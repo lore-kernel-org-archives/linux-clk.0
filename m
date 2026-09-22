@@ -1,357 +1,421 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011042.outbound.protection.outlook.com [40.107.130.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B7E54CF46;
-	Tue, 22 Sep 2026 13:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790083057; cv=fail; b=uGlkoNq3UOjP37iygSm86zzo9SavMzn5JwIKICyhdKmvEdA/X40t02qD28KlkfPNNHWfxL81L4ExM2XbDkUaMbVTwu8GV/SdeES2pFCeOiF5a3b4yy2zQVVJcTt8joJHXnBbQCp0n/+3Xn6a9hFv3KoJpJ2ZqdDwLswGo9ivJF0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790083057; c=relaxed/simple;
-	bh=KFZ9w4QH4Pf2v+vGZ4WmWCByDTR3s9u7EHILF58bfJ0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=IzCM62vrn/Pne01xIoZFEbvcTSQFk7mpcTze59U5D+aqGftammNuFZKgwD7x8iWi8252u1u9ANsYGrdOFLNrOWSS0uL53GHe23u2MCWut89qo34LFzSeiNKivKW46H1TKOTYk7tW4wJdRNSP+4Dv4eH5QI7cnKl6Q4F0J6olGCc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=e5YNHEEm; arc=fail smtp.client-ip=40.107.130.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861DF548570
+	for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2026 13:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790084039; cv=none; b=JY6OHM5EXBf7bIq5jZe4R5VPlNklQa47xGx+FldoOaTE3Q346Ms//5tM3LQlZbwvcjM2tMZifV0KHfV0JRehG31TJw8Kxbr1q37gro1uIips2wieAujzRfdIZ9w/Djm3J9OWe3WQvyx2l8zvpgrjVYTxwFDxoarxm9uM+e0RocI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790084039; c=relaxed/simple;
+	bh=WSdfeY/0K159TMJyPSbYWg5pgAkoB6b1mxTxk/rn788=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZAEuvEfkCKgKni52aBGFnHc7b4idiSghjOXgSXUW5AfxV2qM0p0Awj+4x4toF86RlUTXdnoKI1AtWgEDbuGOD1kJT5pE+OUBojrf6mfq+6Jo1Kw3f5Mkq8SMdTghrN5yMXl9KjITCiXQA39Zx0qbsEFgnp/s0IIaltreRYhRJaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20251104.gappssmtp.com header.i=@riscstar-com.20251104.gappssmtp.com header.b=Z0njjWgk; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="e5YNHEEm"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tMhinrzh5VfoCAQWtcPWTIVNsX0Sl2P2ieYfrOY7Z1hpXCcUIEd87OJlWm3GayyF1momED4L18LfbIgEJinmbKVj30/Rg13QdIDwgx0dv4Xxqag5YmjQ4DwXVvn07hJZyQ7TGcpCawebedayaBmevFAxg74ejxufKhVr+f7NqZQRRuIcbpJwpt1ifpEvwF/X+BBnC+USstM5qtzRgJrdjvCpJCwuZp2HuSNde91mY8Xi0rLZX4KOkcAnbIYDQPDwugD6ep18cs8hwpQgpoLSZiEUWm9HO5bI7NPEVzS0avJPEs5P+AHjLipo9PVJTQGSyWPff0+IPoCRMhbSSBqFJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KFZ9w4QH4Pf2v+vGZ4WmWCByDTR3s9u7EHILF58bfJ0=;
- b=rKgxTZfh0tzm93CelE4CqIeMrygV7UOaVt0RUDfwFswX11iDiYIpuieWkK1mhvpM0zRIAEOqyhNHh95hQWYm75xOHei4b3ZqzvgTVGoC43vrOPOR0eAILrJtQsgFJcZlsreNl8p1sLro8aH4CRTQQhLX4yRT6nupBH5j7LGku5tq3dkJqY1h+pnyu+Oezppzrg45gwjcu56beW0m/k7t6YNduL7G/Mkqi2rItkKqGl9Pxi31qPMDwsihYcE3li2myI/bku26kfYEETtW4/uPHExtyjIHJ9It02zPtC8L/WJKGBNV4/2PzqAVvemJD/JYiDWoaDqyqcMQXJmYyc0PyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KFZ9w4QH4Pf2v+vGZ4WmWCByDTR3s9u7EHILF58bfJ0=;
- b=e5YNHEEm2Bsk5QcSiOEanlBDbFXTJXv+SWHcc7nWyA+Hkt9SO60nBB6mHW7sfkjU0fFsXgTZJLpxJ5CfULCHZWx22aX2a3YKxnSqYhBai/IDKKAR33dVStNiyvOkk7dw1G3Kd3ZZ8q3GYBFKu8WUkODH7v7uQ5OZ0QLQxuq8W5x4/I8XTBcJ/jfd5MMW9eBUSvqFMc8ZsTyXQikKpmy+N4ItYFOmFFAWPcdrg9fY0RXYUq6CnUZ75dEAFyar8emVie4n/EFShR3x2arGaEUO9ZZk+TVolNPOE2hkf0KCOhx/2yhbP6dAvIhX5hYhW1zsATz3XXqv3KZmIwxgO1EHqw==
-Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5b6::22)
- by DU2PR10MB7814.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:49d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.16; Tue, 22 Sep
- 2026 13:17:30 +0000
-Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9126:d21d:31c4:1b9f]) by AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9126:d21d:31c4:1b9f%3]) with mapi id 15.21.0428.015; Tue, 22 Sep 2026
- 13:17:28 +0000
-From: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
-To: "bmasney@redhat.com" <bmasney@redhat.com>, "alexandre.belloni@bootlin.com"
-	<alexandre.belloni@bootlin.com>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"johannes.goede@oss.qualcomm.com" <johannes.goede@oss.qualcomm.com>,
-	"ulfh@kernel.org" <ulfh@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "driver-core@lists.linux.dev"
-	<driver-core@lists.linux.dev>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"dongxuyang@eswincomputing.com" <dongxuyang@eswincomputing.com>,
-	"andersson@kernel.org" <andersson@kernel.org>, "saravanak@kernel.org"
-	<saravanak@kernel.org>, "abelvesa@kernel.org" <abelvesa@kernel.org>,
-	"mripard@kernel.org" <mripard@kernel.org>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "neil.armstrong@linaro.org"
-	<neil.armstrong@linaro.org>, "jens.glathe@oldschoolsolutions.biz"
-	<jens.glathe@oldschoolsolutions.biz>, "dakr@kernel.org" <dakr@kernel.org>,
-	"rafael@kernel.org" <rafael@kernel.org>, "sboyd@kernel.org"
-	<sboyd@kernel.org>
-Subject: Re: [PATCH 4/4] clk: implement sync_state support
-Thread-Topic: [PATCH 4/4] clk: implement sync_state support
-Thread-Index: AQHdSpS3CNrrGLXMT0KI7usHC9XInA==
-Date: Tue, 22 Sep 2026 13:17:28 +0000
-Message-ID: <10e75d2822a925c37dc28e8bc2d55c404f3f910f.camel@siemens.com>
-References: <20260626-clk-sync-state-v1-0-4156d8196dc8@redhat.com>
-	 <20260626-clk-sync-state-v1-4-4156d8196dc8@redhat.com>
-In-Reply-To: <20260626-clk-sync-state-v1-4-4156d8196dc8@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.58.3 (3.58.3-1.fc43) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR10MB6867:EE_|DU2PR10MB7814:EE_
-x-ms-office365-filtering-correlation-id: fc9ed485-8df8-45f1-8797-08df18abd9ff
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|23010399003|366016|376014|7416014|1800799024|10067099003|56012099006|6133799003|55112099003|18002099003|22082099003|4143699003|5023799004|11063799006|38070700021;
-x-microsoft-antispam-message-info:
- gvOiv2GUP/FxXLiB02pe/OqpBPOL+CuJEQVEgWBaGGvOo4V9L1NTVzNefHjOiLFhyTJwdg/iPAFfu5Xtqe/aeq+07kZDIKBBv8GGBWh2FY7Z7kdvQRo0h231MVsSHQkq3VjQz8YUKVvL+Nkiz26b7tuknT4SDDmWL6llEITwkA07Jo1OZYQRyiCLwHvZzGqvn0n1l/sgHxNq1UITHD/WahaVa8NYsaUHrTsehZtBn3HHqsR9aIEqaLJClntGv2vjhYBzhEPHty0gyJ7v7EIZ0cYCVwvQgeXYrMP2MXcpBvy9zjgzz83fIB6xj/rMKG8/y/vGg/a9BIqdrO2N1YIblvJumvJK/foxgR1u/AxZLINUNTmVj/I+qT9yLvb0aNQBn9JtpAQQ2u5VDRmqbVI9wW4DF/688+Jr3QxONRxRMBl5vdgxvSR9Kz/BTq3UPhGEMYH/Ky1efs3XacAAsE2/UkQaUJX1aOZaVCPnN/H2q43erUD98W81jidkC7YJijxsGGaZQDvmjWqNPEhx5hm7ga2ICIwI2ydSsJNv9vw/3DDw8fn62ZFjc5CdgqukVIWoa+8kcefXL1rSmDLYZvtSyp7l7ST5G70MsLPAvOKCDWL6HNKAsCKpNjnSQzKV5nkYvrPhmUU0Ufc/vUpVS7sitFQmwQFLCJknX5TOZUE4wkc=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(376014)(7416014)(1800799024)(10067099003)(56012099006)(6133799003)(55112099003)(18002099003)(22082099003)(4143699003)(5023799004)(11063799006)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?bWJVWVhlUGYrZ3d1TmdxQkVWamhvQzJBSlkveWhYNHMrbExUbjk4VmdnYXM5?=
- =?utf-8?B?NXpta2pBeklLRjMxV3pHRG1hV1d0VGV5eHRWL3Q2UEFSN3E0azZnT0Z1NU5O?=
- =?utf-8?B?ZjhJZjZUQmIxR2VhaGIyL0krclhoMEtOaktSTTFwemtWWFRJbVRtZnF5YkNU?=
- =?utf-8?B?NXNERG5Tb0Q3S20yaE5MV0Y5Z3Jsb0xZY3NuU0xiOFVxTlppa21xeEcyczkx?=
- =?utf-8?B?WlNyd3ZxbXFLL1hjdTFTeGsxK2REbXhQZ2ZsNTJrWWtMbEM2QlpEN1RsbHY4?=
- =?utf-8?B?OTNmcVhXTDhCSTlNLzkzd3loK3JZNHVwUWpSRWRUN1dsNHNlTmVSMXIyaS9m?=
- =?utf-8?B?VDRGalRRVXJhNWxMdFExdmhaNEs2NG5mc1RpTWhYSnNZZGdLdUNLTjEzc3ZE?=
- =?utf-8?B?VUJuMnYwT2p1RlNzVTU4RXdwMVVtVWdvNkVJaEJTN0VIRHhzRUVRWitlVDU1?=
- =?utf-8?B?TDZ5WGtGRTRHMHdaTUNuaUdGR0ZsUjFZUDgrZWtPZFJLZUp6K2VVVTZ1dmdZ?=
- =?utf-8?B?bUxJanlpQjlIQzVsa2UrNmRjK09JdzF3U2o2aFU4UEsxczlNNWNZODdHRWM0?=
- =?utf-8?B?Zm9IaHNmZXdONXg0YXhadzRZOFQxelh3UVRmdE53WFNKUkQ2VG84MC9IMlhT?=
- =?utf-8?B?MWlKZ29lL2N0eFp4RHNleTVNUm1kZkhFODVQTlJkYmRpTm5XQXhHK2JtdHNR?=
- =?utf-8?B?VjNsV2E1VjI2MTNtOFp3M3lpWTg1Qy9vbFV5VHUyK0NWZVZBZ3FVK2FUUTY1?=
- =?utf-8?B?U3A2bnIwamFhOTVDcXZnVVZUYjBlUEJreEtJK25QZmdyNDRvLzBVby9vNjRy?=
- =?utf-8?B?TENIUXNneHJzZTdsb0VJbW94MERsTWV6U1piWGNOK1dNUTZIaGc2cUhiVkt6?=
- =?utf-8?B?cGx2WkR5UEtkbnpoOU9maDVCZG5LeU1TK1crSlFyRVBaM0hqWjB5ckxDU0tX?=
- =?utf-8?B?bDUveTlUWVk1MEdWeVZVbzlMRjBZZzRrTHpEYm91cGZINmMrbGZXZng5V1RW?=
- =?utf-8?B?SGFTeVNKaVRBdTZKa2E1UWlmd2ZPbVA5dTVrNktDUDlycUh1ajRJaE91b1Jo?=
- =?utf-8?B?M3JSOWpiK3N6TXMzTzlkQzY5V3ZsTUdtMkFET1FpVUgwTkF3blRZRkprVzhQ?=
- =?utf-8?B?ZWlmUHNxc1JDeEZ2ZnNGamxHc0VjbG5ISXVFNzdoUlRPeHdYdzQzMDRVU1VZ?=
- =?utf-8?B?VGxraEdzeURGaEd3NGNwRGduWm1pT0FFVDZOUGc3RlJ4YXNNYkRab05GZkRX?=
- =?utf-8?B?OHRxbzNmS0JhVTgzc1dKcmtkSUhGQnh3aGVwcmpxTXU4Tnc3dTNYMVBLSWxP?=
- =?utf-8?B?MGFvZWx6WUJLMjMxOWpsYXVaZUZNSjEzWVBvSmJ4MTJFS0hKSHpkQ1VaM0hx?=
- =?utf-8?B?SDhIcW1nRHNITlVwSGlLdWpCMThndzArYm5vN3RlUFhDbHlUVG9RUWExU3U2?=
- =?utf-8?B?VXZ0SllCSlJWRVViNERRWDRHYXd6VnBLK3hkbHYyWFJaNE5VR0VZSEJ3SWJ4?=
- =?utf-8?B?SmUrQjZ6SlJkZllKcWhBOEZma1Y1Q2xRUHlmb3VHeU5LNG95bnI5NTJrOUpK?=
- =?utf-8?B?N3NoVVJUM2xNOTFvRmdTbVRmQVo4K1JiOFRvMk4vLzVhTDhUWWdua3F4NjUy?=
- =?utf-8?B?K0pKSmVrRHU3cGdaRW1aVU5jUmpyd2s4MURwTXBYOXd6Ry81a282RllEV0U5?=
- =?utf-8?B?dmp6ZXBlblYreEc4cXljc24wd3FkeFN2N0N4eWd6SlJybWxZaFozTnFmazNr?=
- =?utf-8?B?V2hvS3VZeEVHcWlJU0hKMWVlZmp3bDhyMkh1OHVDYjlybjFIdlE2eFJsVlF3?=
- =?utf-8?B?eUpRSEloRG1EVjM3RG12dGtyMlR4Q0hoTTVZTGFFcXZSRUVXVG4vVk1YMTNm?=
- =?utf-8?B?Z0RiQVJKa3E1MkdzNXVWUE10dGdObGF4cXFnd2lOQkUvOG4wT1YxWDV0K05T?=
- =?utf-8?B?VStjSnV0UXpuU1FMOEdyaUxxK1pOSmNuNnJZeHBPU2hrUlBkcm5QaDJCSXF0?=
- =?utf-8?B?djhyc2RXYlgwZXRwc3N3TkVjKy9BdGpudXhHVmNVMERGRkI5QUVpSjRnUUM2?=
- =?utf-8?B?QmlPbFZPUWloWG8rUmxVTEJLUEswbm9zRkY4TVFXOGdEQmN0SlVkV2ZsVjFE?=
- =?utf-8?B?U08yeXlWZGlBZVo1cG1IN1RZTHhJbFZ3MkVSOXg0Mk1aa2J6OVdpdi9VNEVz?=
- =?utf-8?B?alJWdFVodFJ0Q0h0OW81Q0JPb04vZGZ6UFJHWVpLdU5tTlRnbklZQ3N6Q2d3?=
- =?utf-8?B?WG1uTTNJWWZ3VXRwbDdFeUEzVVMxYk14aithc3hqaFZJY1pIc2R0ZlFqOWI0?=
- =?utf-8?B?UFBCZ3djZlpDL3lmNXVYU2VGNEsyYTZhUHp5bmdjSVRkcVB2c0JsMzR6SHg4?=
- =?utf-8?Q?9llzAKTqSNkjX7Oo=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <07FC455735B4A94D950990FD2B0EBDB4@EURPRD10.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=riscstar-com.20251104.gappssmtp.com header.i=@riscstar-com.20251104.gappssmtp.com header.b="Z0njjWgk"
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3a2015bbfceso6638231fa.1
+        for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2026 06:33:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20251104.gappssmtp.com; s=20251104; t=1790084026; x=1790688826; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=QydC7bgWG0EuejZPwcV3a+DqQPYaemecyt7vWNS1w14=;
+        b=Z0njjWgkxgYupjm7pTX6smX5zlEkJwBSvtmCHtMLVqa0ho0MyL9pbnU6MaZSUFQPfa
+         8HnKvZdrJ2dobHMZH4afa9CW5lNN+aVQytgUlOGIHwIHP+6g/cheR8/ZJtv4dB79uos4
+         0vposbqNRJ2MMvUGUXXDy74l9EEVfsmJ0bT08P1UTWiUDIcNZucuI3KMZm3KIRb4Tqt3
+         yN4H3lzYOtcW4J1qAFwDwmZTdO5w29ZBKCxpHfK/SiVFqDzPQEyDhzMg9J0TJiX4jurq
+         xClotg1HNK7qrm8669zzBtdVoeHQVThpFTUWqvRN8w8qPzyxdNYI1xHuir26qacQdfre
+         /Jzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790084026; x=1790688826;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=QydC7bgWG0EuejZPwcV3a+DqQPYaemecyt7vWNS1w14=;
+        b=t3DZvhCXU4gr2jUkZ/vLAJSo2d8TVxVOcQ/7pdNTIjL0kmoZmanTrcqgpfnTjQWHP9
+         kadkHbJ8NIml8WuSDj0vN2aA0jKKestS+6Zo5fCrwtb5Fpd87F0cqrRpV8BKaeLqBnqh
+         3Vndgt89ccaGF8OOsvAVP/tBcWxOcRZF/qAoF5l3p/iwZe9FxhQd0AwfiNiBOSlYcLOs
+         gXeNyaX4rxsQyqNxInO2a2CFLUZ2syvV3ZpJyV1yMWLO2jQK7W54qH1JgrQWVLTE/KCf
+         U48qOUfFvR87dtr7jrhOKOVcP0kTytgptoyKTuwsd63HJxWxZbc6fl6xesbyJrVMqrU5
+         8SvQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzu/LORBmS0P9arbFShceSuvLzsfci6NFbIxDLo6Q854eh0QiROilCfLhRpwyfREfOo/8N8ElxM+p4=@vger.kernel.org
+X-Gm-Message-State: AFuF++lROaypW5xFdiA+R9XXvD7wPY1mTcbluNAAXChpkz3KL101ZsJz
+	erjPe7kL4oT3JWSbVFjNgLNpBexTseJGW6gR+aGaAL9xuEsdHlm8lVof1Q7ptxZBc/I=
+X-Gm-Gg: AYBFou2X5uR39hVYVS6Hiv8smb2OaIiZp0TKz4zrBxsV+9QPIy2NTE8BGKyohUHzCcm
+	Ki/mMxqapvCW2Mj1u33rvIIrlAAY1+e3VqRfsrSPHeKMPLsd4ltdya0sZXplA4DqoBMA+ZdLdCT
+	+7q/Z80Z9K6DgHwTbB0MMVRtYYjfMRH4iL/WMiKXxreUx/Ea9+MSmA3v4wUAYUig2RM7IjnkVXm
+	pnk/trx+9K3bcgHLuK1HVAZb03PVbt2qfY7Nhudg9BOdwtSdgilIuSDCnxLlQmJz/20Ka0F3M1A
+	FDPoaP28eCxVXYOe5qQBwdAe5/ygfJdrBBJEigjpU65940Fn9XKOY4lwisNovbi39XRK940oa1B
+	2QlPfM40jIPtn6F7hm4By/TFuDYEbHcCXky0oK/JvQqUnPvN0dihBb7za0fxkq0QoQ8qWdFzWuO
+	h24PQPy9mwdGsPFmhLCIt39vD7s1stt0qlE1xkbdsuYFaxO9fmtZabXsqyXpwRZCPcaHxrSgY=
+X-Received: by 2002:a2e:bcc3:0:b0:3a5:d0c6:46c4 with SMTP id 38308e7fff4ca-3a624d70581mr7729801fa.15.1790084024945;
+        Tue, 22 Sep 2026 06:33:44 -0700 (PDT)
+Received: from [172.22.22.28] ([73.62.185.64])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3a627d82b71sm5924741fa.34.2026.09.22.06.33.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Sep 2026 06:33:44 -0700 (PDT)
+Message-ID: <0785235b-de06-44d4-9068-ec706eeba848@riscstar.com>
+Date: Tue, 22 Sep 2026 08:33:37 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc9ed485-8df8-45f1-8797-08df18abd9ff
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2026 13:17:28.5410
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QuYeXrm0D4+86sCWFbGDRodeOqbPtYPhxPJfrMr73ue07fZLvrqc/3maJVROoMPBaU4AZPzLH/+MUQ9mqF3Wq1xe2owg3KcO293mkpxtOc8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR10MB7814
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] clk: toshiba: introduce a TC9564 SoC clock and reset
+ driver
+To: Brian Masney <bmasney@redhat.com>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, abelvesa@kernel.org,
+ kees@kernel.org, gustavoars@kernel.org, p.zabel@pengutronix.de,
+ daniel@riscstar.com, mohd.anwar@oss.qualcomm.com,
+ lorenzo.bianconi@oss.qualcomm.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, mfd@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260918165234.687224-1-elder@riscstar.com>
+ <20260918165234.687224-4-elder@riscstar.com> <arG238GS8bMB6DkW@redhat.com>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <arG238GS8bMB6DkW@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-SGkgQnJpYW4sIEFsZXhhbmRyZSwNCg0KdGhhbmtzIGZvciBsb29raW5nIGludG8gdGhpcyEgQWxl
-eGFuZHJlIGFza2VkIG1lIHRvIGNvbmZpcm0gdGhhdA0KaXQgd2lsbCB3b3JrIGZvciBSVEMgZGV2
-aWNlcywgYnV0IG15IGN1cnJlbnQgdW5kZXJzdGFuZGluZyBpcyB0aGF0DQppdCB3aWxsIG5vdCBh
-bmQgaGVyZSBpcyB3aHk6DQoNCk9uIEZyaSwgMjAyNi0wNi0yNiBhdCAxMjozMiAtMDQwMCwgQnJp
-YW4gTWFzbmV5IHdyb3RlOg0KPiBUaGUgZXhpc3Rpbmcgc3VwcG9ydCBmb3IgZGlzYWJsaW5nIHVu
-dXNlZCBjbGtzIHJ1bnMgaW4gdGhlIGxhdGUgaW5pdGNhbGwNCj4gc3RhZ2UsIGFuZCBpdCBoYXMg
-YmVlbiBrbm93biBmb3IgYSBsb25nIHRpbWUgdGhhdCB0aGlzIGlzIGJyb2tlbiBzaW5jZQ0KPiBp
-dCBydW5zIHRvbyBlYXJseSBpbiB0aGUgYm9vdCB1cCBwcm9jZXNzLiBJdCBkb2Vzbid0IHdvcmsg
-Zm9yIGtlcm5lbA0KPiBtb2R1bGVzLCBhbmQgaXQgYWxzbyBkb2Vzbid0IHdvcmsgaWYgYWxsIG9m
-IHRoZSBjb25zdW1lcnMgaGF2ZW4ndCBmdWxseQ0KPiBwcm9iZWQgeWV0LiBGb2xrcyBoYXZlIGxv
-bmcgcmVjb21tZW5kZWQgdG8gYm9vdCBjZXJ0YWluIHBsYXRmb3JtcyB3aXRoDQo+IGNsa19pZ25v
-cmVfdW51c2VkIHRvIHdvcmsgYXJvdW5kIGlzc3VlcyB3aXRoIGRpc2FibGluZyB1bnVzZWQgY2xr
-cy4NCj4gDQo+IExldCdzIGdvIGFoZWFkIGFuZCBhZGQgYSBmcmFtZXdvcmstbGV2ZWwgc3luY19z
-dGF0ZSBjYWxsYmFjayBmb3IgdGhlIGNsaw0KPiBzdWJzeXN0ZW0uIElmIGEgZHJpdmVyIGRvZXNu
-J3QgaGF2ZSBhIHN5bmNfc3RhdGUgY2FsbGJhY2sgY29uZmlndXJlZCwNCj4gd2hpY2ggaXMgdGhl
-IDk5KyUgdXNlIGNhc2UgdG9kYXksIHRoZW4gbGV0J3Mgc2V0IGl0IHVwIHRvIHVzZSB0aGUNCj4g
-Y2xrX3N5bmNfc3RhdGUoKSBpbnRyb2R1Y2VkIGluIHRoaXMgY29tbWl0IHNvIHRoYXQgbm8gZHJp
-dmVyIGNoYW5nZXMNCj4gYXJlIG5lZWRlZC4NCj4gDQo+IEF0IHRoZSB0aW1lIG9mIHRoaXMgd3Jp
-dGluZywgdGhlcmUgYXJlIGN1cnJlbnRseSBvbmx5IDcgY2xrIGRyaXZlcnMgdGhhdA0KPiBpbXBs
-ZW1lbnQgc3luY19zdGF0ZSwgYW5kIGFsbCBhcmUgUXVhbGNvbW0gU29DcyB3aGVyZSB0aGV5IGlu
-dGVyYWN0IHdpdGgNCj4gdGhlIGludGVyY29ubmVjdCBmcmFtZXdvcmsgdmlhIGljY19zeW5jX3N0
-YXRlKCkuIEEgc2hhcmVkIGhlbHBlciBoYXMNCj4gYmVlbiBjcmVhdGVkIGZvciB0aGlzIHBsYXRm
-b3JtIHRoYXQgY2FsbHMgY2xrX3N5bmNfc3RhdGUoKS4gSXQgaXMNCj4gZXhwZWN0ZWQgdGhhdCBh
-bnkgbmV3IGNsayBkcml2ZXJzIHRoYXQgd2FudCB0byBpbXBsZW1lbnQgdGhlaXIgb3duDQo+IHN5
-bmNfc3RhdGUgd2lsbCBhbHNvIG5lZWQgdG8gY2FsbCBjbGtfc3luY19zdGF0ZSgpIGF0IHRoZSBl
-bmQgb2YgdGhlaXINCj4gY3VzdG9tIHN5bmNfc3RhdGUgY2FsbGJhY2suDQo+IA0KPiBUaGVyZSB3
-aWxsIGJlIHNldmVyYWwgc3RhZ2VzIG9mIGRpc2FibGluZyB1bnVzZWQgY2xrczoNCj4gDQo+IC0g
-VGhlIGZpcnN0IHBoYXNlIHdpbGwgYmUgZXhlY3V0ZWQgYXQgbGF0ZV9pbml0Y2FsbCBhbmQgaXQg
-d2lsbCBvbmx5DQo+IMKgIGRpc2FibGUgdW51c2VkIGNsa3MgdGhhdCBkbyBub3QgaGF2ZSBhIHN0
-cnVjdCBkZXYuDQo+IC0gVGhlIHN5bmNfc3RhdGUgY2FsbGJhY2sgd2lsbCBiZSBpbnZva2VkIGZv
-ciBlYWNoIGNsayBkcml2ZXIgb25jZSBhbGwNCj4gwqAgY29uc3VtZXJzIGhhdmUgcHJvYmVkLg0K
-PiANCj4gVGhpcyBpcyBiYXNlZCBvbiBwcmV2aW91cyBhdHRlbXB0cyBieSBTYXJhdmFuYSBLYW5u
-YW4gYW5kIEFiZWwgVmVzYQ0KPiB0aGF0IGFyZSBsaW5rZWQgYmVsb3cuDQo+IA0KPiBUaGlzIGNo
-YW5nZSB3YXMgdGVzdGVkIG9uIGEgVGhpbmtwYWQgeDEzcyBsYXB0b3AuDQo+IA0KPiDCoMKgwqAg
-W8KgwqDCoCAwLjM2NjczN10gY2xrOiBEaXNhYmxpbmcgdW51c2VkIGNsb2NrcyBub3QgYXNzb2Np
-YXRlZCB3aXRoIGEgZGV2aWNlDQo+IMKgwqDCoCBbwqDCoMKgIDAuMzY3MjMyXSBQTTogZ2VucGQ6
-IERpc2FibGluZyB1bnVzZWQgcG93ZXIgZG9tYWlucw0KPiDCoMKgwqAgW8KgwqDCoCA3Ljc5MTQx
-M10gcWNvbS1xbXAtcGNpZS1waHkgMWMyNDAwMC5waHk6IGNsazogRGlzYWJsaW5nIHVudXNlZCBj
-bG9ja3MNCj4gwqDCoMKgIFvCoMKgwqAgNy43OTk3MDJdIHFjb21fYW9zc19xbXAgYzMwMDAwMC5w
-b3dlci1tYW5hZ2VtZW50OiBjbGs6IERpc2FibGluZyB1bnVzZWQgY2xvY2tzDQo+IMKgwqDCoCBb
-wqDCoMKgIDguNTQ4ODIwXSBxY29tLXFtcC1wY2llLXBoeSAxYzE0MDAwLnBoeTogY2xrOiBEaXNh
-YmxpbmcgdW51c2VkIGNsb2Nrcw0KPiDCoMKgwqAgW8KgwqDCoCA5LjEyMTg0OV0gcWNvbS1xbXAt
-dXNiLXBoeSA4OGYxMDAwLnBoeTogY2xrOiBEaXNhYmxpbmcgdW51c2VkIGNsb2Nrcw0KPiDCoMKg
-wqAgW8KgwqDCoCA5LjEyMTk4NV0gcWNvbS1xbXAtdXNiLXBoeSA4OGVmMDAwLnBoeTogY2xrOiBE
-aXNhYmxpbmcgdW51c2VkIGNsb2Nrcw0KPiDCoMKgwqAgW8KgwqDCoCA5LjEyMjY5MV0gcWNvbS1l
-ZHAtcGh5IGFlYzVhMDAucGh5OiBjbGs6IERpc2FibGluZyB1bnVzZWQgY2xvY2tzDQo+IMKgwqDC
-oCBbwqDCoMKgIDkuMTIyNzYwXSBkaXNwX2NjLXNjODI4MHhwIGFmMDAwMDAuY2xvY2stY29udHJv
-bGxlcjogY2xrOiBEaXNhYmxpbmcgdW51c2VkIGNsb2Nrcw0KPiDCoMKgwqAgW8KgwqDCoCA5LjE0
-MjEyMV0gcWNvbS1xbXAtY29tYm8tcGh5IDg4ZWIwMDAucGh5OiBjbGs6IERpc2FibGluZyB1bnVz
-ZWQgY2xvY2tzDQo+IMKgwqDCoCBbwqDCoMKgIDkuMTY5MTQ5XSBxY29tLXFtcC1jb21iby1waHkg
-ODkwMzAwMC5waHk6IGNsazogRGlzYWJsaW5nIHVudXNlZCBjbG9ja3MNCj4gwqDCoMKgIFvCoMKg
-IDE2LjA1Nzk5N10gcWNvbS1jcHVmcmVxLWh3IDE4NTkxMDAwLmNwdWZyZXE6IGNsazogRGlzYWJs
-aW5nIHVudXNlZCBjbG9ja3MNCj4gwqDCoMKgIFvCoMKgIDE2LjA1ODE0OV0gY2xrLXJwbWggMTgy
-MDAwMDAucnNjOmNsb2NrLWNvbnRyb2xsZXI6IGNsazogRGlzYWJsaW5nIHVudXNlZCBjbG9ja3MN
-Cj4gwqDCoMKgIFvCoMKgIDE2LjMzNDg3OV0gcWNvbS1xbXAtcGNpZS1waHkgMWMwNjAwMC5waHk6
-IGNsazogRGlzYWJsaW5nIHVudXNlZCBjbG9ja3MNCj4gwqDCoMKgIFvCoMKgIDE2LjcwNjExM10g
-Y2FtY2Mtc2M4MjgweHAgYWQwMDAwMC5jbG9jay1jb250cm9sbGVyOiBjbGs6IERpc2FibGluZyB1
-bnVzZWQgY2xvY2tzDQo+IMKgwqDCoCBbwqDCoCAyMS41NjU3MzFdIHE2cHJtLWxwYXNzLWNsb2Nr
-IDMwMDAwMDAucmVtb3RlcHJvYzpnbGluay1lZGdlOmdwcjpzZXJ2aWNlQDI6Y2xvY2stY29udHJv
-bGxlcjogY2xrOiBEaXNhYmxpbmcgdW51c2VkIGNsb2Nrcw0KPiDCoMKgwqAgW8KgwqAgMjEuNTk3
-MDY5XSB2YV9tYWNybyAzMzcwMDAwLmNvZGVjOiBjbGs6IERpc2FibGluZyB1bnVzZWQgY2xvY2tz
-DQo+IMKgwqDCoCBbwqDCoCAyMS42MDUwMzldIHJ4X21hY3JvIDMyMDAwMDAucnhtYWNybzogY2xr
-OiBEaXNhYmxpbmcgdW51c2VkIGNsb2Nrcw0KPiDCoMKgwqAgW8KgwqAgMjEuNjMwMzEzXSB3c2Ff
-bWFjcm8gMzI0MDAwMC5jb2RlYzogY2xrOiBEaXNhYmxpbmcgdW51c2VkIGNsb2Nrcw0KPiDCoMKg
-wqAgW8KgwqAgMjEuNjM1MDY5XSB0eF9tYWNybyAzMjIwMDAwLnR4bWFjcm86IGNsazogRGlzYWJs
-aW5nIHVudXNlZCBjbG9ja3MNCj4gDQo+IFRlc3RlZC1ieTogSmVucyBHbGF0aGUgPGplbnMuZ2xh
-dGhlQG9sZHNjaG9vbHNvbHV0aW9ucy5iaXo+DQo+IFRlc3RlZC1ieTogTmVpbCBBcm1zdHJvbmcg
-PG5laWwuYXJtc3Ryb25nQGxpbmFyby5vcmc+ICMgb24gQU1MLVM5MDVYLUNDLCBBTUwtUzgwNVgt
-Q0MsIEJQSS1NMlMsIEJQSS1NNQ0KPiBUZXN0ZWQtYnk6IFh1eWFuZyBEb25nIDxkb25neHV5YW5n
-QGVzd2luY29tcHV0aW5nLmNvbT4gIyBoZnA1NTANCj4gU2lnbmVkLW9mZi1ieTogQnJpYW4gTWFz
-bmV5IDxibWFzbmV5QHJlZGhhdC5jb20+DQo+IExpbms6IGh0dHBzOi8vd3d3LnlvdXR1YmUuY29t
-L3dhdGNoP3Y9dFhZek04eUxJUUENCj4gTGluazogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxs
-LzIwMjEwNDA3MDM0NDU2LjUxNjIwNC0xLXNhcmF2YW5ha0Bnb29nbGUuY29tLw0KPiBMaW5rOiBo
-dHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyMjEyMjcyMDQ1MjguMTg5OTg2My0xLWFiZWwu
-dmVzYUBsaW5hcm8ub3JnLw0KPiAtLS0NCj4gwqBkcml2ZXJzL2Nsay9jbGsuY8KgwqAgfCA3OCAr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLQ0KPiDC
-oGluY2x1ZGUvbGludXgvY2xrLmggfCAxNCArKysrKysrKysrDQo+IMKgMiBmaWxlcyBjaGFuZ2Vk
-LCA3OSBpbnNlcnRpb25zKCspLCAxMyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2Nsay9jbGsuYyBiL2RyaXZlcnMvY2xrL2Nsay5jDQo+IGluZGV4IDA0OGFkZmE4NmE1
-ZC4uMmI2ZmFlNTQ3MDJhIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Nsay9jbGsuYw0KPiArKysg
-Yi9kcml2ZXJzL2Nsay9jbGsuYw0KPiBAQCAtMTQ0MiwxNCArMTQ0MiwzOSBAQCBzdGF0aWMgdm9p
-ZCBjbGtfY29yZV9kaXNhYmxlX3VucHJlcGFyZShzdHJ1Y3QgY2xrX2NvcmUgKmNvcmUpDQo+IMKg
-CWNsa19jb3JlX3VucHJlcGFyZV9sb2NrKGNvcmUpOw0KPiDCoH0NCj4gwqANCj4gLXN0YXRpYyB2
-b2lkIF9faW5pdCBjbGtfdW5wcmVwYXJlX3VudXNlZF9zdWJ0cmVlKHN0cnVjdCBjbGtfY29yZSAq
-Y29yZSkNCj4gKy8qDQo+ICsgKiBSZXR1cm5zIHRydWUgaWYgQGNvcmUgc2hvdWxkIGJlIHNraXBw
-ZWQgZHVyaW5nIGFuIHVudXNlZC1jbG9jayBzd2VlcCBmb3INCj4gKyAqIEBkZXYuwqAgV2hlbiBA
-ZGV2IGlzIE5VTEwgdGhlIHN3ZWVwIGlzIHRoZSBnbG9iYWwgbGF0ZV9pbml0Y2FsbCBwYXNzOyB3
-aGVuDQo+ICsgKiBAZGV2IGlzIG5vbi1OVUxMIHRoZSBzd2VlcCBpcyBhIHBlci1kZXZpY2Ugc3lu
-Y19zdGF0ZSBwYXNzLg0KPiArICovDQo+ICtzdGF0aWMgYm9vbCBjbGtfY29yZV9za2lwX3VudXNl
-ZChzdHJ1Y3QgY2xrX2NvcmUgKmNvcmUsIHN0cnVjdCBkZXZpY2UgKmRldikNCj4gK3sNCj4gKwkv
-Kg0KPiArCSAqIEF0IGxhdGVfaW5pdGNhbGwsIHNraXAgY2xvY2tzIHRoYXQgYmVsb25nIHRvIGEg
-ZGV2aWNlIOKAlCB0aGV5IHdpbGwgYmUNCj4gKwkgKiBoYW5kbGVkIGF0IHN5bmNfc3RhdGUgdGlt
-ZS4NCj4gKwkgKi8NCj4gKwlpZiAoIWRldiAmJiBjb3JlLT5kZXYpDQo+ICsJCXJldHVybiB0cnVl
-Ow0KDQpUaGlzIHdpbGwgc2tpcCBhbGwgY29yZS0+ZGV2ICE9IE5VTEwsIGJ1dCB0aGUgZGVmZXJy
-ZWQgc3luYy1iYXNlZCBkaXNhYmxpbmcNCndpbGwgb25seSB3b3JrIGZvciB0aG9zZSBkcml2ZXIt
-Ym91bmQgZGV2aWNlcywgbm90IGRyaXZlcmxlc3MgY2xhc3MgZGV2aWNlcz8NClByb2JhYmx5IGEg
-cmVncmVzc2lvbiBpbiBwb3dlciBjb25zdW1wdGlvbiBhcy1pcywgc2VlIGFsc28gYmVsb3cuLi4N
-Cg0KPiArDQo+ICsJLyogV2hlbiBjYWxsZWQgZnJvbSBzeW5jX3N0YXRlLCBvbmx5IHByb2Nlc3Mg
-Y2xvY2tzIGZvciB0aGlzIGRldmljZS4gKi8NCj4gKwlpZiAoZGV2ICYmIGNvcmUtPmRldiAhPSBk
-ZXYpDQo+ICsJCXJldHVybiB0cnVlOw0KPiArDQo+ICsJcmV0dXJuIGZhbHNlOw0KPiArfQ0KPiAr
-DQo+ICtzdGF0aWMgdm9pZCBjbGtfdW5wcmVwYXJlX3VudXNlZF9zdWJ0cmVlKHN0cnVjdCBjbGtf
-Y29yZSAqY29yZSwNCj4gKwkJCQkJIHN0cnVjdCBkZXZpY2UgKmRldikNCj4gwqB7DQo+IMKgCXN0
-cnVjdCBjbGtfY29yZSAqY2hpbGQ7DQo+IMKgDQo+IMKgCWxvY2tkZXBfYXNzZXJ0X2hlbGQoJnBy
-ZXBhcmVfbG9jayk7DQo+IMKgDQo+IMKgCWhsaXN0X2Zvcl9lYWNoX2VudHJ5KGNoaWxkLCAmY29y
-ZS0+Y2hpbGRyZW4sIGNoaWxkX25vZGUpDQo+IC0JCWNsa191bnByZXBhcmVfdW51c2VkX3N1YnRy
-ZWUoY2hpbGQpOw0KPiArCQljbGtfdW5wcmVwYXJlX3VudXNlZF9zdWJ0cmVlKGNoaWxkLCBkZXYp
-Ow0KPiArDQo+ICsJaWYgKGNsa19jb3JlX3NraXBfdW51c2VkKGNvcmUsIGRldikpDQo+ICsJCXJl
-dHVybjsNCj4gwqANCj4gwqAJaWYgKGNvcmUtPnByZXBhcmVfY291bnQpDQo+IMKgCQlyZXR1cm47
-DQo+IEBAIC0xNDY3LDcgKzE0OTIsOCBAQCBzdGF0aWMgdm9pZCBfX2luaXQgY2xrX3VucHJlcGFy
-ZV91bnVzZWRfc3VidHJlZShzdHJ1Y3QgY2xrX2NvcmUgKmNvcmUpDQo+IMKgCX0NCj4gwqB9DQo+
-IMKgDQo+IC1zdGF0aWMgdm9pZCBfX2luaXQgY2xrX2Rpc2FibGVfdW51c2VkX3N1YnRyZWUoc3Ry
-dWN0IGNsa19jb3JlICpjb3JlKQ0KPiArc3RhdGljIHZvaWQgY2xrX2Rpc2FibGVfdW51c2VkX3N1
-YnRyZWUoc3RydWN0IGNsa19jb3JlICpjb3JlLA0KPiArCQkJCcKgwqDCoMKgwqDCoCBzdHJ1Y3Qg
-ZGV2aWNlICpkZXYpDQo+IMKgew0KPiDCoAlzdHJ1Y3QgY2xrX2NvcmUgKmNoaWxkOw0KPiDCoAl1
-bnNpZ25lZCBsb25nIGZsYWdzOw0KPiBAQCAtMTQ3NSw3ICsxNTAxLDEwIEBAIHN0YXRpYyB2b2lk
-IF9faW5pdCBjbGtfZGlzYWJsZV91bnVzZWRfc3VidHJlZShzdHJ1Y3QgY2xrX2NvcmUgKmNvcmUp
-DQo+IMKgCWxvY2tkZXBfYXNzZXJ0X2hlbGQoJnByZXBhcmVfbG9jayk7DQo+IMKgDQo+IMKgCWhs
-aXN0X2Zvcl9lYWNoX2VudHJ5KGNoaWxkLCAmY29yZS0+Y2hpbGRyZW4sIGNoaWxkX25vZGUpDQo+
-IC0JCWNsa19kaXNhYmxlX3VudXNlZF9zdWJ0cmVlKGNoaWxkKTsNCj4gKwkJY2xrX2Rpc2FibGVf
-dW51c2VkX3N1YnRyZWUoY2hpbGQsIGRldik7DQo+ICsNCj4gKwlpZiAoY2xrX2NvcmVfc2tpcF91
-bnVzZWQoY29yZSwgZGV2KSkNCj4gKwkJcmV0dXJuOw0KPiDCoA0KPiDCoAlpZiAoY29yZS0+Zmxh
-Z3MgJiBDTEtfT1BTX1BBUkVOVF9FTkFCTEUpDQo+IMKgCQljbGtfY29yZV9wcmVwYXJlX2VuYWJs
-ZShjb3JlLT5wYXJlbnQpOw0KPiBAQCAtMTUwOCw3ICsxNTM3LDcgQEAgc3RhdGljIHZvaWQgX19p
-bml0IGNsa19kaXNhYmxlX3VudXNlZF9zdWJ0cmVlKHN0cnVjdCBjbGtfY29yZSAqY29yZSkNCj4g
-wqAJCWNsa19jb3JlX2Rpc2FibGVfdW5wcmVwYXJlKGNvcmUtPnBhcmVudCk7DQo+IMKgfQ0KPiDC
-oA0KPiAtc3RhdGljIGJvb2wgY2xrX2lnbm9yZV91bnVzZWQgX19pbml0ZGF0YTsNCj4gK3N0YXRp
-YyBib29sIGNsa19pZ25vcmVfdW51c2VkOw0KPiDCoHN0YXRpYyBpbnQgX19pbml0IGNsa19pZ25v
-cmVfdW51c2VkX3NldHVwKGNoYXIgKl9fdW51c2VkKQ0KPiDCoHsNCj4gwqAJY2xrX2lnbm9yZV91
-bnVzZWQgPSB0cnVlOw0KPiBAQCAtMTUxNiwxNyArMTU0NSwyNyBAQCBzdGF0aWMgaW50IF9faW5p
-dCBjbGtfaWdub3JlX3VudXNlZF9zZXR1cChjaGFyICpfX3VudXNlZCkNCj4gwqB9DQo+IMKgX19z
-ZXR1cCgiY2xrX2lnbm9yZV91bnVzZWQiLCBjbGtfaWdub3JlX3VudXNlZF9zZXR1cCk7DQo+IMKg
-DQo+IC1zdGF0aWMgaW50IF9faW5pdCBjbGtfZGlzYWJsZV91bnVzZWQodm9pZCkNCj4gK3N0YXRp
-YyBpbnQgX19jbGtfZGlzYWJsZV91bnVzZWQoc3RydWN0IGRldmljZSAqZGV2KQ0KPiDCoHsNCj4g
-wqAJc3RydWN0IGNsa19jb3JlICpjb3JlOw0KPiDCoAlpbnQgcmV0Ow0KPiDCoA0KPiDCoAlpZiAo
-Y2xrX2lnbm9yZV91bnVzZWQpIHsNCj4gLQkJcHJfd2FybigiY2xrOiBOb3QgZGlzYWJsaW5nIHVu
-dXNlZCBjbG9ja3NcbiIpOw0KPiArCQkvKg0KPiArCQkgKiBPbmx5IHNob3cgdGhpcyBtZXNzYWdl
-IG9uY2UgZm9yIHRoZSBwcm92aWRlcnMgdGhhdCBhcmUgbm90DQo+ICsJCSAqIGFzc29jaWF0ZWQg
-d2l0aCBhIGRldmljZSwgd2hpY2ggaXMgdGhlIGZpcnN0IHBhc3Mgb2YNCj4gKwkJICogZGlzYWJs
-aW5nIHVudXNlZCBjbG9ja3MuIE90aGVyd2lzZSBpdCdsbCBzaG93IHVwIGZvciBlYWNoDQo+ICsJ
-CSAqIGNsayBwcm92aWRlciBhcyB3ZWxsLg0KPiArCQkgKi8NCj4gKwkJaWYgKCFkZXYpDQo+ICsJ
-CQlwcl93YXJuKCJjbGs6IE5vdCBkaXNhYmxpbmcgdW51c2VkIGNsb2Nrc1xuIik7DQo+IMKgCQly
-ZXR1cm4gMDsNCj4gwqAJfQ0KPiDCoA0KPiAtCXByX2luZm8oImNsazogRGlzYWJsaW5nIHVudXNl
-ZCBjbG9ja3NcbiIpOw0KPiArCWlmIChkZXYpDQo+ICsJCWRldl9pbmZvKGRldiwgImNsazogRGlz
-YWJsaW5nIHVudXNlZCBjbG9ja3NcbiIpOw0KDQpJdCBiZWNvbWVzIHF1aXRlIGNoYXR0eSBvbiBs
-YXJnZSBzeXN0ZW1zPw0KDQo+ICsJZWxzZQ0KPiArCQlwcl9pbmZvKCJjbGs6IERpc2FibGluZyB1
-bnVzZWQgY2xvY2tzIG5vdCBhc3NvY2lhdGVkIHdpdGggYSBkZXZpY2VcbiIpOw0KPiDCoA0KPiDC
-oAlyZXQgPSBjbGtfcG1fcnVudGltZV9nZXRfYWxsKCk7DQo+IMKgCWlmIChyZXQpDQo+IEBAIC0x
-NTM4LDE2ICsxNTc3LDE2IEBAIHN0YXRpYyBpbnQgX19pbml0IGNsa19kaXNhYmxlX3VudXNlZCh2
-b2lkKQ0KPiDCoAljbGtfcHJlcGFyZV9sb2NrKCk7DQo+IMKgDQo+IMKgCWhsaXN0X2Zvcl9lYWNo
-X2VudHJ5KGNvcmUsICZjbGtfcm9vdF9saXN0LCBjaGlsZF9ub2RlKQ0KPiAtCQljbGtfZGlzYWJs
-ZV91bnVzZWRfc3VidHJlZShjb3JlKTsNCj4gKwkJY2xrX2Rpc2FibGVfdW51c2VkX3N1YnRyZWUo
-Y29yZSwgZGV2KTsNCj4gwqANCj4gwqAJaGxpc3RfZm9yX2VhY2hfZW50cnkoY29yZSwgJmNsa19v
-cnBoYW5fbGlzdCwgY2hpbGRfbm9kZSkNCj4gLQkJY2xrX2Rpc2FibGVfdW51c2VkX3N1YnRyZWUo
-Y29yZSk7DQo+ICsJCWNsa19kaXNhYmxlX3VudXNlZF9zdWJ0cmVlKGNvcmUsIGRldik7DQo+IMKg
-DQo+IMKgCWhsaXN0X2Zvcl9lYWNoX2VudHJ5KGNvcmUsICZjbGtfcm9vdF9saXN0LCBjaGlsZF9u
-b2RlKQ0KPiAtCQljbGtfdW5wcmVwYXJlX3VudXNlZF9zdWJ0cmVlKGNvcmUpOw0KPiArCQljbGtf
-dW5wcmVwYXJlX3VudXNlZF9zdWJ0cmVlKGNvcmUsIGRldik7DQo+IMKgDQo+IMKgCWhsaXN0X2Zv
-cl9lYWNoX2VudHJ5KGNvcmUsICZjbGtfb3JwaGFuX2xpc3QsIGNoaWxkX25vZGUpDQo+IC0JCWNs
-a191bnByZXBhcmVfdW51c2VkX3N1YnRyZWUoY29yZSk7DQo+ICsJCWNsa191bnByZXBhcmVfdW51
-c2VkX3N1YnRyZWUoY29yZSwgZGV2KTsNCj4gwqANCj4gwqAJY2xrX3ByZXBhcmVfdW5sb2NrKCk7
-DQo+IMKgDQo+IEBAIC0xNTU1LDggKzE1OTQsMTkgQEAgc3RhdGljIGludCBfX2luaXQgY2xrX2Rp
-c2FibGVfdW51c2VkKHZvaWQpDQo+IMKgDQo+IMKgCXJldHVybiAwOw0KPiDCoH0NCj4gKw0KPiAr
-c3RhdGljIGludCBfX2luaXQgY2xrX2Rpc2FibGVfdW51c2VkKHZvaWQpDQo+ICt7DQo+ICsJcmV0
-dXJuIF9fY2xrX2Rpc2FibGVfdW51c2VkKE5VTEwpOw0KPiArfQ0KPiDCoGxhdGVfaW5pdGNhbGxf
-c3luYyhjbGtfZGlzYWJsZV91bnVzZWQpOw0KPiDCoA0KPiArdm9pZCBjbGtfc3luY19zdGF0ZShz
-dHJ1Y3QgZGV2aWNlICpkZXYpDQo+ICt7DQo+ICsJX19jbGtfZGlzYWJsZV91bnVzZWQoZGV2KTsN
-Cj4gK30NCj4gK0VYUE9SVF9TWU1CT0xfR1BMKGNsa19zeW5jX3N0YXRlKTsNCj4gKw0KPiDCoHN0
-YXRpYyBpbnQgY2xrX2NvcmVfZGV0ZXJtaW5lX3JvdW5kX25vbG9jayhzdHJ1Y3QgY2xrX2NvcmUg
-KmNvcmUsDQo+IMKgCQkJCQnCoMKgIHN0cnVjdCBjbGtfcmF0ZV9yZXF1ZXN0ICpyZXEpDQo+IMKg
-ew0KPiBAQCAtNDMzOSw4ICs0Mzg5LDEwIEBAIF9fY2xrX3JlZ2lzdGVyKHN0cnVjdCBkZXZpY2Ug
-KmRldiwgc3RydWN0IGRldmljZV9ub2RlICpucCwgc3RydWN0IGNsa19odyAqaHcpDQo+IMKgCWNv
-cmUtPmRldiA9IGRldjsNCj4gwqAJY2xrX3BtX3J1bnRpbWVfaW5pdChjb3JlKTsNCj4gwqAJY29y
-ZS0+b2Zfbm9kZSA9IG5wOw0KPiAtCWlmIChkZXYgJiYgZGV2LT5kcml2ZXIpDQo+ICsJaWYgKGRl
-diAmJiBkZXYtPmRyaXZlcikgew0KDQpTbyB0aGlzIHdpbGwgb25seSB3b3JrIGZvciBkcml2ZXIt
-Ym91bmQgZGV2aWNlcywgYnV0IG5vdCBmb3IgUlRDLWNsYXNzDQpkZXZpY2VzLCByaWdodD8NCg0K
-SW4gdGhlIHVzZS1jYXNlIHdlJ3ZlIGRpc2N1c3NlZCB3aXRoIEFsZXhhbmRyZToNCg0KY2xrID0g
-ZGV2bV9jbGtfcmVnaXN0ZXIoJnBjZjg1MDYzLT5ydGMtPmRldiwgJnBjZjg1MDYzLT5jbGtvdXRf
-aHcpOw0KDQomcGNmODUwNjMtPnJ0Yy0+ZGV2IGlzIGFuIHJ0Y19jbGFzcyBkZXZpY2UgLS0gaXQg
-bmV2ZXIgaGFzIGRldi0+ZHJpdmVyIHNldC4NCg0KPiDCoAkJY29yZS0+b3duZXIgPSBkZXYtPmRy
-aXZlci0+b3duZXI7DQo+ICsJCWRldl9hZGRfc3luY19zdGF0ZShkZXYsIGNsa19zeW5jX3N0YXRl
-KTsNCj4gKwl9DQo+IMKgCWNvcmUtPmh3ID0gaHc7DQo+IMKgCWNvcmUtPmZsYWdzID0gaW5pdC0+
-ZmxhZ3M7DQo+IMKgCWNvcmUtPm51bV9wYXJlbnRzID0gaW5pdC0+bnVtX3BhcmVudHM7DQo+IGRp
-ZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2Nsay5oIGIvaW5jbHVkZS9saW51eC9jbGsuaA0KPiBp
-bmRleCA5OThiYTNmMjYxZGEuLjMxYTBjOTIyNGM0NiAxMDA2NDQNCj4gLS0tIGEvaW5jbHVkZS9s
-aW51eC9jbGsuaA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L2Nsay5oDQo+IEBAIC04NDYsNiArODQ2
-LDIwIEBAIHZvaWQgZGV2bV9jbGtfcHV0KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGNsayAq
-Y2xrKTsNCj4gwqAgKi8NCj4gwqANCj4gwqANCj4gKy8qDQo+ICsgKiBjbGtfc3luY19zdGF0ZSAt
-IHN5bmNfc3RhdGUgY2FsbGJhY2sgdG8gZGlzYWJsZSB1bnVzZWQgY2xvY2tzDQo+ICsgKiBAZGV2
-OiB0aGUgY2xvY2sgcHJvdmlkZXIgZGV2aWNlIHdob3NlIHVudXNlZCBjbG9ja3Mgc2hvdWxkIGJl
-IGRpc2FibGVkDQo+ICsgKg0KPiArICogSXQgaXMgY2FsbGVkIGJ5IHRoZSBkcml2ZXIgY29yZSBv
-bmNlIGFsbCBjb25zdW1lcnMgb2YgQGRldiBoYXZlIHByb2JlZCwNCj4gKyAqIGFuZCBkaXNhYmxl
-cyBhbnkgY2xvY2tzIGJlbG9uZ2luZyB0byBAZGV2IHRoYXQgYXJlIHVudXNlZCBhdCB0aGF0IHBv
-aW50Lg0KPiArICoNCj4gKyAqIElmIGEgY2xvY2sgcHJvdmlkZXIgZG9lc24ndCBoYXZlIGEgc3lu
-Y19zdGF0ZSBjYWxsYmFjaywgdGhlbiB0aGUgZnJhbWV3b3JrDQo+ICsgKiB3aWxsIHNldCB1cCBj
-bGtfc3luY19zdGF0ZSgpIG9uIHlvdXIgZHJpdmVycyBiZWhhbGYuIElmIHlvdXIgZHJpdmVyIG5l
-ZWRzDQoNClRoYXQgaXMgb25seSB0cnVlIGlmIGRldi0+ZHJpdmVyIGlzIHNldCBhdCBfX2Nsa19y
-ZWdpc3RlcigpIHRpbWU/DQoNCj4gKyAqIGEgc3luY19zdGF0ZSBjYWxsYmFjaywgdGhlbiB0aGF0
-IGNhbGxiYWNrIGFsc28gbmVlZHMgdG8gY2FsbA0KPiArICogY2xrX3N5bmNfc3RhdGUoKS4NCj4g
-KyAqLw0KPiArdm9pZCBjbGtfc3luY19zdGF0ZShzdHJ1Y3QgZGV2aWNlICpkZXYpOw0KPiArDQo+
-IMKgLyoqDQo+IMKgICogY2xrX3JvdW5kX3JhdGUgLSBhZGp1c3QgYSByYXRlIHRvIHRoZSBleGFj
-dCByYXRlIGEgY2xvY2sgY2FuIHByb3ZpZGUNCj4gwqAgKiBAY2xrOiBjbG9jayBzb3VyY2UNCg0K
-SSd2ZSBhbHNvIHRlc3RlZCB0aGUgc2VyaWVzIHdpdGggcmVnYXJkcyB0byBQQ0Y4NTA1MyBSVEMg
-Y2xrb3V0IGlzc3VlLCBidXQNCnRoZSBjbG9jayBpcyBub3QgYmVpbmcgZGlzYWJsZWQgaW4gcHJh
-Y3RpY2UuDQoNCi0tIA0KQWxleGFuZGVyIFN2ZXJkbGluDQpTaWVtZW5zIEFHDQp3d3cuc2llbWVu
-cy5jb20NCg==
+On 9/21/26 5:59 PM, Brian Masney wrote:
+> Hi Alex,
+> 
+> On Fri, Sep 18, 2026 at 11:52:32AM -0500, Alex Elder wrote:
+>> Define a new platform driver that manages clock and reset signals
+>> within the TC9564 SoC.  There are 21 clocks, which can only be
+>> enabled and disabled, as well as 13 reset signals.
+>>
+>> Two registers manage the state of the clocks and two others manage
+>> the state of the resets.  The registers are accessed via a regmap
+>> supplied by a system controller, which coordinates access to a
+>> region of memory that will be shared with another driver.
+>>
+>> Access to the memory region is provided via a BAR on a PCIe endpoint
+>> function embedded in the TC9564 SoC.  For that reason, neither the
+>> PCIe clock nor PCIe reset can be manipulated by this driver (they
+>> are assumed always on and deasserted, respectively).
+>>
+>> Similarly, control is not available for the I2C clock and reset,
+>> because the PCIe subsystem on the TC9564 relies on I2C
+>>
+>> Co-developed-by: Daniel Thompson <daniel@riscstar.com>
+>> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> ---
+>>   MAINTAINERS              |   1 +
+>>   drivers/clk/Kconfig      |  11 ++
+>>   drivers/clk/Makefile     |   1 +
+>>   drivers/clk/clk-tc9564.c | 366 +++++++++++++++++++++++++++++++++++++++
+>>   4 files changed, 379 insertions(+)
+>>   create mode 100644 drivers/clk/clk-tc9564.c
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 66d0e7e65adcb..39346a5cd9a7f 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -27675,6 +27675,7 @@ M:	Alex Elder <elder@kernel.org>
+>>   M:	Daniel Thompson <danielt@kernel.org>
+>>   S:	Maintained
+>>   F:	Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml
+>> +F:	drivers/clk/clk-tc9564.c
+>>   F:	include/dt-bindings/clock/toshiba,tc9564.h
+>>   
+>>   TOSHIBA TC9564 PCI DRIVER
+>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+>> index f9592fd9ec2bb..50efa10d48450 100644
+>> --- a/drivers/clk/Kconfig
+>> +++ b/drivers/clk/Kconfig
+>> @@ -292,6 +292,17 @@ config COMMON_CLK_S2MPS11
+>>   	  clock. These multi-function devices have two (S2MPS14) or three
+>>   	  (S2MPS11, S5M8767) fixed-rate oscillators, clocked at 32KHz each.
+>>   
+>> +config COMMON_CLK_TC9564
+>> +	tristate "Toshiba TC9564 clock support"
+>> +	depends on TC9564_PCI
+> 
+> select RESET_CONTROLLER
+
+Thank you.  The reset and clock drivers were previously separate
+and the reset only became available if RESET_CONTROLLER was enabled.
+Combining them means I need this.  I will add it.
+
+I also need to select MFD_SYSCON to get syscon_node_to_regmap()
+(or perhaps something similar, depending on the answers to my
+questions about the proper way to define the syscon).
+> 
+>> +	default m
+> 
+> default n
+
+This depends on TC9564_PCI, and if TC9564_PCI is enabled I would
+like this to (automatically) be available (at least as a module).
+
+Why do you recommend "n"?
+
+>> +	help
+>> +	  This enables support for the clock and reset controller embedded
+>> +	  in the Toshiba TC9564 (and Qualcomm QPS615) SoC.  The state of
+>> +	  clock and reset lines is controlled by MMIO to a region managed
+>> +	  by a system controller; this ensures access to the region is
+>> +	  coordinated between this and other drivers.
+> 
+> Rather than 'other drivers', outline specifically which other drivers.
+
+I was intentionally vague at this point because the one other driver
+has not yet gone out for upstream review for this iteration of the
+code.  But I do agree with you, so I'll change this to say:
+
+    ... between this and the XGMAC (stmmac) driver.
+
+Then it will be correct without modification once that driver goes
+out for review.  Is that better, or do you suggest something else?
+
+>> +
+>>   config CLK_TWL
+>>   	tristate "Clock driver for the TWL PMIC family"
+>>   	depends on TWL4030_CORE
+>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+>> index b18af485d7f03..a98ea8ff92066 100644
+>> --- a/drivers/clk/Makefile
+>> +++ b/drivers/clk/Makefile
+>> @@ -110,6 +110,7 @@ obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
+>>   obj-$(CONFIG_COMMON_CLK_SP7021)		+= clk-sp7021.o
+>>   obj-$(CONFIG_COMMON_CLK_STM32F)		+= clk-stm32f4.o
+>>   obj-$(CONFIG_COMMON_CLK_STM32H7)	+= clk-stm32h7.o
+>> +obj-$(CONFIG_COMMON_CLK_TC9564)		+= clk-tc9564.o
+>>   obj-$(CONFIG_COMMON_CLK_TPS68470)      += clk-tps68470.o
+>>   obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
+>>   obj-$(CONFIG_CLK_TWL)			+= clk-twl.o
+>> diff --git a/drivers/clk/clk-tc9564.c b/drivers/clk/clk-tc9564.c
+>> new file mode 100644
+>> index 0000000000000..4f900bc8994a7
+>> --- /dev/null
+>> +++ b/drivers/clk/clk-tc9564.c
+>> @@ -0,0 +1,366 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +
+>> +/*
+>> + * Copyright (C) 2026 by RISCstar Solutions Corporation.  All rights reserved.
+>> + */
+>> +
+>> +#include <linux/bits.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/mod_devicetable.h>
+> 
+> Uwe already pointed out removing this.
+
+Yes, done.
+
+> 
+>> +#include <linux/module.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/reset-controller.h>
+>> +
+>> +#include <dt-bindings/clock/toshiba,tc9564.h>
+>> +
+>> +#define CLK_CTRL0_OFFSET	0x1004
+>> +#define RST_CTRL0_OFFSET	0x1008
+>> +#define CLK_CTRL1_OFFSET	0x100c
+>> +#define RST_CTRL1_OFFSET	0x1010
+>> +
+>> +struct tc9564_clock_init {
+>> +	const char *name;	/* NULL means unused entry */
+>> +	u32 offset;
+>> +	u32 mask;
+>> +};
+>> +
+>> +struct tc9564_clock {
+>> +	struct clk_hw hw;
+>> +	u32 which;
+>> +	u32 offset;		/* CLK_CTRL0_OFFSET or CLK_CTRL1_OFFSET */
+>> +	u32 mask;		/* Zero means undefined clock */
+>> +};
+>> +
+>> +struct tc9564_reset {
+>> +	u32 offset;		/* RST_CTRL0_OFFSET or RST_CTRL1_OFFSET */
+>> +	u32 mask;		/* Zero means undefined reset */
+>> +};
+>> +
+>> +struct tc9564_clocks {
+>> +	struct device *dev;
+>> +	struct regmap *regmap;
+>> +	struct reset_controller_dev rcdev;
+>> +	size_t clock_count;
+>> +	struct tc9564_clock clocks[] __counted_by(clock_count);
+>> +};
+>> +
+>> +#define TC9564_CLOCK_INIT0(_name, _bit)	__TC9564_CLOCK_INIT(_name, 0, _bit)
+>> +#define TC9564_CLOCK_INIT1(_name, _bit)	__TC9564_CLOCK_INIT(_name, 1, _bit)
+>> +
+>> +#define __TC9564_CLOCK_INIT(_name, _reg, _bit)		\
+>> +	[CLOCK_##_name] = {				\
+>> +		.name	= #_name,			\
+>> +		.offset	= CLK_CTRL ## _reg ## _OFFSET,	\
+>> +		.mask	= BIT(_bit),			\
+>> +	}
+>> +
+>> +#define TC9564_RESET_INIT0(_name, _bit)	__TC9564_RESET_INIT(_name, 0, _bit)
+>> +#define TC9564_RESET_INIT1(_name, _bit)	__TC9564_RESET_INIT(_name, 1, _bit)
+>> +
+>> +#define __TC9564_RESET_INIT(_name, _reg, _bit)		\
+>> +	[RESET_##_name] = {				\
+>> +		.offset	= RST_CTRL ## _reg ## _OFFSET,	\
+>> +		.mask = BIT(_bit),			\
+>> +	}
+>> +
+>> +static const struct tc9564_clock_init tc9564_clock_init[] = {
+>> +	TC9564_CLOCK_INIT0(MCU, 0),
+>> +	TC9564_CLOCK_INIT0(INTC, 4),
+>> +	/* TC9564_CLOCK_INIT0(PCIE, 9), */
+>> +	/* TC9564_CLOCK_INIT0(I2C, 12), */
+> 
+> A comment would be useful here to outline why these are commented out.
+> Is the PCIE one comment out because of what's outlined in the commit
+> message?
+
+Yes, that is why.  We are downstream of PCIe, and PCIe in this
+case depends on I2C.  So we don't want to mess with these two
+clocks or their reset counterparts.
+
+I only provide this for the benefit of documentation.  If someone
+happens to see bit 9 set in this register, it means the PCIe clock
+is enabled.
+
+Anyway, others have suggested simply removing these comments.
+So I'll do what you suggest, but I'm interested to know whether
+you would favor just deleting them instead.
+> 
+>> +	TC9564_CLOCK_INIT0(SRAM, 13),
+>> +	TC9564_CLOCK_INIT0(UART, 16),
+>> +	TC9564_CLOCK_INIT0(MSIGEN, 18),
+>> +	TC9564_CLOCK_INIT0(PLL, 24),
+>> +	TC9564_CLOCK_INIT0(SGMII, 25),
+>> +	TC9564_CLOCK_INIT0(REFCLKO, 26),
+
+. . .
+
+>> +static const struct reset_control_ops tc9564_reset_control_ops = {
+>> +	.assert		= tc9564_reset_assert,
+>> +	.deassert	= tc9564_reset_deassert,
+> 
+> I'd rather not have the extra spaces because sometimes these get out of
+> line with new members that need more space. Also tc9564_clk_ops above
+> doesn't have the extra spaces.
+
+That's OK with me.  I normally align assignments like this for
+readability, but it's obviously an arbitrary stylistic choice.
+I'll just use one space, no alignment (just as the clk_ops do
+above).  I'll do the same in the platform driver structure
+assignments.
+> 
+>> +};
+>> +
+>> +static void tc9564_reset_assert_all(struct tc9564_clocks *clocks)
+>> +{
+>> +	for (u32 id = 0; id < TC9564_RESET_COUNT; id++)
+>> +		if (tc9564_reset[id].mask)
+>> +			tc9564_reset_manage(&clocks->rcdev, id, true);
+>> +}
+>> +
+>> +static int tc9564_reset_init(struct tc9564_clocks *clocks)
+>> +{
+>> +	struct reset_controller_dev *rcdev = &clocks->rcdev;
+>> +
+>> +	rcdev->ops = &tc9564_reset_control_ops;
+>> +	rcdev->owner = THIS_MODULE;
+>> +	rcdev->dev = clocks->dev;
+>> +	rcdev->of_node = dev_of_node(clocks->dev);
+>> +	rcdev->nr_resets = TC9564_RESET_COUNT;
+>> +
+>> +	return devm_reset_controller_register(clocks->dev, rcdev);
+>> +}
+>> +
+>> +static int tc9564_clk_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct tc9564_clocks *clocks;
+>> +	int ret;
+>> +
+>> +	if (!dev_of_node(dev))
+>> +		return dev_err_probe(dev, -EINVAL, "no devicetree node\n");
+>> +
+>> +	clocks = tc9564_clk_init(dev);
+>> +	if (IS_ERR(clocks))
+>> +		return dev_err_probe(dev, PTR_ERR(clocks),
+>> +				     "failed to initialize clocks\n");
+>> +
+>> +	ret = tc9564_reset_init(clocks);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "failed to initialize resets\n");
+>> +
+>> +	/* Force all resets to be initially asserted */
+>> +	tc9564_reset_assert_all(clocks);
+>> +
+>> +	/* Force all clocks to be initially disabled */
+>> +	tc9564_clock_disable_all(clocks);
+>> +
+>> +	platform_set_drvdata(pdev, clocks);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void tc9564_clk_remove(struct platform_device *pdev)
+>> +{
+>> +	struct tc9564_clocks *clocks = platform_get_drvdata(pdev);
+>> +
+>> +	/* Leave all resets to be deasserted when done */
+>> +	tc9564_reset_assert_all(clocks);
+> 
+> The comment says deasserted but the code calls assert_all.
+
+Oops.  Will fix.  Thank you very much for your review Brian.
+
+					-Alex
+
+> 
+> Brian
+> 
+> 
+>> +
+>> +	/* Leave all clocks disabled when done */
+>> +	tc9564_clock_disable_all(clocks);
+>> +}
+>> +
+>> +static const struct of_device_id tc9564_clk_ids[] = {
+>> +	{ .compatible = "toshiba,tc9564-clock" },
+>> +	{ },
+>> +};
+>> +MODULE_DEVICE_TABLE(of, tc9564_clk_ids);
+>> +
+>> +static struct platform_driver tc9564_clk_driver = {
+>> +	.probe	= tc9564_clk_probe,
+>> +	.remove	= tc9564_clk_remove,
+>> +	.driver	= {
+>> +		.name		= KBUILD_MODNAME,
+>> +		.of_match_table = tc9564_clk_ids,
+>> +		.probe_type	= PROBE_PREFER_ASYNCHRONOUS,
+>> +	},
+>> +};
+>> +module_platform_driver(tc9564_clk_driver);
+>> +
+>> +MODULE_DESCRIPTION("Toshiba TC9564 Clock and Reset Driver");
+>> +MODULE_LICENSE("GPL");
+>> -- 
+>> 2.53.0
+>>
+> 
+
