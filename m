@@ -1,148 +1,148 @@
-Received: from sender6-op-o12.zoho.com (sender6-op-o12.zoho.com [165.173.180.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf2-f13.google.com (mail-lf2-f13.google.com [74.125.229.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338F45616CC;
-	Tue, 22 Sep 2026 15:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.180.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790092614; cv=pass; b=bVefxJQdhaxfjTzREAVuFX+KozwcMtlI/2SHWUXD/2sqxxZ+h075FJmg/cv+/nmffry/GI+uKMVZJUBqY+IEzTAUkbh/0ZL0Un+WZOBgz9EUQCfFkOw56q2V36IUKy/30n5kHbzdSwtSjjf0FAxjXWbmkhbCdX6Cz6GPfWpFazI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790092614; c=relaxed/simple;
-	bh=w1znGPM/qqPZ0i9oJj8dkTQ3ryTG0oULsfaaAWIw9RQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=nq0mWfAEcRlIxMPZ8zp+8hBheWe6pMVAfbx9cmNsPA34alIxdGjvtb6sgqfYNZzTSyM4/Kbh/63SgbaoUJUkIUraY7s/U5t08xq9vaB4SOEZIifDS2Kf5mzF47/4mkD3smomI6R0IQ8BdpMEC3uvGHMU5L5on8a79h65TF15l2Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=ILEHrA5r; arc=pass smtp.client-ip=165.173.180.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572DA56C625
+	for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2026 17:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.229.205
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790098448; cv=none; b=tLR+F+ccdrZEERWt245PQDcScwxGoJF3Xz/aM4ZhU6WeFdgUbplHykvOOvj3+ByERuC+IeuiBFSbBOb7WkLW4AjHsRWoHFkJp6AqluQN39svLAL2ZHtn+P+2yTUYXZaCt9SPSrZ1PxjmOeC890hKGwwlQkDrfAJ0e/mUUmFpCrY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790098448; c=relaxed/simple;
+	bh=k62lXyffQpfvoXLrJkljRwAuyGHOT0TxBUmsYyaQxeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dgGgyJeE45lK0mgOb0IzCiou0VW+Gcmf3eilQCmZ8ux+kBWna0cr2TXmLlgiQw6FzdFDN4zM+lNthopTDlZrlzHL5zD8S64ZIMrVKJypOl9NnhSuZasOGfUlqyZZjvGG7Q1HAbIEkyqV3VjdLnR+cB3Z40vUZN2cKPhL1dD5gJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F+qbLcma; arc=none smtp.client-ip=74.125.229.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="ILEHrA5r"
-ARC-Seal: i=1; a=rsa-sha256; t=1790092590; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=SBNSYRLDyn0P37lpEGHmWsi9paZfOeq3PlN3XSnJDHvL/N+A02GAo8dOcPTx2meHwg6lDLrJX+x00lZuA+PHD1jfHrZopnXvcx+pMwxHAGwIx6wRKckBfmW9H4JT1rAmS8cbp8dvo55wyqSU1c/kBCy0nOnFpzq85fTnf8RETAU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1790092590; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=HcOkEm8qqnkDKNinM/lYYnC2iu4jAqLUF2hwPidYcKg=; 
-	b=BRCINSej5gYImZZZBFideTeHtJ490z6zhhv5G0GM1E4V23dHBPGHI5b7fYI1MZuAZysHqg5amQsWCmzpxy8wxtZaRUBcpsbqhROmon2LgqfTWkxjz8VS6iZqJRJjdVhxP/SiLfM53CpxUnuk8oAK9NU0Kn9yu3PhO6aXmJDla3k=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1790092590;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Date:Message-Id:Message-Id:Cc:Cc:Subject:Subject:From:From:To:To:In-Reply-To:Reply-To;
-	bh=HcOkEm8qqnkDKNinM/lYYnC2iu4jAqLUF2hwPidYcKg=;
-	b=ILEHrA5r8EbBQVLFetBKDax6gRjI9cFrWXgJ9vLYIKqFjUnxHsXRwmwtaL6JiM1+
-	vLKrFHIS4fXI5RYXHOQwoh++I5lCMriG+FfjNOnjLHlKHImtZEUfKgqDnWgHiUwnmC1
-	FysxFmuN9FFjgi1o9167W+6f/IBQFQKCm3QeGIaw=
-Received: by smtp.zohomail.com with SMTPS id 1790092587188860.0530086011092;
-	Tue, 22 Sep 2026 08:56:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F+qbLcma"
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b5e4f16f12so6963e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2026 10:34:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790098444; x=1790703244; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=yuuzD7pETxcjGtdgpLYjcgyqt6WFmTw9RRQGOf5Uv14=;
+        b=F+qbLcmaca+A7AyWZWOQhPVmars/c7oXhjRoRSh3f6XJiaHgyYayW1M5gB7JLqxQO3
+         FOi08tQR4/bFXkcFOtYmcNWxHlTlATsXQvqk73/17WNRlK5Ix1ar4kL8uOPJDcltRRO+
+         C6iYgA2Nwkme39zmExsY/8+CFOSAuYGgQp7gs0C32f634ByBEXEG98E4ZTvxnmjDofE2
+         93ot/k8pK1oTcAWOpUBZDvStgL/UWssKK89wlvBiz1N226zZiCec77wldh5syBlIrq8/
+         Rk9oK+MdMv5fWT5fYqDxFgG8UP/Muz7AjPnDWaQr+pzb/IHFLKu48BYEcCror0pxUdog
+         S3Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790098444; x=1790703244;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=yuuzD7pETxcjGtdgpLYjcgyqt6WFmTw9RRQGOf5Uv14=;
+        b=xzRPcjm4nrZVurj65cEMpV487nj5bTOD/25AOAO2VK6iAiDkzHAqqS0r7knM8/x7BY
+         /pY7VqsIdF1sWMtn/TH93vSezeH3luWT2cPvxZdEaWPxciq762ugzXblfPFosJakroJp
+         ky5YAatSpWRPTdR4sPlnbH0NPrNaotZ5RJ6iDLolPPFKW5cAf/mNlWFP/CkcWQSS/Mwr
+         BwLqqSwO6zVEp7/8hOUSajRvRiUDF0lPVNTSccSnHtybMbsBMrc1LDXApMICNi/3ybpo
+         +9Mxgh89pRpcBhreuRRVC4zYrF8KC9v7dQYUuv3kvA/8Fdp/6OftmTgyfjn7UDISse+R
+         lU8g==
+X-Forwarded-Encrypted: i=1; AKwUvBxOQ+9s7l5zmShykzxh8Oc13YXMzaJ3YOP/pFvefy6J7ud99YQNbGlIH2TpdUipwXeqHc92g8/mi74=@vger.kernel.org
+X-Gm-Message-State: AFuF++kClMS+6BmJJSXvyet/m6YfgUJ8WYPr0rWQtVL6AbSRMn6Yv7fv
+	5SK6dve0+jYTIJ/LHpqy1Hh0gIAObrfgf27EnYdRUzWqfrjndDs1+EIu
+X-Gm-Gg: AYBFou3CzTaH4p8K+Mlmz+aCebHW8nAXkbxJeq/QTgUtl07oGs066e9EYwLHA1maYy8
+	AMj0PycepbC/zYr20xaS5t4ZfG34CnF3iZX22CoYFjjoKAyXXLP2oxFwZ8K7kT845XVCgW5dXo4
+	3Q8wwC7T+BT6TR3mBvj4yr44dwbIpZrOQ9m7qInPxLFlP3B7FCkfQtgbFC1JHIB0DyoDeLmV9eD
+	7inO/HswW3jFX+SWVCKdzDu6jizlJkU7OuWvoqQBKiwelnIUpE95ymrmqJpwjQqHiH6uDNW1uNZ
+	QvjuS9JHtYdhaK7o+hBptqVweSTDtHAH/EbEhVj0go3/t6l+tnY15BPwYsVoqukM8od5ADxIN3x
+	eRWanBwcoRfVKN6dsxm9XOQfCmoG/H4+aRFV6DCE3PYgOYn4Zpyq+//cR4GRG3LIg6r2EOFfbtG
+	9Hxmcd2f/L3Q0gLV4SeLF3t9cfGWXA8hkWIkNrC+oKXaiNeqoSckx2vMQSDX+PQPgNvDXdKlgXR
+	rmgsvVQ5xyx/6hW8jybxFfEP2qG6SPrQITfF+tW+i40pWn+iVV6v9E=
+X-Received: by 2002:a05:6512:6881:10b0:5b8:9963:12df with SMTP id 2adb3069b0e04-5b8d8960c1bmr764e87.9.1790098444004;
+        Tue, 22 Sep 2026 10:34:04 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b8d858f129sm41541e87.63.2026.09.22.10.34.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Sep 2026 10:34:01 -0700 (PDT)
+Message-ID: <df84b2b6-e4a4-4751-9923-6001f78db0a2@gmail.com>
+Date: Tue, 22 Sep 2026 20:34:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 22 Sep 2026 23:56:20 +0800
-Message-Id: <DLLYUYMR3CZT.17I8APGBH9H8S@pigmoral.tech>
-Cc: "Stephen Boyd" <sboyd@kernel.org>, "Brian Masney"
- <bmasney+clk@redhat.com>, "Jerome Brunet" <jbrunet+clk@baylibre.com>,
- "Chen-Yu Tsai" <wens@kernel.org>, "Jernej Skrabec"
- <jernej.skrabec@gmail.com>, "Samuel Holland" <samuel@sholland.org>, "Andre
- Przywara" <andre.przywara@arm.com>, <linux-clk@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 7/8] clk: sunxi-ng: a733: Add bus clock gates
-From: "Junhui Liu" <junhui.liu@pigmoral.tech>
-To: "Enzo Adriano" <enzo.adriano.code@gmail.com>, <junhui.liu@pigmoral.tech>
-X-Mailer: aerc 0.22.0
-References: <20260921-a733-clk-v4-0-9c184ebe9ac1@pigmoral.tech>
- <20260921-a733-clk-v4-7-9c184ebe9ac1@pigmoral.tech>
- <20260921200512.3179109-1-enzo.adriano.code@gmail.com>
-In-Reply-To: <20260921200512.3179109-1-enzo.adriano.code@gmail.com>
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 05/10] mfd: Support for ROHM BD73800 PMIC core
+To: Lee Jones <lee@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Matti Vaittinen <matti.vaittinen@linux.dev>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-rtc@vger.kernel.org, Sverdlin@mva-rohm,
+ Alexander <alexander.sverdlin@siemens.com>
+References: <cover.1789538455.git.mazziesaccount@gmail.com>
+ <3e3a25abe337e3f68cde585674019dca439ac897.1789538455.git.mazziesaccount@gmail.com>
+ <20260922154543.GA3438784@google.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20260922154543.GA3438784@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Enzo,
-Thanks for testing and for the feedback.
+On 22/09/2026 18:45, Lee Jones wrote:
+> On Wed, 16 Sep 2026, Matti Vaittinen wrote:
+> 
+>> From: Matti Vaittinen <mazziesaccount@gmail.com>
+>>
+>> The BD73800 integrates regulators, ADC (intended for accumulating current /
+>> voltage / power values), a real-time clock (RTC), clock gate and GPIOs.
+>>
+>> Add core support for ROHM BD73800 Power Management IC.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> Acked-by: Lee Jones <lee@kernel.org>
+>> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+>>
+>> ---
+>> Revision history:
+>>   v3 => v4:
+>>    - Removed extra whitespace from the end of a file.
+>>   v2 => v3:
+>>    - Translated this:
+>>      https://lore.kernel.org/all/20260813105955.GA1820248@google.com/
+>>      to an ack. Please, let me know if this isn't ok.
+>>   v1 => v2:
+>>    - styling
+>>    - update copyright years
+>> ---
+>>   drivers/mfd/Kconfig              |  15 +-
+>>   drivers/mfd/rohm-bd71828.c       | 147 ++++++++++++++-
+>>   include/linux/mfd/rohm-bd73800.h | 306 +++++++++++++++++++++++++++++++
+>>   include/linux/mfd/rohm-generic.h |   1 +
+>>   4 files changed, 461 insertions(+), 8 deletions(-)
+>>   create mode 100644 include/linux/mfd/rohm-bd73800.h
+> 
+> Looks okay.
+> 
+> Let me know when you have all of the Acks and we'll merge it via MFD.
 
-On Tue Sep 22, 2026 at 4:05 AM CST, Enzo Adriano wrote:
-> Hi Junhui,
->
-> I tested the exact v4 series on a Radxa Cubie A7S. I used v7.3-rc1,
-> applied the four-patch A523 single-divider prerequisite, this eight-patch
-> series, and Andre's current seven-patch A733 pinctrl series. The test DT =
-is
-> a minimal Cubie A7S harness with the main and R CCUs, RTC, pinctrl, UART0=
-,
-> and MMC0. The Image, DTB, and initramfs were loaded into RAM from U-Boot.
->
-> The exact posted stack starts all eight CPUs, probes the RTC and the A733
-> pinctrl driver, and binds UART0. Serial output then stops immediately aft=
-er
-> the 8250 driver replaces the boot console:
->
->   sun60i-a733-pinctrl 2000000.pinctrl: initialized sunXi PIO driver
->   printk: console [ttyS0] disabled
->   2500000.serial: ttyS0 MMIO32:0x0000000002500000 ... is a 16550A
->   printk: console [ttyS0] enabled
->   printk: legacy bootconsole [uart8250] disabled
->
-> It never reaches the initramfs `/bin/sh` readiness line. There is no pani=
-c or
-> oops in the captured output.
->
-> As a private comparator, I changed only `ahb_cpus_clk` at 0x5c0 bit 28 to
-> `CLK_IS_CRITICAL`. That advances the same build to:
->
->   clk: Disabling unused clocks
+Thanks Lee,
 
-I reproduced the ahb-cpus issue on a Cubie A7A. After disabling
-ahb-cpus, accessing registers in the CPUS domain causes the system to
-hang. Marking it critical allows the A7A to pass clk_disable_unused()
-and reach PID 1.
+I think all of the patches had relevant ACKs/RBs already in the previous 
+revision. Eg, AFAICS this is good to go.
 
-I will mark ahb_cpus_clk as CLK_IS_CRITICAL in the next version.
+Yours,
+	-- Matti
 
->
-> but serial output stops there and PID 1 is still not reached. I also adde=
-d
-> private begin/done tracing around each individual enabled clock in
-> `clk_disable_unused_subtree()`. Neither trace marker appears, so the seco=
-nd
-> loss occurs before the first individual unused-clock disable is attempted=
-.
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
 
-However, I could not reproduce this second failure on the Cubie A7A,
-even after disabling all peripherals except UART0, including MMC0. The
-board passes clk_disable_unused() and reaches PID 1, so I am not sure
-whether the second failure is related to the clock driver.
-
-Could you also try adding `clk_ignore_unused` to the kernel command
-line? This would help confirm whether the second failure is caused by
-disabling an unused clock.
-
->
-> Each run used the same RAM-only payload and was followed by an
-> identity-checked 120-second power recovery. The board returned to its exa=
-ct
-> vendor kernel and eMMC root after all three runs.
->
-> So I cannot add a Tested-by for v4 as posted. The `ahb-cpus` gate appears=
- to
-> be one issue, but marking it critical is not sufficient on this board. Co=
-uld
-> you please check the CPUS/AHB dependency and the path entered immediately
-> after `clk: Disabling unused clocks`? I can retest a focused change or v5=
- on
-> the Cubie A7S.
->
-> Assisted-by: Codex:gpt-5
-> I reviewed this report and take responsibility for its contents.
->
-> Regards,
-> Enzo
-
---=20
-Best regards,
-Junhui Liu
+~~ When things go utterly wrong vim users can always type :help! ~~
