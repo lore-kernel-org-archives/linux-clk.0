@@ -1,94 +1,133 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF651B142D;
-	Wed, 23 Sep 2026 05:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3852C43C07C
+	for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 05:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790142146; cv=none; b=tJoTRGDpvaOOekeSMPxPhfWWYjEj3s992mENokpK50uHBHWJy6czs7s4UMhIX79z2bwtEPOnVCqS/8ZvWwcovz6+sTrxbOjlpbtaXp4nfuI3/b96oS+WK5EFD8MreftmZ29XQkW1/Ovy+dp0Avo4xUiRxtYUA2apwp1qEzJ0TnE=
+	t=1790142185; cv=none; b=FapXjLQiaL2thH3orxctB+dM/OOMtTcpKUn9SrSHBbFQspDkhb3o8lsp4D/FzYx74Bf0d/eQN2Nq6QYBTBO8lelEknRES9jhLk0aZ9u1t6Vlg9ekelMD24+WyCaq8GN8lgSFbuiZkU5RNR3HXiFm3NwrR7cwsbtrZshR2dFR7NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790142146; c=relaxed/simple;
-	bh=O7vLiErv27RUD70UUHBrWpEb96rWFJU+SsC9JHBfrLA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=SwDK78O58Cw19CJ+qpDIQyKY5vLKuj554zPyz6DczwmBqLm+YUsgHvXVz4+Ua+xonHgjuWnn72kuBc3LHYMsh0Enzfx2Cpy0v6EU7Ne1wH/33UmItE0hV4MhPU9iRGpx6znoOv/yOkxo10uaVVq2nBgwesXox6UPDKiWoC62V70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=igGYhJC3; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1790142185; c=relaxed/simple;
+	bh=evvdxFW0XGj4u2nv1dcL52FeniuoXTfcetA+SkuRBR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DdI6mr+0iwqym/oi9ofcwt/DbjvO1BKdfjjlgCWqRCI6qOH3iBH7V4K4YkOlJ1Dp9WrjSF3yJ1PGuV8Sq7d3fKvR6lW/h4WK1Yw3KscoFPa+aFg+/kzYFhau4DNCgIcT2r3U7lRfUNNR7Kbnk9fAlxSuj1vi09HcPrEd+kUWbI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=KXh1sMJJ; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="igGYhJC3"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 68N5g1P71095606, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1790142121; bh=O7vLiErv27RUD70UUHBrWpEb96rWFJU+SsC9JHBfrLA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=igGYhJC3fnM9NpG2Kyy7h4x/0diJcoDPsGqeRBJHlO6Dd8aprufTDtu5SQt8zpjN6
-	 F06eWfjo/c7jnhtBejksv52s7dkgtm2KJUkCuaO/0zf3d5KnqNOX/HRqkfIagqwSzy
-	 b8YpP7uxY8dnTSh9teYDt3WcxnsKxCek5TlBbmeDRo3K0XMYW5xLW2D9P4muiF3e4u
-	 LXWMMH/X7KKyS9GpVeyQvD8l89GagWgFsjak/KnUj45YA/4mcHETZzoL0sO8t01zKW
-	 PrnehLf/Epzy/UKKPtl55GR+4SP0xWBfAZsA8eIrdiNlpO7OaOXMHHSHhXOCTZq40F
-	 bhKbNvRuTSyjQ==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 68N5g1P71095606
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 23 Sep 2026 13:42:01 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Wed, 23 Sep 2026 13:42:01 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::b3cc:c263:b82d:e87c%10]) with mapi id
- 15.02.2562.049; Wed, 23 Sep 2026 13:42:01 +0800
-From: =?utf-8?B?WXUtQ2h1biBMaW4gW+ael+elkOWQm10=?= <eleanor.lin@realtek.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-CC: "sboyd@kernel.org" <sboyd@kernel.org>, "bmasney+clk@redhat.com"
-	<bmasney+clk@redhat.com>, "jbrunet+clk@baylibre.com"
-	<jbrunet+clk@baylibre.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	=?utf-8?B?RWRnYXIgTGVlIFvmnY7mib/oq61d?= <cylee12@realtek.com>,
-	"afaerber@suse.com" <afaerber@suse.com>,
-	=?utf-8?B?SnlhbiBDaG91IFvlkajoirflrold?= <jyanchou@realtek.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-realtek-soc@lists.infradead.org"
-	<linux-realtek-soc@lists.infradead.org>,
-	=?utf-8?B?SmFtZXMgVGFpIFvmiLTlv5fls7Bd?= <james.tai@realtek.com>,
-	=?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
-	=?utf-8?B?U3RhbmxleSBDaGFuZ1vmmIzogrLlvrdd?= <stanley_chang@realtek.com>,
-	Brian Masney <bmasney@redhat.com>
-Subject: RE: [PATCH v14 07/11] clk: realtek: Add support for mux clock
-Thread-Topic: [PATCH v14 07/11] clk: realtek: Add support for mux clock
-Thread-Index: AQHdOeL/g/aJu9pvt06W4ewBENBGWbbPKKcAgAyf0hA=
-Date: Wed, 23 Sep 2026 05:42:01 +0000
-Message-ID: <0b1dd932101848b7ba18aba6ea2d5080@realtek.com>
-References: <20260901072446.2563145-1-eleanor.lin@realtek.com>
- <20260901072446.2563145-8-eleanor.lin@realtek.com>
- <178947683646.448573.8652586338644531668.b4-reply@b4>
-In-Reply-To: <178947683646.448573.8652586338644531668.b4-reply@b4>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="KXh1sMJJ"
+Received: from eig-obgw-6003b.ext.cloudfilter.net ([10.0.30.175])
+	by cmsmtp with ESMTPS
+	id 99zcxU1jZusRS9FkuxUfMl; Wed, 23 Sep 2026 05:42:56 +0000
+Received: from gator4166.hostgator.com ([108.167.190.91])
+	by cmsmtp with ESMTPS
+	id 9FksxNZtR97Dy9FktxDWDg; Wed, 23 Sep 2026 05:42:55 +0000
+X-Authority-Analysis: v=2.4 cv=asGyCTZV c=1 sm=1 tr=0 ts=6ab366df
+ a=vY9Mjuda9oMEc2E4Cx1x2A==:117 a=vY9Mjuda9oMEc2E4Cx1x2A==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=7T7KSl7uo7wA:10 a=1XWaLZrsAAAA:8
+ a=VwQbUJbxAAAA:8 a=gQCpgM2l43S2ifiWpRwA:9 a=QEXdDO2ut3YA:10
+ a=2aFnImwKRvkU0tJ3nQRT:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:
+	List-Archive; bh=XZXuWlR3J1G3Neq9edGZVGMzRKBFPrLLovwH9qNtkMk=; b=KXh1sMJJccY4
+	QijMG9o3a3hO+BM4rxEGNIW3ATPnbIDla6kiEZMIegHSU1dVcTXMDQsCRSzLMfQqfrq5Wg7FvuxQE
+	rKlefYM3lRP1IZLPy386slYt55XiRKAPGLdXaBWOHJuyezxFNxwVvz5QBAMmIlVVCk8wANhLqLX54
+	210PeKNjxla8t8FSE7vkHyqqFvSm0BAg/cC5j14dWFGnXseXRXX519pajf3SnD8wRtCs4BtiAlrzO
+	c+INWN21FlkLdNdHFdpT6DwRDQziZvNESd6NN84sh03I0JEsKQ0+fPF/eIwoZwnG8S13nxS5NfdUv
+	Y69+E6Xc7CT6/nVsuktPcw==;
+Received: from flh4-125-195-69-90.tky.mesh.ad.jp ([125.195.69.90]:43778 helo=[10.203.100.34])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.100)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1x9Fks-00000001x5C-0S81;
+	Wed, 23 Sep 2026 00:42:54 -0500
+Message-ID: <08b4b6ce-a04c-49d0-9250-1cd3122f1a32@embeddedor.com>
+Date: Wed, 23 Sep 2026 14:42:49 +0900
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: tegra: annotate struct tegra210_clk_emc_provider
+ with __counted_by_ptr
+To: Bill Wendling <morbo@google.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-clk@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, codemender-patching+linux@google.com
+References: <20260922110601.1959213-1-morbo@google.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20260922110601.1959213-1-morbo@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 125.195.69.90
+X-Source-L: No
+X-Exim-ID: 1x9Fks-00000001x5C-0S81
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: flh4-125-195-69-90.tky.mesh.ad.jp ([10.203.100.34]) [125.195.69.90]:43778
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 17
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfKmZFClbcwDOuNMDYc2G7D8zyXyexWDqYvcAWiVlE/urvaZTSQ9X5MYBYxNz6k3TW1lE7Zl7+1U9QwloPo2ooHlRlA9IvdukMJ02MM+yEh1g4qoVoZic
+ tkLATi8FkcMxYhZx9sY/jyn0Oj9zFrupQrAvT2/wTxjK6sn7vRDOgZ1lo8YWrn1AT5/bFHe9zdSyPkV+07Cl1WYV/bKylABJ1iw=
 
-SGkgSmVyb21lLA0KDQo+ID4gK3N0YXRpYyB1OCBydGtfY2xrX3JlZ21hcF9tdXhfZ2V0X3BhcmVu
-dChzdHJ1Y3QgY2xrX2h3ICpodykgew0KPiA+ICsgICAgIHN0cnVjdCBydGtfY2xrX3JlZ21hcF9t
-dXggKmNsa20gPSB0b19ydGtfY2xrX3JlZ21hcF9tdXgoaHcpOw0KPiA+ICsgICAgIHVuc2lnbmVk
-IGludCBudW1fcGFyZW50cyA9IGNsa19od19nZXRfbnVtX3BhcmVudHMoaHcpOw0KPiA+ICsgICAg
-IHUzMiB2YWw7DQo+ID4gKyAgICAgaW50IHJldDsNCj4gPiArDQo+ID4gKyAgICAgcmV0ID0gcmVn
-bWFwX3JlYWQoY2xrbS0+Y2xrci5yZWdtYXAsIGNsa20tPm11eF9vZnMsICZ2YWwpOw0KPiA+ICsg
-ICAgIGlmIChyZXQpDQo+ID4gKyAgICAgICAgICAgICByZXR1cm4gMHhmZjsNCj4gPiArDQo+ID4g
-KyAgICAgdmFsID0gKHZhbCA+PiBjbGttLT5zaGlmdCkgJiBjbGttLT5tYXNrOw0KPiA+ICsNCj4g
-PiArICAgICByZXR1cm4gdmFsID49IG51bV9wYXJlbnRzID8gMHhmZiA6IHZhbDsNCj4gDQo+IFRo
-aXMgaXMgbm90IHJlYWxseSB1c2VmdWwsIHRoZSBjb3JlIGFscmVhZHkgcmVqZWN0cyB2YWwgPj0g
-bnVtX3BhcmVudC4NCj4gU28gcmV0dXJuaW5nIGEgaGlnaGVyIG51bWJlciBjaGFuZ2VzIG5vdGhp
-bmcgYXMgaXQgc3RhbmRzDQo+IA0KDQpXaWxsIGNoYW5nZSBpdCB0byAncmV0dXJuIHZhbDsnDQoN
-CkJlc3QgUmVnYXJkcywNCll1LUNodW4NCg==
+
+
+On 9/22/26 20:06, Bill Wendling wrote:
+> Annotate the "configs" pointer field of "struct
+> tegra210_clk_emc_provider" with the "__counted_by_ptr" attribute,
+> allowing the compiler to perform runtime bounds checking on accesses to
+> "configs" based on the value of "num_configs".
+> 
+> The "emc->provider.configs = devm_kcalloc(...)" call uses
+> "emc->num_timings" for the number of elements, which is then assigned to
+> "emc->provider.num_configs" before any accesses to "configs". The
+> "num_configs" field isn't modified after assignment.
+> 
+> Cc: codemender-patching+linux@google.com
+> Assisted-by: LLM
+> Signed-off-by: Bill Wendling <morbo@google.com>
+
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+
+Thanks
+-Gustavo
+
+> ---
+>   include/linux/clk/tegra.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+> index 3650e926e93f..f1034e14c1a4 100644
+> --- a/include/linux/clk/tegra.h
+> +++ b/include/linux/clk/tegra.h
+> @@ -170,7 +170,7 @@ struct tegra210_clk_emc_provider {
+>   	struct module *owner;
+>   	struct device *dev;
+>   
+> -	struct tegra210_clk_emc_config *configs;
+> +	struct tegra210_clk_emc_config *configs __counted_by_ptr(num_configs);
+>   	unsigned int num_configs;
+>   
+>   	int (*set_rate)(struct device *dev,
+
