@@ -1,169 +1,312 @@
-Received: from mail-vs2-f41.google.com (mail-vs2-f41.google.com [74.125.227.41])
+Received: from mail-ed2-f12.google.com (mail-ed2-f12.google.com [74.125.228.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60E9446BFA
-	for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 20:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.227.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790194458; cv=pass; b=rSbUKjDzymmqT9Xo3EjIU2gK61H2M91yFYdgi4PYeXHkPsNhvtgipuEso3sqSeOdM2HlKB6F6mrBQs2DOMMwhmYTkh6aAIgbRYAG1P2bTnhCzGXbs9OgdHjlHeuff88SHPUNhGGjRSJZ9dEwV6NynEvLcSM5RkILBv52LihWm0Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790194458; c=relaxed/simple;
-	bh=qOYwtCPr1PxjrvDGfh2AOArCnIzBjh0iMMKj+uLMXjI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TXJCQW2Y2b4kHfC99A/6Km8X2WltAZviJ1yEATfwrLEAdxu7bZZBZcilZD8KyGLQmtyy4NfJy7la7eRZL9JycVJLg3vpMJWiQ3t26dMsYg42isUmQzEkl3i0QNYrxzCZVjhdGld/3/eOlrFqeLp26OHsV8TJdNbY/lz2M2mRCSE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=saSnNjWQ; arc=pass smtp.client-ip=74.125.227.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF793BED59
+	for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 20:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790194662; cv=none; b=bQ/w1hcxlZGO/VNfD+uHY9SGUSJYUeJ2KS2PJ/LDbJww85z90wpJxie0XKO0MSw+3b3xbUNwvSFQAq16b9DR2CVAwDLh23pNpdvOE4deq9zYYZ0lBNgvw1h7QLiAjDmuYHC1S0o0LG3CjhBJVe2IZX9NvGLlo6d2mPewCKcIYSQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790194662; c=relaxed/simple;
+	bh=IRhuTM0kLZsYFMp3Lrgkw0bn0kAOxMdvDnoLmBzNWoo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h4kWwNDL3Mjr/361ABNALNxsSRh4lmPvCfFD/VHhR/9GZV/RV+FBz5ac+vxtuEc84HMQt6XiYVmrZGz9x04JT0drwAkZAhRrDXI19IAkApPsQ9FOsCqt5IFB0Xaz/1FXzOXIzjjnBVXsiLi94KnIJtbGInBOrTuR6Ar8QvtiGTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZJL6yBLW; arc=none smtp.client-ip=74.125.228.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="saSnNjWQ"
-Received: by mail-vs2-f41.google.com with SMTP id ada2fe7eead31-785643199baso515319137.0
-        for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 13:14:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790194440; cv=none;
-        d=google.com; s=arc-20260327;
-        b=kaf1ynPR9wdCPH3UNPGEjbLVZQaklnoHv5pJE+ts3is9T18ER9x5fQeyaZ5QiDIyHU
-         CxGdehXStDd4rx9mjuXr4i+d2fiahZofoug7u9wGSRGKrLzVYUUCOQvZPeF7a+qMl9IE
-         Gt2KYgT//LgdrqhP02ROHZxximqnRzQKC2qkOJPhBWE6g9X/gyXarfdAqJiTEasSIPWj
-         xzWYEi8eEgf69UMAtUzTTO62jeHYhzLpG0GXUek2pVCXTkB+B/LZNlP769kD0JKmhSKX
-         yr+vlkAUYyFBrto6yKLaVrQ19EDtzlPYKCwq1yaxF6c6Y5NHmAg2TE84eLcwlgLc5pQv
-         bdXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=yYhzfOA6SCO7uTNbvN7IrLA5gsM9sl+9GrMf5cq1964=;
-        fh=fqjfXO8Y6vzYqfs+HsvkTady+VCG+zc0Zle+A7DCt4k=;
-        b=k9TVx3uOgCj4h7T49cXWeTPK2O1U8qyLH8ZWHR3s6016GoblaDaAl4AVCg/2V+AL2d
-         WBSLq7TJU86TA+CA6vJo8n1r+16qb3awofkz5PZBuueb3EV5az6fUbdXr5zOHPhLx5SL
-         LMnYnjVMvEHqbv8OaaCtRIMFpeJtwq12Fauod7+xbbgr44gakWsAXmVk+T+a1mEao7QI
-         yabQyPO4jUJIgjylSwpgLSuf/m82TtzQybbtJEr5/Db5tZKRuKax5G+A8pANyloNK/uG
-         KsBAnRVm7fOgoKPm4QpQuaNmP6JqtZcX4zgwz9pkZLrKPmrbqwXIwfDlObkypxrbeszU
-         9Y0A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZJL6yBLW"
+Received: by mail-ed2-f12.google.com with SMTP id 4fb4d7f45d1cf-6a985fba28bso1872466a12.3
+        for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 13:17:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790194440; x=1790799240; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=yYhzfOA6SCO7uTNbvN7IrLA5gsM9sl+9GrMf5cq1964=;
-        b=saSnNjWQniJW2lT8LE9/W3Df2C1igopjCUZcnweu2hnNSFCjmSo9YjkPxILgLV9Vw2
-         +c3F87QwQBrPQ/p5wq6bo5IkasgYRye/lmGoz+bosXL4ZqsgZtX2Yotbti4RgXMr6nMK
-         WNt/AR5Wi46NelCfGZAvxniaWKCFDY8QvmnV8LgQtj79RL+oZZ2llbjMd17u1xvWBKDj
-         Kwr7G/bT5qF07iofvMg2Vw9b6Tj37U7ybl78FyreZDOoAwI7n7MGXoC8+P5TgCwnE8WQ
-         vlifTAoJCHCxO02zvxPRk4Oc6Zn6U46nGpWFJK5/0iLJPjuM1s/ou87hsMxVTZ/fybvK
-         IG4A==
+        d=gmail.com; s=20251104; t=1790194654; x=1790799454; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=HgPtV1IXszkLhG6uHST7dgneJNufVJJ9/BLgDeMeRlk=;
+        b=ZJL6yBLWkBcJzrLYyUTdEfCIA+QPROzG80OrQGmhnGm5TxpYKY5ZnsNw2Y09qciGfX
+         3eV2H8ffg5t+LX3xzHYr/8NJnEMkqZfWjQWMMKqoDkoNdZqzj0uXH9Uo1EQgL+H4Oo8k
+         cUOxEFuuP0D8/LQYNZjgkVSAhv+GvnE4NhZDbllSKsNrK8UaS3Afcf+g7oD/kP+J6mVj
+         VXFgUSX6fJA1D85JGezKrCPXEIUTLpSqld2TYYW2H++yQXsWYGktjfOXgOs0kbe58F+4
+         j8Rb5JyFK/aS9PYaHFxCPhpx4852Sy5oUUz4v+MFh1zGA/yynES7YltbBvYI0gRoJdRf
+         zBOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790194440; x=1790799240;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=yYhzfOA6SCO7uTNbvN7IrLA5gsM9sl+9GrMf5cq1964=;
-        b=KFKpTDJu2GllMe6rxuo7Mx7PsGJ0Iuh4SHUgSKQ8S+LANo9CnJw8t0lmT6n4/LDF7d
-         9lhz8mKvtBnF8tRBkJead5Ua6xzGjQFcLBgiCXZnvbZYfLne00RfgB9gZKPpFcBPUzkZ
-         4aAZZh6HvLSnMxHGkmTc63zR5CG0qGS10m5CAW+iF3djbgPGedTZcywM7ZqKLuupAtHd
-         oudEk00QNjtOQLbXG6tj2poYXeG1dvdbGrcrcLKfa1h481eUGQ0K44v9hmp17+BBprq1
-         2VRCxqZQWZnzyqDbUkDDoR9UUDokmqfe2BDiLyT03UpZgsF7anZ1csSqt0UbIFUyHQhu
-         wCqA==
-X-Forwarded-Encrypted: i=1; AKwUvByuHTOKjC3YQGR1Y6/YCl3oOhJdT6iE16CBKz6Oyq+O8uZJ1EOLvSJVDFbvFQBSk3+Vo+pBQjgYwzg=@vger.kernel.org
-X-Gm-Message-State: AFuF++ldoYwqjOFkx1YUDNi38m//iHA6VEUiMB/FySdzQb6f3sOGXsFi
-	LtIO3o8VoKNVG0gBUYftnoX65SeauBGuZV9zH6iY+iCT6IpUXb5AMEjaTtOZ5kL+wnttSAaKY86
-	POgI/Jd5dRLd+kHMWNdy/DIt2mQtnPw8=
-X-Gm-Gg: AYBFou049YawQLhy9w4aXw9cCpF4aanPZkjtqlQM4NdnooHxKd4sAtQ1sJjNAkII8Ly
-	InAqDXKfcDrpHKPU5ZWAa9P9zXi1Z78euUEkN+2gxHCPBOMPToe4DJ68C/ps3Rpry6oi/AY5LaT
-	1lOvLqwW1VhjSJHpNBqaqlncE+b4ZlFAWB2Pjd4AVt/fY9l055Oo8SA8q27UnOXYasEZuIpflWf
-	/ZbCHA9zQGeTRlqHeVX3jzTe09Kd64cDn9jDth+s8UGi3vFPU1nhcjkBAOuPorgr78w4TguZQfA
-	DMah0jenU3Y9kXMYYVoWvcMG9Fjktnr7KsY77bLxS8haKVu2BXi8q8vyrmlmNQs/vfnvudzxMiI
-	0cHsROS+zwGE0w9cxkyb4nLdWiqCNrQjrZWozQi2Rd599Jb+Tg0zvM8VS6oDzKP0Hs7LNgIuw56
-	oKWNti0AkjANteac1jsxh6Y6L5/OZOMuDHSoN0YQ5jcQau
-X-Received: by 2002:a05:6102:548b:b0:7a6:d11b:16ea with SMTP id
- ada2fe7eead31-7af1c7a036amr305798137.6.1790194439982; Wed, 23 Sep 2026
- 13:13:59 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1790194654; x=1790799454;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=HgPtV1IXszkLhG6uHST7dgneJNufVJJ9/BLgDeMeRlk=;
+        b=XP7PE9+l/DnXL9yrMr1Oys9+0AN1rl7w/py7mYmDmBXSqUA6yid3ETPPUnmf7lPKlT
+         k0aY8SHioRvsMNloLTFSMYtrRNVp/UKRSQEajrcX+Sv+NOrkwVk2AGcYf07Fh9NcAApr
+         c3ldVmib4PRsQoAIeJgmrcmFyvayfxr6B1b/NTwa896kGYPxPRp9UzXTZ/Jvf8Rlf/Nu
+         eGfxWD/MvCuxROR9d/PuRrHhPiJZqQ5cP54NtU0BdX5ANYbeMeUuFR1WXDBIhQLRTHFf
+         B1WCT9b9T5kVOhvhBHk8Hpm+yL9jgWF1yh/5KURWFwYtUULB9UnMX1hI5N+ya3w/F1mV
+         lX+w==
+X-Forwarded-Encrypted: i=1; AKwUvBxa7mPzD1E3MZMNhP37G0YWeYTOvt86XQx4JFbTAZzm44A20+nBS5gBKzBEOjzHtX/SV5q+d9ivj7g=@vger.kernel.org
+X-Gm-Message-State: AFuF++nXJedG1SGiCD2QRs06Qol2uJXbHUaLcNrW3m/3lNkCG8jtAPb5
+	SJYAA2B0vlTVQjUS76F/fAoYH04JG+Ryiuk3kpK5er2DLUbV9FkZo89z
+X-Gm-Gg: AYBFou32Pf7Vwq64+ZZAnOWJv5F4aFGEMbZlpO2/hqOiuyMB/TKTel7pk5yHhhDW0M2
+	wmOXc913biBf0EQKNdaQ5+NwfK8LEqOEsJ+M8z0vvKL4tth4rBlujg1SFL4QuxwcI4FAFq11w3a
+	Qn6/RBY+CIQmzyndcyvEyPkqnfei+Y4+jMuzdEbpF+WkVCFHC+XuYx2DvKSd+3Wye8sIdh9MCmx
+	Ls/L6MUhWvQv1shFEm8X2Nto+StJr3LsW7HY9OUKHHYSMx0FnAv2AYxgeuJ/q9Jdgs0PLmRntlG
+	slXloxWx9foK5w7lWSZaGQBl2IVcTlQ+muPh48espKc29zqKRX2o6S0VGwgr1oBe1ttF2e+dDYd
+	whQdan09jnFqV+ZM5j8zEoBmi+be/gMSHFP8ImxmeDuf1vL4kGVKiW0FcpU3m1uvVIEqqIS0mfe
+	ocdEC3iEo2dtlazqMKs4xfDSX4XqyTO3DYA1+lvlz4043HE2T6b15poJiqaPFZKsPmnjRFHeT5V
+	qIk86f+jIgxAl/4NdCMyXwa0+fi9Kw8
+X-Received: by 2002:a17:907:9452:b0:c29:4b79:e41a with SMTP id a640c23a62f3a-c2ac24cf5c4mr18473566b.20.1790194654447;
+        Wed, 23 Sep 2026 13:17:34 -0700 (PDT)
+Received: from debian (ip-78-137-176-146.broadband.digiweb.ie. [78.137.176.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2aae5c8a44sm177243566b.20.2026.09.23.13.17.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Sep 2026 13:17:33 -0700 (PDT)
+From: Pablo Mazzini <pmazzini@gmail.com>
+To: Brian Masney <bmasney+clk@redhat.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Pablo Mazzini <pmazzini@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@lists.linux.dev
+Subject: [PATCH v1 01/11] dt-bindings: clock: add Allwinner B288 CCU
+Date: Wed, 23 Sep 2026 21:16:51 +0100
+Message-ID: <20260923201701.43391-1-pmazzini@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260804-h616-pwm-v8-v8-0-db37ab8624ae@gmail.com>
- <20260804-h616-pwm-v8-v8-2-db37ab8624ae@gmail.com> <arFMta6PPwmzSk86@monoceros>
- <CADvTj4r1sFjPko7G5DwrPUw9x1tPzQspJhCUmHSMtrudn7SXEQ@mail.gmail.com>
- <33e760ca-2bb4-4f1d-a736-7e74a97e60c4@bootlin.com> <CADvTj4rBUNF6EaKXbsy5t1cS0iakpWVdpQ5sQF2qLS4YyHM2aQ@mail.gmail.com>
- <58145d8f-dd16-4cc2-b2ea-d475462241ab@bootlin.com> <arOif-bN6JgLeWd3@monoceros>
-In-Reply-To: <arOif-bN6JgLeWd3@monoceros>
-From: James Hilliard <james.hilliard1@gmail.com>
-Date: Wed, 23 Sep 2026 14:13:48 -0600
-X-Gm-Features: AclHuK9uNvVaV2VJoRguaZ7pkecy04Hwe0dR9Nt2OWuOrBNW9SpmIsO_os_jzFg
-Message-ID: <CADvTj4q4G5doa-br_SvvcuSF0sMA6Vb3K8ogZL7xe=auEd_s+g@mail.gmail.com>
-Subject: Re: [PATCH v8 2/4] pwm: sun8i: Add H616 PWM support
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Richard GENOUD <richard.genoud@bootlin.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Maxime Ripard <mripard@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Paul Kocialkowski <paulk@sys-base.io>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, John Stultz <jstultz@google.com>, 
-	Joao Schim <joao@schimsalabim.eu>, bigunclemax@gmail.com, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 23, 2026 at 4:11=E2=80=AFAM Uwe Kleine-K=C3=B6nig <ukleinek@ker=
-nel.org> wrote:
->
-> On Wed, Sep 23, 2026 at 09:16:28AM +0200, Richard GENOUD wrote:
-> > Le 22/09/2026 =C3=A0 17:46, James Hilliard a =C3=A9crit :
-> > > The resolution tradeoff is real, but the waveform API currently speci=
-fies
-> > > the ordering: choose the largest period not exceeding the request, th=
-en
-> > > the largest compatible duty length not exceeding the request, then th=
-e
-> > > offset. That's the ordering implemented in v9.
-> >
-> > The ordering stated by pwm_round_waveform_might_sleep() documentation i=
-s
-> > period_length_ns, duty_length_ns and then duty_offset_ns, but what abou=
-t
-> > duty steps?
-> > It's not stated in there because it's not a user input, but still, it's=
- a
-> > quite important value for a pulse width *modulator*.
->
-> From my POV as someone who cares about many PWM lowlevel drivers, it
-> would be ideal if there would be a generic function that only relies on
-> conforming and ideally simple lowlevel drivers and work out a good
-> period that makes the required amount of duty steps available.
->
-> When I designed the requirements for the round-to-hw function I had in
-> mind that it should be possible to find the next higher possible period
-> for a given lower bound (and that works, only lacks implementation).
-> Working out a period that has finegrained duty steps is harder but
-> doable:
->
-> But something like that should work:
->
->  - Pick a period P
->  - P*, D*, _ =3D round_to_hw(period=3DP, duty_cycle=3DP-1, duty_offset=3D=
-0)
->  - Either take P* - D* as a measure for the finegrainedness, or continue
->    to research available steps using round_to_hw(period=3DP*,
->    duty_cycle=3DP*-1, duty_offset=3D0)
->  - If there are too little steps pick a different P and retry.
+The B288 (sun8iw10p1) is a dual Cortex-A7 SoC used in e-book readers.
 
-Thanks, that makes sense. A generic helper could build on the existing
-rounding contract to select a period with the required duty resolution.
+Signed-off-by: Pablo Mazzini <pmazzini@gmail.com>
+---
+ .../clock/allwinner,sun8i-b288-ccu.yaml       | 55 ++++++++++++
+ include/dt-bindings/clock/sun8i-b288-ccu.h    | 90 +++++++++++++++++++
+ include/dt-bindings/reset/sun8i-b288-ccu.h    | 45 ++++++++++
+ 3 files changed, 190 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/allwinner,sun8i-b288-ccu.yaml
+ create mode 100644 include/dt-bindings/clock/sun8i-b288-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-b288-ccu.h
 
-That looks fairly involved to get right across different controllers,
-particularly defining the resolution requirement and keeping the search
-bounded. I'd prefer to tackle it as a separate follow-up after the H616
-series is merged, if that separation sounds reasonable to you.
+diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun8i-b288-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun8i-b288-ccu.yaml
+new file mode 100644
+index 000000000000..22b59d5b652c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/allwinner,sun8i-b288-ccu.yaml
+@@ -0,0 +1,55 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/allwinner,sun8i-b288-ccu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Allwinner B288 Clock Control Unit
++
++maintainers:
++  - Chen-Yu Tsai <wens@csie.org>
++  - Maxime Ripard <mripard@kernel.org>
++
++properties:
++  "#clock-cells":
++    const: 1
++
++  "#reset-cells":
++    const: 1
++
++  compatible:
++    const: allwinner,sun8i-b288-ccu
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: High Frequency Oscillator
++      - description: Low Frequency Oscillator
++
++  clock-names:
++    items:
++      - const: hosc
++      - const: losc
++
++required:
++  - "#clock-cells"
++  - "#reset-cells"
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    ccu: clock-controller@1c20000 {
++        compatible = "allwinner,sun8i-b288-ccu";
++        reg = <0x01c20000 0x400>;
++        clocks = <&osc24M>, <&osc32k>;
++        clock-names = "hosc", "losc";
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/sun8i-b288-ccu.h b/include/dt-bindings/clock/sun8i-b288-ccu.h
+new file mode 100644
+index 000000000000..3dc1704d001e
+--- /dev/null
++++ b/include/dt-bindings/clock/sun8i-b288-ccu.h
+@@ -0,0 +1,90 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++#ifndef _DT_BINDINGS_CLK_SUN8I_B288_H_
++#define _DT_BINDINGS_CLK_SUN8I_B288_H_
++
++#define CLK_PLL_CPUX	0
++#define CLK_PLL_AUDIO_BASE	1
++#define CLK_PLL_VIDEO0	2
++#define CLK_PLL_DDR0	3
++#define CLK_PLL_PERIPH0	4
++#define CLK_PLL_VIDEO1	5
++#define CLK_PLL_24M	6
++#define CLK_PLL_PERIPH1	7
++#define CLK_PLL_DE	8
++#define CLK_PLL_DDR1	9
++
++#define CLK_PLL_PERIPH0_2X	10
++#define CLK_PLL_PERIPH1_2X	11
++#define CLK_CPUX	12
++#define CLK_AXI	13
++#define CLK_CPUAPB	14
++#define CLK_AHB1	15
++#define CLK_APB1	16
++#define CLK_APB2	17
++
++#define CLK_NAND	18
++#define CLK_MMC0	19
++#define CLK_MMC1	20
++#define CLK_MMC2	21
++#define CLK_MMC3	22
++#define CLK_SPI0	23
++#define CLK_SPI1	24
++#define CLK_SPI2	25
++#define CLK_DRAM	26
++#define CLK_DE	27
++#define CLK_EE	28
++#define CLK_EDMA	29
++#define CLK_TCON0	30
++#define CLK_MBUS	31
++
++#define CLK_BUS_THS	32
++#define CLK_BUS_NAND	33
++#define CLK_BUS_SDMMC0_BUS	34
++#define CLK_BUS_SDMMC1_BUS	35
++#define CLK_BUS_SDMMC2_BUS	36
++#define CLK_BUS_SDMMC3_BUS	37
++#define CLK_BUS_SPI0	38
++#define CLK_BUS_SPI1	39
++#define CLK_BUS_SPI2	40
++#define CLK_BUS_I2S0	41
++#define CLK_BUS_I2S1	42
++#define CLK_BUS_SPDIF	43
++#define CLK_BUS_DSD	44
++#define CLK_BUS_DMIC	45
++#define CLK_BUS_USBOHCI0	46
++#define CLK_BUS_USBEHCI0	47
++#define CLK_BUS_USBOTG	48
++#define CLK_BUS_DE	49
++#define CLK_BUS_EE	50
++#define CLK_BUS_TCON0	51
++#define CLK_BUS_CSI_S	52
++#define CLK_BUS_CSI_M	53
++#define CLK_BUS_CSI_MISC	54
++#define CLK_BUS_ADDA	55
++#define CLK_BUS_SDRAM	56
++#define CLK_BUS_PSRAM	57
++#define CLK_BUS_DMA	58
++#define CLK_BUS_UART0	59
++#define CLK_BUS_UART1	60
++#define CLK_BUS_UART2	61
++#define CLK_BUS_UART3	62
++#define CLK_BUS_UART4	63
++#define CLK_BUS_UART5	64
++#define CLK_BUS_TWI0	65
++#define CLK_BUS_TWI1	66
++#define CLK_BUS_TWI2	67
++#define CLK_BUS_PIO	68
++#define CLK_BUS_GPADC	69
++#define CLK_BUS_KEYADC	70
++
++/*
++ * mmc0 and mmc1 are v4p1x controllers driven in the old timing mode, which
++ * needs the sample and output phase clocks. mmc2 and mmc3 are newer blocks
++ * that do their own delay calibration and have none.
++ */
++#define CLK_MMC0_SAMPLE	71
++#define CLK_MMC0_OUTPUT	72
++#define CLK_MMC1_SAMPLE	73
++#define CLK_MMC1_OUTPUT	74
++
++#endif
+diff --git a/include/dt-bindings/reset/sun8i-b288-ccu.h b/include/dt-bindings/reset/sun8i-b288-ccu.h
+new file mode 100644
+index 000000000000..675145654548
+--- /dev/null
++++ b/include/dt-bindings/reset/sun8i-b288-ccu.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++#ifndef _DT_BINDINGS_RST_SUN8I_B288_H_
++#define _DT_BINDINGS_RST_SUN8I_B288_H_
++
++#define RST_BUS_THS	0
++#define RST_BUS_NAND	1
++#define RST_BUS_MMC0	2
++#define RST_BUS_MMC1	3
++#define RST_BUS_MMC2	4
++#define RST_BUS_MMC3	5
++#define RST_BUS_SPI0	6
++#define RST_BUS_SPI1	7
++#define RST_BUS_SPI2	8
++#define RST_BUS_I2S0	9
++#define RST_BUS_I2S1	10
++#define RST_BUS_SPDIF	11
++#define RST_BUS_DSD	12
++#define RST_BUS_DMIC	13
++#define RST_USBPHY0	14
++#define RST_BUS_OHCI0	15
++#define RST_BUS_EHCI0	16
++#define RST_BUS_OTG	17
++#define RST_BUS_DE	18
++#define RST_BUS_EE	19
++#define RST_BUS_TCON0	20
++#define RST_BUS_CSI	21
++#define RST_BUS_ADDA	22
++#define RST_BUS_WLAN	23
++#define RST_MBUS	24
++#define RST_BUS_DRAM	25
++#define RST_BUS_PSRAM	26
++#define RST_BUS_DMA	27
++#define RST_BUS_UART0	28
++#define RST_BUS_UART1	29
++#define RST_BUS_UART2	30
++#define RST_BUS_UART3	31
++#define RST_BUS_UART4	32
++#define RST_BUS_UART5	33
++#define RST_BUS_I2C0	34
++#define RST_BUS_I2C1	35
++#define RST_BUS_I2C2	36
++#define RST_BUS_GPADC	37
++#define RST_BUS_KEYADC	38
++
++#endif
+-- 
+2.53.0
 
-For this series, I'll keep the driver following the existing period,
-duty-length and offset rounding rules. Do you see any remaining issues
-with v10 that need to be addressed before it can be merged?
-
->
-> Best regards
-> Uwe
