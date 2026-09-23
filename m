@@ -1,88 +1,88 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47356568548
-	for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 19:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A33569F19
+	for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 19:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790191322; cv=none; b=REpAGEGjnQLfFpJ2LShLXTx4DO1/G7wjZlTc005Az9n5AfBwNJlGTz0bvpMUq50ApqrMxm3bMCJGr8if+tCj7PJdFvZBOByRhGqE9BpnRVGT700vDGY0EkZJZUmXsLxKUymAOolo6w6XOlB9pmD1GaBlB90TKU1XXalwlcbdad4=
+	t=1790191335; cv=none; b=OIW+43fzNi8LF3OlkL+y80sUzgUfZ90LDmoh0z+Kra1fgF7SX3PEnMKzSyGHGwfCVm4/YbQsG1hvjABi/3/jOXMBuT/caXB6if03NCxCCMCgY5y8lzmCxBfXgSPaHYjetqd4p72HyO5pbd8O2Hh0Z13nBUnWsiJ7BkyHAvGbjhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790191322; c=relaxed/simple;
-	bh=XfSzh2RA8bORT/gYaruicqFcyICwPciq8TCBpa0zDx0=;
+	s=arc-20240116; t=1790191335; c=relaxed/simple;
+	bh=sX+E+Anyu8CFs2952xi4vwpxNCngY7cIPMCPNrSrZqY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XNtrjCraKsIRgCH4GtivRhe07aCL/bDsNobcqx2XVSFP4dc+ve8xa2IyGLBObqv1MK4JyHB5+eGGXiz/3hucgWnGhnYW3ZEJgo9E7LJkuxMFu9bXZmaJZCL2UXAXnOQmjGE4yglIlIr+F08i4SlGI/s1Wlot//Se2fhmU4wYc7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QRaUtOKK; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=b/K8MXgv; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=Berf3FlA2PwTUdZ52KPsQ+EXeUPecVlMBvLhIkN20CxLV2STZj1u2/TWbxnBfxUu4sKssr9TD/r0PtDyz87+f8o5u3E2F0y6AdQStoZijsZ7U+mFdUieNbzgB8dB1Y2bNz5iPiyhFOOJYlgxCH7E5GyqLTQ0zEpq4qb4Bkf9CGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IFrgp7BH; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=IpezUcx5; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QRaUtOKK";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="b/K8MXgv"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68NGTgBa3938110
-	for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 19:21:55 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IFrgp7BH";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="IpezUcx5"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68NGTiE03081886
+	for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 19:22:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bf6GLnn2j60X/tEoyBage8pZiQbutJQgNhGY/VeJuPg=; b=QRaUtOKKF83L6gi2
-	rgGoS6Kusyg0I9hz0XYLU5WuFSsDg9eYDOlCstRbuT8AY0U12VeEiPjzKd2x17/z
-	hq0BzgRDw7NdhkOuKZOweaTsEmFS5Tlq/JJ4F7RTKLg9P9s4JgX199Gylp5I/iY2
-	wYFPyQdIaSBFA/hGAmOrc9TeJnh6axqH/RMU9DvpKGldM6/H92B5DMhocHSQgEaT
-	Fuw95MHwgyVroLcyJJgSHoUWWu0CK37VbktXryXM/6SmDX8pQA8zEOMMfuwFGpXX
-	H851z8xS5uXhfhGWuO1qxIvsh++DNPmcGBh+dfFDVMhxInJ3u+W9Tx72Ere75W4+
-	2FaNUQ==
-Received: from mail-dy1-f199.google.com (mail-dy1-f199.google.com [74.125.82.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gvbwmambj-1
+	EcvKdqD2Z99ZaO0jUIMo/vHNRZMwTcapU92eW9YWlJU=; b=IFrgp7BHSVZCRsR2
+	ein3thYHgBG6N4JyBPjE5YmwhkankKZ1MuOUlU7IDnbsPCztaZvBRHUO5H30knwR
+	veLpntXhJscufnP2+DaRPgA+CtICquYrIkD1Lw3Pf8T+sWoj67j1BBN16Q8h7u+7
+	G21yEL83UQdMg0JHW9AjRrus6Fc1TWwGe3JSkxkYqG5fdVH34SV2aEOHKzPH3B1Z
+	l6qLcgkTRGgwYp5tOUT7ktLZEe3UGqCitT+KiRe1bzOBvV4tiizVzZnABqdlFbf+
+	TEscMynH6OtLnSkh94GWuwxEPMw2HFCzJTOrVPVeROC9UoCR7gHy9aOoX20TE+B0
+	CqO0ag==
+Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gvbx7jkj7-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 19:21:55 +0000 (GMT)
-Received: by mail-dy1-f199.google.com with SMTP id 5a478bee46e88-32861f5448cso1479183eec.0
-        for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 12:21:55 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 19:22:02 +0000 (GMT)
+Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-333543ac378so1523360eec.1
+        for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 12:22:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1790191315; x=1790796115; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1790191322; x=1790796122; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=bf6GLnn2j60X/tEoyBage8pZiQbutJQgNhGY/VeJuPg=;
-        b=b/K8MXgvQRFRkb5mQY1V9DsXU5rJpW5t+1l6pYIcNEswVz4jBnAgpY0WYDpYz3M/3c
-         zu0JWDkh2XVTTm4ILt+kwpJaqyZheK3s5FNhe2Cqq5UMlXUCmT25ITJ+Gj2dW6agBg4C
-         mjILtryy83J6YS+RY/+/MgvtA3rlWmQQREoQsQZtFE7HbcSbs5HCGFA0Sft/C/aA/nUe
-         M5PfnDgIL3rNPCX4Pa/29GoTCLWOdlXnK5/qvVK7MlO+sYMMJCBDH0bZwDDRmSTEgual
-         kSIHqUuYxjJ2M4zLHcH42nd5igPKOYk4djq4Ddf51haam/SmgWzsGHgMz7pBUKaEMwaF
-         578Q==
+        bh=EcvKdqD2Z99ZaO0jUIMo/vHNRZMwTcapU92eW9YWlJU=;
+        b=IpezUcx5GUxUfwgZyzccUbr16sebf4yayuYZWSBIeVCgmSTbKUfCBAPy3JAQ4Phn5v
+         I24Meq29Nc2Sq6SYXU/3vPUTwRA9zl+Cwu3ve1OAC1CffhFtPmpF8ntEw8Ib3ul1hPtq
+         zkpdC+G6Rig/8tddP8MDeL5vVJV9JC4ot9MgPrMSi2eV++zEhL4WY/WLlPwUDLtQ1Xhm
+         aH6KsQPUNv4cDSUrxsKGkHZOpwWTc+fJtEksJ8OY9XTTbD4fsUA0Ny63lf5RtQseuK6y
+         xX/nBtCtkTCWopfR3J6dFgvVs+Lgg9IqlXxYkPa9OlSxyjzyZDj4mj24paDk6w6EzIqT
+         i/ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790191315; x=1790796115;
+        d=1e100.net; s=20260707; t=1790191322; x=1790796122;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=bf6GLnn2j60X/tEoyBage8pZiQbutJQgNhGY/VeJuPg=;
-        b=d7SQk+Q+UrU/OuXZxq6QFSTFDUm1ZCGGE5T30pkKzvuj6ha8Ot3epIXP4p7t7OZyzk
-         p0Kw8Nv/HrEt3hmJJdzT2zKIAsJtZhX2x2ZL1cAsEfDb5LAD/eKv1x0hfNuX3Gcxylnd
-         aDukfrn1NS+4CruVIcepeAmu3ESSLCSVJX19aHVkbwY9/sMFeiL1vCe6Tq/XHlUe5bHO
-         ZTTGo+mCk9qTtHWO3YshsnqBEa2mEDCSfvnD6zrj3hhm189V+RhORiG2mwUjptvIbLqm
-         L2yzrF5BNASMgn7OXstagIDQLJla2/Dx+GGwIrcpIlMpaqNet2F+1BpY7ehvzMgq4AWd
-         U/MQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwdyCd1FlJuR8iFHwRkTq3kkahkCePngZlLPNVIx4zaLemVsyy9BhV0XpaNmqCTGs0xrzTqyWRzwo8=@vger.kernel.org
-X-Gm-Message-State: AFuF++nscxj/Dtm02JiT+Mya4lnuxbZyOy25D8617Yc3mYq9EoIuPH9g
-	Gp7YShS3iCXNfEeogmAMIJ5CK89Z6R8ANrnWQQWHYZ0nTkD8vwwMO6USsBWN5SUmNor9MXKlKuO
-	dX+6j161IJGvHN11Oi0dEe9twbK1v8dLeEqNohPcm6/iE3yfX2ht9Pbth11790W8=
-X-Gm-Gg: AYBFou2daKmkhJGQr19qTvQ7auVHnXbWKomAj7+4mXjXC55fM7v4PxQy99qMdl0sdV+
-	mTf5hvYDNycTb0Jhkc9qpVBGx+MF5/6lSGO0mN24pvNSC3DD/WavxcTeGmJOazi6awg147/yMln
-	v40ZOfxn+yEQgvW19WxlbRow4F2W2RP4WNN7Y3zZHvghZ0/MjNW2Qxx/NNeCenhlM8rkYNDBHS+
-	8b/fjZroKTZYj8URGETtudXOGtx/0qz0ssXDC9nDKP3+/YvRz15XjatHlogKQT2/Fr1T7ZmE9Tj
-	uB96YnIGUijtDxw7mfwqDm2VTNeLeHNNBx9cBXz7UkIEBoEhQlMqYH4wRARZuKbf/A0eJN3GzU1
-	bZRMvt3cvsIMMtcboo1bABSs=
-X-Received: by 2002:a05:693c:87d8:b0:33e:bbcc:eb99 with SMTP id 5a478bee46e88-34001eff31fmr90673eec.18.1790191314782;
-        Wed, 23 Sep 2026 12:21:54 -0700 (PDT)
-X-Received: by 2002:a05:693c:87d8:b0:33e:bbcc:eb99 with SMTP id 5a478bee46e88-34001eff31fmr90647eec.18.1790191314050;
-        Wed, 23 Sep 2026 12:21:54 -0700 (PDT)
+        bh=EcvKdqD2Z99ZaO0jUIMo/vHNRZMwTcapU92eW9YWlJU=;
+        b=Vecrdh7gRzbqA08/Ydt6GJFoCHhI8WImsum5L0O+MPKwSYeH9gdwJt7aoFJk12AYKz
+         NZIZgnN5UOYAmRGySfNeo+cm6PlaSDQm/G92+rNS3PuLL2UJmcFAXPCgnAOI+DA/gIf0
+         pNrR2h88O3y2AH3947yO8mzQLy/NhfNAwjmrNQZPbySEmnPhevr6IFRMh5qUDCGsuHUW
+         tHAx8MR0uq2VQLz88jGbKQK2PmLOySyKB+9XuC/Cn0G/MUFYk2TZ/pNNVU0Anp5NBU03
+         f3PJ++ZzWFdiBnBxYl2mHDPfXzYjXi7CI8nAQYTESY1AtkTQppgLAw0Jg5TPYyhwOkqd
+         axeA==
+X-Forwarded-Encrypted: i=1; AKwUvBxvorZqLo5LvQtY6wNFa7VZDF6ACzpzYsDEAFr5dkf++S5woce2+A5bU4/m9xBxDpHUE254vFX3or4=@vger.kernel.org
+X-Gm-Message-State: AFuF++nhvo3ss/Dr9R/zFDb9mkxEJUdzoF7Z3yqMQWur6m9mQUeOmJZ5
+	/9Zx6P4jgh9rrKMuyAjJs1qpu2ynw38jCm/tafn3hLTAML4YvpttNtdY5SIcetEwwfMaZP1SDd7
+	vCTOVUVWQLTMLZIHff96Pr7A3taJhIBl4nE339+MZyiU3C5UUUaxwlz0wdVtg+2M=
+X-Gm-Gg: AYBFou18xICyfdea7Cyb1EJdse/fwQew6sm0qIoBevZOVVRsdYqIz/F9IRhNbQuLDni
+	WKuhvk5zzEtKdP0oOGjY1uN1XqdGeI7AsvUCNUA3hE/9VegxWM5n31IJvWnWTi4+lYgORE8E6aq
+	MRIp5cxYQvPUFGPZNGjvZI9ApmWS/WUkDJ/zH5gjQhW/wvDQMh04fBO5dueVFmiM7aSLtilMbou
+	y8cYKhULZ7cZwQOk/JHKDa7LAGTfS7Yef/mZyXOPqE+gKvev+1W/aq0Ls5ZaLh7EJ0NVZfP+nnM
+	2kQMiMSOgyOlPvRO9hsuUJHFoUhBal7DFRajjMKFu60aqByG81nhh7z+vwQcI1VgjPF9Y3cDRAl
+	It8Xc8qlGsJwx4mcOYWj57tQ=
+X-Received: by 2002:a05:693c:66cd:20b0:33b:d8b2:8fba with SMTP id 5a478bee46e88-34002be4d40mr106593eec.7.1790191321150;
+        Wed, 23 Sep 2026 12:22:01 -0700 (PDT)
+X-Received: by 2002:a05:693c:66cd:20b0:33b:d8b2:8fba with SMTP id 5a478bee46e88-34002be4d40mr106561eec.7.1790191320319;
+        Wed, 23 Sep 2026 12:22:00 -0700 (PDT)
 Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33e9684d643sm17609309eec.18.2026.09.23.12.21.48
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33e9684d643sm17609309eec.18.2026.09.23.12.21.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Sep 2026 12:21:53 -0700 (PDT)
+        Wed, 23 Sep 2026 12:22:00 -0700 (PDT)
 From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Thu, 24 Sep 2026 00:51:32 +0530
-Subject: [PATCH v2 2/3] dt-bindings: clock: qcom: document the Nord DPRX
- Clock Controller
+Date: Thu, 24 Sep 2026 00:51:33 +0530
+Subject: [PATCH v2 3/3] clk: qcom: dprxcc: Add Nord DPRX clock controller
+ support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,7 +91,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260924-nords_dprx-v2-2-fa4364e087ef@oss.qualcomm.com>
+Message-Id: <20260924-nords_dprx-v2-3-fa4364e087ef@oss.qualcomm.com>
 References: <20260924-nords_dprx-v2-0-fa4364e087ef@oss.qualcomm.com>
 In-Reply-To: <20260924-nords_dprx-v2-0-fa4364e087ef@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
@@ -107,152 +107,964 @@ Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
         Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Taniya Das <taniya.das@oss.qualcomm.com>
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Abel Vesa <abel.vesa@oss.qualcomm.com>
 X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIzMDA3NyBTYWx0ZWRfX6AcGY8JGrQDA
- MoBKGCH7NmRS+n75hq2HQvuGaJj70zZxlehpO2hrJxs2RWlmsPwlREXNF1/0K3pYfmuKmZLbunP
- VCf1yUlVsCcT8JHU+YEQtdr+E//k6jY=
-X-Authority-Analysis: v=2.4 cv=R/6WitRX c=1 sm=1 tr=0 ts=6ab426d3 cx=c_pps
- a=cFYjgdjTJScbgFmBucgdfQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+X-Proofpoint-ORIG-GUID: Do0Vp01gfJGsfEVFUqZq4Fh3V0rFUyF2
+X-Authority-Analysis: v=2.4 cv=J4s/fwnS c=1 sm=1 tr=0 ts=6ab426da cx=c_pps
+ a=PfFC4Oe2JQzmKTvty2cRDw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
  a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
- a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=1x_EA7c-f_fbMv8ZdKgA:9 a=QEXdDO2ut3YA:10
- a=scEy_gLbYbu1JhEsrz4S:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-Proofpoint-GUID: 3creRARU7riFw53LfcHQWqeidsdaJpTu
-X-Proofpoint-ORIG-GUID: 3creRARU7riFw53LfcHQWqeidsdaJpTu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIzMDA3NyBTYWx0ZWRfX52IltiIttgie
- Iyds+C29sr55lRKhri4orkvcqatZmdSHDm0GuvOVz/XX2502SqrRsCLDx9t5wqNrof83J/ahM2B
- DxxPmRVQe15MrYl+hpmOBGi3aQgkCF1nGGQ5AO8xDu/EeJXHkVXoNfU1S+GpVxrjJajLzyMypys
- pMMsYCWzTVg5e2hCsR/hlz/GSSMmNymeEsMsc135xIHi93UVm5C1Lzxcu3B8G3iSlihhHV4tkkz
- to/9k/Un3WTgr+U63KdMx5iNmbnxFAw5OT/BFVr9EsxryZ0UwsyMTCbeION4CXcB79STX2TxNpA
- arfRweXMV9Kio8M5hTGsUGAmmmJ+1/Rc5ttSWGQ5vHu+kWtZd3Ml7FSqVP/pmzNRxSwFOnHMwx3
- M7yZkrKnDjmAJD3gkg+huCAtcCV9TOA/a9Wh/oEcRRnIrSc5gk1MHZBJQQsFCxv1ODSNeBHt4u3
- XZG8v77nEbiFrTdgH+A==
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
+ a=EUspDBNiAAAA:8 a=0-BBk2c4bgoaTx3pdGQA:9 a=QEXdDO2ut3YA:10
+ a=6Ab_bkdmUrQuMsNx7PHu:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIzMDA3NyBTYWx0ZWRfXye/enf7Dqhd+
+ JEJBFgnd0LURcTR0+E8GN5sq8XXflrvs2Q9J5av3RycG/8nF/w5QXFbK4nixBH9+Lh0MjrZMFyO
+ Tmz/JAwGR4rBfHksIUZdtBSyHHxge3Ig1tky6sLnv2fsS1KjWurAuCvTw3gJrkUasMs+/kLmpIH
+ AiSTaSsK/VKXXyDaie38JgV4hZv9fICH425GVVvzixI0Fl+kDGEkMeMU8JN3A7LYAP70s6426FI
+ aQfTIsOJ8GMHasNJUnlUnZJIPlNUMdbuqdBKfl4cySOHRNceJKW6RQmHoCQAnbBkpqGXZsdoGIL
+ HrUSewvOdDfLX0EI1Jq/YMUjujN5CRmwbPS3bv4htwJPW56FqXjXuoIYzY36J9llghbV0UOxl64
+ dWKwW1cDVwWycxREzPRL4GvqlzKNaYtCrugTa3Nk0+843nd2CGUst9wgoKhhYxbm5/S2gXTcxd0
+ FBLF2+k4QVrg5MA7bGg==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIzMDA3NyBTYWx0ZWRfXxx4Igvx4gmaT
+ tm2o6GMWcZlZtSqZPFI7a45vH1uEMlm6T0qc/47k48fnDZaBAjA0YMyArVVK5HSIL6qgCa9pysL
+ dnR4G81I5bgi7zbyoOYOxrcLUGmEfSs=
+X-Proofpoint-GUID: Do0Vp01gfJGsfEVFUqZq4Fh3V0rFUyF2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-23_06,2026-09-21_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1015 malwarescore=0 impostorscore=0 priorityscore=1501
- lowpriorityscore=0 spamscore=0 suspectscore=0 phishscore=0 adultscore=0
+ suspectscore=0 malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501
+ phishscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609230077
 
-Add bindings documentation for the Nord DisplayPort Receiver (DPRX)
-Clock Controller.
+Add support for the DisplayPort Receiver (DPRX) clock controllers on
+Nord devices. There are two identical DPRX clock controller
+instances (DPRX0 and DPRX1), each providing clocks for the DPRX core,
+audio, AHB and video memory paths, along with core PLLs.
 
+Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
 Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 ---
- .../bindings/clock/qcom,nord-dprxcc.yaml           | 68 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,nord-dprxcc.h       | 27 +++++++++
- 2 files changed, 95 insertions(+)
+ drivers/clk/qcom/Kconfig        |  11 +
+ drivers/clk/qcom/Makefile       |   1 +
+ drivers/clk/qcom/dprxcc0-nord.c | 434 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/dprxcc1-nord.c | 433 +++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 879 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,nord-dprxcc.yaml b/Documentation/devicetree/bindings/clock/qcom,nord-dprxcc.yaml
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 3bf39a2c54c85ee7d0c59608ad71b8ec6c899020..0fd6f5642db23599be8f0365e73faec5451e6411 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -255,6 +255,17 @@ config CLK_NORD_CAMCC
+ 	  Say Y if you want to support camera devices and functionality such as
+ 	  capturing pictures.
+ 
++config CLK_NORD_DPRXCC
++	tristate "Nord DPRX Clock Controller"
++	depends on ARM64 || COMPILE_TEST
++	select CLK_NORD_GCC
++	default m if ARCH_QCOM
++	help
++	  Support for the Display Port Receiver (DPRX) clock controller on
++	  Nord devices. The DPRX clock controller provides clocks for the
++	  DPRX core, audio, AHB and video memory paths.
++	  Say Y if you want to support DPRX functionality.
++
+ config CLK_NORD_GCC
+ 	tristate "Nord Global Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index bd70e18a7118126fa20427b3366956075cecb00f..f5294bb67e9a8387c40e629c2ec150e4dd4848b2 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -50,6 +50,7 @@ obj-$(CONFIG_CLK_KUNO_GCC) += gcc-kuno.o
+ obj-$(CONFIG_CLK_MAILI_VIDEOCC) += videocc-maili.o
+ obj-$(CONFIG_CLK_NORD_CAMCC) += camcc-nord.o
+ obj-$(CONFIG_CLK_NORD_DISPCC) += dispcc0-nord.o dispcc1-nord.o
++obj-$(CONFIG_CLK_NORD_DPRXCC) += dprxcc0-nord.o dprxcc1-nord.o
+ obj-$(CONFIG_CLK_NORD_GCC) += gcc-nord.o negcc-nord.o nwgcc-nord.o segcc-nord.o
+ obj-$(CONFIG_CLK_NORD_GPUCC) += gpucc-nord.o gpu2cc-nord.o
+ obj-$(CONFIG_CLK_NORD_TCSRCC) += tcsrcc-nord.o
+diff --git a/drivers/clk/qcom/dprxcc0-nord.c b/drivers/clk/qcom/dprxcc0-nord.c
 new file mode 100644
-index 0000000000000000000000000000000000000000..e3553e0eecd5027155b4dca5c0596e3140641aa9
+index 0000000000000000000000000000000000000000..d17b9338f33bf4864d8a5968ada3806a921fe68e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,nord-dprxcc.yaml
-@@ -0,0 +1,68 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,nord-dprxcc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm DPRX Clock & Reset Controller on Nord
-+
-+maintainers:
-+  - Taniya Das <taniya.das@oss.qualcomm.com>
-+
-+description: |
-+  Qualcomm dprx clock control module provides the clocks, and resets
-+  domains on Nord.
-+
-+  See also:
-+    include/dt-bindings/clock/qcom,nord-dprxcc.h
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,nord-dprxcc0
-+      - qcom,nord-dprxcc1
-+
-+  clocks:
-+    items:
-+      - description: XO clock source
-+      - description: DPRX CFG AHB clock from NWGCC
-+      - description: Sleep clock source
-+
-+  power-domains:
-+    description:
-+      MMCX power domain.
-+    maxItems: 1
-+
-+  required-opps:
-+    description:
-+      MMCX performance point.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - clocks
-+  - power-domains
-+  - required-opps
-+
-+allOf:
-+  - $ref: qcom,gcc.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,nord-nwgcc.h>
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/power/qcom,rpmhpd.h>
-+    clock-controller@a940000 {
-+      compatible = "qcom,nord-dprxcc0";
-+      reg = <0x0a940000 0xc000>;
-+      clocks = <&rpmhcc RPMH_CXO_CLK>,
-+               <&nwgcc NW_GCC_DPRX0_CFG_AHB_CLK>,
-+               <&sleep_clk>;
-+      power-domains = <&rpmhpd RPMHPD_MMCX>;
-+      required-opps = <&rpmhpd_opp_low_svs>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
-+...
-diff --git a/include/dt-bindings/clock/qcom,nord-dprxcc.h b/include/dt-bindings/clock/qcom,nord-dprxcc.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..62c26b58ebef04f05ea1dc77664c03aaad65baa4
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,nord-dprxcc.h
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++++ b/drivers/clk/qcom/dprxcc0-nord.c
+@@ -0,0 +1,434 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
 + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
 + */
 +
-+#ifndef _DT_BINDINGS_CLK_QCOM_DPRX_CC_NORD_H
-+#define _DT_BINDINGS_CLK_QCOM_DPRX_CC_NORD_H
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
 +
-+/* DPRX_CC clocks */
-+#define DPRX_CC_AHB_CLK					0
-+#define DPRX_CC_AUD_CLK					1
-+#define DPRX_CC_AUDIO_CLK_SRC				2
-+#define DPRX_CC_CORE_AHB_DIV_CLK_SRC			3
-+#define DPRX_CC_CORE_AUD_DIV_CLK_SRC			4
-+#define DPRX_CC_CORE_RCG0_CLK_SRC			5
-+#define DPRX_CC_CORE_RCG2_CLK_SRC			6
-+#define DPRX_CC_CORE_RCG3_CLK_SRC			7
-+#define DPRX_CC_MDP_MEM_CLK				8
-+#define DPRX_CC_MMCX_XO_CLK				9
-+#define DPRX_CC_PLL0					10
-+#define DPRX_CC_PLL1					11
-+#define DPRX_CC_VID_MEM_CLK				12
++#include <dt-bindings/clock/qcom,nord-dprxcc.h>
 +
-+/* DPRX_CC resets */
-+#define DPRX_CC_DPRX_BLK_BCR				0
++#include "clk-alpha-pll.h"
++#include "clk-branch.h"
++#include "clk-rcg.h"
++#include "clk-regmap.h"
++#include "clk-regmap-divider.h"
++#include "common.h"
++#include "reset.h"
 +
-+#endif
++enum {
++	DT_BI_TCXO,
++	DT_AHB_CLK,
++	DT_SLEEP_CLK,
++};
++
++enum {
++	P_BI_TCXO,
++	P_DPRX_0_DPRX_CC_PLL0_OUT_EVEN,
++	P_DPRX_0_DPRX_CC_PLL0_OUT_MAIN,
++	P_DPRX_0_DPRX_CC_PLL0_OUT_ODD,
++	P_DPRX_0_DPRX_CC_PLL1_OUT_EVEN,
++	P_DPRX_0_DPRX_CC_PLL1_OUT_MAIN,
++	P_SLEEP_CLK,
++};
++
++static const struct pll_vco lucid_ole_vco[] = {
++	{ 249600000, 2300000000, 0 },
++};
++
++static const struct pll_vco zonda_ole_vco[] = {
++	{ 700000000, 3600000000, 0 },
++};
++
++/* 550.0 MHz Configuration */
++static const struct alpha_pll_config dprx_0_dprx_cc_pll0_config = {
++	.l = 0x1c,
++	.alpha = 0xa555,
++	.config_ctl_val = 0x20485699,
++	.config_ctl_hi_val = 0x00182261,
++	.config_ctl_hi1_val = 0x82aa299c,
++	.test_ctl_val = 0x00000000,
++	.test_ctl_hi_val = 0x00000003,
++	.test_ctl_hi1_val = 0x00009000,
++	.test_ctl_hi2_val = 0x00000034,
++	.user_ctl_val = 0x00000000,
++	.user_ctl_hi_val = 0x00400005,
++};
++
++static struct clk_alpha_pll dprx_0_dprx_cc_pll0 = {
++	.offset = 0x0,
++	.config = &dprx_0_dprx_cc_pll0_config,
++	.vco_table = lucid_ole_vco,
++	.num_vco = ARRAY_SIZE(lucid_ole_vco),
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
++	.clkr = {
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_0_dprx_cc_pll0",
++			.parent_data = &(const struct clk_parent_data) {
++				.index = DT_BI_TCXO,
++			},
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_lucid_evo_ops,
++		},
++	},
++};
++
++/* 1080.0 MHz Configuration */
++static const struct alpha_pll_config dprx_0_dprx_cc_pll1_config = {
++	.l = 0x38,
++	.alpha = 0x4000000,
++	.config_ctl_val = 0x08240800,
++	.config_ctl_hi_val = 0x05008001,
++	.config_ctl_hi1_val = 0x00000000,
++	.config_ctl_hi2_val = 0x00000000,
++	.user_ctl_val = 0x00000000,
++	.user_ctl_hi_val = 0x02000080,
++};
++
++static struct clk_alpha_pll dprx_0_dprx_cc_pll1 = {
++	.offset = 0x1000,
++	.alpha_width = 28,
++	.config = &dprx_0_dprx_cc_pll1_config,
++	.vco_table = zonda_ole_vco,
++	.num_vco = ARRAY_SIZE(zonda_ole_vco),
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_ZONDA_OLE],
++	.clkr = {
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_0_dprx_cc_pll1",
++			.parent_data = &(const struct clk_parent_data) {
++				.index = DT_BI_TCXO,
++			},
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_zonda_ole_ops,
++		},
++	},
++};
++
++static const struct parent_map dprx_cc_0_parent_map_0[] = {
++	{ P_BI_TCXO, 0 },
++	{ P_DPRX_0_DPRX_CC_PLL0_OUT_EVEN, 1 },
++	{ P_DPRX_0_DPRX_CC_PLL0_OUT_ODD, 2 },
++	{ P_DPRX_0_DPRX_CC_PLL0_OUT_MAIN, 4 },
++	{ P_SLEEP_CLK, 5 },
++};
++
++static const struct clk_parent_data dprx_cc_0_parent_data_0[] = {
++	{ .index = DT_BI_TCXO },
++	{ .hw = &dprx_0_dprx_cc_pll0.clkr.hw },
++	{ .hw = &dprx_0_dprx_cc_pll0.clkr.hw },
++	{ .hw = &dprx_0_dprx_cc_pll0.clkr.hw },
++	{ .index = DT_SLEEP_CLK },
++};
++
++static const struct parent_map dprx_cc_0_parent_map_1[] = {
++	{ P_BI_TCXO, 0 },
++	{ P_DPRX_0_DPRX_CC_PLL1_OUT_EVEN, 3 },
++	{ P_SLEEP_CLK, 5 },
++	{ P_DPRX_0_DPRX_CC_PLL1_OUT_MAIN, 6 },
++};
++
++static const struct clk_parent_data dprx_cc_0_parent_data_1[] = {
++	{ .index = DT_BI_TCXO },
++	{ .hw = &dprx_0_dprx_cc_pll1.clkr.hw },
++	{ .index = DT_SLEEP_CLK },
++	{ .hw = &dprx_0_dprx_cc_pll1.clkr.hw },
++};
++
++static const struct freq_tbl ftbl_dprx_0_dprx_cc_audio_clk_src[] = {
++	F(216000000, P_DPRX_0_DPRX_CC_PLL1_OUT_MAIN, 5, 0, 0),
++	F(300000000, P_DPRX_0_DPRX_CC_PLL1_OUT_MAIN, 5, 0, 0),
++	F(360000000, P_DPRX_0_DPRX_CC_PLL1_OUT_MAIN, 5, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 dprx_0_dprx_cc_audio_clk_src = {
++	.cmd_rcgr = 0x80c8,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = dprx_cc_0_parent_map_1,
++	.freq_tbl = ftbl_dprx_0_dprx_cc_audio_clk_src,
++	.hw_clk_ctrl = true,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "dprx_0_dprx_cc_audio_clk_src",
++		.parent_data = dprx_cc_0_parent_data_1,
++		.num_parents = ARRAY_SIZE(dprx_cc_0_parent_data_1),
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_dprx_0_dprx_cc_core_rcg0_clk_src[] = {
++	F(220000000, P_DPRX_0_DPRX_CC_PLL0_OUT_MAIN, 2.5, 0, 0),
++	F(440000000, P_DPRX_0_DPRX_CC_PLL0_OUT_MAIN, 2.5, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 dprx_0_dprx_cc_core_rcg0_clk_src = {
++	.cmd_rcgr = 0x8004,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = dprx_cc_0_parent_map_0,
++	.freq_tbl = ftbl_dprx_0_dprx_cc_core_rcg0_clk_src,
++	.hw_clk_ctrl = true,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "dprx_0_dprx_cc_core_rcg0_clk_src",
++		.parent_data = dprx_cc_0_parent_data_0,
++		.num_parents = ARRAY_SIZE(dprx_cc_0_parent_data_0),
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_dprx_0_dprx_cc_core_rcg2_clk_src[] = {
++	F(275000000, P_DPRX_0_DPRX_CC_PLL0_OUT_MAIN, 2, 0, 0),
++	F(440000000, P_DPRX_0_DPRX_CC_PLL0_OUT_MAIN, 2.5, 0, 0),
++	F(550000000, P_DPRX_0_DPRX_CC_PLL0_OUT_MAIN, 2, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 dprx_0_dprx_cc_core_rcg2_clk_src = {
++	.cmd_rcgr = 0x8068,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = dprx_cc_0_parent_map_0,
++	.freq_tbl = ftbl_dprx_0_dprx_cc_core_rcg2_clk_src,
++	.hw_clk_ctrl = true,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "dprx_0_dprx_cc_core_rcg2_clk_src",
++		.parent_data = dprx_cc_0_parent_data_0,
++		.num_parents = ARRAY_SIZE(dprx_cc_0_parent_data_0),
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_dprx_0_dprx_cc_core_rcg3_clk_src[] = {
++	F(275000000, P_DPRX_0_DPRX_CC_PLL0_OUT_MAIN, 2, 0, 0),
++	F(550000000, P_DPRX_0_DPRX_CC_PLL0_OUT_MAIN, 2, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 dprx_0_dprx_cc_core_rcg3_clk_src = {
++	.cmd_rcgr = 0x8098,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = dprx_cc_0_parent_map_0,
++	.freq_tbl = ftbl_dprx_0_dprx_cc_core_rcg3_clk_src,
++	.hw_clk_ctrl = true,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "dprx_0_dprx_cc_core_rcg3_clk_src",
++		.parent_data = dprx_cc_0_parent_data_0,
++		.num_parents = ARRAY_SIZE(dprx_cc_0_parent_data_0),
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static struct clk_regmap_div dprx_0_dprx_cc_core_ahb_div_clk_src = {
++	.reg = 0x80b0,
++	.shift = 0,
++	.width = 4,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "dprx_0_dprx_cc_core_ahb_div_clk_src",
++		.parent_hws = (const struct clk_hw*[]) {
++			&dprx_0_dprx_cc_core_rcg3_clk_src.clkr.hw,
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_regmap_div_ro_ops,
++	},
++};
++
++static struct clk_regmap_div dprx_0_dprx_cc_core_aud_div_clk_src = {
++	.reg = 0x80d0,
++	.shift = 0,
++	.width = 9,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "dprx_0_dprx_cc_core_aud_div_clk_src",
++		.parent_hws = (const struct clk_hw*[]) {
++			&dprx_0_dprx_cc_audio_clk_src.clkr.hw,
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_regmap_div_ro_ops,
++	},
++};
++
++static struct clk_branch dprx_0_dprx_cc_ahb_clk = {
++	.halt_reg = 0x80b4,
++	.halt_check = BRANCH_HALT_VOTED,
++	.hwcg_reg = 0x80b4,
++	.hwcg_bit = 1,
++	.clkr = {
++		.enable_reg = 0x80b4,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_0_dprx_cc_ahb_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&dprx_0_dprx_cc_core_ahb_div_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch dprx_0_dprx_cc_aud_clk = {
++	.halt_reg = 0x80d4,
++	.halt_check = BRANCH_HALT_VOTED,
++	.hwcg_reg = 0x80d4,
++	.hwcg_bit = 1,
++	.clkr = {
++		.enable_reg = 0x80d4,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_0_dprx_cc_aud_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&dprx_0_dprx_cc_core_aud_div_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch dprx_0_dprx_cc_mdp_mem_clk = {
++	.halt_reg = 0x8088,
++	.halt_check = BRANCH_HALT_VOTED,
++	.hwcg_reg = 0x8088,
++	.hwcg_bit = 1,
++	.clkr = {
++		.enable_reg = 0x8088,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_0_dprx_cc_mdp_mem_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&dprx_0_dprx_cc_core_rcg2_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch dprx_0_dprx_cc_mmcx_xo_clk = {
++	.halt_reg = 0x80d8,
++	.halt_check = BRANCH_HALT_VOTED,
++	.hwcg_reg = 0x80d8,
++	.hwcg_bit = 1,
++	.clkr = {
++		.enable_reg = 0x80d8,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_0_dprx_cc_mmcx_xo_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch dprx_0_dprx_cc_vid_mem_clk = {
++	.halt_reg = 0x8028,
++	.halt_check = BRANCH_HALT_VOTED,
++	.hwcg_reg = 0x8028,
++	.hwcg_bit = 1,
++	.clkr = {
++		.enable_reg = 0x8028,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_0_dprx_cc_vid_mem_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&dprx_0_dprx_cc_core_rcg0_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_regmap *dprx_cc_0_nord_clocks[] = {
++	[DPRX_CC_AHB_CLK] = &dprx_0_dprx_cc_ahb_clk.clkr,
++	[DPRX_CC_AUD_CLK] = &dprx_0_dprx_cc_aud_clk.clkr,
++	[DPRX_CC_AUDIO_CLK_SRC] = &dprx_0_dprx_cc_audio_clk_src.clkr,
++	[DPRX_CC_CORE_AHB_DIV_CLK_SRC] = &dprx_0_dprx_cc_core_ahb_div_clk_src.clkr,
++	[DPRX_CC_CORE_AUD_DIV_CLK_SRC] = &dprx_0_dprx_cc_core_aud_div_clk_src.clkr,
++	[DPRX_CC_CORE_RCG0_CLK_SRC] = &dprx_0_dprx_cc_core_rcg0_clk_src.clkr,
++	[DPRX_CC_CORE_RCG2_CLK_SRC] = &dprx_0_dprx_cc_core_rcg2_clk_src.clkr,
++	[DPRX_CC_CORE_RCG3_CLK_SRC] = &dprx_0_dprx_cc_core_rcg3_clk_src.clkr,
++
++	[DPRX_CC_MDP_MEM_CLK] = &dprx_0_dprx_cc_mdp_mem_clk.clkr,
++	[DPRX_CC_MMCX_XO_CLK] = &dprx_0_dprx_cc_mmcx_xo_clk.clkr,
++	[DPRX_CC_PLL0] = &dprx_0_dprx_cc_pll0.clkr,
++	[DPRX_CC_PLL1] = &dprx_0_dprx_cc_pll1.clkr,
++	[DPRX_CC_VID_MEM_CLK] = &dprx_0_dprx_cc_vid_mem_clk.clkr,
++};
++
++static const struct qcom_reset_map dprx_cc_0_nord_resets[] = {
++	[DPRX_CC_DPRX_BLK_BCR] = { 0x8000 },
++};
++
++static struct clk_alpha_pll *dprx_cc_0_nord_plls[] = {
++	&dprx_0_dprx_cc_pll0,
++	&dprx_0_dprx_cc_pll1,
++};
++
++static const struct regmap_config dprx_cc_0_nord_regmap_config = {
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.max_register = 0x8104,
++	.fast_io = true,
++};
++
++static void dprx_cc_0_nord_regs_configure(struct device *dev, struct regmap *regmap)
++{
++	/*
++	 * Configure cdiv 20 for core aud and 11 for core ahb clks of DPRX CC
++	 */
++	regmap_write(regmap, dprx_0_dprx_cc_core_aud_div_clk_src.reg, 0x13);
++	regmap_write(regmap, dprx_0_dprx_cc_core_ahb_div_clk_src.reg, 0x0A);
++}
++
++static const struct qcom_cc_driver_data dprx_cc_0_nord_driver_data = {
++	.alpha_plls = dprx_cc_0_nord_plls,
++	.num_alpha_plls = ARRAY_SIZE(dprx_cc_0_nord_plls),
++	.clk_regs_configure = dprx_cc_0_nord_regs_configure,
++};
++
++static const struct qcom_cc_desc dprx_cc_0_nord_desc = {
++	.config = &dprx_cc_0_nord_regmap_config,
++	.clks = dprx_cc_0_nord_clocks,
++	.num_clks = ARRAY_SIZE(dprx_cc_0_nord_clocks),
++	.resets = dprx_cc_0_nord_resets,
++	.num_resets = ARRAY_SIZE(dprx_cc_0_nord_resets),
++	.driver_data = &dprx_cc_0_nord_driver_data,
++};
++
++static const struct of_device_id dprx_cc_0_nord_match_table[] = {
++	{ .compatible = "qcom,nord-dprxcc0" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, dprx_cc_0_nord_match_table);
++
++static int dprx_cc_0_nord_probe(struct platform_device *pdev)
++{
++	return qcom_cc_probe(pdev, &dprx_cc_0_nord_desc);
++}
++
++static struct platform_driver dprx_cc_0_nord_driver = {
++	.probe = dprx_cc_0_nord_probe,
++	.driver = {
++		.name = "dprxcc0-nord",
++		.of_match_table = dprx_cc_0_nord_match_table,
++	},
++};
++
++module_platform_driver(dprx_cc_0_nord_driver);
++
++MODULE_DESCRIPTION("QTI DPRXCC0 NORD Driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/qcom/dprxcc1-nord.c b/drivers/clk/qcom/dprxcc1-nord.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..851a97c196c0ae3c022858bb18f62bf295199d68
+--- /dev/null
++++ b/drivers/clk/qcom/dprxcc1-nord.c
+@@ -0,0 +1,433 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/clock/qcom,nord-dprxcc.h>
++
++#include "clk-alpha-pll.h"
++#include "clk-branch.h"
++#include "clk-rcg.h"
++#include "clk-regmap.h"
++#include "clk-regmap-divider.h"
++#include "common.h"
++#include "reset.h"
++
++enum {
++	DT_BI_TCXO,
++	DT_AHB_CLK,
++	DT_SLEEP_CLK,
++};
++
++enum {
++	P_BI_TCXO,
++	P_DPRX_1_DPRX_CC_PLL0_OUT_EVEN,
++	P_DPRX_1_DPRX_CC_PLL0_OUT_MAIN,
++	P_DPRX_1_DPRX_CC_PLL0_OUT_ODD,
++	P_DPRX_1_DPRX_CC_PLL1_OUT_EVEN,
++	P_DPRX_1_DPRX_CC_PLL1_OUT_MAIN,
++	P_SLEEP_CLK,
++};
++
++static const struct pll_vco lucid_ole_vco[] = {
++	{ 249600000, 2300000000, 0 },
++};
++
++static const struct pll_vco zonda_ole_vco[] = {
++	{ 700000000, 3600000000, 0 },
++};
++
++/* 550.0 MHz Configuration */
++static const struct alpha_pll_config dprx_1_dprx_cc_pll0_config = {
++	.l = 0x1c,
++	.alpha = 0xa555,
++	.config_ctl_val = 0x20485699,
++	.config_ctl_hi_val = 0x00182261,
++	.config_ctl_hi1_val = 0x82aa299c,
++	.test_ctl_val = 0x00000000,
++	.test_ctl_hi_val = 0x00000003,
++	.test_ctl_hi1_val = 0x00009000,
++	.test_ctl_hi2_val = 0x00000034,
++	.user_ctl_val = 0x00000000,
++	.user_ctl_hi_val = 0x00400005,
++};
++
++static struct clk_alpha_pll dprx_1_dprx_cc_pll0 = {
++	.offset = 0x0,
++	.config = &dprx_1_dprx_cc_pll0_config,
++	.vco_table = lucid_ole_vco,
++	.num_vco = ARRAY_SIZE(lucid_ole_vco),
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
++	.clkr = {
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_1_dprx_cc_pll0",
++			.parent_data = &(const struct clk_parent_data) {
++				.index = DT_BI_TCXO,
++			},
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_lucid_evo_ops,
++		},
++	},
++};
++
++/* 1080.0 MHz Configuration */
++static const struct alpha_pll_config dprx_1_dprx_cc_pll1_config = {
++	.l = 0x38,
++	.alpha = 0x4000000,
++	.config_ctl_val = 0x08240800,
++	.config_ctl_hi_val = 0x05008001,
++	.config_ctl_hi1_val = 0x00000000,
++	.config_ctl_hi2_val = 0x00000000,
++	.user_ctl_val = 0x00000000,
++	.user_ctl_hi_val = 0x02000080,
++};
++
++static struct clk_alpha_pll dprx_1_dprx_cc_pll1 = {
++	.offset = 0x1000,
++	.alpha_width = 28,
++	.config = &dprx_1_dprx_cc_pll1_config,
++	.vco_table = zonda_ole_vco,
++	.num_vco = ARRAY_SIZE(zonda_ole_vco),
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_ZONDA_OLE],
++	.clkr = {
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_1_dprx_cc_pll1",
++			.parent_data = &(const struct clk_parent_data) {
++				.index = DT_BI_TCXO,
++			},
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_zonda_ole_ops,
++		},
++	},
++};
++
++static const struct parent_map dprx_cc_1_parent_map_0[] = {
++	{ P_BI_TCXO, 0 },
++	{ P_DPRX_1_DPRX_CC_PLL0_OUT_EVEN, 1 },
++	{ P_DPRX_1_DPRX_CC_PLL0_OUT_ODD, 2 },
++	{ P_DPRX_1_DPRX_CC_PLL0_OUT_MAIN, 4 },
++	{ P_SLEEP_CLK, 5 },
++};
++
++static const struct clk_parent_data dprx_cc_1_parent_data_0[] = {
++	{ .index = DT_BI_TCXO },
++	{ .hw = &dprx_1_dprx_cc_pll0.clkr.hw },
++	{ .hw = &dprx_1_dprx_cc_pll0.clkr.hw },
++	{ .hw = &dprx_1_dprx_cc_pll0.clkr.hw },
++	{ .index = DT_SLEEP_CLK },
++};
++
++static const struct parent_map dprx_cc_1_parent_map_1[] = {
++	{ P_BI_TCXO, 0 },
++	{ P_DPRX_1_DPRX_CC_PLL1_OUT_EVEN, 3 },
++	{ P_SLEEP_CLK, 5 },
++	{ P_DPRX_1_DPRX_CC_PLL1_OUT_MAIN, 6 },
++};
++
++static const struct clk_parent_data dprx_cc_1_parent_data_1[] = {
++	{ .index = DT_BI_TCXO },
++	{ .hw = &dprx_1_dprx_cc_pll1.clkr.hw },
++	{ .index = DT_SLEEP_CLK },
++	{ .hw = &dprx_1_dprx_cc_pll1.clkr.hw },
++};
++
++static const struct freq_tbl ftbl_dprx_1_dprx_cc_audio_clk_src[] = {
++	F(216000000, P_DPRX_1_DPRX_CC_PLL1_OUT_MAIN, 5, 0, 0),
++	F(300000000, P_DPRX_1_DPRX_CC_PLL1_OUT_MAIN, 5, 0, 0),
++	F(360000000, P_DPRX_1_DPRX_CC_PLL1_OUT_MAIN, 5, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 dprx_1_dprx_cc_audio_clk_src = {
++	.cmd_rcgr = 0x80c8,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = dprx_cc_1_parent_map_1,
++	.freq_tbl = ftbl_dprx_1_dprx_cc_audio_clk_src,
++	.hw_clk_ctrl = true,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "dprx_1_dprx_cc_audio_clk_src",
++		.parent_data = dprx_cc_1_parent_data_1,
++		.num_parents = ARRAY_SIZE(dprx_cc_1_parent_data_1),
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_dprx_1_dprx_cc_core_rcg0_clk_src[] = {
++	F(220000000, P_DPRX_1_DPRX_CC_PLL0_OUT_MAIN, 2.5, 0, 0),
++	F(440000000, P_DPRX_1_DPRX_CC_PLL0_OUT_MAIN, 2.5, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 dprx_1_dprx_cc_core_rcg0_clk_src = {
++	.cmd_rcgr = 0x8004,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = dprx_cc_1_parent_map_0,
++	.freq_tbl = ftbl_dprx_1_dprx_cc_core_rcg0_clk_src,
++	.hw_clk_ctrl = true,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "dprx_1_dprx_cc_core_rcg0_clk_src",
++		.parent_data = dprx_cc_1_parent_data_0,
++		.num_parents = ARRAY_SIZE(dprx_cc_1_parent_data_0),
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_dprx_1_dprx_cc_core_rcg2_clk_src[] = {
++	F(275000000, P_DPRX_1_DPRX_CC_PLL0_OUT_MAIN, 2, 0, 0),
++	F(440000000, P_DPRX_1_DPRX_CC_PLL0_OUT_MAIN, 2.5, 0, 0),
++	F(550000000, P_DPRX_1_DPRX_CC_PLL0_OUT_MAIN, 2, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 dprx_1_dprx_cc_core_rcg2_clk_src = {
++	.cmd_rcgr = 0x8068,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = dprx_cc_1_parent_map_0,
++	.freq_tbl = ftbl_dprx_1_dprx_cc_core_rcg2_clk_src,
++	.hw_clk_ctrl = true,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "dprx_1_dprx_cc_core_rcg2_clk_src",
++		.parent_data = dprx_cc_1_parent_data_0,
++		.num_parents = ARRAY_SIZE(dprx_cc_1_parent_data_0),
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_dprx_1_dprx_cc_core_rcg3_clk_src[] = {
++	F(275000000, P_DPRX_1_DPRX_CC_PLL0_OUT_MAIN, 2, 0, 0),
++	F(550000000, P_DPRX_1_DPRX_CC_PLL0_OUT_MAIN, 2, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 dprx_1_dprx_cc_core_rcg3_clk_src = {
++	.cmd_rcgr = 0x8098,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = dprx_cc_1_parent_map_0,
++	.freq_tbl = ftbl_dprx_1_dprx_cc_core_rcg3_clk_src,
++	.hw_clk_ctrl = true,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "dprx_1_dprx_cc_core_rcg3_clk_src",
++		.parent_data = dprx_cc_1_parent_data_0,
++		.num_parents = ARRAY_SIZE(dprx_cc_1_parent_data_0),
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static struct clk_regmap_div dprx_1_dprx_cc_core_ahb_div_clk_src = {
++	.reg = 0x80b0,
++	.shift = 0,
++	.width = 4,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "dprx_1_dprx_cc_core_ahb_div_clk_src",
++		.parent_hws = (const struct clk_hw*[]) {
++			&dprx_1_dprx_cc_core_rcg3_clk_src.clkr.hw,
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_regmap_div_ro_ops,
++	},
++};
++
++static struct clk_regmap_div dprx_1_dprx_cc_core_aud_div_clk_src = {
++	.reg = 0x80d0,
++	.shift = 0,
++	.width = 9,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "dprx_1_dprx_cc_core_aud_div_clk_src",
++		.parent_hws = (const struct clk_hw*[]) {
++			&dprx_1_dprx_cc_audio_clk_src.clkr.hw,
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_regmap_div_ro_ops,
++	},
++};
++
++static struct clk_branch dprx_1_dprx_cc_ahb_clk = {
++	.halt_reg = 0x80b4,
++	.halt_check = BRANCH_HALT_VOTED,
++	.hwcg_reg = 0x80b4,
++	.hwcg_bit = 1,
++	.clkr = {
++		.enable_reg = 0x80b4,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_1_dprx_cc_ahb_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&dprx_1_dprx_cc_core_ahb_div_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch dprx_1_dprx_cc_aud_clk = {
++	.halt_reg = 0x80d4,
++	.halt_check = BRANCH_HALT_VOTED,
++	.hwcg_reg = 0x80d4,
++	.hwcg_bit = 1,
++	.clkr = {
++		.enable_reg = 0x80d4,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_1_dprx_cc_aud_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&dprx_1_dprx_cc_core_aud_div_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch dprx_1_dprx_cc_mdp_mem_clk = {
++	.halt_reg = 0x8088,
++	.halt_check = BRANCH_HALT_VOTED,
++	.hwcg_reg = 0x8088,
++	.hwcg_bit = 1,
++	.clkr = {
++		.enable_reg = 0x8088,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_1_dprx_cc_mdp_mem_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&dprx_1_dprx_cc_core_rcg2_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch dprx_1_dprx_cc_mmcx_xo_clk = {
++	.halt_reg = 0x80d8,
++	.halt_check = BRANCH_HALT_VOTED,
++	.hwcg_reg = 0x80d8,
++	.hwcg_bit = 1,
++	.clkr = {
++		.enable_reg = 0x80d8,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_1_dprx_cc_mmcx_xo_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch dprx_1_dprx_cc_vid_mem_clk = {
++	.halt_reg = 0x8028,
++	.halt_check = BRANCH_HALT_VOTED,
++	.hwcg_reg = 0x8028,
++	.hwcg_bit = 1,
++	.clkr = {
++		.enable_reg = 0x8028,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "dprx_1_dprx_cc_vid_mem_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&dprx_1_dprx_cc_core_rcg0_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_regmap *dprx_cc_1_nord_clocks[] = {
++	[DPRX_CC_AHB_CLK] = &dprx_1_dprx_cc_ahb_clk.clkr,
++	[DPRX_CC_AUD_CLK] = &dprx_1_dprx_cc_aud_clk.clkr,
++	[DPRX_CC_AUDIO_CLK_SRC] = &dprx_1_dprx_cc_audio_clk_src.clkr,
++	[DPRX_CC_CORE_AHB_DIV_CLK_SRC] = &dprx_1_dprx_cc_core_ahb_div_clk_src.clkr,
++	[DPRX_CC_CORE_AUD_DIV_CLK_SRC] = &dprx_1_dprx_cc_core_aud_div_clk_src.clkr,
++	[DPRX_CC_CORE_RCG0_CLK_SRC] = &dprx_1_dprx_cc_core_rcg0_clk_src.clkr,
++	[DPRX_CC_CORE_RCG2_CLK_SRC] = &dprx_1_dprx_cc_core_rcg2_clk_src.clkr,
++	[DPRX_CC_CORE_RCG3_CLK_SRC] = &dprx_1_dprx_cc_core_rcg3_clk_src.clkr,
++	[DPRX_CC_MDP_MEM_CLK] = &dprx_1_dprx_cc_mdp_mem_clk.clkr,
++	[DPRX_CC_MMCX_XO_CLK] = &dprx_1_dprx_cc_mmcx_xo_clk.clkr,
++	[DPRX_CC_PLL0] = &dprx_1_dprx_cc_pll0.clkr,
++	[DPRX_CC_PLL1] = &dprx_1_dprx_cc_pll1.clkr,
++	[DPRX_CC_VID_MEM_CLK] = &dprx_1_dprx_cc_vid_mem_clk.clkr,
++};
++
++static const struct qcom_reset_map dprx_cc_1_nord_resets[] = {
++	[DPRX_CC_DPRX_BLK_BCR] = { 0x8000 },
++};
++
++static struct clk_alpha_pll *dprx_cc_1_nord_plls[] = {
++	&dprx_1_dprx_cc_pll0,
++	&dprx_1_dprx_cc_pll1,
++};
++
++static const struct regmap_config dprx_cc_1_nord_regmap_config = {
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.max_register = 0x8104,
++	.fast_io = true,
++};
++
++static void dprx_cc_1_nord_regs_configure(struct device *dev, struct regmap *regmap)
++{
++	/*
++	 * Configure cdiv 20 for core aud and 11 for core ahb clks of DPRX CC
++	 */
++	regmap_write(regmap, dprx_1_dprx_cc_core_aud_div_clk_src.reg, 0x13);
++	regmap_write(regmap, dprx_1_dprx_cc_core_ahb_div_clk_src.reg, 0x0A);
++}
++
++static const struct qcom_cc_driver_data dprx_cc_1_nord_driver_data = {
++	.alpha_plls = dprx_cc_1_nord_plls,
++	.num_alpha_plls = ARRAY_SIZE(dprx_cc_1_nord_plls),
++	.clk_regs_configure = dprx_cc_1_nord_regs_configure,
++};
++
++static const struct qcom_cc_desc dprx_cc_1_nord_desc = {
++	.config = &dprx_cc_1_nord_regmap_config,
++	.clks = dprx_cc_1_nord_clocks,
++	.num_clks = ARRAY_SIZE(dprx_cc_1_nord_clocks),
++	.resets = dprx_cc_1_nord_resets,
++	.num_resets = ARRAY_SIZE(dprx_cc_1_nord_resets),
++	.driver_data = &dprx_cc_1_nord_driver_data,
++};
++
++static const struct of_device_id dprx_cc_1_nord_match_table[] = {
++	{ .compatible = "qcom,nord-dprxcc1" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, dprx_cc_1_nord_match_table);
++
++static int dprx_cc_1_nord_probe(struct platform_device *pdev)
++{
++	return qcom_cc_probe(pdev, &dprx_cc_1_nord_desc);
++}
++
++static struct platform_driver dprx_cc_1_nord_driver = {
++	.probe = dprx_cc_1_nord_probe,
++	.driver = {
++		.name = "dprxcc1-nord",
++		.of_match_table = dprx_cc_1_nord_match_table,
++	},
++};
++
++module_platform_driver(dprx_cc_1_nord_driver);
++
++MODULE_DESCRIPTION("QTI DPRXCC1 NORD Driver");
++MODULE_LICENSE("GPL");
 
 -- 
 2.34.1
