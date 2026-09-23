@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECD6331EB7;
-	Wed, 23 Sep 2026 07:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FB53F4DD2;
+	Wed, 23 Sep 2026 07:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790147912; cv=none; b=E8ED9xpnVjp20R6oUt3bI7EPkQszJg6eRqi1nNOgJ0niAEwbQWonUhphzud14j/9cDM8Uo+CY4Za4ChzQqFR9RGLDXyl+5zNlP9xevFmCrCpJNeReiCZ8s3PzkV8zziHf4ydU9/aA9R6g6pne2zey/RLxtHbC80vtoLtO+IspnA=
+	t=1790148345; cv=none; b=u7V4cTtlBheSrrK0atNs5lzLjiikCk0JisA5657oaCUhJ0+FH/KZpOP+ZaLMd7/PKaweh7JQqMYItEo0tzJDG5E/0DgeD51MFGMysuk1/g7rJ8TCX/chN+3Zi9hwsGwcsLzgLbF5MGx+cP5PId5YIsr7FpQRTqRJJ7bbxX9hUiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790147912; c=relaxed/simple;
-	bh=0Lwr0/tWfAZ9fseMLREPGQiGCFcJK1ojgMrbwR3LwYQ=;
+	s=arc-20240116; t=1790148345; c=relaxed/simple;
+	bh=gjKAhENt8OS/KqIAW7SARRbkKsR3HmNYD+TAopC3l9k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pgingF27wn7RckGQR+0MgvGpo4WUjpOjwGBM1AmMNd4y0+LorEVCCfEV3XMn81Qv+7p+BIgib3OGQ39bkAxwQvvuBRVYKO73t5oFpUADKiOsPc+oZazXJlF1LT3SfrUG31M65DEfrZfRNl5shPG5o0JQtalqdV4TAUWv3zZvGNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgkSvpyD; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=in3DrK/8/fOZ3k+eXJLI8+SF0jyx0NvRJs4blqzedc83eoT+32jfZoTSJEpWJzbOiND/5mremyOcGzYYZActNvywYXLfPQIqvvV/MCDQngWGM60sGMI2567MroCqymzxjk7y2atUxFI+5YEilWRugn0VSKXDRbomZ4K1hgQdQ/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PnTvaGXU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgkSvpyD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF641F000FF;
-	Wed, 23 Sep 2026 07:18:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PnTvaGXU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E5C91F000FF;
+	Wed, 23 Sep 2026 07:25:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790147910;
-	bh=hjeJPL69ZDqze5/p8wzcHo2cRaykHOUG+cZBY+I4Ow0=;
+	s=k20260515; t=1790148343;
+	bh=nHU+klMl+6fj4IxcKpc7ReZXkRGsZ/M7dfsPEKrCLKE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=AgkSvpyD0aEFsFPDzirqDI2fo1fs2XImrxaomjofc/LRjrWC7t9UBBSkPB8jWEh5X
-	 7N6KYfapuHMAxfSwq8VQ26WiONDxjWxTZyQplaeIOqlvYZ4+z/bLdsA2iYvRU/hznx
-	 O/N0fLnrRShxrG1yjA1JaeXrUdIeEK/0gh+01GWGv6alJVJr3BRjN1PqAUNqmOb7Bu
-	 vNZY5ZePju1uxu/ZDZauTaYLekKVN9oszqIlEP1osNsmCqsoiC7mwibS3tXXh80lT4
-	 njSnS/Osa13TXMIkxVEww1OUlL4oA4V1m7U3sdmTiL/aQtfrPS/cYZIWDwJQAUSMMH
-	 /7cfWpmXkVPOQ==
-Message-ID: <3e7b66be-124a-446f-bdfd-b0fe30fff796@kernel.org>
-Date: Wed, 23 Sep 2026 09:18:24 +0200
+	b=PnTvaGXUEepbUNJGYgo3QOK4ATe+VF/C8uPkFpcODBJG2+8AQajxzrLP9gSiT1cpN
+	 oqdoJh4cY7kJEcr2m69K9E87Y8ff2qQOhA73C5DmXfBv7i1WF7u06LJ3tKG17/ycaS
+	 wPSA9YdoCgh9YctF48BD1ljFpgbQ5ynzDGb3B4KWCZdC1eJ3v2Z4hzONnPMSLMC0nd
+	 38OjgtZXzVh4ccWsjkiIR6Fm8BGgCsYPDMyKR8FcEzjpv8mj8TlWc2V7svKF/hWGGP
+	 uyAFHMeWZk2IJPrfxD2ODwhF6dqj0o7YHfc7uIuwSogMPlgqR3nCoNjVX1Qhw7IVam
+	 VD5SqOjKsZI/g==
+Message-ID: <fbeac5ba-a28d-4d34-8d23-4946aef515ea@kernel.org>
+Date: Wed, 23 Sep 2026 09:25:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: clock: introduce
- toshiba,tc9564-clock.yaml
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: introduce the TC9564 config syscon
 To: Alex Elder <elder@riscstar.com>
 Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
@@ -48,9 +47,10 @@ Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com,
  linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20260918165234.687224-1-elder@riscstar.com>
- <20260918165234.687224-3-elder@riscstar.com>
- <20260920-messy-successful-caracara-fcdbcd@quoll>
- <1ac16236-284a-4d01-b68a-4b32d5c5287c@riscstar.com>
+ <20260918165234.687224-2-elder@riscstar.com>
+ <20260920-fiery-fanatic-manticore-6abf0a@quoll>
+ <85b0e7de-e4a8-4e08-b801-a9664d366e1a@riscstar.com>
+ <7e32063f-f1a4-4259-96c9-fcbdd25c7f2f@riscstar.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,54 +96,70 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <1ac16236-284a-4d01-b68a-4b32d5c5287c@riscstar.com>
+In-Reply-To: <7e32063f-f1a4-4259-96c9-fcbdd25c7f2f@riscstar.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/09/2026 15:13, Alex Elder wrote:
-> On 9/20/26 1:21 PM, Krzysztof Kozlowski wrote:
->>> diff --git a/include/dt-bindings/clock/toshiba,tc9564.h b/include/dt-bindings/clock/toshiba,tc9564.h
->>> new file mode 100644
->>> index 0000000000000..75732fddd3025
->>> --- /dev/null
->>> +++ b/include/dt-bindings/clock/toshiba,tc9564.h
->>> @@ -0,0 +1,54 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->>> +
->>> +/*
->>> + * Copyright (C) 2026 by RISCstar Solutions Corporation.  All rights reserved.
->>> + */
->>> +
->>> +#ifndef __ClOCK_TOSHIBA_TC9564_H__
->>> +#define __ClOCK_TOSHIBA_TC9564_H__
->>> +
->>> +/* Clock IDs */
->>> +
->>> +#define CLOCK_MCU		0
->>> +#define CLOCK_INTC		1
->>> +/* #define CLOCK_PCIE		2 */
->>> +/* #define CLOCK_I2C		3 */
->> Drop both, and SRAM is number 2. Or enable and implement them.
+On 22/09/2026 23:02, Alex Elder wrote:
+> On 9/21/26 4:46 PM, Alex Elder wrote:
+>>> I also have doubts that this is needed - I see no updates to the misc
+>>> binding, which would be referencing it. But then another point would be,
+>>> that you do not need separate child node, which has no properties.
 > 
-> I forgot to respond to this.  I think you are confused.
+> Krzysztof, I've done some additional work on this based on
+> your feedback.
 > 
-> SRAM is BAR number 2.  This is defining clock IDs.
+> I think you are correct that there is no need to define
+> this as a special syscon with its own compatible string.
 > 
-> And the reason these are commented out is that, while they
-> do exist, we explicitly do not want anyone to disable either
-> of these clocks because PCIe uses them.  This clock (and
-> reset) control is accessed via PCIe.
+> Instead, I can simply define a simple syscon with a label:
 > 
-> I do accept that someone might want me to simply omit
-> these commented-out definitions, and I'd be fine with
-> that.
+>          tc9564_config_syscon0: syscon@0 {
+>                  compatible = "syscon";
+
+I never proposed anything like that. I asked to drop simple-mfd.
+
+>                  reg = <0x0 0x2000>;
+>          };
 > 
-> But your suggestion wasn't sensible so I wanted to clear
-> that up before deleting these.
+> And then have the devices that need to use it, refer to
+> its label using a phandle:
+> 
+>          tc9564_clock0: clock@1004 {
+>                  compatible = "toshiba,tc9564-clock";
+>                  toshiba,config-syscon = <&tc9564_config_syscon0>;
+>                  #clock-cells = <1>;
+>                  #reset-cells = <1>;
+>          };
+> 
+>          tc9564_emac0: ethernet@40000 {
+>                  compatible = "toshiba,tc9564-xgmac";
+>                  reg = <0x40000 0x8000>;
+>                  toshiba,config-syscon = <&tc9564_config_syscon0 0x1070>;
+> 		. . .
+> 	};
+> 
+>          tc9564_emac1: ethernet@48000 {
+>                  compatible = "toshiba,tc9564-xgmac";
+>                  reg = <0x48000 0x8000>;
+>                  toshiba,config-syscon = <&tc9564_config_syscon0 0x1074>;
+> 		. . .
+> 	};
+> 
+> That simplifies things a bit, and requires no devicetree binding.
+> 
+> If you think this is incorrect, please let me know, otherwise it
+> is the direction I plan to go with the next version of this
+> series.
 > 
 
-Indices should be continuous, there is no point in having holes in
-numbering.
+I think nothing behind PCI EP should be described in DT, because
+everything is internal to the device and implied by compatible (or
+vid/pid). We do describe internals of devices in DT usually for complex
+devices (like some display blocks with multiple subblocks) or when they
+are used outside of that device. That's why I asked how are all these
+clocks and resets exposed to the host. If the syscon is used only by the
+device itself, I don't quite get the benefits of describing it in DT.
 
 Best regards,
 Krzysztof
