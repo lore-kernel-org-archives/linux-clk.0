@@ -1,71 +1,70 @@
-Received: from mail-oi2-f13.google.com (mail-oi2-f13.google.com [74.125.231.205])
+Received: from mail-oi2-f12.google.com (mail-oi2-f12.google.com [74.125.231.204])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5B63A3E91
-	for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 05:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE6C438037
+	for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 05:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790141786; cv=none; b=RGnTHLGjThVXNAm3G33MHiKws3ysSnV5KErfAkIUSMt767sVK43DOAzFeM6rpXF5AIEhATCa5I2oFea+XYWmvvyoSCDRgKuUr0NLNNT5atGKpWQLlIUVx1S/flhA8DNua8VmyByxf3imiZ1XqDTRkuASyFQbSthwsrg7kGzPW84=
+	t=1790141792; cv=none; b=hRHMGrU1KlNDKe0VgKuGBl0Cbfj2QRZCNg5AWPvpx40LB2NSXxksJuRN00OKcGh3R+PLiqssBL1x/6WBtQu1qSojgBfrKea+R8+CuAGn7I0NIo46WlPjOP+zZhbGxAkqWkf7xamvH5AUxW8XCy+Q8406XQTZsVZeWpWkviehRdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790141786; c=relaxed/simple;
-	bh=5k9VLU6OvtrGZi0gO1yZy16OfwqfrZmQwujeqIifWv0=;
+	s=arc-20240116; t=1790141792; c=relaxed/simple;
+	bh=cxjDKZ0MA9VUms6JcpknLJlKdT7ZoJ5aaylgo7tCtYM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pLpt5d7wYxF2U4P6fQdFtY+fMyldZd3yyuJmL213WjW+q0clX4Xp34798MumbmZaiIKxfrmEhDhshf847vt8iTdxpYEKq4qOJTZfenZOcC4hMN+I5VlmrKBzhMq1tIqVUAFyjIErAoox1VI1GZfdpgcNNpyBwsjDrb6WCXnw6cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F8XH63Z4; arc=none smtp.client-ip=74.125.231.205
+	 In-Reply-To:To:Cc; b=I8oD9aTVA0usfTIE9TDBj4gZg8cOiac6sZoFmhWWhfILbdCPzzli+MKJ6v0YOu2mv87sukV6OmcOHG4MYPzaGrLKxIu329xZg3WWyfZN5Eq77LZ4bMey3PYAQMwwN2yNtmMh4UZuKmoSQcCx0cgutt+ohO9S16z+XUwHcdey8v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eEjd7w19; arc=none smtp.client-ip=74.125.231.204
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8XH63Z4"
-Received: by mail-oi2-f13.google.com with SMTP id 5614622812f47-4b37a3688a2so516006b6e.0
-        for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2026 22:36:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eEjd7w19"
+Received: by mail-oi2-f12.google.com with SMTP id 5614622812f47-4c4bf3defecso442124b6e.3
+        for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2026 22:36:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790141784; x=1790746584; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790141788; x=1790746588; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=M4cUR/bgVx/Ef4Tc/Iqux+0dgmZ5BenjLrR4X+eBZEU=;
-        b=F8XH63Z4doIji6bAgrFxU4KEekuBBKmXL51+Wdkbkecnt3xzvQGiJ1lj6kBiiQE78l
-         6vt0ZXymtZwSyYJYb3xeB4CmuzVVdbvwsvON9Pmdscl6FcrzMXmyawBtN9dynJ+8gwNN
-         YRUrlwN1ZBsGdgrlCvm4KY6vI00oR6JgtnCqXh3Al3/tQWCPvopqWqeScOzz3ApR3aMF
-         qSRL/1UsfSmgkSPUXWGNkGBcZRViDMufWKGPqpKEkvu0eyJHIDhDYBCEAH3MEwB3n2dY
-         eFQMaLv4if3U391jU5QfTeY3iz8JDef7iyMh5NtrfQdMcNMF4tqbUgVjIHsb3OXZfhhQ
-         /FRQ==
+        bh=FHj476tA2byKc8arhZaw8Ci81fHtdMiGqz0hVZIDFng=;
+        b=eEjd7w19w8vtUCtcvfPFqKj+v4qyTlmYkyRQ4urFWKUusuoEZChikhf01YcT8IXvG0
+         sdBfixDz4jR6z6ndfCO82+hQzPgYrVPgffnlY5KXy4EIGlZpsRGNY5YNVpottIh777zN
+         2cRMP59ybEikhrngtEuGOGtiRXgIekFlH9qOZ8scHPUtJz2I4i3btswhF5D1Q3RLPYQL
+         +gMv9f0qilvdnixX3CThrE8ogJAtSmIbzcvuSmWlqF838gx8bkBYb7KN6n2JwsIW1rWC
+         m8BSj5i48MguQtJJU4LfHPbiQAiA91W8DK2j4jp2S2nylKnsmeTY+mFT60JPhTyTrKrx
+         d3VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790141784; x=1790746584;
+        d=1e100.net; s=20260707; t=1790141788; x=1790746588;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=M4cUR/bgVx/Ef4Tc/Iqux+0dgmZ5BenjLrR4X+eBZEU=;
-        b=jz0cL5K9mTYWYj+8X79XTBKFiekd8Q10P6jeZ6MTUjqYUYHFfWVJyvIqFh6EQJMbWi
-         hhO07LXUgfFVtNNlkRvAJtJaeoQhVaj0DvcOBK5G/uE0hA1eudjDn9sZJaFJeOjy23WP
-         vIa1UvlYN6qVNpzy49BfNxPLFarxrDiRhcXEiyikCotrMVFehzRw1ekPo46OEX/Q+BUk
-         1zlZ+jEAYD5jfsn5ZUbCIRZRJYtNix9otbaBrEEEuzTXxjscJwKdJZi2tmgXaQr+5xd0
-         5s99x3h5Q352sa/vn1Xtba/XG/1OCm7ljCRkReZURLg/oR7ENXNsMNiUqyRr9YPuqdwG
-         nYLg==
-X-Forwarded-Encrypted: i=1; AKwUvBzhn7TioePK3zmr5FJXsyxc9Oxvkgxhfl8nr4YaPlhCKbVWZZ1uOX+JU0ckMH8mgje8qcpRIbXaCRY=@vger.kernel.org
-X-Gm-Message-State: AFuF++nqvZwLDWzc+ivTeJKo+R3lt2x9nPJuMM+btCj4e4bQhbvbi9L0
-	jk9Szi00867FKU6rhZTZKJsGpQuz8D7TcceNVxHGG6yAp9ey3HG+szLF
-X-Gm-Gg: AYBFou0khF2Vajs/2FiJcCDlH5wphH3XL9k/aX29TdIql7bTZfKrFXR4+1sq5sgEMly
-	GOY6StDEXSR6O7ySTCxh8zCd7Jz61gOhZOPGuqMZQ78c1Tgg5jt3RdS6f/I+Ri2jo8DoGKOyUV4
-	XCpCiNEjWijVRuwxiRTwxr/tWlWCALl8dXC2S7QShD0A5LwAlr+MziGEBtt3TFAOFkFlyZbwVyD
-	RJ/Q9dN8vSjDw4a151nHctw7tCy2cIbfufSr6JSe4s8pO94gW4y9L0QiNyvFjEoEkjeukMc+zAN
-	6nmfELa8dYToo74WX9kbqcr61fjpPbeg0xx2Uu9+FPCZHOY6mQZTZqEcRr0zqEe3puFRqkRVPgd
-	2GD1rgYiduRh0GjiwVxPV6DfvK/gMYitlGnHgAKJSlebEwhir+vHH7Qyc4jBndXJgqUCZOa9S32
-	DUcIltjILgxivBI620oCjqHhENStVLtd2x2HeawGgbzn8xFV7dfe5k379eSQxQ6yEpVJC+7/35B
-	F2ypPdXeMNL1fkHrr0U15i66ww9MzNtpi+9YdILcozKMkH1qKn81x31bzyKAPDl0TfQf5kJkudO
-	T8fswAbaYXUi9FasbstKkIinsq3V+dCP/eSPh/93XTC8XvM/SPz15y+mENODEkVoESGlIgeeda4
-	SFROklxUtwTdokNNBj3Xe
-X-Received: by 2002:a05:6808:6b8a:b0:4c1:9127:c0fb with SMTP id 5614622812f47-4d5ba3c38b4mr1883196b6e.36.1790141784089;
-        Tue, 22 Sep 2026 22:36:24 -0700 (PDT)
+        bh=FHj476tA2byKc8arhZaw8Ci81fHtdMiGqz0hVZIDFng=;
+        b=XvF2EUQJZfXGp8JVsX6JZq0xU3KgnxvQNtu9clDseRVmln/yMKDrtHkzq+fb3yvDrv
+         mM79PILY65ssiMixrEwkksq0VswC3sUB8UO4jMzlY9x/F1kmf5gc/N5jA/DZJ5axNGfx
+         0vunBYxWZTYlPBjTDvQ1ZpK1Pf00vGpdu2auK6ezFkmk2yqY6yOFS4xd6Vz6bjjUdzdU
+         DJcK/FFb3j7Gyyx8J7N77QhV7gkgUnGkuFdpGCexOtehttLOT469rD7aTTxFW/+Al1dz
+         pVSoZe2fbz6Iip1hqPmqV/ZZHY8K1+djrxNNThArdyVuFt+dwUxZ0CbCdEeMlJEAnVRJ
+         FkHA==
+X-Forwarded-Encrypted: i=1; AKwUvBw+YUvSOObY4UX7NgXULjiaz6DDWxBHF+TFWaWsODqPnJ3kp8MQbzrmVuyG1KKK/zez8BiNqxl848A=@vger.kernel.org
+X-Gm-Message-State: AFuF++nD9v26/41JjXNL1UZRov473nBn05a4eimtG3yZoX6mhsP4Tz1W
+	kHIaAcrDRMPi65rvZ8+O5A3fgLpHHF2jE47OZ3sXZOnFIAH1+puUhBkl
+X-Gm-Gg: AYBFou0G/CPc+zSOEt57wRajEM6F/B1aYPLLKjFnj/pHYKj5+myL0Kxrz0kf3ryeJB6
+	/aeAOPyyD/ybZouQyA4yIAdFFidXNQ6zV2w2jX7nQueNjn4q6jnoH9i/vnVdvMG45HLyo2voF6l
+	85+n5+wcf4LwE1+Ye3VI/XH7zJ3HMyA7hSaiPbCYAfyB0Uaw/HZWU8/ySWPN0uEUHr2WvHzcHnd
+	Jwo8E38Z+/mOPM3JhhBcgbU0uM3AJQgEd5osf4d6sdchsoSWrKk9bmdaI1uTSgNfPN+hnHSuPGn
+	zUuBA4afDUXNEqM6e9yAh1JImxpSSHZOVL0KvYVmvsOf8FUIaQ+gXYFVlbSELypbQ5SB+85Zi7k
+	PMz2GrFkItF5BfRZMt2teTJs4xfSjiBxtlQkyi+iQ2KfydzPzA7vj/Bi7Z9pj6TU7ORMXLyX5A8
+	ymX4otJC73eyvai5IOUzjRECkbxROVOLNKuojNRv2XDYuswjDRii6NpWKcVtX8ma5piORdXXpsb
+	bDI8QXaxFoiTn29jF0+RBGM1ybMdEVh+6EsuXCPp0umj2Lvv2CpwUCS2tcuF6Y3Boli8Swv/RFW
+	HmSz+byfIx6PUK+SMj7SZI47CU1fM61dkcnIX8+M1GliBy2C2ex2Jhf9ZkOgscOOLmwB8j9MjZR
+	vehm8GSFbObNsmGuDvVUS
+X-Received: by 2002:a05:6808:1783:b0:4c6:eddf:ca6f with SMTP id 5614622812f47-4d5b6bda069mr1922304b6e.12.1790141788407;
+        Tue, 22 Sep 2026 22:36:28 -0700 (PDT)
 Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4d5c4aed99bsm1436896b6e.12.2026.09.22.22.36.22
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4d5c4aed99bsm1436896b6e.12.2026.09.22.22.36.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2026 22:36:23 -0700 (PDT)
+        Tue, 22 Sep 2026 22:36:27 -0700 (PDT)
 From: James Hilliard <james.hilliard1@gmail.com>
-Date: Tue, 22 Sep 2026 23:36:14 -0600
-Subject: [PATCH v10 1/5] dt-bindings: pwm: allwinner: add h616 pwm
- compatible
+Date: Tue, 22 Sep 2026 23:36:17 -0600
+Subject: [PATCH v10 4/5] arm64: dts: allwinner: h616: add PWM controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -74,7 +73,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260922-h616-pwm-v8-v10-1-dccebbe1aabf@gmail.com>
+Message-Id: <20260922-h616-pwm-v8-v10-4-dccebbe1aabf@gmail.com>
 References: <20260922-h616-pwm-v8-v10-0-dccebbe1aabf@gmail.com>
 In-Reply-To: <20260922-h616-pwm-v8-v10-0-dccebbe1aabf@gmail.com>
 To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
@@ -93,96 +92,87 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>,
  bigunclemax@gmail.com, linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
- James Hilliard <james.hilliard1@gmail.com>, 
- Conor Dooley <conor.dooley@microchip.com>
+ James Hilliard <james.hilliard1@gmail.com>
 X-Mailer: b4 0.15.2
 
 From: Richard Genoud <richard.genoud@bootlin.com>
 
-The Allwinner H616 PWM block differs from the A10 and H6 blocks, but it
-uses the same input clocks as H6, so extend the existing Allwinner PWM
-binding.
+The H616 has a PWM controller that can provide PWM signals, but also
+plain clocks.
 
-The block has six channels that can generate PWM waveforms. Each channel
-also has a bypass that turns its output into a clock suitable for consumers
-such as the integrated X-Powers AC200 or AC300 Ethernet PHY.
+Add the PWM controller node and pins in the device tree.
 
-Require #clock-cells for H616 because the bypass clocks are part of its
-provider interface, while continuing to disallow the property for the older
-variants.
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
- .../bindings/pwm/allwinner,sun4i-a10-pwm.yaml      | 33 +++++++++++++++++++++-
- 1 file changed, 32 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi | 47 ++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.yaml b/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.yaml
-index 1197858e431f..3b1819c8630c 100644
---- a/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.yaml
-+++ b/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.yaml
-@@ -14,6 +14,13 @@ properties:
-   "#pwm-cells":
-     const: 3
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
+index 1598e86259ab..90fe56a1d3cd 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
+@@ -281,6 +281,17 @@ watchdog: watchdog@30090a0 {
+ 			clocks = <&osc24M>;
+ 		};
  
-+  "#clock-cells":
-+    const: 1
-+    description:
-+      The cell selects the PWM channel whose hardware bypass path is exported
-+      as a clock. Its rate follows the selected shared pair source and divider;
-+      the PWM period, duty-cycle and polarity logic is bypassed.
++		pwm: pwm@300a000 {
++			compatible = "allwinner,sun50i-h616-pwm";
++			reg = <0x0300a000 0x400>;
++			clocks = <&osc24M>, <&ccu CLK_BUS_PWM>;
++			clock-names = "mod", "bus";
++			resets = <&ccu RST_BUS_PWM>;
++			#pwm-cells = <3>;
++			#clock-cells = <1>;
++			status = "disabled";
++		};
 +
-   compatible:
-     oneOf:
-       - const: allwinner,sun4i-a10-pwm
-@@ -36,6 +43,7 @@ properties:
-           - const: allwinner,sun50i-h5-pwm
-           - const: allwinner,sun5i-a13-pwm
-       - const: allwinner,sun50i-h6-pwm
-+      - const: allwinner,sun50i-h616-pwm
+ 		pio: pinctrl@300b000 {
+ 			compatible = "allwinner,sun50i-h616-pinctrl";
+ 			reg = <0x0300b000 0x400>;
+@@ -385,6 +396,42 @@ nand_rb1_pin: nand-rb1-pin {
+ 				bias-pull-up;
+ 			};
  
-   reg:
-     maxItems: 1
-@@ -62,7 +70,9 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: allwinner,sun50i-h6-pwm
-+            enum:
-+              - allwinner,sun50i-h6-pwm
-+              - allwinner,sun50i-h616-pwm
- 
-     then:
-       properties:
-@@ -83,6 +93,27 @@ allOf:
-         clocks:
-           maxItems: 1
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: allwinner,sun50i-h616-pwm
++			/omit-if-no-ref/
++			pwm0_pin: pwm0-pin {
++				pins = "PD28";
++				function = "pwm0";
++			};
 +
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
++			/omit-if-no-ref/
++			pwm1_pin: pwm1-pin {
++				pins = "PG19";
++				function = "pwm1";
++			};
 +
-+        clock-names:
-+          minItems: 2
++			/omit-if-no-ref/
++			pwm2_pin: pwm2-pin {
++				pins = "PH2";
++				function = "pwm2";
++			};
 +
-+      required:
-+        - "#clock-cells"
++			/omit-if-no-ref/
++			pwm3_pin: pwm3-pin {
++				pins = "PH0";
++				function = "pwm3";
++			};
 +
-+    else:
-+      properties:
-+        "#clock-cells": false
++			/omit-if-no-ref/
++			pwm4_pin: pwm4-pin {
++				pins = "PI14";
++				function = "pwm4";
++			};
 +
- required:
-   - compatible
-   - reg
++			/omit-if-no-ref/
++			pwm5_pin: pwm5-pin {
++				pins = "PA12";
++				function = "pwm5";
++			};
++
+ 			/omit-if-no-ref/
+ 			spi0_pins: spi0-pins {
+ 				pins = "PC0", "PC2", "PC4";
 
 -- 
 2.53.0
