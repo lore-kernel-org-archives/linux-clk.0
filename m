@@ -1,44 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8BC530DFF;
-	Wed, 23 Sep 2026 18:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AA1495504;
+	Wed, 23 Sep 2026 18:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790188856; cv=none; b=l4mvDeU92BgZ8pAVMEui6eFjuJdahxk4vdX5MSBa0XLC342/JpaD4FcTrym/Q4N+PRfVx6seA0E//Zx8HQqmBgkAVye+Vdpm9pdf5LkBg6gmLTL0yergXYZ1Dx4gI5aw+xCMItnSGAdB0XiVVUFei8NYj6QpxJiO1+0ymkj8VaE=
+	t=1790188926; cv=none; b=qNKtL7b3EGZqBjLTw8ld+UOuT898Wq7jmnFMLbbRjidIGj2E3cvviAUu7phIOr0HRBC4NeHw7iiLRYYUsuWt1Z1bXUbl6xnHWIpFbK5M8naqaBSbuIHVrH/J4/C90UKchcy5F7tzsPEuP2m1xgqhCvBxbaG2MpnCWkUCVW9VLB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790188856; c=relaxed/simple;
-	bh=fufgafUjt5ss16o0es0hiwBt60ZX7JQfj3DkvX16e0M=;
+	s=arc-20240116; t=1790188926; c=relaxed/simple;
+	bh=oq9m92o6w9sZRBrmawFn+n0rCYT5VmXenCBOW43xTeU=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=t4CWFzNtyKFIzSwTsU6smL4z4Af14iy+7/G6Vy+fEG47ugYSQuBaKinqRWt8YHus5aPVYwsB41JMtSrGaTL/Ewbl9fag19BJA+fyb51FIc1l4smemroEfOjwsDNNsr1i7iGm2bVxXTPtqxqnalFqcMFpP2Np0RGotU65U939TwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PTxzIYJw; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=GWYsHEoF86i/T9b9jY5cIycf9gR0BFu4rjSOCULnqWC7lEP1IKEZesWr7vc0oZIhITI/5p21SjNhOa+5ri8jl8Jab0vl+AnVAGYpQlU1fqBaPRIRJDNfRJVILrGYuVs8THbtEQFbPDk0+bunGXgCiO6RVfc2ezByQRaZflWuOPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mO+b/PQ9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PTxzIYJw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BA291F0089E;
-	Wed, 23 Sep 2026 18:40:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mO+b/PQ9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82F1C1F000FF;
+	Wed, 23 Sep 2026 18:42:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790188851;
-	bh=S/W2Po2BbF5aq98WhvE/IfdysqS3aPARdILD9rgtljQ=;
+	s=k20260515; t=1790188925;
+	bh=CLXnsVVcSPkhF7h8dHKlhuo4Ss7UfHsEXXx8kfXdW60=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=PTxzIYJw9OCK0Dbv1BWI/GJin4ZmTvnbH+9ja8Y0VBEW22iMifb5qzEEo0VI4Eqmv
-	 nhbQ06WCWtnoOnwm93dYH44E5AGzTGq7CLgIUvy0am1tpnHhUoZhHhPz+g0aG9Cixd
-	 IPKHPZWErBK3nzrPR+vOg8KnzqLiBXiBbnW6Avz2O/P1rItyD7KtX2DJpkBRhW03J+
-	 s+uOn1HHXjc27M776anNxxZ8Cp3ywXdK9otBwJOiZoy5ZLaAWbDb2xK4eOxx/YX0j6
-	 glIBwBXDmnfjpGE69Zwez+6TH2KQRsCBbVVcUApcN/m9lFv+Fad2Z6qy3CdHOL+WqP
-	 G+CsMSblha3MQ==
+	b=mO+b/PQ9oPMQT4wsPcASUhT4kB8nXrtcIXzwH/3H44bGB8Zvo4xK4CeXV/TGM/lyO
+	 xhDxN7b1gJ6tcOtA6PqSIsVgPl32/o1sePi4ckUaFuIsR5Vtvs8qqS3jIHC3NVIqKx
+	 faw0ZkPZkmdQc+rQQim0p2K7WRVVH80jyv47gsPFgCXDKesDEgQJs89khUht2hdneN
+	 CSoEw5Kj4QPrwWgRgAjEH+h4RklNFvm6Wzx0DRkS4PmMtv1GuhQmNJd4/eD9AeoiHJ
+	 hamzIBscKJbnmPKJXC6gjAIZV3JQ7HSXAKUSYwDnL3aIuHCWJ3Lb7iXSCBXuUPcP4e
+	 onbgysd0Mcpfw==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v12 09/12] clk: zte: Introduce a driver for zx297520v3
- matrix clocks
+Subject: Re: [PATCH v12 07/12] clk: zte: Add zx PLL support infrastructure
 Reply-To: sashiko-reviews@lists.linux.dev
 To: =?utf-8?b?U3RlZmFuIETDtnNpbmdlcg==?= <stefandoesinger@gmail.com>
-Cc: lee@kernel.org, vkoul@kernel.org, linux-phy@lists.infradead.org, neil.armstrong@linaro.org, linux-clk@vger.kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, mfd@lists.linux.dev, robh@kernel.org, olteanv@gmail.com
-In-Reply-To: <20260923-zx29clk-v12-9-9c243796b6d2@gmail.com>
+Cc: robh@kernel.org, devicetree@vger.kernel.org, linux-phy@lists.infradead.org, olteanv@gmail.com, lee@kernel.org, linux-clk@vger.kernel.org, mfd@lists.linux.dev, conor+dt@kernel.org, neil.armstrong@linaro.org, vkoul@kernel.org
+In-Reply-To: <20260923-zx29clk-v12-7-9c243796b6d2@gmail.com>
 References: <20260923-zx29clk-v12-0-9c243796b6d2@gmail.com>
- <20260923-zx29clk-v12-9-9c243796b6d2@gmail.com>
+ <20260923-zx29clk-v12-7-9c243796b6d2@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 23 Sep 2026 18:40:50 +0000
-Message-Id: <20260923184051.0BA291F0089E@smtp.kernel.org>
+Date: Wed, 23 Sep 2026 18:42:04 +0000
+Message-Id: <20260923184204.82F1C1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,54 +46,93 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] clk: zte: missing DT export for ZX297520V3_RFFE_WCLK
+- [Medium] clk: zte: set_rate rejects valid rates due to strict VCO bounds =
+check
 --
 
-commit 4d2c5025ee60ae5cdf0e636caff70b2cdc8a3e60
+commit 03d27f14b3d2dbba9c34e624628df45495020947
 Author: Stefan D=C3=B6singer <stefandoesinger@gmail.com>
 
-clk: zte: Introduce a driver for zx297520v3 matrix clocks
+clk: zte: Add zx PLL support infrastructure
 
-This clock controller controls high speed devices: CPU, DMA, RAM, SDIO,
-Ethernet. The only non-clock, non-reset registers I have spotted here
-are hardware spinlocks.
+This patch adds code to decode and program PLL settings on ZTE's
+zx297520v3 SoC.
 
-> diff --git a/drivers/clk/zte/clk-zx297520v3.c b/drivers/clk/zte/clk-zx297=
-520v3.c
-> index 68bfeab84d745..92b56571b1556 100644
-> --- a/drivers/clk/zte/clk-zx297520v3.c
-> +++ b/drivers/clk/zte/clk-zx297520v3.c
-
+> diff --git a/drivers/clk/zte/pll-zx.c b/drivers/clk/zte/pll-zx.c
+> index fc76c6524a163..d3687495d06ce 100644
+> --- a/drivers/clk/zte/pll-zx.c
+> +++ b/drivers/clk/zte/pll-zx.c
 [ ... ]
-
-> +static const unsigned int zx297520v3_matrix_exports[] =3D {
-> +	[ZX297520V3_SYS_TIMER_WCLK] =3D		ZX_CLK_SYS_TIMER_WCLK,
-> +	[ZX297520V3_CPU_WCLK] =3D			ZX_CLK_CPU_WCLK,
-
+> +static u32 zx29_pll_calc_values(const struct zx29_clk_pll *pll, unsigned=
+ long parent_rate,
+> +				unsigned long rate, unsigned long min_rate, unsigned long max_rate)
+> +{
 [ ... ]
-
-> +	[ZX297520V3_PDCFG_WCLK] =3D		ZX_CLK_PDCFG_WCLK,
-> +	[ZX297520V3_PDCFG_PCLK] =3D		ZX_CLK_PDCFG_PCLK,
-> +	[ZX297520V3_SSC_WCLK] =3D			ZX_CLK_SSC_WCLK,
-> +	[ZX297520V3_SSC_PCLK] =3D			ZX_CLK_SSC_PCLK,
+> +	for (j =3D 1; j <=3D postdiv2_max; j++) {
+> +		for (i =3D 1; i <=3D postdiv1_max; i++) {
+> +			u64 vco =3D (u64)rate * i * j;
+> +			unsigned long out;
+> +
+> +			if (vco > ZX29_PLL_VCO_MAX_FREQ || vco < ZX29_PLL_VCO_MIN_FREQ)
+> +				continue;
 
 [Severity: Medium]
-Is the mapping for ZX297520V3_RFFE_WCLK intentionally missing from
-zx297520v3_matrix_exports?
+Will this strict bounds check reject valid rates during zx29_pll_set_rate()?
 
-Because this mapping is omitted, any device querying for the RFFE work clock
-via the device tree will be silently mapped to index 0. This index correspo=
-nds
-to the ZX_CLK_MATRIX_OSC26M_D4 clock rather than the intended rffe-wclk.
+If the requested target rate maps to a VCO frequency at the very bottom edg=
+e of
+the valid bounds (e.g. exactly 900 MHz), the rational approximation for the
+dividers could produce an actual VCO frequency just below 900 MHz.
 
-Could this incorrect mapping break the LTE radio hardware and potentially
-disrupt actual consumers of the 6.5 MHz matrix-osc26m-d4 clock when a driver
-probes and operates on the hardware block?
+When zx29_pll_determine_rate() returns this slightly truncated output rate,=
+ it
+is then passed to zx29_pll_set_rate() which passes it back to this function.
 
-> +	[ZX297520V3_AXI_WCLK] =3D			ZX_CLK_AXI_WCLK,
-> +	[ZX297520V3_GMAC_WCLK] =3D		ZX_CLK_GMAC_WCLK,
-> +	[ZX297520V3_GMAC_PCLK] =3D		ZX_CLK_GMAC_PCLK,
+At that point, the recalculated VCO will fall slightly below
+ZX29_PLL_VCO_MIN_FREQ and be strictly rejected.
+
+[ ... ]
+> +static int zx29_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			     unsigned long parent_rate)
+> +{
+> +	struct zx29_clk_pll *pll =3D to_zx29_clk_pll(hw);
+> +	u32 setting;
+> +
+> +	/*
+> +	 * TODO: Implement gradual PLL rate change. PLLs can be changed while t=
+hey are running and
+> +	 * downstream hardware is generally fine with that. The exception is DR=
+AM, which reads
+> +	 * incorrect values if changed too fast.
+> +	 *
+> +	 * Changing the mpll rate is potentially useful for over/underclocking.=
+ Gating mpll is
+> +	 * unrealistic because too many devices depend on it.
+> +	 */
+> +	setting =3D zx29_pll_calc_values(pll, parent_rate, rate, rate, rate);
+
+[Severity: Medium]
+Since zx29_pll_calc_values() can fail due to the strict VCO bounds check, d=
+oes
+this cause zx29_pll_set_rate() to unexpectedly return -EINVAL for a rate th=
+at
+was just validated by zx29_pll_determine_rate()?
+
+This breaks the Common Clock Framework (CCF) contract, which expects set_ra=
+te()
+to succeed when passed a rate validated by determine_rate(). Could this cau=
+se
+regressions through unexpected driver probe failures?
+
+> +	if (!setting)
+> +		return -EINVAL;
+> +
+> +	dev_dbg(pll->dev, "%s: Setting new configuration: 0x%08x\n", clk_hw_get=
+_name(hw), setting);
+> +
+> +	return regmap_update_bits(pll->map, pll->reg, 0x00ffffff, setting);
+> +}
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260923-zx29clk-v1=
-2-0-9c243796b6d2@gmail.com?part=3D9
+2-0-9c243796b6d2@gmail.com?part=3D7
