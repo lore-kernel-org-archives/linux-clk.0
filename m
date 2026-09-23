@@ -1,153 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6405B3B2D04;
-	Wed, 23 Sep 2026 09:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12CE450409;
+	Wed, 23 Sep 2026 09:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790154747; cv=none; b=YlyWOd8fMB5eAdrvWaDlfHIfeexT7ezvqdMP2icT/EqfxxKLi50SuaHPvRzRrFkhNh+gccvyEGSCoHICjn3Zfvheehd5w2tLMpzIGQMqzJxLapV8atL5UFLeiw9TjRpFu9Pon7U+i9vEkrupOSSV6UhumJW4JPeVSNs26s++B60=
+	t=1790157011; cv=none; b=TetpyU+nprawLamFfRvGiFr9ZfgljliIwKdE/KA5JOhjmf6iRPqdI8KurzlOagcOn1QPJ/lBxRgfrOHipZwBa7eUvrXJgOCwKsOMvkYnXId8b5pCimo2sd1ay1wtOa5BPAEW0JPWHEFyCyvIKiomeHT8SaiuhP+8uchaJaEp6G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790154747; c=relaxed/simple;
-	bh=0tTdfhEMY/idwlv+Ev6plwh4HQeV4Piw+M0FylkgFoM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e6cLtV3TT9yUrsHCoxgg4wLjgBY53a2L81qzdhEdccdW2vl9rX5gZ/shvVjffT2FZMxt68Twrd7AeYPMq64f8hayRsmEL2fr0o2DA5WvZa3epMbVQt0g38d1Q9bvzcZiWfWloJotvrQfkxmJkjhn+gpFjedUdfivUK5PVDWJl1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 213471F000FF;
-	Wed, 23 Sep 2026 09:12:23 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Stephen Boyd <sboyd@kernel.org>,
+	s=arc-20240116; t=1790157011; c=relaxed/simple;
+	bh=2DEptU/BCQCCbP+o7ogqK7gMveBuRg0Fat/2M40Jruw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ddXmwxh0hx3AMKqsapJzyitehSRacGXEtrdkbnlZ2bdiqjUWVKiVPlKrz+E4Vdx6SZTPPCVRH7z0BOHUCB0/iRo9rHhgKC5VxQysLkDXFrSBa6psRtRv9smrFF2HjPZez0YouQSwEMHlFxPFgY1QSaFaQHUmZRtZI6wlx/tuusA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVw8v3yP; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVw8v3yP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A3C41F00893;
+	Wed, 23 Sep 2026 09:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790157010;
+	bh=Dpkfxbn6T1G7p7lIRLe3ir/ZubE3QQzEvQyVg576vgM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=mVw8v3yPtxTe3gax/J4dXiqC5bzIurnEJOX9pazK+We0g3pQgbZaKiGeiyRfinSTG
+	 yhPzkAUOuMf07sUmVY3NhJU9iLpUGCJjNdvSFgQUOBc7/o/1FTB+yQD9eO8gjzJmP4
+	 P6isekAlyeLIRpCw+UuawTpbJbpVJ5QxIMjRtf0Lwpb6dFOUpSKAQ58zb57+as7UjJ
+	 TsDjfwuEUro+uPUL49Ab5ziiEejqkSPrKXk9RxPkWZLycjFp6zMl9iWKOFkp4INr5a
+	 N3XWgeK3TYz2qVkUrrCWZprDaa8+/h4A4ELP9/Pa+C4HBC0bP23oEvwOhcpxsIwfFW
+	 ln3RnwM2zwQSA==
+Date: Wed, 23 Sep 2026 10:50:03 +0100
+From: Lee Jones <lee@kernel.org>
+To: Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Brian Masney <bmasney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Russell King <linux@armlinux.org.uk>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: rzg2l: Fix internal clock names
-Date: Wed, 23 Sep 2026 11:12:18 +0200
-Message-ID: <8254a5b1dccf33252042a366a3839a70020d6487.1790154594.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	Manivannan Sadhasivam <mani@kernel.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	mfd@lists.linux.dev
+Subject: Re: [PATCH v11 05/12] mfd: zx297520v3: Add a clock and reset MFD
+ driver
+Message-ID: <20260923095003.GB3864833@google.com>
+References: <20260826-zx29clk-v11-0-f8ad59c6426c@gmail.com>
+ <20260910161711.GK1051768@google.com>
+ <x9tzyTnKRAOyrdtSGnka0g@gmail.com>
+ <lIjduhk6Sb-yyUCQAY-CKQ@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <lIjduhk6Sb-yyUCQAY-CKQ@gmail.com>
 
-By convention, internal clock names start with a dot and use lower-case.
-Fix the outliers.
+On Thu, 17 Sep 2026, Stefan Dösinger wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk for v7.4.
+> Hi Lee,
+> 
+> Am Donnerstag, 10. September 2026, 22:14:54 Ostafrikanische Zeit schrieben 
+> Sie:
+> > Hi Lee,
+> > 
+> > Thanks again for your review!
+> 
+> This is a ping regarding my reply[0] to your review from last week. Do you 
+> have any comments on my responses?
 
- drivers/clk/renesas/r9a07g043-cpg.c | 12 ++++++------
- drivers/clk/renesas/r9a07g044-cpg.c | 12 ++++++------
- drivers/clk/renesas/r9a08g045-cpg.c |  6 +++---
- 3 files changed, 15 insertions(+), 15 deletions(-)
+Nope. =:-)
 
-diff --git a/drivers/clk/renesas/r9a07g043-cpg.c b/drivers/clk/renesas/r9a07g043-cpg.c
-index 59d6ee2e888fa706..f7e32abc5d0b3109 100644
---- a/drivers/clk/renesas/r9a07g043-cpg.c
-+++ b/drivers/clk/renesas/r9a07g043-cpg.c
-@@ -119,7 +119,7 @@ static const struct cpg_core_clk r9a07g043_core_clks[] __initconst = {
- 	DEF_FIXED(".pll3_400", CLK_PLL3_400, CLK_PLL3, 1, 4),
- 	DEF_FIXED(".pll3_533", CLK_PLL3_533, CLK_PLL3, 1, 3),
- 	DEF_MUX_RO(".sel_pll3_3", CLK_SEL_PLL3_3, SEL_PLL3_3, sel_pll3_3),
--	DEF_DIV("divpl3c", CLK_DIV_PLL3_C, CLK_SEL_PLL3_3, DIVPL3C, dtable_1_32),
-+	DEF_DIV(".divpl3c", CLK_DIV_PLL3_C, CLK_SEL_PLL3_3, DIVPL3C, dtable_1_32),
- #ifdef CONFIG_ARM64
- 	DEF_FIXED(".pll5", CLK_PLL5, CLK_EXTAL, 125, 1),
- 	DEF_FIXED(".pll5_500", CLK_PLL5_500, CLK_PLL5, 1, 6),
-@@ -135,7 +135,7 @@ static const struct cpg_core_clk r9a07g043_core_clks[] __initconst = {
- 	DEF_FIXED("P0_DIV2", R9A07G043_CLK_P0_DIV2, R9A07G043_CLK_P0, 1, 2),
- 	DEF_FIXED("TSU", R9A07G043_CLK_TSU, CLK_PLL2_DIV2_10, 1, 1),
- 	DEF_DIV("P1", R9A07G043_CLK_P1, CLK_PLL3_DIV2_4, DIVPL3B, dtable_1_32),
--	DEF_FIXED("P1_DIV2", CLK_P1_DIV2, R9A07G043_CLK_P1, 1, 2),
-+	DEF_FIXED(".p1_div2", CLK_P1_DIV2, R9A07G043_CLK_P1, 1, 2),
- 	DEF_DIV("P2", R9A07G043_CLK_P2, CLK_PLL3_DIV2_4_2, DIVPL3A, dtable_1_32),
- 	DEF_FIXED("M0", R9A07G043_CLK_M0, CLK_PLL3_DIV2_4, 1, 1),
- 	DEF_FIXED("ZT", R9A07G043_CLK_ZT, CLK_PLL3_DIV2_4_2, 1, 1),
-@@ -151,12 +151,12 @@ static const struct cpg_core_clk r9a07g043_core_clks[] __initconst = {
- 		   mtable_sdhi, 0, rzg2l_cpg_sd_clk_mux_notifier),
- 	DEF_SD_MUX("SD1", R9A07G043_CLK_SD1, SEL_SDHI1, SEL_SDHI1_STS, sel_sdhi,
- 		   mtable_sdhi, 0, rzg2l_cpg_sd_clk_mux_notifier),
--	DEF_FIXED("SD0_DIV4", CLK_SD0_DIV4, R9A07G043_CLK_SD0, 1, 4),
--	DEF_FIXED("SD1_DIV4", CLK_SD1_DIV4, R9A07G043_CLK_SD1, 1, 4),
-+	DEF_FIXED(".sd0_div4", CLK_SD0_DIV4, R9A07G043_CLK_SD0, 1, 4),
-+	DEF_FIXED(".sd1_div4", CLK_SD1_DIV4, R9A07G043_CLK_SD1, 1, 4),
- #ifdef CONFIG_ARM64
- 	DEF_FIXED("M2", R9A07G043_CLK_M2, CLK_PLL3_533, 1, 2),
--	DEF_FIXED("M2_DIV2", CLK_M2_DIV2, R9A07G043_CLK_M2, 1, 2),
--	DEF_DSI_DIV("DSI_DIV", CLK_DSI_DIV, CLK_PLL5_FOUTPOSTDIV, CLK_SET_RATE_PARENT),
-+	DEF_FIXED(".m2_div2", CLK_M2_DIV2, R9A07G043_CLK_M2, 1, 2),
-+	DEF_DSI_DIV(".dsi_div", CLK_DSI_DIV, CLK_PLL5_FOUTPOSTDIV, CLK_SET_RATE_PARENT),
- 	DEF_FIXED("M3", R9A07G043_CLK_M3, CLK_DSI_DIV, 1, 1),
- #endif
- };
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 913cca6dd46fc52c..3b6d0bd1ec134ba8 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -187,7 +187,7 @@ static const struct {
- 		DEF_FIXED(".pll3_div2_4", CLK_PLL3_DIV2_4, CLK_PLL3_DIV2, 1, 4),
- 		DEF_FIXED(".pll3_div2_4_2", CLK_PLL3_DIV2_4_2, CLK_PLL3_DIV2_4, 1, 2),
- 		DEF_MUX_RO(".sel_pll3_3", CLK_SEL_PLL3_3, SEL_PLL3_3, sel_pll3_3),
--		DEF_DIV("divpl3c", CLK_DIV_PLL3_C, CLK_SEL_PLL3_3, DIVPL3C, dtable_1_32),
-+		DEF_DIV(".divpl3c", CLK_DIV_PLL3_C, CLK_SEL_PLL3_3, DIVPL3C, dtable_1_32),
- 
- 		DEF_FIXED(".pll5_250", CLK_PLL5_250, CLK_PLL5_FOUT3, 1, 2),
- 		DEF_FIXED(".pll6_250", CLK_PLL6_250, CLK_PLL6, 1, 2),
-@@ -204,7 +204,7 @@ static const struct {
- 		DEF_FIXED("P0_DIV2", R9A07G044_CLK_P0_DIV2, R9A07G044_CLK_P0, 1, 2),
- 		DEF_FIXED("TSU", R9A07G044_CLK_TSU, CLK_PLL2_DIV2_10, 1, 1),
- 		DEF_DIV("P1", R9A07G044_CLK_P1, CLK_PLL3_DIV2_4, DIVPL3B, dtable_1_32),
--		DEF_FIXED("P1_DIV2", CLK_P1_DIV2, R9A07G044_CLK_P1, 1, 2),
-+		DEF_FIXED(".p1_div2", CLK_P1_DIV2, R9A07G044_CLK_P1, 1, 2),
- 		DEF_DIV("P2", R9A07G044_CLK_P2, CLK_PLL3_DIV2_4_2, DIVPL3A, dtable_1_32),
- 		DEF_FIXED("M0", R9A07G044_CLK_M0, CLK_PLL3_DIV2_4, 1, 1),
- 		DEF_FIXED("ZT", R9A07G044_CLK_ZT, CLK_PLL3_DIV2_4_2, 1, 1),
-@@ -215,13 +215,13 @@ static const struct {
- 			   mtable_sdhi, 0, rzg2l_cpg_sd_clk_mux_notifier),
- 		DEF_SD_MUX("SD1", R9A07G044_CLK_SD1, SEL_SDHI1, SEL_SDHI1_STS, sel_sdhi,
- 			   mtable_sdhi, 0, rzg2l_cpg_sd_clk_mux_notifier),
--		DEF_FIXED("SD0_DIV4", CLK_SD0_DIV4, R9A07G044_CLK_SD0, 1, 4),
--		DEF_FIXED("SD1_DIV4", CLK_SD1_DIV4, R9A07G044_CLK_SD1, 1, 4),
-+		DEF_FIXED(".sd0_div4", CLK_SD0_DIV4, R9A07G044_CLK_SD0, 1, 4),
-+		DEF_FIXED(".sd1_div4", CLK_SD1_DIV4, R9A07G044_CLK_SD1, 1, 4),
- 		DEF_DIV("G", R9A07G044_CLK_G, CLK_SEL_GPU2, DIVGPU, dtable_1_8),
- 		DEF_FIXED("M1", R9A07G044_CLK_M1, CLK_PLL5_FOUTPOSTDIV, 1, 1),
- 		DEF_FIXED("M2", R9A07G044_CLK_M2, CLK_PLL3_533, 1, 2),
--		DEF_FIXED("M2_DIV2", CLK_M2_DIV2, R9A07G044_CLK_M2, 1, 2),
--		DEF_DSI_DIV("DSI_DIV", CLK_DSI_DIV, CLK_SEL_PLL5_4, CLK_SET_RATE_PARENT),
-+		DEF_FIXED(".m2_div2", CLK_M2_DIV2, R9A07G044_CLK_M2, 1, 2),
-+		DEF_DSI_DIV(".dsi_div", CLK_DSI_DIV, CLK_SEL_PLL5_4, CLK_SET_RATE_PARENT),
- 		DEF_FIXED("M3", R9A07G044_CLK_M3, CLK_DSI_DIV, 1, 1),
- 		DEF_FIXED("M4", R9A07G044_CLK_M4, CLK_DIV_DSI_LPCLK, 1, 1),
- 	},
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index ea2a6a71aebd71c2..4e1cd3177ecd8615 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -167,14 +167,14 @@ static const struct cpg_core_clk r9a08g045_core_clks[] __initconst = {
- 	DEF_FIXED("M0", R9A08G045_CLK_M0, CLK_PLL3_DIV2_4, 1, 1),
- 	DEF_G3S_DIV("P1", R9A08G045_CLK_P1, CLK_PLL3_DIV2_4, DIVPL3A, G3S_DIVPL3A_STS,
- 		    dtable_1_32, 0, 0, 0, NULL),
--	DEF_FIXED("P1_DIV2", CLK_P1_DIV2, R9A08G045_CLK_P1, 1, 2),
-+	DEF_FIXED(".p1_div2", CLK_P1_DIV2, R9A08G045_CLK_P1, 1, 2),
- 	DEF_G3S_DIV("P2", R9A08G045_CLK_P2, CLK_PLL3_DIV2_8, DIVPL3B, G3S_DIVPL3B_STS,
- 		    dtable_1_32, 0, 0, 0, NULL),
- 	DEF_G3S_DIV("P3", R9A08G045_CLK_P3, CLK_PLL3_DIV2_4, DIVPL3C, G3S_DIVPL3C_STS,
- 		    dtable_1_32, 0, 0, 0, NULL),
--	DEF_FIXED("P3_DIV2", CLK_P3_DIV2, R9A08G045_CLK_P3, 1, 2),
-+	DEF_FIXED(".p3_div2", CLK_P3_DIV2, R9A08G045_CLK_P3, 1, 2),
- 	DEF_FIXED("P4", R9A08G045_CLK_P4, CLK_PLL2_DIV2, 1, 5),
--	DEF_FIXED("P4_DIV2", CLK_P4_DIV2, R9A08G045_CLK_P4, 1, 2),
-+	DEF_FIXED(".p4_div2", CLK_P4_DIV2, R9A08G045_CLK_P4, 1, 2),
- 	DEF_FIXED("P5", R9A08G045_CLK_P5, CLK_PLL2_DIV2, 1, 4),
- 	DEF_FIXED("ZT", R9A08G045_CLK_ZT, CLK_PLL3_DIV2_8, 1, 1),
- 	DEF_FIXED("S0", R9A08G045_CLK_S0, CLK_SEL_PLL4, 1, 2),
 -- 
-2.43.0
-
+Lee Jones
