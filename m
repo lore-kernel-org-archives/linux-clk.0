@@ -1,433 +1,179 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4932495050;
-	Wed, 23 Sep 2026 11:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989233382FC;
+	Wed, 23 Sep 2026 11:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790162145; cv=none; b=WpxCdQ1w72DWnjhL3/66FR2pB7SbWCVJSHO34i6LNsMqFRJNV2Hq74Xnv1JzvzkI3eNeAkYA3MdTSFIJFlCEroEGo79eZU+p+7jHSjZ7AEu2ChNp6wnrNgmrLQybw0XssfpdgcSt9PxFdp554h7KniEHWuSP6/F+x5qr40ur6aI=
+	t=1790162674; cv=none; b=NTd4OHn6SHkZ931//TO3kRB79fPPKQqGtTKKE84JN8JgiHjuKBTEUMbRRaXaL5jA1dKB4CaPBvkRIZiBC5PhJaAOWdNlhumGoLIiM+9rJujtcthRwSMzSlPv7DthV9tvxm5qymo1rPgncuTdXO7ytIrqAxB8vS9DK3jRUgeEOKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790162145; c=relaxed/simple;
-	bh=9V/M4QuDb1aTEKAcJYylTQN3hv5JlhRhajwreFSaOrk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gm0ejJh2bw+gzGuCbzZ46qqClwRTRHaDfKWxSKmSnUiQyUCJ8g5f99+lQl5JUgEut1b4GMBXijZXwS3ldJIF/BF5TkSEFAflyJuYlQSBgtpppDTfC3GWn7MQx1iC0/9zEbI4NgUjV359n47A1gpgSTy5T1Cjg1WdqkuZyAdoOl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AP128hEA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1790162674; c=relaxed/simple;
+	bh=TEEwf0OK3ASPSQ/u04eQKbrq0RLcv3gmB/qHYc3605M=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=CPCeTbKeKY7aBhHG5ILKr1hNjqcSpfxRoT1cVT8VHI4+oR//yV/haeOg9dEJBOOGBgCwR6yLU2fNSarl6ZUkR8DMSKo20taEu9Pq8ol7eaJNGs3syGdLE/E2ypGzfyI1eW9uYgqo5KwBmIbqGRgG+zbTi30Fv35/5Wci3bsyNbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KyJ8rRaI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AP128hEA"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7420EC2BCFA;
-	Wed, 23 Sep 2026 11:15:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1790162145;
-	bh=9V/M4QuDb1aTEKAcJYylTQN3hv5JlhRhajwreFSaOrk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=AP128hEAVEZfnKD89oVHKDOlVxOM2sjMKUyKyDCiPZh6q5F7Llj5OqjgmIiSITvth
-	 4SnHV3vktJpYDvnzxexU8FSEYipROctIhtrkwntmc0a2L2/SYZW+Uw1jZucgahdzb6
-	 nGAr0BQQH7IReZoDb01IaAZpGsdOFJhsr2paNGtOmBSjTDP48wYWqe+fAFVhvK8ebW
-	 bvC6HzOGjd9mVz73/ixnsC1L2xFZ2D+JGXWFGqb+4D1d5sViGzrVl111oUfdLcIz1I
-	 iDOlXmhMk8IakEjGoOIuvesTtB9+Ytygk8pF/aP7Q2UDK6qqDfv535JZxRzlJolGhH
-	 CH5xegmVuJh6w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56455C9830B;
-	Wed, 23 Sep 2026 11:15:45 +0000 (UTC)
-From: Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>
-Date: Wed, 23 Sep 2026 19:14:49 +0800
-Subject: [PATCH RFC 3/3] clk: meson: t7: Model PLL pre-divider as a divider
- clock
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KyJ8rRaI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 925B71F00893;
+	Wed, 23 Sep 2026 11:24:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790162672;
+	bh=J9g2a92wrndbH9rSV6qvGEKxGUNXcugHf6a+Io4Iz8E=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=KyJ8rRaILNB9t8PP3PtkE1Rg/mUv+22FzJBP2/s2DM/QQgO9rcw6ZVTaI45/Rvx8S
+	 CShvtx94RNl7mBFLzM+u5VmLjpX5jf6R0kHeyJVc1XdE/18Zw3Y6uGz/VljEXmQ0z1
+	 hn3FNbdFyqvt/5iBQVRP7zeREDztcINP4MLpKvstPOZtWccYCY/+vG3m0NUh3bwwp1
+	 N68fSlPLtI4q1W/5+ixgndvUEPaDG3wP5+QJaJLmL2Y/7I7J/LgaySl6bJvQWoziSF
+	 Gis2eTOXqphk/GMbT6eZ0aqWgegMNId+NtFKvetgr0AHlmoU+acT1NE3iEcgrYl5ox
+	 2DTx3o9qgxeeg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH RFC 1/3] clk: meson: pll: Remove the dedicated n
+ parameter
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Jian Hu" <jian.hu@amlogic.com>
+Cc: devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org, neil.armstrong@linaro.org, linux-amlogic@lists.infradead.org
+In-Reply-To: <20260923-meson_refactor_n-v1-1-3a8ce27121a2@amlogic.com>
+References: <20260923-meson_refactor_n-v1-0-3a8ce27121a2@amlogic.com>
+ <20260923-meson_refactor_n-v1-1-3a8ce27121a2@amlogic.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 23 Sep 2026 11:24:31 +0000
+Message-Id: <20260923112431.925B71F00893@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260923-meson_refactor_n-v1-3-3a8ce27121a2@amlogic.com>
-References: <20260923-meson_refactor_n-v1-0-3a8ce27121a2@amlogic.com>
-In-Reply-To: <20260923-meson_refactor_n-v1-0-3a8ce27121a2@amlogic.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Jian Hu <jian.hu@amlogic.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1790162143; l=10156;
- i=jian.hu@amlogic.com; s=20260415; h=from:subject:message-id;
- bh=YqMo5icc69xckYBk4DLB/d4LRHXA7luoRj0+rYDAwok=;
- b=qvttVB6Wt2KwUtggaJdYIPBILVXCd2fyS/FGTvSDgbP/I6xP6IGz7a/ozA7UWV+8gM4OTCg+q
- +TAW7V5swB1Al3I4plkBLDEFqJ7bqjSEhE/oOn/o40mkh1IU/gxtdqw
-X-Developer-Key: i=jian.hu@amlogic.com; a=ed25519;
- pk=zHUE+rNtH9z+Sb8au1/elWknjFQmy5QDVkBoxleuOIA=
-X-Endpoint-Received: by B4 Relay for jian.hu@amlogic.com/20260415 with
- auth_id=735
-X-Original-From: Jian Hu <jian.hu@amlogic.com>
-Reply-To: jian.hu@amlogic.com
 
-From: Jian Hu <jian.hu@amlogic.com>
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+s) to consider:
+- [Critical] clk: meson: struct meson_clk_pll_data removal of 'n' breaks co=
+mpilation
+- [High] clk: meson: pll unconditionally requires range, breaking table-bas=
+ed PLLs
+- [High] clk: meson: external pre-divider violates PLL disable/reset sequen=
+cing
+--
 
-Replace the dedicated PLL pre-divider with a standalone
-divider clock. The PLL DCO now takes the pre-divider clock
-as its parent instead of the input clock directly.
+commit 9a0d9eb075576d244c161f62134109ad2353a8b7
+Author: Jian Hu <jian.hu@amlogic.com>
 
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
----
- drivers/clk/meson/t7-pll.c | 183 ++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 141 insertions(+), 42 deletions(-)
+clk: meson: pll: Remove the dedicated n parameter
 
-diff --git a/drivers/clk/meson/t7-pll.c b/drivers/clk/meson/t7-pll.c
-index 0a622f45fa36..049f0c879c45 100644
---- a/drivers/clk/meson/t7-pll.c
-+++ b/drivers/clk/meson/t7-pll.c
-@@ -71,6 +71,34 @@
- #define MCLK_PLL_CNTL4		0x10
- #define MCLK_PLL_STS		0x14
- 
-+static const struct clk_div_table t7_prediv_div_table[] = {
-+	{ .val = 1, .div = 1 },
-+	{ /* sentinel */ }
-+};
-+
-+static struct clk_regmap t7_gp0_prediv = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = GP0PLL_CTRL0,
-+		.shift = 10,
-+		.width = 5,
-+		.table = t7_prediv_div_table,
-+		/*
-+		 * The hardware reset value is 0. Allow it during clock registration
-+		 * to avoid a warning from the common divider code.
-+		 * set_rate() will program the valid divider value (1).
-+		 */
-+		.flags = CLK_DIVIDER_ALLOW_ZERO,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "gp0_prediv",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "in0",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
- static const struct pll_mult_range t7_media_pll_mult_range = {
- 	.min = 125,
- 	.max = 250,
-@@ -97,11 +125,6 @@ static struct clk_regmap t7_gp0_pll_dco = {
- 			.shift   = 0,
- 			.width   = 8,
- 		},
--		.n = {
--			.reg_off = GP0PLL_CTRL0,
--			.shift   = 10,
--			.width   = 5,
--		},
- 		.l = {
- 			.reg_off = GP0PLL_STS,
- 			.shift   = 31,
-@@ -119,8 +142,8 @@ static struct clk_regmap t7_gp0_pll_dco = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "gp0_pll_dco",
- 		.ops = &meson_clk_pll_ops,
--		.parent_data = &(const struct clk_parent_data) {
--			.fw_name = "in0",
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&t7_gp0_prediv.hw
- 		},
- 		.num_parents = 1,
- 	},
-@@ -159,6 +182,25 @@ static const struct reg_sequence t7_gp1_init_regs[] = {
- 	{ .reg = GP1PLL_CTRL3,  .def = 0x00000000 },
- };
- 
-+static struct clk_regmap t7_gp1_prediv = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = GP1PLL_CTRL0,
-+		.shift = 16,
-+		.width = 5,
-+		.table = t7_prediv_div_table,
-+		/* Same rationale as gp0_prediv. */
-+		.flags = CLK_DIVIDER_ALLOW_ZERO,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "gp1_prediv",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "in0",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
- static struct clk_regmap t7_gp1_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
-@@ -171,11 +213,6 @@ static struct clk_regmap t7_gp1_pll_dco = {
- 			.shift   = 0,
- 			.width   = 8,
- 		},
--		.n = {
--			.reg_off = GP1PLL_CTRL0,
--			.shift   = 16,
--			.width   = 5,
--		},
- 		.l = {
- 			.reg_off = GP1PLL_STS,
- 			.shift   = 31,
-@@ -193,8 +230,8 @@ static struct clk_regmap t7_gp1_pll_dco = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "gp1_pll_dco",
- 		.ops = &meson_clk_pll_ops,
--		.parent_data = &(const struct clk_parent_data) {
--			.fw_name = "in0",
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&t7_gp1_prediv.hw
- 		},
- 		.num_parents = 1,
- 	},
-@@ -227,6 +264,25 @@ static const struct reg_sequence t7_hifi_init_regs[] = {
- 	{ .reg = HIFIPLL_CTRL6, .def = 0x56540000 }
- };
- 
-+static struct clk_regmap t7_hifi_prediv = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HIFIPLL_CTRL0,
-+		.shift = 10,
-+		.width = 5,
-+		.table = t7_prediv_div_table,
-+		/* Same rationale as gp0_prediv. */
-+		.flags = CLK_DIVIDER_ALLOW_ZERO,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "hifi_prediv",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "in0",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
- static struct clk_regmap t7_hifi_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
-@@ -239,11 +295,6 @@ static struct clk_regmap t7_hifi_pll_dco = {
- 			.shift   = 0,
- 			.width   = 8,
- 		},
--		.n = {
--			.reg_off = HIFIPLL_CTRL0,
--			.shift   = 10,
--			.width   = 5,
--		},
- 		.frac = {
- 			.reg_off = HIFIPLL_CTRL1,
- 			.shift   = 0,
-@@ -267,8 +318,8 @@ static struct clk_regmap t7_hifi_pll_dco = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hifi_pll_dco",
- 		.ops = &meson_clk_pll_ops,
--		.parent_data = &(const struct clk_parent_data) {
--			.fw_name = "in0",
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&t7_hifi_prediv.hw
- 		},
- 		.num_parents = 1,
- 	},
-@@ -312,6 +363,25 @@ static const struct reg_sequence t7_pcie_pll_init_regs[] = {
- 	{ .reg = PCIEPLL_CTRL2,	.def = 0x00001000 }
- };
- 
-+static struct clk_regmap t7_pcie_prediv = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = PCIEPLL_CTRL0,
-+		.shift = 10,
-+		.width = 5,
-+		.table = t7_prediv_div_table,
-+		/* Same rationale as gp0_prediv. */
-+		.flags = CLK_DIVIDER_ALLOW_ZERO,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "pcie_prediv",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "in0",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
- static struct clk_regmap t7_pcie_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
-@@ -324,11 +394,6 @@ static struct clk_regmap t7_pcie_pll_dco = {
- 			.shift   = 0,
- 			.width   = 8,
- 		},
--		.n = {
--			.reg_off = PCIEPLL_CTRL0,
--			.shift   = 10,
--			.width   = 5,
--		},
- 		.l = {
- 			.reg_off = PCIEPLL_CTRL0,
- 			.shift   = 31,
-@@ -345,8 +410,8 @@ static struct clk_regmap t7_pcie_pll_dco = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "pcie_pll_dco",
- 		.ops = &meson_clk_pcie_pll_ops,
--		.parent_data = &(const struct clk_parent_data) {
--			.fw_name = "in0",
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&t7_pcie_prediv.hw
- 		},
- 		.num_parents = 1,
- 	},
-@@ -633,6 +698,25 @@ static const struct reg_sequence t7_hdmi_init_regs[] = {
- 	{ .reg = HDMIPLL_CTRL6, .def = 0x56540000 }
- };
- 
-+static struct clk_regmap t7_hdmi_prediv = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HDMIPLL_CTRL0,
-+		.shift = 10,
-+		.width = 5,
-+		.table = t7_prediv_div_table,
-+		/* Same rationale as gp0_prediv. */
-+		.flags = CLK_DIVIDER_ALLOW_ZERO,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "hdmi_prediv",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "in0",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
- static struct clk_regmap t7_hdmi_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
-@@ -645,11 +729,6 @@ static struct clk_regmap t7_hdmi_pll_dco = {
- 			.shift   = 0,
- 			.width   = 9,
- 		},
--		.n = {
--			.reg_off = HDMIPLL_CTRL0,
--			.shift   = 10,
--			.width   = 5,
--		},
- 		.l = {
- 			.reg_off = HDMIPLL_CTRL0,
- 			.shift   = 31,
-@@ -667,8 +746,8 @@ static struct clk_regmap t7_hdmi_pll_dco = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_pll_dco",
- 		.ops = &meson_clk_pll_ops,
--		.parent_data = (const struct clk_parent_data []) {
--			{ .fw_name = "in0", }
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&t7_hdmi_prediv.hw
- 		},
- 		.num_parents = 1,
- 	},
-@@ -722,6 +801,25 @@ static const struct reg_sequence t7_mclk_init_regs[] = {
- 	{ .reg = MCLK_PLL_CNTL4, .def = 0x00180303 },
- };
- 
-+static struct clk_regmap t7_mclk_prediv = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = MCLK_PLL_CNTL0,
-+		.shift = 16,
-+		.width = 5,
-+		.table = t7_prediv_div_table,
-+		/* Same rationale as gp0_prediv. */
-+		.flags = CLK_DIVIDER_ALLOW_ZERO,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "mclk_prediv",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "in0",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
- static struct clk_regmap t7_mclk_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
-@@ -734,11 +832,6 @@ static struct clk_regmap t7_mclk_pll_dco = {
- 			.shift   = 0,
- 			.width   = 8,
- 		},
--		.n = {
--			.reg_off = MCLK_PLL_CNTL0,
--			.shift   = 16,
--			.width   = 5,
--		},
- 		.l = {
- 			.reg_off = MCLK_PLL_CNTL0,
- 			.shift   = 31,
-@@ -761,8 +854,8 @@ static struct clk_regmap t7_mclk_pll_dco = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mclk_pll_dco",
- 		.ops = &meson_clk_pll_ops,
--		.parent_data = &(const struct clk_parent_data) {
--			.fw_name = "in0",
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&t7_mclk_prediv.hw
- 		},
- 		.num_parents = 1,
- 	},
-@@ -939,21 +1032,25 @@ static struct clk_regmap t7_mclk_1 = {
- };
- 
- static struct clk_hw *t7_gp0_hw_clks[] = {
-+	[CLKID_GP0_PREDIV]		= &t7_gp0_prediv.hw,
- 	[CLKID_GP0_PLL_DCO]		= &t7_gp0_pll_dco.hw,
- 	[CLKID_GP0_PLL]			= &t7_gp0_pll.hw,
- };
- 
- static struct clk_hw *t7_gp1_hw_clks[] = {
-+	[CLKID_GP1_PREDIV]		= &t7_gp1_prediv.hw,
- 	[CLKID_GP1_PLL_DCO]		= &t7_gp1_pll_dco.hw,
- 	[CLKID_GP1_PLL]			= &t7_gp1_pll.hw,
- };
- 
- static struct clk_hw *t7_hifi_hw_clks[] = {
-+	[CLKID_HIFI_PREDIV]		= &t7_hifi_prediv.hw,
- 	[CLKID_HIFI_PLL_DCO]		= &t7_hifi_pll_dco.hw,
- 	[CLKID_HIFI_PLL]		= &t7_hifi_pll.hw,
- };
- 
- static struct clk_hw *t7_pcie_hw_clks[] = {
-+	[CLKID_PCIE_PREDIV]		= &t7_pcie_prediv.hw,
- 	[CLKID_PCIE_PLL_DCO]		= &t7_pcie_pll_dco.hw,
- 	[CLKID_PCIE_PLL_DCO_DIV2]	= &t7_pcie_pll_dco_div2.hw,
- 	[CLKID_PCIE_PLL_OD]		= &t7_pcie_pll_od.hw,
-@@ -973,12 +1070,14 @@ static struct clk_hw *t7_mpll_hw_clks[] = {
- };
- 
- static struct clk_hw *t7_hdmi_hw_clks[] = {
-+	[CLKID_HDMI_PREDIV]		= &t7_hdmi_prediv.hw,
- 	[CLKID_HDMI_PLL_DCO]		= &t7_hdmi_pll_dco.hw,
- 	[CLKID_HDMI_PLL_OD]		= &t7_hdmi_pll_od.hw,
- 	[CLKID_HDMI_PLL]		= &t7_hdmi_pll.hw,
- };
- 
- static struct clk_hw *t7_mclk_hw_clks[] = {
-+	[CLKID_MCLK_PREDIV]		= &t7_mclk_prediv.hw,
- 	[CLKID_MCLK_PLL_DCO]		= &t7_mclk_pll_dco.hw,
- 	[CLKID_MCLK_PRE]		= &t7_mclk_pre_od.hw,
- 	[CLKID_MCLK_PLL]		= &t7_mclk_pll.hw,
+The Meson PLL framework models the PLL pre-divider (N) using a dedicated
+field in struct meson_clk_pll_data. Since the common clock framework already
+provides a generic divider implementation, this patch removes the dedicated
+n parameter from the framework and simplifies the PLL rate calculation.
 
--- 
-2.47.1
+> --- a/drivers/clk/meson/clk-pll.c
+> +++ b/drivers/clk/meson/clk-pll.c
+[ ... ]
+> @@ -119,145 +107,48 @@ static unsigned int __pll_params_with_frac(unsigne=
+d long rate,
+[ ... ]
+> -static int meson_clk_get_pll_table_index(unsigned int index,
+> -					 unsigned int *m,
+> -					 unsigned int *n,
+> -					 struct meson_clk_pll_data *pll)
+> +static int meson_clk_get_pll_multiplier(unsigned long rate,
+> +					unsigned long parent_rate,
+> +					unsigned int *m,
+> +					struct meson_clk_pll_data *pll)
+>  {
+> -	if (!pll->table[index].n)
+> +	if (!pll->range)
+>  		return -EINVAL;
 
+[Severity: High]
+Does this unconditionally reject any PLL that lacks a .range definition?
 
+Many table-based PLLs in Meson SoC drivers (like axg_gp0_pll_dco) leave
+.range as NULL and rely strictly on .table. Without .range, rate calculatio=
+ns
+for these PLLs will deterministically fail at runtime.
+
+[ ... ]
+> @@ -420,7 +311,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, =
+unsigned long rate,
+[ ... ]
+>  	enabled =3D meson_parm_read(clk->map, &pll->en);
+>  	if (enabled)
+>  		meson_clk_pll_disable(hw);
+> =20
+> -	meson_parm_write(clk->map, &pll->n, n);
+
+[Severity: High]
+Does stripping the write to the N pre-divider from this protected atomic
+section violate the hardware requirement to place the PLL in a disabled and
+reset state before its input frequency changes?
+
+By modelling the pre-divider as an external generic CCF clk_divider,
+its .set_rate will modify the hardware register immediately without
+notifying the running downstream PLL. Can this cause the active PLL to
+lose lock and produce an unstable clock, potentially locking up the system?
+
+>  	meson_parm_write(clk->map, &pll->m, m);
+> =20
+>  	if (MESON_PARM_APPLICABLE(&pll->frac)) {
+> --- a/drivers/clk/meson/clk-pll.h
+> +++ b/drivers/clk/meson/clk-pll.h
+> @@ -11,29 +11,17 @@
+>  #include <linux/regmap.h>
+>  #include "parm.h"
+> =20
+> -struct pll_params_table {
+> -	unsigned int	m;
+> -	unsigned int	n;
+> -};
+> -
+
+[Severity: High]
+Does removing pll_params_table also remove the framework's capability to
+enforce non-contiguous PLL multiplier rules?
+
+>  struct pll_mult_range {
+>  	unsigned int	min;
+>  	unsigned int	max;
+>  };
+[ ... ]
+>  struct meson_clk_pll_data {
+>  	struct parm en;
+>  	struct parm m;
+> -	struct parm n;
+
+[Severity: Critical]
+Does removing the n and table fields from struct meson_clk_pll_data break
+the build for untouched SoC platform drivers?
+
+Drivers such as axg.c continue to initialize these fields in their static P=
+LL
+definitions (like axg_sys_pll_dco):
+
+static struct clk_regmap axg_sys_pll_dco =3D {
+	.data =3D &(struct meson_clk_pll_data){
+		...
+		.n =3D {
+			.reg_off =3D HHI_SYS_PLL_CNTL,
+			.shift   =3D 9,
+			.width   =3D 5,
+		},
+
+This will cause an immediate compiler error because the types have been
+removed. Will this breakage persist and break git bisect?
+
+>  	struct parm frac;
+>  	struct parm l;
+>  	struct parm rst;
+[ ... ]
+> @@ -41,7 +29,6 @@ struct meson_clk_pll_data {
+>  	struct parm l_detect;
+>  	const struct reg_sequence *init_regs;
+>  	unsigned int init_count;
+> -	const struct pll_params_table *table;
+>  	const struct pll_mult_range *range;
+>  	unsigned int frac_max;
+>  	u8 flags;
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260923-meson_refa=
+ctor_n-v1-0-3a8ce27121a2@amlogic.com?part=3D1
