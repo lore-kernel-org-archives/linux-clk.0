@@ -1,104 +1,95 @@
-Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com [74.125.226.204])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417474BB269
-	for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 11:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.226.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0913ACEF9;
+	Wed, 23 Sep 2026 12:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790163959; cv=none; b=HtybDOOF1YIWvxlDzkkZgAixNuOZRJqtRQpyqhFYz8z03nbCXR7sbG9GWTaWFYeW4DYSAIF7A/puBqX1MNUd9PwsDpta7muJa7YppiWQydwviSp1mzJ31kuq7TH1nQVIYYrU5/mmoUre8XtwHSlOuqplUwB3pXnE6BoGDwFAH4M=
+	t=1790166950; cv=none; b=Pg3Gx0VT2bn7KfqM+JN22TbcMFMGr7K093iVRPbS67A/MDpjKARNjhr5fo1uG81IqCXEXUJo12mCQB5cFzwqa8IU79Ao7ekbOCMp0j47ljMPczB2rvxXxORNu6D+AhAb6rOWu1Go6MWGWHoWAXZcKL+vTX17aNsCTgEMt+T+Yhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790163959; c=relaxed/simple;
-	bh=qBZsBwNLRX+g5XOly40nZlG/H+p+IdNWLBlhUC/CHn4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mMxVpYmbSDx8a+u1urK2vXxQ0SxnSeEvoXLoitBKhQbvVMP4GhQGa+YHlrfHr1CCO2MRQttVYONS8Hv9PCM11lbMe5XQWGjSgJz+m79lYNn6+CRGYVtAK2v+IoP9zNiBzLZjx2gUTnozZ82cw3INy4PY4wGec0M2wACrCgEzqRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.226.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97e7c72bfebso273910241.3
-        for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 04:45:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790163948; x=1790768748;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=pEC4AigJ1rNzvkNiOygWPr/6PCYaFxhpSnly8JjX1tA=;
-        b=NdiCsZvbgttUlPxpr96P5Tf4ibEF9AugoCcqZFR28vjGLmftLlc/pYt6Q0UaV3Xs83
-         aUfM7BAyu/1pRFeXL+D2wFqo57pThcl0S3KvPyQW+l3Zvy/v/4axsh4UevUtXCUocWwC
-         JrkyhgQcj1ROf8Sm/QrHFA7F0QFywlcK+BQyyJNXhNrEo4Ba5cLokmGy2rM3cvhJ5C//
-         tWF7RNBH84gM/rUzVDmto3FfTXEavAGaal5aptzyWu5HQY66OO2bjgFmiAAekhH+f16W
-         QDMZC+RBYrmSYsY0nFPITeBHX9kRQ65pHX5AcJUfFFhX2LbnnABzAeTnUVVpUhpPBZHt
-         6Kzg==
-X-Forwarded-Encrypted: i=1; AKwUvBy46rf6uQ8YuTiRHoy3JoHPNgeMGsUVb9Ve3jrzAcWzjdd1yo00jyl/Q23Qq8HxQKb2LBk0e93hUBo=@vger.kernel.org
-X-Gm-Message-State: AFuF++lQFLfVUzYdrCjvNEsexJsv68jykEKRQVnCJOIaLETIob1sWVxG
-	kwPfhixQjqWPq6mlPN3vqkvpI1XFHKIXK4MdP//lZWpexMU9Y01tnCpK0HDEgINR8IY=
-X-Gm-Gg: AYBFou2iTtsvPUMwrRVk+1U+i9LKSiy++nutJYFE8IYIHPfWCd09xYhnw1eU7RP99v8
-	gnI6ylhYHxbhlVxyN4GOmruRJeqyHI0MLWKyXiwkDZZv28L8V84ngc68pF0fjyKZzcGc+ErBTJs
-	jql0ceZsvr9r5LVEIpXOdeyqwt9jMI1n2Z0ZMM8lHGa8q8+yet5jlH6hKucsrkHjuRNUwL380Nc
-	JzlD+7HsIReLYcuYey6v4syCvmYr0xt42TjotPhFHr2xX3ocPftTasVxKjzMFGZviYTYgGJCUhf
-	dFAbNolnLIwn0TPt8v7lE8vIBIvYcmDuws9z5/fpggKmPNQdbERgI3h7RHq4erEfeBLIuVFccnQ
-	n8U6A7cVvzMFDXu3fccHgrQIXtH6lKcanhNaOardxv/FxDlVOKKy5JQyMz04wpYcXLhfKcQzwjC
-	VI/B5LcBIySlsfHZt4dt9VUVOvcxHeouBgeiDGzVpUlBhwX5uGwuUDbdGtHAj5lPrwdMT9mCoab
-	W4StJkpZG1kO/9ZGsVP0roqX6G8hzHRY7HNs5Q7B5c0o2o=
-X-Received: by 2002:a05:6102:c12:b0:7a7:198a:c2c7 with SMTP id ada2fe7eead31-7ac1eb9760emr1813089137.37.1790163948369;
-        Wed, 23 Sep 2026 04:45:48 -0700 (PDT)
-Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com. [74.125.227.12])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7abf6087f6dsm3607197137.9.2026.09.23.04.45.47
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Sep 2026 04:45:47 -0700 (PDT)
-Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c67e512ee9so325989e0c.0
-        for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2026 04:45:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBz1N5aU3jsWcosWDa5lcbgEPGxE6e2EX9whvsMedSVY+nHN2emsRP7GdzCddJRyBvqaA7g+NSOsREg=@vger.kernel.org
-X-Received: by 2002:a05:6102:f85:b0:7a7:198a:c2c4 with SMTP id
- ada2fe7eead31-7ac1ea9919bmr2233594137.34.1790163947325; Wed, 23 Sep 2026
- 04:45:47 -0700 (PDT)
+	s=arc-20240116; t=1790166950; c=relaxed/simple;
+	bh=TR1ks53Mu/FJ2r5qW5C8B3D0GUcWmmmERba0oHGrCd4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=COOc3UUz2ymPp0jTOieCBapdo/dFP+esIHEg9xW8v+ERbkufZA5eLOT+ptVT4ZHNaLDbLIMVLmdH1AuKhXOyfs34MaNSwXIFc+zdg/jwtCLO4cOqi9W+EH6sgk03EXKCjCY6qPyEviZg3oPJeTDSugimj2Xzt/DqFu90WuIs3hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kDrwDmt4; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kDrwDmt4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C84E1F0089B;
+	Wed, 23 Sep 2026 12:35:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790166948;
+	bh=9KsKOIPLtU1rbiWY3Id1SMc79Dvze0biHYy+SZuaDWU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=kDrwDmt42N6ryKTzfYCE+RIzlMSJVWawUWxnAbIYMw8p08ZaKIKYzRlfOXCB5pTeP
+	 JCmGq2IXTK31tht/yVrNoZiPNrQfMMb0E/ZZh05Q8ITxRwgRAaadbOcWEYMHyVgroz
+	 BGSoUzB9s8irG4c2A9zUh+ts9C+kzS6A7J03/8gvWFpntlMprJWh4WtmXbfPlQJIKi
+	 SZ5qVd8qvZ8W3MstLQVlc35fvLh6H67ianvdz5/IfwyA48t4zeW+jxB4xXcjAmcUjk
+	 /jD84uGRa/rdEOdl8uyjk0V4cT+gbB2lmzVJv+PSSihrA9iD7PKGtLMfQ2wN4xPha5
+	 wY9qLwhEtRx+A==
+From: Vinod Koul <vkoul@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>, 
+ Todor Tomov <todor.too@gmail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Bryan O'Donoghue <bod@kernel.org>, 
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-phy@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+ Oleg Keri <okerixx@gmail.com>
+In-Reply-To: <20260918-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v20-0-dc244e124e71@linaro.org>
+References: <20260918-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v20-0-dc244e124e71@linaro.org>
+Subject: Re: (subset) [PATCH v20 0/6] Add phy_get_by_of_node and devm
+ helper
+Message-Id: <179016693988.140073.11333980752731618724.b4-ty@kernel.org>
+Date: Wed, 23 Sep 2026 18:05:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260921134432.50338-1-ayman.chaudhry.kc@renesas.com> <20260921134432.50338-7-ayman.chaudhry.kc@renesas.com>
-In-Reply-To: <20260921134432.50338-7-ayman.chaudhry.kc@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Sep 2026 13:45:35 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX_jhgBFpUUBzYb_U8sp5u-M=h=4g87iSvgBK=2VULGLA@mail.gmail.com>
-X-Gm-Features: AclHuK_h5MxsrDxhcMUS1bBcJVK5M781CZwgtQ6JdKTzUMPjzqK2NUlscu8dT_k
-Message-ID: <CAMuHMdX_jhgBFpUUBzYb_U8sp5u-M=h=4g87iSvgBK=2VULGLA@mail.gmail.com>
-Subject: Re: [PATCH v2 6/9] clk: renesas: Add support for RZ/G2M v3.0
-To: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On Mon, 21 Sept 2026 at 15:45, Ayman Chaudhry
-<ayman.chaudhry.kc@renesas.com> wrote:
-> Add initial support for Renesas RZ/G2M v3.0 (a.k.a. R8A774A3) SoC,
-> including basic core clocks, and SCIF2 (serial console) and INTC-AP
-> (GIC) module clocks. The RZ/G2M v3.0 CPG is similar to the RZ/G2M v1.3,
-> however it lacks some modules such as the FCPCI.
->
-> Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v1->v2:
-> - Updated include path to CPG dt-bindings
-> - Added Reviewed-by tag
 
-Thanks, will queue in renesas-clk for v7.4.
+On Fri, 18 Sep 2026 14:56:35 +0100, Bryan O'Donoghue wrote:
+> This series has evolved from a CAMSS standalone series to a series that is
+> mostly on the PHY side now, so I've split the series up to reflect that
+> fact.
+> 
+> Starting off by fixing a long-standing use-after-free race-condition in the
+> phy core flagged by Sashiko in v13. While my series doesn't introduce the
+> bug it seems appropriate to address it anyway once flagged.
+> 
+> [...]
 
-Gr{oetje,eeting}s,
+Applied, thanks!
 
-                        Geert
+[1/6] phy: core: Fix race-condition between _of_phy_get() and try_module_get()
+      commit: 090055ee629523092688da42428558ba56d4272f
+[2/6] phy: core: Add phy_get_by_of_node()
+      commit: 89c5ae2b19619e41f9098011667fc1f59c9f322c
+[3/6] phy: core: Add devm_phy_get_by_of_node()
+      commit: 2ee4e00dc1a38bf7bbe128825a63c6b523480c33
+[4/6] phy: core: Add missing kerneldoc colon in two locations
+      commit: fcce260fa4ba624dced020789d0a9a0cc1670062
 
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+~Vinod
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
