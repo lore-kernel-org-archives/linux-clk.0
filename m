@@ -1,184 +1,237 @@
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD363BCD21
-	for <linux-clk@vger.kernel.org>; Thu, 24 Sep 2026 09:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F713C2795
+	for <linux-clk@vger.kernel.org>; Thu, 24 Sep 2026 09:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790242512; cv=none; b=NNwBm4NobJIt/DsIzpySovq5wznXI5w2zUPh0WGelR/kmlejx0LvKD9KfqJWCvB/4hs3g26If7YXG3361ZDACLVmjxfvJNh+U70KgNNJhG6now/wS5BeamwjsplvbJSZ9zIJqFYukyamcdq8V7Iapbi8zldjj28iZfwhjFEivyw=
+	t=1790242827; cv=none; b=BiPVoaHbVIGmV779eXFgFYDOQqjA6c484rNX3h80OrIkTAamkc78pXBZxStIVtnqOilGVxO2IiZLX16rhbEE1O6cuLLYGZlDLv1Za1YMwj03u8bqZH99Q3eU/mp2AjvMI9myfgGRgKD9UbyUOFbvkud0H/vbZTJsATFln/9NE6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790242512; c=relaxed/simple;
-	bh=xlFr47uBNraq9Vfw+jhIc3orvyXDcJ8EdkBjzapnpks=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cOpCcRNvMT0YeCOHlZxXWfe9A4kevjIsqVjKgk2O7L+iCp96rVuYogAP0boN2Of9/Oq502lcCgwxAQ0y3b2PcFm0UjeVzqFCRSLOepEZRq7lVhxftcjw6ONqNCV6S43lWF1PaITUtgn3G7fPHBN+gwmayhgm3aY6K7Stj9++W1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=QNLXS3Ym; arc=none smtp.client-ip=74.125.225.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1790242827; c=relaxed/simple;
+	bh=7kh4ZgB9VWJM1x4v5o80hyppDSt+3VV+HLjLFnM3EMY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aMBtaqyX99S223S1N6duNQMCRkKhARlCmHoIkVF7XE8g5d3QdHdG91mTN1SErllxvX+lmu3KGKTvoWe0KldmuZnaZ7BRmWWpX+94SdNGtiXuhJxsYdj433H9bSJKbLQAGxotILyFJXmRhSKwgawNSHucqcgN6gGSFrJ7SDrwDHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RJUaZlNX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Suh7BX6T; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="QNLXS3Ym"
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49e620fa473so11026195e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 24 Sep 2026 02:35:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RJUaZlNX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Suh7BX6T"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68O9PkYv1080154
+	for <linux-clk@vger.kernel.org>; Thu, 24 Sep 2026 09:40:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=sKfkfgei71i9bFDAQ/f6qc
+	tZa/AzU0W+tjMKL/QROEU=; b=RJUaZlNXmOVatxs3YzlVh9FGKD+4x91N9LOIjd
+	uXogjs6c0FNIMg5RkXJdrXsmkydZphQEvLbulNq8ATPGSqq0AAvWkwojf4+pwH37
+	m89SGe0QDthlhY5niY9WeH9jwbgAG3SaP4n7hcZYiTq69t+mBSWkrPMV2bLGCh24
+	O7MsTGrvAF0tE6mOVq9Wtq18cMg0bdDM3JWq6Xw33iUzccmNQ8UTnk44TrTQHPHg
+	6vxoiPnjHcRxtFmT777UsN/XjyzMgbExivbNRKoh+NcGzNfMjJ1HXKfZCKDiKTrw
+	gXvBB3yVC2/nTFhp6l9AJ7WsKLGVNslyD/T1xjRJ7rq2dfHQ==
+Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gvfmwmccs-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 24 Sep 2026 09:40:22 +0000 (GMT)
+Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-33bb08e80a8so788546eec.0
+        for <linux-clk@vger.kernel.org>; Thu, 24 Sep 2026 02:40:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1790242508; x=1790847308; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ntOIbWg0v6Y7sjUG+xdx4uPbi3N8TfY72tgKuI0bUbw=;
-        b=QNLXS3YmCK1BfBF7nU6ZAi9jD+ARO67zOm1zraT43p3A2tSNmRmr3MxQYTTusl/9tQ
-         W/cVYWYLGOLnJ4vhIS810/TLgmUC7/L2MtcZUoP3DXhdTAF+EjVVu8nvb9+Gl0ejglHh
-         v3omTb2w2LbPW/R6nfy3hK3qAorfTVauqThaawmV2MlsY7D+VwumuwnHrrXDvxN8ortq
-         mcGaSxf7Pk0ebN/C62TaoQFsRUj/Ml+r7N4c21inQPuFM5TXPyO3b5CZA2IyJLBPvsjr
-         25fNcbO9AUjH9uR7pONolWo75YsJEcoh6ftZeGKZUkQRSGLiQMfhw3m3B5DJM/FvypUq
-         ZdJw==
+        d=oss.qualcomm.com; s=google; t=1790242822; x=1790847622; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=sKfkfgei71i9bFDAQ/f6qctZa/AzU0W+tjMKL/QROEU=;
+        b=Suh7BX6TY8e6qxQWArMN6l24t7LBf7b7/qZNoKdAJ6YngO1G9b9ZHdjLp1qPWNvuJ5
+         lHrcp6W4nCm07j1umvyiS8ogXT9eESjrjJdWp7fOJxSQ/x3tB1dn7kgNHaDlA/nXuihR
+         m+CV+q667VAiQFbvovaIyCD1EiU1/h2EcKK6xDKe/3DT/zxVjVJBbDEp5J9VDB2twoUf
+         3upUpGvbbjsBozQVve+YooFw+Gns02LJM7Ynn6SxYTuEngxWdSlKJmdRr/ZP4Qjtl7D4
+         aoOE9zeYxvJpfckCDT1Wex/ukeZljBI3v7beJMeJ9ETq8NfY1xAnOsvxPgVDthIWZqE0
+         ry5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790242508; x=1790847308;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=ntOIbWg0v6Y7sjUG+xdx4uPbi3N8TfY72tgKuI0bUbw=;
-        b=qCMJ5lVRnGLhT6wG4C4D/IK80w8OISYIfMxX9J2PSoe/6Ev7XTPCIRoi7ZMGF/81Fs
-         wHo5HPH10hzmdT7/Le6rvO4WQS/SJAa8JX2Rg7evT/OcgoImcS/yXXvdE0OigSCwIjoe
-         fwMkKvFxAsTuuq8mTbfYsLcXEZPK63kFxG9irpeLKOGUNzKGLzjsqvU+nAJ9c1+3uOW+
-         Z3eM8nkFCwHn8XLRyLCVrET+nczhLo0cjw5W10xQWBl3EQGBxhwdGFEaLTA0JMCxHNI0
-         MHStw3TlPUkD56IgK/u68hORonumUzoAubvdCDatxtOrmA74jIMQbq91ljO7dCaF7d5z
-         q31g==
-X-Forwarded-Encrypted: i=1; AKwUvBzsvYVBiUBwvi6/AjNRTGCWS+v22mXKz/WOx8u09PraPueU76DDLA8Pac1akEpuG0MTnJqtbQypPCg=@vger.kernel.org
-X-Gm-Message-State: AFuF++ltKHN4khGIJbYvTv64nzY0xWoffpUJvNkjd7OPSZZqzO4T51pO
-	lnI0zT+vbYvxepKNYwV2tM1My1TyXda6beUoeardIqhNbPJ3w437vMpUK5l3Laz9/bk=
-X-Gm-Gg: AYBFou2luklVgJPRzoI0fvB/VzEKjPV8TF2Gsv50NqGndgAWBg666Uz8WV6vDW3VRdC
-	1DkZ06r4sj9uo+l4jUDcTQLJGnYgXPrtVFU8XX8eCzfV7y2feFmMyYxHkj4mrlIWYYbg0FPjwjY
-	DZfA3Fq8dxfWAnSSmCaxYKQXuzhPmhQmM41S/mpgwL1Q/mxCjPtqh4u+zZi8I/it1OE5TL+zbI3
-	St2AMssT+syhY1VhNKhOFQoZ/I4v6kJcB+5LzSpn0CzoauACbEh++RXTlZCP3NQjXwRNahf1xnn
-	goGcMfV4PdEi+n9nvYbXZLRcQ2VwF6DHvpaq366wTXbPNmscuWQQYlMdfLArp9XrTX8XbIobmnf
-	nbzHcEr9USbwIE3ZoQobTUTi+fzcDX9ynoUgwOVwR/t12EU9JFijoncIGJOAMvGzOqAPwg3ncgX
-	UE4Giae9f4s59uBVPna5Z6N9+4w0B3dU2mAQxp21wnqnWtkb8ZIUXuwQGTsBXBBbFQP33T/GHWn
-	WHrYTNknwe0FHNwqA==
-X-Received: by 2002:a05:600c:4fcc:b0:49f:df99:ff1a with SMTP id 5b1f17b1804b1-49fe66f344dmr32157945e9.17.1790242507705;
-        Thu, 24 Sep 2026 02:35:07 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fe5cd2bacsm50613795e9.13.2026.09.24.02.35.07
+        d=1e100.net; s=20260707; t=1790242822; x=1790847622;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=sKfkfgei71i9bFDAQ/f6qctZa/AzU0W+tjMKL/QROEU=;
+        b=0qreWEqE6A5jtDxmlkNoscUYTk48O1hdn+rdu1qh13jB40+n5qn28tW8YvG7Wo7zke
+         6Ilph//WVVTCX5GtyQmiwcMhEWej8/0Wp5eUG001V8zvcKUZDiyEWyycvvTd/X8Y9dBp
+         Mn9kQY+q0zq5FpP0rkPewYZu3aD+B3oYNfGWOL0R7qOdyem16Wj7+Wwog4zoP793aUBn
+         fm1eyc1UH2p3S119Kl17qz0nzFCNQ9Kwd5f46omRRg6gxXX+0JBDvrnYMDX7xHZ4i5bs
+         hS97Qy7n7at63uKDqZHYGgVPqGV85yHq844xYJX83bAyxrMEqm/uKIDIZRQtkrlJF7T+
+         hC+w==
+X-Forwarded-Encrypted: i=1; AKwUvByETk7WdcsSujs3vglWOqkpUTS8Wxywj9eRWl6ID8qtfCvCa7ac0fXpEya2TzbOaU8KAOpSMADN/oI=@vger.kernel.org
+X-Gm-Message-State: AFuF++k0PoPg4vo7iDUTQH/x0MrUDkgwJKvmr3iTnyNL8iTtHPX5bE+E
+	4zfwFlJ4snx1sl24FGsDpy0FJVVDyUZJynMXFrt+W5L2NmcDtwTdm99N/elsQHE2ytHKlmaMr7R
+	rE/CiRzv3grz2WfhrwUhDiclZy5kDvvv7JYNE6Z0eUYkZVdHTyEK0eqn5TxppE/SHSL/DyYE=
+X-Gm-Gg: AYBFou3w8NnR+3WFfHcv2V8rxahH8reTtAfoxPfKgIpnutZFT+xMunA0u/VFutXVEX4
+	06TBNch0VfeIxxJdIk465GB6JtIPAmrGTH9sqSo1G5qji6RObNJS6JLYByKT7b2C/zOMFyp3gqN
+	yXlHrI/jsDAjfxLvAGWjC2ThyQwSN5yUrUZ5gdY9vDLojPE4EgydbP4/wub5NtsUOxhm/jPo3jW
+	3TF3/cTOwCo5K0axQZDy03UpHu8D3Cad+pGVXMc7LPFLtmSmzVV9yN1jBIR/QrNsp5yW61qVLVH
+	GMqDINgwHrAYlTwmTY5cLD0lufQeiAPoYUfavYQCuVmMdSPOqfCfsZr9pCnzpUQN1qJ9QzOCPwu
+	i1v6GQY/xR3IlAm0PBp8sVnY=
+X-Received: by 2002:a05:7300:6b1a:b0:33b:e076:f2e with SMTP id 5a478bee46e88-340040a4b88mr1338581eec.8.1790242821594;
+        Thu, 24 Sep 2026 02:40:21 -0700 (PDT)
+X-Received: by 2002:a05:7300:6b1a:b0:33b:e076:f2e with SMTP id 5a478bee46e88-340040a4b88mr1338548eec.8.1790242820980;
+        Thu, 24 Sep 2026 02:40:20 -0700 (PDT)
+Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33e939fdabcsm13482354eec.3.2026.09.24.02.40.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Sep 2026 02:35:07 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>, Neil
- Armstrong <neil.armstrong@linaro.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>, Kevin Hilman
- <khilman@baylibre.com>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Jerome Brunet
- <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Jian Hu <jian.hu@amlogic.com>
-Subject: Re: [PATCH RFC 0/3] clk: meson: Refactor PLL pre-divider as a
- divider clock
-In-Reply-To: <20260923-meson_refactor_n-v1-0-3a8ce27121a2@amlogic.com>
-References: <20260923-meson_refactor_n-v1-0-3a8ce27121a2@amlogic.com>
-Date: Thu, 24 Sep 2026 11:35:06 +0200
-Message-ID: <1j1paj9elx.fsf@starbuckisacylon.baylibre.com>
+        Thu, 24 Sep 2026 02:40:09 -0700 (PDT)
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+Date: Thu, 24 Sep 2026 15:09:56 +0530
+Subject: [PATCH] clk: qcom: gcc: Fix GPLL enable register offset for Nord
+ SoC
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260924-nord_gcc_offset_fix-v1-1-230ffad2dae9@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAOvvtGoC/x2MQQqAIBAAvyJ7Tigryb4SIeGuthcNjQiivycdZ
+ 2DmgUKZqcAsHsh0ceEUK3SNALdvMZBkrAyqVbo1apAxZbTBOZu8L3Raz7dE3ZMbJ4UDGqjlkan
+ q/7qs7/sBepfH3WUAAAA=
+X-Change-ID: 20260924-nord_gcc_offset_fix-d63ec582d4d9
+To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        Shawn Guo <shengchao.guo@oss.qualcomm.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Taniya Das <taniya.das@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-aa3f6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTI0MDA0MCBTYWx0ZWRfX4Xty6B3ENIku
+ 0OOF3/tps2HQ7kMpftzTSLYQTEN5LD0Xe2H7f0xYi2fVn2czs9sT5zT+LGCMXAJoOoe3QqWynnY
+ r4LxJHM3u8cC8SRZ4/mMjarZT61IIyO1cfuCq0ezO6VbgrKmxYoD5QLYse/nQf3nmCqZ39QwyLM
+ GC9XRPwV1EcbENv8y/3XfoRzMIfXSzV1btUo9rYzEguT1D57HqFQ/qDqiIODG3u6hMngtz9HX0p
+ n+2C1ElGyEhbD5c4PVq5F62ZcuNWvaMOhrLLGhZZRkmPDDop9srPd8aYwi0A6kpdJBLW4ZfAefP
+ 6iWE5p5vN4hEKo776MayZ0bT14SeB+rwAlULbMVZtlt5lTcBRC2++EeiWbNYiDodAhwJy9vjxCg
+ zwUB6QGK6C9UV8Dp+N3aBvL2ohku/lhXdWm8rmpZni/0tE/olBOnfOChHzXPu5EElQUz36uXf1z
+ 4y+7WkBJUPj9xXIuNzQ==
+X-Authority-Analysis: v=2.4 cv=WK/qzXsR c=1 sm=1 tr=0 ts=6ab4f006 cx=c_pps
+ a=PfFC4Oe2JQzmKTvty2cRDw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
+ a=EUspDBNiAAAA:8 a=tWc-dzksYj5tB7JG_AwA:9 a=QEXdDO2ut3YA:10
+ a=6Ab_bkdmUrQuMsNx7PHu:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTI0MDA0MCBTYWx0ZWRfX3PdZCLuojB8y
+ J+LYtMCquP/vBBOZhOvBHFug9IIhP8Tj1iIFX9IlS8IIiGszEzjs8WQ5mQE4kiqFdQGXdNUdeIi
+ NdcRNKQApOtERUuReqhoRyR3PbgJFL0=
+X-Proofpoint-ORIG-GUID: 2uRrJ1p7LNAtCvI-XqoRCa7tEoOCLeP0
+X-Proofpoint-GUID: 2uRrJ1p7LNAtCvI-XqoRCa7tEoOCLeP0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-24_02,2026-09-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 impostorscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2609040000
+ definitions=main-2609240040
 
-On mer. 23 sept. 2026 at 19:14, Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org> wrote:
+The GPLLs in the North-East, North-West and South-East global clock
+controllers on the Qualcomm Nord SoC were registered with a placeholder
+enable register offset of 0x0. As a result the shared PLL voting register
+was never programmed, leaving the PLLs' enable state uncontrolled.
 
-> This series refactors the Meson PLL framework to remove the dedicated
-> PLL pre-divider (N) parameter from the PLL implementation and model it
-> as a separate divider clock.
->
-> Currently, the Meson PLL framework models the PLL pre-divider using a
-> dedicated n field in struct meson_clk_pll_data. This makes the
-> pre-divider part of the PLL-specific implementation, although the
-> Common Clock Framework already provides a generic divider clock.
->
-> This series separates the pre-divider from the PLL and makes the PLL
-> DCO take the pre-divider clock as its parent. This allows the
-> pre-divider to be modeled using the standard CCF divider implementation
-> and simplifies the PLL framework.
->
-> The series currently covers T7 as an RFC to get feedback on the
-> framework design before applying the same approach to other SoCs.
->
-> Series:
-> clk: meson: pll: Remove the dedicated n parameter
-> dt-bindings: clock: amlogic: Add T7 pre-divider clock IDs
-> clk: meson: t7: Model PLL pre-divider as a divider clock
->
-> The other Meson SoCs will be converted separately after the T7 PLL
-> framework refactoring has been reviewed and the overall approach is
-> agreed upon.
->
-> Any feedback on the proposed clock hierarchy and the separation of the
-> PLL pre-divider from the PLL itself would be appreciated.
+Point each GPLL at its actual GPLL_ENABLE register (0x57010 for the
+North-East and South-East controllers, 0x76008 for the North-West
+controller). Each PLL continues to select its own vote bit through
+enable_mask.
 
-So if I summarize this RFC, you have simply taken the divider out of the
-PLL, no futher addaptation. right ?
+Fixes: a4f780cd5c7a ("clk: qcom: gcc: Add multiple global clock controller driver for Nord SoC")
+Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+---
+ drivers/clk/qcom/negcc-nord.c | 4 ++--
+ drivers/clk/qcom/nwgcc-nord.c | 2 +-
+ drivers/clk/qcom/segcc-nord.c | 8 ++++----
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-I'm happy with it on the general principle and fine with the change as
-long as you test it on as much platform as you can, clearly flagging
-those you have just compiled tested.
+diff --git a/drivers/clk/qcom/negcc-nord.c b/drivers/clk/qcom/negcc-nord.c
+index 0db284edc4e41e960adaca8f10cbcd4197352e2d..ef9ff450bcd44baf71e57eaa4f2c59a3c714b2cf 100644
+--- a/drivers/clk/qcom/negcc-nord.c
++++ b/drivers/clk/qcom/negcc-nord.c
+@@ -46,7 +46,7 @@ static struct clk_alpha_pll ne_gcc_gpll0 = {
+ 	.offset = 0x0,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
+ 	.clkr = {
+-		.enable_reg = 0x0,
++		.enable_reg = 0x57010,
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "ne_gcc_gpll0",
+@@ -85,7 +85,7 @@ static struct clk_alpha_pll ne_gcc_gpll2 = {
+ 	.offset = 0x2000,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
+ 	.clkr = {
+-		.enable_reg = 0x0,
++		.enable_reg = 0x57010,
+ 		.enable_mask = BIT(2),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "ne_gcc_gpll2",
+diff --git a/drivers/clk/qcom/nwgcc-nord.c b/drivers/clk/qcom/nwgcc-nord.c
+index 280558f15748c95cfb373c09141b3023d7fcec5c..1eb8e53139120db4b872e7b7985c63e85d6b2013 100644
+--- a/drivers/clk/qcom/nwgcc-nord.c
++++ b/drivers/clk/qcom/nwgcc-nord.c
+@@ -36,7 +36,7 @@ static struct clk_alpha_pll nw_gcc_gpll0 = {
+ 	.offset = 0x0,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
+ 	.clkr = {
+-		.enable_reg = 0x0,
++		.enable_reg = 0x76008,
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "nw_gcc_gpll0",
+diff --git a/drivers/clk/qcom/segcc-nord.c b/drivers/clk/qcom/segcc-nord.c
+index 51d7f83e21b6b2f2780088f26f547cc48801c6e4..98b53311d333c4ec4b7fcb69e6e2f6815c37319a 100644
+--- a/drivers/clk/qcom/segcc-nord.c
++++ b/drivers/clk/qcom/segcc-nord.c
+@@ -39,7 +39,7 @@ static struct clk_alpha_pll se_gcc_gpll0 = {
+ 	.offset = 0x0,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
+ 	.clkr = {
+-		.enable_reg = 0x0,
++		.enable_reg = 0x57010,
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "se_gcc_gpll0",
+@@ -78,7 +78,7 @@ static struct clk_alpha_pll se_gcc_gpll2 = {
+ 	.offset = 0x2000,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
+ 	.clkr = {
+-		.enable_reg = 0x0,
++		.enable_reg = 0x57010,
+ 		.enable_mask = BIT(2),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "se_gcc_gpll2",
+@@ -95,7 +95,7 @@ static struct clk_alpha_pll se_gcc_gpll4 = {
+ 	.offset = 0x4000,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
+ 	.clkr = {
+-		.enable_reg = 0x0,
++		.enable_reg = 0x57010,
+ 		.enable_mask = BIT(4),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "se_gcc_gpll4",
+@@ -112,7 +112,7 @@ static struct clk_alpha_pll se_gcc_gpll5 = {
+ 	.offset = 0x5000,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
+ 	.clkr = {
+-		.enable_reg = 0x0,
++		.enable_reg = 0x57010,
+ 		.enable_mask = BIT(5),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "se_gcc_gpll5",
 
-A change like this would likely need to land early in the cycle give as
-much time as possible for testing.
+---
+base-commit: 3d7783543c2646af69ad65825e810060494bea21
+change-id: 20260924-nord_gcc_offset_fix-d63ec582d4d9
 
-However there a couple of thing I'm concerned about:
-
-* You've drop the table support: are you sure this is not needed anymore
-  ? don't you want to be able to restrict mutlipliers to specific values
-  sometimes ? If not, then OK.
-
-* the determine_rate() make no call to round the parent rate: Since the
-  parent will be the divier, how do you progate the rate change so N
-  moves and the best parent rate is found ? For sure this fractional
-  multiplier clock will need CLK_SET_RATE_PARENT to adjust the
-  pre-divider.
-
-* Goes with the point above, but I'm not seeing anything that favors
-  lower N for lower jitter, Or mention of a minimum input rate (which
-  could be a property) ?
-  Those are constraints I think I have understood from your explanation
-  here [1] but maybe you've got new information to share ?
-
-This is overall going in the right direction but determine_rate() and
-constraints need work.
-
-Note: you are more likely to get test feedback if you add g12 (sm1) as an
-example. Those are still the most widely used amlogic platforms with
-mainline.
-
-[1]: https://lore.kernel.org/linux-clk/c9c4945f-cdfc-4382-b8ca-71b69d91deb4@amlogic.com/
-
->
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> ---
-> Jian Hu (3):
->       clk: meson: pll: Remove the dedicated n parameter
->       dt-bindings: clock: amlogic: Add T7 pre-divider clock IDs
->       clk: meson: t7: Model PLL pre-divider as a divider clock
->
->  drivers/clk/meson/clk-pll.c                     | 178 +++++------------------
->  drivers/clk/meson/clk-pll.h                     |  13 --
->  drivers/clk/meson/t7-pll.c                      | 183 ++++++++++++++++++------
->  include/dt-bindings/clock/amlogic,t7-pll-clkc.h |   6 +
->  4 files changed, 181 insertions(+), 199 deletions(-)
-> ---
-> base-commit: 43e1705ecab981c66baee89041e6f728c0436f19
-> change-id: 20260923-meson_refactor_n-e7f25904e536
->
-> Best regards,
-> -- 
-> Jian Hu <jian.hu@amlogic.com>
->
->
->
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
-
+Best regards,
 -- 
-Jerome
+Taniya Das <taniya.das@oss.qualcomm.com>
+
