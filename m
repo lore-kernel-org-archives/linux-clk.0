@@ -1,246 +1,150 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49FD4119E0
-	for <linux-clk@vger.kernel.org>; Thu, 24 Sep 2026 07:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA30D42E8F0
+	for <linux-clk@vger.kernel.org>; Thu, 24 Sep 2026 07:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790235000; cv=none; b=bq8ajy9zPMpkK6GxfstUhaWWMalzt5QEeoxhV6sy44wrneuuLgRCNk/eIb+8BL6uB21OmCa9ob7NJKBmDcyGS2P2UdkBaM/sxN8RXeR+BICluPo9MykO9ggUYLtQLv0tLIwbBggziGLCLDXwSVq5F8xzREOgJ0jeL4UFb8tH45Q=
+	t=1790235008; cv=none; b=MdbPlKosUFLivqkyyfa33CnpRDSX5vbzlkzZ6b4dT6ZWEpwx5mzjHseZKirCMzPAWf3nJg2ZMV6jp2YYcLsViTICEzXFi6cTm8ChbtsxEP3nA/ydvQdAYoXxFRWSKD9b+CsP8jJwlKzJx4WwKEsuQTDUmlrorCNLQWH8fuxFnBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790235000; c=relaxed/simple;
-	bh=CMvlXvQYKT+sEUJAuGnvK2SuGOnVwIle5gvPOXA8pbM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Iv/882DpkWhG/vRa+s6Q0/sXpEVe4pVxX/WJkow7LJaA08qPRHOULI0ZA6ykAy5VUPlWFtuR9XXaOAzs6CbkSqsth2h1sJRnUA8JlD2pHoDCQEEHUtwzeyIcAF6DUKx5EH1KBdtd3u1KSLzvONxFoYfjFieEiT4cNILvsgIse9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LCIcLM0N; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790235008; c=relaxed/simple;
+	bh=uLnagpfUFVqNy8Hx6YY4OSsrTwJNd/dKrsdS6zcaC5A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PcET60rYbAmzh93CW1+G5Ff4vF7dzBUu77HyC3CclBHU3dBYfA4TQ7GnebdQ9YX4Sn35eiICHCRuCOyP4ZZEQnr5JEBv1rYncBMLWHLneuhnCkvD80sa0U2YowzQ7N4fdo2gmc/L7Y/LAvZX3k6glNLFs0HDnGwovDXL4wkN2K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=HBfQbUYa; arc=none smtp.client-ip=74.125.225.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LCIcLM0N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7741A1F008A5
-	for <linux-clk@vger.kernel.org>; Thu, 24 Sep 2026 07:29:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790234998;
-	bh=o6e4OwppNAvQffTq3Mizz05+V9H4+0j9jUd7tnJWyV8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=LCIcLM0N99+Hbop+wqdHdOkenjitA5y/3608MdBzkOzFotLGp6gVNHaSFVDWw0R5p
-	 aF01uR+29naehlScZFBv5fnawbZg5H9xR4NOcv0D43X6Z47e2HhzZ+0OLenR3Mbgr+
-	 qZgvMTTC+VLE1zySrodN36DdX7fRUxq2jU8uVNwZk1/WLcIkLvqiCnLQqWJ8h9GdTO
-	 DGy3Ox7GEfYF64dQZtvL6cRwI2FmliT+l9xrBZcwk5Zwaq1ecQ1D1cm4NHu7i+ycC1
-	 B3f2YKA3eNBuxabLGwJ6GapVklHVMMN7mQiLYK9PS+gPWBlOoy5l9GWERgZY6cDzMh
-	 bGWLEtDSHTJKA==
-Received: by mail-ed2-f12.google.com with SMTP id 4fb4d7f45d1cf-6a803458ba0so2320351a12.0
-        for <linux-clk@vger.kernel.org>; Thu, 24 Sep 2026 00:29:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBx/MwCNlp/gKgsBSyfqri5ndW2tPz7RxmgnozJhKp+SWSk7kwgPmblmYxAU+GqBbP1phW6mNQKW86o=@vger.kernel.org
-X-Gm-Message-State: AFuF++lUeUV04mQtcBvWPD4gBh5eZjh9bdoUDZgahuxx/gk3Tgm0JEr4
-	/DQ/pGgJUkKPU8UHc93tUM+/IwudtawudXrxDUsd9hE8O6gn4KtJhlYVDo1m8DZEHGvHVi8wG08
-	q3jv/eYCpUmm4nlG5HnJ2xx72PXtNJQg=
-X-Received: by 2002:a05:6402:454c:b0:6a9:a362:4646 with SMTP id
- 4fb4d7f45d1cf-6aac8f6a1cfmr1047631a12.14.1790234997231; Thu, 24 Sep 2026
- 00:29:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="HBfQbUYa"
+Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49b912d37b5so10067435e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 24 Sep 2026 00:30:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1790235003; x=1790839803; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Mdc4xxWsL55mn3imyt0LizMFSY4UfYvhYLzlk2F0w9U=;
+        b=HBfQbUYadkpBJvEeftpMYsA9H2eDOHHBeXZb6/tTo95bkBiTqEEVk6EUNtcbUKNqhz
+         3TEZBI7qfSsBWG/qE/Wzdz3jc1kQatAr8yp5g3i/AwvqISj2/RW4cZS8sJUFCgH/J1fB
+         uDUybzSuIw01kr6cPFGw3LM1Z6pXjQguyquvtlhpPTRDjip5S2uPRDtEYutkpxGH9WuM
+         1+EzT/gZVTZmnP7ebKZHdo5Nj+E39kdaSAOgncx62Iro4hxCWpGMGsD9KMxo557bG/Ps
+         Ky/wEcFbY1kz6nMp9V/b1LZPaN5gKz7rDgEysgJ5sI60ruRBA0+d49oTIF+MdTEZj443
+         gbKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790235003; x=1790839803;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Mdc4xxWsL55mn3imyt0LizMFSY4UfYvhYLzlk2F0w9U=;
+        b=H1m5IWtw4cl4vX1fz7Dv4IK6nX7W7ohWg/5zSiQjsg6ttbEPBPcdaD9m2EQ2JDEXTi
+         bxmU/6Ej8zkTx5v4cWtSC5rj0LLNwnzF0k5O9CpboLzKAL7+00njW16x+1Fb+o1afD1+
+         hBPU9hAeSHybP6Rp1QhiAoBZUpE7CnG3fbX3xtoqicMxIiVzWLI/i1Kos7fMq+NqWOa+
+         j0dpiDFtFNaz3BNv5q4zaPuJ451UlY+28NpVuhkHSlfrUk4TD0Ufj7oyRmvtnUvc7y35
+         z31o8QIpMnkbZBXkOERdc9LBEl7yVI6D15kozawlBc+4wAy7/AQkBDnN44YledaFDEMD
+         YA9A==
+X-Forwarded-Encrypted: i=1; AKwUvByiRvAy8Ql59kzchJxwS0qfgH0knsfOeuqeS/hyi1TTWvIwJNUqDq1luw+Vp9LfeBLNuNQOHSsTlnY=@vger.kernel.org
+X-Gm-Message-State: AFuF++n0i6xb4+cnExRMaQPBGqbP942mcC15DxYuaX+5BGvzK61X5ngZ
+	jC/uWB4825aGsLHUvrJfSOpC9LA/nkV2BTQ9o9nlGpkSeDRnrXZEGkGtMQ+Sfj6gCP8=
+X-Gm-Gg: AYBFou28hdMAo5aVkhHS0RqwI/0f/Oviy4ryc7aIWNd92Qg0ECl/elxKet8AWAA/+zO
+	QqU93rGJTStTzS0srkY65y/LBEMK4fa/DhJkzCJsIns2rTyxJNanWpwBDuVQZJi2HxC7ipV6WZO
+	j2H7kFCue/e8tF3+zJ2p5zbfIBtZV/FCifjT/XzU6sevD9oGiJFYhDI/xeCpCQ8KqQ+AcPySCTb
+	5qNZLfDjSV9qIZOyJiyloNWIRF+S0F4qG9rT/YL/vH9zi9b9iRYh5TD06XQJdvvgJrGzeOFJ5KB
+	L8BY/PpsudksbOpjkpcAQeDHOlJDVEXjqU7EPBnKcMfbOKW1UtoPLJp0F+AH1IcIKKvQ3Dwu1P6
+	rTYE0/ox9kIgbLjKfrDt/IHZTiOspnKcV8q7ss/LfgBBEhHapS25Yec5obIiDJAiMlP7CbIAlSa
+	T63Xzt2kC+mY4031dzIdX3TpzN6aK12tvofVHoZgiO+zxh83SfwB1dTdcvnxj4pXITyBhX9MyST
+	RlVvWXrplHGsenl+A==
+X-Received: by 2002:a05:600c:a47:b0:49e:823a:9dec with SMTP id 5b1f17b1804b1-49fe66c892cmr22336635e9.3.1790235002814;
+        Thu, 24 Sep 2026 00:30:02 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fe5bae43dsm45721935e9.5.2026.09.24.00.30.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Sep 2026 00:30:02 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Alex Elder <elder@riscstar.com>, Brian Masney <bmasney@redhat.com>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, abelvesa@kernel.org,
+ kees@kernel.org, gustavoars@kernel.org, p.zabel@pengutronix.de,
+ daniel@riscstar.com, mohd.anwar@oss.qualcomm.com,
+ lorenzo.bianconi@oss.qualcomm.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, mfd@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] clk: toshiba: introduce a TC9564 SoC clock and
+ reset driver
+In-Reply-To: <7147ce22-fc6d-4cff-9470-98e341da0a87@riscstar.com>
+References: <20260918165234.687224-1-elder@riscstar.com>
+ <20260918165234.687224-4-elder@riscstar.com> <arG238GS8bMB6DkW@redhat.com>
+ <0785235b-de06-44d4-9068-ec706eeba848@riscstar.com>
+ <1jcxu3adn6.fsf@starbuckisacylon.baylibre.com>
+ <7147ce22-fc6d-4cff-9470-98e341da0a87@riscstar.com>
+Date: Thu, 24 Sep 2026 09:29:56 +0200
+Message-ID: <1ja4p79kej.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260626-clk-sync-state-v1-0-4156d8196dc8@redhat.com> <20260626-clk-sync-state-v1-1-4156d8196dc8@redhat.com>
-In-Reply-To: <20260626-clk-sync-state-v1-1-4156d8196dc8@redhat.com>
-From: Saravana Kannan <saravanak@kernel.org>
-Date: Thu, 24 Sep 2026 00:29:45 -0700
-X-Gmail-Original-Message-ID: <CACRMN=dAxriWU7Age3g9o_d6zyz8hj2p76vHXJSs7sCFxSwuWw@mail.gmail.com>
-X-Gm-Features: AclHuK-NBcm4IMn1oaE4L5Cw3_gYXDaNTrtvMEQJ9SGgnBgHjAAixNmXtLBSKIk
-Message-ID: <CACRMN=dAxriWU7Age3g9o_d6zyz8hj2p76vHXJSs7sCFxSwuWw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] driver: core: introduce dev_add_sync_state()
-To: Brian Masney <bmasney@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Xuyang Dong <dongxuyang@eswincomputing.com>, 
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
-	Hans de Goede <johannes.goede@oss.qualcomm.com>, Maxime Ripard <mripard@kernel.org>, 
-	Saravana Kannan <saravanak@kernel.org>, Abel Vesa <abelvesa@kernel.org>, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Jun 26, 2026 at 9:33=E2=80=AFAM Brian Masney <bmasney@redhat.com> w=
-rote:
->
-> We have cases where a device node represents a provider for multiple
-> types of resources, like clocks, power-domains, resets, etc. We
-> currently have dev_set_drv_sync_state() where a framework or driver
-> can set the sync_state callback for a device node, however it currently
-> only supports a single sync_state callback.
->
-> The pmdomain subsystem currently sets up a sync_state callback in the
-> core framework, and the clk subsystem will setup it's own separate
-> sync_state callback in the core framework. These can collide with each
-> other on some types of devices that have multiple types of resources.
-> Additionally, some clk drivers already have their own separate
-> sync_state callback already defined.
->
-> Let's introduce support for allowing drivers and frameworks to add their
-> own sync_state callback via a new function dev_add_sync_state() so that
-> multiple sync_state callbacks can coexist.
+On mer. 23 sept. 2026 at 16:33, Alex Elder <elder@riscstar.com> wrote:
 
-I had already thought about this scenario when I implemented the
-framework. Your driver should just set its sync_state() callback and
-that my_drv_sync_state() will simply call the sync state helper
-functions provided by the relevant frameworks.
+> On 9/23/26 3:58 PM, Jerome Brunet wrote:
+>>>>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+>>>>> index f9592fd9ec2bb..50efa10d48450 100644
+>>>>> --- a/drivers/clk/Kconfig
+>>>>> +++ b/drivers/clk/Kconfig
+>>>>> @@ -292,6 +292,17 @@ config COMMON_CLK_S2MPS11
+>>>>>    	  clock. These multi-function devices have two (S2MPS14) or three
+>>>>>    	  (S2MPS11, S5M8767) fixed-rate oscillators, clocked at 32KHz each.
+>>>>>    
+>>>>> +config COMMON_CLK_TC9564
+>>>>> +	tristate "Toshiba TC9564 clock support"
+>>>>> +	depends on TC9564_PCI
+>>>> select RESET_CONTROLLER
+>>> Thank you.  The reset and clock drivers were previously separate
+>>> and the reset only became available if RESET_CONTROLLER was enabled.
+>>> Combining them means I need this.  I will add it.
+>> Why did you combine them ?
+>> 
+>> it would be a lot better if the reset were handled in
+>> drivers/reset rather than in clock. There has already been some work to
+>> move reset from clock back to reset. This often involve auxiliary drivers.
+> To be honest, I got a suggestion from someone to combine them, but
+> I said "no, I got feedback last year that separating them was
+> better."  But then a second person told me that these are often
+> combined, so I took that as "two against one" and decided to
+> merge them.
+>
+> The other reason is that four registers are used:
+>    #define CLK_CTRL0_OFFSET	0x1004
+>    #define RST_CTRL0_OFFSET	0x1008
+>    #define CLK_CTRL1_OFFSET	0x100c
+>    define RST_CTRL1_OFFSET	0x1010
+>
+> They alternate between clock and reset.  The previous separated
+> drivers specified the two offsets for each driver in the reg
+> property.  But somehow these interleaved registers seemed a
+> little off, so I thought the combined driver cleaned that up
+> a little.
+>
+> I don't have any strong preference one way or another.  If you
+> think they're better separate, I don't mind separating them
+> again.  The two drivers are extremely simple.
 
-This link list is adding a lot of code without any clear benefit. And
-it also doesn't work for drivers that might care for a particular
-sequence of framework sync_state() callbacks. Instead your are forced
-to follow whatever order in which the frameworks are adding the sync
-state callbacks to your device.
+Yes, SoC manufacturer tend to mix the 2, it is fairly usual and we used
+to have many drivers in clock providing reset too. We have been slowly
+cleaning that up over the past few years.
 
-I don't think this patch is a good idea.
+To be clear it is not strictly forbbiden to mix ressources but putting
+things where they belong help review and maintainance.
 
--Saravana
+There are several examples you can look at with auxiliary device
+support, ./tenstorrent/atlantis-prcm.c is a good example.
 
 >
-> Link: https://lore.kernel.org/linux-clk/CAPx+jO9JiV16ePLk59hTQzEMnA96Va6N=
-s4jqJbwyZ6oTT0AjXA@mail.gmail.com/
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> Assisted-by: Claude:claude-opus-4-6
-> ---
->  drivers/base/base.h    |  7 +++++++
->  drivers/base/core.c    | 29 +++++++++++++++++++++++++++++
->  include/linux/device.h | 11 +++++++++++
->  3 files changed, 47 insertions(+)
->
-> diff --git a/drivers/base/base.h b/drivers/base/base.h
-> index a5b7abc10ff0..339db4afbeb4 100644
-> --- a/drivers/base/base.h
-> +++ b/drivers/base/base.h
-> @@ -178,6 +178,8 @@ static inline bool dev_has_sync_state(struct device *=
-dev)
->
->         if (!dev)
->                 return false;
-> +       if (!list_empty(&dev->sync_state_list))
-> +               return true;
->         drv =3D READ_ONCE(dev->driver);
->         if (drv && drv->sync_state)
->                 return true;
-> @@ -188,10 +190,15 @@ static inline bool dev_has_sync_state(struct device=
- *dev)
->
->  static inline void dev_sync_state(struct device *dev)
->  {
-> +       struct sync_state_entry *entry;
-> +
->         if (dev->bus->sync_state)
->                 dev->bus->sync_state(dev);
->         else if (dev->driver && dev->driver->sync_state)
->                 dev->driver->sync_state(dev);
-> +
-> +       list_for_each_entry(entry, &dev->sync_state_list, node)
-> +               entry->fn(dev);
->  }
->
->  int driver_add_groups(const struct device_driver *drv,
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 4d026682944f..acc12f402dd3 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -2612,6 +2612,7 @@ EXPORT_SYMBOL_GPL(device_show_string);
->  static void device_release(struct kobject *kobj)
->  {
->         struct device *dev =3D kobj_to_dev(kobj);
-> +       struct sync_state_entry *entry, *tmp;
->         struct device_private *p =3D dev->p;
->
->         /*
-> @@ -2625,6 +2626,11 @@ static void device_release(struct kobject *kobj)
->          */
->         devres_release_all(dev);
->
-> +       list_for_each_entry_safe(entry, tmp, &dev->sync_state_list, node)=
- {
-> +               list_del(&entry->node);
-> +               kfree(entry);
-> +       }
-> +
->         kfree(dev->dma_range_map);
->         kfree(dev->driver_override.name);
->
-> @@ -3239,12 +3245,35 @@ void device_initialize(struct device *dev)
->         INIT_LIST_HEAD(&dev->links.consumers);
->         INIT_LIST_HEAD(&dev->links.suppliers);
->         INIT_LIST_HEAD(&dev->links.defer_sync);
-> +       INIT_LIST_HEAD(&dev->sync_state_list);
->         dev->links.status =3D DL_DEV_NO_DRIVER;
->         dev_assign_dma_coherent(dev, dma_default_coherent);
->         swiotlb_dev_init(dev);
->  }
->  EXPORT_SYMBOL_GPL(device_initialize);
->
-> +int dev_add_sync_state(struct device *dev,
-> +                          void (*fn)(struct device *dev))
-> +{
-> +       struct sync_state_entry *entry;
-> +
-> +       if (!dev || !dev->driver)
-> +               return 0;
-> +
-> +       list_for_each_entry(entry, &dev->sync_state_list, node)
-> +               if (entry->fn =3D=3D fn)
-> +                       return 0;
-> +
-> +       entry =3D kmalloc_obj(*entry);
-> +       if (!entry)
-> +               return -ENOMEM;
-> +
-> +       entry->fn =3D fn;
-> +       list_add_tail(&entry->node, &dev->sync_state_list);
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(dev_add_sync_state);
-> +
->  struct kobject *virtual_device_parent(void)
->  {
->         static struct kobject *virtual_dir =3D NULL;
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 7b2baffdd2f5..b7a3dd4b56ed 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -642,6 +642,8 @@ enum struct_device_flags {
->   * @driver_override: Driver name to force a match.  Do not touch directl=
-y; use
->   *                  device_set_driver_override() instead.
->   * @links:     Links to suppliers and consumers of this device.
-> + * @sync_state_list: List of sync_state callbacks added by subsystem
-> + *             frameworks (e.g. clk, genpd) via dev_add_sync_state().
->   * @power:     For device power management.
->   *             See Documentation/driver-api/pm/devices.rst for details.
->   * @pm_domain: Provide callbacks that are executed during system suspend=
-,
-> @@ -723,6 +725,7 @@ struct device {
->                                          */
->
->         struct dev_links_info   links;
-> +       struct list_head        sync_state_list;
->         struct dev_pm_info      power;
->         struct dev_pm_domain    *pm_domain;
->
-> @@ -1137,6 +1140,14 @@ static inline int dev_set_drv_sync_state(struct de=
-vice *dev,
->         return 0;
->  }
->
-> +struct sync_state_entry {
-> +       struct list_head        node;
-> +       void                    (*fn)(struct device *dev);
-> +};
-> +
-> +int dev_add_sync_state(struct device *dev,
-> +                          void (*fn)(struct device *dev));
-> +
->  static inline void dev_set_removable(struct device *dev,
->                                      enum device_removable removable)
->  {
->
-> --
-> 2.54.0
->
+> 					-Alex
+
+-- 
+Jerome
