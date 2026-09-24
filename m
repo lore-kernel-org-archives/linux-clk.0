@@ -1,109 +1,102 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4703C9EF8;
-	Thu, 24 Sep 2026 14:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11F84A263D;
+	Thu, 24 Sep 2026 15:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790260727; cv=none; b=WMCL5edMWT0th6AcJzzoBbBb7kpXzMbGPkmlFOa0swn1/M672Lr9axQLjm7NLjTG4S6QNRDyB3I1uwMEPThclz3dM7I4pOAp57MRshSmwoFsyuOz72nDJSWadjK55Mt/xrJTZaxo6yU4hq709LQ+/k5sxO9zHBQl45E1rHac81A=
+	t=1790263806; cv=none; b=AwE7zFSOnB9jmkMStOUVLu3n3FnK/4yNZezjxetsIk5ZBdeoxDcU4GzsiUJriPI4Y5Kc1p/n8UilujJ0uOh1oY5Ibq3UaljrpC/AqoefsupuKmK7gvSjKe3/pQ9JAWGA/ca6mo7Vnr1xQ7xkLGqfL/sCh3QpTK7e6MDdwrJy4pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790260727; c=relaxed/simple;
-	bh=B7L+GN8EOMrfe62BtJNrbN4w2aX8t7lKA7UWYMth/QU=;
+	s=arc-20240116; t=1790263806; c=relaxed/simple;
+	bh=6Kd3H8OgG7G5CfVYho6YrPmqzUbKDh3yoZfacF7ygBM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IszkbdzTesjd2KEMstrBSbcxEhWnJwhCOLiP73uAAYjRR2qRhjTfWXfSmRflsdK8n29y19mUo+3onGM1CDan/zyEw55lsbu0M0aD4uMy6J4/m9EzaAN1ZiV78c0Af8/vDo2AGuYfpGpeSMdF55A7v8PKOvYfrxs8VQADh1/gXhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lKHwjV9m; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLL1HOSAuexLaI+SIlOZqLqLmTts6H8CsN5nD5Srh4bFT7d5K4LrSnHCUpo0lupxBBjdyUvAbjBee9DjUXjioAtDgBNPdCGKearD6P9dv/RwlWh1CwDi2c20t2cw2VSlnO3HNziXlFNGTSxPlZOjpu5rJZTkZrwcUIM+NHfafnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EW0B7Nc6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lKHwjV9m"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DAB7BD0;
-	Thu, 24 Sep 2026 16:36:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1790260615;
-	bh=B7L+GN8EOMrfe62BtJNrbN4w2aX8t7lKA7UWYMth/QU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lKHwjV9m5LTQ5EiY6WzBz9pgzaoNw7/t8Xf9M28MaUx21IG6tm32irCHIx7EPyMAQ
-	 7KcZGhKt/DjeAiOzwUkDXZkjgmgtFRu7OytINlmNQSpeLbWeqJvtXOTKTQqmFNK9vX
-	 QuPwtAHeu8EsoqTEQxXVmz8q9kAhA2ssnDnPiXbU=
-Date: Thu, 24 Sep 2026 17:38:41 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Paul Elder <paul.elder@ideasonboard.com>
-Cc: Paul Elder <paul.elder+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EW0B7Nc6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A8C91F000FF;
+	Thu, 24 Sep 2026 15:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790263805;
+	bh=3xaD1IMfAyp/uIU4MITG18na4g3zXQJFSDgCzveCcZU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=EW0B7Nc6zPIXKvae2h9udoFtfnvLgEztZgFp0GIOtPQU6aa0CKVM4BU/HUwpZ0vKr
+	 1Ng2uL1PApIcsZ4dt5R5rJKBtQ+ejpuIHqzHFWmmVVwhmekO997ypwXY7o1b50WfWZ
+	 jNFyYcsC4YxISGl8X5n0lAnADzdfFjebSuXNuMX4ChHZy2l4ud2CDTfr6dJYsj4GSw
+	 /HSilVBl9WDa93bYPAWt+PWertSA1Ap0Lu9AOmmd31jcJF3mOw6bQ5CoDyBZirCmh8
+	 972QlyXRwXWLAAYyvARx/fHNTHXFpJ4VQs7bNe/4FU9mINsUnDG7ZOXj72PcCtGHg4
+	 yo2B1+UfXTs2Q==
+Date: Thu, 24 Sep 2026 10:30:01 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Joshua Peisach <jpeisach@ubuntu.com>,
+	Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Maud Spierings <maud_spierings@murena.io>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 08/11] media: vsp1: Document X5H SoC ID
-Message-ID: <20260924143841.GE135998@killaraus.ideasonboard.com>
-References: <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-0-dbe9236bfd22@ideasonboard.com>
- <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-8-dbe9236bfd22@ideasonboard.com>
- <20260919175851.GI1124359@killaraus.ideasonboard.com>
- <179024137074.2882041.17628313046085880585@neptunite.rasen.tech>
+	Michael Turquette <mturquette@baylibre.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	dri-devel@lists.freedesktop.org, Jonas Karlman <jonas@kwiboo.se>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, mfd@lists.linux.dev,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Graham Markall <hello@big-grey.co.uk>, linux-clk@vger.kernel.org,
+	Paul Walmsley <pjw@kernel.org>, Robert Foss <rfoss@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Dominique Belhachemi <db@domibel.de>
+Subject: Re: [PATCH v4 06/20] dt-bindings: soc: starfive: Add
+ starfive,jh7110-vout-subsystem
+Message-ID: <179026380151.180820.13279134510036926790.robh@kernel.org>
+References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
+ <CGME20260915153224eucas1p1c19b20f6af600b1c3228a9a8f4bb4490@eucas1p1.samsung.com>
+ <20260915-jh7110-clean-send-v4-6-f0e4fd6f2cc8@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <179024137074.2882041.17628313046085880585@neptunite.rasen.tech>
+In-Reply-To: <20260915-jh7110-clean-send-v4-6-f0e4fd6f2cc8@samsung.com>
 
-On Thu, Sep 24, 2026 at 06:16:10PM +0900, Paul Elder wrote:
-> Quoting Laurent Pinchart (2026-09-20 02:58:51)
-> > On Sat, Sep 19, 2026 at 02:07:05AM +0900, Paul Elder wrote:
-> > > From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > 
-> > > The R-Car X5H uses 0x09 as the SoC ID in the version register. Document
-> > > is with a macro, as done for other R-Car SoCs.
-> > > 
-> > > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-> > > ---
-> > > Changes in v2:
-> > > - Fix the version register number: s/0x04/0x09/
-> > 
-> > Thanks for the fix.
-> > 
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > 
-> > But I think we can squash this with patch 09/11.
-> > 
-> > > ---
-> > >  drivers/media/platform/renesas/vsp1/vsp1_regs.h | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/drivers/media/platform/renesas/vsp1/vsp1_regs.h b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-> > > index 4c0315656e9f81a9656b58fb6f0233f8a22ac0e1..8abf39bac6c2f333696ebf55de87586d2df3bed0 100644
-> > > --- a/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-> > > +++ b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-> > > @@ -816,6 +816,7 @@
-> > >  #define VI6_IP_VERSION_SOC_E3                (0x04 << 0)
-> > >  #define VI6_IP_VERSION_SOC_V3U               (0x05 << 0)
-> > >  #define VI6_IP_VERSION_SOC_V4H               (0x06 << 0)
-> > > +#define VI6_IP_VERSION_SOC_X5H               (0x09 << 0)
+
+On Tue, 15 Sep 2026 17:32:14 +0200, Michal Wilczynski wrote:
+> The JH7110 groups its display hardware into a video output subsystem,
+> dom_vout_top, covering the DC8200, the HDMI transmitter, the video
+> output clock generator and the video output system controller.
 > 
-> Do we need to add an X5H1 (0x09) and X5H2 (0x07)? Or whatever 0x07 is because
-> that's what the bsp is referencing for X5H. I've personally observed 0x09 for X5H1.
+> They share one NoC port whose clock and reset gate access to every
+> register in the region, and the region sits in the PD_VOUT power
+> domain. Describe the subsystem as a bus node so those resources are
+> owned by the block that shares them, rather than by whichever consumer
+> happens to probe first.
+> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  .../starfive/starfive,jh7110-vout-subsystem.yaml   | 218 +++++++++++++++++++++
+>  1 file changed, 218 insertions(+)
+> 
 
-I'd add 0x09 for now, and 0x07 later when we'll be able to test X5H2.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> > >  /* RZ/G2L SoCs have no version register, So use 0x80 for SoC Identification */
-> > >  #define VI6_IP_VERSION_SOC_RZG2L     (0x80 << 0)
-> > >  
-
--- 
-Regards,
-
-Laurent Pinchart
