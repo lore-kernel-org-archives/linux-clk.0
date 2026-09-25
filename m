@@ -1,31 +1,31 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A65E501F4D;
-	Fri, 25 Sep 2026 22:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B10850AC20;
+	Fri, 25 Sep 2026 22:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790376974; cv=none; b=jWSF275GcezOdxLMUGmF2iUw1hI3jraPZ9vIVuEOT8CB/DAVg/ZxsVHqocr48AeEWzsw1G57cw+Ly6pc2kfNBGPIifES2GTeVDlmFecNTIZHMY241Ck4oBldZBQSzYBclxpeNm91wTi8bvFCeGXb5Zwn+PRM+J0zhIXcj3HDrZ0=
+	t=1790376977; cv=none; b=FyO4Yl7AjOmdz5fxbHHv/7M7arHgE+8BBwizeYOVpcVl0AEAJ77RDRyVLxF+4xzAuOPQh5xva0p4XcgBHGy9VGnwXa26Xap5ZbzuaBKe+LLzVizpMasFanuft8b+Up93C1+yzPZXn/oz/2Zw0F0wF/bDe7NcMxxuXSIMOzjj3Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790376974; c=relaxed/simple;
-	bh=3blP0nDMtGN6vIpTbQx5TZFpZ7wvhmdDuk7aLl94D6A=;
+	s=arc-20240116; t=1790376977; c=relaxed/simple;
+	bh=qfpp5+5JkkoAYOyrvSG6KAf8EvSoq7d1du0nH5PfF8g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GC1BAfSwCFmdTJIrvNyi5R5TGbaCqkGARNKXt7/JXRb8+bJdwvzyXkdAKsNvjkUbdEjLTkuA12ueYf51rGXi/00nFTIHYdR0hzSqhZ4BUk2dCtCkbuuIXIOsFPvflIDKc2IZemZwtFsDZn/vnaG1nIjc4g8Mba9LfN86a9npS/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=ch2MCgeR; arc=none smtp.client-ip=217.140.110.172
+	 MIME-Version; b=JKBiHS2TGwNujsHW4/NxRO3ozCmfx9wFbfrCgIS535ATA+aZKrPZjzvAWg9zTM4FyJ1lid/n+Ni3IcHzYHkzYoVTv5IPtUAOAcNA913wogeSCkkzQhDaHxP2qhP/6hG9lrvBWTotSbNSMS6sndvCKWDsze3EFPXcbm7tvuR3fJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=dnkfq5IW; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="ch2MCgeR"
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="dnkfq5IW"
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D055C169C;
-	Fri, 25 Sep 2026 15:56:06 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D7941C01;
+	Fri, 25 Sep 2026 15:56:10 -0700 (PDT)
 Received: from ryzen.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 847D13F632;
-	Fri, 25 Sep 2026 15:56:07 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B171A3F632;
+	Fri, 25 Sep 2026 15:56:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1790376970; bh=3blP0nDMtGN6vIpTbQx5TZFpZ7wvhmdDuk7aLl94D6A=;
+	t=1790376973; bh=qfpp5+5JkkoAYOyrvSG6KAf8EvSoq7d1du0nH5PfF8g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ch2MCgeRNQuiON+68rcbbb1+lleArxnuaZiRb/vxJl69WhNsvrBnGE+afWZP6d3kr
-	 9qlTxF4HXyAlE1Xfi8rwBIGbAT4phq4kPTy/oj4mLFMjpF1aRl061uZus9VuNiObNr
-	 B4LXW0zlGp+GmcFVxcBoJTW+nZCvvglCa2NTgctk=
+	b=dnkfq5IWoMq6y/8XNgXFwNRf83bC4Unes4iUc3MywojZ6pjEE2YfqzCyHz01oBbMc
+	 NtyAtDRYLNLZSMvxlsP7GRCOv+0jjur4zvoCNVFw7fYf4os6RMGNUCqwJOh0Jks45l
+	 +dTXkzZB7qeOKxgMqQfpQWjzLTGmXIUNQp0Kymyw=
 From: Andre Przywara <andre.przywara@arm.com>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
@@ -40,9 +40,9 @@ Cc: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev
-Subject: [PATCH v3 2/4] dt-bindings: clock: sun55i-a523-ccu: Add A523 CPU CCU clock controller
-Date: Sat, 26 Sep 2026 00:51:10 +0200
-Message-ID: <20260925225112.14081-3-andre.przywara@arm.com>
+Subject: [PATCH v3 3/4] clk: sunxi-ng: add support for the A523/T527 CPU CCU
+Date: Sat, 26 Sep 2026 00:51:11 +0200
+Message-ID: <20260925225112.14081-4-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.46.4
 In-Reply-To: <20260925225112.14081-1-andre.przywara@arm.com>
 References: <20260925225112.14081-1-andre.przywara@arm.com>
@@ -54,106 +54,492 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are four clock controllers in the A523 SoC, but only three are
-described in the DT binding so far.
+The A523 contains a separate CCU block for the CPU PLLs. This includes
+one CPU clock per cluster, plus the DSU PLL, which clocks the part that
+connects the two clusters. There is also a "backup" PLL, which can be used
+to clock the cores when the main PLLs are reprogrammed.
+Those PLLs are then connected via MUXes to the two clusters and the DSU.
 
-Add a description for the CPU CCU, which provides separate clocks for
-the two CPU clusters and the DSU interconnect.
+Describe those clocks and their relationship, to allow the kernel to
+adjust the core frequency.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 ---
- .../clock/allwinner,sun55i-a523-ccu.yaml      | 38 ++++++++++++++++++-
- .../dt-bindings/clock/sun55i-a523-cpu-ccu.h   | 13 +++++++
- 2 files changed, 50 insertions(+), 1 deletion(-)
- create mode 100644 include/dt-bindings/clock/sun55i-a523-cpu-ccu.h
+ drivers/clk/sunxi-ng/Kconfig               |   5 +
+ drivers/clk/sunxi-ng/Makefile              |   2 +
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.c | 378 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.h |  24 ++
+ drivers/clk/sunxi-ng/ccu_div.h             |   5 +
+ 5 files changed, 414 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.h
 
-diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-index 58be701a720ea..8d5481fb63ae8 100644
---- a/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-+++ b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-@@ -19,6 +19,7 @@ properties:
-   compatible:
-     enum:
-       - allwinner,sun55i-a523-ccu
-+      - allwinner,sun55i-a523-cpu-ccu
-       - allwinner,sun55i-a523-mcu-ccu
-       - allwinner,sun55i-a523-r-ccu
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 6af2d020e03e9..b2d8efa231cf2 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -67,6 +67,11 @@ config SUN55I_A523_R_CCU
+ 	default ARCH_SUNXI
+ 	depends on ARM64 || COMPILE_TEST
  
-@@ -35,12 +36,23 @@ properties:
- 
- required:
-   - "#clock-cells"
--  - "#reset-cells"
-   - compatible
-   - reg
-   - clocks
-   - clock-names
- 
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: allwinner,sun55i-a523-cpu-ccu
-+then:
-+  properties:
-+    "#reset-cells": false
-+else:
-+  required:
-+    - "#reset-cells"
++config SUN55I_A523_CPU_CCU
++	tristate "Support for the Allwinner A523/T527 CPU CCU"
++	default ARCH_SUNXI
++	depends on ARM64 || COMPILE_TEST
 +
- allOf:
-   - if:
-       properties:
-@@ -64,6 +76,30 @@ allOf:
-             - const: iosc
-             - const: losc-fanout
- 
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - allwinner,sun55i-a523-cpu-ccu
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: High Frequency Oscillator (usually at 24MHz)
-+            - description: Low Frequency Oscillator (usually at 32kHz)
-+            - description: Internal Oscillator
-+            - description: Peripherals PLL 0 (1200 MHz output)
-+            - description: Peripherals PLL 0 (600 MHz output)
-+
-+        clock-names:
-+          items:
-+            - const: hosc
-+            - const: losc
-+            - const: iosc
-+            - const: pll-periph0-2x
-+            - const: pll-periph0-600m
-+
-   - if:
-       properties:
-         compatible:
-diff --git a/include/dt-bindings/clock/sun55i-a523-cpu-ccu.h b/include/dt-bindings/clock/sun55i-a523-cpu-ccu.h
+ config SUN4I_A10_CCU
+ 	tristate "Support for the Allwinner A10/A20 CCU"
+ 	default ARCH_SUNXI
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index a1c4087d72417..309ff5a089ecf 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_SUN50I_H616_CCU)	+= sun50i-h616-ccu.o
+ obj-$(CONFIG_SUN55I_A523_CCU)	+= sun55i-a523-ccu.o
+ obj-$(CONFIG_SUN55I_A523_MCU_CCU)	+= sun55i-a523-mcu-ccu.o
+ obj-$(CONFIG_SUN55I_A523_R_CCU)	+= sun55i-a523-r-ccu.o
++obj-$(CONFIG_SUN55I_A523_CPU_CCU)	+= sun55i-a523-cpu-ccu.o
+ obj-$(CONFIG_SUN4I_A10_CCU)	+= sun4i-a10-ccu.o
+ obj-$(CONFIG_SUN5I_CCU)		+= sun5i-ccu.o
+ obj-$(CONFIG_SUN6I_A31_CCU)	+= sun6i-a31-ccu.o
+@@ -64,6 +65,7 @@ sun50i-h616-ccu-y		+= ccu-sun50i-h616.o
+ sun55i-a523-ccu-y		+= ccu-sun55i-a523.o
+ sun55i-a523-mcu-ccu-y		+= ccu-sun55i-a523-mcu.o
+ sun55i-a523-r-ccu-y		+= ccu-sun55i-a523-r.o
++sun55i-a523-cpu-ccu-y		+= ccu-sun55i-a523-cpu.o
+ sun4i-a10-ccu-y			+= ccu-sun4i-a10.o
+ sun5i-ccu-y			+= ccu-sun5i.o
+ sun6i-a31-ccu-y			+= ccu-sun6i-a31.o
+diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.c b/drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.c
 new file mode 100644
-index 0000000000000..042f2310f64de
+index 0000000000000..ef1b05b2a9b58
 --- /dev/null
-+++ b/include/dt-bindings/clock/sun55i-a523-cpu-ccu.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.c
+@@ -0,0 +1,378 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2023-2025 Arm Ltd.
++ *
++ * There are four PLLs: one for the little cluster (cores 0-3: PLL1), one for
++ * the "big" cluster (cores 4-7: PLL3), one for the DSU interconnect (probably
++ * its SCLK, driving the L3 cache: PLL2), and one undocumented "backup" PLL0,
++ * which can be used to drive either or both clusters, while the original PLLs
++ * are re-programmed (and re-lock).
++ * PLL[123] are the same, with a multiplier, a predivider, and two separate
++ * divider fields. For PLL1 till PLL3 there is an additional shift field, in
++ * the mux clock - although that applies only to the PLL, not the other sources.
++ * The two clusters and the DSU are connected to a mux clock each, selecting
++ * from various sources, including the PLL-PERIPH0-600M clock, again useful
++ * during DVFS operations:
++ *
++ *                           PLL-PERI0-600M (from the main CCU)
++ *                               |
++ *                       +-------+-----------+
++ *                      /         \           \
++ *            +------+ /  +------+ \  +------+ \  +------+
++ *            | PLL1 | |  | PLL0 | |  | PLL3 | |  | PLL2 |
++ *            +------+ |  +------+ |  +------+ |  +------+
++ *                \    |     ^     |    /      |     /
++ *                DIV  |    / \    |  DIV      |   DIV      (plus 24MHz,
++ *                  \  |   /   \   |  /        \   /              32KHz,
++ *                +---------+ +---------+   +---------+           16MHz,
++ *                 \ CPU-L /   \ CPU-B /     \  DSU  /       for each mux)
++ *                  \     /     \     /       \     /
++ *                   +---+       +---+         +---+
++ *                     |           |             |
++ *             +-------+-----------+-----DSU-----+----+
++ *             |   +---+---+   +---+---+              |
++ *             |   | cores |   | cores |              |
++ *             |   |  0-3  |   |  4-7  | +------------+
++ *             |   +-------+   +-------+ |  L3 cache  |
++ *             +-------------------------+------------+
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/platform_device.h>
++
++#include "ccu_common.h"
++#include "ccu_reset.h"
++
++#include "ccu_div.h"
++#include "ccu_gate.h"
++#include "ccu_mp.h"
++#include "ccu_nm.h"
++#include "ccu_mult.h"
++
++#include <dt-bindings/clock/sun55i-a523-cpu-ccu.h>
++#include "ccu-sun55i-a523-cpu.h"
++
++/*
++ * The 24 MHz oscillator, the root of most of the clock tree.
++ * .fw_name is the string used in the DT "clock-names" property, used to
++ * identify the corresponding clock in the "clocks" property.
++ */
++static const struct clk_parent_data osc24M[] = {
++	{ .fw_name = "hosc" }
++};
++
++/*
++ * Undocumented PLL, mux-able to both clusters, usable as an interim PLL
++ * during DVFS clock rate changes. Bits [23:16] and [4:2] are RAZ/WI, which
++ * looks like the DDR or VIDEO PLLs, and not like the other CPU PLLs.
++ * Bits [1:0] are not dividers, as they don't have any effect on the frequency.
++ */
++#define SUN55I_A523_PLL_CPU_0_REG		0x00
++
++static struct ccu_mult pll_cpu_0_clk = {
++	.enable	= BIT(27),
++	.lock	= BIT(28),
++	.mult	= _SUNXI_CCU_MULT(8, 8),
++	.common	= {
++		.reg		= 0x00,
++		.hw.init	= CLK_HW_INIT_PARENTS_DATA("pll-cpu-0", osc24M,
++							   &ccu_mult_ops,
++							   CLK_SET_RATE_UNGATE),
++	},
++};
++static const struct clk_parent_data pll_cpu_0_hws[] = {
++	{ .hw = &pll_cpu_0_clk.common.hw },
++};
++
++/*
++ * The PLLs are input * N / P / (M0 * M1). Model them as NM, by ignoring the
++ * predivider P and the only 2-bit wide M0, and fixing them to 1 in probe().
++ * Using NKMP wouldn't be better, because the "P" in there is a shift.
++ * The actual enable bit is bit 31, which we set once in probe, along with
++ * some other control bits, as the manual recommends to not touch them
++ * during runtime.
++ */
++#define SUN55I_A523_PLL_CPU_L_REG		0x04
++static struct ccu_nm pll_cpu_l_clk = {
++	.enable		= BIT(27),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 20, 108),
++	.m		= _SUNXI_CCU_DIV(0, 3),		/* M1 */
++	.common		= {
++		.reg		= 0x04,
++		.update_bits	= BIT(26),
++		.hw.init	= CLK_HW_INIT_PARENTS_DATA("pll-cpu-l", osc24M,
++							   &ccu_nm_ops,
++							   CLK_SET_RATE_UNGATE |
++							   CLK_IS_CRITICAL),
++	},
++};
++static const struct clk_parent_data pll_cpu_l_hws[] = {
++	{ .hw = &pll_cpu_l_clk.common.hw },
++};
++
++#define SUN55I_A523_PLL_CPU_DSU_REG		0x08
++static struct ccu_nm pll_cpu_dsu_clk = {
++	.enable		= BIT(27),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 20, 108),
++	.m		= _SUNXI_CCU_DIV(0, 3),		/* M1 */
++	.common		= {
++		.reg		= 0x08,
++		.update_bits	= BIT(26),
++		.hw.init	= CLK_HW_INIT_PARENTS_DATA("pll-cpu-dsu", osc24M,
++							   &ccu_nm_ops,
++							   CLK_SET_RATE_UNGATE |
++							   CLK_IS_CRITICAL),
++	},
++};
++static const struct clk_parent_data pll_cpu_dsu_hws[] = {
++	{ .hw = &pll_cpu_dsu_clk.common.hw },
++};
++
++#define SUN55I_A523_PLL_CPU_B_REG		0x0c
++static struct ccu_nm pll_cpu_b_clk = {
++	.enable		= BIT(27),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 20, 108),
++	.m		= _SUNXI_CCU_DIV(0, 3),		/* M1 */
++	.common		= {
++		.reg		= 0x0c,
++		.update_bits	= BIT(26),
++		.hw.init	= CLK_HW_INIT_PARENTS_DATA("pll-cpu-b", osc24M,
++							   &ccu_nm_ops,
++							   CLK_SET_RATE_UNGATE |
++							   CLK_IS_CRITICAL),
++	},
++};
++static const struct clk_parent_data pll_cpu_b_hws[] = {
++	{ .hw = &pll_cpu_b_clk.common.hw },
++};
++
++/*
++ * These are just the divider parts of the CPU clocks, even when the mux
++ * field is in the same register. As the divider only applied to the CPU
++ * clocks, this has to be handled separately.
++ */
++static SUNXI_CCU_P_DATA(pll_cpu_l_div_clk, "pll-cpu-l-div",
++			pll_cpu_l_hws, 0x60,
++			16, 2,				/* P */
++			CLK_SET_RATE_PARENT);
++static SUNXI_CCU_P_DATA(pll_cpu_b_div_clk, "pll-cpu-b-div",
++			pll_cpu_b_hws, 0x064,
++			16, 2,				/* P */
++			CLK_SET_RATE_PARENT);
++static SUNXI_CCU_P_DATA(pll_cpu_dsu_div_clk, "pll-cpu-dsu-div",
++			pll_cpu_dsu_hws, 0x06c,
++			16, 2,				/* P */
++			CLK_SET_RATE_PARENT);
++
++static const struct clk_parent_data cpu_l_parents[] = {
++	{ .fw_name = "hosc" },
++	{ .fw_name = "losc" },
++	{ .fw_name = "iosc" },
++	{ .hw = &pll_cpu_l_div_clk.common.hw },
++	{ .fw_name = "pll-periph0-600m" },
++	{ .hw = &pll_cpu_0_clk.common.hw },
++};
++
++static SUNXI_CCU_MUX_DATA(cpu_l_clk, "cpu-l", cpu_l_parents, 0x60,
++			  24, 3,		/* mux */
++			  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++
++static const struct clk_parent_data cpu_b_parents[] = {
++	{ .fw_name = "hosc" },
++	{ .fw_name = "losc" },
++	{ .fw_name = "iosc" },
++	{ .hw = &pll_cpu_b_div_clk.common.hw },
++	{ .fw_name = "pll-periph0-600m" },
++	{ .hw = &pll_cpu_0_clk.common.hw },
++};
++
++static SUNXI_CCU_MUX_DATA(cpu_b_clk, "cpu-b", cpu_b_parents, 0x64,
++			  24, 3,		/* mux */
++			  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++
++/*
++ * Register 0x68 holds gate bits for the two cluster clocks and the DSU.
++ * We leave them alone in the kernel, that's something for TF-A or the SCP.
++ */
++
++static const struct clk_parent_data cpu_dsu_parents[] = {
++	{ .fw_name = "hosc" },
++	{ .fw_name = "losc" },
++	{ .fw_name = "iosc" },
++	{ .hw = &pll_cpu_dsu_div_clk.common.hw },
++	{ .fw_name = "pll-periph0-2x" },
++	{ .fw_name = "pll-periph0-600m" },
++};
++
++static SUNXI_CCU_MUX_DATA(cpu_dsu_clk, "cpu-dsu", cpu_dsu_parents, 0x6c,
++			  24, 3,		/* mux */
++			  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++
++static struct ccu_common *sun55i_a523_cpu_ccu_clks[] = {
++	&pll_cpu_0_clk.common,
++	&pll_cpu_l_clk.common,
++	&pll_cpu_b_clk.common,
++	&pll_cpu_dsu_clk.common,
++	&pll_cpu_l_div_clk.common,
++	&pll_cpu_b_div_clk.common,
++	&pll_cpu_dsu_div_clk.common,
++	&cpu_l_clk.common,
++	&cpu_b_clk.common,
++	&cpu_dsu_clk.common,
++};
++
++static struct clk_hw_onecell_data sun55i_a523_cpu_hw_clks = {
++	.hws	= {
++		[CLK_PLL_CPU_0]		= &pll_cpu_0_clk.common.hw,
++		[CLK_PLL_CPU_L]		= &pll_cpu_l_clk.common.hw,
++		[CLK_PLL_CPU_DSU]	= &pll_cpu_dsu_clk.common.hw,
++		[CLK_PLL_CPU_B]		= &pll_cpu_b_clk.common.hw,
++		[CLK_DIV_CPU_L]		= &pll_cpu_l_div_clk.common.hw,
++		[CLK_DIV_CPU_DSU]	= &pll_cpu_dsu_div_clk.common.hw,
++		[CLK_DIV_CPU_B]		= &pll_cpu_b_div_clk.common.hw,
++		[CLK_CPU_L]		= &cpu_l_clk.common.hw,
++		[CLK_CPU_DSU]		= &cpu_dsu_clk.common.hw,
++		[CLK_CPU_B]		= &cpu_b_clk.common.hw,
++	},
++	.num	= CLK_NUMBER,
++};
++
++static const struct sunxi_ccu_desc sun55i_a523_cpu_ccu_desc = {
++	.ccu_clks	= sun55i_a523_cpu_ccu_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sun55i_a523_cpu_ccu_clks),
++
++	.hw_clks	= &sun55i_a523_cpu_hw_clks,
++};
++
++static const u32 pll_regs[] = {
++	SUN55I_A523_PLL_CPU_0_REG,
++	SUN55I_A523_PLL_CPU_L_REG,
++	SUN55I_A523_PLL_CPU_DSU_REG,
++	SUN55I_A523_PLL_CPU_B_REG,
++};
++
++static struct ccu_mux_nb sun55i_a523_cpu_l_nb = {
++	.common		= &cpu_l_clk.common,
++	.cm		= &cpu_l_clk.mux,
++	.delay_us	= 1, /* manual doesn't really say */
++	.bypass_index	= 4, /* PLL_PERI0@600MHz, as recommended by manual */
++};
++static struct ccu_mux_nb sun55i_a523_cpu_b_nb = {
++	.common		= &cpu_b_clk.common,
++	.cm		= &cpu_b_clk.mux,
++	.delay_us	= 1, /* manual doesn't really say */
++	.bypass_index	= 4, /* PLL_PERI0@600MHz, as recommended by manual */
++};
++static struct ccu_mux_nb sun55i_a523_cpu_dsu_nb = {
++	.common		= &cpu_dsu_clk.common,
++	.cm		= &cpu_dsu_clk.mux,
++	.delay_us	= 1, /* manual doesn't really say */
++	.bypass_index	= 5, /* PLL_PERI0@600MHz, as recommended by manual */
++};
++
++static int sun55i_a523_start_pll(void __iomem *reg)
++{
++	u32 val = readl(reg);
++
++	/* check if the bootloader had the PLL already running and locked */
++	if ((val & GENMASK(31, 28)) == GENMASK(31, 28)) {
++		/* If the dividers are already set to 1 (encoded as 0) ... */
++		if (!(val & GENMASK(21, 16)))
++			return 0;
++
++		/*
++		 * The PLL is already running, but the P and M0 dividers are
++		 * not programmed to 1, which we assume in our formula above.
++		 * If we just clear them, the frequency jumps up by at least
++		 * a factor of 2, probably crashing the system.
++		 * So we need TODO:
++		 * - remux the consumer (a different register!)
++		 * - gate the PLL
++		 * - set the factor to match M0==P==1
++		 * - ungate the PLL
++		 * - wait for the PLL to lock
++		 * - remux
++		 * For now just be a diva: U-Boot does the right thing already.
++		 */
++		return -EEXIST;
++	}
++
++	/* set the enable, the LDO and the lock bits, and clear dividers */
++	val |= BIT(31) | BIT(30) | BIT(29) | BIT(26);
++	val &= ~GENMASK(21, 16); /* covering PLL_P and PLL_M0 */
++	writel(val, reg);
++
++	/* wait for the lock bit */
++	return readl_relaxed_poll_timeout(reg, val, val & BIT(28), 100, 70000);
++}
++
++static int sun55i_a523_cpu_ccu_probe(struct platform_device *pdev)
++{
++	const struct sunxi_ccu_desc *desc;
++	void __iomem *reg;
++	int i, ret;
++
++	desc = of_device_get_match_data(&pdev->dev);
++	if (!desc)
++		return -EINVAL;
++
++	reg = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(reg))
++		return PTR_ERR(reg);
++
++	/*
++	 * The user manual recommends to keep the PLLs running, and just
++	 * gate their output if they are not needed, to avoid interference
++	 * with other PLLs, since they share a power domain.
++	 * To comply with this, we use this output gate as the CCF enable bit,
++	 * so we need to enable all PLLs here.
++	 */
++	for (i = 0; i < ARRAY_SIZE(pll_regs); i++) {
++		ret = sun55i_a523_start_pll(reg + pll_regs[i]);
++		if (ret)
++			return ret;
++	}
++
++	ret = devm_sunxi_ccu_probe(&pdev->dev, reg, desc);
++	if (ret)
++		return ret;
++
++	/* Reparent CPUs/DSU during PLL rate changes */
++	ccu_mux_notifier_register(pll_cpu_l_clk.common.hw.clk,
++				  &sun55i_a523_cpu_l_nb);
++	ccu_mux_notifier_register(pll_cpu_b_clk.common.hw.clk,
++				  &sun55i_a523_cpu_b_nb);
++	ccu_mux_notifier_register(pll_cpu_dsu_clk.common.hw.clk,
++				  &sun55i_a523_cpu_dsu_nb);
++
++	return ret;
++}
++
++static const struct of_device_id sun55i_a523_cpu_ccu_ids[] = {
++	{
++		.compatible = "allwinner,sun55i-a523-cpu-ccu",
++		.data = &sun55i_a523_cpu_ccu_desc,
++	},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, sun55i_a523_cpu_ccu_ids);
++
++static struct platform_driver sun55i_a523_cpu_ccu_driver = {
++	.probe	= sun55i_a523_cpu_ccu_probe,
++	.driver	= {
++		.name			= "sun55i-a523-cpu-ccu",
++		.suppress_bind_attrs	= true,
++		.of_match_table		= sun55i_a523_cpu_ccu_ids,
++	},
++};
++module_platform_driver(sun55i_a523_cpu_ccu_driver);
++
++MODULE_IMPORT_NS("SUNXI_CCU");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.h b/drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.h
+new file mode 100644
+index 0000000000000..484343b2c4fa6
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
 + * Copyright 2025 Arm Ltd.
 + */
 +
-+#ifndef _DT_BINDINGS_CLK_SUN55I_A523_CPU_CCU_H_
-+#define _DT_BINDINGS_CLK_SUN55I_A523_CPU_CCU_H_
++#ifndef _CCU_SUN55I_A523_CPU_H
++#define _CCU_SUN55I_A523_CPU_H
 +
-+#define CLK_CPU_L		7
-+#define CLK_CPU_DSU		8
-+#define CLK_CPU_B		9
++#include <dt-bindings/clock/sun55i-a523-cpu-ccu.h>
 +
-+#endif /* _DT_BINDINGS_CLK_SUN55I_A523_CPU_CCU_H_ */
++/* The PLL clocks itself and the pure divider clocks are not exported. */
++
++#define CLK_PLL_CPU_0		0
++#define CLK_PLL_CPU_L		1
++#define CLK_PLL_CPU_DSU		2
++#define CLK_PLL_CPU_B		3
++
++#define CLK_DIV_CPU_L		4
++#define CLK_DIV_CPU_DSU		5
++#define CLK_DIV_CPU_B		6
++
++#define CLK_NUMBER	(CLK_CPU_B + 1)
++
++#endif /* _CCU_SUN55I_A523_CPU_H */
+diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
+index a30a92780a051..e5a15857a0547 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.h
++++ b/drivers/clk/sunxi-ng/ccu_div.h
+@@ -292,6 +292,11 @@ struct ccu_div {
+ 		},							\
+ 	}
+ 
++#define SUNXI_CCU_P_DATA(_struct, _name, _parents, _reg,		\
++			 _pshift, _pwidth, _flags)			\
++	SUNXI_CCU_P_DATA_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
++				       _pshift, _pwidth, 0, 0, 0, _flags)
++
+ static inline struct ccu_div *hw_to_ccu_div(struct clk_hw *hw)
+ {
+ 	struct ccu_common *common = hw_to_ccu_common(hw);
 -- 
 2.46.4
 
