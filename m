@@ -1,79 +1,111 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl2-f43.google.com (mail-dl2-f43.google.com [74.125.229.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C78E26AC3;
-	Fri, 25 Sep 2026 02:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D175C4248A0
+	for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 05:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.229.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790302176; cv=none; b=E5UC1C6QIMMP4nouCGIhELlDX2D+MW7K9hPAY+amDmeDzGi48zkeFnLbynkK4Pr8lych5JuJSII9nSBvCqIReJvOR+ITL27XihDYVaSHOvFNKRUjrffB1pTJEPHzuLvm2oN+B5QqLXbTEVV+Py38a2NWetrBUWDTAQTNzvyaHag=
+	t=1790315391; cv=none; b=GFGCy/AlHnuuYCSg1Gt9WTMrZDO4DVyF9HeRLFJf/PUT8WqF16XKVBk832XwbgoUOqZUaeDnjDH1f56EZzsPaKlYYBAsEsBW1Fh6/q0TXZFs8XuWhstF6MZzADoATKmsCbzDkDJL5v3I9a9xwrDsyCjf8zLB8BcNIZ+uOU9Mhxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790302176; c=relaxed/simple;
-	bh=Lee/KGTk0erzLHAjrCf0qKCpp2QdgSA+BXuhxZBdeD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IREj4PSfFc4CaL5Vpu3Y+vVlEMIdeWax0XmAec33DROmwDnzORApEsKNs1eeuSElUdzpArR7kA3SN+FA0H/vl1CduavCPeRdO/EAlffgbYCjlAXHxuiyIebbm6dmiVN5VbuSkyVxZ5X0CPETvzPDtLdHSFSfifNhVox+n2dabLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjvVMfzu; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790315391; c=relaxed/simple;
+	bh=CMUAdTOQsl3zxRJz65ORDRt0Z6fLyb+XQaRIbRhIx7Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FyibO92UcsBA3VJAiyxh5cnMyPHy4exAdj4y9Wh5dXVEiOLRCV4/+m8gxwLfcFowhnRjPuPRVK4nNbmnU7G6b0BTugJvi4SOxLjeKRoelt84HIIo9V/GUXolUoCawgpQt4WFvF6XnKvQuGH/FS1lSskO6Lb3Vb2ni+31bcVaugU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SSzf4Pcu; arc=none smtp.client-ip=74.125.229.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjvVMfzu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A196E1F000FF;
-	Fri, 25 Sep 2026 02:09:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790302174;
-	bh=lEL7RjYejIrWAwKkZbGHqb91M2mSRkyiPtdwFTRkUfM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=NjvVMfzuQCo1u9YBX0Kqq6OQK8qMet0GOlgyftH8Xn5HAFe4a19psJzg8db7IDl3y
-	 MGfBw7+mCm+4acLgm2C+IyYsVAgZO+IVOwWLOWiqndh0FzfEoJriPO4mA+p7yy7l+t
-	 78DGZRlhCVkcSpqEUxCHKCv4eAwpJSEsyehM/qmNIGbPy0PtYDGdFqPHf9NXzAdoFv
-	 8eBbH3r57ldzviReBBmTK2h7yx9stzZ51ReVF+ZJ5c6eDvYJYpZPxx9gM+yaRJ71Rd
-	 ekx61NS913qmU4GdoXSZ/NFrDyCSY4BIX+k9wa8QYLnpw6CiS5Qo3SCww98BF2wS5F
-	 vqkZjsszoFDKg==
-Date: Thu, 24 Sep 2026 19:09:33 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-Cc: Drew Fustini <dfustini@oss.tenstorrent.com>,
-	Joel Stanley <jms@oss.tenstorrent.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Brian Masney <bmasney@redhat.com>, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sashiko <sashiko-bot@kernel.org>
-Subject: Re: [PATCH] clk: tenstorrent: Fix refcount leak on shared gate clk
- enable failure
-Message-ID: <arXX3RkaFvEwTySN@thelio>
-References: <20260924-atlantis_gate_shared_enable_fix-v1-1-303f925b8a3d@oss.tenstorrent.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SSzf4Pcu"
+Received: by mail-dl2-f43.google.com with SMTP id a92af1059eb24-144f7915355so501217c88.3
+        for <linux-clk@vger.kernel.org>; Thu, 24 Sep 2026 22:49:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790315389; x=1790920189; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=gpsFMQhFIaN3WfMajRs3T925X7ybvvJkOFygMeT7WvM=;
+        b=SSzf4Pcu/RqY4GXFvJwQpeq67l+6KPag7VZ8sJe5g5Ii7eqA918FISNpKeGP15wdA6
+         kCDvABvaUYibBZEdQxwCuYH2y6uQevLaHQlKVJ6Kl5rHphtq+SnF7MbW/5Vqb22DcMD8
+         9iJtdxrzFHo3Sz5wBWo9X/f3/FzuCWpKCw175WaFMg1RC2uk3GW1gxxCTSFzKwKdgujz
+         Q9i+X8KwfXjeozlmzueybZrx0JQcbsKRC3un0LXbwhTIBv477Xx5ISPb6gyO26FOfzSy
+         Rs1gwtgkMas4TYxWAaOJ89NMh44afqcUWKhe3xw1e6cRaSGaYK6ftyIXOnjnfke5DjKC
+         Owgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790315389; x=1790920189;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=gpsFMQhFIaN3WfMajRs3T925X7ybvvJkOFygMeT7WvM=;
+        b=P69KYS8Wl20IhHvdm3XdYw32ITJRiDbKzxOHV8YwR7VDtL9V8SHyXEN7BXt4pPbA6e
+         ggSeGllZ1d0Q+TkLMMC15cmLiVXpwr9ucN7FfsgctyV+dDtIi7+kkqL6c0Az2w4XJEj5
+         VhLMaLVjQys7ATAPynei6I43MJc4BM3qJfq7cSpwl/gA53a2m9E2XwdkAw7cuPbCTmiq
+         T+evl+rm8DDt0V7Uquwo54dks8T6yTQqp0NV7XzQl1dgzC8ZkjnGlLA8dr9gf0IP0O4h
+         HYHad9kMvYTQv8rmWNMGjp2b9COKn8mFazqDltPT+G82hYI0BUWu8ZcAPtzfnTZuytH+
+         wVkQ==
+X-Gm-Message-State: AFuF++mOYvTg27nOQoEleLeHLiXIVVV0EM71oi/p8QsdMOkpZFSex5zz
+	WbxlXamW+YhneGxu98f9E7AUb26xnBpkqz0mfW3ROAGZf4bSpTIxXn1XsnjPyykz3vhZRg==
+X-Gm-Gg: AYBFou1/R4M+eKiaxwp6gUZVc3ChBnyFi/tlizW8ixPfC7zLcGYrzCoNCwYF2nrdZwe
+	G0kBKOhd7HLQpGGfx4Qb8JYEgjGSIu3L+D5yzVaIaPbgYz/txUnm9xB+gCLKIZPqYQSk6r2Z4xP
+	J98PAnnot+eaKTnvM2qgl8sK57ESeTiihDrDMUv/SFeEfe0UP1/Ezfb67yRW857JbipkSiZ1fJ3
+	DJNTawY7A4jg7VU4IRMJLmkkDqg4+NBwXZe52ZvNKz40zgJFpcRV2bzBVidMYA4zCOPOAaBaLEe
+	OXCHIwlkJKGzVoyy/y/xYwuIrvAk26vjy69AZ7U5KWy5MQPpE/lKciRjxXq27nk6WiSU3L134OP
+	s+558wDNRDM2VFaSYETW5eZh0bBuuxJoAkgnfKHjTwFOhpVQapRse7JkqDWjl6YfJT5FXhDPoK8
+	KwWNyvQE96gpUIYM1nEQVO+N2o42OKoC/S33pIP+SFk3A/aKLr7sK3SgQ1mmXcfQffVcrDYKTGt
+	mqk9XJ0ApVi1z2ORMA4xR2m0m0sy5830HJ3rK/Q68BTvKZLH3cMLF8VKDNbtmhkzTnibkJ/qT17
+	sDCe3UkF2Qq5bFiLjQIDloPYBnKRRhoYenyPJxTOP13iX6udwl1pZoFHZSw=
+X-Received: by 2002:a05:7022:1009:b0:143:5722:55be with SMTP id a92af1059eb24-14504033d55mr4092505c88.30.1790315388475;
+        Thu, 24 Sep 2026 22:49:48 -0700 (PDT)
+Received: from spider.bream-herring.ts.net ([103.6.151.236])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-145a7318afcsm3237181c88.0.2026.09.24.22.49.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Sep 2026 22:49:47 -0700 (PDT)
+From: Matthias Goergens <matthias.goergens@gmail.com>
+To: sboyd@kernel.org,
+	bmasney+clk@redhat.com,
+	jbrunet+clk@baylibre.com
+Cc: linux-clk@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: name the clk/linux clk-next branch
+Date: Fri, 25 Sep 2026 13:49:43 +0800
+Message-ID: <20260925054943.2964129-1-matthias.goergens@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260924-atlantis_gate_shared_enable_fix-v1-1-303f925b8a3d@oss.tenstorrent.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 24, 2026 at 10:31:51AM -0500, Anirudh Srinivasan wrote:
-> atlantis_clk_gate_shared_enable() increments the refcount for the number
-> of clks requesting the shared gate clk to be enabled always. It should
-> only do this when the enable for the gate took effect in hardware. It's
-> possible to end up in a situation where the gate enable failed, but the
-> refcount is incremented anyway, so subsequent requests by other clks
-> that share the same refcount get ignored and the gate enable is never
-> retried.
-> 
-> Update this function so that the refcount is not incremented when the
-> gate clk enable fails in hardware.
-> 
-> Reported-by: Sashiko <sashiko-bot@kernel.org>
-> Link: https://sashiko.dev/#/patchset/AS8P251MB00013BD9A093C06D2D60E10EC8B42%40AS8P251MB0001.EURP251.PROD.OUTLOOK.COM
-> Fixes: 23c8ebc95284 ("clk: tenstorrent: Add Atlantis clock controller driver")
-> Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-> ---
->  drivers/clk/tenstorrent/atlantis-prcm.c | 19 +++++++++----------
->  1 file changed, 9 insertions(+), 10 deletions(-)
+The T: entry for COMMON CLK FRAMEWORK names clk/linux without a branch.
+The repository's HEAD points to branch master, which mainline already
+contains.  linux-next merges the clk-next branch of this repository
+(Next/Trees).  Name that branch in the entry.
 
-Reviewed-by: Drew Fustini (Tenstorrent) <fustini@kernel.org>
+Signed-off-by: Matthias Goergens <matthias.goergens@gmail.com>
+---
+This is part of a cleanup of all T: entries whose repository HEAD is
+not where development happens: one patch per repository, sent in small
+batches.  The plan is at [1], and why it goes out in batches at [2].
 
-I will apply this to tenstorrent-clk-for-next.
+[1] https://lore.kernel.org/all/20260924033200.3615554-1-matthias.goergens@gmail.com/
+[2] https://lore.kernel.org/all/20260924101844.2403008-1-matthias.goergens@gmail.com/
 
-Thanks,
-Drew
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 140eafcbbd78..88ff97fde3ea 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6500,7 +6500,7 @@ M:	Jerome Brunet <jbrunet+clk@baylibre.com>
+ L:	linux-clk@vger.kernel.org
+ S:	Maintained
+ Q:	http://patchwork.kernel.org/project/linux-clk/list/
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+ F:	Documentation/devicetree/bindings/clock/
+ F:	drivers/clk/
+ F:	include/dt-bindings/clock/
+
+base-commit: 62f4c998b297cf233997a2b4cd6fc2d2df0319c9
+-- 
+2.55.0
+
