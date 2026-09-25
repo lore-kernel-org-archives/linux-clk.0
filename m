@@ -1,56 +1,50 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D2B4E80BA;
-	Fri, 25 Sep 2026 16:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A424EBAF9;
+	Fri, 25 Sep 2026 16:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790354657; cv=none; b=QYjbUtd5TrSntYcNADEY7m7KtuZZ+hi26ctnGQw+ClZ/cmWi8ZNh7gdDNNYpE8Ta6m0T4/04m2rkaDsTrlPFY2CRRK3ZTR76I9nO3nEixutsYqnOdx6FT3tZ2+heDmxKunhgmKdS+dLkUObw5eDdOjYO4DNnNU0mhiG6l9sx+jE=
+	t=1790354660; cv=none; b=cHD/xz2nXgUU/+H9sQOA5tQFN4d2IzmIVo9qiwtxJKOm3aQIgryKrRjmYy43mvPaop4qkGxxhw6Ev0Fjg9mZ+IKTpUgczAN3pc8As9rQk3Bofui27R6KcpOs0cN3dmnqjswpblb6niiaHpWLV6Kl44lyNRvrJ2uqDDSJS7qCmxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790354657; c=relaxed/simple;
-	bh=hyK5J9mPPKwiX/dFgYJEZlLRuvfhsxSqE+XH9y9EtXE=;
+	s=arc-20240116; t=1790354660; c=relaxed/simple;
+	bh=gjohcdPGiYL7nwDam/SpJP7ttDdTdJ3RNPcZMPG/yzU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pWtHA1gFoHY7VGNAHioVvJ8uRG3dE0WpX34GgmysXxzEeap6jmiytSl5Cti3h/NDDiiKzGQptIlnJKkkbN75jlTJJNvMTWPDS8PUUmBOYoDDgT9XrgjESb9+KKPsrPJORARuvvtIC9dLTkIfMEXYAbCc5dIQtNI5JvjrFK5JMM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6HMgdaq; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=DSC9qPFA+tgp3bpsgHqz5uIPxwf9rRC+llxQ2y7TtvcnyiatOmJAEQ7DBqK9rebhvY4kH2L25xZMYrCA9sw5K4h0iwIUwY7nPUs8jHWQpbxsnwGblCkGnWAIn2nW6/AIkjRLYLHiRBqjtwG0JMW9FLRltDEHSfdJQxhiDsBdN/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTYduPqu; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6HMgdaq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0436D1F0089D;
-	Fri, 25 Sep 2026 16:43:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTYduPqu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A3D1F008A2;
+	Fri, 25 Sep 2026 16:44:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790354636;
-	bh=auT01dKw9KoRKcdYjDZdalcmjamUWzwRdXmfsqdgIxI=;
+	s=k20260515; t=1790354645;
+	bh=5j0426lKs8YxQsfCYvCrdp7iBo9AjRLpYEF6ZpaZ04A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=U6HMgdaqcD+loPfu2k4ioIbTE12UhB7AWbGRyhOkKWksUe3G5a5lWUKXF/Y+GFLT4
-	 aahac2FFbXJFDeOXyPhHTUo4SxXaPtRBkpMLgfAOsAogAOCehxvsVZbxGtMqU2S6Me
-	 Ee4vcnt35/YQPZacUhcGmXaO6K1c6n8wFSWQukcBfY8YbKqWo9SCTMHPUT6YpyZJFW
-	 ZE1Nqw3fN1XypiEhUaAOz4knNGXShmz3ZEH1d6pyHiyEu9HYjHJozaDuMFgfs7a/6Y
-	 G62EiaQnB3jxmU2+yj9cI3P+fR2HiB/i7IPJFAHY9E5Kz7Cm99XXYbWZD9yBas1e0z
-	 QZiw9nigcDVFA==
+	b=BTYduPqutypUiyXWnnt38KbtWtOUbVLy8NufG+AGwnYI7V0TM9wYNiQbhTRLRVQwH
+	 THmpJzLdN2qYTYPpem+g2VN+j9cLHeSfMmDM9zSQ5EbIQQTwA+8OO4OB6eYNo0254R
+	 dxNnOeqr6kqI9rpAVzioQT4DwngGD/pHkh8CbCojBMygcwKGbyz2iPqQAUpLUE05Ct
+	 xeZZ7/a12ywBPvH0pmBC689FoPoZ8zXIJsm4HWlB5D3OF/6+GNRWVrpYqJa+DNbu3E
+	 o7VpvUMlWkxPQiEmWTPbLOpUCApAAomDPSO0twW+FBD3snxb/R9sPY2sqgB2nsL6JL
+	 mjQ1pmlG6o1Yg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Luo Jie <jie.luo@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	Taniya Das <taniya.das@oss.qualcomm.com>,
+	Sreeshankar K <sreeshankar0910@gmail.com>
+Cc: bmasney@redhat.com,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	quic_kkumarcs@quicinc.com,
-	quic_linchen@quicinc.com,
-	quic_leiwei@quicinc.com,
-	quic_suruchia@quicinc.com,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Abel Vesa <abel.vesa@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v4 00/12] clk: qcom: ipq-cmn-pll: Add IPQ5210 CMN PLL support
-Date: Fri, 25 Sep 2026 11:43:27 -0500
-Message-ID: <179035461230.1296652.11291614603851605905.b4-ty@b4>
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/2] Add SM7250 rpmh clocks
+Date: Fri, 25 Sep 2026 11:43:33 -0500
+Message-ID: <179035461221.1296652.1014512238937356307.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260906-qcom_ipq5210_cmnpll-v4-0-aec5ed642f4f@oss.qualcomm.com>
-References: <20260906-qcom_ipq5210_cmnpll-v4-0-aec5ed642f4f@oss.qualcomm.com>
+In-Reply-To: <20260816131646.10551-1-sreeshankar0910@gmail.com>
+References: <20260816131646.10551-1-sreeshankar0910@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,38 +55,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sun, 06 Sep 2026 07:18:06 -0700, Luo Jie wrote:
-> The CMN (Common) PLL block of IPQ5210 is almost same as that of IPQ9574
-> which is currently supported by the driver. It accepts a 48 MHz reference
-> clock from the on-board Wi-Fi block and is configured to run at 12 GHz.
-> The difference is in the output clocks.
+On Sun, 16 Aug 2026 13:16:43 +0000, Sreeshankar K wrote:
+> Qualcomm SM7250 is known as lito.
+> Add the RPMH clocks present in SM7250 SoC.
 > 
-> This patch series adds support for IPQ5210 into the CMN PLL clock driver.
-> On the IPQ5210, the CMN PLL block supplies a broad set of output clocks
-> to the networking hardware and GCC:
+> Sreeshankar K (2):
+>   clk: qcom: rpmh: Add SM7250 rpmh clocks
+>   dt-bindings: clock: qcom,rpmhcc: Document RPMHCC bindings for SM7250
 > 
 > [...]
 
 Applied, thanks!
 
-[01/12] clk: qcom: ipq-cmn-pll: Use devm_clk_hw_register_fixed_rate_parent_data
-        commit: 02abccc8cbd496e41197ce49606d7e62e51e74ae
-[03/12] clk: qcom: clk-regmap-divider: Support CLK_DIVIDER_* flags
-        commit: a6c7b75f0a2841e996173183f03b1f660cdfe01d
-[04/12] clk: qcom: ipq-cmn-pll: Register CMN PLL /2 clock
-        commit: 2b7bf51437b3ca029bf1ce34c8bd0f6f31364262
-[05/12] clk: qcom: ipq-cmn-pll: Add NSS clock support
-        commit: 305945963fd7c1baf913b2d9899a3bdc1cbf9d37
-[06/12] clk: qcom: ipq-cmn-pll: Add PPE clock support
-        commit: 9d9326971cfe983e29050d3f4abdd236307d93cc
-[07/12] clk: qcom: ipq-cmn-pll: Add PON reference clock support
-        commit: e30664a4cee3096aad71f63e6d5e2b2e67248277
-[08/12] clk: qcom: ipq-cmn-pll: Add EPHY-RAW clock support
-        commit: c627e9d87bfcfb277082922863d2d139667fdc53
-[09/12] clk: qcom: ipq-cmn-pll: Add clock gate support for fixed clocks
-        commit: 0de5d615f1b698affec0c6050742c72240cc7fb9
-[10/12] clk: qcom: ipq-cmn-pll: Add all output clocks for IPQ5210
-        commit: 77bc1b834c53b4209b9ba3ec313caf9796367f9b
+[1/2] clk: qcom: rpmh: Add SM7250 rpmh clocks
+      commit: d98bd51a6dc6d62df12bee0ae29db9bb1013bc3e
 
 Best regards,
 -- 
