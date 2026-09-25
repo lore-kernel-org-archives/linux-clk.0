@@ -1,157 +1,135 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8963536655C;
-	Fri, 25 Sep 2026 21:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BDB4F055B;
+	Fri, 25 Sep 2026 22:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790371642; cv=none; b=ifKvuUC2QczlQCv/RujwXk6qzMgKMyd6h1MXwGZeSVLjdGBZGFueJndcaE8KUk8xU4UPc9OzoOuh7NJ97gAwpZ9uYZhKgAWGwwtb2EKwrFkmyGBkBlfalWpCXUIz2B6ODkbkRsttuCiXBrJTo93N+IDYAH1ZRVZx4euEMItKw38=
+	t=1790376968; cv=none; b=aTp8jlevFNDcQ1uR7FJYDBViWdo1T5IprZDhcv6wwVCum7EqgbrEAOeOhEenJJdT3fObvW+/So8OdEtJl1IeUNJz5anlVkAlzgg2bfMB1/5ExEVIhKZA/X5cH5W3FDLZTOm8xRld9hLUll3qVhPfacbNkWQaCdnrrir/fvzNLjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790371642; c=relaxed/simple;
-	bh=hOAuYgE31oa5MlQggeC7RP4ISyMcHrmvGlKLBuIxi84=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=PQHXaRmtW6GV4httLrsMAQmqWYPHkInwUkW5rkNa7JiWyewC564gA6yHH9SLco4zDF+/sL3ejQh+w01A0kK2Cgx85lz3BdirPYEdNbWc5twOqp+h/hGaK/0aHuW6V08mrLxZopjGhJv1V/ZApQiVdF8WrV7E2ClAz4Wvqwa2qf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=q5pcUiQt; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1790376968; c=relaxed/simple;
+	bh=sCbdqOYDE+J/MhWw6Yok3HLazdmH5YreU68DshgauHU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A9WLrpTNnu6d9Ta1rHiXhzjerEl1LItg9/xI7Ml8fJKx2PKQikm+sL3mCtwbtV6e/MOM7h9wHlQe+dB0+snKbITOHRvafcRQGsJsjIwSahN1LBmLy6WEhc7kXZgujqsMoWQ1/Jimho2EXzV4d1ewzk+wZNr5Y3iPfdzq0X3dugc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=jEMlTWxx; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="q5pcUiQt"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260925212716euoutp01b383dcf07bf8160d2a3a69967b8bc633~YrYRx8Ka90791007910euoutp01E;
-	Fri, 25 Sep 2026 21:27:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260925212716euoutp01b383dcf07bf8160d2a3a69967b8bc633~YrYRx8Ka90791007910euoutp01E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1790371636;
-	bh=NsFrcStNS+TX7bCXsmgniOEglOFn1G3AomEV8/XqEv8=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=q5pcUiQtDlMr1uaRyXlmJt7ZsCDzRcfzR5pcT1Yf1GTjSjYFFWiFj00hyPBN9yLXz
-	 k8+kWYGtr2NpC0w5KCvzEBcv7TVwkprzIGWiaPS19V3x9Qb1O0ppehmCMlpPnVJfFs
-	 ATB0NEVBbVWKsf67GBBo3EbW4lOwtT7SEykBpmw4=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20260925212715eucas1p285f7c5d39c92c121008275ccebab4ec2~YrYQoaKyD2482224822eucas1p2E;
-	Fri, 25 Sep 2026 21:27:15 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260925212713eusmtip176927563c0f94e00bf31fa297fa80ca0~YrYO_Esaa1753917539eusmtip1D;
-	Fri, 25 Sep 2026 21:27:13 +0000 (GMT)
-Message-ID: <b5548b50-20d4-4b5d-b38d-5069c2b03f38@samsung.com>
-Date: Fri, 25 Sep 2026 23:27:13 +0200
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="jEMlTWxx"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 872B9169C;
+	Fri, 25 Sep 2026 15:56:00 -0700 (PDT)
+Received: from ryzen.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 52C2F3F632;
+	Fri, 25 Sep 2026 15:56:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1790376964; bh=sCbdqOYDE+J/MhWw6Yok3HLazdmH5YreU68DshgauHU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jEMlTWxxoJMnI1UhQcnj5XtED9OG6mSOLSkwQq4h4DUEzuv3tdb0Wtm7jarX6GQhx
+	 J2T7clL381kZy90zEmj/BcPDNVCex6Rd/4n+SNPsCrDAZqA83H9DQ4P530KdJTUtZh
+	 /ZPC6Q5iziHQ8OXEux7tbwx+MXVizGtoMENRvLys=
+From: Andre Przywara <andre.przywara@arm.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev
+Subject: [PATCH v3 0/4] arm64: allwinner: a523: Enable CPU clocks
+Date: Sat, 26 Sep 2026 00:51:08 +0200
+Message-ID: <20260925225112.14081-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.46.4
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/20] dt-bindings: phy: Add
- starfive,jh7110-inno-hdmi-phy
-To: Krzysztof Kozlowski <krzk@kernel.org>, Joshua Peisach
-	<jpeisach@ubuntu.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
-	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrzej
-	Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, Laurent
-	Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
-	<jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli
-	<luca.ceresoli@bootlin.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
-	Yan <andy.yan@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, Emil
-	Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Paul Walmsley
-	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
-	Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>, Jerome
-	Brunet <jbrunet+clk@baylibre.com>, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, mfd@lists.linux.dev,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, Marek
-	Szyprowski <m.szyprowski@samsung.com>, Maud Spierings
-	<maud_spierings@murena.io>, Graham Markall <hello@big-grey.co.uk>, Icenowy
-	Zheng <zhengxingda@iscas.ac.cn>, Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20260918-futuristic-mindful-waxbill-21fa2d@quoll>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20260925212715eucas1p285f7c5d39c92c121008275ccebab4ec2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260915153214eucas1p2b548f3236ef98fb0cbf320e397420125
-X-EPHeader: CA
-X-CMS-RootMailID: 20260915153214eucas1p2b548f3236ef98fb0cbf320e397420125
-References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
-	<CGME20260915153214eucas1p2b548f3236ef98fb0cbf320e397420125@eucas1p2.samsung.com>
-	<20260915-jh7110-clean-send-v4-1-f0e4fd6f2cc8@samsung.com>
-	<20260917-mutant-chamois-of-competence-46ca77@quoll>
-	<DLI0QTP0NUHS.DAFYGACKWKWO@ubuntu.com>
-	<20260918-futuristic-mindful-waxbill-21fa2d@quoll>
+Content-Transfer-Encoding: 8bit
+
+Hi,
+
+an update for the A523 CPU clock series, aiming at eventually lifting
+all A523 boards out of their current 768MHz misery ;-)
+This addresses the comments on the list and from Sashiko, though I took
+the freedom to ignore impossible scenarios (we cannot really remove this
+clock module), and pathological corner cases (race condition between
+registering the CCU and registering the clock notifiers).
+Changes to mention are the usage of a new clock macro based on a divider
+clock for the PLL dividers, and the rework of the PLL start routine. 
+For a more complete changelog see below. Based on v7.3-rc1.
+
+==============================
+This series adds support for the CPU clock controller in the Allwinner
+A523/A527/T527 family of SoCs.
+
+In contrast to all earlier Allwinner SoCs, this chip features a separate
+CCU for the CPU clocks (one for each of the two clusters) and the DSU
+clock.
+
+Patch 1 adds some slight enhancement to the sunxi-ng clock driver
+framework, to generalise the update bit.
+Patch 2 adds the binding document for the new CCU.
+Patch 3 adds the actual clock driver, and patch 4 makes use of that by
+adding the clock description to the SoC .dtsi.
+
+Please have a look and test!
+
+Cheers,
+Andre
+
+Changes in v3:
+- forbid #reset-cells in DT binding
+- adjust top level comment to include DSU divider bits
+- drop patch 2 in favour of using a div clock and a new macro
+- describe PLL divider clocks using new divider clock macro
+- rename 600MHz input clock name to match binding (lower case "m")
+- add MUX notifier for DSU clock as well
+- add new function to start CPU PLLs in a safer way
+- add MODULE_DEVICE_TABLE
+- drop unneeded (and now forbidden) #reset-cells from .dtsi
+- only build driver for CONFIG_ARCH_SUNXI
+
+Changes in v2:
+- rebase on v7.3-rc1
+- cover CCU_FEATURE_KEY_FIELD in update bits generalisation
+- explicitly include binding header in clock driver
+- order clocks property before enable-method in DT nodes
 
 
+Andre Przywara (4):
+  clk: sunxi-ng: generalise update bit
+  dt-bindings: clock: sun55i-a523-ccu: Add A523 CPU CCU clock controller
+  clk: sunxi-ng: add support for the A523/T527 CPU CCU
+  arm64: dts: allwinner: a523: add CPU clocks
 
-On 9/18/26 08:16, Krzysztof Kozlowski wrote:
-> On Thu, Sep 17, 2026 at 08:34:18PM -0400, Joshua Peisach wrote:
->> On Thu Sep 17, 2026 at 2:51 AM EDT, Krzysztof Kozlowski wrote:
->>> On Tue, Sep 15, 2026 at 05:32:09PM +0200, Michal Wilczynski wrote:
->>>> Add the dt-binding for the StarFive JH7110 Innosilicon HDMI PHY.
->>>>
->>>> This device is a child of the starfive,jh7110-hdmi-subsystem node. It
->>>> functions as both a PHY provider for the controller and as a clock
->>>> provider for the variable pixel clock (hdmi_pclk), which it generates
->>>> from its refoclk.
->>>>
->>>> Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
->>>
->>> While I appreciate other people looking at this, I don't think review
->>> here applies. It was a blanket tag, given to the entire series, with
->>> exception that it is from newbie, thus I want to ask: was this binding
->>> REALLY reviewed by Joshua?
->>>
->>> Are the rest of the patches actually reviewed or just "looks good to
->>> me"? I see no comments from Joshua on v3, v2 and v1, which is usual sign
->>> of doing review.
->>>
->>>
->> I commented on v3 saying that I would test if I could. I don't just
-> 
-> Testing has nothing to do with reviewing.
-> 
->> throw "Reviewed-by" on everything I look at.
->>
->> If anything, I've been trying to be more honest in reviews, and only
->> review ones that I actually care about[1].
-> 
-> You gave blanket tag for entire series, so I do not get this argument.
-> 
->>
->> If reviewing patches isn't a good way for newbies to start getting
->> familiar with the kernel code (especially a NEW driver), then I don't
->> know what is.
-> 
-> Writing code and receiving review is something for newbies to start
-> with. If you do not know kernel code or bindings, why do you think
-> your review is applicable? If I try to review design of a post-tension
-> concrete bridge, I would probably learn something. Would my
-> review apply? No.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+ .../clock/allwinner,sun55i-a523-ccu.yaml      |  38 +-
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi |  21 +
+ drivers/clk/sunxi-ng/Kconfig                  |   5 +
+ drivers/clk/sunxi-ng/Makefile                 |   2 +
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.c    | 378 ++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.h    |  24 ++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c        |  12 +-
+ drivers/clk/sunxi-ng/ccu-sun6i-rtc.c          |   4 +-
+ drivers/clk/sunxi-ng/ccu_common.h             |   8 +-
+ drivers/clk/sunxi-ng/ccu_div.c                |   3 +-
+ drivers/clk/sunxi-ng/ccu_div.h                |   5 +
+ drivers/clk/sunxi-ng/ccu_gate.c               |   6 +-
+ drivers/clk/sunxi-ng/ccu_mp.h                 |   8 +-
+ drivers/clk/sunxi-ng/ccu_mux.c                |   8 +-
+ drivers/clk/sunxi-ng/ccu_nm.c                 |   1 +
+ .../dt-bindings/clock/sun55i-a523-cpu-ccu.h   |  13 +
+ 16 files changed, 506 insertions(+), 30 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.h
+ create mode 100644 include/dt-bindings/clock/sun55i-a523-cpu-ccu.h
 
-Well I do feel like this is at least partially my fault. I took the
-Reviewed-by on the cover letter and automatically applied it using b4
-without asking Joshua any more clarifying questions.
 
-In v5 I will drop it from the binding patches and keep it on the driver
-patches.
-
-Joshua - please feel free to continue reviewing and testing this
-patchset. Your help is very welcome.
-
-Best regards,
+base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+2.46.4
+
