@@ -1,167 +1,115 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBE54F55BB;
-	Fri, 25 Sep 2026 22:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC5450AC35;
+	Fri, 25 Sep 2026 23:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790376980; cv=none; b=VYNcPLKTikcoueroEDutJAcn9PTHvL7MGsWZ7eos5lFE16bkyGM7IVV3O/wMAEPWRRrGDs/iPER6Wq3J9lVJEY1LsiD7NPKh1ublWxq7DQOv6hUg2jRKHnmr1+Gy1Zfyxcmgto47rcXm8UDJr16UTXl2kKEnx8UETqgAg6jwZuE=
+	t=1790377569; cv=none; b=XW7K1GFf8b6Cr6epDwds99bbJgaOfQSI//9NlI8es/zdSizwMkgzz7OQcYIVOBIogewj7ZaaEJgSmRe9i7eBO4UkZ30lnfx+AMJ2DOO1eTMt5iAGLO4NHQMiIkMniwiLdbUGIXc52U7MtI9ZQ+ajn4BtSsu0QjnkPVC+d/K3Xyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790376980; c=relaxed/simple;
-	bh=sg8jvCBQyHW5vy7uXNNvXeP1MR1xgM2tRjcrl/rYpoI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zna4zjsKC/15Sy7Md7qGcvfwJfrJIJHye+KNwJE7HjgsojS+n9mGeMv8owl/chr0/Wf46cpT5Q4lLTbifu25DVeSRtN8P7xbe6P6Uy2c3q0+AjGIgYzn/aC4v6mVUOpd28o+dEPL5LKprWJgaoekIsD/wNlQ/MUy7HFO8FM2EM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=C0/z1680; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1790377569; c=relaxed/simple;
+	bh=82b+Zff3GkRRTkmgR+x9dU+EVX9oxH0Zz0tM+Id74Kc=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=fKC08JBimFvjOWLN3Y4730jSetb1WkoKvKHMFtVuJ0LKE1B9Q4n47kxtSmsp0ZQeH8JmImeBkfDab38OTYbZAs55h9apiZ51wHbpyYBk9nOp0WmItqA2KJ0dWOR61YBjLkzZGubZ7pqq0pKKVQuQS2Tuz4+vP+G0p3x8WS/+R9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5LVGEtu; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="C0/z1680"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32E57169C;
-	Fri, 25 Sep 2026 15:56:13 -0700 (PDT)
-Received: from ryzen.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2B6A3F632;
-	Fri, 25 Sep 2026 15:56:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1790376976; bh=sg8jvCBQyHW5vy7uXNNvXeP1MR1xgM2tRjcrl/rYpoI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=C0/z1680uzcUHf+WVyfZ1DXvoFESy73F+hQHAeXDeDoQuFwWBRhL3mTO0OijoLw94
-	 r6RDOhkdkQg39alkChkbqiQDxpJh/rsOM3MmCUTJXCrGEChJVJiKrlYzmCLXaIADQY
-	 dEhB7h175rw3UbF2pbPM5Tm3ORXQYdeRv0nhihi0=
-From: Andre Przywara <andre.przywara@arm.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: [PATCH v3 4/4] arm64: dts: allwinner: a523: add CPU clocks
-Date: Sat, 26 Sep 2026 00:51:12 +0200
-Message-ID: <20260925225112.14081-5-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.46.4
-In-Reply-To: <20260925225112.14081-1-andre.przywara@arm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5LVGEtu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 343D71F000FF;
+	Fri, 25 Sep 2026 23:06:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790377567;
+	bh=Y1JXEVRbYtjKcvqgyHEoilnTMmmCNLzDyspuKu8v46A=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=Y5LVGEtu9z8JQAiqUivazN8tjccvA4+Lc/HDCtBFBgIlriKkzHnq+OzHSNF/KSq/3
+	 WjOmvq2DTBzCm27duzJdWQtOKBsmcR2gpwUQL5a2hRVS5DxDBYe5Rd72fOhc0fk8UI
+	 VDAlkWVreHrDjZa2vT81JLjtW/sTTWUIj7KnABPVSzdhLSCHoPNw1JNu4mkJtovSoV
+	 vtxS0sQ71NoGQv9SIe6MUd2mlEmA0GXP4wD1pr4y6bi0otB1aCSkERMv3jgbPWglYR
+	 daTy1ddXBcG8KYT1GoeaCjUzNjmnc3zVsqBnqVSPLlSTeEbWRBlZEDe+CYo0V1iE0c
+	 vayi3nocl2gGg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 3/4] clk: sunxi-ng: add support for the A523/T527 CPU
+ CCU
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Andre Przywara" <andre.przywara@arm.com>
+Cc: devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev, robh@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <20260925225112.14081-4-andre.przywara@arm.com>
 References: <20260925225112.14081-1-andre.przywara@arm.com>
+ <20260925225112.14081-4-andre.przywara@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 25 Sep 2026 23:06:06 +0000
+Message-Id: <20260925230607.343D71F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The Allwinner A523 family of SoCs feature a separate clock unit for the
-CPU PLLs and muxes, including one for the DSU interconnect.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] clk: sunxi-ng: race condition exposes clock provider before noti=
+fiers are active
+--
 
-Add a DT node for the CPU clock controller, and list all the clocks from
-the other CCUs that this controller needs.
-Also list the clock source for each CPU: there is one clock for each
-cluster of four cores, suffixed L and B, for little and big (although
-all cores are of the same Cortex-A55 type).
+commit a788d9f9856e477a2e6af810c839fb77ae3d033e
+Author: Andre Przywara <andre.przywara@arm.com>
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+clk: sunxi-ng: add support for the A523/T527 CPU CCU
+   =20
+The A523 contains a separate CCU block for the CPU PLLs. This includes
+one CPU clock per cluster, plus the DSU PLL, which clocks the part that
+connects the two clusters. There is also a "backup" PLL, which can be used
+to clock the cores when the main PLLs are reprogrammed.
+Those PLLs are then connected via MUXes to the two clusters and the DSU.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-index 85ef492ffeae7..d8aa13af3935e 100644
---- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-@@ -6,6 +6,7 @@
- #include <dt-bindings/clock/sun55i-a523-ccu.h>
- #include <dt-bindings/clock/sun55i-a523-mcu-ccu.h>
- #include <dt-bindings/clock/sun55i-a523-r-ccu.h>
-+#include <dt-bindings/clock/sun55i-a523-cpu-ccu.h>
- #include <dt-bindings/reset/sun55i-a523-ccu.h>
- #include <dt-bindings/reset/sun55i-a523-mcu-ccu.h>
- #include <dt-bindings/reset/sun55i-a523-r-ccu.h>
-@@ -25,6 +26,7 @@ cpu0: cpu@0 {
- 			compatible = "arm,cortex-a55";
- 			device_type = "cpu";
- 			reg = <0x000>;
-+			clocks = <&cpu_ccu CLK_CPU_L>;
- 			enable-method = "psci";
- 		};
- 
-@@ -32,6 +34,7 @@ cpu1: cpu@100 {
- 			compatible = "arm,cortex-a55";
- 			device_type = "cpu";
- 			reg = <0x100>;
-+			clocks = <&cpu_ccu CLK_CPU_L>;
- 			enable-method = "psci";
- 		};
- 
-@@ -39,6 +42,7 @@ cpu2: cpu@200 {
- 			compatible = "arm,cortex-a55";
- 			device_type = "cpu";
- 			reg = <0x200>;
-+			clocks = <&cpu_ccu CLK_CPU_L>;
- 			enable-method = "psci";
- 		};
- 
-@@ -46,6 +50,7 @@ cpu3: cpu@300 {
- 			compatible = "arm,cortex-a55";
- 			device_type = "cpu";
- 			reg = <0x300>;
-+			clocks = <&cpu_ccu CLK_CPU_L>;
- 			enable-method = "psci";
- 		};
- 
-@@ -53,6 +58,7 @@ cpu4: cpu@400 {
- 			compatible = "arm,cortex-a55";
- 			device_type = "cpu";
- 			reg = <0x400>;
-+			clocks = <&cpu_ccu CLK_CPU_B>;
- 			enable-method = "psci";
- 		};
- 
-@@ -60,6 +66,7 @@ cpu5: cpu@500 {
- 			compatible = "arm,cortex-a55";
- 			device_type = "cpu";
- 			reg = <0x500>;
-+			clocks = <&cpu_ccu CLK_CPU_B>;
- 			enable-method = "psci";
- 		};
- 
-@@ -67,6 +74,7 @@ cpu6: cpu@600 {
- 			compatible = "arm,cortex-a55";
- 			device_type = "cpu";
- 			reg = <0x600>;
-+			clocks = <&cpu_ccu CLK_CPU_B>;
- 			enable-method = "psci";
- 		};
- 
-@@ -74,6 +82,7 @@ cpu7: cpu@700 {
- 			compatible = "arm,cortex-a55";
- 			device_type = "cpu";
- 			reg = <0x700>;
-+			clocks = <&cpu_ccu CLK_CPU_B>;
- 			enable-method = "psci";
- 		};
- 	};
-@@ -1144,5 +1153,17 @@ npu: npu@7122000 {
- 			resets = <&mcu_ccu RST_BUS_MCU_NPU>;
- 			power-domains = <&ppu PD_NPU>;
- 		};
-+
-+		cpu_ccu: clock-controller@8817000 {
-+			compatible = "allwinner,sun55i-a523-cpu-ccu";
-+			reg = <0x08817000 0x80>;
-+			clocks = <&osc24M>, <&rtc CLK_OSC32K>,
-+				 <&rtc CLK_IOSC>, <&ccu CLK_PLL_PERIPH0_2X>,
-+				 <&ccu CLK_PLL_PERIPH0_600M>;
-+			clock-names = "hosc", "losc",
-+				      "iosc", "pll-periph0-2x",
-+				      "pll-periph0-600m";
-+			#clock-cells = <1>;
-+		};
- 	};
- };
--- 
-2.46.4
+Describe those clocks and their relationship, to allow the kernel to
+adjust the core frequency.
 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.c b/drivers/clk/sun=
+xi-ng/ccu-sun55i-a523-cpu.c
+> new file mode 100644
+> index 0000000000000..ef1b05b2a9b58
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523-cpu.c
+> @@ -0,0 +1,378 @@
+
+[ ... ]
+
+> +static int sun55i_a523_cpu_ccu_probe(struct platform_device *pdev)
+> +{
+> +	const struct sunxi_ccu_desc *desc;
+> +	void __iomem *reg;
+> +	int i, ret;
+
+[ ... ]
+
+> +	ret =3D devm_sunxi_ccu_probe(&pdev->dev, reg, desc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Reparent CPUs/DSU during PLL rate changes */
+> +	ccu_mux_notifier_register(pll_cpu_l_clk.common.hw.clk,
+> +				  &sun55i_a523_cpu_l_nb);
+
+[Severity: Medium]
+Could this expose the clock provider before the notifiers are registered?
+
+If devm_sunxi_ccu_probe() publishes the clock provider globally, and the
+thread is preempted immediately after it returns, could deferred probe
+workqueues run asynchronously and probe a consumer?
+
+If a consumer like cpufreq then calls clk_set_rate() before the subsequent
+ccu_mux_notifier_register() calls are executed, would the PLL relock
+without reparenting the CPU, potentially leading to a system crash?
+
+> +	ccu_mux_notifier_register(pll_cpu_b_clk.common.hw.clk,
+> +				  &sun55i_a523_cpu_b_nb);
+> +	ccu_mux_notifier_register(pll_cpu_dsu_clk.common.hw.clk,
+> +				  &sun55i_a523_cpu_dsu_nb);
+> +
+> +	return ret;
+> +}
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260925225112.1408=
+1-1-andre.przywara@arm.com?part=3D3
