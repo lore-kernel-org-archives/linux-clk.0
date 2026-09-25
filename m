@@ -1,129 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DCB36495F;
-	Fri, 25 Sep 2026 12:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B19C4A0130
+	for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 13:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790341096; cv=none; b=GWh4VGQp10JzU6/o7EZVYZ89UiuKgd9d6MJnMOAWu6QoIjTB3+oMDcu/h1xyHaChxpTe8ZdAzAL0swWN+eLObfjoX6zP2dloG4mq/Kaw6XBuy47xeHAcdwnJspxRDX3geZqJSHeyN22h2Pkk4hz8ADHAip2V2sI4k0FctQa14bQ=
+	t=1790342005; cv=none; b=ebHY1TyokGnI/DBas/IYVsCnj8bqqAivU8S6kad6Hn0ZGgLED9seV2Ehi+k3x5TjaO1XOINUtdEsH4xCPn9a5v75lgXU5F9Cu+qF0FdFzB97ThI0jKua0/IWCHFvOktKY7JOppCV8F3RoI1jDmGyno3lJ2bcUWZWABzXNa32fHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790341096; c=relaxed/simple;
-	bh=Djh7EIlJWoKVdGspdFOu0gSdxVPNo3FdFkoX9qmfmgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cXwEsqLMTtQxheXEut98HRIMBOWwzYBpz8sxo6vLSAc3FMTEgcTxforlZmhcE6NgdjUsEpvLaeAVzAJCYmgRwTlHbRNmWz6IsnoAIM3QI1BdapfL8nIyd8dzgTKmJqMoNs44fs9YZv86ow3H5rHMFqJst6JNB710hmWx7hVSAjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbmABMCD; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790342005; c=relaxed/simple;
+	bh=vclxjWw5pbNHxPmb6u3gWWTE705WGvUQLYcSKKFPpoY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ude41znLA2zHiOwzE/i1dImw+JXqIVtExKGdPg6UjFpZHsBXOJPNpYEU2vE20SaW3pFliDruGHq1n1LMJYngFl9fbW2TFS7uPDhiuaZ0HzvMUP+KlOE0O8yoaWcUcjBrxQHklPlmZKP8NqV1P99mQvLcmxvMNp5rZtnoGSR/Mok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=GnLyPyVk; arc=none smtp.client-ip=74.125.225.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbmABMCD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A961A1F000FF;
-	Fri, 25 Sep 2026 12:58:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790341095;
-	bh=jbnszAl0K2VzxzoSrqdeRmwXSjuXaYSQ8xFcW+B2Iio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UbmABMCD3NJD18sg93yx8jrXsuUaIDW5mnrEVLTg6fzvCRXCnallCKU/aHKc5Ujl1
-	 I0vVx09yYduB7rxp1XMEkWSATP3Hr91gCvaUbQVzA6YRrqzVzcpW/2mZeZdO/NaN61
-	 /Ans4jXN/JZUSgJU9zX/4auRYKLjRb9rkc+U7MUBZD+JSbsP16pCy9+MI19foMDerf
-	 RI9aFat4ufgdX2dLBvZpCR85hUow+beiMf3AWGSmKCslac+6pkbCfRJF4A7L+KvrmQ
-	 VOI/0qY2BpPUJVRWTbO4abBg81p80fQDim3OHWxCLzlGQgcyg2WZ0wFZ74pqkLq6nA
-	 YBVlqyXBNL4vA==
-Date: Fri, 25 Sep 2026 14:58:11 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Jacky Huang <ychuang3@nuvoton.com>, 
-	Shan-Chun Hung <schung@nuvoton.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Steam Lin <STLin2@winbond.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Jacky Huang <ychuang570808@gmail.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] clk: nuvoton: ma35d1: Add missing WDT/WWDT parent
- clocks
-Message-ID: <20260925-skinny-husky-of-cookies-4aaddb@quoll>
-References: <20260921-perso-ma35d1-upstream-clk-v2-0-209fd32a8b00@bootlin.com>
- <20260921-perso-ma35d1-upstream-clk-v2-1-209fd32a8b00@bootlin.com>
- <20260924-bald-awesome-griffin-7d1d5b@quoll>
- <87jyo9ljlo.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="GnLyPyVk"
+Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49cc9f581c4so3629185e9.0
+        for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 06:13:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1790341998; x=1790946798; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=4/+dZ2Z79f3TnZjAcbASKi5bWyGm2AchTT4KVZyto8o=;
+        b=GnLyPyVk10Us4MEw4c9C+59163Ve3w9N6+ye9hfy5luNgaJJsDC2R3tffCLl9kiAz9
+         L/o9Jeks9zUwRea+kRpp4EME5pZJUJkuTrl6Y++aYnStu4dowOqLL2KnAqB6pAByR2Ig
+         EyNE/8mSM7V1bfr4VxbWMwn+/NiXht9rBiKYHK0Q9lGpvBub12PFCfAJA/Y5HsM/+zqW
+         URGbos/EFVS4q1ycy5+ca6Dbpx4w/2vVK3qbNDsEJTZCmvXaIgRxXxXtWmv2Bo3xeiwR
+         d4564942M0GQkXUNro50Bpd+k+jlHq6WMpTqFt6CbVMNXjbgrIOs0OiJ3Kn33KbbgDfW
+         BLhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790341998; x=1790946798;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=4/+dZ2Z79f3TnZjAcbASKi5bWyGm2AchTT4KVZyto8o=;
+        b=T+izC57oaHFLi3WUBYkJICmSjnqoVqxTLdBK8Ew692zD9mmRIqSm5FuGPflLosXG4j
+         JwWF9BBftTU4lD9XmlskUd/HQ3PA+k0zl8Az8NxsJI1k7psoRAcgDZYDDz4pSrxE4V68
+         YbIUHXfWHFGXI+Tl3Z0EgrNsWJOfhS0MJZm2Ikj9ijx7+irT1Lf5VsUt+d63PxrVfFOS
+         A8N0jhE8P5gXX87sKMbzC8r9ojE/OTZovz5uV6LySAs5k5we9LaZ3sNAI+G8ycUyhF+p
+         HJWa4ag/YVnH8Nh4YSm3jTvKVc9vT/7hwmoYZgEDG2xbktrA4Kp2iyjBDW7FC2vxom3z
+         JOWw==
+X-Gm-Message-State: AFuF++liFi0fcHZmfGNgB2JeUD7QV7+NE2OYW1G0Bv4/rZgxpE+KJ5bZ
+	4pf/fQfNvB6NEq95wfoVyNZG6o+tVFCNQ9IF4UjEfyB3vCvMUsRsKSueefQwlwxtvnY=
+X-Gm-Gg: AYBFou1F0ZxmefgBlJuE2oM97pGcR0RIwJuITM/+f3hF36wdFR8ccO+zwqnEeJ6HtVd
+	Rb02/Ac/Pqb0pwCIrK8RXFxIopTm8M7LYRGPH4dWlEfrGoL0lABOnFRJdrYe1Krt/zxWxYtLjpN
+	5SxJ13eTzr2kCT05ZnP0vY4lfDxSCceICmlNuZUNeqOi7qzR/EeB9C5arneFokpKdjf8p6gNh0A
+	C3JF3RgQICfsaw4s88hhhdCt559PxIJkZQvx0G4CHJrj0hRsthxTBZeGmxm2pGT4SOksHbDKBs9
+	AJ54RX31hSOdIfCnCfNeQDeWqhtqf8fMClo9Flop3cu54its/dzfVZbvhWnOM8DCf0r+m6WWbtZ
+	+nq3ZTAGOSrtSG1itWPaGN0VQeyvPlewrtPrFILwBBN0pDwQ/nA6BR7OjsdVVz91fdYf5TCbRnd
+	8/lutmpwbISZg8Hcym0SW3pau3V+53c4uwhhFHIP21sIKljO0rh2fmlVffaS7m/DUwuddvUGyeF
+	+Vu+QakjwWcdd9FaQ==
+X-Received: by 2002:a05:600c:4e53:b0:49c:e37e:4389 with SMTP id 5b1f17b1804b1-49fe66c8288mr99559755e9.4.1790341998059;
+        Fri, 25 Sep 2026 06:13:18 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fedec53c4sm86924765e9.4.2026.09.25.06.13.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Sep 2026 06:13:11 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Ryan Brue <ryanbrue.dev@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Brian
+ Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Chen-Yu Tsai
+ <wenst@chromium.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 2/2] clk: mediatek: mt6795: fix the FHCTL DDS mask width
+In-Reply-To: <88272aca-2a9e-4a75-b7f2-4f7aac8b6d18@collabora.com>
+References: <20260912-mt8173-fix-dds-mask-width-v1-0-3d0c0292c85c@gmail.com>
+ <20260912-mt8173-fix-dds-mask-width-v1-2-3d0c0292c85c@gmail.com>
+ <88272aca-2a9e-4a75-b7f2-4f7aac8b6d18@collabora.com>
+Date: Fri, 25 Sep 2026 15:13:00 +0200
+Message-ID: <1j33ux8of7.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87jyo9ljlo.fsf@bootlin.com>
+Content-Type: text/plain
 
-On Fri, Sep 25, 2026 at 12:18:43PM +0200, Miquel Raynal wrote:
-> Hello Krzysztof,
-> 
-> >> Reported-by: Jacky Huang <ychuang570808@gmail.com>
-> >> Closes: https://lore.kernel.org/linux-clk/b8a8a65b-e302-4747-bc90-4920fc48795a@gmail.com/
-> >> Suggested-by: Jacky Huang <ychuang570808@gmail.com>
-> >> Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
-> >> Cc: stable@vger.kernel.org
-> >> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> >> ---
-> >>  drivers/clk/nuvoton/clk-ma35d1.c               | 2 ++
-> >>  include/dt-bindings/clock/nuvoton,ma35d1-clk.h | 4 +++-
-> >
-> > Please do not combine patches.
-> 
-> I thought splitting these changes would not make sense in this (= a fix)
-> case, but fine.
-> 
-> [...]
-> 
-> >> @@ -248,6 +248,8 @@
-> >>  #define ADC_GATE	233
-> >>  #define EADC_DIV	234
-> >>  #define EADC_GATE	235
-> >> -#define	CLK_MAX_IDX	236
-> >> +#define PCLK3_DIV4096	236
-> >> +#define PCLK4_DIV4096	237
-> >> +#define	CLK_MAX_IDX	238
-> >
-> > This cannot be updated. If it has to, then not a binding and should be
-> > first dropped from the bindings like we did for most of the platforms
-> > having similar issue.
-> 
-> When you say "This cannot be updated", do we agree that you mean
-> "CLK_MAX_IDX cannot be updated"?
+On lun. 14 sept. 2026 at 10:16, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> wrote:
 
-Yes, the MAX ID.
+> On 9/12/26 08:40, Ryan Brue wrote:
+>> All eight PLLs in mt6795's pllfhs[] have pcwbits = 21, so the FHCTL DDS
+>> field is bits 20:0, but _FH() declares .dds_mask = GENMASK(21, 0). As on
+>> MT8173, new_dds from mtk_pll_calc_values() is always 21-bit, so admitting
+>> bit 21 of FHCTL_MON into the poll in hopping_hw_flow() can only make it
+>> time out. The same mask feeds the CON1 write-back and fhctl_set_ssc_regs().
+>> 
+>> Unlike MT8173 this path has a user: mt6795-sony-xperia-m5.dts switches
+>> FHCTL on for mainpll, mpll and msdcpll, with SSC.
+>> 
+>> Found by inspection while fixing MT8173. I have no MT6795 hardware, so
+>> this one is untested.
+>> 
+>> Fixes: f222a1baec5f ("clk: mediatek: mt6795: Add support for frequency hopping through FHCTL")
+>> Assisted-by: LLM
+>> Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-> 
-> I'm not sure I fully understand the reasoning behind, because the whole
-> point of defining this CLK_MAX_IDX value is to let drivers know the
-> number of clocks, so it must obviously follow the updates in this
-> file. I cannot just drop it, the driver does not work without it. If we
+Hey Angelo,
 
-It's not a binding if it has to change, because bindings should not
-change - otherwise they break its users, because  since it is ABI there
-is an outside user expecting EXACTLY this number of clocks and it cannot
-grow. Obviously, this is not a binding just like FOR EVERY other case so
-can be safely dropped.
+Will you collect the MTK changes yourself and send us a PR or should
+we collect the changes you've reviewed for this cycle ?
 
-> enlarge that number, what is the problem as long as we keep the other
-> numbers identical?
-> 
-> Maybe one way to fix that mess is to:
-> 1- Add the 2 new values (238 and 239) + a new define:
->    NUVOTON_MA35D1_MAX_IDX 240
->    238 would then have two definitions for a short period of time.
-> 2- Replace CLK_MAX_IDX by NUVOTON_MA35D1_MAX_IDX in the driver
-> 3- Drop CLK_MAX_IDX in the bindings.
+Cheers
 
-Why we can't fix it like we did everywhere else?
-git lg -- include/dt-bindings/clock/
-and search for "number" which leads to recent commits like
-d10f26a7abbd3dd5d59bac1acdca117385b54ea9
-but there was same work for Samsung and many others (Renesas, maybe
-NXP?). You add define to the driver, then drop it from the binding. Can
-be a few commits like we did for many cases, but recent change from
-Linus I think went acked while combined binding and driver.
+>
 
-Best regards,
-Krzysztof
-
+-- 
+Jerome
