@@ -1,115 +1,129 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
+Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B19C4A0130
-	for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 13:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9952B47F2ED
+	for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 13:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790342005; cv=none; b=ebHY1TyokGnI/DBas/IYVsCnj8bqqAivU8S6kad6Hn0ZGgLED9seV2Ehi+k3x5TjaO1XOINUtdEsH4xCPn9a5v75lgXU5F9Cu+qF0FdFzB97ThI0jKua0/IWCHFvOktKY7JOppCV8F3RoI1jDmGyno3lJ2bcUWZWABzXNa32fHs=
+	t=1790342155; cv=none; b=GQ+4Qn/p70iyP2E+GFtGST8Z1Z+IEya9OX9GqYvpMQokow9Fk/WVc2oP5KROV+f/dwDM/X3kPp4f72177pSsICkFp4w3+Fbh56b4GTB8W1gwzCdZpfVXfgg0CaoWtdizJ/m/TTPVKTUcI1uMvk/2aL6ry/nFo1sD0dRlTOoWYUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790342005; c=relaxed/simple;
-	bh=vclxjWw5pbNHxPmb6u3gWWTE705WGvUQLYcSKKFPpoY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ude41znLA2zHiOwzE/i1dImw+JXqIVtExKGdPg6UjFpZHsBXOJPNpYEU2vE20SaW3pFliDruGHq1n1LMJYngFl9fbW2TFS7uPDhiuaZ0HzvMUP+KlOE0O8yoaWcUcjBrxQHklPlmZKP8NqV1P99mQvLcmxvMNp5rZtnoGSR/Mok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=GnLyPyVk; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1790342155; c=relaxed/simple;
+	bh=IWP0yysy+y9CebMkqYVJptEONcyqLAP7y6/myAOohqA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gb3cohY5mObV4Jm7qVtvEdQQcVhekoQHPhKRMwEeJjwGhKELLWHnuGm2kaqMT55ElvAyo5N3YB5o3lWOk7A1WmNWngrVjYPboEa2pb5w/eymfedwSCeuaDUnewOr7lhsXANx9Ax3O49YeUDzYt3B3aJ01k7k40NAFUj4Jzt66vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DnTsN+WW; arc=none smtp.client-ip=74.125.225.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="GnLyPyVk"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49cc9f581c4so3629185e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 06:13:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DnTsN+WW"
+Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-4843c3ea1f6so478948f8f.0
+        for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 06:15:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1790341998; x=1790946798; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1790342138; x=1790946938; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=4/+dZ2Z79f3TnZjAcbASKi5bWyGm2AchTT4KVZyto8o=;
-        b=GnLyPyVk10Us4MEw4c9C+59163Ve3w9N6+ye9hfy5luNgaJJsDC2R3tffCLl9kiAz9
-         L/o9Jeks9zUwRea+kRpp4EME5pZJUJkuTrl6Y++aYnStu4dowOqLL2KnAqB6pAByR2Ig
-         EyNE/8mSM7V1bfr4VxbWMwn+/NiXht9rBiKYHK0Q9lGpvBub12PFCfAJA/Y5HsM/+zqW
-         URGbos/EFVS4q1ycy5+ca6Dbpx4w/2vVK3qbNDsEJTZCmvXaIgRxXxXtWmv2Bo3xeiwR
-         d4564942M0GQkXUNro50Bpd+k+jlHq6WMpTqFt6CbVMNXjbgrIOs0OiJ3Kn33KbbgDfW
-         BLhw==
+        bh=vLYsvlss9yZfm3Rai6co/hO6k5fqoif67TyIhe9Xe90=;
+        b=DnTsN+WWwUBKNHapKFmkRVkw0oy1AmE1T2fxaZ6ZcP3bpOcUzN781c/9Exfr6dvgr6
+         f2iQB2cs3TVWFydhXtAWz7w9wrBxfJO32285TdKjazbK9k3n9H8jn8gOXL8KHckBzJn8
+         bijWHB74SfQccCXvuJafpnzNAvQ1OCuuFgI4LViUB8bERGRc1bKanJBStJFMGtHs/+uz
+         YaxJ7er4RTE88+fLbBq9atm8t/BsQ3Y5mw5QR7vT7WQmDK0ssEMiAlDQ8bL1iqNIAMBY
+         ULF4lXJwGhnWoNw1Y5GjQGWJhfuSFA0RLnTXzjEbKa9TCL4i0NG75nL6gFTv/2hJ47HL
+         mitQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790341998; x=1790946798;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=4/+dZ2Z79f3TnZjAcbASKi5bWyGm2AchTT4KVZyto8o=;
-        b=T+izC57oaHFLi3WUBYkJICmSjnqoVqxTLdBK8Ew692zD9mmRIqSm5FuGPflLosXG4j
-         JwWF9BBftTU4lD9XmlskUd/HQ3PA+k0zl8Az8NxsJI1k7psoRAcgDZYDDz4pSrxE4V68
-         YbIUHXfWHFGXI+Tl3Z0EgrNsWJOfhS0MJZm2Ikj9ijx7+irT1Lf5VsUt+d63PxrVfFOS
-         A8N0jhE8P5gXX87sKMbzC8r9ojE/OTZovz5uV6LySAs5k5we9LaZ3sNAI+G8ycUyhF+p
-         HJWa4ag/YVnH8Nh4YSm3jTvKVc9vT/7hwmoYZgEDG2xbktrA4Kp2iyjBDW7FC2vxom3z
-         JOWw==
-X-Gm-Message-State: AFuF++liFi0fcHZmfGNgB2JeUD7QV7+NE2OYW1G0Bv4/rZgxpE+KJ5bZ
-	4pf/fQfNvB6NEq95wfoVyNZG6o+tVFCNQ9IF4UjEfyB3vCvMUsRsKSueefQwlwxtvnY=
-X-Gm-Gg: AYBFou1F0ZxmefgBlJuE2oM97pGcR0RIwJuITM/+f3hF36wdFR8ccO+zwqnEeJ6HtVd
-	Rb02/Ac/Pqb0pwCIrK8RXFxIopTm8M7LYRGPH4dWlEfrGoL0lABOnFRJdrYe1Krt/zxWxYtLjpN
-	5SxJ13eTzr2kCT05ZnP0vY4lfDxSCceICmlNuZUNeqOi7qzR/EeB9C5arneFokpKdjf8p6gNh0A
-	C3JF3RgQICfsaw4s88hhhdCt559PxIJkZQvx0G4CHJrj0hRsthxTBZeGmxm2pGT4SOksHbDKBs9
-	AJ54RX31hSOdIfCnCfNeQDeWqhtqf8fMClo9Flop3cu54its/dzfVZbvhWnOM8DCf0r+m6WWbtZ
-	+nq3ZTAGOSrtSG1itWPaGN0VQeyvPlewrtPrFILwBBN0pDwQ/nA6BR7OjsdVVz91fdYf5TCbRnd
-	8/lutmpwbISZg8Hcym0SW3pau3V+53c4uwhhFHIP21sIKljO0rh2fmlVffaS7m/DUwuddvUGyeF
-	+Vu+QakjwWcdd9FaQ==
-X-Received: by 2002:a05:600c:4e53:b0:49c:e37e:4389 with SMTP id 5b1f17b1804b1-49fe66c8288mr99559755e9.4.1790341998059;
-        Fri, 25 Sep 2026 06:13:18 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fedec53c4sm86924765e9.4.2026.09.25.06.13.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Sep 2026 06:13:11 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Ryan Brue <ryanbrue.dev@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Brian
- Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, Chen-Yu Tsai
- <wenst@chromium.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 2/2] clk: mediatek: mt6795: fix the FHCTL DDS mask width
-In-Reply-To: <88272aca-2a9e-4a75-b7f2-4f7aac8b6d18@collabora.com>
-References: <20260912-mt8173-fix-dds-mask-width-v1-0-3d0c0292c85c@gmail.com>
- <20260912-mt8173-fix-dds-mask-width-v1-2-3d0c0292c85c@gmail.com>
- <88272aca-2a9e-4a75-b7f2-4f7aac8b6d18@collabora.com>
-Date: Fri, 25 Sep 2026 15:13:00 +0200
-Message-ID: <1j33ux8of7.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20260707; t=1790342138; x=1790946938;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=vLYsvlss9yZfm3Rai6co/hO6k5fqoif67TyIhe9Xe90=;
+        b=jyheIdq8E+YQclk50OGvIxxFniNt3OGZ5Goz94dOcTFDzRekXJnT/KdsHtyncnRsCm
+         h/Lq/AIy8Nam6E0ZRHA5aOPeTRagKP+9zIKTYCevS9ogz7DbmXXokQAspfKxX5gx8w3X
+         574UXLyfO0gWDpu09VasbuIbHkRpliMsC4h55mZEXhHvDT6shyBO9A1/zhLceQeHTZHl
+         IxM6v4t/rC4jpJgKghQxg52P5uDvqztKeoScTNe/lix0R0HxO6mkE643nzK7R/GX5fWk
+         8NtTDPG95uRqT+1qBPsc3AGh4GqTyMBLs++3nXybYv3Sj2+JFUmwegQtBH45Xb0lsT/i
+         ci9w==
+X-Forwarded-Encrypted: i=1; AKwUvBzemKYZmUor84tv1xiTxAvxfQPNaN0PmgX6TkzVjKfW9uqBFPEVwzE71GT3fZnyhbF+Vo6HW6gLLMM=@vger.kernel.org
+X-Gm-Message-State: AFuF++nCG3Be6QvHOOz6Zs3+TB9J8Gt9gwwchDD0yW1bx5ufb2vq+Z1+
+	PkKwNppqCp55w6ekxt62/+Owh6IU9I1LAdxAPP804jXTPrCXPba30FqA
+X-Gm-Gg: AYBFou2sHtckmASeIx+dUHKWulRnAxF/i3UrS07BTjUC3FW2hwy2BR1a0v/IM+ZPqVG
+	oOqQntrAsHZrqPvWMcWKxvV9ZQIy2aG55M5OJ9nVWvpvL3b8nq3KCvx1xq0/95sOUR73c50MhlD
+	40qMihYZl1F3eQD5T/GftQG1wS0BJI87dWnSDyFASfcsixamOQ21fCOrLsyB8HYrbbRuF6iL2p1
+	A61sDdyu429TQ99WjZFvMQgb79dVsEhWES7MPXU9aqUtwUr1VXIBQaMuuTN9Zzq5Ywma7KprYYr
+	fKP2FTyVhBWlp32mojrG9s0tRimnEvp6XhjIFoUSZwzNVD2IQsPZvAasepksiK34ZjsolmtcCc6
+	m9VnEaYW+kZJ2Eu1VOaOw6faiM85qjeSd5HhkGTgIGVjSzdTo3GcPHpbkHQuxUXzzTPSP9nzRRb
+	b/0vi2gjNljId42LdltWDnHEMRFDgLUV0oYyaxbSY/A0bQAdxKmn3JO4QS3z2B4ZvbrBM4xtcG9
+	l2VB8jZOAY3YQ==
+X-Received: by 2002:a05:6000:430c:b0:487:1c89:f158 with SMTP id ffacd0b85a97d-48871671a05mr9519994f8f.14.1790342138218;
+        Fri, 25 Sep 2026 06:15:38 -0700 (PDT)
+Received: from [10.50.156.4] ([23.90.153.238])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4887a64ed6esm7832929f8f.29.2026.09.25.06.15.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Sep 2026 06:15:37 -0700 (PDT)
+Message-ID: <a5e76452-1fa1-4675-9a16-8683702ff4d0@gmail.com>
+Date: Fri, 25 Sep 2026 15:15:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] clk: Add gpio-locked fixed clock driver
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Vyacheslav Yurkov via B4 Relay <devnull+V.Yurkov.EXT.bruker.com@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Jyri Sarha <jsarha@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+References: <20260915-feature-clock-guard-v5-0-42ab5dc3a6aa@bruker.com>
+ <20260915-feature-clock-guard-v5-2-42ab5dc3a6aa@bruker.com>
+ <1j33vaesh7.fsf@starbuckisacylon.baylibre.com>
+ <e697d892-fbd2-432a-b71c-8547ead22ea0@gmail.com>
+ <1jtsnpcn8l.fsf@starbuckisacylon.baylibre.com>
+ <39fdddbf-0fdb-40e7-9cd5-c8f857ee8b9d@gmail.com>
+ <1j8q4p8rxl.fsf@starbuckisacylon.baylibre.com>
+Content-Language: en-US
+From: Vyacheslav Yurkov <uvv.mail@gmail.com>
+In-Reply-To: <1j8q4p8rxl.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On lun. 14 sept. 2026 at 10:16, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> wrote:
+On 25.09.2026 13:57, Jerome Brunet wrote:
+> On jeu. 17 sept. 2026 at 19:05, Vyacheslav Yurkov <uvv.mail@gmail.com> wrote:
+> 
+>> On 16.09.2026 15:57, Jerome Brunet wrote:
+>>
+>>>>>> +/* We can't enable the clock, but the Common Clock Framework calls only
+>>>>>> + * enable() not is_enabled()
+>>>>>> + */
+>>>>>> +static int gpio_locked_clk_enable(struct clk_hw *hw)
+>>>>>> +{
+>>>>>> +	return gpio_locked_clk_is_enabled(hw);
+>>>>>> +}
+>>>
+>>> You need to explain your problem a bit more because this is not OK. Your
+>>> clock should really just provide .is_enabled() AFAICT
+>>
+>> When a peripheral driver uses devm_clk_get_enabled(), this is resolved
+>> to clk_prepare() and clk_enable(). Neither of them check for
+>> .is_enabled(). Is that a flaw in the CCF or expected behavior?
+>>
+> 
+> .enable() does return an error on failure. It is up to the provider to
+> return one or not. In your case, it will be probably be necessary to on
+> the gpio a little.
 
-> On 9/12/26 08:40, Ryan Brue wrote:
->> All eight PLLs in mt6795's pllfhs[] have pcwbits = 21, so the FHCTL DDS
->> field is bits 20:0, but _FH() declares .dds_mask = GENMASK(21, 0). As on
->> MT8173, new_dds from mtk_pll_calc_values() is always 21-bit, so admitting
->> bit 21 of FHCTL_MON into the poll in hopping_hw_flow() can only make it
->> time out. The same mask feeds the CON1 write-back and fhctl_set_ssc_regs().
->> 
->> Unlike MT8173 this path has a user: mt6795-sony-xperia-m5.dts switches
->> FHCTL on for mainpll, mpll and msdcpll, with SSC.
->> 
->> Found by inspection while fixing MT8173. I have no MT6795 hardware, so
->> this one is untested.
->> 
->> Fixes: f222a1baec5f ("clk: mediatek: mt6795: Add support for frequency hopping through FHCTL")
->> Assisted-by: LLM
->> Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
->
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+I'm not sure I understand what you meant.
+> Note that if the GPIO can sleep, interacting with the gpio must happen
+> in prepare (think i2c gpio devices)
 
-Hey Angelo,
+In other words, I should only provide prepare/unprepare instead? Do you 
+think is_enabled can also be replaced by is_prepared in this case?
 
-Will you collect the MTK changes yourself and send us a PR or should
-we collect the changes you've reviewed for this cycle ?
-
-Cheers
-
->
-
--- 
-Jerome
+Slava
