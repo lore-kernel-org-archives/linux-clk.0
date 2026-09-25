@@ -1,142 +1,100 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F5F387373;
-	Fri, 25 Sep 2026 14:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77214B8284;
+	Fri, 25 Sep 2026 14:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790347526; cv=none; b=ERuchhy6ifQIkoNw8X30+L3orUH27BWCsBMpKBWor3uhmJjHOEZOMHp3p7bxLmAHICHU7CU1j5IAXwWW0aiQxAHGFAa1pnc0FIDLP/zQf/suxtXDlA2cqmQsBIf8k9zk/hIin5OxnPiXQsozWhrPlv3rSx1zAQrJ1JBqVfimDdQ=
+	t=1790348119; cv=none; b=JODVEwlp8+2qvcxA5b215Y2x3IRhF7qHfzEdlq8g6WhKt15z812tcxSvjsEx2aGc1bpLy3FxsJZrDUvVIKiJJE0GuLnspsE7fM5+AhhDYYPU86TPTkE0j4uQ3UBcTC8IvKfVoupVRxyd9+M+WaSdd4N5+1JJcQ1l3eE9uvCs09g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790347526; c=relaxed/simple;
-	bh=ML8xGeJkMBFFuMCc01tEEnknU1OExtMrKqZGCEmNfaM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mbrHsPDMZ6YTqeCa1DWQIpq0wXBsJ3rxNsSqrFqp4SFrHMyCn++/bsRdDGO1kRHmiXrU+iCxWSa9MSH5gRuOZTXFM4n//R4wWnwTWbvfMt4GYkElFi0amxlsoxjF7pK81XNlHTwDGBXsAxwrW1792gaNVwcFOvQcHpuAxW3CRY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=uO46dbdX; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1790348119; c=relaxed/simple;
+	bh=opYKHEotMRYFAlD4+KcOmyrLCKHFKVp0R5gI4jsOH6w=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=DRk/qclIXGXB1bTk1YsWfGaZssdltB/vxjvtQDofJOGCIPv2dBmgOxMBiqwbOhzjAI3TBa8W5oX4fMdvicmkKE27miACCPHVQwHE60lGC/aqHoIPZP/0xk8v5H8OtL/JBPWlVY+9/prIk68S6qaBD/Y/F3FDUakgEivDkO5AcuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eaPykenQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="uO46dbdX"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 2AB18C653F0;
-	Fri, 25 Sep 2026 14:46:10 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3805D6073B;
-	Fri, 25 Sep 2026 14:45:22 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 47AB4102F1E07;
-	Fri, 25 Sep 2026 16:45:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790347517; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=rLcTEY9bJK7D3aB6ON4jRKBYa5Go52EKWi4ZLVeVWAM=;
-	b=uO46dbdXDQzTWoXCmwNHDCYs5MGzz1k8Yi4clftYkyWitlHG979vJvanTTBAL3tTl/y4Aw
-	Xj4EYJEgfFFwz0ks0fKanM4frUfmlZwwGkm16jPFGUDHBncL72LFqn4SSpRevaNQFv0mCm
-	vA8v5C+wTswqi6jXsWWDS+4AU72qO8T5Vsn/QIamievB3+0rIOnjdKSA4dLuBxdOTKLaXK
-	A0qQM9d1qL8CLzgeZSJ4F5P7hkSNB0JUKoMej1dKJs5EGm9ranUTmOFKp5AGpwjT77mtz/
-	qj9/8gLfTHTKBPd6Uod2OloYazOZM2nNvNZSImwxabBreOeupeUVRPSyeOlZrA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Fri, 25 Sep 2026 16:44:25 +0200
-Subject: [PATCH v3 6/6] clk: nuvoton: ma35d1: Avoid possible error pointer
- dereferencing
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eaPykenQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94EAF1F000FF;
+	Fri, 25 Sep 2026 14:55:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790348110;
+	bh=DGtCVwBHH9uGVSpKpNVSFCLtyHt/if/SX8EZqpJgR4c=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=eaPykenQV13zboL/8Dz1aUz5TWQN1E6BXmjrHlAQp93iWH+7KD9XhSmzicHqmAJpB
+	 UEVeNzYAdTlDiMIsAcUqs2pSTeuRkEfXxNBGwNXNwh/G85zJsGC60tryPTYbh7TTJl
+	 od0xjdvaYi7IJWdwayl/ybGqFrq98O+kfp/DdA1OT0kC63lZeythuWpDhyu5dJRfz7
+	 FpauC3bUyiO2djghzbi3b3AmNvB18UrGcjDjmsC6zFBO3Ju/rOikdXm78+EqSO1FQ3
+	 PcHyB/7HQVg8GNmdekqw/fQJciVPRZp8E4qVNTXgH2ZW3OkgbUMDKNRI3PyuZMepjF
+	 4e8a36PwR3cMA==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 3/6] dt-bindings: clock: ma35d1: Add missing WDT/WWDT
+ parent clocks
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Miquel Raynal" <miquel.raynal@bootlin.com>
+Cc: devicetree@vger.kernel.org, conor+dt@kernel.org, robh@kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <20260925-perso-ma35d1-upstream-clk-v3-3-ffbae7e020a8@bootlin.com>
+References: <20260925-perso-ma35d1-upstream-clk-v3-0-ffbae7e020a8@bootlin.com>
+ <20260925-perso-ma35d1-upstream-clk-v3-3-ffbae7e020a8@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 25 Sep 2026 14:55:10 +0000
+Message-Id: <20260925145510.94EAF1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260925-perso-ma35d1-upstream-clk-v3-6-ffbae7e020a8@bootlin.com>
-References: <20260925-perso-ma35d1-upstream-clk-v3-0-ffbae7e020a8@bootlin.com>
-In-Reply-To: <20260925-perso-ma35d1-upstream-clk-v3-0-ffbae7e020a8@bootlin.com>
-To: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
- Arnd Bergmann <arnd@arndb.de>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Steam Lin <STLin2@winbond.com>, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- Miquel Raynal <miquel.raynal@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
 
-MA35D1 registration helpers store their parent_hw
-argument straight into the parent data, without checking it first. In
-case of registration failure an error pointer will be stored in the
-table, which is then forwarded to the clk core, which treats any
-non-NULL parent as valid handles.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] clk: nuvoton: ma35d1: missing MA35D1_CLK_COUNT increment causes la=
+tent OOB array write
+--
 
-Bail out early when the parent is an error pointer, instead of building
-the parent data.
+commit fa4195c8a4eac6a0140746768ad2e5ab623b88e4
+Author: Miquel Raynal <miquel.raynal@bootlin.com>
 
-This issue is mostly theoretical in practice, since reaching such an
-error would involve a very early -ENOMEM.
+dt-bindings: clock: ma35d1: Add missing WDT/WWDT parent clocks
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- drivers/clk/nuvoton/clk-ma35d1-divider.c |  3 +++
- drivers/clk/nuvoton/clk-ma35d1-pll.c     |  3 +++
- drivers/clk/nuvoton/clk-ma35d1.c         | 13 +++++++++++--
- 3 files changed, 17 insertions(+), 2 deletions(-)
+This commit adds PCLK3_DIV4096 and PCLK4_DIV4096 to the dt-bindings header
+to describe the clock tree for WDT and WWDT muxes.
 
-diff --git a/drivers/clk/nuvoton/clk-ma35d1-divider.c b/drivers/clk/nuvoton/clk-ma35d1-divider.c
-index e992e7c30341..57a7b4ed3b5e 100644
---- a/drivers/clk/nuvoton/clk-ma35d1-divider.c
-+++ b/drivers/clk/nuvoton/clk-ma35d1-divider.c
-@@ -90,6 +90,9 @@ struct clk_hw *ma35d1_reg_adc_clkdiv(struct device *dev, const char *name,
- 	int ret;
- 	int i;
- 
-+	if (IS_ERR(parent_hw))
-+		return parent_hw;
-+
- 	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
- 	if (!div)
- 		return ERR_PTR(-ENOMEM);
-diff --git a/drivers/clk/nuvoton/clk-ma35d1-pll.c b/drivers/clk/nuvoton/clk-ma35d1-pll.c
-index c7c0dc91a012..92424e9c669d 100644
---- a/drivers/clk/nuvoton/clk-ma35d1-pll.c
-+++ b/drivers/clk/nuvoton/clk-ma35d1-pll.c
-@@ -336,6 +336,9 @@ struct clk_hw *ma35d1_reg_clk_pll(struct device *dev, u32 id, u8 u8mode, const c
- 	struct clk_hw *hw;
- 	int ret;
- 
-+	if (IS_ERR(parent_hw))
-+		return parent_hw;
-+
- 	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
- 	if (!pll)
- 		return ERR_PTR(-ENOMEM);
-diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk-ma35d1.c
-index 538ec87afeea..98608a26c5b3 100644
---- a/drivers/clk/nuvoton/clk-ma35d1.c
-+++ b/drivers/clk/nuvoton/clk-ma35d1.c
-@@ -130,10 +130,19 @@ static struct clk_hw *ma35d1_clk_mux(struct device *dev, const char *name,
- 				     const int *parent_idx, int num_parents)
- {
- 	const struct clk_hw *parent_hws[MA35D1_MUX_MAX_PARENTS] = {};
-+	struct clk_hw *parent;
- 	int i;
- 
--	for (i = 0; i < num_parents; i++)
--		parent_hws[i] = (parent_idx[i] >= 0) ? hws[parent_idx[i]] : NULL;
-+	for (i = 0; i < num_parents; i++) {
-+		if (parent_idx[i] < 0)
-+			continue;
-+
-+		parent = hws[parent_idx[i]];
-+		if (IS_ERR(parent))
-+			return parent;
-+
-+		parent_hws[i] = parent;
-+	}
- 
- 	return clk_hw_register_mux_hws(dev, name, parent_hws, num_parents,
- 				       CLK_SET_RATE_NO_REPARENT, reg, shift,
+> diff --git a/include/dt-bindings/clock/nuvoton,ma35d1-clk.h b/include/dt-=
+bindings/clock/nuvoton,ma35d1-clk.h
+> index 2d6a44a7e55c4..764d837d6162a 100644
+> --- a/include/dt-bindings/clock/nuvoton,ma35d1-clk.h
+> +++ b/include/dt-bindings/clock/nuvoton,ma35d1-clk.h
+> @@ -248,5 +248,7 @@
+>  #define ADC_GATE	233
+>  #define EADC_DIV	234
+>  #define EADC_GATE	235
+> +#define PCLK3_DIV4096	236
+> +#define PCLK4_DIV4096	237
 
--- 
-2.55.0
+[Severity: High]
+Does this introduction of clock IDs 236 and 237 require a corresponding
+update to MA35D1_CLK_COUNT in the clock driver?
 
+In drivers/clk/nuvoton/clk-ma35d1.c, MA35D1_CLK_COUNT is currently hardcoded
+to 236:
+
+drivers/clk/nuvoton/clk-ma35d1.c:
+#define MA35D1_CLK_COUNT        236
+
+The driver's ma35d1_clocks_probe() function uses this count to allocate the
+hardware clock pointer array:
+
+drivers/clk/nuvoton/clk-ma35d1.c:ma35d1_clocks_probe()
+    ma35d1_hw_data =3D devm_kzalloc(dev,
+                                  struct_size(ma35d1_hw_data, hws, MA35D1_C=
+LK_COUNT),
+                                  GFP_KERNEL);
+
+If subsequent patches instantiate these new fixed factor clocks and write to
+hws[PCLK3_DIV4096] or hws[PCLK4_DIV4096], it appears it will write out of
+bounds into adjacent heap memory because the array only holds 236 elements
+(indices 0 to 235).
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260925-perso-ma35=
+d1-upstream-clk-v3-0-ffbae7e020a8@bootlin.com?part=3D3
