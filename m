@@ -1,42 +1,42 @@
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348E63E3D86;
-	Fri, 25 Sep 2026 20:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96ADC3B52F4;
+	Fri, 25 Sep 2026 21:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790366960; cv=none; b=G9d3afYwuwe4vgKiNPNPta7bCmnkw8wqXrfb5Qy6A8IQXDOFLpP5rBEjO1yAetFBok9ieBCwm8vYMRWCcu7hDIsB8nqE2dueAknPEfiAsT+6JPGIHXxGZKky6bzVQdf4S+kKACCGpfYCGssyh6P+ZWH7vkbcUANRN1o+h0Jis20=
+	t=1790370350; cv=none; b=GBskewaWfTjDecoHB2+GpAeBV0LqDKed/qF8/jrA5z4sGq5iDvnWLPhwdr2Tpp2j5Bf4+HsZSo8dZP1jriBtnCL9TRXZHcVR5L9tg2wow/c4mn+IXtABVlaKvF0KpcvWjz2RWBKKxGT86tqCbGzWXWL902Cjm3HSVIASVcRCqUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790366960; c=relaxed/simple;
-	bh=PB8HNnfF/cX+xDho/6cquCzANHwc216Yj7bT1Qkzqes=;
+	s=arc-20240116; t=1790370350; c=relaxed/simple;
+	bh=b2qb3/m17D3IRapINEcz5X+cf1puUkUajkGVTpn8xNc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=K+4mvprS9w3PZH5L7EGHHYn3SkZS+nC4HIIPFMVS2rqIOCmWNeNmfhE4KOydCs+56jLoKKu6KiLWDIBq9LuY02cdd42hW+M/QcA6166c107yexJc+LpFOH7vblDs9PSG8h0CjwL9h4EE00/Z5RqkrqZ0fvOLQ2Y2BPI3VyJh3DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kjgvy4zl; arc=none smtp.client-ip=210.118.77.12
+	 Content-Type:References; b=trQHJmJ8jpU2Emnr72NUws/mAkgBiG4s16pSt7xXdevwNa6detSJIymfQdpalyINb4+J83e4+k9OoyZ+ly1BUrdlKNjXK6OppOb0BBszKyIYKerM4nZRDJRUWW7IhtzpjtNbSpqeObYvvcQFxtMssp5ePDY2q/yqzRu+UHbvfY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CVZtL4P0; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kjgvy4zl"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260925200914euoutp02190211168e9262f27661be7eb6326ac0~YqUJW3dDY2877128771euoutp02d;
-	Fri, 25 Sep 2026 20:09:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260925200914euoutp02190211168e9262f27661be7eb6326ac0~YqUJW3dDY2877128771euoutp02d
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CVZtL4P0"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260925210544euoutp0243b789d72a0438105cf8c503582698ec~YrFfDN8xy1957819578euoutp02g;
+	Fri, 25 Sep 2026 21:05:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260925210544euoutp0243b789d72a0438105cf8c503582698ec~YrFfDN8xy1957819578euoutp02g
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1790366954;
-	bh=R72S8DmRi/X/3ay93ymVYKLFPysF0+EoCRlZHiXClqQ=;
+	s=mail20170921; t=1790370344;
+	bh=qk8Ge4T09jwT9y52eGQdabyjZGZHTm4rz1alzvhqzEo=;
 	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=kjgvy4zlvFmyqpQHEzHq/zWMUA3FgQkqE75j4+LomdrHrNmkJpvcM3ydDGtKc4VXp
-	 fWZsWjxcsrdkzuWcJLhS1ty46ziDUjRf9WEicSKvI1tcUCxzIfuP5EWFNFERIqLDX4
-	 zaHyNsRYRimaSmp2xvCGlZcGHHhLniYdd49lPjJI=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260925200913eucas1p198ff3fecf4c9d327b4b2d573f4509285~YqUIQc1cW1226912269eucas1p1i;
-	Fri, 25 Sep 2026 20:09:13 +0000 (GMT)
+	b=CVZtL4P01wXy1+ugGq9YEKbXZtnS2m47LDVMgeukd6k9aRE2PKTyTewEyd+xd1xUz
+	 8XKsChiKzsHX6DVkdi2FeObuR4HvgrN2iAyS5sv8IPM1Qj2rOSydSod94INXrs4zeX
+	 5ElvIi0+nZqcmJqlTKr1DtZBGumK+I3xrSlCxzds=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260925210543eucas1p2a1839e7e4c6489c00394e4e8a41e38dd~YrFdyTFmE0692106921eucas1p2t;
+	Fri, 25 Sep 2026 21:05:43 +0000 (GMT)
 Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260925200911eusmtip12932e01dfb1872e66825c5d6349ffed6~YqUGgNfWN0501005010eusmtip1G;
-	Fri, 25 Sep 2026 20:09:11 +0000 (GMT)
-Message-ID: <0c29c063-0b09-4710-8bf8-1d9adee4eb53@samsung.com>
-Date: Fri, 25 Sep 2026 22:09:10 +0200
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260925210541eusmtip20e82e1fc97240a09f0da0d95e25d9799~YrFcD3k-g2562925629eusmtip2U;
+	Fri, 25 Sep 2026 21:05:41 +0000 (GMT)
+Message-ID: <1a1a9b49-430b-4218-b27d-e133d488e8d9@samsung.com>
+Date: Fri, 25 Sep 2026 23:05:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,10 +44,9 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/20] drm: starfive: jh7110: Enable display
- subsystem
-To: Icenowy Zheng <zhengxingda@iscas.ac.cn>, Byron Stanoszek
-	<gandalf@winds.org>
+Subject: Re: [PATCH v4 01/20] dt-bindings: phy: Add
+ starfive,jh7110-inno-hdmi-phy
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
 	<neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
 	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrzej
@@ -70,210 +69,111 @@ Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
 	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, Marek
 	Szyprowski <m.szyprowski@samsung.com>, Maud Spierings
-	<maud_spierings@murena.io>, Graham Markall <hello@big-grey.co.uk>, Chaoyi
-	Chen <chaoyi.chen@rock-chips.com>, Joshua Peisach <jpeisach@ubuntu.com>,
-	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+	<maud_spierings@murena.io>, Graham Markall <hello@big-grey.co.uk>, Icenowy
+	Zheng <zhengxingda@iscas.ac.cn>, Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Joshua Peisach <jpeisach@ubuntu.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@baylibre.com>
 Content-Language: en-US
 From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <cdb63b93c4a8857ac61b17902369086e9a278dd3.camel@iscas.ac.cn>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260925200913eucas1p198ff3fecf4c9d327b4b2d573f4509285
+In-Reply-To: <20260917-mutant-chamois-of-competence-46ca77@quoll>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20260925210543eucas1p2a1839e7e4c6489c00394e4e8a41e38dd
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260915153213eucas1p148f013af239a334fc78cdc249c0f8a61
+X-RootMTR: 20260915153214eucas1p2b548f3236ef98fb0cbf320e397420125
 X-EPHeader: CA
-X-CMS-RootMailID: 20260915153213eucas1p148f013af239a334fc78cdc249c0f8a61
-References: <CGME20260915153213eucas1p148f013af239a334fc78cdc249c0f8a61@eucas1p1.samsung.com>
-	<20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
-	<b8b046ee-c574-3e16-6079-2fc415633dae@winds.org>
-	<cdb63b93c4a8857ac61b17902369086e9a278dd3.camel@iscas.ac.cn>
+X-CMS-RootMailID: 20260915153214eucas1p2b548f3236ef98fb0cbf320e397420125
+References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
+	<CGME20260915153214eucas1p2b548f3236ef98fb0cbf320e397420125@eucas1p2.samsung.com>
+	<20260915-jh7110-clean-send-v4-1-f0e4fd6f2cc8@samsung.com>
+	<20260917-mutant-chamois-of-competence-46ca77@quoll>
 
-Hi Bryan and Icenowy,
 
-On 9/20/26 09:35, Icenowy Zheng wrote:
-> 在 2026-09-20日的 02:09 -0400，Byron Stanoszek写道：
->> On Tue, 15 Sep 2026, Michal Wilczynski wrote:
+
+On 9/17/26 08:51, Krzysztof Kozlowski wrote:
+> On Tue, Sep 15, 2026 at 05:32:09PM +0200, Michal Wilczynski wrote:
+>> Add the dt-binding for the StarFive JH7110 Innosilicon HDMI PHY.
 >>
->>> This series enables the display subsystem on the StarFive JH7110.
+>> This device is a child of the starfive,jh7110-hdmi-subsystem node. It
+>> functions as both a PHY provider for the controller and as a clock
+>> provider for the variable pixel clock (hdmi_pclk), which it generates
+>> from its refoclk.
 >>
->> Hi Michal,
->>
->> I tested your v4 patch series on my VisionFive2 1.3B with kernel 7.3-
->> rc3 today
->> and it works very well, except for 2 issues. Note, to make the screen
->> refresh
->> properly, I am using the noncoherent cache fixes from
->> https://protect2.fireeye.com/v1/url?k=3d78ed45-62e3d45a-3d79660a-000babdfecba-dbc6e750c3338bb9&q=1&e=d9589fcd-304c-4065-91c9-c5043969df15&u=https%3A%2F%2Fgithub.com%2Fganboing-jh7110%2Flinux%2Fcommits%2Fganboing-jh7110-cache-fix-v1%2F
->> (specifically commits 3683d97, ef93e2c, 277db0b, and 26ce3e6) in
->> addition to
->> your patch.
->>
->> Issue 1: I have a Dell U2711 monitor which has limited HDMI 1.3
->> capability, so
->> I invented my own Xorg mode to get a good frame rate:
->>
->> "2560x1440_40.22"  162.00  2560 2608 2640 2720  1440 1443 1448 1481
->> +hsync -vsync
->>
->> With this mode and your new driver, I started getting rows of black
->> pixels
->> flickering in the upper-left corner of my LCD screen. These weren't
->> there back
->> when I was running the same mode under the Keith Zhao driver from
->> StarFive
->> (drm/verisilicon v5 plus a bunch of patches for dma cache coherency)
->> (
->> https://patchwork.kernel.org/project/dri-devel/cover/20241120061848.196754-1-keith.zhao@starfivetech.com
->> /).
->>
->> The glitches I saw suggested the sync polarity was being set
->> incorrectly; the
->> number of glitched rows was exactly the vsync pulse width plus 1
->> (i.e.
->> "1440 1443 1448 1481" produced 6 bad rows, "1440 1443 1456 1481"
->> produced 14,
->> "1440 1441 1442 1481" produced 2, and so forth).
->>
->> I did a register dump between the two drivers and found that,
->> although the
->> DC8200 HSYNC and VSYNC registers were identical between the two
->> versions, the
->> hsync and vsync bits on the inno hdmi tx were swapped between the
->> two. When I
->> manually set the VIDEO_TIMING_CTL register from 0x09 to 0x05
->> (matching the
->> output of Keith's driver), the glitches went away.
->>
->> Keith Zhao driver:
->>
->> === DC8200 display 0 ===
->> DC   PANEL_CONFIG               0x1418 = 0x00001111
->> DC   HSIZE                      0x1430 = 0x0AA00A00
->> DC   HSYNC                      0x1438 = 0x45280A30
->> DC   VSIZE                      0x1440 = 0x05C905A0
->> DC   VSYNC                      0x1448 = 0xC2D405A3
->> DC   DPI_CONFIG                 0x14B8 = 0x00000005
->> DC   FB_CONFIG                  0x1518 = 0x14000000
->> DC   FB_ADDRESS                 0x1400 = 0x71200000
->> DC   FB_STRIDE                  0x1408 = 0x00002800
->> DC   FB_SIZE                    0x1810 = 0x02D00A00
->> DC   FB_CONFIG_EX               0x1CC0 = 0x00002000
->> DC   PANEL_START                0x1CCC = 0x00000001
->> DC   DP_CONFIG                  0x1CD0 = 0x0000000A
->> DC   FB_WATER_MARK              0x1CE8 = 0x00000000
->> DC   PANEL_CONFIG_EX            0x2518 = 0x00000000
->>
->> === INNO HDMI TX video timing ===
->> HDMI VIDEO_TIMING_CTL           0x08   = 0x05
->> HDMI EXT_HTOTAL_L               0x09   = 0xA0
->> HDMI EXT_HTOTAL_H               0x0A   = 0x0A
->> HDMI EXT_HBLANK_L               0x0B   = 0xA0
->> HDMI EXT_HBLANK_H               0x0C   = 0x00
->> HDMI EXT_HDELAY_L               0x0D   = 0x70
->> HDMI EXT_HDELAY_H               0x0E   = 0x00
->> HDMI EXT_HDURATION_L            0x0F   = 0x20
->> HDMI EXT_HDURATION_H            0x10   = 0x00
->> HDMI EXT_VTOTAL_L               0x11   = 0xC9
->> HDMI EXT_VTOTAL_H               0x12   = 0x05
->> HDMI EXT_VBLANK                 0x13   = 0x29
->> HDMI EXT_VDELAY                 0x14   = 0x26
->> HDMI EXT_VDURATION              0x15   = 0x05
->>
->> Your driver (showing only the changed values):
->>
->> DC   DP_CONFIG                  0x1CD0 = 0x00000000
->> DC   PANEL_CONFIG_EX            0x2518 = 0x00000001
->> HDMI VIDEO_TIMING_CTL           0x08   = 0x09
->>
->> Specifically the bit#s are different between the two drivers:
->>
->> inno_hdmi-starfive.h (Keith Zhao):     inno-hdmi.c (generic):
->>    v_HSYNC_POLARITY_SF(n)  ((n) << 2)     v_HSYNC_POLARITY  bit 3
->>    v_VSYNC_POLARITY_SF(n)  ((n) << 3)     v_VSYNC_POLARITY  bit 2
->>
->> "_SF" suggests this change is specific to StarFive. The correct
->> positions are
->> HSYNC=bit 2 and VSYNC=bit 3 for the JH7110.
+>> Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
 > 
-> In fact it's not SF specific, [1] pg.13 (full manual page 979) also
-> shows the same for RK.
+> While I appreciate other people looking at this, I don't think review
+> here applies. It was a blanket tag, given to the entire series, with
+> exception that it is from newbie, thus I want to ask: was this binding
+> REALLY reviewed by Joshua?
 > 
-> It could be an error from Rockchip developers since the beginning.
+> Are the rest of the patches actually reviewed or just "looks good to
+> me"? I see no comments from Joshua on v3, v2 and v1, which is usual sign
+> of doing review.
+> 
+> 
+>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>> ---
+>>  .../phy/starfive,jh7110-inno-hdmi-phy.yaml         | 49 ++++++++++++++++++++++
+>>  1 file changed, 49 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.yaml b/Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..f838fcc238ec7db0a8e794234bdceec36cb6d9e7
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.yaml
+>> @@ -0,0 +1,49 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: https://protect2.fireeye.com/v1/url?k=1b336029-7ab87530-1b32eb66-74fe485cbfec-59631fa23f87244c&q=1&e=7e2eb06f-7b14-4bec-84e5-b60bb954d80a&u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fphy%2Fstarfive%2Cjh7110-inno-hdmi-phy.yaml%23
+>> +$schema: https://protect2.fireeye.com/v1/url?k=46734e4d-27f85b54-4672c502-74fe485cbfec-9b6e35999c41723e&q=1&e=7e2eb06f-7b14-4bec-84e5-b60bb954d80a&u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
+>> +
+>> +title: StarFive JH7110 Innosilicon INNO HDMI PHY
+>> +
+>> +maintainers:
+>> +  - Michal Wilczynski <m.wilczynski@samsung.com>
+>> +
+>> +description:
+>> +  The PHY portion of the StarFive JH7110 INNO HDMI IP.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: starfive,jh7110-inno-hdmi-phy
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +    description: Reference oscillator.
+> 
+> This barely counts as a resource, so usual question: no resources here?
+> no MMIO? Even the user of this phy is the block itself.
+> 
+> This makes me wonder if this should be a device node in the first place
+> (instead folded into the parent).
 
-Yeah I agree; Maud Spierings reported similar issue and Dominuque
-Belhachemi also figured that v_HSYNC_POLARITY and v_VSYNC_POLARITY are
-simply swapped in
-inno-hdmi.c.
+The PHY has no reg because the reg is shared with the controller and
+owned by the parent - patch 9 lets the bridge take its regmap from
+there.
 
-As Icenowy stated Rockhip TRM also confirms this. I intend to send a fix
-as part of this series (as suggested by Maud).
+The user of the PHY is not only the block itself. It is the pixel clock
+provider for the whole display subsystem, voutcrg takes hdmitx0_pixelclk
+as the parent of its DC8200 pixel MUXes, and while HDMI output is active
+it is the only intended source for that clock. The parent has to be
+assigned explicitly so the general PLL does not end up driving the pixel
+clock, and so a DSI user does not reach the HDMI PHY clock generator.
+
+So it has to be its own node. The HDMI block has two independent
+functions with different clock inputs and one of them feeds back into
+the SoC clock tree. The PHY generates hdmitx0_pixelclk which voutcrg
+consumes the controller consumes pclk/mclk/bclk from voutcrg. Folded
+into one node that node is both a provider to and a consumer of
+voutcrg which is a cycle in the hardware description, not just in Linux.
 
 > 
-> [1]
-> https://protect2.fireeye.com/v1/url?k=ba283351-e5b30a4e-ba29b81e-000babdfecba-1b86e6ec0e74b45d&q=1&e=d9589fcd-304c-4065-91c9-c5043969df15&u=https%3A%2F%2Fgithub.com%2FDeciHD%2Frockchip_docs%2Fblob%2Fmain%2Frk3128%2FTRM-chapter-24-hdmi-tx.pdf
 > 
-> Thanks,
-> Icenowy
+> Best regards,
+> Krzysztof
 > 
->>
->> I'm guessing that your 42-mode test passed because most CEA modes are
->> +hsync
->> +vsync, and this wouldn't show any difference if the two bits were
->> transposed.
->>
->> Once the sync polarity is sorted, I'd be happy to give a Tested-by:
->> on the
->> series.
->>
->>   --
->>
->> Issue 2: This is more a feature request than an issue. Originally, I
->> tried
->> running this Xorg modeline, which worked well under Keith's driver:
->>
->> "2560x1440_49.90"  201.00  2560 2608 2640 2720  1440 1443 1448 1481
->> +hsync -vsync
->>
->> However, your driver would not accept this pixel clock. I then
->> noticed you have
->> a pre-PLL table of fixed clocks. Is there any chance you can change
->> the code to
->> compute the pre-PLL on the fly like how Keith does it, rather than
->> use a table?
-
-I can add the entry, hopefully you can let me know in the v5 whether it
-works for you.
-
-inno_hdmi_phy_pre_pll_determine_rate() returns -EINVAL for any rate not
-in the table, and .mode_valid is built entirely on that:
-
-rounded = clk_round_rate(ctrl->clks[CLK_PCLK].clk, pixelclk);
-if (rounded != pixelclk)
-      return MODE_NOCLOCK;
-
-If the PHY computes dividers on demand, clk_round_rate() starts
-succeeding for almost every rate .mode_valid stops rejecting anything
-and we're back to advertising modes the PHY can't drive  the
-blank screen bug patch 11 exists to fix.
-
-To keep the rejection you'd have to replace the table with a real
-constraint model.
-
-The fracdiv values doesn't seem to be cleanly derivable and the Rockchip
-has the datasheet and still chose a table. 
-
-
->>
->> Thanks for all your great work!
->>
->> Best regards,
->>   -Byron
->>
->>
->> _______________________________________________
->> linux-riscv mailing list
->> linux-riscv@lists.infradead.org
->> https://protect2.fireeye.com/v1/url?k=46fbedc2-1960d4dd-46fa668d-000babdfecba-e6e7fb64f005c1b3&q=1&e=d9589fcd-304c-4065-91c9-c5043969df15&u=http%3A%2F%2Flists.infradead.org%2Fmailman%2Flistinfo%2Flinux-riscv
+> 
 
 Best regards,
 -- 
