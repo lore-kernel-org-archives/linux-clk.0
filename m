@@ -1,163 +1,129 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5783CB2FD
-	for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 12:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DCB36495F;
+	Fri, 25 Sep 2026 12:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790340460; cv=none; b=Eu05Swq1zax3XPBbQnGBbTX6StFWPj/hpo1BbOIEYkL3/Rq8OfgOx4Pdrd0wW+viP0PtC8mxAX9ZVcbQKteyZswudsheNIH7RI39aMT0DInwICUHEb77OrylV/QAg909rrvyx/5e3mOsK4HMUquJM0dvLDwf7kKMjZaeF42XMv8=
+	t=1790341096; cv=none; b=GWh4VGQp10JzU6/o7EZVYZ89UiuKgd9d6MJnMOAWu6QoIjTB3+oMDcu/h1xyHaChxpTe8ZdAzAL0swWN+eLObfjoX6zP2dloG4mq/Kaw6XBuy47xeHAcdwnJspxRDX3geZqJSHeyN22h2Pkk4hz8ADHAip2V2sI4k0FctQa14bQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790340460; c=relaxed/simple;
-	bh=X8SD06Xsb+QlpqJHnrtPeIbPCA/K3oHZVylpioAlIxc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UOPRBcJ55AntIP5kJ2GkKOduYZ8x7tj667Bb7THKF0XWWmeNfP3j1wNf25ypEbdQW7LAgTxXcgk5cl27xA69MH1p4gx7RqP0e+QbbzR168BJ7rIMVSycZijyvH3dKjzu0oo1rPIZA3m+rf58e6fNEz1GiQOALZErqf3GQgBOzCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=JOki174R; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1790341096; c=relaxed/simple;
+	bh=Djh7EIlJWoKVdGspdFOu0gSdxVPNo3FdFkoX9qmfmgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cXwEsqLMTtQxheXEut98HRIMBOWwzYBpz8sxo6vLSAc3FMTEgcTxforlZmhcE6NgdjUsEpvLaeAVzAJCYmgRwTlHbRNmWz6IsnoAIM3QI1BdapfL8nIyd8dzgTKmJqMoNs44fs9YZv86ow3H5rHMFqJst6JNB710hmWx7hVSAjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbmABMCD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="JOki174R"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49b912d3931so7127545e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 05:47:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1790340455; x=1790945255; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=hVgejJErSi/df8/6avC+kCC2kZbgZL+1y5/eEh1fX5I=;
-        b=JOki174RcaL6QezS2v04KMA++qfhwEcc/7Y/iyeeN4QUOg0KgoFHc2qvMwkjehyM0l
-         /MM83apeVoE/ukdFju+vMP6ixPDUVXHVnLOFvhTIKPCZBuP38+Q8dhyJMPQrNkgMcqQG
-         Ggi7Ob5w4RjXhnEvCT1mYkhj58D4a7SH9rtWnuWX9LymsFP915LlOzrfpxmV3IeFtY3k
-         ZZglkPNYt1NUUBsYR4i6PB28CRkbcYKCgjLctVa3jNvyeie8iRyDH1ZV+3Hou4qrm+SZ
-         RcP0rRhukcssFLnOFyba804gTusswmMH3XqHeiogcGlX7otPN4kCF5PQDPfw7nqL8aAu
-         wRUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790340455; x=1790945255;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=hVgejJErSi/df8/6avC+kCC2kZbgZL+1y5/eEh1fX5I=;
-        b=hbjcX4ZwK6k6X3vuRxGf+C/N9JeT0hTFFZXP1AzKTdK3veIqueYteQu+0pQi4bApFb
-         ufkEr1Y88W3DC7y7PDrqDhJ8cir17MVQWfLoxrXbCOb6ga+8Ky96/PbuoDWguJsKBjC1
-         G2r8x7clsPeniuPOsXFTXmL/fbsZBTcqBmD4T27mhCEgC19yIoTkPS1TEFMQlZMty65Q
-         XSsgTkKzfA2Fgc3vumq2gIB+cavmt4Lp/2vbm8Ah/pD2PO5MTFHGOxQuPxc1Af98Su7i
-         mGaSFUhB0PuAlVWo1kSGKflE3jWtrQYGLNXOB/NKR5uFHK7WgMfv+ihlCfa2fDo/87Fv
-         gD7Q==
-X-Forwarded-Encrypted: i=1; AKwUvBzpNoQA13GREdljFuEmhbtgSuUKVNd28B7hjb76hm6reglIeDdQ8HbsJRfZfSCffyaJwnuF7KnWkJU=@vger.kernel.org
-X-Gm-Message-State: AFuF++mi8U4GmB34vbIDgWFFMtioXRQW00HuxuFMswCh6fnbgQTgCoH0
-	Bh8LfM7l786sCUVJv0r1ifDmdfKxuxQEGqmO+e+CNq7MXxUsV5KZ0lMiyzKp3a2e+MA=
-X-Gm-Gg: AYBFou2MVHzbPxZo+vNbfmR8cRvcphMipmxVUGvj/si/vhMfdezug25jCyrTZ08zDcd
-	mxX0YCDmw1gDXAo/f3zuSsflyVGTlCCgwKHR8NBhIlfqsfSVe6TaAkcfJk0sv6Oz/Dhhv1yL1Ii
-	4v6+5vMBaxGGQ067tlFg/eiQ+X81RKPh7srqwTX8P+94G3UG1Cs5j/LmvquX8HhTyVtbauGtW4l
-	aYnJw/XRJR7lg22EJWZv8qYpyiFOD0wYf3F9rtHwnOXD0wE7WRk8A1KYaqXZEX8nq9kwUS8S1iG
-	/zWitHPeDr+9KPkiYGcBtnjpZoO/9WNqrT/bXB4rLsXLsUYFFFWsfa53Rd7Slgui2TIGObkWVZr
-	Vd3x4J4QDVuKNeQOpWg23DGn12If/GSNzQ7j7cU59p6AgBrUPqHPdHf5n1Z7s/H2rupNGlb7gyg
-	Oc9f4/oKIvASLQvWfoBkUx5UIEC9swe6VgS01C1hcTto324YvmUDCSlwLY8kkJmiHw7hUT+Jdvo
-	6RvjNpbydnIlCarwQ==
-X-Received: by 2002:a05:600c:6090:b0:49e:6e94:7cae with SMTP id 5b1f17b1804b1-49fe670424cmr91000685e9.28.1790340455565;
-        Fri, 25 Sep 2026 05:47:35 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49ff27eabc1sm58460335e9.15.2026.09.25.05.47.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Sep 2026 05:47:32 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michal Wilczynski <m.wilczynski@samsung.com>, Vinod Koul
- <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Rob
- Herring <robh@kernel.org>, Krzysztof
-	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrzej
-	Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, Laurent
-	Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Luca
- Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
- Simona
-	Vetter <simona@ffwll.ch>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
-	Yan <andy.yan@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, Emil
- Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Heiko
-	Stuebner <heiko@sntech.de>, Conor Dooley <conor@kernel.org>, Paul Walmsley
- <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
-	Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>, Jerome
-	Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- mfd@lists.linux.dev, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-riscv@lists.infradead.org, Andy Yan <andyshrk@163.com>, Marek
-	Szyprowski <m.szyprowski@samsung.com>, Maud Spierings
- <maud_spierings@murena.io>, Graham Markall <hello@big-grey.co.uk>, Icenowy
-	Zheng <zhengxingda@iscas.ac.cn>, Michal Wilczynski
- <m.wilczynski@samsung.com>
-Subject: Re: [PATCH v3 13/19] clk: starfive: jh7110-vout: Allow pixel clock
- rate propagation
-In-Reply-To: <20260904-jh7110-clean-send-v3-13-484f9ae72715@samsung.com>
-References: <20260904-jh7110-clean-send-v3-0-484f9ae72715@samsung.com>
- <CGME20260904132733eucas1p1a6529cb2ea97bc75c9cd190d1ba901c0@eucas1p1.samsung.com>
- <20260904-jh7110-clean-send-v3-13-484f9ae72715@samsung.com>
-Date: Fri, 25 Sep 2026 14:47:30 +0200
-Message-ID: <1j5wzt8plp.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbmABMCD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A961A1F000FF;
+	Fri, 25 Sep 2026 12:58:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790341095;
+	bh=jbnszAl0K2VzxzoSrqdeRmwXSjuXaYSQ8xFcW+B2Iio=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=UbmABMCD3NJD18sg93yx8jrXsuUaIDW5mnrEVLTg6fzvCRXCnallCKU/aHKc5Ujl1
+	 I0vVx09yYduB7rxp1XMEkWSATP3Hr91gCvaUbQVzA6YRrqzVzcpW/2mZeZdO/NaN61
+	 /Ans4jXN/JZUSgJU9zX/4auRYKLjRb9rkc+U7MUBZD+JSbsP16pCy9+MI19foMDerf
+	 RI9aFat4ufgdX2dLBvZpCR85hUow+beiMf3AWGSmKCslac+6pkbCfRJF4A7L+KvrmQ
+	 VOI/0qY2BpPUJVRWTbO4abBg81p80fQDim3OHWxCLzlGQgcyg2WZ0wFZ74pqkLq6nA
+	 YBVlqyXBNL4vA==
+Date: Fri, 25 Sep 2026 14:58:11 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Jacky Huang <ychuang3@nuvoton.com>, 
+	Shan-Chun Hung <schung@nuvoton.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Steam Lin <STLin2@winbond.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Jacky Huang <ychuang570808@gmail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] clk: nuvoton: ma35d1: Add missing WDT/WWDT parent
+ clocks
+Message-ID: <20260925-skinny-husky-of-cookies-4aaddb@quoll>
+References: <20260921-perso-ma35d1-upstream-clk-v2-0-209fd32a8b00@bootlin.com>
+ <20260921-perso-ma35d1-upstream-clk-v2-1-209fd32a8b00@bootlin.com>
+ <20260924-bald-awesome-griffin-7d1d5b@quoll>
+ <87jyo9ljlo.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87jyo9ljlo.fsf@bootlin.com>
 
-On ven. 04 sept. 2026 at 15:27, Michal Wilczynski <m.wilczynski@samsung.com> wrote:
+On Fri, Sep 25, 2026 at 12:18:43PM +0200, Miquel Raynal wrote:
+> Hello Krzysztof,
+> 
+> >> Reported-by: Jacky Huang <ychuang570808@gmail.com>
+> >> Closes: https://lore.kernel.org/linux-clk/b8a8a65b-e302-4747-bc90-4920fc48795a@gmail.com/
+> >> Suggested-by: Jacky Huang <ychuang570808@gmail.com>
+> >> Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
+> >> Cc: stable@vger.kernel.org
+> >> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> >> ---
+> >>  drivers/clk/nuvoton/clk-ma35d1.c               | 2 ++
+> >>  include/dt-bindings/clock/nuvoton,ma35d1-clk.h | 4 +++-
+> >
+> > Please do not combine patches.
+> 
+> I thought splitting these changes would not make sense in this (= a fix)
+> case, but fine.
+> 
+> [...]
+> 
+> >> @@ -248,6 +248,8 @@
+> >>  #define ADC_GATE	233
+> >>  #define EADC_DIV	234
+> >>  #define EADC_GATE	235
+> >> -#define	CLK_MAX_IDX	236
+> >> +#define PCLK3_DIV4096	236
+> >> +#define PCLK4_DIV4096	237
+> >> +#define	CLK_MAX_IDX	238
+> >
+> > This cannot be updated. If it has to, then not a binding and should be
+> > first dropped from the bindings like we did for most of the platforms
+> > having similar issue.
+> 
+> When you say "This cannot be updated", do we agree that you mean
+> "CLK_MAX_IDX cannot be updated"?
 
-> The dc8200_pix0 and dc8200_pix1 MUXes feed the display controller, and
-> the rate they carry is ultimately produced by the HDMI PHY, which
-> registers hdmitx0_pixelclk as a clock provider.
->
-> Add CLK_SET_RATE_PARENT to both MUXes so a rate requested on them
-> reaches that parent, instead of being clamped to whatever rate the
-> parent already happens to run at.
->
-> Co-developed-by: Dominique Belhachemi <db@domibel.de>
-> Signed-off-by: Dominique Belhachemi <db@domibel.de>
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  drivers/clk/starfive/clk-starfive-jh7110-vout.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-vout.c b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
-> index bad20d5d794a72f071b4d547b7304786a8ba9afa..aeba42cd3c44ba205ced52b1826d2d2de82ad78f 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh7110-vout.c
-> +++ b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
-> @@ -40,10 +40,12 @@ static const struct jh71x0_clk_data jh7110_voutclk_data[] = {
->  	JH71X0_GATE(JH7110_VOUTCLK_DC8200_AXI, "dc8200_axi", 0, JH7110_VOUTCLK_VOUT_TOP_AXI),
->  	JH71X0_GATE(JH7110_VOUTCLK_DC8200_CORE, "dc8200_core", 0, JH7110_VOUTCLK_VOUT_TOP_AXI),
->  	JH71X0_GATE(JH7110_VOUTCLK_DC8200_AHB, "dc8200_ahb", 0, JH7110_VOUTCLK_VOUT_TOP_AHB),
-> -	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX0, "dc8200_pix0", 0, 2,
-> +	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX0, "dc8200_pix0",
-> +		    CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT, 2,
+Yes, the MAX ID.
 
-I see that you've added CLK_SET_RATE_NO_REPARENT following a previous
-sashiko advice.
+> 
+> I'm not sure I fully understand the reasoning behind, because the whole
+> point of defining this CLK_MAX_IDX value is to let drivers know the
+> number of clocks, so it must obviously follow the updates in this
+> file. I cannot just drop it, the driver does not work without it. If we
 
-Note that saying it will 'hijack' the parent without it is kind of
-strong. It is fine to let a mux reparent while setting a rate, as long
-as you understand the possible consequences for the rest of the tree.
+It's not a binding if it has to change, because bindings should not
+change - otherwise they break its users, because  since it is ABI there
+is an outside user expecting EXACTLY this number of clocks and it cannot
+grow. Obviously, this is not a binding just like FOR EVERY other case so
+can be safely dropped.
 
-Regardless
+> enlarge that number, what is the problem as long as we keep the other
+> numbers identical?
+> 
+> Maybe one way to fix that mess is to:
+> 1- Add the 2 new values (238 and 239) + a new define:
+>    NUVOTON_MA35D1_MAX_IDX 240
+>    238 would then have two definitions for a short period of time.
+> 2- Replace CLK_MAX_IDX by NUVOTON_MA35D1_MAX_IDX in the driver
+> 3- Drop CLK_MAX_IDX in the bindings.
 
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+Why we can't fix it like we did everywhere else?
+git lg -- include/dt-bindings/clock/
+and search for "number" which leads to recent commits like
+d10f26a7abbd3dd5d59bac1acdca117385b54ea9
+but there was same work for Samsung and many others (Renesas, maybe
+NXP?). You add define to the driver, then drop it from the binding. Can
+be a few commits like we did for many cases, but recent change from
+Linus I think went acked while combined binding and driver.
 
->  		    JH7110_VOUTCLK_DC8200_PIX,
->  		    JH7110_VOUTCLK_HDMITX0_PIXELCLK),
-> -	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX1, "dc8200_pix1", 0, 2,
-> +	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX1, "dc8200_pix1",
-> +		    CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT, 2,
->  		    JH7110_VOUTCLK_DC8200_PIX,
->  		    JH7110_VOUTCLK_HDMITX0_PIXELCLK),
->  	/* LCD */
->
-> -- 
-> 2.34.1
->
+Best regards,
+Krzysztof
 
--- 
-Jerome
