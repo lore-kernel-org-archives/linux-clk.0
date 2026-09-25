@@ -1,163 +1,136 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-wr2-f35.google.com (mail-wr2-f35.google.com [74.125.225.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7D8353A90;
-	Fri, 25 Sep 2026 14:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3983A49E156
+	for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 14:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790345023; cv=none; b=vELEmCuUpc3W7lOfaYu1s0TceQVtdrbudJWM6otK3NnIs4U37uF61+lwqq6dCieKSaUxcGiw9y8+z9XdjbDoFCVLrLIveIVnSHNlrh8ye7U2mC0yo8U3aZKfGMUC5ujjdztWWhBVRYYzwTluxcZdXNTozwLlMQlBOF9o3bfr7t8=
+	t=1790346147; cv=none; b=FZm/9fsrLKOOZDNw+Ws9yQOTR7ggwe3CRhfrzqF0y307jDtfupqy0mKjPaWG+wLUyx6D0OfBgrXVliELERZ31npEn2Fob9cr1GxWw4UwohuM02oUQUvL6PZVzwa6yye+frsxtwLOHnrjvjvZzfQpETOQZiCh1zkSl1y2TdDLBLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790345023; c=relaxed/simple;
-	bh=WzqSw9TPi1uq7hvWinX527KKvJhojSFLzb5QPhZFD/U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AES9ObOeLk8soNMh7q4Q7oNkxtmhx0QHiTPWBqSaymhmkqhX/zwBxKxaJS22EOpFGINsC99WhSWkWG9V4njl/MABQL2+wPYQ59w83zbM21RYXxP7GzAEVRr69Ghpw9giUUnbjBtObiJCJ3Reb4AjjdH1r8PXGlVFfvC6sJacOIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from edelgard.fodlan.icenowy.me (unknown [120.85.96.244])
-	by APP-01 (Coremail) with SMTP id qwCowAA3D_P+frZqWmXzCA--.32169S2;
-	Fri, 25 Sep 2026 22:02:41 +0800 (CST)
-Message-ID: <2a3e3ce8d62805394ef41a2e9f84a5051af30ac2.camel@iscas.ac.cn>
-Subject: Re: [PATCH v3 13/19] clk: starfive: jh7110-vout: Allow pixel clock
- rate propagation
-From: Icenowy Zheng <zhengxingda@iscas.ac.cn>
-To: Jerome Brunet <jbrunet@baylibre.com>, Michal Wilczynski	
- <m.wilczynski@samsung.com>, Vinod Koul <vkoul@kernel.org>, Neil Armstrong	
- <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Andrzej Hajda	 <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart	 <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli
- <luca.ceresoli@bootlin.com>, David Airlie	 <airlied@gmail.com>, Simona
- Vetter <simona@ffwll.ch>, Maarten Lankhorst	
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
- Yan <andy.yan@rock-chips.com>, Philipp Zabel	 <p.zabel@pengutronix.de>,
- Emil Renner Berthing <kernel@esmil.dk>, Hal Feng	
- <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Heiko
- Stuebner <heiko@sntech.de>,  Conor Dooley <conor@kernel.org>, Paul Walmsley
- <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,  Albert Ou
- <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
- Belhachemi <db@domibel.de>,  Brian Masney <bmasney+clk@redhat.com>, Jerome
- Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	mfd@lists.linux.dev, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, Andy Yan <andyshrk@163.com>, Marek
- Szyprowski	 <m.szyprowski@samsung.com>, Maud Spierings
- <maud_spierings@murena.io>,  Graham Markall <hello@big-grey.co.uk>
-Date: Fri, 25 Sep 2026 22:02:38 +0800
-In-Reply-To: <1j5wzt8plp.fsf@starbuckisacylon.baylibre.com>
-References: <20260904-jh7110-clean-send-v3-0-484f9ae72715@samsung.com>
-	 <CGME20260904132733eucas1p1a6529cb2ea97bc75c9cd190d1ba901c0@eucas1p1.samsung.com>
-	 <20260904-jh7110-clean-send-v3-13-484f9ae72715@samsung.com>
-	 <1j5wzt8plp.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 
+	s=arc-20240116; t=1790346147; c=relaxed/simple;
+	bh=d5uDDZqpgCCF8ojhypKkg1mxed2A2EO+LI5JH4IuU90=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ag68mtppSTYrhTiUzKr/Gw8DcpIxz/cVPzzG69EyfQ8OwfkXyozVAfOYapzNT7k/73Bgjkc6Le8FhTkR6DI6Qmxlpt5Lpo3MwicGjOAMTw603XDee8oLpSsgjP9GVA1MZ+nvxM9s14F0ly29uN1tMm1NB8JiYdaJ9UNhA6ZGRqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=HubwWeC7; arc=none smtp.client-ip=74.125.225.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="HubwWeC7"
+Received: by mail-wr2-f35.google.com with SMTP id ffacd0b85a97d-4888129c46eso362017f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 07:22:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1790346140; x=1790950940; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=rPNL1M3jOjQFzxSJPuEX1QG7QhoNHxjdxEWAOGyxkfw=;
+        b=HubwWeC7jF+9b/IB2A+RGD8cWmyBpNGrMhldVdU3rCcVRwHrMmlhaIoWm7/qu3v7PO
+         SAEAvknUCue7nQBGnx0jEDEudwP5d7PlM6hMSlxus/iGWfhTM00fQM6ElkgOqmNMElF9
+         v6DGW9mb445hjlGTfL+L3BbwCyYftEalOz91EagrSqLvItR3rBXWII/QJcNg7dbvVBVX
+         3AutFrKg+2BoviaGMvtasyTVRYhkdMlalWraaUrjcDq6z3kO8jYDeKF6bKIq/pjGeXft
+         26smmi2eSD3GGvLK47Sd2EWQpezFVyMugsz69Zi2iJd/72mIsM++eGW32bEpZMMVAnWj
+         oVvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790346140; x=1790950940;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=rPNL1M3jOjQFzxSJPuEX1QG7QhoNHxjdxEWAOGyxkfw=;
+        b=B8rVw8ukH64pdpGfZVUA44akkbaLQmuz0E/g0l55XnXTpZzGS6mFfoQO/FzBTYIYeO
+         r43EDiYfSkaOdomUpaIKy1k1744vceuYdIiAu+Q2KIsDmFphmjPO5ES7F5XUvoGIXB4+
+         AGbxQxCeiy8RqSXFM3Mgeyo0TRttaDgWnUMQGt9g8vrTSCOj5na23Qq8pOLPx7WvAA+Y
+         4E8lzEZGQRx1E2GQvRrUNMafls4bBeHI1m2X1qM4qhrLYCf81EUc0/YwxhHIJxnkmGz2
+         ufbWlVtHDckGyXRzd45fnT/ZD2ux8u9NNDpiHDvbs4wA8tKCqf1Qu67z57YFgdpB5YuS
+         Isgg==
+X-Forwarded-Encrypted: i=1; AKwUvBxHbXUhybMMs49ZMt+i3H4h2WNi3MV2jXM1t5+A48NjKkJzrGo+ohNLEtzdfrP3nDAdg5T7z3MMTeY=@vger.kernel.org
+X-Gm-Message-State: AFuF++mCWKJTDsi44mXNHp+IViM3R7aurSGbhe+QubL+vyb1bNURc7ln
+	bSIYbxPn3flntrp5PxhEj1F3n4Dk6iOdZ2P3DWV6oCjV6ovn0RS3UG/SVSz7nTmPfxc=
+X-Gm-Gg: AYBFou2JqPRjECgrDk6dWmaYGjY52CHW3ElaKK1+7GNN8Ar6dN58o5+3vslXbEL8VX3
+	xjhvfEk2IwwgJBf0P0RTmACyebysYvMBBB92dXdVWxAS0AuOQlugFcctvavqr29TOLPl3LMtKhc
+	Fu1c2ASbWpB2TlYKMysfH8UuRtgRC3Cdcnxx8KKD7QlHXE1lw0mxNfl2LG7Lvp2rVWT4zqCYUYv
+	6BhdKCliuKKagu/aitj14b64hOwaPIa6rvK6BSZNjAsNl/KYsRSIxe3ZDFv3+1BVom3HOicvtFE
+	HsIDlc102T9RT0RmPvQKBVipf0YpLu3q1Wy0BL2Bk4rSW8QctRJiOrL8s9kp4H00GyvLropMcTF
+	Gmx/N2MjXnmmKm4zYn0tmhnho85n9KN+z81ToMDgID29HlwqtCkcNrsf7fl1Cfnb1MkHHY40fAf
+	0Lu0U5PgZd1Cnk6C4+2frwaDtnFdVZ/h5cOqBMaEkVPInBsIOH5oHF4t2nw6mc/m3hyniIWXnpG
+	hGHNVXug0VHVjbw/Q==
+X-Received: by 2002:adf:e186:0:b0:488:80d0:873a with SMTP id ffacd0b85a97d-48880d089e8mr3037468f8f.5.1790346139942;
+        Fri, 25 Sep 2026 07:22:19 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4887a30b9aesm6834677f8f.5.2026.09.25.07.22.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Sep 2026 07:22:17 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Vyacheslav Yurkov <uvv.mail@gmail.com>, Vyacheslav Yurkov via B4 Relay
+ <devnull+V.Yurkov.EXT.bruker.com@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Brian Masney <bmasney@redhat.com>, Brian Masney
+ <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Jyri
+ Sarha <jsarha@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+Subject: Re: [PATCH v5 2/2] clk: Add gpio-locked fixed clock driver
+In-Reply-To: <a5e76452-1fa1-4675-9a16-8683702ff4d0@gmail.com>
+References: <20260915-feature-clock-guard-v5-0-42ab5dc3a6aa@bruker.com>
+ <20260915-feature-clock-guard-v5-2-42ab5dc3a6aa@bruker.com>
+ <1j33vaesh7.fsf@starbuckisacylon.baylibre.com>
+ <e697d892-fbd2-432a-b71c-8547ead22ea0@gmail.com>
+ <1jtsnpcn8l.fsf@starbuckisacylon.baylibre.com>
+ <39fdddbf-0fdb-40e7-9cd5-c8f857ee8b9d@gmail.com>
+ <1j8q4p8rxl.fsf@starbuckisacylon.baylibre.com>
+ <a5e76452-1fa1-4675-9a16-8683702ff4d0@gmail.com>
+Date: Fri, 25 Sep 2026 16:22:16 +0200
+Message-ID: <1jzex576nb.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:qwCowAA3D_P+frZqWmXzCA--.32169S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZFW5WrW3Kr47uw4UtFWrZrb_yoW5Aw4rpr
-	s7Ca4rJFs0qF48Za4xX3WYqFW5Aan2ya45tFn7ZF10vr45Ka1UWw1vkF9xWF97XrZ7Cw13
-	Wr4v9F4fuF4DXr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvmb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
-	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
-	c7CjxVAaw2AFwI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26rWY6r4UJwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7IUnPl1DUUUUU==
-X-CM-SenderInfo: x2kh0wp0lqwv3d6l2u1dvotugofq/
+Content-Type: text/plain
 
-=E5=9C=A8 2026-09-25=E4=BA=94=E7=9A=84 14:47 +0200=EF=BC=8CJerome Brunet=E5=
-=86=99=E9=81=93=EF=BC=9A
-> On ven. 04 sept. 2026 at 15:27, Michal Wilczynski
-> <m.wilczynski@samsung.com> wrote:
->=20
-> > The dc8200_pix0 and dc8200_pix1 MUXes feed the display controller,
-> > and
-> > the rate they carry is ultimately produced by the HDMI PHY, which
-> > registers hdmitx0_pixelclk as a clock provider.
-> >=20
-> > Add CLK_SET_RATE_PARENT to both MUXes so a rate requested on them
-> > reaches that parent, instead of being clamped to whatever rate the
-> > parent already happens to run at.
-> >=20
-> > Co-developed-by: Dominique Belhachemi <db@domibel.de>
-> > Signed-off-by: Dominique Belhachemi <db@domibel.de>
-> > Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> > ---
-> > =C2=A0drivers/clk/starfive/clk-starfive-jh7110-vout.c | 6 ++++--
-> > =C2=A01 file changed, 4 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/starfive/clk-starfive-jh7110-vout.c
-> > b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
-> > index
-> > bad20d5d794a72f071b4d547b7304786a8ba9afa..aeba42cd3c44ba205ced52b18
-> > 26d2d2de82ad78f 100644
-> > --- a/drivers/clk/starfive/clk-starfive-jh7110-vout.c
-> > +++ b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
-> > @@ -40,10 +40,12 @@ static const struct jh71x0_clk_data
-> > jh7110_voutclk_data[] =3D {
-> > =C2=A0	JH71X0_GATE(JH7110_VOUTCLK_DC8200_AXI, "dc8200_axi", 0,
-> > JH7110_VOUTCLK_VOUT_TOP_AXI),
-> > =C2=A0	JH71X0_GATE(JH7110_VOUTCLK_DC8200_CORE, "dc8200_core", 0,
-> > JH7110_VOUTCLK_VOUT_TOP_AXI),
-> > =C2=A0	JH71X0_GATE(JH7110_VOUTCLK_DC8200_AHB, "dc8200_ahb", 0,
-> > JH7110_VOUTCLK_VOUT_TOP_AHB),
-> > -	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX0, "dc8200_pix0", 0,
-> > 2,
-> > +	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX0, "dc8200_pix0",
-> > +		=C2=A0=C2=A0=C2=A0 CLK_SET_RATE_PARENT |
-> > CLK_SET_RATE_NO_REPARENT, 2,
->=20
-> I see that you've added CLK_SET_RATE_NO_REPARENT following a previous
-> sashiko advice.
+On ven. 25 sept. 2026 at 15:15, Vyacheslav Yurkov <uvv.mail@gmail.com> wrote:
 
-I think the problem is that the Innosilicon HDMI PHY is designed to be
-solely the pixel clock provider when HDMI output is enabled, so manual
-clock parent assginment is required when using HDMI to prevent the
-general PLL from driving the pixel clock, and for DSI to prevent
-abusing the HDMI PHY clock generator.
+> On 25.09.2026 13:57, Jerome Brunet wrote:
+>> On jeu. 17 sept. 2026 at 19:05, Vyacheslav Yurkov <uvv.mail@gmail.com> wrote:
+>> 
+>>> On 16.09.2026 15:57, Jerome Brunet wrote:
+>>>
+>>>>>>> +/* We can't enable the clock, but the Common Clock Framework calls only
+>>>>>>> + * enable() not is_enabled()
+>>>>>>> + */
+>>>>>>> +static int gpio_locked_clk_enable(struct clk_hw *hw)
+>>>>>>> +{
+>>>>>>> +	return gpio_locked_clk_is_enabled(hw);
+>>>>>>> +}
+>>>>
+>>>> You need to explain your problem a bit more because this is not OK. Your
+>>>> clock should really just provide .is_enabled() AFAICT
+>>>
+>>> When a peripheral driver uses devm_clk_get_enabled(), this is resolved
+>>> to clk_prepare() and clk_enable(). Neither of them check for
+>>> .is_enabled(). Is that a flaw in the CCF or expected behavior?
+>>>
+>> 
+>> .enable() does return an error on failure. It is up to the provider to
+>> return one or not. In your case, it will be probably be necessary to on
+>> the gpio a little.
 
-Thanks,
-Icenowy
+it will probably be necessary to poll on the gpio a little. (sorry)
 
->=20
-> Note that saying it will 'hijack' the parent without it is kind of
-> strong. It is fine to let a mux reparent while setting a rate, as
-> long
-> as you understand the possible consequences for the rest of the tree.
->=20
-> Regardless
->=20
-> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
->=20
-> > =C2=A0		=C2=A0=C2=A0=C2=A0 JH7110_VOUTCLK_DC8200_PIX,
-> > =C2=A0		=C2=A0=C2=A0=C2=A0 JH7110_VOUTCLK_HDMITX0_PIXELCLK),
-> > -	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX1, "dc8200_pix1", 0,
-> > 2,
-> > +	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX1, "dc8200_pix1",
-> > +		=C2=A0=C2=A0=C2=A0 CLK_SET_RATE_PARENT |
-> > CLK_SET_RATE_NO_REPARENT, 2,
-> > =C2=A0		=C2=A0=C2=A0=C2=A0 JH7110_VOUTCLK_DC8200_PIX,
-> > =C2=A0		=C2=A0=C2=A0=C2=A0 JH7110_VOUTCLK_HDMITX0_PIXELCLK),
-> > =C2=A0	/* LCD */
-> >=20
-> > --=20
-> > 2.34.1
-> >=20
+>
+> I'm not sure I understand what you meant.
 
+>> Note that if the GPIO can sleep, interacting with the gpio must happen
+>> in prepare (think i2c gpio devices)
+>
+> In other words, I should only provide prepare/unprepare instead? Do you 
+> think is_enabled can also be replaced by is_prepared in this case?
+
+It depends on the GPIO API used. have a look at clk-gpio.c
+
+>
+> Slava
+
+-- 
+Jerome
