@@ -1,172 +1,104 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEF836B915;
-	Fri, 25 Sep 2026 08:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBCF3D891F;
+	Fri, 25 Sep 2026 08:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790326428; cv=none; b=LwX+MxaL5Ka3WT3Fj+ZxJjY8P6ijrpXVZ7Zgs7lmX5sY10DeulYZmrnpYh28P3UFo7rFQ7+HWJA/nEQY7VeuzWQD+II+Q3ZpvD+9dl8CiPRygZYRRz5ugnBh8F3l3+gDww1Kxlqt5d8P+SQUARoqAPHodQAf5FNKf4FE7++cBbA=
+	t=1790326498; cv=none; b=bv7MeVbExgJbS3RgTy3WtqTbUuU6pUK+9y/lHmhujv+nvnWl5em5PcFw1tioiAGSGAP/XaAM4UI1P37rqVwmDAMLyJO6gmvU624RAFgBYWfHBMj9vEGXzp426jXU3NjeYXIRTB65qJ1LU/FY9TJtvcIIHjiCvRcslYwkrMEvQX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790326428; c=relaxed/simple;
-	bh=3JA2AcXtvCo9mRvRvJ0uJv4Xssg70F4KtS0kS3YkXj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dHq3aKTc7CIIW5EXPrDvMpGcJ+/Xk7YCG2OaTuz1AJnGJ/VVOreNoZkrPPFz7IH4V8cDZJLJPoeL951cjZJq+F5rtf/OJHBefANJ6WfMNooqV7uRmzOCzZ7xEh5F+efVOcVwj3BZp4G9ZQ6kxjir09bO47h4Jf2y+Iszcr9Z8E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A6E61F00893;
-	Fri, 25 Sep 2026 08:53:43 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] arm64: dts: renesas: r8a78000: Add MSIOF nodes
-Date: Fri, 25 Sep 2026 10:53:30 +0200
-Message-ID: <10e85f27b8ea4342f6f19a7c9e68fd641e58b54a.1790325809.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1790325809.git.geert+renesas@glider.be>
-References: <cover.1790325809.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1790326498; c=relaxed/simple;
+	bh=whRTRytNFXJ6yv27AeunLIdqqAPwUHKHVDtFSzkAyPE=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=n79UZHe2erHdOxQnAUVFpJPKb87eqz7uaOr1aNTR+uMdY1l/NYsPctg+QgmqgWp3q3tdfdUeeVKil51ROkUhXOh45eXimhXT9bi36Aj1NWGJvPSDCIi3RY/MnjTkhKAdDSiPUQGpMEq5SO6zK/b+DNFvaAjj6vri8MggXNsq2Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQksgQLl; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQksgQLl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC6EF1F000FF;
+	Fri, 25 Sep 2026 08:54:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790326497;
+	bh=LZyEQV4yuKpnz9owINkSGiZR37QMXVmaN7Ow/tWvU2M=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=eQksgQLlpfiL1+iNvItoUxs2tMzTXUdEp3dKJZzCL2FDH9xN2sTHcDP4NWOF9Hl4Q
+	 hFZkGSub4ykBuhnoVrpGT2a7uQqva9B4zK9MoxcCIZEtomWSXNuokYdIBumUrtB7xL
+	 1Nwu/oJ12y4RbHwj+5bqXiTBqsSnJ/vQuNqfKE/9t36D02oeBjqb7wKBT5EJDuzIps
+	 0QJzvsw2TiWi2Q2TtMSINu+z8OwpU5ommLosiK5gVwNhAwe6Xd2y9lHh6g7lItyr6S
+	 Nmhp7ZPaXJLghVjw7C/LWVQYD7hOusp6j8GCtJT6vk2Vsf+Oo0FeD+d1Botw9+3OBP
+	 21VVeHsSlm0+w==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2 3/4] clk: qcom: Add lpass audio clock controller
+ driver for Glymur
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Srinivas Kandagatla" <srinivas.kandagatla@oss.qualcomm.com>
+Cc: robh@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20260925084635.112399-4-srinivas.kandagatla@oss.qualcomm.com>
+References: <20260925084635.112399-1-srinivas.kandagatla@oss.qualcomm.com>
+ <20260925084635.112399-4-srinivas.kandagatla@oss.qualcomm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 25 Sep 2026 08:54:56 +0000
+Message-Id: <20260925085456.DC6EF1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add device nodes for the Clock-Synchronized Serial Interfaces with FIFO
-(MSIOF) on the Renesas R-Car X5H (R8A78000) SoC.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] clk: qcom: regmap max_register too small for WSA3 and WSA4 resets
+--
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a78000.dtsi | 104 ++++++++++++++++++++++
- 1 file changed, 104 insertions(+)
+commit 6f75476fee92ffe314194d6764b5d4210219aa0a
+Author: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a78000.dtsi b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-index 9a07753b221541ed..d75a9e43f772f871 100644
---- a/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-@@ -1000,6 +1000,110 @@ mdlc_aon: system-controller@c1338000 {
- 			bootph-all;
- 		};
- 
-+		msiof0: spi@c1700000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc1700000 0 0x100>;
-+			interrupts = <GIC_ESPI 744 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSO_SCP_MAIN>;
-+			power-domains = <&mdlc_scp R8A78000_MDLC_PD_SCP 0x50>;
-+			resets = <&mdlc_scp 0x50>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof1: spi@c1710000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc1710000 0 0x100>;
-+			interrupts = <GIC_ESPI 745 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSO_SCP_MAIN>;
-+			power-domains = <&mdlc_scp R8A78000_MDLC_PD_SCP 0x51>;
-+			resets = <&mdlc_scp 0x51>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof2: spi@c1720000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc1720000 0 0x100>;
-+			interrupts = <GIC_ESPI 746 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSO_SCP_MAIN>;
-+			power-domains = <&mdlc_scp R8A78000_MDLC_PD_SCP 0x52>;
-+			resets = <&mdlc_scp 0x52>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof3: spi@c1730000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc1730000 0 0x100>;
-+			interrupts = <GIC_ESPI 747 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSO_SCP_MAIN>;
-+			power-domains = <&mdlc_scp R8A78000_MDLC_PD_SCP 0x53>;
-+			resets = <&mdlc_scp 0x53>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof4: spi@c0600000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc0600000 0 0x100>;
-+			interrupts = <GIC_ESPI 18 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSOCK_PERW_BUS>;
-+			power-domains = <&mdlc_perw R8A78000_MDLC_PD_APL 0x4f>;
-+			resets = <&mdlc_perw 0x4f>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof5: spi@c0608000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc0608000 0 0x100>;
-+			interrupts = <GIC_ESPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSOCK_PERW_BUS>;
-+			power-domains = <&mdlc_perw R8A78000_MDLC_PD_APL 0x50>;
-+			resets = <&mdlc_perw 0x50>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof6: spi@c0610000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc0610000 0 0x100>;
-+			interrupts = <GIC_ESPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSOCK_PERW_BUS>;
-+			power-domains = <&mdlc_perw R8A78000_MDLC_PD_APL 0x51>;
-+			resets = <&mdlc_perw 0x51>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof7: spi@c0618000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc0618000 0 0x100>;
-+			interrupts = <GIC_ESPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSOCK_PERW_BUS>;
-+			power-domains = <&mdlc_perw R8A78000_MDLC_PD_APL 0x52>;
-+			resets = <&mdlc_perw 0x52>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		mdlc_cmnn: system-controller@ca410000 {
- 			compatible = "renesas,r8a78000-mdlc";
- 			reg = <0 0xca410000 0 0x1000>;
--- 
-2.43.0
+clk: qcom: Add lpass audio clock controller driver for Glymur
 
+This commit adds support for the LPASS audio clock controller on
+Glymur devices. This allows LPASS peripheral loader drivers to control
+the clocks and bring the subsystems out of reset.
+
+> diff --git a/drivers/clk/qcom/lpasscc-glymur.c b/drivers/clk/qcom/lpasscc=
+-glymur.c
+> new file mode 100644
+> index 0000000000000..356625dce99e2
+> --- /dev/null
+> +++ b/drivers/clk/qcom/lpasscc-glymur.c
+
+[ ... ]
+
+> +static const struct qcom_reset_map lpass_audiocc_glymur_resets[] =3D {
+> +	[LPASS_AUDIO_SWR_RX_CGCR] =3D { 0xa0, 1 },
+> +	[LPASS_AUDIO_SWR_WSA1_CGCR] =3D { 0xb0, 1 },
+> +	[LPASS_AUDIO_SWR_WSA2_CGCR] =3D { 0xd8, 1 },
+> +	[LPASS_AUDIO_SWR_WSA3_CGCR] =3D { 0x300c, 1 },
+> +	[LPASS_AUDIO_SWR_WSA4_CGCR] =3D { 0x301c, 1 },
+> +};
+> +
+> +static const struct regmap_config lpass_audiocc_glymur_regmap_config =3D=
+ {
+> +	.reg_bits =3D 32,
+> +	.reg_stride =3D 4,
+> +	.val_bits =3D 32,
+> +	.name =3D "lpass-audio-csr",
+> +	.max_register =3D 0x1000,
+
+[Severity: High]
+Will the reset operations for WSA3 and WSA4 fail here?
+
+The target register offsets for WSA3 (0x300c) and WSA4 (0x301c) far exceed
+the configured max_register limit of 0x1000.
+
+When the WSA3 or WSA4 client driver attempts to initialize and uses the
+reset controller API, the QCOM reset controller driver forwards the request
+to the regmap subsystem. Since the target offsets are outside the
+configured bound, won't the regmap bounds check fail and return -EIO,
+preventing the SoundWire WSA3 and WSA4 controllers from initializing
+correctly?
+
+> +};
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260925084635.1123=
+99-1-srinivas.kandagatla@oss.qualcomm.com?part=3D3
