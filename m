@@ -1,117 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331FA456E11;
-	Fri, 25 Sep 2026 14:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD0B4BD78D
+	for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 14:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790348235; cv=none; b=iO9qacrDqa/gIdEwicq3QR1IzpubMSEfqNv9zikwAxkhWfMH+cB/Y1mXeC251lqZvzF4xcgbR+wWdeSpmx/1kLV8dosSwr0x5O3vouTPzF66c1BRW5BEiPaqRJkbguL2yYhiaz0W9C9y7W3JHbsaVPTIjt21OENBfK+Bz547Y6Q=
+	t=1790348334; cv=none; b=b9lcaXnUEBivp7jDemTD5d/rlRlxGLwZk7qD1sl3HLsA8gAogyxAhWCIB0/FxewBqZgEQVNh4Wc/Y3k/ugb01kZU68gPx6/Y6ijCAdDzhLZtb/4Vf/7/OzYyd/fg94DCef3bc+iJpRrqAYd8UJJrAyS4ZjXvJJRj9NOmdL50ZNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790348235; c=relaxed/simple;
-	bh=mIcFpe9JE2OceWDeNTZaCq5DbJs5iye2rs2gSvw2I9E=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=iCvQIJK8l8fIps98pgxxrvQeuyKmC2N52+Sd7IlXqZjXbH0mIocVypKQ0LBaC21xxjW2bY9rFZ0LEQH0AwKzppVPZ5f1OWqiesauPEGKgfF+KmlDNpiZkOOmmA7vOVqLjGHxllYscdJtaxwxFyrkwoTpsWOp8aElZhVj47hzgCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lfw9TVG/; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790348334; c=relaxed/simple;
+	bh=Sknz3FdFSB6JPY2cqVQyaPIiINy7RpwrClA0JIyd34E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Cv6t+2+2CM+5ZOidhfF+bRHtgHOBvyeaNS2EVlOP+zFex+JURHBrjoiVboYuLMeyXVqLoof3geUhu709vMNAwLAshioRuY5hF0mbvzOVTccWaZ9OzYN+CDIXCJzvSRyGs5md7+oCGFElG+MlGQCNqBMl8esElczYA21qyGf9iAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=BrwtVUIH; arc=none smtp.client-ip=74.125.225.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfw9TVG/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ACF51F00893;
-	Fri, 25 Sep 2026 14:57:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790348221;
-	bh=EovV/FWgCvrsFXbNM5d6Zx+yf0Rq+JBC0XZHrnCASJA=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=lfw9TVG/7Ghsx4RL3MR/IdF+iPYAAtlEyrKuTZZsG14ec5MOYtvAv9MnAIKu9wS+b
-	 JgmChhSHR2l73Y7x29gaUtnTRcLwInqp1mG2nCMz1GXIoqWlj8wx8/SvCNlzncaNVr
-	 Dx6Ek6R4l/zVOzzQ0Br76+QlhSAjjYSSelmgcb90v3c4lGqug4iL8UO3a/v4mXZcnC
-	 RwCsKFFrLn2uRir99lfwkQTEoIc4Nvb/uteAKsFmgt5EaS1xMMpQuHKx+tleCYYp/v
-	 QcAVwFfJVigcb+FXfmXLhDesUoQZi1u4FdO0UHOFmS1RMuKRjhbqL3K+DjjydVkdG7
-	 D7PSuubLy4jsg==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 4/6] clk: nuvoton: ma35d1: Add missing WDT/WWDT
- parent clocks
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Miquel Raynal" <miquel.raynal@bootlin.com>
-Cc: linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <20260925-perso-ma35d1-upstream-clk-v3-4-ffbae7e020a8@bootlin.com>
-References: <20260925-perso-ma35d1-upstream-clk-v3-0-ffbae7e020a8@bootlin.com>
- <20260925-perso-ma35d1-upstream-clk-v3-4-ffbae7e020a8@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 25 Sep 2026 14:57:01 +0000
-Message-Id: <20260925145701.6ACF51F00893@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="BrwtVUIH"
+Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49cd5462b69so6173435e9.1
+        for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 07:58:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1790348321; x=1790953121; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=W3mmzkhyErUd9nhmX6bMHHacdtyTPprVFWqekxL7BwQ=;
+        b=BrwtVUIHH/QB9hJoZlLViL8IdmyIq55QgfqePQ8NVStLrD8NZL8AmZDN5LXCtvVJnx
+         FOh5qUHNbUFHZuW6+RKQbioe5L3+Ld/qwnkazUm7XrISI+a7aBz2cAnpbtd/2Rcf2iIg
+         NwgrwwXfxgYPYhnO/IaTf9Y0QsGc9ts29n7u4HqcJ5kHYU0PKD+uUA5tRcWfhrKOj3qu
+         XvUaGlLJfd9erwX3XT+fnv16uoifzhSeszP86Zlbt7prESE5GsnZq1RpPznJwkMY3/3n
+         nQc49tERyQUAf885FeN+sZoj11iZWWEQCascaUbFloGe4bHgj0NPoMLHkT44clCJD9uv
+         dang==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790348321; x=1790953121;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=W3mmzkhyErUd9nhmX6bMHHacdtyTPprVFWqekxL7BwQ=;
+        b=hsqk8hsa7VY3NEn6k0gi/0M7PFM4BtYGJPLzYaaUkQLVK9aKU6oKrdcsFjLNei/hP/
+         G5z5jC5LiV02win+ibA8RmD+ungDZ/rYHqqWozn9oLO9P60MTOZZ4lG7yOXRS/T+l787
+         Uuh8E+Jpv583SWWShOomuiwjN1aTYVjBUacQuPESSGXiyiJmhNjtvf+2nIKtVX+T8S4T
+         j8DiDegFmlQZD8QcVtkFiIdqacLiflLiC4OZfGlQsfQOBplCUdQY3IOE1nB+e0HO2TSg
+         Fc42iH1T965WmKQLxmJFs9Ut1TlYSitVpLEvMl+14OqUDdsxh5sNryAt7HD0dyboZU2F
+         qFqQ==
+X-Gm-Message-State: AFuF++lNoGiDhvVAaaRhi9Mx5ocwFWfsEPo7kDN8e2Kfyc3FRI01/FJQ
+	9NgG1myTx1Sh71Gd2Lzm26Qyacyapts8bhAXa2ApRsC9kQMznAWu87Aga5Iy7YGLorI=
+X-Gm-Gg: AYBFou16Q8IlaZn/Hk5qjQcQii23rBSa4dfCFuop4AlSEKNk7B0nE/BeldRRUlfaaS+
+	LR1K9BEoadE4Bdg6g+zOP0U1hF79guvv8E9GhZIA+rDoffgzHwR2LScsG10wIf+WyMSsvLYypIv
+	NS8uXvvuTSPyTINiuLEdihMRwWGsUg+3cu1C1bWVbdehQRTYp+yIOVni627dkjSBpg8T1QwRqlg
+	e1zC/l+WqICPixI19Ygr0dgCMIcrokNFhYcMqIOmtSHLGoo/p4UJNI2CTbkoX840cD2ffIka3sg
+	ume+3CWPLDTE+Z4yUDCxrJjKMiWJF7fOFlsxgN+4kcc/jmY3ZgB7oZEEfDOl7mrjqI+p1SW6m1N
+	gzWFDQkuJlkKTFiAp/7LVcMZv41XZf1Jmj6Zm8IJZp0VbXUCKulz0ybAjosoDO4tP1uUQRt6Zw4
+	ebhdRvzQDA6XJz/NKnbbb0JY9iQy90p9djaQSdD+nReAY0lLzJH9TEMQQRDcrecUmIOG0P9qy2Z
+	6mt7b/hn7sHXXoghw==
+X-Received: by 2002:a05:600c:154b:b0:49c:ed94:cdd8 with SMTP id 5b1f17b1804b1-49fe66c863cmr109626585e9.6.1790348321076;
+        Fri, 25 Sep 2026 07:58:41 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49ff13b3c58sm27350435e9.0.2026.09.25.07.58.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Sep 2026 07:58:39 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
+ <jbrunet+clk@baylibre.com>, Yixun Lan <dlan@kernel.org>, Alex Elder
+ <elder@riscstar.com>, Inochi Amaoto <inochiama@outlook.com>, Haylen Chu
+ <heylenay@4d2.org>
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, Troy Mitchell
+ <troy.mitchell@linux.spacemit.com>
+Subject: Re: [PATCH 0/5] clk: spacemit: preserve and safely synchronize
+ firmware PLLs
+In-Reply-To: <20260909-spacemit-pll-init-v1-0-b3065ad5a4ac@linux.spacemit.com>
+References: <20260909-spacemit-pll-init-v1-0-b3065ad5a4ac@linux.spacemit.com>
+Date: Fri, 25 Sep 2026 16:58:38 +0200
+Message-ID: <1jtsnd74yp.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] clk: nuvoton: ma35d1: heap buffer overflow when assigning WDT/WWDT=
- parent clocks
---
+On mer. 09 sept. 2026 at 22:07, Troy Mitchell <troy.mitchell@linux.spacemit.com> wrote:
 
-commit c77078104be2c7bd11ad595fff116aca53714922
-Author: Miquel Raynal <miquel.raynal@bootlin.com>
+> Firmware may leave PLLs running with valid settings absent from Linux's
+> rate tables. Replacing those settings during clock registration can
+> stop CPUs that depend on them.
 
-clk: nuvoton: ma35d1: Add missing WDT/WWDT parent clocks
+A provider should not act on the clock on its own. 
 
-This commit adds missing WDT and WWDT parent clocks for the Nuvoton MA35D1
-clock controller. It registers pclk3_div4096 and pclk4_div4096 as fixed
-factor children of pclk3 and pclk4 to expose them through the provider.
+>
+> This series removes the init fallback to the first rate-table entry,
+> decodes hardware rates directly and preserves unlisted rates. Opt-in
+> synchronization applies only to differing parameters for the same
+> decoded rate.
 
-Link: https://lore.kernel.org/linux-clk/b8a8a65b-e302-4747-bc90-4920fc48795=
-a@gmail.com/
+Don't think the provider should be responsible for that
 
-> diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk-m=
-a35d1.c
-> index 6aa42a3e1be3b..5d706f5c30a59 100644
-> --- a/drivers/clk/nuvoton/clk-ma35d1.c
-> +++ b/drivers/clk/nuvoton/clk-ma35d1.c
-> @@ -544,6 +544,8 @@ static int ma35d1_clocks_probe(struct platform_device=
- *pdev)
->  	hws[HCLK3] =3D ma35d1_clk_fixed_factor(dev, "hclk3", "sysclk1_mux", 1, =
-2);
->  	hws[PCLK3] =3D ma35d1_clk_fixed_factor(dev, "pclk3", "sysclk1_mux", 1, =
-2);
->  	hws[PCLK4] =3D ma35d1_clk_fixed_factor(dev, "pclk4", "sysclk1_mux", 1, =
-2);
-> +	hws[PCLK3_DIV4096] =3D ma35d1_clk_fixed_factor(dev, "pclk3_div4096", "p=
-clk3", 1, 4096);
-> +	hws[PCLK4_DIV4096] =3D ma35d1_clk_fixed_factor(dev, "pclk4_div4096", "p=
-clk4", 1, 4096);
+> It temporarily moves mapped CPU consumers to validated
+> PLL1 branches and restores their parents after the reprogrammed PLL
+> locks.
 
-[Severity: High]
-Does this code overflow the hws[] array?
+This is typically a use case or policy choice that belong in whatever
+consumes the clock. Your DVFS driver maybe ?
 
-Looking at the definitions in drivers/clk/nuvoton/clk-ma35d1.c,
-MA35D1_CLK_COUNT is defined as 236:
+> PLL1 itself is not synchronized, and enabled outputs outside the
+> managed CPU paths prevent synchronization.
+>
+> The series also corrects CPU divider and shared-parent modeling and
+> makes MIX rate selection agree with programming. Runtime PLL rate
+> changes still require a stopped PLL; automatic DVFS switching and new
+> rate-table entries are outside this series.
+>
+> ---
+> Troy Mitchell (5):
+>       clk: spacemit: derive PLL rates from hardware
+>       clk: spacemit: make MIX rate selection consistent
+>       clk: spacemit: describe CPU clock dividers and shared PLL muxes
+>       clk: spacemit: reject rate changes to running firmware PLLs
+>       clk: spacemit: safely synchronize PLL parameters during init
+>
+>  drivers/clk/spacemit/ccu-k1.c     |  60 +++--
+>  drivers/clk/spacemit/ccu-k3.c     | 137 +++++++---
+>  drivers/clk/spacemit/ccu_common.c |  12 +
+>  drivers/clk/spacemit/ccu_common.h |   2 +
+>  drivers/clk/spacemit/ccu_mix.c    |  35 ++-
+>  drivers/clk/spacemit/ccu_mix.h    |  18 ++
+>  drivers/clk/spacemit/ccu_pll.c    | 535 +++++++++++++++++++++++++++++++-------
+>  drivers/clk/spacemit/ccu_pll.h    |  43 ++-
+>  8 files changed, 689 insertions(+), 153 deletions(-)
+> ---
+> base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
+> change-id: 20260907-spacemit-pll-init-c942bb249244
+>
+> Best regards,
+> --  
+> Troy Mitchell <troy.mitchell@linux.spacemit.com>
+>
 
-#define MA35D1_CLK_COUNT 236
-
-And in ma35d1_clocks_probe(), the array is allocated using this count:
-
-	ma35d1_hw_data =3D devm_kzalloc(dev,
-				      struct_size(ma35d1_hw_data, hws, MA35D1_CLK_COUNT),
-				      GFP_KERNEL);
-	if (!ma35d1_hw_data)
-		return -ENOMEM;
-
-	ma35d1_hw_data->num =3D MA35D1_CLK_COUNT;
-	hws =3D ma35d1_hw_data->hws;
-
-Since the hardcoded MA35D1_CLK_COUNT was not increased to accommodate the
-two newly added clocks, will writing to PCLK3_DIV4096 (236) and
-PCLK4_DIV4096 (237) cause an out-of-bounds heap write?
-
-Additionally, because ma35d1_hw_data->num remains capped at
-MA35D1_CLK_COUNT, does this leave the new clocks unregistered to external
-dt-binding consumers?
-
-> =20
->  	hws[USBPHY0] =3D ma35d1_clk_fixed("usbphy0", 480000000);
->  	hws[USBPHY1] =3D ma35d1_clk_fixed("usbphy1", 480000000);
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260925-perso-ma35=
-d1-upstream-clk-v3-0-ffbae7e020a8@bootlin.com?part=3D4
+-- 
+Jerome
