@@ -1,117 +1,126 @@
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+Received: from sender6-op-o12.zoho.com (sender6-op-o12.zoho.com [165.173.180.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA6B375ABE
-	for <linux-clk@vger.kernel.org>; Sat, 26 Sep 2026 03:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790393536; cv=none; b=o00dYBodbGkwemZMAzgR3tp4FnKMoyvKUweq8HpuLfyBfm4pZZbTA2UxiN7moBmjMKoHsnPcgzCp2/wQqHByjxdTFvL4iYXrgZGWmc56apj86yaPgZ6NJfAMDBEEVbOfu/3Ik9AjYXnuoaZXg0knJMIIHWx8CxQ+Z8M451Z4TWY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790393536; c=relaxed/simple;
-	bh=BLv0rRdoWToZOH28vOWENZ07pNp7lKwV0lf3MjaJwMw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YDtSmBsipWWQUhqnSKGbgtH5kQTSAXDf0pu2BAoUNWhnLr6aM5Mg1JqtkMANsQPzJfiyh3Z+wT6WSLwvkn6UHJgjlnQIu0NSJwpmdD1CpZ8L+EK5l9lrRoQqf+yoJcAJeQOV8PvWUZi016rZF1erkXSuvk8O07Bqncr5fCbOTp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=jo9wQQ7m; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debian.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DE03783D5;
+	Sat, 26 Sep 2026 03:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.180.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790394708; cv=pass; b=Zf7/TbINKla8dqul1TPn/OoLAS139//a21tpmRnpoukUg9xAHWICBWyxCJ3CB1x1jUCNKcBobM7Tjy/upmhoODF6tqhoN+DVWp4z2273MSorehZm8/w14X4iijXXwfqAGGqtrt9SmkMBbPY9Ymf1mqFGZ0v4Q6Z3qarovL4X+eA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790394708; c=relaxed/simple;
+	bh=AenLVsR40v/I2V8hU5aFSuC2h6bdaoca/ZaMMLXD7LY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Ap0aFJ3Ec3Dx0kF8xpgNxhsGIlwWC4pfl/SQQTXNrycqHiS8iG7XizbrZ5szqrzOC9JHOtYY+CO5auY9mn46LGr2j3YNpbfWBT2M7Oe10kLKh5x8keP0LkXixXxMmj1uV7HAbODVVxEbXyibZgnynUGGJkuhJM44mjNA4E7oWtY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=X9lR9t+O; arc=pass smtp.client-ip=165.173.180.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="jo9wQQ7m"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:Content-Transfer-Encoding:Content-Type
-	:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:
-	Reply-To:Content-ID:Content-Description;
-	bh=AQLmCm/9B4mrJDzPpo+c4kOsaksdj2bsxYt/mOLsFQ8=; b=jo9wQQ7mm1/ITjk+ho4Jqb3VQ4
-	pZIm1U2kqU9EuqV46lVDXBxtDVqh6mbj/xZCVgKxADk0e2A+hQc6WwZfju0uf/V9QQDHCcacY0TFO
-	kvEYBfRRfI7hAG62lVNBjhLw3NdbPvg/A/lUr8mu8Z/uP1+PInYzLX2mvLZidv8ajyiaLyE9N/WXN
-	DiWG1A+Y4rYjXLv7HkZsYQ9Fu1lUSzYgN0eO9ym8loXE/rzLtByS5fEFW7wwesxFNYSNy/NVqgAlC
-	p5RVlYBoeEHqVbXfwr/vSn+oAcQhe7y0NVmH4v6jfafS+/SH1x4gI3ntSvqjYJyPDFRi/2TfNfFv2
-	ozuxqb4A==;
-Received: from authenticated-user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-	(Exim 4.96)
-	(envelope-from <domibel@debian.org>)
-	id 1xAJ91-005nOH-2V
-	for linux-clk@vger.kernel.org;
-	Sat, 26 Sep 2026 03:32:12 +0000
-Received: by mail-pz2-f41.google.com with SMTP id d2e1a72fcca58-8693af0d7c4so947183b3a.3
-        for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2026 20:32:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBx/RIge5/UPH8PdIdEPQT6Hbp272sBuTEbUj+S9IsB4VbDTyo/Ic0qatPkx4FTPyJYQGC2y7Zo/rN8=@vger.kernel.org
-X-Gm-Message-State: AFuF++l3F7sOn/HtccrWCmlzDfh9Trdc9nxtPB9TnaiFW3osjM5nduWm
-	shIYAj/9Qq/lygCQTH89SfEpJr/fxjk6hSIFxNZa267S0qk0In+k5bMI3zd37hV2Ly9yrirJHr/
-	fRDFP0jHh35f+H2SNrePmU88SpndYJXw=
-X-Received: by 2002:aa7:888b:0:b0:880:7e9a:6e56 with SMTP id
- d2e1a72fcca58-8807e9a73a8mr2177107b3a.13.1790393525763; Fri, 25 Sep 2026
- 20:32:05 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="X9lR9t+O"
+ARC-Seal: i=1; a=rsa-sha256; t=1790394679; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=hcdUvlqhEAhvRwAd7ZHCQT0gA3kxGMGPiAyYPWNCZ3G8o3ICf6DG8HW4XXQoyinp8Dppzog/zOwvDF3WNpPGwVQonoBsB066ELV/QNiO4yCaU6D0ywjK0pl+B8/W780RbHxzqgwGGBsUlcnlL/WfXgfOjHDi+wRp+25xj8X5SrY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1790394679; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=fV+OYR1a5s/03fbYdkCOSm1nCeOMl/C4++YXRNfv/rg=; 
+	b=A6Odpcw+ofPIswzOf3mZfaQ1MKlujgpIij6W7tJcCYX18DcMHZ1EHUxISK4UmNiQNnpL8e1TBwT8TLy0Ms2nG30G4EOJwd7Ftf9IrtGu7A/IE6QVtm5ag1/0EdCGEdngAVuZEJ5iMrbUEbeusTrWqFPPL4vZ8+x2ngxs/r6WV1g=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1790394679;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Date:Message-Id:Message-Id:Cc:Cc:Subject:Subject:From:From:To:To:In-Reply-To:Reply-To;
+	bh=fV+OYR1a5s/03fbYdkCOSm1nCeOMl/C4++YXRNfv/rg=;
+	b=X9lR9t+OuCotMH0uHQ8o8QJqXn5RtaRSmpncPreAeFoM9AHD8rLb3cP8wrVJvUJD
+	XqKQRx3lZV7yJmrtrWTjxdfdHS/1hcDrSwLiL+xO+jexE/Setw6wvVxawenMaUoITX+
+	4aUUZkQ1K0LFuuxUx2f1bh5SJrP7nKSr0x7xI6rM=
+Received: by smtp.zohomail.com with SMTPS id 1790394677967246.7571969104904;
+	Fri, 25 Sep 2026 20:51:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CGME20260915153246eucas1p289987fd8757c89ff865c99b6465708a8@eucas1p2.samsung.com>
- <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com> <20260915-jh7110-clean-send-v4-18-f0e4fd6f2cc8@samsung.com>
-In-Reply-To: <20260915-jh7110-clean-send-v4-18-f0e4fd6f2cc8@samsung.com>
-From: Dominique Belhachemi <domibel@debian.org>
-Date: Fri, 25 Sep 2026 23:31:54 -0400
-X-Gmail-Original-Message-ID: <CAAvaLCzm1o=m6P88KNeHCG9BuTBu4AQmAec90kN3MMC6ZpALaQ@mail.gmail.com>
-X-Gm-Features: AclHuK8_8y3EcFqb3OgZBY9WaeDxyzPMPd1_yK_ekhMIXfr7tAphtd8D7H_5xEI
-Message-ID: <CAAvaLCzm1o=m6P88KNeHCG9BuTBu4AQmAec90kN3MMC6ZpALaQ@mail.gmail.com>
-Subject: Re: [PATCH v4 18/20] phy: starfive: Add jh7110-inno-hdmi-phy driver
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Emil Renner Berthing <kernel@esmil.dk>, 
-	Hal Feng <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Dominique Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, mfd@lists.linux.dev, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Maud Spierings <maud_spierings@murena.io>, 
-	Graham Markall <hello@big-grey.co.uk>, Icenowy Zheng <zhengxingda@iscas.ac.cn>, 
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>, Joshua Peisach <jpeisach@ubuntu.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Debian-User: domibel
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 26 Sep 2026 11:51:11 +0800
+Message-Id: <DLOXXXFCEB5G.15XI8896GM7B7@pigmoral.tech>
+Cc: "Stephen Boyd" <sboyd@kernel.org>, "Brian Masney"
+ <bmasney+clk@redhat.com>, "Jerome Brunet" <jbrunet+clk@baylibre.com>,
+ "Chen-Yu Tsai" <wens@kernel.org>, "Jernej Skrabec"
+ <jernej.skrabec@gmail.com>, "Samuel Holland" <samuel@sholland.org>, "Andre
+ Przywara" <andre.przywara@arm.com>, <linux-clk@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 7/8] clk: sunxi-ng: a733: Add bus clock gates
+From: "Junhui Liu" <junhui.liu@pigmoral.tech>
+To: "Enzo Adriano" <enzo.adriano.code@gmail.com>, <junhui.liu@pigmoral.tech>
+X-Mailer: aerc 0.22.0
+References: <20260921-a733-clk-v4-0-9c184ebe9ac1@pigmoral.tech>
+ <20260921-a733-clk-v4-7-9c184ebe9ac1@pigmoral.tech>
+ <20260921200512.3179109-1-enzo.adriano.code@gmail.com>
+ <DLLYUYMR3CZT.17I8APGBH9H8S@pigmoral.tech>
+ <20260926020313.911537-1-enzo.adriano.code@gmail.com>
+In-Reply-To: <20260926020313.911537-1-enzo.adriano.code@gmail.com>
+X-ZohoMailClient: External
 
-On Tue, Sep 15, 2026 at 11:32=E2=80=AFAM Michal Wilczynski
-<m.wilczynski@samsung.com> wrote:
+Hi Enzo,
+Thanks for the feedback.
+
+On Sat Sep 26, 2026 at 10:03 AM CST, Enzo Adriano wrote:
+> Hi Junhui,
 >
-> +static int starfive_hdmi_phy_probe(struct platform_device *pdev)
-> +{
-> +       ret =3D clk_set_rate(inno->phyclk, 297000000);
-> +       if (ret) {
-> +               dev_err(dev, "Failed to set default rate: %d\n", ret);
-> +               goto err_del_clk_provider;
-> +       }
+> Thanks for reproducing the ahb-cpus issue. Adding clk_ignore_unused lets
+> the Cubie A7S reach an interactive initramfs shell.
+>
+> I reused the September 21 uninstrumented comparator: v7.3-rc1 plus the
+> four single-divider patches, CCU v4, the seven pinctrl patches, and the
+> minimal test DT, with only ahb_cpus_clk marked CLK_IS_CRITICAL. The Image=
+,
+> DTB and initramfs were byte-identical to that earlier comparator; the
+> only boot-argument change was adding clk_ignore_unused.
 
-Hi Michal,
+I tried to reproduce your software stack: v7.3-rc1 plus the four
+single-divider patches, CCU v4 with ahb_cpus_clk marked CLK_IS_CRITICAL,
+the seven pinctrl patches, and a minimal test DT based on my
+understanding of your description. On my Cubie A7A, it completes
+clk_disable_unused() and reaches PID 1 without clk_ignore_unused, so I
+still cannot reproduce the second failure.
 
-Can we drop these 5 lines?
-When my 4K monitor comes up in mode (3840x2160@30, 297 MHz) the screen
-stays blank.
+>
+> Without the flag, that comparator stopped producing serial output at
+> "clk: Disabling unused clocks". With it, the confirmation run recorded:
+>
+>   [    1.263452] clk: Not disabling unused clocks
+>   [    1.292364] Run /bin/sh as init process
+>   [    1.526500] mmc0: new high speed SDXC card at address 544c
+>
+> Commands issued after the shell prompt returned the expected readiness
+> and completion markers. No panic, oops or SError appeared in the capture.
+> The RAM-only run was followed by a guarded 120-second power-off recovery,
+> which restored the vendor kernel and eMMC root.
+>
+> This narrows the second failure to the path bypassed by clk_ignore_unused=
+,
+> but does not identify an individual clock: the flag also bypasses the
+> runtime-PM acquisition and traversal before the per-clock disable calls.
+> I therefore still cannot add a Tested-by for v4 as posted.
 
-When the first real modeset requests a mode whose pixel clock is also 297 M=
-Hz,
-clk_set_rate(hdmi_pclk, 297000000) then sees cur =3D=3D want and does nothi=
-ng.
-So the pre-PLL is never actually programmed.
+Could you share the exact minimal DT used for the test, either by email
+or through a git branch I can access?
 
-Without these 5 lines inno->pixclock stays 0,
-so the first modeset's clk_set_rate() always runs .set_rate() for real.
+Could you also provide some details about the boot firmware you used,
+including where the U-Boot and TF-A images came from and their versions?
+I would like to reproduce the test with the same firmware and rule out
+differences in the boot firmware.
 
-Together with my forgotten fix from May we can have working 4K@30 on the VF=
-2.
-https://lore.kernel.org/all/20260528184145.384114-1-domibel@debian.org/
+>
+> Assisted-by: Codex:gpt-6
+>
+> Regards,
+> Enzo
 
-Best
--Dominique
+--=20
+Best regards,
+Junhui Liu
