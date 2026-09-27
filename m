@@ -1,247 +1,191 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C87F37F8BD;
-	Sun, 27 Sep 2026 12:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12A44A21;
+	Sun, 27 Sep 2026 13:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790511870; cv=none; b=nApxiFBC04eFmRXaO5SpJTbpZ3LLIk/Fj2YWJfPgQnONzKUbcp3UhhUSAjFx385dEw03ZDnyJSUgFHhdcHQiBbXR5RFs0oXAsgAMGSQvMLMT/bO2OQKEjaHsW0v8FdDVAjwuVFdK9L1vFyQrAlMSXCxvVRukYxjvTmZ5NCGWvr8=
+	t=1790516074; cv=none; b=PWwerFzp+CCX+uKzwsGXoMkiiPoMfP1W7NP3vE+wvCHvnpiYSbbARWCKOyCeVkTUHH4oreJEJYZlXcBcmPWr2GT9lUvL5He1b1nraZmhtlqqwvk7S0TsvciDxMA6Z1XW2EDdhqo26+R5yU2xfLDSjeIugPmCZ0TRfomqUjXr5IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790511870; c=relaxed/simple;
-	bh=Eabtyyo2YD6OXaWcJ1KYjvaPz90W4eHSXn+ysJfKcQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=Z5Iki3JutLpAJfgraAIkg7BYDrFJ6DKGZiSzcI+dgayHLJVH7U3X63UJIJL+Vdl0GhFD3dpaF7jEjMU8MQl0ZfWw/SvPQPCrRJrI5cI2XebDBtzPBrOFj2A74rXjyss7qZiZMzSZBX1bCgECR8VGm38t9Xm34KIJVIuLfTENUQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RsvsBSoD; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1790516074; c=relaxed/simple;
+	bh=i4xUTiesBfALH3lLZpBCBOyemy/rpCEK8TZJ/FnJoRE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=V84Y1tkzVdZfckpIE3NK6S+aQxTk0jvV7/zhF0miD98AGSxpRAsGNOh3TUIEf3cnlAhrRvzDnWkJrZFqBHz4BBIAGROym1KZ5vRX6laEU8EKYg7FGZ3jGO5drncZHn8uwk8L1spa8WXl+NwmpAAilOaa63ZSHvP+KvecMEbUQ8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BD7rbElr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RsvsBSoD"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260927122417euoutp02c11f1b951ae847b50bcd234c1cea70a3~ZLQxMbr_w0190201902euoutp02E;
-	Sun, 27 Sep 2026 12:24:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260927122417euoutp02c11f1b951ae847b50bcd234c1cea70a3~ZLQxMbr_w0190201902euoutp02E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1790511857;
-	bh=P49ZMU53FicxNQXQjDxDy7KxdjeVCJlhMGoMoRje+gw=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=RsvsBSoDQhTUVnfXDVSkrdrOYQ/Wsh1BtDWKN2OEHAmBv6/x/wUDE7dGn4v+y3IEz
-	 GVq1Qr7+km89frEDkm6XtTfcTKG+fawbhnA8f3Xzbe0L0H+SxxVsn3GOl+LN6Aiq1A
-	 6D6JssYUQkL1uITQAXH8aFS2M5L7bk1syryiiLFM=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260927122417eucas1p13bf27abd0a8e031bbc3a449d6390076b~ZLQwv5zRV1213312133eucas1p1O;
-	Sun, 27 Sep 2026 12:24:17 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20260927122415eusmtip2cb25e97ede526048fb85b90aa2ad6fdb~ZLQu-_M9m0941609416eusmtip2-;
-	Sun, 27 Sep 2026 12:24:15 +0000 (GMT)
-Message-ID: <b8777bd3-960a-4d2a-88f7-f8c818407298@samsung.com>
-Date: Sun, 27 Sep 2026 14:24:15 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BD7rbElr"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5E236C4AF13;
+	Sun, 27 Sep 2026 13:34:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1790516074;
+	bh=i4xUTiesBfALH3lLZpBCBOyemy/rpCEK8TZJ/FnJoRE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=BD7rbElrjbfbyYymzqBoWZGOtfjBvAJNLtk5UJhRZ3mrQiHARscWhGsZ5qt9x3tGo
+	 welONwJVXWiaMJRtDau5pYrpqDqXnvxAZfwghx7zBPnGw7CIMQd8TGM8F7vQl4YcjG
+	 4jdS3R1XPsBKCJzv6rmQ91rhHo3DVOXB8Y9vK7Q5sCzvAI+Rozs+YtVrnh6k+3r/JH
+	 aJqxxtkmZ880NQoI2zNw3LdGIQxaAsbHInDbwLEgTtqHK0ACKCe3ljdfmoZjcVffxZ
+	 ARQdJz8vyYtxMibeqCXfu9SOMDXSXS+2vD3VuHOBibeRmnv0GpwabO4Qab0UZ7+v7m
+	 +NlaqnphFTb3g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE76C9830E;
+	Sun, 27 Sep 2026 13:34:34 +0000 (UTC)
+From: Vyacheslav Yurkov via B4 Relay <devnull+V.Yurkov.EXT.bruker.com@kernel.org>
+Date: Sun, 27 Sep 2026 13:34:11 +0000
+Subject: [PATCH v6 2/2] clk: Add gpio-locked clock driver
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/20] drm: starfive: jh7110: Enable display
- subsystem
-To: Joshua Peisach <jpeisach@ubuntu.com>, Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss
-	<rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
-	Yan <andy.yan@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, Emil
-	Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Paul Walmsley
-	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
-	Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>, Jerome
-	Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	mfd@lists.linux.dev, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
-	linux-riscv@lists.infradead.org, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Maud Spierings <maud_spierings@murena.io>,
-	Graham Markall <hello@big-grey.co.uk>, Icenowy Zheng
-	<zhengxingda@iscas.ac.cn>, Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <DLIJUQCKB76W.3RHK9KPO5JSOZ@ubuntu.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20260927122417eucas1p13bf27abd0a8e031bbc3a449d6390076b
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260915153213eucas1p148f013af239a334fc78cdc249c0f8a61
-X-EPHeader: CA
-X-CMS-RootMailID: 20260915153213eucas1p148f013af239a334fc78cdc249c0f8a61
-References: <CGME20260915153213eucas1p148f013af239a334fc78cdc249c0f8a61@eucas1p1.samsung.com>
-	<20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
-	<DLGBPXP4F8E0.9X0QMZ9GFQVF@ubuntu.com>
-	<136d6789-2f0c-4a91-ab2d-de3a3f119d5d@samsung.com>
-	<DLIJUQCKB76W.3RHK9KPO5JSOZ@ubuntu.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260927-feature-clock-guard-v6-2-007983b13ec2@bruker.com>
+References: <20260927-feature-clock-guard-v6-0-007983b13ec2@bruker.com>
+In-Reply-To: <20260927-feature-clock-guard-v6-0-007983b13ec2@bruker.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Jyri Sarha <jsarha@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, Vyacheslav Yurkov <uvv.mail@gmail.com>, 
+ Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790516073; l=4221;
+ i=V.Yurkov.EXT@bruker.com; s=20260318; h=from:subject:message-id;
+ bh=zcVM35pLLEJsaD3vvg5k9YlaPu6vWhe06tWgwilDuM8=;
+ b=qDdoBLXfj4GNuRDhSXTYV6ngcTlpe36kP2Iu8Otodmdw8k076f1d2q4Gw/fua04ZNzFJelFwE
+ XEZNwhT1mgkB837QnpHdLpJzwVne58Kq1rP1GmDyeUBkmXaVIZEMm4y
+X-Developer-Key: i=V.Yurkov.EXT@bruker.com; a=ed25519;
+ pk=snJmgYVOKlp7aQtK9tWnEI7QTYxpPpJJvxdVsnxA7Fk=
+X-Endpoint-Received: by B4 Relay for V.Yurkov.EXT@bruker.com/20260318 with
+ auth_id=686
+X-Original-From: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+Reply-To: V.Yurkov.EXT@bruker.com
 
+From: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
 
+A gpio-locked clock exposes a clock, which status is determined by a
+GPIO signal. The common use-case is a FPGA-assisted clocking design
+where peripheral clocks are generated by FPGA PLLs that are outside
+CPU control, with clock-valid/PLL-lock status exposed through GPIO signals.
+Consumers can use the output clock to wait until the input clock is locked
+and only then initialize dependent peripherals.
 
-On 9/18/26 17:32, Joshua Peisach wrote:
-> On Thu Sep 17, 2026 at 1:22 PM EDT, Michal Wilczynski wrote:
->>
->>
->> On 9/16/26 02:45, Joshua Peisach wrote:
->>> On Tue Sep 15, 2026 at 11:32 AM EDT, Michal Wilczynski wrote:
->>>>
->>>> Testing
->>>> =======
->>>>
->>>> Tested on a VisionFive 2 v1.3B using modetest.
->>>
->>> I.. got nothing. I did have to manually modprobe the modules, but
->>> unless I am doing something wrong.. I didn't get anything and modetest
->>> just gave -2.
->>
->> Hmm have you also changed the DTB not just the kernel and the modules
->> (you can also built in everything).
->>
-> Yes (I didn't built-in everything, but I did make sure the DTB was
-> copied and flash-kernel was run)
-> 
->> Also note modetest needs -M verisilicon.
->>
-> 
-> "failed to open device 'versilicon' with busid '(null)': No such file
-> or directory"
-> 
-> 
->> If that is not it, could you send "dmesg | grep -iE
->> 'verisilicon|inno|hdmi|vout'" and "ls /sys/class/drm/"?
->>
-> the dmesg output:
-> 
-> [    0.090950] /soc/display-subsystem@29400000/hdmi@29590000/controller: Fixed dependency cycle(s) with /soc/display-subsystem@29400000/display@29400000
-> [    0.091029] /soc/display-subsystem@29400000/display@29400000: Fixed dependency cycle(s) with /soc/display-subsystem@29400000/hdmi@29590000/controller
-> [    0.104227] /hdmi-connector: Fixed dependency cycle(s) with /soc/display-subsystem@29400000/hdmi@29590000/controller
-> [    0.104272] /soc/display-subsystem@29400000/hdmi@29590000/controller: Fixed dependency cycle(s) with /hdmi-connector
-> 
-> 
-> /sys/class/drm only contains the file "version"
+Signed-off-by: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+---
+ drivers/clk/clk-gpio.c | 44 +++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 41 insertions(+), 3 deletions(-)
 
-Typo - it is "verisilicon" you are missing the i.
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 9099c57e2715..a264ba21baf2 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -138,6 +138,19 @@ static const struct clk_ops clk_gpio_mux_ops = {
+ 	.determine_rate = __clk_mux_determine_rate,
+ };
+ 
++/* We can't prepare the clock, but the Common Clock Framework calls only
++ * prepare() not is_prepared(), therefore we fallback on the actuall GPIO value.
++ */
++static int clk_gpio_locked_prepare(struct clk_hw *hw)
++{
++	return clk_sleeping_gpio_gate_is_prepared(hw);
++}
++
++static const struct clk_ops clk_gpio_locked_ops = {
++	.prepare =	clk_gpio_locked_prepare,
++	.is_prepared =	clk_sleeping_gpio_gate_is_prepared,
++};
++
+ static struct clk_hw *clk_register_gpio(struct device *dev, u8 num_parents,
+ 					struct gpio_desc *gpiod,
+ 					const struct clk_ops *clk_gpio_ops)
+@@ -146,6 +159,7 @@ static struct clk_hw *clk_register_gpio(struct device *dev, u8 num_parents,
+ 	struct clk_hw *hw;
+ 	struct clk_init_data init = {};
+ 	int err;
++	const char *clk_name;
+ 	const struct clk_parent_data gpio_parent_data[] = {
+ 		{ .index = 0 },
+ 		{ .index = 1 },
+@@ -155,7 +169,11 @@ static struct clk_hw *clk_register_gpio(struct device *dev, u8 num_parents,
+ 	if (!clk_gpio)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	init.name = dev->of_node->name;
++	err = device_property_read_string(dev, "clock-output-names", &clk_name);
++	if (err)
++		clk_name = fwnode_get_name(dev->fwnode);
++
++	init.name = clk_name;
+ 	init.ops = clk_gpio_ops;
+ 	init.parent_data = gpio_parent_data;
+ 	init.num_parents = num_parents;
+@@ -192,6 +210,12 @@ static struct clk_hw *clk_hw_register_gpio_mux(struct device *dev,
+ 	return clk_register_gpio(dev, 2, gpiod, &clk_gpio_mux_ops);
+ }
+ 
++static struct clk_hw *clk_hw_register_gpio_locked(struct device *dev,
++						  struct gpio_desc *gpiod)
++{
++	return clk_register_gpio(dev, 1, gpiod, &clk_gpio_locked_ops);
++}
++
+ static int gpio_clk_driver_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -201,8 +225,11 @@ static int gpio_clk_driver_probe(struct platform_device *pdev)
+ 	struct gpio_desc *gpiod;
+ 	struct clk_hw *hw;
+ 	bool is_mux;
++	bool is_gpio_locked;
++	enum gpiod_flags gpio_flags;
+ 
+ 	is_mux = of_device_is_compatible(node, "gpio-mux-clock");
++	is_gpio_locked = of_device_is_compatible(node, "gpio-locked-clock");
+ 
+ 	num_parents = of_clk_get_parent_count(node);
+ 	if (is_mux && num_parents != 2) {
+@@ -210,14 +237,24 @@ static int gpio_clk_driver_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	gpio_name = is_mux ? "select" : "enable";
+-	gpiod = devm_gpiod_get(dev, gpio_name, GPIOD_OUT_LOW);
++	if (is_mux)
++		gpio_name = "select";
++	else if (is_gpio_locked)
++		gpio_name = "enabled";
++	else
++		gpio_name = "enable";
++
++	gpio_flags = is_gpio_locked ? GPIOD_IN : GPIOD_OUT_LOW;
++
++	gpiod = devm_gpiod_get(dev, gpio_name, gpio_flags);
+ 	if (IS_ERR(gpiod))
+ 		return dev_err_probe(dev, PTR_ERR(gpiod),
+ 				     "Can't get '%s' named GPIO property\n", gpio_name);
+ 
+ 	if (is_mux)
+ 		hw = clk_hw_register_gpio_mux(dev, gpiod);
++	else if (is_gpio_locked)
++		hw = clk_hw_register_gpio_locked(dev, gpiod);
+ 	else
+ 		hw = clk_hw_register_gpio_gate(dev, num_parents, gpiod);
+ 	if (IS_ERR(hw))
+@@ -229,6 +266,7 @@ static int gpio_clk_driver_probe(struct platform_device *pdev)
+ static const struct of_device_id gpio_clk_match_table[] = {
+ 	{ .compatible = "gpio-mux-clock" },
+ 	{ .compatible = "gpio-gate-clock" },
++	{ .compatible = "gpio-locked-clock" },
+ 	{ }
+ };
+ 
 
-But that is not the real problem: /sys/class/drm holding only "version"
-means no DRM device registered at all and your dmesg shows no probe
-output from any of the drivers, so they are not being loaded.
-
-I would suspect something is missing from the .config.
-
-Those are relevant options for this series:
-
-CONFIG_DRM_VERISILICON_DC=y
-CONFIG_CLK_STARFIVE_JH7110_VOUT=y
-CONFIG_SOC_STARFIVE_JH7110_VOUT_SUBSYSTEM=y
-CONFIG_SOC_STARFIVE_JH7110_HDMI_SUBSYSTEM=y
-CONFIG_PHY_STARFIVE_JH7110_INNO_HDMI=y
-CONFIG_DRM_STARFIVE_JH7110_INNO_HDMI=y
-
-easiest to build them in.
-
-Run "make olddefconfig" after editing .config - DRM_VERISILICON_DC
-selects DRM_BRIDGE_CONNECTOR, DRM_DISPLAY_HELPER and DRM_GEM_DMA_HELPER,
-and if those did not get pulled in the DC never registers. Also verify
-after building how .config actually looks like.
-
-With those options and correct dtb the drivers should probe correctly
-and there would be a trace in dmesg.
-
-
-> 
-> -Josh
-> 
->>>
->>>> ---
->>>> Michal Wilczynski (20):
->>>>       dt-bindings: phy: Add starfive,jh7110-inno-hdmi-phy
->>>>       dt-bindings: display: bridge: Add starfive,jh7110-inno-hdmi-controller
->>>>       dt-bindings: mfd: Add starfive,jh7110-hdmi-subsystem
->>>>       dt-bindings: soc: starfive: Add starfive,jh7110-vout-syscon
->>>>       dt-bindings: display: verisilicon: Add starfive,jh7110-dc8200
->>>>       dt-bindings: soc: starfive: Add starfive,jh7110-vout-subsystem
->>>>       drm/bridge: inno-hdmi: Split probe out of bind
->>>>       drm/bridge: inno-hdmi: Allow the register map to come from a parent
->>>>       drm/bridge: inno-hdmi: Add .disable platform operation
->>>>       drm/bridge: inno-hdmi: Add .mode_valid platform operation
->>>>       drm/bridge: inno-hdmi: Make the PHY configuration table optional
->>>>       soc: starfive: Add jh7110-hdmi-subsystem driver
->>>>       soc: starfive: Add jh7110-vout-subsystem driver
->>>>       clk: starfive: jh7110-vout: Allow pixel clock rate propagation
->>>>       drm/bridge: starfive: Add JH7110 HDMI controller driver
->>>>       phy: Add common Innosilicon HDMI PHY helpers
->>>>       phy: rockchip: inno-hdmi: Use the common Innosilicon PHY helpers
->>>>       phy: starfive: Add jh7110-inno-hdmi-phy driver
->>>>       riscv: dts: starfive: jh7110: Update DT for display subsystem
->>>>       MAINTAINERS: Add StarFive JH7110 display subsystem entry
->>>>
->>>>  .../starfive,jh7110-inno-hdmi-controller.yaml      | 121 +++++
->>>>  .../bindings/display/verisilicon,dc.yaml           |   1 +
->>>>  .../mfd/starfive,jh7110-hdmi-subsystem.yaml        |  95 ++++
->>>>  .../phy/starfive,jh7110-inno-hdmi-phy.yaml         |  49 ++
->>>>  .../soc/starfive/starfive,jh7110-syscon.yaml       |   1 +
->>>>  .../starfive/starfive,jh7110-vout-subsystem.yaml   | 218 ++++++++
->>>>  MAINTAINERS                                        |  13 +
->>>>  arch/riscv/boot/dts/starfive/jh7110-common.dtsi    | 121 ++++-
->>>>  arch/riscv/boot/dts/starfive/jh7110.dtsi           | 105 +++-
->>>>  drivers/clk/starfive/clk-starfive-jh7110-vout.c    |   6 +-
->>>>  drivers/gpu/drm/bridge/Kconfig                     |  11 +
->>>>  drivers/gpu/drm/bridge/Makefile                    |   1 +
->>>>  drivers/gpu/drm/bridge/inno-hdmi.c                 | 112 +++-
->>>>  drivers/gpu/drm/bridge/jh7110-inno-hdmi.c          | 297 +++++++++++
->>>>  drivers/phy/Kconfig                                |   8 +
->>>>  drivers/phy/Makefile                               |   1 +
->>>>  drivers/phy/phy-inno-hdmi.c                        | 298 +++++++++++
->>>>  drivers/phy/rockchip/Kconfig                       |   1 +
->>>>  drivers/phy/rockchip/phy-rockchip-inno-hdmi.c      | 168 +-----
->>>>  drivers/phy/starfive/Kconfig                       |  20 +
->>>>  drivers/phy/starfive/Makefile                      |   1 +
->>>>  drivers/phy/starfive/phy-jh7110-inno-hdmi.c        | 579 +++++++++++++++++++++
->>>>  drivers/soc/Kconfig                                |   1 +
->>>>  drivers/soc/Makefile                               |   1 +
->>>>  drivers/soc/starfive/Kconfig                       |  43 ++
->>>>  drivers/soc/starfive/Makefile                      |   3 +
->>>>  drivers/soc/starfive/jh7110-hdmi-subsystem.c       |  73 +++
->>>>  drivers/soc/starfive/jh7110-vout-subsystem.c       |  82 +++
->>>>  include/drm/bridge/inno_hdmi.h                     |  10 +-
->>>>  include/linux/phy/inno-hdmi-phy.h                  |  85 +++
->>>>  30 files changed, 2337 insertions(+), 188 deletions(-)
->>>> ---
->>>> base-commit: fd73f4a6659897191fa0d40695fe370925dd3780
->>>> change-id: 20251031-jh7110-clean-send-7d2242118026
->>>>
->>>> Best regards,
->>>
->>> By the way, something weird happenined while I applied the patches
->>> using git am. Somehow, some were out of order. The 10th patch
->>> adding .mode_valid tried to be applied before .disable even though
->>> in the series, the order is correctly set? git would obviously
->>> fail because the .disable entry did not exist in the header, so I had
->>> to manually put those in.
->>>
->>> I guess it's possible that something went wrong here? I personally
->>> pulled the mailbox from the lore.kernel.org mbox.gz file.
->>
->> I would recommend using b4 shazam instead
->>
->>>
->>
->> Best regards,
-> 
-> 
-
-Best regards,
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+2.34.1
+
+
