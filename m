@@ -1,52 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BF03C345D;
-	Sun, 27 Sep 2026 20:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0804035A3B1;
+	Sun, 27 Sep 2026 20:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790542763; cv=none; b=SlGlq5Ys+x5GQFSl7bNSmz2ibf0WdMNiHoRZH2GD8Qof8ig3lSTqMjPoP4DP7tptlk+tWmmVYYwkBCzM1kGEFMOsc4ZIZEEISz+A8MY1Okqk4fNj0+Y6P9grL5dkfE1Sdw0sYylfISW45b0iERM2X42bulktXDOxeGDsJxWy0Zg=
+	t=1790542795; cv=none; b=Aam4cUdzWTMPgEfvt6E1zy7FoJxtizc5eb7An56uLg4ksdy0iFQpgdNXOX5M9jISguyLvpRqeNuIMwMzs49gl3zC4cGc8b94YB2Luxp7y3aXwAmREJlCv5Nl2t31zVs8L+3RdeiICKhOogREGbSM4m1Gy3ATZxL6rk4FJP77J/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790542763; c=relaxed/simple;
-	bh=bjd2xsMHgt2f4k8YQWXYZtZZfNnBUY5y6vjs+uRTKhg=;
+	s=arc-20240116; t=1790542795; c=relaxed/simple;
+	bh=uZJC3u/e59+JogXEuTPL9E+ANzaRd8epWClATpQe50c=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=RYHz7IU4wexuT60cFckT57WolV2vUY6icvCX0hcPLq5Cd9Viy5YyjNuBjO0XrpfEawUp/YQPrF4Mz0qakCulkIIYpVi4QMk6nv73m7zDs/7SrvMNZsTv/ErMBMhiVFosjs6NHwBMX+xDYcEDNsdOVTVyNIluPm56JL8Hd1qE2FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XFNVVNFn; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=GI3T6TJZHY+bEZGMQkQhI1AYXSt1H/YMvRtT1wnZn4rtZWKDgmwiSsGohoh++Gv5hA5s/yZTd6SzIsTlNWQlDcyuE3LExryiUb/LrLLdVtn3nFXKjIA7+u+eYCsKX2eH1Bu9WlM5p1Yv1j7nveq/vAoF2iujICKNlfS6NuoO9I0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQ5H1r+v; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFNVVNFn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0B701F000FF;
-	Sun, 27 Sep 2026 20:59:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQ5H1r+v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14E781F000FF;
+	Sun, 27 Sep 2026 20:59:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790542762;
-	bh=bjd2xsMHgt2f4k8YQWXYZtZZfNnBUY5y6vjs+uRTKhg=;
+	s=k20260515; t=1790542793;
+	bh=uZJC3u/e59+JogXEuTPL9E+ANzaRd8epWClATpQe50c=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=XFNVVNFnUA5QwiZ1GCqUdNT+Xna9529xJ8/ifBHbaeapY0ijaGVaK85f2iShB76Z9
-	 EK/5MRDL6bh+GMa3sWXwluLNcQHuRjaSpsB3FJW69Gpd4zaGv5UbzUMEg5DyL/L7z+
-	 PUmCxcL6F/MkgRrzltbstkMCUwnzfITGwZm3hmNmNDKdYEoyLLZ9eEY2DRhXoyngIT
-	 O/mPVt7QcOfN6kkWgE/VahQvXg4xU3+zF2lmLmzUkDeI+OTUdzPeeKsyrRb1NC6ZDh
-	 E/vWLB5qZl3MuufcfoW3vEpqBctY9DIi1Lw4MRgpZtQqAaRN739HiwPgOK0MSue0ra
-	 Z9q/aiTSepRGA==
+	b=lQ5H1r+vZxMbROC3tJUyFid1AnLkJvT4F58T7RLI/Sm+CDcecnRFrkwAi9tPlX6xm
+	 kwGdRdNqd3lrbM8Sxx+ee1oLVuoj0IGhNr87XKSng6OXxpNhmFxE5/hTcw1n1uX96l
+	 vcwWSLYjXN/jMv0lY6i6DkwngcJUAZlQbWZ0IltwH4pNh7ymBV3Vdte6xKKCDnugOP
+	 zIbElpeF/gzljmLdzuyueccyip3ma7R3FXVpqXLnIdpdYwVIEvE3Zf53nYOfPYzFIt
+	 HFHNOK5TFYY5O232STOoENjCkQUNh0SY60g4/vCN8+xowsjUdM+GkH/ASv24LO1NxB
+	 gH4bRO/fEoEfw==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v13 07/13] clk: zte: Add regmap-based clocks
+Subject: Re: [PATCH v13 06/13] clk: zte: Add Clock registration
+ infrastructure
 Reply-To: sashiko-reviews@lists.linux.dev
 To: =?utf-8?b?U3RlZmFuIETDtnNpbmdlcg==?= <stefandoesinger@gmail.com>
-Cc: robh@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org, olteanv@gmail.com, devicetree@vger.kernel.org, mfd@lists.linux.dev, linux-phy@lists.infradead.org, vkoul@kernel.org, lee@kernel.org, neil.armstrong@linaro.org
-In-Reply-To: <20260927-zx29clk-v13-7-70d8f673386c@gmail.com>
+Cc: conor+dt@kernel.org, olteanv@gmail.com, linux-phy@lists.infradead.org, neil.armstrong@linaro.org, vkoul@kernel.org, linux-clk@vger.kernel.org, mfd@lists.linux.dev, robh@kernel.org, lee@kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20260927-zx29clk-v13-6-70d8f673386c@gmail.com>
 References: <20260927-zx29clk-v13-0-70d8f673386c@gmail.com>
- <20260927-zx29clk-v13-7-70d8f673386c@gmail.com>
+ <20260927-zx29clk-v13-6-70d8f673386c@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 27 Sep 2026 20:59:21 +0000
-Message-Id: <20260927205921.E0B701F000FF@smtp.kernel.org>
+Date: Sun, 27 Sep 2026 20:59:52 +0000
+Message-Id: <20260927205953.14E781F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-> This is based on meson/clk-regmap.c, although slightly simplified. I
-> have kept the copyright lines at the top of the file to indicate its
-> origin.
+> The next patches will implement the regmap clocks and PLL driver. The
+> actual hardware specific clock listing will live in a separate module.
 >=20
 > Reviewed-by: Brian Masney <bmasney@redhat.com>
 > Signed-off-by: Stefan D=C3=B6singer <stefandoesinger@gmail.com>
@@ -55,5 +55,5 @@ Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260927-zx29clk-v1=
-3-0-70d8f673386c@gmail.com?part=3D7
+3-0-70d8f673386c@gmail.com?part=3D6
 
