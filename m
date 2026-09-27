@@ -1,142 +1,123 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk2-f38.google.com (mail-qk2-f38.google.com [74.125.230.230])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C7D3B14D5;
-	Sun, 27 Sep 2026 15:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E903B14DE
+	for <linux-clk@vger.kernel.org>; Sun, 27 Sep 2026 15:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790522825; cv=none; b=uknK2QYZOdAGUoAdzp1T5MW6X0z04un3+hbRRzVTgm7Zdum4xs9XUZXD/2QDDHfgx+nQkJGqOE+4pt2u+w9n4ficCzsER5hSWE1R6I2dKH952e4jDYfCd9IL0cMQMNUNAzqc1LZdBjjN5Ic4T7bu/95CI7D9UyFYzQsq6DrOhZk=
+	t=1790523166; cv=none; b=MdQlDRLRkCJkKmLYBECiRGmt9PL1TIOxv+OUUCi7KczHPbMI+QMNzXHtbjWr2InvS02YYTP5aiVODJShCtta7/+EZoBgo+dhz1dOfrCze1q7rBv1QPaLc9LpYaQmqhUhOCObmwtPLtSEXXlR2p7/aiRqsDVzl5UjNRRKt4+Q+NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790522825; c=relaxed/simple;
-	bh=ZJif99HrM3tONVAFov7W+Nz1FkXr7HloM1H9lUZ80zI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=SOioAyxCP4tuDsirPkgQRN/3TLGFwCyZxBRnqtyKKNrgupcHxEuDB5Q96ax/IIg9bMfphn/ZoCHzchMF1x7p8aqFamQjz3oDBxFROEn5sv8kM4hkQ4T55xX1895seoH7SrDMcIR3Y4xjlJzSeEVlXYBzwX20ek2l+5OUluK0yZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gjg9eQOW; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1790523166; c=relaxed/simple;
+	bh=AUELxXX/4KdMVFHfZVh7d6Npt4NuE8mNYbP31G6l8cE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dWop7DAdlbYuZDFtu//SGUv+9ItwNl2DJq8LA35MgzQibevUlu1E+U24CPIUE9Mqr78KJNQHRbgr4hES4c9nFWv/qibbIWAFTC9d144eaCafgEfzsONCmysCEbjyHEyVuzP/8L/JCIMZwqSrJBhY+1yMsh/PY05j47W2xMuUAS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thinkoid.org; spf=none smtp.mailfrom=thinkoid.org; dkim=pass (2048-bit key) header.d=thinkoid-org.20251104.gappssmtp.com header.i=@thinkoid-org.20251104.gappssmtp.com header.b=Bko8XzRm; arc=none smtp.client-ip=74.125.230.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thinkoid.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=thinkoid.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gjg9eQOW"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260927152657euoutp01fee60fb85c8f744f5b23de099f9efd5d~ZNwQwVanT0796507965euoutp01Z;
-	Sun, 27 Sep 2026 15:26:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260927152657euoutp01fee60fb85c8f744f5b23de099f9efd5d~ZNwQwVanT0796507965euoutp01Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1790522818;
-	bh=552yr90urBhvBvN6cAihy9SNDNfGhvxsBdcKYn8Bqkg=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=gjg9eQOWA0CxY3ngNhBHqtz1JM3KKcYnvAXf1eQWIfGbzS+ettayDylBqirZGSDZ0
-	 4/LXiCaTIPkLLVpd5a2xD3aFHM5RQsqbdNfRkqEjajd72YE31sUYSbxWhMeTWRmQ+F
-	 TWdrCd/edX3NzOp1vM2aOWlWptW3UGr6cosY45Yg=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260927152656eucas1p1473e0b9575b6efc4ccc01e99783bf8aa~ZNwPrSQNF0222902229eucas1p1j;
-	Sun, 27 Sep 2026 15:26:56 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260927152655eusmtip1c51d14fba318ce4acae93d017ad71be3~ZNwOCLRV_3134331343eusmtip1g;
-	Sun, 27 Sep 2026 15:26:55 +0000 (GMT)
-Message-ID: <a74ccc09-ed64-4915-ab85-232c6d953c3d@samsung.com>
-Date: Sun, 27 Sep 2026 17:26:54 +0200
+	dkim=pass (2048-bit key) header.d=thinkoid-org.20251104.gappssmtp.com header.i=@thinkoid-org.20251104.gappssmtp.com header.b="Bko8XzRm"
+Received: by mail-qk2-f38.google.com with SMTP id d75a77b69052e-53336049862so5496601cf.3
+        for <linux-clk@vger.kernel.org>; Sun, 27 Sep 2026 08:32:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=thinkoid-org.20251104.gappssmtp.com; s=20251104; t=1790523162; x=1791127962; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=AUELxXX/4KdMVFHfZVh7d6Npt4NuE8mNYbP31G6l8cE=;
+        b=Bko8XzRmxrxhB1yOjvyzWxL6fsflbVvF3cb+Jb0W1u854XoEEpOv1UgUywBedNTSG2
+         f+9AuKYYMyxONsYCe8nY5+U3FhhMpvrwJL5tUtRRXQFpVfI7sgXMLKuqftBxvV+e5NWP
+         tTQDTedpcQDJeJdgK+m6C38pvKZybvdzSrAKG/fn3r02D3ijRLNBDPH+rwhUrsQKR+jf
+         irZaO7g9CxOF2fynph5lJO7/0MR3r5822IqdiHkpId98lewlIZF5N0u4A7bGSX7Hbm2/
+         3+YJhCX01z1RxIPf8UDhMQ8Bo9J1+U0t/ZM0QAOvfNt0ZctALzDCZ52mLtvELG3J6Ek8
+         l0EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790523162; x=1791127962;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=AUELxXX/4KdMVFHfZVh7d6Npt4NuE8mNYbP31G6l8cE=;
+        b=KLdZW+8b7GLZAtupXmIIWN8YK4BPJgRmg0cAz7H8mvdryjW3xPT5uqhO6wdiNyGHKG
+         MAj09RCgZe9/SgA6X0c4eMjMvXqwIZVc/ntWTyL1j6ulZGES0vYQHlC4eSYjO0Y6Numk
+         T9D0SVHr+ar7F5JCOakNbG4Kk2dIzkJJsfytVKAEjTQRUz1cQQjeWRSkknlwq08S+YwF
+         wCblQNTOvamFETNKDjoZ/Gke4qNNVfyXD8R/gnoVEhKpa1BPCRcEO9uJjewWsiXjydhn
+         t5UqYDt4QQWza4ozL49YwCIwqNdvS+xgg/nyrH24YW6yeEC65HMOeBelPo7v07o4eI4K
+         u/Gg==
+X-Forwarded-Encrypted: i=1; AKwUvBzTeHIsmDLVB6J80LCLxoc5L2C5RxTOwI8VR2Ajs7/WEg17Xb2/tjN0/Vs7YOR/ae4k9tXnRe0qMoY=@vger.kernel.org
+X-Gm-Message-State: AFuF++mbqgP98E0dRkhfH3RBmIfPGOO3a1ZDO4oj7bHGSVZIilbXtMI7
+	ol9mQFA177cFer3Bpft1RoPsdFYxTTLm0/NMWTeeKB6BBHwumuIgp3bd7TUVHKyHoKE=
+X-Gm-Gg: AYBFou3fuwszzzJ0kEuNROb/eJnEbWLc66+InjJ7RwmWiNBxdw4Lk2y93op4CEg4D9+
+	DX0YPqNjN+dQAdD1haP1a0KMkTLWjNZFdrlQVmJTywxD7/0/FEPwiYlgqosgIVTC1pEKE2XXidK
+	5VOY97R/w6CnUgj6x58UY06WKPzofDwtjcuYiQHodNq1mrDpi/aVrSl0tS79HiuQBNg35lsZKDv
+	tiSD91Big12Fk6kdnV34POKwGFYS9uFZvEFNyngg195wFbnZUhf2xPct6IP+r9BjvYMhcj1c1K8
+	jeWLCtMu8XH/n3LkuyQumgQL2Fu5C/yagVtfDj8ThR8T29ck4DbsdZ0LYc3jwr4BDCxKN0X1l6N
+	/r6n7deHSe8Pe/gMgq6x2dK1xM9lqHs0AhM0BCeh1f1PJCxiKaTCwWXik34GtTBK7Xo7jT27WCJ
+	CtkGf89yq2qo87USVBg53sGOIrhm2FKKbyES4NNSmmGQ+7L20=
+X-Received: by 2002:a05:622a:4d9a:b0:533:33c6:e636 with SMTP id d75a77b69052e-53333c6feb6mr56127141cf.6.1790523162378;
+        Sun, 27 Sep 2026 08:32:42 -0700 (PDT)
+Received: from armok ([2605:a601:a61d:7a00::2])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-53322020e91sm43319281cf.1.2026.09.27.08.32.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Sep 2026 08:32:42 -0700 (PDT)
+From: Liviu Nicoara <lnicoara@thinkoid.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Todor Tomov <todor.too@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Bryan O'Donoghue <bod@kernel.org>,
+	Loic Poulain <loic.poulain@oss.qualcomm.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Felipe Balbi <balbi@ti.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	johannes.goede@oss.qualcomm.com
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+	Oleg Keri <okerixx@gmail.com>
+Subject: Re: [PATCH v20 5/6] media: qcom: camss: Add support for PHY API devices
+Date: Sun, 27 Sep 2026 11:32:36 -0400
+Message-ID: <20260927153236.2727-1-lnicoara@thinkoid.org>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <105d1f73-5334-4ae1-8267-1927f8691a06@oss.qualcomm.com>
+References: <105d1f73-5334-4ae1-8267-1927f8691a06@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/20] dt-bindings: display: verisilicon: Add
- starfive,jh7110-dc8200
-To: Icenowy Zheng <zhengxingda@iscas.ac.cn>, Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss
-	<rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
-	Yan <andy.yan@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, Emil
-	Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Paul Walmsley
-	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
-	Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>, Jerome
-	Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	mfd@lists.linux.dev, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
-	linux-riscv@lists.infradead.org, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Maud Spierings <maud_spierings@murena.io>,
-	Graham Markall <hello@big-grey.co.uk>, Chaoyi Chen
-	<chaoyi.chen@rock-chips.com>, Joshua Peisach <jpeisach@ubuntu.com>,
-	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <1aa49a9bcf5c5a16ce38b57f8f508a31ca70c1ce.camel@iscas.ac.cn>
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260927152656eucas1p1473e0b9575b6efc4ccc01e99783bf8aa
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260915153222eucas1p213b95b05ea7eb9a18700af8888ef5a44
-X-EPHeader: CA
-X-CMS-RootMailID: 20260915153222eucas1p213b95b05ea7eb9a18700af8888ef5a44
-References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
-	<CGME20260915153222eucas1p213b95b05ea7eb9a18700af8888ef5a44@eucas1p2.samsung.com>
-	<20260915-jh7110-clean-send-v4-5-f0e4fd6f2cc8@samsung.com>
-	<1aa49a9bcf5c5a16ce38b57f8f508a31ca70c1ce.camel@iscas.ac.cn>
 
+On Sun, 27 Sep 2026 10:40:33 +0200, Hans de Goede wrote:
+> It would be great if you can post your DT bits for this upstream soon,
+> then we can add them to:
+>
+> https://github.com/linux-msm/laptops-kernel/commits/qcom-laptops/
+>
+> and more people can test.
 
+They are posted; v3 is the current version, with Bryan's Reviewed-by:
 
-On 9/18/26 07:58, Icenowy Zheng wrote:
-> 在 2026-09-15二的 17:32 +0200，Michal Wilczynski写道：
->> The JH7110 embeds a DC8200. The binding requires an SoC specific
->> compatible ahead of the generic one, so add the JH7110 to the enum.
->>
->> Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> ---
->>  Documentation/devicetree/bindings/display/verisilicon,dc.yaml | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git
->> a/Documentation/devicetree/bindings/display/verisilicon,dc.yaml
->> b/Documentation/devicetree/bindings/display/verisilicon,dc.yaml
->> index
->> 919a9001220120054cb62d1d01b7293367266f95..05a202633cd273fec358c095c64
->> 584d959d96d90 100644
->> --- a/Documentation/devicetree/bindings/display/verisilicon,dc.yaml
->> +++ b/Documentation/devicetree/bindings/display/verisilicon,dc.yaml
->> @@ -16,6 +16,7 @@ properties:
->>    compatible:
->>      items:
->>        - enum:
->> +          - starfive,jh7110-dc8200
-> 
-> Note: this binding is being refactored as part of MA35D1 support
-> introduction (this SoC has a single-port DC like a DC8000), after the
-> refactor the binding string might need to appear twice.
-> 
-> Thanks,
-> Icenowy
+https://lore.kernel.org/all/20260926122533.8200-1-lnicoara@thinkoid.org/
 
-Hi,
-Thank you for letting me know. I've found the patchset on the mailing
-list [1]. Will make sure to rebase (and fix) after it gets in
-(presumably before this one although I'm not 100% sure).
+It also links the sensor to the privacy LED. It applies to
+qcom-laptops as of 3e45da63f61e, which already carries its
+dependencies (the x1e camera DT v7 and v20 5/6 and 6/6).
 
-[1] - https://lore.kernel.org/all/20260918030125.315978-2-a0987203069@gmail.com/
-
-
-> 
->>            - thead,th1520-dc8200
->>        - const: verisilicon,dc # DC IPs have discoverable ID/revision
->> registers
->>  
-> 
-> 
-
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Thanks,
+Liviu
