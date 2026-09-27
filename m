@@ -1,106 +1,138 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB933EFFD2;
-	Sun, 27 Sep 2026 13:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25F13C09FB;
+	Sun, 27 Sep 2026 14:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790516524; cv=none; b=ZnWRW9zNo2WImMtnIz/xQvKKAB/noehSmJdZj6anFEz1g8gVbhnz4MaYgPaNi2A8nF4D9bvDOJvGoiT2apIUjv73mGlwBJqePdTMG9zhMd+WkJ+YdD3vjzXOnHMHjlW7OyxLu6eUGKLbk78KzWXU2p9eHjrC6doI7D7wcjKzlPo=
+	t=1790517606; cv=none; b=o6K+e/D/7KfRSOaK5Np3t1uTWvXcnzh21wz5FsFGN37oXTRxtnnMxNuqfJjmWfeQr3sBfBOpAaLxXG+8fsPhgGUnhs9jt4ERTQx+H//S00IGKF6S/JIygHAGWQRZg/EziMa2OKtRYNf2ixcGmgLZ0nDLne0ZfD/6nuL+F0re4fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790516524; c=relaxed/simple;
-	bh=3RbF8J5GHiFDe0m5GrWK9CBeQJSNR45o2Xvk8o/Qqoc=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=tpS1G343vhNX4CnY+c1mYZ3PxMdXP70QecgPoTAEcyto1ps5A9AyHE0BZTgxdEocnsJWy2GCrv2tN5OiV8LaG1i1uWQcPgpSWDqSYrMx0WSPN2Q0zHpMyIAPWfhR/h0Um/MfiiQbod1fI9QRnMFDlvWXh6ejoNTW0BI2WrfnFvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3e64YcE; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790517606; c=relaxed/simple;
+	bh=TWibO/U7JZz/QwbWUVZ4iATu8yxVm0v3Ez0NVaeMK3s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LZ+Q1JEcc3KN0GrtSjNGfqD6ZJZEk2anBEMFxNc4knlARGwcdbyrqHgBRY9U/hRk4lJ8RM+UpoaEFc+iKKa/ihzZZtqnf1VaHae7zg/IUMLZnrolvzFJu3b56A/vGHDbN1fbGKAT1PGmXJ5k1ffMMQIlKWx8q8GwLDDVA0rXQ8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aLsvXwnb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3e64YcE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB2F1F000FF;
-	Sun, 27 Sep 2026 13:42:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790516520;
-	bh=bn1g1HC2TrgcTr9oAKVof6dffRQLIiZSLmHAksdhAfU=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=k3e64YcEIhrlTIXmaexRXKF6josnB9V56epdj8ChsJpyxwCkYRJZsifTzIcEAEAsF
-	 cbbZmZuSLFkvMU+CXKnDEXNHNzZ0pviSdRRzY4ZmmB2KmvxUsdXRRj5ND4Zxz55/bn
-	 BaTElc4FxYWs3X9BvRT1XmWsWQQ90s+yEKLrrZ9fQXcb0M65xPivwqTeh40biMBg0o
-	 GtOz0AOgPD8x49lgfktvxRpzkIc62qIY1te6lVU9+oJhdr0cydrZddOmTe1j25kckc
-	 C85Sh0r9Aur2BlD5TQzd1cs85DXwK1K5GqVqdPl79r1hBu5l5n3AkTkfpjbbuRzOz7
-	 KHMGGocnHN5lw==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v6 2/2] clk: Add gpio-locked clock driver
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Vyacheslav Yurkov" <V.Yurkov.EXT@bruker.com>
-Cc: devicetree@vger.kernel.org, robh@kernel.org, linux-clk@vger.kernel.org, conor+dt@kernel.org
-In-Reply-To: <20260927-feature-clock-guard-v6-2-007983b13ec2@bruker.com>
-References: <20260927-feature-clock-guard-v6-0-007983b13ec2@bruker.com>
- <20260927-feature-clock-guard-v6-2-007983b13ec2@bruker.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 27 Sep 2026 13:42:00 +0000
-Message-Id: <20260927134200.9DB2F1F000FF@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aLsvXwnb"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8AA85C2BCB3;
+	Sun, 27 Sep 2026 14:00:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1790517605;
+	bh=TWibO/U7JZz/QwbWUVZ4iATu8yxVm0v3Ez0NVaeMK3s=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=aLsvXwnbxXATwC5FbM2CHce8MjwN6U0vKaXPBkJkXI99jA7wLStn7FUySJor5AInl
+	 EXabqEz8CayCMwZtm/QeuP+nqv6Sel38MX7siva62G0pp2T6chf9KElFtNMYgbHtAq
+	 Q1aEI6J960nnyZbnqYxdv0gcERIliHR3kW9LmIuJmjp3+/d7Ol53TFZkeU4zTfmq58
+	 fRmiembSlpx/2tocz1JnBISzooatzMkbIVSix9turdQ57bW5G/agjEqbWPwcD9KLZb
+	 rim2qdknvSHf7VD0/Pzgy0eEpdv8r2EXpQ0+LhQ3/yTOpWeTgt5iILIVXNBZkUlOTz
+	 Upxo0nkqaSsgw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C60C98332;
+	Sun, 27 Sep 2026 14:00:05 +0000 (UTC)
+From: Vyacheslav Yurkov via B4 Relay <devnull+V.Yurkov.EXT.bruker.com@kernel.org>
+Subject: [PATCH v7 0/2] A proposal to add a gpio-locked clock driver.
+Date: Sun, 27 Sep 2026 13:59:59 +0000
+Message-Id: <20260927-feature-clock-guard-v7-0-8dd19568d9a2@bruker.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF8huWoC/33PwU7DMAwG4FeZciYoceKk3Yn3QBwcN92iwYrSt
+ QJNfXfSXQpqxPG35O+372KMOcVRHA93keOcxjRcS/BPB8Fnup6iTF3JAhQ4ZXQj+0i3KUfJ7wN
+ f5Gmi3MkeFAEbDK1DUTY/c+zT10N9fSv5nMbbkL8fJbNep/97s5ZKOm08B6saG/xLyNMl5mceP
+ sQKzrAhqFUdgRVhQItNh8aqHWI2pNxSR0xBlGYmRaQs4Q6xG+LB1RFbkNhyE4yH4DXvENyQVmM
+ dwYJYoIAdG3JEO8T9QsDXEbe+o3zbmKBNZPiDLMvyAzG9vZ0QAgAA
+X-Change-ID: 20260318-feature-clock-guard-f20a2c35b965
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Jyri Sarha <jsarha@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, Vyacheslav Yurkov <uvv.mail@gmail.com>, 
+ Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790517604; l=2916;
+ i=V.Yurkov.EXT@bruker.com; s=20260318; h=from:subject:message-id;
+ bh=TWibO/U7JZz/QwbWUVZ4iATu8yxVm0v3Ez0NVaeMK3s=;
+ b=ZYv4YZhRda6DmmweFJ29otdnUK5ilAr4Rqy3RS6DNMS8kFkHXJ/ZTnke6SMssQZGDaWPpI116
+ 39SuSrgLI55Ag0//heGluE4zdymm2AyClPPyL6A98XljSQEbswC2C9y
+X-Developer-Key: i=V.Yurkov.EXT@bruker.com; a=ed25519;
+ pk=snJmgYVOKlp7aQtK9tWnEI7QTYxpPpJJvxdVsnxA7Fk=
+X-Endpoint-Received: by B4 Relay for V.Yurkov.EXT@bruker.com/20260318 with
+ auth_id=686
+X-Original-From: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+Reply-To: V.Yurkov.EXT@bruker.com
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] clk: gpio: locked-clock prepare callback violates API and inverts =
-success
---
+A gpio-locked clock represents an input clock, which state is determined
+by a GPIO signal. It's similar to a gated-fixed-clock, but GPIO direction
+is inverted. Consumers can use the output clock to wait until all input
+clocks are locked and only then initialize / access dependent peripherals.
 
-commit 6568d5231c6cc47d178121c89d700cd8a3a8cf08
-Author: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+The usage example for such a driver is when peripherals depend on PLLs in
+a FPGA, which can't be directly accessed by the CPU, but need a GPIO pin
+to check whether clock is actually usable. E.g. some of the IPs might not
+have a proper split between registers and IP core, which means that if an
+external clock and/or PLL lock is missing and one tries to access the 
+registers, the response never comes, thus the CPU stalls.
 
-clk: Add gpio-locked clock driver
+Signed-off-by: Vyacheslav Yurkov <uvv.mail@gmail.com>
+Signed-off-by: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+---
+Changes in v7:
+- Fix compatibility strings and schema errors.
+- Update GPIO pin name
+- Link to v6: https://lore.kernel.org/r/20260927-feature-clock-guard-v6-0-007983b13ec2@bruker.com
 
-This commit introduces a gpio-locked clock driver where the clock's status
-is determined by a GPIO signal. It is intended for FPGA-assisted clocking
-designs where consumers can wait until the input clock is locked before
-initializing dependent peripherals.
+Changes in v6:
+- Debug messages dropped.
+- The new driver is now an extension of exising clk-gpio drivers.
+- The controller doesn't enable the parent clock, the consumer is
+  supposed to do that instead.
+- Link to v5: https://lore.kernel.org/r/20260915-feature-clock-guard-v5-0-42ab5dc3a6aa@bruker.com
 
-> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-> index 9099c57e27156..a264ba21baf26 100644
-> --- a/drivers/clk/clk-gpio.c
-> +++ b/drivers/clk/clk-gpio.c
+Changes in v5:
+- Use existing DT binding with an additional property instead of adding
+  a new one
+- The driver is simplified in a way that it represents the actual HW
+  desgin without additional unrelated constructs
+- Aggregation is removed, now it's one clock input, one clock output
+- Link to v4: https://lore.kernel.org/r/20260726-feature-clock-guard-v4-0-e9c8b372b71c@bruker.com
 
-[ ... ]
+Changes in v4:
+- Removed driver specifics from DT binding
+- Link to v3: https://lore.kernel.org/r/20260603-feature-clock-guard-v3-0-01cca0aa04a5@bruker.com
 
-> @@ -138,6 +138,19 @@ static const struct clk_ops clk_gpio_mux_ops =3D {
->  	.determine_rate =3D __clk_mux_determine_rate,
->  };
-> =20
-> +/* We can't prepare the clock, but the Common Clock Framework calls only
-> + * prepare() not is_prepared(), therefore we fallback on the actuall GPI=
-O value.
-> + */
-> +static int clk_gpio_locked_prepare(struct clk_hw *hw)
-> +{
-> +	return clk_sleeping_gpio_gate_is_prepared(hw);
-> +}
+Changes in v3:
+- Removed unnecessary dt bindings
+- Improved HW description and commit messages
+- Link to v2: https://lore.kernel.org/r/20260510-feature-clock-guard-v2-0-6c25458d5340@bruker.com
 
-[Severity: High]
-Does this callback violate the Common Clock Framework prepare semantics?
+Changes in v2:
+- Renamed to clk-gpio-locked to express intent.
+- Provide enable() / is_enabled() operations so the clock behaves as
+  expected
+- Fixed DTS errors / warnings
+- Link to v1: https://lore.kernel.org/r/20260318-feature-clock-guard-v1-0-6137cb4084b7@bruker.com
 
-The Common Clock Framework expects the prepare callback to return 0 on
-success and a negative error code on failure. However,
-clk_sleeping_gpio_gate_is_prepared() returns the instantaneous boolean GPIO
-state.
+---
+Vyacheslav Yurkov (2):
+      dt-bindings: clock: gpio-gate-clock: Add a new compatible string
+      clk: Add gpio-locked clock driver
 
-If the clock is successfully locked, this returns 1, which the framework
-interprets as an error, aborting the preparation. If it is unlocked, it
-returns 0, which the framework interprets as a success.
+ .../devicetree/bindings/clock/gpio-gate-clock.yaml | 32 +++++++++++++++-
+ drivers/clk/clk-gpio.c                             | 44 ++++++++++++++++++++--
+ 2 files changed, 71 insertions(+), 5 deletions(-)
+---
+base-commit: fd179f8a05be3ccae366b9b96e176b51fbe54aab
+change-id: 20260318-feature-clock-guard-f20a2c35b965
 
-Additionally, the commit message states consumers can wait until the clock =
-is
-locked, but this implementation returns the state immediately without block=
-ing
-or polling for the lock. Will this cause dependent peripherals to initialize
-prematurely or fail to initialize at all?
+Best regards,
+-- 
+Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
 
-[ ... ]
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260927-feature-cl=
-ock-guard-v6-0-007983b13ec2@bruker.com?part=3D2
