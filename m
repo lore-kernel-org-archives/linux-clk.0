@@ -1,50 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504DD23C8AE;
-	Sun, 27 Sep 2026 17:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B363438A1;
+	Sun, 27 Sep 2026 17:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790530831; cv=none; b=kXp0B24KjpE4q1Gxry+9Yeil3XbntNiyqsQ0D2DxZGuUjfKsK5oc50t9lmlHs/TfKdLYZ1+9qqCOXeH4M42El+3r7WD62j4n+F97QAh6KOeCg4udOtp0S/hEtSKRz5oxZDy1T7+GRXtcvZopECGlASc89cx7BBYjgqQkKsukFX4=
+	t=1790531245; cv=none; b=J4dqQLiRDi4dwaxHeHKdIGKxu/7zKoP5LYFGvGGKY+KnnfDgRUVtEvSJ4QUcNWC86iCCoyzOMKKgvVUbtuScODFyjXfSBSk/n0HGumG4EyFDvsTeRhg47L83ahR3+LhjtTIln3b5/wdae1OIqhxr4mDHNGU5PwvEOb7pOXw1RI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790530831; c=relaxed/simple;
-	bh=yEFV3lkIaPKi7zVGKiJPo1Sjy0OlfxaF4BS2U1sBqUU=;
+	s=arc-20240116; t=1790531245; c=relaxed/simple;
+	bh=XQa/0FGcbV4DJZxulZm8xi2VEhQ/ECB89X6MiDGzHF0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U2eMoouuyyu01LLi7IekxFbJulSePyp32L0cELAfWc2Epk2ckLl1D5QZaA9JnTdJ6sH+XBkUh2aqTXYr4NeayURmdG+h3iWII/g/h7HL3Ai+S/IvcyWtby5qxdaevvO8vk7Xdxy3OMBpVVF7prkttAF9r/JL6+PsIUnQG4qraS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1QS/gdz; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=NrCif4/SxZdAk4oBDG2XAFO7DTr4Jl+YiBan7H0ij+k3BANujtZQ/vEeI525XV6S2pl4tMgrBUlDUCpe0sMkTKL5sjMrSmKWzODRpk3prR6VezwUGS9pqKawDnDhYlYGdRMY8xdSyqxYVTt/wZCqLZ/Clcm8ZxgMXiQB7N/df+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTse6Bce; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1QS/gdz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF1651F000FF;
-	Sun, 27 Sep 2026 17:40:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTse6Bce"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 835891F000FF;
+	Sun, 27 Sep 2026 17:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790530829;
-	bh=rRicdbRpdSMevJVjz0k9ySyuClDHkZPdx7+N/XrY8Xk=;
+	s=k20260515; t=1790531243;
+	bh=4UGSD6QOqsK7x7bW27DoVdhw8/6KXu6nNsPGwCg+XOM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=A1QS/gdz5FrsJEDgePvIQvIDiUwOEyInkviYgzx/9+hBfEeEc8pymb8o+pJY1M8oh
-	 8L0mn5VXjz0rWJz5/UwLUUXb/SOl5vHH5zt5WYu/qCbnMy1hN7ZYmhzLxASav1oooc
-	 NSaiVY0Hmd3Fkm59yFY62+rHFC+ItPVWukVFAtNZROFPRdjIebaAGK3tCpAzVq2Ltt
-	 Tc3WZ+BzimCSWOaWfZBaGrAi+1srwhejw8DkcioK7Jg8VteKRiy/vEC7GBIDRwI3Zv
-	 ULcVnZ1fJawAVCzy9KKccZM+cgPp7qHitVH/Le98PXnIaXD1P4Ii525hrYXoh1W58g
-	 DucM6bhq1+FWQ==
-Date: Sun, 27 Sep 2026 19:40:25 +0200
+	b=FTse6BceAe8HDezxUlWZ/5EQyZhJCydrkGIETRwb+qZoDQdid4eUZiet1e/6LE3XY
+	 6CKwR/P9eRbDakEQpISJQc/muLW/BCSVfe4zjAVLXFGxOusx/kiSYwE5qIgI0fPQMe
+	 50lAZXN82q1RRUocay1M/xuqzW4oj6d8R6/EuIVoamW9hCric6QoglU1YSKn9l1Qdh
+	 Mc/7iKuoPES12gmICCMeolnpSPlEdQbw1tu7ur0q4A9eD04k+IX1T7QCXzcWN6pYZk
+	 pKdB/DBpdjwqYBL3J+evETgwqzESxou2Q9F+n4zeUizvN0HH4yIwiaodfwhsA/zSjL
+	 ybq1Rid6R5bmw==
+Date: Sun, 27 Sep 2026 19:47:20 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-hardening@vger.kernel.org, netdev@vger.kernel.org, 
-	Hal Feng <hal.feng@starfivetech.com>
-Subject: Re: [PATCH v4 17/22] dt-bindings: clock: Add StarFive JHB100
- Peripheral-2 clock and reset generator
-Message-ID: <20260927-wild-modest-goat-b79b3c@quoll>
-References: <20260920120044.194901-1-changhuang.liang@starfivetech.com>
- <20260920120044.194901-18-changhuang.liang@starfivetech.com>
+To: Muzaffer Kadir <muzafferkadir@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
+	Ulf Hansson <ulfh@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	"Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Lee Jones <lee@kernel.org>, 
+	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Robert Marko <robimarko@gmail.com>, 
+	Guru Das Srinagesh <linux@gurudas.dev>, Amit Kucheria <amitk@kernel.org>, 
+	Thara Gopinath <thara.gopinath@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	David Heidelberg <david@ixit.cz>, phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, iommu@lists.linux.dev, mfd@lists.linux.dev, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-pm@vger.kernel.org, 
+	linux-input@vger.kernel.org
+Subject: Re: [PATCH v3 04/19] dt-bindings: power: rpmpd: Add MSM8952 power
+ domains
+Message-ID: <20260927-tiny-electronic-toucan-bcbd21@quoll>
+References: <20260921-msm8952-initial-support-v3-0-b96fd3fe298b@mainlining.org>
+ <20260921-msm8952-initial-support-v3-4-b96fd3fe298b@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,21 +66,17 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260920120044.194901-18-changhuang.liang@starfivetech.com>
+In-Reply-To: <20260921-msm8952-initial-support-v3-4-b96fd3fe298b@mainlining.org>
 
-On Sun, Sep 20, 2026 at 05:00:39AM -0700, Changhuang Liang wrote:
-> Add bindings for the Peripheral-2 clock and reset generator (PER2CRG)
-> on the JHB100 RISC-V SoC by StarFive Ltd.
+On Mon, Sep 21, 2026 at 09:18:55PM +0300, Muzaffer Kadir wrote:
+> Document the compatible for the rpmpd found on MSM8952.
 > 
-> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> Signed-off-by: Muzaffer Kadir <muzafferkadir@mainlining.org>
 > ---
->  .../clock/starfive,jhb100-per2crg.yaml        | 76 +++++++++++++++++++
->  .../dt-bindings/clock/starfive,jhb100-crg.h   | 57 ++++++++++++++
->  .../dt-bindings/reset/starfive,jhb100-crg.h   | 17 +++++
->  3 files changed, 150 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jhb100-per2crg.yaml
+>  Documentation/devicetree/bindings/power/qcom,rpmpd.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
