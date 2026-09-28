@@ -1,139 +1,126 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9966822157B;
-	Mon, 28 Sep 2026 02:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD0F3F1048;
+	Mon, 28 Sep 2026 05:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790561778; cv=none; b=QgdAXb8phAk9XwvVesBldcySv3FAEDdlTDgWBk6CojHW/rHKqNzw/gkiYTMU2qPrTk/U8sr/SW3CLtUPRixK98neVcSQvFiV8ngCez2H4t2IFZr1lsfRG22QL3Dms43v0RerNs6tAZM8VKq1P2zEse6Vb0eMNgZmNYoGjNm+syM=
+	t=1790574693; cv=none; b=LDreLGECquNXfZFfvRmIBbSGi+6qxGYKYEhyYiL3i+tBQLxK0HIfijkrYyn4Pe/r/JhFDDn3GYPUBBmti5TFAKU5+D+mQdVStwxnEpuelq86i55eI4XRuq1S2n++pB7eQmE7Qg/TPIy/7WEs8PJ6cMI4dSl6H3B1c2nfztx6pLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790561778; c=relaxed/simple;
-	bh=BBdBCSyd1YlVRWlY+Yu8Hm8YgDtYYWt9szJ6SRyPYMI=;
+	s=arc-20240116; t=1790574693; c=relaxed/simple;
+	bh=nVOq0IloLg+NshvRJerNrJibOVRsYaapA/ZZ1DPvguw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OGTCXXdWObF5ojdmr8rIkPdjctBFGToA8kUaSsEk2iCVQ4KxtaEPMGHpwbpr2ouw5M2N8MQEwplFKhr95pAPdWMR4qDmb0D8aieev2rCWVU52Ku0qQ7oU2TGVfiKOIvglAsBNHn9dL0YN+OVnuRIfdu5lIzkgMAgOR0fjYxL/Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B237F1F00893;
-	Mon, 28 Sep 2026 02:16:14 +0000 (UTC)
-Date: Sun, 27 Sep 2026 21:16:11 -0500
-From: bjorn@zenbook
-To: Abel Vesa <abel.vesa@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=UUl9d/UO+Xson3EMXZm/7ThHGOGFQ4DXlVBJnJy2zopwBAMYs0uaCqlKG5lzsmknsb4L8vQXiBJELfAAitQmptGnK6cR9OLBou4vvrrG/P2VgMBoiOR7+HDqcdtfiH2tpIqe9u09let20P9jhB7lPiXCgKqA5YK28TukkIIcUkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VyM3grQ1; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VyM3grQ1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59D3C1F000FF;
+	Mon, 28 Sep 2026 05:51:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790574688;
+	bh=OdX7uCgtFkFd2aH+O4C66iT1zLtDyfne3dT1QXJOzso=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=VyM3grQ1CphVfmohqtVtXq3BioMvKGXxxTbnzYvJcXyiQfBlxeA5UtvY6LEXrXZv7
+	 R9aaUx5365fvFoPGdt739m8D0k1b0U2pVY6ywjELRQHxmZpNkedGMxe5VrsC0aYrwz
+	 Om1wF7BjoEmUDkxogPewe/np5LoXvKdnb1s2OtpkWyH3N+pSfz6o3F9vl8ouQ0DEnp
+	 ztCYjZKqcvM1Gsv+bAlXyR6duF//+oEPBajEs1GD7TMsN/1MfqCTjUWJLiQE0HHjPY
+	 jFlJgMCLm8eUsu0vyxhMZkdCaAiIYp3ds/mRhGxv8R8TpB6uKZRFwxT8ulZAa7Ip34
+	 +RUFljIDWhsgw==
+Date: Mon, 28 Sep 2026 07:51:24 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 27/48] clk: qcom: gcc-sm6375: Use common clock
- controller probe data
-Message-ID: <arahN4PGK53PdNI3@zenbook>
-References: <20260924-clk-qcom-rework-legacy-always-on-clocks-v2-0-1479443ee016@oss.qualcomm.com>
- <20260924-clk-qcom-rework-legacy-always-on-clocks-v2-27-1479443ee016@oss.qualcomm.com>
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	kernel@pengutronix.de, linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
+	Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin.sipraga@analog.com>
+Subject: Re: [PATCH v9 1/2] dt-bindings: clock: add TI CDCE6214 binding
+Message-ID: <20260928-vigilant-ultramarine-cockatrice-dca7c9@quoll>
+References: <20260921-clk-cdce6214-v9-0-f2ea74fd38a2@pengutronix.de>
+ <20260921-clk-cdce6214-v9-1-f2ea74fd38a2@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260924-clk-qcom-rework-legacy-always-on-clocks-v2-27-1479443ee016@oss.qualcomm.com>
+In-Reply-To: <20260921-clk-cdce6214-v9-1-f2ea74fd38a2@pengutronix.de>
 
-On Thu, Sep 24, 2026 at 03:06:39PM +0300, Abel Vesa wrote:
-> Move the always-on branch register offsets into a critical_cbcrs array
-> and describe the DFS RCGs through qcom_cc_driver_data.
-> 
-> Move the configuration of GPLL10, GPLL11, GPLL8 and GPLL9 into the
-> clk_regs_configure callback. This preserves the existing ordering of
-> enabling the always-on branches before configuring these four PLLs.
-
-I don't see the clk_regs_configure being applied and the four
-gpllNN_config definitions are dangling after this change.
-
-(Please use "make W=1e")
-
-I'm applying the rest of the series.
-
-Regards,
-Bjorn
-
-> Using the alpha_plls array instead would configure the PLLs before the
-> CBCR enables in the common probe path.
-> 
-> Use qcom_cc_probe() to perform the common initialization instead of
-> open-coding it in the driver's probe.
-> 
-> Assisted-by: LLM
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/gcc-sm6375.c | 46 ++++++++++++++++++++++---------------------
->  1 file changed, 24 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sm6375.c b/drivers/clk/qcom/gcc-sm6375.c
-> index 9c2acf8dc4b7..c67d4293c76b 100644
-> --- a/drivers/clk/qcom/gcc-sm6375.c
-> +++ b/drivers/clk/qcom/gcc-sm6375.c
-> @@ -3853,7 +3853,30 @@ static const struct regmap_config gcc_sm6375_regmap_config = {
->  	.fast_io = true,
->  };
->  
-> +static const u32 gcc_sm6375_critical_cbcrs[] = {
-> +	0x17028, /* GCC_CAMERA_XO_CLK */
-> +	0x2b004, /* GCC_CPUSS_GNOC_CLK */
-> +	0x1702c, /* GCC_DISP_XO_CLK */
-> +};
+On Mon, Sep 21, 2026 at 08:49:59AM +0200, Sascha Hauer wrote:
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,cdce6214
 > +
-> +static struct clk_alpha_pll *gcc_sm6375_plls[] = {
-> +	&gpll10,
-> +	&gpll11,
-> +	&gpll8,
-> +	&gpll9,
-> +};
+> +  reg:
+> +    maxItems: 1
 > +
-> +static const struct qcom_cc_driver_data gcc_sm6375_driver_data = {
-> +	.alpha_plls = gcc_sm6375_plls,
-> +	.num_alpha_plls = ARRAY_SIZE(gcc_sm6375_plls),
-> +	.clk_cbcrs = gcc_sm6375_critical_cbcrs,
-> +	.num_clk_cbcrs = ARRAY_SIZE(gcc_sm6375_critical_cbcrs),
-> +	.dfs_rcgs = gcc_dfs_clocks,
-> +	.num_dfs_rcgs = ARRAY_SIZE(gcc_dfs_clocks),
-> +};
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 2
 > +
->  static const struct qcom_cc_desc gcc_sm6375_desc = {
-> +	.driver_data = &gcc_sm6375_driver_data,
->  	.config = &gcc_sm6375_regmap_config,
->  	.clks = gcc_sm6375_clocks,
->  	.num_clks = ARRAY_SIZE(gcc_sm6375_clocks),
-> @@ -3871,28 +3894,7 @@ MODULE_DEVICE_TABLE(of, gcc_sm6375_match_table);
->  
->  static int gcc_sm6375_probe(struct platform_device *pdev)
->  {
-> -	struct regmap *regmap;
-> -	int ret;
-> -
-> -	regmap = qcom_cc_map(pdev, &gcc_sm6375_desc);
-> -	if (IS_ERR(regmap))
-> -		return PTR_ERR(regmap);
-> -
-> -	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks, ARRAY_SIZE(gcc_dfs_clocks));
-> -	if (ret)
-> -		return ret;
-> -
-> -	/* Keep some clocks always-on */
-> -	qcom_branch_set_clk_en(regmap, 0x17028); /* GCC_CAMERA_XO_CLK */
-> -	qcom_branch_set_clk_en(regmap, 0x2b004); /* GCC_CPUSS_GNOC_CLK */
-> -	qcom_branch_set_clk_en(regmap, 0x1702c); /* GCC_DISP_XO_CLK */
-> -
-> -	clk_lucid_pll_configure(&gpll10, regmap, &gpll10_config);
-> -	clk_lucid_pll_configure(&gpll11, regmap, &gpll11_config);
-> -	clk_lucid_pll_configure(&gpll8, regmap, &gpll8_config);
-> -	clk_zonda_pll_configure(&gpll9, regmap, &gpll9_config);
-> -
-> -	return qcom_cc_really_probe(&pdev->dev, &gcc_sm6375_desc, regmap);
-> +	return qcom_cc_probe(pdev, &gcc_sm6375_desc);
->  }
->  
->  static struct platform_driver gcc_sm6375_driver = {
-> 
-> -- 
-> 2.54.0
-> 
+> +  clock-names:
+> +    oneOf:
+> +      - items:
+> +          - enum: [ priref, secref ]
+> +      - items:
+> +          - const: priref
+> +          - const: secref
+
+Entire oneOf can be simpler:
+minItems: 1
+items:
+  - enum: [ priref, secref ]
+  - const: secref
+
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +patternProperties:
+> +  '-pins$':
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    patternProperties:
+> +      '^conf':
+
+Style prefers suffixes after hyphen, so:
+'^conf-'
+
+> +        type: object
+> +        additionalProperties: false
+> +        $ref: /schemas/pinctrl/pincfg-node.yaml#
+
+...
+
+> diff --git a/include/dt-bindings/clock/ti,cdce6214.h b/include/dt-bindings/clock/ti,cdce6214.h
+> new file mode 100644
+> index 0000000000000..41ec4f8868bbb
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/ti,cdce6214.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> +#ifndef _DT_BINDINGS_CLK_TI_CDCE6214_H
+> +#define _DT_BINDINGS_CLK_TI_CDCE6214_H
+> +
+> +/* Clock indices for the clocks provided by the CDCE6214 */
+> +#define CDCE6214_CLK_OUT0	2
+
+Please start at 0 or 1
+
+> +#define CDCE6214_CLK_OUT1	3
+> +#define CDCE6214_CLK_OUT2	4
+> +#define CDCE6214_CLK_OUT3	5
+> +#define CDCE6214_CLK_OUT4	6
+> +#define CDCE6214_CLK_PLL	7
+> +#define CDCE6214_CLK_PSA	8
+> +#define CDCE6214_CLK_PSB	9
+
+Best regards,
+Krzysztof
+
