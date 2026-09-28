@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257744E0202;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7384E781C;
 	Mon, 28 Sep 2026 15:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790611060; cv=none; b=W8LNJWNXHrCpPXvfYaM/FSsREJqz6RHRRZGiAtZtccMC3pJF3DVPUOh7tQcaTGW75HnSXweH9SJIuP7eBF+GjAc2iqAWoctznDAlfQm73XDO3wHadUYjmLF4blqPEGfXhmAc15Pb1e51fzj+BmlClC4zT9BCrqjns7eBVw1+Hh8=
+	t=1790611060; cv=none; b=rXIwTMdbEoxlGiHkI5s2SzbGNzicTQppHAP8FtfgD9ry71FXRO7yjfYkIMjlPXEEH34Lldd5V178QwCGDmDIH1zpk9c+pFxMk0N8vG7Lr2sZ5vw6VFNFUFpc2kRWjIg7uonHJZG7ORwXH6Q4FBvQYdkQ452evkrHS+IMo/IqHyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1790611060; c=relaxed/simple;
-	bh=+/ARVIPj4f56djx3Ezh4ZToCMNPoyd7Ue0tRG/g2D/Q=;
+	bh=SYANKLAbxJyoW2QnOLm6k4zECQ+VPKkAu/UEfQHhM0g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Nquokkqcbwr5ZS/rPwyyjp3mcmWqoM/Wc87kOSnD25M2II8GBCFJNGMa8bczMX8S31v0WUkJHrwyEgK5D/o4ER/I6fF6UKAjUq0mWeWz9KH0lu0tQMEDQSYvSTqvUO24O1TFUB+GcWl6x0jdrK3ig2+MzRQFl7xl8i1tKHeXQaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YMMSbLs5; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=hEug+gmswzEt000joMjYfgJqtChEOUlTWKcsJeVl5wYjQ4P+g+p7IUvSit52b8f/U07JUknkZaBpG0bXNlycLg/Dghb/AQGu7is295HQr2tyJfc965N03obVZ4P6Dprhaw7iEk6wCb4j4B/oavaRbbWk15Jz8jM81HceBzQ8x4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TKqqAv7s; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMMSbLs5"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D5428C4AF12;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKqqAv7s"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E715AC4AF13;
 	Mon, 28 Sep 2026 15:57:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1790611059;
-	bh=+/ARVIPj4f56djx3Ezh4ZToCMNPoyd7Ue0tRG/g2D/Q=;
+	s=k20201202; t=1790611060;
+	bh=SYANKLAbxJyoW2QnOLm6k4zECQ+VPKkAu/UEfQHhM0g=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=YMMSbLs5YhQkXSElJ5Meo1yHeg0MTSWlzZL8Wbrq/HOU3MrvO063sTBRbhNeHXsPd
-	 OInz47JNdExxqygksL1tVJnNiKoFqo9EF2uif+fZDAKuwAo9FpfArPc3GwZUKfq1oc
-	 NZDgWUFmS9GycmLtOhvSebXSyW6Be8iPtosCrvwQqxbFfEG5TVK0qJHVZ0nTXaWOhK
-	 96xhfrejewY3/0N7p8+pk4Nr5UIX2yng+eTKoMshs2fym1Pe52vQwAPDicI5cyjRRV
-	 ApS/fi+3Kz55yZXbi53slTdFi0gNEzB/o3JwJ0Va11SMEpWt60zWI8mV4ao9XL/g3x
-	 raO/Mg564nvBg==
+	b=TKqqAv7sdmfXHHh55ljNcH5MFFg+xiyePQfvUa6Qk3eVn3IfRYYuWkarrZv9X9b6x
+	 WcidtfSurZO1rOE0LxNmCkinTy8/ULE4KZWZsUpuD53vFXVGY7ZoW0BZOBFyk0/6SL
+	 B/l/jaYYvcNUTG+Mtd4L5l3cE6F9AyR4HL1SfQpPeOcXyR+2AlAnbSYm/v601APj3G
+	 6BlCyNhoGNo1citp6sY9ARVy6+3tx39gPvB8Wwk3EyGN4ojFZ1v7ay64TI1Gj/qM+n
+	 343QfChXP02qa5kkja8V+DbGQWzySNo2oq2W0sbaQ0dyYZLtefpefk7KpnHI44BkXr
+	 kr9LM1+p0ladA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E31CA5FA1;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C86EFCA5FA5;
 	Mon, 28 Sep 2026 15:57:39 +0000 (UTC)
 From: Sarath Ganapathiraju via B4 Relay <devnull+sarath.ganapathiraju.oss.qualcomm.com@kernel.org>
-Date: Mon, 28 Sep 2026 21:27:38 +0530
-Subject: [PATCH v9 1/2] dt-bindings: clock: qcom: Add LPASS VA CSR
- HeartBeat pulse clock
+Date: Mon, 28 Sep 2026 21:27:39 +0530
+Subject: [PATCH v9 2/2] clk: qcom: Add LPASS VA CSR heartbeat pulse clock
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,7 +40,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260928-master-v9-1-2277f09f9a09@oss.qualcomm.com>
+Message-Id: <20260928-master-v9-2-2277f09f9a09@oss.qualcomm.com>
 References: <20260928-master-v9-0-2277f09f9a09@oss.qualcomm.com>
 In-Reply-To: <20260928-master-v9-0-2277f09f9a09@oss.qualcomm.com>
 To: andersson@kernel.org, abelvesa@kernel.org, sboyd@kernel.org, 
@@ -52,12 +51,12 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  prasad.kumpatla@oss.qualcomm.com
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1790611058; l=2671;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790611058; l=7219;
  i=sarath.ganapathiraju@oss.qualcomm.com; s=default;
  h=from:subject:message-id;
- bh=EqcShn4lKqnUcEIX4DZ2sa+EOeN9w3AEP1mmSm22Vj0=;
- b=TM1SJBp7tH2hiudoY6cxOGN8Yw7u22o1dRULwet6bK+mW7NneRBOWhaNU2KCyJucBLZ1GONOR
- JVCTUtNDf01BvkG2eJUpH7xEZtBrYMGYwUmu7vm+a70ud3GwAiHzJuV
+ bh=9q9YIZqVtf9d6sHTnjkABET5HZcW6HM3vhcrNkH9uzM=;
+ b=4zd63SxWb1SAFgcoVc9Zm9sMF9Dk53mctVIyb6/MYFjjw2j7IvlC/AYhE2PcqpyswxUdrLU52
+ kbQa3cH2EpzA9mMZGy8VXkrH/Sbh9M5w06sqg3g1mQyyyxIvT6iNDWR
 X-Developer-Key: i=sarath.ganapathiraju@oss.qualcomm.com; a=ed25519;
  pk=4p2FWGXM+F2sir13Lu5stw5aKX5trUymK/ttESvgxQg=
 X-Endpoint-Received: by B4 Relay for
@@ -67,89 +66,243 @@ Reply-To: sarath.ganapathiraju@oss.qualcomm.com
 
 From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
 
-Add a binding for the Qualcomm LPASS VA CSR rate generator node that
-exposes the lpass_heartbeat_pulse clock on Hawi.
-
 The HeartBeat Pulse, also known as RateGen Pulse, synchronizes the
-start of DMAs and Codec Interfaces for the audio usecase and can serve
-as a periodic wakeup source for the DSP.
+start of DMAs and Codec Interfaces for the audio usecases and can
+serve as a periodic wakeup source for the DSP.
 
-Require the LPASS LPR and audio vote clocks to access VA CSR register
-space safely.
+Add the LPASS VA CSR driver that models the rate generator as a clock
+provider so consumers can enable and disable it through the common
+clock framework.
+
+Attach the DT vote clocks to runtime PM and resume the device before
+programming the rate generator registers in probe. Also take a runtime
+PM reference from the clock prepare path so later enable and disable
+register accesses happen only while the LPASS votes are active.
 
 Signed-off-by: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
 ---
- .../bindings/clock/qcom,hawi-lpass-va-csr.yaml     | 62 ++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+ drivers/clk/qcom/Kconfig        |  14 ++++
+ drivers/clk/qcom/Makefile       |   1 +
+ drivers/clk/qcom/lpass-va-csr.c | 174 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 189 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,hawi-lpass-va-csr.yaml b/Documentation/devicetree/bindings/clock/qcom,hawi-lpass-va-csr.yaml
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 27d0ab24d50a..da2e8005d075 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -2137,6 +2137,20 @@ config CLK_GFM_LPASS_SM8250
+ 	  Support for the Glitch Free Mux (GFM) Low power audio
+           subsystem (LPASS) clocks found on SM8250 SoCs.
+ 
++config QCOM_CLK_LPASS_HEARTBEAT_PULSE
++	tristate "Qualcomm LPASS VA CSR heartbeat pulse clock provider"
++	depends on COMMON_CLK
++	depends on ARM64 || COMPILE_TEST
++	select REGMAP_MMIO
++	default m if ARCH_QCOM
++	help
++	  Qualcomm LPASS VA CSR block contains the rate generator hardware
++	  that produces the HeartBeat Pulse (also known as RateGen Pulse).
++	  This driver models the rate generator as a clock provider so
++	  that consumers can enable or disable it via the common clock
++	  framework, and it can be used to synchronize the start of DMAs
++	  and Codec Interfaces or as a periodic wakeup source for the DSP.
++
+ config SM_VIDEOCC_8450
+ 	tristate "SM8450 Video Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 6affb5073f26..787a3761af3b 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -28,6 +28,7 @@ obj-$(CONFIG_CLK_ELIZA_GPUCC) += gpucc-eliza.o
+ obj-$(CONFIG_CLK_ELIZA_TCSRCC) += tcsrcc-eliza.o
+ obj-$(CONFIG_CLK_ELIZA_VIDEOCC) += videocc-eliza.o
+ obj-$(CONFIG_CLK_GFM_LPASS_SM8250) += lpass-gfm-sm8250.o
++obj-$(CONFIG_QCOM_CLK_LPASS_HEARTBEAT_PULSE) += lpass-va-csr.o
+ obj-$(CONFIG_CLK_GLYMUR_CAMCC) += camcc-glymur.o
+ obj-$(CONFIG_CLK_GLYMUR_DISPCC) += dispcc-glymur.o
+ obj-$(CONFIG_CLK_GLYMUR_EVACC) += evacc-glymur.o
+diff --git a/drivers/clk/qcom/lpass-va-csr.c b/drivers/clk/qcom/lpass-va-csr.c
 new file mode 100644
-index 000000000000..601da83add2b
+index 000000000000..93eafb2e043a
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,hawi-lpass-va-csr.yaml
-@@ -0,0 +1,62 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,hawi-lpass-va-csr.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/clk/qcom/lpass-va-csr.c
+@@ -0,0 +1,174 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
++ */
 +
-+title: Qualcomm LPASS VA CSR heartbeat pulse clock provider
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/of_clk.h>
++#include <linux/pm_clock.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
 +
-+maintainers:
-+  - Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-+  - Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
++#include "clk-regmap.h"
 +
-+description:
-+  The Hawi LPASS (Low Power Audio Subsystem) VA CSR block contains a
-+  rate generator that produces a periodic HeartBeat Pulse, also known
-+  as the RateGen Pulse. This pulse synchronizes the start of DMAs and
-+  Codec Interfaces for audio usecases and can serve as a periodic wakeup
-+  source for the DSP.
++#define LPASS_RATE_GEN_CTRL		0xd000
++#define LPASS_RATE_GEN_COUNTER_0	0xd004
++#define LPASS_RATE_GEN_DELAY		0xd010
 +
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,hawi-lpass-va-csr
++#define LPASS_RATE_GEN_MAX_REG		LPASS_RATE_GEN_DELAY
 +
-+  reg:
-+    maxItems: 1
-+    description: Address and size of the VA CSR register block.
++#define LPASS_RG_CTRL_EN		BIT(0)
 +
-+  clocks:
-+    items:
-+      - description: LPASS LPR (Low Power Resource) voting clock
-+      - description: LPASS Audio voting clock
++struct lpass_va_csr_data {
++	u32 counter_0;
++	u32 delay;
++};
 +
-+  clock-names:
-+    items:
-+      - const: lpr
-+      - const: audio
++static const struct lpass_va_csr_data hawi_csr_data = {
++	.counter_0 = 0x960,
++	.delay = 0x16,
++};
 +
-+  "#clock-cells":
-+    const: 0
++static const struct regmap_config lpass_rate_gen_regmap_config = {
++	.name = "lpass_rate_gen",
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++	.max_register = LPASS_RATE_GEN_MAX_REG,
++	.cache_type = REGCACHE_MAPLE,
++};
 +
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - "#clock-cells"
++struct lpass_va_csr {
++	struct device *dev;
++	struct clk_regmap hb;
++};
 +
-+additionalProperties: false
++#define to_lpass_va_csr(_hw) \
++	container_of(to_clk_regmap(_hw), struct lpass_va_csr, hb)
 +
-+examples:
-+  - |
-+    #include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
++static int lpass_va_csr_hb_prepare(struct clk_hw *hw)
++{
++	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
 +
-+    clock-controller@7ee0000 {
-+      compatible = "qcom,hawi-lpass-va-csr";
-+      reg = <0x07ee0000 0xe000>;
-+      clocks = <&q6prmcc LPASS_HW_LPR_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-+               <&q6prmcc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
-+      clock-names = "lpr", "audio";
-+      #clock-cells = <0>;
-+    };
++	return pm_runtime_resume_and_get(csr->dev);
++}
++
++static void lpass_va_csr_hb_unprepare(struct clk_hw *hw)
++{
++	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
++
++	pm_runtime_put_sync(csr->dev);
++}
++
++static const struct clk_ops lpass_va_csr_hb_ops = {
++	.prepare = lpass_va_csr_hb_prepare,
++	.unprepare = lpass_va_csr_hb_unprepare,
++	.enable = clk_enable_regmap,
++	.disable = clk_disable_regmap,
++};
++
++static int lpass_va_csr_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	const struct lpass_va_csr_data *data = of_device_get_match_data(dev);
++	struct lpass_va_csr *csr;
++	struct clk_init_data init = {
++		.name = "lpass_heartbeat_pulse",
++		.ops = &lpass_va_csr_hb_ops,
++	};
++	struct regmap *regmap;
++	void __iomem *base;
++	int ret;
++
++	csr = devm_kzalloc(dev, sizeof(*csr), GFP_KERNEL);
++	if (!csr)
++		return -ENOMEM;
++
++	csr->dev = dev;
++
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	regmap = devm_regmap_init_mmio(dev, base,
++				       &lpass_rate_gen_regmap_config);
++	if (IS_ERR(regmap))
++		return dev_err_probe(dev, PTR_ERR(regmap),
++				     "failed to init regmap\n");
++
++	ret = devm_pm_runtime_enable(dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to enable PM runtime\n");
++
++	ret = devm_pm_clk_create(dev);
++	if (ret)
++		return ret;
++
++	ret = of_pm_clk_add_clks(dev);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "failed to get vote clocks\n");
++
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret)
++		return ret;
++
++	ret = regmap_write(regmap, LPASS_RATE_GEN_COUNTER_0, data->counter_0);
++	if (ret) {
++		pm_runtime_put_sync(dev);
++		return ret;
++	}
++
++	ret = regmap_write(regmap, LPASS_RATE_GEN_DELAY, data->delay);
++	if (ret) {
++		pm_runtime_put_sync(dev);
++		return ret;
++	}
++
++	csr->hb.regmap = regmap;
++	csr->hb.enable_reg = LPASS_RATE_GEN_CTRL;
++	csr->hb.enable_mask = LPASS_RG_CTRL_EN;
++	csr->hb.hw.init = &init;
++
++	ret = devm_clk_register_regmap(dev, &csr->hb);
++	if (ret) {
++		pm_runtime_put_sync(dev);
++		return ret;
++	}
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &csr->hb.hw);
++	if (ret) {
++		pm_runtime_put_sync(dev);
++		return ret;
++	}
++
++	pm_runtime_put_sync(dev);
++
++	return 0;
++}
++
++static const struct of_device_id lpass_va_csr_dt_match[] = {
++	{ .compatible = "qcom,hawi-lpass-va-csr", .data = &hawi_csr_data },
++	{}
++};
++MODULE_DEVICE_TABLE(of, lpass_va_csr_dt_match);
++
++static const struct dev_pm_ops lpass_va_csr_pm_ops = {
++	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
++};
++
++static struct platform_driver lpass_va_csr_driver = {
++	.driver = {
++		.name = "qcom-lpass-va-csr",
++		.of_match_table = lpass_va_csr_dt_match,
++		.pm = pm_ptr(&lpass_va_csr_pm_ops),
++	},
++	.probe = lpass_va_csr_probe,
++};
++
++module_platform_driver(lpass_va_csr_driver);
++
++MODULE_DESCRIPTION("Qualcomm LPASS VA CSR heartbeat pulse clock provider");
++MODULE_LICENSE("GPL");
 
 -- 
 2.34.1
