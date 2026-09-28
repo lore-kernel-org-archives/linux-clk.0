@@ -1,148 +1,139 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960932472AE;
-	Sun, 27 Sep 2026 21:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9966822157B;
+	Mon, 28 Sep 2026 02:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790543128; cv=none; b=dpG8kCRYgPjPTAwzcUCordFcgr4Gep3jyTbO/FunGOChNRyIfxKPeImD6IXoj/fL+iglL2s8DNeuVXFsTMkgUoh7KYlPaoWh8eaRRNSMe2aBSAxwyxqiB0IBTeTwnI2WF5+gbCCIRcKJvTteMzS02LHDbDRpoz/6aWqcnCbJlEw=
+	t=1790561778; cv=none; b=QgdAXb8phAk9XwvVesBldcySv3FAEDdlTDgWBk6CojHW/rHKqNzw/gkiYTMU2qPrTk/U8sr/SW3CLtUPRixK98neVcSQvFiV8ngCez2H4t2IFZr1lsfRG22QL3Dms43v0RerNs6tAZM8VKq1P2zEse6Vb0eMNgZmNYoGjNm+syM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790543128; c=relaxed/simple;
-	bh=2ULQhFk2dc9UmjdLYD/XY5ey5A4Vo31E3uQyiqi9EFY=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=fwxhVhz25QbKDtzgm6qCKl08TM/uu+KsrllL82PAA1yi9HPyLPXNYEXbKWK3iIs95NEpbytyA6CNnwZNFgtBzvMpGLWmnzmhAezjsMWmlx2kFxVgE9otHKELvsuw5PzzF4FowICVIiOWa+sFTYXU6ztTv6SHM9l5FDBMISIiJ5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTvn3IuL; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTvn3IuL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A632B1F000FF;
-	Sun, 27 Sep 2026 21:05:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790543127;
-	bh=E56r9AJFQyJKksoqgtO02DwFpMWfx3pLf3SSN9eIVNQ=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=MTvn3IuLLUwBvTGDSZ18ifxFNqKvbYU+Tm5atPKmxIf4xtaJOcXU5yvtUnQ87316u
-	 E17GBVmCfqpmUqe8Xamuv5mApqzdWj3l3eI9snvqK2gxPWTFd0uFYL531+E4Yjl29/
-	 WuQsQetvSts80GP+aVCaCUEU2pfVDmjYsx61RsRH8Ne2DncsLJ8A2prJIxlwIWfjC9
-	 wrE/UwOeLj0onzx6VsCZqt2bkH1xmlhnrhPu2cRgH/JSkBLZ5Gubsp2gjV7TlQRirL
-	 fWX/yB1sid244jHR8asdcbzktyKLKa8kQ+nZfXNBrw2NVXRCQY1tqlBRQOMTXfH7ix
-	 ePuWNeJYlxGkg==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v13 10/13] clk: zte: Introduce a driver for zx297520v3
- matrix clocks
-Reply-To: sashiko-reviews@lists.linux.dev
-To: =?utf-8?b?U3RlZmFuIETDtnNpbmdlcg==?= <stefandoesinger@gmail.com>
-Cc: linux-clk@vger.kernel.org, neil.armstrong@linaro.org, olteanv@gmail.com, linux-phy@lists.infradead.org, conor+dt@kernel.org, devicetree@vger.kernel.org, vkoul@kernel.org, mfd@lists.linux.dev, robh@kernel.org, lee@kernel.org
-In-Reply-To: <20260927-zx29clk-v13-10-70d8f673386c@gmail.com>
-References: <20260927-zx29clk-v13-0-70d8f673386c@gmail.com>
- <20260927-zx29clk-v13-10-70d8f673386c@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 27 Sep 2026 21:05:26 +0000
-Message-Id: <20260927210526.A632B1F000FF@smtp.kernel.org>
+	s=arc-20240116; t=1790561778; c=relaxed/simple;
+	bh=BBdBCSyd1YlVRWlY+Yu8Hm8YgDtYYWt9szJ6SRyPYMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGTCXXdWObF5ojdmr8rIkPdjctBFGToA8kUaSsEk2iCVQ4KxtaEPMGHpwbpr2ouw5M2N8MQEwplFKhr95pAPdWMR4qDmb0D8aieev2rCWVU52Ku0qQ7oU2TGVfiKOIvglAsBNHn9dL0YN+OVnuRIfdu5lIzkgMAgOR0fjYxL/Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B237F1F00893;
+	Mon, 28 Sep 2026 02:16:14 +0000 (UTC)
+Date: Sun, 27 Sep 2026 21:16:11 -0500
+From: bjorn@zenbook
+To: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 27/48] clk: qcom: gcc-sm6375: Use common clock
+ controller probe data
+Message-ID: <arahN4PGK53PdNI3@zenbook>
+References: <20260924-clk-qcom-rework-legacy-always-on-clocks-v2-0-1479443ee016@oss.qualcomm.com>
+ <20260924-clk-qcom-rework-legacy-always-on-clocks-v2-27-1479443ee016@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260924-clk-qcom-rework-legacy-always-on-clocks-v2-27-1479443ee016@oss.qualcomm.com>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [High] clk: zx297520v3: orphaned firmware clocks due to NULL dev->of_node
-- [Low] clk: zx297520v3: compilation failure due to const initializers
---
+On Thu, Sep 24, 2026 at 03:06:39PM +0300, Abel Vesa wrote:
+> Move the always-on branch register offsets into a critical_cbcrs array
+> and describe the DFS RCGs through qcom_cc_driver_data.
+> 
+> Move the configuration of GPLL10, GPLL11, GPLL8 and GPLL9 into the
+> clk_regs_configure callback. This preserves the existing ordering of
+> enabling the always-on branches before configuring these four PLLs.
 
-commit 1f05d5e802fc7c2765df7aa9b0a1ac54ff100e45
-Author: Stefan D=C3=B6singer <stefandoesinger@gmail.com>
+I don't see the clk_regs_configure being applied and the four
+gpllNN_config definitions are dangling after this change.
 
-    clk: zte: Introduce a driver for zx297520v3 matrix clocks
+(Please use "make W=1e")
 
-This commit introduces a clock controller driver for the zx297520v3 matrix
-clocks, covering high-speed devices like CPU, DMA, RAM, SDIO, and Ethernet.
-It defines fixed dividers, muxes, and gates for the matrix clock tree.
+I'm applying the rest of the series.
 
-> diff --git a/drivers/clk/zte/clk-zx297520v3.c b/drivers/clk/zte/clk-zx297=
-520v3.c
-> index 68bfeab84d745..d5f8bc4064bd4 100644
-> --- a/drivers/clk/zte/clk-zx297520v3.c
-> +++ b/drivers/clk/zte/clk-zx297520v3.c
-[ ... ]
-> @@ -812,6 +812,528 @@ static const struct zx_clk_data zx297520v3_topclk_d=
-ata =3D {
-[ ... ]
-> +static const struct zx_parent_desc matrix_unk =3D PARENT_FW("wclk-osc26m=
-");
-[ ... ]
-> +static const struct zx_clock zx297520v3_matrix_clocks[] =3D {
-[ ... ]
-> +	[ZX_CLK_CPU_WCLK]         =3D GATE("cpu-wclk", PARENT_ID(ZX_CLK_CPU_MUX=
-), 0x24, 1,
-> +					 CLK_IS_CRITICAL),
-> +	[ZX_CLK_CPU_PCLK]         =3D GATE("cpu-pclk", clk_main[0], 0x24, 2, CL=
-K_IS_CRITICAL),
+Regards,
+Bjorn
 
-[Severity: Low]
-Is this code valid C?
-
-The array element clk_main[0] is being used as a static struct initializer.
-In C, unlike C++, array elements and const variables are not constant
-expressions, which will produce a fatal "initializer element is not constan=
-t"
-build error.
-
-[ ... ]
-> +	[ZX_CLK_PDCFG_WCLK]       =3D GATE("pdcfg-wclk", matrix_unk, 0x88, 0, C=
-LK_IS_CRITICAL),
-
-[Severity: Low]
-Does this initializer also fail to build?
-
-Similar to the above, matrix_unk is a const variable and cannot be used
-as a static struct initializer in C.
-
-[ ... ]
-> +static const struct zx_clk_data zx297520v3_matrixclk_data =3D {
-> +	.init =3D zx297520v3_matrix_init,
-> +	.clocks =3D zx297520v3_matrix_clocks,
-> +	.num_clocks =3D ARRAY_SIZE(zx297520v3_matrix_clocks),
-> +	.exports =3D zx297520v3_matrix_exports,
-> +	.num_exports =3D ARRAY_SIZE(zx297520v3_matrix_exports),
+> Using the alpha_plls array instead would configure the PLLs before the
+> CBCR enables in the common probe path.
+> 
+> Use qcom_cc_probe() to perform the common initialization instead of
+> open-coding it in the driver's probe.
+> 
+> Assisted-by: LLM
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+> ---
+>  drivers/clk/qcom/gcc-sm6375.c | 46 ++++++++++++++++++++++---------------------
+>  1 file changed, 24 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sm6375.c b/drivers/clk/qcom/gcc-sm6375.c
+> index 9c2acf8dc4b7..c67d4293c76b 100644
+> --- a/drivers/clk/qcom/gcc-sm6375.c
+> +++ b/drivers/clk/qcom/gcc-sm6375.c
+> @@ -3853,7 +3853,30 @@ static const struct regmap_config gcc_sm6375_regmap_config = {
+>  	.fast_io = true,
+>  };
+>  
+> +static const u32 gcc_sm6375_critical_cbcrs[] = {
+> +	0x17028, /* GCC_CAMERA_XO_CLK */
+> +	0x2b004, /* GCC_CPUSS_GNOC_CLK */
+> +	0x1702c, /* GCC_DISP_XO_CLK */
 > +};
 > +
->  static int clk_zx297520v3_probe(struct platform_device *pdev)
+> +static struct clk_alpha_pll *gcc_sm6375_plls[] = {
+> +	&gpll10,
+> +	&gpll11,
+> +	&gpll8,
+> +	&gpll9,
+> +};
+> +
+> +static const struct qcom_cc_driver_data gcc_sm6375_driver_data = {
+> +	.alpha_plls = gcc_sm6375_plls,
+> +	.num_alpha_plls = ARRAY_SIZE(gcc_sm6375_plls),
+> +	.clk_cbcrs = gcc_sm6375_critical_cbcrs,
+> +	.num_clk_cbcrs = ARRAY_SIZE(gcc_sm6375_critical_cbcrs),
+> +	.dfs_rcgs = gcc_dfs_clocks,
+> +	.num_dfs_rcgs = ARRAY_SIZE(gcc_dfs_clocks),
+> +};
+> +
+>  static const struct qcom_cc_desc gcc_sm6375_desc = {
+> +	.driver_data = &gcc_sm6375_driver_data,
+>  	.config = &gcc_sm6375_regmap_config,
+>  	.clks = gcc_sm6375_clocks,
+>  	.num_clks = ARRAY_SIZE(gcc_sm6375_clocks),
+> @@ -3871,28 +3894,7 @@ MODULE_DEVICE_TABLE(of, gcc_sm6375_match_table);
+>  
+>  static int gcc_sm6375_probe(struct platform_device *pdev)
 >  {
->  	const struct platform_device_id *id =3D platform_get_device_id(pdev);
-> =20
->  	if (!id)
->  		return -ENODEV;
-> =20
->  	return zx_clk_common_probe(&pdev->dev, pdev->dev.parent->of_node,
->  				   (const struct zx_clk_data *)id->driver_data);
+> -	struct regmap *regmap;
+> -	int ret;
+> -
+> -	regmap = qcom_cc_map(pdev, &gcc_sm6375_desc);
+> -	if (IS_ERR(regmap))
+> -		return PTR_ERR(regmap);
+> -
+> -	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks, ARRAY_SIZE(gcc_dfs_clocks));
+> -	if (ret)
+> -		return ret;
+> -
+> -	/* Keep some clocks always-on */
+> -	qcom_branch_set_clk_en(regmap, 0x17028); /* GCC_CAMERA_XO_CLK */
+> -	qcom_branch_set_clk_en(regmap, 0x2b004); /* GCC_CPUSS_GNOC_CLK */
+> -	qcom_branch_set_clk_en(regmap, 0x1702c); /* GCC_DISP_XO_CLK */
+> -
+> -	clk_lucid_pll_configure(&gpll10, regmap, &gpll10_config);
+> -	clk_lucid_pll_configure(&gpll11, regmap, &gpll11_config);
+> -	clk_lucid_pll_configure(&gpll8, regmap, &gpll8_config);
+> -	clk_zonda_pll_configure(&gpll9, regmap, &gpll9_config);
+> -
+> -	return qcom_cc_really_probe(&pdev->dev, &gcc_sm6375_desc, regmap);
+> +	return qcom_cc_probe(pdev, &gcc_sm6375_desc);
 >  }
-
-[Severity: High]
-Does this code leave all firmware-based clocks orphaned?
-
-The parent's of_node is passed explicitly to zx_clk_common_probe() for
-validation and provider registration, but it is never assigned to
-pdev->dev.of_node. Since the matrix clock controller is an MFD child device
-without an of_compatible, its pdev->dev.of_node will be NULL.
-
-When registering the clocks, the Common Clock Framework relies on dev->of_n=
-ode
-to resolve fw_name parents. For example, in zx_clk_register_fixed_div() in
-drivers/clk/zte/clk-zx.c:
-
-	case ZX_PARENT_FW:
-		return devm_clk_hw_register_fixed_factor_fwname(dev, NULL,
-				desc->name, p->fw_name,
-				CLK_SET_RATE_PARENT, 1, desc->div);
-
-Because dev->of_node is NULL, clk_core_fill_parent()'s of_clk_get_by_name()
-will instantly return -ENOENT.
-
-Should pdev->dev.of_node be assigned before probing so the CCF can resolve
-the clock tree?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260927-zx29clk-v1=
-3-0-70d8f673386c@gmail.com?part=3D10
+>  
+>  static struct platform_driver gcc_sm6375_driver = {
+> 
+> -- 
+> 2.54.0
+> 
