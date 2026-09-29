@@ -1,82 +1,101 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7883E5EEA
-	for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 16:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D821D36B934
+	for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 16:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790699989; cv=none; b=DnTt3+sW7lE66puGXTb2dyjR7rs17/fRflg4Cb8e9ZH9IpRDU9kbPnFtEQTOe5pj66jQacLOKNqaRBoioa1XbGN7syEBn5IIXIw4eVXtLZ/NvKr62BL04G5ryYqm/hQfrdbkmosQiZGNmRCLgrDdaW1fmcbaGVda1ltCzlbzx3Q=
+	t=1790700517; cv=none; b=jSozVcV5ow5U5h/ohk/iQlf0ZWsUTEL3YtbGar09S+yo+NP5Qmm8mAhTqFfkWv4xTdXIt3GyYO5q6KAwjwhWWh2xSRh9vNjSyIoWHiCalS6cTEyKvSK6zQmL7IzBdx+2X5f5AkurBKLEZ+dhqNuVdyaF56Y5RpW0zjc//Iq8/r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790699989; c=relaxed/simple;
-	bh=5JgxFy2M+q3CsNTyNd/dWd2e9DAffFt/Edo2iCguHck=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=F5r5GAI0HVZwBdVF2BhwlBuussYnY6497GcFtokX5qrc/ngOkbiobhEm4U78Ui+v+A8DL9UTk67PaEi0s4XBDrAp2KqRcd3X4Ps09Dn6mpswRXmcJdloTThnuaZFG8BrUub0YJTbLZiTbqoGTINo5BWo1w6NU6ZWPr28fxgVeMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h/pZGXIz; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=AVheytB9; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1790700517; c=relaxed/simple;
+	bh=gjzKEDoEc/+GLpE25sXuiGP4bdJDlHX/8bJR6oQseoU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mBdTOh8kJUDQnmFLZ+xljnp7q1n0bas68L0Q8fm07dGE1Qn0bb3OH4w0zy/1phdVWOwlLKIRiEJcP+uAEnMxo6kJ8XQVV5JTd/5EtpDIn+TGGLxqIlt/Gnr8Dtciph9f/v5U2EUiPiwcgGgfr6r40UilxgeS7gSoDdQXVaS6RM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U66cTeuf; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=HMOurltX; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h/pZGXIz";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="AVheytB9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U66cTeuf";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="HMOurltX"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1790699986;
+	s=mimecast20190719; t=1790700511;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4vSMTaFwVmnb+Rmt42e8RSqF0GusWSrT12M1j+n1IUM=;
-	b=h/pZGXIz4644nHO7ClBteT5bLn1OQXlZIVOrOcvuQlfrWkjabUTQlAWr3vpEHCfNfRlE5u
-	KqHtOh9d6OLPjRhQT6rdlzg8i8676pUdHmGya6hQkkXqZ1gXAuUEVdlUAjz6HguCIJMHBM
-	xroVLdHTTpsZhpC/lge4n9kOOVopzyg=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=h7fhQ9KGGUbPPoOeQdI2Gd4sk4/oPY6yvPOncKOrRvQ=;
+	b=U66cTeuf+pG4nZC0Gq05rli9sFWqokHK4sTQaEXJe4gh043PDfJpfCKzKVxopgAJnawGQo
+	WAA9/XmDqc82m1DBfUnQAyFiCMEiLuaM3Ixps0jktgSHjZ3jaWqZibQneYAaYYqr6ZQ20z
+	80SRElFGGgg5Ppmte8ErDAe3qYogkF4=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-47-UfAAi9NnN4Cmv2ON-JwW2w-1; Tue, 29 Sep 2026 12:39:45 -0400
-X-MC-Unique: UfAAi9NnN4Cmv2ON-JwW2w-1
-X-Mimecast-MFC-AGG-ID: UfAAi9NnN4Cmv2ON-JwW2w_1790699985
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93bf4c0af4eso180573685a.1
-        for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 09:39:45 -0700 (PDT)
+ us-mta-121--m6idgN2O_C8AQ0veAOoNg-1; Tue, 29 Sep 2026 12:48:27 -0400
+X-MC-Unique: -m6idgN2O_C8AQ0veAOoNg-1
+X-Mimecast-MFC-AGG-ID: -m6idgN2O_C8AQ0veAOoNg_1790700507
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-91442ba2e46so72677276d6.1
+        for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 09:48:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1790699985; x=1791304785; darn=vger.kernel.org;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=4vSMTaFwVmnb+Rmt42e8RSqF0GusWSrT12M1j+n1IUM=;
-        b=AVheytB9Y7nDS4MxLM5WGi3Hm9SzThRHXd97DPBFViPXPAk2fta/5ZPPUCS+hO0KyD
-         pTs/x2EZqTT4BL+wbeHPXYBQFXQztUfq28tAJnrkZknNU0XDsw4PCztToUkeY5iyqx3c
-         69mcgUhjUpSPeJWYJykfk3qbVtglUlv3Rhf8AaS2fbw8kTl8NypxHpNbEmjQURoaSl2u
-         h/ApASD1C2TGGmS5LwgV06hdRi7vcBn1nsyALq8mBdkMibl2AWbrnvI9LMm908pOLBP4
-         ircMefFRyU1WsQw13n37spC6HUoz7zgNx6w+0N5TRq5vhI3i+Jl7iSZ190F0sotMXQ4e
-         /2xA==
+        d=redhat.com; s=google; t=1790700507; x=1791305307; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=h7fhQ9KGGUbPPoOeQdI2Gd4sk4/oPY6yvPOncKOrRvQ=;
+        b=HMOurltXsOJYedqYy2XE57vGiMrC20OlOC83Zt6b5srtERwK3mpC6Xpgxd2+JHaeFd
+         yDMpIhnWZjuhRqqXdbROXN7rICAr6OvUvovYJfPIJhBMKmtLcLDx4CRcrcGF0izPd+Xw
+         CdQcLBgRbHguV5GzpTZuU8/cHNDPsv5fKCUxN2TgBwAmBYo+cZC90IJtnM1IrfBxva+Q
+         0M46B1q+yzz1sQxrz+qbO/BmQ9xSGIpDvG0IzutawEBwuz5nX48livdkXIRWP/NgOtK8
+         dqCz3rZJur6CKbnrTENg6p4HLqPT0NqqriTU87zo4hmtnfjQcQOZWXVHjQFbnO5e0/Hy
+         oI9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790699985; x=1791304785;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1790700507; x=1791305307;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=4vSMTaFwVmnb+Rmt42e8RSqF0GusWSrT12M1j+n1IUM=;
-        b=SgaUtKMT8fOqkM9t8ZagU/sPwXsR1vjjaDtboOgUkUICZj4NCa64uIqHFZNxx2HfrG
-         B/69X99T1aSXQNE0N0x7hdH2jC65ZeBqSmwH2CCoteuvnaQqWbK26t2j0AZnPybyN5ns
-         kKWbT2Q5JTnUQNYGvLNGdOC7wHpZxTJMQhXfFYpI1eZ/iI41mj+MvSD5m6ZQ6KaOrDvX
-         vY8PgDR8RNSxAEdnLqUCpGZOidKybqHR0xDkZ6OIO4wIBc7ZP+rhsxD7PZrYOCSrs+y+
-         sBCjeZJ+MV2VkYHVndlS6vODud5IMCeRXnINn7WNXgLsPpWpPrv/5ZEZNhbycosENeGH
-         Pg7w==
-X-Gm-Message-State: AFuF++lJo8gyCKfLDHbh+BeoWP0kJYLFY4bA9Gmh4cgfenf0kg12uH7+
-	hucJhyS62xqX8LP6SvJklgp8WKSNB6UYqkclXAq2CWnExne+7/MQrlgr8WtETzuubqG4HkJd4UE
-	vw4cbDEeYFNzB/mK+PspynzfEzwPexTxoz3iaS9oX+VJoKEenG3+/mJKLFynT5Q==
-X-Gm-Gg: AYBFou2ae1Ati5ilLFRNkmwFCPdlwgmIMgljjhQcArgaDh13AN9gqXunG3JGlD7afmB
-	KvFCHHNc+6/6Yzplo4vhW0QCqq9QgHsQacO0D9CKNCsQxRWLeGZHbX+r5O4n30ijHCjjgS66ofb
-	cEa1AVcXaTcf72iNXrgS54wL1mzuAKW0vktWqyl5VUY+jGb3p9EvFXFN3FGeDONzVAucX+RhnSk
-	0YsfRODW8UqiV+8Nr/U5TTH9336e4px0IgnTLWk0JoUTVXtWHfstNSDeEGcfqbKA9+0YUIRgTwT
-	4WZga6fEPTOunBilqtCEq4HhTwONPslCK0AZCc8/UlrK2dmXDEWIp7DP2FzlWj7OjIakh+f3rgy
-	jlgWd7jJUrG3Y5kIOWoYgtSie2bt/WVj5J6Bn3kttIAjgFVv9bME=
-X-Received: by 2002:a05:620a:44c8:b0:93c:290e:9e9c with SMTP id af79cd13be357-93c8bef3627mr583066285a.16.1790699984880;
-        Tue, 29 Sep 2026 09:39:44 -0700 (PDT)
-X-Received: by 2002:a05:620a:44c8:b0:93c:290e:9e9c with SMTP id af79cd13be357-93c8bef3627mr583060685a.16.1790699984366;
-        Tue, 29 Sep 2026 09:39:44 -0700 (PDT)
+        bh=h7fhQ9KGGUbPPoOeQdI2Gd4sk4/oPY6yvPOncKOrRvQ=;
+        b=XjXn5yxYe2q2V6V7GLwfKQDr1tTY5pXRpML5sTXzezPyC6KQuOjbPDhBz4tgPUU+wD
+         miNRDEPuYH68EtLC+r8pVPbTjAO8LRd0WMWytpjv1MHehALEiqbf0ylGc9luXjukvEBo
+         Ff5/e9R237Ru/L0f+0xY9lyDXEuG/3d+/zJ/gPZUrZioV7SPLq0VTr/1DU7Pdtxz46ic
+         elWCZbK4vgssvjXCzJzCp1xnwj7fA0iVTWkzW7T4AeAV7xFCl9yRzecxxoxblYEaQiw2
+         o0zUHFoSAtHoR4v/D8YopkVdAlQ4BKUgI/el7M1DZ86TsEU60ts2IYoI6yBMzpzFT9vJ
+         VQ2w==
+X-Forwarded-Encrypted: i=1; AKwUvBziGcXVKYV/nWkXXIDypvAzYQYq8NPch79DLjafhubNT7pg6mAwr5bmZw83UyQOf75yYjhNP75CVCM=@vger.kernel.org
+X-Gm-Message-State: AFuF++lamnVik2+QgzJxlxZLhnR5fIJQtR2l3RpfLu1j1vi6hUGdieZR
+	+6AoY+M4wFoWBROC1A8WvODoyeYp6rVO1yk58g71F80Us8l+yUtY8KFzhArYE69cJ+B1egiEKJO
+	lcaeVH8k67kncXxE9P3NCWI1idi4NnpV+en2vlTYMESKX5t2y24vL9+1lVX7KzA==
+X-Gm-Gg: AYBFou3wzDmDYUHzkZeU29L33pt444BAFIvN4eqdIXJjVdk3nqRZ/avbb1AdDZK0p2F
+	92GdnoHhLdz8NKyhJ/7Wk4y24P823BaJj7RxpQEogGk2pLEyEhmB4NfPps7jedkj4Ejcgt8tDLZ
+	ZfGl+8J/URPnI5b62igm2rK67yK2QEpAm7BFiHvn2NPv1FrhIfcCHkt+s62hAQkpSr+jYD2cakN
+	SXwwY88zcAa2iJU6Pdxi5NuMByG1Q3kwjgnFM9OWwCAnTM1rYOSuaW2fhK7uDl2hfyRGvFInBlK
+	G3Tc4/WGSdiG4RU8ZRk+UY/UCUeXyrfYrWN23FS1OOa431/97C6mCa/mvsxAFnGk4xHM2lnuxF9
+	dnDQC14BR6OLc9gJRSrSuN5hHqJeF4+eGxherIs2KCtNb3wADj0k=
+X-Received: by 2002:a05:620a:700a:b0:93a:1b82:4962 with SMTP id af79cd13be357-93c9f90d39emr21400485a.47.1790700506652;
+        Tue, 29 Sep 2026 09:48:26 -0700 (PDT)
+X-Received: by 2002:a05:620a:700a:b0:93a:1b82:4962 with SMTP id af79cd13be357-93c9f90d39emr21392085a.47.1790700505852;
+        Tue, 29 Sep 2026 09:48:25 -0700 (PDT)
 Received: from bmasney-x1.rmtuswv.csb (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93c9f569504sm8213985a.45.2026.09.29.09.39.43
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93c9f54529asm10347985a.37.2026.09.29.09.48.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Sep 2026 09:39:43 -0700 (PDT)
+        Tue, 29 Sep 2026 09:48:24 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+To: linux-kernel@vger.kernel.org, 
+ Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: michael@amarulasolutions.com, linux-amarula@amarulasolutions.com, 
+ Abel Vesa <abelvesa@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Cristian Marussi <cristian.marussi@arm.com>, 
+ Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Sebin Francis <sebin.francis@ti.com>, 
+ Stephen Boyd <sboyd@kernel.org>, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+In-Reply-To: <20260904101243.412006-1-dario.binacchi@amarulasolutions.com>
+References: <20260904101243.412006-1-dario.binacchi@amarulasolutions.com>
+Subject: Re: (subset) [PATCH v14 0/4] Support spread spectrum clocking for
+ i.MX8M PLLs
+Message-Id: <179070048452.199845.10870046832708018931.b4-ty@b4>
+Date: Tue, 29 Sep 2026 12:48:04 -0400
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,154 +104,37 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] clk: sp7021: fix infrastructure clocks clobbering PLL
- provider entries
-From: Brian Masney <bmasney@redhat.com>
-To: Andrew Gaylard <ag@ffroot.co.za>
-Cc: linux-clk@vger.kernel.org, qinjian@cqplus1.com, mturquette@baylibre.com, 
- sboyd@kernel.org, bmasney@redhat.com, linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20260820130224.1584902-1-ag@ffroot.co.za>
-References: <20260820130224.1584902-1-ag@ffroot.co.za>
-Date: Tue, 29 Sep 2026 12:39:39 -0400
-Message-Id: <179069997903.213266.2923932929883625249.b4-reply@b4>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5320; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=705; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=5JgxFy2M+q3CsNTyNd/dWd2e9DAffFt/Edo2iCguHck=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJ2vzz7ycm+N27TyV5lxTtR+xYdvf19yx83WVnnLT7PU
- 4K31+5+0FHKwiDGxSArpsiyJNeoICJ1le29O5osMHNYmUCGMHBxCsBE9BYz/JWokypfe96ZZ+8W
- vYDIKH/eUr4V6dccmJxPLZqx0n2bfz0jw+crmUnSj5X/vFC82p76KnJJfubmTXKP5i6em7nTQ3J
- 1Jy8A
+ bh=SAHYf/h8Oe0K/ekB9Nro0D69org/h+4brL2o93Uibw4=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJ2v75WObHBi99/6nvz91sfuy9/aBE213x2T6bCawPDb
+ lVWxc/nOkpZGMS4GGTFFFmW5BoVRKSusr13R5MFZg4rE8gQBi5OAZjILQVGhi1pPpPUYzwFivpu
+ 5+WFhLcrLrx2Yo2ZS3zjMwHTvjirboZ/GtcvfHvLK77mYvkzJi1D73jODRmTUlvF/1fM2lIoJ7G
+ eBwA=
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Hi Andrew,
 
-On 2026-08-20 15:02 +0200, Andrew Gaylard wrote:
-> The sp_clk_gates[] array previously included 9 infrastructure gate
-> clocks (CLK_SYSTEM, CLK_IOCTL, etc.) appended after the 64 DT-visible
-> gate clocks. The registration loop used the array index directly as the
-> hws[] index, so infrastructure clocks at positions 64-72 overwrote
-> hws[PLL_A] through hws[PLL_SYS].
+On Fri, 04 Sep 2026 12:06:29 +0200, Dario Binacchi wrote:
+> Support spread spectrum clocking for i.MX8M PLLs
 > 
-> As a result, DT lookups for <&clkc PLL_E_25> (index 67), PLL_E_2P5
-> (66) and PLL_E_112P5 (68) silently resolved to CLK_RBUS, CLK_IOP and
-> CLK_SDCTRL0 respectively. The L2SW Ethernet driver believed it was
-> holding the PLLE outputs, but was actually double-referencing already-
-> critical infrastructure clocks. The real PLLE outputs remained at
-> enable_count=0 and were powered down by clk_disable_unused(), causing
-> an Ethernet hang on boards with fixed-link MAC-to-MAC connections.
+> The series adds support for spread spectrum clocking for i.MX8M{M,N,P}
+> PLLs (audio, video and DRAM). It has been tested for the video PLL on
+> boards using i.MX8MN and i.MX8MP.
 > 
-> Fix by splitting infrastructure clocks into a separate sp_clk_infra[]
-> array and registering them with a dedicated loop that uses a local hw
-> variable rather than an hws[] slot. Since these clocks have no DT
-> consumer they do not need to appear in the of_clk provider table.
+> While at it, it validates the spread spectrum configuration in the clk
+> core before it reaches the providers, and fixes the i.MX SCMI OEM
+> extension, which converted the spread to the wrong unit.
 > 
-> With the provider table correct, the L2SW driver's devm_clk_get_enabled()
-> calls now hold the actual PLLE outputs, making CLK_IS_CRITICAL on plle
-> and its sub-outputs unnecessary. Remove it.
-> 
-> Signed-off-by: Andrew Gaylard <ag@ffroot.co.za>
+> [...]
 
-This patch does not apply against the tree.
+Applied, thanks!
 
-Brian
+[2/4] clk: validate spread spectrum configuration
+      commit: 109124b8ff43fb911d5b8790bb5e4c5684f72d88
 
-> ---
-
->  drivers/clk/clk-sp7021.c | 42 +++++++++++++++++++++++++++++-----------
->  1 file changed, 31 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-sp7021.c b/drivers/clk/clk-sp7021.c
-> index 1d067b0af8a7..50c667cbb3dc 100644
-> --- a/drivers/clk/clk-sp7021.c
-> +++ b/drivers/clk/clk-sp7021.c
-> @@ -124,9 +124,14 @@ static const struct sp_clk_gate_info sp_clk_gates[] = {
->  	{ 0x97 },
->  	{ 0x98 },		/* CLK_ICM: Input Capture Module */
->  	{ 0x99, 0, true },	/* CLK_AXI_GLOBAL: AXI interconnect, no driver consumer */
-> -	/* Infrastructure clocks: all default to enabled in hardware but
-> -	 * have no driver consumer, so marked critical to prevent gating.
-> -	 */
-> +};
-> +
-> +/*
-> + * Infrastructure clocks have no DT consumer so are not exposed
-> + * through the of_clk provider. They are registered separately and
-> + * marked CLK_IS_CRITICAL so clk_disable_unused() never gates them.
-> + */
-> +static const struct sp_clk_gate_info sp_clk_infra[] = {
->  	{ 0x00, 0, true },	/* CLK_SYSTEM:  SYSTEM CLKEN    mo_clken0 bit 0  */
->  	{ 0x03, 0, true },	/* CLK_IOCTL:   IOCTL CLKEN     mo_clken0 bit 3  */
->  	{ 0x04, 0, true },	/* CLK_IOP:     IOP CLKEN       mo_clken0 bit 4  */
-> @@ -644,25 +649,23 @@ static int sp7021_clk_probe(struct platform_device *pdev)
->  	/*
->  	 * PLLE and all its sub-outputs are used by the L2SW Ethernet switch
->  	 * (50MHz RMII, 25MHz MII/100M, 2.5MHz MII/10M, 112.5MHz MAC fabric).
-> -	 * The L2SW driver explicitly claims these via clock-names in DTS, but
-> -	 * CLK_IS_CRITICAL is kept as a belt-and-suspenders guard in case the
-> -	 * driver consumer reference isn't sufficient on all board configurations.
-> +	 * The L2SW driver explicitly claims these via clock-names in DTS.
->  	 */
->  	hws[PLL_E] = sp_pll_register(dev, "plle", &pd_ext, PLLE_CTL,
-> -				     6, 2, 50000000, 0, 0, CLK_IS_CRITICAL);
-> +				     6, 2, 50000000, 0, 0, 0);
->  	if (IS_ERR(hws[PLL_E]))
->  		return PTR_ERR(hws[PLL_E]);
->  	pd_e.hw = hws[PLL_E];
->  	hws[PLL_E_2P5] = sp_pll_register(dev, "plle_2p5", &pd_e, PLLE_CTL,
-> -					 13, -1, 2500000, 0, 0, CLK_IS_CRITICAL);
-> +					 13, -1, 2500000, 0, 0, 0);
->  	if (IS_ERR(hws[PLL_E_2P5]))
->  		return PTR_ERR(hws[PLL_E_2P5]);
->  	hws[PLL_E_25] = sp_pll_register(dev, "plle_25", &pd_e, PLLE_CTL,
-> -					12, -1, 25000000, 0, 0, CLK_IS_CRITICAL);
-> +					12, -1, 25000000, 0, 0, 0);
->  	if (IS_ERR(hws[PLL_E_25]))
->  		return PTR_ERR(hws[PLL_E_25]);
->  	hws[PLL_E_112P5] = sp_pll_register(dev, "plle_112p5", &pd_e, PLLE_CTL,
-> -					   11, -1, 112500000, 0, 0, CLK_IS_CRITICAL);
-> +					   11, -1, 112500000, 0, 0, 0);
->  	if (IS_ERR(hws[PLL_E_112P5]))
->  		return PTR_ERR(hws[PLL_E_112P5]);
->  
-> @@ -689,7 +692,7 @@ static int sp7021_clk_probe(struct platform_device *pdev)
->  		return PTR_ERR(hws[PLL_SYS]);
->  	pd_sys.hw = hws[PLL_SYS];
->  
-> -	/* gates */
-> +	/* gates, directly mapped into hws[] for DT lookup */
->  	for (i = 0; i < ARRAY_SIZE(sp_clk_gates); i++) {
->  		char name[10];
->  		u32 j = sp_clk_gates[i].reg;
-> @@ -706,6 +709,23 @@ static int sp7021_clk_probe(struct platform_device *pdev)
->  			return PTR_ERR(hws[i]);
->  	}
->  
-> +	/* infrastructure gates, not in hws[] */
-> +	for (i = 0; i < ARRAY_SIZE(sp_clk_infra); i++) {
-> +		char name[14];
-> +		u32 j = sp_clk_infra[i].reg;
-> +		struct clk_hw *hw;
-> +
-> +		sprintf(name, "infra_0x%02x", j);
-> +		hw = devm_clk_hw_register_gate_parent_data(dev, name, &pd_sys,
-> +							   CLK_IS_CRITICAL,
-> +							   clk_base + (j >> 4) * 4,
-> +							   j & 0x0f,
-> +							   CLK_GATE_HIWORD_MASK,
-> +							   NULL);
-> +		if (IS_ERR(hw))
-> +			return PTR_ERR(hw);
-> +	}
-> +
->  	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
->  }
->  
-> -- 
-> 2.53.0
-> 
-> 
-> 
-
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
 
