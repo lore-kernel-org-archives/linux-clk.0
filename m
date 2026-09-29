@@ -1,172 +1,105 @@
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA86515998
-	for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 11:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54B350E5AA;
+	Tue, 29 Sep 2026 12:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790681973; cv=none; b=ld4teUzAgvrqUAAGUqdr7+CJywZu9laiGMY2PJgmfoJudG+E3irNFcWa7y9SaNc3tCs1sVDZ8tZgDSHfFlrbWuYXfm9Mc1s1R9nknu1vPiBNkFNevn3u7lCB2YUEJVTHSB5Kh3yHgqefyT+lzbuGoeRQQx/rz0PfUsr5918fHR4=
+	t=1790683806; cv=none; b=hEgd749UHhcJAkBVagpqEEplcvObgDn0jDa/Ddn7r3bmH/ORF23KlC0B5BvFVy+8L0gvc2tem3fgQqdNW3qdPRDrAuP3xZfxokEUFQT5AWpLsRXMtUB5GH0S+cHbAJsM/3gIk5wDoq2N8KePJiqkVdNm3sl9Hl2UIeSaxPtHtN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790681973; c=relaxed/simple;
-	bh=2Mu45L5BARy+ps5xY5B43FwHSGdIF2xZMGNAyYhbb/o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RF5SocLc51ULYn6Rrrl4URAcUIbau1hyStKFnbwCQ0CCdemNfro12or3P6CGmDJ1Ku7gap5No+8pdD5wKkoaetUWrWU07OsBFbyL0B/+kon5pnvQe/J6gvTAMWCbLQ8ghvrVBK9rTRtxtCFKL1d7HaVCc66QV0YM9vt4OGcuqSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NOgBeKBe; arc=none smtp.client-ip=74.125.225.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NOgBeKBe"
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-4a003bd18e5so11525475e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 04:39:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790681970; x=1791286770; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=YS0haltmyIBpZtM2yu+Y4ol89PxPMhiw1pJAIKA+MII=;
-        b=NOgBeKBetcHSFoCk1MFIRmA4KH5hdDFWwH83JgI8EFRLsR+UvieRqN/ncW2YeOLntW
-         /7w4qOuW81sN56Z8F3HYVe5Tt9owqeGOhG0IU6sj/scLAXRAnF6KclbQql8xjfsYa2E9
-         A61rJVScah3znPUG6jq0x3EOaHXa3J2iIks+NwDTgkiJIOrYf/BBxSyMfqauMutP8VY6
-         4fBWJyglkSJYDwErUzWJL42gAVV0ApgJFadbYZfQ63/qhdd6CZMXQE1ScEUcKoOg6srE
-         m00u5VdMIEVNSZ3VFV3fJywIu4s8EZCNNKYkQgILMSlK3T+NNEH8y5NS6Jb9MKQQ2z8k
-         jnQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790681970; x=1791286770;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=YS0haltmyIBpZtM2yu+Y4ol89PxPMhiw1pJAIKA+MII=;
-        b=plFH7fyK0XMTQ24OCSLgn9kIJMO6gS80Xl7vB2mxN7UhmJvvlnbuN+tRTBGPUtnRaA
-         aBZuLEn0yYcNtbLRcHVrT6OjjJLmaMXQ5DYyNuqY+sy8fm74ztMtiaPpOacHGLXLGuEK
-         dDGq6e5xicnUF8E7QJkv712mZ830ZyCCNLgjeB8FPcro2l1T5z51J31V/4bRAEj43I2Z
-         xkzsUKqidRBpZDpsASeHgnQ+EIAIn6+GZS4sXmaqYhrysy97oaQgKSn+DEDZk5LPLdvY
-         SY1MfWMpo7A3K4eVhXoGLJFxuQxDR1NZt85177vYlzcj64N/0BGN67Tc3bp5IhDYL2Q2
-         XJww==
-X-Forwarded-Encrypted: i=1; AKwUvBxktxGd7XpqNDc6pZjH3eVk7na9LkenDx0P/aVmnE6M8pq89WXRpw5ZimUHSFPsjIakcZmDC8w/2S4=@vger.kernel.org
-X-Gm-Message-State: AFuF++nXUUwDYvjx57C2DNHhYgjUnndT8lXvKHEAJ/IPAF/ppvGW9De1
-	gaH+eJDvAtweP3HaFDjVhfPg2XGOTluWRNnsfb39Eo6VPyWvnQ1dt5G3
-X-Gm-Gg: AYBFou1Bt73EGCNgLI73NwgSvOLqAl+6JIJaWJYL4QGsoevwhv/PbD2DDlZO/AMlt1c
-	BpgmYSuAg6oCO/SQWNlnOSmAysrhTqz7TPYmy+PH25B8nNNJqlXTzJHj2f+Vdmev7O282FGiUCC
-	gTlzVscpKNTRyNOeLLdNZbwfS4bx8wjbLJ9litKRrWSf8QY///Shk6DxDhQRHdMetThkH5EBuHf
-	CsBdhuTWn/YUFLRVak1npASHnhCyTMbudnW+H4+fG50dEgv1i9FxMO3guh66bOTliSUUXoT95C2
-	yUApqXodWl1bXCeyIWZiUC7C9gb3dp5eSMSzWYxvi4Ys78DeJquk3Pt+9vT1cdk3vD5P+yM4gKv
-	WlcHI98R6NaqyA4MiWVeocTA7EjT/NH2g92N00hK1nJajzyq49pBQMNPfo7eV6TP179j5et4xV7
-	eu7//Xfxc2R4GcMr5/8YPPkm7W8qwu84R0a/tQkdOKjZZmC/SXHhUipxaMmnfbolY6ff+ON78at
-	31MgOjBNhSfv1VwyVrziHUG9Po4EYz5F5Qz2zSQWeUgIXHjI56qpusqOgPZQGl5kNLvia12LduY
-	YiANtfYLXgjhAgGLMw==
-X-Received: by 2002:a05:600c:1d1c:b0:49f:bc43:9e96 with SMTP id 5b1f17b1804b1-49ff06bcd5fmr208937585e9.8.1790681969910;
-        Tue, 29 Sep 2026 04:39:29 -0700 (PDT)
-Received: from iku.example.org ([2a06:5906:61b:2d00:be4b:8730:c872:1736])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a00d0f66cfsm83215565e9.14.2026.09.29.04.39.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Sep 2026 04:39:29 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/2] clk: renesas: r9a09g056: Add ADC clocks and reset
-Date: Tue, 29 Sep 2026 12:39:21 +0100
-Message-ID: <20260929113921.119489-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260929113921.119489-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260929113921.119489-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1790683806; c=relaxed/simple;
+	bh=0TQIG6b0QhiYyhhVsn09ZaXE0tRmvWDczzbfnRItPCs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iYH6/Lc8nmgvf/dFl5/YsQXRM71QXh8ZP6Exwm5OSzufUiKLjBG3GKMA+JpahV6nyEqmA+ffoKO8VdAY3uujf297UAv7V91w1JJX572vKNFwJ52fQX/tK+IeYwvwRb2+gH0wdANp35GRlevuv2tgiPam02HkSZ0cPrmfnkEp+fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.helo=mail.mainlining.org; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.helo=mail.mainlining.org
+Message-ID: <d3b99da7-bc64-4df8-94ab-25080474ee35@mainlining.org>
+Date: Tue, 29 Sep 2026 15:09:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+Subject: Re: [PATCH v3 16/19] thermal: qcom: tsens: Add support for MSM8952
+ tsens
+To: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
+ Ulf Hansson <ulfh@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Lee Jones <lee@kernel.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Robert Marko <robimarko@gmail.com>, Guru Das Srinagesh <linux@gurudas.dev>,
+ Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Kees Cook <kees@kernel.org>,
+ Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
+ <gpiccoli@igalia.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ David Heidelberg <david@ixit.cz>, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, iommu@lists.linux.dev, mfd@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org,
+ linux-input@vger.kernel.org
+References: <20260921-msm8952-initial-support-v3-0-b96fd3fe298b@mainlining.org>
+ <20260921-msm8952-initial-support-v3-16-b96fd3fe298b@mainlining.org>
+ <4de27200-3598-47b7-b0af-8f7acd037618@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <4de27200-3598-47b7-b0af-8f7acd037618@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Daniel,
 
-Add clocks and reset entries for the ADC controller.
+On Tue, 29 Sep 2026 09:11:28 +0200, Daniel Lezcano wrote:
+> On 9/21/26 20:19, Muzaffer Kadir via B4 Relay wrote:
+>> From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+>>
+>> Add MSM8952 support for tsens.
+>>
+>> Downstream does a lot of advanced things with calculations.
+>> But seems like using tsens-v1 directly works too.
+> 
+> Can you elaborate a bit the changelog please ?
+> 
+> Thanks
+> 
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clk/renesas/r9a09g056-cpg.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+MSM8952 has 11 sensors
+and 3200 default slope (according to downstream)
 
-diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
-index 51c1e322826a..6bf8f9ca16e6 100644
---- a/drivers/clk/renesas/r9a09g056-cpg.c
-+++ b/drivers/clk/renesas/r9a09g056-cpg.c
-@@ -35,11 +35,15 @@ enum clk_ids {
- 	CLK_PLLGPU,
- 
- 	/* Internal Core Clocks */
-+	CLK_PLLCM33_DIV2,
- 	CLK_PLLCM33_DIV3,
- 	CLK_PLLCM33_DIV4,
- 	CLK_PLLCM33_DIV5,
- 	CLK_PLLCM33_DIV16,
- 	CLK_PLLCM33_GEAR,
-+	CLK_PLLCM33_ADC_PCLK_GEAR,
-+	CLK_PLLCM33_ADC_PCLK_DIV2,
-+	CLK_PLLCM33_ADC_ADCLK_GEAR,
- 	CLK_SMUX2_XSPI_CLK0,
- 	CLK_SMUX2_XSPI_CLK1,
- 	CLK_PLLCM33_XSPI,
-@@ -135,6 +139,12 @@ static const struct clk_div_table dtable_2_100[] = {
- 	{0, 0},
- };
- 
-+static const struct clk_div_table dtable_8_10[] = {
-+	{0, 8},
-+	{1, 10},
-+	{0, 0},
-+};
-+
- static const struct clk_div_table dtable_16_128[] = {
- 	{0, 16},
- 	{1, 32},
-@@ -171,11 +181,18 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
- 	DEF_PLL(".pllgpu", CLK_PLLGPU, CLK_QEXTAL, PLLGPU),
- 
- 	/* Internal Core Clocks */
-+	DEF_FIXED(".pllcm33_div2", CLK_PLLCM33_DIV2, CLK_PLLCM33, 1, 2),
- 	DEF_FIXED(".pllcm33_div3", CLK_PLLCM33_DIV3, CLK_PLLCM33, 1, 3),
- 	DEF_FIXED(".pllcm33_div4", CLK_PLLCM33_DIV4, CLK_PLLCM33, 1, 4),
- 	DEF_FIXED(".pllcm33_div5", CLK_PLLCM33_DIV5, CLK_PLLCM33, 1, 5),
- 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
- 	DEF_DDIV(".pllcm33_gear", CLK_PLLCM33_GEAR, CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
-+	DEF_CSDIV(".adc_pclk_gear", CLK_PLLCM33_ADC_PCLK_GEAR, CLK_PLLCM33_DIV2,
-+		  CSDIV1_DIVCTL0, dtable_8_10),
-+	DEF_FIXED(".adc_pclk_gear_div2", CLK_PLLCM33_ADC_PCLK_DIV2,
-+		  CLK_PLLCM33_ADC_PCLK_GEAR, 1, 2),
-+	DEF_CSDIV(".adc_adclk_gear", CLK_PLLCM33_ADC_ADCLK_GEAR, CLK_PLLCM33_ADC_PCLK_GEAR,
-+		  CSDIV1_DIVCTL1, dtable_2_16),
- 	DEF_SMUX(".smux2_xspi_clk0", CLK_SMUX2_XSPI_CLK0, SSEL1_SELCTL2, smux2_xspi_clk0),
- 	DEF_SMUX(".smux2_xspi_clk1", CLK_SMUX2_XSPI_CLK1, SSEL1_SELCTL3, smux2_xspi_clk1),
- 	DEF_CSDIV(".pllcm33_xspi", CLK_PLLCM33_XSPI, CLK_SMUX2_XSPI_CLK1, CSDIV0_DIVCTL3,
-@@ -539,6 +556,10 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
- 						BUS_MSTOP(3, BIT(4))),
- 	DEF_MOD("gpu_0_ace_clk",		CLK_PLLDTY_ACPU_DIV2, 15, 2, 7, 18,
- 						BUS_MSTOP(3, BIT(4))),
-+	DEF_MOD("adc_0_pclk",			CLK_PLLCM33_ADC_PCLK_DIV2, 16, 7, 8, 7,
-+						BUS_MSTOP(3, BIT(9))),
-+	DEF_MOD("adc_0_adclk",			CLK_PLLCM33_ADC_ADCLK_GEAR, 16, 8, 8, 8,
-+						BUS_MSTOP(3, BIT(9))),
- 	DEF_MOD("tsu_0_pclk",			CLK_QEXTAL, 16, 9, 8, 9,
- 						BUS_MSTOP(5, BIT(2))),
- 	DEF_MOD("tsu_1_pclk",			CLK_QEXTAL, 16, 10, 8, 10,
-@@ -634,6 +655,7 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
- 	DEF_RST(13, 13, 6, 14),		/* GPU_0_RESETN */
- 	DEF_RST(13, 14, 6, 15),		/* GPU_0_AXI_RESETN */
- 	DEF_RST(13, 15, 6, 16),		/* GPU_0_ACE_RESETN */
-+	DEF_RST(15, 6, 7, 7),		/* ADC_ADRST_N */
- 	DEF_RST(15, 7, 7, 8),		/* TSU_0_PRESETN */
- 	DEF_RST(15, 8, 7, 9),		/* TSU_1_PRESETN */
- };
--- 
-2.55.0
+For tests, this is the table for readings:
+tsens sensor 0  1  2  3  4  5  6  7  8  9  10
+TWRP         32 31 29 28 28 31 30 30 30 32 30
+this patch   31 29 31 29 29 31 30 31 31 30 30
 
+Both are read from same device, one after the other,
+First upstream then TWRP.
+2 degree difference seems reasonable in my idea,
+as there is a reboot process happens in between reads and
+downstream has more power saving features than this port.
+
+I don't know any way to independently measure temperature.
+
+I reused offsets and slope from downstream.
+
+My commit message wasn't good, I will expand the
+commit message by v4.
+
+Best regards,
+Muzaffer Kadir
