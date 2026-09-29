@@ -1,44 +1,44 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4E65187CA;
-	Tue, 29 Sep 2026 10:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D537F51121C;
+	Tue, 29 Sep 2026 10:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790677968; cv=none; b=lH8JpLJTJYfWyjrZZbwu4Pn8lU5DrmMyU575otqV53hd3SVcXqJh7zMKQezegpQwNNA3MmjN+Nl7tZNpEtwh7rWCPcEQ4Fua/2qxt78vJ57LosM4tuFDoN9GQ0rTY1BzVqJWT3Bcj01TCC9jQCa4BJr53mRWAfZ8tc6e7aVeUIY=
+	t=1790677971; cv=none; b=AWqdGhyjIfjZj0XNAYf1rMaJrLAOma2zMRhmE3O4t2DQ6ShWoRlT4ReiZjkJiTwNaY0RImHQ2azUPEKSBYKq4iOTcII00+dcsxEaTXl9fBfmd3c76N9jvOhLh0h7VyewgLDg5L05a1aFJBy8M+ChCkpfiCQmMwrdNw3j3hrL8UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790677968; c=relaxed/simple;
-	bh=I7UMdGcCl0DX+Opz1TnjT3UoLaAAZc7x/DvZrufXojM=;
+	s=arc-20240116; t=1790677971; c=relaxed/simple;
+	bh=PGxfG4GswGxpRBUm8UCX+WqXgRKjV3h5jpjFEsNDvTI=;
 	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=uSgC84b8aYwMXdHMdgoq7qUXwUQBxpuFKjZ+s7nRnwWGciPWn9heD3BGubmCtpwSJxp9OpVZ7r6YctjHNo3tSdo3MjOuRKJhSSfXhUsmrsN0FFLU5pG+4d3itY+mBlz6WgENcjYlITebMGX6mdK6TdCmetfoA4G8BnB0wnsGcSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VoJUUOwL; arc=none smtp.client-ip=210.118.77.11
+	 Content-Type:References; b=B7JpCe/02Xbo1BDuoTNroTrE0KHNq2ua8bK7VjDfxbOOaJZdcNMRK2AKbGwkQtfv/P2dgBmuVYuP54kyN70ScN/rcfymWLLETOhUJAwiLtO9qANqrlpiwzqZGe/+FrsycSNM7eWR7W8qq8Mm7IeHGejzDmXn17gDbnelrntkwWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oSYPnfJD; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VoJUUOwL"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oSYPnfJD"
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260929103231euoutp01d4d8f15936912f644cd7a91de60a492d~ZxBwU3fzq2203922039euoutp01S;
-	Tue, 29 Sep 2026 10:32:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260929103231euoutp01d4d8f15936912f644cd7a91de60a492d~ZxBwU3fzq2203922039euoutp01S
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260929103234euoutp02dc4b1acf0a8fd54ea0ddc37536c0f74c~ZxBzNKfyq2495624956euoutp02b;
+	Tue, 29 Sep 2026 10:32:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260929103234euoutp02dc4b1acf0a8fd54ea0ddc37536c0f74c~ZxBzNKfyq2495624956euoutp02b
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1790677951;
-	bh=9NEw7RKkFUyh3R4GTKv1l/ySgAYiNAho9EQ+VxCzyQQ=;
+	s=mail20170921; t=1790677954;
+	bh=EbYsk9Njb8C2I6GLljBqusfUU4TznDQgHcHjwYQpI3Q=;
 	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=VoJUUOwLwIA5bdY4CGjAjgrWNK13n6Yg92cD6oAsUUvN9hVJkC/Sdn3iaVsnVmGvH
-	 6KKp8SSJUaGlfqRt8/NHCdby2bLTUzNk02gZYr2pYLP/l6XK1KiV1G6wRpoLPptTGQ
-	 lAtL+87SgZbEyVh8hFmQwasuYzy84p1ZgbamAy+A=
+	b=oSYPnfJDTcyArgTQcf54yN5b7peUpxpLNTf9vkZdj/QqheZaaGNztbEDCtQUDmc/L
+	 j0ThxVuDMpegD+YKuiRqYn0iXfGFO8jTcPWaHMz5r6ZHHb9bDxrtR6QhqYyhUIeKW1
+	 yWQS5CZpwEy6ztFlMcg5HmNdfnBc3XgPMLuCNeUY=
 Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260929103231eucas1p1e7b7a409de871be517c6efad3bf06881~ZxBv-bxT90572605726eucas1p1G;
-	Tue, 29 Sep 2026 10:32:31 +0000 (GMT)
+	20260929103233eucas1p1bc0682334aad710c3894271f46ba1f47~ZxBx6jyyA1238312383eucas1p12;
+	Tue, 29 Sep 2026 10:32:33 +0000 (GMT)
 Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
 	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260929103229eusmtip174bc2dae28e846d16be34688ae6f217d~ZxBuFcjhu0258202582eusmtip1_;
-	Tue, 29 Sep 2026 10:32:29 +0000 (GMT)
+	20260929103231eusmtip1fbec61cdfb04720ef14d10ad0c48a4db~ZxBwDYyUF0259202592eusmtip13;
+	Tue, 29 Sep 2026 10:32:31 +0000 (GMT)
 From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Tue, 29 Sep 2026 12:31:09 +0200
-Subject: [PATCH v5 12/21] drm/bridge: inno-hdmi: Make the PHY configuration
- table optional
+Date: Tue, 29 Sep 2026 12:31:10 +0200
+Subject: [PATCH v5 13/21] drm/bridge: inno-hdmi: Make the register clock
+ source selectable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,7 +46,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260929-jh7110-clean-send-v5-12-82b4d8e3c6c7@samsung.com>
+Message-Id: <20260929-jh7110-clean-send-v5-13-82b4d8e3c6c7@samsung.com>
 In-Reply-To: <20260929-jh7110-clean-send-v5-0-82b4d8e3c6c7@samsung.com>
 To: Vinod Koul <vkoul@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
 	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, 
@@ -76,89 +76,65 @@ Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
 	<u.kleine-koenig@baylibre.com>,  Michal Wilczynski
 	<m.wilczynski@samsung.com>
 X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20260929103231eucas1p1e7b7a409de871be517c6efad3bf06881
+X-CMS-MailID: 20260929103233eucas1p1bc0682334aad710c3894271f46ba1f47
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260929103231eucas1p1e7b7a409de871be517c6efad3bf06881
+X-RootMTR: 20260929103233eucas1p1bc0682334aad710c3894271f46ba1f47
 X-EPHeader: CA
-X-CMS-RootMailID: 20260929103231eucas1p1e7b7a409de871be517c6efad3bf06881
+X-CMS-RootMailID: 20260929103233eucas1p1bc0682334aad710c3894271f46ba1f47
 References: <20260929-jh7110-clean-send-v5-0-82b4d8e3c6c7@samsung.com>
-	<CGME20260929103231eucas1p1e7b7a409de871be517c6efad3bf06881@eucas1p1.samsung.com>
+	<CGME20260929103233eucas1p1bc0682334aad710c3894271f46ba1f47@eucas1p1.samsung.com>
 
-The pre-emphasis and drive-strength values in inno_hdmi_phy_config, and
-the registers they are written to, belong to the PHY integrated into the
-controller. A platform whose PHY is a separate device has neither, and
-its own .mode_valid already validates the pixel clock against the real
-PHY, so the table only bounds the generic check.
+inno_hdmi_init_hw() drives the register interface from the system clock
+on every platform, by setting v_REG_CLK_SOURCE_SYS unconditionally in
+HDMI_SYS_CTRL.
 
-Let such a platform omit the table: skip the integrated-PHY register
-writes in the power-up path and the table lookup in .mode_valid when it
-is absent. Platforms that supply one are unaffected.
+That is not right everywhere. On the JH7110 a Framework 13 (fml13v01)
+panel flickers continuously with the system clock selected and behaves
+once the TMDS clock drives the register interface instead. Maud Spierings
+found this by diffing HDMI_SYS_CTRL against the StarFive vendor kernel,
+which leaves the bit clear.
 
+Add a plat_data flag for it rather than changing the bit for everyone.
+The Rockchip integrations keep the system clock, so this is a no-op for
+them; only a platform that asks for it gets the TMDS clock.
+
+Reported-by: Maud Spierings <maud_spierings@murena.io>
+Closes: https://lore.kernel.org/all/e780ecb8-918f-4816-99c8-b69b10b25a18@murena.io/
 Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 ---
- drivers/gpu/drm/bridge/inno-hdmi.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/bridge/inno-hdmi.c | 4 +++-
+ include/drm/bridge/inno_hdmi.h     | 2 ++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/bridge/inno-hdmi.c b/drivers/gpu/drm/bridge/inno-hdmi.c
-index 10cfdaa2891bb1a1389002d17cd0dfcec9398212..56f7d41cdae49ae872599a86799412c421158369 100644
+index 56f7d41cdae49ae872599a86799412c421158369..db92013a3b1e7c1b6668e9257523a0ca8d2c23d7 100644
 --- a/drivers/gpu/drm/bridge/inno-hdmi.c
 +++ b/drivers/gpu/drm/bridge/inno-hdmi.c
-@@ -538,8 +538,14 @@ static void inno_hdmi_power_up(struct inno_hdmi *hdmi,
- 			       unsigned long mpixelclock)
- {
- 	struct inno_hdmi_phy_config *phy_config;
--	int ret = inno_hdmi_find_phy_config(hdmi, mpixelclock);
-+	int ret;
-+
-+	inno_hdmi_sys_power(hdmi, false);
-+
-+	if (!hdmi->plat_data->phy_configs)
-+		goto out;
+@@ -580,7 +580,9 @@ static void inno_hdmi_init_hw(struct inno_hdmi *hdmi)
+ 	usleep_range(100, 150);
  
-+	ret = inno_hdmi_find_phy_config(hdmi, mpixelclock);
- 	if (ret < 0) {
- 		phy_config = hdmi->plat_data->default_phy_config;
- 		DRM_DEV_ERROR(hdmi->dev,
-@@ -549,8 +555,6 @@ static void inno_hdmi_power_up(struct inno_hdmi *hdmi,
- 		phy_config = &hdmi->plat_data->phy_configs[ret];
- 	}
+ 	msk = m_REG_CLK_INV | m_REG_CLK_SOURCE | m_POWER | m_INT_POL;
+-	val = v_REG_CLK_INV | v_REG_CLK_SOURCE_SYS | v_PWR_ON | v_INT_POL_HIGH;
++	val = v_REG_CLK_INV | v_PWR_ON | v_INT_POL_HIGH;
++	val |= hdmi->plat_data->reg_clk_source_tmds ? v_REG_CLK_SOURCE_TMDS :
++						      v_REG_CLK_SOURCE_SYS;
+ 	hdmi_modb(hdmi, HDMI_SYS_CTRL, msk, val);
  
--	inno_hdmi_sys_power(hdmi, false);
--
- 	hdmi_writeb(hdmi, HDMI_PHY_PRE_EMPHASIS, phy_config->pre_emphasis);
- 	hdmi_writeb(hdmi, HDMI_PHY_DRIVER, phy_config->voltage_level_control);
- 	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x15);
-@@ -560,6 +564,7 @@ static void inno_hdmi_power_up(struct inno_hdmi *hdmi,
- 	hdmi_writeb(hdmi, HDMI_PHY_SYNC, 0x00);
- 	hdmi_writeb(hdmi, HDMI_PHY_SYNC, 0x01);
- 
-+out:
- 	inno_hdmi_sys_power(hdmi, true);
+ 	inno_hdmi_standby(hdmi);
+diff --git a/include/drm/bridge/inno_hdmi.h b/include/drm/bridge/inno_hdmi.h
+index 1e9974401c39e3773bb339eaec0b45ff1dd9c975..620f035eb9846762ff91cd933b30e07eaeeae8ed 100644
+--- a/include/drm/bridge/inno_hdmi.h
++++ b/include/drm/bridge/inno_hdmi.h
+@@ -32,6 +32,8 @@ struct inno_hdmi_plat_data {
+ 	const struct inno_hdmi_plat_ops *ops;
+ 	struct inno_hdmi_phy_config *phy_configs;
+ 	struct inno_hdmi_phy_config *default_phy_config;
++	/* Clock the register interface from the TMDS clock, not the system clock. */
++	bool reg_clk_source_tmds;
  };
  
-@@ -836,7 +841,8 @@ static enum drm_mode_status inno_hdmi_bridge_mode_valid(struct drm_bridge *bridg
- 	if (mpixelclk < HDMI_TMDS_CHAR_RATE_MIN_HZ)
- 		return MODE_CLOCK_LOW;
- 
--	if (inno_hdmi_find_phy_config(hdmi, mpixelclk) < 0)
-+	if (hdmi->plat_data->phy_configs &&
-+	    inno_hdmi_find_phy_config(hdmi, mpixelclk) < 0)
- 		return MODE_CLOCK_HIGH;
- 
- 	if (plat_ops && plat_ops->mode_valid) {
-@@ -1118,11 +1124,6 @@ struct inno_hdmi *inno_hdmi_probe(struct platform_device *pdev,
- 	int irq;
- 	int ret;
- 
--	if (!plat_data->phy_configs || !plat_data->default_phy_config) {
--		dev_err(dev, "Missing platform PHY ops\n");
--		return ERR_PTR(-ENODEV);
--	}
--
- 	hdmi = devm_drm_bridge_alloc(dev, struct inno_hdmi, bridge, &inno_hdmi_bridge_funcs);
- 	if (IS_ERR(hdmi))
- 		return ERR_CAST(hdmi);
+ struct inno_hdmi *inno_hdmi_bind(struct device *pdev,
 
 -- 
 2.34.1
