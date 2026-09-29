@@ -1,74 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3EC53B613;
-	Tue, 29 Sep 2026 20:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBD63B9DA2
+	for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 20:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790714063; cv=none; b=tT6SWiYqbzSqYVrG3PhNr3rurqh+DMat8j4k5w+u9Z0vGRoF8RH3ns1C+6kLEW8unWvdEcCNxvF2KKdekBrfSc/1SQRL2Ru3NPjV4BhVheMbctogfO11ZiV1eOWl5rocpdk348wcDHOrLq/H88JXuxoDj6eJX78HYz9l/lcSaVA=
+	t=1790714204; cv=none; b=uuf9YvzH3kPdYSZCkSIjiG33g+HPjN7jd3UYZ/DoGVpq3s79/bGcpEO3HR2txUDFjFYV2jmmzSnN7CI122/Xp72Ugf75mw2yoXyVAF1lQrholibxR9T7lv1exlEQi12q9OEYtqMZosSZFOS0Sedy/F2Vk9nwq/VUzv6Jdqy8ld4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790714063; c=relaxed/simple;
-	bh=uqzPvssUpU0NWV7aeqFhFC1Ds8F9yGTwzUx3rMzSJfw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tcl8Fwme+XTM3w56aK4VxSMRPmOB92KguNGzICuUPMnMLNNrUWozI3A8VuZlgWX5Bjdb1HSrYmXuCPY8cEG8dhuXzMN9JynmfULwi5eg2d9jRl5q4xckfZTzgH0d5+dEbZ4K8pTM83GyfPrMLXfo45HXT3arviTHZ7ILgVaJGzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E2U/jp51; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790714204; c=relaxed/simple;
+	bh=yhpu5AzNOI5Y10YA5nFBH+Nkn7LBfLtKpgOknmId3pg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=K8gQ1791KjwrZTDe+TaScyNa590nTp89PJhA+BicdUJ635xdm35Rfgzaqp8ujxyoUBPkAbZrAgH0TrIixLymf1oygWm3dmTBJeTqAxbMPpkzsg7WqXUj2qzJ0AIu1ROyozZ8by0Eq/7gScRhBX/zKkIV+3lLUE+Oxfjbtyu+m94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WAH/Mp+1; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E2U/jp51"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09D821F0089C;
-	Tue, 29 Sep 2026 20:34:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790714062;
-	bh=eVDGXtda6alBwsEddGUj6QdZKxkb6ETP0ChakBOah6g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=E2U/jp51+5HhnrCYQQhxCUTkz11TyWvbDR/oIjRg2249zcr5KQ2NmeCIOQSvYqm06
-	 OPd+IOkLjKZx1qN4Te05xbgp3g4DywN55mRYZKrj7HVfKswvan2iFIQ3jSAIxZTPFb
-	 gdtHz4HJRqeKW/BXmm9WRocpuFr8rdIlz5EuZ/CP89D4Xw+IYEXsESjbZpC2g3hJ8K
-	 /k3xd3rziQJVLq+M9R28nHSaYoQ1Qi1+7zucW/MuzjwbWuvfDT1xK8C6cinWcYSofo
-	 sYgcsxYwPdBiXlC+tLa2eFAamPIn38Z/jtJa2wg4VkwqJR5DrqIiU3ae0Yxnk6AoFB
-	 vTUhwRbxH1Cag==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>,
-	Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH v5] dt-bindings: mailbox: qcom: Document Maili CPUCP mailbox controller
-Date: Tue, 29 Sep 2026 15:34:14 -0500
-Message-ID: <179071404937.2903617.11280795356567912201.b4-ty@b4>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260907-maili_initial_clock-v5-1-e79bb6b93a49@oss.qualcomm.com>
-References: <20260907-maili_initial_clock-v5-1-e79bb6b93a49@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WAH/Mp+1"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 2F6871A1068;
+	Tue, 29 Sep 2026 20:36:40 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E7F47601BD;
+	Tue, 29 Sep 2026 20:36:39 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8876B10329865;
+	Tue, 29 Sep 2026 22:36:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1790714198; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=yhpu5AzNOI5Y10YA5nFBH+Nkn7LBfLtKpgOknmId3pg=;
+	b=WAH/Mp+13aZ5eDr8kOEsC1v3Ok9ucToS9GnpiqyopQtL29j1sHMbGhqHPlXUaJBc8KihKl
+	KSW3Q2eUAT9N8eEvvMKurcqFeUFtvkTd0lFqGSGlwReBdAC6GqfJjvkhT0e77v+Fs5FgGc
+	sB6a4aPme+tBjZLoP5U6K28wdW1zbq2uFCMCte+Y2Iptg/sOkLtTjQ8hj/RGRwMtemj44u
+	aZiWAaTDFXvFfsu4ATJOpFSHcIoIm4jAuHBqrnB9OVKWl5wDojJK2qkQkUWikm9SBRdP4a
+	ePkus+vRyVlAVqxNuksxJKAqmuvZ1W97trLVnkMf0CgyVrl6U1uaB7HtImEOwA==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: sashiko-bot@kernel.org
+Cc: sashiko-reviews@lists.linux.dev,  devicetree@vger.kernel.org,
+  linux-clk@vger.kernel.org,  conor+dt@kernel.org,  robh@kernel.org
+Subject: Re: [PATCH v5 8/9] clk: nuvoton: ma35d1: get HXT/LXT from DT
+In-Reply-To: <20260929145618.187A21F000FF@smtp.kernel.org>
+	(sashiko-bot@kernel.org's message of "Tue, 29 Sep 2026 14:56:17
+	+0000")
+References: <20260929-perso-ma35d1-upstream-clk-v5-0-68533e935ee4@bootlin.com>
+	<20260929-perso-ma35d1-upstream-clk-v5-8-68533e935ee4@bootlin.com>
+	<20260929145618.187A21F000FF@smtp.kernel.org>
+User-Agent: mu4e 1.12.12; emacs 30.2
+Date: Tue, 29 Sep 2026 22:36:36 +0200
+Message-ID: <871pab6bhn.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
+On 29/09/2026 at 14:56:17 GMT, sashiko-bot@kernel.org wrote:
 
-On Mon, 07 Sep 2026 14:07:18 +0530, Taniya Das wrote:
-> Document the CPU Control Processor (CPUCP) mailbox controller for the
-> Qualcomm Maili SoC. It is software compatible with the X1E80100 CPUCP
-> mailbox controller and uses it as a fallback compatible string.
+> Thank you for your contribution! Sashiko AI review found 2 potential issu=
+e(s) to consider:
+> - [High] clk: nuvoton: missing IS_ERR check causes permanent probe
+> deferral
 
-Applied, thanks!
+Gasp. Yes that's correct.
 
-[1/1] dt-bindings: mailbox: qcom: Document Maili CPUCP mailbox controller
-      commit: dd647489dadd1f9460fa7280f08e4b65cb9aa349
+> - [Medium] clk: nuvoton: hardcoded parent strings cause orphaned gate
+> clocks
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+I don't think this one is serious, linkage is reliable because we
+leverage the device tree nodes in the clk_core_get/clk_parse_spec
+path. The fallback is indeed based on string matching, but heh, that's
+because of backward compat, not my call.
+
+I will send a v6.
+
+Miqu=C3=A8l
