@@ -1,227 +1,967 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011030.outbound.protection.outlook.com [52.101.65.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2579A4F85C4;
-	Tue, 29 Sep 2026 15:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790694150; cv=fail; b=DySrCId0ya/UIHch75oW9HIq8ydqWT4IpS9KaPhm2rCjiRJrZOQGR7jXAEMgB5pIQ4Nq0DF4F7e3i/4aNRAo1EG02h2ZWcjBABuUEZlcnFp3Ncht6k/GrENTc4vjenCLPcGaEmzADjS1YEqBd0ZKk8lXry4qqwp2KTLCkdjQBdc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790694150; c=relaxed/simple;
-	bh=xAiYNFhtsXOpnDPZGs+bcu/26De6OVYHEZ0/BBaOfmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=JslPnflomz15e1yQM4y1W/umtaCQhYAYEmKF2eotKyNIAG6o2Mz8BYqLjSPYjJ7psOglo8xkTe0ExFLzZPqAwMrRqDVwOGzheppOc5SmSUec+j2NC8L3TE8dgnPxYQKQ0ghNe2LbhNeD3KvauV6LXNnxRrqFFROG7RA/9458qOI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=umt2hlSB; arc=fail smtp.client-ip=52.101.65.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="umt2hlSB"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J1PRs/DIIFCN+ASRLC/+kkXL29vGJBxIm824N9S4bjdea4H5OSRS+ygY76HlQyxNIZ7BAVaLbnFNRMXOzCnVJdHGMPU5uqLeeRT3KzAK453MrGOd8weTE8pdZq0vF54yjrr4S8MjZd3IFO8CP1aaqxBaMjtOWASbO1QSX96XQcV++anPoFQlSVQwZBlvwhN+3OKKNm8aL+l7K/KYHzl6IkyhJCBK4maYftFaafm5KHHEMH1roQ5uKnllD4pS6Sn7QTTOHkcghwXDLcyUxpR3qs5qECtQ/l/+b0CDP+tDAgUqXSXH1HBUHKzidipQfdVp63RnkRp36qwn+8iU3NIv3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dv52Hrnu9HFFpKb8modhz3Sqw0H0rfEaoSJc5UmsYjo=;
- b=J0cYIQlxkr1UKJ5g2QectxjWpJra3NuPZQX/rQB9c5LxF1hpfb/oBuJPOy1BQ8paz3W2BkuL+mbTfm7kcGlpvmH29fH+7eyjpJGsekaO0KhOJq8mYkhmnJ6mSLMkTBUx174kRsdLnLdIix7T1s6IUD4W85uSDjsFziTDewib8BlJEzZMOL//7N4BVlNFDlTxoHKyU2vXjaMdoWoylMLgDEg1qh4APlmu/do+la+2UfeQwjCelubggdR++CUfVeYudzijQA2CIA7K4xcp9cQrhFckqDaC37D0xEBHzZu7ET4kz1dpUzDEVUSXg9Uvmoumvz1uRySSY6rq/m9tCH6Zig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dv52Hrnu9HFFpKb8modhz3Sqw0H0rfEaoSJc5UmsYjo=;
- b=umt2hlSB/MwbEaXOqSlhgeq5rPIH4Ql/gs9Yo2JZqbjQsl5gxXI7QyfU5JhJbfEM/EoTXIpfXo8Wzb9sJ0lgF2SdmWrv0+8qPvmaE7sEgYBAzg/CQ9+/tSaI5djtN4iorfj1K8W8GbmnkLO5kQ8IGn9oDaus6aSPzFVRfZ1rfK502nl2o+vOyqW4bt7/8JZwR1m2v/f7jI1fCtEM/69DJouus5oBfJrVRUVW30O8BMlEK/gpnG5prvyJU/2vzXqz3aiMt96wnsq/upbaG4CU25RMpgrYxBlMNmbAzg4R1yXYa8oUSZzckwGQdVnMDdhUi01Nncn6z35b8uCRzV8lIA==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by MMZPR04MB619844.eurprd04.prod.outlook.com (2603:10a6:190:54::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.24; Tue, 29 Sep
- 2026 15:02:07 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0451.022; Tue, 29 Sep 2026
- 15:02:07 +0000
-Date: Tue, 29 Sep 2026 11:01:56 -0400
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Frank Li <Frank.Li@nxp.com>, Lee Jones <lee@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-i3c@lists.infradead.org, mfd@lists.linux.dev,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 05/20] i3c: dw: switch to array-based exclusive reset
- control
-Message-ID: <arvS5M5UeK64NP9m@lizhi-Precision-Tower-5810>
-References: <20260929061417.20733-1-jszhang@kernel.org>
- <20260929061417.20733-6-jszhang@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260929061417.20733-6-jszhang@kernel.org>
-X-ClientProxiedBy: CY5PR19CA0031.namprd19.prod.outlook.com
- (2603:10b6:930:1a::23) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B603A3D79EF;
+	Tue, 29 Sep 2026 15:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790694191; cv=none; b=sOPdxGnB4TbvezYRyLdcS8J1x3fMxs9LQQcQJ4vYYisC1mC1kVlyuxYwSla8ckCk1LcnNcX/ODGfPOQhRy378v3cgfxvJCbqyzPvfVDqLT7H7gxoqaNOpBjEcmDapF9vkmFbGldelSXNf8Lq7sq6RymK2iwIDSNAYYYtea/1scc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790694191; c=relaxed/simple;
+	bh=I32lRmeX03BK/thHrM6AXR+aj8zTVqDZ1Yjo2puV4dg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uyUfGWs2OAr4yxY9E3rm3ruwpgrVX8wXSSbbb99G6xs4ULg7HBKxaMayDDVC8LuMNpGxP8k5t6J3z+jPTqPUjJlmh7fL2VKKicv0YBvK/7BbOLiwEq1RmMSAWV3ShpuH+qHJxMO2G6slVHZpOlodVlwz/F4+/MV+l8L8UJ8YmnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from edelgard.fodlan.icenowy.me (unknown [112.94.101.54])
+	by APP-05 (Coremail) with SMTP id zQCowACH7zny0rtqdIuvCQ--.6639S2;
+	Tue, 29 Sep 2026 23:02:11 +0800 (CST)
+Message-ID: <89101c871fa34c74908c490701691a91749d37e2.camel@iscas.ac.cn>
+Subject: Re: [PATCH v5 00/21] drm: starfive: jh7110: Enable display subsystem
+From: Icenowy Zheng <zhengxingda@iscas.ac.cn>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, Vinod Koul
+ <vkoul@kernel.org>,  Manivannan Sadhasivam	 <mani@kernel.org>, Neil
+ Armstrong <neil.armstrong@linaro.org>, Rob Herring	 <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss
+	 <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Luca Ceresoli	 <luca.ceresoli@bootlin.com>, Maarten Lankhorst	
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Andy Yan
+ <andy.yan@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>,  Emil
+ Renner Berthing	 <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>,
+ Michael Turquette	 <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Heiko Stuebner	 <heiko@sntech.de>, Paul Walmsley
+ <pjw@kernel.org>, Palmer Dabbelt	 <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Alexandre Ghiti	 <alex@ghiti.fr>, Dominique
+ Belhachemi <db@domibel.de>, Brian Masney	 <bmasney+clk@redhat.com>, Jerome
+ Brunet <jbrunet+clk@baylibre.com>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, Marek
+ Szyprowski <m.szyprowski@samsung.com>, Maud Spierings
+ <maud_spierings@murena.io>, Graham Markall	 <hello@big-grey.co.uk>, Chaoyi
+ Chen <chaoyi.chen@rock-chips.com>, Joshua Peisach <jpeisach@ubuntu.com>,
+ Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,  Byron
+ Stanoszek <gandalf@winds.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@oss.qualcomm.com>
+Date: Tue, 29 Sep 2026 23:02:10 +0800
+In-Reply-To: <997ee10ce43857e096cc2c5723bf949683791714.camel@iscas.ac.cn>
+References: 
+	<CGME20260929103200eucas1p17af134cc3b93c242227964f574f13aa5@eucas1p1.samsung.com>
+		 <20260929-jh7110-clean-send-v5-0-82b4d8e3c6c7@samsung.com>
+	 <997ee10ce43857e096cc2c5723bf949683791714.camel@iscas.ac.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|MMZPR04MB619844:EE_
-X-MS-Office365-Filtering-Correlation-Id: dd2b95e2-906c-44d5-b0ff-08df1e3aa148
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|7416014|1800799024|23010399003|19092799006|18002099003|22082099003|4143699003|10067099003|56012099006|11063799006;
-X-Microsoft-Antispam-Message-Info:
-	6Hjrj9CIcd1TDrsKVW+SsDPmF3vZ2COw1kTKXjqMAzb9b3YnkrXPFNsH0EhiDW3vPIUGYUvzUYxU5J3G4f0QXig3YGgh0cGiAAwjSa4pT4FCqxRP9uMMGlDKLZ4COUFxBiAH6y35fupYn/OTqNnK6Mp0GnedJGOF61PmBcvMkZ2vsrEi+GMQCxzqEdYPTzGCP8Rwlv77SJnizy7Y55ERZ/Y1oGZ6lF2Gc/q2Gm1BgO537Ja0aNQSY2uM4l5uBdebZK1TDfkCsfkWBWPXV31F6L1ZTRHKzpfYmdtSQ58v4AarWOSnitZNQCWBaBlNGsvKpcIA50XJF34PAcoD5urfafrFybSXRAyofbPA4H+MIs78I6liZg2CFmxcbHH6PzMhw9h2mxdNZ/WOCxuV+uz5CIyZYcsk2spMHylmZvnqNtc30Pn80LPniRyqnMTNihDjCc6zrWO430bXDmXwwGG1sESWbn4w3HIw/zs4BmQ1ECJwpO33oAZTKM4/182mnFx13WrpPOe5T/AxkWad9F+emyruKbYAMwpzUk4uK9jE8951EdV5VrO5bd9mFTatBAt9piLi0L3avifhaM2ZHCmA7lJGZux9ZQNKpeXyvPQp+d9Kl2sm5fPbIC1ijeaP5xdJALEjzgfTxTlROvszne/hB/3KudEVx4dB/xVh6qfh0wA=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(23010399003)(19092799006)(18002099003)(22082099003)(4143699003)(10067099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?KKGWuMMWdES+UO8fULVSQr+RXi2hya3Q5pETILFHyGoCfRjmnd+9eyELMQ/c?=
- =?us-ascii?Q?zoF8z03Jx/HGI9D6YCUV7i5KxconvOueB4h//K4MUhV6arwPu9gXdg7JkLll?=
- =?us-ascii?Q?Y4MYCf1ZYwf3eu5PvupAGJfK4R6R/3AMXeWXYnqUJFiYVM3eQORAhSaFUVGA?=
- =?us-ascii?Q?E7SD/z9hCujZd2zU+G4PPccu/kchApQTIt6f0tykqc7lJVcje6hJitCZCUMb?=
- =?us-ascii?Q?OdFsgsyRMdQdC+uX5eWFWUA6vBV/ZLlNwspfwKn9MOcrTcy8Js4vOaxKwFJo?=
- =?us-ascii?Q?AoR2OHtWpGyccpMRxzELXvTOPlR0Cwa34e7+Ki1284hiJLwasxvYgkucPUcn?=
- =?us-ascii?Q?ZR7bIBng1PAatBc+gSsRHhygIzb6fte0nD5ArzzJ8ByVy6/L9tbTzzbxQ4ne?=
- =?us-ascii?Q?ModsW9mr+kViXN7dgMKY7teNI2U3QYPTD8BPqLbQccpSbdX6RDH1ifErJia5?=
- =?us-ascii?Q?t7kVQqF+5Bc5oaBjHdJapnSCAiALmgEKaeSkkWrkVVKEWoC7r5f/Jd53tHyv?=
- =?us-ascii?Q?Jtriq0Rz5H/ykGO+IU8pS7IMaN/BNI8GWff0XyUwYKR219p5N5H/8eF8FB7V?=
- =?us-ascii?Q?PH5O5Bu2fN63g1trs7MAZEak97xId235/tfv6QT1XeR5aBI6gzKjDLDBJ10P?=
- =?us-ascii?Q?5eCsBRtwEocN/b5sC5ikBG2UPgaeaFmaY3n8AP+LPnQS9M8DRgZZT5WunGPu?=
- =?us-ascii?Q?MHyK/1cm0Cn9XITftkqAr/W4ZCo9/yM8yiqAZlFKMu7b7eQPNKIHsd/ap03+?=
- =?us-ascii?Q?8ANdW02Gx+37rsBTHWhAZ8RUncTTCvGf9s36nARN+YUn6MZ8I2Pth+Quea2W?=
- =?us-ascii?Q?YctJeryR8thWJ6TDKGxX3h8eGAKsxx9GQR2kWVmAFbHry0+JeuUtEAhePR1w?=
- =?us-ascii?Q?L46M8Vxou2je/WipGmD+TW3CjEbu0QXHzTGigAHE7+YpnhylnFw9jjFXz7j5?=
- =?us-ascii?Q?FJzkkW1o1vbeK7Sg4RJ3JnFZCXjMmIMajtvA20+lN9l/gvFw+XK8ac28s/8g?=
- =?us-ascii?Q?NJJ6MOVCeAFB5Pt4PtjMr3WykoXhd4H5CqvoVo1ljWyKicxiwwow04s5kgQN?=
- =?us-ascii?Q?qxic8EwjyJsgiNbHbkId6WTDjY6U4MhA/P49NmFqY/wYVrQo90pQHe5wx/w6?=
- =?us-ascii?Q?h/jOprstt9DeLbxuHy2eVFZZ3yU5NVJIGAyBo3pcrwMoKBiLi3rd9VazM4Wk?=
- =?us-ascii?Q?lU9qsnNFTWy6P5/nVW5qdXjvFF1xUgP/X7A68f0TCAUUBCOqULgj8Q3oIuc8?=
- =?us-ascii?Q?aVOp0IbdY4H5Z4KKDF6LnrfNVK8tOIuD4HaqAD3rySQbIfslCnf9XciXjqv+?=
- =?us-ascii?Q?JTgys29F661B0SWuZVi0fY9KtUcyeKl99HKyhZ2kAxdRVOsHYmjY/X8oa3hu?=
- =?us-ascii?Q?rMD5a1CGRe0wn1rLts6C81eq03oY7Oap1KC108XUNkkug+TwIlKDfkQkasiq?=
- =?us-ascii?Q?q8N+Nj1rFkW12rOWetPQ//tqnBwKjwWuX3ZUdky58V1f2ueRHp0NijJPz3pn?=
- =?us-ascii?Q?fFQtX50lbRq9eLNfu1TZzfITzSIBHIKlyLHkrVc9phsAj1S7lxNZBbNkEJBo?=
- =?us-ascii?Q?IHTDoCn8yv9DxAR++uLJwux5hgNdoyT2TVeS316xBOW+RBcDxprN+nMmc3mP?=
- =?us-ascii?Q?13+w9REMrpgyTgO8ir7KbNM1dV9VpLmE39YBDArPvgBhhj4Uy6i5lVSUFnlH?=
- =?us-ascii?Q?I37xeoA3WSia61RvVl7CyTa1I2NRAg9sTdil60OzpYnlreFIEAMfhcXTSyS7?=
- =?us-ascii?Q?N92QCas6Gerr6hnh7e53eb3GB1hSipYN/VCB9SS9qYmO7JDVGey/?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd2b95e2-906c-44d5-b0ff-08df1e3aa148
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2026 15:02:07.6129
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2pgx2coCKPIBzsiWfYlIOKMbONRPrKXjF8rhs+AqGqqCJl1GrMr5x87tkW96wUIgyccByEA4k9lyZLK7M5IgHBdf+RWVz8QoIVhAkmouaAlAJrc7OsbrugPDAI2wIRaH
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MMZPR04MB619844
+X-CM-TRANSID:zQCowACH7zny0rtqdIuvCQ--.6639S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfuw1UArW3KFWUCFyrXw4fXwb_yoW5AryxJo
+	W7Gw1rZr4rKr1j9r1UAr17Jw13XF1kGFnrXr1UAr13GF1kJr4UA34xJa45X3y3tF18ur4U
+	CryUJr18Xay8Jr1kn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUYS7k0a2IF6w4kM7kC6x804xWl14x267AKxVWrJVCq3wAFc2x0
+	x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj4
+	1l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0
+	I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4
+	vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
+	xwCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x07b3nY7UUUUU=
+X-CM-SenderInfo: x2kh0wp0lqwv3d6l2u1dvotugofq/
 
-On Tue, Sep 29, 2026 at 02:14:02PM +0800, Jisheng Zhang wrote:
-> The Synopsys DesignWare I3C master controller can have multiple reset
-> lines, such as a core reset and APB reset.
->
-> Refactor the driver to use devm_reset_control_array_get_exclusive()
-> instead of a single named reset handle. This automatically manages all
-> resets allocated to the device node sequentially.
->
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
+=E5=9C=A8 2026-09-29=E4=BA=8C=E7=9A=84 22:54 +0800=EF=BC=8CIcenowy Zheng=E5=
+=86=99=E9=81=93=EF=BC=9A
+> =E5=9C=A8 2026-09-29=E4=BA=8C=E7=9A=84 12:30 +0200=EF=BC=8CMichal Wilczyn=
+ski=E5=86=99=E9=81=93=EF=BC=9A
+> > This series enables the display subsystem on the StarFive JH7110.
+> >=20
+> > Merging: the series splits by subsystem, there is no build
+> > dependency
+> > between the blocks, and each block lands in the tree that already
+> > owns
+> > those files:
+> >=20
+> > =C2=A0 drm-misc=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1, 3, 6,=
+ 8-13, 16
+> > =C2=A0=C2=A0=C2=A0 drivers/gpu/drm/bridge/, include/drm/bridge/ and the=
+ display
+> > =C2=A0=C2=A0=C2=A0 bindings. Patch 1 is an inno-hdmi fix with a Fixes: =
+tag; it
+> > applies
+> > =C2=A0=C2=A0=C2=A0 to Rockchip as much as to StarFive and is independen=
+t of the
+> > rest,
+> > =C2=A0=C2=A0=C2=A0 so it can go on its own.
+> >=20
+> > =C2=A0 linux-phy (Vinod)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 2, 17-19
+> > =C2=A0=C2=A0=C2=A0 drivers/phy/, include/linux/phy/ and bindings/phy/, =
+all covered
+> > by
+> > =C2=A0=C2=A0=C2=A0 the GENERIC PHY FRAMEWORK entry.
+> >=20
+> > =C2=A0 Conor's tree=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 4, 5, 7, 14-15, 20
+> > =C2=A0=C2=A0=C2=A0 bindings/soc/starfive/ (STARFIVE SOC DRIVERS),
+> > =C2=A0=C2=A0=C2=A0 arch/riscv/boot/dts/starfive/ (STARFIVE DEVICETREES)=
+, and
+> > =C2=A0=C2=A0=C2=A0 drivers/soc/starfive/, which this series creates.
+> >=20
+> > =C2=A0 -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 21
+> > =C2=A0=C2=A0=C2=A0 MAINTAINERS.
+> >=20
+> > There are no out-of-tree dependencies: the dc8200 driver, the
+> > th1520
+> > reset controller and the inno-hdmi bridge that the RFC listed as
+> > prerequisites are all upstream now.
+> >=20
+> > One in-tree dependency: the clk patch that was 14/20 in v4 has been
+> > applied by Brian Masney so it is dropped here. The DT patch needs
+> > it
+> > at
+> > runtime for the pixel MUXes to follow the PHY, so this series wants
+> > that
+> > commit present.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Oh I forgot to pick this patch, which is
+af384d6e0573b416a7a28e0ab6300d797cae369d in linux-next.
 
->  drivers/i3c/master/dw-i3c-master.c | 24 ++++++++++++++++++------
->  drivers/i3c/master/dw-i3c-master.h |  2 +-
->  2 files changed, 19 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-> index 4563d8761ba0..1c6c870f5bb3 100644
-> --- a/drivers/i3c/master/dw-i3c-master.c
-> +++ b/drivers/i3c/master/dw-i3c-master.c
-> @@ -1657,6 +1657,11 @@ static const struct dw_i3c_platform_ops dw_i3c_platform_ops_default = {
->  	.set_dat_ibi = dw_i3c_platform_set_dat_ibi_nop,
->  };
->
-> +static void dw_i3c_resets_assert(void *data)
-> +{
-> +	reset_control_assert(data);
-> +}
-> +
->  int dw_i3c_common_probe(struct dw_i3c_master *master,
->  			struct platform_device *pdev)
->  {
-> @@ -1696,10 +1701,17 @@ int dw_i3c_common_probe(struct dw_i3c_master *master,
->  	if (IS_ERR(master->pclk))
->  		return PTR_ERR(master->pclk);
->
-> -	master->core_rst = devm_reset_control_get_optional_exclusive_deasserted(&pdev->dev,
-> -										NULL);
-> -	if (IS_ERR(master->core_rst))
-> -		return PTR_ERR(master->core_rst);
-> +	master->resets = devm_reset_control_array_get_optional_exclusive(&pdev->dev);
-> +	if (IS_ERR(master->resets))
-> +		return PTR_ERR(master->resets);
-> +
-> +	ret = reset_control_deassert(master->resets);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_add_action_or_reset(&pdev->dev, dw_i3c_resets_assert, master->resets);
-> +	if (ret)
-> +		return ret;
->
->  	spin_lock_init(&master->xferqueue.lock);
->  	INIT_LIST_HEAD(&master->xferqueue.list);
-> @@ -1873,7 +1885,7 @@ static int __maybe_unused dw_i3c_master_runtime_suspend(struct device *dev)
->
->  	dw_i3c_master_disable(master);
->
-> -	reset_control_assert(master->core_rst);
-> +	reset_control_assert(master->resets);
->  	dw_i3c_master_disable_clks(master);
->  	pinctrl_pm_select_sleep_state(dev);
->  	return 0;
-> @@ -1885,7 +1897,7 @@ static int __maybe_unused dw_i3c_master_runtime_resume(struct device *dev)
->
->  	pinctrl_pm_select_default_state(dev);
->  	dw_i3c_master_enable_clks(master);
-> -	reset_control_deassert(master->core_rst);
-> +	reset_control_deassert(master->resets);
->
->  	dw_i3c_master_set_intr_regs(master);
->  	dw_i3c_master_restore_timing_regs(master);
-> diff --git a/drivers/i3c/master/dw-i3c-master.h b/drivers/i3c/master/dw-i3c-master.h
-> index 17ad817d1f8e..f5b4491b247a 100644
-> --- a/drivers/i3c/master/dw-i3c-master.h
-> +++ b/drivers/i3c/master/dw-i3c-master.h
-> @@ -36,7 +36,7 @@ struct dw_i3c_master {
->  	} xferqueue;
->  	struct dw_i3c_master_caps caps;
->  	void __iomem *regs;
-> -	struct reset_control *core_rst;
-> +	struct reset_control *resets;
->  	struct clk *core_clk;
->  	struct clk *pclk;
->  	char version[5];
-> --
-> 2.53.0
->
+Sorry for the disturbance.
+
+Thanks,
+Icenowy
+
+> >=20
+> > The dom_vout block holds the display controller (dc8200), the clock
+> > generator (voutcrg) and the HDMI IP, all inside PD_VOUT. The HDMI
+> > IP
+> > is
+> > a single register block containing both the controller and the PHY,
+> > and
+> > it has a circular clock dependency with voutcrg:
+> >=20
+> > =C2=A0 - the HDMI controller needs pclk/mclk/bclk from voutcrg
+> > =C2=A0 - voutcrg needs the pixel clock for its dc8200 pixel MUXes, and
+> > that
+> > =C2=A0=C2=A0=C2=A0 clock is generated by the HDMI PHY
+> >=20
+> > The loop only exists if the HDMI block is treated as one device.
+> > The
+> > PHY's reference clock is xin24m, not a voutcrg output, so splitting
+> > the
+> > node into a parent plus phy and controller children gives deferred
+> > probe
+> > a linear order: hdmi-phy, then voutcrg, then hdmi-controller.
+> >=20
+> > The parent maps the register block and owns the regmap its two
+> > children
+> > share. Everything in the region sits behind one NoC port whose
+> > clock
+> > and
+> > reset gate access to it, inside PD_VOUT, so the vout subsystem node
+> > from
+> > the RFC is back and owns those for as long as any child exists.
+> >=20
+> > Patch 11 adds a .mode_valid platform op to inno-hdmi.
+> > inno_hdmi_bridge_mode_valid() checks the pixel clock against
+> > hdmi->refclk, but that clock only exists where a "ref" clock is
+> > described. The JH7110 gets its pixel clock from the PHY, so refclk
+> > is
+> > NULL and the check was skipped: unsupported modes were advertised,
+> > the
+> > modeset then "succeeded" because the atomic enable path cannot
+> > fail,
+> > and
+> > the display stayed blank.
+> >=20
+> > Patch 12 makes the inno-hdmi PHY configuration table optional. The
+> > JH7110 drives its PHY through a separate driver, so the table only
+> > ever
+> > existed to get past a probe time check, and the register writes it
+> > fed
+> > belong to the integrated PHY the JH7110 does not have.
+> >=20
+> > Patches 17-19 drop the PHY duplication from the RFC. The JH7110 has
+> > the
+> > same Innosilicon PHY as the RK3328, offset by 0x100 because it sits
+> > behind the controller in the shared register block. Patch 17
+> > factors
+> > out
+> > the pre-PLL config format, table lookup, determine_rate,
+> > recalc_rate
+> > and
+> > the pre-PLL programming; patch 18 moves Rockchip onto it; patch 19
+> > adds
+> > the JH7110 driver. Pixel clock tables, post-PLL and analog config
+> > stay
+> > SoC specific.
+> >=20
+> > Patch 18 should be a no-op for Rockchip - same writes, same order,
+> > same
+> > values - and RK3228, whose pre-PLL is at different addresses, keeps
+> > its
+> > own register code and shares only the lookup. I have no Rockchip
+> > hardware, so it is build tested only (arm and riscv). A Tested-by
+> > would
+> > help.
+> >=20
+>=20
+> I got a weird regression with the v5 revision of this patchset:
+>=20
+> With a MS2130 capture card, /sys/class/drm/card0-HDMI-A-1/modes now
+> only lists 4096x2160 and 3840x2160 modes. All lower resolutions modes
+> disappeared (including the preferred 1280x720 74.25M standard mode).
+>=20
+> The edid-decode result of this capture card is listed below:
+>=20
+> ```
+> edid-decode (hex):
+>=20
+> 00 ff ff ff ff ff ff 00 21 57 36 18 bd e9 02 00
+> 25 1d 01 03 80 35 1d 78 22 ee 91 a3 54 4c 99 26
+> 0f 50 54 21 0f 00 81 00 81 40 81 80 90 40 95 00
+> 01 01 a9 40 b3 00 01 1d 00 72 51 d0 1e 20 6e 28
+> 55 00 0f 48 42 00 00 1e 0e 1f 00 80 51 00 1e 30
+> 40 80 37 00 0f 48 42 00 00 1c 00 00 00 10 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc
+> 00 4d 41 43 52 4f 53 49 4c 49 43 4f 4e 0a 01 19
+>=20
+> 02 03 37 f1 55 02 11 13 84 1f 10 03 12 06 15 07
+> 16 05 14 5e 5f 63 64 20 21 22 23 09 7f 07 83 01
+> 00 00 6e 03 0c 00 10 00 00 3c 20 00 80 01 02 03
+> 04 e5 0e 61 60 65 66 66 21 50 b0 51 00 1b 30 40
+> 70 36 00 0f 48 42 00 00 1e 66 21 56 aa 51 00 1e
+> 30 46 8f 33 00 0f 48 42 00 00 1e 8c 0a d0 8a 20
+> e0 2d 10 10 3e 96 00 10 09 00 00 00 18 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 49
+>=20
+> ----------------
+>=20
+> Block 0, Base EDID:
+> =C2=A0 EDID Structure Version & Revision: 1.3
+> =C2=A0 Vendor & Product Identification:
+> =C2=A0=C2=A0=C2=A0 Manufacturer: HJW
+> =C2=A0=C2=A0=C2=A0 Model: 6198
+> =C2=A0=C2=A0=C2=A0 Serial Number: 190909
+> =C2=A0=C2=A0=C2=A0 Made in: week 37 of 2019
+> =C2=A0 Basic Display Parameters & Features:
+> =C2=A0=C2=A0=C2=A0 Digital display
+> =C2=A0=C2=A0=C2=A0 Maximum image size: 53 cm x 29 cm
+> =C2=A0=C2=A0=C2=A0 Gamma: 2.20
+> =C2=A0=C2=A0=C2=A0 DPMS levels: Off
+> =C2=A0=C2=A0=C2=A0 Monochrome or grayscale display
+> =C2=A0=C2=A0=C2=A0 First detailed timing is the preferred timing
+> =C2=A0 Color Characteristics:
+> =C2=A0=C2=A0=C2=A0 Red=C2=A0 : 0.6396, 0.3300
+> =C2=A0=C2=A0=C2=A0 Green: 0.2998, 0.5996
+> =C2=A0=C2=A0=C2=A0 Blue : 0.1503, 0.0595
+> =C2=A0=C2=A0=C2=A0 White: 0.3125, 0.3291
+> =C2=A0 Established Timings I & II:
+> =C2=A0=C2=A0=C2=A0 DMT 0x04:=C2=A0=C2=A0 640x480=C2=A0=C2=A0=C2=A0 59.940=
+476 Hz=C2=A0=C2=A0 4:3=C2=A0=C2=A0=C2=A0=C2=A0 31.469 kHz=C2=A0=C2=A0=C2=A0=
+=20
+> 25.175000 MHz
+> =C2=A0=C2=A0=C2=A0 DMT 0x09:=C2=A0=C2=A0 800x600=C2=A0=C2=A0=C2=A0 60.316=
+541 Hz=C2=A0=C2=A0 4:3=C2=A0=C2=A0=C2=A0=C2=A0 37.879 kHz=C2=A0=C2=A0=C2=A0=
+=20
+> 40.000000 MHz
+> =C2=A0=C2=A0=C2=A0 DMT 0x10:=C2=A0 1024x768=C2=A0=C2=A0=C2=A0 60.003840 H=
+z=C2=A0=C2=A0 4:3=C2=A0=C2=A0=C2=A0=C2=A0 48.363 kHz=C2=A0=C2=A0=C2=A0=20
+> 65.000000 MHz
+> =C2=A0=C2=A0=C2=A0 DMT 0x11:=C2=A0 1024x768=C2=A0=C2=A0=C2=A0 70.069359 H=
+z=C2=A0=C2=A0 4:3=C2=A0=C2=A0=C2=A0=C2=A0 56.476 kHz=C2=A0=C2=A0=C2=A0=20
+> 75.000000 MHz
+> =C2=A0=C2=A0=C2=A0 DMT 0x12:=C2=A0 1024x768=C2=A0=C2=A0=C2=A0 75.028582 H=
+z=C2=A0=C2=A0 4:3=C2=A0=C2=A0=C2=A0=C2=A0 60.023 kHz=C2=A0=C2=A0=C2=A0=20
+> 78.750000 MHz
+> =C2=A0=C2=A0=C2=A0 DMT 0x24:=C2=A0 1280x1024=C2=A0=C2=A0 75.024675 Hz=C2=
+=A0=C2=A0 5:4=C2=A0=C2=A0=C2=A0=C2=A0 79.976 kHz=C2=A0=C2=A0=20
+> 135.000000 MHz
+> =C2=A0 Standard Timings:
+> =C2=A0=C2=A0=C2=A0 DMT 0x1c:=C2=A0 1280x800=C2=A0=C2=A0=C2=A0 59.810326 H=
+z=C2=A0 16:10=C2=A0=C2=A0=C2=A0 49.702 kHz=C2=A0=C2=A0=C2=A0=20
+> 83.500000 MHz
+> =C2=A0=C2=A0=C2=A0 DMT 0x20:=C2=A0 1280x960=C2=A0=C2=A0=C2=A0 60.000000 H=
+z=C2=A0=C2=A0 4:3=C2=A0=C2=A0=C2=A0=C2=A0 60.000 kHz=C2=A0=C2=A0=20
+> 108.000000 MHz
+> =C2=A0=C2=A0=C2=A0 DMT 0x23:=C2=A0 1280x1024=C2=A0=C2=A0 60.019740 Hz=C2=
+=A0=C2=A0 5:4=C2=A0=C2=A0=C2=A0=C2=A0 63.981 kHz=C2=A0=C2=A0=20
+> 108.000000 MHz
+> =C2=A0=C2=A0=C2=A0 DMT 0x2a:=C2=A0 1400x1050=C2=A0=C2=A0 59.978442 Hz=C2=
+=A0=C2=A0 4:3=C2=A0=C2=A0=C2=A0=C2=A0 65.317 kHz=C2=A0=C2=A0=20
+> 121.750000 MHz
+> =C2=A0=C2=A0=C2=A0 DMT 0x2f:=C2=A0 1440x900=C2=A0=C2=A0=C2=A0 59.887445 H=
+z=C2=A0 16:10=C2=A0=C2=A0=C2=A0 55.935 kHz=C2=A0=C2=A0=20
+> 106.500000 MHz
+> =C2=A0=C2=A0=C2=A0 DMT 0x33:=C2=A0 1600x1200=C2=A0=C2=A0 60.000000 Hz=C2=
+=A0=C2=A0 4:3=C2=A0=C2=A0=C2=A0=C2=A0 75.000 kHz=C2=A0=C2=A0=20
+> 162.000000 MHz
+> =C2=A0=C2=A0=C2=A0 DMT 0x3a:=C2=A0 1680x1050=C2=A0=C2=A0 59.954250 Hz=C2=
+=A0 16:10=C2=A0=C2=A0=C2=A0 65.290 kHz=C2=A0=C2=A0=20
+> 146.250000 MHz
+> =C2=A0 Detailed Timing Descriptors:
+> =C2=A0=C2=A0=C2=A0 DTD 1:=C2=A0 1280x720=C2=A0=C2=A0=C2=A0 60.000000 Hz=
+=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 45.000 kHz=C2=A0=C2=A0=C2=A0=C2=A0
+> 74.250000
+> MHz (1039 mm x 584 mm)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 Hfront=C2=A0 110 Hsync=C2=A0 40 Hback=C2=A0 220 Hp=
+ol P
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 Vfront=C2=A0=C2=A0=C2=A0 5 Vsync=C2=A0=C2=A0 5 Vba=
+ck=C2=A0=C2=A0 20 Vpol P
+> =C2=A0=C2=A0=C2=A0 DTD 2:=C2=A0 1280x768=C2=A0=C2=A0=C2=A0 59.870228 Hz=
+=C2=A0=C2=A0 5:3=C2=A0=C2=A0=C2=A0=C2=A0 47.776 kHz=C2=A0=C2=A0=C2=A0=C2=A0
+> 79.500000
+> MHz (1039 mm x 584 mm)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 Hfront=C2=A0=C2=A0 64 Hsync 128 Hback=C2=A0 192 Hp=
+ol N
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 Vfront=C2=A0=C2=A0=C2=A0 3 Vsync=C2=A0=C2=A0 7 Vba=
+ck=C2=A0=C2=A0 20 Vpol P
+> =C2=A0=C2=A0=C2=A0 Dummy Descriptor:
+> =C2=A0=C2=A0=C2=A0 Display Product Name: 'MACROSILICON'
+> =C2=A0 Extension blocks: 1
+> Checksum: 0x19
+>=20
+> ----------------
+>=20
+> Block 1, CTA-861 Extension Block:
+> =C2=A0 Revision: 3
+> =C2=A0 Underscans IT Video Formats by default
+> =C2=A0 Basic audio support
+> =C2=A0 Supports YCbCr 4:4:4
+> =C2=A0 Supports YCbCr 4:2:2
+> =C2=A0 Native detailed modes: 1
+> =C2=A0 Video Data Block:
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0=C2=A0 2:=C2=A0=C2=A0 720x480=C2=A0=C2=A0=C2=
+=A0 59.940060 Hz=C2=A0=C2=A0 4:3=C2=A0=C2=A0=C2=A0=C2=A0 31.469 kHz=C2=A0=
+=C2=A0=C2=A0=20
+> 27.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 17:=C2=A0=C2=A0 720x576=C2=A0=C2=A0=C2=A0 50=
+.000000 Hz=C2=A0=C2=A0 4:3=C2=A0=C2=A0=C2=A0=C2=A0 31.250 kHz=C2=A0=C2=A0=
+=C2=A0=20
+> 27.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 19:=C2=A0 1280x720=C2=A0=C2=A0=C2=A0 50.0000=
+00 Hz=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 37.500 kHz=C2=A0=C2=A0=C2=A0=20
+> 74.250000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0=C2=A0 4:=C2=A0 1280x720=C2=A0=C2=A0=C2=A0 60=
+.000000 Hz=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 45.000 kHz=C2=A0=C2=A0=C2=A0=
+=20
+> 74.250000 MHz (native)
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 31:=C2=A0 1920x1080=C2=A0=C2=A0 50.000000 Hz=
+=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 56.250 kHz=C2=A0=C2=A0=20
+> 148.500000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 16:=C2=A0 1920x1080=C2=A0=C2=A0 60.000000 Hz=
+=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 67.500 kHz=C2=A0=C2=A0=20
+> 148.500000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0=C2=A0 3:=C2=A0=C2=A0 720x480=C2=A0=C2=A0=C2=
+=A0 59.940060 Hz=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 31.469 kHz=C2=A0=C2=A0=
+=C2=A0=20
+> 27.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 18:=C2=A0=C2=A0 720x576=C2=A0=C2=A0=C2=A0 50=
+.000000 Hz=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 31.250 kHz=C2=A0=C2=A0=C2=A0=
+=20
+> 27.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0=C2=A0 6:=C2=A0 1440x480i=C2=A0=C2=A0 59.9400=
+60 Hz=C2=A0=C2=A0 4:3=C2=A0=C2=A0=C2=A0=C2=A0 15.734 kHz=C2=A0=C2=A0=C2=A0=
+=20
+> 27.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 21:=C2=A0 1440x576i=C2=A0=C2=A0 50.000000 Hz=
+=C2=A0=C2=A0 4:3=C2=A0=C2=A0=C2=A0=C2=A0 15.625 kHz=C2=A0=C2=A0=C2=A0=20
+> 27.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0=C2=A0 7:=C2=A0 1440x480i=C2=A0=C2=A0 59.9400=
+60 Hz=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 15.734 kHz=C2=A0=C2=A0=C2=A0=20
+> 27.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 22:=C2=A0 1440x576i=C2=A0=C2=A0 50.000000 Hz=
+=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 15.625 kHz=C2=A0=C2=A0=C2=A0=20
+> 27.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0=C2=A0 5:=C2=A0 1920x1080i=C2=A0 60.000000 Hz=
+=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 33.750 kHz=C2=A0=C2=A0=C2=A0=20
+> 74.250000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 20:=C2=A0 1920x1080i=C2=A0 50.000000 Hz=C2=
+=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 28.125 kHz=C2=A0=C2=A0=C2=A0=20
+> 74.250000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 94:=C2=A0 3840x2160=C2=A0=C2=A0 25.000000 Hz=
+=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 56.250 kHz=C2=A0=C2=A0=20
+> 297.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 95:=C2=A0 3840x2160=C2=A0=C2=A0 30.000000 Hz=
+=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 67.500 kHz=C2=A0=C2=A0=20
+> 297.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 99:=C2=A0 4096x2160=C2=A0=C2=A0 25.000000 Hz=
+ 256:135=C2=A0=C2=A0 56.250 kHz=C2=A0=C2=A0=20
+> 297.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC 100:=C2=A0 4096x2160=C2=A0=C2=A0 30.000000 Hz 256:=
+135=C2=A0=C2=A0 67.500 kHz=C2=A0=C2=A0=20
+> 297.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 32:=C2=A0 1920x1080=C2=A0=C2=A0 24.000000 Hz=
+=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 27.000 kHz=C2=A0=C2=A0=C2=A0=20
+> 74.250000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 33:=C2=A0 1920x1080=C2=A0=C2=A0 25.000000 Hz=
+=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 28.125 kHz=C2=A0=C2=A0=C2=A0=20
+> 74.250000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 34:=C2=A0 1920x1080=C2=A0=C2=A0 30.000000 Hz=
+=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 33.750 kHz=C2=A0=C2=A0=C2=A0=20
+> 74.250000 MHz
+> =C2=A0 Audio Data Block:
+> =C2=A0=C2=A0=C2=A0 Linear PCM:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Max channels: 2
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Supported sample rates (kHz): 192 176.4 96=
+ 88.2 48 44.1 32
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Supported sample sizes (bits): 24 20 16
+> =C2=A0 Speaker Allocation Data Block:
+> =C2=A0=C2=A0=C2=A0 FL/FR - Front Left/Right
+> =C2=A0 Vendor-Specific Data Block (HDMI), OUI 00-0C-03:
+> =C2=A0=C2=A0=C2=A0 Source physical address: 1.0.0.0
+> =C2=A0=C2=A0=C2=A0 Maximum TMDS clock: 300 MHz
+> =C2=A0=C2=A0=C2=A0 Extended HDMI video details:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HDMI VICs:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HDMI VIC 1:=C2=A0 3840x2160=C2=
+=A0=C2=A0 30.000000 Hz=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 67.500 kHz=C2=A0=
+=C2=A0=20
+> 297.000000 MHz
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HDMI VIC 2:=C2=A0 3840x2160=C2=
+=A0=C2=A0 25.000000 Hz=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 56.250 kHz=C2=A0=
+=C2=A0=20
+> 297.000000 MHz
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HDMI VIC 3:=C2=A0 3840x2160=C2=
+=A0=C2=A0 24.000000 Hz=C2=A0 16:9=C2=A0=C2=A0=C2=A0=C2=A0 54.000 kHz=C2=A0=
+=C2=A0=20
+> 297.000000 MHz
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HDMI VIC 4:=C2=A0 4096x2160=C2=
+=A0=C2=A0 24.000000 Hz 256:135=C2=A0=C2=A0 54.000 kHz=C2=A0=C2=A0=20
+> 297.000000 MHz
+> =C2=A0 YCbCr 4:2:0 Video Data Block:
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 97:=C2=A0 3840x2160=C2=A0=C2=A0 60.000000 Hz=
+=C2=A0 16:9=C2=A0=C2=A0=C2=A0 135.000 kHz=C2=A0=C2=A0=20
+> 594.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC=C2=A0 96:=C2=A0 3840x2160=C2=A0=C2=A0 50.000000 Hz=
+=C2=A0 16:9=C2=A0=C2=A0=C2=A0 112.500 kHz=C2=A0=C2=A0=20
+> 594.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC 101:=C2=A0 4096x2160=C2=A0=C2=A0 50.000000 Hz 256:=
+135=C2=A0 112.500 kHz=C2=A0=C2=A0=20
+> 594.000000 MHz
+> =C2=A0=C2=A0=C2=A0 VIC 102:=C2=A0 4096x2160=C2=A0=C2=A0 60.000000 Hz 256:=
+135=C2=A0 135.000 kHz=C2=A0=C2=A0=20
+> 594.000000 MHz
+> =C2=A0 Detailed Timing Descriptors:
+> =C2=A0=C2=A0=C2=A0 DTD 3:=C2=A0 1360x768=C2=A0=C2=A0=C2=A0 60.015162 Hz=
+=C2=A0 85:48=C2=A0=C2=A0=C2=A0 47.712 kHz=C2=A0=C2=A0=C2=A0=C2=A0
+> 85.500000
+> MHz (1039 mm x 584 mm)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 Hfront=C2=A0=C2=A0 64 Hsync 112 Hback=C2=A0 256 Hp=
+ol P
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 Vfront=C2=A0=C2=A0=C2=A0 3 Vsync=C2=A0=C2=A0 6 Vba=
+ck=C2=A0=C2=A0 18 Vpol P
+> =C2=A0=C2=A0=C2=A0 DTD 4:=C2=A0 1366x768=C2=A0=C2=A0=C2=A0 59.789541 Hz 6=
+83:384=C2=A0=C2=A0 47.712 kHz=C2=A0=C2=A0=C2=A0=C2=A0
+> 85.500000
+> MHz (1039 mm x 584 mm)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 Hfront=C2=A0=C2=A0 70 Hsync 143 Hback=C2=A0 213 Hp=
+ol P
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 Vfront=C2=A0=C2=A0=C2=A0 3 Vsync=C2=A0=C2=A0 3 Vba=
+ck=C2=A0=C2=A0 24 Vpol P
+> =C2=A0=C2=A0=C2=A0 DTD 5:=C2=A0=C2=A0 720x480=C2=A0=C2=A0=C2=A0 59.940060=
+ Hz=C2=A0=C2=A0 3:2=C2=A0=C2=A0=C2=A0=C2=A0 31.469 kHz=C2=A0=C2=A0=C2=A0=C2=
+=A0
+> 27.000000
+> MHz (16 mm x 9 mm)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 Hfront=C2=A0=C2=A0 16 Hsync=C2=A0 62 Hback=C2=A0=
+=C2=A0 60 Hpol N
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 Vfront=C2=A0=C2=A0=C2=A0 9 Vsync=C2=A0=C2=A0 6 Vba=
+ck=C2=A0=C2=A0 30 Vpol N
+> Checksum: 0x49=C2=A0 Unused space in Extension Block: 18 bytes
+> ```
+>=20
+> Thanks,
+> Icenowy
+>=20
+> > Testing
+> > =3D=3D=3D=3D=3D=3D=3D
+> >=20
+> > Tested on a VisionFive 2 v1.3B using modetest.
+> >=20
+> > All 42 modes the sink advertises work, with nothing in dmesg. Pixel
+> > clocks run from 25.175 MHz (640x480@59.94) up to 297 MHz
+> > (4096x2160@30), including 3840x2160 and the full 1920x1080 and
+> > 1280x720
+> > rate families.
+> >=20
+> > The four modes the RFC reported as broken work now too:
+> > 2560x1440@59.95,
+> > 2048x1080@60.00, 2048x1080@24.00=C2=A0and 720x400@70.08.
+> >=20
+> > Before patch 11, four of the advertised modes failed:
+> > 1680x1050@59.95
+> > (146.250 MHz), 1400x1050@59.98=C2=A0(121.750), 1152x864@59.97=C2=A0(81.=
+768)
+> > and
+> > 1280x768@60.35=C2=A0(80.140). Those pixel clocks are not in the PHY pre=
+-
+> > PLL
+> > table, so clk_set_rate() returned -EINVAL and the screen stayed
+> > black
+> > while userspace saw a successful modeset. They are rejected in
+> > .mode_valid now; the other refresh rates of those resolutions still
+> > work.
+> >=20
+> > The mux the HDMI controller programs in dom_vout_syscon has a DP
+> > and
+> > a
+> > DPI branch, and the DT wires the DPI one, so the DP branch was
+> > checked
+> > separately by moving the input endpoint to the DC8200's DP output
+> > on
+> > a
+> > throwaway branch. SYSCFG_4 reads 0x4c0b0000 instead of 0x0c0b0000,
+> > the
+> > output is identical to the DPI path and all 42 modes set. Sweeping
+> > VOUT_HDMI_DP_YUV_MODE over its four values with a mode held shows
+> > only
+> > RGB giving a correct picture, as documented.
+> >=20
+> > Every commit builds for riscv, and the Rockchip PHY also for arm.
+> >=20
+> > Notes
+> > =3D=3D=3D=3D=3D
+> >=20
+> > The JH7110 has no central MAINTAINERS entry and maintainership is
+> > fragmented, so patch 21 adds one for the display subsystem and I am
+> > happy to help maintain it. The new PHY library lives under
+> > drivers/phy/,
+> > already covered by the generic PHY framework entry.
+> >=20
+> > checkpatch warns "does MAINTAINERS need updating?" on the patches
+> > adding
+> > files, because that entry comes in patch 21.
+> >=20
+> > Thanks to Icenowy Zheng for the dc8200 driver and for explaining
+> > how
+> > the
+> > SoC and the display pipeline fit together.
+> >=20
+> > Thanks also to Dominique Belhachemi, who got rid of the vout-
+> > subsystem
+> > wrapper and helped with the testing, to Maud Spierings for testing
+> > on
+> > a
+> > Framework 13 panel, and to Graham Markall for testing
+> > the JH7110 display patches independently and writing up the
+> > results:
+> > https://big-grey.co.uk/2026/01/26/testing-starfive-jh7110-display-contr=
+oller-patches/
+> >=20
+> > Link to v1:
+> > https://lore.kernel.org/all/20251108-jh7110-clean-send-v1-0-06bf43bb76b=
+1@samsung.com/
+> >=20
+> > ---
+> > Changes in v5:
+> > - Rebased onto v7.3-rc5.
+> > - Dropped the clk patch, applied as af384d6e0573.
+> > - New patch 13 makes the HDMI_SYS_CTRL register clock source
+> > selectable
+> > =C2=A0 per platform, and the JH7110 selects the TMDS clock. The driver
+> > drove
+> > =C2=A0 the register interface from the system clock for everyone, and a
+> > =C2=A0 Framework 13 panel flickers continuously that way (Maud
+> > Spierings).
+> > =C2=A0 Rockchip keeps the system clock, so this is a no-op there. This
+> > was
+> > =C2=A0 listed as a known limitation in v4.
+> > - New patch 1 fixes v_HSYNC_POLARITY and v_VSYNC_POLARITY, which
+> > have
+> > =C2=A0 been swapped in inno-hdmi since the driver was merged. The
+> > hardware
+> > =C2=A0 puts HSYNC in bit 2 and VSYNC in bit 3, and the driver had them
+> > the
+> > =C2=A0 other way round. Almost all CEA modes drive both syncs with the
+> > same
+> > =C2=A0 polarity, so the two writes are indistinguishable and the bug
+> > only
+> > =C2=A0 shows on a mode whose polarities differ - a band of black rows a=
+t
+> > the
+> > =C2=A0 top of the screen, vsync_end - vsync_start + 1 rows tall.
+> > Reported
+> > =C2=A0 independently by Dominique Belhachemi, Maud Spierings and Byron
+> > =C2=A0 Stanoszek, and confirmed against the RK3128 TRM by Icenowy Zheng=
+,
+> > so
+> > =C2=A0 this is a Rockchip fix too.
+> > - Added a 201 MHz entry to the JH7110 pre-PLL table for a 2560x1440
+> > =C2=A0 mode Byron Stanoszek runs on a Dell U2711. It is derived the sam=
+e
+> > way
+> > =C2=A0 as the neighbouring entries (fbdiv 134, /16, VCO 3.216 GHz) but =
+I
+> > have
+> > =C2=A0 no sink that asks for it, so it is untested on my hardware.
+> > - Moved the hdmi-subsystem binding from bindings/mfd/ to
+> > =C2=A0 bindings/soc/starfive/, next to the vout-subsystem binding and
+> > matching
+> > =C2=A0 its driver in drivers/soc/starfive/. The mfd/ path was left over
+> > from
+> > =C2=A0 when the driver was called hdmi-mfd; nothing in the series is an
+> > MFD
+> > =C2=A0 device, and it meant one isolated binding patch would have had t=
+o
+> > go
+> > =C2=A0 through the MFD tree on its own.
+> > - The commit message for "Split probe out of bind" claimed a
+> > matching
+> > =C2=A0 inno_hdmi_remove(); no such function exists, so the claim is
+> > gone.
+> > - Dropped Joshua Peisach's Reviewed-by from the PHY driver patch as
+> > well,
+> > =C2=A0 since that patch changed in v5.
+> > - Dropped Joshua Peisach's Reviewed-by from the binding patches; he
+> > said
+> > =C2=A0 he is not reviewing DT (Krzysztof Kozlowski). It is kept on the
+> > driver
+> > =C2=A0 patches he did look at.
+> > - Removed a probe-time clk_set_rate() from the PHY driver. It
+> > programmed
+> > =C2=A0 a default rate, and .set_rate writes PHY registers that live in
+> > the
+> > =C2=A0 window gated by the controller's system clock - a clock the PHY
+> > cannot
+> > =C2=A0 hold without creating a probe cycle with voutcrg.
+> > - Link to v4:
+> > https://lore.kernel.org/r/20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@=
+samsung.com
+> >=20
+> > Changes in v4:
+> > - New patch 11 makes the inno-hdmi PHY configuration table
+> > optional,
+> > so
+> > =C2=A0 the JH7110 controller can drop the dummy two entry table it
+> > carried
+> > =C2=A0 only to satisfy the probe time check, along with the integrated
+> > PHY
+> > =C2=A0 register writes that table fed (Icenowy Zheng). That table was
+> > also
+> > =C2=A0 acting as an upper bound: inno_hdmi_find_phy_config() runs befor=
+e
+> > the
+> > =C2=A0 platform .mode_valid and returns early, so its 297 MHz sentinel
+> > =C2=A0 rejected every mode above that even though the PHY pre-PLL table
+> > has a
+> > =C2=A0 594 MHz entry. Nothing here advertises such a mode, so it was
+> > latent.
+> > - Fixed a v3 regression: CLK_SET_RATE_NO_REPARENT stops
+> > clk_set_rate()
+> > =C2=A0 from reparenting the dc8200 pixel MUXes, so they kept whatever
+> > the
+> > =C2=A0 bootloader had selected and the display stayed black on boards
+> > where
+> > =C2=A0 that was not the HDMI PHY. They get assigned-clock-parents now
+> > (Maud
+> > =C2=A0 Spierings, Dominique Belhachemi).
+> > - vout-subsystem binding: describe the children by compatible
+> > instead
+> > of
+> > =C2=A0 $ref, as qcom,sm8750-mdss does, and show the whole subsystem wit=
+h
+> > all
+> > =C2=A0 four children in the example (Krzysztof Kozlowski).
+> > - Dropped the vout-syscon example from starfive,jh7110-syscon.yaml,
+> > it
+> > =C2=A0 is part of the vout subsystem example now (Krzysztof Kozlowski).
+> > - Renamed the xin24m node to xin24m-clock (Krzysztof Kozlowski).
+> > - Fixed the HDMI HPD pinmux: it drove the pin high (GPOUT_HIGH with
+> > the
+> > =C2=A0 output enabled) while also reading it as the hotplug input, so
+> > HPD
+> > =C2=A0 could only ever read asserted. It is an input now.
+> > - jh7110-inno-hdmi: dropped a regmap lookup whose result was never
+> > used;
+> > =C2=A0 inno_hdmi_probe() fetches the parent regmap itself. The commit
+> > message
+> > =C2=A0 claimed otherwise and is corrected.
+> > - phy: rockchip: dropped two now unused RK3328 spread spectrum
+> > macros
+> > =C2=A0 the v3 cleanup missed. The register write itself moved to the
+> > shared
+> > =C2=A0 helper and is unchanged, so Chaoyi's Reviewed-by is carried over=
+.
+> > - inno-hdmi: the hotplug handler dereferenced bridge.dev
+> > unconditionally.
+> > =C2=A0 Splitting probe out of bind moved the interrupt request to probe=
+,
+> > so
+> > =C2=A0 an HPD event before the DRM master attaches the bridge would
+> > oops.
+> > =C2=A0 Guarded.
+> > - Dropped the <linux/mod_devicetable.h> includes (Uwe Kleine-
+> > K=C3=B6nig).
+> > - jh7110-inno-hdmi: __free(device_node) for the graph lookups, and
+> > =C2=A0 dropped the redundant negative check on clk_round_rate() (Chaoyi
+> > Chen).
+> > - phy: rockchip: dropped the recalc_rate debug print that the
+> > shared
+> > =C2=A0 helper already emits (Chaoyi Chen).
+> > - Rebased onto v7.3-rc3.
+> > - Link to v3:
+> > https://lore.kernel.org/r/20260904-jh7110-clean-send-v3-0-484f9ae72715@=
+samsung.com
+> >=20
+> > Changes in v3:
+> > - Brought back the vout subsystem node and driver, now owning the
+> > NoC
+> > =C2=A0 bus clock, its reset and PD_VOUT for the whole region, with
+> > dc8200,
+> > =C2=A0 the HDMI block, the syscon and voutcrg as its children (Icenowy
+> > Zheng).
+> > - Fixed a hard hang when the bridge is built as a module: the PHY's
+> > =C2=A0 .is_prepared read a register in the window gated by the
+> > controller's
+> > =C2=A0 system clock, so clk_disable_unused() wedged the CPU before the
+> > =C2=A0 controller had bound. The op is gone; the framework uses the
+> > software
+> > =C2=A0 prepare count instead. (Marek Szyprowski)
+> > - The HDMI controller now programs the display mux in
+> > dom_vout_syscon
+> > =C2=A0 from the port graph rather than inheriting whatever the
+> > bootloader
+> > =C2=A0 left, with a phandle to the syscon (Icenowy Zheng).
+> > - The register access clock is named "pclk" to match the existing
+> > =C2=A0 inno-hdmi binding, so the generic driver no longer picks up the
+> > pixel
+> > =C2=A0 clock. Previously it held the pre-PLL powered from probe and
+> > sized
+> > the
+> > =C2=A0 DDC divider from the wrong rate.
+> > - Dropped the clk suffixes and the single-entry -names properties
+> > from
+> > =C2=A0 the bindings (Conor Dooley). mclk and bclk keep their names: per
+> > TRM
+> > =C2=A0 5.3 they are the HDMI audio clocks, not module and bus clocks, s=
+o
+> > the
+> > =C2=A0 descriptions say that instead.
+> > - Replaced patternProperties with plain properties in the hdmi-
+> > subsystem
+> > =C2=A0 binding (Conor Dooley).
+> > - dc8200 gets an SoC specific compatible, and inherits dma-
+> > noncoherent
+> > =C2=A0 from the subsystem bus node, so it validates against
+> > verisilicon,dc.
+> > - Added the pre-PLL entry for the Framework 13 panel and fixed two
+> > =C2=A0 devicetree whitespace nits (Maud Spierings).
+> > - select REGMAP_MMIO, CLK_SET_RATE_NO_REPARENT on the dc8200 pixel
+> > MUXes
+> > =C2=A0 so clk_set_rate() cannot reroute them, and inno-hdmi register
+> > reads
+> > =C2=A0 return 0 instead of stack garbage when regmap_read() fails.
+> > - phy: rockchip: dropped the local pre-PLL lookup wrapper and the
+> > 28
+> > now
+> > =C2=A0 unused RK3328 pre-PLL macros, and restored the VCO debug output,
+> > this
+> > =C2=A0 time in the shared helper so both drivers get it (Jonas Karlman)=
+.
+> > - Rebased onto v7.3-rc1.
+> > - Link to v2:
+> > https://lore.kernel.org/r/20260828-jh7110-clean-send-v2-0-331680c8b9d1@=
+samsung.com
+> >=20
+> > Changes since the RFC:
+> > - Dropped the vout-subsystem wrapper driver and its binding, along
+> > with
+> > =C2=A0 the patch relaxing the voutcrg binding; genpd handles PD_VOUT pe=
+r
+> > =C2=A0 node.
+> > - Renamed the compatible to starfive,jh7110-hdmi-subsystem,
+> > dropping
+> > =C2=A0 "mfd" as a Linux term (Conor Dooley).
+> > - Absolute $refs in the bindings, unused example labels dropped,
+> > and
+> > the
+> > =C2=A0 examples deduplicated between parent and children (Conor Dooley)=
+.
+> > - Added the .mode_valid platform operation (patch 7).
+> > - Split the inno-hdmi rework into a mechanical probe/bind split
+> > (patch
+> > =C2=A0 4)
+> > =C2=A0 and the regmap-from-parent change (patch 5). struct inno_hdmi is
+> > no
+> > =C2=A0 longer exported; no platform glue dereferences it.
+> > - Replaced the duplicated PHY driver with a shared Innosilicon
+> > library
+> > =C2=A0 and moved Rockchip onto it (patches 11-13).
+> > - Fixed pre-PLL lock detection, which masked the status read with
+> > the
+> > =C2=A0 register address instead of the lock bit.
+> > - Fixed a pixel clock refcount underflow: enable returns early on
+> > =C2=A0 failure while disable tore down unconditionally.
+> > - voutcrg patch reduced to adding CLK_SET_RATE_PARENT to the two
+> > dc8200
+> > =C2=A0 pixel MUXes.
+> > - Rebased onto v7.2.
+> >=20
+> > ---
+> > Michal Wilczynski (21):
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/bridge: inno-hdmi: fix swapped HSYNC=
+ and VSYNC polarity
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dt-bindings: phy: Add starfive,jh7110-in=
+no-hdmi-phy
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dt-bindings: display: bridge: Add starfi=
+ve,jh7110-inno-hdmi-
+> > controller
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dt-bindings: soc: starfive: Add starfive=
+,jh7110-hdmi-
+> > subsystem
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dt-bindings: soc: starfive: Add starfive=
+,jh7110-vout-syscon
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dt-bindings: display: verisilicon: Add s=
+tarfive,jh7110-dc8200
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dt-bindings: soc: starfive: Add starfive=
+,jh7110-vout-
+> > subsystem
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/bridge: inno-hdmi: Split probe out o=
+f bind
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/bridge: inno-hdmi: Allow the registe=
+r map to come from a
+> > parent
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/bridge: inno-hdmi: Add .disable plat=
+form operation
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/bridge: inno-hdmi: Add .mode_valid p=
+latform operation
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/bridge: inno-hdmi: Make the PHY conf=
+iguration table
+> > optional
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/bridge: inno-hdmi: Make the register=
+ clock source
+> > selectable
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 soc: starfive: Add jh7110-hdmi-subsystem=
+ driver
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 soc: starfive: Add jh7110-vout-subsystem=
+ driver
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/bridge: starfive: Add JH7110 HDMI co=
+ntroller driver
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 phy: Add common Innosilicon HDMI PHY hel=
+pers
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 phy: rockchip: inno-hdmi: Use the common=
+ Innosilicon PHY
+> > helpers
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 phy: starfive: Add jh7110-inno-hdmi-phy =
+driver
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 riscv: dts: starfive: jh7110: Update DT =
+for display subsystem
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAINTAINERS: Add StarFive JH7110 display=
+ subsystem entry
+> >=20
+> > =C2=A0.../starfive,jh7110-inno-hdmi-controller.yaml=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 121 +++++
+> > =C2=A0.../bindings/display/verisilicon,dc.yaml=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0.../phy/starfive,jh7110-inno-hdmi-phy.yaml=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 49 ++
+> > =C2=A0.../starfive/starfive,jh7110-hdmi-subsystem.yaml=C2=A0=C2=A0 |=C2=
+=A0 95 ++++
+> > =C2=A0.../soc/starfive/starfive,jh7110-syscon.yaml=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0.../starfive/starfive,jh7110-vout-subsystem.yaml=C2=A0=C2=A0 | 21=
+8 ++++++++
+> > =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 13 +
+> > =C2=A0arch/riscv/boot/dts/starfive/jh7110-common.dtsi=C2=A0=C2=A0=C2=A0=
+ | 121 ++++-
+> > =C2=A0arch/riscv/boot/dts/starfive/jh7110.dtsi=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 105 +++-
+> > =C2=A0drivers/gpu/drm/bridge/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 11 +
+> > =C2=A0drivers/gpu/drm/bridge/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0drivers/gpu/drm/bridge/inno-hdmi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 120 ++=
+++-
+> > =C2=A0drivers/gpu/drm/bridge/jh7110-inno-hdmi.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 298
+> > +++++++++++
+> > =C2=A0drivers/phy/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
+=C2=A0 8 +
+> > =C2=A0drivers/phy/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 =
+1 +
+> > =C2=A0drivers/phy/phy-inno-hdmi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 298
+> > +++++++++++
+> > =C2=A0drivers/phy/rockchip/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0drivers/phy/rockchip/phy-rockchip-inno-hdmi.c=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 168 +-----
+> > =C2=A0drivers/phy/starfive/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 20 +
+> > =C2=A0drivers/phy/starfive/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0drivers/phy/starfive/phy-jh7110-inno-hdmi.c=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | 582
+> > +++++++++++++++++++++
+> > =C2=A0drivers/soc/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
+=C2=A0 1 +
+> > =C2=A0drivers/soc/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 =
+1 +
+> > =C2=A0drivers/soc/starfive/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 43 ++
+> > =C2=A0drivers/soc/starfive/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +
+> > =C2=A0drivers/soc/starfive/jh7110-hdmi-subsystem.c=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 73 +++
+> > =C2=A0drivers/soc/starfive/jh7110-vout-subsystem.c=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 82 +++
+> > =C2=A0include/drm/bridge/inno_hdmi.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 12 +-
+> > =C2=A0include/linux/phy/inno-hdmi-phy.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 85 +++
+> > =C2=A029 files changed, 2344 insertions(+), 189 deletions(-)
+> > ---
+> > base-commit: 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e
+> > change-id: 20251031-jh7110-clean-send-7d2242118026
+> > prerequisite-patch-id: f0e814166bef9f12a11c54de07203b17bd97a027
+> >=20
+> > Best regards,
+
