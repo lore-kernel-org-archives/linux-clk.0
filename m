@@ -1,47 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F6D568FCA;
-	Tue, 29 Sep 2026 19:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF20B388E4B;
+	Tue, 29 Sep 2026 19:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790711807; cv=none; b=bys39bDEiJmCN7zucUGs/KUYGtEjeo0GZXgPiDjCzgeoXOHYr6CIGD2FIgQkK20IqQ3WyLsfupMgQlX7LGolpf4vuvarvh61h+i6SfpVo69OiSuqDmSONbBS2+/dtg5hmERxqlmdXIKWjVlyPvpzS5Ryo2fE2PbQzP8DHz6zpNE=
+	t=1790711915; cv=none; b=lLd2WJCyfXX8wVCEEKYT7+asy77bYuXzuxGP1xM/Nk80F83bemMzYTpBMYacgrK/hu7LCsar3OalldhqlhtU10HHuOT7JPZNkclvCr94R2dsWlWXZU2rX8Ll+fL7hMmQjcbYVOI9WKWnqLidBAsKGXO/6ERCUjuDv4m54oqY4hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790711807; c=relaxed/simple;
-	bh=FVhwdiqVdgD2NrGBTPyzyZ//0RAvThbV6/LmcvgRGFc=;
+	s=arc-20240116; t=1790711915; c=relaxed/simple;
+	bh=rzIyuyw2Sv4lrUy8xSI2ZMlSAC2YqPgM0Am+3ZBgb0Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WMwVfUsKeYHNnMW0LGWF8hXAbCGrFQSNewyz8kyg/i4S8MyivKuPbVASokyxTl1SfmQ+jU/ObxJWQK/e6V1saTY9OocyBJtyDM2Jujnyyo/DfkJyxW71mdLMVa/4Xr6ZwoiEdalG5BWnqFzdVE3GYM0MYzhYA7SDc/qWMF7dP8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9rkNtyX; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=XmsusZa3Fbi0lljsqB58HQ2M4+meRKtoSwqbYy7QL4jC8oCpfEcVMhPlG1kRiX6JlqnneE1/OEhvXmc6E8xl4EH/DEKrJ6y0sHXRn+LEgV6DrbVva3qWXu8hjSziY6ESiVkK8SWkMOfALKvkwD4gS14HF6rKrS8xPpPl/Js0XwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MD8JS7rU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9rkNtyX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C7E21F000FF;
-	Tue, 29 Sep 2026 19:56:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MD8JS7rU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 683301F000FF;
+	Tue, 29 Sep 2026 19:58:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790711806;
-	bh=9vXn/nJiT5LKKdyToAfStxMmLBFCxAvb6D9CfPyFgbw=;
+	s=k20260515; t=1790711912;
+	bh=FM08SSqsWSOZJWtV+yNcCq2za0yCimEnBoqDGB1eG60=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=k9rkNtyXPHFrNp6kSwmo6AgDL0sdzrW+21KTEpUcf/kNZGJqbE0m4mOCt+zRzSP8w
-	 EAfLbY1Yu0MHVuaCKlZf7NYyNt04j2VzsTn10UwUYOGAUH72W4g4JwiS66rhqnJDXL
-	 TVZeaq2Op9ALi0v+XPc8GV1QkfxuzLRrawsNC546cnP5zZ9zxsJVeBEN224EQYUJrx
-	 ukemXUiCb3u0UGC8NCil3gjT3UFgmsiO3baj8kAtcxer9EBlhJjNMzo5Sd0gSKH0GA
-	 VXerm/1pRrnw9GSAVwxbGn1ydzWA/HLo97cp6hMwIF08GO5zWbslcJsFQKLUDu9T09
-	 kopAzkKn3oDhg==
-Date: Tue, 29 Sep 2026 12:56:45 -0700
+	b=MD8JS7rUltqIokKYj4s9NMk3Cw71hV8LHF0JdqABhcsGjIZOQMNizD0pmlplj4qQf
+	 uezCHmwJmrp3KKwtkEdcP8mhilJQuzmWMaktNjxSxnva1Nk+07kZ2kbFPllXEfHg5T
+	 ccAdRFxzUKCnrfboj8FpXsZiFbHn3BeOGSgu3uWn4qXiTcxMak+Crv+64pXOMifXUs
+	 tSC0V5lUA/Jor0235C/iyi83lx/m0koI1TgVDw1cCfVFoupkR4tJsy/VMPaifxBHdB
+	 YWlLq5R1VD5RLEoHobWJhABApSpeEo0BvRSE9B0RDZM8Bb+yztDCA96EONxPXRhdpH
+	 uoqezxorutw6w==
+Date: Tue, 29 Sep 2026 12:58:31 -0700
 From: Drew Fustini <fustini@kernel.org>
-To: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
 Cc: Drew Fustini <dfustini@oss.tenstorrent.com>,
 	Joel Stanley <jms@oss.tenstorrent.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Brian Masney <bmasney@redhat.com>, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sashiko <sashiko-bot@kernel.org>
-Subject: Re: [PATCH] clk: tenstorrent: Fix refcount leak on shared gate clk
- enable failure
-Message-ID: <arwX/SguNGK3FhFm@x1>
-References: <20260924-atlantis_gate_shared_enable_fix-v1-1-303f925b8a3d@oss.tenstorrent.com>
- <arXX3RkaFvEwTySN@thelio>
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: tenstorrent: use regmap_assign_bits() for
+ conditional set/clear
+Message-ID: <arwYZ3rU1fNTFTld@x1>
+References: <20260924083439.461769-1-peng.fan@oss.nxp.com>
+ <arV1rOMRG6D9erK8@thelio>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,28 +49,44 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <arXX3RkaFvEwTySN@thelio>
+In-Reply-To: <arV1rOMRG6D9erK8@thelio>
 
-On Thu, Sep 24, 2026 at 07:09:33PM -0700, Drew Fustini wrote:
-> On Thu, Sep 24, 2026 at 10:31:51AM -0500, Anirudh Srinivasan wrote:
-> > atlantis_clk_gate_shared_enable() increments the refcount for the number
-> > of clks requesting the shared gate clk to be enabled always. It should
-> > only do this when the enable for the gate took effect in hardware. It's
-> > possible to end up in a situation where the gate enable failed, but the
-> > refcount is incremented anyway, so subsequent requests by other clks
-> > that share the same refcount get ignored and the gate enable is never
-> > retried.
+On Thu, Sep 24, 2026 at 12:10:36PM -0700, Drew Fustini wrote:
+> On Thu, Sep 24, 2026 at 04:34:38PM +0800, Peng Fan (OSS) wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
 > > 
-> > Update this function so that the refcount is not incremented when the
-> > gate clk enable fails in hardware.
+> > Replace if/else blocks using regmap_set_bits()/regmap_clear_bits() with
+> > the simpler regmap_assign_bits() call.
 > > 
-> > Reported-by: Sashiko <sashiko-bot@kernel.org>
-> > Link: https://sashiko.dev/#/patchset/AS8P251MB00013BD9A093C06D2D60E10EC8B42%40AS8P251MB0001.EURP251.PROD.OUTLOOK.COM
-> > Fixes: 23c8ebc95284 ("clk: tenstorrent: Add Atlantis clock controller driver")
-> > Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > > ---
-> >  drivers/clk/tenstorrent/atlantis-prcm.c | 19 +++++++++----------
-> >  1 file changed, 9 insertions(+), 10 deletions(-)
+> >  drivers/clk/tenstorrent/atlantis-prcm.c | 11 +++--------
+> >  1 file changed, 3 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/drivers/clk/tenstorrent/atlantis-prcm.c b/drivers/clk/tenstorrent/atlantis-prcm.c
+> > index 6d4386eeb7dae..854b9c48816f2 100644
+> > --- a/drivers/clk/tenstorrent/atlantis-prcm.c
+> > +++ b/drivers/clk/tenstorrent/atlantis-prcm.c
+> > @@ -205,14 +205,9 @@ static int atlantis_clk_gate_endisable(struct clk_hw *hw, int enable)
+> >  {
+> >  	struct atlantis_clk_gate *gate = hw_to_atlantis_clk_gate(hw);
+> >  
+> > -	if (enable)
+> > -		return regmap_set_bits(gate->common.regmap,
+> > -				       gate->config.reg_offset,
+> > -				       gate->config.enable);
+> > -	else
+> > -		return regmap_clear_bits(gate->common.regmap,
+> > -					 gate->config.reg_offset,
+> > -					 gate->config.enable);
+> > +	return regmap_assign_bits(gate->common.regmap,
+> > +				  gate->config.reg_offset,
+> > +				  gate->config.enable, enable);
+> >  }
+> >  
+> >  static int atlantis_clk_gate_enable(struct clk_hw *hw)
+> > -- 
+> > 2.50.1
 > 
 > Reviewed-by: Drew Fustini (Tenstorrent) <fustini@kernel.org>
 > 
@@ -79,7 +94,7 @@ On Thu, Sep 24, 2026 at 07:09:33PM -0700, Drew Fustini wrote:
 
 Applied to tenstorrent-clk-for-next:
 
-  3f0655b51eb0 clk: tenstorrent: Fix refcount leak on shared gate clk enable failure
+  d5e56ca6c53b clk: tenstorrent: use regmap_assign_bits() for conditional set/clear
 
 Thanks,
 Drew
