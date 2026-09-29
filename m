@@ -1,65 +1,65 @@
 Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28B151C341
-	for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 10:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30AD51DAEB
+	for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 10:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790679060; cv=none; b=kHPT3HJi+w9LawF/NBFN6wmLaNURlw2PCm4Kgp0D3hlvwpaoGosFbjdL4pjZPK4o1mFMLZ5XayrOyoL/6uzgHHkXeh3j4E1XCAjaF90/KRBOuWRjguH1eJ26gOXh3VCeAVQxWr+oPW0lQmBEtFq6lQsVyBhPwfWPmqv8UhzWJ1E=
+	t=1790679060; cv=none; b=Bg5QaWUXiLUPU3ZV4szNKsAsy9942XCSxg2HrxGuiT/krL/o+R+LOn9pVwT7f38g047NY6MT7BSgcH5g7HumiGSNMhMgnEM2cvktYXyr6sC1dQcOVI9/aEKm70r/1wADvN60q4N687wt5pC+DUnynXf/knSzPSbi2NF50CFuiDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1790679060; c=relaxed/simple;
-	bh=yEBiC89OR3qXvDQDCPsvt3vnd76aREcYsfSAe/oYJqM=;
+	bh=TOovBp7AJBZftG0dksjLHjN9+gQXUXQNB4O63AGk+ss=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l2aedHkhuCGdipYV8UwjFkwNtnBRzAk2a/D1/BoCDXRl4rnPPiUP+xDVB8Ngqlpamy5svpBdbQ4DM/SFPzzeW2E9e/12y6NwEmNlvw5f5i9XgiJemnEFZPVX6ZFRh1vdZFWEe5HtFNnmTnEGbWHCTSXbT23jLwZrZCKuo4eQTNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MmBgauqP; arc=none smtp.client-ip=74.125.225.140
+	 MIME-Version; b=B95KomEoyfgqTxr62gWpZ7rmpMA+TPb7gXUWLyTZpANLJB6zvncH2DUSth7UUdyRqbcsddx2Z3cPLoS7FnZVlHTWqa6IYvSnkBu3uUA9vGk/4MjiDhGH2fcrHRYAeqEMN9JucludSZ0VGj/ADCvEaBl3myRasOOnZiNDbE2ed+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fy5Z9o1+; arc=none smtp.client-ip=74.125.225.140
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmBgauqP"
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49e6598dd44so25404235e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 03:50:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fy5Z9o1+"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-4a006bb267eso9830045e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 03:50:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790679039; x=1791283839; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790679046; x=1791283846; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=I9o2g8NAo8BLROcpDMeEoV80HGh5uA5p5XCke07A0uI=;
-        b=MmBgauqPf5DoL3EuA5ugwMqKxCx9+fnMEX/8c11Dv8Q4OTrqhN7gn2Q5S0jVVn1KX1
-         vYIJk8yTXv3WnHSprzu44vY4OgxL2d/aknXRa7wMXDGk3xCF022CYNGFW+C5OiIT3pmL
-         VqHMLsUiwrcmkU6RvzYiyN3o36m6JLmDdbRKsfG3ewbZpve6+lTt22yhMbmVk1DIA0fw
-         HJFs4UahZUbrzWkdZEyKW3jilheo13RfuD5dfC0eqIDTnLbLTU6eWRqFNf7LdeMMV9Cf
-         qLxHzaL3aISxb8zhb8xDfESA90U0hQ/gYrXY9IaUXMN2xSWy9vpc9kj7Rill/IwTWxNZ
-         hYiw==
+        bh=ZeymYWRbDO3OTFfGWiJn5j86DHN1mxMvxZVS6ZWxjik=;
+        b=Fy5Z9o1+6rFj/DLN5HPvef30XCjxQw8YdkdmsVgTljsFa8YSVTW4s8OaIyKKA/LCCU
+         K217Q4NoQglY4O4T+DbJA+BZAs1Sa3+nta761vifETRk7P40b7tZOSyVlzecwlIdRU+j
+         xHFetuSDWUJ3JVi5gOlfcBZtt7tPoA2qHbt8sax1a7CWiv0v0b+1paUawzmjvWtuvQnG
+         FModt5W7Imw7nzlKa50hQ5QVexPTxmENbkw85PGc7ZuNR0iBgKcODwOSZzcHyeQXp2QM
+         Qofa+MWsuNJh7vwStLC4QkK31YcY51PaGXGD5wvgJbpbmgBp0Htv81ilKHTBC8/iAOlt
+         mGMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790679039; x=1791283839;
+        d=1e100.net; s=20260707; t=1790679046; x=1791283846;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=I9o2g8NAo8BLROcpDMeEoV80HGh5uA5p5XCke07A0uI=;
-        b=bT65GsRJ+mh7qnTOQLYAnZM3EjMYceMXG9uu4Q0oG4kxm9yhCuqwiHxl7RYjjf+FnI
-         Qj7KtFL7136sHmNepIDaoontBaDobX29Erv4YuHYzILnDRtRq//0UMUP1UdzXYkSaf+m
-         JXp5GE6FFd02vGUdQKra+KtCm15IOH40sg1b9xpcx+X4eyza+tDpV/a7c6ju5W/rE0tV
-         Y+5uf32SxcBGfCaRlxPltSF69o/R3I06M7ixiFsWazW1lAjoSDDcEjTr2J/vXLrJ4/pJ
-         fkkKe2OfvFADkZhsHaHhVhcWXADP4pC89+r2ceOSJ9Vl+45MFTb0QM76tX63bLcnwvl3
-         0hCA==
-X-Forwarded-Encrypted: i=1; AKwUvBxozqlNJyW0DUw9iNXnu6if90V109ssKV8VqU70slost7Q7a67uQYlgKh5u8TiIoUW1PWFm8GQuu40=@vger.kernel.org
-X-Gm-Message-State: AFuF++m0oZ836SQOUWi7J9KFbBXIZ4ygH5KgZFg7O+2eWh6injU5sctQ
-	o4KlEwPOYVomc9dXOeVANNP7NuMyrmovYYx4Lw2WkxwJnfKQ2b63eGEAqfjbNxoc
-X-Gm-Gg: AYBFou2gDpXKJOK44jKHcn3JqIT+byboc7BSWnP3zM7sE4oFSu3ccpGA2oDbbYFfM9P
-	qbHtYGDJKFis92wPVS0ymOM406UHLd3L87tjNl2u/51fPDmZqkr/zRAjfzKE0rXDW0RBSrWes5b
-	clAq3BuSTpR04gELYfip6hWWCjlpirIgZLdtmOH4yf7GfxclWwdTRIGRbhOhTu7SsnYMFqKB4Vq
-	SfME9LJ8+4qO9YfL6zaNn1npx/mM0k2aaFe/4F1wMW+NpVuiocEFipmSHMu1xjT2SeKtchQbNtZ
-	wRG41G4SLIioTFPGiEHSueQi4FIejPaB+S4OMM0P8of4CH9NdjfmFscirG1uAhbYpzEyHabR1AW
-	wVjLiQqImnEIQMThLRrVFtm4/iAiorWY8YojGse8nWiGdRGaVcYTiqu0uBnIAZHnBKDM2ZGDJf5
-	8neV12C9TW5wcPy310gx8KEdqybVjmHyuVam/8amKFLmJWWGFgleVebzY+ij958AcmuIpFEZWD0
-	lXOz7D8JfFluoSAh2pLcZoOnRRsJFQ+ad80wDcr+lN/hnnqtSw9IojFG33Vj2Yv0DHXYxDS9Uih
-	XSYAM0ykfV2BzkhcA//9EFMp5Buk
-X-Received: by 2002:a05:600c:6291:b0:49f:ffed:2cb with SMTP id 5b1f17b1804b1-49fffed033bmr120811245e9.6.1790679039014;
-        Tue, 29 Sep 2026 03:50:39 -0700 (PDT)
+        bh=ZeymYWRbDO3OTFfGWiJn5j86DHN1mxMvxZVS6ZWxjik=;
+        b=1ePi7ydyWqsM1ajrfQFExzR4VADAlU3FinaKYqaZbgN0VIzf25ladWivOobeoCK5B2
+         yGfvGBbz+1jrnMZ7V2Dp4NUUnXxnpXa+valtKXEvalfwg7QHQHk8+a8mNGui/fOziZXm
+         lftvZg7wOkr5E9NaCzAlN+Rx2NWvXQldLndudeW3FwmPP+DH7pfVeXmZs2CMN5LhXn1j
+         yTxYqS20le+3/c1+YeQr+akI0kaWbnKLvnt3bFnMlzPS5RD+ox0UC5SKJB3MQrRtM1r1
+         XLH12WneDA3Gm8ScxtzEjT1dZ5K3VpYI67h9TgQFegQhtyw3cgcGXTWALblTUCVVpXmp
+         HT7g==
+X-Forwarded-Encrypted: i=1; AKwUvBzj1VriALHfuyi2XrndbmG3RgAFdE6+K17liH2gdiNJeBQOmJYUxP43dkSz/VXCZznCFnDl708h0H4=@vger.kernel.org
+X-Gm-Message-State: AFuF++kBn4RjJZQ0jKA5++gdsVz2HohK2ASWdzXlWrpI0VG586uX1XQr
+	4QpX3KOiAle+xV/wDuFBRX/tAwrI22woXAAXtQWqHkeNwlzXcpt+1Y2i
+X-Gm-Gg: AYBFou3REMobrq34uuxFHTdD8FMYNr5XhFrAtH9Updhvsnem5QQ8ESMWSQN+46dYqca
+	NNd7B3F3fEDV7h+ffZC6tUFqvfiZSS8DDvo5us66Dbjffm8QBhR2fpnB+w6erFMbQlBvV/2pAY5
+	79eCADyaxQ5kUGxWM3g6rcV5WZS9dAkmK3DmwzY9fY5rG0cHhMMv0gedy2DBQAAqM4epSD13s3/
+	mT3GqteBCRlPQh6z4DYHSlz1QRBiVGaWUOuV+tsavsvrwX6rREr4/TdwujbtPNsgszYl84ZgAOo
+	IZhBnNPkHsEW5vKE3ikhmaR3yciutP8Afy4c+XA3elH94Ni5+xXFhSnbZxkDt0Ro69xMCohNmKt
+	wwLAK4EmXPDSXIPT8Z26+mN1kxf1KHnlZ0pGTYCNDnh0mrf/neBYWF6eotj3f55lNwNsSXx8FMV
+	R6Ih3rX6c062AaimeL/zmYABQ+4fHAAlY/UgHAV+heoN5i2wP3oRqQIDnuXjfXJiEoFtt/MxUgX
+	MEPZq8fv0Md3+VTKx8pCnf442uEy92FMgSvguC4Ccn7RMN+2n79PLcOVjOwmD5iwoamNCeGb682
+	/qCPKJ0yc751rTtqfctxDfEZr0xN
+X-Received: by 2002:a05:600c:c48f:b0:499:bf8c:cfd1 with SMTP id 5b1f17b1804b1-49fe66bdfdbmr282392825e9.2.1790679046003;
+        Tue, 29 Sep 2026 03:50:46 -0700 (PDT)
 Received: from iku.example.org ([2a06:5906:61b:2d00:10d5:21e1:1aae:c9d8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48af5058c52sm3516303f8f.19.2026.09.29.03.50.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48af5058c52sm3516303f8f.19.2026.09.29.03.50.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Sep 2026 03:50:38 -0700 (PDT)
+        Tue, 29 Sep 2026 03:50:45 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -81,9 +81,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v7 4/8] watchdog: rzv2h: Drop WDTRCR_RSTIRQS define
-Date: Tue, 29 Sep 2026 11:50:17 +0100
-Message-ID: <20260929105021.542730-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v7 8/8] arm64: dts: renesas: r9a09g087: Use CPG/MSSR syscon for WDTDCR access
+Date: Tue, 29 Sep 2026 11:50:21 +0100
+Message-ID: <20260929105021.542730-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260929105021.542730-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260929105021.542730-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -97,9 +97,16 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-WDTRCR_RSTIRQS is unused, so drop it.
+The WDTDCR registers for wdt0-wdt5 reside in the second register region of
+the CPG/MSSR block. This multi-function block is now exposed via a unified
+syscon regmap interface.
+
+Replace the direct mapping of the individual WDTDCR registers with the
+new "renesas,sysc" phandle property pointing to the CPG/MSSR block syscon
+node.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v6->v7:
 - No change
@@ -108,27 +115,99 @@ v5->v6:
 - No change
 
 v4->v5:
+- Added review-by tag.
+
+v3->v4:
 - No change
 
 v2->v3:
-- Updated commit message to reflect the change in v3.
----
- drivers/watchdog/rzv2h_wdt.c | 2 --
- 1 file changed, 2 deletions(-)
+- Renamed the "renesas,sys" property to "renesas,sysc"
+- Updated commit message
 
-diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.c
-index 55ac11fcfcab..17c9e9a24ce2 100644
---- a/drivers/watchdog/rzv2h_wdt.c
-+++ b/drivers/watchdog/rzv2h_wdt.c
-@@ -40,8 +40,6 @@
- #define WDTCR_RPSS_25		0x00
- #define WDTCR_RPSS_100		0x3000
+v1->v2:
+- No change.
+---
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 24 +++++++++++-----------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+index 68c8daed557b..abca7aa89458 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+@@ -327,61 +327,61 @@ channel1 {
  
--#define WDTRCR_RSTIRQS		BIT(7)
--
- #define WDTDCR_WDTSTOPCTRL	BIT(0)
+ 		wdt0: watchdog@80082000 {
+ 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
+-			reg = <0 0x80082000 0 0x400>,
+-			      <0 0x81295100 0 0x04>;
++			reg = <0 0x80082000 0 0x400>;
+ 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
+ 			clock-names = "pclk";
+ 			power-domains = <&cpg>;
++			renesas,sysc = <&cpg 0>;
+ 			status = "disabled";
+ 		};
  
- #define WDT_DEFAULT_TIMEOUT	60U
+ 		wdt1: watchdog@80082400 {
+ 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
+-			reg = <0 0x80082400 0 0x400>,
+-			      <0 0x81295104 0 0x04>;
++			reg = <0 0x80082400 0 0x400>;
+ 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
+ 			clock-names = "pclk";
+ 			power-domains = <&cpg>;
++			renesas,sysc = <&cpg 1>;
+ 			status = "disabled";
+ 		};
+ 
+ 		wdt2: watchdog@80082800 {
+ 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
+-			reg = <0 0x80082800 0 0x400>,
+-			      <0 0x81295108 0 0x04>;
++			reg = <0 0x80082800 0 0x400>;
+ 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
+ 			clock-names = "pclk";
+ 			power-domains = <&cpg>;
++			renesas,sysc = <&cpg 2>;
+ 			status = "disabled";
+ 		};
+ 
+ 		wdt3: watchdog@80082c00 {
+ 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
+-			reg = <0 0x80082c00 0 0x400>,
+-			      <0 0x8129510c 0 0x04>;
++			reg = <0 0x80082c00 0 0x400>;
+ 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
+ 			clock-names = "pclk";
+ 			power-domains = <&cpg>;
++			renesas,sysc = <&cpg 3>;
+ 			status = "disabled";
+ 		};
+ 
+ 		wdt4: watchdog@80083000 {
+ 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
+-			reg = <0 0x80083000 0 0x400>,
+-			      <0 0x81295110 0 0x04>;
++			reg = <0 0x80083000 0 0x400>;
+ 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
+ 			clock-names = "pclk";
+ 			power-domains = <&cpg>;
++			renesas,sysc = <&cpg 4>;
+ 			status = "disabled";
+ 		};
+ 
+ 		wdt5: watchdog@80083400 {
+ 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
+-			reg = <0 0x80083400 0 0x400>,
+-			      <0 0x81295114 0 0x04>;
++			reg = <0 0x80083400 0 0x400>;
+ 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
+ 			clock-names = "pclk";
+ 			power-domains = <&cpg>;
++			renesas,sysc = <&cpg 5>;
+ 			status = "disabled";
+ 		};
+ 
 -- 
 2.55.0
 
