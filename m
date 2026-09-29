@@ -1,133 +1,123 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15053D47DA
-	for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 15:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AC82D7DC6
+	for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 15:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790696225; cv=none; b=HzlhWoqPv+NCHSGNsHJSV/L/OU6ukT4TdxoeG3DbMWDM2xr4OjGbBx4nwAHf/HNwHggBBlAQNmGXUeCSEj2jyMaS7Yr1v7AOLWQTb3QSSeqvhsGkiqa9dOPreKAK4D0aOHfCPCZZBE3ctZ9eQhmJVPnXdVRXA1QulWI2/QsVJso=
+	t=1790697151; cv=none; b=EFXG1jMirZx6JloC3k1+wxWi0jlHQk0yqtbl5Qdv2DNhXekZv+cTW7E0Itad/Fb3MtOR3/2TG5clMb5/ZdgDWM4Lt0c/psrDdx4UEoHIK+/kH4mGsmQWOCI+nYQTFE6PGRpv0SHLtnbCOZIGL8x4Bitv9wcmpAjQOmPzhGziSKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790696225; c=relaxed/simple;
-	bh=ZfXedYkqY+BKBZBXX5A6LoKC4jkyILJ/d8OB5hU1wtA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r7Pyp0A4FEsqtK3gS8ONgi0a/I3rHlcyMtqTG0Y/VgmNqmZhoRT5h/4aXfoneIFQdKifjXH3t942Tpfcff1z8qj84w6npHIkt9JqroLfcUKTi345bAML5St1hZlGFn7+NB/LJyf+AmsMULxzo9B8dbMbqXk7N5pSd7tcO+gXcdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=MfEUS7kf; arc=none smtp.client-ip=74.125.225.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1790697151; c=relaxed/simple;
+	bh=ZhioHhKCI3c9+3BTGfqNVVJyHhlhbfeWZ3cQGaxcT3Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=AnxvjwSmYTWqX59DY5NY7NtU13Vwn4K2uIPePQSylEgyJ1AZgBDMeBSpMg2+XgdTYamlZeka9neJqG3UdgDKq2BTBa2V4KHpugjYnfC5r/uITjERTAFbcethgMpqS87qilu+/homA3vABD4CpfgSslcZliI/tVUSkRPXljkO0hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZzK6OUPp; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=hIcXm1rb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="MfEUS7kf"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-485984ebf5cso3497937f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 08:37:03 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZzK6OUPp";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="hIcXm1rb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1790697149;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fsdd/ZfuXmaiSsfG+5vAWetJ7u+NesgPGBI4SS5aNWI=;
+	b=ZzK6OUPprazgv/duPlku/fICRK54gEj++K7t1o9vmVu71Tu1pgka9Q1Fh+6tO63BdiSb7N
+	hTwkuz1aDgFZ70vrOWrk2GXqSdB3RhlqinU8rA784ICUCtAgEFAsYuEgWC+1DN/ckIXcPj
+	/QyMfhprUQHp697zL5QabYqChB3noXg=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-59-UuKRpApDNwGBspfY9rtjPQ-1; Tue, 29 Sep 2026 11:52:28 -0400
+X-MC-Unique: UuKRpApDNwGBspfY9rtjPQ-1
+X-Mimecast-MFC-AGG-ID: UuKRpApDNwGBspfY9rtjPQ_1790697147
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-53333acddb5so80806241cf.1
+        for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 08:52:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1790696222; x=1791301022; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=ZfXedYkqY+BKBZBXX5A6LoKC4jkyILJ/d8OB5hU1wtA=;
-        b=MfEUS7kf3BfNEpEuhCbI81Ifa5dndCSQQkiMHyHrB3a1NMdqijQ6ks5FR28rYfF+9A
-         6RKRw/ugqykQX4WFVF+4bT4cZ+CTMkB1Td83Epxf+i+nJSGv0+7vE8vkr3oX7/J+Ook/
-         eFbWH/bcq+W412kY98c2oAxnQK6nEhk/nzo72W/pbUFDqK+9vat4/EFjYLz+zLnOBQgL
-         EwVcs+1MSIHdqhyToUmMxKz057Ur+neTthZTSxzCPt7mbFBWD1nLbFTEjF+W/DIoWuqi
-         Go6Us9wTJjt9K/3YdI97/QscLCHRA2b/X6cJQfReEeW2rRUZQACJGT8BCrETESkpGeM2
-         GhlA==
+        d=redhat.com; s=google; t=1790697147; x=1791301947; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=fsdd/ZfuXmaiSsfG+5vAWetJ7u+NesgPGBI4SS5aNWI=;
+        b=hIcXm1rbNSUC2IVlsLaIK/UbU6LwWoxGb98VpHDN09pMj2vBNpK0lgKlTSGK/WgNTU
+         YhRogaqq9WNdZzomqpV0tF69O8j1Yq+AYnxCMtpbmbFSbJkTDz4Cof5qPup6vfXfGFsW
+         4r0lhz51abY/RX1/zdM5EqmpQB9NkoUkmIM7701RxmeoZ7mMdUWgzU0FWY6GPyYlBRHU
+         nK8QrDlKqEhWRmbwWvbA8ges6jCNvKtFETZwAVne39+wFj2ogfwJ0QPiauurM6+yB/kW
+         il5Moq+sNPZK6RFCV4gIEUXm8ToGpYWg+CVCBblo2kjJx5Ym8ME6SLM7zzhnceRprSeh
+         E2oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790696222; x=1791301022;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1790697147; x=1791301947;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=ZfXedYkqY+BKBZBXX5A6LoKC4jkyILJ/d8OB5hU1wtA=;
-        b=Hj0CBkoxg7NPsqStKelEKcXaNv3oltwQ76GhwXGev9bnKFbCaZeiQOzIgWDjNxR51k
-         4+rAcUa2slZONXbi7kZKMKyMPpRJld4JpgpraKRqqEtq+p4FmJvytxCwQE3oPYWDjM2M
-         XJ0iU8HzozuaHpvHD2IN3yeSYdLsNtaJoK4lgVKXkz3o9ittsYYzqVoTysL5Rh+Ljc4K
-         0TdpCqFbQgyqnAsii3goXBo+io4G8keMdfspPiBOXwSlTPEBhPNV060s0uvZZvCSFuU4
-         sisF2Fp/F60s2zQiB+xpG3ltSl75D3dPNIK4eGbbWZTxuaeoZrL32umaMHFQajYDpr/h
-         CN0A==
-X-Forwarded-Encrypted: i=1; AKwUvBxS4BuPLzn9XNoNlSQXD4Lu1G0y4KrU3mFzNgJ0Pw8DzUI5shUmhSR+ytzBrd+Tntc4o5P5cfVM/Fw=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLl2H7k8rORhM0ALYK7rvFLtnOYaFJ6nZ2BM9b+J0aC4FpFlT3o
-	W2QmSBtXBFxH3Uo1NUI3L5m9APKiqGjmUNgxFMEX7/rpzbj0Mpc1wBO0RHosVriN7qA=
-X-Gm-Gg: AYBFou3iUQPr+Yt7SHattRkRSbS/0am2xwbatahUA+iEKfKi6suQRsdnlpmzY4u2m91
-	aLCMkA8gSMeh114S8vngHdFagPbLF6Ph3AcBdeRe6UVz/LLFHJ4LlGj4/N5URE507kT7sTAs55T
-	/64f+CbACuQReQlZjGiJb/fSwe2+NUSxgT5z7T7IE2DK0mvRUu/f1ebViy2sG6RcHBZp4zvPJBu
-	Nx3kc9t5eRBoCAlXn+9BM/pfGtgqDZ2qC8pJOYG5KAz1mQsfnAdob3JUtJhiJhLtHJf5lxP7rqv
-	53Q9yLrGnAnG8CGWZpkPHHF13mBF66bgsk3M0NtyRf1rPdxAPNORid8MCuIwIbGBHW7UWPdE5qD
-	nABT+4sCLjhXGgC3MCgyN/C9LYqAxxmsWXv+pLA/eYr9ZuEEWJyabNeJvvvrWTNBpc4o2J8GyJL
-	6SU4tdt7cXRYZIARErlawx18RKpssJAsikvtOs+DVpPKucU6NTydb2/2ZHqr+SGc2dTR9hVl2zO
-	Quu9oof5YgnFR751PX9qqkgYqSxa5+vW2q7O4iH2wZRNpSlWnymo7oZGjVREA==
-X-Received: by 2002:a05:6000:703:b0:487:13ab:142 with SMTP id ffacd0b85a97d-48872abc483mr31447342f8f.35.1790696222042;
-        Tue, 29 Sep 2026 08:37:02 -0700 (PDT)
-Received: from localhost (p200300f65f19a904123cb16e9a8bb736.dip0.t-ipconnect.de. [2003:f6:5f19:a904:123c:b16e:9a8b:b736])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-48af5056a16sm4647768f8f.18.2026.09.29.08.37.00
+        bh=fsdd/ZfuXmaiSsfG+5vAWetJ7u+NesgPGBI4SS5aNWI=;
+        b=M4d0v62008fCC9dhEgEjec1fE73baP2dMpOtB3vEeQxDWtpauqmgDOguEOFeccU67u
+         PJGLDs+89xBS/1KaJQgJ/7mewii4fNga/kJwanALB8VciSa0iTVB2XJgQR/hswXR2fUm
+         bfPq9VmZ1ohDeQEmk4pZ/kVf9EW+96jAB+JG+w9+12cB+55mJgNouNHDwut7kBq/tN0g
+         w/E8d2fIsVDfPjw5Zh5w4URZtjW90B72R9GAqTRk+NNUS8Y4/uF/M/sqMFiA+mut0YvQ
+         AQw1lA9QjXkAAnAIKgI9fFg47JUe6x0DPVeZ30LxFGuktNreJuI/8tiXCbd9KMTMT8yQ
+         SbAA==
+X-Forwarded-Encrypted: i=1; AKwUvByhBhJP5OngDLE6dMVhbGfIfj3KuCJuy9nYg2ph2L9NQfm+Wem3cENiBpozHSPQLCWm8M406HhGejg=@vger.kernel.org
+X-Gm-Message-State: AFuF++nIop/jotd7SJ9x5La9GVL81DwtVjxD2itKqvoUdtD2dcSW5DBD
+	u+AXqF1ZgM2Aq+h6BXeV4F/u0iPbJyasyN2+AF5H0MFYLtluDjSTT67mEi2UxGnc38vN4C7H+d8
+	5CezT2oo++Ubc+OTUdbu4eXZXEPd5PJgrlUgC31zhWYv5pMspX1CJRX2k/R5YQnKfHsncvA==
+X-Gm-Gg: AYBFou3L6D8/4xmPprrPh4/KGI19VqgwH7d2gbHB9B2Miumv5T5QlkTkcFCAH40H18M
+	TwbZXlrTFRtaMLJbkAqXJetYSnCBjin46pSo5enkseRDsFD6lJKIem/wQRAfXVKwYG3w9NQgAJ0
+	Juyqy/FICJs1izm/eduRcrNot8+7p3qxAazyhfGTKHNYH3ywYn9/7qrtmQ1O2jtVNyzr9tOtDiD
+	jDA12IbxsBDENNcqvVNqKNDPG42TocJXqDK9NF+nHDC5Q+AW/6rveNCMJCN2KoPcj1oEBl4EfGL
+	2KT7DcIutBjHbwCywFGsodHVlTPQR4jqwVxYCdddgrwyOgEIzY6+0lrtA8p+vAHZSR3HtfB8otI
+	pyCZzH18jx+/EuKE7JZMgzBKvVTrP9UKlWX3tz7eX4VkgcZ+6JnQ=
+X-Received: by 2002:a05:622a:a05:b0:533:4359:b6be with SMTP id d75a77b69052e-5334359c1b0mr126510351cf.9.1790697147320;
+        Tue, 29 Sep 2026 08:52:27 -0700 (PDT)
+X-Received: by 2002:a05:622a:a05:b0:533:4359:b6be with SMTP id d75a77b69052e-5334359c1b0mr126509881cf.9.1790697146764;
+        Tue, 29 Sep 2026 08:52:26 -0700 (PDT)
+Received: from bmasney-x1.rmtuswv.csb (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-53322020e91sm89606841cf.1.2026.09.29.08.52.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Sep 2026 08:37:01 -0700 (PDT)
-Date: Tue, 29 Sep 2026 17:37:00 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Abel Vesa <abelvesa@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] clk: qcom: Add lpass audio clock controller driver
- for Glymur
-Message-ID: <arvaq9M5aO7RVYSl@monoceros>
-References: <20260922184425.56114-1-srinivas.kandagatla@oss.qualcomm.com>
- <20260922184425.56114-4-srinivas.kandagatla@oss.qualcomm.com>
+        Tue, 29 Sep 2026 08:52:25 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+ phucduc.bui@gmail.com
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20260724070457.24007-1-phucduc.bui@gmail.com>
+References: <20260724070457.24007-1-phucduc.bui@gmail.com>
+Subject: Re: [PATCH] clk: si521xx: restore cache_only on regcache_sync()
+ failure in resume
+Message-Id: <179069712462.199845.6340553951907887636.b4-ty@b4>
+Date: Tue, 29 Sep 2026 11:52:04 -0400
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bxlqyfqepcg4nu2t"
-Content-Disposition: inline
-In-Reply-To: <20260922184425.56114-4-srinivas.kandagatla@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=351; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=2VVbrhExCycg0VvIpM/2JFaJtJS75797ZuxbfhvmGSM=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJ239veUd1xem/IRpMLZw1eZUcfb+JZpfv9xuvVvB1vG
+ 9YHPH6j3VHKwiDGxSArpsiyJNeoICJ1le29O5osMHNYmUCGMHBxCsBEYicyMjxq0psq+dr9oIRY
+ OzML79Pw2cI9r0xNEuY2dgj+XvC7tYqRYfP6XQYlXld3d/1e/PzKZ5YTXB7LXzR5hPdGGwUuuft
+ pAjMA
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
 
---bxlqyfqepcg4nu2t
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 3/4] clk: qcom: Add lpass audio clock controller driver
- for Glymur
-MIME-Version: 1.0
+On Fri, 24 Jul 2026 14:04:57 +0700, phucduc.bui@gmail.com wrote:
+> clk: si521xx: restore cache_only on regcache_sync() failure in resume
 
-Hello,
+Applied, thanks!
 
-On Tue, Sep 22, 2026 at 07:44:24PM +0100, Srinivas Kandagatla wrote:
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
+[1/1] clk: si521xx: restore cache_only on regcache_sync() failure in resume
+      commit: 906fddec02bc9381ca872544820bd4d610cfa20c
 
-Please don't use <linux/mod_devicetable.h>. That pulls in many unneeded
-dependencies and I'm working on getting rid of it.
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
 
-Just rely on <linux/platform_device.h> to provide of_device_id
-(preferred), or include <linux/device-id/of.h> if you want to go full
-iwyu.
-
-Best regards
-Uwe
-
---bxlqyfqepcg4nu2t
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmq72xkACgkQj4D7WH0S
-/k6kBAf4kOBFV8X54QSaUA2drytAFm1AWOMNOdRBmU6yY64TUWxW0ucR2aSy7o/J
-/yrQTDzdn8RgenjsGrl9iGOfOs2G0TGRLNMiJ+xivGPKPZoVAmKvjLV17B2xTfy0
-31Qgy8JGmoxizoOfsQP/BMJnnThCdEAqHLuLW/WSFNqZlGGOPZ7O+OnsNn8KD1l1
-ZyRNOo6+uFI0N49sVHcrSVau/vkV6B0RQIZRWHVn3czU8qT+XEAPayaSULauF+6S
-lfvqQSraHK3Ji+Q6Kg7SmQV++dN9xwTQnTvoe5c/VgB9pb5x8MSt6ckDOh5ber73
-DLYbbptZH2au4aATXTKSCEIgt8k/
-=Dnk/
------END PGP SIGNATURE-----
-
---bxlqyfqepcg4nu2t--
