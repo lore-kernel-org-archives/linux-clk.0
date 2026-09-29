@@ -1,161 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011015.outbound.protection.outlook.com [40.93.194.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC1347ECDC;
-	Tue, 29 Sep 2026 08:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790671355; cv=none; b=OwHQuSzaN7ahJPI+bgEVUszhNaMK14Z2d3oscrUK2ZJoVjSZ31s8vC9vDkyiUxaBQaRzNYYOhJrD6GVhOvz5uvUy/rFHV3IR/bKZ5Eqtq9JyIGcjn+495uTnNUQVJIjaVi8/5MnRUxxEZLCh1BnsSZwJ0HLDdPx7Qi0KuBZhw9c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790671355; c=relaxed/simple;
-	bh=f4y/mvoHZS071lB6AkPsZEkb4J49NsbE6lJ22i/vLPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OFAHpmbix/8wLSDolX03YA94rloGnbDrbSGYSabYk/dnu4ztYahNvUOEWxOGNgf1UdG3I8mMIO/yInscNYW7gUg1v+Twb8RNeqTdR6afzbYjh3ndzh3SYfrAtga+Xr0Xq3UXrnxsGMlHOr/svXpbkBWW5LDzZ3/8dIApsLxFb4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZU69Nbq; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1414EBACC;
+	Tue, 29 Sep 2026 09:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790674786; cv=fail; b=fFepbuemiRRX1WUbKJZOxG0jAIyLRl0IP1mspQl+Ffe98IZ0o5MgvNDSntuGdV7dsV7VFQUBeWOc1Pd+govhMldzJc7XfpE2XHo6r8T6vP7X87RjK5ElniXUE6jurp6tWu1QbfgxSWh2JFijZskLKEsqvIpHH6Rbi81l0jf+GYo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790674786; c=relaxed/simple;
+	bh=6F9v33Kj2lzsNY2JXELPTbrxHcpOGI79LCPpEicLF+k=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=QDRv/clD0mpHiVKQmmz6RF3M6BTTFU7W5wE5HEsuj6v/g80Z+S2WOHV4gmLwKcjlZJ5o+9Pis2Lr6sOJhKfKx7YaTbk31mKEU1/yXmboiAxwmp5u37JbHcwPbhWhA1f/MD5fRMaL2xgzzggo+esa6noPlInjVKOKDArn5LHeUBQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=Ea/LvTv1; arc=fail smtp.client-ip=40.93.194.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZU69Nbq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32E2C1F00899;
-	Tue, 29 Sep 2026 08:42:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790671354;
-	bh=5rtCPENpmtMMjeAjed2RbvlHNfF2BKBVrFP7DRlYUzs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PZU69NbqSmv6V4oncymr1RvBFBZeu1qW6BHj8QQCiyA3HcVoQrT13YglXRwtGHAZI
-	 6+1IRA492yJ650qrx1dj4OF7Ixz+dv6EYf5QJLH6e7dJxmZJH2g5bi746Cj8z+X2GO
-	 1betMD3DDQcYIIgpP3fpXTZzYOcjHpjo8ob+yuoNjl2BWRkd8wDJSkJxTPqyqM2+qn
-	 tJKERAehFlFPXWukoY3A8WbW5HcyXOpbLCL9PZUvYcp7a9vIMUtlH+r5zFK+9rvVnB
-	 h2tZNORlQLJlGs+oaLNdBo9kZKABlzT4RvZ9RYz4FvpAFdsBynq/kLeOA0F+q+tdK8
-	 O7c6BAAdXffTA==
-Date: Tue, 29 Sep 2026 10:42:29 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v3 2/4] dt-bindings: clock: sun55i-a523-ccu: Add A523 CPU
- CCU clock controller
-Message-ID: <20260929-aggressive-uptight-rattlesnake-35fdca@quoll>
-References: <20260925225112.14081-1-andre.przywara@arm.com>
- <20260925225112.14081-3-andre.przywara@arm.com>
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="Ea/LvTv1"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rbNqzwGuNl8g+c8kRiko5BPjpNRKC5QawTQn1aZ3W0KyDe2Th/WItkKU2ZFarR7own/orU3wODUNSNQ9dIA0YM9uu4bnyRKwVdoed5v30OCOnVAyq52jQ5IrNP50sCAj/GTh1vKqITGSj3O50GM6SgB3zRDeFTq9leDATonuh9r1gnCxH0azYrYRvQL99xdhSwMLNgTVCqpq79qqDRE1D3iZ9D/VPGSgQoMJ+eEK36R5eJfYdHnQ+yzDUpx12v2iShgSAMLHgnwDPWbUlwOxcXezLm6jzztLfJCL9yf6ZK3A6V8EXIeFrHNxWePs0UF0z+GWjZJ3aI5rsbgPV4Fhnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gwcHWaAF78Ul5ou/BwWqrAd2ESAuAw//1sGo+8WtPps=;
+ b=HfjdgcgfOcL7uVEYYH/OKlE/5V2Vj4bBqgmYhaC3IseFSd8+A5/y6T3kaS9Oletr+C2kPzmKQKr6SlnWmMOdpcIGVALk8plpaw6k6xAM1fc2qdFfvjT0MaKN0CqsGzmEsDSAdq9KpF0hoXf6UY7YLgzjbk8RtzVgjv0usXtCGiSzPN0wn4lZIYwLsKDJ9X0bSU+t8N0g9T/L8v1S4QUuCQ2nsX1ijV7al/AXuEgjfweKCT/FUSbPtJcuIRlnV+tZ1itivRbsmUQ6AQ2C//LJenkdMVn+O9vOFxRcJJO1It/u3IBXvC4DzD2K8HdHJ32LDc3MriOHWKaJcFJ19447Sg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gwcHWaAF78Ul5ou/BwWqrAd2ESAuAw//1sGo+8WtPps=;
+ b=Ea/LvTv1QzFZhKB70NRMNfP9bdj3bQOFyj8xYQCSqNBUexxOIqTnUvxAvdQLn5D71bl9a7B1ZdRcId4Gnonx4WBwEXn2UpkRT3kEq+QxRdEzOnn/q7slR4D8Q0+G69MeukgzI7DsVDaWyUNbwPVGc8xUF/GVQ1yoKtnIkoJw4Qx/LM3o4dAR4v73TvyPVAFZ+9DYTYdZ4gKhfcWIdYlkUZ8Fm2FaWyErnb9CCPrkEeSORd7Jj5w0BJIgwLGXqiF8/29K3sabH9EaubCuCKRvUcOBaGOXVhQ4GIxn7xZyW1p4IuMcvmQmbHIWVSyg7eaoymyf5RZTMmhQTOuzfVKJ8A==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from DM4PR03MB6192.namprd03.prod.outlook.com (2603:10b6:5:39c::23)
+ by SA5PR03MB989108.namprd03.prod.outlook.com (2603:10b6:806:4d6::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.18; Tue, 29 Sep
+ 2026 09:39:40 +0000
+Received: from DM4PR03MB6192.namprd03.prod.outlook.com
+ ([fe80::b75b:5c92:1e9d:514b]) by DM4PR03MB6192.namprd03.prod.outlook.com
+ ([fe80::b75b:5c92:1e9d:514b%4]) with mapi id 15.21.0451.024; Tue, 29 Sep 2026
+ 09:39:40 +0000
+From: evon.chiam@altera.com
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dinh Nguyen <dinguyen@kernel.org>
+Cc: Brian Masney <bmasney@redhat.com>,
+	Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] clk: socfpga: add Agilex72 clock manager support
+Date: Tue, 29 Sep 2026 17:38:11 +0800
+Message-ID: <cover.1790661931.git.evon.chiam@altera.com>
+X-Mailer: git-send-email 2.43.7
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR05CA0188.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::13) To DM4PR03MB6192.namprd03.prod.outlook.com
+ (2603:10b6:5:39c::23)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260925225112.14081-3-andre.przywara@arm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR03MB6192:EE_|SA5PR03MB989108:EE_
+X-MS-Office365-Filtering-Correlation-Id: 216b2a3c-61d4-4fff-7ada-08df1e0d8ff1
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|23010399003|376014|7416014|366016|10067099003|11063799006|6133799003|55112099003|18002099003|260925022911599003|56012099006|260925021311599003|260925021911599003;
+X-Microsoft-Antispam-Message-Info:
+	Y47KCDU5ozjnOhzXng27RbY01UI8m4fnd1vfg2A4mF+zVfIH219xGGVsXQu0qzPR58FEmyDkrBq9HWSB6znoep3TJZQCv/4OFSWqlHh4mP9qYC4wQVTPCqgtbW/6kVUHYR627m5TPYB9xkQvuCiJF7vqBafCXYXk5D4zFAy7ewDbSSgrjZjyp+7AVKSjoTUre7A8WVibFGvEAHdSM+aHMG1j1JDj95so3djVeg6Fj/VmiiqzgYeKF8vO/Ra7RtkIXNEr5N45Fw/g0QZnwXFf3ny+iZnWH7/0v45p5/P8KqElBaGeyg85ZJR9n3wTvp421TTrHBipQTD7b1w4zzGBXWZYvdQ+vwvCSS24LFmLwv6MRsvnw9I5LUc1EKwlXxRUT00iISkSuf1P+2O+qgWnBtGm3XJoF30Aqd/2sDMAB2A8n5MArybreGuyIRc+9xyAOFxO1sUd/fiXKodvKDXZucqGzdg4EQPujQOFSC0SEWr2MNF/zqCM8UTVa5mYfTiaD/dBvDETbaOg8LQkxnQ3mKnqsIf8XtcjA7HO9L+ak33UFid91grz98SWT8NJuT/SBfANy9TggqpUUo0snHlCGFpYM+BM4/Ykp8YVBcuKwsIgbdXY4kv3JXgT4spBVjB4
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR03MB6192.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(376014)(7416014)(366016)(10067099003)(11063799006)(6133799003)(55112099003)(18002099003)(260925022911599003)(56012099006)(260925021311599003)(260925021911599003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?OFTtQ4WyhOPlGyJjOIMW1pxHKFf5uCMrK3/sWYOK/9XI9snEtoL5EzBNOOHw?=
+ =?us-ascii?Q?L2eMe0Lc3RoSxFGeZk623PYlz30VZImlZez1FEYbovKq96TR1kWgDn8XDy1s?=
+ =?us-ascii?Q?gwNsbPTDjPGuOjBQKSB4FrZPTgxeMvzQ7pifZFPkeM9iwgeifVT5JiiRe/1+?=
+ =?us-ascii?Q?5lulYz0SlEWhTYVJsbRiC7JB8zVROfZT6fie5RA2C4DtwvDP284j+s1vEXZj?=
+ =?us-ascii?Q?iZv1HAtHhkERCdgUdjcA6aYus8kWa9r4BRSaZzEBh/HdLAs8qarw4FlUKTMj?=
+ =?us-ascii?Q?7mOS16BIWzuvV+TbN0FTh9RqpqGyBFoRt9WOlnLfV/Omu0cDlbHGV6Ji7SjJ?=
+ =?us-ascii?Q?GLHR89SMqX2JCBkgYgg4k53prZnJJFoacycVX3jB50PXuabMDTwp9UUU/ePD?=
+ =?us-ascii?Q?71FcAAjYjCRgTwwQ318OSiO2c+7sCLHEyvnjC3Y9hynWUpnsSaF0cFkUsnrI?=
+ =?us-ascii?Q?oW7ZatuN/Uw9mUG7X0nbWWKkTSmkG8uxODQCzFFZkVe+UlFsI4hruUv+blKD?=
+ =?us-ascii?Q?yNZ1OScUrtnHR/mMq3UXji33asDpubfEMI3EBnlTjXCKQ/DEZirseZOQrpUj?=
+ =?us-ascii?Q?ZYgiD1zYtsGhd23n5E7ocnwEcbuMIeD+0vs4thjCYkZer53SzPwG+yURlVoY?=
+ =?us-ascii?Q?FNY6+dm7ve4NGtBsFwxpS0eF17cTsh6MNz78B8hQ/avPuKMsrcw6/4tvF7vB?=
+ =?us-ascii?Q?sR/SQXUq8caSyBYO/DSF0c7sajG+gdffOhYeyKaKQS4216NEJlAJdImr+Z2S?=
+ =?us-ascii?Q?7LdpEIJxsY0abmmXdAcdcJQsGumbDo2n0kMwRTbEEO7YiX96la8l98jlN+BA?=
+ =?us-ascii?Q?8J4fGUQtQxNCsG1TdmsLIWrsyFS3DLmdDPnEpT0+EOeJXzYMXDeeJqHw5qcl?=
+ =?us-ascii?Q?3ZXsnO8BOTyG4J1tmOLEUA2n2WRXhGaqZ8Hb1BY71W0Oo5yRnEb2MMcPKbPg?=
+ =?us-ascii?Q?KQ5KxoF97+laClaNYQRJk8tt/jAHpq85uw/fCuoYLBKKk/ZvzW50+9KMLjl1?=
+ =?us-ascii?Q?sWQvqLakiU2Q8v+KJ1k1qPQmNXaq3NpQyJ1cskMwNkDghl4J3Q4DyrroQNBJ?=
+ =?us-ascii?Q?lJ+6Z/AQQ5Hi8hhaWRRRisxbRdRlwfHiT3cete9le2anHbQYgDxqC4i4yUTY?=
+ =?us-ascii?Q?XIGAbmZ0dMeldihr7akNNAI538ZpvowTjE9g8ukNSsEhvPRZRSy39V5x1GX3?=
+ =?us-ascii?Q?DTVBJRB4csIgot7DQ5a7k1Am38sg+Jbya3rzz9G5uOQM4ry1q0AOB+bP6vl8?=
+ =?us-ascii?Q?GQboJccF8FvrTii9i3Xx2p65HrJHq5qfCPmtyuJNv5w/v0WehFDEvQEnRRX4?=
+ =?us-ascii?Q?Ic1PpCbgEUIRwYeKhgnRb8s5fdWB9fbJld6+qbaj97jTQHklPnl3fm0jt3YT?=
+ =?us-ascii?Q?v38y+ZvHzMujEANn+3Tswf3NlnkAG4ycLNOHysg5mECFwuVSmFyscneB1x0B?=
+ =?us-ascii?Q?zKy8KyNS41hAF/42mvkwHbrEUX7YGAxY4rhvuXZD96RewbHlkI0ZMRUrL/sX?=
+ =?us-ascii?Q?MxzZ+7Htd+prdmhoQHR0O1hWninkpI0Up1cI5paVAGsZgLkSbfuTVzmh9CYq?=
+ =?us-ascii?Q?R/W9X/KxancPqeNJtmLn5rrmtPq10sxsDdXsL+ge8k8qSii6romr31Bk50en?=
+ =?us-ascii?Q?IP/TOpber24SjmtnQbkSiL1+reygsqjNqBzgnTru7QRp+N9A/re8KRmqtvY0?=
+ =?us-ascii?Q?+LuVwLfKETXCm47AeazSSU9skgic1SBeuLQJa78lgbHOhl0yq6FWyzOk6mF9?=
+ =?us-ascii?Q?XrdJ6Nvfdg=3D=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 216b2a3c-61d4-4fff-7ada-08df1e0d8ff1
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR03MB6192.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2026 09:39:40.7575
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kSlbpcE1de537q9ZtewywDy3trM1Z/il/pxb++Ki88cKk986uR35ZOUbyBIvyageLMCEv0yAjXlLR9eQ0JcC3A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PR03MB989108
 
-On Sat, Sep 26, 2026 at 12:51:10AM +0200, Andre Przywara wrote:
-> There are four clock controllers in the A523 SoC, but only three are
-> described in the DT binding so far.
-> 
-> Add a description for the CPU CCU, which provides separate clocks for
-> the two CPU clusters and the DSU interconnect.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  .../clock/allwinner,sun55i-a523-ccu.yaml      | 38 ++++++++++++++++++-
->  .../dt-bindings/clock/sun55i-a523-cpu-ccu.h   | 13 +++++++
->  2 files changed, 50 insertions(+), 1 deletion(-)
->  create mode 100644 include/dt-bindings/clock/sun55i-a523-cpu-ccu.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-> index 58be701a720ea..8d5481fb63ae8 100644
-> --- a/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-> +++ b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-> @@ -19,6 +19,7 @@ properties:
->    compatible:
->      enum:
->        - allwinner,sun55i-a523-ccu
-> +      - allwinner,sun55i-a523-cpu-ccu
->        - allwinner,sun55i-a523-mcu-ccu
->        - allwinner,sun55i-a523-r-ccu
->  
-> @@ -35,12 +36,23 @@ properties:
->  
->  required:
->    - "#clock-cells"
-> -  - "#reset-cells"
->    - compatible
->    - reg
->    - clocks
->    - clock-names
->  
-> +if:
+From: "Chiam, Evon" <evon.chiam@altera.com>
 
-This goes to the allOf block.
+This series adds clock manager support for the Altera SoCFPGA Agilex72
+platform: the devicetree binding and clock ID header, the clock manager
+driver, and the devicetree changes that instantiate it on the Agilex72
+SoC and the SoCDK board.
 
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: allwinner,sun55i-a523-cpu-ccu
-> +then:
-> +  properties:
-> +    "#reset-cells": false
-> +else:
-> +  required:
-> +    - "#reset-cells"
-> +
->  allOf:
->    - if:
->        properties:
-> @@ -64,6 +76,30 @@ allOf:
->              - const: iosc
->              - const: losc-fanout
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - allwinner,sun55i-a523-cpu-ccu
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: High Frequency Oscillator (usually at 24MHz)
-> +            - description: Low Frequency Oscillator (usually at 32kHz)
-> +            - description: Internal Oscillator
-> +            - description: Peripherals PLL 0 (1200 MHz output)
-> +            - description: Peripherals PLL 0 (600 MHz output)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: hosc
-> +            - const: losc
-> +            - const: iosc
-> +            - const: pll-periph0-2x
-> +            - const: pll-periph0-600m
-> +
->    - if:
->        properties:
->          compatible:
-> diff --git a/include/dt-bindings/clock/sun55i-a523-cpu-ccu.h b/include/dt-bindings/clock/sun55i-a523-cpu-ccu.h
-> new file mode 100644
-> index 0000000000000..042f2310f64de
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/sun55i-a523-cpu-ccu.h
+The Agilex72 clock manager exposes multiple register regions (clkmgr and
+three GPPLLs) and provides the peripheral clocks used by the SoC. The
+driver registers the PLL, peripheral, and gate clock tree, while the DT
+describes the external input references and the clock manager node.
 
-Filename should match compatible.
+Changes in v2:
+- Dropped "dt-bindings: arm: altera: fix Agilex72 compatible vendor
+  prefix" and "arm64: dts: altera: move Agilex72 DT and use altr
+  prefix". The Agilex72 SoC and board compatible strings keep the
+  "intel," prefix and the devicetree stays in dts/intel. Moving the
+  SoCFPGA devicetrees is handled by a separate series:
+  https://lore.kernel.org/r/cover.1789123511.git.evon.chiam@altera.com
+- Reworked the clock manager driver following review; see the per-patch
+  changelogs.
+- Link to v1: https://lore.kernel.org/r/cover.1786006669.git.evon.chiam@altera.com
 
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-> +/*
-> + * Copyright 2025 Arm Ltd.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_SUN55I_A523_CPU_CCU_H_
-> +#define _DT_BINDINGS_CLK_SUN55I_A523_CPU_CCU_H_
-> +
-> +#define CLK_CPU_L		7
+Chiam, Evon (3):
+  dt-bindings: clock: altr,agilex72-clkmgr: add Agilex72 clock manager
+  clk: socfpga: agilex72: add clock manager driver for Agilex72
+  arm64: dts: socfpga: agilex72: add clock manager support
 
-Indices start from 0 or 1
+ .../bindings/clock/altr,agilex72-clkmgr.yaml  |   76 +
+ .../boot/dts/intel/socfpga_agilex72.dtsi      |   44 +-
+ .../boot/dts/intel/socfpga_agilex72_socdk.dts |   12 +
+ drivers/clk/socfpga/Kconfig                   |    3 +-
+ drivers/clk/socfpga/Makefile                  |    2 +-
+ drivers/clk/socfpga/clk-agilex72.c            | 1299 +++++++++++++++++
+ .../dt-bindings/clock/altr,agilex72-clkmgr.h  |  115 ++
+ 7 files changed, 1545 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/altr,agilex72-clkmgr.yaml
+ create mode 100644 drivers/clk/socfpga/clk-agilex72.c
+ create mode 100644 include/dt-bindings/clock/altr,agilex72-clkmgr.h
 
-Best regards,
-Krzysztof
+-- 
+2.43.7
 
