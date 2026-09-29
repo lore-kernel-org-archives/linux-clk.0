@@ -1,44 +1,44 @@
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DD932FA2E;
-	Tue, 29 Sep 2026 10:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A982B511197;
+	Tue, 29 Sep 2026 10:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790677951; cv=none; b=LJcF9Sqre0MhV07G4361ASxAc9HK3a0QCRTRbQJejvtQ2O8s1tQoV34uNCGetc0rf9v5E5kSIHLyMyYCxnB1d4QBxsmQMwMzjhGZsGNWQ+kxj+OsFzwxy6PjavVZGoZcWdi5Ve5bryrqH7wKqlCiae4nE4HaN7poyKl/oOAx2LI=
+	t=1790677954; cv=none; b=IgI4kL9BOO5gvvKmxuES5dhF2tV9vY+bRlg2qthZuXMTr3tFuJMuUNfEOdS4DplhnQgd3WfqMGVO3B796EzkVDzgoqIX/wV0YMX1gHGUAQtZubRQ5mJNuf4pXLQG0GwSX+iUVd2MwaS+tsDcs5vFJKz+kpMqYBNbmsW0ywP1WaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790677951; c=relaxed/simple;
-	bh=4moaK26KmVJdQxiXnAOI2ZUcs+I1C/g2i7ggIWEm7ZU=;
+	s=arc-20240116; t=1790677954; c=relaxed/simple;
+	bh=ufJliOYnXKHraPSwYiwbCyjo/WYKf9ZdlmUvwq1KpXQ=;
 	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=TePefyWLY/YdffVp7SVdzl0u8llakwt9hxwny2JvdapWSOVXLodSsi2QPfBOm4SfBdFZlNxE4gqTwNu8JJnCOjUYpBCD6W2Z0OxAdRE6u4PkD/hCj7793zh8dcSQsr27N64IXBfizAKh3+IH2Jlu/ys9uflR/YG/ji3LP8WlQ7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sAv06qXa; arc=none smtp.client-ip=210.118.77.12
+	 Content-Type:References; b=g2SIL12DYUVyFEaJFjpz4X0lRn8u60gyKgRLNKHg0djtQSgMLsKfFnt8wFqyXJrMtNAlJ2EuVJ3aJn4jwLh3hcQmhv8mBTDi2YRZOmnKzU+HQFdiFoSD1jD5tz33xPg/CRQ7/+PMdcOMXibbVB3PefJMBMU7aMrEnLT1tNVPe5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NmAqaVS+; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sAv06qXa"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260929103214euoutp0239cd0709a7b693b64125e504c0b05c5f~ZxBgD2WVB2627126271euoutp02W;
-	Tue, 29 Sep 2026 10:32:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260929103214euoutp0239cd0709a7b693b64125e504c0b05c5f~ZxBgD2WVB2627126271euoutp02W
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NmAqaVS+"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260929103215euoutp02f8c276ddf250dd0d534a320a9e5dfaec~ZxBhHe3dV2627326273euoutp02e;
+	Tue, 29 Sep 2026 10:32:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260929103215euoutp02f8c276ddf250dd0d534a320a9e5dfaec~ZxBhHe3dV2627326273euoutp02e
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1790677934;
-	bh=ZWj7QASkmSIyTParfRCzIhJpisMTNMwYHjF17hKyQWY=;
+	s=mail20170921; t=1790677935;
+	bh=z6Ivbm3uEAk0eL38U4gZ6ZLVJBBWp1RKPLhJkjq7bUg=;
 	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=sAv06qXaNMslv8Ra+Hauon8xh3s/yVc0Lv0EacP3TwhgsuI5v7+EXfzMQt81cydUO
-	 oI539uc36Wgjr+ZmwpJug4EEM+lrVGO0KgDkNn/LuI5WHeMVKBYeWvqyn5I9A9CS7q
-	 4L8gQjyP1MvKUS5o6jVa22qoxWsbnNRBEbeRfipo=
+	b=NmAqaVS+hWoJ14mVAwI2re9qbimYT6QdFsRCFoowfTI2MBfP49yo6UaOQ5EYy/E2U
+	 O2psFE3n7SbsdREdeTtEc9nmexftYO566DedKzA49UOhlXx9t/GuC73zsQZbKN3pn7
+	 UcJgJJ4yuSxMYoGIbhxMn2XEOWtDvnRtc4obOJ6Y=
 Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
 	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20260929103212eucas1p26bca549b6b306e920b033ba7b43ae085~ZxBe1UG5G0313003130eucas1p2v;
-	Tue, 29 Sep 2026 10:32:12 +0000 (GMT)
+	20260929103214eucas1p20a39791b0286596d4c33c2e459030943~ZxBgq06RZ1023310233eucas1p2L;
+	Tue, 29 Sep 2026 10:32:14 +0000 (GMT)
 Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
 	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260929103210eusmtip15d0f617e692fbb652a613464a49bf809~ZxBcTrhhf0258902589eusmtip1F;
-	Tue, 29 Sep 2026 10:32:10 +0000 (GMT)
+	20260929103212eusmtip1fe888ccdef6a095b34ca4ddf011b03d6~ZxBekjHPT0259202592eusmtip1v;
+	Tue, 29 Sep 2026 10:32:12 +0000 (GMT)
 From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Tue, 29 Sep 2026 12:31:02 +0200
-Subject: [PATCH v5 05/21] dt-bindings: soc: starfive: Add
- starfive,jh7110-vout-syscon
+Date: Tue, 29 Sep 2026 12:31:03 +0200
+Subject: [PATCH v5 06/21] dt-bindings: display: verisilicon: Add
+ starfive,jh7110-dc8200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,7 +46,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260929-jh7110-clean-send-v5-5-82b4d8e3c6c7@samsung.com>
+Message-Id: <20260929-jh7110-clean-send-v5-6-82b4d8e3c6c7@samsung.com>
 In-Reply-To: <20260929-jh7110-clean-send-v5-0-82b4d8e3c6c7@samsung.com>
 To: Vinod Koul <vkoul@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
 	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, 
@@ -73,42 +73,38 @@ Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
 	<maud_spierings@murena.io>,  Graham Markall <hello@big-grey.co.uk>,  Icenowy
 	Zheng <zhengxingda@iscas.ac.cn>,  Chaoyi Chen <chaoyi.chen@rock-chips.com>, 
 	Joshua Peisach <jpeisach@ubuntu.com>,  =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>,  Krzysztof Kozlowski
-	<krzysztof.kozlowski@oss.qualcomm.com>,  Michal Wilczynski
+	<u.kleine-koenig@baylibre.com>,  Michal Wilczynski
 	<m.wilczynski@samsung.com>
 X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20260929103212eucas1p26bca549b6b306e920b033ba7b43ae085
+X-CMS-MailID: 20260929103214eucas1p20a39791b0286596d4c33c2e459030943
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260929103212eucas1p26bca549b6b306e920b033ba7b43ae085
+X-RootMTR: 20260929103214eucas1p20a39791b0286596d4c33c2e459030943
 X-EPHeader: CA
-X-CMS-RootMailID: 20260929103212eucas1p26bca549b6b306e920b033ba7b43ae085
+X-CMS-RootMailID: 20260929103214eucas1p20a39791b0286596d4c33c2e459030943
 References: <20260929-jh7110-clean-send-v5-0-82b4d8e3c6c7@samsung.com>
-	<CGME20260929103212eucas1p26bca549b6b306e920b033ba7b43ae085@eucas1p2.samsung.com>
+	<CGME20260929103214eucas1p20a39791b0286596d4c33c2e459030943@eucas1p2.samsung.com>
 
-The video output subsystem has its own system controller, documented as
-dom_vout_syscon. Among other things it holds the mux that selects which
-DC8200 output drives the HDMI transmitter, so the HDMI controller needs
-to reach it.
+The JH7110 embeds a DC8200. The binding requires an SoC specific
+compatible ahead of the generic one, so add the JH7110 to the enum.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 ---
- .../devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml         | 1 +
+ Documentation/devicetree/bindings/display/verisilicon,dc.yaml | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
-index 0039319e91fe6e6aadc4300114626348e4dfb7ce..cf9b657d0e8a3ed5c5688336fee4123e14a2ac58 100644
---- a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
-+++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
-@@ -24,6 +24,7 @@ properties:
-           - enum:
-               - starfive,jh7110-aon-syscon
-               - starfive,jh7110-stg-syscon
-+              - starfive,jh7110-vout-syscon
-           - const: syscon
+diff --git a/Documentation/devicetree/bindings/display/verisilicon,dc.yaml b/Documentation/devicetree/bindings/display/verisilicon,dc.yaml
+index 919a9001220120054cb62d1d01b7293367266f95..05a202633cd273fec358c095c64584d959d96d90 100644
+--- a/Documentation/devicetree/bindings/display/verisilicon,dc.yaml
++++ b/Documentation/devicetree/bindings/display/verisilicon,dc.yaml
+@@ -16,6 +16,7 @@ properties:
+   compatible:
+     items:
+       - enum:
++          - starfive,jh7110-dc8200
+           - thead,th1520-dc8200
+       - const: verisilicon,dc # DC IPs have discoverable ID/revision registers
  
-   reg:
 
 -- 
 2.34.1
