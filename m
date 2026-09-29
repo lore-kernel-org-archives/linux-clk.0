@@ -1,47 +1,59 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B737D3DA7E0;
-	Tue, 29 Sep 2026 03:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D677E3EC699;
+	Tue, 29 Sep 2026 03:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790651746; cv=none; b=tPRgp+WhVgMs5P+Y2lWDv+jiIbd3B+EyH37wMiY0Y1pyQMbTnBT3zawlXYHgh1xVjoPp+jdsut526f7d37tJyd5QWuh6ZbsVLHgIYusCjOQbOVPHOaE+2oKiqom2yzb+r7sRuhMxrrkPU7rCUUrvC+8NkZQXQSp9baAuTJ63IsU=
+	t=1790651749; cv=none; b=J6rwJ1T5jzqP+iicoPwiXgKKDzHcqnm3GKoOW1wUsoR9FViG9D8KpjpRYDrEIIjTeI1uHqwBMCqbRYDFdlPkFgXaeftwcqB90tZL0G/Zx2+inZbO7O+Gr+o0zGqRqpTZzYTo4FSml/noaWoHE8QR344xk3Bwz3EFbokuJEpu5Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790651746; c=relaxed/simple;
-	bh=xUXB/wGGhO7cG5KU2tnrw/3ksAXxjX3wtV5ifZ7l0pg=;
+	s=arc-20240116; t=1790651749; c=relaxed/simple;
+	bh=tTbvf8KIo+xWqJv+acsiJgplV+02uttXLJIYkji03Cc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N3DnUuOvaHhY0w7HV4cMBTF8PziuPrl6qJedMgSD+BUhjIBn8osVREC4D8BRJr3mxeRuvLblUN4qNmakpvziQb/APsxS9vGQy4RHL3JewBKgmptxFM9fS4+5YVXx01aqz/G/mJYAJOMaXpVHKwBV1l2AhIkx6v1ZdpkC/xjY88c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFUsEfjm; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=OYpCyTdt6K0akyYBe8i6o2v+bobZH9SoBbMcdiwJS4nrCVklvxrC7TWdCn+R+zs/6q5qbSK+KStxTlaFI0BkA5pmJVUO7+Kc4uH8bJD/da5THW+3qnR5bCgrTrd6/BjLRLzdV6mmiZYvGM9q+dChRl39zKJQHVPc57mnZgmXrMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFq0wjWy; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFUsEfjm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EBB51F00893;
-	Tue, 29 Sep 2026 03:15:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFq0wjWy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F0F91F00898;
+	Tue, 29 Sep 2026 03:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790651741;
-	bh=QepHw4rsKYLzw/gLQSfegDIM2BJrlEu+rJLNvpT7b8M=;
+	s=k20260515; t=1790651743;
+	bh=3c0pWDYbnRyeZ7VG+SamrUMMa6QD6BS4IAEifX+fcfE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=QFUsEfjmUMk/4x7d1hotete/3x0QKaZwLgGGXujG+7CQFVxl6LDEKFT9igc2FrDe8
-	 cXwmQ39Gf+Ys9rzBOCMKu9Prab/8trT+zThDfTTdH/hd5xwnqW7Bx8ROFZb3tJQbQD
-	 bvCWc/FTPnh7eqnC0riyFkiKgLyrF67t2QR6PzL7eTt0u82q82um4OExaVNtvWYaX3
-	 Xnz0QCh2q9dn9eglZLJ8PeKN0av5OOwdqqk0iBTiVz7Eayzolek56FhPqxDVp/zCEl
-	 7vMpgzlZwdPaKtkzNdMDp+OCH5NH+niaC/n7MWooII48wjHCx7/rC92lXQKkqblhbW
-	 HpVmPyFWJwr5g==
+	b=PFq0wjWyl2W/u99pTvHkMwQkj3g1LicGEiUprowPNbF1buxlXDM69mIwqxRRI1RU1
+	 Yx6oC2E1QNTHhGNg1IxFvoxdX/4ioumFamXovhY436ARHzcQg5IJZJYII+aw0KqkPO
+	 +1gE+m+byfkQuVZHb6tFKzuRwjTP6hXwKYclfTdF+O0/jPreos/7fb36ljkjWtO0sd
+	 llBTp6lf5Od6aN4DDvSwq91gOMk3DDkbw9EP32Gky3Q4FDCHuWYl+TL4DguJgW50Bu
+	 Eij1QAVA6LZsovTUP1F74vvkcY6b7+fKW6U7JsvJBLBZQAvt2OMTB0BgROabiaklQm
+	 PCX2XMPGB7B2A==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
+To: Bryan O'Donoghue <bod@kernel.org>,
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney@redhat.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	=?UTF-8?q?Andr=C3=A9=20Apitzsch?= <git@apitzsch.eu>
+Cc: Erikas Bitovtas <xerikasxx@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Subject: Re: [PATCH v2] ARM: dts: qcom: msm8974: add MDSS reset
-Date: Mon, 28 Sep 2026 22:14:41 -0500
-Message-ID: <179065170941.2673486.13871653651451343539.b4-ty@b4>
+	linux-clk@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: (subset) [PATCH v10 0/4] media: qcom: venus: add MSM8939 support
+Date: Mon, 28 Sep 2026 22:14:42 -0500
+Message-ID: <179065170986.2673486.16966268784735038404.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260810-msm8974-mmcc-fix-v2-1-5c787d79c0fa@oss.qualcomm.com>
-References: <20260810-msm8974-mmcc-fix-v2-1-5c787d79c0fa@oss.qualcomm.com>
+In-Reply-To: <20260731-msm8939-venus-rfc-v10-0-9ac503250fc7@apitzsch.eu>
+References: <20260731-msm8939-venus-rfc-v10-0-9ac503250fc7@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,20 +64,26 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 10 Aug 2026 12:01:52 +0300, Dmitry Baryshkov wrote:
-> Commit 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until
-> late_initcall_sync") kept power-domains on longer during boot which is
-> causing DSI clock to get stuck and fail to acquire its configuration on
-> DSI bringup. Follow the example of other platforms and add MDSS reset to
-> the display subsystem node, fixing DSI issues.
+On Fri, 31 Jul 2026 22:08:19 +0200, André Apitzsch wrote:
+> This patch series adds support for Venus on MSM8939. It is mostly
+> similar to MSM8916 Venus, except it needs two additional cores to be
+> powered on before it can start decoding.
 > 
+> As per Dmitry's request, I am attaching Fluster results and
+> v4l2-compliance output. Fluster results were very inconsistent and
+> caused power collapse fails.
+> H.264: https://pastebin.com/C15qeq5W
+> H.265 (HEVC): https://pastebin.com/WDsnxvuk
+> VP8: https://pastebin.com/egAgEm15
+> v4l2-compliance: https://pastebin.com/VpBhEFc1
+> Power collapse fail log: https://pastebin.com/rTivMcpK
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] ARM: dts: qcom: msm8974: add MDSS reset
-      commit: 542991a1d77e5fea5263c2406773a0cd09a8ec48
+[4/4] arm64: dts: qcom: msm8939-asus-z00t: add Venus
+      commit: bb92958ea1012d8fdee55fa9254e420b8fb1b6f8
 
 Best regards,
 -- 
