@@ -1,141 +1,148 @@
-Received: from sender6-op-o12.zoho.com (sender6-op-o12.zoho.com [165.173.180.12])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDBF4F4024;
-	Tue, 29 Sep 2026 14:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.180.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790692088; cv=pass; b=mRtFqwUFqlD/7LflY0nS1OP1A10eq6nodhZUl+m3YZRfLLWhMOZaSS6FmKKdQ7q0ZFvKwOEIUOB6rpCgx+2XpP2WHXKghp03LNjBx3gjD05VHQUK88Uvy5lntwgNbSP6AaY/SmGjjpujsAZ94GdrQ4j5QgDJIP9Dd6ybr/4N6uA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790692088; c=relaxed/simple;
-	bh=B+7p0nXl2g4IPDqxo0h8dt+McvFM/fu6HfhJRhNjJPE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=E7pJGZtR09KjGgnu37rioagkGQYrofqsxpwDd1WZCkXtei7qox8spxPmbOBCrFAyf7X3Qq6LH223cXvEFhEhTjfl1cH7qdjZDpz31P7ZEB6SOnQ17cgBs4lTHM+Nfa8kkRuenNw3qzIvZr0cqMZL1PFsqpaundhns5YFIhdxduY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=X9fWsRwH; arc=pass smtp.client-ip=165.173.180.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B889D52CCF0;
+	Tue, 29 Sep 2026 14:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790693143; cv=none; b=k6DVydf/U8ueh/iWcYRR8MRrYOBPcQwotfucaaD8Al50Av0tELbYHZjbJHJQfNjaT0GmU1ifZ/5lViz4MwH5PDIKaFLi9ELiDlGRk0U0/tTece6d4zdhs6GjCBqdy1S6oIaKAUP6+HmsOo0ob53x89rD6r2W1f554UCs995Xz9k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790693143; c=relaxed/simple;
+	bh=7CgUo0n0PBA9fOmf74rRVAYxvkxnw795XCEf4T+ttfo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U394JJGmB1UIBNvWcWrSifV6rTNK7T6dQb6c+Do3DHhD4BMH7w052AwscPV0XbeDv4xpeGyNOAxfSQpUmqrDJ9wCmT2+CnW0oYAoDBrcVc+vKIK/wwVoBgXL8ewfaGFccsCB774tb/Zv9dKSJRI1JwaWWZ34ZhhvhuNa85E71rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LuuB+fBb; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="X9fWsRwH"
-ARC-Seal: i=1; a=rsa-sha256; t=1790692060; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ldsP/RLJD8nl19EVItyT4bYblAFBFIOX07oNppxphzZqYGq40JO2K33mg2AtnQeJ45AQT1mlS20O7qr1byLt5TrKGHzUAU/h8e6z6Jmec04JsXLkJ/4cmoTs2jjXIrRU3Gmt1AOKPmjozQb94vOL3+ocMX6Ebg5f9SiLaY684ZY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1790692060; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=yx24PhUBiZbSsgHhB7AVEx7YIp35K2EBHbfwiSXgi4Y=; 
-	b=bTn2SJ1c3juhJhNXrH52q7NOBSG7JKOF3Y3ntEN5OlsKjBTjNxA48phvDy7RqXATlA1YTfB2liaNZ4Q9Y2wBdNSvinDrdsc2bSpgeLdXkKvil20gxl7GI+UtRTGBVvCWE6S33DphGHe/FR+mChsD/l9dBLn711LdLOIdjqPA8+Q=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1790692060;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Date:Message-Id:Message-Id:Cc:Cc:Subject:Subject:From:From:To:To:In-Reply-To:Reply-To;
-	bh=yx24PhUBiZbSsgHhB7AVEx7YIp35K2EBHbfwiSXgi4Y=;
-	b=X9fWsRwHlhdq8h1Bl6Hl4vuOWlNcmWmplgiyQ5isjVNr9HImmlFhLBmoiObdo0Vk
-	0xQvGZrtK4/ieXZ+QS2K64WBxtfy44+UyGOpE3K6+P/ecpaU/QF9m7xjXfDTq7ywylL
-	DN5dp1BTnooI0DAsyqCi6fsueRENdFiGgB7paQbU=
-Received: by smtp.zohomail.com with SMTPS id 1790692058044679.6670001196361;
-	Tue, 29 Sep 2026 07:27:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LuuB+fBb"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 8905C1A1064;
+	Tue, 29 Sep 2026 14:45:28 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 56A48601BD;
+	Tue, 29 Sep 2026 14:45:28 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 59075103282F2;
+	Tue, 29 Sep 2026 16:45:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1790693126; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=HnE/nEINBntspdikCM9SocywhfFVbUfdzqo6gj4+tUE=;
+	b=LuuB+fBb3tqUEXEHcLEkKkhrUmC4yd0n7JHXARbMCDuQiFyVNnUxqcKpP61Ain1Paf7zZo
+	lCxL7xePLBv9Ju1E/ToZh9iPXvj9x/IVtG0/sRneN+wnaktDri7XALJAJRIE5wjN4BHmKz
+	/fTrgcfLCHkHm2doSSaFQdlyMaoi8jP8m3DbzYVCKYuwqrcI3iTNDIYWw6v1CSmOJWFjzF
+	m7msFlGAyilmVSQY2Us9yTr3k8PXm4S7gpSPQQljL3tvNa48Hph9Wa38wpPWUueIqs5HMa
+	VTDeHt95oglI/aG5X7M20pvVafTgPb8XtIf7y1b1nImePCIjmM/ruPW99MWSbg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v5 0/9] clk: nuvoton: ma35d1: Fix mux parenting and
+ peripheral clock rates
+Date: Tue, 29 Sep 2026 16:44:43 +0200
+Message-Id: <20260929-perso-ma35d1-upstream-clk-v5-0-68533e935ee4@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Sep 2026 22:27:30 +0800
-Message-Id: <DLRVCRNJL9VN.1TYGQLOZZVTZA@pigmoral.tech>
-Cc: "Stephen Boyd" <sboyd@kernel.org>, "Brian Masney"
- <bmasney+clk@redhat.com>, "Jerome Brunet" <jbrunet+clk@baylibre.com>,
- "Chen-Yu Tsai" <wens@kernel.org>, "Jernej Skrabec"
- <jernej.skrabec@gmail.com>, "Samuel Holland" <samuel@sholland.org>, "Andre
- Przywara" <andre.przywara@arm.com>, <linux-clk@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 7/8] clk: sunxi-ng: a733: Add bus clock gates
-From: "Junhui Liu" <junhui.liu@pigmoral.tech>
-To: "Enzo Adriano" <enzo.adriano.code@gmail.com>, <junhui.liu@pigmoral.tech>
-X-Mailer: aerc 0.22.0
-References: <20260921-a733-clk-v4-0-9c184ebe9ac1@pigmoral.tech>
- <20260921-a733-clk-v4-7-9c184ebe9ac1@pigmoral.tech>
- <20260921200512.3179109-1-enzo.adriano.code@gmail.com>
- <DLLYUYMR3CZT.17I8APGBH9H8S@pigmoral.tech>
- <20260926020313.911537-1-enzo.adriano.code@gmail.com>
- <DLOXXXFCEB5G.15XI8896GM7B7@pigmoral.tech>
- <20260926210222.283703-1-enzo.adriano.code@gmail.com>
-In-Reply-To: <20260926210222.283703-1-enzo.adriano.code@gmail.com>
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/43NQW7DIBCF4atErDsVAwHjrHqPKosxHhrU2FjgW
+ K0i3704m7aKFGX5P2m+uYrCOXIRh91VZF5iiWmsYV52wp9o/GCIfW2hpLLSoYaJc0kwkDY9wmU
+ qc2YawJ8/wRpPPngkZztR76fMIX7d7Pdj7VMsc8rft1cLbusz6oKAwI1jwxYbxfTWpTSf4/jq0
+ yA2d1G/VqvwkaVAgpJt6LUi10l5b+m/lnlk6WqF0BE3LJUkd2/tn7b2m6Vt2xijdYvhv7Wu6w8
+ vERdpqAEAAA==
+X-Change-ID: 20260813-perso-ma35d1-upstream-clk-65cacfc1a86b
+To: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chi-Fang Li <cfli0@nuvoton.com>, 
+ Arnd Bergmann <arnd@arndb.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
+ Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
+ Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Steam Lin <STLin2@winbond.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ openbmc@lists.ozlabs.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
+ stable@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+ Jacky Huang <ychuang570808@gmail.com>, Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Enzo,
-Thank you for the detailed information.
+I am in possession of an MA35D1 NuMaker board. The SPI controller has
+been contributed, but at this stage it does not work with the current
+clock driver.
 
-On Sun Sep 27, 2026 at 5:02 AM CST, Enzo Adriano wrote:
-> Hi Junhui,
->
-> Attached are the exact minimal board DTS and SoC DTSI used for both runs,
-> plus the configuration extracted from the tested Image and reproduction
-> notes. I rebuilt the DTB from the recorded source and recovered config;
-> it matches the tested 4497-byte DTB byte-for-byte (SHA-256):
->
->   4c7b762757392334e8b7ac525e60bf5757ec23b34efdcc949d2093c238b1ed16
->
-> The support archive contains the two local integration/comparator diffs,
-> the four A733 clock/reset headers, source history and short UART excerpts=
-.
-> Applying the 19 published patches and these local diffs to v7.3-rc1
-> reproduces the tested source tree. This is the minimal diagnostic DT,
-> not my newer DTS work; its fixed card supply is part of that test setup.
->
-> Both the September 21 failing run and September 26 clk_ignore_unused run
-> report identical firmware banners:
->
->   U-Boot 2018.07-12-boot-aw2501-gb2d229198b2-dirty
->   (Jan 06 2026 - 03:45:33 +0000) Allwinner Technology
->   BL31: v2.5(debug):5fc237a6a
->   BL31: Built : 09:05:28, Feb 26 2025
+The clock controller registers its muxes with .fw_name parent data,
+which requires every internal clock name to be declared in the DT. As
+the DT does not declare them, all parent lookups fail: muxes end up
+registered as root clocks and most peripherals read a zero rate.
 
-I have now successfully reproduced the issue using the same vendor boot
-firmware version. The root cause is that the vendor U-Boot selects
-pll-periph0-480M as the parent of the GIC clock. However, the current
-Linux A733 CCU driver does not model the GIC clock, so the common clock
-framework considers pll-periph0-480M unused and disables it during late
-initialization. This stops the GIC and causes the system to hang.
+This conversion exposed a first issue with the WDT/WWDT parents which
+were actually missing in the clock driver. I am not using these clocks
+myself but it is worth fixing.
 
-I will model the GIC clock properly in the next version and mark it as
-CLK_IS_CRITICAL. Although the GIC node can reference this clock in the
-device tree, the generic GICv3 driver currently ignores the clock
-property and therefore does not acquire or enable it.
+The second round of reviews raised another problem with the
+crystals. HXT and LXT are external crystal oscillators wired on the
+board, while HIRC and LIRC are on-chip RC oscillators. HXT was poorly
+described (and incorrectly exposed through the DT) while LXT was not
+even documented. The series now also takes the two crystal inputs from
+the DT: they get documented in the bindings, described in the boards and
+looked up by the driver.
 
->
-> These tests used the vendor firmware already installed on the A7S;
-> I did not build or flash U-Boot or TF-A for them. Unfortunately, I cannot
-> establish the original installation/download image, the U-Boot dirty
-> delta, or the BL31 source/build inputs. I also do not have verified hashe=
-s
-> of the installed firmware binaries. Earlier source-correlation records
-> point to Radxa's downstream U-Boot, but the retained candidate build is
-> a different revision and is not a reproducible source for this firmware.
->
-> reproduce.txt includes the actual ext4load/booti commands and bootargs.
-> In particular, I set the U-Boot environment variable drm_debug=3D1 as wel=
-l
-> as including it in bootargs. U-Boot reports FDT fixup errors and "update
-> dts" before Linux, also on the successful run; the excerpts retain those
-> messages. The DTB hash above describes the file loaded into RAM. I did
-> not capture the final post-fixup tree passed to Linux, so I cannot yet
-> rule out a firmware or DT-fixup difference from your A7A.
+The clock tree now looks much more accurate.
 
-Thanks again for providing the exact test setup. It was essential for
-identifying the difference between the mainline and vendor U-Boot
-behavior.
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+Changes in v5:
+- Fix the bindings wrt HXT and LXT.
+- Fix the DT descriptions of HXT and LXT.
+- Collect tags.
+- Link to v4: https://lore.kernel.org/r/20260925-perso-ma35d1-upstream-clk-v4-0-f3697553391f@bootlin.com
 
->
-> Assisted-by: Codex:gpt-6
->
-> Regards,
-> Enzo
+Changes in v4:
+- I forgot to bump the clock counter in the driver after adding the two
+  new clocks in the bindings. Sashiko will keep complaining about the
+  incoherency though. Since binding and driver changes should be kept
+  separated, I cannot do both at the same time.
+- Link to v3: https://lore.kernel.org/r/20260925-perso-ma35d1-upstream-clk-v3-0-ffbae7e020a8@bootlin.com
 
---=20
+Changes in v3:
+- Drop the number of clocks from the binding, set it in the driver only
+- Split the binding/driver patches completely
+- Link to v2: https://lore.kernel.org/r/20260921-perso-ma35d1-upstream-clk-v2-0-209fd32a8b00@bootlin.com
+
+Changes in v2:
+- New patch 1/3: register the missing WDT/WWDT parent clocks
+- New patch 3/3: harden the code
+- Link to v1: https://lore.kernel.org/r/20260813-perso-ma35d1-upstream-clk-v1-1-e78e5e6172ea@bootlin.com
+
+---
+Miquel Raynal (9):
+      clk: nuvoton: ma35d1: Keep the clock count in the driver
+      dt-bindings: clock: ma35d1: Document the missing crystal inputs
+      dt-bindings: clock: ma35d1: Drop CLK_MAX_IDX define
+      dt-bindings: clock: ma35d1: Add missing WDT/WWDT parent clocks
+      clk: nuvoton: ma35d1: Add missing WDT/WWDT parent clocks
+      clk: nuvoton: ma35d1: Use clk_hw pointers as mux parents
+      clk: nuvoton: ma35d1: Avoid possible error pointer dereferencing
+      clk: nuvoton: ma35d1: get HXT/LXT from DT
+      arm64: dts: nuvoton: ma35d1: Add LXT crystal and correct HXT name
+
+ .../bindings/clock/nuvoton,ma35d1-clk.yaml         |  16 +-
+ arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts    |   9 +-
+ arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts    |   9 +-
+ arch/arm64/boot/dts/nuvoton/ma35d1.dtsi            |   3 +-
+ drivers/clk/nuvoton/clk-ma35d1-divider.c           |   3 +
+ drivers/clk/nuvoton/clk-ma35d1-pll.c               |   3 +
+ drivers/clk/nuvoton/clk-ma35d1.c                   | 656 +++++++--------------
+ include/dt-bindings/clock/nuvoton,ma35d1-clk.h     |   3 +-
+ 8 files changed, 246 insertions(+), 456 deletions(-)
+---
+base-commit: c5137d373338693fc18f03824782c7d383bfd57a
+change-id: 20260813-perso-ma35d1-upstream-clk-65cacfc1a86b
+
 Best regards,
-Junhui Liu
+-- 
+Miquel Raynal <miquel.raynal@bootlin.com>
+
