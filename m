@@ -1,42 +1,41 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C904852CCC4;
-	Tue, 29 Sep 2026 14:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD1F5326A9;
+	Tue, 29 Sep 2026 14:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790693146; cv=none; b=pZR3b432aphqwVJMNvo6xfKnPhJWAJKrGrOu0I14F0ju3j7v54wMJ9J9sLstuEmoLZbTbkzF6tFangbpXJWZp3VIt6LnFH2DLwO4dVt+SB5MW+q9HJI+KoN1iJ6KbbS4kEkFZQM6/CCJHTxNT4nsBKCL4yQntHMwNAn6MqTkuUw=
+	t=1790693153; cv=none; b=RGdRg15TDFPq9FTNTsB5e6ErN/ORJNdedwP16Zuj2LgoqEjf5543JCybpDmmv55cJdwvMGFFq5A1PDiQC2C7z2EBmrjW8edWddH85U58SHXUUSX83Uvge3GuccNGXOhVWJmEdRHY0xt64LFOkSCbXtc+NollZ8BJRkzeQLB67r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790693146; c=relaxed/simple;
-	bh=Twb6Vi/4J7ssk0EwkgIgu0lEhcp0CvYGappAxYYsl+Y=;
+	s=arc-20240116; t=1790693153; c=relaxed/simple;
+	bh=IeGP+KKpriV8FefDDiit66uxhtaDWHtsG/9ADL1Wsl8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qD7yVgCQXsoRgEglIFmPMuem6lsYAZ0qdgs/+JBpwYWKH5OELvIjsAoipBLE5e11kxOtOu353ofdIVXynBgDHy/GvvKR18ioVBqFGJxUE2yQ0/LURsUqUmxMtPWNkorX6dXJgJDu1m6bXhQGQsANuDXURB54wPXlZ3K7AUpmV1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bWoogI3C; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=kwULHtQkR1Zgtad1lt53/IqS2/7yzGdOwgxWs43Qk6jql6l67rQl5VXfm+LNgxDFuoaN9FrS7Hw4FhWKU3qb84PMs063bVQLmJ9AgijKxcuUYxj1MaH6I099V8oaQH/XbCHWfYaM6ZWz9n0k1LFRVyCKHez+7NhGhKXNgemQCz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aFkrNNlZ; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bWoogI3C"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aFkrNNlZ"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id A49274E410BE;
-	Tue, 29 Sep 2026 14:45:35 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 008951A1065;
+	Tue, 29 Sep 2026 14:45:40 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 799E5601BD;
-	Tue, 29 Sep 2026 14:45:35 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A585910329812;
-	Tue, 29 Sep 2026 16:45:30 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BBC34601BD;
+	Tue, 29 Sep 2026 14:45:39 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 93CB3103282F2;
+	Tue, 29 Sep 2026 16:45:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790693134; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1790693138; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=FI8MM4zLwxVlmw7VDmYSwTBJd8VFU5MfFASzd6xayQ4=;
-	b=bWoogI3CaFjR6U8nd0ppQkYmcXE6298N8V+dpnuvYsLhEfl0sx960SD3XS6nMkIZcZFn28
-	vuwJzEs89FUiquQ3hu3YWwYn98B7ujYHmNdBraNx1iKDNiymU/xValPG04KoA1/+EIKtyA
-	Y8Yy6AaBitGmdlxb0l9zgyh47nPW2TohAzTHgySCXrfo4FPeQTexxwg791ys2e7TAhErI/
-	Se7fy67e64db8S0Kkg3u13CUYXga0WJwsURcurFC9QbUXaTYrjdJgyWDL5BEWkrW7ueBwT
-	aQykMjvH1LHRqm10fUhjkgfH/fV03+bf7S4TfA74YYrnXRPT6OYe/1PXtdzC4A==
+	bh=QUVwPAQqcPJEXSHcvyrm5SHBCzZnkZ7JUl+/bI5Vt0A=;
+	b=aFkrNNlZnN7cPRkxEp+kaEKDWaLGwjdgCWVAI+r4bHBORC1yvYUJTBpRgqe2f6H6ADUHCU
+	EnqmdI+qgM92OaGxLY0Hq/mlQLQQMqR7NehAufaHgZVghNSu7gmhO+dBJoAVf7rG5n9+k1
+	bHa1eF7t13AvTCymK2x/hEWabP2s7/sDKav05yMOsG0e3BCIKVD19nBbQBETmtR0Q/pLzH
+	O+Nzy7Hkp7Ptvymr49u2xccuFx7hoFH0MgbanX7stcJKq0axreIJt9KgQpXSH37vjpgkYi
+	3KVSwTwJxhe+YMDJ6DvR7x/qISAhmdIEeNaaVWSe/yz5WdiOi4DY051uYQ091Q==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Tue, 29 Sep 2026 16:44:45 +0200
-Subject: [PATCH v5 2/9] dt-bindings: clock: ma35d1: Document the missing
- crystal inputs
+Date: Tue, 29 Sep 2026 16:44:46 +0200
+Subject: [PATCH v5 3/9] dt-bindings: clock: ma35d1: Drop CLK_MAX_IDX define
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,7 +44,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260929-perso-ma35d1-upstream-clk-v5-2-68533e935ee4@bootlin.com>
+Message-Id: <20260929-perso-ma35d1-upstream-clk-v5-3-68533e935ee4@bootlin.com>
 References: <20260929-perso-ma35d1-upstream-clk-v5-0-68533e935ee4@bootlin.com>
 In-Reply-To: <20260929-perso-ma35d1-upstream-clk-v5-0-68533e935ee4@bootlin.com>
 To: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
@@ -62,64 +61,30 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
  openbmc@lists.ozlabs.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
- stable@vger.kernel.org
+ Conor Dooley <conor.dooley@microchip.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-The MA35D1 clock controller takes two crystal oscillator inputs from
-the board:
-- HXT, a high-speed 24 MHz crystal for most of the system
-- LXT, a low-speed 32.768 kHz crytal for the RTC and low power modes
+Drop CLK_MAX_IDX define of MA35D1 include. This is not a binding and
+should not be placed here. Value is defined in the user driver.
 
-So far the binding was expecting a single crystal. The example named it
-HXT, but no real definition for it was given. LXT was not even
-described. In order to remain backward compatible, we will continue to
-allow either one (HXT) or two (HXT then LXT) input clocks. I propose to
-give those phandles a name to clarify what these entries expect, but I'm
-not listing the clock-names property in the required block, for backward
-compatibility. The rates are fixed by the TRM, so even if the second
-oscillator is not described, the OS can make an educated guess.
-
-Fixes: 2f8b5eb589cb ("dt-bindings: clock: nuvoton: add binding for ma35d1 clock controller")
-Cc: stable@vger.kernel.org
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- .../devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml    | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ include/dt-bindings/clock/nuvoton,ma35d1-clk.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
-index 8f0c43683729..9649feda8d7a 100644
---- a/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
-+++ b/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
-@@ -29,7 +29,18 @@ properties:
-     const: 1
+diff --git a/include/dt-bindings/clock/nuvoton,ma35d1-clk.h b/include/dt-bindings/clock/nuvoton,ma35d1-clk.h
+index ba2d70f776a6..2d6a44a7e55c 100644
+--- a/include/dt-bindings/clock/nuvoton,ma35d1-clk.h
++++ b/include/dt-bindings/clock/nuvoton,ma35d1-clk.h
+@@ -248,6 +248,5 @@
+ #define ADC_GATE	233
+ #define EADC_DIV	234
+ #define EADC_GATE	235
+-#define	CLK_MAX_IDX	236
  
-   clocks:
--    maxItems: 1
-+    minItems: 1
-+    maxItems: 2
-+    description:
-+      The controller takes 2 crystal oscillator inputs from the board.
-+      HXT is a 24 MHz crystal feeding the internal PLLs. LXT is a 32.768
-+      kHz crystal, for RTC and low power operations.
-+
-+  clock-names:
-+    minItems: 1
-+    items:
-+      - const: hxt
-+      - const: lxt
- 
-   nuvoton,pll-mode:
-     description:
-@@ -58,6 +69,7 @@ examples:
-         compatible = "nuvoton,ma35d1-clk";
-         reg = <0x40460200 0x100>;
-         #clock-cells = <1>;
--        clocks = <&clk_hxt>;
-+        clocks = <&clk_hxt>, <&clk_lxt>;
-+        clock-names = "hxt", "lxt";
-     };
- ...
+ #endif /* __DT_BINDINGS_CLOCK_NUVOTON_MA35D1_CLK_H */
 
 -- 
 2.55.0
