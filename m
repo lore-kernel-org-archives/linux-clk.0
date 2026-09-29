@@ -1,132 +1,210 @@
-Received: from mail-pj2-f38.google.com (mail-pj2-f38.google.com [74.125.227.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981F05383F6
-	for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 19:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87866392819;
+	Tue, 29 Sep 2026 19:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790709882; cv=none; b=Uo3tf6PKY8CvgQiS41Yg79Gdi7vkJc36oaqDx/RnTzM0tXo0XKVgVImh1gkPbK9laMaHhWF8BZbZLcb4NBR31hbWrqi5CbqfSMHyr00SZ1dMpuOZ5DMzEvCnClGdEiwKMMgPhLP8TjJqaEg3C0v8P6z7CofBmP0fRn1Q2wRK1to=
+	t=1790710740; cv=none; b=Oikk17iYol1YoNfEssEeO9jAj+40WPCCMWhFbCILWOXQ4f6fb+Z4yAOrThjkYbl1T6zPUAqoqzIob9aB4h3wAqo/VTZ5RFb1zL1NoCaIXVz6t8COfQkzl82NVoEyKsvnY6N3CajcxeWf3O9imcgZWTAgrPV/e56WqsqU4mUk/o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790709882; c=relaxed/simple;
-	bh=RvBlO2Tj+oD4izUACOcTsnJXXEePaYc3n30436iNNw0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FmLuf4s7bykl7q6m1q93cgeCkrfqpsrOWdkOKs1fywwyYFvJ3HHc6xalz+gO/IhTsqNDanrx6ICjhiSJQpt3lr5gA5NWWgWMKEISNHbLYYaDpVsHw3sL7wQkSoW3ZG/30YPx2KUCx4/XwEzsMj8tLVpswmEeKvxolDFt9rP/pQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JQ086+nY; arc=none smtp.client-ip=74.125.227.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790710740; c=relaxed/simple;
+	bh=0PEVIn2BfHN7sUqiyH9zoZrr3wqEIptJ04d6UD6OcUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SSOVC7mmFo6Y10kfLflg0xwHp7UrbA0x0q1EOjkx9i+QJ9TeXaLBj8xGlTo3FfTsJy2/mxkG2ajtWpqKZM5VncxuScpcq4NdXNR48D+hYZy6kJ3EZLk76ahFGNR0nJtHo1jD++keVet0bHo49Qnk74ciFXriKoKWk7vXqKjjnZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fj11jVh9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JQ086+nY"
-Received: by mail-pj2-f38.google.com with SMTP id d9443c01a7336-2e2d719d99dso2811525ad.2
-        for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2026 12:24:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790709880; x=1791314680; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=lzp9+chQ6iocMfXVjqbrn94FQKdp8G+cswYdgKOgF0w=;
-        b=JQ086+nY5kJDLHKyAbdl0+rEpv8Mvc4WKEGAZBVgQVlLfLm6bWyhV0R+cOZt82lCX/
-         z+zeEHbkX4aTok2m0hyQ3gGCDbU8EnaSjqfV4TNyugBb9YDVo5M6GMnRfAM4x7rDIx2f
-         aOAWZV6Mgp88HSGqP0x7TETh5reoEqwi/yLbbMNXBp3XAFGzr47tlD/Ro+yAOPQuQxGa
-         8BKFHFCAgNiFquCPIc1rBmr1wtZFODks4LFMTAfiShjaGb9abUR4jokaWpryP8Wbfh4Q
-         3UkNL89bfbMqDT9a5gQRW19Qc0LUzEMg3SWUFNgmoqUP9JmCvONCGPxDpwbobFpc26mL
-         30wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790709880; x=1791314680;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=lzp9+chQ6iocMfXVjqbrn94FQKdp8G+cswYdgKOgF0w=;
-        b=1w9dw1quvb21oEIvwkuu2PwLH4y3XJITdqpQPA5b7Z5MnCE2e7/QREV/8XIFSN+OdN
-         RYroQiC9jHFGk4BnbSlcVtOMSsXQ1GTZitwFD7uQNWXWRYU7Ut1nsvdUzAnXVn8QCXf7
-         8QCArgHC3Aky6ddz8AfIbE3AARIgG5izDduAObpzMZiQblVsQxWpWC1pEHOYZzVxoHWh
-         31pfBrUoc0pNYSGvYR442iPb8jVzsQkx08IFY+WFwYJ6e3hf3TUzZWq0b6/gG+polrNG
-         x1DZM0pgnixhI/GV7zG524RFK7j3LllTXbtRpdh4H4AeBi748Wtxj3gXxKtEz+2qrF4c
-         rcbg==
-X-Gm-Message-State: AFuF++lVkmcMsEZWmQAAgIYOwSrcKNFMxPappgdx03x3EMt/a2TA7oRO
-	tGJHDyqdbYkjVTtdYFK2S4JPpQrR7ySqQ4Hvn4svoC5YTTyBeSbqE0nNimJszFwS
-X-Gm-Gg: AYBFou3WT7LBBnmxKW7Mb8Qk30VdW2AA7pvAep+XI+/WP5GByKk7oXRvXlbfBeCQ5+0
-	URpZ0PcGwTTRw3SB66/k1jd9XCD4bKBn3L068xIe7mtwsV5C9l/KK9BJqru9soZ1TcRR++wARYV
-	29EN8B2ULVfgB5gFeeVJc1YjTJ3UI4bicMfH5jNHQiaGYc/3glPJMlFX14Vl9m8jne6iI22nSrE
-	u+0OwF1kQ0u8wfxogjiauYJN+/5eCFgzQeTCDOgfdwcdnf3J9sANhiWMz14zKMBb11ihzHfnr4d
-	HI2dylwuYqrYkFi1p3OEgXq5sWo/3XZ/WnZFL1gRu4SEViQtaix9UFPtOSv0RrI7ZUfa7dfgb6S
-	XK9fxk4Oj6y3XMG1iqds4x+qLbpXwXwvWZyqU7d/3DLkNxfq2bPUYMEwPcyL/ET7Q2iLRcJMaS4
-	l2tDIsd3FpwPGq75c5Ndb2rTA3+XCbXk23m3nguNvjV/5Ymkw2amSx/QZ6s+QUhFxNCD8eeVqVn
-	TrKZvkqJvcPJ99kQtfO+mm3m5/36fdM6sQI/Czt4L/9oIL7lizHKuKxBsq8AaEfFfPvjacEef2A
-	TA9tfxVKz5vJTf4MESi6hTtOetkOWITqyFBEY+tnCgQ/YkrQ
-X-Received: by 2002:a17:903:32d2:b0:2df:b5c7:d0f1 with SMTP id d9443c01a7336-2e2de565bcamr475215ad.44.1790709879930;
-        Tue, 29 Sep 2026 12:24:39 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8000:7a86::e35])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e2dd39be7csm611795ad.3.2026.09.29.12.24.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Sep 2026 12:24:39 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fj11jVh9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D59D1F000FF;
+	Tue, 29 Sep 2026 19:38:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790710739;
+	bh=VsGpWLQ4V1vn9Tkitk4/L46O9pJ0sPXyLWBFVS/Nrs4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=fj11jVh99BJrwxKYIiKxEfLqjBw8IgTj2t8u8K+Qbhjj6i2r3O4J19cjqCKMcc0x7
+	 3pjU1jPb3MmY6lReift+WlXzce/KSulEsw4QGtLAmO8bgUM3PCeJe1IN1Wc0F1PLLY
+	 EtE6R0y7ofJDC+Fwp1gsUG7an3u3q+xpOmOfblyT1rsIjQaNi+kqjpVsrHT1dp7EmW
+	 t1mQ2zNdRwqPQ0A7TqLalEVPESJhh+fuiO0+GX8uJigtS8EJATk/I8xeiEl9vpMut3
+	 hzokpXB+U0h0zadU0cfhGF7mxc7QTCqbBE8ux3N8t0I45sSEVwPZ3fJzuqyOk3/Omz
+	 dJ1ya0c+b8LwQ==
+Date: Tue, 29 Sep 2026 20:38:52 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
-	linux-kernel@vger.kernel.org (open list),
-	linux-hardening@vger.kernel.org (open list:KERNEL HARDENING (not covered by other areas):Keyword:\b__counted_by(_le|_be|_ptr)?\b)
-Subject: [PATCH RESEND] clk: tegra: bmp: remove kcalloc
-Date: Tue, 29 Sep 2026 12:24:37 -0700
-Message-ID: <20260929192437.27775-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	Andi Shyti <andi.shyti@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>, Lee Jones <lee@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-i3c@lists.infradead.org, mfd@lists.linux.dev,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/20] arm64: add Synaptics SL261X SoCs and RDK boards
+Message-ID: <20260929-smoked-laurel-087d5a3523a3@spud>
+References: <20260929061417.20733-1-jszhang@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ftlp7D0f7O7319jz"
+Content-Disposition: inline
+In-Reply-To: <20260929061417.20733-1-jszhang@kernel.org>
 
-Use a flexible array member to avoid allocating separately.
+--ftlp7D0f7O7319jz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Use __counted_by for extra runtime analysis.
+On Tue, Sep 29, 2026 at 02:13:57PM +0800, Jisheng Zhang wrote:
+> Add initial support for the Synaptics SL261X SoCs and corresponding
+> RDK boards.
+>=20
+> The SL261X SoCs include five pin-to-pin compatible SoCs: SL2611, SL2613,
+> SL2615, SL2617, and SL2619.
+>=20
+> Only reset, pinctrl, clk/pll, uart, gpio, i2c, spi, i3c are included in
+> this series. The support for Ethernet, USB, SDHCI, CAN, DMAC, XSPI will
+> be submitted after this series is merged.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/clk/tegra/clk-bpmp.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+This series is filled with wildcard compatibles, which we don't permit
+typically. The only case for SoCs that I've seen them accepted is when
+the devices covered are actually just different binnings of the same
+device. I took a look at the docs for this device, but it wasn't clear
+to me if these are actually binnings or if there are different
+integrations here. If they're binnings, I'd rather you used 0 as the
+final digit, rather than x, since that matches the synaptics
+documentation for the family. If they're not binnings, there's no
+guarantee that they share the same errata etc, and must have different
+compatibles.
 
-diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-index 067a8555c4e7..15b976162b59 100644
---- a/drivers/clk/tegra/clk-bpmp.c
-+++ b/drivers/clk/tegra/clk-bpmp.c
-@@ -32,7 +32,7 @@ struct tegra_bpmp_clk {
- 	unsigned int id;
- 
- 	unsigned int num_parents;
--	unsigned int *parents;
-+	unsigned int parents[] __counted_by(num_parents);
- };
- 
- static inline struct tegra_bpmp_clk *to_tegra_bpmp_clk(struct clk_hw *hw)
-@@ -518,20 +518,14 @@ tegra_bpmp_clk_register(struct tegra_bpmp *bpmp,
- 	unsigned int i;
- 	int err;
- 
--	clk = devm_kzalloc(bpmp->dev, sizeof(*clk), GFP_KERNEL);
-+	clk = devm_kzalloc(bpmp->dev, struct_size(clk, parents, info->num_parents), GFP_KERNEL);
- 	if (!clk)
- 		return ERR_PTR(-ENOMEM);
- 
-+	clk->num_parents = info->num_parents;
- 	clk->id = info->id;
- 	clk->bpmp = bpmp;
- 
--	clk->parents = devm_kcalloc(bpmp->dev, info->num_parents,
--				    sizeof(*clk->parents), GFP_KERNEL);
--	if (!clk->parents)
--		return ERR_PTR(-ENOMEM);
--
--	clk->num_parents = info->num_parents;
--
- 	/* hardware clock initialization */
- 	memset(&init, 0, sizeof(init));
- 	init.name = info->name;
--- 
-2.55.0
+Cheers,
+Conor.
 
+>=20
+>=20
+> Jisheng Zhang (20):
+>   dt-bindings: serial: snps-dw-apb-uart: Add Synaptics sl261x uart
+>   dt-bindings: i2c: dw: Add Synaptics sl261x i2c
+>   spi: dt-bindings: snps,dw-apb-ssi: Add Synaptics sl261x spi
+>   dt-bindings: i3c: dw: support up to two reset lines
+>   i3c: dw: switch to array-based exclusive reset control
+>   dt-bindings: i3c: Add Synaptics sl261x i3c
+>   arm64: kconfig: let ARCH_BERLIN cover Synaptics arm64 SoCs
+>   dt-bindings: reset: add Synaptics SL261X SoCs
+>   reset: add Synaptics SL261x reset support
+>   pinctrl: berlin: use u16 instead of u8 for the offset
+>   pinctrl: berlin: enable module build support
+>   pinctrl: berlin: add optional pinconf support
+>   dt-bindings: pinctrl: berlin: Support Synaptics SL261X SoCs
+>   pinctrl: berlin: support Synaptics SL261X SoCs
+>   dt-bindings: clock: add Synaptics SL261X clock
+>   clk: berlin: add Synaptics SL261X SoC clocks and plls
+>   dt-bindings: mfd: Add Synaptics SL261x global block binding
+>   regulator: dt-bindings: sy8827n: support standard properties
+>   dt-bindings: arm: berlin: Add Synaptics SL261X SoC and RDK board
+>   arm64: dts: synaptics: Add Synaptics SL261X SoC and RDK board
+>=20
+>  .../bindings/arm/marvell,berlin.yaml          |  20 +
+>  .../bindings/clock/syna,sl261x-clk.yaml       |  92 +++
+>  .../bindings/i2c/snps,designware-i2c.yaml     |   1 +
+>  .../bindings/i3c/snps,dw-i3c-master.yaml      |   6 +-
+>  .../bindings/mfd/syna,sl261x-gbl.yaml         | 208 +++++
+>  .../pinctrl/marvell,berlin2-soc-pinctrl.yaml  |  10 +-
+>  .../bindings/regulator/silergy,sy8827n.yaml   |   5 +-
+>  .../bindings/reset/syna,sl261x-reset.yaml     |  40 +
+>  .../bindings/serial/snps-dw-apb-uart.yaml     |  12 +-
+>  .../bindings/spi/snps,dw-apb-ssi.yaml         |   1 +
+>  arch/arm64/Kconfig.platforms                  |   4 +-
+>  arch/arm64/boot/dts/synaptics/Makefile        |   5 +
+>  arch/arm64/boot/dts/synaptics/sl2611-rdk.dts  |  16 +
+>  arch/arm64/boot/dts/synaptics/sl2611.dtsi     | 490 ++++++++++++
+>  arch/arm64/boot/dts/synaptics/sl2613-rdk.dts  |  16 +
+>  arch/arm64/boot/dts/synaptics/sl2613.dtsi     |  12 +
+>  arch/arm64/boot/dts/synaptics/sl2615-rdk.dts  |  16 +
+>  arch/arm64/boot/dts/synaptics/sl2615.dtsi     |  46 ++
+>  arch/arm64/boot/dts/synaptics/sl2617-rdk.dts  |  16 +
+>  arch/arm64/boot/dts/synaptics/sl2617.dtsi     |  46 ++
+>  arch/arm64/boot/dts/synaptics/sl2619-rdk.dts  |  16 +
+>  arch/arm64/boot/dts/synaptics/sl2619.dtsi     |  44 ++
+>  .../boot/dts/synaptics/sl261x-rdk-common.dtsi | 135 ++++
+>  drivers/clk/Kconfig                           |   1 +
+>  drivers/clk/berlin/Kconfig                    |  25 +
+>  drivers/clk/berlin/Makefile                   |   4 +
+>  drivers/clk/berlin/sl-clk.c                   | 279 +++++++
+>  drivers/clk/berlin/sl-clk.h                   |  31 +
+>  drivers/clk/berlin/sl-sysmgr-clk.c            | 250 ++++++
+>  drivers/clk/berlin/sl-sysmgr-clk.h            |  44 ++
+>  drivers/clk/berlin/sl261x-clks.c              | 385 +++++++++
+>  drivers/clk/berlin/sl261x-pll.c               | 145 ++++
+>  drivers/clk/berlin/sl261x-pll.h               |  14 +
+>  drivers/i3c/master/dw-i3c-master.c            |  24 +-
+>  drivers/i3c/master/dw-i3c-master.h            |   2 +-
+>  drivers/pinctrl/berlin/Kconfig                |   7 +
+>  drivers/pinctrl/berlin/Makefile               |   1 +
+>  drivers/pinctrl/berlin/berlin.c               | 259 +++++-
+>  drivers/pinctrl/berlin/berlin.h               |  17 +-
+>  drivers/pinctrl/berlin/pinctrl-sl261x.c       | 745 ++++++++++++++++++
+>  drivers/reset/Kconfig                         |   6 +
+>  drivers/reset/Makefile                        |   1 +
+>  drivers/reset/reset-sl261x.c                  | 224 ++++++
+>  include/dt-bindings/clock/syna,sl261x.h       | 131 +++
+>  include/dt-bindings/reset/syna,sl261x-reset.h |  80 ++
+>  45 files changed, 3899 insertions(+), 33 deletions(-)
+>  create mode 100755 Documentation/devicetree/bindings/clock/syna,sl261x-c=
+lk.yaml
+>  create mode 100644 Documentation/devicetree/bindings/mfd/syna,sl261x-gbl=
+=2Eyaml
+>  create mode 100644 Documentation/devicetree/bindings/reset/syna,sl261x-r=
+eset.yaml
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2611-rdk.dts
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2611.dtsi
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2613-rdk.dts
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2613.dtsi
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2615-rdk.dts
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2615.dtsi
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2617-rdk.dts
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2617.dtsi
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2619-rdk.dts
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2619.dtsi
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
+>  create mode 100644 drivers/clk/berlin/Kconfig
+>  create mode 100644 drivers/clk/berlin/sl-clk.c
+>  create mode 100644 drivers/clk/berlin/sl-clk.h
+>  create mode 100644 drivers/clk/berlin/sl-sysmgr-clk.c
+>  create mode 100644 drivers/clk/berlin/sl-sysmgr-clk.h
+>  create mode 100644 drivers/clk/berlin/sl261x-clks.c
+>  create mode 100644 drivers/clk/berlin/sl261x-pll.c
+>  create mode 100644 drivers/clk/berlin/sl261x-pll.h
+>  create mode 100644 drivers/pinctrl/berlin/pinctrl-sl261x.c
+>  create mode 100644 drivers/reset/reset-sl261x.c
+>  create mode 100644 include/dt-bindings/clock/syna,sl261x.h
+>  create mode 100644 include/dt-bindings/reset/syna,sl261x-reset.h
+>=20
+> --=20
+> 2.53.0
+>=20
+
+--ftlp7D0f7O7319jz
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCarwTywAKCRB4tDGHoIJi
+0iSUAQDQBP7yTMTRQHM/PgAAhHzzJvYdwsiryiFIj8dSXwY0TAD9F2PqX3b5V+ld
+h0q5oG8eDLbjjVQcWB1DWaQc14lxeQw=
+=yJKk
+-----END PGP SIGNATURE-----
+
+--ftlp7D0f7O7319jz--
