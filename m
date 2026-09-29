@@ -1,100 +1,74 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF20B388E4B;
-	Tue, 29 Sep 2026 19:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4603EFD17;
+	Tue, 29 Sep 2026 20:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790711915; cv=none; b=lLd2WJCyfXX8wVCEEKYT7+asy77bYuXzuxGP1xM/Nk80F83bemMzYTpBMYacgrK/hu7LCsar3OalldhqlhtU10HHuOT7JPZNkclvCr94R2dsWlWXZU2rX8Ll+fL7hMmQjcbYVOI9WKWnqLidBAsKGXO/6ERCUjuDv4m54oqY4hc=
+	t=1790714062; cv=none; b=RCmZK3IcAIYm+WECCW/czSojGdpBc2uvons1wTYalg6eE35HyqDV2gNYTatbQsO5e4WidsJDEUDlcsXrIJswz/wxKh0LveTuTSMuHhrPXJS9yOu2yTKri7jjT9XNTJSP6NMdI6vQjzlAhhnyqbQID+dvfj0EKDbqCTcSsTJtdHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790711915; c=relaxed/simple;
-	bh=rzIyuyw2Sv4lrUy8xSI2ZMlSAC2YqPgM0Am+3ZBgb0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmsusZa3Fbi0lljsqB58HQ2M4+meRKtoSwqbYy7QL4jC8oCpfEcVMhPlG1kRiX6JlqnneE1/OEhvXmc6E8xl4EH/DEKrJ6y0sHXRn+LEgV6DrbVva3qWXu8hjSziY6ESiVkK8SWkMOfALKvkwD4gS14HF6rKrS8xPpPl/Js0XwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MD8JS7rU; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790714062; c=relaxed/simple;
+	bh=BfZcupWhI5ahJDjeC4wsNbIVI4Nbw24z0Adm8BqPlVg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rf7qnGiUvMTQJzNiv5pOTdx9DKKCDtVWOtFZbf4yNdzxZMqm1Jts3nRw1tC8/iSrLmjilSveh67VHA+yu/TVlsYMIfOBR7zlu7AFZRKlKjyXz3DMbi0RL18WfMtwRM3lok591uvuxBg0BUPl7mMAgqpxh3AXzUBermMUhQydzxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lu8uI9HA; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MD8JS7rU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 683301F000FF;
-	Tue, 29 Sep 2026 19:58:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lu8uI9HA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BB031F0089B;
+	Tue, 29 Sep 2026 20:34:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790711912;
-	bh=FM08SSqsWSOZJWtV+yNcCq2za0yCimEnBoqDGB1eG60=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=MD8JS7rUltqIokKYj4s9NMk3Cw71hV8LHF0JdqABhcsGjIZOQMNizD0pmlplj4qQf
-	 uezCHmwJmrp3KKwtkEdcP8mhilJQuzmWMaktNjxSxnva1Nk+07kZ2kbFPllXEfHg5T
-	 ccAdRFxzUKCnrfboj8FpXsZiFbHn3BeOGSgu3uWn4qXiTcxMak+Crv+64pXOMifXUs
-	 tSC0V5lUA/Jor0235C/iyi83lx/m0koI1TgVDw1cCfVFoupkR4tJsy/VMPaifxBHdB
-	 YWlLq5R1VD5RLEoHobWJhABApSpeEo0BvRSE9B0RDZM8Bb+yztDCA96EONxPXRhdpH
-	 uoqezxorutw6w==
-Date: Tue, 29 Sep 2026 12:58:31 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Drew Fustini <dfustini@oss.tenstorrent.com>,
-	Joel Stanley <jms@oss.tenstorrent.com>,
+	s=k20260515; t=1790714060;
+	bh=MqxhznrnsjyG9ebH5kY/8Kl7ayyQw8UgzT4BU66fEnw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=lu8uI9HACYSNmIZb+hwDKpJwxAIhfaT1c+70vMyRiimc8DS3zqc8ybpRezkL6ZaUk
+	 bdqAIEmocHmN5mwt44rVsq/rLO1MCI0v4YZFgcIPVFTTYQrxo71C/uqXk7z4q0MERm
+	 aNhMyaez7qJMnq/1Q9EzhXhXWV4ohK4xKrhl5KnaeqZmjUgQgZI2DlAmKEOwZLgjQb
+	 ENunvyGW5dIJkeJ5q583zujkRIZX9GfqRk9zd/B37tcIgZLb4QNhli1Iv9zOCS5uES
+	 BwT5aqfQtXfSd6Pps4NOoifwVPGZZ7vlcHIpQaiZnrgLoV9rSvi3B53sDf91CIG1V1
+	 RSSSW5pCIZehA==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Taniya Das <taniya.das@oss.qualcomm.com>,
+	Abel Vesa <abelvesa@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: tenstorrent: use regmap_assign_bits() for
- conditional set/clear
-Message-ID: <arwYZ3rU1fNTFTld@x1>
-References: <20260924083439.461769-1-peng.fan@oss.nxp.com>
- <arV1rOMRG6D9erK8@thelio>
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v4 0/2] clk: qcom: Add camera clock controllers support for Qualcomm Maili SoC
+Date: Tue, 29 Sep 2026 15:34:13 -0500
+Message-ID: <179071404941.2903617.14660816524713513430.b4-ty@b4>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260922-maili_camcc-v4-0-87704b664dde@oss.qualcomm.com>
+References: <20260922-maili_camcc-v4-0-87704b664dde@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <arV1rOMRG6D9erK8@thelio>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 24, 2026 at 12:10:36PM -0700, Drew Fustini wrote:
-> On Thu, Sep 24, 2026 at 04:34:38PM +0800, Peng Fan (OSS) wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> > 
-> > Replace if/else blocks using regmap_set_bits()/regmap_clear_bits() with
-> > the simpler regmap_assign_bits() call.
-> > 
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >  drivers/clk/tenstorrent/atlantis-prcm.c | 11 +++--------
-> >  1 file changed, 3 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/clk/tenstorrent/atlantis-prcm.c b/drivers/clk/tenstorrent/atlantis-prcm.c
-> > index 6d4386eeb7dae..854b9c48816f2 100644
-> > --- a/drivers/clk/tenstorrent/atlantis-prcm.c
-> > +++ b/drivers/clk/tenstorrent/atlantis-prcm.c
-> > @@ -205,14 +205,9 @@ static int atlantis_clk_gate_endisable(struct clk_hw *hw, int enable)
-> >  {
-> >  	struct atlantis_clk_gate *gate = hw_to_atlantis_clk_gate(hw);
-> >  
-> > -	if (enable)
-> > -		return regmap_set_bits(gate->common.regmap,
-> > -				       gate->config.reg_offset,
-> > -				       gate->config.enable);
-> > -	else
-> > -		return regmap_clear_bits(gate->common.regmap,
-> > -					 gate->config.reg_offset,
-> > -					 gate->config.enable);
-> > +	return regmap_assign_bits(gate->common.regmap,
-> > +				  gate->config.reg_offset,
-> > +				  gate->config.enable, enable);
-> >  }
-> >  
-> >  static int atlantis_clk_gate_enable(struct clk_hw *hw)
-> > -- 
-> > 2.50.1
-> 
-> Reviewed-by: Drew Fustini (Tenstorrent) <fustini@kernel.org>
-> 
-> I will apply this to tenstorrent-clk-for-next.
 
-Applied to tenstorrent-clk-for-next:
+On Tue, 22 Sep 2026 09:26:36 +0530, Jagadeesh Kona wrote:
+> This series adds support for the camera clock controllers on the upcoming
+> Qualcomm Maili SoC.
 
-  d5e56ca6c53b clk: tenstorrent: use regmap_assign_bits() for conditional set/clear
+Applied, thanks!
 
-Thanks,
-Drew
+[2/2] clk: qcom: Add support for camera clock controller on Maili
+      commit: 4ba7bf34e60fec198b1b76470ba02b495c45788e
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
