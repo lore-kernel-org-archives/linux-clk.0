@@ -1,162 +1,141 @@
-Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com [74.125.228.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2DF47208B
-	for <linux-clk@vger.kernel.org>; Wed, 30 Sep 2026 09:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE663845DC;
+	Wed, 30 Sep 2026 09:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790760553; cv=none; b=eamtIfvestrUNVBYeLjAwm/VDbvFoKzN5YLKqVysChKBU8VRfyCWY24A8iXTALOeI2jZdP8FK8tyqppZpukI0cQk/gag82pJxM3doRQvo5OUVbJNzxgZ+R0LDVCx0slQXs3Rynqx2vleA9o1o2IbZqglRA0yChnCeE5W1yRCpl0=
+	t=1790760560; cv=none; b=qHvywGwkwUv0N7fPEFrNWdpXS8+Mei/iYmqFNVv3hZCSucgGZcLP3GMz1aw4pjUfPyP4asNxW+07P3XkyJImROQmcPkR4WZtDcydMgOAzsaM+0D+OwaZhG/PXwzD7SO39t3YslHwxbSyjc4cKrIRLe9ZzWOzSZPAyDZFnEUHOkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790760553; c=relaxed/simple;
-	bh=mknuXwZ95tcNOhem/WwO440N8fKuQ6mt+WRrlOPB8Xc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aQIZM8zPr+Lc2ceSyhezWoSogde0vhVg0EcaHpOT755q3a6kxKeuAcX++5Wz9xmvWmFqRPmYy4YJMtMFaz5gfCiSCbO3YmSY7OjVyPABbkz8Poj/S/MU4hVpt9uDd3tItCsJgMAPd2Z9b1/ZtsXSyIGTamL2SdHG/4gaYBnK+Tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yjp39Ie8; arc=none smtp.client-ip=74.125.228.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790760560; c=relaxed/simple;
+	bh=Fj2CGpbn18h2x9Ix9QU2iCE10XquvaqfV4WsW5n8CWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J74MkpOo2OEHMIeq+aJmfFgHyjf8K6w0pONTeTVIBUPY0Z2mYiKwo4/IfELNxx7FbLW8gSUi/y0x+KjGR+JVKRO9x2aXnLLjrB9HuLqQPMK4rh0fXg9QJHFSCCI8Ib2eTj+o/5Yn/Vj5Pqa/F57Z4sRCQAzQMhQOlJzoaQ2oNtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GpgMMVM9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yjp39Ie8"
-Received: by mail-pz2-f41.google.com with SMTP id d2e1a72fcca58-853619d9956so190206b3a.3
-        for <linux-clk@vger.kernel.org>; Wed, 30 Sep 2026 02:29:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790760551; x=1791365351; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=dCuOczbTp0o8M/OdE7sBIXiBo8j5afblsAbUmAPXWJ0=;
-        b=Yjp39Ie8iKUrFARXoyxkWhn0v7rlvOANVnCPkSCYTCpV3wwuQPnDc3lfCzjhgusk23
-         HHlmLKzWgP4sz09IK+Aa48Z7Tr6CXvjmYBTlHWbZjwcVod3PoRLus4xMwuHIMm0GrBS5
-         uaGLgmiMfI2Y/PVAiCaRvChuDQEuiU6cRd6Xm+X6Fgvf4eHgj27kL3Bj8Yaq5z4o3R2j
-         hkFMNGp05A+pwJXecWfgO69GdP7Ahm+E0SN9loPwn9uvkAAHEKGETjB4uswlj6s0p0Om
-         WdRpU3c5qFU9psPTG6YK79Vp/9cFUgvFUz2MsTvNS++1DPO8jPWHL/62gmKZyHdJmYVB
-         FcGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790760551; x=1791365351;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=dCuOczbTp0o8M/OdE7sBIXiBo8j5afblsAbUmAPXWJ0=;
-        b=SkcM0IkDpgbXrSxDn6y9/fvVIAmPYYR8SwlLGd4HLHgMoo+PRaqtvx6og21Hws6IS2
-         ig7katjs2ZWfpBI4Qp37Z4RaEqx6WQo6XKG1wOoHhFdsDLGcgtKPsycm7ZooiTqrkp5M
-         zw34qu2dGroDFpVh5A8orYCHwQUPh1CRf2XC8HE96RjeuuqqSCKhor4KqqeZpUIf5gdl
-         rzwUakwcii+H7r0oH0d2RwlaYnbsr3cpIeouR58e0kCm1SQI7u6cUSECpODAa24lKPTO
-         HyFz2iTbdVgpe2EeTUs/BElK86ZUi2N6ojInszQhOu3wEbLM/81IvjI2k8jTLKydFMJ3
-         XB5g==
-X-Gm-Message-State: AFuF++nyryowlmbFGX7PB8DKOyFVLe9YrtvJnH10KggKmzfMiR+mdBKN
-	nMHkOVPk16ON81mTpL+DUhP+FwrY1usoKOuJsP5DYcIqZHU87s4dqw4bKQio7A==
-X-Gm-Gg: AYBFou0qic50SfS+WlVE+qWxb5UT6SF9d/zki6RKSkqiVXRVS2k+DM0dJYz7bvqCn8b
-	rfqpLqODezwMcxuDSGAMMGC0IZEXuaP2RuSt/GBVz1jApfqzm52RgtpKMA8/0JtXbzJcL9Uf6Hu
-	MUA/XxagQfhRY0E4LfSdQ/q9RHSAot0msKi/9AD2Y1Je3GerAyxBndyGnbOIaV0aT4pievWALOh
-	/mVCZ4k0zx8yHZRRM0QDIVKTzI7npjhoE3lZQlOfM/VrnnulQ6sAhLP6Wt4hFHSTgI3O8yneN3u
-	iKZB/tdkVi4fR3pGp/YRdwTdYZSCEir+7vdFqKXRoNJPO6ZPLb1L71DsbW2a0j9EGFQbns7M8v5
-	yJ//z/hZB2/nBYHYfO2BQQZpEmN3lgQokh1NzcHs+cec6CXFnGWstaGkbzXewOe6RlIWAYSB+zc
-	k3Cq4B18j8LG/fYSHJVvHTug/YqXM/r53XA35/69GXSvqqMNTNnLJO9DzUwFVrsnEzpki1H/A0/
-	u59KS1R/vDzzw0=
-X-Received: by 2002:a05:6a00:4787:b0:882:b2a:4840 with SMTP id d2e1a72fcca58-88749bed3e0mr770897b3a.2.1790760551234;
-        Wed, 30 Sep 2026 02:29:11 -0700 (PDT)
-Received: from jfliu-sfa1411.. ([129.227.183.200])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8872624c5b5sm493474b3a.43.2026.09.30.02.29.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 02:29:10 -0700 (PDT)
-From: Jianfeng Liu <liujianfeng1994@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Jianfeng Liu <liujianfeng1994@gmail.com>
-Subject: [PATCH] clk: qcom: dispcc-x1e80100: don't disable display PLLs in the unused-clock sweep
-Date: Wed, 30 Sep 2026 17:28:55 +0800
-Message-ID: <20260930092904.5222-1-liujianfeng1994@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GpgMMVM9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82CCC1F000FF;
+	Wed, 30 Sep 2026 09:29:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790760559;
+	bh=/I2j8EtervZUekqkoXeInY0fb0//oNYCQBLFthnmKww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=GpgMMVM9zSyI7cseyP4ugRp0T06ijIk4rue1FO8ILmV97WBeoC6sOEJahhiN4PEH9
+	 KWngsyLOunNALWj0Qqqr0xYCNpIA06Orymz3d1DdkVEXAovuvXy+X3sRuUZKq5W7E0
+	 HR0pQVZeIVY7nscUBSHM9pUE0CMK8RLwjFf4iZ/MIU7HsYvET8DQzNbsFlIVktdcBZ
+	 Ao/0qb7BKB9aHDoBp2j8a/f739LR1BxZCAMxO6yB//m4sVaBVLSxjY5O8TDvk7FBFS
+	 HiKOtaVIdxul++gFC1tbEiuKBeLYZi+kJebEbAFksMZdapQU1cNZEU6elALisQBOn+
+	 sylcFDHEX+XJQ==
+Date: Wed, 30 Sep 2026 11:29:16 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Rosen Penev <rosenp@gmail.com>, linux-clk@vger.kernel.org, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_by(_le|_be|_ptr)?b" <linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH RESEND] clk: tegra: bmp: remove kcalloc
+Message-ID: <arzWBhCQCCUBI95M@orome>
+References: <20260929192437.27775-1-rosenp@gmail.com>
+ <1jwls32msl.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wv6hlsxowlo3aj7c"
+Content-Disposition: inline
+In-Reply-To: <1jwls32msl.fsf@starbuckisacylon.baylibre.com>
 
-UEFI leaves disp_cc_pll0 locked and running for the handover
-framebuffer.  clk_disable_unused() runs before any
-display driver probes, finds it unused (no consumers, no
-CLK_IGNORE_UNUSED) and powers it down through
-alpha_pll_reset_lucid_evo_disable().  When the DPU driver later
-enables mdp_clk, alpha_pll_reset_lucid_evo_prepare() performs a
-full PLL reset and relock.
 
-On X1E80100 that relock can end up marginal, and whether it does is
-a per-boot analog lottery.  A marginal PLL degrades the DPU core
-timing just enough that the DisplayPort controller drops every
-other MTP (micro transfer packet) of the pixel stream fed by the
-DPU.  The result is static black vertical bands on the eDP panel:
-at 2560x1600, 24bpp, 4 lanes, one MTP is 4 * 64 symbols / 3 bytes
-per pixel = 85.33 pixels, so the screen splits into exactly 30
-bands of which every second one is black (20 bands at 16bpp).
-This reproduces on roughly half of all boots and persists for the
-whole boot.
+--wv6hlsxowlo3aj7c
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RESEND] clk: tegra: bmp: remove kcalloc
+MIME-Version: 1.0
 
-The corruption is invisible to every register or clock-state dump:
-the PLL locks either way, only the lock quality differs, and all
-programmed values (DPU, DP controller MSA/TU, PHY, dispcc) are
-byte-identical between good and bad boots.  The controller's
-internal BIST pattern stays clean on a corrupted boot, pinning the
-failure to the pixel ingest timing fed by the DPU.
+On Wed, Sep 30, 2026 at 09:58:18AM +0200, Jerome Brunet wrote:
+> On mar. 29 sept. 2026 at 12:24, Rosen Penev <rosenp@gmail.com> wrote:
+>=20
+> > Use a flexible array member to avoid allocating separately.
+> >
+> > Use __counted_by for extra runtime analysis.
+> >
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > ---
+> >  drivers/clk/tegra/clk-bpmp.c | 12 +++---------
+> >  1 file changed, 3 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+> > index 067a8555c4e7..15b976162b59 100644
+> > --- a/drivers/clk/tegra/clk-bpmp.c
+> > +++ b/drivers/clk/tegra/clk-bpmp.c
+> > @@ -32,7 +32,7 @@ struct tegra_bpmp_clk {
+> >  	unsigned int id;
+> > =20
+> >  	unsigned int num_parents;
+> > -	unsigned int *parents;
+> > +	unsigned int parents[] __counted_by(num_parents);
+> >  };
+> > =20
+> >  static inline struct tegra_bpmp_clk *to_tegra_bpmp_clk(struct clk_hw *=
+hw)
+> > @@ -518,20 +518,14 @@ tegra_bpmp_clk_register(struct tegra_bpmp *bpmp,
+> >  	unsigned int i;
+> >  	int err;
+> > =20
+> > -	clk =3D devm_kzalloc(bpmp->dev, sizeof(*clk), GFP_KERNEL);
+> > +	clk =3D devm_kzalloc(bpmp->dev, struct_size(clk, parents, info->num_p=
+arents), GFP_KERNEL);
+> >  	if (!clk)
+> >  		return ERR_PTR(-ENOMEM);
+> > =20
+> > +	clk->num_parents =3D info->num_parents;
+> >  	clk->id =3D info->id;
+> >  	clk->bpmp =3D bpmp;
+> > =20
+> > -	clk->parents =3D devm_kcalloc(bpmp->dev, info->num_parents,
+> > -				    sizeof(*clk->parents), GFP_KERNEL);
+> > -	if (!clk->parents)
+> > -		return ERR_PTR(-ENOMEM);
+> > -
+> > -	clk->num_parents =3D info->num_parents;
+> > -
+>=20
+> What is the benefit of doing this ? It looks like you are just trading
+> one alloc for another here ?
 
-Verified on an Acer Swift SFA14-11 (X1E78100):
-  - clk_ignore_unused on the cmdline:                7/7 boots clean
-  - keeping only disp_cc_pll0 from the sweep:       10/10 boots clean
-  - keeping any other clock from the sweep:        still corrupts
-  - with this patch:                                10/10 boots clean
+I think the point is allocating the parents array as part of the main
+allocation, so we end up with one allocation instead of two. This avoids
+fragmentation and overhead and is possibly a little bit faster.
 
-Keep the firmware-provided PLL state by marking disp_cc_pll0
-CLK_IGNORE_UNUSED, the same way gcc drivers protect CPU hfplls
-(cf. gcc-msm8960).  Other drivers using
-clk_alpha_pll_reset_lucid_ole_ops for their display PLLs (sm8550,
-sm8650) may carry the same latent issue.
+Seems fine to me.
 
-Fixes: ee3f0739035f5 ("clk: qcom: Add dispcc clock driver for x1e80100")
-Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
-Assisted-by: LLM
+Thierry
 
----
+--wv6hlsxowlo3aj7c
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/clk/qcom/dispcc-x1e80100.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/clk/qcom/dispcc-x1e80100.c b/drivers/clk/qcom/dispcc-x1e80100.c
-index aed06203a886a..5613f1fdb2e4a 100644
---- a/drivers/clk/qcom/dispcc-x1e80100.c
-+++ b/drivers/clk/qcom/dispcc-x1e80100.c
-@@ -94,6 +94,21 @@ static struct clk_alpha_pll disp_cc_pll0 = {
- 	.clkr = {
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "disp_cc_pll0",
-+			/*
-+			 * The boot firmware (UEFI) leaves disp_cc_pll0 locked
-+			 * and running for the handover framebuffer.
-+			 * clk_disable_unused() runs before any display driver
-+			 * probes, finds the PLL unused (no consumers, no
-+			 * CLK_IGNORE_UNUSED) and powers it down.  The DPU
-+			 * driver then has to relock it via the reset-prepare
-+			 * sequence.  On X1E80100 that relock can end up
-+			 * marginal (per-boot analog lottery), degrading the
-+			 * DPU core timing enough to corrupt eDP output at
-+			 * MTP granularity (every other micro transfer packet
-+			 * delivered blank, on ~50% of boots).  Keeping the
-+			 * firmware PLL state avoids the relock entirely.
-+			 */
-+			.flags = CLK_IGNORE_UNUSED,
- 			.parent_data = &(const struct clk_parent_data) {
- 				.index = DT_BI_TCXO,
- 			},
----
-base-commit: 6474fa070f2b8013b4b87350b775b8c3be6e8aac
-branch: dispcc-x1e80100-keep-disp-plls
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmq81mwACgkQ3SOs138+
+s6E3tQ//R14tkkjFYJZEQEQ5qTwdA1ZQSnxQ28D0oYUUvcyOkCUoUBq9KKQ0/P+9
+0xqFSfaQC/porrzG78vdnj//AxyzEgt6CLXFPHm+m4uNWvH5yOPJ3aSavFY75zeb
+iaX0kpvoaSxnMrmJAJJEixiOF1jBIaDUc5qSB4J1sO5m8E/QDeyPJRACF2Wvd2Mf
+9Zfjdk62/UYkSSybAlwEQn6DUw/Ew3Bdeu5N33MrP9PuuU4feBKXjlVrqdbUHx87
+TUshE5VIZMHfZrSq46Tx8oUBl/74UWqyTm01OBFbTKajWPtyWmBorZzU6bzhMbcG
+FP/ZH9jIZQq9Hs/MiDFgj1/ThlAZy+E/FwcYaiUDvoiZdmBbPKp63Ul/DFr/2V+y
+quHYHXkxLrhoFrOWuqXm0Wffn2SkXk2PfcvO5t9AoEvQzzIS86zsmzUw3DAyqQ31
+3pu/ouKhxCav0mI+XNLiNQewlP1vXuoFHaTjIGtZms3kg5Ip06PjdipeXia7a124
+eJoESshKBci4hsF55CKJiPtJ4TzT6TuRQoJr9hSfyHOf+18Ciq7JPz2Te8wN/2QE
+rWWt00XUuDhrZTKYRVcfgGFEFY2j0KSGFj59uf0vEIZktBrplAAdLfx/9JPsusPW
+pDwJkGs0/Sq5ajSQahBZHcFJEQmDA964dqs2Y11HclzKMrlp6fs=
+=xOlJ
+-----END PGP SIGNATURE-----
 
--- 
-2.47.3
-
+--wv6hlsxowlo3aj7c--
