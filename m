@@ -1,42 +1,41 @@
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15AF51AFF0;
-	Wed, 30 Sep 2026 17:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9546651CF7C;
+	Wed, 30 Sep 2026 17:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790789157; cv=none; b=ibhIOpgeeAWC13QgIVL6oiAekJvS4cd27SYyW0MC1wxaDmVotDFf9gAvUVckc2hRsrox6exVMoN2xsgYyLh+jmYQiDxMeodZYBHbG3KFQruDj9AXnp9k/xoTqw+wnUxbWhn+PLYgpu8Zddy9JH7/han51wXjcYVHLyJz1y5ebVQ=
+	t=1790789161; cv=none; b=Yh+azyR5zg+m8/OfKYRN9ec6DMpzI7xD4pElQqbCMEJUE0XPdjPHLl+NvDZ4zbmVCq/CP2SDTzfdWrfMB4VA2iKuHJYqz4A9LwKL720EMsH/MvbUzVJFKfsbJ0t6MqS7q9iopGIAJ+q3L/DZbVvXLQjIt8fUHQKvPj7yguAN9ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790789157; c=relaxed/simple;
-	bh=jtRw0b1Nz/fJkIFUHTC5atNIq2aWs0bpvYJ2DXi+9vY=;
+	s=arc-20240116; t=1790789161; c=relaxed/simple;
+	bh=aJpTd9FnbsDWjvzrF7GDhcwZ+4qnb3VNB8IcPOk9sw0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZtQIpLzlwevlcus9Bkbp8rUf3E0KJdICFDj/aWk4flNwcXIUre/yR8DOKqYUPuK7cstpIxxoTYeLpRqzo9zzqcQ+rrhpHBQt3q6Wy/9xwjwDTIgtu0eznp78iOO8v12r3V7oGWvrpgVwte21pv9DH6NTFZqH3KZjtfc3vJcB5NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=O9gMj+LP; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=hLJkHGcuLY76l8uvb/Fc1mm01oM3ucSL4pS8iFozXqoKuRNTpqn78/fF44qI1rtMvALwdSjG1G7atpfHYN1tJiWztuQOoNhJia3lTa3lvfGPv9D7ph4RwZOYoaJDxjx37VrqYXiaCtQjuGvzQ4ty2P6dyKQigrl8eECUZlaNf94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rab9vyKX; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="O9gMj+LP"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rab9vyKX"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 813D01A107C;
-	Wed, 30 Sep 2026 17:25:54 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 201841A107D;
+	Wed, 30 Sep 2026 17:25:58 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 554CC60749;
-	Wed, 30 Sep 2026 17:25:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5189E10328A02;
-	Wed, 30 Sep 2026 19:25:49 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E8B2D60749;
+	Wed, 30 Sep 2026 17:25:57 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 55912103284B8;
+	Wed, 30 Sep 2026 19:25:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790789152; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1790789156; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=my1/07f1CulK0UA/JMd9zJxqBQXOzzWengmFLOXpouM=;
-	b=O9gMj+LPZwQNs73ZYdghyQmEOOyyan00c3snYOq/XWHsz9z5vSBenRZFPopk2L0L3Eof8w
-	9NIF3V233tlFlfRVx0hG+k+w2P007v6VT70nijdzHPJajoRI0LmoqjDb03ixAi4dxCjvNL
-	tUV7Fc3+QFtiUrxT7pcDq4mDdLk5lYViyzNsgnx9I58G9EYRwjbHy2gCdzoybg/B49NKpB
-	2gdeUDLEq6rwQR/8zDaDBWr6OKPd7NLeIN82smpJZd01G2d0PGlq3S/a2pvNcrixqmX4cy
-	khKCPtJxxKCg7n/WtQWksBZSKTlffCthNmrohj9mDq6tg5lN4p116dWqvQC6HQ==
+	bh=mZvEpaFZrL7sZc8hczs8U0IzP8KZqdxqF/bu88DD5Gs=;
+	b=Rab9vyKX9unXZrb7kEb33b15+oA/6TTGmowd/60xRiBdmH7mTY4Pi8klCIuURd8c5kzBB9
+	RO8r2lgHSmWU07bNnLMnF7CFRcSps96IPHIsGh3m4vBEW5bA9Gfyh43cRh1yo0OQxc9FEC
+	zFiQkRSlvTEM43umBc9jpzat2nuSWvPZ8H0MmVRayD/AiDJq51zVPtxDt2q40UL19Wj/lx
+	tqE7nF71tSFbybIrX91uOd18HKI9AZlHnP6S80+jo7TMqEgNHyhsehOgHrPTihjtHEUXxo
+	T1FzbrsQlg8xl/92z6PH6fa4QOeK+Jo+KfIFSnbHVCFQEjmFJis1SFAtxcRFug==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Wed, 30 Sep 2026 19:24:53 +0200
-Subject: [PATCH v6 07/12] clk: nuvoton: ma35d1: Avoid possible error
- pointer dereferencing
+Date: Wed, 30 Sep 2026 19:24:54 +0200
+Subject: [PATCH v6 08/12] clk: nuvoton: ma35d1: Retrieve HXT/LXT from DT
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,7 +44,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260930-perso-ma35d1-upstream-clk-v6-7-48937ee6c9bb@bootlin.com>
+Message-Id: <20260930-perso-ma35d1-upstream-clk-v6-8-48937ee6c9bb@bootlin.com>
 References: <20260930-perso-ma35d1-upstream-clk-v6-0-48937ee6c9bb@bootlin.com>
 In-Reply-To: <20260930-perso-ma35d1-upstream-clk-v6-0-48937ee6c9bb@bootlin.com>
 To: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
@@ -59,83 +58,115 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Steam Lin <STLin2@winbond.com>, linux-arm-kernel@lists.infradead.org, 
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- Miquel Raynal <miquel.raynal@bootlin.com>
+ Miquel Raynal <miquel.raynal@bootlin.com>, stable@vger.kernel.org
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-MA35D1 registration helpers store their parent_hw
-argument straight into the parent data, without checking it first. In
-case of registration failure an error pointer will be stored in the
-table, which is then forwarded to the clk core, which treats any
-non-NULL parent as valid handles.
+HXT and LXT are crystal oscillator inputs of the clock controller, they
+are described in the DT, so retrieve them, in order, and store them in
+their respective HXT/LXT hw table entries.
 
-Bail out early when the parent is an error pointer, instead of building
-the parent data.
+Since old DTs reference the HXT fixed-clock without naming it and do not
+describe LXT at all, we assume that HXT must be present, and fallback to
+creating a fixed clock for LXT if it is not described (for backward
+compatibility purposes).
 
-This issue is mostly theoretical in practice, since reaching such an
-error would involve a very early -ENOMEM.
+The downstream gate clocks can directly use the hw clocks as parents,
+instead of relying on string matching.
 
+Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
+Cc: stable@vger.kernel.org
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/clk/nuvoton/clk-ma35d1-divider.c |  3 +++
- drivers/clk/nuvoton/clk-ma35d1-pll.c     |  3 +++
- drivers/clk/nuvoton/clk-ma35d1.c         | 13 +++++++++++--
- 3 files changed, 17 insertions(+), 2 deletions(-)
+ drivers/clk/nuvoton/clk-ma35d1.c | 43 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 35 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/nuvoton/clk-ma35d1-divider.c b/drivers/clk/nuvoton/clk-ma35d1-divider.c
-index e992e7c30341..57a7b4ed3b5e 100644
---- a/drivers/clk/nuvoton/clk-ma35d1-divider.c
-+++ b/drivers/clk/nuvoton/clk-ma35d1-divider.c
-@@ -90,6 +90,9 @@ struct clk_hw *ma35d1_reg_adc_clkdiv(struct device *dev, const char *name,
- 	int ret;
- 	int i;
- 
-+	if (IS_ERR(parent_hw))
-+		return parent_hw;
-+
- 	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
- 	if (!div)
- 		return ERR_PTR(-ENOMEM);
-diff --git a/drivers/clk/nuvoton/clk-ma35d1-pll.c b/drivers/clk/nuvoton/clk-ma35d1-pll.c
-index c7c0dc91a012..92424e9c669d 100644
---- a/drivers/clk/nuvoton/clk-ma35d1-pll.c
-+++ b/drivers/clk/nuvoton/clk-ma35d1-pll.c
-@@ -336,6 +336,9 @@ struct clk_hw *ma35d1_reg_clk_pll(struct device *dev, u32 id, u8 u8mode, const c
- 	struct clk_hw *hw;
- 	int ret;
- 
-+	if (IS_ERR(parent_hw))
-+		return parent_hw;
-+
- 	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
- 	if (!pll)
- 		return ERR_PTR(-ENOMEM);
 diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk-ma35d1.c
-index 1a857f28310f..ceebcbd8c18b 100644
+index ceebcbd8c18b..d955d79abdd2 100644
 --- a/drivers/clk/nuvoton/clk-ma35d1.c
 +++ b/drivers/clk/nuvoton/clk-ma35d1.c
-@@ -130,10 +130,19 @@ static struct clk_hw *ma35d1_clk_mux(struct device *dev, const char *name,
- 				     const int *parent_idx, int num_parents)
+@@ -4,6 +4,7 @@
+  * Author: Chi-Fang Li <cfli0@nuvoton.com>
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+@@ -191,6 +192,15 @@ static struct clk_hw *ma35d1_clk_gate(struct device *dev, const char *name, cons
+ 				    reg, shift, 0, &ma35d1_lock);
+ }
+ 
++static struct clk_hw *ma35d1_clk_gate_parent(struct device *dev, const char *name,
++					     struct clk_hw *parent,
++					     void __iomem *reg, u8 shift)
++{
++	return devm_clk_hw_register_gate_parent_hw(dev, name, parent,
++						   CLK_SET_RATE_PARENT,
++						   reg, shift, 0, &ma35d1_lock);
++}
++
+ static int ma35d1_get_pll_setting(struct device_node *clk_node, u32 *pllmode)
  {
- 	const struct clk_hw *parent_hws[MA35D1_MUX_MAX_PARENTS] = {};
-+	struct clk_hw *parent;
- 	int i;
+ 	const char *of_str;
+@@ -215,10 +225,12 @@ static int ma35d1_clocks_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *clk_node = pdev->dev.of_node;
++	struct clk_bulk_data *clks;
+ 	void __iomem *clk_base;
+ 	static struct clk_hw **hws;
+ 	static struct clk_hw_onecell_data *ma35d1_hw_data;
+ 	u32 pllmode[PLL_MAX_NUM];
++	int num_clks;
+ 	int ret;
  
--	for (i = 0; i < num_parents; i++)
--		parent_hws[i] = (parent_idx[i] >= 0) ? hws[parent_idx[i]] : NULL;
-+	for (i = 0; i < num_parents; i++) {
-+		if (parent_idx[i] < 0)
-+			continue;
+ 	ma35d1_hw_data = devm_kzalloc(dev,
+@@ -240,12 +252,27 @@ static int ma35d1_clocks_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	hws[HXT] = ma35d1_clk_fixed("hxt", 24000000);
+-	hws[HXT_GATE] = ma35d1_clk_gate(dev, "hxt_gate", "hxt",
+-					clk_base + REG_CLK_PWRCTL, 0);
+-	hws[LXT] = ma35d1_clk_fixed("lxt", 32768);
+-	hws[LXT_GATE] = ma35d1_clk_gate(dev, "lxt_gate", "lxt",
+-					clk_base + REG_CLK_PWRCTL, 1);
++	num_clks = devm_clk_bulk_get_all(dev, &clks);
++	if (num_clks < 0)
++		return num_clks;
 +
-+		parent = hws[parent_idx[i]];
-+		if (IS_ERR(parent))
-+			return parent;
-+
-+		parent_hws[i] = parent;
++	if (!num_clks) {
++		dev_err(dev, "missing crystal input clocks\n");
++		return -ENODEV;
 +	}
++
++	hws[HXT] = __clk_get_hw(clks[0].clk);
++
++	if (num_clks > 1)
++		hws[LXT] = __clk_get_hw(clks[1].clk);
++	else
++		/* Old DTs do not describe the low-speed crystal */
++		hws[LXT] = ma35d1_clk_fixed("lxt", 32768);
++
++	hws[HXT_GATE] = ma35d1_clk_gate_parent(dev, "hxt_gate", hws[HXT],
++					       clk_base + REG_CLK_PWRCTL, 0);
++	hws[LXT_GATE] = ma35d1_clk_gate_parent(dev, "lxt_gate", hws[LXT],
++					       clk_base + REG_CLK_PWRCTL, 1);
+ 	hws[HIRC] = ma35d1_clk_fixed("hirc", 12000000);
+ 	hws[HIRC_GATE] = ma35d1_clk_gate(dev, "hirc_gate", "hirc",
+ 					 clk_base + REG_CLK_PWRCTL, 2);
+@@ -632,8 +659,8 @@ static int ma35d1_clocks_probe(struct platform_device *pdev)
+ 	hws[UART16_GATE] = ma35d1_clk_gate(dev, "uart16_gate", "uart16_div",
+ 					   clk_base + REG_CLK_APBCLK0, 28);
  
- 	return clk_hw_register_mux_hws(dev, name, parent_hws, num_parents,
- 				       CLK_SET_RATE_NO_REPARENT, reg, shift,
+-	hws[RTC_GATE] = ma35d1_clk_gate(dev, "rtc_gate", "lxt",
+-					clk_base + REG_CLK_APBCLK0, 29);
++	hws[RTC_GATE] = ma35d1_clk_gate_parent(dev, "rtc_gate", hws[LXT],
++					       clk_base + REG_CLK_APBCLK0, 29);
+ 	hws[DDR_GATE] = ma35d1_clk_gate(dev, "ddr_gate", "ddrpll",
+ 					clk_base + REG_CLK_APBCLK0, 30);
+ 
 
 -- 
 2.55.0
