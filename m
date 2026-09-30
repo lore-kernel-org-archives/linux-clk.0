@@ -1,175 +1,169 @@
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2090.outbound.protection.partner.outlook.cn [139.219.146.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8502645D5FE;
-	Wed, 30 Sep 2026 08:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577353CBE6E
+	for <linux-clk@vger.kernel.org>; Wed, 30 Sep 2026 08:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.50
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790756895; cv=fail; b=Fj4gbwX72a3YiUhVfU2/1owUfpKt1vMaYAGSM4+O2Utj9YInjufN/WDkJ/MfcfkDLZGPlup8gm6jS2vtL8as4NUwZ53Euk9Ft24OArWXblGK1GxDRgELYeV1PgXeMkR64ZB0QJFIdet0hxfFbt6835pXcn+KmYXCVV4YcFyzXa0=
+	t=1790757390; cv=pass; b=nxaPU7dHMIOoo3Xxr+6ARZvo18KRBZgiNpxC0YVdov+eINUVkLzXxabw6OASKmcBYyjmcd+xqfdYNVPwIrDyryeH8wvtRP9jvxhsah3PwYY+nt64mT2zcfohZdk9oW1hgajnEFaMaHJx7OpjKcFvViOA8IPRRWdgmrd/IICjuDQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790756895; c=relaxed/simple;
-	bh=/qtUxTpZeBf1fIpkeUG3jp0Wm19P1AexI7jxJ5mVCMk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NNsApoLsVZMLmUnAo8HlfaUW8R9huFtzzZDUXy3ZM0OswkEWM980r/EV3c42MRiV4R8c/UBQSG67/FZQwo/vK2l0nTZYrB/PuDlkDjQT8zYtc+/1wmOn+mcmx3cggpC5UKQIm0/6YG9bG6Yy8lb66jeitASNRWLLQMrY42AQH6U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kSMDGsiQRLvkv9xCd7D5oGgjBKoaxMy81zUxXoX1qLoygw9QjSCfPSobNQXol6bqMJL4fSKhGePD0K0lzWfmoRoAHbi26QsBdylL83wd1NkMRAc4o7z0n5cLC16hFAKmTHdo9GYANeABJhCaKRRaJMtPhpSrXDoo045SWxfU0v+cuA+NsXUQjuhiOp+4vMDHDHGR/OWNO8rP4gPkM9bO3qZ31vh/8cFGWeYHK4L1wy8MwQnj2E8Irk24TLmPoQCIQTB+D1reG+VxijiYF6Wi74IrUWMlZol0E/J2ZlRDSjdSLRm+AysdO0J4+CCkn/w/tn++PqQOUtmFrwNdg1BM3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/qtUxTpZeBf1fIpkeUG3jp0Wm19P1AexI7jxJ5mVCMk=;
- b=A9QIsKyUPrppQ9+zFA0AUbG6UDhIPBFDDMKFp/VbQ1Qpzj338qGb/noG2Np/BWxabUp9N7MwXabqIcr5A6n0KeRFxX1St5MX2dVVOSw92FyvkLc90uq4oQMUaLCxmOnbuo0Smy28qwdefIernTfg7lEfdLDlMaIJ768aF3ZgDF6MhpjNvfWJO7LpDtdnu3KDJo8fjhVQCXXDsMNBW1HQhSGnKsVM1CLzg2wvQo44DVGXTcb2BFm9+jF0EwcO5zfQNxqXwlKlCqJNw9IkA0kfpNSSpmF7dwl+dOhbBSlzSajlzd1yxxfywBH+3tglpVvLXdYA+6x9Skr2hSG4qbBykA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::6) by ZQ4PR01MB1331.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:16::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.26; Wed, 30 Sep
- 2026 08:27:59 +0000
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- ([fe80::e7d4:256c:b066:850d]) by
- ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%4])
- with mapi id 15.21.0451.026; Wed, 30 Sep 2026 08:27:59 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette
-	<mturquette@baylibre.com>, Brian Masney <bmasney@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Paul Walmsley
-	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Emil Renner Berthing <kernel@esmil.dk>, Kees Cook
-	<kees@kernel.org>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, Richard
- Cochran <richardcochran@gmail.com>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, Hal Feng
-	<hal.feng@starfivetech.com>
-Subject: Re: [PATCH v4 03/22] clk: starfive: Rename file name "jh71x0" to
- "common"
-Thread-Topic: [PATCH v4 03/22] clk: starfive: Rename file name "jh71x0" to
- "common"
-Thread-Index: AQHdSPew5FxIBMEJ4kOnpM+hu5x6v7bfcogAgARvjxCAAvFdgIAABc8Q
-Date: Wed, 30 Sep 2026 08:27:59 +0000
-Message-ID:
- <ZQ4PR01MB12026522469590AF04BAB1ACF28B2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-References: <20260920120044.194901-1-changhuang.liang@starfivetech.com>
- <20260920120044.194901-4-changhuang.liang@starfivetech.com>
- <1jqzih73ob.fsf@starbuckisacylon.baylibre.com>
- <ZQ4PR01MB12022FD5940DAA1AC1279B8FF28D2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <1jtsn72mds.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1jtsn72mds.fsf@starbuckisacylon.baylibre.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1331:EE_
-x-ms-office365-filtering-correlation-id: 49c02d1e-5925-43d3-7c81-08df1eccbc7b
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|23010399003|7416014|366016|376014|10067099003|56012099006|921020|4143699003|18002099003|22082099003|38070700021;
-x-microsoft-antispam-message-info:
- WGDEY3LJNKj90KJ6294/RSj/FVaQfmaYoOc0t1siAzZ0LX2h4/1HlA27Yy0rNvaUShx4GGe7TWtBqOAcWmiCkpUAnchhyEoUacDqdZOLjXmITXmP4zDb2tQXPB/gGbgp0nu1APC43NS8C1vilK+TKrgPzTySItjX4TaCdiSp4HTuI9W0K1vRWmJTL/CHl6Bk+It9qSVjzHFaoNcD5/UD1fOaQrPkUnJzjUR0zSDh2gXAxQxNVUNUci7djA3RkIMxSEodIow8Rcue7vLouNnfiQj3VSfrtCzjuxp7pWtCwCqYgGb70AnrLgSylPn+BV7BjNegGxilJ17vXJcqpY6PEZOwUFEJ/Rc92tT0jI+NJg13+PMLD4MqfFWMT+HFzUBcFhbUTk3MulQR+Kekka6OxjesgKvJMERR8sPbP1onKlbPQgknDHOy3/AQ4GnBDpagB/uCTCRRxekcqtX3M1QXUktn2leA9enkFJm4hy5zu1AhxIQjmtlT9xmpXUzKYjB5sFNtdQJr8k+k9fRmpwUDo+H+6l8M8nmoZcjyvRdXG9MVCSXCJztZIsOiRnA2DuVLufNWcAqNrBp6xjtmoLwAeg==
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(7416014)(366016)(376014)(10067099003)(56012099006)(921020)(4143699003)(18002099003)(22082099003)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?8v9TTaOqdj84DaDw+hiAPNng2a9tk3GQZBJ+E2w899+Uz+HSOVRF0KaX5IG1?=
- =?us-ascii?Q?S3MyVYshi3NhNfgr5KqiJyfaCqO9Tmd9EcZGK/y+b/mkIFPgcEBmOHhYKNjf?=
- =?us-ascii?Q?f7zuw8tTNFUMv82XaRHiUBpHwektEQZKG49OFUJJaxA0/fSrPscl6k+o/0w1?=
- =?us-ascii?Q?TPSsaumHXR0RXwYd7drE4lt2Ylj1gFK9APWh2Hm7UlKt8JqHR4XxQdAHI9DQ?=
- =?us-ascii?Q?BDZmVCFdTHmNSNrqaFcsS+RB5v+4BD+eMXQheHY1iyx+y2Qqb6ib+Pj759TC?=
- =?us-ascii?Q?Z836acmRHzACZfPyMTBpfL+Uym3pfpPRnJJS5P9QtmXBaxiGtEVNu/9rq4le?=
- =?us-ascii?Q?8ISSxEA6DqPfF2306S+83HtbPmPtvb7rsudmHpwzqUT+XBX8NwYqPqUVFRlv?=
- =?us-ascii?Q?IjYpiwxoZJNTk8LZ0Ng6cvW1Vq5Z4OBYoyku1gJ4JQvpbjq5T6zNLBN92SII?=
- =?us-ascii?Q?Y62tjbJsrLEldutX1ImzH13dBwCcY6p4R5d/0+7lDhHHO6JNSAEG/PwAwRCV?=
- =?us-ascii?Q?G6JwZK/QSpVhTbZ7iU2VNf/cqD1XzNU75b+Ecgni/PeJzebdMB5e7jr9oO+Q?=
- =?us-ascii?Q?2l2pg0JTP7COeSVLXtr6jvt9U21+pR5PHWxjozEhaKGSt4PpiPDsYkbeEUxP?=
- =?us-ascii?Q?wAZxYkSgoaZrojcue/6I8VYEKT57+OKD62tTcI/kfpGyqLJSUiR2Oni2QGsM?=
- =?us-ascii?Q?LfQZ6B2ZGKWwRAPj7fNoW79qxD5QggyLJ/OUytvflmS0Ka2jHvyf4XodmXEo?=
- =?us-ascii?Q?z2KVlq5pH/7is8wb77E7sXfQV2sgjwBQOd+I8/eOwT2wfmNxyAjqVSr/7VeF?=
- =?us-ascii?Q?qc4DS8YDyFiD/sbYIdfVr7YhUb8i48L2eQF87yHk+tMVuP520GIUa1I/jk87?=
- =?us-ascii?Q?9Yoit+SNn5kIDw5BeQf+Pqwk8eh9Y/r0GCzvvijJFjTic1PQL1kLQdrDp8KW?=
- =?us-ascii?Q?Kd/O/7qFNQIUGFYHmpE0aMbVAW6w93SPsTJ8EJZEBV8Wcax7+7f6gm0CgaBL?=
- =?us-ascii?Q?fENFZdXdvw2P63JwaPTWw78MKdN4lxh4bnJF2AmCBIgopjeTPEeESevAcD5s?=
- =?us-ascii?Q?VQdGl1/OMzNG/ioL4LnJ7mx2IgXi0vI8cQ/CEKo+OP16ghumAPAmNoYQxvaD?=
- =?us-ascii?Q?F2yu9WFGvgA6jKWbiweTgTCtww4kfscWygdCmV4MQGFQOaN8FwzNshWNXzN1?=
- =?us-ascii?Q?y4hXZ/rVOFOZrBkdDskSkDL6Y6wBFwxi8xlMVBpOqZNKLlXJB1bkHrDwVm6n?=
- =?us-ascii?Q?IPhmYQe9pmgnbelx9RVgq1S2gTqTLNU6Zno5pLvBT+ERw5655YN16nZ65L3u?=
- =?us-ascii?Q?SrP5UvaMKQHbhJ5Hd56j755QpWiEElsVSXO/n1VngiKHDvoZqdxg9OODt/Wc?=
- =?us-ascii?Q?OM7lDUVxFz3t7RzN6AQFmIWCyLyy9OdvbZQiPQm/ymUT+1XSat/ugZHMn4nv?=
- =?us-ascii?Q?2DqPxiNdya4rjQN7lBrXBFPlLih8KJzuFBmZzs6duDBEZeWUonng176p400I?=
- =?us-ascii?Q?a0tBb4siBQjrb6HyplmBgEodXuJqq4wBmbIOApU48pRHDXQ48MMQtVX+EAAL?=
- =?us-ascii?Q?xtlZAEnq2pF0gEBGpDYr9RpEtL5dLQUevyi6z2xuwWYGXvcl+cKmFTzxLiQK?=
- =?us-ascii?Q?q1/giKuAQKbA2tjV/1nHduDSGBAc4bdJrNJrmNa76tyOVEZasFXdwTSbnXFq?=
- =?us-ascii?Q?fiUCHerh1OUluqtzqWTDqDoxAUCPeS+Z+i+y+ClVLLlrt/5lR4OtPB/4wFyN?=
- =?us-ascii?Q?MLiF3mHrkJ2eCQtqzziqZVfzJ5pf+Gg=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1790757390; c=relaxed/simple;
+	bh=HjdOFxmrol1vUnD9FKIi4UFta8BjlFpXjkromc99kSU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uYVpIF9teCP/gzX1aS40aBEnoEqrol0NOtGiKAyi7B4knQ284YCrfTa++2hCaHcGRbiMMJpB3GSO68ThHDrwXAtoJfTtnxYNrAkI8/3abih/MFnptFLUJCnK9YvwcIw5Wkul0kjxgymNks9coPvFYw12CEgq3aiULoI7TnaZZmE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPP9lv96; arc=pass smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPP9lv96"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4887d3c59ecso735502f8f.1
+        for <linux-clk@vger.kernel.org>; Wed, 30 Sep 2026 01:36:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790757387; cv=none;
+        d=google.com; s=arc-20260327;
+        b=a/Vyqo2A/KyecMjFFYC26oJ6wr+OTL62FB9syTSkAwkgj35CMdraDR2JAYFqFxvY5x
+         NRZObKVFCrgC+5vZVChE/5pADiqYrkD06p73xdpQBUzTZ+xv5Pg+TxMy7iHMUSdC91Na
+         hRC8rfNXME2Gpc+ICSYO+B9547ery70jpcLt6RShmwlMZ29QaO/VgT00Eg8EzPV83hm8
+         Q4TcNy6/k+KUJ9CK0LrNHw2Djxky8jfLXa1WaJetZA2hYEeqlMBcRMRMBQmFoGn3sxiH
+         sooV/xu66hId8wOUt4Gn187cVsgehhoCYpKjEt0r4xeOMfP5Rha8a1ZLAvsr8r8OeKQp
+         0/jQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=lZaIHzaOhcnhKP+I2Nw6s6CnueUSh0ItyVCxd7z2kOw=;
+        fh=qMmGyPF82QM2IA+MRiSiDCDf5+FA4CAk2RSqvKLIL+Y=;
+        b=bLLcu0gucPkATs15ruvCd0/NyLARg6Ya9NhoxB9ndeB2zEsBmF4I/Z71Zr0Qkez5Dx
+         /UljPGkn2w+HzHpGw6+CI0urDLvOHa303R+mwV0ide/MLXzdU+v5FrLVKDRdzH7Axbw8
+         I6IdIobd7+SVaShvhD3modH6VD04UbmZUlW4jdvHaNbSGppQP7Cjr2uU7+gm2JLoMRTR
+         lxK/5q8Jd2YkzDo/R+19V6g3bZUmy6o1vy83JvxEI5boiMj/kFeN89XczuQWuK2u0zY6
+         ImKwovSoSzFq0bw2oKNgLRgmwmfijemP11XmmiCm5p9hQzYkeiJDXck1lXkzlu87hCzX
+         5nYw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790757387; x=1791362187; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=lZaIHzaOhcnhKP+I2Nw6s6CnueUSh0ItyVCxd7z2kOw=;
+        b=fPP9lv96gucxheuD/UTtuwMLtRAubDXO6WGg74NbhRj4tuAn4KBKQ+RWXrNeSi8GPI
+         mfCZqPOC4R3qYvxuSRl8a0qTaw6LpWt6Foq0S+81hAq5LsAf2W6PjsJZGfiSZl/4nSr9
+         GcwVDBW3HAa3HSoKBFbNd1v2cC6sgXo97nXeWmbDHwq6zOpW+ywSnscCG8VNMh86gfuM
+         q4QWhSJdmrkdfIww3F9Cgr9D/RneVfoD5dZNXEItcwosil4qsfSpZX8iUhKSQ1a2zgWF
+         cQO+Z6UJeYPAZnfg2nJPSsMhJ93/Wlc/sNjA/7JKIJo3KiN512Ar3cU8zlXufdC0pW1e
+         zlyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790757387; x=1791362187;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=lZaIHzaOhcnhKP+I2Nw6s6CnueUSh0ItyVCxd7z2kOw=;
+        b=yikAhAb7W7Yo0zolblCdnkiaX4NLR1jGUfn9HaYOVxil+I7WQ16rSfSj2/W1CZuv6h
+         xrLa8ph90I8kJWy5xTRRF7K6pIdF9qn2Kx6pqhSMk8rNx3zlP3iMLRDlpPZN0M2Y+zfz
+         PSh0QEWbTccN1B45PjLZd8DCLLHsaRiS9/maoTSKzeEkgYshIt74Yo6wm/qeJWIRRBOH
+         gAkRELLPoILG0YZScZaXdus/lAH1EcLTxRx2e7uL67rTlBZsdfeiZGegiWmQqiQGgdNb
+         oIXtVHG8m4cqhCahhrTKfND+nd3o2wXAM04LS9IoyV5JOfS7cNMtlM6bzDHYmj5dQnJT
+         vGyg==
+X-Forwarded-Encrypted: i=1; AKwUvBwZLCpdibPAjIPb77mVUKKcXV5QMKJRDjvYumrzif6MBDwIuFo4p0CuElc3hwxt/g2sCXjotoB1KJk=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIMkRm4DWTvz/Y7MKlOIY0UvAP07x73sROXNs7+A4xFqgcVXk3S
+	uPuKOxD/WXUHd+rCDXUVOoVV2fJzeFPof2CkLHTNSkKxXlZFhBoUrudJ7vgp2A6XRAX78MSZhf6
+	BNT1hkYWYbjLHao1N4D0qfv1trLtGdqg=
+X-Gm-Gg: AYBFou34svqZc6IQgHPRKmp0GFe5B+ruScAsXTP8u+LqcJOkCu4m2VUgMDLX3dsA3j9
+	++iwcHSBbTwMxBWDHERqkCWcYQQKyOzRw85THAYgS12LhoEIim0e6ZZLJjS690qymVjfP805bB9
+	CRun4wBIZfMIhsv5jMg/DrYtOsN2/0PC/N6pGbL8YMjzbhAMeOSibYtI29uvJ6fbNs3xGtQBNSQ
+	pd4nb3lXZ5hu1itS4OE4Jmctp0XB6pTJhq6fdux6aCGvKlq8NZ1YxDV9u8m30zQB7b3zj0wgSba
+	X59tB6/sfHscKVWWxQ4BcWbXCc9vmmhl6oXp4aQIi6jp6OJnNprb1Ip7AJl/dKao5dDGpyV1/81
+	gVbLncEqDg4TCjMfamQCTDHpVlw7ulk3i61cFFNc4jgbVfwp4aS4BfPn/45p25UDh1vB7uSQx1Q
+	==
+X-Received: by 2002:a5d:588c:0:b0:48a:f11e:6d5e with SMTP id
+ ffacd0b85a97d-48b024a6d19mr1630952f8f.11.1790757387095; Wed, 30 Sep 2026
+ 01:36:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49c02d1e-5925-43d3-7c81-08df1eccbc7b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2026 08:27:59.3809
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Sb9tN59D5hGUQ+ZHGSvtQAarEITcs9Ym6/pD6Ybo+oHSiwAOhGR9PPupSshXXPSfrFd3kq0exhF6JKfQXvMlC2Djac5YPCzdYBnH+RdUNSnjdE32PL+rw1GwXc6b1ycn
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1331
+References: <20260929105021.542730-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260929105021.542730-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260929110602.D533D1F000FF@smtp.kernel.org>
+In-Reply-To: <20260929110602.D533D1F000FF@smtp.kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 30 Sep 2026 09:36:01 +0100
+X-Gm-Features: AclHuK8CCNO96WytW0FDoK4wkycLlbK69yfsHonOrEjdyZiIwv_YOfKHdgyoR20
+Message-ID: <CA+V-a8sNsgCP6icoYd8irORb9OGMAFG+RrgMOEtAiMoX9gFFdA@mail.gmail.com>
+Subject: Re: [PATCH v7 3/8] watchdog: rzv2h: Drop enabling clocks in the
+ restart handler
+To: sashiko-reviews@lists.linux.dev
+Cc: wsa+renesas@sang-engineering.com, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, robh@kernel.org, linux-clk@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Jerome
+Hi sashiko,
 
-> On lun. 28 sept. 2026 at 11:10, Changhuang Liang
-> <changhuang.liang@starfivetech.com> wrote:
->=20
-> > Hi, Jerome
+On Tue, Sep 29, 2026 at 12:06=E2=80=AFPM <sashiko-bot@kernel.org> wrote:
+>
+> Thank you for your contribution! Sashiko AI review found 1 potential issu=
+e(s) to consider:
+> - [High] watchdog: unintended system reset during suspend due to permanen=
+tly enabled clocks
+> --
+>
+> commit 465743d35253a3a281f9ce8cea373ed0c3ae3e5a
+> Author: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> watchdog: rzv2h: Drop enabling clocks in the restart handler
+>
+> The commit drops dynamic clock enable/disable operations from the watchdo=
+g
+> restart handler to avoid deadlocking on the clock framework's global
+> enable_lock. Instead, it keeps the peripheral and oscillator clocks enabl=
+ed
+> for the lifetime of the device using devm_clk_get_enabled() and
+> devm_clk_get_optional_enabled().
+>
+> > diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.=
+c
+> > index f247e42d54f54..55ac11fcfcabd 100644
+> > --- a/drivers/watchdog/rzv2h_wdt.c
+> > +++ b/drivers/watchdog/rzv2h_wdt.c
+>
+> [ ... ]
+>
+> > @@ -292,11 +279,11 @@ static int rzv2h_wdt_probe(struct platform_device=
+ *pdev)
+> >       if (IS_ERR(priv->base))
+> >               return PTR_ERR(priv->base);
 > >
-> > Thanks for the review.
+> > -     priv->pclk =3D devm_clk_get_prepared(dev, "pclk");
+> > +     priv->pclk =3D devm_clk_get_enabled(dev, "pclk");
+> >       if (IS_ERR(priv->pclk))
+> >               return dev_err_probe(dev, PTR_ERR(priv->pclk), "Failed to=
+ get pclk\n");
 > >
-> >> On dim. 20 sept. 2026 at 05:00, Changhuang Liang
-> >> <changhuang.liang@starfivetech.com> wrote:
-> >>
-> >> > From: Sia Jee Heng <jeeheng.sia@starfivetech.com>
-> >> >
-> >> > StarFive JHB100 shares a similar clock and reset design with JH7110.
-> >> > To facilitate the reuse of the file and its functionalities, files
-> >> > containing the "jh71x0" naming convention are renamed to use the
-> >> > "common" wording.
-> >>
-> >> Is this really necessary ? Rename are generally not recommended.
-> >> Do we really care if your new soc use something named after the older
-> one ?
-> >>
-> >> You are naming it common now but how long is it going to stay "common"=
- ?
-> >> If your next SoC does not use this anymore it won't be common for long=
- ...
-> >>
-> >
-> > Okay, I will drop the current PATCH 1/2/3/4 and directly reuse the curr=
-ent
-> JH71x0-related interfaces.
-> >
->=20
-> Please make sure your series applies on clk-next next time around.
-> This one failed to apply when it was sent.
+> > -     priv->oscclk =3D devm_clk_get_optional_prepared(dev, "oscclk");
+> > +     priv->oscclk =3D devm_clk_get_optional_enabled(dev, "oscclk");
+>
+> [Severity: High]
+> Does switching to devm_clk_get_enabled() and devm_clk_get_optional_enable=
+d()
+> prevent the PM framework from fully gating these clocks during suspend?
+>
+> By permanently incrementing the CCF enable_count by 1 here in probe, it a=
+ppears
+> that pm_clk_suspend() will only drop the count from 2 to 1 during system
+> suspend, leaving the clocks physically enabled.
+>
+> If the clocks remain running while the system is suspended and the ping w=
+orker
+> is frozen, won't the hardware watchdog counter inevitably underflow and t=
+rigger
+> an unintended system reset?
+>
+The driver doesn't currently support dev pm ops so I can't test this
+scenario. My current intention is to add syscon support so for now
+I'll drop this patch and revisit it when adding pm ops.
 
-Okay, I will send the next version based on clk-next.
-
-Best Regards,
-
+Cheers,
+Prabhakar
