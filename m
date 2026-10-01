@@ -1,170 +1,115 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8023AEF56;
-	Thu,  1 Oct 2026 12:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD92651A156;
+	Thu,  1 Oct 2026 14:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790859369; cv=none; b=VOP2NkMKIoHvOPEGXuWfsZU4p6M0QchS5lF+OcTBzPuIJi/Z3kUQ4Tv6nG5FL39j728ecDitsxwS/8+m4v9gCEUTII3J6A1mz+Xeb2hG54a07NnzGUnVC5LqiDbafJe/+7ZFkfcJF/KW0y9zpMG82P0H8Q+TYXX4Da6TlVkB4R4=
+	t=1790865565; cv=none; b=PB5EPPEcgIVKAVwljMW9Nc6O9mT+OXj75Chz8Fr6hYBXtLZ/hW3G89e05EtWwadlFb9o9APaFUxm9UYilWtTrpfRKm/M2IagI5DgpPTA9wgcNMXut1GxZnJAPHlAlxLj8EouIUSPXrAvqzEc4Kzed5K8TyYX0FNvlDuOcORz1Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790859369; c=relaxed/simple;
-	bh=lr8mhxzproW+Qgv7R7SpyFbt6jvUf0jjDsRWDMaQp7E=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=JsZUPNyhiGHZOpwtGvpm7nQacH+osTWhA0q6xQ3DRJR9hOZ9SKv4rwMPkGq277q7tV7n+BoFG22sO58lUKN40F/fIeFRy0f4p8yJqnVOXzvgHb4hdwTChyB0sdH2ZblMR4Gxp2jAQ5jKVTn+OjsfksaIQd/G6yqzdpT9NeR3VFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSh6vWIo; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790865565; c=relaxed/simple;
+	bh=x1mcmFODorlLOxx+KdY14jTTfjS03g+7143QHJaWdUk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MHxPst7jsQdRjzvNFhLQR+eoMRagxmX/IIPCP9GV6PcbyyDaY8Evf/2CYdx/2bs2mrhOmiYCorNC9u/TxLFfPyNWuXVkM/7ucuQrF0nwVUtaV6PgTpeErVPxI3mfd0L3oJS8DYbRGdphFcP2TaslwJEfhckWf84TS6o6uTEdkjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYH1C9yi; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSh6vWIo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D99071F000FF;
-	Thu,  1 Oct 2026 12:56:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYH1C9yi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A66A1F0089A;
+	Thu,  1 Oct 2026 14:39:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790859367;
-	bh=R8qJWUn2+S7UJPBG1ZhM/jt62L4jpx3jXiyLqBVTUMI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=OSh6vWIouumpWK+f+14lEyjM7ZPbL/MGuSU4k3GDwd/Iim+4pfx86lodna9KP2L6U
-	 YoKnYtTUAQ6vUMkmyxp7HWFEbU5CRbXwsM+9xEIES6F6C8jsPuQHQ8Y3HM5zXDBXVK
-	 j/NEtS1IG66MJAo0sHzMZdh3Pr6qrS97IiminKGuFb16Gjw5pCdqwGzNXg2kqDkItV
-	 lJQumbCHNwMSivTHV+huSnOh3gOB5JtauNFkzCQsQe5NOWZrO6hey7c5m0idNTDyjv
-	 D6UuAZLSqOZbz1Ab0oD9sFixb0jOoXdGV2q19/jsWI/G10YkuDSBMxTI6aGp3u0jM+
-	 lXm2IrABQ/xVQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v9 11/15] gpio: pl061: switch data path to gpio-regmap
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Long Zhao" <longzhao@ambarella.com>
-Cc: linux-serial@vger.kernel.org, robh@kernel.org, linux-clk@vger.kernel.org, lee@kernel.org, conor+dt@kernel.org, mfd@lists.linux.dev, devicetree@vger.kernel.org
-In-Reply-To: <20261001-cv75-v5-v9-11-486cc289a4b8@ambarella.com>
-References: <20261001-cv75-v5-v9-0-486cc289a4b8@ambarella.com>
- <20261001-cv75-v5-v9-11-486cc289a4b8@ambarella.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 01 Oct 2026 12:56:06 +0000
-Message-Id: <20261001125606.D99071F000FF@smtp.kernel.org>
+	s=k20260515; t=1790865558;
+	bh=Zqr944MUTAng9/MUwJsTayj4y5qkmHFfqWFHtS30VEc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=mYH1C9yikVsWqYZcRr/xTb/7iPJPFiAjgPh3IhJyLg2gI13xZp3Zgip6BnnRfGtiw
+	 MnwipDi/KDvYR4PkVyEv5ptUCB+0RCd4aXh/Mj3g6gHRjyvwbeQoIKdqX5uxYKuAb5
+	 gXxGttwLeM0uKEfo117eD7PQaJ8OYpASgDoaMSbMhIrM2Z03UtJrDGDwEmNSvqESct
+	 SFwthINgMsxzSGELdHWOtYdZCKR8wkH4j7wgdIfghEhkEtOvTq3tn0vgiTiYIeTSXQ
+	 yhiB6t6xy2goS89vqL89nxYzRTJg3m5NMOKX2Is+y43CEU5xP9lO29apa0TYB3zSGb
+	 WV/WuPxG6IKoQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Abel Vesa <abelvesa@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taniya Das <taniya.das@oss.qualcomm.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Tengfei Fan <tengfei.fan@oss.qualcomm.com>,
+	Abel Vesa <abel.vesa@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v5 00/42] clk: qcom: Tie CX power domains to GCCs
+Date: Thu,  1 Oct 2026 09:39:04 -0500
+Message-ID: <179086553016.3495936.2028744481705242969.b4-ty@b4>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260924-qcom-tie-cx-to-gcc-v5-0-38732033e5b5@oss.qualcomm.com>
+References: <20260924-qcom-tie-cx-to-gcc-v5-0-38732033e5b5@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [High] gpio: pl061: UAF due to LIFO devres cleanup ordering
-- [High] gpio: pl061: Missing GPIOCHIP_IRQ_RESOURCE_HELPERS allows HW confl=
-ict
-- [Medium] gpio: pl061: Missing synchronize_irq() causes UAF on module unlo=
-ad
---
 
-commit 0dd970f78f76a57be040a10722f95f7c065440ed
-Author: Long Zhao <longzhao@ambarella.com>
+On Thu, 24 Sep 2026 13:39:16 +0300, Abel Vesa wrote:
+> Tie the CX power domain to GCC clock controllers for SDM670,
+> SM8150, SM8250, SM8350, SM8450, SM8550, SM8650, SM8750, SM6350,
+> SM4450, QCS8300, SDX75, SAR2130P, SC7180, SC7280, SA8775P,
+> X1E80100, Eliza, Kaanapali, and QCS615.
+> 
+> Enable runtime PM for GCC providers without critical clocks, allowing CX to
+> power down when their consumers release clocks and GDSCs.
+> 
+> [...]
 
-gpio: pl061: switch data path to gpio-regmap
+Applied, thanks!
 
-This commit migrates the PL061 driver to use gpio-regmap for its data path,
-handling the PL061 quirk where output values must be written after a direct=
-ion
-change. It sets up a custom irqchip and domain attached via gpio-regmap, and
-modifies the interrupt handler to appropriately check regmap reads.
+[28/42] arm64: dts: qcom: kaanapali: Add GCC CX power domain
+        commit: 9339897ad7eded77adf834e032482f7609911448
+[29/42] arm64: dts: qcom: monaco: Add GCC CX power domain
+        commit: f5d35c78bcb6b96a4ad9b60e31657a9a389c8de5
+[30/42] arm64: dts: qcom: sar2130p: Add GCC CX power domain
+        commit: 787e304c81502bdf6993270d746d482891b91f70
+[31/42] arm64: dts: qcom: sdm670: Add GCC CX power domain
+        commit: 56002ee061ac5a73fb280065369133bfde40396e
+[32/42] arm64: dts: qcom: sdx75: Add GCC CX power domain
+        commit: dbd1f3e15714b470cd5801122d6a81e02fda92bb
+[33/42] arm64: dts: qcom: sm4450: Add GCC CX power domain
+        commit: f1579fca044a69dae2e134b315d4ee10ca5ccdde
+[34/42] arm64: dts: qcom: sm6350: Add GCC CX power domain
+        commit: b00fe15b094e8d50f24d43431de5486257b2b756
+[35/42] arm64: dts: qcom: sm8150: Add GCC CX power domain
+        commit: b1542c3e23012ffce3b5d7a5b6e87f0faf3a015a
+[36/42] arm64: dts: qcom: sm8250: Add GCC CX power domain
+        commit: 389a0144c511316cf21d5dc2aa30028de87f9d00
+[37/42] arm64: dts: qcom: sm8350: Add GCC CX power domain
+        commit: fb1adf2ef0574dd1f9d4481dbeb0d443300d779c
+[38/42] arm64: dts: qcom: sm8450: Add GCC CX power domain
+        commit: f1586048fb1dabb91c82fbe11557e505587973d3
+[39/42] arm64: dts: qcom: sm8550: Add GCC CX power domain
+        commit: df50f5c5690a472d750a0e327ac4d05a4a9c8b79
+[40/42] arm64: dts: qcom: sm8650: Add GCC CX power domain
+        commit: 108a8d51fba8432c5d5253dec1c565ffe7c1edbc
+[41/42] arm64: dts: qcom: sm8750: Add GCC CX power domain
+        commit: ee35c132956f4797ed6be33c451decb94d1752af
+[42/42] arm64: dts: qcom: talos: Add GCC CX power domain
+        commit: 5ad7eb6a944eea8471f496442c9a3609a286437f
 
-> diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-> index c821a5117eede..08d45f8923c2a 100644
-> --- a/drivers/gpio/gpio-pl061.c
-> +++ b/drivers/gpio/gpio-pl061.c
-[ ... ]
-> -static const struct irq_chip pl061_irq_chip =3D {
-> +static const struct irq_chip pl061_irqchip =3D {
-> +	.name			=3D "pl061",
->  	.irq_ack		=3D pl061_irq_ack,
->  	.irq_mask		=3D pl061_irq_mask,
->  	.irq_unmask		=3D pl061_irq_unmask,
-> @@ -322,67 +256,187 @@ static const struct irq_chip pl061_irq_chip =3D {
->  	.irq_set_wake		=3D pl061_irq_set_wake,
->  	.irq_print_chip		=3D pl061_irq_print_chip,
->  	.flags			=3D IRQCHIP_IMMUTABLE,
-> -	GPIOCHIP_IRQ_RESOURCE_HELPERS,
-> -};
-> +};
-
-[Severity: High]
-Does the omission of GPIOCHIP_IRQ_RESOURCE_HELPERS from this irq_chip
-definition detach it from gpiolib's resource locking?
-
-Without these helpers, gpiochip_lock_as_irq() is never called when a pin
-is requested as an IRQ, so GPIOD_FLAG_USED_AS_IRQ is not set. Could this
-allow userspace to accidentally reconfigure an active IRQ pin as an output,
-causing hardware conflicts?
-
-> +
-> +static int pl061_irq_domain_map(struct irq_domain *d, unsigned int virq,
-[ ... ]
-> +static void pl061_remove_irq(void *data)
-> +{
-> +	struct pl061 *pl061 =3D data;
-> +
-> +	irq_set_chained_handler_and_data(pl061->parent_irq, NULL, NULL);
-
-[Severity: Medium]
-Is a call to synchronize_irq() needed here before proceeding?
-
-While the chained handler is cleared, there appears to be no synchronization
-with in-flight handlers. If pl061_irq_handler() is running concurrently
-on another CPU, it might still be executing when we proceed.
-
-> +
-> +	for (unsigned int i =3D 0; i < pl061->data->ngpio; i++) {
-> +		unsigned int virq;
-> +
-> +		virq =3D irq_find_mapping(pl061->irq_domain, i);
-> +		if (virq)
-> +			irq_dispose_mapping(virq);
-> +	}
-> +
-> +	irq_domain_remove(pl061->irq_domain);
-
-[Severity: Medium]
-If pl061_irq_handler() is still running, could it access this freed domain
-when it calls generic_handle_domain_irq(pl061->irq_domain, offset)?
-
-> +}
-[ ... ]
-> +static int pl061_probe(struct amba_device *adev, const struct amba_id *i=
-d)
-> +{
-[ ... ]
-> +	config.parent =3D dev;
-> +	config.regmap =3D pl061->regmap;
-> +	config.ngpio =3D data->ngpio;
-> +	config.reg_dat_base =3D GPIO_REGMAP_ADDR(regs->dat);
-> +	config.reg_set_base =3D GPIO_REGMAP_ADDR(regs->dat);
-> +	config.reg_dir_out_base =3D GPIO_REGMAP_ADDR(regs->dir);
-> +	config.reg_mask_xlate =3D data->reg_mask_xlate;
-> +	config.quirks =3D data->quirks;
-> +	config.irq_domain =3D pl061->irq_domain;
-> +	config.drvdata =3D pl061;
-> +
-> +	gpio_regmap =3D devm_gpio_regmap_register(dev, &config);
-> +	if (IS_ERR(gpio_regmap)) {
-> +		if (pl061->irq_domain)
-> +			irq_domain_remove(pl061->irq_domain);
-> +		return PTR_ERR(gpio_regmap);
-> +	}
-> +
-> +	if (irq) {
-> +		ret =3D devm_add_action_or_reset(dev, pl061_remove_irq, pl061);
-
-[Severity: High]
-Can this devres action registration order cause a use-after-free during
-driver unbind?
-
-Since devm_add_action_or_reset() is called after devm_gpio_regmap_register(=
-),
-devres will execute pl061_remove_irq() first during teardown because it uses
-LIFO ordering.
-
-This means pl061_remove_irq() will run and free pl061->irq_domain, but
-the gpiochip is still registered. When gpio_regmap subsequently unregisters
-the gpiochip, gpiochip_remove() will eventually call
-gpiochip_free_remaining_irqs(), which will attempt to use the already-freed
-irq.domain pointer.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261001-cv75-v5-v9=
--0-486cc289a4b8@ambarella.com?part=3D11
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
