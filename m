@@ -1,106 +1,50 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799C41A724C
-	for <linux-clk@vger.kernel.org>; Thu,  1 Oct 2026 00:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC73537756B;
+	Thu,  1 Oct 2026 00:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790814971; cv=none; b=L7lVb2KeVBnX4osFB0JNownbWVlM2kw/IqeGJnQN0OAXm0Fo6sv71gapxmFieSq8kiiwlxliF9esBVfA83wTX/hGiRaY5Swry2MxkcSwEqznvy7IT48+PurY7yAt6Np/8rnufb+dUwbRzA5DPm2LXQTnI4zYJiTXzBbyFKfistw=
+	t=1790815236; cv=none; b=hg2jJmsT5WX+cVYMqPphCbXMYC7pOezRVCnbbF4iKaWyJ0ZRry1QBkYVaUtievmjIgZcK0V5pCwHrPlmkXCUhSGRE7yxwmdqRzSkelxZxC5wdPbXkfTapWaQ7aNoGpZMpIn3Qrr7Ls3LsT55JwPd2NV0vOSk0f2A2RETeUY7FhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790814971; c=relaxed/simple;
-	bh=mEiOxK6qgL2knbgWwksX7Taq8hLellRiYQOPrC1ldZ8=;
+	s=arc-20240116; t=1790815236; c=relaxed/simple;
+	bh=UI9BLBTThba/tbipQa2Pd4i365kNErFb2j0bR+1KJHk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y5u0xolFEds2LgS7y1xj8ZRaAyxz+LvyY027TARXc6X1wuGez8kbSk1D6ugt270egn9ihCgi/0zz3HADkBBkZKyPUnqj+zVVPDDo32Zo8KV25tMVjtqGo0ajwc8husr3NB5U1QI3v9j5gIBEmh/3uuaupILB1Cq5Xjzpb1k6lkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CdO6XnWQ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=qIQZSosw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=BwCUGuJAWB3LG9XZmjxGf9V1hRwtYcnYhmZZMf83tsKpiitBMF5heEKi1CZO4BIoNHAPGOBFSworoNOmum3u7TfZAiZNgV9Nj7vr6t6ipPXHKiIQX5OFBN9mPdYxYKhNviwA7PaBLYvpS66ehb0WrXSNwdfVc5ZQa6urTFxxijE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jl6bcv+M; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CdO6XnWQ";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="qIQZSosw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1790814966;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YsV5MN4aFpGUFvwk6vrhGH7My89v8MB96omgdQVAOpM=;
-	b=CdO6XnWQtublw8+NsoRQljqcdY6oVACGKb7CQEUdxd0f2yM5aOYmuWxteAic9INbqD2cbt
-	Lyfwu/20GdXHxP9SUAQU7/5zU+jxOyJqcsTX8tdNSDesili5ffl4J7hl3B+x08U8DUxJ9t
-	Va/t9ZuK/wUH4NywO4swlGsvug0YAXk=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-15-Mf37FK_ANf6Vgexc-zsD-A-1; Wed, 30 Sep 2026 20:36:04 -0400
-X-MC-Unique: Mf37FK_ANf6Vgexc-zsD-A-1
-X-Mimecast-MFC-AGG-ID: Mf37FK_ANf6Vgexc-zsD-A_1790814964
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-916cc44720aso65680266d6.3
-        for <linux-clk@vger.kernel.org>; Wed, 30 Sep 2026 17:36:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1790814964; x=1791419764; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=YsV5MN4aFpGUFvwk6vrhGH7My89v8MB96omgdQVAOpM=;
-        b=qIQZSoswFTsxcrn/PhOSvYr083RaQMmNUxBxLateoYBMR/oevPcpwykVYd5c1Kp/PF
-         pB0sTFglbT4tn8nkaryxPtQdAVq4+7KI3qw2xhFFkWVBUWa91KUF7y7Z/2IS9axdRIYK
-         CIrvHyHmUqpetVr7TPifBX33C7yDT+AbBkoWRa3w6Rvhqo9CeqekngNnp8ROQY5oNAFh
-         9681mI3pg4wKHaBpj5u2i4IJcOgvsNhc3OoaSI3HHsU37yGqB90MvOTpqSzPKykqxU+t
-         L3PUbP8a/2tuTW2BhC38KCy3vaiB1ST8wLPTvSVH49twgRPZOUeGEc/q95D0M6IxGh2R
-         TXhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790814964; x=1791419764;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=YsV5MN4aFpGUFvwk6vrhGH7My89v8MB96omgdQVAOpM=;
-        b=NyLHFAAwS6+2bTV74DIpb4JIa3nvpzlDZ9hHaxppUxK9EjfoOW5/WzYVoq/2EZOf9T
-         /d6pimd6S/oj7bExDljScwEyFKulrmH/HfMu8dxuv831+WF0vRIQGAZH6qsWdohJDtMZ
-         EWeCUn1Blj+nF/+jLnKezazvJuzKFH8GdpJ2wxESY8TNqNbQNu8S6NAff8QcmvsIfLMe
-         d9QjVMioV3QjgatHICjDGdJVO6jBC9TTz4SRQuZBXXUSTs36eFxo0vUftzOvtTo+N8aH
-         o2BtdqKhjUJtnVK56mJ0oPd/qi81g27MsIB8mbNDXY5Fgzt/zk2XglCDvDoHUI3B+Hhw
-         pkAw==
-X-Forwarded-Encrypted: i=1; AKwUvBxotVe2TKjUhmpOeTokQHlLFqmEzqJ/NWn0tUFJXKzqP3nEvL893mE8EPJp+a8jrgrHFq3Y2bjKwkU=@vger.kernel.org
-X-Gm-Message-State: AFq9FYK1DtsjXbbxI6tB7j9crvK1anUxc3m0pLMBCfKoSWd+7YzqR3yf
-	TqDK9bFeXod7WSR5EdNWtw8cPnSEO4kf7WbPuGkzDJCJYld/wX+lt9Dv3a0GI/9BpdDDc25xNEo
-	ZAEoUw+dVpnLO0LnULQPtWKGV9CAE4BsOZCZnjXudxUXx3v0gjrNS3SQs9YSG7w==
-X-Gm-Gg: AYBFou2SX5fl14fZNG5A229TbTB4fC99KuHtW40UTdzuZieRsrGgwDIaL1sm9Rp9CuP
-	92BZ4QJdzrRDz527dgaEHNPxC64Sxmfn/n8m2RH94b7Bg/dwpbhjhuJ6o4UOXIRCor2z9SHSnBT
-	BDsdIb3GyS/z8VzyKioXbmCrq3xxSRYb6YsWFIHgiUL8zy+zczg2vCHca42VrUVSg8m665r+TCZ
-	EuwucmARdyn0sqPY4OUbsJqw69r6CwMH2GDKdXYC4tl6UnsHMNOMZZObgrJGg74I+imb1dRSG/i
-	y+yAVLNuRt3S8GxCXQ2U8IaKxlJb3BaNzSP+nle+y2UOA2vb8ChV7C4TEEpnCEosYQyXTcJlj11
-	bOUw/QjnMMitkOjJJPgxyjZQizw3NEo2BKvI=
-X-Received: by 2002:ad4:5aa5:0:b0:915:e58c:9036 with SMTP id 6a1803df08f44-917a0a02e72mr59189416d6.6.1790814963534;
-        Wed, 30 Sep 2026 17:36:03 -0700 (PDT)
-X-Received: by 2002:ad4:5aa5:0:b0:915:e58c:9036 with SMTP id 6a1803df08f44-917a0a02e72mr59188656d6.6.1790814962863;
-        Wed, 30 Sep 2026 17:36:02 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-917a881aba3sm12432406d6.2.2026.09.30.17.36.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 17:36:02 -0700 (PDT)
-Date: Wed, 30 Sep 2026 20:36:00 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, michael@amarulasolutions.com,
-	linux-amarula@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sebin Francis <sebin.francis@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@kernel.org>
-Subject: Re: (subset) [PATCH v14 0/4] Support spread spectrum clocking for
- i.MX8M PLLs
-Message-ID: <ar2q8M7Sn9DccVBI@redhat.com>
-References: <20260904101243.412006-1-dario.binacchi@amarulasolutions.com>
- <179070048452.199845.10870046832708018931.b4-ty@b4>
- <CABGWkvojte=RG=BJ=jvcq5HfUcYUZNsWNN+c5zDh-449VJ8Svg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jl6bcv+M"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8501B1F000FF;
+	Thu,  1 Oct 2026 00:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790815231;
+	bh=fGIgfHHyq+/K2lVOR8B8BSXPb5iv0tNgGC8KPp0J+Rw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Jl6bcv+MS+vKEci9m+7ZjgmLmmXrz56RooqDFDnUXXY5gsoy0sAkrVS2WcfyXX0pA
+	 rnXoRUwxrm6OCDUz3tIJGnmyyx3HPa31AfKH75V1GYpEaJl5ADVA2HAYYqbLfUPmcg
+	 Q9tqkSeWmAlNCqmax9+XHbRh6BIrPXVpMb19sa2YH4LT57n9RVNnYmt5xAXD+xLxF7
+	 +QpFdrKQVGUSilRHXvlVY129IcC3vQSgvYBal8zHEP5SitOCzOQhPbAGf99ELCX2M3
+	 OM/8IPVY8g+ptMzP6wT6aEDTqXGVHpt405DEJqtAA/Z34WW3a2lbBOEt7g3jFo194p
+	 ZzsaWRMH2Uh6A==
+Date: Wed, 30 Sep 2026 19:40:17 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <taniya.das@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>, 
+	Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Tengfei Fan <tengfei.fan@oss.qualcomm.com>, Abel Vesa <abel.vesa@oss.qualcomm.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v5 00/42] clk: qcom: Tie CX power domains to GCCs
+Message-ID: <ar2n-yjFdOwmK_wz@zenbook>
+References: <20260924-qcom-tie-cx-to-gcc-v5-0-38732033e5b5@oss.qualcomm.com>
+ <179035461215.1296652.13047689320991053383.b4-ty@b4>
+ <CAL_JsqKVYyMR=_+eJ3YO-7yj_sFKx3hknNxdm3_5yYJmGMwbyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -110,49 +54,128 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABGWkvojte=RG=BJ=jvcq5HfUcYUZNsWNN+c5zDh-449VJ8Svg@mail.gmail.com>
-User-Agent: Mutt/2.4.2 (2026-08-30)
+In-Reply-To: <CAL_JsqKVYyMR=_+eJ3YO-7yj_sFKx3hknNxdm3_5yYJmGMwbyA@mail.gmail.com>
 
-+ Sudeep
-
-Hi Dario,
-
-On Wed, Sep 30, 2026 at 11:01:28AM +0200, Dario Binacchi wrote:
-> On Tue, Sep 29, 2026 at 6:48 PM Brian Masney <bmasney@redhat.com> wrote:
+On Tue, Sep 29, 2026 at 04:50:53PM -0500, Rob Herring wrote:
+> On Fri, Sep 25, 2026 at 11:43 AM Bjorn Andersson <andersson@kernel.org> wrote:
 > >
 > >
-> > On Fri, 04 Sep 2026 12:06:29 +0200, Dario Binacchi wrote:
-> > > Support spread spectrum clocking for i.MX8M PLLs
+> > On Thu, 24 Sep 2026 13:39:16 +0300, Abel Vesa wrote:
+> > > Tie the CX power domain to GCC clock controllers for SDM670,
+> > > SM8150, SM8250, SM8350, SM8450, SM8550, SM8650, SM8750, SM6350,
+> > > SM4450, QCS8300, SDX75, SAR2130P, SC7180, SC7280, SA8775P,
+> > > X1E80100, Eliza, Kaanapali, and QCS615.
 > > >
-> > > The series adds support for spread spectrum clocking for i.MX8M{M,N,P}
-> > > PLLs (audio, video and DRAM). It has been tested for the video PLL on
-> > > boards using i.MX8MN and i.MX8MP.
-> > >
-> > > While at it, it validates the spread spectrum configuration in the clk
-> > > core before it reaches the providers, and fixes the i.MX SCMI OEM
-> > > extension, which converted the spread to the wrong unit.
+> > > Enable runtime PM for GCC providers without critical clocks, allowing CX to
+> > > power down when their consumers release clocks and GDSCs.
 > > >
 > > > [...]
 > >
 > > Applied, thanks!
 > >
-> > [2/4] clk: validate spread spectrum configuration
-> >       commit: 109124b8ff43fb911d5b8790bb5e4c5684f72d88
+> > [01/42] dt-bindings: clock: qcom: gcc-sdm845: Require CX power domain
+> >         commit: 55388f587b3301dffdb30074d00f069d80d29341
+> > [02/42] dt-bindings: clock: qcom: gcc-sm8150: Add CX power domain
+> >         commit: 80d35f528a46b5f1e9777ce83de48fd9efa7c422
+> > [03/42] dt-bindings: clock: qcom: gcc-sm8250: Add CX power domain
+> >         commit: 98e936c9d46a25b4eceacf907fe5d87b3999040e
+> > [04/42] dt-bindings: clock: qcom: gcc-sm8350: Add CX power domain
+> >         commit: 534af057998b59a4813fd2eba524f2f523f356d6
+> > [05/42] dt-bindings: clock: qcom: gcc-sm8450: Add CX power domain
+> >         commit: 4de0860a340888fd2582681facbceda71b375617
+> > [06/42] dt-bindings: clock: qcom: qcs615-gcc: Add CX power domain
+> >         commit: 779dd957c4c8a7d7d0fd8ac03caa27fe6db23514
+> > [07/42] dt-bindings: clock: qcom: sm8550-gcc: Add CX power domain
+> >         commit: 5a577a480dd3d764cc2f55a112efc92d59ad59ec
+> > [08/42] dt-bindings: clock: qcom: sm8650-gcc: Add CX power domain
+> >         commit: 76615e10462c425f926e50dce52e9d23bb2f9428
+> > [09/42] dt-bindings: clock: qcom: sm8750-gcc: Add CX power domain
+> >         commit: f9c74b6ed57922b1fdb1ed6835665e06b5ba01a5
+> > [10/42] dt-bindings: clock: qcom: sm4450-gcc: Add CX power domain
+> >         commit: df3faa0e74e433304f9a6f33d3ac4d3376fcdc06
+> > [11/42] dt-bindings: clock: qcom: gcc-sm6350: Add CX power domain
+> >         commit: 3d4f3414300bba79d517585ac10181e285ca6be3
+> > [12/42] dt-bindings: clock: qcom: qcs8300-gcc: Add CX power domain
+> >         commit: fcf1810fede27777f9b708a9cef431bcac1d8e38
+> > [13/42] dt-bindings: clock: qcom: sdx75-gcc: Add CX power domain
+> >         commit: 6df1fd0bfa649c0f13abd026a01dbed5f1727fea
+> > [14/42] clk: qcom: gcc-eliza: Tie the CX power domain to controller
+> >         commit: 4eb8f2ad36888e5b29aa0a5e7e0bc60e382312ea
+> > [15/42] clk: qcom: gcc-kaanapali: Tie the CX power domain to controller
+> >         commit: 18c75784e4a9db5ed8cf6818a29ec0ac15ea2c8b
+> > [16/42] clk: qcom: gcc-qcs8300: Tie the CX power domain to controller
+> >         commit: 2d948e428c77b8764fe96537c70e5500b29f9c4e
+> > [17/42] clk: qcom: gcc-sa8775p: Tie the CX power domain to controller
+> >         commit: eed0a644a28a39d9da91a10d51b8f3247302a533
+> > [18/42] clk: qcom: gcc-sar2130p: Tie the CX power domain to controller
+> >         commit: 40537977a0ff9a6a1bcc489863e5656914b1ac53
+> > [19/42] clk: qcom: gcc-sc7280: Tie the CX power domain to controller
+> >         commit: 503de100eb2823519b82d759ead69ee377289a9e
+> > [20/42] clk: qcom: gcc-sdx75: Tie the CX power domain to controller
+> >         commit: 563b9aceb53ea15f2ada9417809d1d9e9a2c1fd1
+> > [21/42] clk: qcom: gcc-sm4450: Tie the CX power domain to controller
+> >         commit: 9965e30e827665e2fc9f0b3271733feaee809d48
+> > [22/42] clk: qcom: gcc-sm8350: Tie the CX power domain to controller
+> >         commit: 4572e9c0c4d48447d22a25037cbd2fbfda74a8c2
+> > [23/42] clk: qcom: gcc-sm8450: Tie the CX power domain to controller
+> >         commit: 6742c3ce04e5d52f718e4b562d0a1d817e1d76db
+> > [24/42] clk: qcom: gcc-sm8550: Tie the CX power domain to controller
+> >         commit: fe2a50974f4a0c78a68931f156d99e0479a4f00a
+> > [25/42] clk: qcom: gcc-sm8650: Tie the CX power domain to controller
+> >         commit: e4e6177235c6e0342357c48497d6b1a546c0ae57
+> > [26/42] clk: qcom: gcc-sm8750: Tie the CX power domain to controller
+> >         commit: f593d28a9193f1b5a96eb69bc5eb4dda2eaebebf
+> > [27/42] clk: qcom: gcc-x1e80100: Tie the CX power domain to controller
+> >         commit: 965dd2be7d35b2474251ee60d44addb257c9c85f
 > 
-> Thanks for picking up patch 2/4.
+> Pretty sure this has introduced a bunch of warnings for qcom. Where's
+> the .dts changes?
 > 
-> I put the two fixes at the head of the series expecting them to go in together.
-> Am I missing something for 1/4?
+
+My bad. I test every dts change against the current bindings in
+linux-next, but not the other way around - so I failed to spot the
+introduced warnings.
+
+> We've really got to stop merging binding changes that introduce
+> warnings to existing .dts files.
 > 
-> And how should 3/4 and 4/4 be handled?
 
-I can pick up the other SCMI patches, however I am waiting for a
-Reviewed-by or an Acked-by from Sudeep for the SCMI changes in patches 1
-and 3. It looks like Sudeep wasn't CCed on the original series so I added
-him.
+Warnings we can fix, the possible regressions in backwards compatibility
+is a bigger concern to me. So that's another pass I need to figure out
+how to incorporate in my workflow.
 
-Abel is the maintainer for imx in patch 4. I can take this as well,
-however I'd need an Acked by from Abel.
+Regards,
+Bjorn
 
-Brian
-
+>      14 clock-controller@100000 (qcom,sm8550-gcc): 'power-domains' is
+> a required property
+>      12 syscon@9a10000 (syscon): compatible: ['syscon'] is too short
+>      11 clock-controller@100000 (qcom,gcc-sm8250): 'power-domains' is
+> a required property
+>       9 clock-controller@100000 (qcom,qcs8300-gcc): 'power-domains' is
+> a required property
+>       8 clock-controller@100000 (qcom,sm8650-gcc): 'power-domains' is
+> a required property
+>       8 clock-controller@100000 (qcom,qcs615-gcc): 'power-domains' is
+> a required property
+>       6 clock-controller@100000 (qcom,gcc-sm8150): 'power-domains' is
+> a required property
+>       5 clock-controller@100000 (qcom,gcc-sm8450): 'power-domains' is
+> a required property
+>       5 clock-controller@100000 (qcom,gcc-sm8350): 'power-domains' is
+> a required property
+>       2 clock-controller@100000 (qcom,sm8750-gcc): 'power-domains' is
+> a required property
+>       2 clock-controller@100000 (qcom,kaanapali-gcc): 'power-domains'
+> is a required property
+>       2 clock-controller@100000 (qcom,gcc-sm6350): 'power-domains' is
+> a required property
+>       2 clock-controller@100000 (qcom,gcc-sdm670): 'power-domains' is
+> a required property
+>       1 clock-controller@80000 (qcom,sdx75-gcc): 'power-domains' is a
+> required property
+>       1 clock-controller@100000 (qcom,sm4450-gcc): 'power-domains' is
+> a required property
+> 
+> 
+> Rob
