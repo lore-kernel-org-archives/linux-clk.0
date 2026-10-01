@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C46499F28;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3723749E5D9;
 	Thu,  1 Oct 2026 12:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790858461; cv=none; b=PBSTZn1Y29hfHV3ji7Yw07tLvSeFLvnkzDSOo5MX4gMNy4ejzHKc/jSBKyvefhXcePkioR3xCZ+eC/QWbNu8uCbjK0t+/BDUhYIbvQg24CrzmXccrvqyw0O3akykEhrQwDhKaKlncF2dpAjP2/SV+5uGZSpHm/8bMQa9Iv3XONo=
+	t=1790858461; cv=none; b=Y0QvG9LuimCY3dEwYmOAl9jHimsbE3p4s4U2M6cZBaj08FJClJN/kXmanBkAT+X73xtPlD04OX0bJO0ElG8ao8pI10JVPVlxlYcZU4Mn9n/53NBXEMoStH3WKeKCMYspVusB4N00JW3tUiSbMo8xExgHReofs34BUdSVg/SyWQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1790858461; c=relaxed/simple;
-	bh=bqgS5XpvrstWVWKP9LuvnDwflt0rXBSfiLBunIlP0Gs=;
+	bh=A6TKI0IEGVMFdx8CFDfSgaU1YD5Nt5zfxVsEGII7wcY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NGWXjotAqLJ30YmQOKjmzrlIlWu3g1a3FuFYGvH78LCdKGgz/zG9aynQrw2lvmkAV0pk6R232jREkm9kF7dX+zyPLz7nZ+UBfow09z0LH1YwZJaz9LlmryGlYpuo1tH7o627VdsXcKEyr31vtl7lFgPr9jqa5knkeIZVXOg5fhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4HWw9pu; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=E93FuiSc3RY7nyPFXkjl8d+JmvBUDhVO2eyI7K00bu4bXKckUVsKaRuY5YG2SNsoZPmRPcf77T1/NSSkmd1GdSj7wjqeTDAZxT9lGglCueorVjBghOd0o4gUgw4Hta6Gn3UsCMVUMm1XAblgljJad2c0DFY2EIlcjg5TAmY191g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B0FhEXet; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4HWw9pu"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A85DFC4DDF1;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B0FhEXet"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CF7F2C4AF63;
 	Thu,  1 Oct 2026 12:41:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1790858460;
-	bh=bqgS5XpvrstWVWKP9LuvnDwflt0rXBSfiLBunIlP0Gs=;
+	bh=A6TKI0IEGVMFdx8CFDfSgaU1YD5Nt5zfxVsEGII7wcY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=h4HWw9puFIZ/vU7BzvNAQalkwNEfgQWkhZUH+VfAHy8VxowGTBzeCmSBbggKPr8Rx
-	 ir+irtTYj95m90U7qNJQZsjViFhIfVyZUD1OB1tZRGMmELJGY4yLXPRV98LmkCIR7I
-	 r58z6lR0TKGbOev3SkGrZmnFg5UMDcEy8ayA6dIgvmroU5y+4Xlqaz8ftmknjZ4B2W
-	 9d2RL/x5+E0oeYuLvP5MoWC5nYLtrNZcnFSFx9xZeYmSKcDdEwWbI0WQzvgQA9LNJq
-	 nEeAf0OO9EJ3NViDRcA8EpBCju7lPMiyfEDIDmhldl7Qgr9YPLdCZT6j45kSc+Jwpq
-	 p2NuVzVwOGLjQ==
+	b=B0FhEXetmubFk5A0uAW8VT7IuslY1koHHJFebMms3DZ1wdwpMEAQb6ztcVaGGNV3/
+	 FGTZI+bsb1TAL719VKn59RvRb+ktU77ubFd/WAgOZ59HwA5W/aRAcYLJPQS4BVfZYY
+	 7LXkuI6XKUogQ+t0DY63kK69PlOAmsD1qDMld0T+2ongPDy6/ji5AROhO2BJttQX8H
+	 g5GCG+0G1URetpCzyNUYGDPrM33x99S0AmCc2xI3goUnrtNUo3u0JLrRPq2r1cq3wk
+	 vkbCEr20xoz+EqpKwcUGiriVGnzoky0k/iHptaqo/gLks87qY9UzBXdZvQ3vuN5K9N
+	 oCc4+fSupmG9w==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E38CA5FA5;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E48CA5FD4;
 	Thu,  1 Oct 2026 12:41:00 +0000 (UTC)
 From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Thu, 01 Oct 2026 20:40:55 +0800
-Subject: [PATCH v9 06/15] clk: ambarella: add CV75 RCT clock controller
+Date: Thu, 01 Oct 2026 20:40:57 +0800
+Subject: [PATCH v9 08/15] gpio: pl061: convert register access to regmap
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261001-cv75-v5-v9-6-486cc289a4b8@ambarella.com>
+Message-Id: <20261001-cv75-v5-v9-8-486cc289a4b8@ambarella.com>
 References: <20261001-cv75-v5-v9-0-486cc289a4b8@ambarella.com>
 In-Reply-To: <20261001-cv75-v5-v9-0-486cc289a4b8@ambarella.com>
 To: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -63,11 +63,11 @@ Cc: Long Zhao <longzhao@ambarella.com>, Rob Herring <robh@kernel.org>,
  linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1790858457; l=12327;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790858457; l=11303;
  i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=QChNsrVZVY8Pzfog5BXibva/KN+iXooU+fbG0vVELS4=;
- b=iaW9N26cQh9EZLY3CVgDJlyDcsaHV+pC3kUodWmLp/c9JfaEOe2gEm96R33rAPger8nmlggMB
- pXaRXlZdBw7DKve6AQ5hjLTdVgoU5AlN8qRzp7iYTsoAO4y7Vt5T2J2
+ bh=uA7OlKuOGQYG2GvBwBpLkW2V50ylczQZjnla8/gJ09Q=;
+ b=UVxJ8/cur2KGMQAJzKg6fp3KkLU3VEVcTrEHp5lxCvYPWKyyHxBi6wCPMHIq0w2xRFaq7Xb0m
+ kzZzzTajgOrDM9exQ19sNHcXbtJdWRpDrzqiPsWUiQNzeUjSeJvWqVc
 X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
  pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
 X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
@@ -77,438 +77,337 @@ Reply-To: longzhao@ambarella.com
 
 From: Long Zhao <longzhao@ambarella.com>
 
-Add a table-driven CCF driver for the CV75 root clock tree. Register
-the core PLL, AHB/APB fixed factors and UART0 composite clock, with
-osc supplied via clk_parent_data.
+Replace readb()/writeb() with a MMIO regmap while keeping the existing
+gpio_chip and girq irqchip. Use a raw spinlock so irq_ack() can run
+under the irq descriptor lock.
 
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 Signed-off-by: Long Zhao <longzhao@ambarella.com>
 ---
- drivers/clk/Kconfig              |   1 +
- drivers/clk/Makefile             |   1 +
- drivers/clk/ambarella/Kconfig    |   9 +
- drivers/clk/ambarella/Makefile   |   3 +
- drivers/clk/ambarella/clk-cv75.c | 365 +++++++++++++++++++++++++++++++++++++++
- 5 files changed, 379 insertions(+)
+ drivers/gpio/Kconfig      |   1 +
+ drivers/gpio/gpio-pl061.c | 134 ++++++++++++++++++++++++++++++----------------
+ 2 files changed, 89 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 1717ce75a907..fbbf4963716c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -506,6 +506,7 @@ config COMMON_CLK_RPMI
- 	  the RISC-V platform management interface (RPMI) specification.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index f03c05288376..2a1487bd1a94 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -583,6 +583,7 @@ config GPIO_PL061
+ 	depends on ARM_AMBA || COMPILE_TEST
+ 	select IRQ_DOMAIN
+ 	select GPIOLIB_IRQCHIP
++	select REGMAP_MMIO
+ 	help
+ 	  Say yes here to support the PrimeCell PL061 GPIO device.
  
- source "drivers/clk/actions/Kconfig"
-+source "drivers/clk/ambarella/Kconfig"
- source "drivers/clk/analogbits/Kconfig"
- source "drivers/clk/aspeed/Kconfig"
- source "drivers/clk/bcm/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index cc108a75a900..30d823ee606f 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -112,6 +112,7 @@ obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 919cf86fd590..66aea0856bc4 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -19,9 +19,11 @@
+ #include <linux/ioport.h>
+ #include <linux/irq.h>
+ #include <linux/irqchip/chained_irq.h>
++#include <linux/log2.h>
+ #include <linux/module.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pm.h>
++#include <linux/regmap.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+@@ -36,6 +38,7 @@
+ #define GPIOIC  0x41C
  
- # please keep this section sorted lexicographically by directory path name
- obj-y					+= actions/
-+obj-y					+= ambarella/
- obj-y					+= analogbits/
- obj-y					+= aspeed/
- obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
-diff --git a/drivers/clk/ambarella/Kconfig b/drivers/clk/ambarella/Kconfig
-new file mode 100644
-index 000000000000..720eebdc5c9c
---- /dev/null
-+++ b/drivers/clk/ambarella/Kconfig
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: GPL-2.0-only
+ #define PL061_GPIO_NR	8
++#define PL061_DATA_OFFSET	2
+ 
+ struct pl061_context_save_regs {
+ 	u8 gpio_data;
+@@ -49,18 +52,49 @@ struct pl061_context_save_regs {
+ struct pl061 {
+ 	raw_spinlock_t		lock;
+ 
+-	void __iomem		*base;
++	struct regmap		*regmap;
+ 	struct gpio_chip	gc;
+ 	int			parent_irq;
+ 
+ 	struct pl061_context_save_regs csave_regs;
+ };
+ 
++static bool pl061_is_data_reg(unsigned int reg)
++{
++	return is_power_of_2(reg) &&
++	       reg >= BIT(PL061_DATA_OFFSET) &&
++	       reg <= BIT(PL061_DATA_OFFSET + PL061_GPIO_NR - 1);
++}
 +
-+config CLK_AMBARELLA_CV75
-+	bool "Ambarella CV75 RCT clock controller"
-+	depends on ARCH_AMBARELLA || COMPILE_TEST
-+	default ARCH_AMBARELLA
-+	help
-+	  Say Y to enable the Ambarella CV75 RCT clock controller for
-+	  early bring-up clocks (core PLL, AHB, APB, UART0).
-diff --git a/drivers/clk/ambarella/Makefile b/drivers/clk/ambarella/Makefile
-new file mode 100644
-index 000000000000..29555e452441
---- /dev/null
-+++ b/drivers/clk/ambarella/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0-only
++static bool pl061_volatile_reg(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case GPIOMIS:
++	case GPIOIC:
++		return true;
++	default:
++		return pl061_is_data_reg(reg);
++	}
++}
 +
-+obj-$(CONFIG_CLK_AMBARELLA_CV75) += clk-cv75.o
-diff --git a/drivers/clk/ambarella/clk-cv75.c b/drivers/clk/ambarella/clk-cv75.c
-new file mode 100644
-index 000000000000..4071dfd75659
---- /dev/null
-+++ b/drivers/clk/ambarella/clk-cv75.c
-@@ -0,0 +1,365 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Ambarella CV75 RCT clock controller
-+ *
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ */
-+
-+#include <linux/array_size.h>
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
-+#include <linux/clk-provider.h>
-+#include <linux/container_of.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/math.h>
-+#include <linux/math64.h>
-+#include <linux/module.h>
-+#include <linux/overflow.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/types.h>
-+
-+#include <dt-bindings/clock/ambarella,cv75-rct.h>
-+
-+#define CV75_NUM_CLKS		(CV75_GCLK_APB + 1)
-+
-+#define PLL_CTRL_BYPASS		BIT(2)
-+#define PLL_CTRL_FRAC_MODE	BIT(3)
-+#define PLL_CTRL_FORCE_RESET	BIT(4)
-+#define PLL_CTRL_POWER_DOWN	BIT(5)
-+#define PLL_CTRL_HALT_VCO	BIT(6)
-+#define PLL_CTRL_SDIV		GENMASK(15, 12)
-+#define PLL_CTRL_SOUT		GENMASK(19, 16)
-+#define PLL_CTRL_INTP		GENMASK(30, 24)
-+
-+#define PLL_CTRL2_VCODIV_DIV2	BIT(8)
-+#define PLL_CTRL2_FSDIV_DIV2	BIT(9)
-+#define PLL_CTRL2_FSOUT_DIV2	BIT(11)
-+#define PLL_CTRL2_BYPASS_HSDIV	BIT(12)
-+
-+struct cv75_pll_hw {
-+	struct clk_hw hw;
-+	u32 ctrl;
-+	u32 frac;
-+	u32 ctrl2;
++static const struct regmap_config pl061_regmap_config = {
++	.reg_bits = 16,
++	.val_bits = 8,
++	.reg_stride = 4,
++	.max_register = GPIOIC,
++	.volatile_reg = pl061_volatile_reg,
++	.fast_io = true,
++	.use_raw_spinlock = true,
 +};
 +
-+struct cv75_clk {
+ static int pl061_get_direction(struct gpio_chip *gc, unsigned offset)
+ {
+ 	struct pl061 *pl061 = gpiochip_get_data(gc);
++	unsigned int gpiodir = 0;
+ 
+-	if (readb(pl061->base + GPIODIR) & BIT(offset))
++	regmap_read(pl061->regmap, GPIODIR, &gpiodir);
++
++	if (gpiodir & BIT(offset))
+ 		return GPIO_LINE_DIRECTION_OUT;
+ 
+ 	return GPIO_LINE_DIRECTION_IN;
+@@ -70,12 +104,9 @@ static int pl061_direction_input(struct gpio_chip *gc, unsigned offset)
+ {
+ 	struct pl061 *pl061 = gpiochip_get_data(gc);
+ 	unsigned long flags;
+-	unsigned char gpiodir;
+ 
+ 	raw_spin_lock_irqsave(&pl061->lock, flags);
+-	gpiodir = readb(pl061->base + GPIODIR);
+-	gpiodir &= ~(BIT(offset));
+-	writeb(gpiodir, pl061->base + GPIODIR);
++	regmap_update_bits(pl061->regmap, GPIODIR, BIT(offset), 0);
+ 	raw_spin_unlock_irqrestore(&pl061->lock, flags);
+ 
+ 	return 0;
+@@ -86,19 +117,19 @@ static int pl061_direction_output(struct gpio_chip *gc, unsigned offset,
+ {
+ 	struct pl061 *pl061 = gpiochip_get_data(gc);
+ 	unsigned long flags;
+-	unsigned char gpiodir;
++	unsigned int mask = BIT(offset);
+ 
+ 	raw_spin_lock_irqsave(&pl061->lock, flags);
+-	writeb(!!value << offset, pl061->base + (BIT(offset + 2)));
+-	gpiodir = readb(pl061->base + GPIODIR);
+-	gpiodir |= BIT(offset);
+-	writeb(gpiodir, pl061->base + GPIODIR);
++	regmap_write(pl061->regmap, BIT(offset + PL061_DATA_OFFSET),
++		     !!value << offset);
++	regmap_update_bits(pl061->regmap, GPIODIR, mask, mask);
+ 
+ 	/*
+ 	 * gpio value is set again, because pl061 doesn't allow to set value of
+ 	 * a gpio pin before configuring it in OUT mode.
+ 	 */
+-	writeb(!!value << offset, pl061->base + (BIT(offset + 2)));
++	regmap_write(pl061->regmap, BIT(offset + PL061_DATA_OFFSET),
++		     !!value << offset);
+ 	raw_spin_unlock_irqrestore(&pl061->lock, flags);
+ 
+ 	return 0;
+@@ -107,15 +138,19 @@ static int pl061_direction_output(struct gpio_chip *gc, unsigned offset,
+ static int pl061_get_value(struct gpio_chip *gc, unsigned offset)
+ {
+ 	struct pl061 *pl061 = gpiochip_get_data(gc);
++	unsigned int val = 0;
++
++	regmap_read(pl061->regmap, BIT(offset + PL061_DATA_OFFSET), &val);
+ 
+-	return !!readb(pl061->base + (BIT(offset + 2)));
++	return !!val;
+ }
+ 
+ static int pl061_set_value(struct gpio_chip *gc, unsigned int offset, int value)
+ {
+ 	struct pl061 *pl061 = gpiochip_get_data(gc);
+ 
+-	writeb(!!value << offset, pl061->base + (BIT(offset + 2)));
++	regmap_write(pl061->regmap, BIT(offset + PL061_DATA_OFFSET),
++		     !!value << offset);
+ 
+ 	return 0;
+ }
+@@ -126,8 +161,8 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+ 	struct pl061 *pl061 = gpiochip_get_data(gc);
+ 	int offset = irqd_to_hwirq(d);
+ 	unsigned long flags;
+-	u8 gpiois, gpioibe, gpioiev;
+-	u8 bit = BIT(offset);
++	unsigned int gpiois = 0, gpioibe = 0, gpioiev = 0;
++	unsigned int bit = BIT(offset);
+ 
+ 	if (offset < 0 || offset >= PL061_GPIO_NR)
+ 		return -EINVAL;
+@@ -145,9 +180,9 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+ 
+ 	raw_spin_lock_irqsave(&pl061->lock, flags);
+ 
+-	gpioiev = readb(pl061->base + GPIOIEV);
+-	gpiois = readb(pl061->base + GPIOIS);
+-	gpioibe = readb(pl061->base + GPIOIBE);
++	regmap_read(pl061->regmap, GPIOIEV, &gpioiev);
++	regmap_read(pl061->regmap, GPIOIS, &gpiois);
++	regmap_read(pl061->regmap, GPIOIBE, &gpioibe);
+ 
+ 	if (trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) {
+ 		bool polarity = trigger & IRQ_TYPE_LEVEL_HIGH;
+@@ -199,9 +234,9 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+ 			 offset);
+ 	}
+ 
+-	writeb(gpiois, pl061->base + GPIOIS);
+-	writeb(gpioibe, pl061->base + GPIOIBE);
+-	writeb(gpioiev, pl061->base + GPIOIEV);
++	regmap_write(pl061->regmap, GPIOIS, gpiois);
++	regmap_write(pl061->regmap, GPIOIBE, gpioibe);
++	regmap_write(pl061->regmap, GPIOIEV, gpioiev);
+ 
+ 	raw_spin_unlock_irqrestore(&pl061->lock, flags);
+ 
+@@ -211,6 +246,7 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+ static void pl061_irq_handler(struct irq_desc *desc)
+ {
+ 	unsigned long pending;
++	unsigned int mis = 0;
+ 	int offset;
+ 	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
+ 	struct pl061 *pl061 = gpiochip_get_data(gc);
+@@ -218,8 +254,9 @@ static void pl061_irq_handler(struct irq_desc *desc)
+ 
+ 	chained_irq_enter(irqchip, desc);
+ 
+-	pending = readb(pl061->base + GPIOMIS);
+-	if (pending) {
++	regmap_read(pl061->regmap, GPIOMIS, &mis);
++	if (mis) {
++		pending = mis;
+ 		for_each_set_bit(offset, &pending, PL061_GPIO_NR)
+ 			generic_handle_domain_irq(gc->irq.domain,
+ 						  offset);
+@@ -233,11 +270,9 @@ static void pl061_irq_mask(struct irq_data *d)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct pl061 *pl061 = gpiochip_get_data(gc);
+ 	u8 mask = BIT(irqd_to_hwirq(d) % PL061_GPIO_NR);
+-	u8 gpioie;
+ 
+ 	raw_spin_lock(&pl061->lock);
+-	gpioie = readb(pl061->base + GPIOIE) & ~mask;
+-	writeb(gpioie, pl061->base + GPIOIE);
++	regmap_update_bits(pl061->regmap, GPIOIE, mask, 0);
+ 	raw_spin_unlock(&pl061->lock);
+ 
+ 	gpiochip_disable_irq(gc, d->hwirq);
+@@ -248,13 +283,11 @@ static void pl061_irq_unmask(struct irq_data *d)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct pl061 *pl061 = gpiochip_get_data(gc);
+ 	u8 mask = BIT(irqd_to_hwirq(d) % PL061_GPIO_NR);
+-	u8 gpioie;
+ 
+ 	gpiochip_enable_irq(gc, d->hwirq);
+ 
+ 	raw_spin_lock(&pl061->lock);
+-	gpioie = readb(pl061->base + GPIOIE) | mask;
+-	writeb(gpioie, pl061->base + GPIOIE);
++	regmap_update_bits(pl061->regmap, GPIOIE, mask, mask);
+ 	raw_spin_unlock(&pl061->lock);
+ }
+ 
+@@ -272,9 +305,7 @@ static void pl061_irq_ack(struct irq_data *d)
+ 	struct pl061 *pl061 = gpiochip_get_data(gc);
+ 	u8 mask = BIT(irqd_to_hwirq(d) % PL061_GPIO_NR);
+ 
+-	raw_spin_lock(&pl061->lock);
+-	writeb(mask, pl061->base + GPIOIC);
+-	raw_spin_unlock(&pl061->lock);
++	regmap_write(pl061->regmap, GPIOIC, mask);
+ }
+ 
+ static int pl061_irq_set_wake(struct irq_data *d, unsigned int state)
+@@ -308,15 +339,20 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	struct device *dev = &adev->dev;
+ 	struct pl061 *pl061;
+ 	struct gpio_irq_chip *girq;
 +	void __iomem *base;
-+	spinlock_t lock;
-+	struct cv75_pll_hw core;
-+	struct cv75_pll_hw enet;
-+	struct cv75_pll_hw sd;
-+};
+ 	int ret, irq;
+ 
+ 	pl061 = devm_kzalloc(dev, sizeof(*pl061), GFP_KERNEL);
+ 	if (pl061 == NULL)
+ 		return -ENOMEM;
+ 
+-	pl061->base = devm_ioremap_resource(dev, &adev->res);
+-	if (IS_ERR(pl061->base))
+-		return PTR_ERR(pl061->base);
++	base = devm_ioremap_resource(dev, &adev->res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
 +
-+struct cv75_pll {
-+	const char *name;
-+	struct cv75_pll_hw *hw;
-+	unsigned long flags;
-+	u32 ctrl;
-+	u32 frac;
-+	u32 ctrl2;
-+	int id;
-+};
-+
-+struct cv75_fixed_factor {
-+	const char *name;
-+	u32 id;
-+	struct u16_fract ratio;
-+};
-+
-+struct cv75_composite {
-+	const char *name;
-+	const struct clk_parent_data *parents;
-+	unsigned long flags;
-+	u32 id;
-+	u16 mux_reg;
-+	u16 div_reg;
-+	u8 num_parents;
-+	u8 mux_shift;
-+	u8 mux_width;
-+	u8 div_shift;
-+	u8 div_width;
-+};
-+
-+struct cv75_composite_hw {
-+	struct clk_mux mux;
-+	struct clk_divider div;
-+	struct clk_gate gate;
-+};
-+
-+static struct cv75_clk cv75_ccu;
-+
-+#define CV75_PLL(_id, _name, _ctrl, _frac, _ctrl2, _flags, _hw) {	\
-+	.name	= _name,						\
-+	.hw	= _hw,							\
-+	.flags	= _flags,						\
-+	.ctrl	= _ctrl,						\
-+	.frac	= _frac,						\
-+	.ctrl2	= _ctrl2,						\
-+	.id	= _id,							\
-+}
-+
-+static const struct cv75_pll cv75_plls[] = {
-+	CV75_PLL(CV75_GCLK_CORE, "core", 0x000, 0x004, 0x100,
-+		 CLK_GET_RATE_NOCACHE | CLK_IS_CRITICAL, &cv75_ccu.core),
-+	CV75_PLL(-1, "pll_enet", 0x520, 0x524, 0x528,
-+		 CLK_GET_RATE_NOCACHE, &cv75_ccu.enet),
-+	CV75_PLL(-1, "pll_sd", 0x4ac, 0x4b0, 0x4b4,
-+		 CLK_GET_RATE_NOCACHE, &cv75_ccu.sd),
-+};
-+
-+static const struct cv75_fixed_factor cv75_fixed_factors[] = {
-+	{ .id = CV75_GCLK_AHB, .name = "ahb", .ratio = { 1, 2 } },
-+	{ .id = CV75_GCLK_APB, .name = "apb", .ratio = { 1, 4 } },
-+};
-+
-+static const struct clk_parent_data cv75_uart_parents[] = {
-+	{ .fw_name = "osc" },
-+	{ .hw = &cv75_ccu.core.hw },
-+	{ .hw = &cv75_ccu.enet.hw },
-+	{ .hw = &cv75_ccu.sd.hw },
-+};
-+
-+#define CV75_COMPOSITE(_id, _name, _parents, _mreg, _mshift, _mwidth,	\
-+		       _dreg, _dshift, _dwidth, _flags)			\
-+{									\
-+	.id		= _id,						\
-+	.name		= _name,					\
-+	.parents	= _parents,					\
-+	.num_parents	= ARRAY_SIZE(_parents),				\
-+	.mux_reg	= _mreg,					\
-+	.mux_shift	= _mshift,					\
-+	.mux_width	= _mwidth,					\
-+	.div_reg	= _dreg,					\
-+	.div_shift	= _dshift,					\
-+	.div_width	= _dwidth,					\
-+	.flags		= _flags,					\
-+}
-+
-+static const struct cv75_composite cv75_composites[] = {
-+	CV75_COMPOSITE(CV75_GCLK_UART0, "uart0", cv75_uart_parents,
-+		       0x1c8, 0, 2, 0x038, 0, 24,
-+		       CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+#define to_cv75_pll(_hw) container_of(_hw, struct cv75_pll_hw, hw)
-+
-+static unsigned long cv75_pll_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct cv75_pll_hw *pll = to_cv75_pll(hw);
-+	u32 ctrl, ctrl2, frac_val;
-+	u32 intp, sdiv, sout;
-+	u32 vcodiv, fsdiv, fsout;
-+	u64 vco, frac = 0;
-+
-+	ctrl = readl_relaxed(cv75_ccu.base + pll->ctrl);
-+	if (ctrl & (PLL_CTRL_POWER_DOWN | PLL_CTRL_HALT_VCO | PLL_CTRL_FORCE_RESET))
-+		return 0;
-+
-+	if (ctrl & PLL_CTRL_BYPASS)
-+		return parent_rate;
-+
-+	ctrl2 = readl_relaxed(cv75_ccu.base + pll->ctrl2);
-+	intp = FIELD_GET(PLL_CTRL_INTP, ctrl) + 1;
-+	sdiv = FIELD_GET(PLL_CTRL_SDIV, ctrl) + 1;
-+	sout = FIELD_GET(PLL_CTRL_SOUT, ctrl) + 1;
-+	vcodiv = (ctrl2 & PLL_CTRL2_VCODIV_DIV2) ? 2 : 1;
-+	fsdiv = (ctrl2 & PLL_CTRL2_FSDIV_DIV2) ? 2 : 1;
-+	fsout = (ctrl2 & PLL_CTRL2_FSOUT_DIV2) ? 2 : 1;
-+
-+	vco = (u64)parent_rate * vcodiv * fsdiv * intp * sdiv;
-+	if (ctrl & PLL_CTRL_FRAC_MODE) {
-+		frac_val = readl_relaxed(cv75_ccu.base + pll->frac);
-+		frac = mul_u64_u32_shr((u64)parent_rate * vcodiv * fsdiv * sdiv,
-+				       frac_val, 32);
-+		vco += frac;
-+	}
-+
-+	if (!(ctrl2 & PLL_CTRL2_BYPASS_HSDIV))
-+		vco = div_u64(vco, (u64)vcodiv * fsout * sout);
-+
-+	return vco;
-+}
-+
-+static const struct clk_ops cv75_pll_ops = {
-+	.recalc_rate = cv75_pll_recalc_rate,
-+};
-+
-+static int cv75_register_plls(struct device *dev,
-+			      struct clk_hw_onecell_data *data)
-+{
-+	struct clk_parent_data parent_data = { .fw_name = "osc" };
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(cv75_plls); i++) {
-+		const struct cv75_pll *desc = &cv75_plls[i];
-+		struct cv75_pll_hw *pll = desc->hw;
-+		struct clk_init_data init = {};
-+		int ret;
-+
-+		pll->ctrl = desc->ctrl;
-+		pll->frac = desc->frac;
-+		pll->ctrl2 = desc->ctrl2;
-+
-+		init.name = desc->name;
-+		init.ops = &cv75_pll_ops;
-+		init.parent_data = &parent_data;
-+		init.num_parents = 1;
-+		init.flags = desc->flags;
-+		pll->hw.init = &init;
-+
-+		ret = devm_clk_hw_register(dev, &pll->hw);
-+		if (ret)
-+			return ret;
-+
-+		if (desc->id >= 0)
-+			data->hws[desc->id] = &pll->hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int cv75_register_fixed_factors(struct device *dev,
-+				       struct clk_hw_onecell_data *data)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(cv75_fixed_factors); i++) {
-+		const struct cv75_fixed_factor *f = &cv75_fixed_factors[i];
-+		struct clk_hw *hw;
-+
-+		hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, f->name,
-+								 &cv75_ccu.core.hw, 0,
-+								 f->ratio.numerator,
-+								 f->ratio.denominator);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		data->hws[f->id] = hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct clk_hw *cv75_register_composite(struct device *dev,
-+					      const struct cv75_composite *c)
-+{
-+	const struct clk_ops *mux_ops = NULL, *div_ops = NULL, *gate_ops = NULL;
-+	struct clk_hw *mux_hw = NULL, *div_hw = NULL, *gate_hw = NULL;
-+	struct cv75_composite_hw *comp;
-+
-+	comp = devm_kzalloc(dev, sizeof(*comp), GFP_KERNEL);
-+	if (!comp)
-+		return ERR_PTR(-ENOMEM);
-+
-+	if (c->mux_width) {
-+		comp->mux.reg = cv75_ccu.base + c->mux_reg;
-+		comp->mux.shift = c->mux_shift;
-+		comp->mux.mask = GENMASK(c->mux_width - 1, 0);
-+		comp->mux.lock = &cv75_ccu.lock;
-+		mux_hw = &comp->mux.hw;
-+		mux_ops = &clk_mux_ops;
-+	}
-+
-+	if (c->div_width) {
-+		comp->div.reg = cv75_ccu.base + c->div_reg;
-+		comp->div.shift = c->div_shift;
-+		comp->div.width = c->div_width;
-+		comp->div.flags = CLK_DIVIDER_ONE_BASED;
-+		comp->div.lock = &cv75_ccu.lock;
-+		div_hw = &comp->div.hw;
-+		div_ops = &clk_divider_ops;
-+
-+		comp->gate.reg = cv75_ccu.base + c->div_reg;
-+		comp->gate.bit_idx = c->div_shift + c->div_width;
-+		comp->gate.flags = CLK_GATE_SET_TO_DISABLE;
-+		comp->gate.lock = &cv75_ccu.lock;
-+		gate_hw = &comp->gate.hw;
-+		gate_ops = &clk_gate_ops;
-+	}
-+
-+	return devm_clk_hw_register_composite_pdata(dev, c->name, c->parents,
-+						    c->num_parents,
-+						    mux_hw, mux_ops,
-+						    div_hw, div_ops,
-+						    gate_hw, gate_ops, c->flags);
-+}
-+
-+static int cv75_register_composites(struct device *dev,
-+				    struct clk_hw_onecell_data *data)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(cv75_composites); i++) {
-+		const struct cv75_composite *c = &cv75_composites[i];
-+		struct clk_hw *hw;
-+
-+		hw = cv75_register_composite(dev, c);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		data->hws[c->id] = hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int cv75_rct_probe(struct platform_device *pdev)
-+{
-+	struct clk_hw_onecell_data *data;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	spin_lock_init(&cv75_ccu.lock);
-+
-+	cv75_ccu.base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(cv75_ccu.base))
-+		return PTR_ERR(cv75_ccu.base);
-+
-+	data = devm_kzalloc(dev, struct_size(data, hws, CV75_NUM_CLKS), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+	data->num = CV75_NUM_CLKS;
-+
-+	ret = cv75_register_plls(dev, data);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register plls\n");
-+
-+	ret = cv75_register_fixed_factors(dev, data);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register fixed factors\n");
-+
-+	ret = cv75_register_composites(dev, data);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register composites\n");
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, data);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to add clock provider\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id cv75_rct_match[] = {
-+	{ .compatible = "ambarella,cv75-rct" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, cv75_rct_match);
-+
-+static struct platform_driver cv75_rct_driver = {
-+	.probe = cv75_rct_probe,
-+	.driver = {
-+		.name = "ambarella-cv75-rct",
-+		.of_match_table = cv75_rct_match,
-+	},
-+};
-+module_platform_driver(cv75_rct_driver);
-+
-+MODULE_AUTHOR("Cao Rongrong <rrcao@ambarella.com>");
-+MODULE_DESCRIPTION("Ambarella CV75 RCT clock controller");
-+MODULE_LICENSE("GPL");
++	pl061->regmap = devm_regmap_init_mmio(dev, base, &pl061_regmap_config);
++	if (IS_ERR(pl061->regmap))
++		return PTR_ERR(pl061->regmap);
+ 
+ 	raw_spin_lock_init(&pl061->lock);
+ 	pl061->gc.request = gpiochip_generic_request;
+@@ -335,7 +371,7 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	/*
+ 	 * irq_chip support
+ 	 */
+-	writeb(0, pl061->base + GPIOIE); /* disable irqs */
++	regmap_write(pl061->regmap, GPIOIE, 0); /* disable irqs */
+ 	irq = adev->irq[0];
+ 	if (!irq)
+ 		dev_warn(&adev->dev, "IRQ support disabled\n");
+@@ -366,14 +402,20 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ static int pl061_suspend(struct device *dev)
+ {
+ 	struct pl061 *pl061 = dev_get_drvdata(dev);
++	unsigned int val = 0;
+ 	int offset;
+ 
+ 	pl061->csave_regs.gpio_data = 0;
+-	pl061->csave_regs.gpio_dir = readb(pl061->base + GPIODIR);
+-	pl061->csave_regs.gpio_is = readb(pl061->base + GPIOIS);
+-	pl061->csave_regs.gpio_ibe = readb(pl061->base + GPIOIBE);
+-	pl061->csave_regs.gpio_iev = readb(pl061->base + GPIOIEV);
+-	pl061->csave_regs.gpio_ie = readb(pl061->base + GPIOIE);
++	regmap_read(pl061->regmap, GPIODIR, &val);
++	pl061->csave_regs.gpio_dir = val;
++	regmap_read(pl061->regmap, GPIOIS, &val);
++	pl061->csave_regs.gpio_is = val;
++	regmap_read(pl061->regmap, GPIOIBE, &val);
++	pl061->csave_regs.gpio_ibe = val;
++	regmap_read(pl061->regmap, GPIOIEV, &val);
++	pl061->csave_regs.gpio_iev = val;
++	regmap_read(pl061->regmap, GPIOIE, &val);
++	pl061->csave_regs.gpio_ie = val;
+ 
+ 	for (offset = 0; offset < PL061_GPIO_NR; offset++) {
+ 		if (pl061->csave_regs.gpio_dir & (BIT(offset)))
+@@ -398,10 +440,10 @@ static int pl061_resume(struct device *dev)
+ 			pl061_direction_input(&pl061->gc, offset);
+ 	}
+ 
+-	writeb(pl061->csave_regs.gpio_is, pl061->base + GPIOIS);
+-	writeb(pl061->csave_regs.gpio_ibe, pl061->base + GPIOIBE);
+-	writeb(pl061->csave_regs.gpio_iev, pl061->base + GPIOIEV);
+-	writeb(pl061->csave_regs.gpio_ie, pl061->base + GPIOIE);
++	regmap_write(pl061->regmap, GPIOIS, pl061->csave_regs.gpio_is);
++	regmap_write(pl061->regmap, GPIOIBE, pl061->csave_regs.gpio_ibe);
++	regmap_write(pl061->regmap, GPIOIEV, pl061->csave_regs.gpio_iev);
++	regmap_write(pl061->regmap, GPIOIE, pl061->csave_regs.gpio_ie);
+ 
+ 	return 0;
+ }
 
 -- 
 2.34.1
