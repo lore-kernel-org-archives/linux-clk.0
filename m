@@ -1,155 +1,174 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D86329E44
-	for <linux-clk@vger.kernel.org>; Fri,  2 Oct 2026 15:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42524D4886
+	for <linux-clk@vger.kernel.org>; Fri,  2 Oct 2026 15:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790953724; cv=none; b=IHv7vAzAaF3LKG3wOGeelgigC+/dOpbYow4jiWVppQqVnIfyP42U6AbAgamPrmrljgW2COoihmKh7ItyEEcqYDcUryTvalPOTge9k2tCC1/d1dA2gQDI7GInR/18TR9f9mdlVC4dFzN3AGehr1+WbuXLy7M78/B163203RV+u84=
+	t=1790953920; cv=none; b=sUgKCF6SVbo5NE6y9HSvIDdcjoFWCviKYmF4NPJTZ2Lf86F18CYRd9as/otVJ5ex807H4KpvMsF2g4ZTTJ8VVexUGbdzC+pq7D24dlQkO5UaWdq2JDe3b4E0r7va5nyjHpIJeR0hkj3U9Bp0aETGic8LJ2Wpb4ka16W4fyzMpbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790953724; c=relaxed/simple;
-	bh=nzzaG++30e7eP7gzQKASjcC/CQNsfJv4ueyQSdSfHAU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=plXHsI3dNRgs/rGnM7sj5ARBf67RPztWb6rSHF3K/oavpo7ooemD7MUu/3+5KFURY3c1Kc3hgdVWeGYqj3Xny0leCZcvOnngmdW0AnWAAQDtR2cUJba7p8dhKmaRD3by0QM95/XTiexjEtw1VRvZhsV3GzFFCIGIMrF7ndHOnOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gf3pglWf; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=pxalEcfV; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1790953920; c=relaxed/simple;
+	bh=BXSTojC4lp2VomfKySiwbSrWTs82k5is0N7A+po482w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dOsG4bHh2u3g+rFOomE7HHKX5+fXoGXOlR8MN5ulB+KFrqROF9zriq8i4XONS8Yfhtx/sVajbBm5jR/619zK4pBUWvLWWlcZjcS5nHs1XGQc/jK8/JiqmM3L/aOptcUY59+I3HCnuCphk1I5du7UMfx5BCpmAdtZRPgxv6QXmDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GrOBZ3DC; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=pN/gn+T8; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gf3pglWf";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="pxalEcfV"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GrOBZ3DC";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="pN/gn+T8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1790953716;
+	s=mimecast20190719; t=1790953917;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LD/A3nglaC31jBIMtUDrqXBiepN73OFs6DJpCa6dtO4=;
-	b=Gf3pglWfrqbJTauSJEYdtySw15tpLwpmvdX4QPA8PCQTvTLYRw5O7Yt1XRqlFx8Yqi74mH
-	Hb3A1Fxhsv8i0lkm/cTXBaG0bh7qs+X05+6bPkdki6E5jV8dK3w7QU33+6aIFbgO+dmzGA
-	p4F+YuLSyQiCHhblyCDltkkX9/sv14Y=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=LWmLd+rLGF8wp2MGoAWUFRqguzK3p2qoTL1+rkmSfkI=;
+	b=GrOBZ3DCcTz+fLX0P6vRG3M6AEd8qeGvuVNAeFxscJZtchngQfND8TIg2N5YtTl9iKpr+G
+	3/OmAnEhl/SxPZeDulKAtN7xTnlrh7SKv76WOhIZ1ImiZ9ZKnPFcvWmWOgdFhhCCHV+qCO
+	vE1QzMrYCpeIBFfUWYroN4wDhLh2avE=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-244-0Z7acHuxOme3AjusNrVrKw-1; Fri, 02 Oct 2026 11:08:34 -0400
-X-MC-Unique: 0Z7acHuxOme3AjusNrVrKw-1
-X-Mimecast-MFC-AGG-ID: 0Z7acHuxOme3AjusNrVrKw_1790953714
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-51c26012cd0so154314341cf.0
-        for <linux-clk@vger.kernel.org>; Fri, 02 Oct 2026 08:08:34 -0700 (PDT)
+ us-mta-655-xo20fGU4PtaR5d7KUoYcVA-1; Fri, 02 Oct 2026 11:11:56 -0400
+X-MC-Unique: xo20fGU4PtaR5d7KUoYcVA-1
+X-Mimecast-MFC-AGG-ID: xo20fGU4PtaR5d7KUoYcVA_1790953916
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-9308eafb465so1887810585a.2
+        for <linux-clk@vger.kernel.org>; Fri, 02 Oct 2026 08:11:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1790953714; x=1791558514; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=LD/A3nglaC31jBIMtUDrqXBiepN73OFs6DJpCa6dtO4=;
-        b=pxalEcfVm3yGOi25gW2CcXzbBeRIeAPEiDSMAhlUHO22Yk7FY9wUlTFHCsC4SLzp4S
-         LuMoX/5ivXPdLdWJzh9HlrT+m5pm+Rd+VtD0R358zXsAqzsFGw/15Abbp735wiVQX2jc
-         e/+5hCSEeMp+JyTcmJqcRrE03fw3fUmAjnjDX/0iV1WTfqQi+eg3FB7HL5qBXvMJVy7Z
-         71avtjq5ZJmMWqDPEvdxlsVl1jEjsLYp7VdkVVvJM3zyTtLmdCn9v+t+neosZEXoohgG
-         COD5m6GRVIwnXR0Qhx0RggWz0kI0tEXJjvzQbnWQxhfIChnIOXV/5MlPnZDQFoWxKlmQ
-         edTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790953714; x=1791558514;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=redhat.com; s=google; t=1790953916; x=1791558716; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=LD/A3nglaC31jBIMtUDrqXBiepN73OFs6DJpCa6dtO4=;
-        b=ptaWVArqr6YzL+yhR21whyYHha18sA4M0FxWw0ko02TRYAxXgJPQ+X9qxy0hUhxnPV
-         TAP0PSvJqAxfnNeWIb+pEqh2AXTLMTQMHV/b0meGYRg3E3UrbimRBQBF4qfW4YJI6gOP
-         Nj1FzMoj5Ou/tHUjQOlrjj0caaZL2L/zZkTuANPUzUnJyMNVRDPdhFAO7FvnA6B7ViAm
-         DBGVahTi+nlZgBe0Nckz1H737B/BUeszXtDw4EOUEmRwCl6bTjrufnhWspNeMKHNVagJ
-         vi+j75TlSmNP+CxI4RPoBWFc64T2BWjCFHY3WLQmoEwCD0wwt8i7lB71rfxlqHiXY6yY
-         u/XA==
-X-Gm-Message-State: AFuF++kM9blMJPacKM5zSL+Nzae4kvx4GWWRIStwYZwxV7p95F+lvL4V
-	okz4ZdHkjwwGOuChghoYRY6sWFnYu7Qkz/zYR7olrkWpNn04jj2okgpAE/OaYV+kZ6DraeEA1vw
-	36o5E4FC3K8Bhj9vTdRE3o+A0/AdNEHZbHX1tRAEhpUM4N4FlEbxIiuH3zJY8rg==
-X-Gm-Gg: AYBFou1nl6FeRkih31nxsiQ7Nab5o91gP/JJCSHECHnVKnb0quUfcn3+pchRZpPt1wE
-	6S9qHK0KUYLMY+Q8giSLeOzoU35J2e/5nUEX1YPXWh6Mo9MaPzHAFGFsV1w9cchfBMIIRQ4EG9e
-	lg5NqxxqDoZFOP8i/8yuK0uSA+U/ciYjj8ILRwc+Z+QyMkZToISbY57B9l7eTIG7xCftbl4JfVt
-	dInYbS7RvAtYREZyH7BiuTjue3eLo+w6fucWRIlwBeC5C2kYC44N3Q1V9SMll9JV4lYKAxKfMlp
-	GUM0eyY33R9kBIZcWc+HNiNVALj9+pMKhwCfs1f5cHUphxc+9yAwyy6LhBVENIz4IvCtLk1iB0N
-	qV2SkgV9a8yuyLgaUcrDGPZ/1pWSChZzedv6YSVfLrfBOm3R7Xv4=
-X-Received: by 2002:a05:622a:1353:b0:533:3610:c5eb with SMTP id d75a77b69052e-533d96b6966mr49792441cf.53.1790953713772;
-        Fri, 02 Oct 2026 08:08:33 -0700 (PDT)
-X-Received: by 2002:a05:622a:1353:b0:533:3610:c5eb with SMTP id d75a77b69052e-533d96b6966mr49791681cf.53.1790953713259;
-        Fri, 02 Oct 2026 08:08:33 -0700 (PDT)
-Received: from bmasney-x1.rmtuswv.csb (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-53398d128ccsm27596841cf.24.2026.10.02.08.08.31
+        bh=LWmLd+rLGF8wp2MGoAWUFRqguzK3p2qoTL1+rkmSfkI=;
+        b=pN/gn+T8xbN49zVpBn13gV7HsChE0Sk3cphEVrJs6osThGDtD3g6Lgz1C6Cd3QGUgv
+         MUPECoNqBLI01vuAuRIC8n+w0cgGF54xvtuOQnRnjB0CxI1Mvb9B1zdpJXJpqfNFpgW1
+         WHQj4QaDtdebuPXIDE2Cry8FHWzriIquA3mjygGbwbLC1/s/lY+DmmUm/MiK4iAT9LBk
+         D6tjdknJrK1fxy8r3z6KQ4saHba56h9gixc66poY6m6O1bQb9BzWtqO2NVNlwBq31LTj
+         D7dh8u8EpHM1OOwAJIaqafKgC/uqZVd+n1VcOcVl7TuQltSMBnOqzdkryZBnY3DiK112
+         NUlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790953916; x=1791558716;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=LWmLd+rLGF8wp2MGoAWUFRqguzK3p2qoTL1+rkmSfkI=;
+        b=gAklP6T4ItXjxj6L8nU0Weh+BLcegULBUvU1jJK4lC7KQtDIoWV6IEAM1y84a9vKuK
+         G1eo9Q7dt8g4KCJ6Wmihcu0aKJ4C5aVdsFvywWZnQqvzxltYknDxyFl6Qgi1Rr/LTmQc
+         bU1/1BsO3tanJudHcidu2BR36OK+Y5/+K+yt2I38DfEC7l8djUSq2ygo3+KzGpUlGMaj
+         bi5pQEVA1mXOsBCpuCYFzKU1JfWvW6o7kfLCJNGVPQ4hsLYWE298XnRvjx63wqupMUtW
+         B61n9bi3+2eCrtx4X1JtjmW0955/IfR5QlMaPYpBGJB9RZiEjD6gm5zYYwlwNldX0sxm
+         /G8Q==
+X-Gm-Message-State: AFuF++lZtM3xP36I1qrxA7SfhAOg0FXObIvTYU1yXZCh0neIU1CXrlb2
+	pDldC5I6TPJf4ypjMYXTRl5SsRRUJCDtpDySzhe2V+lIV3DGJj+HuZDjAX93sqiK7PPeWE2EPM4
+	gxf3wWobr9DAhkUC9EOSsmMHh5o3Y8VLSYuKSiDXU1aZYW2FhZ78YQj+UiuFfPA==
+X-Gm-Gg: AYBFou0atEK50YpFNV7nVGgK6SBYvQhlSVngbgXxq6pnbJmML9Fw642/6LNZCHBSYj1
+	CJhF5Jfw8hyYB+ISWIpsTHeCiiuJJHEMseev57OWGv4c6ikZvqIDCk/8oIiYP6Pja+Od8DqEvlb
+	ATvihYPPrN0CLxC2I5F630sS3mnNIqlCLg7GWUFcu+jG3xPoY95a1maquLmzNc5J5WZXdKtchfD
+	/i/LkqaqGn5mtS5zLy6dZ05RbivsPHstt8KLpMvqj+Jkz931O2n8EJOSxtVmX8a+UjOFx4quC6s
+	G40RgxzcB1GojfZEbsLrfiMN7ds5saY9YvbufmodbMMIROmhJS8PSs8sOjNqECluyWBocs3iPsl
+	dv0DTqfjVqsOCMMOeqyvZQIGXy+7z5QKLRc4=
+X-Received: by 2002:a05:620a:26a6:b0:93c:5efa:39ae with SMTP id af79cd13be357-93ce7c1228emr548900485a.12.1790953915889;
+        Fri, 02 Oct 2026 08:11:55 -0700 (PDT)
+X-Received: by 2002:a05:620a:26a6:b0:93c:5efa:39ae with SMTP id af79cd13be357-93ce7c1228emr548889585a.12.1790953914967;
+        Fri, 02 Oct 2026 08:11:54 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93cca1a433dsm240505285a.13.2026.10.02.08.11.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Oct 2026 08:08:32 -0700 (PDT)
+        Fri, 02 Oct 2026 08:11:53 -0700 (PDT)
+Date: Fri, 2 Oct 2026 11:11:51 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
- Russell King <linux@armlinux.org.uk>, Lee Jones <lee@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-phy@lists.infradead.org, mfd@lists.linux.dev, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-In-Reply-To: <20260927-zx29clk-v13-0-70d8f673386c@gmail.com>
-References: <20260927-zx29clk-v13-0-70d8f673386c@gmail.com>
-Subject: Re: (subset) [PATCH v13 00/13] ZTE zx297520v3 clock bindings and
- driver
-Message-Id: <179095369547.791677.11922932020340915175.b4-ty@b4>
-Date: Fri, 02 Oct 2026 11:08:15 -0400
+To: Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>
+Cc: linux-clk@vger.kernel.org, Brian Masney <bmasney+clk@redhat.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>, mturquette@baylibre.com
+Subject: Re: [GIT PULL] clk: zte: zx297520v3 clock bindings and driver (v2)
+Message-ID: <ar_Jt4eIPy1-uq1-@redhat.com>
+References: <hUBEMGo3TGyVsIj5LaphmQ@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1464; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=LWMTx7OVyEurkrK8gxvgvVLf0aBDX7nOCsHhfPnuLAk=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLL2n3j1sCJv/pFzhTZJnIp6XLMW1T+Zsn17zf5NPhp2l
- nuniVRzdZSyMIhxMciKKbIsyTUqiEhdZXvvjiYLzBxWJpAhDFycAjARdn2GP5ylRUdjm2eldZ5u
- XD5jQ+j9xzleR9dJh/49fXhFlVPSDB9Ght0/fk9fsCKpqrNG5anMU3n7TWp/uuXyZ0pIxLpUpGv
- P4wMA
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+In-Reply-To: <hUBEMGo3TGyVsIj5LaphmQ@gmail.com>
+User-Agent: Mutt/2.4.2 (2026-08-30)
 
+Hi Stefan,
 
-On Sun, 27 Sep 2026 23:13:28 +0300, Stefan DÃ¶singer wrote:
-> ZTE zx297520v3 clock bindings and driver
-> 
+On Thu, Oct 01, 2026 at 08:39:27PM +0300, Stefan Dösinger wrote:
 > Hi,
 > 
-> I am sending version 13 of my zx297520v3 clock patch. It addresses review
-> comments for the MFD driver but has no other substantial changes
+> This pull request contains the device tree bindings and clock driver for
+> ZTE zx297520v3 boards. It contains the next step in adding support for
+> zx297520v3 boards: Documenting clock and reset manager hardware and
+> adding drivers for its PLLs and clock tree. This is v2 of the pull
+> request, based on v7.3-rc1 rather than clk-next.
 > 
-> [...]
+> The patches have been reviewed and carry appropriate R-B tags by
+> Krzysztof Kozlowski (bindings) and Brian Masney (clk driver).
+> 
+> The PR does not contain the MFD, reset and device tree patches. They
+> will be submitted to the MFD, reset and soc trees respectively. The
+> clock driver compiles without them, but won't be instantiated without
+> the MFD parent.
+> 
+> The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
+> 
+>   Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   https://gitlab.com/stefandoesinger/zx297520-kernel.git tags/v2-zx29-clk-for-7.4
+> 
+> for you to fetch changes up to 75e4151c9e157d84c8c6c365893ecf33d221bca5:
+> 
+>   clk: zte: Introduce a driver for zx297520v3 LSP clocks (2026-10-01 20:20:43 +0300)
+> 
+> ----------------------------------------------------------------
+> clk: zte: Add clock drivers for zx297520v3 SoC
+> 
+> This tag contains the device tree bindings and clock driver for ZTE
+> zx297520v3 boards. It contains the next step in adding support for
+> zx297520v3 boards: Documenting clock and reset manager hardware and
+> adding drivers for its PLLs and clock tree.
+> 
+> The PR does not contain the MFD, reset and device tree patches. They
+> will be submitted to the MFD, reset and soc trees respectively. The
+> clock driver compiles without them, but won't be instantiated without
+> the MFD parent.
+> 
+> ----------------------------------------------------------------
+> Stefan Dösinger (9):
+>       dt-bindings: clk: zte: Add zx297520v3 top clock and reset controller
+>       dt-bindings: clk: zte: Add zx297520v3 matrix clock and reset controller
+>       dt-bindings: clk: zte: Add zx297520v3 LSP clock and reset controller
+>       clk: zte: Add Clock registration infrastructure
+>       clk: zte: Add regmap-based clocks
+>       clk: zte: Add zx PLL support infrastructure
+>       clk: zte: Introduce a driver for zx297520v3 top clocks
+>       clk: zte: Introduce a driver for zx297520v3 matrix clocks
+>       clk: zte: Introduce a driver for zx297520v3 LSP clocks
 
-Applied, thanks!
+The commits in the pull have the changelog in the commit message. For
+example:
 
-[01/13] dt-bindings: clk: zte: Add zx297520v3 top clock and reset controller
-        commit: 9b9e5daaea8febcdf67a656e76b3a7e1d0f2290a
-[02/13] dt-bindings: clk: zte: Add zx297520v3 matrix clock and reset controller
-        commit: 3847bc94d1746c1448c984338fcfdf1216db0827
-[03/13] dt-bindings: clk: zte: Add zx297520v3 LSP clock and reset controller
-        commit: 4500e2e361ecba42cb1abd6f6891a45d99f57741
-[06/13] clk: zte: Add Clock registration infrastructure
-        commit: ad5107a88e993b576b01761c6560e157519e0f84
-[07/13] clk: zte: Add regmap-based clocks
-        commit: 0f973ffd1038e2bca5ad89279412a508df62f44f
-[08/13] clk: zte: Add zx PLL support infrastructure
-        commit: 77732e66cd47e849031e4fc8999cbff0ec958deb
-[09/13] clk: zte: Introduce a driver for zx297520v3 top clocks
-        commit: 392a4957db5c2f2c37bf0191d9531710b3080dbf
-[10/13] clk: zte: Introduce a driver for zx297520v3 matrix clocks
-        commit: 4ea299afff42c6a09eb1aea1d29c678c3374b824
-[11/13] clk: zte: Introduce a driver for zx297520v3 LSP clocks
-        commit: f8a3cbf8678ab80d3aba5918f2f5e1acc1e7287d
+https://gitlab.com/stefandoesinger/zx297520-kernel/-/commit/75e4151c9e157d84c8c6c365893ecf33d221bca5
 
-Best regards,
--- 
-Brian Masney <bmasney@redhat.com>
+I went to the last series and cherry picked the relevant commits.
+
+Brian
 
