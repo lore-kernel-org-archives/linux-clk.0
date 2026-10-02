@@ -1,43 +1,43 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0941412C0F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76C343CEE3;
 	Fri,  2 Oct 2026 07:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790927072; cv=none; b=JA3SmGGKbljLdklwBrlwGQfK+eg1VyQ/IySESSr5TI09xlGqcRqPM3iY9NgqjtB2tloFfX21WsOhP9jLCL2SYuWL8utV7Gf+yB/O8ModiUjd/PBdVgfHxm1vzM4d8Yfx1fMim0MfvSYIEU4Uhrg9KzbAaTclI98mWWrXcNkLD3o=
+	t=1790927072; cv=none; b=Qdy6HQe5FYN3Zn+WP22miU6MDmqvmbnyTsFCMzt7pZI/p4Tley2mvUD4rw5dK0Tlyzxca2IG0hVUhxCSjMcQdZfbzJiCTV5VrlDF9phnWI8HznFgGCT0NkRsHSObhcdJUOOfpa3qJF3l7SKnQcpR6BVf2+9uFzg2LukZsfpocpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1790927072; c=relaxed/simple;
-	bh=WbXgQwFwVdbOb0t3jcjc3zqWRmHiiLbos/UZQgohawg=;
+	bh=VaMdPHkwK470UcI+nrbNmXbIbEGMqbzfn56DqaGODoA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aVImhzZwCn6Dz1XGP5SNsI8FWNH2ZLynFB/wZTaAqqT5njPzZokuhc7/jbtSlaMPnLGqlDoxZOy0fPMHNhNZm2bVRydXBrRTV02U9bWdCjS6eMmzmaec2UidBk5FvAMclyYXsdtGJqSl9g9SBrdTzYkHKBCO7RWmKf43v9jFtl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=p5jC4NA0; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=GpcVGdUGeUTp+1nSEkOJk2+jv+3a2jNBzROI3k1IGILT1wzbR57+t6nRTakqtDRixVs40kZ/OdrBa7VvFKyIRR/iVgz2eN1nagy3kWF7sBz6AlPP412i2wv0lkgN7Knt2WMylVEwkA552+sA0Nw2y6jl6au/uHd8hFQpQOctHAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=I6RBRA4q; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="p5jC4NA0"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6927hncX73646822, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="I6RBRA4q"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6927hlyS73646803, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1790927029; bh=oP06fDniIpzkVtuRfee/DejiSv4Ly3yjfmnB4oKGYRo=;
+	t=1790927028; bh=YAVQloOQd8519Y/8M+l2E99t/y6eDVD2tKUV8ARvnjY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=p5jC4NA0zYoBTUpUnGc2QjxVWUMXonUjk4yTwfWTOY4NCcuMdGBjlOvi5E3BICFeA
-	 4qvsVT1m2A2pulGbc6+pm1WnCBHGhJ5mXU7+HhlFzXpjyjCjy9YVzVdOJF4Z85VVf1
-	 iFZ8euXuX+BZvoJSwKwVGsPT2m5JxgT/wdB6jmxsKUeIVcLXMyAKeoXk7VmIBgu0z1
-	 rgCvK8dZAWkUwd81NF8rJya42xbZFPoit+9hFt85Lfpxc5FJxTUVdfuxJJE/ccDGG+
-	 GbfKvHfpHbmIe6aXonICN1Pu4aB01edlUiNMmGYIbU4JEhrY/a3HQ41+ECP+t6AmAL
-	 7OmSi7iQdRLdQ==
+	b=I6RBRA4q7+VxDaPUR4YejasJq7CC70xWXftAJjttOaS03yOCkMdcobbZSceg9iA5o
+	 yrAiHyX5KJ0X9wwwp5k4t59+jAtqqM4L2o7DldK4oueGXyAzMA7liH95JS0zWYw5Ro
+	 /wu+g2HKErcU/c7umEBCmBodcjefP6DqVSHKxQXfHEjy3fOmrfm8l9ezf6J0M2ePA+
+	 rExY5KYQKcgUHkpp4uNZLMTgSTVw7NFwvM+Wu/DUvqIFaDa+0CljtbFy7mw6BLFQ7N
+	 30iKhSnhEtvR1Aui8Uxw3gl/rVmN7eaYC7MEBtM2KBSoYn0hjzQyb0nx9LO07LRu7A
+	 aBSUZP2vmuZ9g==
 Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 6927hncX73646822
+	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 6927hlyS73646803
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 2 Oct 2026 15:43:49 +0800
+	Fri, 2 Oct 2026 15:43:47 +0800
 Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
  RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Fri, 2 Oct 2026 15:43:34 +0800
+ 15.2.2562.49; Fri, 2 Oct 2026 15:43:32 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
  (10.21.1.56) with Microsoft SMTP Server id 15.2.2562.49 via Frontend
- Transport; Fri, 2 Oct 2026 15:43:34 +0800
+ Transport; Fri, 2 Oct 2026 15:43:32 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <jbrunet+clk@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
 	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
@@ -47,10 +47,10 @@ CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-realtek-soc@lists.infradead.org>, <james.tai@realtek.com>,
 	<cy.huang@realtek.com>, <stanley_chang@realtek.com>,
-	<eleanor.lin@realtek.com>, Brian Masney <bmasney@redhat.com>
-Subject: [PATCH v15 08/11] clk: realtek: Add support for MMC-tuned PLL clocks
-Date: Fri, 2 Oct 2026 15:43:28 +0800
-Message-ID: <20261002074331.3066919-9-eleanor.lin@realtek.com>
+	<eleanor.lin@realtek.com>
+Subject: [PATCH v15 03/11] reset: realtek: Add RTD1625 reset controller driver
+Date: Fri, 2 Oct 2026 15:43:23 +0800
+Message-ID: <20261002074331.3066919-4-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20261002074331.3066919-1-eleanor.lin@realtek.com>
 References: <20261002074331.3066919-1-eleanor.lin@realtek.com>
@@ -65,508 +65,323 @@ Content-Type: text/plain
 
 From: Cheng-Yu Lee <cylee12@realtek.com>
 
-Add clk_pll_mmc_ops for enable/disable, prepare, rate control, and status
-operations on MMC PLL clocks.
+Add support for the CRT (Clock, Reset, and Test) and ISO (Isolation)domain
+reset controller on the Realtek RTD1625 SoC.
 
-Also add clk_pll_mmc_phase_ops to support phase get/set operations.
+The reset controller shares the same register space with the CRT and ISO
+clock controller. To handle this shared register space, the reset driver is
+implemented as an auxiliary driver. It will be instantiated and probed via
+the auxiliary bus by the RTD1625-CRT and RTD1625-ISO clock controller driver.
 
 Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
-Co-developed-by: Jyan Chou <jyanchou@realtek.com>
-Signed-off-by: Jyan Chou <jyanchou@realtek.com>
 Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
 Changes in v15:
 - None.
 ---
- drivers/clk/realtek/Kconfig       |   3 +
- drivers/clk/realtek/Makefile      |   2 +
- drivers/clk/realtek/clk-pll-mmc.c | 430 ++++++++++++++++++++++++++++++
- drivers/clk/realtek/clk-pll.h     |  13 +
- 4 files changed, 448 insertions(+)
- create mode 100644 drivers/clk/realtek/clk-pll-mmc.c
+ drivers/reset/realtek/Kconfig         |  11 ++
+ drivers/reset/realtek/Makefile        |   1 +
+ drivers/reset/realtek/reset-rtd1625.c | 262 ++++++++++++++++++++++++++
+ 3 files changed, 274 insertions(+)
+ create mode 100644 drivers/reset/realtek/reset-rtd1625.c
 
-diff --git a/drivers/clk/realtek/Kconfig b/drivers/clk/realtek/Kconfig
-index e8deccf93f94..00ef9c5ba969 100644
---- a/drivers/clk/realtek/Kconfig
-+++ b/drivers/clk/realtek/Kconfig
-@@ -26,4 +26,7 @@ config RTK_CLK_COMMON
- 	  infrastructure to spawn reset controllers via the auxiliary bus
- 	  where required.
- 
-+config RTK_CLK_PLL_MMC
-+	bool
+diff --git a/drivers/reset/realtek/Kconfig b/drivers/reset/realtek/Kconfig
+index 5ddf8e5c09c7..38591b6a70b3 100644
+--- a/drivers/reset/realtek/Kconfig
++++ b/drivers/reset/realtek/Kconfig
+@@ -6,3 +6,14 @@ config RESET_RTK_COMMON
+ 	  Realtek SoCs. It provides shared reset control operations
+ 	  (assert, deassert, status) that other Realtek-specific reset
+ 	  drivers can use.
 +
- endif
-diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
-index 217ccaf5644a..52b9cb9c2323 100644
---- a/drivers/clk/realtek/Makefile
-+++ b/drivers/clk/realtek/Makefile
-@@ -6,3 +6,5 @@ clk-rtk-y += clk-pll.o
- clk-rtk-y += clk-regmap-gate.o
- clk-rtk-y += clk-regmap-mux.o
- clk-rtk-y += freq_table.o
-+
-+clk-rtk-$(CONFIG_RTK_CLK_PLL_MMC) += clk-pll-mmc.o
-diff --git a/drivers/clk/realtek/clk-pll-mmc.c b/drivers/clk/realtek/clk-pll-mmc.c
++config RESET_RTD1625
++	tristate "RTD1625 Reset Controller"
++	depends on ARCH_REALTEK || COMPILE_TEST
++	select RESET_RTK_COMMON
++	select AUXILIARY_BUS
++	help
++	  This enables the reset controller driver for Realtek RTD1625 SoC.
++	  The driver controls reset lines for various peripherals including
++	  PCIe, SATA, HDMI, display, video encoder/decoder, USB, SD, audio,
++	  and other subsystems.
+diff --git a/drivers/reset/realtek/Makefile b/drivers/reset/realtek/Makefile
+index 6d68e41748bf..993acd1e2d14 100644
+--- a/drivers/reset/realtek/Makefile
++++ b/drivers/reset/realtek/Makefile
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ obj-$(CONFIG_RESET_RTK_COMMON) += reset-rtk-common.o
++obj-$(CONFIG_RESET_RTD1625) += reset-rtd1625.o
+diff --git a/drivers/reset/realtek/reset-rtd1625.c b/drivers/reset/realtek/reset-rtd1625.c
 new file mode 100644
-index 000000000000..2ee90b5d8a38
+index 000000000000..061634e74b5f
 --- /dev/null
-+++ b/drivers/clk/realtek/clk-pll-mmc.c
-@@ -0,0 +1,430 @@
++++ b/drivers/reset/realtek/reset-rtd1625.c
+@@ -0,0 +1,262 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Copyright (C) 2021-2026 Realtek Semiconductor Corporation
-+ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ * Copyright (C) 2026 Realtek Semiconductor Corporation
 + */
 +
-+#include <linux/bits.h>
-+#include <linux/delay.h>
-+#include <linux/export.h>
-+#include <linux/math.h>
++#include <dt-bindings/reset/realtek,rtd1625.h>
++#include <linux/auxiliary_bus.h>
++#include <linux/array_size.h>
++#include <linux/device.h>
++#include <linux/errno.h>
 +#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include "clk-pll.h"
-+
-+#define RTK_PLL_EMMC1_OFFSET            0x0
-+#define RTK_PLL_EMMC2_OFFSET            0x4
-+#define RTK_PLL_EMMC3_OFFSET            0x8
-+#define RTK_PLL_EMMC4_OFFSET            0xc
-+#define RTK_PLL_SSC_DIG_EMMC1_OFFSET    0x0
-+#define RTK_PLL_SSC_DIG_EMMC3_OFFSET    0xc
-+#define RTK_PLL_SSC_DIG_EMMC4_OFFSET    0x10
-+
-+#define RTK_PLL_MMC_SSC_DIV_N_VAL       0x1b
-+
-+#define RTK_PLL_PHRT0_MASK              BIT(0)
-+#define RTK_PLL_PHSEL_MASK              GENMASK(4, 0)
-+#define RTK_PLL_SSCPLL_RS_MASK          GENMASK(12, 10)
-+#define RTK_PLL_SSCPLL_ICP_MASK         GENMASK(9, 5)
-+#define RTK_PLL_SSC_DIV_EXT_F_MASK      GENMASK(25, 13)
-+#define RTK_PLL_PI_IBSELH_MASK          GENMASK(28, 27)
-+#define RTK_PLL_SSC_DIV_N_MASK          GENMASK(23, 16)
-+#define RTK_PLL_NCODE_SSC_EMMC_MASK     GENMASK(20, 13)
-+#define RTK_PLL_FCODE_SSC_EMMC_MASK     GENMASK(12, 0)
-+#define RTK_PLL_GRAN_EST_EM_MC_MASK     GENMASK(20, 0)
-+#define RTK_PLL_EN_SSC_EMMC_MASK        BIT(0)
-+#define RTK_PLL_FLAG_INITIAL_EMMC_MASK  BIT(8)
-+
-+#define RTK_PLL_PHRT0_SHIFT             1
-+#define RTK_PLL_SSCPLL_RS_SHIFT         10
-+#define RTK_PLL_SSCPLL_ICP_SHIFT        5
-+#define RTK_PLL_SSC_DIV_EXT_F_SHIFT     13
-+#define RTK_PLL_PI_IBSELH_SHIFT         27
-+#define RTK_PLL_SSC_DIV_N_SHIFT         16
-+#define RTK_PLL_NCODE_SSC_EMMC_SHIFT    13
-+#define RTK_PLL_FLAG_INITIAL_EMMC_SHIFT 8
-+
-+#define CYCLE_DEGREES                   360
-+#define PHASE_STEPS                     32
-+#define PHASE_SCALE_FACTOR              1125
-+
-+static inline struct rtk_clk_regmap_pll_mmc *to_clk_pll_mmc(struct clk_hw *hw)
-+{
-+	struct rtk_clk_regmap *clkr = to_rtk_clk_regmap(hw);
-+
-+	return container_of(clkr, struct rtk_clk_regmap_pll_mmc, clkr);
-+}
-+
-+static inline int get_phrt0(struct rtk_clk_regmap_pll_mmc *clkm, u32 *val)
-+{
-+	u32 reg;
-+	int ret;
-+
-+	ret = regmap_read(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC1_OFFSET, &reg);
-+	if (ret)
-+		return ret;
-+
-+	*val = (reg >> RTK_PLL_PHRT0_SHIFT) & RTK_PLL_PHRT0_MASK;
-+
-+	return 0;
-+}
-+
-+static inline int set_phrt0(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
-+{
-+	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC1_OFFSET,
-+				  RTK_PLL_PHRT0_MASK << RTK_PLL_PHRT0_SHIFT,
-+				  val << RTK_PLL_PHRT0_SHIFT);
-+}
-+
-+static inline int get_phsel(struct rtk_clk_regmap_pll_mmc *clkm, int id, u32 *val)
-+{
-+	u32 sft = id ? 8 : 3;
-+	u32 raw_val;
-+	int ret;
-+
-+	ret = regmap_read(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC1_OFFSET, &raw_val);
-+	if (ret)
-+		return ret;
-+
-+	*val = (raw_val >> sft) & RTK_PLL_PHSEL_MASK;
-+
-+	return 0;
-+}
-+
-+static inline int set_phsel(struct rtk_clk_regmap_pll_mmc *clkm, int id, u32 val)
-+{
-+	u32 sft = id ? 8 : 3;
-+
-+	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC1_OFFSET,
-+				  RTK_PLL_PHSEL_MASK << sft, val << sft);
-+}
-+
-+static inline int set_sscpll_rs(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
-+{
-+	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC2_OFFSET,
-+				  RTK_PLL_SSCPLL_RS_MASK, val << RTK_PLL_SSCPLL_RS_SHIFT);
-+}
-+
-+static inline int set_sscpll_icp(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
-+{
-+	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC2_OFFSET,
-+				  RTK_PLL_SSCPLL_ICP_MASK, val << RTK_PLL_SSCPLL_ICP_SHIFT);
-+}
-+
-+static inline int get_ssc_div_ext_f(struct rtk_clk_regmap_pll_mmc *clkm, u32 *val)
-+{
-+	u32 raw_val;
-+	int ret;
-+
-+	ret = regmap_read(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC2_OFFSET, &raw_val);
-+	if (ret)
-+		return ret;
-+
-+	*val = (raw_val & RTK_PLL_SSC_DIV_EXT_F_MASK) >> RTK_PLL_SSC_DIV_EXT_F_SHIFT;
-+
-+	return 0;
-+}
-+
-+static inline int set_ssc_div_ext_f(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
-+{
-+	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC2_OFFSET,
-+				  RTK_PLL_SSC_DIV_EXT_F_MASK,
-+				  val << RTK_PLL_SSC_DIV_EXT_F_SHIFT);
-+}
-+
-+static inline int set_pi_ibselh(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
-+{
-+	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC2_OFFSET,
-+				  RTK_PLL_PI_IBSELH_MASK, val << RTK_PLL_PI_IBSELH_SHIFT);
-+}
-+
-+static inline int set_ssc_div_n(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
-+{
-+	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC3_OFFSET,
-+				  RTK_PLL_SSC_DIV_N_MASK, val << RTK_PLL_SSC_DIV_N_SHIFT);
-+}
-+
-+static inline int get_ssc_div_n(struct rtk_clk_regmap_pll_mmc *clkm, u32 *val)
-+{
-+	u32 raw_val;
-+	int ret;
-+
-+	ret = regmap_read(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC3_OFFSET, &raw_val);
-+	if (ret)
-+		return ret;
-+
-+	*val = (raw_val & RTK_PLL_SSC_DIV_N_MASK) >> RTK_PLL_SSC_DIV_N_SHIFT;
-+
-+	return 0;
-+}
-+
-+static inline int set_pow_ctl(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
-+{
-+	return regmap_write(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC4_OFFSET, val);
-+}
-+
-+static inline int get_pow_ctl(struct rtk_clk_regmap_pll_mmc *clkm, u32 *val)
-+{
-+	u32 raw_val;
-+	int ret;
-+
-+	ret = regmap_read(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC4_OFFSET, &raw_val);
-+	if (ret)
-+		return ret;
-+
-+	*val = raw_val;
-+
-+	return 0;
-+}
-+
-+static int rtk_clk_regmap_pll_mmc_phase_set_phase(struct clk_hw *hw, int degrees)
-+{
-+	struct clk_hw *hwp = clk_hw_get_parent(hw);
-+	struct rtk_clk_regmap_pll_mmc *clkm;
-+	int phase_id, ret;
-+	u32 val;
-+
-+	if (!hwp)
-+		return -ENOENT;
-+
-+	clkm = to_clk_pll_mmc(hwp);
-+	phase_id = (hw == &clkm->phase0_hw) ? 0 : 1;
-+	val = DIV_ROUND_CLOSEST(degrees * 100, PHASE_SCALE_FACTOR);
-+	ret = set_phsel(clkm, phase_id, val);
-+	if (ret)
-+		return ret;
-+
-+	usleep_range(10, 20);
-+
-+	return 0;
-+}
-+
-+static int rtk_clk_regmap_pll_mmc_phase_get_phase(struct clk_hw *hw)
-+{
-+	struct rtk_clk_regmap_pll_mmc *clkm;
-+	struct clk_hw *hwp;
-+	int phase_id, ret;
-+	u32 val;
-+
-+	hwp = clk_hw_get_parent(hw);
-+	if (!hwp)
-+		return -ENOENT;
-+
-+	clkm = to_clk_pll_mmc(hwp);
-+	phase_id = (hw == &clkm->phase0_hw) ? 0 : 1;
-+	ret = get_phsel(clkm, phase_id, &val);
-+	if (ret)
-+		return ret;
-+
-+	val = DIV_ROUND_CLOSEST(val * CYCLE_DEGREES, PHASE_STEPS);
-+
-+	return val;
-+}
-+
-+const struct clk_ops rtk_clk_pll_mmc_phase_ops = {
-+	.set_phase = rtk_clk_regmap_pll_mmc_phase_set_phase,
-+	.get_phase = rtk_clk_regmap_pll_mmc_phase_get_phase,
-+};
-+EXPORT_SYMBOL_NS_GPL(rtk_clk_pll_mmc_phase_ops, "CLK_REALTEK");
-+
-+static int rtk_clk_regmap_pll_mmc_prepare(struct clk_hw *hw)
-+{
-+	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
-+
-+	return set_pow_ctl(clkm, 7);
-+}
-+
-+static void rtk_clk_regmap_pll_mmc_unprepare(struct clk_hw *hw)
-+{
-+	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
-+
-+	set_pow_ctl(clkm, 0);
-+}
-+
-+static int rtk_clk_regmap_pll_mmc_is_prepared(struct clk_hw *hw)
-+{
-+	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
-+	u32 val;
-+	int ret;
-+
-+	ret = get_pow_ctl(clkm, &val);
-+	if (ret)
-+		return 1;
-+
-+	return val != 0x0;
-+}
-+
-+static int rtk_clk_regmap_pll_mmc_enable(struct clk_hw *hw)
-+{
-+	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
-+	int ret;
-+
-+	ret = set_phrt0(clkm, 1);
-+	if (ret)
-+		return ret;
-+
-+	udelay(10);
-+
-+	return 0;
-+}
-+
-+static void rtk_clk_regmap_pll_mmc_disable(struct clk_hw *hw)
-+{
-+	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
-+
-+	set_phrt0(clkm, 0);
-+	udelay(10);
-+}
-+
-+static int rtk_clk_regmap_pll_mmc_is_enabled(struct clk_hw *hw)
-+{
-+	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
-+	u32 val;
-+	int ret;
-+
-+	ret = get_phrt0(clkm, &val);
-+	if (ret)
-+		return 1;
-+
-+	return val == 0x1;
-+}
-+
-+static unsigned long rtk_clk_regmap_pll_mmc_recalc_rate(struct clk_hw *hw,
-+							unsigned long parent_rate)
-+{
-+	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
-+	u32 val, ext_f;
-+	u64 rate, base;
-+	int ret;
-+
-+	ret = get_ssc_div_n(clkm, &val);
-+	if (ret)
-+		return 0;
-+
-+	ret = get_ssc_div_ext_f(clkm, &ext_f);
-+	if (ret)
-+		return 0;
-+
-+	base = parent_rate / 4;
-+	rate = base * (val + 2);
-+	rate += div_u64(base * ext_f, 8192);
-+
-+	return rate;
-+}
-+
-+static int rtk_clk_regmap_pll_mmc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
-+{
-+	u32 val = RTK_PLL_MMC_SSC_DIV_N_VAL + 2;
-+	u64 tmp;
-+
-+	if (!req->best_parent_rate)
-+		return -EINVAL;
-+
-+	req->rate = req->best_parent_rate / 4 * val;
-+	tmp = (u64)(req->best_parent_rate / 4) * 1517;
-+	req->rate += tmp >> 13;
-+
-+	return 0;
-+}
-+
-+static int rtk_clk_regmap_pll_mmc_set_rate(struct clk_hw *hw, unsigned long rate,
-+					   unsigned long parent_rate)
-+{
-+	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
-+	u32 val = RTK_PLL_MMC_SSC_DIV_N_VAL;
-+	int ret;
-+
-+	/*
-+	 * The 'rate' and 'parent_rate' are intentionally unused here.
-+	 *
-+	 * Despite receiving various rate requests (e.g., 26MHz, 52MHz, 200MHz),
-+	 * this function consistently configures the hardware for 27MHz (0x1b).
-+	 * This is because these settings reflect the input reference clock
-+	 * frequency to the SSCPLL, not the final PLL output frequency.
-+	 *
-+	 * The actual frequency division to achieve the requested eMMC rate
-+	 * is handled internally by the downstream eMMC host controller.
-+	 */
-+
-+	ret = regmap_update_bits(clkm->clkr.regmap,
-+				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC1_OFFSET,
-+				 RTK_PLL_FLAG_INITIAL_EMMC_MASK,
-+				 0x0 << RTK_PLL_FLAG_INITIAL_EMMC_SHIFT);
-+	if (ret)
-+		return ret;
-+
-+	ret = set_ssc_div_n(clkm, val);
-+	if (ret)
-+		return ret;
-+
-+	ret = set_ssc_div_ext_f(clkm, 1517);
-+	if (ret)
-+		return ret;
-+
-+	ret = set_pi_ibselh(clkm, 2);
-+	if (ret)
-+		return ret;
-+
-+	ret = set_sscpll_rs(clkm, 3);
-+	if (ret)
-+		return ret;
-+
-+	ret = set_sscpll_icp(clkm, 1);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(clkm->clkr.regmap,
-+				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC3_OFFSET,
-+				 RTK_PLL_NCODE_SSC_EMMC_MASK,
-+				 27 << RTK_PLL_NCODE_SSC_EMMC_SHIFT);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(clkm->clkr.regmap,
-+				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC3_OFFSET,
-+				 RTK_PLL_FCODE_SSC_EMMC_MASK, 321);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(clkm->clkr.regmap,
-+				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC4_OFFSET,
-+				 RTK_PLL_GRAN_EST_EM_MC_MASK, 5985);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(clkm->clkr.regmap,
-+				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC1_OFFSET,
-+				 RTK_PLL_EN_SSC_EMMC_MASK, 0x1);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(clkm->clkr.regmap,
-+				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC1_OFFSET,
-+				 RTK_PLL_EN_SSC_EMMC_MASK, 0x0);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(clkm->clkr.regmap,
-+				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC1_OFFSET,
-+				 RTK_PLL_FLAG_INITIAL_EMMC_MASK,
-+				 0x1 << RTK_PLL_FLAG_INITIAL_EMMC_SHIFT);
-+	if (ret)
-+		return ret;
-+
-+	usleep_range(10, 20);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops rtk_clk_pll_mmc_ops = {
-+	.prepare          = rtk_clk_regmap_pll_mmc_prepare,
-+	.unprepare        = rtk_clk_regmap_pll_mmc_unprepare,
-+	.is_prepared      = rtk_clk_regmap_pll_mmc_is_prepared,
-+	.enable           = rtk_clk_regmap_pll_mmc_enable,
-+	.disable          = rtk_clk_regmap_pll_mmc_disable,
-+	.is_enabled       = rtk_clk_regmap_pll_mmc_is_enabled,
-+	.recalc_rate      = rtk_clk_regmap_pll_mmc_recalc_rate,
-+	.determine_rate   = rtk_clk_regmap_pll_mmc_determine_rate,
-+	.set_rate         = rtk_clk_regmap_pll_mmc_set_rate,
-+};
-+EXPORT_SYMBOL_NS_GPL(rtk_clk_pll_mmc_ops, "CLK_REALTEK");
-diff --git a/drivers/clk/realtek/clk-pll.h b/drivers/clk/realtek/clk-pll.h
-index 023b49bbcbee..d21793387eee 100644
---- a/drivers/clk/realtek/clk-pll.h
-+++ b/drivers/clk/realtek/clk-pll.h
-@@ -44,4 +44,17 @@ struct rtk_clk_regmap_pll {
- extern const struct clk_ops rtk_clk_pll_ops;
- extern const struct clk_ops rtk_clk_pll_ro_ops;
- 
-+struct rtk_clk_regmap_pll_mmc {
-+	struct rtk_clk_regmap clkr;
-+	unsigned int pll_ofs;
-+	unsigned int ssc_dig_ofs;
-+	struct clk_hw phase0_hw;
-+	struct clk_hw phase1_hw;
++#include <linux/slab.h>
++#include "reset-rtk-common.h"
++
++struct rtd1625_reset_info {
++	const struct rtk_reset_desc *descs;
++	unsigned int nr_resets;
 +};
 +
-+#define __rtk_clk_regmap_pll_mmc_hw(_ptr)  __rtk_clk_regmap_hw(&(_ptr)->clkr)
++static const struct rtk_reset_desc rtd1625_crt_reset_descs[] = {
++	/* Bank 0: offset 0x0 */
++	[RTD1625_CRT_RSTN_MISC]         = { .ofs = 0x0, .bit = 0,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_DIP]          = { .ofs = 0x0, .bit = 2,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_GSPI]         = { .ofs = 0x0, .bit = 4,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_SDS]          = { .ofs = 0x0, .bit = 6,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_SDS_REG]      = { .ofs = 0x0, .bit = 8,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_SDS_PHY]      = { .ofs = 0x0, .bit = 10, .write_en = 1 },
++	[RTD1625_CRT_RSTN_GPU2D]        = { .ofs = 0x0, .bit = 12, .write_en = 1 },
++	[RTD1625_CRT_RSTN_DC_PHY]       = { .ofs = 0x0, .bit = 22, .write_en = 1 },
++	[RTD1625_CRT_RSTN_DCPHY_CRT]    = { .ofs = 0x0, .bit = 24, .write_en = 1 },
++	[RTD1625_CRT_RSTN_LSADC]        = { .ofs = 0x0, .bit = 26, .write_en = 1 },
++	[RTD1625_CRT_RSTN_SE]           = { .ofs = 0x0, .bit = 28, .write_en = 1 },
++	[RTD1625_CRT_RSTN_DLA]          = { .ofs = 0x0, .bit = 30, .write_en = 1 },
++	/* Bank 1: offset 0x4 */
++	[RTD1625_CRT_RSTN_JPEG]         = { .ofs = 0x4, .bit = 0,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_SD]           = { .ofs = 0x4, .bit = 2,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_SDIO]         = { .ofs = 0x4, .bit = 6,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCR_CNT]      = { .ofs = 0x4, .bit = 8,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE0_STITCH] = { .ofs = 0x4, .bit = 10, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE0_PHY]    = { .ofs = 0x4, .bit = 12, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE0]        = { .ofs = 0x4, .bit = 14, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE0_CORE]   = { .ofs = 0x4, .bit = 16, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE0_POWER]  = { .ofs = 0x4, .bit = 18, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE0_NONSTICH] = { .ofs = 0x4, .bit = 20, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE0_PHY_MDIO] = { .ofs = 0x4, .bit = 22, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE0_SGMII_MDIO] = { .ofs = 0x4, .bit = 24, .write_en = 1 },
++	[RTD1625_CRT_RSTN_VO2]          = { .ofs = 0x4, .bit = 28, .write_en = 1 },
++	[RTD1625_CRT_RSTN_MISC_SC0]     = { .ofs = 0x4, .bit = 30, .write_en = 1 },
++	/* Bank 2: offset 0x8 */
++	[RTD1625_CRT_RSTN_MD]           = { .ofs = 0x8, .bit = 4,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_LVDS1]        = { .ofs = 0x8, .bit = 6,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_LVDS2]        = { .ofs = 0x8, .bit = 8,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_MISC_SC1]     = { .ofs = 0x8, .bit = 10, .write_en = 1 },
++	[RTD1625_CRT_RSTN_I2C_3]        = { .ofs = 0x8, .bit = 12, .write_en = 1 },
++	[RTD1625_CRT_RSTN_FAN]          = { .ofs = 0x8, .bit = 14, .write_en = 1 },
++	[RTD1625_CRT_RSTN_TVE]          = { .ofs = 0x8, .bit = 16, .write_en = 1 },
++	[RTD1625_CRT_RSTN_AIO]          = { .ofs = 0x8, .bit = 18, .write_en = 1 },
++	[RTD1625_CRT_RSTN_VO]           = { .ofs = 0x8, .bit = 20, .write_en = 1 },
++	[RTD1625_CRT_RSTN_MIPI_CSI]     = { .ofs = 0x8, .bit = 22, .write_en = 1 },
++	[RTD1625_CRT_RSTN_HDMIRX]       = { .ofs = 0x8, .bit = 24, .write_en = 1 },
++	[RTD1625_CRT_RSTN_HDMIRX_WRAP]  = { .ofs = 0x8, .bit = 26, .write_en = 1 },
++	[RTD1625_CRT_RSTN_HDMI]         = { .ofs = 0x8, .bit = 28, .write_en = 1 },
++	[RTD1625_CRT_RSTN_DISP]         = { .ofs = 0x8, .bit = 30, .write_en = 1 },
++	/* Bank 3: offset 0xc */
++	[RTD1625_CRT_RSTN_SATA_PHY_POW1] = { .ofs = 0xc, .bit = 0,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_SATA_PHY_POW0] = { .ofs = 0xc, .bit = 2,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_SATA_MDIO1]   = { .ofs = 0xc, .bit = 4,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_SATA_MDIO0]   = { .ofs = 0xc, .bit = 6,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_SATA_WRAP]    = { .ofs = 0xc, .bit = 8,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_SATA_MAC_P1]  = { .ofs = 0xc, .bit = 10, .write_en = 1 },
++	[RTD1625_CRT_RSTN_SATA_MAC_P0]  = { .ofs = 0xc, .bit = 12, .write_en = 1 },
++	[RTD1625_CRT_RSTN_SATA_MAC_COM] = { .ofs = 0xc, .bit = 14, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE1_STITCH] = { .ofs = 0xc, .bit = 16, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE1_PHY]     = { .ofs = 0xc, .bit = 18, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE1]         = { .ofs = 0xc, .bit = 20, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE1_CORE]   = { .ofs = 0xc, .bit = 22, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE1_POWER]  = { .ofs = 0xc, .bit = 24, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE1_NONSTICH] = { .ofs = 0xc, .bit = 26, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE1_PHY_MDIO] = { .ofs = 0xc, .bit = 28, .write_en = 1 },
++	[RTD1625_CRT_RSTN_HDMITOP]      = { .ofs = 0xc, .bit = 30, .write_en = 1 },
++	/* Bank 4: offset 0x68 */
++	[RTD1625_CRT_RSTN_I2C_4]        = { .ofs = 0x68, .bit = 2,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_I2C_5]        = { .ofs = 0x68, .bit = 4,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_TSIO]         = { .ofs = 0x68, .bit = 6,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_VI]           = { .ofs = 0x68, .bit = 8,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_EDP]          = { .ofs = 0x68, .bit = 10, .write_en = 1 },
++	[RTD1625_CRT_RSTN_VE1_MMU]      = { .ofs = 0x68, .bit = 12, .write_en = 1 },
++	[RTD1625_CRT_RSTN_VE1_MMU_FUNC] = { .ofs = 0x68, .bit = 14, .write_en = 1 },
++	[RTD1625_CRT_RSTN_HSE_MMU]      = { .ofs = 0x68, .bit = 16, .write_en = 1 },
++	[RTD1625_CRT_RSTN_HSE_MMU_FUNC] = { .ofs = 0x68, .bit = 18, .write_en = 1 },
++	[RTD1625_CRT_RSTN_MDLM2M]       = { .ofs = 0x68, .bit = 20, .write_en = 1 },
++	[RTD1625_CRT_RSTN_ISO_GSPI]     = { .ofs = 0x68, .bit = 22, .write_en = 1 },
++	[RTD1625_CRT_RSTN_SOFT_NPU]     = { .ofs = 0x68, .bit = 24, .write_en = 1 },
++	[RTD1625_CRT_RSTN_SPI2EMMC]     = { .ofs = 0x68, .bit = 26, .write_en = 1 },
++	[RTD1625_CRT_RSTN_EARC]         = { .ofs = 0x68, .bit = 28, .write_en = 1 },
++	[RTD1625_CRT_RSTN_VE1]          = { .ofs = 0x68, .bit = 30, .write_en = 1 },
++	/* Bank 5: offset 0x90 */
++	[RTD1625_CRT_RSTN_PCIE2_STITCH]  = { .ofs = 0x90, .bit = 0,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE2_PHY]    = { .ofs = 0x90, .bit = 2,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE2]        = { .ofs = 0x90, .bit = 4,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE2_CORE]   = { .ofs = 0x90, .bit = 6,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE2_POWER]  = { .ofs = 0x90, .bit = 8,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE2_NONSTICH] = { .ofs = 0x90, .bit = 10, .write_en = 1 },
++	[RTD1625_CRT_RSTN_PCIE2_PHY_MDIO] = { .ofs = 0x90, .bit = 12, .write_en = 1 },
++	[RTD1625_CRT_RSTN_DCPHY_UMCTL2] = { .ofs = 0x90, .bit = 14, .write_en = 1 },
++	[RTD1625_CRT_RSTN_MIPI_DSI]     = { .ofs = 0x90, .bit = 16, .write_en = 1 },
++	[RTD1625_CRT_RSTN_HIFM]         = { .ofs = 0x90, .bit = 18, .write_en = 1 },
++	[RTD1625_CRT_RSTN_NSRAM]        = { .ofs = 0x90, .bit = 20, .write_en = 1 },
++	[RTD1625_CRT_RSTN_AUCPU0_REG]   = { .ofs = 0x90, .bit = 22, .write_en = 1 },
++	[RTD1625_CRT_RSTN_MDL_GENPW]    = { .ofs = 0x90, .bit = 24, .write_en = 1 },
++	[RTD1625_CRT_RSTN_MDL_CHIP]     = { .ofs = 0x90, .bit = 26, .write_en = 1 },
++	[RTD1625_CRT_RSTN_MDL_IP]       = { .ofs = 0x90, .bit = 28, .write_en = 1 },
++	[RTD1625_CRT_RSTN_TEST_MUX]     = { .ofs = 0x90, .bit = 30, .write_en = 1 },
++	/* Bank 6: offset 0xb8 */
++	[RTD1625_CRT_RSTN_ISO_BIST]     = { .ofs = 0xb8, .bit = 0,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_MAIN_BIST]    = { .ofs = 0xb8, .bit = 2,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_MAIN2_BIST]   = { .ofs = 0xb8, .bit = 4,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_VE1_BIST]     = { .ofs = 0xb8, .bit = 6,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_VE2_BIST]     = { .ofs = 0xb8, .bit = 8,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_DCPHY_BIST]   = { .ofs = 0xb8, .bit = 10, .write_en = 1 },
++	[RTD1625_CRT_RSTN_GPU_BIST]     = { .ofs = 0xb8, .bit = 12, .write_en = 1 },
++	[RTD1625_CRT_RSTN_DISP_BIST]    = { .ofs = 0xb8, .bit = 14, .write_en = 1 },
++	[RTD1625_CRT_RSTN_NPU_BIST]     = { .ofs = 0xb8, .bit = 16, .write_en = 1 },
++	[RTD1625_CRT_RSTN_CAS_BIST]     = { .ofs = 0xb8, .bit = 18, .write_en = 1 },
++	[RTD1625_CRT_RSTN_VE4_BIST]     = { .ofs = 0xb8, .bit = 20, .write_en = 1 },
++	/* Bank 7: offset 0x454 (DUMMY0, no write_en) */
++	[RTD1625_CRT_RSTN_EMMC]         = { .ofs = 0x454, .bit = 0 },
++	/* Bank 8: offset 0x458 (DUMMY1, no write_en) */
++	[RTD1625_CRT_RSTN_GPU]          = { .ofs = 0x458, .bit = 0 },
++	/* Bank 9: offset 0x464 (DUMMY4, no write_en) */
++	[RTD1625_CRT_RSTN_VE2]          = { .ofs = 0x464, .bit = 0 },
++	/* Bank 10: offset 0x880 */
++	[RTD1625_CRT_RSTN_UR1]          = { .ofs = 0x880, .bit = 0,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_UR2]          = { .ofs = 0x880, .bit = 2,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_UR3]          = { .ofs = 0x880, .bit = 4,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_UR4]          = { .ofs = 0x880, .bit = 6,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_UR5]          = { .ofs = 0x880, .bit = 8,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_UR6]          = { .ofs = 0x880, .bit = 10, .write_en = 1 },
++	[RTD1625_CRT_RSTN_UR7]          = { .ofs = 0x880, .bit = 12, .write_en = 1 },
++	[RTD1625_CRT_RSTN_UR8]          = { .ofs = 0x880, .bit = 14, .write_en = 1 },
++	[RTD1625_CRT_RSTN_UR9]          = { .ofs = 0x880, .bit = 16, .write_en = 1 },
++	[RTD1625_CRT_RSTN_UR_TOP]       = { .ofs = 0x880, .bit = 18, .write_en = 1 },
++	[RTD1625_CRT_RSTN_I2C_7]        = { .ofs = 0x880, .bit = 28, .write_en = 1 },
++	[RTD1625_CRT_RSTN_I2C_6]        = { .ofs = 0x880, .bit = 30, .write_en = 1 },
++	/* Bank 11: offset 0x890 */
++	[RTD1625_CRT_RSTN_SPI0]         = { .ofs = 0x890, .bit = 0,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_SPI1]         = { .ofs = 0x890, .bit = 2,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_SPI2]         = { .ofs = 0x890, .bit = 4,  .write_en = 1 },
++	[RTD1625_CRT_RSTN_LSADC0]       = { .ofs = 0x890, .bit = 16, .write_en = 1 },
++	[RTD1625_CRT_RSTN_LSADC1]       = { .ofs = 0x890, .bit = 18, .write_en = 1 },
++	[RTD1625_CRT_RSTN_ISOMIS_DMA]   = { .ofs = 0x890, .bit = 20, .write_en = 1 },
++	[RTD1625_CRT_RSTN_AUDIO_ADC]    = { .ofs = 0x890, .bit = 22, .write_en = 1 },
++	[RTD1625_CRT_RSTN_DPTX]         = { .ofs = 0x890, .bit = 24, .write_en = 1 },
++	[RTD1625_CRT_RSTN_AUCPU1_REG]   = { .ofs = 0x890, .bit = 26, .write_en = 1 },
++	[RTD1625_CRT_RSTN_EDPTX]        = { .ofs = 0x890, .bit = 28, .write_en = 1 },
++};
 +
-+extern const struct clk_ops rtk_clk_pll_mmc_ops;
-+extern const struct clk_ops rtk_clk_pll_mmc_phase_ops;
++static const struct rtd1625_reset_info rtd1625_crt_info = {
++	.descs = rtd1625_crt_reset_descs,
++	.nr_resets = ARRAY_SIZE(rtd1625_crt_reset_descs),
++};
 +
- #endif /* __CLK_REALTEK_CLK_PLL_H */
++static const struct rtk_reset_desc rtd1625_iso_reset_descs[] = {
++	[RTD1625_ISO_RSTN_VFD]                 = { .ofs = 0x88, .bit = 0 },
++	[RTD1625_ISO_RSTN_CEC0]                = { .ofs = 0x88, .bit = 2 },
++	[RTD1625_ISO_RSTN_CEC1]                = { .ofs = 0x88, .bit = 3 },
++	[RTD1625_ISO_RSTN_CBUSTX]              = { .ofs = 0x88, .bit = 5 },
++	[RTD1625_ISO_RSTN_CBUSRX]              = { .ofs = 0x88, .bit = 6 },
++	[RTD1625_ISO_RSTN_USB3_PHY2_XTAL_POW]  = { .ofs = 0x88, .bit = 7 },
++	[RTD1625_ISO_RSTN_UR0]                 = { .ofs = 0x88, .bit = 8 },
++	[RTD1625_ISO_RSTN_GMAC]                = { .ofs = 0x88, .bit = 9 },
++	[RTD1625_ISO_RSTN_GPHY]                = { .ofs = 0x88, .bit = 10 },
++	[RTD1625_ISO_RSTN_I2C_0]               = { .ofs = 0x88, .bit = 11 },
++	[RTD1625_ISO_RSTN_I2C_1]               = { .ofs = 0x88, .bit = 12 },
++	[RTD1625_ISO_RSTN_CBUS]                = { .ofs = 0x88, .bit = 13 },
++	[RTD1625_ISO_RSTN_USB_DRD]             = { .ofs = 0x88, .bit = 14 },
++	[RTD1625_ISO_RSTN_USB_HOST]            = { .ofs = 0x88, .bit = 15 },
++	[RTD1625_ISO_RSTN_USB_PHY_0]           = { .ofs = 0x88, .bit = 16 },
++	[RTD1625_ISO_RSTN_USB_PHY_1]           = { .ofs = 0x88, .bit = 17 },
++	[RTD1625_ISO_RSTN_USB_PHY_2]           = { .ofs = 0x88, .bit = 18 },
++	[RTD1625_ISO_RSTN_USB]                 = { .ofs = 0x88, .bit = 19 },
++	[RTD1625_ISO_RSTN_TYPE_C]              = { .ofs = 0x88, .bit = 20 },
++	[RTD1625_ISO_RSTN_USB_U3_HOST]         = { .ofs = 0x88, .bit = 21 },
++	[RTD1625_ISO_RSTN_USB3_PHY0_POW]       = { .ofs = 0x88, .bit = 22 },
++	[RTD1625_ISO_RSTN_USB3_P0_MDIO]        = { .ofs = 0x88, .bit = 23 },
++	[RTD1625_ISO_RSTN_USB3_PHY1_POW]       = { .ofs = 0x88, .bit = 24 },
++	[RTD1625_ISO_RSTN_USB3_P1_MDIO]        = { .ofs = 0x88, .bit = 25 },
++	[RTD1625_ISO_RSTN_VTC]                 = { .ofs = 0x88, .bit = 26 },
++	[RTD1625_ISO_RSTN_USB3_PHY2_POW]       = { .ofs = 0x88, .bit = 27 },
++	[RTD1625_ISO_RSTN_USB3_P2_MDIO]        = { .ofs = 0x88, .bit = 28 },
++	[RTD1625_ISO_RSTN_USB_PHY_3]           = { .ofs = 0x88, .bit = 29 },
++	[RTD1625_ISO_RSTN_USB_PHY_4]           = { .ofs = 0x88, .bit = 30 },
++};
++
++static const struct rtd1625_reset_info rtd1625_iso_info = {
++	.descs = rtd1625_iso_reset_descs,
++	.nr_resets = ARRAY_SIZE(rtd1625_iso_reset_descs),
++};
++
++static const struct rtk_reset_desc rtd1625_iso_s_reset_descs[] = {
++	[RTD1625_ISO_S_RSTN_ISOM_MIS] = { .ofs = 0x310, .bit = 0, .write_en = 1 },
++	[RTD1625_ISO_S_RSTN_GPIOM]    = { .ofs = 0x310, .bit = 2, .write_en = 1 },
++	[RTD1625_ISO_S_RSTN_TIMER7]   = { .ofs = 0x310, .bit = 4, .write_en = 1 },
++	[RTD1625_ISO_S_RSTN_IRDA]     = { .ofs = 0x310, .bit = 6, .write_en = 1 },
++	[RTD1625_ISO_S_RSTN_UR10]     = { .ofs = 0x310, .bit = 8, .write_en = 1 },
++};
++
++static const struct rtd1625_reset_info rtd1625_iso_s_info = {
++	.descs = rtd1625_iso_s_reset_descs,
++	.nr_resets = ARRAY_SIZE(rtd1625_iso_s_reset_descs),
++};
++
++static int rtd1625_reset_probe(struct auxiliary_device *adev,
++			       const struct auxiliary_device_id *id)
++{
++	const struct rtd1625_reset_info *info;
++	struct device *dev = &adev->dev;
++	struct rtk_reset_data *data;
++
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	info = (const struct rtd1625_reset_info *)id->driver_data;
++
++	data->descs           = info->descs;
++	data->regmap          = dev_get_platdata(dev);
++	data->rcdev.owner     = THIS_MODULE;
++	data->rcdev.nr_resets = info->nr_resets;
++	data->rcdev.ops       = &rtk_reset_ops;
++	data->rcdev.dev       = dev;
++	data->rcdev.of_node   = dev->of_node;
++
++	return devm_reset_controller_register(dev, &data->rcdev);
++}
++
++static const struct auxiliary_device_id rtd1625_reset_ids[] = {
++	{
++		.name = "clk_rtk.rtd1625_crt_rst",
++		.driver_data = (kernel_ulong_t)&rtd1625_crt_info },
++	{
++		.name = "clk_rtk.rtd1625_iso_rst",
++		.driver_data = (kernel_ulong_t)&rtd1625_iso_info },
++	{
++		.name = "clk_rtk.rtd1625_iso_s_rst",
++		.driver_data = (kernel_ulong_t)&rtd1625_iso_s_info },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(auxiliary, rtd1625_reset_ids);
++
++static struct auxiliary_driver rtd1625_reset_driver = {
++	.probe    = rtd1625_reset_probe,
++	.id_table = rtd1625_reset_ids,
++	.driver = {
++		.name = "rtd1625-reset",
++	},
++};
++module_auxiliary_driver(rtd1625_reset_driver);
++
++MODULE_DESCRIPTION("Realtek RTD1625 Reset Controller Driver");
++MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS("REALTEK_RESET");
 -- 
 2.43.0
 
