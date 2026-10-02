@@ -1,229 +1,239 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74CA3D954F;
-	Fri,  2 Oct 2026 08:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD77443C13
+	for <linux-clk@vger.kernel.org>; Fri,  2 Oct 2026 08:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790928666; cv=none; b=SypEvn+EUZ507xw28REhCuJfXNxCtboNyVLEofe7TMyHnv1RdUFwLCzqmbwnSojgnRxlVzG9rLNuZp38ngYBUng6LB7oyimwj50+pOHYDzDa1UFkkAo6Gq/RgbWc0G6BL06ZDTStx94WS4sL0qnPuk/KJuQU4DO1ftZtYUTh98k=
+	t=1790928971; cv=none; b=t4TBOo9XfSgpHohRy7RUOfmkLjL4D1LLDo+LM+7lJCESKDnPaIshpsq6sr6SE1A7Bv2JuEBxQcOoptx1ilpG3g7b3t7MLDzpD4mGtGUj+vKgbas836uwYvm0Eb2+feaMtZjT3sggWaQCFRAJkmefkwL3HjUkZFaLaSxTYU00n9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790928666; c=relaxed/simple;
-	bh=jbrobNgLFvEYW+K5702m//jZXUekQEX6EeXtEarN3MI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GG7CFw/buHXF4E+KIcf4X/ZOrHk+Fs6LXxbz9KDgk/iJQqKch+vhYK+xW1c5cRgxo6IFy/35ZQvsjjY6hJM9gDmsARFF7X8MiI3ApA6eBuseE0qrgrqD76oJ9nPahLDxSS/HfdwcrhFMRgE2uwojZxxDJLRQ8H3O2fuEp9ofR0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ia0kYKAi; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1790928971; c=relaxed/simple;
+	bh=SrkCUBs7QxzRS2ct6PfMjjH+MllOa63+vm3xFxenUMY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BvO2EsPS0dgLQQTZvc+dxaVwywm6aN/iYnsk7PnedHllscIDNZGxOLgfhc7taOJh2Xi64QGjNGhIuOcTZKva2oCoD2CfOQfAkTCKTqYG2M8bkqbtzlcLS+kvkFJ1yu2rSltkEoxi4LeIUDshMuPCTTOyqqaFhlaZ6BA7NZz8jks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=QiQNvjst; arc=none smtp.client-ip=74.125.225.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ia0kYKAi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790928663; x=1822464663;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jbrobNgLFvEYW+K5702m//jZXUekQEX6EeXtEarN3MI=;
-  b=ia0kYKAiSWnVp3MxPr/qS1CY66rm1SkwHNDl+yUybqKvbzb5kyHAJMoG
-   BP2vJ178VD2gnOvJhMntaT9LrZiIjNDYCJIXh5w3S0HbJbeKnO1XUYYFs
-   oTDUytjCS8HvqEkI8tgNPJNM6IhFlFl0KhimHFSo8XhlsUbtJ1QCkACRf
-   mtie2nW22/ipJiznn3OBcWB/cejmPhUVuZDBzdJTdF7LragquZTY5JHfL
-   4l7mnS8V9DwzkriZX+57rkeOikdswybiZWDDT+8qpQ5U9pB9Z+YoOQfel
-   D5tP8npLinhSC20xp+hviwgEVbPsKUoFXEUy2giQuAaF8Smu1XHwiqRqx
-   Q==;
-X-CSE-ConnectionGUID: l+io++RYQbqUdxWzNxF9Nw==
-X-CSE-MsgGUID: wZeGrd1hS+6ji4HgbDBkzQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11922"; a="94406446"
-X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; 
-   d="scan'208";a="94406446"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2026 01:10:53 -0700
-X-CSE-ConnectionGUID: OWKdrr/1QZ+1XoZZBrzcjw==
-X-CSE-MsgGUID: wfmyyLdUR1uQ8ZwS3auB0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; 
-   d="scan'208";a="275740714"
-Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.188])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2026 01:10:47 -0700
-Date: Fri, 2 Oct 2026 11:10:44 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: longzhao@ambarella.com
-Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>,
-	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 06/15] clk: ambarella: add CV75 RCT clock controller
-Message-ID: <ar9nBBGJ361IFXn8@ashevche-desk.local>
-References: <20261001-cv75-v5-v9-0-486cc289a4b8@ambarella.com>
- <20261001-cv75-v5-v9-6-486cc289a4b8@ambarella.com>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="QiQNvjst"
+Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-4a022e9cbebso10723555e9.0
+        for <linux-clk@vger.kernel.org>; Fri, 02 Oct 2026 01:16:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1790928966; x=1791533766; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=guSS/KYjl8+8j30rtfwxuibMm84o1LTrBp5a4oJHKrY=;
+        b=QiQNvjstwbOumYLNiQN5WT7Y9iSHTzmkOl0eaL4otxyZEejYtFBdOyB3rJVYKG1Wvm
+         UcKSIMb/SFW4gW83nqiKWTopeKMadBT029V+1f3PvpmbNRPlaiTMMhFEzPLzfQ2rNoKn
+         5/hk3knivyzSIfT4BNvlNE75qXLCD4B87I2RITcuNAMhkKqIhAjcaXCbveS42kW45lnY
+         xEmdKDax8Sn9OjAB5XEs0HxcUFuw4MzKfakjIocVrr8pnCYsZV69GXOZVdWsrgeSMrw2
+         15D2PvHGGDq4vOSvN9V3Gx9u5j7rfQ5v7/DBs213GTvzG0wTS0j6loytWZPBTGw4T7sa
+         aM7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790928966; x=1791533766;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :references:in-reply-to:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=guSS/KYjl8+8j30rtfwxuibMm84o1LTrBp5a4oJHKrY=;
+        b=gzCtMs+1pC50ZmnbqR7K5LvbHrKukR1Wveiu8IVhgk5r9rpj3gyC1tU6WkgBF3xWXd
+         DRB9iyrLbQov3UIRlMMEkv3et6g7nhSBqC0fxysQf5cREu6v5m5BuWOifbccvpYP0Yk2
+         2IsJEOVdVIjt1atgw3Me5j8fJ9N3QIP30TREpKoT3opi/gGULs+gayO1eZfqCKq57rf6
+         QOTw2awyhsnXSyz0MPLjDkWJFKTPLIlvUmd5ZwYpwslQeFAd6Rx0V+csM8Dwv5KLnCwv
+         eybyCf6UoYyuXBl/1a78ZDsxpan/26GM0o4jTTGEIMRNRtUpvpIQYQK3QZMrHzxnu7CS
+         ZH1A==
+X-Forwarded-Encrypted: i=1; AKwUvBy1iW0wh5biEedFUpm3jxiUOt+QzkYg1BbqpjDLf4JKW6STn3NZrH4+VNMs1ZQFGu8fblqrXou0nf4=@vger.kernel.org
+X-Gm-Message-State: AFuF++k+al5n9C6LC99fb4jvWtt7KfTUia08M13R6lFJW7Gv+0W9fvSP
+	kcZ7GmGKjPq5smweiQSrHPlX0Wr8TyyYxA9vJC3UUIfruWg3iChQHebyuZ7rhDorrBk=
+X-Gm-Gg: AYBFou1Rsq+BDjJWTdxenUtHqA2DAPEhbOdgkdKisrH73HIOp202EaGnidwTep+r4+j
+	BdLjAnTEczkMurzQrfhpD4A62LTQ0/V/JKdCqT2U3/NQ15CiMrDGQ4Q2wWXcooJ9TGyVzxmgrc5
+	LwL5ik3WHn1yxeIoNonAIFI2NWVTm5hKrDC1XhEek8j6VdPxCvH/vdwEVTgDwyMT+92kFoyWBCe
+	p3xjoC4n9MDagjfLspDeNeyiVl4uxNaCBgnlwHb1Ex/vAK5a9FenGUhTHzVanfJhOiOzo676xg5
+	/rWzZq1wV3YzN03cBJbZMJAnOYKof3791sS1OF2zZMqeVfK9Um1OwBBK1qMARIu29BFpZK+e9qf
+	a2oDLcvNMP8fiYphuh3iejyLwnCvIKaqSDWT7nCldugrtu2mA46/JAVGMfjtW7Q9Aprt5m5jzqC
+	fJ9L6huuEXKsFk6IZRYJI7glgyB8SuVYZ05TQl/GKRnGsbrJXnKUCrfdvNAv/TtdiykcznuRYX3
+	VNJibpIZFBCvpEftQ==
+X-Received: by 2002:a05:600c:1d15:b0:49f:e427:e88f with SMTP id 5b1f17b1804b1-4a027564ddemr35404475e9.21.1790928965827;
+        Fri, 02 Oct 2026 01:16:05 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b380fada5sm3689482f8f.24.2026.10.02.01.16.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Oct 2026 01:16:05 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, Arnd
+ Bergmann <arnd@arndb.de>, Brian Masney <bmasney+clk@redhat.com>, Jerome
+ Brunet <jbrunet+clk@baylibre.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, Steam Lin <STLin2@winbond.com>,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+ devicetree@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v6 08/12] clk: nuvoton: ma35d1: Retrieve HXT/LXT from DT
+In-Reply-To: <87o6ddmmc2.fsf@bootlin.com>
+References: <20260930-perso-ma35d1-upstream-clk-v6-0-48937ee6c9bb@bootlin.com>
+ <20260930-perso-ma35d1-upstream-clk-v6-8-48937ee6c9bb@bootlin.com>
+ <1j7bk13gpq.fsf@starbuckisacylon.baylibre.com>
+ <87o6ddmmc2.fsf@bootlin.com>
+Date: Fri, 02 Oct 2026 10:16:04 +0200
+Message-ID: <1jy0cg1prv.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261001-cv75-v5-v9-6-486cc289a4b8@ambarella.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 01, 2026 at 08:40:55PM +0800, Long Zhao via B4 Relay wrote:
+On jeu. 01 oct. 2026 at 18:12, Miquel Raynal <miquel.raynal@bootlin.com> wr=
+ote:
 
-> Add a table-driven CCF driver for the CV75 root clock tree. Register
-> the core PLL, AHB/APB fixed factors and UART0 composite clock, with
-> osc supplied via clk_parent_data.
+> On 01/10/2026 at 11:36:33 +02, Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+>> On mer. 30 sept. 2026 at 19:24, Miquel Raynal <miquel.raynal@bootlin.com=
+> wrote:
+>>
+>>> HXT and LXT are crystal oscillator inputs of the clock controller, they
+>>> are described in the DT, so retrieve them, in order, and store them in
+>>> their respective HXT/LXT hw table entries.
+>>>
+>>> Since old DTs reference the HXT fixed-clock without naming it and do not
+>>> describe LXT at all, we assume that HXT must be present, and fallback to
+>>> creating a fixed clock for LXT if it is not described (for backward
+>>> compatibility purposes).
+>>>
+>>> The downstream gate clocks can directly use the hw clocks as parents,
+>>> instead of relying on string matching.
+>>>
+>>> Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock c=
+ontroller")
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+>>> ---
+>>>  drivers/clk/nuvoton/clk-ma35d1.c | 43 ++++++++++++++++++++++++++++++++=
+--------
+>>>  1 file changed, 35 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk=
+-ma35d1.c
+>>> index ceebcbd8c18b..d955d79abdd2 100644
+>>> --- a/drivers/clk/nuvoton/clk-ma35d1.c
+>>> +++ b/drivers/clk/nuvoton/clk-ma35d1.c
+>>> @@ -4,6 +4,7 @@
+>>>   * Author: Chi-Fang Li <cfli0@nuvoton.com>
+>>>   */
+>>>=20=20
+>>> +#include <linux/clk.h>
+>>>  #include <linux/clk-provider.h>
+>>>  #include <linux/mfd/syscon.h>
+>>>  #include <linux/module.h>
+>>> @@ -191,6 +192,15 @@ static struct clk_hw *ma35d1_clk_gate(struct devic=
+e *dev, const char *name, cons
+>>>  				    reg, shift, 0, &ma35d1_lock);
+>>>  }
+>>>=20=20
+>>> +static struct clk_hw *ma35d1_clk_gate_parent(struct device *dev, const=
+ char *name,
+>>> +					     struct clk_hw *parent,
+>>> +					     void __iomem *reg, u8 shift)
+>>> +{
+>>> +	return devm_clk_hw_register_gate_parent_hw(dev, name, parent,
+>>> +						   CLK_SET_RATE_PARENT,
+>>> +						   reg, shift, 0, &ma35d1_lock);
+>>> +}
+>>> +
+>>>  static int ma35d1_get_pll_setting(struct device_node *clk_node, u32 *p=
+llmode)
+>>>  {
+>>>  	const char *of_str;
+>>> @@ -215,10 +225,12 @@ static int ma35d1_clocks_probe(struct platform_de=
+vice *pdev)
+>>>  {
+>>>  	struct device *dev =3D &pdev->dev;
+>>>  	struct device_node *clk_node =3D pdev->dev.of_node;
+>>> +	struct clk_bulk_data *clks;
+>>>  	void __iomem *clk_base;
+>>>  	static struct clk_hw **hws;
+>>>  	static struct clk_hw_onecell_data *ma35d1_hw_data;
+>>>  	u32 pllmode[PLL_MAX_NUM];
+>>> +	int num_clks;
+>>>  	int ret;
+>>>=20=20
+>>>  	ma35d1_hw_data =3D devm_kzalloc(dev,
+>>> @@ -240,12 +252,27 @@ static int ma35d1_clocks_probe(struct platform_de=
+vice *pdev)
+>>>  		return -EINVAL;
+>>>  	}
+>>>=20=20
+>>> -	hws[HXT] =3D ma35d1_clk_fixed("hxt", 24000000);
+>>> -	hws[HXT_GATE] =3D ma35d1_clk_gate(dev, "hxt_gate", "hxt",
+>>> -					clk_base + REG_CLK_PWRCTL, 0);
+>>> -	hws[LXT] =3D ma35d1_clk_fixed("lxt", 32768);
+>>> -	hws[LXT_GATE] =3D ma35d1_clk_gate(dev, "lxt_gate", "lxt",
+>>> -					clk_base + REG_CLK_PWRCTL, 1);
+>>> +	num_clks =3D devm_clk_bulk_get_all(dev, &clks);
+>>> +	if (num_clks < 0)
+>>> +		return num_clks;
+>>> +
+>>> +	if (!num_clks) {
+>>> +		dev_err(dev, "missing crystal input clocks\n");
+>>> +		return -ENODEV;
+>>> +	}
+>>> +
+>>> +	hws[HXT] =3D __clk_get_hw(clks[0].clk);
+>>
+>> Don't open code it. use .fw_name
+>
+> Ok, if I understand your suggestion, I will go for the use of
+>
+>     devm_clk_hw_register_fixed_rate_parent_data()
+>
+> for these fixed clocks.
+>
+>>
+>>> +
+>>> +	if (num_clks > 1)
+>>> +		hws[LXT] =3D __clk_get_hw(clks[1].clk);
+>>> +	else
+>>> +		/* Old DTs do not describe the low-speed crystal */
+>>> +		hws[LXT] =3D ma35d1_clk_fixed("lxt", 32768);
+>>
+>> I'd give it another name so you can clearly see the difference between t=
+he
+>> DT one and the manually registered one.
+>>
+>>> +
+>>
+>> Don't need to open code this either.
+>> provide both .fw_name and .name - CCF will fallback to the name.
+>>
+>> When you want to conditionally register the fixed is up to you.
+>
+> Ok, so if my understanding is correct, I should use parent data with:
+> * .fw_name being the clock-names entry
+> * .name being the name of the clock that will be created ex-nihilo
+> Am I correct? And clock-output-names in that case has no importance at
+> all (hence this strengthen my wish to get rid of it)?
 
-...
+Yes
 
-> +#include <linux/array_size.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/bits.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/container_of.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
+>
+> In the fallback case, what naming makes sense? I don't know. I would
+> have preferred to just name it "hxt" (respectively "lxt") in both cases
+> because we truly don't care about the name, except it would be nicer for
+> the reader of clk_summary. Do you mind if I keep "hxt"/"lxt" for both?
 
-> +#include <linux/math.h>
-> +#include <linux/math64.h>
+Picking another name is merely a suggestion. I don't have a strong opinion
+over this.
 
-The latter one covers the former one.
+>
+> Thanks a lot for the hints!
+> Miqu=C3=A8l
 
-> +#include <linux/module.h>
-> +#include <linux/overflow.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/types.h>
-
-...
-
-> +struct cv75_pll_hw {
-> +	struct clk_hw hw;
-
-> +	u32 ctrl;
-> +	u32 frac;
-> +	u32 ctrl2;
-
-This repeats twice in different data structures. Is the semantic the same in
-both cases? If so, it might make sense to have a separate data structure for
-these three and embed it as required.
-
-> +};
-
-...
-
-> +struct cv75_pll {
-> +	const char *name;
-> +	struct cv75_pll_hw *hw;
-> +	unsigned long flags;
-
-> +	u32 ctrl;
-> +	u32 frac;
-> +	u32 ctrl2;
-
-^^^ See above.
-
-> +	int id;
-> +};
-
-...
-
-> +{
-> +	struct clk_parent_data parent_data = { .fw_name = "osc" };
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(cv75_plls); i++) {
-
-	for (unsigned int i = 0; i < ARRAY_SIZE(cv75_plls); i++) {
-
-Same approach in the below code where similar cases appear.
-
-> +		const struct cv75_pll *desc = &cv75_plls[i];
-> +		struct cv75_pll_hw *pll = desc->hw;
-> +		struct clk_init_data init = {};
-> +		int ret;
-> +
-> +		pll->ctrl = desc->ctrl;
-> +		pll->frac = desc->frac;
-> +		pll->ctrl2 = desc->ctrl2;
-> +
-> +		init.name = desc->name;
-> +		init.ops = &cv75_pll_ops;
-> +		init.parent_data = &parent_data;
-> +		init.num_parents = 1;
-> +		init.flags = desc->flags;
-> +		pll->hw.init = &init;
-> +
-> +		ret = devm_clk_hw_register(dev, &pll->hw);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (desc->id >= 0)
-> +			data->hws[desc->id] = &pll->hw;
-> +	}
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static int cv75_rct_probe(struct platform_device *pdev)
-> +{
-> +	struct clk_hw_onecell_data *data;
-> +	struct device *dev = &pdev->dev;
-> +	int ret;
-
-> +	spin_lock_init(&cv75_ccu.lock);
-
-Can it be done later, after memory allocation?
-
-> +	cv75_ccu.base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(cv75_ccu.base))
-> +		return PTR_ERR(cv75_ccu.base);
-> +
-> +	data = devm_kzalloc(dev, struct_size(data, hws, CV75_NUM_CLKS), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +	data->num = CV75_NUM_CLKS;
-> +
-> +	ret = cv75_register_plls(dev, data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register plls\n");
-> +
-> +	ret = cv75_register_fixed_factors(dev, data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register fixed factors\n");
-> +
-> +	ret = cv75_register_composites(dev, data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register composites\n");
-> +
-> +	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to add clock provider\n");
-> +
-> +	return 0;
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--=20
+Jerome
