@@ -1,83 +1,101 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8545361DCB
-	for <linux-clk@vger.kernel.org>; Fri,  2 Oct 2026 18:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54FB3EB7F0
+	for <linux-clk@vger.kernel.org>; Fri,  2 Oct 2026 19:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790967137; cv=none; b=CNZgGMWux1RLuySFxaqP2o3An7NKNRxZ6KqW/InL5kh+f6ZmpTbt5zf7XtzZXl3GH66REqaZBXiepoKBbo2iP8DTYRS3mfXGh+DBi8+WlAJnRBGcg4ldVVmtgI+Vxoi2/e19vr98TUuCvaDymNkGRj26gqb+QsCKD9ATmeMl+cs=
+	t=1790968249; cv=none; b=cMYCg56FYaG+hlzzoyCFEqIRZloBpRl4jiWjxy0t6z8j4T5Gs1rfDmVaMn2+p5yPZFaDRj+xKeMkIzg0L29YWutOJTiTpAebyZhLJCWSGYid7ClUOtsJGON51C8PpVMsCtBHzwWnkkKEngxVQO7+MeR2rW4t24k3OTiq4Lc0Rpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790967137; c=relaxed/simple;
-	bh=d+7Dzq3mPeyFPY32y86AvdtMGs9/cR+SwwsFl7j1jgU=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=CwDTbNYP4bXYJQ1tqAJqBKnFQmEA9DSvrL65r938rgpHj5kybwvmsgsGtwqrOV/au3/yyZnL6cjIf1Cx4/BoZYR/iPE94Qeks2Da4DZvHlvffBZWFeLptmqmlWpqIlPwuvG91Oi7hcCwUjhvKl1e4sBykWaIjl7BD7Y37pmzIBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HuGmaO/o; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=mBI6+CaK; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1790968249; c=relaxed/simple;
+	bh=38O0AiYv7sXZCfgiUvA0Jw+V6OPDeMpifWbiiyBPEcA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=bPsyyzfDS6yrST3n4HbRMcJDHIPPoucJ7ba00mQB/QGvcMdIHA4nQfIkG+TJr6TKALhxY8DfD+WMfjhZUn2L5bSIqp+/IK9Ibb2sdD02dze7/ssv2kaKhNUrtl9gs7HLXZLjhAgrdIIL2ZlX3q1rr1Wwuv2gMFhWMws84c9IA0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DKb2TNYP; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=i9tukCWK; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HuGmaO/o";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="mBI6+CaK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DKb2TNYP";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="i9tukCWK"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1790967119;
+	s=mimecast20190719; t=1790968244;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=r0MvWYWwsu7LG0V0ETPW58ud5t6tmXACPDGuesfQVDA=;
-	b=HuGmaO/o9vKa496/1RyoY0obRUI20MtNMpCaJAuxSydQfiEWDxwFtoh4z7IgZqcIgp9SZv
-	3cwoGbYBSGT2ZyR1Sk8shpZfnHP6+KYrvY/TWozQE9xen09EBkwyHq7apyLNN3XEDE1M8e
-	1iWY05iuKJhK3Qevh5otCn34d5olaN4=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=SqOef5FaraL1edtYgsKupndEumwwwfe19d9XZdXNw+I=;
+	b=DKb2TNYPGMwG/DJbyu21e05ODze6kh0tzoQGZvWFVaPp/wDyeGdKCK/thnKdtubwSffmy3
+	tYwI6Zp9ua347gpJgn0v6/4LEnt62eQpzWTEUtsbvSWT9Qwc0mzt9LHu503hbK/Ezm+rmZ
+	ixAyzitYUD5mkFn3GmpuNWuc/ywFGEU=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-655-PTe2WI5SNZmkgFxer0RVQA-1; Fri, 02 Oct 2026 14:51:57 -0400
-X-MC-Unique: PTe2WI5SNZmkgFxer0RVQA-1
-X-Mimecast-MFC-AGG-ID: PTe2WI5SNZmkgFxer0RVQA_1790967117
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-93caa0ce0cdso368933585a.2
-        for <linux-clk@vger.kernel.org>; Fri, 02 Oct 2026 11:51:57 -0700 (PDT)
+ us-mta-624-RsJ5EdY7NgeMTZK5OTjxGQ-1; Fri, 02 Oct 2026 15:10:42 -0400
+X-MC-Unique: RsJ5EdY7NgeMTZK5OTjxGQ-1
+X-Mimecast-MFC-AGG-ID: RsJ5EdY7NgeMTZK5OTjxGQ_1790968242
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93cc40759b2so274311685a.1
+        for <linux-clk@vger.kernel.org>; Fri, 02 Oct 2026 12:10:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1790967117; x=1791571917; darn=vger.kernel.org;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=r0MvWYWwsu7LG0V0ETPW58ud5t6tmXACPDGuesfQVDA=;
-        b=mBI6+CaK0VPmeI3cVu1PU3PD7RbV1HuhM4Ec9Ey+94hWHhmQ/efAt93x0359oUESUh
-         o84iWcn2UKdw5BxVdjoZgOTbHoSEJvER33KkdVG9NliIsdF/mye6DY69YecSZctayYiF
-         NyGExUQuSOycgO6SjwC3BJ3YJD4c3EzNED8RC4kUbU+lmTrS2ATY1LmulOlxCB6nqVqZ
-         NgJ+BQ2y7+q0X/8rX//TRIcox77mTBRYF/dEXkwuCXlv/b6Vt5PoGPffIJfnkiU3F7IR
-         Y0zp2pYYeTJJ95af7Rf6GvehD/APSgbDgfh5KzK3R1662lO/lyIT9mzEAe/Ir70TKZC4
-         mItw==
+        d=redhat.com; s=google; t=1790968242; x=1791573042; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=SqOef5FaraL1edtYgsKupndEumwwwfe19d9XZdXNw+I=;
+        b=i9tukCWK8tTrAx3Eq7Gidiyg3HaP9rWy6Q+eoK4pCmG8TeZNn3vwWqkiemcK9JDZKj
+         hWzXRXGsOwNR4wFxebn7mrUwvMvzDphDsEZyK1CaSW7YWGEZUSa80r4kI/efX8NNzy+l
+         pjVFa4b18gBkFtY3ayeJynx5JO747j7BPHYMeKP4fch+zDDvinwSgml1RNiyBFVXLsmm
+         o8Z0TMMSBbLUjeR6K47GfHmCw1z0KBHBbEQ7iDT73u95Z8L3YfkoO3guQ0KoJmwXEmlf
+         Zmwi6hpO9BrLB7h1EXnygrb9ycKxNSpIQ44VZWz9LDdYvKKLy1FDK6moFiypnSlZZrSW
+         Z6Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790967117; x=1791571917;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1790968242; x=1791573042;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=r0MvWYWwsu7LG0V0ETPW58ud5t6tmXACPDGuesfQVDA=;
-        b=ABZr3qgOxQ/eQRY2IRU4CbSyaAj7FAKaexvPzqIufbaV5zlgxdfyH7l52u5BWRRDF1
-         rV68/V50qocLWvVv2431xSxV61bJS2s0szQFmuPdL5btakvaK8flVn3/IjKrsLZIoq7T
-         4sVEcA6YradPGdv9+NcuoXTFZBNP2ekjCZksswfdTb8V2e+JECQwHCICJPcVDwxg3pn4
-         qujOofWvaYGyo4g42dJKJaHMHifb0x/x6km947UtA2W8a3J4V1mfJY5zChFgUVwRKEcx
-         nnJXMTcNl3hO/kLzIJQ0B5/TqiLpp1N+aJlnB6j5oCUOI+7Bc4y45ra6jiXupezlt3DN
-         xQkg==
-X-Forwarded-Encrypted: i=1; AKwUvBz8/CHd9tiaXd2b/FoyPBTjnNoefUvmkFD1vRr5Tx8c8hqc53vsBDRngwJeFAecEldcsVAhuF+sP+o=@vger.kernel.org
-X-Gm-Message-State: AFuF++nvE4Irfj7ZMBIQ38QOblTFD6d2cY4hy5UGGbZ0e1nGwnl0KalR
-	762dC1ZcF0mwr/3Rs1Oe5SazRJMfHBJlPvzxPBG1SmoNh0W9uxull2w0iyIUY6ExekXRmJieSov
-	O6P4IgLZkD9naZSK/tBMWh9JiDofkwN+8i3cNTbD7jN4rBGNS0abFNI/q4Gp7/60Dpla/iA==
-X-Gm-Gg: AYBFou2YJCN4iTyhYaJ2n2YINeX3nqzBT0GESomP2fyZnwRFDD999AHRzu5Tx46MeVp
-	/V8fTQFz82Ui8rCgbxzH7PmVZogErYEOfBYLVHZSQOrRLaNxbiJU7ylMFKCwsduG18i1WbNzQEp
-	xjhOgQlotXzgEIK/Sss0zvYs/93qjAUhQmIWqJchcCO8mY0gsiPTDmUMF8brni1bQnr+tOU2O0p
-	vUVf2nJ7j2ZaFOJQzxm2VKMFpQiCdYwcbF1FnvsN6+//hGaKqAEc/hTSYw11+JhwUphV2Ak46n0
-	zKlpvSg900H8Njfh2pEYttBajrW2ZlMVJ+7yWiRqoq5uaEDrqk+Z1JcjOlYMAuOXBHjOlEHHn2v
-	7ClOHIln5r3s/hw==
-X-Received: by 2002:a05:620a:7105:b0:93a:824:ac8d with SMTP id af79cd13be357-93e5102406amr48501985a.27.1790967116810;
-        Fri, 02 Oct 2026 11:51:56 -0700 (PDT)
-X-Received: by 2002:a05:620a:7105:b0:93a:824:ac8d with SMTP id af79cd13be357-93e5102406amr48495985a.27.1790967116138;
-        Fri, 02 Oct 2026 11:51:56 -0700 (PDT)
+        bh=SqOef5FaraL1edtYgsKupndEumwwwfe19d9XZdXNw+I=;
+        b=ltWW2iQD+il8WCw0qw/tsa9ckKrfURP7giyZvZvn9nZbPlsaYcokxN4hspRce42f2e
+         YSrzZhCQ7G2TVvIXg/GncLzYyc0HrjjYYHoGMWXQV+zwdhWrHRBV4/GCRXWHrI3uTpc7
+         GeXwhbLreeYYocJ51xcBrrX0c2s1QDwEVj6wq5ZEq+Jl8pTehozAKZbDJB/OirrpaPIL
+         j/cBwGg8lFJWf8NePPMkS+1YQvL97PZmh4ZhkLVYxoFrPNOp4bXitnZr1HTJ54IKeRBK
+         nbWxsliRU7qluCPaFAeyadymOTj081ryJOWhR4MG8AOmlwrIe1EH41s+85ibi3LleDhn
+         Yjjw==
+X-Forwarded-Encrypted: i=1; AKwUvBxAoPWJ0kZx23kpUCczs9FX5hVczk4Wjgn7v1xX3A3rxYczX18j9WE/cYrfNCt2Mc+56Bzm80LbJIA=@vger.kernel.org
+X-Gm-Message-State: AFuF++l+0zxBd46XXQmQRRGxMe4tl1pahpDPPuxZqOvlLtb5y5woMpzV
+	+n4DnRyc+11VYrqJKqzbCtUj9tVcMJEKSPq/4dlm3ZYgMo0v7KZ+U28N8DlE3pEB8Rtz9AeDcgZ
+	Cb+2oLiB5opsxvO1pCfi6C+WvGuruZ/ZopuZUu8fNTMZg2CmT177qkc9JGqzkhdqwCIQ0eJIEl7
+	fYQBFRR9Vv/XY994d08wGT+BMZ77mUUP2diMdmBc0SHzyK
+X-Gm-Gg: AYBFou2NMhFDag/s9oLxd1pizvLphzqjtvTyov3YGnLNvyE89UoKlmU8eCQjyXMWz8E
+	NxOMdwJdUOXnJiRF5Y4mP4SZ79aASXiEGvjjtqlqZchrEF3aPS83j7ti5wDJUPJd5XGCBNSkYCr
+	VtJAvbTPvS02D9jXAdewoWUwYvYDOVHOys2RkBZiYi8Xys1eqQV7bPS6yOhh6QnSDdW1ZDqsv21
+	9HRA1Kpag/qvjpT/IkFO5/CLgWbw9U+M0bjpc5JWwQkFLOpKMwz8yhDJzvPJo6aGStZY9oABX+Z
+	TYYgnol8vf2oej6IYVUWpWYlJbSgoxB1N9/NRKYZ6EVjJdhK2ByjECmK1Gk+t3JiV8PeYn6ZxKS
+	0dTfkJjxawI0jkw==
+X-Received: by 2002:a05:620a:278a:b0:93b:d7a0:d9e7 with SMTP id af79cd13be357-93cf19d98b0mr663876685a.65.1790968241868;
+        Fri, 02 Oct 2026 12:10:41 -0700 (PDT)
+X-Received: by 2002:a05:620a:278a:b0:93b:d7a0:d9e7 with SMTP id af79cd13be357-93cf19d98b0mr663869285a.65.1790968241277;
+        Fri, 02 Oct 2026 12:10:41 -0700 (PDT)
 Received: from bmasney-x1.rmtuswv.csb ([2600:382:7723:4eba:66b1:961f:1a2d:af55])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93cca03a1bbsm290352485a.1.2026.10.02.11.51.53
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93e457a4e20sm177796785a.40.2026.10.02.12.10.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Oct 2026 11:51:55 -0700 (PDT)
+        Fri, 02 Oct 2026 12:10:40 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>, 
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+ Junhui Liu <junhui.liu@pigmoral.tech>
+Cc: Conor Dooley <conor.dooley@microchip.com>, Yixun Lan <dlan@kernel.org>, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+In-Reply-To: <20261003-dr1v90-cru-dt-fix-v2-0-6e7d96612ac0@pigmoral.tech>
+References: <20261003-dr1v90-cru-dt-fix-v2-0-6e7d96612ac0@pigmoral.tech>
+Subject: Re: (subset) [PATCH v2 0/2] riscv: dts: anlogic: dr1v90: fix clock
+ dtbs_check errors
+Message-Id: <179096822701.834873.13625187278784966753.b4-ty@b4>
+Date: Fri, 02 Oct 2026 15:10:27 -0400
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -86,83 +104,34 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v5 11/23] dt-bindings: clock: Add StarFive JHB100
- Peripheral-0 clock and reset generator
-From: Brian Masney <bmasney@redhat.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
- Brian Masney <bmasney@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Emil Renner Berthing <kernel@esmil.dk>, 
- Kees Cook <kees@kernel.org>, 
- "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
- Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, linux-hardening@vger.kernel.org, 
- netdev@vger.kernel.org, Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <20260930124317.5648-12-changhuang.liang@starfivetech.com>
-References: <20260930124317.5648-1-changhuang.liang@starfivetech.com>
- <20260930124317.5648-12-changhuang.liang@starfivetech.com>
-Date: Fri, 02 Oct 2026 14:51:13 -0400
-Message-Id: <179096707365.821688.14329539857628581125.b4-review@b4>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1426; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=638; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=d+7Dzq3mPeyFPY32y86AvdtMGs9/cR+SwwsFl7j1jgU=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLL2/7Wx/KcQOOltnNfPrdMX3LuT/HC+0e60NpG6lD1rZ
- 17q/rvbvKOUhUGMi0FWTJFlSa5RQUTqKtt7dzRZYOawMoEMYeDiFICJ/DvF8JvNMflnwRuHRRt/
- inec9nG6u3qLz7SmebNcL5042au9L+cTw28Wm8MCxyYbZ0apt67dn7TKUV08XMTt6JZbavvlIy/
- UbmYAAA==
+ bh=CgnHm+pOx1EqQqkPIiwdM7WFpAfZXzamTaQBTcq0Abw=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLIOMK67m3Ay+Nfj4xaHN4q8WRyRc17z+nwBXWfeqNKTg
+ S/i4v5HdZSyMIhxMciKKbIsyTUqiEhdZXvvjiYLzBxWJpAhDFycAjCRnzwMf/g6Vd3Fj0zZvYw5
+ 59vrz2JdzDF6dxfteFI0a+OuPs7sxhpGhusXj6rYutcsk9M9XGoSrvh16X6Tc91XZQUFWH/3ipZ
+ KcwEA
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Hi Changhuang,
 
-> Add bindings for the Peripheral-0 clock and reset generator (PER0CRG)
-> on the JHB100 RISC-V SoC by StarFive Ltd.
+On Sat, 03 Oct 2026 00:28:38 +0800, Junhui Liu wrote:
+> riscv: dts: anlogic: dr1v90: fix clock dtbs_check errors
 > 
-> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->
-> diff --git a/Documentation/devicetree/bindings/clock/starfive,jhb100-per0crg.yaml b/Documentation/devicetree/bindings/clock/starfive,jhb100-per0crg.yaml
-> new file mode 100644
-> index 000000000000..db43e03fd60c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/starfive,jhb100-per0crg.yaml
-> @@ -0,0 +1,70 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/starfive,jhb100-per0crg.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: StarFive JHB100 Peripheral-0 Clock and Reset Generator
-> +
-> +maintainers:
-> +  - Changhuang Liang <changhuang.liang@starfivetech.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: starfive,jhb100-per0crg
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Main Oscillator (25 MHz)
-> +      - description: PLL6
-> +      - description: Configure 400MHz
-> +      - description: Configure 800MHZ
+> The external CAN and watchdog clocks are optional board-level inputs to
+> the DR1V90 CRU. The current binding requires both inputs, causing the
+> common SoC device tree to provide fixed-clock placeholders without the
+> required clock-frequency property. Consequently, dtbs_check reports:
+> 
+> [...]
 
-There's a mismatch here in the casing of the units. One line has MHz and
-the other has MHZ.
+Applied, thanks!
 
-Brian
+[1/2] dt-bindings: clock: anlogic,dr1v90-cru: make external clocks optional
+      commit: ca4983a301063d9cf8d0ef556883f90a94a0bd32
 
+Best regards,
 -- 
 Brian Masney <bmasney@redhat.com>
 
