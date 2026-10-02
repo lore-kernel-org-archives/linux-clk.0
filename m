@@ -1,90 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCF546C840;
-	Fri,  2 Oct 2026 09:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23D444E046;
+	Fri,  2 Oct 2026 09:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790932486; cv=none; b=F+55QqYYgcTo3m5ehaBvNo2RTv2yRIdojm78hmqDwwJLFlC99oNUXnO+EL+SxDKNpACZHch5fES1Wpbs7yLiBZzvlOvRBWV1xkicdPJeVQh9HkZubfQtV3gi4e036iF9Wi4TK21b84fWQeVOSyUIleYVfkit7U4TQETuWeicWOo=
+	t=1790932968; cv=none; b=Q1D6pylWjhg+nFwRJ4mozC88oUm6TZxUeCd2LEGckR6vDHQA9vWqgPUMPBykyTfIUu2aF8XXF23Y8SJBOi1fROEYQYvGdWdRMSb151tCG0WMB1Zaq3lvYOMel7ASP6uBUF1YuqgbJ/CKDJjg7qPHgdbQ+MB4dfUNJ1q/qxCxqx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790932486; c=relaxed/simple;
-	bh=qAQQBfayz0zyDLK6k18ivMhR2sXSvex38ewtzXLLkqs=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=OB0d9ruitH2IBm4YDHPtSJ1uhaIw4ArZPuCw8hDd2AIcD/yw1jhbWdxEUOVOnqhU+hh3O6znGRNpGH+XSNeQQCKEwU2dDIHtThWsA3M6Yxt5GRoIcnvtPS3iucoFpMLywBPQG7dy16KlB+FZ5Java787WO4f992Ol5kS5NBF13U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IoFhluqV; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790932968; c=relaxed/simple;
+	bh=fjiLNweLxwmozP439aS0ZNu1H6FrPKQa3Ai1bKR9ZlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bd8+el5hr9uv6aN8fOCiSNZbxr9anIp0Nz7DsyI8JJjCjr8LtbS6nRKmWZ/ZZyzN8IpDDh9//KCUxKrR4SUYGPRAnnfahURqM6NAztt2d2d5Z5ssdI3t8TxXQAA8hRhs83NROmqHCmlm0PxO6qRBxM7wxZZO5STuuPgHT1pPdmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LdRYyhbw; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IoFhluqV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B54641F00893;
-	Fri,  2 Oct 2026 09:14:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790932485;
-	bh=Y0kOdqEo71g8AWci/z+cAXnUMfAQ4suoLdgDOhKBvFU=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=IoFhluqVUTP1ekMX5LxQiLX/Vi6uwsgBugpN/TYiGuYvlBz+uf3tUwXHu4kzNxSuw
-	 0bXzzGeSJNyXEo1myBNzHoai5rrrdDSkxHX30HBjOrp9ZpxodL2L1r7hh7Jy/8VmFC
-	 bZMTpX7jqx1S7YtoDLbq9A7xde3pN9KEQHDq5Qas+kG0oKiXKJVUUGWysqf11jg6k4
-	 akDx8nBu4+a2Mv7QFfntfqBrO0+wUBRZxAOp4J9MUCWrvzArkQGmrs4pFbib90t9DE
-	 5CafsZcQ+M38HKxavd2QY2iN95NUTGtqoAEX5UDXjRlyZ0hNEafXwUP/Wlz+55XbTi
-	 XVyTznQk3zyFQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v15 04/11] clk: realtek: Introduce common probe()
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Yu-Chun Lin" <eleanor.lin@realtek.com>
-Cc: robh@kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261002074331.3066919-5-eleanor.lin@realtek.com>
-References: <20261002074331.3066919-1-eleanor.lin@realtek.com>
- <20261002074331.3066919-5-eleanor.lin@realtek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 02 Oct 2026 09:14:44 +0000
-Message-Id: <20261002091444.B54641F00893@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LdRYyhbw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1790932965; x=1822468965;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fjiLNweLxwmozP439aS0ZNu1H6FrPKQa3Ai1bKR9ZlE=;
+  b=LdRYyhbwjtEqAllMZnnUdIlQLD4P7oRusht+jqt4IF06wNlxK4NsMfwF
+   STPirGH1aRRLaY79CNcDoRuY2RgLLznJlPzctExPIzCjXsERQCuJKrbPu
+   Z0UD39/QDvqlZGb7UYX+yWmt5tBn/7om+U3G0q7sAROZ0OucrP4NQEona
+   ZWLMYJJ8NKV2WaFK61cuV5tTyy7AK8nJZv5gV7rxbmXvBweHIhDeDTiCJ
+   JdSfs/Zt7OZjuCSWiHBsyRY5CXaahEKu8MNBBSmTBijX84z4o9lxbZXkc
+   Hpe1lsNFGUHkpkaiV6o3Z4Duuw1E90kwfCtMP8+dZm6wVSnzXYMdKq+cv
+   g==;
+X-CSE-ConnectionGUID: 291CZu/KTnGiZNtKKGwSmg==
+X-CSE-MsgGUID: Fq/fZPLJRIWgR9C8P3Zlyw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11922"; a="90728986"
+X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; 
+   d="scan'208";a="90728986"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2026 02:22:43 -0700
+X-CSE-ConnectionGUID: eNU2YW10T22FBc3/h+ZAhw==
+X-CSE-MsgGUID: y1/IruAGQNa1bH81g2tJsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; 
+   d="scan'208";a="302464580"
+Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.188])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2026 02:22:37 -0700
+Date: Fri, 2 Oct 2026 12:22:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: longzhao@ambarella.com
+Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>,
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 09/15] gpio: pl061: use IRQ_TYPE_LEVEL_MASK and
+ IRQ_TYPE_EDGE_BOTH
+Message-ID: <ar932rg30_MnbRhf@ashevche-desk.local>
+References: <20261001-cv75-v5-v9-0-486cc289a4b8@ambarella.com>
+ <20261001-cv75-v5-v9-9-486cc289a4b8@ambarella.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261001-cv75-v5-v9-9-486cc289a4b8@ambarella.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Low] clk: realtek: aux_name in struct rtk_clk_desc is missing const qual=
-ifier
---
+On Thu, Oct 01, 2026 at 08:40:58PM +0800, Long Zhao via B4 Relay wrote:
 
-commit 70362e309c085cb7899e077d069e8a4a7e5719cc
-Author: Cheng-Yu Lee <cylee12@realtek.com>
+> Use the standard IRQ_TYPE_LEVEL_MASK and IRQ_TYPE_EDGE_BOTH helpers
+> instead of open-coded edge and level comparisons.
 
-clk: realtek: Introduce common probe()
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Add rtk_clk_probe() to set up the shared regmap, register clock hardware,
-and add the clock provider. Additionally, if the "#reset-cells" property is
-present, it creates and registers an auxiliary device.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> diff --git a/drivers/clk/realtek/clk-rtk-common.h b/drivers/clk/realtek/c=
-lk-rtk-common.h
-> new file mode 100644
-> index 0000000000000..de3f23120b539
-> --- /dev/null
-> +++ b/drivers/clk/realtek/clk-rtk-common.h
-> @@ -0,0 +1,37 @@
 
-[ ... ]
-
-> +struct rtk_clk_desc {
-> +	struct clk_hw_onecell_data *clk_data;
-> +	struct rtk_clk_regmap **clks;
-> +	size_t num_clks;
-> +	char *aux_name;
-
-[Severity: Low]
-Would it be better for aux_name to be a const char pointer here?
-
-Since this struct member is typically assigned string literals by caller
-drivers, dropping the const qualifier exposes read-only memory to accidental
-modification and could cause compiler warnings if compiled with
--Wwrite-strings.
-
-> +};
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261002074331.3066=
-919-1-eleanor.lin@realtek.com?part=3D4
