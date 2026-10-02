@@ -1,164 +1,163 @@
-Received: from mail-vs2-f38.google.com (mail-vs2-f38.google.com [74.125.227.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E4E4CDDCA
-	for <linux-clk@vger.kernel.org>; Fri,  2 Oct 2026 14:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.227.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790952236; cv=pass; b=RULaOoFJHcr5QawDNxQNHNDSLLUjksA1zbKD3kzeI8UWrfEPaEGUJ3Cm+4iKRzQ3Pdx0S400bGLlhV6fPJ09rVGRRm6BwcTgO206DBBtc/+eGbQrX+2Z/cn3xYOCMT14vIdCT8QP/7np2nccODX/0i+xImk4hCjXERQ3efq95OQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790952236; c=relaxed/simple;
-	bh=ciy5AYs5s8nztyVhIOwmEsvrjTLJIlrAEhcvpdlNER8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XQ4oSF8wxFKdMt3/GPJN/E9ruKRH+UQ9AsQZg27VumlqTZ886P58l/39+Gf2VhWJzec+pQN23ZX9T/Jf3UD0TGYgL/u9e12hmpiJbrIV6FqCGwArdZ73v+wSUMlKkVsJdsx4W3HW6vubIFk9Vao3m0zYGhz4MR5QzxKtUTBxDiM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uCF3L400; arc=pass smtp.client-ip=74.125.227.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6362D0C92;
+	Fri,  2 Oct 2026 15:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790953292; cv=none; b=mro8h0WsNEwZ1O34r8ezQevp8w+SAeZDSTzfv0UmgqcTecrg9trrcWidDDgTwGhoLWikks5bokJVXvjTE2uLdLceWOkoBoSVVmmbodnYH5tuP5NCUzBVG9oEmiPCXpEgxIsdXZGEtIrOjs6JKjBRgrJbptfpcvHumxlStgQpddI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790953292; c=relaxed/simple;
+	bh=/Wtjhe4uwyrblLurTTWWRRXZVozjZeQrVRrNjPCH3J4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oEdfZbSlPFxVRKsJVYW7TJrjbLeVAn+GY4nrP38VKcp0buCd/lBzwkXPTR19VcK8bCEctjg8dFVTqCjEWTET86kcNOx6yH/uCN3HvxotM8bii07GzXn72C5OolyLuCDGQ7bCTboH0w2v34QKINPh9VhPkyzO+1TfvBYZjsJqqfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=d6IPFMo5; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uCF3L400"
-Received: by mail-vs2-f38.google.com with SMTP id ada2fe7eead31-7b314b72db8so2397899137.1
-        for <linux-clk@vger.kernel.org>; Fri, 02 Oct 2026 07:43:45 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790952222; cv=none;
-        d=google.com; s=arc-20260327;
-        b=diXy5to6sfhYPoRr10l3hl8ADBF3TrApf1Ub0fPXThR9zH2FYNqlj17S50eO4cIOqc
-         gEstnqV0r76eA/w5Qy6OScLhVySeVL0ZcX7LtfLGadQaRbz2g74BWB/CPsk1hKMeStGX
-         ySE/bCcwCTSMQtfaojsCwsHmdLSTmguect5FYPfI6/ywkpC12Ox+FKR+BI70mqdCZOqj
-         k1cqmmIyJ/9SSolWKMOARaqV4BU35hMoYkrtEuBrfWukteBTyAoGju+xwyHx+UkuU2UK
-         HP/SprE0wDKWzRbkkS52JVuI/XN5/GPIotS6ihsdMbwep8ywEUEXHINrmP8n+YbHFcvj
-         sMGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=Abb/w7OCqOgoDbYsM1LhnQzjs8VHQVCJFeoLP4m09ag=;
-        fh=QsNOxM6HsUN0V9yDf1OgqP6zBGrdur2nY86QIXakOsI=;
-        b=RWVCp8pAjbsVDR0j+56g8kYdGuwqj7W3iQYYwTBI31QulwAj0iPFhoz7aoHbia2PJ3
-         E29V+HmE+snNcO7oLiqEVodJRIUizuRXh8SVO/WLVKbDavje4eC8HzA42VI9MJspT4ct
-         NrplzmgokgEYXFDdDc16bEEjzdNWL/JldroUWSRcVfFAFnlDyW7IiEfAHCDq8Zsrkt+e
-         rAd8jLtWYNGkWNVbbzEBhqMXU77mEBveO1nZB+MFwwXUfX0/NkeuxAAw2TuYgG7/gfaW
-         C4d622eLVam7dxQkUZ5s7cu2F6e1kJ6FG3sFo9yc3fWXuFnFuHDEZGt0aUr97fsgikEU
-         QL5g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1790952222; x=1791557022; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Abb/w7OCqOgoDbYsM1LhnQzjs8VHQVCJFeoLP4m09ag=;
-        b=uCF3L400Mw41pP+ID6dTCrQn/Ou4FPEJbBHdeII18Hoz2k1k4rre1rJFIAO6bUlwre
-         z6gRPhTpXcPlz3nq0557AFvFh64IkDhE8gu0hkTjEtYc2AALo8ve7aHeBWZgT9kS+qGm
-         Aahd4jObOdGpUC05G+dt5DQuF+dhHOuKKmZ6W24WpocQRINW+cTk76pKa47/8kSJj8hq
-         vlvzoyk+5wxSfN4jV0Sl34fdQ36egSdDouJplkpNq5THjyyVeVWZqvL8by+BiUPNF7Xw
-         3PiJS7vaaBE6zz6Q9K+202iOt1HVPlA/GK7GXLGJs75ihgepxby2XEeWJJsV23G3G3Nd
-         ThfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790952222; x=1791557022;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Abb/w7OCqOgoDbYsM1LhnQzjs8VHQVCJFeoLP4m09ag=;
-        b=EUGWOC3saY5ygINbJAn9RNJHasuUcozC1RXhqh/hHqwhTH6AcoeFmlDx9whbfyO5aO
-         q69ri7DjKUy2ejwS0VJHy0B3SIkBxHYMkpSTZXvIEVeruoGJpwi+X6A7QqP34XRhJQoi
-         WtUPMX1YipPNqWW7fh4NiSK4HhlN8I3CkgKFfD/9skqVOBYG0nUW8fkBXpU6CEDwUP6a
-         JJEB9WsGX2kP3mhhY/FMqm3kJX5P4Dbka5ppZzah6XCy+aOcL4e6Twp2IxJ19e8RZAOc
-         Ih80K2y9Y7bjVLaOlpBOOa7NUVyLtwwnbfO7rmDYMcgpTvijzdb8l5alwSKjR6+W48pC
-         /fqg==
-X-Forwarded-Encrypted: i=1; AKwUvByAPwYed/NnjxcGrgBD10yZK0NPQ4kjpOfZZJ8gx+rWdpUnrAbAjGnCTIP0SgK7ueMv/k/kF/3oJIw=@vger.kernel.org
-X-Gm-Message-State: AFq9FYI/pqkUu+uV7syG4cf15VAQcRWJ+lBVoTg/uIm0nSSqq5FFgpfH
-	24O+EuEveBOAeaZLOgKCTduuVGs4Uz4nNS38sHlYGnt8Kcz3bDkcvMXCSeNzh2P6yahPNhozjt3
-	ss/9/IDzoAtycNPlolgm8pTMKXBoV2CSmP4H6dkKFnw==
-X-Gm-Gg: AYBFou3PgYIfeHbu/S/WFyyNd/OhzU4JA57eFvWzMfHesO5zCGYcP/ZQNvMAerorAIL
-	3k5tU3HIqej7sefgdJyFk623N6nhwmG5URFaHxim1f3WbdacSWrZ0JV4mHehJn7ynNR6iiJSu6/
-	8XQC7+oyvQa1nLhlAImBr82N7bc/dmXTBbiHnOHoBsyJPfAhBZ3Zs8bay3ma97mT2esKU8JimAF
-	D8AANfr6t84NOXZip1OAH2CzOG3tvt+NfQs5OAwODTuiDcppOZCvOS0P59387ECtBrsZuY4Pp6Q
-	Z6i3rfoq810mNEYqMpGtwWIkerVyGjSyRgWNPV9Sr7+HISPqqgZSY6m5Av7cbYDEF7lIJ6mEBdx
-	LVteBUye4W2KzkLYz2JtCO/18
-X-Received: by 2002:a05:6102:f9b:b0:7a1:f980:e936 with SMTP id
- ada2fe7eead31-7c0f51a9b92mr610476137.18.1790952222091; Fri, 02 Oct 2026
- 07:43:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="d6IPFMo5"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 9FEDD1A10EA;
+	Fri,  2 Oct 2026 15:01:22 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6FD2D603DC;
+	Fri,  2 Oct 2026 15:01:22 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 31B98103281F4;
+	Fri,  2 Oct 2026 17:01:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1790953279; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=t9aBlN3dQdjhZj/Rg/p1QzqBO0eCn4FFiX6tAiOVuJc=;
+	b=d6IPFMo5IR7moUJPvHQ6n79+ZOMUDmwEeNcWP7mM9oybwLI6ObRQZDWz4vpm6Q4XNxfpQA
+	VF38AdcBTkf+muokbDAlrfP/zLy5ZtZT81s0sXS5tZZEmew5rYgGUd/8SApes4nfSAe5EE
+	st+Wgd+cfAIzAAb0Yy4oGl3CVKOnqEe5JLFXcfz0zKcL3Ep5QU/srNkhOLfEVqDGkHmyOO
+	ek0qBDLt+f2zpVQi9ReNunm8vablr1ASUXo4NfccDnKlP3bJY5n24VhooCwg18i2aTY9Ou
+	0VXAXQg2F4vI/bB90YTmYfcMaRwK0yAf0c+VT6qHSYigezAPIrzuy1kXhNiWkw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v7 0/7] clk: nuvoton: ma35d1: Fix mux parenting and
+ peripheral clock rates
+Date: Fri, 02 Oct 2026 17:01:04 +0200
+Message-Id: <20261002-perso-ma35d1-upstream-clk-v7-0-cbd991fa6270@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260929-exynos850-acpm-firmware-support-v3-0-473a69fc8a3d@linaro.org>
- <20260929-exynos850-acpm-firmware-support-v3-2-473a69fc8a3d@linaro.org>
-In-Reply-To: <20260929-exynos850-acpm-firmware-support-v3-2-473a69fc8a3d@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 2 Oct 2026 15:43:29 +0100
-X-Gm-Features: AclHuK-HUUsrOdFljkk42xven02N-tiuZrJ__yBG6xUzcagLPJ7c3UWcflomjnQ
-Message-ID: <CADrjBPqi3RWdUy-S2Vn2-E6h0OGhrFPWEcKcarswivOdPzFTKQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] firmware: samsung: acpm: add Exynos850 support
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/43Qz07EIBAG8FfZcBYDTPnnyfcwHoAOLnG3NFAbz
+ abvLl0P1jRpPH6TzG++zI1ULAkreTrdSME51ZSHFvTDiYSzG96Qpr5lIphQzHCgI5aa6dWB7Dn
+ 9GOtU0F1puLxTJYMLMXBnlCdtfywY0+fdfnlt+ZzqlMvX/dQs1+mPaoU9UGdJGVVGAqAFidg9+
+ 5ynSxoeQ76S1Z35r3XccOaUU9QGJSquBbq9Jba9+JElWi/BbOxBOOMZ21uwteSRBc2K0TvUyAR
+ zZm91/7a61QJltWw/szzuLbWxgB1ZqlmdsaARVbDe/7WWZfkGKMgNFEACAAA=
+X-Change-ID: 20260813-perso-ma35d1-upstream-clk-65cacfc1a86b
+To: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
+ Arnd Bergmann <arnd@arndb.de>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
+ Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
+ Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Steam Lin <STLin2@winbond.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ openbmc@lists.ozlabs.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, 29 Sept 2026 at 03:11, Alexey Klimov <alexey.klimov@linaro.org> wrote:
->
-> The Exynos850 SoC contains an APM co-processor. Communication
-> with this hardware block is established using the ACPM protocol,
-> which handles IPC messages for clocks, power, thermal management,
-> and PMIC control.
->
-> Add the "samsung,exynos850-acpm-ipc" compatible string along with
-> its associated match data. This includes the specific initialisation
-> data base offset (which differs from the GS101 offset) and the
-> "exynos850-acpm-clk" device name required to properly instantiate
-> the clock provider.
->
-> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
+I am in possession of an MA35D1 NuMaker board. The SPI controller has
+been contributed, but at this stage it does not work with the current
+clock driver.
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+The clock controller registers its muxes with .fw_name parent data,
+which requires every internal clock name to be declared in the DT. As
+the DT does not declare them, all parent lookups fail: muxes end up
+registered as root clocks and most peripherals read a zero rate.
 
->  drivers/firmware/samsung/exynos-acpm.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-> index 942a2e9f02f5..5a16665e941b 100644
-> --- a/drivers/firmware/samsung/exynos-acpm.c
-> +++ b/drivers/firmware/samsung/exynos-acpm.c
-> @@ -39,6 +39,7 @@
->  #define ACPM_POLL_TIMEOUT_US           (100 * USEC_PER_MSEC)
->  #define ACPM_TX_TIMEOUT_US             500000
->
-> +#define ACPM_EXYNOS850_INITDATA_BASE   0x7000
->  #define ACPM_GS101_INITDATA_BASE       0xa000
->
->  /**
-> @@ -876,6 +877,11 @@ struct acpm_handle *devm_acpm_get_by_phandle(struct device *dev)
->  }
->  EXPORT_SYMBOL_GPL(devm_acpm_get_by_phandle);
->
-> +static const struct acpm_match_data acpm_exynos850 = {
-> +       .initdata_base = ACPM_EXYNOS850_INITDATA_BASE,
-> +       .acpm_clk_dev_name = "exynos850-acpm-clk",
-> +};
-> +
->  static const struct acpm_match_data acpm_gs101 = {
->         .initdata_base = ACPM_GS101_INITDATA_BASE,
->         .acpm_clk_dev_name = "gs101-acpm-clk",
-> @@ -886,6 +892,10 @@ static const struct of_device_id acpm_match[] = {
->                 .compatible = "google,gs101-acpm-ipc",
->                 .data = &acpm_gs101,
->         },
-> +       {
-> +               .compatible = "samsung,exynos850-acpm-ipc",
-> +               .data = &acpm_exynos850,
-> +       },
->         {},
->  };
->  MODULE_DEVICE_TABLE(of, acpm_match);
->
-> --
-> 2.51.0
->
+This conversion exposed a first issue with the WDT/WWDT parents which
+were actually missing in the clock driver. I am not using these clocks
+myself but it is worth fixing.
+
+The second round of reviews raised another problem with the
+crystals. HXT and LXT are external crystal oscillators wired on the
+board, while HIRC and LIRC are on-chip RC oscillators. HXT was described
+whereas LXT was not. The series now also takes the two crystal inputs
+from the DT: they get documented in the bindings, described in the
+boards and looked up by the driver (with a fallback for backward
+compatibility).
+
+Finally, I was still unsatisfied by the clock tree because there were
+too many root clocks. Many "gates" were wrongly set aside from the
+downstream clocks they would gate, and SYSPLL was simply not parented at
+all (?).
+
+The clock tree now looks much more accurate.
+
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+Changes in v7:
+- Avoid opencoding core helpers, replace them with existing helpers
+  (mentioned by Jerome)
+- Rebased on top of clk-next since the first patches have been applied
+- Link to v6: https://lore.kernel.org/r/20260930-perso-ma35d1-upstream-clk-v6-0-48937ee6c9bb@bootlin.com
+
+Changes in v6:
+- Drop the clock output names entirely, they are not relevant.
+- Error out when the crystal providers defer probing.
+- Make sure gates are correctly parented.
+- Make sure SYSPLL is parented.
+- Link to v5: https://lore.kernel.org/r/20260929-perso-ma35d1-upstream-clk-v5-0-68533e935ee4@bootlin.com
+
+Changes in v5:
+- Fix the bindings wrt HXT and LXT.
+- Fix the DT descriptions of HXT and LXT.
+- Collect tags.
+- Link to v4: https://lore.kernel.org/r/20260925-perso-ma35d1-upstream-clk-v4-0-f3697553391f@bootlin.com
+
+Changes in v4:
+- I forgot to bump the clock counter in the driver after adding the two
+  new clocks in the bindings. Sashiko will keep complaining about the
+  incoherency though. Since binding and driver changes should be kept
+  separated, I cannot do both at the same time.
+- Link to v3: https://lore.kernel.org/r/20260925-perso-ma35d1-upstream-clk-v3-0-ffbae7e020a8@bootlin.com
+
+Changes in v3:
+- Drop the number of clocks from the binding, set it in the driver only
+- Split the binding/driver patches completely
+- Link to v2: https://lore.kernel.org/r/20260921-perso-ma35d1-upstream-clk-v2-0-209fd32a8b00@bootlin.com
+
+Changes in v2:
+- New patch 1/3: register the missing WDT/WWDT parent clocks
+- New patch 3/3: harden the code
+- Link to v1: https://lore.kernel.org/r/20260813-perso-ma35d1-upstream-clk-v1-1-e78e5e6172ea@bootlin.com
+
+---
+Miquel Raynal (7):
+      clk: nuvoton: ma35d1: Use clk_hw pointers as mux parents
+      clk: nuvoton: ma35d1: Avoid possible error pointer dereferencing
+      clk: nuvoton: ma35d1: Retrieve HXT/LXT from DT when possible
+      clk: nuvoton: ma35d1: Reparent the gates correctly
+      clk: nuvoton: ma35d1: Reparent SYSPLL correctly
+      arm64: dts: nuvoton: ma35d1: Drop HXT clock output name
+      arm64: dts: nuvoton: ma35d1: Add LXT crystal and clock-names
+
+ arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts |   7 +-
+ arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts |   7 +-
+ arch/arm64/boot/dts/nuvoton/ma35d1.dtsi         |   3 +-
+ drivers/clk/nuvoton/clk-ma35d1-divider.c        |   3 +
+ drivers/clk/nuvoton/clk-ma35d1-pll.c            |   3 +
+ drivers/clk/nuvoton/clk-ma35d1.c                | 707 ++++++++----------------
+ 6 files changed, 264 insertions(+), 466 deletions(-)
+---
+base-commit: 6b78cda327cc2dbcd0e60f411ae014997a684b55
+change-id: 20260813-perso-ma35d1-upstream-clk-65cacfc1a86b
+
+Best regards,
+-- 
+Miquel Raynal <miquel.raynal@bootlin.com>
+
