@@ -1,47 +1,47 @@
 Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012053.outbound.protection.outlook.com [40.107.209.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6949146982C;
-	Fri,  2 Oct 2026 10:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D02479864;
+	Fri,  2 Oct 2026 10:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.53
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790936596; cv=fail; b=p41V0NyWOwC4u/+m8R0K1FnnxpiO8HnvUkbTK5GdbXZI9Y22TiJfDAbWlo5eHi4tINI86ghwJc/BBHuZcMviatpd3kAeRYdljI7bytj8S/mryQ9/+N4n0oGBtJCQhwAnMS4gH+FnnqffPMrSjEmfrQ8QSOME5b2t4XlUDHekauw=
+	t=1790936598; cv=fail; b=eZRn//eNl8obtzErH4wEmFDu7XxAZHNUCygsDCI08mvp1zwzFh3YJeZfU+1HZvz/z4lXBXFwUaO6Xgosn+EGFl68RK1jvxyxLsFND5jepBi/u2Qxl46IAddGHKZaN9dUr2+MkKfDqrAZkaMiVA5fVc10gp2fwOM+FK7GTLTNhbQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790936596; c=relaxed/simple;
-	bh=Xyou9Pke/ijjB30hQy4zgy1RxSedGdxTvWjFretzL7s=;
+	s=arc-20240116; t=1790936598; c=relaxed/simple;
+	bh=4zr2G4MlOEw/iq2NKjl9YtLC32r9W6Y9aCTuQe8xKbE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lYfLkXK9RBVd8E3E9YxxtD8eevtTYpdrdpfGIWBghHSE//V4ikqPKHPQVSlL7NgfSmztIukXlzefkzjw7CBhBea9JGiY4GmMD2cdT6xDFev8JnVNJm1ZBKT2uJAzBbPhtROJn/8xuiqrwCLsfIxe5OQWIGDbLE51ncNVzC4BL44=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=YKASOrY5; arc=fail smtp.client-ip=40.107.209.53
+	 Content-Type:MIME-Version; b=aY8cVprLv4VmCdUSmJjrEigoOm3TDJ6FjROnIDWmmJqr1PCkcUxhKJwiAU6A6Zluqvdtelr9pqjlMLpMMwVnPmra6P63AnzID/b55B1fvdB7Soionl3iWetMrYH3fHOYDh63Tjlz0IDRJ4v5K5wFEXbOYhAtXD2/bZevpOdoalk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=RzbTbRNY; arc=fail smtp.client-ip=40.107.209.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="YKASOrY5"
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="RzbTbRNY"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XCg1eCDLdU/fo914t0yhvqsCHeGcnkhE7V1+HDGa6pjgSybIDO0XBaZgNP+SzOtuJXyjoUeeqCegQIcMWOTmEZFEBsORJGCbeEziHvIZfk5GzQzRIpTrcMQ6xJyv5lRm8y/yTGP8XBHIDgpqzwXsKF3jzM4vFLcm9WcZVVZJE1T4JHEsST4pKkTSpsLYEiYwO+ojNljoVRGK++VVzTfsscQNBWMHpC9WU4TLzbYAzBZExIsA6yetX15FhIRm4BcjPUDjSCflVSNHZ7TdNqazpuAIfvv9AQUGKh+GsDPRc+jx6HDeh39rxBT8cftDvZb6TsyalSWrXSQwcaU35mKIPw==
+ b=q4x18KJkMTZ1Gs+FQTpHwkzFdqunUMQykxbd1G1nMgunJrkDaErfyxgYclKQGjAcrt9qHf0I62vnLF+4KuKUg65Q0/bVEkYbOdDo8VYv4BR7on7cfZTuutPz71pF4zesgMvRZz5sUCQd68oVQHI8oWewWOJIoYaycQrovPVmL830CigMlTRf9lwzGx63VQfzIm7vW+wdpyhPIIJxsTcDbrojXDKCXIsRu5snuT+h4ChsT+dnsU3LbEBMIMSSpKS7VHCJXWuMMuTyXO2QIJPg7+qhLn75SbuxMUjoGY5vAoZ630AbX3LS/DW09FfBzj5sXqaNwfNPi/8naufxxnTuVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4gV98dRMehAXcSVEC4cFOX7zlXg1u4LkSug2t/iRKhw=;
- b=pmWcy9TlkZME4APD6u3HGfB1HvJMXUYGdd6B0VqDy25go/5sqRabqjaBcY9ePhk+SMGws3ok4NM4vGzgVfQweIK9HnIeAsd7/m+JDkW1m6xHBqKb+CSER7Dwct/R+657UIeVtzntYvxuGhZUVqB5w9M5j0asJXJQy/vmfJoYb41ZPfgP5C/wOQQSAJTPMEG4ksE7uFVhLX01ueDq9EPmDcI8qUcktdFnHxuFFKM2gghnAloDOTswXiHhzIOv9GrAyJ2GxgM+RjEq5ITkxrGKJoqCHBybNm/D+CJ9TdtA65fyT6/GeuQcxMagwgJbCYaljsuxLubKEl2OjEtL55OuBw==
+ bh=0mZ+4T0yIz4oWfHdS3wmWko/nquRqy789OKQqsHol2A=;
+ b=PR12uOAyG2pHVhIGw13rJA5ePJ+PojzN0fGBagm7yFK6u47719lAFzhxwMif7WjHxtx5J+gPE75aWwgKFau5QT6KZl3E3JZn3XY7cO2mckXC7pRVc7pSDHsC3v1tUz2NA3mh3DTINJUsLH45IXr5J+IB9+y7jrZl+vcdxl4R96Hye+h0lSS84w1GZZGFMBTfXPf7GzTgS35Twu4n1i+p5VUXZRINLrinALj12iSUUFkL/4aACnWe3q+1HjY6OgKjtQDRniGkpJC1ZEwAoOZC8dDdA/a3ZN81SghIUjJtEaYz/yXccJPx8beNkmVnXFT+s8MVxkCPKr05Z1pAD50G4g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
  dkim=pass header.d=altera.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4gV98dRMehAXcSVEC4cFOX7zlXg1u4LkSug2t/iRKhw=;
- b=YKASOrY5w9PLRDOKcEbpqz1NEktesyncYVtPwspcPcTgQfuRj8HF2vhRpq/CQNbRBhRO26vL3HaM/C86KHhy2wRLBJCWIAf4Kkxu7VEiPWdr/AnJV/vVMgEH3/wSdSLT1sTcmAEzyjWj61x9I+PvhqkiXR5I/fV2hDp4kainY96AKwUrtDdcWXr8MM7iOiK4TBLukIQIPpITS+7Rdi4oInYG0aEHWMkRKbpnS4WHkCgFayWNAq+1Y7hJZ3VGcws5psOSKJIquK6tnDyE1D8VWHX1w0hMPWeGY48d1t26x5BKn/KqpVn8FpqhelNucgYHemG/AT1GwBFnTgLFGXZBCQ==
+ bh=0mZ+4T0yIz4oWfHdS3wmWko/nquRqy789OKQqsHol2A=;
+ b=RzbTbRNYW3gLIB5oxSlXBVMZuWc1rcPdilPXTq2T1S9FqJ1+PfwEREAfSxyOQyu43eKrACBw5bKa7Z18qY2CT+SgB+UPWnVkzms+c0jUwaNSmHWBgRqSgZZIDyivkJZhCAfnusYL50AZgLewQjEN+WjUXtIj/xvNkmayGaXLCDhN0GuQwcm6PcEjnluycpxgoq0KJGU/kEfaF4luTH4mZwgNoe3eQrxdlcgtYtJtvj33urPTu8IAkmfj++wEAheSglkCPFEw+UtYal05Q69uFb9/eFH33i642p45+oSI+dTM65CY69NrgZ/UGT8SWifMuU9Ef25V7XTBTmkhOgWqOw==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=altera.com;
 Received: from MW4PR03MB6588.namprd03.prod.outlook.com (2603:10b6:303:12b::22)
  by SA1PR03MB7053.namprd03.prod.outlook.com (2603:10b6:806:326::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.18; Fri, 2 Oct
- 2026 10:23:10 +0000
+ 2026 10:23:12 +0000
 Received: from MW4PR03MB6588.namprd03.prod.outlook.com
  ([fe80::dbfe:2474:d98e:ddf7]) by MW4PR03MB6588.namprd03.prod.outlook.com
  ([fe80::dbfe:2474:d98e:ddf7%6]) with mapi id 15.21.0472.016; Fri, 2 Oct 2026
- 10:23:10 +0000
+ 10:23:12 +0000
 From: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
 To: Dinh Nguyen <dinguyen@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -50,9 +50,9 @@ To: Dinh Nguyen <dinguyen@kernel.org>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
-Subject: [PATCH v2 1/3] clk: socfpga: agilex: register the SP timer clocks early
-Date: Fri,  2 Oct 2026 18:22:54 +0800
-Message-ID: <b0214433cf10ebc094c6685f60a12abe58860523.1790935401.git.adrian.ho.yin.ng@altera.com>
+Subject: [PATCH v2 2/3] clk: socfpga: agilex5: register the SP timer clocks early
+Date: Fri,  2 Oct 2026 18:22:55 +0800
+Message-ID: <cc6e826f93e113e42fbba46f7da2ad8cda7cdb57.1790935401.git.adrian.ho.yin.ng@altera.com>
 X-Mailer: git-send-email 2.49.GIT
 In-Reply-To: <cover.1790935401.git.adrian.ho.yin.ng@altera.com>
 References: <cover.1790935401.git.adrian.ho.yin.ng@altera.com>
@@ -69,58 +69,58 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: MW4PR03MB6588:EE_|SA1PR03MB7053:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b6e174a-ec30-4def-999b-08df206f285c
+X-MS-Office365-Filtering-Correlation-Id: f7a6f866-8285-4a98-9701-08df206f2986
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|1800799024|23010399003|366016|376014|18002099003|22082099003|55112099003|10067099003|56012099006|11063799006;
 X-Microsoft-Antispam-Message-Info:
-	73fprUUeXrUNi1yvXP47+S1oIvalAtSFIImv/+LgpTtYzu4gQHBZ8zm/KTGtEcbJBueayiSuJSUxjbhBLZjwzxeK0IYmtUYgZ70DLN+G+aG4ndFR2HI239Lbrm0MGQFNGE8MHLdpOlMGVKFTX7zA/R+mzBy7r/27NnDi2/envpgQXtB9Xmzpf8rBd/zbFu1AcWL9JmFGrKJzARhP8rIbWtPhZ235GfcVKBH6pb6g4odiDFxGOwEzwFUVJ69+zeb7D37HpsYTfXui8of6+EZlCpjS6mDX2Zqt5rmMJqly0VBP8/gTGLtk3GuUMSu/Hu2fGb9tC5EJfBa4wNqvNvhgCShhahWGWESlgaL7tM8cv4tNJLNGo7YVsYfU27IH+zW6ja/x1ZV3E5Nn//FK7pJOMnVUJb44jI/BGs9o3gzGoI63d9bR8Y6v1OzC0VUli/JqQLnSD1b+Zy+K7bDmL15PyFkxg0p6JN/GEFoJZ0cDtz0lyWTN2Z6Us7nnHR95fBD9at4ffdNrOYx31XC8gyVdan8DPJL0s/qHs/ZqoJaRaraacNrFSp7REW+JqqoeGvk8KSPOxdUJj0H7vGts/NwGFIx1rf8WLOdyRy0eJ4/n/juM3/JxQ1mmspaKMHOuH0OLZ+2Yk6Fc8ysfnSLBcWwO/X7Ex5KEtQH5meB0p6XCAZE=
+	Dr1uXqJgRkrfPAvHupA/qsjDz5wPe9NE2smVwfehFmjcqzdjWSKpbeNtwTSKFvGAIIsnND6upgz5s4NCYGyr7b3pIPyWlARF2ETQZdw8BlffZWPdwWLyI25JdkUqpcUmvV/vB3UF6/C3wXB4s0vYbucSA88VVQDhVJIQo8xQSTU+GriqYmx4nOG+6VGyKKyugTjahtHkAVsust5L6HS8+nTAWOOJu4h+3f6wRZBu8R3x0qbeKslld+6Gqo1fjEaGavEbXd/xXliIacqqZbY6hh8+CT8WEZaopO/gmZOvJ5MDwGN5CNxPG191HWrz9oxcaZD8DXvfSWoXgUPC0wavZ6B8YPyRtmm0PB2y4uz9fJW738lTRELeWnyrx8p1Axa/F0DcJnYmOHVbFLLM6AIsY9S7CGKtn7VyI1gC5dHdXBxHXDUHpmJ6Zyw3NZQMWJQKF6F5kjSRcQVXHvHbRDFHusGNpvW34YosYLcZZH4KR4hYfY3gmjYCuunTVPd7oUa0tQ1Teh1PoVtSwKkr6bYFTcK0b597Rtv/IMtUVrWZmkSRlMlEaw5I1r75qjRaH9OKGPpkRiSGsJV5LfBnhUuJl7Dh9ZeKz3BblX+6n7JY8NmgWCjbq6gJF7KPksG/YHOkD5CwU4CMlZqu34YF8uJtDlJ5EwZL6lvnmbcnPVUTvVE=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR03MB6588.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(366016)(376014)(18002099003)(22082099003)(55112099003)(10067099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nM/fPcHM1BxoPV5RmXA1lUGfZM2CtK9XoqaOplNLxfpxj4gEmCJ0EyEfEVXU?=
- =?us-ascii?Q?7Q0jdYXSddTCrO0YnkPQdiTZnEQlN/1Fr9W0wOqbZ9WQlfKb3559UqXnPvGb?=
- =?us-ascii?Q?fS8f2eE8yHy1Qc5WW6vew2GcSrbGu74KhRi8xaJRr5tTmfvpoeto69l9lMAE?=
- =?us-ascii?Q?zvaLKb6B5wpCJC3Q6qf9itKTFiFsEqZr2BjnqQRtXdOh0q/Acpp7wCeSoWQY?=
- =?us-ascii?Q?4WiT+oSX9chHEgQWuRQIL2b2WijXqNkM1j5t+iOIORHNfHCucB1eJc1XfaNu?=
- =?us-ascii?Q?1Vq/k0jKsi0gZ1wfA64vh7VJ1RMZmp78dIBmr+WMp9UOzMaMlL+afYarm72y?=
- =?us-ascii?Q?bKvqAo9KF+OKlMyk1g2Htr12intsiJGCyRhBcGHQm+BQ3AVMT33TiNYQHyIK?=
- =?us-ascii?Q?b1NulfKWL2Eruyl8DdBMb14Kli9a2rYR1sL9bkDPmX0F8zR/KaFwt5VHOj1M?=
- =?us-ascii?Q?6+tIEAjHoOs62soZ1fX6vZkjcvpJPiRw67hTLMBrq3EI4DDEQWs+YDg/6orL?=
- =?us-ascii?Q?vDae1cvlGuN0KIdzqlH0g4veYrybF0m0f2QLn5phsaTXYDvWDa2WFkz1NZ9g?=
- =?us-ascii?Q?ZTLv92YiimLOOs7v5D+rfs+i/2b+O9tb5K1P8NxomGlMq/pWgJXfcpFCUf+y?=
- =?us-ascii?Q?JveB/3IzSn9l0oeTgT+h+LSMLkuO02pjV2Q7vSEwH2l5z7Lgt9CuTn3MOAAF?=
- =?us-ascii?Q?V5PY9h5kyfAPBzoU/V4E8YRyHqamGVRuCHOeFOXu79Hyo0py1oQWTBXxuoh3?=
- =?us-ascii?Q?QJBnbminwlKa5os1mPkRA5ZkFKP9tvK1nyPSJ6is4S/5FSQsvSb2ROrD49Xo?=
- =?us-ascii?Q?toPxBYOxx4D2g2dqeW3KGVbirfPdu3tfiFl80eOD6FLlsHFBlPiEZrrExXAg?=
- =?us-ascii?Q?JPvxsL087GTN4D8epHSAc9OxnlqRgxLVVgbHDGlFQgdvl2Dw944Nis01bkRq?=
- =?us-ascii?Q?8AVUBxZl92qnADARu8ey8WfMls5teNBS1xp5PYuKuF8KKc6Wl5pK/DemvYtO?=
- =?us-ascii?Q?YTGx02kvXFZASGV+F1NalXzg+Dhc2GtO3PYU7du/kROqAuHfg31kSOCbfP46?=
- =?us-ascii?Q?C8EYVs3uu8BY00r+Hztk74NCZ63heBlJsI2PKf5ALYPbN5EWPo6JQTqOZScC?=
- =?us-ascii?Q?1xVGNkK3Q1ZH83DagEsHHi996ASZUu0jzpaJyIuF2r6Bxcv41sD+A6iUFHyG?=
- =?us-ascii?Q?RVTkG9wHyL/m3JW/VPaHIhQjscDGnnL7cKYVm3BP1l5z+j1ujYimcqhxgedV?=
- =?us-ascii?Q?c+3pj3dpMJDFvw5lR67vHJDSC7/xeHwTFf97dLwoGMYujktwP0LVcT63sf9f?=
- =?us-ascii?Q?wJ5BhPyvtRyCaxXNSBOdz1IcuFokGwiO7D0gY7kpLNNsGhL9nNvsSJhvp6Ya?=
- =?us-ascii?Q?0Rofb5/f1LLa3ltclMTT/FJwCHbukKJcmD+D9TSNIfMgJbDI9YBS3HJkA+yB?=
- =?us-ascii?Q?tqNZTpR8d/JJQ4I9ilfApXfxxYi6x+3Y2Ux59flz5iZxn4CCUIFC/vsand2f?=
- =?us-ascii?Q?1yReX3jlIY5MtQfAVGTgD8jFNMzgyTguWt5cWkcn1A7Cd19RS1GqTQCFCd0x?=
- =?us-ascii?Q?Ng41HP9n3lj4JeLXga5BoApAYGNvtcqJRyVebAheXCIYWS/nIFMRIRf7xUAN?=
- =?us-ascii?Q?Cspmnd8tplVlu5IC0pY9KtgJjg6kpbdbLQzOzaKePVLxLAquWIzR1Ik/EiKW?=
- =?us-ascii?Q?gbDIM00dopGqllxr5GW302PpyA9S/9pUgnBX2FlP+83kK0Xt6lTby/FR1Gp+?=
- =?us-ascii?Q?SAmDH74bWtm6Rmh13mBpqtk8aaoxXjI=3D?=
+	=?us-ascii?Q?ygCKvgYiSPUESC9O9IBoE+skBV9fC9iQPTv830Ul+Ac8tjaho2Z1R0WX6ilc?=
+ =?us-ascii?Q?e1Olo6bSpy2Xzdptr1E7m0+G4oE/fVtGB2XM+ySmRvKVST8UmVrmhJT/PnmT?=
+ =?us-ascii?Q?nOy0PYHhcZ1t8hMeBJkB4dkTOg9L/4eHWq/hzRF2si8bN2k77EFr0C6pHbiE?=
+ =?us-ascii?Q?8bhLgyJJf/hPA+R2I/r5Jeq2rODClfANMovIXIWyy9QV9jbDipchxqi+U0Uw?=
+ =?us-ascii?Q?ojqxR4ppxkSN0pY5lmpyGAtq6QRlgbZrkASWgpZ3z/m11x8hXGJsAJtEgsl6?=
+ =?us-ascii?Q?fRInHBxjijWMjWgsy1T18UQ1SB7p4kJAvGtq30gU42OLkF4Dbct9PIa1fYEC?=
+ =?us-ascii?Q?5rrfSnQrcZqx8H9YiZf4X8N1f6NsjboIWqw2SquEGiU2E9cxvzbN3q0CgS58?=
+ =?us-ascii?Q?ykQmTK1guvZ94at4rOZNxdNEUoFuWZjpAH6WEhg0lxRDCxxVsdVcZk/+hn37?=
+ =?us-ascii?Q?cmNa0X0NpTUYYC/EdhD4OffT9IXyIHESGU25JPwT1t9PpsiUJZlmhT8NGGTo?=
+ =?us-ascii?Q?KlMU0l3JaFquZxK7rxT88BhDMEhqG30zsqjb2wvuR8zalp9xEHF69HP1vwce?=
+ =?us-ascii?Q?8e8YQcALW6gynVxjtio9DvYiCZic3uZmmXm+fUEEUKCUyblx0eRa3AlkE1dH?=
+ =?us-ascii?Q?qoPpL1P6ZzwnAUJc6WmbPsOapLjiBs45bd6eNTZn7H7JdQIrY9OCFmP53v7d?=
+ =?us-ascii?Q?5S37e4gZeaS3bKv0UzLRKKc5UPxYUnoPs9nnR9nSp8KRphgnUAAvKnuh7grx?=
+ =?us-ascii?Q?e8S8SPh+GCj1H/cBJ2/FvIRm183TLywNSJA0s6yC3g8RGO1jUNuMnMujZW73?=
+ =?us-ascii?Q?9hPn32vF2M17WJ1UHKV8TK6b0smmVpYnNzN5jSXa+y3ISsai635FE3OG7W1s?=
+ =?us-ascii?Q?Tf4jjmUJUp+bx3RFqAiENhpwyuP1OegUC6xEcyc3Xze6QUpTAyBJBHOY91MZ?=
+ =?us-ascii?Q?KMAUDOJCmImY0pQnc9oS6EJ2kwi0UVpzt6Z4e9k1t1qUCeiR6mWZ7AmCpSLi?=
+ =?us-ascii?Q?D/k2ZkT+zFz4cXl70X/dhEdLP6F8doLZ5VwSbOksh83fRm58ZOUzuuvkZqWF?=
+ =?us-ascii?Q?+AIqYqose7U8uSKlKigO6tKMrbbqeZIkfRzA7lsFMOfJv4MtU9gROZIpPht2?=
+ =?us-ascii?Q?UI2zK+/eQmtS2iL3asL8lrz2ySCUv7+rV+cvaor5wAHxA6CT6EWU0mdxLlC1?=
+ =?us-ascii?Q?yzAhJuc9ey+OMmsQx0nBpqbhIN5oJWSKifHtoXNJEaMyST0ZZUNsZhpqlngg?=
+ =?us-ascii?Q?9xeg8QVPGVw6b35lDCkdKwKkArmbUkmJhMRjD3dyvA1e6PYTxv7OUwbqAVyy?=
+ =?us-ascii?Q?AQ3ZRSj2nS+qcXPfuqu/M69tSoo5xz65jWlrROkv75ijdvU9qf2NEujFiIcT?=
+ =?us-ascii?Q?dg3HxLZp4dToWBc0flcxKsiALR73uHYYKUrLFXqFq8r4UgAxIWpe68qhQFDC?=
+ =?us-ascii?Q?9ImypFwc/iDApktpRqf2xElUxucBE2qmQ/lm860m8Z4+t00FZnJ0n6QmRpB2?=
+ =?us-ascii?Q?BCJq6sxR9ZNM4+ZiR2lE+IgcvPQxPYGiXq6rQGXNFBQSBU4SAv6Oh+juuNn3?=
+ =?us-ascii?Q?CTPVRXw1xrJixrYolfdJAnFsFSR9ZL/UawZTdpAoq9MqgqRr7HUB178ojoyw?=
+ =?us-ascii?Q?EwAt5fVRhcRqIB4Eiajzdv7rbcX5aAPIKdO+FaL7oscbjINhI/2C9UV6S97L?=
+ =?us-ascii?Q?X+Ceu638EGgAcCeK7DP0VJyW+WbP+If71zE8Kr8OCnM8qaM2+VQJhUBndd84?=
+ =?us-ascii?Q?MD9DQctyDUJ30NIY6SutWIF6J16Ob+w=3D?=
 X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b6e174a-ec30-4def-999b-08df206f285c
+X-MS-Exchange-CrossTenant-Network-Message-Id: f7a6f866-8285-4a98-9701-08df206f2986
 X-MS-Exchange-CrossTenant-AuthSource: MW4PR03MB6588.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2026 10:23:10.1383
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2026 10:23:12.1206
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HfAJiTYhjsSzUTKlUACmnDpdA+MLdWeFO8is8q9+6O0IgrcmeC/PH14Y+1DM7wVpqOBR1u9uroBJ81zsPl0oQtwLiI0SAhdWO1zF44/9Y/E=
+X-MS-Exchange-CrossTenant-UserPrincipalName: pFnkCYLUKZLZicsB77DTTvy1JMXLMpHARSg3JRg1I7ut55FvteUN7/L5GQ+8MdS24+FhhmwlXc742JYl3MLtDumEe3oLEcr+IHQ83nUANEs=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR03MB7053
 
 The DW APB timers are probed through TIMER_OF_DECLARE() from time_init()
@@ -129,21 +129,21 @@ at core_initcall(). The timer's clk_get() therefore fails and the timer
 is never brought up.
 
 Register only l4_sp_clk and its parents (boot_clk, main_pll, periph_pll,
-main_pll_c1, peri_pll_c1 and noc_free_clk) from of_clk_init() using
+main_pll_c3, peri_pll_c1 and noc_free_clk) from of_clk_init() using
 CLK_OF_DECLARE_DRIVER(), with every other clock left as -EPROBE_DEFER.
 The remaining clocks are still registered when the platform driver
 probes, which reuses the early provider.
 
 Signed-off-by: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
 ---
- drivers/clk/socfpga/clk-agilex.c | 222 +++++++++++++++++++++++--------
- 1 file changed, 169 insertions(+), 53 deletions(-)
+ drivers/clk/socfpga/clk-agilex5.c | 138 +++++++++++++++++++++++-------
+ 1 file changed, 109 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
-index 2bdea1997b5e..91a80b7b1886 100644
---- a/drivers/clk/socfpga/clk-agilex.c
-+++ b/drivers/clk/socfpga/clk-agilex.c
-@@ -4,7 +4,9 @@
+diff --git a/drivers/clk/socfpga/clk-agilex5.c b/drivers/clk/socfpga/clk-agilex5.c
+index f7f0ad884f64..e439950dd6da 100644
+--- a/drivers/clk/socfpga/clk-agilex5.c
++++ b/drivers/clk/socfpga/clk-agilex5.c
+@@ -5,7 +5,9 @@
   */
  #include <linux/slab.h>
  #include <linux/clk-provider.h>
@@ -151,259 +151,78 @@ index 2bdea1997b5e..91a80b7b1886 100644
  #include <linux/of.h>
 +#include <linux/of_address.h>
  #include <linux/platform_device.h>
- 
- #include <dt-bindings/clock/agilex-clock.h>
-@@ -232,24 +234,49 @@ static const struct stratix10_pll_clock agilex_pll_clks[] = {
- 	  0, 0x9c},
+ #include  <dt-bindings/clock/intel,agilex5-clkmgr.h>
+ #include "stratix10-clk.h"
+@@ -233,7 +235,29 @@ static const struct agilex5_pll_clock agilex5_pll_clks[] = {
+ 	},
  };
  
+-/* Main PLL C0, C1, C2, C3 and Peri PLL C0, C1, C2, C3. With ping-pong counter. */
 +/*
 + * The SP timers are probed from time_init() and cannot defer, so their
 + * l4_sp_clk and its parents are registered from of_clk_init(). Everything
 + * else is registered when the platform driver probes.
 + */
-+static const struct n5x_perip_c_clock n5x_early_perip_c_clks[] = {
-+	{ AGILEX_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0, 0x54, 8},
-+	{ AGILEX_PERIPH_PLL_C1_CLK, "peri_pll_c1", "periph_pll", NULL, 1, 0, 0xA8, 8},
++static const struct stratix10_perip_c_clock agilex5_early_perip_c_clks[] = {
++	{ AGILEX5_MAIN_PLL_C3_CLK, "main_pll_c3", "main_pll", NULL, 1, 0,
++	  0x68 },
++	{ AGILEX5_PERIPH_PLL_C1_CLK, "peri_pll_c1", "periph_pll", NULL, 1, 0,
++	  0xB4 },
 +};
 +
-+static const struct stratix10_perip_c_clock agilex_early_perip_c_clks[] = {
-+	{ AGILEX_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0, 0x5C},
-+	{ AGILEX_PERIPH_PLL_C1_CLK, "peri_pll_c1", "periph_pll", NULL, 1, 0, 0xB0},
++static const struct agilex5_perip_cnt_clock agilex5_early_perip_cnt_clks[] = {
++	{ AGILEX5_NOC_FREE_CLK, "noc_free_clk", noc_free_mux,
++	ARRAY_SIZE(noc_free_mux), 0, 0x40, 0, 0, 0 },
 +};
 +
-+static const struct stratix10_perip_cnt_clock agilex_early_perip_cnt_clks[] = {
-+	{ AGILEX_NOC_FREE_CLK, "noc_free_clk", NULL, noc_free_mux, ARRAY_SIZE(noc_free_mux),
-+	  0, 0x40, 0, 0, 0},
++static const struct agilex5_gate_clock agilex5_early_gate_clks[] = {
++	{ AGILEX5_L4_SP_CLK, "l4_sp_clk", noc_mux, ARRAY_SIZE(noc_mux),
++	  CLK_IS_CRITICAL, 0x24, 3, 0x44, 6, 2, 0x30, 1, 0 },
 +};
 +
-+static const struct stratix10_gate_clock agilex_early_gate_clks[] = {
-+	/*
-+	 * The l4_sp_clk feeds a 100 MHz clock to various peripherals, one of them
-+	 * being the SP timers, thus cannot get gated.
-+	 */
-+	{ AGILEX_L4_SP_CLK, "l4_sp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), CLK_IS_CRITICAL, 0x24,
-+	  3, 0x44, 16, 2, 0x30, 1, 0},
-+};
-+
- static const struct n5x_perip_c_clock n5x_main_perip_c_clks[] = {
- 	{ AGILEX_MAIN_PLL_C0_CLK, "main_pll_c0", "main_pll", NULL, 1, 0, 0x54, 0},
--	{ AGILEX_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0, 0x54, 8},
- 	{ AGILEX_MAIN_PLL_C2_CLK, "main_pll_c2", "main_pll", NULL, 1, 0, 0x54, 16},
- 	{ AGILEX_MAIN_PLL_C3_CLK, "main_pll_c3", "main_pll", NULL, 1, 0, 0x54, 24},
- 	{ AGILEX_PERIPH_PLL_C0_CLK, "peri_pll_c0", "periph_pll", NULL, 1, 0, 0xA8, 0},
--	{ AGILEX_PERIPH_PLL_C1_CLK, "peri_pll_c1", "periph_pll", NULL, 1, 0, 0xA8, 8},
- 	{ AGILEX_PERIPH_PLL_C2_CLK, "peri_pll_c2", "periph_pll", NULL, 1, 0, 0xA8, 16},
- 	{ AGILEX_PERIPH_PLL_C3_CLK, "peri_pll_c3", "periph_pll", NULL, 1, 0, 0xA8, 24},
- };
++/* Main PLL C0, C1, C2 and Peri PLL C0, C2, C3. With ping-pong counter. */
+ static const struct stratix10_perip_c_clock agilex5_main_perip_c_clks[] = {
+ 	{ AGILEX5_MAIN_PLL_C0_CLK, "main_pll_c0", "main_pll", NULL, 1, 0,
+ 	  0x5C },
+@@ -241,12 +265,8 @@ static const struct stratix10_perip_c_clock agilex5_main_perip_c_clks[] = {
+ 	  0x60 },
+ 	{ AGILEX5_MAIN_PLL_C2_CLK, "main_pll_c2", "main_pll", NULL, 1, 0,
+ 	  0x64 },
+-	{ AGILEX5_MAIN_PLL_C3_CLK, "main_pll_c3", "main_pll", NULL, 1, 0,
+-	  0x68 },
+ 	{ AGILEX5_PERIPH_PLL_C0_CLK, "peri_pll_c0", "periph_pll", NULL, 1, 0,
+ 	  0xB0 },
+-	{ AGILEX5_PERIPH_PLL_C1_CLK, "peri_pll_c1", "periph_pll", NULL, 1, 0,
+-	  0xB4 },
+ 	{ AGILEX5_PERIPH_PLL_C2_CLK, "peri_pll_c2", "periph_pll", NULL, 1, 0,
+ 	  0xB8 },
+ 	{ AGILEX5_PERIPH_PLL_C3_CLK, "peri_pll_c3", "periph_pll", NULL, 1, 0,
+@@ -265,8 +285,6 @@ static const struct agilex5_perip_cnt_clock agilex5_main_perip_cnt_clks[] = {
+ 	ARRAY_SIZE(core3_free_mux), 0, 0x0110, 0, 0, 0},
+ 	{ AGILEX5_DSU_FREE_CLK, "dsu_free_clk", dsu_free_mux,
+ 	ARRAY_SIZE(dsu_free_mux), 0, 0xfc, 0, 0, 0},
+-	{ AGILEX5_NOC_FREE_CLK, "noc_free_clk", noc_free_mux,
+-	ARRAY_SIZE(noc_free_mux), 0, 0x40, 0, 0, 0 },
+ 	{ AGILEX5_EMAC_A_FREE_CLK, "emaca_free_clk", emaca_free_mux,
+ 	ARRAY_SIZE(emaca_free_mux), 0, 0xD4, 0, 0x88, 0 },
+ 	{ AGILEX5_EMAC_B_FREE_CLK, "emacb_free_clk", emacb_free_mux,
+@@ -313,8 +331,6 @@ static const struct agilex5_gate_clock agilex5_gate_clks[] = {
+ 	  0x24, 2, 0x44, 4, 2, 0x30, 1, 0 },
+ 	{ AGILEX5_L4_SYS_FREE_CLK, "l4_sys_free_clk", noc_mux,
+ 	  ARRAY_SIZE(noc_mux), 0, 0, 0, 0x44, 2, 2, 0x30, 1, 0 },
+-	{ AGILEX5_L4_SP_CLK, "l4_sp_clk", noc_mux, ARRAY_SIZE(noc_mux),
+-	  CLK_IS_CRITICAL, 0x24, 3, 0x44, 6, 2, 0x30, 1, 0 },
  
- static const struct stratix10_perip_c_clock agilex_main_perip_c_clks[] = {
- 	{ AGILEX_MAIN_PLL_C0_CLK, "main_pll_c0", "main_pll", NULL, 1, 0, 0x58},
--	{ AGILEX_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0, 0x5C},
- 	{ AGILEX_MAIN_PLL_C2_CLK, "main_pll_c2", "main_pll", NULL, 1, 0, 0x64},
- 	{ AGILEX_MAIN_PLL_C3_CLK, "main_pll_c3", "main_pll", NULL, 1, 0, 0x68},
- 	{ AGILEX_PERIPH_PLL_C0_CLK, "peri_pll_c0", "periph_pll", NULL, 1, 0, 0xAC},
--	{ AGILEX_PERIPH_PLL_C1_CLK, "peri_pll_c1", "periph_pll", NULL, 1, 0, 0xB0},
- 	{ AGILEX_PERIPH_PLL_C2_CLK, "peri_pll_c2", "periph_pll", NULL, 1, 0, 0xB8},
- 	{ AGILEX_PERIPH_PLL_C3_CLK, "peri_pll_c3", "periph_pll", NULL, 1, 0, 0xBC},
- };
-@@ -257,8 +284,6 @@ static const struct stratix10_perip_c_clock agilex_main_perip_c_clks[] = {
- static const struct stratix10_perip_cnt_clock agilex_main_perip_cnt_clks[] = {
- 	{ AGILEX_MPU_FREE_CLK, "mpu_free_clk", NULL, mpu_free_mux, ARRAY_SIZE(mpu_free_mux),
- 	   0, 0x3C, 0, 0, 0},
--	{ AGILEX_NOC_FREE_CLK, "noc_free_clk", NULL, noc_free_mux, ARRAY_SIZE(noc_free_mux),
--	  0, 0x40, 0, 0, 0},
- 	{ AGILEX_L3_MAIN_FREE_CLK, "l3_main_free_clk", "noc_free_clk", NULL,
- 	  1, 0, 0, 1, 0, 0},
- 	{ AGILEX_L4_SYS_FREE_CLK, "l4_sys_free_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0,
-@@ -292,12 +317,6 @@ static const struct stratix10_gate_clock agilex_gate_clks[] = {
- 	  1, 0x44, 0, 2, 0x30, 1, 0},
- 	{ AGILEX_L4_MP_CLK, "l4_mp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
- 	  2, 0x44, 8, 2, 0x30, 1, 0},
--	/*
--	 * The l4_sp_clk feeds a 100 MHz clock to various peripherals, one of them
--	 * being the SP timers, thus cannot get gated.
--	 */
--	{ AGILEX_L4_SP_CLK, "l4_sp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), CLK_IS_CRITICAL, 0x24,
--	  3, 0x44, 16, 2, 0x30, 1, 0},
- 	{ AGILEX_CS_AT_CLK, "cs_at_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
- 	  4, 0x44, 24, 2, 0x30, 1, 0},
- 	{ AGILEX_CS_TRACE_CLK, "cs_trace_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
-@@ -454,32 +473,148 @@ static int n5x_clk_register_pll(const struct stratix10_pll_clock *clks,
+ 	/* Core sight clocks*/
+ 	{ AGILEX5_CS_AT_CLK, "cs_at_clk", noc_mux, ARRAY_SIZE(noc_mux), 0,
+@@ -486,35 +502,92 @@ static int agilex5_clk_register_pll(const struct agilex5_pll_clock *clks,
  	return 0;
  }
  
--static int agilex_clkmgr_init(struct platform_device *pdev)
-+static struct stratix10_clock_data *agilex_clk_data;
+-static int agilex5_clkmgr_init(struct platform_device *pdev)
++static struct stratix10_clock_data *agilex5_clk_data;
 +
-+static struct stratix10_clock_data *agilex_clk_data_alloc(void __iomem *base)
-+{
-+	struct stratix10_clock_data *clk_data;
-+	int i;
-+
-+	clk_data = kzalloc(struct_size(clk_data, clk_data.hws, AGILEX_NUM_CLKS),
-+			   GFP_KERNEL);
-+	if (!clk_data)
-+		return NULL;
-+
-+	clk_data->base = base;
-+	clk_data->clk_data.num = AGILEX_NUM_CLKS;
-+
-+	for (i = 0; i < AGILEX_NUM_CLKS; i++)
-+		clk_data->clk_data.hws[i] = ERR_PTR(-EPROBE_DEFER);
-+
-+	return clk_data;
-+}
-+
-+static void agilex_clk_register_early(struct stratix10_clock_data *clk_data)
-+{
-+	agilex_clk_register_pll(agilex_pll_clks, ARRAY_SIZE(agilex_pll_clks), clk_data);
-+
-+	agilex_clk_register_c_perip(agilex_early_perip_c_clks,
-+				    ARRAY_SIZE(agilex_early_perip_c_clks), clk_data);
-+
-+	agilex_clk_register_cnt_perip(agilex_early_perip_cnt_clks,
-+				      ARRAY_SIZE(agilex_early_perip_cnt_clks),
-+				      clk_data);
-+
-+	agilex_clk_register_gate(agilex_early_gate_clks,
-+				 ARRAY_SIZE(agilex_early_gate_clks), clk_data);
-+}
-+
-+static void n5x_clk_register_early(struct stratix10_clock_data *clk_data)
-+{
-+	n5x_clk_register_pll(agilex_pll_clks, ARRAY_SIZE(agilex_pll_clks), clk_data);
-+
-+	n5x_clk_register_c_perip(n5x_early_perip_c_clks,
-+				 ARRAY_SIZE(n5x_early_perip_c_clks), clk_data);
-+
-+	agilex_clk_register_cnt_perip(agilex_early_perip_cnt_clks,
-+				      ARRAY_SIZE(agilex_early_perip_cnt_clks),
-+				      clk_data);
-+
-+	agilex_clk_register_gate(agilex_early_gate_clks,
-+				 ARRAY_SIZE(agilex_early_gate_clks), clk_data);
-+}
-+
-+static void __init
-+agilex_clkmgr_of_init(struct device_node *np,
-+		      void (*register_early)(struct stratix10_clock_data *))
-+{
-+	struct stratix10_clock_data *clk_data;
-+	void __iomem *base;
-+
-+	base = of_iomap(np, 0);
-+	if (!base) {
-+		pr_err("%s: failed to map clock registers\n", __func__);
-+		return;
-+	}
-+
-+	clk_data = agilex_clk_data_alloc(base);
-+	if (!clk_data) {
-+		iounmap(base);
-+		return;
-+	}
-+
-+	register_early(clk_data);
-+
-+	if (of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data)) {
-+		pr_err("%s: failed to add clock provider\n", __func__);
-+		return;
-+	}
-+
-+	agilex_clk_data = clk_data;
-+}
-+
-+static void __init agilex_clkmgr_early_init(struct device_node *np)
-+{
-+	agilex_clkmgr_of_init(np, agilex_clk_register_early);
-+}
-+
-+CLK_OF_DECLARE_DRIVER(agilex_clkmgr, "intel,agilex-clkmgr",
-+		      agilex_clkmgr_early_init);
-+
-+static void __init n5x_clkmgr_early_init(struct device_node *np)
-+{
-+	agilex_clkmgr_of_init(np, n5x_clk_register_early);
-+}
-+
-+CLK_OF_DECLARE_DRIVER(n5x_clkmgr, "intel,easic-n5x-clkmgr",
-+		      n5x_clkmgr_early_init);
-+
-+static struct stratix10_clock_data *
-+agilex_clkmgr_get_clk_data(struct platform_device *pdev,
-+			   void (*register_early)(struct stratix10_clock_data *))
- {
--	struct device_node *np = pdev->dev.of_node;
--	struct device *dev = &pdev->dev;
- 	struct stratix10_clock_data *clk_data;
- 	void __iomem *base;
--	int i, num_clks;
-+
-+	if (agilex_clk_data)
-+		return agilex_clk_data;
- 
- 	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
--		return PTR_ERR(base);
--
--	num_clks = AGILEX_NUM_CLKS;
-+		return ERR_CAST(base);
- 
--	clk_data = devm_kzalloc(dev, struct_size(clk_data, clk_data.hws,
--				num_clks), GFP_KERNEL);
-+	clk_data = agilex_clk_data_alloc(base);
- 	if (!clk_data)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
--	clk_data->clk_data.num = num_clks;
--	clk_data->base = base;
-+	register_early(clk_data);
- 
--	for (i = 0; i < num_clks; i++)
--		clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
-+	return clk_data;
-+}
- 
--	agilex_clk_register_pll(agilex_pll_clks, ARRAY_SIZE(agilex_pll_clks), clk_data);
-+static int agilex_clkmgr_add_provider(struct platform_device *pdev,
-+				      struct stratix10_clock_data *clk_data)
-+{
-+	int i;
-+
-+	for (i = 0; i < AGILEX_NUM_CLKS; i++)
-+		if (clk_data->clk_data.hws[i] == ERR_PTR(-EPROBE_DEFER))
-+			clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
-+
-+	if (clk_data == agilex_clk_data)
-+		return 0;
-+
-+	return of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
-+				      &clk_data->clk_data);
-+}
-+
-+static int agilex_clkmgr_init(struct platform_device *pdev)
-+{
-+	struct stratix10_clock_data *clk_data;
-+
-+	clk_data = agilex_clkmgr_get_clk_data(pdev, agilex_clk_register_early);
-+	if (IS_ERR(clk_data))
-+		return PTR_ERR(clk_data);
- 
- 	agilex_clk_register_c_perip(agilex_main_perip_c_clks,
- 				 ARRAY_SIZE(agilex_main_perip_c_clks), clk_data);
-@@ -490,36 +625,17 @@ static int agilex_clkmgr_init(struct platform_device *pdev)
- 
- 	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
- 			      clk_data);
--	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
--	return 0;
-+
-+	return agilex_clkmgr_add_provider(pdev, clk_data);
- }
- 
- static int n5x_clkmgr_init(struct platform_device *pdev)
++static struct stratix10_clock_data *agilex5_clk_data_alloc(void __iomem *base)
  {
 -	struct device_node *np = pdev->dev.of_node;
 -	struct device *dev = &pdev->dev;
@@ -415,37 +234,116 @@ index 2bdea1997b5e..91a80b7b1886 100644
 -	if (IS_ERR(base))
 -		return PTR_ERR(base);
 -
--	num_clks = AGILEX_NUM_CLKS;
--
+-	num_clks = AGILEX5_NUM_CLKS;
++	int i;
+ 
 -	clk_data = devm_kzalloc(dev, struct_size(clk_data, clk_data.hws,
 -				num_clks), GFP_KERNEL);
--	if (!clk_data)
++	clk_data = kzalloc(struct_size(clk_data, clk_data.hws, AGILEX5_NUM_CLKS),
++			   GFP_KERNEL);
+ 	if (!clk_data)
 -		return -ENOMEM;
--
--	clk_data->base = base;
++		return NULL;
+ 
+ 	clk_data->base = base;
 -	clk_data->clk_data.num = num_clks;
++	clk_data->clk_data.num = AGILEX5_NUM_CLKS;
++
++	for (i = 0; i < AGILEX5_NUM_CLKS; i++)
++		clk_data->clk_data.hws[i] = ERR_PTR(-EPROBE_DEFER);
  
 -	for (i = 0; i < num_clks; i++)
 -		clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
--
--	n5x_clk_register_pll(agilex_pll_clks, ARRAY_SIZE(agilex_pll_clks), clk_data);
-+	clk_data = agilex_clkmgr_get_clk_data(pdev, n5x_clk_register_early);
-+	if (IS_ERR(clk_data))
-+		return PTR_ERR(clk_data);
++	return clk_data;
++}
  
- 	n5x_clk_register_c_perip(n5x_main_perip_c_clks,
- 				 ARRAY_SIZE(n5x_main_perip_c_clks), clk_data);
-@@ -530,8 +646,8 @@ static int n5x_clkmgr_init(struct platform_device *pdev)
++static void agilex5_clk_register_early(struct stratix10_clock_data *clk_data)
++{
+ 	agilex5_clk_register_pll(agilex5_pll_clks, ARRAY_SIZE(agilex5_pll_clks),
+ 				 clk_data);
  
- 	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
- 			      clk_data);
+-	/* mainPLL C0, C1, C2, C3 and periph PLL C0, C1, C2, C3*/
++	agilex5_clk_register_c_perip(agilex5_early_perip_c_clks,
++				     ARRAY_SIZE(agilex5_early_perip_c_clks),
++				     clk_data);
++
++	agilex5_clk_register_cnt_perip(agilex5_early_perip_cnt_clks,
++				       ARRAY_SIZE(agilex5_early_perip_cnt_clks),
++				       clk_data);
++
++	agilex5_clk_register_gate(agilex5_early_gate_clks,
++				  ARRAY_SIZE(agilex5_early_gate_clks), clk_data);
++}
++
++static void __init agilex5_clkmgr_early_init(struct device_node *np)
++{
++	struct stratix10_clock_data *clk_data;
++	void __iomem *base;
++
++	base = of_iomap(np, 0);
++	if (!base) {
++		pr_err("%s: failed to map clock registers\n", __func__);
++		return;
++	}
++
++	clk_data = agilex5_clk_data_alloc(base);
++	if (!clk_data) {
++		iounmap(base);
++		return;
++	}
++
++	agilex5_clk_register_early(clk_data);
++
++	if (of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data)) {
++		pr_err("%s: failed to add clock provider\n", __func__);
++		return;
++	}
++
++	agilex5_clk_data = clk_data;
++}
++
++CLK_OF_DECLARE_DRIVER(agilex5_clkmgr, "intel,agilex5-clkmgr",
++		      agilex5_clkmgr_early_init);
++
++static int agilex5_clkmgr_init(struct platform_device *pdev)
++{
++	struct stratix10_clock_data *clk_data = agilex5_clk_data;
++	void __iomem *base;
++	int i;
++
++	if (!clk_data) {
++		base = devm_platform_ioremap_resource(pdev, 0);
++		if (IS_ERR(base))
++			return PTR_ERR(base);
++
++		clk_data = agilex5_clk_data_alloc(base);
++		if (!clk_data)
++			return -ENOMEM;
++
++		agilex5_clk_register_early(clk_data);
++	}
++
+ 	agilex5_clk_register_c_perip(agilex5_main_perip_c_clks,
+ 				     ARRAY_SIZE(agilex5_main_perip_c_clks),
+ 				     clk_data);
+@@ -526,8 +599,15 @@ static int agilex5_clkmgr_init(struct platform_device *pdev)
+ 	agilex5_clk_register_gate(agilex5_gate_clks,
+ 				  ARRAY_SIZE(agilex5_gate_clks), clk_data);
+ 
 -	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
 -	return 0;
++	for (i = 0; i < AGILEX5_NUM_CLKS; i++)
++		if (clk_data->clk_data.hws[i] == ERR_PTR(-EPROBE_DEFER))
++			clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
 +
-+	return agilex_clkmgr_add_provider(pdev, clk_data);
++	if (clk_data == agilex5_clk_data)
++		return 0;
++
++	return of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
++				      &clk_data->clk_data);
  }
  
- static int agilex_clkmgr_probe(struct platform_device *pdev)
+ static int agilex5_clkmgr_probe(struct platform_device *pdev)
 -- 
 2.49.GIT
 
