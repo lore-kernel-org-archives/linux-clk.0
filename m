@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E841847F3A1
-	for <linux-clk@vger.kernel.org>; Fri,  2 Oct 2026 10:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A6A44C66C
+	for <linux-clk@vger.kernel.org>; Fri,  2 Oct 2026 10:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790937325; cv=none; b=G5k+LLs/kq78YG/ZhmnWmla7t02ihV3S2tAgijT4SK9YVAZ68s2VCpZ/ofsuYmpZkjFpwnDCyMK/gL3dmn8o+cRn0mBRN/Cywoa9yc575zUH3EC/KPGlAEBENNRdHdXHUabMkvPVuEf4G1NE5rBHaccfhAExWw0f8Jv27Qa8v54=
+	t=1790937358; cv=none; b=fXkUAUa5R2jTkWMxURObHHO0xUICY0qIWLSC4Yb7VbQ+V99Cdb/lvNi7J2hncT3DvIroryoZW3ldbe4iI+6VznUzV/2P1xLhKfRDTDuvH/lu1tRkJhHXWfFJMqnCfLcjlaWkaxUz14WFlPNs9eSeY55GC3YFBWS+UC5rzzhjNkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790937325; c=relaxed/simple;
-	bh=5QWp2uhF76R39u41+1oeJWoMQvajnENrgq3uaCojZaU=;
+	s=arc-20240116; t=1790937358; c=relaxed/simple;
+	bh=V7lHTsHvZeDNZDQVCJstR4+kRVHO5Ma2v75ep6DRSzE=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=tUGDRp/yADDE6TbBbpT2KwHGWy+bAsL8YUKtp+VREVxnrHipJ3adEtaIVSoaOgaqvqM9L47VL2LNeIixYJoDEDdFEfTN7SU5dY5M6E1jEvzi1EiHzDD06TPTqMtWutji83k+9vFQTBTS83P1FxLxkLIxXMEA+YXoetgrNAgVMl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GOD8jLj2; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=naCXFS1L0W+RduI8dRj0cdztELfMMc8pWarUejVHvyuVVm+4SsdM636oVsVkMn1RAmpargSdN9OmVZysoe8i6TJ4L2Md54cJGaIL+TTOb+zfsXccnedpdunJqvQ91H/xM2C1ASombOdtJTJy4dCZ+Xu87oKCqjT88VTW/GYIja8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8jwljFg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GOD8jLj2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD0531F000FF;
-	Fri,  2 Oct 2026 10:35:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8jwljFg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47E2D1F000FF;
+	Fri,  2 Oct 2026 10:35:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790937318;
-	bh=XjphhJgW/nGZqEpN1eYi7P3d2EW1iyRoLYV2FNXoJlg=;
+	s=k20260515; t=1790937356;
+	bh=GVDybXNR0/PJT/sfEqUTOvL0hLdyiWMhUYOcrpJeZSs=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=GOD8jLj2S7vb11YsOFX8pG9KCXNoJaUKBP27FoH1cbnmDaMwzvM7lv2+nBGY5SHwp
-	 osNbk7b3hJRrKfysE8IEtJYHVA7LcioUSsPwbzQk1RlfB9AcNSTJ30H5zi67+R8DQJ
-	 6rXWMf6hpiLj4qMheorGVmO0B8jnoh41aaVCDSFk8mFgTC4vqCr0uNKwOBeWO8rjic
-	 QLWU5VUwvf8ZME0bkqtyakdW8e4dHz/Hl8aWSgxAZ/w7gX0ZXGkdqW/l7O3a4OHoFG
-	 RJpW4z/oovsER1gczAagVKBTPAXisaJsxm7vdb5HvjU1GdVOhfAGsrMf6OdP13R90q
-	 dsEXxvnrGVawQ==
+	b=b8jwljFgfnML5PzYEn8R3be8U8yNyiPcRiqytfXbvQd3tODvKrWgFt4YRwTu2zpXd
+	 Tgs9F2MVS3WEjxZuesCKhW5PFIwSBQIss/bnFe/7TzzABKBgrGTvnXSUq5oySLaG3/
+	 O2og8aM8CQu5YRPTya4nJOEjo9cEGi4vJoWFG0dCc4zgfuKTiHB4cN30M21E6ks5ZC
+	 sIAjHbVMobix+ePDXYw1IDI5GtAHrFMv1OoG/zj7Prnarv2mbiz83n/WevP9v1V7b8
+	 0wwc6r4VBGU01Eyx8clfsKb88kYPs5KirkbMP7GuzYtldjOxK6j0BIMQ+zP2OzZX41
+	 Xa/msnCavScMw==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 3/3] clk: socfpga: stratix10: register the SP timer
+Subject: Re: [PATCH v2 1/3] clk: socfpga: agilex: register the SP timer
  clocks early
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Adrian Ng Ho Yin" <adrian.ho.yin.ng@altera.com>
 Cc: linux-clk@vger.kernel.org
-In-Reply-To: <3164e6dcf09ca68c2ff9537b0f96aefcc793366a.1790935401.git.adrian.ho.yin.ng@altera.com>
+In-Reply-To: <b0214433cf10ebc094c6685f60a12abe58860523.1790935401.git.adrian.ho.yin.ng@altera.com>
 References: <cover.1790935401.git.adrian.ho.yin.ng@altera.com>
- <3164e6dcf09ca68c2ff9537b0f96aefcc793366a.1790935401.git.adrian.ho.yin.ng@altera.com>
+ <b0214433cf10ebc094c6685f60a12abe58860523.1790935401.git.adrian.ho.yin.ng@altera.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 02 Oct 2026 10:35:18 +0000
-Message-Id: <20261002103518.AD0531F000FF@smtp.kernel.org>
+Date: Fri, 02 Oct 2026 10:35:55 +0000
+Message-Id: <20261002103556.47E2D1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,134 +47,131 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
-- [High] clk: socfpga: use-after-free of unmapped IO memory on probe failure
-- [Medium] clk: socfpga: memory leak of clk_data on probe error
-- [Medium] clk: socfpga: incomplete early init rollback causes fatal regist=
-ration conflicts
+- [High] clk: socfpga: use-after-free of I/O memory on probe failure
+- [Medium] clk: socfpga: memory and I/O mapping leaks on error paths
+- [Medium] clk: socfpga: double registration of early clocks on provider fa=
+ilure
 --
 
-commit 68e80ef968cd718473fa02d4989427b8a0ddd324
+commit 1aa58afee8b5118fcfe81945cc09867307ba4bd8
 Author: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
+Subject: clk: socfpga: agilex: register the SP timer clocks early
 
-clk: socfpga: stratix10: register the SP timer clocks early
+This commit splits the clock registration for the Agilex platform into an
+early initialization phase to support timers that require clocks before
+core_initcall, and defers the remaining clocks to the platform driver probe.
 
-The patch registers the SP timer clocks early using CLK_OF_DECLARE_DRIVER()
-to prevent probe deferral, while deferring the remaining clocks to the
-platform driver probe.
-
-> diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
-> index b4bf4e2d38e16..7eae2dfa408d5 100644
-> --- a/drivers/clk/socfpga/clk-s10.c
-> +++ b/drivers/clk/socfpga/clk-s10.c
+> diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-a=
+gilex.c
+> index 2bdea1997b5ef..91a80b7b1886a 100644
+> --- a/drivers/clk/socfpga/clk-agilex.c
+> +++ b/drivers/clk/socfpga/clk-agilex.c
 
 [ ... ]
 
-> +static struct stratix10_clock_data *s10_clk_data_alloc(void __iomem *bas=
-e)
+> +static void __init
+> +agilex_clkmgr_of_init(struct device_node *np,
+> +		      void (*register_early)(struct stratix10_clock_data *))
 > +{
 > +	struct stratix10_clock_data *clk_data;
-> +	int i;
+> +	void __iomem *base;
 > +
-> +	clk_data =3D kzalloc(struct_size(clk_data, clk_data.hws, STRATIX10_NUM_=
-CLKS),
-> +			   GFP_KERNEL);
-> +	if (!clk_data)
-> +		return NULL;
-
-[ ... ]
-
-> +static void __init s10_clkmgr_early_init(struct device_node *np)
->  {
-
-[ ... ]
-
-> +	s10_clk_register_early(clk_data);
-> =20
-> -	for (i =3D 0; i < num_clks; i++)
-> -		clk_data->clk_data.hws[i] =3D ERR_PTR(-ENOENT);
-> +	if (of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_da=
-ta)) {
-> +		pr_err("%s: failed to add clock provider\n", __func__);
+> +	base =3D of_iomap(np, 0);
+> +	if (!base) {
+> +		pr_err("%s: failed to map clock registers\n", __func__);
 > +		return;
 > +	}
+> +
+> +	clk_data =3D agilex_clk_data_alloc(base);
+> +	if (!clk_data) {
+> +		iounmap(base);
+> +		return;
+> +	}
+> +
+> +	register_early(clk_data);
+> +
+> +	if (of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_da=
+ta)) {
 
 [Severity: Medium]
-If of_clk_add_hw_provider() fails here, does it leave the globally register=
-ed
-early clocks active but without a provider?
+If of_clk_add_hw_provider() fails, register_early() will have already
+registered the clocks via the CCF APIs. Because agilex_clk_data is not set,
+they become permanently inaccessible to consumers.=20
 
-Since s10_clk_data is left as NULL, won't the fallback probe s10_clkmgr_ini=
-t()
-attempt to re-register the early clocks via s10_clk_register_early()? Could
-this cause a fatal name collision (-EEXIST) in the clock framework and
-permanently deprive downstream consumers of the early clocks?
+When the platform driver later probes, it will attempt to register these ea=
+rly
+clocks again because agilex_clk_data is still NULL. Can this result in
+duplicate CCF name rejections, leaving the new array with -ENOENT?
 
-> -	s10_clk_register_pll(s10_pll_clks, ARRAY_SIZE(s10_pll_clks), clk_data);
-> +	s10_clk_data =3D clk_data;
-> +}
-> +
-> +CLK_OF_DECLARE_DRIVER(stratix10_clkmgr, "intel,stratix10-clkmgr",
-> +		      s10_clkmgr_early_init);
-> +
-> +static int s10_clkmgr_init(struct platform_device *pdev)
-> +{
-> +	struct stratix10_clock_data *clk_data =3D s10_clk_data;
-> +	void __iomem *base;
-> +	int i;
-> +
-> +	if (!clk_data) {
-> +		base =3D devm_platform_ioremap_resource(pdev, 0);
-> +		if (IS_ERR(base)) {
-> +			pr_err("%s: failed to map clock registers\n", __func__);
-> +			return PTR_ERR(base);
-> +		}
-> +
-> +		clk_data =3D s10_clk_data_alloc(base);
-> +		if (!clk_data)
-> +			return -ENOMEM;
-> +
-> +		s10_clk_register_early(clk_data);
+> +		pr_err("%s: failed to add clock provider\n", __func__);
+> +		return;
+
+[Severity: Medium]
+Does this error path leak the I/O mapping and memory? It appears of_iomap()
+base and agilex_clk_data_alloc() clk_data are not cleaned up with
+iounmap() and kfree() before returning.
+
 > +	}
+> +
+> +	agilex_clk_data =3D clk_data;
+> +}
 
 [ ... ]
 
-> -	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
-> -	return 0;
-> +	for (i =3D 0; i < STRATIX10_NUM_CLKS; i++)
+> +static int agilex_clkmgr_add_provider(struct platform_device *pdev,
+> +				      struct stratix10_clock_data *clk_data)
+> +{
+> +	int i;
+> +
+> +	for (i =3D 0; i < AGILEX_NUM_CLKS; i++)
 > +		if (clk_data->clk_data.hws[i] =3D=3D ERR_PTR(-EPROBE_DEFER))
 > +			clk_data->clk_data.hws[i] =3D ERR_PTR(-ENOENT);
 > +
-> +	if (clk_data =3D=3D s10_clk_data)
+> +	if (clk_data =3D=3D agilex_clk_data)
 > +		return 0;
 > +
 > +	return of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
 > +				      &clk_data->clk_data);
->  }
-
-[Severity: Medium]
-If of_clk_add_hw_provider() fails here and propagates the error directly, d=
-oes
-it leak the clk_data allocation?
-
-Since clk_data is now allocated with kzalloc() in s10_clk_data_alloc()
-instead of devm_kzalloc(), bypassing explicit cleanup on this error path
-appears to permanently leak the memory.
 
 [Severity: High]
-Does propagating the error from of_clk_add_hw_provider() also cause a
-use-after-free on unmapped IO memory?
+If early init was skipped or failed, agilex_clkmgr_get_clk_data() maps I/O
+memory using devm_platform_ioremap_resource() and registers clocks.
 
-If the fallback probe mapped base using devm_platform_ioremap_resource(), a
-probe failure will trigger devres cleanup and automatically unmap base.
-However, since the clocks were registered without being tied to devres in
-s10_clk_register_early(), they remain globally active and hold pointers to =
-the
-now unmapped IO memory.
+Unlike the original code which ignored the return value, this propagates the
+error from of_clk_add_hw_provider(). Returning the error causes the driver
+core's devres to unmap the memory, but the clocks remain globally registere=
+d in
+CCF with raw pointers to the unmapped base.
 
-Could any subsequent access by the clock framework to these clocks derefere=
-nce
-the unmapped memory and lead to a kernel panic?
+Can this lead to a use-after-free of devm-managed I/O memory if CCF attempts
+to read from the unmapped base during operations like debugfs reads?
+
+> +}
+> +
+> +static int agilex_clkmgr_init(struct platform_device *pdev)
+> +{
+> +	struct stratix10_clock_data *clk_data;
+> +
+> +	clk_data =3D agilex_clkmgr_get_clk_data(pdev, agilex_clk_register_early=
+);
+> +	if (IS_ERR(clk_data))
+> +		return PTR_ERR(clk_data);
+> =20
+>  	agilex_clk_register_c_perip(agilex_main_perip_c_clks,
+>  				 ARRAY_SIZE(agilex_main_perip_c_clks), clk_data);
+> @@ -490,36 +625,17 @@ static int agilex_clkmgr_init(struct platform_devic=
+e *pdev)
+> =20
+>  	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
+>  			      clk_data);
+> +
+> +	return agilex_clkmgr_add_provider(pdev, clk_data);
+
+[Severity: Medium]
+If agilex_clkmgr_add_provider() fails, probe returns an error. Does this le=
+ak
+the clk_data allocated by kzalloc() in agilex_clk_data_alloc()?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1790935401.gi=
-t.adrian.ho.yin.ng@altera.com?part=3D3
+t.adrian.ho.yin.ng@altera.com?part=3D1
