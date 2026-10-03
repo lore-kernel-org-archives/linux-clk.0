@@ -1,139 +1,98 @@
-Received: from sender6-op-o12.zoho.com (sender6-op-o12.zoho.com [165.173.180.12])
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604BB31A56D;
-	Sat,  3 Oct 2026 14:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.180.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791038206; cv=pass; b=h0SCVEIJPOrdfgA5P8ptzzPDjBygi9D+N4XLQ8zq72LRvAQegZq4BPyKMYJNBBlmtOyhWCXjj109MdQ9RbLpkblRIf6RosuDWJrTbZQgD01sH9qNH8BiqWqkndys9s0gfRFUIEdxqzkTZtglh0zQK7RvujPy0S3UPVZ6qXfSpq8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791038206; c=relaxed/simple;
-	bh=9Egv4q97ghG6oqT2h8uxYWEJx97iLxhYm/0+T/pO2i4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=VtIY7M4czw9XDZUHBaYHrIlQ7MpD36ul/klz1uXcALvDDouL+IPBZBM1uyRmRFB68DWhrh6A5XaeTivlpcYNlZ0dPhMD0+NfJy5LToUUXNtO7Zo12/YxAZJiJrphSrJtA0LzRO1tsC0hTM04Uo89Z0FVzuXDgn4eH4fOhmFozvQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=aVP6eu9Q; arc=pass smtp.client-ip=165.173.180.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065EB42669C;
+	Sat,  3 Oct 2026 14:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791039451; cv=none; b=cOm4/9kMcgdd8z5zJhhOnJH/Jj58k6OWlaBJQ8HE3PTWKutnEIZH0S0ShqkNHUihYLmoY5rrCg28pbcPEwGFwEX3gYrJ/AM5djI26mC2rczZlYWsuQL+Hmod0FAKWKvV2XiuirlRfVeBXkIjWayApdBu3v7CRSA3DsNF9NlIVSk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791039451; c=relaxed/simple;
+	bh=uXJZsVteBsFqjHbXMx/x9zuPLikQCN04yzIKRIVguww=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G+AVygObPkp3N2Zb5xKYUwt7U9sLStUlMXtbZJbLtJ4EinmYmWTMp21AwJSNRnGFCHUfju1YQ1dscDtYHNiXEyrCm2M+G6hu7ZaUysb43RskvXY6Bwcnt49iyqLUeTbGSqlETFvwa629QZmdEJW5pEsEoGeCun3+u1Zoj3kLsDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=krETLDSJ; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="aVP6eu9Q"
-ARC-Seal: i=1; a=rsa-sha256; t=1791038153; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=kLHYAhye2LfTlMwX0V6q6TTBkux+wUFvoV4mXNTnSVevlJCYF5FyMMRkdeFkH0XszsbgO+qYY2nuDmDtmuWaPe/Qry8FJt2ZBs79Ypjdi3fNNl4hpSYv+BiOAYPvjEGr930y6mI6YFb29oTMGzg8MfOcXrhEuaUKicppeQkNN0A=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1791038153; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=9Egv4q97ghG6oqT2h8uxYWEJx97iLxhYm/0+T/pO2i4=; 
-	b=kRHyPxPAhgGthdAaCK3cR3qk8LPjw/tJr7goGPLgT4hdbGXJLOiOJ1lqY0IdtuTXa9XDacMAmTO1f4RS03uNFPlHZxXQGT2pAIugaTweekvCg9hn+GKltqoM9snXW4m7nB8EGOvghDWut1qOUqMP68/t2wHIXMBOcPKR2QN3pmM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1791038153;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Date:Message-Id:Message-Id:To:To:Cc:Cc:Subject:Subject:From:From:In-Reply-To:Reply-To;
-	bh=9Egv4q97ghG6oqT2h8uxYWEJx97iLxhYm/0+T/pO2i4=;
-	b=aVP6eu9QquEmV95y1DiK1BJcTJUnvthZ3+boRCVkxLohCUk8OTC/+kQtbqhGdwwC
-	V3gRD61LqmAqz0zOpqvCC3f+OHP72cIIbFN5+2qPbvitDeoBI/XjkIeRaTIsvgm5ev7
-	f6L/Rn7N7zv+L3ETm7cY0TEXFhKrt4FIczIQYM5w=
-Received: by smtp.zohomail.com with SMTPS id 1791038151074231.15688188388413;
-	Sat, 3 Oct 2026 07:35:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="krETLDSJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail2; t=1791039437; x=1791298637;
+	bh=uXJZsVteBsFqjHbXMx/x9zuPLikQCN04yzIKRIVguww=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=krETLDSJFteY5BJdc1leBNvIaU/JT5EvBg0qmMKmXAMGCIixEkKBV1/RvNOYdQNw4
+	 ZsMOUI8PVJcNmD4cwCsqYEwSO1hPSPcxcghYh0Y+2aJWcf1SfpWdekhQ7DuhwqBykO
+	 VUXFMH0QoyueBEwkYDaSW5eMsWpZ3fEFxIQDnQOk+IZ3JV/xbTQWlVPnCa1ElVBqgg
+	 YKWVur9NcKXLKhovIH7SaxfSVYNlUVkXUxk0Dw2Pjp40jnM5TAuc74RmvmTek+xenm
+	 ANkIPCqfLyq9n/Z/WaUiiHW4GS1/o4g8n/OdqjVoRtyEpC0OMBhPTiMFBBWjDUGyK6
+	 NyyvFIp5tt/Lg==
+Date: Sat, 03 Oct 2026 14:57:11 +0000
+To: wens@kernel.org
+From: Norman Herms <dockseed@proton.me>
+Cc: Junhui Liu <junhui.liu@pigmoral.tech>, Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, netdev@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, Enzo Adriano <enzo.adriano.code@gmail.com>, Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH v5 3/8] clk: sunxi-ng: a733: Add PRCM CCU
+Message-ID: <Xss-x8UR9RSDehrUzeE27kgFWXhob67jMdSrxfgSV5FIhrtDiD5VRcpJYP2-j7itF4eArxOmzsGWXqQucflO9EJqt7LK70OVjFmCjsaqHc0=@proton.me>
+In-Reply-To: <CAGb2v65q8w6NLzTtuMX3HZR98nAvR=Z4ODUCFZb5j3TgkDu_3Q@mail.gmail.com>
+References: <20260930-a733-clk-v5-0-11175b41cd2d@pigmoral.tech> <20260930-a733-clk-v5-3-11175b41cd2d@pigmoral.tech> <CAGb2v65q8w6NLzTtuMX3HZR98nAvR=Z4ODUCFZb5j3TgkDu_3Q@mail.gmail.com>
+Feedback-ID: 144388465:user:proton
+X-Pm-Message-ID: 1db97b86471db45a5d153e83a4f06e314e249029
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 03 Oct 2026 22:35:41 +0800
-Message-Id: <DLVA17A4RRG7.2ECQKV3SJDAGI@pigmoral.tech>
-To: <wens@kernel.org>, "Junhui Liu" <junhui.liu@pigmoral.tech>
-Cc: "Stephen Boyd" <sboyd@kernel.org>, "Brian Masney"
- <bmasney+clk@redhat.com>, "Jerome Brunet" <jbrunet+clk@baylibre.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Jernej Skrabec"
- <jernej.skrabec@gmail.com>, "Samuel Holland" <samuel@sholland.org>,
- "Philipp Zabel" <p.zabel@pengutronix.de>, "Paul Walmsley" <pjw@kernel.org>,
- "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
- "Alexandre Ghiti" <alex@ghiti.fr>, "Richard Cochran"
- <richardcochran@gmail.com>, <linux-clk@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>, <netdev@vger.kernel.org>, "Jerome
- Brunet" <jbrunet@baylibre.com>, "Enzo Adriano"
- <enzo.adriano.code@gmail.com>, "Andre Przywara" <andre.przywara@arm.com>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>, "Yixun Lan"
- <dlan@gentoo.org>
-Subject: Re: [PATCH v5 0/8] clk: sunxi-ng: Add support for Allwinner A733
- CCU and PRCM
-From: "Junhui Liu" <junhui.liu@pigmoral.tech>
-X-Mailer: aerc 0.22.0
-References: <20260930-a733-clk-v5-0-11175b41cd2d@pigmoral.tech>
- <CAGb2v66O7Ze=TiHO_5q=76QpU8ZXraFyV+HfO+_HpkTDr1U-nQ@mail.gmail.com>
-In-Reply-To: <CAGb2v66O7Ze=TiHO_5q=76QpU8ZXraFyV+HfO+_HpkTDr1U-nQ@mail.gmail.com>
-X-ZohoMailClient: External
 
-Hi Chen-Yu,
+Hi ChenYu,
 
-On Sat Oct 3, 2026 at 9:37 PM CST, Chen-Yu Tsai wrote:
-> On Wed, Sep 30, 2026 at 1:27=E2=80=AFAM Junhui Liu <junhui.liu@pigmoral.t=
-ech> wrote:
->>
->> Add support for the main CCU and the PRCM module (R-CCU) found in the
->> Allwinner A733 SoC. The clock architecture is derived from the previous
->> A523 design, with the MCU_CCU removed and the clock tree extended for
->> the additional functional blocks found on the A733.
->>
->> The A733 introduces a "pll-ref" clock that normalizes the physical
->> oscillator frequency, which can be 19.2MHz, 24MHz, or 26MHz, into a
->> consistent 24MHz reference for the PLL clock tree.
->>
->> The peripheral, video, and DE PLLs provide multiple independently gated
->> outputs with programmable dividers. Model these outputs as separate
->> divider-and-gate child clocks. Also follow the documented hierarchy for
->> the derived peripheral PLL outputs. The explicitly named PLL_AUDIO1 /2
->> and /5 outputs are modeled as fixed-factor clocks, with their divider
->> fields initialized accordingly.
->>
->> Also extend the sunxi-ng SDM (Sigma-Delta Modulation) support for the
->> dual-pattern register layout used by the A733 PLLs. PLL_AUDIO0 uses the
->> dual-pattern SDM support to synthesize its fractional output.
->> PLL_AUDIO1 does not expose fractional rates, but its SDM controls are
->> modeled so that stale settings left by firmware can be disabled when an
->> integer rate is programmed.
+Measurements for your comments on this patch. Same two Radxa Cubie A7S
+boards and boot chain as in my reply to the cover letter (SID + 0xA0 =3D
+0, no secure boot). Cold boot, register reads from U-Boot at
+non-secure EL2 on both boards (same values). On one board also a
+non-secure write test, and reads from EL3 with a test BL31 that only
+reads, before and after sunxi_security_setup(). Again done by AI agents
+(Claude) on my boards, so a report, not a Tested-by.
+
+> The three bus dividers are secure by default, and either need to be toggl=
+ed
+> to non-secure by the bootloader, or (I'm guessing) the system is running
+> without secure boot and the secure access bit isn't in effect.
+
+On our boards the bootloader toggles them. Bit 0 of PRCM_SEC_SWITCH_REG
+(UM 4.2.5.26) covers exactly AHBS/APBS0/APBS1, and TF-A's common
+sunxi_security_setup() writes 0x1 to that register (our BL31 and the
+vendor BL31 set 0x7). From EL3 it reads 0 before and 0x7 after that
+write. From non-secure: 0x07010290 =3D 0x7, r-ahb =3D 0x03000000, r-apb1 =
+=3D
+0x04000000. Both differ from the reset value 0, so these registers are
+readable. We have not checked non-secure access to them before BL31
+sets the switch. Note that secure filtering is active on these parts
+even without the fuse, see the TWD gate below.
+
+> > +static SUNXI_CCU_GATE_HW(bus_r_twd_clk, "bus-r-twd", &r_apb0_clk.commo=
+n.hw, 0x12c, BIT(0), 0);
 >
-> Some of the clock controls, like the PLL and AHB/APB bus dividers, are
-> secure by default and need to be set to non-secure for Linux to be able
-> to use them properly. And there is also a TWD clock in the PRCM that the
-> user manual says is secure only.
->
-> Have you given any thought to this? If we end up having to convert to
-> SCMI or something to handle those clocks it's going to be a bit ugly.
->
-> And presumably things work now because the secure/non-secure access bit
-> isn't in effect right now because you aren't using secure boot? At least
-> this was a thing in the past...
->
+> User manual says this is secure only.
 
-Thanks for pointing this out. This is indeed something I had not
-considered before. I will try enabling secure boot on my spare Cubie A7Z
-board and test it on actual hardware.
+On our boards it behaves like that even without secure boot. From EL3,
+S_TWD_BGR_REG (0x0701012C) reads its UM default 0x1, before and after
+the BL31 security setup, so the gate is open after reset. From
+non-secure it reads 0 on both boards, and a non-secure write of 0x1
+does not stick.
 
-For the PLL and AHB/APB bus clock controls, the user manual indicates
-that the relevant security bits can be set by TF-A to allow the kernel
-to access these registers. This also appears to be how this has
-traditionally been handled on sunxi platforms. So I think we can do the
-same in TF-A for the A733.
+> BSP sources say there is a "dma-clken-sw" gate at 0x1dc bit 0. Same on th=
+e
+> A523, though it's unclear what it does or controls.
 
-For bus_r_twd_clk, I will test whether the register is indeed always
-secure. If it is, I think the clock can be removed from the kernel and
-left enabled by its hardware reset value or by the boot firmware.
+The A733 UM lists no register at 0x1DC (the S_PRCM list goes from
+0x01CC to 0x020C). In the Radxa BSP (radxa/allwinner-bsp, branch
+cubie-aiot-v1.5.0) "dma-clken-sw" exists in ccu-sun55iw3-r.c and
+ccu-sun60iw1-r.c, but not in ccu-sun60iw2-r.c, the A733 one. On our
+boards 0x070101DC reads 0 from non-secure.
 
->
-> Thanks
-> ChenYu
->
-
---=20
-Best regards,
-Junhui Liu
-
+Thanks,
+Norman
