@@ -1,42 +1,42 @@
 Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A4B2DECC2;
-	Sat,  3 Oct 2026 15:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D8647F2F9;
+	Sat,  3 Oct 2026 16:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791041801; cv=none; b=AnqtaRX5KbOptvo+NIKLCJrCAJGx83dfr6r1hMA7i84+ud31YUdDl8A+bC/imdweQOcyX2Xcr1/BzTcyPB2FfRU6X5d2O6EbVsT7FjrITtJTNfPVTBBJ5PItSEM0978Mf4NPYNlJC6HNpiTfkQOO1M727+2iVZZb//AG9vZKMKE=
+	t=1791044391; cv=none; b=MySjTpL2VdTdfIo1Bc0O8ygy7rJaSIPN55/qiuLG9+qH6E6hvdVhSC+vE0qgpf55xMI8+39sLXyqIUmjng+1Rl4YqDOOq9zgwtRJ9Y2B+TD84JdQR6R3HI8ZY5n9BxOQ4ExY2oQ0PxMgcqqaPFApQKQ0aAC7eF6wGV6NdlCPeV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791041801; c=relaxed/simple;
-	bh=R1SaWeYMMbeZGDSXBSN/rMNKOG6/CCkSASIw2cgwwEU=;
+	s=arc-20240116; t=1791044391; c=relaxed/simple;
+	bh=5IOcEQbOTG2rgEVmb7kS10pbAMNXM5TrNK08bo4jq1s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=dWL1H0u+2GtDah2FUF/scbMmzFYuWTU2h0tf65bm/DyvdxnusMKQ/JeDBKdnsRxuOOSYra4GdfbaRWAMQsVgCO6k/FQwsG9uejp91blp0PYfJW/ZU3/usMFNkHotTAhK8J96yVMpM+TWdkQ7buz8IKIIK9YkdniIo4GWrbJ9vW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iyRdI8uv; arc=none smtp.client-ip=210.118.77.11
+	 Content-Type:References; b=aWj/XZDWIRGmNN2nCau8uD6cykklQZbIJFUISol779oQ2w+/lBuAtcqFKsOU5WVhuCgL7dhGKTcGiho+kiKzDGEOw0LF8Raoosw6Gx0JaUw81gKiBj6yeQ9xb0qhuYTd9vM6uo91IUlcpzhxQnznugCXl3W5IuCF68gY/Sii31A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lsnwuG0R; arc=none smtp.client-ip=210.118.77.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iyRdI8uv"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261003153628euoutp012ff25533234c428be9ff26b1fae8bcaf~bDwR0T6ER1714317143euoutp01W;
-	Sat,  3 Oct 2026 15:36:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261003153628euoutp012ff25533234c428be9ff26b1fae8bcaf~bDwR0T6ER1714317143euoutp01W
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lsnwuG0R"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261003161944euoutp015445fcbf6e0d4e3cb00b7533697c0e02~bEWDnwLC60335403354euoutp012;
+	Sat,  3 Oct 2026 16:19:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261003161944euoutp015445fcbf6e0d4e3cb00b7533697c0e02~bEWDnwLC60335403354euoutp012
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1791041788;
-	bh=cezTBuZnRU09BC5t/TXbbnr/2mOgRJXIrT1bA9nKYfk=;
+	s=mail20170921; t=1791044384;
+	bh=1XaQcVeyhm8yfAFalkdFK1wk7N73U0zKdzj1RF8N3QE=;
 	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=iyRdI8uvT1VnyJT6tqgggenZI6nITXILkxQtf0XryX352UU+lQidWIGBUPATnmApl
-	 NqErh1NgfRSaacsdX3dVtsHcj+ObkGldlks/K3Pp/ACh4wuzlI3nw9I71uwYTuobcz
-	 MAqgn33qV3D/4uufZns8VtPAgjSZZJfnfsm8yK1Y=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261003153627eucas1p1f4cc5dc15e7a5dbebdfb26617afe1f56~bDwQpLxK00845508455eucas1p1j;
-	Sat,  3 Oct 2026 15:36:27 +0000 (GMT)
+	b=lsnwuG0Rt3fGmtfGSOO65rhkC0IFUgrq1ANqgsQGtVreBctftYXQpGMAZgPzf+Ci0
+	 +kvHkS1AYixN1TDhKQn3VgurKD90DR9RBMHeFubIeyUtXTe1ckGdkeIPTPBfcYCdGk
+	 P4JjhZ41OygKkWPJO9Q1IpC/ICJqCNGZ8gN2VJqo=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20261003161943eucas1p2d4d85e066b9cedf34cbeaf481bf875db~bEWCnjmvZ2037620376eucas1p20;
+	Sat,  3 Oct 2026 16:19:43 +0000 (GMT)
 Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20261003153625eusmtip1ba5f07ce91f2ac9a6e0ffa2ce26ac1cb~bDwPATbZ22801128011eusmtip1E;
-	Sat,  3 Oct 2026 15:36:25 +0000 (GMT)
-Message-ID: <eaba2fa9-a1ce-4dac-9bd6-e0b3a3dd01ef@samsung.com>
-Date: Sat, 3 Oct 2026 17:36:25 +0200
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20261003161941eusmtip20b539371f409b63e666c140753664cb8~bEWBBnkRs2154121541eusmtip2G;
+	Sat,  3 Oct 2026 16:19:41 +0000 (GMT)
+Message-ID: <e1b83c15-1ca9-4575-97aa-f44552ecb182@samsung.com>
+Date: Sat, 3 Oct 2026 18:19:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,10 +44,9 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/20] dt-bindings: phy: Add
- starfive,jh7110-inno-hdmi-phy
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
+Subject: Re: [PATCH v5 08/21] drm/bridge: inno-hdmi: Split probe out of bind
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Vinod Koul
+	<vkoul@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Neil Armstrong
 	<neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
 	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrzej
 	Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, Laurent
@@ -55,17 +54,16 @@ Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
 	<jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli
 	<luca.ceresoli@bootlin.com>, Maarten Lankhorst
 	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
-	Yan <andy.yan@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, Emil
-	Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Paul Walmsley
+	Thomas Zimmermann <tzimmermann@suse.de>, Andy Yan <andy.yan@rock-chips.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Emil Renner Berthing
+	<kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Paul Walmsley
 	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
 	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
 	Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>, Jerome
-	Brunet <jbrunet+clk@baylibre.com>, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, mfd@lists.linux.dev,
+	Brunet <jbrunet+clk@baylibre.com>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
 	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, Marek
 	Szyprowski <m.szyprowski@samsung.com>, Maud Spierings
@@ -75,115 +73,162 @@ Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
 	<u.kleine-koenig@baylibre.com>
 Content-Language: en-US
 From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <6cf9e611-bfc5-407b-8132-bd328f8b61fc@kernel.org>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20261003153627eucas1p1f4cc5dc15e7a5dbebdfb26617afe1f56
+In-Reply-To: <6535891.44csPzL39Z@diego>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20261003161943eucas1p2d4d85e066b9cedf34cbeaf481bf875db
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260915153214eucas1p2b548f3236ef98fb0cbf320e397420125
+X-RootMTR: 20260929103221eucas1p264107850882dde96fcda4772332d4f41
 X-EPHeader: CA
-X-CMS-RootMailID: 20260915153214eucas1p2b548f3236ef98fb0cbf320e397420125
-References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
-	<CGME20260915153214eucas1p2b548f3236ef98fb0cbf320e397420125@eucas1p2.samsung.com>
-	<20260915-jh7110-clean-send-v4-1-f0e4fd6f2cc8@samsung.com>
-	<20260917-mutant-chamois-of-competence-46ca77@quoll>
-	<1a1a9b49-430b-4218-b27d-e133d488e8d9@samsung.com>
-	<6cf9e611-bfc5-407b-8132-bd328f8b61fc@kernel.org>
+X-CMS-RootMailID: 20260929103221eucas1p264107850882dde96fcda4772332d4f41
+References: <20260929-jh7110-clean-send-v5-0-82b4d8e3c6c7@samsung.com>
+	<CGME20260929103221eucas1p264107850882dde96fcda4772332d4f41@eucas1p2.samsung.com>
+	<20260929-jh7110-clean-send-v5-8-82b4d8e3c6c7@samsung.com>
+	<6535891.44csPzL39Z@diego>
 
 
 
-On 9/30/26 13:01, Krzysztof Kozlowski wrote:
-> On 25/09/2026 23:05, Michal Wilczynski wrote:
->>>> +  clocks:
->>>> +    maxItems: 1
->>>> +    description: Reference oscillator.
->>>
->>> This barely counts as a resource, so usual question: no resources here?
->>> no MMIO? Even the user of this phy is the block itself.
->>>
->>> This makes me wonder if this should be a device node in the first place
->>> (instead folded into the parent).
+On 9/30/26 12:02, Heiko Stübner wrote:
+> Am Dienstag, 29. September 2026, 12:31:05 Mitteleuropäische Sommerzeit schrieb Michal Wilczynski:
+>> inno_hdmi_bind() both sets up the bridge and attaches it to a DRM
+>> encoder. A platform whose HDMI controller is a child of a larger device
+>> needs the first half without the second, since it registers as its own
+>> platform driver and lets the DRM core bind the bridge later.
 >>
->> The PHY has no reg because the reg is shared with the controller and
->> owned by the parent - patch 9 lets the bridge take its regmap from
->> there.
+>> Move the setup into a new exported inno_hdmi_probe(), and reduce
+>> inno_hdmi_bind() to a wrapper around it.
 >>
->> The user of the PHY is not only the block itself. It is the pixel clock
->> provider for the whole display subsystem, voutcrg takes hdmitx0_pixelclk
->> as the parent of its DC8200 pixel MUXes, and while HDMI output is active
->> it is the only intended source for that clock. The parent has to be
->> assigned explicitly so the general PLL does not end up driving the pixel
->> clock, and so a DSI user does not reach the HDMI PHY clock generator.
+>> No functional change intended.
 >>
->> So it has to be its own node. The HDMI block has two independent
+>> Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
+>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>> ---
+>>  drivers/gpu/drm/bridge/inno-hdmi.c | 49 +++++++++++++++++++++++++++++++++-----
+>>  include/drm/bridge/inno_hdmi.h     |  4 ++++
+>>  2 files changed, 47 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/inno-hdmi.c b/drivers/gpu/drm/bridge/inno-hdmi.c
+>> index d7c33b92e2ddf4ced84d17304463f44be52270b8..7a9f54dce2647f0320d77629a28154eade14385f 100644
+>> --- a/drivers/gpu/drm/bridge/inno-hdmi.c
+>> +++ b/drivers/gpu/drm/bridge/inno-hdmi.c
+>> @@ -929,7 +929,14 @@ static irqreturn_t inno_hdmi_irq(int irq, void *dev_id)
+>>  {
+>>  	struct inno_hdmi *hdmi = dev_id;
+>>  
+>> -	drm_helper_hpd_irq_event(hdmi->bridge.dev);
+>> +	/*
+>> +	 * The interrupt is requested in probe, but bridge.dev is only set once
+>> +	 * the DRM master binds and attaches the bridge, which may never happen.
+>> +	 * Drop hotplug events that arrive before then rather than dereference a
+>> +	 * NULL drm_device.
+>> +	 */
+>> +	if (hdmi->bridge.dev)
+>> +		drm_helper_hpd_irq_event(hdmi->bridge.dev);
 > 
-> I do not see the logic which lead to this conclusion. Pixel clock
-> provider, so a clock controller, cannot be a user of a phy. Clock
-> controller does not have a physical layer.
+> This is not part of the commit description and while true, should likely
+> be its own patch with its own description.
 
-Sorry I think the wording was not perfect. I meant the PHY node is a
-pixel clock provider. voutcrg consumes a clock not a PHY.
 
-voutcrg: clock-controller@295c0000 {
-         clocks = <&syscrg ...>, <&hdmi_phy>;
-         clock-names = ...,"hdmitx0_pixelclk";
-};
-
-The consumer of the PHY is only the hdmi controller.
-
-What matters for the node layout is where that clock goes. voutcrg is the
-SoC display clock controller - it is not part of the HDMI block:
-
-hdmi_phy -- pixel clock -> voutcrg
-                              |
-                              - pclk/mclk/bclk -> hdmi_controller
-                              - pix0/pix1 -> dc8200
-
-hdmi_phy and hdmi_controller are the same register block with one reg
-owned by the parent. So if that block is described as a single node:
-
-hdmi_node - pixel clock -> voutcrg
-     ^                          |
-     --- pclk/mclk/bclk --------
-
-the node provides a clock to voutcrg and consumes three clocks from
-voutcrg. That is a cycle in the device tree description.
-
-Split in two there is no cycle: the PHY's only input is xin24m - the 24 MHz
-oscillator which gives a linear order - hdmi_phy, voutcrg, hdmi_controller.
+It only made sense with this patch, hence why it's included. Happy to
+split it.
 
 > 
-> And really, I have no clue what hdmitx0_pixelclk and voutcrg are. I
-> could probably study the patches a lot to figure that out, but my review
-> queue has still 200 more, so I'll skip.
 > 
-> But nevertheless assigning clock parent of HDMI clock to PHY is
-> standard, most of the platforms have it, thus it is not a justification
-> for odd design.
+>>  
+>>  	return IRQ_HANDLED;
+>>  }
+>> @@ -1061,11 +1068,24 @@ static struct i2c_adapter *inno_hdmi_i2c_adapter(struct inno_hdmi *hdmi)
+>>  	return adap;
+>>  }
+>>  
+>> -struct inno_hdmi *inno_hdmi_bind(struct device *dev,
+>> -				 struct drm_encoder *encoder,
+>> -				 const struct inno_hdmi_plat_data *plat_data)
+>> +/**
+>> + * inno_hdmi_probe - Internal helper to perform common setup
+>> + * @pdev: platform device
+>> + * @plat_data: SoC-specific platform data
+>> + *
+>> + * This function handles all the common hardware setup: allocating the main
+>> + * struct, mapping registers, getting clocks, initializing the hardware,
+>> + * setting up the IRQ, and initializing the DDC adapter and bridge struct.
+>> + * It returns a pointer to the inno_hdmi struct on success, or an ERR_PTR
+>> + * on failure.
+>> + *
+>> + * This function is used by modern, decoupled MFD/glue drivers. It registers
+>> + * the bridge but does not attach it.
+>> + */
+>> +struct inno_hdmi *inno_hdmi_probe(struct platform_device *pdev,
+>> +				  const struct inno_hdmi_plat_data *plat_data)
+>>  {
+>> -	struct platform_device *pdev = to_platform_device(dev);
+>> +	struct device *dev = &pdev->dev;
+>>  	struct inno_hdmi *hdmi;
+>>  	int irq;
+>>  	int ret;
+>> @@ -1128,7 +1148,24 @@ struct inno_hdmi *inno_hdmi_bind(struct device *dev,
+>>  	if (ret)
+>>  		return ERR_PTR(ret);
+>>  
+>> -	ret = drm_bridge_attach(encoder, &hdmi->bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+>> +	return hdmi;
+>> +}
+>> +EXPORT_SYMBOL_GPL(inno_hdmi_probe);
+>> +
+>> +struct inno_hdmi *inno_hdmi_bind(struct device *dev,
+>> +				 struct drm_encoder *encoder,
+>> +				 const struct inno_hdmi_plat_data *plat_data)
+>> +{
+>> +	struct platform_device *pdev = to_platform_device(dev);
+>> +	struct inno_hdmi *hdmi;
+>> +	int ret;
+>> +
+>> +	hdmi = inno_hdmi_probe(pdev, plat_data);
+>> +	if (IS_ERR(hdmi))
+>> +		return hdmi;
+>> +
+>> +	ret = drm_bridge_attach(encoder, &hdmi->bridge, NULL,
+>> +				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+>>  	if (ret)
+>>  		return ERR_PTR(ret);
+> 
+> This clutters up the structure even more than it is right now. From "bind"
+> back to "probe" and "dev" back to "pdev" and calling a function called
+> "probe" from the bind callback.
+> 
+> You are right, that all the resource allocation can (and probably should)
+> live in the drivers probe-path, but then please call that probe function
+> from the actual probe path.
+> 
+> For example you could look at how all the Synopsys bridges do that.
 
-Agreed and that is what this is - I followed RK3328, which uses the same
-Innosilicon IP and also describes it as two nodes:
+That is what the new jh7110 driver does - it is a plain platform driver
+and calls inno_hdmi_probe() from its own probe no component framework.
+Same shape as th1520-dw-hdmi.c which calls dw_hdmi_probe() from its
+platform probe and never calls dw_hdmi_bind().
 
-hdmi:    hdmi@ff3c0000   clocks = <&cru PCLK_HDMI>, ...
-hdmiphy: phy@ff430000    clocks = <&cru PCLK_HDMIPHY>, <&xin24m>,
-                                  <&cru DCLK_HDMIPHY>
-                         clock-output-names = "hdmi_phy";
-                         #clock-cells = <0>;
-                         #phy-cells = <0>;
+I kept inno_hdmi_bind() as a wrapper on purpose so the rockchip probe/bind
+flow stays exactly as it is today. I do not have any rockchip hardware and
+moving resource acquisition out of bind and into probe there changes when the
+bridge is added, which I did not want to do build tested only. dw-hdmi keeps
+dw_hdmi_bind() for the same kind of consumer since dw_hdmi-rockchip.c is
+still component based.
 
-The only difference is reg: RK3328 has two register ranges, the JH7110 has
-one, so the parent owns it and the children have none.
+I am happy to convert inno_hdmi-rockchip.c so probe acquires the
+resources and bind only attaches - that would let inno_hdmi_bind() go
+away entirely - if someone with rockchip hardware can test it. Otherwise
+I would rather send it separately where it can get proper testing, as
+this series is at 21 patches already.
+
+You are right about pdev - inno_hdmi_bind() will take a platform_device like
+dw_hdmi_bind() does so the to_platform_device() goes away.
 
 > 
->> functions with different clock inputs and one of them feeds back into
->> the SoC clock tree. The PHY generates hdmitx0_pixelclk which voutcrg
->> consumes the controller consumes pclk/mclk/bclk from voutcrg. Folded
->> into one node that node is both a provider to and a consumer of
->> voutcrg which is a cycle in the hardware description, not just in Linux.
+> 
+> Thanks
+> Heiko
 > 
 > 
-> Best regards,
-> Krzysztof
 > 
 
 Best regards,
