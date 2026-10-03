@@ -1,236 +1,93 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from mail-43102.protonmail.ch (mail-43102.protonmail.ch [185.70.43.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D8647F2F9;
-	Sat,  3 Oct 2026 16:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF26448F037
+	for <linux-clk@vger.kernel.org>; Sat,  3 Oct 2026 16:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791044391; cv=none; b=MySjTpL2VdTdfIo1Bc0O8ygy7rJaSIPN55/qiuLG9+qH6E6hvdVhSC+vE0qgpf55xMI8+39sLXyqIUmjng+1Rl4YqDOOq9zgwtRJ9Y2B+TD84JdQR6R3HI8ZY5n9BxOQ4ExY2oQ0PxMgcqqaPFApQKQ0aAC7eF6wGV6NdlCPeV4=
+	t=1791046307; cv=none; b=qy32wQxlOyJC+e1EDYYb0/58CXRo9HiUQ9HbAXZZenkPQ3cpliO3tGQbdgz9ev1O6CyqBfiQ0M9uzYzNvWRqv2Dsmouz27/19dprVW4iQLth6izaYGqbwtBdFFjg65aYcUL03NB/FIvG7jz+ydUZwEiuwRGVtsZb2mSe4CI0vrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791044391; c=relaxed/simple;
-	bh=5IOcEQbOTG2rgEVmb7kS10pbAMNXM5TrNK08bo4jq1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=aWj/XZDWIRGmNN2nCau8uD6cykklQZbIJFUISol779oQ2w+/lBuAtcqFKsOU5WVhuCgL7dhGKTcGiho+kiKzDGEOw0LF8Raoosw6Gx0JaUw81gKiBj6yeQ9xb0qhuYTd9vM6uo91IUlcpzhxQnznugCXl3W5IuCF68gY/Sii31A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lsnwuG0R; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1791046307; c=relaxed/simple;
+	bh=iN2dacuD2WXWVPe3pa7Hiwu4Q8mHr64UNBGkwL/Vsxo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tDLD0MABgrAZTgR3KHMXGGnHCbo4xeYdAYVU0mv5+gDLZ5zoU1Dtb/tkDrMF4v4Tr54R4QQFg3RN5+xOMjbPERWP+aXM9hhcDG2M++1dfgh8+22K/MUlaAs/jVUGwe3T6BO2mGPpmQB83eY9dDhOCgGl/NWKEtaB4r9d1zul3y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=NPj4ASj3; arc=none smtp.client-ip=185.70.43.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lsnwuG0R"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261003161944euoutp015445fcbf6e0d4e3cb00b7533697c0e02~bEWDnwLC60335403354euoutp012;
-	Sat,  3 Oct 2026 16:19:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261003161944euoutp015445fcbf6e0d4e3cb00b7533697c0e02~bEWDnwLC60335403354euoutp012
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1791044384;
-	bh=1XaQcVeyhm8yfAFalkdFK1wk7N73U0zKdzj1RF8N3QE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=lsnwuG0Rt3fGmtfGSOO65rhkC0IFUgrq1ANqgsQGtVreBctftYXQpGMAZgPzf+Ci0
-	 +kvHkS1AYixN1TDhKQn3VgurKD90DR9RBMHeFubIeyUtXTe1ckGdkeIPTPBfcYCdGk
-	 P4JjhZ41OygKkWPJO9Q1IpC/ICJqCNGZ8gN2VJqo=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20261003161943eucas1p2d4d85e066b9cedf34cbeaf481bf875db~bEWCnjmvZ2037620376eucas1p20;
-	Sat,  3 Oct 2026 16:19:43 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261003161941eusmtip20b539371f409b63e666c140753664cb8~bEWBBnkRs2154121541eusmtip2G;
-	Sat,  3 Oct 2026 16:19:41 +0000 (GMT)
-Message-ID: <e1b83c15-1ca9-4575-97aa-f44552ecb182@samsung.com>
-Date: Sat, 3 Oct 2026 18:19:41 +0200
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="NPj4ASj3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail2; t=1791046291; x=1791305491;
+	bh=jhnKxC1jfYQTIuTmaIFSI31CFkT8/+tMwqpFmimI1mE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=NPj4ASj3XEB0AC4FSjoNSNY4thPPfkhDBceN/B6WWS+OtBflPV1mvNX8MFPV4VWrJ
+	 GkSGEHVXJAlj863kX7PKt3+YeM/wbnItd53pFWe9wJrrvhLcW5llncYSe4ERPi+kO2
+	 p7MNtEO4eHGAVsLe3q/7l28e68457E8nhgNnpp5sVYNeMaeCWxaSvsXWhwamcRYQMY
+	 jdR2D8BWxlanXhb46a6pJgkqEBFU4aVU6ZKDv/7jG2NY/PzJ3mOrUzC/suFYCKdfpm
+	 mt+AAma/lVJL5I9QzILJvPtnP+WwNmtEXWwt9WDETHlRbbx2Gj2a0UBn0FrypYQpgW
+	 sKWGp2wa3lCTw==
+Date: Sat, 03 Oct 2026 16:51:24 +0000
+To: Junhui Liu <junhui.liu@pigmoral.tech>
+From: Norman Herms <dockseed@proton.me>
+Cc: wens@kernel.org, Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, netdev@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, Enzo Adriano <enzo.adriano.code@gmail.com>, Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH v5 3/8] clk: sunxi-ng: a733: Add PRCM CCU
+Message-ID: <IX5E2OTO5TApj5Vn4djIoBmcguIRvSNmVwcbXPiXUUGdVZr1NAJHSRomSnI2U5zgW9LWkNXJUpSIlkvHGCwlb1n6mYkGZoH4l1EOvNgua38=@proton.me>
+In-Reply-To: <DLVAHLGLB6W5.1X87X6JJ6MY5H@pigmoral.tech>
+References: <20260930-a733-clk-v5-0-11175b41cd2d@pigmoral.tech> <20260930-a733-clk-v5-3-11175b41cd2d@pigmoral.tech> <CAGb2v65q8w6NLzTtuMX3HZR98nAvR=Z4ODUCFZb5j3TgkDu_3Q@mail.gmail.com> <DLVAHLGLB6W5.1X87X6JJ6MY5H@pigmoral.tech>
+Feedback-ID: 144388465:user:proton
+X-Pm-Message-ID: f0d0ad3ff4b1cce1df4b4fde15de0e8f3c9593c9
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 08/21] drm/bridge: inno-hdmi: Split probe out of bind
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Vinod Koul
-	<vkoul@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
-	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrzej
-	Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, Laurent
-	Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
-	<jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli
-	<luca.ceresoli@bootlin.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Andy Yan <andy.yan@rock-chips.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Emil Renner Berthing
-	<kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Paul Walmsley
-	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
-	Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>, Jerome
-	Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, Marek
-	Szyprowski <m.szyprowski@samsung.com>, Maud Spierings
-	<maud_spierings@murena.io>, Graham Markall <hello@big-grey.co.uk>, Icenowy
-	Zheng <zhengxingda@iscas.ac.cn>, Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	Joshua Peisach <jpeisach@ubuntu.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <6535891.44csPzL39Z@diego>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261003161943eucas1p2d4d85e066b9cedf34cbeaf481bf875db
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260929103221eucas1p264107850882dde96fcda4772332d4f41
-X-EPHeader: CA
-X-CMS-RootMailID: 20260929103221eucas1p264107850882dde96fcda4772332d4f41
-References: <20260929-jh7110-clean-send-v5-0-82b4d8e3c6c7@samsung.com>
-	<CGME20260929103221eucas1p264107850882dde96fcda4772332d4f41@eucas1p2.samsung.com>
-	<20260929-jh7110-clean-send-v5-8-82b4d8e3c6c7@samsung.com>
-	<6535891.44csPzL39Z@diego>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Hi Junhui, ChenYu,
 
+> > The three bus dividers are secure by default, and either need to be tog=
+gled
+> > to non-secure by the bootloader, or (I'm guessing) the system is runnin=
+g
+> > without secure boot and the secure access bit isn't in effect.
+> >
+> > Please add a comment about this.
+>
+> Okay, I will add a comment explaining this.
 
-On 9/30/26 12:02, Heiko Stübner wrote:
-> Am Dienstag, 29. September 2026, 12:31:05 Mitteleuropäische Sommerzeit schrieb Michal Wilczynski:
->> inno_hdmi_bind() both sets up the bridge and attaches it to a DRM
->> encoder. A platform whose HDMI controller is a child of a larger device
->> needs the first half without the second, since it registers as its own
->> platform driver and lets the DRM core bind the bridge later.
->>
->> Move the setup into a new exported inno_hdmi_probe(), and reduce
->> inno_hdmi_bind() to a wrapper around it.
->>
->> No functional change intended.
->>
->> Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> ---
->>  drivers/gpu/drm/bridge/inno-hdmi.c | 49 +++++++++++++++++++++++++++++++++-----
->>  include/drm/bridge/inno_hdmi.h     |  4 ++++
->>  2 files changed, 47 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/inno-hdmi.c b/drivers/gpu/drm/bridge/inno-hdmi.c
->> index d7c33b92e2ddf4ced84d17304463f44be52270b8..7a9f54dce2647f0320d77629a28154eade14385f 100644
->> --- a/drivers/gpu/drm/bridge/inno-hdmi.c
->> +++ b/drivers/gpu/drm/bridge/inno-hdmi.c
->> @@ -929,7 +929,14 @@ static irqreturn_t inno_hdmi_irq(int irq, void *dev_id)
->>  {
->>  	struct inno_hdmi *hdmi = dev_id;
->>  
->> -	drm_helper_hpd_irq_event(hdmi->bridge.dev);
->> +	/*
->> +	 * The interrupt is requested in probe, but bridge.dev is only set once
->> +	 * the DRM master binds and attaches the bridge, which may never happen.
->> +	 * Drop hotplug events that arrive before then rather than dereference a
->> +	 * NULL drm_device.
->> +	 */
->> +	if (hdmi->bridge.dev)
->> +		drm_helper_hpd_irq_event(hdmi->bridge.dev);
-> 
-> This is not part of the commit description and while true, should likely
-> be its own patch with its own description.
+A data point for that comment, measured since my last reply. For the
+registers behind a security switch, ChenYu's guess holds on our boards.
+Two test BL31s, each clearing a switch again after
+sunxi_security_setup(), then reads and writes from U-Boot at
+non-secure EL2:
 
+- PRCM_SEC_SWITCH_REG bit 0 cleared (0x07010290 reads 0x6): r-ahb
+  reads 0x03000000 and r-apb1 0x04000000, the values EL3 reads, and a
+  write to r-apb0 (0 -> 1 -> 0) sticks.
 
-It only made sense with this patch, hence why it's included. Happy to
-split it.
+- CCMU_SEC_SWITCH_REG cleared to 0 (PLL, BUS and MBUS secure): PLL_PERI0,
+  AHB, APB0, APB1, TRACE, the AHB and MBUS master gating, NSI and MBUS
+  read the values EL3 reads. Writes to PLL_NPU pattern 0 and to TRACE
+  stick, and U-Boot's own write to the MBUS gate enable register
+  (0x4 -> 0x804) sticks.
 
-> 
-> 
->>  
->>  	return IRQ_HANDLED;
->>  }
->> @@ -1061,11 +1068,24 @@ static struct i2c_adapter *inno_hdmi_i2c_adapter(struct inno_hdmi *hdmi)
->>  	return adap;
->>  }
->>  
->> -struct inno_hdmi *inno_hdmi_bind(struct device *dev,
->> -				 struct drm_encoder *encoder,
->> -				 const struct inno_hdmi_plat_data *plat_data)
->> +/**
->> + * inno_hdmi_probe - Internal helper to perform common setup
->> + * @pdev: platform device
->> + * @plat_data: SoC-specific platform data
->> + *
->> + * This function handles all the common hardware setup: allocating the main
->> + * struct, mapping registers, getting clocks, initializing the hardware,
->> + * setting up the IRQ, and initializing the DDC adapter and bridge struct.
->> + * It returns a pointer to the inno_hdmi struct on success, or an ERR_PTR
->> + * on failure.
->> + *
->> + * This function is used by modern, decoupled MFD/glue drivers. It registers
->> + * the bridge but does not attach it.
->> + */
->> +struct inno_hdmi *inno_hdmi_probe(struct platform_device *pdev,
->> +				  const struct inno_hdmi_plat_data *plat_data)
->>  {
->> -	struct platform_device *pdev = to_platform_device(dev);
->> +	struct device *dev = &pdev->dev;
->>  	struct inno_hdmi *hdmi;
->>  	int irq;
->>  	int ret;
->> @@ -1128,7 +1148,24 @@ struct inno_hdmi *inno_hdmi_bind(struct device *dev,
->>  	if (ret)
->>  		return ERR_PTR(ret);
->>  
->> -	ret = drm_bridge_attach(encoder, &hdmi->bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
->> +	return hdmi;
->> +}
->> +EXPORT_SYMBOL_GPL(inno_hdmi_probe);
->> +
->> +struct inno_hdmi *inno_hdmi_bind(struct device *dev,
->> +				 struct drm_encoder *encoder,
->> +				 const struct inno_hdmi_plat_data *plat_data)
->> +{
->> +	struct platform_device *pdev = to_platform_device(dev);
->> +	struct inno_hdmi *hdmi;
->> +	int ret;
->> +
->> +	hdmi = inno_hdmi_probe(pdev, plat_data);
->> +	if (IS_ERR(hdmi))
->> +		return hdmi;
->> +
->> +	ret = drm_bridge_attach(encoder, &hdmi->bridge, NULL,
->> +				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
->>  	if (ret)
->>  		return ERR_PTR(ret);
-> 
-> This clutters up the structure even more than it is right now. From "bind"
-> back to "probe" and "dev" back to "pdev" and calling a function called
-> "probe" from the bind callback.
-> 
-> You are right, that all the resource allocation can (and probably should)
-> live in the drivers probe-path, but then please call that probe function
-> from the actual probe path.
-> 
-> For example you could look at how all the Synopsys bridges do that.
+So on these non-fused parts (SID + 0xA0 =3D 0) the switch bits do not
+gate non-secure access, as the UM notes on these registers say for
+non-security mode. With secure boot enabled, the bootloader has to set
+them; we cannot test that.
 
-That is what the new jh7110 driver does - it is a plain platform driver
-and calls inno_hdmi_probe() from its own probe no component framework.
-Same shape as th1520-dw-hdmi.c which calls dw_hdmi_probe() from its
-platform probe and never calls dw_hdmi_bind().
+That narrows what I wrote earlier about secure filtering without the
+fuse: on our boards it applies to the registers the UM marks as fixed
+secure (S_TWD_BGR_REG), to CCMU_SEC_SWITCH_REG itself and to the SPC
+status words, not to the registers behind a switch. We tested a sample
+of each switch group, not every register.
 
-I kept inno_hdmi_bind() as a wrapper on purpose so the rockchip probe/bind
-flow stays exactly as it is today. I do not have any rockchip hardware and
-moving resource acquisition out of bind and into probe there changes when the
-bridge is added, which I did not want to do build tested only. dw-hdmi keeps
-dw_hdmi_bind() for the same kind of consumer since dw_hdmi-rockchip.c is
-still component based.
+One board, AI agents (Claude) on my board as before, so a report, not
+a Tested-by.
 
-I am happy to convert inno_hdmi-rockchip.c so probe acquires the
-resources and bind only attaches - that would let inno_hdmi_bind() go
-away entirely - if someone with rockchip hardware can test it. Otherwise
-I would rather send it separately where it can get proper testing, as
-this series is at 21 patches already.
-
-You are right about pdev - inno_hdmi_bind() will take a platform_device like
-dw_hdmi_bind() does so the to_platform_device() goes away.
-
-> 
-> 
-> Thanks
-> Heiko
-> 
-> 
-> 
-
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Thanks,
+Norman
