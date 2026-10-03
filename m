@@ -1,93 +1,81 @@
-Received: from mail-43102.protonmail.ch (mail-43102.protonmail.ch [185.70.43.102])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF26448F037
-	for <linux-clk@vger.kernel.org>; Sat,  3 Oct 2026 16:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD36489FDD;
+	Sat,  3 Oct 2026 17:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791046307; cv=none; b=qy32wQxlOyJC+e1EDYYb0/58CXRo9HiUQ9HbAXZZenkPQ3cpliO3tGQbdgz9ev1O6CyqBfiQ0M9uzYzNvWRqv2Dsmouz27/19dprVW4iQLth6izaYGqbwtBdFFjg65aYcUL03NB/FIvG7jz+ydUZwEiuwRGVtsZb2mSe4CI0vrw=
+	t=1791047582; cv=none; b=Ub6BzsxbxXCmjnU6CLnsMaoFCAb58NM8y1q6lEczTz2/tQ0kUoLy1oDduy07AiGW7PZYmBLSQDwlIod/mXGApL4dtH42jePRh/d+JY9CW81Gcm21Mff8daPncdIkEvpXaLmYjjcpzfvc2I9IMiyaiCtgqRxW5Er7DdglgKDcEiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791046307; c=relaxed/simple;
-	bh=iN2dacuD2WXWVPe3pa7Hiwu4Q8mHr64UNBGkwL/Vsxo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tDLD0MABgrAZTgR3KHMXGGnHCbo4xeYdAYVU0mv5+gDLZ5zoU1Dtb/tkDrMF4v4Tr54R4QQFg3RN5+xOMjbPERWP+aXM9hhcDG2M++1dfgh8+22K/MUlaAs/jVUGwe3T6BO2mGPpmQB83eY9dDhOCgGl/NWKEtaB4r9d1zul3y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=NPj4ASj3; arc=none smtp.client-ip=185.70.43.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+	s=arc-20240116; t=1791047582; c=relaxed/simple;
+	bh=0oyFs4uOGs4H1gccO/F2s6dkScfA44grjw264DWQylA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qCthOUIBPkNT7kuRbvxAFW87MN/EUX9/Pg6iKrNgAzYiPUbiCOsAF9jDxSJHPp6cVAQg5FHnTfp6tigzS7Np9nIIk5ZOxD2CSHiVe5t63524ji8Gf5AFVoT+0LQxw3bq7vxo43NFMMZ3i962l+J4EQX5N3/Uabzb9VHqJytYCcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mvO8/u/A; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="NPj4ASj3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail2; t=1791046291; x=1791305491;
-	bh=jhnKxC1jfYQTIuTmaIFSI31CFkT8/+tMwqpFmimI1mE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=NPj4ASj3XEB0AC4FSjoNSNY4thPPfkhDBceN/B6WWS+OtBflPV1mvNX8MFPV4VWrJ
-	 GkSGEHVXJAlj863kX7PKt3+YeM/wbnItd53pFWe9wJrrvhLcW5llncYSe4ERPi+kO2
-	 p7MNtEO4eHGAVsLe3q/7l28e68457E8nhgNnpp5sVYNeMaeCWxaSvsXWhwamcRYQMY
-	 jdR2D8BWxlanXhb46a6pJgkqEBFU4aVU6ZKDv/7jG2NY/PzJ3mOrUzC/suFYCKdfpm
-	 mt+AAma/lVJL5I9QzILJvPtnP+WwNmtEXWwt9WDETHlRbbx2Gj2a0UBn0FrypYQpgW
-	 sKWGp2wa3lCTw==
-Date: Sat, 03 Oct 2026 16:51:24 +0000
-To: Junhui Liu <junhui.liu@pigmoral.tech>
-From: Norman Herms <dockseed@proton.me>
-Cc: wens@kernel.org, Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, netdev@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, Enzo Adriano <enzo.adriano.code@gmail.com>, Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [PATCH v5 3/8] clk: sunxi-ng: a733: Add PRCM CCU
-Message-ID: <IX5E2OTO5TApj5Vn4djIoBmcguIRvSNmVwcbXPiXUUGdVZr1NAJHSRomSnI2U5zgW9LWkNXJUpSIlkvHGCwlb1n6mYkGZoH4l1EOvNgua38=@proton.me>
-In-Reply-To: <DLVAHLGLB6W5.1X87X6JJ6MY5H@pigmoral.tech>
-References: <20260930-a733-clk-v5-0-11175b41cd2d@pigmoral.tech> <20260930-a733-clk-v5-3-11175b41cd2d@pigmoral.tech> <CAGb2v65q8w6NLzTtuMX3HZR98nAvR=Z4ODUCFZb5j3TgkDu_3Q@mail.gmail.com> <DLVAHLGLB6W5.1X87X6JJ6MY5H@pigmoral.tech>
-Feedback-ID: 144388465:user:proton
-X-Pm-Message-ID: f0d0ad3ff4b1cce1df4b4fde15de0e8f3c9593c9
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvO8/u/A"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B44AB1F0089B;
+	Sat,  3 Oct 2026 17:12:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791047580;
+	bh=kAqQ4xinSUc4yXroGj7gCvZiryGMGvyGCvMOHkjDy00=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=mvO8/u/AJo5x7NQgWTKQoTYjmgerBXtpVs2UYB3Bu2l1+mBxwSDC7LBTKTJnciR9k
+	 bhDYswPucwQML97aQ/3FoydfM4DYLintp2HnQpPJ8oSK9DMOb6DIbepPKuufOLC3zi
+	 7WZxBqQQVcgimuoJ+5Spsvvee5OXytw69WsuhNJZpAraPGVieLNUG5PgxUCbYa6q6n
+	 /fxHUrQx94FRXqZW5kbTW2ENQR0FWiRf6EI+rhOMR5D8ke3HVcjMW9qesmC0IJ9Ax0
+	 QbgkmBRSX/Jg95TtAwBvGQWMJTln4TSuUXAGTKIHuKPEpQ0BUOOc6pbhxGD+WKUHzN
+	 wpHaSD6ZVZ0ww==
+Date: Sat, 3 Oct 2026 13:12:51 -0400
+From: Brian Masney <masneyb@kernel.org>
+To: Drew Fustini <fustini@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Aamir Ahmed <elb12345@hotmail.co.uk>,
+	Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Joel Stanley <jms@oss.tenstorrent.com>,
+	Drew Fustini <dfustini@oss.tenstorrent.com>,
+	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] clk: tenstorrent: Atlantis PRCM fixes for v7.4
+Message-ID: <asE3kwpkTGM7L1JI@x1g10>
+References: <asCtllTmVqc1ZDBK@x1gen8.tail89d63.ts.net>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <asCtllTmVqc1ZDBK@x1gen8.tail89d63.ts.net>
+User-Agent: Mutt/2.4.2 (2026-08-30)
 
-Hi Junhui, ChenYu,
+On Sat, Oct 03, 2026 at 12:24:06AM -0700, Drew Fustini wrote:
+> The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
+> 
+>   Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/tenstorrent/linux.git tags/tenstorrent-clk-for-v7.4
+> 
+> for you to fetch changes up to c64b54ddb692c30b8fb139a2ead32eb4db7faef5:
+> 
+>   MAINTAINERS: Update RISC-V Tenstorrent SoC entry (2026-09-29 12:06:41 -0700)
+> 
+> ----------------------------------------------------------------
+> clk: tenstorrent: Atlantis PRCM fixes for v7.4
+> 
+> Minor cleanups for the Atlantis PRCM driver:
+> - Set the onecell .num before the first store into .hws[]
+> - Only bump the shared gate refcount once the enable has taken effect
+> - Use regmap_assign_bits() in the plain gate op
+> 
+> Also update MAINTAINERS: add Anirudh as M: and change T: to kernel.org
 
-> > The three bus dividers are secure by default, and either need to be tog=
-gled
-> > to non-secure by the bootloader, or (I'm guessing) the system is runnin=
-g
-> > without secure boot and the secure access bit isn't in effect.
-> >
-> > Please add a comment about this.
->
-> Okay, I will add a comment explaining this.
+Merged into clk-next.
 
-A data point for that comment, measured since my last reply. For the
-registers behind a security switch, ChenYu's guess holds on our boards.
-Two test BL31s, each clearing a switch again after
-sunxi_security_setup(), then reads and writes from U-Boot at
-non-secure EL2:
-
-- PRCM_SEC_SWITCH_REG bit 0 cleared (0x07010290 reads 0x6): r-ahb
-  reads 0x03000000 and r-apb1 0x04000000, the values EL3 reads, and a
-  write to r-apb0 (0 -> 1 -> 0) sticks.
-
-- CCMU_SEC_SWITCH_REG cleared to 0 (PLL, BUS and MBUS secure): PLL_PERI0,
-  AHB, APB0, APB1, TRACE, the AHB and MBUS master gating, NSI and MBUS
-  read the values EL3 reads. Writes to PLL_NPU pattern 0 and to TRACE
-  stick, and U-Boot's own write to the MBUS gate enable register
-  (0x4 -> 0x804) sticks.
-
-So on these non-fused parts (SID + 0xA0 =3D 0) the switch bits do not
-gate non-secure access, as the UM notes on these registers say for
-non-security mode. With secure boot enabled, the bootloader has to set
-them; we cannot test that.
-
-That narrows what I wrote earlier about secure filtering without the
-fuse: on our boards it applies to the registers the UM marks as fixed
-secure (S_TWD_BGR_REG), to CCMU_SEC_SWITCH_REG itself and to the SPC
-status words, not to the registers behind a switch. We tested a sample
-of each switch group, not every register.
-
-One board, AI agents (Claude) on my board as before, so a report, not
-a Tested-by.
-
-Thanks,
-Norman
+Brian
