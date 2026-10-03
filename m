@@ -1,68 +1,33 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA2449BD87
-	for <linux-clk@vger.kernel.org>; Sat,  3 Oct 2026 19:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9832737FC;
+	Sat,  3 Oct 2026 20:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791057067; cv=none; b=EKxczNCaw79Ef5xRjiJBpZtuaEe3xscjm5zlpY9JO9XThokvfDaT2KfKQ4N5YesXWr/LqcZ8ETbf+5ecQitDizbTzCrLgmuk6qHqyHWlu7Y2kfza7GUb39U2wRk1MltqrNkezLX1v1EGti04nQabGaRvwcAAhBxZOko3hIxdhCE=
+	t=1791060330; cv=none; b=BtqZs95jgtNPz8RY67Sj0dKD23p6TURVS1RLfPUtko9Add6DlQAQj6ts6diBIKFfXxLpE+tg5ixDdDxDZCteOlDBEo+0IxXnBl8bZQ2iqz6NCQqwv3FR1d8JRY+QQtDSJI7RBWN8QhqrnRzx3y7AcH6iADLMGGA3Rj3hKbdnjEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791057067; c=relaxed/simple;
-	bh=7pBfjveomDnmzdvLDU2dmhnc89A87sIYXO91YioPoWQ=;
+	s=arc-20240116; t=1791060330; c=relaxed/simple;
+	bh=JenYKjlV6XIEvMSaZd7zEXK28c/Rlb8gWmrbqlqg4vs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RX/lT+e53dF8O06rIPu4qh8IB7dZRoQ0fkd9Sd6eM4JQGD5W04Nkm6jbF7yeEZZFkXsmd2XA1YqRk36D9bbzYKF0MZ1nxApHAvhTpEEvb0mypb2FTQzQ6hVeoUbl+7P5ENC8AuChtgigOmVMdaHKgYGOyoELrZQ3r7Y+4UXBjK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=r7TsFJis; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 In-Reply-To:Content-Type; b=NzPIbx4fE9f3c0t1U7gVddogFXv94MtNIqKSYhTpZmfCCwAhFv6lVg175Aktajwy6QE9cNNtJLVTAC/i6fbQtzIRYKsRZhczfog+jGVYwyCLZSaSgTvWdf2Lyq2oHWi3L01ZX6apOTuCJyYQYKRt6XHI5p3M+YdMesyKkBNpLmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OZEj4F1n; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r7TsFJis"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49ffbd83a92so6685745e9.0
-        for <linux-clk@vger.kernel.org>; Sat, 03 Oct 2026 12:51:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791057064; x=1791661864; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=GthwDRkP6iGq1qpE9Gwptow6c+M7A3HXNDwh7Y2Glb0=;
-        b=r7TsFJisSQnFR036Lx7A3Ji+tzCpGYhe36jSD/1CrNjzKkkUnhOFutTi0oZ8QDVvQA
-         SpENr3VGQuDmepT7B+/+FDgtGuckXgd57laUnrWsHoJKpieDiZwRUj8Ls5fJ4aLEcKGW
-         YzIUHlHQX1wR4R/TXUA1u7UYoK4QqnnJF6p2lKaoCJSr6wXJDL5GB+Dt3LcN6T/ZMYW7
-         s5HCD8nUFNxMb/bWeQsFcuvPLZDIHs0RA1PeeM26EaDI0TRsqaRxZtZoAys9h4AkLfas
-         Xr7fw01ohlN/mlEkPd8dRv47KHJy6ek2PwQCZLBLL775D6mYjpZd2vA9/Qh9QPi7KszP
-         RhCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791057064; x=1791661864;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=GthwDRkP6iGq1qpE9Gwptow6c+M7A3HXNDwh7Y2Glb0=;
-        b=bkMIvMMsRFXAkk973QtSQQK2D4sxOZ69HNaiOksLWS7axTLQx9Q3tzQc4iFQz9cDob
-         BJhWSnt1W/mvTv82B89kl95HEXygPGs2auilX9+NNLWVQMOHWpfZ9V/sC8gpDURpkSfy
-         CB54hQ4HPr8lxPhBgCpnSkbCA/GcbT8rMh8c/4U7PrmkDuVaW/YM5iXTam+ECul11gyd
-         ytqpuYxDWh3UBmVqQULN6legtlxPY+nIOzmUgAmVvHeuO5RoEPkCwNq33r6fQsldAtGx
-         PnG083b+dmmfLQbiwaRfcUAxm9H+lMOvIx3WUC1RcvtRj/KM4imKi7mNvQkda/YAjr2r
-         5Krg==
-X-Forwarded-Encrypted: i=1; AKwUvByNvwL2cmP+gn9KgGbwQ2C+aLQd465FrlJ46ELZGS6mADtY1x8ap9bIGxjNAqxoamAFTl1XmjpwDis=@vger.kernel.org
-X-Gm-Message-State: AFuF++lRQyALEcW+zsHlwLtP/HO0+gLx/9mKqjzJTqUYEvao/oXQ1vCi
-	35oqX4k1Jeon0AaSfjaOB5okVr1d8haHe/VNbT2s6oh7neaGncIG2QnX
-X-Gm-Gg: AYBFou3ybnrZvITcDCo3cjT7Urn6zjoO9CJtqHn8Ubo06+Al0oKWeJ4Fx+KwcOit8fO
-	0v6g53EDqAo5k0CeFfdbCZ40lniykvpCT1/FQqNuqJ/L2bqfpi7v/8rPdbl9kASlkoZOB+2JyBw
-	GdF67gSC1uYLJbE1DLjhEb9FdJAjHobfpapV48B+XDvxEWIQJbdZq9X0NoMNi5oEEoUFcceMzZZ
-	M+ngt+xdf2heeSp8OlQKcyRyE8cIGNLp8mzafbVy6F3yixgq3VAGN8JSNNJM2eJBNyvbhlzRQzy
-	5yjzsve3sYzyst/fe5MgqBtnELIGhBKD+TF5aefunrgMSSpV/YCOA1ZkbXuppN2qvSO7A8jNIHU
-	wWnqtI8YbsLEZ2ZuHjl39CVs5uEb4URI9Xaw6n29C3kNFZQiQureYkK3Jtq0DrsRL0ali0t0JZB
-	4cQLAxXfO3YEKaAQbfQNeISv+V8ZUEL12mLHqBOXFXAm7PUW56LnJoRo2If4+3+pzMsHl6piaOc
-	qif2elbF1Yf/eMAgx0/W9HWyYRip7kap03sTg==
-X-Received: by 2002:a7b:cd8e:0:b0:49f:bd3c:bc18 with SMTP id 5b1f17b1804b1-4a02758ff89mr75811725e9.19.1791057063698;
-        Sat, 03 Oct 2026 12:51:03 -0700 (PDT)
-Received: from [192.168.20.170] (5403F394.catv.pool.telekom.hu. [84.3.243.148])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a0280b2e3csm233621055e9.5.2026.10.03.12.50.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 03 Oct 2026 12:51:03 -0700 (PDT)
-Message-ID: <4ae83db6-768d-447e-b177-3ef5206267f9@gmail.com>
-Date: Sat, 3 Oct 2026 21:50:57 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZEj4F1n"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 333BB1F0089B;
+	Sat,  3 Oct 2026 20:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791060329;
+	bh=X8iuOQXnVYYdSG0NuC0FpqYPqJ9aUVdctLVwjWuIw3s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=OZEj4F1nQ7bdjYU+XZTkdEJ7/ssHip5lidQLNVWEi/QuA6awBDOVhvWhzQXm6yFj4
+	 eKotg0qzyzRTMIrQc4GaFLTN1IG6xzhob5Q7l6ys9J4THnxp1Rid4s3b+62yu3V7Zq
+	 5/kv8sJp35n9cpbZ5F9opovWevocGak0PMALOgcHIIOZ/zmullKw1j81ZRkbGHScO6
+	 c9oEPZeC/1yIBZ6Yv2C8ujWVbyvUIo99ndVuw+6hJjXEIKpmm/0hCgCO5X3bBNH63x
+	 jHELs+T79aqduVbESmXLEyYl7qMd5rPThx+TF0J5HF/PJQtqqUmyUQZVlPTgb9xi50
+	 lZCZLAfDvkq+g==
+Message-ID: <3ee91c92-4e3a-4bac-85cf-923f5d77ceff@kernel.org>
+Date: Sat, 3 Oct 2026 22:45:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,155 +35,160 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-ipq5018: mark 'gpll0_main' clock as
- critical
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Abel Vesa <abel.vesa@oss.qualcomm.com>,
- Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>,
- Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
- Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Cc: Stanislaw Pal <kuncy7@gmail.com>, Mieczyslaw Nalewaj <namiltd@yahoo.com>,
- Jie Luo <jie.luo@oss.qualcomm.com>, Georg Seema <georgseema@gmail.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20260918-ipq5018-mark-gpll0_main-critical-v1-1-fbe8f27a0106@gmail.com>
- <e16cf23c-82aa-465b-81b2-6240f4a0f4d9@oss.qualcomm.com>
- <f2ccd6b6-e5a2-4d36-a12c-124638c31280@gmail.com>
- <66d48e1f-7bab-42f3-84db-ce794f2a2a89@oss.qualcomm.com>
-Content-Language: hu
-From: Gabor Juhos <j4g8y7@gmail.com>
-In-Reply-To: <66d48e1f-7bab-42f3-84db-ce794f2a2a89@oss.qualcomm.com>
+Subject: Re: [PATCH v4 01/20] dt-bindings: phy: Add
+ starfive,jh7110-inno-hdmi-phy
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Lee Jones <lee@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
+ <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Dominique Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, mfd@lists.linux.dev,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Maud Spierings <maud_spierings@murena.io>,
+ Graham Markall <hello@big-grey.co.uk>,
+ Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+ Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+ Joshua Peisach <jpeisach@ubuntu.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
+ <CGME20260915153214eucas1p2b548f3236ef98fb0cbf320e397420125@eucas1p2.samsung.com>
+ <20260915-jh7110-clean-send-v4-1-f0e4fd6f2cc8@samsung.com>
+ <20260917-mutant-chamois-of-competence-46ca77@quoll>
+ <1a1a9b49-430b-4218-b27d-e133d488e8d9@samsung.com>
+ <6cf9e611-bfc5-407b-8132-bd328f8b61fc@kernel.org>
+ <eaba2fa9-a1ce-4dac-9bd6-e0b3a3dd01ef@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <eaba2fa9-a1ce-4dac-9bd6-e0b3a3dd01ef@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-2026. 10. 01. 18:15 keltezéssel, Konrad Dybcio írta:
-> On 9/24/26 1:33 PM, Gabor Juhos wrote:
->> Hi Konrad,
->>
->> 2026. 09. 23. 15:32 keltezéssel, Konrad Dybcio írta:
->>> On 9/18/26 11:27 AM, Gabor Juhos wrote:
->>>> On IPQ5018, the APCS core clock feeds the CPUs. It can use
->>>> different clocks as its parent, but during system boot it
->>>> utilizes GPLL0.
+On 03/10/2026 17:36, Michal Wilczynski wrote:
 > 
-> [...]
 > 
->>> At a glance, we have the CPUs consuming
->>> &apcs_glb APCS_ALIAS0_CORE_CLK
+> On 9/30/26 13:01, Krzysztof Kozlowski wrote:
+>> On 25/09/2026 23:05, Michal Wilczynski wrote:
+>>>>> +  clocks:
+>>>>> +    maxItems: 1
+>>>>> +    description: Reference oscillator.
+>>>>
+>>>> This barely counts as a resource, so usual question: no resources here?
+>>>> no MMIO? Even the user of this phy is the block itself.
+>>>>
+>>>> This makes me wonder if this should be a device node in the first place
+>>>> (instead folded into the parent).
 >>>
->>> which takes XO/GPLL0/A53PLL as parents.
+>>> The PHY has no reg because the reg is shared with the controller and
+>>> owned by the parent - patch 9 lets the bridge take its regmap from
+>>> there.
 >>>
->>> GPLL0 is a child of GPLL0_MAIN, so this should never be gated in
->>> practice. devlink and probe deferrals should make sure you always
->>> get a valid clock handle for the cpufreq driver..
+>>> The user of the PHY is not only the block itself. It is the pixel clock
+>>> provider for the whole display subsystem, voutcrg takes hdmitx0_pixelclk
+>>> as the parent of its DC8200 pixel MUXes, and while HDMI output is active
+>>> it is the only intended source for that clock. The parent has to be
+>>> assigned explicitly so the general PLL does not end up driving the pixel
+>>> clock, and so a DSI user does not reach the HDMI PHY clock generator.
+>>>
+>>> So it has to be its own node. The HDMI block has two independent
 >>
->> Yes, the cpufreq driver gets a valid clock handle. However the hang happens
->> early, when the 'apcs_alias0_core' clock is not registered yet. So CCF does not
->> know that the clock (hence the CPU) is a consumer of GPLL0.
+>> I do not see the logic which lead to this conclusion. Pixel clock
+>> provider, so a clock controller, cannot be a user of a phy. Clock
+>> controller does not have a physical layer.
 > 
-> So is that the late_initcall kicking in early, disabling unused
-> clocks,
+> Sorry I think the wording was not perfect. I meant the PHY node is a
+> pixel clock provider. voutcrg consumes a clock not a PHY.
+> 
+> voutcrg: clock-controller@295c0000 {
+>          clocks = <&syscrg ...>, <&hdmi_phy>;
+>          clock-names = ...,"hdmitx0_pixelclk";
+> };
+> 
+> The consumer of the PHY is only the hdmi controller.
+> 
+> What matters for the node layout is where that clock goes. voutcrg is the
+> SoC display clock controller - it is not part of the HDMI block:
+> 
+> hdmi_phy -- pixel clock -> voutcrg
+>                               |
+>                               - pclk/mclk/bclk -> hdmi_controller
+>                               - pix0/pix1 -> dc8200
+> 
+> hdmi_phy and hdmi_controller are the same register block with one reg
+> owned by the parent. So if that block is described as a single node:
+> 
+> hdmi_node - pixel clock -> voutcrg
+>      ^                          |
+>      --- pclk/mclk/bclk --------
+> 
+> the node provides a clock to voutcrg and consumes three clocks from
+> voutcrg. That is a cycle in the device tree description.
 
-No, disabling unused clocks happens much later.
+There is no cycle. Internal signals to the block are not represented in DT.
 
-> or is there some other logic that ends up disabling the
-> GPLL?
+What you have is a driver problem and you create some sort of DT
+structure to solve that. DT purpose is NOT to solve your driver
+dependencies or circular connections.
 
-In the actual case, it is being disabled by runtime PM, which happens due to the
-pm_runtime_put() call in the 'ipq_cmn_pll' driver's probe function.
-
-Adding a WARN() into the clk_alpha_pll_disable() function results in this message:
-
-  WARNING: disabling 'gpll0_main', expect a system hang!!!
-  WARNING: at clk_alpha_pll_disable+0xd8/0x108, CPU#0: kworker/u8:0/11
-  Modules linked in:
-  CPU: 0 UID: 0 PID: 11 Comm: kworker/u8:0 Not tainted 7.3.0-rc1 #0 PREEMPT
-  Hardware name: TP-Link Archer AX55 v1 (DT)
-  Workqueue: pm pm_runtime_work
-  ...
-  Call trace:
-   clk_alpha_pll_disable+0xd8/0x108 (P)
-   clk_core_disable+0xec/0x278                 # gpll0_main
-   clk_core_disable+0x110/0x278                # gpll0
-   clk_core_disable+0x110/0x278                # pcnoc_bfdcd_clk_src
-   clk_core_disable+0x110/0x278                # pcnoc_clk_src
-   clk_core_disable+0x110/0x278                # gcc_cmn_blk_ahb_clk
-   clk_disable+0x38/0x60
-   pm_clk_suspend+0x120/0x170
-   pm_generic_runtime_suspend+0x34/0x58
-   __rpm_callback+0x50/0x200
-   rpm_callback+0x60/0x78
-   rpm_suspend+0xf4/0x5e8
-   pm_runtime_work+0xd4/0xe0
-   process_one_work+0x258/0x860
-   worker_thread+0x1c8/0x378
-   kthread+0x140/0x158
-   ret_from_fork+0x10/0x20
-
-However the problem is not specific to the ipq_cmn_pll driver. It is a race
-between probing different devices.
-
-For example, consider a simplified probe function of a driver:
-
-  static int ipq5018_gpll0_consumer_probe(struct platform_device *pdev)
-  {
-          struct clk *clk;
-
-          clk = devm_clk_get_enabled(&pdev->dev, "foo");
-          if (IS_ERR(clk))
-                  return PTR_ERR(clk);
-
-          return some_function();
-  }
-
-Then assume the followings:
-  - "foo" is a descendant clock of GPLL0
-  - the probe function runs before probing other devices, so the probed device
-    will be the first consumer of GPLL0
-  - some_function() returns with an error code
-
-The result will be the same hang. Due to the probe failure, devres disables the
-clock, but since the the device is the only consumer of GPLL0, it is getting
-disabled as well.
-
-Here is the repective WARN result:
-
-  WARNING: disabling 'gpll0_main', expect a system hang!!!
-  WARNING: at clk_alpha_pll_disable+0xd8/0xf8, CPU#1: swapper/0/1
-  Modules linked in:
-  CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 7.3.0-rc1 #0 PREEMPT
-  Hardware name: TP-Link Archer AX55 v1 (DT)
-  ..
-  Call trace:
-   clk_alpha_pll_disable+0xd8/0xf8 (P)
-   clk_core_disable+0xdc/0x268
-   clk_disable+0x38/0x60
-   clk_disable_unprepare+0x18/0x38
-   devm_clk_release+0x2c/0x50
-   dr_node_release+0x24/0x38
-   release_nodes+0x78/0x118
-   devres_release_all+0x84/0xf0
-   device_unbind_cleanup+0x34/0x98
-   really_probe+0x190/0x3f0
-   __driver_probe_device+0x174/0x1e0
-   driver_probe_device+0xc4/0x130
-   __driver_attach+0x108/0x258
-   bus_for_each_dev+0x6c/0xb8
-   driver_attach+0x2c/0x40
-   bus_add_driver+0x128/0x258
-   driver_register+0x68/0x138
-   __platform_driver_register+0x30/0x48
-   ipq5018_gpll0_consumer_driver_init+0x2c/0x40
-   do_one_initcall+0x6c/0x548
-   kernel_init_freeable+0x264/0x388
-   kernel_init+0x34/0x1f0
-   ret_from_fork+0x10/0x20
-
-Maybe this helps to understand the problem.
-
-Regards,
-Gabor
+Best regards,
+Krzysztof
