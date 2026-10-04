@@ -1,310 +1,255 @@
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2098.outbound.protection.partner.outlook.cn [139.219.17.98])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922BD33ADA7;
-	Sun,  4 Oct 2026 04:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.98
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791086992; cv=fail; b=b6t49/HUSAdBuYQve/G+LBW1943LY2q8i6nVrsBfNXhv+2s1bYVKCiFw3YH7YQH1E1K/KtTz0Eo41D8mV5lw0yWp91tzTfT878usgIPPViPR1Wx5ZK9h19OUPtc4d8+xDe0hGB0ReeBN/6U0H2n6MYhg0uXvAj3qpMGRwgdHk8o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791086992; c=relaxed/simple;
-	bh=rhfw5EtQmrb2N8oSGnR+yAIIsTl/juajpFGOjIldHo8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=stpIqlauAeGndzWEHi15GzA8p/b+5joBRBV2MCG3qlP4K0gWtDHLR/qV2bFYPlOBYaWpTUZ8yff4JrGfq8FTdTLkH8YEBdO1NICX6PoPAV/+PqFaXiGHGveKEAXjZ2lESIhGcnDLgD5t3QceSxRoDVuk8is1tCwWoXul/09khcg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Q4usiuyccACsFhU57wizHDnGQtd35oLHzPcuL7ys7g0ngN6kdhxzYqHzULbozICEjVuIdpVYuYtSlD1CLtT/BjCQFwT1qZOB64m3LIPxvtxbqFavMgqyDzj09T1IVrZDtSmveV4LcuspG08/c88z4sFr8oSuy7Rifz0DjobP0/A9ih5lHFUJeES5doByCmUFSDSMkryzi8U+JMakfVu7fs/gAz6tbBDWRTBOxA/otq0tohE8suZ4TuVemKf5k/43JYO9DoKJ5aLFOjvYUyHabZp+MmORY7Vg1Jm5gpBA8jGF6V/G7+8QBCLK2HBjd5JhOW17clZ3iLQl7Ka8udPstw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dDx260ByFWlF+0C6uIEXZmUiTZI2QDT3nQFK6SLVHOg=;
- b=Pk5EkwrfjxdBUAvihamStthJLKU5F2j7Tqy0TeaEN28ppbfoQtDud5Nx2mNwHXjNio6BxS1IATvRVlPtsdtGk2ToWbEblUI7X+LRzTx+2E/7Cfw4qCIfqv8/l3Km1Q9Wn3N5/apULVvVA5qajQE6uJjV1NtiDMwm8RFzcaYkDxkqYnoNrGJqjaGcvc0VSJnky7hVJ8OuAaNiM5s126PRsii+DFksFfcJGIidLjKBYLowlDpKeOGaKJlmPGJZkvZjyLUPk2h0KMGbAemUe/g/9ab2Sf9de6/iVFSPpUYeCMZMci+YQFU+NWf3yZpX3c66mZs9C5QNo1KO6PpmZuSibg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::6) by ZQ4PR01MB1155.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:15::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.18; Sun, 4 Oct
- 2026 04:09:36 +0000
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- ([fe80::e7d4:256c:b066:850d]) by
- ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%4])
- with mapi id 15.21.0472.016; Sun, 4 Oct 2026 04:09:36 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Brian Masney <bmasney@redhat.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Jerome Brunet
-	<jbrunet+clk@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
-	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Emil Renner
- Berthing <kernel@esmil.dk>, Kees Cook <kees@kernel.org>, "Gustavo A . R .
- Silva" <gustavoars@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, Hal Feng
-	<hal.feng@starfivetech.com>
-Subject: Re: [PATCH v5 10/23] clk: starfive: Add JHB100 System-2 clock
- generator driver
-Thread-Topic: [PATCH v5 10/23] clk: starfive: Add JHB100 System-2 clock
- generator driver
-Thread-Index: AQHdUNlXLmh95bym/0m9TiTYdcb04bbqrOAAgAIdwuA=
-Date: Sun, 4 Oct 2026 04:09:36 +0000
-Message-ID:
- <ZQ4PR01MB120205E933ED1F874645F35DF2972@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-References: <20260930124317.5648-1-changhuang.liang@starfivetech.com>
- <20260930124317.5648-11-changhuang.liang@starfivetech.com>
- <asALCsosWkutrwUK@redhat.com>
-In-Reply-To: <asALCsosWkutrwUK@redhat.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1155:EE_
-x-ms-office365-filtering-correlation-id: d76536f5-b40b-4e31-9e1a-08df21cd4dad
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|23010399003|376014|38070700021|56012099006|10067099003|4143699003|22082099003|18002099003;
-x-microsoft-antispam-message-info:
- 5/pFXrQGql3q359qYvs6MNXAX+1oAbUkvOr0A+L46nTUEBIocV/ONd4GkGVgmhUMzDNpRqkNZm9TWIUr6r6ZvLxYXJAq14OhUSYOAswmzPA3dyv90Vd3d/Zh1ZzQa7lFqByJChcJ0ifx9QzxSZcUzWd9UM3EfEM1ntWqAwpntXUnRm0U2jC5wpq81mpiSUxGnkd8DlkyAOjWy6Xn2IYz5UW/samCeJSsdNNJ4/ehM1dEGGA+vqBzhzc1r0uebiVUTO32I+cH0vuIzRmVxn7C1cTO3z1DgWiA10Ek27k3QXWWuOlWgUDfClxlBq5YOdrWKrpbc3zc86WsR9wCdF6EPW2wXcWP92/IHDMoXb22bGun2UpZjjCbLni1Ad0q+lrsDLVZe10IIpz9/Qgk20hMYV3Wt11sgx28oWWBVH085+/+Qd30u/Dwk11IV+5fEYPlM2Z71jb4ME016J/ihBbEWlEv7xfa+QXAoX7FXw2JFGXa17//fyis2R/8uMBldokivu4e/3v7vSUpVwWcUzB3b2mf62yp3S1+7O4A4JyR6hwAS0dJxf510Z7XWeZbx8pQ
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(23010399003)(376014)(38070700021)(56012099006)(10067099003)(4143699003)(22082099003)(18002099003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?ePO9JzroDLPkNqm4hLGFDV8gzGV7mEowD0LIzBn+41Yz4mA7lSDO89MA0Ijt?=
- =?us-ascii?Q?v6sH21JjfnDW5ocEJwY+pKDoGAaqT4t/1C/E9IREot9jwYjjaBgRfyzSG2bz?=
- =?us-ascii?Q?zVeczjqUTFMEJn7/KbtIQHcLCs46XnLrsFkzuZoYlwYWYyox3YqdYuvVtkVI?=
- =?us-ascii?Q?vqzmbwh0n7LblDATpGS/E9KJf3GOUdnQal10127HW+wZ347jYxL3T5f8tqVQ?=
- =?us-ascii?Q?zTyznsreRMXxmD5N5iJnw0Vv5ojALcxav3SOduuslR5hKu5aCcIFKkluND7t?=
- =?us-ascii?Q?/wvI6Ap+u9ljsoVQa2ZlbgwyLYDLC31H48kZ44eE0+V/qRozbtvlOpwP9eFb?=
- =?us-ascii?Q?v9AcHh5ndkqsPAHTW9yaU4EkbkvbsoOOuhLcbb7dFHpj85TjFW7AA7svj2Vf?=
- =?us-ascii?Q?cAXY3PZnSVNbN5IbzD8xUp6V0yO2nUmnh4P8Y3raH2+64C0KiYwdMZKNNoll?=
- =?us-ascii?Q?imxbB9i9VUShNKqDjjOjBw2lvHYadrGNjZjZes0w8LqyYlfd5mEzo2gElBqu?=
- =?us-ascii?Q?k+GBkDExhz/8A8ij/ilyy+etMo711kxJVlZo4jU4vuL5RTdJ8+BX2W27Mxv+?=
- =?us-ascii?Q?o9/YQfaNWta/RukCHXvYPjm2D7In+H4JZVrwPUCFYBdMt9X2oZSo3K6pIYUZ?=
- =?us-ascii?Q?VBqr/b2r+F5ad8oRk31720OEb2fTD9tnvAbg5GtoCe5H72n8/jyky3XWw91A?=
- =?us-ascii?Q?8jeAvU+5TMrjAyJU6+gQGaQy/6BF4RUVM68n76hLGbyBvW6jURiijfPMMdlE?=
- =?us-ascii?Q?cxHoaxivbqhJ5yg+VgAksVdnMMUGE9+yIhPYz4xqzyeMw0Eo2EEgM69+Ki2a?=
- =?us-ascii?Q?jWRlRprT501leDvjL1O59k+MYXRU4DpoCybznFrRnWY7ESAkmoFdwENyhlFL?=
- =?us-ascii?Q?c3XbTRepZmriLh5W/NKWF7XxTk9cEcw17Dg1QsKBcLQnlfG7zyQeZP6XbWFT?=
- =?us-ascii?Q?lUZOrTe+qqVazw57mI5jwCFvBICAoiO8C/iInFK/JuO6zHqiqUV4X/kRPD7g?=
- =?us-ascii?Q?G+tfPX7F4yoSTU7gpjDsNmqrI6EeguGDyQ9D+1/cdlcm+kta3xkeV5kc5WZS?=
- =?us-ascii?Q?p//RmYwtk+95YTpX0JebMOqLt6Ks5jQGKaX5rje2hkqYzmFXOJqhKz3Brs71?=
- =?us-ascii?Q?gIPQukeQc64Am1d2SZav2d5di9394oKUnNNVSYMoQV8r2z6TaT0aDHa3+Zy1?=
- =?us-ascii?Q?1X8u3YCfs4QbRRqMAMQVWB269dTEHOAf6CuEeSSFdmETL40omouhjZ9zU3+H?=
- =?us-ascii?Q?VmgHFsehs1lioLIePRNfRaiHISP+ct4iamW5DIgPc46x6yZ3yHnChZ1Nqwgq?=
- =?us-ascii?Q?EM5PRkaxfQYq0h7R1od7nwqXbT4EZZr/Yq4E7U6Pp+p/IcDWR0qKZT3Cuobb?=
- =?us-ascii?Q?7QZc+Yh0NJC4zBAVIbijhSpoo0N3P+9RulNJVsmgG+cMqDgLlMVjXsZqN885?=
- =?us-ascii?Q?L94HHwWbocv6PsYn5xjiiXQG9wh0vTOvGyYLqQVeVdeHtH6ERAGWzJEwJWs3?=
- =?us-ascii?Q?gIfbLzA8550LbtxwxCslNW0b++a4HYhsWK/HgJv1rCxGf2lPZwHBdcI2V96s?=
- =?us-ascii?Q?bU3fOxn1GTQRkAMOCIZmiIH0rsaX2JqCjRfx9EdSsEcOip3kUOR/X5gL8SEJ?=
- =?us-ascii?Q?ux3/uH3GZN5utbBZ4LzGHKZrSakSlb7+/azwC2GXKn1CRW5gocvAWcyf6Y0c?=
- =?us-ascii?Q?5MDEl94ncDcAbFSvjxAGDiMu+aRXHaHMFu9OA4quNPIXYnkaZUTB2v1hFny9?=
- =?us-ascii?Q?60v/CRfS3fKsRluXtToWG+WwVI+0GN8=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F85135CBD7;
+	Sun,  4 Oct 2026 07:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791098125; cv=none; b=I9tZKOEH5hrfqGGavwdiIwjEUiBKvNT6iotukC0sPHmljibOXlrQf5GNQ7Iiyxe92GTnYFQHkqT4+21ru2L/EhZt0MqjE//K8lSzjktapPDwoXYew4fWIfdvwdK0YlpvoXRuz/ubR19fnadzLgylh+ko1hrMA3Q6dvdgnEJWtF4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791098125; c=relaxed/simple;
+	bh=hwlTaim7t3I726sD5rkMbvkHa9ze7MTuT0ID+eAajW8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fOUYzfi71c7+uOcISBTkSWKfZWrrCV32Bm85hNO/rDkVfTzIEQraXmvYs1Ee8gJVMH3pe/SsKBt+9M2J1OKoQd5hBXKikOoShdVjA2w+YtX4E1F4YzvmRivDl4UiwI1k8uMG99akZrU4OTbnbcZNdy5xFyRwkgnJQWfaFum6eik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kn0TAw1q; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kn0TAw1q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EBF51F000FF;
+	Sun,  4 Oct 2026 07:15:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791098124;
+	bh=1YLqc6z8LyeKl0+KHcGgxZtXD3B6g5rBKBLuGBPQUYU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=kn0TAw1qOPg5KYhpCD5VwxN5UsLsVZecc5X1+BlRO+/o/J0KyyUVCwJWD/DeTKK/E
+	 RYh5KVemaOG0bO5S4ZTiYG/rO+u7yoB1LVNJ2PrMNN87Sh+fHO+Hq2NFic5LVZSdNR
+	 StXIBQEf4ikYEcKOKN7jweHKB/e76NgzG1YzjtfmJvW5Ja9QS/+fdpD3Cv7OiopjY9
+	 snCT50OgtZ/e6e1g0T+tyndQn8GOvnTkD0WDMzLqDdlp3pU/mFxN5S9WqNFfz2OnG3
+	 gO2r9kpPI+glHqLVWBRh4vYaKeLHwwi5f/RIs3BogGDhK+P8plcxCS4Zt7KsoAs2O7
+	 btLDUv5erfrhA==
+Message-ID: <ac7b82e6-22ea-465c-8477-bbe0bd9c8c27@kernel.org>
+Date: Sun, 4 Oct 2026 09:15:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: d76536f5-b40b-4e31-9e1a-08df21cd4dad
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Oct 2026 04:09:36.4925
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YTNm6XUIMMxj8N0hTwIos2yu43jnvY23xANhRnAqAIWN2xnT/PahdahRNIq8jwYJctD5HTZ4iHPEr3ereHdL7ONdMhFNmEsRhQGGHZKINI/RjVXAAkr75A28yov+Ov5g
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1155
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/20] dt-bindings: phy: Add
+ starfive,jh7110-inno-hdmi-phy
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Lee Jones <lee@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
+ <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Dominique Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, mfd@lists.linux.dev,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Maud Spierings <maud_spierings@murena.io>,
+ Graham Markall <hello@big-grey.co.uk>,
+ Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+ Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+ Joshua Peisach <jpeisach@ubuntu.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
+ <CGME20260915153214eucas1p2b548f3236ef98fb0cbf320e397420125@eucas1p2.samsung.com>
+ <20260915-jh7110-clean-send-v4-1-f0e4fd6f2cc8@samsung.com>
+ <20260917-mutant-chamois-of-competence-46ca77@quoll>
+ <1a1a9b49-430b-4218-b27d-e133d488e8d9@samsung.com>
+ <6cf9e611-bfc5-407b-8132-bd328f8b61fc@kernel.org>
+ <eaba2fa9-a1ce-4dac-9bd6-e0b3a3dd01ef@samsung.com>
+ <3ee91c92-4e3a-4bac-85cf-923f5d77ceff@kernel.org>
+ <3c5c15d9-ea7e-49a2-adae-ec3e3c72594b@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <3c5c15d9-ea7e-49a2-adae-ec3e3c72594b@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, Brain
+On 04/10/2026 00:35, Michal Wilczynski wrote:
+> 
+> 
+> On 10/3/26 22:45, Krzysztof Kozlowski wrote:
+>> On 03/10/2026 17:36, Michal Wilczynski wrote:
+>>>
+>>>
+>>> On 9/30/26 13:01, Krzysztof Kozlowski wrote:
+>>>> On 25/09/2026 23:05, Michal Wilczynski wrote:
+>>>>>>> +  clocks:
+>>>>>>> +    maxItems: 1
+>>>>>>> +    description: Reference oscillator.
+>>>>>>
+>>>>>> This barely counts as a resource, so usual question: no resources here?
+>>>>>> no MMIO? Even the user of this phy is the block itself.
+>>>>>>
+>>>>>> This makes me wonder if this should be a device node in the first place
+>>>>>> (instead folded into the parent).
+>>>>>
+>>>>> The PHY has no reg because the reg is shared with the controller and
+>>>>> owned by the parent - patch 9 lets the bridge take its regmap from
+>>>>> there.
+>>>>>
+>>>>> The user of the PHY is not only the block itself. It is the pixel clock
+>>>>> provider for the whole display subsystem, voutcrg takes hdmitx0_pixelclk
+>>>>> as the parent of its DC8200 pixel MUXes, and while HDMI output is active
+>>>>> it is the only intended source for that clock. The parent has to be
+>>>>> assigned explicitly so the general PLL does not end up driving the pixel
+>>>>> clock, and so a DSI user does not reach the HDMI PHY clock generator.
+>>>>>
+>>>>> So it has to be its own node. The HDMI block has two independent
+>>>>
+>>>> I do not see the logic which lead to this conclusion. Pixel clock
+>>>> provider, so a clock controller, cannot be a user of a phy. Clock
+>>>> controller does not have a physical layer.
+>>>
+>>> Sorry I think the wording was not perfect. I meant the PHY node is a
+>>> pixel clock provider. voutcrg consumes a clock not a PHY.
+>>>
+>>> voutcrg: clock-controller@295c0000 {
+>>>          clocks = <&syscrg ...>, <&hdmi_phy>;
+>>>          clock-names = ...,"hdmitx0_pixelclk";
+>>> };
+>>>
+>>> The consumer of the PHY is only the hdmi controller.
+>>>
+>>> What matters for the node layout is where that clock goes. voutcrg is the
+>>> SoC display clock controller - it is not part of the HDMI block:
+>>>
+>>> hdmi_phy -- pixel clock -> voutcrg
+>>>                               |
+>>>                               - pclk/mclk/bclk -> hdmi_controller
+>>>                               - pix0/pix1 -> dc8200
+>>>
+>>> hdmi_phy and hdmi_controller are the same register block with one reg
+>>> owned by the parent. So if that block is described as a single node:
+>>>
+>>> hdmi_node - pixel clock -> voutcrg
+>>>      ^                          |
+>>>      --- pclk/mclk/bclk --------
+>>>
+>>> the node provides a clock to voutcrg and consumes three clocks from
+>>> voutcrg. That is a cycle in the device tree description.
+>>
+>> There is no cycle. Internal signals to the block are not represented in DT.
+>>
+>> What you have is a driver problem and you create some sort of DT
+>> structure to solve that. DT purpose is NOT to solve your driver
+>> dependencies or circular connections.
+> 
+> The structure is not something I added. The voutcrg binding has required
+> an input clock named hdmitx0_pixelclk since it was merged in 2023
+> a097a5ec14df ("dt-bindings: clock: Add StarFive JH7110 Video-Output
+> clock and reset generator") and this series does not touch that file:
+> 
+> Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
+>        - const: hdmitx0_pixelclk
+> 
+> Mainline satisfies it with a placeholder, because so far nothing provided the
+> real clock:
+> 
+> hdmitx0_pixelclk: hdmitx0-pixel-clock {
+>             compatible = "fixed-clock";                                                                          
+>             clock-output-names = "hdmitx0_pixelclk";
+>             #clock-cells = <0>;
+> };
+> 
+> All this series does is point that existing input at the device that actually
+> generates it.
+> 
+> TRM [1] table 5-3  on page 529 lists the display CRG's input clocks. Most come from
+> dom_vout_top, but three come from IP blocks inside the subsystem:
+> 
+> clk_hdmitx0_pixelclk        297 MHz   u0_hdmi_tx.clk_pix
+> clk_mipitx_dphy_rxesc        10 MHz   u0_mipitx_dphy.clk_rxesc
+> clk_mipitx_dphy_txbytehs    297 MHz   u0_mipitx_dphy.clk_txbytehs
+> 
+> and on page 530 the CRG offers clk_hdmitx0_pixelclk as Source1 for:
+> 
+> u0_dc8200.clk_pix0      Source0 clk_dc8200_pix0  Source1 clk_hdmitx0_pixelclk
+> u0_dc8200.clk_pix1      Source0 clk_dc8200_pix0  Source1 clk_hdmitx0_pixelclk
+> u0_cdns_dsiTx.clk_dpi   Source0 clk_dc8200_pix0  Source1 clk_hdmitx0_pixelclk
+> 
+> The DC8200 and the DSI TX are separate devices, so the pixel clock
+> crosses two block boundaries to reach them.
+> 
+> That is also why the DT has to be able to name it. Those MUXes have two
+> parents and the selection is made in DT:
+> 
+> &dc8200 {
+>           assigned-clocks = <&voutcrg JH7110_VOUTCLK_DC8200_PIX0>, ...;
+>           assigned-clock-parents = <&hdmi_phy>, <&hdmi_phy>;
+> };
+> 
+> and voutcrg takes it as an input clock because that is what the hardware
+> does. If the PHY is folded into the HDMI node, that input phandle points at
+> a node which also consumes pclk/mclk/bclk from voutcrg. That is where the
+> cycle comes from - the hardware topology not the driver.
 
-Thanks for the review.
+Which is perfectly "fine" - present in many other SoCs as well. This is
+not different and your arguments are insufficient to give here
+exceptions. Why? Because again you use as an argument a Linux driver
+problem (cyclic dependency). Basically to solve Linux problem you
+introduce new empty nodes.
 
-> Hi Changhuang,
->=20
-> On Wed, Sep 30, 2026 at 05:43:04AM -0700, Changhuang Liang wrote:
-> > Add support for JHB100 System-2 clock generator (SYS2CRG).
-> >
-> > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> > ---
-> >  drivers/clk/starfive/Kconfig                  |  10 ++
-> >  drivers/clk/starfive/Makefile                 |   1 +
-> >  .../clk/starfive/clk-starfive-jhb100-sys2.c   | 129 ++++++++++++++++++
-> >  3 files changed, 140 insertions(+)
-> >  create mode 100644 drivers/clk/starfive/clk-starfive-jhb100-sys2.c
-> >
-> > diff --git a/drivers/clk/starfive/Kconfig
-> > b/drivers/clk/starfive/Kconfig index 11da8bcc4046..cfaac934a8e0 100644
-> > --- a/drivers/clk/starfive/Kconfig
-> > +++ b/drivers/clk/starfive/Kconfig
-> > @@ -92,3 +92,13 @@ config CLK_STARFIVE_JHB100_SYS1
-> >  	help
-> >  	  Say yes here to support the system-1 clock controller on the
-> >  	  StarFive JHB100 SoC.
-> > +
-> > +config CLK_STARFIVE_JHB100_SYS2
-> > +	bool "StarFive JHB100 system-2 clock support"
-> > +	depends on ARCH_STARFIVE || COMPILE_TEST
-> > +	select CLK_STARFIVE_JH71X0
-> > +	select RESET_STARFIVE_JHB100 if RESET_CONTROLLER
-> > +	default ARCH_STARFIVE
-> > +	help
-> > +	  Say yes here to support the system-2 clock controller on the
-> > +	  StarFive JHB100 SoC.
-> > diff --git a/drivers/clk/starfive/Makefile
-> > b/drivers/clk/starfive/Makefile index 0061550e0f7e..29cdef20575e
-> > 100644
-> > --- a/drivers/clk/starfive/Makefile
-> > +++ b/drivers/clk/starfive/Makefile
-> > @@ -13,3 +13,4 @@ obj-$(CONFIG_CLK_STARFIVE_JH7110_VOUT)	+=3D
-> clk-starfive-jh7110-vout.o
-> >
-> >  obj-$(CONFIG_CLK_STARFIVE_JHB100_SYS0)		+=3D
-> clk-starfive-jhb100-sys0.o
-> >  obj-$(CONFIG_CLK_STARFIVE_JHB100_SYS1)		+=3D
-> clk-starfive-jhb100-sys1.o
-> > +obj-$(CONFIG_CLK_STARFIVE_JHB100_SYS2)		+=3D
-> clk-starfive-jhb100-sys2.o
-> > diff --git a/drivers/clk/starfive/clk-starfive-jhb100-sys2.c
-> > b/drivers/clk/starfive/clk-starfive-jhb100-sys2.c
-> > new file mode 100644
-> > index 000000000000..a2c7e8eba9b6
-> > --- /dev/null
-> > +++ b/drivers/clk/starfive/clk-starfive-jhb100-sys2.c
-> > @@ -0,0 +1,129 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * StarFive JHB100 System-2 Clock Driver
-> > + *
-> > + * Copyright (C) 2024 StarFive Technology Co., Ltd.
-> > + *
-> > + * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
-> > + *
-> > + */
-> > +
-> > +#include <dt-bindings/clock/starfive,jhb100-crg.h>
-> > +#include <linux/init.h>
-> > +#include <linux/platform_device.h>
-> > +
-> > +#include "clk-starfive-jh71x0.h"
-> > +
-> > +#define JHB100_SYS2CLK_NUM_CLKS
-> 	(JHB100_SYS2CLK_MAIN_ICG_EN_JTAG1 + 1)
-> > +
-> > +/* external clocks */
-> > +#define JHB100_SYS2CLK_OSC
-> 	(JHB100_SYS2CLK_NUM_CLKS + 0)
-> > +#define JHB100_SYS2CLK_PLL1
-> 	(JHB100_SYS2CLK_NUM_CLKS + 1)
-> > +#define JHB100_SYS2CLK_GPU0_NCNOC_INIT
-> 	(JHB100_SYS2CLK_NUM_CLKS + 2)
-> > +#define JHB100_SYS2CLK_GPU1_NCNOC_INIT
-> 	(JHB100_SYS2CLK_NUM_CLKS + 3)
-> > +
-> > +static const char * const jhb100_sys2_ext_clk[] =3D {
-> > +	"osc",
-> > +	"pll1",
-> > +	"gpu0_ncnoc_init",
-> > +	"gpu1_ncnoc_init",
-> > +};
-> > +
-> > +static const struct jh71x0_clk_data jhb100_sys2crg_clk_data[] =3D {
-> > +	/* jtag mst*/
-> > +	JH71X0__DIV(JHB100_SYS2CLK_JTAGM0_HCLK, "jtagm0_hclk", 6,
-> > +		    JHB100_SYS2CLK_PLL1),
-> > +	JH71X0__DIV(JHB100_SYS2CLK_JTAGM1_HCLK, "jtagm1_hclk", 6,
-> > +		    JHB100_SYS2CLK_PLL1),
-> > +	JH71X0__DIV(JHB100_SYS2CLK_JTAGM0_ATPG, "jtagm0_ATPG", 12,
-> > +		    JHB100_SYS2CLK_PLL1),
-> > +	JH71X0__DIV(JHB100_SYS2CLK_JTAGM1_ATPG, "jtagm1_ATPG", 12,
-> > +		    JHB100_SYS2CLK_PLL1),
-> > +	JH71X0__DIV(JHB100_SYS2CLK_JTAGM0_ATPG_TCLOCK,
-> "jtagm0_atpg_tclock", 2,
-> > +		    JHB100_SYS2CLK_JTAGM0_ATPG),
-> > +	JH71X0__DIV(JHB100_SYS2CLK_JTAGM1_ATPG_TCLOCK,
-> "jtagm1_atpg_tclock", 2,
-> > +		    JHB100_SYS2CLK_JTAGM1_ATPG),
-> > +	JH71X0_GATE(JHB100_SYS2CLK_JTAG0_MST_WRAP_HCLK,
-> "jtag0_mst_wrap_hclk",
-> > +		    CLK_IGNORE_UNUSED, JHB100_SYS2CLK_JTAGM0_HCLK),
->=20
-> Can you leave a comment somewhere about why CLK_IGNORE_UNUSED is
-> on some of these clocks? We may be able to deprecate this flag once some
-> variation of the clk sync_state support lands:
->=20
-> https://lore.kernel.org/linux-clk/20260626-clk-sync-state-v1-0-4156d8196d=
-c
-> 8@redhat.com/
->=20
->=20
-
-There are some clocks that we do not consume through a driver. Currently,=20
-CLK_IGNORE_UNUSED can keep them in their hardware default state (always on)=
-.=20
-If there is an intention to deprecate this flag, in the next version I may =
-need to=20
-replace it with CLK_IS_CRITICAL.
-
-> > +	JH71X0_GATE(JHB100_SYS2CLK_JTAG0_MST_WRAP_CLK_JTAG,
-> "jtag0_mst_wrap_clk_jtag",
-> > +		    CLK_IGNORE_UNUSED, JHB100_SYS2CLK_JTAGM0_HCLK),
-> > +	JH71X0_GATE(JHB100_SYS2CLK_JTAG0_MST_WRAP_APB_PCLK,
-> "jtag0_mst_wrap_apb_pclk",
-> > +		    CLK_IGNORE_UNUSED, JHB100_SYS2CLK_JTAGM0_ATPG),
-> > +	JH71X0_GATE(JHB100_SYS2CLK_JTAG0_MST_WRAP_ATPG_TCLOCK,
-> "jtag0_mst_wrap_atpg_tclock",
-> > +		    CLK_IGNORE_UNUSED, JHB100_SYS2CLK_JTAGM0_ATPG),
-> > +	JH71X0_GATE(JHB100_SYS2CLK_JTAG1_MST_WRAP_HCLK,
-> "jtag1_mst_wrap_hclk",
-> > +		    CLK_IGNORE_UNUSED, JHB100_SYS2CLK_JTAGM1_HCLK),
-> > +	JH71X0_GATE(JHB100_SYS2CLK_JTAG1_MST_WRAP_CLK_JTAG,
-> "jtag1_mst_wrap_clk_jtag",
-> > +		    CLK_IGNORE_UNUSED, JHB100_SYS2CLK_JTAGM1_HCLK),
-> > +	JH71X0_GATE(JHB100_SYS2CLK_JTAG1_MST_WRAP_APB_PCLK,
-> "jtag1_mst_wrap_apb_pclk",
-> > +		    CLK_IGNORE_UNUSED, JHB100_SYS2CLK_JTAGM1_ATPG),
-> > +	JH71X0_GATE(JHB100_SYS2CLK_JTAG1_MST_WRAP_ATPG_TCLOCK,
-> "jtag1_mst_wrap_atpg_tclock",
-> > +		    CLK_IGNORE_UNUSED, JHB100_SYS2CLK_JTAGM1_ATPG),
-> > +	/* hostusbcmn */
-> > +	JH71X0__DIV(JHB100_SYS2CLK_HOSTUSB_NCNOC_TARG,
-> "hostusb_ncnoc_targ", 12,
-> > +		    JHB100_SYS2CLK_PLL1),
-> > +	JH71X0__DIV(JHB100_SYS2CLK_HOSTUSBCMN_CFG_500,
-> "hostusbcmn_cfg_500", 4,
-> > +		    JHB100_SYS2CLK_PLL1),
-> > +	/* bmcperiph1 */
-> > +	JH71X0__DIV(JHB100_SYS2CLK_BMCPER1_NCNOC_TARG,
-> "bmcper1_ncnoc_targ", 6,
-> > +		    JHB100_SYS2CLK_PLL1),
-> > +	JH71X0__DIV(JHB100_SYS2CLK_BMCPER1_CFG_250,
-> "bmcper1_cfg_250", 5,
-> > +		    JHB100_SYS2CLK_PLL1),
-> > +	JH71X0__DIV(JHB100_SYS2CLK_BMCPER1_CFG_143_DFT,
-> "bmcper1_cfg_143_dft", 8,
-> > +		    JHB100_SYS2CLK_PLL1),
-> > +	JH71X0_GATE(JHB100_SYS2CLK_BMCPER1_CFG_143,
-> "bmcper1_cfg_143",
-> > +CLK_IS_CRITICAL,
->=20
-> Also please leave a comment why CLK_IS_CRITICAL is needed as well for
-> these particular clocks.
-
-OK.
-
-Best Regards,
-Changhuang
+Best regards,
+Krzysztof
