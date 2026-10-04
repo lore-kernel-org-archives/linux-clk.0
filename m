@@ -1,84 +1,159 @@
-Received: from mail-07.mail-europe.com (mail-07.mail-europe.com [37.187.220.204])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx2-f38.google.com (mail-yx2-f38.google.com [74.125.224.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F65D405C2F
-	for <linux-clk@vger.kernel.org>; Sun,  4 Oct 2026 11:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.187.220.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF9843E48B
+	for <linux-clk@vger.kernel.org>; Sun,  4 Oct 2026 12:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791112510; cv=none; b=iCHd48DE9/V3fwBwaseJKQ7tc4gISI9CJduQeNpQiVn4W4biQvSgNut88wXCyq05aJV1s846k+T3wI1syQqShQBl5oPotIWvPh6VVlXWbb2nHS/E32CKjqcuQRqLdbt5x0177DFi/RAmXOVB65NGxwhdnE5hI/ryyKZJe4dQZmM=
+	t=1791116019; cv=none; b=LbrQTWK4R6DOYebswB/WNPGHAJzkZQrkpuhSBufkI2d2Va8iMc7oHl9pJNoBGa/x7YeacdtLICXjVaiammwvQ7129SY6wl/NTL0ZN1/MMfvuk1i5o0KxZnRCfmTegtnEFIAMdc9Mg/Sdsx3BAmzO3/OJo5QQk4l9K+NCIQ58s6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791112510; c=relaxed/simple;
-	bh=hsUe3R8HTIJa107Px4Pv5UjHvCZZlBUMI1qqHQMrE1U=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hl4TEIg2GIOpquLazZqzOnuR0BSWGhvAFEq3/Pwa0AI5zt/OnlDQCx8PskvJ0MKDcyHG8Fk51NJhX3QFWmnTbRYW0cH6PCh4Vtd/sqIvTLOskSDennrhqIPj4Pm1VeAeu1U+Kd2hh5YeNm/LhFDoWIQKnINjUHf9AU+LTVUk3j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=IO3RWP4M; arc=none smtp.client-ip=37.187.220.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="IO3RWP4M"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail2; t=1791112496; x=1791371696;
-	bh=axUuY6R+xPUQ9WsKqWZyN6vKAeBDZjWnfhApo6LvrFU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=IO3RWP4MxsoympIGLuMgbYvzs9IVs1H4h4EsImXO+KDAGmiMm81gXPq616RUv4pyV
-	 ggy3fdn3B1uimqvqorZcmf+qI98ciJzr1bgAYUSxyXC7UxeaI80pKFqxQD3jg/VIxn
-	 yHonCeDb115PBvkfjUGx6GIifZYHjiEyg/8FNF9vi2HTjprUr4Q2Mvm9qnvxv/Febi
-	 GOkZofTu0EYjJLfFWclkELv5rALS8Rzyacmu4qht+nbVA8iRmVS+G5BBTU2P8RHd3n
-	 qpLtzBjgXdNwsBQtR8DjlHZSW85qIUfycbCeVl3tu19oVcg3Jnc9IH5StFjEjeerUO
-	 cwh9aunD2WP7A==
-Date: Sun, 04 Oct 2026 11:14:50 +0000
-To: wens@kernel.org
-From: Norman Herms <dockseed@proton.me>
-Cc: Junhui Liu <junhui.liu@pigmoral.tech>, Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, netdev@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, Enzo Adriano <enzo.adriano.code@gmail.com>, Andre Przywara <andre.przywara@arm.com>
-Subject: AW: Re: [PATCH v5 7/8] clk: sunxi-ng: a733: Add bus clock gates
-Message-ID: <TEcOYCDcz77vYtgXxuHGwhVo6AFFgV2M5rIDAsLiG4T7fD6J41La8o19hf2iMQhaMXd1wHsvqeDardYv7hjy3TbV9oCkfzYKRMn0EGlh7Ww=@proton.me>
-In-Reply-To: <CAGb2v65Lqo7NiFhc2GYdfY7+jkC4Y+p6=Zy85HOFmXJzT0u1fg@mail.gmail.com>
-References: <20260930-a733-clk-v5-0-11175b41cd2d@pigmoral.tech> <20260930-a733-clk-v5-7-11175b41cd2d@pigmoral.tech> <CAGb2v65Lqo7NiFhc2GYdfY7+jkC4Y+p6=Zy85HOFmXJzT0u1fg@mail.gmail.com>
-Feedback-ID: 144388465:user:proton
-X-Pm-Message-ID: 24affaecb9b426f52699549cb7abbc8bb40c0be3
+	s=arc-20240116; t=1791116019; c=relaxed/simple;
+	bh=5Pr4pI6UHbC0U2MKjSQsGnO4riVPy06dn9dWWcRzV98=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p6OFDt5HakGtLBxa1CyuHQgScx2ktHDTcIH6mWeEIqTqaxWW+hYcMG1KV3wZMLouArGfub40eyEGOJB9rp4CtmwFyhU+FXPH026NN/0qSks5/eubR1m9EzUW2Bpw7KFe+0Kt3PkC+lARPpgX8wFOa1QgvscJ1GNHIZzo0GBQ+ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.224.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx2-f38.google.com with SMTP id 00721157ae682-8ac502960dcso6524817b3.1
+        for <linux-clk@vger.kernel.org>; Sun, 04 Oct 2026 05:13:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791116017; x=1791720817;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:reply-to:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=nfYr76LOTu8jVRzggIwBN8xVUqu42mEkcSJCjGTgQ0g=;
+        b=DLWeoWYwb6J88BidInKDdYRf7QvQEEgaqCt/Z6vc5tP4gypmGQFw5tblRyd4I7/gFQ
+         gUhgkVdEd/Y/hyd8Ea8tU4ZLtSVDoaj02P/W2GWeeikSDdoIXJmaklb8lwcitJx/fGRN
+         dw4ON1of3N6EhSuLGQ5wIqSOL9k4DopjrgPSnEcWxLIDRHVCqFNB+/khiCEkXJLdRjC5
+         v2ZxS7A+5m5pVKvZRkQj1/FiLV1nH1cfG+TIZbfpCpQDvbcwcz+njfGBSqP2VKiIcpeI
+         T1nulANjJifKtPH1y1Egx4AF6cUq32WH3SL3n5M6KzxXC/uvaC27n1N/p6Prx9Hfpx4J
+         uR1w==
+X-Forwarded-Encrypted: i=1; AKwUvBzBh86Q6rp2j2HyrwbqswH1er8q6otuLjcbdcaS6YOXAhO0E+F0gH811YtroaXWoJFsm3BooeTtuac=@vger.kernel.org
+X-Gm-Message-State: AFq9FYL3eo3i5kDnApkrPzDFDcvAGCtjgVtscVU1J1bnXwQt7SzE959i
+	s9HOuWjhpJcr12KUiChI/5AEGrucSkVy2t2MG/Y0l0JdD/1lB2oXujZrn6t+0LZM3wg=
+X-Gm-Gg: AYBFou3zIQmjydj+NtMvWU1hHbtQXsj2kD8Z7YyOEXclJghrs31cqcgNq38c1F+M1/L
+	1IqBD825wVP/BY1Z8E7A2tenFVl2QHM48c5KXW9px0JSWF6tAvwzDLmq9x52yj6s7BkS0aXToaa
+	EhhUFEuWizAcVpz6VvH+IO+J5Mwzafarjf5T+igUsrNrLsulhaz8PMZZcjv8RXl/r/OnYksuJAS
+	0tZYld/LqVUACtXtTfga7IHap5l63XuBz3UOkaDqh+UJnMF6fYLJqleEge68FU6p4tcjYcIQNC4
+	69Ibd87oSJARywA/MHDgM85LO5cSfP2LWeyy93a87e5lHcHPTjisTXMohdMpLJATj1MYiPdHA6j
+	ZbxzbXI6CEh22IPrdJikTbZHinGPG2r18EETtGrTHFQD92UwQP1wSyeZhEbmQy593v/30kwpAWh
+	H6mVfg3SGfH/lD5EOUAeBrluLHfZiSLSgUHxYMsg+vBtAxtvsXItQ/LCFBFsr256MRH+WnPjg81
+	nmLUGIgyKwaGTBPRYjV2TXf5va9JQ3wzT3sQAxcozBtBb8oon64ZpzwpHc6FTCc
+X-Received: by 2002:a05:690e:13c6:b0:677:a99a:8107 with SMTP id 956f58d0204a3-677ac0fccf6mr3127513d50.105.1791116016833;
+        Sun, 04 Oct 2026 05:13:36 -0700 (PDT)
+Received: from mail-yx2-f43.google.com (mail-yx2-f43.google.com. [74.125.224.171])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-677c1b1a214sm1636113d50.6.2026.10.04.05.13.34
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Oct 2026 05:13:35 -0700 (PDT)
+Received: by mail-yx2-f43.google.com with SMTP id 956f58d0204a3-66e4ab201ebso537408d50.3
+        for <linux-clk@vger.kernel.org>; Sun, 04 Oct 2026 05:13:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzx9tgPfCCJAyJqfCzPC6QlLTt0CRhXdmSYFDVfpLpMJHKxcejqon3JSr5VUTar9L3Noc/nnZnXxis=@vger.kernel.org
+X-Received: by 2002:a05:690e:d01:b0:66f:7e05:c3f8 with SMTP id
+ 956f58d0204a3-677ac00785emr2680725d50.42.1791116014048; Sun, 04 Oct 2026
+ 05:13:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20260905153234.133217-1-tanure@linux.com> <20260905153234.133217-5-tanure@linux.com>
+ <aqSX-kUvYaixESxe@redhat.com> <CAJX_Q+2vpcFw-5evCkykwWo6jbHvKvQ4XjYt_EKFyJuQm_ES5g@mail.gmail.com>
+ <1jcxui79k0.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jcxui79k0.fsf@starbuckisacylon.baylibre.com>
+Reply-To: tanure@linux.com
+From: Lucas Tanure <tanure@linux.com>
+Date: Sun, 4 Oct 2026 13:13:22 +0100
+X-Gmail-Original-Message-ID: <CAJX_Q+0T=k44tHbJ5BSAsD-RvpytA6mLu1FKu_2GZgYucorXNw@mail.gmail.com>
+X-Gm-Features: AclHuK8rosb4K--WkyZLuEcRV46M1KSWdwcM-4rWMY7HfYobH2sNfTEc1o2MX3w
+Message-ID: <CAJX_Q+0T=k44tHbJ5BSAsD-RvpytA6mLu1FKu_2GZgYucorXNw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] clk: meson: t7: don't mark sys_ampipe_nand as critical
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Brian Masney <bmasney@redhat.com>, Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Chuan Liu <chuan.liu@amlogic.com>, 
+	Jian Hu <jian.hu@amlogic.com>, Ronald Claveau <linux-kernel-dev@aliel.fr>, 
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 4, 2026 at 1:03 PM Chen-Yu Tsai <wens@kernel.org> wrote:
-> > +static SUNXI_CCU_GATE_HWS(ahb_store_clk, "ahb-store", ahb_hws,
-> > +                         0x5c0, BIT(24), CLK_IS_CRITICAL);
-> > +static SUNXI_CCU_GATE_HWS(ahb_cpus_clk, "ahb-cpus", ahb_hws,
-> > +                         0x5c0, BIT(28), CLK_IS_CRITICAL);
+On Sat, Sep 12, 2026 at 4:51=E2=80=AFPM Jerome Brunet <jbrunet@baylibre.com=
+> wrote:
 >
-> I suspect these refer to a AHB-AHB bridge for the various subsystems show=
-n
-> in the memory map. That would explain why when the "ahb-store" clock is
-> gated, the storage bits stop working.
+> On sam. 12 sept. 2026 at 08:50, Lucas Tanure <tanure@linux.com> wrote:
 >
-> If that's the case, we should describe it as the parent of each storage
-> peripheral bus gate's parent. Same would go for the other types. I haven'=
-t
-> checked what the BSP does though.
+> > On Sat, Sep 12, 2026 at 1:08=E2=80=AFAM Brian Masney <bmasney@redhat.co=
+m> wrote:
+> >>
+> >> Hi Lucas,
+> >>
+> >> On Sat, Sep 05, 2026 at 04:32:34PM +0100, Lucas Tanure wrote:
+> >> > sys_ampipe_nand clocks the pipeline stage inserted in the bus path
+> >> > between the SD/eMMC controllers and the NIC_MATRIX fabric. It does h=
+ave
+> >> > identifiable consumers - the three MMC controllers - so marking it
+> >> > critical was the wrong tool: the clock should be referenced from the
+> >> > consumer nodes and claimed by the mmc driver instead.
+> >> >
+> >> > Drop the CLK_IS_CRITICAL flag and update the comment accordingly.
+> >> > sys_am2axi0..2 remain critical as they clock the AXI DMA bus itself =
+and
+> >> > have no single identifiable consumer.
+> >> >
+> >> > Assisted-by: Claude:claude-fable-5
+> >> > Signed-off-by: Lucas Tanure <tanure@linux.com>
+> >> > ---
+> >> > This patch depends on the MMC controllers actually referencing the c=
+lock:
+> >> > the dt-bindings, mmc driver and t7 DTS changes adding the "pipeline"
+> >> > clock must land before this patch, otherwise the boot hangs and memo=
+ry
+> >> > corruption this clock caused are reintroduced.
+> >>
+> >> This series should be merged together in one tree? Which tree? I can
+> >> provide an Acked-by if it should go through the mmc tree.
+> >>
+> >> Brian
+> >>
+> > It's definitely best to keep the series together in one tree to avoid
+> > boot regressions,
+> > but I think the clk tree is the better fit since the core changes
+> > revolve around clock logic.
+> > Could you accept it ?
+>
+> No. This applies on top of another change already queued in the amlogic
+> clock tree. It can't go through the MMC tree at the moment.
+>
+> This clock is not critical in mainline right now, so
+> 1) I could merge this and it and in practice there would be no
+>    regression. The problem you had would still be there until the MMC
+>    change lands
+>
+> 2) Or you can wait for the MMC stuff to land and re-submit this in
+>    the next cycle.
+>
+> Your choice. IMO, (1) is fine.
+>
+> >
+> > thanks
+> > lucas
+>
+> --
+> Jerome
+Hi Jerome,
 
-Two data points, in case they help.
+Sorry for the late reply. The MMC side is in next now, so the clock has
+a real consumer.
 
-The vendor BSP (radxa/allwinner-bsp, branch cubie-aiot-v1.5.0,
-drivers/clk/sunxi-ng/ccu-sun60iw2.c) models no hierarchy either. It
-registers every gate in 0x5c0 and 0x5e0 as a keyed gate on the
-oscillator and marks each one CLK_IS_CRITICAL or CLK_IGNORE_UNUSED, so
-clk_disable_unused() never closes any of them.
+Can you take this patch dropping the sys_ampipe_nand part or
+should I re-submit a new version dropping sys_ampipe_nand change and
+only marking sys_am2axi0/1/2 as critical?
 
-On a Cubie A7S running our own 6.18-based tree, with the GPU power
-domain up and ahb-gpu0 (0x5c0 bit 7) and mbus-gpu0 (0x5e0 bit 16) both
-closed, drm/powervr still bound, read the core ID and loaded the
-matching firmware, but the firmware then failed to boot ("Firmware
-failed to boot"). With both bits set, the same modprobe initialized the
-GPU. So for the GPU, register access worked with these two gates
-closed; what failed was the firmware running on the GPU.
-
-The measurements were run on my boards by AI agents.
-
-Norman
+Thanks
+Lucas
