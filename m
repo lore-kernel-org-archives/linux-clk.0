@@ -1,129 +1,134 @@
-Received: from mail.scd31.com (mail.scd31.com [205.209.125.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5364E4D7D53;
-	Mon,  5 Oct 2026 17:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.209.125.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106ED32B137
+	for <linux-clk@vger.kernel.org>; Mon,  5 Oct 2026 18:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791221248; cv=none; b=XFDhrAxbi1JNpg0pY9t1y7e2pp6UAvGJhPNQkkK5V0/qMaOcQ/R/F9ysS1DgcjSjS3Ew76rcvisncXO8niZsfMJLQoVDZKkdtJSpH4iFfI/qVy6KJf0kdEl43E2riV6yjVCkmbOBlaO7J+6ylxlDrPxzjARyPgiyxp/VAyX7Lws=
+	t=1791225070; cv=none; b=rFj2wVeMFhHax5qh26IGSzoFbGqxjD/TeXA5THkOidB8uvDMpEBmno6C5ifMxnMAPmSfN0K320KL+G87GJUoWwtuapxq3mvc18Ec+HAOiBpXD8l82A0WaxN8DsmuEVQmaxJTBcS0ZuNXaL97daXZQ6EmEY1+HQS9jjNZbEULx9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791221248; c=relaxed/simple;
-	bh=iM3FDTUSJkdeCcHzPgGFZAFh4wP6orUAGtfWqLT20hk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AcZ+WUol1bOdS8lxaFsCAnELPxvzn/u2X8WVpUUk0jVAA0067g1xs9ShFnsd7OviKoFEaVjo+Bh0H+tNPQ8svkmb+hSWjlaHAWAYxIMtz08qFUBkFVWksuHN2MbzRRYkGBe2fFyYhR2m4SBw+MEP1FgIEhyle1xErcBQRHgYCS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=scd31.com; spf=pass smtp.mailfrom=scd31.com; dkim=pass (2048-bit key) header.d=scd31.com header.i=@scd31.com header.b=NkIZVHIe; arc=none smtp.client-ip=205.209.125.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=scd31.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=scd31.com
+	s=arc-20240116; t=1791225070; c=relaxed/simple;
+	bh=/YjAT+PTANp5RO4duL6E//TuMjIjLHUPGD7hH8q1nCA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ak4090kVDZ44oWb6DqTT5A/Mii/363VUpqB2Wwkgoql60uzF5NyHU3rhVb/d3sNJEX62+uoyHzwSMrmvR2ClE+Y9KKoEZFXN7Zj0KJwuEwEay99XA5BdJBvC1o/JrpzkHrPYPCIr+r/5hcI25w0OGtWZi6fZaMnFGqqwnlX7Fzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mPp0567a; arc=none smtp.client-ip=74.125.82.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=scd31.com header.i=@scd31.com header.b="NkIZVHIe"
-From: Sophie D <patches@scd31.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=scd31.com; s=mail;
-	t=1791220639;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1ah6BRYlOqcajJUdl5DlnBTDzNHXdGvo5x5zaQWEpp8=;
-	b=NkIZVHIe/NEIztwGEg5rftAncOzAtTd97OTgds4MCRjaTV/u3umbjksfKTQ9FIca5njqWK
-	nMg0AiLZCR5QQctw/NiPKpQoIP2TcGME8CvMv/oxmWWUj0e3t+ysmtH0Hoqqig9DzG7SV/
-	DCfTWlZTeL9Lz47VpWivUgLmhuRTkPUExavQDbOmRiOMb8I9JvaxzphsY7U/jbN0I/8cdm
-	TB9YZ/dTHE8dC1mprBE1sYQ71q7dG4euLmlK+5bozG8LqXkHfzCV/qb1oh0zQU76aKH4MJ
-	JDw0USNlv8wLTnmUEVuTsch++5vFwgnc06pl333eMOUBVHLENZlQmZei4I6Rcg==
-To: Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mPp0567a"
+Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-33fb4680717so5893347eec.1
+        for <linux-clk@vger.kernel.org>; Mon, 05 Oct 2026 11:31:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791225068; x=1791829868; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=6PuYbZh3CSJx/YeySaraDhA8HTOEwlS5gR3oZ9G0OMs=;
+        b=mPp0567abLw7JG+WLzGJMH3XRtB8NuakHDzWTv9g5TjEdG07ni23ONXk7jRK0IVOPN
+         wWm2WhuxD04bvvttEcwS2+cXKT66WtRkXBzQBhiBhPNRtKpBjop5DTOTEXSCW6OacQSP
+         +Hem3A8aBZ68N076PQnd/jY2EvFAb5Tx2usUG/VUpIy2jsfCAXNC+Fp8ll1l9CkhpHfV
+         26rD7s+K33w1vZ9IV3CApU5Ac0cR3ntU8L6+w1UWGpv1UM7I2r4pVPvvz6CA+K2kAlBx
+         ZnLGzSk3WvqbExEl9rWrshJIwkC+Xs2dN/4TmcGxC1fDEIBbvtUXY7fxgxqnnIPVmcUH
+         VWKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791225068; x=1791829868;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=6PuYbZh3CSJx/YeySaraDhA8HTOEwlS5gR3oZ9G0OMs=;
+        b=FIYcf2VZOFN17bu36J9zqdXVEX7UqxyujHfMUeddsriKc9Bz2O0HxDrEvE8Zf2v0RJ
+         wBtFZk8HJNbZ6Fi1z4ZNSd/zJwnCWGLwEVbEbgqos5O/Qg3KwUOfNrjjXyLDUGCOdQB5
+         hSgBhrEhv/5nQpcV9TLnlv4K/mCpDpOLZqtpTkusYkQ8xC9Ih60qHeotFXf+25e+Wczo
+         ZoJptMFf0WRnXg2zAlDLCCQdZxA147ngiaAU3Euvwb0+8+fGILomgFz90X1J4Mf8i7cC
+         cCjQ1JQNE8SSk6Y8rTPDIpNOSOwbVVOGBUL37T6gyEhS800JIJ+HM8Sfchagwe2RBaJM
+         7oaQ==
+X-Gm-Message-State: AFuF++lmyqtzVnCBrIxA/r4xwf2EXJlvK1oUjjCraIZyZRsxE5F1OGzW
+	edZ+2rrLBGe0TobPwxrD3uZgpcRWZ908eW/RJX2k2VPC9SDCx2oPVUwG
+X-Gm-Gg: AYBFou3g8Mc17z5qGy24HzOdAZ4JbM9h54hbTYQllT5sCznKmwoEtiSw2LHwaxOgA1U
+	CHCe/yLE/oh1NLowfNd9KQAEWAkEeRwQ8FmRGHHI/0x9nRGfZzTNjXypQrJ8dIjnueCmi3+gGN4
+	BjVoe1M+2zIhFzkFfMy64wAz5L8Y9xuANCHWhGiL5yyRO7fBZKylODWUDIY4B4i7dESAYSxoRwg
+	xzqpKjAl8l5nGBm2lBuXdMedwAWrBQxi4BBosqtxDfA0uVRvEwOEp3mKi03Gx3zjWaMyyAIVxJR
+	jVTutJEO0uSrszDgOD+mYnzFxAdKLNd7QqszDeTE5CV3LeWfeiOqQNLAbL5c5mPqEYV8jJhiClp
+	CwMubxt4MJ/U+p7L3tVLu1gJrYc5VmJQVfMRe/QNMCeiY6TW84n+H0LHavoHv9yu8sjYXh6HLmp
+	0iK+u9RGEsoW7M1f+8pIWPO5sThTd4Qamev5/pnmsIhlG0wRaekmRTguYY+5i2KahQihWPSnlKV
+	jHLiNdesgt/9UBfoWNrI6labdmBLvTnQLt6KI5E62nsO0q7vzu7HbNbqzPjPgn5PjzEn97adYtp
+	KtZn7eo=
+X-Received: by 2002:a05:7301:f84:b0:34c:1f07:2d5 with SMTP id 5a478bee46e88-3511162fa68mr10914269eec.6.1791225067702;
+        Mon, 05 Oct 2026 11:31:07 -0700 (PDT)
+Received: from MaquinaLab.. ([179.179.237.181])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-35146ac4dc4sm140223eec.23.2026.10.05.11.31.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Oct 2026 11:31:07 -0700 (PDT)
+From: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+To: Junhui Liu <junhui.liu@pigmoral.tech>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Richard Cochran <richardcochran@gmail.com>
 Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Sophie D <patches@scd31.com>
-Subject: [PATCH] clk: mediatek: mt2701: Enable all subsystem clocks by default
-Date: Mon,  5 Oct 2026 13:17:05 -0400
-Message-ID: <20261005171706.2164743-1-patches@scd31.com>
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	netdev@vger.kernel.org,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Enzo Adriano <enzo.adriano.code@gmail.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Norman Herms <dockseed@proton.me>
+Subject: Re: [PATCH v5 3/8] clk: sunxi-ng: a733: Add PRCM CCU
+Date: Mon,  5 Oct 2026 15:30:20 -0300
+Message-ID: <20261005183038.417798-1-vinicius.eduardo.pedrosa@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260930-a733-clk-v5-3-11175b41cd2d@pigmoral.tech>
+References: <20260930-a733-clk-v5-0-11175b41cd2d@pigmoral.tech> <20260930-a733-clk-v5-3-11175b41cd2d@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Only the core MT2701 clock driver is enabled by default when building
-for ARCH_MEDIATEK on ARM; none of the subsystem clock drivers are. As a
-result, multi_v7_defconfig produces a kernel where Ethernet, PCIe, USB,
-display, GPU and audio do not work on MT7623 boards such as the Banana
-Pi BPI-R2, as their clocks live in ethsys, hifsys, mmsys, g3dsys and
-audsys.
+Hi Junhui,
 
-Default all of the MT2701 subsystem clock drivers to
-COMMON_CLK_MT2701, in line with newer SoCs such as MT8173, MT8183 and
-MT7986.
+On Wed Sep 30, 2026 at 1:26 AM CST, Junhui Liu wrote:
+> +static SUNXI_CCU_GATE_HW(bus_r_msgbox_clk, "bus-r-msgbox", &r_ahb_clk.common.hw, 0x17c, BIT(0), 0);
 
-Signed-off-by: Sophie D <patches@scd31.com>
----
- drivers/clk/mediatek/Kconfig | 8 ++++++++
- 1 file changed, 8 insertions(+)
+[...]
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 0e8dd82aa84e..a449ec878abc 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -29,48 +29,56 @@ config COMMON_CLK_MT2701
- config COMMON_CLK_MT2701_MMSYS
- 	bool "Clock driver for MediaTek MT2701 mmsys"
- 	depends on COMMON_CLK_MT2701
-+	default COMMON_CLK_MT2701
- 	help
- 	  This driver supports MediaTek MT2701 mmsys clocks.
- 
- config COMMON_CLK_MT2701_IMGSYS
- 	bool "Clock driver for MediaTek MT2701 imgsys"
- 	depends on COMMON_CLK_MT2701
-+	default COMMON_CLK_MT2701
- 	help
- 	  This driver supports MediaTek MT2701 imgsys clocks.
- 
- config COMMON_CLK_MT2701_VDECSYS
- 	bool "Clock driver for MediaTek MT2701 vdecsys"
- 	depends on COMMON_CLK_MT2701
-+	default COMMON_CLK_MT2701
- 	help
- 	  This driver supports MediaTek MT2701 vdecsys clocks.
- 
- config COMMON_CLK_MT2701_HIFSYS
- 	bool "Clock driver for MediaTek MT2701 hifsys"
- 	depends on COMMON_CLK_MT2701
-+	default COMMON_CLK_MT2701
- 	help
- 	  This driver supports MediaTek MT2701 hifsys clocks.
- 
- config COMMON_CLK_MT2701_ETHSYS
- 	bool "Clock driver for MediaTek MT2701 ethsys"
- 	depends on COMMON_CLK_MT2701
-+	default COMMON_CLK_MT2701
- 	help
- 	  This driver supports MediaTek MT2701 ethsys clocks.
- 
- config COMMON_CLK_MT2701_BDPSYS
- 	bool "Clock driver for MediaTek MT2701 bdpsys"
- 	depends on COMMON_CLK_MT2701
-+	default COMMON_CLK_MT2701
- 	help
- 	  This driver supports MediaTek MT2701 bdpsys clocks.
- 
- config COMMON_CLK_MT2701_AUDSYS
- 	bool "Clock driver for Mediatek MT2701 audsys"
- 	depends on COMMON_CLK_MT2701
-+	default COMMON_CLK_MT2701
- 	help
- 	  This driver supports Mediatek MT2701 audsys clocks.
- 
- config COMMON_CLK_MT2701_G3DSYS
- 	bool "Clock driver for MediaTek MT2701 g3dsys"
- 	depends on COMMON_CLK_MT2701
-+	default COMMON_CLK_MT2701
- 	help
- 	  This driver supports MediaTek MT2701 g3dsys clocks.
- 
--- 
-2.55.0
+> +static SUNXI_CCU_GATE_HW(bus_r_riscv_clk, "bus-r-riscv", &r_apb0_clk.common.hw,
+> +			 0x21c, BIT(0), 0);
 
+I'm bringing up mainline on a Radxa Cubie A7Z (PCB V1.11, 1 GiB). With
+7.3-rc6, this series and a local common-DT integration, PSCI reboot and
+power-off hang once unused clocks are disabled. The boot chain uses
+vendor boot0/BL31 and source-built SCP/U-Boot.
+
+Keeping both of these gates enabled fixes reboot; either alone still
+hangs. With only these two marked CLK_IS_CRITICAL, reboot returns to
+boot0 and power-off drops DCDC1 from 3.3 V to 0.7 V and turns off the
+green LED with power still connected. I haven't checked whether each
+gate is needed for power-off on its own.
+
+My guess is that BL31 talks to the SCP for these, but I haven't traced
+it, and it may be specific to the vendor firmware.
+
+Would it make sense to mark them CLK_IS_CRITICAL, like bus-r-cpucfg
+already is? I can test the next revision on this board either way.
+
+Thanks,
+Vinicius
