@@ -1,80 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.scd31.com (mail.scd31.com [205.209.125.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4014C10D6;
-	Mon,  5 Oct 2026 17:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5364E4D7D53;
+	Mon,  5 Oct 2026 17:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.209.125.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791220267; cv=none; b=HOXntXUhaFHIXbSjbYDcFt4JJMtHtqxNmwL8IyZ2mQwuXBsOUhOulRHdSCs0zpcRl3nkfbbKXgWdYDjAiytH0ZlIVEZtKo4lo0o3NEbY7PqIh7rHtlLAinc5PzWiNe8N4qjGfslCAwowLg3x2qga6yplV+ps8cisPz+TTfrRGkE=
+	t=1791221248; cv=none; b=XFDhrAxbi1JNpg0pY9t1y7e2pp6UAvGJhPNQkkK5V0/qMaOcQ/R/F9ysS1DgcjSjS3Ew76rcvisncXO8niZsfMJLQoVDZKkdtJSpH4iFfI/qVy6KJf0kdEl43E2riV6yjVCkmbOBlaO7J+6ylxlDrPxzjARyPgiyxp/VAyX7Lws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791220267; c=relaxed/simple;
-	bh=4S8cNXpKkbPdNq7sYbv67jo59HB9VfgZeryGUR4ExSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VzmXoin6O1HgrdZ1WxMTFsY6S+kfxbbdYKboddqi73vkz4+VrsxG03gfi7AVTycTQBi3CR4n5Z8vS7kxeXJQLRWIJhbiWKEMUOdD4CS2k5n5I5eKtfsp7qLfZ9IhhyfIhgL6K2vAVOWESrjCcTOx5xB5pJ+coq/AbiZZrKqvRhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ol/xJsFg; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791221248; c=relaxed/simple;
+	bh=iM3FDTUSJkdeCcHzPgGFZAFh4wP6orUAGtfWqLT20hk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AcZ+WUol1bOdS8lxaFsCAnELPxvzn/u2X8WVpUUk0jVAA0067g1xs9ShFnsd7OviKoFEaVjo+Bh0H+tNPQ8svkmb+hSWjlaHAWAYxIMtz08qFUBkFVWksuHN2MbzRRYkGBe2fFyYhR2m4SBw+MEP1FgIEhyle1xErcBQRHgYCS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=scd31.com; spf=pass smtp.mailfrom=scd31.com; dkim=pass (2048-bit key) header.d=scd31.com header.i=@scd31.com header.b=NkIZVHIe; arc=none smtp.client-ip=205.209.125.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=scd31.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=scd31.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ol/xJsFg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C07521F00893;
-	Mon,  5 Oct 2026 17:11:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791220266;
-	bh=HYh2rxKMx2Wm+Lvc6QK3nB5xBauzxm6BmT4G4eVxSRw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ol/xJsFgT2Yczz6kItqZg4PP+pPv2843l7xlxzUkrJigmBhMGNe0PAkqpxaMgl7+R
-	 e0rZEDY8t4JKy/E54WTLLVpxIxf4gtJKewD84TlTTR+qRVPimWeUVX/xY6VlaaGM+N
-	 VoeT7ZwIZhH9zLh1L5Ci3GpGlrF9Ss8XT0RSi/BdGEJo/ibQkv88zFUfH65ZSv8iTS
-	 zERF4e1IFNdmw6A/EQ+HbwGY8UNtKK/+eYoQZ3d2P69bBQgucMVeJeZ/socIyT2QlI
-	 iwz6KVzrVYsvjLGn5FdXBV2iHoIIz6VWDqVhn52hWnz2mM6PV3DUmUWcK36ZPm5aja
-	 yDGeUGGFxRwsg==
-Date: Mon, 5 Oct 2026 12:11:05 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: linux-rockchip@lists.infradead.org,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Brian Masney <bmasney+clk@redhat.com>, devicetree@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=scd31.com header.i=@scd31.com header.b="NkIZVHIe"
+From: Sophie D <patches@scd31.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=scd31.com; s=mail;
+	t=1791220639;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1ah6BRYlOqcajJUdl5DlnBTDzNHXdGvo5x5zaQWEpp8=;
+	b=NkIZVHIe/NEIztwGEg5rftAncOzAtTd97OTgds4MCRjaTV/u3umbjksfKTQ9FIca5njqWK
+	nMg0AiLZCR5QQctw/NiPKpQoIP2TcGME8CvMv/oxmWWUj0e3t+ysmtH0Hoqqig9DzG7SV/
+	DCfTWlZTeL9Lz47VpWivUgLmhuRTkPUExavQDbOmRiOMb8I9JvaxzphsY7U/jbN0I/8cdm
+	TB9YZ/dTHE8dC1mprBE1sYQ71q7dG4euLmlK+5bozG8LqXkHfzCV/qb1oh0zQU76aKH4MJ
+	JDw0USNlv8wLTnmUEVuTsch++5vFwgnc06pl333eMOUBVHLENZlQmZei4I6Rcg==
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-pm@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>, kernel@collabora.com,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/7] dt-bindings: devfreq: event: rockchip,dfi: add
- rk3576
-Message-ID: <179122026463.1037372.13014542138147307791.robh@kernel.org>
-References: <20260921-b4-rockchip-dfi-rk3576-support-v2-0-04f847016321@collabora.com>
- <20260921-b4-rockchip-dfi-rk3576-support-v2-3-04f847016321@collabora.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Sophie D <patches@scd31.com>
+Subject: [PATCH] clk: mediatek: mt2701: Enable all subsystem clocks by default
+Date: Mon,  5 Oct 2026 13:17:05 -0400
+Message-ID: <20261005171706.2164743-1-patches@scd31.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260921-b4-rockchip-dfi-rk3576-support-v2-3-04f847016321@collabora.com>
+Content-Transfer-Encoding: 8bit
 
+Only the core MT2701 clock driver is enabled by default when building
+for ARCH_MEDIATEK on ARM; none of the subsystem clock drivers are. As a
+result, multi_v7_defconfig produces a kernel where Ethernet, PCIe, USB,
+display, GPU and audio do not work on MT7623 boards such as the Banana
+Pi BPI-R2, as their clocks live in ethsys, hifsys, mmsys, g3dsys and
+audsys.
 
-On Mon, 21 Sep 2026 23:15:05 +0200, Sebastian Reichel wrote:
-> From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> 
-> The RK3576 has DFI hardware for monitoring the DDR's bandwidth much
-> like other rockchip SoCs do. Unlike the RK3588 however, it only has two
-> memory channels, so only two per-channel pclks for DFI.
-> 
-> Add a compatible for this SoC's variant, and add it to the conditionals
-> at the bottom of the bindings file.
-> 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
->  .../bindings/devfreq/event/rockchip,dfi.yaml          | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
+Default all of the MT2701 subsystem clock drivers to
+COMMON_CLK_MT2701, in line with newer SoCs such as MT8173, MT8183 and
+MT7986.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Sophie D <patches@scd31.com>
+---
+ drivers/clk/mediatek/Kconfig | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 0e8dd82aa84e..a449ec878abc 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -29,48 +29,56 @@ config COMMON_CLK_MT2701
+ config COMMON_CLK_MT2701_MMSYS
+ 	bool "Clock driver for MediaTek MT2701 mmsys"
+ 	depends on COMMON_CLK_MT2701
++	default COMMON_CLK_MT2701
+ 	help
+ 	  This driver supports MediaTek MT2701 mmsys clocks.
+ 
+ config COMMON_CLK_MT2701_IMGSYS
+ 	bool "Clock driver for MediaTek MT2701 imgsys"
+ 	depends on COMMON_CLK_MT2701
++	default COMMON_CLK_MT2701
+ 	help
+ 	  This driver supports MediaTek MT2701 imgsys clocks.
+ 
+ config COMMON_CLK_MT2701_VDECSYS
+ 	bool "Clock driver for MediaTek MT2701 vdecsys"
+ 	depends on COMMON_CLK_MT2701
++	default COMMON_CLK_MT2701
+ 	help
+ 	  This driver supports MediaTek MT2701 vdecsys clocks.
+ 
+ config COMMON_CLK_MT2701_HIFSYS
+ 	bool "Clock driver for MediaTek MT2701 hifsys"
+ 	depends on COMMON_CLK_MT2701
++	default COMMON_CLK_MT2701
+ 	help
+ 	  This driver supports MediaTek MT2701 hifsys clocks.
+ 
+ config COMMON_CLK_MT2701_ETHSYS
+ 	bool "Clock driver for MediaTek MT2701 ethsys"
+ 	depends on COMMON_CLK_MT2701
++	default COMMON_CLK_MT2701
+ 	help
+ 	  This driver supports MediaTek MT2701 ethsys clocks.
+ 
+ config COMMON_CLK_MT2701_BDPSYS
+ 	bool "Clock driver for MediaTek MT2701 bdpsys"
+ 	depends on COMMON_CLK_MT2701
++	default COMMON_CLK_MT2701
+ 	help
+ 	  This driver supports MediaTek MT2701 bdpsys clocks.
+ 
+ config COMMON_CLK_MT2701_AUDSYS
+ 	bool "Clock driver for Mediatek MT2701 audsys"
+ 	depends on COMMON_CLK_MT2701
++	default COMMON_CLK_MT2701
+ 	help
+ 	  This driver supports Mediatek MT2701 audsys clocks.
+ 
+ config COMMON_CLK_MT2701_G3DSYS
+ 	bool "Clock driver for MediaTek MT2701 g3dsys"
+ 	depends on COMMON_CLK_MT2701
++	default COMMON_CLK_MT2701
+ 	help
+ 	  This driver supports MediaTek MT2701 g3dsys clocks.
+ 
+-- 
+2.55.0
 
