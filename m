@@ -1,161 +1,286 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742E135028C
-	for <linux-clk@vger.kernel.org>; Mon,  5 Oct 2026 06:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4F32931F1;
+	Mon,  5 Oct 2026 07:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791182771; cv=none; b=pDawyeA6C0vqcl2PRNkSIKNPKJxKU7mP4/cNO1zWyZmOWq2ZtmeIc8PExuJ3zSFQuVEsXYSNdIJIhdi9zjKHZj8EhDqISvHiAHUxP1kIwmWiJYRuODGWcFWcsYuJJ/bvG26ttXLwn7DzbCD0exAIAGcTjyher7RhtuSAXKu83Fo=
+	t=1791185286; cv=none; b=HmJR7MOx0P5s09w+gZcGoorpgqbyC/vATPeIZgkAvc+ygpujwZZWrbHeUYwY916h7G7mb4L4YRYGCBlsFZbzcOQytPw4QxW47CQIGFF7KTSWRPic0bA6ZW5hxvPAWBTRmbT/ZX4yuhVbUIETVxU4YWDDQW22B6zGk0ogTU/n0BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791182771; c=relaxed/simple;
-	bh=/EpE2JWFJw3TBNSsiKNRmUaSmt7qw0r6S7KqmpuMupg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tWhHic+atREcW1vgfJ8AuZA0OLsqD0B0qFoXfTf1S/CANOKusGnjQugOkXoMYWtivNtusb6biqm6hbG7NvyhDk+SDZINaLy7E9CvIBWRrzfvj431VsOficHc2xS4jjBtNBvE+Mege6aGmEZ8wz9IUh6vOA5Zdv0v6qzHYWawM8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U3N7CzEF; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Xjl5VEfG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U3N7CzEF";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Xjl5VEfG"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 695122IG4063665
-	for <linux-clk@vger.kernel.org>; Mon, 5 Oct 2026 06:46:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=DS/Jxbw/RtxNEdrQWY8vtrOz
-	o8Z7Ka23qMSrwVDSSqI=; b=U3N7CzEFhzDDIIYW1KLKfQ5bGngPiHxI5/sFXLLC
-	ynIGVzja3h+mzH1Myoj5B5hiHN2u0GSdlO0OLgfj4l5FlVkRPgsmwvMmLdSwdzXk
-	mgVTLhAfZdvQOc1kfLlqrYO4f3bCjO1H32p1HmD55yT4gSfWA4cuURKrufb/pzUN
-	KARb58QwX/ecIvlxdH7AGX/yMKIpwmodiL48uhee1Qzy8Cyv0ZDQKT04wKAYkyNW
-	qGkaoVWa7sg5axDTRCeYupXgGi7U9FrfrWPJrRPUPDG46HMU9xrpUU6fmATLXAkn
-	rb6FaqcBCLo5V1TPso9MTjzv2Jw0YwE4nIhAkqFojh1ilg==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h41gn8qmd-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 05 Oct 2026 06:46:08 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-93be1861d2dso246061685a.3
-        for <linux-clk@vger.kernel.org>; Sun, 04 Oct 2026 23:46:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791182768; x=1791787568; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=DS/Jxbw/RtxNEdrQWY8vtrOzo8Z7Ka23qMSrwVDSSqI=;
-        b=Xjl5VEfGViB+6S1G7a5KySmk9nBlLh5qVa6+ntKZrQEBP3zNDJ1/GB6lnOZxMmE98Z
-         vj9nFAlSdDAUHCPVDTNM7Lgk0UTwKze7XqgrDizuM+4tC7fFXi0EiTLUhHlJb26cpE0q
-         J0cvKuDyPPn6THv6BNMfoYAe69kE/kqUbPmY/WkYc33h0obNvFFrvOJVDFe783ky5Lkq
-         4H4iV24UkbzLs4EODJJ4Hl/yyMB4A+w0gWLvO1ppbjSfHVYR4HB4xdWgUkrJUxbxmc1l
-         6IrNxdp+ngSflz8+9IIIi2DipXXXcpJHAZOsVJMEdq5H4wGIcJw5Frj+kobKAZA8p0Xa
-         1xMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791182768; x=1791787568;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=DS/Jxbw/RtxNEdrQWY8vtrOzo8Z7Ka23qMSrwVDSSqI=;
-        b=HiEYyamSWd5bGZ+rpQfxOyV8Z6ibggvVS9hovf5SBZv9y4/0QrpE8blODajic8encN
-         A+T9dX82GLO5/TNNCUTXIslvchDYBx4MYJd3Q5eDGIKBP6YbXqsFT2ZzJfFg/GafkRCI
-         TpINKfeT4FV+ZOY91Sal2ino/yYlTHiLXsH+IS8OfV6wrk3vFPVymwugSWr31FT/rryS
-         lB3ZZMcIpVfygY3/cPwtTzADtwF0h47x1QA5LckCd9JDXkW8ejS4oGoWEmrP61q8ihMV
-         Yxgvalym7ucnV8VgEmdgBmQOZH6gsG68778Z71SMKD51zcvfo2H0hX/wGD2LDiXu8/Hm
-         HiWw==
-X-Forwarded-Encrypted: i=1; AKwUvBxSHyntEo4b2Ju7Dl4g7bJHWRKXtU9u4YyEiBFbOxmZx9tTZsSVCBG49fKvWPm2bGZpx9h2ozo1HIA=@vger.kernel.org
-X-Gm-Message-State: AFuF++m/fcZHR4nN0lhWraTbXgWASEV8kAiXzGC91C0u0dQ8giYHxIPS
-	5tbjtJ2HWEtcR5rGwLT/Ze3ONKAn67rAfqhfGmH19EVu5ydQewdT71P9nvnmRnlpBTZJdNOJ+Yy
-	NrItp0EYLqoDbLnAh4U0u6R0OzHSp20sMRMOfV4hbrHH7NRgE8o6hVm133sFRkro=
-X-Gm-Gg: AYBFou2+wpLgL9TYNQ6SLXa/Jf1emsTtB6YIW9MVpkdiaUOk6zR/xCVOhx6wEgiofmO
-	ivMjNpRXPir1CImhWW90K97jiaEVdTzIADpCrzKXdtbahlvsekOL/WEUxqdJMgpy580/UzPSX8k
-	2ydTucQbZTWWhGlA2UfiwMkEb0IMs1GMH/mAOXsGM+wDImifRLd4d6t5/akJW7J0Bn+/01ZOmYR
-	80ma9DV3nprzionN5/r0D7DjWL8y52Kg39/4AXiR0U9klP1JaTb6g1NoIgJN4H7fqp1JA6NLh5m
-	5ObTDNl1UvibrHez1f6YMLNTsQBqnkOduQAiae94pYHGd06wXpXHM+kuf4uj9qkb4wpNunlfmLn
-	QBxt1ecfIjRXVJrxE/rPVvNg570bvSpdkzAwaiU716+OcadvZXL/wsiMtQs2+iktyn5xdviX9Ov
-	RqMtTfTo2iuo+o
-X-Received: by 2002:a05:620a:404e:b0:93b:d7a3:45d4 with SMTP id af79cd13be357-93e510c3e52mr1330077985a.61.1791182767782;
-        Sun, 04 Oct 2026 23:46:07 -0700 (PDT)
-X-Received: by 2002:a05:620a:404e:b0:93b:d7a3:45d4 with SMTP id af79cd13be357-93e510c3e52mr1330073785a.61.1791182767194;
-        Sun, 04 Oct 2026 23:46:07 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5bb7c795adesm3039416e87.37.2026.10.04.23.46.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Oct 2026 23:46:05 -0700 (PDT)
-Date: Mon, 5 Oct 2026 09:46:04 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: fabricioakio@gmail.com
-Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: qcom: mmcc-sdm660: enable the parents of the
- pixel clock sources
-Message-ID: <bhsrueyydjwzpvawtil3d2jukefdmleltrj3aw56c4hqnrma2d@wfvc7tzmc7gn>
-References: <20261002-sdm660-pclk0-parent-enable-v2-1-b07f6c33e96f@gmail.com>
+	s=arc-20240116; t=1791185286; c=relaxed/simple;
+	bh=BU6r9ETSklSPrbVIstMQM7CQuv+fcmQeMbwRafanowQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Iy9nUrea0oTjv6tsupww7AQ2bKfl18YL8dmtRcI+hebT49Xg9nKxtMFIH0RukQGjIlAgMKl8/G3jQnFT1yvUfCvm054ilUtK6XbLs62/7bLcQsCHvKsg9b+6tNt1FL13bkho3EmU0Jvv/13kkzBLAVfTXVgSrdopwmRnnDRt1TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from edelgard.fodlan.icenowy.me (unknown [112.94.101.54])
+	by APP-01 (Coremail) with SMTP id qwCowAAX6u1IUcNqyUDqCQ--.9868S2;
+	Mon, 05 Oct 2026 15:27:07 +0800 (CST)
+Message-ID: <b22705108be21d1b267fa5964e6c084a08c1fba1.camel@iscas.ac.cn>
+Subject: Re: [PATCH v4 01/20] dt-bindings: phy: Add
+ starfive,jh7110-inno-hdmi-phy
+From: Icenowy Zheng <zhengxingda@iscas.ac.cn>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, Krzysztof Kozlowski
+	 <krzk@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
+ <neil.armstrong@linaro.org>,  Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart	 <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, Maarten Lankhorst	
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
+ Yan <andy.yan@rock-chips.com>, Philipp Zabel	 <p.zabel@pengutronix.de>,
+ Emil Renner Berthing <kernel@esmil.dk>, Hal Feng	
+ <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Paul
+ Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,  Dominique
+ Belhachemi	 <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>, Jerome
+ Brunet	 <jbrunet+clk@baylibre.com>, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, mfd@lists.linux.dev,
+ linux-clk@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, 	linux-riscv@lists.infradead.org, Marek
+ Szyprowski <m.szyprowski@samsung.com>,  Maud Spierings
+ <maud_spierings@murena.io>, Graham Markall <hello@big-grey.co.uk>, Chaoyi
+ Chen	 <chaoyi.chen@rock-chips.com>, Joshua Peisach <jpeisach@ubuntu.com>,
+ Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=	 <u.kleine-koenig@baylibre.com>
+Date: Mon, 05 Oct 2026 15:27:04 +0800
+In-Reply-To: <3c5c15d9-ea7e-49a2-adae-ec3e3c72594b@samsung.com>
+References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
+		<CGME20260915153214eucas1p2b548f3236ef98fb0cbf320e397420125@eucas1p2.samsung.com>
+		<20260915-jh7110-clean-send-v4-1-f0e4fd6f2cc8@samsung.com>
+		<20260917-mutant-chamois-of-competence-46ca77@quoll>
+		<1a1a9b49-430b-4218-b27d-e133d488e8d9@samsung.com>
+		<6cf9e611-bfc5-407b-8132-bd328f8b61fc@kernel.org>
+		<eaba2fa9-a1ce-4dac-9bd6-e0b3a3dd01ef@samsung.com>
+		<3ee91c92-4e3a-4bac-85cf-923f5d77ceff@kernel.org>
+	 <3c5c15d9-ea7e-49a2-adae-ec3e3c72594b@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261002-sdm660-pclk0-parent-enable-v2-1-b07f6c33e96f@gmail.com>
-X-Proofpoint-ORIG-GUID: xCXaaWaG2HWhuXNZMb_w2DkoJ8ftD1dg
-X-Proofpoint-GUID: xCXaaWaG2HWhuXNZMb_w2DkoJ8ftD1dg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA1MDAyNiBTYWx0ZWRfX2+FcZwnqJbpO
- 3We60W1BzNbyUKhPa4AdTdzTlPuyZnxGld9OfUe/5N3Wq5AEN3nkSGOJ3tI4D3tC87z0OcFMKzY
- t6JNQoEzHwfzjZeVEEySh/kL1LKnWdy7I1RLwDPVZ27wmJeOqnU+VpYuwvZlX4bVjQik5Ajr9NL
- aQV52mRyxPRXALbQXsq9ps+NThT1VNH0ZbY2OUZSeQJggd8XnF18uwPkLZnbPXJ/+sM/zKejmRt
- e+iOEa1lmb0fUEZlVRT0ES5Gyi8E3d5+tvoByG+X8KAQyxuUSQBdsDgZmJXgW1kHoIVnJZ6ZuDf
- K3lau7lEVJZ+vKIm2dEZ8C0pnl6Ec4pIhpOppfjCVeAMJYVPub6BTmYO0FScn6WZPdosQH5Ruiy
- gtzz4qWxLmWfLb8iYPZQ8z3TUjxBsx70slIgaQQV8xfS+OAWgQCxGG/5mDI57wS4EH98UKuuKfm
- DK1LLXvOJvF8zOeL7SA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA1MDAyNiBTYWx0ZWRfX7BPSIuYwpGaN
- t7p38XvtnekG0B73EXUo/0FeXyIReI24rOaJJSlMGpWM2ilP+bBWwcE3Zrzw1XbLyeW3Xexo3pB
- qlmnv3IP7/wEkC7ePPobn8zz0zqPEf4=
-X-Authority-Analysis: v=2.4 cv=P9WvFSAu c=1 sm=1 tr=0 ts=6ac347b0 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22 a=pGLkceISAAAA:8
- a=EUspDBNiAAAA:8 a=9pdQQDx3cQu5pPcDlioA:9 a=CjuIK1q_8ugA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-05_01,2026-10-02_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 bulkscore=0 clxscore=1015 spamscore=0 priorityscore=1501
- lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2610050026
+X-CM-TRANSID:qwCowAAX6u1IUcNqyUDqCQ--.9868S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3GF13Cr4furW8WrWkJFy3twb_yoW7Kw1xpr
+	18ta4UJryDZr18Xr1jqr1UXFy5tw1DA3W5Xr15JF18Jrn8tryIqF1UXr1jgFyDJrs7Aw17
+	tryUXrZrZr1DArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvGb7Iv0xC_KF4lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwV
+	C2z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
+	xwCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjxU-HqcUUUUU
+X-CM-SenderInfo: x2kh0wp0lqwv3d6l2u1dvotugofq/
 
-On Fri, Oct 02, 2026 at 01:46:24PM -0300, Fabricio Akio via B4 Relay wrote:
-> From: Fabricio Akio <fabricioakio@gmail.com>
-> 
-> pclk0_clk_src and pclk1_clk_src are fed by the DSI PHY PLLs, which
-> dsi_pll_14nm_vco_set_rate() resets and only clk_prepare() restarts. The
-> DSI host sets the link rates before it prepares the PLL, so the RCG is
-> updated against a stopped source, and if it is enabled at that point
-> the update times out:
-> 
->   pclk0_clk_src: rcg didn't update its configuration.
-> 
-> Seen on a board whose simple-framebuffer node lists the pixel clock:
-> the RCG then reads enabled at msm's first modeset.
-> 
-> Set CLK_OPS_PARENT_ENABLE on both so the core prepares the PLL around
-> the rate change, as dispcc-sm8250 does for its pixel clock sources since
-> commit acf7a91d0b0e ("clk: qcom: dispcc-sm8250: Enable parents for pixel
-> clocks").
-> 
-> Fixes: 5db3ae8b33de ("clk: qcom: Add SDM660 Multimedia Clock Controller (MMCC) driver")
-> Signed-off-by: Fabricio Akio <fabricioakio@gmail.com>
+=E5=9C=A8 2026-10-04=E6=97=A5=E7=9A=84 00:35 +0200=EF=BC=8CMichal Wilczynsk=
+i=E5=86=99=E9=81=93=EF=BC=9A
+>=20
+>=20
+> On 10/3/26 22:45, Krzysztof Kozlowski wrote:
+> > On 03/10/2026 17:36, Michal Wilczynski wrote:
+> > >=20
+> > >=20
+> > > On 9/30/26 13:01, Krzysztof Kozlowski wrote:
+> > > > On 25/09/2026 23:05, Michal Wilczynski wrote:
+> > > > > > > +=C2=A0 clocks:
+> > > > > > > +=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > > > > > > +=C2=A0=C2=A0=C2=A0 description: Reference oscillator.
+> > > > > >=20
+> > > > > > This barely counts as a resource, so usual question: no
+> > > > > > resources here?
+> > > > > > no MMIO? Even the user of this phy is the block itself.
+> > > > > >=20
+> > > > > > This makes me wonder if this should be a device node in the
+> > > > > > first place
+> > > > > > (instead folded into the parent).
+> > > > >=20
+> > > > > The PHY has no reg because the reg is shared with the
+> > > > > controller and
+> > > > > owned by the parent - patch 9 lets the bridge take its regmap
+> > > > > from
+> > > > > there.
+> > > > >=20
+> > > > > The user of the PHY is not only the block itself. It is the
+> > > > > pixel clock
+> > > > > provider for the whole display subsystem, voutcrg takes
+> > > > > hdmitx0_pixelclk
+> > > > > as the parent of its DC8200 pixel MUXes, and while HDMI
+> > > > > output is active
+> > > > > it is the only intended source for that clock. The parent has
+> > > > > to be
+> > > > > assigned explicitly so the general PLL does not end up
+> > > > > driving the pixel
+> > > > > clock, and so a DSI user does not reach the HDMI PHY clock
+> > > > > generator.
+> > > > >=20
+> > > > > So it has to be its own node. The HDMI block has two
+> > > > > independent
+> > > >=20
+> > > > I do not see the logic which lead to this conclusion. Pixel
+> > > > clock
+> > > > provider, so a clock controller, cannot be a user of a phy.
+> > > > Clock
+> > > > controller does not have a physical layer.
+> > >=20
+> > > Sorry I think the wording was not perfect. I meant the PHY node
+> > > is a
+> > > pixel clock provider. voutcrg consumes a clock not a PHY.
+> > >=20
+> > > voutcrg: clock-controller@295c0000 {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks =3D <&syscrg =
+...>, <&hdmi_phy>;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names =3D ...,=
+"hdmitx0_pixelclk";
+> > > };
+> > >=20
+> > > The consumer of the PHY is only the hdmi controller.
+> > >=20
+> > > What matters for the node layout is where that clock goes.
+> > > voutcrg is the
+> > > SoC display clock controller - it is not part of the HDMI block:
+> > >=20
+> > > hdmi_phy -- pixel clock -> voutcrg
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pclk/mclk/bclk -> hdmi_controller
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pix0/pix1 -> dc8200
+> > >=20
+> > > hdmi_phy and hdmi_controller are the same register block with one
+> > > reg
+> > > owned by the parent. So if that block is described as a single
+> > > node:
+> > >=20
+> > > hdmi_node - pixel clock -> voutcrg
+> > > =C2=A0=C2=A0=C2=A0=C2=A0 ^=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> > > =C2=A0=C2=A0=C2=A0=C2=A0 --- pclk/mclk/bclk --------
+> > >=20
+> > > the node provides a clock to voutcrg and consumes three clocks
+> > > from
+> > > voutcrg. That is a cycle in the device tree description.
+> >=20
+> > There is no cycle. Internal signals to the block are not
+> > represented in DT.
+> >=20
+> > What you have is a driver problem and you create some sort of DT
+> > structure to solve that. DT purpose is NOT to solve your driver
+> > dependencies or circular connections.
+>=20
+> The structure is not something I added. The voutcrg binding has
+> required
+> an input clock named hdmitx0_pixelclk since it was merged in 2023
+> a097a5ec14df ("dt-bindings: clock: Add StarFive JH7110 Video-Output
+> clock and reset generator") and this series does not touch that file:
+>=20
+> Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: hdmitx0_pixelclk
+>=20
+> Mainline satisfies it with a placeholder, because so far nothing
+> provided the
+> real clock:
+>=20
+> hdmitx0_pixelclk: hdmitx0-pixel-clock {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compat=
+ible =3D "fixed-
+> clock";=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-=
+output-names =3D "hdmitx0_pixelclk";
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #clock=
+-cells =3D <0>;
+> };
+>=20
+> All this series does is point that existing input at the device that
+> actually
+> generates it.
+>=20
+> TRM [1] table 5-3=C2=A0 on page 529 lists the display CRG's input clocks.
+> Most come from
+> dom_vout_top, but three come from IP blocks inside the subsystem:
+>=20
+> clk_hdmitx0_pixelclk=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 297 MHz=C2=
+=A0=C2=A0 u0_hdmi_tx.clk_pix
+> clk_mipitx_dphy_rxesc=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 10 MHz=C2=
+=A0=C2=A0 u0_mipitx_dphy.clk_rxesc
+> clk_mipitx_dphy_txbytehs=C2=A0=C2=A0=C2=A0 297 MHz=C2=A0=C2=A0 u0_mipitx_=
+dphy.clk_txbytehs
+>=20
+> and on page 530 the CRG offers clk_hdmitx0_pixelclk as Source1 for:
+>=20
+> u0_dc8200.clk_pix0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Source0 clk_dc8200_pix0=
+=C2=A0 Source1
+> clk_hdmitx0_pixelclk
+> u0_dc8200.clk_pix1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Source0 clk_dc8200_pix0=
+=C2=A0 Source1
+> clk_hdmitx0_pixelclk
+> u0_cdns_dsiTx.clk_dpi=C2=A0=C2=A0 Source0 clk_dc8200_pix0=C2=A0 Source1
+> clk_hdmitx0_pixelclk
+>=20
+> The DC8200 and the DSI TX are separate devices, so the pixel clock
+> crosses two block boundaries to reach them.
+>=20
+> That is also why the DT has to be able to name it. Those MUXes have
+> two
+> parents and the selection is made in DT:
+>=20
+> &dc8200 {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 assigned-clocks =
+=3D <&voutcrg JH7110_VOUTCLK_DC8200_PIX0>,
+> ...;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 assigned-clock-par=
+ents =3D <&hdmi_phy>, <&hdmi_phy>;
+> };
+>=20
+> and voutcrg takes it as an input clock because that is what the
+> hardware
+> does. If the PHY is folded into the HDMI node, that input phandle
+> points at
+> a node which also consumes pclk/mclk/bclk from voutcrg. That is where
+> the
+> cycle comes from - the hardware topology not the driver.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+I think the common clock framework has a "orphaned clock" feature to
+solve this kind of cyclic clock dependency, although this could be a
+pandora's box if not properly used.
 
+Thanks,
+Icenowy
 
--- 
-With best wishes
-Dmitry
+>=20
+> [1] -
+> https://doc-en.rvspace.org/JH7110/PDF/JH7110_TRM_StarFive_Preliminary_V2.=
+pdf
+>=20
+> >=20
+> > Best regards,
+> > Krzysztof
+> >=20
+>=20
+> Best regards,
+
