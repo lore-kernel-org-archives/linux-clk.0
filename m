@@ -1,106 +1,249 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34153434999
-	for <linux-clk@vger.kernel.org>; Mon,  5 Oct 2026 09:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E3D434E28;
+	Mon,  5 Oct 2026 09:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791191559; cv=none; b=WGJR4j+JHNBn85D2h1jrfg1qmi7wliRYZ5CcWtTMOPB8uCkRXnlnpSpvOxWWlekFLtW7zQnpEbe0TjlaFo6nOHSAmdpPYfL+4CpIbWFnSAwzzwI3DPu1poMeufHBmrU7oaS4z26KD/NzM64wjEPxT3aou7EK+l8bYaLcpmArqSs=
+	t=1791191840; cv=none; b=RqjDN5KfngBCMm8Myboz2Qdh33gmP7fJwIVYQiEdsg0KNM8eMB759CCpErjWS7AComRX62vnxPt8kEfLppnjb+nj97lW7bV1F1cuaIjoWgPnH/vmXf30GE4eldO7znLoAIxMp1vB++cIRRJK1HbkmTfhwzbUEefT7UnwhLUh1HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791191559; c=relaxed/simple;
-	bh=DEKopGIrQkLh8SWF/zKNuJLXidGRTJJo4QAeZeLI1Kg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=F6ojt5+M7ZBVZ1IxOpWnLvTuEuJSnPsS6UQ9RSnj5LeDfPZ8zDAncsJMFhlYGi1ovCc15AjDbKcAS9r51EUbI2KKajEQSEybTPLJn3YBrfflLVMDwI+WRUxaoA6+PQ7mbv1/z+0RVVqgV/TWNmCc4IVTuoS04ATHQsZAzO6gQ7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=XNYsO8jj; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1791191840; c=relaxed/simple;
+	bh=HVeqBCma9XhPQYuXr7Z1BFby/I89QIvKhp1Qz/Sy+Fc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lI26REcdZtECnAR9fHyEsmN0arXleQKlePi9NmlNdVEa1ojbZRqIHUmNCC9nL5c+6vkTHlSQnv9NF1jhymyNY4Wckf2j7mEozfKmQqXfVN/Ctlh8jU0KO/wqryTK2kCxePFHZbxnNv4Pknrnm3U4mgDGbnCL2fj2yfpVHaEaKQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=lpUkjIKq; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="XNYsO8jj"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49ccf3ca626so10060895e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 05 Oct 2026 02:12:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1791191556; x=1791796356; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=DEKopGIrQkLh8SWF/zKNuJLXidGRTJJo4QAeZeLI1Kg=;
-        b=XNYsO8jjfmPwdlHxjhGD2gOYE4KwbdRGvaUWB4gF9FQAgJ4UMjq+F5EnGYi6alD8vz
-         vggoW7EO7joFFi5tHSjBaE7Zp31Yi5WoTij4qKD6V3kOoHC4jgc5YlglLN1leGAM6tF2
-         PJJO6bj7BZ1OBB6VxC4NfN7JM+koXy9ywqhRc9gbTlP1/6YbgHcjC0HFqlk/VQWojjoZ
-         ml5orml1Ers2fx5fcOIhzryz4Qpb/C2pOUbCxGvgpDLheFkG1fbvt1MWG9OPTGkIKQD4
-         uMyiDAHH1hk6diNTjfjClm/aFsEqGw4MXyVv6O74prYzcXuFw8EKkRhLZe2N+DOKwSIC
-         FiIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791191556; x=1791796356;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :references:in-reply-to:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=DEKopGIrQkLh8SWF/zKNuJLXidGRTJJo4QAeZeLI1Kg=;
-        b=cNoVtD43pM8ta/EDBGGi3blXy45TFtsR2FU7Ql8sQj6A4uaiBRADtpy2Mu3LZ6Exij
-         6yijjCVGJQPS0Q0cyNqbVB5vP4nzs2nvzBgj/dU5/+4Mp5C0GU/T9/40PUP2d+oF71kq
-         xRUTJtfHOJg/PX53qJPiil1UF+t0Go7g6R43lk9XbdOXDotRZmXQbBOoippRrj9YgdAl
-         UJb+GdTIhVXRKUZ2fw3/m1ZSwKzQsiXSyVcgL5lVR5U0ajLxLvHUBAXpZJCbHhzT8AuE
-         FESKEVo/JAJGwBxDp69P49HWgFRXsQeAF0GRpfBEXPpMYHhKMDhv6WV2q817uEGTI+9U
-         EOOA==
-X-Forwarded-Encrypted: i=1; AKwUvBxDR3v7cNiHCL4M/7NbzmgMJrQAeBOGqAsli5fuqyE6ARbOX/fYpwHIIrZQTqrgCCZAzrs8QSRzvU4=@vger.kernel.org
-X-Gm-Message-State: AFuF++n2O5z9+Sg5DwqQN0gZ5VeftzxJKFA0Z4HWDwM8ljo1uZTlMcoZ
-	c3ZxK8feGpo31e8FRdJtYC/r74miS+kUO0g/LlH0VBU+P9y2Xy866O7OhwedGFU4L/o=
-X-Gm-Gg: AYBFou126CMOfb9mMWA7B2qUPrpGSqS6JZPVE2SjVtCewXb0wPMij3whvg6DnsY0Ddj
-	kDYCsE9g5/2rcgPRwEL5AOx0dz4eyCAqa6N2DqGOOQbaaLEQpDobn8gk2qnSxyKiEQ7cR2hF4xq
-	2eUjjyFrTfOjdpfU6raPiSD8n8pEaO9SokIrUxL+9kO1trPmf6OouRjsIj7ZiPipuXBRKsTAPPL
-	6+uShD8GNWx9EycTeFHwKSRKdJCpArF3Sxt9OJwtQ+d6rzznRdOHtZyJId3lLE/1/Kehqm6wWzq
-	qC4VF3as8UHJtuamVkbi/BEbBRHQlfR/ktzKT9yJYSbirs67HjME9yJH4JeXFpDHEopa4C3JYF8
-	VF04H/lYuBJI7FeczvOmQnoIX2kzuvft9SPZkESMLXj/xW3JH3+2ElH9h6HvRPWmRqj7kYqh4xE
-	l/FX3WYQK6YlWXK3vszux0ekwbVAOSMY++l1krlUN57KJFhSy3hYyBfHntW97ybhyQy7cAEF9kf
-	unlwEErc1VpYn7y
-X-Received: by 2002:a05:600c:1394:b0:4a0:1c17:4fb2 with SMTP id 5b1f17b1804b1-4a02759dc21mr185147705e9.31.1791191556536;
-        Mon, 05 Oct 2026 02:12:36 -0700 (PDT)
-Received: from localhost (90-182-211-1.rcp.o2.cz. [90.182.211.1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a03ff20831sm205138945e9.4.2026.10.05.02.12.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2026 02:12:36 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, sashiko-bot@kernel.org
-Cc: sashiko-reviews@lists.linux.dev, conor+dt@kernel.org,
- linux-clk@vger.kernel.org, robh@kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v8 5/7] clk: nuvoton: ma35d1: Reparent SYSPLL correctly
-In-Reply-To: <87zewti2pf.fsf@bootlin.com>
-References: <20261004-perso-ma35d1-upstream-clk-v8-0-e1a106a128c0@bootlin.com>
- <20261004-perso-ma35d1-upstream-clk-v8-5-e1a106a128c0@bootlin.com>
- <20261004205551.6279C1F000FF@smtp.kernel.org> <87zewti2pf.fsf@bootlin.com>
-Date: Mon, 05 Oct 2026 11:12:35 +0200
-Message-ID: <1jjynw7bp8.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="lpUkjIKq"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8221152B;
+	Mon,  5 Oct 2026 02:17:12 -0700 (PDT)
+Received: from [192.168.178.24] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED5D03F66F;
+	Mon,  5 Oct 2026 02:17:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1791191836; bh=HVeqBCma9XhPQYuXr7Z1BFby/I89QIvKhp1Qz/Sy+Fc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lpUkjIKqVD2+wgOZwWjHfaqcnAIOIiZd3eLZsf6wSBSB4hW0xAMMT3/10Lmlrwifu
+	 CN9yeYzy+LatTmrx6kdYmZFt+2+4QqkeIsWO4jHmUJbkhdKQV+jDepAzXQYqnw21Fc
+	 AcKyquEiAMypKcdXGDJ87Dsc2jJveIx5ZKcjOXDk=
+Message-ID: <4ac4c90f-887e-4545-9c26-9706bdaa1a79@arm.com>
+Date: Mon, 5 Oct 2026 11:17:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 7/8] clk: sunxi-ng: a733: Add bus clock gates
+To: Junhui Liu <junhui.liu@pigmoral.tech>, wens@kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ netdev@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+ Enzo Adriano <enzo.adriano.code@gmail.com>
+References: <20260930-a733-clk-v5-0-11175b41cd2d@pigmoral.tech>
+ <20260930-a733-clk-v5-7-11175b41cd2d@pigmoral.tech>
+ <CAGb2v65Lqo7NiFhc2GYdfY7+jkC4Y+p6=Zy85HOFmXJzT0u1fg@mail.gmail.com>
+ <DLWMN3TYBP9F.3N62QFP7QEE9U@pigmoral.tech>
+Content-Language: en-GB
+From: Andre Przywara <andre.przywara@arm.com>
+In-Reply-To: <DLWMN3TYBP9F.3N62QFP7QEE9U@pigmoral.tech>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun 04 Oct 2026 at 23:19, Miquel Raynal <miquel.raynal@bootlin.com> wrot=
-e:
+Hi,
 
-> On 04/10/2026 at 20:55:50 GMT, sashiko-bot@kernel.org wrote:
->
->> Thank you for your contribution! Sashiko AI review found 1 potential iss=
-ue(s) to consider:
->> - [Low] clk: nuvoton: ma35d1: Modification of global static state
->> during probe
->
-> There is a single clock controller. Should never be a problem. I can
-> certainly move it in to more local scope if someone asks, but it's not
-> practically needed.
+On 10/5/26 06:41, Junhui Liu wrote:
+> Hi Chen-Yu,
+> 
+> On Sun Oct 4, 2026 at 7:03 PM CST, Chen-Yu Tsai wrote:
+>> On Tue, Sep 29, 2026 at 7:28 PM Junhui Liu <junhui.liu@pigmoral.tech> wrote:
+>>>
+>>> Add the bus clock gates that control access to the devices' register
+>>> interface on the Allwinner A733 SoC. These clocks are typically
+>>> single-bit controls in the BGR registers, covering UARTs, SPI, I2C, and
+>>> various multimedia engines. It also includes bus gates for system
+>>> components like the IOMMU and MSI-lite interfaces.
+>>>
+>>> Also mark the ahb-store, mbus-store and ahb-cpus clocks as critical.
+>>> Disabling either store gate breaks access to boot/storage devices such
+>>> as MMC and SPI NOR, while gating ahb-cpus hangs any access to the CPUS
+>>> power domain registers when unused clocks are disabled.
+>>>
+>>> Tested-by: Jerome Brunet <jbrunet@baylibre.com>
+>>> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+>>> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>>> ---
+>>>   drivers/clk/sunxi-ng/ccu-sun60i-a733.c | 492 ++++++++++++++++++++++++++++++++-
+>>>   1 file changed, 491 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+>>> index 1b2d4d36ec4c..b077e5d2f32c 100644
+>>> --- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+>>> +++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+>>> @@ -4,6 +4,10 @@
+>>>    * Copyright (C) 2026 Junhui Liu <junhui.liu@pigmoral.tech>
+>>>    * Based on the A523 CCU driver:
+>>>    *   Copyright (C) 2023-2024 Arm Ltd.
+>>> + *
+>>> + * TODO: The real parents of some bus gates, including its-pcie0-aclk,
+>>> + * msi-lite, npu, ufs, sgpio, lpc and i2spcm, are not documented in the
+>>> + * manual. For now, follow the vendor BSP, which keeps them on hosc.
+>>>    */
+>>
+>> [...]
+>>
+>>> @@ -510,9 +522,118 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE_FEAT(mbus_clk, "mbus", mbus_parents, 0x588
+>>>                                             BIT(31),     /* gate */
+>>>                                             CLK_IS_CRITICAL,
+>>>                                             CCU_FEATURE_UPDATE_BIT);
+>>> +static const struct clk_hw *mbus_hws[] = { &mbus_clk.common.hw };
+>>> +
+>>> +static SUNXI_CCU_GATE_HWS(mbus_iommu0_sys_clk, "mbus-iommu0-sys", mbus_hws, 0x58c, BIT(0), 0);
+>>> +static SUNXI_CCU_GATE_HWS(apb_iommu0_sys_clk, "apb-iommu0-sys", apb0_hws, 0x58c, BIT(1), 0);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_iommu0_sys_clk, "ahb-iommu0-sys", ahb_hws, 0x58c, BIT(2), 0);
+>>> +
+>>> +static SUNXI_CCU_GATE_DATA(bus_msi_lite0_clk, "bus-msi-lite0", hosc, 0x594, BIT(0), 0);
+>>> +static SUNXI_CCU_GATE_DATA(bus_msi_lite1_clk, "bus-msi-lite1", hosc, 0x59c, BIT(0), 0);
+>>> +static SUNXI_CCU_GATE_DATA(bus_msi_lite2_clk, "bus-msi-lite2", hosc, 0x5a4, BIT(0), 0);
+>>> +
+>>> +static SUNXI_CCU_GATE_HWS(mbus_iommu1_sys_clk, "mbus-iommu1-sys", mbus_hws, 0x5b4, BIT(0), 0);
+>>> +static SUNXI_CCU_GATE_HWS(apb_iommu1_sys_clk, "apb-iommu1-sys", apb0_hws, 0x5b4, BIT(1), 0);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_iommu1_sys_clk, "ahb-iommu1-sys", ahb_hws, 0x5b4, BIT(2), 0);
+>>
+>>> +static SUNXI_CCU_GATE_HWS(ahb_ve_dec_clk, "ahb-ve-dec", ahb_hws,
+>>> +                         0x5c0, BIT(0), 0);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_ve_enc_clk, "ahb-ve-enc", ahb_hws,
+>>> +                         0x5c0, BIT(1), 0);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_vid_in_clk, "ahb-vid-in", ahb_hws,
+>>> +                         0x5c0, BIT(2), 0);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_vid_cout0_clk, "ahb-vid-cout0", ahb_hws,
+>>> +                         0x5c0, BIT(3), 0);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_vid_cout1_clk, "ahb-vid-cout1", ahb_hws,
+>>> +                         0x5c0, BIT(4), 0);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_de_clk, "ahb-de", ahb_hws,
+>>> +                         0x5c0, BIT(5), 0);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_npu_clk, "ahb-npu", ahb_hws,
+>>> +                         0x5c0, BIT(6), 0);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_gpu0_clk, "ahb-gpu0", ahb_hws,
+>>> +                         0x5c0, BIT(7), 0);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_serdes_clk, "ahb-serdes", ahb_hws,
+>>> +                         0x5c0, BIT(8), 0);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_usb_sys_clk, "ahb-usb-sys", ahb_hws,
+>>> +                         0x5c0, BIT(9), 0);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_msi_lite0_clk, "ahb-msi-lite0", ahb_hws,
+>>> +                         0x5c0, BIT(16), 0);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_store_clk, "ahb-store", ahb_hws,
+>>> +                         0x5c0, BIT(24), CLK_IS_CRITICAL);
+>>> +static SUNXI_CCU_GATE_HWS(ahb_cpus_clk, "ahb-cpus", ahb_hws,
+>>> +                         0x5c0, BIT(28), CLK_IS_CRITICAL);
+>>
+>> I suspect these refer to a AHB-AHB bridge for the various subsystems shown
+>> in the memory map. That would explain why when the "ahb-store" clock is
+>> gated, the storage bits stop working.
+>>
+>> If that's the case, we should describe it as the parent of each storage
+>> peripheral bus gate's parent. Same would go for the other types. I haven't
+>> checked what the BSP does though.
+> 
+> As Norman mentioned in his reply, the vendor BSP also does not model
+> this hierarchy and instead models these gates as independent clocks
+> parented to the oscillator. The manual does not describe the hierarchy
+> either, so I don't think we have enough information to model it
+> differently at this point.
 
-I may be missing something key here but why is not in your defined
-indexes like the rest of the clocks ?=20
+Well, I wouldn't use the BSP as a good example on how to model the clock 
+tree, they have been very misguided in the past.
+What the BSP does is to add just more input/gate MBUS clocks for each 
+device, which is something I think we should avoid.
+To that regard using them as parent clocks for the existing gates, as 
+Chen-Yu suggested, sounds like a good idea: We keep a single clock for 
+the devices, but still can turn both clocks off (I think, not tested).
 
->
-> Thanks,
-> Miqu=C3=A8l
->
+Cheers,
+Andre
 
---=20
-Jerome
+> I will add comments explaining why ahb_store_clk, mbus_store_clk, and
+> ahb_cpus_clk are marked critical.
+> 
+>>
+>>> +static SUNXI_CCU_GATE_HWS(mbus_iommu0_clk, "mbus-iommu0", mbus_hws,
+>>> +                         0x5e0, BIT(0), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_iommu1_clk, "mbus-iommu1", mbus_hws,
+>>> +                         0x5e0, BIT(1), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_desys_clk, "mbus-desys", mbus_hws,
+>>> +                         0x5e0, BIT(11), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_ve_enc0_gate_clk, "mbus-ve-enc0-gate", mbus_hws,
+>>> +                         0x5e0, BIT(12), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_ve_dec0_gate_clk, "mbus-ve-dec0-gate", mbus_hws,
+>>> +                         0x5e0, BIT(14), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_gpu0_clk, "mbus-gpu0", mbus_hws,
+>>> +                         0x5e0, BIT(16), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_npu_clk, "mbus-npu", mbus_hws,
+>>> +                         0x5e0, BIT(18), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_vid_in_clk, "mbus-vid-in", mbus_hws,
+>>> +                         0x5e0, BIT(24), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_serdes_clk, "mbus-serdes", mbus_hws,
+>>> +                         0x5e0, BIT(28), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_msi_lite0_clk, "mbus-msi-lite0", mbus_hws,
+>>> +                         0x5e0, BIT(29), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_store_clk, "mbus-store", mbus_hws,
+>>> +                         0x5e0, BIT(30), CLK_IS_CRITICAL);
+>>
+>> Same thing for the MBUS clocks.
+>>
+>>> +static SUNXI_CCU_GATE_HWS(mbus_msi_lite2_clk, "mbus-msi-lite2", mbus_hws,
+>>> +                         0x5e0, BIT(31), 0);
+>>> +
+>>> +static SUNXI_CCU_GATE_HWS(mbus_dma0_clk, "mbus-dma0", mbus_hws,
+>>> +                         0x5e4, BIT(0), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_ve_enc0_clk, "mbus-ve-enc0", mbus_hws,
+>>> +                         0x5e4, BIT(1), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_ce_clk, "mbus-ce", mbus_hws,
+>>> +                         0x5e4, BIT(2), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_dma1_clk, "mbus-dma1", mbus_hws,
+>>> +                         0x5e4, BIT(3), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_nand_clk, "mbus-nand", mbus_hws,
+>>> +                         0x5e4, BIT(5), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_csi_clk, "mbus-csi", mbus_hws,
+>>> +                         0x5e4, BIT(8), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_isp_clk, "mbus-isp", mbus_hws,
+>>> +                         0x5e4, BIT(9), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_gmac0_clk, "mbus-gmac0", mbus_hws,
+>>> +                         0x5e4, BIT(11), 0);
+>>> +/* Undocumented, taken from the vendor kernel. */
+>>> +static SUNXI_CCU_GATE_HWS(mbus_gmac1_clk, "mbus-gmac1", mbus_hws,
+>>> +                         0x5e4, BIT(12), 0);
+>>> +static SUNXI_CCU_GATE_HWS(mbus_ve_dec0_clk, "mbus-ve-dec0", mbus_hws,
+>>> +                         0x5e4, BIT(18), 0);
+>>
+>> [...]
+>>
+>> The remaining definitions look correct (minus the vendor BSP ones which I
+>> couldn't check at this time).
+>>
+>> I didn't check the clock list additions.
+>>
+>> Consider this
+>>
+>> Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+>>
+> 
+> Thanks!
+> 
+>>
+>> We can change the AHB / MBUS clock parents later if we do figure it out.
+>>
+>>
+>> ChenYu
+> 
+
