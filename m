@@ -1,124 +1,94 @@
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA66438470
-	for <linux-clk@vger.kernel.org>; Mon,  5 Oct 2026 09:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDD14756AE;
+	Mon,  5 Oct 2026 10:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791192060; cv=none; b=LFYgMyO2LAiqzPs4Yv/8aVp6jta4SvnBbUgff+ft97GUw7OTDHFZ1NaGjWWnWQoAdYYq/f9t64vUSXbprWDLztsbWTOA5JCdLbM8Qzr7qkxh6PevNgiOOJ+2BdHTi1US1oDDSkEQEFimaNwi+1/vWbAX9j0fFyt2oBS/SiSpat0=
+	t=1791195908; cv=none; b=ojk3Tk+OrlMB6KT2NM7fklwsKXNjO6SdbRwl+o7CufCRbtr2FH1WiVJSd4oVw5IPer2Rul71oNjs3+c1s5ZATdUK91PG0A2c/GqGZPXq27EE5UFDOjzczn9MhVmas311wwjjf2ic5Gryii39V4zZKhOfIOrH1LbpEjiweEh2uHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791192060; c=relaxed/simple;
-	bh=MLYf36H5QskETZxzDq+/MEooa/mfwbkX4pzrx+i1jrk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=A2obIZUEBgohSATrTZeYbl93yC2yDSvnPONqRHUlIpJxYEzvi3do0DUzyh85cfk4/HpHdlJ1zCvCsUK0mwh8vhGvsSzQBXgIIqPZRmCNglu03MkDLMvKy0vm3NoF1NDDBN3ykOeAz8+gRzjkTol9d4eC00rIQXOXmWQVK5/7Gco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=R0jvH8GE; arc=none smtp.client-ip=74.125.225.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1791195908; c=relaxed/simple;
+	bh=WRlhwtU1kXu7w+5nMoJISp3hl1W6KmEIiCCyZauF3Kw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c/RfDpLZpj0ACDBf/ym59KM/nJY4hmErOwAZNiOoksB5EMTLA0CJ4Ql44aC2cmVoUy5oEDd0WxjOdji+yRSKCHGVZe5TjX3gQXWHIuEgVrywqz+jP9bCBKCeaWtYXcLj7WXiQWRvPAOKvq+wXnvAzJSMPXAdgpqqA35qOymUJsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JShs+XMJ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="R0jvH8GE"
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-4a16bc7ad39so2432295e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 05 Oct 2026 02:20:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1791192056; x=1791796856; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=z40S/ylZZcXE7HA9H4ygNmMIKaIpP+LiRcjwv8oZ5J8=;
-        b=R0jvH8GEb5q9XJQbiLF0fD+vLuGgu89vCbckY89Jbcd3RNH0nEEN020q6Rwuft4Wgs
-         Sl5YMiFUj8YEDQ+7kBU4TbQcsSn5ogxGG/PeE6zJC3uEyCSbwpOxALlrFs83IaLhMMiF
-         ABpPMRQUDLaBhHYX1uus+JxljsI5CeVxHITCuIGQJ6nnM1oY7rw9c/pua8LpCtefSSGz
-         JmH4oXU3R8BY9Bp/6utp4YztamcY3Y8UDUsFfn7GcWq/BurX6XaALrKwI8s8uNHrKEGD
-         iunJkGOacQKlW/xgbGpNslHMAMWi0MpjFskPAn/xxbiQoXhobE5obFxHyTog1Yy7TcZj
-         OlQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791192056; x=1791796856;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=z40S/ylZZcXE7HA9H4ygNmMIKaIpP+LiRcjwv8oZ5J8=;
-        b=qKEfqeJr+ieSR4cG3yXEQcY2g/8x87LjWs2Bf7USLymkU+vUAXTFIeedxDt5VcyMl/
-         Asa7cZXwQyhm7oBW0p8F/y+2pLa08SxXL3hWqwZRTg580NrhBvssf5YUOcAQo6YVPl+z
-         /DeDT+zLXj/EvMAkigjr4/7xcBGI3QIwYIzKUHSzNYNpZudVciDvPvV7JMkgzeHKClUN
-         NYdSg+RcRknFHHB7i/0jtogtDoHnvkYgxsoDvzdrsXr6HALGNq1mK9nQlXtuT229uqzX
-         USuXKQLLpvRw1OWC1sY0AegKg6mXR53fmAvPP8A9et32HypfRgMo3Tqq1kIzb5fcVikr
-         dsMA==
-X-Forwarded-Encrypted: i=1; AKwUvBw97nKsUaFnUotchaB+DOtwbzvnTyDPDUsYfE84RGWSGavaxpdBKhyVkZ4zukIde9BlshFze1vsXnw=@vger.kernel.org
-X-Gm-Message-State: AFuF++kuqKEu4L/z3kXQgtpmyeoAsTAGDOeeQRYHOi+kkpc8kCyypNN8
-	vmNreUwfW4Uo0H4OjvH8Ho0lQWmrvS1UJSjUVCan/lgaMhjpcBqBdV4TA9+hAXFQOao=
-X-Gm-Gg: AYBFou3I66FpxxRH/Gbtk0XKFlpB8qizCMZx7ELcJnyKRIvfIdAe0Jh45Wb3cw/mscV
-	afKyIKOHKXf6IvWFrw0e3JzX5wTKskfKWvaXHwdrzxsGTI/1bQsQ8h5EV900mDDjn8989gpi4j3
-	QmvNTFb1yDJ4k3Kb9XNNclL/9p5u+CwEyRDcIgtQPO/xK9xo3oRDu1DcRuMp6+IY78PfroWlpQN
-	8FKn29br1ItAuuCAPEBF9Hxvn0FQ2uV2kT7UmdGborXk1rSnVHZAinM0rFrhGX7RFWMphBfyL1u
-	KY2d2HjCBUA/UO9NpsCaLfKOBC+uw5uVp0Tcawgdy+feWw/J3Fdwwz+R4Qk+AlecW7b8dco05c1
-	zoPMWdKZSwpmH7sjj+9co8swolosIo08ydQ2elP5CBv1DPxHfwIcJSP1PwYwlTc3q0rpea+y5DQ
-	tagot+0eDL/0qlpm+DmRCQSCLRUVGBaycG8VUte8R8GgNgeAeZQTZuh9kYecLyN8XtXTiOsoHaU
-	y6hetmrAmtQYOE=
-X-Received: by 2002:a05:600c:548c:b0:49e:65f2:db64 with SMTP id 5b1f17b1804b1-4a027534bd7mr162795275e9.5.1791192056124;
-        Mon, 05 Oct 2026 02:20:56 -0700 (PDT)
-Received: from localhost (90-182-211-1.rcp.o2.cz. [90.182.211.1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a03fef5950sm208756515e9.2.2026.10.05.02.20.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2026 02:20:55 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Brian Masney
- <bmasney@redhat.com>, Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti
- <alex@ghiti.fr>, Philipp Zabel <p.zabel@pengutronix.de>, Emil Renner
- Berthing <kernel@esmil.dk>, Chen Wang <unicorn_wang@outlook.com>, Inochi
- Amaoto <inochiama@gmail.com>, Alexey Charkov <alchark@gmail.com>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Keguang Zhang
- <keguang.zhang@gmail.com>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "linux-riscv@lists.infradead.org"
- <linux-riscv@lists.infradead.org>, Hal Feng <hal.feng@starfivetech.com>
-Subject: Re: [PATCH v5 2/8] clk: starfive: Add system-0 domain PLL clock driver
-In-Reply-To: <ZQ4PR01MB120246C3208C10BDEFD32BCFF2882@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-References: <20260828095608.19955-1-changhuang.liang@starfivetech.com>
- <20260828095608.19955-3-changhuang.liang@starfivetech.com>
- <179075859479.1471718.5492634704694937513.b4-reply@b4>
- <ZQ4PR01MB120246C3208C10BDEFD32BCFF2882@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-Date: Mon, 05 Oct 2026 11:20:54 +0200
-Message-ID: <1jh5j07bbd.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JShs+XMJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03EF81F00893;
+	Mon,  5 Oct 2026 10:25:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791195906;
+	bh=GfnN1aSdXWmTo8q/DewYWQGMbm4TMx5bk22+lXAuIcc=;
+	h=From:To:Cc:Subject:Date;
+	b=JShs+XMJ7dR91/bjgbQ90njng/7XJepBHoGNu2K9eWBMmrdFwza/j08M2ESVZvnP0
+	 5oGDdCTg0cckUTHSh9VEhf0UVw9OzweLZXV5K4fpWgevlxs2QsfjZ/qwVje0x0gzNl
+	 tp1jtNEpy9kwfi6ejrqBw3NYLp3P30rtzbJog4MUMZk1BtXZ/MIvfWH74D5UpYVbGN
+	 Bw2U178xJg0fAAi2jsZHFjDiaz2WtTuJsMklWBKgDU7sI4bUMZl0BKQtdygizXtXg5
+	 JGUcyD2KQh0wivKhmp0qkG+Czr+gbWHvaCT6qCJ3PdOfUJYBQGvhbCXiYA0CSBbWgr
+	 8Q7hbky8YbLNw==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	linux-clk@vger.kernel.org,
+	Sylwester Nawrocki <snawrocki@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk: samsung: drivers for v7.4
+Date: Mon,  5 Oct 2026 12:24:44 +0200
+Message-ID: <20261005102459.35529-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1760; i=krzk@kernel.org; h=from:subject; bh=WRlhwtU1kXu7w+5nMoJISp3hl1W6KmEIiCCyZauF3Kw=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqw3r7uvYdiNMrOSRdYOQDpociZVSRIJDDmcx1j XLXsUG5JDaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCasN6+wAKCRDBN2bmhouD 15qcEACG0M98i3CPuDUqKNgoRkpkYeH8U4AkjGlSTjitCoDBbSqZ57uNssFoWl0Vbeke19COgRs d6qjgNH/GSsU5gnPqvPgxKy3Ytf3ownSZ99TbV48L3ZQCYKfHBk1X5uU/Q+L5fZ9walvsvIYRk4 Qxh5lmq4AC9et/rdO4HPRc7qbEMXwm+D5c5T9Y0SnP7+wvJtY46XrA+vb1hW83d0+3m9ZsrEqA0 6KSQ9t1BVGyVvJvcFW80rnFV3hSXknL2H+gSPdUnhI2e136QVxc9l0zDWMqMIHANpEujUx3P44z 1Ym4dnjoyDpb4+O3YStL8iyLJZ1fUCynOOB5f4SJYzhII217QyfSzVUDg842ZuyIdru9GuLf3Y8 tuu9DeEipFc2Nfz1sKzDjIJS/QpZpops2WDUKSWKFj43/WB35nNBujd6Yac/jNmIdLxnnRX9SaV NvET/0RoVAx7nOed+1cjxWilY3DkixApeuoUeP+QHW44IwBZPhB/3uk+Jm0zuLk+hBMJWML1hFY gyQLjlGua72FPMwcMIfGCcvdLZywXgJjej8VBrTMb3xVcj2gHwJFtLLfokJ7dMb09TKHZPsnK+m SBaXLuqvu4gHNXxcsQs4cJNeOvZHxKq2pyfGqqPUYNIIQ3CeHl58SQXqey/QxAB6RSbxHKKI5A5 Kv9MvIWQ0LJfn4g==
+X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On Sat 03 Oct 2026 at 11:02, Changhuang Liang <changhuang.liang@starfivetech.com> wrote:
+The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
 
->> > +static const struct jhb100_pll_info jhb100_sys0_pll_info[] = {
->> > +	JHB100_PLL(JHB100_SYS0PLL_PLL2_OUT, "pll2_out",
->> jhb100_pll2_presets,
->> > +		   ARRAY_SIZE(jhb100_pll2_presets), JHB100_PLL2_OFFSET, false),
->> > +	_JHB100_PLL(JHB100_SYS0PLL_PLL3_OUT, "pll3_out",
->> jhb100_pll3_presets,
->> > +		    ARRAY_SIZE(jhb100_pll3_presets), JHB100_PLL3_OFFSET,
->> > +		    CLK_IS_CRITICAL, false),
->> > +	_JHB100_PLL(JHB100_SYS0PLL_PLL4_OUT, "pll4_out", NULL, 0,
->> > +		    JHB100_PLL4_OFFSET, CLK_IGNORE_UNUSED, true),
->> 
->> Please comment when adding CLK_IGNORE_UNUSED so people have an idea
->> why it is needed and how it can be removed
->
-> OK, I understand that there is an intention to remove this flag. On our SoC, some clocks are 
-> typically not referenced by any driver, but we don't want them to be turned off. We currently 
-> use CLK_IGNORE_UNUSED to preserve their hardware-default enabled state. Perhaps in the 
-> next version we will replace it with CLK_IS_CRITICAL.
+  Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
 
-CLK_IGNORE_UNUSED and CLK_IS_CRITICAL do not express the same thing both
-equally need to be commented so a few years from now, we are not left
-wondering why this was added.
+are available in the Git repository at:
 
-You do not have a driver for this clock today. The fact you still *need*
-that clock show maybe you should have one and maybe someone, someday,
-will fix this.
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-7.4
 
->
->> 
+for you to fetch changes up to 13634cde9771811488847ef76cd64a785599fdb5:
+
+  clk: samsung: acpm: add Exynos850 support (2026-09-20 17:11:54 +0200)
+
+----------------------------------------------------------------
+Samsung SoC clock drivers changes for v7.4
+
+1. New drivers for a new SoC: Exynos5515.
+2. ACPM driver: add support for Exynos850 (beside existing Google
+   GS101).
+
+----------------------------------------------------------------
+Aiden Isik (3):
+      dt-bindings: clock: Add Exynos5515 SoC
+      clk: samsung: clk-pll: Add support for pll_309
+      clk: samsung: Introduce Exynos5515 clock driver
+
+Alexey Klimov (2):
+      clk: samsung: acpm: introduce driver data for SoC-specific clocks
+      clk: samsung: acpm: add Exynos850 support
+
+ .../bindings/clock/samsung,exynos5515-cmu.yaml     |  145 ++
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-acpm.c                     |   61 +-
+ drivers/clk/samsung/clk-exynos5515.c               | 1484 ++++++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                      |    1 +
+ drivers/clk/samsung/clk-pll.h                      |    1 +
+ include/dt-bindings/clock/samsung,exynos5515-cmu.h |  191 +++
+ 7 files changed, 1878 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos5515-cmu.yaml
+ create mode 100644 drivers/clk/samsung/clk-exynos5515.c
+ create mode 100644 include/dt-bindings/clock/samsung,exynos5515-cmu.h
