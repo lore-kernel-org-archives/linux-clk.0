@@ -1,267 +1,147 @@
-Received: from sender6-op-o12.zoho.com (sender6-op-o12.zoho.com [165.173.180.12])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D21822126C;
-	Mon,  5 Oct 2026 04:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.180.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791175332; cv=pass; b=AVLD3uynFm525cUOAGYAonXbgzNlEThO3qN0GycvJ3MdpP7IwlsiUWDzZeCg7GRN3nOYZotkBbeZO8uETmfL9MwXJEy08n3wfCu1jEPq1pbluRp8WV0oEPjNltAnkDNf3oUFFpL0lmxNcoNqVHBPVzuxa8pCRC8EvvXdD0dVt30=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791175332; c=relaxed/simple;
-	bh=TZxNSZ/fvte5/PVYeZHaRCQtAGAMtGntWtDaIM4Nn40=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=K0jvIFR7MIZYwKpjwudh15IZWm49cSEhBgq0umefbSYkdCEH8bswgbf4wA7HnVoW30aeP3sFblABqEu4ppswXSXdjJAOx4PDCaknl4d847XBIJFjTS3BdO01q6mjDtp7G58vGcUiLprNBmzCqJakYBlX6MIAAiPpYdiNZPtuvrw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=Vlu2rvsu; arc=pass smtp.client-ip=165.173.180.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581BD330D35
+	for <linux-clk@vger.kernel.org>; Mon,  5 Oct 2026 06:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791180415; cv=none; b=Yi3/7IFDvw3KxyiOOMyLZeuOWAS2WPUB1MjoNBzTmW6B4E8AhlCD6FvCj7ArV585QLxWJ4kl1xPXMMJCGm0h5c9UjwU2LXYYjaAwMgaK8GfjUePND/e0tRRNqLoMSORAPuilO1LXSUNsjHbA2SRqpIyKaKLiLhWb6rr7qN+xc7I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791180415; c=relaxed/simple;
+	bh=3SuNTqlRtjw+n0YfunZF2hfFU7ZZIJF/+3S7ngwKu0I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=isFOAm0ARL92ShQu27u7V1/xNT7M+2UdXYEYlgrP8tDkekV4zl/OhSRFKkKsCHK/k81qbI6a7N6QQooBnm6LlDOGFPtLYJ1JNSKC9Wx6RkDUCMIEOzQgvDqEFgSDEeDLEu+HxXdxOXuPqVscd5XUdKUrc9cc5n8sp7i5zsK8KfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mRoSuk/u; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bG9W8uIA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="Vlu2rvsu"
-ARC-Seal: i=1; a=rsa-sha256; t=1791175281; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=AI67L/etDKRXMy/h3C/49dpfgoEQTzxqfRUsfPKNRCeO7jwbUxjXou0t+MSuNygOA5ajn7UVyb2DoAuxBJuPQo5EMuJK7SrCtH2jY2Qgd+lrJ4yBllNuOYZ/+GUNAgLftThDJPrMKOHl9/c2VnaajwKSyV/vlij8ly8f+hf3TWk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1791175281; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=qJFGQKjvbH1HqSDayT62DQ2rPAzEBQdHJkasbzlXbNg=; 
-	b=PDfcLn1BYodAaZUEHZJw2Dd2oDe1yF3nrD0G5arhe66YWaJZUjcH7leENicRbTn0dlYOXdk6L7cIbAsH8rMgs8M1XK6kvxx2NBRc8TjqZNIa4OKM4POx2vRIpuJx3mm8KQ8MxYwGZt38B4nP2gH+hwFjGnl8WVCwK7vVSWpblcU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1791175281;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Date:Message-Id:Message-Id:Cc:Cc:Subject:Subject:From:From:To:To:In-Reply-To:Reply-To;
-	bh=qJFGQKjvbH1HqSDayT62DQ2rPAzEBQdHJkasbzlXbNg=;
-	b=Vlu2rvsuksYEU7h9UlpgeiLM4sV2miSw8nrRHl0jfNGZvoK2wDl80etPsjnuc3aj
-	bOSQvL4WI6A+Vr5cwNPvzu5bDHEvH81Vkn11EIx0PCCYuHdDZQu3Sys8XaANa76iiH+
-	h7bqGLFvsABQvSS9yzOe53P8IJJ/bJWv12anp2Ac=
-Received: by smtp.zohomail.com with SMTPS id 1791175279488549.9267500854362;
-	Sun, 4 Oct 2026 21:41:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mRoSuk/u";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bG9W8uIA"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6951050u1410910
+	for <linux-clk@vger.kernel.org>; Mon, 5 Oct 2026 06:06:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=0JTQmqx/+td
+	m2477yswPyj2KINxreiPb6kUpTysNU3w=; b=mRoSuk/u2RuVZyjPlhZx0n+KjQt
+	dtJvZGwWXpi0PcynLunli5dnVvLnGLsCEgSLcupY2ZC1Vw5h5HytZv1nmSZ8iWpm
+	7btA+RBA5oG0bIMRYIXr+7yusMUg1vjKXN6QOyBotSENu7xxe7/43zMOrfluBhkV
+	uIob3sSo+qYuaPlTD1qAa3WrngfGg+rembdElyJnqfAcIWGeJ1lZHEHAiAedoHq7
+	zbmPx8VO2mVedoG0hBgCbM9y9QndbWEhjJJ8fCl1ytV9vNoZZvz+0BPT1MqblzjI
+	rehXYzPsf6SdyOIGr5NAPrgoFoGNqokzRYcDu9LNJ2LVaMCyEUzmdDFNoYw==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h2sr6cp2h-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 05 Oct 2026 06:06:53 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2d7443e0f0bso25372385ad.1
+        for <linux-clk@vger.kernel.org>; Sun, 04 Oct 2026 23:06:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1791180413; x=1791785213; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=0JTQmqx/+tdm2477yswPyj2KINxreiPb6kUpTysNU3w=;
+        b=bG9W8uIApE4WV5SXVIi9pMVqN4PBOH1PPt65eqn6RNw8HgmF38GTdN0ACuz+2GcLtf
+         qaIPBH6ebv3V8UNg8pAT11Bg4KHTcaws2yGVkziTEmbZnXRqPcRIsByiMjtP9BNnJJ0a
+         UVjijGYUymZNo5M2ZHRJ6Q0s7vwO6PhGJu+BiXdkLUDJv2rvkdgEIdfJA+G3fwWp4y+H
+         94UPFwgUENhPzFlp3vvGtua9acypJdMJe0ZgNdjfsqDR/9U+Ugcw9Rsz6r8uBq9Uom+O
+         1rjKrdsyDgAuBOrfSfHYv26QGlSxEAVojWy+kU4FcALnZeudjznJs2sxu91HoZ0TfyOy
+         6i8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791180413; x=1791785213;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=0JTQmqx/+tdm2477yswPyj2KINxreiPb6kUpTysNU3w=;
+        b=o6AeQyLruRZ34Wmaeg26F42LJ/uc142JxPbrjGLNPWvcR+xXJVq15Ke1Q3C13iMbvW
+         x7aQCH55+MTg2oSP9VBXIqCSZTh1vTpHA0uKsXvqWXufxaGm0/hBOz4Azsaekw9raVey
+         ra+lkYKmrjSOyZdXrWO+5oKXi3TtYtPHiGy/hu6eu5V/KEiXximjcawFCN7KVqqomnuE
+         KLEXrJfhbPgrMVryYxOqIwi9M2lTrkVM710nt12Mev4Oj5y5KLVBeZrojQsw+JHazA6v
+         tGXYOMjAjy2mF+tRxKA+rl+YYMi+9XC4GStfXvWard5fWW/MkDDw8rchQ5LLHpABWOAd
+         q3PQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxVnBzggxJYLJdP0AhEKb7b1c2HQxBGi32KoWtJ0HpHQ74amY4JVIupv/efKWuZCtjt3W5dALUeURM=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLe8XPlZV8HYpBHjjvK0nmslndacUjsMgtidelP2HCTMSFeCdZt
+	v1zcPdyT8Sh5urqwpXQGP/hvGNQsemEZPANRzPC3q1Quhex8wW2XYh0iCFJGBaoMXL3BIy1Ouwl
+	WKzw+T7NI7E0jddycNwDYsWmA/zP7tIR66iyfyGBWji1TIWmMkCQJJClrl/4xE0DP0VzJjoo=
+X-Gm-Gg: AYBFou0SJuV7sTyNsFWetwmWf+7dRod9wPTOLn3RjCwANmWpp+Pw06T9kE6Ne0jSNGd
+	NacIQuLFbCHPGblcvGlbwgCF7DjBkcpizLoBTwUCQE9fRBMP/0REo0pM2DNOCS1MykixSXtFEtv
+	PV8a2lhJSWr7w1fCKBnHADANBwUY8wKWoZgxWH3uoFRO4mTT07FHXzn+c+i7SajxjJOTDtTV23X
+	P2rdIq5502CrJbXB5N7rEgy6vIafW/ZRP0rC94ujQICUqr7ekeHsyx1dHZaKVac1zjapyMOSTgL
+	lysPxu2dzbis0a9B3uoCVL98hRyA5wb5iQwikCK5WBikrYm0dAJLM/Z0vTSyJXuePpdeJkp9Jh7
+	RD55rkTAzFl+1BfSY9tFCncZ3WHmh
+X-Received: by 2002:a17:903:1209:b0:2dd:c100:a5df with SMTP id d9443c01a7336-2e49b67e212mr86070225ad.51.1791180412962;
+        Sun, 04 Oct 2026 23:06:52 -0700 (PDT)
+X-Received: by 2002:a17:903:1209:b0:2dd:c100:a5df with SMTP id d9443c01a7336-2e49b67e212mr86070065ad.51.1791180412515;
+        Sun, 04 Oct 2026 23:06:52 -0700 (PDT)
+Received: from hu-nandam-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e5a5cae104sm2455035ad.21.2026.10.04.23.06.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Oct 2026 23:06:52 -0700 (PDT)
+From: Ajay Kumar Nandam <ajay.nandam@oss.qualcomm.com>
+To: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+Cc: Ajay Kumar Nandam <ajay.nandam@oss.qualcomm.com>, andersson@kernel.org,
+        abelvesa@kernel.org, sboyd@kernel.org, bmasney+clk@redhat.com,
+        jbrunet+clk@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, srinivas.kandagatla@oss.qualcomm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        prasad.kumpatla@oss.qualcomm.com
+Subject: Re: [PATCH v10 2/2] clk: qcom: Add LPASS VA CSR heartbeat pulse clock
+Date: Mon,  5 Oct 2026 11:36:30 +0530
+Message-Id: <20261005060630.3323963-1-ajay.nandam@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260930-master-v10-2-105207bc5275@oss.qualcomm.com>
+References: <20260930-master-v10-0-105207bc5275@oss.qualcomm.com> <20260930-master-v10-2-105207bc5275@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 05 Oct 2026 12:41:10 +0800
-Message-Id: <DLWMN3TYBP9F.3N62QFP7QEE9U@pigmoral.tech>
-Cc: "Stephen Boyd" <sboyd@kernel.org>, "Brian Masney"
- <bmasney+clk@redhat.com>, "Jerome Brunet" <jbrunet+clk@baylibre.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Jernej Skrabec"
- <jernej.skrabec@gmail.com>, "Samuel Holland" <samuel@sholland.org>,
- "Philipp Zabel" <p.zabel@pengutronix.de>, "Paul Walmsley" <pjw@kernel.org>,
- "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
- "Alexandre Ghiti" <alex@ghiti.fr>, "Richard Cochran"
- <richardcochran@gmail.com>, <linux-clk@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>, <netdev@vger.kernel.org>, "Jerome
- Brunet" <jbrunet@baylibre.com>, "Enzo Adriano"
- <enzo.adriano.code@gmail.com>, "Andre Przywara" <andre.przywara@arm.com>
-Subject: Re: [PATCH v5 7/8] clk: sunxi-ng: a733: Add bus clock gates
-From: "Junhui Liu" <junhui.liu@pigmoral.tech>
-To: <wens@kernel.org>, "Junhui Liu" <junhui.liu@pigmoral.tech>
-X-Mailer: aerc 0.22.0
-References: <20260930-a733-clk-v5-0-11175b41cd2d@pigmoral.tech>
- <20260930-a733-clk-v5-7-11175b41cd2d@pigmoral.tech>
- <CAGb2v65Lqo7NiFhc2GYdfY7+jkC4Y+p6=Zy85HOFmXJzT0u1fg@mail.gmail.com>
-In-Reply-To: <CAGb2v65Lqo7NiFhc2GYdfY7+jkC4Y+p6=Zy85HOFmXJzT0u1fg@mail.gmail.com>
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA1MDAyNCBTYWx0ZWRfX/BwIcl63Oc0s
+ 9tMdein76nCCdLxc+qIez/dNJIC33dDes9ZmHWbdfHbqXcM2U1r4Bn3i1sP76eEhqWyv0hZE7FU
+ 0ywPUfzRErSGIHBXMTIBpncB5dtMRx0=
+X-Authority-Analysis: v=2.4 cv=NaBzRGD4 c=1 sm=1 tr=0 ts=6ac33e7d cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=X3mpNT67QEWHydoHx2sA:9
+ a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-GUID: hx3VyuMntCXjK8dLY_zrpb1SWg3Kp8va
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA1MDAyNCBTYWx0ZWRfX/ZUULpi7L7ci
+ H5rm3IF7Z6zNh64Zha0NMRHbvsu2MRbCGET6cNKPwoEhigvM7VZV4Y4IZUxeIOPoucB0iuKghfL
+ O3SJV6aJW4rr6va0NARLhTalNSRe+XkrKEOb6Pu6vBQ6kS22ka13JQy1Np0glZIWaTykGhs5Jw2
+ GOx09Wib1tKSc0guIcrJXtu/Bix3QGc8uQ46tTWfG1J3PIRFbjjEK++Jfe1E96Zpi8IAQVSRWQS
+ QwgB6ix82fQ2bUnpWaaODEG6KTW9Y5gXooCE8wqVCdg5/4aVFYFErdSXAY2Fn8r1DBykCMfoyTo
+ fDepnOUYXNe0iK/a39pUfGyUADBpUC9YIZzvLvHLKxpFZzOlLEuOKSHW4YEehFmDR2FOHSieyOg
+ fpBOrSv1ks2n5eEUZNhGd8fWtjqhovsoZf30ETY6kmCmOObRuIvWI7PoOmo+LGxFPlCC+5NKdS4
+ Lwlx0zFTMjsCMfwh5Ew==
+X-Proofpoint-ORIG-GUID: hx3VyuMntCXjK8dLY_zrpb1SWg3Kp8va
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-05_01,2026-10-02_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 impostorscore=0 malwarescore=0 spamscore=0
+ lowpriorityscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
+ clxscore=1011 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2609040000
+ definitions=main-2610050024
 
-Hi Chen-Yu,
+> +static int lpass_va_csr_hb_prepare(struct clk_hw *hw)
+> +{
+> +	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
+> +
+> +	return pm_runtime_resume_and_get(csr->dev);
+> +}
 
-On Sun Oct 4, 2026 at 7:03 PM CST, Chen-Yu Tsai wrote:
-> On Tue, Sep 29, 2026 at 7:28=E2=80=AFPM Junhui Liu <junhui.liu@pigmoral.t=
-ech> wrote:
->>
->> Add the bus clock gates that control access to the devices' register
->> interface on the Allwinner A733 SoC. These clocks are typically
->> single-bit controls in the BGR registers, covering UARTs, SPI, I2C, and
->> various multimedia engines. It also includes bus gates for system
->> components like the IOMMU and MSI-lite interfaces.
->>
->> Also mark the ahb-store, mbus-store and ahb-cpus clocks as critical.
->> Disabling either store gate breaks access to boot/storage devices such
->> as MMC and SPI NOR, while gating ahb-cpus hangs any access to the CPUS
->> power domain registers when unused clocks are disabled.
->>
->> Tested-by: Jerome Brunet <jbrunet@baylibre.com>
->> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
->> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
->> ---
->>  drivers/clk/sunxi-ng/ccu-sun60i-a733.c | 492 ++++++++++++++++++++++++++=
-++++++-
->>  1 file changed, 491 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-=
-ng/ccu-sun60i-a733.c
->> index 1b2d4d36ec4c..b077e5d2f32c 100644
->> --- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
->> +++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
->> @@ -4,6 +4,10 @@
->>   * Copyright (C) 2026 Junhui Liu <junhui.liu@pigmoral.tech>
->>   * Based on the A523 CCU driver:
->>   *   Copyright (C) 2023-2024 Arm Ltd.
->> + *
->> + * TODO: The real parents of some bus gates, including its-pcie0-aclk,
->> + * msi-lite, npu, ufs, sgpio, lpc and i2spcm, are not documented in the
->> + * manual. For now, follow the vendor BSP, which keeps them on hosc.
->>   */
->
-> [...]
->
->> @@ -510,9 +522,118 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE_FEAT(mbus_cl=
-k, "mbus", mbus_parents, 0x588
->>                                            BIT(31),     /* gate */
->>                                            CLK_IS_CRITICAL,
->>                                            CCU_FEATURE_UPDATE_BIT);
->> +static const struct clk_hw *mbus_hws[] =3D { &mbus_clk.common.hw };
->> +
->> +static SUNXI_CCU_GATE_HWS(mbus_iommu0_sys_clk, "mbus-iommu0-sys", mbus_=
-hws, 0x58c, BIT(0), 0);
->> +static SUNXI_CCU_GATE_HWS(apb_iommu0_sys_clk, "apb-iommu0-sys", apb0_hw=
-s, 0x58c, BIT(1), 0);
->> +static SUNXI_CCU_GATE_HWS(ahb_iommu0_sys_clk, "ahb-iommu0-sys", ahb_hws=
-, 0x58c, BIT(2), 0);
->> +
->> +static SUNXI_CCU_GATE_DATA(bus_msi_lite0_clk, "bus-msi-lite0", hosc, 0x=
-594, BIT(0), 0);
->> +static SUNXI_CCU_GATE_DATA(bus_msi_lite1_clk, "bus-msi-lite1", hosc, 0x=
-59c, BIT(0), 0);
->> +static SUNXI_CCU_GATE_DATA(bus_msi_lite2_clk, "bus-msi-lite2", hosc, 0x=
-5a4, BIT(0), 0);
->> +
->> +static SUNXI_CCU_GATE_HWS(mbus_iommu1_sys_clk, "mbus-iommu1-sys", mbus_=
-hws, 0x5b4, BIT(0), 0);
->> +static SUNXI_CCU_GATE_HWS(apb_iommu1_sys_clk, "apb-iommu1-sys", apb0_hw=
-s, 0x5b4, BIT(1), 0);
->> +static SUNXI_CCU_GATE_HWS(ahb_iommu1_sys_clk, "ahb-iommu1-sys", ahb_hws=
-, 0x5b4, BIT(2), 0);
->
->> +static SUNXI_CCU_GATE_HWS(ahb_ve_dec_clk, "ahb-ve-dec", ahb_hws,
->> +                         0x5c0, BIT(0), 0);
->> +static SUNXI_CCU_GATE_HWS(ahb_ve_enc_clk, "ahb-ve-enc", ahb_hws,
->> +                         0x5c0, BIT(1), 0);
->> +static SUNXI_CCU_GATE_HWS(ahb_vid_in_clk, "ahb-vid-in", ahb_hws,
->> +                         0x5c0, BIT(2), 0);
->> +static SUNXI_CCU_GATE_HWS(ahb_vid_cout0_clk, "ahb-vid-cout0", ahb_hws,
->> +                         0x5c0, BIT(3), 0);
->> +static SUNXI_CCU_GATE_HWS(ahb_vid_cout1_clk, "ahb-vid-cout1", ahb_hws,
->> +                         0x5c0, BIT(4), 0);
->> +static SUNXI_CCU_GATE_HWS(ahb_de_clk, "ahb-de", ahb_hws,
->> +                         0x5c0, BIT(5), 0);
->> +static SUNXI_CCU_GATE_HWS(ahb_npu_clk, "ahb-npu", ahb_hws,
->> +                         0x5c0, BIT(6), 0);
->> +static SUNXI_CCU_GATE_HWS(ahb_gpu0_clk, "ahb-gpu0", ahb_hws,
->> +                         0x5c0, BIT(7), 0);
->> +static SUNXI_CCU_GATE_HWS(ahb_serdes_clk, "ahb-serdes", ahb_hws,
->> +                         0x5c0, BIT(8), 0);
->> +static SUNXI_CCU_GATE_HWS(ahb_usb_sys_clk, "ahb-usb-sys", ahb_hws,
->> +                         0x5c0, BIT(9), 0);
->> +static SUNXI_CCU_GATE_HWS(ahb_msi_lite0_clk, "ahb-msi-lite0", ahb_hws,
->> +                         0x5c0, BIT(16), 0);
->> +static SUNXI_CCU_GATE_HWS(ahb_store_clk, "ahb-store", ahb_hws,
->> +                         0x5c0, BIT(24), CLK_IS_CRITICAL);
->> +static SUNXI_CCU_GATE_HWS(ahb_cpus_clk, "ahb-cpus", ahb_hws,
->> +                         0x5c0, BIT(28), CLK_IS_CRITICAL);
->
-> I suspect these refer to a AHB-AHB bridge for the various subsystems show=
-n
-> in the memory map. That would explain why when the "ahb-store" clock is
-> gated, the storage bits stop working.
->
-> If that's the case, we should describe it as the parent of each storage
-> peripheral bus gate's parent. Same would go for the other types. I haven'=
-t
-> checked what the BSP does though.
+Since this clock is registered with devm_clk_register_regmap(dev, ...)
+after devm_pm_runtime_enable(dev), the clock core should already mark the
+provider as runtime-PM managed and take a provider PM reference in
+clk_core_prepare() before calling the clock's .prepare callback. It also
+drops that reference after .unprepare.
 
-As Norman mentioned in his reply, the vendor BSP also does not model
-this hierarchy and instead models these gates as independent clocks
-parented to the oscillator. The manual does not describe the hierarchy
-either, so I don't think we have enough information to model it
-differently at this point.
-
-I will add comments explaining why ahb_store_clk, mbus_store_clk, and
-ahb_cpus_clk are marked critical.
-
->
->> +static SUNXI_CCU_GATE_HWS(mbus_iommu0_clk, "mbus-iommu0", mbus_hws,
->> +                         0x5e0, BIT(0), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_iommu1_clk, "mbus-iommu1", mbus_hws,
->> +                         0x5e0, BIT(1), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_desys_clk, "mbus-desys", mbus_hws,
->> +                         0x5e0, BIT(11), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_ve_enc0_gate_clk, "mbus-ve-enc0-gate", m=
-bus_hws,
->> +                         0x5e0, BIT(12), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_ve_dec0_gate_clk, "mbus-ve-dec0-gate", m=
-bus_hws,
->> +                         0x5e0, BIT(14), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_gpu0_clk, "mbus-gpu0", mbus_hws,
->> +                         0x5e0, BIT(16), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_npu_clk, "mbus-npu", mbus_hws,
->> +                         0x5e0, BIT(18), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_vid_in_clk, "mbus-vid-in", mbus_hws,
->> +                         0x5e0, BIT(24), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_serdes_clk, "mbus-serdes", mbus_hws,
->> +                         0x5e0, BIT(28), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_msi_lite0_clk, "mbus-msi-lite0", mbus_hw=
-s,
->> +                         0x5e0, BIT(29), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_store_clk, "mbus-store", mbus_hws,
->> +                         0x5e0, BIT(30), CLK_IS_CRITICAL);
->
-> Same thing for the MBUS clocks.
->
->> +static SUNXI_CCU_GATE_HWS(mbus_msi_lite2_clk, "mbus-msi-lite2", mbus_hw=
-s,
->> +                         0x5e0, BIT(31), 0);
->> +
->> +static SUNXI_CCU_GATE_HWS(mbus_dma0_clk, "mbus-dma0", mbus_hws,
->> +                         0x5e4, BIT(0), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_ve_enc0_clk, "mbus-ve-enc0", mbus_hws,
->> +                         0x5e4, BIT(1), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_ce_clk, "mbus-ce", mbus_hws,
->> +                         0x5e4, BIT(2), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_dma1_clk, "mbus-dma1", mbus_hws,
->> +                         0x5e4, BIT(3), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_nand_clk, "mbus-nand", mbus_hws,
->> +                         0x5e4, BIT(5), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_csi_clk, "mbus-csi", mbus_hws,
->> +                         0x5e4, BIT(8), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_isp_clk, "mbus-isp", mbus_hws,
->> +                         0x5e4, BIT(9), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_gmac0_clk, "mbus-gmac0", mbus_hws,
->> +                         0x5e4, BIT(11), 0);
->> +/* Undocumented, taken from the vendor kernel. */
->> +static SUNXI_CCU_GATE_HWS(mbus_gmac1_clk, "mbus-gmac1", mbus_hws,
->> +                         0x5e4, BIT(12), 0);
->> +static SUNXI_CCU_GATE_HWS(mbus_ve_dec0_clk, "mbus-ve-dec0", mbus_hws,
->> +                         0x5e4, BIT(18), 0);
->
-> [...]
->
-> The remaining definitions look correct (minus the vendor BSP ones which I
-> couldn't check at this time).
->
-> I didn't check the clock list additions.
->
-> Consider this
->
-> Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
->
-
-Thanks!
-
->
-> We can change the AHB / MBUS clock parents later if we do figure it out.
->
->
-> ChenYu
-
---=20
-Best regards,
-Junhui Liu
-
+So this explicit pm_runtime_resume_and_get()/pm_runtime_put_sync() pair
+looks like it double-counts the same provider device rather than adding new
+protection for the regmap gate ops. Is the extra reference intentional here?
+If not, the custom prepare/unprepare callbacks could probably be dropped and
+the driver could rely on the clock core's provider runtime-PM handling.
