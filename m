@@ -1,143 +1,132 @@
-Received: from mail-wr2-f33.google.com (mail-wr2-f33.google.com [74.125.225.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE0C37B020
-	for <linux-clk@vger.kernel.org>; Mon,  5 Oct 2026 12:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57742494805;
+	Mon,  5 Oct 2026 14:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791203709; cv=none; b=sJEfjjEstSRAhH4RaOif0FhpJBovPPUJ/xZMT/vY/tPCqcd4o4foP4g7aVIBZhSieVpE92n3QVNzlyB+UkRdW49Z2yqUqmpaxxUYUh0jiM4H8PE9X8z56VBywzlj3V5Rko2qWuGwuvZyHEleRFyfSTVDcagtL2McXaB8oT+RpFg=
+	t=1791208828; cv=none; b=Fq59kSst0yL2hGcavFgC8DFuEuzp4d40yYhJksR9PyIdbnYtlZhXQyYR5AUpaOklDH9dpIP9MKQoGbHdqs5Qwbad5kihU5mXFEyq/nQtrwasVgvpAFWURKIfe3gWwdDPbYO/L6/KTpcmbomwaJccRwJb6/9rgKHqM6U4IxJnksM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791203709; c=relaxed/simple;
-	bh=GjpLzScGvDT5+IF4EJ/jQV9Td5tyjYNGeOCPSv5ZJso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NWV+rcK+stFk/wyL8O1ejGH60HhTX9+lTlgNDY5cHSB+ljt7nruX7x4IVyV0r+QT50QD+jc/RekUfjV9aFwsgtvBXdSneS0+Wqp+FicfkDXxYFcgKIlwF7UVKGgFU8pL2M1zaGvAylxHeyI9HdPS0jQG4/bk8Br7q/ew8douKVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nvxrct9e; arc=none smtp.client-ip=74.125.225.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nvxrct9e"
-Received: by mail-wr2-f33.google.com with SMTP id ffacd0b85a97d-48b0fc598f8so1019590f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 05 Oct 2026 05:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1791203707; x=1791808507; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=MtOkhtouXdYxuMzn6oEg118/G/+iHWMuCiEVkeqGr/E=;
-        b=nvxrct9eEUPc/BpyE8YSa5TzfhT+r4AvgpD2r4QT3A3o1XEgVXuustr2Wqd5FMDF3f
-         kevV4J6cAeCTZq7LOv4jUdY5L1s3aGCS5K4Zj7j2/fTxq5iqFE7GaPC13JKT6LE4Qfe2
-         kuIGeFIttRvjk6X7GOqw4zgARwRMDgwjhdR9vOQQTv5cDuMhIlBWfpPnCH/Hn8cTGoFv
-         XLpAMkTOgMbLkOyctgaA4sAuluXJglrmEYCyHJArOvBe5ApAiiqZd0K9TJB+4vDOdQHV
-         Q20DIYn2WkCF3aqUTgnOnNjpI8qQC91pLnWag3+O7IYs/gg7pZYvcW+nvUgxr2SNE7Jz
-         o6hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791203707; x=1791808507;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=MtOkhtouXdYxuMzn6oEg118/G/+iHWMuCiEVkeqGr/E=;
-        b=zHIgFnf8hBEfNY695dDAKEAJVk76iA7iDb0+kHhZVCUqGnkPMRdTgSydtI08Hf/jWJ
-         dCL8YElccsKYy15TRqyEAMv8SdlL1wTR970Gnj8G+ZN4ISIzJonWkZhXRshLhM3hd8mg
-         Feq9tJW/htXZzOod80XopK0UazxfpMwvFOfu7k9wT6K8iBSHcfW2qUhdFPLlxIVpdvJj
-         L+v9ZbSakt1D67C28tvVMrfMWIcRG+payyTS0wzACCGO2h1XSGWfaNcIC4QW7cuBlqe1
-         oliNt5CcjfVB71c5Gn1vwCaTfdlfl7ItrY4V2aQlDm7jZbe5vTjc9smWG9lK5lrNGWH2
-         A+YA==
-X-Forwarded-Encrypted: i=1; AKwUvBy978CuFAdYbmr5Tyh26xW599IdsXqhq3vHtiWVf8AzQLdl8iTBjD3DpiZbIGjbHSlwnlb84km1KLw=@vger.kernel.org
-X-Gm-Message-State: AFuF++nLjGVnkXe0kUYKWJmBMm0h5SFIwJads5glwegLG4zTQsk74WtF
-	eDJ1SRKIAaaoqg0k7r7Tct1ZXg2Wnzh7UJfG+T36VnDjLQdc0J7/Cp1739sAy/4JQq8=
-X-Gm-Gg: AYBFou1/WoiBuybu7qMkYOrdU5tDqhhdvuWi5EnTDcjecrDvCGgX1HSyWhd3oDo7V51
-	gFr6hjNP04tLsfE/sldeIJjTV7UnDtWvOE+NVwtXWI8hnbTOYAjpkE3CCSfOLO7Pa1NRXk2xxEs
-	3NY05ZOPOoxnylkwSSinUye56zpBV7Aef6VYs5TWdNy9YloP5/KUj8N9rUDcmwh4bSXmi/lnn1z
-	HE8qSPtSqhOnr4NngWHXwTmlCC3XMHVYvXPzYOLaC2/5err6eIglIVupq/C+tpNzvMm2nAUHuKl
-	7Ibv1476CZtaKu9WxBd+6lMIP1MIJKEMXMIRsEmuC/Byi0ZOqtC48G54LkaANc7Y46etx5VyN9+
-	+tJNY8vYw+/u8Said4TieG+BpotAuSv3BD/YEq20JQMPhZuO9RIq2UhXiDRkkXuwsYFGvK8WNh+
-	P1rfA2THakQeFX2vgwqACKkAFp6LP3Y+mnRpLBLB7aUBxfvqadngba1RYiABBi8wAs9dyZX3j14
-	Ky1QPoZbJs=
-X-Received: by 2002:a05:600c:1f8f:b0:49d:1df6:2592 with SMTP id 5b1f17b1804b1-4a027698a2fmr183289125e9.21.1791203706473;
-        Mon, 05 Oct 2026 05:35:06 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff25:4f41:ec49:36a8:7075:6d05])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a166bfaf73sm169425895e9.4.2026.10.05.05.35.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2026 05:35:06 -0700 (PDT)
-Date: Mon, 5 Oct 2026 14:35:01 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: smd-rpm: Skip proxy votes on clocks for
- QCM2290
-Message-ID: <asOZdcWpfEtEm-5X@linaro.org>
-References: <20260910-clk-smd-rpm-skip-proxy-v1-1-1cb5694a99d9@oss.qualcomm.com>
- <dab99b27-ebc2-477e-b56a-26250aceee23@oss.qualcomm.com>
- <ad4aff4f-2d66-425a-a358-6cefaaa1319e@oss.qualcomm.com>
- <bbf2e7e8-42cf-4146-a2ec-b5182a161109@oss.qualcomm.com>
+	s=arc-20240116; t=1791208828; c=relaxed/simple;
+	bh=ZX5xUToHuWaNOd+bCaQzYXpRy+E8h/GxkuOaBVGHj2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uzp3QYWlQ+RQTv1PfIEDNvVXtUo6z7q6zfPuxCwM5re+hkCyCA5zx5GKUETs3mQPs7L9J0w9prxDk0CQrscUR/XxwRZ5LRlb453tMtDTUDYTcW++hHm0iHPlgVgGIAkXZlmf77PD8UpBhix7z3Yk2YmxjscXQvPxU/SoEzQzQmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.helo=mail.mainlining.org; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.helo=mail.mainlining.org
+Message-ID: <e590764c-1ef7-4166-9c2d-a96a89029736@mainlining.org>
+Date: Mon, 5 Oct 2026 17:00:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bbf2e7e8-42cf-4146-a2ec-b5182a161109@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/19] Add Initial Support For MSM8952, Add General
+ Mobile Shamrock
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
+ Ulf Hansson <ulfh@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Lee Jones <lee@kernel.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Robert Marko <robimarko@gmail.com>, Guru Das Srinagesh <linux@gurudas.dev>,
+ Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Kees Cook <kees@kernel.org>,
+ Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
+ <gpiccoli@igalia.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ David Heidelberg <david@ixit.cz>, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, iommu@lists.linux.dev, mfd@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org,
+ linux-input@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Abel Vesa <abel.vesa@oss.qualcomm.com>
+References: <20260921-msm8952-initial-support-v3-0-b96fd3fe298b@mainlining.org>
+ <179098834078.3641559.798772743228949994.b4-ty@b4>
+From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+Content-Language: en-US
+In-Reply-To: <179098834078.3641559.798772743228949994.b4-ty@b4>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 21, 2026 at 10:53:40AM +0200, Konrad Dybcio wrote:
-> On 9/16/26 1:05 PM, Imran Shaik wrote:
-> > 
-> > 
-> > On 11-09-2026 02:36 pm, Konrad Dybcio wrote:
-> >> On 9/10/26 3:44 PM, Imran Shaik wrote:
-> >>> clk_smd_rpm_handoff() votes both active and sleep RPM resource states for
-> >>> every clock, keeping them non-zero until a consumer takes over. If there
-> >>> is no consumer, those clocks will remain active in the idle scenario as
-> >>> well, and the sleep vote is never cleared, blocking XO shutdown.
-> >>>
-> >>> Introduce the skip_clks_handoff flag to handle this on QCM2290 clocks,
-> >>> keeping other targets unaffected.
-> >>>
-> >>> Fixes: 00f64b58874e ("clk: qcom: Add support for SMD-RPM Clocks")
-> >>> Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
-> >>> ---
-> >>
-> >> Are you booting with clk_ignore_unused?
-> >>
-> > 
-> > No Konrad, clk_ignore_unused is not present.
-> > 
-> > Irrespective of clk_ignore_unused, the proxy votes are placed to RPM
-> > during handoff. If no consumer takes over, those votes remain active,
-> > keeping the resource ON in idle and preventing XO shutdown.
+On Sat,  3 Oct 2026 03:46:52 +0300, Dmitry Baryshkov wrote:
+> On Mon, 21 Sep 2026 21:18:51 +0300, Muzaffer Kadir wrote:
+>> MSM8952 is a SoC with 8 core cpu and Adreno 405 gpu.
+>>
+>> Ported without uart connection. ramoops and usb
+>> mainly used to debug.
+>> USB is not enabled in this series because it
+>> depends on the not yet upstreamed (and not developed by me)
+>> pmi8950_smbcharger.
+>>
+>> [...]
 > 
-> I re-read this and yeah you're right
+> Applied to ttt, thanks!
 > 
-> Is the handoff functionality necessary at all for non-icc clocks?
-> I'm suspecting that this was just a port of the ancient msm-3.10
-> logic where the (modified) clock framework had a handoff mechanism
-> similar to today's sync_state, except the toning-down of these
-> clocks was never added
-> 
+> [01/19] dt-bindings: clock: qcom: Add MSM8952 global clock controller
+>         (no commit info)
+> [02/19] clk: qcom: Add global clock controller driver for MSM8952
+>         (no commit info)
+> [03/19] dt-bindings: nvmem: Add compatible for MSM8952
+>         (no commit info)
+> [04/19] dt-bindings: power: rpmpd: Add MSM8952 power domains
+>         (no commit info)
+> [05/19] dt-bindings: mmc: sdhci-msm: Add MSM8952 compatible
+>         (no commit info)
+> [06/19] dt-bindings: vendor-prefixes: Add General Mobile
+>         (no commit info)
+> [07/19] dt-bindings: arm: qcom: Document MSM8952 SoC binding
+>         (no commit info)
+> [08/19] dt-bindings: iommu: qcom,iommu: Add MSM8952 IOMMU to SMMUv2 compatibles
+>         (no commit info)
+> [09/19] dt-bindings: mfd: qcom,tcsr: Add compatible for MSM8952
+>         (no commit info)
+> [10/19] dt-bindings: display/msm: qcom, mdp5: Add MSM8952 compatible
+>         https://gitlab.freedesktop.org/lumag/msm/-/commit/df6ce9e6447e
+> [11/19] dt-bindings: firmware: qcom,scm: Document MSM8952 SCM
+>         (no commit info)
+> [12/19] dt-bindings: clock: qcom,rpmcc: Add MSM8952 compatible
+>         (no commit info)
+> [13/19] drm: msm: mdp5: Add MDP5 configuration for MSM8952
+>         https://gitlab.freedesktop.org/lumag/msm/-/commit/7af226f9aa59
+> [14/19] soc: qcom: ubwc: Add UBWC config for MSM8952
+>         (no commit info)
+> [15/19] dt-bindings: thermal: tsens: Add MSM8952
+>         (no commit info)
+> [16/19] thermal: qcom: tsens: Add support for MSM8952 tsens
+>         (no commit info)
+> [17/19] arm64: dts: qcom: Add initial support for MSM8952
+>         (no commit info)
+> [18/19] dt-bindings: input: touchscreen: goodix: Add binding for GT970
+>         (no commit info)
+> [19/19] arm64: dts: qcom: generalmobile-shamrock: new device
+>         (no commit info)
 
-The purpose of the handoff functionality is to sync the RPM vote state
-with the Linux vote state. Since we don't have any "read status"
-implemented, we do need to make a vote for every RPM clock to guarantee
-it is in the expected state.
+Hi Dmitry,
 
-Simply skipping the proxy/handover votes does not fully solve the
-problem, since you will still leave unused clocks enabled by the boot
-firmware always-on.
+Thanks for accepting MDP5 patches.
 
-I don't think we need to force on all clocks though, we could probably
-also unconditionally send a "disable clock" after sync_state (once/if
-the clock unused cleanup is actually managed by sync_state).
+The message lists all 19 patches, but only 10 and 13 have commit
+links, the rest say "(no commit info)". Does this mean the whole
+series was applied, or only the MDP5 ones?
 
-Thanks,
-Stephan
+Best regards,
+Muzaffer Kadir
+
