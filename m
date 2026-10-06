@@ -1,33 +1,37 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from sm24.hosting.reg.ru (sm24.hosting.reg.ru [31.31.198.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFEC4718F4;
-	Tue,  6 Oct 2026 16:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4E438B131;
+	Tue,  6 Oct 2026 22:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=31.31.198.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791302606; cv=none; b=JwblG582iJEDkC9XBWJsblUciWOF7jIJo4tCDwOrCRShiG7HFoWnKqiovb8UoMWq6oUSAbgPjGJLDEYUrXTwv1WkE6e3pk2+Oe7Jfl0iDSJHWkpjtWFUOjv1/pgQjqznNa76UkdAStxOC+7Mntm+zeDJIPZ7dg6NBOnvzojmawQ=
+	t=1791324018; cv=none; b=TcTuHreRu0uG0zwWm5dM7uH2CiRGiyhKvyb+nOvqdBUkjv61FFp5/sJoX+HCtLAnxq9X897hYhasvfSTcBfOgZC91hYHI4qhZju8x8n+pwBkOsn/Uslag11l1F99bC2Bel11aEb1QQIS5RMCgkNiWw/I4Hl0edy8fYCIRoYcgL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791302606; c=relaxed/simple;
-	bh=Km70Z2q6Wl3WNPJHaiSPI9AfYGdfVOw9gkHt2B6+Rfc=;
+	s=arc-20240116; t=1791324018; c=relaxed/simple;
+	bh=o45QKyA7wp46WIeYrWSgR+1Uye74TRLCFeWZcUyDtKg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tXkl7QOFMjaNVVTJiO9OCf2TXlwgkWhBqGeW7DJIEvD8KIJy63729c4Mk/8nsrBmWnIhK4ujK05QY5InHQLF6r41hYZ8ckidQrEVXUtUY45q2j9xR/Mfm0cUEQkgyt/Y0Yh450g3DvmN6O06G1P+/eUE38CwEbIfYDfsPRZQj8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cI6f48k2; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=cVXjH/TjnxiiXc+KxJY5enlQszdg/0hxfYWD92g2iFeIAV68hd8EXzHu7HMLtM59NQApcAty3Z6ECOHw1uMJfUMTbAalA1KluuDeLArEZYLLkj25lOQaOOpS29f+XqGSXaVculINOA1momlAJlJs7s22uM7KpfDwmGaytv6LRWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minlexx.ru; spf=none smtp.mailfrom=minlexx.ru; dkim=pass (1024-bit key) header.d=minlexx.ru header.i=@minlexx.ru header.b=CU06wOUZ; arc=none smtp.client-ip=31.31.198.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minlexx.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minlexx.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cI6f48k2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C2281F0089E;
-	Tue,  6 Oct 2026 16:03:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791302605;
-	bh=pag7ec08sf7H4imvEPV/grARicGzKhyFVyc+ZIA/s7A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=cI6f48k21Pos7Jebeyj6Y1mcBgrcdPoLlVktj3nLKqxukD8+NpbAMUtC+OwcDRRyi
-	 w+Ppq8nXgoGGAsx1KGLqf9O999FSB+xVcMG3IwsmQC0wKcWPzUVmWcdR1R7yteAG/K
-	 EDnKmfvU2/ShyLxSXq1eE0bKQJ/ku0maSLqD+ptg6MzgVzSDtibHoF+Sxzcl5DC5O1
-	 J/UrkGYw128fohHMODMKVqQRg7W6JhP2SMNcqUq7gfWwivY6bHQ4CQK58kXV6L487l
-	 CiY2BLl+Wwc2M4Zk/tyWYlIhv80UuWGTVld4rDrS2uKEVolRftW1e0cQeYhaMGd6cg
-	 5ppkHzEvnYgxA==
-Message-ID: <f7d0ef63-3d8c-4e1b-b346-81500ee64046@kernel.org>
-Date: Tue, 6 Oct 2026 18:03:17 +0200
+	dkim=pass (1024-bit key) header.d=minlexx.ru header.i=@minlexx.ru header.b="CU06wOUZ"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=minlexx.ru;
+	s=dkim; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:
+	Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=iVaFj6YS6P/7eWvHwtc8XiBJqROatZlHWcZMW/PW5fs=; b=CU06wOUZk0w6YB58F06Pt6dgl3
+	EQ1EJfOY3ff/IzyYLU/LQj4Qnvh+fCsYjWmqmR0wfBhjxaWC4PZNIq+LyxA+cthVvXlQKSJky/+AH
+	eFMUwVc3IEeac6XpIW9L4zg1mZyUwSjm2DbcTHhwKpqgSo57dY8Tqc/KbGjyynj34P20=;
+Received: 
+	by sm24.hosting.reg.ru with esmtpsa (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(envelope-from <alexeymin@minlexx.ru>)
+	id 1xECug-0000000Gnjh-3E4S;
+	Wed, 07 Oct 2026 00:41:31 +0300
+Message-ID: <0a3ad36c-c82a-4324-b4ea-905ec3b52c41@minlexx.ru>
+Date: Wed, 7 Oct 2026 00:41:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,206 +39,100 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] dt-bindings: clock: sun55i-a523-ccu: Add A523 CPU
- CCU clock controller
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-References: <20260925225112.14081-1-andre.przywara@arm.com>
- <20260925225112.14081-3-andre.przywara@arm.com>
- <20260929-aggressive-uptight-rattlesnake-35fdca@quoll>
- <20261005005036.7fd5e60e@ryzen.lan>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] clk: qcom: mmcc-sdm660: enable the parents of the
+ pixel clock sources
+To: fabricioakio@gmail.com, Bjorn Andersson <andersson@kernel.org>,
+ Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
+ Martin Botka <martin.botka@somainline.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20261002-sdm660-pclk0-parent-enable-v2-1-b07f6c33e96f@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20261005005036.7fd5e60e@ryzen.lan>
-Content-Type: text/plain; charset=UTF-8
+From: Alexey Minnekhanov <alexeymin@minlexx.ru>
+In-Reply-To: <20261002-sdm660-pclk0-parent-enable-v2-1-b07f6c33e96f@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 05/10/2026 00:50, Andre Przywara wrote:
-> On Tue, 29 Sep 2026 10:42:29 +0200
-> Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On 02.10.2026 19:46, Fabricio Akio via B4 Relay wrote:
+> From: Fabricio Akio <fabricioakio@gmail.com>
 > 
-> Hi Krzysztof,
+> pclk0_clk_src and pclk1_clk_src are fed by the DSI PHY PLLs, which
+> dsi_pll_14nm_vco_set_rate() resets and only clk_prepare() restarts. The
+> DSI host sets the link rates before it prepares the PLL, so the RCG is
+> updated against a stopped source, and if it is enabled at that point
+> the update times out:
 > 
-> thanks for the review!
+>    pclk0_clk_src: rcg didn't update its configuration.
 > 
->> On Sat, Sep 26, 2026 at 12:51:10AM +0200, Andre Przywara wrote:
->>> There are four clock controllers in the A523 SoC, but only three are
->>> described in the DT binding so far.
->>>
->>> Add a description for the CPU CCU, which provides separate clocks for
->>> the two CPU clusters and the DSU interconnect.
->>>
->>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
->>> ---
->>>  .../clock/allwinner,sun55i-a523-ccu.yaml      | 38 ++++++++++++++++++-
->>>  .../dt-bindings/clock/sun55i-a523-cpu-ccu.h   | 13 +++++++
->>>  2 files changed, 50 insertions(+), 1 deletion(-)
->>>  create mode 100644 include/dt-bindings/clock/sun55i-a523-cpu-ccu.h
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
->>> index 58be701a720ea..8d5481fb63ae8 100644
->>> --- a/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
->>> +++ b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
->>> @@ -19,6 +19,7 @@ properties:
->>>    compatible:
->>>      enum:
->>>        - allwinner,sun55i-a523-ccu
->>> +      - allwinner,sun55i-a523-cpu-ccu
->>>        - allwinner,sun55i-a523-mcu-ccu
->>>        - allwinner,sun55i-a523-r-ccu
->>>  
->>> @@ -35,12 +36,23 @@ properties:
->>>  
->>>  required:
->>>    - "#clock-cells"
->>> -  - "#reset-cells"
->>>    - compatible
->>>    - reg
->>>    - clocks
->>>    - clock-names
->>>  
->>> +if:
->>
->> This goes to the allOf block.
+> Seen on a board whose simple-framebuffer node lists the pixel clock:
+> the RCG then reads enabled at msm's first modeset.
 > 
-> OK.
+> Set CLK_OPS_PARENT_ENABLE on both so the core prepares the PLL around
+> the rate change, as dispcc-sm8250 does for its pixel clock sources since
+> commit acf7a91d0b0e ("clk: qcom: dispcc-sm8250: Enable parents for pixel
+> clocks").
 > 
->>> +  properties:
->>> +    compatible:
->>> +      contains:
->>> +        const: allwinner,sun55i-a523-cpu-ccu
->>> +then:
->>> +  properties:
->>> +    "#reset-cells": false
->>> +else:
->>> +  required:
->>> +    - "#reset-cells"
->>> +
->>>  allOf:
->>>    - if:
->>>        properties:
->>> @@ -64,6 +76,30 @@ allOf:
->>>              - const: iosc
->>>              - const: losc-fanout
->>>  
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          enum:
->>> +            - allwinner,sun55i-a523-cpu-ccu
->>> +
->>> +    then:
->>> +      properties:
->>> +        clocks:
->>> +          items:
->>> +            - description: High Frequency Oscillator (usually at 24MHz)
->>> +            - description: Low Frequency Oscillator (usually at 32kHz)
->>> +            - description: Internal Oscillator
->>> +            - description: Peripherals PLL 0 (1200 MHz output)
->>> +            - description: Peripherals PLL 0 (600 MHz output)
->>> +
->>> +        clock-names:
->>> +          items:
->>> +            - const: hosc
->>> +            - const: losc
->>> +            - const: iosc
->>> +            - const: pll-periph0-2x
->>> +            - const: pll-periph0-600m
->>> +
->>>    - if:
->>>        properties:
->>>          compatible:
->>> diff --git a/include/dt-bindings/clock/sun55i-a523-cpu-ccu.h b/include/dt-bindings/clock/sun55i-a523-cpu-ccu.h
->>> new file mode 100644
->>> index 0000000000000..042f2310f64de
->>> --- /dev/null
->>> +++ b/include/dt-bindings/clock/sun55i-a523-cpu-ccu.h
->>
->> Filename should match compatible.
+> Fixes: 5db3ae8b33de ("clk: qcom: Add SDM660 Multimedia Clock Controller (MMCC) driver")
+> Signed-off-by: Fabricio Akio <fabricioakio@gmail.com>
+> ---
+> Changes in v2:
+> - Set the flag on pclk1_clk_src as well, as Dmitry asked. v1 left it
+>    out because this board has nothing on DSI1 to test it with.
+> - Link to v1: https://patch.msgid.link/20261002-sdm660-pclk0-parent-enable-v1-1-d6ff889144e4@gmail.com
+> ---
+>   drivers/clk/qcom/mmcc-sdm660.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> Is that a new requirement? We never did this for the Allwinner clock or
-> reset bindings, all headers are named like sun<x>i-<soc>-<name>-ccu.h.
+> diff --git a/drivers/clk/qcom/mmcc-sdm660.c b/drivers/clk/qcom/mmcc-sdm660.c
+> index 9f8b8e29fa0f..827741229dd7 100644
+> --- a/drivers/clk/qcom/mmcc-sdm660.c
+> +++ b/drivers/clk/qcom/mmcc-sdm660.c
+> @@ -984,7 +984,8 @@ static struct clk_rcg2 pclk0_clk_src = {
+>   		.parent_data = mmcc_xo_dsi0pll_dsi1pll,
+>   		.num_parents = ARRAY_SIZE(mmcc_xo_dsi0pll_dsi1pll),
+>   		.ops = &clk_pixel_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE |
+> +			 CLK_OPS_PARENT_ENABLE,
+>   	},
+>   };
+>   
+> @@ -998,7 +999,8 @@ static struct clk_rcg2 pclk1_clk_src = {
+>   		.parent_data = mmcc_xo_dsi0pll_dsi1pll,
+>   		.num_parents = ARRAY_SIZE(mmcc_xo_dsi0pll_dsi1pll),
+>   		.ops = &clk_pixel_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE |
+> +			 CLK_OPS_PARENT_ENABLE,
+>   	},
+>   };
+>   
+> 
+> ---
+> 
+> Best regards,
+> 
+> Fabricio Akio <fabricioakio@gmail.com>
 
-I say EXACTLY the same thing for ~4 years, so yes. New requirement since
-4 years. Allwinner for sure received same feedback already.
+I've verified that it at least doesn't break booting on 3 different
+devices based on 3 different related SoCs:
 
-> And I think especially since we have sun55i-a523-mcu-ccu.h and
-> sun55i-a523-r-ccu.h, I think we should stay consistent, at least for
-> the existing SoCs.
-> 
->>> @@ -0,0 +1,13 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
->>> +/*
->>> + * Copyright 2025 Arm Ltd.
->>> + */
->>> +
->>> +#ifndef _DT_BINDINGS_CLK_SUN55I_A523_CPU_CCU_H_
->>> +#define _DT_BINDINGS_CLK_SUN55I_A523_CPU_CCU_H_
->>> +
->>> +#define CLK_CPU_L		7
->>
->> Indices start from 0 or 1
-> 
-> This is also something very common for Allwinner clocks: the CCU has
-> clocks that are not exposed to the DT, because they are internal
-> clocks we need to model the clock tree. We number them logically,
+  * sdm630-sony-pioneer (Xperia XA2)
+  * sdm636-xiaomi-whyred (Redmi Note 5/Pro)
+  * sdm660-xiaomi-lavender (Redmi Note 7)
 
-They are not ABI thus do not create impression they should be and you
-prepare some placeholder for them.
+I've also never seen before the warning about pclk0_clk_src not
+updating its configuration. MMCC seemed to always work fine, but
+given some recent fixes to clock drivers I'd be not surprised if
+something was missed in initial porting..
 
-These are not IDs of your clocks in the hardware. This is only the ABI.
+Tested-by: Alexey Minnekhanov <alexeymin@minlexx.ru>
 
-Again, same feedback I repeat for 4 years.
-
-Best regards,
-Krzysztof
+--
+Regards,
+Alexey Minnekhanov
