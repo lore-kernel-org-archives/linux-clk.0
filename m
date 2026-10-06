@@ -1,141 +1,88 @@
-Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com [74.125.82.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B9138238D
-	for <linux-clk@vger.kernel.org>; Tue,  6 Oct 2026 06:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77C33BFE47;
+	Tue,  6 Oct 2026 07:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791268986; cv=none; b=q1C5sCFiogzzJy1ZOFqTFYRVFzZt5g/+M/juY0cL1pqH/DZAHMb6CIuGZ2rjNcydq87lWIMUnOOhjauMT1oeOzLUWdbW5dCR952XoN4aVe+9pU6CAQYhK2Fs27MfEQgcihdPXr9fKbJ6fjUBiwyY1nV+GRspzg6EBmBoAvAgeWo=
+	t=1791273469; cv=none; b=FnR7VVDEa4PtkFPcKseQu410QdwkbNI1HGGfjFDpejdCe682MCWA2rh5Hvi1ertK6ubtHMrJaFDkK7u8BIhgBxAgpMoRkv9FhwqRTL1uFzfPrVkWqa69anvhwfZn7vGpR7o7vGRTHGZMlE3FGITdr+7mFlFVwlNMig/4/5runAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791268986; c=relaxed/simple;
-	bh=LPA4AM/vfcSgBS/S0JOUdZBplbpkl3iyy1X111JdKXs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OezEwCpNDxgdEqkdF2xsrKo6ozENpzX2NcG7wrahP63krvE7KQMtVqHGXnbzkQgiJzy6mYfoh0P1ve3UFWP79pvGpwxrxm745t9G5Fqqy/WemSTWVCI4mRDzhvIDhwIfTAVziqUpj8WJQQv23ZAQCdDWXj8HzBEsHU/Mx7DpV30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DcU7Shu3; arc=none smtp.client-ip=74.125.82.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1791273469; c=relaxed/simple;
+	bh=Ba8SRvLUlDgJylfpuGchatFp660PUxF7wpMiaEDu7lg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=az6WezOpmVCCF2tbLVY+I9874jgR5lCWPFGfNDFBQv27H22Qvk+r+AU7mU+Yguf2BSpkJzrqBkD+XU56955NibpPIQgYqreTmdTU96S8Jwst0jLs7jdDxWEwkQ9AWKhyDZv4WfxA7TrXU1WEKyrwxXREuZK1/7BiGolAmpSHHLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UaM579DS; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DcU7Shu3"
-Received: by mail-dy1-f178.google.com with SMTP id 5a478bee46e88-33fb4680717so7201200eec.1
-        for <linux-clk@vger.kernel.org>; Mon, 05 Oct 2026 23:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791268983; x=1791873783; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=HcianPOZJYcBmieDb1o4dWGCk/aX34XvMBlFCiEYCc4=;
-        b=DcU7Shu3YMzQvz60HJZoeh0S3B7cQZDcYRR6NhQKWaux3nmQ7SfQ20Ilz920CJvgDt
-         Zz5ESqDIUklR6U3B0HN6ArWK29x/wNLKWbPOeEcQsRohrOQ+B/rOTkxqyCQvQM9KQyfL
-         cScUg+hKd/QWsCmXBcbfcbh400AsgFxjD/7aQIVhi41/6hnN0CcYBR3oydMqF7J/GgCy
-         lmlljRVsV0DmLDgqLbiokYVsAD9Z6chFFjeoXdZe2zXRsck53uAiEveuCfh80HqYMcRL
-         W9bJVvCyutAQUCU45q3wQzRxb20i2SPQHvMwencQqun84u5lS07Ig3o2LKSrEzVPNmP0
-         5hzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791268983; x=1791873783;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=HcianPOZJYcBmieDb1o4dWGCk/aX34XvMBlFCiEYCc4=;
-        b=qj0a2lXZmBpOXDNSQFspSLdt805b2SfNhBHDQ1aD5qzpoBPYnX99znDC2HMFTro4l2
-         SC729Hr/hBBvuUMoSYnBBf2zNTGNYo8fAXyK41MI55yeltwitA+SBZIWjClZNzJoIWLL
-         qrNJAOE5fcEFVRBVzw9S/8EC0LIaSZAGUc/5RblinMC8VmDx3bs/KjaHtskrnafsypAk
-         eIjplji7plN3Gv3H8R9yacEYc/6oQ8G/emg8KwxKF42CpjkLfbf2IKRIKi5jKA9/BX2l
-         /8tg34dr+yLeMGgA64eEkr/QD9B7ASByITuYrKZr4QIWi1rDx7vGgVQwN6KftzCmg7xf
-         WGSQ==
-X-Gm-Message-State: AFq9FYKC/n6ExkfJougy4qtXmZGMB2avN+Oy0qstLQo7UEENCVrkCbLy
-	qfCRwaQnPpm5SD/hkoW6NuBD/8jgCxpjTRJeBa7JdsdZetLocM4UJtBP
-X-Gm-Gg: AYBFou1M+ILq9RQCisYBn0xdWy4XeZyZBDT0ZBIe6oS3KOfrbYYS6N8g7HE5ZpFUXWj
-	78nLlgiiRSE4RpMTYJlvM+a9UQUVYRtnSrhRjDv40ke31jNr2zQeHZyiJ/4FDsYE/2rg7cstmyx
-	DsVCiXaCsNfbnQAF2pgMWlWsvOLeRbvnhiMXv+mknxIREITjmJMtZsq7VZuvr3APxNH7pE/dFYF
-	u/PlmrhUwZ505b4UWqvHettdLqOMOK1i/CxYcGxKMLjK9ieLGm7q6ytrOQ/Uz0lO9nlofx8j2P/
-	HaO9iOBL08kJ96xPIbxDJSFRRqAVLO0SUPB3YoAFA4Z9Dd5XJUTRsZaU0Sp873DcWBLBgQLmVa/
-	AwuQv7xEaDmWf/7+nqUb3Em1/g93rUhw/GlBbAfyes26BzBnOlWVOrIRYhcWDSgDazUH/SWeEvA
-	wQg03ABrxhc6wDpfaAWn9Nm6yfgHUNjPS1krF9WrdufBiqdBqhm5LjcdDNMT4SK/iM25YEEOmHP
-	4RCStsL
-X-Received: by 2002:a05:7301:18a3:b0:34e:67d0:bbb9 with SMTP id 5a478bee46e88-351116caa62mr11416936eec.29.1791268983110;
-        Mon, 05 Oct 2026 23:43:03 -0700 (PDT)
-Received: from localhost.localdomain ([2a09:bac5:55f5:25c3::3c3:b])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-35146a2c991sm4617347eec.14.2026.10.05.23.42.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2026 23:43:02 -0700 (PDT)
-From: Chuanhong Guo <gch981213@gmail.com>
-Date: Tue, 06 Oct 2026 14:42:24 +0800
-Subject: [PATCH 2/2] clk: mediatek: mt7629: add RTC clock selection
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UaM579DS"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 4FAF21A1187;
+	Tue,  6 Oct 2026 07:57:46 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1CE3D6074B;
+	Tue,  6 Oct 2026 07:57:46 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8A01B103308A6;
+	Tue,  6 Oct 2026 09:57:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1791273465; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Ba8SRvLUlDgJylfpuGchatFp660PUxF7wpMiaEDu7lg=;
+	b=UaM579DS36zpJx7g3lKSM4QpM5nBYHlxvcvaOVnta3Ap9MrrQBcuRiq1Ke/vL5be3uCWZv
+	G650XIEWWrxkYxTSxqB2fr8+91dX+KUk0+rZr287zBi3eBAij68sbjMqLoaITgwS3wXkHP
+	hMviIYfK3yJOKJweqA+v1Do4Nc8mV7jbbc4MP+GlZA/2wCWrkHyaSvvtE4JFbHCZVyO3vM
+	ikaw5V6CxG+4T2oIBgEAYGrquOeIP67zJWe//Gww/0JQ0yapGHdYR7OhgULiDwE5P/7VL1
+	f/MKgrV3n9qkZLs0NcZDz0z0mHNYa6BAO9PspAGxjpoUT0Md6ojXNsFKWPppLg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: sashiko-bot@kernel.org,  sashiko-reviews@lists.linux.dev,
+  conor+dt@kernel.org,  linux-clk@vger.kernel.org,  robh@kernel.org,
+  devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 5/7] clk: nuvoton: ma35d1: Reparent SYSPLL correctly
+In-Reply-To: <1jjynw7bp8.fsf@starbuckisacylon.baylibre.com> (Jerome Brunet's
+	message of "Mon, 05 Oct 2026 11:12:35 +0200")
+References: <20261004-perso-ma35d1-upstream-clk-v8-0-e1a106a128c0@bootlin.com>
+	<20261004-perso-ma35d1-upstream-clk-v8-5-e1a106a128c0@bootlin.com>
+	<20261004205551.6279C1F000FF@smtp.kernel.org>
+	<87zewti2pf.fsf@bootlin.com>
+	<1jjynw7bp8.fsf@starbuckisacylon.baylibre.com>
+User-Agent: mu4e 1.12.12; emacs 30.2
+Date: Tue, 06 Oct 2026 09:57:37 +0200
+Message-ID: <87cxtni7m6.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261006-b4-mt7629-rtc-v1-2-e556386df816@gmail.com>
-References: <20261006-b4-mt7629-rtc-v1-0-e556386df816@gmail.com>
-In-Reply-To: <20261006-b4-mt7629-rtc-v1-0-e556386df816@gmail.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Chuanhong Guo <gch981213@gmail.com>
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-CLK_MODE bits 3:2 select the RTC clock source. Selector 0 uses the
-40 MHz crystal divided by 1024, while selector 3 divides it by 1221
-to provide approximately 32.76 kHz. The integrated Wi-Fi needs this
-/1221 source.
+On 05/10/2026 at 11:12:35 +02, Jerome Brunet <jbrunet@baylibre.com> wrote:
 
-Add the /1221 fixed-factor clock and the RTC mux so device trees can
-select this source through assigned-clock-parents. Keep CLK_TOP_RTC
-for the existing /1024 source.
+> On Sun 04 Oct 2026 at 23:19, Miquel Raynal <miquel.raynal@bootlin.com> wr=
+ote:
+>
+>> On 04/10/2026 at 20:55:50 GMT, sashiko-bot@kernel.org wrote:
+>>
+>>> Thank you for your contribution! Sashiko AI review found 1 potential is=
+sue(s) to consider:
+>>> - [Low] clk: nuvoton: ma35d1: Modification of global static state
+>>> during probe
+>>
+>> There is a single clock controller. Should never be a problem. I can
+>> certainly move it in to more local scope if someone asks, but it's not
+>> practically needed.
+>
+> I may be missing something key here but why is not in your defined
+> indexes like the rest of the clocks ?
 
-Selector 1 is reserved. Selector 2 is documented as an approximately
-25 kHz PMU bandgap clock, but its source and control are not sufficiently
-described to model it here. Leave these entries unmodelled while
-preserving the hardware selector values.
+SYSPLL and its parent (HXT_GATE) are in the hws[] array. Are you
+suggesting to use the hw_clk pointer directly there instead of using the
+parent data structure as an envelope? Because the issue raised is the
+global definition of the struct clk_parent_data and then its
+modification (since I need to reference the hws[SYSPLL] pointer inside).
 
-Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
----
- drivers/clk/mediatek/clk-mt7629.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/clk/mediatek/clk-mt7629.c b/drivers/clk/mediatek/clk-mt7629.c
-index e154771b1b8b..6336f8c4167b 100644
---- a/drivers/clk/mediatek/clk-mt7629.c
-+++ b/drivers/clk/mediatek/clk-mt7629.c
-@@ -285,6 +285,10 @@ static const char * const infra_mux1_parents[] = {
- 	"armpll"
- };
- 
-+static const char * const rtc_parents[] = {
-+	"rtc", "clk_null", "clk_null", "rtc_32k"
-+};
-+
- static const struct mtk_gate_regs apmixed_cg_regs = {
- 	.set_ofs = 0x8,
- 	.clr_ofs = 0x8,
-@@ -367,6 +371,7 @@ static const struct mtk_fixed_factor top_divs[] = {
- 	FACTOR(CLK_TOP_ETH_500M, "eth_500m", "eth1pll", 1, 1),
- 	FACTOR(CLK_TOP_TXCLK_SRC_PRE, "txclk_src_pre", "sgmiipll_d2", 1, 1),
- 	FACTOR(CLK_TOP_RTC, "rtc", "clkxtal", 1, 1024),
-+	FACTOR(CLK_TOP_RTC_32K, "rtc_32k", "clkxtal", 1, 1221),
- 	FACTOR(CLK_TOP_PWM_QTR_26M, "pwm_qtr_26m", "clkxtal", 1, 1),
- 	FACTOR(CLK_TOP_CPUM_TCK_IN, "cpum_tck_in", "cpum_tck", 1, 1),
- 	FACTOR(CLK_TOP_TO_USB3_DA_TOP, "to_usb3_da_top", "clkxtal", 1, 1),
-@@ -458,6 +463,8 @@ static struct mtk_composite infra_muxes[] = {
- };
- 
- static struct mtk_composite top_muxes[] = {
-+	/* CLK_MODE */
-+	MUX(CLK_TOP_RTC_SEL, "rtc_sel", rtc_parents, 0x000, 2, 2),
- 	/* CLK_CFG_0 */
- 	MUX_GATE(CLK_TOP_AXI_SEL, "axi_sel", axi_parents,
- 		 0x040, 0, 3, 7),
-
--- 
-2.55.0
-
+Thanks,
+Miqu=C3=A8l
