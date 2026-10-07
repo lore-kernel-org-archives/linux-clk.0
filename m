@@ -1,56 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CC736F90C;
-	Wed,  7 Oct 2026 14:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B802D4AEBEC;
+	Wed,  7 Oct 2026 14:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791381744; cv=none; b=aMqROrHqRIDiyFyul3pB8FztjD8evZqx/R8jCyL6fUDgjOIqUJBWm5uRqeb2RFyClxZ8NrFc/QjRPpcFbtDsKCJ3o6yl0F8T3DOpCv3bUlk4up4Fm5akoD5HyHbIZRqiFNn39k4U+dHa2FBqv/0ykXVelGFjSemSmy8/0sRhWhU=
+	t=1791383765; cv=none; b=YlmG6E5kgj8wAjZzvPc8rNqTzK4JwYzrA3Rf4lawD2wLXKwaAOS9QanySEXD9sNAVDwYtdCcPGlVqLg3r/E/E8grK2D9lX3P2GysFYrh8H8e4oJ2mG4iaEm5VlI9BlfvuI62ipmWcuexLZiP5rIoSvlgcSoxGg0Qiz6lFPWwoe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791381744; c=relaxed/simple;
-	bh=olSRUiCBtWt4Fm6jAGRods0yqX5aB1afznh1v6MYuAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DOJSzaoE9JRxlxMfJoOOznGvA1LmFLaY4XvaAfpXp0rAgAe7mfAWT/gpno2PAcCpkl5KCc6nwS4BuRkwBi3c+tk6CcPs4erYX6XfOIrMM2ZdYXGMqMTvlHY+N1FeLfzL6Umxj9RtfSNyr6ClQXBl+rkXKSOCDV4CfQNKESc7tK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dh+P1RXb; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791383765; c=relaxed/simple;
+	bh=JCDxpzDMPi258juByXUTo/u1k+9ayt6in3D9ik2ndYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ig6yMO2N46E8RYU9tWW6eb4fWtllxReqHrVPJyuYy4Un3pTU8QJkZzWhtmaQ/TH5bSzLTPF9/fYHUpEuzyzVHXM+7JOyYmzKl+0b7ili4yAjEGLOpuYkyqKwkIXOgLMLptLfOpe6orF0vmwDGC3W2KedsMvGpybStRm+mS0/nGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBLPmq5r; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dh+P1RXb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FF1D1F0089B;
-	Wed,  7 Oct 2026 14:02:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBLPmq5r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DC5A1F0089B;
+	Wed,  7 Oct 2026 14:35:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791381735;
-	bh=Q11AWL/EPY/BIfVce6hC9e0RarRTo3nH7wZFJBgkAFk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=dh+P1RXbYlDFbGN3suBP/RDNbylH2oJ6Gms2EMXYldoKY8E2nHzwHiFnEwdYs6W3l
-	 rzCIRKZL/2iqcKybG7RD0BwtEi/bq4DmkfqpcAlZLB4mbuYfEh1ZsU4gy05P5HOT2n
-	 NEY87qUfazr66eAYIt7kTX9znV4y6r4PtvY4BI1JE89teABSvP1yUye/8tBRlOKBS4
-	 zZ6QUo1bMqC7W/yvoZBKYDESwwmOVG8MQ6pnl/OjjxSxUYzvDH1LE7XN8/GU2GPNeS
-	 UcWsvKy6I+qmBNhd7oOvK5R+fgRjy1CWFelgmxhdKOuPc2onZzPCJxW8jy4vQhJ50K
-	 TiZM7D5W804PA==
-Date: Wed, 7 Oct 2026 15:02:08 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: Ying Liu <victor.liu@nxp.com>, Frank Li <frank.li@oss.nxp.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v10 6/9] dt-bindings: clock: nxp,imx95-blk-ctl: Add ldb
- child node
-Message-ID: <20261007-ebaeee3a3bbd50ebbdedcf72@squawk>
-References: <20261006-dcif-upstreaming-v10-0-bcfb28de0aae@oss.nxp.com>
- <20261006-dcif-upstreaming-v10-6-bcfb28de0aae@oss.nxp.com>
- <20261007-cb2d638508f306f3385c3799@squawk>
- <jr7zy2oxsuzfjrp4d74tl6gxiz5kg3pxl4qgigbbmtzyvjliwp@xaidoy4qvrdh>
+	s=k20260515; t=1791383760;
+	bh=IIr/Aoc1Hs3lvHLCFBiOMQidFB5bfl16umvco5XedmY=;
+	h=Date:From:To:Cc:Subject;
+	b=GBLPmq5rt9Jn/3UM0qjTFoHmGIKVO532Wu6JkLg3615fh9nHVSEPk+MkSaXxFpQMZ
+	 niiv33Fbo7mrpHbhn1LSTWtELRUAdNfJALbn8ek6oMSfKXjLgTFt6u/9sBIl/x6WfS
+	 PNjRpTjG4Erv8axilgxq43+f+ngulcAw0WouGa+Yrz+e0nJ+1awAwtJfxS8WzTgYFB
+	 Bax1oYRSWQJWbhcEN3LupYcNA52XudAni4hRKJ3tiJvJLpfd9Rq9W1RYI5iuPYqbWN
+	 S3nNhf0mee8BbhNJoQdllOOZVgpDOwsnpK+I/hxL4cR+cQVUfW1W0xel73SmaH8KQA
+	 ongfBcoZ3PJ3w==
+Date: Wed, 7 Oct 2026 22:35:55 +0800
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Jerome Brunet <jbrunet@baylibre.com>
+Cc: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [GIT PULL] Allwinner Clock Changes for 7.4
+Message-ID: <asZYyy4D2PkhjE3q@home.wens.tw>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -58,68 +42,71 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qfYFC1F6QFYmGCHK"
+	protocol="application/pgp-signature"; boundary="1oyjFqg1TWnhEdcA"
 Content-Disposition: inline
-In-Reply-To: <jr7zy2oxsuzfjrp4d74tl6gxiz5kg3pxl4qgigbbmtzyvjliwp@xaidoy4qvrdh>
 
---qfYFC1F6QFYmGCHK
+
+--1oyjFqg1TWnhEdcA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 07, 2026 at 04:57:45PM +0300, Laurentiu Palcu wrote:
-> Hi Conor,
->=20
-> On Wed, Oct 07, 2026 at 02:12:52PM +0100, Conor Dooley wrote:
-> > On Tue, Oct 06, 2026 at 12:22:01PM +0000, Laurentiu Palcu wrote:
-> > > Since the BLK CTL registers, like the LVDS CSR, can be used to contro=
-l the
-> > > LVDS Display Bridge controllers, add 'ldb' child node to handle
-> > > these use cases.
-> > >=20
-> > > Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> > > ---
-> > >  .../bindings/clock/nxp,imx95-blk-ctl.yaml          | 24 ++++++++++++=
-+++++++++-
-> > >  1 file changed, 23 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ct=
-l.yaml b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
-> > > index fbbf1b3f17904..97fe816a38f94 100644
-> > > --- a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
-> > > +++ b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
-> > > @@ -51,6 +51,10 @@ patternProperties:
-> > >      $ref: /schemas/media/fsl,imx95-csi-formatter.yaml#
-> > >      unevaluatedProperties: false
-> > > =20
-> > > +  '^ldb@[0-9a-f]+$':
-> > > +    type: object
-> > > +    $ref: /schemas/display/bridge/fsl,ldb.yaml#
-> >=20
-> > The class of device is bridge, why not use that here?
->=20
-> I'm sorry, your question is a bit vague... Are you referring to renaming
-> the pattern to '^bridge@[0-9a-f]+$'? If yes, I don't have strong
-> opinions against it. I can do it in the next iteration.
+The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
 
-Yes, sorry.
-That'd be great.
+  Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
 
-Thanks,
-Conor.
+are available in the Git repository at:
 
-pw-bot: changes-requested
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-7.4
 
+for you to fetch changes up to 9ef62592b80c7ffb8cd987d889f659c1dc4f9f16:
 
---qfYFC1F6QFYmGCHK
-Content-Type: application/pgp-signature; name=signature.asc
+  clk: sunxi-ng: ccu_common: Use readl_relaxed_poll_timeout_atomic for PLL lock (2026-09-20 17:32:54 +0800)
+
+----------------------------------------------------------------
+Allwinner Clock Changes for 7.4
+
+Allwinner sunxi-ng clk library's single divider clk type gained support
+for the update bit, and various single divider clks in the A523 driver
+are converted to correctly use the single divider type.
+
+The "wait for lock" helper is changed to use atomic MMIO polling, as it
+could be used when timekeeping is not available yet, and *sleep() doesn't
+work correctly
+
+----------------------------------------------------------------
+Alastair D'Silva (1):
+      clk: sunxi-ng: ccu_common: Use readl_relaxed_poll_timeout_atomic for PLL lock
+
+Junhui Liu (4):
+      clk: sunxi-ng: div: Add feature support to M clock macro
+      clk: sunxi-ng: sun55i-a523-ccu: Use M-only clocks for MBUS, IOMMU and DRAM
+      clk: sunxi-ng: sun55i-a523-ccu: Use P-only clocks for high-speed timers
+      clk: sunxi-ng: sun55i-a523-r-ccu: Use P-only clocks for timers
+
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c |  37 ++++-----
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c   | 128 ++++++++++++++-----------------
+ drivers/clk/sunxi-ng/ccu_common.c        |   2 +-
+ drivers/clk/sunxi-ng/ccu_div.h           |  18 ++++-
+ 4 files changed, 89 insertions(+), 96 deletions(-)
+
+--1oyjFqg1TWnhEdcA
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCasZQ4AAKCRB4tDGHoIJi
-0vtMAP9BAzbT8CNXcasaaU+K6qO6MCMdqQyLCatmAZpSK81yRwEAudTtBZWLd7cb
-w3GYYsCuwheg3bZe3nqy+OpPtql79AY=
-=kp1o
+iQIzBAABCgAdFiEE2nN1m/hhnkhOWjtHOJpUIZwPJDAFAmrGWMsACgkQOJpUIZwP
+JDC4ohAAissvzueqOTIR//65cJgKfRBNeqoxHplC0NeBFOUgYJqSPasSkstRD1I5
+kCKz+00sKtPE+PCUB3PO3QzjOVv8BgeX0qDxjlvWc7GilD/Lz8dUXeHO8S12Gs6J
+Cnvy9hg0i9frMxclrBfKzSP7uLCpcqI0qHEnKdbNgzLTTEm2MtPBXKhn8su7jI22
+yORwt+ZhXFUztAQusXZ4d5P5xBTkJDE2ad63Mi9o7LgyFmawOu/lsDJV1090szLg
+HEWpKg0SgcEoFGhRs2OA1ZVkOUl0rt9r/I/NxvX5XUbfPOF5T+hRmNtB3m4XxG0C
+62UgGCseWIkVdyC4OFogJcG4iMHtWMtUZeWIVisfGRdehrlzljVittCjJrT2J2sS
+jKdgFwNHEe/NYEQnHrwlN62Jm7pF8r+h2o69ZN8p3nOsYwhHhioSPhy0ksOqYvDT
+o94pbMQOxaCBMWez0MoarttrDnSCQFDnNBIaVvEZSunI3LQHDSzx5XzO+jaH5rUH
+LHwiZwJfat0fTDk3T6jmfNK5SE2xO0JwmLZhTav+hO8J6ND73zEmplpRU2AG2n89
+Gs07Ah/YMRWD5GWOUqtSc9eQyM0tQln5RpFPIWrclIJEjXf5yHA/rOQb7v3dF7rl
+G8Wq8w1nGo3q4Ew6iReWbxhtpVuPnQflIIat6JlL3rKBeniFMCs=
+=R13c
 -----END PGP SIGNATURE-----
 
---qfYFC1F6QFYmGCHK--
+--1oyjFqg1TWnhEdcA--
