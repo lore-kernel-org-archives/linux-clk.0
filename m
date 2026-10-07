@@ -1,581 +1,189 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BB63F9F25
-	for <linux-clk@vger.kernel.org>; Wed,  7 Oct 2026 06:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A868633FE05;
+	Wed,  7 Oct 2026 07:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791355880; cv=none; b=NCnNIo1qED1pjs1a3GSPnTASHAwfLu9YNbmcXpgxRZGC9P0H/hugus27jBjHJffNaIoJid5dTvxGZcloDy2XCSVDD72U0FWIuUVEgYT3qpxIIjllTM8Lo5Ja1mo1eQD5H+H+hiUwwClfPMcfGap75xBDqoNwoIoybqYtrwF5T1s=
+	t=1791356746; cv=none; b=Ak8RkDISNWJMoW945q4rJHVyVK7NktgEiBXdNJr6oR4bcgT6Zrq8fF3M3110tyS9MfAThMYo4ebLwSDt4yJkRyhSyNfRa37UVfAcyI72OM996XcWFSna9OJOhioQ+nuZa38ED1CDkYHTWKQrxdO3zuRf/0VxiUmPeIC+/i0jMac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791355880; c=relaxed/simple;
-	bh=KyN5yZrFVJKthjAmmbAkJxjolAt+EZeqj8evlB0uFuo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uvNlrCIpSUjSo9XtyczvCCBPtKYZiHFkG8IzzrmvDTkx++m/Zx1ICAYKW8FZmDMlqrvduprDZrs4l/yHwKU+Eb3eHeeNsun9EU5j4emBr/sfc9jn23Sxo1KCWAb1nbbT82QnMKFyARqsuBaFMP3uY+TcbalyFEL3e34IuxlUh3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eIuVN+2F; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LZVVEhlg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1791356746; c=relaxed/simple;
+	bh=plGTE4i/JKvBSg1EJp9QjiFEUlgfjg7QxfZeB3XEPQQ=;
+	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=dYAzUqlJGfoBj5nopfzHE1Consw7nXRrFGGpFwHsmA5E+OftySmGkikiHFyP5e3S1VfKe0UpoGlP6kcoGlcJd2+4csuzhwYHNY8yGqf0K2A1HG05VgYO7veOfyqiEBGxa53O8J71pfKMOXmPxOUDLyEAfPJR63BazBnnYJvURtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M9WvsPS4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eIuVN+2F";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LZVVEhlg"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6974UHWT2063166
-	for <linux-clk@vger.kernel.org>; Wed, 7 Oct 2026 06:51:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Lh+LpMJSEHytBkWqz8ESY8YPUgkth8UqfG+klhzEh6M=; b=eIuVN+2FK7xX98+e
-	g73jLmYwYk5ZzkF/0sNPeBkzvhZh2MiL5mqkffeQJZzZhsvDeOBE2uKz8KUcdOBA
-	r7su/Z1U+yzZvrKL+Cfkf9r1XXkzGGIxke2UAgeWq0CHaLLesZAe3+LgDLnrsa9y
-	CfKqE7uZNfH+79aH2SZcAMXs6XewvxE5OED8pXTJgHIUjQ2vJXimhl9tGpMwqwCl
-	JbF5K/js/rqBBdHVDcQ3rcVDw5ZqYlNN+tKGe1SylJxBrr0hDFsI02Js8clSo/2y
-	jchfAYMSIp6vFsXsCRaQ2qRDPpk/bgepWFwJfplsVMHWMiIwwjj9D53yP4HXsdiu
-	ul227g==
-Received: from mail-dl1-f69.google.com (mail-dl1-f69.google.com [74.125.82.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h5c6u0xk3-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 07 Oct 2026 06:51:17 +0000 (GMT)
-Received: by mail-dl1-f69.google.com with SMTP id a92af1059eb24-14373747468so4236685c88.1
-        for <linux-clk@vger.kernel.org>; Tue, 06 Oct 2026 23:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791355877; x=1791960677; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Lh+LpMJSEHytBkWqz8ESY8YPUgkth8UqfG+klhzEh6M=;
-        b=LZVVEhlgJgsM1EJevcs9K+aDb1YKzZPXp8qKytRZftsK52fOtqHDLqTB41cxWTDah5
-         KYgEvFOxAafga02wzqhAIhaQVixqc9haoZNqxDwOKJM+wmWsZrXeWy0zppVDbV8hvHMh
-         zYrw1IXu6azy4qCxXFHz0S4sOuGQibOPXytoPtKufzLDuazJJaeMa2ZVnAwu5YNH0dPZ
-         0HJPhKu0fmbJqjHL6tPMA83Jc6JTw0Hytr7lNoyhC7OLMoaG2pbvn8s5MIvNANg2XCJk
-         6Gxd1A+0ANgu/v0c2Gtm7WE7NNhgiQcpMtA+IvqNEDWwTrm9Xl8g9Mb21aKXtPgx0xxN
-         nX5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791355877; x=1791960677;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Lh+LpMJSEHytBkWqz8ESY8YPUgkth8UqfG+klhzEh6M=;
-        b=ZFdIzSg7TK+r07yaURIrTyG+mC/1S+rkjf/8/F99iN6elyZyuBC2ARGZ+6AgSnDQte
-         Bu2It/l4HLcX4bgk9FXRlPzef2PvYXTCHOvYUduhxrBFClpH6ZqZdsPKAB+2YbQPZKvw
-         xvZSquyTSL5CazUo9WMjcOh9UHbMD9ak/CqK2G1w2pinziZeLUYUc7B6GGK6e+zM3+Jm
-         2bWwPkywh4AgYUO2967Lmd4YO9jTLY60kM3epS9a3lsr4Q7dSg7ZDStCCKLeX3+pNH0+
-         IYFiqPhYAerq+G18slhFcpjWruVcjQTx0/VbirIvuw7WidQ4zoB8sAk1mp3bZDyrCUHw
-         ET5g==
-X-Forwarded-Encrypted: i=1; AKwUvBxfQbnwtNICarzyjcnxCKqsmvcptN5PXKJrgE89t3dSkon+7Ox7lmIwus7RzeAeRaykFP8KvTssftE=@vger.kernel.org
-X-Gm-Message-State: AFuF++n5rUQgUL0jADksG4rP/uwMNEYE7Fz9No9zsfSoZhI3USxblkL2
-	tkckyVxYrNEEUEHii/EXIOgBst1EBoHe6yW1CdL7MIrO7SbyivdvDu6TLnIBg4f8JVaZwAc/r0Z
-	G0RmUTk2R3ZYaehg858ykvX/xkOJUbBS1jzmZ+SP0AnYX6m0+IJyxDJYszl8apNI=
-X-Gm-Gg: AYBFou2w6VzztGwk4ADYPFIZIDs2NTKdST9v4cYUY00+tifd34tpsR+6e5SSroDkoGY
-	rghAI5yOIq2CN/6emGnuEbsgGW0KBEWTUgsKEQEbhPX+graMOejYXwADE+FvrFy0l/5Y3yGoqAI
-	WdTRew5I/lT+SAWwTzb5WNNcOXxL/4GDqAZK/swB5+AcRd75dv5SBXjYE4Q6rMklX01VE7w8oRr
-	47bqTg2tQWCfri4eO5sbFrokn+aTntK98uhCqnligP1OL7MZpcm+3lIvPb9jB+o3zUkSfc5d9JU
-	TqOun+t/uDLZeyJFs7llI2CLzxj9cMyNSrOwWuqb+ZC/XtfQPiArX3q5wZ5YHzgmHsKvI7pg3do
-	gYGI7c5zqn9cLHV7ics8dL6Zzq2lMZjpxr4g5mYnvqy4NMSvAUQsQtaKQ0Kx2wsAqVYI8KIyCOp
-	+GrlmutvM8Zt0vtdXipgIzy6yhQT6Li9LVnSo=
-X-Received: by 2002:a05:7022:f502:b0:143:7001:7645 with SMTP id a92af1059eb24-16209760be6mr1069615c88.47.1791355876615;
-        Tue, 06 Oct 2026 23:51:16 -0700 (PDT)
-X-Received: by 2002:a05:7022:f502:b0:143:7001:7645 with SMTP id a92af1059eb24-16209760be6mr1069587c88.47.1791355876026;
-        Tue, 06 Oct 2026 23:51:16 -0700 (PDT)
-Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1615f1ac8c5sm7374730c88.2.2026.10.06.23.51.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Oct 2026 23:51:15 -0700 (PDT)
-From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Date: Wed, 07 Oct 2026 12:20:47 +0530
-Subject: [PATCH 4/4] clk: qcom: apss-ipq9650: Add IPQ9650 APSS clock
- controller driver
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M9WvsPS4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E795E1F0089B;
+	Wed,  7 Oct 2026 07:05:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791356745;
+	bh=zE7x8mwroMqzVvZsd48PbPdzc5eCBks6/z+j6DuMqko=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=M9WvsPS4mDGVLgITZOHJqvxCbKW1I9Gba9v1n9kjeztRA45wfvP2gcz8M4wzx1FPM
+	 nT9sbwoTxR7pBEDBW7gueuN9lA6NztjD7SIlqfW8tmtO6uyfvydkvrTjTZBZcfZp3B
+	 afJ156BzKMuc9QcgkqqAqM7Yiob8DNFz76RS8WnxGtdZjr2Lb+4gsOqTQJTS6UijjI
+	 +SyHzw9MeOefLOai4hPcXKuNnY+ihhVhLNWYt1FH5ksLmJtJtRIdp3T0rgBaUZVE1E
+	 lvxCMqJyGD2vxoMKeyylaePDDouEMogueK/+zq+4yDHf0g7H3KyzxTfUC4TP0ehuk8
+	 y8teYIJJWfoSA==
+Message-ID: <sashiko-outbox-162689@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 1/4] interconnect: icc-clk: support N:1 master-to-slave
+ topology
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Kathiravan Thirumoorthy" <kathiravan.thirumoorthy@oss.qualcomm.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261007-ipq9650_apss_clk-v1-1-fd4c2b3cbdea@oss.qualcomm.com>
+References: <20261007-ipq9650_apss_clk-v1-0-fd4c2b3cbdea@oss.qualcomm.com>
+ <20261007-ipq9650_apss_clk-v1-1-fd4c2b3cbdea@oss.qualcomm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 07 Oct 2026 07:05:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261007-ipq9650_apss_clk-v1-4-fd4c2b3cbdea@oss.qualcomm.com>
-References: <20261007-ipq9650_apss_clk-v1-0-fd4c2b3cbdea@oss.qualcomm.com>
-In-Reply-To: <20261007-ipq9650_apss_clk-v1-0-fd4c2b3cbdea@oss.qualcomm.com>
-To: Georgi Djakov <djakov@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-X-Mailer: b4 0.15.2
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA3MDAyNyBTYWx0ZWRfX6ddszzkFmdUJ
- 3nZ3vCulN+HLHYbWBa0kdaI5Q2GerekMHu6w6F0M5MrwdOKpbX5GVIBWnbPVqQkZAKegNP4A1WW
- fSMVUqr+V4f9BuWJi4KQRr6Mrj+HtGY=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA3MDAyNyBTYWx0ZWRfX1XgoXMTEI6z5
- nb/MQHcAMjWIeb8vioYuefLx+60ORwxZ1qiM0zCraW8/QMgoNB7Wx0VYJEfsd/7p7Q9gKo4DdiW
- bEyeJKEK319Z2JDPRj33mN7WP0XRaF4pouDqxDfqN2OFTM14+TwMrg8E44N7t+dGAZNxOcroEsF
- HYXWXS+hGr8nI967A7FSk5hnlFXpm+oz2gHwsdvHu/lxGPhlIlKbEJb67BuIjmXVGEbkTMwDaq6
- aG7KSYIA0pxxnAis2/49Xcfa4KRjFoQ9MyGFHGe4WMrqtBsTMIyOgH8tM5mykXA4yJX81U5BVhG
- or3Mp4SsJjwQpMkvMiUoHUAoK0LIunJ8hPVZH4AUET6R1yd0GV3DNmK6K07QYDrlzas/57QomDL
- fCr2w9rhaJVf1zNWl+hMlwoLwnG3KCk8h4q+3pqaxhz9fPXZYB1eqhj35vy1Rwy7VKP5zbnVrCL
- 8684JOzCtjS5xlBbKfA==
-X-Proofpoint-ORIG-GUID: ZZI3hM45E7jk_N52QJXYu5X2jxTXpk8Q
-X-Authority-Analysis: v=2.4 cv=T5EZ3PKQ c=1 sm=1 tr=0 ts=6ac5ebe5 cx=c_pps
- a=kVLUcbK0zfr7ocalXnG1qA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
- a=EUspDBNiAAAA:8 a=ml8jbCMxnmMANGqTHqUA:9 a=QEXdDO2ut3YA:10
- a=vr4QvYf-bLy2KjpDp97w:22
-X-Proofpoint-GUID: ZZI3hM45E7jk_N52QJXYu5X2jxTXpk8Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-07_02,2026-10-06_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
- clxscore=1015 bulkscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2610070027
 
-The APSS clock controller on IPQ9650 provides the CPU and L3 clocks.
-The four Cortex-A55 cores (silver), the Cortex-A78 core (gold) and the
-L3 are each clocked by their own Zonda PLL. Each clock is selected
-through a glitch-free mux (GFM) whose parents are XO, GPLL0 and the
-corresponding PLL. The gold mux can also select the PLL's post-divider
-output.
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+s) to consider:
+- [High] icc: list corruption and data race in icc_clk_set() during concurr=
+ent unbind
+- [Medium] icc: bypassed rate aggregation leaves shared clock at high rate
+- [Medium] icc: missing error check for icc_link_create() in icc_clk_regist=
+er()
+--
 
-The L3 needs to be scaled along with the CPUs, so register an icc-clk
-provider in which both CPU clusters vote on the L3 core clock.
+commit fb3619debbc961d128e9125a7da752adeb391118
+Author: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 
-Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
----
- drivers/clk/qcom/Kconfig        |   9 +
- drivers/clk/qcom/Makefile       |   1 +
- drivers/clk/qcom/apss-ipq9650.c | 385 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 395 insertions(+)
+    interconnect: icc-clk: support N:1 master-to-slave topology
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 27d0ab24d50a..a17f661c3102 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -599,6 +599,15 @@ config IPQ_APSS_6018
- 	  Say Y if you want to support CPU frequency scaling on
- 	  ipq based devices.
- 
-+config IPQ_APSS_9650
-+	tristate "IPQ9650 APSS Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
-+	default y if IPQ_GCC_9650
-+	help
-+	  Support for APSS Clock controller on Qualcomm IPQ9650 platform.
-+	  Say Y if you want to support CPU frequency scaling on IPQ9650 based
-+	  devices.
-+
- config IPQ_CMN_PLL
- 	tristate "IPQ CMN PLL Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 6affb5073f26..ec3d8512a812 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -68,6 +68,7 @@ obj-$(CONFIG_CLK_QCM2290_GPUCC) += gpucc-qcm2290.o
- obj-$(CONFIG_IPQ_APSS_PLL) += apss-ipq-pll.o
- obj-$(CONFIG_IPQ_APSS_5424) += apss-ipq5424.o
- obj-$(CONFIG_IPQ_APSS_6018) += apss-ipq6018.o
-+obj-$(CONFIG_IPQ_APSS_9650) += apss-ipq9650.o
- obj-$(CONFIG_IPQ_CMN_PLL) += ipq-cmn-pll.o
- obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
- obj-$(CONFIG_IPQ_GCC_5018) += gcc-ipq5018.o
-diff --git a/drivers/clk/qcom/apss-ipq9650.c b/drivers/clk/qcom/apss-ipq9650.c
-new file mode 100644
-index 000000000000..7602f3896fe3
---- /dev/null
-+++ b/drivers/clk/qcom/apss-ipq9650.c
-@@ -0,0 +1,385 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/interconnect-provider.h>
-+
-+#include <dt-bindings/clock/qcom,apss-ipq.h>
-+#include <dt-bindings/interconnect/qcom,ipq9650.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-regmap.h"
-+#include "common.h"
-+
-+enum {
-+	DT_XO,
-+	DT_GPLL0,
-+};
-+
-+static const struct pll_vco silver_pll_vco[] = {
-+	{ 816000000, 1968000000, 0 },
-+};
-+
-+static const struct pll_vco gold_pll_vco[] = {
-+	{ 696000000, 1992000000, 0 },
-+};
-+
-+static const struct pll_vco l3_pll_vco[] = {
-+	{ 696000000, 1512000000, 0 },
-+};
-+
-+static const struct alpha_pll_config silver_apss_pll_config = {
-+	.l = 0x23,
-+	.config_ctl_val = 0x08200920,
-+	.config_ctl_hi_val = 0x05008001,
-+	.config_ctl_hi1_val = 0x04000000,
-+	.user_ctl_val = 0x01000009,
-+};
-+
-+static const struct alpha_pll_config gold_apss_pll_config = {
-+	.l = 0x26,
-+	.config_ctl_val = 0x08200920,
-+	.config_ctl_hi_val = 0x05008001,
-+	.config_ctl_hi1_val = 0x04000000,
-+	.user_ctl_val = 0x01000009,
-+};
-+
-+static const struct alpha_pll_config l3_pll_config = {
-+	.l = 0x1e,
-+	.config_ctl_val = 0x08200920,
-+	.config_ctl_hi_val = 0x05008001,
-+	.config_ctl_hi1_val = 0x04000000,
-+	.user_ctl_val = 0x01000009,
-+};
-+
-+static struct clk_alpha_pll silver_apss_pll = {
-+	.offset = 0x0,
-+	.config = &silver_apss_pll_config,
-+	.vco_table = silver_pll_vco,
-+	.num_vco = ARRAY_SIZE(silver_pll_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_ZONDA],
-+	.flags = SUPPORTS_DYNAMIC_UPDATE,
-+	.clkr = {
-+		.enable_reg = 0x0,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "silver_apss_pll",
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_XO,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_IS_CRITICAL,
-+			.ops = &clk_alpha_pll_zonda_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_alpha_pll gold_apss_pll = {
-+	.offset = 0x10000,
-+	.config = &gold_apss_pll_config,
-+	.vco_table = gold_pll_vco,
-+	.num_vco = ARRAY_SIZE(gold_pll_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_ZONDA],
-+	.flags = SUPPORTS_DYNAMIC_UPDATE,
-+	.clkr = {
-+		.enable_reg = 0x10000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gold_apss_pll",
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_XO,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_IS_CRITICAL,
-+			.ops = &clk_alpha_pll_zonda_ops,
-+		},
-+	},
-+};
-+
-+static const struct clk_div_table gold_apss_pll_post_div_table[] = {
-+	{ 0x0, 1 },
-+	{ 0x1, 2 },
-+	{ }
-+};
-+
-+static struct clk_alpha_pll_postdiv gold_apss_pll_postdiv = {
-+	.offset = 0x10000,
-+	.post_div_shift = 8,
-+	.post_div_table = gold_apss_pll_post_div_table,
-+	.num_post_div = ARRAY_SIZE(gold_apss_pll_post_div_table),
-+	.width = 2,
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_ZONDA],
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "gold_apss_pll_postdiv",
-+		.parent_hws = (const struct clk_hw*[]){
-+			&gold_apss_pll.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_alpha_pll_postdiv_zonda_ops,
-+	},
-+};
-+
-+static struct clk_alpha_pll l3_pll = {
-+	.offset = 0x20000,
-+	.config = &l3_pll_config,
-+	.vco_table = l3_pll_vco,
-+	.num_vco = ARRAY_SIZE(l3_pll_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_ZONDA],
-+	.flags = SUPPORTS_DYNAMIC_UPDATE,
-+	.clkr = {
-+		.enable_reg = 0x20000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "l3_pll",
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_XO,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_IS_CRITICAL,
-+			.ops = &clk_alpha_pll_zonda_ops,
-+		},
-+	},
-+};
-+
-+struct clk_gfm {
-+	u32 mux_reg;
-+	u32 mux_mask;
-+	struct clk_hw hw;
-+	void __iomem *base;
-+};
-+
-+#define to_clk_gfm(_hw) container_of(_hw, struct clk_gfm, hw)
-+
-+static u8 clk_gfm_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_gfm *gfm = to_clk_gfm(hw);
-+	u32 val;
-+
-+	val = readl(gfm->base + gfm->mux_reg);
-+	return val & gfm->mux_mask;
-+}
-+
-+static int clk_gfm_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_gfm *gfm = to_clk_gfm(hw);
-+	u32 val;
-+
-+	val = readl(gfm->base + gfm->mux_reg);
-+	val &= ~gfm->mux_mask;
-+	val |= (index & gfm->mux_mask);
-+	writel(val, gfm->base + gfm->mux_reg);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_gfm_ops = {
-+	.get_parent = clk_gfm_get_parent,
-+	.set_parent = clk_gfm_set_parent,
-+	.determine_rate = __clk_mux_determine_rate_closest,
-+};
-+
-+static struct clk_gfm silver_apss_pll_gfmux = {
-+	.mux_reg = 0x84,
-+	.mux_mask = 0xf,
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "silver_apss_pll_gfmux",
-+		.parent_data = (const struct clk_parent_data[]) {
-+			{ .index = DT_XO },
-+			{ .index = DT_GPLL0 },
-+			{ .hw = &silver_apss_pll.clkr.hw },
-+		},
-+		.num_parents = 3,
-+		.ops = &clk_gfm_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_gfm gold_apss_pll_gfmux = {
-+	.mux_reg = 0x10084,
-+	.mux_mask = 0xf,
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "gold_apss_pll_gfmux",
-+		.parent_data = (const struct clk_parent_data[]) {
-+			{ .index = DT_XO },
-+			{ .index = DT_GPLL0 },
-+			{ .hw = &gold_apss_pll.clkr.hw },
-+			{ .hw = &gold_apss_pll_postdiv.clkr.hw },
-+		},
-+		.num_parents = 4,
-+		.ops = &clk_gfm_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_gfm l3_pll_gfmux = {
-+	.mux_reg = 0x20084,
-+	.mux_mask = 0xf,
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "l3_pll_gfmux",
-+		.parent_data = (const struct clk_parent_data[]) {
-+			{ .index = DT_XO },
-+			{ .index = DT_GPLL0 },
-+			{ .hw = &l3_pll.clkr.hw },
-+		},
-+		.num_parents = 3,
-+		.ops = &clk_gfm_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_branch apss_silver_core_clk = {
-+	.halt_reg = 0x8c,
-+	.clkr = {
-+		.enable_reg = 0x8c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data) {
-+			.name = "apss_silver_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&silver_apss_pll_gfmux.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch apss_gold_core_clk = {
-+	.halt_reg = 0x1008c,
-+	.clkr = {
-+		.enable_reg = 0x1008c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data) {
-+			.name = "apss_gold_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gold_apss_pll_gfmux.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch l3_core_clk = {
-+	.halt_reg = 0x2008c,
-+	.clkr = {
-+		.enable_reg = 0x2008c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data) {
-+			.name = "l3_core_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&l3_pll_gfmux.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_hw *apss_hws[] = {
-+	&silver_apss_pll_gfmux.hw,
-+	&l3_pll_gfmux.hw,
-+	&gold_apss_pll_gfmux.hw,
-+};
-+
-+static struct clk_regmap *apss_clks[] = {
-+	[APSS_PLL_EARLY] = &silver_apss_pll.clkr,
-+	[APSS_SILVER_CORE_CLK] = &apss_silver_core_clk.clkr,
-+	[L3_PLL] = &l3_pll.clkr,
-+	[L3_CORE_CLK] = &l3_core_clk.clkr,
-+	[APSS_GOLD_PLL] = &gold_apss_pll.clkr,
-+	[APSS_GOLD_PLL_POSTDIV] = &gold_apss_pll_postdiv.clkr,
-+	[APSS_GOLD_CORE_CLK] = &apss_gold_core_clk.clkr,
-+};
-+
-+static const struct regmap_config apss_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0x2fffc,
-+	.fast_io = true,
-+};
-+
-+static struct clk_alpha_pll *ipq9650_apss_plls[] = {
-+	&silver_apss_pll,
-+	&gold_apss_pll,
-+	&l3_pll,
-+};
-+
-+static const struct qcom_cc_driver_data ipq9650_apss_driver_data = {
-+	.alpha_plls = ipq9650_apss_plls,
-+	.num_alpha_plls = ARRAY_SIZE(ipq9650_apss_plls),
-+};
-+
-+#define IPQ_APPS_PLL_ID			(9650 * 3)	/* some unique value */
-+
-+static const struct qcom_icc_hws_data icc_cpu_l3[] = {
-+	{ MASTER_CPU_SILVER, SLAVE_L3, L3_CORE_CLK },
-+	{ MASTER_CPU_GOLD, SLAVE_L3, L3_CORE_CLK },
-+};
-+
-+static const struct qcom_cc_desc apss_desc = {
-+	.config = &apss_regmap_config,
-+	.clks = apss_clks,
-+	.num_clks = ARRAY_SIZE(apss_clks),
-+	.icc_hws = icc_cpu_l3,
-+	.num_icc_hws = ARRAY_SIZE(icc_cpu_l3),
-+	.icc_first_node_id = IPQ_APPS_PLL_ID,
-+	.clk_hws = apss_hws,
-+	.num_clk_hws = ARRAY_SIZE(apss_hws),
-+	.driver_data = &ipq9650_apss_driver_data,
-+};
-+
-+static int apss_ipq9650_probe(struct platform_device *pdev)
-+{
-+	const struct qcom_cc_desc *desc = &apss_desc;
-+	struct regmap *regmap;
-+	struct clk_gfm *gfm;
-+	void __iomem *base;
-+	int i;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base,
-+				       &apss_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	for (i = 0; i < desc->num_clk_hws; i++) {
-+		gfm = to_clk_gfm(apss_hws[i]);
-+		gfm->base = base;
-+	}
-+
-+	return qcom_cc_really_probe(&pdev->dev, desc, regmap);
-+}
-+
-+static const struct of_device_id apss_ipq9650_match_table[] = {
-+	{ .compatible = "qcom,ipq9650-apss-clk" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, apss_ipq9650_match_table);
-+
-+static struct platform_driver apss_ipq9650_driver = {
-+	.probe = apss_ipq9650_probe,
-+	.driver = {
-+		.name = "qcom,ipq9650-apss-clk",
-+		.of_match_table = apss_ipq9650_match_table,
-+		.sync_state = icc_sync_state,
-+	},
-+};
-+
-+module_platform_driver(apss_ipq9650_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm IPQ9650 APSS Clock Driver");
-+MODULE_LICENSE("GPL");
+    icc_clk_register() assumes each icc_clk_data entry describes a unique
+    master/slave pair and creates both nodes for every entry. When several
+    masters share the same slave_id, the shared slave node is created and
+    added again on each later entry. icc_node_create() returns the existing
+    node, so icc_node_add() hits WARN_ON(node->provider):
 
--- 
-2.34.1
+[ ... ]
 
+    This topology is needed on IPQ9650, where the silver and gold CPU
+    clusters both vote on the single L3 clock through a shared SLAVE_L3
+    node.
+   =20
+    The onecell table is also filled in registration order, so xlate only
+    works when the node IDs happen to match that order. Size the table by
+    the highest node ID, index it by ID, and skip slave creation when the
+    node is already registered.
+   =20
+    icc_clk_set() also passes only the requesting node's bandwidth to
+    clk_set_rate(), so the last writer wins. A low vote from one master can
+    then lower the clock below what another master asked for. Before setting
+    the rate, take the highest peak bandwidth across all nodes that share
+    the clock.
+
+> diff --git a/drivers/interconnect/icc-clk.c b/drivers/interconnect/icc-cl=
+k.c
+> index 93c030608d3e0..567d071fade8e 100644
+> --- a/drivers/interconnect/icc-clk.c
+> +++ b/drivers/interconnect/icc-clk.c
+> @@ -24,7 +24,10 @@ struct icc_clk_provider {
+> =20
+>  static int icc_clk_set(struct icc_node *src, struct icc_node *dst)
+>  {
+> +	unsigned long rate =3D icc_units_to_bps(src->peak_bw);
+> +	struct icc_provider *provider =3D src->provider;
+>  	struct icc_clk_node *qn =3D src->data;
+> +	struct icc_node *node;
+>  	int ret;
+> =20
+>  	if (!qn || !qn->clk)
+>  		return 0;
+> =20
+>  	if (!src->peak_bw) {
+>  		if (qn->enabled)
+>  			clk_disable_unprepare(qn->clk);
+>  		qn->enabled =3D false;
+> =20
+>  		return 0;
+>  	}
+
+[Severity: Medium]
+Will this early return circumvent the newly added aggregation logic when a
+master sets its bandwidth to zero?
+
+When multiple masters share the same clock in an N:1 topology, bypassing the
+rate aggregation loop due to an early return causes the underlying shared
+clock to remain running at the previously requested high rate instead of
+stepping down to the maximum of the remaining masters' votes. The clock sta=
+ys
+unnecessarily high until another node updates its vote.
+
+> =20
+>  	if (!qn->enabled) {
+>  		ret =3D clk_prepare_enable(qn->clk);
+>  		if (ret)
+>  			return ret;
+>  		qn->enabled =3D true;
+>  	}
+> =20
+> -	return clk_set_rate(qn->clk, icc_units_to_bps(src->peak_bw));
+> +	/*
+> +	 * Multiple master nodes can share the same underlying clock (N:1
+> +	 * topology, e.g. several CPU clusters voting on one L3 clock).
+> +	 * Aggregate the peak bandwidth across all of them before setting
+> +	 * the rate, otherwise the last caller wins and can undervote what
+> +	 * another master already asked for.
+> +	 */
+> +	list_for_each_entry(node, &provider->nodes, node_list) {
+
+[Severity: High]
+Does this list iteration race with concurrent unbind?
+
+icc_clk_set() executes as the provider->set callback holding only icc_bw_lo=
+ck.
+Concurrently, if an interconnect provider is unbound via sysfs,
+icc_node_del() removes nodes from provider->nodes using list_del() while
+holding only icc_lock:
+
+drivers/interconnect/core.c:icc_node_del() {
+    mutex_lock(&icc_lock);
+    list_del(&node->node_list);
+    mutex_unlock(&icc_lock);
+}
+
+Because the locks are disjoint, this list traversal can race with list_del(=
+),
+leading to iteration over poisoned pointers.
+
+> +		struct icc_clk_node *n =3D node->data;
+> +
+> +		if (n && clk_is_match(n->clk, qn->clk))
+> +			rate =3D max(rate, icc_units_to_bps(node->peak_bw));
+> +	}
+> +
+> +	return clk_set_rate(qn->clk, rate);
+>  }
+
+[ ... ]
+
+> @@ -126,7 +148,16 @@ struct icc_provider *icc_clk_register(struct device =
+*dev,
+>  		icc_node_add(node, provider);
+>  		/* link to the next node, slave */
+>  		icc_link_create(node, first_id + data[i].slave_id);
+> -		onecell->nodes[j++] =3D node;
+> +		onecell->nodes[data[i].master_id] =3D node;
+
+[Severity: Medium]
+Should the return value of icc_link_create() be checked here?
+
+If icc_link_create() fails to allocate memory for the links, it returns
+-ENOMEM. Because this return value is ignored, the interconnect graph links
+might silently fail to form. This can break the master-to-slave interconnect
+topology, leading to ignored bandwidth requests while driver initialization
+appears to succeed.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261007-ipq9650_ap=
+ss_clk-v1-0-fd4c2b3cbdea@oss.qualcomm.com?part=3D1
