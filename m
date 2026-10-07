@@ -1,91 +1,152 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDC93D813E;
-	Wed,  7 Oct 2026 13:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2423914FE;
+	Wed,  7 Oct 2026 13:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791378430; cv=none; b=c/EdHCHec+vhgkjIooTyK4VIJHNh4iNfCKIRoNZ7H30fcw3/eF+eSCSAqjcwFZ6BPnNSGzVgaqHo+1Tem7oXQ/l01Lt2sJCq3CIFsAA6L2eLdRhNgZBh/xPOVpqghyl8WlqCjiKRzZb37l5M/nvsuor/G/R8FR/+Fa2TxpneVog=
+	t=1791378703; cv=none; b=t7pIgLFRnk1NtB8N4E3tABPBqBWSge+ZDF1fDkKcXJu8U8M6TGXVsgSFAcCdUB33y49UoS8EuwHs2StX0pK8VUdn4A7vybmjF6AFIMbmnC2n5VUuznF/gF038eWXKiHPG5Ic9+c2AjzPEINnuWs7A2k5Y5+eWB04NDYlyxA6YfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791378430; c=relaxed/simple;
-	bh=ayPSE+Y6CAfKuyH1Ek1gEM4Hw7Gq1/HwDAqp8sPGsaI=;
+	s=arc-20240116; t=1791378703; c=relaxed/simple;
+	bh=41fDVbxZ9amXXnHNyo3+/lxLChs10LDalX4OlFmqo/A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=olIz887Fo5pADwNthxzhJTgVE//Hxi2R6Rk2JT489rLz+G4UYfBctWZTaSLuCj3dZ+w0W9hg6Rw0QO8jznQ6j51TJTe69Nvzg1WcRoXZj0hPWrXYYIrGhWcenpbZ8Y82XhFKO396xJBE0KQA5AzhOU/cF/QT8SCMFG7ygXIgKCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ajMiwFDY; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=rbqRRRjnjqn1n7g7xKFG5y2O0IDFXWo+7lf2RCLQOl+PBB1CQKclcGajbGt+vtEMhAHKBK2S8CLNisuZF1pIugi/qqPEdRktA1f5xIH59F4lN+r2YbSUXHJJVx/zAFw0k0goowVYjGqX/Axl/ABW65C4Or8Op10pgzaMdWFdmNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRtCQ22f; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajMiwFDY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7C881F0089B;
-	Wed,  7 Oct 2026 13:06:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRtCQ22f"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5373B1F0089B;
+	Wed,  7 Oct 2026 13:11:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791378423;
-	bh=Uq4+gSwVCA9riGGi/ppitQyXRBTdaQE5mWOuNhAJjtE=;
+	s=k20260515; t=1791378692;
+	bh=fU1GuLIm19BVy56Ks7brnn3nS8NIyYYLHC3fc8g43AI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ajMiwFDYDqKVhwZy1GL8/TOAtxXo2jffYvMKf9f57XZ6HEwpoPQ9qD08h8uWRsoD3
-	 nNpPyLFDUaBf1Nx23T8mDOLujbS7aN5hD2cv90Lrjzm7AY9Fyw9jadFJXIH5XOGw3s
-	 Gj+Ivg4MJfLH61TO4RGkNNNakkMHop6Hbueh/iRPwJzOjaanMgucgg8t1g7TCxlhzk
-	 Ss4k8epI341uyzkQ3uryGR/tIvXBZv3XCCIrxaFFk43FF3SardgHnV9lZzMQhnS4qh
-	 o9B9YXrzh+qokQRyIyNArImyu0lCqUdCvIkEtgNf0c9cFCAVKAbTp4G2mtE0/KFg25
-	 Z5YfQKIa3KEAg==
-Date: Wed, 7 Oct 2026 15:06:55 +0200
-From: Brian Masney <masneyb@kernel.org>
-To: "Christian Marangi (Ansuel)" <ansuelsmth@gmail.com>
-Cc: Brian Masney <bmasney@redhat.com>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Felix Fietkau <nbd@nbd.name>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v2 0/2] clk: en7523: Add support for selecting SCU serdes
-Message-ID: <asZD79RRF4u5OJdn@x1g10>
-References: <20260915125226.20579-1-ansuelsmth@gmail.com>
- <179000484817.707534.5059164498545591038.b4-ty@b4>
- <CA+_ehUzrL9qHe92tE0CeaOMAD1LXGuK79t5mZGv+bp2sCas_sA@mail.gmail.com>
+	b=VRtCQ22fEbfQ1dlzLF708OiRR5/rHAgOdNCo/U46SgQRZ9EkrZqbOU9n2X9qWbrD3
+	 D4PaJQNjeeGJRhpreBG072Pwo74Kzuemtww48AAWJUv7sP+9Rj8D8tZzEtxrzmKeXx
+	 1Vtd2/6Koyu+TUW2GmdadK4GOjIcKagf3kCpDqm1UVFSzQN5lxetDMp5W9trtkk9iC
+	 +zLjDdrEfiu6De5/INIcOCYGbA3ZwCeqbomaDfAFfOS2Mguqkp8D2MD4zUjO4E1dpR
+	 uwIDO+yEAOtxLJgiWYmEOlpWK/m9qoWzUmULSGIVvLK8hekazRyw7jgfR38rPyazQn
+	 74lxNHZi+8Kaw==
+Date: Wed, 7 Oct 2026 14:11:27 +0100
+From: Conor Dooley <conor@kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, Frank.Li@kernel.org,
+	imx@lists.linux.dev, robh@kernel.org, devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, conor+dt@kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v10 6/9] dt-bindings: clock: nxp,imx95-blk-ctl: Add ldb
+ child node
+Message-ID: <20261007-e9f7f08f98c153f0d0c97c91@squawk>
+References: <20261006-dcif-upstreaming-v10-0-bcfb28de0aae@oss.nxp.com>
+ <20261006-dcif-upstreaming-v10-6-bcfb28de0aae@oss.nxp.com>
+ <20261006123500.94C911F00893@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rYN3Tj1AuBnBbp+q"
 Content-Disposition: inline
-In-Reply-To: <CA+_ehUzrL9qHe92tE0CeaOMAD1LXGuK79t5mZGv+bp2sCas_sA@mail.gmail.com>
-User-Agent: Mutt/2.4.2 (2026-08-30)
+In-Reply-To: <20261006123500.94C911F00893@smtp.kernel.org>
 
-On Tue, Oct 06, 2026 at 01:23:36PM +0200, Christian Marangi (Ansuel) wrote:
-> Il giorno lun 21 set 2026 alle ore 17:34 Brian Masney
-> <bmasney@redhat.com> ha scritto:
-> >
-> >
-> > On Tue, 15 Sep 2026 14:52:22 +0200, Christian Marangi wrote:
-> > > clk: en7523: Add support for selecting SCU serdes
-> > >
-> > > This small series is a split from the Airoha AN7581 USB PHY series [1].
-> > >
-> > > [1] https://lore.kernel.org/all/20260702093812.15918-1-ansuelsmth@gmail.com/
-> > >
-> > > Changes v2:
-> > > - Rebase on top of linux-next
-> > > - Add review tag for Documentation patch
-> > >
-> > > [...]
-> >
-> > Applied, thanks!
-> >
-> > [1/2] dt-bindings: clock: airoha: Add PHY binding for Serdes port
-> >       commit: 11952173d8a180ac05641775f80bd6946327478f
-> > [2/2] clk: en7523: Add support for selecting the Serdes port in SCU
-> >       commit: 4e39820b601221997cb2220edc830f92367cdfc2
-> >
-> 
-> is it possible to have a stable branch/signed tag for phy subsystem?
-> Commit 11952173d8a180ac05641775f80bd6946327478f is needed
-> to permit correct compilation of a airoha usb phy driver.
+--rYN3Tj1AuBnBbp+q
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes. I'll have to rebase the clk-next tree but it's no big deal.
+On Tue, Oct 06, 2026 at 12:34:59PM +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 1 potential issu=
+e(s) to consider:
+> - [Medium] dt-bindings: missing LDB constraints for nxp,imx95-lvds-csr va=
+riant
+> --
+>=20
+> commit ef256d56e7840a3d6a825d4ac33adad77eacd513
+> Author: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+>=20
+> dt-bindings: clock: nxp,imx95-blk-ctl: Add ldb child node
+>=20
+> Since the BLK CTL registers, like the LVDS CSR, can be used to control the
+> LVDS Display Bridge controllers, add 'ldb' child node to handle
+> these use cases.
+>=20
+> > diff --git a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.=
+yaml b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
+> > index fbbf1b3f17904..97fe816a38f94 100644
+> > --- a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
+> [ ... ]
+> > @@ -63,7 +67,9 @@ allOf:
+> >        properties:
+> >          compatible:
+> >            contains:
+> > -            const: nxp,imx95-camera-csr
+> > +            enum:
+> > +              - nxp,imx94-lvds-csr
+> > +              - nxp,imx95-camera-csr
+> >      then:
+> >        required:
+> >          - '#address-cells'
+>=20
+> [Severity: Medium]
+> Could this introduce a regression where device tree validation incorrectl=
+y fails
+> for i.MX95 devices that define an ldb child node under the LVDS CSR?
 
-I'm at Linux Plumbers right now and I'll send out an immutable tag in a
-day or two.
+This ldb child is new, how could there be a regression like this?
 
-Brian
+>=20
+> This change restricts #address-cells and #size-cells to these two strings,
+> forcing them to false for nxp,imx95-lvds-csr. Should nxp,imx95-lvds-csr a=
+lso
+> be included in this enum?
+>=20
+> [ ... ]
+> > @@ -72,8 +78,24 @@ allOf:
+> >        properties:
+> >          '#address-cells': false
+> >          '#size-cells': false
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          not:
+> > +            contains:
+> > +              const: nxp,imx95-camera-csr
+> > +    then:
+> >        patternProperties:
+> >          '^formatter@[0-9a-f]+$': false
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          not:
+> > +            contains:
+> > +              const: nxp,imx94-lvds-csr
+> > +    then:
+> > +      patternProperties:
+> > +        '^ldb@[0-9a-f]+$': false
+>=20
+> [Severity: Medium]
+> Does this introduce a regression by preventing nxp,imx95-lvds-csr from
+> declaring an ldb child node?
+>=20
+> This explicitly forbids the ldb child node for anything other than
+> nxp,imx94-lvds-csr, thereby silently prohibiting it for nxp,imx95-lvds-cs=
+r.
+>=20
+> --=20
+> Sashiko AI review =B7 https://sashiko.dev/#/patchset/20261006-dcif-upstre=
+aming-v10-0-bcfb28de0aae@oss.nxp.com?part=3D6
+
+--rYN3Tj1AuBnBbp+q
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCasZE/wAKCRB4tDGHoIJi
+0pxvAPoDgU95rPok0uGP0uVoh/Yksvh22uL6LGRHfp/ZfKppLAD8CGqFqi59wvXk
+5Bc26aOCnBFpESmlYWFOdNfSqL0pRwI=
+=NzJU
+-----END PGP SIGNATURE-----
+
+--rYN3Tj1AuBnBbp+q--
