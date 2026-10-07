@@ -1,189 +1,164 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A868633FE05;
-	Wed,  7 Oct 2026 07:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC04533FE05
+	for <linux-clk@vger.kernel.org>; Wed,  7 Oct 2026 07:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791356746; cv=none; b=Ak8RkDISNWJMoW945q4rJHVyVK7NktgEiBXdNJr6oR4bcgT6Zrq8fF3M3110tyS9MfAThMYo4ebLwSDt4yJkRyhSyNfRa37UVfAcyI72OM996XcWFSna9OJOhioQ+nuZa38ED1CDkYHTWKQrxdO3zuRf/0VxiUmPeIC+/i0jMac=
+	t=1791358340; cv=none; b=RYnWQNRXwXjCfN3xI3OB9rJ1KVFHjnXfaTPWsQQPMXh3/QA6g7tHVizYbinnnPvvT1TJuCvnYO+/IAI4NBVcstAyR5uJ1p+zpbfQke7VhQqZmGxx5kYhfqxRZ5FxbJLiQSbJUSZ9zuFs+/NV43Du6injlu9y3BvgvPoWVmb1S/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791356746; c=relaxed/simple;
-	bh=plGTE4i/JKvBSg1EJp9QjiFEUlgfjg7QxfZeB3XEPQQ=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=dYAzUqlJGfoBj5nopfzHE1Consw7nXRrFGGpFwHsmA5E+OftySmGkikiHFyP5e3S1VfKe0UpoGlP6kcoGlcJd2+4csuzhwYHNY8yGqf0K2A1HG05VgYO7veOfyqiEBGxa53O8J71pfKMOXmPxOUDLyEAfPJR63BazBnnYJvURtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M9WvsPS4; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791358340; c=relaxed/simple;
+	bh=9/0X5x1xXm8iZzxib+GdUs/t5i5t4uoWiZA9k58E6MQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rEwJBgxIbS81dWqTgx08kCfiMO3Od+6Oe5nzky3ZIFXTiq0vz78os/LlAEzQWI7LiLm687s/oDDOBOGSbPQ2J9ksO5Cu9FPhz0yLtyPmdWNj86i19HYF+kMvOz4X3TVT6GSe/kbTEU8FQy77wpFgtAPqzeIE2NHmOuOjM0BreUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KuXZDIYX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=KzZnnXII; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M9WvsPS4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E795E1F0089B;
-	Wed,  7 Oct 2026 07:05:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791356745;
-	bh=zE7x8mwroMqzVvZsd48PbPdzc5eCBks6/z+j6DuMqko=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=M9WvsPS4mDGVLgITZOHJqvxCbKW1I9Gba9v1n9kjeztRA45wfvP2gcz8M4wzx1FPM
-	 nT9sbwoTxR7pBEDBW7gueuN9lA6NztjD7SIlqfW8tmtO6uyfvydkvrTjTZBZcfZp3B
-	 afJ156BzKMuc9QcgkqqAqM7Yiob8DNFz76RS8WnxGtdZjr2Lb+4gsOqTQJTS6UijjI
-	 +SyHzw9MeOefLOai4hPcXKuNnY+ihhVhLNWYt1FH5ksLmJtJtRIdp3T0rgBaUZVE1E
-	 lvxCMqJyGD2vxoMKeyylaePDDouEMogueK/+zq+4yDHf0g7H3KyzxTfUC4TP0ehuk8
-	 y8teYIJJWfoSA==
-Message-ID: <sashiko-outbox-162689@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/4] interconnect: icc-clk: support N:1 master-to-slave
- topology
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Kathiravan Thirumoorthy" <kathiravan.thirumoorthy@oss.qualcomm.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261007-ipq9650_apss_clk-v1-1-fd4c2b3cbdea@oss.qualcomm.com>
-References: <20261007-ipq9650_apss_clk-v1-0-fd4c2b3cbdea@oss.qualcomm.com>
- <20261007-ipq9650_apss_clk-v1-1-fd4c2b3cbdea@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 07 Oct 2026 07:05:44 +0000
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KuXZDIYX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="KzZnnXII"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6974U9B03264018
+	for <linux-clk@vger.kernel.org>; Wed, 7 Oct 2026 07:32:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=TrPqnuCmGBJoTkrNjmurDatiLKx80qmQsRw
+	Xr61wMdo=; b=KuXZDIYXhNjWX2UAjQ2k1PdIRJNrI5cxJVLPWSTq1YJhTl5b5+q
+	s9jEfkvitihUgM918bI6yL6429+IeBjgbzHYB2a4VqZ0sO4QHMo4owUJIyKDzot2
+	iTW9O1FVo+szxpwsBZ7O2ijLMmzFUou5jEs0EQSQLCvL7wdngpYDNpkQ2M+ntwQ+
+	BQTuuRzQUojg8TCxv8yN0ZFec8A4E/JTXIy+dg+q2Qmpk0tbJ26RV52HlRIAc19i
+	pFLS1eUaghd2JEn47pumuO0wNqX2y59aDmY4SJ2dJScsB/Iae91MBARlnTbg8jW6
+	0LlPtaP+/8/Nos8kfTQGgbYYs/xF6qb8ugA==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h5c6092ws-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 07 Oct 2026 07:32:18 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-cc4ac5feaa4so3088699a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 07 Oct 2026 00:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1791358337; x=1791963137; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=TrPqnuCmGBJoTkrNjmurDatiLKx80qmQsRwXr61wMdo=;
+        b=KzZnnXIIxUIURnbQvB8pjZQ/ahpdX7EYEs88yOuwqxK+ua+entJAfaUO20dSqTa4wG
+         iiAfKf8BeN2Wsf28nnrsKz2XW6QRVaGEIBsJks+SvfaFysK44M8GOoNX6soj62ZEYL5q
+         tqRC2pwKzoWkrtNGUnMB2a4NtubkcHzQjPQnNXuBm72MP16tA7rjNFdic2oYPiDFRCYd
+         vFBAvCsPzDkZR3dtdWdOagy2zImra7cdHURdKW9mX7bmR8krcoamxs1FMKmvuFrDFCQ0
+         CyezDGvtcrBsjhmzuuHS4q/u8ygKbamgxy72UYz+llFVFojwSrBYAc9u4Q3Svw34Nisx
+         G9YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791358337; x=1791963137;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=TrPqnuCmGBJoTkrNjmurDatiLKx80qmQsRwXr61wMdo=;
+        b=u9m4OXKh0ZLlFBvk3D9kI69Opu+G+B8rVFa4Er1Xs5Tra/uLbjUhkA4Pz2evK078hU
+         kiwQVCW9vgQ88Lhe3Blom7lqQXLRY6jxelUs1HYpSrXseEUeOoRHqZEJouZfibsGIjEv
+         y14WyoRpgfjgaRAxYoXQcJEUuzgfPOUcdRL/HKVNXFWrete2aDAc+7FYJvzQ/C8EoQIu
+         XFl8hx84RNQ0R/4RouJie/QsLLZmNVFxjJRPB0t8jN6pBCcBac1dQzrB4ofE+qg3mC/d
+         m+UNbVrAVax34SxI1jelx1p3TRxIhSCxbEi5cFB69KUPj6uFUzGsvwowEVk8EhHAntxJ
+         Zu0w==
+X-Forwarded-Encrypted: i=1; AKwUvBxZxWtsZgGT9YOIt4Kg8i0UhW6SYtsTtBtZhesanSFskf900cNJQ6V/o/W3gGUmfaBmOuEb/d8tVHo=@vger.kernel.org
+X-Gm-Message-State: AFuF++nyRIwYodgrlbLIWnrXYrfKyWX9w6sAK31uMn8veMvJSIffQD3T
+	DCncBCObLwXUbDygBAmnHGzd86mFHQrXUmQS/0WGmqIOyfw0daMz/O0JWsMk7VnMDKx43viXgl1
+	5/nw8eWCmiJ8ChV0xp8G4dp9bFdoiHl2xVQv8HPzz5R1p5xwlJ0vnP4Z+HshSEzo=
+X-Gm-Gg: AYBFou1tos5Bggy/eQ5yr9tLXgJEUMLUaUEZzJ8cFRHZ4rUNujuJYWH83rOYhchp/b6
+	h4dn1qWXaErhkZkfqZRJqc6ljWykDCQykELlWdDgxGDrxu1aa8ND4wcnFYx5FLZi/mUBsEverBO
+	ZF7YCtSX0Z3MqJ4t1Se9DH5MMueHLQXtYZa9w40UOoYNQxcsU0J5T1c2eZV7rwi8ye1jHT0Ov+N
+	mJpYuAFISmZ/YQxVKb78+/PShnNuALn9jmgqySOhCKLPIsOHRx+ApkWG+88VgGEnS8Gviu7NBLv
+	6X3nlrRTAafsyjro5h3hCGkN1nTiNbn0wp2+AuV4srRGx9R3Tvr9lxp5/D0sc0ueZG6GdIWIY4w
+	jHMkabMTn+u5Op+tac7scA3o17jZzJZZxhFev7uEeAq6Cx5XzGy6QuR1WlPk=
+X-Received: by 2002:a05:6a21:3995:b0:3da:ec28:2cc6 with SMTP id adf61e73a8af0-3e13405391amr1044483637.22.1791358337264;
+        Wed, 07 Oct 2026 00:32:17 -0700 (PDT)
+X-Received: by 2002:a05:6a21:3995:b0:3da:ec28:2cc6 with SMTP id adf61e73a8af0-3e13405391amr1044459637.22.1791358336760;
+        Wed, 07 Oct 2026 00:32:16 -0700 (PDT)
+Received: from QCOM-aGQu4IUr3Y.qualcomm.com (i-global052.qualcomm.com. [199.106.103.52])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cd0a9ba4589sm956037a12.24.2026.10.07.00.32.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Oct 2026 00:32:16 -0700 (PDT)
+From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Abel Vesa <abelvesa@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Shawn Guo <shengchao.guo@oss.qualcomm.com>
+Subject: [PATCH] clk: qcom: negcc-nord: Keep the AHB2PHY_0 bridge clock always on
+Date: Wed,  7 Oct 2026 15:31:46 +0800
+Message-ID: <20261007073146.3162478-1-shengchao.guo@oss.qualcomm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: yL_AGDPp91K8cu0TSynfaIuFmZTDoXF9
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA3MDAyOCBTYWx0ZWRfX2x+25zzKRcBL
+ a3zXYAELLw4jxCr8g0AoWMm4cYkiOJdWrcM5XomMoRh12dfcGcS7eo2f6VbaVDwn0+wultBlErq
+ cojfEY0H3zqoS8xgm+5EtJF6B2boCEA=
+X-Authority-Analysis: v=2.4 cv=PM+aavqC c=1 sm=1 tr=0 ts=6ac5f582 cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
+ a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=EUspDBNiAAAA:8
+ a=lWL-Se4DGgWCUzFVucoA:9 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-GUID: yL_AGDPp91K8cu0TSynfaIuFmZTDoXF9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA3MDAyOCBTYWx0ZWRfXw6RwRpa+LmKO
+ h1DN2phn81jILa8mFzaaAn+7vcszO+LV1V3ve/mheSD0pHhhUTN5qkg8mTP0tYNoi6gE1ecC9x2
+ 2Ml4ZUPcgNfZTzFopKFSZk/Gnb2OYtCI3AERZEtJwETjHfoMgInD5uQYXLJpR/aUzcrKAG0k/bm
+ XocemNJv1cGZKFUZE+hTQvLsR1xiiQl/PFPvS+vIMXGHFmMWgfqTsc3k5cjV0i02bKGqXMUShmY
+ vMLWlZegDRnBZtZMNd8uXC/UQGQVs1pdw8OVRQMliOcezZ5UKAYeH+N1hzs108VpNaRXTOqhp9K
+ zprm0Pt8TZPWOqlM5uWT+3IhVixFHk1qfk4vynXP6RWFWKPrm9j3oRPoSVYtDVfDB8+bjh0ulp3
+ e553Xmjp+VmV9pUTrZ3FOSzoTuTTiRjWJZox/5/9Hu5NIlEM9kyQFlSoDWdyvuepguTG55ldxDO
+ LkMDBRTmoBgL7xk5BQQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-07_02,2026-10-06_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1015 adultscore=0 bulkscore=0 phishscore=0
+ malwarescore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2609040000
+ definitions=main-2610070028
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [High] icc: list corruption and data race in icc_clk_set() during concurr=
-ent unbind
-- [Medium] icc: bypassed rate aggregation leaves shared clock at high rate
-- [Medium] icc: missing error check for icc_link_create() in icc_clk_regist=
-er()
---
+NE_GCC_AHB2PHY_CLK gates the AHB2PHY_0 bridge, which fronts the
+USB2/USB3-DP PHYs, EUD and PHY_REFGEN_4. It has no consumer in DT, so
+clk_disable_unused() gates it before the PHY modules probe. The PHY
+initialization sequence then never reaches the PHYs, and DWC3 core soft
+reset times out:
 
-commit fb3619debbc961d128e9125a7da752adeb391118
-Author: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+  dwc3-qcom a600000.usb: DWC3 controller soft reset failed.
+  dwc3-qcom a600000.usb: error -ETIMEDOUT: failed to initialize core
 
-    interconnect: icc-clk: support N:1 master-to-slave topology
+As a result, USB on Nord only works when booting with clk_ignore_unused.
+EUD has no clock binding and may be accessed while the USB PHYs are
+powered down, so modelling the clock as a PHY consumer is not sufficient.
 
-    icc_clk_register() assumes each icc_clk_data entry describes a unique
-    master/slave pair and creates both nodes for every entry. When several
-    masters share the same slave_id, the shared slave node is created and
-    added again on each later entry. icc_node_create() returns the existing
-    node, so icc_node_add() hits WARN_ON(node->provider):
+Mark the branch as always-on, as is done for the AHB2PHY clocks on
+other Qualcomm SoCs (e.g. Kuno, SDX75).
 
-[ ... ]
+Assisted-by: LLM
+Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+---
+ drivers/clk/qcom/negcc-nord.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    This topology is needed on IPQ9650, where the silver and gold CPU
-    clusters both vote on the single L3 clock through a shared SLAVE_L3
-    node.
-   =20
-    The onecell table is also filled in registration order, so xlate only
-    works when the node IDs happen to match that order. Size the table by
-    the highest node ID, index it by ID, and skip slave creation when the
-    node is already registered.
-   =20
-    icc_clk_set() also passes only the requesting node's bandwidth to
-    clk_set_rate(), so the last writer wins. A low vote from one master can
-    then lower the clock below what another master asked for. Before setting
-    the rate, take the highest peak bandwidth across all nodes that share
-    the clock.
+diff --git a/drivers/clk/qcom/negcc-nord.c b/drivers/clk/qcom/negcc-nord.c
+index 68ce4d6278ba..9c9b4a83df1c 100644
+--- a/drivers/clk/qcom/negcc-nord.c
++++ b/drivers/clk/qcom/negcc-nord.c
+@@ -812,7 +812,7 @@ static struct clk_branch ne_gcc_ahb2phy_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "ne_gcc_ahb2phy_clk",
+-			.ops = &clk_branch2_ops,
++			.ops = &clk_branch2_aon_ops,
+ 		},
+ 	},
+ };
+-- 
+2.43.0
 
-> diff --git a/drivers/interconnect/icc-clk.c b/drivers/interconnect/icc-cl=
-k.c
-> index 93c030608d3e0..567d071fade8e 100644
-> --- a/drivers/interconnect/icc-clk.c
-> +++ b/drivers/interconnect/icc-clk.c
-> @@ -24,7 +24,10 @@ struct icc_clk_provider {
-> =20
->  static int icc_clk_set(struct icc_node *src, struct icc_node *dst)
->  {
-> +	unsigned long rate =3D icc_units_to_bps(src->peak_bw);
-> +	struct icc_provider *provider =3D src->provider;
->  	struct icc_clk_node *qn =3D src->data;
-> +	struct icc_node *node;
->  	int ret;
-> =20
->  	if (!qn || !qn->clk)
->  		return 0;
-> =20
->  	if (!src->peak_bw) {
->  		if (qn->enabled)
->  			clk_disable_unprepare(qn->clk);
->  		qn->enabled =3D false;
-> =20
->  		return 0;
->  	}
-
-[Severity: Medium]
-Will this early return circumvent the newly added aggregation logic when a
-master sets its bandwidth to zero?
-
-When multiple masters share the same clock in an N:1 topology, bypassing the
-rate aggregation loop due to an early return causes the underlying shared
-clock to remain running at the previously requested high rate instead of
-stepping down to the maximum of the remaining masters' votes. The clock sta=
-ys
-unnecessarily high until another node updates its vote.
-
-> =20
->  	if (!qn->enabled) {
->  		ret =3D clk_prepare_enable(qn->clk);
->  		if (ret)
->  			return ret;
->  		qn->enabled =3D true;
->  	}
-> =20
-> -	return clk_set_rate(qn->clk, icc_units_to_bps(src->peak_bw));
-> +	/*
-> +	 * Multiple master nodes can share the same underlying clock (N:1
-> +	 * topology, e.g. several CPU clusters voting on one L3 clock).
-> +	 * Aggregate the peak bandwidth across all of them before setting
-> +	 * the rate, otherwise the last caller wins and can undervote what
-> +	 * another master already asked for.
-> +	 */
-> +	list_for_each_entry(node, &provider->nodes, node_list) {
-
-[Severity: High]
-Does this list iteration race with concurrent unbind?
-
-icc_clk_set() executes as the provider->set callback holding only icc_bw_lo=
-ck.
-Concurrently, if an interconnect provider is unbound via sysfs,
-icc_node_del() removes nodes from provider->nodes using list_del() while
-holding only icc_lock:
-
-drivers/interconnect/core.c:icc_node_del() {
-    mutex_lock(&icc_lock);
-    list_del(&node->node_list);
-    mutex_unlock(&icc_lock);
-}
-
-Because the locks are disjoint, this list traversal can race with list_del(=
-),
-leading to iteration over poisoned pointers.
-
-> +		struct icc_clk_node *n =3D node->data;
-> +
-> +		if (n && clk_is_match(n->clk, qn->clk))
-> +			rate =3D max(rate, icc_units_to_bps(node->peak_bw));
-> +	}
-> +
-> +	return clk_set_rate(qn->clk, rate);
->  }
-
-[ ... ]
-
-> @@ -126,7 +148,16 @@ struct icc_provider *icc_clk_register(struct device =
-*dev,
->  		icc_node_add(node, provider);
->  		/* link to the next node, slave */
->  		icc_link_create(node, first_id + data[i].slave_id);
-> -		onecell->nodes[j++] =3D node;
-> +		onecell->nodes[data[i].master_id] =3D node;
-
-[Severity: Medium]
-Should the return value of icc_link_create() be checked here?
-
-If icc_link_create() fails to allocate memory for the links, it returns
--ENOMEM. Because this return value is ignored, the interconnect graph links
-might silently fail to form. This can break the master-to-slave interconnect
-topology, leading to ignored bandwidth requests while driver initialization
-appears to succeed.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261007-ipq9650_ap=
-ss_clk-v1-0-fd4c2b3cbdea@oss.qualcomm.com?part=3D1
