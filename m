@@ -1,170 +1,138 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender6-pp-g123.zoho.com (sender6-pp-g123.zoho.com [165.173.180.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3D12DECCB
-	for <linux-clk@vger.kernel.org>; Wed,  7 Oct 2026 00:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3AD5B206;
+	Wed,  7 Oct 2026 03:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.180.123
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791334197; cv=pass; b=Q1bZO3PJ/zXx2RYQNbEcpyj5wraescau0mP5qRmv/y7QOzyjkVia/7ljMwEWLNbkoefumX8lvOAL2SaegtZhDa+HzSOssF74w7nJ35S7UMzcaZWhVyUQbYN38BgZY3lp5icRnp3MvbTXopOczQKPgWm/Y+nOuouvZPWxOpezUSI=
+	t=1791344145; cv=pass; b=SSbeQ84WQuLAKnmprhCtqyDh20JNny4LenTg8Ed+35C5e4b9qM9lk5SK7EgCMo9YztNXhfcvXSe3NUzWN4U4EGkueylGgoYOqZzN9XRhB4jg7X//ybnOdRT4lT+lASK06ILCgzSoEG1wfaDrkBJZzwc/jiR7WBQ0PA2K9yLggf0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791334197; c=relaxed/simple;
-	bh=jibWeNECBJ6nGuuVGpXMaJ411vpC41Hnyp5ZlPjaFrU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sisbc+z5zA2w+UkUiA2KhEO6gHVUDaI1YrtQW2At6kXsG7zstm5P433MY7ZpNARoR0+3ppgsRO4Ye4M5jq6151TKgtrmUHhkx5YLKtCTHXww6PLer1nsHZ1y9wY7pwc9SnOUqFtSmeiHlHiDHP9NQl39brRs8FU22WXli0oPuGI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QjL8i6Tg; arc=pass smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1791344145; c=relaxed/simple;
+	bh=tT28eRbBX/xWqcGm7Vdom8PM07D1NYc0Wz80OC3tjzw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=u3oVNeZPw5KD5x7pkNTXG0wIu7beprWrnY57Gmv0a5JvRQbeAnID5GsdMA3FxjVArzoG6TZ1rP3GEGsmQtAhQLMDJzPOL2v1xZ81EtBSwZeN5sus2wECqcaTaAG3Lp8eZ2M/yM+6KQL1IAUfB9AUc6cKeRgDhV4y4qejSHYE15I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=ngjjKCMT; arc=pass smtp.client-ip=165.173.180.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QjL8i6Tg"
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-8ab432273c5so14776817b3.3
-        for <linux-clk@vger.kernel.org>; Tue, 06 Oct 2026 17:49:55 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791334195; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Mgz+1m6rczH8e96nqN5n6Jf9Cn3a70/MMKHmXHT67CoN2gWdJvkbzRgWgOX5KjaW/2
-         XDXhoXLMS3Pp68ZF+1EaZWiIU8S5Q+u69TM2a+v/MMO+Cu4CKIjBkvb66ANA8nVtUneI
-         AF7GQAtYFEhUEhBGHvtPxBwyMJR90LKn92E82soj5Lev02Vl2AV6uDwbNANZgEiudBhc
-         i6DrEIzF7J+DtKIS4d5BR3muYzw0po07pY7QmNtF84ngxCUVLctxyiak2caEWGiyrPdw
-         dftIr7HV+cjeYJc8yA7/gqVnVh0Gi4azXH1bqyTXIAVy3OgvKbAWWOu4Ebzsesw4aS4J
-         PL/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=8j/HQqu4cy32s4K7jv4w7/Ec5CfjGEebGBJG85uzxYI=;
-        fh=N5+giqfQXyYStRKL+ATfMddvyH5M0HgOjhMPO1Av4GA=;
-        b=pjFlMzc82v5yxcKjOKPJYsE+SqFiU/x0CzeO9gzng8uyOkYNAis+2xULyQMb0ScnuP
-         g7VvVavRfXK/B1vcSCpu/11ZsvI6iLetjr8gAwLXSS3T+jnkXocf18jMPJOQsUmIcXHK
-         6MAm7rshD1D+qh6GcOkuFm0oBVNWcBH1dO1lIAEguWSu5Ntc0PsnUaNROlSR4nSmEV77
-         fpegFq7gP48QAUIxJzsD6Y1jQ/wpJRyWPO4DsihCCthYZq9DdXDXkd/XWHlCJg73lLJY
-         eaI5EWp2WNPcmbNkW8HA45N8GoRUFKwwzFjh+1leXVsOJ1O+92r9UcEN/q1e+J5vS4b7
-         8BGQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1791334195; x=1791938995; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=8j/HQqu4cy32s4K7jv4w7/Ec5CfjGEebGBJG85uzxYI=;
-        b=QjL8i6TgtAjF4wRVO56FVrfHK0ABEELBNmCB0IwMtSycsCrADIs3aK5itKSXyK94CQ
-         fAXkGoYnepDWarPf7Ey5mwLC5LdBWCH/WbEMIz1qtYfDsniFZLxJ4dEp89xhxNWML3E7
-         1znmSyX/1VnIjWkBX+F6IswLM70b6ffqlK6/vQZtF4D5wdEPah/Oa41R9ZTnRR82iBRa
-         oYMxDW4ARR5Z634FBE+/LWz/QG6viSIT5Ul/D3D0I3HBio9aa4IwuO1yIrDfvgUMLldz
-         lfzqal7L0BBGnckD6CKlFpHqgg0hbYrxVr2JEAo7ySNoSmMHoSFn+z5fsMtyKQqzvxfs
-         x2mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791334195; x=1791938995;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=8j/HQqu4cy32s4K7jv4w7/Ec5CfjGEebGBJG85uzxYI=;
-        b=jRzUicHJE1vRaPCxqsEJi+87BCQ7kVzj21NRU4swhCJaP4J3VLGO461pgFLEDhB5Cu
-         neL6Od3HFqsdYCAdF1UxlwqwskAKdwjcsd17PJTGyVX2hMMr0Q42bfGazLJbJlUZGn4s
-         pgfGftkObz4ppQdaFU0UGLF5jmowqmcepXYIA1hgM8703olr3joo094Fl86NjxfAgbnM
-         DNS2doQVOemTRCkcDcdiPABUxr/HRRuQbiBzbYYU1qYSPCGWhZE3aTQH/AABumf5hdNS
-         PPBwaowOccyVKYU8aF9a0c4JeCmdyLCyHUn4FpS/Ec9JeHUTloPoqz2rSqY1u69SXJXI
-         gi0g==
-X-Forwarded-Encrypted: i=1; AKwUvBzEFjCRSU8ezjCwACw/jFITHADQJKgl0FLBAOaGhLWQdW6VMyw4Kbnvk+NY/obSUcn3L1Q0xB7jYD8=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIP1nG1Xjya/VRJ85zdHc797QxDCsiKBF4ascEQ2Tmk2+a56WrZ
-	uKuSVitGtP0fICF9Mj9tGw/GdnnQYgL4KFruZsuY3/LCpTYgWpDu9hL4UC3PEwQ5dP7ZzYQw4uJ
-	mUi5EcadezO688CLHk+cwj1fhDV1ZLLRU5/xqSrFOAQ==
-X-Gm-Gg: AYBFou0fJGdYDhmEPmqM2jCIdbBuOE/RpUuf9YNcPVxYgOC2LkE0CcqO2b8pxKwDSkC
-	fWrRrEInDmQ9oMFwFEH02aYIDZe210EhsfqAmu946k/aSEbKnnr9xv9pIZDplnTgyjmS4IsFibY
-	uPUKHqhx1SjbCjssCiEnnBMAJYav+VMWaJ+ifTsxfliJ08eynR6ZBtiqupiSk8tvNVqN5JZTU1j
-	cwMgplhr3weQTCxU3SxJ6+E6DL+aQuhGz/kh9nMGnYlgngLtrnXjaehUejNbAYsetn0hus1Q1LH
-	dNTgE/qR0YN6xqJnbYjVdmmYYhDp4k8W7P91MMQydLJM8JycZUiyvPnpAvYKhuXGEpuy5GkGruS
-	6KyeMtfF3thlG464=
-X-Received: by 2002:a05:690c:ec6:b0:861:a2ae:8c6b with SMTP id
- 00721157ae682-8b05ac458e3mr9173847b3.2.1791334194577; Tue, 06 Oct 2026
- 17:49:54 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="ngjjKCMT"
+ARC-Seal: i=1; a=rsa-sha256; t=1791344101; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=EMt2HxZjGxKqN3KMja356Ejlm4RJ3ba7GuoEX6EUHQ11KKvVi/AlTLXrVwZkxPQFoHXC2LwGWUjI5cwh53QZConfu700rGSNok0yINxejDfgC4WPDw5S0pJqMo6zSdJiN0CpO7ReMGrXY/KVAefrmvMEFgrCdz1MsMrReBIMc90=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1791344101; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7EEv66TfkkqDC0vBD6k5R4XJT1WUveDu+xqFWjFMwS8=; 
+	b=l09IKvPiFoQMX2AX3F1fOIWVtTXZREcVQyzldMWz0+tZ8xOSQYyblRiDWkWmxg4EZ5zBLoXBv3b9B0s6Z0q2Fny0MWidmzBKZsDWz4s/sdjCyBYR5a6VNIQn40ecbW82JoQ9oCDbnNvyOF0d5ymxtqwYHoXTK3mqdQn+11WsUOo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1791344101;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Date:Message-Id:Message-Id:To:To:Cc:Cc:Subject:Subject:From:From:In-Reply-To:Reply-To;
+	bh=7EEv66TfkkqDC0vBD6k5R4XJT1WUveDu+xqFWjFMwS8=;
+	b=ngjjKCMToI6FGmexYDJ/b1KiQmPlOSMsEgTrZ1Bj27Cu5QVcCjFprimUKNkf1sYU
+	A5Bksc5nvWbdRiJ5nUGNCEssIHzFQgZ9YVyrNw6nk+G1S4Q6xuauG+CvM6kkgkftsNq
+	RzjUMpRmbx+tDp0XBw4HCwVTxhtGOhNEnUh06Anw=
+Received: by smtp.zohomail.com with SMTPS id 1791344099855931.7368458013717;
+	Tue, 6 Oct 2026 20:34:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260929-exynos850-acpm-firmware-support-v3-0-473a69fc8a3d@linaro.org>
- <20260929-exynos850-acpm-firmware-support-v3-2-473a69fc8a3d@linaro.org>
-In-Reply-To: <20260929-exynos850-acpm-firmware-support-v3-2-473a69fc8a3d@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 6 Oct 2026 19:49:41 -0500
-X-Gm-Features: AclHuK9KAi2YbRrGI4BgLSa88-aMtBCudk5hm_jOIiAtHKuwiCVmb4TkmJdVAQo
-Message-ID: <CAPLW+4kQ2M11VbUBkr6ktjfRGRnbdUWRuOK=ek4-3MJxSwGPAw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] firmware: samsung: acpm: add Exynos850 support
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 07 Oct 2026 11:34:49 +0800
+Message-Id: <DLYAHDTH3129.3AYF0OSHL8RJ8@pigmoral.tech>
+To: "Vinicius Pedrosa" <vinicius.eduardo.pedrosa@gmail.com>, "Junhui Liu"
+ <junhui.liu@pigmoral.tech>, "Stephen Boyd" <sboyd@kernel.org>, "Brian
+ Masney" <bmasney+clk@redhat.com>, "Jerome Brunet"
+ <jbrunet+clk@baylibre.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Chen-Yu Tsai" <wens@kernel.org>, "Jernej Skrabec"
+ <jernej.skrabec@gmail.com>, "Samuel Holland" <samuel@sholland.org>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>, "Paul Walmsley" <pjw@kernel.org>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Alexandre Ghiti" <alex@ghiti.fr>, "Richard Cochran"
+ <richardcochran@gmail.com>
+Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+ <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+ <netdev@vger.kernel.org>, "Jerome Brunet" <jbrunet@baylibre.com>, "Enzo
+ Adriano" <enzo.adriano.code@gmail.com>, "Andre Przywara"
+ <andre.przywara@arm.com>, "Norman Herms" <dockseed@proton.me>
+Subject: Re: [PATCH v5 3/8] clk: sunxi-ng: a733: Add PRCM CCU
+From: "Junhui Liu" <junhui.liu@pigmoral.tech>
+X-Mailer: aerc 0.22.0
+References: <20260930-a733-clk-v5-0-11175b41cd2d@pigmoral.tech>
+ <20260930-a733-clk-v5-3-11175b41cd2d@pigmoral.tech>
+ <20261005183038.417798-1-vinicius.eduardo.pedrosa@gmail.com>
+In-Reply-To: <20261005183038.417798-1-vinicius.eduardo.pedrosa@gmail.com>
+X-ZohoMailClient: External
 
-On Mon, Sep 28, 2026 at 9:11=E2=80=AFPM Alexey Klimov <alexey.klimov@linaro=
-.org> wrote:
->
-> The Exynos850 SoC contains an APM co-processor. Communication
-> with this hardware block is established using the ACPM protocol,
-> which handles IPC messages for clocks, power, thermal management,
-> and PMIC control.
->
-> Add the "samsung,exynos850-acpm-ipc" compatible string along with
-> its associated match data. This includes the specific initialisation
-> data base offset (which differs from the GS101 offset) and the
-> "exynos850-acpm-clk" device name required to properly instantiate
-> the clock provider.
->
-> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
+Hi Vinicius,
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Thanks for testing.
 
->  drivers/firmware/samsung/exynos-acpm.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+On Tue Oct 6, 2026 at 2:30 AM CST, Vinicius Pedrosa wrote:
+> Hi Junhui,
 >
-> diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/sa=
-msung/exynos-acpm.c
-> index 942a2e9f02f5..5a16665e941b 100644
-> --- a/drivers/firmware/samsung/exynos-acpm.c
-> +++ b/drivers/firmware/samsung/exynos-acpm.c
-> @@ -39,6 +39,7 @@
->  #define ACPM_POLL_TIMEOUT_US           (100 * USEC_PER_MSEC)
->  #define ACPM_TX_TIMEOUT_US             500000
+> On Wed Sep 30, 2026 at 1:26 AM CST, Junhui Liu wrote:
+>> +static SUNXI_CCU_GATE_HW(bus_r_msgbox_clk, "bus-r-msgbox", &r_ahb_clk.c=
+ommon.hw, 0x17c, BIT(0), 0);
 >
-> +#define ACPM_EXYNOS850_INITDATA_BASE   0x7000
->  #define ACPM_GS101_INITDATA_BASE       0xa000
+> [...]
 >
->  /**
-> @@ -876,6 +877,11 @@ struct acpm_handle *devm_acpm_get_by_phandle(struct =
-device *dev)
->  }
->  EXPORT_SYMBOL_GPL(devm_acpm_get_by_phandle);
+>> +static SUNXI_CCU_GATE_HW(bus_r_riscv_clk, "bus-r-riscv", &r_apb0_clk.co=
+mmon.hw,
+>> +			 0x21c, BIT(0), 0);
 >
-> +static const struct acpm_match_data acpm_exynos850 =3D {
-> +       .initdata_base =3D ACPM_EXYNOS850_INITDATA_BASE,
-> +       .acpm_clk_dev_name =3D "exynos850-acpm-clk",
-> +};
-> +
->  static const struct acpm_match_data acpm_gs101 =3D {
->         .initdata_base =3D ACPM_GS101_INITDATA_BASE,
->         .acpm_clk_dev_name =3D "gs101-acpm-clk",
-> @@ -886,6 +892,10 @@ static const struct of_device_id acpm_match[] =3D {
->                 .compatible =3D "google,gs101-acpm-ipc",
->                 .data =3D &acpm_gs101,
->         },
-> +       {
-> +               .compatible =3D "samsung,exynos850-acpm-ipc",
-> +               .data =3D &acpm_exynos850,
-> +       },
->         {},
->  };
->  MODULE_DEVICE_TABLE(of, acpm_match);
+> I'm bringing up mainline on a Radxa Cubie A7Z (PCB V1.11, 1 GiB). With
+> 7.3-rc6, this series and a local common-DT integration, PSCI reboot and
+> power-off hang once unused clocks are disabled. The boot chain uses
+> vendor boot0/BL31 and source-built SCP/U-Boot.
 >
-> --
-> 2.51.0
+> Keeping both of these gates enabled fixes reboot; either alone still
+> hangs. With only these two marked CLK_IS_CRITICAL, reboot returns to
+> boot0 and power-off drops DCDC1 from 3.3 V to 0.7 V and turns off the
+> green LED with power still connected. I haven't checked whether each
+> gate is needed for power-off on its own.
 >
+> My guess is that BL31 talks to the SCP for these, but I haven't traced
+> it, and it may be specific to the vendor firmware.
+
+Yes, it appears that the vendor SCP firmware runs on the E902 core
+instead of the ARISC OR100 core on the A733. Disabling either
+bus-r-riscv or bus-r-msgbox breaks the SCPI communication path between
+TF-A and the SCP firmware.
+
+>
+> Would it make sense to mark them CLK_IS_CRITICAL, like bus-r-cpucfg
+> already is? I can test the next revision on this board either way.
+
+Mainline TF-A uses native PSCI for reboot and power-off on the NCAT2
+family. Even if Crust is ported to the A733 in the future, I would
+expect it to run on the ARISC OR100 core rather than the E902 core.
+
+(Also see discussion in [1].)
+
+The E902 may also be supported by the Linux remoteproc and mailbox
+drivers in the future. In that case, bus-r-riscv and bus-r-msgbox
+should be managed by their respective drivers instead of being kept
+enabled globally.
+
+I don't know if marking these clocks as CLK_IS_CRITICAL just for the
+vendor SCP firmware is a good idea...
+
+[1] https://lore.kernel.org/linux-sunxi/556cd32394062960a3ea4af0011155cfa83=
+ae91f.camel@d-silva.org/T/#u
+
+>
+> Thanks,
+> Vinicius
+
+--=20
+Best regards,
+Junhui Liu
