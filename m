@@ -1,151 +1,375 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AE13C9880
-	for <linux-clk@vger.kernel.org>; Fri,  9 Oct 2026 08:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE883D9DB4
+	for <linux-clk@vger.kernel.org>; Fri,  9 Oct 2026 09:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791533773; cv=none; b=PE6CgDDFpFHQbg457xkSB2wgPYVMTskuLqD0WP99nURVCDw404njNf1hGlu02F6HB3HA+wQB17iTkSb0V2Bsc/+8dfnBlVwqLxo2GKwSkJ4yjIKV3PNNo49mjfv5uXw6wLsgXXcktIe7Ec5a9u3uNp8uuyWIDaDHgN7ra/41vQY=
+	t=1791536433; cv=none; b=YtpBIUxTPs2DoxTl9TO2RkrCVQ40gfuqf8JHo6MVnR6iyP+F5Tk2bRuVW1RzIUrKUe/Vz26McPm3kBdQc6C3XGgbt2f2agK2msWIGN3QWWwRhDqbN5mMs0mPthbkEUgJqSWO2J0W5YBMIlXgklfKeq+R8Ec0HgTlsGWTxS4dt4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791533773; c=relaxed/simple;
-	bh=t7qRmqHdMAl1qk4MJVpTg0mh8/vY1dTo8qJcR8916Yk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VPmrvI9JnIVq333Y6WMDEtNaWUWjNqeje9E7ut9fpy++SnPc97CdrmPpcoDsleJeoLhDZ4QfKUIsqclpwxanY5i0/eRMD+FclZRCqr2Qz/oYTdtGc9aGrCrNxhg9SLEz2UHPYATSZGMkQ3sCkmi3RWCplGpJMDaVYwgiXiADjZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fp/K5liQ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BGDC2rIQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1791536433; c=relaxed/simple;
+	bh=dVqIXO/9c7iSDHVJkYbnjKppuyWuIM2GIVXBblovHYo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OnuziP9McWly4gtyNBWNyGlPkZaDEoGy39fnmo6isNg7//+WApe0hb+qIM5TRA9UFvBqZWm5yaZZOBkgtQqIYLqtHy283a/goNWkQcMuqPUuM5wYeJMROc6Q7ayU5uPrLSyY+njYAl2w3lJeDj7sSuAh3rnJwDlFgMEfWo7sG08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=aaKatAm+; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fp/K5liQ";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BGDC2rIQ"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6993HCYu593957
-	for <linux-clk@vger.kernel.org>; Fri, 9 Oct 2026 08:16:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	T4fGb7Hz2boMwAT6WGpk0OCK8tzz+FcRa4JXQhQJpJk=; b=Fp/K5liQZd0BPbPo
-	6C8FYm6+sKesgHm5jfJqOTCdAVQ8fmBZiCmOHKbt03g5iWpY6jVRjMGpdqczBh+x
-	EGi2/VnvoVuAjx/e+EdGKmMrhrUXLhCWh1fBCfGwqEplnnDBMZOD/vqL0ygyM7t4
-	/C3vlTRsN7F80iAT8QoXSGCAgRST5zWa/l9xaNGwMReTiEXTnUOeLwUAcmID9nBF
-	paC6xLZuPglh9Q+A9Vj+u8j7Xs2S7f3uNrV6bl5SUl6d82UJC/Dw11vBM3ojVPfz
-	izx6rMQo5dVHZSBLnz6tpMNHDavOr+cbzcgpDuaGXMja/Fn4EMSZ9A1jpnCeRhJr
-	4XIAog==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h6baj3tx7-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 09 Oct 2026 08:16:08 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-93bf4c0af4eso375321885a.1
-        for <linux-clk@vger.kernel.org>; Fri, 09 Oct 2026 01:16:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="aaKatAm+"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a0286c981dso55416805e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 09 Oct 2026 02:00:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791533768; x=1792138568; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=T4fGb7Hz2boMwAT6WGpk0OCK8tzz+FcRa4JXQhQJpJk=;
-        b=BGDC2rIQY/3AZvToa+mnV+I3zJgzXJx9cd8RKeWu2ChGnrq4ksFJ50cKLhIfbY7Ksm
-         JkiUQgSAq3Olk4i2ooXg1YtLbSXLwq8v4kgrxzTcNiI0z7goPIhHx2hOXsGSTTL5/3zC
-         FBaeetlF7noGbKsRKOfh8CR+ofkFV3DkKFzJzkJ6B43hRLfLuMZjmNIa7N0SG9HmdVB7
-         DNJx+e6gyYxN5LAjxBtlKPW3sz//VrLJYn+w2L4sZguLXxNO/e7WkFv0zlW8r3NQHIaB
-         +QNuwKLaDVhOYQmh1RhztSLwB3yG7+i0EgEP2E1Fsj7k8y1TfDMUvyM4ySnYzZXf1cCg
-         Coaw==
+        d=baylibre.com; s=google; t=1791536425; x=1792141225; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=9cU6FQ2Ny19xqbH7FtIbST4Npto/KKrlVjyPkUdH56U=;
+        b=aaKatAm+kbhwsK3GTz320Grqqtco+pb/A6sxu3n9kAfzNk61nySQEBEAfoF+eJwFqk
+         iMXVs4sCHi2YgFjLZtLaxOpya6Y3rolCoatJGrYzAFRwsE0YZHFt3UgFejMUWwPkd9yh
+         mXRvedspeE0x3W6+4qjmBMOGWGp2cFIw5DDo+7RoniWDUl2qqK89w1oFiqz752j7SfEV
+         7w3v/lxEcMLtFjVKAX7/CgU5+MdNv6P6zz9YHdXifkzaKlv7XOFxE+gn6Ei5floaXB2B
+         EGeHJadoH26Z8JtiV7AvN78Ke4C+j5G7hJTKJu/mSO8dBf23PLJwsXtCQ3q9ANOLKfda
+         9q8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791533768; x=1792138568;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+        d=1e100.net; s=20260707; t=1791536425; x=1792141225;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :references:in-reply-to:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=T4fGb7Hz2boMwAT6WGpk0OCK8tzz+FcRa4JXQhQJpJk=;
-        b=YUCpqAGLcZPq3LMPLhNkWTif0dCmhUfB2AON5BwApq0DRDjY+QebvuQ5U1HEfk8AUT
-         on+HF6I0A15BhX0vl/dhMbS9BWmZUxWR0aMVXcV9iFHHC2i3BPQ4VjT4u9c0QVhzhoxj
-         6RdapeNrJr60bT4WKJYHKhKuZAa6IEC7ZHruAC9+v2gprLG260MdED1D8BAMMjwhdkJP
-         FT5WuNVGEnfVrdKuFIw0QRwILaljP+2pUOuFBUXEp9Ts7WFlEUY+QYbHeaKVlf7qx5pz
-         ZDhDNBh75GnNNLeowvZuNH31sNivLD1bsbsKKatvWyC/RVIOcb00C4IdY3GLqnY/7T0v
-         qQFA==
-X-Gm-Message-State: AFuF++nhsB02+UbNlER6owYayq0pBwUnUWMS946Q7xsmgWLlNZ6woxot
-	tRghpBUEtwGM1b4W67zAcJKWONqa3YKVjE62aEDj2pMArUadjFDRCbYlFGVTwf78xlThRnuSiJ2
-	N1HPxNhJkc0VjAatrVJrDNVQ61UGrCLKcNwBk32V6No4ps2royiK28KrA2l2RLK0=
-X-Gm-Gg: AYBFou2zTJjIuGvHr6Oe5YHIL8pe4/9zXhk8benuMIWZO+feTiFJzI5qnCLUPr0f/oX
-	y00kjeAIyJSl3u9JeqtxyiEaM0HjipMb3dokJFy/PfumyQHWQhG+jtbHO/PsIBjYPE6Tp2ysKKQ
-	h57eBHYCKv3pkZQ7vJScHyCFr8avpzKPJhLvLduo0NfH5G5w9gY0aD71s7l5BMxD3SGwvnS5og6
-	PkPZNNnW/YSUNvULqQehf2NqPN1MOX9LWO0ZbqqnASKz2vhTtqpoEWy1qE2iqRv0I44j8IaHTWz
-	NOR2qCG8cuMY6r7MQXRS3tFO6RQH+dB+/tN4dk8rDeHV4xUclqQ8THratHcFzNemDiRIWXOmYnf
-	H2VrF++5NArmcKPPfVtA1LMhTedc=
-X-Received: by 2002:a05:620a:2b88:b0:93e:4f45:6fc with SMTP id af79cd13be357-93eb965e53amr213376085a.27.1791533767735;
-        Fri, 09 Oct 2026 01:16:07 -0700 (PDT)
-X-Received: by 2002:a05:620a:2b88:b0:93e:4f45:6fc with SMTP id af79cd13be357-93eb965e53amr213371585a.27.1791533767082;
-        Fri, 09 Oct 2026 01:16:07 -0700 (PDT)
-Received: from hackbox.tail37bb1b.ts.net ([188.27.161.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18bf21276sm69068565e9.8.2026.10.09.01.16.05
+        bh=9cU6FQ2Ny19xqbH7FtIbST4Npto/KKrlVjyPkUdH56U=;
+        b=kXZ4ZwnsQ6LyISMhYCzROR1+Y76dC3+VaK5ZtSRZ5iTKQ66C/DqAM9ZcV8w2HJLi2J
+         TELrXt+QzwhXa9AJuotNYdad2cobOU1rBTkoyaygp7F+sO5AAEMb4NbjOGZvyUizBHwN
+         lqwanEe0YF1bQZJhiaSnKHeZRay0xiDDGfrBdNjqdxGZG1RsFbmPNS8disHPuUESs6xT
+         wSuoZenM37/zVam9euc01lI6xIGuTKk6K8RrzY/bREdw/6O+nhzcSENqJGZbXgl3ez6D
+         c99fMprbP22gBtOFoHjM7/Zy7h2Pz7u53FtpIBB+/6Qc+YS9Enbex1oDCCe2qATLIccF
+         wQow==
+X-Forwarded-Encrypted: i=1; AKwUvBxadQXMFokxzAfWvjpenQURBIsT5OR7DlP9Ktq6c+IfdFQHGVgt0XLjWW2qp4C+1ohbmhycn4BNfgs=@vger.kernel.org
+X-Gm-Message-State: AFuF++lH/rLlld2zlHfwnX7WnPq3CpNLycFB9nUR5bA8dU6yrS4rpT41
+	7H+0RR13rXdtGm70zxLGPN1Brw7yMfD54VbNbRVnz1gOj8OCpqh2csU9fUwRjHv6XbA=
+X-Gm-Gg: AYBFou0kLSeVZOoI5ZGa9YxyoLRS6Oktek9U+LU4s5J4xkK6BhQ3oMcflqp0kbZfyLx
+	foDjswq6HMy7ay0QHcUWK8klViX2rR33WO/AOvqRyuhw86C42KUVqBsg6AjHZChJY1CuMcU9Tzv
+	BT6OF4J8CVytmAdogNiriKbRHlVCePnobnAaAijhJ6ksceUFrxfdsm52UmvXU8NhMjBaVviOtDr
+	NnpR/g4A/RP0iP7M64Y0dacDQ66Ya13Boqpe/0fKm1CLCGOjulaRf1uVjX7CiUMYN6LL/FS0vse
+	CJpasjatEFSKuLtwdzDzF9ti6sxz0LmI90OCr0aR9kauvorm2XqoxT97/UGjYLLYQMpZ55WG4Cv
+	e8fm+jx/hhZINCy5gzpscMMdx+gDOmNa8xgIsxlKC/u8VQonlbHxL8ufF6aAFPL1lIz6fjb4TZa
+	KfmKdw3T3eR5zl3APtb8uGCeEOZteh5O+SbTwKZCqKSdesxHxvgO9Xvf1gpFQ5nO8aBKVLvHCF7
+	PKpicVZBrBwWWXU6g==
+X-Received: by 2002:a05:600c:620b:b0:49c:fc6c:be19 with SMTP id 5b1f17b1804b1-4a18e4d12e7mr19730845e9.31.1791536423436;
+        Fri, 09 Oct 2026 02:00:23 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18bf2caf4sm49180425e9.10.2026.10.09.02.00.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2026 01:16:06 -0700 (PDT)
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>, Frank Li <Frank.Li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Frieder Schrempf <frieder@fris.de>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Mikhail Vaniulin <mikhail.vaniulin@axians.rs>
-Subject: Re: [PATCH 1/2] clk: imx: fracn-gppll: Add 350 MHz support
-Date: Fri,  9 Oct 2026 11:15:59 +0300
-Message-ID: <179153373231.1996373.14178239298073465630.b4-ty@b4>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260910-upstreaming-v7-3-imx93-displayline-v1-1-bb9446e6ed6e@kontron.de>
-References: <20260910-upstreaming-v7-3-imx93-displayline-v1-1-bb9446e6ed6e@kontron.de>
+        Fri, 09 Oct 2026 02:00:22 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Jian Hu <jian.hu@amlogic.com>, Jian Hu via B4 Relay
+ <devnull+jian.hu.amlogic.com@kernel.org>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Stephen Boyd <sboyd@kernel.org>, Brian Masney
+ <bmasney+clk@redhat.com>, Kevin Hilman <khilman@baylibre.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Jerome Brunet
+ <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH RFC 0/3] clk: meson: Refactor PLL pre-divider as a
+ divider clock
+In-Reply-To: <7bd6015c-3b93-4ce9-bde9-506a727525d8@amlogic.com>
+References: <20260923-meson_refactor_n-v1-0-3a8ce27121a2@amlogic.com>
+ <1j1paj9elx.fsf@starbuckisacylon.baylibre.com>
+ <7bd6015c-3b93-4ce9-bde9-506a727525d8@amlogic.com>
+Date: Fri, 09 Oct 2026 11:00:21 +0200
+Message-ID: <1jik3bp7tm.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA5MDAzMiBTYWx0ZWRfX3tlWEKZ3fcBh
- LycmeHJlxTJ4HCEJMHWVBpSzePBtis0DoCLB6eE0QqcnaEko8BRWm2aW96PrYDazyMkBlgQ3TuG
- 9aWcoczunJOw9BSE7RuM9TgBLhSyWZaNGa3uxMBj+KmcMEFOYOIpmBgQEE8VbONtEzbRMVMz4aj
- FivEet9PK5NyWR6HHz+wHdEEn1RJu0GMnE6VkRo2yNn6cq/iK7DfJy9um1OcAWuohvbwhHH0rbp
- 150nJz2VD+PNZYY/SppyrzeTVFzYA3rL4wYHzI6FiRASeQ9X7gVPDvg0xU0ECJE7a1cTQr+oWeZ
- IiXzTjuB+3SzeSOzeL1iRBTJZ9JLUEBGWH46hJHuTro9nTWWem44WG1bEDngsyjqzU/p6wJGPKO
- iRKc6q8QPBpbeViznDqvXX//D1PNttbBdegwu/cx4thPpwBpHmyqWG8qrHGtwtBPuAGgRNu7KLP
- 3MBn7+VT9sZoYjB3ycA==
-X-Proofpoint-GUID: L87Z_fJbHBsQNWn6meX1hRD3ilTnEl7o
-X-Authority-Analysis: v=2.4 cv=H/dOUOYi c=1 sm=1 tr=0 ts=6ac8a2c8 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=EiYrS7xXfcF7w+nkr41hpQ==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
- a=EUspDBNiAAAA:8 a=SBSG_3fblaHcu9w4dFsA:9 a=QEXdDO2ut3YA:10
- a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-ORIG-GUID: L87Z_fJbHBsQNWn6meX1hRD3ilTnEl7o
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA5MDAzMiBTYWx0ZWRfX489P/bTkIrLa
- Oony8/u7/CkYjEIdm+8QOgQ4Ya9V/OFvHoS1C4v28HqdXG04hFoXFLgsk6JoUcAG54SrTPLs0kl
- U/UKuIK6j/O/5qH3Py//6FqdhA/LDMk=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-09_02,2026-10-08_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 phishscore=0 bulkscore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610020000
- definitions=main-2610090032
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On ven. 09 oct. 2026 at 14:35, Jian Hu <jian.hu@amlogic.com> wrote:
 
-On Thu, 10 Sep 2026 17:19:06 +0200, Frieder Schrempf wrote:
-> Add the 350 MHz frequency support that can be used for display with
-> pixelclk of 50 MHz. The divider of 7 is important for LVDS output on
-> i.MX93. It is also usable for parallel output.
+> Hi Jerome,
+>
+>
+> Thanks for your review.
+>
+>
+> On 9/24/2026 5:35 PM, Jerome Brunet wrote:
+>> [ EXTERNAL EMAIL ]
+>>
+>> On mer. 23 sept. 2026 at 19:14, Jian Hu via B4 Relay <devnull+jian.hu.am=
+logic.com@kernel.org> wrote:
+>>
+>>> This series refactors the Meson PLL framework to remove the dedicated
+>>> PLL pre-divider (N) parameter from the PLL implementation and model it
+>>> as a separate divider clock.
+>>>
+>>> Currently, the Meson PLL framework models the PLL pre-divider using a
+>>> dedicated n field in struct meson_clk_pll_data. This makes the
+>>> pre-divider part of the PLL-specific implementation, although the
+>>> Common Clock Framework already provides a generic divider clock.
+>>>
+>>> This series separates the pre-divider from the PLL and makes the PLL
+>>> DCO take the pre-divider clock as its parent. This allows the
+>>> pre-divider to be modeled using the standard CCF divider implementation
+>>> and simplifies the PLL framework.
+>>>
+>>> The series currently covers T7 as an RFC to get feedback on the
+>>> framework design before applying the same approach to other SoCs.
+>>>
+>>> Series:
+>>> clk: meson: pll: Remove the dedicated n parameter
+>>> dt-bindings: clock: amlogic: Add T7 pre-divider clock IDs
+>>> clk: meson: t7: Model PLL pre-divider as a divider clock
+>>>
+>>> The other Meson SoCs will be converted separately after the T7 PLL
+>>> framework refactoring has been reviewed and the overall approach is
+>>> agreed upon.
+>>>
+>>> Any feedback on the proposed clock hierarchy and the separation of the
+>>> PLL pre-divider from the PLL itself would be appreciated.
+>> So if I summarize this RFC, you have simply taken the divider out of the
+>> PLL, no futher addaptation. right ?
+>>
+>> I'm happy with it on the general principle and fine with the change as
+>> long as you test it on as much platform as you can, clearly flagging
+>> those you have just compiled tested.
+>>
+>> A change like this would likely need to land early in the cycle give as
+>> much time as possible for testing.
+>>
+>> However there a couple of thing I'm concerned about:
+>>
+>> * You've drop the table support: are you sure this is not needed anymore
+>>    ? don't you want to be able to restrict mutlipliers to specific values
+>>    sometimes ? If not, then OK.
+>>
+>> * the determine_rate() make no call to round the parent rate: Since the
+>>    parent will be the divier, how do you progate the rate change so N
+>>    moves and the best parent rate is found ? For sure this fractional
+>>    multiplier clock will need CLK_SET_RATE_PARENT to adjust the
+>>    pre-divider.
+>>
+>> * Goes with the point above, but I'm not seeing anything that favors
+>>    lower N for lower jitter, Or mention of a minimum input rate (which
+>>    could be a property) ?
+>>    Those are constraints I think I have understood from your explanation
+>>    here [1] but maybe you've got new information to share ?
+>>
+>> This is overall going in the right direction but determine_rate() and
+>> constraints need work.
+>>
+>> Note: you are more likely to get test feedback if you add g12 (sm1) as an
+>> example. Those are still the most widely used amlogic platforms with
+>> mainline.
+>>
+>> [1]: https://lore.kernel.org/linux-clk/c9c4945f-cdfc-4382-b8ca-71b69d91d=
+eb4@amlogic.com/
+>
+>
+> Yes, your summary is correct: the RFC simply takes the pre-divider out=20
+> of the PLL.
+>
+>
+> 1) Keeping the table support
+>
+> Agreed, removing it was premature. Some tables cannot be expressed as
+> a multiplier range:
+>
+> - pinned (m, n) pairs, e.g. axg PCIe GP0 (m=3D200, n=3D3) and meson8m2
+>  =C2=A0 GP0 (m=3D182, n=3D3)
+> - a pinned m, e.g. g12a PCIe PLL (m=3D150)
+> - sparse tables, e.g. meson8b HDMI PLL
+>
+> The per-platform conversions will turn the tables with contiguous m
+> and n =3D 1 into range, and keep the tables for the rest, so
+> the framework will support both.
+>
+>
+> 2) N is fixed per PLL
+>
+> The main new information: the pre-divider is not meant to be selected
+> dynamically. Per the hardware design, each PLL has a single fixed N
+> value, defined together with the rest of the PLL: N =3D 1 for most PLLs,
+> and N =3D 3 for a few special cases on older SoCs (the axg PCIe PLL and
+> the meson8m2 GP0 PLL). The PLL input frequency constraints are
+> respected by this fixed value.
 
-Applied, thanks!
+Ok, but this is not we have done so far. I don't think fixing the
+predivier would break any use case, but if it does we may have to
+re-visit this.
 
-[1/2] clk: imx: fracn-gppll: Add 350 MHz support
-      commit: f85b551c519ee8f92be601ccf4f7d440582ac476
+>
+> Keeping N at 1 minimizes PLL jitter and yields the best performance.
+>
+> So this is less about dropping the constraints than about the fact
+> that there is nothing to choose at runtime: no N search in
+> determine_rate(), and no PFD input frequency constraint to enforce,
+> since the PLL input frequency is a constant for each PLL.
+>
+> 3) No CLK_SET_RATE_PARENT on the DCO
+>
+> With N fixed, the pre-divider rate never changes, so the DCO does not
+> set CLK_SET_RATE_PARENT on purpose: the flag would claim that the
+> parent rate may change to satisfy the child, which is not the case
+> here. determine_rate() never touches best_parent_rate so the flag
+> would be a no operation today.
+>
+>
+> 4) Implementation methods for pre-divider clock
+>
+> While testing the RFC I found that with the single-entry pre-divider
+> table ({val =3D 1, div =3D 1}), the pre-divider register can never actual=
+ly
+> be programmed.
+>
+> The pre-divider field resets to 0, which is not a valid setting.
+>
+> During registration, recalc_rate() reports the parent rate for the
+> zero register value. With N =3D 1 the reported rate is the parent rate,
+> and the single-entry table also rounds every rate request back to the
+> parent rate, so clk_set_rate() always bails out early (rounded rate =3D=3D
+> current rate) and clk_regmap_div_set_rate() is never called. The
+> register keeps its invalid reset value.
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@oss.qualcomm.com>
+I see, you should have had a warning like that then ?
+
+''' Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set  '''
+
+But from what I understand, your divider may have zero written in its
+register but it will not output the parent rate unmodified, correct ?
+In such case CLK_DIVIDER_ALLOW_ZERO is not correct.
+
+Can you clarify the meaning of invalid ? If the just no oscillation I
+guess we could add a 'CLK_DIVIDER_INVALID_ZERO' that returns 0 from
+recalc_rate().
+
+If your multiplier you'll probably have to handle this is
+determine_rate() with something like
+
+if (req->best_parend_rate =3D=3D 0 ||
+    (req->rate / req->best_parent_rate) > YOUR_MAX_MULT) {
+    clk_hw_round_rate(parent, req->rate / YOUR_MAX_MULT)
+}
+
+Then you update req->best_parent_rate with the value you get and CCF
+will update the divider when the rate is applied.
+
+If you then add your single entry table and CLK_SET_RATE_PARENT, it
+should work as you expect AFAIU.
+
+>
+> v2 programs the fixed N at registration time, with a new
+> init_val field in clk_regmap_div_data, applied from .init() once the
+> regmap is available.
+
+I don't like driver setting regs without a clear instruction from the
+consumer or the framework, it is a splipery slope where people just tend
+shove their use cases..
+
+>
+> Or do you have any other good ideas?
+>
+> The patch is available[1], Please help to review it.
+>
+>
+> 5) Testing and rollout
+>
+> So far this has been boot tested on T7. For v2 I will
+> convert the SoCs one by one, starting with g12a and sm1 which
+> have the most mainline users, then the remaining platforms.
+>
+
+Please add the RFT tag. Please test GXL as well, you should have no
+problem getting your hands on one, those are still easily available.
+
+For Meson8, maybe Martin will be able to help us out ?
+
+>
+> [1]
+>
+> --- a/drivers/clk/meson/clk-regmap.c
+> +++ b/drivers/clk/meson/clk-regmap.c
+> @@ -163,10 +163,28 @@ static int clk_regmap_div_set_rate(struct clk_hw=20
+> *hw, unsigned long rate,
+>  =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 clk_div_mask(div->width) <=
+<=20
+> div->shift, val);
+>  =C2=A0};
+>
+> +static int clk_regmap_div_init(struct clk_hw *hw)
+> +{
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0int ret;
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0struct clk_regmap *clk =3D to_clk_regmap(hw);
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0struct clk_regmap_div_data *div =3D clk_get_r=
+egmap_div_data(clk);
+> +
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D clk_regmap_init(hw);
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret)
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;
+> +
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0if (div->init_val)
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0regmap_update_bit=
+s(clk->map, div->offset,
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 clk_div_mask(div->width) <=
+< div->shift,
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 div->init_val << div->shif=
+t);
+> +
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0return 0;
+> +}
+> +
+>  =C2=A0/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
+>
+>  =C2=A0const struct clk_ops clk_regmap_divider_ops =3D {
+> -=C2=A0 =C2=A0 =C2=A0 =C2=A0.init =3D clk_regmap_init,
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0.init =3D clk_regmap_div_init,
+>
+>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>>> ---
+>>> Jian Hu (3):
+>>>        clk: meson: pll: Remove the dedicated n parameter
+>>>        dt-bindings: clock: amlogic: Add T7 pre-divider clock IDs
+>>>        clk: meson: t7: Model PLL pre-divider as a divider clock
+>>>
+>>>   drivers/clk/meson/clk-pll.c                     | 178 +++++----------=
+--------
+>>>   drivers/clk/meson/clk-pll.h                     |  13 --
+>>>   drivers/clk/meson/t7-pll.c                      | 183 +++++++++++++++=
++++------
+>>>   include/dt-bindings/clock/amlogic,t7-pll-clkc.h |   6 +
+>>>   4 files changed, 181 insertions(+), 199 deletions(-)
+>>> ---
+>>> base-commit: 43e1705ecab981c66baee89041e6f728c0436f19
+>>> change-id: 20260923-meson_refactor_n-e7f25904e536
+>>>
+>>> Best regards,
+>>> --
+>>> Jian Hu <jian.hu@amlogic.com>
+>>>
+>>>
+>>>
+>>> _______________________________________________
+>>> linux-amlogic mailing list
+>>> linux-amlogic@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+>> --
+>> Jerome
+>
+> --
+>
+> Jian
+>
+>
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+
+--=20
+Jerome
