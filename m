@@ -1,112 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9E1494817;
-	Fri,  9 Oct 2026 09:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA48B4D90C0;
+	Fri,  9 Oct 2026 11:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791538904; cv=none; b=kYDFfKuQK9xBK/JlvTfyFZ2XqBJwP7/7GQ6TUIvzeaiV2OCTJAE2AsOLSn98XNaoj6sLQIH65GxRR7eXF22nkAikxmCZGVIHmXR3A34IXavjhU1J6WEH9NOlgE5E3bhFBl27obbPKlFX2m/WAKW0pb5J9GyDZJn+y6YmBWdGH6A=
+	t=1791543617; cv=none; b=TlrTrWshTSTgzn70KvUKFe9Lr/mpcadRSqifx9q+GiyN8KzG8oDdZZKV+SqdewnUib5VZ6kV9VgPg6sbXdCU9Z6SCtJTeojhM6xPUgU0fqLYNmUF8alpVT0TmV2fV9c9iLtC3UgS6FGtJNYbaJ0CMgoTygN2OGPlhsuk9j3V9I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791538904; c=relaxed/simple;
-	bh=u9EmbQR0cN1WRZrECL9onPDnYf/Gka3OBpqjOOETwP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dKMVsOwhWrlZHPYylI5IaHGEmprIMKi9SBdrvW5TiBe1+xJAnAg+KzJGtFttq0W+HABBTZ0AZ0K504YLiQ+GePFJcWmv3pnCVSlTGWwuOYKKtHIniJaXnOqMjkFWMvmg6+oA7BzFhvUTPksOMki8TBR8mmXrnxZLzsOE6sX/zcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mE+2N9Oo; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791543617; c=relaxed/simple;
+	bh=nEmNB/P7dMfDzlN97RLQsTVzEKL8hg1jn6EUL8ZG6dA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Y/Cy/IhtiD1jg/0B+9qtHo9IW+njd9bobMjv0ouDFSvcM58n3opTWXPI5LD4fqKXaiMir+kBbuYmP4u4MvtPEiaZOSZaIeJCSyovgu2QtS070qfMEZQSpvkIaprib4jW2Wp1Oq83rg1efDqzB2ZDQFu8AtbIGxNsAnesJTkElNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tubpZ2LZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mE+2N9Oo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 293F01F00899;
-	Fri,  9 Oct 2026 09:41:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791538899;
-	bh=SHucz3qY6+BH4YMQ0K3equMWZeHDs8Rh369diC5si0E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=mE+2N9OoBdEYpunteW+EXEQNOBKakLAPk4Xxbo6gd8peEvPD1svewzIVjRl3uia9f
-	 nS9VyTlWHDrf8krWW5c/YAWH3cyxbs8hGZXTXNCU7HcRT3z/Qc89p8Xl8hi6Ur1O83
-	 6b24gQOjgczrQ+V8T+4i5rDQHqxFL2okRO47JO9ojvZHi0jxaWN+i07vZXd/BQKN5u
-	 5rFmEYNltoE7T5V9jrvVnQ+JYMYTpkAcsF3fVXx4gwm6PeZAinx+WnJO/8no+kP5wo
-	 irazBvdBPLIsID9XskU1dpBDgbqrwzQ412eT/2i9EqE86RcSHkEYsmR0eDBmIMeLL9
-	 PThlht1AoQ+jw==
-Message-ID: <5d3ccf9f-9e2c-4aa8-aaef-af83348fd344@kernel.org>
-Date: Fri, 9 Oct 2026 11:41:35 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tubpZ2LZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1CDE4C2BCF4;
+	Fri,  9 Oct 2026 11:00:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1791543616;
+	bh=nEmNB/P7dMfDzlN97RLQsTVzEKL8hg1jn6EUL8ZG6dA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=tubpZ2LZtFEWN/RphMGgME8PHX3Rt1/MI8DUeTkByjySoBF7IlENhQPebetmQaPTy
+	 WA+Xp+ltM3AcY/j/AQtzG7SG+qymsIiqeK/Cs02GfdlWpJJ7vulE3rP2ov1tZDkqEN
+	 fLofamh7+gXJKR5vl343/kexwusw1cVwxlqD8nXIWtPLsCTMcrDS1IszVfR/l8aDBL
+	 jUJBjCGD6DRhBWOa/duccp/nR5WpG+1TeM/BbUgJQw5ax+T7b7AEaGFn3n2WYW/p3D
+	 g8ecV6Lno23SgPx2k9TQrhfrzE+a5Cu72f5BDY+lARtvvQabqwNfmhX2EecsgdJTOR
+	 0Z2aMWIvn2sWA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09FB4CA601F;
+	Fri,  9 Oct 2026 11:00:16 +0000 (UTC)
+From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
+Subject: [PATCH 0/2] clk: add Ambarella CV75 RCT clock controller
+Date: Fri, 09 Oct 2026 19:00:11 +0800
+Message-Id: <20261009-cv75-clk-v1-0-6959b4da83c5@ambarella.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: xilinx: fix NULL pointer dereference in
- xvcu_clk_hw_unregister_leaf()
-To: Haotian Zhang <vulab@iscas.ac.cn>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Michal Simek
- <michal.simek@amd.com>, Michael Tretter <m.tretter@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20261009061805.3172589-1-vulab@iscas.ac.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20261009061805.3172589-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADvJyGoC/yXM0QpAMBTG8VfRubbaNBavIhczBwehDam1dzdc/
+ ur/fR4cWkIHVeLB4kWOtjVCpAmYUa8DMuqiIeNZIThXzFwqZ2aZWa8kClnKXBUaYr5b7On+rur
+ mtzvbCc3x7iGEBzbbpUJsAAAA
+X-Change-ID: 20261007-cv75-clk-f74e1494576a
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Long Zhao <longzhao@ambarella.com>, Long Zhao <zl020895@163.com>, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1791543615; l=2190;
+ i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
+ bh=nEmNB/P7dMfDzlN97RLQsTVzEKL8hg1jn6EUL8ZG6dA=;
+ b=Ccza4jQiFmnUVMomgE3ejHoZTGqwXkTT2Q/8/Zxd0/dF8iYXRd0cbXmE+p6pclf4tqY/HeQRl
+ 2r6oZaibcS1BwEF8KJlBKlurGpjzt+ZqaKK3KC/eqrxj5E07v3QyFdT
+X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
+ pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
+X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
+ auth_id=903
+X-Original-From: Long Zhao <longzhao@ambarella.com>
+Reply-To: longzhao@ambarella.com
 
-On 09/10/2026 08:18, Haotian Zhang wrote:
-> xvcu_clk_hw_unregister_leaf() gets the mux with
-> clk_hw_get_parent(divider), which returns NULL when the divider has no
-> parent, and passes it to clk_hw_unregister_mux() without checking it.
-> The following check tests the wrong variable: divider has already been
-> verified to be non-NULL at this point, so "if (!divider) return;" is
-> dead code and a NULL mux is dereferenced, crashing in
-> clk_hw_unregister_mux().
-> 
-> Only unregister the mux when it is non-NULL, and always release the
-> divider.
+Split from the combined CV75 bring-up series.
 
-So you fired up your OpenClaw or whatever LLM tool and don't bother to
-slow down, right?
+CLK_AMBARELLA_CV75 depends on ARCH_AMBARELLA || COMPILE_TEST, so the
+driver still builds with COMPILE_TEST when the SoC symbol is absent.
+The binding uses the ambarella vendor prefix, which is added by the
+SoC series and is not in mainline yet; dt_binding_check needs that
+prefix. The MAINTAINERS entry for these files is in the SoC series.
+
+Changes since the patches in the combined v9:
+- drop the redundant linux/math.h include (Andy)
+- use for (unsigned int i = 0; ...) (Andy)
+- initialize the spinlock after the allocation succeeds (Andy)
+- group the ctrl, frac and ctrl2 offsets in struct cv75_pll_regs (Andy)
+
+Link: https://patch.msgid.link/20261001-cv75-v5-v9-0-486cc289a4b8@ambarella.com
+
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: linux-clk@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: Long Zhao <longzhao@ambarella.com>
+Cc: Long Zhao <zl020895@163.com>
+Cc: linux-kernel@vger.kernel.org
+
+Assisted-by: LLM
+Signed-off-by: Long Zhao <longzhao@ambarella.com>
+---
+Long Zhao (2):
+      dt-bindings: clock: add Ambarella CV75 RCT
+      clk: ambarella: add CV75 RCT clock controller
+
+ .../bindings/clock/ambarella,cv75-rct.yaml         |  64 ++++
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/ambarella/Kconfig                      |   9 +
+ drivers/clk/ambarella/Makefile                     |   3 +
+ drivers/clk/ambarella/clk-cv75.c                   | 361 +++++++++++++++++++++
+ include/dt-bindings/clock/ambarella,cv75-rct.h     |  14 +
+ 7 files changed, 453 insertions(+)
+---
+base-commit: 34cf6dafc47441dfb6b356a095b89c3585a93714
+change-id: 20261007-cv75-clk-f74e1494576a
 
 Best regards,
-Krzysztof
+--  
+Long Zhao <longzhao@ambarella.com>
+
+
