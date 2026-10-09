@@ -1,66 +1,31 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94974EE869
-	for <linux-clk@vger.kernel.org>; Fri,  9 Oct 2026 16:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E883825785D;
+	Fri,  9 Oct 2026 17:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791563754; cv=none; b=N8xMm+1EZ+SV+fWEXJZKu7v8Ku7vkzkd7faXv95hmnwspAtI8PilkXO3qZBAYFvkzcxdrvcT39owMtt9kjzO1n5JW0JtyJRPp9rfsMUhqed1n21R0qhavOaPjbYJrZjRvDEDqjrIpfFoScKzPmhpd2d17C7zVCm789VVFBoRtbc=
+	t=1791565346; cv=none; b=TxsiQ+yZutffX0jDvLj/krf6WRaeV9Xd1mcRjn3wDqA3QX1aGRJopnwutCAFeY5GpBeqcZtEB0lCDMnm4+TgaXGWjs/SKRMb27NlN+iwFVyvybk56ZAnIRLBpdpGxe3P13aieSxM5RD4JGSQ8cq/t+o6SrIU3VypbCv6wqH68+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791563754; c=relaxed/simple;
-	bh=xzv9srNKau9QTm0+BVYd1p9jfOptiwQ8hJqbnIEu1ag=;
+	s=arc-20240116; t=1791565346; c=relaxed/simple;
+	bh=Nbaxx1cYT8/hi0/ylkMqXJ+kHR5HgrXz/PNLs+1XKS4=;
 	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=nu0wBOQ8DOsHRAxhXBiz4MO/1swBORuLzJ4flYI9h0WwVoO36O1/AGh8Youb6cYZ4JZluxkm5E67dtIn2J59hnZPPvcRHHHMaAwHYjOFY31jX/l/YMxq2RBSB2FqpGDBxxqLB/Ux+lA8gFtjGzPrdDhwzmpKR8YInsngPHMvBWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=XjunLH8M; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	 References:Date:Message-Id; b=cVNPk+k7n3RiIOZiRKxpm8tctYd3mNduk2/yFMrg0ApBzltH1wHi+gSYQcjjZz2fJ3LeOGeIHzlgGTxRQnNtAP1FBAp0XNXew8xT22vUn4ZdhHCaxvSNQ6M9AgFWhxVCbqs7XKgD/CAKOny5IcLxjt91x93Rm0LqJCmJg+0B/Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnVLwOUh; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="XjunLH8M"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4a1923f15afso453325e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 09 Oct 2026 09:35:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1791563748; x=1792168548; darn=vger.kernel.org;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=OR0B7gxjQXP7SQsiz6aV3vPuWAutmo5psfSXuZCrJdw=;
-        b=XjunLH8MLDA7ajpTfYbPndutCDgjZywUlYdcbcYLkhiVxZtxDCoejR6ooedX7f36Hp
-         1Cce9dDfVJrSr1HdtzDETriILG9hY9WSYQQGKR1SYQ41Cou+0UfLP9dvPWl+VJigUf9v
-         IwaNCdn7h/7EgAOxx30CbmSqqidN1aQFLWUH6mV5tu3PkYzSxsb5mRXOIsrnzLVV/CPt
-         ZPYgDLR925LCkpSTL9Fuc7tEj/fkH8z1EM6h4azt/uBBPqfi6ExkA5FUPOQ/uNuPOZRm
-         UPGbgzYa1HIEVSW4kUikKOw/siTwygkauLhb9C7XDqvnRmpcKwJk+seHsGrMCwd15Ttg
-         e7AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791563748; x=1792168548;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=OR0B7gxjQXP7SQsiz6aV3vPuWAutmo5psfSXuZCrJdw=;
-        b=LZXoPHdVRzWh2yGT9Ey+rqOFnpEXyeQ/LERxSKpVMyYCmCpqQuVT8OPG7CuUWzAhnN
-         8+4zhwMHsw8s+efiFsgQZlTrUtiM5trC1VQHZJBSbMnIP+wQHt7GPsOUqCY1r2wBqkzG
-         03iat0fMrSlz9bt8F++5Mlh1p8x03X/zSg8jS2j+rE+Bb7M8iFGFc6F5O9pcmYJ9CpjI
-         71WOA9f5Q2Vm69EPsLIx3Nj1F0vZ3cQxdkZNeLk40HDN6Urg1khAO0AF5haRKu1Xv7bW
-         0kLmEGVKbPyJISE8O1kEjmYPuvg62vtbMyY/AKizuH1TU1HKOVA4C+z7M8fl+F8JKHY3
-         zKKA==
-X-Forwarded-Encrypted: i=1; AKwUvBw8pJdgmokqfTxEjQg+XxEuXM4NeyJfBPNhNlBJdxAl6V31EQ7z2BB+MRgJp2uYvDFavvE3jy/QR6I=@vger.kernel.org
-X-Gm-Message-State: AFuF++kkZh60HUpVVqQwqbAM5vBpTvEIdW2FEZOxn6QgF4zNeAQsBEZM
-	+1co/QSnd8EjVaFlWGXyHuvVtXu0rRCdBaSfPkEnPU5XbYClHpSJxKlFu88Q1nVdI4caHC5WdA0
-	q/9OrjNfRdQ==
-X-Gm-Gg: AYBFou3xbn6oTilmqTKpuioewH6qyhjUF1Xc5lZZ7L2UmoRoYpg0jeyHLhxcuREdaNX
-	rWuyYQwCDp222n+N3oCKsBLjLXya5puTxq3CPGl0YFi4YhZRTHSqbN6ufpINbRi9YnZ2L70EPyK
-	a9ZEfF1/ragLtCrfXPc4rA71EB2HpX4IjyeWrXfDYbmxW/HL0t/EY4ByQUqjatKOXku/fdORyao
-	LoN/jQWLcO6SaUy/xXEvNBD/p/SwZxZfCRl8CLg3fDP7Z54ltxbHgExiH6dnImSDbXAzCK0rxMF
-	zcesQIYcqLTI5OaHJKphlFwHKe4X5Zq46NQKzyfOYFAvxwdaVA5i1Rb3cLXCOZgVoQo8dORg0Cw
-	/db+FEEtCNY9WCpokl6bGnNkuTQ4uMn3I4DN/1aorPr/BR13gyCvYLlfIgAdix0fvxWs46Lc47Z
-	egBlRL3PqUsFuekLesXkzzJ9Iyt1+bXUBAqSO21Mf9kV1PURGZRXbbYJVMdaC7hz//eijvkp4zK
-	KYiedq0JmcXyNhvXw==
-X-Received: by 2002:a05:600c:1c21:b0:49c:cee0:f383 with SMTP id 5b1f17b1804b1-4a18e4b6241mr55388775e9.16.1791563747862;
-        Fri, 09 Oct 2026 09:35:47 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18eb4485dsm105678505e9.2.2026.10.09.09.35.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2026 09:35:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnVLwOUh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 542151F000FF;
+	Fri,  9 Oct 2026 17:02:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791565344;
+	bh=5dMVbJnI19moENBSqVQMDpVDPhFrQzEaV/+VuGW6XHU=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=MnVLwOUhgOJPC/uZi5mCOu/LRQrkel5tXE0qY/cgmI7sUAYT4PtwqXMiNAGQr1hdr
+	 SJY+QBzuN7FLFXeTlr2WROHrbrLeygFZNc4RGDsray9vpLSzymMjiaQoOeXENH+sXx
+	 9lzd5rtSGtNxbqhSxOFWB/qU+H257K98FYkm0lnbg56rc7bMROZ/w4syMn2NAqbG3J
+	 bBKTmjmODndbtrBSjxM1gDBT7yyzimkvl/beqowHexy3D3+pxhiaRGf5APSWP1CYJ2
+	 ILPVCSerolSK+kObLdo8jAgHZh1SJoULi5Nl7iIZjvEitEYox/wdQayRyJUMcb9s7B
+	 hiowh3rYLwwFg==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,124 +34,418 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2 1/1] clk: nuvoton: ma35d1-divider: use direct
- formula instead of divider table
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Joey Lu <a0987203069@gmail.com>
-Cc: sboyd@kernel.org, ychuang3@nuvoton.com, schung@nuvoton.com, 
- yclu4@nuvoton.com, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20261008064307.2757324-2-a0987203069@gmail.com>
-References: <20261008064307.2757324-1-a0987203069@gmail.com>
- <20261008064307.2757324-2-a0987203069@gmail.com>
-Date: Fri, 09 Oct 2026 18:35:25 +0200
-Message-Id: <179156372588.266328.3848259565001346041.b4-review@b4>
+Subject: Re: [PATCH 2/2] clk: ambarella: add CV75 RCT clock controller
+From: Brian Masney <masneyb@kernel.org>
+To: Long Zhao <longzhao@ambarella.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org
+In-Reply-To: <20261009-cv75-clk-v1-2-6959b4da83c5@ambarella.com>
+References: <20261009-cv75-clk-v1-0-6959b4da83c5@ambarella.com>
+ <20261009-cv75-clk-v1-2-6959b4da83c5@ambarella.com>
+Date: Fri, 09 Oct 2026 19:02:06 +0200
+Message-Id: <179156532625.79180.13840464074277826113.b4-review@b4>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3913; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=xzv9srNKau9QTm0+BVYd1p9jfOptiwQ8hJqbnIEu1ag=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFknxa9oVTKL1DDcnNHJUbsxhyX63p9tu7xNUk72fLzCt
- GjzZubzHaUsDGJcDLJiiiw13NXi7yS1vsyarnMbZg4rE8gQBi5OAZjIiv8M/4uzg8JbXP7rHJwz
- Se2iTZTq8cuHD7rn7GE73Cft3nVJMpXhf/lC0fW5d6+8KpBJash7IDtlVcG55gONT641Xu8XWii
- RzwcA
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11601; i=masneyb@kernel.org;
+ s=20250903; h=from:subject:message-id;
+ bh=Nbaxx1cYT8/hi0/ylkMqXJ+kHR5HgrXz/PNLs+1XKS4=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJOykm/O/RK4ebfqFLu75qz7tt4zFt/Z8upKLHmzqmaT
+ qFJZ2U/dZSyMIhxMciKKbIsyTUqiEhdZXvvjiYLzBxWJpAhDFycAjCRu9GMDLu31Pvf1nyX58t7
+ 2EFwpbb2oyMecgs23F65QtOPVev3zwyG/2lfljuwTLq84YCx4f/v3RrPs/+2/G3/2fdmhbP2rFK
+ /VQwA
+X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-> The ADC clock divider register implements rate = parent_rate / (2 * (N + 1)),
+Hi Long,
 
-Are you open-coding CLK_DIVIDER_EVEN_INTEGERS ?
-
- * CLK_DIVIDER_EVEN_INTEGERS - clock divisor is 2, 4, 6, 8, 10, etc.
- *	Formula is 2 * (value read from hardware + 1)
-
-Am wondering if this driver is necessary at all ? Can you just use the
-regular divider here ?
-
-> which was previously modeled by building a clk_div_table with one entry per
-> possible divider value (up to 2^width entries) and feeding it through the
-> generic divider_recalc_rate()/divider_determine_rate()/divider_get_val()
-> helpers. That is unnecessary overhead (a large table allocation and a
-> linear scan on every rate lookup) for a relationship with a simple
-> closed-form expression, so compute the rate directly instead.
+> Add a table-driven CCF driver for the CV75 root clock tree. Register
+> the core PLL, AHB/APB fixed factors and UART0 composite clock, with
+> osc supplied via clk_parent_data.
 > 
-> Drop the mask_bit/mask mechanism as well. The previous code unconditionally
-> OR'd an arbitrary bit into the divider register on every set_rate() call,
-> and the one existing caller passed mask_bit as a bitmask value (0x1ffff)
-> rather than a bit index, so BIT() shifted by an out-of-range amount, which
-> is undefined behavior. The divider field write already clears and rewrites
-> only its own bits, so no extra forced bit is needed.
-> 
-> Select the divider with a single helper shared by determine_rate() and
-> set_rate(), using closest rounding as before, so the rate promised by
-> determine_rate() is the rate that set_rate() programs. The helper clamps
-> the divider to the valid range and avoids overflowing 2 * rate for very
-> large requested rates, which would otherwise lead to a division by zero.
-> Reject a rate of 0 with -EINVAL.
-> 
-> Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
-> Signed-off-by: Joey Lu <a0987203069@gmail.com>
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+
+The dt binding mentions a reset however I don't see any reference to it
+in the driver.
+
 >
-> diff --git a/drivers/clk/nuvoton/clk-ma35d1-divider.c b/drivers/clk/nuvoton/clk-ma35d1-divider.c
-> index e992e7c30341..12a946c989e9 100644
-> --- a/drivers/clk/nuvoton/clk-ma35d1-divider.c
-> +++ b/drivers/clk/nuvoton/clk-ma35d1-divider.c
-> @@ -16,8 +16,6 @@ struct ma35d1_adc_clk_div {
->  	void __iomem *reg;
->  	u8 shift;
->  	u8 width;
-> -	u32 mask;
-> -	const struct clk_div_table *table;
->  	/* protects concurrent access to clock divider registers */
->  	spinlock_t *lock;
->  };
-> @@ -29,44 +27,66 @@ static inline struct ma35d1_adc_clk_div *to_ma35d1_adc_clk_div(struct clk_hw *_h
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 37a8e35d4178..6bfa2c8fffe1 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -510,6 +510,7 @@ config COMMON_CLK_RPMI
+>  	  the RISC-V platform management interface (RPMI) specification.
 >  
->  static unsigned long ma35d1_clkdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
->  {
-> -	unsigned int val;
->  	struct ma35d1_adc_clk_div *dclk = to_ma35d1_adc_clk_div(hw);
-> +	unsigned int val;
+>  source "drivers/clk/actions/Kconfig"
+> +source "drivers/clk/ambarella/Kconfig"
+>  source "drivers/clk/analogbits/Kconfig"
+>  source "drivers/clk/anlogic/Kconfig"
+>  source "drivers/clk/aspeed/Kconfig"
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index 52d138d4ffc8..99377a13ebc5 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -125,6 +125,7 @@ obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
 >  
->  	val = readl_relaxed(dclk->reg) >> dclk->shift;
->  	val &= clk_div_mask(dclk->width);
-> -	val += 1;
-> -	return divider_recalc_rate(hw, parent_rate, val, dclk->table,
-> -				   CLK_DIVIDER_ROUND_CLOSEST, dclk->width);
+>  # please keep this section sorted lexicographically by directory path name
+>  obj-y					+= actions/
+> +obj-y					+= ambarella/
+>  obj-y					+= analogbits/
+>  obj-y					+= anlogic/
+>  obj-y					+= aspeed/
+> diff --git a/drivers/clk/ambarella/Kconfig b/drivers/clk/ambarella/Kconfig
+> new file mode 100644
+> index 000000000000..720eebdc5c9c
+> --- /dev/null
+> +++ b/drivers/clk/ambarella/Kconfig
+> @@ -0,0 +1,9 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
 > +
-> +	return DIV_ROUND_CLOSEST_ULL((u64)parent_rate, 2 * (val + 1));
+> +config CLK_AMBARELLA_CV75
+> +	bool "Ambarella CV75 RCT clock controller"
+> +	depends on ARCH_AMBARELLA || COMPILE_TEST
+> +	default ARCH_AMBARELLA
+> +	help
+> +	  Say Y to enable the Ambarella CV75 RCT clock controller for
+> +	  early bring-up clocks (core PLL, AHB, APB, UART0).
+> diff --git a/drivers/clk/ambarella/Makefile b/drivers/clk/ambarella/Makefile
+> new file mode 100644
+> index 000000000000..29555e452441
+> --- /dev/null
+> +++ b/drivers/clk/ambarella/Makefile
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +
+> +obj-$(CONFIG_CLK_AMBARELLA_CV75) += clk-cv75.o
+> diff --git a/drivers/clk/ambarella/clk-cv75.c b/drivers/clk/ambarella/clk-cv75.c
+> new file mode 100644
+> index 000000000000..7135402a36ec
+> --- /dev/null
+> +++ b/drivers/clk/ambarella/clk-cv75.c
+> @@ -0,0 +1,361 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Ambarella CV75 RCT clock controller
+> + *
+> + * Copyright (C) 2026 Ambarella, Inc.
+> + */
+> +
+> +#include <linux/array_size.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/container_of.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/math64.h>
+> +#include <linux/module.h>
+> +#include <linux/overflow.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/types.h>
+> +
+> +#include <dt-bindings/clock/ambarella,cv75-rct.h>
+> +
+> +#define CV75_NUM_CLKS		(CV75_GCLK_APB + 1)
+> +
+> +#define PLL_CTRL_BYPASS		BIT(2)
+> +#define PLL_CTRL_FRAC_MODE	BIT(3)
+> +#define PLL_CTRL_FORCE_RESET	BIT(4)
+> +#define PLL_CTRL_POWER_DOWN	BIT(5)
+> +#define PLL_CTRL_HALT_VCO	BIT(6)
+> +#define PLL_CTRL_SDIV		GENMASK(15, 12)
+> +#define PLL_CTRL_SOUT		GENMASK(19, 16)
+> +#define PLL_CTRL_INTP		GENMASK(30, 24)
+> +
+> +#define PLL_CTRL2_VCODIV_DIV2	BIT(8)
+> +#define PLL_CTRL2_FSDIV_DIV2	BIT(9)
+> +#define PLL_CTRL2_FSOUT_DIV2	BIT(11)
+> +#define PLL_CTRL2_BYPASS_HSDIV	BIT(12)
+> +
+> +struct cv75_pll_regs {
+> +	u32 ctrl;
+> +	u32 frac;
+> +	u32 ctrl2;
+> +};
+> +
+> +struct cv75_pll_hw {
+> +	struct clk_hw hw;
+> +	struct cv75_pll_regs regs;
+> +};
+> +
+> +struct cv75_clk {
+> +	void __iomem *base;
+> +	spinlock_t lock;
+> +	struct cv75_pll_hw core;
+> +	struct cv75_pll_hw enet;
+> +	struct cv75_pll_hw sd;
+> +};
+> +
+> +struct cv75_pll {
+> +	const char *name;
+> +	struct cv75_pll_hw *hw;
+> +	unsigned long flags;
+> +	struct cv75_pll_regs regs;
+> +	int id;
+> +};
+> +
+> +struct cv75_fixed_factor {
+> +	const char *name;
+> +	u32 id;
+> +	struct u16_fract ratio;
+> +};
+> +
+> +struct cv75_composite {
+> +	const char *name;
+> +	const struct clk_parent_data *parents;
+> +	unsigned long flags;
+> +	u32 id;
+> +	u16 mux_reg;
+> +	u16 div_reg;
+> +	u8 num_parents;
+> +	u8 mux_shift;
+> +	u8 mux_width;
+> +	u8 div_shift;
+> +	u8 div_width;
+> +};
+> +
+> +struct cv75_composite_hw {
+> +	struct clk_mux mux;
+> +	struct clk_divider div;
+> +	struct clk_gate gate;
+> +};
+> +
+> +static struct cv75_clk cv75_ccu;
+> +
+> +#define CV75_PLL(_id, _name, _ctrl, _frac, _ctrl2, _flags, _hw) {	\
+> +	.name	= _name,						\
+> +	.hw	= _hw,							\
+> +	.flags	= _flags,						\
+> +	.regs	= {							\
+> +		.ctrl = _ctrl,						\
+> +		.frac = _frac,						\
+> +		.ctrl2 = _ctrl2,					\
+> +	},								\
+> +	.id	= _id,							\
 > +}
 > +
-> +static unsigned int ma35d1_clkdiv_get_val(struct ma35d1_adc_clk_div *dclk,
-> +					  unsigned long parent_rate,
-> +					  unsigned long rate)
-> +{
-> +	unsigned long max = clk_div_mask(dclk->width) + 1;
-> +	unsigned long val;
-> +
-> +	if (rate > parent_rate / 2)
-> +		return 1;
-> +
-> +	val = DIV_ROUND_CLOSEST_ULL((u64)parent_rate, 2 * rate);
-> +
-> +	return clamp(val, 1UL, max);
->  }
->  
->  static int ma35d1_clkdiv_determine_rate(struct clk_hw *hw,
->  					struct clk_rate_request *req)
->  {
->  	struct ma35d1_adc_clk_div *dclk = to_ma35d1_adc_clk_div(hw);
-> +	unsigned int val;
->  
-> -	return divider_determine_rate(hw, req, dclk->table, dclk->width,
-> -				      CLK_DIVIDER_ROUND_CLOSEST);
-> +	if (!req->rate)
-> +		return -EINVAL;
-> +
-> +	val = ma35d1_clkdiv_get_val(dclk, req->best_parent_rate, req->rate);
-> +	req->rate = DIV_ROUND_CLOSEST_ULL((u64)req->best_parent_rate, 2 * val);
+> +static const struct cv75_pll cv75_plls[] = {
+> +	CV75_PLL(CV75_GCLK_CORE, "core", 0x000, 0x004, 0x100,
+> +		 CLK_GET_RATE_NOCACHE | CLK_IS_CRITICAL, &cv75_ccu.core),
+> +	CV75_PLL(-1, "pll_enet", 0x520, 0x524, 0x528,
+> +		 CLK_GET_RATE_NOCACHE, &cv75_ccu.enet),
+> +	CV75_PLL(-1, "pll_sd", 0x4ac, 0x4b0, 0x4b4,
+> +		 CLK_GET_RATE_NOCACHE, &cv75_ccu.sd),
 
-Rate propagation support is lost with this.
+Why is CLK_GET_RATE_NOCACHE set on all of these?
+
+> +};
+> +
+> +static const struct cv75_fixed_factor cv75_fixed_factors[] = {
+> +	{ .id = CV75_GCLK_AHB, .name = "ahb", .ratio = { 1, 2 } },
+> +	{ .id = CV75_GCLK_APB, .name = "apb", .ratio = { 1, 4 } },
+> +};
+> +
+> +static const struct clk_parent_data cv75_uart_parents[] = {
+> +	{ .fw_name = "osc" },
+> +	{ .hw = &cv75_ccu.core.hw },
+> +	{ .hw = &cv75_ccu.enet.hw },
+> +	{ .hw = &cv75_ccu.sd.hw },
+> +};
+> +
+> +#define CV75_COMPOSITE(_id, _name, _parents, _mreg, _mshift, _mwidth,	\
+> +		       _dreg, _dshift, _dwidth, _flags)			\
+> +{									\
+> +	.id		= _id,						\
+> +	.name		= _name,					\
+> +	.parents	= _parents,					\
+> +	.num_parents	= ARRAY_SIZE(_parents),				\
+> +	.mux_reg	= _mreg,					\
+> +	.mux_shift	= _mshift,					\
+> +	.mux_width	= _mwidth,					\
+> +	.div_reg	= _dreg,					\
+> +	.div_shift	= _dshift,					\
+> +	.div_width	= _dwidth,					\
+> +	.flags		= _flags,					\
+> +}
+> +
+> +static const struct cv75_composite cv75_composites[] = {
+> +	CV75_COMPOSITE(CV75_GCLK_UART0, "uart0", cv75_uart_parents,
+> +		       0x1c8, 0, 2, 0x038, 0, 24,
+> +		       CLK_SET_RATE_NO_REPARENT),
+> +};
+> +
+> +#define to_cv75_pll(_hw) container_of(_hw, struct cv75_pll_hw, hw)
+> +
+> +static unsigned long cv75_pll_recalc_rate(struct clk_hw *hw,
+> +					  unsigned long parent_rate)
+> +{
+> +	struct cv75_pll_hw *pll = to_cv75_pll(hw);
+> +	u32 ctrl, ctrl2, frac_val;
+> +	u32 intp, sdiv, sout;
+> +	u32 vcodiv, fsdiv, fsout;
+> +	u64 vco, frac = 0;
+
+Put in reverse Christmas tree order.
+
+> +
+> +	ctrl = readl_relaxed(cv75_ccu.base + pll->regs.ctrl);
+> +	if (ctrl & (PLL_CTRL_POWER_DOWN | PLL_CTRL_HALT_VCO | PLL_CTRL_FORCE_RESET))
+> +		return 0;
+> +
+> +	if (ctrl & PLL_CTRL_BYPASS)
+> +		return parent_rate;
+> +
+> +	ctrl2 = readl_relaxed(cv75_ccu.base + pll->regs.ctrl2);
+> +	intp = FIELD_GET(PLL_CTRL_INTP, ctrl) + 1;
+> +	sdiv = FIELD_GET(PLL_CTRL_SDIV, ctrl) + 1;
+> +	sout = FIELD_GET(PLL_CTRL_SOUT, ctrl) + 1;
+> +	vcodiv = (ctrl2 & PLL_CTRL2_VCODIV_DIV2) ? 2 : 1;
+> +	fsdiv = (ctrl2 & PLL_CTRL2_FSDIV_DIV2) ? 2 : 1;
+> +	fsout = (ctrl2 & PLL_CTRL2_FSOUT_DIV2) ? 2 : 1;
+> +
+> +	vco = (u64)parent_rate * vcodiv * fsdiv * intp * sdiv;
+> +	if (ctrl & PLL_CTRL_FRAC_MODE) {
+> +		frac_val = readl_relaxed(cv75_ccu.base + pll->regs.frac);
+> +		frac = mul_u64_u32_shr((u64)parent_rate * vcodiv * fsdiv * sdiv,
+> +				       frac_val, 32);
+> +		vco += frac;
+> +	}
+> +
+> +	if (!(ctrl2 & PLL_CTRL2_BYPASS_HSDIV))
+> +		vco = div_u64(vco, (u64)vcodiv * fsout * sout);
+> +
+> +	return vco;
+> +}
+> +
+> +static const struct clk_ops cv75_pll_ops = {
+> +	.recalc_rate = cv75_pll_recalc_rate,
+> +};
+> +
+> +static int cv75_register_plls(struct device *dev,
+> +			      struct clk_hw_onecell_data *data)
+> +{
+> +	struct clk_parent_data parent_data = { .fw_name = "osc" };
+> +
+> +	for (unsigned int i = 0; i < ARRAY_SIZE(cv75_plls); i++) {
+> +		const struct cv75_pll *desc = &cv75_plls[i];
+> +		struct cv75_pll_hw *pll = desc->hw;
+> +		struct clk_init_data init = {};
+> +		int ret;
+> +
+> +		pll->regs = desc->regs;
+> +
+> +		init.name = desc->name;
+> +		init.ops = &cv75_pll_ops;
+> +		init.parent_data = &parent_data;
+> +		init.num_parents = 1;
+> +		init.flags = desc->flags;
+> +		pll->hw.init = &init;
+> +
+> +		ret = devm_clk_hw_register(dev, &pll->hw);
+> +		if (ret)
+> +			return ret;
+> +
+> +		if (desc->id >= 0)
+> +			data->hws[desc->id] = &pll->hw;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int cv75_register_fixed_factors(struct device *dev,
+> +				       struct clk_hw_onecell_data *data)
+> +{
+> +	for (unsigned int i = 0; i < ARRAY_SIZE(cv75_fixed_factors); i++) {
+> +		const struct cv75_fixed_factor *f = &cv75_fixed_factors[i];
+> +		struct clk_hw *hw;
+> +
+> +		hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, f->name,
+> +								 &cv75_ccu.core.hw, 0,
+> +								 f->ratio.numerator,
+> +								 f->ratio.denominator);
+> +		if (IS_ERR(hw))
+> +			return PTR_ERR(hw);
+> +
+> +		data->hws[f->id] = hw;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static struct clk_hw *cv75_register_composite(struct device *dev,
+> +					      const struct cv75_composite *c)
+> +{
+> +	const struct clk_ops *mux_ops = NULL, *div_ops = NULL, *gate_ops = NULL;
+> +	struct clk_hw *mux_hw = NULL, *div_hw = NULL, *gate_hw = NULL;
+> +	struct cv75_composite_hw *comp;
+> +
+> +	comp = devm_kzalloc(dev, sizeof(*comp), GFP_KERNEL);
+> +	if (!comp)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	if (c->mux_width) {
+> +		comp->mux.reg = cv75_ccu.base + c->mux_reg;
+> +		comp->mux.shift = c->mux_shift;
+> +		comp->mux.mask = GENMASK(c->mux_width - 1, 0);
+> +		comp->mux.lock = &cv75_ccu.lock;
+> +		mux_hw = &comp->mux.hw;
+> +		mux_ops = &clk_mux_ops;
+> +	}
+> +
+> +	if (c->div_width) {
+> +		comp->div.reg = cv75_ccu.base + c->div_reg;
+> +		comp->div.shift = c->div_shift;
+> +		comp->div.width = c->div_width;
+> +		comp->div.flags = CLK_DIVIDER_ONE_BASED;
+> +		comp->div.lock = &cv75_ccu.lock;
+> +		div_hw = &comp->div.hw;
+> +		div_ops = &clk_divider_ops;
+> +
+> +		comp->gate.reg = cv75_ccu.base + c->div_reg;
+> +		comp->gate.bit_idx = c->div_shift + c->div_width;
+> +		comp->gate.flags = CLK_GATE_SET_TO_DISABLE;
+> +		comp->gate.lock = &cv75_ccu.lock;
+> +		gate_hw = &comp->gate.hw;
+> +		gate_ops = &clk_gate_ops;
+> +	}
+> +
+> +	return devm_clk_hw_register_composite_pdata(dev, c->name, c->parents,
+> +						    c->num_parents,
+> +						    mux_hw, mux_ops,
+> +						    div_hw, div_ops,
+> +						    gate_hw, gate_ops, c->flags);
+> +}
+> +
+> +static int cv75_register_composites(struct device *dev,
+> +				    struct clk_hw_onecell_data *data)
+> +{
+> +	for (unsigned int i = 0; i < ARRAY_SIZE(cv75_composites); i++) {
+> +		const struct cv75_composite *c = &cv75_composites[i];
+> +		struct clk_hw *hw;
+> +
+> +		hw = cv75_register_composite(dev, c);
+> +		if (IS_ERR(hw))
+> +			return PTR_ERR(hw);
+> +
+> +		data->hws[c->id] = hw;
+> +	}
+> +
+> +	return 0;
+> +}
+
+If you think that you'll have other SoC designs in the future, then you
+should split out this functionality above into it's own .c file that you
+can use as a library.
+
+Brian
 
 -- 
-Jerome
-
+Brian Masney <masneyb@kernel.org>
