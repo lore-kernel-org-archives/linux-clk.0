@@ -1,43 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0141C430302;
-	Fri,  9 Oct 2026 06:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5291D435534;
+	Fri,  9 Oct 2026 06:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791526228; cv=none; b=YbGmGvNR2cpliOxoS41WPfJpkToAgf29Sdc4CTOLuj8eoZ3P3p4LEWJlt/CDQQuXQaxGWMbvoSahcCZTjRm3m1E75oSuA375eA2uOKFiuQlxYamtClTInvjNmGNVvfZu+l62TDycd9Y/lPXk41AVZR45zdhy+mANbBkWtQgp6Cs=
+	t=1791526259; cv=none; b=brEjta49PDeEAC0cfT6objSvOi3lyRZN+BSjbGINWlW0Jv5Dw12lbxtTTYwNHTBZWu+Ft4a6xvA6tZ7GCupXsKKgpBr/ebHmHV+He92/jTSG+rYbw3LqTgYZDcFArZzbMfjzY4G/2loP9q+dpW7lDHqhghG3UPzS0t7rvR3F45k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791526228; c=relaxed/simple;
-	bh=/UfbsjqzDY6VeeP2gUInuXeu+5cK5tmhqvo9/j9H7WA=;
+	s=arc-20240116; t=1791526259; c=relaxed/simple;
+	bh=N6oKuLb55eA8lD9aO3ioDmNfeLCSxGY48zlC4YpkWik=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndOQiS092H6YNKsNFTyFNooBRl/Hy3TiUE4/js2YLqjBcDfDRjNAv4cTNgRgrzJ9xvh96DqektD/gnWN3yy244LsYP422Vh47UZzaVtBpHbe5G3+7Qk+bGV4/CrFLXh35fFwYoIlD+URPLQGFWqDdupKmMf+Vev4IE7d92rbz04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TnvZgk0x; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=qjlYdkeQD9HITifFthr+3SQKijXVCVOz0KLfHuRVW8M3Cvh4Pkh8IlKrLj4ZFXO3FlrxSwZ1XVS9Bi6DvREu2HkzSdRNkl/Y8ajX4OGWSRVopDlmVDPXopGZJ0W8q8nHZSvtwWb47cIRoiNwtHaVjT0Bu79nSNZFarHxR3LTR78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GYjMQ8Rj; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TnvZgk0x"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 701F21F000FF;
-	Fri,  9 Oct 2026 06:10:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYjMQ8Rj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72B191F00898;
+	Fri,  9 Oct 2026 06:10:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791526225;
-	bh=9QrbgLJlJB9Qt6Mk85+69XrHJzKoUGmt4nkY0QTog5I=;
+	s=k20260515; t=1791526258;
+	bh=vTBfdkdiLXR6doacRRqDnlzSTCmPURyXZAOXJeR/J/0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=TnvZgk0x3anRi4HJIiM5vnuWn5XkEYRAfheAVzWXOHOS2F1P/Gfdj4+j7s/RGkWr1
-	 ONzyzm5Hs+JOvtmZMdDE/MVStCIqOARIopB7USDHskOjFPTl6xzYw1NuFDzjthUnYi
-	 QesQ+pTzuGyi/OyvSGlIOtFosmYFD4XDQkg9J4LT4JPqtgSddMgIbu4xD/K1vRvB5H
-	 epZZqDHiO6qfmg4gt+Bu7H3G6bS0k6VfjlCRdYcfGuU5jHVVxq0RQ+qbYu+hWoo557
-	 aVEVT/8DEJ8OSq19UQM89c6oKivooqVpA3HemLpRjCqJ3Csw3R6DHZjVoHWxdH+8HV
-	 4g/JjhcmKyEog==
-Date: Fri, 9 Oct 2026 08:10:22 +0200
+	b=GYjMQ8Rj+ke+uQQ151GhaFQxe3REKSpKD/Y9PeDvy+4WMRY44KkcMkl+qgAKFJgQX
+	 vehV9y1n3yQ01BPSd6P7MmT4h6UfXrUgMgq7i72iW+u54yglzj/mAEsz+4967c8Kwy
+	 jvkj5vnisYO17n6soskqIC6nqSyCgplkJr8cAPamLEL4wQFzpZmKhyF70x6UY8qZ/9
+	 0lArEvcQf7MTp6uDyfoBBQd1c0/V3LfZy8pI75s1kwgw+nCvxlgnpfvnPZLRiAKktN
+	 Cp+pSYnVa3oXY09eWoVBPijbiwfVwvfINmufPv9l3aTPv4yHlhfIurC6BHut01pjbh
+	 n8EW2xgMa+aDg==
+Date: Fri, 9 Oct 2026 08:10:55 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Haotian Zhang <vulab@iscas.ac.cn>
-Cc: =?utf-8?B?QmVub8ODwq50?= Monin <benoit.monin@bootlin.com>, 
-	Brian Masney <bmasney+clk@redhat.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org, =?utf-8?B?VGjDg8Kpbw==?= Lebrun <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH] clk: eyeq: release OLB mapping in eqc_early_init() error
- and success paths
-Message-ID: <20261009-reliable-mule-of-feminism-adcb7f@quoll>
-References: <20261009032636.3059201-1-vulab@iscas.ac.cn>
+Cc: Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: composite: fix NULL dereference when the parent
+ clock is not set
+Message-ID: <20261009-daft-succinct-stoat-5d5bd1@quoll>
+References: <20261008180652.2756849-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,28 +44,26 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261009032636.3059201-1-vulab@iscas.ac.cn>
+In-Reply-To: <20261008180652.2756849-1-vulab@iscas.ac.cn>
 
 
-On Fri, 09 Oct 2026 11:26:36 +0800, Haotian Zhang wrote:
-> eqc_early_init() calls of_iomap() to read the early PLL registers, then
-> returns to the caller without ever calling iounmap(). The mapping is not
-> stored in any structure, is not devm-managed and is not carried over to
-> the platform device, so it is leaked on both the success path and every
-> goto err path (early clock probe failure and of_clk_add_hw_provider()
-> failure). The early clocks registered here are all fixed factors, so they
-> do not keep the mapping alive.
+On Fri, 09 Oct 2026 02:06:52 +0800, Haotian Zhang wrote:
+> clk_composite_determine_rate() reads the parent clock with
+> clk_hw_get_parent() and hands it to
+> clk_composite_determine_rate_for_parent() without checking it.
+> clk_hw_get_parent() returns NULL when the clock has no parent yet, for
+> example while the parent is still an orphan, and the helper dereferences
+> that NULL pointer in clk_hw_get_rate(), which reads parent_hw->core and
+> oopses the kernel.
 > 
-> Release the mapping with iounmap() before returning on success and in the
-> error path, initializing base to NULL so that the allocation failure path
-> taken before of_iomap() does not unmap an uninitialized pointer.
+> Return -EINVAL when the parent clock is NULL.
 > 
-> Fixes: 25d904946a0b ("clk: eyeq: add driver")
+> Fixes: 2f508a955a67 ("clk: Convert basic types to clk_hw based provider APIs")
 > Assisted-by: DeepSeek-V4.1-Flash
 > Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 > ---
->  drivers/clk/clk-eyeq.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+>  drivers/clk/clk-composite.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
 
