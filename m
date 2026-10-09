@@ -1,65 +1,65 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CA0509F11
-	for <linux-clk@vger.kernel.org>; Fri,  9 Oct 2026 18:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4078D5013BB
+	for <linux-clk@vger.kernel.org>; Fri,  9 Oct 2026 18:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791570597; cv=none; b=g6GcHdBiwvOt9kBGsmNERiQD2c8qAVqrHy7GT6lI5nsFjqffG53CqZtQMMvSc0+rwB6TiuSwSDBPxlHsz/r8IddVL1KN4IaHRjmBQMeVUhgf1qFcQzOQljtfs8uqdcE7/ids+pixXYQoAlLmK8n8yIOODRSTnkXJ/sugARr+2RM=
+	t=1791570597; cv=none; b=jju4uSM01oLMzPoOUZBq+MrHocmSkhF68tqIvMZPdn/+BuXTXNeYylghJlmlad36t9KFrVsV8PQvws9lXUkn4RIe/Slv2E11UsWveGVlm5YyLSUEeAP9j4Fc59oUPy7/K8fDu0wh9ge9A4owHPUDQmdWezWIzlgZxrYp6kZA1+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1791570597; c=relaxed/simple;
-	bh=I/1PyQTs9JiOymPOiuzFhvwhZ7XqmQsZMTD56HnUL+U=;
+	bh=hqh6Oz8jthBJvM6D58JFS6alnDs/Glpqv2ePGiXx8QM=;
 	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=iOmXdLT7ddL4+ZfmvC/qyHGyDI+Rl3oddkRn/VolukCS+VydcO3uo8g4VZWllc6BLInCjfmV27qCZufisRX1a2id6ClPvYsQbhFch5mgV+waJ0ZIdXeN7QwpNWB4TiO7ObHCj5dhgo5Vp9GYqzO8ZJaiehwhVy2tbzbzaHgIRtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=fq+rJ0PU; arc=none smtp.client-ip=209.85.128.53
+	 References:Date:Message-Id; b=hLOYWrEVom2GcNHZhzxXu69yxTbUPKBq5/cS5Oi1632wl1NeVP/6b/Zp3mJsF0xEbsB7/5Ljwdu5AuAlvaOjsZky9CEvnONIteEZDJoH3JEEVCLBPY8lm71g9w7eqEmL7HQtL0BGIRacsQdYBh1Me/XZ95vQv0ZbcnUeSSR9xBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=AyUvhP3u; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="fq+rJ0PU"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4980fe6b3beso12763035e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 09 Oct 2026 11:29:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="AyUvhP3u"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-48c4d870d54so58443f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 09 Oct 2026 11:29:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1791570588; x=1792175388; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1791570586; x=1792175386; darn=vger.kernel.org;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=6eTdAycFKzyoelmWzAqDQwOHsmx7MWbf93DwQ7V1xow=;
-        b=fq+rJ0PUlWlOWB4iC0dwXZptaajulIkFu6QKtycdSqqlImipv3M8/wFuulbWaruG7A
-         PU5fhjqIm7VfsuJVNXP4D88exrObvRvyuiu6dQIjR8uRJCyuw5sPOfjAL+e0rCJ4181H
-         T6jy3+04ar7xE5YnW3NATjif5BaGRzwpEwEXvAo32JjTlwZY6eHY0YqS2XVbzDCQC6p4
-         W1KaDwYw66fhpSUU7xvvgzraiQ+gO6rYTgOyROu0x54+ZYIAyRtxS2eGOttlJPe+mxE4
-         chYr5ZRolaLR9tZHTnj775qztB4WiOQ8wDsu2g/XiIkd81PQjKENIps8yT4I2aqc5BAO
-         /Qag==
+        bh=c/afa+kv2Lz5RKZtvNmWgTzIvifY9Vb7PPR36VvNXyQ=;
+        b=AyUvhP3u+DZff3B+bnWHUxkE+L25ncMs1XmWq89EjbvmmcDCRO3hnPtpt+xo+vjL8h
+         sp4nTNqxMsEGCz6/rFGPkDNGukMtr/sTc4CBVvyaljzc5eq6tN06+5U6a4lLf3C05P1u
+         Z4Q39UiVJLsjZWJ+X2Kj9mA3xCOQ8NKBfFPznTV21IP7AYCdp1fOKqDJwpjEAIEVBZnD
+         nMII8DbkC3PRVsR8l498qcEnBucYGySQfx29lTYbwiOJawteiWsxd9kZvQglZULnkdKo
+         m9ldcb7xwMLPShhdcPmYfY1fOIZXREjMYXH0Dv/rnDs2ghwc2piAS+Vv+QwkllSTc4p3
+         +vdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791570588; x=1792175388;
+        d=1e100.net; s=20260707; t=1791570586; x=1792175386;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=6eTdAycFKzyoelmWzAqDQwOHsmx7MWbf93DwQ7V1xow=;
-        b=SeVOwlk1fwV0wna/H8ajXKriQqbXpFFwmU/SnuuDdzX+xlcJUIBfmPVRGqf74+QRCV
-         mcO/51U7UI7ynno1UicN3iMGzyzWU8fH7XKHPecZcRjlfP7bmkqc/m8i8FYQT9sxnMF4
-         5EfenXYiv3CV52P1H+DQdnnxiOhee1525QaIcmKR0lsaxdKBmwWeaK0dDgHT/B/gVBFp
-         wsbHqdZONVge3n4ARTClBLsIGGw9jDiP5VG5cgUWsH4PSdR5O3vLfSDb/5iKrItL0X33
-         c0xtBOchW0fvLg5QKzejfOaKoIlZmjxsi9YShesTkqbONGyM6XuEgZN4Hb5xx1+KtnpW
-         tt1Q==
-X-Forwarded-Encrypted: i=1; AKwUvBwjcQW+4glnVi16rlBQFSXeyvwsLA9ROumExDR4XHb1SG4OvnCzbeiMtO2eUpVpFS/zXErzRjTPkY8=@vger.kernel.org
-X-Gm-Message-State: AFuF++kphlWGGZLd1grlq7vcOjb/4CrSsIgPMKxoYY3f+nD7mPz6Xb8n
-	RC7+p2PeFWxdIJMFkyd2yCarvKHJLACc3r2jLWPk2oietmGTrX7h9V6P4qvcXuu5kZs=
-X-Gm-Gg: AYBFou08icnAQFSMTtKjXsvwsCeWQdYJjWoeijZBnrO3IDwyIYKhS25ityxjNJtKNa3
-	kdVZfACzjK1T1SFZv/BBczeeyjq7vFSb0nOUTWVy0Uh8H22c7rMGARB74JPjLjyofMxMMX7aFbK
-	Al6TgZXhj4rvL7njTPkwb27Ovpu0pPCfVEtrIpzaGSau7T4JZNBHCd28Q22nzP5iT60BHjdRJs1
-	0FM1HEyH6LZS7PytInu03YhxBjbw7KXpS74H/Mqt/ClEVOps/0AcG6WppbjbHFKxmM80kbAg12m
-	4RTjS2k+rzJSqUjhEPGlbHhTFp3dWYMc/Ko5GD9OQGbr7CFIPhTthqIsjWOHS3i7jh5emJkkh22
-	D13beaQRqWungwTywlzAb8YPLDwaH1Axw7owENrWoYwTHEDSgw6B9cTwhv36/+5FMiNNny1alLs
-	AtuSR1n3i0bZqlBAENh5NyA9luoGYT3wSEEoCLqGX6Oksfn8/VjndQq1+kyRMAIWzht4I1OS904
-	joV/YTWcZZR4fyWNw==
-X-Received: by 2002:a05:600c:3146:b0:4a0:34a:588c with SMTP id 5b1f17b1804b1-4a18e4a7cb9mr54978795e9.14.1791570588129;
-        Fri, 09 Oct 2026 11:29:48 -0700 (PDT)
+        bh=c/afa+kv2Lz5RKZtvNmWgTzIvifY9Vb7PPR36VvNXyQ=;
+        b=chtxNMPo554tjQ9WWRn7M/WkuxdjramaDyTVEqrybQ/iC4vmexIdWWvpwLLWxojWVT
+         07U5BZe5WZtpADG+PoqieWscY9aeu8SjtJ07fhyvIPIDYt5Zl7REYSZrGFBSRO7rXCeB
+         jNeoimnUqA8Sn4c5KBx0OtUQeJ7FaoCC1w+BWVSPl9KC9hXm6BBPUlOD1tBwH7Ci5vOm
+         TuhUSnvuMiRVO8QBRrWNxSX6BallnhLEroitmszhupRVApBVxJmQjmbstQYx8Au7aIdd
+         4cVmM4I3N3UhQ9pExKUGWkq5NLDBaEfPiVK9aYaZselUZJu9NiUv9TGqSqjfes5Vt9lp
+         +kRQ==
+X-Forwarded-Encrypted: i=1; AKwUvBx8CyVIksAArO9P62zpricYW3H+3ru7vfkJNzcQHrwWIIkasBthsIG2J2ifsoAwv66yBdbHcCePWds=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKjW69kngGPyAeWNCuKQeWhl3GBPTMQRPmzgAMsCrd+ZxJbmzLk
+	ZQ0uXRfpO1j6kPilA8qkAFC3BkC0gFJyC7EgS0k2tbtr2u9DHOu+2oTLa4mhNzRd+T8=
+X-Gm-Gg: AYBFou1IP6PCFDNZIA8IGnwiDz4TJMVNR+IMwdn1SO3OfbtO5lbw6Vfl5tpFhYxyd0u
+	iPpPqkvIzI4p1bOPe+qmYD8U+tEZ2JCFrIVYCbywaGc2K1/2aQqTKbGCwkGzcGfUCxsdy+sjDKS
+	eP3nDwNa1fXi5SYF7YvQtD5UWNuNTHhnXakHUU/QdapzpdXKP5Dza3SksDcrTWsUspTC9CHVHGE
+	SSp5eeRWzzN0CsVR9zUKHSHJJeNujxDFRZ/kabfm2NF1Zkj2cmdFYZd8zEP3tu+tgQ2LFXnDJfU
+	RGMuq49ZAIe0YS4NMfuM7T7uGOGHdFDd4at2J6SGVv+EoHb7g+Syj1pvTA0wBJIw7PIBDtKApEM
+	Nlh7984SKdSkXNZa+MuXY28gwhnLEZ1OX+9HS08ih6rtoqXQjH6QwpwkINdjpYyZP28Vo5JPe42
+	k5n3AsB1OxHVPJE/PLdWWV8y9MO9ForHlwzIqDDFzNHAP8oGb9IDtKu56CcZ0NKl/P64CinVSeo
+	mrRSFWU1rkRsGQ9hQ==
+X-Received: by 2002:a05:6000:46c8:b0:487:1c89:f158 with SMTP id ffacd0b85a97d-48dbaadebc8mr3400904f8f.14.1791570584563;
+        Fri, 09 Oct 2026 11:29:44 -0700 (PDT)
 Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18be97d1esm111362245e9.8.2026.10.09.11.29.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48db94e33d2sm5786376f8f.9.2026.10.09.11.29.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2026 11:29:47 -0700 (PDT)
+        Fri, 09 Oct 2026 11:29:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,8 +68,8 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v15 09/11] clk: realtek: Add RTD1625-CRT clock
- controller driver
+Subject: Re: [PATCH v15 05/11] clk: realtek: Add support for phase locked
+ loops (PLLs)
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Yu-Chun Lin <eleanor.lin@realtek.com>
 Cc: jbrunet+clk@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
@@ -80,36 +80,294 @@ Cc: jbrunet+clk@baylibre.com, sboyd@kernel.org, robh@kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-realtek-soc@lists.infradead.org, 
  james.tai@realtek.com, cy.huang@realtek.com, stanley_chang@realtek.com, 
  Brian Masney <bmasney@redhat.com>
-In-Reply-To: <20261002074331.3066919-10-eleanor.lin@realtek.com>
+In-Reply-To: <20261002074331.3066919-6-eleanor.lin@realtek.com>
 References: <20261002074331.3066919-1-eleanor.lin@realtek.com>
- <20261002074331.3066919-10-eleanor.lin@realtek.com>
+ <20261002074331.3066919-6-eleanor.lin@realtek.com>
 Date: Fri, 09 Oct 2026 20:29:35 +0200
-Message-Id: <179157057524.266328.2343186062671086748.b4-review@b4>
+Message-Id: <179157057524.266328.7662236812996349329.b4-review@b4>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1049; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=I/1PyQTs9JiOymPOiuzFhvwhZ7XqmQsZMTD56HnUL+U=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFknjaY+v5c248QzibkLb21kunR8D1/LituXzsQ2tD9P/
- iV/+gZPXEcpC4MYF4OsmCJLDXe1+DtJrS+zpuvchpnDygQyhIGLUwAm4m/M8N83YEvPuYu5lRa9
- ehNe/CzZ+37h77KfreL6/8P4p29eEnaHkeEn7y8J9Q2/r2i8u3L2os2d9b8eB5n3+86QuZjLJtM
- +fycfAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8040; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=hqh6Oz8jthBJvM6D58JFS6alnDs/Glpqv2ePGiXx8QM=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFknjaZ6XD2gxBc7UcxvMqv66R9tfMfl32j8upP+fZ6id
+ 0cV50mLjlIWBjEuBlkxRZYa7mrxd5JaX2ZN17kNM4eVCWQIAxenAEyEcz4jw5qAl/6Cpc9TZ9UG
+ hx7OtNFZ/ahMVML8S+MftuzfBf+fiDH8T+W6Knej7crxOQvKtGPbr8wI4mm59qhhz7Q3nA0zFIU
+ u8QIA
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-> +static const char * const clk_gpu_parents[] = {"pll_gpu", "clk_sys"};
-> +static RTK_CLK_REGMAP_MUX(clk_gpu, clk_gpu_parents, CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
-> +			  0x28, 12, 0x1);
-> +static const char * const clk_ve_parents[] = {"pll_vodma", "clk_sysh", "pll_ve1", "pll_ve2"};
-> +static RTK_CLK_REGMAP_MUX(clk_ve1, clk_ve_parents, CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
-> +			  0x4c, 0, 0x3);
-> +static RTK_CLK_REGMAP_MUX(clk_ve2, clk_ve_parents, CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
-> +			  0x4c, 3, 0x3);
-> +static RTK_CLK_REGMAP_MUX(clk_ve4, clk_ve_parents, CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
-> +			  0x4c, 6, 0x3);
-> +static RTK_CLK_REGMAP_GATE(clk_en_misc, "clk_sys", CLK_IS_CRITICAL, 0x50, 0, 1);
+> Provide a full set of PLL operations for programmable PLLs and a read-only
+> variant for fixed or hardware-managed PLLs.
+> 
+> Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
+> Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+> Reviewed-by: Brian Masney <bmasney@redhat.com>
+>
+> diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
+> index 13000ed4ba11..71edc18121c6 100644
+> --- a/drivers/clk/realtek/Makefile
+> +++ b/drivers/clk/realtek/Makefile
+> @@ -2,3 +2,5 @@
+>  obj-$(CONFIG_RTK_CLK_COMMON) += clk-rtk.o
+>  
+>  clk-rtk-y += clk-rtk-common.o
+> +clk-rtk-y += clk-pll.o
+> +clk-rtk-y += freq_table.o
+> diff --git a/drivers/clk/realtek/clk-pll.c b/drivers/clk/realtek/clk-pll.c
+> new file mode 100644
+> index 000000000000..31670b8316cd
+> --- /dev/null
+> +++ b/drivers/clk/realtek/clk-pll.c
+> @@ -0,0 +1,217 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2024-2026 Realtek Semiconductor Corporation
+> + * Author: Cheng-Yu Lee <cylee12@realtek.com>
+> + */
+> +
+> +#include <linux/export.h>
+> +#include <linux/regmap.h>
+> +#include <linux/spinlock.h>
+> +#include "clk-pll.h"
+> +
+> +#define TIMEOUT 500
+> +
+> +static inline struct rtk_clk_regmap_pll *to_rtk_clk_regmap_pll(struct clk_hw *hw)
+> +{
+> +	struct rtk_clk_regmap *clkr = to_rtk_clk_regmap(hw);
+> +
+> +	return container_of(clkr, struct rtk_clk_regmap_pll, clkr);
+> +}
+> +
+> +static int wait_freq_ready(struct rtk_clk_regmap_pll *clkp)
+> +{
+> +	u32 pollval;
+> +
+> +	/* reg == 0 means not configured.
+> +	 * Register offset 0 is never a valid address on Realtek SoCs.
 
-You are using the using the old global names but there does not seem
-to be a good reason for this. Your driver is entirely static so the hw are known at compile time
-and you can use them. Use .parent_hws or parent_data when appropriate. Not parent_names please.
+Fix the comment style please
+
+> +	 */
+> +	if (!clkp->freq_ready_reg)
+> +		return 0;
+
+Do you need to protect against your own driver providing bad offset ?
+
+> +
+> +	return regmap_read_poll_timeout_atomic(clkp->clkr.regmap, clkp->freq_ready_reg, pollval,
+> +		(pollval & clkp->freq_ready_mask) == clkp->freq_ready_val, 1, TIMEOUT);
+> +}
+> +
+> +static bool is_power_on(struct rtk_clk_regmap_pll *clkp)
+> +{
+> +	u32 val;
+> +
+> +	/* reg == 0 means not configured (assume always on).
+> +	 * Register offset 0 is never a valid address on Realtek SoCs.
+> +	 */
+
+You've already said this. It would be more helpful to tell us that PLL that does not
+provider a power reg is considered to be always powered, if that is the case
+
+> +	if (!clkp->power_reg)
+> +		return true;
+> +
+> +	if (regmap_read(clkp->clkr.regmap, clkp->power_reg, &val))
+> +		return false;
+> +
+> +	return (val & clkp->power_mask) == clkp->power_val_on;
+> +}
+> +
+> +static void rtk_clk_regmap_pll_disable(struct clk_hw *hw)
+> +{
+> +	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
+> +	unsigned long flags;
+> +
+> +	if (!clkp->seq_power_off)
+> +		return;
+> +
+> +	spin_lock_irqsave(&clkp->lock, flags);
+
+What do you protect with this ?
+regmap does provide some locking already and CCF too. Do you expect something
+to poke the registers you are writing ?
+
+> +
+> +	regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_power_off,
+> +			       clkp->num_seq_power_off);
+> +
+> +	spin_unlock_irqrestore(&clkp->lock, flags);
+> +}
+> +
+> +static int rtk_clk_regmap_pll_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	spin_lock_irqsave(&clkp->lock, flags);
+> +
+> +	ret = is_power_on(clkp);
+> +
+> +	spin_unlock_irqrestore(&clkp->lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+> +static int rtk_clk_regmap_pll_determine_rate(struct clk_hw *hw,
+> +					     struct clk_rate_request *req)
+> +{
+> +	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
+> +	const struct rtk_freq_table *ftblv = NULL;
+> +
+> +	ftblv = ftbl_find_by_rate(clkp->freq_tbl, req->rate);
+
+Doesn't this completly disregard the parent rate ?
+
+I understand that SoC vendor may expect a single frequency as input but it
+it is pretty fragile to do so.
+
+A PLL is usually some sort of (fractional) multiplier.
+It is way better to provide the table of multiplier you support, along with their
+sequence and properly doing the calculation here.
+
+> +
+> +	if (ftblv && ftblv->rate >= req->min_rate) {
+> +		req->rate = ftblv->rate;
+> +		return 0;
+> +	}
+> +
+> +	/* floor result is below min_rate; find the smallest rate >= min_rate */
+> +	ftblv = ftbl_find_ceil_by_rate(clkp->freq_tbl, req->min_rate);
+> +	if (!ftblv || ftblv->rate > req->max_rate)
+> +		return -EINVAL;
+
+This is not how determine_rate() works. You just round to the closest rate the PLL
+supports. You are free to round as you wish (bellow or closest)
+
+Just test the different multipliers you support and return what is best compared to
+the request. There is no reason to return EINVAL for this.
+
+> +
+> +	req->rate = ftblv->rate;
+> +
+> +	return 0;
+> +}
+> +
+> +static unsigned long rtk_clk_regmap_pll_recalc_rate(struct clk_hw *hw,
+> +						    unsigned long parent_rate)
+> +{
+> +	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
+> +	const struct rtk_freq_table *fv;
+> +	unsigned long flags;
+> +	u32 freq_val;
+> +
+> +	spin_lock_irqsave(&clkp->lock, flags);
+> +
+> +	if (regmap_read(clkp->clkr.regmap, clkp->freq_reg, &freq_val)) {
+> +		spin_unlock_irqrestore(&clkp->lock, flags);
+> +		return 0;
+> +	}
+> +
+> +	freq_val &= clkp->freq_mask;
+> +
+> +	fv = ftbl_find_by_val_with_mask(clkp->freq_tbl, clkp->freq_mask,
+> +					freq_val);
+> +
+> +	spin_unlock_irqrestore(&clkp->lock, flags);
+> +
+> +	return fv ? fv->rate : 0;
+> +}
+> +
+> +static int rtk_clk_regmap_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				       unsigned long parent_rate)
+> +{
+> +	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
+> +	const struct rtk_freq_table *fv;
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	fv = ftbl_find_by_rate(clkp->freq_tbl, rate);
+> +	if (!fv || fv->rate != rate)
+> +		return -EINVAL;
+> +
+> +	spin_lock_irqsave(&clkp->lock, flags);
+> +
+> +	if (clkp->seq_pre_set_freq) {
+> +		ret = regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_pre_set_freq,
+> +					     clkp->num_seq_pre_set_freq);
+> +		if (ret)
+> +			goto unlock;
+> +	}
+> +
+> +	ret = regmap_update_bits(clkp->clkr.regmap, clkp->freq_reg,
+> +				 clkp->freq_mask, fv->val);
+> +	if (ret)
+> +		goto unlock;
+> +
+> +	if (clkp->seq_post_set_freq) {
+> +		ret = regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_post_set_freq,
+> +					     clkp->num_seq_post_set_freq);
+> +		if (ret)
+> +			goto unlock;
+> +	}
+> +
+> +	if (is_power_on(clkp)) {
+> +		ret = wait_freq_ready(clkp);
+> +		if (ret)
+> +			goto unlock;
+> +	}
+> +
+> +unlock:
+> +	spin_unlock_irqrestore(&clkp->lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+> +static int rtk_clk_regmap_pll_enable(struct clk_hw *hw)
+> +{
+> +	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
+> +	unsigned long flags;
+> +	int ret = 0;
+> +
+> +	if (!clkp->seq_power_on)
+> +		return ret;
+> +
+> +	spin_lock_irqsave(&clkp->lock, flags);
+> +
+> +	if (is_power_on(clkp))
+> +		goto unlock;
+> +
+> +	ret = regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_power_on,
+> +				     clkp->num_seq_power_on);
+> +	if (ret)
+> +		goto unlock;
+> +
+> +	ret = wait_freq_ready(clkp);
+> +	if (ret)
+> +		goto unlock;
+> +
+> +unlock:
+> +	spin_unlock_irqrestore(&clkp->lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+> +const struct clk_ops rtk_clk_pll_ops = {
+> +	.enable         = rtk_clk_regmap_pll_enable,
+> +	.disable        = rtk_clk_regmap_pll_disable,
+> +	.is_enabled     = rtk_clk_regmap_pll_is_enabled,
+> +	.recalc_rate    = rtk_clk_regmap_pll_recalc_rate,
+> +	.determine_rate = rtk_clk_regmap_pll_determine_rate,
+> +	.set_rate       = rtk_clk_regmap_pll_set_rate,
+> +};
+> +EXPORT_SYMBOL_NS_GPL(rtk_clk_pll_ops, "CLK_REALTEK");
+> +
+> +const struct clk_ops rtk_clk_pll_ro_ops = {
+> +	.recalc_rate = rtk_clk_regmap_pll_recalc_rate,
+
+is_enabled ?
 
 -- 
 Jerome
