@@ -1,98 +1,103 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5359E37BE84
-	for <linux-clk@vger.kernel.org>; Fri,  9 Oct 2026 08:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AE13C9880
+	for <linux-clk@vger.kernel.org>; Fri,  9 Oct 2026 08:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791533514; cv=none; b=urhtmnE3hUMAZ/nqhhRA/113/fXYXVkBx1i9zjjjYsbny/hVwCRiu6xmT9TtqQVYU1+H3ClJ9Pgp+7x+W42UIt77OFIaSPs4urx0ZR9xt88/qXT/IO0zM4jJmkMvjEcgqiBpngIZUapFm/FbndY/2+z/6wX91RS3r4OIarFugug=
+	t=1791533773; cv=none; b=PE6CgDDFpFHQbg457xkSB2wgPYVMTskuLqD0WP99nURVCDw404njNf1hGlu02F6HB3HA+wQB17iTkSb0V2Bsc/+8dfnBlVwqLxo2GKwSkJ4yjIKV3PNNo49mjfv5uXw6wLsgXXcktIe7Ec5a9u3uNp8uuyWIDaDHgN7ra/41vQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791533514; c=relaxed/simple;
-	bh=6IXEn9io4jhhi35jnInkyOCmx79vnsl9EgePJUzHTRU=;
+	s=arc-20240116; t=1791533773; c=relaxed/simple;
+	bh=t7qRmqHdMAl1qk4MJVpTg0mh8/vY1dTo8qJcR8916Yk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MM85AoWKBZGvQAe8GATk0fHjWOruJo3LuCg7wFmifEZjnMOD97/+xgtJtlzsJ/3ngSEckVBtD8spjm4pIkvDhlUdJyAkcPKpsVADcWnfT/pyc+bMzQhvBX3+7hQix4bcJTqJWqqFdNVnW2BVZcx2Ddx/ch1rtX+7juWY5tkhAxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GCogJsH2; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=eANovxaN; arc=none smtp.client-ip=205.220.180.131
+	 MIME-Version:Content-Type; b=VPmrvI9JnIVq333Y6WMDEtNaWUWjNqeje9E7ut9fpy++SnPc97CdrmPpcoDsleJeoLhDZ4QfKUIsqclpwxanY5i0/eRMD+FclZRCqr2Qz/oYTdtGc9aGrCrNxhg9SLEz2UHPYATSZGMkQ3sCkmi3RWCplGpJMDaVYwgiXiADjZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fp/K5liQ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BGDC2rIQ; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GCogJsH2";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="eANovxaN"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6993HHgW451485
-	for <linux-clk@vger.kernel.org>; Fri, 9 Oct 2026 08:11:48 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fp/K5liQ";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BGDC2rIQ"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6993HCYu593957
+	for <linux-clk@vger.kernel.org>; Fri, 9 Oct 2026 08:16:09 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pOMaeRRKUrXuh1tFBxR1Fs/IvAupGTrOWfaFKNrQMJk=; b=GCogJsH2WLEZ3gf7
-	7h9wRYz3J0SDKdw9/2oVf/epv0mHnN0QR7gWAZ+4xiK32zHjBB3fDIsQaiGpzTlj
-	hNtEIx2sqaL/5PDb6vUrHZk0hB3mGystxTxXF2lBh9SUHofWUVK583xEmx9ROktI
-	LS0zq+0lrcQd9EfuOigI5AmO6v97yAlHPoWWqdpLJPd4oNa7yg3a9SfX4fu5lkG4
-	yUkMLSBBtVWXfwkf1XFUkl4P7nhaTxrAhF4GAHHRyMpiDldrEkbHNNEmZ2DDGZ3q
-	4yAfN9RK8i++0aGltT0/klmquKWbq1zk+Pq0QU8yt3ZEQK7xUYO5IXOiUSGraUnT
-	xU3lVA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h6b9kkrv0-1
+	T4fGb7Hz2boMwAT6WGpk0OCK8tzz+FcRa4JXQhQJpJk=; b=Fp/K5liQZd0BPbPo
+	6C8FYm6+sKesgHm5jfJqOTCdAVQ8fmBZiCmOHKbt03g5iWpY6jVRjMGpdqczBh+x
+	EGi2/VnvoVuAjx/e+EdGKmMrhrUXLhCWh1fBCfGwqEplnnDBMZOD/vqL0ygyM7t4
+	/C3vlTRsN7F80iAT8QoXSGCAgRST5zWa/l9xaNGwMReTiEXTnUOeLwUAcmID9nBF
+	paC6xLZuPglh9Q+A9Vj+u8j7Xs2S7f3uNrV6bl5SUl6d82UJC/Dw11vBM3ojVPfz
+	izx6rMQo5dVHZSBLnz6tpMNHDavOr+cbzcgpDuaGXMja/Fn4EMSZ9A1jpnCeRhJr
+	4XIAog==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h6baj3tx7-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 09 Oct 2026 08:11:47 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93dea1b6c89so1107676185a.2
-        for <linux-clk@vger.kernel.org>; Fri, 09 Oct 2026 01:11:47 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Fri, 09 Oct 2026 08:16:08 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-93bf4c0af4eso375321885a.1
+        for <linux-clk@vger.kernel.org>; Fri, 09 Oct 2026 01:16:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791533507; x=1792138307; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1791533768; x=1792138568; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=pOMaeRRKUrXuh1tFBxR1Fs/IvAupGTrOWfaFKNrQMJk=;
-        b=eANovxaNV8D40sAYmDyV7YlsAT31iB+jydxc8AHbL1OtkDKs9/guPqAilL1X0H6MhH
-         SqEaTcIxf0YiCTFXuucKE6ClvB6f+YVAYyR3RSddkVL0VC6WO7SpTc0n1zhONLt4Cl7o
-         7OwXSfH3/PqJPXoOfiUNDhpuaSqEFHthIuzJ8NQM7dd0h1tjdgcftjzZsxFxjv3+P1H2
-         yg3f/Db5LM+GCN8kXM65qVfsVgEkzYCvLZpgbboVDIOdxfSGetqLiqvJe7U04K51/OCY
-         IGb1wgJS3FozAyOLdHCzkY27gNJHGxVkKEClfE7fTed+G7pxErlN0BTQL77ERe6caQS0
-         /24g==
+        bh=T4fGb7Hz2boMwAT6WGpk0OCK8tzz+FcRa4JXQhQJpJk=;
+        b=BGDC2rIQY/3AZvToa+mnV+I3zJgzXJx9cd8RKeWu2ChGnrq4ksFJ50cKLhIfbY7Ksm
+         JkiUQgSAq3Olk4i2ooXg1YtLbSXLwq8v4kgrxzTcNiI0z7goPIhHx2hOXsGSTTL5/3zC
+         FBaeetlF7noGbKsRKOfh8CR+ofkFV3DkKFzJzkJ6B43hRLfLuMZjmNIa7N0SG9HmdVB7
+         DNJx+e6gyYxN5LAjxBtlKPW3sz//VrLJYn+w2L4sZguLXxNO/e7WkFv0zlW8r3NQHIaB
+         +QNuwKLaDVhOYQmh1RhztSLwB3yG7+i0EgEP2E1Fsj7k8y1TfDMUvyM4ySnYzZXf1cCg
+         Coaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791533507; x=1792138307;
+        d=1e100.net; s=20260707; t=1791533768; x=1792138568;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=pOMaeRRKUrXuh1tFBxR1Fs/IvAupGTrOWfaFKNrQMJk=;
-        b=aa8qvvsuJK04fxlzUW5i5lZtJeA5AvMoaz1GmIIs9g3Ph8G/mkTP9AAav7YLFeWig0
-         C/sV2nIraguWzMuDTeugXDz6pAiIrQo7wBfCG1gKEsE8NjAIujhr+jHQPsdXqaXKMxdW
-         medvw+Q137MoxLP25TVC/WShSP7lOvpV03tdzQFmNHx4Z9XViJ368tJAWgNlXyCUyvxW
-         nvL/cDAuFLhbfAEJeXy2L9rawRK4m/drxC2wDTNBeY69X4LvjtfSqPBV7E4CPBUKcqF7
-         pCeeMqCXZa0M3MUTgVt9vUnvvZIcJUIJxQtnrGpP0rFmXzDffwL3REqimj2Veo5ZTvna
-         GKAA==
-X-Forwarded-Encrypted: i=1; AKwUvBzyF8PeajOaSQd117CDbr5kZpS3m6oD2cWWNvwLcWFgKAd2E3kV0pHu7ZttC8P7kOmu3Q+fQgjO3ds=@vger.kernel.org
-X-Gm-Message-State: AFuF++mWdAOXHLSrOqI2wGMTDi3m7n0WZvhFslnfhQobYG4VswNbYKZt
-	Ed7K5B+U8fbnsxk3Z9kKOMMtomxzwPyx8JbuGaDdXkUpg9q7J1ySDu0v7YkzaTuv6LmkuHHuffi
-	Y09ISrdWOWLzBVV6aI1JovTikgrGCP+wHlovcwW1oR73nURpAOCUty4+fu06zB7M=
-X-Gm-Gg: AYBFou2erXbB9EcWqUY5oNn9fpZHJTJLqmgNDw41Qqr3qwaUEmpXo+VK3F43PaF4dOr
-	umGpr9wJyBhiOwFJ5o+flyfkKZPuFbJzNja+nO27ONHcc7qLpLDkOcyCHXyqoYYWxVYY0E1Dxm2
-	4RjBTfSXQE/W5SpVKJbeyqnhsM1HZaCPZr8HYFGNfCMhJTFCZLFkj96cEqqwmAbxfUqNQQV1NWz
-	AHe7o281SC5NO9JCTWo16Dnq6RJarxEq7xa8Wk163zNzkJduwQ/0y5yQ7wpcMZp/YdChD6iACMp
-	CryePWPDnRi3k5aLR1bmXug/Jazx5vJolIs+2qPsvfj48/QZi9FtEHj0tQVu4LjuXtKGA/rcJAy
-	fPZ1cj2qPX/lueO3bq7JJwxbPPmc=
-X-Received: by 2002:a05:620a:4115:b0:93e:6c02:d181 with SMTP id af79cd13be357-93ebd1e23aamr162091385a.14.1791533507089;
-        Fri, 09 Oct 2026 01:11:47 -0700 (PDT)
-X-Received: by 2002:a05:620a:4115:b0:93e:6c02:d181 with SMTP id af79cd13be357-93ebd1e23aamr162088785a.14.1791533506490;
-        Fri, 09 Oct 2026 01:11:46 -0700 (PDT)
+        bh=T4fGb7Hz2boMwAT6WGpk0OCK8tzz+FcRa4JXQhQJpJk=;
+        b=YUCpqAGLcZPq3LMPLhNkWTif0dCmhUfB2AON5BwApq0DRDjY+QebvuQ5U1HEfk8AUT
+         on+HF6I0A15BhX0vl/dhMbS9BWmZUxWR0aMVXcV9iFHHC2i3BPQ4VjT4u9c0QVhzhoxj
+         6RdapeNrJr60bT4WKJYHKhKuZAa6IEC7ZHruAC9+v2gprLG260MdED1D8BAMMjwhdkJP
+         FT5WuNVGEnfVrdKuFIw0QRwILaljP+2pUOuFBUXEp9Ts7WFlEUY+QYbHeaKVlf7qx5pz
+         ZDhDNBh75GnNNLeowvZuNH31sNivLD1bsbsKKatvWyC/RVIOcb00C4IdY3GLqnY/7T0v
+         qQFA==
+X-Gm-Message-State: AFuF++nhsB02+UbNlER6owYayq0pBwUnUWMS946Q7xsmgWLlNZ6woxot
+	tRghpBUEtwGM1b4W67zAcJKWONqa3YKVjE62aEDj2pMArUadjFDRCbYlFGVTwf78xlThRnuSiJ2
+	N1HPxNhJkc0VjAatrVJrDNVQ61UGrCLKcNwBk32V6No4ps2royiK28KrA2l2RLK0=
+X-Gm-Gg: AYBFou2zTJjIuGvHr6Oe5YHIL8pe4/9zXhk8benuMIWZO+feTiFJzI5qnCLUPr0f/oX
+	y00kjeAIyJSl3u9JeqtxyiEaM0HjipMb3dokJFy/PfumyQHWQhG+jtbHO/PsIBjYPE6Tp2ysKKQ
+	h57eBHYCKv3pkZQ7vJScHyCFr8avpzKPJhLvLduo0NfH5G5w9gY0aD71s7l5BMxD3SGwvnS5og6
+	PkPZNNnW/YSUNvULqQehf2NqPN1MOX9LWO0ZbqqnASKz2vhTtqpoEWy1qE2iqRv0I44j8IaHTWz
+	NOR2qCG8cuMY6r7MQXRS3tFO6RQH+dB+/tN4dk8rDeHV4xUclqQ8THratHcFzNemDiRIWXOmYnf
+	H2VrF++5NArmcKPPfVtA1LMhTedc=
+X-Received: by 2002:a05:620a:2b88:b0:93e:4f45:6fc with SMTP id af79cd13be357-93eb965e53amr213376085a.27.1791533767735;
+        Fri, 09 Oct 2026 01:16:07 -0700 (PDT)
+X-Received: by 2002:a05:620a:2b88:b0:93e:4f45:6fc with SMTP id af79cd13be357-93eb965e53amr213371585a.27.1791533767082;
+        Fri, 09 Oct 2026 01:16:07 -0700 (PDT)
 Received: from hackbox.tail37bb1b.ts.net ([188.27.161.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18be97d1esm65404655e9.8.2026.10.09.01.11.44
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18bf21276sm69068565e9.8.2026.10.09.01.16.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2026 01:11:45 -0700 (PDT)
+        Fri, 09 Oct 2026 01:16:06 -0700 (PDT)
 From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Frank.Li@nxp.com, Wentao Liang <vulab@iscas.ac.cn>
-Cc: abelvesa@kernel.org, bmasney@redhat.com, festevam@gmail.com,
-        imx@lists.linux.dev, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        peng.fan@nxp.com, s.hauer@pengutronix.de, sboyd@kernel.org,
-        shawnguo@kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: Fix clock reference leak in imx_obtain_fixed_clock_hw()
-Date: Fri,  9 Oct 2026 11:11:35 +0300
-Message-ID: <179153345648.1914323.15178647656208865959.b4-ty@b4>
+To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>, Frank Li <Frank.Li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Frieder Schrempf <frieder@fris.de>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Mikhail Vaniulin <mikhail.vaniulin@axians.rs>
+Subject: Re: [PATCH 1/2] clk: imx: fracn-gppll: Add 350 MHz support
+Date: Fri,  9 Oct 2026 11:15:59 +0300
+Message-ID: <179153373231.1996373.14178239298073465630.b4-ty@b4>
 X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260915055631.1730231-1-vulab@iscas.ac.cn>
-References: <20260915055631.1730231-1-vulab@iscas.ac.cn>
+In-Reply-To: <20260910-upstreaming-v7-3-imx93-displayline-v1-1-bb9446e6ed6e@kontron.de>
+References: <20260910-upstreaming-v7-3-imx93-displayline-v1-1-bb9446e6ed6e@kontron.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -101,51 +106,45 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: Ce_97xHl_TWggJxXCLw7xTXF8S0e6MdD
-X-Authority-Analysis: v=2.4 cv=U98Hnuru c=1 sm=1 tr=0 ts=6ac8a1c3 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=EiYrS7xXfcF7w+nkr41hpQ==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA5MDAzMiBTYWx0ZWRfX3tlWEKZ3fcBh
+ LycmeHJlxTJ4HCEJMHWVBpSzePBtis0DoCLB6eE0QqcnaEko8BRWm2aW96PrYDazyMkBlgQ3TuG
+ 9aWcoczunJOw9BSE7RuM9TgBLhSyWZaNGa3uxMBj+KmcMEFOYOIpmBgQEE8VbONtEzbRMVMz4aj
+ FivEet9PK5NyWR6HHz+wHdEEn1RJu0GMnE6VkRo2yNn6cq/iK7DfJy9um1OcAWuohvbwhHH0rbp
+ 150nJz2VD+PNZYY/SppyrzeTVFzYA3rL4wYHzI6FiRASeQ9X7gVPDvg0xU0ECJE7a1cTQr+oWeZ
+ IiXzTjuB+3SzeSOzeL1iRBTJZ9JLUEBGWH46hJHuTro9nTWWem44WG1bEDngsyjqzU/p6wJGPKO
+ iRKc6q8QPBpbeViznDqvXX//D1PNttbBdegwu/cx4thPpwBpHmyqWG8qrHGtwtBPuAGgRNu7KLP
+ 3MBn7+VT9sZoYjB3ycA==
+X-Proofpoint-GUID: L87Z_fJbHBsQNWn6meX1hRD3ilTnEl7o
+X-Authority-Analysis: v=2.4 cv=H/dOUOYi c=1 sm=1 tr=0 ts=6ac8a2c8 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=EiYrS7xXfcF7w+nkr41hpQ==:17
  a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=EUspDBNiAAAA:8 a=7W_6zTuqtRk8UThwdy0A:9 a=QEXdDO2ut3YA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA5MDAzMiBTYWx0ZWRfX2caT2IO3y0Dc
- LDL6NBPv2v8nd/fEqh17z/R5hQIZoJd1DxVCPYJBZPfAtg5MvQ/H7JC1Uf19mCmiwUG3vWQf1Ju
- 3cJfBvtXkpReJYFEk2of3L8tySlUEn4=
-X-Proofpoint-GUID: Ce_97xHl_TWggJxXCLw7xTXF8S0e6MdD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA5MDAzMiBTYWx0ZWRfX4y9FyZzT8rnv
- h8lxg/s/BDk9aelMWauxpd+fF9+WnedlNjE15SDL0Rz7ni1b7SAIVcxgWAIdA1WsXDO3x8aIeI+
- M6gzzEjyiFBbEeot5+yzZtZNyDGdBfTq9w/jftSIL9yrLI0ZdR2jvOu0T0Xw5WVDTiyxNQ1Wy95
- x0lGxHhFS5PDSd2R01/ivKw3D2cxROSQdIquXhgFkqtKdU4kcfK7yHnP+YH2FMUhEBNCljHdos1
- mW9tXF1cHQ2mbh869FF5DysVhB/TAFpRS8WaM1Ln1RBvbfi6LEgrz3ETVGbGXjk3jMeAy/tvXBv
- oppS93qkyioto1XY/Qtca4hL0yN/GmepD01fyZc2LIGKknWiqgHrs/NTbhTUaKSiBzXchq8fOy3
- klN2TrducNFHbktEMU1vcrPEdLNBQPMQ2tjV+J/QWSip+S8OfCCgNctftNTaUoLs1u1bdRqITqN
- F293B9b3YE3GeW0ifiQ==
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
+ a=EUspDBNiAAAA:8 a=SBSG_3fblaHcu9w4dFsA:9 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-ORIG-GUID: L87Z_fJbHBsQNWn6meX1hRD3ilTnEl7o
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA5MDAzMiBTYWx0ZWRfX489P/bTkIrLa
+ Oony8/u7/CkYjEIdm+8QOgQ4Ya9V/OFvHoS1C4v28HqdXG04hFoXFLgsk6JoUcAG54SrTPLs0kl
+ U/UKuIK6j/O/5qH3Py//6FqdhA/LDMk=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-10-09_02,2026-10-08_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 adultscore=0 clxscore=1015 malwarescore=0
- spamscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610020000 definitions=main-2610090032
+ impostorscore=0 spamscore=0 phishscore=0 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610020000
+ definitions=main-2610090032
 
 
-On Tue, 15 Sep 2026 05:56:31 +0000, Wentao Liang wrote:
-> imx_obtain_fixed_clock_hw() obtains the clock through
-> imx_obtain_fixed_clock_from_dt(), which creates a consumer reference
-> via of_clk_get_from_provider(). The reference is discarded right after
-> __clk_get_hw() returns the hardware pointer, leaking it.
-> 
-> Keep the imx_clk_fixed() fallback unchanged and drop the DT-obtained
-> consumer reference with clk_put() once the hardware pointer has been
-> extracted.
-> 
-> [...]
+On Thu, 10 Sep 2026 17:19:06 +0200, Frieder Schrempf wrote:
+> Add the 350 MHz frequency support that can be used for display with
+> pixelclk of 50 MHz. The divider of 7 is important for LVDS output on
+> i.MX93. It is also usable for parallel output.
 
 Applied, thanks!
 
-[1/1] clk: imx: Fix clock reference leak in imx_obtain_fixed_clock_hw()
-      commit: 52d4d1b26a5bc64de95099d0a3dd8b90dba1f3a3
+[1/2] clk: imx: fracn-gppll: Add 350 MHz support
+      commit: f85b551c519ee8f92be601ccf4f7d440582ac476
 
 Best regards,
 -- 
