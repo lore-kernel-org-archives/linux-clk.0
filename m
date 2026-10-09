@@ -1,65 +1,65 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4078D5013BB
-	for <linux-clk@vger.kernel.org>; Fri,  9 Oct 2026 18:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A987A4F30F0
+	for <linux-clk@vger.kernel.org>; Fri,  9 Oct 2026 18:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791570597; cv=none; b=jju4uSM01oLMzPoOUZBq+MrHocmSkhF68tqIvMZPdn/+BuXTXNeYylghJlmlad36t9KFrVsV8PQvws9lXUkn4RIe/Slv2E11UsWveGVlm5YyLSUEeAP9j4Fc59oUPy7/K8fDu0wh9ge9A4owHPUDQmdWezWIzlgZxrYp6kZA1+I=
+	t=1791570599; cv=none; b=nmLxqPdPI9V5ooku74BzZR3goj2hWZrrI+DJjeZY4raDhXAA+4yh3lvzu6Ve2fP9FzjnHz5G4I/WXJgfgt7IyBP1j7v3PVdEekUHnyBGnO79WDnaZ7yX3PcH229yhffv6Tfeiq0GHmgI7mXwIUti4gV2zmlDB0R3yIxuXU0LAYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791570597; c=relaxed/simple;
-	bh=hqh6Oz8jthBJvM6D58JFS6alnDs/Glpqv2ePGiXx8QM=;
+	s=arc-20240116; t=1791570599; c=relaxed/simple;
+	bh=XNzr2wNUNghrBBxT8exO2uqCTKmR32NqYT7zK1+uz7E=;
 	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=hLOYWrEVom2GcNHZhzxXu69yxTbUPKBq5/cS5Oi1632wl1NeVP/6b/Zp3mJsF0xEbsB7/5Ljwdu5AuAlvaOjsZky9CEvnONIteEZDJoH3JEEVCLBPY8lm71g9w7eqEmL7HQtL0BGIRacsQdYBh1Me/XZ95vQv0ZbcnUeSSR9xBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=AyUvhP3u; arc=none smtp.client-ip=209.85.221.43
+	 References:Date:Message-Id; b=Rhf6WUMmtcQWIQNWzgnLULQgDhCmt7yu/T3YPzUtvOSh0BiJD3NXDPaHuXK0i8faHcb7yRLEbxugMvHH5DldVjQlo4tZZSDIDPh1LoF9oLt4Hp2fqjlFeKXrLwgRCExS+Rrg9mMQ91tk7cvvwLCEoYn4fVCJeCCQTvkK25J63L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=JMH5HjF0; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="AyUvhP3u"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-48c4d870d54so58443f8f.2
-        for <linux-clk@vger.kernel.org>; Fri, 09 Oct 2026 11:29:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="JMH5HjF0"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4a140e7405dso1491475e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 09 Oct 2026 11:29:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre.com; s=google; t=1791570586; x=1792175386; darn=vger.kernel.org;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=c/afa+kv2Lz5RKZtvNmWgTzIvifY9Vb7PPR36VvNXyQ=;
-        b=AyUvhP3u+DZff3B+bnWHUxkE+L25ncMs1XmWq89EjbvmmcDCRO3hnPtpt+xo+vjL8h
-         sp4nTNqxMsEGCz6/rFGPkDNGukMtr/sTc4CBVvyaljzc5eq6tN06+5U6a4lLf3C05P1u
-         Z4Q39UiVJLsjZWJ+X2Kj9mA3xCOQ8NKBfFPznTV21IP7AYCdp1fOKqDJwpjEAIEVBZnD
-         nMII8DbkC3PRVsR8l498qcEnBucYGySQfx29lTYbwiOJawteiWsxd9kZvQglZULnkdKo
-         m9ldcb7xwMLPShhdcPmYfY1fOIZXREjMYXH0Dv/rnDs2ghwc2piAS+Vv+QwkllSTc4p3
-         +vdw==
+        bh=BpjtofrkUDRqvSiMqlyAYlghXPAPat+XcdincmK9q5k=;
+        b=JMH5HjF0gTC8LSamwc1Fsq1sEnBsFhtr8+l6Hb7vRyeuJBHbLEDCbxloyP2cxplCRH
+         JuPVdAwbo6l+Qy7gZ8JDaX+mfzJX9j8RmVwejUmZtnAVouiXzFDr8/R1OlbsfrYwqafu
+         QaYoaQGuAlBtOH28+nXV9hiMr87SNwl/keS+gDL+lS88OpjnrJ704zmd2vcgiQNEIXQw
+         UeS/NiYig/eAHJOYT/VtbnKlo7C2X7qsAxnGmW/Vq9ArXjrIB0cTLSU+Acv1x/PTl98l
+         XrIG6KIc3EExX5keO5zuiDv46ojHhpzbeMkfOet4ENE0E7sN2vUmdtlue+hBfHZZ0HF9
+         PMNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20260707; t=1791570586; x=1792175386;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=c/afa+kv2Lz5RKZtvNmWgTzIvifY9Vb7PPR36VvNXyQ=;
-        b=chtxNMPo554tjQ9WWRn7M/WkuxdjramaDyTVEqrybQ/iC4vmexIdWWvpwLLWxojWVT
-         07U5BZe5WZtpADG+PoqieWscY9aeu8SjtJ07fhyvIPIDYt5Zl7REYSZrGFBSRO7rXCeB
-         jNeoimnUqA8Sn4c5KBx0OtUQeJ7FaoCC1w+BWVSPl9KC9hXm6BBPUlOD1tBwH7Ci5vOm
-         TuhUSnvuMiRVO8QBRrWNxSX6BallnhLEroitmszhupRVApBVxJmQjmbstQYx8Au7aIdd
-         4cVmM4I3N3UhQ9pExKUGWkq5NLDBaEfPiVK9aYaZselUZJu9NiUv9TGqSqjfes5Vt9lp
-         +kRQ==
-X-Forwarded-Encrypted: i=1; AKwUvBx8CyVIksAArO9P62zpricYW3H+3ru7vfkJNzcQHrwWIIkasBthsIG2J2ifsoAwv66yBdbHcCePWds=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKjW69kngGPyAeWNCuKQeWhl3GBPTMQRPmzgAMsCrd+ZxJbmzLk
-	ZQ0uXRfpO1j6kPilA8qkAFC3BkC0gFJyC7EgS0k2tbtr2u9DHOu+2oTLa4mhNzRd+T8=
-X-Gm-Gg: AYBFou1IP6PCFDNZIA8IGnwiDz4TJMVNR+IMwdn1SO3OfbtO5lbw6Vfl5tpFhYxyd0u
-	iPpPqkvIzI4p1bOPe+qmYD8U+tEZ2JCFrIVYCbywaGc2K1/2aQqTKbGCwkGzcGfUCxsdy+sjDKS
-	eP3nDwNa1fXi5SYF7YvQtD5UWNuNTHhnXakHUU/QdapzpdXKP5Dza3SksDcrTWsUspTC9CHVHGE
-	SSp5eeRWzzN0CsVR9zUKHSHJJeNujxDFRZ/kabfm2NF1Zkj2cmdFYZd8zEP3tu+tgQ2LFXnDJfU
-	RGMuq49ZAIe0YS4NMfuM7T7uGOGHdFDd4at2J6SGVv+EoHb7g+Syj1pvTA0wBJIw7PIBDtKApEM
-	Nlh7984SKdSkXNZa+MuXY28gwhnLEZ1OX+9HS08ih6rtoqXQjH6QwpwkINdjpYyZP28Vo5JPe42
-	k5n3AsB1OxHVPJE/PLdWWV8y9MO9ForHlwzIqDDFzNHAP8oGb9IDtKu56CcZ0NKl/P64CinVSeo
-	mrRSFWU1rkRsGQ9hQ==
-X-Received: by 2002:a05:6000:46c8:b0:487:1c89:f158 with SMTP id ffacd0b85a97d-48dbaadebc8mr3400904f8f.14.1791570584563;
-        Fri, 09 Oct 2026 11:29:44 -0700 (PDT)
+        bh=BpjtofrkUDRqvSiMqlyAYlghXPAPat+XcdincmK9q5k=;
+        b=AEEsV8PvI5Y5aoA8qOOXufGVzGvYfj0GjcSKzJEqy6pmLE2LHAcyyxIA1YyCl3EqiW
+         V3aNsJnHJ3uFEA/riukatu890BjBYYHYzSdzkR5PAwbm3ys6HDBp+UVDjY4L7BsQuIwC
+         XAIqh+cNU5KsS/i4XI4okKR9pX/+Y+hvE+0QlXpBGvuGBlnbarlNVKi+Y8kiIqcMyl+u
+         cLdzoELKxSFaYFaYsGx+T1uIA9tFGDOpVNnCwsFvMXEx3fOnnvotpVAmgiSkDtAPnzr3
+         KZWVzXornRuVbtBnbR+Qzvy2yX57KTO7vVyB4pt2QNUMMfQzW8engmbERLQPwQGk8DLD
+         29Tw==
+X-Forwarded-Encrypted: i=1; AKwUvBzsqp/t2W9tkLeD0rcBpcbm3S+1AMhN2VHu6+peSjB/IS3lh/HkLgSqixX6fOE3Y6GYSXcLxhaaoTc=@vger.kernel.org
+X-Gm-Message-State: AFuF++l+RYMpzrdkSC3/wFpwOciw7u0B9ET9LUoMtX/2c4moSWGj4KC7
+	bBn6zr8MEmXFtBguoLn7j5zVYUsB49SQA+fhEGTyOVTheDU5rjajZz+0mWG1KD75vAI=
+X-Gm-Gg: AYBFou00tyM9hLLtDneCNzembd/WOkAb6s4+suaslc1z0Q37o6eiFuf5cLBHxC5+sMB
+	ssLzJ7FS+d+BN9CVOzp2HZgMG2wG4cM/jGYW5GT/dhVb4fxulFFGZkF1k63qIxjrGharP/g80bV
+	j4gKmMy6TIflt+N4hJHBomZ5GfJBIhmO8DmMUWMfjgHbDPBS3B6PAhhduyAZ58wZ9V1GK0KX9gG
+	QbDo8Ow3wjRZ8IvJVYKZA7dJbFmUfAWxQmrFk5+OF/WmtC9ZgA8HYfUJY2XvieuujNpmWePDSIs
+	aMN5icF50p5a22u4q4jBxDjNQvVpUMEKItx+6TkznP5q44CV5mXdXYV4ku7tSmvNe7RIGL65uzr
+	28OnPJuV9qmM+qCTFR9+Zc9pNEywed2+F4PegIJu7W9nlP5QIqGowtq6H0anmuls9Ea4Z80jK6K
+	D0ukw4k/vrmlykiretr4XCa5SAjuO41qv47YwZQhTidshqS2qZibhBAyCqttxUCH3uB5jmvb5Hr
+	cQ8t+dk8evOlvAwAw==
+X-Received: by 2002:a05:600c:c165:b0:4a1:706f:b40d with SMTP id 5b1f17b1804b1-4a18e4988ecmr56332465e9.7.1791570585690;
+        Fri, 09 Oct 2026 11:29:45 -0700 (PDT)
 Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48db94e33d2sm5786376f8f.9.2026.10.09.11.29.43
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18e48db03sm95749805e9.3.2026.10.09.11.29.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2026 11:29:44 -0700 (PDT)
+        Fri, 09 Oct 2026 11:29:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,8 +68,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v15 05/11] clk: realtek: Add support for phase locked
- loops (PLLs)
+Subject: Re: [PATCH v15 06/11] clk: realtek: Add support for gate clock
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Yu-Chun Lin <eleanor.lin@realtek.com>
 Cc: jbrunet+clk@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
@@ -80,23 +79,28 @@ Cc: jbrunet+clk@baylibre.com, sboyd@kernel.org, robh@kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-realtek-soc@lists.infradead.org, 
  james.tai@realtek.com, cy.huang@realtek.com, stanley_chang@realtek.com, 
  Brian Masney <bmasney@redhat.com>
-In-Reply-To: <20261002074331.3066919-6-eleanor.lin@realtek.com>
+In-Reply-To: <20261002074331.3066919-7-eleanor.lin@realtek.com>
 References: <20261002074331.3066919-1-eleanor.lin@realtek.com>
- <20261002074331.3066919-6-eleanor.lin@realtek.com>
+ <20261002074331.3066919-7-eleanor.lin@realtek.com>
 Date: Fri, 09 Oct 2026 20:29:35 +0200
-Message-Id: <179157057524.266328.7662236812996349329.b4-review@b4>
+Message-Id: <179157057524.266328.4248123787670079601.b4-review@b4>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8040; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=hqh6Oz8jthBJvM6D58JFS6alnDs/Glpqv2ePGiXx8QM=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFknjaZ6XD2gxBc7UcxvMqv66R9tfMfl32j8upP+fZ6id
- 0cV50mLjlIWBjEuBlkxRZYa7mrxd5JaX2ZN17kNM4eVCWQIAxenAEyEcz4jw5qAl/6Cpc9TZ9UG
- hx7OtNFZ/ahMVML8S+MftuzfBf+fiDH8T+W6Knej7crxOQvKtGPbr8wI4mm59qhhz7Q3nA0zFIU
- u8QIA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5945; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=XNzr2wNUNghrBBxT8exO2uqCTKmR32NqYT7zK1+uz7E=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFknjaae9uxc/m6+QK2RgueRBvebz8Lz10RPbDsVbijMb
+ bFoSRBrRykLgxgXg6yYIksNd7X4O0mtL7Om69yGmcPKBDKEgYtTACYSksHwhzvIVES3Pend/cIn
+ NZOPsmdNNlKbJujvIiDq0L1+IldIOMP/hGq/KXtqPh1ezP+T2/2CvdnnaxvU/RcwxFx6o1Tb7Gf
+ IAgA=
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-> Provide a full set of PLL operations for programmable PLLs and a read-only
-> variant for fixed or hardware-managed PLLs.
+> Introduce clk_regmap_gate_ops supporting enable, disable, and is_enabled
+> for standard regmap gate clocks. To accommodate hardware designs, the
+> enable and disable operations handle a 'write_en' flag, which asserts an
+> adjacent write-enable bit (bit_idx + 1) simultaneously when modifying the
+> gate bit.
+> 
+> Add clk_regmap_gate_ro_ops as a read-only variant exposing only is_enabled.
 > 
 > Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
 > Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
@@ -104,270 +108,146 @@ X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
 > Reviewed-by: Brian Masney <bmasney@redhat.com>
 >
 > diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
-> index 13000ed4ba11..71edc18121c6 100644
+> index 71edc18121c6..840aff067b61 100644
 > --- a/drivers/clk/realtek/Makefile
 > +++ b/drivers/clk/realtek/Makefile
-> @@ -2,3 +2,5 @@
->  obj-$(CONFIG_RTK_CLK_COMMON) += clk-rtk.o
+> @@ -3,4 +3,5 @@ obj-$(CONFIG_RTK_CLK_COMMON) += clk-rtk.o
 >  
 >  clk-rtk-y += clk-rtk-common.o
-> +clk-rtk-y += clk-pll.o
-> +clk-rtk-y += freq_table.o
-> diff --git a/drivers/clk/realtek/clk-pll.c b/drivers/clk/realtek/clk-pll.c
+>  clk-rtk-y += clk-pll.o
+> +clk-rtk-y += clk-regmap-gate.o
+>  clk-rtk-y += freq_table.o
+> diff --git a/drivers/clk/realtek/clk-regmap-gate.c b/drivers/clk/realtek/clk-regmap-gate.c
 > new file mode 100644
-> index 000000000000..31670b8316cd
+> index 000000000000..7033aeb1cd82
 > --- /dev/null
-> +++ b/drivers/clk/realtek/clk-pll.c
-> @@ -0,0 +1,217 @@
+> +++ b/drivers/clk/realtek/clk-regmap-gate.c
+> @@ -0,0 +1,64 @@
 > +// SPDX-License-Identifier: GPL-2.0-only
 > +/*
-> + * Copyright (C) 2024-2026 Realtek Semiconductor Corporation
+> + * Copyright (C) 2017-2026 Realtek Semiconductor Corporation
 > + * Author: Cheng-Yu Lee <cylee12@realtek.com>
 > + */
 > +
+> +#include <linux/bits.h>
+> +#include <linux/clk-provider.h>
 > +#include <linux/export.h>
 > +#include <linux/regmap.h>
-> +#include <linux/spinlock.h>
-> +#include "clk-pll.h"
+> +#include "clk-regmap-gate.h"
 > +
-> +#define TIMEOUT 500
-> +
-> +static inline struct rtk_clk_regmap_pll *to_rtk_clk_regmap_pll(struct clk_hw *hw)
+> +static int rtk_clk_regmap_gate_update(struct clk_hw *hw, bool enable)
 > +{
-> +	struct rtk_clk_regmap *clkr = to_rtk_clk_regmap(hw);
+> +	struct rtk_clk_regmap_gate *clkg = to_rtk_clk_regmap_gate(hw);
+> +	unsigned int mask = BIT(clkg->bit_idx);
+> +	unsigned int val = enable ? mask : 0;
 > +
-> +	return container_of(clkr, struct rtk_clk_regmap_pll, clkr);
-> +}
-> +
-> +static int wait_freq_ready(struct rtk_clk_regmap_pll *clkp)
-> +{
-> +	u32 pollval;
-> +
-> +	/* reg == 0 means not configured.
-> +	 * Register offset 0 is never a valid address on Realtek SoCs.
-
-Fix the comment style please
-
+> +	/*
+> +	 * Hardware specific design: to modify the gate bit, the adjacent
+> +	 * write-enable bit (bit_idx + 1) must be asserted simultaneously.
 > +	 */
-> +	if (!clkp->freq_ready_reg)
-> +		return 0;
-
-Do you need to protect against your own driver providing bad offset ?
-
+> +	if (clkg->write_en) {
+> +		mask |= BIT(clkg->bit_idx + 1);
+> +		val |= BIT(clkg->bit_idx + 1);
+> +	}
 > +
-> +	return regmap_read_poll_timeout_atomic(clkp->clkr.regmap, clkp->freq_ready_reg, pollval,
-> +		(pollval & clkp->freq_ready_mask) == clkp->freq_ready_val, 1, TIMEOUT);
+> +	return regmap_update_bits(clkg->clkr.regmap, clkg->gate_ofs, mask, val);
 > +}
 > +
-> +static bool is_power_on(struct rtk_clk_regmap_pll *clkp)
+> +static int rtk_clk_regmap_gate_enable(struct clk_hw *hw)
 > +{
+> +	return rtk_clk_regmap_gate_update(hw, true);
+> +}
+> +
+> +static void rtk_clk_regmap_gate_disable(struct clk_hw *hw)
+> +{
+> +	rtk_clk_regmap_gate_update(hw, false);
+> +}
+> +
+> +static int rtk_clk_regmap_gate_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct rtk_clk_regmap_gate *clkg = to_rtk_clk_regmap_gate(hw);
+> +	int ret;
 > +	u32 val;
 > +
-> +	/* reg == 0 means not configured (assume always on).
-> +	 * Register offset 0 is never a valid address on Realtek SoCs.
-> +	 */
-
-You've already said this. It would be more helpful to tell us that PLL that does not
-provider a power reg is considered to be always powered, if that is the case
-
-> +	if (!clkp->power_reg)
-> +		return true;
-> +
-> +	if (regmap_read(clkp->clkr.regmap, clkp->power_reg, &val))
-> +		return false;
-> +
-> +	return (val & clkp->power_mask) == clkp->power_val_on;
-> +}
-> +
-> +static void rtk_clk_regmap_pll_disable(struct clk_hw *hw)
-> +{
-> +	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
-> +	unsigned long flags;
-> +
-> +	if (!clkp->seq_power_off)
-> +		return;
-> +
-> +	spin_lock_irqsave(&clkp->lock, flags);
-
-What do you protect with this ?
-regmap does provide some locking already and CCF too. Do you expect something
-to poke the registers you are writing ?
-
-> +
-> +	regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_power_off,
-> +			       clkp->num_seq_power_off);
-> +
-> +	spin_unlock_irqrestore(&clkp->lock, flags);
-> +}
-> +
-> +static int rtk_clk_regmap_pll_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	spin_lock_irqsave(&clkp->lock, flags);
-> +
-> +	ret = is_power_on(clkp);
-> +
-> +	spin_unlock_irqrestore(&clkp->lock, flags);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rtk_clk_regmap_pll_determine_rate(struct clk_hw *hw,
-> +					     struct clk_rate_request *req)
-> +{
-> +	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
-> +	const struct rtk_freq_table *ftblv = NULL;
-> +
-> +	ftblv = ftbl_find_by_rate(clkp->freq_tbl, req->rate);
-
-Doesn't this completly disregard the parent rate ?
-
-I understand that SoC vendor may expect a single frequency as input but it
-it is pretty fragile to do so.
-
-A PLL is usually some sort of (fractional) multiplier.
-It is way better to provide the table of multiplier you support, along with their
-sequence and properly doing the calculation here.
-
-> +
-> +	if (ftblv && ftblv->rate >= req->min_rate) {
-> +		req->rate = ftblv->rate;
-> +		return 0;
-> +	}
-> +
-> +	/* floor result is below min_rate; find the smallest rate >= min_rate */
-> +	ftblv = ftbl_find_ceil_by_rate(clkp->freq_tbl, req->min_rate);
-> +	if (!ftblv || ftblv->rate > req->max_rate)
-> +		return -EINVAL;
-
-This is not how determine_rate() works. You just round to the closest rate the PLL
-supports. You are free to round as you wish (bellow or closest)
-
-Just test the different multipliers you support and return what is best compared to
-the request. There is no reason to return EINVAL for this.
-
-> +
-> +	req->rate = ftblv->rate;
-> +
-> +	return 0;
-> +}
-> +
-> +static unsigned long rtk_clk_regmap_pll_recalc_rate(struct clk_hw *hw,
-> +						    unsigned long parent_rate)
-> +{
-> +	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
-> +	const struct rtk_freq_table *fv;
-> +	unsigned long flags;
-> +	u32 freq_val;
-> +
-> +	spin_lock_irqsave(&clkp->lock, flags);
-> +
-> +	if (regmap_read(clkp->clkr.regmap, clkp->freq_reg, &freq_val)) {
-> +		spin_unlock_irqrestore(&clkp->lock, flags);
-> +		return 0;
-> +	}
-> +
-> +	freq_val &= clkp->freq_mask;
-> +
-> +	fv = ftbl_find_by_val_with_mask(clkp->freq_tbl, clkp->freq_mask,
-> +					freq_val);
-> +
-> +	spin_unlock_irqrestore(&clkp->lock, flags);
-> +
-> +	return fv ? fv->rate : 0;
-> +}
-> +
-> +static int rtk_clk_regmap_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				       unsigned long parent_rate)
-> +{
-> +	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
-> +	const struct rtk_freq_table *fv;
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	fv = ftbl_find_by_rate(clkp->freq_tbl, rate);
-> +	if (!fv || fv->rate != rate)
-> +		return -EINVAL;
-> +
-> +	spin_lock_irqsave(&clkp->lock, flags);
-> +
-> +	if (clkp->seq_pre_set_freq) {
-> +		ret = regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_pre_set_freq,
-> +					     clkp->num_seq_pre_set_freq);
-> +		if (ret)
-> +			goto unlock;
-> +	}
-> +
-> +	ret = regmap_update_bits(clkp->clkr.regmap, clkp->freq_reg,
-> +				 clkp->freq_mask, fv->val);
-> +	if (ret)
-> +		goto unlock;
-> +
-> +	if (clkp->seq_post_set_freq) {
-> +		ret = regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_post_set_freq,
-> +					     clkp->num_seq_post_set_freq);
-> +		if (ret)
-> +			goto unlock;
-> +	}
-> +
-> +	if (is_power_on(clkp)) {
-> +		ret = wait_freq_ready(clkp);
-> +		if (ret)
-> +			goto unlock;
-> +	}
-> +
-> +unlock:
-> +	spin_unlock_irqrestore(&clkp->lock, flags);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rtk_clk_regmap_pll_enable(struct clk_hw *hw)
-> +{
-> +	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
-> +	unsigned long flags;
-> +	int ret = 0;
-> +
-> +	if (!clkp->seq_power_on)
+> +	ret = regmap_read(clkg->clkr.regmap, clkg->gate_ofs, &val);
+> +	if (ret < 0)
 > +		return ret;
 > +
-> +	spin_lock_irqsave(&clkp->lock, flags);
-> +
-> +	if (is_power_on(clkp))
-> +		goto unlock;
-> +
-> +	ret = regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_power_on,
-> +				     clkp->num_seq_power_on);
-> +	if (ret)
-> +		goto unlock;
-> +
-> +	ret = wait_freq_ready(clkp);
-> +	if (ret)
-> +		goto unlock;
-> +
-> +unlock:
-> +	spin_unlock_irqrestore(&clkp->lock, flags);
-> +
-> +	return ret;
+> +	return !!(val & BIT(clkg->bit_idx));
 > +}
 > +
-> +const struct clk_ops rtk_clk_pll_ops = {
-> +	.enable         = rtk_clk_regmap_pll_enable,
-> +	.disable        = rtk_clk_regmap_pll_disable,
-> +	.is_enabled     = rtk_clk_regmap_pll_is_enabled,
-> +	.recalc_rate    = rtk_clk_regmap_pll_recalc_rate,
-> +	.determine_rate = rtk_clk_regmap_pll_determine_rate,
-> +	.set_rate       = rtk_clk_regmap_pll_set_rate,
+> +const struct clk_ops rtk_clk_regmap_gate_ops = {
+> +	.enable     = rtk_clk_regmap_gate_enable,
+> +	.disable    = rtk_clk_regmap_gate_disable,
+> +	.is_enabled = rtk_clk_regmap_gate_is_enabled,
 > +};
-> +EXPORT_SYMBOL_NS_GPL(rtk_clk_pll_ops, "CLK_REALTEK");
+> +EXPORT_SYMBOL_NS_GPL(rtk_clk_regmap_gate_ops, "CLK_REALTEK");
 > +
-> +const struct clk_ops rtk_clk_pll_ro_ops = {
-> +	.recalc_rate = rtk_clk_regmap_pll_recalc_rate,
+> +const struct clk_ops rtk_clk_regmap_gate_ro_ops = {
+> +	.is_enabled = rtk_clk_regmap_gate_is_enabled,
+> +};
+> +EXPORT_SYMBOL_NS_GPL(rtk_clk_regmap_gate_ro_ops, "CLK_REALTEK");
+> diff --git a/drivers/clk/realtek/clk-regmap-gate.h b/drivers/clk/realtek/clk-regmap-gate.h
+> new file mode 100644
+> index 000000000000..9303adda3166
+> --- /dev/null
+> +++ b/drivers/clk/realtek/clk-regmap-gate.h
+> @@ -0,0 +1,65 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2017-2026 Realtek Semiconductor Corporation
+> + * Author: Cheng-Yu Lee <cylee12@realtek.com>
+> + */
+> +
+> +#ifndef __CLK_REALTEK_CLK_REGMAP_GATE_H
+> +#define __CLK_REALTEK_CLK_REGMAP_GATE_H
+> +
+> +#include "clk-rtk-common.h"
+> +
+> +struct rtk_clk_regmap_gate {
+> +	struct rtk_clk_regmap clkr;
+> +	unsigned int gate_ofs;
+> +	u8 bit_idx;
+> +	u32 write_en : 1;
+> +};
+> +
+> +#define __rtk_clk_regmap_gate_hw(_p) __rtk_clk_regmap_hw(&(_p)->clkr)
+> +
+> +#define __RTK_CLK_REGMAP_GATE(_name, _parent, _ops, _flags, _ofs, _bit_idx, \
+> +			      _write_en)                                    \
+> +	struct rtk_clk_regmap_gate _name = {                                \
+> +		.clkr.hw.init = CLK_HW_INIT(#_name, _parent, _ops, _flags), \
+> +		.gate_ofs = _ofs,                                           \
+> +		.bit_idx = _bit_idx,                                        \
+> +		.write_en = _write_en,                                      \
+> +	}
+> +
+> +#define RTK_CLK_REGMAP_GATE(_name, _parent, _flags, _ofs, _bit_idx, _write_en)        \
+> +	__RTK_CLK_REGMAP_GATE(_name, _parent, &rtk_clk_regmap_gate_ops, _flags, _ofs, \
+> +			      _bit_idx, _write_en)
+> +
+> +#define RTK_CLK_REGMAP_GATE_RO(_name, _parent, _flags, _ofs, _bit_idx, _write_en)  \
+> +	__RTK_CLK_REGMAP_GATE(_name, _parent, &rtk_clk_regmap_gate_ro_ops, _flags, \
+> +			  _ofs, _bit_idx, _write_en)
+> +
+> +#define __RTK_CLK_REGMAP_GATE_NO_PARENT(_name, _ops, _flags, _ofs, _bit_idx,  \
+> +				    _write_en)                                \
+> +	struct rtk_clk_regmap_gate _name = {                                  \
+> +		.clkr.hw.init = CLK_HW_INIT_NO_PARENT(#_name, _ops, _flags),  \
+> +		.gate_ofs = _ofs,                                             \
+> +		.bit_idx = _bit_idx,                                          \
+> +		.write_en = _write_en,                                        \
+> +	}
+> +
+> +#define RTK_CLK_REGMAP_GATE_NO_PARENT(_name, _flags, _ofs, _bit_idx, _write_en)        \
+> +	__RTK_CLK_REGMAP_GATE_NO_PARENT(_name, &rtk_clk_regmap_gate_ops, _flags, _ofs, \
+> +				    _bit_idx, _write_en)
+> +
+> +#define RTK_CLK_REGMAP_GATE_NO_PARENT_RO(_name, _flags, _ofs, _bit_idx, _write_en)  \
+> +	__RTK_CLK_REGMAP_GATE_NO_PARENT(_name, &rtk_clk_regmap_gate_ro_ops, _flags, \
+> +				    _ofs, _bit_idx, _write_en)
 
-is_enabled ?
+Is this _NO_PARENT still used ? if not drop it
 
 -- 
 Jerome
