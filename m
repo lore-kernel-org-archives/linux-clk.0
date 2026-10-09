@@ -1,74 +1,46 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B7F3BE627
-	for <linux-clk@vger.kernel.org>; Fri,  9 Oct 2026 09:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0256449A3D2;
+	Fri,  9 Oct 2026 09:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791537044; cv=none; b=eG9KPnKdvHSb0wUsiFAb93n7HBb/72uct0KvLX/m5J3LM+InVc+ULVD8TPh58r9lJFs/vXObMTCpDDnxo0bfS44tA8SrrXQIYOZIjqD+LGhJmnJGuoY/vTTe0LjbINf1VqbbRy30To/+s4fS1XU6yMLHgWvfWZSe856dEmIQsc0=
+	t=1791538312; cv=none; b=ATwJykR4paCfBmow9aqvwVWz6mCNPxdqHHHwBkbX96DtZvNTHfclpnUbR51Tzt9zSG9ONkE+4bfwxOBolVnxY3YJBOmXlavzmZDg+axHa7dbp+vO1GJ9BGRuwlaMrORu3zmBCdHdyP9cqxrDzL9QdrdpGdv23z75zC1VgYcu5co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791537044; c=relaxed/simple;
-	bh=hSrFY6yJOAn0mmdan1yEptjvNe8y2O/A+HPVrFv+sLU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=L2LjKj0sLhqoRNJsE/S6aof7WnkTGkFgjBkE37O+KvtiNjFgGnmYmHmHHt3aoQNR65NPsE913U2nugnKAjQDd5Nosu+frXEG/AomCpg/p2kMMxoCq19BR0jdgP6LDmg5/FOGoEfpZcYLIbc8d2jSkgEj5Hw+ymvKvimf61QvHyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Jj8R3cr8; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1791538312; c=relaxed/simple;
+	bh=j3BjLAvA3Bq5JnSG/zolAG4cMSh78NzeXeYs2MYU6P0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=apBPDQJ9NlL9INYbACJzl4s97ME71OX6goN4Fa1x7qhI1NGjjE2z4TfWmJpT5CmXOO20gRV83nS0p6EC3vwz4RI4HfxDGfdueNkmO7bQZuwSWC+nRg9JCZiMT3F6OJ3LpkHGaj6ycPQj0Mwy74w2WPOx3oBgsMq1ule4P4n/tOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YwB1Q/iZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Jj8R3cr8"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-48b9d8055dfso4790521f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 09 Oct 2026 02:10:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1791537040; x=1792141840; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=f/JIy/pMq5OkQ+wPHl+YKwojqjh6/wHrpuO6FCK/Wi4=;
-        b=Jj8R3cr8v0xeWB0+OsSQ6kgBM8lFrzL2fMzD8QexoZqyHwGpgzdNxzNovs2OGN/wOY
-         sa4EgW8Rme8MVsngHnmJMmj7h66UCHYzjGXvA/nBCOHmazCiuiDlpXhp9M0NqWCsTGha
-         Rk35BIt5d8grAC57fcUeK3mWB05hWoNbDELVkgJx4YdHsxFafzTY6cM/re1y1mkfwf45
-         bVc9x9cFNuiKh7GSkrL9Bgkj+RkXV7w1ftbTRad8p3l7qdkAJfPQoBScnD+7i9k7c3s0
-         JavfYLD+cfvjiNRyhSYVmV+x/ELDmoyqtYqMp0Ag14+Xoc6o2KMWx6tfioesAsS1KaJc
-         KlWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791537040; x=1792141840;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :references:in-reply-to:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=f/JIy/pMq5OkQ+wPHl+YKwojqjh6/wHrpuO6FCK/Wi4=;
-        b=oi7ICAL+t3Wr9xfvPkoMjMhFrwR+9gyafgFji0aA8Dmn3D/3DXd78PK8fOiayn9mkQ
-         ZK36NN7ZJHi2aTHaFAP+xZ4h3KdeK6uVci86NdpbyrIrsvGUU215dtvk4Nml19Di7X7T
-         +ZzCT6WdRw8ZNY3YEFHY+2ol/SisoEVxc5QuyYf+QZMn7VdfhFnV0j+BJU6PcOZM/zVG
-         t12cLDJkeOqur0UPBZqLnMESH8IorGR2z52p4m2eJljraHZcJD1+P3Lzp0arvlN54M1M
-         TmHyBTVw2Oaldikd0yxKSMA5ElcizmyjKzp9+4kJVJMGCErAf5Dp6q/ILRHsJCsX66/o
-         7Wdg==
-X-Gm-Message-State: AFq9FYJzGk/mowrAzny+gbplobfqWb+QjzrdP78YvgFs9Xv1Vc3qkITp
-	Bu1g9osRClYvlgDnuqFKbi0AEbOjxVbeO7WtspDKNFtoMTx1QwMrypjeONJwrLhlH+U=
-X-Gm-Gg: AYBFou1rkmcvEyCarZRNNdUMiPO7q+iG9yYscltgV+dVaXjHeglRnN1QzfgMd4U7Bhr
-	j+i7wubcdZChAg54p7wFPl61DxXaf/ADttTHQCL5ZntD+x45dmRiglQfWiJ7+IElJWwF8Z5OE69
-	gWmA1U6B8vzd2bzCANVhMO4S0S0/T9cG4wWqUjHeielE3A8qJp5GLHdjR6jxP55Sd5coBfPGmCg
-	q+6lkPWwskyLFs79rNnJ8WNWofkZ6tDbgwJTyOBxUywaG8A32kpYyFv1nmVLyLQwZqbWhn9k3de
-	cdsE7Dmj9oRsqaXVua6JnpwCkrV5dGMad26QAnDPmjUkP/fIPF53JvppDqpST45HRTBRZzepc79
-	jX/9y97IvmaNxhCfDSd+260nKwwPb5Nxl9m54mDUBg+xkcOW069pya7f/UchfXVi5e9bLLirVct
-	xx0v2xQGPJoedZpuPqStrtZali1R8EubwanjueDWqiaCMOWNJOmM+rTYz9c3bU/CMwknasbt/zR
-	xD8We1NmNd1PQzRKw==
-X-Received: by 2002:a05:6000:491c:b0:488:8546:d0b2 with SMTP id ffacd0b85a97d-48dbacf06ccmr2124854f8f.51.1791537039476;
-        Fri, 09 Oct 2026 02:10:39 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48db9463499sm2693592f8f.3.2026.10.09.02.10.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2026 02:10:39 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: sashiko-reviews@lists.linux.dev, Haotian Zhang <vulab@iscas.ac.cn>
-Cc: linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: xilinx: fix NULL pointer dereference in
- xvcu_clk_hw_unregister_leaf()
-In-Reply-To: <sashiko-outbox-164950@kernel.org>
-References: <20261009061805.3172589-1-vulab@iscas.ac.cn>
- <sashiko-outbox-164950@kernel.org>
-Date: Fri, 09 Oct 2026 11:10:38 +0200
-Message-ID: <1jfqyfp7ch.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YwB1Q/iZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C58601F000FF;
+	Fri,  9 Oct 2026 09:31:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791538310;
+	bh=s8xH1F/JaR1AxQIsxpZSOc+O+rct9Lu7coFrpOF8Daw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=YwB1Q/iZ3QJTtD9mlHQtZiKNCTC5E1HewCNOMKPP3epLLGfgCdzvPo0gJQ8zTehw5
+	 0WcwYH4tZryXGVIeCfYPZhTA5aa+6UPwOs4DQbPLiiQeTw9uCQpY+KnHf2y3VDWmrw
+	 2j9cCxe1xNbiPipGXaEZI5oOYtNw2NU+ioV40lRQU5o90TF2PP+bLTRE4CDBWyORT+
+	 5j45IGKhLjaSA0wKIpsY7MPMLloxxmkXCl3QPac1GfRI2M7IH4EN5FVnTSrZhIboXZ
+	 +Wgj5Zdq9upDxBwEf87SDwYQ1+J7ijGuwxtSAiMxGTGWer0EYjRmyl6Kn0AIB2XRJX
+	 IVNjkaue4cJHg==
+Date: Fri, 9 Oct 2026 11:31:47 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org, 
+	konradybcio@kernel.org, abelvesa@kernel.org, kees@kernel.org, gustavoars@kernel.org, 
+	mohd.anwar@oss.qualcomm.com, lorenzo.bianconi@oss.qualcomm.com, danielt@kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Daniel Thompson <daniel@riscstar.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: introduce
+ toshiba,tc9564-clock.yaml
+Message-ID: <20261009-gifted-stylish-tortoise-95b14d@quoll>
+References: <20261005230927.2000398-1-elder@riscstar.com>
+ <20261005230927.2000398-2-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -76,111 +48,112 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20261005230927.2000398-2-elder@riscstar.com>
 
-On ven. 09 oct. 2026 at 06:33, sashiko-bot@kernel.org wrote:
+On Mon, Oct 05, 2026 at 06:09:24PM -0500, Alex Elder wrote:
+> Define the binding for the clock controller functionality present in
+> the Toshiba TC9564 SoC.
+> 
+> Co-developed-by: Daniel Thompson <daniel@riscstar.com>
+> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+> v2: - Only define clock information, not reset information
+>     - Reworded description to avoid talking about software
+>     - Clock IDs are now consecutive (no more commented-out values)
+> 
+>  .../bindings/clock/toshiba,tc9564-clock.yaml  | 54 +++++++++++++++++++
+>  MAINTAINERS                                   |  7 +++
+>  include/dt-bindings/clock/toshiba,tc9564.h    | 34 ++++++++++++
+>  3 files changed, 95 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/toshiba,tc9564.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml b/Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml
+> new file mode 100644
+> index 0000000000000..329b8f002cf2d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml
+> @@ -0,0 +1,54 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/toshiba,tc9564-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Toshiba TC9564 Clock Controller
+> +
+> +maintainers:
+> +  - Alex Elder <elder@riscstar.com>
+> +  - Daniel Thompson <daniel@riscstar.com>
+> +
+> +description:
+> +  The Toshiba TC9564 is an SoC accessed by a host system through the
+> +  upstream PCIe port on the PCIe switch it implements.  The switch
+> +  includes an embedded PCIe endpoint that provides access to various
+> +  SoC peripherals (including a clock controller) via its BARs.
+> +
+> +  A total of 21 clocks are implemented, though two of these are not
+> +  controllable.  Access to the clock controller relies on PCIe being
+> +  functional, so the PCIe clock is assumed to be always on.  Similarly,
+> +  the PCIe controller relies on I2C, so the I2C clock is also assumed
+> +  to be always on.
+> +
+> +  Clock ids are defined in <dt-bindings/clock/toshiba,tc9564.h>.
+> +
+> +properties:
+> +  compatible:
+> +    const: toshiba,tc9564-clock
+> +
+> +  toshiba,config-syscon:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle for the configuration space system controller.
 
-> Thank you for your contribution! Sashiko AI review found 2 potential issu=
-e(s) to consider:
-> - [High] clk: xilinx: Use-After-Free due to incorrect child/parent unregi=
-ster order
-> - [High] clk: xilinx: UAF race during removal due to mixed devm/manual cl=
-eanup
-> --
->
-> commit 7f74ba5d4aed358cc163ed1eb7e56a50f1f385b0
-> Author: Haotian Zhang <vulab@iscas.ac.cn>
->
-> clk: xilinx: fix NULL pointer dereference in xvcu_clk_hw_unregister_leaf()
->
-> This commit addresses a NULL pointer dereference when a divider has no pa=
-rent
-> by checking that the mux is non-NULL before calling clk_hw_unregister_mux=
-().
-> It also removes dead code that erroneously checked the divider instead of=
- the
-> mux.
->
->> diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu=
-.c
->> index ccd9d7c0b1809..58a9762ef20a9 100644
->> --- a/drivers/clk/xilinx/xlnx_vcu.c
->> +++ b/drivers/clk/xilinx/xlnx_vcu.c
->> @@ -516,9 +516,8 @@ static void xvcu_clk_hw_unregister_leaf(struct clk_h=
-w *hw)
->>  		return;
->>=20=20
->>  	mux =3D clk_hw_get_parent(divider);
->> -	clk_hw_unregister_mux(mux);
+I do not see my previous comment addressed - you have no resources here,
+so this belongs to the parent. You responded something about pci-ep, but
+the parent is not pci-ep. Open your code:
+https://lore.kernel.org/lkml/20260918165234.687224-5-elder@riscstar.com/
 
-should deregister the divider here
+I clearly see code like:
+  syscon {
+    clock@ {
+    };
+  };
 
->> -	if (!divider)
->> -		return;
->> +	if (mux)
->> +		clk_hw_unregister_mux(mux);
->>=20=20
->>  	clk_hw_unregister_divider(divider);
+so I do not understand what pci-ep has anything to do here.
 
-this last line should be removed
+What's more, I still do not see any usage of these clocks outside. And I
+still did not receive actual answers (or I missed them) how these clocks
+are routed OUTSIDE of the connector. You said for example:
+"Ultimately the TC9564 SoC has a single 25 MHz input clock,"
 
->
-> [Severity: High]
-> Does this unregister the parent mux before the child divider, leading to a
-> use-after-free?
+but that is input. I did not ask how this device receives clocks. I
+asked how the host receives the clocks from this device.
 
-Yes, the function clearly has a copy paste error than you should address pr=
-operly.
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - toshiba,config-syscon
+> +  - "#clock-cells"
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/toshiba,tc9564.h>
 
->
-> Calling clk_hw_unregister_mux() first reparents the divider to the orphan
-> list, but leaves divider->core->parents[0].hw pointing to the mux struct =
-before
-> the memory is freed by the mux unregistration.
->
-> If a concurrent thread registers a new clock, the clock framework invokes
-> clk_core_reparent_orphans_nolock() to try resolving orphans. It iterates =
-the
-> orphan list, finds the divider, and calls clk_core_fill_parent_index(), w=
-hich
-> reads the dangling entry->hw pointer and dereferences it:
->
-> drivers/clk/clk.c:clk_core_fill_parent_index() {
->     ...
-> 	if (entry->hw) {
-> 		parent =3D entry->hw->core;
->     ...
-> }
->
-> Should the teardown strictly follow leaf-to-root order (gate -> divider -=
-> mux)
-> to prevent orphaned children from dereferencing freed parent pointers dur=
-ing
-> concurrent reparenting?
->
->
-> [Severity: High]
-> Does this manual cleanup race with the devres-managed OF provider removal?
->
-> Because xvcu_register_clock_provider() registers the OF clock provider us=
-ing
-> devm_of_clk_add_hw_provider(), the OF provider isn't removed from the glo=
-bal
-> clock provider list until the devres cleanup phase, which executes after
-> xvcu_remove() returns.
->
-> By manually freeing the hardware structures here during xvcu_remove(), the
-> active OF provider is left with dangling pointers in its internal hws arr=
-ay.
-> If a concurrent consumer invokes clk_get() during this window,
-> of_clk_hw_onecell_get() could yield a freed clk_hw pointer, resulting in a
-> use-after-free in the clock framework.
->
->>  }
->
-> --=20
-> Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261009061805.31=
-72589-1-vulab@iscas.ac.cn?part=3D1
+Looks unused.
 
---=20
-Jerome
+> +
+> +    clock {
+
+Anyway, if this stays, that's a clock-controller.
+
+Best regards,
+Krzysztof
+
