@@ -1,74 +1,75 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23098387359;
-	Fri,  9 Oct 2026 17:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC75388899;
+	Fri,  9 Oct 2026 17:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791566816; cv=none; b=KEYQ+Tr6n1oLbagkTYkvOxwpSuldn2YyppcaDxswy6nH25IlC65HUNwNM3/MPhKVAmHQxbKqOJvOxB6Z7BsFHuiJRsOxavXZKV8xuCdxlPzaTJDDyGwcWRPqcwthDzvYQLJ6uJ0Xj8UHfrkBloT23CKw0IpS8125DuLwkxkkfuQ=
+	t=1791567757; cv=none; b=DTi0pP8DOAxP8qI8iW5e2N8RHBplg1F2fn3OGbvLkYZ4ZmjagJw6G6FYIkzDzJUp3PHAFGs30x/9PjiPaXa2jLHdTg2Y6EbnGUDsoFFUREkQf2kyi/T2sskcB0AiYQlBZZZGxv9Zuu1QQmrzHgCdi3ft590cekYwgIBqHV1BvY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791566816; c=relaxed/simple;
-	bh=yIfhk7t0Q0/6czwCKnnwk3YcuXiAY847suPHeymdBZk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jI/lsG5IUipyr6OmZeSztJeZxnr/T2tMD7RIS1/zzaNqtl6DEyC2ih4TvTT0+NYo86UDOMz0Ho9JcCoo7+ZhPvX7Zrnt9u05E0R9TqUOhYI75T0w5PmM3QRE5UOmLCTLvwuZFz4RMhkTF9ryJBognbsUazitMw4EjybHegVGido=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2DmY2Kd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791567757; c=relaxed/simple;
+	bh=MYZCFcnGVwravfQJoAJhoTJQ5YLQriFGFELEWuNGOxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qax6/a6qq1py4kkVAfozHIzY1kF3w3RJH7Cpx/APTaNpf31UjdPOJTCVU8hwx0gnN3ICQbKpsK99fWxiMTZHngwh38I31tJeKTje68TmJLKqREkxsW+JcPMxLVFOVrKa1msDaZICJ68e9l2oDWU9sgJYFtkAbUSQccEuda5gv/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efXsdIoW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2DmY2Kd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F8A91F000FF;
-	Fri,  9 Oct 2026 17:26:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efXsdIoW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EFE71F000FF;
+	Fri,  9 Oct 2026 17:42:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791566813;
-	bh=14RtLDjAzH+Uq1svShyy8jPiYQ2LOU2SIP9yEuSlcl8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=T2DmY2KdIUbhsYApuAAf+IkpllFAWey1TI0KCmptDcs+is6BYjOoKTq9b6nD9KiEK
-	 drAB1yGhGELeGx98Fhq6c02u2RbRQQmwoax8UMNUkL4c7bkqF5uJsg98ibYvb81ZL0
-	 plTAo+LJ+u0cIZV2dqcru8lHG76EuShljGVgtpXzvxtH3oHxPM64NO6IrZLMjLzOkz
-	 /wswbHyXPpjAm6tY18a+0f3/vZEUTjFbRp87830lpGjftuvtyWEvBfCmseWw91o0UF
-	 APSfZ9oMxZCfPQUezVaZEBaSJJmCrlLM6u0YM13e8S9ehuUijhUY2G/ixexU9hsuX/
-	 0Ys6k/JOjAJQA==
+	s=k20260515; t=1791567756;
+	bh=gR9DG1fEHiN2p3/i4oj6eVX6qR2LIOcWYTyiypTAGH4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=efXsdIoWwWqF4ntQor9o80SrU0oukoxl3br5/YUxzxL7ZYcB8kbRNKdthrT5gYshv
+	 goU6Z+2TCoNResQwR5z8+wGLS6jt1WxFNob5uvozEBqmkqorlNKY+vzs4EG9ggRAnD
+	 JOXHxndYjc3NDXybA+qGgV+TPLNabNB48qEmRpPlIvEX3HUC0wwxeRF7/3P7XDlaxO
+	 RbidzmVdo3TTSLIms2n62RcS/LkhfSxrBFK9BZegveEeajldCKKpgQxt0vf0+gzvcH
+	 LRqcF85Z8SERJTMcCPe1TEP3W+hsYsM/xm0KWmtKcabvxj85l8R7U8m9PJSc/vOF1Y
+	 gZbj+KnxOkLig==
+Date: Fri, 9 Oct 2026 19:42:28 +0200
 From: Brian Masney <masneyb@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Wei Xu <xuwei5@hisilicon.com>, 
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20261001212051.2227941-1-robh@kernel.org>
-References: <20261001212051.2227941-1-robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: Convert HiSilicon clocks to DT
- schema
-Message-Id: <179156680410.85870.15108447876910168467.b4-ty@b4>
-Date: Fri, 09 Oct 2026 19:26:44 +0200
+To: Alex Elder <elder@riscstar.com>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andersson@kernel.org, konradybcio@kernel.org, abelvesa@kernel.org,
+	kees@kernel.org, gustavoars@kernel.org, mohd.anwar@oss.qualcomm.com,
+	lorenzo.bianconi@oss.qualcomm.com, danielt@kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Daniel Thompson <daniel@riscstar.com>
+Subject: Re: [PATCH v2 2/3] clk: toshiba: introduce a TC9564 SoC clock driver
+Message-ID: <asknhPZLx1lbvam2@x1g10>
+References: <20261005230927.2000398-1-elder@riscstar.com>
+ <20261005230927.2000398-3-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=323; i=masneyb@kernel.org;
- s=20250903; h=from:subject:message-id;
- bh=o8aE+f1r4humesp8sIx5qOiEX33R2HJieHvLZ1vmTGo=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJOKt9kZWw9KWYYZMqYvflJgq+i9QlOBfm77TMWLOG+X
- FUUzufdUcrCIMbFICumyLIk16ggInWV7b07miwwc1iZQIYwcHEKwETEnzIyfPvN/5oprTHJV0hm
- 0mdl0yV/dO+cEG45OuOsCuOV2dZNcYwMq+qEcmON4uc9TBCdtS2pc7qv0pZVU7mLqr6rMvDeXLa
- CBwA=
-X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261005230927.2000398-3-elder@riscstar.com>
+User-Agent: Mutt/2.4.2 (2026-08-30)
 
+On Mon, Oct 05, 2026 at 06:09:25PM -0500, Alex Elder wrote:
+> Define a new platform driver that manages clocks implemented by the
+> Toshiba TC9564 SoC.  There are 21 clocks that can be enabled and
+> disabled.  Two of these are reserved, so only 19 can be managed.
+> 
+> Two registers manage the state of the clocks.  The registers are
+> accessed via a regmap supplied by a system controller, because the
+> region of memory accessed is shared with other drivers.
+> 
+> Access to the memory region is provided via a BAR on a PCIe endpoint
+> function embedded in the TC9564 SoC.  For that reason the PCIe clock
+> cannot be manipulated by this driver (it is assumed to be enabled).
+> Similarly, control is not available for the I2C clock, because the
+> PCIe subsystem on the TC9564 relies on I2C.
+> 
+> Co-developed-by: Daniel Thompson <daniel@riscstar.com>
+> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
+> Signed-off-by: Alex Elder <elder@riscstar.com>
 
-On Thu, 01 Oct 2026 16:20:48 -0500, Rob Herring (Arm) wrote:
-> dt-bindings: clock: Convert HiSilicon clocks to DT schema
-
-Applied, thanks!
-
-[1/1] dt-bindings: clock: Convert HiSilicon clocks to DT schema
-      commit: 8ebee4049bb55abce37a7a0ff8ad44f4c354da49
-
-Best regards,
--- 
-Brian Masney <masneyb@kernel.org>
+Reviewed-by: Brian Masney <masneyb@kernel.org>
 
