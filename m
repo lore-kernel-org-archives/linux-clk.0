@@ -1,111 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DCF442138;
-	Fri,  9 Oct 2026 06:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC8B390C9E
+	for <linux-clk@vger.kernel.org>; Fri,  9 Oct 2026 06:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791526266; cv=none; b=W4843UklOEK5QdOFT2hU04OK0s81wWfnApZyMAgD41WYX3OL20Y6mOY5gk6hGerbReuyBfkzNXf1WRVhcCrN2Vskz5bxKE3TFlRigUgoNCOMWKHvSGtCoP2mF/ZXnAV20+aAECT9eqwQ6AJlUMpzbT9BGBmG7y6Dw5006Q+VK4M=
+	t=1791526603; cv=none; b=os1pUEKtDbGdHnKfQLE19rFYm3AA5nT6cYqYNcFFOnxR4XNLOoFDFy7Gpa04oFGP0cfRp8bcKeGwCeTEf1AVsvgI9Cc9wfbRerwuvTPDbld8DJDYD71Qfoy9b9uxnxN8ZR02l4hvyMVk4jrh6k7pRZFStfkXvp5SVTWFKweGsv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791526266; c=relaxed/simple;
-	bh=kNjC6FwstwBb0HZFRPvHGiWDSmN9lqpoTvjU96l8ouU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b3A4a4c0CommMnQTrvvJp/53e3QkPO2SSk9w2KwHc/gAFQkke4/E7pUXGQkWUCYLC3PzTMQRzK8KP21Ra1IsOR7H1PrxIC81KCButPV4Y3eVFY981zAK8M+4B4qfJyUcMHzL8RyiazB6n2ChgP5/zAd8gv3VPvAtodKlryAHPRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMKBbQm5; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791526603; c=relaxed/simple;
+	bh=RjCrlSCJfIi78Fj/A7WCMyUFRGca/w1QLsrXcqS44bM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HVex2salLL4Ub85yV67XHiJOXw/bJn6XenLqfxHOrW4Uuv0BAaedEvP/7p6YAd/AjWGkzvey2Zt5xf82jyxxxQ+8ylKwfngHSDsXunbQqd+2+4mg+vxy/8BsZ2/pH+5xRbTctTcIq8s2SkM+xoL3MzkcVDCgdNBbjwl+fIxxzwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=aSJx3Pss; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMKBbQm5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E211F00898;
-	Fri,  9 Oct 2026 06:11:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791526264;
-	bh=QspHgvhexBo/96gD+93/ZvCQ+ECziB5aSNYOJ4PzkgI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=cMKBbQm5T0RW9UEpxoochiCoroChcortLtbVt6zfW/367irjuWv54gbHg4Pmla2NY
-	 +ofSFj1KD636ThX1Si8snSQkKKmDQ2CnXNAyi8S+2rmZL72JBmfY+DqDYqpmEVlaQb
-	 Lrl+Agw5U1PqQ7ZTzuLZVkB9WlfOB7gCRvE1dhccjC2CEJAKLXpdiR6hx4SSpZByK+
-	 AZAhkRjrOZ5ieFhVWsJShx3zQaqTGFG9SDpKGLS3OuCJYtLnXezZ6lBZd6yWR0GN+x
-	 dRke3sbO16lv6ycm7IVvpYqG7pEm9LqRabOqYNb8rFbwwUejoRFH8NlgcWkQhLosvl
-	 ACU/yPIDMYKNw==
-Date: Fri, 9 Oct 2026 08:11:02 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Haotian Zhang <vulab@iscas.ac.cn>
-Cc: Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Brian Masney <bmasney+clk@redhat.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH] clk: at91: fix device node reference leak in
- at91sam9x5_sckc_register()
-Message-ID: <20261009-graceful-visionary-capybara-efbcc0@quoll>
-References: <20261008163052.2685401-1-vulab@iscas.ac.cn>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="aSJx3Pss"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a16af2a232so31535565e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 08 Oct 2026 23:16:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1791526600; x=1792131400; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=uf13mC8auXckg/x22icKiOE8QWvUnwyH6rsSLIpr82I=;
+        b=aSJx3Pss2A5tRg9DsUVm0rcByLgIxCJrqrAM8a5BQLW9yuBBDHHOcWJhedM0M0dxA2
+         mjipETxIgbmoHZrXjyeJ/mqIBg9tFT2kLq1XOv4JFbichncCe3fLvBqytWhaLMA1LquI
+         JKKBedWjbYlwJ0sHgjkvVJt+/qlUxVfmgfUn/KqmQpYIJBVB9dv5qhdP6Evjaos6uVLp
+         UeL2mthWmsztp+gHzRZoBEO+cVfZOjDQCE86yFBU2b80xHcihayfAEfD7h+JuJOX5jED
+         3bMVe+u5L4MGMPHuyHf/Y9kaIdWd/oFzkNsed+rxDDN9n2EqTdzHAmmm9LVdUBuh7+m7
+         qlyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791526600; x=1792131400;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=uf13mC8auXckg/x22icKiOE8QWvUnwyH6rsSLIpr82I=;
+        b=tM7rTm+/mJnTemjbsTX2YJsavye2Hezt9ufK3pUmVUIrEgcIjBz1BlgJwji3JqUqLn
+         brTtcZM5Au2KR6AA/AfgAq+YPdugf73MDTF+v5tg4+T/1mpsj4g6yAJs7eCkfANrLyHP
+         yuzq+ziLln21neNldn24hbw8OMB5kroEAZ3evEz7f6yE+HVBR2IRqycAKYkO8HgJaRTc
+         N44KF63qYmY00rBtPmevhXfyGCuBqUwFQnONXvqqUEAZyusCpaA+dc0IwNSIF1esGejJ
+         DWNVkRTpjf7Vsk13o+oRCUs03zFmswSdYkRz9TzfsMcAU8MIHx2kVb/v4E+QofNfFrba
+         kXyw==
+X-Forwarded-Encrypted: i=1; AKwUvBz1QTF/2raRyzZqcIXFJLdVxa2VyIcs/6PQDQUTP4NvhmrDPz+MjhJj8Ky47Aq5zNUoEBMs716X/v0=@vger.kernel.org
+X-Gm-Message-State: AFuF++ls0W34Y2OtMDkS5tn2rQyhgj/vWHnyJNXNrbLCI/+1dSRQfJCi
+	NeRr+4tFfK8RKITxmfo3q5c3XtOn+ddPFfCgVv3N4oT96/l0/QTm6xTILBMA6yB4YcI=
+X-Gm-Gg: AYBFou2YUyjciEyU0AK8AKeT5M1XmViMG6dVG1UQKSGg74Uiocs7DpUWM6sds8YY4C6
+	5z2YpQZxWN6MJb9zZbwMFm8hZ51lM2ag6vbkAeeDiJizQSCjgo6J2EDSghTsMqBhxLmaeCWE5TU
+	ZmTDrHP+s+x7HGayzPvLunXAVIrCjXGW3WbS2gPLdQ9qQYip6e/V8UlDZaBsrzh9coaWfbz0D0v
+	puCsALc3LlsoFQRmRc2gyiqwfDHhhckMn7k3lVJl4GMkW/34Lo66DzJnGbAQ+rVjmORZgfhiZpR
+	NENzkNQYBE5xYhKYZdWL3LSMWXt3W1ZjFw2uZuOHgN5WRxLTQz6pH/qp2XI+7FZ47Tv0ZDVdVWu
+	AQh21NGRqhQd2FfVg/noWZpqlXVp497b7Ekz4UoN+ZT6kfU2+FNst4bmJKYvf+wLXyzv9QxP8TU
+	BSC8oAnHTwxzyYv1FtEYGGOWsBxSq6LgqNyIfZff3yV8M8iafqLA2oOKVbGEzI/zqMhRYc4z2pV
+	cMET26uSsy2QrYpYNfyT8wJIPfmkxcoOBLTSOfp6v4=
+X-Received: by 2002:a05:600c:64c7:b0:49f:ff32:803c with SMTP id 5b1f17b1804b1-4a18e49c536mr12899995e9.16.1791526599915;
+        Thu, 08 Oct 2026 23:16:39 -0700 (PDT)
+Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([82.208.30.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18e4a3b4asm46622225e9.5.2026.10.08.23.16.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Oct 2026 23:16:39 -0700 (PDT)
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: sboyd@kernel.org,
+	bmasney+clk@redhat.com,
+	jbrunet+clk@baylibre.com,
+	linux-clk@vger.kernel.org
+Cc: alexandre.belloni@bootlin.com,
+	nicolas.ferre@microchip.com,
+	claudiu.beznea@tuxon.dev,
+	conor@kernel.org
+Subject: [GIT PULL] Microchip clock updates for v7.4
+Date: Fri,  9 Oct 2026 09:16:36 +0300
+Message-ID: <20261009061636.30104-1-claudiu.beznea@tuxon.dev>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261008163052.2685401-1-vulab@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
 
+The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
 
-On Fri, 09 Oct 2026 00:30:52 +0800, Haotian Zhang wrote:
-> at91sam9x5_sckc_register() calls of_get_compatible_child() to look up the
-> "atmel,at91sam9x5-clk-slow-osc" and "atmel,at91sam9x5-clk-slow" legacy
-> child nodes during DT backward compatibility handling. Both calls return a
-> device node with its reference count incremented, but neither reference is
-> ever dropped: the first is simply overwritten when the second lookup
-> reassigns child, and the second is leaked on every return path, including
-> the unregister_slow_* cleanup labels. of_clk_add_hw_provider() takes its
-> own reference and does not consume the caller's.
-> 
-> Drop the slow-osc reference once it has been used and release the remaining
-> child reference on both the success and error paths.
-> 
-> Fixes: 45b5ec8498ff ("clk: at91: modernize sckc binding")
-> Assisted-by: DeepSeek-V4.1-Flash
-> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
-> ---
->  drivers/clk/at91/sckc.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
+  Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
 
+are available in the Git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-7.4
 
-Multiple things here:
-1. Your team ignored completely previous feedback.
+for you to fetch changes up to 77cccf570d0de540d5062944f3555cade23b51f7:
 
-2. You use multiple identities with this email, thus I actually doubt we speak
-   with actual person.
+  clk: at91: main: Drop unneeded cast in at91_clk_register_main_osc() (2026-10-08 23:30:31 +0300)
 
-3. Finally, same feedback:
-You sent multiple independent patches, to multiple independent
-subsystems. The amount of these patches clearly suggest this was
-AI generated and most likely not tested.
+----------------------------------------------------------------
+Microchip clock updates for v7.4
 
-More importantly, you sent all this work without properly organizing
-relevant patches into patchsets. This makes reviewing difficult
-and might cause multiple reviewers to address the same issue.
-Replying to the entire set is impossible and requires handling each
-patch independently, instead of applying or discarding the set.
-Maintainers also won't see the bigger picture of your work. Quite
-worrying.
+This update includes:
+- a cleanup patch to drop unneeded cast
 
-This is on the verge of hostile patch: bomb us with so many
-contributions, we won't be able to handle them in efficient manner,
-like responding ONCE to ask you to slow down.  Considering all this
-is untested and LLM generated, I have even more doubts whether this
-should be considered for review.
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      clk: at91: main: Drop unneeded cast in at91_clk_register_main_osc()
 
-Please read kernel documentation BEFORE posting more work. It will
-explain you how to identify subsystems, how to organize your work per
-subsystem (so a patchset grouping multiple patches with a short cover
-letter), how to document usage of LLM and how what you should not do
-if this was posted in a good faith.
-
-Best regards,
-Krzysztof
-
-
-
-
+ drivers/clk/at91/clk-main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
