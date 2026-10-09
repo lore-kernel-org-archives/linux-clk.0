@@ -1,159 +1,112 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0256449A3D2;
-	Fri,  9 Oct 2026 09:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9E1494817;
+	Fri,  9 Oct 2026 09:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791538312; cv=none; b=ATwJykR4paCfBmow9aqvwVWz6mCNPxdqHHHwBkbX96DtZvNTHfclpnUbR51Tzt9zSG9ONkE+4bfwxOBolVnxY3YJBOmXlavzmZDg+axHa7dbp+vO1GJ9BGRuwlaMrORu3zmBCdHdyP9cqxrDzL9QdrdpGdv23z75zC1VgYcu5co=
+	t=1791538904; cv=none; b=kYDFfKuQK9xBK/JlvTfyFZ2XqBJwP7/7GQ6TUIvzeaiV2OCTJAE2AsOLSn98XNaoj6sLQIH65GxRR7eXF22nkAikxmCZGVIHmXR3A34IXavjhU1J6WEH9NOlgE5E3bhFBl27obbPKlFX2m/WAKW0pb5J9GyDZJn+y6YmBWdGH6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791538312; c=relaxed/simple;
-	bh=j3BjLAvA3Bq5JnSG/zolAG4cMSh78NzeXeYs2MYU6P0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=apBPDQJ9NlL9INYbACJzl4s97ME71OX6goN4Fa1x7qhI1NGjjE2z4TfWmJpT5CmXOO20gRV83nS0p6EC3vwz4RI4HfxDGfdueNkmO7bQZuwSWC+nRg9JCZiMT3F6OJ3LpkHGaj6ycPQj0Mwy74w2WPOx3oBgsMq1ule4P4n/tOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YwB1Q/iZ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791538904; c=relaxed/simple;
+	bh=u9EmbQR0cN1WRZrECL9onPDnYf/Gka3OBpqjOOETwP8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dKMVsOwhWrlZHPYylI5IaHGEmprIMKi9SBdrvW5TiBe1+xJAnAg+KzJGtFttq0W+HABBTZ0AZ0K504YLiQ+GePFJcWmv3pnCVSlTGWwuOYKKtHIniJaXnOqMjkFWMvmg6+oA7BzFhvUTPksOMki8TBR8mmXrnxZLzsOE6sX/zcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mE+2N9Oo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YwB1Q/iZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C58601F000FF;
-	Fri,  9 Oct 2026 09:31:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mE+2N9Oo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 293F01F00899;
+	Fri,  9 Oct 2026 09:41:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791538310;
-	bh=s8xH1F/JaR1AxQIsxpZSOc+O+rct9Lu7coFrpOF8Daw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YwB1Q/iZ3QJTtD9mlHQtZiKNCTC5E1HewCNOMKPP3epLLGfgCdzvPo0gJQ8zTehw5
-	 0WcwYH4tZryXGVIeCfYPZhTA5aa+6UPwOs4DQbPLiiQeTw9uCQpY+KnHf2y3VDWmrw
-	 2j9cCxe1xNbiPipGXaEZI5oOYtNw2NU+ioV40lRQU5o90TF2PP+bLTRE4CDBWyORT+
-	 5j45IGKhLjaSA0wKIpsY7MPMLloxxmkXCl3QPac1GfRI2M7IH4EN5FVnTSrZhIboXZ
-	 +Wgj5Zdq9upDxBwEf87SDwYQ1+J7ijGuwxtSAiMxGTGWer0EYjRmyl6Kn0AIB2XRJX
-	 IVNjkaue4cJHg==
-Date: Fri, 9 Oct 2026 11:31:47 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org, 
-	konradybcio@kernel.org, abelvesa@kernel.org, kees@kernel.org, gustavoars@kernel.org, 
-	mohd.anwar@oss.qualcomm.com, lorenzo.bianconi@oss.qualcomm.com, danielt@kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Daniel Thompson <daniel@riscstar.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: introduce
- toshiba,tc9564-clock.yaml
-Message-ID: <20261009-gifted-stylish-tortoise-95b14d@quoll>
-References: <20261005230927.2000398-1-elder@riscstar.com>
- <20261005230927.2000398-2-elder@riscstar.com>
+	s=k20260515; t=1791538899;
+	bh=SHucz3qY6+BH4YMQ0K3equMWZeHDs8Rh369diC5si0E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=mE+2N9OoBdEYpunteW+EXEQNOBKakLAPk4Xxbo6gd8peEvPD1svewzIVjRl3uia9f
+	 nS9VyTlWHDrf8krWW5c/YAWH3cyxbs8hGZXTXNCU7HcRT3z/Qc89p8Xl8hi6Ur1O83
+	 6b24gQOjgczrQ+V8T+4i5rDQHqxFL2okRO47JO9ojvZHi0jxaWN+i07vZXd/BQKN5u
+	 5rFmEYNltoE7T5V9jrvVnQ+JYMYTpkAcsF3fVXx4gwm6PeZAinx+WnJO/8no+kP5wo
+	 irazBvdBPLIsID9XskU1dpBDgbqrwzQ412eT/2i9EqE86RcSHkEYsmR0eDBmIMeLL9
+	 PThlht1AoQ+jw==
+Message-ID: <5d3ccf9f-9e2c-4aa8-aaef-af83348fd344@kernel.org>
+Date: Fri, 9 Oct 2026 11:41:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261005230927.2000398-2-elder@riscstar.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: xilinx: fix NULL pointer dereference in
+ xvcu_clk_hw_unregister_leaf()
+To: Haotian Zhang <vulab@iscas.ac.cn>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Michal Simek
+ <michal.simek@amd.com>, Michael Tretter <m.tretter@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20261009061805.3172589-1-vulab@iscas.ac.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20261009061805.3172589-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 05, 2026 at 06:09:24PM -0500, Alex Elder wrote:
-> Define the binding for the clock controller functionality present in
-> the Toshiba TC9564 SoC.
+On 09/10/2026 08:18, Haotian Zhang wrote:
+> xvcu_clk_hw_unregister_leaf() gets the mux with
+> clk_hw_get_parent(divider), which returns NULL when the divider has no
+> parent, and passes it to clk_hw_unregister_mux() without checking it.
+> The following check tests the wrong variable: divider has already been
+> verified to be non-NULL at this point, so "if (!divider) return;" is
+> dead code and a NULL mux is dereferenced, crashing in
+> clk_hw_unregister_mux().
 > 
-> Co-developed-by: Daniel Thompson <daniel@riscstar.com>
-> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
-> v2: - Only define clock information, not reset information
->     - Reworded description to avoid talking about software
->     - Clock IDs are now consecutive (no more commented-out values)
-> 
->  .../bindings/clock/toshiba,tc9564-clock.yaml  | 54 +++++++++++++++++++
->  MAINTAINERS                                   |  7 +++
->  include/dt-bindings/clock/toshiba,tc9564.h    | 34 ++++++++++++
->  3 files changed, 95 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml
->  create mode 100644 include/dt-bindings/clock/toshiba,tc9564.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml b/Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml
-> new file mode 100644
-> index 0000000000000..329b8f002cf2d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml
-> @@ -0,0 +1,54 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/toshiba,tc9564-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Toshiba TC9564 Clock Controller
-> +
-> +maintainers:
-> +  - Alex Elder <elder@riscstar.com>
-> +  - Daniel Thompson <daniel@riscstar.com>
-> +
-> +description:
-> +  The Toshiba TC9564 is an SoC accessed by a host system through the
-> +  upstream PCIe port on the PCIe switch it implements.  The switch
-> +  includes an embedded PCIe endpoint that provides access to various
-> +  SoC peripherals (including a clock controller) via its BARs.
-> +
-> +  A total of 21 clocks are implemented, though two of these are not
-> +  controllable.  Access to the clock controller relies on PCIe being
-> +  functional, so the PCIe clock is assumed to be always on.  Similarly,
-> +  the PCIe controller relies on I2C, so the I2C clock is also assumed
-> +  to be always on.
-> +
-> +  Clock ids are defined in <dt-bindings/clock/toshiba,tc9564.h>.
-> +
-> +properties:
-> +  compatible:
-> +    const: toshiba,tc9564-clock
-> +
-> +  toshiba,config-syscon:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Phandle for the configuration space system controller.
+> Only unregister the mux when it is non-NULL, and always release the
+> divider.
 
-I do not see my previous comment addressed - you have no resources here,
-so this belongs to the parent. You responded something about pci-ep, but
-the parent is not pci-ep. Open your code:
-https://lore.kernel.org/lkml/20260918165234.687224-5-elder@riscstar.com/
-
-I clearly see code like:
-  syscon {
-    clock@ {
-    };
-  };
-
-so I do not understand what pci-ep has anything to do here.
-
-What's more, I still do not see any usage of these clocks outside. And I
-still did not receive actual answers (or I missed them) how these clocks
-are routed OUTSIDE of the connector. You said for example:
-"Ultimately the TC9564 SoC has a single 25 MHz input clock,"
-
-but that is input. I did not ask how this device receives clocks. I
-asked how the host receives the clocks from this device.
-
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - toshiba,config-syscon
-> +  - "#clock-cells"
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/toshiba,tc9564.h>
-
-Looks unused.
-
-> +
-> +    clock {
-
-Anyway, if this stays, that's a clock-controller.
+So you fired up your OpenClaw or whatever LLM tool and don't bother to
+slow down, right?
 
 Best regards,
 Krzysztof
-
