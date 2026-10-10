@@ -1,106 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88423998A6;
-	Sat, 10 Oct 2026 09:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F8F3E7630
+	for <linux-clk@vger.kernel.org>; Sat, 10 Oct 2026 10:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791624632; cv=none; b=M9onbWj6vLA4abhnheA7H3lmzsN9J5Va6vVykrODHz7LueFPqDtZlP8Ax3Q2BQoEGfsJjfEPA8HGtVvXDARRIrd5TtsxjUMjMW8zHtUC7XjqSkw6tN8D4HMM8WPirFQytExM6aFqiqfVJLmBQT/1+wVtWu2kcLyS5Q+kZVRYrbk=
+	t=1791626821; cv=none; b=cKq3FupBhjTICn45zckBoHpiP17XrvIAWphOkJGGQ1C3gASG/yZYQNnWM43+uLzRKkrYTWB/iBttY5zCrxZcIJHMkCStDFsdWCdERZm5huklwDS7rrDCnFiYMvIo6yeGEESx+oESALhunheXLnWrl2ypfbAMKeqzHXvU91gxTSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791624632; c=relaxed/simple;
-	bh=FPWTtZnRa/XbFRcpNgUFJ2yRAoGZbSTq3vkG/aBIgAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IixlfEd6wwyUtx4EB/Bt27VFdp3w5KjiYTwNx9RlsGdbRfto3eKHQ3ce+g6+yY3J+f84Le7Rmbv3rwKM/1aKxvJfW2Z+IdnwcyzuUhRO4SBgr8DGfklO8rxXCvGTKYMMHxAjauXN5+bO95CmSSWOkleXRUHlA1mgBxS2+AGw5VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNEAqFUT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791626821; c=relaxed/simple;
+	bh=G+OmJo6KHk1Dz1mbCFgc9+lDQS9rLz/nyFsb9jkmjTQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nxajhPou9gB9mZdFjOZUxN7NIU2+4krV8xwqvoU9Zybqf+dyUXelzN5Lmpw4pApRrXlBl1B3SXAfpwe6Z2acjhqN6otCz4U+Ml9jT5JHvufF5cBQvdaoJ8U1+NTaqfl06CBIlx4t55/muJL4vGlqDQp6MY0MIUcq8Nk/WoAeOzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=d68cN/PS; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNEAqFUT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1165A1F00893;
-	Sat, 10 Oct 2026 09:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791624631;
-	bh=/+Vxq1o02mDWR1BNJWOLcsj18DVs283fdRVapx4nsXQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=VNEAqFUTMQek7CuGdGDawVNRARU5W+S89JEu9ORpuE2mrcglPIUbPwjcDAR7xcMHG
-	 n+BtKu1qLFE1AgHte/9/5d/dRDT/4TSgxi4my5/zXbZ+GejYYFBMGJ8uLHBEC4r718
-	 bDtGeUl9kPy4x+USV2utU2uUc6uMbLMAdYTy5W3pFJvakvlYiJHc3mcPllMm7ncRtW
-	 NlRMjpB6p08omkcpG6MKU/Ns9Z84ipc5xWrbSvWZ3VIb7JlMKYWcggXnAproFt6f/u
-	 Y/YhegpJoUKWxInNFDco0NINblZU1VA6lsEa0l5U3FerWclWJsnC4g8wSkFQPeE4y2
-	 fF+D/NDfvO0jA==
-Date: Sat, 10 Oct 2026 11:30:28 +0200
-From: Vinod Koul <vkoul@kernel.org>
-To: "Christian Marangi (Ansuel)" <ansuelsmth@gmail.com>
-Cc: Brian Masney <masneyb@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Felix Fietkau <nbd@nbd.name>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] clk: en7523: Add support for selecting SCU serdes
-Message-ID: <asoFtO0sw6DnTJ6K@parshuram>
-References: <20260915125226.20579-1-ansuelsmth@gmail.com>
- <179000484817.707534.5059164498545591038.b4-ty@b4>
- <CA+_ehUzrL9qHe92tE0CeaOMAD1LXGuK79t5mZGv+bp2sCas_sA@mail.gmail.com>
- <asZD79RRF4u5OJdn@x1g10>
- <askXRONt8Si264ve@x1g10>
- <CA+_ehUw7374O63trsUORkfMbhMJqiXn_WkC_KL+hTDnLAa2=Gg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="d68cN/PS"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-48c4649b3aaso273789f8f.2
+        for <linux-clk@vger.kernel.org>; Sat, 10 Oct 2026 03:06:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1791626818; x=1792231618; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ElWk8fKGydcvVdEATDJFrXGRGjE67AASQOUO8YEQCOc=;
+        b=d68cN/PS96BgvaIVEbW2urVOHeTHY7+qz2vq3ZYroJ7w6D2flGUHlTYleNncFvf4vO
+         puUb3WbeX7NaZjNdQ17BYEefqc7aCo6zwUFZ//ichHmHw2uvxkUYlqip+MoobynRH+Ma
+         h46VywE+M2rCQUhdXxzsXBSp2DNt5+uNyLjvoh0yGSVenUen61/flVwvUqVCr3FtKWKO
+         zY96L61c0UjNnt1Sxg1utoRuwI4rOX9hJdDjmmXYXprqHZJ+4cF2h3Nbq8Oc+v51FzEa
+         VjFySdR3C4kLh7p/pvbtWP0Lrnvl8JKnt58lPu6Km54GKt3h6KTjcga9YUY+czD/duZk
+         7xdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791626818; x=1792231618;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ElWk8fKGydcvVdEATDJFrXGRGjE67AASQOUO8YEQCOc=;
+        b=jc9IYuo3AO6G41Vh1YimCdywTIQzZQblhs7IcIutxtefPMHclQPL2Jux0M5s/Uim9T
+         9CkTCqMMCZ6DCUs2okYtJJldZyWuNYQr8Fa7cgqRcAmm9iUc7dri7gbWCNknjk4eWkDJ
+         iXheP+BHMzZ7/8QWDIFiRNeE94TX8XA51TZk/UuTGAJUGXIr2NpX/TCxfYjb/wgJ6BnO
+         A4gOXvTuT35jWOchuG/Zex/nna0Ro8yla2zHtMNvKkCCCt5e5NfjCxEUYGVPlNZoaedQ
+         wa6k8E1W08Cxo8HKmMlsprufPVhjuTb6PZCNO7f7QKL37087FDq6nDe3BQJhpwTkBjPU
+         NY5A==
+X-Forwarded-Encrypted: i=1; AKwUvBwm99QbzkmoKyukt83zG5hytbq9ihN9TQg736GLQRA8GwPe68/oOViTE1Pe59L8j5XyuVO7OZnG86w=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLv4oXxOd7nCpvuTslhKjMvwq6vvDEt1YOwiyaY+phlDVSCUIbC
+	xeh149XlBdv0fBxQR1kfRmvQ0as2/YyFQjRNlypzM6bonLcncl7hgnWjlCkLTjkZ+bY=
+X-Gm-Gg: AYBFou0d0TNNTRg8JSwb2jydvWegB1iGlcxRCq/wyR2ttWw/Qlb7iosirBC8UZ5OoEj
+	Hmli0MBtKfaYEbGlUUcgkwMYceIc3a/ZgmzPkPepWQC93BuGCWNQqtCHNwmh2STzVwmoUchxuXi
+	nLGTAQnMA1H7MJ1t9VnhsAaXtEjKgnLI6l5osNWSqT5/3lqC7gsyjDqBmSSEJKE1ASSQOaHI5SQ
+	cag3TcZSWBLkSTyz4HRxLwkbPz0OJafazM3yYMO7fnh+2ExVKLadlzZKuiP45K6+6Upl3JGNlVG
+	TZtHlI//vCjZJtKBXsmKkvMhnVD+IWcq6ZsF7eTeYgEMDLu0FiMI6I2wMrWnidgS1FPAXNb6Wb0
+	esUl5ro9L5dpHJ7E8gj2VvUblZFazXRFL7MdW3gON+gm05IKaulL5moF8SNX/e7Vy0vVqHsPV+S
+	3OEU5B3h4FFrV82D5aJnT2snVVURpX8jdyJLR60nOU6QPZ71olmB0iil0ZRrmNotYNlGAlcdiy4
+	8TsJEeTuQ4ePj5Whg==
+X-Received: by 2002:adf:f2cf:0:b0:48a:fe3b:64b7 with SMTP id ffacd0b85a97d-48dbacf6ef6mr5914261f8f.53.1791626817764;
+        Sat, 10 Oct 2026 03:06:57 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48db9ac6a91sm7389151f8f.41.2026.10.10.03.06.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Oct 2026 03:06:56 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Lucas Tanure <tanure@linux.com>
+Cc: Brian Masney <bmasney+clk@redhat.com>, 
+ Chuan Liu <chuan.liu@amlogic.com>, Jian Hu <jian.hu@amlogic.com>, 
+ Ronald Claveau <linux-kernel-dev@aliel.fr>, linux-mmc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20260905153234.133217-1-tanure@linux.com>
+References: <20260905153234.133217-1-tanure@linux.com>
+Subject: Re: (subset) [PATCH v2 0/4] amlogic: t7: give the MMC bus pipeline
+ clock real consumers
+Message-Id: <179162681558.457042.13976808955805070898.b4-ty@b4>
+Date: Sat, 10 Oct 2026 12:06:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+_ehUw7374O63trsUORkfMbhMJqiXn_WkC_KL+hTDnLAa2=Gg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16.0
 
-On 09-10-26, 19:22, Christian Marangi (Ansuel) wrote:
+Applied to git@github.com:BayLibre/clk-meson.git (clk-meson-next), thanks!
 
-> > > >
-> > > > is it possible to have a stable branch/signed tag for phy subsystem?
-> > > > Commit 11952173d8a180ac05641775f80bd6946327478f is needed
-> > > > to permit correct compilation of a airoha usb phy driver.
-> > >
-> > > Yes. I'll have to rebase the clk-next tree but it's no big deal.
-> > >
-> > > I'm at Linux Plumbers right now and I'll send out an immutable tag in a
-> > > day or two.
-> >
-> > I looked into creating an immutable branch, however as I mentioned it's
-> > going to require rebasing clk-next (actually clk-pile). I'm willing to
-> > do that, however I realized after I sent my last email that the laptop
-> > I'm working on right now in Europe only has access to my kernel.org
-> > account. So I'd have to rebase all of the prior commits and add my korg
-> > Signed-off-by since it's going to change the committer on lots of
-> > commits from my Red Hat to korg account.  I don't want to do that.
-> >
-> > Given that we're this close to the merge window, I'd like to avoid any
-> > kind of risky operations on the tree this close to assembling a pull for
-> > Linus. If I can be convinced this is particularly pressing for v7.4 I'm
-> > willing to entertain the request, but I wouldn't be able to do it until
-> > Monday when I'm back in the US.
+[4/4] clk: meson: t7: don't mark sys_ampipe_nand as critical
+      commit: 363f97a1ce635b86be7fd263d56a040fbd87bdbb
 
-I would be on same lines. Considering we are _very_ close to merge
-windows, I would be very hesitant to rebase my tree
-> >
-> 
-> Thanks a lot for the effort. No, no need to hurry on this.
-> 
-> It was ideal to have as it's currently blocking 2 other driver for
-> submission but it's not worth to cause all these rebase and resign.
-> 
-> If minimal changes are possible, it's totally ok to wait for Monday.
-> 
-> If not possible, then rc1 it is.
+Best regards,
+--
+Jerome
 
-Yes lets postpone this to rc1.
-
-Also, in future it is strongly recommended that people request folks for
-immutable tags when patches are picked (ideally mention in cover) so
-that dependencies are taken care of.
-
-Thanks
--- 
-~Vinod
