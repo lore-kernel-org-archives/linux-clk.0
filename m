@@ -1,97 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135C819DF6A;
-	Sat, 10 Oct 2026 15:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1646D498935
+	for <linux-clk@vger.kernel.org>; Sat, 10 Oct 2026 16:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791647695; cv=none; b=ex+b5nGOctiw5dbUoWxK1qI63lxckG79SxAV6aTblqOz0OIzTy5PoRZ+2yDwlHOnk2FZrL+phK15IcnGOYYigXgoWgA26ibvCfPgTyBiaWd9Fveyy4vvfn4bdbJZSla9rf6eL5gL/QYKPW5lYt6Y1zu7fwOprUYSG6ceOVj6mII=
+	t=1791648112; cv=none; b=VN8FjCdwI8Rmna3US85WVQnzmezcgvp2R+owX9bo4fr7pwSNGg5o7L3UBFFXSNLiqnHdZyIIHcDHW53mCjiJzg9g1VRP5ZXs2hhBxRrMKBMbrtTuJRsHiltvvKSW81bSd/zEIfhHtJwuoazeGwcGh8HlkMY1aK674TAA28VjCkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791647695; c=relaxed/simple;
-	bh=0WnTX6JFAKOwNBzueJdRfq3UFsWECoWcNzTd9e4Y7Rg=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=br4xvSM6q19hW8OcaOCjRNG/Wzcu+1w+ubb2+8VWjXepTXFVdyEFe4POjY+TltUfE4OlFxuI5gawJzzo78362BTe+3M0LRwrYZXkqaMgAsgNcha6Nxra7fccfCVANukEx4IEIQ9ynIAhz1y5N/3tloFL6VcjU5mvMJR/vFCiu0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7XUcIsB; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791648112; c=relaxed/simple;
+	bh=zTEIKTFLzHZXtE/A3+jk/VVlG2VZw/zJplZ3MmFf0cI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ye4qymWZ0oUAy8C8VJhvx4qW7VKf1NfIP3ruDGbPsX0o1WAdXcmMZlljETMu7wYunkhCEhSUyICWl3LETPYeFMiAq7UvSYkaIlwmqrLOIfKXoAvLWWtQQ8JslzZaPYVFUcQECcF5kHj/SwhO/8J9ocb/gDegNM4+nUNUbmksxT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=npTm5TEV; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7XUcIsB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18EA81F000FF;
-	Sat, 10 Oct 2026 15:54:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791647693;
-	bh=kag0Uy2qggUnzDfGrLenknHgY0Ukpn3ly0Z92YI9DdI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=X7XUcIsBAkomm7lMoox7C8ecbaXYKE4GRqCeLGVc8byA7/Lp7TVQxzCETpgxKo0gh
-	 4+kwBXj0JLEpyM57FR511Ym2Dd2CKJLM5OL1zPZPiefW1osRpNPLvc/kCnAROUnJEx
-	 zrGvlX/qi2j18y7o5BsN6KxgB7Cyq8FsQHbTDGJdV7RhxLYP84Vtn/aOMOkgv2UOxQ
-	 uUkkrlYfnCFu1NJObfqswOKdmZXEO5KdOKg93+mOLgTMe1By0QG89MA8NG0CJAV8ZJ
-	 ZVFDlyJgCNK91MFtMQ9Deett+6AMp/fUvo7Jw4nlw7hm4yBz6qaFGcUA6KKd2aqjBv
-	 V70HaepaU9v+w==
-Message-ID: <sashiko-outbox-166706@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v6 7/8] clk: sunxi-ng: a733: Add bus clock gates
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Junhui Liu" <junhui.liu@pigmoral.tech>
-Cc: linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev
-In-Reply-To: <20261009-a733-clk-v6-7-ae8178fce7e8@pigmoral.tech>
-References: <20261009-a733-clk-v6-0-ae8178fce7e8@pigmoral.tech>
- <20261009-a733-clk-v6-7-ae8178fce7e8@pigmoral.tech>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 10 Oct 2026 15:54:52 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="npTm5TEV"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-48b0584ad71so346730f8f.0
+        for <linux-clk@vger.kernel.org>; Sat, 10 Oct 2026 09:01:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791648109; x=1792252909; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=MEIQwNWMcMY7HhQDtjEWtbdNYuCPb8sPCT17bZmYgvk=;
+        b=npTm5TEVWD0nmpjY9pVMJRTtKdSreUOgjWhlzXsl7ts1IujCYWa4EdocjF6wCNvIxC
+         +R2W5x/FJwGcn5kHgKpHD8Px26I2Pu57rV5xNjbzVM9riFXItyAbJ1KVQpdYNOUkcgVj
+         mCTvERjo1jZeCvtBr2/Oh7YU6H63Qev4/6UvJDHTV0IdZ0fpq1t5bgq99T5O1pO84RN8
+         cGMUqr2CDjguq6zCTttHHhLPe5bgajgvqhqsI7739UUenDl+XOo1j0Wl8cc5ASQkwJtf
+         cbgUhPQNCIXQRoSck7oxXmcvCuvf+a+m9Knjhlmj5MbHw89U9FFXqLpK3VuX9+qrlkGD
+         Xucg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791648109; x=1792252909;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=MEIQwNWMcMY7HhQDtjEWtbdNYuCPb8sPCT17bZmYgvk=;
+        b=DQMf8Q2bq1xjMeT1UklEizW/Sa0VUPPtcbPkoD3+La7VFmZngK2UZgQkms8k8s1XG0
+         C4VEuyT35NRVdmJt7QcvZ8byutj6/pwRPGp9P40RuqFyrRSWBAZDWifhBB21ukZu7K6U
+         rferqqcNiE0RVO20QJ1BmPpaPXh9kCjqbDsCuvvsvJuzVOH3rzGrOvHCDl6hvp4qU9P+
+         wZG9+vLH4ACsrTU6J4Rfex9U4/hYhehcjcSW+AXBswutRNsGkLhf9UxQPCYo19C+8XeO
+         c9nETJrNnwFIlW9kZzEKp0onKf9cXLe2BSwBb1I0aNMnowuC1r+QvGpE4C/IZ+43XZUZ
+         PZ0w==
+X-Forwarded-Encrypted: i=1; AKwUvBxFI2z9lF4plNSY8cMr1Lgbh/FfSsTFhJcnfPUyN8yWqffiKkeP83Iy9CrcyzHbpGmSs+lPSKW+MUg=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIy8Xt4zWg+sXs2GNWgMMk8MEQexrjNJXG+7aSqG6IpDzD3ZQtk
+	2VhgyZOUicaCdJX64gD9O5YUtW80AAgLNP+JjLBBUpIVx74gb9H68nGmxHBcnzP0uaA=
+X-Gm-Gg: AYBFou0OA0/UQWGqqDcsiXIHzSizF1Ejp8ElHmQHSFQqWKi2nTsaAQbBkU6vKT8oHKs
+	9XSD03SnjgZ/Z8L5DAO1CzNcobnFuilRIaSJwYQM+WFvHN+bp1h/Ig+r9ZFFGlLjZqhderjiz4v
+	ddTyrm+lZMRr47FHH/+k8MLZ2wRWhdb7wXPe05yPdWs6qTYCS/goFNa2OnCsOXWWGkOITZ0x4z6
+	Hy06NOJ5PNBpxdxgbSQnPtzn1NENLoQXXiwj3bLZ2TFK+HsQ/LVWT2KULQeh5SIxgeJv7SZPjtQ
+	vZ47v0fiIksPjZOqaEeakcnOUkAp37PiLTtjAVy2Hov7P6OBgZ5JchLM5ni4ChK7alL+TsOM0Lp
+	DFtwoc8/Motd7fY6eanYvu7EI39ZgX3LEerYIlV+rQZZeE/w/ptp8koSe1gKTyL3aa4z+tG05we
+	i0anDyGLkeoNmUnBHB9HAswcf3GaJF6q323wPqJxbtdZ8MMPn/fyeMXhBeNLn0MUgSag==
+X-Received: by 2002:a05:6000:184e:b0:488:8904:cf19 with SMTP id ffacd0b85a97d-48dbaceb60cmr10490477f8f.10.1791648108898;
+        Sat, 10 Oct 2026 09:01:48 -0700 (PDT)
+Received: from luca-vm.lan ([154.61.61.58])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48db9ac6a91sm8579603f8f.41.2026.10.10.09.01.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Oct 2026 09:01:48 -0700 (PDT)
+From: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+To: linux-mediatek@lists.infradead.org
+Cc: Luca Leonardo Scorcia <l.scorcia@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: mediatek: clk-mt8173-apmixedsys: Invoke platform_set_drvdata on probe
+Date: Sat, 10 Oct 2026 18:01:30 +0200
+Message-ID: <20261010160134.112136-1-l.scorcia@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] clk: sunxi-ng: ahb_store_clk is missing CLK_IS_CRITICAL flag
---
+The remove function for mt8173-apmixedsys needs drvdata to correctly
+unregister apmixedsys clocks, but the probe function never calls
+platform_set_drvdata. Add the missing call to platform_set_drvdata on
+probe success.
 
-commit f3ca9c131f39f726826090f6af6752e7b39c004c
-Author: Junhui Liu <junhui.liu@pigmoral.tech>
+Fixes: 4c02c9af3cb9 ("clk: mediatek: mt8173: Break down clock drivers and allow module build")
+Signed-off-by: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+---
+This issue was identified by Sashiko while I was working on the mt8167
+apmixedsys, but it is present on the current mt8173 driver too.
 
-clk: sunxi-ng: a733: Add bus clock gates
+ drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This commit adds bus clock gates that control access to the device register
-interfaces on the Allwinner A733 SoC. It also intends to mark the ahb-store,
-mbus-store, and ahb-cpus clocks as critical to prevent access breakage to
-boot and storage devices.
+diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+index d7d416172ab3..65dc4489a09c 100644
+--- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+@@ -179,6 +179,8 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
+ 	if (r)
+ 		goto unregister_ref2usb;
+ 
++	platform_set_drvdata(pdev, clk_data);
++
+ 	return 0;
+ 
+ unregister_ref2usb:
+-- 
+2.43.0
 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-n=
-g/ccu-sun60i-a733.c
-> --- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-
-[ ... ]
-
-> +static SUNXI_CCU_GATE_HWS(ahb_msi_lite0_clk, "ahb-msi-lite0", ahb_hws,
-> +			  0x5c0, BIT(16), 0);
-> +
-> +/* This gate controls access to the storage controller MMIO registers. */
-> +static SUNXI_CCU_GATE_HWS(ahb_store_clk, "ahb-store", ahb_hws,
-> +			  0x5c0, BIT(24), 0);
-
-[Severity: High]
-The commit message notes that the ahb-store clock should be marked as
-critical, but the definition of ahb_store_clk here uses 0 for its flags
-parameter instead of CLK_IS_CRITICAL.
-
-During late boot, the Common Clock Framework automatically disables any
-clocks that have no active consumers holding a reference to them.
-
-Could this omission allow the framework to inadvertently gate the storage
-controller MMIO registers, leading to a system freeze or storage probe
-failures?
-
-> +static const struct clk_hw *ahb_store_hws[] =3D { &ahb_store_clk.common.=
-hw };
-> +
-> +/* Keep enabled for access to the CPUS domain registers. */
-> +static SUNXI_CCU_GATE_HWS(ahb_cpus_clk, "ahb-cpus", ahb_hws,
-> +			  0x5c0, BIT(28), CLK_IS_CRITICAL);
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261009-a733-clk-v=
-6-0-ae8178fce7e8@pigmoral.tech?part=3D7
