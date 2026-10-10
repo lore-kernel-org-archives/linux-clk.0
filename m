@@ -1,63 +1,63 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE47A49A3DE
-	for <linux-clk@vger.kernel.org>; Sat, 10 Oct 2026 11:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2998649B1EA
+	for <linux-clk@vger.kernel.org>; Sat, 10 Oct 2026 11:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791633376; cv=none; b=C/p/zQjwYgYQ90aEaC8pou9p8hOH1q4h5ytdga7oqyMcb9IxtFQQI95s8y0rdjr36aUwKMaQjYjBRNVg5wLBZO3mCy22+1SlivyC1MYxhSOKxmeR7RU3BFiWl14aiZVLD2O2jAtUNV6F78hEhAP/W4q02JJiLb8sl9KiDXpk6NU=
+	t=1791633381; cv=none; b=i4LgT6d/AwUz8v6GpWQfk28eBa24HwEAWOI4Unc2lVD2RLsMCddUwBHeEEJAZUmkvpveIhLSwuM/alihf2KSCYF+7v0RTAKSlJHrpyB8roAVa+FzikKIByNyZEA4K1dRk9tCmkAIOfuVk93awO7+OBHFKlbYebjl8EhDU//4tLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791633376; c=relaxed/simple;
-	bh=FsWmx/ObrGOwpry4gMTdMfUvKRBXwQpqujcqAmfgbec=;
+	s=arc-20240116; t=1791633381; c=relaxed/simple;
+	bh=IJBQElIzm5Wt076Ytkpdk8RoCfkW2kryOy57Girj/r0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eSNduZs7RZjhrSg37XNwNMWNGLYPz9JqzrCJJATRoWW1TjI2B1YxdddEjVIMvrvK+1vfkbgr/M1TEOy0oCuf9nesMYOddJmtC9hkmga5YT7GChH7VIgPIclq1QKWYl/yS6OwsPo0wJfnF+ncIEsREJgLF4jACWHPXNKcdXBlxi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oyOOqCeH; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=s07hpnthEdNZKuswMHI+eNTwrTlI0ah3cypHHwRMydk9qcAoDCpYawLNaVUKzYz+s+IG1VQPB8rHt7FGTwteSfHaqlvAQIRRTtxt39haLeBIdIMSZBeXkRe4j6fc8JgqRVyahptbwLWTEQjlNEyWOZrEgjQBI3jcZp4Xa32x6/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V5f7Ht9w; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oyOOqCeH"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4a018792ab3so4788635e9.0
-        for <linux-clk@vger.kernel.org>; Sat, 10 Oct 2026 04:56:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V5f7Ht9w"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a140e7405dso6731835e9.3
+        for <linux-clk@vger.kernel.org>; Sat, 10 Oct 2026 04:56:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791633373; x=1792238173; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791633377; x=1792238177; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Qd6y2NiBciAjRKr5ndbJ7uSamNBWAtmvHRlzXouwwJA=;
-        b=oyOOqCeHYt2nT2ehy6mS9StH0zpUWaT2SvYbcrfvAXtfRtW5MDgUJF9yTovZ1o5nKu
-         fDbWqh5wGIk/ReEqi3R+3T8pJ0YyX6LBw26+UZE8Mlp95TmSxiPKTgzyMm28AzCK93wD
-         d6WCZH31PG/9vvvg47RBM8KJ9uGUzv2W1Jxpxb8blOm1KMS5eLnL6DnhnP1RH9Fx9cet
-         DUUVpA5z/+1HWvz8yRLVigM1JFK77RZghtEXllqkPjNwZkycsgl+OyAroMUR/U8c91fv
-         94LIzYusyjpLEeWs6aMrzUNtawZ4WI4n3ttfQe8R0TNpv3UWGUpuAkcBsJWWhwOnlyvR
-         kvRQ==
+        bh=XawY6rGwERNjw0CFRz+0ONBwu0wfWrlBMNsKmysKmec=;
+        b=V5f7Ht9wiRAzFHrKQ3hQAwgE9gUdxehpanS8Ckvjq6YyNtKjMWd3/VmCbXE38MBlWa
+         d1l3yEqMofX/Es2xCGZZG+PZiRE/t5E3XdSA9fn8yLbfLwGDAozJAARAKOWGOtPezx25
+         9q1eYfXBzeFdBTX6noBQki0VufIpaOOSeRQ3pVzGjdjpnJt4FKP4DPihAaFnKuxSb1Oj
+         +ntZP3OMsbi9TkJmFf00JuuWY2C9CFZSyh73neAXHnRIuUbW50M5gaIARtUjsn623hrU
+         2eMJgZV1PZXv+yGwgYM54TRGFvHCqakcjC2QccsLIA+WZJCpLOcAtrrJMX1MzL8LayuV
+         7MPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791633373; x=1792238173;
+        d=1e100.net; s=20260707; t=1791633377; x=1792238177;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Qd6y2NiBciAjRKr5ndbJ7uSamNBWAtmvHRlzXouwwJA=;
-        b=P310D7JrmMyJgurnXWP3ugh5Ws7fJlBf9HtjnP4ct9QEAX/z8Z3A+a/y13uvOwmwfy
-         9jl9zPLKfPnA1wIWeE+jtQa5FhZ6UXvZc4yRtMZXx5cOxemyfeCfvoZXHzhsirXH8S02
-         YaW0s8Fb95RQ4LRs9sLiH4RHoSAKPHHP4KhP17qe44XT+dCuinaP6GG3wd70CDSnMYDm
-         c2RjjKa7jxWJkGTBR7jwgigUb3uAZ9ONw/Za/Mxz45gCDCJwDInA5wBnqPCDvHJMueM6
-         h9Ppub0O4DjDk0UcpdE9QvFnHMnp6b9O4QRK4bu71gWikFiVpsCznp7YwV99tG3kzN+C
-         dDBg==
-X-Forwarded-Encrypted: i=1; AKwUvBzZWan0dESGE6FVPRgK2smb3m53EJ2T51IShcKTXSho9+3/c5Gy8bnLBwDNeR549dXpginidQBtYwQ=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKsOoCpWCyANHaSjAYzhmI8Dl5uFu2rLG0gAEaQ9wQcr0cDOJMz
-	Xji0D4CDJrFguwI6gMqu88oABeu8prHFz0Lk0SkGjFvgoobauCZa3bbq
-X-Gm-Gg: AYBFou2yaIc/9rPGNe0f27ayheJQio0mo1l4uGBF5OrHI4Y6txhPrkkuNMsllgxBiCA
-	yXK2LB8WhUyBWS1jYAydFq229c0oqGuqqp99wWxGhpS4aDeQoAVWSGccnlSWglqg4TzR7Zflb2R
-	uJzgXyyLvZJSqjc+ZUsL/o2T8vu3aZWdtq83aXjynXxj0tXkNJqfiOq7NOIfgnvL7lf/9TKX13r
-	YdU3Oj33sSs1JBqyNcr0YjUAc3tn/Guo7dt2A76LYLXJR0hqU+/E51jhZrihh9Su+AKwKM9cO0q
-	pH9B+3qTLGOuzHLkzoiJ7nc7UUM7FBhIL3PIy6SHJkBF6d8TOzmlZrN4XYLY4aX7FgwFlT0vf+1
-	+KPJQk0TgDtTLUneveqXIu7bBGEd7tLgIhHfVK3hZCcEd5Oik4PKJFI6tAFaG/tcSghTn/9DVIW
-	eyc4jbhhwmsXZLSwi2g67KndxA5F/gXrwcQ/S47culVP+xteQsgSFXYFPEHaUMsomrpA==
-X-Received: by 2002:a05:600c:6749:b0:4a0:1a7f:2abf with SMTP id 5b1f17b1804b1-4a18e49d633mr79294265e9.7.1791633373147;
-        Sat, 10 Oct 2026 04:56:13 -0700 (PDT)
+        bh=XawY6rGwERNjw0CFRz+0ONBwu0wfWrlBMNsKmysKmec=;
+        b=DpZaUh3ok9T13pVUM+wgj9dG4xfea8eFJvEnDwYhNPO9DcQRI2rG9vIx8MUD+zV+kw
+         Z+Ue2I0ouK3QLPLRu+AQCkw//nekaxc2TCaBPTOGkw3PU+wmpf5puLUAq6T8+57v6l6a
+         47MMJ7hTsT6F3hNhyYVM/UJLEl0blkh5cnSHhiQNWKfZuuPhT5g9Rn7UOlI6jzO0f7dL
+         tr4ULgzqwyDpTJN5ChMHEYY8iKZ/Rj/fJYHC9+Sa8sgSbHSxBPwiBB6oTgp2HYaHkEbF
+         MQ00dhCweo2WUbF/fcxu60pllj7DKF7Mca+yJ+cM+0rhL6w9O4LHERFI9tgDNJJA4oe5
+         BQ0g==
+X-Forwarded-Encrypted: i=1; AKwUvBwKMhyVx48HbOQInBUVBqSKCa9v31YYH8IptNhWNutjLv0oPQKttfmyOzHLxd2z8hFsgFvfsYSTxLc=@vger.kernel.org
+X-Gm-Message-State: AFq9FYI8aJBlAtXOEnsc9D6CWv2j4aWORQYEVflaSaQ1kdZcx1KtIdWe
+	HwauQsq9de0jUvObH9tmBEY3qhOo16TvLcWBfRve9WEHEBttrUJ8ZWN0
+X-Gm-Gg: AYBFou2aGPVnqMLlXlCiv3f4EYyu0si6Tsl2erAIKYQeKu7lsEaQIJIRJbkTt6chHDo
+	jWMEfJ6pb27fQKQhNLgzl7M9ksGdMQFBz3Hik6Jw2GHvIcOxvRy65FhUo+BQQ+Sf3XmGQ98hcbf
+	biIzP2QCAZba0h5n5x83GiOuf0KOV57Dkj5iRbE4OTkIdSsAaZyJbgXNNuHqxaUdGvEhEPDLBpd
+	GDin59tyNhtqSdLo/t4ieZPxAY9whPeg3+4IxGFVVY8Bb7T+2XOvo8tsrBgOQjavJD+ZOaWWg9r
+	nY3SrsoYibojgQr9fHGLzPhxRYQXzZqx+nWDG75QFNzLZ9mJKzvR+1nzNrWljllmPe3NHJNaBfG
+	h4ujCFL3EPJcn0eEPqdnRq36y5QpwqWD6zmPHtrhN4c55M4GQTu5QWWSr8BERerOmkn63zp+flI
+	BKW7IHxfJF5NkXuruOQ0Gm6xnrvSm1mT5cdkwSqCPtuogtvnFnLDYOyVyDzVoZablYOw==
+X-Received: by 2002:a05:600c:820a:b0:4a0:98c:e082 with SMTP id 5b1f17b1804b1-4a18e4a3f0dmr88323785e9.13.1791633377176;
+        Sat, 10 Oct 2026 04:56:17 -0700 (PDT)
 Received: from luca-vm.lan ([154.61.61.58])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48db9aca657sm8746340f8f.43.2026.10.10.04.56.11
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48db9aca657sm8746340f8f.43.2026.10.10.04.56.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 Oct 2026 04:56:12 -0700 (PDT)
+        Sat, 10 Oct 2026 04:56:16 -0700 (PDT)
 From: Luca Leonardo Scorcia <l.scorcia@gmail.com>
 To: linux-mediatek@lists.infradead.org
 Cc: Luca Leonardo Scorcia <l.scorcia@gmail.com>,
@@ -88,9 +88,9 @@ Cc: Luca Leonardo Scorcia <l.scorcia@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH 6/7] drm/mediatek: mtk_hdmi: Improve the secure output bit toggle
-Date: Sat, 10 Oct 2026 13:54:06 +0200
-Message-ID: <20261010115539.9237-7-l.scorcia@gmail.com>
+Subject: [PATCH 7/7] arm64: dts: mediatek: mt8167: Add HDMI display nodes
+Date: Sat, 10 Oct 2026 13:54:07 +0200
+Message-ID: <20261010115539.9237-8-l.scorcia@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261010115539.9237-1-l.scorcia@gmail.com>
 References: <20261010115539.9237-1-l.scorcia@gmail.com>
@@ -102,45 +102,100 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The secure output control bit toggle for mt2701/mt8167 currently sets
-bit 0 (DEEP_COLOR_EN), 1-2 (DEEP_COLOR_MODE), 15 (HDMI_PSECUR_EN) and 31
-(HDMI_PCLK_FREE_RUN_EN) in the same operation, but only bit 15 is actually
-controlling the HDMI_PSECUR_EN bit, the rest of them are already being set
-in separate operations later. Add a define for bit 15 and clean up the bit
-update operation.
+Add the required nodes to drive HDMI output on the mt8167 SoC.
 
-Fixes: 0fc721b2968e ("drm/mediatek: add hdmi driver for MT2701 and MT7623")
 Signed-off-by: Luca Leonardo Scorcia <l.scorcia@gmail.com>
 ---
- drivers/gpu/drm/mediatek/mtk_hdmi.c      | 2 +-
- drivers/gpu/drm/mediatek/mtk_hdmi_regs.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/mediatek/mt8167.dtsi | 62 ++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-index 9896eaf81e7e..781177a1f190 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-@@ -63,7 +63,7 @@ static void mtk_hdmi_hw_make_reg_writable(struct mtk_hdmi *hdmi, bool enable)
- 	if (hdmi->conf && hdmi->conf->tz_disabled)
- 		regmap_update_bits(hdmi->sys_regmap,
- 				   hdmi->sys_offset + HDMI_SYS_CFG20,
--				   0x80008005, enable ? 0x80000005 : 0x8000);
-+				   HDMI_PSECUR_EN, enable ? 0 : HDMI_PSECUR_EN);
- 	else
- 		arm_smccc_smc(MTK_SIP_SET_AUTHORIZED_SECURE_REG, 0x14000904,
- 			      0x80000000, 0, 0, 0, 0, 0, &res);
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_regs.h b/drivers/gpu/drm/mediatek/mtk_hdmi_regs.h
-index 2050ba45b23a..e0c35277c553 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi_regs.h
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi_regs.h
-@@ -219,6 +219,7 @@
- #define DEEP_COLOR_EN			BIT(0)
- #define HDMI_AUDIO_TEST_SEL		BIT(8)
- #define HDMI2P0_EN			BIT(11)
-+#define HDMI_PSECUR_EN			BIT(15)
- #define HDMI_OUT_FIFO_EN		BIT(16)
- #define HDMI_OUT_FIFO_CLK_INV		BIT(17)
- #define MHL_MODE_ON			BIT(28)
+diff --git a/arch/arm64/boot/dts/mediatek/mt8167.dtsi b/arch/arm64/boot/dts/mediatek/mt8167.dtsi
+index 27cf32d7ae35..ab76e0637eb1 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8167.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8167.dtsi
+@@ -112,6 +112,27 @@ apmixedsys: apmixedsys@10018000 {
+ 			#clock-cells = <1>;
+ 		};
+ 
++		hdmi_phy: hdmi-phy@10018300 {
++			compatible = "mediatek,mt8167-hdmi-phy";
++			reg = <0 0x10018300 0 0x20>;
++			clocks = <&apmixedsys CLK_APMIXED_HDMI_REF>;
++			clock-names = "pll_ref";
++			clock-output-names = "hdmtx_dig_cts";
++			mediatek,ibias = <0xa>;
++			mediatek,ibias_up = <0x1c>;
++			#clock-cells = <0>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
++
++		cec: cec@1001a000 {
++			compatible = "mediatek,mt8167-cec", "mediatek,mt8173-cec";
++			reg = <0 0x1001a000 0 0xbc>;
++			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&topckgen CLK_TOP_26M_CEC>;
++			status = "disabled";
++		};
++
+ 		iommu: m4u@10203000 {
+ 			compatible = "mediatek,mt8167-m4u";
+ 			reg = <0 0x10203000 0 0x1000>;
+@@ -120,6 +141,15 @@ iommu: m4u@10203000 {
+ 			#iommu-cells = <1>;
+ 		};
+ 
++		hdmiddc: i2c@11011000 {
++			compatible = "mediatek,mt8167-hdmi-ddc", "mediatek,mt8173-hdmi-ddc";
++			reg = <0 0x11011000 0 0x10>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&topckgen CLK_TOP_26M_HDMI_SIFM>;
++			clock-names = "ddc-i2c";
++			status = "disabled";
++		};
++
+ 		mmsys: syscon@14000000 {
+ 			compatible = "mediatek,mt8167-mmsys", "syscon";
+ 			reg = <0 0x14000000 0 0x1000>;
+@@ -145,6 +175,38 @@ smi_common: smi@14017000 {
+ 			power-domains = <&spm MT8167_POWER_DOMAIN_MM>;
+ 		};
+ 
++		hdmi: hdmi@1401b000 {
++			compatible = "mediatek,mt8167-hdmi";
++			reg = <0 0x1401b000 0 0x400>;
++			clocks = <&mmsys CLK_MM_HDMI_PXL>,
++				 <&mmsys CLK_MM_HDMI_PLL>,
++				 <&mmsys CLK_MM_HDMI_ADSP_BCK>,
++				 <&mmsys CLK_MM_HDMI_SPDIF>;
++			clock-names = "pixel", "pll", "bclk", "spdif";
++			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_LOW>;
++			phys = <&hdmi_phy>;
++			phy-names = "hdmi";
++			mediatek,syscon-hdmi = <&mmsys 0x900>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++
++					hdmi0_in: endpoint { };
++				};
++
++				port@1 {
++					reg = <1>;
++
++					hdmi0_out: endpoint { };
++				};
++			};
++		};
++
+ 		imgsys: syscon@15000000 {
+ 			compatible = "mediatek,mt8167-imgsys", "syscon";
+ 			reg = <0 0x15000000 0 0x1000>;
 -- 
 2.43.0
 
