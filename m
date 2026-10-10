@@ -1,93 +1,97 @@
-Received: from mail-m127159.xmail.ntesmail.com (mail-m127159.xmail.ntesmail.com [115.236.127.159])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C304357D17
-	for <linux-clk@vger.kernel.org>; Sat, 10 Oct 2026 15:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135C819DF6A;
+	Sat, 10 Oct 2026 15:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791646415; cv=none; b=L4xWbDVa6RRJFRjJbDRTg8O2sLMINm30k6aC06bq+P1GFt0etRUm7QYYjaX3mTIHiv+DTut36PwmIq+YppbZ1zWjRDMWrP+nWfNI9yvBlkthzju9hi0qNEKqHmwoxaeHs3aHL5EE7GiRdzgHLEzs95tIM+gZvC6BvlnZ2eNDaFM=
+	t=1791647695; cv=none; b=ex+b5nGOctiw5dbUoWxK1qI63lxckG79SxAV6aTblqOz0OIzTy5PoRZ+2yDwlHOnk2FZrL+phK15IcnGOYYigXgoWgA26ibvCfPgTyBiaWd9Fveyy4vvfn4bdbJZSla9rf6eL5gL/QYKPW5lYt6Y1zu7fwOprUYSG6ceOVj6mII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791646415; c=relaxed/simple;
-	bh=vDtSt8BVBlfls3fTwP9vPuO3EMmM05i7of5iRjQZpvY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=anPrzAlcOvQ+aqdfMHyDIa3MaBHY8Mm8kk2iO/itqvxAdfHA4twY+S3N3lAldTNgCzxC1pbbFNJVuLaLiZHgy2vxHcX4c0Hik2uFjy0a8Q8NMdIXkeaML/6BWnpS8hlcEtLGkkCB2TF8PYqIGDnsfNAPlRtcB9YlN8uIakF4b24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=jSXz+bj1; arc=none smtp.client-ip=115.236.127.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1791647695; c=relaxed/simple;
+	bh=0WnTX6JFAKOwNBzueJdRfq3UFsWECoWcNzTd9e4Y7Rg=;
+	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=br4xvSM6q19hW8OcaOCjRNG/Wzcu+1w+ubb2+8VWjXepTXFVdyEFe4POjY+TltUfE4OlFxuI5gawJzzo78362BTe+3M0LRwrYZXkqaMgAsgNcha6Nxra7fccfCVANukEx4IEIQ9ynIAhz1y5N/3tloFL6VcjU5mvMJR/vFCiu0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7XUcIsB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="jSXz+bj1"
-Received: from localhost.localdomain (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 509291fa2;
-	Sat, 10 Oct 2026 22:17:45 +0800 (GMT+08:00)
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	heiko@sntech.de,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Fabio Estevam <festevam@nabladev.com>
-Subject: [PATCH 2/2] clk: rockchip: fix wrong PMU CLKSEL register on rv1103b
-Date: Sat, 10 Oct 2026 22:17:19 +0800
-Message-Id: <1791641839-74584-3-git-send-email-shawn.lin@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1791641839-74584-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1791641839-74584-1-git-send-email-shawn.lin@rock-chips.com>
-X-HM-Tid: 0aa1262d4ebf03a4kunm7e28e606b1d68
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1kYFggdWUFKV1ktWUFJV1kPCRoVCBIfWUFZQhlMGVZKTRpLSx5KSk
-	1MHklWFRQJFhoXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0
-	tIVUpLSU9PT0hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=jSXz+bj1bwHG2NvbdLm8kB/3CrhmFQqx/IlVruqajaJfk2itwshFwUH3DKa8t39dEZU6MYYrkOHQ5aNZjJKah8TMUUnIJIFBYdIDc+jE9Lzki+pVAhHI2f2MZvtwXvnN0+gtot+auS+013VnWYkmwChSHL70h94sYvkjUwvwJ6A=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=cRVD+j0mEe6JG0Q8711sJijh9bJIZ8lloQUL6z3dLHY=;
-	h=date:mime-version:subject:message-id:from;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7XUcIsB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18EA81F000FF;
+	Sat, 10 Oct 2026 15:54:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791647693;
+	bh=kag0Uy2qggUnzDfGrLenknHgY0Ukpn3ly0Z92YI9DdI=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=X7XUcIsBAkomm7lMoox7C8ecbaXYKE4GRqCeLGVc8byA7/Lp7TVQxzCETpgxKo0gh
+	 4+kwBXj0JLEpyM57FR511Ym2Dd2CKJLM5OL1zPZPiefW1osRpNPLvc/kCnAROUnJEx
+	 zrGvlX/qi2j18y7o5BsN6KxgB7Cyq8FsQHbTDGJdV7RhxLYP84Vtn/aOMOkgv2UOxQ
+	 uUkkrlYfnCFu1NJObfqswOKdmZXEO5KdOKg93+mOLgTMe1By0QG89MA8NG0CJAV8ZJ
+	 ZVFDlyJgCNK91MFtMQ9Deett+6AMp/fUvo7Jw4nlw7hm4yBz6qaFGcUA6KKd2aqjBv
+	 V70HaepaU9v+w==
+Message-ID: <sashiko-outbox-166706@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v6 7/8] clk: sunxi-ng: a733: Add bus clock gates
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Junhui Liu" <junhui.liu@pigmoral.tech>
+Cc: linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev
+In-Reply-To: <20261009-a733-clk-v6-7-ae8178fce7e8@pigmoral.tech>
+References: <20261009-a733-clk-v6-0-ae8178fce7e8@pigmoral.tech>
+ <20261009-a733-clk-v6-7-ae8178fce7e8@pigmoral.tech>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 10 Oct 2026 15:54:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-clk_32k and dbclk_pmu_gpio0 use RK3568_PMU_CLKSEL_CON(0), which is the
-wrong SoC macro and resolves to 0x100 in the PERICRU region instead of
-the RV1103B PMUCRU register at 0x70300. Reading or setting these clocks
-would access an unrelated register.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] clk: sunxi-ng: ahb_store_clk is missing CLK_IS_CRITICAL flag
+--
 
-Use RV1103B_PMUCLKSEL_CON(0), as already done for the XIN_RC_SRC clock
-in the same file.
+commit f3ca9c131f39f726826090f6af6752e7b39c004c
+Author: Junhui Liu <junhui.liu@pigmoral.tech>
 
-Fixes: 3e65e426d457 ("clk: rockchip: Add clock controller for the RV1103B")
-Cc: Fabio Estevam <festevam@nabladev.com>
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+clk: sunxi-ng: a733: Add bus clock gates
 
----
+This commit adds bus clock gates that control access to the device register
+interfaces on the Allwinner A733 SoC. It also intends to mark the ahb-store,
+mbus-store, and ahb-cpus clocks as critical to prevent access breakage to
+boot and storage devices.
 
- drivers/clk/rockchip/clk-rv1103b.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-n=
+g/ccu-sun60i-a733.c
+> --- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
 
-diff --git a/drivers/clk/rockchip/clk-rv1103b.c b/drivers/clk/rockchip/clk-rv1103b.c
-index 7da1fda..aee1ba4 100644
---- a/drivers/clk/rockchip/clk-rv1103b.c
-+++ b/drivers/clk/rockchip/clk-rv1103b.c
-@@ -130,7 +130,7 @@ static struct rockchip_clk_branch rv1103b_clk_uart2_fracmux __initdata =
- 
- static struct rockchip_clk_branch rv1103b_rcdiv_pmu_fracmux __initdata =
- 	MUX(CLK_32K, "clk_32k", clk_32k_p, CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
--			RK3568_PMU_CLKSEL_CON(0), 0, 2, MFLAGS);
-+			RV1103B_PMUCLKSEL_CON(0), 0, 2, MFLAGS);
- 
- static struct rockchip_clk_branch rv1103b_clk_branches[] __initdata = {
- 
-@@ -373,7 +373,7 @@ static struct rockchip_clk_branch rv1103b_clk_branches[] __initdata = {
- 	GATE(PCLK_PMU_GPIO0, "pclk_pmu_gpio0", "lsclk_pmu_root", 0,
- 			RV1103B_PMUCLKGATE_CON(0), 4, GFLAGS),
- 	COMPOSITE_NODIV(DBCLK_PMU_GPIO0, "dbclk_pmu_gpio0", dbclk_pmu_gpio0_p, 0,
--			RK3568_PMU_CLKSEL_CON(0), 3, 1, MFLAGS,
-+			RV1103B_PMUCLKSEL_CON(0), 3, 1, MFLAGS,
- 			RV1103B_PMUCLKGATE_CON(0), 5, GFLAGS),
- 	GATE(PCLK_PWM0, "pclk_pwm0", "lsclk_pmu_root", 0,
- 			RV1103B_PMUCLKGATE_CON(2), 0, GFLAGS),
--- 
-2.7.4
+[ ... ]
 
+> +static SUNXI_CCU_GATE_HWS(ahb_msi_lite0_clk, "ahb-msi-lite0", ahb_hws,
+> +			  0x5c0, BIT(16), 0);
+> +
+> +/* This gate controls access to the storage controller MMIO registers. */
+> +static SUNXI_CCU_GATE_HWS(ahb_store_clk, "ahb-store", ahb_hws,
+> +			  0x5c0, BIT(24), 0);
+
+[Severity: High]
+The commit message notes that the ahb-store clock should be marked as
+critical, but the definition of ahb_store_clk here uses 0 for its flags
+parameter instead of CLK_IS_CRITICAL.
+
+During late boot, the Common Clock Framework automatically disables any
+clocks that have no active consumers holding a reference to them.
+
+Could this omission allow the framework to inadvertently gate the storage
+controller MMIO registers, leading to a system freeze or storage probe
+failures?
+
+> +static const struct clk_hw *ahb_store_hws[] =3D { &ahb_store_clk.common.=
+hw };
+> +
+> +/* Keep enabled for access to the CPUS domain registers. */
+> +static SUNXI_CCU_GATE_HWS(ahb_cpus_clk, "ahb-cpus", ahb_hws,
+> +			  0x5c0, BIT(28), CLK_IS_CRITICAL);
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261009-a733-clk-v=
+6-0-ae8178fce7e8@pigmoral.tech?part=3D7
