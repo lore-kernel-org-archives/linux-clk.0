@@ -1,76 +1,145 @@
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2233164BA
-	for <linux-clk@vger.kernel.org>; Sat, 10 Oct 2026 19:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5CF3D170C
+	for <linux-clk@vger.kernel.org>; Sun, 11 Oct 2026 18:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791660881; cv=none; b=iNdgHVHMTTm+3HDyj9yx9CvtA+y7hsPWh+MCgFBagTkHj0zKlUaoTT6tcT9ftIAfc5ddPPNdj4oP4BoxosHNqqhVwCXg7IwopXcgy8e59mfsuwYh4MV5PkB2NkLhlbX5SU/5Ldv/nBmBT/T3Yu3PimVs+jef2pUPP4I7QNuJJ9g=
+	t=1791744768; cv=none; b=tCm2cP0MqMGGNa5eFiQyUNQkJR8wlIK2E4tp7cNSwp+a3eesW5qHVjmowEHfWbpY+8Av74xnUBkHtPVdd/BmmGbWLU7eQyHCxM3ohBoB6a9ddiwb2o1S046gOIuaTOGR42nN75CAqonwVxtwO34QDReIg2aywit7eDznC80X4xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791660881; c=relaxed/simple;
-	bh=2jg4Zg9CY3g2Liw7gGHp2KJ5maqfxequAZ88NAf4gZk=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=FhKuIakxOLaBY+QkZ6ToVeDN1N9hWix5uba05SILrWLKCh7kKYutwa7ytbryaRxIDohzKQxd0G+a3j/Okw6U5xaeosyviKt0ynBWTg0gpuzI0R816gja2fIcyp9KJSbpaN/QZG8vz647CYh40c+PeSLoYLizrITOOnu6VqIGeMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=W5xvqxGb; arc=none smtp.client-ip=178.251.229.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
+	s=arc-20240116; t=1791744768; c=relaxed/simple;
+	bh=yXPQpfc9suKyLzGtUqDK1jBB7VLe8tQS9GLwAXxdCSw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IoOEEYQZVcxPTOzFF5nB+EQdEWs6uwdAF4aqh79oDApZyev1t6mnu/8mnOtiohZTvCdjseSwIlJkW0hYU7eebcZNS9yrYoOGKqFVNoNlyQnsmBrQ1eus3s/AiV6PyY5yMR3IjdpduioMqyFiJ/Fm92fxxVvW4VHJjiF6AOBskcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MxQ5oVLz; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="W5xvqxGb"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPA id 764831086F7;
-	Sat, 10 Oct 2026 21:26:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1791660420;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=2jg4Zg9CY3g2Liw7gGHp2KJ5maqfxequAZ88NAf4gZk=;
-	b=W5xvqxGbc02BTI2TJnYlayEy/DAsWqTJ83UtPEWeM5UYLxqihTQXn2iEpPG2zhGWgMAV3H
-	IQdkN20j5Dszlmpobk8g0huambde8vfpGuKuxGLQqCctVs3uV39iFX6IPROcaDtVaeYTH0
-	CN3rjvR9gCJrcY6Mv+VR2N33LdP2XqzAgeC/6ZeFte5cl+pZVA/zp9UURgXRsrvK/kMb7S
-	DbncncUXHRD/bex88cm4WDnBLAhq8/uRigLUIMidtADtcDG8hI1VFHRNnU0ZTegU5I0mfd
-	0gNHpIl49zFj6UZefWVXm7HLu35flLcnNVboVE5r2iS6O0DbgU1EYhJBU0F5hQ==
-From: "Fabio Estevam" <festevam@nabladev.com>
-In-Reply-To: <1791641839-74584-3-git-send-email-shawn.lin@rock-chips.com>
-Content-Type: text/plain; charset="utf-8"
-References: <1791641839-74584-1-git-send-email-shawn.lin@rock-chips.com> <1791641839-74584-3-git-send-email-shawn.lin@rock-chips.com>
-Date: Sat, 10 Oct 2026 21:26:58 +0200
-Cc: "Stephen Boyd" <sboyd@kernel.org>, heiko@sntech.de, "Brian Masney" <bmasney+clk@redhat.com>, "Jerome Brunet" <jbrunet+clk@baylibre.com>, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org
-To: "Shawn Lin" <shawn.lin@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MxQ5oVLz"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4a16aaf2067so15253575e9.0
+        for <linux-clk@vger.kernel.org>; Sun, 11 Oct 2026 11:52:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791744766; x=1792349566; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=MdXQKQEM6Wnboxcp/n/qLe+CxKEtSxSxHHjbqvRr+mE=;
+        b=MxQ5oVLzvvMYe8921Dv+Aj4eIgD60YnftXu+cJah+y9ln+pTjJOv6Est8Jza/j5wgp
+         GKbMA9hbmcDHtVEtnTNcgd55hTtDAH4Bh/Bx/1NXcMmHOYSuRcJkfhOHXQU3H9UMvxLI
+         hrtcfL3nWXqnGfxqMd5z8Po4gJPx2win/9f9Zz/feob8oZjaPvpnhwbxhmC8oPGo++9W
+         ifmyq2NUYNN3i5xEsgs/kukVz/RtUUzr1O1zisiGIKFxb6DZcfmVV29Fti41I+IOVHAY
+         f/SH6TKpulXMFnk4j/DUPun3ZBU9atyjM32c0hXA4MsKcmfwFKrbzca/86yAJsLqspWn
+         NaAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791744766; x=1792349566;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=MdXQKQEM6Wnboxcp/n/qLe+CxKEtSxSxHHjbqvRr+mE=;
+        b=0unpkYPtrnQ4E3T53hbUPUZfEtf2pC+g5Wpv5kz8WIntr/4Gp9TAjr6uxvxfEpxc42
+         VC2DGihD4hEKphckW0ZiUDgqv4osxRJUWz+VIPC6RUret6OX9DGXfsbiJa+a9KqBhd3d
+         8OOqkQulQpPJtfKTg1LjIks+vEL8kYpnE5RgYNW8s8NKl5cyQGM+SfxWO4n56sPL1+iJ
+         FCYCYY8kk763p+mhsWINQAERvlYN56JNe92xkFHbDygPOo3BcMCIMecAIGYOIlT8UaeD
+         btzvnPLus+dMpeiZO/mzGtqUrDGsbhdQMPYJbgU3uQ9hqmXZLY6Xuq0j6TxlTybLnIlu
+         clng==
+X-Forwarded-Encrypted: i=1; AKwUvBzSekH4Vdr1TdKQ9Y5vXvbozXhRzSGbSI2iX5oPNOrGZd9Fn5eF3mXeuRh7WmnF+e8H3HLsmLjMH0E=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJJg61r+YPiuNP+5ujgO6UCl/tart4jw5nVw7IyBIdL+JSKlC0w
+	KF+VpvnfwIiIjdbvf06Y0RyxOYWNvVBZnq8Sx3CvDGy4tI7kKVM1ArOF
+X-Gm-Gg: AYBFou1CbGvXt4nGhW/Y+1xowGjMBmhRhB+8emdKpmWFuBGwRQYbEXqYEjPw7ooLA5L
+	pxsm1p/Q/s/B8WKbzCAKy3MFXl5h+slJWKXWDFm6UA0zKb2K//3ErXN9vuIjHrd8s0ALoWl4lIE
+	TvTw9F/PNvXjm/PHH04b0pF0qmqpa8RBPaYt0lirV33JkmuSPnEVZURh/d0cnKsvXp4ECPhw6BK
+	Avk2v0tcB2tNNdzEqWuQuKbaJrtH/28ziUE3oE93HHNAKrn/EFf2SB/pcFZMP5sCyPZWBVXS2KR
+	0NV9Mt1o6t+ooFCJjs09NVuD9kx6Fg6jZ92/Svne5OjrwbIQdmTM79r+EzOmEO701gUxQFmV6ZF
+	2d+WtPo0JNWTr99V+UlWINd0y2Bjixkkyw8D2+9hITF3nrZHPPgQPXiBlnlhRJa2mqtm4PfVRp6
+	oQ+IBmmC8TDTnczaPN+tINwR0XIi/mWoLjVzCgMtogux0yDUDetO3Znq40tCSswFo3zax1MuDkY
+	ORiTjhZh3/3IFH2iFdCTm67ASPDR2qRxDxDIblQ+5k2FF+FVBvPXA0EuySsUUrAKEPq5/bgVrBg
+	sYNIfiTzYVxTrkD5focSIg==
+X-Received: by 2002:a05:600c:4ec9:b0:4a1:7739:f9ab with SMTP id 5b1f17b1804b1-4a18e4ca953mr139504245e9.20.1791744765625;
+        Sun, 11 Oct 2026 11:52:45 -0700 (PDT)
+Received: from Ansuel-XPS24.localdomain (host-95-235-252-189.retail.telecomitalia.it. [95.235.252.189])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4a18bf2caf4sm257418615e9.10.2026.10.11.11.52.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Oct 2026 11:52:45 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Felix Fietkau <nbd@nbd.name>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v8 0/3] clk: add support for Airoha AN7583 clock
+Date: Sun, 11 Oct 2026 20:52:34 +0200
+Message-ID: <20261011185238.52229-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <a44bfaca-9c4e-dc0c-6f83-364a7953bb44@nabladev.com>
-Subject: =?utf-8?q?Re=3A?= [PATCH 2/2] =?utf-8?q?clk=3A?==?utf-8?q?_rockchip=3A?= 
- fix wrong PMU CLKSEL register on rv1103b
-User-Agent: SOGoMail 5.12.11
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: None
+Content-Transfer-Encoding: 8bit
 
-Hi Shawn,
+This small series introduce some cleanup and support for
+clock and reset of Airoha AN7583.
 
-On Saturday, October 10, 2026 11:17 -03, Shawn Lin <shawn.lin@rock-chip=
-s.com> wrote:
+The implementation is similar to EN7581 but AN7583 introduce
+new reset and more clock divisor support.
 
-> clk=5F32k and dbclk=5Fpmu=5Fgpio0 use RK3568=5FPMU=5FCLKSEL=5FCON(0),=
- which is the
-> wrong SoC macro and resolves to 0x100 in the PERICRU region instead o=
-f
-> the RV1103B PMUCRU register at 0x70300. Reading or setting these cloc=
-ks
-> would access an unrelated register.
->=20
-> Use RV1103B=5FPMUCLKSEL=5FCON(0), as already done for the XIN=5FRC=5F=
-SRC clock
-> in the same file.
->=20
-> Fixes: 3e65e426d457 ("clk: rockchip: Add clock controller for the RV1=
-103B")
-> Cc: Fabio Estevam <festevam@nabladev.com>
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Changes v8:
+- Add ACK tag by Connor
+- Fix missing priv->base assign
 
-Thanks for the fix.
+Changes v7:
+- Add further info for DT patch
+- Add serdes selection support
+- Rebase on top of linux-next
+  Link: https://lore.kernel.org/all/20261009070725.13196-1-ansuelsmth@gmail.com/
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Changes v6:
+- Address bot suggestion for DT patch
+- Add further information on chip-scu phandle
+- Add dedicated PERSTOUT reset and PCIE_HB reset
+  Link: https://lore.kernel.org/all/20260819221458.30040-1-ansuelsmth@gmail.com/
+
+Changes v5:
+- Rebase on top of linux-next
+- Drop even more patch to reduce patch delta
+- Make chip-scu specific to AN7583
+  Link: https://lore.kernel.org/all/20260528190000.9164-1-ansuelsmth@gmail.com
+
+Changes v4:
+- Add review tag for DT patch
+- Fix clock patch to use en7581-chip-scu compatible
+- Drop PCIE SCU SSR write
+
+Changes v3:
+- Drop .set_rate patch (will be proposed later)
+- Drop chip-scu binding and related patch
+  Link: https://lore.kernel.org/all/20251106195935.1767696-1-ansuelsmth@gmail.com
+
+Changes v2:
+- Add .set_rate support
+- Rework DT to EN7581 implementation (clock driver is parent)
+- Add additional cleanup patch
+- Merge binding with schema patch
+- Add chip_scu phandle
+
+Christian Marangi (3):
+  dt-bindings: clock: airoha: Document support for AN7583 clock
+  clk: en7523: generalize register clocks function
+  clk: en7523: add support for Airoha AN7583 clock
+
+ .../bindings/clock/airoha,en7523-scu.yaml     |  23 ++
+ drivers/clk/clk-en7523.c                      | 257 +++++++++++++++++-
+ include/dt-bindings/clock/en7523-clk.h        |   3 +
+ .../dt-bindings/reset/airoha,an7583-reset.h   |  65 +++++
+ 4 files changed, 346 insertions(+), 2 deletions(-)
+ create mode 100644 include/dt-bindings/reset/airoha,an7583-reset.h
+
+-- 
+2.55.0
 
