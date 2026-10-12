@@ -1,143 +1,221 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5833A0B31;
-	Mon, 12 Oct 2026 07:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4675F27FD74
+	for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 08:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791788934; cv=none; b=O3MKNw/AJM02vomOWLlpMmTTQU/GJB7onnlkWnLKC1pNaFQKzHUH3gbCM65A6fDsK7wjrD5ajPX5SD8MRTRZtUozM99RLxnw3Ri4CekU200Gn2PmsojMUU71No4uuf5pv2i2b8xorcHnfDc5wE2HLtlPYJbo+LVQzTK6MZ0n14Q=
+	t=1791793033; cv=none; b=SMsKIgXH4MkrIO5TCpcSB2IlX1CL1FkM7uYdMm3fK/++L01blfHTwKbkuzijVhGl1s1/9Lmh1xdNZm2Qw6D2My5NEv+LufrXkYMirawG/75txANZqI256PKVyG/vS6EAZIpoLSl5UJh7ImmwLp1ZDCGWcqvRVwCDSt+COT2MWOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791788934; c=relaxed/simple;
-	bh=drUbEhE++aOdd9MpkdF8jZSgZtyEnmUugWsYHm0GI0s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sZ9qw74kk6yk/J6yGv2Gx1qEnvO1xU4/XNuNpTmlfYnFTz1+eSiNri/Q8yKzTn1EEXNib/8rOmhgTly/YUQskmdDDaThzwbEK1jX0G87laFhWUROrTRZdhY4nYvJyhl4tP4f3os0X1fTsPlW2OhM5bvhXBnU7Iu36wvjeDt364g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dh8Tzq5i; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791793033; c=relaxed/simple;
+	bh=LBNk5mSEvmb/JFtueibojf+Rw2v4KwD8FDbTwjMrtbo=;
+	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id; b=Xago3+HRrIRMkoUjSJkEqLIzt+0Z3b5EFNBHarE65ql57MJ+O5M1FSRpfZXYItmDWqleUuJnCzLUIjx44jo4bVfkP0/ohLi87j+rgCpTXdaFZLtNVAH8XatypUOF5TytUWv9GgGGYZlLOBkIXck4BUGLR4Ylv/RZdfU1K0OANGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=QUDMJsal; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dh8Tzq5i"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4871F0089B;
-	Mon, 12 Oct 2026 07:08:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791788932;
-	bh=26xk8dmr8jAYc6qjJPKF+8t0Zh2+xvf1YvI7IcgDOWY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=dh8Tzq5i6OFbiLUQVPyzoIX1TjwIyFQ4zN5zuhkp/UclM1zWpwD321+qfk3Yb+/JN
-	 GlvJcxC2ZfT1zUVgrHKaqpSyZlwMuSq5QM2waEyBtyrUHSA7a9SYT1Cjg3Q+8hCxxn
-	 jIxv4a0SsMSNrpUk8gTTOb6LAeROiNWQc/S1dEvfN69xsdvDvmX+WCMs79sJrHdqvG
-	 EI6qnumKh3yL/mgoeT3yrgCvOqntrANSbYOaYdifEa/O+sRgn+E7ZqkF5h/Mwafr/z
-	 M5uy5+ybylexYpw6bdaIeBARyauiDqPjNbqaPehuUHjeW+Fgwz1W4ILMMTX06MXv63
-	 Nv7vEm/pyc2Zw==
-Message-ID: <a0eca34d-5eb2-4730-b8c7-0f2302bcf265@kernel.org>
-Date: Mon, 12 Oct 2026 09:08:40 +0200
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="QUDMJsal"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4a021c809e3so15693415e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 01:17:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1791793028; x=1792397828; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=/zLuY+/+ESi4JJhmc3hnMkOLSBz9DtESmIsl3yGIgb8=;
+        b=QUDMJsalbLn5h/UGekHNOBO2FtxMhVZej31S+ZUEetQij9oAMZojo/1P/a0F6As6Hy
+         5J6iUsuGbHoxhmOmiuj7lQLdfTBk1LoHmJYXrggOoa/kfWRoD6WFu+RcH0cH8/QKV8p2
+         pti5oIJSm9RNO/UV8JkTtq8xZ96B5cee0KxsYGb1i0AHWfXpSpvm/cQsZ1iFy/CFbprr
+         3b10E2hz6cOwSB1VzlDhJNl6zvdWBGhajnWlNg9mUWjmQLNx//+Kg5XHLFhd3p2x97ua
+         lsML7iNUiZJ84FfaEyEgnTR8aZCkRCd+Zl80uaEkGq2gV5OHxThY1yT2S7PLhlEZxIqK
+         16jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791793028; x=1792397828;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=/zLuY+/+ESi4JJhmc3hnMkOLSBz9DtESmIsl3yGIgb8=;
+        b=vlQ61rsXBwMvaI1d2843FGdyFvZzUTyOSWkq4wdXWuAe4nCj5DHXIfDtaIaMGMeCTl
+         AN64sxlmoAYUuXfdKd9V8YapHbjIP+UgmMqgCfEXqYDRjBtwugUOqpgjjfdH92duRmRG
+         N2SitPXXY1UQNMw5E1IkzI+Y18O5PLnqZBTdqjFvDfgUxE563fmDx7shRkLmbu3sKS33
+         EGgwKVv99BzSaFQxEOS5BgdXkwXRnVuTC51z8x8I9xuxLDyX7oCXHcJWAaBti9ltrRKN
+         wvHd8mgSGceoOE6qERRyf74Pbkkb1XR9K1sGNmWE15sAw7Sw2DBvLv78u+kG8CT9H7pG
+         9wnA==
+X-Forwarded-Encrypted: i=1; AKwUvBxxtB2ZSHyg0EVLiWMYSmsfi+T8eQhwsNtyREPGN4irYTMh60CIrkyZRZz92enUjmdiFOcLt2q1Ohw=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLsIoC4vZtGss7Qc6hnOpVQiD5oy0cYBSPHV1vWoN/PNENnPFSE
+	t8OWazIAMps+feFvcxLqZMy6srIsWsg3DswkeWGMViLbdiM+Q1hoAtPKtICiuzYdNJ0=
+X-Gm-Gg: AYBFou2reZdpjsKxBdUxaeU0TyEwmrlKuRwqvPBNTv6CqFMZ7AxoCAc1yRII7CqgIqI
+	AFBvQNJwQfpEo5aLoqlXVPy/Lloqd7bauQIhL66BVVPxvJj3l91VU396nc+XpVZCPFDQ3XgNLJh
+	m8tchM3SMOn3k7YKS4duCv1D9oE4HwmPNb49nCWsQ0nSWa/TNFeHmUltW4eLYPxPbUmH1oxcYy4
+	ncrNSCKMVXHsSjWXXn4/pdX4Z+X2w/SOH4xiZn4RH3eMoFYAnvnU55K/u+3yAfH3m4ywqMj0iRm
+	cDng4iPfRi34SzZ8hYjIxJ/D/PD69UtxvEoWN9JxU8fAtl/f7+F3S5d5V0YQX34k42PKREBQFhL
+	1u+LhSX82LF1q1+a82CrZJKJ+QLSHmlsbx4tcldxc4Ctg35931v+AF70R3F33UIhdFukz3gbhzb
+	lV518izt19fCJ3BzjjwpfeRWODpgki8PJrGmVWlnqMqlJdjylVklKmJGMAkZAjtPdOvHOmUWkLe
+	hXUhLRxDPmiwTaYIQ==
+X-Received: by 2002:a05:600c:4fcb:b0:4a1:811c:8083 with SMTP id 5b1f17b1804b1-4a18e4c3600mr160793515e9.33.1791793028350;
+        Mon, 12 Oct 2026 01:17:08 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a19f318c31sm57721225e9.3.2026.10.12.01.17.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Oct 2026 01:17:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 04/18] dt-bindings: pinctrl: add Ambarella CV75 pinctrl
-To: Linus Walleij <linusw@kernel.org>
-Cc: longzhao@ambarella.com, Arnd Bergmann <arnd@arndb.de>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Long Zhao <zl020895@163.com>, Lee Jones <lee@kernel.org>,
- mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260921-cv75-v5-v8-0-282ff5d98dda@ambarella.com>
- <20260921-cv75-v5-v8-4-282ff5d98dda@ambarella.com>
- <CAD++jLmKF5XxHsJX29sdXC_6JHKn-7HkE=N+TKtk5xODtQj3_w@mail.gmail.com>
- <b2256847-3ec1-47e8-ac79-ceca86eb09e7@kernel.org>
- <CAD++jLkrXXg9xrhAZ8HETc5Qcv5BbkY-ibjvzBmE5WZVqDEGWQ@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <CAD++jLkrXXg9xrhAZ8HETc5Qcv5BbkY-ibjvzBmE5WZVqDEGWQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 1/1] clk: nuvoton: ma35d1-divider: use direct
+ formula instead of divider table
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Joey Lu <a0987203069@gmail.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, sboyd@kernel.org, 
+ ychuang3@nuvoton.com, schung@nuvoton.com, yclu4@nuvoton.com, 
+ bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <2e5f4ca4-ccb7-4328-9bcb-32a2c4f73694@gmail.com>
+References: <20261008064307.2757324-1-a0987203069@gmail.com>
+ <20261008064307.2757324-2-a0987203069@gmail.com>
+ <179156372588.266328.3848259565001346041.b4-review@b4>
+ <2e5f4ca4-ccb7-4328-9bcb-32a2c4f73694@gmail.com>
+Date: Mon, 12 Oct 2026 10:16:56 +0200
+Message-Id: <179179301672.27179.2823663473263190790.b4-reply@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5683; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=LBNk5mSEvmb/JFtueibojf+Rw2v4KwD8FDbTwjMrtbo=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFlnplc8itQ6ebFhz7PLFXFem37ylAreXbdi7sTPN7eYM
+ Jc09kbO7yhlYRDjYpAVU2Sp4a4Wfyep9WXWdJ3bMHNYmUCGMHBxCsBEZjcyMhzdfDuAOaxMoPl6
+ sk+FDJemiyVzs2R57KKZV43+qbAHTGBkuFg9wfvj6y83hK/fqfx/7/r8KtuUbjnGT74nysN7uKU
+ vsQMA
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On 12/10/2026 09:06, Linus Walleij wrote:
-> On Fri, Oct 9, 2026 at 8:17 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On 01/10/2026 09:03, Linus Walleij wrote:
+On 2026-10-12 13:36 +0800, Joey Lu wrote:
 > 
->>> On Mon, Sep 21, 2026 at 6:23 AM Long Zhao via B4 Relay
->>> <devnull+longzhao.ambarella.com@kernel.org> wrote:
->>>
->>>> From: Long Zhao <longzhao@ambarella.com>
->>>>
->>>> Document the CV75 pin controller binding using generic function and
->>>> groups properties for pinmux configuration.
->>>>
->>>> Reviewed-by: Linus Walleij <linusw@kernel.org>
->>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
->>>> Signed-off-by: Long Zhao <longzhao@ambarella.com>
->>>
->>> This patch 4/18 applied to the pinctrl tree.
->>
->> There is a dependency, you cannot take this patch alone.
-> 
-> Oops, but is it a DTS dependency so if none of the other patches go in through
+> On 10/10/2026 12:35 AM, Jerome Brunet wrote:
+> >> The ADC clock divider register implements rate = parent_rate / (2 * (N + 1)),
+> > Are you open-coding CLK_DIVIDER_EVEN_INTEGERS ?
+> >
+> >   * CLK_DIVIDER_EVEN_INTEGERS - clock divisor is 2, 4, 6, 8, 10, etc.
+> >   *	Formula is 2 * (value read from hardware + 1)
+> >
+> > Am wondering if this driver is necessary at all ? Can you just use the
+> > regular divider here ?
+> >
+> >> which was previously modeled by building a clk_div_table with one entry per
+> >> possible divider value (up to 2^width entries) and feeding it through the
+> >> generic divider_recalc_rate()/divider_determine_rate()/divider_get_val()
+> >> helpers. That is unnecessary overhead (a large table allocation and a
+> >> linear scan on every rate lookup) for a relationship with a simple
+> >> closed-form expression, so compute the rate directly instead.
+> >>
+> >> Drop the mask_bit/mask mechanism as well. The previous code unconditionally
+> >> OR'd an arbitrary bit into the divider register on every set_rate() call,
+> >> and the one existing caller passed mask_bit as a bitmask value (0x1ffff)
+> >> rather than a bit index, so BIT() shifted by an out-of-range amount, which
+> >> is undefined behavior. The divider field write already clears and rewrites
+> >> only its own bits, so no extra forced bit is needed.
+> >>
+> >> Select the divider with a single helper shared by determine_rate() and
+> >> set_rate(), using closest rounding as before, so the rate promised by
+> >> determine_rate() is the rate that set_rate() programs. The helper clamps
+> >> the divider to the valid range and avoids overflowing 2 * rate for very
+> >> large requested rates, which would otherwise lead to a division by zero.
+> >> Reject a rate of 0 with -EINVAL.
+> >>
+> >> Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
+> >> Signed-off-by: Joey Lu <a0987203069@gmail.com>
+> >>
+> >> diff --git a/drivers/clk/nuvoton/clk-ma35d1-divider.c b/drivers/clk/nuvoton/clk-ma35d1-divider.c
+> >> index e992e7c30341..12a946c989e9 100644
+> >> --- a/drivers/clk/nuvoton/clk-ma35d1-divider.c
+> >> +++ b/drivers/clk/nuvoton/clk-ma35d1-divider.c
+> >> @@ -16,8 +16,6 @@ struct ma35d1_adc_clk_div {
+> >>   	void __iomem *reg;
+> >>   	u8 shift;
+> >>   	u8 width;
+> >> -	u32 mask;
+> >> -	const struct clk_div_table *table;
+> >>   	/* protects concurrent access to clock divider registers */
+> >>   	spinlock_t *lock;
+> >>   };
+> >> @@ -29,44 +27,66 @@ static inline struct ma35d1_adc_clk_div *to_ma35d1_adc_clk_div(struct clk_hw *_h
+> >>   
+> >>   static unsigned long ma35d1_clkdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+> >>   {
+> >> -	unsigned int val;
+> >>   	struct ma35d1_adc_clk_div *dclk = to_ma35d1_adc_clk_div(hw);
+> >> +	unsigned int val;
+> >>   
+> >>   	val = readl_relaxed(dclk->reg) >> dclk->shift;
+> >>   	val &= clk_div_mask(dclk->width);
+> >> -	val += 1;
+> >> -	return divider_recalc_rate(hw, parent_rate, val, dclk->table,
+> >> -				   CLK_DIVIDER_ROUND_CLOSEST, dclk->width);
+> >> +
+> >> +	return DIV_ROUND_CLOSEST_ULL((u64)parent_rate, 2 * (val + 1));
+> >> +}
+> >> +
+> >> +static unsigned int ma35d1_clkdiv_get_val(struct ma35d1_adc_clk_div *dclk,
+> >> +					  unsigned long parent_rate,
+> >> +					  unsigned long rate)
+> >> +{
+> >> +	unsigned long max = clk_div_mask(dclk->width) + 1;
+> >> +	unsigned long val;
+> >> +
+> >> +	if (rate > parent_rate / 2)
+> >> +		return 1;
+> >> +
+> >> +	val = DIV_ROUND_CLOSEST_ULL((u64)parent_rate, 2 * rate);
+> >> +
+> >> +	return clamp(val, 1UL, max);
+> >>   }
+> >>   
+> >>   static int ma35d1_clkdiv_determine_rate(struct clk_hw *hw,
+> >>   					struct clk_rate_request *req)
+> >>   {
+> >>   	struct ma35d1_adc_clk_div *dclk = to_ma35d1_adc_clk_div(hw);
+> >> +	unsigned int val;
+> >>   
+> >> -	return divider_determine_rate(hw, req, dclk->table, dclk->width,
+> >> -				      CLK_DIVIDER_ROUND_CLOSEST);
+> >> +	if (!req->rate)
+> >> +		return -EINVAL;
+> >> +
+> >> +	val = ma35d1_clkdiv_get_val(dclk, req->best_parent_rate, req->rate);
+> >> +	req->rate = DIV_ROUND_CLOSEST_ULL((u64)req->best_parent_rate, 2 * val);
+> > Rate propagation support is lost with this.
+> Thanks for the review.
+> On open-coding CLK_DIVIDER_EVEN_INTEGERS: you're right. The ADC divider 
+> is exactly 2 * (val + 1), so the regular divider covers it. The 
+> dedicated driver is not needed. You're also right that my 
+> determine_rate() lost rate propagation, because it never forwarded the 
+> request to the parent the way divider_determine_rate() does.
+> I tested the regular divider on hardware. That showed a separate problem 
+> in the existing clock tree. The mux parents are declared with .fw_name 
+> only, but the controller node has no clock-names, so the lookup fails. 
+> sysclk1_mux and everything below it (pclk0, adc_div, and so on) end up 
+> as orphans at 0 Hz. As a result clk_set_rate() on the ADC clock returns 
+> early without writing the divider register. That hid the real behaviour 
+> of the divider.
+> So I will drop this series and send a new series that:
+> 1. fixes the parent lookup in the clock tree, and
+> 2. switches the ADC divider to the regular divider and removes the 
+> dedicated driver together with the unused mask_bit parameter.
 
-No, it is a bindings dependency, introducing new DT bindings warning for
-both your tree and next. Your tree is fine in this case as long as next
-is also fine... but next is not, because that patch did not make it there.
+Have you looked at this series ?
 
-We cannot have any new DT bindings warnings in next.
+https://lore.kernel.org/all/20261004-perso-ma35d1-upstream-clk-v8-0-e1a106a128c0@bootlin.com/
 
-> this merge window it'd still be OK right?
-> 
-> I think the other patches are still being reviewed and we are at -rc7 so..
-Best regards,
-Krzysztof
+It does address several problems the existing driver has when it comes to
+parents and incorrect usage of .fw.name
+
+Please sync with Miquel on this.
+
+-- 
+Jerome
+
