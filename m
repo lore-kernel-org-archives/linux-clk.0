@@ -1,212 +1,144 @@
 Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC55A3AD509
-	for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 10:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F27B41DED5
+	for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 11:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791800543; cv=none; b=pw0fJdY8Lp3yhfy8m/EJlMZnkTGMb747AdOz0OTKbqXkXW//iuJaFvWZlcOtTiPPYVNjyHz/rs30Xuv5vbRzzIEJILHynvYD7/O4IB5hbv51D/65xJ8S5JDKjMZ+jIpVOdxEy0JVriFUyDvfE2ajmY2zb36ex8rw1s+8BXsjLYw=
+	t=1791803907; cv=none; b=kwbQ5SWwgbghygv8CGFFY6qd68gx02DxKUgJC9boT1h9/foH6sSXQip9zSb8Q8uciWKhVm95xMuYe0mq0xHDbec580MMvtyIN4z1vGRHyTS4M8ECoXYmCMtNIlqG1VhDC3TuKMCeHK/HySBSYes9yI62w9MP/qNb+miPgzgERaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791800543; c=relaxed/simple;
-	bh=tTAZF8a763gW6j5Lx6Y94iC7OKIfcaHRy+T2VFppwEc=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=nViTsou+8IESICFOVy9V4SxnbmLJ8ukqTKthLYKWn1vWDPxLzpq4A2+z3h/GXaRR7bJCJ/1aT3EdIWkk3GzzW3B7QFiz0WCZwyBGLn4vNZH44XKIT1T78Pl4VtlYwXNtgau+1T7Cu2huLJRlRpd95Yq4vVwGJh2AT69OD6eWz7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=N9JBxXq1; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1791803907; c=relaxed/simple;
+	bh=20jkYx8ujzIk6V8EjzGICADAn/dtFkP5yiHUM8K7JU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MdcMXE/5JX+dVVH0ClMx7f4LQAaF/gmV24UugnQ8LDUdS5W0nYvBCG/mXaa+rCD4Ri70X4EbHUmRzRNlAaBvKyiPqTvYP53UfmqqQsVBl4w9eRgss6uMWhobqXzTkqZYM2wRddeD9nT1R0YnVuo+LXvWAFelVVXydovYnReE3rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Bnf5mhq0; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="N9JBxXq1"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4956869750eso13478085e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 03:22:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Bnf5mhq0"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4a01933b584so15358105e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 04:18:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1791800524; x=1792405324; darn=vger.kernel.org;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=AJYyZEBiOUM7OvSMbISuEMhl5UT5CKz97qPqv6r5uKs=;
-        b=N9JBxXq1hXsGzlG8ChFOdJmaMHvc9k1/ZdSQ4Ct4h6McErEbgBaZ9yPYoKO3WstKwZ
-         7B82T75S+5jNOiNSJZyl1vavBtq21LevLrD7WBDcihmUiKdHbAxZ70ByuSbAVsvU6hnm
-         bDUNjuZoWOMZxYzPJw/hsovM+ILSGbfB6H39BPrrBU6Mgo49Be8h2ykLHxxmx+1jY5Kk
-         7w2Z/71aUpgCad8o07id7PYCkcsVc4eNR2wvl2Cy1CtZ3uE2+uTf/UBK5rdLkwi6KYoC
-         /PwTKclr0gf0qlPkHMeORwvfAmaN+ABEBR5P8dsj/3NgTWb1/3dNtOb2NiE++IOULQ7x
-         HmMg==
+        d=baylibre.com; s=google; t=1791803905; x=1792408705; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=ojX3hkGfX4or6LXO9A1AxAUN8SUQm9XePAgC0Ad/Cog=;
+        b=Bnf5mhq0tNnn4pixhxuNbrwY7dD+z5pbFI0pSD9ORZa0KAX56bMZTKzMLGJHKvAVSI
+         dCdegE1rufjmxQnHpLM+FNp6LD6lr5jvhWtGLruHI/U2ErYJgdEEkB0r3h/73OzkNU+o
+         8fT/iJKth2sda1UiO+aBJesZDMyYYKRLhfH9HdJuCXRQWG/EqrhbNsd+P/OwDhXDvpI6
+         uRDK58jaYmzbsdHKeJHxESER7hVFpuRHFhsRjBivv0dybDCumoAa8Q4xtMApg89+2BW8
+         8nHduOJYcqDPr+My4ipcatjhFBr8DJhRer5gXh8FnRfGDrwB73R2XnWfqjH+ClAROMaY
+         lmlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791800524; x=1792405324;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1791803905; x=1792408705;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=AJYyZEBiOUM7OvSMbISuEMhl5UT5CKz97qPqv6r5uKs=;
-        b=s6bJt5KQRjDw5LDCcaWLtO0Hsb9jHyEJcl8eoZuSfDhLOZeqxoHdRsUyKHexWcWxCo
-         z3utKGpj/CXswj6JnzAI+8crZlPuAH+ocW9h0/pZyVfHrcEtEWnvasjto3zs6gA6rxQj
-         Q7WhW90oB9twiMO4aGB9aVAc3f0tan77pUw7nNNsdYYKP5j3QK035b9wnbWQrYJwUa2f
-         ae/cqK3X8lsQPhiReMfa5lqMfH9LRGjIYcHf07BUrSY3fQ73W+zfNlhLY+DewlIIahw8
-         GdY+fZh0V3F0MS923qKdGtlXlTUB4mdbAGbELm64a1JlK9l8gwP21OSkhDOT0932tck/
-         TxUw==
-X-Forwarded-Encrypted: i=1; AKwUvBwEd2xt1JiZ8gKgf9Fz75tGzi4nGWBlrmjo1JR8Y6nvLwVfxZpASzxiAi4+Hxxg10WHfXWSc+Ighwo=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIMA1IiusWSpmSfxGQ70Ev9fgs5OJz1dmbPTUkDbmbS+ihb5NK6
-	MSGCGyZckaOuW1ZgYA2/n4x0umbFtcSPa0T7h+EbX0vVWRqkFC5c1WlD+/WbftXvYZQ=
-X-Gm-Gg: AYBFou3iTekR0Yh2L09NQ9lpQGNRh+kASQvWxDVU0xP2CXM/8JFHhjZTazywHM2RSkw
-	0+3awCwGRfdWqdoxJhqAA23gtWLjUVKlsNSq7c2zmD/cYsmwTQfSnO38yFve2af3bHPuzAMDyj0
-	CpanNMuxji2dSTFViA4JFa+76g4AB7hA8rH9/1W9q4cW4iVI232EGevdx/xSiYAc8mqxd1NGosZ
-	jo7a/9GDlWg5hTfbVGwpW07BZTrlc9ttjd6blpjgXfJ03bafnDo4xG3QUn0XTJYNme4kHpyrsdu
-	s84wJ3y2+lDmWqIkTFkvqgMl/wtaHZDi0jsEQuolLt1ygqbz7Pbxd6q4Pcz4VUOzzDNA8wBrJ+r
-	EAPSBvZzQq+kXfbapHJtOJwmelh/9KaZNFsqyOFiLbVght9bIC3hqMNYprs4/bapXCBAhvWj+v7
-	7Fyv3Y1e3MWzuKN4sI/eNoACwg7g8c0cfVLKKzqW7vUbpkhqgvvjY0FsnGFgsArjJzwNTdaZ81i
-	Tq1z9cWQJbdxr1EWg==
-X-Received: by 2002:a05:600c:3e0a:b0:4a0:1c10:1419 with SMTP id 5b1f17b1804b1-4a18e4cd667mr165296415e9.26.1791800523761;
-        Mon, 12 Oct 2026 03:22:03 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a19f249692sm143801505e9.3.2026.10.12.03.22.03
+        bh=ojX3hkGfX4or6LXO9A1AxAUN8SUQm9XePAgC0Ad/Cog=;
+        b=YNEg2tLWenAvBq5D0M2ospPpqfZT0CbOQAfMW4ml1AAG8Dekd3NQjL8RIGL1v0vgeN
+         b6oDwYtNk9aDlaroseosgtyo6FVAxN34lzB96GO1x9+QQdx88W9XImnxTersWAaXzngi
+         2uWPuw45VZjiSzdtB+d7G2vOYIXT1G3CD4UGg65dl+I9gwDWjI2u9vp+8XKyfEPbzZrc
+         7EBV+t0ysvCAZ+LG0dZ/vgzEYXJ7g9clRyqO+9V8NUiGRKbSytwpSF5InfDOwP8v2wtz
+         GJXJUx07+AiXatpf41TJReimmSUe6N7odbfi7Z1VtwcYAHD9rUouhQnrcKd/CarCVwuD
+         o1TQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzggM9R4lqEYGntKQ9DaZLwJyoApNp9LVrMnBxHhuSdahEpeQxPsXmh2oXjsuidfKc0bwj/cNOYt+M=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIcBZ2iHBJwU3GqZVTedju0Vrj569VjvL2y37FRgFgbKJQCEGfO
+	NgjBSnpFKIx0kbaPeXwJsIPFH8zG7W9GgFlft4K1kWJzeJ01BTSK1V7N1elVAdDjeNA=
+X-Gm-Gg: AYBFou2J53o+9TTZXunmKdGbgc6/FKbYWheUQOgVYd+W8X+dVvBtX2mqyL40Otb727w
+	EdpEauVfynlE/sK5jmgzhzGnTDd9iFLoL9SCYHQZv+Hg5b+4qVeGF3G8EAYy1oasywD/SQLdgVu
+	r/hY5fyJJZDGEkXzYIOrKbDEHd70UgOfenJhBbPJ52KRw17hOR3ALXDhVxWjmJHNxhBTzKRuaF2
+	uMMUGhG6mkR+boIk/xsbE5KNjhRrciZfJkl5m5BwrImVK3zTxMVddEb4WMyqRJ1DWksN6/Nf03J
+	zJiLCuYprN1gWZdcfkb//NCe0/obtiuAkNBxZJMHGM0hnsKJkBdPd+8EdlsWC9L3W5KiBqOifhn
+	LKnjgHa9gI59KO68g0v2ixJul2odxfDlyBl1sCOtBzNvXknpRMSTIBxkbH46tumDfhzhsw8loDC
+	2dX9a1Kqga3RhQeYt/xLVFBhxk7qpCveD5fFO8zvgpMWfvUDLFjUM2HQ0buH6PEUcLcha7qyJru
+	mwNaONjoApeD5pXk8jCC0Gs4uI0xC3uLPnQ2tB4a1yvHD9Hx6rpzs537hfh0A==
+X-Received: by 2002:a05:600c:6384:b0:4a1:7741:ec43 with SMTP id 5b1f17b1804b1-4a18e4b8966mr159157835e9.26.1791803904585;
+        Mon, 12 Oct 2026 04:18:24 -0700 (PDT)
+Received: from localhost (p200300f65f19a904ade4f69ba751c34c.dip0.t-ipconnect.de. [2003:f6:5f19:a904:ade4:f69b:a751:c34c])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4a18bb68abfsm311754435e9.0.2026.10.12.04.18.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Oct 2026 03:22:03 -0700 (PDT)
+        Mon, 12 Oct 2026 04:18:21 -0700 (PDT)
+Date: Mon, 12 Oct 2026 13:18:21 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: Ying Liu <victor.liu@nxp.com>, Frank Li <frank.li@oss.nxp.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v10 5/9] drm/imx: Add support for i.MX94 DCIF
+Message-ID: <aszBIkBXoFIkkeiL@monoceros>
+References: <20261006-dcif-upstreaming-v10-0-bcfb28de0aae@oss.nxp.com>
+ <20261006-dcif-upstreaming-v10-5-bcfb28de0aae@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v6 10/15] clk: starfive: Add StarFive JHB100
- Peripheral-0 clock driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Brian Masney <bmasney@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <20261008123338.11081-11-changhuang.liang@starfivetech.com>
-References: <20261008123338.11081-1-changhuang.liang@starfivetech.com>
- <20261008123338.11081-11-changhuang.liang@starfivetech.com>
-Date: Mon, 12 Oct 2026 12:21:47 +0200
-Message-Id: <179180050742.66744.4988353309640403131.b4-review@b4>
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5017; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=tTAZF8a763gW6j5Lx6Y94iC7OKIfcaHRy+T2VFppwEc=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFlntuznFX6rbup/o6uqu9d9gqCAanb70c5Ja+t9j3U/n
- 5LInFLXUcrCIMbFICumyFLDXS3+TlLry6zpOrdh5rAygQxh4OIUgIm4v2T4K+gjayPzakqr4lEd
- aSMdb5GHD+Pm7Jh923+T2fu20m37tzP8d/K+9HX1+cdPlaMOSJvuLd6/eeXc7mu2LTKnzorHNUk
- 85AMA
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cdga4qrbhoxcfsbx"
+Content-Disposition: inline
+In-Reply-To: <20261006-dcif-upstreaming-v10-5-bcfb28de0aae@oss.nxp.com>
 
-> Add driver for the StarFive JHB100 Peripheral-0 clock controller.
-> 
-> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> ---
->  drivers/clk/starfive/Kconfig                  |  10 +
->  drivers/clk/starfive/Makefile                 |   1 +
->  .../clk/starfive/clk-starfive-jhb100-per0.c   | 617 ++++++++++++++++++
->  3 files changed, 628 insertions(+)
->  create mode 100644 drivers/clk/starfive/clk-starfive-jhb100-per0.c
->
-> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
-> index cfaac934a8e0..b2a05bbb450f 100644
-> --- a/drivers/clk/starfive/Kconfig
-> +++ b/drivers/clk/starfive/Kconfig
-> @@ -73,6 +73,16 @@ config CLK_STARFIVE_JH7110_VOUT
->  	  Say yes here to support the Video-Output clock controller
->  	  on the StarFive JH7110 SoC.
->  
-> +config CLK_STARFIVE_JHB100_PER0
-> +	bool "StarFive JHB100 peripheral-0 clock support"
-> +	depends on ARCH_STARFIVE || COMPILE_TEST
-> +	select CLK_STARFIVE_JH71X0
-> +	select RESET_STARFIVE_JHB100 if RESET_CONTROLLER
-> +	default ARCH_STARFIVE
-> +	help
-> +	  Say yes here to support the peripheral-0 clock controller
-> +	  on the StarFive JHB100 SoC.
-> +
->  config CLK_STARFIVE_JHB100_SYS0
->  	bool "StarFive JHB100 system-0 clock support"
->  	depends on ARCH_STARFIVE || COMPILE_TEST
-> diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
-> index 29cdef20575e..352717886295 100644
-> --- a/drivers/clk/starfive/Makefile
-> +++ b/drivers/clk/starfive/Makefile
-> @@ -11,6 +11,7 @@ obj-$(CONFIG_CLK_STARFIVE_JH7110_STG)	+= clk-starfive-jh7110-stg.o
->  obj-$(CONFIG_CLK_STARFIVE_JH7110_ISP)	+= clk-starfive-jh7110-isp.o
->  obj-$(CONFIG_CLK_STARFIVE_JH7110_VOUT)	+= clk-starfive-jh7110-vout.o
->  
-> +obj-$(CONFIG_CLK_STARFIVE_JHB100_PER0)		+= clk-starfive-jhb100-per0.o
->  obj-$(CONFIG_CLK_STARFIVE_JHB100_SYS0)		+= clk-starfive-jhb100-sys0.o
->  obj-$(CONFIG_CLK_STARFIVE_JHB100_SYS1)		+= clk-starfive-jhb100-sys1.o
->  obj-$(CONFIG_CLK_STARFIVE_JHB100_SYS2)		+= clk-starfive-jhb100-sys2.o
-> diff --git a/drivers/clk/starfive/clk-starfive-jhb100-per0.c b/drivers/clk/starfive/clk-starfive-jhb100-per0.c
-> new file mode 100644
-> index 000000000000..ef6e6906cd2f
-> --- /dev/null
-> +++ b/drivers/clk/starfive/clk-starfive-jhb100-per0.c
-> @@ -0,0 +1,617 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * StarFive JHB100 Peripheral-0 Clock Driver
-> + *
-> + * Copyright (C) 2024 StarFive Technology Co., Ltd.
-> + *
-> + * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
-> + *
-> + */
-> +
-> +#include <dt-bindings/clock/starfive,jhb100-crg.h>
+
+--cdga4qrbhoxcfsbx
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v10 5/9] drm/imx: Add support for i.MX94 DCIF
+MIME-Version: 1.0
+
+On Tue, Oct 06, 2026 at 12:22:00PM +0000, Laurentiu Palcu wrote:
+> +#include <linux/mod_devicetable.h>
 > +#include <linux/platform_device.h>
-> +
-> +#include "clk-starfive-jh71x0.h"
-> +
-> +#define JHB100_PER0CLK_NUM_CLKS			(JHB100_PER0CLK_MAIN_ICG_EN_TRNG + 1)
-> +
-> +/* external clocks */
-> +#define JHB100_PER0CLK_OSC			(JHB100_PER0CLK_NUM_CLKS + 0)
-> +#define JHB100_PER0CLK_PLL6			(JHB100_PER0CLK_NUM_CLKS + 1)
-> +#define JHB100_PER0CLK_CFG_400			(JHB100_PER0CLK_NUM_CLKS + 2)
-> +#define JHB100_PER0CLK_CFG_800			(JHB100_PER0CLK_NUM_CLKS + 3)
-> +#define JHB100_PER0CLK_NCNOC_INIT		(JHB100_PER0CLK_NUM_CLKS + 4)
-> +#define JHB100_PER0CLK_NCNOC_TARG		(JHB100_PER0CLK_NUM_CLKS + 5)
-> +
-> +static const char * const jhb100_per0_ext_clk[] = {
-> +	"osc",
-> +	"pll6",
-> +	"cfg_400",
-> +	"cfg_800",
-> +	"ncnoc_init",
-> +	"ncnoc_targ",
+
+Please rely on linux/platform_device.h to provide of_device_id and drop
+linux/mod_devicetable.h.
+
+> +static const struct of_device_id dcif_dt_ids[] = {
+> +	{ .compatible = "nxp,imx94-dcif", },
+
+No , before } please.
+
+> +	{ /* sentinel */ }
 > +};
+> +MODULE_DEVICE_TABLE(of, dcif_dt_ids);
 > +
-> +/*
-> + * Regarding the CLK_IS_CRITICAL flag:
-> + *   What is special here is the UART*-related clocks. On the JHB100, the secure
-> + *   core may consume one UART, while the AP core consumes another. Different
-> + *   core boards may select different UARTs, so we usually want to keep all UART*
-> + *   clocks always on to prevent the AP core from turning off the clock for the
-> + *   secure core's UART.
-> + *   UART0-3 are usually used by the HOST side, and there will be no driver on
-> + *   the BMC side to consume these clocks. Therefore, these clocks need to be
-> + *   enabled for the host to consume.
+> +static struct platform_driver dcif_platform_driver = {
+> +	.probe	= dcif_probe,
+> +	.remove	= dcif_remove,
+> +	.shutdown = dcif_shutdown,
+> +	.driver	= {
+> +		.name		= "imx-dcif-drm",
+> +		.of_match_table	= dcif_dt_ids,
+> +		.pm		= pm_ptr(&dcif_pm_ops),
+> +	},
 
-So you are forcefully enabling 14 clocks for 1 to 4 clocks that may or may not be used.
-This is not how this should work. You just enable clock randomly hoping it will cover
-your use case. If you are managing the clock for these secure core, it clearly shows you
-need a driver for it.
+I generally don't like the effort to keep the = aligned in such
+structures and don't recommend to even try it. Still more if it's
+inconsitent from the start. Just use a single space before the =.
 
-> + *
-> + * Regarding the CLK_IGNORE_UNUSED flag:
-> + *   Clocks flagged CLK_IGNORE_UNUSED are not consumed by any driver. The flag
-> + *   keeps them in their hardware default state (enabled) instead of letting
-> + *   the clock framework gate them once it disables unused clocks.  If this
-> + *   flag needs to be removed later, it must be ensured that these clocks will
-> + *   not be disabled even if they are not consumed.
+Best regards
+Uwe
 
-Why ? you are ignoring all sorts of thing in there like i3c. If the i3c bus is unused,
-the clock should be disabled. If it is actively used, why don't you have a driver for it ?
+--cdga4qrbhoxcfsbx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Throwing CLK_IGNORE_UNUSED and CLK_IS_CRITICAL at the majority of your clocks is not OK.
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Jerome
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrMwfoACgkQj4D7WH0S
+/k616wgAm56cItlrtTGYJGQMifXXyKIZEbNaNh8obfuoDdC9KTfL6OrQDbETA8n/
+83AtYbd6RkC4JP7NX3SK5DlSDS/oLGmxynxAfceKMBWsUcqR4oEpGee8ZRkIFMYn
+BL355LaaGTv56+1iWN/tYDLNYYgKV+jwUYXmDJferAy0J0I1aTlYgEYMNoCJGGxb
+ciaSMXRD1FzuAb3vpJpUvWltH2+boMSdeaKoj6ZblcP2sHWtw4UWN3b1YEcrSVcl
+zMXusjBfMNf3S6BQ3GHOW5axtmRXjnPsqxXPCouSaEqqAahemWk+g7rA/4XF+Xax
+302ZWP3FujxCr3/FFyysMyUncNGZnw==
+=Kiiw
+-----END PGP SIGNATURE-----
 
+--cdga4qrbhoxcfsbx--
