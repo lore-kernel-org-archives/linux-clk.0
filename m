@@ -1,144 +1,320 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F27B41DED5
-	for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 11:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB21A488202;
+	Mon, 12 Oct 2026 11:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791803907; cv=none; b=kwbQ5SWwgbghygv8CGFFY6qd68gx02DxKUgJC9boT1h9/foH6sSXQip9zSb8Q8uciWKhVm95xMuYe0mq0xHDbec580MMvtyIN4z1vGRHyTS4M8ECoXYmCMtNIlqG1VhDC3TuKMCeHK/HySBSYes9yI62w9MP/qNb+miPgzgERaA=
+	t=1791805980; cv=none; b=BGu4SdsnW5UqAJ98a1uynfVsORnLsGNlb4CAaeus8NzyZWImZpH2cIuKONFEfoEPxhVEeub996RE8ga2PH3Zr1/Yf3dq4t4/x8y9WwEvHNC+HIitpXHgpKd7ohCpgpJ6Nk9MDXl54puwc+yvfiYT8ZENPesG75FX7P7vAVIUuKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791803907; c=relaxed/simple;
-	bh=20jkYx8ujzIk6V8EjzGICADAn/dtFkP5yiHUM8K7JU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MdcMXE/5JX+dVVH0ClMx7f4LQAaF/gmV24UugnQ8LDUdS5W0nYvBCG/mXaa+rCD4Ri70X4EbHUmRzRNlAaBvKyiPqTvYP53UfmqqQsVBl4w9eRgss6uMWhobqXzTkqZYM2wRddeD9nT1R0YnVuo+LXvWAFelVVXydovYnReE3rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Bnf5mhq0; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1791805980; c=relaxed/simple;
+	bh=ItNrtX6IE2iJ5ANpQaYu97h4e0H0mgBYq8Akzk9ytr4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=jUU4VZirbn60GAQ5DR1RSZ85zdCc2W9cHbxvQD1W5eTkiE0i+U5BFy0fW6PNOG81fUeQSNT9U8HqHyM8EhjAJx455OZx+yQm08cYlDHAtKbmwyMQKyajuBY1Qciw666uy6d8tD/lavOkBJycvBufnM8HvgOGB4U8Jx08dhY2QyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cO+Ocovv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Bnf5mhq0"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4a01933b584so15358105e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 04:18:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1791803905; x=1792408705; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=ojX3hkGfX4or6LXO9A1AxAUN8SUQm9XePAgC0Ad/Cog=;
-        b=Bnf5mhq0tNnn4pixhxuNbrwY7dD+z5pbFI0pSD9ORZa0KAX56bMZTKzMLGJHKvAVSI
-         dCdegE1rufjmxQnHpLM+FNp6LD6lr5jvhWtGLruHI/U2ErYJgdEEkB0r3h/73OzkNU+o
-         8fT/iJKth2sda1UiO+aBJesZDMyYYKRLhfH9HdJuCXRQWG/EqrhbNsd+P/OwDhXDvpI6
-         uRDK58jaYmzbsdHKeJHxESER7hVFpuRHFhsRjBivv0dybDCumoAa8Q4xtMApg89+2BW8
-         8nHduOJYcqDPr+My4ipcatjhFBr8DJhRer5gXh8FnRfGDrwB73R2XnWfqjH+ClAROMaY
-         lmlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791803905; x=1792408705;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ojX3hkGfX4or6LXO9A1AxAUN8SUQm9XePAgC0Ad/Cog=;
-        b=YNEg2tLWenAvBq5D0M2ospPpqfZT0CbOQAfMW4ml1AAG8Dekd3NQjL8RIGL1v0vgeN
-         b6oDwYtNk9aDlaroseosgtyo6FVAxN34lzB96GO1x9+QQdx88W9XImnxTersWAaXzngi
-         2uWPuw45VZjiSzdtB+d7G2vOYIXT1G3CD4UGg65dl+I9gwDWjI2u9vp+8XKyfEPbzZrc
-         7EBV+t0ysvCAZ+LG0dZ/vgzEYXJ7g9clRyqO+9V8NUiGRKbSytwpSF5InfDOwP8v2wtz
-         GJXJUx07+AiXatpf41TJReimmSUe6N7odbfi7Z1VtwcYAHD9rUouhQnrcKd/CarCVwuD
-         o1TQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzggM9R4lqEYGntKQ9DaZLwJyoApNp9LVrMnBxHhuSdahEpeQxPsXmh2oXjsuidfKc0bwj/cNOYt+M=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIcBZ2iHBJwU3GqZVTedju0Vrj569VjvL2y37FRgFgbKJQCEGfO
-	NgjBSnpFKIx0kbaPeXwJsIPFH8zG7W9GgFlft4K1kWJzeJ01BTSK1V7N1elVAdDjeNA=
-X-Gm-Gg: AYBFou2J53o+9TTZXunmKdGbgc6/FKbYWheUQOgVYd+W8X+dVvBtX2mqyL40Otb727w
-	EdpEauVfynlE/sK5jmgzhzGnTDd9iFLoL9SCYHQZv+Hg5b+4qVeGF3G8EAYy1oasywD/SQLdgVu
-	r/hY5fyJJZDGEkXzYIOrKbDEHd70UgOfenJhBbPJ52KRw17hOR3ALXDhVxWjmJHNxhBTzKRuaF2
-	uMMUGhG6mkR+boIk/xsbE5KNjhRrciZfJkl5m5BwrImVK3zTxMVddEb4WMyqRJ1DWksN6/Nf03J
-	zJiLCuYprN1gWZdcfkb//NCe0/obtiuAkNBxZJMHGM0hnsKJkBdPd+8EdlsWC9L3W5KiBqOifhn
-	LKnjgHa9gI59KO68g0v2ixJul2odxfDlyBl1sCOtBzNvXknpRMSTIBxkbH46tumDfhzhsw8loDC
-	2dX9a1Kqga3RhQeYt/xLVFBhxk7qpCveD5fFO8zvgpMWfvUDLFjUM2HQ0buH6PEUcLcha7qyJru
-	mwNaONjoApeD5pXk8jCC0Gs4uI0xC3uLPnQ2tB4a1yvHD9Hx6rpzs537hfh0A==
-X-Received: by 2002:a05:600c:6384:b0:4a1:7741:ec43 with SMTP id 5b1f17b1804b1-4a18e4b8966mr159157835e9.26.1791803904585;
-        Mon, 12 Oct 2026 04:18:24 -0700 (PDT)
-Received: from localhost (p200300f65f19a904ade4f69ba751c34c.dip0.t-ipconnect.de. [2003:f6:5f19:a904:ade4:f69b:a751:c34c])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4a18bb68abfsm311754435e9.0.2026.10.12.04.18.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Oct 2026 04:18:21 -0700 (PDT)
-Date: Mon, 12 Oct 2026 13:18:21 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: Ying Liu <victor.liu@nxp.com>, Frank Li <frank.li@oss.nxp.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v10 5/9] drm/imx: Add support for i.MX94 DCIF
-Message-ID: <aszBIkBXoFIkkeiL@monoceros>
-References: <20261006-dcif-upstreaming-v10-0-bcfb28de0aae@oss.nxp.com>
- <20261006-dcif-upstreaming-v10-5-bcfb28de0aae@oss.nxp.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cO+Ocovv"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 320A1C2BCFD;
+	Mon, 12 Oct 2026 11:53:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1791805980;
+	bh=ItNrtX6IE2iJ5ANpQaYu97h4e0H0mgBYq8Akzk9ytr4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=cO+Ocovv/l3dFMJWrDLIzKx0lTkmijyMqyA8nB+jEbgnuGO8NVSrQOq8qCaPCJdQT
+	 z9r6ZAtg7QnuA5zT0kRo1Vwx/AveuabmUUrur82yHY2eXTcZisArI7M87kMkGlpfjF
+	 Bq5lrQqyFy231tXzGCITm4nzPFyJLW8/xPE1UhXMnxu9l4K6OzQKWXBs4tq9z0rRm5
+	 OFfjDNDn9K8BiC+BtKRyE/FuLDL3fPawtXyiDsH7aq8necUWoYaHxwyAzm/RhMIL6l
+	 PBK+SHUKe1NAbIZu4MpQjeJ+kn2SMy/cxpyRXg2xo0p1sUPMzTYFD2XRw9U8K9ovkY
+	 iTLHqzmNWalpw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C48CA9ED2;
+	Mon, 12 Oct 2026 11:53:00 +0000 (UTC)
+From: Sarath Ganapathiraju via B4 Relay <devnull+sarath.ganapathiraju.oss.qualcomm.com@kernel.org>
+Date: Mon, 12 Oct 2026 17:22:59 +0530
+Subject: [PATCH v11 2/2] clk: qcom: Add LPASS VA CSR heartbeat pulse clock
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cdga4qrbhoxcfsbx"
-Content-Disposition: inline
-In-Reply-To: <20261006-dcif-upstreaming-v10-5-bcfb28de0aae@oss.nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261012-master-v11-2-15009e3ecac3@oss.qualcomm.com>
+References: <20261012-master-v11-0-15009e3ecac3@oss.qualcomm.com>
+In-Reply-To: <20261012-master-v11-0-15009e3ecac3@oss.qualcomm.com>
+To: andersson@kernel.org, abelvesa@kernel.org, sboyd@kernel.org, 
+ bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, robh@kernel.org, 
+ krzk+dt@kernel.org, conor+dt@kernel.org, 
+ srinivas.kandagatla@oss.qualcomm.com, sarath.ganapathiraju@oss.qualcomm.com
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ prasad.kumpatla@oss.qualcomm.com
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1791805978; l=7440;
+ i=sarath.ganapathiraju@oss.qualcomm.com; s=default;
+ h=from:subject:message-id;
+ bh=Be40tqRCaREpt0ACRUayXerE4aw2R7L/eowyK6NM63E=;
+ b=HNl8vmBGUXgwhBQF15NmwuMnC+OYL4wSf/o5bEjOcWVdrjLPqTcdOLTTkg4rHTxVXDg9uKQaD
+ 9i6fjdNjvyZDCB4WMsOGrN7uJUn57ggHpVVeiicrO9bRhfWtCTGc8Sy
+X-Developer-Key: i=sarath.ganapathiraju@oss.qualcomm.com; a=ed25519;
+ pk=4p2FWGXM+F2sir13Lu5stw5aKX5trUymK/ttESvgxQg=
+X-Endpoint-Received: by B4 Relay for
+ sarath.ganapathiraju@oss.qualcomm.com/default with auth_id=870
+X-Original-From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+Reply-To: sarath.ganapathiraju@oss.qualcomm.com
+
+From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+
+The HeartBeat Pulse, also known as RateGen Pulse, synchronizes the
+start of DMAs and Codec Interfaces for the audio usecases and can
+serve as a periodic wakeup source for the DSP.
+
+Add the LPASS VA CSR driver that models the rate generator as a clock
+provider so consumers can enable and disable it through the common
+clock framework.
+
+Attach the DT vote clocks to runtime PM and program the rate generator
+counter and delay registers from runtime resume after the votes are
+enabled. This restores the state if the LPASS register context is lost
+across runtime suspend.
+
+Rely on the clock core provider runtime PM handling around clock
+prepare and unprepare to keep the votes active for regmap gate
+accesses.
+
+Signed-off-by: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+---
+ drivers/clk/qcom/Kconfig        |  14 ++++
+ drivers/clk/qcom/Makefile       |   1 +
+ drivers/clk/qcom/lpass-va-csr.c | 180 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 195 insertions(+)
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 27d0ab24d50a..da2e8005d075 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -2137,6 +2137,20 @@ config CLK_GFM_LPASS_SM8250
+ 	  Support for the Glitch Free Mux (GFM) Low power audio
+           subsystem (LPASS) clocks found on SM8250 SoCs.
+ 
++config QCOM_CLK_LPASS_HEARTBEAT_PULSE
++	tristate "Qualcomm LPASS VA CSR heartbeat pulse clock provider"
++	depends on COMMON_CLK
++	depends on ARM64 || COMPILE_TEST
++	select REGMAP_MMIO
++	default m if ARCH_QCOM
++	help
++	  Qualcomm LPASS VA CSR block contains the rate generator hardware
++	  that produces the HeartBeat Pulse (also known as RateGen Pulse).
++	  This driver models the rate generator as a clock provider so
++	  that consumers can enable or disable it via the common clock
++	  framework, and it can be used to synchronize the start of DMAs
++	  and Codec Interfaces or as a periodic wakeup source for the DSP.
++
+ config SM_VIDEOCC_8450
+ 	tristate "SM8450 Video Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 6affb5073f26..787a3761af3b 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -28,6 +28,7 @@ obj-$(CONFIG_CLK_ELIZA_GPUCC) += gpucc-eliza.o
+ obj-$(CONFIG_CLK_ELIZA_TCSRCC) += tcsrcc-eliza.o
+ obj-$(CONFIG_CLK_ELIZA_VIDEOCC) += videocc-eliza.o
+ obj-$(CONFIG_CLK_GFM_LPASS_SM8250) += lpass-gfm-sm8250.o
++obj-$(CONFIG_QCOM_CLK_LPASS_HEARTBEAT_PULSE) += lpass-va-csr.o
+ obj-$(CONFIG_CLK_GLYMUR_CAMCC) += camcc-glymur.o
+ obj-$(CONFIG_CLK_GLYMUR_DISPCC) += dispcc-glymur.o
+ obj-$(CONFIG_CLK_GLYMUR_EVACC) += evacc-glymur.o
+diff --git a/drivers/clk/qcom/lpass-va-csr.c b/drivers/clk/qcom/lpass-va-csr.c
+new file mode 100644
+index 000000000000..e5fb870aa36d
+--- /dev/null
++++ b/drivers/clk/qcom/lpass-va-csr.c
+@@ -0,0 +1,180 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/of_clk.h>
++#include <linux/pm_clock.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
++
++#include "clk-regmap.h"
++
++#define LPASS_RATE_GEN_CTRL		0xd000
++#define LPASS_RATE_GEN_COUNTER_0	0xd004
++#define LPASS_RATE_GEN_DELAY		0xd010
++
++#define LPASS_RATE_GEN_MAX_REG		LPASS_RATE_GEN_DELAY
++
++#define LPASS_RG_CTRL_EN		BIT(0)
++
++struct lpass_va_csr_data {
++	u32 counter_0;
++	u32 delay;
++};
++
++static const struct lpass_va_csr_data hawi_csr_data = {
++	.counter_0 = 0x960,
++	.delay = 0x16,
++};
++
++static const struct regmap_config lpass_rate_gen_regmap_config = {
++	.name = "lpass_rate_gen",
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++	.max_register = LPASS_RATE_GEN_MAX_REG,
++	.cache_type = REGCACHE_MAPLE,
++};
++
++struct lpass_va_csr {
++	const struct lpass_va_csr_data *data;
++	struct clk_regmap hb;
++};
++
++static const struct clk_ops lpass_va_csr_hb_ops = {
++	.enable = clk_enable_regmap,
++	.disable = clk_disable_regmap,
++	.is_enabled = clk_is_enabled_regmap,
++};
++
++static int lpass_va_csr_runtime_resume(struct device *dev)
++{
++	struct lpass_va_csr *csr = dev_get_drvdata(dev);
++	const struct lpass_va_csr_data *data = csr->data;
++	int ret;
++
++	ret = pm_clk_resume(dev);
++	if (ret)
++		return ret;
++
++	ret = regmap_write(csr->hb.regmap, LPASS_RATE_GEN_COUNTER_0,
++			   data->counter_0);
++	if (ret)
++		goto err_pm_clk_suspend;
++
++	ret = regmap_write(csr->hb.regmap, LPASS_RATE_GEN_DELAY, data->delay);
++	if (ret)
++		goto err_pm_clk_suspend;
++
++	return 0;
++
++err_pm_clk_suspend:
++	pm_clk_suspend(dev);
++	return ret;
++}
++
++static int lpass_va_csr_runtime_suspend(struct device *dev)
++{
++	return pm_clk_suspend(dev);
++}
++
++static int lpass_va_csr_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	const struct lpass_va_csr_data *data = of_device_get_match_data(dev);
++	struct lpass_va_csr *csr;
++	struct clk_init_data init = {
++		.name = "lpass_heartbeat_pulse",
++		.ops = &lpass_va_csr_hb_ops,
++	};
++	struct regmap *regmap;
++	void __iomem *base;
++	int ret;
++
++	csr = devm_kzalloc(dev, sizeof(*csr), GFP_KERNEL);
++	if (!csr)
++		return -ENOMEM;
++
++	if (!data)
++		return dev_err_probe(dev, -EINVAL, "missing match data\n");
++
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	regmap = devm_regmap_init_mmio(dev, base,
++				       &lpass_rate_gen_regmap_config);
++	if (IS_ERR(regmap))
++		return dev_err_probe(dev, PTR_ERR(regmap),
++				     "failed to init regmap\n");
++
++	csr->data = data;
++	csr->hb.regmap = regmap;
++	csr->hb.enable_reg = LPASS_RATE_GEN_CTRL;
++	csr->hb.enable_mask = LPASS_RG_CTRL_EN;
++	csr->hb.hw.init = &init;
++
++	platform_set_drvdata(pdev, csr);
++
++	ret = devm_pm_runtime_enable(dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to enable PM runtime\n");
++
++	ret = devm_pm_clk_create(dev);
++	if (ret)
++		return ret;
++
++	ret = of_pm_clk_add_clks(dev);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "failed to get vote clocks\n");
++
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret)
++		return ret;
++
++	ret = devm_clk_register_regmap(dev, &csr->hb);
++	if (ret) {
++		pm_runtime_put_sync(dev);
++		return ret;
++	}
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &csr->hb.hw);
++	if (ret) {
++		pm_runtime_put_sync(dev);
++		return ret;
++	}
++
++	pm_runtime_put_sync(dev);
++
++	return 0;
++}
++
++static const struct of_device_id lpass_va_csr_dt_match[] = {
++	{ .compatible = "qcom,hawi-lpass-va-csr", .data = &hawi_csr_data },
++	{}
++};
++MODULE_DEVICE_TABLE(of, lpass_va_csr_dt_match);
++
++static const struct dev_pm_ops lpass_va_csr_pm_ops = {
++	SET_RUNTIME_PM_OPS(lpass_va_csr_runtime_suspend,
++			   lpass_va_csr_runtime_resume, NULL)
++};
++
++static struct platform_driver lpass_va_csr_driver = {
++	.driver = {
++		.name = "qcom-lpass-va-csr",
++		.of_match_table = lpass_va_csr_dt_match,
++		.pm = pm_ptr(&lpass_va_csr_pm_ops),
++	},
++	.probe = lpass_va_csr_probe,
++};
++
++module_platform_driver(lpass_va_csr_driver);
++
++MODULE_DESCRIPTION("Qualcomm LPASS VA CSR heartbeat pulse clock provider");
++MODULE_LICENSE("GPL");
+
+-- 
+2.34.1
 
 
---cdga4qrbhoxcfsbx
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v10 5/9] drm/imx: Add support for i.MX94 DCIF
-MIME-Version: 1.0
-
-On Tue, Oct 06, 2026 at 12:22:00PM +0000, Laurentiu Palcu wrote:
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/platform_device.h>
-
-Please rely on linux/platform_device.h to provide of_device_id and drop
-linux/mod_devicetable.h.
-
-> +static const struct of_device_id dcif_dt_ids[] = {
-> +	{ .compatible = "nxp,imx94-dcif", },
-
-No , before } please.
-
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, dcif_dt_ids);
-> +
-> +static struct platform_driver dcif_platform_driver = {
-> +	.probe	= dcif_probe,
-> +	.remove	= dcif_remove,
-> +	.shutdown = dcif_shutdown,
-> +	.driver	= {
-> +		.name		= "imx-dcif-drm",
-> +		.of_match_table	= dcif_dt_ids,
-> +		.pm		= pm_ptr(&dcif_pm_ops),
-> +	},
-
-I generally don't like the effort to keep the = aligned in such
-structures and don't recommend to even try it. Still more if it's
-inconsitent from the start. Just use a single space before the =.
-
-Best regards
-Uwe
-
---cdga4qrbhoxcfsbx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrMwfoACgkQj4D7WH0S
-/k616wgAm56cItlrtTGYJGQMifXXyKIZEbNaNh8obfuoDdC9KTfL6OrQDbETA8n/
-83AtYbd6RkC4JP7NX3SK5DlSDS/oLGmxynxAfceKMBWsUcqR4oEpGee8ZRkIFMYn
-BL355LaaGTv56+1iWN/tYDLNYYgKV+jwUYXmDJferAy0J0I1aTlYgEYMNoCJGGxb
-ciaSMXRD1FzuAb3vpJpUvWltH2+boMSdeaKoj6ZblcP2sHWtw4UWN3b1YEcrSVcl
-zMXusjBfMNf3S6BQ3GHOW5axtmRXjnPsqxXPCouSaEqqAahemWk+g7rA/4XF+Xax
-302ZWP3FujxCr3/FFyysMyUncNGZnw==
-=Kiiw
------END PGP SIGNATURE-----
-
---cdga4qrbhoxcfsbx--
