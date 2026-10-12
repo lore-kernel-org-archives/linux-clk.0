@@ -1,65 +1,66 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C00B41B355
-	for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 10:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E51842F708
+	for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 10:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791800537; cv=none; b=MsPsWfvO+b4QT26XwcOazSuUyWSmjP9uGSMd51gPJq3eIVNFw9mi4XvD+pe1rovZl5vvsdQlMpp1OzrT2iIfnNOgELZTwbTWNYQhUM7a0gMaLZP/if+G4wzXTGMZRftTBW0QWJCZUgMGgOHCce97GjYTea1NNv48my/caz16Lsk=
+	t=1791800538; cv=none; b=suDXI01AykedZLP7nLX9GgUwfV9nndjJVSWo0SlcQmV14A6XjuXJmbgS1+535AoAliTRCrxRSxune9QGHAlnjSEGRMA7kM+N6ShM7GRHqWmyOp/XQyY7bLq0HEG5j4TeBy4CoRgFCwv8MkN0ppPADU3IynNLSZKm6MVl3MZm2q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791800537; c=relaxed/simple;
-	bh=YyoMrHD861VVJe+iGivxq1ZHVntN1q/d1zW1Rds/nog=;
+	s=arc-20240116; t=1791800538; c=relaxed/simple;
+	bh=pnNxWb9NIET8zGXgnh0fPk0259Mg14jdBHHSwczKVxY=;
 	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=eeboWhTycyiZp5wkkIE211GAR+l2jBhnFsRCijjjjc/L7KNBvMKxkhdU4k13Zumre8Vk4lEuL9u3/fyqi+1GFK5YF+kP7qU4ZOJgYcqlP7GBE/klVpfejEhUR2uvNnSVKdSdhp2+wzzJZII2NihUYA8JWXqxtWRpNwtiuEGtUXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=UnQ+2uOj; arc=none smtp.client-ip=209.85.128.53
+	 References:Date:Message-Id; b=hk8f+4PgsqMdhqZcrLDtqFlxizErL2qwL8aZo/KqnePcJzBjnU3WZyzzPhe8F7LRLhbIClH5ksjxSH5PyxLAEM1st5yDKuSf6XTIwotEEY1xHutTX85vaDsOyUmhKE4/Neri6QxKA7/D/G/stPgKdEyrTW2w6+6KONjQH2yAXIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=J/FPZyct; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="UnQ+2uOj"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4a02753c04fso8842525e9.3
-        for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 03:22:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="J/FPZyct"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-48c4649b3aaso959686f8f.2
+        for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 03:22:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1791800519; x=1792405319; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1791800523; x=1792405323; darn=vger.kernel.org;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=EQ8apU/TC78OUyWBg16BbmC/9tMwONU/mzWyf8HFPDg=;
-        b=UnQ+2uOjBP0b8JyqsyuNCVx3/XpKzJNCx5bbY9/wpDBDRojFBSZqgmrg9bbTaEaFIB
-         WurwYQCSXOlkTBNqMeKNRwrvHyh75dQjkDX2/IcjikTr3Y89pFlk4+igpg9x2dGXJrYq
-         qHvRMsuszV3r3vp9+ky2xpC8NLKYMBUxK+hSn6axvaERtJWsVgpKhXo11y3RWlIKSSqB
-         c9AaYW8yZM5IKmdFR/eOEwzwMawKUDmdKtVEmpBSNL3DmWWxxLwb4Z51I8bvgBjsX846
-         CMLwf4pCZo9du88aGj083pW/w4TcAvLH4jCzUJ8XtqGU116dWfGxoUBfK2cuOslCE3mj
-         rGTw==
+        bh=wSG3oCF74JWXW1bTfxbde+arlZoaBNLQIBfAv04jt2A=;
+        b=J/FPZyctTu0NeTuogB0104t6yOPUgzuEFCAl1/bASlFkk8J+srIz30/4gYlAbpiMOg
+         9VNZBedU/CYN4Y5FNpbqIz4EPGWBh+ItlC40l6tXsFgPsi3mIluEdh4irOf53MHOMXaK
+         d1H8mWQy4MJP41HUwY/Y7MpBzkF77YYRYOvZUxLvtHrg/yFOa24PKmT9XOoms4TEbyv/
+         Wu2BjL3M8RaxR7GCOwESqLmiKyOXu2fhxGAIBohXbkidnjuSZX5uOlCC68nMcjNpQRHa
+         u91DwSTNQNszbBzLpQBHF47FsVK4Hv6ulzDzXHYKbTQJaH5qoLrDmU4RDKzamDmgfiCQ
+         elnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791800519; x=1792405319;
+        d=1e100.net; s=20260707; t=1791800523; x=1792405323;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=EQ8apU/TC78OUyWBg16BbmC/9tMwONU/mzWyf8HFPDg=;
-        b=FnyGI4M2jYQImBAUP1Vl77Ot4mMlqFo9evEojqTFYINvjE3JVaH7tVMA6nQANf2JkL
-         kM17U6/gkYo3EKt9bLwOWje/puS50Zmw0LNoc3zv5BHO2QtKig30d8CKnJLTJBlU3ScJ
-         HlpCp1f7Y3+4Mo2WYhm7dR0n5zOPOeR/y7vCwCiriI+N3mGbppELj89a9sAZnMN5xhaa
-         8mNnVBYo3Eg3E4Dm8efAh7F72LqaTJ5Y5KLT+58CmNMfwiGDc2Z4kh/1Xp26sbQBZIBl
-         bl7IrfHdADM5tID2VCqbgOukr833iFqubCoKfuVus4ysAe/TamgiGhkVoR/515QsS7vZ
-         efGg==
-X-Forwarded-Encrypted: i=1; AKwUvBw+DB8N3Uzh2yTOZfxw8UeqppMUobTFBOzpyjv/IkXAigbm6wPNDjWSgILQ0IaphK7SSAALqZ/Lt+k=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJsVj/Tyq3DefB54wSU2YtHyXdcD805hfo2e+tvFlhwiKax7b9a
-	O8rYcpt+keFbxMP3v5DyDNXJYRY4TEmNN/fOl+j/02iwC3GoMBIbPSLsaWkWoQp3r0g=
-X-Gm-Gg: AYBFou3kn08HDBW9k4LjvrGkyMmwNl6wjFQ8npVTc3MS/mPIN5mV1UyvPEMRupQF250
-	xI9g5D91lxBHvzsx4mA6ApIZ9RlcevM7YIzfTQj5Qa/XsDBhse+XRNT/eUz4H2A8lceIVA8WXFY
-	BP7syIaaNYQ96NUXySlc5SjMHgpzkKUJQMjuzB9dFpSvsiN+wB/xgcGyaZvr2tRHsoluJVxxTVb
-	LPUjx5z6QXn644qITqfTqdlbWsDUWymwpAIqv05AmnW+rErReTf6OXW4c4O4/rNCwwY6wVfg9Jl
-	RDd/H21VK4TDJF1ehctvSgglfEpGywy1PAy6Ix+RrjzlJ6SN2Y/slO+NrdVPTM5qmm7f+HCNrDc
-	qh0bBYkOwU12RywOzIzz2UYBS6kiu2liOWUDGeFdhTzEd5VqBFc/dfEUCcaRdUJYn7fJBExJLSM
-	AeWwa68oVsVw/Wi0bxTDFEcWpa6HpoNhBocbGEozRUZdx5vbeht5JO7wSMV4ZYB8BWlvUyIdAqx
-	P0F+qIgFTltSmLWIQ==
-X-Received: by 2002:a05:600c:1909:b0:4a0:2391:6529 with SMTP id 5b1f17b1804b1-4a18e4d3f12mr185023125e9.29.1791800519433;
-        Mon, 12 Oct 2026 03:21:59 -0700 (PDT)
+        bh=wSG3oCF74JWXW1bTfxbde+arlZoaBNLQIBfAv04jt2A=;
+        b=XHFm64vu/1uAbTSCwxVrSYHeZFNtjhWzzAVT7FQ+OC+toYPqirvn3E6Uebxwf/4oTV
+         DX1ZHwfFp4I2FJdjXrOtC8GBepcq4tMTy3K18Rz/h214YwJ13D0z7Q1x3Qsh8VuIdNcz
+         7xNCY8dMvYRZIkITCxDFtQ2XZXcaqfKDYii6HxNrlzYnxckafFsaLKPu5iIKYhNYQ6pJ
+         CeYk+ln1eidjOYPSPbTEMeP9Q6E8VTx61sTu3O0jgmOlEFJL61DqmaAqOHnj2LK0xF5V
+         ++1ojDvll+aXi5drKap3uCPqMWQMqg1a4a+NjvXZUY1xWRgjokC9lD2LhVA60zdhmAQG
+         xA1g==
+X-Forwarded-Encrypted: i=1; AKwUvBwWAPqNyZXyOEaBWzPiFgSa5Fahd7GCBz5n+km3w/m6+jgEC1SD6Rhe65ibgvxapxM6H/gPtSYyJ2s=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLCqYzmtsX2W8Jffs5/9v2Z0qhmaSTZhpnvC2a3atvYLJLRRZ60
+	tq8eGMIxoE+08sX3Wlqz6YCWvxCGOKM4XMZMZ/jLXA6bv2MuwidOrFH091DNHztaK+oNDjxlSby
+	wgO+KOmA=
+X-Gm-Gg: AYBFou2V5rGrlLFmsBSwJD/XrVP5goww6OGdQRFn9g5fOvbaIuErmC94BIyBmQ4Xl0i
+	jWe6UkS33IudlcJ9IbdzrcflxHePexYgYDjjvknEEwvL+VaGVs7pYASn7bhFVzJUu3ql45plL0s
+	NrDv8q3ccfhS2sxCl2ir6ez+CBHlgadh7bGEDh9birASiJpts4qr9lck/tI+UEBYI8EbzobVE6s
+	tzy/WdjA2eFdtoCC/VV/IHjw2AWFf6SpzYItwea4+4oDn3+k76ae9hld4jXdhVKUV5lg2BYjbbi
+	ZTU9wh5LrHtBlRc7Oi7KmCW+ESg3UBVXVceCg1Wju46mYcc7EAVzKUYmfMMkKPcVdaFpLmPWJw4
+	w5tDYcxhbDswkXwITxFHPDgmKByKCO98MyDn0BgWwwkUjj/q9pdSB+HUXpVJaHMiIfuy/Xzwna4
+	aUiX3SavwJu+yMq2QG8jovAvD8PAlQ/RDtCB5QMpOYK6oCs+kCTgopqjMNSb+aixkEc2ZzgPniD
+	KRcCMyhid/Z8pINkQs=
+X-Received: by 2002:a05:600c:83c9:b0:4a1:70f0:ac2 with SMTP id 5b1f17b1804b1-4a18e4ce9cfmr166723875e9.24.1791800522611;
+        Mon, 12 Oct 2026 03:22:02 -0700 (PDT)
 Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a199e5db12sm157509785e9.2.2026.10.12.03.21.58
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18bf31b83sm287466995e9.12.2026.10.12.03.22.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Oct 2026 03:21:59 -0700 (PDT)
+        Mon, 12 Oct 2026 03:22:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,8 +69,8 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v6 06/15] clk: starfive: Add JHB100 System-1 clock
- generator driver
+Subject: Re: [PATCH v6 08/15] clk: starfive: Introduce idiv ops for
+ inverted divider clocks
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Changhuang Liang <changhuang.liang@starfivetech.com>
 Cc: Brian Masney <bmasney@redhat.com>, 
@@ -80,127 +81,70 @@ Cc: Brian Masney <bmasney@redhat.com>,
  Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
  Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <20261008123338.11081-7-changhuang.liang@starfivetech.com>
+In-Reply-To: <20261008123338.11081-9-changhuang.liang@starfivetech.com>
 References: <20261008123338.11081-1-changhuang.liang@starfivetech.com>
- <20261008123338.11081-7-changhuang.liang@starfivetech.com>
+ <20261008123338.11081-9-changhuang.liang@starfivetech.com>
 Date: Mon, 12 Oct 2026 12:21:47 +0200
-Message-Id: <179180050742.66744.3501923081079835549.b4-review@b4>
+Message-Id: <179180050742.66744.154947682767663962.b4-review@b4>
 X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4493; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=YyoMrHD861VVJe+iGivxq1ZHVntN1q/d1zW1Rds/nog=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFlntuz/OvmOF/+PdIvvq15Kvru33VB0vvWu2u6yyRuPi
- 7Tr3lYR6ChlYRDjYpAVU2Sp4a4Wfyep9WXWdJ3bMHNYmUCGMHBxCsBEwr4yMmx47H9k33SjzKWC
- bxPfrBdz/X540yORr1XnfNk3bffc2SzD8E95Jffi+BLeqcIv406da9VQudt6IN/+6hTZJxl5UaJ
- 7+zgB
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1977; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=pnNxWb9NIET8zGXgnh0fPk0259Mg14jdBHHSwczKVxY=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFlntuzfrGv/WEVPdLV5tHi+YeOfQ+VnD2SnVaRfezHz5
+ Y/GG1IVHaUsDGJcDLJiiiw13NXi7yS1vsyarnMbZg4rE8gQBi5OAZjIlsMM/7PO393IYNV8xrem
+ Xe/NxPVv8vr9OZQETj54s20bm9+6VS4M/4uY/t2dl8IocOm5ht2cHEdHrvlqeetVPLXDXq3RWh5
+ fzgMA
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-> Add support for JHB100 System-1 clock generator (SYS1CRG).
-> 
+> Some StarFive clocks only advertise the divider and invert capabilities
+> (via JH71X0_CLK_INVERT, without ENABLE). Add the JH71X0_IDIV() macro
+> to declare such clocks, and jh71x0_clk_idiv_ops, which combines the
+> divider rate operations with get_phase/set_phase.
+>
+
+Please rephrase, I don't understand what you mean
+
 > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 > ---
->  drivers/clk/starfive/Kconfig                  |  10 ++
->  drivers/clk/starfive/Makefile                 |   1 +
->  .../clk/starfive/clk-starfive-jhb100-sys1.c   | 118 ++++++++++++++++++
->  3 files changed, 129 insertions(+)
->  create mode 100644 drivers/clk/starfive/clk-starfive-jhb100-sys1.c
+>  drivers/clk/starfive/clk-starfive-jh71x0.c | 13 ++++++++++++-
+>  drivers/clk/starfive/clk-starfive-jh71x0.h |  8 ++++++++
+>  2 files changed, 20 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
-> index cd5b7754403e..11da8bcc4046 100644
-> --- a/drivers/clk/starfive/Kconfig
-> +++ b/drivers/clk/starfive/Kconfig
-> @@ -82,3 +82,13 @@ config CLK_STARFIVE_JHB100_SYS0
->  	help
->  	  Say yes here to support the system-0 clock controller on the
->  	  StarFive JHB100 SoC.
-> +
-> +config CLK_STARFIVE_JHB100_SYS1
-> +	bool "StarFive JHB100 system-1 clock support"
-> +	depends on ARCH_STARFIVE || COMPILE_TEST
-> +	select CLK_STARFIVE_JH71X0
-> +	select RESET_STARFIVE_JHB100 if RESET_CONTROLLER
-> +	default ARCH_STARFIVE
-> +	help
-> +	  Say yes here to support the system-1 clock controller on the
-> +	  StarFive JHB100 SoC.
-> diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
-> index d2ba83d7d02c..0061550e0f7e 100644
-> --- a/drivers/clk/starfive/Makefile
-> +++ b/drivers/clk/starfive/Makefile
-> @@ -12,3 +12,4 @@ obj-$(CONFIG_CLK_STARFIVE_JH7110_ISP)	+= clk-starfive-jh7110-isp.o
->  obj-$(CONFIG_CLK_STARFIVE_JH7110_VOUT)	+= clk-starfive-jh7110-vout.o
+> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.c b/drivers/clk/starfive/clk-starfive-jh71x0.c
+> index c5ee82db3c92..224fcc3d08db 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh71x0.c
+> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.c
+> @@ -303,6 +303,15 @@ static const struct clk_ops jh71x0_clk_inv_ops = {
+>  	.debug_init = jh71x0_clk_debug_init,
+>  };
 >  
->  obj-$(CONFIG_CLK_STARFIVE_JHB100_SYS0)		+= clk-starfive-jhb100-sys0.o
-> +obj-$(CONFIG_CLK_STARFIVE_JHB100_SYS1)		+= clk-starfive-jhb100-sys1.o
-> diff --git a/drivers/clk/starfive/clk-starfive-jhb100-sys1.c b/drivers/clk/starfive/clk-starfive-jhb100-sys1.c
-> new file mode 100644
-> index 000000000000..db37b243db18
-> --- /dev/null
-> +++ b/drivers/clk/starfive/clk-starfive-jhb100-sys1.c
-> @@ -0,0 +1,118 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * StarFive JHB100 System-1 Clock Driver
-> + *
-> + * Copyright (C) 2024 StarFive Technology Co., Ltd.
-> + *
-> + * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
-> + *
-> + */
-> +
-> +#include <dt-bindings/clock/starfive,jhb100-crg.h>
-> +#include <linux/init.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "clk-starfive-jh71x0.h"
-> +
-> +#define JHB100_SYS1CLK_NUM_CLKS			(JHB100_SYS1CLK_BMCPER3_CFG_125 + 1)
-> +
-> +/* external clocks */
-> +#define JHB100_SYS1CLK_OSC			(JHB100_SYS1CLK_NUM_CLKS + 0)
-> +#define JHB100_SYS1CLK_PLL0			(JHB100_SYS1CLK_NUM_CLKS + 1)
-> +#define JHB100_SYS1CLK_PLL1			(JHB100_SYS1CLK_NUM_CLKS + 2)
-> +#define JHB100_SYS1CLK_PLL2			(JHB100_SYS1CLK_NUM_CLKS + 3)
-> +#define JHB100_SYS1CLK_PLL4			(JHB100_SYS1CLK_NUM_CLKS + 4)
-> +#define JHB100_SYS1CLK_PLL5			(JHB100_SYS1CLK_NUM_CLKS + 5)
-> +#define JHB100_SYS1CLK_NPU_NCNOC_INIT		(JHB100_SYS1CLK_NUM_CLKS + 6)
-> +
-> +static const char * const jhb100_sys1_ext_clk[] = {
-> +	"osc",
-> +	"pll0",
-> +	"pll1",
-> +	"pll2",
-> +	"pll4",
-> +	"pll5",
-> +	"npu_ncnoc_init",
+> +static const struct clk_ops jh71x0_clk_idiv_ops = {
+> +	.get_phase = jh71x0_clk_get_phase,
+> +	.set_phase = jh71x0_clk_set_phase,
+> +	.recalc_rate = jh71x0_clk_recalc_rate,
+> +	.determine_rate = jh71x0_clk_determine_rate,
+> +	.set_rate = jh71x0_clk_set_rate,
+> +	.debug_init = jh71x0_clk_debug_init,
+
+Instead of trying to cover all the combination that could exist, can you just chain 2 elements ?
+a div then an inv ?
+
 > +};
 > +
-> +/*
-> + * Regarding the CLK_IS_CRITICAL flag:
-> + *   Clocks flagged CLK_IS_CRITICAL feed logic that has to keep running whether
-> + *   or not a consumer holds them, such as the bus interconnect and always-on
-> + *   blocks. Gating them hangs the system, so they must never be disabled.
-> + *
-> + * Regarding the CLK_IGNORE_UNUSED flag:
-> + *   Clocks flagged CLK_IGNORE_UNUSED are not consumed by any driver. The flag
-> + *   keeps them in their hardware default state (enabled) instead of letting
-> + *   the clock framework gate them once it disables unused clocks.  If this
-> + *   flag needs to be removed later, it must be ensured that these clocks will
-> + *   not be disabled even if they are not consumed.
+>  const struct clk_ops *starfive_jh71x0_clk_ops(u32 max)
+>  {
+>  	if (max & JH71X0_CLK_DIV_MASK) {
+> @@ -313,7 +322,9 @@ const struct clk_ops *starfive_jh71x0_clk_ops(u32 max)
+>  		}
+>  		if (max & JH71X0_CLK_ENABLE)
+>  			return &jh71x0_clk_gdiv_ops;
+> -		if (max == JH71X0_CLK_FRAC_MAX)
+> +		else if (max & JH71X0_CLK_INVERT)
+> +			return &jh71x0_clk_idiv_ops;
+> +		else if (max == JH71X0_CLK_FRAC_MAX)
+>  			return &jh71x0_clk_fdiv_ops;
 
-Those comments you are using are too generic and not really helpful as they are.
-
-For example there is no CLK_IGNORE_UNUSED below but the comment mention it.
-
-On the previous patch you've mention CLK_IS_CRITICAL and the fact the clock must stay on.
-It is the flag definition so it does not help much.
-
-For each clock with this flag, adding a quick comment explain *WHY* is must stay
-ON would be a lot more helpful for a future contributor wondering why it was
-put there and how it can possibly be removed. IOW, what device does this clock and
-why doesn't it have a driver ?
-
-... and again, I don't think a USB clock should be critical.
+Given the branches return, if was enough and you did not need to modify the existing path.
 
 -- 
 Jerome
