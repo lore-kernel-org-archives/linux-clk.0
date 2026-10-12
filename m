@@ -1,64 +1,64 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18A83BBFA2
-	for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 06:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B60364935
+	for <linux-clk@vger.kernel.org>; Mon, 12 Oct 2026 06:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791786635; cv=none; b=Yo8TU4/ESC+tk+MF/x+96QRXuyokn2EpUFzC78amkfaEQyifW/dvzsOtNAV0IkTi9Dnk4R3YsMz7NTlMUZvCBFD0WbRDcYOkz7AwOyFkZBiErk7drhoy4R9uFJM5riK0ND4m3SSDVhC27rs15LwcBAcUCSPgfOE/fe0oHWFzhho=
+	t=1791786637; cv=none; b=HlsDXVbFND4z0j/7Irnf+dhzm6NeSb+TtYI2fluBUKjGzITh2LkP0CNxDL20pDHTLt9HgCQC7cr71u7yuuSlE09XVERcAxDRMdtRDR/f3sR9UbztTpgoxkZxpRHKE3a3BdEnlnVYW0nFzLWuuMpXNeS0f2qlnInY830Q8L3gRGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791786635; c=relaxed/simple;
-	bh=nTmkkQ+srYSH1qSInry/EXxTspT5axi15V9RfozReIs=;
+	s=arc-20240116; t=1791786637; c=relaxed/simple;
+	bh=t6HlpzVkV6z864H43M58aoqN8E6EQKTOL7RyFtVr08k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qF0AjIE7r3m2pUvXcHI96Z4gGV2eHt6IcvNUFpyslvIj3jnLD1GDBJnHD1wn/FTz+RzWxKs6v3EJh61dEAO7ZatDteS2y388qcm0oVk4V/sNX8x7NRPmqmchdtcPbg//QVWubc7JlJX0T1sj9ID3PoX1Qio4gJtvs0Kp/BfQVN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hyqV0QIL; arc=none smtp.client-ip=209.85.214.179
+	 MIME-Version; b=VO4lNkJBX7wKwEF0GB0axKZOiRD2gdjNzoeFb3GDYX9gGpV24Acpb90GRktVa5JZKIgs78HZglWNlu0+TOVpxbEYYLkPglQJQ5TlOXY0ejhO78FtPAso8gv/pwWd/arFLZvSjoQkp6nPpipokziGhuPRUMmYMsqk4bzJ+QJF+JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dO/UH6re; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hyqV0QIL"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2e623eda81cso8842005ad.0
-        for <linux-clk@vger.kernel.org>; Sun, 11 Oct 2026 23:30:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dO/UH6re"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2d71d1cc8b2so8047085ad.1
+        for <linux-clk@vger.kernel.org>; Sun, 11 Oct 2026 23:30:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791786630; x=1792391430; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791786634; x=1792391434; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=mEUI0qMUoX7WI41VkLWV4LHhhLkoSphEWPjNV+Kx3hQ=;
-        b=hyqV0QIL9r3u3JvdhDEEOzriKxuMRaS8Glsow1UGNL+rA5QSY5lGTApFZ6V+cyc5PF
-         jnoA4ge6oHFkVCtkcxtQeXq1RWNqBz3AAEiWOo4U00RldBzFkWniO4hePypyojirnrEO
-         dESigyp3g3Qkjo5a3Wi0eHiccgA0Ua6AncvVMoTm5SLFssoSGus/xi1O3lpd7qnSzY2r
-         Iup/AN7au3I4PWa5RVud8f6+Kfs0BGphAfJYn2YYjRKAmPQ3Oug7Uh8NnQmqTCXiKsPp
-         BfmZBIaFuURghuUv0nH0xlF4qybCRXWje9GyIWddNbheMHrXeI0Ft7BVSrAn63DpkoE8
-         9V0g==
+        bh=GKOeMXNG1kfy2/JP3GJLdq+HcYyRr6DhQVK+LeX96yQ=;
+        b=dO/UH6rentCrJQ4n/6eD5EDXV0UD0hd0JAhz1icDjW0bQymkAwhs09EuFD3B4Awwo8
+         hWDDK9UC3+dhu3NAwgCkUI3Q5nMAeboxlhO8PClxxtmvvrV9y0nt9oX7WZrEWRBVf2Kb
+         82k4OaDY15t6c6AFztkd2ePdlQ0JSkrAuwD5PyNdyVewXkloK9dXk7bsyxMpaVxQf6eL
+         r9m5ySR1hs/TIG4Ag1A0nTnu/QIsyyyI7nSG3aGvCUuehs8E4RmxQEp5llEUToNnpVJX
+         XXLQiOVAygGm4psknVJihEEvJkg2pmvyL6433a52Yova4iX9zCNdvlHebk+67VRYJG5P
+         Ix2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791786630; x=1792391430;
+        d=1e100.net; s=20260707; t=1791786634; x=1792391434;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=mEUI0qMUoX7WI41VkLWV4LHhhLkoSphEWPjNV+Kx3hQ=;
-        b=ZFMf/4tk7N/cgoFLx4yOV1rMSHre1LUe8F6vnuQei6aZJiQsuj7L99xtNP4v5oZ8qB
-         e8zDYO3sL7TopaQ1i/4jPYfF9qbBHtZbMjlKGMyQd78Zy7dvUQyK6hbCxhksydtWvi+t
-         nR7N1r2r3Kaj5zucfJOPee5qWrCaxXvBQmWcAygSS1EQOqrTtWtVuUC4x/El1L69fMG+
-         8CVrVzoukpaDdrm87RYRhZzmB6SROyheNa6ytsSeijaktj07S7BesX0F2VI+f8rSyfCy
-         +apuRovKV4lCgGR+GZyvbGfzDOohUAE0miDO2JIbvomb2BkNk2borgOmmbJASfGEqVil
-         ELVw==
-X-Forwarded-Encrypted: i=1; AKwUvBzugoXJ2ObolYKoTdIxeexWnNns3v1kZ6YiRP9X9NWz6Wo2J/mTtdjPMwJo2qFEObaQhpbaGucBMxI=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLcWQ6dRdu45ubJofGgUiQyaiKSfTeZITEJFLsuv7v2oZyC3aUl
-	migMNbAm/n39SrWwyTbz5Zy6BtsIcOZFqN3ZKJUVVfH3F/RLoORXQpc4
-X-Gm-Gg: AYBFou1Bz6nJjioqQRZWjPPpyOH7Akyc+563mvgjt/fDh9WokKEaXoKY14Ws5gQWcZd
-	92/kN8blpw9hHQsPYNSdchXgg2JsQpcCXzMNMVuOFWhL41iOgY4snyx5nrFHje0YOQ7zqlZ61J4
-	gkq9EqZLymM2DsHdasv8EAltDnBXmeR90+Mohjv6gCIf1TmVzaF+2oepDi381gpNsgI2NfYr6Xs
-	KywkSHkEsr37Gb3hd1ZTkcAPoUfzDRX1CufZV+3ORJOGrkt/ajstLJ+rRBNQeE7a23DeeHDCsWX
-	9IhVuDd9s2Dwdye80jEK53Xafz6rvn6R5VBvJQa0U7zUqaSwkXaY7+E9XzdvtMvCUlAXQW8eFqe
-	ApQJ579i50WSNLLW5Ty9mx1RFkWoOOU2TpPnF5JI87Eg+FnhqLIFwkgXWWwXr4HGpDrN0xF1NM8
-	zTgKJ2Ufcomq4a0+8owLgyFst8zxdlZyU6Yu12RXXz4eKqimMHH9yAv83HvjZDOHB+H+/0QK9e2
-	itUaI6S9e6cbQaqq2xL9em4bneq8gM3/sJ7HgrrErpyli/onfGJRsSW1EerSTyB33gqzD4QxxQ=
-X-Received: by 2002:a17:902:ebcd:b0:2e2:c773:a37 with SMTP id d9443c01a7336-2e842ab68c7mr74795165ad.16.1791786629963;
-        Sun, 11 Oct 2026 23:30:29 -0700 (PDT)
+        bh=GKOeMXNG1kfy2/JP3GJLdq+HcYyRr6DhQVK+LeX96yQ=;
+        b=FpUHiIy54iy8yNUW8jUxVtC3Akbj3iKsjGtm70LTTBpHuoEMGqgrfW8W2vY9Eq7l2V
+         lw8AjdDtQ19SAtoeOXjfinWR5DJ1Y6ROrf9r4H83dURik01dBQilR9bXjVjncYj5YkNK
+         NLvUIXlMLIINu9KcBd/+6muPrgGiUwNlRIZHmb+vyen3Q9C6zAoYmnMMwEoOaIkb+PAx
+         QRHgIp4wv2fIGltHwQO9sIUlHdRjUWbqN+A6RYgv+OnelYuY9xdHBMrRG98uJ/OyH9Vx
+         VN32Zg8fJqljqTNT6RMK/eZLObsKaj8K6JaOd6ZKxsooybGiMyZpYipYzmZETpjE7KA3
+         rTfw==
+X-Forwarded-Encrypted: i=1; AKwUvBxloztqqTJanzBa+dn1/gNjnAtLECtXHDK8Mnl9HQapRYBzAOkcQCPD+nXH94nRETmgBzR4b7j9vKQ=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLMxVa3NNxZ1CMUrXb+8q+DkhR+NHrI63W+rtX/hDyDabpPvm/u
+	mNvfZZ65ZTJQyXqQ4z+aiasPYqWan3bfh8Wlcr1nOWEqHbC0+wXNaSm/
+X-Gm-Gg: AYBFou37oMs0mEiff558HduZ5x8aUtzWppxO/TcTG0aTlb70qqLlpscS2thA5XIdjoz
+	SsztPVDWkJ3hqLc7s9CbBb6GwyUDdwe0qr+5TWF0USuvcSqE7ED8J41k2QGjYjB4T4IrEykORhI
+	uIqRALPJLickAW7mEgWKR6q3Nld4/ZAM3PGHSC2IwoiZE2XqugO/w2ZhJrVIKZteWCKhNtKeA3S
+	RQPvSCIOpkNcqPpPrCYY50Rq8Zp5DjQAmr/vB3tW3AlAv0CczUkdpiN19tHlz+KwCqj2c4adwP/
+	zio0dr1FFiR1s7lcxytUsKJPHW0/hf4MRQ7cq1bQNY/0/7hsCljDU2FqEWaDkeANdTbpHKqquwx
+	JVjsq5aa8SeEDLhDYJAc/bDi9kk+3cRuESe9hyJg1+epxXBZPc/ziDbyaeMKyL8m6hUMwme1TUl
+	SJdVrgNl5VNyvbzLhufSQqgKVUHUYqHQm6rg35FruvSCR6o/wnZ1iuJ9E7td/mN7OoXOr2yjmnm
+	NY43yTHiv889gr4tYruWp16Ylov0v+zxpVLrUrg7Mr9n8DplPMSIZ4xAswid/8=
+X-Received: by 2002:a17:902:cccc:b0:2df:7fe1:72b8 with SMTP id d9443c01a7336-2e8429a649bmr73282855ad.16.1791786633938;
+        Sun, 11 Oct 2026 23:30:33 -0700 (PDT)
 Received: from localhost.localdomain (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e8422da9b1sm39071745ad.66.2026.10.11.23.30.27
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e8422da9b1sm39071745ad.66.2026.10.11.23.30.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Oct 2026 23:30:29 -0700 (PDT)
+        Sun, 11 Oct 2026 23:30:33 -0700 (PDT)
 From: Joey Lu <a0987203069@gmail.com>
 To: sboyd@kernel.org
 Cc: ychuang3@nuvoton.com,
@@ -71,9 +71,9 @@ Cc: ychuang3@nuvoton.com,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Joey Lu <a0987203069@gmail.com>
-Subject: [PATCH 1/3] clk: nuvoton: ma35d1: fix parent lookup for clk_parent_data entries
-Date: Mon, 12 Oct 2026 14:30:18 +0800
-Message-ID: <20261012063020.3331443-2-a0987203069@gmail.com>
+Subject: [PATCH 2/3] clk: nuvoton: ma35d1: use the generic divider for the ADC clock
+Date: Mon, 12 Oct 2026 14:30:19 +0800
+Message-ID: <20261012063020.3331443-3-a0987203069@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261012063020.3331443-1-a0987203069@gmail.com>
 References: <20261012063020.3331443-1-a0987203069@gmail.com>
@@ -85,461 +85,44 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The parent tables were converted to struct clk_parent_data with only
-.fw_name set, for example { .fw_name = "hxt" }. The clock controller
-node has a single "clocks" entry for the external crystal and no
-"clock-names", so a firmware lookup by name can never succeed. The clk
-core falls back to a global name lookup only when .name is set, so these
-parents are never resolved.
+The ADC clock divider implements rate = parent_rate / (2 * (N + 1)),
+which is what the generic clk divider already provides with
+CLK_DIVIDER_EVEN_INTEGERS. Use it with CLK_DIVIDER_ROUND_CLOSEST, as the
+dedicated driver did, instead of a private clk_ops implementation. This
+also keeps the rate request propagation handled by
+divider_determine_rate().
 
-As a result sysclk1_mux and everything below it (hclk*, pclk*, and the
-peripheral dividers and gates) stay orphans with a rate of 0, and
-clk_set_rate() on any of their consumers returns early without
-programming the hardware.
+The dedicated driver additionally OR'd a caller-supplied mask bit into
+the divider register on every set_rate(). Its only caller passed a
+bitmask (0x1ffff) rather than a bit index, which made BIT() shift by an
+out-of-range amount, and nothing requires an extra bit to be forced, so
+that behavior is not carried over.
 
-Set .name as well as .fw_name on every entry so the lookup falls back to
-the globally registered clock of that name. .fw_name is kept so the
-tables still work if clock-names is ever added to the binding.
-
-Fixes: f50a000b4219 ("clk: nuvoton: Use clk_parent_data instead of string for parent clock")
 Signed-off-by: Joey Lu <a0987203069@gmail.com>
 ---
- drivers/clk/nuvoton/clk-ma35d1.c | 260 +++++++++++++++----------------
- 1 file changed, 130 insertions(+), 130 deletions(-)
+ drivers/clk/nuvoton/clk-ma35d1.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk-ma35d1.c
-index 9f65d0623517a..09e6ceeb2c556 100644
+index 09e6ceeb2c556..523493e42e38c 100644
 --- a/drivers/clk/nuvoton/clk-ma35d1.c
 +++ b/drivers/clk/nuvoton/clk-ma35d1.c
-@@ -63,298 +63,298 @@ static DEFINE_SPINLOCK(ma35d1_lock);
- #define PLL_MODE_SS             2
+@@ -1014,10 +1014,11 @@ static int ma35d1_clocks_probe(struct platform_device *pdev)
+ 	hws[QEI2_GATE] = ma35d1_clk_gate(dev, "qei2_gate", "pclk1",
+ 					 clk_base + REG_CLK_APBCLK2, 14);
  
- static const struct clk_parent_data ca35clk_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "capll", },
--	{ .fw_name = "ddrpll", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "capll", .name = "capll", },
-+	{ .fw_name = "ddrpll", .name = "ddrpll", },
- };
+-	hws[ADC_DIV] = ma35d1_reg_adc_clkdiv(dev, "adc_div", hws[PCLK0],
+-					     &ma35d1_lock, 0,
+-					     clk_base + REG_CLK_CLKDIV4,
+-					     4, 17, 0x1ffff);
++	hws[ADC_DIV] = devm_clk_hw_register_divider_parent_hw(dev, "adc_div", hws[PCLK0], 0,
++							      clk_base + REG_CLK_CLKDIV4, 4, 17,
++							      CLK_DIVIDER_EVEN_INTEGERS |
++							      CLK_DIVIDER_ROUND_CLOSEST,
++							      &ma35d1_lock);
+ 	hws[ADC_GATE] = ma35d1_clk_gate(dev, "adc_gate", "adc_div",
+ 					clk_base + REG_CLK_APBCLK2, 24);
  
- static const struct clk_parent_data sysclk0_sel_clks[] = {
--	{ .fw_name = "epll_div2", },
--	{ .fw_name = "syspll", },
-+	{ .fw_name = "epll_div2", .name = "epll_div2", },
-+	{ .fw_name = "syspll", .name = "syspll", },
- };
- 
- static const struct clk_parent_data sysclk1_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "syspll", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "syspll", .name = "syspll", },
- };
- 
- static const struct clk_parent_data axiclk_sel_clks[] = {
--	{ .fw_name = "capll_div2", },
--	{ .fw_name = "capll_div4", },
-+	{ .fw_name = "capll_div2", .name = "capll_div2", },
-+	{ .fw_name = "capll_div4", .name = "capll_div4", },
- };
- 
- static const struct clk_parent_data ccap_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "vpll", },
--	{ .fw_name = "apll", },
--	{ .fw_name = "syspll", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "vpll", .name = "vpll", },
-+	{ .fw_name = "apll", .name = "apll", },
-+	{ .fw_name = "syspll", .name = "syspll", },
- };
- 
- static const struct clk_parent_data sdh_sel_clks[] = {
--	{ .fw_name = "syspll", },
--	{ .fw_name = "apll", },
-+	{ .fw_name = "syspll", .name = "syspll", },
-+	{ .fw_name = "apll", .name = "apll", },
- };
- 
- static const struct clk_parent_data dcu_sel_clks[] = {
--	{ .fw_name = "epll_div2", },
--	{ .fw_name = "syspll", },
-+	{ .fw_name = "epll_div2", .name = "epll_div2", },
-+	{ .fw_name = "syspll", .name = "syspll", },
- };
- 
- static const struct clk_parent_data gfx_sel_clks[] = {
--	{ .fw_name = "epll", },
--	{ .fw_name = "syspll", },
-+	{ .fw_name = "epll", .name = "epll", },
-+	{ .fw_name = "syspll", .name = "syspll", },
- };
- 
- static const struct clk_parent_data dbg_sel_clks[] = {
--	{ .fw_name = "hirc", },
--	{ .fw_name = "syspll", },
-+	{ .fw_name = "hirc", .name = "hirc", },
-+	{ .fw_name = "syspll", .name = "syspll", },
- };
- 
- static const struct clk_parent_data timer0_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk0", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk0", .name = "pclk0", },
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- 	{ .index = -1, },
--	{ .fw_name = "hirc", },
-+	{ .fw_name = "hirc", .name = "hirc", },
- };
- 
- static const struct clk_parent_data timer1_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk0", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk0", .name = "pclk0", },
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- 	{ .index = -1, },
--	{ .fw_name = "hirc", },
-+	{ .fw_name = "hirc", .name = "hirc", },
- };
- 
- static const struct clk_parent_data timer2_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk1", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk1", .name = "pclk1", },
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- 	{ .index = -1, },
--	{ .fw_name = "hirc", },
-+	{ .fw_name = "hirc", .name = "hirc", },
- };
- 
- static const struct clk_parent_data timer3_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk1", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk1", .name = "pclk1", },
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- 	{ .index = -1, },
--	{ .fw_name = "hirc", },
-+	{ .fw_name = "hirc", .name = "hirc", },
- };
- 
- static const struct clk_parent_data timer4_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk2", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk2", .name = "pclk2", },
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- 	{ .index = -1, },
--	{ .fw_name = "hirc", },
-+	{ .fw_name = "hirc", .name = "hirc", },
- };
- 
- static const struct clk_parent_data timer5_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk2", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk2", .name = "pclk2", },
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- 	{ .index = -1, },
--	{ .fw_name = "hirc", },
-+	{ .fw_name = "hirc", .name = "hirc", },
- };
- 
- static const struct clk_parent_data timer6_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk0", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk0", .name = "pclk0", },
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- 	{ .index = -1, },
--	{ .fw_name = "hirc", },
-+	{ .fw_name = "hirc", .name = "hirc", },
- };
- 
- static const struct clk_parent_data timer7_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk0", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk0", .name = "pclk0", },
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- 	{ .index = -1, },
--	{ .fw_name = "hirc", },
-+	{ .fw_name = "hirc", .name = "hirc", },
- };
- 
- static const struct clk_parent_data timer8_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk1", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk1", .name = "pclk1", },
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- 	{ .index = -1, },
--	{ .fw_name = "hirc", },
-+	{ .fw_name = "hirc", .name = "hirc", },
- };
- 
- static const struct clk_parent_data timer9_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk1", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk1", .name = "pclk1", },
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- 	{ .index = -1, },
--	{ .fw_name = "hirc", },
-+	{ .fw_name = "hirc", .name = "hirc", },
- };
- 
- static const struct clk_parent_data timer10_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk2", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk2", .name = "pclk2", },
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- 	{ .index = -1, },
--	{ .fw_name = "hirc", },
-+	{ .fw_name = "hirc", .name = "hirc", },
- };
- 
- static const struct clk_parent_data timer11_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk2", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk2", .name = "pclk2", },
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- 	{ .index = -1, },
--	{ .fw_name = "hirc", },
-+	{ .fw_name = "hirc", .name = "hirc", },
- };
- 
- static const struct clk_parent_data uart_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "sysclk1_div2", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "sysclk1_div2", .name = "sysclk1_div2", },
- };
- 
- static const struct clk_parent_data wdt0_sel_clks[] = {
- 	{ .index = -1, },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk3_div4096", },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk3_div4096", .name = "pclk3_div4096", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- };
- 
- static const struct clk_parent_data wdt1_sel_clks[] = {
- 	{ .index = -1, },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk3_div4096", },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk3_div4096", .name = "pclk3_div4096", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- };
- 
- static const struct clk_parent_data wdt2_sel_clks[] = {
- 	{ .index = -1, },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "pclk4_div4096", },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "pclk4_div4096", .name = "pclk4_div4096", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- };
- 
- static const struct clk_parent_data wwdt0_sel_clks[] = {
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "pclk3_div4096", },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "pclk3_div4096", .name = "pclk3_div4096", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- };
- 
- static const struct clk_parent_data wwdt1_sel_clks[] = {
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "pclk3_div4096", },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "pclk3_div4096", .name = "pclk3_div4096", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- };
- 
- static const struct clk_parent_data wwdt2_sel_clks[] = {
- 	{ .index = -1, },
- 	{ .index = -1, },
--	{ .fw_name = "pclk4_div4096", },
--	{ .fw_name = "lirc", },
-+	{ .fw_name = "pclk4_div4096", .name = "pclk4_div4096", },
-+	{ .fw_name = "lirc", .name = "lirc", },
- };
- 
- static const struct clk_parent_data spi0_sel_clks[] = {
--	{ .fw_name = "pclk1", },
--	{ .fw_name = "apll", },
-+	{ .fw_name = "pclk1", .name = "pclk1", },
-+	{ .fw_name = "apll", .name = "apll", },
- };
- 
- static const struct clk_parent_data spi1_sel_clks[] = {
--	{ .fw_name = "pclk2", },
--	{ .fw_name = "apll", },
-+	{ .fw_name = "pclk2", .name = "pclk2", },
-+	{ .fw_name = "apll", .name = "apll", },
- };
- 
- static const struct clk_parent_data spi2_sel_clks[] = {
--	{ .fw_name = "pclk1", },
--	{ .fw_name = "apll", },
-+	{ .fw_name = "pclk1", .name = "pclk1", },
-+	{ .fw_name = "apll", .name = "apll", },
- };
- 
- static const struct clk_parent_data spi3_sel_clks[] = {
--	{ .fw_name = "pclk2", },
--	{ .fw_name = "apll", },
-+	{ .fw_name = "pclk2", .name = "pclk2", },
-+	{ .fw_name = "apll", .name = "apll", },
- };
- 
- static const struct clk_parent_data qspi0_sel_clks[] = {
--	{ .fw_name = "pclk0", },
--	{ .fw_name = "apll", },
-+	{ .fw_name = "pclk0", .name = "pclk0", },
-+	{ .fw_name = "apll", .name = "apll", },
- };
- 
- static const struct clk_parent_data qspi1_sel_clks[] = {
--	{ .fw_name = "pclk0", },
--	{ .fw_name = "apll", },
-+	{ .fw_name = "pclk0", .name = "pclk0", },
-+	{ .fw_name = "apll", .name = "apll", },
- };
- 
- static const struct clk_parent_data i2s0_sel_clks[] = {
--	{ .fw_name = "apll", },
--	{ .fw_name = "sysclk1_div2", },
-+	{ .fw_name = "apll", .name = "apll", },
-+	{ .fw_name = "sysclk1_div2", .name = "sysclk1_div2", },
- };
- 
- static const struct clk_parent_data i2s1_sel_clks[] = {
--	{ .fw_name = "apll", },
--	{ .fw_name = "sysclk1_div2", },
-+	{ .fw_name = "apll", .name = "apll", },
-+	{ .fw_name = "sysclk1_div2", .name = "sysclk1_div2", },
- };
- 
- static const struct clk_parent_data can_sel_clks[] = {
--	{ .fw_name = "apll", },
--	{ .fw_name = "vpll", },
-+	{ .fw_name = "apll", .name = "apll", },
-+	{ .fw_name = "vpll", .name = "vpll", },
- };
- 
- static const struct clk_parent_data cko_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
--	{ .fw_name = "hirc", },
--	{ .fw_name = "lirc", },
--	{ .fw_name = "capll_div4", },
--	{ .fw_name = "syspll", },
--	{ .fw_name = "ddrpll", },
--	{ .fw_name = "epll_div2", },
--	{ .fw_name = "apll", },
--	{ .fw_name = "vpll", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
-+	{ .fw_name = "hirc", .name = "hirc", },
-+	{ .fw_name = "lirc", .name = "lirc", },
-+	{ .fw_name = "capll_div4", .name = "capll_div4", },
-+	{ .fw_name = "syspll", .name = "syspll", },
-+	{ .fw_name = "ddrpll", .name = "ddrpll", },
-+	{ .fw_name = "epll_div2", .name = "epll_div2", },
-+	{ .fw_name = "apll", .name = "apll", },
-+	{ .fw_name = "vpll", .name = "vpll", },
- };
- 
- static const struct clk_parent_data smc_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "pclk4", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "pclk4", .name = "pclk4", },
- };
- 
- static const struct clk_parent_data kpi_sel_clks[] = {
--	{ .fw_name = "hxt", },
--	{ .fw_name = "lxt", },
-+	{ .fw_name = "hxt", .name = "hxt", },
-+	{ .fw_name = "lxt", .name = "lxt", },
- };
- 
- static const struct clk_div_table ip_div_table[] = {
 -- 
 2.43.0
 
