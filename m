@@ -1,87 +1,33 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F773EAC71
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 09:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7DE253340;
+	Tue, 13 Oct 2026 09:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791882849; cv=none; b=b6QT4+B8baNzasCWErjTvscqSGA8va5yVGi/1Td9+fHrfkIJS59fFaQqhZFoZyu5tkv4TC3tXJq1sruASKeUPYX/HrQGOfo4xRWZDWMSwwKnGR2Ukyvf+8OhRmRObqhCRKyoixiDOqmzrpeDWegsaUHGhir8SmgIQOmljc9tm7w=
+	t=1791883390; cv=none; b=dsMdhJYT0MvoeDavz56z+a19TANqVY4IJPTI+5BZXk94YjIOrd2QdpUroH1ayfBrtmzKb13uJsgDKWTn5AMVMPGFkHGQ1c1TLJhaRAPiLLI6VXd5vRlw3eTSCXCVtHLZsjzIkRTo1C9UQwfqpB55eow0X3FwGS+ogDkav94aGbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791882849; c=relaxed/simple;
-	bh=9t1LfwP+C0V3WkdUIqJJulzQNJ66T5GzsZqb8QyGXNw=;
+	s=arc-20240116; t=1791883390; c=relaxed/simple;
+	bh=ofil04HhTpC5obolLrlUT+WOtzfPuVxc9y1abvRUQSQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CyRnEPypTnmIka5OgeXaDP5OMQG97B+IlQ3EWZHkQ8RtEJpxtw5soK1yg8CAkhp08Smue4EdjD8fo1s/wlnCyDjxGtM2SNcslrK7XVyL9BTBo8wLzHZIYPOOu0md0MjnFjqeL+o+W8vd3UISI5/8sPDK+cg2VrktbhH4DW3uYVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GMG5hYf7; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gclKFj0C; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 In-Reply-To:Content-Type; b=qAkYtPt8PgPWM7BzxkAsC5AdxJZ093ZoE2WRAIITuu4cyiRMrrgQBIYqAfmvvacLwMv3SSnROakIIHjyw7vRPolWXUk6PqKm/HTQ6RwJKWA4H0Ckbyrgq0aZFFlAl2T7VqxKDgm2yYQPtzIGa0o3AWAG/6iNf5jFrVMJ+VhRhUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNEhL49s; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GMG5hYf7";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gclKFj0C"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69D8IQ8p922903
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 09:14:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	V4iSugGS1p1Fu0QiaYnOql6lHp7UYNFe+58/RnRtCOU=; b=GMG5hYf7up+Vl+3v
-	cWUG63lH68sYoAdAYb+aJoD9xby/yKNj883k6Z9nejdI3eI3FP19D2tMZHYAMLea
-	yMxTwRadGTeVLYZZbYi98HML9lWNn1Z+I5yjmACWYAMEnAi/NYyARop+MPj2q9z9
-	4i0h13r5NyQOjSs/MK77M3nEz3BP4m64L+SqKnTgVTT6NF7htnC+J9bowJ47L/ck
-	e2YjT4MRjn4Sap30l+2lLe2MCj9gcLAUgeYOxqWCT/OKfYXjB7ahL8P/s8AtlvZ5
-	hIZX6I0/l39J3zB71zUibRrl4d0O0htus2E2C0xErS+Hr1JvnwF79+2bqASif/WC
-	yjoAuw==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h98h1t4ww-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 09:14:06 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93cc50fb0d2so47254085a.0
-        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 02:14:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791882845; x=1792487645; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=V4iSugGS1p1Fu0QiaYnOql6lHp7UYNFe+58/RnRtCOU=;
-        b=gclKFj0CCVJOYFZdM5LWdSfVHPgKJyabTV/brrB+Ij05uGrEo0GBYWzf0Bx3/x7XWY
-         7XGa0SkR8v7JkTyu33M4afnrTN90PstZvt2RXB5uQUk7/rT6JmtnKJLeplJRajRHItHy
-         ViQp+2Pqc5SwFbPKRhxaXLPrHuADeP7RJIdjNsC/uPyygLIEiiXD0kRbks6weSOKAgn7
-         Mt7vdNuxhVXU35PcVuGZqigaRrxaWnLv9YvJQg/LbHUFjNlgmIc/kI5qMSnye9LVrxys
-         lqw9ZM5gtbpwOPVfXe9rD9PY269/9zwZP9mBDR2RyYqrqYEuxRWxsmRzivIrbAPXeCVS
-         MbZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791882845; x=1792487645;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=V4iSugGS1p1Fu0QiaYnOql6lHp7UYNFe+58/RnRtCOU=;
-        b=blkJ4dRhzIATvbiUaGtjXSFYaepXtQCrORMbsquQXk7YcK5oV3ue/ZJiLI+Vjd9WIq
-         YNc13yPaciOfxalzhQV6s/J5vbTCpHBZKfhUgM4jqwHiBZBYMM12uOuEQfXUfVGhJ0e7
-         gl+7+OFMyNc8F92nQbMfnLLjxcB9BYVO9r/GhM/aiazq3RlPQb/o1q353x9pTg7MjK7v
-         hQoTyIE+xJEoxs2Rgt2G6lPEPoYA3Spz9C8bQS8LZdPWRsajF5mCspqY+9KHJANqHusS
-         S9DBSS+4CpgkUsD5pvDw8IunmwIA4HKJ23fQUQsdJq0YjM4nmz9LZl7wzXXnieyWQGL7
-         Fw/A==
-X-Forwarded-Encrypted: i=1; AKwUvBxJHb/huE09SmdUhhIfHpddYj7myLyLCXLXbQjae4YSAZsMJIsDHSmrbFTsauMt0ewSYhrB8XNn+IE=@vger.kernel.org
-X-Gm-Message-State: AFq9FYInkYfP0OoFu4xQPniWhl9IWhCeBbsu0Ga13s6iC4YxuYFg7wQc
-	lr6Q1XRaN9FsVrK0VU5s5rN1IViSt9N/nfHNbMtPF+362E5jKXpJtiTSbFvVdJuiV/45GaeR5r1
-	nKozNmCyD/9mnUxCwOHHdSVrsCn5nXDrngO7WyxOgjS+KiOyP23HAZFxOi2PVhzwvbkrqaSA=
-X-Gm-Gg: AYBFou2Oc80sOjrLQTd2X88ZiDaA/PZB/VeF+7h0K3qS2vxdlJ3jR2uWJ6pj1GA3LTC
-	11rznpLVOQz+tBLJKfPYTNGQY0eIuZPGNpmJZLG+P86cPxYTvpVZ+0z3XP//j8dsbvZth9k3TcX
-	jV7zhbqJ6fPnexlKgEm+9rg6bVVRRluI2PvmMdvFOtKQeUpbseU05irA5CHLVg3tiCAdcbg1wkZ
-	wGrNcFFcqQEyzb5JVKXGPbgPgzel0HkvqHAWeNhLtLSXXYVD23oSbOpOfU9YoaTPFin2UZoLu1J
-	VC5gKpqr30qyjGGW3FYUsrxVVqBeh/T/JnsLc5kxGVwT70E43hA20WT7isKOxoxTYUSlsEeTHHd
-	4Hv4FG/YawMB+ABOmBzOJdQ==
-X-Received: by 2002:a05:620a:3186:b0:939:8bc:8826 with SMTP id af79cd13be357-93ebd10c0e2mr2350660885a.2.1791882845506;
-        Tue, 13 Oct 2026 02:14:05 -0700 (PDT)
-X-Received: by 2002:a05:620a:3186:b0:939:8bc:8826 with SMTP id af79cd13be357-93ebd10c0e2mr2350658785a.2.1791882844985;
-        Tue, 13 Oct 2026 02:14:04 -0700 (PDT)
-Received: from [192.168.226.26] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c366707467csm105224266b.76.2026.10.13.02.14.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Oct 2026 02:14:03 -0700 (PDT)
-Message-ID: <9e3ded68-ed3d-4a64-b26f-dee50b7e00fe@oss.qualcomm.com>
-Date: Tue, 13 Oct 2026 11:14:01 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNEhL49s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 608E61F000FF;
+	Tue, 13 Oct 2026 09:22:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791883389;
+	bh=7dLuRhyxP4nwjlLQAHA1PhTS/cikBl46Qd8VTWlXOfc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=YNEhL49syqeDz9UxO2iRTohsddBwkDSOmONbNUTTwQb8W+2yBiuXEdJHLLgs6TbC+
+	 HgPMOJfoS407xu8tcYfDZS/DpmFkMGv8dir5K6NTkhw6AQySNyfKWmkFxLJs1qm0rZ
+	 TCHpDbojAethdw7LxlRHYJfYOGy1l6+fE/+QQO9qhj1cMFCU+hVK7mg1pLPRpV4xa2
+	 TUyH23m00MjeY7B7z++AVGEDsICxPPCNLpnaFfIe22sckAv4hda7ZnhCBTdsANYsCC
+	 ux0dLAh5wFBy9sH3N4Smf9a8iPGC2pzkT96xorZZr+wuPcjA8TIncDmvk0bDSzcwxR
+	 Z3CP4N5Ug4Yjg==
+Message-ID: <56dc6c05-7fd6-43de-bc62-c353ae1dbcc3@kernel.org>
+Date: Tue, 13 Oct 2026 11:22:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -89,94 +35,156 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: qcom: negcc-nord: Add frequencies for
- ne_gcc_sdcc4_apps_clk_src
-To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>
-References: <20261009-nord-sdcc-clk-v2-1-e00ecfa321c3@oss.qualcomm.com>
+Subject: Re: [PATCH v8 04/18] dt-bindings: pinctrl: add Ambarella CV75 pinctrl
+To: Linus Walleij <linusw@kernel.org>
+Cc: longzhao@ambarella.com, Arnd Bergmann <arnd@arndb.de>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Long Zhao <zl020895@163.com>, Lee Jones <lee@kernel.org>,
+ mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260921-cv75-v5-v8-0-282ff5d98dda@ambarella.com>
+ <20260921-cv75-v5-v8-4-282ff5d98dda@ambarella.com>
+ <CAD++jLmKF5XxHsJX29sdXC_6JHKn-7HkE=N+TKtk5xODtQj3_w@mail.gmail.com>
+ <b2256847-3ec1-47e8-ac79-ceca86eb09e7@kernel.org>
+ <CAD++jLkrXXg9xrhAZ8HETc5Qcv5BbkY-ibjvzBmE5WZVqDEGWQ@mail.gmail.com>
+ <a0eca34d-5eb2-4730-b8c7-0f2302bcf265@kernel.org>
+ <CAD++jLm=T-U07vAVCogMnfOfkDf=i9QhGGc8ok2N-ZUh50WLNA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20261009-nord-sdcc-clk-v2-1-e00ecfa321c3@oss.qualcomm.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <CAD++jLm=T-U07vAVCogMnfOfkDf=i9QhGGc8ok2N-ZUh50WLNA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=VqC2kO2n c=1 sm=1 tr=0 ts=6acdf65e cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=E7-qh2Fnl_Ea1JZtUYsA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-GUID: 3GNxkdSjaYKSG6Vp_BL84EZnLPqzlKHM
-X-Proofpoint-ORIG-GUID: 3GNxkdSjaYKSG6Vp_BL84EZnLPqzlKHM
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDEzMDAzNiBTYWx0ZWRfX++EwbcsvlKKa
- s1RW/MdufHV3k1gMP7WL73dyHJPwa9G6Lwa8mmiGgoLruAYecIDLr0WzAXxYSK9D0CiPZ3GuwZ7
- ZUObH6tlMN+/rUY7OY2dfIakQOy4e4o=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDEzMDAzNiBTYWx0ZWRfX9WbhzuNseJ+j
- RKsE9W8pnGEj8oXSI94/X1Gdo/r7n/ExZNLMLf//mZJ375lT88kR1A8+WLAWYz/iS76hTieRaZY
- NBn6Q+ODRauz3FDmnOOfnRNbEBzOwwb87OIdqvQpvUPExlx8UDBj4dnM7mU22G5w+yf9qCRF9RJ
- CyZcSbGuEonvclMFKJgF0dFw54HoAHRrxMZsyNid1o2KfXnNuL4VcyQpFVUrYLMshHxgHiim0Je
- JLqLL22K5I4UCIq6JsgNaRs9XGvU0p9526noypN9Qsrb8ky3elrUYEom0tG0AC507/zZYOJ99tS
- cfELBPl5GEkT7oVLibZtDnI7FJ5ZZEt1FKB59/KbQowF169zPVddffXlwu563U4FNCZq3dJLTcT
- /5bkhmx+Z5dQoYwkGjZuOTo10+ERCiKNSYH3/oi4RmElBg3KvKEi6ZOUBOQ11Hlz5wEclNNcy6V
- E4INcyReuNI9O1zXh9g==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-13_01,2026-10-09_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- adultscore=0 phishscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610130036
+Content-Transfer-Encoding: 8bit
 
-On 10/9/26 8:08 AM, Jagadeesh Kona wrote:
-> Add the frequency table entries for ne_gcc_sdcc4_apps_clk_src to support
-> the additional clock rates required on the Nord platform.
+On 13/10/2026 10:44, Linus Walleij wrote:
+> On Mon, Oct 12, 2026 at 9:08 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On 12/10/2026 09:06, Linus Walleij wrote:
+>>> On Fri, Oct 9, 2026 at 8:17 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>> On 01/10/2026 09:03, Linus Walleij wrote:
+>>>
+>>>>> On Mon, Sep 21, 2026 at 6:23 AM Long Zhao via B4 Relay
+>>>>> <devnull+longzhao.ambarella.com@kernel.org> wrote:
+>>>>>
+>>>>>> From: Long Zhao <longzhao@ambarella.com>
+>>>>>>
+>>>>>> Document the CV75 pin controller binding using generic function and
+>>>>>> groups properties for pinmux configuration.
+>>>>>>
+>>>>>> Reviewed-by: Linus Walleij <linusw@kernel.org>
+>>>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+>>>>>> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+>>>>>
+>>>>> This patch 4/18 applied to the pinctrl tree.
+>>>>
+>>>> There is a dependency, you cannot take this patch alone.
+>>>
+>>> Oops, but is it a DTS dependency so if none of the other patches go in through
+>>
+>> No, it is a bindings dependency, introducing new DT bindings warning for
+>> both your tree and next.
 > 
-> Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-> ---
-> Changes in v2:
-> - Updated few frequency table entries to align with pre-div reg width [Sashiko AI review].
-
-Please make the generator aware of this overflow
-
-> - Picked R-By tags received on v1.
-> - Link to v1: https://lore.kernel.org/r/20261009-nord-sdcc-clk-v1-1-63351f25a165@oss.qualcomm.com
-> ---
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Konrad
-
->  drivers/clk/qcom/negcc-nord.c | 5 +++++
->  1 file changed, 5 insertions(+)
+> Is there a problem with the bindings patch itself?
 > 
-> diff --git a/drivers/clk/qcom/negcc-nord.c b/drivers/clk/qcom/negcc-nord.c
-> index 68ce4d6278baa5888b277fb34a135d7e5beb789a..0e33737475d98f1c37853a5e234831d03dd50aec 100644
-> --- a/drivers/clk/qcom/negcc-nord.c
-> +++ b/drivers/clk/qcom/negcc-nord.c
-> @@ -436,6 +436,11 @@ static struct clk_rcg2 ne_gcc_qupv3_wrap2_s6_clk_src = {
->  };
->  
->  static const struct freq_tbl ftbl_ne_gcc_sdcc4_apps_clk_src[] = {
-> +	F(144000, P_BI_TCXO, 16, 3, 25),
-> +	F(400000, P_BI_TCXO, 12, 1, 4),
-> +	F(19200000, P_BI_TCXO, 1, 0, 0),
-> +	F(20000000, P_NE_GCC_GPLL0_OUT_MAIN, 6, 1, 5),
-> +	F(25000000, P_NE_GCC_GPLL0_OUT_MAIN, 6, 1, 4),
->  	F(37500000, P_NE_GCC_GPLL0_OUT_MAIN, 16, 0, 0),
->  	F(50000000, P_NE_GCC_GPLL0_OUT_MAIN, 12, 0, 0),
->  	F(100000000, P_NE_GCC_GPLL0_OUT_MAIN, 6, 0, 0),
+> In that case Long can just send an incremental patch to
+> fix it right?
 > 
-> ---
-> base-commit: aac26bee2287c88af5be5a5ff96d783b19a28790
-> change-id: 20261009-nord-sdcc-clk-1b23f4eb4177
+>> Your tree is fine in this case as long as next
+>> is also fine... but next is not, because that patch did not make it there.
 > 
-> Best regards,
+> But the patch is in -next?
+> 
+> ~/linux-next$ ls
+> Documentation/devicetree/bindings/pinctrl/ambarella,cv75-pinctrl.yaml
+> Documentation/devicetree/bindings/pinctrl/ambarella,cv75-pinctrl.yaml
+> 
+>> We cannot have any new DT bindings warnings in next.
+> 
+> I guess I just don't get it :D
+> 
+> To me it seems like a fairly normal situation: ACKed bindings merged
+> together with the driver, no dependence on anything.
+
+But there is a dependency. Your commit uses undocumented vendor prefix
+which introduces warnings.
+
+New warnings:
+Documentation/devicetree/bindings/pinctrl/ambarella,cv75-pinctrl.example.dtb:
+pinctrl@e4010000 (ambarella,cv75-pinctrl):
+'ambarella,drive-strength-syscon', 'ambarella,pull-syscon' do not match
+any of the regexes: '^#.*',
+https://gitlab.com/robherring/linux-dt/-/jobs/17038310909
+
+
+
+BTW, this commit of yours:
+9c2932badcd3e3c0fc630eac5ff2bfd5fadf93f1
+
+does not even build, so a make error.
+
+> 
+> But if you tell me "revert the patch" I will simply revert the patch
+> because I trust you, it doesn't really matter why.
+
+I think Ambarella won't be picked up, because of total mess with
+patchsets, thus Rob should just take the vendor prefix... except there
+is no vendor prefix patch to take, since it is squashed with other work.
+
+I don't get why this became so messy and have no clue how this should be
+fixed, except revert which is sad churn-type of work.
+
+Best regards,
+Krzysztof
