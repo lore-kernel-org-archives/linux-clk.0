@@ -1,215 +1,179 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazhn15012014.outbound.protection.outlook.com [52.102.160.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEDC50129F;
-	Tue, 13 Oct 2026 14:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.160.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EF851474D
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 15:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.170
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791903149; cv=fail; b=DKxksdDYIpuZJSPAJ3P2x2B4g3DaIlYtdE+J3dPRyfo6l4DMJ9fajyvRD7NWmdZrtJk85nPdVuH7EC26A9X6yz6+OZOUjMOSXhLnLhMdDGtGaCVASzJ02hMKM09q5H8eKD+eeJBQVK+B7P6deVI6RiGw76DcYZmMic5JrTC2Tis=
+	t=1791904089; cv=pass; b=lPwTgCHFZ5V+DM5MMbUO7909C2qDXWC2j1OM+h09LaIDsXYvhc2/N+ZGFqCKW0d4t33S6wKvucz1hETC6LFcoxpuPhPk5z5vHfSLTuoHVM6FD8E6ThShGKILmLOew1FpUUJ10nHG4EcKvtFI4yjibIsZtao9bIr58MNMmVw0UW4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791903149; c=relaxed/simple;
-	bh=MtfopWukNxpEWJB3YCz7657c5C6Yyerewfbw0Ikp6/I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=uOCEYFMmAWijqo/r8547Xijm2HzLgwuF1+NMf9MZqFLknzxWascVnTy2YQlTphUU37EWzIl37p4di00lE/MmfgHHbeMJizv8lGCBierDynQidcWrkJwj6vVT2bHKIS5UvBfNgpBhkJJZo4cm0prpJWwmKwJf69v8eOXXIxSi+ms=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=SCLczF1B; arc=fail smtp.client-ip=52.102.160.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1791904089; c=relaxed/simple;
+	bh=kSeEty/pyx+v4Qu7BrqL5A6bwA+hTSmxB+Kegwde04I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OPTRxT7ngJDXVxELXSeu132a4zy2pszLNrzio5skFDyGPU9tFD+vTdiBAWyRFTrfwvvA+lcLe/SQHIlU89RSOHWG5IjpCcBhtzzQfG8BEyxFrkSUNbjjqW02ZvHNyOETCnfg5x8A6U+9GpnDaa0X6TXfnGMBbAWVCNa2BknIov8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=smF305Ed; arc=pass smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="SCLczF1B"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K59DSzKe6JBwaDg1dI2FgK96qt7bb5sEPm0xj33NlphueLduiOIBGxuGpAcnNl16assV3FXGDYTrME5VrCKlkSvm4oQkQ83b0MMduqTKjq2iG7vWsle25ijnLQWfEqS6LEHojxP0lg8Thdq5QTkV0HjnV9p3XtisEbuoLPdUIVV+Nu2iiGggtzy1582io/bLMp++mGWiKcCSgFdy6gEXLEm5HcHj1J3tR6Xlud+WNxGaDim+qUzO79sdy9ztXQa+ATIbbWUbCfd8aP9TmbXSvSMxt5acfqz69GSMaHoUUVJuvx3eGckikCnLhqJzhRa2TBgMe1cCEFGCdVBaDI/jrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6swCKV+567F4AJ45MeO0F9cZgftEUwqUwYgIFHLoE6Q=;
- b=J126x/UDGzaNOQ1/7pyDlyuONPTYF9oFbGXH9UqiCPERCPHehqePUHXM8NWtbkJRR6833+nXxvcU8Svhh6aBgXY1FlyQzv5x5+WVKkAwDKJqmCBmiIdX1BtLJ6wZMZyIEthwPuIth31mxrwENqPF0djx6XRJqFcJh+cBrm2Vc7lvYZfCgDSOYL45UgX1z2EE5CBmb3M3MaKpa2ed2igTlmxCLq4IVMzWZdmyGRPVKHm/z0I1wx3Xmzf+E0yqQijFxLOJktPHZ268uI/jMx6TG9ySyrYkUuDgWJL6z2F1Cl+tbZv+WwQv/ZrmdGkNcTXAkpclMIkwJqONr6tPvHs66w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.60) smtp.rcpttodomain=st-md-mailman.stormreply.com
- smtp.mailfrom=foss.st.com; dmarc=fail (p=none sp=none pct=100) action=none
- header.from=foss.st.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6swCKV+567F4AJ45MeO0F9cZgftEUwqUwYgIFHLoE6Q=;
- b=SCLczF1BYcqn8NtRUG1PXSG9DiCy/hkXVr5UMZGjilSyl2SIgdNWn0eMsohmjuEoNTLkkB5y5By9/Hb3PXzid3olLxqGFpltMQpYHwmOJRRcctY9kI1xvGKaHTAlPcjCg8tNsLHriZ/xVF0cNQgp39wOnfXn4zZicsUKkZLySn7Z17Y8LFFiIVipZ/lRGB9hW0JoFVTdyiQTy2hM4GXiIaWxpQF4I2fK9s6JqLesKdJh99zXzzq7jHKMwN48NbfOj4ZdXNSQsc3ZrHM64MY7yovug24sswrbDboJ49zSMUXpEKIQchJXR5KZqZqO2oBaRYUXiOluUshaecbVabNQKA==
-Received: from BE1P281CA0199.DEUP281.PROD.OUTLOOK.COM (2603:10a6:b10:89::15)
- by GVXPR10MB8661.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1e5::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.23; Tue, 13 Oct
- 2026 14:52:22 +0000
-Received: from MI3PEPF00008551.eurprd05.prod.outlook.com
- (2603:10a6:b10:89:cafe::19) by BE1P281CA0199.outlook.office365.com
- (2603:10a6:b10:89::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.522.4 via Frontend Transport; Tue, 13
- Oct 2026 14:52:22 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=fail (sender IP
- is 164.130.1.60) smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.60; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.60) by
- MI3PEPF00008551.mail.protection.outlook.com (10.167.240.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.522.6 via Frontend Transport; Tue, 13 Oct 2026 14:52:21 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
- (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Tue, 13 Oct
- 2026 16:52:47 +0200
-Received: from localhost (10.48.87.14) by STKDAG1NODE2.st.com (10.75.128.133)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Tue, 13 Oct
- 2026 16:52:21 +0200
-From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Date: Tue, 13 Oct 2026 16:52:14 +0200
-Subject: [PATCH] clk: stm32: add support for reset_control_reset()
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="smF305Ed"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2e61ac64ec3so27074075ad.2
+        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 08:08:07 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791904087; cv=none;
+        d=google.com; s=arc-20260327;
+        b=SbeZOf+SNughWi11XFQlZKhBM0HEPUcyR15/yTULkaA6FBZFy/48G5vHszU6XX4gMr
+         zh7fDYVpYwh+HECXvj80vP+y4IGYrcNLqn4Ia+LtBQ6nnD1wHZbKkmxvjAj6pVMTkLc4
+         qlWoIRqIymEWRn1joo6JTE7It55VtHVivTNOhE5OEuEL/t+e45DEyEBKk7fnGOC+NgNr
+         Vvv99EFHl/Tbbpmf/oxj8RvwfyOF68tAkHMUEQH+CjULSKXtY/40pYxfDODSICiBeZ2K
+         QI6sgKHQBWcH44HOn+3Uasw91XWakyRRIQk6UFfHwvWz0Ms4+5GneAl6vIzfrmnYQE71
+         7WzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=LQ5BAPQzf5De6H7G8HN1TYce8oTd+xAhm08KbGTjuS4=;
+        fh=2hfhS/TDdw+vB47+SyuDzTOw4Y7UogjPq+LMZLKB1/M=;
+        b=YidlrvZkriuR8CpHIfMlDM07MVWcMh3l2RmvWhRqVvYABbJqOP9SFoOhnpIvy3X/eC
+         a50pjvUzxDy540ge/HGgIujCjZuDr3Wwe1gSnbz2wLPxeVFqRKBziVvN0BbgvBP50Z3g
+         aFOxnv4BgIlzbK0DnW3a33OQCFingZvKQaEuwm6SiHWmTgeTmZMn5EmQPOn9Q8C/LHM+
+         XO3rib6+KbrwW5QOs8S5U4bwcGmGA7llVSv9B6vNR6F+zXFjpsdOMT94IdgR8legvyZx
+         JiqEfggqf9bg5s6HYoYmCXBohzI4SpVNeyI9vhgAv78DMuJ6zMh2meu/PusKfdTjwQAI
+         IXNA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791904087; x=1792508887; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=LQ5BAPQzf5De6H7G8HN1TYce8oTd+xAhm08KbGTjuS4=;
+        b=smF305EdPwny8M1/F2FRVkVLZhSefEb8odFniq2p4i7nPgpcNWoMVlHqvRFdgIfJRL
+         VvbuvIzMXb5LEt9M6pLDpLbUh26Ncr88AVzD1xvqHbfydC0IayRfb51UxOtdmA6ODGDD
+         cDWw+iXdkgWnaoALUua5Q05CYEXEp0vaUlRIHnJT4ep5v1OVo+eaM1Odt/Ia1rIHvzFe
+         BKuNcdpcnYF9GsVdqP0X9d3KwoAzV2Txiu9oeviHSV9FRcAjXzlwBXPaDXOiu7KO58Jr
+         W8/kKaty3Wmrq6qMbGvneZSXfEtS3dkK4Myt6eZhpT+y3K+m9efCiS6BvFDPC8p8LAme
+         w/Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791904087; x=1792508887;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=LQ5BAPQzf5De6H7G8HN1TYce8oTd+xAhm08KbGTjuS4=;
+        b=g7rBtk7rPwJoJPolAUY24EXNxpSHDlGi70sH9G/BR34szmGeghePBiP43TDP+TXTvn
+         k3kaq2ioOsTOdK4vtMRcarigCS1T6ELguBClJvlUemRAWGF5k7hAWDnDHnKevwLbZqU8
+         dLl8UTY4buiGtQTOsod64iqf1vVzzLrFJbkl9dx+RDSyXOYaiDk3vOYltLEmSSMbhWTe
+         DMkGYhE4R2OhemYtQAugGOGf9LjqKWI0Cmsjy7aLC9K/GxByq1Bk3Ydd1zHN6ilb94pr
+         1vwc1IxDvdOFpN8Pnt1SNhyMy5xJLvjQm/YmGvta/m4FDkQgVuSUffOCd2ge6M2Lmm+f
+         cV5g==
+X-Gm-Message-State: AFq9FYK71iohjMyL4ao0kTXLuOf4PlctIIFeSXD4BtUYOWY2XWfPX601
+	Wm86nGn+EUYmlEeXhNPskMWzfIc/uyjFKOsv5IUiZYw/XPRCm4g8ebKwRu3by6Ejjh02DZJjTmH
+	RjO7zGCk/YFtRVxgaF2QVLFViAwfkADg=
+X-Gm-Gg: AYBFou2+YmujhywBFw8g3Wsbe0ryBoZu0IAsd4e3ecKL7dFTBIi3Qk58oC1kV4fapIt
+	21fNb/ZX6bOZmK8krR7S8kw+kJztY7+zGlLjGDNB8YxFBhTLr7C3ehZ1BjzJGczJc2w8C6eoPuc
+	k2WIF6bsIlbWswR9svUYvQVUuU+if7NfQpLDrl1axh4LEKa6HyBzYvjd7fosSOn9SnxfOfs2zxu
+	JgkaV+PTn7Ycq9GtuOKtHG0qvxB8cLjabuU38tS1P+sLj/x0Xl8mH6fbXXT2ipsK68RkxQv97Fo
+	yi0320eYiavE9p1C7uZ3EVne9lCtDEJ8DrJ8VFiAd+fRawyPEfOLj5LH3Sws7WCcij/07PE=
+X-Received: by 2002:a17:902:fc4e:b0:2dd:c170:2d4d with SMTP id
+ d9443c01a7336-2e842abcb40mr130264665ad.24.1791904086913; Tue, 13 Oct 2026
+ 08:08:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20261013-ups_reset_control_reset-v1-1-f8a6c7f6cc3c@foss.st.com>
-X-B4-Tracking: v=1; b=H4sIAJ1FzmoC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzNDA0Nj3dKC4vii1OLUkvjk/LySovwcCE/XJNkozTDJwCIlJc1QCai7oCg
- 1LbMCbHJ0bG0tAA3Pwp1pAAAA
-To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1791903140; l=2794;
- i=gabriel.fernandez@foss.st.com; s=20261013; h=from:subject:message-id;
- bh=MtfopWukNxpEWJB3YCz7657c5C6Yyerewfbw0Ikp6/I=;
- b=A3MQKHu0hhQGoo646gMASgU75jTdKE4XGvDUgPY4DUpoT55+aQnRQPHGHltBdWq4CHSJHc+RO
- 3B8QWBjDGaIBHkN+eReoqJcGo8odq7OJkRY3QiixE1fTN1jtqHiRvwn
-X-Developer-Key: i=gabriel.fernandez@foss.st.com; a=ed25519;
- pk=BVZE1QjIfcrviw9RyyOGQGGsg9CNbaxyjYn9pAlkNyQ=
-X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
- (10.75.128.133)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MI3PEPF00008551:EE_|GVXPR10MB8661:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5493646a-0f3a-4813-84bb-08df2939963e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|1800799024|34020700016|376014|82310400026|23010399003|56012099006|11063799006|261009223027099003|10067099003|18002099003|12100799066;
-X-Microsoft-Antispam-Message-Info:
-	Bvuz3+/24MAe7D21KA8vz6ZX87RdM6R0SNWmjBSNw1jQOIyao3sDEYdpQi6IEZi0tBTI3mTUE7PTmaFQN9XcGqYcPEteHtZ2gygj5qfGnXtWCkotinvFZLEcKnl38FkZmIAFcMN3sLyhZSvkRpDv9VKsdkOc6AUV6VNJ4jUEY3yC9aWki7WWOq7maTO8Ks9ccnr8N0hZXRaqMPx2uNVflQ5EYWLOPfvueyG67AjKE82sS/7sFdv8q+9lmogPl+CJg5YcT5TpXEvK1YfqrtT61fEIDERfEjrQQQI1/h30L/jDFlhjkoRz8FdceH0Ugi2exDY9TLgWHQqpblN2cQV1kSiEz17AMeoxSV5VRGDc4h43DPBe5lTLoLCKEWwjz3Z3mSKlixrvY72foiYNLGCUNhgGwNqpNcy/1YQ8GXd8Z9cuDGZ2lBE3YcERUmOFHLZ1JWcDpizjxBW6cY+r5rau5H0c5uQX37pFnLCpkjM2tBgEZ3/d0EffD1Q4wND0+MMk7zJz8qhBC+noJTNTS5OOzCkOu+LHRkXsFwxIDlB37lzsH30YZewtkEedosq0DOgcf0BbfCy/TI9qZAhNJ3lX68Sg3JhiIXyc+n0qZ0kpM+IOejSfGjEFX6Lp7wWA7h0k1Y32tpkIFjlq6phSY0ub2uxXnUQyn34k9s2Hp6/M596Tm5UUeg14zWlocrU30bTwCKjh5UTIkJ8VjjQ6b6djKQ==
-X-Forefront-Antispam-Report:
-	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(34020700016)(376014)(82310400026)(23010399003)(56012099006)(11063799006)(261009223027099003)(10067099003)(18002099003)(12100799066);DIR:OUT;SFP:1501;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	a1g6pyfW2UnNM01c84R1IPbAC8eGOM10Kz3Faax5Fu7U9v+WD0RJXffxeVr0Y0Q9icm/N1FyIemnZu4z2nG+ZsRDLUeFhaHrnZE+L2Tz0svb+rvrClhJxryPQ61a9CSMBwP3sqoYW53xEAXNbJTElx2P+RBt1F+8YkqPn2wvr8+nd7YkZQYon08ykA8PK83TkgBlrFUNsgKx4gk52U74nZtLOv5xO9DxEK/fpXBPR7GWXMY76zSLdWWxWJGtNecqEwbQww+uKeI7cKedLqnCa0G3wadP0xJ94px1JNPy6dMt8QBGhXxAGOn0t7YTS+EiyZajJeF6EpOdGN/yfkq1MM8yfLnWUiMB9nDd2hTxQNQ0hW3MmQzuNaRheB7KS6GQoPKPlR2FHNPW3aEJNBYcPw3caIdQsQR92uWIJNsNhxLETsboKd15mB2RAgKbo0xE
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2026 14:52:21.9838
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5493646a-0f3a-4813-84bb-08df2939963e
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MI3PEPF00008551.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB8661
+References: <20261012100816.331033-1-pmazzini@gmail.com> <20261012100816.331033-3-pmazzini@gmail.com>
+ <sashiko-outbox-167950@kernel.org>
+In-Reply-To: <sashiko-outbox-167950@kernel.org>
+From: Pablo Mazzini <pmazzini@gmail.com>
+Date: Tue, 13 Oct 2026 16:07:39 +0100
+X-Gm-Features: AclHuK_pl3pWqTJLvh0wYDQbXNbwPmw0G3N4wD6Ym2FvqFNGBQBI95gOlewMvjs
+Message-ID: <CAAxh=jvSRyW3XwnyV2RVHH9FZvq9A7A7ruXNSpAgXzdcCNjGeA@mail.gmail.com>
+Subject: Re: [PATCH v4 02/11] clk: sunxi-ng: add Allwinner B288 CCU driver
+To: sashiko-reviews@lists.linux.dev
+Cc: linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The STM32 RCC reset controller currently implements only .assert(),
-.deassert(), and .status().
-As a result, reset_control_reset() returns -ENOTSUPP, forcing consumers
-to open-code the assert / delay / deassert sequence.
+The B288 has pll-video0 and pll-video1 at TCON0 mux values 0 and 1, so
+the plain mapping is right.
 
-Implement .reset() to provide the standard reset operation and avoid
-duplicating this logic in consumers.
+BSP: https://github.com/pocketbook/kernel-b288/blob/e30bb2ed149410ef2d3245e=
+a01192833d44c4e46/drivers/clk/sunxi/clk-sun8iw10.c#L468
+Wiki: https://linux-sunxi.org/B288/Clocks
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
----
- drivers/clk/stm32/reset-stm32.c | 45 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
-
-diff --git a/drivers/clk/stm32/reset-stm32.c b/drivers/clk/stm32/reset-stm32.c
-index fc237fccae68..9b853417e9c5 100644
---- a/drivers/clk/stm32/reset-stm32.c
-+++ b/drivers/clk/stm32/reset-stm32.c
-@@ -4,6 +4,8 @@
-  * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
-  */
- 
-+#include <linux/delay.h>
-+#include <linux/iopoll.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -13,6 +15,13 @@
- 
- #include "reset-stm32.h"
- 
-+/* Hold time between reset assertion and deassertion */
-+#define STM32_RESET_ASSERT_DELAY_US		2
-+
-+/* Polling of the reset status bit after deassertion */
-+#define STM32_RESET_DEASSERT_POLL_US		10
-+#define STM32_RESET_DEASSERT_TIMEOUT_US		(10 * USEC_PER_MSEC)
-+
- struct stm32_reset_data {
- 	/* reset lock */
- 	spinlock_t			lock;
-@@ -119,9 +128,45 @@ static int stm32_reset_status(struct reset_controller_dev *rcdev,
- 	return !!(reg & BIT(ptr_line->bit_idx));
- }
- 
-+static int stm32_check_deassert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
-+	struct stm32_reset_cfg line_reset;
-+	const struct stm32_reset_cfg *ptr_line;
-+	u32 reg;
-+
-+	ptr_line = stm32_get_reset_line(rcdev, id, &line_reset);
-+	if (!ptr_line)
-+		return -EPERM;
-+
-+	return readl_poll_timeout(data->membase + ptr_line->offset, reg,
-+				  !(reg & BIT(ptr_line->bit_idx)),
-+				  STM32_RESET_DEASSERT_POLL_US,
-+				  STM32_RESET_DEASSERT_TIMEOUT_US);
-+}
-+
-+static int stm32_reset(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	int ret;
-+
-+	ret = stm32_reset_assert(rcdev, id);
-+	if (ret)
-+		return ret;
-+
-+	fsleep(STM32_RESET_ASSERT_DELAY_US);
-+
-+	ret = stm32_reset_deassert(rcdev, id);
-+	if (ret)
-+		return ret;
-+
-+	return stm32_check_deassert(rcdev, id);
-+}
-+
- static const struct reset_control_ops stm32_reset_ops = {
- 	.assert		= stm32_reset_assert,
- 	.deassert	= stm32_reset_deassert,
-+	.reset		= stm32_reset,
- 	.status		= stm32_reset_status,
- };
- 
-
----
-base-commit: a90ee4305c4a5df72c11b31dacfdc76e00fcf78a
-change-id: 20261013-ups_reset_control_reset-4c2f1b08ddf1
-
-Best regards,
--- 
-Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-
+On Mon, Oct 12, 2026 at 11:21=E2=80=AFAM <sashiko-bot@kernel.org> wrote:
+>
+> Thank you for your contribution! Sashiko AI review found 1 potential issu=
+e(s) to consider:
+> - [Medium] clk: sunxi-ng: missing parent index table for tcon0_clk
+> --
+>
+> commit 3f9c552550550b015864167770907fa314ac3239
+> Author: Pablo Mazzini <pmazzini@gmail.com>
+>
+> clk: sunxi-ng: add Allwinner B288 CCU driver
+>
+> This commit introduces the Allwinner B288 CCU driver, covering the PLLs,
+> the CPU/AHB/APB tree, module clocks, bus gates, and resets. The driver
+> is noted to be closely related to the A64 CCU.
+>
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-b288.c b/drivers/clk/sunxi-=
+ng/ccu-sun8i-b288.c
+> > new file mode 100644
+> > index 0000000000000..c53afd6f9af98
+> > --- /dev/null
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-b288.c
+>
+> [ ... ]
+>
+> > +/* DE_CFG @ 0x104, EE_CFG @ 0x108, EDMA_CFG @ 0x10c -- M[3:0] mux[26:2=
+4] gate 31 */
+> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(de_clk, "de", de_parents, 0x104,
+> > +                                   0, 4, 24, 3, BIT(31), CLK_SET_RATE_=
+PARENT);
+> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(ee_clk, "ee", de_parents, 0x108,
+> > +                                   0, 4, 24, 3, BIT(31), CLK_SET_RATE_=
+PARENT);
+> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(edma_clk, "edma", de_parents, 0x=
+10c,
+> > +                                   0, 4, 24, 3, BIT(31), CLK_SET_RATE_=
+PARENT);
+> > +
+> > +/* TCON_CFG @ 0x118 -- mux[26:24] gate 31, no divider */
+> > +static SUNXI_CCU_MUX_DATA_WITH_GATE(tcon0_clk, "tcon0", tcon0_parents,=
+ 0x118,
+> > +                                 24, 3,              /* mux */
+> > +                                 BIT(31),            /* gate */
+> > +                                 CLK_SET_RATE_PARENT);
+>
+> [Severity: Medium]
+> Does the B288 hardware actually use a 1:1 index mapping (0 and 1) for thi=
+s
+> TCON mux?
+>
+> The closely related A64 SoC uses a {0, 2} index mapping for its TCON PLLs=
+.
+> Because SUNXI_CCU_MUX_DATA_WITH_GATE defaults to a 1:1 mapping, if a disp=
+lay
+> driver requests to use pll_video1 for the TCON, the CCU driver will write
+> index 1 to the mux register. If the hardware maps the second parent to in=
+dex
+> 2 instead of 1, this will result in incorrect clock parent selection and =
+could
+> break video output.
+>
+> If a custom mapping is needed, it might be slightly tricky to define sinc=
+e the
+> ccu_mux.h framework currently lacks a SUNXI_CCU_MUX_DATA_TABLE_WITH_GATE
+> macro to combine a table with clk_parent_data.
+>
+> > +
+> > +/* MBUS_CFG @ 0x15c -- M[2:0] mux[25:24] gate 31 */
+> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(mbus_clk, "mbus", mbus_parents, =
+0x15c,
+> > +                                   0, 3, 24, 2, BIT(31), CLK_IS_CRITIC=
+AL);
+>
+> --
+> Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261012100816.33=
+1033-1-pmazzini@gmail.com?part=3D2
