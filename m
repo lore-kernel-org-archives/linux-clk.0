@@ -1,130 +1,93 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA54B48876E
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 17:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF4552CCEB;
+	Tue, 13 Oct 2026 17:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791913076; cv=none; b=ubkAF7RuCIaBe4H+EK4tDaANT/CBoe1QSRDebw0RxV/71Fak9wBZno3lqg37x5cSCZ+WNZTOjabah55IFqwOzg8EpjKuB3OciTJgJy4zqtnS3GLiQ6myVOO4SAIkZfjVLU/Jvln4mGsef4huFhJZq5ZJjP+pzZc6+rSnSV3KTxY=
+	t=1791914045; cv=none; b=lD4yUvEDM9AIdjm3Mqs78hK9eIEYGmQ2vVTyYddY2+yPwgRXYJmNsEIQztshUIOL5A0Zd5KT0mx8JjO6dD4k2CdtT40CMjr399KuuwZV0Ikik9m6R/nr+kLPM2Y9cybsPE+kL5cXg/cgzfPYYQ16F85SktGlSlRELSeQlMw5/04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791913076; c=relaxed/simple;
-	bh=IBWm8OoDuOOoK6QNsoCkV6oJjvsDZlll7v/MDvILjss=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=alC0+IgmaH9X2t60/IgKrEOSsRTG+SAL1jW27+aR0KNBHtGtFqpcGnrsIKSHw/c9MCamuiBEXJP4c+n4aT/gqEoCmL1ZD2Y2iN8UufaAgDRw7I2znFx8r+iZ2lCTuihBSb+bIrQoxwYlGiiApGgC780tMJ+wBnFMnk02a6qqpwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=gTaswrx6; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1791914045; c=relaxed/simple;
+	bh=hp1dTw3hRxiZBvSzxIR3eaRSSMR6S7lRt7/KxcL7YmU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=UMQJkSxW7BYTfdk6GaaiDxU9w1vnnTdK3PtPQvySHxXgdK3z2WgIAf5CtgwwYCyOQOOBPJBPCFwDQaIQ3RDorzm8z3nMEilx78MFyW0I7COm8Z8iMdN7jADl4QwP+/k53RiikeoTmwfvPWJHaPOighGYfzUul/7SarsktK8isKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=OWFaVuM9; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="gTaswrx6"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a0e1b0681bso23570465e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 10:37:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1791913073; x=1792517873; darn=vger.kernel.org;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=kwog7Istc+fIBrJkEcS1h+8HETAF7LvLAVFr6xgg7kM=;
-        b=gTaswrx6nfFaToncTJW6YJ6RXiySzqFT8IgmtReTR7IMiVGHPNunAOk6R2+cfxyAIj
-         N78NmnvjK1MH0Kp/w7YqCihQSONA8XkB/hs+ZNvpOGrRsBPfXP58OlfETCwi9POaeir5
-         LSzfXtke0WVjEKkCyMZx2CuXFs16h4ee/cl33s29arv9go5FUmG9q8JVjMZZzbohUU0E
-         OwoVkva6gCILEwcvtH31kr0wtyq6e7BC9WdU5zacHhWEDp6u819vSodAdmOdFu1tOmtT
-         T0jJ495Nrl/8wK5AW/9MKyzD78g050lfwSW8SkbkGAT7OCUJ13/dNPUToZnEbkZIYLMx
-         joLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791913073; x=1792517873;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=kwog7Istc+fIBrJkEcS1h+8HETAF7LvLAVFr6xgg7kM=;
-        b=sZkJWhCID/24VNPCOovVgTUTVZvZerLECOacIeX/d9yXeJy2aK2+Lm8zTE11bNTEex
-         x2nDEWCErLcLEEDF9OizkW10WsUTAYHCpmwYoWULLQDCcf5z8i8lCQs90PeJs9oNhRhy
-         knNPTpv+aZgONE+tW0cHmTaXF0HS+OEjxoueSP1us53nx7lOob1fjNSTXhLbQvbbFakd
-         lMMJXPuH687/c1vGqViuuobQpqZDY8hqcoXjFpaU8F5gvjuvNZiS1njl7Wi7+0a9Y1El
-         S7q326G1s2jjAO66lDNVzqvPys72cBHK/n956tbkOPgej2LWD5qcJj6Xt3EEjFYx9/YO
-         /NZQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwVH4caaL6M1OTnTQSAB4B8C0rV6HlV0Hi4cUuM1BpnPWYTQohAcoQheCufSZ1aEIiaeNyaIBllh+Y=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIn2pE8Ahmr8nuQHN0mvgTx0pfzD0efVL89STSRAq+4wYN2PrAW
-	ZVLYayhwcDtXs6hsXasDUj1cbejM5i+qllifZx08VunQCoavoertd35n4z7P+mZM0cY=
-X-Gm-Gg: AYBFou1iB6nN5z9mjRJjt8bABRMOU7lhB42lUTS0qymSTliPDaNvq185F8y7LSU1nqk
-	RqQ/O4pUhY52oZB12KaOpuOEMjX/hlNqgq6YAUo42PlXalq+tLV5AsmAm31hJDpvhSAIMiDU2NZ
-	Lu3iGg6mcRJ77uXoe3GHHpolkrWUPaO0Laq5d1cBzc88RTKAxmVeudnucpf4xNUMOa+qo3OSNdP
-	D40xBWWKulHUybNRtikk0MsYygyUfVhXJIl9bup11srhP4EtO5YWKG75nYZC8lowqe+vmv0EZUw
-	tH0ok74MxG7I2se65H+Zwbv5S4XM46yStq3EGi2pe3hRNChLdI+6dMTE6sZI3YyvNZFRbZb7VXV
-	0+uXtVjPorVsD9Vgww5eLocTxpYxmO3KAW2pZ2NMRVamYYdBvykwn9SssRlqdc4tMe32zk2ZOaP
-	6unCjNt6yT56ZLKYamN6GqbP2yHZTP/hDm5mDOeX7iL+I6UKSo0an0cuQYMJ2NOXDAzBGweMzjZ
-	emuVVYLPi+fF9ofzyFzsxgimX7T
-X-Received: by 2002:a05:600c:4fcb:b0:4a1:811c:8083 with SMTP id 5b1f17b1804b1-4a18e4c3600mr260249025e9.33.1791913073155;
-        Tue, 13 Oct 2026 10:37:53 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a19303d518sm350899745e9.0.2026.10.13.10.37.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 10:37:52 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="OWFaVuM9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=hp1dTw3hRxiZBvSzxIR3eaRSSMR6S7lRt7/KxcL7YmU=; b=O
+	WFaVuM93IWPWVHz1DROYW7egfZ3MO/d1MdS/gA7+Jxi5NWJd4PoZrmiHx15AKVZ2
+	4UM4Cwvntj02QhgfOh2yUzLuhNFwL2fTm+PsC0+Y4zrcQoHKQKUn5ibm288MEAes
+	5R0lW7gOOP+J72R9BCZBMfN7yGrWIPetla+gvN6Ux0=
+Date: Wed, 14 Oct 2026 01:51:46 +0800 (CST)
+From: zl020895  <zl020895@163.com>
+To: "Linus Walleij" <linusw@kernel.org>
+Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, longzhao@ambarella.com,
+	"Arnd Bergmann" <arnd@arndb.de>,
+	"Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	"Rob Herring" <robh@kernel.org>,
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+	"Conor Dooley" <conor+dt@kernel.org>,
+	"Michael Turquette" <mturquette@baylibre.com>,
+	"Stephen Boyd" <sboyd@kernel.org>,
+	"Jerome Brunet" <jbrunet@baylibre.com>,
+	"Bartosz Golaszewski" <brgl@kernel.org>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	"Jiri Slaby" <jirislaby@kernel.org>,
+	"Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Catalin Marinas" <catalin.marinas@arm.com>,
+	"Will Deacon" <will@kernel.org>, "Lee Jones" <lee@kernel.org>,
+	mfd@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re:Re: Re: [PATCH v8 04/18] dt-bindings: pinctrl: add Ambarella
+ CV75 pinctrl
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
+In-Reply-To: <CAD++jLmrQwAT1Sb8HGgoM8x48rN9-pPT2RB1GE18h5YA7c4CwQ@mail.gmail.com>
+References: <20260921-cv75-v5-v8-0-282ff5d98dda@ambarella.com>
+ <20260921-cv75-v5-v8-4-282ff5d98dda@ambarella.com>
+ <CAD++jLmKF5XxHsJX29sdXC_6JHKn-7HkE=N+TKtk5xODtQj3_w@mail.gmail.com>
+ <b2256847-3ec1-47e8-ac79-ceca86eb09e7@kernel.org>
+ <CAD++jLkrXXg9xrhAZ8HETc5Qcv5BbkY-ibjvzBmE5WZVqDEGWQ@mail.gmail.com>
+ <a0eca34d-5eb2-4730-b8c7-0f2302bcf265@kernel.org>
+ <CAD++jLm=T-U07vAVCogMnfOfkDf=i9QhGGc8ok2N-ZUh50WLNA@mail.gmail.com>
+ <56dc6c05-7fd6-43de-bc62-c353ae1dbcc3@kernel.org>
+ <54b55ad7.9d3a.1a135b09587.Coremail.zl020895@163.com>
+ <CAD++jLmrQwAT1Sb8HGgoM8x48rN9-pPT2RB1GE18h5YA7c4CwQ@mail.gmail.com>
+X-NTES-SC: AL_Qu2SA/WavEEr4CaeZekdnUoTj+Y/XMK0uvwk1YdVc8gEnjjMwxonRUZAE2Xr9+a2LgydoDuVWhh8yd55fo9x/FIZB3Lpfw2lhbgiuZUShQ==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v8 5/7] clk: nuvoton: ma35d1: Reparent SYSPLL correctly
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, sashiko-bot@kernel.org, 
- sashiko-reviews@lists.linux.dev, conor+dt@kernel.org, 
- linux-clk@vger.kernel.org, robh@kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <87ld81v8y1.fsf@bootlin.com>
-References: <20261004-perso-ma35d1-upstream-clk-v8-0-e1a106a128c0@bootlin.com>
- <20261004-perso-ma35d1-upstream-clk-v8-5-e1a106a128c0@bootlin.com>
- <20261004205551.6279C1F000FF@smtp.kernel.org> <87zewti2pf.fsf@bootlin.com>
- <1jjynw7bp8.fsf@starbuckisacylon.baylibre.com>
- <87cxtni7m6.fsf@bootlin.com>
- <179181904945.33566.17882786294681341398.b4-reply@b4>
- <87ld81v8y1.fsf@bootlin.com>
-Date: Tue, 13 Oct 2026 19:37:51 +0200
-Message-Id: <179191307176.266355.13493126045902473311.b4-reply@b4>
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1115; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=vwYzSJnJvZdAYWxZfVM9vG2ExZs8LLQUp+M4wnaHYLA=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFnncvKjl3suKowPOtp5+qSoXF5T18EXvDv/W8V/7Xjrt
- 14gsle3o5SFQYyLQVZMkaWGu1r8naTWl1nTdW7DzGFlAhnCwMUpABOJN2Nk2GKoapzC1Ly2w+Wu
- 5vXmWObm6B65iODHAm93OqTnlmlPZfhnuvOiacDxqbXP1Tl0pFKOX85fd7Vr7bZFM57m5izU5nr
- OCgA=
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+Message-ID: <69bf6d9d.a86d.1a1366451f1.Coremail.zl020895@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:eygvCgD3NyGyb85qV71XAA--.16978W
+X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbC7hJWx2rOb7KL3QAA3C
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-
-> > So 2 possibilities:
-> > * You just need the .hw then I don't really get why you are doing it differently
-> >   for this clock ?
-> 
-> True.
-> 
-> > * OR, this is one of the those clock where you want to check DT first then
-> 
-> It is not.
-> 
-> >   fallback to a fixed clock, then yes you need parent_data. don't forget
-> >   the fw_name (which I did not see here) and use a local variable for that,
-> >   not a global
-> >
-> > Did I miss something ?
-> 
-> You got it absolutely right, and while implementing the change I
-> remember why I used the name instead of the hw pointer:
-> 
->      clk_hw_register_fixed_rate_parent_hw() exists, but
-> devm_clk_hw_register_fixed_rate_parent_hw() did not.
-> 
-> So since it looks like most of these helpers have their devm_
-> counterpart, I will add this new helper in clk-provider.h. I plan on
-> doing that addition in this commit because I think that is what Boyd
-> used to prefer, but I can add it in a preparation patch that is your own
-> preference, I don't mind.
-
-Separate patch for the new helper please. Same series is fine.
-
--- 
-Jerome
-
+CkF0IDIwMjYtMTAtMTQgMDA6Mzg6NDAsICJMaW51cyBXYWxsZWlqIiA8bGludXN3QGtlcm5lbC5v
+cmc+IHdyb3RlOgo+T24gVHVlLCBPY3QgMTMsIDIwMjYgYXQgNDozNuKAr1BNIHpsMDIwODk1IDx6
+bDAyMDg5NUAxNjMuY29tPiB3cm90ZToKPgo+PiBXb3VsZCB0aGlzIHdvcms/OiBJIHNlbmQgYSBz
+dGFuZGFsb25lCj4+ICJkdC1iaW5kaW5nczogdmVuZG9yLXByZWZpeGVzOiBhZGQgQW1iYXJlbGxh
+IiBwYXRjaCB0byBSb2Igd2l0aCBvbmx5Cj4+IHRoZSB0d28gbGluZXMgaW4gdmVuZG9yLXByZWZp
+eGVzLnlhbWwsIGFuZCBkcm9wIHRoYXQgaHVuayBmcm9tIHRoZQo+PiBTb0Mgc2VyaWVzLiBPbmNl
+IHRoZSBwcmVmaXggaXMgaW4gbGludXgtbmV4dCwgdGhlIHZlbmRvci1wcmVmaXgKPj4gd2Fybmlu
+Z3Mgc2hvdWxkIGJlIGZpeGVkLiBUaGUgcmVtYWluaW5nIGV4YW1wbGUgbWF0Y2hlcywgc3VjaCBh
+cwo+PiBhbWJhcmVsbGEsZHJpdmUtc3RyZW5ndGgtc3lzY29uLCBzdGlsbCBuZWVkIHRoZSBzZXBh
+cmF0ZQo+PiBHUElPL1VBUlQvcGluY3RybCBiaW5kaW5ncy4KPgo+VGhhdCB3b3JrcyBmb3IgbWUg
+YW5kIHNvbHZlcyBteSBwcm9ibGVtIHNvIGdvIGFoZWFkLgo+Cj5Zb3VycywKPkxpbnVzIFdhbGxl
+aWoKClNlbnQ6Cmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI2MTAxNC1jdjc1LXByZWZp
+eC12MS0xLWZlOTVlZDU2Nzg4MEBhbWJhcmVsbGEuY29tCgpCZXN0IHJlZ2FyZHMsCkxvbmcgWmhh
+bwo=
