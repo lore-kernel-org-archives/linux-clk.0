@@ -1,64 +1,64 @@
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7082151FCC3
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 15:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4A0531629
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 15:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791904713; cv=none; b=akpAfLY6zlVXwQF7vp7y2g8atyNY4qfL9JIZpNLmMUR1eLjBjRjnaPb468IeFfVSMS+El+KFEMQUb+U5nT731IsIgsTBeP2Ic2Ij7aO05s14T43ofgfyHYZ5otXogbZeDZvHbT0CAWXklooVtI5tRr0eCbTKJDSITv/unLWL3ZA=
+	t=1791904719; cv=none; b=Plx0tktqBKgt1HDPhSyOiFpZlB3OtHjaJC/Q+6AP0OpwBKbzJ1NuPqE27581KRrD0mphRa0KYx3aVwtrh1+EJpoQa6kykVUNyvAqjG7OuPBSgTCjD/dRcMrWsXtl6VDRDfzdikSLnIvJSt0moQsKAfuHzk/NFWuSJE4WwT3byus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791904713; c=relaxed/simple;
-	bh=kI48R3fJE4JTl82VzeEKG7bnMrIy6krPzjytHDhI1KU=;
+	s=arc-20240116; t=1791904719; c=relaxed/simple;
+	bh=0Rg3trTDVXkz0wUUwVq33AVQV/Ql8DJF3Zmohm/+o8I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H0EJRr58mjvHXpe4/ERqs6iw7f62ugGmIWQCHXf1AWsIj73Os3BfLUlGkCUQI3nVo8QwAXtfuIr1cFzqzA5lgP8X1czyt01TU7HSP9QWL/Twh9waQiSYvpaR566NTAuLODDubcDt34BYtpLqWG+9SPeC4geZnPyohugnG6ps9NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j5zM1+8l; arc=none smtp.client-ip=209.85.215.176
+	 MIME-Version; b=dkkEPDeCajYmTFei8VtDcY8KvohMLAFCJrMVGMvuQY90mXYL6xms7QkfBBDQCGXNmZ8eVBICSW5ohJML0hJy2qvsnD0oNMtlq434LfSdeUj0Lpi7O3OR/E9cFUCF1yNgogVUbmB3eSOksnkxDqQO2/lbuVySTjM52t+LHxuOnEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSFQ0auY; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j5zM1+8l"
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-cc1d57602e8so1206780a12.3
-        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 08:18:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSFQ0auY"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3ac5b090d16so87424a91.0
+        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 08:18:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791904711; x=1792509511; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791904716; x=1792509516; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=0Sh7oprtwXxfenbG/+R5+LvA/DuQZDqOYjTKSD5ze8U=;
-        b=j5zM1+8lKv8jz4VFmzHpU75dcnRBIoBwktsh4QVNeEstlvTZAR7G1NnE5c5V3LNLmU
-         DwykOagHGOOhHtkVRNaaORjbfY810DH/djWk5ckNsT7ze9Ji4eSlF9OAXcU7z6gIjh1N
-         dcN/28XMLxOPzGEYBxytrdAeGOuFrewj+AO6Rb926l06/w2hbmdrH2k8rhraGEgV/TTB
-         /PMul6E26vI/uvqj3GJVCYBd5F2QvFWCLHvptOCkWX5eU5HMiixoLrcJqRH7yJFHNeOU
-         GBo7i14nZ3AHRoTJARJTyXm4PXHltq0Qf+RxyW5L7RnEOqxm6mZ+mCQHsj03WC86kYhh
-         eI8A==
+        bh=RSK+e0uR+hrpe/b9QMXoajdIs6DQrymWCkZkpBSheng=;
+        b=CSFQ0auYDP+y2PP7RGugfVQFbHFY7/BZr1DfkyU1Oqud1oLaaRkogFhpBqBFDN3QL4
+         v0hk8qyiYtGW51+1DUFzfrMFQZ+4+2rSZJxpusVh+++Au3XWF8PUfnuumsXnvImp4n4T
+         nuaqf70OPFeT7q265wXXrWq1OfZls9L1l4E8jCmYHHETY/oUeHZGAnf2DFL1ffcJaNE3
+         RY1YG66ykVlZsXs4FdweujEH/FOrMxejFyFg0jdTOcgfivKWlkOZ4s9a7F4I1uqhI5EP
+         iuBOw4kpWu6Su+cPcUx5CeFZMzUlzBCOeUv7qZbcNlEXwBkqHTl8evN7cJpdYjKJqgdL
+         KSZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791904711; x=1792509511;
+        d=1e100.net; s=20260707; t=1791904716; x=1792509516;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=0Sh7oprtwXxfenbG/+R5+LvA/DuQZDqOYjTKSD5ze8U=;
-        b=pyBTxQ+VmPSy+G463iHT9+QnmeTmpZAKX5lLbyrW7e55J2jRbZssNqSGnIFVBfHxH4
-         90VN6hbsU/PVSzyExVcYqxDYKYSSsJZhlgQdAXxPGfDl3w5UHcxbrrMbZGZAcz1N2z4e
-         +XoYpHFazMa0ZGKaSne1WgpnKxP3rDInL4x2iwXLhCIh0ZKKRUUjmSjDCraP07JA0h79
-         2sz9wp3VQM5PGM1/aJ83QwzQt/43Wzl/U0DFlS9v/rA28gIKWSnifcrHYqIXMU7yvAHi
-         r89gwKU/ucWkYXHjIYlMd9Pf4p0zzD/vvzMmtXldaZc4RD7r4ykuhFgC9GuSmA+YCpGT
-         KDkQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxruiv0kbFkFMmbG1C63Be+YTSSHZYV9f13BCyFIOIRfftlFWsUbGPF4vCP/8o6z8B53En3i3ikoZ0=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKU/BwXZybPWDrlaXF77zMrkpPWH1uUwpJBgQatABd++pg9QFeV
-	V72jvLPmT784xRyT+SzQcxUWi9BxdZ70cNFgSeeVGCVZE08Svn4c6AzA
-X-Gm-Gg: AYBFou3HgahcHudBsC63COH3uZD3o5eJx25aIQb510zvhocUvGTrNX5AcwTmo6N1Wvb
-	AcFYDesuDdssZUJV6hVCXuEN0ZMPOt53gWf5wnFgKJo8QKXfAyMvU/f8kC4dkI3cYpdwQ2gcg07
-	sClljNIubxxgWiOFJgf1/OtXe/dwYM2Ot24FNbChpLeHKWDet+c4FO1mF8EM50CayPMQ8xETVkJ
-	hWWlu1/K+dWZdDqF/wFTU9rLKcpXqb9MnbvyJf7XL6juHelmtj7X3oEU88ndTevy0gDHj45TEja
-	Glip7rf0QjiCJ4cirUddqOtW4RA0m5Wpq5TJWYrNjjHwVZ9bG/YeedOrqY3GaK8YEOM5e/UQ1aZ
-	w3rWpbYfNpnhymD96qk2MEQ2s7jw5AjnhYhkstUQdbKjTfGTS3j4oBkjtium26qcAq5zi1+2LSn
-	dltreh4JrxTqqX6N7v3nQZai4IC2zli41eI+zMuF3lhvQPBN1HbpN8z/PzHr3CsXDLwRlXh1q6I
-	iGJysV98zbO86gpwKfS0sTQj8bf
-X-Received: by 2002:a05:6a21:394c:b0:3de:3f4d:f2bc with SMTP id adf61e73a8af0-3e16badf2a9mr12154427637.1.1791904710777;
-        Tue, 13 Oct 2026 08:18:30 -0700 (PDT)
+        bh=RSK+e0uR+hrpe/b9QMXoajdIs6DQrymWCkZkpBSheng=;
+        b=wR2InMazISuZVNVm4pjnYNgWy6QOE9Kr2eJ2qmBD1Eeaa0ljyQPXrzhnf6DjNnnJST
+         E/JLrwIY2JBNJ/TSgfP/WyCAshCs55vp3GjWskI/9dj9qw/xeR59FLbw6N0t1mZeIFs7
+         kKa901IR8AIO+D7ovpQ+TpGOCLsIMlfawFrrgLp+Xd2uVFI664ZJBjGVo+xI2YHukqeC
+         UeZfksEbb+X7+2MkXTXugENa3KsHBLz0k5k3Pxch7KbyT3hmGEoQi3T/NdRQ8+1Py2Ww
+         fZBlJ390F4kImHA2RE3Oc8C/PTz0CsCsOVfWwSMrvT53RJiOiBKLqPRDev8AgpxIq5L8
+         sNqw==
+X-Forwarded-Encrypted: i=1; AKwUvBxC+gSdmwO7PqB7FOAB6DN6JPcK/pNLhUG+nvPW7iQdfDIXX4LtgNDYnkZWCE9sMmRqaJiCaQ6thaw=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIa9FfKtudi8QeVW4atSAVfffWkOTxKmznZXmv7YDIJbO2syvxp
+	UbhLNDLLwbeQ0H/se9xPN3hmeh5nzTgGEAp0qoUERmjyJdPNAFt+6C+1
+X-Gm-Gg: AYBFou1xEMeFwbqzKpbgnXL13fDgDz19i4OU6/ph/clduXdf8BCYHUOu3yCw3JioJiZ
+	h1a1gzKeFJ2ZWn7XGgL8w1MTOd7+a5QCSUKlbz1Hj716DCTKuvylIgPssUwqCJIAu0dRclsW9MM
+	9DnjZjK0R7TRkGm/V2i7k6kvgVlyCVUzrr/fzDvKWxR8m2lG5uIKhXM3g44XNopqjRT3gh2srMd
+	YFfb/qZZsCK8TS/KbU2lt7jX8kMFIekQdBc6GZ73Zs7HrgFznDJdeF929qAk6B7a7Yr+KAcwM8a
+	TCSR/xM/DihY4oPHIov3RbkEt9z1e5FXXamBegH9Nf1ogZBmZoD31kynjjQtvuiDArna+wW763T
+	27iEZtz+3PW9bFEj63pIbBUdDlomjpaLudcPVajY+H/+ePAjRAcuhXk+LT6Nwg7APNQDwSSxhBs
+	DjgK/5x7Rn+AIr3URe+xKFZ9Ad/DnG8HcipLwgAcXGBFn8YQw3NPHdQmu+MPryKXCXIGKhHVrcK
+	GFlTKgKKfCxA9QTiQAOoAo4nwqMpFg0SPFSiug=
+X-Received: by 2002:a17:90b:4fd2:b0:3a0:b800:50a4 with SMTP id 98e67ed59e1d1-3ab36956d82mr9294604a91.3.1791904716462;
+        Tue, 13 Oct 2026 08:18:36 -0700 (PDT)
 Received: from buffalo-ssd.taila54753.ts.net ([240b:253:4760:f400:1ebf:ceff:fe7f:5e0b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cd3da04596dsm5759888a12.29.2026.10.13.08.18.25
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cd3da04596dsm5759888a12.29.2026.10.13.08.18.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 08:18:30 -0700 (PDT)
+        Tue, 13 Oct 2026 08:18:35 -0700 (PDT)
 From: Akari Tsuyukusa <akkun11.open@gmail.com>
 To: Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
@@ -86,11 +86,10 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
 	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
 	Akari Tsuyukusa <akkun11.open@gmail.com>,
-	stable@vger.kernel.org,
-	Brian Masney <bmasney@redhat.com>
-Subject: [PATCH v2 06/35] clk: mediatek: mt8192: Fix memory leak on module removal
-Date: Wed, 14 Oct 2026 00:17:05 +0900
-Message-ID: <20261013151734.3177690-7-akkun11.open@gmail.com>
+	stable@vger.kernel.org
+Subject: [PATCH v2 07/35] clk: mediatek: mt6735: Add missing MODULE_DEVICE_TABLE()
+Date: Wed, 14 Oct 2026 00:17:06 +0900
+Message-ID: <20261013151734.3177690-8-akkun11.open@gmail.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261013151734.3177690-1-akkun11.open@gmail.com>
 References: <20261013151734.3177690-1-akkun11.open@gmail.com>
@@ -102,39 +101,45 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-clk_mt8192_apmixed_probe() in clk-mt8192-apmixedsys.c does not call
-platform_set_drvdata(), but clk_mt8192_apmixed_remove() callback calls
-platform_get_drvdata().
-This results in platform_get_drvdata() returning NULL,
-which leads to calling kfree(NULL) in mtk_free_clk_data(NULL).
-This leaves clk_data unreleased, causing a memory leak.
+Add MODULE_DEVICE_TABLE() to the MT6735 clock drivers (imgsys, mfgcfg)
+to export the Device Tree matching tables. This is required so that the
+clock drivers can be automatically loaded when built as modules.
 
-Fix this by calling platform_set_drvdata() during probe.
-
-Fixes: 124294ff468f ("clk: mediatek: mt8192: Move apmixedsys clock driver to its own file")
+Fixes: 0bd9b1211f74 ("clk: mediatek: Add drivers for MT6735 syscon clock and reset controllers")
 Cc: stable@vger.kernel.org
 Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
-Reviewed-by: Brian Masney <bmasney@redhat.com>
 ---
 Changes in v2:
-- Capitalize the first letter of the commit message: "fix" -> "Fix"
+- Removed wrong mentions of vdecsys, vencsys from the commit message.
 ---
- drivers/clk/mediatek/clk-mt8192-apmixedsys.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/mediatek/clk-mt6735-imgsys.c | 1 +
+ drivers/clk/mediatek/clk-mt6735-mfgcfg.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/drivers/clk/mediatek/clk-mt8192-apmixedsys.c b/drivers/clk/mediatek/clk-mt8192-apmixedsys.c
-index b0563a285bd6..e6ac40e2f12d 100644
---- a/drivers/clk/mediatek/clk-mt8192-apmixedsys.c
-+++ b/drivers/clk/mediatek/clk-mt8192-apmixedsys.c
-@@ -176,6 +176,8 @@ static int clk_mt8192_apmixed_probe(struct platform_device *pdev)
- 	if (r)
- 		goto unregister_gates;
+diff --git a/drivers/clk/mediatek/clk-mt6735-imgsys.c b/drivers/clk/mediatek/clk-mt6735-imgsys.c
+index c564f8f72432..813241d526cf 100644
+--- a/drivers/clk/mediatek/clk-mt6735-imgsys.c
++++ b/drivers/clk/mediatek/clk-mt6735-imgsys.c
+@@ -41,6 +41,7 @@ static const struct of_device_id of_match_mt6735_imgsys[] = {
+ 	{ .compatible = "mediatek,mt6735-imgsys", .data = &imgsys_clks },
+ 	{ /* sentinel */ }
+ };
++MODULE_DEVICE_TABLE(of, of_match_mt6735_imgsys);
  
-+	platform_set_drvdata(pdev, clk_data);
-+
- 	return r;
+ static struct platform_driver clk_mt6735_imgsys = {
+ 	.probe = mtk_clk_simple_probe,
+diff --git a/drivers/clk/mediatek/clk-mt6735-mfgcfg.c b/drivers/clk/mediatek/clk-mt6735-mfgcfg.c
+index 1f5aedddf209..8a18ee244a4d 100644
+--- a/drivers/clk/mediatek/clk-mt6735-mfgcfg.c
++++ b/drivers/clk/mediatek/clk-mt6735-mfgcfg.c
+@@ -45,6 +45,7 @@ static const struct of_device_id of_match_mt6735_mfgcfg[] = {
+ 	{ .compatible = "mediatek,mt6735-mfgcfg", .data = &mfgcfg_clks },
+ 	{ /* sentinel */ }
+ };
++MODULE_DEVICE_TABLE(of, of_match_mt6735_mfgcfg);
  
- unregister_gates:
+ static struct platform_driver clk_mt6735_mfgcfg = {
+ 	.probe = mtk_clk_simple_probe,
 -- 
 2.56.0
 
