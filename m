@@ -1,129 +1,212 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2003A3B993F
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 08:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26543A0B24
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 09:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791881086; cv=none; b=CD8LkTxk9MbRmQZJyCUHZlseRpRb9wOjJnMbEJ+/++jnK5awadgMikcMmQOTUlNgTU64TH6jOy2w8cOQgjIv2rbOvNuTR3oD1G2lcHJFas6HLjX0lIpRDg/v9aOTmxGOY8O3J82tM8PjecGk706M/BVSgMz/wrGZRQt2SJ58OKg=
+	t=1791882333; cv=none; b=HU/ZuWpatwalurl6Tfs7i0rmaCITklY/ax6uWWbatKlSPMNsv62IEawXMv9hmeiC96m3BzTA6v3tTGF6UNSuUgHMOany72b/TJA0FTibhVZf5d7NAR3AsZIFVeXUhyqt5IIRyHW+xS9CC75poYEyrbVtbzYRh2093IJVMhGch3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791881086; c=relaxed/simple;
-	bh=vxqqcKeLdquDIj2KN23L6bIhx0QnUrefdPPqJUxyJLc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ahNQmTNqMI3MfyxEL2sSw01/Pxv1jfQo1JSg96dyfuWAUocTnUjZZLiP4hONdQAnzQPc1L/86zI6on3SqsEqtWdtPmyHPDuFjheIaVT2NSURkKak4CDO1M9biOsh2Ws+AbYfUVZ5GF0gmW04ENePW8jECLB84JFKy9DgbCHO8GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I49h76bx; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791882333; c=relaxed/simple;
+	bh=mcDuyv5VV8y1u8HIkjifl6NSJsYbz2oQBovItDT06wU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CfwIizI2hJeJiF8IHUax7rO0b9p+69RDbWOO9s1pcj9FRdL6U99KYaQqwJ0f2d9ZsQLlCQkRtdyD9wQORSOA97Ss0EnxpjzAFXQeoC54EnV2IYFXb9zlXM8OGbhRZWsI0r4sshPA5Ou9HXAN52aN2GDwEYdXUDnBM8IwQBA+mP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=kuFIYKS+; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I49h76bx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D633F1F008A4
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 08:44:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791881084;
-	bh=vxqqcKeLdquDIj2KN23L6bIhx0QnUrefdPPqJUxyJLc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=I49h76bxM/lZR8p2VMAgIv/gvVy6UbprkYg7xesOZ4S5gyWBPpG6u4HTxJMv57uGJ
-	 k8g6aFgvpTUE6kXpWN0vNFPeWi1Syq+lecQZKak3qkJCnIXXyqoamOjLnEHPwLMHE8
-	 xRaGKUaKo88JjDzDOLsrHdNww6yj9eMszUmR3izWt1n/Q4XFa08DWFjFSyXIZAOkAn
-	 fl3NfTB7if7RgS09qggiygd6M8OfYRYUY2lMeA187+oooKVA3dfNMynbTTj/sJEi4H
-	 vgKV/6wHBpGJm81bfFvM+JhuwCKfPGkgm/d5mFGf5ZeZU9yPB3Pa1a/WxtCLvCRx/i
-	 GxyAqgQ70H5ag==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3a1eb6fa0f4so28737491fa.2
-        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 01:44:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByzVeXeFzUKqE6i3fAnAoN5mlY1RQQSnvgWvNd2LfROup8V0WF21W8SmGiJbimyqHNAwjpmQE36748=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJpWak3R0jLqBXcEvmwl2Dvh1WNVL3IP+mG+xECN7/gY1PZFOnf
-	UsniDrXvybptOtDrCR7f0dIITv65/r3b3yhzAVyV/ERDCZ0TzYrKJdYn2C+lKEwgC6kUtjz6vNQ
-	Yk3v7TkfUWD/5ZYylQ00nacjMhmsLY7Q=
-X-Received: by 2002:a2e:be0b:0:b0:3a9:abd6:1ab9 with SMTP id
- 38308e7fff4ca-3a9c514fd25mr26402801fa.8.1791881083577; Tue, 13 Oct 2026
- 01:44:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="kuFIYKS+"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-48c6955a7c3so624716f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 02:05:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1791882328; x=1792487128; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=iZjRkbq5W/7t5bYSMSsHGWHFlPOzNbExBo1Z2x1DxZ0=;
+        b=kuFIYKS+z25bs0Gwjcq62NEOIl0fnSOlXxjRpd73ZrRd3MxzR3/SJNnu+J4lbqBEQg
+         pKLozfQUZYNtb+8GGFxAkaRFDQp02daD3/aY4j1iZjdO+D5LQG98ZGoc6HvGDGIL/7BK
+         0aiO/TXZjW5iGlQBCr4TXGXuVxiaw7ZghirkHlg+47rnI28k2lGXjUUPf5Cs8CxNJWQ2
+         hrVcK43BF7DzUjREfqmBdHz1hg5Dsif/jtqjpcOAMA7VX35dsPkShIG24szs4zk4PcvC
+         mcVcPUdAs85jicDF/6lckhuxNPZcBgJH2Lw63uIFoLMaGDFcLRki3xHf2h6IxWQBFzu3
+         UYtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791882328; x=1792487128;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=iZjRkbq5W/7t5bYSMSsHGWHFlPOzNbExBo1Z2x1DxZ0=;
+        b=kGJKZ5j3RN2MwfG1kkm/jJyPRmm/3RGDOLGwg81Bma9AKZlXs5qbVtaJiRQEql/OUu
+         qz/yxRd3+/uSkoU42j+YVvOMh9eboSr1rgH3G6n20kMDdvha5o8ER97zfkuoolV7LXLz
+         42a0UfAyZr6w9AswwvuioaVIsMaLB/3OR9FtQBBBt2PcbG103yOLUM0J3GergvmWDKjd
+         Lb4aCFzB75OKd30dSkdqk1ivdvt7GVs2aV6OCvxcttDR7IYSyKpvsSbQE9HOTek7lolt
+         lBHUyEKQk3whq0v7FVd+g/dcKGWRcp9x3BSXd87fHFJfAGEyfB8Kv86vf0S+SUVnUlFa
+         6RgQ==
+X-Forwarded-Encrypted: i=1; AKwUvByIcpscEq4UvGiLjnP/gOoycBpg6+cte5Mx49ooVucvjDKcagrVBW0Hf4e8/zympn6Hw9xBzNwWOoA=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIY7IQ6K4X/nG5FnlhhNVIoQvSfdnK3NLt6gCpGdKsI3E6rWThj
+	jTFZm4FRcB5IEhgvnELBZse1GBIYslp3TrvzjAIRfSZ0pJSJzVBlPshFG4nuzLr7ajE=
+X-Gm-Gg: AYBFou2N3znYqWoPDdV8tQpxcmaiMvAjmgCnjvjN06dEOKbM3zRRrg3QWHwNwInCJm1
+	I03J6yLtplbTLm1gZjMPTjXpVUw9XNu/TpU4MGmG4zChmrTgZF49iPI0KZAVmmb3jwg/GFvmjws
+	+Ov7zd9af1sNDFBPetSc3GBwPWXsvrKi3IwSdWsMbqeXBUTvp1Lq8C99uyH0x1bFXTokFPcrvjr
+	FFKNIk2x2ONUsH4YH+Xy2RXftQrd6zfah8gn2+st7PXJmZ3NN1cLd2ZYuQu7O4Aj5UblVgz1BIf
+	jRlm3d/e9/7YLyHi1vizYfFEQHmziXkq/yqtBaEGxL+9Bmzp2euVK+IL/6rUCyCB5m6tfE6Ql9l
+	bxabpZxxzXMrD+qWaukesnUUlUIXJs+yXqBpU9A/VWEwFsVcoshHqksCgVzFuDmbFwNJ2ThVyy/
+	62raXeTjBrAOv81BJ8w5OhusRaTeGEDcPTeTFqbF5RKVxKszVHEFf/m7VV0MHuq6Z2PFgmlAlB0
+	cAX2pPl17OW72ctJA==
+X-Received: by 2002:a05:6000:40e0:b0:48c:6a4d:3b67 with SMTP id ffacd0b85a97d-48dbaceb433mr22277898f8f.19.1791882328049;
+        Tue, 13 Oct 2026 02:05:28 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48de0ab6361sm3495503f8f.32.2026.10.13.02.05.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2026 02:05:27 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Brian Masney <bmasney@redhat.com>, Jerome Brunet
+ <jbrunet+clk@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Emil Renner Berthing <kernel@esmil.dk>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-riscv@lists.infradead.org"
+ <linux-riscv@lists.infradead.org>, Hal Feng <hal.feng@starfivetech.com>
+Subject: Re: [PATCH v6 05/15] clk: starfive: Add JHB100 System-0 clock
+ generator driver
+In-Reply-To: <ZQ4PR01MB1202DE124DED06ECEC948B89F29E2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+References: <20261008123338.11081-1-changhuang.liang@starfivetech.com>
+ <20261008123338.11081-6-changhuang.liang@starfivetech.com>
+ <179180050742.66744.1321848308971146208.b4-review@b4>
+ <ZQ4PR01MB1202DE124DED06ECEC948B89F29E2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+Date: Tue, 13 Oct 2026 11:05:26 +0200
+Message-ID: <1jzewiezs9.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260921-cv75-v5-v8-0-282ff5d98dda@ambarella.com>
- <20260921-cv75-v5-v8-4-282ff5d98dda@ambarella.com> <CAD++jLmKF5XxHsJX29sdXC_6JHKn-7HkE=N+TKtk5xODtQj3_w@mail.gmail.com>
- <b2256847-3ec1-47e8-ac79-ceca86eb09e7@kernel.org> <CAD++jLkrXXg9xrhAZ8HETc5Qcv5BbkY-ibjvzBmE5WZVqDEGWQ@mail.gmail.com>
- <a0eca34d-5eb2-4730-b8c7-0f2302bcf265@kernel.org>
-In-Reply-To: <a0eca34d-5eb2-4730-b8c7-0f2302bcf265@kernel.org>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 13 Oct 2026 10:44:31 +0200
-X-Gmail-Original-Message-ID: <CAD++jLm=T-U07vAVCogMnfOfkDf=i9QhGGc8ok2N-ZUh50WLNA@mail.gmail.com>
-X-Gm-Features: AclHuK8uOkUyYpjHvZrw-87c6Tq4ZbkYSTxyMDm1V9n2PMOjyOCFsNCXto0ZE_s
-Message-ID: <CAD++jLm=T-U07vAVCogMnfOfkDf=i9QhGGc8ok2N-ZUh50WLNA@mail.gmail.com>
-Subject: Re: [PATCH v8 04/18] dt-bindings: pinctrl: add Ambarella CV75 pinctrl
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: longzhao@ambarella.com, Arnd Bergmann <arnd@arndb.de>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
-	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Oct 12, 2026 at 9:08=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
-> On 12/10/2026 09:06, Linus Walleij wrote:
-> > On Fri, Oct 9, 2026 at 8:17=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel=
-.org> wrote:
-> >> On 01/10/2026 09:03, Linus Walleij wrote:
-> >
-> >>> On Mon, Sep 21, 2026 at 6:23=E2=80=AFAM Long Zhao via B4 Relay
-> >>> <devnull+longzhao.ambarella.com@kernel.org> wrote:
-> >>>
-> >>>> From: Long Zhao <longzhao@ambarella.com>
-> >>>>
-> >>>> Document the CV75 pin controller binding using generic function and
-> >>>> groups properties for pinmux configuration.
-> >>>>
-> >>>> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> >>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.c=
-om>
-> >>>> Signed-off-by: Long Zhao <longzhao@ambarella.com>
-> >>>
-> >>> This patch 4/18 applied to the pinctrl tree.
-> >>
-> >> There is a dependency, you cannot take this patch alone.
-> >
-> > Oops, but is it a DTS dependency so if none of the other patches go in =
-through
+On mar. 13 oct. 2026 at 05:29, Changhuang Liang <changhuang.liang@starfivetech.com> wrote:
+
+> Hi, Jerome
 >
-> No, it is a bindings dependency, introducing new DT bindings warning for
-> both your tree and next.
+>> > Add support for JHB100 System-0 clock generator (SYS0CRG).
+>> >
+>> > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+>> > ---
+>> >  MAINTAINERS                                   |   7 +
+>> >  drivers/clk/starfive/Kconfig                  |  10 ++
+>> >  drivers/clk/starfive/Makefile                 |   2 +
+>> >  .../clk/starfive/clk-starfive-jhb100-sys0.c   | 156 ++++++++++++++++++
+>> >  4 files changed, 175 insertions(+)
+>> >  create mode 100644 drivers/clk/starfive/clk-starfive-jhb100-sys0.c
+>> >
+>> > diff --git a/MAINTAINERS b/MAINTAINERS index
+>> > 66d6c15f1dd2..dff8b819f83e 100644
+>> > --- a/MAINTAINERS
+>> > +++ b/MAINTAINERS
+>> > @@ -26217,6 +26217,13 @@ F:
+>> 	Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy.yaml
+>> >  F:	drivers/phy/starfive/phy-jh7110-pcie.c
+>> >  F:	drivers/phy/starfive/phy-jh7110-usb.c
+>> >
+>> > +STARFIVE JHB100 CLOCK DRIVERS
+>> > +M:	Changhuang Liang <changhuang.liang@starfivetech.com>
+>> > +S:	Supported
+>> > +F:	Documentation/devicetree/bindings/clock/starfive,jhb1*.yaml
+>> > +F:	drivers/clk/starfive/clk-starfive-jhb1*
+>> > +F:	include/dt-bindings/clock/starfive,jhb1*.h
+>> > +
+>> >  STARFIVE JHB100 EXTERNAL INTERRUPT CONTROLLER DRIVER
+>> >  M:	Changhuang Liang <changhuang.liang@starfivetech.com>
+>> >  S:	Supported
+>> > diff --git a/drivers/clk/starfive/Kconfig
+>> > b/drivers/clk/starfive/Kconfig index 51716655554f..cd5b7754403e 100644
+>> > --- a/drivers/clk/starfive/Kconfig
+>> > +++ b/drivers/clk/starfive/Kconfig
+>> > @@ -72,3 +72,13 @@ config CLK_STARFIVE_JH7110_VOUT
+>> >  	help
+>> >  	  Say yes here to support the Video-Output clock controller
+>> >  	  on the StarFive JH7110 SoC.
+>> > +
+>> > +config CLK_STARFIVE_JHB100_SYS0
+>> > +	bool "StarFive JHB100 system-0 clock support"
+>> > +	depends on ARCH_STARFIVE || COMPILE_TEST
+>> > +	select CLK_STARFIVE_JH71X0
+>> > +	select RESET_STARFIVE_JHB100 if RESET_CONTROLLER
+>> 
+>> just imply RESET_STARFIVE_JHB100 ?
+>> 
+>> It can be disabled if RESET_CONTROLLER is not set, so it is kind of weak
+>> already.
+>> 
+>> > +	default ARCH_STARFIVE
+>> > +	help
+>> > +	  Say yes here to support the system-0 clock controller on the
+>> > +	  StarFive JHB100 SoC.
+>> > diff --git a/drivers/clk/starfive/Makefile
+>> > b/drivers/clk/starfive/Makefile index 199ac0f37a2f..d2ba83d7d02c
+>> > 100644
+>> > --- a/drivers/clk/starfive/Makefile
+>> > +++ b/drivers/clk/starfive/Makefile
+>> > @@ -10,3 +10,5 @@ obj-$(CONFIG_CLK_STARFIVE_JH7110_AON)	+=
+>> clk-starfive-jh7110-aon.o
+>> >  obj-$(CONFIG_CLK_STARFIVE_JH7110_STG)	+= clk-starfive-jh7110-stg.o
+>> >  obj-$(CONFIG_CLK_STARFIVE_JH7110_ISP)	+= clk-starfive-jh7110-isp.o
+>> >  obj-$(CONFIG_CLK_STARFIVE_JH7110_VOUT)	+=
+>> clk-starfive-jh7110-vout.o
+>> > +
+>> > +obj-$(CONFIG_CLK_STARFIVE_JHB100_SYS0)		+=
+>> clk-starfive-jhb100-sys0.o
+>> > diff --git a/drivers/clk/starfive/clk-starfive-jhb100-sys0.c
+>> > b/drivers/clk/starfive/clk-starfive-jhb100-sys0.c
+>> > new file mode 100644
+>> > index 000000000000..edab54f228ad
+>> > --- /dev/null
+>> > +++ b/drivers/clk/starfive/clk-starfive-jhb100-sys0.c
+>> > @@ -0,0 +1,156 @@
+>> > +// SPDX-License-Identifier: GPL-2.0
+>> > +/*
+>> > + * StarFive JHB100 System-0 Clock Driver
+>> > + *
+>> > + * Copyright (C) 2024 StarFive Technology Co., Ltd.
+>> > + *
+>> > + * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
+>> > + *
+>> > + */
+>> > +
+>> > +#include <dt-bindings/clock/starfive,jhb100-crg.h>
+>> > +#include <linux/init.h>
+>> > +#include <linux/platform_device.h>
+>> > +
+>> > +#include "clk-starfive-jh71x0.h"
+>> > +
+>> > +#define JHB100_SYS0CLK_NUM_CLKS
+>> 	(JHB100_SYS0CLK_GPU1_NCNOC_INIT + 1)
+>> > +
+>> > +/* external clocks */
+>> > +#define JHB100_SYS0CLK_OSC
+>> 	(JHB100_SYS0CLK_NUM_CLKS + 0)
+>> > +#define JHB100_SYS0CLK_PLL0
+>> 	(JHB100_SYS0CLK_NUM_CLKS + 1)
+>> > +#define JHB100_SYS0CLK_PLL1
+>> 	(JHB100_SYS0CLK_NUM_CLKS + 2)
+>> > +#define JHB100_SYS0CLK_PLL2
+>> 	(JHB100_SYS0CLK_NUM_CLKS + 3)
+>> 
+>> Does this mean that if the you ever find out you've forgot an internal clock
+>> (which does happen fairly often) the whole external block will shift ?
+>> 
+>
+> Later, I will introduce the following macros to define the external clock, which can avoid this problem.
+>
+> #define JH71X0_EXT_CLK_FLAG	BIT(15)
+> #define JH71X0_EXT_CLK(_n) 	(JH71X0_EXT_CLK_FLAG | (_n))
+>
 
-Is there a problem with the bindings patch itself?
+hummm okay ... still seems hackish to me.
 
-In that case Long can just send an incremental patch to
-fix it right?
+>
 
-> Your tree is fine in this case as long as next
-> is also fine... but next is not, because that patch did not make it there=
-.
-
-But the patch is in -next?
-
-~/linux-next$ ls
-Documentation/devicetree/bindings/pinctrl/ambarella,cv75-pinctrl.yaml
-Documentation/devicetree/bindings/pinctrl/ambarella,cv75-pinctrl.yaml
-
-> We cannot have any new DT bindings warnings in next.
-
-I guess I just don't get it :D
-
-To me it seems like a fairly normal situation: ACKed bindings merged
-together with the driver, no dependence on anything.
-
-But if you tell me "revert the patch" I will simply revert the patch
-because I trust you, it doesn't really matter why.
-
-Yours,
-Linus Walleij
+-- 
+Jerome
