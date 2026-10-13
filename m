@@ -1,212 +1,182 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26543A0B24
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 09:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F773EAC71
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 09:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791882333; cv=none; b=HU/ZuWpatwalurl6Tfs7i0rmaCITklY/ax6uWWbatKlSPMNsv62IEawXMv9hmeiC96m3BzTA6v3tTGF6UNSuUgHMOany72b/TJA0FTibhVZf5d7NAR3AsZIFVeXUhyqt5IIRyHW+xS9CC75poYEyrbVtbzYRh2093IJVMhGch3o=
+	t=1791882849; cv=none; b=b6QT4+B8baNzasCWErjTvscqSGA8va5yVGi/1Td9+fHrfkIJS59fFaQqhZFoZyu5tkv4TC3tXJq1sruASKeUPYX/HrQGOfo4xRWZDWMSwwKnGR2Ukyvf+8OhRmRObqhCRKyoixiDOqmzrpeDWegsaUHGhir8SmgIQOmljc9tm7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791882333; c=relaxed/simple;
-	bh=mcDuyv5VV8y1u8HIkjifl6NSJsYbz2oQBovItDT06wU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CfwIizI2hJeJiF8IHUax7rO0b9p+69RDbWOO9s1pcj9FRdL6U99KYaQqwJ0f2d9ZsQLlCQkRtdyD9wQORSOA97Ss0EnxpjzAFXQeoC54EnV2IYFXb9zlXM8OGbhRZWsI0r4sshPA5Ou9HXAN52aN2GDwEYdXUDnBM8IwQBA+mP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=kuFIYKS+; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1791882849; c=relaxed/simple;
+	bh=9t1LfwP+C0V3WkdUIqJJulzQNJ66T5GzsZqb8QyGXNw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CyRnEPypTnmIka5OgeXaDP5OMQG97B+IlQ3EWZHkQ8RtEJpxtw5soK1yg8CAkhp08Smue4EdjD8fo1s/wlnCyDjxGtM2SNcslrK7XVyL9BTBo8wLzHZIYPOOu0md0MjnFjqeL+o+W8vd3UISI5/8sPDK+cg2VrktbhH4DW3uYVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GMG5hYf7; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gclKFj0C; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="kuFIYKS+"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-48c6955a7c3so624716f8f.1
-        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 02:05:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GMG5hYf7";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gclKFj0C"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69D8IQ8p922903
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 09:14:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	V4iSugGS1p1Fu0QiaYnOql6lHp7UYNFe+58/RnRtCOU=; b=GMG5hYf7up+Vl+3v
+	cWUG63lH68sYoAdAYb+aJoD9xby/yKNj883k6Z9nejdI3eI3FP19D2tMZHYAMLea
+	yMxTwRadGTeVLYZZbYi98HML9lWNn1Z+I5yjmACWYAMEnAi/NYyARop+MPj2q9z9
+	4i0h13r5NyQOjSs/MK77M3nEz3BP4m64L+SqKnTgVTT6NF7htnC+J9bowJ47L/ck
+	e2YjT4MRjn4Sap30l+2lLe2MCj9gcLAUgeYOxqWCT/OKfYXjB7ahL8P/s8AtlvZ5
+	hIZX6I0/l39J3zB71zUibRrl4d0O0htus2E2C0xErS+Hr1JvnwF79+2bqASif/WC
+	yjoAuw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h98h1t4ww-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 09:14:06 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93cc50fb0d2so47254085a.0
+        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 02:14:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1791882328; x=1792487128; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+        d=oss.qualcomm.com; s=google; t=1791882845; x=1792487645; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=iZjRkbq5W/7t5bYSMSsHGWHFlPOzNbExBo1Z2x1DxZ0=;
-        b=kuFIYKS+z25bs0Gwjcq62NEOIl0fnSOlXxjRpd73ZrRd3MxzR3/SJNnu+J4lbqBEQg
-         pKLozfQUZYNtb+8GGFxAkaRFDQp02daD3/aY4j1iZjdO+D5LQG98ZGoc6HvGDGIL/7BK
-         0aiO/TXZjW5iGlQBCr4TXGXuVxiaw7ZghirkHlg+47rnI28k2lGXjUUPf5Cs8CxNJWQ2
-         hrVcK43BF7DzUjREfqmBdHz1hg5Dsif/jtqjpcOAMA7VX35dsPkShIG24szs4zk4PcvC
-         mcVcPUdAs85jicDF/6lckhuxNPZcBgJH2Lw63uIFoLMaGDFcLRki3xHf2h6IxWQBFzu3
-         UYtw==
+        bh=V4iSugGS1p1Fu0QiaYnOql6lHp7UYNFe+58/RnRtCOU=;
+        b=gclKFj0CCVJOYFZdM5LWdSfVHPgKJyabTV/brrB+Ij05uGrEo0GBYWzf0Bx3/x7XWY
+         7XGa0SkR8v7JkTyu33M4afnrTN90PstZvt2RXB5uQUk7/rT6JmtnKJLeplJRajRHItHy
+         ViQp+2Pqc5SwFbPKRhxaXLPrHuADeP7RJIdjNsC/uPyygLIEiiXD0kRbks6weSOKAgn7
+         Mt7vdNuxhVXU35PcVuGZqigaRrxaWnLv9YvJQg/LbHUFjNlgmIc/kI5qMSnye9LVrxys
+         lqw9ZM5gtbpwOPVfXe9rD9PY269/9zwZP9mBDR2RyYqrqYEuxRWxsmRzivIrbAPXeCVS
+         MbZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791882328; x=1792487128;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=iZjRkbq5W/7t5bYSMSsHGWHFlPOzNbExBo1Z2x1DxZ0=;
-        b=kGJKZ5j3RN2MwfG1kkm/jJyPRmm/3RGDOLGwg81Bma9AKZlXs5qbVtaJiRQEql/OUu
-         qz/yxRd3+/uSkoU42j+YVvOMh9eboSr1rgH3G6n20kMDdvha5o8ER97zfkuoolV7LXLz
-         42a0UfAyZr6w9AswwvuioaVIsMaLB/3OR9FtQBBBt2PcbG103yOLUM0J3GergvmWDKjd
-         Lb4aCFzB75OKd30dSkdqk1ivdvt7GVs2aV6OCvxcttDR7IYSyKpvsSbQE9HOTek7lolt
-         lBHUyEKQk3whq0v7FVd+g/dcKGWRcp9x3BSXd87fHFJfAGEyfB8Kv86vf0S+SUVnUlFa
-         6RgQ==
-X-Forwarded-Encrypted: i=1; AKwUvByIcpscEq4UvGiLjnP/gOoycBpg6+cte5Mx49ooVucvjDKcagrVBW0Hf4e8/zympn6Hw9xBzNwWOoA=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIY7IQ6K4X/nG5FnlhhNVIoQvSfdnK3NLt6gCpGdKsI3E6rWThj
-	jTFZm4FRcB5IEhgvnELBZse1GBIYslp3TrvzjAIRfSZ0pJSJzVBlPshFG4nuzLr7ajE=
-X-Gm-Gg: AYBFou2N3znYqWoPDdV8tQpxcmaiMvAjmgCnjvjN06dEOKbM3zRRrg3QWHwNwInCJm1
-	I03J6yLtplbTLm1gZjMPTjXpVUw9XNu/TpU4MGmG4zChmrTgZF49iPI0KZAVmmb3jwg/GFvmjws
-	+Ov7zd9af1sNDFBPetSc3GBwPWXsvrKi3IwSdWsMbqeXBUTvp1Lq8C99uyH0x1bFXTokFPcrvjr
-	FFKNIk2x2ONUsH4YH+Xy2RXftQrd6zfah8gn2+st7PXJmZ3NN1cLd2ZYuQu7O4Aj5UblVgz1BIf
-	jRlm3d/e9/7YLyHi1vizYfFEQHmziXkq/yqtBaEGxL+9Bmzp2euVK+IL/6rUCyCB5m6tfE6Ql9l
-	bxabpZxxzXMrD+qWaukesnUUlUIXJs+yXqBpU9A/VWEwFsVcoshHqksCgVzFuDmbFwNJ2ThVyy/
-	62raXeTjBrAOv81BJ8w5OhusRaTeGEDcPTeTFqbF5RKVxKszVHEFf/m7VV0MHuq6Z2PFgmlAlB0
-	cAX2pPl17OW72ctJA==
-X-Received: by 2002:a05:6000:40e0:b0:48c:6a4d:3b67 with SMTP id ffacd0b85a97d-48dbaceb433mr22277898f8f.19.1791882328049;
-        Tue, 13 Oct 2026 02:05:28 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48de0ab6361sm3495503f8f.32.2026.10.13.02.05.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 02:05:27 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Brian Masney <bmasney@redhat.com>, Jerome Brunet
- <jbrunet+clk@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
- <p.zabel@pengutronix.de>, Emil Renner Berthing <kernel@esmil.dk>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-riscv@lists.infradead.org"
- <linux-riscv@lists.infradead.org>, Hal Feng <hal.feng@starfivetech.com>
-Subject: Re: [PATCH v6 05/15] clk: starfive: Add JHB100 System-0 clock
- generator driver
-In-Reply-To: <ZQ4PR01MB1202DE124DED06ECEC948B89F29E2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-References: <20261008123338.11081-1-changhuang.liang@starfivetech.com>
- <20261008123338.11081-6-changhuang.liang@starfivetech.com>
- <179180050742.66744.1321848308971146208.b4-review@b4>
- <ZQ4PR01MB1202DE124DED06ECEC948B89F29E2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-Date: Tue, 13 Oct 2026 11:05:26 +0200
-Message-ID: <1jzewiezs9.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20260707; t=1791882845; x=1792487645;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=V4iSugGS1p1Fu0QiaYnOql6lHp7UYNFe+58/RnRtCOU=;
+        b=blkJ4dRhzIATvbiUaGtjXSFYaepXtQCrORMbsquQXk7YcK5oV3ue/ZJiLI+Vjd9WIq
+         YNc13yPaciOfxalzhQV6s/J5vbTCpHBZKfhUgM4jqwHiBZBYMM12uOuEQfXUfVGhJ0e7
+         gl+7+OFMyNc8F92nQbMfnLLjxcB9BYVO9r/GhM/aiazq3RlPQb/o1q353x9pTg7MjK7v
+         hQoTyIE+xJEoxs2Rgt2G6lPEPoYA3Spz9C8bQS8LZdPWRsajF5mCspqY+9KHJANqHusS
+         S9DBSS+4CpgkUsD5pvDw8IunmwIA4HKJ23fQUQsdJq0YjM4nmz9LZl7wzXXnieyWQGL7
+         Fw/A==
+X-Forwarded-Encrypted: i=1; AKwUvBxJHb/huE09SmdUhhIfHpddYj7myLyLCXLXbQjae4YSAZsMJIsDHSmrbFTsauMt0ewSYhrB8XNn+IE=@vger.kernel.org
+X-Gm-Message-State: AFq9FYInkYfP0OoFu4xQPniWhl9IWhCeBbsu0Ga13s6iC4YxuYFg7wQc
+	lr6Q1XRaN9FsVrK0VU5s5rN1IViSt9N/nfHNbMtPF+362E5jKXpJtiTSbFvVdJuiV/45GaeR5r1
+	nKozNmCyD/9mnUxCwOHHdSVrsCn5nXDrngO7WyxOgjS+KiOyP23HAZFxOi2PVhzwvbkrqaSA=
+X-Gm-Gg: AYBFou2Oc80sOjrLQTd2X88ZiDaA/PZB/VeF+7h0K3qS2vxdlJ3jR2uWJ6pj1GA3LTC
+	11rznpLVOQz+tBLJKfPYTNGQY0eIuZPGNpmJZLG+P86cPxYTvpVZ+0z3XP//j8dsbvZth9k3TcX
+	jV7zhbqJ6fPnexlKgEm+9rg6bVVRRluI2PvmMdvFOtKQeUpbseU05irA5CHLVg3tiCAdcbg1wkZ
+	wGrNcFFcqQEyzb5JVKXGPbgPgzel0HkvqHAWeNhLtLSXXYVD23oSbOpOfU9YoaTPFin2UZoLu1J
+	VC5gKpqr30qyjGGW3FYUsrxVVqBeh/T/JnsLc5kxGVwT70E43hA20WT7isKOxoxTYUSlsEeTHHd
+	4Hv4FG/YawMB+ABOmBzOJdQ==
+X-Received: by 2002:a05:620a:3186:b0:939:8bc:8826 with SMTP id af79cd13be357-93ebd10c0e2mr2350660885a.2.1791882845506;
+        Tue, 13 Oct 2026 02:14:05 -0700 (PDT)
+X-Received: by 2002:a05:620a:3186:b0:939:8bc:8826 with SMTP id af79cd13be357-93ebd10c0e2mr2350658785a.2.1791882844985;
+        Tue, 13 Oct 2026 02:14:04 -0700 (PDT)
+Received: from [192.168.226.26] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c366707467csm105224266b.76.2026.10.13.02.14.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Oct 2026 02:14:03 -0700 (PDT)
+Message-ID: <9e3ded68-ed3d-4a64-b26f-dee50b7e00fe@oss.qualcomm.com>
+Date: Tue, 13 Oct 2026 11:14:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clk: qcom: negcc-nord: Add frequencies for
+ ne_gcc_sdcc4_apps_clk_src
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+References: <20261009-nord-sdcc-clk-v2-1-e00ecfa321c3@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20261009-nord-sdcc-clk-v2-1-e00ecfa321c3@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=VqC2kO2n c=1 sm=1 tr=0 ts=6acdf65e cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=E7-qh2Fnl_Ea1JZtUYsA:9 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-GUID: 3GNxkdSjaYKSG6Vp_BL84EZnLPqzlKHM
+X-Proofpoint-ORIG-GUID: 3GNxkdSjaYKSG6Vp_BL84EZnLPqzlKHM
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDEzMDAzNiBTYWx0ZWRfX++EwbcsvlKKa
+ s1RW/MdufHV3k1gMP7WL73dyHJPwa9G6Lwa8mmiGgoLruAYecIDLr0WzAXxYSK9D0CiPZ3GuwZ7
+ ZUObH6tlMN+/rUY7OY2dfIakQOy4e4o=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDEzMDAzNiBTYWx0ZWRfX9WbhzuNseJ+j
+ RKsE9W8pnGEj8oXSI94/X1Gdo/r7n/ExZNLMLf//mZJ375lT88kR1A8+WLAWYz/iS76hTieRaZY
+ NBn6Q+ODRauz3FDmnOOfnRNbEBzOwwb87OIdqvQpvUPExlx8UDBj4dnM7mU22G5w+yf9qCRF9RJ
+ CyZcSbGuEonvclMFKJgF0dFw54HoAHRrxMZsyNid1o2KfXnNuL4VcyQpFVUrYLMshHxgHiim0Je
+ JLqLL22K5I4UCIq6JsgNaRs9XGvU0p9526noypN9Qsrb8ky3elrUYEom0tG0AC507/zZYOJ99tS
+ cfELBPl5GEkT7oVLibZtDnI7FJ5ZZEt1FKB59/KbQowF169zPVddffXlwu563U4FNCZq3dJLTcT
+ /5bkhmx+Z5dQoYwkGjZuOTo10+ERCiKNSYH3/oi4RmElBg3KvKEi6ZOUBOQ11Hlz5wEclNNcy6V
+ E4INcyReuNI9O1zXh9g==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-13_01,2026-10-09_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
+ adultscore=0 phishscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610130036
 
-On mar. 13 oct. 2026 at 05:29, Changhuang Liang <changhuang.liang@starfivetech.com> wrote:
+On 10/9/26 8:08 AM, Jagadeesh Kona wrote:
+> Add the frequency table entries for ne_gcc_sdcc4_apps_clk_src to support
+> the additional clock rates required on the Nord platform.
+> 
+> Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+> ---
+> Changes in v2:
+> - Updated few frequency table entries to align with pre-div reg width [Sashiko AI review].
 
-> Hi, Jerome
->
->> > Add support for JHB100 System-0 clock generator (SYS0CRG).
->> >
->> > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
->> > ---
->> >  MAINTAINERS                                   |   7 +
->> >  drivers/clk/starfive/Kconfig                  |  10 ++
->> >  drivers/clk/starfive/Makefile                 |   2 +
->> >  .../clk/starfive/clk-starfive-jhb100-sys0.c   | 156 ++++++++++++++++++
->> >  4 files changed, 175 insertions(+)
->> >  create mode 100644 drivers/clk/starfive/clk-starfive-jhb100-sys0.c
->> >
->> > diff --git a/MAINTAINERS b/MAINTAINERS index
->> > 66d6c15f1dd2..dff8b819f83e 100644
->> > --- a/MAINTAINERS
->> > +++ b/MAINTAINERS
->> > @@ -26217,6 +26217,13 @@ F:
->> 	Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy.yaml
->> >  F:	drivers/phy/starfive/phy-jh7110-pcie.c
->> >  F:	drivers/phy/starfive/phy-jh7110-usb.c
->> >
->> > +STARFIVE JHB100 CLOCK DRIVERS
->> > +M:	Changhuang Liang <changhuang.liang@starfivetech.com>
->> > +S:	Supported
->> > +F:	Documentation/devicetree/bindings/clock/starfive,jhb1*.yaml
->> > +F:	drivers/clk/starfive/clk-starfive-jhb1*
->> > +F:	include/dt-bindings/clock/starfive,jhb1*.h
->> > +
->> >  STARFIVE JHB100 EXTERNAL INTERRUPT CONTROLLER DRIVER
->> >  M:	Changhuang Liang <changhuang.liang@starfivetech.com>
->> >  S:	Supported
->> > diff --git a/drivers/clk/starfive/Kconfig
->> > b/drivers/clk/starfive/Kconfig index 51716655554f..cd5b7754403e 100644
->> > --- a/drivers/clk/starfive/Kconfig
->> > +++ b/drivers/clk/starfive/Kconfig
->> > @@ -72,3 +72,13 @@ config CLK_STARFIVE_JH7110_VOUT
->> >  	help
->> >  	  Say yes here to support the Video-Output clock controller
->> >  	  on the StarFive JH7110 SoC.
->> > +
->> > +config CLK_STARFIVE_JHB100_SYS0
->> > +	bool "StarFive JHB100 system-0 clock support"
->> > +	depends on ARCH_STARFIVE || COMPILE_TEST
->> > +	select CLK_STARFIVE_JH71X0
->> > +	select RESET_STARFIVE_JHB100 if RESET_CONTROLLER
->> 
->> just imply RESET_STARFIVE_JHB100 ?
->> 
->> It can be disabled if RESET_CONTROLLER is not set, so it is kind of weak
->> already.
->> 
->> > +	default ARCH_STARFIVE
->> > +	help
->> > +	  Say yes here to support the system-0 clock controller on the
->> > +	  StarFive JHB100 SoC.
->> > diff --git a/drivers/clk/starfive/Makefile
->> > b/drivers/clk/starfive/Makefile index 199ac0f37a2f..d2ba83d7d02c
->> > 100644
->> > --- a/drivers/clk/starfive/Makefile
->> > +++ b/drivers/clk/starfive/Makefile
->> > @@ -10,3 +10,5 @@ obj-$(CONFIG_CLK_STARFIVE_JH7110_AON)	+=
->> clk-starfive-jh7110-aon.o
->> >  obj-$(CONFIG_CLK_STARFIVE_JH7110_STG)	+= clk-starfive-jh7110-stg.o
->> >  obj-$(CONFIG_CLK_STARFIVE_JH7110_ISP)	+= clk-starfive-jh7110-isp.o
->> >  obj-$(CONFIG_CLK_STARFIVE_JH7110_VOUT)	+=
->> clk-starfive-jh7110-vout.o
->> > +
->> > +obj-$(CONFIG_CLK_STARFIVE_JHB100_SYS0)		+=
->> clk-starfive-jhb100-sys0.o
->> > diff --git a/drivers/clk/starfive/clk-starfive-jhb100-sys0.c
->> > b/drivers/clk/starfive/clk-starfive-jhb100-sys0.c
->> > new file mode 100644
->> > index 000000000000..edab54f228ad
->> > --- /dev/null
->> > +++ b/drivers/clk/starfive/clk-starfive-jhb100-sys0.c
->> > @@ -0,0 +1,156 @@
->> > +// SPDX-License-Identifier: GPL-2.0
->> > +/*
->> > + * StarFive JHB100 System-0 Clock Driver
->> > + *
->> > + * Copyright (C) 2024 StarFive Technology Co., Ltd.
->> > + *
->> > + * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
->> > + *
->> > + */
->> > +
->> > +#include <dt-bindings/clock/starfive,jhb100-crg.h>
->> > +#include <linux/init.h>
->> > +#include <linux/platform_device.h>
->> > +
->> > +#include "clk-starfive-jh71x0.h"
->> > +
->> > +#define JHB100_SYS0CLK_NUM_CLKS
->> 	(JHB100_SYS0CLK_GPU1_NCNOC_INIT + 1)
->> > +
->> > +/* external clocks */
->> > +#define JHB100_SYS0CLK_OSC
->> 	(JHB100_SYS0CLK_NUM_CLKS + 0)
->> > +#define JHB100_SYS0CLK_PLL0
->> 	(JHB100_SYS0CLK_NUM_CLKS + 1)
->> > +#define JHB100_SYS0CLK_PLL1
->> 	(JHB100_SYS0CLK_NUM_CLKS + 2)
->> > +#define JHB100_SYS0CLK_PLL2
->> 	(JHB100_SYS0CLK_NUM_CLKS + 3)
->> 
->> Does this mean that if the you ever find out you've forgot an internal clock
->> (which does happen fairly often) the whole external block will shift ?
->> 
->
-> Later, I will introduce the following macros to define the external clock, which can avoid this problem.
->
-> #define JH71X0_EXT_CLK_FLAG	BIT(15)
-> #define JH71X0_EXT_CLK(_n) 	(JH71X0_EXT_CLK_FLAG | (_n))
->
+Please make the generator aware of this overflow
 
-hummm okay ... still seems hackish to me.
+> - Picked R-By tags received on v1.
+> - Link to v1: https://lore.kernel.org/r/20261009-nord-sdcc-clk-v1-1-63351f25a165@oss.qualcomm.com
+> ---
 
->
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
--- 
-Jerome
+Konrad
+
+>  drivers/clk/qcom/negcc-nord.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/negcc-nord.c b/drivers/clk/qcom/negcc-nord.c
+> index 68ce4d6278baa5888b277fb34a135d7e5beb789a..0e33737475d98f1c37853a5e234831d03dd50aec 100644
+> --- a/drivers/clk/qcom/negcc-nord.c
+> +++ b/drivers/clk/qcom/negcc-nord.c
+> @@ -436,6 +436,11 @@ static struct clk_rcg2 ne_gcc_qupv3_wrap2_s6_clk_src = {
+>  };
+>  
+>  static const struct freq_tbl ftbl_ne_gcc_sdcc4_apps_clk_src[] = {
+> +	F(144000, P_BI_TCXO, 16, 3, 25),
+> +	F(400000, P_BI_TCXO, 12, 1, 4),
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+> +	F(20000000, P_NE_GCC_GPLL0_OUT_MAIN, 6, 1, 5),
+> +	F(25000000, P_NE_GCC_GPLL0_OUT_MAIN, 6, 1, 4),
+>  	F(37500000, P_NE_GCC_GPLL0_OUT_MAIN, 16, 0, 0),
+>  	F(50000000, P_NE_GCC_GPLL0_OUT_MAIN, 12, 0, 0),
+>  	F(100000000, P_NE_GCC_GPLL0_OUT_MAIN, 6, 0, 0),
+> 
+> ---
+> base-commit: aac26bee2287c88af5be5a5ff96d783b19a28790
+> change-id: 20261009-nord-sdcc-clk-1b23f4eb4177
+> 
+> Best regards,
