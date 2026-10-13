@@ -1,348 +1,174 @@
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010063.outbound.protection.outlook.com [52.101.201.63])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC7948F005;
-	Tue, 13 Oct 2026 07:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791875296; cv=fail; b=WDP+jjB5ieFmpD2k3hEQKrHL15A4+FwNeJjq+Kufz3ROnPHyHjygrK/xqi9mN7x358ramyO55ts8K6YegNoPQmAfwbjwJiCFmze0eFZDNOpAs+mbVjotWy6R+ebpedGOeEDLI3YjWxkqf3OnqBz+7gQ0N9ecH8XxFKnoeQLKzUk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791875296; c=relaxed/simple;
-	bh=F708ZyLimbqu1eXhOypMUf+kJEiegkiCMKXUpm2ubFg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qV5sBg7gVF8ePnLq/ml37kMa6HNYcXyOOwcBns/7XnW+ppYP1MqvuSgWHyN69GKRLq7X08gG3PYu+TMRlmWt3Pvf+q8WNGtDL1qqw/5Km1EnFZ24bR2/hrToCgCAVhp4iwMvzuJuvTv3Eg67qt3/aeE9WLQKclVFyOsaIilemdQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=MnbK+x2q; arc=fail smtp.client-ip=52.101.201.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57733F4108
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 07:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791875405; cv=none; b=XLhs1VRaQLxTg2aTnUn3bJ2avTm/79iMSUwGf0/EWpAP+wKv74r5QBBO4ktsVII26rQNWSdx+ELqrCQqnu8yw6+MD/9AuMI11H9iteArpwaib6VpHiheEPLn8VPeaTm1zOv4ajHDjaQny+KfJulzvn+4fVT1/Sup/742/BCgM8o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791875405; c=relaxed/simple;
+	bh=YXk1F50qxeCCVcBtXcFIz7gVKLmlgDjcOyk/TvM7adQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GB8DYNkD5+V0zamZoBSMbJb/iu1c7vZubRbROfqNnwNhy/xqdA8d3lNuYoU0NPiWiZ1XQUEau3nPjDGMCOWl3RDot7aEyAnHL1fLxO9RLDqjCgk2ztGP31G6V6paA78Zftz4iWWQG3GJrjHk4o+CUB/UnyuYGFEFiBT7hexYzS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F+yFJz80; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=HxQehHeo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="MnbK+x2q"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uzF4geAnA7MaH9EK1deXVO9jdhf3Axb0kN8n5eY0Ag0Z4yM5CU6KPmIkY7MpdO7VkbsfRF7TOEdSsWNQWULNsXEQsYxc2jXSvi6iY2eTVKiZctcwRe6RDIO2fb1Swj9OeeKXBb/0fyjU8zlAdndluIwm0TLIzKEEEjXTeVxO6ayPZDLKy5xL0W2QthW+3VrapH9bZ898go7ljWxbS1QHpQOLRH/Abqo9fBnhUwBdP0cbf2WHTFRRJioR+BJmUI7cqQTlLQciz6kwLss+MlvwYQiusn0D6MVBmEZs+VnvFI7+HYlsPsOdgZYBBuMh4aDIuwl0Lg2cM2cw7tbORI0bJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uLZpDTEt2IHIzjbaWvE7gyvuiYgies+XzqTKWQRJC78=;
- b=LrpkGYK4327ytRjPr+BwHCyPH3WY9anGXt2RI0VehMDvsa44W2hgx222Sl+iyX3UoAu2FjcF6BykNaf0W7k2FMQhv7krdldnOPhXwqY/XxGGshqc8nlF3Ia1VsW4HLtcGdMM3Plx9gHCUrrLCJUKFqewFNYExNprCrCTOvU5b6yX6uwbJRbFkOacy8yb0PTA4R2xyUn2hBstFJWfnYLyNCn66zuKAmyKni3Mp4JaqEN5stQi8jP/U8MY4wgQobKAHsknOuXxrye9xFH+1ygkKJX5xVVKJL9u38tm+qQWWPy9LZbxcwdKyIInor3UZ6VoryWK7girrHI9UXeFQXTKjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uLZpDTEt2IHIzjbaWvE7gyvuiYgies+XzqTKWQRJC78=;
- b=MnbK+x2qsetgo5bKNFKSlb895HzACogPn7T0BRwfo0jLW2yxy5q49JIBgQrMl9eqni6d5l/4B3NEm9R013JUV02ls26dDlrerpJ7sGDKjuYO+hrC7xZTIDFN6swBjBtOyPBLXnlZ0eeEi4FjKfYaPtl8SCMgLPA0ue3ghgJb5A8qQwbKm+TP4dBfy+PMafhQArW45JAIU85RWl+W6Xge82SrzJsBu9NqcOqWAsxmwGgPNLm7yqalZbbWXgrxWSX00EpId77fjHcLlEeyZKy7lp/0s54H7QtTArHFUaicJoz3qAnaksflHbJ9Ri3qkww+CruT8jzsvBq9JYlU8uFKXg==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from SJ0PR03MB6581.namprd03.prod.outlook.com (2603:10b6:a03:393::12)
- by BY1PR03MB7947.namprd03.prod.outlook.com (2603:10b6:a03:5b8::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.12; Tue, 13 Oct
- 2026 07:08:10 +0000
-Received: from SJ0PR03MB6581.namprd03.prod.outlook.com
- ([fe80::e335:b86:cf59:8b80]) by SJ0PR03MB6581.namprd03.prod.outlook.com
- ([fe80::e335:b86:cf59:8b80%5]) with mapi id 15.21.0496.021; Tue, 13 Oct 2026
- 07:08:10 +0000
-From: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
-To: Dinh Nguyen <dinguyen@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
-Subject: [PATCH v3 3/3] clk: socfpga: stratix10: register the SP timer clocks early
-Date: Tue, 13 Oct 2026 15:07:54 +0800
-Message-ID: <7de51d5f9c716c03fabab77d1a2b4dba3af745fd.1791871090.git.adrian.ho.yin.ng@altera.com>
-X-Mailer: git-send-email 2.49.GIT
-In-Reply-To: <cover.1791871090.git.adrian.ho.yin.ng@altera.com>
-References: <cover.1791871090.git.adrian.ho.yin.ng@altera.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI3PR01CA0012.apcprd01.prod.exchangelabs.com
- (2603:1096:4:296::11) To SJ0PR03MB6581.namprd03.prod.outlook.com
- (2603:10b6:a03:393::12)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F+yFJz80";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="HxQehHeo"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69D20rF9302935
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 07:10:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	er7IVFqOrQhE4gOGxRyz0iJFSCkVtseB/xDovrLGub4=; b=F+yFJz80pyWXdWD3
+	jDhFvRiVOUyGZHNlHl1xQNyiIwiFbSyo6acUvRl7BqEm7yVSjOC58/UHa6F2kQBK
+	kQRNg+02EkoVvU3pCW70Twc0KSxETEYvG6YieHOKEKGqzFAHRB/GS0RTjflVv7OT
+	Tl5FyUK7FjHIT3rabBxGZEFuD8j0zw7wUBueWSkTQgwhJR8QF2AyddAskRbNfbnf
+	ypnQmbyzr4YDnF6carzBYKxXmGMKjt5em2iWRCmU6BeJVObty5rCkBBYl/Xki6xy
+	abAfTBv2z4Bnig7OVsKF545zaZYvWM1BlBZ5LDG04TAsh4CNk1ejLzy6s28LE+eM
+	mritSA==
+Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com [74.125.82.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h98sq9hj3-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 07:10:02 +0000 (GMT)
+Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-33c35f5ca6cso6413987eec.1
+        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 00:10:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1791875402; x=1792480202; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=er7IVFqOrQhE4gOGxRyz0iJFSCkVtseB/xDovrLGub4=;
+        b=HxQehHeoSWvUDtTilbFZvfTLvniDkUYASwU3JZCh8OnEtz3hBjVF5SdYG0aBtHqLy2
+         okw+7GmVj9npXzTbSc0A9W+XqrBVJXU+HYIgIZXwW6WJ2kGgScGDu1mroFsAr3ipEVkH
+         Q29aizHxZqkS88C8ynor5eVupKUPNcCojBbTPFrcm7OhcWfnB/6XfdSPhNKfMzYx6yUZ
+         y7uNCMjjhBKpYbOrherAih3CcTdIZf6dfnX7VOkI+FfPS5C5J+dzXq4aWAWxOdq2aeTB
+         kcru0/8PvDA/0CkzL+09AMjvG8X+Y8KQy/pv4Z2TY+XPOv3MbmG4WW+jQicqn8862tpE
+         DSuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791875402; x=1792480202;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=er7IVFqOrQhE4gOGxRyz0iJFSCkVtseB/xDovrLGub4=;
+        b=QIl4ir7t+fkiSIEGBqtcexgLH+3I9TFKgHj+sgCPxYOgAsM0gUH4yw+omGsGKUYS47
+         YFLusutCk4anMd88b2BivMAwMmWui7yCIEfq3CvUYp8ZIdZA0F8e5/+7cGJDwTjG+xBv
+         na45W55PfIzRYMiEmcT5L4P9f5yComxRdTA+AjkKhTDaa1Pt1QoRvljAsY3AIWmGcDwx
+         PuZvXOji++Ia2aHAmqYpFfmi/2g8rVSxXbLioaCzLf0IHd/khITCVy/VGRIl1wgvrmm3
+         cbeZdIaHbC9JrbCyuXBOpvsh1Lw779SQz/L9oKdbiAxqeXz/+PPCCQngeSOS4nPxdI6w
+         YauQ==
+X-Forwarded-Encrypted: i=1; AKwUvBz/Cl78KoFykSw01hG4rVhQkcW5P2REvErxG4nvb40QG3XernrxIOys8BrAInwNu9UhFCGgth5s0os=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKBR7rhUBIWOGrw4fhfJ1AA6fNHPmtpa8603DfS3bG3XiYCA71c
+	/81ncjdEp7cHLpoH9rzXPvWnjiw5rmax9Uxsc3ffeaxrBUnkyjjReESrlrtg/bveYKP2ajPCgWA
+	4YLnTvuWXGtUTUTQ8QyJKBufKmIqkAbkhqQxH4fQpKInMA0yrzTmvincKQiZAV3g=
+X-Gm-Gg: AYBFou2/rFTxDCRbj+33Uol0rJ2V82bHe2QfW/W3GuK1+J06c0/eAUaZ5gyHMiTDJCv
+	n4IuG5h2HtgG99xMy319tgwih2NxXgfG1ACPf+Qv2CIQaYuyd006P/LgTBVRtNRzhQYTn+I1JVM
+	8NgNklQbnSvRfRqYyFL8Ktv6Nc9rrbtbQ/njghbRgIusrqWollmIY3NvOD7TksFg6+OdkVB7kZU
+	Vs8psNfvJBjmHNwBuwCNCOiBEZW2X5+6jrfJOHek5Oa/GkQhvO4ekqGnnnyw+Y6UJypmcvSTlfv
+	hn/SVKtYH+2Qk/ilWmPIIlGdCnaGv3xSNiki7UNwqlVNZnKUHYcqGHF1a/zwK8Cy55njbGLWKDW
+	gIEoSm1hnAc9F2kXLf0M340VHE6A7KEt2JYL6TnENncCyZxXJb/xIQBnNlMbvVhvmCn6AFO/9m6
+	UPPJmLuJHWQF6jx0srkuDdjv5RIFQwOw==
+X-Received: by 2002:a05:7300:e5c4:b0:353:5d9a:9971 with SMTP id 5a478bee46e88-3537e088be4mr16581450eec.18.1791875401581;
+        Tue, 13 Oct 2026 00:10:01 -0700 (PDT)
+X-Received: by 2002:a05:7300:e5c4:b0:353:5d9a:9971 with SMTP id 5a478bee46e88-3537e088be4mr16581415eec.18.1791875400974;
+        Tue, 13 Oct 2026 00:10:00 -0700 (PDT)
+Received: from hu-varada-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3537cab27d5sm46081248eec.17.2026.10.13.00.09.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2026 00:10:00 -0700 (PDT)
+From: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
+Date: Tue, 13 Oct 2026 12:39:43 +0530
+Subject: [PATCH v2 1/3] dt-bindings: interconnect: Add Qualcomm ipq5210
+ support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR03MB6581:EE_|BY1PR03MB7947:EE_
-X-MS-Office365-Filtering-Correlation-Id: 241457dc-d9f9-4871-d86d-08df28f8bd2a
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|56012099006|11063799006|261009223027099003|10067099003|22082099003|18002099003|55112099003;
-X-Microsoft-Antispam-Message-Info:
-	K1AoQDy+8Ae7l9Qn1z5mKXLufOpgxqB8m8uEb6iBB+RIBUFRNysJZQSIyKcHezo/nPz3eTsrGQcrDRs9T8as8LTD6GrlRx2NxVwylEFeO0TOWLaHuU/Reh7EiW24zEdEHYxplKsSJz18ul/IsLvd4/0kLYBS0RfG1WE6rF9nxHqDK6UpEfJ0Q0r8Gn/EisbvQLxY9XgHkkOEkxCBpzcI1gOaHSdRSAoIcSUOvCqAkZYrzRZn9qolxZvFz5/nZKUL7hwaRgn5UDdzIoZzZfcwT5gm27Noo77xLeg2MkFVnHkHPkAyhSngGnb5l8GUlkSlh4fiOaMlUDD/nQtZQJuY6jKQDDYLTfsaO2DWuxus1G1cyxk2eInlocuwotskgNjFeQdxklu3ihzOVNak6nPpcpF0deqc/2UL05sr8Yl7invy9bf/o2QHqBQf9eIED5rJlvGiYDQq0FtQG2IN8YfRY+qas2e3GFf4D50N3duHCmvTixgk74iq+ipW/zfP6YS4qDrGLzifjTw7gZybXPGqZKdOtlKkx9IXoFlASHicbH1aqYaYntA2MrLukp51l+M2ORIP/LmX/JelRiMK2J4tY8sH2YR6rJJpMjJA/jRowiXGQHqJOnP9uPOga604XOJLtVGFJIad9IZy8rrYvwhe9adH0j5bbjoSZjzEUF3ZEG0=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR03MB6581.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(56012099006)(11063799006)(261009223027099003)(10067099003)(22082099003)(18002099003)(55112099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rqOVPdutRFsVhZ1blrPxRo7tHlsGkxbGPeUd208zLlGtzXY1+xrlrvakKRjQ?=
- =?us-ascii?Q?HxyOVicZxtFZqggO32p/+hZ+DFFhUY865JiblAffzGaUazb01RX7Fv/Wn+et?=
- =?us-ascii?Q?gLwvsT0AktTHUil5wKLi1sJLZRrhQi6qyW5oWL32xVnDtkU5TT55m8Xsq3x8?=
- =?us-ascii?Q?mhxaWViPMRCvCLc2TQVSmlzbfFoyMjLLAQJZVKdAJohEEI07qffzxuKi1qSp?=
- =?us-ascii?Q?LBgAyqLlxvoPPHaALVr2s+xsXWPP7YaUDbxcdHW5bYs5UrANM7ODmjsOffnU?=
- =?us-ascii?Q?8Rv76MG+ijkAnmq0Dzphis+iw8jT3QPB023FYkTldWU+4Xh7w3D2Kg/aQvwp?=
- =?us-ascii?Q?EshU0GTJblyL1NyXc8IPa5y99nVkTAxGmJCFWTptYp7Om/Z83DhjwPKJv/VV?=
- =?us-ascii?Q?21x82vhP5zflnfzoCgeT10IXBkqgLxtikm3p2x1Tfc6+kqp4n/Tw5XsFo1xq?=
- =?us-ascii?Q?OwWj4cWSU9B/+HdZAHEuvZgRuUSkHCr9hjBR5Q/xvNtZdkjiLzMuifLJmYUU?=
- =?us-ascii?Q?nv28fHaNLtFT+JZ/Z1IQUrG5oqWXmAGfC4qbv5aUsHgOV435QInjZOwOnap0?=
- =?us-ascii?Q?XKNktYoiQTu//Kc7GPhOqGXFGGu152xAjNOJl6gxjREAXMIDKM+hascQBGpS?=
- =?us-ascii?Q?iyRQnu93s/NmyFQsBLUPfDBDMiuvtVeLGCKy2hIMRj08M/l3cHXVrcJ6ixTX?=
- =?us-ascii?Q?npF/uUbufp3cxfuEtyZvznHGVPlu7MuEBn4UMfXdz5igRBQ8dlvl+9jbof+v?=
- =?us-ascii?Q?c6bIlnMz59Be5hZ2bdpJp7L0EKTuoonoF5jiltTojeBSEzQXB3w2nNPzMnYx?=
- =?us-ascii?Q?g1oTd2sbuPUkSR9RJozyxmRMvydI0D8yfEWCIUpqzMSxs1I4+ZKzmd4wXQ+0?=
- =?us-ascii?Q?h6gnmG8EqyIRN5dAYphQQFIAhFK7bQYd/s6PygcpS9+CM+0mMiRTyWQaGqDt?=
- =?us-ascii?Q?BkWVsug7BocgF7zk7I7n8Ns8qBkxuKFFWm0eo4Yt76uB27cowAsFzBrv1sZk?=
- =?us-ascii?Q?U0DeW4YMm+KCnmuSGYJma0wxtKabW95kyfYIDj2aPCaRA8PeslOHWFeGhESJ?=
- =?us-ascii?Q?/EEwgds+Mp3esu7HkpT0evLrgKBBvPAoJxrNzdbtOO5M1KF8O/7bt4KP250G?=
- =?us-ascii?Q?Nez+HVVMB9QkJxcafCV1NlAsSZ3wCLZKekM04kPDsHWc//zIEJxkTUHB9syQ?=
- =?us-ascii?Q?OSTDg7jRIqY6L9J2wgCrstU9TGfGkfN8HPCBocal3DLBd3nd7etE3qsFUhA7?=
- =?us-ascii?Q?inopdWToCmU2DBCIebu8q7DOgYcMjaLToDsnn9PSBvPJPipTVTySfvVwZCHP?=
- =?us-ascii?Q?NGZqXq5fU6pYB2mVpwnFhKwspVIUzdZJfPPHVkaGJwIuOrkqELgedKGQQXWO?=
- =?us-ascii?Q?/oHaQnxn9rxeCiviyKsry8j7fssIUHcXM9eBuiZo8OsWPkv8IpkvyUCS028c?=
- =?us-ascii?Q?zniOvG0xh0azSx02mBnQJUvrdC0A1wgguPILKpJvaLw6M8RTj+D9zKQtH+Yz?=
- =?us-ascii?Q?iUdmg0IndMqXwectxKhEz3yyJUTfWEeiq4OWL0+Q8SKOe1fe8Y2y0M0+6103?=
- =?us-ascii?Q?lKj4UBSnPF23dVd9QOAl3Qm7MntPHHOlbnQjI5OY9PZzcRnq+61HdUALMJv/?=
- =?us-ascii?Q?L8+nXc4zzsW1bAkM75SKrazVF5MqzqRAHl5U1uMmjCxG4g171iLo8ZWVGFHq?=
- =?us-ascii?Q?eMHtDZfK/3eVTG9N6OeR4aqnY1Xb+jmjfpjopABoJiCd+x6CqC0eJGQu9KgS?=
- =?us-ascii?Q?AUweIo4ofivybpabx8FF9tOOy204Se8=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 241457dc-d9f9-4871-d86d-08df28f8bd2a
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR03MB6581.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2026 07:08:10.1808
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QQKEd/1WDrh/DJHhvy0L1mOBRcmWW+5WEbc2DE3dDza/QaBJajisOPmqM+GjT2gJWQMAVwKHfxap+06CoNp7e9dMKECEJIZkTs1JcYhVn+w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR03MB7947
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261013-icc-v2-1-196b219e25c1@oss.qualcomm.com>
+References: <20261013-icc-v2-0-196b219e25c1@oss.qualcomm.com>
+In-Reply-To: <20261013-icc-v2-0-196b219e25c1@oss.qualcomm.com>
+To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDEzMDAyOCBTYWx0ZWRfX/IxePZuiq3po
+ WR2NdfjDftaQ7i+8NLnjzv8JzfQgx+9AcCn/dmZJjk354hXhrqPqjC/hObdlg4kdT0LkTIXd2AP
+ +5Tx3KTnm+wEbJj7vVndEJQD8WNtXBBKgdpJspZTxvE0ZGgSxJBSGVieVgI9sDhBTQgGr47DlOr
+ OGS+nMitGGXHz5sQLcH7KFdFazbUU1Tm4YmWkissOkxhl7lGuAclk167lAEn1Adj35e5VND9XvK
+ kDRE+D9bBdWcK8Zdo69TO5m5cITT2qzbsKOkM5CzWl8icCKQqHJ8fOnp/u2257oVc/3UFFdsj3k
+ b7cResyfc88QU4abvMAw+15+AaPet9YxbYEdQACm6ny/WPC834Pxp4ZbAhatn5i21UXGZenaYif
+ F/lfuEif5o8qbJcy0clIqNLV+Pj6pCP6lWfg7Pc9Gxj1SQfwjWV0r5ApbSrSg/x/Yy19Qe4Vp7s
+ IUNPZSPp68wMS7uQoSg==
+X-Authority-Analysis: v=2.4 cv=JN+uIMKb c=1 sm=1 tr=0 ts=6acdd94a cx=c_pps
+ a=Uww141gWH0fZj/3QKPojxA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=LXs94aH5GLyjx-_FEpEA:9 a=QEXdDO2ut3YA:10
+ a=PxkB5W3o20Ba91AHUih5:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDEzMDAyOCBTYWx0ZWRfX13woLDvIv+FY
+ PVxM8DVP7P83P7OuCfAihBZ/5XbJpUS6/r0htG0zHJbPxHQ1+PYXiiuVSdBVXhmn+GfCFGmf+0t
+ tnb7/wU5IQ6HhoZ0cq89gIIVl78z6Wk=
+X-Proofpoint-ORIG-GUID: pHRATMI1AUknXtrCipWDfYRpdIJT4eZ5
+X-Proofpoint-GUID: pHRATMI1AUknXtrCipWDfYRpdIJT4eZ5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-13_01,2026-10-09_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0 suspectscore=0
+ phishscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1011 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610130028
 
-The DW APB timers are probed through TIMER_OF_DECLARE() from time_init()
-and cannot defer, but the clock manager is a platform driver registered
-at core_initcall(). The timer's clk_get() therefore fails and the timer
-is never brought up.
+Add master/slave ids for Qualcomm ipq5210 Network-On-Chip
+interfaces. This will be used by the gcc-ipq5210 driver
+for providing interconnect services using the icc-clk framework.
 
-Register only l4_sp_clk and its parents (boot_clk, main_pll, periph_pll,
-main_noc_base_clk, peri_noc_base_clk and noc_free_clk) from
-of_clk_init() using CLK_OF_DECLARE_DRIVER(), with every other clock left
-as -EPROBE_DEFER. The remaining clocks are still registered when the
-platform driver probes, which reuses the early provider.
-
-Signed-off-by: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
+Acked-by: Georgi Djakov <djakov@kernel.org>
+Signed-off-by: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
 ---
- drivers/clk/socfpga/clk-s10.c | 146 ++++++++++++++++++++++++++++------
- 1 file changed, 121 insertions(+), 25 deletions(-)
+ include/dt-bindings/interconnect/qcom,ipq5210.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
-index b4bf4e2d38e1..1976789b5166 100644
---- a/drivers/clk/socfpga/clk-s10.c
-+++ b/drivers/clk/socfpga/clk-s10.c
-@@ -5,6 +5,7 @@
- #include <linux/slab.h>
- #include <linux/clk-provider.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/platform_device.h>
- 
- #include <dt-bindings/clock/stratix10-clock.h>
-@@ -188,20 +189,36 @@ static const struct stratix10_pll_clock s10_pll_clks[] = {
- 	  0, 0xe4},
- };
- 
-+/*
-+ * The SP timers are probed from time_init() and cannot defer, so their
-+ * l4_sp_clk and its parents are registered from of_clk_init(). Everything
-+ * else is registered when the platform driver probes.
-+ */
-+static const struct stratix10_perip_c_clock s10_early_perip_c_clks[] = {
-+	{ STRATIX10_MAIN_NOC_BASE_CLK, "main_noc_base_clk", "main_pll", NULL, 1, 0, 0x88},
-+	{ STRATIX10_PERI_NOC_BASE_CLK, "peri_noc_base_clk", "periph_pll", NULL, 1, 0,
-+	  0xF8},
-+};
+diff --git a/include/dt-bindings/interconnect/qcom,ipq5210.h b/include/dt-bindings/interconnect/qcom,ipq5210.h
+new file mode 100644
+index 000000000000..90c0395e4596
+--- /dev/null
++++ b/include/dt-bindings/interconnect/qcom,ipq5210.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++#ifndef INTERCONNECT_QCOM_IPQ5210_H
++#define INTERCONNECT_QCOM_IPQ5210_H
 +
-+static const struct stratix10_perip_cnt_clock s10_early_perip_cnt_clks[] = {
-+	{ STRATIX10_NOC_FREE_CLK, "noc_free_clk", NULL, noc_free_mux, ARRAY_SIZE(noc_free_mux),
-+	  0, 0x4C, 0, 0x3C, 1},
-+};
++#define MASTER_CNOC_PCIE0	0
++#define SLAVE_CNOC_PCIE0	1
++#define MASTER_CNOC_PCIE1	2
++#define SLAVE_CNOC_PCIE1	3
++#define MASTER_SNOC_PCIE0	4
++#define SLAVE_SNOC_PCIE0	5
++#define MASTER_SNOC_PCIE1	6
++#define SLAVE_SNOC_PCIE1	7
++#define MASTER_USB		8
++#define SLAVE_USB		9
 +
-+static const struct stratix10_gate_clock s10_early_gate_clks[] = {
-+	{ STRATIX10_L4_SP_CLK, "l4_sp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux),
-+	  CLK_IS_CRITICAL, 0x30, 3, 0x70, 16, 2, 0x3C, 1, 0},
-+};
-+
- static const struct stratix10_perip_c_clock s10_main_perip_c_clks[] = {
- 	{ STRATIX10_MAIN_MPU_BASE_CLK, "main_mpu_base_clk", "main_pll", NULL, 1, 0, 0x84},
--	{ STRATIX10_MAIN_NOC_BASE_CLK, "main_noc_base_clk", "main_pll", NULL, 1, 0, 0x88},
- 	{ STRATIX10_PERI_MPU_BASE_CLK, "peri_mpu_base_clk", "periph_pll", NULL, 1, 0,
- 	  0xF4},
--	{ STRATIX10_PERI_NOC_BASE_CLK, "peri_noc_base_clk", "periph_pll", NULL, 1, 0,
--	  0xF8},
- };
- 
- static const struct stratix10_perip_cnt_clock s10_main_perip_cnt_clks[] = {
- 	{ STRATIX10_MPU_FREE_CLK, "mpu_free_clk", NULL, mpu_free_mux, ARRAY_SIZE(mpu_free_mux),
- 	   0, 0x48, 0, 0, 0},
--	{ STRATIX10_NOC_FREE_CLK, "noc_free_clk", NULL, noc_free_mux, ARRAY_SIZE(noc_free_mux),
--	  0, 0x4C, 0, 0x3C, 1},
- 	{ STRATIX10_MAIN_EMACA_CLK, "main_emaca_clk", "main_noc_base_clk", NULL, 1, 0,
- 	  0x50, 0, 0, 0},
- 	{ STRATIX10_MAIN_EMACB_CLK, "main_emacb_clk", "main_noc_base_clk", NULL, 1, 0,
-@@ -263,8 +280,6 @@ static const struct stratix10_gate_clock s10_gate_clks[] = {
- 	  1, 0x70, 0, 2, 0x3C, 1, 0},
- 	{ STRATIX10_L4_MP_CLK, "l4_mp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x30,
- 	  2, 0x70, 8, 2, 0x3C, 1, 0},
--	{ STRATIX10_L4_SP_CLK, "l4_sp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), CLK_IS_CRITICAL, 0x30,
--	  3, 0x70, 16, 2, 0x3C, 1, 0},
- 	{ STRATIX10_CS_AT_CLK, "cs_at_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x30,
- 	  4, 0x70, 24, 2, 0x3C, 1, 0},
- 	{ STRATIX10_CS_TRACE_CLK, "cs_trace_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x30,
-@@ -382,33 +397,111 @@ static int s10_clk_register_pll(const struct stratix10_pll_clock *clks,
- 	return 0;
- }
- 
--static int s10_clkmgr_init(struct platform_device *pdev)
-+static struct stratix10_clock_data *s10_clk_data;
-+
-+static struct stratix10_clock_data *s10_clk_data_alloc(void __iomem *base)
-+{
-+	struct stratix10_clock_data *clk_data;
-+	int i;
-+
-+	clk_data = kzalloc(struct_size(clk_data, clk_data.hws, STRATIX10_NUM_CLKS),
-+			   GFP_KERNEL);
-+	if (!clk_data)
-+		return NULL;
-+
-+	clk_data->base = base;
-+	clk_data->clk_data.num = STRATIX10_NUM_CLKS;
-+
-+	for (i = 0; i < STRATIX10_NUM_CLKS; i++)
-+		clk_data->clk_data.hws[i] = ERR_PTR(-EPROBE_DEFER);
-+
-+	return clk_data;
-+}
-+
-+static void s10_clk_register_early(struct stratix10_clock_data *clk_data)
-+{
-+	s10_clk_register_pll(s10_pll_clks, ARRAY_SIZE(s10_pll_clks), clk_data);
-+
-+	s10_clk_register_c_perip(s10_early_perip_c_clks,
-+				 ARRAY_SIZE(s10_early_perip_c_clks), clk_data);
-+
-+	s10_clk_register_cnt_perip(s10_early_perip_cnt_clks,
-+				   ARRAY_SIZE(s10_early_perip_cnt_clks),
-+				   clk_data);
-+
-+	s10_clk_register_gate(s10_early_gate_clks,
-+			      ARRAY_SIZE(s10_early_gate_clks), clk_data);
-+}
-+
-+/*
-+ * The registered clocks keep using the mapping and clk_data, so neither is
-+ * released once the early clocks have been registered.
-+ */
-+static int s10_clkmgr_setup(struct device_node *np)
- {
--	struct device_node *np = pdev->dev.of_node;
--	struct device *dev = &pdev->dev;
- 	struct stratix10_clock_data *clk_data;
- 	void __iomem *base;
--	int i, num_clks;
- 
--	base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(base)) {
-+	base = of_iomap(np, 0);
-+	if (!base) {
- 		pr_err("%s: failed to map clock registers\n", __func__);
--		return PTR_ERR(base);
-+		return -ENOMEM;
- 	}
- 
--	num_clks = STRATIX10_NUM_CLKS;
--	clk_data = devm_kzalloc(dev, struct_size(clk_data, clk_data.hws,
--						 num_clks), GFP_KERNEL);
--	if (!clk_data)
-+	clk_data = s10_clk_data_alloc(base);
-+	if (!clk_data) {
-+		iounmap(base);
- 		return -ENOMEM;
-+	}
- 
--	clk_data->base = base;
--	clk_data->clk_data.num = num_clks;
-+	s10_clk_register_early(clk_data);
-+	s10_clk_data = clk_data;
- 
--	for (i = 0; i < num_clks; i++)
--		clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
-+	return 0;
-+}
- 
--	s10_clk_register_pll(s10_pll_clks, ARRAY_SIZE(s10_pll_clks), clk_data);
-+static int s10_clkmgr_add_provider(struct device_node *np)
-+{
-+	static bool added;
-+	int ret;
-+
-+	if (added)
-+		return 0;
-+
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
-+				     &s10_clk_data->clk_data);
-+	if (ret)
-+		return ret;
-+
-+	added = true;
-+
-+	return 0;
-+}
-+
-+static void __init s10_clkmgr_early_init(struct device_node *np)
-+{
-+	if (s10_clkmgr_setup(np))
-+		return;
-+
-+	if (s10_clkmgr_add_provider(np))
-+		pr_err("%s: failed to add clock provider\n", __func__);
-+}
-+
-+CLK_OF_DECLARE_DRIVER(stratix10_clkmgr, "intel,stratix10-clkmgr",
-+		      s10_clkmgr_early_init);
-+
-+static int s10_clkmgr_init(struct platform_device *pdev)
-+{
-+	struct stratix10_clock_data *clk_data;
-+	int i, ret;
-+
-+	if (!s10_clk_data) {
-+		ret = s10_clkmgr_setup(pdev->dev.of_node);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	clk_data = s10_clk_data;
- 
- 	s10_clk_register_c_perip(s10_main_perip_c_clks,
- 				 ARRAY_SIZE(s10_main_perip_c_clks), clk_data);
-@@ -420,8 +513,11 @@ static int s10_clkmgr_init(struct platform_device *pdev)
- 	s10_clk_register_gate(s10_gate_clks, ARRAY_SIZE(s10_gate_clks),
- 			      clk_data);
- 
--	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
--	return 0;
-+	for (i = 0; i < STRATIX10_NUM_CLKS; i++)
-+		if (clk_data->clk_data.hws[i] == ERR_PTR(-EPROBE_DEFER))
-+			clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
-+
-+	return s10_clkmgr_add_provider(pdev->dev.of_node);
- }
- 
- static int s10_clkmgr_probe(struct platform_device *pdev)
++#endif /* INTERCONNECT_QCOM_IPQ5210_H */
+
 -- 
-2.49.GIT
+2.34.1
 
