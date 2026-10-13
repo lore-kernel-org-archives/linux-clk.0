@@ -1,123 +1,144 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08001525A75
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 17:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A652489892
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 17:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791912243; cv=none; b=DiQ24aDzMY12HbzIKaamT/jS0ekbAy5GRL46CKPh2vMgtIJU4rzDW6YnG6yIxJ0ajG+SheAZdaFH+G7wgHeA1jUWsAHw3VBKo9LHGN0nN8qyOj5MqmZM0y9etfM21s/FYpLw7BntYjjld9p224AiQjlJ4AXnrU56Lv/na1cOxMs=
+	t=1791912910; cv=none; b=TNHyNOJEiJ6X0ntaUV5JTSi+gB4/Jyb0oBZu6L30LQIuCwAaWX8b4hJHIxXhXGpS4RFuMBwpHEGv8D4vmaw/EWO5TGoiul0Wj0QS+PMeqp8HFEi+LNVHd0BdMt717w+hx4GtYPqjWRkwR94OVb7i4KPVke6aINAR+cL1nO/kj1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791912243; c=relaxed/simple;
-	bh=LWy5Fwm5w2z43MLGiHr85w0rO4LFK2RqgzUaxD90Vtk=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=t7i1ViXFeXWDb4feFn9mplMb9c/1RtwjtvqgyRkLRtmCItos//Y1ZT7cSx4WMc7ruXbgZiDhz2yWyflgoPSb96DXjURh3LtmBV8CD7e+Xl57q6o2xpq429yy4GDrgIiwn49wmisQgGKeH22uQE0xLGJTUfUke3AZyRFGrmBrXLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9YD6t4Z; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791912910; c=relaxed/simple;
+	bh=PqaAprE6zhOL8p22rLBYn5eJgHj6opqszjk2fOReKAQ=;
+	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id; b=J2aR3VrFyjgqOTpnFBlxRHARvl3J1MYpzQ9WpJaNtZ5Z9M6ygqd8Ti2PBiu4wNxo2a6xnUIEjJk+zoXd2BAPPqMQ0a2DEI+CxAWM9Vi21fnFGj1Pi9wnGZW3aLs3pQ1GTKCtPh6fUEfP7HH8uJCn2yq+muzOP7XYJYpGtvZ6nzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=gRlSCGAL; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9YD6t4Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B78361F000FF;
-	Tue, 13 Oct 2026 17:24:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791912241;
-	bh=Khx44oudycswJRfqoPvGM3yewUMDgdqdlQiuN2yFEOI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=R9YD6t4Z1QI2L4xdAgPMledbY1ZiiMIhmafHh37HCrOErAT18HQp5nGJV6wkjdrWN
-	 2SL9sgu0+g710ERATiyGwe+cluqcR2Ov4KabbkGXGqlTd8RU09RHxa8OIz3AJh/+VE
-	 9Tufwv/JtPzZlnZnxgxmROElHirF4u3ChdxbOFC54NWt+6Ly5Pv3dMlOkmK9KdWY8a
-	 Vtudy04b0au7G0ipm3xA+p4v6Sh9AxGoEeaGfuHNu+7GGgZj5Ig4eo3ggmme4u97vl
-	 9/aADNcAYo7jW3/ROmqxhrj221CEbVtWdzdO7dClcaHaI0SQAOMpkgRxb2Q6NjXLf/
-	 MbunOZVnC65Qw==
-Message-ID: <sashiko-outbox-170217@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 34/35] clk: mediatek: mt8196: Switch to common
- probe/remove helpers
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Akari Tsuyukusa" <akkun11.open@gmail.com>
-Cc: =?utf-8?b?b3BlbiBsaXN0OkNPTU1PTiBDTEsgRlJBTUVXT1JL?= <linux-clk@vger.kernel.org>
-In-Reply-To: <20261013151734.3177690-35-akkun11.open@gmail.com>
-References: <20261013151734.3177690-1-akkun11.open@gmail.com>
- <20261013151734.3177690-35-akkun11.open@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 13 Oct 2026 17:24:01 +0000
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="gRlSCGAL"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4a16c399641so32639575e9.2
+        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 10:35:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1791912906; x=1792517706; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=XvXZ6HBIwKrdmh6LJViiFdMYKRVjXSvkOWi1JS6VLBw=;
+        b=gRlSCGALR1cMhSLmk1EHyHG3Cn0GUrKn83hB7XFmRmo7kC72Q+SetqF27sYJart/qE
+         hrcCvlTC2AMIEeVyQ2qVVobbGwJr6kmsNuDcSk/rNLRXNym6lq7q7KBDe9jxx1sdXjfe
+         4VVjD9y3KaHcphsDAguNw9kw0jndGyhnTDM8RTCU33TlaLiaw0eRFEJpAu7KG6SaqKgf
+         VYjKJeBboSVJ6X7nhub//Mme6hwoli0Q4nepQlgvRw2Zgug+BuoQ1saLmd7hEgvynhpn
+         EYppN18ShaB6Dn6jFhCbZNho9U2/xqTEmVR+JDsvj9j+rcXdzBJFVJrHD26IXeIfs9WX
+         VdOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791912906; x=1792517706;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=XvXZ6HBIwKrdmh6LJViiFdMYKRVjXSvkOWi1JS6VLBw=;
+        b=KZLjfOZ2D8JZd4FanMefoUfZ80jqa1DfSOfxiP1A3tagwbeeoQzUB9LerSOYiiGR+R
+         ImGruJnkv8YxTYnPkdar+Gk4IgJePdGNd/QJRMsoulqwWlVyCfuuar+vr5OwdecJ8DvD
+         q9N94kG52T0g+qFyhpxdMgmNvHrLiYgx2CS2YBIxdTmkW0ZQKEMaGnjpF5jngNe6HXJK
+         7WBGH2IruXP5ZlylYdY0J6+PtwBfMX0QUCPXif8BtzPOL2jnwPyf5H99ouvHnS+UwbJK
+         z37DSPLUzKY8FYDstO+PGLBm7ajz9B2pKzkgtEvELLfJua0lxhfQVBg+tVzHtMnDmRpk
+         mbmg==
+X-Forwarded-Encrypted: i=1; AKwUvByDFgMu1DsaYNJiib/vRjmPZryw+hO2T8OyFBj/Nd8l4vGTcmr3oivjST4taqR+MlyUxAaJVjwl7kU=@vger.kernel.org
+X-Gm-Message-State: AFq9FYK8woOVFioKIK4rUskJxGSDqtQLSIWcLtSTfuQ/RXo0tVux2NIq
+	HyvNwijHxQu/pTluz9btTaqnxXZVl17FG6wHQjnGSmqbXO8d/QhVHSgktP92b5PZ6OI=
+X-Gm-Gg: AYBFou1rNUBgjkadLY+77Fb+qxBPLI4rVdIA5qomvcH6AoJoQAzp8cEozBqAmkE9pzq
+	ZTSSQbZcF9JbcoafoHfnjKZPVSHJWjdidms//wUlGEUVDR8hgYZI3VgOUOdlUls1CO3jCYZhdq/
+	V4cSNNrJ0gPAUW18ewaOzop9KTsG05SsoVaWQyat8qgh+acvNh10a4D/DFbjaqcKHeNjlYb+PlB
+	ouNL65T+9a1sevKqxRKQ4wdgOHjrtTWgyrRRnDRPYSoDdOBSZDMSFYxec2sUpS20oTopQ9XwXEx
+	O2rVROxEW70dNQcZjIBO8zH0QVHFjK8uMbiHZrXx7fGVc64nIU3EgDRDoy4Qi84Jx1hOTbqc3g9
+	GyIS2nWNpy2fp4Ad7ebyNkaGjw7OuDIyG32UZCoKwtg7Mu6DLv7FxJ7zoEQ7QoRiOuOHubA3CsQ
+	QQP9GQFckyCo/gTG7o/f2H/7qFAeciHRh90QIQrB/Q44bcIpBVftkkPnxqSjIVHhQLi4r+zazIh
+	SXlWl/6fpQbSrcG8BOk3CUuog37
+X-Received: by 2002:a05:600c:e556:10b0:4a1:93fd:8f2 with SMTP id 5b1f17b1804b1-4a193fd0a16mr140466375e9.6.1791912906474;
+        Tue, 13 Oct 2026 10:35:06 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18bf2343asm684245515e9.9.2026.10.13.10.35.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2026 10:35:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v8 3/7] clk: nuvoton: ma35d1: Retrieve HXT/LXT from DT
+ when possible
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, sashiko-bot@kernel.org, 
+ sashiko-reviews@lists.linux.dev, conor+dt@kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org
+In-Reply-To: <87fqy9v82c.fsf@bootlin.com>
+References: <20261004-perso-ma35d1-upstream-clk-v8-0-e1a106a128c0@bootlin.com>
+ <20261004-perso-ma35d1-upstream-clk-v8-3-e1a106a128c0@bootlin.com>
+ <20261004205903.E62F91F000FF@smtp.kernel.org> <875wzhjhe6.fsf@bootlin.com>
+ <1jmrss7byt.fsf@starbuckisacylon.baylibre.com>
+ <87fqy9v82c.fsf@bootlin.com>
+Date: Tue, 13 Oct 2026 19:35:04 +0200
+Message-Id: <179191290452.266355.16355634952216272745.b4-reply@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2308; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=PqaAprE6zhOL8p22rLBYn5eJgHj6opqszjk2fOReKAQ=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFnnsk9M2LU0baczm61fbMG91GMrv1geYA09+f3eywDbx
+ X9miKc2dpSyMIhxMciKKbLUcFeLv5PU+jJrus5tmDmsTCBDGLg4BWAiJvmMDL9US31uKJx48rTj
+ Tr1oeNhpBvlLn0SD1ANYbrnab2W408Pwv0T0g0rGeTk/SeEuic5eEZOX+Q18pw4oJwnf0Tau0tj
+ DCwA=
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] clk: mediatek: redundant ioremap and exclusive region request fo=
-r PLLs
---
+On 2026-10-13 19:12 +0200, Miquel Raynal wrote:
+> Hi Jerome,
+> 
+> >>>> -	hws[HXT] = ma35d1_clk_fixed("hxt", 24000000);
+> >>>
+> >>> [Severity: Critical]
+> >>> Does this unconditional removal break ABI compatibility with older device
+> >>> trees?
+> >>>
+> >>> Because HXT (index 0) is exported as a public ABI in the DT bindings,
+> >>> removing its explicit registration leaves hws[HXT] as NULL in the provider's
+> >>> clock array. If an existing downstream or older device tree consumer explicitly
+> >>> references this clock via clocks = <&clk HXT>, won't the provider's
+> >>> of_clk_hw_onecell_get() fail to resolve the clock and return an error?
+> >>
+> >> Jerome, your wisdom matters here :-) For me this is a false positive,
+> >> because nobody outside this driver should access hws[HXT] and the clock
+> >> is still referenced through the DT, just not provided by this
+> >> driver. For me this is not an issue we should consider, let me know
+> >> otherwise.
+> >
+> > Strictly speaking there is (used to be) a clock at this index so it is
+> > not a false positive. Someone crazy enough could have gone through here
+> > to get the OSC even if does not make a lot of sense.
+> >
+> > This clock should never have existed to start with but it got in the
+> > bindings ... and that is the pain of dealing with bad bindings :/
+> >
+> > You've got 2 options:
+> > * Removing the ID from the bindings explaining clearly that it conflicts
+> >   with the fact this clock is actually an input according to the same
+> >   bindings. I suspect the DT maintainers won't like this much ...
+> >
+> > * Keep the bad support binding in the driver: You'll need a pass-through
+> >   clock element where the parent data is the fw_name and a fallback to
+> >   an `hxt-fake-internal' fixed clock. Feel free to add a comment
+> >   explaining how bad it is to use that clock and what user should be
+> >   doing instead.
+> 
+> Too bad. I am pretty sure nobody ever used that yet (since it is both
+> very recent and fundamentally broken) but okay, I'll keep registering a
+> dummy fixed clock there in case anybody ever cares about that lookup.
 
-commit 493ba4ac616daf31697a4dcddf3d65ea3f269cb3
-Author: Akari Tsuyukusa <akkun11.open@gmail.com>
+Maybe I'm a bit too cautious with this. If you get the DT folks to ack
+the removal of the ID, I'm fine with you dropping the workaround.
 
-clk: mediatek: mt8196: Switch to common probe/remove helpers
+-- 
+Jerome
 
-This commit updates the MT8196 apmixedsys, mcusys, and mfg drivers to use
-the common mtk_clk_simple_probe() and mtk_clk_simple_remove() helpers by
-representing their PLL configurations with struct mtk_clk_desc.
-
-> diff --git a/drivers/clk/mediatek/clk-mt8196-apmixedsys.c b/drivers/clk/m=
-ediatek/clk-mt8196-apmixedsys.c
-> index c4ebb0170b82b..a20fa02070a88 100644
-> --- a/drivers/clk/mediatek/clk-mt8196-apmixedsys.c
-> +++ b/drivers/clk/mediatek/clk-mt8196-apmixedsys.c
-
-[ ... ]
-
-> @@ -192,8 +141,8 @@ static const struct of_device_id of_match_clk_mt8196_=
-apmixed[] =3D {
->  MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_apmixed);
-> =20
->  static struct platform_driver clk_mt8196_apmixed_drv =3D {
-> -	.probe =3D clk_mt8196_apmixed_probe,
-> -	.remove =3D clk_mt8196_apmixed_remove,
-> +	.probe =3D mtk_clk_simple_probe,
-
-[Severity: Medium]
-Does switching to mtk_clk_simple_probe() cause an unintended exclusive=20
-memory region request for the shared apmixedsys controller?
-
-By switching to the common helper without setting .shared_io =3D true in=20
-the mtk_clk_desc structures, __mtk_clk_simple_probe() will map the IO=20
-region exclusively:
-
-drivers/clk/mediatek/clk-mtk.c:__mtk_clk_simple_probe() {
-	/* Composite and divider clocks needs us to pass iomem pointer */
-	if (mcd->composite_clks || mcd->divider_clks || mcd->plls) {
-		if (!mcd->shared_io)
-			base =3D devm_platform_ioremap_resource(pdev, 0);
-...
-}
-
-Because devm_platform_ioremap_resource() calls request_mem_region(),=20
-this exclusive claim could conflict with other drivers expecting to=20
-access this shared syscon node.
-
-Furthermore, the exclusively mapped `base` pointer appears to be completely=
-=20
-unused for PLL registration, as mtk_clk_register_plls() maps the region a=20
-second time via of_iomap():
-
-drivers/clk/mediatek/clk-pll.c:mtk_clk_register_plls() {
-...
-	base =3D of_iomap(dev->of_node, 0);
-...
-}
-
-Would it be safer to set .shared_io =3D true in apmixed_desc and=20
-apmixed2_desc (and similarly for other shared controllers in this patch) to=
-=20
-avoid the redundant mapping and exclusive resource lock?
-
-> +	.remove =3D mtk_clk_simple_remove,
->  	.driver =3D {
->  		.name =3D "clk-mt8196-apmixed",
->  		.of_match_table =3D of_match_clk_mt8196_apmixed,
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261013151734.3177=
-690-1-akkun11.open@gmail.com?part=3D34
