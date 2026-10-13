@@ -1,113 +1,119 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B5B51C063
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 17:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6F65208C4
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 17:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791911544; cv=none; b=FSc+jX5kKLPvVBXh0vE29lFrK86KG68jFg6CVEAebJg0yyCUzPCZ9ZrDezq6H/xxJZIp5nnbthrtXrdpRPprTpOzGZxt/JqRA1hzmN70xK97BO/4bqjF2y5S3Iz1xZ3aPFU1FG99IS0RNEW2ZUPD733Nn6QDSjavDMZZtMip6lg=
+	t=1791911738; cv=none; b=jAIboMFp6odBoWp5E6ZaYN+wpJqJNEPO7AXZpeJj1WkcWpkVIV1QmByBefebr78tt8Ah1Sa+Hbu7oiVwRUB5rRR2ms9vjz7cnKGGT29f9pdx6PEo7QUOnYcriBlLx2MFT3a/IDvIE9d6xniv1IDrTZdwK4XO4gFQWmZllCp6Dwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791911544; c=relaxed/simple;
-	bh=T8NlhaeVZy6s9aCXxQDmOlcnQfGg7C5XfWYHzD/xFw0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=H8MqHYLCWh/gTwqjTO4GgEB/Gj0Ue4jNR0jgfynm0/82vSpBNe7HVkXd+mqjGwx0qmCnckH9on4CzruW7FejaMjZjHlbUYLOS8kBqTO6S57OUor63R83ysUrslbnS7OJW4yBentObE3aqeTaxfOM4UqMJHijA291zPiLPfC9chU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gIwAZpJu; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1791911738; c=relaxed/simple;
+	bh=RtKX7YyQZ9klLGIQT1nD6AhAtzyS0G+6hzvSYWK0CdI=;
+	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=p+IgJw3XWNU/fpVjZfkJJFPjKnGfirZBQ0VPUcFk1UNv6DA8yqXEv27bjB/LWncZPdjgiXdo+Aipyn3RTH80yV4wWdwvFgirRfXREG2TyBjeyLCnRdSzJgXz4ZXid1cjv6HZVBHqclQamtQVI7eorsSr8zZNiwAik0cwoGlo/jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvL+kTim; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gIwAZpJu"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id A9304C653F4;
-	Tue, 13 Oct 2026 17:13:14 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D863660362;
-	Tue, 13 Oct 2026 17:12:18 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AD28C11D7185F;
-	Tue, 13 Oct 2026 19:12:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1791911534; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=hV8HMJDWqmywJZRWh24mzyeI9ctzMOp+YlqUbyGw7g8=;
-	b=gIwAZpJurkDQBahCsCqIbskG2gt9/prCtlnZC+DRYwoC2yr8yEOJvam5+oj9tchPbjerLx
-	mIY2oON/ZebscTCmrcErr7ynJrs9F+jESU5GJSJ4ErhqSTsjgBew6jW+U/QPCTZ9aIQPdJ
-	WCsifudwCNUwZFlBqhWgmiThggVlWyjuH+cFGxD0nR0EzT/OQj9XvhwaBnuckrSIpLG1oy
-	Dv+uHnSlqcm6DoacDDrM0nynPUSy6WxEqVAlM3ajyOBB+Hdfw1adRpNfRVL+ddY2LvVpVC
-	JtJ3RVqXusu486PoBHbdLQqigySpC3CzXjaJDwWtQhs+0+QI9WommO+vqxT8iQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: sashiko-bot@kernel.org,  sashiko-reviews@lists.linux.dev,
-  conor+dt@kernel.org,  linux-clk@vger.kernel.org,
-  devicetree@vger.kernel.org,  robh@kernel.org
-Subject: Re: [PATCH v8 3/7] clk: nuvoton: ma35d1: Retrieve HXT/LXT from DT
- when possible
-In-Reply-To: <1jmrss7byt.fsf@starbuckisacylon.baylibre.com> (Jerome Brunet's
-	message of "Mon, 05 Oct 2026 11:06:50 +0200")
-References: <20261004-perso-ma35d1-upstream-clk-v8-0-e1a106a128c0@bootlin.com>
-	<20261004-perso-ma35d1-upstream-clk-v8-3-e1a106a128c0@bootlin.com>
-	<20261004205903.E62F91F000FF@smtp.kernel.org>
-	<875wzhjhe6.fsf@bootlin.com>
-	<1jmrss7byt.fsf@starbuckisacylon.baylibre.com>
-User-Agent: mu4e 1.12.12; emacs 30.2
-Date: Tue, 13 Oct 2026 19:12:11 +0200
-Message-ID: <87fqy9v82c.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvL+kTim"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7DE21F00893;
+	Tue, 13 Oct 2026 17:15:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791911737;
+	bh=gFiG3pmlyYWOgpLysalFV7ZZWWqMTlC+ECsXtYMCvK0=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=XvL+kTimNWD2bxa2cG2Y+u3APh8/vf4sxWnaG6LKfgYkjnjsVb44mtM8Gr/SOFKHC
+	 W6LZr9jF5TkpT26RDEgR4wbKXun07iHU9YCNud3XkS7iR4bqIQw0q/iFv+QN/aUCDO
+	 05jrrSpHi1oxFefxxZ2hPqq7dIQMmf1dSUiAalQNevzLv+hu8LEgdxr7cJr3AIAlai
+	 1kaF0T9YUYanbvz7hOwDLaxVev0JgQL3b8yZt1nnpAKarc3V+G8EZ+8k1c1eKQKt0z
+	 Is7+/BUbOcFNweHFV+4cH4atM8+55R30oPxYx4Usk086OtsxPM6l6tyOpFINV3XiVB
+	 2QPjwhbeovwsA==
+Message-ID: <sashiko-outbox-170199@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v6 1/7] rust: clk: use 'kernel vertical style' for
+ imports
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, ojeda@kernel.org, gary@garyguo.net
+In-Reply-To: <20261013-clk-type-state-v6-1-a5e9977b3509@collabora.com>
+References: <20261013-clk-type-state-v6-0-a5e9977b3509@collabora.com>
+ <20261013-clk-type-state-v6-1-a5e9977b3509@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 13 Oct 2026 17:15:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Jerome,
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Low] rust: clk: missing trailing // in vertical imports in doctests
+--
 
->>>> -	hws[HXT] =3D ma35d1_clk_fixed("hxt", 24000000);
->>>
->>> [Severity: Critical]
->>> Does this unconditional removal break ABI compatibility with older devi=
-ce
->>> trees?
->>>
->>> Because HXT (index 0) is exported as a public ABI in the DT bindings,
->>> removing its explicit registration leaves hws[HXT] as NULL in the provi=
-der's
->>> clock array. If an existing downstream or older device tree consumer ex=
-plicitly
->>> references this clock via clocks =3D <&clk HXT>, won't the provider's
->>> of_clk_hw_onecell_get() fail to resolve the clock and return an error?
->>
->> Jerome, your wisdom matters here :-) For me this is a false positive,
->> because nobody outside this driver should access hws[HXT] and the clock
->> is still referenced through the DT, just not provided by this
->> driver. For me this is not an issue we should consider, let me know
->> otherwise.
->
-> Strictly speaking there is (used to be) a clock at this index so it is
-> not a false positive. Someone crazy enough could have gone through here
-> to get the OSC even if does not make a lot of sense.
->
-> This clock should never have existed to start with but it got in the
-> bindings ... and that is the pain of dealing with bad bindings :/
->
-> You've got 2 options:
-> * Removing the ID from the bindings explaining clearly that it conflicts
->   with the fact this clock is actually an input according to the same
->   bindings. I suspect the DT maintainers won't like this much ...
->
-> * Keep the bad support binding in the driver: You'll need a pass-through
->   clock element where the parent data is the fw_name and a fallback to
->   an `hxt-fake-internal' fixed clock. Feel free to add a comment
->   explaining how bad it is to use that clock and what user should be
->   doing instead.
+commit d1e8fb84f14ee05c8bc2b0c2603a25f2c8d23a0f
+Author: Daniel Almeida <daniel.almeida@collabora.com>
 
-Too bad. I am pretty sure nobody ever used that yet (since it is both
-very recent and fundamentally broken) but okay, I'll keep registering a
-dummy fixed clock there in case anybody ever cares about that lookup.
+rust: clk: use 'kernel vertical style' for imports
 
-> You'll probably need to play that last trick with the lxt anyway ?
+This commit converts all imports in the clk module to use the kernel=20
+vertical style. It also drops the Result import since it is provided=20
+by the prelude.
 
-Yes, it is already handled indeed.
+Link: https://docs.kernel.org/rust/coding-guidelines.html#imports
 
-Thanks!
-Miqu=C3=A8l
+> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+> index f04f5c4a03d64..c73fe7c572511 100644
+> --- a/rust/kernel/clk.rs
+> +++ b/rust/kernel/clk.rs
+
+[ ... ]
+
+> @@ -119,9 +125,11 @@ mod common_clk {
+>      /// The following example demonstrates how to obtain and configure a=
+ clock for a device.
+>      ///
+>      /// ```
+> -    /// use kernel::clk::{Clk, Hertz};
+> +    /// use kernel::clk::{
+> +    ///     Clk,
+> +    ///     Hertz,
+> +    /// };
+
+[Severity: Low]
+This isn't a bug, but should this vertical import have a trailing // empty
+comment? According to Documentation/rust/coding-guidelines.rst, vertical
+imports require a trailing // to prevent rustfmt from collapsing the lines.
+It looks like the doc test for Clk::get is missing it here.
+
+>      /// use kernel::device::Device;
+> -    /// use kernel::error::Result;
+>      ///
+>      /// fn configure_clk(dev: &Device) -> Result {
+>      ///     let clk =3D Clk::get(dev, Some(c"apb_clk"))?;
+
+[ ... ]
+
+> @@ -293,9 +301,11 @@ fn drop(&mut self) {
+>      /// device. The code functions correctly whether or not the clock is=
+ available.
+>      ///
+>      /// ```
+> -    /// use kernel::clk::{OptionalClk, Hertz};
+> +    /// use kernel::clk::{
+> +    ///     Hertz,
+> +    ///     OptionalClk,
+> +    /// };
+
+[Severity: Low]
+Similarly, should the vertical import in the OptionalClk::get doc test also
+include a trailing // comment to match the kernel vertical style guidelines?
+
+>      /// use kernel::device::Device;
+> -    /// use kernel::error::Result;
+>      ///
+>      /// fn configure_clk(dev: &Device) -> Result {
+>      ///     let clk =3D OptionalClk::get(dev, Some(c"apb_clk"))?;
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261013-clk-type-s=
+tate-v6-0-a5e9977b3509@collabora.com?part=3D1
