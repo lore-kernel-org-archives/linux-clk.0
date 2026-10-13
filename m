@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53CE515970
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 16:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1D64052D8
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 16:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791907743; cv=none; b=D83G+XB/5xnJaoEFsdFnMMDpljnEAbLikuKknqZUQZW00V7U7cXj9eaGw8QvO8EbLHBEyvf37F7aNVNNcLeZkKsXvFhC1XdtixQ/6EELc1s+U7tmu1IBvNZ9ogi4K2au/BtDY6+kGieRdmf9/QjHxpMSAzN5IhnAzP03JQB7a7c=
+	t=1791907856; cv=none; b=el/ONteKVSFcz6FoJRmqPpqPal6lXYuIlInzLiqOpV2xJ0tPUZhBT+ezCwxicNkDYx6Uf4QV5/NoeaZChR06j9HouDZ7m2ORm6QXISzT8MpNnOppE3+bIPre+K8JzJLU+6R0sWMa5xhWaq4Cl+WLbCgZXTT0TeqFqv/TzdpcycQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791907743; c=relaxed/simple;
-	bh=yVXRnE7u6lcjE1RHB1x/KSSUTpGnJow975aGy9p0UVQ=;
+	s=arc-20240116; t=1791907856; c=relaxed/simple;
+	bh=VUAck7T6bT8Fau8Wl5SOklNOyGPyeHrPEVARSyFMuqs=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=gwbLDLE4VIi9ejKtTDOJYiHBozsobkjG6AW7xiIcCJIugudPAfwoCG5s6Vix9bhAeRqm58DppidOsiT3rDSu+XjKqgaLStG97IGDItyJzaOdMlZI/2w/4YZeHVvsbO+E0Hnes/F6HRizdC9nY5GgsOOdn/w/fDoKrDp1DuXxYHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kA+8Xi68; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=cfxQ1hn3mteUGpHWHGH/1S5YfVy0XRiMz3l0JpZzwG28UCF9ScUXg3eX/EZ6TWVljbYXz6ogKWZi8wKxixpK/AAtDkRBoVjHllwW08tMuY/eTK2BzKh9BZh0M7GyK8Lru81VuOLQR2gwvh3GjEaDc5cwPgR3s+TuiaVgfocY4Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZt0o5Dg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kA+8Xi68"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE941F000FF;
-	Tue, 13 Oct 2026 16:09:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZt0o5Dg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75C6E1F00898;
+	Tue, 13 Oct 2026 16:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791907741;
-	bh=iJqdD02G8Y/yTdTLNOavMtXG/KipJe4pyARxd3GiODY=;
+	s=k20260515; t=1791907854;
+	bh=Qlvx4AJ0Cu9op9TWT4AsBwvA/Mbh6dRxFRbbbL0NqOs=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=kA+8Xi68bTEVWw1DUr87defOqzC+GEoIm3CNCnmst2uuAJw1R+GXNg32++IWWUNaV
-	 voef5QudPTjm/pFrsF/GiMAEbQxHvdyaQT4FTLx6eYnNeUCKThxXsQD1+gMf7VO8gt
-	 D5YY/Wl6PkTPYX8ACYgLmUB1BAVAEDcUpi0deozTwJJPobA9OKcrq7vPYlLIcK6VMa
-	 Yeza1dRyUafdQZDnM3vwwk52bs21Fn+T0iV0czRB6EFEjPcGP4jcLKK+TFNm4XmTw+
-	 5oCViygokipdJKvnWmNcTCPViqD8I74O05A26wZob8iCumCEp3PwBIjPvLDfiHSS0W
-	 KP9MhG5M889FQ==
-Message-ID: <sashiko-outbox-170092@kernel.org>
+	b=cZt0o5DgSRrXvj4GPXvmaF0uhAPnnYPHh7fqoOzfHDNt2u3SMyZCvTaC3nHKmxBZy
+	 5aclANc1Ja6j4y6+74GqAGeUO3ZrVutTkK1D7s4qPoZr5hjWoYQRFMWp2UaZTdjs5l
+	 EMo3L0zPjx1nkMHeTwiV3oVTqwJWCv/MGC8TVOGpciPGbwuCMDvkJvE6LEPi+w996L
+	 Q0kriKmxMYXxUwpg+r/pAP/zwaxUYuD9+htNNKU6KEpYmoEh9D5bUH7RviLkEXCKHw
+	 3CYI6LbfR/Q0cPOUta/GHVQ5oJX0lvf5ijIbyFnwTlylVtpJib0+b5ieCNly7loF7J
+	 k49ZswS2bW7NQ==
+Message-ID: <sashiko-outbox-170095@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 15/35] clk: mediatek: Add FHCTL support to common
+Subject: Re: [PATCH v2 14/35] clk: mediatek: Add child-device population to
  probe/remove helpers
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Akari Tsuyukusa" <akkun11.open@gmail.com>
 Cc: =?utf-8?b?b3BlbiBsaXN0OkNPTU1PTiBDTEsgRlJBTUVXT1JL?= <linux-clk@vger.kernel.org>
-In-Reply-To: <20261013151734.3177690-16-akkun11.open@gmail.com>
+In-Reply-To: <20261013151734.3177690-15-akkun11.open@gmail.com>
 References: <20261013151734.3177690-1-akkun11.open@gmail.com>
- <20261013151734.3177690-16-akkun11.open@gmail.com>
+ <20261013151734.3177690-15-akkun11.open@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 13 Oct 2026 16:09:00 +0000
+Date: Tue, 13 Oct 2026 16:10:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,80 +47,94 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [High] clk: mediatek: Use-After-Free of FHCTL base on probe deferral / re=
-bind
-- [Medium] clk: mediatek: memory leak of FHCTL iomem base on probe failure =
-or no matches
+- [High] clk: mediatek: NULL deref in __mtk_clk_simple_remove() without id_=
+table fallback
+- [High] clk: mediatek: Use-after-free of clk in devm notifier release
 --
 
-commit 8d87854263bcfad5cea06d0fd17b75e7b846a747
+commit 4b72b775dd71cd9f8aca52f2f386291f6722da4e
 Author: Akari Tsuyukusa <akkun11.open@gmail.com>
 
-clk: mediatek: Add FHCTL support to common probe/remove helpers
-
-Extend __mtk_clk_simple_probe() and __mtk_clk_simple_remove() to support
-FHCTL. This reduces boilerplate code in apmixedsys drivers with FHCTL
-support.
+clk: mediatek: Add child-device population to probe/remove helpers
+   =20
+MediaTek audio clock drivers call devm_of_platform_populate() after
+mtk_clk_simple_probe(). Extend __mtk_clk_simple_probe() to run
+of_platform_populate() when the new 'populate_children' flag is set,
+reducing boilerplate.
 
 > diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mt=
 k.c
-> index 1172e76516c03..8fa81a8671ad0 100644
+> index e06cd40d995a9..1172e76516c03 100644
 > --- a/drivers/clk/mediatek/clk-mtk.c
 > +++ b/drivers/clk/mediatek/clk-mtk.c
 [ ... ]
-> @@ -525,8 +529,18 @@ static int __mtk_clk_simple_probe(struct platform_de=
+> @@ -603,7 +604,16 @@ static int __mtk_clk_simple_probe(struct platform_de=
 vice *pdev,
->  	}
-> =20
->  	if (mcd->plls) {
-> -		r =3D mtk_clk_register_plls(&pdev->dev, mcd->plls,
-> +#if IS_ENABLED(CONFIG_COMMON_CLK_MEDIATEK_FHCTL)
-> +		if (mcd->fhctl_node) {
-> +			fhctl_parse_dt(mcd->fhctl_node, mcd->pllfhs,
-> +				       mcd->num_pllfhs);
-> +			r =3D mtk_clk_register_pllfhs(&pdev->dev, mcd->plls,
-> +						    mcd->num_plls, mcd->pllfhs,
-> +						    mcd->num_pllfhs, clk_data);
-
-[Severity: Medium]
-This problem wasn't introduced by this patch, but does calling
-fhctl_parse_dt() here expose drivers to a memory leak of the fhctl iomem
-base mapped via of_iomap() in fhctl_parse_dt()?
-
-If mtk_clk_register_pllfhs() fails, the code jumps to the free_data label
-in __mtk_clk_simple_probe(), bypassing unregister_plls. As a result, the
-mapped i/o memory seems to be permanently leaked.
-
-Additionally, if mtk_clk_register_pllfhs() fails to register the very first
-pll, it skips its internal cleanup loop entirely, meaning the memory mapped
-by fhctl_parse_dt() is never unmapped.
+>  		r =3D mtk_register_reset_controller_with_dev(&pdev->dev,
+>  							   mcd->rst_desc);
+>  		if (r)
+> -			goto unregister_clks;
+> +			goto unregister_provider;
+> +	}
+> +
+> +	if (mcd->populate_children) {
+> +		r =3D of_platform_populate(pdev->dev.of_node, NULL, NULL,
+> +					 &pdev->dev);
+> +		if (r) {
+> +			of_platform_depopulate(&pdev->dev);
+> +			goto unregister_provider;
 
 [Severity: High]
-This problem wasn't introduced by this patch, but does the common
-registration path expose fhctl-enabled drivers to a use-after-free during
-probe deferral or device rebinds?
+Does this new error path cause a use-after-free on the clk?
 
-During a successful call, fhctl_parse_dt() mutates the static mcd->pllfhs
-array by setting pllfh->state.fh_enable =3D 1 and storing the mapped i/o
-pointer in pllfh->state.base.
+If __mtk_clk_simple_probe() has previously registered a rate-change
+notifier on a struct clk using devm_clk_notifier_register() (via
+mcd->clk_notifier_func), the notifier's lifetime is tied to the
+pdev->dev devres list.
 
-If the probe later fails and the device is removed,
-mtk_clk_unregister_pllfhs() calls iounmap() on the base but fails to clear
-the fh_enable flag or the stale base pointer from the static array.
+When taking this goto unregister_provider error path, the clocks are
+manually unregistered via the cleanup labels, for example by calling
+mtk_clk_unregister_muxes() which calls clk_hw_unregister() and then
+clk_unregister().
 
-If the device is subsequently re-bound and fhctl_parse_dt() fails early
-(leaving the static array unmodified), won't mtk_clk_register_pllfhs()
-still see fh_enable =3D=3D 1 from the previous probe and blindly dereference
-the stale, unmapped state.base pointer?
+clk_unregister() frees the struct clk pointer, but does not remove its
+associated notifiers from clk_notifier_list.
 
-> +		} else
-> +#endif
-> +			r =3D mtk_clk_register_plls(&pdev->dev, mcd->plls,
->  					  mcd->num_plls, clk_data);
+Later, when the driver core invokes devres_release_all() for the device,
+it calls devm_clk_notifier_release(), which invokes
+clk_notifier_unregister() with the now-freed struct clk pointer, resulting
+in a use-after-free.
+
+This use-after-free also appears to occur during driver unbind in
+__mtk_clk_simple_remove().
+
+[ ... ]
+> @@ -658,6 +671,9 @@ static void __mtk_clk_simple_remove(struct platform_d=
+evice *pdev,
+>  	struct clk_hw_onecell_data *clk_data =3D platform_get_drvdata(pdev);
+>  	const struct mtk_clk_desc *mcd =3D device_get_match_data(&pdev->dev);
+> =20
+> +	if (mcd->populate_children)
+
+[Severity: High]
+Can this dereference a NULL mcd pointer during driver removal?
+
+Many MediaTek clock drivers register as platform drivers using an
+id_table without an of_match_table. While __mtk_clk_simple_probe() handles
+this by safely falling back to platform_get_device_id() when
+device_get_match_data() returns NULL, __mtk_clk_simple_remove() lacks
+this fallback.
+
+When the driver is unbound, for instance via sysfs or module unload,
+device_get_match_data() will return NULL, causing mcd->populate_children
+to crash.
+
+> +		of_platform_depopulate(&pdev->dev);
 > +
->  		if (r)
->  			goto free_data;
+>  	of_clk_del_provider(node);
+>  	if (mcd->clks)
+>  		mtk_clk_unregister_gates(mcd->clks, mcd->num_clks, clk_data);
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261013151734.3177=
-690-1-akkun11.open@gmail.com?part=3D15
+690-1-akkun11.open@gmail.com?part=3D14
