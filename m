@@ -1,201 +1,317 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2113.outbound.protection.partner.outlook.cn [139.219.146.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96483F54A0
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 10:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791888191; cv=none; b=HZ/E66Pw3XAKIAWTzpf2uvhnEmhjp+Jn3GsttMBzAafiitu5B0TG8fZbmIgjePtDbmyHvxqO+gWDrNZ2QuV1G+i5XASY0uF+TU+S6XtGbGVbpLsYL5oeoyxY6A/QXzKz0IGHrbgfLy34T+DtA59dk6uqsKWukVx8crcRgDhvG+w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791888191; c=relaxed/simple;
-	bh=np6bjerOYn1Zyw8+TrjpZHV++1EzsIEKSOeSr92z3XM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BfIIUSjkoV9Azf5U3W70qOTAKASnxFC47fLI8jme2JOdBkUyHlf7eKuHyy/1ZVKFk9cAAaowkJcCxiVBh0khe3fHEvfvKrTGmGqREdDy9ZuBzOL1KbBgyZDOkkqgq5EYEbuVIJu8pQ6sCuF0/8BPduij2//JngYu6EN/REWIUvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O7On7kp2; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=VeuPKZzs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O7On7kp2";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="VeuPKZzs"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69D8RZpU3907366
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 10:43:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=MXZwRO4BDFJqGb2cbS7wiYcy
-	bGxVIUNkZePoqU20lgw=; b=O7On7kp2ZExeU1gfqcV1UOmjCub8po7o0HkFjvcD
-	OPA2R1jbOvAdyzk3FbyeY7XGG1Ot8Ra/eKn+cwRwKb+cNd+ScwQhpoUQ/x57gbzP
-	M8MVi8NG0Bc7NsEZcXP+VPnsTCbNjFGraKWOy0MsQQJ4Ad3ASPuLmnc/4dRru/eN
-	nq1i38D8oNQ1i4l7BtYBbqeIqxv+i/8VeH88Jn/O+Xy0t5NpFIFjT2aioDVfg3Lb
-	xqFTBgjuKVhd0JRemyD2MWi+PiD3mgwzw3YGRsPIPvxREw4LO3MT1xE88CATApMk
-	mpiMr5lY+THIWYw19GEWosyOTgvsQDR969C8xY9GBMHbqA==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h95xqu44b-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 10:43:08 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-91b8306ba68so39425106d6.2
-        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 03:43:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791888188; x=1792492988; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=MXZwRO4BDFJqGb2cbS7wiYcybGxVIUNkZePoqU20lgw=;
-        b=VeuPKZzsu+dV65n5YQr9XtKp7Iu1wArQY9aHTX5ZwTowIAu8rSStoZLr9/bGhghVWh
-         lQpCdTKiR4s19Ge7NOg3i2ryyYaJbpsEQOCS6jpOBOtfz9n6XilqyBAwQD3XfbLLtwCH
-         rcBRrSLLmmPKDq0disHSUzzxQI9oYo5Uxfea54BUzCu0ckAkGBneSBe7oewRd4Z2SdyS
-         RvjGFm82c4n872QLjD+oyd5+Z8a355AmOtlhCEnbLoI82wi2AfgpZewzQsE9DTPBJqnh
-         8Uly16KkrrNGP4hC4ogMpgiF1AGXco3a12rzHWd4pZNICo6JUyvdAwNBuCiyAwBy5SMW
-         ZKrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791888188; x=1792492988;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=MXZwRO4BDFJqGb2cbS7wiYcybGxVIUNkZePoqU20lgw=;
-        b=CULoUbpIajEqoXIXGhKL3Zlzo8p8fnMt7HEl2k6s1PaYr7+ZL3zX9kNoONZrNGeHiG
-         X0EtLal+SkPhePw4N0Hj7k8qOmjyO0CYXc2eJahYdcJNOjqTH3gLgUJu//sfpzGXBTdE
-         spie5qBgE+qEQojSRW8alQt2LQUoWlJ9VLiaP8HUEtC/S9p5Zl/c+K0vufrj+BElMdbK
-         muXi346ws8Pg+kyES2cd9BmYrt+MmC+2kr9TeEEtWuECyxrYboXKs+Dhf3NlaPhTCpmJ
-         EHRaznRLAWTiIpGJi5JbOBEf0hxPDvkOdLNj8PIL4XqKZMYaKwe2d+OUru9LRmsR3JaK
-         pyBQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwVAaWrxu3VSoGYiD+P487csTLIfBsVYt78MY6bJAiakQgQnA7bxTMaZygfr/Vsl22i8wPGa6984/0=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKoLGYx2u8kwLuThgeHe0oCWq0AMf3jaLdNC41puO8px3uvQb9r
-	dzTluO50S4+mT8YmOYMpXfjNPQn/QBGbmoJxaw1hVY981aXrzmoNneJ+tSnbajYYtxoJJ0kY4Q/
-	6Lw3XcEFcGWC2k8Vi0BRwiOXm9CNTUcAo3kAA8DpnQJSAVkpHkRCix/agqvzLitrqBkB5E50=
-X-Gm-Gg: AYBFou04jOlyV/YGeko3+Yh9XRptFbsM88QA2Fq96fhMhFVqegCn9ORuVqxcHbVffw1
-	LnUTWNxv0tGZO3JBuP7z61XUYiiSadQVafFZFD6TIVEhmyWcFoz9eO7TuXeZaIozK2Sx9aNhhK+
-	HBunoFcRhfiloBSl8TkCQWwIucMRDwcuZ8TQjJqPTGEYOoUWsAf6YDlig55YcC/D4X5x1YErSOz
-	1M/xFTRN5zaquUnu0AMQNRf8b7sU4uN/J40Nl4NfeYSLs8OAHleMIABYUQJGnpIP4b8BvaQ6ENh
-	ITL78AllCdrOwWY2pcge4eErYLlyecgjP8LdoLTokG7q0duxlGtvuPFT4IZIlFKapTXAqMbWLlR
-	EaybqSJnQwWppgQRMV99mCZ61zPspdoWdqJa7qHrOt1sx+l4uk05vfhmfARY46sfLtl7mdpnzD1
-	pH7rdi/A6mKQB0
-X-Received: by 2002:a05:620a:1b9a:b0:93c:7582:14e4 with SMTP id af79cd13be357-93ebd2085ccmr1853088785a.40.1791888187868;
-        Tue, 13 Oct 2026 03:43:07 -0700 (PDT)
-X-Received: by 2002:a05:620a:1b9a:b0:93c:7582:14e4 with SMTP id af79cd13be357-93ebd2085ccmr1853085785a.40.1791888187320;
-        Tue, 13 Oct 2026 03:43:07 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3a9c3befebcsm37453901fa.1.2026.10.13.03.43.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 03:43:06 -0700 (PDT)
-Date: Tue, 13 Oct 2026 13:43:04 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Shawn Guo <shengchao.guo@oss.qualcomm.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v3 4/6] clk: qcom: Add Nord display clock controller
- support
-Message-ID: <ijqjle2jpl7ycdecndlx7qlj4qfm3s5zuxbsecnmhz5cnuomis@nnnxqbubt45z>
-References: <20260724-nords_mm_v1-v3-0-32b45232217f@oss.qualcomm.com>
- <20260724-nords_mm_v1-v3-4-32b45232217f@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85AB471432;
+	Tue, 13 Oct 2026 10:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.113
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791888199; cv=fail; b=Mzlab6t1RJNDh0wRMMBWY6zMdzelNDyDi4wBqRxix9SOxM6oBp3ZeASyV71dk0EUVrS8fKEPwRGllpNMh83Agystq7blJ4mVNJYVP4pTN+OkjGrQTSkGmsQ29jfobMeXGiJiGCmPCBCZwi/noum8YmAnVTSN4zM9JBowSTzJOlU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791888199; c=relaxed/simple;
+	bh=QcQSu1mnIlZPrk8Uu3Faz42x2fNYbGzMEj5orf157BY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=foSgNN8pd5i8DloAq04l1qJBZPDGgvcOj/vJQrArHeo42zZPwwSgoflUXmrgyqVoGtzI8cijgXDf7e6dNccK2pKTdmpltiV9BYn25LdkldaBIArtD3npUtzU3KkybkVyfMve0Vy/wtkqQBiyJ1gIje4xYqG97kZL85dt/CVHZkk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RiU8p+g8yBb0uBrO0vrW09DmjfHVUASQHwlaZJx0jLgcq12GfLSzri6UV/WFW/Yf1JuJKEMDXQSKxQ4foBCKwW85GVND+KqhkQiqv2+CmOxq4bg45dR48jfNKuJrqRVZt6REuHh3HOy/QETTcl2CtjFXE7kNXVN+hDCjKcp388QOda+RHHHC9qHGCc+YGZbWyiAmw63Qb7KGnqKlGqgwrWF+qbkZkCWSzVmJEGxJGXiMN/4/Rj0N+pG3irBW/EkV0kWfKUQmuuItHye1jKt5WZPC7neFdXsVhBwcMuzxRgXsK3vGZ72oBvw3Yh15dyKEtDMeyTsZcxKI+u5nQIARXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xun51H6Hs8wkodTe3PnaKo+c8L/r4MLjDymQAigNhBk=;
+ b=Otv1rLbLK7OFuH8AA+0IVCJwLyrN1RXSzYfiJKY9/pYr1TzOehC8ywJp4x632+BR2GTwBLEmHfG16YuB/FCyNBEU9Bge5IiFq1Fdv8UpPecJYYT1JNLKiOIUW42S1pNLn5JOAygL9zKmn6SpdFjPXw9f4rRV398zu/iTvZDLdCO2pUQAGAz+ntbuOCXvrNSl7oSzmHc9RbT7NAy7h9pc24j/mbHChlmwBpYFtB9tUxpI5m5x9JfuC+ubOBZd7+CzBUxYyPbykw4wXx39jE/S4mB6nzTVwikbYLXMlw6OCq+ZQ/5eHkVqA0I+fYVIy1YWLPLqFcbo+POQz+eef35uXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:17::6) by ZQ4PR01MB1234.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:17::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.23; Tue, 13 Oct
+ 2026 10:27:25 +0000
+Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e7d4:256c:b066:850d]) by
+ ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%4])
+ with mapi id 15.21.0496.021; Tue, 13 Oct 2026 10:27:25 +0000
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+To: Brian Masney <bmasney@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Emil Renner Berthing <kernel@esmil.dk>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Changhuang Liang <changhuang.liang@starfivetech.com>
+Subject: [PATCH v1 5/6] reset: starfive: jh71x0: Support discontiguous reset IDs
+Date: Tue, 13 Oct 2026 03:27:06 -0700
+Message-Id: <20261013102707.9207-6-changhuang.liang@starfivetech.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20261013102707.9207-1-changhuang.liang@starfivetech.com>
+References: <20261013102707.9207-1-changhuang.liang@starfivetech.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: NT0PR01CA0027.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:c::20) To ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:17::6)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260724-nords_mm_v1-v3-4-32b45232217f@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDEzMDA0MiBTYWx0ZWRfX+XvxNiuYd1YH
- Jf5Qi/emSBLUCsD25GWRU2LnrlIIriqeRTD1J6OqXCXkTZxZ3YQ8M5HACqd59qDsgt3WTQGcIh5
- cthD+kPyteQuvOT25V9JDIrWOTlTwD8Nh8SO3seJK9KQ7Uy14fcqCmnv6p8qh4yNqFcUWtjeDSU
- p5dc2WrcoBZP0IOmdUZU76FaRpksWOr1w6VtSunFGJ5kKdz5wjdkhfANpNoC9EpbQr2m6iwzaE8
- 0Wh2X8WashjYKAcsexRiZc9hqYYW261knF/MTty7aWdx9Og0lBi95qxfQX4gVyG13I+sLe6l870
- XcQ2RtLRutIehkqcbGOOI2u33JhHHPI1Y8gwlYg595WLChMb9w2QR3rILCqlhmOkYlKdHnLce5p
- esTH15Lb9QHkN/OB/F3uTpOrRqvl5pgtL1ApuBRo3faXkocfY9osIa8xk6rsMqhHbbCFUM0J0u9
- hAFGrYerCBjbqqTBVRw==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDEzMDA0MiBTYWx0ZWRfX7dja+6Ymh6Fp
- 4u3/kx9HJ5GbX3kUZsSmdFg8EE30hIvFeQfyGp7yYkjQT0qupz/TfC3uF5gR8Zrf5dVNRWwcFQ8
- eXYVOcJFEwtu0Xncke3rwngA+E7FmwI=
-X-Proofpoint-ORIG-GUID: xu2D8DQ0IPNJgCLM1ttyHPiwstDTM0Zs
-X-Authority-Analysis: v=2.4 cv=EP+TQFZC c=1 sm=1 tr=0 ts=6ace0b3c cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22 a=EUspDBNiAAAA:8
- a=mHeL4lCu1BsMOEic-KwA:9 a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-GUID: xu2D8DQ0IPNJgCLM1ttyHPiwstDTM0Zs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-13_01,2026-10-09_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
- malwarescore=0 priorityscore=1501 bulkscore=0 adultscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610130042
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1234:EE_
+X-MS-Office365-Filtering-Correlation-Id: 06e0af08-5cf6-4fb1-c65a-08df291492da
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|52116014|1800799024|376014|366016|23010399003|38350700014|56012099006|261009223027099003|10067099003|18002099003|22082099003|6133799003;
+X-Microsoft-Antispam-Message-Info:
+	JtrbPvaDtYCjQ260xgdJrrWPwNTWaO2hahY8R8oXcnarEVj2JSWyH2xy7mvkemTr2YflonrSd+njvr0nLNP2epE34rYJB+ZbItrGOTlfSRTMdQCFC1krK8l+wtMJhxrbiR1MTBLDmCMVLwbAIgaoXl7hZFFvTA5uMndJDQjCBT8vYQ/U09EATJwscgvSNHN34VrUAuitEaJGulGaYr3N6rPfbfEKpUc+MxZlmf8LIvbezdq/np+wtV50pSCYMms3Vv3GHa7C16mgODS5Hngovyf4EmfJVPsojhD9ciXiLAZgD+21H4cRvMUEBYCnUB6ddCX76JzbKNtiQXpgd7Vr01PjNgm8vQBWkyerEe6vXjorSo0M5po/Q2gbaDLb5xednfu9PfBsLJDGeoyC8zkiM18Gs98daD5iUanodPW7+HbueuWZVnbuWsU3X0CBHBMwk6sP3NN1nUxaSmgCD/ghB1v/7d5JotWQmdZMfmePFQ8o3XDOYvRAtQuZhtPmIxgZdKrj2SfvBckFYz1k5uQR/afzIzq20a7Smp3G7Kmpt76Z+gftibb87lhHYdLf1PRY
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(1800799024)(376014)(366016)(23010399003)(38350700014)(56012099006)(261009223027099003)(10067099003)(18002099003)(22082099003)(6133799003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?51DN+Zx1vqK8nZVrrRE83/s/aau/+1hpTde932Ds7ScrIsW9pAwEXxE9XjkF?=
+ =?us-ascii?Q?W5MS52p6Ba0xnjos13v1Tmcu12kRGnInv366ZOmdZe3YhtwqxCf76vuPksOG?=
+ =?us-ascii?Q?UXRYBdVgcXZ5MDw8+QdlMWFOKP+5GphnXB7AC06Jxgp9U+5myDtYpIqQMf0P?=
+ =?us-ascii?Q?INlIAGxZIJus3zoAIghwQjRORih+01keIQLk+GUO9P8PmcTw572WoH/PSJaO?=
+ =?us-ascii?Q?ZFjO0GT5uMqvTAXSimhchO3QgHBIZp2QBITKFW3YmxzFnDfJg7Cp5YH1BcBq?=
+ =?us-ascii?Q?cvJy3KHn3Ugr37+2bIvghbQiQwgMLrLSNs6QQ+d/IpwFttRhJW9JqPH4h3AY?=
+ =?us-ascii?Q?Fal8b6gjiJCE5wZp+wItEHD3c0Xoz0ODxLuEcpeCZTWVO2x2gNs0NKXGorFM?=
+ =?us-ascii?Q?11ebHo15cRBITa8+R3MNxPTgAx2oLczGD0SsQFwh7cX06JIcweXM80UMO4gS?=
+ =?us-ascii?Q?tXnPZLRLdlpYJgT4XFZ91Yfy/VUiWv1y4EkdfOSMT0OHvok5oVRQhtA28On0?=
+ =?us-ascii?Q?MXOK2ku4EUCx/kknbyOCyHwZ4le9CohBqhJpEBbnbYWPQqPUKuFgrusnfd9+?=
+ =?us-ascii?Q?UlELJ0Mb7KVR+HHBQS9ptd7srDuNqie2WaaMXyDegZl+yqL8OiNOjMyalCRA?=
+ =?us-ascii?Q?ZczgSuC7Powet8t4hzcaNEWsC4U1IR1KcKYwdo/KWjfNSB8wmekLlNVUNGSj?=
+ =?us-ascii?Q?mkm8Bt2n9WQBq2YOkFYENj9iNBRFBR8Mlc9vNcT6pJrza6KbX5mx4IdERH9U?=
+ =?us-ascii?Q?IlT6lz+TGNCww2hTWQOISH9/mZpqIoDS+C+Ey7yHDBbEtVudtK07Ac2h6VEN?=
+ =?us-ascii?Q?aIlloj396NDpxHzUzXkHLKLFibcoBcX+a6Cqb18rc8+oJVHZr+VOv57Gl7c3?=
+ =?us-ascii?Q?phmmuGrlHpo9gbfxm7knZ3BpxGq25svd78ai78dalkBm7v4AQugxYIdkA0lF?=
+ =?us-ascii?Q?HxuAILaXnLlJZHqp38RjKJ3OA+Re08Mch0X/S8ctbCjiL9VBqoOu9TqIIvIE?=
+ =?us-ascii?Q?DsQvh5zAP6QXrHNls95oVOUZKFkUBangprJiQRxyPOmHNUAO7BszlqS/zcpB?=
+ =?us-ascii?Q?Efd/PvVSxy7mOBNO1NQRhNhnZDR4LUtE28Ovz/7KnRFyxtGz080qKp7NycI9?=
+ =?us-ascii?Q?81tVGIjNJcgq0VZ6g0EcfcxOyTPXzDbe+9MrXsAEL59gWPXHtSaiFns6hSXV?=
+ =?us-ascii?Q?+RLKM2y4Xfl62PwHRWaoUkERfVzNUtWRMm5Y0FgxVq/K3/nz5vMPYipPEoNL?=
+ =?us-ascii?Q?uvoAJ18sw80kew22AMyXtJi5QYs/G+rvbl7S+Fdk59wqt9TQrpwqNZ/KHnmn?=
+ =?us-ascii?Q?5PLEFOdr7NKooXvBNUWNcgc6ROtYmq+cWhm41e5enipKo+rZrNHw5RHR0gEi?=
+ =?us-ascii?Q?OZsO8zfAfckt1pT3fbwd3vESwoVuTjmYWS+UP4twCD3pMXX/n6hCfrmyU3cr?=
+ =?us-ascii?Q?Z9dW111xPs7uhkAwim4HRApuv2Cch6MW30cSb33tVSHf4GgUvV2abMMENxSe?=
+ =?us-ascii?Q?GYGkRLhfA7zbz8sfbyKC1qijdVxit2wUHL79nNFvMXfhgg2PhEZ8Egtkt/C9?=
+ =?us-ascii?Q?CIU7BqeNjPlgLxtQCO/OZ5/A1Or3e8/vuIWUV4U6Pv7EQANpMPMPrCaaebhI?=
+ =?us-ascii?Q?3Cj3XkBPYkUJN9HsGL5Xi9eZkfR39D2yGcElW9aTMcEaI71wkO96ZMTDxtXx?=
+ =?us-ascii?Q?Fqj/UP41gm0xh6uU2P7IU3Iv3KbD7FpLe2kFqWw5iVZ6/qa66xlmcL0BeljS?=
+ =?us-ascii?Q?bVCBKUGc36Kx6mOmLOiwC4+pN+B0IfGmfECr+9cmz6hlIhrUp1j0?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06e0af08-5cf6-4fb1-c65a-08df291492da
+X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2026 10:27:25.0877
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7xpFdvPVBnKXimgnEIz5Bjsvw45KNiUsJgwNk0C4anE3S3dDqo/tOvZ2Rh1EJ54YpdnxKW66vZdGtRDvSB0jy/+ycBnjS1VuFpQoONwdw1UiEyjMBwHP2anMn1JDBKuE
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1234
 
-On Fri, Jul 24, 2026 at 04:25:08PM +0530, Taniya Das wrote:
-> Add support for the display clock controllers (DISPCC) on the
-> Qualcomm Nord platform.
-> 
-> The platform includes two display clock controller instances,
-> display0 and display1. Register support for both controllers.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Reviewed-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/Kconfig        |   11 +
->  drivers/clk/qcom/Makefile       |    1 +
->  drivers/clk/qcom/dispcc0-nord.c | 2004 +++++++++++++++++++++++++++++++++++++++
->  drivers/clk/qcom/dispcc1-nord.c | 2004 +++++++++++++++++++++++++++++++++++++++
->  4 files changed, 4020 insertions(+)
-> 
-> +
-> +static struct clk_rcg2 mdss_0_disp_cc_mdss_mdp_clk_src = {
-> +	.cmd_rcgr = 0x810c,
-> +	.mnd_width = 0,
-> +	.hid_width = 5,
-> +	.parent_map = disp_cc_0_parent_map_8,
-> +	.freq_tbl = ftbl_mdss_0_disp_cc_mdss_mdp_clk_src,
-> +	.hw_clk_ctrl = true,
-> +	.clkr.hw.init = &(const struct clk_init_data) {
-> +		.name = "mdss_0_disp_cc_mdss_mdp_clk_src",
-> +		.parent_data = disp_cc_0_parent_data_8,
-> +		.num_parents = ARRAY_SIZE(disp_cc_0_parent_data_8),
-> +		.flags = CLK_SET_RATE_PARENT,
-> +		.ops = &clk_rcg2_shared_ops,
+The reset IDs exposed to consumers of the StarFive JHB100 reset
+controllers do not map one-to-one to the hardware reset bits.
 
-clk_rcg2_shared_no_init_park_ops
+Add struct jh71x0_reset_info, which describes the number of resets, the
+assert/status register offsets and, for discontiguous controllers, a
+table mapping reset IDs to hardware bits. Add
+reset_starfive_jh71x0_register_with_info() to register such a
+controller, and translate the reset ID in the update and status
+callbacks when a map is provided.
 
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 mdss_0_disp_cc_mdss_pclk0_clk_src = {
-> +	.cmd_rcgr = 0x80c4,
-> +	.mnd_width = 8,
-> +	.hid_width = 5,
-> +	.parent_map = disp_cc_0_parent_map_2,
-> +	.freq_tbl = ftbl_mdss_0_disp_cc_mdss_byte0_clk_src,
-> +	.hw_clk_ctrl = true,
-> +	.clkr.hw.init = &(const struct clk_init_data) {
-> +		.name = "mdss_0_disp_cc_mdss_pclk0_clk_src",
-> +		.parent_data = disp_cc_0_parent_data_2,
-> +		.num_parents = ARRAY_SIZE(disp_cc_0_parent_data_2),
-> +		.flags = CLK_SET_RATE_PARENT,
+Existing users of reset_starfive_jh71x0_register() are unaffected.
 
-Here and in several similar places: No CLK_OPS_PARENT_ENABLE?
+Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+---
+ .../reset/starfive/reset-starfive-jh71x0.c    | 99 ++++++++++++++++---
+ .../reset/starfive/reset-starfive-jh71x0.h    | 19 ++++
+ 2 files changed, 107 insertions(+), 11 deletions(-)
 
-> +		.ops = &clk_pixel_ops,
-> +	},
-> +};
-> +
-
+diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.c b/drivers/reset/starfive/reset-starfive-jh71x0.c
+index 29ce3486752f..fd1c755a0017 100644
+--- a/drivers/reset/starfive/reset-starfive-jh71x0.c
++++ b/drivers/reset/starfive/reset-starfive-jh71x0.c
+@@ -14,6 +14,8 @@
+ 
+ #include "reset-starfive-jh71x0.h"
+ 
++#define JH71X0_RESET_ID_INVALID	ULONG_MAX
++
+ struct jh71x0_reset {
+ 	struct reset_controller_dev rcdev;
+ 	/* protect registers against concurrent read-modify-write */
+@@ -21,6 +23,11 @@ struct jh71x0_reset {
+ 	void __iomem *assert;
+ 	void __iomem *status;
+ 	const u32 *asserted;
++
++	/* Only exists in reset controllers that use the
++	 * reset_starfive_jh71x0_register_with_info helper.
++	 */
++	const struct jh71x0_reset_info *info;
+ };
+ 
+ static inline struct jh71x0_reset *
+@@ -29,19 +36,40 @@ jh71x0_reset_from(struct reset_controller_dev *rcdev)
+ 	return container_of(rcdev, struct jh71x0_reset, rcdev);
+ }
+ 
++static unsigned long
++jh71x0_reset_id_to_hw_id(const struct jh71x0_reset_map *map, unsigned int nr_resets,
++			 unsigned long reset_id)
++{
++	for (u32 i = 0; i < nr_resets; i++) {
++		if (map[i].reset_id == reset_id)
++			return map[i].hw_id;
++	}
++
++	return JH71X0_RESET_ID_INVALID;
++}
++
+ static int jh71x0_reset_update(struct reset_controller_dev *rcdev,
+ 			       unsigned long id, bool assert)
+ {
+ 	struct jh71x0_reset *data = jh71x0_reset_from(rcdev);
+-	unsigned long offset = id / 32;
+-	u32 mask = BIT(id % 32);
+-	void __iomem *reg_assert = data->assert + offset * sizeof(u32);
+-	void __iomem *reg_status = data->status + offset * sizeof(u32);
+-	u32 done = data->asserted ? data->asserted[offset] & mask : 0;
+-	u32 value;
+-	unsigned long flags;
++	unsigned long offset, flags;
++	void __iomem *reg_assert;
++	void __iomem *reg_status;
++	u32 mask, done, value;
+ 	int ret;
+ 
++	if (data->info && data->info->discontiguous) {
++		id = jh71x0_reset_id_to_hw_id(data->info->map, data->info->nr_resets, id);
++		if (id == JH71X0_RESET_ID_INVALID)
++			return -EINVAL;
++	}
++
++	offset = id / 32;
++	mask = BIT(id % 32);
++	reg_assert = data->assert + offset * sizeof(u32);
++	reg_status = data->status + offset * sizeof(u32);
++	done = data->asserted ? data->asserted[offset] & mask : 0;
++
+ 	if (!assert)
+ 		done ^= mask;
+ 
+@@ -89,10 +117,20 @@ static int jh71x0_reset_status(struct reset_controller_dev *rcdev,
+ 			       unsigned long id)
+ {
+ 	struct jh71x0_reset *data = jh71x0_reset_from(rcdev);
+-	unsigned long offset = id / 32;
+-	u32 mask = BIT(id % 32);
+-	void __iomem *reg_status = data->status + offset * sizeof(u32);
+-	u32 value = readl(reg_status);
++	void __iomem *reg_status;
++	unsigned long offset;
++	u32 mask, value;
++
++	if (data->info && data->info->discontiguous) {
++		id = jh71x0_reset_id_to_hw_id(data->info->map, data->info->nr_resets, id);
++		if (id == JH71X0_RESET_ID_INVALID)
++			return -EINVAL;
++	}
++
++	offset = id / 32;
++	mask = BIT(id % 32);
++	reg_status = data->status + offset * sizeof(u32);
++	value = readl(reg_status);
+ 
+ 	if (!data->asserted)
+ 		return !(value & mask);
+@@ -132,3 +170,42 @@ int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_no
+ 	return devm_reset_controller_register(dev, &data->rcdev);
+ }
+ EXPORT_SYMBOL_GPL(reset_starfive_jh71x0_register);
++
++int reset_starfive_jh71x0_register_with_info(struct device *dev, struct device_node *of_node,
++					     void __iomem *assert, void __iomem *status,
++					     const u32 *asserted,
++					     const struct jh71x0_reset_info *info,
++					     struct module *owner)
++{
++	struct jh71x0_reset *data;
++	int ret;
++
++	if (info->discontiguous && (!info->map || !info->nr_resets))
++		return dev_err_probe(dev, -EINVAL,
++				     "discontiguous controller without a valid ID map\n");
++
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	data->rcdev.ops = &jh71x0_reset_ops;
++	data->rcdev.owner = owner;
++	data->rcdev.nr_resets = info->nr_resets;
++	data->rcdev.dev = dev;
++	data->rcdev.of_node = of_node;
++
++	spin_lock_init(&data->lock);
++	data->assert = assert;
++	data->status = status;
++	data->asserted = asserted;
++	data->info = info;
++
++	ret = devm_reset_controller_register(dev, &data->rcdev);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "Failed to register reset controller\n");
++
++	dev_info(dev, "Registered %u resets\n", data->rcdev.nr_resets);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(reset_starfive_jh71x0_register_with_info);
+diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.h b/drivers/reset/starfive/reset-starfive-jh71x0.h
+index db7d39a87f87..36f198139602 100644
+--- a/drivers/reset/starfive/reset-starfive-jh71x0.h
++++ b/drivers/reset/starfive/reset-starfive-jh71x0.h
+@@ -6,9 +6,28 @@
+ #ifndef __RESET_STARFIVE_JH71X0_H
+ #define __RESET_STARFIVE_JH71X0_H
+ 
++struct jh71x0_reset_map {
++	unsigned long reset_id;
++	unsigned long hw_id;
++};
++
++struct jh71x0_reset_info {
++	unsigned int nr_resets;
++	unsigned int assert_offset;
++	unsigned int status_offset;
++	bool discontiguous;
++	const struct jh71x0_reset_map *map;
++};
++
+ int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_node,
+ 				   void __iomem *assert, void __iomem *status,
+ 				   const u32 *asserted, unsigned int nr_resets,
+ 				   struct module *owner);
+ 
++int reset_starfive_jh71x0_register_with_info(struct device *dev, struct device_node *of_node,
++					     void __iomem *assert, void __iomem *status,
++					     const u32 *asserted,
++					     const struct jh71x0_reset_info *info,
++					     struct module *owner);
++
+ #endif /* __RESET_STARFIVE_JH71X0_H */
 -- 
-With best wishes
-Dmitry
+2.25.1
+
