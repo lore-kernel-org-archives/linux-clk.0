@@ -1,179 +1,241 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EF851474D
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 15:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791904089; cv=pass; b=lPwTgCHFZ5V+DM5MMbUO7909C2qDXWC2j1OM+h09LaIDsXYvhc2/N+ZGFqCKW0d4t33S6wKvucz1hETC6LFcoxpuPhPk5z5vHfSLTuoHVM6FD8E6ThShGKILmLOew1FpUUJ10nHG4EcKvtFI4yjibIsZtao9bIr58MNMmVw0UW4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791904089; c=relaxed/simple;
-	bh=kSeEty/pyx+v4Qu7BrqL5A6bwA+hTSmxB+Kegwde04I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OPTRxT7ngJDXVxELXSeu132a4zy2pszLNrzio5skFDyGPU9tFD+vTdiBAWyRFTrfwvvA+lcLe/SQHIlU89RSOHWG5IjpCcBhtzzQfG8BEyxFrkSUNbjjqW02ZvHNyOETCnfg5x8A6U+9GpnDaa0X6TXfnGMBbAWVCNa2BknIov8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=smF305Ed; arc=pass smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D9252D2AF
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 15:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791904681; cv=none; b=MHQ+6BOyR/CTnr8RmNzQBmz2ruQpqsg0DC8P986n30TjmO27moaZ1Q9X1NKSKlOLNmBfO7aEx6DjIMnuRZftIAnKU0fPUvbDa/07dpW4xmk8m50xPUSzgNW5urLPtBslBcf9sEXfkvWlkSHNtCVTGvcCjVOs4bfWWRTcLnzrfcw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791904681; c=relaxed/simple;
+	bh=OE+gXHE9UHjIn/OavOIvjtiu1YPN517pO6UGiQZApvU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ez8qLt2Rg9mSVxpwih9H20QkBmnM1SQHsuC/cljq8wjcAd7ceOAIuZShp9OtCXMk3Mqw2c0ErZOR+kr6z/XKAtJdt7rAwo2Hvme7ABzkDt0E/pzC3ChD/meqCpS9130hlqa3UkRqYNOFn9ltIffkHYLcDnVofe+B7JU/U6oDlko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pGh0VHjO; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="smF305Ed"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2e61ac64ec3so27074075ad.2
-        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 08:08:07 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791904087; cv=none;
-        d=google.com; s=arc-20260327;
-        b=SbeZOf+SNughWi11XFQlZKhBM0HEPUcyR15/yTULkaA6FBZFy/48G5vHszU6XX4gMr
-         zh7fDYVpYwh+HECXvj80vP+y4IGYrcNLqn4Ia+LtBQ6nnD1wHZbKkmxvjAj6pVMTkLc4
-         qlWoIRqIymEWRn1joo6JTE7It55VtHVivTNOhE5OEuEL/t+e45DEyEBKk7fnGOC+NgNr
-         Vvv99EFHl/Tbbpmf/oxj8RvwfyOF68tAkHMUEQH+CjULSKXtY/40pYxfDODSICiBeZ2K
-         QI6sgKHQBWcH44HOn+3Uasw91XWakyRRIQk6UFfHwvWz0Ms4+5GneAl6vIzfrmnYQE71
-         7WzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=LQ5BAPQzf5De6H7G8HN1TYce8oTd+xAhm08KbGTjuS4=;
-        fh=2hfhS/TDdw+vB47+SyuDzTOw4Y7UogjPq+LMZLKB1/M=;
-        b=YidlrvZkriuR8CpHIfMlDM07MVWcMh3l2RmvWhRqVvYABbJqOP9SFoOhnpIvy3X/eC
-         a50pjvUzxDy540ge/HGgIujCjZuDr3Wwe1gSnbz2wLPxeVFqRKBziVvN0BbgvBP50Z3g
-         aFOxnv4BgIlzbK0DnW3a33OQCFingZvKQaEuwm6SiHWmTgeTmZMn5EmQPOn9Q8C/LHM+
-         XO3rib6+KbrwW5QOs8S5U4bwcGmGA7llVSv9B6vNR6F+zXFjpsdOMT94IdgR8legvyZx
-         JiqEfggqf9bg5s6HYoYmCXBohzI4SpVNeyI9vhgAv78DMuJ6zMh2meu/PusKfdTjwQAI
-         IXNA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pGh0VHjO"
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-ca766c1c9ccso1026295a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 08:17:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791904087; x=1792508887; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=LQ5BAPQzf5De6H7G8HN1TYce8oTd+xAhm08KbGTjuS4=;
-        b=smF305EdPwny8M1/F2FRVkVLZhSefEb8odFniq2p4i7nPgpcNWoMVlHqvRFdgIfJRL
-         VvbuvIzMXb5LEt9M6pLDpLbUh26Ncr88AVzD1xvqHbfydC0IayRfb51UxOtdmA6ODGDD
-         cDWw+iXdkgWnaoALUua5Q05CYEXEp0vaUlRIHnJT4ep5v1OVo+eaM1Odt/Ia1rIHvzFe
-         BKuNcdpcnYF9GsVdqP0X9d3KwoAzV2Txiu9oeviHSV9FRcAjXzlwBXPaDXOiu7KO58Jr
-         W8/kKaty3Wmrq6qMbGvneZSXfEtS3dkK4Myt6eZhpT+y3K+m9efCiS6BvFDPC8p8LAme
-         w/Gw==
+        d=gmail.com; s=20251104; t=1791904677; x=1792509477; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=hpeZCtjtr3RFnVadMQBbI2r1C6CwdAtY8VnYl6TRGII=;
+        b=pGh0VHjOGadM7GlLMNhCGMjwxEVfeq+W4RQqZ9R84kNIF2rJIsQur73nuUGADCNttu
+         3XkfhXqgIsAALniH0d0Il9O0yDcf+pTwHJaj7M9Vqwr+vrXfMkDnk79SXRpYZIlEHMSC
+         bgUmGWqBg5XrvtnQOzK5oQYAs/TCMpgUFu2cmGUfhyb0opdaKti/7C5FlKWeZfeVCgvU
+         Y78pUs9M1b6RfNOGt+yTpOUl5l7QNtJUQ4JqlKZHx2t/9rKR/G0wKJFu4VH9HrmjbQxz
+         uvO2EZCXPDZ1Io7lWPZYFWWyyOpr6D5aEbAKuiJybppuPuI1n4HM49w4HiyvhWIfCMqt
+         SqDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791904087; x=1792508887;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=LQ5BAPQzf5De6H7G8HN1TYce8oTd+xAhm08KbGTjuS4=;
-        b=g7rBtk7rPwJoJPolAUY24EXNxpSHDlGi70sH9G/BR34szmGeghePBiP43TDP+TXTvn
-         k3kaq2ioOsTOdK4vtMRcarigCS1T6ELguBClJvlUemRAWGF5k7hAWDnDHnKevwLbZqU8
-         dLl8UTY4buiGtQTOsod64iqf1vVzzLrFJbkl9dx+RDSyXOYaiDk3vOYltLEmSSMbhWTe
-         DMkGYhE4R2OhemYtQAugGOGf9LjqKWI0Cmsjy7aLC9K/GxByq1Bk3Ydd1zHN6ilb94pr
-         1vwc1IxDvdOFpN8Pnt1SNhyMy5xJLvjQm/YmGvta/m4FDkQgVuSUffOCd2ge6M2Lmm+f
-         cV5g==
-X-Gm-Message-State: AFq9FYK71iohjMyL4ao0kTXLuOf4PlctIIFeSXD4BtUYOWY2XWfPX601
-	Wm86nGn+EUYmlEeXhNPskMWzfIc/uyjFKOsv5IUiZYw/XPRCm4g8ebKwRu3by6Ejjh02DZJjTmH
-	RjO7zGCk/YFtRVxgaF2QVLFViAwfkADg=
-X-Gm-Gg: AYBFou2+YmujhywBFw8g3Wsbe0ryBoZu0IAsd4e3ecKL7dFTBIi3Qk58oC1kV4fapIt
-	21fNb/ZX6bOZmK8krR7S8kw+kJztY7+zGlLjGDNB8YxFBhTLr7C3ehZ1BjzJGczJc2w8C6eoPuc
-	k2WIF6bsIlbWswR9svUYvQVUuU+if7NfQpLDrl1axh4LEKa6HyBzYvjd7fosSOn9SnxfOfs2zxu
-	JgkaV+PTn7Ycq9GtuOKtHG0qvxB8cLjabuU38tS1P+sLj/x0Xl8mH6fbXXT2ipsK68RkxQv97Fo
-	yi0320eYiavE9p1C7uZ3EVne9lCtDEJ8DrJ8VFiAd+fRawyPEfOLj5LH3Sws7WCcij/07PE=
-X-Received: by 2002:a17:902:fc4e:b0:2dd:c170:2d4d with SMTP id
- d9443c01a7336-2e842abcb40mr130264665ad.24.1791904086913; Tue, 13 Oct 2026
- 08:08:06 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1791904677; x=1792509477;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=hpeZCtjtr3RFnVadMQBbI2r1C6CwdAtY8VnYl6TRGII=;
+        b=gxLUk9wP/LcZ41PaZUtNp8REAESZ8924dIgSU8U+4q/30ejDOnCisMoMAWFbRuWoZs
+         A4uCgzF1nxcSck0RAra9u1TFRjMWWan43LcS5iGHSYeUC9FrSsNakZpyfs/43QlHhIAS
+         Ertp/aMaLg0yFjWnG2ewE1vdumljEYqYmfOt+pardVnFguNgdMvPE9hcDc/zcGv9sA/1
+         YGcH0e2tp65iboHq3A+My7VKQ1ME8lgc8MN+yC5sv3yefsv7MrdAH2K63xu2NJLAX66Z
+         H6mTeAyo4bk5BOfsRJbDs6vDNUh3VZO9PlJcUAuhmllnnRp3JY/2Th6J5MaN7LiP1ebK
+         Yr4A==
+X-Forwarded-Encrypted: i=1; AKwUvBwoBl0jFF0KtfMtQZ5uZrrK+Q5+TV9yB1Hwrm7tjb7PLeig0dLWC6Sl/e2HTRBxJdpDtk0jMkGLO28=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJ1/kJrFbTYE6VF62VFoh8Ojd3qyqsLmNdLq4RkWunMWjK8bWi5
+	aDVXRshxkkNJpXmvqUGkIW5XM78InYE9LGh4F1r4a4yzdyjF14IpqfeO
+X-Gm-Gg: AYBFou1gz8Q+fhYRxboRfd6vilWRcWIOu2YIRu2qPJ5mrmDN5x37IsjFDYo67GWh+B6
+	nyuoHyZvu2Ldhv2hMzKPtqdpsclgwsfdysPjR7sBAa7Zq6fFxkO7VseHbV2NQYEp/ETeocNBqhy
+	2Vs/3illTGAbjLzbJYqf/7wIZz3RSCqmfessM9S++ds04+E4lZZbGBhOzaK3CgGu0E7K/qUtufY
+	PsIViiwTDSUB9nO+pbIb3dT9eFVvsf/RQwqpsDANqBjlWFHWhRAP0uZcy7DfdFTN4vcFOtW2q4S
+	v4kKnwGQUdZoTvBUPri1MNt8NwHjES2JnPwDRsomsgBQy3DlKXubSVxpq4PVCByO348zmo6MYDk
+	K72qyK2TsccnhEkmdFVh5yF7He5UvRGww0/aHLGF0Xy+goC9W8DDn6DaVU4DhPR/af6xhx5srOT
+	FOMV6qsTlGZ0Uyf3X2QGI6G2rMgele4rS2TpDAeI83kHMD+x9NPt+T+Eu0/C75Q0+yGwcksp9qz
+	9pEUnlH9KkLtJqzx6XO0hOU1mNx
+X-Received: by 2002:a05:6a20:c905:b0:3dd:a195:dd55 with SMTP id adf61e73a8af0-3e16bfa50dbmr12116690637.55.1791904677448;
+        Tue, 13 Oct 2026 08:17:57 -0700 (PDT)
+Received: from buffalo-ssd.taila54753.ts.net ([240b:253:4760:f400:1ebf:ceff:fe7f:5e0b])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cd3da04596dsm5759888a12.29.2026.10.13.08.17.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2026 08:17:56 -0700 (PDT)
+From: Akari Tsuyukusa <akkun11.open@gmail.com>
+To: Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Yassine Oudjana <y.oudjana@protonmail.com>,
+	Richard Cochran <richardcochran@gmail.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Kees Cook <kees@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Haotian Zhang <vulab@iscas.ac.cn>,
+	Miles Chen <miles.chen@mediatek.com>,
+	Sam Shih <sam.shih@mediatek.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+	Laura Nao <laura.nao@collabora.com>,
+	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-kernel@vger.kernel.org (open list),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
+	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
+	Akari Tsuyukusa <akkun11.open@gmail.com>
+Subject: [PATCH v2 00/35] clk: mediatek: Migrate to common probe/remove helpers and fix memory leaks
+Date: Wed, 14 Oct 2026 00:16:59 +0900
+Message-ID: <20261013151734.3177690-1-akkun11.open@gmail.com>
+X-Mailer: git-send-email 2.56.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261012100816.331033-1-pmazzini@gmail.com> <20261012100816.331033-3-pmazzini@gmail.com>
- <sashiko-outbox-167950@kernel.org>
-In-Reply-To: <sashiko-outbox-167950@kernel.org>
-From: Pablo Mazzini <pmazzini@gmail.com>
-Date: Tue, 13 Oct 2026 16:07:39 +0100
-X-Gm-Features: AclHuK_pl3pWqTJLvh0wYDQbXNbwPmw0G3N4wD6Ym2FvqFNGBQBI95gOlewMvjs
-Message-ID: <CAAxh=jvSRyW3XwnyV2RVHH9FZvq9A7A7ruXNSpAgXzdcCNjGeA@mail.gmail.com>
-Subject: Re: [PATCH v4 02/11] clk: sunxi-ng: add Allwinner B288 CCU driver
-To: sashiko-reviews@lists.linux.dev
-Cc: linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The B288 has pll-video0 and pll-video1 at TCON0 mux values 0 and 1, so
-the plain mapping is right.
+This series migrates most MediaTek clock drivers to the common
+probe/remove helpers provided by the MTK clock framework.
 
-BSP: https://github.com/pocketbook/kernel-b288/blob/e30bb2ed149410ef2d3245e=
-a01192833d44c4e46/drivers/clk/sunxi/clk-sun8iw10.c#L468
-Wiki: https://linux-sunxi.org/B288/Clocks
+Key changes:
+- Fix memory leaks on module removal caused by missing
+  platform_set_drvdata() calls (patches 1-6).
+- Add missing MODULE_DEVICE_TABLE() (patches 7, 8).
+- Add missing support for cpumux, PLL, FHCTL, and child-device
+  population to the common helpers (patches 12-15).
+- Convert all compatible clock drivers to use struct mtk_clk_desc
+  and mtk_clk_simple_probe/remove (patches 16-35).
 
-On Mon, Oct 12, 2026 at 11:21=E2=80=AFAM <sashiko-bot@kernel.org> wrote:
->
-> Thank you for your contribution! Sashiko AI review found 1 potential issu=
-e(s) to consider:
-> - [Medium] clk: sunxi-ng: missing parent index table for tcon0_clk
-> --
->
-> commit 3f9c552550550b015864167770907fa314ac3239
-> Author: Pablo Mazzini <pmazzini@gmail.com>
->
-> clk: sunxi-ng: add Allwinner B288 CCU driver
->
-> This commit introduces the Allwinner B288 CCU driver, covering the PLLs,
-> the CPU/AHB/APB tree, module clocks, bus gates, and resets. The driver
-> is noted to be closely related to the A64 CCU.
->
-> > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-b288.c b/drivers/clk/sunxi-=
-ng/ccu-sun8i-b288.c
-> > new file mode 100644
-> > index 0000000000000..c53afd6f9af98
-> > --- /dev/null
-> > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-b288.c
->
-> [ ... ]
->
-> > +/* DE_CFG @ 0x104, EE_CFG @ 0x108, EDMA_CFG @ 0x10c -- M[3:0] mux[26:2=
-4] gate 31 */
-> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(de_clk, "de", de_parents, 0x104,
-> > +                                   0, 4, 24, 3, BIT(31), CLK_SET_RATE_=
-PARENT);
-> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(ee_clk, "ee", de_parents, 0x108,
-> > +                                   0, 4, 24, 3, BIT(31), CLK_SET_RATE_=
-PARENT);
-> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(edma_clk, "edma", de_parents, 0x=
-10c,
-> > +                                   0, 4, 24, 3, BIT(31), CLK_SET_RATE_=
-PARENT);
-> > +
-> > +/* TCON_CFG @ 0x118 -- mux[26:24] gate 31, no divider */
-> > +static SUNXI_CCU_MUX_DATA_WITH_GATE(tcon0_clk, "tcon0", tcon0_parents,=
- 0x118,
-> > +                                 24, 3,              /* mux */
-> > +                                 BIT(31),            /* gate */
-> > +                                 CLK_SET_RATE_PARENT);
->
-> [Severity: Medium]
-> Does the B288 hardware actually use a 1:1 index mapping (0 and 1) for thi=
-s
-> TCON mux?
->
-> The closely related A64 SoC uses a {0, 2} index mapping for its TCON PLLs=
-.
-> Because SUNXI_CCU_MUX_DATA_WITH_GATE defaults to a 1:1 mapping, if a disp=
-lay
-> driver requests to use pll_video1 for the TCON, the CCU driver will write
-> index 1 to the mux register. If the hardware maps the second parent to in=
-dex
-> 2 instead of 1, this will result in incorrect clock parent selection and =
-could
-> break video output.
->
-> If a custom mapping is needed, it might be slightly tricky to define sinc=
-e the
-> ccu_mux.h framework currently lacks a SUNXI_CCU_MUX_DATA_TABLE_WITH_GATE
-> macro to combine a table with clk_parent_data.
->
-> > +
-> > +/* MBUS_CFG @ 0x15c -- M[2:0] mux[25:24] gate 31 */
-> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(mbus_clk, "mbus", mbus_parents, =
-0x15c,
-> > +                                   0, 3, 24, 2, BIT(31), CLK_IS_CRITIC=
-AL);
->
-> --
-> Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261012100816.33=
-1033-1-pmazzini@gmail.com?part=3D2
+The memory leak and MODULE_DEVICE_TABLE() fixes are split from the
+migration patches to allow backporting to stable.
+
+Drivers not converted:
+- MT6765 apmixedsys: requires direct register init.
+- MT6795 apmixedsys: uses mtk_clk_register_ref2usb_tx().
+- MT7629 eth/sgmiisys: uses a hacked probe sequence (multi-instance
+  sgmii gates).
+- MT8173 apmixedsys: uses mtk_clk_register_ref2usb_tx() and custom
+  divider registration.
+- MT8188/MT8195 topckgen: call devm_clk_hw_register_mux() and register
+  a notifier.
+- MT8196 vlpckgen: requires direct register init.
+- MT8365 apmixedsys: uses devm_clk_hw_register_gate().
+
+Patches 1-6 are based on
+"[PATCH v2 0/6] clk: mediatek: fix memory leak on module removal"
+(In addition fixed a compilation error in mt8173-infracfg)
+https://lore.kernel.org/linux-mediatek/20260707074839.240676-1-akkun11.open@gmail.com/
+
+Patch 5 fixes the same issue mentioned below
+"[PATCH] clk: mediatek: clk-mt8173-apmixedsys: Invoke platform_set_drvdata on probe"
+https://lore.kernel.org/linux-mediatek/20261010160134.112136-1-l.scorcia@gmail.com/
+
+Patch 12 is based on
+"[PATCH 1/3] clk: mediatek: clk-mtk: Add cpumux support to common probe/remove helpers"
+https://lore.kernel.org/lkml/20260304181024.738391-1-akkun11.open@gmail.com/
+
+Changes in v2:
+- Add two new fixes "Fix index in composite clock unwind path" and
+  "Fix memory leak in mtk_clk_register_gate()".
+- Add new refactor "return 0 instead of r in __mtk_clk_simple_probe()"
+- Fix missing `.data = &apmixed_desc` in the MT8167 and MT8195
+  apmixedsys drivers.
+- Fix PLL registration and unregistration when
+  CONFIG_COMMON_CLK_MEDIATEK_FHCTL is disabled.
+- Fix child-device population logic.
+- Clarify the rationale in the SoC conversion commit messages.
+- Minor fixes to several commit messages.
+- Rebased onto `24a19b953e2a ("Linux 7.3-rc7")`
+  from `075b74841bd0 ("Linux 7.2-rc6")`
+
+Link to v1:
+https://lore.kernel.org/linux-mediatek/20260803141659.559129-1-akkun11.open@gmail.com/T/
+
+Akari Tsuyukusa (35):
+  clk: mediatek: mt2712: Fix memory leak on module removal
+  clk: mediatek: mt6795: Fix memory leak on module removal
+  clk: mediatek: mt7622: Fix memory leak on module removal
+  clk: mediatek: mt8135: Fix memory leak on module removal
+  clk: mediatek: mt8173: Fix memory leak on module removal
+  clk: mediatek: mt8192: Fix memory leak on module removal
+  clk: mediatek: mt6735: Add missing MODULE_DEVICE_TABLE()
+  clk: mediatek: mt7988-apmixed: Add missing MODULE_DEVICE_TABLE()
+  clk: mediatek: Fix index in composite clock unwind path
+  clk: mediatek: Fix memory leak in mtk_clk_register_gate()
+  clk: mediatek: return 0 instead of r in __mtk_clk_simple_probe()
+  clk: mediatek: Add cpumux support to common probe/remove helpers
+  clk: mediatek: Add PLL support to common probe/remove helpers
+  clk: mediatek: Add child-device population to probe/remove helpers
+  clk: mediatek: Add FHCTL support to common probe/remove helpers
+  clk: mediatek: mt2701: Switch to common probe/remove helpers
+  clk: mediatek: mt2712-apmixedsys: Switch to common probe/remove
+    helpers
+  clk: mediatek: mt6735-apmixedsys: Switch to common probe/remove
+    helpers
+  clk: mediatek: mt6779: Switch to common probe/remove helpers
+  clk: mediatek: mt6795: Switch to common probe/remove helpers
+  clk: mediatek: mt6797: Switch to common probe/remove helpers
+  clk: mediatek: mt7622: Switch to common probe/remove helpers
+  clk: mediatek: mt7981-apmixed: Switch to common probe/remove helpers
+  clk: mediatek: mt7986-apmixed: Switch to common probe/remove helpers
+  clk: mediatek: mt7988-apmixed: Switch to common probe/remove helpers
+  clk: mediatek: mt8135-apmixedsys: Switch to common probe/remove
+    helpers
+  clk: mediatek: mt8167-apmixedsys: Switch to common probe/remove
+    helpers
+  clk: mediatek: mt8173-infracfg: Switch to common probe/remove helpers
+  clk: mediatek: mt8183: Switch to common probe/remove helpers
+  clk: mediatek: mt8186-apmixedsys: Switch to common probe/remove
+    helpers
+  clk: mediatek: mt8188-apmixedsys: Switch to common probe/remove
+    helpers
+  clk: mediatek: mt8192: Switch to common probe/remove helpers
+  clk: mediatek: mt8195: Switch to common probe/remove helpers
+  clk: mediatek: mt8196: Switch to common probe/remove helpers
+  clk: mediatek: mt8516-apmixedsys: Switch to common probe/remove
+    helpers
+
+ drivers/clk/mediatek/Kconfig                 |  34 +--
+ drivers/clk/mediatek/clk-gate.c              |   4 +-
+ drivers/clk/mediatek/clk-mt2701-aud.c        |  35 +--
+ drivers/clk/mediatek/clk-mt2701.c            | 233 +++++--------------
+ drivers/clk/mediatek/clk-mt2712-apmixedsys.c |  48 +---
+ drivers/clk/mediatek/clk-mt6735-apmixedsys.c |  51 +---
+ drivers/clk/mediatek/clk-mt6735-imgsys.c     |   1 +
+ drivers/clk/mediatek/clk-mt6735-mfgcfg.c     |   1 +
+ drivers/clk/mediatek/clk-mt6779.c            | 124 ++--------
+ drivers/clk/mediatek/clk-mt6795-apmixedsys.c |   2 +
+ drivers/clk/mediatek/clk-mt6795-infracfg.c   |  70 +-----
+ drivers/clk/mediatek/clk-mt6795-pericfg.c    |  71 +-----
+ drivers/clk/mediatek/clk-mt6797.c            | 140 ++---------
+ drivers/clk/mediatek/clk-mt7622-apmixedsys.c |  60 +----
+ drivers/clk/mediatek/clk-mt7622-aud.c        |  35 +--
+ drivers/clk/mediatek/clk-mt7622-infracfg.c   |  70 +-----
+ drivers/clk/mediatek/clk-mt7981-apmixed.c    |  37 +--
+ drivers/clk/mediatek/clk-mt7986-apmixed.c    |  37 +--
+ drivers/clk/mediatek/clk-mt7988-apmixed.c    |  40 +---
+ drivers/clk/mediatek/clk-mt8135-apmixedsys.c |  48 +---
+ drivers/clk/mediatek/clk-mt8167-apmixedsys.c |  58 ++---
+ drivers/clk/mediatek/clk-mt8173-apmixedsys.c |   2 +
+ drivers/clk/mediatek/clk-mt8173-infracfg.c   |  98 ++------
+ drivers/clk/mediatek/clk-mt8183-apmixedsys.c |  51 +---
+ drivers/clk/mediatek/clk-mt8183-audio.c      |  26 +--
+ drivers/clk/mediatek/clk-mt8186-apmixedsys.c |  59 +----
+ drivers/clk/mediatek/clk-mt8188-apmixedsys.c |  60 +----
+ drivers/clk/mediatek/clk-mt8192-apmixedsys.c |  67 ++----
+ drivers/clk/mediatek/clk-mt8192-aud.c        |  26 +--
+ drivers/clk/mediatek/clk-mt8195-apmixedsys.c |  75 ++----
+ drivers/clk/mediatek/clk-mt8195-apusys_pll.c |  49 +---
+ drivers/clk/mediatek/clk-mt8196-apmixedsys.c |  67 +-----
+ drivers/clk/mediatek/clk-mt8196-mcu.c        |  96 +++-----
+ drivers/clk/mediatek/clk-mt8196-mfg.c        |  84 ++-----
+ drivers/clk/mediatek/clk-mt8516-apmixedsys.c |  42 +---
+ drivers/clk/mediatek/clk-mtk.c               |  90 ++++++-
+ drivers/clk/mediatek/clk-mtk.h               |  12 +
+ 37 files changed, 496 insertions(+), 1607 deletions(-)
+
+-- 
+2.56.0
+
