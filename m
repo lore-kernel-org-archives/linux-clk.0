@@ -1,190 +1,177 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E372A4EF13F
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 11:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791891312; cv=none; b=kSnO956ow0biFrpyZAdqpN+DxZFl6u5y5v8UdpAhsi0mTDWa+5YN5wWVx5ILuKU19+R/DTw/d0oh4VgFnXW6anbtfoFw99+5Y/b72qwRc7ZTZvxzDSFIHTnYMsGtEIhtHDijYHr2X/rvSTeLj+N+IjrnL41/6UzYoGsyb/jkDpI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791891312; c=relaxed/simple;
-	bh=eq78BI1b8aHQ8AAJBU6bJ/Gcgf05g89TrYsdBkgz/G8=;
-	h=Message-ID:From:Subject:To:In-Reply-To:References:Content-Type:
-	 Date; b=OPmPtm8AjCJQwpRDlenqZB2OCXef0ECK86oMxo0vn3No0UnssmjYKzo/G4k5m361j3bKnlefw+eGbB7V1urCKuudN0x4DygGQgl1KBHB+so6TY10CA/XdCeTo4DQDlQCNmmQ+yavlPZ/cp74zegPbmr4GxZY+xLWIcXIcrUwLvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aa4Lk40S; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F330C4F405F
+	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 12:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791892838; cv=pass; b=al+BCLZfylSLq9aamW6sCV3gL78uOfsVue1kggsT3oYNN9Gepkb8OytrFF7Y0dNzxrYLcyKlOSUvun6moStXfLMkECEKEugJ1QdbppQLRn3jO2RGkGSnW3zTudN1H/RTyVWuGjHuEG+f0QggVfZRz7XPz03s+UislkX/Szfv518=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791892838; c=relaxed/simple;
+	bh=3MZ0rBUQQ/DT6hYuG6QZ4NQ/FBC1DV7mDn+OHinCE3k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iNTkibbg4WOSKg9O74weyEHWh896d5gt0By9ZkiEp9UPx2GH6GWVev5z8u9yKRnL15/qc6bJiSkGb4UrqI/HBawOKTiBnvCVIF1RwwVcgJ2eKZY+64MG4eEeKaOncxP3oH0cB2oPA6dApHCCJzlJWASqzcy7wydgGMskTkQXA34=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=IaZLwu7R; arc=pass smtp.client-ip=74.125.224.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aa4Lk40S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB861F000FF;
-	Tue, 13 Oct 2026 11:35:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791891309;
-	bh=24REupCt5Xa1xGdLSdH6D9z8G+KTWLkowPgHJoTc5Ts=;
-	h=From:Subject:Reply-To:To:In-Reply-To:References:Date;
-	b=aa4Lk40SqwZ3lo2SwsU9P4XZP2cKoOB85qPKoXk8AcFJv8yvUieg30tXKGEZXdHA3
-	 oC8qK30gk2KpZAgG/opBhj2ei2XB1n4k2ejTq6ZF+1PApvcCnxT5AvrdfV3iWjgMZg
-	 8MJeuZy8QeJukqig3waF9HCFBMNNgxtsmhoK/B9yWNakc+43ie+QXrVwNDgnvRg65z
-	 8mAWLNH38r8Trnd9PolhlP0aB9n57lD12731CqLWmYnZTRqxoGyb/Clo1+e8Ok1K3a
-	 47rw3Dy99xhYQFlE99bq6HA3pIxp5wojkAfmLwYLVreBaM0NWaaGr94sNlPMW7kr0Z
-	 pmLPjEHIsafXg==
-Message-ID: <sashiko-outbox-169634@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] clk: samsung: exynos5-subcmu: Defer probe until power
- domains are available
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Marek Szyprowski" <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org
-In-Reply-To: <20261013111840.3645724-1-m.szyprowski@samsung.com>
-References: <CGME20261013111847eucas1p24df37631cc74fa27879f7d979348a1e1@eucas1p2.samsung.com>
- <20261013111840.3645724-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 13 Oct 2026 11:35:08 +0000
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="IaZLwu7R"
+Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-6768403e9bbso2292539d50.1
+        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 05:00:36 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791892836; cv=none;
+        d=google.com; s=arc-20260327;
+        b=gtI/j+EMY80qkeSgpo4mGaqdjz7JKqDYSxYhTXCCT+eyXCCzWIDWyNdIW0jwizYjI2
+         iizH0mcZChOtHE4r9/oWKyR/NS7fjMSNUhFLe2KDRHKnAkYTa3B0w5RujJj0fQpz2Jb+
+         DjVQyPw/N8nApL+aMNwjJTAnUSFoz62Tw1ZOFuEAO0/E6hys9sbiYsA+YwVdF9NrsEYx
+         TPObNRAbU386EBBdDIPnQd0y5hIEFH6YqWxfGVbXgEae0GBS3LffwhJ87FxZDjycrlTQ
+         ofqB3qxswBxhDUdHdYSD0vSVsUR6xxIE30uqg5pz+2sxnLmN9H3gpCRguX3VBqWduUmm
+         4JfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=pPCqI76VDLf6A6OD3FPwbH85jg0U2eYBPW7UJZyjAkU=;
+        fh=sLXNvfJRhqILB4gs58mBiAm1HdxGB2b8odcUhEkJCek=;
+        b=CAtYmTvXUC/PZBALL3FYNqP53kLTJAs6Hf46KI/MxGSXG/7dud2hudae8rw2jvMPG3
+         tdNN0rKJ0N4pv7sGmeSpt5MwvWaqSGcR0p1Sb38y3kD+nRhtluM0QZSZtSV56l2XIJLP
+         CeMOYn6lsDCKevnb8cWuOlSx9Y90ON9nvkFjlb1HFIZDsAR902aFyCC2xLsyPwT9BB+Q
+         jV2wr4jg0rVmlRZV82Sh1u+cChrPChNJ5YdBJGp2ckoITw/Uvl6ImSWH9bRnO4JZL0mP
+         N7e1/KIix6L0h5FKprECs2hxJZ7aBE+Hp8gNARSoqn+epALtqfIYKHtElML8eECeKxM7
+         F4zA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1791892836; x=1792497636; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=pPCqI76VDLf6A6OD3FPwbH85jg0U2eYBPW7UJZyjAkU=;
+        b=IaZLwu7R8ZTUVshbS8jWl4wLf/889Kp5dpZ8mC+Vjb8PzD/OJVDP4TPwDs/X7SxWj6
+         QTuLu1+L4G4eV6GTQGNpcU1q3yf0mjQnDgFTrWN0FPp3JZVm1TBB4pZ4c+mB1xou3nL+
+         C/Q2w30XPDuy7tpYbSQtkjvWG57ST04mbDhh0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791892836; x=1792497636;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=pPCqI76VDLf6A6OD3FPwbH85jg0U2eYBPW7UJZyjAkU=;
+        b=RnGL0kIFaMWKiqv9rQcz1o5ylppS0891Qn9PqeTCgvdKVHjPoMdwxk8vMNO/Zr+6fV
+         DltjSdn2n5nhWioISP1mRC5XDy1DEBHS218l0wnmewAP27gQh3jtYEqziXXFkxQ/MAzT
+         KnVm+WhhNDN5kR+x5Zfk859Pujv4/qBLmOm9PuTTsJp8RGX7QZVR05KqZKgYx700oZVS
+         HRexCzoelc1oPZ6dAF2zrtZ9XgNaGdKppFNyhiQl4X2XxRRShLbDX0yxcA4k5MOqs9k8
+         8fqkk9xkI8lw0anRSyWPecg4mW+Iq3+tl0V/j+403pBiiKdzAyjd4BVMaLYGD+Kjgqf2
+         wYdg==
+X-Forwarded-Encrypted: i=1; AKwUvBxSxTAWdj5iuRBveZsoCEvvSnXwqz8EatmFqOSdfx5w2ai5m/zAQieeBcY10ZW+PETS4YJUWDeOSuw=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJt2sM8ULOc4PiTnGWQiHRr8zCj2WwhBECux/6rG3b/vEQ46V7Q
+	EpEvP4eU6UqtjBETmkn4bY+4NKwJcOqsxsTUWQ5puByjJcG4WnuTNqZu4DcIggxxGAM6YvGt4XA
+	8vRyNLt+yk7i87+YhuOqkEGTErdh+fobtF1innxsxUw==
+X-Gm-Gg: AYBFou0BykJ0+xt6a3pxwThLy+PPFK4+431AoUAhjfWFHpGqhPd9/rkiI/XHPrWkj7k
+	A9yZpw3p0MVxBPzh+eWCgc5KLrb/On0J9DBNddxyPzKkOw0CVXVE3YFQxMHP0MxGMuIP8To286V
+	iyV4fufiVyBPtSuCigyFMBstbyrXMpfLihSfor0jJBIik1LDPN1dS3CrvueMkeLCArJdNqHLrX+
+	Avz8FEuCp/0yNBoe+wPeVTI/dtuhXHEiaaNFYjHL9oUApaynHphLGQnDxFYeP6BjA1DfBYktCyL
+	L/agTzUa9uUiX9uHCVvUOeHuG0D0SEz6lYkGaPyVbia04S49oC9FHBQgqwQlUq8ypSKbxTe+Vzs
+	PgOfBAWMWKPRsm0xHiffTR76DF3AHW3zlqseER9cnAC2p
+X-Received: by 2002:a05:690e:418b:b0:677:d67d:39e3 with SMTP id
+ 956f58d0204a3-67936767e9cmr4005406d50.2.1791892835727; Tue, 13 Oct 2026
+ 05:00:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20260904101243.412006-1-dario.binacchi@amarulasolutions.com>
+ <179070048452.199845.10870046832708018931.b4-ty@b4> <CABGWkvojte=RG=BJ=jvcq5HfUcYUZNsWNN+c5zDh-449VJ8Svg@mail.gmail.com>
+ <ar2q8M7Sn9DccVBI@redhat.com>
+In-Reply-To: <ar2q8M7Sn9DccVBI@redhat.com>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Tue, 13 Oct 2026 14:00:24 +0200
+X-Gm-Features: AclHuK8xxG5WHCzDqDFRzliodJK57Ya-SC3DZoZtYPsOSf_tESDvqgcH-jYqUEQ
+Message-ID: <CABGWkvpjZsDR=tOEeNfEGY3TWC0U3o=ZZE4BEWCx8DF7uBmt+g@mail.gmail.com>
+Subject: Re: (subset) [PATCH v14 0/4] Support spread spectrum clocking for
+ i.MX8M PLLs
+To: Sudeep Holla <sudeep.holla@kernel.org>, Abel Vesa <abelvesa@kernel.org>
+Cc: linux-kernel@vger.kernel.org, michael@amarulasolutions.com, 
+	linux-amarula@amarulasolutions.com, Brian Masney <bmasney+clk@redhat.com>, 
+	Cristian Marussi <cristian.marussi@arm.com>, Fabio Estevam <festevam@gmail.com>, 
+	Frank Li <Frank.Li@nxp.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Brian Masney <bmasney@redhat.com>, Peng Fan <peng.fan@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Sebin Francis <sebin.francis@ti.com>, Stephen Boyd <sboyd@kernel.org>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
-s) to consider:
-- [Critical] clk: samsung: UAF panic via -EPROBE_DEFER in __init probe func=
-tion
-- [High] clk: samsung: async pm_runtime_get in subcmu probe causes unpowere=
-d reg reads
-- [Medium] clk: samsung: sub-CMU registered without PM domain for disabled =
-nodes
-- [Medium] clk: samsung: missing of_genpd_add_device() error check
---
+Hi Sudeep, Abel,
 
-commit b224f204096c564d4ab18ceac4426ac6bc78aaed
-Author: Marek Szyprowski <m.szyprowski@samsung.com>
+On Thu, Oct 1, 2026 at 2:36=E2=80=AFAM Brian Masney <bmasney@redhat.com> wr=
+ote:
+>
+> + Sudeep
+>
+> Hi Dario,
+>
+> On Wed, Sep 30, 2026 at 11:01:28AM +0200, Dario Binacchi wrote:
+> > On Tue, Sep 29, 2026 at 6:48=E2=80=AFPM Brian Masney <bmasney@redhat.co=
+m> wrote:
+> > >
+> > >
+> > > On Fri, 04 Sep 2026 12:06:29 +0200, Dario Binacchi wrote:
+> > > > Support spread spectrum clocking for i.MX8M PLLs
+> > > >
+> > > > The series adds support for spread spectrum clocking for i.MX8M{M,N=
+,P}
+> > > > PLLs (audio, video and DRAM). It has been tested for the video PLL =
+on
+> > > > boards using i.MX8MN and i.MX8MP.
+> > > >
+> > > > While at it, it validates the spread spectrum configuration in the =
+clk
+> > > > core before it reaches the providers, and fixes the i.MX SCMI OEM
+> > > > extension, which converted the spread to the wrong unit.
+> > > >
+> > > > [...]
+> > >
+> > > Applied, thanks!
+> > >
+> > > [2/4] clk: validate spread spectrum configuration
+> > >       commit: 109124b8ff43fb911d5b8790bb5e4c5684f72d88
+> >
+> > Thanks for picking up patch 2/4.
+> >
+> > I put the two fixes at the head of the series expecting them to go in t=
+ogether.
+> > Am I missing something for 1/4?
+> >
+> > And how should 3/4 and 4/4 be handled?
+>
+> I can pick up the other SCMI patches, however I am waiting for a
+> Reviewed-by or an Acked-by from Sudeep for the SCMI changes in patches 1
+> and 3. It looks like Sudeep wasn't CCed on the original series so I added
+> him.
+>
+> Abel is the maintainer for imx in patch 4. I can take this as well,
+> however I'd need an Acked by from Abel.
 
-clk: samsung: exynos5-subcmu: Defer probe until power domains are available
-   =20
-Sub-CMU devices are added to their power domains with of_genpd_add_device()
-during exynos5_clk_probe(). Its return value is ignored, so if the power
-domain provider is not registered yet, the sub-CMU device is silently left
-outside of its power domain.
+Just a gentle ping. Any chance to get your acks on 1/4 and 3/4
+(Sudeep) and 4/4 (Abel)?
 
-Since commit c09a3e6c97f0 ("soc: samsung: pm_domains: Convert to regular
-platform driver"), power domain providers are registered only when their
-platform devices are probed, which happens after exynos5_clk_probe() has
-already been called.
+Thanks and regards,
 
-When a sub-CMU device is outside of its power domain, its runtime PM
-callbacks race with the power domain state changes, which might result in
-losing the proper hardware state. In practice, some clock muxes are left
-switched to the oscillator instead of the respective PLLs.
+Dario
+>
+> Brian
+>
 
-Fix this by deferring exynos5_clk_probe() until the platform devices for
-all available power domains are instantiated.
-
-> diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsu=
-ng/clk-exynos5-subcmu.c
-> index 3731298473013..587fe6e3bbed2 100644
-> --- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-> +++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-
-[ ... ]
-
-> @@ -155,11 +156,25 @@ static int __init exynos5_clk_register_subcmu(struc=
-t device *parent,
-> =20
->  static int __init exynos5_clk_probe(struct platform_device *pdev)
->  {
-> +	static const char pd_node_name[] =3D "samsung,exynos4210-pd";
->  	struct device_node *np;
->  	const char *name;
->  	int i;
-> =20
-> -	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
-> +	/* Defer until all needed power domains are registered */
-> +	for_each_compatible_node(np, NULL, pd_node_name) {
-> +		if (of_device_is_available(np)) {
-> +			struct platform_device *pd =3D of_find_device_by_node(np);
-> +
-> +			if (!pd) {
-> +				of_node_put(np);
-> +				return -EPROBE_DEFER;
-
-[Severity: Critical]
-Since exynos5_clk_probe() is marked __init, will returning -EPROBE_DEFER
-cause a use-after-free panic?
-
-When probe deferral is triggered, the probe function is queued for retry.
-Because the function resides in the __init section, its memory is freed
-after boot. When the deferred probe workqueue eventually retries probing
-the device, the kernel will jump into freed memory.
-
-(The modpost section mismatch warning that would normally prevent assigning
-an __init function to a platform driver's probe callback is masked by the
-__refdata annotation on exynos5_clk_driver).
-
-> +			}
-> +			put_device(&pd->dev);
-> +		}
-> +	}
-> +
-> +	for_each_compatible_node(np, NULL, pd_node_name) {
->  		if (of_property_read_string(np, "label", &name) < 0)
->  			continue;
->  		for (i =3D 0; i < nr_cmus; i++)
->  			if (strcmp(cmu[i]->pd_name, name) =3D=3D 0)
->  				exynos5_clk_register_subcmu(&pdev->dev,
->  							    cmu[i], np);
-
-[Severity: Medium]
-Since this second loop doesn't have the of_device_is_available() check
-used in the first loop, could this instantiate sub-CMU devices for disabled
-PM domains?
-
-For disabled nodes, this will extract the label, find a matching sub-CMU,
-and call exynos5_clk_register_subcmu(). Because the PM domain provider for
-the disabled node is never registered, of_genpd_add_device() will fail.
-
-[Severity: Medium]
-Will masking the return value of exynos5_clk_register_subcmu() leave the
-hardware in an invalid state?
-
-If of_genpd_add_device() or platform_device_alloc() fails in
-exynos5_clk_register_subcmu(), the error is ignored. The device is register=
-ed
-without its power domain attached, which can cause runtime PM callbacks to
-race with domain state changes, leaving clock muxes in an incorrect state.
-
->  	}
->  	return 0;
->  }
-
-I also noticed another issue with runtime PM in this driver:
-
-drivers/clk/samsung/clk-exynos5-subcmu.c:exynos5_subcmu_probe() {
-    ...
-    pm_runtime_set_suspended(dev);
-    pm_runtime_enable(dev);
-    pm_runtime_get(dev);
-
-    ctx->dev =3D dev;
-    samsung_clk_register_div(ctx, info->div_clks, info->nr_div_clks);
-    ...
-}
-
-[Severity: High]
-Does this asynchronous pm_runtime_get() cause unpowered register reads?
-
-It queues the device power-on but does not wait, and then the immediately
-following clock registration functions access the hardware registers. The
-Common Clock Framework initialization synchronously reads the clock registe=
-rs
-via .recalc_rate ops (e.g., clk_divider_recalc_rate()).
-
-Because the device resume and genpd power-on are queued asynchronously,
-these register reads occur while the power domain is physically off. This
-can cause an imprecise external abort (bus fault) or return zeros, leading
-to a corrupted clock tree state.
-
-Should this use pm_runtime_get_sync() to ensure the hardware is ready before
-access?
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261013111840.3645=
-724-1-m.szyprowski@samsung.com?part=3D1
+Dario Binacchi
+Senior Embedded Software Engineer
+M. +39 328 0625246
+dario.binacchi@amarulasolutions.com
+=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
+=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95
+Amarula Solutions SRL
+ Via Felice Cavallotti 25D, 41012 Carpi, MO, IT
+info@amarulasolutions.com
+www.amarulasolutions.com
