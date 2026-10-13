@@ -1,127 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F7E246774
-	for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2026 16:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419993C4B60;
+	Tue, 13 Oct 2026 16:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791910366; cv=none; b=kiTk7nFgEr1h5ByrEoHD7pu/1D3UCNJ28S+aYXRV5WfLiqm2rM7J/NBRRHT5Odx6Gz/6dvxDInPO/ICtV13JFZd98jp+XTqfR4MXF/W42WwtL52ycm4Q+/XpM2sk6WXOjwFlppHxONp92eM1Z+m98++zA5nLakNPEDKjUVNMIqc=
+	t=1791910411; cv=none; b=AsxiR//+1izOLxD6os3Gyq8/UoSGso7b9MolR7F9/8p/i5JylBugW5AaQH1auRuV29Ygkhkcmt9gfbluuoTpcXhVtegmlUkO1WgV2sD4+FTzxMOeKckoOcCEtOtQ5cyFKmVKrALOPUKmeZq+qIB6E4RgmgjtC413nC0koYbVlCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791910366; c=relaxed/simple;
-	bh=z67caY4tucYP/b7OGoBj//5s1ekQa+oSGQoFaFHOFdU=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=iMwgnTSiPFt9oNEpSvuwBDugNa3P5HQ2wEy95E5jxVnsE5Kq99V7G6tJcsECi/qy68eSBqDWENqBUNN/bF9rvh/e0L69zLNU8kb+DMxPL3IBSpXfEv1V2GnCAphYimr3uF2AIqwLQVuWmJIeWfwd9m4u5nqtMQD/CBoACYWayWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EgUvULUC; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791910411; c=relaxed/simple;
+	bh=Bf1+cUNbE5qkVcTONyft5tgSlgcrjgq5df40Ua6ahf0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sbVu8HMFI11XKzF+CvMW4tJk+J24veOiDMtHfSXM7X2sk8xB0rF52P1jCuogyfvD4Na8Vl+csEzPHIPQYJ+4aT5E9sQ7QR/qVzs7uU2yelLaNSFzfo8vbiMqsUKwpULSrnVekNMc1Vt/AUgCSz17tK0+ZiURB7CoDiM+6Mccyl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GWxRcSJq; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EgUvULUC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 069FD1F00893;
-	Tue, 13 Oct 2026 16:52:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791910365;
-	bh=spukiG6k2wS4FfNw6LJiZPCnLPdbzs2wSnRxF/8WfIE=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=EgUvULUCKwntXRQHHrXkzJ8PQYI3F5Hvp3fHZjqb4JNAWPYW6bmb05JQ6s6BtCan8
-	 tHb2W5qo5i3qSSdEvJihvzW9yWYexp01LiGwsSyYpeMIjfUbtyMRQeroSIHMxQjGvt
-	 JigF1iRp+fWlQcEJHois09F91z2+4hHKYDTIH0ov4y9nHKFu02ucB8WvsH9kI3uyTq
-	 +DiQncFlsQr3GUAcYAOoPuVwYhLU+Z0xFdhTqdXtGuC5vNzk72CM9g1Xe2BTcWbzAQ
-	 HwOuOfU4syfT0xi4Mn9uL0qQjB1SYQ6507ablzIB1HCspxs2gFcRMMaG5eezrLDDP2
-	 sCS4U+9lB9jog==
-Message-ID: <sashiko-outbox-170166@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 25/35] clk: mediatek: mt7988-apmixed: Switch to
- common probe/remove helpers
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Akari Tsuyukusa" <akkun11.open@gmail.com>
-Cc: =?utf-8?b?b3BlbiBsaXN0OkNPTU1PTiBDTEsgRlJBTUVXT1JL?= <linux-clk@vger.kernel.org>
-In-Reply-To: <20261013151734.3177690-26-akkun11.open@gmail.com>
-References: <20261013151734.3177690-1-akkun11.open@gmail.com>
- <20261013151734.3177690-26-akkun11.open@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 13 Oct 2026 16:52:44 +0000
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GWxRcSJq"
+Received: from smtpout-01.galae.net (unknown [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 83A62C653F4;
+	Tue, 13 Oct 2026 16:54:19 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C8E0C60362;
+	Tue, 13 Oct 2026 16:53:13 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2DEFC11D714FD;
+	Tue, 13 Oct 2026 18:53:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1791910393; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=iHPYa0/Oq6Fpvpu0NFhqnH64bHq9AyO4cfaAIVmzVx8=;
+	b=GWxRcSJqpJ5YCykL6qTYMGDEn0XCoERbh0ikqwcc6yyyRszBgdjVQGKdChUUcGFShmyabe
+	DSqTyY0aYRmeU1Zpk4lft2mzq1TuNaQ8rsthI1FjPFy1zDjmtcIz/iPUEwdpumRh9mrUO4
+	GDNdgoEA2snHF6tq5huO0590iJ5XfWhPHl8MNNomdBUqRM/W6MbqjQJystixnI2CI1J+Qi
+	m2A1LAVky0xJF7LSAwFqMAtlKjZrkGvR8sqFTiFevttr/weqyI22xM9cQRDTSPmThlXuTv
+	SoDuur1irMzuW5DAghll4CuZBFc1HJoFscp9xmOcbNZzyyS1sMQGBlyC+1xpvw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: sashiko-bot@kernel.org,  sashiko-reviews@lists.linux.dev,
+  conor+dt@kernel.org,  linux-clk@vger.kernel.org,  robh@kernel.org,
+  devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 5/7] clk: nuvoton: ma35d1: Reparent SYSPLL correctly
+In-Reply-To: <179181904945.33566.17882786294681341398.b4-reply@b4> (Jerome
+	Brunet's message of "Mon, 12 Oct 2026 17:30:49 +0200")
+References: <20261004-perso-ma35d1-upstream-clk-v8-0-e1a106a128c0@bootlin.com>
+	<20261004-perso-ma35d1-upstream-clk-v8-5-e1a106a128c0@bootlin.com>
+	<20261004205551.6279C1F000FF@smtp.kernel.org>
+	<87zewti2pf.fsf@bootlin.com>
+	<1jjynw7bp8.fsf@starbuckisacylon.baylibre.com>
+	<87cxtni7m6.fsf@bootlin.com>
+	<179181904945.33566.17882786294681341398.b4-reply@b4>
+User-Agent: mu4e 1.12.12; emacs 30.2
+Date: Tue, 13 Oct 2026 18:53:10 +0200
+Message-ID: <87ld81v8y1.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] clk: mtk: out-of-bounds array write in mtk_clk_register functions
---
+On 12/10/2026 at 17:30:49 +02, Jerome Brunet <jbrunet@baylibre.com> wrote:
 
-commit 9e2f22353c17eb582f6f6eadd7b30d78eb6c4de2
-Author: Akari Tsuyukusa <akkun11.open@gmail.com>
+> On 2026-10-06 09:57 +0200, Miquel Raynal wrote:
+>> On 05/10/2026 at 11:12:35 +02, Jerome Brunet <jbrunet@baylibre.com> wrot=
+e:
+>>=20
+>> > On Sun 04 Oct 2026 at 23:19, Miquel Raynal <miquel.raynal@bootlin.com>=
+ wrote:
+>> >
+>> >> On 04/10/2026 at 20:55:50 GMT, sashiko-bot@kernel.org wrote:
+>> >>
+>> >>> Thank you for your contribution! Sashiko AI review found 1 potential=
+ issue(s) to consider:
+>> >>> - [Low] clk: nuvoton: ma35d1: Modification of global static state
+>> >>> during probe
+>> >>
+>> >> There is a single clock controller. Should never be a problem. I can
+>> >> certainly move it in to more local scope if someone asks, but it's not
+>> >> practically needed.
+>> >
+>> > I may be missing something key here but why is not in your defined
+>> > indexes like the rest of the clocks ?
+>>=20
+>> SYSPLL and its parent (HXT_GATE) are in the hws[] array. Are you
+>> suggesting to use the hw_clk pointer directly there instead of using the
+>> parent data structure as an envelope? Because the issue raised is the
+>> global definition of the struct clk_parent_data and then its
+>> modification (since I need to reference the hws[SYSPLL] pointer inside).
+>
+> The problem sashiko is pointing at is that you are creating a global and =
+then use
+> it as a local variable, just assigning the the .hw
+>
+> So 2 possibilities:
+> * You just need the .hw then I don't really get why you are doing it diff=
+erently
+>   for this clock ?
 
-clk: mediatek: mt7988-apmixed: Switch to common probe/remove helpers
+True.
 
-The MT7988 apmixedsys driver used a custom probe to register PLLs but
-had no remove callback. With PLL registration and unregistration
-handled by the common helpers, the driver can use mtk_clk_simple_probe()
-and mtk_clk_simple_remove().
+> * OR, this is one of the those clock where you want to check DT first then
 
-> diff --git a/drivers/clk/mediatek/clk-mt7988-apmixed.c b/drivers/clk/medi=
-atek/clk-mt7988-apmixed.c
-> index 24f4e7b87a312..f7bb00e7d17a1 100644
-> --- a/drivers/clk/mediatek/clk-mt7988-apmixed.c
-> +++ b/drivers/clk/mediatek/clk-mt7988-apmixed.c
-[ ... ]
-> -free_apmixed_data:
-> -	mtk_free_clk_data(clk_data);
-> -	return r;
-> -}
-> -
->  static struct platform_driver clk_mt7988_apmixed_drv =3D {
-> -	.probe =3D clk_mt7988_apmixed_probe,
-> +	.probe =3D mtk_clk_simple_probe,
-> +	.remove =3D mtk_clk_simple_remove,
+It is not.
 
-[Severity: High]
-While this is not a regression for mt7988-apmixedsys because its IDs are
-densely packed (0..11), does migrating to mtk_clk_simple_probe cause an
-out-of-bounds array write for other drivers migrated in this series?
+>   fallback to a fixed clock, then yes you need parent_data. don't forget
+>   the fw_name (which I did not see here) and use a local variable for tha=
+t,
+>   not a global
+>
+> Did I miss something ?
 
-Looking at __mtk_clk_simple_probe() in clk-mtk.c, it allocates clk_data bas=
-ed
-on the total count of clock elements:
+You got it absolutely right, and while implementing the change I
+remember why I used the name instead of the hw pointer:
 
-drivers/clk/mediatek/clk-mtk.c:__mtk_clk_simple_probe() {
-	...
-	num_clks =3D mcd->num_clks + mcd->num_composite_clks;
-	num_clks +=3D mcd->num_fixed_clks + mcd->num_factor_clks;
-	num_clks +=3D mcd->num_mux_clks + mcd->num_divider_clks;
-	num_clks +=3D mcd->num_cpumuxes + mcd->num_plls;
+     clk_hw_register_fixed_rate_parent_hw() exists, but
+devm_clk_hw_register_fixed_rate_parent_hw() did not.
 
-	clk_data =3D mtk_alloc_clk_data(num_clks);
-	...
-}
+So since it looks like most of these helpers have their devm_
+counterpart, I will add this new helper in clk-provider.h. I plan on
+doing that addition in this commit because I think that is what Boyd
+used to prefer, but I can add it in a preparation patch that is your own
+preference, I don't mind.
 
-For drivers with sparse clock IDs like mt2701 topckgen, the total element
-count (149) is smaller than the maximum ID (CLK_TOP_AXISEL_D4 is 158).
-When mtk_clk_register_factors() processes this, will it write out-of-bounds
-into adjacent slab memory?
-
-drivers/clk/mediatek/clk-mtk.c:mtk_clk_register_factors() {
-	...
-		clk_data->hws[ff->id] =3D hw;
-	...
-}
-
-Could this cause a kernel panic during boot when loading other Mediatek clo=
-ck
-drivers with sparse IDs (like mt2701 and mt6779) migrated in this series?
-
->  	.driver =3D {
->  		.name =3D "clk-mt7988-apmixed",
->  		.of_match_table =3D of_match_clk_mt7988_apmixed,
->  	},
->  };
-> -builtin_platform_driver(clk_mt7988_apmixed_drv);
-> +module_platform_driver(clk_mt7988_apmixed_drv);
-> =20
->  MODULE_DESCRIPTION("MediaTek MT7988 apmixedsys clocks driver");
->  MODULE_LICENSE("GPL");
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261013151734.3177=
-690-1-akkun11.open@gmail.com?part=3D25
+Thanks for all the guidance!
+Miqu=C3=A8l
