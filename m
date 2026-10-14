@@ -1,35 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C102A4CB8BC;
-	Wed, 14 Oct 2026 12:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5354B1468;
+	Wed, 14 Oct 2026 12:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791980442; cv=none; b=i7kfuDCbahH0ovJoTAY3v8BD0/stvx6sY8frJBI2UjB7WEibGXltuNkuggY8BoEpF6F0GFyozL7kIOdSk8jCrj+pVXB6Ofrbtcisd++Xr5wOTFazvRkkc2N33IlZ1QRciK97oLb++YiEvhMaTczGgHYwlsVDQwVy5zDofAoQwjw=
+	t=1791980450; cv=none; b=UtbmKdMJ0ujrL90TR3uV0mLo1U38jdImPMjacuT29ICUhjJU37yLyoWVjhrCxbVe9TwwPlMnX0U5i8Vlnv6VsZ9xNnntJCuFdZMA5YkZ5qP70gRWXW5ECaCw3nwXuTzfRk0+OGO9jP95R66JeRaP4fVTAXbxk+0AKTCEWWuof1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791980442; c=relaxed/simple;
-	bh=zOm0X0tNaeAbnH7T3HAeYVTqaME7q0cfX2ex2l5d7wo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=foIffZGUOIFTzy2DWJ5Mjooeccc0nvdePbPtVNLIJxXUq96lqmmioRDbsHztwnwjGE2O2AQPftOftnTJX6hm2LALSHsUc+xc1XyJRdujkRjCuPUG9dCSDwW1RzljAQB68hV729eL1PNxxz6B3sEyizSrk9bfXusqfZ3QFZN8XzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Em9Xr0VW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791980450; c=relaxed/simple;
+	bh=y7pYa4fpea4TGtDoNdbrLICC89GEh8Yfl2YkbjAlsH0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=RhwPiwtx8zs1k7oKYZb5DDzXj1/iqTOmdar9TZHByiWQG9pjeSLGI/huF8H4Havl3/ScUXzchK6RGmFQeoj/VEFmkicZQNcYLE8nF0WlrBdRIOjYOSSxYqX2FymYnYLo9a4MVEo5r16oeiHe7NsRQr3iu5IlOkKJNONb5+gOCM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNk2XMVQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Em9Xr0VW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EB741F000FF;
-	Wed, 14 Oct 2026 12:20:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNk2XMVQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E92F41F00898;
+	Wed, 14 Oct 2026 12:20:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791980440;
-	bh=LZMVl0gBatkpFu1QINon5X3rRt2sPBbkS2s6o8Q7mYY=;
-	h=From:Subject:Date:To:Cc;
-	b=Em9Xr0VWgz7fLLZruCMyT+DbbOSUeVaiV+SsY0QLocaMFk2Rvo96LyPVjAnc/aaFd
-	 e95z8g3aeL5Oo6GHuwJnAFh7GWNp3st/Y70jxxlTcSzoPd0l94uGyXZwT/rd4e03tb
-	 7qvSaBYqkCtX/S1NUqT9mtZgGum3+BO+HWZHSCq25an2dAoiZJya7IGEnEXQ0fu8P8
-	 hj5XOr1ZWTkW1FqTwbgAE04HZr0N+17DZvFrZ7EFEDZT700mCFNdYqS/+ucNqLnVp5
-	 k0XkzArD3N0bpldfPotbqPjx8HieT8lVPw1lDVZ7MNEjbE6Bp8MJ7lJbuKq10Wn47L
-	 v8qGFO7hoz1kQ==
+	s=k20260515; t=1791980448;
+	bh=XCNH81hf+RhxgqzrDh+YsOvmxMtFk/zTJiWmyHTTNdU=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=iNk2XMVQES7A19xiN3HJ1409PnNF6KPwkNifvSVDKPZdo8E8s6NahiMe5gvrPmrLZ
+	 Xnnh0zK+QsPxiZFeEBySNtBuIig2hUepl8ZSx6269W59oS0LoNotYxnvYV7z9nnLVJ
+	 AhBBfVRGVDIIxD1/yRp6qrns0WWM2Y1qvtNtT2gwiQXdoA23bTomzHMLFNGSEQn/4k
+	 NoVZ/AuPNBpitZKt1ueQijhEk+/6LF8IPAgmlpXsiVmS+RUKe+LyeBcelLKVvB9mSo
+	 L6VW3LIPte1q5y5eFsoaGqH3yGrYF1e6SsoBl6VbdLiX2KLUrgUVj4xX2nBhSnFq7Y
+	 0lSxRlYSwvaSQ==
 From: Konrad Dybcio <konradybcio@kernel.org>
-Subject: [RFC PATCH 00/16] Centralize the ownership of power rail votes for
- Qualcomm clocks
-Date: Wed, 14 Oct 2026 14:19:00 +0200
-Message-Id: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
+Date: Wed, 14 Oct 2026 14:19:01 +0200
+Subject: [PATCH RFC 01/16] clk: Propagate rate programming failures
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -38,10 +37,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQqDQAxA0atI1h1IhCr2KiLSxoxNK2onVgTx7
- o66fIv/VzAJKgaPZIUgs5oOfQTdEuD3s2/FaRMNKaYZIZKbhlHZ/bjm7ls3szcnvsDc473IiCB
- 2YxCvy/ksq8v2f32Ep2ME27YDFuABxnUAAAA=
-X-Change-ID: 20261001-topic-qc_clk_dvfs-ef907f059611
+Message-Id: <20261014-topic-qc_clk_dvfs-v1-1-3041b788e9f7@oss.qualcomm.com>
+References: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
+In-Reply-To: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, Viresh Kumar <vireshk@kernel.org>, 
  Nishanth Menon <nm@ti.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
@@ -60,218 +58,411 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
  Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1791980431; l=11004;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1791980431; l=12559;
  i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=zOm0X0tNaeAbnH7T3HAeYVTqaME7q0cfX2ex2l5d7wo=;
- b=98u7KzSIWTvY9Kg9mUGPBxk4uWuNt+KyDKuHyTxDv7/7O/R+IUu6Xhf1c30kN0w/U/Q/0x7ke
- mIDTTefb5wtDZpPl5m72c//ru2YvyHhKqlNcI8U5r9h4NsT3pGZ+QwS
+ bh=8Tlhzs468jclPseFI72HZZyXao4fQMLAFf6Z+iMY+tc=;
+ b=rncLHgEQx203mVevIaIHoMfugVE3lNEIEUsb9KuuKIH65coMMDUWU4SIXLpsBGlDupB/cfsO7
+ ABASiMCX2teAilWIqBo1UCLBd9wiDbL9zsRafGyj92DQAvrK+cUDQr7
 X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Qualcomm SoCs, both the PLLs and other types of clocks alike require
-specific voltage rail levels to operate in-spec, but through the
-separation and decentralization of clock and voltage votes, these
-requirements are often not met and are never explicitly stated.
-This results in clocks being undervolted, or at the very least a state
-we're unable to reason about.
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-The devices consuming these clocks very rarely have their own
-requirements in that regard. (1)
+The clock rate-change walk ignores runtime PM, temporary prepare and
+enable, and provider programming failures. clk_set_rate() can therefore
+report success after a provider rejected the operation, while later
+clocks in the affected tree continue to be programmed. Consumers can
+then proceed with a configuration that was never successfully applied.
 
-This series moves the frequency-power_domain-perf_state mappings inside
-the clock drivers, ensuring a single, trusted source of truth is
-established and that the silicon is no longer driven at out-of-spec
-conditions.
+A failed parent switch must not leave the software topology pointing at
+the rejected source or release the old parent's references. Likewise,
+rate notifiers must not announce success before the whole walk succeeds,
+or lose their ABORT notification when a PRE notifier vetoes the change.
 
-To illustrate the nuances involved, here's a couple examples of hidden
-dependencies, as found on SM8650:
-* video_cc_mvs0_clk requires LOW_SVS to run at 900 MHz, but the
-  PLL it sources the signal from requires SVS (higher corner) to
-  produce that frequency. Similarly, to produce 1140 MHz, the clock
-  requires SVS, but the PLL then requires SVS_L1.
-  Analogous story for mvs1_clk.
-* gpu_cc_gmu_clk requires MX to be at SVS to output 625 MHz, the PLL
-  requires SVS_L1 to produce that frequency.
-* A number of camera clocks follow the same pattern.
-* Additionally, some clocks like cam_cc_cci_{0,1,2}_clk require
-  MMCX to run at LOW_SVS, but the PLL has the additional requirement
-  of keeping MXC (a wholly different rail) at SVS_L1.
+Propagate errors and stop the walk at the first failure. Keep topology,
+temporary references, and terminal notifications consistent with the
+outcome.
 
-There's a broad agreement that a consumer should only have to care
-about the clock it consumes, and that configuring its parents is the
-responsibility of the CCF. Requiring the consumers to care about the
-above cases (as is the expectation today) is a clear violation of
-that contract.
-
-A clock controller may have on the order of hundreds of clocks, each
-one with its own frequency-power map, and potentially all of them
-could be similarly affected.
-
-Recently, some drivers (Iris, CAMSS) have attempted to circumvent these
-problems by holding a direct reference to the power rails and managing
-the votes manually, through placing direct votes on each rail via an
-OPP table. That however has a number of drawbacks:
-* Because more than just one clock needs to be scaled at runtime, the
-  OPP table either has to contain NUM_CLOCKS * NUM_RATES to handle
-  that (which blows up pretty quickly), assume the worst case (and
-  waste power), or ignore that problem (and undervolt the clock
-  controller), instead of just being able to call set_rate() on each
-  clock as needed
-* The data ends up being dispersed across various consumers, even
-  though it logically belongs to the clock controller, making it
-  absolutely unauditable
-* It's horrendously error-prone because of the number of clocks
-  involved, the depth of the clock tree and the fact that at the end
-  of the day, one still has to consult the clock controller
-  documentation
-
-The approach proposed here also happens to more naturally fit into the
-process of how an SoC is brought up - clock controllers are always
-the very first pieces that need to be complete before other IP blocks
-can be brought up. And because of (1), enclosing the frequency-corner
-data within the clock drivers takes a weight off of everyone else's
-shoulders.
-
-On a related topic, the GDSCs are modeled as children of *all* power
-domains consumed by a clock controller at once. GDSCs are on/off switches
-with some fancy logic attached to them and may need some (or none) rails
-enabled to power on or off while meeting the hardware timing
-requirements. Voting on them was never quite right in the first place
-and is once again only a side-effect of the clocks' power requirements
-not being handled centrally.
-
-This series removes the vote propagation and the overly broad parent-
-child links, resulting in dropping unnecessary/incorrect votes that are
-now encapsulated by the clk-dvfs infrastructure. Big emphasis on (1)
-once again.
-
-The implementation is as follows:
-
-Each clock describes the rail levels it needs at each frequency. The
-new clk-dvfs helper combines these requirements and submits the
-resulting votes through GenPD and RPMHPD. Votes remain held while a
-clock is prepared, and rate or parent changes reserve the new
-requirements before any clocks are reprogrammed. This also requires CCF
-to report programming failures and OPP to retry failed transitions
-instead of relying on stale cached state.
-
-                Consumer: select rate, prepare clock
-                                   |
-                                   v
-        +------------------------ CCF ----------------------+
-        | Walk the clock tree and reserve resources          |
-        | before programming rates or parents                |
-        +--------------------------------------------------+
-                                   |
-                                   v
- +------------------------------------------------------------------+
- |                                                                    |
- |    GPLL9 ------> SDCC2 RCG -------> SDCC2 apps clock               |
- |      |               |                                             |
- |      |               |                         Other GCC clocks    |
- |      v               v                              |              |
- |  +------------+  +------------+                     v              |
- |  | PLL's own  |  | RCG's own  |          Per-clock requirements    |
- |  | rate table |  | rate table |                         |          |
- |  +-----+------+  +-----+------+                         |          |
- |        |               |                                |          |
- |        | CX            | CX + MX                        |          |
- |        v               v                                v          |
- |    +--------------------------------------------------------+      |
- |    |                  Clock-owned DVFS                        |    |
- |    |                                                          |    |
- |    | Prepared votes + temporary transition votes              |    |
- |    |                          |                               |    |
- |    |               Maximum requirement per rail               |    |
- |    +-----------+--------------+--------------+--------------+      |
- |                |              |              |                     |
- |            CX voter      CX_AO voter     MX voter                  |
- +----------------+-------------+-------------+---------------------+
-                   |              |              |
-                   v              v              v
-       +----------------------- GenPD ----------------------+
-       |      Aggregate GCC votes with other consumers       |
-       +---------------------------------------------------+
-                                  |
-                                  v
-                            +-----------+
-                            |   RPMHPD  |
-                            +-----------+
-
-Straightening out all of the above lets us tackle another problem
-with the upstream description of the power grid - the dependency
-between various rails. Most notably:
-* CX does NOT need to follow the performance state of MMCX
-* MX/MXA/MXC and CX are co-dependent only on some platforms (in coarse
-  terms, SM8350 and before)
-
-However, the main part of series needs to land first to ensure that
-dropping those relationships doesn't remove some wrongful votes the
-system relied on to stay functional. Resolving that will save power and
-finally ensure total stability as far as the providers are concerned.
-
-SM8650 is used as an example in this series, but the conversion will
-have to be done for all Qualcomm platforms. That will follow soon
-after the patches are merged. DFS clocks are left out of this RFC to
-reduce noise (the remaining diff is not particularly large but also
-requires boilerplate changes to bus drivers).
-
-dt-bindings changes are not included since it's an RFC.
-
+Assisted-by: LLM
 Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 ---
-Konrad Dybcio (16):
-      clk: Propagate rate programming failures
-      clk: Acquire resources for clock transitions
-      OPP: Retry failed default single-clock transitions
-      pmdomain: core: Support named indexed virtual attachments
-      pmdomain: core: Support subdomains without pstate propagation
-      pmdomain: core: Support indexed power-domain attachment lists
-      clk: qcom: Add clock-owned GenPD DVFS aggregation
-      clk: qcom: dvfs: Add debugfs
-      clk: qcom: clk-alpha-pll: Add DVFS (un)prepare
-      clk: qcom: clk-alpha-pll: Vote for the PLL calibration frequency
-      clk: qcom: gdsc: Make GDSC parenting optional
-      clk: qcom: gdsc: Link required power domains
-      [DNM] arm64: dts: qcom: sm8650: Describe clock controller power rails
-      [DNM] clk: qcom: Enable clk-dvfs on SM8650
-      [DNM] arm64: dts: qcom: sm8650: Drop required-opps
-      [DNM] pmdomain: qcom: rpmhpd: Stop forwarding MMCX pstate to CX
+ drivers/clk/clk.c      | 163 +++++++++++++++++++++++++++++++++++++------------
+ drivers/clk/clk_test.c |  16 ++++-
+ 2 files changed, 138 insertions(+), 41 deletions(-)
 
- arch/arm64/boot/dts/qcom/sm8650.dtsi        |  62 +--
- drivers/base/power/common.c                 |  24 +-
- drivers/clk/Makefile                        |   1 +
- drivers/clk/clk.c                           | 793 +++++++++++++++++++++++-----
- drivers/clk/clk_resource_test.c             | 376 +++++++++++++
- drivers/clk/clk_test.c                      | 194 ++++++-
- drivers/clk/qcom/Makefile                   |   1 +
- drivers/clk/qcom/camcc-sm8650.c             | 282 ++++++++++
- drivers/clk/qcom/clk-alpha-pll.c            | 317 ++++++++++-
- drivers/clk/qcom/clk-dvfs.c                 | 635 ++++++++++++++++++++++
- drivers/clk/qcom/clk-dvfs.h                 |  41 ++
- drivers/clk/qcom/clk-rcg2.c                 |  93 +++-
- drivers/clk/qcom/clk-regmap.h               |   6 +
- drivers/clk/qcom/common.c                   |  28 +-
- drivers/clk/qcom/common.h                   |   3 +
- drivers/clk/qcom/dispcc-sm8550.c            | 328 ++++++++++--
- drivers/clk/qcom/gcc-sm8650.c               | 261 +++++++++
- drivers/clk/qcom/gdsc.c                     | 154 +++++-
- drivers/clk/qcom/gdsc.h                     |   7 +
- drivers/clk/qcom/gpucc-sm8650.c             | 101 +++-
- drivers/clk/qcom/videocc-sm8550.c           | 135 ++++-
- drivers/opp/core.c                          |  72 ++-
- drivers/opp/opp.h                           |   2 +
- drivers/pmdomain/core.c                     |  60 ++-
- drivers/pmdomain/qcom/rpmhpd.c              |  14 +-
- include/dt-bindings/clock/qcom,sm8650-gcc.h |   2 +
- include/linux/clk-provider.h                |  39 ++
- include/linux/pm_domain.h                   |  33 +-
- 28 files changed, 3734 insertions(+), 330 deletions(-)
----
-base-commit: 4eb2586bd40db27d77cc5b724ca9386ed0c71d53
-change-id: 20261001-topic-qc_clk_dvfs-ef907f059611
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 4d2cc86bfbeb..95669775f8cd 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -84,6 +84,7 @@ struct clk_parent_map {
+  *                     clk_core->rate every time the clock is reparented, and
+  *                     when we're doing the orphan -> !orphan transition.
+  * @new_rate:          New rate to be set during a rate change operation.
++ * @old_rate:          Rate before the current rate change operation.
+  * @new_parent:        Pointer to new parent during parent change. This is also
+  *                     used when a clk's rate is changed.
+  * @new_child:         Pointer to new child during reparenting. This is also
+@@ -130,6 +131,7 @@ struct clk_core {
+ 	unsigned long		rate;
+ 	unsigned long		req_rate;
+ 	unsigned long		new_rate;
++	unsigned long		old_rate;
+ 	struct clk_core		*new_parent;
+ 	struct clk_core		*new_child;
+ 	unsigned long		flags;
+@@ -2163,11 +2165,14 @@ static void clk_reparent(struct clk_core *core, struct clk_core *new_parent)
+ 	core->parent = new_parent;
+ }
+ 
+-static struct clk_core *__clk_set_parent_before(struct clk_core *core,
+-					   struct clk_core *parent)
++static int __clk_set_parent_before(struct clk_core *core,
++				   struct clk_core *parent,
++				   struct clk_core **old_parent)
+ {
+ 	unsigned long flags;
+-	struct clk_core *old_parent = core->parent;
++	int ret;
++
++	*old_parent = core->parent;
+ 
+ 	/*
+ 	 * 1. enable parents for CLK_OPS_PARENT_ENABLE clock
+@@ -2191,14 +2196,24 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
+ 
+ 	/* enable old_parent & parent if CLK_OPS_PARENT_ENABLE is set */
+ 	if (core->flags & CLK_OPS_PARENT_ENABLE) {
+-		clk_core_prepare_enable(old_parent);
+-		clk_core_prepare_enable(parent);
++		ret = clk_core_prepare_enable(*old_parent);
++		if (ret)
++			return ret;
++
++		ret = clk_core_prepare_enable(parent);
++		if (ret)
++			goto disable_old_parent;
+ 	}
+ 
+ 	/* migrate prepare count if > 0 */
+ 	if (core->prepare_count) {
+-		clk_core_prepare_enable(parent);
+-		clk_core_enable_lock(core);
++		ret = clk_core_prepare_enable(parent);
++		if (ret)
++			goto disable_ops_parents;
++
++		ret = clk_core_enable_lock(core);
++		if (ret)
++			goto disable_migration_parent;
+ 	}
+ 
+ 	/* update the clk tree topology */
+@@ -2206,7 +2221,18 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
+ 	clk_reparent(core, parent);
+ 	clk_enable_unlock(flags);
+ 
+-	return old_parent;
++	return 0;
++
++disable_migration_parent:
++	clk_core_disable_unprepare(parent);
++disable_ops_parents:
++	if (core->flags & CLK_OPS_PARENT_ENABLE)
++		clk_core_disable_unprepare(parent);
++disable_old_parent:
++	if (core->flags & CLK_OPS_PARENT_ENABLE)
++		clk_core_disable_unprepare(*old_parent);
++
++	return ret;
+ }
+ 
+ static void __clk_set_parent_after(struct clk_core *core,
+@@ -2232,11 +2258,12 @@ static void __clk_set_parent_after(struct clk_core *core,
+ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+ 			    u8 p_index)
+ {
+-	unsigned long flags;
+ 	int ret = 0;
+ 	struct clk_core *old_parent;
+ 
+-	old_parent = __clk_set_parent_before(core, parent);
++	ret = __clk_set_parent_before(core, parent, &old_parent);
++	if (ret)
++		return ret;
+ 
+ 	trace_clk_set_parent(core, parent);
+ 
+@@ -2247,10 +2274,10 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+ 	trace_clk_set_parent_complete(core, parent);
+ 
+ 	if (ret) {
+-		flags = clk_enable_lock();
++		unsigned long flags = clk_enable_lock();
++
+ 		clk_reparent(core, old_parent);
+ 		clk_enable_unlock(flags);
+-
+ 		__clk_set_parent_after(core, old_parent, parent);
+ 
+ 		return ret;
+@@ -2312,6 +2339,7 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
+ 	struct clk_core *child;
+ 
+ 	core->new_rate = new_rate;
++	core->old_rate = core->rate;
+ 	core->new_parent = new_parent;
+ 	core->new_parent_index = p_index;
+ 	/* include clk in new parent's PRE_RATE_CHANGE notifications */
+@@ -2420,13 +2448,20 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
+ 						  unsigned long event)
+ {
+ 	struct clk_core *child, *tmp_clk, *fail_clk = NULL;
++	unsigned long old_rate = core->rate;
++	unsigned long new_rate = core->new_rate;
+ 	int ret = NOTIFY_DONE;
+ 
+-	if (core->rate == core->new_rate)
++	if (event != PRE_RATE_CHANGE)
++		old_rate = core->old_rate;
++	if (event == POST_RATE_CHANGE)
++		new_rate = core->rate;
++
++	if (old_rate == new_rate)
+ 		return NULL;
+ 
+ 	if (core->notifier_count) {
+-		ret = __clk_notify(core, event, core->rate, core->new_rate);
++		ret = __clk_notify(core, event, old_rate, new_rate);
+ 		if (ret & NOTIFY_STOP_MASK)
+ 			fail_clk = core;
+ 	}
+@@ -2454,17 +2489,17 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
+  * walk down a subtree and set the new rates notifying the rate
+  * change on the way
+  */
+-static void clk_change_rate(struct clk_core *core)
++static int clk_change_rate(struct clk_core *core)
+ {
+ 	struct clk_core *child;
+ 	struct hlist_node *tmp;
+-	unsigned long old_rate;
+ 	unsigned long best_parent_rate = 0;
+ 	bool skip_set_rate = false;
+-	struct clk_core *old_parent;
++	bool rate_ungated = false;
++	bool parent_enabled = false;
++	struct clk_core *old_parent = NULL;
+ 	struct clk_core *parent = NULL;
+-
+-	old_rate = core->rate;
++	int ret = 0;
+ 
+ 	if (core->new_parent) {
+ 		parent = core->new_parent;
+@@ -2474,53 +2509,83 @@ static void clk_change_rate(struct clk_core *core)
+ 		best_parent_rate = core->parent->rate;
+ 	}
+ 
+-	if (clk_pm_runtime_get(core))
+-		return;
++	ret = clk_pm_runtime_get(core);
++	if (ret)
++		return ret;
+ 
+ 	if (core->flags & CLK_SET_RATE_UNGATE) {
+-		clk_core_prepare(core);
+-		clk_core_enable_lock(core);
++		ret = clk_core_prepare(core);
++		if (ret)
++			goto runtime_put;
++
++		ret = clk_core_enable_lock(core);
++		if (ret) {
++			clk_core_unprepare(core);
++			goto runtime_put;
++		}
++		rate_ungated = true;
+ 	}
+ 
+ 	if (core->new_parent && core->new_parent != core->parent) {
+-		old_parent = __clk_set_parent_before(core, core->new_parent);
++		ret = __clk_set_parent_before(core, core->new_parent,
++					      &old_parent);
++		if (ret)
++			goto cleanup;
+ 		trace_clk_set_parent(core, core->new_parent);
+ 
+ 		if (core->ops->set_rate_and_parent) {
+ 			skip_set_rate = true;
+-			core->ops->set_rate_and_parent(core->hw, core->new_rate,
++			ret = core->ops->set_rate_and_parent(core->hw, core->new_rate,
+ 					best_parent_rate,
+ 					core->new_parent_index);
+ 		} else if (core->ops->set_parent) {
+-			core->ops->set_parent(core->hw, core->new_parent_index);
++			ret = core->ops->set_parent(core->hw,
++						    core->new_parent_index);
+ 		}
+ 
+ 		trace_clk_set_parent_complete(core, core->new_parent);
+-		__clk_set_parent_after(core, core->new_parent, old_parent);
++		if (ret) {
++			unsigned long flags = clk_enable_lock();
++
++			clk_reparent(core, old_parent);
++			clk_enable_unlock(flags);
++			__clk_set_parent_after(core, old_parent,
++					       core->new_parent);
++			goto cleanup;
++		}
++
++		__clk_set_parent_after(core, core->new_parent,
++				       old_parent);
+ 	}
+ 
+-	if (core->flags & CLK_OPS_PARENT_ENABLE)
+-		clk_core_prepare_enable(parent);
++	if (core->flags & CLK_OPS_PARENT_ENABLE) {
++		ret = clk_core_prepare_enable(parent);
++		if (ret)
++			goto cleanup;
++		parent_enabled = true;
++	}
+ 
+ 	trace_clk_set_rate(core, core->new_rate);
+ 
+ 	if (!skip_set_rate && core->ops->set_rate)
+-		core->ops->set_rate(core->hw, core->new_rate, best_parent_rate);
++		ret = core->ops->set_rate(core->hw, core->new_rate,
++					  best_parent_rate);
+ 
+ 	trace_clk_set_rate_complete(core, core->new_rate);
+ 
+ 	core->rate = clk_recalc(core, best_parent_rate);
+ 
+-	if (core->flags & CLK_SET_RATE_UNGATE) {
++cleanup:
++	if (rate_ungated) {
+ 		clk_core_disable_lock(core);
+ 		clk_core_unprepare(core);
+ 	}
+ 
+-	if (core->flags & CLK_OPS_PARENT_ENABLE)
++	if (parent_enabled)
+ 		clk_core_disable_unprepare(parent);
+ 
+-	if (core->notifier_count && old_rate != core->rate)
+-		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
++	if (ret)
++		goto runtime_put;
+ 
+ 	if (core->flags & CLK_RECALC_NEW_RATES)
+ 		(void)clk_calc_new_rates(core, core->new_rate);
+@@ -2533,14 +2598,22 @@ static void clk_change_rate(struct clk_core *core)
+ 		/* Skip children who will be reparented to another clock */
+ 		if (child->new_parent && child->new_parent != core)
+ 			continue;
+-		clk_change_rate(child);
++		ret = clk_change_rate(child);
++		if (ret)
++			goto runtime_put;
+ 	}
+ 
+ 	/* handle the new child who might not be in core->children yet */
+-	if (core->new_child)
+-		clk_change_rate(core->new_child);
++	if (core->new_child) {
++		ret = clk_change_rate(core->new_child);
++		if (ret)
++			goto runtime_put;
++	}
+ 
++runtime_put:
+ 	clk_pm_runtime_put(core);
++
++	return ret;
+ }
+ 
+ static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
+@@ -2613,7 +2686,14 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	}
+ 
+ 	/* change the rates */
+-	clk_change_rate(top);
++	ret = clk_change_rate(top);
++	if (ret) {
++		__clk_recalc_rates(top, true, 0);
++		clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
++		goto err;
++	}
++
++	clk_propagate_rate_change(top, POST_RATE_CHANGE);
+ 
+ 	core->req_rate = req_rate;
+ err:
+@@ -3958,8 +4038,11 @@ static void clk_core_reparent_orphans_nolock(void)
+ 		 */
+ 		if (parent) {
+ 			/* update the clk tree topology */
+-			__clk_set_parent_before(orphan, parent);
+-			__clk_set_parent_after(orphan, parent, NULL);
++			struct clk_core *old_parent;
++
++			if (__clk_set_parent_before(orphan, parent, &old_parent))
++				continue;
++			__clk_set_parent_after(orphan, parent, old_parent);
+ 			__clk_recalc_accuracies(orphan);
+ 			__clk_recalc_rates(orphan, true, 0);
+ 
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index 0505ed357b20..8860e9a6e43e 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -29,6 +29,7 @@ static const struct clk_ops empty_clk_ops = { };
+ struct clk_dummy_context {
+ 	struct clk_hw hw;
+ 	unsigned long rate;
++	int set_rate_error;
+ 	struct clk_spread_spectrum sscs;
+ };
+ 
+@@ -82,7 +83,7 @@ static int clk_dummy_set_rate(struct clk_hw *hw,
+ 		container_of(hw, struct clk_dummy_context, hw);
+ 
+ 	ctx->rate = rate;
+-	return 0;
++	return ctx->set_rate_error;
+ }
+ 
+ static int clk_dummy_set_spread_spectrum(struct clk_hw *hw,
+@@ -236,6 +237,18 @@ static void clk_test_exit(struct kunit *test)
+ 	clk_hw_unregister(&ctx->hw);
+ }
+ 
++static void clk_set_rate_error_test(struct kunit *test)
++{
++	struct clk_dummy_context *ctx = test->priv;
++	struct clk *clk = clk_hw_get_clk_kunit(test, &ctx->hw, NULL);
++
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, clk);
++	ctx->set_rate_error = -EIO;
++
++	KUNIT_EXPECT_EQ(test, -EIO, clk_set_rate(clk, DUMMY_CLOCK_RATE_1));
++	KUNIT_EXPECT_EQ(test, DUMMY_CLOCK_RATE_1, clk_get_rate(clk));
++}
++
+ /*
+  * Test that the actual rate matches what is returned by clk_get_rate()
+  */
+@@ -338,6 +351,7 @@ static struct kunit_case clk_test_cases[] = {
+ 	KUNIT_CASE(clk_test_get_rate),
+ 	KUNIT_CASE(clk_test_set_get_rate),
+ 	KUNIT_CASE(clk_test_set_set_get_rate),
++	KUNIT_CASE(clk_set_rate_error_test),
+ 	KUNIT_CASE(clk_test_round_set_get_rate),
+ 	{}
+ };
 
-Best regards,
---  
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+-- 
+2.56.0
 
