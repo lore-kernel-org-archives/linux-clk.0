@@ -1,87 +1,87 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356CC5616A7
-	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 16:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463AF56260C
+	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 16:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791996166; cv=none; b=rJmiZ0WUis5T/TdGQH6TPc37Zt+8taK5+crIgajSC7P1qewB4fWKCpBeiVjBFJBCzTyW1RTRQx8XunXXK6zIjg8XoKPf8d5VnhjKi1gmP0Ko2TK+Up875O2ivbueMAiZ9VcnM1y4tBiA4/VL8omPFi/IKwrn8Cxx4pADWqq2Q/E=
+	t=1791996354; cv=none; b=jEVVm+Se4Z/VO6LZNjGlMoQ6vyx8qmNVIPQfQualXi8FF/qxFl3CiDWxvf8IvoOEIe4bZQxbXsMJ9mcS9JiO37Sw4ZfwLS+X2JHP6nO9E9Sm3ARKg6esQWOOFzymTUrELN/DQXMZQKsf88sFA2B5+yD/rrayRMOYAhnlsw270iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791996166; c=relaxed/simple;
-	bh=+5ByLKIjfqCvrkCU7NEJqSiloCHsqlgCQOrg6SvYrXM=;
+	s=arc-20240116; t=1791996354; c=relaxed/simple;
+	bh=avmiatq5ycfq3Gus4JRQptPL9QjSFPMI9z8DIWEoH7g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MmYK5RVXZyYi2HFg94wug3U70lErHR4NgZVFHaHmtzT+mWZL8u1TZJtXgErppnic4UeXHwSVEseilsARHsDTtlT0/mAvCiQkYvOs7+c1gNQuQfDTKHo1Sx07Kncx6kBTJqzhUPeSW9xC78Fp3tHW/ojY5hMFzwXqFhbQBKrAlds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ymax4bHa; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=L6ARyZHJ; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=gzSrXYdjpqutM1hWDCzh4JG7WqFGxbuJZ8Yh0sUn9qWEd0mEydULLkkHcgXiSOMZfLfVGm99J+4WqTuUAUjLm+1XkMdEN9f7x2pLreebSYuIlQ/U3dyZT3ygGFgT3Z1PIDH5wUq75DXKIiYupcEvD8sbWL9Z79AHNcSXdvGwnsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jEzHYwH9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=GOIthIhr; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ymax4bHa";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="L6ARyZHJ"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69EF4PGD4167231
-	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 16:42:43 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jEzHYwH9";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="GOIthIhr"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69EEbI4M467734
+	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 16:45:52 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iPmSsmPY7WrUMIeP1/fFElJBiwRXXXsL/bHEaVdSks0=; b=Ymax4bHa2o9Fs8Xf
-	oMzFjI+CfReWH8It+9q8IN6PxA6f5+p0ncSJ4+4NMHJDIt/uxsJV9pNkr8m+jOxq
-	kF/DppZiKZoHtI0Fi30rbnwUgBBQ3wEaj1NItVHcVoD1V9kJk3Gclv1VKZG3DKFr
-	8yxS5GfvB8AXfa4IkrSbg9bC4SG9Fxo23kYZk8MXEkIJKa3o+hPWTI15v/Bh5Auk
-	PbtzUApcWGg74HxQ+IS3YM/8gpAj9OPlbnaVhj8RdScE6okKFXifLoCmthjEbKzd
-	8npKdrjMF3ed0tuGBLHPO1dHRRNQMNl0mQL9edtvK5l3HRbqeqCfUFRa29MyvOdO
-	X8h0Gw==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hac230ctp-1
+	XOGH9ZC26XcWJ/gjq1+5uzlqR8S1/dn0I31tPVR1QeQ=; b=jEzHYwH934IrzYuI
+	ynJmeEIh10QL7DWW/i4crH5aW5gLJqI9MFNYhhg/EPHi4iFypDBphxo4LKCahEk/
+	So5w5/cahPOjHd8RAXJjXucGpXKXSNchNgpOjmEUkdPhFuYdXbQDHRMMrvgNikEZ
+	n7bDawQlRFRxtN2LksRIpTowMHqEKWRuOSbq7b1a6siGKwn6lP0AL9pT/ppwnYEp
+	4Bz7HmB1FLq3QJTsx+Ipz9cqdaMgaKM4yUCJWrh61m6X95F82nm+5BHWYL+BYwSG
+	P5Gygm2w8POEDqWZcA30mucnro9zpWojaN3cyG2Nut8IWyXYfiDGfAIULC6rUWX4
+	yQ+Opw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h9yphkjvq-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 16:42:43 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-5350d8a2368so9687761cf.2
-        for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 09:42:43 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 16:45:52 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93cac495d99so33429685a.2
+        for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 09:45:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791996162; x=1792600962; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1791996351; x=1792601151; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=iPmSsmPY7WrUMIeP1/fFElJBiwRXXXsL/bHEaVdSks0=;
-        b=L6ARyZHJXpJGY8JP/n/M7AFL/gELUm0g8OOz15dWxLPNw2UzBHdUw1vMK9+I96QRh4
-         IAYxj7XTQXkgUxSPZgqOn5NEMdxYSmokMrphRTIXmwBluJgoyIYmqNp+WICaAkcft3HW
-         G24+DFKuhAPGsx/D0ssz01TfrLjDxe5ADMRKhM1tXWaLVV/bz7tkRntJlzY843ZrI27H
-         44j+Ek/SVUc08TG6qFFaNnCzn1NR9GQ7awrpox8S7qqRNj0Heiv3el0LghNJKVTZgXgc
-         WeeilyYczZCcFD0cSnkgklH2Ww9gVhuW7AA/Q7iaKHXiuBp1KAs3aYvAeAc58DX4yAge
-         3Rdw==
+        bh=XOGH9ZC26XcWJ/gjq1+5uzlqR8S1/dn0I31tPVR1QeQ=;
+        b=GOIthIhr09Zfxg/HTBSXwAPvFbsfQ0htu5MhzSNJqT0zyYoND9eHd2xLJeaT7Rba61
+         yfjXpcnqHUUj/TKx9RiD4u7en0UmzqkmqqaElMFsOjVi4Jja/8qNyG8L9TXrecmvyso2
+         dYCdDsFlpsupqRVYyVdBG/eiqCmCsXOaMVPKXf7XdA2kem1kXNrOa6Ynxd7jI85UgsWf
+         XwgvbhPB86Y7Ma2Pklo0kVusmyJdZPBE+OKM3ODyRQfg7/6lSvJAi6XNObpAU+LGzHtR
+         eDqBZhokBEVZcTj5zcoEBHeP2W4H9dp38ajJVH0s8HDJ53hXdV04+OTx8q+KHH9ZxP+8
+         eqrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791996162; x=1792600962;
+        d=1e100.net; s=20260707; t=1791996351; x=1792601151;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=iPmSsmPY7WrUMIeP1/fFElJBiwRXXXsL/bHEaVdSks0=;
-        b=NPx3Mlr9280IoV2FO2MXaHCAsQwSPHRy6cby2cMMAcICuWUYXD8zyGLL13bu+8aMNT
-         NQAuFhb+TvHXjl72+KmfdzSCTV20iD1+sKJGm0ben+B29FKeS1VQYRdajaSvIV5SYxW8
-         7VyWMpYYDTUqqV+7zv6tjkwvi1HzIgsFR4QmkPyxrJhlMVgF5HizZbQvJqAohDB7EfXH
-         1CKXAssO3ugdMeRp7PgkEfhCVzRHcximMoLAldGe/oVLEYD0lef7DaJfPpDGcRvDFCYF
-         rzAI/MDI4LWgB9iiFFPZmrV4Pt/DnajzfH9j8CE8K2oPQKxS6CflqCy6ylHvow8OcJ9t
-         p2Ow==
-X-Forwarded-Encrypted: i=1; AKwUvBxDvW8hr9FrHGxABCm8TuIKpfPq96YsUeNaoGs6+LvMaN/ZXFUqC7fzBMjAsjLUbatDZW0Y6sZViy4=@vger.kernel.org
-X-Gm-Message-State: AFq9FYITXon1gQTxGA+lCmF3DuHS2YhaxXOh5PZaUXhF3DWE+NUnBFZ9
-	RCc/csIvU9zr4vvBgYZPFj+SDM2KCNdO4opxhV+6oeSETpKKv4V1xfyPz/IPWaTvYy3XKzXii1i
-	/DAueb+FHyjC/aSIdWAULKmj7aGFDwuAurTWny4HXw5LNA2Vex/9km8Ran7zzvHE=
-X-Gm-Gg: AYBFou18nS3U2w9t5lbYkppOTpfOBTbs/gr1bfScDTUdKPOAbwoBrp6yrIJEnZaAN6F
-	N8pnmtzbgEIKjgtZWsw2NbdRPCGNsLKd6dngfNO3YFqIWuTBXwRyKqtnFdU8ndtW6vjoXIRLUHb
-	KDCYjySmCYUyNVXwCRrmobRw9DGwNV4CF9+iAqyMOsVhXzzgFWfjpydDtbHs88s20SMWKDZhGuE
-	HlQN6Kiatd8UOuAmhrt69SNR2+fVyW2VtJy8pP7MdWVw9LMsOAL7VrgOb+n5ykZIAp1Smd6NwWW
-	T3Wiv78eRD9kyXEruth9WtLdw6sHHKXzre7vbS/nAcUtS5OTHJf6hUm2acOpwJQgGJmqFzYboQ0
-	hSd25yCtJAeyv65zvCLmXaQ==
-X-Received: by 2002:a05:620a:269a:b0:93a:14c:329c with SMTP id af79cd13be357-93ebd0c2693mr3053028585a.1.1791996162219;
-        Wed, 14 Oct 2026 09:42:42 -0700 (PDT)
-X-Received: by 2002:a05:620a:269a:b0:93a:14c:329c with SMTP id af79cd13be357-93ebd0c2693mr3053021385a.1.1791996161600;
-        Wed, 14 Oct 2026 09:42:41 -0700 (PDT)
+        bh=XOGH9ZC26XcWJ/gjq1+5uzlqR8S1/dn0I31tPVR1QeQ=;
+        b=erlqBTNmG/lnAUozib9z6PnibGdoFcQnuNYaPnQs89wl+mZYTOijtOukXLqYp4BlzD
+         AD1VUcC1j+Hp5uiJNtI9A7kXyKq4RwoFaleq5U+eFJ48AWYE55bxeJgvywS8Rl/1AA2z
+         tg6n31PcSZaMgZDyqbnFhyOY7bbvKDWR0E/XadjFAj1mFBmS8OfNu0P9Zbeliwq1AhMv
+         7teNZCuV/1MrWsuPSXqk9P0qUY3qG/n2wmjYZORMz1u5oBNqToqAlcmaNIo1XMVx1REg
+         FuRAoVW2TiMvEFMtSRFk4Hbcu17873xVlvnMacPT3/ltfay770xFYIY2GMWWtX5VL7jp
+         TSWQ==
+X-Forwarded-Encrypted: i=1; AKwUvByU/u2fqgJC/aURtY70hwFI4Sr/jUh5XiLKjmXYp27pHjr19uMdfcp+n3zhqfn3OS/d39hQcm4fthI=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIkVo+bvuNKT3zxKcmuMnn0ndVG1A/gY43vjHgH87ZLL0/k+RNM
+	/TsPfJKKKiYE8objkgILMVo8GXa8iAF7kqhnAy/RIvAa2ETbKuaRzk+kK4o48JtQAXxZNkkkxjt
+	Sdy+iIbDzhcP+Irz6OoJ1FGDG20YfXNB7SrSHafLuls83FQ/VJielY74HngIdTFE=
+X-Gm-Gg: AYBFou2N5Skx8Yw49+qV+y6NT31G4g5HQgq7haXPiudGO/FMT505A2vDlxVV0lF4gYd
+	4R0e276B/pv6F1yEGHJTrYp79nybyAZHjFqraPq0u1gQdulwfoPTQT8bgpNxYYypTeFURrJiVt/
+	EQyTHw7eLcjVpQF+UeTkNoYDCqfRxaH3rHzoFrKQOMw2rwsGLCy7po9tMDd+mqKRETPXRlUuIGu
+	HSKuurw2UOq7wywP1a0hYKm9/wzfa8vMdKpQp3oonlbondx2bQ9tt2yCZbSr7gco4o22KupGq5n
+	BQPtYE35HDN39btQgjER/Dkfxnb0/QRf1+U79nnhICu0Li0zhm5yCnbIQisf2XUNxvsQcAlzkSb
+	lgoayAZcZAreXEVeoVYZeJQ==
+X-Received: by 2002:a05:620a:6501:b0:93a:1312:ff19 with SMTP id af79cd13be357-93ebd2661bdmr3238436685a.5.1791996351330;
+        Wed, 14 Oct 2026 09:45:51 -0700 (PDT)
+X-Received: by 2002:a05:620a:6501:b0:93a:1312:ff19 with SMTP id af79cd13be357-93ebd2661bdmr3238430085a.5.1791996350722;
+        Wed, 14 Oct 2026 09:45:50 -0700 (PDT)
 Received: from [192.168.226.26] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c3ed963cf98sm4760366b.13.2026.10.14.09.42.37
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c3eda61fb26sm4954766b.69.2026.10.14.09.45.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Oct 2026 09:42:40 -0700 (PDT)
-Message-ID: <85f24f78-9b30-4394-9899-65e19eef1b16@oss.qualcomm.com>
-Date: Wed, 14 Oct 2026 18:42:37 +0200
+        Wed, 14 Oct 2026 09:45:49 -0700 (PDT)
+Message-ID: <dad15717-4439-41b7-8552-0176c9cd1505@oss.qualcomm.com>
+Date: Wed, 14 Oct 2026 18:45:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -89,7 +89,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH DNM RFC 14/16] clk: qcom: Enable clk-dvfs on SM8650
+Subject: Re: [PATCH RFC 07/16] clk: qcom: Add clock-owned GenPD DVFS
+ aggregation
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Cc: Konrad Dybcio <konradybcio@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Brian Masney <bmasney+clk@redhat.com>,
@@ -111,92 +112,111 @@ Cc: Konrad Dybcio <konradybcio@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         driver-core@lists.linux.dev, linux-arm-msm@vger.kernel.org,
         devicetree@vger.kernel.org
 References: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
- <20261014-topic-qc_clk_dvfs-v1-14-3041b788e9f7@oss.qualcomm.com>
- <rfcbfy5z45w43ju2qjslrcnxfbhqbcx5fr5bii2icewm5ggihu@lsooj5mc7mpk>
- <bc6a824c-f242-4047-9198-dda53f789704@oss.qualcomm.com>
- <v2ody6fmdt32tv3ldgjews5nvzkwuiyyph5io5jv5nt5wn7qm7@svgijnjzf6y5>
+ <20261014-topic-qc_clk_dvfs-v1-7-3041b788e9f7@oss.qualcomm.com>
+ <ygwhik5t6w74xcqz4igmb6t5esmjjgrmtwqqqmo4doj34t7rpu@jkngx4v76rxg>
+ <6c9937a6-88c3-4e5f-85a3-73d929d3ba01@oss.qualcomm.com>
+ <dbyuabhh3phhe3uq2kvhcnuem7qb2a6j5yvhl6ylizqikt2rlk@vyvrcj3lewtp>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <v2ody6fmdt32tv3ldgjews5nvzkwuiyyph5io5jv5nt5wn7qm7@svgijnjzf6y5>
+In-Reply-To: <dbyuabhh3phhe3uq2kvhcnuem7qb2a6j5yvhl6ylizqikt2rlk@vyvrcj3lewtp>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=PYJqFShd c=1 sm=1 tr=0 ts=6acfb103 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+X-Proofpoint-GUID: dZnNbwvcXoQfYWnwli8j4MQpkfERZEnl
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE0MDA2NiBTYWx0ZWRfX+W7JTGgig8yT
+ habWxbLQmTqtXtkj1n8F5RijvqUdGaZ+Y5DJQt1l2jhnad0suiWcTLN2p3FEGxo98SYKVkXP21p
+ bxH/K0Xv/E6AiM8xInv7kuzMMj8Nj1g=
+X-Proofpoint-ORIG-GUID: dZnNbwvcXoQfYWnwli8j4MQpkfERZEnl
+X-Authority-Analysis: v=2.4 cv=Uv72pOwB c=1 sm=1 tr=0 ts=6acfb1c0 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
  a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
- a=EUspDBNiAAAA:8 a=lNqPBwARffoA8ln7mLoA:9 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE0MDA2NiBTYWx0ZWRfXwz/KzsXqYSQL
- DspT9D9dnA/jtmuW0wchkFLilRw6Y0zAPyVjZEsXsKBGMN4awxargtU9OR1HT6v9/u7zORaaKPe
- 9KQvfaBHTVjyvU3MOHQaFeuW6q4lxwg=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE0MDA2NiBTYWx0ZWRfXywNilMrKKw+e
- CFSmLeXAu0mPeNmbh5On4faVeUFVZPCk1LIzJOU6ORtAvme/YA1YuP71BweX8KVQ+0C3EZ6IyrQ
- oN86xbmtVT9VVVJ4s3zYVfTei+M/lhxdkNwgjgXV0TGpDfMcn+xA4QE93G1tzLJoQF7zqmJs9s3
- UDxjh1j36q6zj/F5B3sNyIWAkwD44RxcK99i+RiL0O+UIdHg9t5KWLZp9oV2wEjv1GTnjvjRUzF
- O/Ya0b7sO71z/dSjBQvR3DqmmbYxQbdYcafixf5JtuMQe/KzUyyG0lIQF4y2VCxF/lxBtUcRPfE
- K+7PLhG3CoWxcswpYpirHlGC2P/EQg0Bb9Syk30xaMNpeM+W19tteyxs5yZdcm5LAltLhwKHfcN
- V5lirkMcHn574RX/EL49xzeX/gDJ1RldZYdGoeQD/yXK1GzNeYMhqM58w0GxoSv2oPCpXmc/cnW
- K8jQ3dk2Nlhok9qcxOg==
-X-Proofpoint-GUID: nTajk2s_dS2Ze42tfrRgF-Xk1KAZ-Ce5
-X-Proofpoint-ORIG-GUID: nTajk2s_dS2Ze42tfrRgF-Xk1KAZ-Ce5
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
+ a=EUspDBNiAAAA:8 a=XY6eGlS5OATuIy7doj0A:9 a=QEXdDO2ut3YA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE0MDA2NiBTYWx0ZWRfX5MPlumLPmXsA
+ AQkvhhOV+vCfLHUw/UTm3ZkoSoKIHkt75WtJAvoJa+pqWAB+l2kpyGR3vUnDlcJru1bn/pr6ESm
+ onC6WT6t/MKcaIkgQFz1wLTqxR4+sUT/Npu652WoVgUWHLrJSIVLCzlxk1uv038hVyIHimro60t
+ 7nDfkkzwaE0rJQvrI5ze1jzcH4ZpSrpFBXWgcTBE8R9RCUUBRrJFn8xYhqVXwsylTkjcsGgxy2r
+ QkLNGu/o9VEcCx42ySQ/OAVE21NawJ/ntliBtMz5NaIcDS/mUli3xc0hI5wC3xSe5RO2eYHrRaQ
+ Hyzf5rPpVk11JGhYfCz9dymujv4rkVsjeL+c6L+0v5lVoo1mUwv+/OjQ5QzxWbBilfBn63AoKHG
+ rfBtrUjuINqBdAqovDfC6qc6wMdQGBRHK5UVuXD+Gt3FglHkQ8ch9oBviX0jlJ1ugJwmhQAAwSQ
+ 6kgpX4DFgXpypqiIwpg==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-10-13_01,2026-10-14_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 priorityscore=1501
- suspectscore=0 phishscore=0 malwarescore=0 impostorscore=0 adultscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2610080000
+ phishscore=0 lowpriorityscore=0 clxscore=1015 priorityscore=1501
+ suspectscore=0 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610080000
  definitions=main-2610140066
 
-On 10/14/26 6:35 PM, Dmitry Baryshkov wrote:
-> On Wed, Oct 14, 2026 at 05:22:40PM +0200, Konrad Dybcio wrote:
->> On 10/14/26 4:40 PM, Dmitry Baryshkov wrote:
->>> On Wed, Oct 14, 2026 at 02:19:14PM +0200, Konrad Dybcio wrote:
+On 10/14/26 6:30 PM, Dmitry Baryshkov wrote:
+> On Wed, Oct 14, 2026 at 05:26:00PM +0200, Konrad Dybcio wrote:
+>> On 10/14/26 4:36 PM, Dmitry Baryshkov wrote:
+>>> On Wed, Oct 14, 2026 at 02:19:07PM +0200, Konrad Dybcio wrote:
 >>>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 >>>>
->>>> Make use of the clock-dvfs infrastructure and fill in the power
->>>> requirements for SM8650's clocks to ensure the hardware can operate in
->>>> accordance with the specification.
+>>>> Clocks on Qualcomm SoCs need a minimum power rail performance state to
+>>>> operate at a given frequency. We currently leave this to clock
+>>>> consumers, so a driver has to know which power domains supply both the
+>>>> clock and its parents. This ties knowledge of the clock tree to
+>>>> individual consumers and doesn't protect other users that prepare or
+>>>> change the same clock without making those power requests.
+>>>
+>>> Why would they prepare or change the same clock without making power
+>>> requests? If it's a legitimate user of the clock, it should have an OPP
+>>> table. If it's not, it should have a separate API to set the clock via a
+>>> legitimate user / aggregator.
+>>
+>> That's the entire problem that motivated this series. The consumer
+>> doesn't know what it needs on Qualcomm platforms. The power
+>> requirements are that of the clock controller's, not of that device's.
+> 
+> I'd still say that the consumers know that they need a certain
+> frequency, which demands a certain voltage / power / etc.
+
+Right, but the meaningful difference here is that the consumers
+only know they need a certain frequency. The required power votes
+from that don't stem from the consumer's requirements. They stem
+from the clock controller's inner workings that are necessary to
+fulfill the consumer's demand.
+
+[...]
+
+>> The Qualcomm case is easy - RPMH is *always* reachable, so the
+>> pmdomain provider needs no clocks itself. For the other cases,
+>> "patches welcome".
+> 
+> Ok. There is a promise that I2C PMICs will never ever be involved in the
+> clock / power tables.
+
+Or at least that someone who needs them will contribute a
+solution to this problem.
+
+> 
 >>
 >> [...]
 >>
->>>>  #include <dt-bindings/clock/qcom,sm8650-camcc.h>
->>>> +#include <dt-bindings/power/qcom,rpmhpd.h>
+>>>> +static unsigned int
+>>>> +qcom_clk_dvfs_aggregate(struct qcom_clk_dvfs_rail_voter *rail_voter)
+>>>> +{
+>>>> +	struct qcom_clk_dvfs_vote *vote;
+>>>> +	unsigned int level = 0;
+>>>> +
+>>>> +	list_for_each_entry(vote, &rail_voter->votes, node)
+>>>> +		level = max(level, vote->level);
+>>>> +
+>>>> +	return max(level, rail_voter->safety_floor_level);
 >>>
->>> I've commented to the cover letter. For me it feels like the layering
->>> violation.
+>>> I guess you want to avoid having too many voters, but would it be
+>>> possible to have one voter per 'signficant' clock and let GenPD itself
+>>> aggregate all the votes?
 >>
->> I understand. I still think it's okay given this is a driver only
->> for a specific SoC.
+>> What does "significant" mean here?
 > 
-> Then soon we will get MMRM submitted upstream, which (currently)
-> randomly imports a set of the clock ids and asks consumers to talk to it
-> using the same clock IDS from DT bindings. Doesn't sounds like a good
-> idea.
+> I'd define it as "using a different power domain or requiring a
+> different corner".
 
-MMRM is more or less clk-powercap. The data it grabs via DT (power
-numbers) could as well be put into the clock driver here, in a
-similar fashion.
-
->> [...]
->>
->>>> +static const struct qcom_clk_dvfs_data cam_cc_camnoc_axi_rt_clk_src_dvfs = {
->>>> +	.pd_indices = (const unsigned int[]) { DT_PMDOMAIN_MMCX, DT_PMDOMAIN_MXC },
->>>> +	.num_pd_indices = 2,
->>>> +	.rates = (const struct qcom_clk_dvfs_rate[]) {
->>>> +		{ 300000000, RPMH_REGULATOR_LEVEL_LOW_SVS },
->>>> +		{ 400000000, RPMH_REGULATOR_LEVEL_SVS },
->>>
->>> And does it actually have the same vote on both MMCX and MXC? I'd need
->>> to check the clock tree.
->>
->> In this case the RCG needs VDD_MM and its direct child branch
->> needs MXC for the flipflops.
-> 
-> My question was "on the same level? Or on different levels? In the OPP
-> tables we (should) have 1:1 between scaling PDs and PD votes. 
-
-On the same level.
+I still don't get it
 
 Konrad
