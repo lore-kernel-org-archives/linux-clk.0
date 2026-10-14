@@ -1,119 +1,131 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2A6412BF1;
-	Wed, 14 Oct 2026 12:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6F84E80CC;
+	Wed, 14 Oct 2026 12:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791981406; cv=none; b=nKaGJNquDwgPZeU0wqXhHBWFvGLz+S3pTbxSTR2XwkcwBROeQk4YjFAZ8lygMv6vDU9g3N8Y1IKdDkXXEo7hXTzE8OLT1qwjoO9i02ektbsxUvUxOk5lbIv6kLtQovFqqP2txR0DuH1Z/U/ZN2zEEfIC/lxy4GgQskAEr81Vglo=
+	t=1791981432; cv=none; b=lXJOyyPCA7W122VlYHcJUB698aOKXCwpzLjq0hbQQFPD8B2AandommN4KAuPr6QRjvXsPhWTuBbdeCLWgCGaUa6Yeacdn0eMnkRwCqLOa3/ZRIIrq9Ly6NOGWw7NEJMacBRDlCJK+SXmgy78zMMvwuiH3C5EbTJTS3yHQ+yJLLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791981406; c=relaxed/simple;
-	bh=J4XFd0sBAw86W0/hl4IWAZGjbN+RKcR0IgKehFmLsGE=;
+	s=arc-20240116; t=1791981432; c=relaxed/simple;
+	bh=7uSCPyNA9hYTau3ViEp9GhTrfshCNKJ/zqI6j1VxtSY=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=d5qKzCRGtDU1qN+aB1Juf9opiNJ0AQ/jzpVHIfJXR7aVJhmdJK4AftDVgTHt5dLm78ugE6a0Fnn/Im3aZWecMq+UaGI7FEGJnyLGuRZfIy3V7ml3IPoRa9Pzgr8UxTiWglIJImtHWIAzhz0vkDdeOLEIDYIoJ/5juoNlU5pPL2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQaigwAO; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=skE8vi5f2Zfcv+Q8IQH2o6456m32gvqDuOpx1LK8eyHEcVfk/5AeR/yAZ7aHwRBNfKSOPycjBC6hofSZX4SKWTMzMfWrp3omSLIKi1rn/IZRWb2AuvoBbO+BZ2BdIzZk0Dx1sXH6HHrPvd1CvomnRIqoijZ+169MNTJlGZkTRI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFYlGaqg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQaigwAO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DECE1F000FF;
-	Wed, 14 Oct 2026 12:36:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFYlGaqg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05B151F008A3;
+	Wed, 14 Oct 2026 12:37:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791981405;
-	bh=9fyW98fb4tDND3qTFXHLus1JF0l7QzhieWqenZvmURA=;
+	s=k20260515; t=1791981431;
+	bh=EyujO6LreswkVKkIMfcZj0sBOrMuUNoqqwofZg3zjIM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=TQaigwAOsUBW7cD2sUAtz/er0B7XiCvJ2TndO1doY1UT/Nc9yosRJa4Hu2rVas+h7
-	 U1VjjzJ6hkcshvRfIQ2BPnozpjbSu9PQw/cwfUehmHiAe7z/nlrPZJGQxnN637Lsr1
-	 kbHBRagUGJlWcUu/hsXeiXeoa5Xt+P3KPfHgXHJImCHrn40sbRXggry+nO4XQwhKT8
-	 4wadtPSrNbYh3reBEEt+9vtoGHMl+v/D99LQZvDRRKW/2zTkmaoxRxtIcKrwC17faz
-	 uZiBZSb8kcqVgNrNtMW3YN7zbnbMFziIoz8nnSLSZm13Fc1M4O9rq6R3dli3EGC6pE
-	 i6TVz4pd/eARQ==
-Message-ID: <sashiko-outbox-171289@kernel.org>
+	b=OFYlGaqgmApbJgl6LENgncMYh3zuMBtlIVjT9AaUjvyCUKs6MciDeopMUBK4waChc
+	 PKGeYex7r1hezA16yvIv9nw67xLdOM6smIhhsbmsIjtnVS/Blb3SKmdoyxaoJ+6lsZ
+	 hk6L9GvKuCNgG5aPs08hx98jSBa1NXFJPeB5E3JilWxQDTy9gD+kHRokw6V2nEJ1YB
+	 zvqUoPHLfQvFlZbMSb+8ueK7OmxSrdAiKmziGAGz58Z9c3+t77M3KjAqOYBtfLtG6i
+	 0fDq6HRQsjqL5E9mx7oZLdlMO+WecQdPpXTSir2YEO9ndTJ6M+PbCqc0c3bBZsNIjv
+	 Px0vH5Jmafznw==
+Message-ID: <sashiko-outbox-171290@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH DNM RFC 14/16] clk: qcom: Enable clk-dvfs on SM8650
+Subject: Re: [PATCH DNM RFC 16/16] pmdomain: qcom: rpmhpd: Stop forwarding
+ MMCX pstate to CX
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Konrad Dybcio" <konradybcio@kernel.org>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261014-topic-qc_clk_dvfs-v1-14-3041b788e9f7@oss.qualcomm.com>
+In-Reply-To: <20261014-topic-qc_clk_dvfs-v1-16-3041b788e9f7@oss.qualcomm.com>
 References: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
- <20261014-topic-qc_clk_dvfs-v1-14-3041b788e9f7@oss.qualcomm.com>
+ <20261014-topic-qc_clk_dvfs-v1-16-3041b788e9f7@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 14 Oct 2026 12:36:44 +0000
+Date: Wed, 14 Oct 2026 12:37:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [High] clk: qcom: Unconditional GDSC required_pds breaks probe on older p=
-latforms
+- [High] pmdomain: qcom: missing error cleanup in rpmhpd_probe() corrupts g=
+pd_list
+- [High] pmdomain: qcom: missing clk-dvfs data causes system hangs
 --
 
-commit 5e8694e8d0d0380215d061d6b9b0bbabdb94e291
+commit e0f5d54b21f4fa98424f55031a683613420b6a75
 Author: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-One line subject: clk: qcom: Enable clk-dvfs on SM8650
 
-This commit enables clock-dvfs infrastructure for SM8650 by filling in the
-power requirements for SM8650 clocks. It also adds SM8650 support to the
-shared dispcc, videocc, and camcc drivers.
+pmdomain: qcom: rpmhpd: Stop forwarding MMCX pstate to CX
 
-> diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-s=
-m8550.c
-> --- a/drivers/clk/qcom/dispcc-sm8550.c
-> +++ b/drivers/clk/qcom/dispcc-sm8550.c
-[ ... ]
-> @@ -1629,6 +1778,8 @@ static struct gdsc mdss_gdsc =3D {
->  	},
->  	.pwrsts =3D PWRSTS_OFF_ON,
->  	.flags =3D POLL_CFG_GDSCR | HW_CTRL | RETAIN_FF_ENABLE,
-> +	.required_pds =3D disp_cc_sm8650_block_pd_indices,
-> +	.num_required_pds =3D ARRAY_SIZE(disp_cc_sm8650_block_pd_indices),
->  };
+This commit modifies the MMCX and MMCX_AO power domains to suppress
+performance-state propagation to their CX and CX_AO parent domains. The
+parent relationship is kept solely for power ordering.
 
-[Severity: High]
-Does this unconditional assignment of SM8650-specific power domains to the
-mdss_gdsc structure break the probe on older platforms like SM8550, SAR2130=
-P,
-and X1E80100?
-
-Since the dispcc-sm8550.c driver is shared between these platforms, the old=
-er
-platform descriptors (like disp_cc_sm8550_desc) do not set
-num_dvfs_rail_voters. As a result, qcom_clk_dvfs_register() won't be called
-during qcom_cc_really_probe().
-
-When gdsc_register() attempts to register these shared GDSCs on the older
-platforms, it evaluates num_required_pds > 0 and calls
-gdsc_get_rail_voters(). This will then unconditionally delegate to
-qcom_clk_dvfs_get_rail_voter(), which returns -EINVAL because the DVFS
-subsystem was never initialized for them.
-
-Could this cause the entire clock controller probe to fail on those older
-platforms?
-
-> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc=
--sm8550.c
-> --- a/drivers/clk/qcom/videocc-sm8550.c
-> +++ b/drivers/clk/qcom/videocc-sm8550.c
-[ ... ]
-> @@ -456,6 +514,8 @@ static struct gdsc video_cc_mvs0c_gdsc =3D {
->  	},
->  	.pwrsts =3D PWRSTS_OFF_ON,
->  	.flags =3D POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
-> +	.required_pds =3D video_cc_sm8650_block_pd_indices,
-> +	.num_required_pds =3D ARRAY_SIZE(video_cc_sm8650_block_pd_indices),
->  };
+> diff --git a/drivers/pmdomain/qcom/rpmhpd.c b/drivers/pmdomain/qcom/rpmhp=
+d.c
+> index fa8fed5bd3e58..4d9463b4d5df0 100644
+> --- a/drivers/pmdomain/qcom/rpmhpd.c
+> +++ b/drivers/pmdomain/qcom/rpmhpd.c
+> @@ -154,6 +156,7 @@ static struct rpmhpd mmcx_w_cx_parent =3D {
+>  	.pd =3D { .name =3D "mmcx", },
+>  	.peer =3D &mmcx_ao_w_cx_parent,
+>  	.parent =3D &cx.pd,
+> +	.parent_flags =3D GENPD_SUBDOMAIN_NO_PERF_STATE_PROPAGATION,
 
 [Severity: High]
-Could the same probe breakage occur here for the video_cc_mvs0c_gdsc
-structure in the shared videocc-sm8550.c driver?
+The commit message explicitly warns that this patch must not be merged with=
+out
+filling out clock DVFS data for all platforms first. It appears platforms
+such as SM8550, SM8450, and SM8250 do not yet receive the necessary DVFS da=
+ta
+updates.
 
-The SM8650-specific requirements are added unconditionally to
-video_cc_mvs0c_gdsc, which is used by SM8550 and X1E80100 as well. This
-appears to introduce the same risk of failing the clock controller probe on
-those platforms.
+Will this cause the CX power domain to lack required performance state vote=
+s,
+leading to system hangs and hardware lockups when multimedia blocks operate=
+ on
+these older platforms?
+
+[ ... ]
+
+> @@ -1223,9 +1227,13 @@ static int rpmhpd_probe(struct platform_device *pd=
+ev)
+>  	for (i =3D 0; i < num_pds; i++) {
+>  		if (!rpmhpds[i])
+>  			continue;
+> -		if (rpmhpds[i]->parent)
+> -			pm_genpd_add_subdomain(rpmhpds[i]->parent,
+> -					       &rpmhpds[i]->pd);
+> +		if (rpmhpds[i]->parent) {
+> +			ret =3D pm_genpd_add_subdomain_with_flags(rpmhpds[i]->parent,
+> +							        &rpmhpds[i]->pd,
+> +							        rpmhpds[i]->parent_flags);
+> +			if (ret)
+> +				return ret;
+
+[Severity: High]
+Does returning directly here leave statically allocated PM domains globally
+registered in the genpd core?
+
+By the time this loop executes, all PM domains have already been initialized
+and added to the global gpd_list by pm_genpd_init() in the preceding loop.
+Because the PM domain structures are statically allocated file globals,
+returning an error without cleanup leaves their gpd_list_node members in the
+global gpd_list.
+
+If probe is later retried, for example via deferred probe, pm_genpd_init()
+will be invoked again on these same static structures, potentially leading =
+to
+list corruption.
+
+Would an error path that calls pm_genpd_remove() for initialized domains and
+pm_genpd_remove_subdomain() for previously added subdomains be needed here?
+
+> +		}
+>  	}
+> =20
+>  	return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261014-topic-qc_c=
-lk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com?part=3D14
+lk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com?part=3D16
