@@ -1,88 +1,89 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1426953162A
-	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 14:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7848453B603
+	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 15:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791988869; cv=none; b=dVvV0n54EeOxSucINBFth2fCRF7yEgmte4NCCxzwiESi0QUeBS6IC3KHzyzbDO1EKU5bAhB0eva+5Z5rUBSY8FSXMkk220bw4SVQpPGYxFrg6C+HDURyuxhEjA1bK8DqKd9vL2cI8uOtFVvzXMcZSVC0eNNx1WXHWkw5vhmd5lI=
+	t=1791990171; cv=none; b=NnDt95JIAdV9DWZ8pV+V4c3Ge16+Ue7bcfmxiu45cXwhGLY1VkqJUGr6GUsqsn/jBNVY6sgVQnuO1lZ+U/4WUt+c2ZRjTTo4WLGFpOzpkiWhiL6Z1RmFsGXnxLZF9w3RdNBsHWzXGPwE9spXOKJE4g1X+vSvvFcxa7HKgG9vYq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791988869; c=relaxed/simple;
-	bh=Ec9/hUno1ZFZzQR8bss0/NRU+5O102GhZCMRIqp7HBc=;
+	s=arc-20240116; t=1791990171; c=relaxed/simple;
+	bh=D6DSOaHcvSq0t/JVKqdCTLF4wlLhu48+ANiIihPgiqA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VoB4XgNysjQewSBoUM4kuDumHM5EYiFRXgeC9p+A8NDUMiF/cv8QA1GUtQEgG4D8cpYk3k+6QiAF0dhz576FmwcB9KPGP5fAe+GRi1HbiW4OrKjnmd7V1DpSsE9QGxupKCgpUQZerFUxeCG3bIXSJw4zpGT2uxjc6gLcv3MGWR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HYZmXe93; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=UTImkear; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZgj4Mky+23rTeANHp7YrnMhXZ/hC3xQml9JHoPbGuxAiciEGqqOGHtE4e90oq/ID9PmarynDnHNuOXsVpLiwMXwBDQ0Pzs23PHYXiBpAT8Ymc5b4aKQmWfm6g/Q6yTeQm/S6nkuOtdbBcPQ5mGO3UpZFM3UEpu7X5EU5aHphhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nckwyOJb; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BOy6VS1B; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HYZmXe93";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="UTImkear"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69EEb8al1582932
-	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 14:41:04 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nckwyOJb";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BOy6VS1B"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69EEafeN500299
+	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 15:02:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ux0HctdGbOznFj/FPt6E7SCo
-	5RvSeqfeFWrCy3PfWf8=; b=HYZmXe93jWeqDh/RKjJ/2n4FvspXLYYxwy/kGdwC
-	WZPH5Z+j6uM7ffmv2Zx5XYNm46r7ZhYkos0DwhqSJPCS87UcqawuRSzbYWl+AkDj
-	tpnivH7stEJGqXJYBJHBKdu13SV8MF1cBQ8Dkj5X3qabfx7PwTCR/1mZtT9SMPWj
-	BtO0Fe2VH6NS3vmLsQl/ssQcwMgnqaFmOqIAgWUpq07RqKNwiJC4wT79RRS1l6Yy
-	7vOedm7PKpbwNsNKHIaYgeAVRiWPcDiHPRmwFSD2eZ+nvXHurRHG0QudK4JQLseo
-	LmwHCKnXPqpZJ+SlKrz50IRADXBn5qnDaHWZ2ZrlKi++vQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h9s2b4u23-1
+	:references:subject:to; s=qcppdkim1; bh=VLs9L3lY/vfTjFsZ1UhtwMXv
+	kTr/rNAuLor1fwi1wLY=; b=nckwyOJbBmDHevt0K852xtIcZq5G1mXGcllTXYTb
+	Cnq8fF516yDCg2QhzN1Tm9RP5trjnbR8SMDii6RzLOjqj47RIzIBBgygnjTA2Ls/
+	xSf317dJIuaT0db/ktl7N0c/2gBz+D8LXAGkSKjTAyi/imVDiisK6L49gfZjegbO
+	/z/Fux0vxeRJN7dU3gjghXRFFosrrZJFrLz3FmDeP8G6Zf3/PPmiEj4awPJSxr/N
+	eJL9+8ZOYUP2Ly9iu56xGtKH5ybukDy52dBox6fS2OinwvnwVg5nQQCU9r1JS6Vz
+	Z1xIXqXBHXqQNdE8a3YPN97145FjQQttzi72kWdCJ8fcnQ==
+Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com [209.85.221.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4haagf0dxr-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 14:41:03 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93caf6c528aso734012585a.0
-        for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 07:41:03 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 15:02:49 +0000 (GMT)
+Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-5df1badcee9so3319966e0c.0
+        for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 08:02:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791988863; x=1792593663; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1791990124; x=1792594924; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=ux0HctdGbOznFj/FPt6E7SCo5RvSeqfeFWrCy3PfWf8=;
-        b=UTImkearRxWS0wMXfgH/QEEkdkcZq0WjPs0aFhZ2kFM0s73MtMTTUh4n2dW/T6gn79
-         VXEFD+Cn51kVi4asmkMo8Z3COKo+tZr7oQsScyjbI56/qMrGWe+h2CpSWz6/OHbpNXt8
-         WcCkqymhd1YcmIxW5AD0LiaKQ7VJymh0NP7bGR3EBhKMRcvcdbGaRjN73n6/fRrqWFKC
-         JgveiE6XmsTjksk8oMnvraR523rDIlMcQlU1msom0N0tFotq1HmsMF4cC1V0x7Rh4s04
-         5o5pf4ibpIsv9gqPuBBML/rWm93pORFmXY/KeX8ckcoAUydvmpeaH00Cw5CtMwE4ZAhJ
-         WLPw==
+        bh=VLs9L3lY/vfTjFsZ1UhtwMXvkTr/rNAuLor1fwi1wLY=;
+        b=BOy6VS1BHQb7n44vif00kP1Yqv6boew1tKvPH4Pe3kPWChrFMtgsNPx0lIIoETGTt1
+         IpUUyeusQlTcPo4E41TCF1oqQAwZ74plVWyHcvKVhfxypyC/oRY32rq8HJg+td5SlC23
+         WytYu/UYQF6BlY2eluS55KXRh6uadog+beIXyIOK3A6GYGh57jYYtKoeVWvLCC2FK1vR
+         eLDhFqAqMSM3ccPHigXZO4imP297zsCgG7KS51nWmMUEyQCWCSMYVCK9MWj7En8J7b78
+         l+4c+gyioAHcFky39baVBp8vr5qW0XtSsFmJajXeTRY1V80PVvyXQyzG7gz6HLkzn1Wg
+         ivRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791988863; x=1792593663;
+        d=1e100.net; s=20260707; t=1791990124; x=1792594924;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=ux0HctdGbOznFj/FPt6E7SCo5RvSeqfeFWrCy3PfWf8=;
-        b=dZIWlad+Bs7UEKlaP8plT2Lt4WAN1Bs9CMWQ7DrPEpLjfj95VJHREJioTtW3xtjxJx
-         ldRGsfvVGxEqtBMHMCFQOqmZVyPt5QmQ95XZC7sFzuTK/xMjwtTjEX8SO2PbEP1nX6Q6
-         VhydqRZ/em/WyVdZyOWEAFxstMWFb78mFo60+OnUzywZTclb7CzVRxniG0dK3rE/o+DI
-         hAZ0y0w+xOgb4ZJLjm8jhCd7rTxw3r6XQc1WBvTofnLkfZ1CEyCsktljut6MTnr5Ve9/
-         XqC54qE7ODeh/ZNsB9gKtje8ZejrgYPUciakSQRcAozP1nl0qPVBfms3FHRtE7mxa7nH
-         nFSg==
-X-Forwarded-Encrypted: i=1; AKwUvBy8WYjG+VKnGAWEVn6hCDBjhJnYtgzURuyQxjsPmuTjacSPq5yQjMw7zKjZ2z5HP1P+cN90OTLypoE=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJLHiDluWcdU/pSGAItVv2vN2GIcIlSo2jMM/boPTpa5TDX6FOA
-	GgJ+QrRBLvR8O3JGphX9Pl0dCcUA1hdn73hToZIp2HWJvI7DtIzUFR8OSr/aFB7LPfo/C6QmqH7
-	rCEHdfJ06NKvmsM5FIbu2gAR8OKj5KBwcBGjaHpvAImUrVP/4a6AhNov/OjsWkHE=
-X-Gm-Gg: AYBFou1CkwC6xfPrmoAttDKt8aCTAMHjO8O3pZesq3eBRW8oMoamqN/LHnrD/9VIwLd
-	QPqliy2pn9tHNqnVqsd4lOdpUSOQXhKhxl/LxsTTw+9EQg80J5jh8WhgwPy/b3Z9wAMMEAZlNWh
-	yFglltVUsJ7OLur6hbijYGpGB00F1io7A0X/gbfgfrqwU3NQrVO/6jfMHmX31Lj7/vYGo5e0m9V
-	fSpEV1LoUpr6kB1omUjg9AXlZTM3HsAPBXryVS7Yt4XBsMsk3V9BvK2avClWLPfgefG4Jzq9S7J
-	px3tTZhNK+ZgxKMYuMdp2rdnS3RmPLREqpOaqm2V3KBHfAfg+65gCRiPbvemi9f1nZ9SO6gV8Mi
-	aABczqTSmWAtrpZX1M8OxSwA7F4X9DM0q6fZK6RBiNlMztNIzoThdY86sgPVI8d0jIWMTz6d69Q
-	pQkXm5kqHwV15j
-X-Received: by 2002:a05:620a:1726:b0:93e:7ec5:1832 with SMTP id af79cd13be357-93ebd1dff54mr2679986785a.23.1791988862683;
-        Wed, 14 Oct 2026 07:41:02 -0700 (PDT)
-X-Received: by 2002:a05:620a:1726:b0:93e:7ec5:1832 with SMTP id af79cd13be357-93ebd1dff54mr2679980385a.23.1791988862076;
-        Wed, 14 Oct 2026 07:41:02 -0700 (PDT)
+        bh=VLs9L3lY/vfTjFsZ1UhtwMXvkTr/rNAuLor1fwi1wLY=;
+        b=oKAHB1FInx2Ac3jC2Kd1fWuJPxvg+LDAhzLn/Ctw61GoqeaMlUwI5RZ2bUZ3OgPQUz
+         4sRYl6kVsRE0JAEgLk8i5WmMs0IOCwQOrb/uJOFzyDB7Bd6DHeJm78fH3A7jDlxTyGnc
+         rIBXqbzpABcUmclDCFayuHTkQf2E1hQQk3LG7j3xaQwDlem3xbh4aCmZ6xmeIcKxhlYm
+         8w6umQS3eDcZV6LT0ihxRqvDfbrb7RKV9XWRtclF4iqV7yyVCmB+Yr8Z3C5qhI5tKXpW
+         CQc6wsK4QyMJWWvHTp+TwGGUbWgq6BOV29nj85uW9q7039yCb4KGWdkgHGNqPeeKKE+U
+         sf6Q==
+X-Forwarded-Encrypted: i=1; AKwUvBxG8WHdFAxN91sLaZMGWFTj4hX0zmLXXs34Naus8iboGlG3l0CQ9Ro+slEhycJYBRzKy28P52eZYOo=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIE1V5jrHm66Bt4qL7ayiW96VS2ATkKzlMseZVlpr5WXvk8YF7C
+	Ie+zsUaHB5LHU630GdW5fgoa/ccz679t53jYWmnyLNuC2SIPj7XIj+nSxAHBFlYvvuo5sl+ZF6f
+	Ig9pBqil0s+/PwtjcxB2LGaFsHXJioPnOb2A8RoQEt8k6mSQWpaLGsmwhK+wlpXE=
+X-Gm-Gg: AYBFou1TFgxzSweWZWyg6gMqOhAzUDKJ/apWPWqHwYhXQpdGYlM1PG2Td6A2vKxx3hj
+	W+yWRb6YFVucBQ5COpzFS8af8qJdZj4k5win0WACSjWucPFhH9gmONGJ5F25ihWs4mFc8mxIa8I
+	PJ0XWK6jjeAcs8Fy+S/VGAdE63ax3bRnDNmFb0SqBw4M4Pz8N7UCuxX1jcsZdTabjYwBTHCO+w5
+	gUyXBWrPO5NxDeRqmL4EgqgyimRohOMn8QUR6afmT0SvniDQl13/OQMRi65dOxfz1YVj7dzpNDL
+	PsiOW88eOJDtVyVKLYg6NIChj0GqT77K05caJs2XjsdmL0500WZe1g1zMlVKxpYuwcf/ZjmqnWU
+	e258d8M/hlBDusk9Lc94SgK46PVA5R8s8kVfVVoTgfcIRSt3DnLYQ+NjuLtMb1WAGrpIXevsXmj
+	29e3loSzmIgGS/
+X-Received: by 2002:a05:6122:30e7:b0:5e5:35a5:8b09 with SMTP id 71dfb90a1353d-5e91f4c2a8amr5417818e0c.17.1791990122703;
+        Wed, 14 Oct 2026 08:02:02 -0700 (PDT)
+X-Received: by 2002:a05:6122:30e7:b0:5e5:35a5:8b09 with SMTP id 71dfb90a1353d-5e91f4c2a8amr5417712e0c.17.1791990121807;
+        Wed, 14 Oct 2026 08:02:01 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3a9e4c55247sm22236841fa.17.2026.10.14.07.41.00
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5be33da3ab7sm703310e87.83.2026.10.14.08.01.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2026 07:41:00 -0700 (PDT)
-Date: Wed, 14 Oct 2026 17:40:58 +0300
+        Wed, 14 Oct 2026 08:01:59 -0700 (PDT)
+Date: Wed, 14 Oct 2026 18:01:57 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Brian Masney <bmasney+clk@redhat.com>,
         Jerome Brunet <jbrunet+clk@baylibre.com>,
         Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
@@ -98,12 +99,16 @@ Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
         Taniya Das <taniya.das@oss.qualcomm.com>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         driver-core@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH DNM RFC 14/16] clk: qcom: Enable clk-dvfs on SM8650
-Message-ID: <rfcbfy5z45w43ju2qjslrcnxfbhqbcx5fr5bii2icewm5ggihu@lsooj5mc7mpk>
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH DNM RFC 13/16] arm64: dts: qcom: sm8650: Describe clock
+ controller power rails
+Message-ID: <555cch3ceqlonpp5xgfrtxesppxolhuedabmw3twjjfspyoj6y@in4qkpalmuwr>
 References: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
- <20261014-topic-qc_clk_dvfs-v1-14-3041b788e9f7@oss.qualcomm.com>
+ <20261014-topic-qc_clk_dvfs-v1-13-3041b788e9f7@oss.qualcomm.com>
+ <su6pmts36qj4hogxfthkrvjr2aod2r2u33onxifqanbarxk3tc@36qoces4rwor>
+ <2ce49c83-b861-4a0d-8412-e8b3ff33bdd5@oss.qualcomm.com>
+ <lyeiklz7kcjhotj43wir7xutru5wmjbrwfwauwbyzx5jcgpito@uyryg2sbmsf6>
+ <924134e4-946d-40e0-8d93-2951aafda4f9@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -112,148 +117,87 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261014-topic-qc_clk_dvfs-v1-14-3041b788e9f7@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=RPQmjIi+ c=1 sm=1 tr=0 ts=6acf9480 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+In-Reply-To: <924134e4-946d-40e0-8d93-2951aafda4f9@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE0MDA1OSBTYWx0ZWRfXzrcfnc3/vRy6
+ dnu1tXUZmF2Mw1bj7SgVNCzKJDxNynkCkPOwZGTMqzvMIvTdM+IbrIDT2CjrH7lxLXmaDqWFcqc
+ aySEooId/mkfvrpZ9TfQA1hKiOBOeZf20FBagLjZVaCFfXpJRoF0ORuwtT50NG2ML/gtpPrf4qT
+ tsbIp5d7AfcXcVqe3/O+KhHdzFTArQgERDYnM+2SkixyAkQ6HcvjKIzAYIHN+I/S0qU2Rx7GtVc
+ DVU4mRTMSF8b0wX78/vwQjekxlLQrkYKdkcxIqU3OLCcP9n++BxS6ZNBf3Z6n7TNhvBgVh6fNfi
+ tzR1bTJrrkOzuM4dFYa+yw7OHQtGL3Ku5WfT0RF5zc8ut4EWtajSHC1XGcYlZdLjW73hN/ltqws
+ si9sqAItNYYsorF2lM6ApBSD+tVvuwGeYpjo/BRDcijHuB7o1QmRhnuZ38TqocNWyAfXoTENCni
+ sLron/zV7XSmjfoFrpg==
+X-Proofpoint-GUID: NMaihDmc7h2BgD99IK9yYXS-EP2Q7H03
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE0MDA1OSBTYWx0ZWRfX5ICx7AxRTMCh
+ FbOnZ4mIvJVczxodkbbY/2VNlCiTsdeg5LPpuS/lpQQx8TE2LjDfDh4X0NWcX5EW7X4LDQqe03j
+ VICagMt8J5EOYgoZVeWk4pkdxa+hY1E=
+X-Proofpoint-ORIG-GUID: NMaihDmc7h2BgD99IK9yYXS-EP2Q7H03
+X-Authority-Analysis: v=2.4 cv=V/noQuni c=1 sm=1 tr=0 ts=6acf9999 cx=c_pps
+ a=1Os3MKEOqt8YzSjcPV0cFA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
  a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22 a=EUspDBNiAAAA:8
- a=PMMxHlK0yRAWYTSW-usA:9 a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: mewxlP3T01Oeoi0sqcGkCt-S5V49bpEX
-X-Proofpoint-ORIG-GUID: mewxlP3T01Oeoi0sqcGkCt-S5V49bpEX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE0MDA1OCBTYWx0ZWRfXzrR+kFL5Q/hJ
- 58rMnWQRuqkUDeyp3fUB6MciGFSwUKWo1/Qx8eTfphBe3wEC71p2orhBTNZ2f/4czqefKroDZCv
- hG58EqyGahy89jl3ya8OuQRMNfMOsur/2/tuRB9w9lhdIlu+JW9KQ61gVzwzLVzUKEHWSsG8k/3
- vfA+2dsmVPUh8L+27bIqUA23dNYvkbEKyg/yRpBLe9BptNspExaPjLlvxYToqox+JEblkdrhlni
- iBnaUVZInfCd0GWy6F7FJH3vusuccW+NoIEMcQykuUFNxaozc08/NOspNhANXClV192Jnvpe+Ne
- doDOf8HcpGCuD+9YtyBYyzyrpjXfYAyhnqzRB3QqgUPqXOrwLI6YQEeYeTo+KzYLIk++mH7GnzR
- ShulekHiGucRJePZmGPTDyCiwBhgh4O6oE9fQIHA0ccG1t8WySC/BaCrmPvL3z6RolWxLkUGini
- 7oRj9GSr2irS2ECCHFw==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE0MDA1OCBTYWx0ZWRfX9bw0ru7IGjlS
- k04K1zBQyMnAMBuRfzQ5uNIN8OV8MeaVU5SmbqaDYDzoR63vk4hqTx8jvGvE3Pp40RZ/fTS14SS
- rEMREmuW//KfEOpqSrXi3ftvH88j2zs=
+ a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=EUspDBNiAAAA:8
+ a=FrZRtYz5i2LrMhXnUOwA:9 a=CjuIK1q_8ugA:10 a=hhpmQAJR8DioWGSBphRh:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-10-13_01,2026-10-14_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 priorityscore=1501 clxscore=1015 malwarescore=0
- phishscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610140058
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 impostorscore=0
+ bulkscore=0 adultscore=0 clxscore=1015 phishscore=0 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610080000
+ definitions=main-2610140059
 
-On Wed, Oct 14, 2026 at 02:19:14PM +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Wed, Oct 14, 2026 at 04:36:11PM +0200, Konrad Dybcio wrote:
+> On 10/14/26 4:33 PM, Dmitry Baryshkov wrote:
+> > On Wed, Oct 14, 2026 at 04:20:08PM +0200, Konrad Dybcio wrote:
+> >> On 10/14/26 4:19 PM, Dmitry Baryshkov wrote:
+> >>> On Wed, Oct 14, 2026 at 02:19:13PM +0200, Konrad Dybcio wrote:
+> >>>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> >>>>
+> >>>> The SM8650 clock-controller nodes omit rails needed by their clocks and
+> >>>> PLLs. Without those connections, the clock-owned DVFS implementation
+> >>>> cannot attach its voters to all required domains and controller probe
+> >>>> can fail before any clocks are registered.
+> >>>>
+> >>>> Fixes: d2350377997f ("arm64: dts: qcom: add initial SM8650 dtsi")
+> >>>> Assisted-by: LLM
+> >>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> >>>> ---
+> >>>>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 16 +++++++++++-----
+> >>>>  1 file changed, 11 insertions(+), 5 deletions(-)
+> >>>>
+> >>>> @@ -6049,8 +6055,8 @@ dispcc: clock-controller@af00000 {
+> >>>>  				 <0>, /* dp3 */
+> >>>>  				 <0>;
+> >>>>  
+> >>>> -			power-domains = <&rpmhpd RPMHPD_MMCX>;
+> >>>> -			required-opps = <&rpmhpd_opp_low_svs>;
+> >>>
+> >>> I think this is neccessary (at least on some platforms) to keep MMCX out
+> >>> of retention. Even if we can drop it here, I don't think we can drop it
+> >>> for older platforms.
+> >>
+> >> MMCX exists precisely to let you turn it off, the clock patches
+> >> retain a way to keep the clock on during the runtime-resume of
+> >> the clock controller driver
+> > 
+> > Turning off MMCX is possible together with suspending the dispcc. If
+> > dispcc is resumed, MMCX should be at least low_svs. On some platforms
+> > it's handled by the cmd-db, where MMCX has a minimal value of low_svs.
+> > On other platforms MMCX lists 'RET' as a possible value, however it's
+> > not enough for dispcc (or other CCs) to work. In theory, *I think*, it's
+> > exactly what 'GCC_DISP_AHB_CLK' might need to vote, but we don't
+> > represent it.
 > 
-> Make use of the clock-dvfs infrastructure and fill in the power
-> requirements for SM8650's clocks to ensure the hardware can operate in
-> accordance with the specification.
+> Retention isn't a ""real"" state the OS should vote for, as the HW
+> downstream of the rails generally needs some flavor of LOW_SVS to
+> function, or at least I don't know of any such cases.
 > 
-> Assisted-by: LLM
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
-> This commit is a DNM since some of the affected drivers are shared
-> between multiple platforms, this will be properly reworked if we agree
-> on merging the clk-DVFS infra.
-> ---
->  drivers/clk/qcom/camcc-sm8650.c             | 282 ++++++++++++++++++++++++
->  drivers/clk/qcom/dispcc-sm8550.c            | 328 ++++++++++++++++++++++++----
->  drivers/clk/qcom/gcc-sm8650.c               | 261 ++++++++++++++++++++++
->  drivers/clk/qcom/gpucc-sm8650.c             | 101 ++++++++-
->  drivers/clk/qcom/videocc-sm8550.c           | 135 ++++++++++--
->  include/dt-bindings/clock/qcom,sm8650-gcc.h |   2 +
->  6 files changed, 1041 insertions(+), 68 deletions(-)
+> See also
 > 
-> diff --git a/drivers/clk/qcom/camcc-sm8650.c b/drivers/clk/qcom/camcc-sm8650.c
-> index 3aad816ed233..188649368564 100644
-> --- a/drivers/clk/qcom/camcc-sm8650.c
-> +++ b/drivers/clk/qcom/camcc-sm8650.c
-> @@ -6,12 +6,15 @@
->  #include <linux/clk-provider.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm.h>
->  #include <linux/regmap.h>
->  
->  #include <dt-bindings/clock/qcom,sm8650-camcc.h>
-> +#include <dt-bindings/power/qcom,rpmhpd.h>
+> 7178817f1904 ("pmdomain: qcom: rpmhpd: Skip retention by default")
 
-I've commented to the cover letter. For me it feels like the layering
-violation.
-
->  
->  #include "clk-alpha-pll.h"
->  #include "clk-branch.h"
-> +#include "clk-dvfs.h"
->  #include "clk-rcg.h"
->  #include "clk-regmap.h"
->  #include "common.h"
-> @@ -46,6 +49,110 @@ enum {
->  	P_SLEEP_CLK,
->  };
->  
-> +/*
-> + * Downstream uses CRM/CESTA for PLL3-7/10 and the CAMNOC AXI RT, CPHY RX,
-> + * CSID, IFE0-2 and SFE0-2 RCGs. Until upstream supports that path, manage
-> + * their rail requirements through clock-owned DVFS.
-> + */
-> +enum {
-> +	DT_PMDOMAIN_MMCX,
-> +	DT_PMDOMAIN_MXC,
-> +	DT_PMDOMAIN_MX,
-> +};
-> +
-> +static const struct qcom_clk_dvfs_data cam_cc_pll0_dvfs = {
-> +	.pd_indices = (const unsigned int[]) { DT_PMDOMAIN_MXC },
-> +	.num_pd_indices = 1,
-> +	.rates = (const struct qcom_clk_dvfs_rate[]) {
-> +		{ 615000000, RPMH_REGULATOR_LEVEL_LOW_SVS_D1 },
-> +		{ 1100000000, RPMH_REGULATOR_LEVEL_SVS },
-> +		{ 1600000000, RPMH_REGULATOR_LEVEL_SVS_L1 },
-> +		{ 2000000000, RPMH_REGULATOR_LEVEL_NOM },
-> +		{ 2100000000, RPMH_REGULATOR_LEVEL_TURBO_L1 },
-> +	},
-> +	.num_rates = 5,
-> +};
-> +
-> +static const struct qcom_clk_dvfs_data cam_cc_camnoc_axi_rt_clk_src_dvfs = {
-> +	.pd_indices = (const unsigned int[]) { DT_PMDOMAIN_MMCX, DT_PMDOMAIN_MXC },
-> +	.num_pd_indices = 2,
-> +	.rates = (const struct qcom_clk_dvfs_rate[]) {
-> +		{ 300000000, RPMH_REGULATOR_LEVEL_LOW_SVS },
-> +		{ 400000000, RPMH_REGULATOR_LEVEL_SVS },
-
-And does it actually have the same vote on both MMCX and MXC? I'd need
-to check the clock tree.
-
-> +	},
-> +	.num_rates = 2,
-> +};
-> +
-> +static const struct qcom_clk_dvfs_data cam_cc_cci_0_clk_src_dvfs = {
-> +	.pd_indices = (const unsigned int[]) { DT_PMDOMAIN_MMCX },
-> +	.num_pd_indices = 1,
-> +	.rates = (const struct qcom_clk_dvfs_rate[]) {
-> +		{ 37500000, RPMH_REGULATOR_LEVEL_LOW_SVS },
-> +	},
-> +	.num_rates = 1,
-> +};
-> +
-> +static const struct qcom_clk_dvfs_data cam_cc_cphy_rx_clk_src_dvfs = {
-> +	.pd_indices = (const unsigned int[]) {
-> +		DT_PMDOMAIN_MMCX, DT_PMDOMAIN_MX, DT_PMDOMAIN_MXC,
-
-Three domains... If we want to have three votes, we really need to have
-three votes in the .rates array. But then it starts to feel like an OPP
-table.
-
-> +	},
-> +	.num_pd_indices = 3,
-> +	.rates = (const struct qcom_clk_dvfs_rate[]) {
-> +		{ 400000000, RPMH_REGULATOR_LEVEL_LOW_SVS },
-> +		{ 480000000, RPMH_REGULATOR_LEVEL_SVS },
-> +	},
-> +	.num_rates = 2,
-> +};
-> +
+Ack, I missed it. The price of doing OE instead of kernel for several
+months :-D
 
 -- 
 With best wishes
