@@ -1,168 +1,143 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E334F54704D;
-	Wed, 14 Oct 2026 12:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CD14E4C5C;
+	Wed, 14 Oct 2026 12:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791981297; cv=none; b=A/DzXrzUcAoKgh1x80oeD5V8W2afDPptPOutpNzqy2e0TTh8iQb50+cYTkAIokxCQ1ikfnyXR2RYQmZjhQMD+1Jj+1fiXkJZBtI2FF+cirKuEMXg3LdCOj4Dtq8zcdxfv6vOTINAleyqQTujsCxIeK8dQxn9H0IVWpZ2sfZO2Fw=
+	t=1791981305; cv=none; b=kXDXsjmRUGJoQrJQkzKpyNtWb/buFMcKLjmBPCd9cH/uHENViXuc+2jVjCBO8/R/bQYnQQFKZpAWayR5+od7YouU/+8ZwPEhkMi4id0BbzbIRnVz+YQUxlm7pZhQ6jJh7mhgYKfrNckZkeADDkMbDSpdl0V4Gj/UIBHHV5fg4n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791981297; c=relaxed/simple;
-	bh=s76aGJfqpPmSDiJlh8MG+88MugezhBBvHXNzPKrGfbE=;
+	s=arc-20240116; t=1791981305; c=relaxed/simple;
+	bh=vk7Jgb/l1JHG3MoJm9nRR4miTWOnzA9y4tp/XSeq76g=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=f0Alx1wm7DkpB83GyW0YB7a0Ai7ciJNFehbNF36n8mDKlTZ0zdwxY3RkaBKCP3rEsnd+A3cD7fGqo2oa0EzapwWplH82SBxjUa9/ntZsaxJfaspqi+40kxzX4FwKJrojBMW5QUu2hZpZRExhOGBQfG1R7xRD43WsKdd+PGhheS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZvLMcSd; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=Pe0HdOgHJEm/WUPYF27nYna3IZgOcDlHwGIBAFU4+KwzQtvN4a3/GRle435iBBW6A3rLXjEK2DasVUfk5yPk2S/keEG607uCq73MwZdJzNd0L7796WTA2JPPlsEAhLbIj13UyTwpIr2sRUbJuJutaZXi0Jvfai2KOAs4ZPGEc+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bniRWKPh; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZvLMcSd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A6A71F00893;
-	Wed, 14 Oct 2026 12:34:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bniRWKPh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 670CF1F00893;
+	Wed, 14 Oct 2026 12:35:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791981296;
-	bh=uTV/sAQ+iGUxAMzhUnkn6HZtHbZHKEQP4E9u69AvMFA=;
+	s=k20260515; t=1791981302;
+	bh=kyelXwy/YG1qvJ339hbRVM82IHDIwlQ18/r1BR4+Fiw=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=GZvLMcSd6CxZRS+ued/DJGGHgXKK92WNuxx/TO/i5qNC6Hxl/Rs0I/cjmEi4GsLBP
-	 uRQ4P4mlli8tdzIvIYRryoFeMDxGU/DgSn9Gjz+NiB4x/S/5VVSQIkXFqMKfvI3mvv
-	 TOB8Juh+v+1gl5T3rqWRW6Q9OJJcDqIlVqkAvIpMkadcbcjC+fW483fRu4er3TYx9P
-	 OI5UtQpuLWhmBO3kRTcpgadnTjKnYRhG7wot4L2/sdwLL3sHzTMoBl6RP104NJeISb
-	 fX+PdJtQUakxWluMK0OQdHGvg4kCkKscsrK14sJF/M/ah90+UUW4mw3ly0sOdKN2wS
-	 V7upgeyedBVJw==
-Message-ID: <sashiko-outbox-171285@kernel.org>
+	b=bniRWKPh8wkrR5NUC+G23chcrZxX8BMfXPpjuGL63ASW7SzkIrygBD3bSl7RetHXc
+	 3Ar3qN5Vd+9+88BeLtf+oTqq1r3lxktFmg0SFHqbzP2KUpeVHx9IFizLh1lM989DZo
+	 56z+3UrEl/DgfyM7r8p//M82ON7w0VZ6xr6Nrs3NPWOStosdE+De96Vg2c4r54xrCZ
+	 7HyKwkqy5lGM6uCRzGsPbWO4XNLrdvBHwsvskNKZx1ylI9uEKIoFcF3dbYRh0JGSI+
+	 53QH2R9kmc8sivO8dNDfobjshEpZKkMKvmxqz4v5Z/QPFI+66KGEBHjWz+N6f/+hGb
+	 F7tUjN2hZab7g==
+Message-ID: <sashiko-outbox-171286@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC 10/16] clk: qcom: clk-alpha-pll: Vote for the PLL
- calibration frequency
+Subject: Re: [PATCH RFC 01/16] clk: Propagate rate programming failures
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Konrad Dybcio" <konradybcio@kernel.org>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261014-topic-qc_clk_dvfs-v1-10-3041b788e9f7@oss.qualcomm.com>
+In-Reply-To: <20261014-topic-qc_clk_dvfs-v1-1-3041b788e9f7@oss.qualcomm.com>
 References: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
- <20261014-topic-qc_clk_dvfs-v1-10-3041b788e9f7@oss.qualcomm.com>
+ <20261014-topic-qc_clk_dvfs-v1-1-3041b788e9f7@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 14 Oct 2026 12:34:56 +0000
+Date: Wed, 14 Oct 2026 12:35:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [High] clk: qcom: dvfs: qcom_clk_dvfs_prepare_rate() unwinds to 0 on fail=
-ure, dropping votes
-- [High] clk: qcom: alpha-pll: disable failure during calibration drops DVF=
-S votes while PLL runs
+- [High] clk: Undervoltage on partial rate change failure due to ABORT_RATE=
+_CHANGE
 --
 
-commit 27077f9ef026973ca3f8e723a45854a856554ed2
+commit 5ce89a94f0fcfcda3a335ff0e5689b0f216c3fd4
 Author: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: clk: qcom: clk-alpha-pll: Vote for the PLL calibration frequency
 
-This commit updates Lucid EVO PLL initialization to safely handle higher
-calibration frequencies. It temporarily raises the DVFS vote to the
-calibration rate during preparation and restores the nominal rate once
-complete.
+clk: Propagate rate programming failures
 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alph=
-a-pll.c
-> index 5dc6b1adc9298..f6e73e2fbe768 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-[ ... ]
-> @@ -2628,12 +2648,9 @@ static int _alpha_pll_lucid_evo_prepare(struct clk=
-_hw *hw, bool reset)
->  		return -EINVAL;
-> =20
->  	ret =3D alpha_pll_lucid_evo_enable(hw);
-> -	if (ret)
-> -		return ret;
-> -
-> -	_alpha_pll_lucid_evo_disable(hw, reset);
-> +	cleanup_ret =3D alpha_pll_lucid_evo_disable_checked(hw, reset);
-> =20
-> -	return 0;
-> +	return ret ?: cleanup_ret;
->  }
+This patch stops the clock rate-change walk at the first failure and
+propagates the error back to the caller. It attempts to keep the topology,
+temporary references, and terminal notifications consistent with the outcom=
+e.
 
-[Severity: High]
-Is it safe to propagate the disable error here if it results in dropping th=
-e=20
-DVFS votes while the PLL is still running?
-
-If alpha_pll_lucid_evo_enable() succeeds but alpha_pll_lucid_evo_disable_ch=
-ecked()
-fails (e.g., due to a regmap write failure), the error is propagated up to
-alpha_pll_lucid_evo_dvfs_prepare().=20
-
-The error handler there unconditionally calls qcom_clk_dvfs_unprepare() via=
- the
-err_unprepare label, resetting all DVFS votes to 0. Because the hardware di=
-sable
-failed, the PLL is left physically enabled and actively running without the
-necessary voltage votes.
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 4d2cc86bfbeb6..95669775f8cd1 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
 
 [ ... ]
-> @@ -2641,21 +2658,69 @@ static void alpha_pll_lucid_evo_disable(struct cl=
-k_hw *hw)
->  	_alpha_pll_lucid_evo_disable(hw, false);
->  }
-> =20
-> -static int alpha_pll_lucid_evo_prepare(struct clk_hw *hw)
-> +/*
-> + * Calibration runs at CAL_L * parent_rate, which may exceed the operati=
-ng rate
-> + * covered by the normal DVFS vote. Raise the vote temporarily to keep t=
-he
-> + * hardware in-spec during that step.
-> + */
-> +static int alpha_pll_lucid_evo_dvfs_prepare(struct clk_hw *hw, bool rese=
-t)
+
+> @@ -2420,13 +2448,20 @@ static struct clk_core *clk_propagate_rate_change=
+(struct clk_core *core,
+>  						  unsigned long event)
 >  {
-[ ... ]
-> +	ret =3D _alpha_pll_lucid_evo_prepare(hw, reset);
-> +	if (ret)
-> +		goto err_unprepare;
-> +
-> +	if (cal_rate > rate && qcom_clk_dvfs_prepare_rate(hw, rate))
-> +		pr_warn("%s: failed to drop calibration DVFS vote\n",
-> +			clk_hw_get_name(hw));
+>  	struct clk_core *child, *tmp_clk, *fail_clk =3D NULL;
+> +	unsigned long old_rate =3D core->rate;
+> +	unsigned long new_rate =3D core->new_rate;
+>  	int ret =3D NOTIFY_DONE;
 > =20
-> +	return 0;
+> -	if (core->rate =3D=3D core->new_rate)
+> +	if (event !=3D PRE_RATE_CHANGE)
+> +		old_rate =3D core->old_rate;
+> +	if (event =3D=3D POST_RATE_CHANGE)
+> +		new_rate =3D core->rate;
+> +
+> +	if (old_rate =3D=3D new_rate)
+>  		return NULL;
+> =20
+>  	if (core->notifier_count) {
+> -		ret =3D __clk_notify(core, event, core->rate, core->new_rate);
+> +		ret =3D __clk_notify(core, event, old_rate, new_rate);
 
 [Severity: High]
-Can ignoring the error from qcom_clk_dvfs_prepare_rate() here leave the unw=
-ound
-power domains without voltage votes?
+When ABORT_RATE_CHANGE is sent, this uses the original old_rate and new_rate
+parameters. Will this cause consumers to revert their changes even if the
+hardware rate already changed?
 
-When down-voting from cal_rate to rate, if qcom_clk_dvfs_prepare_rate() fai=
-ls
-midway, its unwind path resets the successfully updated domains to 0:
+[ ... ]
 
-drivers/clk/qcom/clk-dvfs.c:qcom_clk_dvfs_prepare_rate() {
-	...
-unwind:
-	while (i--) {
-		unsigned int pd_index =3D clock->data->pd_indices[i];
+> @@ -2474,53 +2509,83 @@ static void clk_change_rate(struct clk_core *core)
+>  	if (!skip_set_rate && core->ops->set_rate)
+> -		core->ops->set_rate(core->hw, core->new_rate, best_parent_rate);
+> +		ret =3D core->ops->set_rate(core->hw, core->new_rate,
+> +					  best_parent_rate);
 
-		qcom_clk_dvfs_replace_vote(&clock->rail_voters[pd_index],
-					   &clock->votes[i], 0);
-	}
-	return ret;
-}
+[ ... ]
 
-Since the warning is caught but the error is deliberately ignored (returnin=
-g 0),
-the clock prepares and operates at the target rate but with missing DVFS vo=
-tes
-(vote =3D 0) on the unwound domains, which risks hardware brownouts or syst=
-em
-crashes.
+> -		clk_change_rate(child);
+> +		ret =3D clk_change_rate(child);
+> +		if (ret)
+> +			goto runtime_put;
 
-> +
-> +err_unprepare:
-> +	qcom_clk_dvfs_unprepare(hw);
->  	return ret;
->  }
+[Severity: High]
+If the hardware rate is successfully changed for the parent here, but a
+subsequent child failure aborts the walk, does the parent remain at the
+new rate while the software aborts?
+
+[ ... ]
+
+> @@ -2613,7 +2686,14 @@ static int clk_core_set_rate_nolock(struct clk_cor=
+e *core,
+>  	}
+> =20
+>  	/* change the rates */
+> -	clk_change_rate(top);
+> +	ret =3D clk_change_rate(top);
+> +	if (ret) {
+> +		__clk_recalc_rates(top, true, 0);
+> +		clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
+> +		goto err;
+> +	}
+
+[Severity: High]
+If clk_change_rate() fails downstream after the parent hardware rate was
+already increased, does broadcasting ABORT_RATE_CHANGE here result in
+undervoltage?
+
+For example, consumers like cpufreq or existing device notifiers might
+receive the abort and revert their PRE_RATE_CHANGE voltage increases,
+leaving the hardware running at the high new rate with the low old voltage.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261014-topic-qc_c=
-lk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com?part=3D10
+lk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com?part=3D1
