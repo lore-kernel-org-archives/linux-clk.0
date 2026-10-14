@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2841B4E73A1;
-	Wed, 14 Oct 2026 12:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513373CB2FA;
+	Wed, 14 Oct 2026 12:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791981697; cv=none; b=EHA3r2IJM1ua83PlkYOSk0dmWAL1kYsTzO03ydSW6jWxbT7YyaGkmF1SmaJCuhgm2zIQAO0+y7zGblSS9DTtBfwLrPFY5xC4CMfrYZ7ZV+qZV1SFjtJWuOKoU11SOc+a++9PWAhnUJr0xmWcPxRV2CibI9CCCo43GeF/kRxpoNk=
+	t=1791981715; cv=none; b=UQaKQTQxuFE5aMSm6RiTkOT5T7pkC6cYbJOqMO83kSFP41EOOpV7OEXsVOXtFVdbJgxDnTc6aUrWSD3cH9G0LGlcqWBO9dT2xjK4yCwdQcjQElnIeOopPLD0sSB0fwXRNts0PEw6R1DzXBvQgRZJVBq+KsunggDIymcOat+Gors=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791981697; c=relaxed/simple;
-	bh=wFxFgT9BqsxPCRIxIYgrEnnUq53CRiwcp4kQFVeZ8mI=;
+	s=arc-20240116; t=1791981715; c=relaxed/simple;
+	bh=BdJBMnX1PS7oV1xgLQohru600hlIzqVVaF16P2/ABF0=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=NaJCQIKcx7LZZ6PomSGNs6ebat39K3ZCwuWVX5flMcWTaD4CrEm19hpFCKAdl52CPRNWkEAzwX3aYoEMLN1+z9HlvV5Y0JB91G9Si7E7qU1rX+LqNg5L70KRLYIPn872c9QehfKmYF17ElIqiX1KejoXUftPzlKGl9LswCGZ3Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OZAQf79p; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=TULvRkQslQ8NFAyQ2S2zsZyRpBlODGfklL73xfHR+QwBnX3zt5WO6h/TOJK+UrXNRy8VWggJjhKYIOoyMdPuWpVTf+myag17I5jyNl6PeyrkbuwmYfFdXAoRMKccWLi9aZ1gIH2mI9UNb26ogP32EdgbJSuunt2tN4iVh1of4ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DiD+eOvn; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZAQf79p"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58CE61F00893;
-	Wed, 14 Oct 2026 12:41:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DiD+eOvn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8F5E1F000FF;
+	Wed, 14 Oct 2026 12:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791981695;
-	bh=x0RtK65SDbl+6SlXf4YuuIu8/Gpdjsf90zRxo5iJLus=;
+	s=k20260515; t=1791981714;
+	bh=G1KfmBE3j3a55DXn2hJt2WPX3UgnFnveVoNZmr91efo=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=OZAQf79pIPaHgYwAYFrumHBfvm4eo0HqnM/woBpOHXhWMoH7K15eUO2fRiy6mbaV+
-	 BUnmFNbaWdV95wlYTRvsKotYTU607RlcxTpMg7eZn7YXuPwIHhOaIK91g/nS9k8UTI
-	 7jlReTE5ePfv7DVC5orHqFxkVSpOJKkEIW5tnSuExkO0q9JjN9AC4dzF34s7ckLyt2
-	 sHvSIrG12fNNYuvpAjtihwlK4iqKCzX50nIpI4R34DJC74h2zONWB7CG3eo3xxndVC
-	 TBRJ3BQIxMJ7wIuLAQ+uY66rj1Wm1XhJF4v7+T6j/4kr5jBhvUv2jePgqMIhZzkYIh
-	 95o5wvKvhVxlQ==
-Message-ID: <sashiko-outbox-171295@kernel.org>
+	b=DiD+eOvnJN47KRUexQdGXyBXPoig0Do5vXKKCsJNw2J+g3f5ymSAop9kjMpPTcPyO
+	 SM/vnhWJf77tfZyt6Q76ntw72ZHHofJknkdDPsWAXKworCHvNiKh67Y4D/peotrpEh
+	 rpInYvQ6exPTCygDUPVvFuXMguIXXwSuyd6VsLDixs8W/8MsRYpO6g8c9Ci6VApzUP
+	 VdI6QtEvT+AHZt1A7AWig1Q2ojhVlwqQgUx+Adoup4hVL7a+JVv5Hs+4VXSBfh+TmM
+	 4MWSKQUnmLesOKB7vKOh6H2NXdUtvD/mz1RbHA8GRKcYSUeIxsCYno+J4v77YUyBnc
+	 zr5qnAD3fdgJQ==
+Message-ID: <sashiko-outbox-171296@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH DNM RFC 13/16] arm64: dts: qcom: sm8650: Describe clock
- controller power rails
+Subject: Re: [PATCH RFC 05/16] pmdomain: core: Support subdomains without
+ pstate propagation
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Konrad Dybcio" <konradybcio@kernel.org>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261014-topic-qc_clk_dvfs-v1-13-3041b788e9f7@oss.qualcomm.com>
+In-Reply-To: <20261014-topic-qc_clk_dvfs-v1-5-3041b788e9f7@oss.qualcomm.com>
 References: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
- <20261014-topic-qc_clk_dvfs-v1-13-3041b788e9f7@oss.qualcomm.com>
+ <20261014-topic-qc_clk_dvfs-v1-5-3041b788e9f7@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 14 Oct 2026 12:41:34 +0000
+Date: Wed, 14 Oct 2026 12:41:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,69 +47,54 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Low] dt-bindings: clock: qcom: multiple power-domains exceed schema limi=
-ts
+- [High] pmdomain: missing initial pstate propagation in genpd_add_subdomai=
+n()
 --
 
-commit 0272a7914d28ecdc80c317abd5c3a4cf467f9ae8
+commit 19c8f09b635c74bbdaf740eac823398c603b6fb4
 Author: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-arm64: dts: qcom: sm8650: Describe clock controller power rails
+    pmdomain: core: Support subdomains without pstate propagation
+   =20
+    A subdomain may need its parent to be powered on without requiring its
+    performance state to follow the child's. GenPD currently couples these
+    requirements, so increasing the child's performance state can also
+    raise the parent even when it only needs to remain on.
 
-The SM8650 clock-controller nodes omit rails needed by their clocks and
-PLLs. This commit describes the required power rails for these controllers
-to prevent probe failures.
-
-> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/q=
-com/sm8650.dtsi
-> index 86fbb0fd6472d..0847cfb35954e 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> @@ -2017,8 +2017,9 @@ gcc: clock-controller@100000 {
->  				 <&ufs_mem_phy 1>,
->  				 <&ufs_mem_phy 2>,
->  				 <&usb_dp_qmpphy QMP_USB43DP_USB3_PIPE_CLK>;
-> -
-> -			power-domains =3D <&rpmhpd RPMHPD_CX>;
-> +			power-domains =3D <&rpmhpd RPMHPD_CX>,
-> +					<&rpmhpd RPMHPD_CX_AO>,
-> +					<&rpmhpd RPMHPD_MX>;
-
-[Severity: Low]
-Does this exceed the dt-binding limits? For instance, qcom,sm8650-gcc.yaml
-restricts power-domains to 1 item, but this provides 3. This will cause
-make dtbs_check to fail unless the yaml binding is updated.
-
-> @@ -4364,6 +4365,10 @@ gpucc: clock-controller@3d90000 {
->  			clocks =3D <&bi_tcxo_div2>,
->  				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
->  				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
-> +			power-domains =3D <&rpmhpd RPMHPD_MX>,
-> +					<&rpmhpd RPMHPD_CX>,
-> +					<&rpmhpd RPMHPD_MXC>,
-> +					<&rpmhpd RPMHPD_GFX>;
-
-[Severity: Low]
-Will this trigger a validation failure for gpucc? The qcom,sm8450-gpucc.yaml
-binding limits power-domains to exactly 2 items, but 4 are being provided
-here.
+> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> index 76ff0d9a229c3..80ea70930cc63 100644
+> --- a/drivers/pmdomain/core.c
+> +++ b/drivers/pmdomain/core.c
 
 [ ... ]
 
-> @@ -6049,8 +6055,8 @@ dispcc: clock-controller@af00000 {
->  				 <0>, /* dp3 */
->  				 <0>;
+> @@ -2298,6 +2307,7 @@ static int genpd_add_subdomain(struct generic_pm_do=
+main *genpd,
+>  	}
 > =20
-> -			power-domains =3D <&rpmhpd RPMHPD_MMCX>;
-> -			required-opps =3D <&rpmhpd_opp_low_svs>;
-> +			power-domains =3D <&rpmhpd RPMHPD_MMCX>,
-> +					<&rpmhpd RPMHPD_MX>;
+>  	link->parent =3D genpd;
+> +	link->flags =3D flags;
+>  	list_add_tail(&link->parent_node, &genpd->parent_links);
+>  	link->child =3D subdomain;
+>  	list_add_tail(&link->child_node, &subdomain->child_links);
+>  	if (genpd_status_on_unlocked(subdomain))
+>  		genpd_sd_counter_inc(genpd);
 
-[Severity: Low]
-Is this compatible with the qcom,sm8550-dispcc.yaml schema? The schema
-has a maxItems constraint of 1 for power-domains, but 2 are provided here,
-which will result in a dtbs_check error.
+[Severity: High]
+When the child domain is linked to the parent in genpd_add_subdomain(), its
+power state is synced via genpd_sd_counter_inc(). However, if a consumer
+device has already probed and set a performance state on the child domain
+before it is linked (meaning it already has an active performance_state > 0=
+),
+does this code miss evaluating and propagating that initial performance sta=
+te
+to the parent?
+
+If this initial propagation is omitted, the parent might operate at a lower
+performance state than required by its subdomains. Could this lead to hardw=
+are
+malfunctions or system crashes due to under-voltage or under-clocking?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261014-topic-qc_c=
-lk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com?part=3D13
+lk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com?part=3D5
