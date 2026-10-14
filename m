@@ -1,132 +1,154 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362224E5320;
-	Wed, 14 Oct 2026 12:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E3449B215;
+	Wed, 14 Oct 2026 12:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791981008; cv=none; b=E0hgVoPQdiFgA1lSUQFu5dUjYhCoTna4XtlWODEMSe3+va+NKtbpKZ36ZHZKj63KdaP+XP6POwSLDWWFFML1f+8nzuUoECsCM8VJhvgRXBQnaDs/GFQieBjnkh5a+YhaOH2z+oh3zXPcx7M+K0wr7X10xdf+xJek7wCNxVJD69M=
+	t=1791981175; cv=none; b=J3AiumIPg+yHoZ/jyE5HESNHV1cY6QnPzYOZGmjGd/BSm0C+CWYiLmAJO3RYibpONtE5yFXtsyToZQIUfZYfdeUZEbi8gGedw4PQWp9Yh5eRgHnv6rwsgE8Axeseraw7oZD/hSUPguglBA99bqHT8hsekPcQSXizL7o0DPRAats=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791981008; c=relaxed/simple;
-	bh=f41B/NemOKsKlJi6nDs/7es6CTSVqJZg31S4raNzdCg=;
+	s=arc-20240116; t=1791981175; c=relaxed/simple;
+	bh=ISBNZZjiNTWr/CT9ccLOlzX81bbqY6ihRWX5qwX3qW4=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=ONyaTgg68i4Mmfhl44wY4eYgLa1TYFg6roKYU0BlxO8fTB4ZvQcMTdRmrQ82Y0tDxqHvOtfTdyXSLxUtDU5hsxJRw0ZkIwcmyzxYt8G3Kv7uG3I6uYRloSLxkfdreShOekTXAsWXBVr53p5NjqLHAuyxJ0jboy/gZJXzW8MI9+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgAG6W7e; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=k9Zt62VIceZ9865IIrlfua/NrQaAyPCXVj3eqebZ8MVMj3I1PyClrS1pz7QuL6s0OnlFKdSX7lvIOKyfsCInlSK25IeeWz+iEKIE62ozzH4O0eyRn/TQsjcXjjqMSviOGRRISNFSHBCtj21SoFK9GNi7CO8mCFuLJj2hIco1Vrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aou5uSbF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgAG6W7e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 837411F00893;
-	Wed, 14 Oct 2026 12:30:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aou5uSbF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC261F000FF;
+	Wed, 14 Oct 2026 12:32:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791981006;
-	bh=YZlNgnn84+43sl3uzY65FE3EifNNT1UW+CnMPNbFRk4=;
+	s=k20260515; t=1791981174;
+	bh=/1ewICq/0iNkNN2SDGelYtgQLG8hstST+MXzyv2iBO4=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=RgAG6W7e1ZIvvk5DHiF1Y+t9KiUOMx7LKCKMeUiuz9P3UdiaC4M/8I3zwtH3wNp8v
-	 Z/3Dvu936BEdwe53D1lpOxYPgzzIJdagy34S4MPFMPzYnstxB7Z6V44jdV39mCHzXw
-	 KnxCSaQ1VXwmxSqq7Sp6LUFsXDgKc6t5hc7ij64QSr7jLYHqXEqT8ykQwGTYYLZVCF
-	 n5jEzZ7BWSS+wotMp/5Wu3qqyHw4VR8EQuegcV3zWelmDSzEiocIkz3liEk1PncfY4
-	 D0IwIQdXoMjpWOBXlmBLQd535RHsdbmBpd+kW8uui1fKZyuW6XZsAp6XPuZblX2j9w
-	 L+u47OSrGhBkQ==
-Message-ID: <sashiko-outbox-171278@kernel.org>
+	b=aou5uSbFs5X67NTYTkLG2G7Hs9NP6JzbtJr35DZ13Ti9A+PplCvEtKSRrYxHm6c4r
+	 7chAbRamGXNK6QMiRFqknqWaR2StZJqyVOvVuLMVG7KVLl3EUgW7h36W1no9Be+gbk
+	 qFbMuxlHizQoZ92yeWOD2rFtpAES0962CPAfYVkNzyywCTaIINncKL03Jdc1jniRS1
+	 xQ/A+DWb7+d9oxeKgx7pALvOb8Omi+TZDE6JX+Fl/BEEDqrmcNB1Hjrn65PnRA/gLO
+	 kDM4bJzwyW8zj53VYL513rEl77Sfx/JVbTwV/zg2gdvg1vrU/wOx5EhCQ2RW03iiBq
+	 MAuhiTQ25Vdwg==
+Message-ID: <sashiko-outbox-171282@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC 11/16] clk: qcom: gdsc: Make GDSC parenting optional
+Subject: Re: [PATCH RFC 12/16] clk: qcom: gdsc: Link required power domains
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Konrad Dybcio" <konradybcio@kernel.org>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261014-topic-qc_clk_dvfs-v1-11-3041b788e9f7@oss.qualcomm.com>
+In-Reply-To: <20261014-topic-qc_clk_dvfs-v1-12-3041b788e9f7@oss.qualcomm.com>
 References: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
- <20261014-topic-qc_clk_dvfs-v1-11-3041b788e9f7@oss.qualcomm.com>
+ <20261014-topic-qc_clk_dvfs-v1-12-3041b788e9f7@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 14 Oct 2026 12:30:06 +0000
+Date: Wed, 14 Oct 2026 12:32:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [High] clk: qcom: missing PM domain cleanup on gdsc_register() error path=
-s leads to UAF
+- [High] clk: qcom: gdsc: Unbalanced hardware state on GenPD unlink leaves =
+GDSCs powered without required rails
+- [Low] clk: qcom: gdsc: Redundant wait_for_off logic for non-votable domai=
+ns
 --
 
-commit c8bac551fa3005340251f161ce7de48e8d323366
+commit a3b8e242fc8ba2eae7b378662d9af778b3739733
 Author: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-clk: qcom: gdsc: Make GDSC parenting optional
+clk: qcom: gdsc: Link required power domains
 
-Allows callers of gdsc_register() to suppress parents inferred from the
-controller device and its attached domain list.
+This commit models enable-only requirements for GDSCs as GenPD subdomain
+links without propagating the GDSC performance state to the rail. It allows
+GDSCs to specify only the power-domain endpoints they require while powered.
 
 > diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index b99d70149af34..2d0803e1eb3b1 100644
+> index 2d0803e1eb3b1..73054c600c29a 100644
 > --- a/drivers/clk/qcom/gdsc.c
 > +++ b/drivers/clk/qcom/gdsc.c
 [ ... ]
-> @@ -654,13 +655,17 @@ int gdsc_register(struct gdsc_desc *desc,
+> @@ -379,7 +384,10 @@ static int gdsc_disable(struct generic_pm_domain *do=
+main)
+>  	if (sc->pwrsts =3D=3D PWRSTS_RET_ON)
+>  		return 0;
 > =20
->  	/* Add subdomains */
->  	for (i =3D 0; i < num; i++) {
-> +		ret =3D 0;
+> -	ret =3D gdsc_toggle_logic(sc, GDSC_OFF, domain->synced_poweroff);
+> +	if (sc->num_required_pds && !(sc->flags & VOTABLE))
+> +		wait_for_off =3D true;
 > +
->  		if (!scs[i])
->  			continue;
-> +
->  		if (scs[i]->parent)
->  			ret =3D pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
-> -		else if (!IS_ERR_OR_NULL(dev->pm_domain))
-> +		else if (!desc->no_external_parent &&
-> +			 !IS_ERR_OR_NULL(dev->pm_domain))
->  			ret =3D pm_genpd_add_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->=
-pd);
-> -		else if (desc->pd_list)
-> +		else if (!desc->no_external_parent && desc->pd_list)
+> +	ret =3D gdsc_toggle_logic(sc, GDSC_OFF, wait_for_off);
+
+[Severity: Low]
+This isn't a bug, but is setting wait_for_off here redundant for non-votable
+domains?
+
+Looking at gdsc_toggle_logic(), the wait parameter appears to only affect
+the execution path when sc->flags & VOTABLE is true:
+
+static int gdsc_toggle_logic(...) {
+    ...
+    /* If disabling votable gdscs, don't poll on status */
+    if ((sc->flags & VOTABLE) && status =3D=3D GDSC_OFF && !wait) {
+        udelay(TIMEOUT_US);
+        return 0;
+    }
+    ...
+    ret =3D gdsc_poll_status(sc, status);
+}
+
+Since gdsc_toggle_logic() falls through to gdsc_poll_status() for all
+non-votable domains regardless of the wait parameter, does overriding it
+here have any effect?
+
+[ ... ]
+> @@ -669,13 +779,25 @@ int gdsc_register(struct gdsc_desc *desc,
 >  			ret =3D gdsc_add_subdomain_list(desc->pd_list, &scs[i]->pd);
 > =20
 >  		if (ret)
+> -			goto err_pm_subdomain_remove;
+> +			goto err_remove_parents;
+>  	}
+> =20
+> -	return of_genpd_add_provider_onecell(dev->of_node, data);
+> +	ret =3D of_genpd_add_provider_onecell(dev->of_node, data);
+> +	if (!ret)
+> +		return 0;
+> =20
+> -err_pm_subdomain_remove:
+> +err_remove_parents:
+>  	gdsc_pm_subdomain_remove(desc, i);
+> +err_remove_domains:
+> +	while (linked--) {
+> +		if (scs[linked])
+> +			gdsc_remove_required_subdomains(desc, scs[linked],
+> +							scs[linked]->num_required_pds);
+> +	}
+> +	while (initialized--) {
+> +		if (scs[initialized])
+> +			pm_genpd_remove(&scs[initialized]->pd);
+> +	}
 
 [Severity: High]
-Does this error path correctly clean up all initialized PM domains?
+Does this error path leave initialized GDSCs physically powered ON while
+their required supply rails are powered OFF?
 
-If pm_genpd_add_subdomain() fails, the code jumps to err_pm_subdomain_remov=
-e:
+During initialization, gdsc_get_rail_voters() powers ON the required rails
+via pm_runtime_resume_and_get(). Then gdsc_init() turns ON the GDSC
+hardware, and gdsc_add_required_subdomains() links the rails as parents,
+transferring the power vote to GenPD. Finally, gdsc_put_rail_voters()
+drops the explicit pm_runtime vote.
 
-	if (ret)
-		goto err_pm_subdomain_remove;
-...
-err_pm_subdomain_remove:
-	gdsc_pm_subdomain_remove(desc, i);
+If we take this err_remove_domains path, gdsc_remove_required_subdomains()
+removes the GenPD links. This drops the GenPD power vote, causing the
+required rails to physically power OFF.
 
-	return ret;
+However, the loop then calls pm_genpd_remove() without physically powering
+OFF the GDSCs. Will this violate hardware power sequencing constraints by
+leaving the GDSCs powered ON without their required rails?
 
-This correctly rolls back the subdomains, but doesn't seem to call
-pm_genpd_remove() for the generic PM domains that were successfully
-initialized earlier via gdsc_init() -> pm_genpd_init().
-
-Similarly, earlier in gdsc_register(), if gdsc_init() fails, the function
-returns immediately:
-
-	for (i =3D 0; i < num; i++) {
-		if (!scs[i])
-			continue;
-		...
-		ret =3D gdsc_init(scs[i]);
-		if (ret)
-			return ret;
-	}
-
-And later, if of_genpd_add_provider_onecell() fails:
-
-	return of_genpd_add_provider_onecell(dev->of_node, data);
-
-Both of these return paths exit without cleaning up previously initialized
-domains.
-
-Since these domains are statically added to the global gpd_list but tied
-to devm-allocated structures, could failing the probe (e.g., via
-EPROBE_DEFER) leave dangling pointers in the core PM domain list and cause
-a use-after-free when traversing gpd_list later?
+> =20
+>  	return ret;
+>  }
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261014-topic-qc_c=
-lk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com?part=3D11
+lk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com?part=3D12
