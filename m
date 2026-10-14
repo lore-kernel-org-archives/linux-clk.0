@@ -1,356 +1,237 @@
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50ED751D524;
-	Wed, 14 Oct 2026 13:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.203.200.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791984078; cv=pass; b=esh2mInlQyqQ/ezF1eiwVBpJbpw8tT9XLbsaOO5DdTkQGwaoFhGFpQH7vjcCtAiXlEDUCbkpuMjP4wCGuXka374H6lmmfNuxVhAr2kvY70suEh0+QUrENLMxhCkpkPAxIf59/dihSaqqb2GLZ49OGooA+6vjmsRtIrq6IG2FO7w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791984078; c=relaxed/simple;
-	bh=WPqCicLhyMgLMwuyG1U9We5xCvBt5ziTql9y46M4CMg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lUivpEoM/H7OWHJuQnAre0OKWzVQCdUaHIIkXVbY3sruX643SbiBJW8eUIJGM+YtprmPlZtcmpjQkK+tw0lXs0UqsmmjhqqHE95k3gul5hvqxchObawTO/hvBrKnAsi5HZ6sutLRzU2mbRAmMhbxMa+yANmX1qZ0iHu99XVTBYk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b=Nf2ez91k; arc=pass smtp.client-ip=185.203.200.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5800051E429
+	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 13:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791984346; cv=none; b=ggor0Oar7H8Mq+40rinFFRMfQa3nd5x+LxVsV6JYL4psNzMsSi3p32XNkqIHifSSgYy3tvUCcjfAeZ6+H3TjgfFj6+COQPAjb9hQMHKikm+vZEAnhlmZg33YwUWAMkSYz1cAh+BVAoQKhjRaeS0415bCRiriBKK+j6zA747ctJo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791984346; c=relaxed/simple;
+	bh=0INl34PhK/HRg5WJtm1080VCfjv66/kDwm05AckFZQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hVAbnCgCTHyHufv8WBshplIDQ6Q+pHoD+9XgxJtVgeO7pGlC5AHpTlhnyjcy+8/CMLKJYJQVbdX2C9z+otSin7yTs+kvRqEMDZy9C1Vuarysa7t/TrFzouIEytigcp0SbTipC32X+mLxT5CIrdA9IWqLDSjtLp9IZLHdulofZF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aKkAUL+8; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Z94GVm85; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b="Nf2ez91k"
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 655C22018A0;
-	Wed, 14 Oct 2026 15:21:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1791984071;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hMbRbbBiIgkyYJWVgnEuLvQGMAKrsAL3AoruOMfe5IM=;
-	b=Nf2ez91k0+kTT2KhxIUDmy2YIb3zpI0Kd7A22Xr1J1tgFs6NZRtew/7I1zXoKMZHD6lCW1
-	aywkuTHpojj2FA0Mwe94LC4ECn2cHqCuUVGZt6E/s/ZSsOzTaCiyuHN2RWPNLZGXZ1NsYg
-	fV1CCQEO7Qd3LRgLkgVjYYhEYjgajXvt9CjAG0M2ANuDTBXBkPbg1h4XTnGgNCmXhIuLNs
-	cOpaRGa/lulshw0Heiw+Q28BoScA1QTq8aGcs3TUX9eg4ZZIWY4o+RlZ/lj8s7l1ga9bNe
-	e3duEO9JFuQNXFlQ79ciPDR5X2K+CMxe96dJqZfqrYdWHme2HSevGYZOqbct1w==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1791984071; a=rsa-sha256;
-	cv=none;
-	b=OgyHEsg5ElH3Xe3to8fF0mReUPsYPdIeMdxV6uD6XKYvgOj5hFvbs9QH1K35qXURGK12qf
-	5hR//PWpWJXCgVVpbosz1CLqASkvM9huHusT2La9WZAA71IJsIvlfy1gEU9TpA1N5qfIIC
-	zq1XNMl64FUtEs+q0WpKqTdnE7gQkysNDrk8kLjR7oBdIytQDCbCKJRLFsONJeScdUf8gK
-	MqNfvQChBRP2vXk9N4K2Qx1assRJmGwhi4C6kpSo/b57AFvlLMz9U5U/FO7RJrj+6Slcyt
-	QZ8fxJxSYK1yg+CwdRfbGwvcl7uUVxLwZs7CdYAFrgrBoWUEGHcq678KkFCWsw==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1791984071;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hMbRbbBiIgkyYJWVgnEuLvQGMAKrsAL3AoruOMfe5IM=;
-	b=TBZ1cyIi2Eqd0TjbvLJ3B2n6DhTx6YTKOVeFimuVc3wbPhYsULTxccMfs3jaiDTyXaZfVg
-	qa+5Mwwd6/HoSdmlr7GgOQpqcub6Zn6b8uCbizmA9d9XOsfRNOCjGR6KfaTCOt73tSAQm3
-	sKNxvbSgOGw6nLE431DR6tJuraw26FPD4LncXxbAjDhrlto/USFId5GxvGE6WD9qhaeO1F
-	RgZxp0ZjgMlNHedgLF75T35YUUSZQlbh3h0w+pbn9w34zPhYa9jozGs0DDT5VSwkPjIBx6
-	OHF6jlIeief9Mor8i6rEApDNaBKBzRqPNq+5YjlddM09LRgCgFdZ8YPMW69N6g==
-Message-ID: <95690313aa006369e994b6c4a7af69b809a84337.camel@pengutronix.de>
-Subject: Re: [PATCH v2 06/24] clk: zte: Add ZX279128S CRM clock and reset
- driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Navid Ghahremani <ghahramani.navid@gmail.com>, 
-	linux-arm-kernel@lists.infradead.org
-Cc: arnd@arndb.de, stefandoesinger@gmail.com, krzk@kernel.org, Stephen Boyd
-	 <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
-	 <jbrunet+clk@baylibre.com>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Date: Wed, 14 Oct 2026 15:21:11 +0200
-In-Reply-To: <20261014072109.1759502-7-ghahramani.navid@gmail.com>
-References: <20261014072109.1759502-1-ghahramani.navid@gmail.com>
-	 <20261014072109.1759502-7-ghahramani.navid@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aKkAUL+8";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Z94GVm85"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69EDHuYk329046
+	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 13:25:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=3zp0rB17dPxE0QziDSpcEJV4
+	TAs/poWOIETcgxNKjkg=; b=aKkAUL+8T6OsV9J6HjgfOfDdXbSYg1fA+0PxtFyU
+	d+ieAS79rAJG5VVYshE4C3NPYzjveMJMJu147/YVJaUbebJ3QOvBz303yvHgFk9S
+	Ggli2kGpbF/6m0WWJGDxYAdqNAsEPxORkNV/Q6m4lm+0WIoLKlP/iiyODDwmrMqH
+	U8yUXp7ovv12GYkXWsFyWOTRn7jxRasiMtApM4SNQjf9AubbJq8VOleALZHwca2K
+	QKPEAJt/mBB8+BkdR1GPRlwbmxHBG+sKeJ9YyXh2KI/uhYbnl2W8n/DO2fu5GQR4
+	mn+ykTkWgzp6c0AKxjA58nupLPAOXs9ys/cl+GLlsjqkZA==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4haagf011w-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 13:25:43 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-936aa34873bso75331585a.3
+        for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2026 06:25:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1791984342; x=1792589142; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=3zp0rB17dPxE0QziDSpcEJV4TAs/poWOIETcgxNKjkg=;
+        b=Z94GVm85YvUiozyO0scS4kZOsvQvVJZAO/cHfAJW0LqM0T0yDs0aSz0ztNl7IGhj/t
+         fKC/BzNqU2Ed3hGePNo01hemy7fMfG5E9OjCeVuTEHykTHq3awOt8tOTcjWj2zmkzf9i
+         0Mg8R5ImX3tLxIQhWOBSXuQ5wJm42k8spEzo1Jh1elVKDPmK1dyKgQsI5Y3H/z2b50Og
+         VyRH+twB3zZFFeGWgN4FojI1quV68t1Xl7y2kk3RKLcahW/yIk+qzCB7WXm+quvciukw
+         DN/oKQ0bgsqCwXdS6Mtg9DJb0XytOPDdy7edJL3bB80hkfcr6caU1FXWE/U4jDCQmGXw
+         WX0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791984342; x=1792589142;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=3zp0rB17dPxE0QziDSpcEJV4TAs/poWOIETcgxNKjkg=;
+        b=AobWkly3kz6AUsa6pXuyxRlrpcQ+qo28vyppnCrltU0pvWtHNgh9u3sVLNKwAg9k7W
+         uXhS5v3fqlJkYgLSAWvRdP8Gm0BwMwyKkuXXy+fJqISd12pIpYfkCArBTbh0uHrUos2J
+         iRzTvjHSGjYEqZdvKQRkLzb3kTgiup23r/NDjHoIuoFqCx1KngOSgeqYt/E7DUOkb2jf
+         d/NlH0fuHuJ4sZFxt+UIWQvC9jj4U7UEDm2fIR49n8aAQURZAp2emtxAAQ+kuJIB6oe+
+         LjIKv1VM9IoIVF+yYh2YGlFbrRDcMUDvRy0/rO/SyKv0C+BhLN5ZibdSKzcrAXHINHJm
+         ugJw==
+X-Forwarded-Encrypted: i=1; AKwUvByRJ4tpq29OA3yFDoL2NcDvOK34hOMY82iY83zgW9BxnLFWTqQKHpMamKzPrk0KgDLC2Lo4dqmFlEU=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIFn7+eIgOMDUIskjSISCpVoRNOGBqaCr6KtoLjeOb2LqAvJwU9
+	Qtgvz9dE0t5sy7HjbufBdN6bx74L+4ShqHIdHG82UQiUNAzLRR6rcomGrU+beggx5SlQQfDs9wh
+	GI01Y/hwxrAH2we6rwVkcaDMK97EkdxYb7VWnqQGYbfBOhwI5SzKMAk6C7lDmgsU=
+X-Gm-Gg: AYBFou1pKCn1E+AjFDNfDvNdl8o7Zhf4h4kU3A5jPfAnb+knnjYEjDLAwwKM4njdVX6
+	h3eyGz/AYokPVaATmVHV1X0fwOx8fBrjEldo9GnPar2t/th60hYCvatgHT8xPgEQ1eb03JlNQoW
+	Ogwfvy0N0DVKUr9LQkvomLF/T6c0aeI1P7br38IxhgyUuS/97NN3CXmscnzRQxr9htV0H3aSsof
+	frmxySQ108OAbpK8auJVb+qjWziArKceRSOwyyWyO8pnMm/2EYrt2BBUtWj0dHozbs/nC6gshPd
+	IieT987/Wy2+ocnVRQ9FzJg2cg73qv2HNmmG00b6DrRJeZ9rLHLWZSI1PQ9TFli1EN7WoaicXLc
+	7Yib1h+Y9hBc2LjfbRdDWlTGdjXZ7a/UOknWp37mA4m5WjtmGuTgQhrNDyzOrYkZS3I98H34A4i
+	hxWQC6QqPjcC+q
+X-Received: by 2002:a05:620a:6496:b0:93e:c12c:9b6d with SMTP id af79cd13be357-93ec12c9ee5mr2552207785a.72.1791984342367;
+        Wed, 14 Oct 2026 06:25:42 -0700 (PDT)
+X-Received: by 2002:a05:620a:6496:b0:93e:c12c:9b6d with SMTP id af79cd13be357-93ec12c9ee5mr2552201185a.72.1791984341835;
+        Wed, 14 Oct 2026 06:25:41 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5be33d88252sm665670e87.52.2026.10.14.06.25.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Oct 2026 06:25:40 -0700 (PDT)
+Date: Wed, 14 Oct 2026 16:25:38 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Ulf Hansson <ulfh@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Mike Tipton <mike.tipton@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        driver-core@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH RFC 01/16] clk: Propagate rate programming failures
+Message-ID: <w5omlz6fgvtruhz2mmlpx2jps6vww5rnbnfmfgfyfflcuuxlqw@kji5by4g4ghn>
+References: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
+ <20261014-topic-qc_clk_dvfs-v1-1-3041b788e9f7@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261014-topic-qc_clk_dvfs-v1-1-3041b788e9f7@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE0MDA1MyBTYWx0ZWRfX7LmYUrC67w2+
+ gncUkYP98S/xpOv38i3lJGsxYcuJHGMbKco2c1xk+s6ADmTz8QsZ/0I2Jxiee2fWnoXBPzVpMen
+ QkVGd6shK4nKigrOvjPZdI1bDbtUBl6Hw1Jg1BAUB9sd042R9wv46tQpCfH/BH5Exf5v3IB+W+V
+ C2dETOdzyRz6S9b9abH5Fz6O/c4QImgqFJM+l0Ny/vZoh6trlyUCNfg1Bh0Cr7KZFgMq4OITkrq
+ zM5ONEcEz2nOpLlit1Z4iAs47OSLhJ+t9hNrDx1EnOGmE0v5cLsuhVp2y+BKHOq6ggdQGX4Rtch
+ CB0KacxpibVJCX6wAuWFa9FwY4lFyKoTWPVCsiKhX4vxiUfl3UNUAqX2OJBiVYWx8u/+FSPoHB6
+ b7bA5vwAjG3f5qnivEBfYeaYmcfKTFg9vA7rZqYULlXyVgy4zmbol1CGVHrH4sPsi2TPwJtTr90
+ ucmjiORvNts9xg6HEyQ==
+X-Proofpoint-GUID: Egjj9kaB-M-uWbaaInmiVYUiFc0RqtLh
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE0MDA1MyBTYWx0ZWRfX05P8HxgF+Wh5
+ jHmBzSD5KVCsBkraPTZ5Jal81AnVIXHPDxIuW96H6598cO/OlkOa5ecBl7Un/htsTvWZp/IeFIT
+ NrkE5JOE0XpjCh99dgOc2JAtZvS+b1g=
+X-Proofpoint-ORIG-GUID: Egjj9kaB-M-uWbaaInmiVYUiFc0RqtLh
+X-Authority-Analysis: v=2.4 cv=V/noQuni c=1 sm=1 tr=0 ts=6acf82d7 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=EUspDBNiAAAA:8
+ a=mF3ojIlt9b2smrM3QEAA:9 a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-13_01,2026-10-09_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 impostorscore=0
+ bulkscore=0 adultscore=0 clxscore=1015 phishscore=0 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610080000
+ definitions=main-2610140053
 
-On Mi, 2026-10-14 at 08:20 +0100, Navid Ghahremani wrote:
-> Support the top CRM and low-speed peripheral clock controllers of the
-> ZTE ZX279128S SoC. Implement custom reset controller ops mapping
-> logical reset IDs to internal hardware register offsets, and provide
-> CRM2 clock gating and reset controller support for PCIe.
->
-> Signed-off-by: Navid Ghahremani <ghahramani.navid@gmail.com>
+On Wed, Oct 14, 2026 at 02:19:01PM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> The clock rate-change walk ignores runtime PM, temporary prepare and
+> enable, and provider programming failures. clk_set_rate() can therefore
+> report success after a provider rejected the operation, while later
+> clocks in the affected tree continue to be programmed. Consumers can
+> then proceed with a configuration that was never successfully applied.
+> 
+> A failed parent switch must not leave the software topology pointing at
+> the rejected source or release the old parent's references. Likewise,
+> rate notifiers must not announce success before the whole walk succeeds,
+> or lose their ABORT notification when a PRE notifier vetoes the change.
+> 
+> Propagate errors and stop the walk at the first failure. Keep topology,
+> temporary references, and terminal notifications consistent with the
+> outcome.
+> 
+> Assisted-by: LLM
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > ---
->  drivers/clk/Kconfig             |   1 +
->  drivers/clk/Makefile            |   1 +
->  drivers/clk/zte/Kconfig         |  14 +
->  drivers/clk/zte/Makefile        |   2 +
->  drivers/clk/zte/clk-zx279128s.c | 758 ++++++++++++++++++++++++++++++++
->  5 files changed, 776 insertions(+)
->  create mode 100644 drivers/clk/zte/Kconfig
->  create mode 100644 drivers/clk/zte/Makefile
->  create mode 100644 drivers/clk/zte/clk-zx279128s.c
->=20
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index f9592fd9ec..5200de26c0 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -547,6 +547,7 @@ source "drivers/clk/uniphier/Kconfig"
->  source "drivers/clk/visconti/Kconfig"
->  source "drivers/clk/x86/Kconfig"
->  source "drivers/clk/xilinx/Kconfig"
-> +source "drivers/clk/zte/Kconfig"
->  source "drivers/clk/zynqmp/Kconfig"
-> =20
->  # Kunit test cases
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index b18af485d7..07393019c3 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -181,5 +181,6 @@ ifeq ($(CONFIG_COMMON_CLK), y)
->  obj-$(CONFIG_X86)			+=3D x86/
->  endif
->  obj-y					+=3D xilinx/
-> +obj-y					+=3D zte/
->  obj-$(CONFIG_ARCH_ZYNQ)			+=3D zynq/
->  obj-$(CONFIG_COMMON_CLK_ZYNQMP)         +=3D zynqmp/
-> diff --git a/drivers/clk/zte/Kconfig b/drivers/clk/zte/Kconfig
-> new file mode 100644
-> index 0000000000..92fd27ea42
-> --- /dev/null
-> +++ b/drivers/clk/zte/Kconfig
-> @@ -0,0 +1,14 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config CLK_ZX279128S
-> +	bool "ZTE zx279128s clock driver"
-> +	depends on SOC_ZX279128S || COMPILE_TEST
-> +	depends on OF
-> +	default SOC_ZX279128S
-> +	select RESET_CONTROLLER
-> +	select RESET_SIMPLE
+>  drivers/clk/clk.c      | 163 +++++++++++++++++++++++++++++++++++++------------
+>  drivers/clk/clk_test.c |  16 ++++-
+>  2 files changed, 138 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 4d2cc86bfbeb..95669775f8cd 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -84,6 +84,7 @@ struct clk_parent_map {
+>   *                     clk_core->rate every time the clock is reparented, and
+>   *                     when we're doing the orphan -> !orphan transition.
+>   * @new_rate:          New rate to be set during a rate change operation.
+> + * @old_rate:          Rate before the current rate change operation.
+>   * @new_parent:        Pointer to new parent during parent change. This is also
+>   *                     used when a clk's rate is changed.
+>   * @new_child:         Pointer to new child during reparenting. This is also
+> @@ -130,6 +131,7 @@ struct clk_core {
+>  	unsigned long		rate;
+>  	unsigned long		req_rate;
+>  	unsigned long		new_rate;
+> +	unsigned long		old_rate;
+>  	struct clk_core		*new_parent;
+>  	struct clk_core		*new_child;
+>  	unsigned long		flags;
+> @@ -2163,11 +2165,14 @@ static void clk_reparent(struct clk_core *core, struct clk_core *new_parent)
+>  	core->parent = new_parent;
+>  }
+>  
+> -static struct clk_core *__clk_set_parent_before(struct clk_core *core,
+> -					   struct clk_core *parent)
+> +static int __clk_set_parent_before(struct clk_core *core,
+> +				   struct clk_core *parent,
+> +				   struct clk_core **old_parent)
 
-Don't select RESET_SIMPLE without using it.
+Nit: we have an idiom for returning either a value or an error. Is there
+a reason why you didn't adopt returning  ERR_PTR here?
 
-> +	help
-> +	  This driver supports the clocks of the ZTE zx279128s SoC: the
-> +	  top clock and reset module (CRM) with the PLLs, the CPU, bus and
-> +	  peripheral group clocks, and the CRPMs of the two groups of low
-> +	  speed peripherals (UARTs, SPI flash controller, GPIO, MDIO).
-> +	  Say Y if you build a kernel for a board with this SoC.
-> diff --git a/drivers/clk/zte/Makefile b/drivers/clk/zte/Makefile
-> new file mode 100644
-> index 0000000000..a55ffbfaf1
-> --- /dev/null
-> +++ b/drivers/clk/zte/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_CLK_ZX279128S)	+=3D clk-zx279128s.o
-> diff --git a/drivers/clk/zte/clk-zx279128s.c b/drivers/clk/zte/clk-zx2791=
-28s.c
-> new file mode 100644
-> index 0000000000..892e0c22e5
-> --- /dev/null
-> +++ b/drivers/clk/zte/clk-zx279128s.c
-> @@ -0,0 +1,758 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * ZTE zx279128s clocks: the top CRM and the CRPMs of the two groups of =
-low
-> + * speed peripherals
-> + *
-> + * Copyright (C) 2026 Navid Ghahremani <ghahramani.navid@gmail.com>
-> + *
-> + * The boot loader sets up the PLLs and the CPU and bus clocks, and the =
-driver
-> + * leaves them as they are: it reads them once and registers their rates=
-. The
-> + * gates, and the muxes and dividers of the peripherals, are under its
-> + * control.
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/property.h>
-> +#include <linux/reset-controller.h>
-> +
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +
-> +#include <dt-bindings/clock/zte,zx279128s-crm.h>
-> +#include <dt-bindings/reset/zte,zx279128s-reset.h>
-> +
-> +/* Top CRM */
-> +#define TOP_CLK_SEL		0x0c
-> +#define  TOP_MATRIX_SEL_SHIFT	15
-> +#define  TOP_CPU_SEL_SHIFT	13
-> +#define TOP_CLK_EN		0x14
-> +#define TOP_PLL_A9		0x18
-> +#define TOP_PLL_AUDIO		0x28
-> +#define TOP_USB_EN		0x48
-> +
-> +#define TOP_NUM_CLKS		(ZX279128S_TOP_USB_REF + 1)
-> +
-> +struct zx_reset_line {
-> +	u16 reg;
-> +	u8 bit;
-> +};
-> +
-> +static const struct zx_reset_line zx279128s_top_resets[] =3D {
-> +	[ZX279128S_RESET_USB_B9]  =3D { 0x4c, 9 },
-> +	[ZX279128S_RESET_USB_B10] =3D { 0x4c, 10 },
-> +	[ZX279128S_RESET_USB_B11] =3D { 0x4c, 11 },
-> +	[ZX279128S_RESET_USB_B14] =3D { 0x4c, 14 },
-
-Why store reg in zx_reset_line when it's all the same value?
-
-On the other hand, keeping reg and adding a bool active_low field would
-allow to share ops between the two reset controllers.
-
-> +};
-> +
-> +static DEFINE_SPINLOCK(zx_top_lock);
-
-Why share the lock? Each reset controller has its own register.
-
-> +
-> +struct zx_reset_data {
-> +	struct reset_controller_dev rcdev;
-> +	void __iomem *base;
-> +	spinlock_t *lock;
-> +};
-> +
-> +static inline struct zx_reset_data *to_zx_reset_data(struct reset_contro=
-ller_dev *rcdev)
-> +{
-> +	return container_of(rcdev, struct zx_reset_data, rcdev);
-> +}
-> +
-> +static int zx_reset_assert(struct reset_controller_dev *rcdev, unsigned =
-long id)
-> +{
-> +	struct zx_reset_data *data =3D to_zx_reset_data(rcdev);
-> +	const struct zx_reset_line *line;
-> +	unsigned long flags;
-> +	u32 val;
-> +
-> +	if (id >=3D ARRAY_SIZE(zx279128s_top_resets))
-> +		return -EINVAL;
-
-This check is unnecessary, fwnode_reset_simple_xlate() already checked
-this before the reset control was created.
-
-> +	line =3D &zx279128s_top_resets[id];
-> +	spin_lock_irqsave(data->lock, flags);
-> +	val =3D readl(data->base + line->reg);
-> +	val &=3D ~BIT(line->bit);
-> +	writel(val, data->base + line->reg);
-> +	spin_unlock_irqrestore(data->lock, flags);
-
-Consider sharing a read-modify-write helper between implementations.
-
-> +	return 0;
-> +}
-> +
-> +static int zx_reset_deassert(struct reset_controller_dev *rcdev, unsigne=
-d long id)
-> +{
-> +	struct zx_reset_data *data =3D to_zx_reset_data(rcdev);
-> +	const struct zx_reset_line *line;
-> +	unsigned long flags;
-> +	u32 val;
-> +
-> +	if (id >=3D ARRAY_SIZE(zx279128s_top_resets))
-> +		return -EINVAL;
-> +
-> +	line =3D &zx279128s_top_resets[id];
-> +	spin_lock_irqsave(data->lock, flags);
-> +	val =3D readl(data->base + line->reg);
-> +	val |=3D BIT(line->bit);
-> +	writel(val, data->base + line->reg);
-> +	spin_unlock_irqrestore(data->lock, flags);
-> +	return 0;
-> +}
-> +
-> +static int zx_reset_status(struct reset_controller_dev *rcdev, unsigned =
-long id)
-> +{
-> +	struct zx_reset_data *data =3D to_zx_reset_data(rcdev);
-> +	const struct zx_reset_line *line;
-> +	u32 val;
-> +
-> +	if (id >=3D ARRAY_SIZE(zx279128s_top_resets))
-> +		return -EINVAL;
-> +
-> +	line =3D &zx279128s_top_resets[id];
-> +	val =3D readl(data->base + line->reg);
-> +	return !(val & BIT(line->bit));
-> +}
-> +
-> +static const struct reset_control_ops zx_reset_ops =3D {
-> +	.assert =3D zx_reset_assert,
-> +	.deassert =3D zx_reset_deassert,
-> +	.status =3D zx_reset_status,
-> +};
-> +
-> +/*
-> + * Reset bits are cleared to hold the reset. The registers also hold oth=
-er
-> + * controls, but no other driver writes the reset registers.
-> + */
-> +static int __init zx_top_reset_init(struct device_node *np,
-> +				    void __iomem *base)
-
-Why is this initialized from CLK_OF_DECLARE_DRIVER()?
-Surely USB resets are not required early?
-
-> +{
-> +	struct zx_reset_data *rst;
+>  {
+>  	unsigned long flags;
+> -	struct clk_core *old_parent = core->parent;
 > +	int ret;
 > +
-> +	rst =3D kzalloc_obj(*rst, GFP_KERNEL);
-> +	if (!rst)
-> +		return -ENOMEM;
-> +
-> +	rst->lock =3D &zx_top_lock;
-> +	rst->base =3D base;
-> +	rst->rcdev.ops =3D &zx_reset_ops;
-> +	rst->rcdev.owner =3D THIS_MODULE;
-> +	rst->rcdev.nr_resets =3D ARRAY_SIZE(zx279128s_top_resets);
-> +	rst->rcdev.of_node =3D np;
-> +
-> +	ret =3D reset_controller_register(&rst->rcdev);
-> +	if (ret)
-> +		kfree(rst);
-> +
-> +	return ret;
-> +}
-[...]
-> +static void __init zx279128s_topcrm_init(struct device_node *np)
-> +{
-[...]
-> +}
-> +
-> +CLK_OF_DECLARE_DRIVER(zx279128s_topcrm, "zte,zx279128s-topcrm",
-> +	       zx279128s_topcrm_init);
-[...]
-> +struct zx_crm2_reset_data {
-> +	struct reset_controller_dev rcdev;
-> +	void __iomem *base;
-> +	spinlock_t *lock;
-> +};
+> +	*old_parent = core->parent;
 
-This is exactly the same as zx_reset_data, why duplicate it?
-Same comments as above apply here.
+And that's the reason for asking. A pointer argument is expected to be
+in or in/out param.
 
-regards
-Philipp
+>  
+>  	/*
+>  	 * 1. enable parents for CLK_OPS_PARENT_ENABLE clock
+
+[...]
+
+> @@ -2247,10 +2274,10 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+>  	trace_clk_set_parent_complete(core, parent);
+>  
+>  	if (ret) {
+> -		flags = clk_enable_lock();
+> +		unsigned long flags = clk_enable_lock();
+> +
+>  		clk_reparent(core, old_parent);
+>  		clk_enable_unlock(flags);
+> -
+
+Two unrelated changes?
+
+>  		__clk_set_parent_after(core, old_parent, parent);
+>  
+>  		return ret;
+
+-- 
+With best wishes
+Dmitry
