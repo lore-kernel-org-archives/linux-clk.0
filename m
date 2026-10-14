@@ -1,148 +1,111 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D459D3E1233;
-	Wed, 14 Oct 2026 16:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABEF54DAD6;
+	Wed, 14 Oct 2026 16:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791995479; cv=none; b=KM5IieUHD2qBg8NdLltSGfUFCdAlq4GjOsPLlGcAgXwrquSzu6nWXMVgukmY8D3zg85rblO0Fi+3HnzBF9ECcepOH3urjF0YyM2FjDn1O/qtjgHEfcWmTnjTWwox+XsdDE28nGQm6IBfeM1V0kKgPhkqdSzb2zcFiA+J+HdcSbo=
+	t=1791995557; cv=none; b=lZKijp56k89bkQ21rbJEUvdz58hcuPkHlZJSiViVSDeOO9geLmMNzZBeDwOKhF5FegH1FVN6kcj0UGXqnvkUHYjORGjQooJ3OkxWh+Ti3xSUUKtK39EzwxO8i1Zc0RX4OP1bXBGjq+/c3KZHdQF5MHAT1pNhh79yV6mNMRdGh1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791995479; c=relaxed/simple;
-	bh=TYH96bRS3rqmCs/LOa+rzQH3hQqcZ5UZST9ouhn5bw8=;
+	s=arc-20240116; t=1791995557; c=relaxed/simple;
+	bh=0wGx9WuB0zVmNNCMfYecWTe0N0DvKj0p9f2QogTgOtY=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=E+bMxAoitYK8536k60Sp0N5Rzx2PsiCHYgnI0xWhKxHSs9CawRuFp/yUa8EebEL2FcakQ3nWmyJXSX1EZMly1Aik2kOgAaIhGMOM9+V5ZM2wjHtSjPf/hZe6ovB4JrCX8w/x1Jadse0t4g0SVsnovXz7FY1764CX8eNL7AkD+DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jLha2XIF; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=kwRWFjj076X2HZkhXLpoX4RK1uK6p+I9o/kW1szA3s0YKhCbzrfQZ5IekIO6uxwW3g9fxp7PX8sq5aEpvJ/8yjPpUX9vnXzFgU0I6zKrwmAMkO5S+2PBIm1U8tHgBgVgZ3Ek48oYFgpRz/bQS5BQuGv25N1WRzWYmaFv5ou75ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7rbNsmt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLha2XIF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0BE61F000C4;
-	Wed, 14 Oct 2026 16:31:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7rbNsmt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A07051F000C4;
+	Wed, 14 Oct 2026 16:32:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791995478;
-	bh=yXRGjgtvWVK6g91h157yXzR4HkIoEPgS1TuZGqZYNzs=;
+	s=k20260515; t=1791995556;
+	bh=WugKqNWDagJkCYw+gyR9YtW0vgdFoHCnPeWVVs+DThc=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=jLha2XIFwGUHNGqXStjCJjp5DSIwgQDTtfqPBsbJyb+Wq0nfARDh3dS+XVAXxufBL
-	 OhlCuMoV9hAHsrL9q8zmT4/G/MRH4aozn4RNbXHYZvfXDXwIy58afAGhkt0d8c+wcR
-	 Ls7scy6QzmYqcgo3c0F+WxGDhxGjHlEGjWFrFdv3o488o1hRMc3JLGixazMPrPCzE+
-	 gUMf971FNA5AThFyMUUQXmpWxcctw2G8UwIVimZ88W7FtYIhbV+6RZpOsQGV/uCtlA
-	 PKUpJa53xnprX1+IDaSsG6fXtfvHAyv3YPO8i6s5f+gzVXhVcBZf2hz117GRxpaHKh
-	 t0s5TMsu5H+vQ==
-Message-ID: <sashiko-outbox-171533@kernel.org>
+	b=d7rbNsmt0QRNMrSW07NFzav91k33a4AeKdIW/lso/Kz9nHKcUJQEDEnBMjFVdte3A
+	 6N64q78dr0VXmZEtbwIzoxE63I54PrV0lzPjCiOo9wZ9grShrzGlvDIDVk7uwWshIy
+	 /zcdE9Of0u7QTNA/kZsyu8hOp8DoJhJXz6KSWf9m5CP2bzxTPgyhG9cdF5ChYJPtpL
+	 AQrOis453K88sHv3a9H08Clbi9037is9wIf5EsjXtrf+9fEza3py4pHWxbjh5houQA
+	 d8rXJvSCtGDVlD2a4J5HlqyuOkvkTkMFHVEHWhBsEw7skh5dPEo2t29n9eOTUo4Rxq
+	 gdQiMDGwCaeKg==
+Message-ID: <sashiko-outbox-171534@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 4/5] arm64: dts: qcom: add device tree for SDM845-HDK
+Subject: Re: [PATCH v2 2/5] drm/panel: add Novatek NT36850 panel driver
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261014-sdm845-hdk-v2-4-6d0b4b42f267@oss.qualcomm.com>
+In-Reply-To: <20261014-sdm845-hdk-v2-2-6d0b4b42f267@oss.qualcomm.com>
 References: <20261014-sdm845-hdk-v2-0-6d0b4b42f267@oss.qualcomm.com>
- <20261014-sdm845-hdk-v2-4-6d0b4b42f267@oss.qualcomm.com>
+ <20261014-sdm845-hdk-v2-2-6d0b4b42f267@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 14 Oct 2026 16:31:17 +0000
+Date: Wed, 14 Oct 2026 16:32:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [High] dts: usb_1_qmpphy swaps vdda-phy and vdda-pll voltage supplies
-- [Medium] dts: home_pin_a pinctrl incorrectly configures gpio6 instead of =
-gpio5
-- [Medium] dts: impossible 1.8V vin-supply for 3.3V fixed regulator vreg_sy=
-s_bob_3p3
+- [Medium] drm/panel: uninitialized dsi_info causes empty secondary DSI dev=
+ice name
 --
 
-commit 48f1c407e24f3899e533d5dddbd59a77b4901a02
+commit d78556555a8b667c80856e68aa43c5f0f311c5d4
 Author: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-arm64: dts: qcom: add device tree for SDM845-HDK
+drm/panel: add Novatek NT36850 panel driver
 
-This patch adds the device tree for the SDM845-HDK board, a development
-platform utilizing the modem-less SDA845 SoC. It introduces initial support
-for features like HDMI display, uSD, UFS, USB, and various onboard peripher=
-als.
+This commit adds support for the Truly WQHD dual-DSI command mode panel
+using the Novatek NT36850 controller. It configures power sequences,
+initialization commands, and secondary host registration.
 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-hdk.dts b/arch/arm64/boot/dt=
-s/qcom/sdm845-hdk.dts
-> new file mode 100644
-> index 0000000000000..4dd426912d20f
+> diff --git a/drivers/gpu/drm/panel/panel-novatek-nt36850.c b/drivers/gpu/=
+drm/panel/panel-novatek-nt36850.c
 > --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-hdk.dts
-
-[ ... ]
-
-> +	vreg_sys_bob_3p3: regulator-sys-bob {
-> +		compatible =3D "regulator-fixed";
-> +		regulator-name =3D "sys_bob";
-> +		regulator-min-microvolt =3D <3300000>;
-> +		regulator-max-microvolt =3D <3300000>;
-> +
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +
-> +		vin-supply =3D <&vreg_s4a_1p8>;
-> +	};
-
-[Severity: Medium]
-Is vreg_s4a_1p8 the correct vin-supply for this regulator?
-
-vreg_s4a_1p8 provides 1.8V, but vreg_sys_bob_3p3 is defined as a 3.3V fixed
-regulator. A fixed regulator cannot step up a 1.8V input to 3.3V.
-
-Could this create an incorrect power dependency tree, potentially causing t=
-he
-1.8V supply to be kept awake unnecessarily or turned off while the 3.3V rail
-is still needed?
-
-[ ... ]
-
-> +&pm8998_gpios {
-> +	home_pin_a: home-active-state {
-> +		pins =3D "gpio6";
-> +		function =3D "normal";
-> +		input-enable;
-> +		bias-pull-up;
-> +		qcom,drive-strength =3D <PMIC_GPIO_STRENGTH_NO>;
-> +	};
-
-[Severity: Medium]
-Does home_pin_a incorrectly configure gpio6 instead of gpio5?
-
-Earlier in the file, the key-home node is defined to use gpio5:
-
-		key-home {
-			label =3D "Home";
-			linux,code =3D <KEY_HOMEPAGE>;
-			gpios =3D <&pm8998_gpios 5 GPIO_ACTIVE_LOW>;
-		};
-
-Configuring gpio6 here leaves gpio5 without its required pull-up configurat=
-ion,
-which could break the Home button. Additionally, since vol_up_pin_a also us=
-es
-gpio6, this results in gpio6 being configured twice.
-
-[ ... ]
-
-> +&usb_1_qmpphy {
-> +	vdda-phy-supply =3D <&vreg_l26a_1p2>;
-> +	vdda-pll-supply =3D <&vreg_l1a_0p88>;
-> +
-> +	status =3D "okay";
+> +++ b/drivers/gpu/drm/panel/panel-novatek-nt36850.c
+> [ ... ]
+> +static const struct panel_desc truly_wqhd_desc =3D {
+> +	.mode =3D &truly_wqhd_mode,
+> +	.bpc =3D 8,
+> +	.lanes =3D 4,
+> +	.format =3D MIPI_DSI_FMT_RGB888,
+> +	.mode_flags =3D MIPI_DSI_CLOCK_NON_CONTINUOUS | MIPI_DSI_MODE_LPM,
+> +	.init_sequence =3D truly_wqhd_init_sequence,
+> +	.is_dual_dsi =3D true,
 > +};
 
-[Severity: High]
-Are the voltage supplies for vdda-phy and vdda-pll swapped?
+[Severity: Medium]
+Because the dsi_info struct field is completely omitted here, it is
+zero-initialized by the compiler.
 
-The QMP PHY expects a ~0.88V core supply and a 1.2V PLL supply. Assigning
-vreg_l26a_1p2 (1.2V) to vdda-phy-supply and vreg_l1a_0p88 (0.88V) to
-vdda-pll-supply applies excessive voltage to the 0.88V rail and insufficient
-voltage to the 1.2V rail.
+> [ ... ]
+> +static int nt36850_probe(struct mipi_dsi_device *dsi)
+> +{
+> [ ... ]
+> +	/* If the panel is dual dsi, register DSI1 */
+> +	if (pinfo->desc->is_dual_dsi) {
+> +		info =3D &pinfo->desc->dsi_info;
+> [ ... ]
+> +		dsi1_host =3D of_find_mipi_dsi_host_by_node(dsi1);
+> +		of_node_put(dsi1);
+> +		if (!dsi1_host)
+> +			return dev_err_probe(dev, -EPROBE_DEFER, "cannot get secondary DSI ho=
+st\n");
+> +
+> +		pinfo->dsi[1] =3D devm_mipi_dsi_device_register_full(dev, dsi1_host, i=
+nfo);
 
-Could this reversed configuration lead to hardware failure or potential dam=
-age?
+[Severity: Medium]
+Does passing this zero-initialized info struct to
+devm_mipi_dsi_device_register_full() cause a malformed sysfs representation?
+
+The MIPI DSI core copies info->type into dsi->name. Since info->type is
+empty, it results in an empty string as the device name, creating a broken
+uevent modalias of MODALIAS=3Dmipi: with no actual name.
+
+Should truly_wqhd_desc be updated to include a valid string in .dsi_info
+so the secondary device is properly represented?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261014-sdm845-hdk=
--v2-0-6d0b4b42f267@oss.qualcomm.com?part=3D4
+-v2-0-6d0b4b42f267@oss.qualcomm.com?part=3D2
