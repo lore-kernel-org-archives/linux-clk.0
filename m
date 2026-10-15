@@ -1,138 +1,111 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98DB52CCED;
-	Thu, 15 Oct 2026 12:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EFD51D524;
+	Thu, 15 Oct 2026 12:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792066810; cv=none; b=W/b5MAdBTXpNTcIodiHB0hGYFc/eLcXqomQMa3UFzLD1n3qMlSom697+FzxNB+4JBUzM2uI3RNQ6B8Jkl6910aJxQ69cLsBUFiTrOkuYkq4nW67ON9cIX6Vh05S9Om56IpT2IGZ5SViOctyHzf82a9sRPtgnpDXyus6izvmgRvg=
+	t=1792067535; cv=none; b=Z3/7VowbRmssISNYdYMcH9ZoH1dXdORjRfkGO8bDzsX2y5LvrnYNxVzlNG8/pdJx/u602OL1+C+cr0jtFcCRe1HBoOuIZDxhKJtMU87CtztThW2/rY30qE+YgpC4vjBH1kYC1X2arTHeZAq5UaY91wkgeFfDHBD1x5XvcYz59Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792066810; c=relaxed/simple;
-	bh=wUIP60ReUng2toh7xrANlc05gxl0Ni0XDP3WkJdt+dk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=X8JiJNij7IAV6x62tfxFhoIkna1ubVMmy+sGcM/T15xQQ4z7akgvNi+tQh/G5QbeuMlBW+0wIDLmK8UM46tqNjoFEqmPdROBGalLIB6WP/AodD4v3JUDUfklFjo7ARg1yGwoOnHextmGCw6pxJ1yByiWRcrf+pABn3tMLBZn+o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=sB6BF9zG; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1792067535; c=relaxed/simple;
+	bh=8WD1KJEKyLO9GG7VlKQaADfeScVI9vidkvvaM8Bb0dA=;
+	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=SAaXR/YtZJdbMKhkYJxwBedgtlyP6jCgtQ4aaseeV6g8p/ujTa95/Bp/36SpexzjZcMZUdYD2EsAgBxS+NOZ7CA/R0+7X+dtkmlWVKOzsOBN9XYCoBxhuS9GDaqinEa5ad99nSJ2V7sabVBWxjFmehrLNGEMMS0OznYM3raJe4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhrFfNdb; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="sB6BF9zG"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 40AFB4E41246;
-	Thu, 15 Oct 2026 12:20:07 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 14F6060360;
-	Thu, 15 Oct 2026 12:20:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7B50D10328B70;
-	Thu, 15 Oct 2026 14:19:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1792066801; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=AbpkMZVsBdBOWRwxjTkLihKxr/UR5S6eo3rRMVyn4ks=;
-	b=sB6BF9zGL2ZU/strrmUISETR4noJNIwvoSFUY+Lkyrh1MZcvR+cauOSAMwp3/NI9yZoj7H
-	E0sJ50qpAcRiQqcEpg1xDoOWtR37GqwPgZHhZvAdtumwRkITXfYV0+eSnjjrG8kmLr2u1t
-	XHEEa7I6OlQUrsS6ZGKQXpP0JWRfQTjqlU020859k2g9kISZgBd9z+5imFaM7gLX+mPEUK
-	JZGgohccHhT5uSzQde3m4PdwZfYChsGqPC0W1CiCiXP/dUw0AzN3EJU+3dUkg/Wm3MNddR
-	Wist4WxZhCvxkGViRb1li15Zy//6HOHfAeWBjgHQhJJkZdABoLbMP++bzIta8w==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Thu, 15 Oct 2026 14:19:06 +0200
-Subject: [PATCH v9 10/10] arm64: dts: nuvoton: ma35d1: Add LXT crystal and
- clock-names
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhrFfNdb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D62B01F000C4;
+	Thu, 15 Oct 2026 12:32:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792067534;
+	bh=X8FOmBSXX+HUNGHXxMp3OHiT/S2NzydEE8rbyj6LL5Y=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=FhrFfNdbHiOJlh2XuFB/qa9tJidlObqnBnsGkalNKNkjy0i5o9XE6MEniJsDPOR0Y
+	 zVCo2WURfbfEH3FRqUEzKVl2+gnEm/dvbVPCcl9XQowbTql68NyCKfSHZyALUIZpJ7
+	 RPLpoQ7IAZQvO7V3pjJj5yJ7xzCHzPZV/GrgEMvZhqpe9XUyummirJiIbC4CdHbLVX
+	 WQTFLzcjYIhhi5VlUsM6wmI56q5OfD1Tbi4PxLZslDyIH5GoZFb07omu9vO9t5p2uj
+	 FpGYCvOkd2Gbgz/1M0/LxqhCW2YNkfQQMj5Gom1XC5SdiimZ4yPPKZxm45U+GnTUUW
+	 D2DWM9cTE/f7Q==
+Message-ID: <sashiko-outbox-172803@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v9 05/10] clk: nuvoton: ma35d1: Use device managed
+ helpers for fixed rate clocks
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Miquel Raynal" <miquel.raynal@bootlin.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261015-perso-ma35d1-upstream-clk-v9-5-1f548fa2002e@bootlin.com>
+References: <20261015-perso-ma35d1-upstream-clk-v9-0-1f548fa2002e@bootlin.com>
+ <20261015-perso-ma35d1-upstream-clk-v9-5-1f548fa2002e@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 15 Oct 2026 12:32:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261015-perso-ma35d1-upstream-clk-v9-10-1f548fa2002e@bootlin.com>
-References: <20261015-perso-ma35d1-upstream-clk-v9-0-1f548fa2002e@bootlin.com>
-In-Reply-To: <20261015-perso-ma35d1-upstream-clk-v9-0-1f548fa2002e@bootlin.com>
-To: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
- Arnd Bergmann <arnd@arndb.de>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Steam Lin <STLin2@winbond.com>, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- openbmc@lists.ozlabs.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
 
-The clock controller takes its two crystal oscillator inputs from the
-board: HXT and LXT. The LXT crystal is not described at all: add the
-fixed clock node for it and reference both inputs from the clock
-controller node, with their respective clock-names.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] clk: nuvoton: UAF on unbind due to unmanaged mux clocks holding de=
+vm-managed parents
+--
 
-Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
-Fixes: b69af0984732 ("arm64: dts: nuvoton: Add initial ma35d1 device tree")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
----
- arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts | 6 ++++++
- arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts | 6 ++++++
- arch/arm64/boot/dts/nuvoton/ma35d1.dtsi         | 3 ++-
- 3 files changed, 14 insertions(+), 1 deletion(-)
+commit cdff8376e12bb7360642c4498d1f771077f9d948
+Author: Miquel Raynal <miquel.raynal@bootlin.com>
 
-diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts b/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts
-index d7670afb0a63..7752e85734ac 100644
---- a/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts
-+++ b/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts
-@@ -36,6 +36,12 @@ clk_hxt: clock-hxt {
- 		#clock-cells = <0>;
- 		clock-frequency = <24000000>;
- 	};
-+
-+	clk_lxt: clock-lxt {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+	};
- };
- 
- &clk {
-diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts b/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts
-index 8f3cb18d39b6..5c65f1fe5da9 100644
---- a/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts
-+++ b/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts
-@@ -36,6 +36,12 @@ clk_hxt: clock-hxt {
- 		#clock-cells = <0>;
- 		clock-frequency = <24000000>;
- 	};
-+
-+	clk_lxt: clock-lxt {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+	};
- };
- 
- &clk {
-diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
-index 7228ad4735b5..9a341c2b1397 100644
---- a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
-+++ b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
-@@ -92,7 +92,8 @@ clk: clock-controller@40460200 {
- 			compatible = "nuvoton,ma35d1-clk";
- 			reg = <0x00000000 0x40460200 0x0 0x100>;
- 			#clock-cells = <1>;
--			clocks = <&clk_hxt>;
-+			clocks = <&clk_hxt>, <&clk_lxt>;
-+			clock-names = "hxt", "lxt";
- 		};
- 
- 		pinctrl: pinctrl@40040000 {
+clk: nuvoton: ma35d1: Use device managed helpers for fixed rate clocks
 
--- 
-2.55.0
+Most of the clocks are already registered with device managed helpers,
+except the fixed clocks. Harmonize the driver by using the already
+available managed helper for that.
 
+> diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk-m=
+a35d1.c
+> index 75b7e2a84bfd9..4a745b169778d 100644
+> --- a/drivers/clk/nuvoton/clk-ma35d1.c
+> +++ b/drivers/clk/nuvoton/clk-ma35d1.c
+> @@ -139,9 +139,9 @@ static const struct clk_div_table eadc_div_table[] =
+=3D {
+>  	{13, 28}, {14, 30}, {15, 32}, {0, 0},
+>  };
+> =20
+> -static struct clk_hw *ma35d1_clk_fixed(const char *name, int rate)
+> +static struct clk_hw *ma35d1_clk_fixed(struct device *dev, const char *n=
+ame, int rate)
+>  {
+> -	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
+> +	return devm_clk_hw_register_fixed_rate(dev, name, NULL, 0, rate);
+
+[Severity: High]
+Does this change introduce a use-after-free on driver unbind?
+
+Mux clocks in this driver are registered using clk_hw_register_mux_hws() in
+ma35d1_clk_mux(), which is not devm-managed:
+
+drivers/clk/nuvoton/clk-ma35d1.c:ma35d1_clk_mux() {
+...
+	return clk_hw_register_mux_hws(dev, name, parent_hws, num_parents,
+				       CLK_SET_RATE_NO_REPARENT, reg, shift,
+				       width, 0, &ma35d1_lock);
+}
+
+Because these mux clocks are not devm-managed, they will remain in the clock
+framework after probe failure or driver unbind. Since this patch makes their
+fixed-rate parent clocks devm-managed, those parents will now be freed on
+unbind.
+
+Will the orphaned mux clocks retain dangling pointers to the freed fixed-ra=
+te
+parents, causing a use-after-free if the clock tree is traversed later (e.g=
+.,
+via /sys/kernel/debug/clk/clk_possible_parents)?
+
+>  }
+> =20
+>  static struct clk_hw *ma35d1_clk_mux(struct device *dev, const char *nam=
+e,
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261015-perso-ma35=
+d1-upstream-clk-v9-0-1f548fa2002e@bootlin.com?part=3D5
