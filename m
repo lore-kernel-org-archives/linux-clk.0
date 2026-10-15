@@ -1,169 +1,159 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F42250B8B1
-	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 10:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC7947668B
+	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 10:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792059547; cv=none; b=Ve5vgoJzQ2oQNKg6i/CCp7IbRAoxuDelvxcIR5xNPWbc/ABQjAZeDHcHzdowCuxCrSncy4Sym7jPRH4aK5p2nj5GyMmy99hMHe1aGFJGhuUORWYc3ttqI9yBIXeVlrirMu52lDv0w8NkSIoEeY0FgHz9Fz43VG8XLpCqgnI1D3s=
+	t=1792059660; cv=none; b=CoVEJVG0mEJ5kzC1Dv9/h+N7MQdUbhYBrTcFtO/Cwv+7aH64f63Z3MlVnu6pHjbVkHecYS9kY7haoc2WNIJJ2P+BcFUkYUiQ6ptTEkXfDIGeWu0z9s0U4tCQuQDqxzzYaADKnUI7/yeBIauHEeUpGpn7y5J+krIbCO7BadVJc2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792059547; c=relaxed/simple;
-	bh=obdjFi+DflTCXCJ4HEjroz7TuWbaqLtU7AT1ZuvIE9A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=togEx8VvORexug9qVd3h1KzdMGtOiwZl5dhtmmQWk2/kbtrux9J/LI1sQJZVBzWNzPdX8bsmBskqxSKMly2fsHxk4UnTKM2BThQLw7S/8SLnx49+PJ3HGXbf1lVUhIhqDDhRLidC1amWaaNo6tv/j2LiuRPxCILsuXKcShF5wcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=arsA4alg; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1792059660; c=relaxed/simple;
+	bh=AfazupRWWtICoUAGH1bBSGvypUPJoxkkS6rNv9KiWsg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IvCoMHCDgzOiZHUm3Et9j3FnXewSHDFWNMkVWOOWqy+ddcwjDJ1EqFYluUqc0DGiFSAtzLZtq4QT3U28N4LNYYOQL5w2FZLkR73FAqyqu8yWIjFb3f4vnFEMH1ifXTnI6XoqCzUinkzEo2NFwPY3fPSUSUH5KfmP2XCa9g0HYJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oBIfJRno; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=PRO1Rpsu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="arsA4alg"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a1af482519so22565515e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 03:19:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oBIfJRno";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="PRO1Rpsu"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69F9jTvi2809312
+	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 10:20:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vGqPYmz+xUpL9VkJ6AfNSwDSzuKUGDs49ODBW/+uu5A=; b=oBIfJRno+sYg/ngg
+	B8usJs5xu7nde6QQPE+thF8mZWDZEY2amZdl06EpXXXfedfLPFu1SimGzLbU19q/
+	Epel+YfyPso27KT1Pu1BXlFWuvpLI3fbiLNOX8rLYd388DOG3aejxkJdtb68xtEr
+	ZHxz/vbZl0No0lv1h5wX72IFjp1Fhr16mDE+sYSb9OvLdIPkUY+2pQhxdfKWGFKa
+	/OpBuGu5FwkDGb8pcARX0IU19m4mAm/z7TE8j5RdbCZgPaPE/C8CpisaHu51wcI8
+	9nLYA3bHVjlIcSm1iY6/PYUz3+T23DV+a5I3XUgurR62v/oLwR5oix7sFavB/Yuy
+	SlLWmQ==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4han54t26q-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 10:20:58 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93ea8a9cfe6so89229885a.2
+        for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 03:20:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1792059543; x=1792664343; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+        d=oss.qualcomm.com; s=google; t=1792059658; x=1792664458; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=WA8n8+ZwxN0dqwBSyImmmXrtU+HU1AvHwOdHA7+VJNU=;
-        b=arsA4algxrbrYAbK3kb3VETgYlANl1fMZvpu5yaVUvL+ZGKh2Rg8yumyUKaalS1/en
-         O/JmXIVuu+7SKMMQch+m2wC9MaB62GAjqtJhPts2iYP8tepUcPfPes6UJcdYnvUEP9mq
-         vGLo0JXzqNa2z58LcJSTNdkrud8DU3DF9XF6iQwGEnceDLOPbpG2Od4i6aFVCt6DTZ5v
-         k8xwVZ7oM/e6FDD0cKg7VdFMAKB6KJikTiid2rhoWZ18wylTZnhj+WmfY1o+bGU8B2TU
-         yy3pvm0TxiL3wYVkLTw3qdfQ4KTkeLLQfI36flvHksSzfFPmeyWvemxTPiPQBu3aF5b+
-         W9qg==
+        bh=vGqPYmz+xUpL9VkJ6AfNSwDSzuKUGDs49ODBW/+uu5A=;
+        b=PRO1Rpsu/7GJxiSdQZ+ZuU3C7xC39jYdGmY113iG60Hs7s/VJ0cUr06VXZ8HDOZGN2
+         gyfR0PL2EaMgSnKZvEOZTgFEgCEnKyrg4KbrUnBtS4qC/rts3dBBWBz0CDTDF3qvwv0C
+         DMrbRqC9hQx/mKQKUfCrdmkaFEf4Xn2zb85i16kf38D84Y2CFYLZrClicFQegeHkUmt4
+         M+EYIGOP1+vLA37UPGPduSMKeAlgFO2gQYWD4NzNUcANsPXPCOCLFhjRmW8ybvQM9seL
+         Tjgz1owknrHku7IJmL1dFtKwq2TTmSu84X7LFbpeMUoY8SR5OwDdkMIAputWvzMUJXCv
+         u0rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792059543; x=1792664343;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=WA8n8+ZwxN0dqwBSyImmmXrtU+HU1AvHwOdHA7+VJNU=;
-        b=D8jKCEYcFBDT/daCBbDWVh0Lmt1BOVq88QlHu1aev4v0CDkmCnntVrxJhuGdH27KG+
-         w52/0dnR4dgi1vf9ut8uAeXyss5tA9XsUfJAKIBm00VKuUmnWBKtp/6eWNitvB68xkW0
-         lAbZEB7tQLwV2Pgzl3iLwBwlkJ3gzNEJSLmsdcZHdGKeH764wfZC8mlhglwWYBSAB/Tp
-         RKwwsyyFLZ6cOYlAIuob3im5CokZtoe1KifHit5qUfzQYXtS9hydbteNzzu34HsX/ErK
-         tsu50OFmD0Z8v50YCw39LSKpNF7xmW2VTDRNI1/W+dZp1U11uquP2sFoDORvSZRbJlQq
-         +iqg==
-X-Gm-Message-State: AFq9FYLnx1BEUnH7dOT11eVlewaFN8aK0LMhUoDDpVraBJa3fIlDTICf
-	obZ48g9+Yed1eOZcpwonoP04HswLZAgck9Z+K34l/tj6bzD4ZK94H95ozH2oETZFseo=
-X-Gm-Gg: AYBFou3XhXheZSLmm82PL6Bp/nVfJTbccrLfEruTvb/6TPx+Rbf2zEyDW1HOO7TFhOs
-	Nc1J5U6tgZ4YxYYePVaW9h/K2O4/NBrbfvSwyj8cyxBRCefnyulyQ/qPLtju4pA4PiuqTrhrJGS
-	xWAkh4qmTOq02TMY5/tobP3DPb5WljQ4jPNINMx2PMInY7S065mpZojm/05tC99s9UZYqy+R2QI
-	h1eydz6W0tnFtMQBUNm+xQwLj0QbsiDVwBYZp2lD2JdX4SY9jbNQeRA91RecHly1K0ySRLCtkDA
-	G0K9VPlaLg/ERQOmoH26NGfECxVZmkvyviK3h0zH4oLbErgux7adyNY0EIuTquvssOlaG6/UiID
-	/1VfWWta8QSDfYQFiLafSM/Po4cf/RK9dOnJTsN60jxggG7S+96xrEthtH4jZd30ZUATQRebQm9
-	onUL3oScknsyKMQlHf/hLibu6KeAWNgCRBuUj9W2pwjqCHFZWvbjwYqZTzFt+GESzvhWyp02JHN
-	2vvXr7f0Ciy9l2aMQ==
-X-Received: by 2002:a05:600c:64c6:b0:4a1:c27d:e1a8 with SMTP id 5b1f17b1804b1-4a1c27de583mr23492775e9.10.1792059543225;
-        Thu, 15 Oct 2026 03:19:03 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1bd96fed4sm60950835e9.2.2026.10.15.03.19.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Oct 2026 03:19:02 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Mike Looijmans <mike.looijmans@topic.nl>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
- <jbrunet+clk@baylibre.com>, Michael Turquette <mturquette@linaro.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: cdce925: Size the PLL child name buffer for any int
-In-Reply-To: <a61f0060-c43c-4c0f-afcd-1db262cf62ae@topic.nl>
-References: <20261014-cdce925-truncate-child-name-v1-1-00136be00c49@baylibre.com>
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.1dd36950-a9a7-41bb-847b-d859a91bcfad@emailsignatures365.codetwo.com>
- <a61f0060-c43c-4c0f-afcd-1db262cf62ae@topic.nl>
-Date: Thu, 15 Oct 2026 12:19:01 +0200
-Message-ID: <1j7bjjfeqy.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20260707; t=1792059658; x=1792664458;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=vGqPYmz+xUpL9VkJ6AfNSwDSzuKUGDs49ODBW/+uu5A=;
+        b=CAOF8HwFhOZlJ6GBrKnJ64q0ljZIjTUfpRe8qoJ6mLlnSkhH4347iqidVO3ChtwnLc
+         Tly6oAc3EQYKoLfhTOyyJ4AUiVMdxctOQnokq9XD3GNbIjETg70QxWDapu+WK58/OlvD
+         MW9g5tkY+82qvoEe/VD0oOleC2tpQ38JuYrRQt6Y4cDWqt/r8hn6AEyZtaXAH5nTvoP4
+         9UZkIC9VpnnhAqTuPLTqZab9gQ+pnXbjFhPxKTWdM9n7xFpSo3RVynQy35qymuw5nzfL
+         lID+Y1799ZCp7KzBcr6exMv+UKbeiYV/CePboDAojnDEAGJiZ4iRuZ0KerH+P+SzkgI7
+         vZKQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxKwxpmMPGSYke3R9o95rpoBtM5onsrzM/zK3tm4asq6L2zFpcdFF9Q8oED7YylvKQjp5CzdYBBW78=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIYPE6nOWNrpGryhU9K2583ROh/BWUH/yFyyewwT8+WrhQz2kEG
+	T4OcFoc6U8ka7lilOlS7N4ceokMA7svmmZWKnI6KlUqUSpo8z9R4lrZwxx5oPPwPpq112AvEB80
+	8Yuy/ngHrOUc+4eHUHKwWW7LixNWPeuSey/RD/0ZvY55es6qnIOZa6Y3nJT4YfxE=
+X-Gm-Gg: AYBFou1OqP8SgAtBVhk8699evibbl0s2JqxpRSP1JlXVZbKimuHE3besKrMPEKtncyP
+	TgO3nyspL8JXXW4mqgqag0wdiYow5XwCoUcx2w2Ofsm05yVtPw2XOwbj00CtMnMIOQUkYyK6Xmi
+	0VvndU/zlZ8VcFYNeuOVwtQTB8ApE2ilxD3uijrDXYnaea42XwbTioiKiDgjGt7xhEh14N865Z8
+	9KS23nntGaQPwRaIweDNY1KDdmwT3LCsNrhctXAtYrP7f/SkoN8LjDyNKH0jHShdnphqBQwEko+
+	Et28dtXm6AfODf303MBGgliKET47NPK9iQzyqbrPxSQv6YfeVMyqlvC36QOApkodeO9FpUtG8N8
+	jhScoPVn8xddx+8v+859PRQ==
+X-Received: by 2002:a05:620a:2718:b0:93a:ec4:e5f2 with SMTP id af79cd13be357-93ebd6e4c09mr3599361185a.6.1792059657873;
+        Thu, 15 Oct 2026 03:20:57 -0700 (PDT)
+X-Received: by 2002:a05:620a:2718:b0:93a:ec4:e5f2 with SMTP id af79cd13be357-93ebd6e4c09mr3599356685a.6.1792059657298;
+        Thu, 15 Oct 2026 03:20:57 -0700 (PDT)
+Received: from [192.168.226.26] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c3eda622246sm105704266b.70.2026.10.15.03.20.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Oct 2026 03:20:54 -0700 (PDT)
+Message-ID: <d8c2a208-1ce0-48b9-b850-2561bd37d3f1@oss.qualcomm.com>
+Date: Thu, 15 Oct 2026 12:20:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] arm64: dts: qcom: glymur: Add videocc sleep clock
+To: Shawn Guo <shengchao.guo@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc: Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bartosz Golaszewski <brgl@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20261008081036.3492003-1-shengchao.guo@oss.qualcomm.com>
+ <20261008081036.3492003-3-shengchao.guo@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20261008081036.3492003-3-shengchao.guo@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=RYQFmFtv c=1 sm=1 tr=0 ts=6ad0a90a cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
+ a=EUspDBNiAAAA:8 a=Z62H7OANAOBda0uacUIA:9 a=QEXdDO2ut3YA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE1MDA0MSBTYWx0ZWRfX4+bZfMJMfO0j
+ IxVLdtwtWIyJMphHs0HA1XqjPhZV+tW6cDG1AVFjxdvUPXEVIp9mNu3IjJQ2eqcX6vzq6aYNUxx
+ NiHapwyqfDIJikARCTrI09qxRXkYeH6U1zpgBVby7kOw3sk0iDhCxN3Q+9ti9mRD2XjWwgP4fGa
+ n8x77z+VeF89rj7MWqeSi0bgNeErnyhwpMHzUn7VA7mlDDtpOAVxnMOhWVL3Ypf6ILmfvTLRE40
+ AAF15aJ/AFEVCaxeg/lsHciJnWg1vgp88rmzmAZyjI2umgT966395Tt+LluDHNMD6tUbQMFjfE1
+ ZMk+TLQfsQiD3tVB6pYQX50+znDXe+3xOiclNtH38t9zUECher+GrjIFxBhuKqCE/xb8RsrL5Xy
+ k2q9zHUMrz1JMqsK2uMZyh+MuT+25d+WrRIesH6M2pwmm82+fMHPFpjlLQqaC8kO8G37nYcapQ9
+ RBqz1lxHNKehdOSFckw==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE1MDA0MSBTYWx0ZWRfX5QL5Fd4LOQK0
+ YU59ycWj3pWjhbBPyyT3kYRDByk26PzN23Ap+uq+1mQ+Q3+4YJqA/XUCvvUrMkfUtBWavyo29Kj
+ J23ujnf68PrF6a2/xEFM0lvrE7mqkqo=
+X-Proofpoint-GUID: jJCe8Hvr4zatcewVtVW61q6wikdIMHKH
+X-Proofpoint-ORIG-GUID: jJCe8Hvr4zatcewVtVW61q6wikdIMHKH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-14_01,2026-10-14_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 spamscore=0 malwarescore=0 clxscore=1015 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610150041
 
-On jeu. 15 oct. 2026 at 11:18, Mike Looijmans <mike.looijmans@topic.nl> wrote:
-
-> Met vriendelijke groet / kind regards,
->
-> Mike Looijmans
-> System Expert
->
-> [cid:topic_3fa16e61-8444-4c42-bbdd-4da663de69ef.png]
-> TOPIC Embedded Products B.V.
-> Materiaalweg 4
-> 5681 RJ Best    T:      +31 (0) 499 33 69 69
-> The Netherlands E:      mike.looijmans@topic.nl<mailto:mike.looijmans@topic.nl>
->         W:      www.topic.nl<http://www.topic.nl>
->         L:      LinkedIn<https://www.linkedin.com/company/topic-embedded-systems>
->
-> Please consider the environment before printing this e-mail
->
-> On 10/14/26 18:11, Jerome Brunet wrote:
->
-> The PLL child node name is built from "PLL%d" in a 6 byte stack buffer.
-> The PLL index is bounded by the chip's num_plls, at most 4, but GCC
-> cannot see that bound and, with W=1, warns that the formatted string
-> may not fit.
->
-> Make the buffer large enough to hold any int and use snprintf() with
-> sizeof() so the size stays tied to the declaration.
->
-> Fixes: 19fbbbbcd3a3 ("Add TI CDCE925 I2C controlled clock synthesizer driver")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com><mailto:jbrunet@baylibre.com>
+On 10/8/26 10:10 AM, Shawn Guo wrote:
+> The video clock controller binding describes three clock inputs for
+> Glymur: the board XO, the always-on board XO and the 32 kHz sleep clock.
+> The videocc node passes only the first two.
+> 
+> Pass the board sleep clock as the third input. No functional change,
+> the video sleep clock keeps the rate left by the bootloader and has no
+> rate consumer.
+> 
+> Assisted-by: LLM
+> Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
 > ---
->  drivers/clk/clk-cdce925.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
-> index 4d49cc1659c0..56b69d4fe4c2 100644
-> --- a/drivers/clk/clk-cdce925.c
-> +++ b/drivers/clk/clk-cdce925.c
-> @@ -625,7 +625,12 @@ static int cdce925_probe(struct i2c_client *client)
->         int i;
->         int err;
->         struct device_node *np_output;
-> -       char child_name[6];
-> +       /*
-> +        * The PLL number isn't a compile time constant so GCC can't infer
-> +        * the number. Make the stack buffer large enough to hold any int
-> +        * so Wformat-truncation does not complain.
-> +        */
-> +       char child_name[15];
->         struct regmap_config config = {
->                 .name = "configuration0",
->                 .reg_bits = 8,
-> @@ -697,7 +702,7 @@ static int cdce925_probe(struct i2c_client *client)
->                         dev_err(&client->dev, "Failed register PLL %d\n", i);
->                         goto error;
->                 }
-> -               sprintf(child_name, "PLL%d", i+1);
-> +               snprintf(child_name, sizeof(child_name), "PLL%d", i + 1);
->
-> This would also avoid the warning, without using a larger stack:
->
-> sprintf(child_name, "PLL%c", i + '1');
->
 
-If you keep snprintf and properly cast i, possibly.
-Feel free to send a follow-up change.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-NOTE: please reply to PATCHes using plain text emails.
-
->
->
->
->                 np_output = of_get_child_by_name(node, child_name);
->                 if (!np_output)
->                         continue;
->
-> ---
-> base-commit: a5929cbf1406eb3da217d4a182ff6c5b73f3ed91
-> base-tree: git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> change-id: 20261014-cdce925-truncate-child-name-a4d9db9cf003
->
-> Best regards,
-> --
-> Jerome
->
->
->
-
--- 
-Jerome
+Konrad
