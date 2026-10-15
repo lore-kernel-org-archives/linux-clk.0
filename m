@@ -1,281 +1,228 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770324B4043;
-	Thu, 15 Oct 2026 07:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFD93DB630
+	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 08:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792050802; cv=none; b=kBaVXKaVgMPKpIfqVQBZaJwa7jK2OLRvWv2+cVmdAWP3l3NdHkRFH1AsZ8cKjhg8U1Cv2cpOi96CqhQqKl1IJtLkx+vGMBxdqlMZ2kJaWie4d1w5ufm63cg2/TKZakkYy3r6IViiGPRjGqq/4RYqtISLx7/lo3WYI26iQ+aAb0g=
+	t=1792051739; cv=none; b=LD9qlgro14C4+0H+5hSlqpwt1Lci0d7g1uOYg2FRx9IADud++V2HzB/ZR9hOhcuGwQEUKgq87F3UvchudEYhLV5i9BoYTlR6KUk1y3dlDSZaONiP7hB3XkHnfwMbe31D6ZbiaAsi3XDrgVzWSNaJGuWoh+bGZp1+7li2srQq+7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792050802; c=relaxed/simple;
-	bh=vxw4nMxaECnIc0YHwRfwBILmFkhBQvUD6HX2LsSEB34=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HWhtucL6whVh2AFhOMQhDiS7p5zalmiofgmYVRo0Uq8xkgyBeeDO1sKvlUmsbgFo3GIIFdWf+4aXEOCmhQ14JpkJfPNAQ5+FiHQ1VAebYkGqSGfOL3HzsPR9gnJ2lwO8UFcvNGrZeXdRiwwfsuQJQXxoazSKbgMmFeqJly96bmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lvi5hYAf; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1792051739; c=relaxed/simple;
+	bh=45PV67NtVgc4sgYoNCXN4H3us/yM8vaBVPcRzxk4TYo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QYGVa3ttlMK5D1TTJDt8Kp5u1Aa//7hBKe1849zEVpsGf76mgrzK/cVRTW9QMnnV8R1fGsnkjuA8AchwieKiLai+yU3xceghYFZnm3usrPfDDIYONFTox/jvAbR06v16RxkgAbEZ/aqnjK/jvjvatPSIGL0bzRU61H05a42YCI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Res8tA3h; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=guTIaqTA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lvi5hYAf"
-Received: from neptunite.rasen.tech (unknown [IPv6:2400:2411:160:2f00:6f1c:794c:1e6c:a09b])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2F52A22B;
-	Thu, 15 Oct 2026 09:51:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1792050676;
-	bh=vxw4nMxaECnIc0YHwRfwBILmFkhBQvUD6HX2LsSEB34=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=lvi5hYAfM4BWFRsETfm0uGfpWapVjYU2VpcNuFRkjB+U+ngs7xLfB4EoFcYz7Hdnp
-	 DF5RxeNI9kEZl/vuXVl2HRkjjJiZgiG+ErQ6bxTiIuIeaaE6XUrbFKY73ARwPPQgmZ
-	 qa5fXAjNPNXUEr4oSuiqfSrPHye42VXaaQF0TQWU=
-From: Paul Elder <paul.elder+renesas@ideasonboard.com>
-Date: Thu, 15 Oct 2026 16:51:55 +0900
-Subject: [PATCH DNI v3 15/15] media: rcar-fcp: Check device revision at
- probe time
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Res8tA3h";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="guTIaqTA"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69F7O4nq2121448
+	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 08:08:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VMnY2CqlgwWMj3YeqL6fccDpD4YzU58CT0eUffdDoHE=; b=Res8tA3hpKW+/v3Y
+	qd9PdKElNkpfRFG8PjnPy5qMMB0ADXBDMqSZRbUDe1sOwIVOvbCX67jHZ1TAOrrw
+	RqAjKI3FMEQithBfeOjNv/RhMRxP26sxxkReXOHuhIq6aGCQ0uoJho6Fx0EVfs6T
+	sdG0/BMx5ARj4sY+0bUfCMKRIVhX8cZ1SKdmHYigHq+qqjypnRkdTsMNq248uC4L
+	ZvbPtTOJZLcp5i1Ce8PHv/GsxW8JFNpGtb7zJcAmobbVCms9AAhHYc0OxAxHrb6t
+	JUGriX+6tWN4YZwcBvzkwBnHRLeLdmmoHj0phFBfPBBlqPCVai259ulfyYPG8LVo
+	DAGj5g==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hakwn1m7x-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 08:08:56 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-530cd3dff25so10386921cf.0
+        for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 01:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1792051736; x=1792656536; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=VMnY2CqlgwWMj3YeqL6fccDpD4YzU58CT0eUffdDoHE=;
+        b=guTIaqTAHl2v/qBQVjjinXWaTC3PmoEhn/T3D1gR5BtDrkAelKxrHrtQAKNIY/ykbK
+         Z9gj14LQoIQXuioi0ga12cnBhSh7vSI9AR2FtCq24GiNcWCEch0ERiH/mNP0Wj8SWzdN
+         kHQRo45OW9lMLj28Ug5O+gZc7pH7+Jrvs0sXrI989jcorO3uqKSyPgPTvyaHvCMF/0Ls
+         5XA2szQgkRnSZ8DRFH9SeGbhM32DzRRMbt/0+0bvSncKXGccxuEf0mxO6CtL0RpJVzDp
+         Zr6ibSO4x+Hq+zIbUdgXSp8lb/AaJHS4HnAlZdWDC1BzVAPOtZRv1e5+6pQkgOAXoC1O
+         rYZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792051736; x=1792656536;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=VMnY2CqlgwWMj3YeqL6fccDpD4YzU58CT0eUffdDoHE=;
+        b=m08FGN9SKNFVtFfJxeisPqSsZ1aA5Xx83RXOTk7ahlZv/LqLVdpfQcThdt2r2X+l3G
+         xU7i+tCY+CMXocjSbp4C6Stu+IQNZ1xWaNUdxTp52XdvonHX1Nl6u7J1Sqt0aDkn06//
+         TZUrWZ7dUsu5DJs1AU78j4lKYMvN37hQ3WvLwQtVGcT7ZQ25yOmfMSU+mo3jCgvVV0lC
+         cV2EksKQzRT1MWDn1bedLb/hD4ogu/nG6dKxDcgE6ogz56iX8Q53+pTMeN3OdnqZTyRV
+         GLDj79/n/7KVZ98FiBZUgdiq0sS7AJrnqswTf9t6aqNXG8x4RI40/seg4pS1+y+90UHp
+         ZgBA==
+X-Forwarded-Encrypted: i=1; AKwUvByaQdmhL2+1Cvbx/YdLR31uwK6M5nEXshvrwj+wmG+RcSW6H9bAzYyl+/z9tI73OkO011qC2SkIoqE=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJLZhs0+abFm7wvLkK/0OowejYwe8TVBSQP9op6/QZR07/rcLzO
+	8hI6nExrLxbailPKXqXQu3CmaoxhogqEqVdy+ejFueWlAYota3lmsKydzuIkQrtZv0HGM2Yapjm
+	B8tdf2cZFQdR8NcMxg0tWqxUM04JuRLMLVpwkVWmLy5+hwE81JamCrlTIldB+LU8=
+X-Gm-Gg: AYBFou0vU5UJkp8zvzE03GcisxCq2lnU5GUXSX4BIYlyiLGI9QPJvkmp7lOxFmSSut9
+	+zwH1ImH+iTd3AkC9R7rZ8bLTpKBv44MIGwpfAfQX63Y+whPezvv6qR7HSQ8kHpJvyZwyFYow0Y
+	VQXyui4BeseqjzQlerewa2ipGaNZqzzdEO7AyNr7mogmEjRua7tjWfhYtNqcPLX24xO9zeKWUbL
+	UjlR+GNq9qUIpilvah/VCqKZ1cEv/S+9P7SeaxWT9mDM11TmZ75KvcN5EULl4AfvYhJo3QsycJL
+	xk+HuwI7U54K0R4f0JDfw7OGsEsK1sQpAhKuV0JhPT2S4M4IndL9vB3BCFmRo702AGnyFSE5X5+
+	AyNzKPW04iu6euCFjob2/bA==
+X-Received: by 2002:a05:620a:4449:b0:939:9ef4:79eb with SMTP id af79cd13be357-93ebd27cc8fmr3390574285a.6.1792051735948;
+        Thu, 15 Oct 2026 01:08:55 -0700 (PDT)
+X-Received: by 2002:a05:620a:4449:b0:939:9ef4:79eb with SMTP id af79cd13be357-93ebd27cc8fmr3390562685a.6.1792051733632;
+        Thu, 15 Oct 2026 01:08:53 -0700 (PDT)
+Received: from [192.168.226.26] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c3ed963e0dbsm93441866b.23.2026.10.15.01.08.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Oct 2026 01:08:52 -0700 (PDT)
+Message-ID: <47797de1-b50d-4b4f-989c-00ac2427d40a@oss.qualcomm.com>
+Date: Thu, 15 Oct 2026 10:08:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 07/16] clk: qcom: Add clock-owned GenPD DVFS
+ aggregation
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Ulf Hansson <ulfh@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Mike Tipton <mike.tipton@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        driver-core@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
+ <20261014-topic-qc_clk_dvfs-v1-7-3041b788e9f7@oss.qualcomm.com>
+ <ygwhik5t6w74xcqz4igmb6t5esmjjgrmtwqqqmo4doj34t7rpu@jkngx4v76rxg>
+ <6c9937a6-88c3-4e5f-85a3-73d929d3ba01@oss.qualcomm.com>
+ <dbyuabhh3phhe3uq2kvhcnuem7qb2a6j5yvhl6ylizqikt2rlk@vyvrcj3lewtp>
+ <dad15717-4439-41b7-8552-0176c9cd1505@oss.qualcomm.com>
+ <ussxpger36nwnvuqv4nmtogxkrn4krogw254qbtusdf7y2ofn4@pswnav4mz6lm>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <ussxpger36nwnvuqv4nmtogxkrn4krogw254qbtusdf7y2ofn4@pswnav4mz6lm>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-15-e052903a3832@ideasonboard.com>
-References: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-0-e052903a3832@ideasonboard.com>
-In-Reply-To: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-0-e052903a3832@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- Ulf Hansson <ulfh@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-media@vger.kernel.org, 
- Paul Elder <paul.elder+renesas@ideasonboard.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: b4 0.14.2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE1MDAzMiBTYWx0ZWRfX/72rIrRbg9kH
+ fFW78TJjIqqIZq7hyVsXpDw4r0luL0ChsmPPpfq6/BPfQosUFhF/blHYJlM9rzAOelHVT8HVW9u
+ GWG0vnIPp+C2L86e6Aq++TGtlAdyQuWzHHXuCTEgLRBcb+O4g+pr/8+EWqe0wbDjyiMi1ncjVeX
+ ZZea3M9TIdlozkRL6ieEawqCVZo72WYiuKKZw5zaM6zrCh8AVb6oMXUjwwKNRdmaxR3C3C4YJTj
+ Y4JPcOZyxvvYyVt+Z9Q5kgML6vR/Y/6SSaFLbo4nA5HhVXUGFIzy9fP1V5gBTW3n8eGyhmkvHxO
+ oLwCq+WphHx7h2pSKQ1es2LA/RvnOgCGf4eyVIVA8WEB/dGGj5zyMmsB9Xo582rIO4jwv97Ymgr
+ DvI7hbcxMpXXDWXWpFx2gBHvGEL0Wb/BCl3iFi+vck1C2ffro6lp1NJdZtobP3hfQejiUl5Z96M
+ 2aFSt4WhdBXaE5puKjg==
+X-Proofpoint-GUID: XNmjBl0CL9Qp2GLPhS4MNTcg6bzwAHNS
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE1MDAzMiBTYWx0ZWRfX7SpK2IkwzXoW
+ q3WmFblLCPl+vkr0jLnSzuU8qcxN9A7BwzAQfHu1QA9IfPpTyDoSxDWD88k6gTdkEGaf4CiH5X8
+ J/8dbHascFfS/2u1BWtd8pVi5LgWTo4=
+X-Authority-Analysis: v=2.4 cv=BqUIUoX5 c=1 sm=1 tr=0 ts=6ad08a18 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=EUspDBNiAAAA:8 a=tlWqZDqU6_vpIpeepkAA:9 a=QEXdDO2ut3YA:10
+ a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-ORIG-GUID: XNmjBl0CL9Qp2GLPhS4MNTcg6bzwAHNS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-13_01,2026-10-14_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 spamscore=0 bulkscore=0 suspectscore=0
+ clxscore=1015 malwarescore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610080000
+ definitions=main-2610150032
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On 10/14/26 7:31 PM, Dmitry Baryshkov wrote:
+> On Wed, Oct 14, 2026 at 06:45:46PM +0200, Konrad Dybcio wrote:
+>> On 10/14/26 6:30 PM, Dmitry Baryshkov wrote:
+>>> On Wed, Oct 14, 2026 at 05:26:00PM +0200, Konrad Dybcio wrote:
+>>>> On 10/14/26 4:36 PM, Dmitry Baryshkov wrote:
+>>>>> On Wed, Oct 14, 2026 at 02:19:07PM +0200, Konrad Dybcio wrote:
+>>>>>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Verify that the device revision register reports a valid value,
-otherwise reject the device.
+[...]
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
----
-Changes since v2:
+>> Right, but the meaningful difference here is that the consumers
+>> only know they need a certain frequency. The required power votes
+>> from that don't stem from the consumer's requirements. They stem
+>> from the clock controller's inner workings that are necessary to
+>> fulfill the consumer's demand.
+> 
+> Doesn't Iris core also have "we need this power to work on this
+> frequency" kind of requirements? My assumption has always been that
+> those are just folded into the clock requrements.
 
-- Add FCP type information
-- Reject devices with an unsupported version
+My understanding is that is just an effect of the requirements of
+the clock controller.
 
-Changes since v1:
 
-- Use devm_platform_ioremap_resource()
----
- drivers/media/platform/renesas/rcar-fcp.c | 132 +++++++++++++++++++++++++++---
- 1 file changed, 121 insertions(+), 11 deletions(-)
+>>>> The Qualcomm case is easy - RPMH is *always* reachable, so the
+>>>> pmdomain provider needs no clocks itself. For the other cases,
+>>>> "patches welcome".
+>>>
+>>> Ok. There is a promise that I2C PMICs will never ever be involved in the
+>>> clock / power tables.
+>>
+>> Or at least that someone who needs them will contribute a
+>> solution to this problem.
+> 
+> I meant actual I2C PMICs, like PM8008.
 
-diff --git a/drivers/media/platform/renesas/rcar-fcp.c b/drivers/media/platform/renesas/rcar-fcp.c
-index 76d4c250b30815d9eac58f9b54ad923748df79f6..5f2c483f71f42f0fc614db216c54d65e2372e8fb 100644
---- a/drivers/media/platform/renesas/rcar-fcp.c
-+++ b/drivers/media/platform/renesas/rcar-fcp.c
-@@ -14,28 +14,78 @@
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/property.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
- 
- #include <media/rcar-fcp.h>
- 
--#define RCAR_FCP_REG_RST		0x0010
--#define RCAR_FCP_REG_RST_SOFTRST	BIT(0)
--#define RCAR_FCP_REG_STA		0x0018
--#define RCAR_FCP_REG_STA_ACT		BIT(0)
-+#define RCAR_FCP_REG_VCR			0x0000
-+#define RCAR_FCP_REG_VCR_CATEGORY		(1 << 8)
-+#define RCAR_FCP_REG_VCR_REVISION_H3_ES1	(1 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_M3W		(2 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_V3M		(3 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_H3		(4 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_D3		(5 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_M3N		(6 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_V3H		(7 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_E3		(8 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_X5H_V1	(12 << 0)
-+
-+#define RCAR_FCP_REG_CFG0			0x0004
-+#define RCAR_FCP_REG_CFG0_FCPVSEL		BIT(1)
-+
-+#define RCAR_FCP_REG_RST			0x0010
-+#define RCAR_FCP_REG_RST_RIIFRST		BIT(22)
-+#define RCAR_FCP_REG_RST_RSIFRST		BIT(21)
-+#define RCAR_FCP_REG_RST_DCMPRST		BIT(20)
-+#define RCAR_FCP_REG_RST_MODRST			BIT(4)
-+#define RCAR_FCP_REG_RST_SOFTRST		BIT(0)
-+
-+#define RCAR_FCP_REG_STA			0x0018
-+#define RCAR_FCP_REG_STA_ACT			BIT(0)
-+
-+#define RCAR_FCP_REG_TL_CTRL			0x0070
-+#define RCAR_FCP_REG_TL_CTRL_TLEN		BIT(31)
-+#define RCAR_FCP_REG_TL_CTRL_VPOS_C(n)		((n) << 16)
-+#define RCAR_FCP_REG_TL_CTRL_VPOS_Y(n)		((n) << 0)
-+
-+#define RCAR_FCP_REG_PICINFO1			0x00c4
-+#define RCAR_FCP_REG_PICINFO1_STRIDE_DIV16	((n) << 0)
-+
-+#define RCAR_FCP_REG_BA_ANC_Y0			0x0100
-+#define RCAR_FCP_REG_BA_ANC_Y1			0x0104
-+#define RCAR_FCP_REG_BA_ANC_Y2			0x0108
-+#define RCAR_FCP_REG_BA_ANC_C			0x010c
-+#define RCAR_FCP_REG_BA_REF_Y0			0x0110
-+#define RCAR_FCP_REG_BA_REF_Y1			0x0114
-+#define RCAR_FCP_REG_BA_REF_Y2			0x0118
-+#define RCAR_FCP_REG_BA_REF_C			0x011c
-+
-+enum rcar_fcp_type {
-+	RCAR_FCPF,
-+	RCAR_FCPV,
-+};
- 
- struct rcar_fcp_device {
- 	struct list_head list;
- 	struct device *dev;
- 	void __iomem *base;
- 	struct reset_control *rstc;
-+	enum rcar_fcp_type type;
- };
- 
- static LIST_HEAD(fcp_devices);
- static DEFINE_MUTEX(fcp_lock);
- 
-+static inline u32 rcar_fcp_read(struct rcar_fcp_device *fcp, u32 reg)
-+{
-+	return ioread32(fcp->base + reg);
-+}
-+
- static inline void rcar_fcp_write(struct rcar_fcp_device *fcp, u32 reg, u32 val)
- {
- 	iowrite32(val, fcp->base + reg);
-@@ -154,15 +204,67 @@ EXPORT_SYMBOL_GPL(rcar_fcp_soft_reset);
-  * Platform Driver
-  */
- 
-+static int rcar_fcp_setup(struct rcar_fcp_device *fcp)
-+{
-+	static const char * const models[] = {
-+		[RCAR_FCPF] = "FCPF",
-+		[RCAR_FCPV] = "FCPV",
-+	};
-+	static struct {
-+		u32 version;
-+		const char *name;
-+	} versions[] = {
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_H3_ES1, "H3 ES1.x" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_M3W, "M3W" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_V3M, "V3M" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_H3, "H3" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_D3, "D3" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_M3N, "M3N" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_V3H, "V3H" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_E3, "E3" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_X5H_V1, "X5H v1.0" },
-+	};
-+
-+	unsigned int i;
-+	u32 version;
-+
-+	/* Check the device version register. */
-+	version = rcar_fcp_read(fcp, RCAR_FCP_REG_VCR);
-+
-+	for (i = 0; i < ARRAY_SIZE(versions); ++i) {
-+		if (versions[i].version == version)
-+			break;
-+	}
-+
-+	if (i >= ARRAY_SIZE(versions)) {
-+		dev_err(fcp->dev, "Invalid FCP version 0x%08x\n", version);
-+		return -ENODEV;
-+	}
-+
-+	dev_dbg(fcp->dev, "%s %s device found\n", models[fcp->type],
-+		versions[i].name);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rcar_fcp_of_match[] = {
-+	{ .compatible = "renesas,fcpf", .data = (void *)RCAR_FCPF },
-+	{ .compatible = "renesas,fcpv", .data = (void *)RCAR_FCPV },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, rcar_fcp_of_match);
-+
- static int rcar_fcp_probe(struct platform_device *pdev)
- {
- 	struct rcar_fcp_device *fcp;
-+	int ret;
- 
- 	fcp = devm_kzalloc(&pdev->dev, sizeof(*fcp), GFP_KERNEL);
- 	if (fcp == NULL)
- 		return -ENOMEM;
- 
- 	fcp->dev = &pdev->dev;
-+	fcp->type = (enum rcar_fcp_type)device_get_match_data(&pdev->dev);
- 
- 	platform_set_drvdata(pdev, fcp);
- 
-@@ -178,12 +280,27 @@ static int rcar_fcp_probe(struct platform_device *pdev)
- 				     "failed to get reset control\n");
- 
- 	pm_runtime_enable(&pdev->dev);
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	if (ret < 0)
-+		goto error_pm_disable;
-+
-+	ret = rcar_fcp_setup(fcp);
-+	if (ret < 0)
-+		goto error_pm_put;
-+
-+	pm_runtime_put(&pdev->dev);
- 
- 	mutex_lock(&fcp_lock);
- 	list_add_tail(&fcp->list, &fcp_devices);
- 	mutex_unlock(&fcp_lock);
- 
- 	return 0;
-+
-+error_pm_put:
-+	pm_runtime_put(&pdev->dev);
-+error_pm_disable:
-+	pm_runtime_disable(&pdev->dev);
-+	return ret;
- }
- 
- static void rcar_fcp_remove(struct platform_device *pdev)
-@@ -215,13 +332,6 @@ static const struct dev_pm_ops fcp_pm_ops = {
- 	RUNTIME_PM_OPS(fcp_pm_runtime_suspend, fcp_pm_runtime_resume, NULL)
- };
- 
--static const struct of_device_id rcar_fcp_of_match[] = {
--	{ .compatible = "renesas,fcpf" },
--	{ .compatible = "renesas,fcpv" },
--	{ },
--};
--MODULE_DEVICE_TABLE(of, rcar_fcp_of_match);
--
- static struct platform_driver rcar_fcp_platform_driver = {
- 	.probe		= rcar_fcp_probe,
- 	.remove		= rcar_fcp_remove,
+Yes, I know
 
--- 
-2.47.3
 
+>>>>>> +static unsigned int
+>>>>>> +qcom_clk_dvfs_aggregate(struct qcom_clk_dvfs_rail_voter *rail_voter)
+>>>>>> +{
+>>>>>> +	struct qcom_clk_dvfs_vote *vote;
+>>>>>> +	unsigned int level = 0;
+>>>>>> +
+>>>>>> +	list_for_each_entry(vote, &rail_voter->votes, node)
+>>>>>> +		level = max(level, vote->level);
+>>>>>> +
+>>>>>> +	return max(level, rail_voter->safety_floor_level);
+>>>>>
+>>>>> I guess you want to avoid having too many voters, but would it be
+>>>>> possible to have one voter per 'signficant' clock and let GenPD itself
+>>>>> aggregate all the votes?
+>>>>
+>>>> What does "significant" mean here?
+>>>
+>>> I'd define it as "using a different power domain or requiring a
+>>> different corner".
+>>
+>> I still don't get it
+> 
+> When the consumer votes for a frequency A / domain BX / level cc, usually
+> the parent clock (at the corresponding frquency nA) also has domain BX
+> and level cc. Sometimes (like in the case of PLLs) it's not the case.
+> The domain might change or the level might change. In those cases that
+> clock must have an explicit voting (I'd still prefer OPP).
+
+I think what you believe is the PLL case is actually more common - the
+branch, its RCG, the PLL upstream and anything inbetween may have a
+different list of [(rail, freq, level)] settings (I say list
+specifically because e.g. the branch may need CX, the RCG may need
+MXC+MMCX and the PLL above may need CX+MXA at various levels.
+
+Konrad
