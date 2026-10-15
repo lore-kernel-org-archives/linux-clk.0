@@ -1,92 +1,105 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B79D4C151C
-	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 11:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24514E36CB
+	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 12:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792065025; cv=none; b=NJE9qk+zbpfjYeiSyeenZ6L2t/2VCy8YvIPD+PZM0YGNfLZu/F6VEcAsKf1WLXRQpYQAszvM0Mmy2n2HhLmfZFsN/UwNn3VOLZMSUTRVo6YsO5svHs74+DMvBuEHFgSbE/8qPRcrhd9tgfb4TZOXUNELdcyHKQ4qSL47u+40ojI=
+	t=1792065697; cv=none; b=mHfjtBtZVmWSbPw1Slb8NaEEgavnd7V6I0UI8eOwVoHFHxB05MslaXq64doyWgBB/nHBu/79/HmVASUNMG0YNLvib1JycBzzv3Z8ozX62QgruhzUX3io9bhF5bdjMRgcHv45i3XoMhokn5JGmj4Det/ERkrCerbgLyJMjQULyKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792065025; c=relaxed/simple;
-	bh=/mDHA4KJTGY3TrDLVzkgSXixkRLERv6h6F6Sa39ZjLU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=SJI5exSmd0AnN8FU0rwG6msJwOm26mgEQhythtanfwvBNL9tPw2I8lxgOKSbVwraG5rFa3jdPFYOcTm2LJySHW4/4/ZyG+/E2ZfVRjdeD9dPvrpLx6udLRLawK2TNFLZZ4uCHC+KEvEzYubRogznKokBtxCXErSISCel1bQLn2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VFr349+G; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1792065697; c=relaxed/simple;
+	bh=JTpFEcQYCRRyKBnTmjwY1iJ/72WurTkplKEibS7le8E=;
+	h=Message-ID:From:Subject:To:In-Reply-To:References:Content-Type:
+	 Date; b=oJYkGD6EojZTRC/5VMxUCfrqMKcTFFCLfglIPn1jyGNkTEtfw1My7l+LcqjoqtAR4rArgMNCzv85vL3rTAyOlTirnoBnZzq3k3ua60H/iKMlFFhv4u1COXkB+txk3CvaRFbBDIFI4aHJ+Pbr/o889IXUtJ6Ov2sf0AfHnlPfH6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4mnBQXx; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VFr349+G"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261015115020euoutp014e484f41201168a0e1cb81fba6d730e0~esaQ0HlZ92952429524euoutp01L
-	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 11:50:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261015115020euoutp014e484f41201168a0e1cb81fba6d730e0~esaQ0HlZ92952429524euoutp01L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1792065020;
-	bh=6UofuFpzzN1lK89cXgKUM2PbWKLz4kyridFu08qheMM=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=VFr349+G7e6ImHFs2khnTSGiV4PpwlE4WWXhSpnpIZAowENa6SIi6/4b9qWPd7I3M
-	 ZpTETjjd4SOqYeatDrHEkwE5zPXLUxY3ZoCNPumGcss37WE3tN0zWeYOQRm2PbNecG
-	 +A/9IGub94sNEJNBbj/j9yUGduUgrHVvUW3+O1m0=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261015115020eucas1p1652dcb97079fc506b99422994680d76e~esaQeAUMW0106901069eucas1p1o;
-	Thu, 15 Oct 2026 11:50:20 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261015115019eusmtip2e8124c6771c12cfa08445087c6278001~esaP6ALnX0510405104eusmtip2_;
-	Thu, 15 Oct 2026 11:50:19 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, Alim
-	Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, Brian
-	Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>
-Subject: [PATCH] clk: samsung: exynos5-subcmu: Use pm_runtime_get_sync()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4mnBQXx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CC391F000C4;
+	Thu, 15 Oct 2026 12:01:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792065696;
+	bh=QpO7Jc2fy2zFD00Bw5t1XJ/ZaAr7bCIXFaEWMYKH3a0=;
+	h=From:Subject:Reply-To:To:In-Reply-To:References:Date;
+	b=e4mnBQXxalMFFmtGQ3ECRa9AGvA4ilw81CgDWZAg2Sf6YuaHBI2+jDT5iAAr0SRJD
+	 rkncL8ZyIh39ZLYLUsNK1h9xhFGScyNPHzAOtsi8umxg9PeRSKr7+dylqXSl6xn1XF
+	 7fiQUrqibnaSVyaCtcFNJvfO3iCimSvsIqGYovyixeHNSGfo78TE4XmPCzcyrp+VY6
+	 SgG2PT0YvfV0RP3eTE2Xih7cgX4ynmXtonzi3fYWApyleP69SZblVPsSpB6iOR5sM5
+	 oFdTzFSeBIjrifjg+mpx1hVco814UscKsl40XfP0gYPfFJ0rrUS0c6yk1VI9JyKzUb
+	 vE/awqfLbxDFw==
+Message-ID: <sashiko-outbox-172780@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] clk: samsung: exynos5-subcmu: Use pm_runtime_get_sync()
  during probe
-Date: Thu, 15 Oct 2026 13:50:06 +0200
-Message-ID: <20261015115008.600082-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.43.0
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Marek Szyprowski" <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org
+In-Reply-To: <20261015115008.600082-1-m.szyprowski@samsung.com>
+References: <CGME20261015115020eucas1p1652dcb97079fc506b99422994680d76e@eucas1p1.samsung.com>
+ <20261015115008.600082-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 15 Oct 2026 12:01:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261015115020eucas1p1652dcb97079fc506b99422994680d76e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261015115020eucas1p1652dcb97079fc506b99422994680d76e
-X-EPHeader: CA
-X-CMS-RootMailID: 20261015115020eucas1p1652dcb97079fc506b99422994680d76e
-References: <CGME20261015115020eucas1p1652dcb97079fc506b99422994680d76e@eucas1p1.samsung.com>
 
-The clocks are registered right after pm_runtime_get(), which only
-schedules a resume asynchronously and doesn't guarantee the device (and
-its power domain) is active yet. Use pm_runtime_get_sync() to ensure the
-power domain is really on while the clock registers are accessed during
-the registration.
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
+- [High] pm: missing error check for pm_runtime_get_sync() allows unpowered=
+ register access
+- [High] clk: samsung: exynos5-subcmu: race condition on global ctx->dev
+--
 
-Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5-subcmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+commit fe90e32911f3916661d4731141c07feca831815e
+Author: Marek Szyprowski <m.szyprowski@samsung.com>
 
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-index 587fe6e3bbed..886836494838 100644
---- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -104,7 +104,7 @@ static int __init exynos5_subcmu_probe(struct platform_device *pdev)
- 
- 	pm_runtime_set_suspended(dev);
- 	pm_runtime_enable(dev);
--	pm_runtime_get(dev);
-+	pm_runtime_get_sync(dev);
- 
- 	ctx->dev = dev;
- 	samsung_clk_register_div(ctx, info->div_clks, info->nr_div_clks);
--- 
-2.43.0
+clk: samsung: exynos5-subcmu: Use pm_runtime_get_sync() during probe
 
+This commit changes the probe function to use pm_runtime_get_sync() instead
+of pm_runtime_get(). This ensures that the device and its power domain are
+fully active before accessing clock registers during registration.
+
+> diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsu=
+ng/clk-exynos5-subcmu.c
+> index 3731298473013..1d7eb98b72cf8 100644
+> --- a/drivers/clk/samsung/clk-exynos5-subcmu.c
+> +++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
+> @@ -103,7 +103,7 @@ static int __init exynos5_subcmu_probe(struct platfor=
+m_device *pdev)
+> =20
+>  	pm_runtime_set_suspended(dev);
+>  	pm_runtime_enable(dev);
+> -	pm_runtime_get(dev);
+> +	pm_runtime_get_sync(dev);
+
+[Severity: High]
+Is it safe to ignore the return value of pm_runtime_get_sync()?
+
+If it returns a negative error code (e.g. hardware failure, regulator
+issue, or timeout), proceeding to call samsung_clk_register_div() and
+samsung_clk_register_gate() will read unpowered hardware registers, which
+can cause a synchronous external abort or data corruption.
+
+Should this check the return value, abort the probe, and roll back PM
+operations on failure?
+
+> =20
+>  	ctx->dev =3D dev;
+>  	samsung_clk_register_div(ctx, info->div_clks, info->nr_div_clks);
+>  	samsung_clk_register_gate(ctx, info->gate_clks, info->nr_gate_clks);
+>  	ctx->dev =3D NULL;
+
+[Severity: High]
+Does assigning and clearing the shared global ctx->dev without locking
+introduce a race condition during concurrent asynchronous probes?
+
+If asynchronous probing is enabled via driver_async_probe, multiple
+exynos5-subcmu devices could probe concurrently. Since pm_runtime_get_sync()
+can sleep, this widens the race window where concurrent threads could
+overwrite ctx->dev or prematurely clear it to NULL while another thread is
+still registering its clocks.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261015115008.6000=
+82-1-m.szyprowski@samsung.com?part=3D1
