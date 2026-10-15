@@ -1,138 +1,99 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DBC56328A
-	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 16:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B013C39479F;
+	Thu, 15 Oct 2026 16:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792080181; cv=none; b=gsI6AfUMAie91Le4c90GraFhnSrSWiVoF4v+g+1866YECmuR8uYT6Y6zZQ0ijhx1qFahKdlxzX8Xliriqr4nTQ5Ui0f2uV1Kj/8RbLg0efg6NwSF8IrGPfDbymyH0D/179FrQ4yQSSTMtOzuj0qUwR56TEMwB2g7Bn9MdCSgDnk=
+	t=1792080977; cv=none; b=bXGSFezthMvqrjIuWADHredAyI9+5YJLZDUY2IVeGhHyckhevO7U3ZgvQ3cYqU0kUBNQi91/1jk/vtujM6FHiwPXSFZn/+jtEwSvyOEzt9ppUic3824IdiXiqpnMHCnMcC8JYEjcsNe3Gaq/1PRXdtKqwdfNo+9EfbqdQJkw6ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792080181; c=relaxed/simple;
-	bh=wUIP60ReUng2toh7xrANlc05gxl0Ni0XDP3WkJdt+dk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OvCvBI/FJ/NvEcB8iCUH2N/o7RsoHQvIJKfU98+K68aSJzn+a+c8S3clXHsQ20dKaMpbha9aDWIUuRu33KhzJpFT3Q2FHM0IFUYTTvBoMAbgaPLSJCKzjUEkMs0xyZyQj5sKyq0mK5z3cm2nzvcdv122HEvC2BpLQT5DNJzPb0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oS25sV93; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1792080977; c=relaxed/simple;
+	bh=pV6Xn7MVqlRKP7Lc05vcFUNKU2U+QNevFDpepLb/C6A=;
+	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=LY+hEiEdsK0jiE69gp5zbkVAilrt5CwQXiUIU+BvMhZehN3sdZSrNSNCNB6nMQRz7fS/VomKEXux/wLeIW47qRispw7ER+kN4gDNNs1b5UBrlfY9JPd9XnKQHG5WPcnLQZYcylRDJBlFRS5XobwS35bSO6fkQEH2eGjlKGAjE4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KO/vVbP4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oS25sV93"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 95CB91A1245;
-	Thu, 15 Oct 2026 16:02:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 674526075C;
-	Thu, 15 Oct 2026 16:02:46 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 160EA10328CF5;
-	Thu, 15 Oct 2026 18:02:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1792080163; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=AbpkMZVsBdBOWRwxjTkLihKxr/UR5S6eo3rRMVyn4ks=;
-	b=oS25sV93XSD557wIB4lBXK1AG3ECjXQ3/Xlt8i7iz5CqRstbNl9cYZbGW70uIC1wRn5iNg
-	ExzMWfb8ZDgKP7VxkURJiqTz4/JC91q9DmmWR2rdv7Hml3dQ9b8NKfvLAvZEMCBE6dFCBd
-	MjlEZIyMoearzV0TbcgmMTd6JWLu+HpzAOjM8wrqNUEmCaB5LuWctAB84QR8v77Fw2n1dA
-	Hc42OYjblLicTn3fhzlEAuAB1WbhnHsACYUtXAsPpBIg4lss4dthUKiIGCGP5+Iw1mcQaZ
-	xizj3KcIO3aEn9DMnW2WfwJR3kSm18N0uw10Q1vIsTZc302ETniRGUF2mLn68g==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Thu, 15 Oct 2026 18:01:23 +0200
-Subject: [PATCH v10 10/10] arm64: dts: nuvoton: ma35d1: Add LXT crystal and
- clock-names
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KO/vVbP4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AAA31F000C4;
+	Thu, 15 Oct 2026 16:16:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792080966;
+	bh=psWLH+JhfLT73MQq5QUq3jITkhYrKx4ZQAFg11ZHijQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=KO/vVbP4fKN5ljLt5JHQX0B41tvRN74bfDPyeFXO1ElYlytX6zifa/DrtvEPQr5SW
+	 BDHVCQh+U0QGQckZofuKFvYuzQFOGiZmKspsRbamFYUtOHMxlW5zoOb0UH9tpWS6HL
+	 dYr3FkOSNiEWNydGYBS6cfcBO3OWZdu/0PVgdZp/+iZg1Li5NcHLDQKdA5qHKN1z53
+	 n2BMa2ENy30nRVyENqhxM+6WG8Sa4GWtugx6Cf+yVNIC2C2QhMiuQDetdfS/mVd89j
+	 Ggv+1i0F+ESo0yInlunNQ7m0y5DTYgivpuYNNaVagAPB+3ABN/EH0YguGUt4zRMycQ
+	 m1woSFRheu5zw==
+Message-ID: <sashiko-outbox-173157@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v10 04/10] clk: nuvoton: ma35d1: Reparent the gates
+ correctly
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Miquel Raynal" <miquel.raynal@bootlin.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261015-perso-ma35d1-upstream-clk-v10-4-47c97b54a809@bootlin.com>
+References: <20261015-perso-ma35d1-upstream-clk-v10-0-47c97b54a809@bootlin.com>
+ <20261015-perso-ma35d1-upstream-clk-v10-4-47c97b54a809@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 15 Oct 2026 16:16:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261015-perso-ma35d1-upstream-clk-v10-10-47c97b54a809@bootlin.com>
-References: <20261015-perso-ma35d1-upstream-clk-v10-0-47c97b54a809@bootlin.com>
-In-Reply-To: <20261015-perso-ma35d1-upstream-clk-v10-0-47c97b54a809@bootlin.com>
-To: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
- Arnd Bergmann <arnd@arndb.de>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Steam Lin <STLin2@winbond.com>, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- openbmc@lists.ozlabs.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
 
-The clock controller takes its two crystal oscillator inputs from the
-board: HXT and LXT. The LXT crystal is not described at all: add the
-fixed clock node for it and reference both inputs from the clock
-controller node, with their respective clock-names.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] clk: nuvoton: CCAP muxes registered with 1-bit width but 4 paren=
+ts
+--
 
-Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
-Fixes: b69af0984732 ("arm64: dts: nuvoton: Add initial ma35d1 device tree")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
----
- arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts | 6 ++++++
- arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts | 6 ++++++
- arch/arm64/boot/dts/nuvoton/ma35d1.dtsi         | 3 ++-
- 3 files changed, 14 insertions(+), 1 deletion(-)
+commit eafc7cdaf7d2454016081e967de0730635be9342
+Author: Miquel Raynal <miquel.raynal@bootlin.com>
 
-diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts b/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts
-index d7670afb0a63..7752e85734ac 100644
---- a/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts
-+++ b/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts
-@@ -36,6 +36,12 @@ clk_hxt: clock-hxt {
- 		#clock-cells = <0>;
- 		clock-frequency = <24000000>;
- 	};
-+
-+	clk_lxt: clock-lxt {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+	};
- };
- 
- &clk {
-diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts b/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts
-index 8f3cb18d39b6..5c65f1fe5da9 100644
---- a/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts
-+++ b/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts
-@@ -36,6 +36,12 @@ clk_hxt: clock-hxt {
- 		#clock-cells = <0>;
- 		clock-frequency = <24000000>;
- 	};
-+
-+	clk_lxt: clock-lxt {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+	};
- };
- 
- &clk {
-diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
-index 7228ad4735b5..9a341c2b1397 100644
---- a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
-+++ b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
-@@ -92,7 +92,8 @@ clk: clock-controller@40460200 {
- 			compatible = "nuvoton,ma35d1-clk";
- 			reg = <0x00000000 0x40460200 0x0 0x100>;
- 			#clock-cells = <1>;
--			clocks = <&clk_hxt>;
-+			clocks = <&clk_hxt>, <&clk_lxt>;
-+			clock-names = "hxt", "lxt";
- 		};
- 
- 		pinctrl: pinctrl@40040000 {
+clk: nuvoton: ma35d1: Reparent the gates correctly
 
--- 
-2.55.0
+The clock tree is still incorrect. There are four main clocks in this
+system: HXT, LXT, HIRC, LIRC. Each clock has a gate control to disable
+it, and in the CCF topology, the gates should be below the clocks so
+children stop ticking when gated. This commit reparents the gates under
+their respective sources and all children under the gates.
 
+> diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk-m=
+a35d1.c
+> index 33b397d7b7c52..65a2691002a73 100644
+> --- a/drivers/clk/nuvoton/clk-ma35d1.c
+> +++ b/drivers/clk/nuvoton/clk-ma35d1.c
+> @@ -74,34 +74,46 @@ static const struct clk_parent_data lxtg_parent_data[=
+] =3D {
+[ ... ]
+>  static const int axiclk_parent_idx[] =3D { AXICLK_DIV2, AXICLK_DIV4 };
+> -static const int ccap_parent_idx[] =3D { HXT, VPLL, APLL, SYSPLL };
+> +static const int ccap_parent_idx[] =3D { HXT_GATE, VPLL, APLL, SYSPLL };
+
+[Severity: Medium]
+The ccap_parent_idx array defines 4 parent clocks (HXT_GATE, VPLL, APLL, SY=
+SPLL).
+However, CCAP0_MUX and CCAP1_MUX are registered with ma35d1_clk_mux()
+using a 1-bit width:
+
+drivers/clk/nuvoton/clk-ma35d1.c:ma35d1_clocks_probe() {
+    ...
+    hws[CCAP0_MUX] =3D ma35d1_clk_mux(dev, "ccap0_mux", clk_base + REG_CLK_=
+CLKSEL0, 12, 1, hws,
+                                    ccap_parent_idx, ARRAY_SIZE(ccap_parent=
+_idx));
+    ...
+}
+
+Since a 1-bit hardware mux field can only address 2 parents (indices 0 and =
+1),
+will attempting to select APLL or SYSPLL result in truncation of the parent
+index or a framework error, rendering those parents unusable?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261015-perso-ma35=
+d1-upstream-clk-v10-0-47c97b54a809@bootlin.com?part=3D4
