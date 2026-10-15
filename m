@@ -1,322 +1,187 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FE7302146;
-	Thu, 15 Oct 2026 15:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FCE3976A0;
+	Thu, 15 Oct 2026 16:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792078466; cv=none; b=bBC2IAvDn0B7ygQ6d7a1Fuj3dNPuraX32uI3iMzwuJ45buzM+49ovhDLpWoWQUakmfxXUpXu/GNNcsGO3V2fRt1zCnH7ayVx48esA/KeT3bm4pEzjPGPjTEjAfwRwxeU07SST6YWcIQcxDA+qo65/EFEx+Galozky/uvINyh3T4=
+	t=1792080114; cv=none; b=rGGydrPXl2f8zF35gsJ48Fa9lnHEFRxgmOvp8n0UiS5rrqwDFYyFGv86i1NR/fbRqIqpugyNRrc3OF2Npg5zuS9lsSd+ysT5q4BUGaxXBSjLeNtlPhCjCOYULVYdgP95CsTg4s3t7GckiF1y8pHUFerGnpfBNnr57Hl9B+htAyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792078466; c=relaxed/simple;
-	bh=Re1OzPbimdP9ij73PTdjkN43Px4fgRdNsZsMaNTdE+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TzxmXaSJLFKfSiCs0x1MyNeWph2XgCdkTuGfnPUT+8aBOu+jVC9R7diAUkcf08NM7oN69UytBKI+U67quanzn3mHbSSTKwPzfCxfX4pEHeh815kVagwHPP03VeKOZ/jr+aI7nN4lihzs2P6votjlIrfSJTx2bKjtL9KSKpwyq3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzzwCEOF; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792080114; c=relaxed/simple;
+	bh=tex/KT0R8L1S/hdQ8NJyp+7lHiatRcXigxiBWWukSQU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=vGLmthNEBLt+Tq3XAQxqjWwnp/UUPrxNJQfBCK4/7nr2lgjrhtgfciqTqsv3U4zmOl+Fv36t5JqCiF1yRoEZK9tfWhzINHprDCbFd0YBmH3lRVGSUwFkZkk/rECmS+ciEL3t6PbKci25ZX9X/DbAeikem2qKbOwfgrvjuZzncsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VDXpmMwJ; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzzwCEOF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D22811F000C5;
-	Thu, 15 Oct 2026 15:34:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792078452;
-	bh=ngGxpYiIc+l9ub+qBBEMWFAzMrMU0ZfsNfzhGcP3fz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EzzwCEOF5UCtQQ5ogYU9OpxdIw6MEJLzEYhp4FMHHDPz9zdqNu9KKf4SwbIsQ1QOc
-	 rIkKxwnXrPKoK/60OubAJUm2Sx4lECHu2yzpMb2jck/Ug5dtQRmTsBBFZaj9+3vij9
-	 8h3Z9n0xNPRb3N3tfqeURgkdcO7GstooPrriy114xO4M7WWxXmfZffjlIFNbMOziVB
-	 iPuMpeRPlU4nItY6z+g7fEL80EWwQfYvd6CaV7cPkQFuqJZcCDqrDZXdAq3mSPwQxZ
-	 Z1wcJ3IXnMT4jyvaR7W7XPAJ5/4c8A/jR/opwaKxcS7QyNkwpOG36OqbHSkhn5BY5j
-	 ySukmI888URWA==
-Date: Thu, 15 Oct 2026 16:34:06 +0100
-From: Lee Jones <lee@kernel.org>
-To: Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Brian Masney <bmasney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Manivannan Sadhasivam <mani@kernel.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	mfd@lists.linux.dev
-Subject: Re: [PATCH v13 04/13] mfd: zx297520v3: Add a clock and reset MFD
-  driver
-Message-ID: <179198492486.839288.18023026004912443161@kernel.org>
-References: <20260927-zx29clk-v13-0-70d8f673386c@gmail.com>
- <20260927-zx29clk-v13-4-70d8f673386c@gmail.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VDXpmMwJ"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 17E5C4E41249;
+	Thu, 15 Oct 2026 16:01:39 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id DAF226075C;
+	Thu, 15 Oct 2026 16:01:38 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 831EF10328B42;
+	Thu, 15 Oct 2026 18:01:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1792080092; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=ssU7XTi+BfG5/GcUZNrJrhUAVwvFZ6ghzUoVfKgt+Ds=;
+	b=VDXpmMwJ2uUzBGGyt+JPr2H8EGwyJQl8VHqcIBWwaYNkBkAF70quyTWCiMbaGR1jBn+zC6
+	tfVCHU6xFpYB1nXBwfUO/d/S09Uijdm9+OkboCZv4b3lovuxYMZOQShMF1H/207Y6OQeN+
+	IOHa3FE5DWdCRSF9nQ92KkNi+C0tZwtNZ/CriwM/SGNiBCpUv81dYra/3AnnWDSrP6T+g3
+	Bzw+BWo6Y7gXkniexo8sO8IYpHw+T46CeXRg5G81eFnqf3rk4MSI/goaz4CuAPO7H8ER1Z
+	EIRwXNTLC3tgsNQBTrGYJ0w8JRjWZ52NjSsijhqCadRcU+/XblXNpmOTHfASbw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v10 00/10] clk: nuvoton: ma35d1: Fix mux parenting and
+ peripheral clock rates
+Date: Thu, 15 Oct 2026 18:01:13 +0200
+Message-Id: <20261015-perso-ma35d1-upstream-clk-v10-0-47c97b54a809@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260927-zx29clk-v13-4-70d8f673386c@gmail.com>
-X-AI-Review-Draft: <20260927-zx29clk-v13-4-70d8f673386c@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/43QTU7DMBAF4KtUXmM0Y8d/rLgHYmE7Y2pBmyopE
+ ajq3ZkWCYJSWSxnJH/z/E5iorHSJB42JzHSXKc67HlAuNuIvI37F5K154VQoCx41PJA4zTIXdS
+ mR/l+mI4jxZ3Mb6/SmhxzyRi9TYLfH0Yq9eOKPz3zvK3TcRg/r7dmc9l+q0GFhjobCdJ6ozUFb
+ Yi6xzQMx7e6v8/DTlzcGX+tdsIZJUpyngxZdIri2lLLXNiyFOdSEEqvVfQJYG3ppWValmarlBT
+ JESiIfm11/7a6i6VtcIY7C1jWll1YGlqWZavzQTsim0NKa8v9WAigWpZjK6c+cKRolbvRl19aX
+ cvybBFGBBtR+XzDCgsLm30FtrCYzpeo+Av01zqfz18obTfJJQMAAA==
+X-Change-ID: 20260813-perso-ma35d1-upstream-clk-65cacfc1a86b
+To: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
+ Arnd Bergmann <arnd@arndb.de>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
+ Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
+ Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Steam Lin <STLin2@winbond.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ openbmc@lists.ozlabs.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
---- checkpatch.pl (3 issues) ---
-Line 227: WARNING: DT compatible string "zte,zx297520v3-topcrm" appears un-documented -- check ./Documentation/devicetree/bindings/
-Line 228: WARNING: DT compatible string "zte,zx297520v3-matrixcrm" appears un-documented -- check ./Documentation/devicetree/bindings/
-Line 229: WARNING: DT compatible string "zte,zx297520v3-lspcrm" appears un-documented -- check ./Documentation/devicetree/bindings/
-----------------------------------
+I am in possession of an MA35D1 NuMaker board. The SPI controller has
+been contributed, but at this stage it does not work with the current
+clock driver.
 
-Is Checkpatch right?
+The clock controller registers its muxes with .fw_name parent data,
+which requires every internal clock name to be declared in the DT. As
+the DT does not declare them, all parent lookups fail: muxes end up
+registered as root clocks and most peripherals read a zero rate.
 
-On Sun, 27 Sep 2026, Stefan Dösinger wrote:
+This conversion exposed a first issue with the WDT/WWDT parents which
+were actually missing in the clock driver. I am not using these clocks
+myself but it is worth fixing.
 
-> This driver registers child devices for the zx297520v3 clock and reset
-> controllers. The clk-zx297520v3 and reset-zte-zx297520v3 submitted in
-> the next patches will drive the respective functionalities.
->
-> Signed-off-by: Stefan Dösinger <stefandoesinger@gmail.com>
->
-> ---
->
-> v13: Break out the MAINTAINERS change so Lee can selectively apply this
-> patch. I made sure it compiles without the DT binding headers.
->
-> Lee, if you prefer, I can send this patch with the MAINTAINERS change
-> folded in stand-alone (or as a pull request). It'll have to tricke into
-> the clk tree before I can PR the bindings and clk driver though.
->
-> Changes v12:
-> Added comments elaborating on the role of the driver and the hardware.
->
-> Regarding the names: zx297520v3 is the SoC's name (chip marking, boot
-> messages). TOPCRM, MATRIXCRM, LSPCRM are ZTE's names for the MMIO blocks
-> in their downstream sources. Sadly no datasheet is available. "clk",
-> "reset" names for the child nodes are mine.
->
-> Regarding personal copyright: I am not affiliated with ZTE nor paid by
-> them. This is my personal hobby project. I am using knowledge extracted
-> from ZTE's kernel dumps, but not code.
->
-> Changes v10 (All Lee Jones):
-> *) drop "select REGMAP_MMIO"
-> *) Drop comment about unimplemented hwlocks
-> *) Use MFD_CELL_[NAME|OF]
-> *) Renamed the device type enum and its values
-> *) Use device_get_match_data instead of the of_ variant
-> *) Improved debug messages
->
-> Changes v9:
-> Deassert the LSP reset and enable the LSP pclk here. In practice the
-> boot rom needs to do that because it prints to an LSP-connected UART and
-> reads the boot policy from the LSP connected flash chip.
->
-> In doing so, I migrated the match data to an enum as mfd.md suggests.
->
-> Changes v8:
-> *) Remove .of_compatible from PHY mfd child
->
-> *) Move to drivers/mfd (Sashiko)
->
-> For me either soc/zte or mfd/ is fine. Note though that this MFD parent
-> is very specific to the zx297520v3 SoC. I don't expect this to be reused
-> anywhere else. There are two more MFD-ish devices in there: soc_sys at
-> 0x140000, which I plan to handle in the same driver, and an i2c PMIC,
-> which would get its own host driver.
->
-> *) Use PLATFORM_DEVID_AUTO (Sashiko). NONE was intentional as I only
-> ever expect one instance, but I don't see any harm in doing the standard
-> thing and use AUTO
->
-> *) On the suggestion not to put the link to mfd_cells[] into match data:
-> I see that it is spelled out in Sashiko's mfd.md, written by Lee Jones,
-> the MFD maintainer. I would appreciate some education on the rationale
-> behind it: Putting a pointer into the void *data is a common pattern in
-> the kernel. I don't understand in which situation this can possibly
-> break?
->
-> Both structs are static const in the same compilation unit. data is a
-> const void *, not a uintptr_t or kernel_ulong_t, so it seems passing a
-> pointer is the intended use. What am I missing?
->
-> Changes v7:
-> Add phy MFD child
->
-> Changes v6: Make the ZTE SoC driver section depend on HAS_IOMEM
-> (Sashiko). The entire MFD section, which contains MFD_CORE, depends on
-> HAS_IOMEM even with COMPILE_TEST.
->
-> Add a NULL ptr check for of_device_get_match_data (Sashiko). While not
-> uniform, rave-sp, rohm-bd9576, atc260x, da9052-i2c protect against
-> incorrect manual attachment that way.
->
-> Add lspclk here as well in an attempt to satisfy both Conor Dooley, who
-> asks for MFD for top and matrix, and Philipp Zabel, who prefers aux but
-> at least wants the reset driver limited to one driver type.
->
-> Changes v5: Use MFD instead of Aux bus for top and matrix crm because of
-> extra functionality: Reboot in top, hwlock in Matrix.
->
-> LSP clocks stay with the aux bus and are thus not handled in this
-> driver. The clk driver will bind directly to the lspcrm node.
-> ---
->  drivers/mfd/Kconfig              |  12 +++++
->  drivers/mfd/Makefile             |   2 +
->  drivers/mfd/zte-zx297520v3-crm.c | 111 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 125 insertions(+)
->
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 857ca3bb0d5b..b30600f6ff0c 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -2580,5 +2580,17 @@ config MFD_MAX7360
->  	  additional drivers must be enabled in order to use the functionality
->  	  of the device.
->
-> +config MFD_ZTE_ZX297520V3_CRM
-> +	tristate "ZTE zx297520v3 Clock and Reset Manager"
-> +	depends on ARCH_ZTE || COMPILE_TEST
-> +	select MFD_CORE
-> +	default SOC_ZX297520V3
-> +	help
-> +	  Say yes here to enable the driver for the ZTE zx297520v3 clock and
-> +	  reset manager MFD driver. This driver provides the host device for
-> +	  the clock and reset drivers and is required to boot the SoC. You
-> +	  will also need to enable CLK_ZTE_ZX297520V3 and RESET_ZTE_ZX297520V3
-> +	  to build the actual clock and reset child drivers.
-> +
->  endmenu
->  endif
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 72d3944b0ad8..ab0cba2042a2 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -304,3 +304,5 @@ obj-$(CONFIG_MFD_RSMU_SPI)	+= rsmu_spi.o rsmu_core.o
->  obj-$(CONFIG_MFD_UPBOARD_FPGA)	+= upboard-fpga.o
->
->  obj-$(CONFIG_MFD_LOONGSON_SE)	+= loongson-se.o
-> +
-> +obj-$(CONFIG_MFD_ZTE_ZX297520V3_CRM)	+= zte-zx297520v3-crm.o
-> diff --git a/drivers/mfd/zte-zx297520v3-crm.c b/drivers/mfd/zte-zx297520v3-crm.c
-> new file mode 100644
-> index 000000000000..d896261a4d40
-> --- /dev/null
-> +++ b/drivers/mfd/zte-zx297520v3-crm.c
-> @@ -0,0 +1,111 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2026 Stefan Dösinger
-> + *
-> + * This driver splits the ZTE zx297520v3 SoC's clock and reset management devices into MFD child
-> + * nodes that are managed by independent drivers in their respective subsystems.
-> + *
-> + * ZTE's downstream kernel names the mmio regions "topcrm", "matrixcrm" and "lspcrm". For an
-> + * explanation of how the controllers relate please see the DT binding documentation found in
-> + * Documentation/devicetree/bindings/clock/zte,zx297520v3-*yaml.
-> + *
-> + * The controllers are primarily clock controllers, but they all have reset controls as well. Top
-> + * and Matrix controllers have further auxiliary functions.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/property.h>
-> +#include <linux/reset.h>
-> +
-> +enum zx_device_type {
-> +	TYPE_INVALID = 0,
-> +	TYPE_TOPCRM,
-> +	TYPE_MATRIXCRM,
-> +	TYPE_LSPCRM,
-> +};
-> +
-> +static const struct mfd_cell zx297520v3_topcrm_cells[] = {
-> +	MFD_CELL_NAME("zx297520v3-topclk"),
-> +	MFD_CELL_NAME("zx297520v3-topreset"),
-> +	MFD_CELL_OF("reboot", NULL, NULL, 0, 0, "syscon-reboot"),
-> +	MFD_CELL_NAME("zx297520v3-usb-phy"),
-> +};
-> +
-> +static const struct mfd_cell zx297520v3_matrixcrm_cells[] = {
-> +	MFD_CELL_NAME("zx297520v3-matrixclk"),
-> +	MFD_CELL_NAME("zx297520v3-matrixreset"),
-> +};
-> +
-> +static const struct mfd_cell zx297520v3_lspcrm_cells[] = {
-> +	MFD_CELL_NAME("zx297520v3-lspclk"),
-> +	MFD_CELL_NAME("zx297520v3-lspreset"),
-> +};
-> +
-> +static int zx297520v3_crm_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	const struct mfd_cell *cells;
-> +	struct reset_control *reset;
-> +	enum zx_device_type type;
-> +	unsigned int num_cells;
-> +	struct clk *pclk;
-> +
-> +	type = (enum zx_device_type)(kernel_ulong_t)device_get_match_data(dev);
-> +	switch (type) {
-> +	case TYPE_TOPCRM:
-> +		cells = zx297520v3_topcrm_cells;
-> +		num_cells = ARRAY_SIZE(zx297520v3_topcrm_cells);
-> +		break;
-> +
-> +	case TYPE_MATRIXCRM:
-> +		cells = zx297520v3_matrixcrm_cells;
-> +		num_cells = ARRAY_SIZE(zx297520v3_matrixcrm_cells);
-> +		break;
-> +
-> +	case TYPE_LSPCRM:
-> +		cells = zx297520v3_lspcrm_cells;
-> +		num_cells = ARRAY_SIZE(zx297520v3_lspcrm_cells);
-> +
-> +		pclk = devm_clk_get_enabled(dev, "pclk");
-> +		if (IS_ERR(pclk))
-> +			return dev_err_probe(dev, PTR_ERR(pclk), "Could not get 'pclk'\n");
-> +
-> +		reset = devm_reset_control_get_exclusive_deasserted(dev, NULL);
-> +		if (IS_ERR(reset))
-> +			return dev_err_probe(dev, PTR_ERR(reset),
-> +					     "Failed to deassert reset control\n");
-> +		break;
-> +
-> +	default:
-> +		return -ENODEV;
-> +	}
-> +
-> +	return devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO, cells, num_cells, NULL, 0, NULL);
-> +}
-> +
-> +static const struct of_device_id of_match_zx297520v3_crm[] = {
-> +	{ .compatible = "zte,zx297520v3-topcrm", .data = (void *)TYPE_TOPCRM },
-> +	{ .compatible = "zte,zx297520v3-matrixcrm", .data = (void *)TYPE_MATRIXCRM },
-> +	{ .compatible = "zte,zx297520v3-lspcrm", .data = (void *)TYPE_LSPCRM },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, of_match_zx297520v3_crm);
-> +
-> +static struct platform_driver zx297520v3_crm = {
-> +	.probe = zx297520v3_crm_probe,
-> +	.driver = {
-> +		.name = "zx297520v3-crm",
-> +		.of_match_table = of_match_zx297520v3_crm,
-> +	},
-> +};
-> +module_platform_driver(zx297520v3_crm);
-> +
-> +MODULE_AUTHOR("Stefan Dösinger <stefandoesinger@gmail.com>");
-> +MODULE_DESCRIPTION("ZTE zx297520v3 CRM driver");
-> +MODULE_LICENSE("GPL");
->
-> -- 
-> 2.55.0
->
+The second round of reviews raised another problem with the
+crystals. HXT and LXT are external crystal oscillators wired on the
+board, while HIRC and LIRC are on-chip RC oscillators. HXT was described
+whereas LXT was not. The series now also takes the two crystal inputs
+from the DT: they get documented in the bindings, described in the
+boards and looked up by the driver (with a fallback for backward
+compatibility).
 
+Finally, I was still unsatisfied by the clock tree because there were
+too many root clocks. Many "gates" were wrongly set aside from the
+downstream clocks they would gate, and SYSPLL was simply not parented at
+all (?).
+
+The clock tree now looks much more accurate.
+
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+Changes in v10:
+- Make sure muxes registration is device managed like all the other clocks.
+- Link to v9: https://lore.kernel.org/r/20261015-perso-ma35d1-upstream-clk-v9-0-1f548fa2002e@bootlin.com
+
+Changes in v9:
+- Create devm_clk_hw_register_fixed_rate_parent_hw().
+- Use the above helper to register SYSPLL.
+- Keep hws[HXT] available in the legacy case.
+- Propose myself for maintaining this driver.
+- Link to v8: https://lore.kernel.org/r/20261004-perso-ma35d1-upstream-clk-v8-0-e1a106a128c0@bootlin.com
+
+Changes in v8:
+- Fix an out-of-bound bug (syspll parenting structure was wrongly
+  defined).
+- Make sure HXT_GATE is validated before being reused (and possibly
+  dereferencced blindly by the core.
+- Link to v7: https://lore.kernel.org/r/20261002-perso-ma35d1-upstream-clk-v7-0-cbd991fa6270@bootlin.com
+
+Changes in v7:
+- Avoid opencoding core helpers, replace them with existing helpers
+  (mentioned by Jerome)
+- Rebased on top of clk-next since the first patches have been applied
+- Link to v6: https://lore.kernel.org/r/20260930-perso-ma35d1-upstream-clk-v6-0-48937ee6c9bb@bootlin.com
+
+Changes in v6:
+- Drop the clock output names entirely, they are not relevant.
+- Error out when the crystal providers defer probing.
+- Make sure gates are correctly parented.
+- Make sure SYSPLL is parented.
+- Link to v5: https://lore.kernel.org/r/20260929-perso-ma35d1-upstream-clk-v5-0-68533e935ee4@bootlin.com
+
+Changes in v5:
+- Fix the bindings wrt HXT and LXT.
+- Fix the DT descriptions of HXT and LXT.
+- Collect tags.
+- Link to v4: https://lore.kernel.org/r/20260925-perso-ma35d1-upstream-clk-v4-0-f3697553391f@bootlin.com
+
+Changes in v4:
+- I forgot to bump the clock counter in the driver after adding the two
+  new clocks in the bindings. Sashiko will keep complaining about the
+  incoherency though. Since binding and driver changes should be kept
+  separated, I cannot do both at the same time.
+- Link to v3: https://lore.kernel.org/r/20260925-perso-ma35d1-upstream-clk-v3-0-ffbae7e020a8@bootlin.com
+
+Changes in v3:
+- Drop the number of clocks from the binding, set it in the driver only
+- Split the binding/driver patches completely
+- Link to v2: https://lore.kernel.org/r/20260921-perso-ma35d1-upstream-clk-v2-0-209fd32a8b00@bootlin.com
+
+Changes in v2:
+- New patch 1/3: register the missing WDT/WWDT parent clocks
+- New patch 3/3: harden the code
+- Link to v1: https://lore.kernel.org/r/20260813-perso-ma35d1-upstream-clk-v1-1-e78e5e6172ea@bootlin.com
+
+---
+Miquel Raynal (10):
+      clk: nuvoton: ma35d1: Use clk_hw pointers as mux parents
+      clk: nuvoton: ma35d1: Avoid possible error pointer dereferencing
+      clk: nuvoton: ma35d1: Retrieve HXT/LXT from DT when possible
+      clk: nuvoton: ma35d1: Reparent the gates correctly
+      clk: nuvoton: ma35d1: Use device managed helpers for fixed rate clocks
+      clk: Create devm_clk_hw_register_fixed_rate_parent_hw()
+      clk: nuvoton: ma35d1: Reparent SYSPLL correctly
+      MAINTAINERS: Add myself as Nuvoton MA35D1 clock controller
+      arm64: dts: nuvoton: ma35d1: Drop HXT clock output name
+      arm64: dts: nuvoton: ma35d1: Add LXT crystal and clock-names
+
+ MAINTAINERS                                     |   8 +
+ arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts |   7 +-
+ arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts |   7 +-
+ arch/arm64/boot/dts/nuvoton/ma35d1.dtsi         |   3 +-
+ drivers/clk/nuvoton/clk-ma35d1-divider.c        |   3 +
+ drivers/clk/nuvoton/clk-ma35d1-pll.c            |   3 +
+ drivers/clk/nuvoton/clk-ma35d1.c                | 716 +++++++++---------------
+ include/linux/clk-provider.h                    |  13 +
+ 8 files changed, 293 insertions(+), 467 deletions(-)
+---
+base-commit: 6b78cda327cc2dbcd0e60f411ae014997a684b55
+change-id: 20260813-perso-ma35d1-upstream-clk-65cacfc1a86b
+
+Best regards,
 -- 
-Lee Jones
+Miquel Raynal <miquel.raynal@bootlin.com>
+
