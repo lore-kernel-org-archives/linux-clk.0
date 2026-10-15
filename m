@@ -1,70 +1,69 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791F054B1A0
-	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 16:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF4554EEA5
+	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 16:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792083306; cv=none; b=lrdQ5tdWQg9dn6AFU0i/d7TkvKlFVMhcWwSqdykYZP7cfcBesv+hRJcQ3/QAMlsI2WlNFnAn5rAPP7XHZxbsgrKjbDJhyGscUlQKroEs7vseqnO9+4WLo2BGXE6PqbqrzNE0hlPv59HoeJu42yIlM/sUFdNeF4h0PEEo0SqwCRE=
+	t=1792083309; cv=none; b=BUE0f4x1eatWdThbZIqCULtjAMLGFr11hCoJJrkojnfzwQH0Rd0A+JCXv0z9m/BLUf5daKKOAumTwZnVHQ52MXhlanEY/svRRP/K7NIbFD1sghX2CQ9bzDgMBoKPS3EjsUKszGJpXFbmGX2Nk9WaRSzZ+RSukfcf1qylRowg7Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792083306; c=relaxed/simple;
-	bh=nNl+aWdXmjwtXODSPDByzsezc844pEMLDbyf7xF3pRY=;
+	s=arc-20240116; t=1792083309; c=relaxed/simple;
+	bh=2inYdETjS1/0iXkUB93PtZKo6J17s5dPHUL/VIsncwk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eSSUuv3/j22seNRNEk2bK3Pcz9HES44NqOfoOxLzZ3p6OScI3GQGlMrHJxm3lZHqGqe7IKvs7TEInnO0036kPplnjWQX0FLZ7rVuIUCkf5as4llrc/Zs15g1CWhuNqjhLzKIcyYXALAwy18Ccg/EUwz+ua8Rqa/1FFAMKptcBq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z44DwCIr; arc=none smtp.client-ip=209.85.221.45
+	 In-Reply-To:To:Cc; b=EjOQsb1UVrH0kwGTQdVdAgfX+fQZMyiXXUKpubLpAo8IcWAvu1owKEtAlhfci2r+9Xy/PkTbxIXM5tLKrJNs6nTpRH8Smv98VNd86juRiA7WsaHA7LVONge8FfVowYSbxhUm5N1g62NRHqiC36gh7QYV3TrmQv5e3R+j8OK9xEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IGEslRki; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z44DwCIr"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-48df0fa43c5so147891f8f.0
-        for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 09:54:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IGEslRki"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-48df8fe8513so644293f8f.0
+        for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 09:54:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1792083288; x=1792688088; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1792083290; x=1792688090; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=qWFqupga0Da3LDpzfcjDFK8WTaNzOGEEKytPnY4vu9I=;
-        b=Z44DwCIreNU6eqKiHLHOOgs4IIZ0CXGhDs3rtB/9bzdm0G+xe+D3HRW+qOG79qMjEv
-         qNy51csXQ5ISXG6b0F4DbO031IN4WAYNAWCiBJFYU28cVItexEh9YD35AwiSIUVmwFTf
-         Q6TkUw2OwAzh9JWnprCH6PVtsRFZIwkRSYjfqSV1GEWotnw7IJNdv7uqJGXiHtsAlslS
-         eEBFsv/XPfIR8UWvJ1A4Ucc6W0znAnqGg7Xcj5CT31nC3kXH1eQ0t1qJ8cFkhyfhGIPF
-         beHrUurRUVg9omTMv93rb/DcFP/KZlp54Xnb+n2tnafr9DoJij4U9UKnww9651NJ4JtD
-         j3Lg==
+        bh=nOQQ4FV9ljkth31bB4LLMsIJDcvWTQeL1zQqaIAUkSI=;
+        b=IGEslRkigK5qf5tPYJAaK2WsSFRbsNtb8EFl5Py9DCeE/I4VHBTlJAwbh6dvdqy6EM
+         vaBmfY9X5OM6LEUIWk/A79d7DoVtTYSTddmsmfRuqQClXd0Ugh+RA1/Uw4O/nUaLsmdo
+         2ciGx4yqcPMvbf2JOK1jbP9WTT+njoQxSxwEto8Fmw/ZQ/DAwXAOURwTBgLLw9ixnEHR
+         bPqiaSpwUCuQyBSgguhqiVz9sfRWzlRy0IN5qbB43mtR4YpNtDacImnzTB1uw5f7Dgy7
+         vsdyDDsL0hEfeWPqb1xk2NX45AsET2b43bl7BL9aNLH48eYl9fO5smN4g6sWCNxipROr
+         6//A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792083288; x=1792688088;
+        d=1e100.net; s=20260707; t=1792083290; x=1792688090;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=qWFqupga0Da3LDpzfcjDFK8WTaNzOGEEKytPnY4vu9I=;
-        b=rLtX3H1YH2zUdlTg1L0DAknVsg1FNJnZ0Gqm9KMuhnw3ZYdZ+puhhkn1499n9fV5VD
-         RFYBFt5+t9O9wWljivtBoFDzClsRsaOMAibr14r2vLs07utZkXfDABpc2x663SEWQoDK
-         Ey1trVGPXxghG6qlnB3HnijOTuLTT4jeIfoKyCdp4fpfpILdpoiZjgoLGTCr7hhAA35x
-         CovNfjIToPE/sG57dQNcaWGPnoYFIgkTSLJ/SpAvDPlrZOmbLEl4P4hD4JNNtm9uErD0
-         jPN6S43ioxr5oxVUSuIUrCqo/tU3UsxmmdEV09HWXRE+p7YleyPkh1XWspx+JSOWXBaj
-         o+Og==
-X-Forwarded-Encrypted: i=1; AKwUvBy9f/ziyqHoPZmdT0ZnQzaoWGsoH36og/g79ZZMbEyC/YWTFIcltCg8wTFtwdpbiVXPd+OtZjHOP5o=@vger.kernel.org
-X-Gm-Message-State: AFq9FYI8gOfMBpK7gDBu0SZszRaP6c3gTjhgQ0azjO9gN+QY3sILlhLI
-	s68hX5aruxdcxWjy85sksu8DYKZkE0Q0BT3iyYKIqpJr0oLNx8y78dIvIRhHi7EngEAfV11Pf9D
-	oQemXlR4=
-X-Gm-Gg: AYBFou1ekmmHJIjsLY8NOeA5U4+1Gb6LMvzAhnxobQ6ngWe53L76gh2Yb9uQzldqBqe
-	+eMn60Rt0dBQmd8+5NJpmc9OsuxvxzTsUq/XmpSE/AcCBGW7BryB5Orm8ynX15LSWQkONspUEKE
-	rrEoYJf5ygxaY5gFUK9J6S38LC61uVKcJUhEPQiM5C136mBA1nGXRJDZbpb9ZQzbSqs6XmdZUqD
-	iW/Hf9K/SR4PwYo726Tx3AG37gRg3rBA9vZMq8pqDmbNo7ANxworCf7JmX+1X6/4qsG5IH7KS3a
-	zNbrfV9bDfQQW3RuQAXrYD3k41IgMKLChXZR/s54PLfi2vFFXEWerw7jB1EoDV1SFMLVRUR60sw
-	a1PX2HT3FyDFa3eN4tq0cK6KrhSaUiszEmJg7x4Za5dVWUV8uyr2/IMLLLr3cBnoKRsNoEvLuP9
-	SebdY8czd/x8a9MHEXsGrd2tBZWmtgja8wYtuVmI1rSSdIH+LXJEVaPQL+iMd3IQr16N7BkUfnx
-	tpoaXkTlTAXERoXaENixN17vNckS2dbnsIOML1ezGXulNNRU9kt1f0M8oww/1o9ZIE3Kg==
-X-Received: by 2002:adf:edd1:0:b0:48d:f1ab:faf9 with SMTP id ffacd0b85a97d-48dfae1ee24mr1225054f8f.16.1792083288385;
-        Thu, 15 Oct 2026 09:54:48 -0700 (PDT)
+        bh=nOQQ4FV9ljkth31bB4LLMsIJDcvWTQeL1zQqaIAUkSI=;
+        b=WAtD+tXOhA7bewFRdHLW0PWKXj/PzAwL4bkyyhnxZSkLkeAfV6e8Ghp7wf7u8FNWZU
+         fnBH15YrZ39xdlp8DqNJFa8cQbYMa9t8R3IuQbCDY8ObUYZQ/H/J2fU8qEvix46YAFoc
+         kks2B8rJoQnfNxSQC0yGYdbCwFEmJlpXaI2LATVn27v0QqqJ3fZuqKM7ouQBqCN5tEap
+         c2dQmy5AjXRJYxpf8Dzxq1e8Sbi6dAgexMLqHYvrFe9oEOIU9Ld2sGQSH71gCY0w6qC5
+         XS5C6hDSj59SL91dGOK1ZdSYMlqWCOENbN1s2WAIGxsYGgdapB62P2aIxX5qnVRCg0zK
+         52RQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxIWYYgZPZGReoCv1J7Mpu+eo3gsWezUmGTspdyllQVWW6Vdavprrk5uZMAX8j/yJGbAGznoRz/Pms=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLTvpDkvFYV2eLCfiYB6gboO1YlOUOQKo0mO0LcAFtMrdryPO+G
+	4OZkEQtAWt5RgrGvQ/G71vtXXtdjVwWlAZ1vNsM4Lw9OiSqKGjc7dSlZujDoXGQ3Np2J6XUfdzQ
+	XsZusvtY=
+X-Gm-Gg: AYBFou3bHae6Ed25REfu9ZLkqvqIzSO2w4GcrIltO4oDMXnjWnwUVYe6lUevmtJv5vs
+	0rI9gphYQFeReP02AyJWXDplG5B4Ux44TKKAC9hUZRE+RS7i1jPUOkBx+tlJeNx+uKcQghmNGu4
+	/zWrpc/h3JQqV4KbWxQpAHpZtJOdeEszlJwZud3uEzJ1vwN+EBQnssyNF5v5Oyow/oI9sgCiq9/
+	8lK6LfhWkK2obkf6Z85fjaMikqwpm1fNqoEkIGPk+Eclht/V9oPz3TMRdUSwoRSfyrsmjkgBPDZ
+	n2AOMrVRUQcEr5n4fD4XeWRyFimeKHIeVd0sMjIW1DzpFMJORZGX5lkn75BE7pTuJD82orTAcL1
+	WhqA69OhEIdM+nlaEIV+BcxUQ+XTkkk4RgYiPhhKyVnNdtrDoxNByljuoh9kURB/QZvw1WtekRh
+	IcE/as8WMEx0Q5uGfr2byeTjJtM5OTqRf5XxeA6zmmCC58VekvzdM7kkXMooI4FViDsODe467Ko
+	dj4E8cPQMseb3H7k58M4QORwldEkTWPvq4REKcdJvVnDOKCRIDdvHB828+QtSsSGSlwKw==
+X-Received: by 2002:a5d:548e:0:b0:486:fb08:2353 with SMTP id ffacd0b85a97d-48dbaaeda2amr27025205f8f.31.1792083289768;
+        Thu, 15 Oct 2026 09:54:49 -0700 (PDT)
 Received: from z13-ek5.local ([151.41.28.233])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48de0aaa5dbsm20775664f8f.12.2026.10.15.09.54.46
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48de0aaa5dbsm20775664f8f.12.2026.10.15.09.54.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Oct 2026 09:54:46 -0700 (PDT)
+        Thu, 15 Oct 2026 09:54:49 -0700 (PDT)
 From: Ettore Chimenti <ettore.chimenti@linaro.org>
-Date: Thu, 15 Oct 2026 18:54:32 +0200
-Subject: [PATCH 3/4] clk: ti: fapll: print clock name that fails to
- register
+Date: Thu, 15 Oct 2026 18:54:33 +0200
+Subject: [PATCH 4/4] clk-816x: add sys_ck clock as sys_clkin_ck alias
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -73,7 +72,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261015-patch-ektor5-dm8168-clk-v1-3-8b99c5cd5541@linaro.org>
+Message-Id: <20261015-patch-ektor5-dm8168-clk-v1-4-8b99c5cd5541@linaro.org>
 References: <20261015-patch-ektor5-dm8168-clk-v1-0-8b99c5cd5541@linaro.org>
 In-Reply-To: <20261015-patch-ektor5-dm8168-clk-v1-0-8b99c5cd5541@linaro.org>
 To: Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
@@ -84,37 +83,38 @@ To: Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
 Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Ettore Chimenti <ettore.chimenti@linaro.org>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792083282; l=826;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792083282; l=1025;
  i=ettore.chimenti@linaro.org; s=20261014; h=from:subject:message-id;
- bh=Ja3D73iaM0XrrX8Ixe84Fx5s+9skcP8lleOkVCdvv/o=;
- b=Xci4KTRtILDfRu0hmxsWfO/nunPhLFDznA3uG4T4fWqGPu7dmThhKO+TibQMZrU4q6OC+sp76
- Px5shKBBIpwAhCyVsbdCgTE7utS17Y1mwhPyqi5yN6CFe3LgHYp2L1c
+ bh=2inYdETjS1/0iXkUB93PtZKo6J17s5dPHUL/VIsncwk=;
+ b=1O5ZnXuEuCnMjVuOJ4/eQtTIjxT1rnz127MjHOzITCjBaKT4WFTMzwIdwSnN3JBq7HUuWeMkK
+ TtnNlcvtqHgAr67OdDdCYKEthyZ5kv0y+0ALBbuBnHrA6OOgOB7mXzO
 X-Developer-Key: i=ettore.chimenti@linaro.org; a=ed25519;
  pk=wCaUblFVaqhuBTQt/hAtysafsAaEsqj/yOD9SPlz6NM=
 
-From: Rouven Czerwinski <rouven.czerwinski@linaro.org>
+This patch adds a new clock alias for the DM816x system, mapping
+'sys_ck' to 'sys_clkin_ck'. This change is necessary because the voltage
+management driver searches for 'sys_ck' in these systems and fails
+without this alias. By including 'sys_ck' as an alias for
+'sys_clkin_ck', we ensure compatibility with existing drivers that may
+reference 'sys_ck'.
 
-Improve the error message when a clock fails to register by including
-the clock's name and its parent's name for better debugging.
-
-Signed-off-by: Rouven Czerwinski <rouven.czerwinski@linaro.org>
+Tested-by: Andrew Goodbody <andrew.goodbody@linaro.org>
 Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
 ---
- drivers/clk/ti/fapll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/ti/clk-816x.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-index 008a61f45ac1..5aab90cf5438 100644
---- a/drivers/clk/ti/fapll.c
-+++ b/drivers/clk/ti/fapll.c
-@@ -520,7 +520,7 @@ static struct clk * __init ti_fapll_synth_setup(struct fapll_data *fd,
- 
- 	clk = clk_register(NULL, &synth->hw);
- 	if (IS_ERR(clk)) {
--		pr_err("failed to register clock\n");
-+		pr_err("failed to register clock '%s' for parent '%s'\n", name, parent);
- 		goto free;
- 	}
+diff --git a/drivers/clk/ti/clk-816x.c b/drivers/clk/ti/clk-816x.c
+index 3b8e483aec92..fe6f66fc5a05 100644
+--- a/drivers/clk/ti/clk-816x.c
++++ b/drivers/clk/ti/clk-816x.c
+@@ -57,6 +57,7 @@ static struct ti_dt_clk dm816x_clks[] = {
+ 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
+ 	DT_CLK(NULL, "timer_32k_ck", "sysclk18_ck"),
+ 	DT_CLK(NULL, "timer_ext_ck", "tclkin_ck"),
++	DT_CLK(NULL, "sys_ck", "sys_clkin_ck"),
+ 	{ .node_name = NULL },
+ };
  
 
 -- 
