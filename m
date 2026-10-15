@@ -1,69 +1,69 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2463B37F8DD
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A767352FE4F
 	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 16:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792083305; cv=none; b=euWgsYpJ/NQQa2ecAYKTNU/5Niojp6h0puw4kG8ZpPR7r0bHuilYCE8R2qjnR7p7oQaHdrzZ0E9JWTaptoNjOO/m3UeWcrQdlL2BzTuJUYCUwO0/NuaB99D1tq2q0xuWqk4RlXSaN0S+X3pIKraPhNDUpPnPc9IH36zXqI7tm0I=
+	t=1792083305; cv=none; b=KUC+BzUFXmQnK/oU8c4PR/WytQ9c6CmMba4KBv42myKKJDVJCqnDdHFR/9w4tW6SjRZyjQq09cNneI0yHxJ62FYMhWxiF2Jx2YZz5NcE4m/ls5K/2qQDK8mqr8Vqty7uaZw1X9xYpVzJLX4zIdIHK7OdDtgeKSqJmhs3bxkQXrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1792083305; c=relaxed/simple;
-	bh=dz4JFwB4ePeaGz3RlHhyJ9b6Yy23+uXcydlEUFJ6fY8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=b4FbSnmpDU7k0yFwvgJGQp0kGHG0EmvIbAuJBk4EAfIrM5bRXS3CtOYhvqS+Y2Z3rWpZXd8pWkHcIXSwr/BqkHZTrtx4It8Sc7JHZx9ArsXzxupIgJdDA/JtWqWYdtch1H2Ei3NEB72TyUKIBax9GiY6ayzzSXrgZd8SLzO0rUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RY4L/Z10; arc=none smtp.client-ip=209.85.128.43
+	bh=33w0zdjcE6uxwqU7ll8OOTlJSYoyfRiEeotGi/VFEE8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Joej2oGBlMtjW1REcYYhpeN6ICbOXN0yWpwK5veC3hkygr+DGu7ia5MNDafC/eAKtrLVlvR//aDM3rl+/FmlBjwIzxJvDw4HJ9MpSGKlXghl50ZluozRI83bZJ4M4dfIJ/dwvlSzwtf7KdfnP3oNYvjqSeAoImfmD4Tl35Fg5hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZetZSOHZ; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RY4L/Z10"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4a172eb31f0so49204735e9.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZetZSOHZ"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-48dfc0421d9so7256f8f.1
         for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 09:54:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1792083286; x=1792688086; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=QqLVm7SLi9zEE0K3BLZXJn3MFA1ghZKJ0G7TZDkfEHQ=;
-        b=RY4L/Z10gtzvXkj5iCNOteXx+oNFO7bBsDk4+5lBQoMdHPQoh1XCRhik7j4YIoQ9B7
-         9oc5D7K3vOvPJGlltGGLCOv1rTjIEzLqGZlulsAde/PoEf0LJNlOAbbiIzerik93H05s
-         IYK8imrF1kmNhrCCRK8H8ZEYmMk7jfJwL58Hizb7tSXW4kN8NAc+mcFXAan65GAw63Gz
-         1VWiiHrZ/r4WLC8+MWzbjfU9olX4uHJyUNZThTrfWFQmyguXVL/YOTCF60Ahxss75y91
-         8IrUpi6enTsbs0Q8fODda4lRBRItx0jDEb2SEtw2pilp7sQAUov/1gI7c8Sc/0gEOLK5
-         D08w==
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=9A4R0ld4xtPUzYOLQ26dMhhwMrPELtsTfbERqTYNE9Y=;
+        b=ZetZSOHZqYLVRfUhAfT6BTgqYVSrRlw5R4rVfPCFwNoKniY3J3bRHQgExbuvMMQoQa
+         5hqkDhC6hXPHmsWP6cUfaQdlj5m1aAXDyjlrrKoTlTycUwqHoFacxtFpmVYF0dLhk4NW
+         N1My4C1voSm1hQJT+PwNro6IjWVNkP5TJFshQEtdDzkPPLrxMzb0fYZ4OPGfS+6mLQes
+         OQcdLNQbvKHEor41qMzXkEOwd27XkUu4OpUfKztr5RrDfyUimRR4mMucLafFvFsaDyoN
+         ktdWJPR0iiwkQpIpiVM+dfOiabgRIHO9BaZi3j+xSroFBihPkqW5HcI/KpPZrmRD0Jf4
+         8p8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20260707; t=1792083286; x=1792688086;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=QqLVm7SLi9zEE0K3BLZXJn3MFA1ghZKJ0G7TZDkfEHQ=;
-        b=aNeQ22tfCnNuGmq52ViN40IkwFmhfacgGAc38tiGYhGYmw+SG/2A9/tFid6MXNQwUx
-         At58mQWNgF8Adpli2vQhlaX673XffIY65FJBzo+dG9giO6nSLc7sCXLLGCf58mfSlFtf
-         yr4fxVnDCLTnXrNB4B2u2CKNyx0WAmKLVacUfLhODMlyMaUj0b+YZpN2l1VirGh98FUR
-         SulhOl+dnk48F6wBXPpJTouoCV7VuR6g+h0E+xXuk+QfYDGC91Afp5VdZoX8yj5vTYX2
-         Wc98Vj/BEjcw9H5DUbqUBFkJd3ZZR0364KRFTRfKx9bLYsOF9A3IFrzsob4oLdExXYL0
-         VOjg==
-X-Forwarded-Encrypted: i=1; AKwUvByo/k+IWyCUoRQS2Lq3SpVCmdPX9Iz/6wSYUUhviJJlbUJyF0OqW5A1LrbJCadzH/pE41MJENjuGik=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIBBT7daLx1uUY/SJeGlWLMbVRl0ncqW4Ber2bP1FslmgWhYUsf
-	wrn2Kyei8w8J5zzryhcWRq8wpgzYswg5SyJ3n8rMd6IFGbAOZDFBV2dPjlt+NHwCzB4BXSs0boO
-	HxoGJ/i4=
-X-Gm-Gg: AYBFou3+dR6sn4AJRphaDz8UmRHXPT80oQeBKDuFzc01eHkjKnbCAVIFqC5bikMmxMf
-	SYgRsB43ZiE6uaNcY7uEBxewMaqUaqlnGSL9FeV2JRlea8gp9T+30U1RNY85x0DOHBef96eHRWy
-	SUgeL89fz20IBANxka7GTnROxuBf03n3Bur7K7dmbSOn0t2JWDh3+s9pboTuoA8ABDv11hoiErv
-	0NWypj80T475efFjtVfcRDCuavO9Rh7cHzTomFUrGvGqTm0bD4MePAbAwhg54eu7mDxm5AzMJow
-	Mwku5h7IWNb23W1zoUTC5FAymORrWy4Xv4fY0a/GkIuL95sFQSaRUqKmxuBm99FO7fLHgtDx9Y1
-	X95ccOdhfFFh8WVHkgI3qgAirxQV+GKO68gMaMG8dfRY9OYanXoeNKW/tO3xZI7Glwqyn7ANVhr
-	lCoxwSeo1XPI9MijRZf90oTNKz+iDzU1d9r8TK6Js0WZw6MIWK38+MpyQDXJC/QdNi9QFySGyQm
-	KPfuarHE/AtewtY2hh6znSEq/PzsfZ3EHGPvswfdvmDyKVND0YnncpeiIYPT3AbI6Gh4A==
-X-Received: by 2002:a05:600c:a013:b0:4a1:c6fe:5c0e with SMTP id 5b1f17b1804b1-4a1c6fe6071mr6634665e9.33.1792083286162;
-        Thu, 15 Oct 2026 09:54:46 -0700 (PDT)
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=9A4R0ld4xtPUzYOLQ26dMhhwMrPELtsTfbERqTYNE9Y=;
+        b=Wl28W0mo2X+b50awFPTs12RnOv88sJvHuV7feFCZUM0rPKGmPG6PWGcRvFM1pgL1ui
+         1Ys4+/BuDziK6Df1Is1uBqz215BSh/UgR1cfNhAxw64kTIW4DwG5cyOhADaw3IRsKw8h
+         vOKAdh+hImjWLiMDLPJhpmrj1Gh+rFvQ60b4sZkHdJLLJQii4TfuNL1ahbvcqn9Zyvrk
+         wM654otdz9/aBz6c2AOjFV2ycglF5PBbhQlfYhC0ZWw3U13f3kWbvkieItLIMzG2fse/
+         qZuZwhcOOIxAgdiX0nsKHW3LwZWjeMVr4Guxsw+1euytUUmpuG9td0zQ3NEcINGuCPjm
+         6rlg==
+X-Forwarded-Encrypted: i=1; AKwUvBzy/CT7R6PclH4nFuJJaAkQx8erkognP3VuT05C88IyhWqnTzonr0Cnr9X3RTf3/LWCeMuRTpir/Ik=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJnnRoLIbg5aAiTU7D+KtXX/DqSGh/5CVKrWXMqxYTXJo1UYxAT
+	jA94+NV/AusPzi+1viPNB7UzaAzcuHvJAWCMA5im7kZqZe3zpzkV3DgKBWOGyFIrJsKYTW31KfL
+	P/U0T5K4=
+X-Gm-Gg: AYBFou0PjlZ8NcRKMIegs0Ec4b08gI97wFnLukh8ZEiNcBSw+bcu7sXmxkK0pM2g1d/
+	QzCehwTbuhIhAwfMd1z5lR90ZC7EDvL4a/C8+FSVgwXgg3auQY83PqNh80ZvgnTy54zLsyVVlaA
+	zR7HJqE2gN+5X30oIMRfQZO82xE4pK5MmNzfWfpmVSWmkkD+gNfVUMbIAjOvB9cfBRgjEJbfnLW
+	3JvNEEEBLNxiBcFDGc2sMEh9nfe7F7LVAJN1QMannYg7hj8xt0AFXOcKE9QWjthlS0ZfXGp329G
+	nYapu6llZce6MvpJyruAWQYjDBLbauWeqvdQMh9mJtMF73W3IqQlm+Wp+2OWDNHX6KFuLTHMWDX
+	v9SdVkNUwtqBSCAcmqNyLNKIkVb3mm7d388CJna86sXk+BMEobUTbpdvpd3G+AW2cg9Mp3J1lZv
+	TQyDyiLjDQT7vm0V8VXO9tLLDugfG2rZO5f/fLDBkDlMPOHeyoo7lBVMq9Hhn2Nl0JTUz1wvs47
+	tb7ATbQWdbqYGwsRELKiCTVjCXyHzWWy/9tJybLiem/ZAju0l8YEWRd8GyyjIlRJ6ding==
+X-Received: by 2002:a05:6000:4553:b0:488:6bcb:ec92 with SMTP id ffacd0b85a97d-48dbaadcfd8mr27221647f8f.17.1792083283972;
+        Thu, 15 Oct 2026 09:54:43 -0700 (PDT)
 Received: from z13-ek5.local ([151.41.28.233])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48de0aaa5dbsm20775664f8f.12.2026.10.15.09.54.45
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48de0aaa5dbsm20775664f8f.12.2026.10.15.09.54.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Oct 2026 09:54:45 -0700 (PDT)
+        Thu, 15 Oct 2026 09:54:43 -0700 (PDT)
 From: Ettore Chimenti <ettore.chimenti@linaro.org>
-Date: Thu, 15 Oct 2026 18:54:31 +0200
-Subject: [PATCH 2/4] clk: ti: fapll: Fix clock speed calculation
+Subject: [PATCH 0/4] clk: ti: fapll/dm816x: clock tree and calculation
+ fixes
+Date: Thu, 15 Oct 2026 18:54:29 +0200
+Message-Id: <20261015-patch-ektor5-dm8168-clk-v1-0-8b99c5cd5541@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,9 +72,10 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261015-patch-ektor5-dm8168-clk-v1-2-8b99c5cd5541@linaro.org>
-References: <20261015-patch-ektor5-dm8168-clk-v1-0-8b99c5cd5541@linaro.org>
-In-Reply-To: <20261015-patch-ektor5-dm8168-clk-v1-0-8b99c5cd5541@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXM3QpAQBCG4VvRHJvaEZJbkQPWYPy3u6Tk3i0On
+ /q+9wLLRthCHlxg+BAr6+JBYQC6r5aOURpviFSUkqIYt8rpHnl0q0mwmTNKM9TTiBz/A0pqBf6
+ 9GW7l/MpF+dvu9cDavTm47wcLSrPcewAAAA==
+X-Change-ID: 20261014-patch-ektor5-dm8168-clk-e426101415b0
 To: Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
  Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, Tony Lindgren <tony@atomide.com>, 
@@ -83,42 +84,62 @@ To: Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
 Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Ettore Chimenti <ettore.chimenti@linaro.org>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792083282; l=1034;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792083282; l=1668;
  i=ettore.chimenti@linaro.org; s=20261014; h=from:subject:message-id;
- bh=fBTD64HW6udC2yGl6I8fIRV564MzcGzaqjs261VGICI=;
- b=l/dbkURMpePhSEWvypYoRZlI9vzGFMFaCM9Q6CaCjA3UFI0DhdX13It/6H6eJCJkN+nzCGSf8
- FeOm2+7dNnCBmuBuRH4svkON+awYpeVhjA/7zgOJR2knKKfpPEU776N
+ bh=33w0zdjcE6uxwqU7ll8OOTlJSYoyfRiEeotGi/VFEE8=;
+ b=bZPgsiJnDeGOKFJE78I2bUEqqyxEubxzl/T0MZ6XjjKEJTiC1lK7Vrq88pRK36Y7k1LfrsZ5D
+ YZPBhsudElNDZlUVtAOrdi74WMMJewl0pvoCOVCtc0jU7oGv6zfB+2B
 X-Developer-Key: i=ettore.chimenti@linaro.org; a=ed25519;
  pk=wCaUblFVaqhuBTQt/hAtysafsAaEsqj/yOD9SPlz6NM=
 
-From: Andrew Goodbody <andrew.goodbody@linaro.org>
+During TI DM8168-EVM board testing we found that the clock hierarcy and
+clock calculation was broken already on 6.12:
 
-The fractional part of the divider was being treated as 1/10000000 wheras
-it is in fact 1/16777215. This led to incorrect clock speeds being
-reported when a fractional divider was in use. Correct it.
+    main_pll_clk1       <--- main PLL should be parent of other PLLs.
+       sysclk1_ck                   
+       main_pll_clk7            
+		...
+       main_pll_clk6            
+		...
+       main_pll_clk5            
+		...
+       main_pll_clk4            
+		...
 
-Signed-off-by: Andrew Goodbody <andrew.goodbody@linaro.org>
+This series brings fixes and additions for TI DM816x / FAPLL clock tree
+and frequency calculation.
+
+Summary:
+- Fix clock tree hierarchy by not using ti_dt_clk_name helper(), that
+  causes the first PLL as the parent of all clocks in DM816x.
+- Add sys_ck alias required for DM816x clock lookup, fixing a boot
+  error.
+- Correct rate calculation logic in fapll driver.
+- Add error logging for clocks failing registration to ease debugging.
+
+Fixing clock tree hierarcy is critical as it fixes DM8168-EVM boot
+failure in 7.3-rc7. These fixes are affecting DM816x SoCs only.
+
 Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
 ---
- drivers/clk/ti/fapll.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Andrew Goodbody (1):
+      clk: ti: fapll: Fix clock speed calculation
 
-diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-index ae2f6fed10f6..008a61f45ac1 100644
---- a/drivers/clk/ti/fapll.c
-+++ b/drivers/clk/ti/fapll.c
-@@ -336,8 +336,8 @@ static unsigned long ti_fapll_synth_recalc_rate(struct clk_hw *hw,
- 		v = readl_relaxed(synth->freq);
- 		synth_int_div = (v >> 24) & 0xf;
- 		synth_frac_div = v & 0xffffff;
--		synth_div_freq = (synth_int_div * 10000000) + synth_frac_div;
--		rate *= 10000000;
-+		synth_div_freq = (synth_int_div * 16777215) + synth_frac_div;
-+		rate *= 16777215;
- 		do_div(rate, synth_div_freq);
- 		rate *= SYNTH_PHASE_K;
- 	}
+Ettore Chimenti (1):
+      clk-816x: add sys_ck clock as sys_clkin_ck alias
 
--- 
-2.56.0
+Rouven Czerwinski (2):
+      clk: ti: fapll: remove ti_dt_clk_name helper
+      clk: ti: fapll: print clock name that fails to register
+
+ drivers/clk/ti/clk-816x.c |  1 +
+ drivers/clk/ti/fapll.c    | 16 ++++++----------
+ 2 files changed, 7 insertions(+), 10 deletions(-)
+---
+base-commit: 0fcb05b72344f40806cbe810de8872f1698bf053
+change-id: 20261014-patch-ektor5-dm8168-clk-e426101415b0
+
+Best regards,
+--  
+Ettore Chimenti <ettore.chimenti@linaro.org>
 
