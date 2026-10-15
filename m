@@ -1,99 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B013C39479F;
-	Thu, 15 Oct 2026 16:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EE754529D
+	for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2026 16:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792080977; cv=none; b=bXGSFezthMvqrjIuWADHredAyI9+5YJLZDUY2IVeGhHyckhevO7U3ZgvQ3cYqU0kUBNQi91/1jk/vtujM6FHiwPXSFZn/+jtEwSvyOEzt9ppUic3824IdiXiqpnMHCnMcC8JYEjcsNe3Gaq/1PRXdtKqwdfNo+9EfbqdQJkw6ek=
+	t=1792083074; cv=none; b=AWVj2dIv3voRAuLfFHWOUBBtQUjdhol1NCBCQZrzCbwBWSRlZd5JMMu3pEiZfLFLR/RWexwHWAMV/TLOye2vVjM2LLSJVFuMO4eSffxcr8WN4LracLYUAkBerEAf3cLM/TfOyT1QzvB3/Pe28jf7XR65Gd4ke+oj9imj6FwrSI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792080977; c=relaxed/simple;
-	bh=pV6Xn7MVqlRKP7Lc05vcFUNKU2U+QNevFDpepLb/C6A=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=LY+hEiEdsK0jiE69gp5zbkVAilrt5CwQXiUIU+BvMhZehN3sdZSrNSNCNB6nMQRz7fS/VomKEXux/wLeIW47qRispw7ER+kN4gDNNs1b5UBrlfY9JPd9XnKQHG5WPcnLQZYcylRDJBlFRS5XobwS35bSO6fkQEH2eGjlKGAjE4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KO/vVbP4; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792083074; c=relaxed/simple;
+	bh=+gN+eHbpvqXWWDtCmdUA8n+6sUZRn5xYwu7h88zKQvU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EkhWIXP4qZyo1Awn/JAv3FLAN2ZkMaLapAHD+un4Kiu8oKr14O+Diqi3LiOzlhRbpLbUu9C1JwrzlT9skNatE18qEOr+H0Fza55WPGtMi9CT7QvQo9wOf7EyJo7BK7c0oXM/g6jTyT9NfOjr+dr7wNBjUFv7qoRO6oG4wy+nd08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=C08c266D; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KO/vVbP4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AAA31F000C4;
-	Thu, 15 Oct 2026 16:16:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792080966;
-	bh=psWLH+JhfLT73MQq5QUq3jITkhYrKx4ZQAFg11ZHijQ=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=KO/vVbP4fKN5ljLt5JHQX0B41tvRN74bfDPyeFXO1ElYlytX6zifa/DrtvEPQr5SW
-	 BDHVCQh+U0QGQckZofuKFvYuzQFOGiZmKspsRbamFYUtOHMxlW5zoOb0UH9tpWS6HL
-	 dYr3FkOSNiEWNydGYBS6cfcBO3OWZdu/0PVgdZp/+iZg1Li5NcHLDQKdA5qHKN1z53
-	 n2BMa2ENy30nRVyENqhxM+6WG8Sa4GWtugx6Cf+yVNIC2C2QhMiuQDetdfS/mVd89j
-	 Ggv+1i0F+ESo0yInlunNQ7m0y5DTYgivpuYNNaVagAPB+3ABN/EH0YguGUt4zRMycQ
-	 m1woSFRheu5zw==
-Message-ID: <sashiko-outbox-173157@kernel.org>
-From: sashiko-bot@kernel.org
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="C08c266D"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id ED7F24E41248;
+	Thu, 15 Oct 2026 16:51:00 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A12D06075C;
+	Thu, 15 Oct 2026 16:51:00 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 025FC10328B42;
+	Thu, 15 Oct 2026 18:50:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1792083055; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=+gN+eHbpvqXWWDtCmdUA8n+6sUZRn5xYwu7h88zKQvU=;
+	b=C08c266DuaEI2T+0YSaPQ5Pn3fC4UKQzYrhEWxTE+KPHTATO+r4df4udlwhJ/bgFc9gJWD
+	jtpzTUh8eiOQ+L2+VJ02pvrzaIoxFQsyJr6UjQ35NFf8FFnrE/QsmOre4Mh/RHMRhrn51H
+	mwElXDkLo2ZcH1uC91xes7JQ+JUSgObol9xvbxV3fPEOpdDXqPhqc7FijAz9bQFuwsUCxZ
+	qUZrTawxX95EJ2/pkJZv06cwqya9yHGDta47xyYLWJzIOFF/wZ1+YIh5urSwtv+ZnRjK2m
+	pJA5G3BwyUOLrv/ZdYG68Dao/f2mpTga35aE1uaTyKEqvapRbBfJkSjWrurHWA==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: sashiko-bot@kernel.org
+Cc: sashiko-reviews@lists.linux.dev,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  robh@kernel.org,  conor+dt@kernel.org
 Subject: Re: [PATCH v10 04/10] clk: nuvoton: ma35d1: Reparent the gates
  correctly
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Miquel Raynal" <miquel.raynal@bootlin.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261015-perso-ma35d1-upstream-clk-v10-4-47c97b54a809@bootlin.com>
+In-Reply-To: <sashiko-outbox-173157@kernel.org> (sashiko-bot@kernel.org's
+	message of "Thu, 15 Oct 2026 16:16:05 +0000")
 References: <20261015-perso-ma35d1-upstream-clk-v10-0-47c97b54a809@bootlin.com>
- <20261015-perso-ma35d1-upstream-clk-v10-4-47c97b54a809@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 15 Oct 2026 16:16:05 +0000
+	<20261015-perso-ma35d1-upstream-clk-v10-4-47c97b54a809@bootlin.com>
+	<sashiko-outbox-173157@kernel.org>
+User-Agent: mu4e 1.12.12; emacs 30.2
+Date: Thu, 15 Oct 2026 18:50:54 +0200
+Message-ID: <877bjivrf5.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] clk: nuvoton: CCAP muxes registered with 1-bit width but 4 paren=
-ts
---
 
-commit eafc7cdaf7d2454016081e967de0730635be9342
-Author: Miquel Raynal <miquel.raynal@bootlin.com>
+> Thank you for your contribution! Sashiko AI review found 1 potential issu=
+e(s) to consider:
+> - [Medium] clk: nuvoton: CCAP muxes registered with 1-bit width but 4
+> parents
 
-clk: nuvoton: ma35d1: Reparent the gates correctly
+This is a pre-existing issue. I will wait for the maintainers to comment
+on the rest of the series. If they ask for other changes, I'll include
+this to the next revision. If not, I will send a dedicated patch for it.
 
-The clock tree is still incorrect. There are four main clocks in this
-system: HXT, LXT, HIRC, LIRC. Each clock has a gate control to disable
-it, and in the CCF topology, the gates should be below the clocks so
-children stop ticking when gated. This commit reparents the gates under
-their respective sources and all children under the gates.
+While at it I checked several others and didn't flag any (except the
+other CCAP mux which suffers from the same issue).
 
-> diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk-m=
-a35d1.c
-> index 33b397d7b7c52..65a2691002a73 100644
-> --- a/drivers/clk/nuvoton/clk-ma35d1.c
-> +++ b/drivers/clk/nuvoton/clk-ma35d1.c
-> @@ -74,34 +74,46 @@ static const struct clk_parent_data lxtg_parent_data[=
-] =3D {
-[ ... ]
->  static const int axiclk_parent_idx[] =3D { AXICLK_DIV2, AXICLK_DIV4 };
-> -static const int ccap_parent_idx[] =3D { HXT, VPLL, APLL, SYSPLL };
-> +static const int ccap_parent_idx[] =3D { HXT_GATE, VPLL, APLL, SYSPLL };
-
-[Severity: Medium]
-The ccap_parent_idx array defines 4 parent clocks (HXT_GATE, VPLL, APLL, SY=
-SPLL).
-However, CCAP0_MUX and CCAP1_MUX are registered with ma35d1_clk_mux()
-using a 1-bit width:
-
-drivers/clk/nuvoton/clk-ma35d1.c:ma35d1_clocks_probe() {
-    ...
-    hws[CCAP0_MUX] =3D ma35d1_clk_mux(dev, "ccap0_mux", clk_base + REG_CLK_=
-CLKSEL0, 12, 1, hws,
-                                    ccap_parent_idx, ARRAY_SIZE(ccap_parent=
-_idx));
-    ...
-}
-
-Since a 1-bit hardware mux field can only address 2 parents (indices 0 and =
-1),
-will attempting to select APLL or SYSPLL result in truncation of the parent
-index or a framework error, rendering those parents unusable?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261015-perso-ma35=
-d1-upstream-clk-v10-0-47c97b54a809@bootlin.com?part=3D4
+Miqu=C3=A8l
