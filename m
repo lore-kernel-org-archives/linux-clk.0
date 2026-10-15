@@ -1,44 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0585D35E950;
-	Thu, 15 Oct 2026 05:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABDE18A6DB;
+	Thu, 15 Oct 2026 05:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792041974; cv=none; b=az6EO00I0ePMRgVo6KIqeU3RN/akNZ8Qx91k1wrQ64SFjpOoP7+Pb3iSEh4v4myPQEpHCHY96fJlg5wx7cQabPEKbWMUxz4221BRRcZyeTgV87o++XQ4v+qvNPdcmmyc45oDEUzlul1ViUvJ/xJYlKnG+0mh6/UzJKkbw70U4g8=
+	t=1792042370; cv=none; b=DMUC/7q6vkhnh1MFr4emzp1BSm/4zA3IMnqddJowhwuTYaA8B07A3uGsmQhkDpOK3z6fC9ENkkd3RIdFeR7Ocl/AlxDp6JZuQ4F7oWg4iRF+c8UGu9lnvIf0GjIYhj6A92V8AFWMaLtIyB+IxQZNWHWBAtVV4fCYDeM/c1gt41U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792041974; c=relaxed/simple;
-	bh=n+kImsj2W0CTkSFcXmwWpPUYuNo10vGWk2IJSfUTjIA=;
+	s=arc-20240116; t=1792042370; c=relaxed/simple;
+	bh=v74u142zCOZBauzq5r9WsnTYIPSUTxMBnq8+SWrLgSw=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=dHAE3fMeRGhfuy3lmx3ybrL894UK6e9t5t6rF8Da5605le9Uk6QzyJ5a/MNt2veHxrvqv9m3Dqy7Zpq/PtyCg9BDOj+MmdOGH1z+B21dniCNReiVc9P4zSjnlk9hb74aULt1eKbUgNDuY21kA9WaZT6dcbnu5qBvCR7Ket91rOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQFBHKUu; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=WztVNgfaP9CNaoo+J9E9IO6GMffambWqCWShsgPKjBglf4a5DKiXLTYh0MFMXX4ZWN28v33OKu/Cj66DXNq52xZbRvzgJw/tXldKdAln6eF6laBCyaMllsg/ydUogGChdloTeXgsDEB08t4bE7+iYZtPhA7IlsI5l8c4eNKYOLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E2Ko5lgE; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQFBHKUu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 072821F000C4;
-	Thu, 15 Oct 2026 05:26:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E2Ko5lgE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFBD61F000C4;
+	Thu, 15 Oct 2026 05:32:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792041973;
-	bh=1LmU6aZodSZy8MBqqZGfVwfRFR4p1RhOpROzgztwjo0=;
+	s=k20260515; t=1792042369;
+	bh=HxWlm7kO0JKdirLmw8k78sCMDS5j8xxKx67CPFzT0hM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ZQFBHKUu3fnbekqa+QiDx/2UnIwrD1E1AWjqIpc62roz7zpKWr8+PODhvvB+R1U/p
-	 PhX4HGFJLq5wB/DnEnxbbpDXYbx5VIyPfJi42v36yeMuNGEu318D7AQKoLIYebRYjf
-	 H1XJllKlrQtUyuR8bqqoceXOcoXwlq41iOiP2YWsBInkNTXcEYPCQP42C1LQkLLNzk
-	 kXSFHPBis5Ki6pD8FCjuXNz1GusLklIOlcnCGgRFcjAvhaI3sdxQX25N86BBFIwhU+
-	 Nt3NxSFlvnTfBdUfqB3g3Hg6yLgJ8S+KIqcjhgOeX9vnXbHgPYx9o7J5RkL6Yg5FJs
-	 z20BHCFpdgZjQ==
-Message-ID: <sashiko-outbox-172305@kernel.org>
+	b=E2Ko5lgEgbVpQJVGnA6a6s23pILIyy15ydP3XtjEzP8h5/ZiI40/b15wimQCKFL0g
+	 vfHdNWjUDULsNm6Y+cBZEIzZ8EVAHvH4HMI6gbLuCPyWyxnvWq0PjGMqur8oLqOi2U
+	 Vkt2DqzyaKLKTGVZj9eD2f7J+teeIs+ONAewed/a7bP5zYk0ngpLELYTokVDr1tPbH
+	 L04wExkzGthCgcrBIp1RoNHCF0rCt+kNloHWZvSIYtwpAT42+5mkH1y0CO/WvjaCED
+	 yW7JAoskOjcN7MOhvCII7sNFJJBeuab6rrYXy5PO3hNhEO3SPo9lQwTcDvGB1R5Wk1
+	 7X0ZVZw6ozq5Q==
+Message-ID: <sashiko-outbox-172309@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v10 5/6] dt-bindings: cpufreq: qcom-hw: Document SM7250
- cpufreq hardware
+Subject: Re: [PATCH v10 6/6] arm64: dts: qcom: Add SM7250 devicetree file
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Sreeshankar K" <sreeshankar0910@gmail.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261015051926.13752-6-sreeshankar0910@gmail.com>
+In-Reply-To: <20261015051926.13752-7-sreeshankar0910@gmail.com>
 References: <20261015051926.13752-1-sreeshankar0910@gmail.com>
- <20261015051926.13752-6-sreeshankar0910@gmail.com>
+ <20261015051926.13752-7-sreeshankar0910@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 15 Oct 2026 05:26:12 +0000
+Date: Thu, 15 Oct 2026 05:32:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,45 +46,57 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] dt-bindings: missing allOf conditional constraint for qcom,sm725=
-0-cpufreq-hw
+- [Low] dts: mismatched #address-cells with empty ranges property
 --
 
-commit 98b8b2444ed3f6041afd44a3665350b379c6ffc1
+commit d7254d0330c233afd2ea9eb553621c4b088c8ea0
 Author: Sreeshankar K <sreeshankar0910@gmail.com>
 
-dt-bindings: cpufreq: qcom-hw: Document SM7250 cpufreq hardware
+arm64: dts: qcom: Add SM7250 devicetree file
 
-Document the cpufreq hardware on the SM7250 SoC.
+This commit adds the base devicetree file for the SM7250 SoC, including bas=
+ic
+nodes like cpu, psci, and other required configurations for booting up to
+the serial console.
 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.ya=
-ml b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
-> index 98eb36bff1727..2dc2c265cac06 100644
-> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
-> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
-> @@ -29,6 +29,7 @@ properties:
->                - qcom,sdm845-cpufreq-hw
->                - qcom,sm6115-cpufreq-hw
->                - qcom,sm6350-cpufreq-hw
-> +              - qcom,sm7250-cpufreq-hw
+> diff --git a/arch/arm64/boot/dts/qcom/sm7250.dtsi b/arch/arm64/boot/dts/q=
+com/sm7250.dtsi
+> new file mode 100644
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/sm7250.dtsi
+[ ... ]
+> +	soc: soc@0 {
+> +		compatible =3D "simple-bus";
+> +		#address-cells =3D <2>;
+> +		#size-cells =3D <2>;
+> +		ranges =3D <0 0 0 0 0x10 0>;
+> +		dma-ranges =3D <0 0 0 0 0x10 0>;
+[ ... ]
+> +		timer@17c20000 {
+> +			compatible =3D "arm,armv7-timer-mem";
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <1>;
+> +			ranges;
 
-[Severity: Medium]
-Does qcom,sm7250-cpufreq-hw also need to be added to the allOf conditional
-blocks later in the file?
+[Severity: Low]
+The parent soc@0 node defines a 2-cell address space layout, but this child
+node defines 1-cell addresses and uses an empty ranges property. According
+to the Devicetree specification, an empty ranges property asserts that
+parent and child address spaces are identically formatted.
 
-This binding schema strictly enforces constraints like the number of regist=
-ers
-(reg, reg-names) and interrupts (interrupts, interrupt-names) based on the
-exact SoC variant using if-then blocks.
+Does this mismatch trigger a ranges_format dtc compiler warning?
 
-Because qcom,sm7250-cpufreq-hw is omitted from those conditionals, device
-trees for the SM7250 variant might silently pass schema validation even if
-they contain an incorrect number of registers or interrupts.
+While Linux of_translate_address() gracefully handles this by reading the
+child's cells and zero-padding the parent's cells, could relying on
+OS-specific parsing quirks for an invalid device tree structure break non-L=
+inux
+parsers like bootloaders?
 
->                - qcom,sm8150-cpufreq-hw
->            - const: qcom,cpufreq-hw
->
+Would it be better to resolve this by using an explicit translation mask,
+such as ranges =3D <0 0 0 0x20000000>;?
+
+> +			reg =3D <0x0 0x17c20000 0x0 0x1000>;
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261015051926.1375=
-2-2-sreeshankar0910@gmail.com?part=3D5
+2-2-sreeshankar0910@gmail.com?part=3D6
