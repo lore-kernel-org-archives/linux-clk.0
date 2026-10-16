@@ -1,108 +1,175 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AB7296BB5;
-	Fri, 16 Oct 2026 04:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BF2296BB5;
+	Fri, 16 Oct 2026 04:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792125648; cv=none; b=acXav1cir9dInJxfyuruhJhwVwfO5IXbuwch2vRmO5vipRovNR/C4dz2WF8y5DzaUMxFK2+06yYTD0WH+ep5uoZfVOKTOephlsIuOFeQvxtyAy3rIQhqq7SvGM5GxThWFloSig6T0Ti0IKc00NwNiGqYN0EJfSh73x13uKI7aLU=
+	t=1792125684; cv=none; b=GUX2q1sVvrFpDDzGLFWQS0xVF1Goh1FXj5afnKaam8X6wgSnh+5ZxrkGboDkmIM3KvR75j1FIy8F1Xi74Pzg+9wHe0RMAatKkQnkgkEkZTXsXfxHt2h8sT7JnXdj8VOrUTWmMzzaX9gxKJ5GeJcGQdVQeXBhYgRL1KlW/fGrry0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792125648; c=relaxed/simple;
-	bh=64BSI40xEnmsDhKAnP7V4Kxo8OL3Vn732k9KiE7He1U=;
+	s=arc-20240116; t=1792125684; c=relaxed/simple;
+	bh=0z/QdXawNlH9DT5d/D4IghSeQI6vOPtpKASdEs13pJ0=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=qiMkB8IjnYJmSLxAdy98TyEE/VeWScKjo1HMocpJM2z6cpDz5s5n2Cy9QiHJRfI8CjTyrwKBrI8XFAHWyGb5luwD5DWe459vSznI88QfF8rJtn8HYjVVRAigJ48MRKqIe6vOZeipddwBRK9wT2LJbk1qDO7yL2db5qYyj1n8c/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LFIdbcp0; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=Nj1LBur/74LyfVR0ZhgevBxniMmXmJ/LMsVenJ9h/nY0KTemGbK3LzqkDQ9qp3DyzD2keCdTWm1LjxRCdP4SSmNsNFfGp24FcjW2Miz6dJHAEdcAS7wUTe8AG6YwE58uOOfyBPwSA6wNy9Pvi8Wh267xB2u1/j2g+E5laW4rnRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTSu2tQ0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LFIdbcp0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F16F21F000C4;
-	Fri, 16 Oct 2026 04:40:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTSu2tQ0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D81F71F000C4;
+	Fri, 16 Oct 2026 04:41:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792125647;
-	bh=TvgfhPyK+2yTAVPMvvCqnIECY/Z2J5oQpMVcw/+cWKQ=;
+	s=k20260515; t=1792125683;
+	bh=LfE6TOFt3U1+7FuQQ1jaXHSENYMyWiT94IvJWMio9dU=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=LFIdbcp0Tgx9jxaFVWG6Uzcl+oj/MQ0GypslWVUWSIU7h8NZsTYPJCENsM3NGBWYN
-	 WjTNtqGHj0O8VG7o8ucYxCw0X1hKvcTBPyKEDJWxis1XwPz7mS8Qh72Sok3K3ADxlJ
-	 Iz2YAPJwEHAHVRNTU4zFPUMvWjrfKz8Iiv68Q1qGiRNwL/hvCIaPPMC/TprRO0N6wO
-	 1kqBo6EKcL9jElKM46pDFPHG4bl4a2Sx8V8ACaXNh3d+jsXO1TPggwPyHY3PYjzVPJ
-	 pMGfEVeG+E4Dtqw0ocS7Z0mrSOzph65vQVbyRHpU1cvOKnXzkhTIx1eJ5GEo3CXw0u
-	 3Uv6PagmXT/nw==
-Message-ID: <sashiko-outbox-173795@kernel.org>
+	b=FTSu2tQ0ZK5Lg2p3/LkgKST1CiTCehMVE6/tEtPwweGJ7DoUAk9FkAM6A2FYhdxV1
+	 czvxLDQ9Ni+Y7lx5n6MjdVsJyQgUQ0X8hOLponxmTDVqyaDea5bPnUnpMiiQM+zs/t
+	 l0P0BtRyghtPTNI1caerEdeH+N45bKTeOxY5fx6CClnhuDu9/WPE84fbp727e9LKm6
+	 1rxrce7XAnViVRImQxXG7N0nwezEEwTJOcHYmtTqyBi3tPkiU3pzYC3j+TSLay5Hxb
+	 F6EGPrzGXSerWekvp0Om1vEXs6Qz7DAHiyL9WOr+Ocf+ycjbbJuEc3zGOR5z6mGAG2
+	 8tIocm4k9R0Lg==
+Message-ID: <sashiko-outbox-173796@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v11 2/5] clk: qcom: Add Global Clock Controller (GCC)
- driver for SM7250
+Subject: Re: [PATCH v11 5/5] arm64: dts: qcom: Add SM7250 devicetree file
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Sreeshankar K" <sreeshankar0910@gmail.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261016042432.824-3-sreeshankar0910@gmail.com>
+In-Reply-To: <20261016042432.824-6-sreeshankar0910@gmail.com>
 References: <20261016042432.824-1-sreeshankar0910@gmail.com>
- <20261016042432.824-3-sreeshankar0910@gmail.com>
+ <20261016042432.824-6-sreeshankar0910@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 16 Oct 2026 04:40:46 +0000
+Date: Fri, 16 Oct 2026 04:41:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
 s) to consider:
-- [High] clk: qcom: Incorrect source enum in freq_tbl causes cpuss_ahb_clk_=
-src rate setting failure
+- [Medium] arm64: dts: qcom: incorrect cpu-map topology for DynamIQ
+- [Low] dts: unused qcom-rpmpd.h header inclusion
+- [Low] dts: empty ranges property with mismatched cell counts triggers dtc=
+ warning
+- [Low] dts: cpu-map core nodes incorrectly numbered across clusters
 --
 
-commit 457d324324dea631af01284e949d55a40199a579
+commit 44af3970816d0373bee16d99b2e8e2afd4954505
 Author: Sreeshankar K <sreeshankar0910@gmail.com>
 
-clk: qcom: Add Global Clock Controller (GCC) driver for SM7250
+arm64: dts: qcom: Add SM7250 devicetree file
 
-Add support for the global clock controller found on SM7250
-based devices.
+This commit adds the base devicetree file for the Qualcomm SM7250 SoC.
+It includes basic nodes like cpu, psci, and other required configuration
+for booting up to the serial console.
 
-> diff --git a/drivers/clk/qcom/gcc-sm7250.c b/drivers/clk/qcom/gcc-sm7250.c
+> diff --git a/arch/arm64/boot/dts/qcom/sm7250.dtsi b/arch/arm64/boot/dts/q=
+com/sm7250.dtsi
 > new file mode 100644
+> index 0000000000000..48480e6855f0c
 > --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-sm7250.c
-[ ... ]
-> +static const struct freq_tbl ftbl_gcc_cpuss_ahb_clk_src[] =3D {
-> +	F(19200000, DT_BI_TCXO_AO, 1, 0, 0),
-> +	{ }
-> +};
+> +++ b/arch/arm64/boot/dts/qcom/sm7250.dtsi
+> @@ -0,0 +1,771 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2026, Sreeshankar K <sreeshankar0910@gmail.com>
+> + */
 > +
-> +static struct clk_rcg2 gcc_cpuss_ahb_clk_src =3D {
-> +	.cmd_rcgr =3D 0x48010,
-> +	.mnd_width =3D 0,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D gcc_parent_map_0,
-> +	.freq_tbl =3D ftbl_gcc_cpuss_ahb_clk_src,
-> +	.clkr.hw.init =3D &(const struct clk_init_data){
-> +		.name =3D "gcc_cpuss_ahb_clk_src",
-> +		.parent_data =3D gcc_parent_data_0_ao,
-> +		.num_parents =3D ARRAY_SIZE(gcc_parent_data_0_ao),
-> +		.flags =3D CLK_SET_RATE_PARENT,
-> +		.ops =3D &clk_rcg2_ops,
-> +	},
-> +};
+> +#include <dt-bindings/clock/qcom,rpmh.h>
+> +#include <dt-bindings/clock/qcom,sm7250-gcc.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/power/qcom,rpmhpd.h>
+> +#include <dt-bindings/power/qcom-rpmpd.h>
 
-[Severity: High]
-Will this cause a rate setting failure for gcc_cpuss_ahb_clk_src?
+[Severity: Low]
+Is it necessary to include qcom-rpmpd.h here? It appears to be unused.
 
-The frequency table ftbl_gcc_cpuss_ahb_clk_src uses the device tree index=20
-DT_BI_TCXO_AO (which evaluates to 1) instead of the internal hardware paren=
-t=20
-macro P_BI_TCXO (which evaluates to 0).
+The SM7250 SoC relies on the newer RPMh framework, so only the definitions =
+from
+<dt-bindings/power/qcom,rpmhpd.h> are used (e.g., RPMHPD_CX). Does this code
+rely on any definitions from qcom-rpmpd.h, or can it be removed as dead cod=
+e?
 
-The associated clock gcc_cpuss_ahb_clk_src restricts its num_parents to 1=20
-via gcc_parent_data_0_ao, and uses gcc_parent_map_0 as its parent map.=20
-During a rate change, the common clock framework invokes qcom_find_src_inde=
-x()=20
-which iterates up to num_parents (1) and checks if the requested source=20
-matches map[0].src (P_BI_TCXO =3D 0).
+[ ... ]
 
-Since 1 !=3D 0, the lookup fails and returns -ENOENT, preventing rate=20
-configuration on the CPUSS AHB clock. Should the frequency table use=20
-P_BI_TCXO instead?
+> +		cpu-map {
+> +			cluster0 {
+> +				core0 {
+> +					cpu =3D <&cpu0>;
+> +				};
+> +
+[ ... ]
+> +
+> +				core5 {
+> +					cpu =3D <&cpu5>;
+> +				};
+> +			};
+> +
+> +			cluster1 {
+> +				core6 {
+> +					cpu =3D <&cpu6>;
+> +				};
+> +			};
+> +
+> +			cluster2 {
+> +				core7 {
+> +					cpu =3D <&cpu7>;
+> +				};
+> +			};
+> +		};
+
+[Severity: Medium]
+Does splitting the cores across cluster0, cluster1, and cluster2 accurately
+reflect the SM7250 topology?
+
+The SM7250 uses a single DynamIQ cluster where all 8 cores share the L3 cac=
+he.
+By placing the cores into three separate clusters in the cpu-map, the Linux
+scheduler is told that migrating tasks between them crosses a socket/package
+boundary, which artificially penalizes cross-core migration and prevents
+optimal load-balancing.
+
+Should all 8 cores be placed under cluster0 to correctly represent the sing=
+le
+shared DynamIQ cluster, similar to other SoCs like SC7180 or SM8250?
+
+
+[Severity: Low]
+Additionally, for the secondary clusters defined here, should the core nodes
+restart their index at core0?
+
+Devicetree schema (cpus.yaml) requires that core nodes within a cluster be
+named coreN where N is the local index within that cluster. Continuing the
+global index (core6 and core7) instead of starting at core0 will trigger
+schema validation errors when running make dtbs_check.
+
+[ ... ]
+
+> +		timer@17c20000 {
+> +			compatible =3D "arm,armv7-timer-mem";
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <1>;
+> +			ranges;
+
+[Severity: Low]
+Will this empty ranges property trigger a DeviceTree compiler warning?
+
+The parent soc@0 node uses #address-cells =3D <2> and #size-cells =3D <2>, =
+while
+timer@17c20000 overrides them to <1> and <1>. The DeviceTree compiler (dtc)
+enforces that an empty ranges property can only be used when the child node=
+'s
+cell counts strictly match the parent's.
+
+While Linux's __of_translate_address handles this gracefully at runtime by
+zero-extending, this mismatch violates the Devicetree specification and
+triggers a ranges_format warning during make dtbs. Could an explicit ranges
+translation be provided here (e.g., ranges =3D <0x0 0x0 0x0 0xffffffff>;) to
+fix the warning?
+
+> +			reg =3D <0x0 0x17c20000 0x0 0x1000>;
+> +
+> +			frame@17c21000 {
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261016042432.824-=
-1-sreeshankar0910@gmail.com?part=3D2
+1-sreeshankar0910@gmail.com?part=3D5
