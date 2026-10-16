@@ -1,146 +1,154 @@
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing2021.csail.mit.edu (outgoing2021.csail.mit.edu [128.30.2.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1893812D2
-	for <linux-clk@vger.kernel.org>; Fri, 16 Oct 2026 16:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FAA3BADB4;
+	Fri, 16 Oct 2026 16:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.30.2.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792167483; cv=none; b=ShhC4NWxJ1exxGXAJN6vzel/kK3zUKz2X/YFFtH6Id0SbGFf92pPQfeCJQZsiWOqDgbPQBgcv3hEUVvaRRopPlBSjd2/Vp0cigybxCyYfuPhm4WRmDFAsfojSc5NFiDE40biK7pz8krGtM7ZY/fObkPNCUliHw4xsZeZUdNnXso=
+	t=1792168854; cv=none; b=QT8dX0TUss7Psnjo5hiPn6O2aBIx59PAK7IKQF2uRnve7dRvt//lapuL7nScdwwOJeths2ir23iaRZIGlkTHTmDYl54mgI0ci29DcR8Rgc3SyQrV3npkALyrRmZsofQYGQIjclRKLj6rza40yBLPwwQ/kPb2JG8w3jws0HaOlSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792167483; c=relaxed/simple;
-	bh=xSr2ExXRN9R0UBBPp938gkkIvwZwXGmsDTqtVSQe06o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DHwv5DJdl93B2804ihD1O1tuxKz3v7x7XhmpACwjpyPhXw6TWRfBFwpUL/WgiDqgXFzJkFbweYZQZrBqGe20y0rEZfHhnXqRFTgigSJEVHKzyzelKmQt4AW4lD9+Irim+4FIZmqo3SkF3C/xd9lz6J56sTLQ+gkOjuru2dwqCvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5ea969fafeeso44868e0c.0
-        for <linux-clk@vger.kernel.org>; Fri, 16 Oct 2026 09:17:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792167477; x=1792772277;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=AunDP67smfuPeJ58K112HEYEzg+svez7qfjrmc8SNz4=;
-        b=tVaHLyvTFazzgKTYAc54zB+mDap6mZP+e5CocObwLm0Fbkr293qkRDvpD+YPMOLGnX
-         MnsrDE3TplaW1jWweY6n0XQdL/QIDYB7LMYSPLVCjCPiB+qNt5YnGj33eBlSPVEFGcFc
-         sefBDNN2gZLTY3O0h2gHg3LDuGEhlmu64oKZTmU5xQeXAWffXAf02AxKxeaaRKvdjEJN
-         CzDu1eJN43yHwPtiMhEj6D2xZAbUM0xFRKBCVEPkpLE3L+Oz5g3RgURXlyeobavuIOyD
-         XV3W2FxT7tBTsYFExRy78Ds9iJjTapeJINM+q4JZT3IW5YA+mBCc78jHxulK1UJEOD0G
-         RWqQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzVzI6D7mL+kFCnyU3KDc1cMILiUUgXcgiWdHJnS47jMRA9qvtxqbYdqUGHnbeKTVNXX/ZfYIeGeqw=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLJRSSn83l0FoXVwrPcaCCK8MUOQ/roRz8dfb22pcDCf/phn7FE
-	FjRIcrZWByDRV6T+6NfQYVVkf9IcfJFHhAFKXUjLhgjDk7QJVmVClrk3aoShouic
-X-Gm-Gg: AYBFou10xSHic3j+eOuv69yOBmVZ+yMBitsYTRcSmNx9+i7p2URB6V1me4Fqs/O+wQs
-	SS2yQMpTwTMCggskHkD0ddt0ePVxEAFgkHxFnui4UolUWNvL+AN3t265Z0HYtnkVtN2z35JV/P7
-	jJW0frI8aYlO9nnd13URtxWAxBe0/NM3i+2E0sCUzsVnsRhoiHsfEzv5hfD69sZosYXLrSQf7RR
-	bFVAKPMoRH8pcqnWzAbu3+NOrpjNzorsTKL0cDlIhr61bNNSgTI24xxYRfeHscsmFf9EZhQ/kL1
-	2bGaj0I43Nw++O2PfonlzjlaHkPG1FTaiiz2qu4f0B+LnQYRTg99a2sCmerSBrt2Nv4H0CuG+Ns
-	lbd3WCPS5jaeDK1meh9g41isb04j3iUvPlgA/fHD3/o92+kMt//upyCfswDxcMkAS2X5tkS803Y
-	nn08KbVcVHVXvehbI5vNy86FTLTkw3Rh7BIgfIQ82pELzvlS04x4EZQ6fZRaVrwTL0zVQ6laHn0
-	ZGkOxMsY5URIIg7u/uzAkClHA0nKQBIKiFS
-X-Received: by 2002:a05:6123:67:b0:5d6:7f46:b8dc with SMTP id 71dfb90a1353d-5eaaa8b25fcmr263129e0c.21.1792167477366;
-        Fri, 16 Oct 2026 09:17:57 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ea9b4ae2e2sm1931724e0c.7.2026.10.16.09.17.57
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Oct 2026 09:17:57 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-7907f01e487so5677137.2
-        for <linux-clk@vger.kernel.org>; Fri, 16 Oct 2026 09:17:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwpW16OipfkTDxqxzVMQgJBmeoJhZ/oDU1snVNNXNb9BjCA8bkGdBTA4C+WMjC8WSTZ56JOI9KXRh4=@vger.kernel.org
-X-Received: by 2002:a05:6102:91d:b0:7cc:25bc:3b20 with SMTP id
- ada2fe7eead31-7cc3697a80cmr4964137.7.1792167476872; Fri, 16 Oct 2026 09:17:56
- -0700 (PDT)
+	s=arc-20240116; t=1792168854; c=relaxed/simple;
+	bh=22aKOV4kC3Q43W/39hlrHl0PEB05/vsaNyU1K9dGtF4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b1A2zJplDOHksxmp0feoPDibG/fjTVe7zZ3jGlWcVX+XL9e4JTZoerz+OoXQEO/3JpMJ9xi28a2ZOIQWx5A0FTg4VxTN5wZ6henNEMkZwUQ7nH9GVMHx1BVR505HIMC13TV/2qTLpYsLDLpCxbU9m+iH5lIEQ6XmZrNuvd12oN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csail.mit.edu; spf=pass smtp.mailfrom=csail.mit.edu; arc=none smtp.client-ip=128.30.2.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csail.mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csail.mit.edu
+Received: from escalante.csail.mit.edu ([128.52.128.198])
+	by outgoing2021.csail.mit.edu with esmtp (Exim 4.95)
+	(envelope-from <nickolai@csail.mit.edu>)
+	id 1xHkzC-00Fc4w-9K;
+	Fri, 16 Oct 2026 12:40:50 -0400
+From: Nickolai Zeldovich <nickolai@csail.mit.edu>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nickolai Zeldovich <nickolai@csail.mit.edu>
+Subject: [PATCH v1] clk: Free the parent map only in __clk_release()
+Date: Fri, 16 Oct 2026 12:40:49 -0400
+Message-ID: <20261016164050.790594-1-nickolai@csail.mit.edu>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1792163045.git.geert+renesas@glider.be> <c38d744c09dffff550a9b882051c211b572b8daf.1792163045.git.geert+renesas@glider.be>
- <sashiko-outbox-174611@kernel.org>
-In-Reply-To: <sashiko-outbox-174611@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 16 Oct 2026 18:17:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWG50U8V9wXBK_5-74o2bseEUbQMy1ZNn-E3aDukwXPKQ@mail.gmail.com>
-X-Gm-Features: AclHuK9fqn3MalAwQj8tdGTinUXqmFBnbO7uqU1e8oT10jns_G1thPssa7yAsT4
-Message-ID: <CAMuHMdWG50U8V9wXBK_5-74o2bseEUbQMy1ZNn-E3aDukwXPKQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/8] clk: renesas: r8a78000: Add SCMI remapping support
-To: sashiko-reviews@lists.linux.dev
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, 
-	conor+dt@kernel.org, wsa+renesas@sang-engineering.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 16 Oct 2026 at 18:13, <sashiko-bot@kernel.org> wrote:
-> Thank you for your contribution! Sashiko AI review found 3 potential issue(s) to consider:
-> - [High] clk: memory leak of struct clk and module refcount on success and probe deferral
-> - [High] clk: renesas: UAF on provider unbind and struct clk memory leak
-> - [Medium] clk: memory and module refcount leak in fill_clk_map()
-> --
->
-> commit a959fac1d9976d318a861219d6e13c9fef99da15
-> Author: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> clk: renesas: r8a78000: Add SCMI remapping support
->
-> This commit extends the Clock Pulse Generator driver for R-Car X5H with SCMI
-> support. It maps DT clock IDs to abstractions offered by the SCMI firmware,
-> falling back to fixed-rate clocks if unavailable.
->
-> > diff --git a/drivers/clk/renesas/r8a78000-cpg.c b/drivers/clk/renesas/r8a78000-cpg.c
-> > index 5ffd7b89cb48e..758cfe78ae58e 100644
-> > --- a/drivers/clk/renesas/r8a78000-cpg.c
-> > +++ b/drivers/clk/renesas/r8a78000-cpg.c
-> [ ... ]
-> > @@ -145,7 +184,46 @@ static const struct clk_map *fill_clk_map(struct r8a78000_cpg_priv *priv,
-> >                       break;
-> >
-> >               map[i].fw_id = map_in[i].fw_id;
-> > -             map[i].hw = fixed_hws[map[i].fw_id];
-> > +             if (map[i].fw_id >= FIXED_CLK_OFFSET) {
-> > +                     enum fixed_clk idx = map[i].fw_id - FIXED_CLK_OFFSET;
-> > +
-> > +                     map[i].hw = fixed_hws[idx];
-> > +                     continue;
-> > +             }
-> > +
-> > +             scmi_spec.np = scmi_clk_np;
-> > +             scmi_spec.args_count = 1;
-> > +             scmi_spec.args[0] = map[i].fw_id;
-> > +
-> > +             clk = of_clk_get_from_provider(&scmi_spec);
-> > +             if (IS_ERR(clk))
-> > +                     return dev_err_cast_probe(dev, clk,
-> > +                             "Failed to get SCMI clock %u\n", map[i].fw_id);
-> > +
-> > +             hw = __clk_get_hw(clk);
->
-> [Severity: High]
-> Does this code leak the dynamically allocated struct clk and its module
-> reference?
->
-> of_clk_get_from_provider() returns a new struct clk and increments the
-> provider's module refcount. The clk pointer is discarded after extracting
-> the raw clk_hw pointer, so it is never passed to clk_put(). This causes a
-> memory leak of struct clk objects and a module refcount leak for the SCMI
-> provider.
->
-> If a subsequent clock lookup in the loop fails and returns -EPROBE_DEFER,
-> the function immediately aborts, and the previously allocated clk handles
-> from earlier loop iterations are not cleaned up.
+clk_core_populate_parent_map() can fail in two ways, and since
+__clk_register() answers every failure with kref_put(&core->ref,
+__clk_release), both end in clk_core_free_parent_map() walking a parent
+map that is not there to walk:
 
-This cannot happen, as all of_clk_get_from_provider() calls use the
-same clock provider: either the first call returns -EPROBE_DEFER,
-or all calls do not return -EPROBE_DEFER.
+ - If the allocation of the map fails, core->parents is NULL while
+   core->num_parents was already set from init->num_parents.
+   clk_core_free_parent_map() only tests num_parents, so it reads
+   core->parents[i].name through a NULL pointer: an oops.
 
-Gr{oetje,eeting}s,
+ - If a later kstrdup_const() of a parent name fails, the function
+   frees the names it copied so far and the map itself, but leaves
+   core->parents pointing at the freed memory. __clk_release() then
+   frees the same names and the same map a second time: a double free
+   on top of a use-after-free read.
 
-                        Geert
+Both arms are the -ENOMEM path of clk_register(), clk_hw_register() and
+of_clk_hw_register(), so of every clock provider in the tree with
+num_parents > 0. A user sees it when a clock provider's probe hits a
+memory allocation failure (in practice under fault injection, as these
+allocations are small): instead of the probe failing with -ENOMEM and
+"failed to register clk", the kernel oopses in __clk_release() called
+from __clk_register(), or, for the second arm, corrupts the slab
+allocator and reports a double free.
 
+clk_core_populate_parent_map() has cleaned up after itself since commit
+fc0c209c147f ("clk: Allow parents to be specified without string names"),
+when __clk_register()'s fail_parents label skipped
+clk_core_free_parent_map() and only the later fail_create_clk label
+freed the map. Commit 9d05ae531c2c ("clk: Initialize struct clk_core
+kref earlier") moved the freeing of everything into __clk_release() and
+pointed all failure labels at kref_put(), so the map is now freed by
+__clk_release() on this path too.
+
+Make clk_core_populate_parent_map() leave the map to __clk_release():
+return the error without freeing anything (the map is zero-allocated and
+kfree_const(NULL) is a no-op, so the partially filled map is freed
+correctly by clk_core_free_parent_map()), and have
+clk_core_free_parent_map() return when there is no map rather than when
+num_parents is zero, which is what clk_core_get_parent_by_index()
+already does for the same state.
+
+Found by formal verification of __clk_register() against the kernel
+binary. Reproduced on riscv64 under QEMU by re-running a fixed-factor
+clock provider's probe through its sysfs bind file with failslab aimed
+at the parent map allocation: the unpatched kernel oopses with a NULL
+pointer dereference in __clk_release() (clk_core_free_parent_map() is
+inlined there), the patched kernel fails the bind write with -ENOMEM
+and logs "failed to register clk". A userspace transcription of the
+four functions reproduces both arms under AddressSanitizer before the
+change and is clean after it. The clk KUnit suites pass before and
+after on x86_64 and riscv64.
+
+Fixes: 9d05ae531c2c ("clk: Initialize struct clk_core kref earlier")
+Assisted-by: LLM
+Signed-off-by: Nickolai Zeldovich <nickolai@csail.mit.edu>
+---
+
+Notes:
+    The riscv64 trigger is a fixed-factor-clock DT node whose registration
+    fails at boot (a second node with the same clock-output-names, -EEXIST),
+    which leaves an unbound platform device; writing its name to the
+    driver's sysfs bind file re-runs of_clk_hw_register() in the writing
+    task, where failslab with the task filter and the kmalloc-64 cache
+    filter can be aimed at the parent map allocation (the second kmalloc-64
+    of that probe, after struct clk_fixed_factor). On the unpatched kernel
+    the oops kills the writing task with the device lock held, so the VM
+    does not power off afterwards; on the patched kernel the write returns
+    -ENOMEM and the next bind attempt fails with -EEXIST as before. The
+    second arm (a parent name copy failing) was reproduced in the userspace
+    transcription only; the fixed-factor clock has a single parent, and the
+    kstrdup_const() of its name lands in a different slab cache.
+    
+    The pending clk-next change to __clk_register(), "clk: fix
+    self-consuming provider module pinning", touches the owner assignment
+    further down and does not overlap with this hunk.
+
+ drivers/clk/clk.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fef87167a60b..c32c3e9d62bd 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4353,15 +4353,8 @@ static int clk_core_populate_parent_map(struct clk_core *core,
+ 			WARN(1, "Must specify parents if num_parents > 0\n");
+ 		}
+ 
+-		if (ret) {
+-			do {
+-				kfree_const(parents[i].name);
+-				kfree_const(parents[i].fw_name);
+-			} while (--i >= 0);
+-			kfree(parents);
+-
++		if (ret)
+ 			return ret;
+-		}
+ 	}
+ 
+ 	return 0;
+@@ -4371,7 +4364,7 @@ static void clk_core_free_parent_map(struct clk_core *core)
+ {
+ 	int i = core->num_parents;
+ 
+-	if (!core->num_parents)
++	if (!core->parents)
+ 		return;
+ 
+ 	while (--i >= 0) {
+
+base-commit: 90201351a862182bdabfc1ad1c97b1e1b6ed5931
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.53.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
