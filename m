@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0BC385D99;
-	Fri, 16 Oct 2026 04:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AB7296BB5;
+	Fri, 16 Oct 2026 04:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792125166; cv=none; b=XGkYs6v8OFPRUyGo/JXizEGqtbCnJvDwaW9vKekx/R10Zv3tDgt6yFhReLfQG0w5GIsUwAEfFwVYw5NwggBeJI0G/QjQrJUr7LXliMFDf9L9RBOHDsmqjmC9Gi5XlgvVRuD6gDIcJOCNauWrMEj5G9eoQp2EApDN3LfueiJSqW0=
+	t=1792125648; cv=none; b=acXav1cir9dInJxfyuruhJhwVwfO5IXbuwch2vRmO5vipRovNR/C4dz2WF8y5DzaUMxFK2+06yYTD0WH+ep5uoZfVOKTOephlsIuOFeQvxtyAy3rIQhqq7SvGM5GxThWFloSig6T0Ti0IKc00NwNiGqYN0EJfSh73x13uKI7aLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792125166; c=relaxed/simple;
-	bh=o12cebP1myZsQrq3B6eNqyG7BXDovC/2M4X1s7+ucN8=;
+	s=arc-20240116; t=1792125648; c=relaxed/simple;
+	bh=64BSI40xEnmsDhKAnP7V4Kxo8OL3Vn732k9KiE7He1U=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=bJMQq6NtXL/IwtAPyaOUgtwatI7CrzgmYp6U2qemPPeytJDCRO6/Aq0PDg6CM5kdsUyKaTOVVOVDwlPptFVjUN5MN0oeC7+EL2/ViJbOSQyYfAd33vyb/ELAuyZ+a//d8oelmGtO4IAqKidop9orh471+6dix3LlMH2mx27CyhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3dh3C0g; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=qiMkB8IjnYJmSLxAdy98TyEE/VeWScKjo1HMocpJM2z6cpDz5s5n2Cy9QiHJRfI8CjTyrwKBrI8XFAHWyGb5luwD5DWe459vSznI88QfF8rJtn8HYjVVRAigJ48MRKqIe6vOZeipddwBRK9wT2LJbk1qDO7yL2db5qYyj1n8c/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LFIdbcp0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3dh3C0g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61C911F000C4;
-	Fri, 16 Oct 2026 04:32:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LFIdbcp0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F16F21F000C4;
+	Fri, 16 Oct 2026 04:40:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792125164;
-	bh=q0vNzXG/ccbeWBNLLxXEZ6EN5CDJ5sMBDWSkNwmcFNE=;
+	s=k20260515; t=1792125647;
+	bh=TvgfhPyK+2yTAVPMvvCqnIECY/Z2J5oQpMVcw/+cWKQ=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=i3dh3C0gzj+LKyWIlQzz6a/9hPSZeWRw2sRtOANDQmxDU7v1NeKC8XcEoCuprWlu9
-	 dKaQCensr8x7x/4WGElDo2Ov0soT0hJEsWfn6589K/SGA2Cfq8srk0XIvWjyF7wknz
-	 AGcgSI192B6lhTNnN9EX/I6MXFnAXskFtHzfDhm2wIYIw1jrSudpnaZY1ol4mLJ2Q/
-	 t8YCShw9uD146obSBZey9yQQYv6373bDY2xwX1hdofFAtrUEK8yMlulPzNie++s4Kz
-	 385NNXlnBo2ddsJ/x0/ffMs2XQQeF4r4eU4a/HflFZjpQNAeMB2DFqSCtNJcXyZziu
-	 TKd3p61bI4a3A==
-Message-ID: <sashiko-outbox-173787@kernel.org>
+	b=LFIdbcp0Tgx9jxaFVWG6Uzcl+oj/MQ0GypslWVUWSIU7h8NZsTYPJCENsM3NGBWYN
+	 WjTNtqGHj0O8VG7o8ucYxCw0X1hKvcTBPyKEDJWxis1XwPz7mS8Qh72Sok3K3ADxlJ
+	 Iz2YAPJwEHAHVRNTU4zFPUMvWjrfKz8Iiv68Q1qGiRNwL/hvCIaPPMC/TprRO0N6wO
+	 1kqBo6EKcL9jElKM46pDFPHG4bl4a2Sx8V8ACaXNh3d+jsXO1TPggwPyHY3PYjzVPJ
+	 pMGfEVeG+E4Dtqw0ocS7Z0mrSOzph65vQVbyRHpU1cvOKnXzkhTIx1eJ5GEo3CXw0u
+	 3Uv6PagmXT/nw==
+Message-ID: <sashiko-outbox-173795@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v11 4/5] dt-bindings: cpufreq: qcom-hw: Document SM7250
- cpufreq hardware
+Subject: Re: [PATCH v11 2/5] clk: qcom: Add Global Clock Controller (GCC)
+ driver for SM7250
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Sreeshankar K" <sreeshankar0910@gmail.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261016042432.824-5-sreeshankar0910@gmail.com>
+In-Reply-To: <20261016042432.824-3-sreeshankar0910@gmail.com>
 References: <20261016042432.824-1-sreeshankar0910@gmail.com>
- <20261016042432.824-5-sreeshankar0910@gmail.com>
+ <20261016042432.824-3-sreeshankar0910@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 16 Oct 2026 04:32:44 +0000
+Date: Fri, 16 Oct 2026 04:40:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,66 +47,62 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] dt-bindings: cpufreq: qcom-hw: missing SM7250 in schema conditio=
-nals
+- [High] clk: qcom: Incorrect source enum in freq_tbl causes cpuss_ahb_clk_=
+src rate setting failure
 --
 
-commit 7eca354281cb4ab83cc6aed6ad713ee095a5b71a
+commit 457d324324dea631af01284e949d55a40199a579
 Author: Sreeshankar K <sreeshankar0910@gmail.com>
 
-dt-bindings: cpufreq: qcom-hw: Document SM7250 cpufreq hardware
+clk: qcom: Add Global Clock Controller (GCC) driver for SM7250
 
-Document the cpufreq hardware on the SM7250 SoC.
+Add support for the global clock controller found on SM7250
+based devices.
 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.ya=
-ml b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
-> index 98eb36bff1727..2dc2c265cac06 100644
-> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
-> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
-> @@ -29,6 +29,7 @@ properties:
->                - qcom,sdm845-cpufreq-hw
->                - qcom,sm6115-cpufreq-hw
->                - qcom,sm6350-cpufreq-hw
-> +              - qcom,sm7250-cpufreq-hw
+> diff --git a/drivers/clk/qcom/gcc-sm7250.c b/drivers/clk/qcom/gcc-sm7250.c
+> new file mode 100644
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-sm7250.c
+[ ... ]
+> +static const struct freq_tbl ftbl_gcc_cpuss_ahb_clk_src[] =3D {
+> +	F(19200000, DT_BI_TCXO_AO, 1, 0, 0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 gcc_cpuss_ahb_clk_src =3D {
+> +	.cmd_rcgr =3D 0x48010,
+> +	.mnd_width =3D 0,
+> +	.hid_width =3D 5,
+> +	.parent_map =3D gcc_parent_map_0,
+> +	.freq_tbl =3D ftbl_gcc_cpuss_ahb_clk_src,
+> +	.clkr.hw.init =3D &(const struct clk_init_data){
+> +		.name =3D "gcc_cpuss_ahb_clk_src",
+> +		.parent_data =3D gcc_parent_data_0_ao,
+> +		.num_parents =3D ARRAY_SIZE(gcc_parent_data_0_ao),
+> +		.flags =3D CLK_SET_RATE_PARENT,
+> +		.ops =3D &clk_rcg2_ops,
+> +	},
+> +};
 
-[Severity: Medium]
-Should this new compatible string also be propagated to the hardware-specif=
-ic
-conditionals in the allOf block?
+[Severity: High]
+Will this cause a rate setting failure for gcc_cpuss_ahb_clk_src?
 
-If the new compatible string is omitted from the conditional blocks, schema
-validation for qcom,sm7250-cpufreq-hw will fall back to the top-level bound=
-s.
-Device trees with incorrect register or interrupt configurations will pass
-validation.
+The frequency table ftbl_gcc_cpuss_ahb_clk_src uses the device tree index=20
+DT_BI_TCXO_AO (which evaluates to 1) instead of the internal hardware paren=
+t=20
+macro P_BI_TCXO (which evaluates to 0).
 
-Since the SM7250 has 3 register domains, should it be added to the constrai=
-nt
-block enforcing exactly 3 items?
+The associated clock gcc_cpuss_ahb_clk_src restricts its num_parents to 1=20
+via gcc_parent_data_0_ao, and uses gcc_parent_map_0 as its parent map.=20
+During a rate change, the common clock framework invokes qcom_find_src_inde=
+x()=20
+which iterates up to num_parents (1) and checks if the requested source=20
+matches map[0].src (P_BI_TCXO =3D 0).
 
-Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml:allOf:
-  - if:
-      properties:
-        compatible:
-          contains:
-            enum:
-              - qcom,milos-cpufreq-epss
-              - qcom,qcs8300-cpufreq-epss
-              - qcom,sc7280-cpufreq-epss
-              - qcom,sm8250-cpufreq-epss
-              - qcom,sm8350-cpufreq-epss
-              - qcom,sm8450-cpufreq-epss
-              - qcom,sm8550-cpufreq-epss
-    then:
-      properties:
-        reg:
-          minItems: 3
-          maxItems: 3
-
->                - qcom,sm8150-cpufreq-hw
->            - const: qcom,cpufreq-hw
->
+Since 1 !=3D 0, the lookup fails and returns -ENOENT, preventing rate=20
+configuration on the CPUSS AHB clock. Should the frequency table use=20
+P_BI_TCXO instead?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261016042432.824-=
-1-sreeshankar0910@gmail.com?part=3D4
+1-sreeshankar0910@gmail.com?part=3D2
