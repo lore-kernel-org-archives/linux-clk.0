@@ -1,126 +1,118 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC15A375F9C;
-	Fri, 16 Oct 2026 16:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979844E1C97;
+	Fri, 16 Oct 2026 16:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792166994; cv=none; b=O4ooBDlosuJTJparzq2WMnuQsWVLLFsi1fJPi4+Uwm0Y6IvnvMO/EcL7b7s27JmrM/y/Y15aupFUzBRxUYo4XSEJh20Zkvr8nU4r7zHIdeRwzRbXVfFng/Mn/MJD/VfTp902QHwZodiDxWAQaQPuePJY3XLKmG+3hUd8X2yf7rA=
+	t=1792167226; cv=none; b=rWTvjAJB9LK0wOpkTHuoGmv1rnpwTV1KHsVBzIIhZCt3UyiY3oY49qLglyM1ORChUEC+oFG3GvpHHGrANGyQnNJwIiONSOuIdBrFaW/GP/WwPbd6zrFzEEsnxhGzbE8iMYLL/VQ1qu2Z+OdO9LVARNDYJ/l96Auma2a/1DXcUUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792166994; c=relaxed/simple;
-	bh=HvIDoCcGFiTande0G0/KBPMuyS5zrzay+reTFQMs1P8=;
+	s=arc-20240116; t=1792167226; c=relaxed/simple;
+	bh=4R6jkjmzZjwquaVB/3N2Juaxep7fobE07x3R/ahMz+M=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=B3wUrxim/td8jR1WVrmUZXbCggGTZOsE5YSvBm54svGoiSq0jqPCbdjkPyA4rLRwuuobBxCOmKnQPwvLemWSyGIkYvYupROJTL3qWT/kNI0gIV8DtLpwWIM+YCpAJdCVGjnvOSAyKpWrlO4cBTlx97NRHJj5nCsJHJ6RJuRvf5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDsain6c; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=SGl8W9IzzLGpUifth/j3ZhnFvPVLwi2CVA7QuSsuTWHezGspX5H1YoVxcFBRpUcHUn23I1Zc7+fncUSlACiVikHk3GQxkostBby3nm1kucTV2zM4zAC2L7X49dnwsCda0rlKeAEPiWwdvbtdI0wKKgMt+XpbeFVkzEaQAomAj7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cl38E2Ox; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDsain6c"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 107FE1F000C4;
-	Fri, 16 Oct 2026 16:09:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cl38E2Ox"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5F331F000C4;
+	Fri, 16 Oct 2026 16:13:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792166990;
-	bh=VR2r+Imq4kVg3djfIN234TsHVwpi2PHKQ+3s+qd6rgU=;
+	s=k20260515; t=1792167224;
+	bh=f9mcCYWbQKrxvLP/cZNNAYe8uscc7wYon8t46vjI+38=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=SDsain6cwQyB6hiuP46qTc1B8L+siwDZHOlFCpXqL3PpvvJ7j8SiQlFjWAnxTUTfv
-	 r8C8Gqnxfr05BCznbxyQ1+17nJFRwGHBJeoxYcq0VuSdjAJhOcpCquvFz2UArSTktP
-	 sDGp42Xbk0CN7QRYIRfegcCt4QqO7/een4MJWxbR3SofJ4x6CJhgQR5hoREV6sPWLI
-	 v0G5dPc7/J3JQQvYX3yoBFnzxotw5Sgd90Ev/Of6fCfd9s8A2AnMjud9R5+GiR91RX
-	 vQlQx3wsagENmLn4X49b6DVPRcSOCi5f80u9BLtHEm0KbKOh9+mS9uM8LEuSFc+MYd
-	 JhQCA7MPxxrow==
-Message-ID: <sashiko-outbox-174605@kernel.org>
+	b=cl38E2OxPeGtrPqQKX48ELPD3XDDInFD4WOkv2HbLLPcGXhUWW4xHzZYCshDboRBg
+	 Pe+AIa7aqPLL4ue0OWAa8p/idiyVMRu2LuAZRkFZEZyoerGDE/Ed0lDLKu1q2e52Q7
+	 f5Q4TsUg4ciscdH5UlYhWb+pkshrXKDHZn9jmCVy4nVPSd8hzKkyiWImgj4ILKb/nn
+	 2ZyZ+E0F10mFI51k6irv+28Wuhr09AkxiGW+EDjz+YKU/ITru7vhQTzyRF8ADTWXYK
+	 So8D4rYBi6Lp8V6SU1I9adWEGOPR5JDkPyVX6blwiaeLH88+BlaE53uodEVnozgZk4
+	 4VrTQQ1+qucQw==
+Message-ID: <sashiko-outbox-174611@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 5/8] pmdomain: Make genpd_get_from_provider() return
- -EPROBE_DEFER
+Subject: Re: [PATCH v4 2/8] clk: renesas: r8a78000: Add SCMI remapping
+ support
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Geert Uytterhoeven" <geert+renesas@glider.be>
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, wsa+renesas@sang-engineering.com
-In-Reply-To: <4524363679c1f2163aca3b3dda2bfbde170d095a.1792163045.git.geert+renesas@glider.be>
+In-Reply-To: <c38d744c09dffff550a9b882051c211b572b8daf.1792163045.git.geert+renesas@glider.be>
 References: <cover.1792163045.git.geert+renesas@glider.be>
- <4524363679c1f2163aca3b3dda2bfbde170d095a.1792163045.git.geert+renesas@glider.be>
+ <c38d744c09dffff550a9b882051c211b572b8daf.1792163045.git.geert+renesas@glider.be>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 16 Oct 2026 16:09:49 +0000
+Date: Fri, 16 Oct 2026 16:13:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
-- [Low] pmdomain: unnecessary probe deferral on invalid domain index
+- [High] clk: memory leak of struct clk and module refcount on success and =
+probe deferral
+- [High] clk: renesas: UAF on provider unbind and struct clk memory leak
+- [Medium] clk: memory and module refcount leak in fill_clk_map()
 --
 
-commit c105920d803c0cf9396fb90d8428fdc4d83e8655
+commit a959fac1d9976d318a861219d6e13c9fef99da15
 Author: Geert Uytterhoeven <geert+renesas@glider.be>
 
-pmdomain: Make genpd_get_from_provider() return -EPROBE_DEFER
+clk: renesas: r8a78000: Add SCMI remapping support
 
-Unlike provider-based look-up functions in other subsystems[1],
-genpd_get_from_provider() returns -ENOENT instead of -EPROBE_DEFER when
-the provider is not found, thus not supporting probe deferral.
-Currently this is worked around in of_genpd_add_subdomain() by remapping
--ENOENT[2].
+This commit extends the Clock Pulse Generator driver for R-Car X5H with SCMI
+support. It maps DT clock IDs to abstractions offered by the SCMI firmware,
+falling back to fixed-rate clocks if unavailable.
 
-Fix this for all current and future callers by returning -EPROBE_DEFER
-instead, and drop the no longer needed remapping code.
-
-> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> index 964e44c2f78f1..88c886814a5b9 100644
-> --- a/drivers/pmdomain/core.c
-> +++ b/drivers/pmdomain/core.c
-> @@ -3021,7 +3021,7 @@ EXPORT_SYMBOL_GPL(of_genpd_del_provider);
->  static struct generic_pm_domain *genpd_get_from_provider(
->  					const struct of_phandle_args *genpdspec)
->  {
-> -	struct generic_pm_domain *genpd =3D ERR_PTR(-ENOENT);
-> +	struct generic_pm_domain *genpd =3D ERR_PTR(-EPROBE_DEFER);
->  	struct of_genpd_provider *provider;
-> =20
->  	if (!genpdspec)
-
+> diff --git a/drivers/clk/renesas/r8a78000-cpg.c b/drivers/clk/renesas/r8a=
+78000-cpg.c
+> index 5ffd7b89cb48e..758cfe78ae58e 100644
+> --- a/drivers/clk/renesas/r8a78000-cpg.c
+> +++ b/drivers/clk/renesas/r8a78000-cpg.c
 [ ... ]
-
-> @@ -3276,7 +3276,7 @@ int of_genpd_add_subdomain(const struct of_phandle_=
-args *parent_spec,
->  out:
->  	mutex_unlock(&gpd_list_lock);
+> @@ -145,7 +184,46 @@ static const struct clk_map *fill_clk_map(struct r8a=
+78000_cpg_priv *priv,
+>  			break;
 > =20
-> -	return ret =3D=3D -ENOENT ? -EPROBE_DEFER : ret;
-> +	return ret;
->  }
+>  		map[i].fw_id =3D map_in[i].fw_id;
+> -		map[i].hw =3D fixed_hws[map[i].fw_id];
+> +		if (map[i].fw_id >=3D FIXED_CLK_OFFSET) {
+> +			enum fixed_clk idx =3D map[i].fw_id - FIXED_CLK_OFFSET;
+> +
+> +			map[i].hw =3D fixed_hws[idx];
+> +			continue;
+> +		}
+> +
+> +		scmi_spec.np =3D scmi_clk_np;
+> +		scmi_spec.args_count =3D 1;
+> +		scmi_spec.args[0] =3D map[i].fw_id;
+> +
+> +		clk =3D of_clk_get_from_provider(&scmi_spec);
+> +		if (IS_ERR(clk))
+> +			return dev_err_cast_probe(dev, clk,
+> +				"Failed to get SCMI clock %u\n", map[i].fw_id);
+> +
+> +		hw =3D __clk_get_hw(clk);
 
-[Severity: Low]
-Does this change leave an unnecessary probe deferral in __genpd_dev_pm_atta=
-ch()?
+[Severity: High]
+Does this code leak the dynamically allocated struct clk and its module
+reference?
 
-If a device specifies a valid PM domain provider but an invalid domain inde=
-x,
-genpd_get_from_provider() returns the specific error code from the provider=
-'s
-xlate callback, such as -ENOENT.
+of_clk_get_from_provider() returns a new struct clk and increments the
+provider's module refcount. The clk pointer is discarded after extracting
+the raw clk_hw pointer, so it is never passed to clk_put(). This causes a
+memory leak of struct clk objects and a module refcount leak for the SCMI
+provider.
 
-However, __genpd_dev_pm_attach() still unconditionally routes all errors
-through driver_deferred_probe_check_state():
+If a subsequent clock lookup in the loop fails and returns -EPROBE_DEFER,
+the function immediately aborts, and the previously allocated clk handles
+from earlier loop iterations are not cleaned up.
 
-drivers/pmdomain/core.c:__genpd_dev_pm_attach() {
-	...
-	pd =3D genpd_get_from_provider(&pd_args);
-	of_node_put(pd_args.np);
-	if (IS_ERR(pd)) {
-		mutex_unlock(&gpd_list_lock);
-		dev_dbg(dev, "%s() failed to find PM domain: %ld\n",
-			__func__, PTR_ERR(pd));
-		return driver_deferred_probe_check_state(base_dev);
-	}
-	...
-}
-
-Could this unnecessarily delay boot and error reporting for devices with
-permanently invalid PM domain IDs by forcing a wait until late_initcall?
-
-Should __genpd_dev_pm_attach() be updated to only call
-driver_deferred_probe_check_state() when PTR_ERR(pd) is -EPROBE_DEFER?
+Additionally, caching the dangling clk_hw pointer in map[i].hw without hold=
+ing
+a device link or proper reference can lead to a use-after-free. If the SCMI
+provider is unbound via sysfs, devres will free the clk_hw structures, but =
+the
+CPG driver will still hold and use the stale pointers.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1792163045.gi=
-t.geert+renesas@glider.be?part=3D5
+t.geert+renesas@glider.be?part=3D2
