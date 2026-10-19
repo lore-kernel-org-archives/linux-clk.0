@@ -1,313 +1,397 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out-zbxj-a74.jellyfish.systems (out-zbxj-a74.jellyfish.systems [198.54.127.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CEA345EC0;
-	Mon, 19 Oct 2026 05:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF161E5714
+	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 06:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792386319; cv=none; b=qHo0yJyijWUlgmxW1w9UyBhp3TuMtcz2TKRs6bEjLvm0CgfICR1FtVSYFj7y7Wr6TlrVh4JFYjpSnzuB3FsAnITYtNWZMziigmcFEXIhwkTwJcswRUxNppzS+tS6nt/Iy64Akw9Xzgd7W/nqFqunfW5XDvMCqonYuYDS7E3edIg=
+	t=1792393031; cv=none; b=n3V0/faQ7/GiYXX3lS7Pp/cGNVEpQML78txvx+pR0zkGITUmQaFeiY1ahjg9MRVIcH4PZOiz+ZdgwbX2Aed5qqW11b2rvn7cKGaygQOp7ddlVqqAinJ+GJ8vUbTyh3jZ8LxwtAnrxihVua4ldGxyaeFUhoLnzjwB3kQa8Hyd5OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792386319; c=relaxed/simple;
-	bh=NxhcC/alXNWfyATTRqBnPlSXDbDsnR85ckwxuqEPl4g=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=CJKK72KH2dT68WXjfFdZQsbitxQSDlK36QcLTsxJoiiicDmCc4Adn/RKMcl3Wg8esIZ7Q9qha7rRKLsbp8hVc9YBNmh6Z7A8+QdEd4dTVpY6mrB7aRimDXYGNhQ8iZV2oGi9KGwLzaotx3zzFc7GdITFS8iLmtuVWPa68sdNntA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZONV8F9c; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792393031; c=relaxed/simple;
+	bh=udeggmCb3Rt5fw3hHrTwRt0wekfKqGLiEZYraZsrQ40=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ec3C8XjbSTMdy5C+Cj20v542xzpgJ4jNnQ3gWI81RptvP5KfD7BF8o93pjRebcygoCkUCcSslPMf3xtAqqBYRwvt5SzNBiCPU1lNPSbMRefiA48OgZeoP/9ec9wlqS/dkgUowyumFqbHuPd4pOnhOyQhrGcT16GTZTwZWMRZ3es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gurudas.dev; spf=pass smtp.mailfrom=gurudas.dev; dkim=pass (2048-bit key) header.d=gurudas.dev header.i=@gurudas.dev header.b=P7zOURVs; arc=none smtp.client-ip=198.54.127.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gurudas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gurudas.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZONV8F9c"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA351F000C4;
-	Mon, 19 Oct 2026 05:05:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792386313;
-	bh=GzsfRT1M+pGum/bxVHMbtI0D+TpCiJSveTAvOkF/h84=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ZONV8F9c+NrPOIi0dpFys7e6KEqK9VKw/t7dS8PVesopPZp/sa75/AUqSE6uwVHKL
-	 RXCT0hNJHVH66g/vmDPyI8cg7c/UFZJzajSsL3SIvM6T6vI3iYg0KztL/Cke70m3gd
-	 64WxsKshSYqhX+8GacbjR3tQDWXTWW0JqW5QMsRdLZvOtWZus4LQqwJobXa0Le5cbl
-	 xMTQU71yLpp27LCQkoNxQuFF1f+VyGq6eeXL8O2C52WZluukdHY0AABgr0967jxqmy
-	 StY6P5WglhREgYdshGI1WWnQB9obzsSuOtp33XjAtBdmcIPhTmXpscMO3TltzIqB2f
-	 b8g+erVUhOo7w==
-Message-ID: <sashiko-outbox-176658@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v10 4/5] arm64: ambarella: add ARCH_AMBARELLA and CV75
- EVK DT
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Long Zhao" <longzhao@ambarella.com>
-Cc: linux-clk@vger.kernel.org, mfd@lists.linux.dev, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <20261019-cv75-soc-v10-4-d386065e2dd5@ambarella.com>
-References: <20261019-cv75-soc-v10-0-d386065e2dd5@ambarella.com>
- <20261019-cv75-soc-v10-4-d386065e2dd5@ambarella.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Oct 2026 05:05:12 +0000
+	dkim=pass (2048-bit key) header.d=gurudas.dev header.i=@gurudas.dev header.b="P7zOURVs"
+Received: from [192.168.1.106] (107-194-158-19.lightspeed.sntcca.sbcglobal.net [107.194.158.19])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4j7RDW4VnZz2x99;
+	Mon, 19 Oct 2026 06:56:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gurudas.dev;
+	s=spacemail; t=1792393020;
+	bh=cA0aY2mWghiYPgF7Otc8FZGSfqB5i/BfGMxAWkJiOuE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=P7zOURVsVpz7knEZeeF6Xwf8Bd+GMdb51KHHUQGgh71QeqmUinIRS+ecZ3ihRlf9v
+	 TU0k51k/GprwPG5d5gqUygnl9xD6BqRBEL2h/gB4rqHI9uTIYzxRm2ClN48NVxIdCu
+	 HU++VwaxujuRKARTO3VdKuZyRTcEijbAlc1logQ/w8cJBTQVjJcKane0clIR+dL8lL
+	 PVs84svNhLoV51HHdCjDOKhevs6H3esIS1TsbVVPaXTfue4RG02AuxMyLTYxSX/enR
+	 A86ZO9Rvr2JlK7cnq9PMZ/eZ54d5TG7KF7wX5VLzKwQlHfM10i+jiQT5p3ACBxPNO6
+	 +vzfzOax71j0g==
+From: Guru Das Srinagesh <linux@gurudas.dev>
+Date: Sun, 18 Oct 2026 23:56:39 -0700
+Subject: [PATCH v4] coccinelle: Detect clk_register() anti-pattern
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261018-cocci-clk-register-v4-1-ed611b1c0da6@gurudas.dev>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/33NSw7CIBgE4KsY1mJ49IUr72FcUPhpUdMaaImm6
+ d2FuqmxcTnJzDcT8uAseHTcTchBsN72XQzZfodUK7sGsNUxI0ZYQSrCsOqVsljdb9hBY/0ADou
+ capGxnEqToTh8ODD2uaDnyyf7sb6CGpKUGm0c9u61vAaaen8PAsUUa1NU0qiaAphTM7pRS3/QE
+ FC6CGyN8E2ERYQxKCthytyI6hfha0RsIjwiBdGEF0A5L8k3Ms/zGxK+yAdSAQAA
+X-Change-ID: 20260802-cocci-clk-register-951d94251af4
+To: Julia Lawall <Julia.Lawall@inria.fr>, 
+ Nicolas Palix <nicolas.palix@imag.fr>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, cocci@inria.fr, 
+ Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org, 
+ Guru Das Srinagesh <linux@gurudas.dev>
+X-Mailer: b4 0.15.2
+X-Envelope-From: linux@gurudas.dev
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [High] arm64: dts: ambarella: uart0 permanently defers probe due to missi=
-ng pinctrl
-- [Medium] arm64: dts: ambarella: undocumented compatible strings and prope=
-rties in cv75
-- [Medium] arm64: dts: ambarella: gpio nodes use unmatched periphid and unp=
-robed pinctrl
---
+Enforce commit 12a0fd23e870 ("clk: Print an error when clk registration
+fails"): clk_register(), clk_hw_register(), and their devm_/of_ variants
+log their own error on failure, so driver-side error prints after these
+calls are redundant.
 
-commit 7e36a79675aa487cf1bb15e171011853976e17db
-Author: Long Zhao <longzhao@ambarella.com>
+Assisted-by: LLM
+Signed-off-by: Guru Das Srinagesh <linux@gurudas.dev>
+---
+Changes in v4:
+- Rebased to v7.3
+- Drop verbose cover letter examples of transformations
+- Match any voidfn instead of specifically only dev_err, pr_err, dev_warn, etc.
+  to cover pr_crit, DRM_DEV_ERROR instances
+- Simplify functional-final `ret = PTR_ERR(...); return ret;` to `return
+  clk_register();` directly such as in clk-pic32.c and clk-sysctrl.c;
+  the new rule names the functions literally, per v1, to keep the file
+  pre-filter working
+- Similarly simplify within-if-body `ret = PTR_ERR(...); return ret;`
+- Drop a local left unread by the removed message when it is declared
+  and set in the registration loop, as in owl-common.c and clk-rpmh.c
+- Running script on whole tree produces a single positive:
+  arch/arm/mach-omap1/clock_data.c, where the removed message is the
+  only user of a local variable, resulting in an unused variable
+  warning. Left this to fix up by hand to keep the script shorter, happy
+  to add rules to handle it if preferred.
+- microchip-isc-clk.c keeps braces on its "else if" arm which checkpatch
+  flags; this is also left to fix up by hand for the same reason.
+- Link to v3: https://patch.msgid.link/20260809-cocci-clk-register-v3-1-60d036e13370@gurudas.dev
 
-arm64: ambarella: add ARCH_AMBARELLA and CV75 EVK DT
+Changes in v3 (Julia):
+- Match an "if" regardless of a trailing "else" (else S, S unused),
+  across context/patch/report/org rules for both families. Found via
+  this to be a real, previously-invisible case in
+  drivers/media/platform/microchip/microchip-isc-clk.c.
+- Fix the org-mode script rules: cocci.print_main() takes (message,
+  position), not just a position; the previous calls omitted the
+  message entirely.
+- Drop the MAINTAINERS addition from v2 per Julia's comment that a
+  specific maintainer isn't needed for this file.
+- Link to v2: https://patch.msgid.link/20260803-cocci-clk-register-v2-1-22e789f75f98@gurudas.dev
 
-This commit adds the ARCH_AMBARELLA platform configuration and introduces
-the device tree files for the Ambarella CV75 SoC and CV75 EVK board to
-support initial console bring-up.
+Changes in v2 (Julia):
+- Use a literal function-name disjunction instead of a regex identifier,
+  enabling spatch's file pre-filter optimization.
+- In "patch" mode, drop braces when only one statement remains, and
+  delete the whole "if" when the message was the only (braceless)
+  statement.
+- Drop two never-observed condition variants (IS_ERR(clk) == 1, ret !=
+  0); keep the one with real precedent (ret < 0).
+- Link to v1: https://patch.msgid.link/20260802-cocci-clk-register-v1-1-df68afcb1eef@gurudas.dev
 
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index d2acfac730037..16d7e3a4c2d62 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -26,6 +26,12 @@ config ARCH_SUNXI
->  	help
->  	  This enables support for Allwinner sunxi based SoCs like the A64.
-> =20
-> +config ARCH_AMBARELLA
-> +	bool "Ambarella SoC family"
-> +	select PINCTRL
-> +	help
-> +	  This enables support for the ARM64 based Ambarella SoCs like CV75.
-> +
->  config ARCH_ALPINE
->  	bool "Annapurna Labs Alpine platform"
->  	select ALPINE_MSI if PCI
+Testing:
+- "make coccicheck COCCI=<full/path/to/clk_register.cocci> MODE=patch SPFLAGS="--in-place"
+- All four modes (report/context/patch/org) verified via "make
+  coccicheck COCCI=<path> MODE=<mode> [M=<path>]" against the
+  whole tree on v7.3.
+---
+ scripts/coccinelle/api/clk_register.cocci | 262 ++++++++++++++++++++++++++++++
+ 1 file changed, 262 insertions(+)
 
-[ ... ]
+diff --git a/scripts/coccinelle/api/clk_register.cocci b/scripts/coccinelle/api/clk_register.cocci
+new file mode 100644
+index 000000000000..01d272e2d96f
+--- /dev/null
++++ b/scripts/coccinelle/api/clk_register.cocci
+@@ -0,0 +1,262 @@
++// SPDX-License-Identifier: GPL-2.0
++/// Remove error messages after clk registration failures, because
++/// clk_register(), clk_hw_register(), and their variants already log
++/// an error when they fail. See commit 12a0fd23e870 ("clk: Print an
++/// error when clk registration fails").
++//
++// Confidence: Medium
++// Options: --include-headers
++
++virtual patch
++virtual context
++virtual org
++virtual report
++
++@depends on context@
++expression clk;
++identifier voidfn;
++constant char[] c;
++statement S;
++@@
++
++clk = \(clk_register\|devm_clk_register\)(...);
++if ( IS_ERR(clk) )
++{
++...
++*voidfn(...,c,...);
++...
++}
++else S
++
++@collapse depends on patch@
++expression list args;
++identifier x;
++identifier voidfn;
++constant char[] c;
++@@
++
++(
++-x = clk_register(args);
+++return clk_register(args);
++|
++-x = devm_clk_register(args);
+++return devm_clk_register(args);
++|
++-x = clk_hw_register(args);
+++return clk_hw_register(args);
++|
++-x = devm_clk_hw_register(args);
+++return devm_clk_hw_register(args);
++|
++-x = of_clk_hw_register(args);
+++return of_clk_hw_register(args);
++)
++-if ( \( IS_ERR(x) \| x \| x < 0 \) )
++(
++-voidfn(...,c,...);
++|
++-{ voidfn(...,c,...); }
++)
++-return x;
++
++@depends on collapse && patch@
++identifier collapse.x;
++type T;
++@@
++
++- T x;
++  ... when != x
++      when strict
++
++@depends on patch@
++expression clk;
++identifier voidfn;
++constant char[] c;
++@@
++
++clk = \(clk_register\|devm_clk_register\)(...);
++-if ( IS_ERR(clk) )
++-voidfn(...,c,...);
++
++@depends on patch@
++expression clk, ret;
++identifier voidfn;
++constant char[] c;
++statement S_else;
++@@
++
++clk = \(clk_register\|devm_clk_register\)(...);
++if ( IS_ERR(clk) )
++-{
++-ret = PTR_ERR(clk);
++-voidfn(...,c,...);
++-return ret;
+++return PTR_ERR(clk);
++-}
++else S_else
++
++@bind_loop depends on patch@
++expression x, E;
++identifier voidfn, n;
++constant char[] c;
++type T;
++statement S, S_else;
++@@
++
++  for (...;...;...) {
++  ... when != n
++- T n;
++  ...
++- n = E;
++  ...
++  x = \(clk_register\|devm_clk_register\|clk_hw_register\|devm_clk_hw_register\|of_clk_hw_register\)(...);
++  if ( \( IS_ERR(x) \| x \| x < 0 \) )
++(
++-{
++-voidfn(...,c,...,n,...);
++S
++-}
++|
++{
++...
++-voidfn(...,c,...,n,...);
++...
++}
++)
++  else S_else
++  ... when != n
++  }
++
++@depends on patch@
++expression clk;
++identifier voidfn;
++constant char[] c;
++statement S, S_else;
++@@
++
++clk = \(clk_register\|devm_clk_register\)(...);
++if ( IS_ERR(clk) )
++(
++-{
++-voidfn(...,c,...);
++S
++-}
++|
++{
++...
++-voidfn(...,c,...);
++...
++}
++)
++else S_else
++
++@r1 depends on org || report@
++position p1;
++expression clk;
++identifier voidfn;
++constant char[] c;
++statement S;
++@@
++
++clk = \(clk_register\|devm_clk_register\)(...);
++if ( IS_ERR(clk) )
++{
++...
++voidfn@p1(...,c,...);
++...
++}
++else S
++
++@depends on context@
++expression ret;
++identifier voidfn;
++constant char[] c;
++statement S;
++@@
++
++ret = \(clk_hw_register\|devm_clk_hw_register\|of_clk_hw_register\)(...);
++if ( \( ret \| ret < 0 \) )
++{
++...
++*voidfn(...,c,...);
++...
++}
++else S
++
++@depends on patch@
++expression ret;
++identifier voidfn;
++constant char[] c;
++@@
++
++ret = \(clk_hw_register\|devm_clk_hw_register\|of_clk_hw_register\)(...);
++-if ( \( ret \| ret < 0 \) )
++-voidfn(...,c,...);
++
++@depends on patch@
++expression ret;
++identifier voidfn;
++constant char[] c;
++statement S, S_else;
++@@
++
++ret = \(clk_hw_register\|devm_clk_hw_register\|of_clk_hw_register\)(...);
++if ( \( ret \| ret < 0 \) )
++(
++-{
++-voidfn(...,c,...);
++S
++-}
++|
++{
++...
++-voidfn(...,c,...);
++...
++}
++)
++else S_else
++
++@r2 depends on org || report@
++position p2;
++expression ret;
++identifier voidfn;
++constant char[] c;
++statement S;
++@@
++
++ret = \(clk_hw_register\|devm_clk_hw_register\|of_clk_hw_register\)(...);
++if ( \( ret \| ret < 0 \) )
++{
++...
++voidfn@p2(...,c,...);
++...
++}
++else S
++
++@script:python depends on org@
++p1 << r1.p1;
++@@
++
++msg = "line %s is redundant because clk_register() already prints an error on failure" % (p1[0].line)
++cocci.print_main(msg, p1)
++
++@script:python depends on report@
++p1 << r1.p1;
++@@
++
++msg = "line %s is redundant because clk_register() already prints an error on failure" % (p1[0].line)
++coccilib.report.print_report(p1[0], msg)
++
++@script:python depends on org@
++p2 << r2.p2;
++@@
++
++msg = "line %s is redundant because clk_hw_register() already prints an error on failure" % (p2[0].line)
++cocci.print_main(msg, p2)
++
++@script:python depends on report@
++p2 << r2.p2;
++@@
++
++msg = "line %s is redundant because clk_hw_register() already prints an error on failure" % (p2[0].line)
++coccilib.report.print_report(p2[0], msg)
 
-> diff --git a/arch/arm64/boot/dts/ambarella/cv75-evk.dts b/arch/arm64/boot=
-/dts/ambarella/cv75-evk.dts
-> new file mode 100644
-> index 0000000000000..42a0fe24b83bd
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ambarella/cv75-evk.dts
-> @@ -0,0 +1,30 @@
+---
+base-commit: c03c1a14507dfaf8b856c2608f9ac216021fc222
+change-id: 20260802-cocci-clk-register-951d94251af4
 
-[ ... ]
+Best regards,
+--  
+Guru Das Srinagesh <linux@gurudas.dev>
 
-> +	chosen {
-> +		stdout-path =3D &uart0;
-> +	};
-> +
-> +	memory@200000 {
-> +		device_type =3D "memory";
-> +		reg =3D <0x0 0x00200000 0x0 0x07e00000>;
-> +	};
-> +};
-> +
-> +&uart0 {
-> +	status =3D "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/ambarella/cv75.dtsi b/arch/arm64/boot/dt=
-s/ambarella/cv75.dtsi
-> new file mode 100644
-> index 0000000000000..c36b6af48237a
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ambarella/cv75.dtsi
-> @@ -0,0 +1,177 @@
-
-[ ... ]
-
-> +		ahb@ffe0000000 {
-> +			compatible =3D "simple-bus";
-> +			reg =3D <0xff 0xe0000000 0x0 0x01000000>;
-> +			ranges =3D <0xe0000000 0xff 0xe0000000 0x01000000>;
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <1>;
-> +
-> +			s_scratchpad_syscon: scratchpad@e002e000 {
-> +				compatible =3D "ambarella,cv75-sec-scratchpad", "syscon";
-> +				reg =3D <0xe002e000 0x1000>;
-> +			};
-> +		};
-> +
-> +		apb@ffe4000000 {
-> +			compatible =3D "simple-bus";
-> +			reg =3D <0xff 0xe4000000 0x0 0x01000000>;
-> +			ranges =3D <0xe4000000 0xff 0xe4000000 0x01000000>;
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <1>;
-> +
-> +			uart0: serial@e4000000 {
-> +				compatible =3D "ambarella,cv75-uart", "snps,dw-apb-uart";
-> +				reg =3D <0xe4000000 0x1000>;
-> +				clocks =3D <&rct CV75_GCLK_UART0>;
-> +				interrupts =3D <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg-shift =3D <2>;
-> +				reg-io-width =3D <4>;
-> +				pinctrl-names =3D "default";
-> +				pinctrl-0 =3D <&uart0_pins>;
-> +
-> +				status =3D "disabled";
-> +			};
-> +
-> +			pinctrl: pinctrl@e4010000 {
-> +				compatible =3D "ambarella,cv75-pinctrl";
-> +				reg =3D <0xe4010000 0x1000>;
-> +				ambarella,drive-strength-syscon =3D <&rct>;
-> +				ambarella,pull-syscon =3D <&s_scratchpad_syscon>;
-> +
-> +				uart0_pins: uart0-pins {
-> +					function =3D "uart0";
-> +					groups =3D "uart0";
-> +				};
-> +			};
-
-[Severity: High]
-Will uart0 permanently defer probing on boot because no driver exists for
-"ambarella,cv75-pinctrl"?
-
-In arch/arm64/boot/dts/ambarella/cv75-evk.dts, uart0 is enabled as the
-console via stdout-path =3D &uart0. In cv75.dtsi, uart0 specifies
-pinctrl-0 =3D <&uart0_pins>, which is a child of pinctrl@e4010000
-(compatible =3D "ambarella,cv75-pinctrl"). However, there is no driver in
-the kernel tree matching "ambarella,cv75-pinctrl".
-
-With CONFIG_ARCH_AMBARELLA selecting CONFIG_PINCTRL and arm64 defconfig
-enabling CONFIG_MODULES=3Dy, fw_devlink (via parse_pinctrl_n() ->
-device_links_check_suppliers()) will hold off probing uart0 waiting for
-the pinctrl supplier. Even after fw_devlink times out or if fw_devlink=3Doff
-is passed, the probe path runs:
-
-really_probe()
-  -> pinctrl_bind_pins()
-    -> devm_pinctrl_get()
-      -> create_pinctrl()
-        -> pinctrl_dt_to_map()
-          -> dt_to_map_one_config()
-
-In drivers/pinctrl/devicetree.c:dt_to_map_one_config(), when
-get_pinctrl_dev_from_of_node() fails to find a registered pinctrl_dev for
-pinctrl@e4010000 and walks up to the root node without pinctrl-use-default
-set:
-
-		if (!np_pctldev || of_node_is_root(np_pctldev)) {
-			of_node_put(np_pctldev);
-			ret =3D -ENODEV;
-			/* keep deferring if modules are enabled */
-			if (IS_ENABLED(CONFIG_MODULES) && !allow_default && ret < 0)
-				ret =3D -EPROBE_DEFER;
-			return ret;
-		}
-
-This returns -EPROBE_DEFER to pinctrl_bind_pins(), aborting really_probe()
-before dw8250_probe() can bind the serial console. Should pinctrl-0 and
-pinctrl-names be omitted from uart0 (or the pinctrl node disabled/omitted)
-until the pinctrl driver is present?
-
-> +
-> +			gpio0: gpio@e4013000 {
-> +				compatible =3D "ambarella,cv75-gpio", "arm,primecell";
-> +				reg =3D <0xe4013000 0x1000>;
-> +				clocks =3D <&rct CV75_GCLK_APB>;
-> +				clock-names =3D "apb_pclk";
-> +				interrupts =3D <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
-> +				gpio-controller;
-> +				#gpio-cells =3D <2>;
-> +				gpio-ranges =3D <&pinctrl 0 0 32>;
-> +				interrupt-controller;
-> +				#interrupt-cells =3D <2>;
-> +				arm,primecell-periphid =3D <0x000e8061>;
-> +			};
-> +
-> +			gpio1: gpio@e4014000 {
-> +				compatible =3D "ambarella,cv75-gpio", "arm,primecell";
-> +				reg =3D <0xe4014000 0x1000>;
-> +				clocks =3D <&rct CV75_GCLK_APB>;
-> +				clock-names =3D "apb_pclk";
-> +				interrupts =3D <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-> +				gpio-controller;
-> +				#gpio-cells =3D <2>;
-> +				gpio-ranges =3D <&pinctrl 0 32 32>;
-> +				interrupt-controller;
-> +				#interrupt-cells =3D <2>;
-> +				arm,primecell-periphid =3D <0x000e8061>;
-> +			};
-> +
-> +			gpio2: gpio@e4015000 {
-> +				compatible =3D "ambarella,cv75-gpio", "arm,primecell";
-> +				reg =3D <0xe4015000 0x1000>;
-> +				clocks =3D <&rct CV75_GCLK_APB>;
-> +				clock-names =3D "apb_pclk";
-> +				interrupts =3D <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-> +				gpio-controller;
-> +				#gpio-cells =3D <2>;
-> +				gpio-ranges =3D <&pinctrl 0 64 32>;
-> +				interrupt-controller;
-> +				#interrupt-cells =3D <2>;
-> +				arm,primecell-periphid =3D <0x000e8061>;
-> +			};
-> +		};
-
-[Severity: Medium]
-Are binding schemas missing for the newly introduced compatible strings and
-properties in cv75.dtsi?
-
-Running make dtbs_check on cv75-evk.dtb will fail validation because
-several compatible strings and vendor properties are not documented under
-Documentation/devicetree/bindings/:
-
-- scratchpad@e002e000 uses compatible =3D "ambarella,cv75-sec-scratchpad",
-  "syscon", which is not listed in
-  Documentation/devicetree/bindings/mfd/syscon.yaml.
-- serial@e4000000 uses compatible =3D "ambarella,cv75-uart",
-  "snps,dw-apb-uart", which is not listed in
-  Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml.
-- pinctrl@e4010000 uses compatible =3D "ambarella,cv75-pinctrl" along with
-  ambarella,drive-strength-syscon and ambarella,pull-syscon, which have no
-  binding schema in the tree.
-- gpio@e4013000, gpio@e4014000, and gpio@e4015000 use
-  compatible =3D "ambarella,cv75-gpio", "arm,primecell", which is not
-  documented in any binding schema.
-
-[Severity: Medium]
-How are gpio0, gpio1, and gpio2 expected to bind to a driver with
-arm,primecell-periphid =3D <0x000e8061>?
-
-Because "arm,primecell" is in compatible, of_platform_bus_create()
-registers gpio0, gpio1, and gpio2 as struct amba_device instances on the
-AMBA bus, where amba_match() -> amba_lookup() matches exclusively against
-periphid. No amba_driver in the tree matches 0x000e8061; for example,
-drivers/gpio/gpio-pl061.c has:
-
-static const struct amba_id pl061_ids[] =3D {
-	{
-		.id	=3D 0x00041061,
-		.mask	=3D 0x000fffff,
-	},
-	{ 0, 0 },
-};
-
-(and PL061 only supports 8 GPIO lines per block rather than 32). In
-addition, gpio-ranges =3D <&pinctrl ... 32> references the unprobed
-pinctrl@e4010000 node, which would cause of_gpiochip_add_pin_range() ->
-of_pinctrl_get() to return -EPROBE_DEFER. Is there a separate GPIO and
-pinctrl driver series that these nodes depend on?
-
-[ ... ]
-
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index ad3bd3d9507b2..454f07a6a6a6f 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -36,6 +36,7 @@ CONFIG_CRASH_DUMP=3Dy
->  CONFIG_ARCH_ACTIONS=3Dy
->  CONFIG_ARCH_AIROHA=3Dy
->  CONFIG_ARCH_SUNXI=3Dy
-> +CONFIG_ARCH_AMBARELLA=3Dy
->  CONFIG_ARCH_ALPINE=3Dy
->  CONFIG_ARCH_APPLE=3Dy
->  CONFIG_ARCH_ARTPEC=3Dy
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019-cv75-soc-v=
-10-0-d386065e2dd5@ambarella.com?part=3D4
