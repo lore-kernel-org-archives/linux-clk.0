@@ -1,108 +1,103 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E99D4B826B
-	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 09:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F024A64D5;
+	Mon, 19 Oct 2026 09:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792403732; cv=none; b=s37DRnoXB88AmyKX3jx70PITTneYU8c5MvUs+sZoDII6qPnhVP1w55dE/PiSrseOEk62MbCrFA7dOWF7AwgiNea0BzlpnU9wByxA1WEXHbzph4UP9kLN9G2J2MWF/QRMSWIBWaC29eHzQn6fUYr1CIuEqjb3N/V+Jy4lStemnwM=
+	t=1792403749; cv=none; b=hM3qCTWceMBA1Zq/rvcfYLYAS4WAAYHU+o1ZBQr19HPpp25m8m8KKgCJ8q5EwXACnGv8g2lfG8JFve4Z1yyUILgKw13nnQmJqGmOb/OGDUWYnEHLuXKtBzkvLi7BkoHUMuKJthUPoy1qyWqS8/0wveO7o1MrD6z4XIttoc47n88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792403732; c=relaxed/simple;
-	bh=j15NZBr9gmJFKjFiA+o1T4SJq+ce59GySu+ndbBbdFI=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=XrUz3m8PWE5z9xeTEsco93hbrbJ1A1ecjk9QNgGebOo2+VaEN2j0tZxPbWw2/l0ncwFhVtv10abWDGFgd0sos7UEiwUheQjRxX0n38stYoL8LC8RrInyDRK3+PfKYXKD37zHjhSL2NGq+16hfJ7RIUgMtwIbYaPFhbXsNOTJ+do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Wu0pMyi/; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1792403749; c=relaxed/simple;
+	bh=WY7dkoHNxdfw3FP1Y8UPHLwUUxou+v+KbEKXraSJmdE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iqsBWw1eIL5jF6wLHCJYacO+IO+y8u6sjT31B2am/8uMNWDuAkR4UnjnJWqMBlq27HtZ0C/oCfWEX8kr7IlH1xLm/wsvGyvwXMHlNi7obEGgLOq7wyzKkI0JWoa+hLpDTQjnfukE0abgJQMmnICVSDCIAoWgXpnXJc6/inUQ8j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=vcnxa2RM; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Wu0pMyi/"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4a1df146015so9496735e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 02:55:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1792403728; x=1793008528; darn=vger.kernel.org;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=/mV3QLBtc235SSF0yEhuYpNqjTPPn1gF9CIeniWG8O4=;
-        b=Wu0pMyi/lau4nMEPPmah6Ri4a2w5QzLW8f86GWx0T3njqo5vzHZaHyq12Uf6OHqOVE
-         AcThV+l3d0oZ+y+HIM/onAje2+1XyDgi/l4MdJFra67te7T6/os24sgPCmaleK62FLnP
-         ZpAexp8P+WP801t+pP5M1+foNyPLJC8z3iJ77FQMwdf/ByckEY5l7+2HczRtApHi4DRN
-         eGOoUxp8iJJxLkTsSlNVsLGh7slXyNXmaAXcZAgCm3EsqgW15FUu1c9S25TjnLxQ/aDf
-         cV7irLtNh0LjQnZxzjfExZ+ZwfuZzKSVJaheedWG7+cuNYrDWWY2JmwVtRkQQekr5sPO
-         jyaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792403728; x=1793008528;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=/mV3QLBtc235SSF0yEhuYpNqjTPPn1gF9CIeniWG8O4=;
-        b=xsKQV3wWNIcilexqFoKGtvDsISG6QBEWlRE7Z5zx6IZZFbY3fbFt1FNq8kqLoo1DDV
-         bQjfAbuusv3E5pg9XnKAFaRpUiV74Q+olSJGiyGpYbA17HHq441xQQpRhlrNckx1JtZ/
-         AzrgTxDCThPVtZM/Yfj5RO4Cs7NDf03/z5nbothZrbWcRQEEP/xbGVfLVMVROGBRq1Ti
-         68RRTxUi3T3lSIzQ7wQqS14CSbuutnNGwAns04XAyXxWS5ujScpJlJvB7R/NJHb1xVSN
-         xu/DEMNhQYLpZ+ARTAX5OpBWQ4ty2ziHyrljnOkQgX9qZ591obeO/WaK577TGCrwV/rJ
-         Av2w==
-X-Forwarded-Encrypted: i=1; AKwUvBzpqo7V7QD2XksqnAzVzdKEUNLafcOE3Z2FonLIcB78rIaOoRbRQsGu0lkF2RoE8jBPJcsN+P9DLR0=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLmQQhloCEMiOmtseaHAgu7cxQE05rg1AJ5vCxRI982pukXk9ob
-	/UUMXnr8UQbswC/GxbIfAyg/dvlNyCo1uBw9iiXryz0cxjnG7ywt1S6HDZz8SCbcKj36bFa1+E+
-	tCIKkyc8=
-X-Gm-Gg: AYBFou0kAbGKRl6VPMAz49UEMQvJSylAIUHsfrRHxXYeE2bFhWe1204HsJt1yrrPpxK
-	SPe2jMBu2HnejI7lX9lF/cFdOmTCkNDN+tJiEgZsT4tYa0Z4oVVAimV2wBpEFlxJUVxUGbXFgpK
-	Lzmrnv6Fggs2xWzUwwsUWUff1lhBeDSsZSxSTcA4kCs8PVO/vHm9zH2tJZKNzTY3eEIP4RmTxhV
-	AGNgSLEg6n+Qk5DOEvV7SvMpDNDjz2xTasvFhVdNYIhtR2ALX7mBuBNqXrDfmu7mzarwy/SDaHf
-	fWzrAa6YAvQTLf22vqRle8vx0OxEayx9vMcZXfMrxyBgONB04FMGGbvxHGBKc6xylX7y8S87GRE
-	aIoCXiEnXKRHcmB2d62rh0eCrfZ1GchlHCkDHX6W5E1ijxMJOgSuIUG1zUXlx+d8JzUXEE48N3w
-	tzN0TNvK1cx2tlxo/xSrm/7c9Z7n/+hOYBQ5e63k9sjLUi0JXv7hspqfnlxXuyd20LOpbFIwqGE
-	PuohStGIS5au4N8ng==
-X-Received: by 2002:a05:600c:628e:b0:4a1:df70:b4a5 with SMTP id 5b1f17b1804b1-4a1df70b5c0mr122511225e9.7.1792403728536;
-        Mon, 19 Oct 2026 02:55:28 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1c8ddde4esm324919775e9.12.2026.10.19.02.55.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 02:55:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="vcnxa2RM"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 8FA1B1A1271;
+	Mon, 19 Oct 2026 09:55:45 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 623F560582;
+	Mon, 19 Oct 2026 09:55:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8C51B10328429;
+	Mon, 19 Oct 2026 11:55:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1792403744; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=WY7dkoHNxdfw3FP1Y8UPHLwUUxou+v+KbEKXraSJmdE=;
+	b=vcnxa2RMnNL2AJxYf35XTCw5sY39XqS5dnoj3MH9sIqq9iBKSorWg38+IRx9O3Om3yiDs7
+	5Slt8dhe5JAlVyu6Ji7ujjss71YjJPRpcPAiKQQ8wNsytOClTg6sb6xw/w9delGgaTa92U
+	jeMHRUX8CR7BljJgxe2yTPRrk9mSpH97hgqp3Q3ZcuP+UhAJUam+qNan/NC7YQ7zeD1W5w
+	XDwCSZF4E+FPMxMka8XSq5aawTNestnLVhP+GapEuMaI+wtQC0TZdCFVdrpKCf5IDwZBlM
+	GRaSPpizIFSXKVX0Jt8fkFjhhuGmcL5ZjOffXzoYVSy3r3ImOVy3nfoo5+dTyA==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: sashiko-bot@kernel.org,  sashiko-reviews@lists.linux.dev,
+  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,  robh@kernel.org,
+  conor+dt@kernel.org
+Subject: Re: [PATCH v10 04/10] clk: nuvoton: ma35d1: Reparent the gates
+ correctly
+In-Reply-To: <179224878757.859276.836775392883899374.b4-reply@b4> (Jerome
+	Brunet's message of "Sat, 17 Oct 2026 16:53:07 +0200")
+References: <20261015-perso-ma35d1-upstream-clk-v10-0-47c97b54a809@bootlin.com>
+	<20261015-perso-ma35d1-upstream-clk-v10-4-47c97b54a809@bootlin.com>
+	<sashiko-outbox-173157@kernel.org> <877bjivrf5.fsf@bootlin.com>
+	<179224878757.859276.836775392883899374.b4-reply@b4>
+User-Agent: mu4e 1.12.12; emacs 30.2
+Date: Mon, 19 Oct 2026 11:55:43 +0200
+Message-ID: <87cxt6ypy8.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] clk: devres: Skip cleanup action for absent optional
- clocks
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: "Baek Kyu, Kim" <pocj8ur4in@gmail.com>
-Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20261018063009.1365568-1-pocj8ur4in@gmail.com>
-References: <20261018063009.1365568-1-pocj8ur4in@gmail.com>
-Date: Mon, 19 Oct 2026 11:55:25 +0200
-Message-Id: <179240372505.859276.1184439049776215030.b4-review@b4>
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=610; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=j15NZBr9gmJFKjFiA+o1T4SJq+ce59GySu+ndbBbdFI=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFlXX/J/al5WFWzgFHunyGih9eXy6Ttz/q7QWSBjVDvLb
- 7bckV7ljlIWBjEuBlkxRZYa7mrxd5JaX2ZN17kNM4eVCWQIAxenAExkQhQjw9L05XXGaTwrfP5u
- iy5cu77y904rTaM9pyf+XmVs3GJyL5Phn93+w5mPH8+ZZSKfOv2O+uSf7Im/bWd+EHwx/d/JXb9
- nd7MDAA==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Sun, 18 Oct 2026 15:30:09 +0900, Baek Kyu, Kim <pocj8ur4in@gmail.com> wrote:
-> devm_clk_get_optional_enabled_with_rate() registers a disable/unprepare
-> action even when the optional lookup returns NULL. If allocating the
-> action fails, the error path calls devm_clk_put(dev, NULL), triggering
-> warnings in devm_clk_match() and devm_clk_put().
-> 
-> Return NULL after the lookup to skip the unnecessary action registration.
-> The state allocated by devm_clk_get_optional() is released when the
-> device is detached.
-> 
-> [...]
+On 17/10/2026 at 16:53:07 +02, Jerome Brunet <jbrunet@baylibre.com> wrote:
 
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+> On 2026-10-15 18:50:54+02:00, Miquel Raynal wrote:
+>> > Thank you for your contribution! Sashiko AI review found 1 potential i=
+ssue(s) to consider:
+>> > - [Medium] clk: nuvoton: CCAP muxes registered with 1-bit width but 4
+>> > parents
+>>=20
+>> This is a pre-existing issue. I will wait for the maintainers to comment
+>> on the rest of the series. If they ask for other changes, I'll include
+>> this to the next revision. If not, I will send a dedicated patch for it.
+>
+> It is too late for cycle for this cycle and I'll wait for rc1.
 
--- 
-Jerome
+I understand your reluctance, but in case you delay the clk PR or make a
+second PR during this merge window I'd like to stress the fact that the
+very first patch of this series is actually fixing the probe of the SPI
+controller on the Nuvoton platform. The rest is general improvement
+which makes sense to merge after -rc1 at this point, but in case there
+is still a window, I believe from a maintainance standpoing it makes
+sense to take it.
 
+> Best would be sent the next versions without the DT stuff, so we can apply
+> the series using the cover as merge description . It makes it easier for
+> us to then provide an immutable branch, should you need it for the DT
+> side.
+
+I don't know what is the canonical way, but myself when I apply series
+with patches that do not belong to 'my' subsystem (typically DT patches)
+I do apply the whole series using b4 using the cover letter and then
+just `git reset --hard <before the DT stuff>`. When sending the `ty`
+letters, it just states something like "<no commit>" under the said DT
+patches, which is perfectly fine. Most maintainers seem to just do that
+given the various `ty` letters I receive when I am the contributor.
+
+> You can fold pre-existing issue fixups in your series if you want to,
+> or you can send follow-ups later. Fine with me either way.
+
+Since I will re-send it at -rc1, I will include that extra fix.
+
+Thanks,
+Miqu=C3=A8l
