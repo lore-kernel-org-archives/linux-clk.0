@@ -1,77 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.180
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792426481;
-	b=f+7AvVq0cvw+GVefna3/0E8jVFpu4zXRdQVqZ8hCI1kflE9kaP825J8Rkvz/lX4zQzvS
-	 4prHgktOhFJ5ZGDVOFKx5/4R2vTpi7Vys5/b5HrVe59HPtOUpHxsl0zP6lP6374SVeX/d
-	 Ffhp5HyZXbuGXcfc2GjwXpC5nAJ2Zn4yy2vQrNDYWQ1UaR8U1LVJkuNi4Ck3KocGgwB+a
-	 0DbcD7XpCIf2yIMf6yUDj1WZNMmquE/zCff3FahY3Vh/IlkxbnPNNOeIxMLojN+F82p7x
-	 zjUwNcD+8ZCla9aTeAjg35E2IdcxKafpvSiC/0HT4tPXheqjlNb2MsHhjrzjBTo1TDQ==
+	t=1792426673;
+	b=j6rqGReOHMnLGCrSakDjOi9IOupowk3Od5T2qyHwET+KmL9THbcMqZTflbzxmG7ld1PD
+	 q0EgXVcGb3gSt6frIgoQqnjVwV+gzQ73WOH+D5siQrzHMaA3STD6n3Uj9NgjHMHb6awKt
+	 8c8kHHfLUaA00bssgs7OSQkC/AeQ71DSj2E8JGvjEC6zhSh0gN1x2gA76EH0dxq1Ni1SX
+	 iLpP06IO41ocIccWLWNNiSFqOLppyQZ970pd5AF9yWebqYgUeBn30XaHkcoNNyR9Q259x
+	 p2/x/Iavpq4CBOYP1BnRn+C54+bCP2jS/7Rvnyg3VspZfxQQiGSlGqNhuAWjAcjHjqA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792426481;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=j+7tIdFx2CZna94rLbvcst0wmmeGVJ2/denMG9ZxUVY=;
-	b=jeywizWefHb9q06dM7RtVpwZMBftJd2I4mrFVMA0P7OuJKBUf+wu4j9z1zA0z7cG7Q9c
-	 pkcXKhwdjQ3r3KZM96wwj3IeS4mLpe96xIkwQCnjqvxeaqlnj/bkL6IDAp4AsAO2EjjE4
-	 Jm+iAO92mXTjsDspM63FBXbQb0q90rbT1sOYF+ezraQhpG2sdKtdV1dNFLII448zAqOn7
-	 IoBEmAlWawQnmZG4gJ7TOADtDRHaFrdtDCl8abvZrDLdYGNa45lzSK3awZM1U2X45qTrP
-	 UZRTIMQvo9Q0XTNQzNuX3ApnrIRo/8GoalGMP0WcGYaftB+6+4ExqMnQoyPbmgl/M6Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792426673;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=hsDZepg8xw8s3IYf2oycHDXOymRS04NCMJOXtFzaXpU=;
+	b=j9r3z9IrqBb5UbH1CnIM1R9Xpk3PnO0A8yDfQghKhqIOMCPrMCcvHgECa/LS9wHqHsHc
+	 sMdw7DOD8iKLyMT8xgwpCKsiAExKL1kpyDOgLVTIHih6N5CVmBZFuhEsb4HwxpcYzNVHP
+	 ig+loZ94i0/r/E+5V5bquqjmnDnkk99LVDM67vYXx9R3Cl6DOpe/HtWBPjTCmXav5PAUG
+	 11rRp1YNm6k8exMrpKJfp+8zdc1wz4shAxRg71nq547P2I4hg5Tqf55iji6EJoGmosJsW
+	 tt5dlurA+RqMKFb6vBCdHMhdM19uLLSsl54R5jJhwWdZQM8BJhigw2lYu1pDeMEUUIg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=rtq8hxqZ;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=doGmmNKp;
+	arc=none smtp.remote-ip=74.125.82.180
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB083606A31D;
-	Mon, 19 Oct 2026 16:14:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CB083606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8DA60A2610
+	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 16:17:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5F8DA60A2610
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=rtq8hxqZ
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2C320BA;
-	Mon, 19 Oct 2026 18:12:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1792426351;
-	bh=ZIVyyqQnMiQPKh6vfUHB6ETpY3hIiE6ECUkpT8nmUAA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rtq8hxqZHb855CpRIjODSktO+Ye4qbFYBQWgoxiOwGPtHvR91oQlHNMOgci85Gjvf
-	 Cb7T2oDCsoqC6UGrLkHp9p82OpVpz0kvNG0p01Lb8DEP+l7U7mEYAL0HykAvtEti/A
-	 PLKBppXhm7TEyUVu6cPP5e1rREnI81Au9CYSw7eQ=
-Date: Mon, 19 Oct 2026 19:14:36 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=doGmmNKp
+Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-3645f0f3fcdso2417798eec.0
+        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 09:17:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792426671; x=1793031471; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=hsDZepg8xw8s3IYf2oycHDXOymRS04NCMJOXtFzaXpU=;
+        b=doGmmNKpO+KfJJ5r3TqqgIGoAZlAoA5zWP58ZbmjTfmUxdXoID7DGxLinQE7EMeZ0O
+         k9RkEadNnUmUZxuvIqmh6AfCOkYozgubS359fVQAqAp/H8yUyFsXOi0ITaqwnZhvkTS4
+         agRblBsa7sJRq2n0ttcUqzGBTESAHWjnNm2wUE0yBVBVQUZtzpalG0IPZ1g2JZoRdD5g
+         a2+YI5pbIQO5opBwzO38VgLgqvS0RqRpvUrV9BxZMNrJ3HUOi1avl5ogaNlhjnm86NMe
+         lsbCdr7DF6tXxzK3Uwg6girjlbNJHcAc/TsDlZxiG91e7Ofl/9PbZ98DR99UNFwVphHb
+         YCfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792426671; x=1793031471;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=hsDZepg8xw8s3IYf2oycHDXOymRS04NCMJOXtFzaXpU=;
+        b=qpSjMzk3FEbvQWPrkM3uPCGn/rW6YPuL8tNzq4ZeNQeZJPgeo729IyYDdfnIl11feU
+         28Fert62OYGNjUAFU5vcX4uwSzN+zcX8sPpF4vcHZmrzlA3sfi+ociVMHbWi3Iw8/5RR
+         Kv7DUiPs8ciJDM0Vq5gF4jrA29o2LxYOxK6oTLq14gFEu6cVepdo2oyeU+0XUNptD/UO
+         UseSL15FQBIyJlIvzZRowfxUQwAy+5SgmBa4xR+mhSF4Jg2yAk5t0L5tlpemap5p5xM9
+         ZqQX7bSkNvwIKVrwzo6TE9m/41ZaJJHnqyWKdgufkvWdOaHYCQh5pPI555CZewWWWfR7
+         Oliw==
+X-Forwarded-Encrypted: i=1; AKwUvBwI9eNELFMXRi3yq6+bMInOT3BcgeXbMgKCPslo14ejPvFUkgYVdmej57VPp6G7sPd6Ug2jGICO4Oo=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKabQAnIBxPgkxxZ7PexTtokJ2fCf9nQQX19HUUMXDE2kn+adC8
+	aBu8J7IGaBaSyJKGp+M/csCpZcmZn4gt/GKFGBgLVqu6qWVJMuiERtgA
+X-Gm-Gg: AYBFou26BPveuBQVG0OFPGyBgNLfYdvMs3Tn2zTN9lyNhWYZVx30LynfB+IYi3wpwn0
+	cJ8zkmE88YyQsR8AncZsyLyBlLmHF86uutQ1N7xIao/XAcBFCTZEP4K73lXNEnBp6VYM4ITBGUO
+	0dTGMpc9onN1wzi1Qj5lhBjCN0vvQwMhw3fNykUaLLoIQ021BkeW1PkP+flUTPCyE6FfEKsfy3m
+	o4TQn5UdHX4shHQhRzjSyXmcdGn0/Wekm19E1ii2F38LLaXyOavvYxCavgMSnTd3EcfMDbkHDj8
+	iXxZQicZX/bkSXvMv6cLt8CYc/ULHxWOQOtobBQxD/WXLmn0lGPFJrI0Mg6SdviUuSph8FmiUxU
+	HCGttSXaaPpXrrEMuXnopzqm9dSysIUdbn8k6OCf/tlSKYDkE9u9pweo1QOnK7U+aEq0VlgnQAG
+	nMSaD0QlVI0lHo4oUNtN4+DjB286eh+qmivWJ++6WR6yRyvjm0rkq7QhMh+dC2UQ7v7KYr4HRoe
+	x0DQh/IKsg=
+X-Received: by 2002:a05:693c:8353:b0:34d:2c1a:9892 with SMTP id 5a478bee46e88-361a274b361mr11482466eec.40.1792426670942;
+        Mon, 19 Oct 2026 09:17:50 -0700 (PDT)
+Received: from redducc.localdomain ([183.83.156.125])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-360819be413sm33410985eec.13.2026.10.19.09.17.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Oct 2026 09:17:50 -0700 (PDT)
+From: redducc <sushmit718@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 1/8] clk: renesas: r8a78000: Add clk_hw to clk_map
-Message-ID: <20261019161436.GD3705@killaraus.ideasonboard.com>
-References: <cover.1792163045.git.geert+renesas@glider.be>
- <1d7da50cfb58232c6dd4c4afefb938fd7e62fdcd.1792163045.git.geert+renesas@glider.be>
- <20261019144256.GC763679@killaraus.ideasonboard.com>
- <CAMuHMdWkAvkxHkzRVviF_NkZHP7UeCBjebxciE6jFN_8ViM=aQ@mail.gmail.com>
- <20261019152203.GA5830@killaraus.ideasonboard.com>
+	Vinod Koul <vkoul@kernel.org>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] clk: qcom: gcc-sm8450: Parent the eUSB3 clkref to bi_tcxo
+Date: Mon, 19 Oct 2026 16:17:38 +0000
+Message-ID: <20261019161740.2384-2-sushmit718@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261019161740.2384-1-sushmit718@gmail.com>
+References: <20261019161740.2384-1-sushmit718@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -81,211 +103,37 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261019152203.GA5830@killaraus.ideasonboard.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 19, 2026 at 06:22:04PM +0300, Laurent Pinchart wrote:
-> On Mon, Oct 19, 2026 at 04:56:28PM +0200, Geert Uytterhoeven wrote:
-> > On Mon, 19 Oct 2026 at 16:42, Laurent Pinchart wrote:
-> > > On Fri, Oct 16, 2026 at 05:55:40PM +0200, Geert Uytterhoeven wrote:
-> > > > Prepare for mapping to other than fixed-rate clocks by adding a clk_hw
-> > > > pointer to the clk_map structure, and populating it up-front.
-> > > >
-> > > > Move r8a78000_cpg_priv.fixed_hws into fill_clk_map(), as it is no longer
-> > > > needed afterwards, and drop NUM_FIXED_CLKS.
-> > > >
-> > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > 
-> > > > --- a/drivers/clk/renesas/r8a78000-cpg.c
-> > > > +++ b/drivers/clk/renesas/r8a78000-cpg.c
-> > > > @@ -16,19 +16,24 @@
-> > > >
-> > > >  #include <dt-bindings/clock/renesas,r8a78000-cpg.h>
-> > > >
-> > > > +struct clk_map_in {
-> > >
-> > > The "_in" suffix isn't very explicit.
-> > 
-> > I can add a comment...
-> 
-> How about calling it clk_id_map ?
-> 
-> > > > +     int dt_id;              /* DT binding clock ID or -1 sentinel */
-> > > > +     u32 fw_id;              /* FIXED_CLK() ID */
-> > > > +};
-> > > > +
-> > > >  struct clk_map {
-> > > >       int dt_id;              /* DT binding clock ID or -1 sentinel */
-> > > >       u32 fw_id;              /* FIXED_CLK() ID */
-> > 
-> > BTW, do you think it would be worthwhile to reuse clk_map_in here?
-> 
-> Possibly. I was about to recommend just using a single structure and
-> leaving the clk_hw pointer NULL and unused in .rodata, but the memory
-> waste isn't very nice, especially if we end up with many entries :-(
+gcc_eusb3_0_clkref_en gates the XO reference to the eUSB2 PHY, but it
+has no parent, so its rate reads as 0. On SM8475 the SNPS eUSB2 PHY
+takes this clock as its reference and rejects a 0 Hz rate as
+unsupported, so USB doesn't probe.
 
-Actually, you could even turns clk_map into
+Parent it to bi_tcxo, as tcsrcc-sm8550 does for its clkref branches.
 
-struct clk_map {
-	const struct clk_id_map *map;
-	struct clk_hw *hw;
-};
+Fixes: db0c944ee92b ("clk: qcom: Add clock driver for SM8450")
+Assisted-by: LLM
+Signed-off-by: redducc <sushmit718@gmail.com>
+---
+ drivers/clk/qcom/gcc-sm8450.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-It should consume the same amount of space on 64-bit platforms. Doing
-the same in the MDLC driver would save space.
-
-Or, if you want to save more memory, you could drop clk_map and store
-the clk_hw in a separate array in r8a78000_cpg_priv, using the same
-indices as clk_map_id.
-
-struct r8a78000_cpg_priv {
-	struct device *dev;
-
-	const struct clk_id_map *map;
-	unsigned int num_map_entries;
-	struct clk_hw **clks;
-
-	struct clk_hw *fixed_hws[NUM_FIXED_CLKS];
-};
-
-where clks is a dynamically-allocated array fo struct clk_hw pointers,
-having the same size as the map array.
-
-Too many options.
-
-> > > > +     struct clk_hw *hw;
-> > > >  };
-> > 
-> > > > @@ -92,35 +94,69 @@ static struct clk_hw *r8a78000_clk_get(struct of_phandle_args *spec,
-> > > >       return hw;
-> > > >  }
-> > > >
-> > > > -static int register_fixed_clks(struct r8a78000_cpg_priv *priv)
-> > > > +static struct clk_hw **register_fixed_clks(struct device *dev)
-> > > >  {
-> > > > -     struct device *dev = priv->dev;
-> > > > +     unsigned int n = ARRAY_SIZE(fixed_clk_rates);
-> > > > +     struct clk_hw **hws, *hw;
-> > > >       unsigned long rate;
-> > > > -     struct clk_hw *hw;
-> > > >       const char *name;
-> > > >
-> > > > -     for (unsigned int i = 0; i < ARRAY_SIZE(fixed_clk_rates); i++) {
-> > > > +     hws = devm_kcalloc(dev, n, sizeof(*hws), GFP_KERNEL);
-> > > > +     if (!hws)
-> > > > +             return ERR_PTR(-ENOMEM);
-> > > > +
-> > > > +     for (unsigned int i = 0; i < n; i++) {
-> > > >               rate = fixed_clk_rates[i];
-> > > >               name = devm_kasprintf(dev, GFP_KERNEL, "cpg-%lu", rate);
-> > > >               if (!name)
-> > > > -                     return -ENOMEM;
-> > > > +                     return ERR_PTR(-ENOMEM);
-> > > >
-> > > >               hw = devm_clk_hw_register_fixed_rate(dev, name, NULL, 0, rate);
-> > > >               if (IS_ERR(hw))
-> > > > -                     return PTR_ERR(hw);
-> > > > +                     return ERR_CAST(hw);
-> > > >
-> > > > -             priv->fixed_hws[i] = hw;
-> > > > +             hws[i] = hw;
-> > > >       }
-> > > >
-> > > > -     return 0;
-> > > > +     return hws;
-> > > > +}
-> > > > +
-> > > > +static const struct clk_map *fill_clk_map(struct r8a78000_cpg_priv *priv,
-> > > > +                                       const struct clk_map_in *map_in)
-> > > > +{
-> > > > +     struct device *dev = priv->dev;
-> > > > +     struct clk_hw **fixed_hws;
-> > > > +     struct clk_map *map;
-> > > > +     unsigned int i;
-> > > > +
-> > > > +     fixed_hws = register_fixed_clks(dev);
-> > > > +     if (IS_ERR(fixed_hws))
-> > > > +             return ERR_CAST(fixed_hws);
-> > > > +
-> > > > +     for (i = 0; map_in[i].dt_id >= 0; i++) { }
-> > >
-> > > This is avoidable by passing { map, ARRAY_SIZE(map) } as match data
-> > > instead of just the map.
-> > 
-> > True, and I did consider this.
-> > The same mechanism is used in the MDLC driver, where using ARRAY_SIZE()
-> > would quickly became a bigger burden due to the presence of many
-> > more maps.  So for consistency, I kept it the same in both drivers.
-> > An initialization macro might make it more manageable, though.
-> 
-> Something along the line of the following ?
-> 
-> struct clk_map_in_entry {
-> 	int dt_id;		/* DT binding clock ID or -1 sentinel */
-> 	u32 fw_id;		/* SCMI firmware clock ID or FIXED_CLK() ID */
-> };
-> 
-> struct clk_map_in {
-> 	const struct clk_map_in_entry *entries;
-> 	unsigned int size;
-> };
-> 
-> #define CPG_MAP_INIT(_entries) {	\
-> 	.entries = _entries,		\
-> 	.size = ARRAY_SIZE(_entries),	\
-> }
-> 
-> struct cpg_data {
-> 	const struct clk_map_in *default_map;
-> 	const struct clk_map_in *fw_map;
-> };
-> 
-> ...
-> 
-> static const struct clk_map_in_entries r8a78000_cpg_fw_entries[] = {
-> 	{ R8A78000_CPG_SGASYNCD4_PERW_BUS,	1661 },
-> 	{ R8A78000_CPG_SGASYNCD8_PERW_BUS,	1662 },
-> 	{ R8A78000_CPG_SGASYNCD16_PERW_BUS,	1663 },
-> 	{ R8A78000_CPG_MSO_SCP_MAIN,		1459 },
-> 	{ R8A78000_CPG_MSOCK_PERW_BUS,		1667 },
-> };
-> 
-> static const clk_map_in r8a78000_cpg_fw = CPG_MAP_INIT(r8a78000_cpg_fw_entries);
-> 
-> static const struct cpg_data r8a78000_cpg_data = {
-> 	.default_map = r8a78000_cpg_default,
-> 	.fw_map = r8a78000_cpg_fw,
-> };
-> 
-> > > > +
-> > > > +     map = devm_kcalloc(dev, i + 1, sizeof(*map), GFP_KERNEL);
-> > > > +     if (!map)
-> > > > +             return ERR_PTR(-ENOMEM);
-> > > > +
-> > > > +     for (i = 0; ; i++) {
-> > > > +             map[i].dt_id = map_in[i].dt_id;
-> > > > +             if (map[i].dt_id < 0)
-> > > > +                     break;
-> > > > +
-> > > > +             map[i].fw_id = map_in[i].fw_id;
-> > > > +             map[i].hw = fixed_hws[map[i].fw_id];
-> > > > +     }
-> > > > +
-> > > > +     devm_kfree(dev, fixed_hws);
-> > >
-> > > Why not plain kcalloc/kfree ?
-> > 
-> > To avoid having to free it manually at multiple (three) locations,
-> > both in the error paths and the success path?
-> 
-> Isn't __free() your friend ?
-> 
-> > >
-> > > > +     return map;
-> > > >  }
-
+diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
+index cdae5d9c8aec..56503a45b64e 100644
+--- a/drivers/clk/qcom/gcc-sm8450.c
++++ b/drivers/clk/qcom/gcc-sm8450.c
+@@ -1500,6 +1500,10 @@ static struct clk_branch gcc_eusb3_0_clkref_en = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_eusb3_0_clkref_en",
++			.parent_data = &(const struct clk_parent_data){
++				.fw_name = "bi_tcxo",
++			},
++			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
 -- 
-Regards,
+2.43.0
 
-Laurent Pinchart
