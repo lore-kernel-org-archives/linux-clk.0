@@ -1,51 +1,50 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3CF628617;
-	Mon, 19 Oct 2026 14:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7131B6479B7;
+	Mon, 19 Oct 2026 14:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792418703; cv=none; b=IgstNaxQhsc1dBckxA3ZMF9pDN0Do0hFnUtZOoU2IKR6YiCtPpkS44NtHRBrl6ymDh+RfNbEBtiDS8Du3rIfRnkXCKJ3BdU8jksg2InmpXaB0qxoLSqGkV8oMfu3f5W9cYT4Ol5W2p4dZdHbaF9+PINTH87tvVqyVqmKQjT7D7s=
+	t=1792418796; cv=none; b=OzBBpbPRlQCMxdwu+3lTOIOtU0azGaNKEL3e/J1H0UfUFY+PMispS/ekhzTwvuLL+heHETVVy5GguTCu7u7Z4XfaUVDAX/4uoi/bPQuXNiGZff/FFks07oGsC/ptt181YyBm4ekUwgdBCFYL61xCzU91x9JpHiriYd467ZjvjdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792418703; c=relaxed/simple;
-	bh=fsNJEv92VqApu4MDiXNnLuv16Emx+3YEMvYHfZNcigI=;
+	s=arc-20240116; t=1792418796; c=relaxed/simple;
+	bh=qzzqFHduJFPJ3gjpN3AgNQSdcp8ZATdEGKLZFid2SzM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vAsksoN2qF4IfZIAaKS9ZUCz4YVahv49mc45FTH6H2zrRkW+ZuOMl7qMqKmCakPKcLT4JdynbGmmWfhNKWXoqezH5jHePbRncc1Y6RhJ2KjJ+pSt+XVOy1gVMGOSf/q4rv1XsBJiDWyUc0a58P+C/M725Pl34TbGUNHAvC0WBxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOdz1It6; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=iqEF4Qubet846ds0Y9SP+wp5/ie1TaWjYrGx/gE4n7U4INSVaIqjvyU27TNZZMDMCq6Xbh/0oFKYgN1ZTmWL2lfulqiAr8gTcdS+wWrWMonXzXS4v2BU7MdK5bk0G6MpvYN3wzzvkRVinAOfg1CaU1uHUUSnGla5Lom+bSP2ibg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVsT+lpS; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOdz1It6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F80B1F000C7;
-	Mon, 19 Oct 2026 14:04:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVsT+lpS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E87381F000C7;
+	Mon, 19 Oct 2026 14:06:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792418700;
-	bh=uAAs1xRU044mRxttfqo0JbA6ZXpm2L7A9MFCtgdteys=;
+	s=k20260515; t=1792418794;
+	bh=3O7F2X6+k4YoUAU2Oxwl9vtYL6fJyRW+Z7I2RKsPELI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=LOdz1It6o+LOIsKL/OAu0yUA+iKE7u/051aWZrFRUGoxAYLmAqlaeR3p8+9hvVdgh
-	 OzPnH0V2Okq1hZKV/SskmBG2af6H6f7jZUb0LPBJyEh0Takr03G2Ic0XL8BshXjbbr
-	 4kkEogjv774YIYhAPWEUGC5SAcRnBXnVOdQ8SZ30Po/uLTLSlX9XO5/GUTZPbROrwh
-	 qEj2bIM5WbaWsEpqU0iwo/3gbZy/u2oprWpLC/KokONuYDhpi5HmysuyYZuvx7U8Xx
-	 e6Zzge87snJmV7J8kWU5+hEB3mfwJhV0WGeRN3JHyH0w6rFwt/CLXjHTQMs7sOY5i5
-	 IUlc0vBRuktiQ==
+	b=SVsT+lpSO4UhuZZin3de5iOCnl7r8MI5SpJg6+BlEprYTj1X30qaM6bgJDmUlUZi7
+	 ACiKIipiJOdIDOFHgHldozO7FMqgo/Bs6AZtmO/A44In4IO5PqL1rS9lUc/Wvisrmr
+	 vpR3W9TUSZfh4tCf09kpnQenL/DJTbaehW6HYXLuihNkJwCh9ixX/IM0odhfV223wK
+	 sbIn1h556jGx7TxK4w1yRyoUEFof21MeH2CiNFP/jIUpkgdbZioAz4xvwCbaLH9X8+
+	 WTy9tC0pHKUaWv0dA7oc2wd1+iE2YlAlBX60km1u/jouJg4tE6cO3W/xSG6AvfSb3E
+	 OeTBlFAJZiQBg==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	Frank Li <Frank.Li@nxp.com>,
-	Brian Masney <bmasney@redhat.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Abel Vesa <abel.vesa@oss.qualcomm.com>,
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Sashiko <sashiko-bot@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	abelvesa@kernel.org,
 	sboyd@kernel.org,
 	bmasney+clk@redhat.com,
 	jbrunet+clk@baylibre.com,
+	jernej.skrabec@gmail.com,
+	samuel@sholland.org,
 	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] clk: imx: imx8qxp-lpcg: add missing MODULE_DEVICE_TABLE()
-Date: Mon, 19 Oct 2026 09:52:05 -0400
-Message-ID: <20261019135441.1420968-434-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.10] clk: sunxi-ng: fix ccu probe clock unregister on error
+Date: Mon, 19 Oct 2026 09:53:12 -0400
+Message-ID: <20261019135441.1420968-501-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261019135441.1420968-1-sashal@kernel.org>
 References: <20261019135441.1420968-1-sashal@kernel.org>
@@ -61,365 +60,390 @@ X-stable-base: Linux 6.18.57
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-[ Upstream commit e89485455ac49925565061733c0d73d568333fc0 ]
+[ Upstream commit 81f4ddc9f7e0c11d3e9d24d0f30023845a02f7ee ]
 
-The driver has a match table for the of bus wired into its driver
-structure, but the table is not exported with MODULE_DEVICE_TABLE().
+When registering clocks with sunxi_ccu_probe(), the number of ccu_clocks
+and the number of hw clocks might be different, eventhough they usually are
+the same.
 
-Add the missing MODULE_DEVICE_TABLE() entry so module alias information
-is generated for automatic module loading.
+If they are different, it could lead to out-of-bound access or registered
+clock left behind on error.
 
-This is a source-level fix.  It does not claim dynamic hardware
-reproduction; the evidence is the driver-owned match table, its use by
-the driver registration structure, and the missing module alias
-publication.
+Use a different variable when iterating on hw clocks so every registered
+clock, and only those, gets unregistered on error.
 
-Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Reviewed-by: Brian Masney <bmasney@redhat.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Link: https://patch.msgid.link/20260704150344.59563-1-pengpeng@iscas.ac.cn
-Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Reported-by: Sashiko <sashiko-bot@kernel.org>
+Closes: https://lore.kernel.org/r/20260629131254.7E34C1F00A3A@smtp.kernel.org
+Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Link: https://patch.msgid.link/20260706-a733-rtc-v4-3-f330728db3d3@baylibre.com
+Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## Local tree
+## Phase 1: Commit message forensics
 
-This checkout is **v7.3-rc4-27-gf0100363d8c37** (`VERSION=7 PATCHLEVEL=3
-SUBLEVEL=0 EXTRAVERSION=-rc4`). The candidate is `e89485455ac49` (`clk:
-imx: imx8qxp-lpcg: add missing MODULE_DEVICE_TABLE()`). The file and
-match table exist here; the one-line fix applies as written.
+**Step 1.1: Subject line**
+Record: **[clk: sunxi-ng]** **[fix]** unregister the right set of CCU
+`clk_hw` objects when `sunxi_ccu_probe()` fails.
 
----
+**Step 1.2: Tags**
+Record:
+- `Reported-by: Sashiko <sashiko-bot@kernel.org>` — static-analysis bot,
+  not syzbot
+- `Closes:
+  https://lore.kernel.org/r/20260629131254.7E34C1F00A3A@smtp.kernel.org`
+- `Reviewed-by: Chen-Yu Tsai <wens@kernel.org>` — sunxi/clk maintainer
+- `Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>` (author)
+- `Link: https://patch.msgid.link/20260706-a733-rtc-v4-3-
+  f330728db3d3@baylibre.com` — **v4 3/9** of the A733 RTC series
+- `Signed-off-by: Chen-Yu Tsai <wens@kernel.org>` (applied to sunxi clk
+  tree)
+- No `Fixes:` tag (expected)
+- No `Cc: stable` (expected; not treated as a negative)
 
-## PHASE 1: COMMIT MESSAGE FORENSICS
+**Step 1.3: Body**
+Record:
+[Bug] `sunxi_ccu_probe()` uses one index for both `desc->ccu_clks`
+(`num_ccu_clks`) and `desc->hw_clks` (`hw_clks->num`). Those lengths are
+not always equal.
+[Symptom] On probe error: **out-of-bounds** `hws[i]` access, or
+**registered clocks left behind**.
+[Version] None stated.
+[Root cause] Error-path unregister walks the leftover loop index instead
+of the hw-clock index.
 
-**Step 1.1 — Subject**
-- Record: `[clk: imx: imx8qxp-lpcg] [add] [export OF match table via
-  MODULE_DEVICE_TABLE so module aliases are generated]`
-
-**Step 1.2 — Tags**
-- Record:
-  - `Reviewed-by: Frank Li <Frank.Li@nxp.com>` (i.MX)
-  - `Reviewed-by: Brian Masney <bmasney@redhat.com>` (Red Hat / clk)
-  - `Reviewed-by: Peng Fan <peng.fan@nxp.com>` (i.MX clk)
-  - `Link: https://patch.msgid.link/20260704150344.59563-1-
-    pengpeng@iscas.ac.cn`
-  - `Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>` (author)
-  - `Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>` (clk-imx
-    maintainer, applied it)
-  - No `Fixes:`, no `Reported-by:`, no `Cc: stable` (absence expected)
-  - Ignore any Sasha Levin SOB if present (none on the real commit)
-
-**Step 1.3 — Body**
-- Record: The OF match table is wired into `platform_driver` but not
-  published with `MODULE_DEVICE_TABLE()`. Without that, modpost does not
-  emit `of:` aliases, so kmod/udev cannot autoload the module from DT
-  compatible strings.
-- Symptom: `CONFIG_CLK_IMX8QXP=m` → LPCG clock module does not load from
-  DT; consumers never get those clocks unless the module is loaded by
-  hand.
-- Version info: none in the message.
-- Root cause: missing alias publication, not a runtime logic bug. Author
-  states it is a source-level finding, not a live hardware repro.
-
-**Step 1.4 — Hidden bug fix?**
-- Record: Not disguised. It is a real autoload/modalias bug stated
-  plainly. The “source-level” wording means it was found by inspection,
-  not that it is theoretical: the table is used and not exported.
+**Step 1.4: Hidden bug fix?**
+Record: **No disguise.** This is an explicit error-path OOB/leak fix.
+Sashiko rated the pre-existing issue **High**.
 
 ---
 
-## PHASE 2: DIFF ANALYSIS
+## Phase 2: Diff analysis
 
-**Step 2.1 — Inventory**
-- Record: `drivers/clk/imx/clk-imx8qxp-lpcg.c` — **+1 / −0**. One line
-  after `imx8qxp_lpcg_match[]`. Surgical, single-file.
+**Step 2.1: Inventory**
+Record: `drivers/clk/sunxi-ng/ccu_common.c` only; **+6 / −6**. Function:
+`sunxi_ccu_probe()`. Surgical, single-file.
 
-**Step 2.2 — Flow**
-- Record: Before: `imx8qxp_lpcg_match` is only `of_match_table` (used
-  after the module is already loaded). After: same table is also a
-  `MODULE_DEVICE_TABLE(of, …)` so file2alias/modpost emits aliases at
-  build time. No probe/runtime path change.
+**Step 2.2: Code-flow change**
+Before: one `i` for (1) `ccu_clks` setup, (2) `hw_clks` register, (3)
+rate-range on `ccu_clks`, then `err_clk_unreg` does `while (--i)` over
+`hw_clks->hws[i]`. After loop (3), `i == num_ccu_clks`, so
+provider/reset failures use the wrong bound.
+After: hw-clock register/unregister uses `j`; `i` stays for `ccu_clks`.
 
-**Step 2.3 — Bug mechanism**
-- Record: **Hardware/module autoload (OF alias publication)**. Match
-  table exists (`fsl,imx8qxp-lpcg-adma/conn/lsio` and `fsl,imx8qxp-
-  lpcg`) but is not exported. Same class as adding device IDs: userspace
-  cannot match hardware to the module.
+**Step 2.3: Bug mechanism**
+Record: **[memory safety / error-path leak]**
+- `num_ccu_clks > hw_clks->num` → OOB read of `hws[]`
+- `num_ccu_clks < hw_clks->num` → incomplete `clk_hw_unregister()`
+  (leak)
+`clk_hw_register()` failure already used the hw index; the clobber is
+the **rate-range loop** added later, then `of_clk_add_hw_provider()` /
+`reset_controller_register()` failures.
 
-**Step 2.4 — Fix quality**
-- Record: Obviously correct; matches every other i.MX clk driver that
-  already has `MODULE_DEVICE_TABLE(of, …)` (`clk-imx8qxp.c`, `clk-
-  imx8mm.c`, etc.). No API, locking, or structural change. Regression
-  risk is negligible: `=y` ignores aliases; `=m` only adds autoload.
-
----
-
-## PHASE 3: GIT HISTORY
-
-**Step 3.1 — Blame**
-- Record: Match table from `1e3121bfe51a3` (“clk: imx: add imx8qxp lpcg
-  driver”, 2018, in **v5.0-rc1**). Module metadata from `e0d0d4d86c766`
-  (“Support building i.MX8QXP clock driver as module”, **v5.10-rc1**).
-  `builtin_platform_driver` → `module_platform_driver` in
-  `eee377b8f44e7` (2021, Fixes: that module-support commit). The hole
-  has been there for the whole modular lifetime of the driver.
-
-**Step 3.2 — Fixes: tag**
-- Record: None. Buggy omission is the module-support work
-  (`e0d0d4d86c766` / `eee377b8f44e7`). Both are in this tree.
-
-**Step 3.3 — File history**
-- Record: Recent file commits are unrelated (pm_runtime, ioremap).
-  Sibling `cd21fdcbef3fb` does the same for `clk-imx8qxp.c`. Standalone;
-  not “patch X/Y”.
-
-**Step 3.4 — Author**
-- Record: Pengpeng Hou also added the same fix for `clk-imx8qxp.c` and
-  MediaTek mt6735 clocks. Not the clk-imx maintainer; Abel Vesa applied
-  it with three subsystem/vendor reviews.
-
-**Step 3.5 — Dependencies**
-- Record: Needs `imx8qxp_lpcg_match`, `module_platform_driver`, and
-  `<linux/module.h>`. All present here. Applies as a single line.
+**Step 2.4: Fix quality**
+Record: Obviously correct (separate index). Minimal. Regression risk
+**very low** (`j` is always set by `for (j = 0; …)` before any `goto
+err_clk_unreg`). No API/locking changes.
 
 ---
 
-## PHASE 4: MAILING LIST / EXTERNAL
+## Phase 3: Git history
 
-**Step 4.1 — Original thread**
-- Record: `b4 dig -c e89485455ac49` →
-  https://patch.msgid.link/20260704150344.59563-1-pengpeng@iscas.ac.cn
-- `b4 dig -a`: **v1 only**, 2026-07-04.
-- Review: Peng Fan, Brian Masney, Frank Li: Reviewed-by only. Abel Vesa:
-  “Applied, thanks!” No NAK, no stable tag, no risk discussion.
+**Step 3.1: Blame**
+Record: Probe helper from `1d80c14248d608` (2016). Error unregister from
+`5d806f9fc8e63d` / `9bec2b9c61340` (v5.16 era). The **clobber** is
+`ea977d742507e` (“Don't call hw_to_ccu_common on hw without common”,
+**v6.10-rc7**), which inserted a `num_ccu_clks` loop after hw
+registration and reused `i`.
 
-**Step 4.2 — Recipients (`b4 dig -w`)**
-- Record: Abel Vesa, Peng Fan, Michael Turquette, Stephen Boyd, Frank
-  Li, Sascha Hauer, Fabio Estevam; `linux-clk`, `imx@lists.linux.dev`,
-  `linux-arm-kernel`, `linux-kernel`. Right maintainers and lists.
+**Step 3.2: Fixes: tag**
+Record: **None.** Introducer is `ea977d742507e` (ancestor of HEAD). That
+commit was itself `Cc: stable` / `Fixes: b914ec33b391e`.
 
-**Step 4.3 — Bug report**
-- Record: No Reported-by / bugzilla / syzbot. Inspection-only, as the
-  commit says.
+**Step 3.3: File history**
+Record: Candidate `81f4ddc9f7e0c`. Nearby Jerome commits are A733 RTC
+**features** after this fix. This patch is **standalone**; later series
+patches are not prerequisites.
 
-**Step 4.4 — Series**
-- Record: Standalone 1/1. Related but independent sibling on `clk-
-  imx8qxp.c`.
+**Step 3.4: Author**
+Record: Jerome Brunet (BayLibre, regular clk/sunxi contributor).
+Maintainer Chen-Yu Tsai reviewed and applied it.
 
-**Step 4.5 — Stable list**
-- Record: Thread has no stable nomination. Direct lore.kernel.org
-  fetches returned **403**; no separate stable-list discussion verified.
-
----
-
-## PHASE 5: CODE SEMANTICS
-
-**Step 5.1 — Functions**
-- Record: No C function changed. Macro `MODULE_DEVICE_TABLE(of,
-  imx8qxp_lpcg_match)` next to the existing `of_device_id` table. Driver
-  still uses `module_platform_driver(imx8qxp_lpcg_clk_driver)`.
-
-**Step 5.2 — “Callers”**
-- Record: Build-time: `scripts/mod/file2alias.c` looks up
-  `__mod_device_table__` and emits `of:` aliases. Runtime: kmod/udev on
-  DT `compatible`. Probe path unchanged. Makefile: `clk-imx-lpcg-
-  scu-$(CONFIG_CLK_IMX8QXP)` → aliases belong to `clk-imx-lpcg-scu.ko`.
-
-**Step 5.3 — Callees**
-- Record: None at runtime. Macro only creates an aliased copy of the
-  table for modpost.
-
-**Step 5.4 — Reachability**
-- Record: Yes, from userspace/DT: i.MX8QXP/8QM DTS uses `fsl,imx8qxp-
-  lpcg` (e.g. `arch/arm64/boot/dts/freescale/imx8qm-ss-*.dtsi`). With
-  `=m`, udev should load the module from that compatible. `arm64
-  defconfig` has `CONFIG_CLK_IMX8QXP=y`, so the default distro/defconfig
-  path is unaffected; custom/distro `=m` is the affected path.
-
-**Step 5.5 — Similar patterns**
-- Record: Same missing-table pattern fixed in `clk-imx8qxp.c` and
-  several other `drivers/clk/imx/*` files already have
-  `MODULE_DEVICE_TABLE`. This was the LPCG outlier.
+**Step 3.5: Dependencies**
+Record: Needs the three-loop `sunxi_ccu_probe()` from `ea977d742507e`.
+That is in this tree. No new helpers. **Can apply standalone.**
 
 ---
 
-## PHASE 6: THIS TREE
+## Phase 4: Mailing list / external
 
-**Step 6.1 — Buggy code here?**
-- Record: Yes. Pre-commit parent still has the table without
-  `MODULE_DEVICE_TABLE`. Module support is in this tree. Bug dates to
-  v5.10 module support (autoload hole after v5.16
-  `module_platform_driver`).
+**Step 4.1: Original discussion**
+Record: `b4 dig -c 81f4ddc9f7e0c` → https://patch.msgid.link/20260706-
+a733-rtc-v4-3-f330728db3d3@baylibre.com
+Series: v1 (Junhui Liu, Jan 2026) → v2/v3/v4 (Jerome). This fix first
+appears in **v3** (“Fix ccu probe helper to properly unregister clocks
+on error”), applied as **v4 3/9**.
+No NAK. Chen-Yu applied it to `sunxi/clk-for-7.3`. No reviewer `Cc:
+stable`.
 
-**Step 6.2 — Backport difficulty**
-- Record: **Clean apply**. Context around the match table matches the
-  hunk.
+**Step 4.2: Recipients (`b4 dig -w`)**
+Record: Chen-Yu Tsai, Jernej Skrabec, Samuel Holland, Stephen Boyd,
+Maxime Ripard, linux-clk, linux-sunxi. Right maintainers.
 
-**Step 6.3 — Already fixed another way?**
-- Record: No other autoload fix on this file. This commit *is* the fix
-  (already upstream in 7.3-rc). No substitute.
+**Step 4.3: Bug report**
+Record: Sashiko on **v2 5/6** (msgid
+`20260629131254.7E34C1F00A3A@smtp.kernel.org`), severity **High**: error
+path uses `i == num_ccu_clks` as the `hws[]` bound → leak or OOB
+depending on driver sizes. Pre-existing, not introduced by the A733
+patch.
 
----
+**Step 4.4: Series**
+Record: 9-patch A733 RTC enablement. This hunk only touches
+`ccu_common.c` and does not need A733. Later patches make RTC
+`num_ccu_clks` vs `hw_clks->num` diverge more; the common-probe bug
+already exists.
 
-## PHASE 7: SUBSYSTEM CONTEXT
-
-**Step 7.1**
-- Record: `[drivers/clk/imx — i.MX8QXP LPCG] [IMPORTANT for
-  i.MX8QXP/8QM; PERIPHERAL vs core kernel]`. Clock provider: if the
-  module never loads, LPCG-gated peripherals fail probe.
-
-**Step 7.2**
-- Record: clk-imx is active (7.3 pulls). This driver itself is mature
-  (2018).
-
----
-
-## PHASE 8: IMPACT AND RISK
-
-**Step 8.1 — Who**
-- Record: Config- and platform-specific: `CONFIG_CLK_IMX8QXP=m` on
-  i.MX8QXP/8QM/8DXL SCU clocks. Not universal. Defconfig `=y` does not
-  need aliases.
-
-**Step 8.2 — Trigger**
-- Record: Boot/enumeration with LPCG DT nodes and the driver as a
-  module. Unprivileged users cannot trigger it; it is bring-up/udev.
-  Common on modular distro kernels, uncommon on typical vendor `=y`
-  images.
-
-**Step 8.3 — Failure mode**
-- Record: Module not autoloaded → LPCG clocks missing → dependent
-  devices fail probe (UART/DMA/etc. depending on board). Not an
-  oops/UAF. Severity **MEDIUM** (functional miss for `=m`), **HIGH** on
-  those boards if clocks are modular.
-
-**Step 8.4 — Risk vs benefit**
-- Record: Benefit: modular i.MX8QXP clocks actually bind. Risk: **very
-  low** (one line of metadata). Ratio favors taking it; same rationale
-  as the “add a device ID” stable exception.
+**Step 4.5: Stable list**
+Record: lore.kernel.org/stable search for this subject returned **no**
+dedicated stable-thread discussion. WebFetch to lore.html returned 403;
+raw mbox via curl/`b4 dig -m` succeeded.
 
 ---
 
-## PHASE 9: SYNTHESIS
+## Phase 5: Semantic / impact
 
-**Step 9.1 — Evidence**
+**Step 5.1: Functions**
+Record: `sunxi_ccu_probe()` only (plus log index).
 
-For:
-- Real autoload bug: match table used, aliases not published.
-- One line, obviously correct, reviewed by NXP i.MX and Red Hat.
-- DT hardware uses these compatibles.
-- Driver is tristate (`CLK_IMX8QXP`); `module_platform_driver` is
-  intentional.
-- Same pattern as device-ID publication, which stable explicitly allows.
-- Applies cleanly; no new API; no runtime behavior change for `=y`.
+**Step 5.2: Callers**
+Record: `devm_sunxi_ccu_probe()` and `of_sunxi_ccu_probe()` in the same
+file. Called from **all** sunxi-ng CCU drivers (H6, A64, H3, D1, A10,
+RTC, …) at SoC clock probe/boot.
 
-Against:
-- No user/syzbot report; source-level only.
-- Not crash/corruption/security.
-- `arm64 defconfig` is `=y`.
-- No `Cc: stable` (not a negative by itself).
+**Step 5.3: Callees**
+Record: `clk_hw_register` / `of_clk_hw_register`,
+`of_clk_add_hw_provider`, `reset_controller_register`,
+`clk_hw_unregister`. Provider add can fail (`-ENOMEM`,
+`of_clk_set_defaults()`).
 
-Unresolved:
-- Could not search lore.kernel.org/stable (HTTP 403). Original thread
-  had no stable discussion.
+**Step 5.4: Reachability**
+Record: Boot-time CCU probe on Allwinner. Failure is error-path (OOM,
+assigned-clock defaults). On failure, `of_sunxi_ccu_probe()` /
+`devm_sunxi_ccu_probe()` **kfree** the `struct sunxi_ccu` whose `lock`
+remaining clocks still point at (`cclk->lock = &ccu->lock`) if
+unregister is incomplete.
 
-**Step 9.2 — Stable rules**
-1. Obviously correct and tested? **PASS** — one-line, three reviews,
-   maintainer applied.
-2. Real bug that affects users? **PASS** — `=m` does not autoload; DTS
-   uses the IDs.
-3. Important? **PASS** (as device-ID/autoload class; not a panic).
-   Missing clocks on modular i.MX8 is user-visible, not trivia.
-4. Small and contained? **PASS** — +1 line, one file.
-5. No new features/APIs? **PASS** — metadata only.
-6. Can apply to this tree? **PASS** —
-   file/table/`module_platform_driver` all present.
-
-**Step 9.3 — Exceptions**
-- Record: Device-ID / module-alias publication for an existing driver
-  (stable exception #1 in spirit).
-
-**Step 9.4 — Decision**
-This is a one-line, reviewed autoload fix for a long-standing modular
-i.MX8QXP LPCG driver. It matches what stable already takes for device
-IDs: hardware described in DT can bind without a manual `modprobe`. Risk
-is negligible on this tree.
+**Step 5.5: Similar patterns**
+Record: `devm_sunxi_ccu_release()` already walks `hw_clks->num`
+correctly. Only the probe error path was wrong. Counts really differ,
+e.g. H6: **127** `ccu_clks` vs **CLK_NUMBER 138**; A64: **104** vs
+**115**. RTC in this tree: 12 `ccu_clks` vs `CLK_NUMBER_NO_GATES` **8**
+on H616/R329 → **OOB** if probe fails after the rate-range loop.
 
 ---
 
-## What the commit solves for this tree
+## Phase 6: This checkout (v7.3-rc4)
 
-Without `MODULE_DEVICE_TABLE()`, `clk-imx-lpcg-scu.ko` has no
-`of:N*T*Cfsl,imx8qxp-lpcg*` aliases. kmod will not load it from DT. LPCG
-is a clock provider, so that shows up as missing clocks and failed
-consumer probe, not as a crash. The fix only publishes the table the
-driver already uses.
+**Step 6.1: Buggy code here?**
+Record: **Yes.** `git describe HEAD` = `v7.3-rc4-27-gf0100363d8c37`;
+`VERSION=7 PATCHLEVEL=3`. `ea977d742507e` and `81f4ddc9f7e0c` are both
+ancestors of HEAD. Pre-fix `sunxi_ccu_probe()` at `81f4ddc9f7e0c^` still
+clobbers `i`. Bug since **v6.10**, long before 7.3.
 
-It meets the stable bar: obviously correct, tiny, no new API, real
-modular-load bug, applies here.
+**Step 6.2: Backport difficulty**
+Record: **Clean apply** on this code (6-line index split). No refactor
+between the buggy helper and this patch.
 
-Risk vs benefit: benefit is correct autoload for `CONFIG_CLK_IMX8QXP=m`;
-risk is essentially zero.
-
-Concerns: no live repro, default `=y`. That does not outweigh a one-line
-alias export that other i.MX clk drivers already have.
+**Step 6.3: Other fixes already here?**
+Record: This **is** the fix (`81f4ddc9f7e0c`). No earlier equivalent.
+That does not mean “already selected for stable”; it is the mainline
+commit being evaluated.
 
 ---
 
-## Verification
-- [Phase 1] `git log -1 e89485455ac49`: tags as above; no
-  Fixes/Reported-by/Cc:stable.
-- [Phase 2] `git show e89485455ac49`: +1 `MODULE_DEVICE_TABLE(of,
-  imx8qxp_lpcg_match)`.
-- [Phase 2] Read `clk-imx8qxp-lpcg.c`: table used as `.of_match_table`;
-  `module_platform_driver`.
-- [Phase 2] `include/linux/module.h`: macro creates `__mod_device_table`
-  alias for modpost.
-- [Phase 3] `git blame` 350–370: table `1e3121bfe51a3` (v5.0); line
-  `e89485455ac49`.
-- [Phase 3] `e0d0d4d86c766` in v5.10-rc1 (tristate); `eee377b8f44e7`
-  switches to `module_platform_driver`.
-- [Phase 3] `git merge-base --is-ancestor e89485455ac49 HEAD` succeeded.
-- [Phase 3] Parent file confirmed missing `MODULE_DEVICE_TABLE`.
-- [Phase 4] `b4 dig -c/-a/-w` and `b4 dig -m`: v1 thread, three R-b,
-  Abel applied; To/Cc = clk + i.MX lists.
-- [Phase 4] lore HTTP 403; stable-list search **UNVERIFIED**.
-- [Phase 5] `Kconfig`: `CLK_IMX8QXP` tristate; Makefile builds `clk-imx-
-  lpcg-scu`.
-- [Phase 5] DTS: `fsl,imx8qxp-lpcg` in imx8qm-ss-*.dtsi.
-- [Phase 5] defconfig: `CONFIG_CLK_IMX8QXP=y`.
-- [Phase 6] `git describe HEAD` / `make kernelversion`: 7.3.0-rc4; buggy
-  table present; clean apply.
-- [Phase 6] Sibling `cd21fdcbef3fb` is a different file; not required
-  for this hunk.
-- [Phase 8] Failure mode: no autoload when `=m` — verified from code and
-  MODULE_DEVICE_TABLE semantics, not from a hardware log.
-- UNVERIFIED: live `=m` boot on i.MX8QXP; lore.kernel.org/stable
-  contents.
+## Phase 7: Subsystem
+
+**Step 7.1:** Record: **clk / Allwinner sunxi-ng CCU**. **IMPORTANT**
+(every Allwinner platform’s clock controller), not core mm/net, not
+staging.
+
+**Step 7.2:** Record: Mature CCU core (2016) with ongoing SoC additions.
+Helper is shared and stable; this is not churny experimental code.
+
+---
+
+## Phase 8: Impact and risk
+
+**Step 8.1:** Record: **platform-specific** — `CONFIG_SUNXI_CCU` /
+Allwinner boards (phones, SBCs, TVs). Many LTS users.
+
+**Step 8.2:** Record: Trigger = CCU **probe failure** after clocks are
+registered (`of_clk_add_hw_provider` / reset register). Not every boot.
+Not a userspace syscall. `of_clk_set_defaults()` is a realistic DT
+failure. Unprivileged users do not trigger it directly.
+
+**Step 8.3:** Record: Incomplete unregister → leak; wrong bound →
+**OOB**; leftover `clk_hw` plus `kfree(ccu)` → **UAF** on `cclk->lock`.
+Severity **HIGH** on the error path (crash / memory safety), not a
+normal-boot oops.
+
+**Step 8.4:** Record: **Benefit high** for Allwinner error-path safety;
+**risk very low** (6-line index fix). Ratio strongly favors backport.
+
+---
+
+## Phase 9: Synthesis
+
+**Step 9.1: Evidence**
+
+FOR:
+- Real OOB/leak in shared CCU probe cleanup; counts differ on H6/A64/RTC
+  in this tree
+- Sashiko High; maintainer Reviewed-by + applied
+- Tiny, obviously correct, no new API
+- Bug from v6.10 (`ea977d742507e`) is in this tree
+- No extra series patches required
+
+AGAINST:
+- Error-path only (not every boot)
+- Nested in an A733 **feature** series (this patch is still self-
+  contained)
+- No live user oops; found by static review
+- No `Fixes:` / `Cc: stable` (not a negative here)
+
+UNRESOLVED:
+- lore HTML 403 (mbox/raw used instead)
+- Exact production hit rate of `of_clk_set_defaults()` failure on CCU
+  nodes
+
+**Step 9.2: Stable rules**
+1. Obviously correct and tested — **PASS** (maintainer review; logic is
+   local)
+2. Real bug affecting users — **PASS** (Allwinner CCU probe fail →
+   leak/OOB)
+3. Important (crash/corruption/deadlock/security) — **PASS** (OOB;
+   incomplete unwind + free of lock)
+4. Small and contained — **PASS** (12 lines, one function)
+5. No new features/APIs — **PASS**
+6. Can apply to this tree — **PASS**
+
+**Step 9.3: Exception category**
+Record: None (not an ID/quirk/DT/build/doc exception). It is a normal
+small bugfix.
+
+**Step 9.4: Decision**
+This tree is **7.3-rc4**. The helper and the v6.10 index-clobber exist
+here. The patch is a surgical error-path memory-safety fix for every
+sunxi-ng CCU, including OOB on RTC when `num_ccu_clks` (12) exceeds
+`hw_clks->num` (8). It meets stable rules with very low regression risk.
+
+---
+
+### Problem and why it matters
+
+`sunxi_ccu_probe()` registered `hw_clks` with index `i`, then reused `i`
+to walk `ccu_clks` for rate limits. On later failure it unregistered
+with that leftover `i`. Those array lengths differ on real SoCs, so
+cleanup either walks off `hws[]` or leaves clocks registered (and can
+free the `ccu` lock those clocks still use). Stable Allwinner devices
+share this helper.
+
+### Stable rules / risk
+
+Small, reviewed, no features, applies cleanly. Benefit is avoiding
+OOB/UAF on CCU probe failure; risk is a loop-index change only.
+
+### Concerns
+
+Needs `ea977d742507e` (present here). Do not pull the rest of the A733
+series. Trigger is probe-error, not hot-path, but the failure mode is
+memory safety.
+
+Verification:
+- [Phase 1] Tags: Sashiko Reported-by/Closes, Chen-Yu Reviewed-by, msgid
+  v4 3/9; no Fixes/Cc stable
+- [Phase 2] Diff: `i` vs `j` in `sunxi_ccu_probe()`; +6/−6 in
+  `ccu_common.c`
+- [Phase 3] `git describe HEAD` → `v7.3-rc4-27-gf0100363d8c37`; blame:
+  bug from `ea977d742507e` (v6.10-rc7); `git merge-base --is-ancestor
+  ea977d742507e HEAD` → yes
+- [Phase 3] `git log --oneline -- drivers/clk/sunxi-ng/ccu_common.c`:
+  candidate `81f4ddc9f7e0c`; later commits are A733 features, not
+  prerequisites
+- [Phase 4] `b4 dig -c 81f4ddc9f7e0c` → lore msgid; `-a` v1–v4; `-w`
+  sunxi/clk maintainers; `-m` 25-message mbox; Chen-Yu applied 3/9; no
+  NAK
+- [Phase 4] Original Sashiko report (curl raw): High, wrong loop limit,
+  leak or OOB
+- [Phase 4] Stable lore search: no prior stable-thread hit
+- [Phase 5] Callers: `devm_sunxi_ccu_probe` / `of_sunxi_ccu_probe` → all
+  sunxi-ng CCU drivers
+- [Phase 5] H6 127 vs 138; A64 104 vs 115; RTC 12 vs 8
+  (`CLK_NUMBER_NO_GATES`) verified in tree
+- [Phase 5] `of_clk_add_hw_provider` can return `-ENOMEM` or
+  `of_clk_set_defaults` error
+- [Phase 6] Pre-fix source at `81f4ddc9f7e0c^` still uses one `i`;
+  current file already has `j`
+- [Phase 7] MAINTAINERS: Chen-Yu Tsai maintains `drivers/clk/sunxi-ng/`
+- [Phase 8] Failure mode: OOB / leak / possible lock UAF on probe error
+  — HIGH, error-path
+- UNVERIFIED: live user crash report beyond Sashiko; lore HTML pages
+  (403)
 
 **YES**
 
- drivers/clk/imx/clk-imx8qxp-lpcg.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/sunxi-ng/ccu_common.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-index 1dae3410ee99a..f0cf6cf918992 100644
---- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-+++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-@@ -354,6 +354,7 @@ static const struct of_device_id imx8qxp_lpcg_match[] = {
- 	{ .compatible = "fsl,imx8qxp-lpcg", NULL },
- 	{ /* sentinel */ }
- };
-+MODULE_DEVICE_TABLE(of, imx8qxp_lpcg_match);
+diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
+index c7e00f0c29a55..bbda75c2bc461 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.c
++++ b/drivers/clk/sunxi-ng/ccu_common.c
+@@ -114,7 +114,7 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, struct device *dev,
+ 			   const struct sunxi_ccu_desc *desc)
+ {
+ 	struct ccu_reset *reset;
+-	int i, ret;
++	int i, j, ret;
  
- static struct platform_driver imx8qxp_lpcg_clk_driver = {
- 	.driver = {
+ 	ccu->desc = desc;
+ 
+@@ -130,8 +130,8 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, struct device *dev,
+ 		cclk->lock = &ccu->lock;
+ 	}
+ 
+-	for (i = 0; i < desc->hw_clks->num ; i++) {
+-		struct clk_hw *hw = desc->hw_clks->hws[i];
++	for (j = 0; j < desc->hw_clks->num ; j++) {
++		struct clk_hw *hw = desc->hw_clks->hws[j];
+ 		const char *name;
+ 
+ 		if (!hw)
+@@ -143,7 +143,7 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, struct device *dev,
+ 		else
+ 			ret = of_clk_hw_register(node, hw);
+ 		if (ret) {
+-			pr_err("Couldn't register clock %d - %s\n", i, name);
++			pr_err("Couldn't register clock %d - %s\n", j, name);
+ 			goto err_clk_unreg;
+ 		}
+ 	}
+@@ -186,8 +186,8 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, struct device *dev,
+ err_del_provider:
+ 	of_clk_del_provider(node);
+ err_clk_unreg:
+-	while (--i >= 0) {
+-		struct clk_hw *hw = desc->hw_clks->hws[i];
++	while (--j >= 0) {
++		struct clk_hw *hw = desc->hw_clks->hws[j];
+ 
+ 		if (!hw)
+ 			continue;
 -- 
 2.53.0
 
