@@ -1,47 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CD95D8C8E;
-	Mon, 19 Oct 2026 14:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573675E0E33;
+	Mon, 19 Oct 2026 14:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792418518; cv=none; b=sKf1vDdSZMQMexx+XOcgJ3IgPWifkKAvYmsdmc6GwY8qH4WaIO44IU37akSfTZMIqLA3X7Ak3nLZTTI5W/zQxzAn+qUcCTOMIxr9DvRe2L4GWdQYqJbCmSYvfnnhBKzVQz9gNngwZcNnzaa8hYQ0RS9Ch8//dJonxMciFEFZh4Y=
+	t=1792418560; cv=none; b=ge7lVD7eGtSki/l+TRZ4rBPL/uTXe57a0CO/i+QaB72/dihaBI+tXEEV2WOsge2T+kNjjFrjuHks30l9biH869xMLVfAvFGzhBHTPqJ9OdngjOxoidGjerBfLGCR7MYud6USAWDrVIy/7h9SnvMxth9uWcSQU6+NHqSTpMpeoSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792418518; c=relaxed/simple;
-	bh=XZ1DQhAoE9PMJ0oJ1VLxRMseKp+0fnZUW8nGW8XSnWY=;
+	s=arc-20240116; t=1792418560; c=relaxed/simple;
+	bh=phjmY77R9vdp2YNlR9ThV9kchmk5itDqPndXdPMMfhA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rWhcx4qwiz55+j+N+m/5t/ywmMKS/PtIWSCH50Kv6i+DvIqZxs3OspFo72Gw/jixxYchWq7JUFBvCWFI731nAPQW347F09bMRGLzqxXGV+laqB5lE1jpD1tyFjo4RL2yj+NZ7MAmnlJ+JTZz4EEIn31Z+wI8HNcJIrwcGElTz3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oLDLbiOZ; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=iwPuaqwqEEWXpcScZoX21t6OUEfhcZoR1wMGcuAmO5KXWXB/TsNSIfG120Z5Uf2BrtAUIGz+bavSHQ33zvoNM4t6N1MkyM/5JutU3RP5oshJbr7vRp2KxLFP/o9E7bthPE7Jmjv55hwmS2SYOk57YZ7BBc3mPCJa92EzhNxuQfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQa5Bjz4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLDLbiOZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C31631F000C9;
-	Mon, 19 Oct 2026 14:01:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQa5Bjz4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 988231F000C5;
+	Mon, 19 Oct 2026 14:02:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792418516;
-	bh=Jk6QeDP3er7oJrzie6h/aR641WmY6fsxB8wBz8frDWI=;
+	s=k20260515; t=1792418558;
+	bh=XgjQpS2/rMqW43pBel9lhFNhDOjVOLpqBUk6j73sCpE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=oLDLbiOZTnR66taWzBOMVQeAV9EhS6xttqVYpAkN3aMtdzOBt3dnKVbuI4Pw8mg8E
-	 Qa/G18GF8jyN1CF9FpZFLI+OTxk/quQ29CBVRyz6p7OHsAgR79WPfov2MrDOcmkfJw
-	 sMQrZhNe6Z/yDBW4/EbYmJ1n14q5zwKBj+fjs68OK7F97da06usYfvdHi/0wm3w6Gj
-	 4d6vHzx7CJTwgoBUHGaPjc1nu/WYVZZtgkiLnyRJFhFG9AiqXoWPAYIpxdSJmqSj1p
-	 Ps5gBQUUAwX48+oKk84yzmpk5pGmYbP+AgwLg0h1bVqcieZVhwwi+jpuw2q76J0/1C
-	 Nw98OgSw8gt9Q==
+	b=aQa5Bjz4YsCTamSzypmFThC4dydqVhe+WF1Rcnntgv0LRNeEvw1wB3sNXpOEX5IyX
+	 DaAhIVH94zE2a7IgjaYAMbUqY6HuFvrXqTs6krLVT/MbpVB2WdNlWOSROXGKqBcWOi
+	 bn33kdTCemqiLv96JZ2oHvN/ssS1Gzm7RbdoCLRjGMs+kb5ShjuJNVAY/EAJUSC2Ix
+	 h1npwxDKuqkUIv1ivHbp9otQVe3Q0XIXY3LmHB6+IEQSQzlN9P9QQBqOjWA7IijhF/
+	 Q0ZxpcIn60CNPXZe05mAUUyVEOc1q7E0bI/XU3QSs3gGo7RwCBlky7ElGqk8nYD/Qa
+	 ebbRWOQdJZ2nw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: William Theesfeld <william@theesfeld.net>,
+Cc: Dmitry Osipenko <digetx@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
 	Brian Masney <bmasney@redhat.com>,
-	Michal Simek <michal.simek@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
+	pgaikwad@nvidia.com,
 	sboyd@kernel.org,
 	bmasney+clk@redhat.com,
 	jbrunet+clk@baylibre.com,
+	thierry.reding@kernel.org,
+	jonathanh@nvidia.com,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] clk: zynq: handle kasprintf() failure in periph_clk registration
-Date: Mon, 19 Oct 2026 09:49:54 -0400
-Message-ID: <20261019135441.1420968-303-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.10] clk: tegra: support 48MHz clock for pll_p_out1
+Date: Mon, 19 Oct 2026 09:50:24 -0400
+Message-ID: <20261019135441.1420968-333-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261019135441.1420968-1-sashal@kernel.org>
 References: <20261019135441.1420968-1-sashal@kernel.org>
@@ -51,474 +56,404 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.18.57
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: William Theesfeld <william@theesfeld.net>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit d4d0d335e8d37c6c7e1c5664c7664288eca5a09b ]
+[ Upstream commit 46e31d69a547530fbef499bde888b6bb45a1deac ]
 
-zynq_clk_register_periph_clk() ignores the return value of the two
-kasprintf() calls used to build the mux and divider clock names, and
-passes the resulting (possibly NULL) pointers straight into
-clk_register_mux(), clk_register_divider() and clk_register_gate() as
-the clock '"'name'"' argument.  On allocation failure that name later
-gets dereferenced by the clock framework (e.g. in debugfs name
-formatting), causing a NULL-pointer dereference.
+UEFI on Surface2 sets pll_p_out1 to 48MHz which is not supported by kernel
+and causes BUG() early on. Add 48MHz clock support for pll_p_out1.
 
-Check both kasprintf() returns.  On failure unwind any allocated name
-buffer and the spinlock, then fall through to the existing err label
-which sets clks[] to ERR_PTR(-ENOMEM).  Freeing the spinlock on the
-error path is correct here because no clk_register_*() call has had
-a chance to take ownership of it; the success path intentionally
-hands it off to the registered clocks.
-
-The neighbouring zynq_clk_register_fclk() in the same file already
-uses this per-allocation goto-label cleanup pattern; this change
-brings periph_clk into line with it.
-
-Signed-off-by: William Theesfeld <william@theesfeld.net>
-Reviewed-by: Brian Masney <bmasney@redhat.com>
-Reviewed-by: Michal Simek <michal.simek@amd.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Jonas Schwöbel <jonasschwoebel@yahoo.de>
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-The local tree is **6.18.53**. The buggy
-`zynq_clk_register_periph_clk()` path is present here, and the patch is
-an 8-line error-path fix. Full nine-phase analysis follows.
+The local tree is **v7.3-rc4** (mainline). The change is a one-line
+parent-rate case that stops a deterministic early-boot `BUG()` when UEFI
+leaves `pll_p_out1` at 48 MHz. Surrounding `_calc_rate` logic has been
+in-tree since 2013, so this is a self-contained crash fix, not a new
+API.
 
 ===============================================================
 PHASE 1: COMMIT MESSAGE FORENSICS
 ===============================================================
 
-**Step 1.1: PARSE THE SUBJECT LINE**
-- Subsystem: `clk: zynq`
-- Action verb: **handle** (bug-fix verb: missing failure handling)
-- Intent: check `kasprintf()` in peripheral clock registration so a NULL
-  name is not passed into the clock framework
-- Record: `[clk/zynq] [handle] [check kasprintf failure when registering
-  periph clocks]`
+Step 1.1: PARSE THE SUBJECT LINE
+Record: **[clk: tegra:] [support] [allow pll_p_out1 parent rate 48 MHz
+in `_calc_rate` so firmware-programmed 48 MHz does not hit `BUG()`]**
 
-**Step 1.2: PARSE ALL COMMIT MESSAGE TAGS**
-- `Reviewed-by: Brian Masney <bmasney@redhat.com>` — clk co-maintainer;
-  also final `Signed-off-by` into clk tree
-- `Reviewed-by: Michal Simek <michal.simek@amd.com>` — ARM/Zynq
-  architecture maintainer
-- `Signed-off-by: William Theesfeld <william@theesfeld.net>` — author
-- `Signed-off-by: Brian Masney <bmasney@redhat.com>` — maintainer merge
-- No `Fixes:` tag (expected for this review pipeline)
-- No `Reported-by:`, `Tested-by:`, `Link:`, or `Cc: stable`
-- Pipeline-added markers ignored per instructions: `[Upstream commit
-  d4d0d335…]`, `Signed-off-by: Sasha Levin`
-- Record: maintainer-reviewed, no syzbot/user report, no Fixes tag
+Step 1.2: PARSE ALL COMMIT MESSAGE TAGS
+Record:
+- **Acked-by:** Thierry Reding `<treding@nvidia.com>` (Tegra maintainer)
+- **Signed-off-by:** Dmitry Osipenko (author; long-time Tegra clk
+  contributor)
+- **Signed-off-by:** Jonas Schwöbel
+- **Signed-off-by:** Svyatoslav Ryhel (submitter)
+- **Signed-off-by:** Brian Masney (clk maintainer who applied it)
+- **No Fixes:** tag (expected)
+- **No Cc: stable** (expected)
+- **No Reported-by / Tested-by / Link:**
+- Ignore any Sasha Levin SOB if present in a candidate wrapper; none on
+  the real commit `46e31d69a5475`
 
-**Step 1.3: ANALYZE THE COMMIT BODY TEXT**
-- Bug: `zynq_clk_register_periph_clk()` ignores two `kasprintf()`
-  results used as mux/divider names and passes them into
-  `clk_register_mux/divider/gate`
-- Claimed symptom: NULL name later dereferenced in CCF (commit cites
-  debugfs name formatting) → NULL-pointer dereference
-- Fix: check both returns; on failure free the other name buffer and the
-  spinlock, then the existing `err` label sets `clks[] =
-  ERR_PTR(-ENOMEM)`
-- Author notes the sibling `zynq_clk_register_fclk()` already uses this
-  goto-cleanup pattern
-- Record: `[Bug: unchecked kasprintf] [Symptom: NPD / broken clock init]
-  [No version info] [Root cause: missing NULL checks before
-  clk_register_*]`
+Step 1.3: ANALYZE THE COMMIT BODY TEXT
+Record:
+- **Bug:** UEFI on Microsoft Surface 2 programs `pll_p_out1` to 48 MHz.
+  `_calc_rate()` only accepted 9.6 MHz and 28.8 MHz in that switch arm;
+  48 MHz fell into `default:` which prints an error and calls `BUG()`.
+- **Symptom:** kernel `BUG()` during early clock init (boot crash).
+- **Root cause:** missing parent-rate case in the out-of-table PLL
+  calculator used when PLLA’s freq table has no matching input rate.
+- **Version info:** none in the message. Cover letter (v2 0/1) says the
+  case is aligned with NVIDIA downstream 3.4 tegra114 logic.
 
-**Step 1.4: DETECT HIDDEN BUG FIXES**
-- Not disguised. Explicit error-path fix. Also closes a spinlock leak on
-  the failure path (lock is allocated before `kasprintf`; success hands
-  it to registered clocks, so failure must `kfree(lock)`).
-- Record: `[Not hidden; allocation-failure / leak / NPD-class error-path
-  fix]`
+Step 1.4: DETECT HIDDEN BUG FIXES
+Record: **Not a hidden fix.** Subject says “support” but the body is
+explicit: this prevents `BUG()`. It is a firmware/hardware compatibility
+quirk, not a new clock API.
 
 ===============================================================
 PHASE 2: DIFF ANALYSIS - LINE BY LINE
 ===============================================================
 
-**Step 2.1: INVENTORY THE CHANGES**
-- File: `drivers/clk/zynq/clkc.c` — **+8 / -0**
-- Function: `zynq_clk_register_periph_clk()`
-- Scope: single-file surgical error-path fix
-- Record: `[clkc.c +8] [zynq_clk_register_periph_clk] [surgical]`
+Step 2.1: INVENTORY THE CHANGES
+Record:
+- **File:** `drivers/clk/tegra/clk-pll.c` (+1 / −0)
+- **Function:** `_calc_rate()`
+- **Scope:** single-file, one `case 48000000:` added next to existing
+  9.6/28.8 MHz cases
 
-**Step 2.2: UNDERSTAND THE CODE FLOW CHANGE**
-Verified against parent `e3b8b15ec6f0a^`:
+Step 2.2: UNDERSTAND THE CODE FLOW CHANGE
+Record:
+- **Before:** `parent_rate == 48000000` → `default` → `pr_err` +
+  `BUG()`.
+- **After:** same arm as 9.6/28.8 MHz: `cfreq = parent_rate /
+  (parent_rate / 1000000)` (1 MHz for 48 MHz), then existing M/N/P
+  calculation and range checks.
+- **Path:** clock-init `clk_set_rate()` on PLLA (and any other PLL using
+  default `_calc_rate`). Error path only in the sense that the old path
+  was a fatal default; this is the out-of-table rate calculator, not a
+  new userspace API.
 
-Before:
-```
-mux_name = kasprintf(...);   /* unchecked */
-div_name = kasprintf(...);   /* unchecked */
-clk_register_mux(..., mux_name, ...);
-clk_register_divider(..., div_name, mux_name, ...);
-clks[clk0] = clk_register_gate(..., clk_name0, div_name, ...);
-```
-`err` was only used for `kmalloc(lock)` failure.
+Verified boot path in this tree:
+- Tegra114 `init_table` sets `TEGRA114_CLK_PLL_A` to 564480000 (`clk-
+  tegra114.c`).
+- `tegra_init_from_table()` calls `clk_set_rate()`.
+- PLLA parent is `"pll_p_out1"` (`tegra114_audio_plls[]`).
+- `pll_a_freq_table[]` only lists 9600000 and 28800000 input rates, so
+  `_get_table_rate()` fails and `_calc_rate()` runs.
+- That is the `BUG()` the commit describes.
 
-After: NULL `mux_name` → `err_mux_name` (`kfree(lock)`); NULL `div_name`
-→ `err_div_name` (`kfree(mux_name)` then lock). Then `err` sets
-`clks[clk0/clk1] = ERR_PTR(-ENOMEM)`. Success path unchanged.
-- Record: `[error path only: skip clk_register_* on kasprintf failure
-  and unwind]`
+Step 2.3: IDENTIFY THE BUG MECHANISM
+Record:
+- **Category:** (h) hardware/firmware workaround + (g) logic: missing
+  switch case that caused (kernel `BUG()`).
+- **Mechanism:** firmware leaves a valid PLLP divider output of 48 MHz;
+  the calculator treated it as an impossible reference and crashed.
 
-**Step 2.3: IDENTIFY THE BUG MECHANISM**
-Category: **error path / resource leak** plus **memory safety** (NULL
-name into CCF).
-
-Verified CCF behavior in this tree (`drivers/clk/clk.c`):
-- `kstrdup_const(NULL)` → `kstrdup(NULL)` returns NULL (`mm/util.c:84`)
-- `__clk_register` then fails with `-ENOMEM` if `core->name` is NULL
-  (`clk.c:4435-4438`)
-- NULL **parent** name hits `WARN(!parent_names[i], ...)` then
-  `clk_cpy_name(..., true)` returns `-EINVAL` (`clk.c:4347-4351,
-  4307-4309`)
-- `zynq_clk_setup()` then does `if (IS_ERR(clks[i])) BUG();`
-  (`clkc.c:570-575`)
-
-So a fully failed registration already `BUG()`s. The remaining hole is
-mixed failure (mux `kasprintf` fails, div succeeds): mux/div
-registration fails, gate may still register with a valid DT name and a
-never-created parent → no `BUG()`, broken UART/SDIO/SPI/LQSPI/SMC/PCAP
-clocks, and the spinlock can leak because `err` is not taken.
-- Record: `[error-path leak + WARN + inconsistent clks[] / possible
-  silent broken periph clocks]`
-
-**Step 2.4: ASSESS THE FIX QUALITY**
-- Matches the existing `zynq_clk_register_fclk()` pattern (present since
-  `f8fe36f6083a70`, v3.13).
-- `kfree(lock)` on this path is correct: no `clk_register_*` has run
-  yet.
-- Does not change the success path.
-- Regression risk: very low. On failure, `clks[]` becomes
-  `ERR_PTR(-ENOMEM)` and `zynq_clk_setup()` `BUG()`s — same policy this
-  driver already uses for lock allocation / registration failure.
-- Record: `[obviously correct, 8 lines, error-path only; risk very low]`
+Step 2.4: ASSESS THE FIX QUALITY
+Record:
+- **Quality:** obviously correct. Same formula already used for the
+  other PLLP_OUT1 rates. Tegra maintainer acked it.
+- **Minimal:** one line, no API/data-structure change.
+- **Regression risk:** very low. Extra parent rate only changes the 48
+  MHz path; other rates unchanged.
+- **Nuance (verified):** tegra114 PLLA uses `pllp_nmp.divm_width = 5`,
+  so `divm_max` is 31. For 48 MHz, `cfg->m = 48`, which can fail the
+  existing `cfg->m > divm_max` check and return `-EINVAL` instead of
+  programming PLLA. That is still far better than `BUG()`:
+  `clk_pll_set_rate()` then `WARN_ON`s and returns. Completeness of PLLA
+  programming is a separate issue; the crash is fixed.
 
 ===============================================================
 PHASE 3: GIT HISTORY INVESTIGATION
 ===============================================================
 
-**Step 3.1: BLAME THE CHANGED LINES**
-- Function introduced in `0ee52b157b8ed8` (“clk: zynq: Add clock
-  controller driver”), 2013, contained in **v3.11-rc1**.
-- `kasprintf` calls were unchecked from introduction until this fix.
-- Record: `[0ee52b157b8ed8 / v3.11] [bug present for the life of this
-  driver]`
+Step 3.1: BLAME THE CHANGED LINES
+Record:
+- Switch and `BUG()` introduced in **`8f8f484bf355e5`** (“clk: tegra:
+  add Tegra specific clocks”, Prashant Gaikwad, 2013-01-11; in v3.9
+  era).
+- 9.6/28.8 MHz formula adjusted in **`e52d7c04bb3911`** (2015).
+- 48 MHz case added by **`46e31d69a5475`** (this commit).
+- Buggy missing-rate behavior has been present for ~13 years.
 
-**Step 3.2: FOLLOW THE FIXES: TAG**
-- No `Fixes:` tag. Buggy commit is the original driver add, which **is**
-  in this tree.
-- Record: `[no Fixes tag; original driver commit is in this tree]`
+Step 3.2: FOLLOW THE FIXES: TAG
+Record: **No Fixes: tag.** Not applicable. Introduced by the original
+2013 Tegra clk driver, not a recent regression.
 
-**Step 3.3: CHECK FILE HISTORY FOR RELATED CHANGES**
-- `f8fe36f6083a70` (v3.13): same goto-cleanup for
-  `zynq_clk_register_fclk()` kasprintf/kmalloc
-- `7938e9ce39d67` (2024, in this tree): “Prevent null pointer
-  dereference caused by kmalloc failure” in `zynq_clk_setup()`
-- `a6aa462c3efc1`: parameter update to this function — not a
-  prerequisite for these checks
-- Standalone; not patch N/M
-- Record: `[standalone; sibling already had the pattern; related kmalloc
-  NPD fix already here]`
+Step 3.3: CHECK FILE HISTORY FOR RELATED CHANGES
+Record: Recent `clk-pll.c` commits are unrelated (GFP helpers,
+`determine_rate`, RPM). This commit is **standalone**, not patch X/Y of
+a clk series. Author/submitter Tegra DT work around the same time
+(TF600T, grouper, tegra114 EMC) does not need to land with this 1-line
+clk case.
 
-**Step 3.4: CHECK THE AUTHOR'S OTHER COMMITS**
-- Only this clk/zynq commit from William Theesfeld in this tree
-- Weight comes from reviewers: Michal Simek (Zynq) and Brian Masney
-  (clk)
-- Record: `[author not subsystem maintainer; both relevant maintainers
-  reviewed]`
+Step 3.4: CHECK THE AUTHOR'S OTHER COMMITS
+Record: Dmitry Osipenko is a regular Tegra clk contributor (`Don't allow
+zero clock rate`, PLLU config, gate refcounting, etc.). Submitter Ryhel
+resubmitted with maintainer Ack. Applied by Brian Masney.
 
-**Step 3.5: CHECK FOR DEPENDENT/PREREQUISITE COMMITS**
-- Uses existing `kasprintf`, `kfree`, `goto err` — all present
-- Mainline context uses `kmalloc_obj`; this tree still uses
-  `kmalloc(sizeof(*lock), GFP_KERNEL)`. The hunk does not touch that
-  line, so no `kmalloc_obj` dependency.
-- Record: `[no prerequisites; applies standalone against this tree’s
-  kmalloc() form]`
+Step 3.5: CHECK FOR DEPENDENT/PREREQUISITE COMMITS
+Record: **None.** Diff only adds a `case` label. `_calc_rate`, the
+9.6/28.8 arm, and `BUG()` default all exist in this file independently
+of later refactors. Can apply standalone.
 
 ===============================================================
 PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
 ===============================================================
 
-**Step 4.1: FIND THE ORIGINAL PATCH DISCUSSION**
-- `b4 dig -c d4d0d335e8d37c6c7e1c5664c7664288eca5a09b` →
-  https://patch.msgid.link/20260601203500.658135-1-william@theesfeld.net
-- `b4 dig -a`: **v1 only** (2026-06-01)
-- Thread saved to mbox: Michal Simek Reviewed-by (2026-06-02); Brian
-  Masney Reviewed-by (2026-06-15). No NAK, no requested respin, no Cc:
-  stable in review.
-- Lore WebFetch returned 403; discussion read from `b4 dig -m` instead
-- Record: `[lore msgid 20260601203500.658135-1-william@theesfeld.net]
-  [v1 applied] [no NAKs] [no stable nomination in thread]`
+Step 4.1: FIND THE ORIGINAL PATCH DISCUSSION
+Record:
+- **b4 dig:**
+  https://patch.msgid.link/20260427132447.118272-2-clamor95@gmail.com
+- **v1:** 2026-04-17 `20260417073452.23342-2-clamor95@gmail.com`
+- **v2 / resend:** 2026-04-27 (cover + patch); Thierry Ack 2026-05-28
+- Cover letter: “Fix this by adding 48MHz clock support… aligned with
+  downstream 3.4 kernel for tegra114 logic”
+- **No NAK.** Only reviewer reply was Thierry’s **Acked-by**.
+- **No Cc: stable** in review (absence is not a negative).
 
-**Step 4.2: CHECK WHO REVIEWED THE PATCH**
-- `b4 dig -w` recipients: Turquette, Boyd, Masney, Simek, linux-clk,
-  linux-arm-kernel, linux-kernel
-- Record: `[clk maintainers + Zynq maintainer were on To/Cc; both
-  Reviewed-by]`
+Step 4.2: CHECK WHO REVIEWED THE PATCH
+Record: Recipients included Stephen Boyd, Michael Turquette, Thierry
+Reding, Jonathan Hunter, linux-clk, linux-tegra. **Thierry Reding
+acked.** Right maintainers were on the thread.
 
-**Step 4.3: SEARCH FOR THE BUG REPORT**
-- No Reported-by / Link / syzbot
-- Record: `[no external bug report; found by code inspection]`
+Step 4.3: SEARCH FOR THE BUG REPORT
+Record: No bugzilla/syzbot link. Description is a concrete
+firmware+hardware trigger (Surface 2 UEFI), not theoretical. Surface 2
+has **no in-tree DT** (tegra114 boards present: dalmore, roth, tn7,
+asus-tf701t only). Users still hit this with UEFI + out-of-tree/work-in-
+progress DT; the clk driver is in-tree for all Tegra114.
 
-**Step 4.4: CHECK FOR RELATED PATCHES AND SERIES**
-- Standalone v1 patch, not a series
-- Record: `[standalone]`
+Step 4.4: CHECK FOR RELATED PATCHES AND SERIES
+Record: Series is **v2 0/1 + 1/1**. Self-contained. No sibling patch
+required for the `BUG()` fix.
 
-**Step 4.5: CHECK STABLE MAILING LIST HISTORY**
-- `lore.kernel.org/stable/` fetch returned 403
-- Record: `[UNVERIFIED: stable-list discussion; not used for the
-  verdict]`
+Step 4.5: CHECK STABLE MAILING LIST HISTORY
+Record: **UNVERIFIED** — lore.kernel.org returned 403 (Anubis). Original
+linux-tegra/linux-clk thread was retrieved via `b4 dig -m`; no stable-
+list discussion in that mbox.
 
 ===============================================================
 PHASE 5: CODE SEMANTIC ANALYSIS
 ===============================================================
 
-**Step 5.1: IDENTIFY KEY FUNCTIONS**
-- Record: `[zynq_clk_register_periph_clk (modified); zynq_clk_setup
-  (caller)]`
+Step 5.1: IDENTIFY KEY FUNCTIONS
+Record: **`_calc_rate()`** only.
 
-**Step 5.2: TRACE CALLERS**
-Call sites in `zynq_clk_setup()` (CLK_OF_DECLARE `"xlnx,ps7-clkc"`,
-every Zynq boot):
-- lqspi, smc, pcap (single gate)
-- sdio0/sdio1, uart0/uart1, spi0/spi1 (two gates)
-- Record: `[boot-time OF clock init for Zynq PS peripherals]`
+Step 5.2: TRACE CALLERS
+Record:
+- Default `pll->params->calc_rate` in `_tegra_clk_register_pll()` for
+  non-PLLM PLLs.
+- Called from **`clk_pll_set_rate()`** and
+  **`clk_pll_determine_rate()`** when `_get_table_rate()` misses.
+- Tegra210 PLLs use `tegra210_pll_fixed_mdiv_cfg` instead; this path is
+  **tegra20/30/114/124**.
+- Context: boot clock init and later audio PLL rate changes. Not a
+  syscall-hot path, but **every boot** on affected firmware.
 
-**Step 5.3: TRACE CALLEES**
-- `kasprintf`, `kmalloc`/`kfree`, `clk_register_mux/divider/gate`
-- Record: `[name alloc + CCF register; gate clocks stored in clks[]]`
+Step 5.3: TRACE CALLEES
+Record: Integer divider math only (`cfreq`, `m`/`n`/`p`). No allocation,
+no locks inside `_calc_rate`. `clk_pll_set_rate` takes `pll->lock` after
+calc.
 
-**Step 5.4: FOLLOW THE CALL CHAIN**
-- `CLK_OF_DECLARE` → `zynq_clk_setup` → `zynq_clk_register_periph_clk`
-  during early boot on `CONFIG_ARCH_ZYNQ`
-- `CONFIG_ARCH_ZYNQ=y` in `arch/arm/configs/multi_v7_defconfig`
-- Not a syscall path; unprivileged users cannot trigger it except by
-  booting the platform (possibly under memory pressure)
-- Record: `[reachable on every Zynq boot; not userspace-triggerable
-  later]`
+Step 5.4: FOLLOW THE CALL CHAIN
+Record:
+`tegra114_clock_init` → `tegra_clk_apply_init_table` →
+`tegra_init_from_table` → `clk_set_rate(pll_a, 564480000)` →
+`clk_pll_set_rate` → `_calc_rate`.
+**Reachable from boot on Tegra114 when parent is 48 MHz.** Unprivileged
+userspace is not required; firmware state is enough.
 
-**Step 5.5: SEARCH FOR SIMILAR PATTERNS**
-- `zynq_clk_register_fclk()` already checks every `kasprintf`
-- After this patch, no remaining unchecked `kasprintf` in
-  `drivers/clk/zynq/clkc.c`
-- Record: `[sibling already fixed; this was the remaining hole]`
+Step 5.5: SEARCH FOR SIMILAR PATTERNS
+Record: Same `_calc_rate` switch is the single shared calculator. No
+duplicate 48 MHz holes in sibling functions. Freq tables still lack 48
+MHz PLLA rows (out-of-table path is intentional, per comment).
 
 ===============================================================
 PHASE 6: CROSS-REFERENCING AGAINST THE LOCAL TREE
 ===============================================================
 
-**Step 6.1: DOES THE BUGGY CODE EXIST IN THIS TREE?**
-- `git describe HEAD` → **v6.18.53-5049-g0f0bdc2b0dffb**
-- `make kernelversion` → **6.18.53**
-- Parent of the candidate still has unchecked `kasprintf` in
-  `zynq_clk_register_periph_clk`
-- Driver built as `obj-$(CONFIG_ARCH_ZYNQ) += zynq/`
-- Record: `[yes, buggy code exists in 6.18.y zynq clkc; bug since
-  v3.11]`
+Step 6.1: DOES THE BUGGY CODE EXIST IN THIS TREE?
+Record:
+- Tree: **`git describe HEAD` = `v7.3-rc4-27-gf0100363d8c37`**,
+  `VERSION=7 PATCHLEVEL=3 SUBLEVEL=0 EXTRAVERSION=-rc4`.
+- `git merge-base --is-ancestor 46e31d69a5475 HEAD` → **already in this
+  checkout** (landed in v7.3-rc1).
+- The **vulnerable pattern** (`_calc_rate` switch + `BUG()` on unknown
+  parent rate) is here and dates to 2013. The 48 MHz hole is what this
+  commit fills. This is not post-7.3 code; older stables that still lack
+  the case have the bug.
 
-**Step 6.2: CHECK FOR BACKPORT COMPLICATIONS**
-- Surrounding function matches; only the 8 check/label lines are needed
-- `kmalloc_obj` in the mainline diff context is **not** used in this
-  file here
-- Record: `[clean apply / trivial context]`
+Step 6.2: CHECK FOR BACKPORT COMPLICATIONS
+Record: **Clean apply** on any tree that still has the 9.6/28.8 arm
+without `case 48000000:`. Context in this file is stable. No backport
+rewrite needed.
 
-**Step 6.3: CHECK IF RELATED FIXES ARE ALREADY HERE**
-- `7938e9ce39d67` (kmalloc NPD in `zynq_clk_setup`) is already in this
-  tree — different allocation
-- fclk kasprintf checks already present
-- No earlier equivalent of this periph_clk check besides the candidate
-  itself
-- Record: `[no substitute fix for this function’s kasprintf]`
+Step 6.3: CHECK IF RELATED FIXES ARE ALREADY HERE
+Record: This **is** the fix (`46e31d69a5475`). No earlier alternate 48
+MHz handling in `clk-pll.c`.
 
 ===============================================================
 PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
 ===============================================================
 
-**Step 7.1: IDENTIFY THE SUBSYSTEM AND ITS CRITICALITY**
-- `drivers/clk/zynq/` — platform clock provider for Xilinx Zynq-7000
-- Criticality: **IMPORTANT** for Zynq (UART/SDIO/SPI clocks);
-  **PERIPHERAL** vs core kernel
-- Record: `[clk/zynq] [IMPORTANT for affected SoC, not universal]`
+Step 7.1: IDENTIFY THE SUBSYSTEM AND ITS CRITICALITY
+Record: **drivers/clk/tegra** — SoC clock driver. **IMPORTANT** for
+NVIDIA Tegra 20/30/114/124, not core-mm/VFS. Boot-blocking on those
+SoCs.
 
-**Step 7.2: ASSESS SUBSYSTEM ACTIVITY**
-- File is mature (2013); recent commits are small correctness fixes, not
-  refactors
-- Record: `[mature/stable platform driver]`
+Step 7.2: ASSESS SUBSYSTEM ACTIVITY
+Record: Mature driver (2013), still receiving fixes. This is a long-
+standing hole, not churn from a new subsystem.
 
 ===============================================================
 PHASE 8: IMPACT AND RISK ASSESSMENT
 ===============================================================
 
-**Step 8.1: DETERMINE WHO IS AFFECTED**
-- Record: `[platform-specific: CONFIG_ARCH_ZYNQ / xlnx,ps7-clkc]`
+Step 8.1: DETERMINE WHO IS AFFECTED
+Record: **Platform/firmware-specific:** Tegra boards whose firmware sets
+`pll_p_out1` to 48 MHz. Documented trigger is **Surface 2 UEFI**. Any
+tegra20/30/114/124 PLL using default `_calc_rate` with that parent rate.
 
-**Step 8.2: DETERMINE THE TRIGGER CONDITIONS**
-- `kasprintf(GFP_KERNEL, "%s_mux"/"%s_div", clk_name0)` during `__init`
-  (~tens of bytes)
-- Trigger: allocation failure at boot (rare, but same class this file
-  already treats as fatal via `BUG()`)
-- Not triggerable later from unprivileged userspace
-- Record: `[rare boot OOM; not a syscall race]`
+Step 8.2: DETERMINE THE TRIGGER CONDITIONS
+Record: **Every boot** with that firmware, during CAR init table
+application. Not a race. Not unprivileged-syscall; **unusable machine**
+if you boot Linux on that hardware.
 
-**Step 8.3: DETERMINE THE FAILURE MODE SEVERITY**
-Verified, not just the commit text:
-- NULL clock **name**: CCF fails `-ENOMEM` (no debugfs NPD on that path
-  in 6.18)
-- NULL **parent** name: `WARN()` then `-EINVAL`
-- Some combinations: `clks[i]` is `ERR_PTR` → existing `BUG()` in
-  `zynq_clk_setup`
-- Mixed success: possible boot with broken peripheral clocks + spinlock
-  leak
-- Author’s debugfs-NPD example is **overstated for this CCF**, but WARN
-  / leak / inconsistent init are real
-- Record: `[WARN + leak + possible BUG() or silently broken
-  UART/SDIO/SPI] [severity HIGH on trigger, trigger rare]`
+Step 8.3: DETERMINE THE FAILURE MODE SEVERITY
+Record: **`BUG()` on boot → CRITICAL** for affected devices (oops/panic,
+system does not come up). After the fix, worst case on tegra114 is
+`-EINVAL` + `WARN_ON` if M overflows, not a hard `BUG()`.
 
-**Step 8.4: CALCULATE RISK-BENEFIT RATIO**
-- Benefit: correct OOM handling for clocks used on every Zynq boot;
-  closes leak; avoids WARN and half-registered trees
-- Risk: 8 lines, error path only, same pattern already in-tree
-- Record: `[benefit medium-high if it fires; risk very low; ratio favors
-  backport]`
+Step 8.4: CALCULATE RISK-BENEFIT RATIO
+Record:
+- **Benefit:** high for those devices (boot vs die); moderate overall
+  (narrow hardware).
+- **Risk:** very low (one `case` label, existing formula).
+- **Ratio:** strongly favors taking it. Matches the **hardware quirk**
+  stable exception (USB/PCI quirk analogue: one-line table addition so
+  existing driver survives real firmware).
 
 ===============================================================
 PHASE 9: FINAL SYNTHESIS
 ===============================================================
 
-**Step 9.1: COMPILE THE EVIDENCE**
+Step 9.1: COMPILE THE EVIDENCE
+**FOR:**
+- Deterministic early-boot `BUG()`, verified via init_table →
+  `clk_set_rate(pll_a)` → `_calc_rate`.
+- One-line, obviously correct, same math as 9.6/28.8 MHz.
+- Acked by Tegra maintainer Thierry Reding; applied by clk maintainer.
+- Code path present since 2013; no prerequisites.
+- Hardware/firmware quirk, not a new UAPI.
 
-FOR:
-- Real missing error handling on `kasprintf` in a boot clock path that
-  already `BUG()`s on `IS_ERR(clks[i])`
-- Also a spinlock leak and a `WARN()` on NULL parent names
-- 8-line, obviously correct, mirrors in-tree sibling
-- Code and bug exist in this 6.18 tree since v3.11
-- Applies without `kmalloc_obj` or other prereqs
-- Reviewed by Zynq maintainer and clk maintainer
-- Same file already received a 2024 allocation-failure NPD fix
+**AGAINST:**
+- Subject looks like a feature (“support 48MHz”).
+- Surface 2 DT is not in mainline; user population is small.
+- PLLA 5-bit M may still reject the computed `m=48` (WARN instead of
+  BUG). Incomplete programming, but the crash is gone.
+- No syzbot/CVE/Fixes tag (expected for this review queue).
 
-AGAINST:
-- Trigger is a tiny boot-time allocation failure (rare)
-- No user/syzbot report
-- Debugfs NPD claim is not how 6.18 CCF handles a NULL `init.name`
-  (fails `-ENOMEM` first)
-- Platform-specific, not core
+**UNRESOLVED:**
+- Stable-list discussion (lore 403).
+- Whether every tegra114 board with 48 MHz pll_p_out1 can actually lock
+  PLLA after this; downstream 3.4 used this same case.
 
-UNRESOLVED:
-- Stable mailing list search (lore 403)
+Step 9.2: APPLY THE STABLE RULES CHECKLIST
+1. Obviously correct and tested? **PASS** — one case, maintainer Ack, in
+   mainline since v7.3-rc1.
+2. Fixes a real bug that affects users? **PASS** — UEFI Surface 2 (and
+   same firmware pattern) `BUG()` at boot.
+3. Important issue? **PASS** — boot `BUG()`, severity CRITICAL for that
+   hardware.
+4. Small and contained? **PASS** — +1 line, one function.
+5. No new features or APIs? **PASS** — quirk: accept a parent rate the
+   hardware/firmware already programs. No new sysfs/uapi/driver.
+6. Can apply to the local tree? **PASS** — surrounding `_calc_rate`
+   exists; patch is a single case add (already present on this 7.3-rc4
+   HEAD because the candidate came from this lineage).
 
-**Step 9.2: APPLY THE STABLE RULES CHECKLIST**
-1. Obviously correct and tested? **PASS** — matches existing fclk
-   pattern; two maintainer Reviewed-by
-2. Fixes a real bug that affects users? **PASS** — unchecked alloc,
-   leak, WARN, inconsistent `clks[]` on Zynq boot
-3. Important issue? **PASS** — boot `WARN`/`BUG()`/broken UART-SDIO-SPI
-   clocks; same class as the in-tree kmalloc NPD fix
-4. Small and contained? **PASS** — +8 lines, one function
-5. No new features or APIs? **PASS**
-6. Can apply to the local tree? **PASS** — function and bug present;
-   context is `kmalloc(sizeof)`, not `kmalloc_obj`
+Step 9.3: CHECK FOR EXCEPTION CATEGORIES
+Record: **Hardware quirk/workaround** (firmware-programmed clock the
+driver must not `BUG()` on). Analogous to USB/PCI quirk table entries.
 
-**Step 9.3: CHECK FOR EXCEPTION CATEGORIES**
-- Not a device ID / quirk / DT / build / docs exception
-- Record: `[none; qualifies as a normal small bugfix]`
+Step 9.4: MAKE YOUR DECISION
+This is a surgical boot-crash fix for a real firmware configuration. It
+meets stable rules and the quirk exception. Limited hardware does not
+disqualify it: obscure-device quirks are routinely taken. Incomplete
+PLLA table entries do not restore the `BUG()`, so they are not a reason
+to reject.
 
-**Step 9.4: MAKE YOUR DECISION**
-The patch is a small, maintainer-reviewed error-path fix for code this
-6.18 tree has had since v3.11. It does not add features. Risk is
-confined to the allocation-failure path. That is appropriate for this
-stable tree.
+What problem it solves: Tegra `_calc_rate()` treated 48 MHz `pll_p_out1`
+as illegal and called `BUG()` while setting PLLA during clock init.
+Surface 2 UEFI programs that rate.
 
-===============================================================
-What problem it solves for this tree
-===============================================================
-`zynq_clk_register_periph_clk()` builds mux/divider names with
-`kasprintf()` and, on failure, still calls into the clock framework.
-That can `WARN` on a NULL parent, leak the per-clock spinlock, and
-either `BUG()` in `zynq_clk_setup()` or leave UART/SDIO/SPI/LQSPI clocks
-half-registered. The fix stops before `clk_register_*`, frees the
-lock/name, and reports `-ENOMEM` the way lock allocation already does.
+Risk vs benefit: one `case` vs a boot panic. Benefit dominates.
 
-===============================================================
-Verification
-===============================================================
-- [Phase 1] Parsed tags: Reviewed-by Masney + Simek; no Fixes/Reported-
-  by/Cc stable; ignored pipeline Upstream/Sasha SOB
-- [Phase 1] Subject/body: handle kasprintf failure; claimed NPD; sibling
-  fclk pattern
-- [Phase 2] Diff: +8 in `zynq_clk_register_periph_clk`; parent still
-  unchecked (git show e3b8b15^)
-- [Phase 2] CCF: `kstrdup(NULL)` returns NULL (`mm/util.c:84`);
-  `__clk_register` `-ENOMEM` on NULL name (`clk.c:4435-4438`); NULL
-  parent `WARN` + `-EINVAL` (`clk.c:4347-4351`)
-- [Phase 2] `zynq_clk_setup` `BUG()`s on `IS_ERR(clks[i])`
-  (`clkc.c:570-575`)
-- [Phase 3] blame: function from `0ee52b157b8ed8` (v3.11-rc1); fclk
-  checks from `f8fe36f6083a70` (v3.13)
-- [Phase 3] related `7938e9ce39d67` kmalloc NPD fix is ancestor of HEAD
-- [Phase 3] no Fixes tag; original driver commit is in this tree
-- [Phase 4] `b4 dig -c d4d0d335…`: lore msgid
-  20260601203500.658135-1-william@theesfeld.net
-- [Phase 4] `b4 dig -a`: v1 only
-- [Phase 4] `b4 dig -w`: clk + Zynq maintainers on Cc
-- [Phase 4] mbox: Simek and Masney Reviewed-by; no NAK
-- [Phase 4] lore WebFetch 403; stable-list search UNVERIFIED
-- [Phase 5] callers: lqspi/smc/pcap/sdio/uart/spi from `zynq_clk_setup`;
-  `CLK_OF_DECLARE(zynq_clkc, "xlnx,ps7-clkc")`
-- [Phase 5] `CONFIG_ARCH_ZYNQ=y` in multi_v7_defconfig;
-  `obj-$(CONFIG_ARCH_ZYNQ) += zynq/`
-- [Phase 6] `git describe HEAD` = v6.18.53-5049-g0f0bdc2b0dffb;
-  kernelversion 6.18.53
-- [Phase 6] buggy kasprintf present without this patch; no kmalloc_obj
-  in this file
-- [Phase 8] failure mode verified against CCF (debugfs NPD overstated);
-  WARN/leak/BUG/broken periph clocks verified
-- UNVERIFIED: whether this hash was discussed on stable@ (lore 403)
+Concerns: no in-tree Surface 2 DT; possible later `-EINVAL` if M
+overflows. Neither makes the `BUG()` acceptable to leave in stable.
 
-The fix is small, surgical, present in the affected 6.18 code, and meets
-the stable criteria.
+Verification:
+- [Phase 1] Tags: Acked-by Thierry Reding; SOBs Osipenko, Schwöbel,
+  Ryhel, Masney; no Fixes/Cc-stable/Reported-by
+- [Phase 2] Diff: +1 line `case 48000000:` in `_calc_rate()` in
+  `drivers/clk/tegra/clk-pll.c`
+- [Phase 2] tegra114 `init_table` sets PLLA 564480000; parent
+  `pll_p_out1`; freq table has no 48 MHz input → `_calc_rate` on boot
+- [Phase 2] `divm_width=5` → m=48 may `-EINVAL` after the fix; `BUG()`
+  still avoided
+- [Phase 3] git blame: switch/`BUG()` from `8f8f484bf355e5` (2013); this
+  commit `46e31d69a547530fbef499bde888b6bb45a1deac`
+- [Phase 3] `git merge-base --is-ancestor 46e31d69a5475 HEAD` → already
+  in this 7.3-rc4 tree
+- [Phase 3] No Fixes tag; standalone; no prerequisite commits
+- [Phase 4] `b4 dig -c 46e31d69a5475` → lore patch-id match; v1
+  2026-04-17, v2 2026-04-27
+- [Phase 4] `b4 dig -a`: v1 then v2 (“aligned with downstream 3.4”)
+- [Phase 4] `b4 dig -w`: linux-clk, linux-tegra, Thierry, Boyd, Hunter
+- [Phase 4] mbox: Thierry Acked-by; no NAK
+- [Phase 4] lore WebFetch 403; stable list UNVERIFIED
+- [Phase 5] callers: `clk_pll_set_rate`, `clk_pll_determine_rate`;
+  default calc_rate for non-PLLM
+- [Phase 6] `git describe HEAD` = v7.3-rc4-27-gf0100363d8c37; Makefile
+  7.3.0-rc4; file and BUG() default present
+- [Phase 6] No other 48 MHz pll_p_out1 fix in this file
+- [Phase 7] clk/tegra, important for Tegra SoCs
+- [Phase 8] Failure mode: `BUG()` at boot, CRITICAL for affected
+  firmware
+- UNVERIFIED: stable@ discussion; whether PLLA actually locks at 564.48
+  MHz with 48 MHz parent on Surface 2 hardware
 
 **YES**
 
- drivers/clk/zynq/clkc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/tegra/clk-pll.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
-index c28d3dacf0fb2..db40a9e7dd3d9 100644
---- a/drivers/clk/zynq/clkc.c
-+++ b/drivers/clk/zynq/clkc.c
-@@ -186,7 +186,11 @@ static void __init zynq_clk_register_periph_clk(enum zynq_clk clk0,
- 	spin_lock_init(lock);
- 
- 	mux_name = kasprintf(GFP_KERNEL, "%s_mux", clk_name0);
-+	if (!mux_name)
-+		goto err_mux_name;
- 	div_name = kasprintf(GFP_KERNEL, "%s_div", clk_name0);
-+	if (!div_name)
-+		goto err_div_name;
- 
- 	clk_register_mux(NULL, mux_name, parents, 4,
- 			CLK_SET_RATE_NO_REPARENT, clk_ctrl, 4, 2, 0, lock);
-@@ -205,6 +209,10 @@ static void __init zynq_clk_register_periph_clk(enum zynq_clk clk0,
- 
- 	return;
- 
-+err_div_name:
-+	kfree(mux_name);
-+err_mux_name:
-+	kfree(lock);
- err:
- 	clks[clk0] = ERR_PTR(-ENOMEM);
- 	if (two_gates)
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 591b9f0c155a0..e48ca3f4b5f86 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -575,6 +575,7 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 		break;
+ 	case 9600000:
+ 	case 28800000:
++	case 48000000:
+ 		/*
+ 		 * PLL_P_OUT1 rate is not listed in PLLA table
+ 		 */
 -- 
 2.53.0
 
