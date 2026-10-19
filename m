@@ -1,87 +1,107 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66684494824
-	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 07:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6CC49738E
+	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 07:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792396564; cv=none; b=lptiYmqklCiyLXEm0JXRqWoA+GiNxnWx3Tn0ASkD1HlffRDt8j5yy/l8Tr6wmZ+rvyRI9Xtxa9JNhdlZ4vVZAhVF1svbjRuCNjC3Rg5URuT90M6mfbmn42A0bSifmvV+YZ9b3Px+5hZv5paJvcB+eqQCImwvBlrPSU7Rzty2HRY=
+	t=1792396573; cv=none; b=RGDDYDtGAYiCtKTXCUY7Zdpuzsyf7zfp2nyp1Ge9ELrjnv4I7jPeSraYdmZExXJQXQcy6VUnMfm3KBlPqri26dMeoGbvZriDjAK1yMOC7RJXb5eCPGIWtA1LcWvIyrxNaR4U4g+4/gkkAmVpt2flMjCsPlxqzLFd5qi1KH1wz90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792396564; c=relaxed/simple;
-	bh=0UsQ3n60E97BGa2HlTROTrEG9CwDCmgVJdoridH2KxE=;
+	s=arc-20240116; t=1792396573; c=relaxed/simple;
+	bh=Mbao0ZUjMArL77rKoYJadFYD4YkJZ1UAMvZ/S7jtPkk=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mTzZ9FtKMgn8AxTnc30viaalAjhKNsZIi8RFdGr2oib6B4OC/sO1F5z665TgK3bxaaLgz6oc6xU0iWj6pVY86uFbZ0qrMTsyq7sbvmYdUD3KMFBEYgoYIab+rRkps3P5C4ZI0WUfKtEWbZw8KQ3ICb7snrHQb0fWqZof6DeCN6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcIg45gj; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=ucT05ITJw9J/y95AD+YnrE5LEvXCYJo+nlhMLxM/UthW277S62msTsLsdTM82zXTUgGDkGf18oddtbMo5RVxMHPMSNqsYxYARlowP2/AmLGVwq21Zewlv22OSNbwbuR19E8RefXOoxbpqGS1uvoe8o4ES3a+k0a5HYJn8YLUNyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MrTqI4gS; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcIg45gj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB5C11F000CE
-	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 07:55:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MrTqI4gS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 572B81F000CE
+	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 07:56:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792396555;
-	bh=0UsQ3n60E97BGa2HlTROTrEG9CwDCmgVJdoridH2KxE=;
+	s=k20260515; t=1792396571;
+	bh=2g+tZ3f/tKxpVgTAphkVP/7LRjo/1vbZL5IP2et9URU=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=WcIg45gjJPO89d8/3nYqpS8ZsQ1qJHg7fsyu6VkP2Bvh0PG4u3Yz/NT2RpJzTRLdf
-	 IGBg/vrEqmAslMw6j79Jl16Q0nnIQIe+wJ2MFZ6ORBEn+2WX1A2CRJJGs+fFwSGsS4
-	 I3VMSK793OTAHM+E7prAJd+jjIx0Ig1OR4oac7z2p8JZyOfqTX+IXXtK3sG9tzKh+m
-	 1Wr7Jow/ViUCJlu2SsUQ0EKO/j/i24SE0qowVmSuSQ14NMoJT6Tig+vC9jBq79lWse
-	 6d0Ul+6eNmqgWqZXil/2W3y2mdRLwGHq0xCLeJ3An1YHh0OOH1CahbpcXMat35Yii4
-	 lvwflv5b1c9TQ==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3a9e87ba696so12250651fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 00:55:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxxbaiNJmZNuyOuMQKNse9y+EvRZTqNPCfB+iSth9v1Bb8B4EPTCrf+Vu5AwN4yxeNgv3K2cR7QmLE=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKRLtCOK5H5KMu0aAy8B3LQQpfBrh/aGKI6XIHbavZGpxGRw/0w
-	fKRHxmlEf8TAGj6iEQ/63RW+ix+MH8pRiRdKhTSIfraOOIQNe62rkc+W48Uk35FJJZ+5tjtZj+6
-	s5Md7BoKwTX0GP8uvPQL4yRaqG4MRRZT4v8NyCUbHMg==
-X-Received: by 2002:a05:651c:54d:b0:3a9:a20e:ecf6 with SMTP id
- 38308e7fff4ca-3ab292fbe8fmr16672011fa.25.1792396554505; Mon, 19 Oct 2026
- 00:55:54 -0700 (PDT)
+	b=MrTqI4gSfn6hl3if2Bca56O29VVkYqMLZ2O3spZnYjiKGJxAbVKJ6ErywrOOuRKYP
+	 RV0L5XnweD20MyPreSC3BRCR7KEJnuWJ4FaTC6XiGEYwFL7W4CH5W2fW07/WSmTSz+
+	 X0DMDTx2SFcnNLjXqOg9RqbjPW/EueTsdhXXlHAm/Qkp1IM/zl+eMXQJb73xHNo4uW
+	 YFoo89ZauWsQh2rM+pR7eVKELdL5RvobfUuOqnn1eIqtdj+B5kYwQveg8AZhemIYpM
+	 g8jZipWTtn1rJQmO566ZCaJiGdxO3s5lg951gwuNII9BsxyQstxZIKXd6KN28SxA4t
+	 MLstE5qCNgolg==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3ab30b3212aso8336961fa.0
+        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 00:56:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBznJxpMEstbDgkUECelPy2mgbDFO+l6koxVYPz84j9CHm2RKne5TSNsZDRGP4mG1K+faYxVGaAn94I=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLekfFPY5yUaj0+niCpSsgx6G69eU4tB+xi9V6c8CPH5um+6bLA
+	pYFJTemPiA0ggCFI5/hKvYXYsKgc6FUo5zsqFGPkcSca25jRVEbwtXADozW3ERldDCvFN+LMkkH
+	B/YfAOFqMlDNinTd6FIlbXCzqzI/ZxazyTXl0kFytOw==
+X-Received: by 2002:a05:651c:324e:b0:3ab:1525:60ac with SMTP id
+ 38308e7fff4ca-3ab28f4910dmr15090981fa.1.1792396570080; Mon, 19 Oct 2026
+ 00:56:10 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 19 Oct 2026 00:55:53 -0700
+ HTTPREST; Mon, 19 Oct 2026 00:56:08 -0700
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 19 Oct 2026 00:55:53 -0700
+ HTTPREST; Mon, 19 Oct 2026 00:56:08 -0700
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20261017045817.1506961-1-shengchao.guo@oss.qualcomm.com>
+In-Reply-To: <20261017045817.1506961-5-shengchao.guo@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261017045817.1506961-1-shengchao.guo@oss.qualcomm.com>
-Date: Mon, 19 Oct 2026 00:55:53 -0700
-X-Gmail-Original-Message-ID: <CAMRc=McuN-mMYa-VDNgkYGh9rHTaVDvsWiCjxtET085dmpUGqg@mail.gmail.com>
-X-Gm-Features: AclHuK8slSWePaVIYeJDR5VtNjk_N9b9g2jdnzeLVp_UokRZoC9_JHQ0m_2QpDE
-Message-ID: <CAMRc=McuN-mMYa-VDNgkYGh9rHTaVDvsWiCjxtET085dmpUGqg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] qcom: videocc: Fix sleep clock on Glymur/SM8750/Nord
+References: <20261017045817.1506961-1-shengchao.guo@oss.qualcomm.com> <20261017045817.1506961-5-shengchao.guo@oss.qualcomm.com>
+Date: Mon, 19 Oct 2026 00:56:08 -0700
+X-Gmail-Original-Message-ID: <CAMRc=McnjCvLG68rczsWG3kzbEgUK0OELXiJjru_dycZ7j4Z-Q@mail.gmail.com>
+X-Gm-Features: AclHuK-cdAoXx0Pik_dUpFzW1Ov91tKFmHPIE62Ca6MoBV3RbxO84t0yIsH9VdI
+Message-ID: <CAMRc=McnjCvLG68rczsWG3kzbEgUK0OELXiJjru_dycZ7j4Z-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] arm64: dts: qcom: nord: Fix videocc clock inputs
 To: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Konrad Dybcio <konradybcio@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>, 
 	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, 
 	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Bartosz Golaszewski <brgl@kernel.org>, 
 	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>
+	Abel Vesa <abel.vesa@oss.qualcomm.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 17 Oct 2026 06:58:13 +0200, Shawn Guo
+On Sat, 17 Oct 2026 06:58:17 +0200, Shawn Guo
 <shengchao.guo@oss.qualcomm.com> said:
-> The video clock controller on Glymur, SM8750 and Nord has three clock
-> inputs: the board XO, the active-only board XO that feeds its PLL
-> reference, and the 32 kHz chip sleep clock that sources its sleep clock
-> generator. It has no AHB clock input; the AHB clock the controller uses
-> for itself is generated inside the block from the XO input.
+> The video clock controller binding describes three clock inputs for
+> Nord: the board XO, the active-only board XO and the 32 kHz sleep clock.
+> The videocc node instead passes the board XO and NW_GCC_VIDEO_AHB_CLK,
+> which is not an input of the controller.
 >
-> qcom,sm8450-videocc.yaml describes two inputs for every compatible it
-> covers, a board XO and a video AHB clock from GCC. For these three SoCs
-> that leaves the sleep clock input undescribable, and describes as the
-> second input a clock that is not routed into the controller.
+> Pass bi_tcxo_ao_div2 and the board sleep clock in place of the AHB
+> clock. No functional change, NW_GCC_VIDEO_AHB_CLK is kept always on by
+> the NW GCC driver.
 >
-> Patch 1 describes the three inputs for the Glymur, Nord and SM8750
-> compatibles and keeps the two-input description for the rest. Patches
-> 2-4 bring the Glymur, SM8750 and Nord videocc nodes in line with it.
-> None of the DTS changes is a functional change.
+> Assisted-by: LLM
+> Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/nord-embedded.dtsi | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/nord-embedded.dtsi b/arch/arm64/boot/dts/qcom/nord-embedded.dtsi
+> index 1ab7d9bc3cfe..62d14be55839 100644
+> --- a/arch/arm64/boot/dts/qcom/nord-embedded.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/nord-embedded.dtsi
+> @@ -886,7 +886,8 @@ videocc: clock-controller@aaf0000 {
+>  		compatible = "qcom,nord-videocc";
+>  		reg = <0x0 0x0aaf0000 0x0 0x10000>;
+>  		clocks = <&bi_tcxo_div2>,
+> -			 <&nwgcc NW_GCC_VIDEO_AHB_CLK>;
+> +			 <&bi_tcxo_ao_div2>,
+> +			 <&sleep_clk>;
+>  		power-domains = <&rpmhpd RPMHPD_MMCX>,
+>  				<&rpmhpd RPMHPD_MXC>;
+>  		required-opps = <&rpmhpd_opp_low_svs>,
+> --
+> 2.43.0
+>
 >
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Tested-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
