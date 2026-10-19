@@ -1,69 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=10.30.226.211
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792422157;
-	b=3O+b/uv4BVo8lyza8970xQt0K3Vgyk7SDx7T4aPCS9kZfjAB+v+MbDcTScT7q7Ai2i3N
-	 1969F1KJIMinnOysNNFaImS7vlHfvKPuvOGdw2axFJHNfNkKFG3JMU7MWkNpMxEg0bfom
-	 GwYIyaYM3/u4gxtVo0RSQ97f7DFn2W7dPVXfou2FH/7EhdYuH9m3SLQQyCKtVz9o7t7kr
-	 /slvzBHIhf7noXvJXFHwOsDbDtaHcyQieo3IZAVise/g2YsoyrsGXpE313KSA5fdRkOR4
-	 9Ix8C5s3NdQxjhFADjxlpWXJiO11dQRlQIETG1Yj5KcjenaG+NP7v4cne1wS+QqHRhg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792422157;
-	h=Received:Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:
-	 Cc:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 Date;
-	bh=o0e483cj+Ai1hA8903e3qQwlNkUDCHTKvHJfd4s0hG8=;
-	b=t4phONdN6b+AHaEao2yX+tecMDFW0qux7Ao9oDgQNlH6AqZXkAhpBvT4D87j8NDiGPaG
-	 G76BTic7rMjJdxB/pJ5S7AVRY+RFwmvs9uMvda1N4gR3D5neB0q6f+W3RzhBbezMOoJFe
-	 5ntIH6C3jX2fOgAiR+vfUGCByvpDle0sgpFN8ws9C0rBKZqkHi24YNpvVyyqOyK+pK70q
-	 4nycAJA/VPWFUGrj+khKijGGYElbTTTEURyc0HLJakGCHbU0RH13n1EsZ7vf5pidhRzz7
-	 SM1e+g9BesRetLEic71gS6mZwRwqZSPMjI6+uEut51CzGz40F+6Xp8wwvEQ0U6Sunqw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NQsgK9w1;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=10.30.226.211
-Received: from aws-us-west-2-korg-listserv-1.web.codeaurora.org (ip-10-30-226-211.us-west-2.compute.internal [10.30.226.211])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21007607BF17
-	for <linux-clk.vger.kernel.org@localhost.mlmmj>; Mon, 19 Oct 2026 15:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NQsgK9w1
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.169
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792422181;
+	b=cSHcFB0br6LX1ta3FnTqQizNRfaML/UqX5L7EFyGLfIo8uYE4Dakyu4CH1gPkCSXfP5f
+	 1DrpofRw/ubjBFBoXLsWkfBA7Cw217w+BvoFZ3asnOPwCLozCfRZKscLwHmdW8zevU5O3
+	 t90Y/6HKm3eC8Pz2n+6tpK8Vs0LxGbY6Ldl4NU7EV3PFRrBMK8j2f0IRfr7odUEw0odmD
+	 hpsCLF4KSA3yIPHw0f5LSc/kMI7CLbaIGhNmyigI/dIW4BsX7RtXrcmH4GizNz+QMRsVA
+	 CLqoI/xDUjOoJzUYQuCHUFgnuWBkgXvXjHPWZibJdLNmJx63QIP/HoxQa3G5UkguIeA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792422181;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=Yo6/2OGJfxhXILo4QGIB9gHfvFskGfKjbh+hNyiFvf8=;
+	b=OEY82Q0MGsqQ8iyTHnTR9woGPSiSpVcfI5HWvD34uFNL+ld/m3Xe5kfoY8wfCivulNl+
+	 fEvUEwer62lQoJ97DCO5cMltoPwhl9d0X8Ibh3yijBcRfaIR+4ptRKUaGcaoq/eXc7f2k
+	 4AAWlBe1wTZ9errQ7dUQGP2GmxcmJLSYMFMDuxbHejQG67MjMUdiNR91I3lW46NjyvyJv
+	 I7FN4E5wZeEDjMCHY9b13boJ4Ty0ceY+olmDREBH/8V5fBO9xMjrYtz0cyZzUizmJ4RRs
+	 amPL9YN+ImJa7qQeW4EJy/IIwh5WRaCfXX8QhJP2/9kXLg0dcTy3i8OINMYyW2+JcvQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.128.169
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3AA6513D0
-	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 15:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792422157; cv=none; b=AWmZByEQKFlr+0bEtmF0L7GEUFAtHJtrkU5TZDP+Jj3wtFcgjQGX/VWjSYPG0nNwjdCVb0aopFcQCiK7doZr+fUK3J9sTl88/7yZ+R2VIARwYJK5mxjGodP8npwBd4O8gHxRuffTYGOAOxceMVIOjMx8gH5BTVyM4QOe9yYd95E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792422157; c=relaxed/simple;
-	bh=Fy7wr5/Vr5YhRVpkHSQmIHTeJiOofOLOAgdN2iuPBTw=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=hZCJA+QLAYDWHuW8l1uV5HyH4/T7sR0emfTWvUVne7JpSXyQ5SNEP9QvXmegQ1sA0hVTN/pQiuSimxtJi8ejtR/+YfwVcWs9+SA6Fk1Xx3J/S6jmetKpNURNcURPFOEr1RhHW2/GgFa8bFtz0gtBfqGlsJpv3W6ij5A0oI4V4I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQsgK9w1; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B960A1F000C4;
-	Mon, 19 Oct 2026 15:02:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792422155;
-	bh=o0e483cj+Ai1hA8903e3qQwlNkUDCHTKvHJfd4s0hG8=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=NQsgK9w1RuVwNqcPLoJydRBjgXkx1yYXkcmcGvc7NiPadX55jk4Ly5VWVDyHrk7BD
-	 1MN0gvuOezzrhmulSInpnBg6tbrsazq7ur7xGJbOtg+0HPGt7IKm727QvqMbj0Ebmm
-	 7V5FvbwNo1e2S7Ckxn7TbPHPAyegw94ucI+FGZm49P/kwvqzLAPqfIKHAulkNZ2ZJg
-	 fxowiPIyLYEByaaQzH0KyQuBWkz3rHdLmISHWPVA7chnAGNKm1trD7c0zr/OySfDym
-	 PcztYg3lY0xuah8KoCW4lmjXlExfTjk7EA3SpgnqYtgNUDV6s5Fq2MfXl2J9ogexhc
-	 9c9wYNo9/aCsA==
-Message-ID: <sashiko-outbox-177595@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH AUTOSEL 6.18-5.10] clk: tegra: support 48MHz clock for
- pll_p_out1
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Sasha Levin" <sashal@kernel.org>
-Cc: linux-clk@vger.kernel.org
-In-Reply-To: <20261019135441.1420968-333-sashal@kernel.org>
-References: <20261019135441.1420968-1-sashal@kernel.org>
- <20261019135441.1420968-333-sashal@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Oct 2026 15:02:35 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10CE607D347
+	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 15:03:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F10CE607D347
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-8acda240937so17097867b3.3
+        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 08:03:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792422180; x=1793026980;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Yo6/2OGJfxhXILo4QGIB9gHfvFskGfKjbh+hNyiFvf8=;
+        b=xq7i03BZBQS25nq7sWXjoVciMEHkzjRKAtyvTznMFxyHzTs8jC79+WG8UR2ZnYmNIK
+         hDEBAwbXOYO0w6/++pqX9Z2U44MGoWcMRxJO239EupFgLXIwRbtQkFlVuvQGzGZ6Cp3v
+         v69PkTxC6UefY5CnxI4ClAcU9AirqJL5FtukwtvA8SsLMkvSVXeuNt09d66wMwFfF8/M
+         vbIA0OjZ4rP1pQ9ldljs75xD2GeR3M8jdGV61hdvnFfi+WTlu9U3ArbE3z6Q7ipKFLGI
+         rGc5MwSs/5INTzFd1wR6WV9oL606ay99Nygjug8JJieEqkQqj1FptQKItkRkjkiEQqa1
+         StwQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzpH6apLWE+ZhPlYjIqU8+slCKv+QleQN2Br4qGtRGXBrYeZKtnKYEtOp3s4ft/zeO9ValEVIc7saM=@vger.kernel.org
+X-Gm-Message-State: AFq9FYL0RR9I8Qhs63wpR9G1e6+paLKVtCuFih6a+i7AVffDrxe6p/Eb
+	SVeAvfenDYB+Ht2yYbippGsVD/G87ereNImRftihFlgHKzQjenB9VZ979RV3CCAVMm8=
+X-Gm-Gg: AYBFou0QH5iWeneGaGRsZtWM8JJsZMCAm8pQ5vPkuVzt6TkRi1fnNajyGwy62dG7I61
+	VCb9nm9yIHpH5p+rytFcFCP0eLC10FRnQAMeztrUvmCOS6IMpt0Vlzz9YcfJLOv6+sdlL2/RmH4
+	Ffmus37+HgHOvXR1mO0VTkdPOQk06T8s/S9cVFPdoGumTZ8XnOaqSQZ+hlHZkD27Eda52qbk7Es
+	VkvqbB7mHFfoWh1E2y4ZRCKTozs3figWNAIsKYmrIEUd+dIzf+UF6NESWJN2oMiOuAQ12JkdSbU
+	phOBp/qafrOD2ZrwuYtUQMEn9+wecbo6qL/xENTE+ZvlQ6+hjR3LNMelGfTAdAwtIHxXOkJwR/f
+	cvnrx3vu/O5PpeimhoRxJnLPR5rMy58B4sqjpro470JZr4avnXzDus5xZL8YiSo6jL4qudblfrF
+	hyz3CBwpLeRaEuhofDqOlOv8/RQkQC9Iy9D9Q2N8RdL4vEmW1OdZJdwJVew6JQh/fV7OnZEMzfe
+	3snbFwOfwYn/9SaZQDFUaUQoB6B4J9GwWRSqd6U
+X-Received: by 2002:a05:690c:113:b0:882:309e:fcaa with SMTP id 00721157ae682-8b0f213a803mr24312837b3.15.1792422179843;
+        Mon, 19 Oct 2026 08:02:59 -0700 (PDT)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com. [209.85.160.181])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91be8f89b54sm61810816d6.7.2026.10.19.08.02.59
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Oct 2026 08:02:59 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-5366463571cso12867211cf.3
+        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 08:02:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBy3qZ84Gkj6vcDUSrcylGV+Q4GYo73TZ7Hp245+cqA6rPntJklP1f5Ncb7M7KVzk5okMtGx2Enobbs=@vger.kernel.org
+X-Received: by 2002:a05:6102:f86:b0:7cb:288a:b66d with SMTP id
+ ada2fe7eead31-7cc369ac7b5mr1684195137.20.1792421799154; Mon, 19 Oct 2026
+ 07:56:39 -0700 (PDT)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -72,84 +78,165 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+References: <cover.1792163045.git.geert+renesas@glider.be> <1d7da50cfb58232c6dd4c4afefb938fd7e62fdcd.1792163045.git.geert+renesas@glider.be>
+ <20261019144256.GC763679@killaraus.ideasonboard.com>
+In-Reply-To: <20261019144256.GC763679@killaraus.ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Oct 2026 16:56:28 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWkAvkxHkzRVviF_NkZHP7UeCBjebxciE6jFN_8ViM=aQ@mail.gmail.com>
+X-Gm-Features: AclHuK9UZUEUyPMO3TO_vFhUiV57c9SStFUdXlV8TRdwkOQjKO9ySUhEkuMfo5c
+Message-ID: <CAMuHMdWkAvkxHkzRVviF_NkZHP7UeCBjebxciE6jFN_8ViM=aQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/8] clk: renesas: r8a78000: Add clk_hw to clk_map
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>, 
+	Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] clk: tegra: _calc_rate() always fails with -EINVAL for 48MHz par=
-ent_rate
---
+Hi Laurent,
 
-commit 5b85244997fd59cc85d760a4c82ed76c458e3f43
-Author: Dmitry Osipenko <digetx@gmail.com>
+On Mon, 19 Oct 2026 at 16:42, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Fri, Oct 16, 2026 at 05:55:40PM +0200, Geert Uytterhoeven wrote:
+> > Prepare for mapping to other than fixed-rate clocks by adding a clk_hw
+> > pointer to the clk_map structure, and populating it up-front.
+> >
+> > Move r8a78000_cpg_priv.fixed_hws into fill_clk_map(), as it is no longer
+> > needed afterwards, and drop NUM_FIXED_CLKS.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-clk: tegra: support 48MHz clock for pll_p_out1
+> > --- a/drivers/clk/renesas/r8a78000-cpg.c
+> > +++ b/drivers/clk/renesas/r8a78000-cpg.c
+> > @@ -16,19 +16,24 @@
+> >
+> >  #include <dt-bindings/clock/renesas,r8a78000-cpg.h>
+> >
+> > +struct clk_map_in {
+>
+> The "_in" suffix isn't very explicit.
 
-This patch adds 48 MHz parent rate handling in _calc_rate() to avoid hitting
-a BUG() when UEFI configures pll_p_out1 to 48 MHz on Surface 2.
+I can add a comment...
 
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index 591b9f0c155a0..e48ca3f4b5f86 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -575,6 +575,7 @@ static int _calc_rate(struct clk_hw *hw, struct tegra=
-_clk_pll_freq_table *cfg,
->  		break;
->  	case 9600000:
->  	case 28800000:
-> +	case 48000000:
->  		/*
->  		 * PLL_P_OUT1 rate is not listed in PLLA table
->  		 */
+> > +     int dt_id;              /* DT binding clock ID or -1 sentinel */
+> > +     u32 fw_id;              /* FIXED_CLK() ID */
+> > +};
+> > +
+> >  struct clk_map {
+> >       int dt_id;              /* DT binding clock ID or -1 sentinel */
+> >       u32 fw_id;              /* FIXED_CLK() ID */
 
-[Severity: Medium]
-When parent_rate is 48000000, this switch arm in _calc_rate() in
-drivers/clk/tegra/clk-pll.c computes:
+BTW, do you think it would be worthwhile to reuse clk_map_in here?
 
-	cfreq =3D parent_rate / (parent_rate / 1000000);
+> > +     struct clk_hw *hw;
+> >  };
 
-which evaluates to 1000000 (1 MHz). Later in _calc_rate(), cfg->m is
-calculated and validated against divm_max(pll):
+> > @@ -92,35 +94,69 @@ static struct clk_hw *r8a78000_clk_get(struct of_phandle_args *spec,
+> >       return hw;
+> >  }
+> >
+> > -static int register_fixed_clks(struct r8a78000_cpg_priv *priv)
+> > +static struct clk_hw **register_fixed_clks(struct device *dev)
+> >  {
+> > -     struct device *dev = priv->dev;
+> > +     unsigned int n = ARRAY_SIZE(fixed_clk_rates);
+> > +     struct clk_hw **hws, *hw;
+> >       unsigned long rate;
+> > -     struct clk_hw *hw;
+> >       const char *name;
+> >
+> > -     for (unsigned int i = 0; i < ARRAY_SIZE(fixed_clk_rates); i++) {
+> > +     hws = devm_kcalloc(dev, n, sizeof(*hws), GFP_KERNEL);
+> > +     if (!hws)
+> > +             return ERR_PTR(-ENOMEM);
+> > +
+> > +     for (unsigned int i = 0; i < n; i++) {
+> >               rate = fixed_clk_rates[i];
+> >               name = devm_kasprintf(dev, GFP_KERNEL, "cpg-%lu", rate);
+> >               if (!name)
+> > -                     return -ENOMEM;
+> > +                     return ERR_PTR(-ENOMEM);
+> >
+> >               hw = devm_clk_hw_register_fixed_rate(dev, name, NULL, 0, rate);
+> >               if (IS_ERR(hw))
+> > -                     return PTR_ERR(hw);
+> > +                     return ERR_CAST(hw);
+> >
+> > -             priv->fixed_hws[i] = hw;
+> > +             hws[i] = hw;
+> >       }
+> >
+> > -     return 0;
+> > +     return hws;
+> > +}
+> > +
+> > +static const struct clk_map *fill_clk_map(struct r8a78000_cpg_priv *priv,
+> > +                                       const struct clk_map_in *map_in)
+> > +{
+> > +     struct device *dev = priv->dev;
+> > +     struct clk_hw **fixed_hws;
+> > +     struct clk_map *map;
+> > +     unsigned int i;
+> > +
+> > +     fixed_hws = register_fixed_clks(dev);
+> > +     if (IS_ERR(fixed_hws))
+> > +             return ERR_CAST(fixed_hws);
+> > +
+> > +     for (i = 0; map_in[i].dt_id >= 0; i++) { }
+>
+> This is avoidable by passing { map, ARRAY_SIZE(map) } as match data
+> instead of just the map.
 
-	cfg->m =3D parent_rate / cfreq;
-	cfg->n =3D cfg->output_rate / cfreq;
-	cfg->cpcon =3D OUT_OF_TABLE_CPCON;
+True, and I did consider this.
+The same mechanism is used in the MDLC driver, where using ARRAY_SIZE()
+would quickly became a bigger burden due to the presence of many
+more maps.  So for consistency, I kept it the same in both drivers.
+An initialization macro might make it more manageable, though.
 
-	if (cfg->m =3D=3D 0 || cfg->m > divm_max(pll) ||
-	    cfg->n > divn_max(pll) || (1 << p_div) > divp_max(pll) ||
-	    cfg->output_rate > pll->params->vco_max) {
-		return -EINVAL;
-	}
+> > +
+> > +     map = devm_kcalloc(dev, i + 1, sizeof(*map), GFP_KERNEL);
+> > +     if (!map)
+> > +             return ERR_PTR(-ENOMEM);
+> > +
+> > +     for (i = 0; ; i++) {
+> > +             map[i].dt_id = map_in[i].dt_id;
+> > +             if (map[i].dt_id < 0)
+> > +                     break;
+> > +
+> > +             map[i].fw_id = map_in[i].fw_id;
+> > +             map[i].hw = fixed_hws[map[i].fw_id];
+> > +     }
+> > +
+> > +     devm_kfree(dev, fixed_hws);
+>
+> Why not plain kcalloc/kfree ?
 
-For parent_rate =3D=3D 48000000 and cfreq =3D=3D 1000000, cfg->m is 48. How=
-ever,
-pll_a uses a 5-bit input divider across Tegra114/124 (via pllp_nmp in
-drivers/clk/tegra/clk-tegra114.c) and Tegra20/30 (via default_nmp in
-drivers/clk/tegra/clk-pll.c):
+To avoid having to free it manually at multiple (three) locations,
+both in the error paths and the success path?
 
-	static struct div_nmp pllp_nmp =3D {
-		.divm_shift =3D 0,
-		.divm_width =3D 5,
-		...
-	};
+>
+> > +     return map;
+> >  }
 
-Because divm_max(pll) is 31, cfg->m > divm_max(pll) is always true when
-cfg->m is 48.
+Gr{oetje,eeting}s,
 
-When UEFI sets pll_p_out1 to 48 MHz, won't _calc_rate() unconditionally
-return -EINVAL whenever clk_pll_set_rate() or clk_pll_determine_rate() is
-called on pll_a, causing tegra114_clock_init() -> tegra_clk_apply_init_tabl=
-e()
--> tegra_init_from_table() in drivers/clk/tegra/clk.c to fail to configure
-TEGRA114_CLK_PLL_A and hit WARN_ON(1)?
+                        Geert
 
-		if (tbl->rate)
-			if (clk_set_rate(clk, tbl->rate)) {
-				pr_err("%s: Failed to set rate %lu of %s\n",
-				       __func__, tbl->rate,
-				       __clk_get_name(clk));
-				WARN_ON(1);
-			}
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019135441.1420=
-968-333-sashal@kernel.org?part=3D1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
