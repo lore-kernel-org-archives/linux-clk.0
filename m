@@ -1,75 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792426866;
-	b=O9mvLyW2aNS4pfKdhBsliMSM8g1UsEtOkXSm1sbqBBetyNr/pXH7PRpw+JGZlzyz9AcU
-	 Qf4AgYkPfxrEVO79Q3olubJktkrMuM6arNYzCrzsOcL6PjwCVSDSLifYcVfCJL/D0Nocm
-	 XulBVVl1tfXeGZZ5hSV70MTyV7MRXgpRjlWExvKMp9UZEjUryYzpIVZgY/m1/kAcCfY+2
-	 1hoywKAtyq+IJc7GJLcmea8k2RLznyKLKFlwmvmZfI796hzlP+5q6iJ2GSImqb9NVDhMo
-	 KFb3AD18Y/cZe5OjbN5wGevCVdjxmBW61A3g5vTVU/TZ18Kwv4RQDCZuS+xYh/jlIZA==
+	t=1792427282;
+	b=tBQgJnz59r0DIdoCGFxu5LCLc+vx9lazE2d+t4XBECgKzwNxisZsRhtBgio0h22QsKL0
+	 m3G0yw6FxEUsv0GmFfGJmfc3jQj78tq0MFGzsQRb5EfHM5IM+tbnpQwyuJNvil2+D65oR
+	 psQhdTGExgCFM1lsPNRXDS2SMF7KaarvG9Izn5fhbqrl/WEjEyskGpKDDrdkGNTia9jOt
+	 xhU3GZlmlRlyJPtW9oKnx6zWtuBdDc1UPn9di3mHk4ryo4ZGp58GjOj1PhlZSH4qo0DcX
+	 gk1Ogx9QOEuECdXx6qFHluF2VO+3rWu+IkvEGHCxwupY3iPGkS+0ikTs6xzIAvAputA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792426866;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792427282;
 	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
 	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type;
-	bh=VNVvlFmAYqdL7e0NbR8n4mhG40CW5PlDGJg9XCAnokY=;
-	b=dI4GXGHkNuPEVFUMtjoiFKE26ei+V/2XLmnhK0JjHaRvzYBz0Uyf2l/OMMd/3PG8kMlC
-	 GZdMQ4L2CRudZsW9pP6QL1ZJdCEsS+D1iEHmoZrrrEyb1Htw92qUCR8qRAbq1YGWTipga
-	 Q2YNC+oSWNk88p3aGBEsoF9kJd3q0zn9SF63NMVA11zT2+8QwBiYK7adB3bPeRgFPxoOB
-	 ONzkOwzhnP+lYyS4gvrRl8wd1xez481Nm+2upmtiOt7qgH0DqB32BeSeTGYSvWmb28yy9
-	 6RpwXa0o3j8ynuVKGhW57fhyD+8FNB+VjO3I2vwXsCpz3LdAiHB31Vbhppdv4OI1u/w==
+	bh=grtW76dvtFb1t9XrerLmKdj5qwyowpPAeH9vnpYNVM8=;
+	b=kmcnzwPGQuM6xw9BaeZJLg6SQiAlsEdDjdHq/VT7NHRMS0H0d1UvgPxv4/DeUC6XtGpk
+	 70gXQuocK1eBuKXnely5MazDX1Hky9fonYPb7rPY87225SZfCQehb+Y9MnxzcOpEtAOP7
+	 p3e65j4jzYnlEyDqHL2+iTNcIS8WQiRlbcEKCbM8Fl38hP5/oRZsrmip5wHXu7a2I1tZp
+	 o7IKoivvs2pzeWx9Uv+AxIKxMf/bCV1ybkQRo1YXiSQrkNcIkM5Mv8zp9lXoreN9OsVVp
+	 0a+B4ckMRbQzxkzM57Pe0ID+zKXJhoZMcjx16inW58mgpSg79tSaVo03ISJ01MhlZWA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=linux-m68k.org;
 	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.208.182
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	arc=none smtp.remote-ip=209.85.218.47
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328B160A2604
-	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 16:21:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 328B160A2604
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8CC606A31C
+	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 16:28:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2B8CC606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3ab35e31f6dso13613931fa.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 09:21:04 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-c2afa22e1dcso355494266b.1
+        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 09:28:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792426863; x=1793031663;
+        d=1e100.net; s=20260707; t=1792427280; x=1793032080;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=VNVvlFmAYqdL7e0NbR8n4mhG40CW5PlDGJg9XCAnokY=;
-        b=JoXqjHZusz1HF7kyKbuSORhCzutDJp7RP7qSRrmUsn6OFRJWELWyaz1uUssNmJ/6it
-         Kn1uiuiW5EX6e9ciRZFdoebvluT8jbqKL2dCLXbaN44th27fVO6TU7QPpR52msl+qg4c
-         97lhrnYMMfehfpFa1WKgaeQRvki2K/Xk1Kwg3I3CF7YpT0MEfH2hwUp82TMXxzaLfK/P
-         YT0WPqbLRjrHb5dPSqsxCtkA96AWUzo6xXh2+KDs3Zf4v1pz03NhTSHlnuVR71Y3Nkxl
-         FbqFGYc+z9Rk4Gy6TMriADaKwoZW8jA25JRvGDDEH42TAR+4hVwSEFFmSgQXLUL4EKYM
-         6fsA==
-X-Forwarded-Encrypted: i=1; AKwUvBzYJPc/TC4nlT2doTWDnF/bXgLSNQDOR9uGYTiGIYaHHDZ6PtaoZTJCNJVPk7Y9zYRNZJcXXjI5LRM=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJvgbmPotcwozjZ8RL1vjmW8GBSAdb0pw5I7fyhmkP9n1rhGRK6
-	jGGyCJP6A9yIcfbckmFtRKCTKZyOvmHrI2RjwqKWa2TM+zK0bbNI7/6Tas3dmcyPD1I=
-X-Gm-Gg: AYBFou3ISxsPjfjnfAqInwLdSlMWjftKra3hMWEa7jLY0iVBIaN5dtG5mG+Mj0py18P
-	2Ri1t/lpFsC1YXsLkdsqlwtVifvMN7yOfCgC7c3c4FPGTD9/8MuQC7KZroa4diYdGp80aOW1y8t
-	00jB3N0qowyg+uA4IyEPqCsksk6tLVwNXypXE9bh1bL5wheIPL7LSHNLTnRX4MCf1KPiMY4pMGr
-	qucwA61iSXWUxcot68UqZ8nWAONx/QXqpetegbCF02mqAt0i+UPvY4W8V2V/bUuqCwPML0eKH8J
-	M4oRws4eAFkAW9VVSAY5hU5Hja78DkbhC8Kj/kKctxNzi0n/+oQlQ0lgwY8BjuSX/HKceQqJZuJ
-	b1wboKUo9DvcLzTTMiZnlNr82ANGtbxuD1KSy0mq5GPj1eTf+tdnZ8nDdaNKqNjxLKxDczk9NHr
-	5zZQ6JgEBGbCVpfnnC5NruyciTy4EgK18fyCVyKtQtjc8bOOPzzVYC2MfsyYm71Q0QIOn7jUqD9
-	KrOkY+I+om4PS/cuxqexQ8s0CxyapmHPDT9T0rrHJsQcc1s
-X-Received: by 2002:a05:651c:50f:b0:3ab:4b23:c130 with SMTP id 38308e7fff4ca-3ab4b23c1cdmr2359641fa.1.1792426863010;
-        Mon, 19 Oct 2026 09:21:03 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3ab1ecd6d31sm23312061fa.17.2026.10.19.09.21.02
+        bh=grtW76dvtFb1t9XrerLmKdj5qwyowpPAeH9vnpYNVM8=;
+        b=iDbVytj4cAGK8N3UyyOBQEKGUGDdRpGoC4mXaR0PvENlbLnyfwIFIGJPfa6cEoYQye
+         35B2qFa9lr4Wd+VeEs+kep68FYPhj5UeLVYPpCtekU8RuvP9sLF3gcEpjeJ1SRAldM+r
+         6i+m1eaekUJM9n+jr35uZH5aes4puLTsx/XDAxxqCdihzLGCEI1j5Q0L2V66nfvQvOwB
+         J3IkRDRDM1PPgFJ+OhTJgOp4YEDQ4YYI+EgsvyK6ExsbPGKPxTcrdx9LOstKQ7wN1c98
+         PazxVhVQgAnWuUBs0JeiHFqL0GfXBNZcZNI4pLKkUMCSY6/SQUn+4+QwsqdGvQ5QN7Pt
+         c7FA==
+X-Forwarded-Encrypted: i=1; AKwUvBwQAyZEjii0mAbUVc4abKmXqSmruG2SFrRKjOusNyb/sYlGKjU7BeZKV5femUmi8DGbgauTYuI086s=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJOhDCUIyDkM/6+acp5teSObjeRG8HtIjqW7w8On5WeF+MDF/7A
+	yDVSq0AkMnyiNgJ22iyFu9rQs8AO4HsMozSjsktUwmJNQ3oM+z+MoelzCYZgeZoG4tc=
+X-Gm-Gg: AYBFou3jf6gCuFyzGLJHQobcX/AKfufb62r+LwXkNi/Jq4Sa47AQEDYg7GvQPl+Y1ua
+	j5o39YK7SYysOezRimZB+2QH8C8uSIuRThHjIPmJMe7rmLL8uu5ypZGz7iiy+AoQbFE6155To6G
+	jno/CTLNnQ3KULXhRqisXPdnhIRGTRz8es8Sp9xeCufA7FTZ7SBu6n/OxFJiEvAiojK13Cxg7M5
+	zlSQdyIxd23bPx0zaMTnhvovv/C5B4/ejPdW7GpS88nRcC1h6byuTRC9abUxl1IZbwCEt6q+x+r
+	77CN3x9ARHoFNiGC3260WwaGKPEPZ9QqN9+vrnwqvijG76vqbnZ9GK96rDewZq/PZsJw6qa/Qu+
+	uNKGqIW2hqe/W5WfyPlJF/352tEfu4seD06wEJlkbZN0Se+8cd9JI5k3A0501M8+3gsyWgUrYO0
+	yj9zW4Xe9Hq5vSqTcYmN0aJzuA3Z8A7HxDKOTgepl7gnHrmM4fiB7LDXylEImzLSRffAKoDmN0K
+	ITEXJAs86CdfXVuFwhguzw3gyZsDv6v+xVL
+X-Received: by 2002:a17:906:1006:10b0:c42:53f:af64 with SMTP id a640c23a62f3a-c42053fc28amr329305266b.49.1792427276930;
+        Mon, 19 Oct 2026 09:27:56 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4091eb4ba6sm379437166b.75.2026.10.19.09.27.56
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Oct 2026 09:21:02 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5bcb440d1cbso586504e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 09:21:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwZNFypddldHoSaJz8R+lUIx9EnYDVDL4FjiKvuYjlfohjVJ8cbBnYOXb0D1qNKgmP0lx25NrtIqkU=@vger.kernel.org
-X-Received: by 2002:a17:906:99c2:b0:c41:825d:ed8c with SMTP id
- a640c23a62f3a-c41825dfa20mr602336266b.26.1792426550419; Mon, 19 Oct 2026
- 09:15:50 -0700 (PDT)
+        Mon, 19 Oct 2026 09:27:56 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6b1f4d8e09aso3299913a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 09:27:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzvXAKc3HD3rv1UJ0oEsbYRUhhPPCBcqw9FvzwnX+isTqw7YUQG6Bq8TC5LG7MlniqdJeTBVmtnWS4=@vger.kernel.org
+X-Received: by 2002:a17:907:9486:b0:c40:f9ea:7387 with SMTP id
+ a640c23a62f3a-c4199c63fd2mr604034966b.6.1792427276005; Mon, 19 Oct 2026
+ 09:27:56 -0700 (PDT)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -79,145 +79,97 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <cover.1792163045.git.geert+renesas@glider.be> <c38d744c09dffff550a9b882051c211b572b8daf.1792163045.git.geert+renesas@glider.be>
- <20261019155619.GB3705@killaraus.ideasonboard.com>
-In-Reply-To: <20261019155619.GB3705@killaraus.ideasonboard.com>
+References: <cover.1792163045.git.geert+renesas@glider.be> <4524363679c1f2163aca3b3dda2bfbde170d095a.1792163045.git.geert+renesas@glider.be>
+ <sashiko-outbox-174605@kernel.org>
+In-Reply-To: <sashiko-outbox-174605@kernel.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 19 Oct 2026 18:15:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXDgc+NMFQ2HgkngsvyhVd1+yEgnk3DQpyVmVUQ_aLvEA@mail.gmail.com>
-X-Gm-Features: AclHuK_Wqb_TY8SIlHzico7Y9pGZs0pikimfidJslyUcM_WsFGAezgyxmzAMr2w
-Message-ID: <CAMuHMdXDgc+NMFQ2HgkngsvyhVd1+yEgnk3DQpyVmVUQ_aLvEA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/8] clk: renesas: r8a78000: Add SCMI remapping support
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
-	Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>, 
-	Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Date: Mon, 19 Oct 2026 18:27:42 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWT=9-GCt6pr3HT6C_=kxe2ud1y2jjXPZBH9MjcDYjB+g@mail.gmail.com>
+X-Gm-Features: AclHuK-zFCPihodw8HUR_tYnDf84w30NySJpayeqxb6wS60EuVgB6NNWocEAZa4
+Message-ID: <CAMuHMdWT=9-GCt6pr3HT6C_=kxe2ud1y2jjXPZBH9MjcDYjB+g@mail.gmail.com>
+Subject: Re: [PATCH v4 5/8] pmdomain: Make genpd_get_from_provider() return -EPROBE_DEFER
+To: sashiko-reviews@lists.linux.dev
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, 
+	conor+dt@kernel.org, wsa+renesas@sang-engineering.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Laurent,
+Hi Sashiko,
 
-On Mon, 19 Oct 2026 at 17:56, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Fri, Oct 16, 2026 at 05:55:41PM +0200, Geert Uytterhoeven wrote:
-> > Extend the Clock Pulse Generator driver for R-Car X5H with SCMI support,
-> > to remap DT clock IDs to abstractions (clocks) offered by the SCMI
-> > firmware when running on a system with SCMI, and SCMI support is
-> > enabled.  Take into account some peculiarities of the current SCMI
-> > firmware implementations, and fall-back to fixed-rate clocks as
-> > replacements for SCMI clocks that are not available.
-> > Support for bus clocks used by serial, I2C, and SPI devices is included.
+On Fri, 16 Oct 2026 at 18:09, <sashiko-bot@kernel.org> wrote:
+> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
+> - [Low] pmdomain: unnecessary probe deferral on invalid domain index
+> --
+>
+> commit c105920d803c0cf9396fb90d8428fdc4d83e8655
+> Author: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> pmdomain: Make genpd_get_from_provider() return -EPROBE_DEFER
+>
+> Unlike provider-based look-up functions in other subsystems[1],
+> genpd_get_from_provider() returns -ENOENT instead of -EPROBE_DEFER when
+> the provider is not found, thus not supporting probe deferral.
+> Currently this is worked around in of_genpd_add_subdomain() by remapping
+> -ENOENT[2].
+>
+> Fix this for all current and future callers by returning -EPROBE_DEFER
+> instead, and drop the no longer needed remapping code.
+>
+> > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> > index 964e44c2f78f1..88c886814a5b9 100644
+> > --- a/drivers/pmdomain/core.c
+> > +++ b/drivers/pmdomain/core.c
+> > @@ -3021,7 +3021,7 @@ EXPORT_SYMBOL_GPL(of_genpd_del_provider);
+> >  static struct generic_pm_domain *genpd_get_from_provider(
+> >                                       const struct of_phandle_args *genpdspec)
+> >  {
+> > -     struct generic_pm_domain *genpd = ERR_PTR(-ENOENT);
+> > +     struct generic_pm_domain *genpd = ERR_PTR(-EPROBE_DEFER);
+> >       struct of_genpd_provider *provider;
 > >
-> > This lets us avoid putting SCMI IDs in DT, and allows us to use the same
-> > hardware description in SoC DTS for systems with and without SCMI
-> > firmware.
+> >       if (!genpdspec)
+>
+> [ ... ]
+>
+> > @@ -3276,7 +3276,7 @@ int of_genpd_add_subdomain(const struct of_phandle_args *parent_spec,
+> >  out:
+> >       mutex_unlock(&gpd_list_lock);
 > >
-> > For now, it is assumed SCMI clock IDs are stable, and match SCP FW
-> > SDKv4.31.0 and later.
-> >
-> > Suggested-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> > --- a/drivers/clk/renesas/r8a78000-cpg.c
-> > +++ b/drivers/clk/renesas/r8a78000-cpg.c
-
-> > @@ -94,6 +113,21 @@ static struct clk_hw *r8a78000_clk_get(struct of_phandle_args *spec,
-> >       return hw;
+> > -     return ret == -ENOENT ? -EPROBE_DEFER : ret;
+> > +     return ret;
 > >  }
-> >
-> > +static struct device_node *scmi_find_proto(struct device_node *scmi, u32 proto)
 >
-> This is the kind of function name that looks prone to a namespace clash.
-> I'd name it r8a78000_clk_scmi_find_proto().
-
-I deliberately picked that name, as a suggestion for a future common
-helper ;-)
-
-> > @@ -145,7 +184,46 @@ static const struct clk_map *fill_clk_map(struct r8a78000_cpg_priv *priv,
-> >                       break;
-> >
-> >               map[i].fw_id = map_in[i].fw_id;
-> > -             map[i].hw = fixed_hws[map[i].fw_id];
-> > +             if (map[i].fw_id >= FIXED_CLK_OFFSET) {
-> > +                     enum fixed_clk idx = map[i].fw_id - FIXED_CLK_OFFSET;
-> > +
-> > +                     map[i].hw = fixed_hws[idx];
-> > +                     continue;
-> > +             }
-> > +
-> > +             scmi_spec.np = scmi_clk_np;
+> [Severity: Low]
+> Does this change leave an unnecessary probe deferral in __genpd_dev_pm_attach()?
 >
-> This seems to be safe because a NULL scmi_clk_np implies usage of the
-> default map, which only contains fixed clock offsets, but that makes the
-> code a bit too fragile for my taste.
-
-Fair enough, I can add a check for a non-zero scmi_clk_np...
-
+> If a device specifies a valid PM domain provider but an invalid domain index,
+> genpd_get_from_provider() returns the specific error code from the provider's
+> xlate callback, such as -ENOENT.
 >
-> > +             scmi_spec.args_count = 1;
-> > +             scmi_spec.args[0] = map[i].fw_id;
-> > +
-> > +             clk = of_clk_get_from_provider(&scmi_spec);
-
-... but please note of_clk_get_from_provider() will return -ENOENT
-in that case.
-
-> > +             if (IS_ERR(clk))
-> > +                     return dev_err_cast_probe(dev, clk,
-> > +                             "Failed to get SCMI clock %u\n", map[i].fw_id);
-> > +
-> > +             hw = __clk_get_hw(clk);
-> > +             if (!hw && fallback != map_in) {
+> However, __genpd_dev_pm_attach() still unconditionally routes all errors
+> through driver_deferred_probe_check_state():
 >
-> And if the above is correct, fallback should always be different from
-> map_in when fw_id corresponds to an SCMI clock.
+> drivers/pmdomain/core.c:__genpd_dev_pm_attach() {
+>         ...
+>         pd = genpd_get_from_provider(&pd_args);
+>         of_node_put(pd_args.np);
+>         if (IS_ERR(pd)) {
+>                 mutex_unlock(&gpd_list_lock);
+>                 dev_dbg(dev, "%s() failed to find PM domain: %ld\n",
+>                         __func__, PTR_ERR(pd));
+>                 return driver_deferred_probe_check_state(base_dev);
+>         }
+>         ...
+> }
+>
+> Could this unnecessarily delay boot and error reporting for devices with
+> permanently invalid PM domain IDs by forcing a wait until late_initcall?
+>
+> Should __genpd_dev_pm_attach() be updated to only call
+> driver_deferred_probe_check_state() when PTR_ERR(pd) is -EPROBE_DEFER?
 
-True.
-
-> What issue does this catch ? Should the fw map contain a fixed clock
-> entry for clocks not available in SCMI ?
-
-Originally it had entries for fixed clocks, too, as the firmware
-restricted access to several bus clocks.
-Recent firmware provides access to more bus clocks than before, hence
-I figured it would be better to use the SCMI clock when available,
-and only use the fixed clock when the SCMI clock is not available.
-
-> > +                     for (unsigned int j = 0; fallback[j].dt_id >= 0; j++) {
-> > +                             if (fallback[j].dt_id == map_in[i].dt_id) {
-> > +                                     enum fixed_clk idx = fallback[j].fw_id - FIXED_CLK_OFFSET;
-> > +
-> > +                                     map[i].hw = fixed_hws[idx];
-> > +                                     break;
-> > +                             }
-> > +                     }
-> > +                     if (map[i].hw)
-> > +                             continue;
-> > +             }
-> > +
-> > +             if (!hw) {
-> > +                     /* CLOCK_ATTRIBUTES is not supported */
-> > +                     dev_warn(dev, "SCMI clock %u is NULL\n", map[i].fw_id);
-> > +                     continue;
-> > +             }
-> > +
-> > +             dev_dbg(priv->dev, "SCMI clock %u is %s at %lu Hz\n",
-> > +                     map[i].fw_id, clk_hw_get_name(hw), clk_hw_get_rate(hw));
-> > +
-> > +             map[i].hw = hw;
-> >       }
-> >
-> >       devm_kfree(dev, fixed_hws);
+__genpd_dev_pm_attach() doesn't care about the actual error code,
+it only cares about error or success.  Hence a change in error code
+has no impact.
 
 Gr{oetje,eeting}s,
 
