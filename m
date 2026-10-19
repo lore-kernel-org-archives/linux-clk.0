@@ -1,50 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E23C6178A6;
-	Mon, 19 Oct 2026 14:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3CF628617;
+	Mon, 19 Oct 2026 14:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792418666; cv=none; b=H8ExvNKMXm0Jg/03RBYYNg76dtE/Y+B4ZE9xs5Cr34dSxtMSKWCiFp9B32I/JRaX/uFBydxcLDAMudiw0NvuOrMizuBv9S6eQVQBXWZO8lA1rl8KUpM34VfrL27finup5p+LyMbVyvbLu09yE41CSJ1gySRDMLSaMOecOmpCKK8=
+	t=1792418703; cv=none; b=IgstNaxQhsc1dBckxA3ZMF9pDN0Do0hFnUtZOoU2IKR6YiCtPpkS44NtHRBrl6ymDh+RfNbEBtiDS8Du3rIfRnkXCKJ3BdU8jksg2InmpXaB0qxoLSqGkV8oMfu3f5W9cYT4Ol5W2p4dZdHbaF9+PINTH87tvVqyVqmKQjT7D7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792418666; c=relaxed/simple;
-	bh=pR1vVLUKyUTT783C6FTmq/aWcHOscIJME0KDutelq8o=;
+	s=arc-20240116; t=1792418703; c=relaxed/simple;
+	bh=fsNJEv92VqApu4MDiXNnLuv16Emx+3YEMvYHfZNcigI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qUy1cACLF38l82BuGNlDB9rK2QIW9ZDOzplAzYiL5e7Jg/v29nKzzvaFRpF1vcYOHMtgBN8lR4dfNIDLJ2v6ixwqC7ajsEIb31N0+AOw93wjTvnR8uHwb4ZJaW77XL8n72NYIcXDWFDi7mkdqmhdukX4RKXgpBvAlD3foev++74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOuufbP3; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=vAsksoN2qF4IfZIAaKS9ZUCz4YVahv49mc45FTH6H2zrRkW+ZuOMl7qMqKmCakPKcLT4JdynbGmmWfhNKWXoqezH5jHePbRncc1Y6RhJ2KjJ+pSt+XVOy1gVMGOSf/q4rv1XsBJiDWyUc0a58P+C/M725Pl34TbGUNHAvC0WBxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOdz1It6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOuufbP3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 755491F000C4;
-	Mon, 19 Oct 2026 14:04:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOdz1It6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F80B1F000C7;
+	Mon, 19 Oct 2026 14:04:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792418664;
-	bh=gyiydqPIB402NHvOlfWp8G1/q2d5b9orTcF5s5wfi3k=;
+	s=k20260515; t=1792418700;
+	bh=uAAs1xRU044mRxttfqo0JbA6ZXpm2L7A9MFCtgdteys=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=fOuufbP3Nf1awuWPKTfmjJKfVuk6DZZEeVgJ8mO++uD2M/5qF/T9xl1alJKTz6mps
-	 jo+rNhpE5JIZaFdM2onr8IeHNd7re7RuwMHBU+CI0KAloUWZsERnSI467sOs0QyAtx
-	 Uk4lxcFU6Cm5DRRq37bvfuPj17J6HDE1BQaDWaE14/jHPoDi3mfOEz3pXhQ2EzLlBf
-	 8u3FcJuiO46FtpnurDWOK5n5kwNBFe2gGXvOFnCJ893EiuBvPS84HRZQpVFNPphth0
-	 gjBmtoJoIfrHwYWIr1qeE3JxLVuY1MEddK5k/4UsKmEFTl1nPVmxKzIjnJODja3hhD
-	 XTXel5xgZLsRA==
+	b=LOdz1It6o+LOIsKL/OAu0yUA+iKE7u/051aWZrFRUGoxAYLmAqlaeR3p8+9hvVdgh
+	 OzPnH0V2Okq1hZKV/SskmBG2af6H6f7jZUb0LPBJyEh0Takr03G2Ic0XL8BshXjbbr
+	 4kkEogjv774YIYhAPWEUGC5SAcRnBXnVOdQ8SZ30Po/uLTLSlX9XO5/GUTZPbROrwh
+	 qEj2bIM5WbaWsEpqU0iwo/3gbZy/u2oprWpLC/KokONuYDhpi5HmysuyYZuvx7U8Xx
+	 e6Zzge87snJmV7J8kWU5+hEB3mfwJhV0WGeRN3JHyH0w6rFwt/CLXjHTQMs7sOY5i5
+	 IUlc0vBRuktiQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
 Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	Frank Li <Frank.Li@nxp.com>,
 	Brian Masney <bmasney@redhat.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Abel Vesa <abel.vesa@oss.qualcomm.com>,
 	Sasha Levin <sashal@kernel.org>,
-	y.oudjana@protonmail.com,
+	abelvesa@kernel.org,
 	sboyd@kernel.org,
 	bmasney+clk@redhat.com,
 	jbrunet+clk@baylibre.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
 	linux-clk@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.18] clk: mediatek: mt6735-vdecsys: add missing MODULE_DEVICE_TABLE()
-Date: Mon, 19 Oct 2026 09:51:40 -0400
-Message-ID: <20261019135441.1420968-409-sashal@kernel.org>
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.18-5.10] clk: imx: imx8qxp-lpcg: add missing MODULE_DEVICE_TABLE()
+Date: Mon, 19 Oct 2026 09:52:05 -0400
+Message-ID: <20261019135441.1420968-434-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261019135441.1420968-1-sashal@kernel.org>
 References: <20261019135441.1420968-1-sashal@kernel.org>
@@ -62,373 +63,363 @@ Content-Transfer-Encoding: 8bit
 
 From: Pengpeng Hou <pengpeng@iscas.ac.cn>
 
-[ Upstream commit 096ab64a0e69460bfb3557d09e17d2933280a1c6 ]
+[ Upstream commit e89485455ac49925565061733c0d73d568333fc0 ]
 
-The driver has an OF match table wired to .of_match_table, but does
-not export the table with MODULE_DEVICE_TABLE().
+The driver has a match table for the of bus wired into its driver
+structure, but the table is not exported with MODULE_DEVICE_TABLE().
 
-Add the missing MODULE_DEVICE_TABLE(of, ...) entry so module alias
-information is generated for OF based module autoloading.
+Add the missing MODULE_DEVICE_TABLE() entry so module alias information
+is generated for automatic module loading.
 
 This is a source-level fix.  It does not claim dynamic hardware
 reproduction; the evidence is the driver-owned match table, its use by
-the platform driver, and the missing module alias publication.
+the driver registration structure, and the missing module alias
+publication.
 
 Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Reviewed-by: Brian Masney <bmasney@redhat.com>
-Signed-off-by: Brian Masney <bmasney@redhat.com>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Link: https://patch.msgid.link/20260704150344.59563-1-pengpeng@iscas.ac.cn
+Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-The local tree is **7.3.0-rc4** (`v7.3-rc4-27-gf0100363d8c37`). The
-vdecsys driver is present here; the change is a one-line
-`MODULE_DEVICE_TABLE(of, ...)` so OF module aliases are generated.
+## Local tree
 
-===============================================================
-PHASE 1: COMMIT MESSAGE FORENSICS
-===============================================================
+This checkout is **v7.3-rc4-27-gf0100363d8c37** (`VERSION=7 PATCHLEVEL=3
+SUBLEVEL=0 EXTRAVERSION=-rc4`). The candidate is `e89485455ac49` (`clk:
+imx: imx8qxp-lpcg: add missing MODULE_DEVICE_TABLE()`). The file and
+match table exist here; the one-line fix applies as written.
 
-**Step 1.1: PARSE THE SUBJECT LINE**
-Record: [clk: mediatek] [add] [missing MODULE_DEVICE_TABLE() for
-mt6735-vdecsys]
+---
 
-**Step 1.2: PARSE ALL COMMIT MESSAGE TAGS**
-Record:
-- Signed-off-by: Pengpeng Hou \<pengpeng@iscas.ac.cn\> (author)
-- Reviewed-by: Brian Masney \<bmasney@redhat.com\> (clk co-maintainer;
-  also committed the patch)
-- Signed-off-by: Brian Masney \<bmasney@redhat.com\>
-- No Fixes:, Reported-by:, Tested-by:, Link:, or Cc: stable
-- Ignore any pipeline-added Sasha Levin SOB (none on this commit)
+## PHASE 1: COMMIT MESSAGE FORENSICS
 
-**Step 1.3: ANALYZE THE COMMIT BODY TEXT**
-Record:
-- Bug: OF match table is wired to `.of_match_table` but not exported
-  with `MODULE_DEVICE_TABLE()`, so modpost does not emit `of:` aliases.
-- Symptom: when `CONFIG_COMMON_CLK_MT6735_VDECSYS=m`, udev/kmod cannot
-  autoload `clk-mt6735-vdecsys.ko` from the DT compatible string;
-  vdecsys clocks/resets never register unless the module is loaded by
+**Step 1.1 — Subject**
+- Record: `[clk: imx: imx8qxp-lpcg] [add] [export OF match table via
+  MODULE_DEVICE_TABLE so module aliases are generated]`
+
+**Step 1.2 — Tags**
+- Record:
+  - `Reviewed-by: Frank Li <Frank.Li@nxp.com>` (i.MX)
+  - `Reviewed-by: Brian Masney <bmasney@redhat.com>` (Red Hat / clk)
+  - `Reviewed-by: Peng Fan <peng.fan@nxp.com>` (i.MX clk)
+  - `Link: https://patch.msgid.link/20260704150344.59563-1-
+    pengpeng@iscas.ac.cn`
+  - `Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>` (author)
+  - `Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>` (clk-imx
+    maintainer, applied it)
+  - No `Fixes:`, no `Reported-by:`, no `Cc: stable` (absence expected)
+  - Ignore any Sasha Levin SOB if present (none on the real commit)
+
+**Step 1.3 — Body**
+- Record: The OF match table is wired into `platform_driver` but not
+  published with `MODULE_DEVICE_TABLE()`. Without that, modpost does not
+  emit `of:` aliases, so kmod/udev cannot autoload the module from DT
+  compatible strings.
+- Symptom: `CONFIG_CLK_IMX8QXP=m` → LPCG clock module does not load from
+  DT; consumers never get those clocks unless the module is loaded by
   hand.
-- Version info: none in the message. Driver introduced in
-  `0bd9b1211f741` (contained in v6.13-rc1); this fix is contained in
-  v7.3-rc1.
-- Root cause: omission at driver introduction, not a later regression.
+- Version info: none in the message.
+- Root cause: missing alias publication, not a runtime logic bug. Author
+  states it is a source-level finding, not a live hardware repro.
 
-**Step 1.4: DETECT HIDDEN BUG FIXES**
-Record: Not hidden. It is an explicit autoload/alias publication fix.
-Author calls it a “source-level fix” with no hardware reproduction; that
-is accurate (the missing macro is visible in the file) and does not make
-the bug theoretical.
+**Step 1.4 — Hidden bug fix?**
+- Record: Not disguised. It is a real autoload/modalias bug stated
+  plainly. The “source-level” wording means it was found by inspection,
+  not that it is theoretical: the table is used and not exported.
 
-===============================================================
-PHASE 2: DIFF ANALYSIS - LINE BY LINE
-===============================================================
+---
 
-**Step 2.1: INVENTORY THE CHANGES**
-Record:
-- File: `drivers/clk/mediatek/clk-mt6735-vdecsys.c` (+1 / -0)
-- Function/data: file-scope after `of_match_mt6735_vdecsys[]`
-- Scope: single-file, one-line surgical fix
+## PHASE 2: DIFF ANALYSIS
 
-**Step 2.2: UNDERSTAND THE CODE FLOW CHANGE**
-Record: Before: match table exists and is used for in-kernel platform
-matching, but no module alias is published. After:
-`MODULE_DEVICE_TABLE(of, of_match_mt6735_vdecsys)` aliases the table for
-`file2alias`/modpost. Affects the modular autoload path only;
-probe/remove logic is unchanged.
+**Step 2.1 — Inventory**
+- Record: `drivers/clk/imx/clk-imx8qxp-lpcg.c` — **+1 / −0**. One line
+  after `imx8qxp_lpcg_match[]`. Surgical, single-file.
 
-**Step 2.3: IDENTIFY THE BUG MECHANISM**
-Record: [Hardware enablement / module autoload] `MODULE_DEVICE_TABLE` is
-the OF analog of exporting PCI/USB IDs. Without it, `modules.alias`
-lacks `of:N*T*Cmediatek,mt6735-vdecsys`. Platform matching still works
-if the module is already loaded or built-in.
+**Step 2.2 — Flow**
+- Record: Before: `imx8qxp_lpcg_match` is only `of_match_table` (used
+  after the module is already loaded). After: same table is also a
+  `MODULE_DEVICE_TABLE(of, …)` so file2alias/modpost emits aliases at
+  build time. No probe/runtime path change.
 
-**Step 2.4: ASSESS THE FIX QUALITY**
-Record: Obviously correct; matches the established MediaTek clk pattern
-(`65c9ad77cbc0e` “Add MODULE_DEVICE_TABLE() where appropriate”).
-Compile-time alias generation only; no locking, no API, no runtime path
-change. Regression risk is negligible. Sibling `clk-mt6735-imgsys.c` /
-`clk-mt6735-mfgcfg.c` still lack the macro in this tree; that does not
-make this hunk wrong.
+**Step 2.3 — Bug mechanism**
+- Record: **Hardware/module autoload (OF alias publication)**. Match
+  table exists (`fsl,imx8qxp-lpcg-adma/conn/lsio` and `fsl,imx8qxp-
+  lpcg`) but is not exported. Same class as adding device IDs: userspace
+  cannot match hardware to the module.
 
-===============================================================
-PHASE 3: GIT HISTORY INVESTIGATION
-===============================================================
+**Step 2.4 — Fix quality**
+- Record: Obviously correct; matches every other i.MX clk driver that
+  already has `MODULE_DEVICE_TABLE(of, …)` (`clk-imx8qxp.c`, `clk-
+  imx8mm.c`, etc.). No API, locking, or structural change. Regression
+  risk is negligible: `=y` ignores aliases; `=m` only adds autoload.
 
-**Step 3.1: BLAME THE CHANGED LINES**
-Record: Match table from `0bd9b1211f741` (Yassine Oudjana, 2024-11-06;
-contained in v6.13-rc1). `MODULE_DEVICE_TABLE` line is this commit
-`096ab64a0e694`. Bug present from first introduction of the driver.
+---
 
-**Step 3.2: FOLLOW THE FIXES: TAG**
-Record: No Fixes: tag on this commit. A later unrelated series (`[PATCH
-07/32] clk: mediatek: mt6735: Add missing MODULE_DEVICE_TABLE()`) cited
-`Fixes: 0bd9b1211f74` for the same omission across four files. Intro
-commit is an ancestor of HEAD.
+## PHASE 3: GIT HISTORY
 
-**Step 3.3: CHECK FILE HISTORY FOR RELATED CHANGES**
-Record: Only two commits on this file: intro + this fix. Sibling same-
-day commit `36cf8d279ff90` does the same for vencsys. Standalone for
-vdecsys; no prerequisite refactor.
+**Step 3.1 — Blame**
+- Record: Match table from `1e3121bfe51a3` (“clk: imx: add imx8qxp lpcg
+  driver”, 2018, in **v5.0-rc1**). Module metadata from `e0d0d4d86c766`
+  (“Support building i.MX8QXP clock driver as module”, **v5.10-rc1**).
+  `builtin_platform_driver` → `module_platform_driver` in
+  `eee377b8f44e7` (2021, Fixes: that module-support commit). The hole
+  has been there for the whole modular lifetime of the driver.
 
-**Step 3.4: CHECK THE AUTHOR'S OTHER COMMITS**
-Record: Pengpeng Hou is not the MT6735 clk maintainer (that is Yassine
-Oudjana). Same-day vencsys twin plus several other `MODULE_DEVICE_TABLE`
-additions (rtc, vdpa, watchdog). Brian Masney, clk co-maintainer,
-reviewed and applied it.
+**Step 3.2 — Fixes: tag**
+- Record: None. Buggy omission is the module-support work
+  (`e0d0d4d86c766` / `eee377b8f44e7`). Both are in this tree.
 
-**Step 3.5: CHECK FOR DEPENDENT/PREREQUISITE COMMITS**
-Record: None. Macro has long existed in `include/linux/module.h`.
-Applies standalone.
+**Step 3.3 — File history**
+- Record: Recent file commits are unrelated (pm_runtime, ioremap).
+  Sibling `cd21fdcbef3fb` does the same for `clk-imx8qxp.c`. Standalone;
+  not “patch X/Y”.
 
-===============================================================
-PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
-===============================================================
+**Step 3.4 — Author**
+- Record: Pengpeng Hou also added the same fix for `clk-imx8qxp.c` and
+  MediaTek mt6735 clocks. Not the clk-imx maintainer; Abel Vesa applied
+  it with three subsystem/vendor reviews.
 
-**Step 4.1: FIND THE ORIGINAL PATCH DISCUSSION**
-Record:
-- Lore/msgid:
-  https://patch.msgid.link/20260704124450.11035-1-pengpeng@iscas.ac.cn
-- `b4 dig -a`: v1 only, applied as submitted
-- Thread (mbox): author post + Brian Masney `Reviewed-by:` on
-  2026-07-06. No NAK, no stable nomination, no requested revisions.
-- WebFetch of lore/spinics: 403/500; thread recovered via `b4 dig -m`.
+**Step 3.5 — Dependencies**
+- Record: Needs `imx8qxp_lpcg_match`, `module_platform_driver`, and
+  `<linux/module.h>`. All present here. Applies as a single line.
 
-**Step 4.2: CHECK WHO REVIEWED THE PATCH**
-Record (`b4 dig -w`): linux-clk, linux-mediatek, Stephen Boyd, Brian
-Masney, AngeloGioacchino Del Regno, Matthias Brugger, Yassine Oudjana.
-Review came from clk co-maintainer Brian Masney.
+---
 
-**Step 4.3: SEARCH FOR THE BUG REPORT**
-Record: No Reported-by, no bugzilla/syzbot. Author states source-level
-evidence only. No in-tree DTS uses `mediatek,mt6735-vdecsys` (binding
-only in `Documentation/devicetree/bindings/clock/mediatek,syscon.yaml`).
+## PHASE 4: MAILING LIST / EXTERNAL
 
-**Step 4.4: CHECK FOR RELATED PATCHES AND SERIES**
-Record: Twin vencsys patch applied in the same pile. Later 07/32 series
-(Akari Tsuyukusa, Aug 2026) would have covered
-imgsys+mfgcfg+vdecsys+vencsys together; vdecsys/vencsys were already
-fixed here. This commit does not depend on that series.
+**Step 4.1 — Original thread**
+- Record: `b4 dig -c e89485455ac49` →
+  https://patch.msgid.link/20260704150344.59563-1-pengpeng@iscas.ac.cn
+- `b4 dig -a`: **v1 only**, 2026-07-04.
+- Review: Peng Fan, Brian Masney, Frank Li: Reviewed-by only. Abel Vesa:
+  “Applied, thanks!” No NAK, no stable tag, no risk discussion.
 
-**Step 4.5: CHECK STABLE MAILING LIST HISTORY**
-Record: No dedicated stable thread found for this subject. UNVERIFIED
-whether an AUTOSEL pick already exists; that must not drive the verdict.
+**Step 4.2 — Recipients (`b4 dig -w`)**
+- Record: Abel Vesa, Peng Fan, Michael Turquette, Stephen Boyd, Frank
+  Li, Sascha Hauer, Fabio Estevam; `linux-clk`, `imx@lists.linux.dev`,
+  `linux-arm-kernel`, `linux-kernel`. Right maintainers and lists.
 
-===============================================================
-PHASE 5: CODE SEMANTIC ANALYSIS
-===============================================================
+**Step 4.3 — Bug report**
+- Record: No Reported-by / bugzilla / syzbot. Inspection-only, as the
+  commit says.
 
-**Step 5.1: IDENTIFY KEY FUNCTIONS IN THE DIFF**
-Record: No function body changed. Added `MODULE_DEVICE_TABLE` next to
-`of_match_mt6735_vdecsys`. Driver uses `mtk_clk_simple_probe` /
-`mtk_clk_simple_remove` via `module_platform_driver`.
+**Step 4.4 — Series**
+- Record: Standalone 1/1. Related but independent sibling on `clk-
+  imx8qxp.c`.
 
-**Step 5.2: TRACE CALLERS**
-Record: Probe is invoked by the platform core when a device matches
-`mediatek,mt6735-vdecsys`. Autoload (udev/kmod) is the path that was
-broken for `=m`. Built-in (`=y`) matching already worked via
-`.of_match_table`.
+**Step 4.5 — Stable list**
+- Record: Thread has no stable nomination. Direct lore.kernel.org
+  fetches returned **403**; no separate stable-list discussion verified.
 
-**Step 5.3: TRACE CALLEES**
-Record: `mtk_clk_simple_probe()` (`drivers/clk/mediatek/clk-mtk.c`)
-registers the vdecsys gates and resets from `vdecsys_clks`. Unchanged by
-this patch.
+---
 
-**Step 5.4: FOLLOW THE CALL CHAIN**
-Record: DT node `compatible = "mediatek,mt6735-vdecsys"` → (modular)
-udev alias lookup → `clk-mt6735-vdecsys.ko` → platform probe → video-
-decoder clocks. Reachable on MT6735 boards that describe that syscon; no
-in-tree board DTS. Unprivileged userspace cannot trigger it except by
-loading the module.
+## PHASE 5: CODE SEMANTICS
 
-**Step 5.5: SEARCH FOR SIMILAR PATTERNS**
-Record: Most MediaTek clk drivers already have `MODULE_DEVICE_TABLE`.
-MT6735 core clocks (apmixedsys/infracfg/pericfg/topckgen) have it;
-imgsys and mfgcfg in this tree still do not. Same class of omission as
-the 2023 sweep `65c9ad77cbc0e`.
+**Step 5.1 — Functions**
+- Record: No C function changed. Macro `MODULE_DEVICE_TABLE(of,
+  imx8qxp_lpcg_match)` next to the existing `of_device_id` table. Driver
+  still uses `module_platform_driver(imx8qxp_lpcg_clk_driver)`.
 
-===============================================================
-PHASE 6: CROSS-REFERENCING AGAINST THE LOCAL TREE
-===============================================================
+**Step 5.2 — “Callers”**
+- Record: Build-time: `scripts/mod/file2alias.c` looks up
+  `__mod_device_table__` and emits `of:` aliases. Runtime: kmod/udev on
+  DT `compatible`. Probe path unchanged. Makefile: `clk-imx-lpcg-
+  scu-$(CONFIG_CLK_IMX8QXP)` → aliases belong to `clk-imx-lpcg-scu.ko`.
 
-**Step 6.1: DOES THE BUGGY CODE EXIST IN THIS TREE?**
-Record: Yes. File exists; driver from `0bd9b1211f741` (v6.13-rc1).
-Kconfig `COMMON_CLK_MT6735_VDECSYS` is **tristate**, Makefile maps it to
-`clk-mt6735-vdecsys.o`. HEAD already contains `096ab64a0e694`
-(v7.3-rc1); the pre-fix omission is the code this candidate addresses.
+**Step 5.3 — Callees**
+- Record: None at runtime. Macro only creates an aliased copy of the
+  table for modpost.
 
-**Step 6.2: CHECK FOR BACKPORT COMPLICATIONS**
-Record: Clean apply. One added line at a stable match-table site; no
-refactor around it.
+**Step 5.4 — Reachability**
+- Record: Yes, from userspace/DT: i.MX8QXP/8QM DTS uses `fsl,imx8qxp-
+  lpcg` (e.g. `arch/arm64/boot/dts/freescale/imx8qm-ss-*.dtsi`). With
+  `=m`, udev should load the module from that compatible. `arm64
+  defconfig` has `CONFIG_CLK_IMX8QXP=y`, so the default distro/defconfig
+  path is unaffected; custom/distro `=m` is the affected path.
 
-**Step 6.3: CHECK IF RELATED FIXES ARE ALREADY HERE**
-Record: This exact line is present (commit `096ab64a0e694`). No
-alternate fix. imgsys/mfgcfg still missing aliases — separate omissions.
+**Step 5.5 — Similar patterns**
+- Record: Same missing-table pattern fixed in `clk-imx8qxp.c` and
+  several other `drivers/clk/imx/*` files already have
+  `MODULE_DEVICE_TABLE`. This was the LPCG outlier.
 
-===============================================================
-PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
-===============================================================
+---
 
-**Step 7.1: IDENTIFY THE SUBSYSTEM AND ITS CRITICALITY**
-Record: [drivers/clk/mediatek] [PERIPHERAL] — SoC-specific video-decoder
-clock/reset driver for MT6735 (Helio T1 era). Not core mm/net/fs.
+## PHASE 6: THIS TREE
 
-**Step 7.2: ASSESS SUBSYSTEM ACTIVITY**
-Record: MediaTek clk is actively developed; this file itself is quiet
-(two commits). MT6735 clk is listed Maintained (Yassine Oudjana).
+**Step 6.1 — Buggy code here?**
+- Record: Yes. Pre-commit parent still has the table without
+  `MODULE_DEVICE_TABLE`. Module support is in this tree. Bug dates to
+  v5.10 module support (autoload hole after v5.16
+  `module_platform_driver`).
 
-===============================================================
-PHASE 8: IMPACT AND RISK ASSESSMENT
-===============================================================
+**Step 6.2 — Backport difficulty**
+- Record: **Clean apply**. Context around the match table matches the
+  hunk.
 
-**Step 8.1: DETERMINE WHO IS AFFECTED**
-Record: Users of MT6735 with `CONFIG_COMMON_CLK_MT6735_VDECSYS=m`. No
-in-tree defconfig enables `COMMON_CLK_MT6735`; no in-tree DTS
-instantiates the node. Built-in builds are unaffected.
+**Step 6.3 — Already fixed another way?**
+- Record: No other autoload fix on this file. This commit *is* the fix
+  (already upstream in 7.3-rc). No substitute.
 
-**Step 8.2: DETERMINE THE TRIGGER CONDITIONS**
-Record: Boot/enumeration with the DT node while the driver is a module.
-Not a race. Not unprivileged-exploitable. Workaround: `modprobe clk-
-mt6735-vdecsys` or build `=y`.
+---
 
-**Step 8.3: DETERMINE THE FAILURE MODE SEVERITY**
-Record: Video-decoder clocks/resets never appear unless the module is
-loaded manually → decode/VPU consumers fail clock lookup. Not
-panic/UAF/corruption. Severity: MEDIUM for modular MT6735 vdec; LOW
-overall population. Failure is “device feature does not come up,” same
-class as missing device IDs.
+## PHASE 7: SUBSYSTEM CONTEXT
 
-**Step 8.4: CALCULATE RISK-BENEFIT RATIO**
-Record: Benefit: modular autoload for this clock controller. Risk: very
-low (one compile-time alias line). Ratio: favorable because risk is
-essentially zero.
+**Step 7.1**
+- Record: `[drivers/clk/imx — i.MX8QXP LPCG] [IMPORTANT for
+  i.MX8QXP/8QM; PERIPHERAL vs core kernel]`. Clock provider: if the
+  module never loads, LPCG-gated peripherals fail probe.
 
-===============================================================
-PHASE 9: FINAL SYNTHESIS
-===============================================================
+**Step 7.2**
+- Record: clk-imx is active (7.3 pulls). This driver itself is mature
+  (2018).
 
-**Step 9.1: COMPILE THE EVIDENCE**
+---
 
-FOR:
-- Real autoload bug on a tristate, `module_platform_driver` clock driver
-- One-line, obviously correct, clk co-maintainer Reviewed-by + applied
-- Same class as device-ID / quirk enablement (OF alias publication)
-- Established MediaTek clk precedent (`65c9ad77cbc0e`: “allow auto-load
-  at boot”)
-- Zero runtime/API/locking risk; applies cleanly
-- Buggy driver exists in this 7.3 tree (since v6.13)
+## PHASE 8: IMPACT AND RISK
 
-AGAINST:
-- Not crash/security/corruption/deadlock
-- No user report or hardware test
-- Niche SoC; no in-tree DTS/defconfig
-- Built-in configs already work
-- Author framed it as source-level only
+**Step 8.1 — Who**
+- Record: Config- and platform-specific: `CONFIG_CLK_IMX8QXP=m` on
+  i.MX8QXP/8QM/8DXL SCU clocks. Not universal. Defconfig `=y` does not
+  need aliases.
 
-UNRESOLVED:
-- Whether AUTOSEL/stable already discussed this hash (lore.kernel.org
-  stable search not useful)
-- Direct fetch of lore HTML (403)
+**Step 8.2 — Trigger**
+- Record: Boot/enumeration with LPCG DT nodes and the driver as a
+  module. Unprivileged users cannot trigger it; it is bring-up/udev.
+  Common on modular distro kernels, uncommon on typical vendor `=y`
+  images.
 
-**Step 9.2: APPLY THE STABLE RULES CHECKLIST**
-1. Obviously correct and tested? **PASS** — one-line alias export;
-   reviewed by clk co-maintainer. No HW test, but correctness does not
-   depend on runtime.
-2. Fixes a real bug that affects users? **PASS** — modular OF autoload
-   is broken by construction when the table is not exported.
-3. Important issue? **PASS** (MEDIUM) — hardware clocks do not come up
-   on the intended modular path; same practical class as missing device
-   IDs, not a panic.
+**Step 8.3 — Failure mode**
+- Record: Module not autoloaded → LPCG clocks missing → dependent
+  devices fail probe (UART/DMA/etc. depending on board). Not an
+  oops/UAF. Severity **MEDIUM** (functional miss for `=m`), **HIGH** on
+  those boards if clocks are modular.
+
+**Step 8.4 — Risk vs benefit**
+- Record: Benefit: modular i.MX8QXP clocks actually bind. Risk: **very
+  low** (one line of metadata). Ratio favors taking it; same rationale
+  as the “add a device ID” stable exception.
+
+---
+
+## PHASE 9: SYNTHESIS
+
+**Step 9.1 — Evidence**
+
+For:
+- Real autoload bug: match table used, aliases not published.
+- One line, obviously correct, reviewed by NXP i.MX and Red Hat.
+- DT hardware uses these compatibles.
+- Driver is tristate (`CLK_IMX8QXP`); `module_platform_driver` is
+  intentional.
+- Same pattern as device-ID publication, which stable explicitly allows.
+- Applies cleanly; no new API; no runtime behavior change for `=y`.
+
+Against:
+- No user/syzbot report; source-level only.
+- Not crash/corruption/security.
+- `arm64 defconfig` is `=y`.
+- No `Cc: stable` (not a negative by itself).
+
+Unresolved:
+- Could not search lore.kernel.org/stable (HTTP 403). Original thread
+  had no stable discussion.
+
+**Step 9.2 — Stable rules**
+1. Obviously correct and tested? **PASS** — one-line, three reviews,
+   maintainer applied.
+2. Real bug that affects users? **PASS** — `=m` does not autoload; DTS
+   uses the IDs.
+3. Important? **PASS** (as device-ID/autoload class; not a panic).
+   Missing clocks on modular i.MX8 is user-visible, not trivia.
 4. Small and contained? **PASS** — +1 line, one file.
-5. No new features or APIs? **PASS** — publishes an existing match
-   table.
-6. Can apply to the local tree? **PASS** — file and match table exist;
-   hunk is identical.
+5. No new features/APIs? **PASS** — metadata only.
+6. Can apply to this tree? **PASS** —
+   file/table/`module_platform_driver` all present.
 
-**Step 9.3: CHECK FOR EXCEPTION CATEGORIES**
-Record: Device-ID / module-alias publication for an existing driver (OF
-`MODULE_DEVICE_TABLE`). That exception applies.
+**Step 9.3 — Exceptions**
+- Record: Device-ID / module-alias publication for an existing driver
+  (stable exception #1 in spirit).
 
-**Step 9.4: MAKE YOUR DECISION**
-The bug is real for `=m` builds, the fix is trivial and already the
-subsystem’s standard pattern, and this tree has the driver. Conservative
-stable practice still takes this class because the downside is nil and
-the upside is the driver actually binding.
+**Step 9.4 — Decision**
+This is a one-line, reviewed autoload fix for a long-standing modular
+i.MX8QXP LPCG driver. It matches what stable already takes for device
+IDs: hardware described in DT can bind without a manual `modprobe`. Risk
+is negligible on this tree.
 
-===============================================================
-What the commit solves, and why it matters here
-===============================================================
+---
 
-Without `MODULE_DEVICE_TABLE(of, of_match_mt6735_vdecsys)`, modpost
-never emits the `of:N*T*Cmediatek,mt6735-vdecsys` alias. On this tree
-the Kconfig is tristate, so a modular vdecsys driver will not autoload;
-video-decoder clocks and resets never register until someone loads the
-module by name. Built-in matching via `.of_match_table` was already
-fine.
+## What the commit solves for this tree
 
-It meets stable rules: obviously correct, one line, no new API, no
-dependencies, and it is the OF equivalent of adding a device ID to an
-existing driver. Risk is compile-time alias generation only.
+Without `MODULE_DEVICE_TABLE()`, `clk-imx-lpcg-scu.ko` has no
+`of:N*T*Cfsl,imx8qxp-lpcg*` aliases. kmod will not load it from DT. LPCG
+is a clock provider, so that shows up as missing clocks and failed
+consumer probe, not as a crash. The fix only publishes the table the
+driver already uses.
 
-Concerns: no in-tree board uses this compatible, no reporter, not a
-crash. Those lower breadth of impact; they do not make the hunk unsafe
-or non-bugfix.
+It meets the stable bar: obviously correct, tiny, no new API, real
+modular-load bug, applies here.
 
-Verification:
-- [Phase 1] Parsed commit `096ab64a0e694`: SOB Pengpeng Hou; Reviewed-
-  by/SOB Brian Masney; no Fixes/Reported-by/Cc: stable
-- [Phase 2] Diff: +1 `MODULE_DEVICE_TABLE(of, of_match_mt6735_vdecsys)`
-  in `clk-mt6735-vdecsys.c`
-- [Phase 3] `git blame`: match table from `0bd9b1211f741`; `git describe
-  --contains` intro v6.13-rc1, fix v7.3-rc1
-- [Phase 3] `git merge-base --is-ancestor 0bd9b1211f741 HEAD` and
-  `096ab64a0e694 HEAD`: both true
-- [Phase 3] `git log --oneline -- drivers/clk/mediatek/clk-
-  mt6735-vdecsys.c`: only intro + this fix
-- [Phase 3] Sibling `36cf8d279ff90` vencsys same change; earlier sweep
-  `65c9ad77cbc0e`
-- [Phase 4] `b4 dig -c 096ab64a0e694`: msgid
-  `20260704124450.11035-1-pengpeng@iscas.ac.cn`; v1 only
-- [Phase 4] `b4 dig -m`: Brian Masney Reviewed-by; no NAK/stable
-  discussion
-- [Phase 4] WebFetch lore/spinics: 403/500; used mbox instead
-- [Phase 5] Kconfig `COMMON_CLK_MT6735_VDECSYS` tristate; Makefile
-  builds `clk-mt6735-vdecsys.o`; probe is `mtk_clk_simple_probe`
-- [Phase 5] `MODULE_DEVICE_TABLE` in `include/linux/module.h` creates
-  file2alias symbol
-- [Phase 6] `git describe HEAD` = v7.3-rc4-27-gf0100363d8c37; `make
-  kernelversion` = 7.3.0-rc4
-- [Phase 6] No in-tree dts/dtsi for mt6735-vdecsys; binding listed in
-  `mediatek,syscon.yaml`
-- [Phase 6] No defconfig sets `COMMON_CLK_MT6735`
-- [Phase 6] imgsys/mfgcfg still lack MODULE_DEVICE_TABLE (verified by
-  grep)
-- [Phase 7] MAINTAINERS: COMMON CLK FRAMEWORK includes Brian Masney;
-  MT6735 CLOCK maintained by Yassine Oudjana
-- [Phase 8] Failure mode: modular autoload miss → vdec clocks absent;
-  severity MEDIUM/narrow
-- UNVERIFIED: whether stable@ already queued this hash; lore stable
-  search did not return this commit
+Risk vs benefit: benefit is correct autoload for `CONFIG_CLK_IMX8QXP=m`;
+risk is essentially zero.
+
+Concerns: no live repro, default `=y`. That does not outweigh a one-line
+alias export that other i.MX clk drivers already have.
+
+---
+
+## Verification
+- [Phase 1] `git log -1 e89485455ac49`: tags as above; no
+  Fixes/Reported-by/Cc:stable.
+- [Phase 2] `git show e89485455ac49`: +1 `MODULE_DEVICE_TABLE(of,
+  imx8qxp_lpcg_match)`.
+- [Phase 2] Read `clk-imx8qxp-lpcg.c`: table used as `.of_match_table`;
+  `module_platform_driver`.
+- [Phase 2] `include/linux/module.h`: macro creates `__mod_device_table`
+  alias for modpost.
+- [Phase 3] `git blame` 350–370: table `1e3121bfe51a3` (v5.0); line
+  `e89485455ac49`.
+- [Phase 3] `e0d0d4d86c766` in v5.10-rc1 (tristate); `eee377b8f44e7`
+  switches to `module_platform_driver`.
+- [Phase 3] `git merge-base --is-ancestor e89485455ac49 HEAD` succeeded.
+- [Phase 3] Parent file confirmed missing `MODULE_DEVICE_TABLE`.
+- [Phase 4] `b4 dig -c/-a/-w` and `b4 dig -m`: v1 thread, three R-b,
+  Abel applied; To/Cc = clk + i.MX lists.
+- [Phase 4] lore HTTP 403; stable-list search **UNVERIFIED**.
+- [Phase 5] `Kconfig`: `CLK_IMX8QXP` tristate; Makefile builds `clk-imx-
+  lpcg-scu`.
+- [Phase 5] DTS: `fsl,imx8qxp-lpcg` in imx8qm-ss-*.dtsi.
+- [Phase 5] defconfig: `CONFIG_CLK_IMX8QXP=y`.
+- [Phase 6] `git describe HEAD` / `make kernelversion`: 7.3.0-rc4; buggy
+  table present; clean apply.
+- [Phase 6] Sibling `cd21fdcbef3fb` is a different file; not required
+  for this hunk.
+- [Phase 8] Failure mode: no autoload when `=m` — verified from code and
+  MODULE_DEVICE_TABLE semantics, not from a hardware log.
+- UNVERIFIED: live `=m` boot on i.MX8QXP; lore.kernel.org/stable
+  contents.
 
 **YES**
 
- drivers/clk/mediatek/clk-mt6735-vdecsys.c | 1 +
+ drivers/clk/imx/clk-imx8qxp-lpcg.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/mediatek/clk-mt6735-vdecsys.c b/drivers/clk/mediatek/clk-mt6735-vdecsys.c
-index 8817085fc1db4..d53ebf92e878d 100644
---- a/drivers/clk/mediatek/clk-mt6735-vdecsys.c
-+++ b/drivers/clk/mediatek/clk-mt6735-vdecsys.c
-@@ -63,6 +63,7 @@ static const struct of_device_id of_match_mt6735_vdecsys[] = {
- 	{ .compatible = "mediatek,mt6735-vdecsys", .data = &vdecsys_clks },
+diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+index 1dae3410ee99a..f0cf6cf918992 100644
+--- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
++++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+@@ -354,6 +354,7 @@ static const struct of_device_id imx8qxp_lpcg_match[] = {
+ 	{ .compatible = "fsl,imx8qxp-lpcg", NULL },
  	{ /* sentinel */ }
  };
-+MODULE_DEVICE_TABLE(of, of_match_mt6735_vdecsys);
++MODULE_DEVICE_TABLE(of, imx8qxp_lpcg_match);
  
- static struct platform_driver clk_mt6735_vdecsys = {
- 	.probe = mtk_clk_simple_probe,
+ static struct platform_driver imx8qxp_lpcg_clk_driver = {
+ 	.driver = {
 -- 
 2.53.0
 
