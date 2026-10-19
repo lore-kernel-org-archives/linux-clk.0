@@ -1,75 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792427282;
-	b=tBQgJnz59r0DIdoCGFxu5LCLc+vx9lazE2d+t4XBECgKzwNxisZsRhtBgio0h22QsKL0
-	 m3G0yw6FxEUsv0GmFfGJmfc3jQj78tq0MFGzsQRb5EfHM5IM+tbnpQwyuJNvil2+D65oR
-	 psQhdTGExgCFM1lsPNRXDS2SMF7KaarvG9Izn5fhbqrl/WEjEyskGpKDDrdkGNTia9jOt
-	 xhU3GZlmlRlyJPtW9oKnx6zWtuBdDc1UPn9di3mHk4ryo4ZGp58GjOj1PhlZSH4qo0DcX
-	 gk1Ogx9QOEuECdXx6qFHluF2VO+3rWu+IkvEGHCxwupY3iPGkS+0ikTs6xzIAvAputA==
+	t=1792427967;
+	b=WvGP67sgSn131ShoRtKZHJYiBqmbUjMbIUu/3c6yMk5zxlDevRNUwjhFLz3SThg88T22
+	 O2srjjYljjR1vE36rkKbyG2V//dXSpFoXLAa/GSAGHIc1ry7Ml80oVTyKGsX/iMkeorXS
+	 xcgqpiy1kmn497ClKRARROY8255CQEO54NC2mMmhqa7Br0PS299BQ6lrPCAqjrAdUiLga
+	 lASuUxQON58AKU0IR1xrNF48aW0NZDHDN9J+PHyJzBCZ5LfDYIcmaS1LFynuzH0GgXF0c
+	 F2BPdlCAVISJC4WsqN7lWoItSX+TPh/gIkRHp9/eDKSUELY1Gp40Ru26grHGPsU5AuA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792427282;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792427967;
 	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
 	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type;
-	bh=grtW76dvtFb1t9XrerLmKdj5qwyowpPAeH9vnpYNVM8=;
-	b=kmcnzwPGQuM6xw9BaeZJLg6SQiAlsEdDjdHq/VT7NHRMS0H0d1UvgPxv4/DeUC6XtGpk
-	 70gXQuocK1eBuKXnely5MazDX1Hky9fonYPb7rPY87225SZfCQehb+Y9MnxzcOpEtAOP7
-	 p3e65j4jzYnlEyDqHL2+iTNcIS8WQiRlbcEKCbM8Fl38hP5/oRZsrmip5wHXu7a2I1tZp
-	 o7IKoivvs2pzeWx9Uv+AxIKxMf/bCV1ybkQRo1YXiSQrkNcIkM5Mv8zp9lXoreN9OsVVp
-	 0a+B4ckMRbQzxkzM57Pe0ID+zKXJhoZMcjx16inW58mgpSg79tSaVo03ISJ01MhlZWA==
+	bh=Q8KL6LGvq0FwHTPovYus9FfkhDMRIi4bd+XQz8TiIQM=;
+	b=zLNYpLOkDLJ31iRfbnu4/9d/Pj6nx0ZGSeaBSRIF6ga9ehTMF0H+7QGpHPC0jxzpygaZ
+	 soF5hIcZ3FFhSCIE+4rRV8rxSoz3V3uk1s89u+3GhN+DADxedb/j4aFEvMGexg4oxKvaG
+	 irz849yqHnBFxptne64UmVXQ7skiwG5PSuCpX+ON4wBbTsY12UrFeONBKXamd3WGSKwJ1
+	 AjNXoAgqWHszOcjgNxK31RUKnmwBs8C8CQzT8v9e+w3IO0Th+ImvGwBGMcLCaO83HgF/h
+	 WVw1Jm+WDZ7CYErEgmD2ysf4/sFdaRU4Y5dBuK4m4uL2vLX8434zziUCvnZm5/SR0Iw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=linux-m68k.org;
 	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.218.47
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	arc=none smtp.remote-ip=209.85.208.53
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8CC606A31C
-	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 16:28:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2B8CC606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514AA606A319
+	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 16:39:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 514AA606A319
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-c2afa22e1dcso355494266b.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 09:28:01 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6afa651700eso3008203a12.2
+        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 09:39:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792427280; x=1793032080;
+        d=1e100.net; s=20260707; t=1792427966; x=1793032766;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=grtW76dvtFb1t9XrerLmKdj5qwyowpPAeH9vnpYNVM8=;
-        b=iDbVytj4cAGK8N3UyyOBQEKGUGDdRpGoC4mXaR0PvENlbLnyfwIFIGJPfa6cEoYQye
-         35B2qFa9lr4Wd+VeEs+kep68FYPhj5UeLVYPpCtekU8RuvP9sLF3gcEpjeJ1SRAldM+r
-         6i+m1eaekUJM9n+jr35uZH5aes4puLTsx/XDAxxqCdihzLGCEI1j5Q0L2V66nfvQvOwB
-         J3IkRDRDM1PPgFJ+OhTJgOp4YEDQ4YYI+EgsvyK6ExsbPGKPxTcrdx9LOstKQ7wN1c98
-         PazxVhVQgAnWuUBs0JeiHFqL0GfXBNZcZNI4pLKkUMCSY6/SQUn+4+QwsqdGvQ5QN7Pt
-         c7FA==
-X-Forwarded-Encrypted: i=1; AKwUvBwQAyZEjii0mAbUVc4abKmXqSmruG2SFrRKjOusNyb/sYlGKjU7BeZKV5femUmi8DGbgauTYuI086s=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJOhDCUIyDkM/6+acp5teSObjeRG8HtIjqW7w8On5WeF+MDF/7A
-	yDVSq0AkMnyiNgJ22iyFu9rQs8AO4HsMozSjsktUwmJNQ3oM+z+MoelzCYZgeZoG4tc=
-X-Gm-Gg: AYBFou3jf6gCuFyzGLJHQobcX/AKfufb62r+LwXkNi/Jq4Sa47AQEDYg7GvQPl+Y1ua
-	j5o39YK7SYysOezRimZB+2QH8C8uSIuRThHjIPmJMe7rmLL8uu5ypZGz7iiy+AoQbFE6155To6G
-	jno/CTLNnQ3KULXhRqisXPdnhIRGTRz8es8Sp9xeCufA7FTZ7SBu6n/OxFJiEvAiojK13Cxg7M5
-	zlSQdyIxd23bPx0zaMTnhvovv/C5B4/ejPdW7GpS88nRcC1h6byuTRC9abUxl1IZbwCEt6q+x+r
-	77CN3x9ARHoFNiGC3260WwaGKPEPZ9QqN9+vrnwqvijG76vqbnZ9GK96rDewZq/PZsJw6qa/Qu+
-	uNKGqIW2hqe/W5WfyPlJF/352tEfu4seD06wEJlkbZN0Se+8cd9JI5k3A0501M8+3gsyWgUrYO0
-	yj9zW4Xe9Hq5vSqTcYmN0aJzuA3Z8A7HxDKOTgepl7gnHrmM4fiB7LDXylEImzLSRffAKoDmN0K
-	ITEXJAs86CdfXVuFwhguzw3gyZsDv6v+xVL
-X-Received: by 2002:a17:906:1006:10b0:c42:53f:af64 with SMTP id a640c23a62f3a-c42053fc28amr329305266b.49.1792427276930;
-        Mon, 19 Oct 2026 09:27:56 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4091eb4ba6sm379437166b.75.2026.10.19.09.27.56
+        bh=Q8KL6LGvq0FwHTPovYus9FfkhDMRIi4bd+XQz8TiIQM=;
+        b=uZ/a558ORPsNHawWqquqDBtodT3XXGCzVfTAv/cohNXL02EIO5+UWViOEEejuKcVKb
+         zKOQqN0uVCdzMMBM+cyKIUuo7I/U3NK3EwlZxhOef6gI4i5wvDcBFBUZWBmKc6I0ZJHa
+         YOm0wKn5TBOxe1jtFA4djTBDW842vxTmlURMjlV+y9KF3ATtwx2qcHMb9lRaG+I0hPic
+         IMiPoujLtM9G4dq5UaJLqoXtPEc570wZFauPQHrVyH8RGhljyfgIf5eeIt0r14p6MGEB
+         rjVlneNbEEYYKCmAD3y+MVbJ/Mz76JvY+6EA0w2762k1+ZXITS2g7SziNKi9cAecte1Z
+         888A==
+X-Forwarded-Encrypted: i=1; AKwUvBw0JXsOmJfcCFcaG8MHqaX7nFl6Wi01XXlyW2DqHTgSFBk0hUBBpH9m0aEskgeiyo06lf3o7Ysifag=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLODmmjGNKIkc3QtedokEN+F+VToQCZ3+FWcNSHjeoadr8nB1Xy
+	t8tNcow4S5PrVRcmCOSrQYNwHmsRuU6o2YDvdFlfx8KZvJeGQ5mmkB8rKX31i/844ek=
+X-Gm-Gg: AYBFou0cjv34iEJBx+UKQKuxev5uG6Xkv9zCpzp81sQTvQffdx/1dcPnU34LaBCXoOE
+	OB+vAcrtJpLbVi+CRNpn4zISbptpGkdAZ9JXDVw78UyAokAE5yzK/GzLq/ab50s3COOAVrjyva1
+	MPUVfBS8Rm/wnfPEIsiqg2W1/yZ30zMTUFssB+EjUMA9Y4iiGnJKmV5xLXm14aMXahlsECSk7l6
+	QcXIbFST/aAnUl3bkbS8B6nuzrEpBDM1xDbMiAkOn7jmhwwdzO6VXX/hatIY5ttOkwOKtvbPQAx
+	rmDH8bSzVi1VyxdiFgh4i/FAX6ucMmpBPpq5NzrACiJWgeLQd63bmrF+s6E17PWvk0jcqsRwOMZ
+	gxAp7078mQy3mY+QAOmE+Ds9Z0oimfH+MxQGH4kIcyFUMpqM9fPS9L58kLlcK8gwVhmdcLh4/8B
+	LNabhsQJ1y9rw59so6CJr6LJHuYNNcDNHf82Uj4RMDpBnheF0Ezyg66X0MBfvm5Q/NltnGM/Gkr
+	rP56xbRYIBII6eSYdTdhcP8wcqB01OjFkph
+X-Received: by 2002:a05:6402:3215:b0:6ac:773b:9c55 with SMTP id 4fb4d7f45d1cf-6b3a820828emr5146464a12.40.1792427965370;
+        Mon, 19 Oct 2026 09:39:25 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b38a1db789sm4082037a12.29.2026.10.19.09.39.25
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Oct 2026 09:27:56 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6b1f4d8e09aso3299913a12.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 09:27:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzvXAKc3HD3rv1UJ0oEsbYRUhhPPCBcqw9FvzwnX+isTqw7YUQG6Bq8TC5LG7MlniqdJeTBVmtnWS4=@vger.kernel.org
-X-Received: by 2002:a17:907:9486:b0:c40:f9ea:7387 with SMTP id
- a640c23a62f3a-c4199c63fd2mr604034966b.6.1792427276005; Mon, 19 Oct 2026
- 09:27:56 -0700 (PDT)
+        Mon, 19 Oct 2026 09:39:25 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-c411e139259so219462766b.2
+        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 09:39:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwnBVMxXmcGHAUakG6jwE6bC3YPpZauy+MMgZcTGJ4l7n9LWvALLHtyBUh2GiOttLqxbWbkAC+cjJ0=@vger.kernel.org
+X-Received: by 2002:a17:907:944c:b0:c40:6ed9:b961 with SMTP id
+ a640c23a62f3a-c419a05c502mr618122766b.5.1792427582507; Mon, 19 Oct 2026
+ 09:33:02 -0700 (PDT)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -80,42 +80,63 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 References: <cover.1792163045.git.geert+renesas@glider.be> <4524363679c1f2163aca3b3dda2bfbde170d095a.1792163045.git.geert+renesas@glider.be>
- <sashiko-outbox-174605@kernel.org>
-In-Reply-To: <sashiko-outbox-174605@kernel.org>
+ <20261019160545.GC3705@killaraus.ideasonboard.com>
+In-Reply-To: <20261019160545.GC3705@killaraus.ideasonboard.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 19 Oct 2026 18:27:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWT=9-GCt6pr3HT6C_=kxe2ud1y2jjXPZBH9MjcDYjB+g@mail.gmail.com>
-X-Gm-Features: AclHuK-zFCPihodw8HUR_tYnDf84w30NySJpayeqxb6wS60EuVgB6NNWocEAZa4
-Message-ID: <CAMuHMdWT=9-GCt6pr3HT6C_=kxe2ud1y2jjXPZBH9MjcDYjB+g@mail.gmail.com>
+Date: Mon, 19 Oct 2026 18:32:48 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUTz3BR48_Y8_UR9PEjLuavHtN-4uaEKURtqRXFBO0uUA@mail.gmail.com>
+X-Gm-Features: AclHuK84fhnixZiNIMOwb9AdAvJEMnIe-A6l4ZZgkoIEEk378oR8Z0wb7zPZzKY
+Message-ID: <CAMuHMdUTz3BR48_Y8_UR9PEjLuavHtN-4uaEKURtqRXFBO0uUA@mail.gmail.com>
 Subject: Re: [PATCH v4 5/8] pmdomain: Make genpd_get_from_provider() return -EPROBE_DEFER
-To: sashiko-reviews@lists.linux.dev
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, 
-	conor+dt@kernel.org, wsa+renesas@sang-engineering.com
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>, 
+	Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Sashiko,
+Hi Laurent,
 
-On Fri, 16 Oct 2026 at 18:09, <sashiko-bot@kernel.org> wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
-> - [Low] pmdomain: unnecessary probe deferral on invalid domain index
-> --
+On Mon, 19 Oct 2026 at 18:05, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Fri, Oct 16, 2026 at 05:55:44PM +0200, Geert Uytterhoeven wrote:
+> > Unlike provider-based look-up functions in other subsystems[1],
+> > genpd_get_from_provider() returns -ENOENT instead of -EPROBE_DEFER when
+> > the provider is not found, thus not supporting probe deferral.
+> > Currently this is worked around in of_genpd_add_subdomain() by remapping
+> > -ENOENT[2].
 >
-> commit c105920d803c0cf9396fb90d8428fdc4d83e8655
-> Author: Geert Uytterhoeven <geert+renesas@glider.be>
+> But not in the other functions calling genpd_get_from_provider() and
+> propagating the error up. Have you validated that no existing call
+> stacks will break ?
 >
-> pmdomain: Make genpd_get_from_provider() return -EPROBE_DEFER
->
-> Unlike provider-based look-up functions in other subsystems[1],
-> genpd_get_from_provider() returns -ENOENT instead of -EPROBE_DEFER when
-> the provider is not found, thus not supporting probe deferral.
-> Currently this is worked around in of_genpd_add_subdomain() by remapping
-> -ENOENT[2].
->
-> Fix this for all current and future callers by returning -EPROBE_DEFER
-> instead, and drop the no longer needed remapping code.
->
+> > Fix this for all current and future callers by returning -EPROBE_DEFER
+> > instead, and drop the no longer needed remapping code.
+> >
+> > [1] of_clk_get_hw_from_clkspec(), __fwnode_reset_control_get()),
+> > [2] Commit 18027d6f392ee8d8 ("PM: domains: Make of_genpd_add_subdomain()
+> >     return -EPROBE_DEFER").
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > v4:
+> >   - New.
+> > ---
+> >  drivers/pmdomain/core.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
 > > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> > index 964e44c2f78f1..88c886814a5b9 100644
+> > index 964e44c2f78f1d55..88c886814a5b9da3 100644
 > > --- a/drivers/pmdomain/core.c
 > > +++ b/drivers/pmdomain/core.c
 > > @@ -3021,7 +3021,7 @@ EXPORT_SYMBOL_GPL(of_genpd_del_provider);
@@ -128,48 +149,49 @@ On Fri, 16 Oct 2026 at 18:09, <sashiko-bot@kernel.org> wrote:
 > >
 > >       if (!genpdspec)
 >
-> [ ... ]
+> Expanding the context:
 >
-> > @@ -3276,7 +3276,7 @@ int of_genpd_add_subdomain(const struct of_phandle_args *parent_spec,
-> >  out:
-> >       mutex_unlock(&gpd_list_lock);
+> >               return ERR_PTR(-EINVAL);
 > >
-> > -     return ret == -ENOENT ? -EPROBE_DEFER : ret;
-> > +     return ret;
-> >  }
+> >       mutex_lock(&of_genpd_mutex);
+> >
+> >       /* Check if we have such a provider in our array */
+> >       list_for_each_entry(provider, &of_genpd_providers, link) {
+> >               if (provider->node == genpdspec->np)
+> >                       genpd = provider->xlate(genpdspec, provider->data);
+> >               if (!IS_ERR(genpd))
+> >                       break;
+> >       }
+> >
+> >       mutex_unlock(&of_genpd_mutex);
+> >
+> >       return genpd;
 >
-> [Severity: Low]
-> Does this change leave an unnecessary probe deferral in __genpd_dev_pm_attach()?
->
-> If a device specifies a valid PM domain provider but an invalid domain index,
-> genpd_get_from_provider() returns the specific error code from the provider's
-> xlate callback, such as -ENOENT.
->
-> However, __genpd_dev_pm_attach() still unconditionally routes all errors
-> through driver_deferred_probe_check_state():
->
-> drivers/pmdomain/core.c:__genpd_dev_pm_attach() {
->         ...
->         pd = genpd_get_from_provider(&pd_args);
->         of_node_put(pd_args.np);
->         if (IS_ERR(pd)) {
->                 mutex_unlock(&gpd_list_lock);
->                 dev_dbg(dev, "%s() failed to find PM domain: %ld\n",
->                         __func__, PTR_ERR(pd));
->                 return driver_deferred_probe_check_state(base_dev);
->         }
->         ...
-> }
->
-> Could this unnecessarily delay boot and error reporting for devices with
-> permanently invalid PM domain IDs by forcing a wait until late_initcall?
->
-> Should __genpd_dev_pm_attach() be updated to only call
-> driver_deferred_probe_check_state() when PTR_ERR(pd) is -EPROBE_DEFER?
+> The for loop seems to imply that we can have multiple providers for the
+> same node. In case a provider fails, the function overrides the error
+> code from -EPROBE_DEFER to whatever the first xlate() returns. That may
+> cause issues for your use case.
 
-__genpd_dev_pm_attach() doesn't care about the actual error code,
-it only cares about error or success.  Hence a change in error code
-has no impact.
+The code has been like that since its introduction.  Technically one
+can register multiple providers for the same device node, but one
+can never safely remove one of them, as of_genpd_del_provider() just
+considers the device node, and removes the first matching provider.
+So I think someone just didn't like nesting curly braces, and tried
+to be smart ;-)
+
+> If the of_genpd_providers list doesn't expect multiple providers per
+> device node, I would change the above into
+>
+>         list_for_each_entry(provider, &of_genpd_providers, link) {
+>                 if (provider->node == genpdspec->np) {
+>                         genpd = provider->xlate(genpdspec, provider->data);
+>                         break;
+>                 }
+>         }
+>
+> to make it explicit.
+
+Will do.
 
 Gr{oetje,eeting}s,
 
