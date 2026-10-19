@@ -1,508 +1,313 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C78A48382F;
-	Mon, 19 Oct 2026 04:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CEA345EC0;
+	Mon, 19 Oct 2026 05:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792385747; cv=none; b=mvmhx7mt3M8YkRUnemMYP2MKlLAcmqYzpqvJOPUTGASuYZulBPn355xJ05JiPuELBnR8LF/EkwKL3ALfW+yE7z4V/S+fV389Cep+isa+8K21nNrz4pbdjzxNQw4Nl7rxZI97aajhv0l6ZFF+9/HbANaBavlDsg4jq461ker2UCE=
+	t=1792386319; cv=none; b=qHo0yJyijWUlgmxW1w9UyBhp3TuMtcz2TKRs6bEjLvm0CgfICR1FtVSYFj7y7Wr6TlrVh4JFYjpSnzuB3FsAnITYtNWZMziigmcFEXIhwkTwJcswRUxNppzS+tS6nt/Iy64Akw9Xzgd7W/nqFqunfW5XDvMCqonYuYDS7E3edIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792385747; c=relaxed/simple;
-	bh=InB9ypZpgVVVOgth66uHd42LKo5ryCpb218UCvxc5wo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jzbOyYJ9dHNOEMPOz7HPKSfjv6vNrxqS4ljMm9lNC/1HIXKlArO91d4FtJ/WSrBDc4uSR2I+Rxr8yHhVP/ryJyvfpN/WXqgARNlJ4kOtNftyNfuAWVxhEDvUUjJGlp31sixeSbpdPQfeRV9vwvAWloeXTvfJHA8aY+nEkwrhUEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiKOwzpH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1792386319; c=relaxed/simple;
+	bh=NxhcC/alXNWfyATTRqBnPlSXDbDsnR85ckwxuqEPl4g=;
+	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=CJKK72KH2dT68WXjfFdZQsbitxQSDlK36QcLTsxJoiiicDmCc4Adn/RKMcl3Wg8esIZ7Q9qha7rRKLsbp8hVc9YBNmh6Z7A8+QdEd4dTVpY6mrB7aRimDXYGNhQ8iZV2oGi9KGwLzaotx3zzFc7GdITFS8iLmtuVWPa68sdNntA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZONV8F9c; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiKOwzpH"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 743E8C4AF48;
-	Mon, 19 Oct 2026 04:55:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1792385746;
-	bh=InB9ypZpgVVVOgth66uHd42LKo5ryCpb218UCvxc5wo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=CiKOwzpHQSSnaonxTKdvQvhyBVy3slTrWbaELXxi1m+h3G04Y5EfScxKsK3VP3ImF
-	 yRn6NpEBtmSxTqFnBwgfZq/WUzSqFdb4MzJJdGkDA6ku6XKA92MgCUnmCdPwM/Ny0X
-	 IVglVAQ9gdzt6c84oG+Ufyu6RhmVlUwSLs/9HrbUTG2cPeiUvDWuB65k7Vi9jmwTBG
-	 N/hdZa50V/fEY/O+pq4zgEg0UfVksyRuBmbPeLsL1nULTNcgmNZZ5GsxoeqDSauVZ8
-	 c6j+x2DMf3KGKNMg6yf2hlG9Re2hQ0S5Vf3zSpN20tQeqHncokvctYOEKaEl1Cbk0m
-	 jT8XKY7emB2Rw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 537A7CCF2DA;
-	Mon, 19 Oct 2026 04:55:46 +0000 (UTC)
-From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Mon, 19 Oct 2026 12:55:41 +0800
-Subject: [PATCH v10 3/5] clk: ambarella: add CV75 RCT clock controller
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZONV8F9c"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA351F000C4;
+	Mon, 19 Oct 2026 05:05:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792386313;
+	bh=GzsfRT1M+pGum/bxVHMbtI0D+TpCiJSveTAvOkF/h84=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=ZONV8F9c+NrPOIi0dpFys7e6KEqK9VKw/t7dS8PVesopPZp/sa75/AUqSE6uwVHKL
+	 RXCT0hNJHVH66g/vmDPyI8cg7c/UFZJzajSsL3SIvM6T6vI3iYg0KztL/Cke70m3gd
+	 64WxsKshSYqhX+8GacbjR3tQDWXTWW0JqW5QMsRdLZvOtWZus4LQqwJobXa0Le5cbl
+	 xMTQU71yLpp27LCQkoNxQuFF1f+VyGq6eeXL8O2C52WZluukdHY0AABgr0967jxqmy
+	 StY6P5WglhREgYdshGI1WWnQB9obzsSuOtp33XjAtBdmcIPhTmXpscMO3TltzIqB2f
+	 b8g+erVUhOo7w==
+Message-ID: <sashiko-outbox-176658@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v10 4/5] arm64: ambarella: add ARCH_AMBARELLA and CV75
+ EVK DT
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Long Zhao" <longzhao@ambarella.com>
+Cc: linux-clk@vger.kernel.org, mfd@lists.linux.dev, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
+In-Reply-To: <20261019-cv75-soc-v10-4-d386065e2dd5@ambarella.com>
+References: <20261019-cv75-soc-v10-0-d386065e2dd5@ambarella.com>
+ <20261019-cv75-soc-v10-4-d386065e2dd5@ambarella.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 19 Oct 2026 05:05:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261019-cv75-soc-v10-3-d386065e2dd5@ambarella.com>
-References: <20261019-cv75-soc-v10-0-d386065e2dd5@ambarella.com>
-In-Reply-To: <20261019-cv75-soc-v10-0-d386065e2dd5@ambarella.com>
-To: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org, 
- Brian Masney <masneyb@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
- Long Zhao <longzhao@ambarella.com>, Long Zhao <zl020895@163.com>, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792385743; l=12264;
- i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=NFJtsivETHZwRd6Y2JF2ZCfZX7rfzhwumgqUlQiPnjM=;
- b=U0Einr1AQAR/6Glwv9rXWHE5YIM+hKl5ddJIC60JHfNl4GYp4eWcB97z/1sZZJSpljZpiTiSX
- HE+STVUOAjqB2KMc22LPQsfnDbQSiAhaAtgIi/BY6SQpEHYiN/pL7x3
-X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
- pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
-X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
- auth_id=903
-X-Original-From: Long Zhao <longzhao@ambarella.com>
-Reply-To: longzhao@ambarella.com
 
-From: Long Zhao <longzhao@ambarella.com>
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+s) to consider:
+- [High] arm64: dts: ambarella: uart0 permanently defers probe due to missi=
+ng pinctrl
+- [Medium] arm64: dts: ambarella: undocumented compatible strings and prope=
+rties in cv75
+- [Medium] arm64: dts: ambarella: gpio nodes use unmatched periphid and unp=
+robed pinctrl
+--
 
-Add a table-driven CCF driver for the CV75 root clock tree. Register
-the core PLL, AHB/APB fixed factors and UART0 composite clock, with
-osc supplied via clk_parent_data.
+commit 7e36a79675aa487cf1bb15e171011853976e17db
+Author: Long Zhao <longzhao@ambarella.com>
 
-Signed-off-by: Long Zhao <longzhao@ambarella.com>
----
- drivers/clk/Kconfig              |   1 +
- drivers/clk/Makefile             |   1 +
- drivers/clk/ambarella/Kconfig    |   9 +
- drivers/clk/ambarella/Makefile   |   3 +
- drivers/clk/ambarella/clk-cv75.c | 361 +++++++++++++++++++++++++++++++++++++++
- 5 files changed, 375 insertions(+)
+arm64: ambarella: add ARCH_AMBARELLA and CV75 EVK DT
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 1717ce75a907..fbbf4963716c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -506,6 +506,7 @@ config COMMON_CLK_RPMI
- 	  the RISC-V platform management interface (RPMI) specification.
- 
- source "drivers/clk/actions/Kconfig"
-+source "drivers/clk/ambarella/Kconfig"
- source "drivers/clk/analogbits/Kconfig"
- source "drivers/clk/aspeed/Kconfig"
- source "drivers/clk/bcm/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index cc108a75a900..30d823ee606f 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -112,6 +112,7 @@ obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
- 
- # please keep this section sorted lexicographically by directory path name
- obj-y					+= actions/
-+obj-y					+= ambarella/
- obj-y					+= analogbits/
- obj-y					+= aspeed/
- obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
-diff --git a/drivers/clk/ambarella/Kconfig b/drivers/clk/ambarella/Kconfig
-new file mode 100644
-index 000000000000..720eebdc5c9c
---- /dev/null
-+++ b/drivers/clk/ambarella/Kconfig
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+config CLK_AMBARELLA_CV75
-+	bool "Ambarella CV75 RCT clock controller"
-+	depends on ARCH_AMBARELLA || COMPILE_TEST
-+	default ARCH_AMBARELLA
-+	help
-+	  Say Y to enable the Ambarella CV75 RCT clock controller for
-+	  early bring-up clocks (core PLL, AHB, APB, UART0).
-diff --git a/drivers/clk/ambarella/Makefile b/drivers/clk/ambarella/Makefile
-new file mode 100644
-index 000000000000..29555e452441
---- /dev/null
-+++ b/drivers/clk/ambarella/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+obj-$(CONFIG_CLK_AMBARELLA_CV75) += clk-cv75.o
-diff --git a/drivers/clk/ambarella/clk-cv75.c b/drivers/clk/ambarella/clk-cv75.c
-new file mode 100644
-index 000000000000..6a8f80571958
---- /dev/null
-+++ b/drivers/clk/ambarella/clk-cv75.c
-@@ -0,0 +1,361 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Ambarella CV75 RCT clock controller
-+ *
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ */
-+
-+#include <linux/array_size.h>
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
-+#include <linux/clk-provider.h>
-+#include <linux/container_of.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/math64.h>
-+#include <linux/module.h>
-+#include <linux/overflow.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/types.h>
-+
-+#include <dt-bindings/clock/ambarella,cv75-rct.h>
-+
-+#define CV75_NUM_CLKS		(CV75_GCLK_APB + 1)
-+
-+#define PLL_CTRL_BYPASS		BIT(2)
-+#define PLL_CTRL_FRAC_MODE	BIT(3)
-+#define PLL_CTRL_FORCE_RESET	BIT(4)
-+#define PLL_CTRL_POWER_DOWN	BIT(5)
-+#define PLL_CTRL_HALT_VCO	BIT(6)
-+#define PLL_CTRL_SDIV		GENMASK(15, 12)
-+#define PLL_CTRL_SOUT		GENMASK(19, 16)
-+#define PLL_CTRL_INTP		GENMASK(30, 24)
-+
-+#define PLL_CTRL2_VCODIV_DIV2	BIT(8)
-+#define PLL_CTRL2_FSDIV_DIV2	BIT(9)
-+#define PLL_CTRL2_FSOUT_DIV2	BIT(11)
-+#define PLL_CTRL2_BYPASS_HSDIV	BIT(12)
-+
-+struct cv75_pll_regs {
-+	u32 ctrl;
-+	u32 frac;
-+	u32 ctrl2;
-+};
-+
-+struct cv75_pll_hw {
-+	struct clk_hw hw;
-+	struct cv75_pll_regs regs;
-+};
-+
-+struct cv75_clk {
-+	void __iomem *base;
-+	spinlock_t lock;
-+	struct cv75_pll_hw core;
-+	struct cv75_pll_hw enet;
-+	struct cv75_pll_hw sd;
-+};
-+
-+struct cv75_pll {
-+	const char *name;
-+	struct cv75_pll_hw *hw;
-+	unsigned long flags;
-+	struct cv75_pll_regs regs;
-+	int id;
-+};
-+
-+struct cv75_fixed_factor {
-+	const char *name;
-+	u32 id;
-+	struct u16_fract ratio;
-+};
-+
-+struct cv75_composite {
-+	const char *name;
-+	const struct clk_parent_data *parents;
-+	unsigned long flags;
-+	u32 id;
-+	u16 mux_reg;
-+	u16 div_reg;
-+	u8 num_parents;
-+	u8 mux_shift;
-+	u8 mux_width;
-+	u8 div_shift;
-+	u8 div_width;
-+};
-+
-+struct cv75_composite_hw {
-+	struct clk_mux mux;
-+	struct clk_divider div;
-+	struct clk_gate gate;
-+};
-+
-+static struct cv75_clk cv75_ccu;
-+
-+#define CV75_PLL(_id, _name, _ctrl, _frac, _ctrl2, _flags, _hw) {	\
-+	.name	= _name,						\
-+	.hw	= _hw,							\
-+	.flags	= _flags,						\
-+	.regs	= {							\
-+		.ctrl = _ctrl,						\
-+		.frac = _frac,						\
-+		.ctrl2 = _ctrl2,					\
-+	},								\
-+	.id	= _id,							\
-+}
-+
-+static const struct cv75_pll cv75_plls[] = {
-+	CV75_PLL(CV75_GCLK_CORE, "core", 0x000, 0x004, 0x100,
-+		 CLK_IS_CRITICAL, &cv75_ccu.core),
-+	CV75_PLL(-1, "pll_enet", 0x520, 0x524, 0x528,
-+		 0, &cv75_ccu.enet),
-+	CV75_PLL(-1, "pll_sd", 0x4ac, 0x4b0, 0x4b4,
-+		 0, &cv75_ccu.sd),
-+};
-+
-+static const struct cv75_fixed_factor cv75_fixed_factors[] = {
-+	{ .id = CV75_GCLK_AHB, .name = "ahb", .ratio = { 1, 2 } },
-+	{ .id = CV75_GCLK_APB, .name = "apb", .ratio = { 1, 4 } },
-+};
-+
-+static const struct clk_parent_data cv75_uart_parents[] = {
-+	{ .fw_name = "osc" },
-+	{ .hw = &cv75_ccu.core.hw },
-+	{ .hw = &cv75_ccu.enet.hw },
-+	{ .hw = &cv75_ccu.sd.hw },
-+};
-+
-+#define CV75_COMPOSITE(_id, _name, _parents, _mreg, _mshift, _mwidth,	\
-+		       _dreg, _dshift, _dwidth, _flags)			\
-+{									\
-+	.id		= _id,						\
-+	.name		= _name,					\
-+	.parents	= _parents,					\
-+	.num_parents	= ARRAY_SIZE(_parents),				\
-+	.mux_reg	= _mreg,					\
-+	.mux_shift	= _mshift,					\
-+	.mux_width	= _mwidth,					\
-+	.div_reg	= _dreg,					\
-+	.div_shift	= _dshift,					\
-+	.div_width	= _dwidth,					\
-+	.flags		= _flags,					\
-+}
-+
-+static const struct cv75_composite cv75_composites[] = {
-+	CV75_COMPOSITE(CV75_GCLK_UART0, "uart0", cv75_uart_parents,
-+		       0x1c8, 0, 2, 0x038, 0, 24,
-+		       CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+#define to_cv75_pll(_hw) container_of(_hw, struct cv75_pll_hw, hw)
-+
-+static unsigned long cv75_pll_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct cv75_pll_hw *pll = to_cv75_pll(hw);
-+	u32 ctrl, ctrl2, frac_val;
-+	u32 vcodiv, fsdiv, fsout;
-+	u32 intp, sdiv, sout;
-+	u64 vco, frac = 0;
-+
-+	ctrl = readl_relaxed(cv75_ccu.base + pll->regs.ctrl);
-+	if (ctrl & (PLL_CTRL_POWER_DOWN | PLL_CTRL_HALT_VCO | PLL_CTRL_FORCE_RESET))
-+		return 0;
-+
-+	if (ctrl & PLL_CTRL_BYPASS)
-+		return parent_rate;
-+
-+	ctrl2 = readl_relaxed(cv75_ccu.base + pll->regs.ctrl2);
-+	intp = FIELD_GET(PLL_CTRL_INTP, ctrl) + 1;
-+	sdiv = FIELD_GET(PLL_CTRL_SDIV, ctrl) + 1;
-+	sout = FIELD_GET(PLL_CTRL_SOUT, ctrl) + 1;
-+	vcodiv = (ctrl2 & PLL_CTRL2_VCODIV_DIV2) ? 2 : 1;
-+	fsdiv = (ctrl2 & PLL_CTRL2_FSDIV_DIV2) ? 2 : 1;
-+	fsout = (ctrl2 & PLL_CTRL2_FSOUT_DIV2) ? 2 : 1;
-+
-+	vco = (u64)parent_rate * vcodiv * fsdiv * intp * sdiv;
-+	if (ctrl & PLL_CTRL_FRAC_MODE) {
-+		frac_val = readl_relaxed(cv75_ccu.base + pll->regs.frac);
-+		frac = mul_u64_u32_shr((u64)parent_rate * vcodiv * fsdiv * sdiv,
-+				       frac_val, 32);
-+		vco += frac;
-+	}
-+
-+	if (!(ctrl2 & PLL_CTRL2_BYPASS_HSDIV))
-+		vco = div_u64(vco, (u64)vcodiv * fsout * sout);
-+
-+	return vco;
-+}
-+
-+static const struct clk_ops cv75_pll_ops = {
-+	.recalc_rate = cv75_pll_recalc_rate,
-+};
-+
-+static int cv75_register_plls(struct device *dev,
-+			      struct clk_hw_onecell_data *data)
-+{
-+	struct clk_parent_data parent_data = { .fw_name = "osc" };
-+
-+	for (unsigned int i = 0; i < ARRAY_SIZE(cv75_plls); i++) {
-+		const struct cv75_pll *desc = &cv75_plls[i];
-+		struct cv75_pll_hw *pll = desc->hw;
-+		struct clk_init_data init = {};
-+		int ret;
-+
-+		pll->regs = desc->regs;
-+
-+		init.name = desc->name;
-+		init.ops = &cv75_pll_ops;
-+		init.parent_data = &parent_data;
-+		init.num_parents = 1;
-+		init.flags = desc->flags;
-+		pll->hw.init = &init;
-+
-+		ret = devm_clk_hw_register(dev, &pll->hw);
-+		if (ret)
-+			return ret;
-+
-+		if (desc->id >= 0)
-+			data->hws[desc->id] = &pll->hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int cv75_register_fixed_factors(struct device *dev,
-+				       struct clk_hw_onecell_data *data)
-+{
-+	for (unsigned int i = 0; i < ARRAY_SIZE(cv75_fixed_factors); i++) {
-+		const struct cv75_fixed_factor *f = &cv75_fixed_factors[i];
-+		struct clk_hw *hw;
-+
-+		hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, f->name,
-+								 &cv75_ccu.core.hw, 0,
-+								 f->ratio.numerator,
-+								 f->ratio.denominator);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		data->hws[f->id] = hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct clk_hw *cv75_register_composite(struct device *dev,
-+					      const struct cv75_composite *c)
-+{
-+	const struct clk_ops *mux_ops = NULL, *div_ops = NULL, *gate_ops = NULL;
-+	struct clk_hw *mux_hw = NULL, *div_hw = NULL, *gate_hw = NULL;
-+	struct cv75_composite_hw *comp;
-+
-+	comp = devm_kzalloc(dev, sizeof(*comp), GFP_KERNEL);
-+	if (!comp)
-+		return ERR_PTR(-ENOMEM);
-+
-+	if (c->mux_width) {
-+		comp->mux.reg = cv75_ccu.base + c->mux_reg;
-+		comp->mux.shift = c->mux_shift;
-+		comp->mux.mask = GENMASK(c->mux_width - 1, 0);
-+		comp->mux.lock = &cv75_ccu.lock;
-+		mux_hw = &comp->mux.hw;
-+		mux_ops = &clk_mux_ops;
-+	}
-+
-+	if (c->div_width) {
-+		comp->div.reg = cv75_ccu.base + c->div_reg;
-+		comp->div.shift = c->div_shift;
-+		comp->div.width = c->div_width;
-+		comp->div.flags = CLK_DIVIDER_ONE_BASED;
-+		comp->div.lock = &cv75_ccu.lock;
-+		div_hw = &comp->div.hw;
-+		div_ops = &clk_divider_ops;
-+
-+		comp->gate.reg = cv75_ccu.base + c->div_reg;
-+		comp->gate.bit_idx = c->div_shift + c->div_width;
-+		comp->gate.flags = CLK_GATE_SET_TO_DISABLE;
-+		comp->gate.lock = &cv75_ccu.lock;
-+		gate_hw = &comp->gate.hw;
-+		gate_ops = &clk_gate_ops;
-+	}
-+
-+	return devm_clk_hw_register_composite_pdata(dev, c->name, c->parents,
-+						    c->num_parents,
-+						    mux_hw, mux_ops,
-+						    div_hw, div_ops,
-+						    gate_hw, gate_ops, c->flags);
-+}
-+
-+static int cv75_register_composites(struct device *dev,
-+				    struct clk_hw_onecell_data *data)
-+{
-+	for (unsigned int i = 0; i < ARRAY_SIZE(cv75_composites); i++) {
-+		const struct cv75_composite *c = &cv75_composites[i];
-+		struct clk_hw *hw;
-+
-+		hw = cv75_register_composite(dev, c);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		data->hws[c->id] = hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int cv75_rct_probe(struct platform_device *pdev)
-+{
-+	struct clk_hw_onecell_data *data;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	cv75_ccu.base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(cv75_ccu.base))
-+		return PTR_ERR(cv75_ccu.base);
-+
-+	data = devm_kzalloc(dev, struct_size(data, hws, CV75_NUM_CLKS), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+	data->num = CV75_NUM_CLKS;
-+
-+	spin_lock_init(&cv75_ccu.lock);
-+
-+	ret = cv75_register_plls(dev, data);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register plls\n");
-+
-+	ret = cv75_register_fixed_factors(dev, data);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register fixed factors\n");
-+
-+	ret = cv75_register_composites(dev, data);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register composites\n");
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, data);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to add clock provider\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id cv75_rct_match[] = {
-+	{ .compatible = "ambarella,cv75-rct" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, cv75_rct_match);
-+
-+static struct platform_driver cv75_rct_driver = {
-+	.probe = cv75_rct_probe,
-+	.driver = {
-+		.name = "ambarella-cv75-rct",
-+		.of_match_table = cv75_rct_match,
-+	},
-+};
-+module_platform_driver(cv75_rct_driver);
-+
-+MODULE_AUTHOR("Cao Rongrong <rrcao@ambarella.com>");
-+MODULE_DESCRIPTION("Ambarella CV75 RCT clock controller");
-+MODULE_LICENSE("GPL");
+This commit adds the ARCH_AMBARELLA platform configuration and introduces
+the device tree files for the Ambarella CV75 SoC and CV75 EVK board to
+support initial console bring-up.
 
--- 
-2.34.1
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index d2acfac730037..16d7e3a4c2d62 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -26,6 +26,12 @@ config ARCH_SUNXI
+>  	help
+>  	  This enables support for Allwinner sunxi based SoCs like the A64.
+> =20
+> +config ARCH_AMBARELLA
+> +	bool "Ambarella SoC family"
+> +	select PINCTRL
+> +	help
+> +	  This enables support for the ARM64 based Ambarella SoCs like CV75.
+> +
+>  config ARCH_ALPINE
+>  	bool "Annapurna Labs Alpine platform"
+>  	select ALPINE_MSI if PCI
 
+[ ... ]
 
+> diff --git a/arch/arm64/boot/dts/ambarella/cv75-evk.dts b/arch/arm64/boot=
+/dts/ambarella/cv75-evk.dts
+> new file mode 100644
+> index 0000000000000..42a0fe24b83bd
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/ambarella/cv75-evk.dts
+> @@ -0,0 +1,30 @@
+
+[ ... ]
+
+> +	chosen {
+> +		stdout-path =3D &uart0;
+> +	};
+> +
+> +	memory@200000 {
+> +		device_type =3D "memory";
+> +		reg =3D <0x0 0x00200000 0x0 0x07e00000>;
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	status =3D "okay";
+> +};
+> diff --git a/arch/arm64/boot/dts/ambarella/cv75.dtsi b/arch/arm64/boot/dt=
+s/ambarella/cv75.dtsi
+> new file mode 100644
+> index 0000000000000..c36b6af48237a
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/ambarella/cv75.dtsi
+> @@ -0,0 +1,177 @@
+
+[ ... ]
+
+> +		ahb@ffe0000000 {
+> +			compatible =3D "simple-bus";
+> +			reg =3D <0xff 0xe0000000 0x0 0x01000000>;
+> +			ranges =3D <0xe0000000 0xff 0xe0000000 0x01000000>;
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <1>;
+> +
+> +			s_scratchpad_syscon: scratchpad@e002e000 {
+> +				compatible =3D "ambarella,cv75-sec-scratchpad", "syscon";
+> +				reg =3D <0xe002e000 0x1000>;
+> +			};
+> +		};
+> +
+> +		apb@ffe4000000 {
+> +			compatible =3D "simple-bus";
+> +			reg =3D <0xff 0xe4000000 0x0 0x01000000>;
+> +			ranges =3D <0xe4000000 0xff 0xe4000000 0x01000000>;
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <1>;
+> +
+> +			uart0: serial@e4000000 {
+> +				compatible =3D "ambarella,cv75-uart", "snps,dw-apb-uart";
+> +				reg =3D <0xe4000000 0x1000>;
+> +				clocks =3D <&rct CV75_GCLK_UART0>;
+> +				interrupts =3D <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
+> +				reg-shift =3D <2>;
+> +				reg-io-width =3D <4>;
+> +				pinctrl-names =3D "default";
+> +				pinctrl-0 =3D <&uart0_pins>;
+> +
+> +				status =3D "disabled";
+> +			};
+> +
+> +			pinctrl: pinctrl@e4010000 {
+> +				compatible =3D "ambarella,cv75-pinctrl";
+> +				reg =3D <0xe4010000 0x1000>;
+> +				ambarella,drive-strength-syscon =3D <&rct>;
+> +				ambarella,pull-syscon =3D <&s_scratchpad_syscon>;
+> +
+> +				uart0_pins: uart0-pins {
+> +					function =3D "uart0";
+> +					groups =3D "uart0";
+> +				};
+> +			};
+
+[Severity: High]
+Will uart0 permanently defer probing on boot because no driver exists for
+"ambarella,cv75-pinctrl"?
+
+In arch/arm64/boot/dts/ambarella/cv75-evk.dts, uart0 is enabled as the
+console via stdout-path =3D &uart0. In cv75.dtsi, uart0 specifies
+pinctrl-0 =3D <&uart0_pins>, which is a child of pinctrl@e4010000
+(compatible =3D "ambarella,cv75-pinctrl"). However, there is no driver in
+the kernel tree matching "ambarella,cv75-pinctrl".
+
+With CONFIG_ARCH_AMBARELLA selecting CONFIG_PINCTRL and arm64 defconfig
+enabling CONFIG_MODULES=3Dy, fw_devlink (via parse_pinctrl_n() ->
+device_links_check_suppliers()) will hold off probing uart0 waiting for
+the pinctrl supplier. Even after fw_devlink times out or if fw_devlink=3Doff
+is passed, the probe path runs:
+
+really_probe()
+  -> pinctrl_bind_pins()
+    -> devm_pinctrl_get()
+      -> create_pinctrl()
+        -> pinctrl_dt_to_map()
+          -> dt_to_map_one_config()
+
+In drivers/pinctrl/devicetree.c:dt_to_map_one_config(), when
+get_pinctrl_dev_from_of_node() fails to find a registered pinctrl_dev for
+pinctrl@e4010000 and walks up to the root node without pinctrl-use-default
+set:
+
+		if (!np_pctldev || of_node_is_root(np_pctldev)) {
+			of_node_put(np_pctldev);
+			ret =3D -ENODEV;
+			/* keep deferring if modules are enabled */
+			if (IS_ENABLED(CONFIG_MODULES) && !allow_default && ret < 0)
+				ret =3D -EPROBE_DEFER;
+			return ret;
+		}
+
+This returns -EPROBE_DEFER to pinctrl_bind_pins(), aborting really_probe()
+before dw8250_probe() can bind the serial console. Should pinctrl-0 and
+pinctrl-names be omitted from uart0 (or the pinctrl node disabled/omitted)
+until the pinctrl driver is present?
+
+> +
+> +			gpio0: gpio@e4013000 {
+> +				compatible =3D "ambarella,cv75-gpio", "arm,primecell";
+> +				reg =3D <0xe4013000 0x1000>;
+> +				clocks =3D <&rct CV75_GCLK_APB>;
+> +				clock-names =3D "apb_pclk";
+> +				interrupts =3D <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
+> +				gpio-controller;
+> +				#gpio-cells =3D <2>;
+> +				gpio-ranges =3D <&pinctrl 0 0 32>;
+> +				interrupt-controller;
+> +				#interrupt-cells =3D <2>;
+> +				arm,primecell-periphid =3D <0x000e8061>;
+> +			};
+> +
+> +			gpio1: gpio@e4014000 {
+> +				compatible =3D "ambarella,cv75-gpio", "arm,primecell";
+> +				reg =3D <0xe4014000 0x1000>;
+> +				clocks =3D <&rct CV75_GCLK_APB>;
+> +				clock-names =3D "apb_pclk";
+> +				interrupts =3D <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+> +				gpio-controller;
+> +				#gpio-cells =3D <2>;
+> +				gpio-ranges =3D <&pinctrl 0 32 32>;
+> +				interrupt-controller;
+> +				#interrupt-cells =3D <2>;
+> +				arm,primecell-periphid =3D <0x000e8061>;
+> +			};
+> +
+> +			gpio2: gpio@e4015000 {
+> +				compatible =3D "ambarella,cv75-gpio", "arm,primecell";
+> +				reg =3D <0xe4015000 0x1000>;
+> +				clocks =3D <&rct CV75_GCLK_APB>;
+> +				clock-names =3D "apb_pclk";
+> +				interrupts =3D <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+> +				gpio-controller;
+> +				#gpio-cells =3D <2>;
+> +				gpio-ranges =3D <&pinctrl 0 64 32>;
+> +				interrupt-controller;
+> +				#interrupt-cells =3D <2>;
+> +				arm,primecell-periphid =3D <0x000e8061>;
+> +			};
+> +		};
+
+[Severity: Medium]
+Are binding schemas missing for the newly introduced compatible strings and
+properties in cv75.dtsi?
+
+Running make dtbs_check on cv75-evk.dtb will fail validation because
+several compatible strings and vendor properties are not documented under
+Documentation/devicetree/bindings/:
+
+- scratchpad@e002e000 uses compatible =3D "ambarella,cv75-sec-scratchpad",
+  "syscon", which is not listed in
+  Documentation/devicetree/bindings/mfd/syscon.yaml.
+- serial@e4000000 uses compatible =3D "ambarella,cv75-uart",
+  "snps,dw-apb-uart", which is not listed in
+  Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml.
+- pinctrl@e4010000 uses compatible =3D "ambarella,cv75-pinctrl" along with
+  ambarella,drive-strength-syscon and ambarella,pull-syscon, which have no
+  binding schema in the tree.
+- gpio@e4013000, gpio@e4014000, and gpio@e4015000 use
+  compatible =3D "ambarella,cv75-gpio", "arm,primecell", which is not
+  documented in any binding schema.
+
+[Severity: Medium]
+How are gpio0, gpio1, and gpio2 expected to bind to a driver with
+arm,primecell-periphid =3D <0x000e8061>?
+
+Because "arm,primecell" is in compatible, of_platform_bus_create()
+registers gpio0, gpio1, and gpio2 as struct amba_device instances on the
+AMBA bus, where amba_match() -> amba_lookup() matches exclusively against
+periphid. No amba_driver in the tree matches 0x000e8061; for example,
+drivers/gpio/gpio-pl061.c has:
+
+static const struct amba_id pl061_ids[] =3D {
+	{
+		.id	=3D 0x00041061,
+		.mask	=3D 0x000fffff,
+	},
+	{ 0, 0 },
+};
+
+(and PL061 only supports 8 GPIO lines per block rather than 32). In
+addition, gpio-ranges =3D <&pinctrl ... 32> references the unprobed
+pinctrl@e4010000 node, which would cause of_gpiochip_add_pin_range() ->
+of_pinctrl_get() to return -EPROBE_DEFER. Is there a separate GPIO and
+pinctrl driver series that these nodes depend on?
+
+[ ... ]
+
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index ad3bd3d9507b2..454f07a6a6a6f 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -36,6 +36,7 @@ CONFIG_CRASH_DUMP=3Dy
+>  CONFIG_ARCH_ACTIONS=3Dy
+>  CONFIG_ARCH_AIROHA=3Dy
+>  CONFIG_ARCH_SUNXI=3Dy
+> +CONFIG_ARCH_AMBARELLA=3Dy
+>  CONFIG_ARCH_ALPINE=3Dy
+>  CONFIG_ARCH_APPLE=3Dy
+>  CONFIG_ARCH_ARTPEC=3Dy
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019-cv75-soc-v=
+10-0-d386065e2dd5@ambarella.com?part=3D4
