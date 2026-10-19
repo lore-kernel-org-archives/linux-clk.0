@@ -1,157 +1,118 @@
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248454E36EF;
-	Mon, 19 Oct 2026 12:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.203.200.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792414525; cv=pass; b=Sv/kOwQXRSbJlUYY6yxXKSgA5vUTBFJnZHBVmPX6Z1qeQ2cczfn4rQ/7QZ4o4DQHb4UhU3koAfWjOX46aT25jwc0p/qzf4TCdznFmfyzU/mEj4SUiRbNkA1Adyq9JkCxIjtS9Ge5H7BPOFV6hhwUe6vSZ1TpKflhU/4NYQb/qZQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792414525; c=relaxed/simple;
-	bh=UE3KjtawDtoJMnO40sfSb4jeUTfZW5R6uwnCYBQkZPo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=isF72o+LATcEvbOLewnsgN9iEBKjuWynZcHQtOpfMvCGYN+297VneyWF8m86z66egvvPK0ZS5B9ewxsTKiBTW1xF9zYKLTzh+UPd3XO6zj6X/jQFZVnfAYwiDVENEjrrS0uUtrp09FgIDrsazmvtznZVAo+CJ1ixlkncADVUxWo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b=gepNrz1U; arc=pass smtp.client-ip=185.203.200.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95234E5346;
+	Mon, 19 Oct 2026 13:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792414814; cv=none; b=s0gTSZRATppBTH3FX0nbAhJKHXvxnlGwjX+Aa9HqC5mo3QaVWc2Q9zX47qLhki3UmpnY9JRGztkFolqCvlCrwveAy+h3/7a5cXAs/ocH4gvc2xrhgWtMVRY1wyHr9tlHr9G2+M9O8PJTAVDPVsHGimm0h/31mBCErnFLGc4zhXc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792414814; c=relaxed/simple;
+	bh=knd/gj40sFjRqKe6w/LldOmiWgAoLSPveNh/KSsbFUY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rjRO3phZXHTu3a25dn4+n6Fa9ySmTr9LHA7nfNbF77MUHG2GzHmnxPIawwgVPl1l6hOSLJKWK1lph1XjtoxH+TgXndjH62M3f0IhURAcnYahJQ/JqLsRd8ss7SX+UphXLntAT6slLGmQnqqtmoohfqmohaXCw4ZR5UkUeFCv9Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XSPj/zDu; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b="gepNrz1U"
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 631DE201B55;
-	Mon, 19 Oct 2026 14:55:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1792414521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EDFACtr3joZkKek48vhVDUWWppSHXimH9DiDBJeDnxE=;
-	b=gepNrz1U6+E8DSXqJNpla4aXDaQwIAZnouL+bQeaRSWSAnv2PkKkBDIfOu+/sUKzcSIb69
-	Vb3gNn7tFjTsoSAdFA9FAC1jK5tMR/cYy8zNGtOj9R0kLVV9AEV0atx2vQR0hkuIRecLCo
-	GGZg/l/BkkQXqi2qah6aklRy1TpfVXdcwjb3RnHha1JokSF6VVy29R9/r1XK7QDjXBlpfy
-	ud42s54DCGMykv2BFWruIe/Oa3Kp5kB5gJplt96g1mFC1Ka6F9cijJo8605D3aJ0AD6T7w
-	URe84NPQPBiddAqyK5z3YB3p1mnPJgINxVlBVF0vS0JPFRssVrf6vtTvEjrolQ==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1792414521; a=rsa-sha256;
-	cv=none;
-	b=M+hY0bCqbBjAqkJiO2Dr0W85cayLgKDgnezkb8w7P8Kbnfem5o4rkdVs+OO5MYoRU1GhyY
-	1emQfM7kAJ7J/0Du2oa+qljCtBrlE+muxwidb+1I0Rzp9det36UkWsn9F72JYTjMFicR5r
-	3BDmGClKSVFcl4ZxDKWlQVNT8oPYgu0pvsvb9oPfch6QM97vUbkokmNUl2y8ZccmpwJw52
-	T4X/FIfYiE4E11R0m9JaQXOccNBdLul94VMjlfthBlzujHddG61+0ArW8R8qbgYuawyALt
-	ZIB+uJ68KX3UzMV7mb0bw/h/aEZJsNH/xmJBJljzNxVETGf7yhI+THk8vvkiMQ==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1792414521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EDFACtr3joZkKek48vhVDUWWppSHXimH9DiDBJeDnxE=;
-	b=SUHVSVb/QsnfjboxpMPWcd1QAf94pumlmEDKgHK+WWDxGpOuKE7pQW7TXFJWTXqcf/dmQH
-	YG7xgdA+2RnWlMj8FDVd6/IZ93shS0Si6MPewJztTSRrEq+tSGSKpM0JdzGNpYn+Y0Ejhc
-	osYs7kdzZXtj9PuQBcmmrSr7QJd8q0Ol9Pij963siJ6W3WM+bT2Wwhb0dncClsMgGvTRwo
-	kI3VVPwSQ+xfY5gum4LASWgNwQxbe7edm/DEItkd1W0C7MIx5tjqhrvTuLsqYM8t5jya54
-	8aomFz9pg01MLE9NmR6a0PX/m0w0TVzYWCIC+RWrNEhYzyU1v+04FQiPExG6Zw==
-Message-ID: <62860351b9ae360c174d36dd54d4110417f395ad.camel@pengutronix.de>
-Subject: Re: [PATCH 05/20] i3c: dw: switch to array-based exclusive reset
- control
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Jisheng Zhang <jszhang@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Stephen Boyd	 <sboyd@kernel.org>, Brian Masney
- <bmasney+clk@redhat.com>, Jerome Brunet	 <jbrunet+clk@baylibre.com>, Andi
- Shyti <andi.shyti@kernel.org>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, Lee Jones
- <lee@kernel.org>,  Linus Walleij <linusw@kernel.org>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,  Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Sebastian
- Hesselbarth	 <sebastian.hesselbarth@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-i3c@lists.infradead.org, mfd@lists.linux.dev,
- linux-gpio@vger.kernel.org, 	linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org
-Date: Mon, 19 Oct 2026 14:55:21 +0200
-In-Reply-To: <20260929061417.20733-6-jszhang@kernel.org>
-References: <20260929061417.20733-1-jszhang@kernel.org>
-	 <20260929061417.20733-6-jszhang@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSPj/zDu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 666021F000C4;
+	Mon, 19 Oct 2026 13:00:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792414813;
+	bh=b0A77YKTXFaxgjm9V8KIMJopVwoJ/660eC1eVvp9d34=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=XSPj/zDuNsxfx3U50cQyoHped1vFYlIc2Iu+XRBXCMaElueT1xVtC58uIAt5wjF/e
+	 7YW6KxRz+eRQXaH/r7SYZ9zL/RjsgeFx5U6Ektj3jPB3uhryUuVzebY5/B0hUI/blI
+	 AcTIXAKF+odndyhwA25tS/cMXg68qcjGuoMsLC5QLUPPPLNrcSprOF05tqX68fqvbs
+	 J/dITzp/3HJKrskr0gpdFUwokxh84nEJympudRc78WlRprLhdjojvEsSzDv34bwhQe
+	 izoH/geTqrOs/JeL6xKASm6jvzmhVhDyvMnreGxbE8e3r8X7UfxfeCriCl2TsdYilT
+	 3aIXcBsx94QGg==
+Message-ID: <fa2e9997-6124-42c0-959c-ec920ee9cbeb@kernel.org>
+Date: Mon, 19 Oct 2026 16:00:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: renesas: rzg2l-cpg: Skip re-initializing MSTOPs and
+ critical resets for s2idle
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "bmasney+clk@redhat.com" <bmasney+clk@redhat.com>,
+ "jbrunet+clk@baylibre.com" <jbrunet+clk@baylibre.com>
+Cc: "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20261019122501.2423969-1-claudiu.beznea@kernel.org>
+ <TY3PR01MB1134614C56D70F75D2C3214D986982@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@kernel.org>
+In-Reply-To: <TY3PR01MB1134614C56D70F75D2C3214D986982@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Di, 2026-09-29 at 14:14 +0800, Jisheng Zhang wrote:
-> The Synopsys DesignWare I3C master controller can have multiple reset
-> lines, such as a core reset and APB reset.
->=20
-> Refactor the driver to use devm_reset_control_array_get_exclusive()
-> instead of a single named reset handle. This automatically manages all
-> resets allocated to the device node sequentially.
+Hi, Biju,
 
-Note that this does not guarantee any particular order. Are you sure
-that this is good enough for all implementations of the DW I3C core?
+On 10/19/26 15:36, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: Claudiu Beznea <claudiu.beznea@kernel.org>
+>> Sent: 19 October 2026 13:25
+>> Subject: [PATCH] clk: renesas: rzg2l-cpg: Skip re-initializing MSTOPs and critical resets for s2idle
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> When the system suspends to s2idle, any of the IP blocks may be in the wakeup path. For a device in the
+>> wakeup path, the generic PM domain (genpd) does not disable/enable its clocks across suspend/resume. Re-
+>> initializing the MSTOP bits for such a device leads to synchronous aborts when its registers are accessed
+>> for the first time after resume.
+>>
+>> In a suspend mode that is not controlled by firmware, power to the SoC is not lost, so the MSTOP and
+>> critical reset state is retained and does not need re-initialization in the first place. Skip it when
+>> pm_suspend_via_firmware() reports such a mode.
+>>
+>> Fixes: 5cd33db56956 ("clk: renesas: rzg2l: Add support for MSTOP in clock enable/disable API")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>   drivers/clk/renesas/rzg2l-cpg.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c index
+>> f6293c968bcf..3d2281456036 100644
+>> --- a/drivers/clk/renesas/rzg2l-cpg.c
+>> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+>> @@ -31,6 +31,7 @@
+>>   #include <linux/reset-controller.h>
+>>   #include <linux/slab.h>
+>>   #include <linux/string_choices.h>
+>> +#include <linux/suspend.h>
+>>   #include <linux/units.h>
+>>
+>>   #include <dt-bindings/clock/renesas-cpg-mssr.h>
+>> @@ -2697,6 +2698,9 @@ static int rzg2l_cpg_resume(struct device *dev)
+>>   	struct rzg2l_cpg_priv *priv = dev_get_drvdata(dev);
+>>   	int ret;
+>>
+>> +	if (!pm_suspend_via_firmware())
+>> +		return 0;
+>> +
+> 
+> Please move this after deassert, otherwise it will lead to SCIF not getting console
+> prompt during s2idle as reset is asserted during suspend?
+How did you reproduce this?
 
-Otherwise it may be wise to at least specify the names in binding, to
-be able to switch to the bulk API or individual control later, if
-needed.
+Who asserts the SCIF reset in s2idle?
 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->  drivers/i3c/master/dw-i3c-master.c | 24 ++++++++++++++++++------
->  drivers/i3c/master/dw-i3c-master.h |  2 +-
->  2 files changed, 19 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i=
-3c-master.c
-> index 4563d8761ba0..1c6c870f5bb3 100644
-> --- a/drivers/i3c/master/dw-i3c-master.c
-> +++ b/drivers/i3c/master/dw-i3c-master.c
-> @@ -1657,6 +1657,11 @@ static const struct dw_i3c_platform_ops dw_i3c_pla=
-tform_ops_default =3D {
->  	.set_dat_ibi =3D dw_i3c_platform_set_dat_ibi_nop,
->  };
-> =20
-> +static void dw_i3c_resets_assert(void *data)
-> +{
-> +	reset_control_assert(data);
-> +}
-> +
->  int dw_i3c_common_probe(struct dw_i3c_master *master,
->  			struct platform_device *pdev)
->  {
-> @@ -1696,10 +1701,17 @@ int dw_i3c_common_probe(struct dw_i3c_master *mas=
-ter,
->  	if (IS_ERR(master->pclk))
->  		return PTR_ERR(master->pclk);
-> =20
-> -	master->core_rst =3D devm_reset_control_get_optional_exclusive_deassert=
-ed(&pdev->dev,
-> -										NULL);
-> -	if (IS_ERR(master->core_rst))
-> -		return PTR_ERR(master->core_rst);
-> +	master->resets =3D devm_reset_control_array_get_optional_exclusive(&pde=
-v->dev);
-> +	if (IS_ERR(master->resets))
-> +		return PTR_ERR(master->resets);
-> +
-> +	ret =3D reset_control_deassert(master->resets);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D devm_add_action_or_reset(&pdev->dev, dw_i3c_resets_assert, mast=
-er->resets);
-> +	if (ret)
-> +		return ret;
+Is the s2idle done with the help of firmware in your case?
 
-This looks like we are missing
-devm_reset_control_array_get_optional_exclusive_deasserted().
+If you have issues on any of your platforms could you check after applying this 
+patch: 
+https://lore.kernel.org/all/20261005111157.17256-1-ovidiu.panait.rb@renesas.com/ ?
 
-regards
-Philipp
+Thank you,
+Claudiu
