@@ -1,126 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCD64A2A78;
-	Mon, 19 Oct 2026 09:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E99D4B826B
+	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 09:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792402126; cv=none; b=ae8CTHdTN3ovXL+uUSLKuKSJkxKJgExK4whWC8HvXI1qF8FiwLGD/fGXekP+82W/nENEa3ndf43tWpOvLm1XVvDi5lpUAf/q2Iu6jlMAqTgo0+lSPgEMBMqY2lJrGsRkmwRJfoVnJl7OUOPSe7AHQZlfmxrX1n+7xhbVZ3BMNe8=
+	t=1792403732; cv=none; b=s37DRnoXB88AmyKX3jx70PITTneYU8c5MvUs+sZoDII6qPnhVP1w55dE/PiSrseOEk62MbCrFA7dOWF7AwgiNea0BzlpnU9wByxA1WEXHbzph4UP9kLN9G2J2MWF/QRMSWIBWaC29eHzQn6fUYr1CIuEqjb3N/V+Jy4lStemnwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792402126; c=relaxed/simple;
-	bh=agh/o7enZ7p5MqoUXioM3l5IaN2TCYtEFLFTWangt2I=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=FjiQ2M13xoaflh4Gfz2u7sl9WGsnPNCFKRIHUWQh9I/tmdeXboN/J0J5BKpNJAHs/YbIgmpJJdRmyOFrMqTinsn9UddQSa9JL1Y2XXhoq11dbgB3ZOwtrqs3VT4HqbaTbua5TkXi+d/S/hjvYbN1Yv1FPxR6irwrE/0b96hGX/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EwmRQMMo; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792403732; c=relaxed/simple;
+	bh=j15NZBr9gmJFKjFiA+o1T4SJq+ce59GySu+ndbBbdFI=;
+	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id; b=XrUz3m8PWE5z9xeTEsco93hbrbJ1A1ecjk9QNgGebOo2+VaEN2j0tZxPbWw2/l0ncwFhVtv10abWDGFgd0sos7UEiwUheQjRxX0n38stYoL8LC8RrInyDRK3+PfKYXKD37zHjhSL2NGq+16hfJ7RIUgMtwIbYaPFhbXsNOTJ+do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Wu0pMyi/; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EwmRQMMo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 114421F000C4;
-	Mon, 19 Oct 2026 09:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792402125;
-	bh=NzdPriWzb+PpbEYkskFC7C89IytwDvaipdXCbKfL/IQ=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=EwmRQMMocmHkEPChHkb1uUmOc+j0ZXLweK24sncr1hDEZleuQ66shSnkj34k6xled
-	 YOqPXiQetrRFajrgZhe58gfO0yr0MogJ83VPsoq38YjBKeE7j8lD/ib6ViYvtWuc4e
-	 RS2Ynk7my8Xe1OsO8LVTDoFtM9Ue8LH2RdNExpAj7Ky7L3e2WGW6E1gcTErwEzh34O
-	 S1jYZgluvM17x2doNEVVyPDDsw0m5WRX077mYQ+B+/op14OjZlAOWEDLHeQWRK4sV0
-	 NVSE823Yj8iRlBmew7xsF1/lfLHWJh1ENAvhJEtPmcLWt0v7ARbjYk+ckooekGQVpz
-	 R5V7wfrVXVQgQ==
-Message-ID: <sashiko-outbox-176903@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 2/5] drm/panel: add Novatek NT36850 panel driver
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261019-sdm845-hdk-v5-2-4aa7e22cd0ed@oss.qualcomm.com>
-References: <20261019-sdm845-hdk-v5-0-4aa7e22cd0ed@oss.qualcomm.com>
- <20261019-sdm845-hdk-v5-2-4aa7e22cd0ed@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Oct 2026 09:28:44 +0000
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Wu0pMyi/"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4a1df146015so9496735e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 02:55:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1792403728; x=1793008528; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=/mV3QLBtc235SSF0yEhuYpNqjTPPn1gF9CIeniWG8O4=;
+        b=Wu0pMyi/lau4nMEPPmah6Ri4a2w5QzLW8f86GWx0T3njqo5vzHZaHyq12Uf6OHqOVE
+         AcThV+l3d0oZ+y+HIM/onAje2+1XyDgi/l4MdJFra67te7T6/os24sgPCmaleK62FLnP
+         ZpAexp8P+WP801t+pP5M1+foNyPLJC8z3iJ77FQMwdf/ByckEY5l7+2HczRtApHi4DRN
+         eGOoUxp8iJJxLkTsSlNVsLGh7slXyNXmaAXcZAgCm3EsqgW15FUu1c9S25TjnLxQ/aDf
+         cV7irLtNh0LjQnZxzjfExZ+ZwfuZzKSVJaheedWG7+cuNYrDWWY2JmwVtRkQQekr5sPO
+         jyaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792403728; x=1793008528;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=/mV3QLBtc235SSF0yEhuYpNqjTPPn1gF9CIeniWG8O4=;
+        b=xsKQV3wWNIcilexqFoKGtvDsISG6QBEWlRE7Z5zx6IZZFbY3fbFt1FNq8kqLoo1DDV
+         bQjfAbuusv3E5pg9XnKAFaRpUiV74Q+olSJGiyGpYbA17HHq441xQQpRhlrNckx1JtZ/
+         AzrgTxDCThPVtZM/Yfj5RO4Cs7NDf03/z5nbothZrbWcRQEEP/xbGVfLVMVROGBRq1Ti
+         68RRTxUi3T3lSIzQ7wQqS14CSbuutnNGwAns04XAyXxWS5ujScpJlJvB7R/NJHb1xVSN
+         xu/DEMNhQYLpZ+ARTAX5OpBWQ4ty2ziHyrljnOkQgX9qZ591obeO/WaK577TGCrwV/rJ
+         Av2w==
+X-Forwarded-Encrypted: i=1; AKwUvBzpqo7V7QD2XksqnAzVzdKEUNLafcOE3Z2FonLIcB78rIaOoRbRQsGu0lkF2RoE8jBPJcsN+P9DLR0=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLmQQhloCEMiOmtseaHAgu7cxQE05rg1AJ5vCxRI982pukXk9ob
+	/UUMXnr8UQbswC/GxbIfAyg/dvlNyCo1uBw9iiXryz0cxjnG7ywt1S6HDZz8SCbcKj36bFa1+E+
+	tCIKkyc8=
+X-Gm-Gg: AYBFou0kAbGKRl6VPMAz49UEMQvJSylAIUHsfrRHxXYeE2bFhWe1204HsJt1yrrPpxK
+	SPe2jMBu2HnejI7lX9lF/cFdOmTCkNDN+tJiEgZsT4tYa0Z4oVVAimV2wBpEFlxJUVxUGbXFgpK
+	Lzmrnv6Fggs2xWzUwwsUWUff1lhBeDSsZSxSTcA4kCs8PVO/vHm9zH2tJZKNzTY3eEIP4RmTxhV
+	AGNgSLEg6n+Qk5DOEvV7SvMpDNDjz2xTasvFhVdNYIhtR2ALX7mBuBNqXrDfmu7mzarwy/SDaHf
+	fWzrAa6YAvQTLf22vqRle8vx0OxEayx9vMcZXfMrxyBgONB04FMGGbvxHGBKc6xylX7y8S87GRE
+	aIoCXiEnXKRHcmB2d62rh0eCrfZ1GchlHCkDHX6W5E1ijxMJOgSuIUG1zUXlx+d8JzUXEE48N3w
+	tzN0TNvK1cx2tlxo/xSrm/7c9Z7n/+hOYBQ5e63k9sjLUi0JXv7hspqfnlxXuyd20LOpbFIwqGE
+	PuohStGIS5au4N8ng==
+X-Received: by 2002:a05:600c:628e:b0:4a1:df70:b4a5 with SMTP id 5b1f17b1804b1-4a1df70b5c0mr122511225e9.7.1792403728536;
+        Mon, 19 Oct 2026 02:55:28 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1c8ddde4esm324919775e9.12.2026.10.19.02.55.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Oct 2026 02:55:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] clk: devres: Skip cleanup action for absent optional
+ clocks
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: "Baek Kyu, Kim" <pocj8ur4in@gmail.com>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20261018063009.1365568-1-pocj8ur4in@gmail.com>
+References: <20261018063009.1365568-1-pocj8ur4in@gmail.com>
+Date: Mon, 19 Oct 2026 11:55:25 +0200
+Message-Id: <179240372505.859276.1184439049776215030.b4-review@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=610; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=j15NZBr9gmJFKjFiA+o1T4SJq+ce59GySu+ndbBbdFI=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFlXX/J/al5WFWzgFHunyGih9eXy6Ttz/q7QWSBjVDvLb
+ 7bckV7ljlIWBjEuBlkxRZYa7mrxd5JaX2ZN17kNM4eVCWQIAxenAExkQhQjw9L05XXGaTwrfP5u
+ iy5cu77y904rTaM9pyf+XmVs3GJyL5Phn93+w5mPH8+ZZSKfOv2O+uSf7Im/bWd+EHwx/d/JXb9
+ nd7MDAA==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Low] drm/panel: missing select DRM_KMS_HELPER in DRM_PANEL_NOVATEK_NT368=
-50
---
+On Sun, 18 Oct 2026 15:30:09 +0900, Baek Kyu, Kim <pocj8ur4in@gmail.com> wrote:
+> devm_clk_get_optional_enabled_with_rate() registers a disable/unprepare
+> action even when the optional lookup returns NULL. If allocating the
+> action fails, the error path calls devm_clk_put(dev, NULL), triggering
+> warnings in devm_clk_match() and devm_clk_put().
+> 
+> Return NULL after the lookup to skip the unnecessary action registration.
+> The state allocated by devm_clk_get_optional() is released when the
+> device is detached.
+> 
+> [...]
 
-commit 6d69498564f980cf8c931a0b5bc25de370ede1e6
-Author: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 
-drm/panel: add Novatek NT36850 panel driver
+-- 
+Jerome
 
-This commit adds a DRM panel driver for the Truly WQHD dual-DSI command mode
-panel built around the Novatek NT36850 display controller.
-
-> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-> index cbdf7b8f7f7af..2cb49e6595d64 100644
-> --- a/drivers/gpu/drm/panel/Kconfig
-> +++ b/drivers/gpu/drm/panel/Kconfig
-> @@ -697,6 +697,16 @@ config DRM_PANEL_NOVATEK_NT36672E
->  	  LCD panel module. The panel has a resolution of 1080x2408 and uses 24=
- bit
->  	  RGB per pixel.
-> =20
-> +config DRM_PANEL_NOVATEK_NT36850
-> +	tristate "Novatek NT36850 panel driver"
-> +	depends on OF
-> +	depends on DRM_MIPI_DSI
-> +	depends on BACKLIGHT_CLASS_DEVICE
-> +	help
-> +	  Say Y here if you want to enable support for the panels built
-> +	  around the Novatek NT36850 display controller, such as some
-> +	  Truly panels used in Qualcomm development kits.
-> +
-
-[Severity: Low]
-Should DRM_PANEL_NOVATEK_NT36850 select DRM_KMS_HELPER here?
-
-In drivers/gpu/drm/panel/panel-novatek-nt36850.c, nt36850_get_modes() calls
-drm_connector_helper_get_modes_fixed(), which is built as part of
-drm_kms_helper.o under CONFIG_DRM_KMS_HELPER:
-
-> diff --git a/drivers/gpu/drm/panel/panel-novatek-nt36850.c b/drivers/gpu/=
-drm/panel/panel-novatek-nt36850.c
-> new file mode 100644
-> index 0000000000000..0d1eeba539dbd
-> --- /dev/null
-> +++ b/drivers/gpu/drm/panel/panel-novatek-nt36850.c
-
-[ ... ]
-
-> +static int nt36850_get_modes(struct drm_panel *panel,
-> +			       struct drm_connector *connector)
-> +{
-> +	struct panel_info *pinfo =3D to_panel_info(panel);
-> +
-> +	connector->display_info.bpc =3D pinfo->desc->bpc;
-> +
-> +	return drm_connector_helper_get_modes_fixed(connector, pinfo->desc->mod=
-e);
-> +}
-
-[ ... ]
-
-When CONFIG_DRM_PANEL_NOVATEK_NT36850=3Dy and CONFIG_DRM_KMS_HELPER=3Dm (or=
- n),
-could linking vmlinux fail with an undefined reference to
-drm_connector_helper_get_modes_fixed?
-
-[ ... ]
-
-> +module_mipi_dsi_driver(nt36850_driver);
-> +
-> +MODULE_AUTHOR("Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>");
-> +MODULE_DESCRIPTION("DRM driver for Novatek NT36850 based MIPI DSI panels=
-");
-> +MODULE_LICENSE("GPL");
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019-sdm845-hdk=
--v5-0-4aa7e22cd0ed@oss.qualcomm.com?part=3D2
