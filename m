@@ -1,397 +1,177 @@
-Received: from out-zbxj-a74.jellyfish.systems (out-zbxj-a74.jellyfish.systems [198.54.127.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF161E5714
-	for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 06:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C3C3A7193;
+	Mon, 19 Oct 2026 07:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792393031; cv=none; b=n3V0/faQ7/GiYXX3lS7Pp/cGNVEpQML78txvx+pR0zkGITUmQaFeiY1ahjg9MRVIcH4PZOiz+ZdgwbX2Aed5qqW11b2rvn7cKGaygQOp7ddlVqqAinJ+GJ8vUbTyh3jZ8LxwtAnrxihVua4ldGxyaeFUhoLnzjwB3kQa8Hyd5OQ=
+	t=1792393327; cv=none; b=dZg8Is2DUA2987e8lfxNdf24pg2a+kmkB6+Nj0ecx5PLI2KYJwJuNJ5FnkFfE6vlWX0blvwGLFYh4C7KkMX9bJLgp8217MWNJRO+SMV+S9s0OFfaWxGCImBtde2T68DR78Fsf67Uo82HZiLlnbzi1NjppsEQT7yHmz5dCmO86EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792393031; c=relaxed/simple;
-	bh=udeggmCb3Rt5fw3hHrTwRt0wekfKqGLiEZYraZsrQ40=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ec3C8XjbSTMdy5C+Cj20v542xzpgJ4jNnQ3gWI81RptvP5KfD7BF8o93pjRebcygoCkUCcSslPMf3xtAqqBYRwvt5SzNBiCPU1lNPSbMRefiA48OgZeoP/9ec9wlqS/dkgUowyumFqbHuPd4pOnhOyQhrGcT16GTZTwZWMRZ3es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gurudas.dev; spf=pass smtp.mailfrom=gurudas.dev; dkim=pass (2048-bit key) header.d=gurudas.dev header.i=@gurudas.dev header.b=P7zOURVs; arc=none smtp.client-ip=198.54.127.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gurudas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gurudas.dev
+	s=arc-20240116; t=1792393327; c=relaxed/simple;
+	bh=IWJHYQT5csf1bfxQNDgJxGfQE4utAXU++e6Y38iDegs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N2D8a3Udmi32XasK3Xqvdyz5xj4kjMgy9AJ+JeiPiK0coXJpAohbL2vFOR+FxLvwLHNpaljFfwApSJZwnPfgc+QTLZqR1BeKdALW2QaY/tiJS3FW9nOj3JnlEAVIFTerg/aDHffrOSTUVf06TFzVn/yrHj7PeLG6rZ+nUnqvlPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=D86rDiSK; arc=none smtp.client-ip=212.227.126.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gurudas.dev header.i=@gurudas.dev header.b="P7zOURVs"
-Received: from [192.168.1.106] (107-194-158-19.lightspeed.sntcca.sbcglobal.net [107.194.158.19])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4j7RDW4VnZz2x99;
-	Mon, 19 Oct 2026 06:56:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gurudas.dev;
-	s=spacemail; t=1792393020;
-	bh=cA0aY2mWghiYPgF7Otc8FZGSfqB5i/BfGMxAWkJiOuE=;
-	h=From:Date:Subject:To:Cc:From;
-	b=P7zOURVsVpz7knEZeeF6Xwf8Bd+GMdb51KHHUQGgh71QeqmUinIRS+ecZ3ihRlf9v
-	 TU0k51k/GprwPG5d5gqUygnl9xD6BqRBEL2h/gB4rqHI9uTIYzxRm2ClN48NVxIdCu
-	 HU++VwaxujuRKARTO3VdKuZyRTcEijbAlc1logQ/w8cJBTQVjJcKane0clIR+dL8lL
-	 PVs84svNhLoV51HHdCjDOKhevs6H3esIS1TsbVVPaXTfue4RG02AuxMyLTYxSX/enR
-	 A86ZO9Rvr2JlK7cnq9PMZ/eZ54d5TG7KF7wX5VLzKwQlHfM10i+jiQT5p3ACBxPNO6
-	 +vzfzOax71j0g==
-From: Guru Das Srinagesh <linux@gurudas.dev>
-Date: Sun, 18 Oct 2026 23:56:39 -0700
-Subject: [PATCH v4] coccinelle: Detect clk_register() anti-pattern
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="D86rDiSK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1792393322; x=1792998122;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=jFT100uFamP5A1+7t6kGUO077SA2VYn6gbrf7ueKwUk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=D86rDiSK53/c8EqF8EV5bBNI94+AELUVcujuucYh5wfEs+ixHbLXss3b+tzBjeTe
+	 kYN3GlLqrJExRRCGqBV0KZse0JE8KHQ4J3+Zz2U7J8iL6yxrBsFxQ/hqTMUDJZBVE
+	 jHdlgoCMkto4deqgXphL/KSe2MXAGduckHVTq5GnlsdYTiGHFyLFxXcxBV0eNTEQo
+	 Kl2eD09nZ8J3oy9Gg9duy6LleEGmuUn1asCYmtXrKEFREGOem0mOIDcyYwbZwhbco
+	 I72c/CMH4jyWjhPhmH0aekMvPfhv1oO29D2sbBs01MYVLOAY7xMpSIJPyEeMcuzLE
+	 GExRgoyuG+bbydOYXw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from client.hidden.invalid by mrelayeu.kundenserver.de (mreue010
+ [212.227.15.167]) with ESMTPSA (Nemesis) id 1Mzydy-1wMrLN0CZi-0130v9; Mon, 19
+ Oct 2026 08:56:07 +0200
+Message-ID: <40a18909-4a96-4bfd-924a-c62658f26de9@oldschoolsolutions.biz>
+Date: Mon, 19 Oct 2026 08:56:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261018-cocci-clk-register-v4-1-ed611b1c0da6@gurudas.dev>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/33NSw7CIBgE4KsY1mJ49IUr72FcUPhpUdMaaImm6
- d2FuqmxcTnJzDcT8uAseHTcTchBsN72XQzZfodUK7sGsNUxI0ZYQSrCsOqVsljdb9hBY/0ADou
- capGxnEqToTh8ODD2uaDnyyf7sb6CGpKUGm0c9u61vAaaen8PAsUUa1NU0qiaAphTM7pRS3/QE
- FC6CGyN8E2ERYQxKCthytyI6hfha0RsIjwiBdGEF0A5L8k3Ms/zGxK+yAdSAQAA
-X-Change-ID: 20260802-cocci-clk-register-951d94251af4
-To: Julia Lawall <Julia.Lawall@inria.fr>, 
- Nicolas Palix <nicolas.palix@imag.fr>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, cocci@inria.fr, 
- Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org, 
- Guru Das Srinagesh <linux@gurudas.dev>
-X-Mailer: b4 0.15.2
-X-Envelope-From: linux@gurudas.dev
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] clk: implement sync_state support
+To: Brian Masney <bmasney@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Ulf Hansson <ulfh@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Xuyang Dong <dongxuyang@eswincomputing.com>,
+ Hans de Goede <johannes.goede@oss.qualcomm.com>,
+ Maxime Ripard <mripard@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
+ Abel Vesa <abelvesa@kernel.org>
+Cc: driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20260626-clk-sync-state-v1-0-4156d8196dc8@redhat.com>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <20260626-clk-sync-state-v1-0-4156d8196dc8@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:cUfu78x5LyhcERPtQ6iwVQ5kI6C3XoSd1pBuP6ROLgNSa4/agon
+ FvZ0YKQO6mfr/Sg7+0bu9OskZeYf2YuUxDfo6uq8TiQWFoLDehyThCJYfmz+gVN4Cse07aN
+ 28sr3qdO9jnKUq57QZ30FZG6Nex4llIVlER07gNrWsUKGLTDGzzzBTP8oAE4PFTQhn+eywg
+ lVcgRDQMkot7htJGzZY+A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:3BQIcOkyU9E=;1VRc6H53xJxw7cN2b6FIjo5a0yq
+ 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
+ ZCqqQJCvVFkXzZtIM8iD9KEKA3R+jmnWdFXTQ==
 
-Enforce commit 12a0fd23e870 ("clk: Print an error when clk registration
-fails"): clk_register(), clk_hw_register(), and their devm_/of_ variants
-log their own error on failure, so driver-side error prints after these
-calls are redundant.
+Hi there,
 
-Assisted-by: LLM
-Signed-off-by: Guru Das Srinagesh <linux@gurudas.dev>
----
-Changes in v4:
-- Rebased to v7.3
-- Drop verbose cover letter examples of transformations
-- Match any voidfn instead of specifically only dev_err, pr_err, dev_warn, etc.
-  to cover pr_crit, DRM_DEV_ERROR instances
-- Simplify functional-final `ret = PTR_ERR(...); return ret;` to `return
-  clk_register();` directly such as in clk-pic32.c and clk-sysctrl.c;
-  the new rule names the functions literally, per v1, to keep the file
-  pre-filter working
-- Similarly simplify within-if-body `ret = PTR_ERR(...); return ret;`
-- Drop a local left unread by the removed message when it is declared
-  and set in the registration loop, as in owl-common.c and clk-rpmh.c
-- Running script on whole tree produces a single positive:
-  arch/arm/mach-omap1/clock_data.c, where the removed message is the
-  only user of a local variable, resulting in an unused variable
-  warning. Left this to fix up by hand to keep the script shorter, happy
-  to add rules to handle it if preferred.
-- microchip-isc-clk.c keeps braces on its "else if" arm which checkpatch
-  flags; this is also left to fix up by hand for the same reason.
-- Link to v3: https://patch.msgid.link/20260809-cocci-clk-register-v3-1-60d036e13370@gurudas.dev
+On 6/26/26 18:32, Brian Masney wrote:
+> The existing support for disabling unused clks runs in the late initcall
+> stage, and it has been known for a long time that this is broken since
+> it runs too early in the boot up process. It doesn't work for kernel
+> modules, and it also doesn't work if all of the consumers haven't fully
+> probed yet. Folks have long recommended to boot certain platforms with
+> clk_ignore_unused to work around issues with disabling unused clks.
+>
+> This series fixes this by adding support for sync_state to the clk
+> subsystem.
+>
+> Changes in v3:
+> - Allow multiple sync_state callbacks in the driver core via a new
+>    helper dev_add_sync_state(). This allows dropping changes to the QC
+>    drivers that already have a sync_state callback since everything can
+>    coexist without changes. This also makes it so that this can coexist
+>    with the pmdomain subsystem.
+> - Only show "clk: Not disabling unused clocks" message once.
+> - Add Tested-by from Neil and Xuyang
+> - Link to v2: https://lore.kernel.org/linux-clk/20260616-clk-sync-state-=
+v2-0-15f82c64d95c@redhat.com/
+>
+> Changes in v2:
+> - Split out clk-cbf-8996.c into it's own patch, and don't call
+>    qcom_cc_sync_state().
+> - Clarify comment above call to dev_set_drv_sync_state() about
+>    the -EBUSY.
+> - Added Tested-by from Jens
+> - Link to v1: https://lore.kernel.org/r/20260603-clk-sync-state-v1-0-457=
+120eed200@redhat.com
+>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+> Brian Masney (4):
+>        driver: core: introduce dev_add_sync_state()
+>        pmdomain: core: migrate to dev_add_sync_state()
+>        driver: core: remove dev_set_drv_sync_state()
+>        clk: implement sync_state support
+>
+>   drivers/base/base.h     |  7 +++++
+>   drivers/base/core.c     | 29 ++++++++++++++++++
+>   drivers/clk/clk.c       | 78 ++++++++++++++++++++++++++++++++++++++++-=
+=2D-------
+>   drivers/pmdomain/core.c |  4 +--
+>   include/linux/clk.h     | 14 +++++++++
+>   include/linux/device.h  | 21 +++++++------
+>   6 files changed, 127 insertions(+), 26 deletions(-)
+> ---
+> base-commit: 6c94b38b83a04c43ea49004275f0391404051093
+> change-id: 20260626-clk-sync-state-ad008829a689
+>
+> Best regards,
 
-Changes in v3 (Julia):
-- Match an "if" regardless of a trailing "else" (else S, S unused),
-  across context/patch/report/org rules for both families. Found via
-  this to be a real, previously-invisible case in
-  drivers/media/platform/microchip/microchip-isc-clk.c.
-- Fix the org-mode script rules: cocci.print_main() takes (message,
-  position), not just a position; the previous calls omitted the
-  message entirely.
-- Drop the MAINTAINERS addition from v2 per Julia's comment that a
-  specific maintainer isn't needed for this file.
-- Link to v2: https://patch.msgid.link/20260803-cocci-clk-register-v2-1-22e789f75f98@gurudas.dev
+Tested the whole series on several sc8280xp and x1 devices. Appears to=20
+work well.
 
-Changes in v2 (Julia):
-- Use a literal function-name disjunction instead of a regex identifier,
-  enabling spatch's file pre-filter optimization.
-- In "patch" mode, drop braces when only one statement remains, and
-  delete the whole "if" when the message was the only (braceless)
-  statement.
-- Drop two never-observed condition variants (IS_ERR(clk) == 1, ret !=
-  0); keep the one with real precedent (ret < 0).
-- Link to v1: https://patch.msgid.link/20260802-cocci-clk-register-v1-1-df68afcb1eef@gurudas.dev
+Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 
-Testing:
-- "make coccicheck COCCI=<full/path/to/clk_register.cocci> MODE=patch SPFLAGS="--in-place"
-- All four modes (report/context/patch/org) verified via "make
-  coccicheck COCCI=<path> MODE=<mode> [M=<path>]" against the
-  whole tree on v7.3.
----
- scripts/coccinelle/api/clk_register.cocci | 262 ++++++++++++++++++++++++++++++
- 1 file changed, 262 insertions(+)
+with best regards
 
-diff --git a/scripts/coccinelle/api/clk_register.cocci b/scripts/coccinelle/api/clk_register.cocci
-new file mode 100644
-index 000000000000..01d272e2d96f
---- /dev/null
-+++ b/scripts/coccinelle/api/clk_register.cocci
-@@ -0,0 +1,262 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/// Remove error messages after clk registration failures, because
-+/// clk_register(), clk_hw_register(), and their variants already log
-+/// an error when they fail. See commit 12a0fd23e870 ("clk: Print an
-+/// error when clk registration fails").
-+//
-+// Confidence: Medium
-+// Options: --include-headers
-+
-+virtual patch
-+virtual context
-+virtual org
-+virtual report
-+
-+@depends on context@
-+expression clk;
-+identifier voidfn;
-+constant char[] c;
-+statement S;
-+@@
-+
-+clk = \(clk_register\|devm_clk_register\)(...);
-+if ( IS_ERR(clk) )
-+{
-+...
-+*voidfn(...,c,...);
-+...
-+}
-+else S
-+
-+@collapse depends on patch@
-+expression list args;
-+identifier x;
-+identifier voidfn;
-+constant char[] c;
-+@@
-+
-+(
-+-x = clk_register(args);
-++return clk_register(args);
-+|
-+-x = devm_clk_register(args);
-++return devm_clk_register(args);
-+|
-+-x = clk_hw_register(args);
-++return clk_hw_register(args);
-+|
-+-x = devm_clk_hw_register(args);
-++return devm_clk_hw_register(args);
-+|
-+-x = of_clk_hw_register(args);
-++return of_clk_hw_register(args);
-+)
-+-if ( \( IS_ERR(x) \| x \| x < 0 \) )
-+(
-+-voidfn(...,c,...);
-+|
-+-{ voidfn(...,c,...); }
-+)
-+-return x;
-+
-+@depends on collapse && patch@
-+identifier collapse.x;
-+type T;
-+@@
-+
-+- T x;
-+  ... when != x
-+      when strict
-+
-+@depends on patch@
-+expression clk;
-+identifier voidfn;
-+constant char[] c;
-+@@
-+
-+clk = \(clk_register\|devm_clk_register\)(...);
-+-if ( IS_ERR(clk) )
-+-voidfn(...,c,...);
-+
-+@depends on patch@
-+expression clk, ret;
-+identifier voidfn;
-+constant char[] c;
-+statement S_else;
-+@@
-+
-+clk = \(clk_register\|devm_clk_register\)(...);
-+if ( IS_ERR(clk) )
-+-{
-+-ret = PTR_ERR(clk);
-+-voidfn(...,c,...);
-+-return ret;
-++return PTR_ERR(clk);
-+-}
-+else S_else
-+
-+@bind_loop depends on patch@
-+expression x, E;
-+identifier voidfn, n;
-+constant char[] c;
-+type T;
-+statement S, S_else;
-+@@
-+
-+  for (...;...;...) {
-+  ... when != n
-+- T n;
-+  ...
-+- n = E;
-+  ...
-+  x = \(clk_register\|devm_clk_register\|clk_hw_register\|devm_clk_hw_register\|of_clk_hw_register\)(...);
-+  if ( \( IS_ERR(x) \| x \| x < 0 \) )
-+(
-+-{
-+-voidfn(...,c,...,n,...);
-+S
-+-}
-+|
-+{
-+...
-+-voidfn(...,c,...,n,...);
-+...
-+}
-+)
-+  else S_else
-+  ... when != n
-+  }
-+
-+@depends on patch@
-+expression clk;
-+identifier voidfn;
-+constant char[] c;
-+statement S, S_else;
-+@@
-+
-+clk = \(clk_register\|devm_clk_register\)(...);
-+if ( IS_ERR(clk) )
-+(
-+-{
-+-voidfn(...,c,...);
-+S
-+-}
-+|
-+{
-+...
-+-voidfn(...,c,...);
-+...
-+}
-+)
-+else S_else
-+
-+@r1 depends on org || report@
-+position p1;
-+expression clk;
-+identifier voidfn;
-+constant char[] c;
-+statement S;
-+@@
-+
-+clk = \(clk_register\|devm_clk_register\)(...);
-+if ( IS_ERR(clk) )
-+{
-+...
-+voidfn@p1(...,c,...);
-+...
-+}
-+else S
-+
-+@depends on context@
-+expression ret;
-+identifier voidfn;
-+constant char[] c;
-+statement S;
-+@@
-+
-+ret = \(clk_hw_register\|devm_clk_hw_register\|of_clk_hw_register\)(...);
-+if ( \( ret \| ret < 0 \) )
-+{
-+...
-+*voidfn(...,c,...);
-+...
-+}
-+else S
-+
-+@depends on patch@
-+expression ret;
-+identifier voidfn;
-+constant char[] c;
-+@@
-+
-+ret = \(clk_hw_register\|devm_clk_hw_register\|of_clk_hw_register\)(...);
-+-if ( \( ret \| ret < 0 \) )
-+-voidfn(...,c,...);
-+
-+@depends on patch@
-+expression ret;
-+identifier voidfn;
-+constant char[] c;
-+statement S, S_else;
-+@@
-+
-+ret = \(clk_hw_register\|devm_clk_hw_register\|of_clk_hw_register\)(...);
-+if ( \( ret \| ret < 0 \) )
-+(
-+-{
-+-voidfn(...,c,...);
-+S
-+-}
-+|
-+{
-+...
-+-voidfn(...,c,...);
-+...
-+}
-+)
-+else S_else
-+
-+@r2 depends on org || report@
-+position p2;
-+expression ret;
-+identifier voidfn;
-+constant char[] c;
-+statement S;
-+@@
-+
-+ret = \(clk_hw_register\|devm_clk_hw_register\|of_clk_hw_register\)(...);
-+if ( \( ret \| ret < 0 \) )
-+{
-+...
-+voidfn@p2(...,c,...);
-+...
-+}
-+else S
-+
-+@script:python depends on org@
-+p1 << r1.p1;
-+@@
-+
-+msg = "line %s is redundant because clk_register() already prints an error on failure" % (p1[0].line)
-+cocci.print_main(msg, p1)
-+
-+@script:python depends on report@
-+p1 << r1.p1;
-+@@
-+
-+msg = "line %s is redundant because clk_register() already prints an error on failure" % (p1[0].line)
-+coccilib.report.print_report(p1[0], msg)
-+
-+@script:python depends on org@
-+p2 << r2.p2;
-+@@
-+
-+msg = "line %s is redundant because clk_hw_register() already prints an error on failure" % (p2[0].line)
-+cocci.print_main(msg, p2)
-+
-+@script:python depends on report@
-+p2 << r2.p2;
-+@@
-+
-+msg = "line %s is redundant because clk_hw_register() already prints an error on failure" % (p2[0].line)
-+coccilib.report.print_report(p2[0], msg)
-
----
-base-commit: c03c1a14507dfaf8b856c2608f9ac216021fc222
-change-id: 20260802-cocci-clk-register-951d94251af4
-
-Best regards,
---  
-Guru Das Srinagesh <linux@gurudas.dev>
+Jens
 
