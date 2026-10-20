@@ -1,81 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792506175;
-	b=5GpkzCmEpiMCn4afEJur/SON/h69PjLOdGkQukiAODE9bU2A9kkWyLuomM10rS/oQC0z
-	 dbpdOdu6eorkCaRJvowW7nITBp1w6UdywtvkS5/A+i+FUe4ky9OTl6J5uR8XpVXT5T9lp
-	 vKSPJIfNed5Ayojmf4IdlM4TxpsYagHApPVNUEXliTvovE1uQo/EduoCzkl4ofVywH2oK
-	 AXxRYbWt12WIHyc/tpvXe5Q/NDZ1r1uK6YCrSfcQkAqzuTHfA6lCgDGjA9urWTYp570Qh
-	 Fl/YtyTYlOuOl7xt2kELe4tdY++vaw/ZrEO+5s2PYJz3fzee1qb++6HkfbX35j8uYkw==
+	t=1792506180;
+	b=1NDb/CJrpkRAsKfNhdQ40B0kg1y494KYMWqRdI4tYMcGOD0q6QmxwObqpgYj5gja73RL
+	 0oiNR6fpyUJAS/gE6og0s7BzrWabtoBnTYjYSJ9jS3jdnFCZxZ3D6qQ1L2lT9hxc7lgP6
+	 he/FyC1/qf6zAOHfxiHzetLl5/uGxxT+8y3A+lDV733Q4HCtw2igaQ2T3IsKVgtSAUBUz
+	 1vlJxGnlcITWNojO5l2/YdL8gnN+BmmTsRCFQ6gwByCMH3dVaDmKAlHOavBE9onjE+UPD
+	 hy4GMYAUJyQrlbzjRGoqDBSlmzl5wanS+SGG1Pfys6HCYJYQQPQN4mudtwerqOpJadA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792506175;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792506180;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=0Po6NV+wXWi97vWY2tLsfy/Tq0VC6nM3yrCItfEC7uY=;
-	b=Mr1wKjZd9lAMFqAEYqwmLMfMuJScD9q2MAuYbcF+V1gPxtTdR3Gd3SX+zyTGKhmITtSa
-	 dexXHjuEXRBtg0RQpJFQ8dblo6AJysis4KJQUrC/GIiR7VR4+uTC3WicuWTn/0HPnrngT
-	 I8lZSfPFSMgNOk0W7Az5BuaBGpP2KlVECTjAl7lkInnyEeauP+J8iFwD1dI+dAV2pw5eL
-	 oxqZIlHhU+Qvs8s7wCpJXfM84ofxZ5+deI8nt4L6PtyMGuSYoZffkSiZmn92JY7RD5oRy
-	 Jvjr/BMjmrJfMBYo3XwQGz0hc4ROj2ad5so7HoM4VarNXrmcxRKd8dkwwcMH+0kRX7A==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=PZ8KNvjhkMdxTOHBC8Sl45C9JTaKlKVWxrChdR0rBwc=;
+	b=4plz7t8GZkI7p/u6uNiaTUZKs3B2igDYPKU1DRbO+EVjdj3T0Dr4bdVr+PEF7aZYk+AU
+	 vW3MS6RcTKzo04lBJG86rQXtqEO3wEji0Vug4bFY1md46jiqsPnGy9+gujIBRf9AIcrXx
+	 WSiDfG/gkdqZ/7GDognCMLoLt4v01WGBC4nojOGYljvxw6H06fvM7HbLEESQKybbAdAsW
+	 t6LIs1IpOaGcs9Aom0WtNuBY++pLsuBJ6T6fvFw4RemSXSjtU3vLLuBsWU+XUVU6VeFVj
+	 bEsWeZMuEa2wGGEoSUZpiws9OgiHIeXOvtsyDco4tII5tfVHQTsgaHYjOm50c+e6D/g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=K4R12YOC;
-	arc=none smtp.remote-ip=74.125.82.171
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=VQA9krVu;
+	arc=none smtp.remote-ip=74.125.82.51
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44F460A2600
-	for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 14:22:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C44F460A2600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C96660A2638
+	for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 14:23:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5C96660A2638
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=K4R12YOC
-Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-35f036b17easo1134233eec.1
-        for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 07:22:54 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=VQA9krVu
+Received: by mail-dl1-f51.google.com with SMTP id a92af1059eb24-18cdcfc05ffso2113636c88.1
+        for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 07:23:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792506174; x=1793110974; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=0Po6NV+wXWi97vWY2tLsfy/Tq0VC6nM3yrCItfEC7uY=;
-        b=K4R12YOCrAh6mzEDRtlBL6/07vYZGhaX4UNkSMg3BXcn7NbRyDymdAEsVPnvvCSV9d
-         KST6fCZGU7xlroi4Ao9SMbbM3DBT4pV8XGiOxGPuzyPCcFC21YOb3sVbf3VpsgwrgNVN
-         PG/Zt0mkYcbvDRCGoxXuKh63R5VmykTzVv0+ouK+whj1zF5H6QT0Yzp2ch/WWFXmla5d
-         DSHd4UNMNqBmYXypAZX6T13wquE3m+WqtFQVD0pGsXr0RcCkLM0AdObeRfAIMkAJGHut
-         5YUc1M1ihMBI6PkSrzt4aPkX2XsOTv1anpygsQUwZMhWjWFRSLYLT5TBJXlqgGv2lYC0
-         iI2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792506174; x=1793110974;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1792506179; x=1793110979; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=0Po6NV+wXWi97vWY2tLsfy/Tq0VC6nM3yrCItfEC7uY=;
-        b=kiGagDGTet+KBJzqWRQu8siM+th1iOuFbb8y1Kc6jR+ShNJpcPfOE6j40Q97yKoPHw
-         znsqUBdgezGjKcK8ttBW54Yxxk8+DdA9sYpCx6jhGMivrag83CQSRsJ8DR2Nnek149LJ
-         tuXZcyYX1eZ2tLyelAb5NWWg9LAK9UecOOZESB1vtWGxzjIEHT3HE1BANNuKyvREkKYP
-         Ux6zzuYCCHEU04fTapejxWxxHvB83tFrXt0bFLgCULGDnXLAmOqj3/kgN4gyLpiaRStv
-         ZUwQ6MHxys1rqUougyCDrEPM/4i6WyZkHReRy9s7SwBcCeC++636qxuX+Tt3I5XHVLYU
-         CGGw==
-X-Forwarded-Encrypted: i=1; AKwUvBzLSBN9KDZPnLFmrTlZaZcb3qnI7ZQc3OQtPI4nJ3iDETSJGiGaZWIMkDzhXggB8uD/czJ8jQZ3h/0=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLlEaOB+pn2dLefpfcPrZty6kBBVK4JrEqTbWu3qgoiFc6DYFZf
-	ba/+vtm1SnIvgVANOaDu7eUeW4OqBCyKJCYIYimKLkr4VrHnlmoCz4CT
-X-Gm-Gg: AYBFou11jhCjEW0uWPZq/2W3XsT+69YNrHtabWNN4wXgQE3ANGSUsUq8HeV2ijZXpbf
-	bur+8EdY24SUZenEr3UmAfYbzHlbsQ2gKDhGcGiyoeiJOVDAsaIjg3XI1V6uNaETSTawH/gI7qf
-	XbnyTC7Nxac04gQV9NwxqW0t/MJL7lB44j4SP3P6UJ4f5yvPnQ3mG03vNjpmGe/+6YxJSgMIyea
-	QbSZbErKhXC+MTTBAZlCVBYJ4Mi54zFOhu0VD0wk6GwdgPjzF2RpCCtSnRD5Tvpz+GrmaxgovgG
-	uEqQspDwOMFAdKZX6pwNCH8qYTL/vAkNNqmWcorTCRm/WqNl7aUHEp2utWwsxFJxKhe+6HVtN/u
-	3Hm+FeACOZy+Y698d5RYeVsCtNLL5HDyYelHYW8bwnJ1RJEBVuq22TEf1GsCd8RQoYdco2LNwEY
-	B+VVcry5BC84Nm8z4teGA+jJ4IeYVYy3Ehd+psZoouPtze3djLHmOcLZ38WcyqkXtSpMEC1uftU
-	tlElB4Q+HU=
-X-Received: by 2002:a05:7300:d94e:b0:35d:d9a9:e455 with SMTP id 5a478bee46e88-361a1b52654mr15441463eec.21.1792506173172;
-        Tue, 20 Oct 2026 07:22:53 -0700 (PDT)
+        bh=PZ8KNvjhkMdxTOHBC8Sl45C9JTaKlKVWxrChdR0rBwc=;
+        b=VQA9krVuTHut3IPDhuI0ClpvD/OmII31kBiOwwHNN/oNIeETn7hxgt7BlputxZUBcE
+         PbUSk4hCl8QrSze3laotuKiNCnSkgu3J9h+wpoPv0G05m1dhyeHuSPay9Wqicmb2cDy0
+         QJIdphlpcCG5laQS8NlO2KdJhtzUYCPGAKdhs7kKz6G1Sk5mPz2EfXBgAvkyXcHeHAkJ
+         Cb6RQ2uL9a5cZcNEzA1A0uupAFhXTS/a5xgyLd8O14Q9LnIvm5jJqCCsEcKL3wGScGib
+         WDSlNxfqdITRAcaYs5HwaXV1fGbm4AYc8vNptNvNxJNMmFzCdyuju+Ht7ohbOTMXc/Ba
+         CmQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792506179; x=1793110979;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=PZ8KNvjhkMdxTOHBC8Sl45C9JTaKlKVWxrChdR0rBwc=;
+        b=RVE5R3vrUjrxKYGWEO0Gd3z4dmlhjxhpI00SS2aCE+BwC0m1tiQDixmxU5TqSvG12N
+         43jDggHnM8nGrxANt3VFOb+u0WrQQUYOHNNYd75xbjy64DD3ZUbMHvoxsDr9MzznDxKn
+         DEBve+OvU4OUeByL9pNoqWC+Tx6VPfN9t7AaDbqkJJObUNB5n/tqKISZETQGaVXw4vng
+         tnRAfsdq0TLIVH9YkMSUFTwreuDMA1wCRjlDdpulCwnDtLWp9ORAuZmSenWcCcBYBod0
+         B1hHf1F9g0qVUiHqmMGwxZYLwgWxiZhqv5hzn2UmZ+4krOtwVoNrjLjKV8OgfFfsrFCn
+         ynpw==
+X-Forwarded-Encrypted: i=1; AKwUvByRPjFHc0p/JsxE3wtJovGHg+A+wGzWQ3kC+pGBjcaYmj23kFugjEOlIXU7nbfOdriHq55nXwICOGc=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIdbln9ZMMohq3MqHJpTA715K8yIEJMUgstJuEfUlZ9XLuwjux7
+	rqgD1LJ6BcxamnxNSQ5/e5F47kOrVAZ+6t3X1zfyZKcvcrEHl2zjc0SE
+X-Gm-Gg: AYBFou06oUFxjjchxHPij/PG+foWosjWjyVLwU8lwU9AbKokkoSeJ0UThBfrtIctd3s
+	DBhWW4b3V5RiwRDpnW/XAiJuciWH5jNnqOc0NFEK/vuuiriIEXNitK+aUFT5nO/MLwcfNUcKMRj
+	9/Sf9rqvTlHsFLS2Ai1ME0m9W78Wnrw8dYoyc7j8tK61m/tIGMSV7L80jXunQwyl9VN8fm0sI59
+	Lny3MihPCdDpkXVVSJ+PaWHo9UYy72FMqJHJCfABGZhpzuMnAZAfWSVH3KBSZuo+t358ObAUEIO
+	kjT0Bz+lTuuzNdq1PFlxtou3WG229ex4rcxLhSWwNMD2SE2GY48XJ8nYzp8H3XEdlBRCB05i/tS
+	pqbess3xY7K4wQefjpkJ1EGurDVFN5Zh2NllExNN0F3RC2OH2y/b4+xTf1+UO3Li0ZBpLl66gA4
+	NBYeqBxGpu+5wQnBpIOsEkzIVNgC3makFv8sU4oe3vrEClSoiJgiTqad6rJOcL+XgWaq0531Kcm
+	X2GKpt3OkQ=
+X-Received: by 2002:a05:7022:7e8d:b0:151:2e62:fe8a with SMTP id a92af1059eb24-18514256ee0mr16829571c88.40.1792506178808;
+        Tue, 20 Oct 2026 07:22:58 -0700 (PDT)
 Received: from redducc.localdomain ([183.83.156.125])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36081ab80f9sm66917444eec.12.2026.10.20.07.22.48
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36081ab80f9sm66917444eec.12.2026.10.20.07.22.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Oct 2026 07:22:52 -0700 (PDT)
+        Tue, 20 Oct 2026 07:22:57 -0700 (PDT)
 From: Sushmit Singh Rathore <sushmit718@gmail.com>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>
@@ -89,10 +90,12 @@ Cc: Abel Vesa <abel.vesa@oss.qualcomm.com>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Sushmit Singh Rathore <sushmit718@gmail.com>
-Subject: [PATCH v2 0/3] clk: qcom: sm8450: Fix eUSB clkref and camera clock collapse
-Date: Tue, 20 Oct 2026 14:21:28 +0000
-Message-ID: <20261020142157.1749-1-sushmit718@gmail.com>
+Subject: [PATCH v2 1/3] clk: qcom: gcc-sm8450: Parent the eUSB3 clkref to bi_tcxo
+Date: Tue, 20 Oct 2026 14:21:29 +0000
+Message-ID: <20261020142157.1749-2-sushmit718@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261020142157.1749-1-sushmit718@gmail.com>
+References: <20261020142157.1749-1-sushmit718@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -104,23 +107,38 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-These fix three clock problems found bringing up mainline on an SM8475
-phone (Nothing Phone (2)): the eUSB2 PHY reference clock reads 0 Hz so
-USB never probes, and the camera GDSCs lose register state and leave
-RCGs running across power collapse.
+gcc_eusb3_0_clkref_en gates the XO reference to the eUSB2 PHY, but it
+has no parent, so its rate reads as 0. On SM8475 the SNPS eUSB2 PHY
+takes this clock as its reference and rejects a 0 Hz rate as
+unsupported, so USB doesn't probe.
 
+Parent it to bi_tcxo, as tcsrcc-sm8550 does for its clkref branches.
+
+Fixes: db0c944ee92b ("clk: qcom: Add clock driver for SM8450")
+Assisted-by: LLM
+Signed-off-by: Sushmit Singh Rathore <sushmit718@gmail.com>
+---
 Changes in v2:
-- Use my full name in From and Signed-off-by.
+- Use full name in From and Signed-off-by.
 
-Sushmit Singh Rathore (3):
-  clk: qcom: gcc-sm8450: Parent the eUSB3 clkref to bi_tcxo
-  clk: qcom: camcc-sm8450: Retain flops across camera GDSC collapse
-  clk: qcom: camcc-sm8450: Park the camera RCGs when they are disabled
+ drivers/clk/qcom/gcc-sm8450.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- drivers/clk/qcom/camcc-sm8450.c | 113 ++++++++++++++++++++------------
- drivers/clk/qcom/gcc-sm8450.c   |   4 ++
- 2 files changed, 74 insertions(+), 43 deletions(-)
-
+diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
+index cdae5d9c8aec..56503a45b64e 100644
+--- a/drivers/clk/qcom/gcc-sm8450.c
++++ b/drivers/clk/qcom/gcc-sm8450.c
+@@ -1500,6 +1500,10 @@ static struct clk_branch gcc_eusb3_0_clkref_en = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_eusb3_0_clkref_en",
++			.parent_data = &(const struct clk_parent_data){
++				.fw_name = "bi_tcxo",
++			},
++			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
 -- 
 2.43.0
 
