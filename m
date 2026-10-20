@@ -1,53 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.13.80.246
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1792508303;
-	b=oKyoFHsdWo0qTR9VIcLbhIZ89GGbtEP7M5q0fz3AK/5yCDgpTZFoLSYaFMhywHwRAEW/
-	 sjMMsm1STRnMaS1RhjQbvj0rFPrjG+dFW9C+2v6vLrjfdQnSf27kIQH+3Q+cS1NgGcPcV
-	 GatE05bsD6hk8iWV6+st4A2SumpqLKhM2pErbIshJuaKB/SS+vEAR4wD5sbQXrYuROjL3
-	 NFKrIorhC4ASJzlqiMXe44dCvCmZ3DhsBfFTESV2M3dnBpQFKlHbAQBAUQisXtBRGtoqP
-	 JhzUb3198DZ4a3aRQXA+GXJcAbioNGcyzH+1g8wldJHK9rsCmrYdr03Ws4aDu6Upf2w==
+	b=TaphurJqN746NYslirCSL5gbZDngW6OSlEUs387T85fCfccaZ/W4EZGuCoPFAJWHlqhn
+	 s+KRPmKK31MKeLWV7CLu89+EJVsPaHFBHNr3roq3r0lOR9pGaXa3ozr+I988wjv7LvvJ3
+	 ZO5Zdm26tkHeKbqW0+2YKxFJQ8HlHitkDf0MqjEEAntjrbN56paggKpQ+0yw9n9MPaOrm
+	 8+RuCIG6fzqovFPEt5nyMj9ppH8znZeuYUVvjNoWmNqneWGgm6V3/qrRzfH1kHR7DQNYB
+	 hGnPW/M+3n2bl019MeZePs2lqYcPonJSW7gOx2BDBpLjfCCxn24sJsU9+rfkoqG/ANw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1792508303;
-	h=DMARC-Filter:Received:DKIM-Signature:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Last-TLS-Session-Version;
-	bh=ztv0HJ8l22RRsNhgDD2bkXEQ2puahy2KotEJnS3/Ydg=;
-	b=5AEd2lEsBRtZ6xQyGBAoRxNDpETDOQ+5x3zSpfkUaxYAAP7sVkFGVQeZ/iAw90bivj8Q
-	 2gpXhwY2IXpoG5eslisz68nq5/OhwK8wPG3hnfG/tcmBAmSBiQEbowccxkF5aKDQvy5M1
-	 W4zu04dmXjzsR9vb2Y9eyRwfWGCv3woh+q3gPdftM6qFPbTwgOYpS2lFm2iqM+qox1niN
-	 ycp5d0ifBeN7qEPP3GzsZe4kH95BgnVMkjLZnUnqZNMSoLdqKE/dc/6vRkZN7Etanj6Qb
-	 vH24PPmFV9ULf/J0fV9RVGH/N4gK9k9ovh6PiF3CuOd0oZlywKxNKBHA0eEDCO37XrQ==
+	h=DMARC-Filter:Received:DKIM-Signature:From:Date:Subject:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
+	 In-Reply-To:To:Cc:X-Mailer:X-Last-TLS-Session-Version;
+	bh=kdeSiPiSYHtLZiKEroKpbvx3t/mSs9j+e1JMptZPqNk=;
+	b=ny0r0G7kvd7ced5gWViY0NYmpoOzeyzOH8nftRO93wVnF5YoSfKZpu/hanjY7U1THCgY
+	 HJuPxnuVX3Tv21M9ewcNvNgWAjIhQTnVZRN6QENjnlhsty4mHNbLwxLtatEgHWXpow+XP
+	 4L48PWsK1vuWFJJM76Ke4D7oE5/dRPYcHDvID5eIC6dI/Etbths5/6UzH6MhL1oDEFPwx
+	 IldYT8H68EGWkpUhausas950TVTeutjMDwev2i9orAZfR6PnAC9luq/pIOSNcdS6b6L3o
+	 xlkgXQWWhhGDYYvZeH2uTpV29FhFTJM6vp0jsOZKewjX/sWYWjqzYMxGW52jINMOLHA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=tipi-net.de;
 	spf=pass smtp.mailfrom=tipi-net.de;
-	dkim=pass header.d=tipi-net.de header.i=@tipi-net.de header.a=rsa-sha256 header.s=dkim header.b=XUfQyvgt;
+	dkim=pass header.d=tipi-net.de header.i=@tipi-net.de header.a=rsa-sha256 header.s=dkim header.b=ZdRrrU+H;
 	arc=none smtp.remote-ip=194.13.80.246
 Received: from mail.tipi-net.de (mail.tipi-net.de [194.13.80.246])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC09606A319;
-	Tue, 20 Oct 2026 14:58:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DBC09606A319
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482B7606A31E;
+	Tue, 20 Oct 2026 14:58:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 482B7606A31E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tipi-net.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tipi-net.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=tipi-net.de header.i=@tipi-net.de header.a=rsa-sha256 header.s=dkim header.b=XUfQyvgt
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 20F43A02DC;
-	Tue, 20 Oct 2026 16:58:15 +0200 (CEST)
+	dkim=pass (2048-bit key, unprotected) header.d=tipi-net.de header.i=@tipi-net.de header.a=rsa-sha256 header.s=dkim header.b=ZdRrrU+H
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AE718A1624;
+	Tue, 20 Oct 2026 16:58:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tipi-net.de; s=dkim;
-	t=1792508300; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=ztv0HJ8l22RRsNhgDD2bkXEQ2puahy2KotEJnS3/Ydg=;
-	b=XUfQyvgtMIFS9NUybNkk3G15CGBu9TocD6/t68NAvHfY8yTD5ZDTrcJiQLAuLdnoVTkwh7
-	9J5snnKJFFnYJSqDvuBX4QvV70VO0spX6/DmcmUvXkVLZWyZlHDcH6/RezGHwz9IhB6CTq
-	k5kxCDLLIt03//O5Pc0hqQiQywk/IxWUbo5d3RJ0+zV7FvGDFL44ypsGTQLZ8EZRKY8DYK
-	0yw91bL1OB1H+VChen/EriIIeMXiAaAv31wteLNr2VU5v4tmAwhv/ytsk7f8KYSc3RTNfI
-	WM0672a3sMi1Srp2n8KiKKyIcnCcXUdfNCA0fxqJrjKreYo9IFbre7jreAopww==
+	t=1792508301; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=kdeSiPiSYHtLZiKEroKpbvx3t/mSs9j+e1JMptZPqNk=;
+	b=ZdRrrU+Hmj4+G5xCCf3YPzOoNy458sP8nEQztvwiHwEeKp7UI3W0KG6Z/6x0/0+sedyF5l
+	j2cKh3sUu9vl8Qz1tmXrbC0HL/vZ2hGyIuY+be4eiGlXxNGHwdTR8mAFUW30wfzCvXdprf
+	k4i+eKvtQHrNHHdap5YhbpfeO2BSFKaqJET3iM3Z2Wmrc0fKiMs9bN1t4FvqctotE//pnB
+	BwFmQxdftnvIc4RP+EHPWxh1ePPYq81j3qMFT6DssY3Bpx/lFNLXm4XsRP1phLaD4RwlnY
+	xPKZU4AEAOD8jhM1OZbw92S5pab1KFUZRDcwdKmkXEroobjc789KyQJLTvY/QQ==
 From: Nicolai Buchwitz <nb@tipi-net.de>
-Subject: [PATCH 0/3] clk: bcm2835: describe the BCM2711 GISB clock for the
- GENET MDIO controller
-Date: Tue, 20 Oct 2026 16:58:08 +0200
-Message-Id: <20261020-devel-bcm2711-gisb-clk-v1-0-a1728724d0f8@tipi-net.de>
+Date: Tue, 20 Oct 2026 16:58:09 +0200
+Subject: [PATCH 1/3] dt-bindings: clock: bcm2835: add the BCM2711 GISB
+ clock
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,10 +59,9 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMyw6CQAxG4VchXduETgxeXsW4mCk/WEU0UyQmh
- Hd31OW3OGchRzY4HauFMmZze4wFsqlIL3HswdYWU6hDI7UEbjFj4KT3sBPh3jyxDjfWbg9EOei
- 2iVTiZ0Zn79/4dP7bX+kKnb43WtcPNgwxmnoAAAA=
-X-Change-ID: 20261012-devel-bcm2711-gisb-clk-cf8eea19c46a
+Message-Id: <20261020-devel-bcm2711-gisb-clk-v1-1-a1728724d0f8@tipi-net.de>
+References: <20261020-devel-bcm2711-gisb-clk-v1-0-a1728724d0f8@tipi-net.de>
+In-Reply-To: <20261020-devel-bcm2711-gisb-clk-v1-0-a1728724d0f8@tipi-net.de>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -79,52 +78,25 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 X-Mailer: b4 0.16.0
 X-Last-TLS-Session-Version: TLSv1.3
 
-The timestamped MDIO write series [1] needs the reference clock the
-GENET MDIO controller divides its MDC from. On BCM2711 that clock is
-not described anywhere, so 5/5 of that series hardcodes 200 MHz behind
-a compatible match, and mdio-bcm-unimac's clock-frequency handling
-assumes the 250 MHz of the STB chips.
+BCM2711 has a clock generator for the GISB bus that the firmware sets
+up at 200 MHz. The GENET MDIO controller runs its MDC off it, so add an
+id for it.
 
-On BCM2711 the MDC is derived from the CPRMAN generator at 0x1d8, which
-the firmware calls gisb and has always run at 200 MHz (PLLD_PER 750 MHz
-/ 3.75). Changing that divider at runtime moves the MDIO busy time by
-the same ratio, see [2], and Phil confirmed it from the
-Raspberry Pi side. GISB is the register bus of the STB peripherals,
-which is where the driver's 250 MHz default comes from.
-
-This adds a clock id, the generator in clk-bcm2835 (critical, the
-firmware enables it and nothing in Linux owns it) and a clocks property
-on the mdio node, like Stefan did for EMMC2.
-
-No functional change by itself. The driver only looks the clock up
-with [1], and only for the timestamp bounds. Making
-unimac_mdio_clk_set() use the real rate is a follow-up, as that moves
-the Pi 400, whose clock-frequency = <1950000> currently lands at
-1.56 MHz instead of 1.95. The limit is a level shifter on that board,
-so the follow-up keeps it at 1.56 MHz.
-
-Patches 1 and 2 are for the clk tree, patch 3 for Florian once the
-header is in. dtbs_check clean, booted on a CM4: clk_summary shows
-gisb at 200 MHz under plld_per, eth0 comes up as before.
-
-[1] https://lore.kernel.org/netdev/20261009143506.2507607-1-jjc@jclark.com/
-[2] https://lore.kernel.org/netdev/60accbd89cfaf0d4be1da5ec2fafd975@tipi-net.de/
-
+Signed-off-by: Nicolai Buchwitz <nb@tipi-net.de>
 ---
-Nicolai Buchwitz (3):
-      dt-bindings: clock: bcm2835: add the BCM2711 GISB clock
-      clk: bcm2835: register the BCM2711 GISB clock
-      ARM: dts: bcm2711: give the GENET MDIO controller its clock
+ include/dt-bindings/clock/bcm2835.h | 1 +
+ 1 file changed, 1 insertion(+)
 
- arch/arm/boot/dts/broadcom/bcm2711.dtsi |  1 +
- drivers/clk/bcm/clk-bcm2835.c           | 16 ++++++++++++++++
- include/dt-bindings/clock/bcm2835.h     |  1 +
- 3 files changed, 18 insertions(+)
----
-base-commit: 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e
-change-id: 20261012-devel-bcm2711-gisb-clk-cf8eea19c46a
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index b60c03430cf15..3186da543f975 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -60,3 +60,4 @@
+ #define BCM2835_CLOCK_DSI1P		50
+ 
+ #define BCM2711_CLOCK_EMMC2		51
++#define BCM2711_CLOCK_GISB		52
 
-Best regards,
---  
-Nicolai Buchwitz <nb@tipi-net.de>
+-- 
+2.53.0
 
