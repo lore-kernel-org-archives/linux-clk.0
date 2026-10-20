@@ -1,80 +1,53 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.13.80.246
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792506474;
-	b=bc7bC7WEQVugoOmn1IOq7DDcF2TlpH1qC3wF2sIGOt+OGhVUcJe1qbrdBH3Zxok9ScL1
-	 pZnLOqni58CmjzIID7qyqvjy1trP95bZMNp8b1PJ0ck32B7IzSQUh4UBxx/bP4otoSWbI
-	 u5wO3QmsmHQQ5aW75L26QNuP90njXEclz/gayDgVKELzFLSZdgpGX7s9Hc30nGIo2G3nn
-	 hNx5bqwtUahVOH5IbxQ8sQcAQtyqxCna2t7W/bYayFamltPq8x5PyC2o6Z8FR9I/PxHQm
-	 FeX59c39I/49Ec65DFX4bsxsKrP17JBiQ7/169fg4nRMU6NE+QpX/NVurVZ+qQ6YQeA==
+	t=1792508303;
+	b=oKyoFHsdWo0qTR9VIcLbhIZ89GGbtEP7M5q0fz3AK/5yCDgpTZFoLSYaFMhywHwRAEW/
+	 sjMMsm1STRnMaS1RhjQbvj0rFPrjG+dFW9C+2v6vLrjfdQnSf27kIQH+3Q+cS1NgGcPcV
+	 GatE05bsD6hk8iWV6+st4A2SumpqLKhM2pErbIshJuaKB/SS+vEAR4wD5sbQXrYuROjL3
+	 NFKrIorhC4ASJzlqiMXe44dCvCmZ3DhsBfFTESV2M3dnBpQFKlHbAQBAUQisXtBRGtoqP
+	 JhzUb3198DZ4a3aRQXA+GXJcAbioNGcyzH+1g8wldJHK9rsCmrYdr03Ws4aDu6Upf2w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792506474;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Date:From:To:
-	 Cc:Subject:Message-ID:In-Reply-To:References:Organization:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Last-TLS-Session-Version;
-	bh=kmBy1fe6LI5oXiYPbhW6SzvVcy1Ogh5pT6iC7mSTUOM=;
-	b=or25HgfrYLJWWYEXQ15Vcz5eaR9LBJvR43Csq5qMvKwsFL3CpyHYwL/PwexySQa9wVAh
-	 mRGPTCiVT/Z3h+GtC9kkG++vqrz9kPM2cYMgPoj3o20aVRVz9qy/Qzi1h70FWhFqXyEWi
-	 xDbygZ7bspkLWY88egjhitvPaze/q1S3E/Cv+U6lPDH5IqsDyV+/9jibHQbEC/chJDIs1
-	 UTeuSzcf257EK91v+/ftIh8L3Nh4r7f/2/jLh0lG+wACAsLVf1UER7EB+QAMwXrY3VU0Y
-	 xOUBqKc4vYEomimVStSBShornR9EnfPym4ohdOGaTvdZvB5wlmCkys190eJrHA+EnnA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792508303;
+	h=DMARC-Filter:Received:DKIM-Signature:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Last-TLS-Session-Version;
+	bh=ztv0HJ8l22RRsNhgDD2bkXEQ2puahy2KotEJnS3/Ydg=;
+	b=5AEd2lEsBRtZ6xQyGBAoRxNDpETDOQ+5x3zSpfkUaxYAAP7sVkFGVQeZ/iAw90bivj8Q
+	 2gpXhwY2IXpoG5eslisz68nq5/OhwK8wPG3hnfG/tcmBAmSBiQEbowccxkF5aKDQvy5M1
+	 W4zu04dmXjzsR9vb2Y9eyRwfWGCv3woh+q3gPdftM6qFPbTwgOYpS2lFm2iqM+qox1niN
+	 ycp5d0ifBeN7qEPP3GzsZe4kH95BgnVMkjLZnUnqZNMSoLdqKE/dc/6vRkZN7Etanj6Qb
+	 vH24PPmFV9ULf/J0fV9RVGH/N4gK9k9ovh6PiF3CuOd0oZlywKxNKBHA0eEDCO37XrQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=NfM2biC7;
-	arc=none smtp.remote-ip=185.246.84.56
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dmarc=none header.from=tipi-net.de;
+	spf=pass smtp.mailfrom=tipi-net.de;
+	dkim=pass header.d=tipi-net.de header.i=@tipi-net.de header.a=rsa-sha256 header.s=dkim header.b=XUfQyvgt;
+	arc=none smtp.remote-ip=194.13.80.246
+Received: from mail.tipi-net.de (mail.tipi-net.de [194.13.80.246])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2436B606A332
-	for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 14:27:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2436B606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC09606A319;
+	Tue, 20 Oct 2026 14:58:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DBC09606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tipi-net.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tipi-net.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=NfM2biC7
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id B34661A1291;
-	Tue, 20 Oct 2026 14:27:52 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7F49060393;
-	Tue, 20 Oct 2026 14:27:52 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 189CA10328DF3;
-	Tue, 20 Oct 2026 16:27:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1792506466; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=kmBy1fe6LI5oXiYPbhW6SzvVcy1Ogh5pT6iC7mSTUOM=;
-	b=NfM2biC74Dx/3Yhz14WigU8d8Se1zC9x3KPteernMS0aBrwpHL8t3yKKgjtiBK85V7smNT
-	0Sr9jRAbaL9fqQ/uQ/rMQcXSrOYyw1yQM7p+fOcPTul8INOTsWuurKS36mhDKE8jc5iPIM
-	QYBr8EgEqLufOp1LinZOCiCxEAjrJUvDAwwFQ+8AMbVTR4kMRDr13CojOEnUaf4Go0VuhC
-	MBW7l3V8+w38SkAw4YMpqfSk8993bPpdLGHcnIoAVjLdhgrowvPxBN7or8GBqDiNXDBn12
-	LVSUfGRDPbpNeEeTJENkz4ZJ+UMkjSKpfa23KxeYxR6nO66mEK6EhphnczYZNQ==
-Date: Tue, 20 Oct 2026 16:27:36 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
- "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li
- <Frank.li@oss.nxp.com>, Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Linus Walleij
- <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
- Leonardo Costa <leonardo.costa@toradex.com>, Frieder Schrempf
- <frieder.schrempf@kontron.de>, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Ernest Van Hoecke
- <ernest.vanhoecke@toradex.com>
-Subject: Re: [PATCH v3 8/8] of: unittest: Test fw_devlink with clock nexus
- maps
-Message-ID: <20261020162736.422fb5b8@bootlin.com>
-In-Reply-To: <20261020-fw-devlink-nexus-ready-v3-8-fd6f1c17e16d@toradex.com>
-References: <20261020-fw-devlink-nexus-ready-v3-0-fd6f1c17e16d@toradex.com>
-	<20261020-fw-devlink-nexus-ready-v3-8-fd6f1c17e16d@toradex.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key, unprotected) header.d=tipi-net.de header.i=@tipi-net.de header.a=rsa-sha256 header.s=dkim header.b=XUfQyvgt
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 20F43A02DC;
+	Tue, 20 Oct 2026 16:58:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tipi-net.de; s=dkim;
+	t=1792508300; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=ztv0HJ8l22RRsNhgDD2bkXEQ2puahy2KotEJnS3/Ydg=;
+	b=XUfQyvgtMIFS9NUybNkk3G15CGBu9TocD6/t68NAvHfY8yTD5ZDTrcJiQLAuLdnoVTkwh7
+	9J5snnKJFFnYJSqDvuBX4QvV70VO0spX6/DmcmUvXkVLZWyZlHDcH6/RezGHwz9IhB6CTq
+	k5kxCDLLIt03//O5Pc0hqQiQywk/IxWUbo5d3RJ0+zV7FvGDFL44ypsGTQLZ8EZRKY8DYK
+	0yw91bL1OB1H+VChen/EriIIeMXiAaAv31wteLNr2VU5v4tmAwhv/ytsk7f8KYSc3RTNfI
+	WM0672a3sMi1Srp2n8KiKKyIcnCcXUdfNCA0fxqJrjKreYo9IFbre7jreAopww==
+From: Nicolai Buchwitz <nb@tipi-net.de>
+Subject: [PATCH 0/3] clk: bcm2835: describe the BCM2711 GISB clock for the
+ GENET MDIO controller
+Date: Tue, 20 Oct 2026 16:58:08 +0200
+Message-Id: <20261020-devel-bcm2711-gisb-clk-v1-0-a1728724d0f8@tipi-net.de>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,36 +57,74 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMyw6CQAxG4VchXduETgxeXsW4mCk/WEU0UyQmh
+ Hd31OW3OGchRzY4HauFMmZze4wFsqlIL3HswdYWU6hDI7UEbjFj4KT3sBPh3jyxDjfWbg9EOei
+ 2iVTiZ0Zn79/4dP7bX+kKnb43WtcPNgwxmnoAAAA=
+X-Change-ID: 20261012-devel-bcm2711-gisb-clk-cf8eea19c46a
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
+ Stefan Wahren <wahrenst@gmx.net>, Phil Elwell <phil@raspberrypi.com>, 
+ netdev@vger.kernel.org, James Clark <jjc@jclark.com>, 
+ Nicolai Buchwitz <nb@tipi-net.de>
+X-Mailer: b4 0.16.0
 X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Ernest,
+The timestamped MDIO write series [1] needs the reference clock the
+GENET MDIO controller divides its MDC from. On BCM2711 that clock is
+not described anywhere, so 5/5 of that series hardcodes 200 MHz behind
+a compatible match, and mdio-bcm-unimac's clock-frequency handling
+assumes the 250 MHz of the STB chips.
 
-On Tue, 20 Oct 2026 15:00:19 +0200
-Ernest Van Hoecke <ernestvanhoecke@gmail.com> wrote:
+On BCM2711 the MDC is derived from the CPRMAN generator at 0x1d8, which
+the firmware calls gisb and has always run at 200 MHz (PLLD_PER 750 MHz
+/ 3.75). Changing that divider at runtime moves the MDIO busy time by
+the same ratio, see [2], and Phil confirmed it from the
+Raspberry Pi side. GISB is the register bus of the STB peripherals,
+which is where the driver's 250 MHz default comes from.
 
-> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> 
-> Extend the fw_devlink OF unit tests with clock references routed through
-> a nexus map. Verify that the mapped consumer has exactly one link to the
-> final clock provider rather than to the nexus.
-> 
-> Also cover a direct clock reference to ensure that it continues to
-> resolve to the original provider when no map is present.
-> 
-> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> ---
-> v3: Route clock-map entries to two providers, use a middle entry (Herve)
->     No clock-map-mask: only clock-map applies to clocks (aacc54c67869)
-> v2: https://lore.kernel.org/r/20260910-fw-devlink-nexus-ready-v2-7-17ac82dbe226@toradex.com
-> ---
->  drivers/of/unittest-data/tests-phandle.dtsi | 20 ++++++++++++++++++++
->  drivers/of/unittest.c                       |  2 ++
->  2 files changed, 22 insertions(+)
-> 
+This adds a clock id, the generator in clk-bcm2835 (critical, the
+firmware enables it and nothing in Linux owns it) and a clocks property
+on the mdio node, like Stefan did for EMMC2.
 
-Reviewed-by: Herve Codina <herve.codina@bootlin.com>
+No functional change by itself. The driver only looks the clock up
+with [1], and only for the timestamp bounds. Making
+unimac_mdio_clk_set() use the real rate is a follow-up, as that moves
+the Pi 400, whose clock-frequency = <1950000> currently lands at
+1.56 MHz instead of 1.95. The limit is a level shifter on that board,
+so the follow-up keeps it at 1.56 MHz.
+
+Patches 1 and 2 are for the clk tree, patch 3 for Florian once the
+header is in. dtbs_check clean, booted on a CM4: clk_summary shows
+gisb at 200 MHz under plld_per, eth0 comes up as before.
+
+[1] https://lore.kernel.org/netdev/20261009143506.2507607-1-jjc@jclark.com/
+[2] https://lore.kernel.org/netdev/60accbd89cfaf0d4be1da5ec2fafd975@tipi-net.de/
+
+---
+Nicolai Buchwitz (3):
+      dt-bindings: clock: bcm2835: add the BCM2711 GISB clock
+      clk: bcm2835: register the BCM2711 GISB clock
+      ARM: dts: bcm2711: give the GENET MDIO controller its clock
+
+ arch/arm/boot/dts/broadcom/bcm2711.dtsi |  1 +
+ drivers/clk/bcm/clk-bcm2835.c           | 16 ++++++++++++++++
+ include/dt-bindings/clock/bcm2835.h     |  1 +
+ 3 files changed, 18 insertions(+)
+---
+base-commit: 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e
+change-id: 20261012-devel-bcm2711-gisb-clk-cf8eea19c46a
 
 Best regards,
-Hervé
+--  
+Nicolai Buchwitz <nb@tipi-net.de>
+
