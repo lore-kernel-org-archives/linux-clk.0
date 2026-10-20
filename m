@@ -1,76 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792502546;
-	b=lxdc+4a0cbCviOHAoKaekmt/HieeSGZKhto9D4Uwk5qsH2tCZZxHb9XhuYZOlc14kA3b
-	 VAeNqh2EAvGzO5rYpI2WhbpS9Kp4l57Q5qsMZ0qaDoFdl9ZRQ0U5eW4taLQlCRHQyrMuU
-	 m+3Q9FyZwKYiESB9M9SRSN7xhEgfIR+q6HtdcSiFoHc9Zy9geOVg5dJrgv/jqcjD6xN9r
-	 zfoyikT86rmT5D/KAByt5bm1PnWwFbwL4kRqo26Paahn3yGLZv81wQFXNHh7nj2rU1QUC
-	 RLWaa8br2E/aHIOd/zs2g6soWbsyIZg8BGfEWbjpdADqNIBUgoRAAJSDs5IQa1eG5mQ==
+	t=1792504746;
+	b=LELqb67ms0sjNvwKS6qwk+zj4oCBLMfgPYqo7oDAlC95IgfTQ0aEEqQ1JZW1e1RuXDgn
+	 hLCpQQ6Jhh5q29gjmqURoTk4shGA3pT/lYfhb7hKdVO3UX1K/7kqeAE5J99NiZhn9EF92
+	 bEGysRsS2PRft2TUgSEztVvKGPlyNbU9dmh/+q2yV+Pjlq0RFeI7vR4vL//tWJqx56XJN
+	 ZcrBHJJH0vFpyM5gHFBwS/8r1O8P2wO1ap+9P5k6Xo5hLoK5k7eB9wFUk2YbYBD72jnlM
+	 DORqY1Uxxc8YMA4LH5tkKp5XjjsWSdvfTKnKFXRxeC9+V4vDkAo3oRYtgva5NzAtUiw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792502546;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=D+mxgjdi4ZCAmeQ/8ywDwvDse5W9MOG3smctM4dikj4=;
-	b=vCKL0F/XNlxfrkuzT8MWDb4A7VstQpLQ88Vrr1vUAzaJcaLPtJt8DhKv+X626jrIvXPQ
-	 4oMUsc7ehxPw9vy3gNqHUkuXNG2RPTlWC8fy/kjsX3lGWcRTQ1aQpu6LofHlr2Bm7Hjhj
-	 NIEpuZ3TyKAtw2vodey2nsM7J7JMqzhzES0K5fVtdNO0jZZ/cBsapklSjzXLlC8Pfmmw8
-	 M+7iWce/wihF/2V6wcnoyCjvuiX49UxSdKwl9XhJin3Dfu/o5LrdsgkkOr16rJBxpKxxh
-	 Kbil3TPwkU47kwK05gp8WUFMfehM/BqEb3EnHFIS+D1Hicna/Apm0c9XuW91FXfRF1w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792504746;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Date:From:To:
+	 Cc:Subject:Message-ID:In-Reply-To:References:Organization:X-Mailer:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Last-TLS-Session-Version;
+	bh=mqd/bQR1q3ufJ1VUmS/hoCYa+/lLgiY4VdTm7nb2aUA=;
+	b=vJ6SyiBrtcNCzi9fWivu0nECNytIJ4oPVR2d/L6i+h89mQRLvI285YJV5BsH9DN0C5MP
+	 FKBQwGR/nYTf9QaxCTwogY51kQWKMvxAizQm72mihFxHfhQbeIag1qUs4IpK4uSp7nQ1K
+	 kLAdyoVg30VSjwfS/AFCsmYlA1x/p7VyX9/RKzp207R9xWbmm3e68Cx2D5NSWjHytvhwP
+	 aSLe32RSAlbj8/BUAsQW1A3uHKZ1QySQHFytYwUz7ZISQA3N8w+4c2Sxq5NTTHMqpdGSr
+	 9Hz2jCtnvu21Mgmdl5DdlR+5tn8CK2Sy7mX2Q9J5plKjj/PJH2lFrsx/D6zQHVzxgOA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.218.44
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=VbKuJqoR;
+	arc=none smtp.remote-ip=185.171.202.116
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E12606A31B
-	for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 13:22:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 88E12606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c2a4e013a44so425756066b.2
-        for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 06:22:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792502544; x=1793107344;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=D+mxgjdi4ZCAmeQ/8ywDwvDse5W9MOG3smctM4dikj4=;
-        b=EFNy2ioAiNZZPPhSKqgYsAmD0kV/dbn/4UbViy0X/h8ZAtI0mvIdMsHZkwShPzATLC
-         WvEu1ITwo1n/4xt2BfBq3KfMFZOvGdDpQH5U9PJFDSF75f6aj5u/2oMaCWac+kUaBneH
-         o5rtxHIil7FWFulabu3Crk9YSaL+fOPgJZDV3NxdfSYk6c7ahCi61cEKywj06aDqtYPM
-         iG3gs6HtX10DnUXuEbnjFNLrLph8ug0H/7a18BfsGs+2IFS1VISJg4xS7XQJtO4zfzCn
-         lqqD1AIFOqOJPasNtXtNdm1UzItMN7R8oHb1L5UEDpHkzh+eHPJyUxK+QwclC80qqWBi
-         NxHg==
-X-Forwarded-Encrypted: i=1; AKwUvBxmsZQRADIe+S7jmLKnTZ+Q+tDLE76GpcenD8pT0FuoojQUBmk14s36eBxeYSGQtho4JklBtKRhjMs=@vger.kernel.org
-X-Gm-Message-State: AFq9FYINfDV+eqIhDQ644j6R9lXcXBDDoE7bY9h9vgycTnwH65DZ2Aiy
-	8CWp3qRWrXpJ/5PzK3gP53yQ2fGP7QdA1syyeoOujDRK4vNQBWm96O55SYYCD3XbnLI=
-X-Gm-Gg: AYBFou3mYqWuWHn90FZ3nltL4lxK7MgbudrTH5OmONysTuyXGI4K88bARr3yn1Vu7v/
-	IIwSBR3agEhzBoGu0YKBhDUdabD7nIsuRmcqdwM+DqahA7fCAaOydWbyEhfZdmThFtjPNoF3XrX
-	hnW6uKcy13QBfPc0mGJz24rvbaeMhqNNWdrRmTkxpT9N3fImKJrzI+XeAJsrhKoiKnDZsL4z4nR
-	qlTV5zEntYQfngF+Is4mj1BflD6U+jjE/8fICsF6trFkcPVq0bnklv9W+ngoF8fx7SUcm9DN87o
-	wCuoyjB0uWImGEKPBU9goDKtDiB3U94+SFKO5yLzDvuZjAKsMYFpX0ErEMsZOvhyv5CvChYZqR+
-	xenyzkYuVcrl/1aJybrge08yRlwQrVJONpf0mAM8F5k8B5myYxAj+M2mAVnxOUHEugo94BDjRZV
-	lmnwOx8uCoNAet4l5QAc5SAR8lw00CtFbCGarG8b10wv4DqxMMorzNwdpDTrxMdhBNmOmJjgy3A
-	j4DFBqJ3XTQ2nOOQesjay7I926AI0C6fg5dzJBg7TSNQl8lly1XF9KB+8UvgevcRpIuJv4v5pw1
-	ARajUBs08FIvfe1dfg==
-X-Received: by 2002:a17:907:c008:b0:c40:f89f:d91d with SMTP id a640c23a62f3a-c419fafad52mr821208566b.28.1792502543695;
-        Tue, 20 Oct 2026 06:22:23 -0700 (PDT)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c466de84b94sm47543766b.65.2026.10.20.06.22.23
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Oct 2026 06:22:23 -0700 (PDT)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6afbc363efeso4993023a12.3
-        for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 06:22:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxhOBoEp/MVWAK5PH5vaRGMo5w1DPTTGOtYGKXhiUOOxYcO2GreZ0eIo0taZHrjR/oM5yOfXcSRzlc=@vger.kernel.org
-X-Received: by 2002:a05:6402:270d:b0:6b1:c7d9:b631 with SMTP id
- 4fb4d7f45d1cf-6b3a8191a46mr7499369a12.23.1792502542847; Tue, 20 Oct 2026
- 06:22:22 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39AD606A31D
+	for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 13:59:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F39AD606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=VbKuJqoR
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id A31F2C63455;
+	Tue, 20 Oct 2026 14:00:01 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1A1FE60393;
+	Tue, 20 Oct 2026 13:59:03 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DFC7710328C52;
+	Tue, 20 Oct 2026 15:58:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1792504737; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=mqd/bQR1q3ufJ1VUmS/hoCYa+/lLgiY4VdTm7nb2aUA=;
+	b=VbKuJqoRJ3pULJxeFEOS68iDJzlgi4lEfLYK4c/4ylEEsBifG64bZoFd+m2bqnyYyOL3wG
+	G9QA6/5QwO/Ttp4oMhWMe4UtkgNrD69t6dy1gd69yehSwsMGC16VaZKhNewq6msQmqwir6
+	THtEkEeEsrFrxjU2Ndt6kwVW3q1HAGO2Z66siuw948x3ghQNfP2oWL0OY3X4mzf04ZWsxT
+	E6GjvQYGCzsWOPIiDUXIdfkrx+nJRmxleeZv4DPSG5E3+XQSK+b5rkaqyHbC05xQTqSJ+I
+	dB+Hht8ExDz0tMStpJSMMuB0pA/vTy/is+GldyCkZKWPuWLQExkD7xPvVTC6Yw==
+Date: Tue, 20 Oct 2026 15:58:41 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
+ "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li
+ <Frank.li@oss.nxp.com>, Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Linus Walleij
+ <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Leonardo Costa <leonardo.costa@toradex.com>, Frieder Schrempf
+ <frieder.schrempf@kontron.de>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Ernest Van Hoecke
+ <ernest.vanhoecke@toradex.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@baylibre.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/8] of: base: Fix stack overflow in
+ of_parse_phandle_with_args_map()
+Message-ID: <20261020155841.59037c99@bootlin.com>
+In-Reply-To: <20261020-fw-devlink-nexus-ready-v3-1-fd6f1c17e16d@toradex.com>
+References: <20261020-fw-devlink-nexus-ready-v3-0-fd6f1c17e16d@toradex.com>
+	<20261020-fw-devlink-nexus-ready-v3-1-fd6f1c17e16d@toradex.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -80,106 +85,74 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-0-e052903a3832@ideasonboard.com>
- <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-15-e052903a3832@ideasonboard.com>
-In-Reply-To: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-15-e052903a3832@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Oct 2026 15:22:09 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUHcR8-9g+KZ4Ssj+mJKYBz1h6QSjWnaPL1BcQWC6v8RQ@mail.gmail.com>
-X-Gm-Features: AclHuK_uZzRO_WalfaTseMvUVupoP686uPVQ89YYU5UfnQv3EiXJeP7RDzX6u2Q
-Message-ID: <CAMuHMdUHcR8-9g+KZ4Ssj+mJKYBz1h6QSjWnaPL1BcQWC6v8RQ@mail.gmail.com>
-Subject: Re: [PATCH DNI v3 15/15] media: rcar-fcp: Check device revision at
- probe time
-To: Paul Elder <paul.elder+renesas@ideasonboard.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-media@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Paul,
+Hi Ernest,
 
-On Thu, 15 Oct 2026 at 09:53, Paul Elder
-<paul.elder+renesas@ideasonboard.com> wrote:
-> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->
-> Verify that the device revision register reports a valid value,
-> otherwise reject the device.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
+On Tue, 20 Oct 2026 15:00:12 +0200
+Ernest Van Hoecke <ernestvanhoecke@gmail.com> wrote:
+
+> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> 
+> of_parse_phandle_with_args_map() reads the #<stem>-cells property of the
+> provider referenced by the consumer into list_size. It then copies that
+> many cells of the consumer's specifier from out_args->args[] into the
+> on-stack initial_match_array[]. Both arrays hold MAX_PHANDLE_ARGS cells,
+> but list_size is never checked against that limit. A malformed
+> Devicetree with a larger cell count therefore makes the copy read past
+> out_args->args[] and write past initial_match_array[].
+> 
+> The cell count of each provider selected by a <stem>-map entry is
+> already rejected when it exceeds MAX_PHANDLE_ARGS. Apply the same limit
+> to the provider referenced by the consumer.
+> 
+> A plain reference to such a provider, without a map, now also fails.
+> Previously it succeeded with the specifier truncated to MAX_PHANDLE_ARGS
+> cells by __of_parse_phandle_with_args().
+> 
+> Fixes: bd6f2fd5a1d5 ("of: Support parsing phandle argument lists through a nexus node")
+> Suggested-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+> Link: https://lore.kernel.org/all/aq1CSswlo57jZpMH@monoceros/
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 > ---
-> Changes since v2:
->
-> - Add FCP type information
-> - Reject devices with an unsupported version
-
-Thanks for the update!
-
-> --- a/drivers/media/platform/renesas/rcar-fcp.c
-> +++ b/drivers/media/platform/renesas/rcar-fcp.c
-
-> @@ -154,15 +204,67 @@ EXPORT_SYMBOL_GPL(rcar_fcp_soft_reset);
->   * Platform Driver
->   */
->
-> +static int rcar_fcp_setup(struct rcar_fcp_device *fcp)
-> +{
-> +       static const char * const models[] = {
-> +               [RCAR_FCPF] = "FCPF",
-> +               [RCAR_FCPV] = "FCPV",
-> +       };
-> +       static struct {
-> +               u32 version;
-> +               const char *name;
-> +       } versions[] = {
-> +               { RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_H3_ES1, "H3 ES1.x" },
-> +               { RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_M3W, "M3W" },
-> +               { RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_V3M, "V3M" },
-> +               { RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_H3, "H3" },
-> +               { RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_D3, "D3" },
-> +               { RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_M3N, "M3N" },
-> +               { RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_V3H, "V3H" },
-> +               { RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_E3, "E3" },
-> +               { RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_X5H_V1, "X5H v1.0" },
-> +       };
+> v3: New patch (Uwe)
+> ---
+>  drivers/of/base.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index f63a9486b130..5abadab22392 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -1587,6 +1587,11 @@ int of_parse_phandle_with_args_map(const struct device_node *np,
+>  	if (ret < 0)
+>  		goto put;
+>  
+> +	if (list_size > MAX_PHANDLE_ARGS) {
+> +		ret = -EINVAL;
+> +		goto put;
+> +	}
 > +
-> +       unsigned int i;
-> +       u32 version;
-> +
-> +       /* Check the device version register. */
-> +       version = rcar_fcp_read(fcp, RCAR_FCP_REG_VCR);
-> +
-> +       for (i = 0; i < ARRAY_SIZE(versions); ++i) {
-> +               if (versions[i].version == version)
-> +                       break;
-> +       }
-> +
-> +       if (i >= ARRAY_SIZE(versions)) {
-> +               dev_err(fcp->dev, "Invalid FCP version 0x%08x\n", version);
 
-You're missing a few variants:
+I would be stricter here and avoid the usage of MAX_PHANDLE_ARGS.
 
-    R-Car V4H: rcar-fcp fea10000.fcp: Invalid FCP version 0x0000010a
-    R-Car V4M: rcar-fcp fea10000.fcp: Invalid FCP version 0x0000010b
+First I would check the arrays size to be sure that they are consistent and
+then check list_size against the array size.
 
-> +               return -ENODEV;
-> +       }
+--- 8< ---
+	BUILD_BUG_ON(ARRAY_SIZE(initial_match_array) != ARRAY_SIZE(out_args->args))
+	if (list_size > ARRAY_SIZE(initial_match_array)) {
+		ret = -EINVAL;
+		goto put;
+	}
+--- 8< ---
 
-Gr{oetje,eeting}s,
+IMHO, this is more robust against modification of the 'args' field
+definition in struct of_phandle_args or modification of the MAX_PHANDLE_ARGS
+value which could lead to some inconsistencies.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Hervé
