@@ -1,98 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792479274;
-	b=GctxQqxfrGLZfPeeXvznAtluO5ozQWKS37VCVBkj3//xr4E/SaGjOcadyX6dpsw6ebBL
-	 wS5nuqy7vbZIwLteHcUTNp8y1qzfYxg1FAUguNhzhJCybv4NhZ/4sYIq5f1WiZ2caMs3e
-	 ylCpqmKMdWnWNsiyJKXOJGTXwjzORSMwWGamhFroH/mGv+DQCuhh5wD7rxOEMldMA6WXz
-	 7H9y3s4DJwMGuOKYzG+87U8bsMJKrFl1vGU7V42PcW/5fJ2DUvZ8rj3qWE8igGftCvIGG
-	 3uxa9m7L2RTJew4YwQQhq4l9HOo5JS0bbsen4Tcl8LHLOcoh+EbSyc+xymQmIDhnX7A==
+	t=1792479349;
+	b=WfwSciZTFynDH0MlGUWtnS9akgNLwwmHqFpynq8QrBFoZpem83vpyuZ8yCuVm9C2WTcB
+	 V9axWu8qZ71dvNKJFDWkB+kRkVRHPVuNoXIq1UoKcECZBoHOlpbZ1le1n8hvNHv/FHe9N
+	 vOcwYCQ8ZLOdKuyOVSknvijlgWli+OJrW95j5dKAzcIlrj2wJ8bl16rAhHlLSeGNd7LJt
+	 Cfbe8BLaXWNtB9JmQ3fWtKx7xINwor5dL9dMblFOg/ycSoQt2cr7S6X+0LIguiJWeYTnU
+	 y2R3abXCpVDP1gFuxyy++ziCoHAdp06o6wIeS/jChr6tV9Afm7ksIg3vX5D68MwuwUQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792479274;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=BJjTco/BBK0P9An74sSOm1tzYey1GPlNFjyOJY9OwIo=;
-	b=x1rXb/+8vY776Ogh5r+OlOHPZ6fE13oYg8OvyHnIavmiqQwJwipFx8akzI9W0acKZb39
-	 kNajrJLNuDQMmCojBp2mwV9bMys8mQFz1bNXt9YS+G4TFrKFTK97ydR4xPqUir6fhM3Yv
-	 UXyecWHdpGi0ePWX9rey/fDJX5SXq47Jo/geshCkpbbE2AlB8AeQu1eJmpvcBfvd1h5vr
-	 9GdpAEuejBXd00PC3bqaHroTn0DjIrh0E2+g/zupzDR+Gj2Ab/q4eMGab4i1sw2GrkWlI
-	 iD39i88NwokCeFeijsN2taiOt0Y8dIUMwo5mYYHtHHR6J4nY7nuYxK+ekp54h/e+/ug==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792479349;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
+	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Proofpoint-GUID:X-Proofpoint-ORIG-GUID:
+	 X-Authority-Analysis:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=OTo02d9lu2hUCUXtfOqHtxSGEa5kW4yvDS/CVW9TPHs=;
+	b=smMGzpvqQ3FWOAiIzDVmDHD0v1GSZHVqWOvVdmYhbBYSupcb5twoJzKe1Q60PkxZPp2h
+	 V+xqZHXABYNj1iPXNL41SfS4FbC/dLjF/kYvSGSUmAXS4b+VpG7/oGb8+W4jqggEUXi41
+	 HQcogrU9ROUQ4mxBdRNlnhLwhNlCSJ+/OsW9UoWOYViu2xiyI4Ebm07kBkcp+0ScyGoCx
+	 QDxxxQtWLYmAPeLLAaM3S3a2ldmL02etjPOQGYWJYN3SYPjGBjrfPf4rY5gPgeJHmuxks
+	 hcp8K2LGU7Ygu+8PFXSRbEoREp1kk9oqm5etF5PuExERnJO9dvGQjoast4+nKQ2vIhA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bairaktaris.de;
-	spf=pass smtp.mailfrom=bairaktaris.de;
-	dkim=pass header.d=bairaktaris.de header.i=@bairaktaris.de header.a=rsa-sha256 header.s=google header.b="a2AMo/QM";
-	arc=none smtp.remote-ip=209.85.208.45
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=eOXZ77JO;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=GN94tP+b;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EA2606A320
-	for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 06:54:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 43EA2606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bairaktaris.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bairaktaris.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1611606A31B
+	for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 06:55:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C1611606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bairaktaris.de header.i=@bairaktaris.de header.a=rsa-sha256 header.s=google header.b=a2AMo/QM
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6ae305e3bd9so4414851a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 23:54:33 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=eOXZ77JO;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=GN94tP+b
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69K0tKSc4178122
+	for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 06:55:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OTo02d9lu2hUCUXtfOqHtxSGEa5kW4yvDS/CVW9TPHs=; b=eOXZ77JOS+5qBwf8
+	yoW8ccNz6u9NkcR7Ur48gQYnAw6ikuD/RzudVJG5cw9DQmva1MIcE1ziZzmp3XWq
+	uBW+/fy8zDWIE9W7y1oPJMv9RwcUCD6UEmd0bz4cbWAv5gBw6XvgemJNgy17z+y/
+	y8hwmsT/nHyt3EydGpXFXzgrjbg58hV9ICuRqW3ifduW/gGaaljN/dOXidJiXNKv
+	pyIg68slO3S+tYxc01vAbjRpRmkPZxY5D4oCvU2o3dtTxz6td1bAOH/LF/f/WuAH
+	Tp5A/fj3W2Ae5/YLvJK7Gfu6nIx2zbRf59hKDkiW26bKWiXEY94Ce+mRVOen0GzY
+	6eV1BA==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hdw5n180v-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 06:55:47 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-53568f05f8bso9158001cf.3
+        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2026 23:55:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bairaktaris.de; s=google; t=1792479272; x=1793084072; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=BJjTco/BBK0P9An74sSOm1tzYey1GPlNFjyOJY9OwIo=;
-        b=a2AMo/QMymtnv5ie+vYewdfNMKkN6lyKSHNxHHeG0rzLRfSkzkuxdawOZmNeGk0sV3
-         PEaifSCIDOiXQEaQDQ4lERqky195FcAFGQlxwjd6pdaPlTQ5agX6VDBpIHviY1F8x/w3
-         W4/bJmiZiHm0nlyEOeYGCuLc3XX/1xHtTjVb117Sw0+IE5TTN50P0XfZECym1ISC0AGS
-         xwF47f/hehl98TI7P0Im8tSinnLKGs6WmnOFMt7mynGJ8hR7NJLiq9Kf45y5PHjv11av
-         Oz6fy4PIpqzR3zKY3+WyyWlLp2Z5WCV+NuivX87S4oBIMz3KD/BCYKGbI3oTl0bZMNCw
-         exww==
+        d=oss.qualcomm.com; s=google; t=1792479347; x=1793084147; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=OTo02d9lu2hUCUXtfOqHtxSGEa5kW4yvDS/CVW9TPHs=;
+        b=GN94tP+bZHBnT3KXoZRkN7W0lt/V33IcJxiDEUjRt4LpIpb+VqBm1bjcyomlAh8wpf
+         PtRNEaOuCHWW1r0gdsfOtWAvU9H6oCNetbV3pgHmKOKg1nnB9SGAfb5jA4u4ZsN/TZko
+         Rx/l62hmkGXZuF9FDQZOhHnRch5mOxEFHE6sKlAKapXSUf2YuqOneDukIELehFmudWWt
+         cGjClQu3bF+CM5+PAiE69q8wcilEGv/Qv9fkuNqJEMz+u8Q8b455sVD/mb2OKLG8YFBF
+         VFnwKRp7hTTI0wqzqFKLm++0I76XpvEKwPHYnpgLDNP2/lAN5rFvJvFwXhIsDby6nLoN
+         ovZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792479272; x=1793084072;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20260707; t=1792479347; x=1793084147;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=BJjTco/BBK0P9An74sSOm1tzYey1GPlNFjyOJY9OwIo=;
-        b=mtm9IB2HOBbodxxFv8OX8bUL2TcKMpqyMRYJ/Wy/GKvXvoU7YBVd3DojejhHdQiQIg
-         s43UeDHJstEDM80b7k4H9k9UPFVZmZig75h9zsxJnxJMLWuXFqIeW5shziRTF+5KyyFa
-         bed47wk5Ew3NBPlQqyhIBsAWKlVo7sPG3cZcH7zq/60W20QszbJQNU27LmF3PB2dis2Y
-         VIqMOwHXWHwo4AstaGiLtC00gsW+jEsaHvkBXm0SivLhb16KG9tbWFEEvcJ9398Jo4ng
-         CUl3CLZuyPeINxe9RYOAqI8yGcUDztYo3kVcUbVvqIMCusjVXzBUdwcuG8bczpcG3Z13
-         UOXQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwWbX1Str3o6R0vwHNn3V7WkwMdmb/1XA90KLHhUoOTrX2NxN8HfzR2Cuda75fj6vw4NdAenJWMWfQ=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIXUoXC9sKvgV/9h/HFX+chC8H5wiyI2YcxThjQwefrEFHaTi9j
-	5AHZbnsObOM/Ag5edo6Wd7RUBWGCdylNvazSpuDqSNDkdgKi+Vf1EdICpJ5P8m0iFg==
-X-Gm-Gg: AYBFou3korNfSIVaZZGpHVd5d28muiuW9b+knF8DVp1C6PiGG6Ano+W+ebZNYBQSsEj
-	hmqKPrF2YktJDv6XPt6vIfNWgNBnHdJfDolO2SX+K5NWQtYdBJlmsPq+ZNeChK88W06i4xXVSOe
-	3pngi+mqZtlQseHoeo2zrprKfe21iYojitm6V46egJQVgieGbdpI74BwcxQJBEkf/SeYkbSl8LN
-	V/2cSU1MCQRs32HfektAMgi9hcKO62u4m7ygQjRtBKiYEwg2DzKagfMb80vbX4j2V7fxL9zoVYs
-	wXG4XmXyNStJBCg7FxX+mRaaSq+jE72bfrsqM2i8BM/9CKuj78ZFWPGXGBMgfxf0Vp3REJjHYsI
-	Rk90WY/zdYEzo1R6yrw2YTxCcQDBZISXQaL3cA1oK89RxFXgwdhyispKyfoV8BfERkiZahiZ7FV
-	kaKUX0xwimMtoExtFmXZcyfK1YXPWNF9KDeLgF3SCyMMu4P0G+z6BEcaumZg3diiY/g2magPyTU
-	R6hIDKmocboMODMoLZlCltEDDHwnbj+MuAlOQB2ozYCWaTVOzQ6YQ/hrqrAhXRGIg1GWMUDtKh3
-	9Z6e1rKBFDKzVEWg7ftSs4ajAPYW3/8g8VgVYXaHlYBGV2sY1fd87IUdWWVl11wud/KTgkT+Bsd
-	p4pdL94kUyF3eVWo8tkLs+2MHuXs93lnGZ7nrr6xgGm9c2j2ErI9A2ojwBqnzTi8Yfwp0MmdNEb
-	Pd8L1aEg==
-X-Received: by 2002:a05:6402:1d54:b0:6b1:b1b9:482b with SMTP id 4fb4d7f45d1cf-6b3a8155676mr6443778a12.14.1792479272378;
-        Mon, 19 Oct 2026 23:54:32 -0700 (PDT)
-Received: from Desktop.fritz.box ([217.26.232.99])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b38a1d6280sm4689846a12.24.2026.10.19.23.54.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 23:54:31 -0700 (PDT)
-From: Julius Bairaktaris <julius@bairaktaris.de>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Vladyslav Andreichykov <vladdrako007@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-ipq6018: add fallback names for the bias PLL parents
-Date: Tue, 20 Oct 2026 08:54:30 +0200
-Message-ID: <20261020065430.1251541-1-julius@bairaktaris.de>
-X-Mailer: git-send-email 2.53.0
+        bh=OTo02d9lu2hUCUXtfOqHtxSGEa5kW4yvDS/CVW9TPHs=;
+        b=a23bI2ss0cpf5w5oneVyDdEB0AyMTnbxoSXVhrfFXyK27RNxEP/Ft1cruMULFnTp5/
+         MWlTDpnlZy9LGJZkbb6h+fKHK+54XxIJbYsamTF3qoSfZwYIajeUFU2Vvd4Sp4HD+RXn
+         JdqEHxxnExJxEictet4PClDGE36IIxorNL1QRZ/0Z0zlo8OJsj67i0GNF+UUGEHwUj72
+         ct1O7QSWidXWNS6WYOyYtqR/euuf8dF1xGvMaVmg3G49inNNk94CVXVHtegE9/XdxkNu
+         TSjFDivxwkFDwqHI+vwNu5Hz6GxhYVu6xHYLJqhxYVQrAgrLp8Az31FMCxS040i52sSe
+         pIeQ==
+X-Forwarded-Encrypted: i=1; AKwUvByGlk+qPzZfSbwJ4y7dKGoICEEmLod2j7/22w6TnP8IKfmLicj4fVKmVtowBzqpgu+30sqqhUE4+MA=@vger.kernel.org
+X-Gm-Message-State: AFq9FYINF2h1Ty6hhNpwZzsTlU7ECm+NIhEinudoS5YOtI8FbmcoNhQc
+	p5LidrVzZcbdrWe/8SzjaeRRG20PswbSPFr+kS4Ta9JhkwteJklSP2c+7NHdlkVN2m6+jnZU4Hv
+	gVg2PH9rfCgMryRfLxYkuMX2ylIGRyHH9cxn/6oMnpWwp0f7GSBxGqjJ9wKidGvM=
+X-Gm-Gg: AYBFou0DiqJRAcZC4VIyp/iFOWM+/IekDxQdXHSovo1CRSxJZEe/Iy5/PgjzjQLG0EC
+	8SSryoiCp0I3m9G4v6U9KVVAch9/IZSwooxDsv6Olq9gluHsodiSmjdFD06M0msuUVZ/81c5RtO
+	zGJsp9med9CRKwDTk9P9tP8ySEl3H2LmAaKG1LDsKuMwXLP02RxZmmvMu6ldSlwkIr1xZsxnJxe
+	Jakb+lysMO75hx/s/t3pK4bV0Ze8g8NCc6qKvMKJ/H+8wMa1+LvZqnJs8hUNe9NBtLE+1HmPlJ9
+	gbU7VvD0uX0SNB51PPfLvvTRC5cf9+I0z6OoD5C1TlkGRapxcHXFLom5YfIzLb/iwhChepB0cg6
+	VEPAeHLkrlK6CAaggr8dmVQ==
+X-Received: by 2002:a05:622a:14cb:b0:51c:2324:666 with SMTP id d75a77b69052e-536460e29afmr169672801cf.3.1792479347235;
+        Mon, 19 Oct 2026 23:55:47 -0700 (PDT)
+X-Received: by 2002:a05:622a:14cb:b0:51c:2324:666 with SMTP id d75a77b69052e-536460e29afmr169672411cf.3.1792479346744;
+        Mon, 19 Oct 2026 23:55:46 -0700 (PDT)
+Received: from [192.168.226.26] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4091eae235sm462296566b.67.2026.10.19.23.55.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Oct 2026 23:55:45 -0700 (PDT)
+Message-ID: <4df039eb-f89d-4a82-9f2a-dc90e31548d8@oss.qualcomm.com>
+Date: Tue, 20 Oct 2026 08:55:42 +0200
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -102,85 +115,79 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/10] arm64: dts: qcom: msm8996pro: use the MSM8996 Pro
+ CPU clock compatible
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Joonwoo Park <joonwoop@codeaurora.org>,
+        Imran Khan <kimran@codeaurora.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab
+ <mchehab@kernel.org>,
+        Ilia Lin <ilialin@codeaurora.org>,
+        Loic Poulain <loic.poulain@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Dmitry Baryshkov <lumag@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20261019-msm8998-fix-clocks-v1-0-370949e4d8a0@oss.qualcomm.com>
+ <20261019-msm8998-fix-clocks-v1-10-370949e4d8a0@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20261019-msm8998-fix-clocks-v1-10-370949e4d8a0@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: Vr-h7nFFgIOp_bAuk8uUOHBeF7c1oa6D
+X-Proofpoint-ORIG-GUID: Vr-h7nFFgIOp_bAuk8uUOHBeF7c1oa6D
+X-Authority-Analysis: v=2.4 cv=L7qI0OT8 c=1 sm=1 tr=0 ts=6ad71073 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
+ a=EUspDBNiAAAA:8 a=2OWSJv1YRWKtX4VDGZoA:9 a=QEXdDO2ut3YA:10
+ a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIwMDAyNyBTYWx0ZWRfX3ckF5SEhTrED
+ GVNmCRye1UsfuJcKLCVIhQaJyS8LOwDfdoW+WtZcvsBj8gamN9YymToYIZxZTHgj48tIXMeQnkY
+ SqrywTW/00FXh8DHK+n8ZkZ0njfIAzG4JbyZ9vkdsUwAjWvjlvV/KWm//k9AQwJ76DeuMUMo1SO
+ da7jawr6pBCCV+z5Ja9c3+RVZ4MxtbTJpQdoQaLclpG7mL9TsCDBO4czLCFzJcHizyXAveNruLg
+ KvJjUchEZ/GQd9y2yS2t7XZ/HCl+8pSgCL5XLNgOBWMIOuRr2FWEWvwFNJLkKnL6xn10ERLL6r+
+ tU0rTZVnd+tlH+wy/ZttnfIL3MmhWWCJhhL8eRWRfEj7JnrihkZVjlL9ibTNwv7d8Ski3O/U8QF
+ utJXfvQTz61Q5+h+D6CikI9Mxngt+SWnEjgaVbrpkSRFCDTZhvdX4cAbPm/jQOgjALYDE8M+TKw
+ dOqiRQzzr3H+MDjrJVw==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIwMDAyNyBTYWx0ZWRfXzASDVAehxl1c
+ s4vsZvePXtGQ2w2PPL4LK3we1yKZglrr+N/6JgKSOah55ZuuTuUXiaN21nggIn8rlWuybx3vGQM
+ dE59edZb0zunZg6r+dWt3S/F4xwlIQM=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-20_01,2026-10-19_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 suspectscore=0 spamscore=0
+ clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610190000
+ definitions=main-2610200027
 
-From: Vladyslav Andreichykov <vladdrako007@gmail.com>
+On 10/19/26 3:41 PM, Dmitry Baryshkov wrote:
+> The CPU clock controller of MSM8996 Pro needs its own setup, which the
+> driver can only apply when the DT tells it the SoC is the Pro one.
+> 
+> Use the MSM8996 Pro compatible.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
 
-bias_pll_cc_clk and bias_pll_nss_noc_clk are outputs of the CMN PLL,
-which takes its AHB and SYS clocks from GCC, so the device tree does not
-pass them back to GCC. With only .fw_name these parents never resolve,
-nss_ppe_clk_src stays an orphan, and setting it to 300 MHz fails with
--EINVAL. The NSS clocks below it, such as gcc_nss_edma_clk, read 0 Hz.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Add .name fallbacks so they resolve to the clocks the CMN PLL registers,
-as gcc-ipq8074 already does.
-
-Tested-by: Vladyslav Andreichykov <vladdrako007@gmail.com>
-Assisted-by: Claude:claude-opus-5-5
-Signed-off-by: Vladyslav Andreichykov <vladdrako007@gmail.com>
-Signed-off-by: Julius Bairaktaris <julius@bairaktaris.de>
----
- drivers/clk/qcom/gcc-ipq6018.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
-index 6943dc511534f..f58000407d015 100644
---- a/drivers/clk/qcom/gcc-ipq6018.c
-+++ b/drivers/clk/qcom/gcc-ipq6018.c
-@@ -360,7 +360,7 @@ static const struct freq_tbl ftbl_nss_ppe_clk_src[] = {
- 
- static const struct clk_parent_data gcc_xo_bias_gpll0_gpll4_nss_ubi32[] = {
- 	{ .fw_name = "xo" },
--	{ .fw_name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .hw = &gpll4.clkr.hw },
- 	{ .hw = &nss_crypto_pll.clkr.hw },
-@@ -539,7 +539,7 @@ gcc_xo_uniphy0_rx_tx_uniphy1_rx_tx_ubi32_bias[] = {
- 	{ .fw_name = "uniphy1_gcc_rx_clk" },
- 	{ .fw_name = "uniphy1_gcc_tx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .fw_name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map
-@@ -594,7 +594,7 @@ gcc_xo_uniphy0_tx_rx_uniphy1_tx_rx_ubi32_bias[] = {
- 	{ .fw_name = "uniphy1_gcc_tx_clk" },
- 	{ .fw_name = "uniphy1_gcc_rx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .fw_name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map
-@@ -733,7 +733,7 @@ static const struct clk_parent_data gcc_xo_uniphy0_rx_tx_ubi32_bias[] = {
- 	{ .fw_name = "uniphy0_gcc_rx_clk" },
- 	{ .fw_name = "uniphy0_gcc_tx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .fw_name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map gcc_xo_uniphy0_rx_tx_ubi32_bias_map[] = {
-@@ -769,7 +769,7 @@ static const struct clk_parent_data gcc_xo_uniphy0_tx_rx_ubi32_bias[] = {
- 	{ .fw_name = "uniphy0_gcc_tx_clk" },
- 	{ .fw_name = "uniphy0_gcc_rx_clk" },
- 	{ .hw = &ubi32_pll.clkr.hw },
--	{ .fw_name = "bias_pll_cc_clk" },
-+	{ .fw_name = "bias_pll_cc_clk", .name = "bias_pll_cc_clk" },
- };
- 
- static const struct parent_map gcc_xo_uniphy0_tx_rx_ubi32_bias_map[] = {
-@@ -1920,7 +1920,7 @@ static const struct clk_parent_data
- 	{ .fw_name = "xo" },
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .hw = &gpll2.clkr.hw },
--	{ .fw_name = "bias_pll_nss_noc_clk" },
-+	{ .fw_name = "bias_pll_nss_noc_clk", .name = "bias_pll_nss_noc_clk" },
- };
- 
- static const struct parent_map gcc_xo_gpll0_gpll2_bias_pll_nss_noc_clk_map[] = {
--- 
-2.53.0
-
+Konrad
