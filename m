@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792504746;
-	b=LELqb67ms0sjNvwKS6qwk+zj4oCBLMfgPYqo7oDAlC95IgfTQ0aEEqQ1JZW1e1RuXDgn
-	 hLCpQQ6Jhh5q29gjmqURoTk4shGA3pT/lYfhb7hKdVO3UX1K/7kqeAE5J99NiZhn9EF92
-	 bEGysRsS2PRft2TUgSEztVvKGPlyNbU9dmh/+q2yV+Pjlq0RFeI7vR4vL//tWJqx56XJN
-	 ZcrBHJJH0vFpyM5gHFBwS/8r1O8P2wO1ap+9P5k6Xo5hLoK5k7eB9wFUk2YbYBD72jnlM
-	 DORqY1Uxxc8YMA4LH5tkKp5XjjsWSdvfTKnKFXRxeC9+V4vDkAo3oRYtgva5NzAtUiw==
+	t=1792505156;
+	b=TNoXt25bOpMAkOaYFF2zWRLgH4I3g6dcWluh439ZyxipY/C50UMqFJFC59svw4cc6v+s
+	 p26+J7nrBNEEDSax+uIHJrWqpO8XedyXY9Zc3EuXeInw6TU+zJF5VpCY1aKld1ugsrHkx
+	 uiQeNvnNkOWAVG1FpuuyBWrxJaRX/y/A5u26Hyhy+C/w9ImJxkbbIgYK/TSQ33ybyZupT
+	 rtDChkF+21vUvv64/hGMiaFwYCUgJEqCJH7EUjT6ecFeBDwREuVPOfF6pU1kq70YpVykU
+	 2rzjCNw9ihdG/sZzmpjAkVnLDEvZrE3Yrv0VvbApD7rC0b39/us9GK0M7UzUlIxE6bQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792504746;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792505156;
 	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Date:From:To:
 	 Cc:Subject:Message-ID:In-Reply-To:References:Organization:X-Mailer:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 X-Last-TLS-Session-Version;
-	bh=mqd/bQR1q3ufJ1VUmS/hoCYa+/lLgiY4VdTm7nb2aUA=;
-	b=vJ6SyiBrtcNCzi9fWivu0nECNytIJ4oPVR2d/L6i+h89mQRLvI285YJV5BsH9DN0C5MP
-	 FKBQwGR/nYTf9QaxCTwogY51kQWKMvxAizQm72mihFxHfhQbeIag1qUs4IpK4uSp7nQ1K
-	 kLAdyoVg30VSjwfS/AFCsmYlA1x/p7VyX9/RKzp207R9xWbmm3e68Cx2D5NSWjHytvhwP
-	 aSLe32RSAlbj8/BUAsQW1A3uHKZ1QySQHFytYwUz7ZISQA3N8w+4c2Sxq5NTTHMqpdGSr
-	 9Hz2jCtnvu21Mgmdl5DdlR+5tn8CK2Sy7mX2Q9J5plKjj/PJH2lFrsx/D6zQHVzxgOA==
+	bh=rpjlQZMNdbdSf6T1XIM98azVI2gPgzqRqo39bRX6+j4=;
+	b=dJs2Y+6hQo3SytuupykvAco+QvxCrAsvhavYF08rV5IocVn3Xf15mQKgUAsaRZdVF8nB
+	 U1QuKFAOb8PEgT8I0JNSOrxxsIAS2m5UOdiZnIuMJXhB3rhu1z8Um4zSC6a2r9ixJDAH+
+	 Py/Jg0YL3/Zy3+6RQu8AVBZGN4Kxc+g0ziUKU/BvZnzNxEveG3bXKB8S0Siwn8Ic1BT1P
+	 VorA4yVTWy0S6KIqDYf9hTZ4iOXRr/YszwO+8wvcrrBHfZktWQyzhdXqe/vfYcAS/LLJ0
+	 t/mxHxs+V3wx56Y1mL18J0IkO4TnjaEBQgfxXFVVMdXkE4fMyhTxjo4o1bKArB5siRg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=bootlin.com;
 	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=VbKuJqoR;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b="BB/Cgox/";
 	arc=none smtp.remote-ip=185.171.202.116
 Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39AD606A31D
-	for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 13:59:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F39AD606A31D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275C560A262E
+	for <linux-clk@vger.kernel.org>; Tue, 20 Oct 2026 14:05:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 275C560A262E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=VbKuJqoR
+	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=BB/Cgox/
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id A31F2C63455;
-	Tue, 20 Oct 2026 14:00:01 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 29868C63455;
+	Tue, 20 Oct 2026 14:06:51 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 1A1FE60393;
-	Tue, 20 Oct 2026 13:59:03 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DFC7710328C52;
-	Tue, 20 Oct 2026 15:58:42 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 83B3660393;
+	Tue, 20 Oct 2026 14:05:52 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C6A6210328934;
+	Tue, 20 Oct 2026 16:05:39 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1792504737; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1792505151; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=mqd/bQR1q3ufJ1VUmS/hoCYa+/lLgiY4VdTm7nb2aUA=;
-	b=VbKuJqoRJ3pULJxeFEOS68iDJzlgi4lEfLYK4c/4ylEEsBifG64bZoFd+m2bqnyYyOL3wG
-	G9QA6/5QwO/Ttp4oMhWMe4UtkgNrD69t6dy1gd69yehSwsMGC16VaZKhNewq6msQmqwir6
-	THtEkEeEsrFrxjU2Ndt6kwVW3q1HAGO2Z66siuw948x3ghQNfP2oWL0OY3X4mzf04ZWsxT
-	E6GjvQYGCzsWOPIiDUXIdfkrx+nJRmxleeZv4DPSG5E3+XQSK+b5rkaqyHbC05xQTqSJ+I
-	dB+Hht8ExDz0tMStpJSMMuB0pA/vTy/is+GldyCkZKWPuWLQExkD7xPvVTC6Yw==
-Date: Tue, 20 Oct 2026 15:58:41 +0200
+	bh=rpjlQZMNdbdSf6T1XIM98azVI2gPgzqRqo39bRX6+j4=;
+	b=BB/Cgox/eirjT8+0vmw+jFEYhRemG8+xv5/pINyLVTJpXLFlO9eLOx6q9vwsaLgmKo0bxg
+	Rg6nqyqcLFWYM7ecfE9SBAxAzUynfCcnd8b4k8ysxmxAlMp4vBdspyYIziaAYfh+XCdMbn
+	IZdCrEFfdIV23FSUYgW4FdHNJic87B0j22lfztOUic3+dIGRCZdMP5zT/FEsZMuxSGFZgR
+	N/zSMQGGCUgMX647AZqDwnou7rfO53AmhcNt0xJiq/8DKxkLUzkeryMhNzHZ6NdvF9aU0x
+	UlxSLELQqcSca8VMF51emi9XZKunsPeR/gX1iSgei8WhBTKgNwqSm7tJwEPz5g==
+Date: Tue, 20 Oct 2026 16:05:38 +0200
 From: Herve Codina <herve.codina@bootlin.com>
 To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
 Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
@@ -66,14 +66,14 @@ Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
  <frieder.schrempf@kontron.de>, devicetree@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
  linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Ernest Van Hoecke
- <ernest.vanhoecke@toradex.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@baylibre.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/8] of: base: Fix stack overflow in
- of_parse_phandle_with_args_map()
-Message-ID: <20261020155841.59037c99@bootlin.com>
-In-Reply-To: <20261020-fw-devlink-nexus-ready-v3-1-fd6f1c17e16d@toradex.com>
+ <ernest.vanhoecke@toradex.com>, Bartosz Golaszewski
+ <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v3 4/8] of: unittest: Test fw_devlink with GPIO nexus
+ maps
+Message-ID: <20261020160538.15ee07bc@bootlin.com>
+In-Reply-To: <20261020-fw-devlink-nexus-ready-v3-4-fd6f1c17e16d@toradex.com>
 References: <20261020-fw-devlink-nexus-ready-v3-0-fd6f1c17e16d@toradex.com>
-	<20261020-fw-devlink-nexus-ready-v3-1-fd6f1c17e16d@toradex.com>
+	<20261020-fw-devlink-nexus-ready-v3-4-fd6f1c17e16d@toradex.com>
 Organization: Bootlin
 X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -91,68 +91,34 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 Hi Ernest,
 
-On Tue, 20 Oct 2026 15:00:12 +0200
+On Tue, 20 Oct 2026 15:00:15 +0200
 Ernest Van Hoecke <ernestvanhoecke@gmail.com> wrote:
 
 > From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 > 
-> of_parse_phandle_with_args_map() reads the #<stem>-cells property of the
-> provider referenced by the consumer into list_size. It then copies that
-> many cells of the consumer's specifier from out_args->args[] into the
-> on-stack initial_match_array[]. Both arrays hold MAX_PHANDLE_ARGS cells,
-> but list_size is never checked against that limit. A malformed
-> Devicetree with a larger cell count therefore makes the copy read past
-> out_args->args[] and write past initial_match_array[].
+> Add OF unit tests that call the fw_devlink add_links operation for GPIOs
+> routed through nexus maps. Verify that each mapped consumer has exactly
+> one link to the final GPIO provider rather than to the nexus.
 > 
-> The cell count of each provider selected by a <stem>-map entry is
-> already rejected when it exceeds MAX_PHANDLE_ARGS. Apply the same limit
-> to the provider referenced by the consumer.
+> Also cover direct references and all GPIO property spellings recognized
+> by fw_devlink, including the deprecated singular and unprefixed forms.
 > 
-> A plain reference to such a provider, without a map, now also fails.
-> Previously it succeeded with the specifier truncated to MAX_PHANDLE_ARGS
-> cells by __of_parse_phandle_with_args().
+> The gpio-map routes its entries to different providers so that selecting
+> the wrong entry is caught as well.
 > 
-> Fixes: bd6f2fd5a1d5 ("of: Support parsing phandle argument lists through a nexus node")
-> Suggested-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
-> Link: https://lore.kernel.org/all/aq1CSswlo57jZpMH@monoceros/
-> Cc: stable@vger.kernel.org
+> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> Reviewed-by: Linus Walleij <linusw@kernel.org>
 > Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 > ---
-> v3: New patch (Uwe)
+> v3: Route gpio-map entries to two providers, use a middle entry (Herve)
+> v2: https://lore.kernel.org/r/20260910-fw-devlink-nexus-ready-v2-3-17ac82dbe226@toradex.com
 > ---
->  drivers/of/base.c | 5 +++++
->  1 file changed, 5 insertions(+)
+>  drivers/of/unittest-data/tests-phandle.dtsi | 39 +++++++++++++++
+>  drivers/of/unittest.c                       | 75 +++++++++++++++++++++++++++++
+>  2 files changed, 114 insertions(+)
 > 
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index f63a9486b130..5abadab22392 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -1587,6 +1587,11 @@ int of_parse_phandle_with_args_map(const struct device_node *np,
->  	if (ret < 0)
->  		goto put;
->  
-> +	if (list_size > MAX_PHANDLE_ARGS) {
-> +		ret = -EINVAL;
-> +		goto put;
-> +	}
-> +
 
-I would be stricter here and avoid the usage of MAX_PHANDLE_ARGS.
-
-First I would check the arrays size to be sure that they are consistent and
-then check list_size against the array size.
-
---- 8< ---
-	BUILD_BUG_ON(ARRAY_SIZE(initial_match_array) != ARRAY_SIZE(out_args->args))
-	if (list_size > ARRAY_SIZE(initial_match_array)) {
-		ret = -EINVAL;
-		goto put;
-	}
---- 8< ---
-
-IMHO, this is more robust against modification of the 'args' field
-definition in struct of_phandle_args or modification of the MAX_PHANDLE_ARGS
-value which could lead to some inconsistencies.
+Reviewed-by: Herve Codina <herve.codina@bootlin.com>
 
 Best regards,
 Hervé
