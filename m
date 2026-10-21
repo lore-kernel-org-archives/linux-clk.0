@@ -1,60 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792588232;
-	b=2aH4hyMAtG/w3rTUMlthqeAjqi7mkY2qwsM2L5O3yiYnyuc1oNK6Ce7UjI7UBJz3sVSZ
-	 FxKjCEILrOxXeFq4KFbTv5NdX3CMxBVGdEql7V09U5XF1nGOM0jD+JjwNcx4KxqM0Gc2M
-	 bDylgL8skBDLY/nYFgZ+FWG1KVcScA+jWXuYJfsns6YNT47C1k0JzdnbB2zn0x6d7I9F2
-	 iVN1bSd7yXEfUHjBWLSzV9J7ZrTgjlUHmbe7huIR/Uvn/U9K9HTb3nfLqKsa66v1EHAni
-	 qIYqV5ILdJC8PjNsoA/FTWIfoFTkKISjHHa4VU+12DRlxa65xogLroaRmA/CCMFBn5w==
+	t=1792588237;
+	b=ro/YMRhZi+i+UA0BQyP5LklSgpzK2ss1IpEHy71+w9OvwwB7gse8/mrpSymdQ2NX65kb
+	 lybTs9Frd00sg3JLavhhz6YUsd0BmmbnM/pfcNp+MMCC3MowBlaLS+KHWTFIl67vJPNvm
+	 maCy3aPn9EaIAAQGDornCptgpknt7uCPAEXjX2LOQibSm5w8+NnabCLH2kb3cI8UF7rlg
+	 SC1rtXBFIxp+kKLE9gqOXQqmgP9/rMuXVdUJ3Lk4D154TkHcPCjTtPNIXPhLSTLWJP08Z
+	 sbd2rkUfU5ZVhWNfEn+wCcz5xCAWC1aPG66WjpU3Z/D08WAc1JHJPOBhVbunO0/xW5g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792588232;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792588237;
 	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:Date:
 	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Last-TLS-Session-Version;
-	bh=Mpk35UQzSCThcQ2HIscEzzLYQpXL9G1v7IFBsf5dB+0=;
-	b=m1kV+Uuu4KbKdhhPC89DoDf8oOozL94e3wQ4grJAnLbjysQ+BemVzhDoNujABakTV9uE
-	 pLs1pSLGZ30C22XxhmjYE9HM8rhNv1HmH2LBPL+MZf083SMrVPDaJ+wJHUWzeDlHAr+pv
-	 zBn6DZejj5wgs0Hd+zWiiT1ojOCw//ddCpVoxBaNaba6hZScdffooZz1BRLcTSBqkewpt
-	 GbnMH7HP9XogJItiW5oz1pqkfWJPCNG5/w00KaC400hDDgCIdMk4XMtoLNUQy1MSKgX68
-	 5nDBacl94YEk7znWuGSAYCOLZtLOdA1wKXFJKYCPsGwGXShLMcnv5vwR86m30VrHHSg==
+	bh=mgG6TBxDwbeRtYdiTnG6B6y0Z6rj+qf4kbhWt/XsMyE=;
+	b=h+Us8BdWDKpW+Rv+ESL7D2Q4h27UGiDy0GoUhhF39DvM1RX8PKqfQ/qZHpLbtQVsVqVA
+	 L34g6pTCyfhYEnV4prlD52ntCPwLg9Zpl6vunqhTHAO6gDM/mUrm2rNVg+qlTXcHeHHhz
+	 To/haQ/N5eJAn1LjbIyqgllDcBgtreDCjJaF+uxWL/9CCIKYTLk3P/NDqAUoRMibR17mK
+	 aiqt70tFzbpHfF2/FdSGIJJvdnxzGiKkWXY/ceiEbE4XJUC10Atn/oQDOxFgXehYE877j
+	 igDQCs6JGsBUh6HlyfKaTJB4BgGz9vugeMCUqtK6fliKGynEnJWrgFfQTlyD9xxqtEw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=bootlin.com;
 	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=SrmTiNem;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=DpvqKVGj;
 	arc=none smtp.remote-ip=185.246.84.56
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30A3606A334;
-	Wed, 21 Oct 2026 13:10:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A30A3606A334
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3D560A2602
+	for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2026 13:10:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CC3D560A2602
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=SrmTiNem
+	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=DpvqKVGj
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 049FC1A12AD;
-	Wed, 21 Oct 2026 13:10:29 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 9054E1A12AD;
+	Wed, 21 Oct 2026 13:10:35 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C5896606E3;
-	Wed, 21 Oct 2026 13:10:28 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0C56D10328D6E;
-	Wed, 21 Oct 2026 15:10:19 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 5D389606E3;
+	Wed, 21 Oct 2026 13:10:35 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E1B1810328A96;
+	Wed, 21 Oct 2026 15:10:30 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1792588222; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1792588233; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=Mpk35UQzSCThcQ2HIscEzzLYQpXL9G1v7IFBsf5dB+0=;
-	b=SrmTiNem7VT+cyyb/vOhxaf3McTOepM2b7mDBy9twYYzYAey65fHKV8Ibm6Qlnu2gCU+mO
-	BuU5CaxD+VjJfWdpI20oVH7TS3wa441D8CGHbhZt0muR9SwD27xKtC2sPO5peUZ2axKOTR
-	OLGQ6cVd8OZJXF3RYkEitiAhN1cQSSgfYDav3ZCJdObfZgrOMehXTQMPCj9ZQzC1NhsStT
-	v60ODVO2WUTkrQkJkA9xGIvMKf9YfkFnTAV/gqAY8Oj3smkPl5joeA/K+mslxFcICtC6NI
-	+Xy6uuYcChopsGY5wmpFoDgUKZQKQR24HCXUaPKV6+MUeys7249cXfMUyxVXIg==
+	bh=mgG6TBxDwbeRtYdiTnG6B6y0Z6rj+qf4kbhWt/XsMyE=;
+	b=DpvqKVGjzwtgRuC8fwanDNB6XemXqJaYptXaxsfEcXsQGsUMyu6JQPrrV5zGKj79/fFp4q
+	126kpNHLh492AsfZeGxSIKuEF+fa0Fu6FGyYmMdcz9CbI1CSg9m47R7GBl8Y3Nik+749dD
+	iskX48x5RMCqYpchjOm/eWZCANTMvQlM7rG/lNVV2JCjiRwjvczv7GYh8WDjzEiW+Lk7Xa
+	jAVlE0spxz2x8Do+Z4VOFovTe+AVD1w8s4u+P8ti3PlXO5QOOcI/VlJNDNdwURv8K80Yxr
+	HNYpbmdxJxn/gJtn4qkz8kp/7/Rh/uZ/RvkKcuxPZsWa2NWE+R2YZZp9N/if5g==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Wed, 21 Oct 2026 15:09:57 +0200
-Subject: [PATCH 1/5] clk: composite: Initialize inner hw clocks during
- registration
+Date: Wed, 21 Oct 2026 15:09:59 +0200
+Subject: [PATCH 3/5] clk: imx8mp: Allow adjusting the video PLL rates for
+ the LDB clock
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -66,7 +66,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261021-ge-clk-lcm-v1-1-246cc35b5ffb@bootlin.com>
+Message-Id: <20261021-ge-clk-lcm-v1-3-246cc35b5ffb@bootlin.com>
 References: <20261021-ge-clk-lcm-v1-0-246cc35b5ffb@bootlin.com>
 In-Reply-To: <20261021-ge-clk-lcm-v1-0-246cc35b5ffb@bootlin.com>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -87,146 +87,30 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-The mux, rate and gate clk_hws of a composite are not registered as
-clocks on their own. Only the ->clk pointer was set to the composite
-clk, but their ->core remained unassigned.
-
-Provider ops may call into clk_hw_* helpers, such as clk_hw_get_flags()
-or clk_hw_get_rate() for instance. In these cases, hw->core will be
-dereferenced.
-
-The composite callbacks kind of papered with this situation by (almost)
-always calling __clk_hw_set_clk() before
-use. clk_composite_determine_rate() never did it, but it probably did
-not fail because the core likely called callbacks like get_parent() or
-recalc_rate() before.
-
-Add a clk_composite_init() callback that sets up the inner core pointers
-once for all just after the core clock registration, and before any
-other callback call from the core. Thanks to this, each per-callback
-assignement can be dropped.
+There must be a x7 or x14 relationship between the LDB clock and the
+pixel clocks feeding the LCDIF blocks. There must be some negociation
+happening between the two and that may only happen by using the upper
+video PLLs. Allow this by setting the CLK_SET_RATE_PARENT flag to the
+LDB clock.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/clk/clk-composite.c | 34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
+ drivers/clk/imx/clk-imx8mp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index 11842bce5918..332b38a326fa 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -8,14 +8,26 @@
- #include <linux/err.h>
- #include <linux/slab.h>
- 
-+static int clk_composite_init(struct clk_hw *hw)
-+{
-+	struct clk_composite *composite = to_clk_composite(hw);
-+
-+	if (composite->mux_hw)
-+		__clk_hw_set_clk(composite->mux_hw, hw);
-+	if (composite->rate_hw)
-+		__clk_hw_set_clk(composite->rate_hw, hw);
-+	if (composite->gate_hw)
-+		__clk_hw_set_clk(composite->gate_hw, hw);
-+
-+	return 0;
-+}
-+
- static u8 clk_composite_get_parent(struct clk_hw *hw)
- {
- 	struct clk_composite *composite = to_clk_composite(hw);
- 	const struct clk_ops *mux_ops = composite->mux_ops;
- 	struct clk_hw *mux_hw = composite->mux_hw;
- 
--	__clk_hw_set_clk(mux_hw, hw);
--
- 	return mux_ops->get_parent(mux_hw);
- }
- 
-@@ -25,8 +37,6 @@ static int clk_composite_set_parent(struct clk_hw *hw, u8 index)
- 	const struct clk_ops *mux_ops = composite->mux_ops;
- 	struct clk_hw *mux_hw = composite->mux_hw;
- 
--	__clk_hw_set_clk(mux_hw, hw);
--
- 	return mux_ops->set_parent(mux_hw, index);
- }
- 
-@@ -37,8 +47,6 @@ static unsigned long clk_composite_recalc_rate(struct clk_hw *hw,
- 	const struct clk_ops *rate_ops = composite->rate_ops;
- 	struct clk_hw *rate_hw = composite->rate_hw;
- 
--	__clk_hw_set_clk(rate_hw, hw);
--
- 	return rate_ops->recalc_rate(rate_hw, parent_rate);
- }
- 
-@@ -126,10 +134,8 @@ static int clk_composite_determine_rate(struct clk_hw *hw,
- 		req->rate = best_rate;
- 		return 0;
- 	} else if (rate_hw && rate_ops && rate_ops->determine_rate) {
--		__clk_hw_set_clk(rate_hw, hw);
- 		return rate_ops->determine_rate(rate_hw, req);
- 	} else if (mux_hw && mux_ops && mux_ops->determine_rate) {
--		__clk_hw_set_clk(mux_hw, hw);
- 		return mux_ops->determine_rate(mux_hw, req);
- 	} else {
- 		pr_err("clk: clk_composite_determine_rate function called, but no mux or rate callback set!\n");
-@@ -144,8 +150,6 @@ static int clk_composite_set_rate(struct clk_hw *hw, unsigned long rate,
- 	const struct clk_ops *rate_ops = composite->rate_ops;
- 	struct clk_hw *rate_hw = composite->rate_hw;
- 
--	__clk_hw_set_clk(rate_hw, hw);
--
- 	return rate_ops->set_rate(rate_hw, rate, parent_rate);
- }
- 
-@@ -161,9 +165,6 @@ static int clk_composite_set_rate_and_parent(struct clk_hw *hw,
- 	struct clk_hw *mux_hw = composite->mux_hw;
- 	unsigned long temp_rate;
- 
--	__clk_hw_set_clk(rate_hw, hw);
--	__clk_hw_set_clk(mux_hw, hw);
--
- 	temp_rate = rate_ops->recalc_rate(rate_hw, parent_rate);
- 	if (temp_rate > rate) {
- 		rate_ops->set_rate(rate_hw, rate, parent_rate);
-@@ -182,8 +183,6 @@ static int clk_composite_is_enabled(struct clk_hw *hw)
- 	const struct clk_ops *gate_ops = composite->gate_ops;
- 	struct clk_hw *gate_hw = composite->gate_hw;
- 
--	__clk_hw_set_clk(gate_hw, hw);
--
- 	return gate_ops->is_enabled(gate_hw);
- }
- 
-@@ -193,8 +192,6 @@ static int clk_composite_enable(struct clk_hw *hw)
- 	const struct clk_ops *gate_ops = composite->gate_ops;
- 	struct clk_hw *gate_hw = composite->gate_hw;
- 
--	__clk_hw_set_clk(gate_hw, hw);
--
- 	return gate_ops->enable(gate_hw);
- }
- 
-@@ -204,8 +201,6 @@ static void clk_composite_disable(struct clk_hw *hw)
- 	const struct clk_ops *gate_ops = composite->gate_ops;
- 	struct clk_hw *gate_hw = composite->gate_hw;
- 
--	__clk_hw_set_clk(gate_hw, hw);
--
- 	gate_ops->disable(gate_hw);
- }
- 
-@@ -237,6 +232,7 @@ static struct clk_hw *__clk_hw_register_composite(struct device *dev,
- 	hw = &composite->hw;
- 
- 	clk_composite_ops = &composite->ops;
-+	clk_composite_ops->init = clk_composite_init;
- 
- 	if (mux_hw && mux_ops) {
- 		if (!mux_ops->get_parent) {
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index fe6dac70f1a1..3540992b8940 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -753,7 +753,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] = imx8m_clk_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
+ 	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET_RATE_PARENT);
+ 	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] = imx8m_clk_hw_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
+-	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00);
++	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite_bus_flags("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RATE_PARENT);
+ 	hws[IMX8MP_CLK_MEMREPAIR] = imx8m_clk_hw_composite_critical("mem_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
+ 	hws[IMX8MP_CLK_MEDIA_MIPI_TEST_BYTE] = imx8m_clk_hw_composite("media_mipi_test_byte", imx8mp_media_mipi_test_byte_sels, ccm_base + 0xc100);
+ 	hws[IMX8MP_CLK_ECSPI3] = imx8m_clk_hw_composite("ecspi3", imx8mp_ecspi3_sels, ccm_base + 0xc180);
 
 -- 
 2.56.0
