@@ -1,121 +1,74 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792572044;
-	b=pbj9u8dHGXVPuxVIECOrbZ4FPmQ9hFNSRpnoE2hLiCF7SQ1HxROyrYYZvCsejLFS5kTr
-	 udqzHaY5Gakl1jHsBNCa5UmDbjczzVVqJNIK/RmN1kv4HUXXYTGENsmH1Sb6BQc1RZeAY
-	 yGeuXZARj7QnBS+h40n0Y3mo4b1LIGqa0QgTs5GuvhO24RJfR+1z8RS2Eo39jvQJlE0sF
-	 UvDwHifs/obJA5Bp795yahmLSSc3v43KzeJo888qefxfvJtLLlX0ao2mNhtdCXfD1uHiW
-	 a5XoJMpzKyzaSmN2iTwlxRAMB3yU3q5iXY95sXgyDr4VWv2+LzTukTTguTrUPnO0m8g==
+	t=1792575471;
+	b=gLTJzlxSTZxHwsKzQO5/RSzBwgRWo4E5Iu6zBFS7QzSulnP9TbWdan2FFYpHGBzcrCWu
+	 xkcfF6dkNgqc4qCKL64bve3e2mtnIGY+uLPFzf+uLQYoSWtiBqTRtsWkUwq5rrGRuPG6K
+	 C+6gdykw+hUMkoI8gzZuFf2YsvX9NQvVwb5d8h0Rc404U3UwHGOLo4OerY/DqjaxshwJ+
+	 B3ZurY7kCYul03nvP6bhf9Hk0say+t9iTbsMHXWiMcNS4OiqzcCSYB76ZU5JJksYBDZ5S
+	 ZzZZgtbk1yR3pPp/vnJccWo8uvPP/X/VshJ252D5fKba5ZFYSzsgPpIXBYlAmZfqaOQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792572044;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
-	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-GUID:X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=Nfw0PUvK6imNS0xXM3MSxUotzC6eCCqH+vuYtGmu7X4=;
-	b=wzPNxrEz7RvBopddU+kXISi5fmjgwXwDz5DEMePhJ5+MGlN2akS5qPZdLG3/rd9WqTpQ
-	 D3A5fVNdSNaRdjiBGjNpKx7X8l98RCCVWvX/ujNS35+KHHBI8xfOuk3BtGIhW4g5TUxvQ
-	 sOwo3w3Zx6cGR8sDLS+BjnVToar/ZLzRMhiJId/ehraN1jJSIhpsMYDFC2XIuWi/FcQlz
-	 ejLHn/RBlI1e+D04RrKVh2UXF8n/GEzn0cSbjrgDpGhIAu13mhU/pJG9wJe2unq+k/vdq
-	 CDHmXWFSVzRGyX6inVkR2xoo+4dv8F3pbj+sixIYM5PXz/33tT4wRQpTHkMpqFQhbbg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792575471;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:To:Cc:
+	 Subject:In-Reply-To:References:User-Agent:Date:Message-ID:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Last-TLS-Session-Version;
+	bh=PO++a8z3xVSOrsSCzcnJsYBIAhxcpwS/rPUxumQkRLA=;
+	b=zFbAi+mTKquVkeEH9gNrKnDjTMXCeU4A209WTO/+W4g1fvC47eWooPN0n+9t+Tsfaza4
+	 xq/+IR6nyc5GCvL6xi7UfgR/3tlv+/7WmNKEglJVEy7og1hieP9VmrARuIWAQ6X29xwnc
+	 S2aFS0Ise8cuqnDwDkA3J/7prTxlMcfjg9sC15cb520ie3B5S4DxrIZsd1Yf1odTKRO3j
+	 P2Rk8mUyPwDQvtsth6Qn/Qv4v9b5RhhiwHXCBILq4LX8Ijr2xv4VAsMPMwJXsoX0+eKxW
+	 OnWTF3EgebRxDJUTi+9q6Ih6qukqXug1+n54QSKXnDfcw+8+uCNC3XqA+VCD1hahlZw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="Z/Fjub/m";
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Ww53EGqe;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=CGBoqbwp;
+	arc=none smtp.remote-ip=185.171.202.116
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33E8606AB27
-	for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2026 08:40:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D33E8606AB27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A59606A321;
+	Wed, 21 Oct 2026 09:37:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 01A59606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Z/Fjub/m;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Ww53EGqe
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69L5jLBE2848640
-	for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2026 08:40:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Nfw0PUvK6imNS0xXM3MSxUot
-	zC6eCCqH+vuYtGmu7X4=; b=Z/Fjub/mbGKMnxjJc4Gt1M/Pzy6QnFCS47e7sML/
-	6xHjYNHpVDW+eZRMU9QFaTkI7SJ1y58xzx0nGOtJtPIXGGTXRLIYfmUo6tEsp8m3
-	7Z7QV4ErCtI4Qs268zbiRPqJKuEJwIJ5Vea52NQbS2yiikCKuWeyvP0q9i0lQ9qb
-	CgMaB5aMHS4h7CAXCq+w7WLGwqWJfG83J0vcye6Qtp7rqArQGJUuolXIQMKZ9OXU
-	q0WvcaBy5v0fVtNXa+hrhInHeHRXb8VEhz6mUvdd1jZQU2fZmxlKcl/0zQFgqqaF
-	4zGCMHRYTiOB2r3J2rjwOjl14l/fykY6uSU0M/fyx1Rliw==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4heeb9ar8h-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2026 08:40:42 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93f568dee56so107055185a.0
-        for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2026 01:40:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1792572042; x=1793176842; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Nfw0PUvK6imNS0xXM3MSxUotzC6eCCqH+vuYtGmu7X4=;
-        b=Ww53EGqeTH+CcS7tZHZmjPzWG6oCQflZL75FcS1YhxAHX09J0uSAFs3ztZ/bMG3DAp
-         A1g5T+kZ2zqzaxL8Y+3y5Vm9Jj/aKjFZqry4poZoQdYlSltBUQNT9ghx1S2JeIgOmOGd
-         W9uOZvgilc16e0r8yZ7h2mVnkHkQpw2Gneo4EHFt9UhWsRftmm0EZW6vj4gf91bdu0Ro
-         GU5Byuv+03adbuHhh0tauwkg5m/UYgpyNmb4CpPrYNEHW4SxNuALkHjgbCOaSaSaQ/vC
-         JAHNjTamq8piITm7U4SMJlHuIq31KNmbj1koPr+7gC88s0IaWnlX7jeYyYZCryLH3gbP
-         V3IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792572042; x=1793176842;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Nfw0PUvK6imNS0xXM3MSxUotzC6eCCqH+vuYtGmu7X4=;
-        b=hKjo3Aw2tbRaS1gNhotecLR05zsZUSSxsPpNQyZben6uvcpMJuiaXEqwIS7ZIB/j/P
-         1msgLUDHJVOlkIEmdcu5pPcm1DaQdRXX7/iIyVayPM03A+hJ4v/lhECf7e5nwS/8z1Z4
-         cZpMDNvbQwHh2eDB0HgSBWyvYiQe1LWtRJrgNsTcCwBFFlI9lUTxIimitdlbai3L+smy
-         hGgMZ2yD3zjPUYyqTKQy9lXQBjSNOaMWN2js23MEIVFZz8JYzbn7NQQf/rqOfg1+f+C6
-         rFyqTWG31PQ5tzrGcfCUT7OzTflz9bFlQEjOILNYVs7l2QBBhrKpG6jn2x7QjaQXMP8H
-         G6ow==
-X-Forwarded-Encrypted: i=1; AKwUvBwsCQV5gS789cWc2Xtg06WhHYA4bXb84T2TcslTnOO6AhpbTgZ6JDtWY/HhDrJPuBmCSq0o41iCBY0=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJFhuIFA4XisvBEav9cjM+JTTfkfMc+gH14vct1OvlHpW42k/0n
-	AgGMxIOj6CPTPeeKbObsGmoFj/WjFTfapjS63BDc+fLLyZQdTIqtzH10bKlEgnPmGuZFDpSCBk3
-	CtzlKT0pZNxXIOpmPt3AfJAr2R0zzBIOv5Ev2n3ayU8xEwxbCtqXjD3SHPYvzMKGPTPi3Niw=
-X-Gm-Gg: AYBFou11rH7h9s/jNt8ag2Wi0ApPr2SuRHnA9KQP8F6aa0lOYl/Uu/9GxPOHXDoURrg
-	ZIdzWdyiSPfv9AlwNDc1yh0V+8uiyHBpFPmLF1+Wajld2kXFMUp+0EH6VIVRJZCbE/bgIVx0zAy
-	Qi2pAUsseiFIqWoXGtqkoruC7A4/GtdpPPKqypCDrIn7gNLCyYMYwnBAhfjk5a6oH5LQoFKDhPN
-	RhbBab2ajM4W2P7izdzPFM0r7qLNH2SD2acetUNbsMDrQhSqM6Cnhn/S+GXvQEKe8giP7CNpFw4
-	lh19lxSom+QWFNGayo0KG8Cp9F8JkCqvoch1iIfDR+sh64QwQZYH5dC1BmGm6Y/99pRoIXb9TrA
-	+ufKgzP2dUPX8miDW
-X-Received: by 2002:a05:620a:4505:b0:93e:c12c:fbc4 with SMTP id af79cd13be357-93f57f9f3c7mr279115785a.81.1792572041617;
-        Wed, 21 Oct 2026 01:40:41 -0700 (PDT)
-X-Received: by 2002:a05:620a:4505:b0:93e:c12c:fbc4 with SMTP id af79cd13be357-93f57f9f3c7mr279112885a.81.1792572041068;
-        Wed, 21 Oct 2026 01:40:41 -0700 (PDT)
-Received: from oss.qualcomm.com ([188.27.161.187])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1f8016c93sm96917225e9.5.2026.10.21.01.40.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2026 01:40:40 -0700 (PDT)
-Date: Wed, 21 Oct 2026 11:40:39 +0300
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Sushmit Singh Rathore <sushmit718@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] clk: qcom: camcc-sm8450: Park the camera RCGs
- when they are disabled
-Message-ID: <qvoigeiju2ka265iqjazauwcjv7zkl7d3in4cfo5im7a2gp3ss@heo6u5sphmew>
-References: <20261020142157.1749-1-sushmit718@gmail.com>
- <20261020142157.1749-4-sushmit718@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=CGBoqbwp
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 17F8EC5CD74;
+	Wed, 21 Oct 2026 09:38:46 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 2D741606E3;
+	Wed, 21 Oct 2026 09:37:47 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 35856103289A8;
+	Wed, 21 Oct 2026 11:37:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1792575466; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=PO++a8z3xVSOrsSCzcnJsYBIAhxcpwS/rPUxumQkRLA=;
+	b=CGBoqbwpj9xTkVn6WWXitamQrNNLf19slUfZI+4ruQfN9t8GL0sXg2fjd33/7/B/r/nLx+
+	N0hPE5qWOIoKnNnB1H5M6PQkd5KlM50V8HHwmo5bUv+6MMnib5DVJtVkPZn2tLCsLgE5+P
+	x7H9zgf5loFIPZfCEYJwx978WollkDP2OLlX39sLtG6aM6+IyT4wZPtQRHozYz9BOb40u2
+	siBiQJtBpzaJiyky/qAXNiAHvGquswO4Qd0V96veXxMaWU656/vhNOmNjF/+AIjIHJbIkT
+	mFWCzR+DuU3ZXnvja4CayAQ4MzwH3LIYpaD1blGXGJ0R8A+mu6103BOYzVH0wg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Maxime Ripard <mripard@kernel.org>,  Alberto Ruiz
+ <aruiz@redhat.com>,  Brendan Higgins <brendan.higgins@linux.dev>,  David
+ Gow <david@davidgow.net>,  Rae Moar <raemoar63@gmail.com>,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  kunit-dev@googlegroups.com
+Subject: Re: [PATCH v8 3/8] clk: introduce new helper
+ clk_hw_get_children_lcm() to calculate LCM of all child rates
+In-Reply-To: <8733u0u22z.fsf@bootlin.com> (Miquel Raynal's message of "Tue, 20
+	Oct 2026 11:57:08 +0200")
+References: <20260327-clk-scaling-v8-0-86cd0aba3c5f@redhat.com>
+	<20260327-clk-scaling-v8-3-86cd0aba3c5f@redhat.com>
+	<8733u0u22z.fsf@bootlin.com>
+User-Agent: mu4e 1.12.12; emacs 30.2
+Date: Wed, 21 Oct 2026 11:37:42 +0200
+Message-ID: <874iefs8bd.fsf@bootlin.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -125,50 +78,114 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261020142157.1749-4-sushmit718@gmail.com>
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIxMDAzNCBTYWx0ZWRfX0sUF4p7uuKQR
- P8n7HG5e8P4sLYKwXZmzXkiV1Z2CtQ2otaezx1qiGWaUZ7Jna5TVcZGJ+z3iYp4ZRYxrYGy14s7
- Q20hYxm/3k8uurZQKyuUMwBrg+nDtB4=
-X-Proofpoint-GUID: bGvS4tnTprOwqNVw-ORTwargoiIdSJhj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIxMDAzNCBTYWx0ZWRfXxu7bVosh6Zek
- /6v/Ys4frXlmsbpqG1F47SOBxPxqBQ6R2rYJIGt5cBSFC3R4Z7P4HWNZMyZhrjFhqkBrRq70k4k
- mMglnH8TvOc0c5KP1svbYzOjK1eGFHl1FCNdDgVpeXzVEdJ1KwaJ/H5aW6SuOlMYQy5sIYlSElY
- ViLKjsoz1zCfzsyIUEu3W1moKaK3B4fMikmc5r6w1JYOLShntQUGZsfWfV3qg9ognBkPKyjAJy7
- pbpK7tFv5ZAJMVXORvYsTV35Oyrp28Rd22KPfTkoyOpFnOLZSlSgwA860grL4L7Ff990U+39jWa
- oagRPZLr0tMUxVDJcrZ+kAjYr2lK1Qsj8VvbVh3sC5mL/OJszDegDYpoKkrTkPfgSQW2Rgz35JI
- o0/ZB8nlJxahFwqy7Rx+36sXMJfKuK+5BduGm2oe4ytCzgvnWY30Cl1sNAvgxg/wrliHA6rIL7e
- B1x1Y8Kx1Qw54Bj9diQ==
-X-Authority-Analysis: v=2.4 cv=R42WitRX c=1 sm=1 tr=0 ts=6ad87a8a cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=Qvngrl3H0rQgGg+94q4QgA==:17
- a=kj9zAlcOel0A:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
- a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=xW1KjDN5FDO35nT6SY0A:9 a=CjuIK1q_8ugA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-ORIG-GUID: bGvS4tnTprOwqNVw-ORTwargoiIdSJhj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-21_02,2026-10-19_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0 spamscore=0
- malwarescore=0 adultscore=0 clxscore=1015 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610210034
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 26-10-20 14:21:31, Sushmit Singh Rathore wrote:
-> The camera RCGs use clk_rcg2_ops, so a disabled RCG stays configured
-> on whichever PLL it last ran from. When that PLL is turned off and the
-> Titan top GDSC then collapses after a camera session, the SoC hangs.
-> 
-> Switch them to clk_rcg2_shared_ops so they park on the XO while
-> disabled, as camcc-sm8550 does. cam_cc_sleep_clk_src runs from the
-> always-on sleep clock and is left alone.
-> 
-> Tested on the Nothing Phone (2) (SM8475).
-> 
-> Fixes: 6082037fe62e ("clk: qcom: add camera clock controller driver for SM8450 SoC")
-> Assisted-by: LLM
-> Signed-off-by: Sushmit Singh Rathore <sushmit718@gmail.com>
+On 20/10/2026 at 11:57:08 +02, Miquel Raynal <miquel.raynal@bootlin.com> wr=
+ote:
 
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+> Hi Brian,
+>
+> On 27/03/2026 at 15:31:58 -04, Brian Masney <bmasney@redhat.com> wrote:
+>
+>> Introduce a new helper that recursively walks through all children and
+>> their descendants, calculating the lowest common multiple (LCM) of their
+>> rates. For the requesting child, it uses the requested rate; for other
+>> enabled children, it uses their current rate. This is useful for
+>> determining what parent rate can satisfy all children through simple
+>> integer dividers.
+>>
+>> Link: https://lore.kernel.org/linux-clk/aUSWU7UymULCXOeF@redhat.com/
+>> Link: https://lpc.events/event/19/contributions/2152/
+>> Signed-off-by: Brian Masney <bmasney@redhat.com>
+>> ---
+>
+> Thanks a lot for this proposal, it is very interesting.
+>
+>>  drivers/clk/clk.c            | 54 +++++++++++++++++++++++++++++++++++++=
++++++++
+>>  include/linux/clk-provider.h |  2 ++
+>>  2 files changed, 56 insertions(+)
+>>
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index 47093cda9df32223c1120c3710261296027c4cd3..bb602c07df9a2b523a72e1e0=
+5cc3a27956e7198b 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -14,6 +14,7 @@
+>>  #include <linux/err.h>
+>>  #include <linux/hashtable.h>
+>>  #include <linux/init.h>
+>> +#include <linux/lcm.h>
+>>  #include <linux/list.h>
+>>  #include <linux/module.h>
+>>  #include <linux/mutex.h>
+>> @@ -838,6 +839,59 @@ void clk_hw_set_rate_range(struct clk_hw *hw, unsig=
+ned long min_rate,
+>>  }
+>>  EXPORT_SYMBOL_GPL(clk_hw_set_rate_range);
+>>=20=20
+>> +/**
+>> + * clk_hw_get_children_lcm - Calculate LCM of all children's rates recu=
+rsively
+>> + * @hw: The parent clock hardware
+>> + * @requesting_hw: The child clock that is requesting a rate change (ca=
+n be NULL)
+>> + * @requesting_rate: The target rate for the requesting clock
+>> + *
+>> + * This helper recursively walks through all children and their descend=
+ants,
+>> + * calculating the lowest common multiple (LCM) of their rates. For the
+>> + * requesting child, it uses the requested rate; for other enabled chil=
+dren, it
+>> + * uses their current rate. This is useful for determining what parent =
+rate can
+>> + * satisfy all children through simple integer dividers.
+>> + *
+>> + * Returns: The LCM of all non-zero rates found in the subtree, or 0 if=
+ no valid rates.
+>> + */
+>> +unsigned long clk_hw_get_children_lcm(struct clk_hw *hw, struct clk_hw =
+*requesting_hw,
+>> +				      unsigned long requesting_rate)
+>> +{
+>> +	unsigned long lcm_rate =3D 0;
+>> +	unsigned long child_rate;
+>> +	struct clk_core *child;
+>> +
+>> +	lockdep_assert_held(&prepare_lock);
+>> +
+>> +	hlist_for_each_entry(child, &hw->core->children, child_node) {
+>> +		/* Use requesting rate for the requesting child, current rate for oth=
+ers */
+>> +		if (child->hw =3D=3D requesting_hw) {
+>
+> This is not working on my end (imx8mp) because the clock requesting the
+> rate is not identified correctly. Here you use the hw clock, but in the
+> imx8mp case there are many composite clocks which are made of inner
+> core clocks (like gate, divider and mux). I believe we should iterate
+> over
+
+I meant "made of inner hw clocks" here. Just to be more clear, if my
+understanting is correct:
+- requesting_hw is the hw clock associated to the composite clock
+- child->hw is one of the inner composite clocks
+So the comparaison cannot work. Iterating over the core clock therefore
+solves this incompatibility.
+
+However, while trying to understand better the values of the pointers
+there, I realized the initialization of the various inner hw->core
+pointers are made all over the place (?) and in certain cases, they are
+even not done at all. For instance, a composite clock with a single
+parent would not go through __clk_hw_set_clk(), at least not during
+registration. Either this never happened before, or maybe some
+recalc_rate() spuriously set it by chance (because __clk_hw_set_clk()
+calls are made a bit everywhere), or maybe because this problem was not
+really a problem without the v2 rate parenting Brian is proposing.
+
+Anyway, I think this situation can be fixed easily, so I will propose
+something on top of this series.
+
+Thanks,
+Miqu=C3=A8l
