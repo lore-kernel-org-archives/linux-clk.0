@@ -1,42 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792612537;
-	b=HNsErmo77rhy75q2lRMWsbcH5taFvKR0oqXvCE0WtnC9if1B+aBWJezRpHICJoRa7AAM
-	 uaC3NZe6hDso7jrncGWsm1rf1GCMjRdwrvndYN5cWqEKh6K0Hv7vDhfvdkrIzmlVfwDR1
-	 CXvfB7Mz8rYzUqYg12w/ZxWPgUGoEd9MDHHltayYtBwnYP5CMR9M5CMnsE6xEl3BP8fqp
-	 S3Yhw8JKnp3oASrbuppgVdjL4wwNUjLsrnrp+vLTHqSOjW2BhGtO+DZiU1bR5T5UJr0s+
-	 pPZ45eVJoFu2jXKY7zs5RLzsenaZUvzni7hlHJkKjG2vD+oPlyTGY77URfdScOm7Sgg==
+	t=1792613079;
+	b=25fxaw62oY3CSGiZ97QscN92xIUK2qNKcUhwKIwa2Mozn/AOD7B892o0JCdvjF+A9dKo
+	 jonX3u8UATEVHQMH8jQegE5BtpcNvxodGgxZ5Cl2DmSqEw+EzeV+P95MoOOIi1P61IYwZ
+	 967/LSqwIj4kmBypk2bqQ3+TZosT1wAv+yQuGuuwmJAd4pMtwgDRN9rj29NsMI96wZjSQ
+	 LlgIoQP8F3MELhSolz4zOdSeGg16u41WAAkOWOLedaqXlUotJtoJTCepkyCZpS0nLN9uE
+	 gwdfeDnusEVgDgYSGTInaA8QLpJ70dpa2u4FTQGyZNKlF4gb8Jfu9W1t3gbxh70n62Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792612537;
-	h=DMARC-Filter:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-CM-TRANSID:X-Coremail-Antispam:X-Originating-IP:
-	 X-CM-SenderInfo;
-	bh=0eVpjhdCNea5ASatZPPwAEkV3nbhcxmbfG8NNTr8rCg=;
-	b=C465UWcNeExMZ6Y0iMazZR2B2gIpUXdRPZiIIavU6wEv1BEAqJX2xv94zR/IQyHXu392
-	 3aa5guCEzdgW9MpkG35lwmMBa1uLefFbnpTSKliygHWl4S9y/OxcLN9YtHc1kUIUmvccT
-	 ru0Z44X5w/nJ1NMnpj60Pt6iPtGR01tvS4L7TI9av1nnYNHVbA+TgDWXitVpgNkxPFus0
-	 hU+iXEGcq9iQpCVhrEtfApuFDSHdboGJiHBVQmfw1A19r5yi/O8XUkoqUjeq4bzL1GuHf
-	 qvqNBWtiQt4oKXXN9EiKnjlc7IDVCSMYYYrCM4pnvi9UFUZx86Ui0NDm7UDhIsln0Wg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792613079;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=JQcbBTTCNeW/OzCCgmDwiOJ4ikwv7Cb8Y/Xfb1GFEQc=;
+	b=zMKwsct2l+gIRLWQZ9BqEUIZKqUGmEvklcAP337TesJskX7NBgECvddZcpLCsjCXNN2w
+	 ik62O3OXdoN4kM9hQg7BpYWQqDBwi9WjJJ74tb9NyoWlqZuOtvNVLRpw9xRKEh3C4mEKo
+	 E3qngVvILVKkRW3Hu/K8XADrL9bOsX3EGr03GL3z/Ob3eLiF4UCUM9W5IAwjbmfRvp3Xf
+	 g4O8Lh8J+7kyYkUD2xtJnFhqtSh3kH+BVg7TMvniObJHCVyBCsoAN9p9UpCPdif7Uivby
+	 QXX5wtiscEKYnkzF7JmT+VV2OeqHcRlsS3De9BQqMDKC0jZv1jSpuwNJvIHKmkVTZjQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=iscas.ac.cn;
-	spf=pass smtp.mailfrom=iscas.ac.cn;
-	arc=none smtp.remote-ip=159.226.251.81
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hQCFWmdt;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E3B606A31D;
-	Wed, 21 Oct 2026 19:55:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E0E3B606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [127.0.1.1] (unknown [223.166.93.48])
-	by APP-03 (Coremail) with SMTP id rQCowAB3gT_6Ftlqxu5hCw--.4480S8;
-	Thu, 22 Oct 2026 03:48:18 +0800 (CST)
-From: Han Gao <gaohan@iscas.ac.cn>
-Date: Thu, 22 Oct 2026 03:48:14 +0800
-Subject: [PATCH 06/18] dt-bindings: reset: add Zhihe A210 reset controllers
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EA5606A31B;
+	Wed, 21 Oct 2026 20:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hQCFWmdt
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 076751F000C1;
+	Wed, 21 Oct 2026 20:04:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792613078;
+	bh=JQcbBTTCNeW/OzCCgmDwiOJ4ikwv7Cb8Y/Xfb1GFEQc=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=hQCFWmdtHz4jog1ZUkZ1L/LUIpuNKY2lHezyWDZThDclcBUwceLwZpFEjTz6PQxqq
+	 E9kTicfGwSAk2eZvEbvvCU3GrwN03uBX6xnQhmQOiiwgayL9Ptf+gReGTKjAZeptoa
+	 XviCQGOaD02kTltsOYvCJtFIuWv4gvJ8b8rapeloX5nbgYh6vVpzmHgrgpJrHBxnU3
+	 TAa7Z7wMICU2WN0jNMxYkkcmsmsmpPo4o25WS9VilJukySBXLCNAKGhmoHtDpmvdW0
+	 B/qZ0OT/L0V1nydHNoohZXHa/bl1IKN446ISV6CSmjxPDGtUz3+V7ad3bLxoU8xHF6
+	 VOigrPb4/8Amw==
+Message-ID: <sashiko-outbox-180623@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 03/18] dt-bindings: clock: add Zhihe A210 clock
+ controllers
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Han Gao" <gaohan@iscas.ac.cn>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261022-a210-init-v1-3-5e438f972d24@iscas.ac.cn>
+References: <20261022-a210-init-v1-0-5e438f972d24@iscas.ac.cn>
+ <20261022-a210-init-v1-3-5e438f972d24@iscas.ac.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 21 Oct 2026 20:04:37 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -45,480 +60,234 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261022-a210-init-v1-6-09fb4d99da65@iscas.ac.cn>
-References: <20261022-a210-init-v1-0-09fb4d99da65@iscas.ac.cn>
-In-Reply-To: <20261022-a210-init-v1-0-09fb4d99da65@iscas.ac.cn>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
- Radu Rendec <radu@rendec.net>, Samuel Holland <samuel.holland@sifive.com>, 
- Daniel Lezcano <daniel.lezcano@kernel.org>, 
- Anup Patel <anup@brainfault.org>, Icenowy Zheng <uwu@icenowy.me>, 
- Drew Fustini <fustini@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-gpio@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
- Han Gao <gaohan@iscas.ac.cn>
-X-Mailer: b4 0.16.0
-X-CM-TRANSID:rQCowAB3gT_6Ftlqxu5hCw--.4480S8
-X-Coremail-Antispam: 1UD129KBjvAXoW3ZF1kJFWkGFWxJF1kWr1UAwb_yoW8JFW5Ko
-	W7XFy3Aw45Jr4xAa98Ww47WFs8Ar18Xw45X34UArykGr4fXF1DGF1kJ3y8XFyrG34Fgrn5
-	Wr1DKr1DArZ0kws8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUOT7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
-	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
-	Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
-	84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJV
-	WxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8
-	Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I
-	0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCa
-	FVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
-	Wlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I
-	6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rV
-	WUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWx
-	JrUvcSsGvfC2KfnxnUUI43ZEXa7sRRjg43UUUUU==
-X-CM-SenderInfo: xjdrxt3q6l2u1dvotugofq/1tbiBgkHDGrYxtWXzwAAs9
 
-From: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+s) to consider:
+- [Medium] dt-bindings: clock: zhihe,a210-clk: missing subsystem controller=
+ input clocks
+- [Medium] dt-bindings: clock: zhihe,a210-clk: disjoint register blocks mer=
+ged in one node
+- [Medium] dt-bindings: clock: zhihe,a210-clk: non-clock macros and global =
+IDs in header
+--
 
-Add bindings for the A210 reset controllers and their reset IDs.
+commit f418ceaa00f70a29b9cfb989d2292f9ccba767ae
+Author: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
 
-Signed-off-by: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
-Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
----
- .../bindings/reset/zhihe,a210-reset.yaml           |  56 ++++
- include/dt-bindings/reset/zhihe,a210-resets.h      | 351 +++++++++++++++++++++
- 2 files changed, 407 insertions(+)
+dt-bindings: clock: add Zhihe A210 clock controllers
 
-diff --git a/Documentation/devicetree/bindings/reset/zhihe,a210-reset.yaml b/Documentation/devicetree/bindings/reset/zhihe,a210-reset.yaml
-new file mode 100644
-index 000000000000..708cb49444eb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/zhihe,a210-reset.yaml
-@@ -0,0 +1,56 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/reset/zhihe,a210-reset.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Zhihe A210 Reset Controller
-+
-+maintainers:
-+  - Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
-+
-+description:
-+  Reset controllers for the Zhihe A210 SoC. Each subsystem exposes a
-+  separate reset controller register block and has its own compatible.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - zhihe,a210-vp-reset
-+      - zhihe,a210-vi-reset
-+      - zhihe,a210-npu-reset
-+      - zhihe,a210-vo-reset
-+      - zhihe,a210-peri0-reset
-+      - zhihe,a210-peri1-reset
-+      - zhihe,a210-peri2-reset
-+      - zhihe,a210-peri3-reset
-+      - zhihe,a210-pcie-reset
-+      - zhihe,a210-usb-reset
-+      - zhihe,a210-tee-reset
-+      - zhihe,a210-gpu-reset
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#reset-cells":
-+    const: 1
-+    description:
-+      The single cell is the reset ID defined in
-+      include/dt-bindings/reset/zhihe,a210-resets.h.
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/reset/zhihe,a210-resets.h>
-+
-+    reset-controller@6b20400 {
-+        compatible = "zhihe,a210-vp-reset";
-+        reg = <0x06b20400 0x200>;
-+        #reset-cells = <1>;
-+    };
-diff --git a/include/dt-bindings/reset/zhihe,a210-resets.h b/include/dt-bindings/reset/zhihe,a210-resets.h
-new file mode 100644
-index 000000000000..2845c0e9e5ed
---- /dev/null
-+++ b/include/dt-bindings/reset/zhihe,a210-resets.h
-@@ -0,0 +1,351 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (C) 2025 Zhihe Computing Limited.
-+ */
-+
-+#ifndef _DT_BINDINGS_RESET_ZHIHE_A210_RESETS_H
-+#define _DT_BINDINGS_RESET_ZHIHE_A210_RESETS_H
-+
-+#define VP_VDEC_PRST		0
-+#define VP_VDEC_CRST		1
-+#define VP_VDEC_ARST		2
-+#define VP_VENC_PRST		3
-+#define VP_VENC_CRST		4
-+#define VP_VENC_ARST		5
-+#define VP_G2D_PRST		6
-+#define VP_G2D_CRST		7
-+#define VP_G2D_ARST		8
-+#define VP_COMP_PRST		9
-+#define VP_COMP_CRST		10
-+#define VP_COMP_ARST		11
-+#define VP_DECOMP_PRST		12
-+#define VP_DECOMP_CRST		13
-+#define VP_DECOMP_ARST		14
-+#define VP_DFMU_PRST		15
-+#define VP_DFMU_ARST		16
-+#define VP_ARB_PRST		17
-+#define VP_ARB_ARST		18
-+#define VP_VDEC_RS_ARST		19
-+#define VP_VENC_RS_ARST		20
-+#define VP_COMP_EXTPRST		21
-+#define VP_DECOMP_EXTPRST	22
-+
-+#define VI_MIPI0_CSI0_PRST	0
-+#define VI_MIPI0_CSI1_PRST	1
-+#define VI_MIPI0_FIFO_RST	2
-+#define VI_MIPI1_CSI0_PRST	3
-+#define VI_MIPI1_CSI1_PRST	4
-+#define VI_MIPI1_FIFO_RST	5
-+#define VI_VIPRE_PRST		6
-+#define VI_VIPRE_I0_PIX_RST	7
-+#define VI_VIPRE_I1_PIX_RST	8
-+#define VI_VIPRE_ISPIF_RST	9
-+#define VI_VIPRE_ARST		10
-+#define VI_ISP_RST		11
-+#define VI_COMP_PRST		12
-+#define VI_COMP_ARST		13
-+#define VI_COMP_ISPOUT_RST	14
-+#define VI_COMP_DECOUT_RST	15
-+#define VI_COMP_VSEOUT_RST	16
-+#define VI_COMP0_RST		17
-+#define VI_COMP1_RST		18
-+#define VI_DECOMP_RST		19
-+#define VI_DW200_RST		20
-+#define VI_DFMU_PRST		21
-+#define VI_DFMU_ARST		22
-+#define VI_ARB_PRST		23
-+#define VI_ARB_ARST		24
-+#define VI_X2H0_HRST		25
-+#define VI_X2H1_HRST		26
-+#define VI_X2H2_HRST		27
-+#define VI_REC_PRST		28
-+#define VI_REC_ARST		29
-+
-+#define NPU_AAB_MST_RST		0
-+#define NPU_AFENCE_RST		1
-+#define NPU_AXI_CCU_PRST	2
-+#define NPU_AXI_CCU_RST		3
-+#define NPU_AXI_M2S1_RST	4
-+#define NPU_AXI_RST		5
-+#define NPU_CLK_CALC_RST	6
-+#define NPU_DFMU_ARST		7
-+#define NPU_DFMU_PRST		8
-+#define NPU_LPC_C_RST		9
-+#define NPU_LPE_C_PRST		10
-+#define NPU_LPE_C_RST		11
-+#define NPU_ARST		12
-+#define NPU_CRST		13
-+#define NPU_HRST		14
-+#define NPU_PCTRL_PB_RST	15
-+#define NPU_PCTRL_PRST		16
-+#define NPU_PCTRL_RST		17
-+#define NPU_PTW_CCU_PRST	18
-+#define NPU_PTW_CCU_RST		19
-+#define NPU_SEMA_ARST		20
-+#define NPU_SEMA_PRST		21
-+#define NPU_DROOP_CCTRL_PRST	22
-+#define NPU_DROOP_CCTRL_RST	23
-+#define NPU_X2H_RST		24
-+#define NPU_X2P_RST		25
-+#define NPU_LDIP_RST		26
-+#define NPU_SRAM_RST		27
-+
-+#define VO_X2H0_RST		0
-+#define VO_X2H1_RST		1
-+#define VO_DPU_HRST		2
-+#define VO_DPU_CRST		3
-+#define VO_DPU_ARST		4
-+#define VO_AUXDISP_PRST		5
-+#define VO_AUXDISP_PIX_RST	6
-+#define VO_AUXDISP_ARST		7
-+#define VO_HDMI_PRST		8
-+#define VO_HDMI_MAIN_RST	9
-+#define VO_MIPI_PRST		10
-+#define VO_DECOMP_PRST		11
-+#define VO_DECOMP0_CRST		12
-+#define VO_DECOMP1_CRST		13
-+#define VO_DECOMP_ARST		14
-+#define VO_ARB_PRST		15
-+#define VO_ARB_ARST		16
-+#define VO_DFMU_PRST		17
-+#define VO_DFMU_ARST		18
-+
-+#define PERI0_TIMER0_CRST	0
-+#define PERI0_TIMER0_PRST	1
-+#define PERI0_TIMER1_CRST	2
-+#define PERI0_TIMER1_PRST	3
-+#define PERI0_WDT0_PRST		4
-+#define PERI0_MBOX0_PRST	5
-+#define PERI0_MBOX1_PRST	6
-+#define PERI0_TIMER0_RST	7
-+#define PERI0_TIMER1_RST	8
-+
-+#define PERI1_GMAC0_ARST	0
-+#define PERI1_GMAC0_HRST	1
-+#define PERI1_GMAC1_ARST	2
-+#define PERI1_GMAC1_HRST	3
-+#define PERI1_GPIO0_DBRST	4
-+#define PERI1_GPIO0_PRST	5
-+#define PERI1_GPIO1_DBRST	6
-+#define PERI1_GPIO1_PRST	7
-+#define PERI1_I2C0_IC_RST	8
-+#define PERI1_I2C0_PRST		9
-+#define PERI1_I2C1_IC_RST	10
-+#define PERI1_I2C1_PRST		11
-+#define PERI1_I2C2_IC_RST	12
-+#define PERI1_I2C2_PRST		13
-+#define PERI1_I2S0_PRST		14
-+#define PERI1_MST_BUS_ARST	15
-+#define PERI1_MST_BUS_PRST	16
-+#define PERI1_PWM0_CRST		17
-+#define PERI1_PWM0_PRST		18
-+#define PERI1_QSPI0_PRST	19
-+#define PERI1_QSPI0_SSI_RST	20
-+#define PERI1_SPI0_PRST		21
-+#define PERI1_SPI0_SSI_RST	22
-+#define PERI1_UART0_PRST	23
-+#define PERI1_UART0_S_RST	24
-+#define PERI1_UART1_PRST	25
-+#define PERI1_UART1_S_RST	26
-+#define PERI1_UART2_PRST	27
-+#define PERI1_UART2_S_RST	28
-+#define PERI1_UART3_PRST	29
-+#define PERI1_UART3_S_RST	30
-+#define PERI1_X2H_GMAC0_ARST	31
-+#define PERI1_X2H_GMAC0_HRST	32
-+#define PERI1_X2H_GMAC1_ARST	33
-+#define PERI1_X2H_GMAC1_HRST	34
-+#define PERI1_DFMU_ARESET	35
-+#define PERI1_DFMU_PRESET	36
-+#define PERI1_PAD_CTRL_PRST	37
-+#define PERI1_PDM0_MRST		38
-+#define PERI1_PDM0_PRST		39
-+#define PERI1_TDM0_RST		40
-+#define PERI1_CAN0_IPG_PE_RST	41
-+#define PERI1_CAN0_IPG_RST	42
-+#define PERI1_CAN0_IPG_SOFT_RST	43
-+#define PERI1_CAN0_IPG_TS_RST	44
-+#define PERI1_CAN0_PRST		45
-+#define PERI1_CAN1_IPG_PE_RST	46
-+#define PERI1_CAN1_IPG_RST	47
-+#define PERI1_CAN1_IPG_SOFT_RST	48
-+#define PERI1_CAN1_IPG_TS_RST	49
-+#define PERI1_CAN1_PRST		50
-+#define PERI1_CHIP_DBG_ARST	51
-+#define PERI1_CHIP_DBG_CRST	52
-+#define PERI1_CHIP_DBG_PRST	53
-+#define PERI1_GMAC_CRST		54
-+#define PERI1_X2H_GMAC2_ARST	55
-+#define PERI1_X2H_GMAC2_HRST	56
-+#define PERI1_ZGMAC_X2X_ARST	57
-+#define PERI1_SPI0_RST		58
-+#define PERI1_I2C0_RST		59
-+#define PERI1_I2C1_RST		60
-+#define PERI1_I2C2_RST		61
-+#define PERI1_GMAC0_RST		62
-+#define PERI1_GMAC0_X2H_RST	63
-+#define PERI1_GMAC1_RST		64
-+#define PERI1_GMAC1_X2H_RST	65
-+
-+#define PERI2_CAN2_IPG_PE_RST	0
-+#define PERI2_CAN2_IPG_RST	1
-+#define PERI2_CAN2_IPG_SOFT_RST	2
-+#define PERI2_CAN2_IPG_TS_RST	3
-+#define PERI2_CAN2_PRST		4
-+#define PERI2_GPIO2_DBRST	5
-+#define PERI2_GPIO2_PRST	6
-+#define PERI2_I2C4_IC_RST	7
-+#define PERI2_I2C4_PRST		8
-+#define PERI2_I2S2_PRST		9
-+#define PERI2_SPI1_PRST		10
-+#define PERI2_SPI1_SSI_RST	11
-+#define PERI2_UART4_PRST	12
-+#define PERI2_UART4_S_RST	13
-+#define PERI2_UART5_PRST	14
-+#define PERI2_UART5_S_RST	15
-+#define PERI2_UART6_PRST	16
-+#define PERI2_UART6_S_RST	17
-+#define PERI2_PAD_CTRL_PRST	18
-+#define PERI2_GPIO3_DBRST	19
-+#define PERI2_GPIO3_PRST	20
-+#define PERI2_I2C3_IC_RST	21
-+#define PERI2_I2C3_PRST		22
-+#define PERI2_I2C5_IC_RST	23
-+#define PERI2_I2C5_PRST		24
-+#define PERI2_I2C6_IC_RST	25
-+#define PERI2_I2C6_PRST		26
-+#define PERI2_I2C7_IC_RST	27
-+#define PERI2_I2C7_PRST		28
-+#define PERI2_I2S1_PRST		29
-+#define PERI2_I2S3_PRST		30
-+#define PERI2_UART7_PRST	31
-+#define PERI2_UART7_S_RST	32
-+#define PERI2_UART8_PRST	33
-+#define PERI2_UART8_S_RST	34
-+#define PERI2_UART9_PRST	35
-+#define PERI2_UART9_S_RST	36
-+#define PERI2_QSPI1_PRST	37
-+#define PERI2_QSPI1_SSI_RST	38
-+#define PERI2_PWM1_CRST		39
-+#define PERI2_PWM1_PRST		40
-+#define PERI2_PWM2_CRST		41
-+#define PERI2_PWM2_PRST		42
-+#define PERI2_I2C3_RST		43
-+#define PERI2_I2C4_RST		44
-+#define PERI2_I2C5_RST		45
-+#define PERI2_I2C6_RST		46
-+#define PERI2_I2C7_RST		47
-+#define PERI2_SPI1_RST		48
-+
-+#define PERI3_DMAC_ARST				0
-+#define PERI3_DMAC_HRST				1
-+#define PERI3_EMMC_SDIO_CLKGEN_RST		2
-+#define PERI3_EMMC_RST				3
-+#define PERI3_EMMC_X2X_ARST_M			4
-+#define PERI3_EMMC_X2X_ARST_S			5
-+#define PERI3_SDIO_RST				6
-+#define PERI3_SDIO_X2X_ARST_M			7
-+#define PERI3_SDIO_X2X_ARST_S			8
-+#define PERI3_AXI_MST_ARST			9
-+#define PERI3_AXI_MST_PRST			10
-+#define PERI3_ADC_PRST				11
-+#define PERI3_TEE_X2X_ARST_M			12
-+#define PERI3_TEE_X2X_ARST_S			13
-+#define PERI3_TEE_H2H_HRST			14
-+#define PERI3_GPIO4_DBRST			15
-+#define PERI3_GPIO4_PRST			16
-+#define PERI3_PAD_CTRL_PRST			17
-+
-+/* pcie common */
-+#define PCIE_X2X_PERI_SLV_ARST			0
-+#define PCIE_X2X_PERI_MST_ARST			1
-+#define PCIE_AXI4_PCIE_MST_ARST			2
-+#define PCIE_AXI4_PCIE_MST_PRST			3
-+#define PCIE_DFMU_PRST				4
-+#define PCIE_DFMU_ARST				5
-+#define PCIE_E16PHY_PHY_RST			6
-+#define PCIE_E16PHY_APBS_PRST			7
-+#define PCIE_X2X_SATA_MST_ARST			8
-+#define PCIE_X2X_SATA_SLV_ARST			9
-+
-+/* sata */
-+#define PCIE_SATA_ARESET			10
-+#define PCIE_SATA_RST_PMALIVE			11
-+#define PCIE_SATA_SLV_AFENCE_ARST		12
-+#define PCIE_SATA_MST_AFENCE_ARST		13
-+#define PCIE_SATA_RST_ASIC0			14
-+#define PCIE_SATA_RST_ASIC1			15
-+#define PCIE_SATA_RST_RXOOB0			16
-+#define PCIE_SATA_RST_RXOOB1			17
-+
-+/* pcie0 */
-+#define PCIE_DM_GEN3X4_APBS_PRST		18
-+#define PCIE_DM_GEN3X4_POWER_UP_RST		19
-+#define PCIE_DM_SLV_AFENCE_ARST			20
-+#define PCIE_DM_MST_AFENCE_ARST			21
-+
-+/* pcie1 */
-+#define PCIE_RP_GEN3X1_APBS_PRST		22
-+#define PCIE_RP_GEN3X1_POWER_UP_RST		23
-+#define PCIE_RP_SLV_AFENCE_ARST			24
-+#define PCIE_RP_MST_AFENCE_ARST			25
-+
-+#define USB_DFMU_PRST				0
-+#define USB_DFMU_ARST				1
-+#define USB_AXI4_MST_ARST			2
-+#define USB_AXI4_MST_PRST			3
-+#define USB_DPTX_APBS_PRST			4
-+#define USB_DPTX_VCC_RST			5
-+#define USB_USB31_APBS_PRST			6
-+#define USB_USB31_VCC_RST			7
-+#define USB_USB31_PHY_RST			8
-+#define USB_USB31_SLV_AFENCE_ARST		9
-+#define USB_C10PHY_PHY_RST			10
-+#define USB_C10PHY_APBS_PRST			11
-+#define USB_USB20_BLK_X2H_HRST			12
-+#define USB_USB20_BLK_X2H_ARST			13
-+#define USB_USB20_SLV_AFENCE_ARST		14
-+#define USB_USB20_BLK_H2P_HRST			15
-+#define USB_USB20_BLK_AHB_SLV_HRST		16
-+#define USB_USB20_BLK_AXI_MST_ARST		17
-+#define USB_USB20_BLK_USB2_SYSREG_PRST		18
-+#define USB_USB20_BLK_USB2_WRAP0_PRST		19
-+#define USB_USB20_BLK_USB2_WRAP0_HRST		20
-+#define USB_USB20_BLK_USB2_WRAP1_PRST		21
-+#define USB_USB20_BLK_USB2_WRAP1_HRST		22
-+#define USB_USB20_BLK_A2X0_HRST			23
-+#define USB_USB20_BLK_A2X0_ARST			24
-+#define USB_USB20_BLK_A2X1_HRST			25
-+#define USB_USB20_BLK_A2X1_ARST			26
-+#define USB_USB20_BLK_USB0_PHY_PON_RESET	27
-+#define USB_USB20_BLK_USB1_PHY_PON_RESET	28
-+#define USB_PERI2_SS_RST			29
-+#define USB_PERI2_SLV_AFENCE_ARST		30
-+
-+#define TEE_KEYRAM_PRST				0
-+#define TEE_DS_PRST				1
-+#define TEE_EFUSE_PRST				2
-+#define TEE_OCRAM_HRST				3
-+#define TEE_SYSREG_PRST				4
-+#define TEE_CCU_PRST				5
-+#define TEE_CCU_CRST				6
-+#define TEE_EIP150B_HRST			7
-+#define TEE_EIP120SIII_HRST			8
-+#define TEE_EIP120SIII_ARST			9
-+#define TEE_EIP120SII_HRST			10
-+#define TEE_EIP120SII_ARST			11
-+#define TEE_EIP120SI_HRST			12
-+#define TEE_EIP120SI_ARST			13
-+#define TEE_DMAC_HRST				14
-+#define TEE_DMAC_ARST				15
-+#define TEE_X2P_TEESYS_PRST			16
-+#define TEE_X2P_TEESYS_ARST			17
-+#define TEE_AXI4_TEESYS_ARST			18
-+#define TEE_APB3_TEESYS_PRST			19
-+#define TEE_APB3_TEESYS_HRST			20
-+#define TEE_AHB2_TEESYS_HRST			21
-+
-+#define GPU_PWR_WRAP_RGX_HOOD_RST		0
-+#define GPU_PWR_WRAP_DFMU_RST			1
-+
-+#endif
+This patch adds the devicetree binding schema and clock ID header for the
+Zhihe A210 SoC clock controllers.
 
--- 
-2.55.0
+> diff --git a/Documentation/devicetree/bindings/clock/zhihe,a210-clk.yaml =
+b/Documentation/devicetree/bindings/clock/zhihe,a210-clk.yaml
+> new file mode 100644
+> index 0000000000000..a3546d2f5977c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/zhihe,a210-clk.yaml
+> @@ -0,0 +1,231 @@
 
+[ ... ]
+
+> +  clocks:
+> +    description: Input reference oscillators.
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 3
+> +    items:
+> +      enum:
+> +        - osc-32k
+> +        - osc-24m
+> +        - rc-24m
+
+[Severity: Medium]
+In the A210 SoC clock hierarchy, zhihe,a210-clk (managing pll-wrap and
+top-crg) and zhihe,a210-aon-clk generate the root PLLs, dividers, muxes, and
+subsystem clock gates (such as top_cfg_aclk, uart_sclk, video_pll_foutvco,
+gmac_pll_foutpostdiv, dpu0_pll_foutpostdiv, aon_osc_clk_logic, aon_rtc_clk,
+npu_aclk, npu_cclk, vp_aclk, and tee_clk), which then feed the 8 subsystem
+clock controllers.
+
+In Documentation/devicetree/bindings/clock/zhihe,a210-clk.yaml, the
+top-level properties:clocks and properties:clock-names definitions only all=
+ow
+up to 3 external reference oscillators (osc-32k, osc-24m, rc-24m) with
+maxItems: 3, and in allOf only the zhihe,a210-clk branch requires clocks and
+clock-names.
+
+Any devicetree node using one of the 8 subsystem clock controller compatible
+strings (zhihe,a210-peri-clk, zhihe,a210-gpu-clk, zhihe,a210-pcie-clk,
+zhihe,a210-usb-clk, zhihe,a210-vi-clk, zhihe,a210-vp-clk, zhihe,a210-vo-clk,
+or zhihe,a210-npu-clk) that specifies its parent clocks from zhihe,a210-clk
+or zhihe,a210-aon-clk will fail dtbs_check schema validation, while omitting
+clocks leaves the hardware clock tree topology undocumented in devicetree a=
+nd
+forces the driver to rely on hardcoded global clock names.
+
+How can the 8 subsystem clock controller nodes declare their upstream input
+clocks in devicetree if clocks and clock-names only permit the 3 external
+reference oscillators, and should each subsystem compatible in allOf specify
+and require its input clocks?
+
+[ ... ]
+
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          const: zhihe,a210-clk
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 9
+> +        reg-names:
+> +          items:
+> +            - const: pll-wrap
+> +            - const: top-crg
+> +            - const: cpu-ss-clk-sysreg
+> +            - const: cpu-ss-cpu-pll
+> +            - const: ddr0-sysreg
+> +            - const: ddr1-sysreg
+> +            - const: slc-dual-sysreg
+> +            - const: top-crg-t
+> +            - const: cpu-ss-ccu
+> +        clocks:
+> +          minItems: 3
+> +        clock-names:
+> +          items:
+> +            - const: osc-32k
+> +            - const: osc-24m
+> +            - const: rc-24m
+> +      required:
+> +        - clocks
+> +        - clock-names
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          const: zhihe,a210-peri-clk
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 5
+> +          maxItems: 5
+> +        reg-names:
+> +          items:
+> +            - const: peri0-sysreg
+> +            - const: peri1-sysreg
+> +            - const: peri2-sysreg
+> +            - const: peri3-sysreg
+> +            - const: tee-crg
+
+[ ... ]
+
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/zhihe,a210-clk.h>
+> +
+> +    clock-controller@260000 {
+> +        compatible =3D "zhihe,a210-clk";
+> +        reg =3D <0x00260000 0x1000>,
+> +              <0x00250000 0x1000>,
+> +              <0x10141600 0x100>,
+> +              <0x10141400 0x100>,
+> +              <0x04810000 0x1000>,
+> +              <0x05810000 0x1000>,
+> +              <0x04900000 0x1000>,
+> +              <0x20250000 0x1000>,
+> +              <0x10140000 0xe00>;
+> +        reg-names =3D "pll-wrap", "top-crg", "cpu-ss-clk-sysreg", "cpu-s=
+s-cpu-pll",
+> +                    "ddr0-sysreg", "ddr1-sysreg", "slc-dual-sysreg", "to=
+p-crg-t",
+> +                    "cpu-ss-ccu";
+> +        #clock-cells =3D <1>;
+> +        clocks =3D <&osc_32k>, <&osc_24m>, <&rc_24m>;
+> +        clock-names =3D "osc-32k", "osc-24m", "rc-24m";
+> +    };
+
+[Severity: Medium]
+In Documentation/devicetree/bindings/clock/zhihe,a210-clk.yaml, the
+allOf:zhihe,a210-clk schema and the clock-controller@260000 example node
+aggregate 9 disjoint hardware register blocks across unrelated SoC
+subsystems into a single devicetree node: pll-wrap (0x00260000), top-crg
+(0x00250000), cpu-ss-clk-sysreg (0x10141600), cpu-ss-cpu-pll (0x10141400),
+ddr0-sysreg (0x04810000), ddr1-sysreg (0x05810000), slc-dual-sysreg
+(0x04900000), top-crg-t (0x20250000), and cpu-ss-ccu (0x10140000).
+
+Similarly, allOf:zhihe,a210-peri-clk aggregates 5 separate hardware blocks
+(peri0-sysreg, peri1-sysreg, peri2-sysreg, peri3-sysreg, and tee-crg) at
+disjoint address ranges into a single devicetree node, even though those 5
+subsystems are independent hardware blocks (and are modeled as 5 separate
+nodes zhihe,a210-peri0-reset through zhihe,a210-peri3-reset and
+zhihe,a210-tee-reset in the reset binding). Merging these blocks into single
+virtual nodes also claims entire 0x1000 *-sysreg ranges that contain
+non-clock control registers.
+
+Should these separate hardware register blocks be modeled as individual
+devicetree nodes matching the physical SoC layout instead of grouping
+disjoint register ranges into zhihe,a210-clk and zhihe,a210-peri-clk?
+
+> diff --git a/include/dt-bindings/clock/zhihe,a210-clk.h b/include/dt-bind=
+ings/clock/zhihe,a210-clk.h
+> new file mode 100644
+> index 0000000000000..aa59d91a9ad05
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/zhihe,a210-clk.h
+> @@ -0,0 +1,649 @@
+
+[ ... ]
+
+> +#define VO_PLL2_DIV_EN                                     347
+> +#define VO_PLL2_DIV_NUM                                    348
+> +#define VO_PLL1_DIV_EN                                     349
+> +#define VO_PLL1_DIV_NUM                                    350
+> +#define VO_PLL0_DIV_EN                                     351
+> +#define VO_PLL0_DIV_NUM                                    352
+
+[ ... ]
+
+> +#define CLK_DUMMY                                          505
+> +#define OSC_32K                                            506
+> +#define OSC_24M                                            507
+> +#define RC_24M                                             508
+
+[ ... ]
+
+> +#define CLK_END 590
+> +
+> +#endif
+
+[Severity: Medium]
+In include/dt-bindings/clock/zhihe,a210-clk.h, all 9 clock controller
+compatibles share a single interleaved global 0..589 ID space rather than
+per-controller 0-based clock IDs, which requires every controller instance =
+in
+drivers/clk/zhihe/clk-a210-ap.c to allocate a 590-entry clk_hw_onecell_data
+array.
+
+In the VI_SYSREG, VO_SYSREG, and VP_SYSREG sections, hardware divider enable
+bits and divider ratio bitfields of the same composite divider clock are
+exposed as separate clock IDs (for example, VI_PRE_ISP_CORE_CLK_DIV_EN and
+VI_PRE_ISP_CORE_CLK_DIV_NUM, VO_PLL0_DIV_EN and VO_PLL0_DIV_NUM, and
+VP_DECOMP_DIV_EN and VP_DECOMP_DIV_NUM). In drivers/clk/zhihe/clk-a210-ap.c,
+only the *_DIV_NUM IDs are registered as composite dividers (using the
+corresponding *_DIV_EN bit as the gate bit), leaving all 16 *_DIV_EN macros
+as unused register-bitfield definitions in the devicetree ABI header.
+
+Additionally, CLK_DUMMY is a software driver implementation artifact,
+OSC_32K, OSC_24M, and RC_24M are external input reference clocks passed via
+the clocks property rather than outputs of the clock controller, and CLK_END
+is an internal array bound whose value changes whenever new clock IDs are
+added, breaking devicetree binding ABI invariance.
+
+Could CLK_END, CLK_DUMMY, OSC_32K, OSC_24M, RC_24M, and the unused *_DIV_EN
+bitfield macros be dropped from include/dt-bindings/clock/zhihe,a210-clk.h,
+and should each clock controller define its own 0-based clock IDs?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261022-a210-init-=
+v1-0-5e438f972d24@iscas.ac.cn?part=3D3
