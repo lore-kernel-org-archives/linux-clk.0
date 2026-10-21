@@ -1,78 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792599155;
-	b=zz8a9uq8ygjFLCFLlww/wzqiH/gPRjtsIzsB8ZEskabDtuE+z9XrPAHzOARSu1t+BMwn
-	 1KQ5d5cWcvPkSwFZ+7D99iQMTBn00Ip0SQ/tRVTmrdiR8Uhao7qv26HeGedDuK3usukOW
-	 sTBWm58deiDUPm1gG/TxzKA8RFvzvZDW8PKfdC24SaEHZ2EzpmuCENAy55a9Nyp30oN8L
-	 A+Q58WYoWNxxxlFe7UvuDZt8Z5AViyiCcffO+aF3x3yQ96rSCF8I3LpePfakHEgmbiQnE
-	 f/uZYjV+oWUo0Vd3jk4UcntzJ8eQ5J12MwUV62f+yOKW5qMDvRWRAlyQrjjmfY2ggrA==
+	t=1792599174;
+	b=keaIj/+gGZaY5HifvXYNFqsNGSb4XO/0+w29ocR9c/jhmbP9NZjlbVvRyFNRcIdLk0Bh
+	 Vg9+bwMiJxwGJ4bdDi3UiJMOwjc0/LY4EutWRTceuQ5EwWerHp0C0Wc+bGaLA1yXLNKoi
+	 GjbBOb+VFcv9cju3HjFgSgoVAj/nt4QT1fHsXNl3fD6cf+9EpUzem1B65SABLes7J0b1l
+	 CByaWxTTc7d6ojK1YgeIhUCIk9+/PmIfuii3YZXKWV171NnS4E4nqGS76s4h82akEIbLH
+	 o1Cczz2EKaQm93cjZscbir8hcBEZbf0/AfkP1zUrBlE3lXjtPkR9rJ4qzmoAFsquVAQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792599155;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792599174;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=vvkmrz90lF2pcovbtpnAs1y6acEdyFSaoxmdLGdJVnw=;
-	b=PrU/2cFWZzcL/KgP+dCpC64cuWFLAvBKmEaorydQnCpXGI7oEvOcmWiSnEQuV6o1Wm6f
-	 JjG8wg292VrytC5xFdfp5UVC+50H6l0O0SQH0WcEbz80DIkkd5lKIEdF/3x9KjPeq0Mo7
-	 s2FRztjdusbjDLQnsFMF86U8fU19rw9GAzOX8xC5Ehnfy2W/ltGMVfPh2fRjwSFfYcSv/
-	 gf+TbXC25sHfpxyip0aEJrV5s6d02MBcocMzGgkVn3+9DYkku+Y9wzZUEQFj6dZBhqa02
-	 TBKUC8EFurYAqMh12YuSgD/vB8Ulqgmk6UVaeoYlB2mFbEKdHLQb+BzL0X6njzUlfqg==
+	bh=WY4ZEuURDiNmK6i91k8nTN7t5MwK2F4DFp8c3nugGjQ=;
+	b=jLQkPZelw+oUeCETC+fANudfj/NepemwEYceJyXM4dPA6VInCPTVmWz7Sw083yddUvnO
+	 CD73aHz6hV/Y6+cEDKxi0lAuQlyatBxtuBamRFqf3O841U8Tf7bUilSEDOohvMcK4qh7d
+	 k1jo5QCbC/b0/kCBlk49oCweyglxt/Akkyyb91xZwR1vRMAl/eK2dVTcONYuspo1QbgPt
+	 oxGrk0ja0fSTmLiwu7m9bdq16Attf6UuwF0F4hTQzlAUpvfREYzdpnvnKpYojVq7ifiPH
+	 waLc/GlC90+svZCwikhQJ0edDSEguiH9pR5/FJGWQAcI14JCxxyj0r6h1zXUaxoj5ng==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ReZIjlQ5;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="d//GyDh9";
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D489060A3839;
-	Wed, 21 Oct 2026 16:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8416070D5C;
+	Wed, 21 Oct 2026 16:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ReZIjlQ5
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d//GyDh9
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792599154;
-	b=WKvc8sv/1/T2+K6MVf7f+HclzXWGlqHvn9Cxwj7JFR2kMPEnZzcyGL25G7Zcns2uPCs4
-	 PW+yEqFI8hARZjvzlRyMprk67XELlxfRym5Jpn6n7dZtSayVDHMNQaIRFw0TarTgN8OYl
-	 VCydgxg3iA8/zBkWOUJXnZd7uFBUtEwQsXP7U+VdQIEw7qcUySf0t5k9Q9k0bzFi/yQKc
-	 svYRRp15a9/xLvYYJXqxPetVSqZ+MhMVB+YG48iID+inivGdn6Txn95cAV5IMm4a3jiZN
-	 lZEUTyHEFMOzOgws66f0NpqsPGBOYQj/4pJWqt2hYi5CHsnCqsfVUKJqCy+PqBPnbSQ==
+	t=1792599173;
+	b=EIkQ568GjFRNS2Y52wPLXyvc8f5Jh+9+Qhs/SICS2TRjXx1ImOtCJFY3II2xBd6C9KfY
+	 AlfJdnp2CPMoC+t/IBnLgBJPrtF84lBUuwzjjmrq0bWkoZtjt5L89KpqouGjkg/M8DbCk
+	 McRhDU6Jck7PhMvDti6dSm7/IFlMu6kCPQ4puz6QzEHEqGwAj4VAmv+PkipPtxY67qdF3
+	 K9CRuzoV5Tws5x5iVJCzVZ7h4vJlS8rE+2lYfQVBxyIam/5Sv0LMRlGnqxt0qixLBYn+8
+	 LmRKnJgB3mbVo7OiIUSjCAuK9M7XKTRZ0bpgJHbMshaPOYhayCNAUjKV+O2zZt8rSMg==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792599154;
+	c=relaxed/relaxed; t=1792599173;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=vvkmrz90lF2pcovbtpnAs1y6acEdyFSaoxmdLGdJVnw=;
-	b=El1LWNFxxd2sQaBtt3xe30PqbTyPfUGxGRC4LAsA7g+t5+qDHdzC4HzpvYifjau2dJ3y
-	 dGTh732Je3xVSloIXNjDsx+dtB0Xwiu8DqXLq42bJNo2+7KkuFcHtq8UylMxBmtaRLhYa
-	 65ut3BOTDXt3c3NF0vF0gsKk3KTC3O6n15Kt3X6sNNuH/2EExPbZNDNZoXHsXmHr239Dp
-	 IZTjwOrV3ksWtCHYiOYgaoW+19+q6TDkd/qw6KX1RPZZ4919jNmvb6CxrMdJhiAh7JN6d
-	 yef2PDx4kduAJ4NoYkoF4UTAZy79iCdqcYUvU79/n8C5/VGLQ7N3sfgZa6/5WNQR5SQ==
+	bh=WY4ZEuURDiNmK6i91k8nTN7t5MwK2F4DFp8c3nugGjQ=;
+	b=C8EYqbaB+TfnwyN0Cw2Rk8LNSK+Z2x+mOD63+afcaYpy+axCss2k9VfRswKtNVNkYBDa
+	 sxZOpQ20M3G4C8Q9nnPvzZEqwiX3lOUetGRDq8vISESBffUS0DvbTI7EKt7RTnlB0QHL1
+	 XKEEf86D6O7aWEUeF2NiTJG3IyEDMH7u5H19kXNc9nIRg4LcOZZn8nl+OTn4w9JhscmXG
+	 9JFtv7+g/lit2t3Xpd+X8J/OloS7vICTyE6VWymxfVLXadEa+9qgbdiH2TBmcJ6YlSSt5
+	 ksrDtyHTvP7lIj6seg9fXZMT1HDHGi2eXBsAjswxPE9RZZa5xMdA9s6RIRCymAol12w==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 360AF1F01576;
-	Wed, 21 Oct 2026 16:12:32 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id C58CE1F0182F;
+	Wed, 21 Oct 2026 16:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792599154;
-	bh=vvkmrz90lF2pcovbtpnAs1y6acEdyFSaoxmdLGdJVnw=;
+	s=k20260515; t=1792599173;
+	bh=WY4ZEuURDiNmK6i91k8nTN7t5MwK2F4DFp8c3nugGjQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=ReZIjlQ5QaDD5UaFxbO+dFihcIQeMa6gsvpNF8gxxE7xFOXOycEG1BXW2XBeL3Rem
-	 1YbJjUc5RFgAB84+BUmTVuHYGDVySQ0OhwjSIzzy2niUXt0KmMJPZGZtcWk3UKRA5n
-	 HCuFnrnRNNU0cMrPXMsfGrzoUt/q5jG3v2nD80IvLQbqtJ8d7/qoaIo+97XJ8PO4LJ
-	 AiAU22PQb7As8Y/UnawztlZu3aQFRTMrTLoPl7Ln2tKpfDsAUeh3/cZY4GVKPidG4B
-	 ZqpaxEmsGGKVrN3UzeCqHI0O0L0/o0d0MC5pMjTBPeGnYdS2MhHWSW5lD2UXuUD7Mh
-	 YPVs2opX/yLkA==
+	b=d//GyDh9Q8mEJYia/2d2C9i9N7gIFXeUkdAjmltYK94QqbZCID9c+qRZHBYe7os3y
+	 Cc+O5K7WXUhFm21gObU/obbZE6mwrIXttogXBvpJwQprURS+VamFjhjmdo+4taeDWj
+	 u/FQZRlI5H7PGMKRq79q+9+eo5LlWdLq8h0Pk6gr3u35FfSchUSY4kAQ/Rjrp9/Ag5
+	 LDE2ayUW0BPt5A9kGy1jTLnMi00Aaca0ipBYuu1vw0nbdgOSLZeJM50locKONFzERL
+	 L/ZHWJNjhvYJ2Dx519fTX4NDFtA9CTktRKvYx66ZlynBVvA+dVjNBDhMdhbhevdM3q
+	 mGIPuiE0bf+wQ==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 5C0C8433C9;
+	by lkml.kernel.org (Postfix) with ESMTP id D927E43404;
 	Wed, 21 Oct 2026 16:12:23 +0000 (UTC)
 From: Cunhao Lu via B4 Relay <devnull+1579567540.qq.com@kernel.org>
-Date: Thu, 22 Oct 2026 00:11:08 +0800
-Subject: [PATCH 11/27] dt-bindings: i2c: rk3x: Add RK3572
+Date: Thu, 22 Oct 2026 00:11:22 +0800
+Subject: [PATCH 25/27] dt-bindings: arm: rockchip: Add Forlinx OK3572-C
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -83,7 +83,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261022-add-board-ok3572-c-v1-11-0b0fd85a31ee@qq.com>
+Message-Id: <20261022-add-board-ok3572-c-v1-25-0b0fd85a31ee@qq.com>
 References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
 In-Reply-To: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -120,11 +120,11 @@ Cc: Cunhao Lu <1579567540@qq.com>, linux-clk@vger.kernel.org,
  linux-stm32@st-md-mailman.stormreply.com, linux-phy@lists.infradead.org, 
  linux-usb@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792599138; l=799;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792599138; l=940;
  i=1579567540@qq.com; s=20261015; h=from:subject:message-id;
- bh=Nx7+ntMd3JyypCSa/70viO2nR8hCpuFBxGmHD3dE47Y=;
- b=vZBl8Zt+3PSebnH2r6ILhisukiqHp80fAWguymShkduIHG3cLZaoRezGCGlFih4pVzb/lfVDO
- EGF0Q9iKVaBDbbgmigC8Jx1ymQfI4QjpxwQrw1EM57mcUJ142fiq1oS
+ bh=oauBPTMgwrpEfcYOz8hlG+zW49i1/JZ++ifkxeoDUZ4=;
+ b=n2lIa41639g6ID0rghs3WoNNMv7QeAjmDoPk8c0SVRA3+qL8scQhxIssd4e0qw1PHqJhVeq/R
+ SluQoGY23TuBCWO1u9LnwDxY6ogyJVzIFE5riu34wg3crDq98cgOfX+
 X-Developer-Key: i=1579567540@qq.com; a=ed25519;
  pk=sUTWrzlIwT4C7ctjNfVZAzzg0G7QUn2XxRGpYsw4RtM=
 X-Endpoint-Received: by B4 Relay for 1579567540@qq.com/20261015 with
@@ -135,25 +135,31 @@ Content-Transfer-Encoding: 7bit
 
 From: Cunhao Lu <1579567540@qq.com>
 
-Add the RK3572 I2C compatible using the RK3399 fallback.
+The board uses the FET3572-C system-on-module and falls back to the
+RK3572 SoC compatible.
 
 Signed-off-by: Cunhao Lu <1579567540@qq.com>
 ---
- Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml b/Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml
-index 91805fe8f3936..bec2b9cfdd118 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml
-+++ b/Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml
-@@ -41,6 +41,7 @@ properties:
-               - rockchip,rk3528-i2c
-               - rockchip,rk3562-i2c
-               - rockchip,rk3568-i2c
-+              - rockchip,rk3572-i2c
-               - rockchip,rk3576-i2c
-               - rockchip,rk3588-i2c
-               - rockchip,rv1126-i2c
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index a799bb843f74..2880ea741e73 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -331,6 +331,12 @@ properties:
+           - const: forlinx,fet3588-c
+           - const: rockchip,rk3588
+ 
++      - description: Forlinx OK3572-C with FET3572-C
++        items:
++          - const: forlinx,ok3572-c
++          - const: forlinx,fet3572-c
++          - const: rockchip,rk3572
++
+       - description: FriendlyElec NanoPi R2 series boards
+         items:
+           - enum:
 
 -- 
 2.34.1
