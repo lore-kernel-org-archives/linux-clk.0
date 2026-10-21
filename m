@@ -1,117 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792590091;
-	b=S3wLAF+l29YenX0MljjyI+Stb/7rIfFMVSteFl7wlyJuWRBtc+SF3B3ojVGfG2XVbKvO
-	 ZIw451siVf/F2VRnch8kNc8iNMfsilyaRPm8rrztoxBsi1Wv1AkrDpueMBsXra6k0eJlf
-	 RV6Si9dhZy/Mi1Ybki3WFH7YwZsf1jHR5f9SVxjg+JcwhFCXhPHteZ0RVaeUNMXB+Yddq
-	 5jD/yb8XNj4RhUJnBrPJBY3vFN4rPhbJpoK+2Vs1l0FSIDTYyzlCT97X96EImphw0VsJO
-	 wSG0GBvxiUCnP7vG8wPfbm6nTjn4U0D+oSLwAhdIa/9tH31RLuX5h8K6n8uP7K4MGNQ==
+	t=1792590574;
+	b=C5ck6qA4KUJG/pE8wXgZucfhaKfIDAg+bDSzyDZgz41GMK5FvgLNYrqusPmZDa+13dYc
+	 QNViSjk+5C6tPtFCKFbYDqIk6OrnLvS3Gy1wUdLAI+BFHoxgDnuvGfLiaH5zoqea0YIND
+	 o5RnO6ZsyM0kCP4GWSqtk44ybOdgAUa/Eh/qoMu5aclFjy42j/F30ne5OaCb6jlxKiJde
+	 +UEIE364137ldHUZy56oamsZZhnFfCH3Lauri0JkqfV4PFeZZhNQQzMXGD+RwH8qjZhEN
+	 wMRElDFtkvfZOa1D5sjV4xT/rFvqzxJKcWo31kVB4T6cp7vlA9m32US54UvAoHG81kg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792590091;
-	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
-	 X-Mimecast-MFC-AGG-ID:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 X-Received:Received:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:Content-Disposition:In-Reply-To:User-Agent;
-	bh=9bv850EBQTH85bFk68nVgqk9mnj/LRa+SIuQDt9yO3k=;
-	b=XSjsPnQaFiNQQ5DIGXy7CtzxyaBpTVxyht4CQmAN4gQPJ0mMiZTwrlPnUBt6RwXARBTe
-	 p/GAxJAHe6/VNv+SjBuX+NF54owyre1jKcIXpQBKBKTOYU++OZcD6uvm+nFeL7KPadScB
-	 8aMfPixMjg84GqK3iQ63vHFT1Hc+yaVtXok+YleanAURF5QdIcvaSlX5TblM4rEybHoJF
-	 yx8C7ihzSZOL65TsLn6aOBALIj+t9b7qJv1ZhhO9X6RzMXmrDHqpqKbIZxvww5oOvpFQO
-	 hqN7aNyQsfCnbtGvS4WRWyuNReuB56crpyLizisvJc4isvJncUlRHdUbg7zGNRcc4sw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792590574;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=cUO2w6H/igzf42de8Iv7z7WkcOH4V+dwsw+vBmdaipY=;
+	b=A9weE75nTYH2Gcw/6IV4sw3wrp6R7Y1oe1Ocar/WR472mZuv4TZNlfQYvw8TFY2b5cUZ
+	 S0ooEauu4fyG487PrlEKQvbOhvgYunh3c9/VtdkhsVL/7jxY0bc8o/QStnQN/6QCe23Xf
+	 7tFRBnHDTq39uvshGXx6LkvTZAdDofI6BDWwSy4i5xbSWk+98ccrpbhHfC5mL8LVSy4zm
+	 wj95G/6ogxheeJI2Z5+tOBppTkMBnkDh5jqoGGvl5WHPCYq2E47nl5RCeRzT4mDwO6gPZ
+	 HR8bUWW6fA6O0n/1yyWauKKqIKlxnz/YUzCnI9N5Vl6tBGVEDdbfMPq4+8ZFySG+lQQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=redhat.com;
-	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=ZJccSif+;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b="Vo/gfEI9";
-	arc=none smtp.remote-ip=170.10.133.124
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=duYihhOD;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B142606A31A
-	for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2026 13:41:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0B142606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AE4606A31E;
+	Wed, 21 Oct 2026 13:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=ZJccSif+;
-	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=Vo/gfEI9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1792590090;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9bv850EBQTH85bFk68nVgqk9mnj/LRa+SIuQDt9yO3k=;
-	b=ZJccSif+bN+wWXyGEe70tSLHpBhUNKw0dUGHPnIPyltiCoaBWjcC58SFVAaLz0Dq5cvDxs
-	Txus2u7TmpuEeQgc6SZ+uXGb/dIXpAhe1It6Upyqt1dg3THwyVx1zNktg5/4M4+R4W1I3M
-	nBIDvkDIt35OOulnVaS2TEDXzjxgsjQ=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-202-BHg-tvBFPle4eHPfLV4v7g-1; Wed, 21 Oct 2026 09:41:28 -0400
-X-MC-Unique: BHg-tvBFPle4eHPfLV4v7g-1
-X-Mimecast-MFC-AGG-ID: BHg-tvBFPle4eHPfLV4v7g_1792590088
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93cb98809caso135604985a.1
-        for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2026 06:41:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1792590088; x=1793194888; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=9bv850EBQTH85bFk68nVgqk9mnj/LRa+SIuQDt9yO3k=;
-        b=Vo/gfEI9F7cOYKyEkehqA4dhNl61L1PyaKEWjqfDE9h+GyilCPgN0m1zGnyJr8l6YM
-         r1BwIo9//XFFPmgh/EPGavymTGTf2PPrfVMpMfXyEl9FqTM20+V8jer1c5Iow1LooMws
-         R+Kc8KACz+wEeIERwWWlcaVQKN/45NaX8kx282N/eCsp9NTh1vY2GyfP7eOD5dyjufYN
-         UdbL1k9Hy4RQtHUUObvNjwKsELm+fSSbqhSq52mmYOGHta3DTMHqucm/i9R1ZqrKpjQ8
-         nBGlFT9g+dkBQyX+agD9c/jM64Um3npiCOFTa6iNWLTzHmLHQmiegVhRGLToTrscKtkC
-         q54w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792590088; x=1793194888;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=9bv850EBQTH85bFk68nVgqk9mnj/LRa+SIuQDt9yO3k=;
-        b=DZf7io5z40KSxsfOW/+V1VeOxjDjc43ryccq2YtNAvxtVJrUsvfap79ZVmj4HldL8C
-         H/iJpK+r56iOjOSRqhwfvHKNkx7d3SazJDSTxgga2hUFzo/euDhKWCaJs5ViagcP3s3o
-         iUcWyAqOCNKmm4AG+XarTdnpKXaqP+2Lbp/DC+XoDE0DNyposoSGqiuzSDKDXBvH6XA7
-         rnTHHrMckubh0YoRSOMgEXKA0mnonhq/7usR4l2KY2D0o+/dHWqvp1ypGQ4iomyDOcQh
-         woGzjgoTb/6aDaAJao5EBgx9D7sx1OBIZjJkIslezJxmZdXWDwphfbLC8poJJ8Y42LH8
-         OAWg==
-X-Forwarded-Encrypted: i=1; AKwUvBx1H4zNzXeetzszkEacWE1ChU0A0c2ry/cZJaZ/RQMHj/d6IbkEll3MGZILbAyN/bM3J/gT+2kzHo8=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJocGNdlt6guktI86ALs5CVf91/DWYU7SwVdNo0BYK/bjOV3MKL
-	IDR+ihd1i0gbu3iP5wwjo/vH/GNsr7O63zkCdkb1ILZEeU2e/wh/de3cjjRtMELz/2kiIDg9tPW
-	Z7fB2J0/KQgUOSOQUf7nGZBSb86kgswhxA7C7n5v6CKNR9o+cyboiHHLjjQU8Rw==
-X-Gm-Gg: AYBFou0Yc5xJe/juDYiphUIbIsNnoxxBlwamjDjfg1sx8/k8Lfsb5lSodqFYVApjQge
-	iSPhJVLCUserJinWE/Mr0w/3vSXOjTjEQPzq/6axd+Y3CdCQgG+cZSvm1e+w1Ik8dc5p48rqY5c
-	uGb4BiAIRAdPVSoxL+yF4arxL9UUnPmsXKpU9S0iVYN+MS7WkG3aB+LOLyrXp7x7FIYkK4ckB/Q
-	YerVokcT6BFRJLer67X9KiNII38Glg6Mu6Yhrh0KS11PxZ78q8ZXHo0kYdXCyhxUVYaqzuku/7P
-	zwCYrOPU7hxXwZYwCJ0QWro8BlCiCsa9jjrxFzDgFrrsH3qgnERkpnaPEP3RFhvcVlI564uw7qo
-	kfmn4Yz6IwYvvUd3wiJowEFSO2+hVOAwkN3ezbECObq7y7ldDCK2QpU783X9kX9EHs40=
-X-Received: by 2002:a05:620a:2b91:b0:939:f978:c1aa with SMTP id af79cd13be357-93f57ecf03fmr403505185a.11.1792590087917;
-        Wed, 21 Oct 2026 06:41:27 -0700 (PDT)
-X-Received: by 2002:a05:620a:2b91:b0:939:f978:c1aa with SMTP id af79cd13be357-93f57ecf03fmr403501185a.11.1792590087408;
-        Wed, 21 Oct 2026 06:41:27 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93f56d9a495sm259379385a.13.2026.10.21.06.41.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2026 06:41:26 -0700 (PDT)
-Date: Wed, 21 Oct 2026 09:41:24 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
-	Alberto Ruiz <aruiz@redhat.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <david@davidgow.net>, Rae Moar <raemoar63@gmail.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Subject: Re: [PATCH v8 0/8] clk: add support for v1 / v2 clock rate
- negotiation and kunit tests
-Message-ID: <atjBBPgt72Pug6IY@redhat.com>
-References: <20260327-clk-scaling-v8-0-86cd0aba3c5f@redhat.com>
- <87wlrcsmv9.fsf@bootlin.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=duYihhOD
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12D6A1F000C4;
+	Wed, 21 Oct 2026 13:49:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792590573;
+	bh=cUO2w6H/igzf42de8Iv7z7WkcOH4V+dwsw+vBmdaipY=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=duYihhODzuw6KQBMSgt6f3leXx9jeNLiFTHeQQfiXpcJXC997QCa/qPWCmMgAjvsS
+	 hYrUjI58SDK5cC0mjU+gFEItbqVt/N+NZP8vAT+1kYUdRjdiAsrTM7YApXdfKWqiEZ
+	 koFCQB9nixJqeJSMSxDiwo+jCdQrQJiODzz9ai6Xg7flv/v5SUpknPVxQnw2Mp/ZK2
+	 zJ/reI6qNhW2GOlpOof1q9vZzMFCPB6R8GJotS5LFe4N2iub0kY/peqNqDG8ew4yg2
+	 XPVG7U/OhrbVTCJVsNOfwb5Dk1CKOnJtWc0Ho/X+K1t2Kr6862Y/a/Hn9WagHynU7B
+	 iglzb3jusLQcg==
+Message-ID: <sashiko-outbox-180327@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 5/5] arm64: dts: imx8mp: Drop VIDEO_PLL1 assigned rate
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Miquel Raynal" <miquel.raynal@bootlin.com>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, Frank.Li@kernel.org
+In-Reply-To: <20261021-ge-clk-lcm-v1-5-246cc35b5ffb@bootlin.com>
+References: <20261021-ge-clk-lcm-v1-0-246cc35b5ffb@bootlin.com>
+ <20261021-ge-clk-lcm-v1-5-246cc35b5ffb@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 21 Oct 2026 13:49:32 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -120,33 +59,149 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wlrcsmv9.fsf@bootlin.com>
-User-Agent: Mutt/2.4.2 (2026-08-30)
 
-On Tue, Oct 20, 2026 at 12:11:06PM +0200, Miquel Raynal wrote:
-> To be fairly honest, the discussion at LPC about how to handle this case
-> (and the transition) did not exist because time was flying but I do not
-> generally like the approaches were we introduce "the good" alternative
-> without enabling it by default. It just makes the transitions endless
-> and more painful for people who already suffer from a problem. I am
-> fine keeping the old behaviour available, but I would be in favour of
-> making the legacy way available with an explicity flag, rather than the
-> opposite. We may break users, yes, but otherwise we will have to support
-> the two calculations forever and nobody will ever notice the new
-> alternative.
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
+- [Medium] arm64: dts: imx8mp: assigned-clock-rates mismatch in helios-lvds=
+ overlay
+- [Medium] clk: imx8mp: bus composite helper used for IP slice in imx8mp_cl=
+ocks_probe()
+--
 
-Honestly making the new behavior the default would also be my preference
-as well. I think it'd be good to get additional opinions about this.
+commit 540b176866f9d4811ba6779f199a55adb4dc8a78
+Author: Miquel Raynal <miquel.raynal@bootlin.com>
 
-> That being said, it works! So:
-> 
-> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> Tested-by: Miquel Raynal <miquel.raynal@bootlin.com>
+arm64: dts: imx8mp: Drop VIDEO_PLL1 assigned rate
 
-Thanks!
+This commit removes the IMX8MP_VIDEO_PLL1 entry and its 1039.5 MHz rate from
+assigned-clocks and assigned-clock-rates in the media_blk_ctrl node of
+arch/arm64/boot/dts/freescale/imx8mp.dtsi, relying on common clock framework
+rate negotiation instead.
 
-Brian
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
+dts/freescale/imx8mp.dtsi
+> index 9b2b3a9bf9e80..2a02e80e60e7b 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -1988,16 +1988,14 @@ media_blk_ctrl: blk-ctrl@32ec0000 {
+>  						  <&clk IMX8MP_CLK_MEDIA_APB>,
+>  						  <&clk IMX8MP_CLK_MEDIA_DISP1_PIX>,
+>  						  <&clk IMX8MP_CLK_MEDIA_DISP2_PIX>,
+> -						  <&clk IMX8MP_CLK_MEDIA_ISP>,
+> -						  <&clk IMX8MP_VIDEO_PLL1>;
+> +						  <&clk IMX8MP_CLK_MEDIA_ISP>;
+>  				assigned-clock-parents =3D <&clk IMX8MP_SYS_PLL2_1000M>,
+>  							 <&clk IMX8MP_SYS_PLL1_800M>,
+>  							 <&clk IMX8MP_VIDEO_PLL1_OUT>,
+>  							 <&clk IMX8MP_VIDEO_PLL1_OUT>,
+>  							 <&clk IMX8MP_SYS_PLL2_500M>;
+>  				assigned-clock-rates =3D <500000000>, <200000000>,
+> -						       <0>, <0>, <500000000>,
+> -						       <1039500000>;
+> +						       <0>, <0>, <500000000>;
 
+[Severity: Medium]
+Does dropping <&clk IMX8MP_VIDEO_PLL1> from assigned-clocks on media_blk_ct=
+rl
+break arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtso?
+
+In arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtso, the
+overlay overrides assigned-clock-rates on &media_blk_ctrl with six entries
+without overriding assigned-clocks:
+
+&media_blk_ctrl {
+	/*
+	 * currently it is not possible to let display clocks configure
+	 * automatically, so we need to set them manually
+	 */
+	assigned-clock-rates =3D <500000000>, <200000000>, <0>,
+		/* IMX8MP_CLK_MEDIA_DISP2_PIX =3D pixelclk of lvds panel */
+		<33260000>, <0>,
+		/* IMX8MP_VIDEO_PLL1 =3D IMX8MP_CLK_MEDIA_LDB * 2 */
+		<465640000>;
+};
+
+With <&clk IMX8MP_VIDEO_PLL1> removed from media_blk_ctrl in
+arch/arm64/boot/dts/freescale/imx8mp.dtsi, the merged &media_blk_ctrl node =
+in
+imx8mp-aristainetos3-helios-lvds.dtb has five entries in assigned-clocks and
+six entries in assigned-clock-rates, which fails device tree schema
+validation.
+
+At boot, when of_clk_set_defaults() -> __set_clk_rates() in
+drivers/clk/clk-conf.c iterates over assigned-clock-rates on &media_blk_ctr=
+l,
+the sixth entry (465640000) is out of bounds for assigned-clocks:
+
+drivers/clk/clk-conf.c:__set_clk_rates() {
+	...
+		if (rate) {
+			rc =3D of_parse_phandle_with_args(node, "assigned-clocks",
+					"#clock-cells",	index, &clkspec);
+			if (rc < 0) {
+				/* skip empty (null) phandles */
+				if (rc =3D=3D -ENOENT)
+					continue;
+				else
+					return rc;
+			}
+	...
+}
+
+Because of_parse_phandle_with_args() returns -ENOENT for the missing sixth
+clock, __set_clk_rates() skips setting IMX8MP_VIDEO_PLL1 to 465640000 Hz,
+leaving the display clock tree misconfigured on that board.
+
+>  				#power-domain-cells =3D <1>;
+> =20
+>  				lvds_bridge: bridge@5c {
+
+[Severity: Medium]
+In the earlier commits in this series enabling rate negotiation on
+IMX8MP_CLK_MEDIA_LDB in drivers/clk/imx/clk-imx8mp.c, should
+imx8mp_clocks_probe() use imx8m_clk_hw_composite_flags() instead of
+imx8m_clk_hw_composite_bus_flags()?
+
+In drivers/clk/imx/clk-imx8mp.c, imx8mp_clocks_probe() registers
+IMX8MP_CLK_MEDIA_LDB (at ccm_base + 0xbf00, in the peripheral clock root
+slice range) with imx8m_clk_hw_composite_bus_flags():
+
+drivers/clk/imx/clk-imx8mp.c:imx8mp_clocks_probe() {
+	...
+	hws[IMX8MP_CLK_MEDIA_LDB] =3D imx8m_clk_hw_composite_bus_flags("media_ldb"=
+, imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RATE_PARENT | CLK_V2_RA=
+TE_NEGOTIATION);
+	...
+}
+
+Passing imx8m_clk_hw_composite_bus_flags() sets IMX_COMPOSITE_BUS in
+drivers/clk/imx/clk-composite-8m.c:__imx8m_clk_hw_composite():
+
+drivers/clk/imx/clk-composite-8m.c:__imx8m_clk_hw_composite() {
+	...
+	} else if (composite_flags & IMX_COMPOSITE_BUS) {
+		div->shift =3D PCG_PREDIV_SHIFT;
+		div->width =3D PCG_PREDIV_WIDTH;
+		divider_ops =3D &imx8m_clk_composite_divider_ops;
+		mux_ops =3D &imx8m_clk_composite_mux_ops;
+	} else {
+		div->shift =3D PCG_PREDIV_SHIFT;
+		div->width =3D PCG_PREDIV_WIDTH;
+		divider_ops =3D &imx8m_clk_composite_divider_ops;
+		mux_ops =3D &clk_mux_ops;
+		if (!(composite_flags & IMX_COMPOSITE_FW_MANAGED))
+			flags |=3D CLK_SET_PARENT_GATE;
+	}
+	...
+}
+
+Because IMX_COMPOSITE_BUS selects the bus slice branch, IMX8MP_CLK_MEDIA_LDB
+uses imx8m_clk_composite_mux_ops instead of clk_mux_ops and drops
+CLK_SET_PARENT_GATE, allowing clk_set_parent() while media_ldb is enabled.
+Using imx8m_clk_hw_composite_flags() from drivers/clk/imx/clk.h would keep
+the peripheral slice configuration while passing CLK_SET_RATE_PARENT |
+CLK_V2_RATE_NEGOTIATION.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261021-ge-clk-lcm=
+-v1-0-246cc35b5ffb@bootlin.com?part=3D5
