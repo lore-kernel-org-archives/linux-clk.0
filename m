@@ -1,57 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792613079;
-	b=25fxaw62oY3CSGiZ97QscN92xIUK2qNKcUhwKIwa2Mozn/AOD7B892o0JCdvjF+A9dKo
-	 jonX3u8UATEVHQMH8jQegE5BtpcNvxodGgxZ5Cl2DmSqEw+EzeV+P95MoOOIi1P61IYwZ
-	 967/LSqwIj4kmBypk2bqQ3+TZosT1wAv+yQuGuuwmJAd4pMtwgDRN9rj29NsMI96wZjSQ
-	 LlgIoQP8F3MELhSolz4zOdSeGg16u41WAAkOWOLedaqXlUotJtoJTCepkyCZpS0nLN9uE
-	 gwdfeDnusEVgDgYSGTInaA8QLpJ70dpa2u4FTQGyZNKlF4gb8Jfu9W1t3gbxh70n62Q==
+	t=1792618143;
+	b=nxAYERgrnCxL6njjjNQOwpSZuAi6+AEKUp5wspLHiGCNDwe9QP9xkxpoBFGvTEL5NAg7
+	 eMvuC+PAUSPytAKaECd0aCDNJ3OccBnyiEcrodDQApLMjvToUgvmT5Nlk+xqtyWBByZDj
+	 r7ZnJQ4uJeAmi/AvzeA8Yyn6Nh0RQZquDIsp5qvWBMswnBxHCIgo0myVaMDqpEzSPosBY
+	 6nhUKXmIWgnPacbycAMXzWB0K53TCFRg0X0VDhKuNRDXaOgyU/vuPPtgArr9xmM6s/aiq
+	 LOps43h2W8OpVttmea6WhY+mlRdBlGtOgoXpWP3vY1YbUQrjeV/aKUlg4+P9uye6YTA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792613079;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=JQcbBTTCNeW/OzCCgmDwiOJ4ikwv7Cb8Y/Xfb1GFEQc=;
-	b=zMKwsct2l+gIRLWQZ9BqEUIZKqUGmEvklcAP337TesJskX7NBgECvddZcpLCsjCXNN2w
-	 ik62O3OXdoN4kM9hQg7BpYWQqDBwi9WjJJ74tb9NyoWlqZuOtvNVLRpw9xRKEh3C4mEKo
-	 E3qngVvILVKkRW3Hu/K8XADrL9bOsX3EGr03GL3z/Ob3eLiF4UCUM9W5IAwjbmfRvp3Xf
-	 g4O8Lh8J+7kyYkUD2xtJnFhqtSh3kH+BVg7TMvniObJHCVyBCsoAN9p9UpCPdif7Uivby
-	 QXX5wtiscEKYnkzF7JmT+VV2OeqHcRlsS3De9BQqMDKC0jZv1jSpuwNJvIHKmkVTZjQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792618143;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=STfXp6czP7xhamjW51To5foTWFXsqjJT8ci8C4r7ssk=;
+	b=nY5M0dcdyUqem8NW52iYLEZKFaGXjP9SPSsOxu4y/ht98XNENRRZ4oTWEPolmZLIp5gA
+	 mDB1iJCp+DqJH0H0Lsq/RJsnf8DenURDhKwLDRAwSwAVI2ZxtKdhei9Z86IJDhQgVPf8k
+	 bJhshBv0wH1x/NRp8dyCNL5wem5xeCtXC5PeUDWnn8NbTGjqbQO1K/3SawTutU93/xg8b
+	 XJb9msevyOWGpgkDQuq+TpiJz0oRGgGDeQtXJhyl6WjYWznquLL/ZGcl1eZJk6cNjKkZx
+	 BiIG6S+jGPnwZuCVdYyQpx47XgIr/bnuzDe6PqMa8FQff71IrzcCaqlLANObpqPCJlQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hQCFWmdt;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=RGABvHP8;
+	arc=none smtp.remote-ip=209.85.161.47
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EA5606A31B;
-	Wed, 21 Oct 2026 20:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFBF606A31B
+	for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2026 21:29:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DAFBF606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hQCFWmdt
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 076751F000C1;
-	Wed, 21 Oct 2026 20:04:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792613078;
-	bh=JQcbBTTCNeW/OzCCgmDwiOJ4ikwv7Cb8Y/Xfb1GFEQc=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=hQCFWmdtHz4jog1ZUkZ1L/LUIpuNKY2lHezyWDZThDclcBUwceLwZpFEjTz6PQxqq
-	 E9kTicfGwSAk2eZvEbvvCU3GrwN03uBX6xnQhmQOiiwgayL9Ptf+gReGTKjAZeptoa
-	 XviCQGOaD02kTltsOYvCJtFIuWv4gvJ8b8rapeloX5nbgYh6vVpzmHgrgpJrHBxnU3
-	 TAa7Z7wMICU2WN0jNMxYkkcmsmsmpPo4o25WS9VilJukySBXLCNAKGhmoHtDpmvdW0
-	 B/qZ0OT/L0V1nydHNoohZXHa/bl1IKN446ISV6CSmjxPDGtUz3+V7ad3bLxoU8xHF6
-	 VOigrPb4/8Amw==
-Message-ID: <sashiko-outbox-180623@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 03/18] dt-bindings: clock: add Zhihe A210 clock
- controllers
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Han Gao" <gaohan@iscas.ac.cn>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261022-a210-init-v1-3-5e438f972d24@iscas.ac.cn>
-References: <20261022-a210-init-v1-0-5e438f972d24@iscas.ac.cn>
- <20261022-a210-init-v1-3-5e438f972d24@iscas.ac.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 21 Oct 2026 20:04:37 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=RGABvHP8
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-6faddda49e7so945780eaf.3
+        for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2026 14:29:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792618142; x=1793222942; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=STfXp6czP7xhamjW51To5foTWFXsqjJT8ci8C4r7ssk=;
+        b=RGABvHP8Dyk6LxsQqpxlHRr1auM08NNzKrG6Zu9WIuX6WdM63LtxwAtz6pOtXWw3c2
+         drEJunJyp4FL2zEmgvD8tWcW8OmQjcHx80JXVIvlTWjgC4o/BoiWVgNiHjvCGtl5QJot
+         sijZFAgPuqjVAQypJxeFhrswKukLMXdAByBXHXV2z6jtUr9SVZDloeNU5xkWTvLn0Vou
+         bXB3CIzkCQQNuNMVdMZTxEYYY+wRJWKNLeOLWXQBt5X/IbzfDJtBNomWzvcsBEIeGJ16
+         bIVOq+kmDddMGPxU8XtlAl9dgWH/CUSiecH9lL+eg5jHu3DVpLFGjqiW00VleCHPFGeO
+         FEFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792618142; x=1793222942;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=STfXp6czP7xhamjW51To5foTWFXsqjJT8ci8C4r7ssk=;
+        b=Zo6CPdg7uRrkFY9/Ckvo5MKtXsH8HL3XBiu7Qo45dPKX96/dX3lgfTI2zkwYs95AlD
+         7rV1DRt522C8RGyx0hIX+lr/NT6oqYU3+OwBQNVyTPN1LofBl0vUOr/+vCBo6anLHTjp
+         yetvLleE/39F55pdU6vO3MgHSgsNzsK4FN0DhYR8GbXxwvk/2vA5icUeJtbzElNvNiL5
+         ybSMdyp8crrZFGPGccIdJLhak8D0lWbqfnMb/u/OkjIE1vLxZZ9SztdnkawMxvUrO/FF
+         J/ZB2gTpacKAOHI2kL172ZhzBY7Gp+iH9QeHrdSlNkBcYnEz+MB1NQu4RarQ5PSMKKpZ
+         +bYA==
+X-Forwarded-Encrypted: i=1; AKwUvByh/zJ5oIU916mPeNpoAb3Pk/gnjnsFmc86JFhBDxoAYogPOItw3X5TD5QkUiWuP4EnE3cdCR9sA+s=@vger.kernel.org
+X-Gm-Message-State: AFq9FYL34Fbb5CPmqD/t9EtdFagNdzahzeR36z3fTN5AqEFnqENmbxxk
+	RCK1e8WP0+cGXFmVT0O0ONaPynb8lGwzc3ISh15GBlkS75aTa2mHkwT3
+X-Gm-Gg: AYBFou1kr9MfOJWCtv5J7nExlbEveA9kIH0lo4qMFYFh+eS6ZoiwgG0MJtduOUGmly/
+	Pls0JAagMIJHQ7/CaumqW2a9vdB2TUOqdyv9ELYDzEpc6dB3miG/PiXmIvYCY8fnVz92iNhEASb
+	3vEmWgSS50P2Nm/4qOsNBj6CbixYAPVRf2XTHgVplybpANUq+E1XCe6nPvfLYw46UQCOShBy15b
+	4I5Es10rJ+Di5EqoBKwOzZNGguc/YqiKpC83QOtE0M9kt60306ewv3/TcmwJXxd1DFEkbN6Mxow
+	faMkAehyHE2aljBLwRUSYgBNJR6twDpju70WdmacaA+Wi5xZcPTe035+nG+AO3CCXT/ocUHp6lQ
+	mbY5L0e5R4LXB6AHE2oI/D7XDwR/9rVRshpXW7KFW5OJQBaKVX5jT3i96abK0iSPlzcGbpCv1h5
+	plDhrPSoKGoAekFUOZ6wVqWj7QT+jF2ZTFCtbUDUpU16jwH65S7FpAEZs6TIkEQDamYgzosh9Tx
+	T+OjF7nMM/GxvoIMrszOqa70k8wmCyLuxMc/pQcN7nZAMoqOduy31ZbCRZoFgrjN124jNP4uXwB
+	O23zzyIzVxXXpRW3Y4576JrjljPE/RJ5fWQ1Oa/lzTh9Y8E+v3qYFfdNs1kRxDbYL+z3PYMS0hY
+	Jv+0k8k1MUio7L4nllsYptLtcRPL3gACMtDHmKfAQ+FoLxurdhzphIdGFupf6+ArDViAu4hEdN/
+	7ClYRGpK6iO+0sV4YFbL1yCBTT
+X-Received: by 2002:a05:6820:f023:b0:6d7:4f30:8f6c with SMTP id 006d021491bc7-7093fdb91e1mr2332072eaf.28.1792618141647;
+        Wed, 21 Oct 2026 14:29:01 -0700 (PDT)
+Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-709043a60bfsm2960339eaf.13.2026.10.21.14.29.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Oct 2026 14:29:01 -0700 (PDT)
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Wed, 21 Oct 2026 15:28:48 -0600
+Subject: [PATCH] clk: send abort notifications when a parent change is
+ vetoed
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,234 +92,163 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261021-submit-clk-parent-abort-v1-v1-1-2936181822fc@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXM3Q6CMAyG4VshPbaRjcSot2I86LYi9WeQbhITw
+ r2zyeHb9HsWSKzCCa7NAsqzJBljCXNowA8UH4wSSoNt7cm01mD6uo9k9O8XTqQcM5IbNeNs0F1
+ sZ8mfuxAMFGBS7uX3x2/3vcv6yT5XsX44SoxOKfqhngp6rPC+WtcNsR+8e54AAAA=
+X-Change-ID: 20261021-submit-clk-parent-abort-v1-b9232ac83dd1
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ James Hilliard <james.hilliard1@gmail.com>
+X-Mailer: b4 0.15.2
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [Medium] dt-bindings: clock: zhihe,a210-clk: missing subsystem controller=
- input clocks
-- [Medium] dt-bindings: clock: zhihe,a210-clk: disjoint register blocks mer=
-ged in one node
-- [Medium] dt-bindings: clock: zhihe,a210-clk: non-clock macros and global =
-IDs in header
---
+clk_core_set_parent_nolock() returns directly when a PRE_RATE_CHANGE
+notifier rejects the proposed parent. Consumers notified before the veto
+do not receive ABORT_RATE_CHANGE, even though they may have stopped I/O
+or reserved resources until the transition finishes. The caller also
+receives a positive notifier return value instead of a negative errno.
 
-commit f418ceaa00f70a29b9cfb989d2292f9ccba767ae
-Author: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
+Recalculate and notify the unchanged subtree with ABORT_RATE_CHANGE before
+returning -EBUSY, as for other failed parent changes. This lets prepared
+consumers unwind without changing the parent or its rate.
 
-dt-bindings: clock: add Zhihe A210 clock controllers
+Extend the mux notifier tests to cover both a self-veto and a later
+notifier vetoing after the first consumer accepted the change. Check the
+abort notification, errno and unchanged parent/rate in both cases.
 
-This patch adds the devicetree binding schema and clock ID header for the
-Zhihe A210 SoC clock controllers.
+Fixes: b2476490ef11 ("clk: introduce the common clock framework")
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+---
+ drivers/clk/clk.c      |  5 +++-
+ drivers/clk/clk_test.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 65 insertions(+), 2 deletions(-)
 
-> diff --git a/Documentation/devicetree/bindings/clock/zhihe,a210-clk.yaml =
-b/Documentation/devicetree/bindings/clock/zhihe,a210-clk.yaml
-> new file mode 100644
-> index 0000000000000..a3546d2f5977c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/zhihe,a210-clk.yaml
-> @@ -0,0 +1,231 @@
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fef87167a60b..a9620d9e0db1 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2983,8 +2983,11 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
+ 	ret = __clk_speculate_rates(core, p_rate);
+ 
+ 	/* abort if a driver objects */
+-	if (ret & NOTIFY_STOP_MASK)
++	if (ret & NOTIFY_STOP_MASK) {
++		__clk_recalc_rates(core, true, ABORT_RATE_CHANGE);
++		ret = -EBUSY;
+ 		goto runtime_put;
++	}
+ 
+ 	/* do the re-parent */
+ 	ret = __clk_set_parent(core, parent, p_index);
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index 1c5c8b7c1f3c..e9d0d6f5084b 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -2364,6 +2364,8 @@ struct clk_mux_notifier_ctx {
+ 	struct notifier_block clk_nb;
+ 	struct clk_mux_notifier_rate_change pre_rate_change;
+ 	struct clk_mux_notifier_rate_change post_rate_change;
++	bool veto;
++	bool aborted;
+ };
+ 
+ #define NOTIFIER_TIMEOUT_MS 100
+@@ -2381,6 +2383,8 @@ static int clk_mux_notifier_callback(struct notifier_block *nb,
+ 		ctx->pre_rate_change.new_rate = clk_data->new_rate;
+ 		ctx->pre_rate_change.done = true;
+ 		wake_up_interruptible(&ctx->pre_rate_change.wq);
++		if (ctx->veto)
++			return NOTIFY_BAD;
+ 	}
+ 
+ 	if (action & POST_RATE_CHANGE) {
+@@ -2390,7 +2394,10 @@ static int clk_mux_notifier_callback(struct notifier_block *nb,
+ 		wake_up_interruptible(&ctx->post_rate_change.wq);
+ 	}
+ 
+-	return 0;
++	if (action == ABORT_RATE_CHANGE)
++		ctx->aborted = true;
++
++	return NOTIFY_OK;
+ }
+ 
+ static int clk_mux_notifier_test_init(struct kunit *test)
+@@ -2488,8 +2495,61 @@ static void clk_mux_notifier_set_parent_test(struct kunit *test)
+ 	clk_put(clk);
+ }
+ 
++static void clk_mux_notifier_veto_parent_test(struct kunit *test)
++{
++	struct clk_mux_notifier_ctx *ctx = test->priv;
++	struct clk *parent = clk_hw_get_clk(&ctx->mux_ctx.parents_ctx[1].hw, NULL);
++	int ret;
++
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
++	ctx->veto = true;
++	ret = clk_set_parent(ctx->clk, parent);
++	clk_put(parent);
++
++	KUNIT_EXPECT_EQ(test, ret, -EBUSY);
++	KUNIT_EXPECT_TRUE(test, ctx->pre_rate_change.done);
++	KUNIT_EXPECT_TRUE(test, ctx->aborted);
++	KUNIT_EXPECT_FALSE(test, ctx->post_rate_change.done);
++	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->clk), DUMMY_CLOCK_RATE_1);
++	KUNIT_EXPECT_EQ(test, ctx->mux_ctx.current_parent, 0);
++}
++
++static int clk_mux_veto_callback(struct notifier_block *nb,
++				 unsigned long action, void *data)
++{
++	return action == PRE_RATE_CHANGE ? NOTIFY_BAD : NOTIFY_OK;
++}
++
++static void clk_mux_notifier_abort_parent_test(struct kunit *test)
++{
++	struct clk_mux_notifier_ctx *ctx = test->priv;
++	struct notifier_block veto = { .notifier_call = clk_mux_veto_callback };
++	struct clk *parent = clk_hw_get_clk(&ctx->mux_ctx.parents_ctx[1].hw, NULL);
++	int ret;
++
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
++	ret = clk_notifier_register(ctx->clk, &veto);
++	if (ret)
++		clk_put(parent);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	/* The first consumer accepts PRE before the second consumer vetoes it. */
++	ret = clk_set_parent(ctx->clk, parent);
++	clk_put(parent);
++	clk_notifier_unregister(ctx->clk, &veto);
++
++	KUNIT_EXPECT_EQ(test, ret, -EBUSY);
++	KUNIT_EXPECT_TRUE(test, ctx->pre_rate_change.done);
++	KUNIT_EXPECT_TRUE(test, ctx->aborted);
++	KUNIT_EXPECT_FALSE(test, ctx->post_rate_change.done);
++	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->clk), DUMMY_CLOCK_RATE_1);
++	KUNIT_EXPECT_EQ(test, ctx->mux_ctx.current_parent, 0);
++}
++
+ static struct kunit_case clk_mux_notifier_test_cases[] = {
+ 	KUNIT_CASE(clk_mux_notifier_set_parent_test),
++	KUNIT_CASE(clk_mux_notifier_veto_parent_test),
++	KUNIT_CASE(clk_mux_notifier_abort_parent_test),
+ 	{}
+ };
+ 
 
-[ ... ]
+---
+base-commit: 81493c1dd1b1ebecb2843a7815973a5bd9a37e5a
+change-id: 20261021-submit-clk-parent-abort-v1-b9232ac83dd1
 
-> +  clocks:
-> +    description: Input reference oscillators.
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 3
-> +    items:
-> +      enum:
-> +        - osc-32k
-> +        - osc-24m
-> +        - rc-24m
+Best regards,
+--  
+James Hilliard <james.hilliard1@gmail.com>
 
-[Severity: Medium]
-In the A210 SoC clock hierarchy, zhihe,a210-clk (managing pll-wrap and
-top-crg) and zhihe,a210-aon-clk generate the root PLLs, dividers, muxes, and
-subsystem clock gates (such as top_cfg_aclk, uart_sclk, video_pll_foutvco,
-gmac_pll_foutpostdiv, dpu0_pll_foutpostdiv, aon_osc_clk_logic, aon_rtc_clk,
-npu_aclk, npu_cclk, vp_aclk, and tee_clk), which then feed the 8 subsystem
-clock controllers.
-
-In Documentation/devicetree/bindings/clock/zhihe,a210-clk.yaml, the
-top-level properties:clocks and properties:clock-names definitions only all=
-ow
-up to 3 external reference oscillators (osc-32k, osc-24m, rc-24m) with
-maxItems: 3, and in allOf only the zhihe,a210-clk branch requires clocks and
-clock-names.
-
-Any devicetree node using one of the 8 subsystem clock controller compatible
-strings (zhihe,a210-peri-clk, zhihe,a210-gpu-clk, zhihe,a210-pcie-clk,
-zhihe,a210-usb-clk, zhihe,a210-vi-clk, zhihe,a210-vp-clk, zhihe,a210-vo-clk,
-or zhihe,a210-npu-clk) that specifies its parent clocks from zhihe,a210-clk
-or zhihe,a210-aon-clk will fail dtbs_check schema validation, while omitting
-clocks leaves the hardware clock tree topology undocumented in devicetree a=
-nd
-forces the driver to rely on hardcoded global clock names.
-
-How can the 8 subsystem clock controller nodes declare their upstream input
-clocks in devicetree if clocks and clock-names only permit the 3 external
-reference oscillators, and should each subsystem compatible in allOf specify
-and require its input clocks?
-
-[ ... ]
-
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: zhihe,a210-clk
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 9
-> +        reg-names:
-> +          items:
-> +            - const: pll-wrap
-> +            - const: top-crg
-> +            - const: cpu-ss-clk-sysreg
-> +            - const: cpu-ss-cpu-pll
-> +            - const: ddr0-sysreg
-> +            - const: ddr1-sysreg
-> +            - const: slc-dual-sysreg
-> +            - const: top-crg-t
-> +            - const: cpu-ss-ccu
-> +        clocks:
-> +          minItems: 3
-> +        clock-names:
-> +          items:
-> +            - const: osc-32k
-> +            - const: osc-24m
-> +            - const: rc-24m
-> +      required:
-> +        - clocks
-> +        - clock-names
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: zhihe,a210-peri-clk
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 5
-> +          maxItems: 5
-> +        reg-names:
-> +          items:
-> +            - const: peri0-sysreg
-> +            - const: peri1-sysreg
-> +            - const: peri2-sysreg
-> +            - const: peri3-sysreg
-> +            - const: tee-crg
-
-[ ... ]
-
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/zhihe,a210-clk.h>
-> +
-> +    clock-controller@260000 {
-> +        compatible =3D "zhihe,a210-clk";
-> +        reg =3D <0x00260000 0x1000>,
-> +              <0x00250000 0x1000>,
-> +              <0x10141600 0x100>,
-> +              <0x10141400 0x100>,
-> +              <0x04810000 0x1000>,
-> +              <0x05810000 0x1000>,
-> +              <0x04900000 0x1000>,
-> +              <0x20250000 0x1000>,
-> +              <0x10140000 0xe00>;
-> +        reg-names =3D "pll-wrap", "top-crg", "cpu-ss-clk-sysreg", "cpu-s=
-s-cpu-pll",
-> +                    "ddr0-sysreg", "ddr1-sysreg", "slc-dual-sysreg", "to=
-p-crg-t",
-> +                    "cpu-ss-ccu";
-> +        #clock-cells =3D <1>;
-> +        clocks =3D <&osc_32k>, <&osc_24m>, <&rc_24m>;
-> +        clock-names =3D "osc-32k", "osc-24m", "rc-24m";
-> +    };
-
-[Severity: Medium]
-In Documentation/devicetree/bindings/clock/zhihe,a210-clk.yaml, the
-allOf:zhihe,a210-clk schema and the clock-controller@260000 example node
-aggregate 9 disjoint hardware register blocks across unrelated SoC
-subsystems into a single devicetree node: pll-wrap (0x00260000), top-crg
-(0x00250000), cpu-ss-clk-sysreg (0x10141600), cpu-ss-cpu-pll (0x10141400),
-ddr0-sysreg (0x04810000), ddr1-sysreg (0x05810000), slc-dual-sysreg
-(0x04900000), top-crg-t (0x20250000), and cpu-ss-ccu (0x10140000).
-
-Similarly, allOf:zhihe,a210-peri-clk aggregates 5 separate hardware blocks
-(peri0-sysreg, peri1-sysreg, peri2-sysreg, peri3-sysreg, and tee-crg) at
-disjoint address ranges into a single devicetree node, even though those 5
-subsystems are independent hardware blocks (and are modeled as 5 separate
-nodes zhihe,a210-peri0-reset through zhihe,a210-peri3-reset and
-zhihe,a210-tee-reset in the reset binding). Merging these blocks into single
-virtual nodes also claims entire 0x1000 *-sysreg ranges that contain
-non-clock control registers.
-
-Should these separate hardware register blocks be modeled as individual
-devicetree nodes matching the physical SoC layout instead of grouping
-disjoint register ranges into zhihe,a210-clk and zhihe,a210-peri-clk?
-
-> diff --git a/include/dt-bindings/clock/zhihe,a210-clk.h b/include/dt-bind=
-ings/clock/zhihe,a210-clk.h
-> new file mode 100644
-> index 0000000000000..aa59d91a9ad05
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/zhihe,a210-clk.h
-> @@ -0,0 +1,649 @@
-
-[ ... ]
-
-> +#define VO_PLL2_DIV_EN                                     347
-> +#define VO_PLL2_DIV_NUM                                    348
-> +#define VO_PLL1_DIV_EN                                     349
-> +#define VO_PLL1_DIV_NUM                                    350
-> +#define VO_PLL0_DIV_EN                                     351
-> +#define VO_PLL0_DIV_NUM                                    352
-
-[ ... ]
-
-> +#define CLK_DUMMY                                          505
-> +#define OSC_32K                                            506
-> +#define OSC_24M                                            507
-> +#define RC_24M                                             508
-
-[ ... ]
-
-> +#define CLK_END 590
-> +
-> +#endif
-
-[Severity: Medium]
-In include/dt-bindings/clock/zhihe,a210-clk.h, all 9 clock controller
-compatibles share a single interleaved global 0..589 ID space rather than
-per-controller 0-based clock IDs, which requires every controller instance =
-in
-drivers/clk/zhihe/clk-a210-ap.c to allocate a 590-entry clk_hw_onecell_data
-array.
-
-In the VI_SYSREG, VO_SYSREG, and VP_SYSREG sections, hardware divider enable
-bits and divider ratio bitfields of the same composite divider clock are
-exposed as separate clock IDs (for example, VI_PRE_ISP_CORE_CLK_DIV_EN and
-VI_PRE_ISP_CORE_CLK_DIV_NUM, VO_PLL0_DIV_EN and VO_PLL0_DIV_NUM, and
-VP_DECOMP_DIV_EN and VP_DECOMP_DIV_NUM). In drivers/clk/zhihe/clk-a210-ap.c,
-only the *_DIV_NUM IDs are registered as composite dividers (using the
-corresponding *_DIV_EN bit as the gate bit), leaving all 16 *_DIV_EN macros
-as unused register-bitfield definitions in the devicetree ABI header.
-
-Additionally, CLK_DUMMY is a software driver implementation artifact,
-OSC_32K, OSC_24M, and RC_24M are external input reference clocks passed via
-the clocks property rather than outputs of the clock controller, and CLK_END
-is an internal array bound whose value changes whenever new clock IDs are
-added, breaking devicetree binding ABI invariance.
-
-Could CLK_END, CLK_DUMMY, OSC_32K, OSC_24M, RC_24M, and the unused *_DIV_EN
-bitfield macros be dropped from include/dt-bindings/clock/zhihe,a210-clk.h,
-and should each clock controller define its own 0-based clock IDs?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261022-a210-init-=
-v1-0-5e438f972d24@iscas.ac.cn?part=3D3
