@@ -1,74 +1,108 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792575471;
-	b=gLTJzlxSTZxHwsKzQO5/RSzBwgRWo4E5Iu6zBFS7QzSulnP9TbWdan2FFYpHGBzcrCWu
-	 xkcfF6dkNgqc4qCKL64bve3e2mtnIGY+uLPFzf+uLQYoSWtiBqTRtsWkUwq5rrGRuPG6K
-	 C+6gdykw+hUMkoI8gzZuFf2YsvX9NQvVwb5d8h0Rc404U3UwHGOLo4OerY/DqjaxshwJ+
-	 B3ZurY7kCYul03nvP6bhf9Hk0say+t9iTbsMHXWiMcNS4OiqzcCSYB76ZU5JJksYBDZ5S
-	 ZzZZgtbk1yR3pPp/vnJccWo8uvPP/X/VshJ252D5fKba5ZFYSzsgPpIXBYlAmZfqaOQ==
+	t=1792575964;
+	b=NXDcFnH4Yt+By1GkFZYzna9eE2gAMLGFxnPlYxVxwrCOSTv0Dl/2H2SOyK9/paAZ+Y3+
+	 3xMmy1zcy7VkcUocwBrdd6v5XZqCm295wHSktWhvrKlIuX+wTDrau6Lpil2CbBCoyE2/C
+	 ovmcvvAnPaAHaw+sUXN+ksYJvejDlNXntExMtXntFYGROTF9KS2A4GrEp/7b0gW44kMLx
+	 whNe7tPEjg4ZqGV5UWBly6acXThQNZCz5f640xpaG7U+h1bAKJ7GCKndSpajVdSl9tsbC
+	 3KLGaZ266mfxLImFIizzTSHnljVAYS4EhjItFgOCq4vlSG3eO90PTlxIgRg6ILx7vWA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792575471;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:To:Cc:
-	 Subject:In-Reply-To:References:User-Agent:Date:Message-ID:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Last-TLS-Session-Version;
-	bh=PO++a8z3xVSOrsSCzcnJsYBIAhxcpwS/rPUxumQkRLA=;
-	b=zFbAi+mTKquVkeEH9gNrKnDjTMXCeU4A209WTO/+W4g1fvC47eWooPN0n+9t+Tsfaza4
-	 xq/+IR6nyc5GCvL6xi7UfgR/3tlv+/7WmNKEglJVEy7og1hieP9VmrARuIWAQ6X29xwnc
-	 S2aFS0Ise8cuqnDwDkA3J/7prTxlMcfjg9sC15cb520ie3B5S4DxrIZsd1Yf1odTKRO3j
-	 P2Rk8mUyPwDQvtsth6Qn/Qv4v9b5RhhiwHXCBILq4LX8Ijr2xv4VAsMPMwJXsoX0+eKxW
-	 OnWTF3EgebRxDJUTi+9q6Ih6qukqXug1+n54QSKXnDfcw+8+uCNC3XqA+VCD1hahlZw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792575964;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=24F/d8Z+ERFiE118WtTUpKViM5tZiEO9H1s/ycjWi/Y=;
+	b=sovH+l2lA1hTIMI9ixnM9ySVy/yxQdt+/O9wllMN2mf9Lyp8dQ2E6pggHZ2lsB5vN1PD
+	 bj8YdW5Rq79giVbrxrYPK5nwiAW6F5vxJ2bkx1IpRP1YuIgmOGXlMFgDEnDxq4uPxs3o2
+	 nF46LEOtRc7Jqv82hXtK5uYEzBa5LijVDW/m7v8TKK/NOuauHLxzPAi8phZtQOlOotYz/
+	 vyNpcw25C9QiXslzYg3JZAwezur/qxqodKoak9ulAtVnuTYfeydjGs3+qRM924nOlo2j4
+	 Amwc51eYpFTHjahVFxTqtaB4c6wRngyydN4CyF/YLwMS0IYGVDiWu9LZj+6AX9ChBdA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=CGBoqbwp;
-	arc=none smtp.remote-ip=185.171.202.116
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=PWoutujy;
+	arc=none smtp.remote-ip=209.85.128.52
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A59606A321;
-	Wed, 21 Oct 2026 09:37:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 01A59606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE17606A31E
+	for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2026 09:46:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BAE17606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=CGBoqbwp
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 17F8EC5CD74;
-	Wed, 21 Oct 2026 09:38:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 2D741606E3;
-	Wed, 21 Oct 2026 09:37:47 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 35856103289A8;
-	Wed, 21 Oct 2026 11:37:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1792575466; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=PO++a8z3xVSOrsSCzcnJsYBIAhxcpwS/rPUxumQkRLA=;
-	b=CGBoqbwpj9xTkVn6WWXitamQrNNLf19slUfZI+4ruQfN9t8GL0sXg2fjd33/7/B/r/nLx+
-	N0hPE5qWOIoKnNnB1H5M6PQkd5KlM50V8HHwmo5bUv+6MMnib5DVJtVkPZn2tLCsLgE5+P
-	x7H9zgf5loFIPZfCEYJwx978WollkDP2OLlX39sLtG6aM6+IyT4wZPtQRHozYz9BOb40u2
-	siBiQJtBpzaJiyky/qAXNiAHvGquswO4Qd0V96veXxMaWU656/vhNOmNjF/+AIjIHJbIkT
-	mFWCzR+DuU3ZXnvja4CayAQ4MzwH3LIYpaD1blGXGJ0R8A+mu6103BOYzVH0wg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
- <sboyd@kernel.org>,  Maxime Ripard <mripard@kernel.org>,  Alberto Ruiz
- <aruiz@redhat.com>,  Brendan Higgins <brendan.higgins@linux.dev>,  David
- Gow <david@davidgow.net>,  Rae Moar <raemoar63@gmail.com>,
-  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  kunit-dev@googlegroups.com
-Subject: Re: [PATCH v8 3/8] clk: introduce new helper
- clk_hw_get_children_lcm() to calculate LCM of all child rates
-In-Reply-To: <8733u0u22z.fsf@bootlin.com> (Miquel Raynal's message of "Tue, 20
-	Oct 2026 11:57:08 +0200")
-References: <20260327-clk-scaling-v8-0-86cd0aba3c5f@redhat.com>
-	<20260327-clk-scaling-v8-3-86cd0aba3c5f@redhat.com>
-	<8733u0u22z.fsf@bootlin.com>
-User-Agent: mu4e 1.12.12; emacs 30.2
-Date: Wed, 21 Oct 2026 11:37:42 +0200
-Message-ID: <874iefs8bd.fsf@bootlin.com>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=PWoutujy
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a1fbd52ab6so3474185e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2026 02:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792575962; x=1793180762; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=24F/d8Z+ERFiE118WtTUpKViM5tZiEO9H1s/ycjWi/Y=;
+        b=PWoutujyIoRGuofHtTRZnHId0HXYZ+TiVKa3GHuxDc34OaszjKj6r1xqRfR8s4xocf
+         upF/LOGDzkzeq1/Vjd36KiK45m+8db/XqNDiKF6H/C4qkPUAwM7n/wjEa/FEPH9d71ri
+         G8ryHZU3RqC0X3P925JN+AqnPMyDVIdqU4Li0v//xBG/n2oGTmsj3NFAlpN9tYs3wW37
+         gpvHhUDv4Xuyf/KRijLrIjMFxHv8q4hw3CzrGJ/Yd+FuYs5NXonm6FlIXvbcgEjt844V
+         Gpgcf/qc/bsd9CQ7wcvg+dsn9dmEfj8LHga+yAdrjem5qNbPNCUiNO6wk6k9gGI36XgB
+         cpgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792575962; x=1793180762;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=24F/d8Z+ERFiE118WtTUpKViM5tZiEO9H1s/ycjWi/Y=;
+        b=URe1/vSXz1sEz0dspTOZvUlEJm37jBd4sHkCtVB2UMnswXEaKdEO4IckTkShS3ar68
+         Ce45GOPiUWfFH/pEjxYQGkxQ2mN73k3BRw43N3GoP6UeSOdhYbJZDAGQBY1q0hCtLR7R
+         9AoSIBFxcbwJpAASAnI6S4iYVHlDJClHNF/U/HuPswDf32Wc4eCmlJFd5Awfny8MHoVp
+         R9DifA0KonvLiX755aF+utcWGe0eA4C3KuzfAEcYdigeqbsvAuzL/8E54huZuRahS/w1
+         3OqNnknjZN3S4V3M5STaQY1v7lekh+kBEyu0Lbhfjnxdn0BXoGlYfPQn8ygucytMxHMg
+         BliA==
+X-Forwarded-Encrypted: i=1; AKwUvBxgRko24RWLhWPd2S/ygt0mU6itu5wxCnYZrMJjD1ryZRE0T7lqU0JO+yX5q+xZLEQXFkGwRne0MNg=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIS9Gef4tX1LwoZq3vEGGfj/U8GpghY1qHTsGxMcDabBd3XZsTg
+	WcfeuBwOF65W9qwaq7LgA34AmVCtr3dwb0Y8YDk3lpQuYyeFbbrHoq5v
+X-Gm-Gg: AYBFou1VPZSPQ7ZMfaAfwUlMABBLkLV6Wn3PysXc9cfetXnSD6uMFUgMPswjq36blPk
+	W0lTn7yMo5P4srjqWMwdmnicdYaY3YZgSqTRjQsKuf3sCj43/rW+Xnl1WvcGM/iZqyFuUVRPfNl
+	zbwCYYaq8OMmfZEuFNnlcJ75hr/9Nqmqq6Yxn1ivG2EPU6i+zY7ydFfg3uDiFg2VpwqzpULqPI+
+	bll7QSJFHG3stvv14IoHp0Rmouy8zA+Ua8KpD5Tj/q8Y9ZE6BPnoO4Hvi/JdwHtlQPTNH5PhKqI
+	kTumGHWTAZRQ+7tCwJuDGmKzubb3TAvZesjN+nkngLo4LrKRtseOuST2jwN/XMQ9gk38lRze0BT
+	ozIi9DjnukaqhZWmTp/5LUWa+Xj87UEoTpLuH0H2MpYDixPGYFS0ui0+SwDfZWjr6VDDZMKi02I
+	g+rGlhUjCeODV1BgXM7W9hzoVi3eLDM7Q5K9xYR6WSnFfWXmwkmhjPfeOA/OEKtp4477cUUS1EA
+	YRCrlAbypc8Z7k3ww6cGgiD8dDPYXHHlFp26HZ5yNdfBMEVUkQ=
+X-Received: by 2002:a05:600c:1f95:b0:4a1:6c0c:ab93 with SMTP id 5b1f17b1804b1-4a1fdd109camr28889945e9.28.1792575961841;
+        Wed, 21 Oct 2026 02:46:01 -0700 (PDT)
+Received: from luca-vm.lan ([154.61.61.58])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e258427cesm4320300f8f.52.2026.10.21.02.45.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Oct 2026 02:46:00 -0700 (PDT)
+From: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+To: akkun11.open@gmail.com
+Cc: angelogioacchino.delregno@collabora.com,
+	bhelgaas@google.com,
+	bmasney+clk@redhat.com,
+	dakr@kernel.org,
+	jbrunet+clk@baylibre.com,
+	laura.nao@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	nicolas.frattaroli@collabora.com,
+	o-takashi@sakamocchi.jp,
+	sboyd@kernel.org,
+	sjoerd@collabora.com,
+	u.kleine-koenig@baylibre.com,
+	wenst@chromium.org,
+	Luca Leonardo Scorcia <l.scorcia@gmail.com>
+Subject: [PATCH 3/6] clk: mediatek: Reserve missing MT8167 clock ID
+Date: Wed, 21 Oct 2026 11:45:20 +0200
+Message-ID: <20261021094542.59417-1-l.scorcia@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260921102522.1640072-4-akkun11.open@gmail.com>
+References: <20260921102522.1640072-4-akkun11.open@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -78,114 +112,26 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-On 20/10/2026 at 11:57:08 +02, Miquel Raynal <miquel.raynal@bootlin.com> wr=
-ote:
+I tested this patch on the Sony PlayStation Classic Mini (MT8167) and
+unfortunately it breaks HDMI output.
 
-> Hi Brian,
->
-> On 27/03/2026 at 15:31:58 -04, Brian Masney <bmasney@redhat.com> wrote:
->
->> Introduce a new helper that recursively walks through all children and
->> their descendants, calculating the lowest common multiple (LCM) of their
->> rates. For the requesting child, it uses the requested rate; for other
->> enabled children, it uses their current rate. This is useful for
->> determining what parent rate can satisfy all children through simple
->> integer dividers.
->>
->> Link: https://lore.kernel.org/linux-clk/aUSWU7UymULCXOeF@redhat.com/
->> Link: https://lpc.events/event/19/contributions/2152/
->> Signed-off-by: Brian Masney <bmasney@redhat.com>
->> ---
->
-> Thanks a lot for this proposal, it is very interesting.
->
->>  drivers/clk/clk.c            | 54 +++++++++++++++++++++++++++++++++++++=
-+++++++
->>  include/linux/clk-provider.h |  2 ++
->>  2 files changed, 56 insertions(+)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index 47093cda9df32223c1120c3710261296027c4cd3..bb602c07df9a2b523a72e1e0=
-5cc3a27956e7198b 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -14,6 +14,7 @@
->>  #include <linux/err.h>
->>  #include <linux/hashtable.h>
->>  #include <linux/init.h>
->> +#include <linux/lcm.h>
->>  #include <linux/list.h>
->>  #include <linux/module.h>
->>  #include <linux/mutex.h>
->> @@ -838,6 +839,59 @@ void clk_hw_set_rate_range(struct clk_hw *hw, unsig=
-ned long min_rate,
->>  }
->>  EXPORT_SYMBOL_GPL(clk_hw_set_rate_range);
->>=20=20
->> +/**
->> + * clk_hw_get_children_lcm - Calculate LCM of all children's rates recu=
-rsively
->> + * @hw: The parent clock hardware
->> + * @requesting_hw: The child clock that is requesting a rate change (ca=
-n be NULL)
->> + * @requesting_rate: The target rate for the requesting clock
->> + *
->> + * This helper recursively walks through all children and their descend=
-ants,
->> + * calculating the lowest common multiple (LCM) of their rates. For the
->> + * requesting child, it uses the requested rate; for other enabled chil=
-dren, it
->> + * uses their current rate. This is useful for determining what parent =
-rate can
->> + * satisfy all children through simple integer dividers.
->> + *
->> + * Returns: The LCM of all non-zero rates found in the subtree, or 0 if=
- no valid rates.
->> + */
->> +unsigned long clk_hw_get_children_lcm(struct clk_hw *hw, struct clk_hw =
-*requesting_hw,
->> +				      unsigned long requesting_rate)
->> +{
->> +	unsigned long lcm_rate =3D 0;
->> +	unsigned long child_rate;
->> +	struct clk_core *child;
->> +
->> +	lockdep_assert_held(&prepare_lock);
->> +
->> +	hlist_for_each_entry(child, &hw->core->children, child_node) {
->> +		/* Use requesting rate for the requesting child, current rate for oth=
-ers */
->> +		if (child->hw =3D=3D requesting_hw) {
->
-> This is not working on my end (imx8mp) because the clock requesting the
-> rate is not identified correctly. Here you use the hw clock, but in the
-> imx8mp case there are many composite clocks which are made of inner
-> core clocks (like gate, divider and mux). I believe we should iterate
-> over
+MediaTek HDMI PHY driver registers the hdmtx_clkdig_cts clock at runtime
+[1]. When this patch is applied, the following boot error appears:
 
-I meant "made of inner hw clocks" here. Just to be more clear, if my
-understanting is correct:
-- requesting_hw is the hw clock associated to the composite clock
-- child->hw is one of the inner composite clocks
-So the comparaison cannot work. Iterating over the core clock therefore
-solves this incompatibility.
+10018300.hdmi-phy: error -EEXIST: failed to register clk 'hdmtx_dig_cts'
+  (0xffff0000018539a0)
+10018300.hdmi-phy: error -EEXIST: Failed to register PLL
+10018300.hdmi-phy: probe with driver mediatek-hdmi-phy failed with error
+  -17
 
-However, while trying to understand better the values of the pointers
-there, I realized the initialization of the various inner hw->core
-pointers are made all over the place (?) and in certain cases, they are
-even not done at all. For instance, a composite clock with a single
-parent would not go through __clk_hw_set_clk(), at least not during
-registration. Either this never happened before, or maybe some
-recalc_rate() spuriously set it by chance (because __clk_hw_set_clk()
-calls are made a bit everywhere), or maybe because this problem was not
-really a problem without the v2 rate parenting Brian is proposing.
+The original problem is caused by having the HDMI PHY node disabled in the
+DTS, which is usually the dtsi default, but it does not happen if the
+HDMI PHY is enabled. If this is merged I think this error would show
+up on all the affected SoCs.
 
-Anyway, I think this situation can be fixed easily, so I will propose
-something on top of this series.
+[1] https://github.com/torvalds/linux/blob/a804c5742bff224d4cb4d25dd383554d598be32b/drivers/phy/mediatek/phy-mtk-hdmi.c#L140
+--
+Luca
 
-Thanks,
-Miqu=C3=A8l
