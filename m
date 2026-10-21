@@ -1,99 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792588892;
-	b=H20Uud8BmH0kyEqB5O3wX3mOXWhBPTkBMzgR7HjYRuEjQVd77juZq947VZSQilgnqv/N
-	 RcIAa/6LXgixKvs0Ceaf1tzn44uEYoc8ZCDQyETHPytv6WjqPrsGRrvWXk+uNttnEjFP7
-	 JZV5XhrESc5c8v3QG705umcZbKvQEsd5XbWLLc/PgySJSYgd42Hl4mQxwa0HE7CkrX7ZI
-	 06AVrVadgTzm38MbSP+4tKwBNaITc2GJeTVhh69sWMQvH2NzTHJ5+9Ic8fzdrLA4Nnd57
-	 Ub4FO749o63TACFce9oxtk6V+GrCAA+4s9mvwG48ndSkzuFaMCWlQjFmddJ93HIweMg==
+	t=1792589545;
+	b=dkXF1NsTGbQ8MRhEhANGrTb2g3Evblj/d7tObrUedcM6k0KIGoisUy6SKyCZQ/L5S4wj
+	 SUVJjsJK/rKdEC0Pv4VoC2Vm4EMKMuD5GtEn4tx8Pnbx6uj/DWbVenWMWtSuA42L33GBz
+	 MitrwBhogJ/nr5DKFTSgAo1z9t+Snzg4VO4EdKdbwXA1Fs+wyCEEznUNfFgVK+DP6iHmp
+	 OF0jUu5Q+J5uQ5NPaRUd3uBNzsFrg/tZOtRUTx+Acbxxy5gx+/WwP8Vk7/iS3YOyQZkno
+	 stGoDc36qrPUwn53G43sIKyiD0HgLuhGHO3lFABkdoUXSPumRaasieokWvvByBdZNDg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792588892;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 In-Reply-To:References:Date:Message-ID:MIME-Version:Content-Type;
-	bh=30kfx+f5OMbhpYMMm98MeKilykOWKFy2lcIJ5DpS4GQ=;
-	b=kY4qipZ6ZeygiXNSgyDLVXcCW6o4NUSUBSPs0W0J8OHpGKI/o3Cy4rXgvckUpHYEIgqH
-	 LVh3BSqWHaKIYf8xP5VN3uMg1UU+bR3WDe6jJ8yIlQj6x7AM9ThIOnm/HkyR4HZHHWnCu
-	 rdP6WQpQtAzx/F2uPOvdSR+n6WsL3a5yutxAkFNiL1P8Bghg6ABZkgisiQw1o2Qos5FnU
-	 Yic8aPll7Qio+EeiodQzc16z1Z0HxlvnmVU/ZTNlfCDeTvkMi734LnvcpkpQqoBHWTIPD
-	 7zQpfZqfs3cGK0UW1kyemZIBUSZtxcU0Uc+CoseWome74nOSX3Uce5GRVHTCYhvgKwg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792589545;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=nkCVEX498q5doKwO4jXKTlZE0yPa4CJnNDHG1G24Xpc=;
+	b=JEIVuG+1gkx9pnIQi3eooiihGRQdW2P6TkS2EIrx7FpilFo+AWiHTg/E2cOUfuHX0h87
+	 h1kaJgWPu5MrW3WTqqyNSUNsfMr9pl/ZB0wQWS04W9YaH1wnSp74ZayxnK0NjnaAxQh78
+	 DCZMTr6XJD+lFB17bfmTkjKKr2k7G9xaWw71oZZv5LWEUSjgOAoGthXhDoXvjeKamtpJ7
+	 fY/NONa0AFchfC7IchFHxhZ8qrWXx8ez0e1/KpwGHkHTN+il1pPeCHcDIgjGRANXWQvyu
+	 04croo3MYg/9C7dqIcyAEqySXMQC62NGiQMRkuEbjqqJw5OtYtS9Qu3Ul2lXwFXIPfA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=k5ciNEZs;
-	arc=none smtp.remote-ip=209.85.128.42
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="mk42l/ej";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804B8606A320
-	for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2026 13:21:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 804B8606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCBB606A31A;
+	Wed, 21 Oct 2026 13:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=k5ciNEZs
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4a16aaf2067so8497915e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2026 06:21:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1792588890; x=1793193690; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=30kfx+f5OMbhpYMMm98MeKilykOWKFy2lcIJ5DpS4GQ=;
-        b=k5ciNEZsaiNxruR+YrSCyEPMx2qRt9HQXeO7PNXhzBssF85TH8ZetQ64YGvjMTENTS
-         1Q9zOQYT1GFjpslrzIasuWqfcwgITWXIq7da+67tTgZevL8crYb6/YuuFXNi0wlmVTOt
-         XwwWbHjdih/afI3BDCdxlZ9eQBQSyctMyG2A0enrUAEUpNIsKE5om8PlqpQegEKFS2xP
-         ZvkPAnZskjDouUPsifX6mC4muBaFbnw4u9Stx0hZEFNtO0kZ7qh7/X1WxNPDBcNhSxHT
-         rFOrZXLF7VqqU3Wew8mkuEAFOJk+xlSHDwaTt3CF8DPj0/x1EHw6wRNuPJWj+cYSh8+/
-         oFaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792588890; x=1793193690;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=30kfx+f5OMbhpYMMm98MeKilykOWKFy2lcIJ5DpS4GQ=;
-        b=BC/DipFJDFtwEWpti7L5fGmTy49pkrZZwNYvfpe+bMFnwsT38cyuEad57oJIExQlad
-         i3H8DEUQzOdJEZvDpTXKwMGUIkH5175t3BZxrhBwOffbLBBE5SsgyOAuASHFM1kQ79wg
-         Ej79i3Br95dfcVEqInG/O8W0hflkm9u8cyoWeVpS+VkxBw92PU9gD4ak6O3GK/owHW3Q
-         iVsFS8db0/NygAFJhIT16X3mo8EyF8co2VCBYjRweQa/Ws6B7proFAZRt9Vc9dbPYeGF
-         oldBaeSa4bBkIQn6+hn6h+r2WzE77mZ3GUyXjWSbgZdZmTv+sruMWPug7Q6q1WgAtpg+
-         Ab2A==
-X-Gm-Message-State: AFq9FYLLiuunET8hnLi5Z9xtWA04sowiAo+XmcVBOO8St/IYt6UX/2Fv
-	u4H3/KIvQDeUCrh+QjdXPf39zq6WlN0K8v/1nngKieHPs8KmEhNoe/WNKihfURLUu9w2MUT1ypx
-	XWNSVtJ8=
-X-Gm-Gg: AYBFou1TRPEm1cBaKcheW+hMfHnzpq9lwwKMxsKNMx7dapkPDZsHjMwHWJTDv7ITAEN
-	MpJXBot6V2CToTUDT00LobOJp+I57pzMkmhAyhIcXyQRRWkePZgRnNGBJZ826lgflU83bqlQ9+Y
-	ujOEdMjlgx+kN7MfhiFQ5j2kmdDArWWfjiYvi+RZMe32WLcZiToegvpPuwGSdSCfauN0r0oIN8g
-	o4sogu4L3N5Rh567w4uqyB2mqhonjfIGCOSwYjC/w2xx1oRjVIJyBGTBv7kgxVPTSPoTJsgAVeB
-	8f+A2HN04HRfKyleTPChCdHHB9k5T6s2AuVp68VQIMug8ncWwi9MT8X50RKu8Dlp/eYsY9/Fxsl
-	unWATkmZWGoqScH8fcy2noVtpO4p0cFGLw+bH4Sv+dy5ZxjDzR32sU96EOIMbrvKhknFvDnb6x1
-	WiQocpvVhl7DL2lzbMNsqL4DK5fkaLXyT/QUoGcMH/GgrHtKgkmxsRSGV9brhxb5MQ9KYo2B9j9
-	CXv9/gnUFXnBy+W6ra8eewMEsmFUaSaZYwnj3i9p1CMKgeiT0cYta8Ll3E9NKJbQ/NQs7Dne+Y=
-X-Received: by 2002:a05:600c:6097:b0:4a1:d456:ddc8 with SMTP id 5b1f17b1804b1-4a1fdaef8b0mr39864365e9.7.1792588888044;
-        Wed, 21 Oct 2026 06:21:28 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1f8016c93sm112679735e9.5.2026.10.21.06.21.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2026 06:21:25 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Ryan Brue <ryanbrue.dev@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
- <jbrunet+clk@baylibre.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 2/2] clk: mediatek: mt6795: fix the FHCTL DDS mask width
-In-Reply-To: <e8389c1c-e858-4171-adff-5bd94909120c@gmail.com>
-References: <20260912-mt8173-fix-dds-mask-width-v1-0-3d0c0292c85c@gmail.com>
- <20260912-mt8173-fix-dds-mask-width-v1-2-3d0c0292c85c@gmail.com>
- <88272aca-2a9e-4a75-b7f2-4f7aac8b6d18@collabora.com>
- <1j33ux8of7.fsf@starbuckisacylon.baylibre.com>
- <12e0953c-5181-45f2-b409-05163ab2a031@collabora.com>
- <e8389c1c-e858-4171-adff-5bd94909120c@gmail.com>
-Date: Wed, 21 Oct 2026 15:21:24 +0200
-Message-ID: <1jy0brgpez.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mk42l/ej
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 938E61F000C4;
+	Wed, 21 Oct 2026 13:32:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792589544;
+	bh=nkCVEX498q5doKwO4jXKTlZE0yPa4CJnNDHG1G24Xpc=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=mk42l/ejngg/OGmJIFtOludEcT5A6LxrDM8rI5d85T5gZqki4USMgKkPF355ijiCN
+	 1w7K+izU3cHj8PVBDMDKgsXBNRJrKA5XuA0WHFEJuXLT4EHBkX5lyTTKC2Gwq829SO
+	 UIRkvRTFscKEyKkHBpNs15NS4BO4447Ev33gs4Tb4JYGPL/aWzRtWGEjPIg9Z0zzIy
+	 h31NDQSXad1LyKKJ8Fq1vAJPIwA0gPr4AsqPnY+NDl+z9snrIGgK+sHl1p61CgPntJ
+	 OuHjAeFwtcCopcuRotb8Mc0skiqh2QiPvgmV1K6P43VgWZ5YBUbQOC/WFHsn2jYun+
+	 G7/sukh4OKe1g==
+Message-ID: <sashiko-outbox-180310@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 3/5] clk: imx8mp: Allow adjusting the video PLL rates
+ for the LDB clock
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Miquel Raynal" <miquel.raynal@bootlin.com>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, Frank.Li@kernel.org
+In-Reply-To: <20261021-ge-clk-lcm-v1-3-246cc35b5ffb@bootlin.com>
+References: <20261021-ge-clk-lcm-v1-0-246cc35b5ffb@bootlin.com>
+ <20261021-ge-clk-lcm-v1-3-246cc35b5ffb@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 21 Oct 2026 13:32:24 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -102,43 +60,86 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain
 
-On sam. 17 oct. 2026 at 18:03, Ryan Brue <ryanbrue.dev@gmail.com> wrote:
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] clk: imx8mp: media_ldb registered with imx8m_clk_hw_composite_bu=
+s_flags()
+--
 
-> On 9/28/26 7:22 AM, AngeloGioacchino Del Regno wrote:
->>
->> Please collect the changes that I've reviewed for this cycle... I'll 
->> start
->> sending PRs from the next one.
->>
->> Thanks!
->>
->> Cheers,
->> Angelo
->
-> Hi Brian, Jerome, and Stephen,
->
-> Gentle ping, in case these slipped through the collection Angelo asked 
-> for above: this two-patch series (FHCTL DDS mask width, mt8173 and 
-> mt6795) and the related mt8173-mfgtop fix [1], both reviewed by Angelo 
-> on 14 Sep. Neither is in clk-next yet, and both still apply cleanly to 
-> it. If it's too late for this cycle, just let me know, and I'll ask 
-> Angelo to take them in his PR for the next one.
+commit 0eadafd0202ef3a4c96dd126be3ffec604e5e8eb
+Author: Miquel Raynal <miquel.raynal@bootlin.com>
 
-Hi Ryan,
+clk: imx8mp: Allow adjusting the video PLL rates for the LDB clock
 
-If you do not see it in the clk-next now, it means we missed it and it
-too late for this cycle, sorry.
+This commit adds the CLK_SET_RATE_PARENT flag to the IMX8MP_CLK_MEDIA_LDB
+clock so that rate changes can propagate to the parent video PLLs.
 
->
-> [1] 
-> https://lore.kernel.org/all/20260913-mfgtop-no-clk-api-power-on-v2-1-b84771a3d5bd@gmail.com/
->
->
-> Best regards,
-> Ryan Brue
+> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+> index fe6dac70f1a15..3540992b89409 100644
+> --- a/drivers/clk/imx/clk-imx8mp.c
+> +++ b/drivers/clk/imx/clk-imx8mp.c
+> @@ -753,7 +753,7 @@ static int imx8mp_clocks_probe(struct platform_device=
+ *pdev)
+>  	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] =3D imx8m_clk_hw_composite("media_m=
+ipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
+>  	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] =3D imx8m_clk_hw_composite_bus_flags("m=
+edia_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET_RAT=
+E_PARENT);
+>  	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] =3D imx8m_clk_hw_composite("media_cam2_p=
+ix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
+> -	hws[IMX8MP_CLK_MEDIA_LDB] =3D imx8m_clk_hw_composite("media_ldb", imx8m=
+p_media_ldb_sels, ccm_base + 0xbf00);
+> +	hws[IMX8MP_CLK_MEDIA_LDB] =3D imx8m_clk_hw_composite_bus_flags("media_l=
+db", imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RATE_PARENT);
 
--- 
-Jerome
+[Severity: Medium]
+Should IMX8MP_CLK_MEDIA_LDB in imx8mp_clocks_probe() be registered with
+imx8m_clk_hw_composite_flags() instead of
+imx8m_clk_hw_composite_bus_flags()?
+
+In the i.MX8MP CCM register map, offsets 0xa000..0xc300 (including
+media_ldb at ccm_base + 0xbf00) are IP peripheral clock slices rather than
+bus clock slices (0x8800..0x9300).
+
+Using imx8m_clk_hw_composite_bus_flags() passes IMX_COMPOSITE_BUS to
+__imx8m_clk_hw_composite() in drivers/clk/imx/clk-composite-8m.c:
+
+	} else if (composite_flags & IMX_COMPOSITE_BUS) {
+		div->shift =3D PCG_PREDIV_SHIFT;
+		div->width =3D PCG_PREDIV_WIDTH;
+		divider_ops =3D &imx8m_clk_composite_divider_ops;
+		mux_ops =3D &imx8m_clk_composite_mux_ops;
+	} else {
+		div->shift =3D PCG_PREDIV_SHIFT;
+		div->width =3D PCG_PREDIV_WIDTH;
+		divider_ops =3D &imx8m_clk_composite_divider_ops;
+		mux_ops =3D &clk_mux_ops;
+		if (!(composite_flags & IMX_COMPOSITE_FW_MANAGED))
+			flags |=3D CLK_SET_PARENT_GATE;
+	}
+
+Passing IMX_COMPOSITE_BUS selects imx8m_clk_composite_mux_ops (intended for
+the dual SEL_A/SEL_B glitchless mux on core and bus slices) instead of
+clk_mux_ops, and drops CLK_SET_PARENT_GATE (added in commit 936c383673b9 to
+gate IP peripheral clock slices during reparenting and avoid clock
+glitches).
+
+In drivers/clk/imx/clk.h, imx8m_clk_hw_composite_flags() is available for IP
+peripheral clock slices that need extra clock flags while keeping
+composite_flags set to 0:
+
+#define imx8m_clk_hw_composite_flags(name, parent_names, reg, flags) \
+	_imx8m_clk_hw_composite(name, parent_names, reg, \
+			0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT |  flags)
+
+>  	hws[IMX8MP_CLK_MEMREPAIR] =3D imx8m_clk_hw_composite_critical("mem_repa=
+ir", imx8mp_memrepair_sels, ccm_base + 0xbf80);
+>  	hws[IMX8MP_CLK_MEDIA_MIPI_TEST_BYTE] =3D imx8m_clk_hw_composite("media_=
+mipi_test_byte", imx8mp_media_mipi_test_byte_sels, ccm_base + 0xc100);
+>  	hws[IMX8MP_CLK_ECSPI3] =3D imx8m_clk_hw_composite("ecspi3", imx8mp_ecsp=
+i3_sels, ccm_base + 0xc180);
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261021-ge-clk-lcm=
+-v1-0-246cc35b5ffb@bootlin.com?part=3D3
