@@ -1,111 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792660068;
-	b=ukAspsjAwKNSx7Byqtf2wkXv7VFcR1dLAbT7WqFjh4DHSwG8okB3Oel0Y10GSYW4Knrq
-	 aTOMmgYRZIzSBfRFSbQVE94PaekaED5EpIvHkvYrLzFN28Nnm7wBMyce5NMU02C3t0Yd9
-	 Auy0vI5mydpspP/4bo69ex4pvM8jtrMpGCeVvHE3/BSGPo9NN/g3OkEaKrwHberjCbwy1
-	 RCybXqzrHFKFGYiy6UiPPEMjcdk2vdvnU/k+143knGQASbEQON4CTmA9786FxvqIVELUv
-	 Twik+cWl8rrqmyKZXvhI6WeLZdanDnf+xtvLNL0lVqWmC3Eh1TWfLAj2Qrw60wBmfJw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792660068;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-Spam-Details-Enc:
-	 X-Authority-Analysis:X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=0qu+A/DrU84k7oCYC9haIMhGuasFxzNnyZOIHQ+S7Jg=;
-	b=VLFeMIWYLQ6mELLItXvh1OEPtc32zsL/fpQKVJkRwYFMEO/kxrnzF8SSH0T0ik5bNkIt
-	 Q5UiAFv+kB3ZHwzvyClLn04M1ZyJojeKHtS8ulLl/IHdiSPKWEMu8alZaXuVoGsw3Gh9B
-	 /oCOZF8CWu6U95tKLIaKbn/BoBNY3JdWd+g7wtSzng/OxhFouJNA69ZSKY8rDkfzBzCRx
-	 3Xm4fIPPUd61ZElxOfbemOgJKtBUElMUqiVdnf/uX99HkuSUEB0GVYLqyUp1u9A5x0t10
-	 bN73jMvjei40VmPsVQY+Kx/zhHbWl+pFBF3n1mplWhADDs1D2FRFEOmFhaxUIwNPeKg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=R4vyjIq2;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=EunLO7FC;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792660962;
+	b=MBVPoFuV2QKaMz/BvaDSHUeGZmwQ2/7ZYAfi4bfhimeKzrNMgMesYztda94bkcuEBHVZ
+	 MzlZw34tVssmPbY5b/52U2PsHXRtF+IL3bRmky2aOYUYiiDdO/LtQtOXRnYDe3uz8Kbpu
+	 z85AycKrZg3ul2EJP01tz04ENdltunHb4z3wXxFfx95B9IeW9hq8y7rWAeI8mKNYZJ3KV
+	 0LY8z1cluWijRv9Youqaza+qDc588OoP4ZEiNEEEYLi71C8XKHI53qs3X613ue1htx3MV
+	 B/2CvFepif2TU09B3spmZRV6zKcGsFKp/7h3MCfnpVm6e3lBl28OoS9ZU7d5NaL4z2Q==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792660962;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=qqxhTJtPctCyqw/BO+NTJMLL3v9u0VV3WUg4oH05iZA=;
+	b=Lnl+UDZjByi+swPaEfbSesuVoExsDnnbaEcit/XvlzIvzpytw2i6u9TJTrvRBDISwvHV
+	 vFDTXOVhIs/jlYJvsMDUIvxPi0nMFNGGsA0Rw+R4yRokiAIvBL+Z8e3XmmrWUjCJ2vS1S
+	 2T8OiJhkl/H0f1mDzvDddBKp5ADhg2xZeun2iFJcmaQHIgMlWnEADI3a/AIDajQBjjQi/
+	 I9DYAaZftn16QpFfA6zGUIiTCqvePsXRD0g2nT9w7nuX3do1QP+SDsv2XbxcBABV1BBZ4
+	 BWn4WlETHryqeJ0SNjv0kCC51UEvklDNBAuZkI3FN/G5ODTK7gPkCHerlUHza306a3Q==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=CjMWOcYp;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37803606A320
-	for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 09:07:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 37803606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA08E606A323;
+	Thu, 22 Oct 2026 09:22:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AA08E606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=R4vyjIq2;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=EunLO7FC
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69M70A4X4110717
-	for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 09:07:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0qu+A/DrU84k7oCYC9haIMhGuasFxzNnyZOIHQ+S7Jg=; b=R4vyjIq2Cag29CA8
-	G4x6yXFU9bVRvJaCxHAHKK21/QDksBa4W3iQwfghy4OArd1fa5BAEKpgNFuMm811
-	s4ZDQkT9Q+pzZ5EJSN8yqQQ+aC3d5umK7YrCL5VNf15qEOzj5NmSjjiM+BomNkXm
-	KFdAQEJYZie7sRvpKs04i++qDNl2H4HS6U1+yiJINSiBApcfSR2BKKFJ9Rbs7neA
-	eylqhMXVkzVtV638K/yOFEVmjZuju2tCXHN8SNpAzbITz0TmuM9KM5P4uXCuBsxl
-	Nafotz2yQ980oZBjQYHLbTvGak4/gGUS3eNhz01F1IGcQcndKt7skDzR/su9U7UP
-	nQzhTQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hf93ahmv5-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 09:07:47 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93edac5877bso48456185a.1
-        for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 02:07:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1792660066; x=1793264866; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=0qu+A/DrU84k7oCYC9haIMhGuasFxzNnyZOIHQ+S7Jg=;
-        b=EunLO7FC6tEUbG/IxFwpfvusOCqC43hYuhEo4vfvPmUPiZChiO4Pjx4bBcID9E8UA2
-         HJIW2Y7CYSTuplHvI/s6iNk8ZhKxec1EBoZbxgErpKLG4TUqFKRBJSI4AzkzL/rCr2tW
-         +r3R476asrvw0fMpwu2rw+Mm19ODh5S7eRAmEUKuDwnWctperTu1/+QCdTbsnkHi8nGT
-         6CGD9j9Wwfix4rduGCwUCJV+twg18Ty3tSx2mvvfpC9BoGWbysWi8X10cacO1J2ov61v
-         GuPXiK12eGRrsOjt8rm/gh58AvSTHoU3t8gdgCDemGyHOWNRtfUQ5r0p4esbDvu8ZfSe
-         lmug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792660066; x=1793264866;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=0qu+A/DrU84k7oCYC9haIMhGuasFxzNnyZOIHQ+S7Jg=;
-        b=oTghDXGL7twAyeQoK5AevoLkMsaLnSc3LAvr5TuJSwoDTCu+jP3iQoZpPr7EXZvXFv
-         9PLZPRaKUNKkJ3wBLmNthoh4h9o+WEU4c3lgdl54CaJP5NxPvyG/q6mD1ZiOEJa+oS48
-         d4DklKdPIOGd5U1SPcHZHKAfMV3txrTQ5c9Zzim70aPUhbWclCACE5dwKLHSJaNL/+NH
-         SC+4C4knGsfzfqxb5k4vh/3nmVEFm8TwotYjYtlttFzMCEVwTjU51ICerwhHxJG/NqQx
-         UVKWAYJPLS1b9ECJ+LBP5anocqeN+1eLFNWwYA+sBCGIHFC3uXYBlZLdszQM1Z0LCFsR
-         DK+g==
-X-Forwarded-Encrypted: i=1; AKwUvBx4BEaKu2mMFWRdrSh/bOPkjNocev15LWIrJQtIkgA4NlGDeaOf4UwTblyc+gNPyit3p5pB8xsJVko=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKCz4FxD/tTeUQ8iusT5M6isB8VQe/mp5KvrmR5fNdHwcJ864yv
-	EuSnsNvfSEWEjaWheuaRX/1FMbOPJDzyF7mTDr1txHlR2ymzIoQzhyfokIfhlZxR8cwiigQgmtM
-	91qb2vPtZ6erxKLYnk60xNB6ZFMPeiRRuRVb7XHboKPOHVHxar5pOwl5QpMVRdcM=
-X-Gm-Gg: AYBFou0UxSZK4x9kDzXbwAh9FwDcYw/lTKvDafBlh0xLLU9j4/81yCN6T+Etvh/GC5R
-	1/RqmPRiHpkFCls9XFB3BVF8YiMdUpcosioepVpNBoVON64JrYIy4B0vpHzGtb+WEoxZxRoihhA
-	WvsbGCc50TTY1j/iKYmktbJgyNnKMIYYOzxycH7YoAGc+uAxmZfEXTPW41j7KUrxmutPf8SPlib
-	TbYJd9Plv+La1hDxIj5nWSRRqxXT35+PgyM3Vwt2VWch+fhRhLwKnTiqnpiEtLbhYArMj/xKPBV
-	I6U2nn5qdF268alp9ouNf66yezD6dNFKwLSeRtu6oCP/YjcYVAjS270saqsdb6sQZZaGKWfTASW
-	74YNuK7gio+vp7OezAstGLA==
-X-Received: by 2002:a05:620a:6084:b0:93f:1fc5:f07b with SMTP id af79cd13be357-93f57eedc95mr955689285a.2.1792660066457;
-        Thu, 22 Oct 2026 02:07:46 -0700 (PDT)
-X-Received: by 2002:a05:620a:6084:b0:93f:1fc5:f07b with SMTP id af79cd13be357-93f57eedc95mr955683985a.2.1792660065814;
-        Thu, 22 Oct 2026 02:07:45 -0700 (PDT)
-Received: from [192.168.226.26] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c468a4ffcf7sm85290266b.24.2026.10.22.02.07.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Oct 2026 02:07:45 -0700 (PDT)
-Message-ID: <8cc2f172-0df4-4494-bc1e-3124cd25afca@oss.qualcomm.com>
-Date: Thu, 22 Oct 2026 11:07:39 +0200
+	dkim=pass (2048-bit key, unprotected) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=CjMWOcYp
+Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
+	(Authenticated sender: pza@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 612022004FF;
+	Thu, 22 Oct 2026 11:22:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1792660958;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qqxhTJtPctCyqw/BO+NTJMLL3v9u0VV3WUg4oH05iZA=;
+	b=CjMWOcYps4eodHQ/s7GPzencBo2C4SpUH2PMkLLZyuJdQbRfjV+1nZY1goYKC71teKkHSC
+	n0tocyMGun3g/fKCB2hUJvz7sYnmOrga67IlxvjEIs/ceqig2aEB4uw2nYGI7R4rv9secK
+	0iN6hQ1q8oF5v9ipuTScKeXtl1Msu8rPrOokI6LZZOAsQ2sNyeYMmMXEFPaKioq6K2AjH3
+	RJce8gIk6THb2yP6wcDHdX5yGvvpWGPs2x69RAEe3MhSWl0M10oR1Psp2iVFBl4sZf7YRn
+	uokfWiyw2qntCIwy1r6H1bBZS5cbxO0gSuR2BEYYRyZeO3sXvMcMdQjPEd3lPg==
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1792660958; a=rsa-sha256;
+	cv=none;
+	b=bxgLHvqvs5tv6FeBl3YzHZC3Y6D7ILoDdSoFhbKcRMyDnL8+MCtU5EiMv9Mo+b+i2OqaA2
+	PEIyJNchn6FykrWCFTlTCWrKcNsu3WAkto0iAOK5Z6+mr61wljAwKv9RrGGGASJjMx4A0N
+	kvirEK2k6ezMCov/eTBMZPT34W/eMtNlGdNF/HBP3N+34EByPQnkxjGQ2weKUBgdAmoUhk
+	JxHKnih6spVxTSvZLL784K3r/TqnXYbWiZZwLYn2VPRhggQEEc4qvQveazYgXePDOOzDDp
+	HtFxMWvmtWttAJIxkOP0VSmdSgh70P0PmSPNFSNHbzDcH+tBtqKxeXS3fAvR2g==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1792660958;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qqxhTJtPctCyqw/BO+NTJMLL3v9u0VV3WUg4oH05iZA=;
+	b=FRXtW2bJ0F+6W++thfASxvZu13hbSvDCTPNqTwriF92QXgbvqLQ22wfBb+/3HTVjJw24B5
+	LP9Gip2zS465cUDzUecBSAXu3WPOkmc3r5lEizRd855I9U1UAt3AWDwLzJOUcqL/pdmtto
+	lE/YYJ1uSH4WyZGM1wixHQraLa2PAh2VSP0pD+vAbOnhTnj07qjbgFMopHPXHxf7j7OVzH
+	45gIRAIuRgbYMFuVKW6xPywhkkm/zF//zeWJrXg/jEkVTm96N/CGuzBKpYeYNZ9IUMUvjf
+	ZCNht5bX5n3WXTb/g8wRDLwxNamxz2McjlZPH2Q5l+Qc91xNyDFiY445ejGvZg==
+Message-ID: <8afa649f656a136eb302a0ab76f9f76ca7bfe9e6.camel@pengutronix.de>
+Subject: Re: [PATCH 07/18] reset: zhihe: add A210 support
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: gaohan@iscas.ac.cn, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Paul Walmsley	
+ <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou	
+ <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Zhiguo Zhu	
+ <zhiguo.zhu@linux.alibaba.com>, Stephen Boyd <sboyd@kernel.org>, Brian
+ Masney	 <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Thomas Gleixner	 <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, Samuel
+ Holland	 <samuel.holland@sifive.com>, Daniel Lezcano
+ <daniel.lezcano@kernel.org>,  Anup Patel <anup@brainfault.org>, Icenowy
+ Zheng <uwu@icenowy.me>, Drew Fustini <fustini@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>
+Date: Thu, 22 Oct 2026 11:22:38 +0200
+In-Reply-To: <20261022-a210-init-v1-7-5e438f972d24@iscas.ac.cn>
+References: <20261022-a210-init-v1-0-5e438f972d24@iscas.ac.cn>
+	 <20261022-a210-init-v1-7-5e438f972d24@iscas.ac.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -115,75 +104,163 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/5] arm64: dts: qcom: sdm845-hdk: add display card
- overlay
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jessica Zhang <jesszhan0024@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Abel Vesa <abelvesa@kernel.org>, Ulf Hansson <ulfh@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20261019-sdm845-hdk-v5-0-4aa7e22cd0ed@oss.qualcomm.com>
- <20261019-sdm845-hdk-v5-5-4aa7e22cd0ed@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20261019-sdm845-hdk-v5-5-4aa7e22cd0ed@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIyMDAzNiBTYWx0ZWRfX4lsZs0Sp6YhK
- sTiweCjlFdH8HFP6AjTCkyceUEfjau2PKdEdOagvH32piq9XpUAKWvkugGHIVorCe+O5tWWoMlH
- TI7W2eJ+GV43p34Dsyrxm+IbJE7n2erol2AC8F7QjkbqRBgHYfHhLj5xLSPS2eneSjHWeCEhQ2L
- xj+du9UhzAhVd1L3+yw5L6sbuCC/XvNsLobJziNUjZrnbnowFePixeH1kY4o4U8p+GRfwmx+h8j
- PMLhd5FMX+sS9sAthL3MAzwJd27o7rOZ/9vO0Unrcte0e4JWm2r+y4d6L/25JpEprrGAb+2PfW5
- uRScREP3V6bthj7ekAVWKUblMOsILjYhpowqBnj32tTLoeSvjZ/vVALC7jfHiFlhPmDfvsorbob
- 9q4qWs20hiLPH1xu3n17t+R1WboQJHLaiQ547mreP0b1E8QpxmoKecGqqFoVe9fJXL2fD2JA4Es
- 3O2tc6zHDFKIVOYUw+w==
-X-Authority-Analysis: v=2.4 cv=H7FOUOYi c=1 sm=1 tr=0 ts=6ad9d263 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=EUspDBNiAAAA:8 a=amIBzKCq339hV6VJ64AA:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-ORIG-GUID: PG_8bmgMLvqawm0tzcrsS_p7uKPm_JWI
-X-Proofpoint-GUID: PG_8bmgMLvqawm0tzcrsS_p7uKPm_JWI
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIyMDAzNiBTYWx0ZWRfX8R2ioNvEgL9E
- OT9A2SfPBSrJnQ9HBa5kovXxqJ7kHmVx0/b1mg9tYW6KDD1tShDfWLA8VBrd2muyFC/QrwIWUj1
- p8yTOEQhRo9EsPA5CUGQ0QdDFAULvwk=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-22_03,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 lowpriorityscore=0 bulkscore=0 malwarescore=0
- phishscore=0 adultscore=0 spamscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610220036
 
-On 10/19/26 11:18 AM, Dmitry Baryshkov wrote:
-> The SDM845 HDK can be fitted with the display card, carrying a Truly
-> NT36850 WQHD dual-DSI panel. Here it is powered by the PMI8998 LAB/IBB
-> and WLED, and it is mutually exclusive with the on-board LT9611 HDMI
-> bridge.
-> 
-> The configuration follows the vendor kernel, with the bias rails at the
-> 5.5 V default of the LCD mode.
-> 
-> Assisted-by: LLM
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+On Do, 2026-10-22 at 03:53 +0800, Han Gao via B4 Relay wrote:
+> From: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
+>=20
+> Add support for A210 reset banks and linked reset signals. Check
+> register readback to detect rejected writes.
+
+Please explain why the linked reset mechanism is required. To me it
+looks like these should be separate resets.
+
+> Signed-off-by: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
+> Co-developed-by: Han Gao <gaohan@iscas.ac.cn>
+> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 > ---
+>  drivers/reset/Kconfig      |  11 +
+>  drivers/reset/Makefile     |   1 +
+>  drivers/reset/reset-a210.c | 589 +++++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 601 insertions(+)
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 3168ab1eea88..039e8a4046dc 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -428,6 +428,17 @@ config RESET_UNIPHIER_GLUE
+>  	  on UniPhier SoCs. Say Y if you want to control reset signals
+>  	  provided by the glue layer.
+> =20
+> +config RESET_ZHIHE_A210
+> +	tristate "ZhiHe A210 reset controller"
+> +	depends on OF && (ARCH_ZHIHE || COMPILE_TEST)
+> +	default ARCH_ZHIHE
+> +	help
+> +	  Build the reset controller driver for the ZhiHe A210 SoC.
+> +
+> +	  This driver provides reset control for the various hardware
+> +	  blocks in the A210 SoC. Say Y if you are building a kernel
+> +	  for the ZhiHe A210 platform.
+> +
+>  config RESET_ZYNQ
+>  	bool "ZYNQ Reset Driver" if COMPILE_TEST
+>  	default ARCH_ZYNQ
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 45ad17062462..3620e94e4539 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -52,5 +52,6 @@ obj-$(CONFIG_RESET_TI_TPS380X) +=3D reset-tps380x.o
+>  obj-$(CONFIG_RESET_TN48M_CPLD) +=3D reset-tn48m.o
+>  obj-$(CONFIG_RESET_UNIPHIER) +=3D reset-uniphier.o
+>  obj-$(CONFIG_RESET_UNIPHIER_GLUE) +=3D reset-uniphier-glue.o
+> +obj-$(CONFIG_RESET_ZHIHE_A210) +=3D reset-a210.o
+>  obj-$(CONFIG_RESET_ZYNQ) +=3D reset-zynq.o
+>  obj-$(CONFIG_RESET_ZYNQMP) +=3D reset-zynqmp.o
+> diff --git a/drivers/reset/reset-a210.c b/drivers/reset/reset-a210.c
+> new file mode 100644
+> index 000000000000..38bad400d6b8
+> --- /dev/null
+> +++ b/drivers/reset/reset-a210.c
+> @@ -0,0 +1,589 @@
+[...]
+> +static int a210_reset_update(struct reset_controller_dev *rcdev,
+> +			     unsigned long id, bool assert)
+> +{
+> +	struct a210_reset *rst =3D to_a210_reset(rcdev);
+> +	const struct a210_rst_signal *signal;
+> +	unsigned long flags;
+> +	u32 value;
+> +	int ret =3D 0;
+> +
+> +	if (id >=3D rst->data->num_signals)
+> +		return -EINVAL;
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Unnecessary, the core already checks id < rcdev->num_resets before
+creating the reset control.
 
-Konrad
+> +
+> +	spin_lock_irqsave(&rst->lock, flags);
+
+If you use guard() here ...
+
+> +	do {
+> +		signal =3D &rst->data->signals[id];
+> +		value =3D readl(rst->base + signal->offset);
+> +		if (assert)
+> +			value &=3D ~signal->mask;
+> +		else
+> +			value |=3D signal->mask;
+> +		writel(value, rst->base + signal->offset);
+> +		/* Firmware can lock individual reset controls against AP writes. */
+> +		if ((readl(rst->base + signal->offset) & signal->mask) !=3D
+> +		    (value & signal->mask)) {
+> +			ret =3D -EIO;
+> +			break;
+
+... this could just return -EIO;
+
+> +		}
+> +		id =3D signal->nextid;
+> +	} while (id);
+
+Is this loop a workaround for the UART driver not handling two resets?
+
+Or do the two linked reset bits really have to be asserted, one
+directly after the other, without any other write to the same register
+in-between and without setting them at the same time? If so, why?
+
+> +	spin_unlock_irqrestore(&rst->lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+> +static int a210_reset_assert(struct reset_controller_dev *rcdev, unsigne=
+d long id)
+> +{
+> +	return a210_reset_update(rcdev, id, true);
+> +}
+> +
+> +static int a210_reset_deassert(struct reset_controller_dev *rcdev, unsig=
+ned long id)
+> +{
+> +	return a210_reset_update(rcdev, id, false);
+> +}
+> +
+> +static int a210_reset_status(struct reset_controller_dev *rcdev, unsigne=
+d long id)
+
+Do you actually need this for any consumer?
+
+> +{
+> +	struct a210_reset *rst =3D to_a210_reset(rcdev);
+> +	const struct a210_rst_signal *signal;
+> +	unsigned long flags;
+> +	bool asserted;
+> +
+> +	if (id >=3D rst->data->num_signals)
+> +		return -EINVAL;
+> +
+> +	/* The logical reset is asserted if any linked signal is asserted. */
+
+What is the "logical reset" in this context?
+
+When there are multiple reset lines that can be in different states,
+I'd expect this to return an error.
+
+> +	spin_lock_irqsave(&rst->lock, flags);
+> +	do {
+> +		signal =3D &rst->data->signals[id];
+> +		asserted =3D (readl(rst->base + signal->offset) & signal->mask) !=3D
+> +			   signal->mask;
+> +		if (asserted)
+> +			break;
+> +		id =3D signal->nextid;
+> +	} while (id);
+> +	spin_unlock_irqrestore(&rst->lock, flags);
+> +
+> +	return asserted;
+> +}
+
+regards
+Philipp
