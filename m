@@ -1,86 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792684655;
-	b=jz56CbSMwjPg+NOzVxzr3toBE1XVA9mg2kUOlMsj1nX3OLSuEhIL+9b/RM0afHooGlw9
-	 60s6tCFAjk/Luj3mFC0B2uSuT8Wi3kwJFKIy/Lndexn+lxKmBMFF3mvWbWEbKshpYCS6s
-	 yGroDvlwjjrZVT3aHHEw9dtJTdV82nuE0vJOkdWeIV+n3kDsv6trZygfedcPLXA1BMqnX
-	 XiJAiQC7OehX6wjGQRa0kZgYowAWrNn2bxKXVSWd2nb7E1r3DISyGEtC1H5rEKkPCzHEs
-	 hzs4VldNw4DoJxk6CExNLG/lII91qcU+/OR4f4wil+mH4D4S2G6F1TCgH90EMmOHUCA==
+	t=1792685587;
+	b=eVMIDDSwPf+NJeDIIJSaE23lRX/Tq97wdWsYdzCSh9HjFQBgfH6vndhI1VZB92qtMZvm
+	 DRjAYOaAgt8+Pd87iLqJ3jrdO0HyDG6bzQiWfWxq2/UkVKUJ8gY8/kzBjTuMVf7wUXz6u
+	 fhNW01kNV1+OdAeJ4Wo4Rs9ppy7DQYUE0v9T/Jk4Y1BAlZby6UGWXbBMmPiBWCHtYgN0b
+	 sT5WWB9XAxiXbqs5t9ESm0jwMLxoyZoxM+Gq3iUTsASNSeD/BjXPwsInGHAsvJFxxBRRf
+	 VCOgtW9h913OC5rSP4HitoCYLzdqTvP0GRk672nrZSg2zM7MAWMTcB76vGz1hLdlwrQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792684655;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:Date:Subject:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
-	 X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
-	bh=bCyNFGNC5QAv5YoFhc+XguwmFWmtXQoZNr4gvZ9GhCA=;
-	b=4lsArQ/8nBcaFo3MvCkxOOBM70cR9xP1mfdDB6Ep8kcGEvCawhtS670fDKMQAh/c6qcJ
-	 6LmdTuzsAIIZLSRiQfrGvw7z2HHP8XeWjSsV7GlfO5Dpt6PNUYpI/Bv5eS7L9TdeQquJy
-	 6AhxV7E8Qk+3rttBrRwFpyr+8KGPbT7f2cCBBuzUUf+/f2toYCPRCsgb/ZDgfGpYWlebj
-	 yTtESdRR0RZIN68Cdjgejlch74H3lJ/Ei0g+6C/WOcCzVY4LZOBtoK5fjdcloP+uW9CE6
-	 XfimywckO00cGcAxT9v1E5VZ3sJDdgFzY3lw+R9hhQg19897MVU0J2Giv8UHwRIT+Sw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792685587;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=6VnMjKMpiGmEsV8NW8gW+gz8xbXvE1RU25n4brd4kQ4=;
+	b=lKqyCtIdlViG0LmmH9lRwgNJz3BtMfo7B7t4q/gARapwF50VN4Po7ETdY/bMLP4fVB1g
+	 n94S5sLrgKhdj3TIjDl1YeFSCY9DhbHRpWA1Z7qi/FfOhn/nPOIBj2/HfZIOf6s3HRdu5
+	 SU8xegheCzTJ0GDa0fb8BlYsP2V7qgfOg0WoN/T19sF+QnajKMb7qYi0tLVwG0gbknzp0
+	 W++hH9jBZatTfOo/850DwGG+gkNWYTxAE+HDE41ujVmUcx1yWOXTxy4yqNQ7tWJFcV8yN
+	 0ZZOa4z1APNI/vC82rur2VA2RK5FloL/s+2zARmR9FGgOO82LyVsnH6aGR5OLqiJt4w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=mopEgmah;
-	arc=none smtp.remote-ip=209.85.128.41
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=abW1Dmhq;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15FC606A31B
-	for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 15:57:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B15FC606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81432606A32A;
+	Thu, 22 Oct 2026 16:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=mopEgmah
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a2001dd4e7so21891775e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 08:57:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1792684653; x=1793289453; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=bCyNFGNC5QAv5YoFhc+XguwmFWmtXQoZNr4gvZ9GhCA=;
-        b=mopEgmahGi2LZ/MpaHEcX854qnec/UxPeuBg/hGh/Z9nqojzxFpELxS5fnOV7Ltg+9
-         Gu+BuVPMR0i/9krCj8jdSbsiDRrbzaKK9/0x3Oh6BYf7feHfZLq9C/pypGvH48fJZQNS
-         OoENBd9sWkdVdvP/6JYfb+eE8DWXUUVdJMnUm5YLcqYZ093zo6wW5TD8XhCyDUKicZAD
-         wdO2+v0YRLJ3j4PWEOrXP8MJnwWGsaqquCM89EB0hjYjSodI1yeqMauHYpgy9nEeDDWv
-         uPCsmw/luwwKeW3N7URKQ/DABaSPe9OHD4HGV0R7QRryY5gehPYFx5qxdbr8ZAoE7vx+
-         QIaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792684653; x=1793289453;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=bCyNFGNC5QAv5YoFhc+XguwmFWmtXQoZNr4gvZ9GhCA=;
-        b=P0Et2/9Ov3u+Qb/SlmT3J3/HLRMXZ+qopRkR4B6MVS31Je4w91Gu9sLdsZ72KHexVb
-         ZASjzZMyVDd4WkDazpnkLPdl7KXQcBqGQVd86yHTcdn10wn7JfQgqx/2zxgwuA0loZhU
-         65+Vpy8FtVskkrXGenNf6PGnucmbgO1nsOTQbyY+mSXMUpEhWKlX+laaDCiKNSD460Em
-         mCkGXlf2Ttck+w9/g+Y+sJikYEXEIAZTeaBr5eDJWl1io/wWbwCfO4Upvg+ozbvbAQvs
-         gOWJEoq/BjxBC+UPuH3O9Sa6uSPUp/7FAgfKqCgCrJaBCXmxNz4QEaberqRt3WngUKei
-         750Q==
-X-Gm-Message-State: AFq9FYKNWMiLrgC9Da1QT4TPSBHy95tXBweXR2uML6mXL2RazBlNhiwP
-	gn+dEa5D7UKE0aII0tvTHIxBIWedyjRM+m/C7R/lNMzKqhkQcJ7ZeGn4TFhO4rIYE9A=
-X-Gm-Gg: AYBFou0OIdRQTrTiLNR/8COmWorJOjDpOwd8ux75qRR6jDgF/BT8FUwxouGzFaEdTCQ
-	wxUXIgW/MxQg5VLXdAK+mvHZceHIgmFrCgW4sLhYeehzaY7w74etamtJ5VFss7J2pjnBpmyNhrh
-	ht5Wi5XGt+Q2PioZi5FD5OITCLmXDguSP0JEPmFflT6ottj20I5TapVHf1uZIie4yTzzfx0VbVL
-	svAMFFP4qsq1r7EI05xmP3fBqNPD0n9qtCFNs+hgYmwUWGAq6Jkb/xsnvZHfbjWsLJSKXgM/s2M
-	jHcHR6Dc7rsJFq9LDKN2N5lAQ12IP+QcMDCae1YWXsVRymEMUlTFZiSBRv3ZsA99V9eXdzSkMua
-	GkrNJbfUEd9Y2vSIJGU/JMKrLh7QyCVWZFlDtK375JjoSxQ4VUst6nFc1pI9hSDvD7AWHDHrE/q
-	olZIdI5WF1SrqXY/pJCq6WT4sLcTRr7sH5mnFBRhH5fpoZa5indsrG/AwLUJQfjhOT8jN5dK8mm
-	N4yJvGl+ZhO0zfx1ISDauKTQd9IkH2zum2cb6sm+C8ZA6LA5n/1nXC5JQBB+Z0aNEkaNLbpD9WH
-	yn09BHu4vmlQKtFpTKJZmlJPXB66
-X-Received: by 2002:a05:600c:3548:b0:4a1:e774:370c with SMTP id 5b1f17b1804b1-4a1fdd145edmr114281495e9.30.1792684652964;
-        Thu, 22 Oct 2026 08:57:32 -0700 (PDT)
-Received: from [127.0.0.1] (mob-83-225-32-96.net.vodafone.it. [83.225.32.96])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1fcd360e4sm96519725e9.4.2026.10.22.08.57.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2026 08:57:32 -0700 (PDT)
-From: Carlo Caione <ccaione@baylibre.com>
-Date: Thu, 22 Oct 2026 17:57:26 +0200
-Subject: [PATCH] MAINTAINERS: cover all the headers in ARM/Amlogic Meson
- SoC CLOCK FRAMEWORK
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=abW1Dmhq
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3BE1F031E0;
+	Thu, 22 Oct 2026 16:13:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792685587;
+	bh=6VnMjKMpiGmEsV8NW8gW+gz8xbXvE1RU25n4brd4kQ4=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=abW1Dmhq2xsBULwQDhBd1LdemPxkwVrgHelPVvVRGy5ySZR7J8nSQF6ueI1q1Rl/d
+	 1GCxiSK06osVl5hmzZM7c+2uJxmzpU0Zm2rnvutG2doRP5MykbjPGBWCUZbxzPFsM7
+	 ebyeaCM91yqvb75d1NmFUWPDMa98dV9RlqJNt1SqRlQt9wwKMrrL5494tb2UpsxA2w
+	 H85IFbgjtheCvoIB/c2HrxYCujNbjkh5lDXLss1Jer1hgDbT+22ZXoUq2JDPsm51D5
+	 LVKldllN1otU4dV61eqP4tcSjuU2Y7ukb5F/j/t/2ArCQocPnMhe29slwUx5HjVr3N
+	 0lMT9E1r3QQ/w==
+Message-ID: <sashiko-outbox-181773@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 09/27] gpio: rockchip: Add RK3572 GPIO support
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Cunhao Lu" <1579567540@qq.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, mfd@lists.linux.dev, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-phy@lists.infradead.org, linux-usb@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, neil.armstrong@linaro.org, olteanv@gmail.com, lee@kernel.org
+In-Reply-To: <20261022-add-board-ok3572-c-v1-9-0b0fd85a31ee@qq.com>
+References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
+ <20261022-add-board-ok3572-c-v1-9-0b0fd85a31ee@qq.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 22 Oct 2026 16:13:05 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -89,54 +59,111 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261022-upstream-maintainers-clk-headers-v1-1-d09dd4db01d6@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWNQQrCMBBFr1Jm7UAz2CBeRVzEdGJHbSwzqQild
- 2+qiw/vbd5fwFiFDc7NAsofMXnnKu7QQBxCvjNKXx2oJe9aIpwnK8phxDFILnWshvH1xIFDv3O
- K5P0pHV3qAtTMpJzk+7u4XP9u8+3BsexdWNcN9iE8poQAAAA=
-X-Change-ID: 20261022-upstream-maintainers-clk-headers-fc2668f41f5a
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, linux-amlogic@lists.infradead.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Carlo Caione <ccaione@baylibre.com>
-X-Mailer: b4 0.16.0
 
-The ARM/Amlogic Meson SoC CLOCK FRAMEWORK section was written when the
-GXBB and Meson8 headers were the only clock headers, and only the A1
-ones were added to it since. The headers of the AXG, G12A, A9, C3, S4
-and T7 clock controllers in include/dt-bindings/clock/ are not covered,
-so ./scripts/get_maintainer.pl does not return this section for them.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] gpio: rockchip: inverted factor of 2 in rockchip_gpio_set_deboun=
+ce()
+--
 
-Match every amlogic,* clock header, and the axg* and g12a* ones.
+commit 779e47c3ede057555631e4f8433e01c234d3e7e3
+Author: Cunhao Lu <1579567540@qq.com>
 
-Signed-off-by: Carlo Caione <ccaione@baylibre.com>
----
- MAINTAINERS | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+gpio: rockchip: Add RK3572 GPIO support
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3a19da74d00c..e5bda99b3015 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2555,7 +2555,9 @@ L:	linux-amlogic@lists.infradead.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/clock/amlogic*
- F:	drivers/clk/meson/
--F:	include/dt-bindings/clock/amlogic,a1*
-+F:	include/dt-bindings/clock/amlogic,*
-+F:	include/dt-bindings/clock/axg*
-+F:	include/dt-bindings/clock/g12a*
- F:	include/dt-bindings/clock/gxbb*
- F:	include/dt-bindings/clock/meson*
- 
+This commit adds support for the rk3572 gpio controller (version 2.7),
+including handling four parent interrupts per bank and querying firmware
+for interrupt-group pin masks via smccc.
 
----
-base-commit: 363f97a1ce635b86be7fd263d56a040fbd87bdbb
-change-id: 20261022-upstream-maintainers-clk-headers-fc2668f41f5a
+> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+> index 77b239a9a601e..35894a68b5446 100644
+> --- a/drivers/gpio/gpio-rockchip.c
+> +++ b/drivers/gpio/gpio-rockchip.c
 
-Best regards,
---  
-Carlo Caione <ccaione@baylibre.com>
+[ ... ]
 
+> @@ -209,12 +212,27 @@ static int rockchip_gpio_set_debounce(struct gpio_c=
+hip *gc,
+>  	if (bank->gpio_type =3D=3D GPIO_TYPE_V2 && !IS_ERR(bank->db_clk)) {
+>  		div_debounce_support =3D true;
+>  		freq =3D clk_get_rate(bank->db_clk);
+> -		max_debounce =3D (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
+> -		if (debounce > max_debounce)
+> -			return -EINVAL;
+> =20
+> -		div =3D debounce * freq;
+> -		div_reg =3D DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
+> +		if (of_device_is_compatible(bank->of_node, "rockchip,rk3572-gpio-bank"=
+)) {
+> +			if (!freq)
+> +				return -EINVAL;
+> +
+> +			div =3D (u64)(GENMASK(23, 0) + 1) * USEC_PER_SEC;
+> +			max_debounce =3D div_u64(div, 2 * freq);
+> +			if (debounce > max_debounce)
+> +				return -EINVAL;
+> +
+> +			div =3D (u64)debounce * freq * 2;
+> +			div_reg =3D DIV_ROUND_CLOSEST_ULL(div, USEC_PER_SEC);
+> +			div_reg =3D div_reg ? div_reg - 1 : 0;
+> +		} else {
+> +			max_debounce =3D (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
+> +			if (debounce > max_debounce)
+> +				return -EINVAL;
+> +
+> +			div =3D debounce * freq;
+> +			div_reg =3D DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
+> +		}
+
+[Severity: Medium]
+Is the factor of 2 inverted in the new "rockchip,rk3572-gpio-bank" branch of
+rockchip_gpio_set_debounce()?
+
+In the existing v2 debounce calculation in the else branch, each step of the
+24-bit debounce clock divider divides db_clk by 2 * (div_reg + 1), giving a
+period of 2 * (div_reg + 1) / freq seconds:
+
+	max_debounce =3D (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
+	...
+	div =3D debounce * freq;
+	div_reg =3D DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
+
+In the new branch for "rockchip,rk3572-gpio-bank", max_debounce divides by
+2 * freq instead of multiplying by 2 (making max_debounce 4x smaller), and
+div_reg multiplies debounce * freq by 2 instead of dividing by
+2 * USEC_PER_SEC (making the programmed divider 4x larger, which can also
+truncate the 24-bit divider for larger debounce values and implies a
+half-cycle resolution of 1 / (2 * freq) at div_reg =3D=3D 0). The commit me=
+ssage
+also does not mention a different hardware debounce divider formula for this
+variant.
+
+Note that in the existing else branch, the reason div_reg underflows when
+db_clk is slow (such as 32.768 kHz) is that rockchip_gpio_set_config() pass=
+es
+true (1 us) as the debounce argument:
+
+drivers/gpio/gpio-rockchip.c:rockchip_gpio_set_config() {
+	switch (param) {
+	case PIN_CONFIG_INPUT_DEBOUNCE:
+		rockchip_gpio_set_debounce(gc, offset, true);
+
+causing DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) to evaluate to 0 before
+subtracting 1 (while (GENMASK(23, 0) + 1) * 2 * 1000000 also overflows a
+32-bit unsigned long, and the register update below in
+rockchip_gpio_set_debounce() uses raw readl() and writel() on
+reg->dbclk_div_con instead of rockchip_gpio_readl() and
+rockchip_gpio_writel()).
+
+Should the 64-bit calculation and the div_reg ? div_reg - 1 : 0 clamp keep
+the non-inverted 2 * (div_reg + 1) divider formula?
+
+>  	} else {
+>  		div_debounce_support =3D false;
+>  	}
+
+[ ... ]
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261022-add-board-=
+ok3572-c-v1-0-0b0fd85a31ee@qq.com?part=3D9
