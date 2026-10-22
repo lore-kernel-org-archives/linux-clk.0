@@ -1,109 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792689782;
-	b=m1LPa3CBYGjMAOQNSB/ayXDELeT0LWaNhyxidwPdQAt6Um1AzICwoxqm7Tsib2xIuqKj
-	 ngJtUBqN6mrHmw9yhOzRSTn8MjbObgzatGvVf1omEWgmkVsGJ0ZIbv8c1oqQnsCCqZarx
-	 s4Z7ACEABQvc23gfvkiH8GohmnBGBUmBWH7re/IaPldTfjZAFc4DkBF8W8GbsRdQyvVW6
-	 wc2jEmioyO8uqtwwXn+XoiZnseaRMfdeprhA7yJbS8su1qVHTjz33wZ8ihUB38xrRe7tU
-	 4JxLD7q8K2SFAfokD3cIRUyrDG1/xtNpgvePbD8rV06ak4dr+BPX0U0/RzVGN7eVueQ==
+	t=1792693317;
+	b=m2AGRB/MkPytZi86yXJCM58g6pniE793zJZkESLdEn5qyBEDa+0WGrxqXbu/dEgnaCby
+	 0mCN/9rP/mr0K6HdplNR/1Ng50V+BTru1qQO6a4zmCLxKQY4QO2F6kFNMPmvuL/fSz/d/
+	 IcbCIt/c+6fO3xvh9Vt8oKvOMVkj/ilPY2V+8+cHcfjidBocZvVFN0wD9VVeVNjORI1W+
+	 1GTbvcuhhF4s+l3+7X4XcUMSjv590YH9yikHoP2a8hp+AUBxnpAqWmP8/fAkWiYyIyxlD
+	 Pte4VcLz8W3GVBzs/KmuwTEsTbt+bqMjnxaIBHihDIALb9wu4IvrDx5tY761xJcuc2A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792689782;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Gm-Message-State:X-Gm-Gg:
-	 X-Received:X-Received:Received:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Info:X-Authority-Analysis:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=w/BA3y2OoXjXB3mySNw0ub75AxUogb3EEtu7UNqKMkI=;
-	b=vc9h64/uTAzRIwjOn9oR3Sd3doH0EGkPYRs1aFEZY9w/ReeDvMwwJ34OunmVQy+HXOuU
-	 Hi6cxFc52fHGY0fbUKCZh/u+efZeoGO6lRReQKgMODUfZyKM3klYMoVgxYq4phb1hcZWR
-	 TuW7WSQ4ycshKbAV4jD8WVFE52AFf0qk8tU5FvkQoOhi2FbrbglQsXfcdLlWmURKqBVd9
-	 nPJ211VOJdFrI1++tOI71TDJjvmrOq9NMJB5dNhDRkEMDxPs4h/lmhWQz/GJiB+lh7WYA
-	 6lMSJcPjYmb8U3yflR3kChXVadUPlEmpkgm8cXOtOOVGTEFP02XaBSY50q3aEOPOgwg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792693317;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
+	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=bQE0lagaKaRPxOL0ymbiA3jEEX5u6DV2i4c9cRwYEcE=;
+	b=3NKuRYd05c8KrF/vBuo7ezsM5GFnNI8iz4u6Z0CFhTx0PnaCjMjJdeMkl8/CYvcSuHmW
+	 UjJchZ+oSc1JAX/CadWZZE/PulD9VNiUkjMHeXqTSq0qgp8vux8ld9jtGAIn8IyToZVpp
+	 R5ncANoLZIb96+QLmskv+Xq6ekWmwaW9qHZZn/QynLjz3V0YVBzsN28kg9ijum9/sjlvp
+	 d8mqScxzUQkxlvSdtvGaRtGG00p9FH88+RO/Ww3nuomuAHpILmhq8Pvm24Sfa1hZKHV0G
+	 XNjGm02u2TnUBejYxf++gCkvxtqcngJ0nBdeqI2l/IgGmxEVj7BTeYhSHpRc0kWodiQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=AnJR1bnH;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=R0RtMfQ8;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=none header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=neKW2akp;
+	arc=none smtp.remote-ip=209.85.221.45
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22ED2606A322
-	for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 17:23:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 22ED2606A322
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AD3606A319
+	for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 18:21:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 86AD3606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=AnJR1bnH;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=R0RtMfQ8
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69MG5P76618725
-	for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 17:23:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	w/BA3y2OoXjXB3mySNw0ub75AxUogb3EEtu7UNqKMkI=; b=AnJR1bnHub8n2Dsk
-	PlaY5Er+I38a5c0bYq/NZXNjg7beJBG4/NmYYsTdv94f0/U56bmbzORFuNIni27f
-	mZUqsH4R409pIXypzUTj0cix8G/DL8Jf14H8onZHRyakrjOoHAYpFR1338rkEoB9
-	IK/DLvMRa5C2LGfpH6agh4GaOZtYKl2kgYkTRAe0wjwkxBI5QQ6baEehFn8yU5yu
-	MWTDKXHaAQE/Lh+sPpnO8TR3v/AjgN/8cq5g9/TwqtcLb/QU533yvyIQvOEQ9IIH
-	voohru8LE5vILX/FPLNiFCHOFaiBwmzUnE9H3gRl8Wdh/JEBQY015K6tMhuAaKWr
-	Xj6DFg==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hfnq0gb23-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 17:23:00 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-88c768886a6so72939b3a.2
-        for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 10:23:00 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=neKW2akp
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-48dee593f18so65728f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 11:21:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1792689780; x=1793294580; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=w/BA3y2OoXjXB3mySNw0ub75AxUogb3EEtu7UNqKMkI=;
-        b=R0RtMfQ8VBuWu7jkxh9zApib3dMqZUz5M391YWF2iqybucubxJjHj3YWUNXO/EDlA9
-         IGfEBYBC8t+Pqx6Esi7Ha6WgRBXYW1l5A/j3odKli+K2meldleYUPGNmoTRXJ7576kMY
-         yh9QFcLG8zwaNS4o55x+lA+5A39tX8Mo7rFn368puOD6QuwOGqy/ApXFYn0jJHAXTlqA
-         ENohKQ+UQmBxvFFBZu9Nc9aOZFDJ9H5XenA9c7KMBA53kKlIFLiWK7gBHWIV7rxemeG0
-         fulYtoSWPaZwWb7WhfL4L0Z2TVOZhll8ThvvLdmch8ubKkv46KnfaTH9q/g/hDgrC+AE
-         E9jw==
+        d=baylibre.com; s=google; t=1792693314; x=1793298114; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=bQE0lagaKaRPxOL0ymbiA3jEEX5u6DV2i4c9cRwYEcE=;
+        b=neKW2akp4bDqZqrooArGXRxYDR5szIWCWU2hQc7KQK5dNxh4Onj9VjkPBRMiVog/ND
+         pqT50n+G9pucH0Wh1LNZR4qBIgeiyZWQQLDtlDytUM4+3tHW5qqqW2jb8baAYQn6SnvQ
+         7gZVjnUrsn+AhZap06o8cebi3L62pZw2CF4zTL9OZIpTISbsLsgPTPzhcsodXNJWHEQ1
+         lghlIreZw/DAToLPLg3GoB0YJJBaqOzZj9WDiC60O9ZiXVGErzjZ1CCFUQWiUL3Oo2JX
+         T9KBpbxFf9pxRRcFoEx9vxJ+26cH9c7IE7d7pBtDo0QYP0r7CYeZXUQfRa8RJuSIybFH
+         QW3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792689780; x=1793294580;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=w/BA3y2OoXjXB3mySNw0ub75AxUogb3EEtu7UNqKMkI=;
-        b=FnWYfCn2m3IfjXkgFqheZLKxUzPyfHq/bImfacd6hqDHk5MQqsFKGH7HDE/JoHwxny
-         k7ubIdznI+6qBIkjdQf7sLR/c/KQlOTyYYjSkGxXhoVyHlKKxkpsarE6r8w2P4obmIxa
-         N+1oWyV5z/pEFTk5rVZQx8FK27x7EBqqwiNLF1uEueL6AViskgP1x4Uyd50y19quzNKV
-         sxEK0DR1Hld49embCmZQfx2BZtzlF6B/JPkJkraN6XSp6AbFbLP41aUt+13YuG+OMREM
-         Ub+l+bCnqwODqyrFbIGrb6uDCC6/asGq66sdXs/PL6rVP0tMSvqz05WCNWJSdw3swwXz
-         bfJg==
-X-Gm-Message-State: AFq9FYKvxbnZ2J15DHn/33aPJn8IkkSeuIaVpZOla6NjtsYzVipNKPlZ
-	z4FtNP5+U3sKhkPsKrYey5B6KgzZDEPQOZpXwWNF3XNmRlZo40ZRKEy7vFACD/qfSnhpT3B9m0V
-	1VkAdbikFTDsLvSymEviTxhvLNMmGbuKhQl3kw0tSbik5e6iG2N3L82tqstuSAZA=
-X-Gm-Gg: AYBFou0cS+Jf64ziTXq2uELm/FIc1EYYLqpWZJCU/Td0R4am9baFei1dl6nKkrrWvzw
-	q7dJbyhhchmArYjIPpoKyNts0nk7hk5XaeAmWvmLZ4Y7rpJoeo6Ft+dFByUK+WF57IWlvxOqmvB
-	n5eruEjnuQ+y1zlQlfExd3Ok+NnJpCFoLVyRLaHsYN5+DQWobd4yor435sdFJy7Z0bRXkfTkahD
-	VcEn/rQjz9sHu+Inlpy8fj0nhizzgbCzCSenocpqC3Fl8OXHSRmWNQpEhP0goNrUnRSlmLviSYv
-	wkpWFNwsk6UyTvy9lmx5VhESHBIoDGbYMPuG91Nu9nOcerI3sQZFmckoDHwxwpoEGx9tsc3b3rC
-	1dBOFVkcVGSpRcGfKrISpYdzwBBh1hw==
-X-Received: by 2002:a05:6a20:3d12:b0:3e2:117a:62ff with SMTP id adf61e73a8af0-3e287e96620mr5159381637.61.1792689779603;
-        Thu, 22 Oct 2026 10:22:59 -0700 (PDT)
-X-Received: by 2002:a05:6a20:3d12:b0:3e2:117a:62ff with SMTP id adf61e73a8af0-3e287e96620mr5159351637.61.1792689779003;
-        Thu, 22 Oct 2026 10:22:59 -0700 (PDT)
-Received: from [192.168.0.195] ([124.123.194.175])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8a0895fb005sm2450502b3a.49.2026.10.22.10.22.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Oct 2026 10:22:58 -0700 (PDT)
-Message-ID: <22a87c51-4f8c-49c0-a13a-c11767f10e85@oss.qualcomm.com>
-Date: Thu, 22 Oct 2026 22:52:53 +0530
+        d=1e100.net; s=20260707; t=1792693314; x=1793298114;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=bQE0lagaKaRPxOL0ymbiA3jEEX5u6DV2i4c9cRwYEcE=;
+        b=i8QAzH26qCCbWfT9FTqgODoYRWmI2aHUp7vF6fhPLyRBTWWRgcQsIKs8Up4rQ22Hrj
+         LGXAs8n+DZKo5caQ7WIByTY2zR1vfzNfFlYBmorKsYaZP9kvRzH0Vu3wUNeEG2otTqH1
+         FFp5Vq69VaG4iTX7SFKoIql3U/se8cgt5hYH+lEaaau/JxHLvo1hA9nFrwAgB3HxPfph
+         rF2A5THFYi2lMtPKqifKj2+nyNEvqqcLVOm3leSZTLR2ay+LtCn0GHw4TQWT2IwHiROd
+         lF7lFfjPwSy2C8D9FACi4CpeJB+gZfKrYLISar5g/Wt8mNV9NyxSzrprjRoaJWG1/hwV
+         ZRkw==
+X-Forwarded-Encrypted: i=1; AKwUvBxQUn0h9oVaxO9YfrGfIHc+DFopcLYslO9vDHQsNPhKuZ01hDpqmdOEBj035qeQJsOHYxbvE24gJu0=@vger.kernel.org
+X-Gm-Message-State: AFq9FYK4+zpiq6Axx43zJ1hhY+Nj/AFF35Ua9QnTK8rWxAbMcWlBbn6+
+	IMt5QWKtIIqA/qVyCF2GU27zeoYNPM8XCddOGfNOP9wWmlAJiGi3E49qlQZF3/qB+oo=
+X-Gm-Gg: AYBFou0DC0A+Upk6nUBYNemmQg0xc5Z20TQgBUBP2us3jcb2RZV/XfMl2GYCcxLUJNY
+	6EyiaQOl6/x5UqqJp+zngkjJLPYHJ01+7GXw93C/c3tmBqcmNaCLypshUFXPdi44geSvOdQyNeB
+	GQtHzfQGV23CskGbFSW2dGZXjq8NO8JknxQ9pVg6ytFKvw8vMnKJkK0wcve3HigONwzdlxv4k9/
+	YK2H+fnPcjkl1GCL47RB9rDWeVlMN3QI628Y92d4ZaeaQrc3cKnpj0N6zYwYqDber84TuRYWzab
+	d1UYGvpS/lUUDLcSHI/ybhOB5ac+OoRNcX1y9tB6fUsW963slMK5DPmFgcI+JXfJEMoLsNAZAGZ
+	MwJ9QqXaDfHgs2QF4BsYxwYU1oaR5+75+mFZDYEa4gcKXitljY7vNM/6LDsN6+NlhPWT7wOyRwe
+	Ahxofmqe285ihbuJAARtoy1RsFGkbSjnZdZ7fOQSNWnplLl4qh3KW9tu9fnnaeO7/L2M5jDGTYh
+	jNAvj3UwcyBan9RAknfjId5f5XvtXJ8xXFoYqgGv+MEAOy0tFuoY6T6yzE48TN6r9jEpEkOnEk=
+X-Received: by 2002:a05:6000:401f:b0:48b:68:594a with SMTP id ffacd0b85a97d-48e264a328dmr12950455f8f.12.1792693313834;
+        Thu, 22 Oct 2026 11:21:53 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e379cf680sm10654f8f.20.2026.10.22.11.21.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Oct 2026 11:21:53 -0700 (PDT)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -113,93 +88,42 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] clk: qcom: dispcc-sm8750: reset the MDSS blocks at
- probe when the bootloader left them running
-To: Qianhui Xu <xiaqinghuan@mail.ustc.edu.cn>, linux-arm-msm@vger.kernel.org
-Cc: linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-References: <20261022140811.469417-1-xiaqinghuan@mail.ustc.edu.cn>
-Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <20261022140811.469417-1-xiaqinghuan@mail.ustc.edu.cn>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 0qO1M-EHm32k2cK-uLgbb_UK8xWMTTBP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIyMDA2OSBTYWx0ZWRfXxQv6IvYnB7pX
- Zwxyyso8Nd6eXaoCcOQvl210fhrNUFfEZ0tZUMPz5Fmeu7ooAqPHXVfsp8SKfustEW9J8wN+vj8
- y1pmq6FNBbBYoEJhfMUjldePxvo2jeVGmbO0ldCG7r40+Jb2vNSYYn7IY4unUtoJpD0zt6fNZaV
- yk9OSQq0n6nc5Fg8SYGG9b3jAA+8q8y3FHSEMQl9JQPFUUWGjg87woiloON9gdCwhHXxnlM9pqP
- 2GqY0Hs9hnOmn5TRidCrreoMuj4JwVIPcihYu0gj4GbPEsAytx4JWFKn/sH4ZtJ+HOVC/Ca0hkS
- jgA113uEagbWhpeeczJiCJfU4lVw05i18bwdBLvGVVgP9feN72+yffEZ8PUAo6YmQil4PCEc5O/
- aRj93k4U0GU7EBD2ZMkw/Qf0rnLPHnnDA7xe+CNSaPPTpoCzCiTB+FBdSWZlZHfNNevSrGhd0kE
- MkbgULkTkM9Vcz4IitQ==
-X-Proofpoint-GUID: 0qO1M-EHm32k2cK-uLgbb_UK8xWMTTBP
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIyMDA2OSBTYWx0ZWRfX6IlWpCbj7je7
- /Ss7hf61/PqEK1GO0/9/rq57QuFqZqMgVzqzkrAqxm9Z5lHzlIF3c8fOLYgNvkJd3qMnaO1KBXk
- JoPxrcDbPx6HRJU8JWHHsRHdg/7T8FU=
-X-Authority-Analysis: v=2.4 cv=UaHE26SN c=1 sm=1 tr=0 ts=6ada4674 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=b4qShTKTPH0tEwh9VF2HSg==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
- a=rTHtfaqMoHADTYiKZ3YA:9 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-22_05,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 bulkscore=0 clxscore=1015 spamscore=0
- malwarescore=0 lowpriorityscore=0 suspectscore=0 impostorscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610220069
+Subject: Re: [PATCH] MAINTAINERS: cover all the headers in ARM/Amlogic
+ Meson SoC CLOCK FRAMEWORK
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Carlo Caione <ccaione@baylibre.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, linux-amlogic@lists.infradead.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20261022-upstream-maintainers-clk-headers-v1-1-d09dd4db01d6@baylibre.com>
+References: <20261022-upstream-maintainers-clk-headers-v1-1-d09dd4db01d6@baylibre.com>
+Date: Thu, 22 Oct 2026 20:21:46 +0200
+Message-Id: <179269330668.4070168.14282043797701140302.b4-review@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=600; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=FHA0UZKs4ozL3194RgoWCh9aYKr2i6a1lCUCq4oBDkE=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFm3QhzWOBQZXriX7Ht+SVZ0w74cw10ndyeHsz2zKu5as
+ fFW9O60jlIWBjEuBlkxRZYa7mrxd5JaX2ZN17kNM4eVCWQIAxenAExkyx5GhgWGYu7+x3JF1PfO
+ /nCPJ0JCaSGTRt3uzHnByRxfJx05fYnhf0xUcsuTE1qzk6PWPpon7p79Z+avy3UzZyx/+/djhVH
+ 0ESYA
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
+On Thu, 22 Oct 2026 17:57:26 +0200, Carlo Caione <ccaione@baylibre.com> wrote:
+> The ARM/Amlogic Meson SoC CLOCK FRAMEWORK section was written when the
+> GXBB and Meson8 headers were the only clock headers, and only the A1
+> ones were added to it since. The headers of the AXG, G12A, A9, C3, S4
+> and T7 clock controllers in include/dt-bindings/clock/ are not covered,
+> so ./scripts/get_maintainer.pl does not return this section for them.
+> 
+> Match every amlogic,* clock header, and the axg* and g12a* ones.
+> 
+> [...]
 
-
-On 10/22/2026 7:38 PM, Qianhui Xu wrote:
->  
-> +	/*
-> +	 * Some bootloaders hand over with the display block still fully
-> +	 * active: dispcc PLLs locked and MDSS core / core_int2 / RSCC out of
-> +	 * reset. Probing on top of that live state makes the command-mode
-> +	 * panel fail to initialise (command DMA timeout, panel init -EIO).
-> +	 *
-> +	 * Assert the three block resets and release them before the PLLs are
-> +	 * configured, so the block starts from a known-zero state.
-> +	 *
-> +	 * Limited to Lenovo Elden for now: it is the only board where this
-> +	 * handover behaviour was observed and the fix verified.
-> +	 */
-> +	if (of_machine_is_compatible("lenovo,elden")) {
-> +		static const u16 elden_bcrs[] = {
-> +			DISP_CC_MDSS_CORE_BCR,
-> +			DISP_CC_MDSS_CORE_INT2_BCR,
-> +			DISP_CC_MDSS_RSCC_BCR,
-> +		};
-> +		unsigned int reg;
-> +		int i;
-> +
-> +		for (i = 0; i < ARRAY_SIZE(elden_bcrs); i++) {
-> +			reg = disp_cc_sm8750_resets[elden_bcrs[i]].reg;
-> +			regmap_write(regmap, reg, 0x1);
-> +		}
-> +		/* Hold for one full ~30 Hz frame before releasing. */
-> +		msleep(50);
-> +		for (i = ARRAY_SIZE(elden_bcrs) - 1; i >= 0; i--) {
-> +			reg = disp_cc_sm8750_resets[elden_bcrs[i]].reg;
-> +			regmap_write(regmap, reg, 0x0);
-> +		}
-> +	}
-> +
-These resets if required should be taken care or triggered from the
-Display SW driver. It is not on to the clock driver to drive these
-resets. If these are done the complete dispcc would be reset and when
-the PLLs gets reconfigured there should be a flicker observed on the
-display.
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 
 -- 
-Thanks,
-Taniya Das
+Jerome
 
