@@ -1,79 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792705989;
-	b=SJv44DSLdLO0LKhKzkabNREY9nEc41gBLEyAGaB1rfNvb0MxXs860d1hjUxYFXmis5Ib
-	 O5tw5Z7cuP13pExPx/AwuXVNY/384/MmOHNBWkAgDeAITVJFy5I4/2dYsREq2gSy/FuaT
-	 AjyunKKwSLboesAwRZGOAdH2fD93lTm/nT31saMl/EaBcTGX9nabCISkFuS3l/OOHQc9K
-	 OUSoWl8ONVoaV17qhtedhyDG2SBdmr1ltTj43cxUqh2uNJYeXBfcO1z/rdwsFQiRSWMY3
-	 +DhIPI3Z2ztLYlvjrugoZL70ao1YgBBnEYfVpwo/I6szwi1HTk3tL478DeWhKrr34iA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792705989;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=nwMxmAB7zKCpQjoLCsCioWT9WOsoTyLEjiLRi7z7+AM=;
-	b=sPa8+QbqTGD7Oet35jfs6rTc0vWMS6KONyzQXVyRwVSYxrWzkC8qvaLW/loKxL4r9E5k
-	 YpMk8y48LbZ62/5ROFGBQx5mB9hN5ntiJbxqApMtcYnVytKVslzUpWNQ65rheu+N24fuy
-	 1wua5BAGS/IedXjER3Zbnq/9PsZO9glugPZ/D4MwmtzqSMMVfDuKDuwN9pxCm1N+qwfyr
-	 kT2SoOufMdtOHtEPJ2IiCWgtBR3WWpBfouW0TGxYoymWmCYlk2Q2h7uHijP52eJHmDj7F
-	 qZE6DsRLRXAdz/TtCNQ/hueOPDJgOuo8yMY+BHzSKPj2lh5WvNY7PWS+14kMOQ56tMw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="d+/GU+Zv";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792706412;
+	b=fUN217kvJQT9NpaQW19prxx3n1yGQXocPrjJS84d7k5Pc6neTKkHxRdPJImDYITSCFcy
+	 0LQ1Mzkh2R02w7rZcnPY31OGbTYq3XBGPT1dPheT0NMV1Pxo4pO/pKLy84LlA+C9V/5Hc
+	 oc9TxhfqQfULwPgICCjGBr5oFHo8bU9PaOREw5u/NBwsKbOXlBVf65NSndiY/s9jG+8Kb
+	 6zZFJ0rL4Ql+1PN+WGip5GC2wqy85ds+70xs4iPxjIC297UYj5oFTJGG1L1GpV59vm1YM
+	 LXJ/UoZywVtducdm0hNCh8Ft0lWu6FxpANt6VSemueNauCKWbhqXRotoCHcYtZelBFA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792706412;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=8sOgvh4yLZPtERkvJnLyKpUnin0Qq6L08scw/NTm3fY=;
+	b=ysIyLIdlgYqeWj+0+VJ/+Y3u3yLtC7ufvxwjJfgRBowP9hvmSGg6XHFyusjKBeoBtW1h
+	 eAXXsTbMayDaixfWEnl3MY288A+ZOBJ5Q2XHZM/dBm5VWlzmWtwQneMkYyXnUJaGUHudM
+	 dez0ePhKRnpRKbtq6ZhIBQTCAw+zLxrebN7EYs+0hRa/RwVlhwZEwRtGPo2bKpjeIpJOW
+	 nNikN5S0c+uw5O8+w6I+OAfaSb55affynX3qJ3jdibGEMxQiKIx1CoOBeqGU4TQKP4fga
+	 UWpwoJLkJSI/ZEG50N4H5159Ilq1/5rWs0PHuESk21fg9SsWQHD2dLN7+1RGxpulsUQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=htOSli12;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8206C606A33C;
-	Thu, 22 Oct 2026 21:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F05606A319
+	for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 22:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d+/GU+Zv
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792705989;
-	b=w5mjGfeHGD9hctfHTCp6FMcjrbIvBFFcyScT7xlZdkZTBZoYqsW6/c8ZCC5tpvUDOcA/
-	 I8SOtbm1Yv8V64OOYxrk1nl1FVflcmRcGp9QR3ln0qVthiF5ZSxNczQ39RuXnV3WYfY0e
-	 4C/piG3l1hWnZQ9pfaB5URobcBRSawcetIl4NESzNBOVep8AsyeMVUwfj3eYM41D1zXt6
-	 BBO6GNts9OsXUpTjsU/v6rI9V0t6dXoCP1WNjL4+Xu4EP/HGBEOPmuVmbtvtFJDskQIFo
-	 y302/INPTHlbip5YT9ohEXHiBU1WJ6yc9ntSbXnEkP7xlcBa1S28gJ+Xw1l2dWMpilQ==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792705989;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=nwMxmAB7zKCpQjoLCsCioWT9WOsoTyLEjiLRi7z7+AM=;
-	b=due8GBSK6kKNSSd+3lUDcGSDjWciO9xAG7mkJc2UDaBHIKCwLUgk87nOsFB0glZLUrBZ
-	 C1rou37yCnihQdTJOIaHJ9a5QIlCxiVzTOMs987vYN5s4XPpRGJVYQE1PSy6wcZN+yWKY
-	 phiPoDFaS68+jjHfPDOVt6hg/x9oD35blna5yfB6Hh6uBcxEZWbcv7cJyTpppk8a35PLu
-	 yR2QdYH9EtS2tpeBVEeP6+SUByPtgMbkkJhAbF4uz7oj5XGxyw7yPco6eBhnHEg6chUTF
-	 m8x02AGOGpZQfhJn6mKOcv/U4cnH+KX5DTo0IWb1C7znzOYkfRopji/aDcozIKkSYCg==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 5AAD61F031E4;
-	Thu, 22 Oct 2026 21:53:06 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=htOSli12
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E7E61F01825;
+	Thu, 22 Oct 2026 22:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792705989;
-	bh=nwMxmAB7zKCpQjoLCsCioWT9WOsoTyLEjiLRi7z7+AM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=d+/GU+Zv9XcJhflI4ugnEoASJ/y9LaoIyzUlAKyJ0CsfKvUGFzke8MG2N4W/3KrAw
-	 j24ip0dkkeGBloWBVbaCKvBnQvtiWVJZ1VfZix7eI8WV9LZbiEiZ7fIC07OE+M644i
-	 Oh626I/cn4NLw3Imo1hIZ3+yEfjDgVjlmzz6rd5qosC3+FvRuvNqqhtPs5y3pQtwto
-	 XGH4adH8zr7lOTOKHTx0m8WyjuCRAvnimqfbOR5+q9oBCnE/pWISeMmonF/5OeFwj3
-	 InTeQHyHzAzOXW5djBlkLD1GjFFQHcl09cjRkJCxkiLtoRHUluqN3IvzMxv1mxBN3g
-	 srH6JgZ66WyUQ==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id CF13341F99;
-	Thu, 22 Oct 2026 21:53:05 +0000 (UTC)
-From: Ronald Claveau via B4 Relay <devnull+linux-kernel-dev.aliel.fr@kernel.org>
-Date: Thu, 22 Oct 2026 23:52:41 +0200
-Subject: [PATCH 3/4] clk: meson: g12a: fix swapped VID_PLL and VID_PLL_DIV
- clock ids for g12b
+	s=k20260515; t=1792706411;
+	bh=8sOgvh4yLZPtERkvJnLyKpUnin0Qq6L08scw/NTm3fY=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=htOSli1215KYpG5FM61DDaMEIRDy8GOeLIolELaVBtUDP7eToIG5FzS0koX/cElLs
+	 XZjenwAplNt9WKZ2l92XbTCpgfVzKO4C1Owk2B5zl781R7u8U+VQ5K0ICsaH5b/khe
+	 2+8m5gIce3H8Ovy8zga+RwE6QycKrGrYbqlWFq/2oNONZZ8DZBT/odlqM7zluIyUXs
+	 oQgJigwLRQwd7RDZL4K3dYFTxgtRDx5JfMMll3qjyKSPv091PAEV9MConxPHGy7lMm
+	 Pi327pdl++dqwKgtM5VueIoXYZQqiCvBPpJnfidQyVe7q0rypzX/p22Z/o+LEzdjKq
+	 zeIuUYUrv/EtQ==
+Message-ID: <sashiko-outbox-182086@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 1/4] clk: meson: g12a: fix fclk_div2p5 multiplier
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Ronald Claveau" <linux-kernel-dev@aliel.fr>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, neil.armstrong@linaro.org
+In-Reply-To: <20261022-fix-g12a-clk-v1-1-e2bd8f3f1afa@aliel.fr>
+References: <20261022-fix-g12a-clk-v1-0-e2bd8f3f1afa@aliel.fr>
+ <20261022-fix-g12a-clk-v1-1-e2bd8f3f1afa@aliel.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 22 Oct 2026 22:00:11 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -82,66 +59,93 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261022-fix-g12a-clk-v1-3-e2bd8f3f1afa@aliel.fr>
-References: <20261022-fix-g12a-clk-v1-0-e2bd8f3f1afa@aliel.fr>
-In-Reply-To: <20261022-fix-g12a-clk-v1-0-e2bd8f3f1afa@aliel.fr>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Jian Hu <jian.hu@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Ronald Claveau <linux-kernel-dev@aliel.fr>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1163;
- i=linux-kernel-dev@aliel.fr; h=from:subject:message-id;
- bh=8rtE4N9DTIQOCn9hKMflNgrg74QraAIVcHNIzm/ZuJM=;
- b=owGbwMvMwCWm1SvKXP3cUInxtFoSQ9at1n0s9qH3l+eu4Wm6GXlp6aT5T9/8n/DwbMqtNSfj3
- fe2JItO6ChlYRDjYpAVU2Tpn2t54t3lo2e+7lFPgZnDygQyhIGLUwAmcpGfkWESw7Y2JtWzi/Yy
- JB8P2ZTEZvXz8VmF0K7WNfw1alv5j/ExMnSVMu23YbFfeEHhf/N21WM3+GZdD65abmjvvlXNdp/
- AVB4A
-X-Developer-Key: i=linux-kernel-dev@aliel.fr; a=openpgp;
- fpr=DFD863F61375BF917F0012173953305EF1D0EC3E
-X-Endpoint-Received: by B4 Relay for linux-kernel-dev@aliel.fr/default with
- auth_id=744
-X-Original-From: Ronald Claveau <linux-kernel-dev@aliel.fr>
-Reply-To: linux-kernel-dev@aliel.fr
-Content-Transfer-Encoding: 7bit
 
-From: Ronald Claveau <linux-kernel-dev@aliel.fr>
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] clk: meson: g12a: incorrect rate for g12a_fclk_div2p5_div due to 4=
+ GHz parent
+--
 
-In g12b onecell data table CLKID_VID_PLL points to g12a_vid_pll_div
-and CLKID_VID_PLL_DIV points to g12a_vid_pll. So the ids are swapped.
+commit 63eec9c39f2ccd77037a929408928c357e150075
+Author: Ronald Claveau <linux-kernel-dev@aliel.fr>
 
-Swap the ids back to their right entries.
+clk: meson: g12a: fix fclk_div2p5 multiplier
 
-Fixes: d43628e9bca6 ("clk: meson: g12a: Add support for G12B CPUB clocks")
-Signed-off-by: Ronald Claveau <linux-kernel-dev@aliel.fr>
----
- drivers/clk/meson/g12a.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This commit changes the multiplier of g12a_fclk_div2p5_div in
+drivers/clk/meson/g12a.c from 1 to 2 so that its fixed factor ratio becomes
+2/5 instead of 1/5.
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index 07105b2089c3..0a738c3c7fb5 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -4849,9 +4849,9 @@ static struct clk_hw *g12b_hw_clks[] = {
- 	[CLKID_HDMI_PLL_OD]		= &g12a_hdmi_pll_od.hw,
- 	[CLKID_HDMI_PLL_OD2]		= &g12a_hdmi_pll_od2.hw,
- 	[CLKID_HDMI_PLL]		= &g12a_hdmi_pll.hw,
--	[CLKID_VID_PLL]			= &g12a_vid_pll_div.hw,
-+	[CLKID_VID_PLL]			= &g12a_vid_pll.hw,
- 	[CLKID_VID_PLL_SEL]		= &g12a_vid_pll_sel.hw,
--	[CLKID_VID_PLL_DIV]		= &g12a_vid_pll.hw,
-+	[CLKID_VID_PLL_DIV]		= &g12a_vid_pll_div.hw,
- 	[CLKID_VCLK_SEL]		= &g12a_vclk_sel.hw,
- 	[CLKID_VCLK2_SEL]		= &g12a_vclk2_sel.hw,
- 	[CLKID_VCLK_INPUT]		= &g12a_vclk_input.hw,
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index d0d4c7b6dc827..4ec5f15daf980 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -995,7 +995,7 @@ static struct clk_regmap g12a_fclk_div7 =3D {
+>  };
+> =20
+>  static struct clk_fixed_factor g12a_fclk_div2p5_div =3D {
+> -	.mult =3D 1,
+> +	.mult =3D 2,
+>  	.div =3D 5,
+>  	.hw.init =3D &(struct clk_init_data){
+>  		.name =3D "fclk_div2p5_div",
 
--- 
-2.43.0
+[Severity: High]
+Won't setting .mult =3D 2 here cause g12a_fclk_div2p5_div and g12a_fclk_div=
+2p5
+to report 1.6 GHz instead of the expected 800 MHz when clk_fixed_factor_ops
+calculates the clock rate?
 
+Unlike the other g12a_fclk_div*_div clocks in drivers/clk/meson/g12a.c, whi=
+ch
+use g12a_fixed_pll (~2 GHz) as their parent:
 
+drivers/clk/meson/g12a.c:
+static struct clk_fixed_factor g12a_fclk_div5_div =3D {
+	.mult =3D 1,
+	.div =3D 5,
+	.hw.init =3D &(struct clk_init_data){
+		.name =3D "fclk_div5_div",
+		.ops =3D &clk_fixed_factor_ops,
+		.parent_hws =3D (const struct clk_hw *[]) { &g12a_fixed_pll.hw },
+		.num_parents =3D 1,
+	},
+};
+
+g12a_fclk_div2p5_div is parented directly to g12a_fixed_pll_dco (~4 GHz),
+before the g12a_fixed_pll post-divider divides the DCO by 2:
+
+drivers/clk/meson/g12a.c:
+static struct clk_fixed_factor g12a_fclk_div2p5_div =3D {
+	.mult =3D 2,
+	.div =3D 5,
+	.hw.init =3D &(struct clk_init_data){
+		.name =3D "fclk_div2p5_div",
+		.ops =3D &clk_fixed_factor_ops,
+		.parent_hws =3D (const struct clk_hw *[]) {
+			&g12a_fixed_pll_dco.hw
+		},
+		.num_parents =3D 1,
+	},
+};
+
+Because g12a_fixed_pll_dco runs at ~4 GHz (3,999,999,938 Hz, as also seen in
+g12a_mpll_50m_div which divides g12a_fixed_pll_dco by 80 to get 50 MHz),
+dividing g12a_fixed_pll_dco by 5 with .mult =3D 1 already produces the 800 =
+MHz
+rate (799,999,987 Hz, or g12a_fixed_pll / 2.5) expected by consumers such as
+gpu_opp_table in arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:
+
+arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi:
+		opp-799999987 {
+			opp-hz =3D /bits/ 64 <799999987>;
+			opp-microvolt =3D <800000>;
+		};
+
+With .mult =3D 2 and .div =3D 5 on g12a_fixed_pll_dco, wouldn't fclk_div2p5
+report ~1.6 GHz (1,599,999,975 Hz) and cause downstream dividers such as the
+Mali GPU, NNA, VDEC, VAPB, and MIPI ISP clocks to program a /2 divider and
+run at half their requested frequency?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261022-fix-g12a-c=
+lk-v1-0-e2bd8f3f1afa@aliel.fr?part=3D1
