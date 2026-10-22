@@ -1,56 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792679185;
-	b=p4PFmpSMpdUBkfveZfL6+4olACoXg7FVi+qWs0EEnolVb9zf7NdsoLWecpHLkmSzEQ3s
-	 XoS+642j7LnpX3dNsX8WwVTYfzRyca5TEw5IsCSQmz2W0/OMUsq8tqa9DETtH7zRN62uX
-	 8S96dZ85VAjMq+RF+dqEQMGmZxD8SFYE36B3wugHXVAbd5Hri7P8XQ8+SG8JewDlUMxlY
-	 xeddS40LKLAQkPE6hZcP7m2uYMSTcc0ZIJT9p55HzgSAkvmi4iAEKSvxy2rN4EBRdpUOs
-	 W79bhpwTtXQ0Pa1xYBF8YqqrkBmsXOrd2hO6aP2wUW4h6bOFrubRZJaZB1bTayvgRZg==
+	t=1792684655;
+	b=jz56CbSMwjPg+NOzVxzr3toBE1XVA9mg2kUOlMsj1nX3OLSuEhIL+9b/RM0afHooGlw9
+	 60s6tCFAjk/Luj3mFC0B2uSuT8Wi3kwJFKIy/Lndexn+lxKmBMFF3mvWbWEbKshpYCS6s
+	 yGroDvlwjjrZVT3aHHEw9dtJTdV82nuE0vJOkdWeIV+n3kDsv6trZygfedcPLXA1BMqnX
+	 XiJAiQC7OehX6wjGQRa0kZgYowAWrNn2bxKXVSWd2nb7E1r3DISyGEtC1H5rEKkPCzHEs
+	 hzs4VldNw4DoJxk6CExNLG/lII91qcU+/OR4f4wil+mH4D4S2G6F1TCgH90EMmOHUCA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792679185;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=8h8OXWqqtzOcuHWP8HSyVX5O+/mE3tXrALm3cLcMPOs=;
-	b=jjvB4wIZ4wTHTdWJEIJI1NaCJlSkk5LVANpDhDOCKipetZpyfqPNzF0FWI1nl++GK8ru
-	 Nm0QjUMp666helDmOmMClOm230eHNuYzGiTDSrxSIxkD4xZKq0Xp+lWLnTUybjuCHDuG4
-	 iPUmdZThY9GeYGQo38WinkzQAUxnsPZkxi0bz+NqMG+Ie/5rlHLe5YCXI119XtwZfQswN
-	 Z0DSIiekZj/vGVWghS0QnC/kThS+mhDK2Sc1FrLYQpuPudMvvKQAe9kFTQeaBp87mPLeU
-	 XEkpJfqS//a8MHpx44eKcIn29/h8Pc/vEqNn7lcEZV2E377yXlk67wWBj0WPC9QZh2Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792684655;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:Date:Subject:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
+	 X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=bCyNFGNC5QAv5YoFhc+XguwmFWmtXQoZNr4gvZ9GhCA=;
+	b=4lsArQ/8nBcaFo3MvCkxOOBM70cR9xP1mfdDB6Ep8kcGEvCawhtS670fDKMQAh/c6qcJ
+	 6LmdTuzsAIIZLSRiQfrGvw7z2HHP8XeWjSsV7GlfO5Dpt6PNUYpI/Bv5eS7L9TdeQquJy
+	 6AhxV7E8Qk+3rttBrRwFpyr+8KGPbT7f2cCBBuzUUf+/f2toYCPRCsgb/ZDgfGpYWlebj
+	 yTtESdRR0RZIN68Cdjgejlch74H3lJ/Ei0g+6C/WOcCzVY4LZOBtoK5fjdcloP+uW9CE6
+	 XfimywckO00cGcAxT9v1E5VZ3sJDdgFzY3lw+R9hhQg19897MVU0J2Giv8UHwRIT+Sw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LoXqAE8m;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=mopEgmah;
+	arc=none smtp.remote-ip=209.85.128.41
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8CC606A319
-	for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 14:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15FC606A31B
+	for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 15:57:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B15FC606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LoXqAE8m
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 159AB1F000C1;
-	Thu, 22 Oct 2026 14:26:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792679184;
-	bh=8h8OXWqqtzOcuHWP8HSyVX5O+/mE3tXrALm3cLcMPOs=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=LoXqAE8masGGNwano1UoePt8lyOHA8dr1s5YceEcbLKjGE16pgXRZFLP3MPk0E3gR
-	 teHDDPoh9fhny3iPx22hbkV1nNkyGwOytyt9wbi97YnbWgpRMUx0oeQ3A/XzchYlDi
-	 xzv8ygdJNgvac0Ld1No+yufHu0CPD1shQYSgn5tuTXvRmflHOJzqjAwcscouK8EJL9
-	 NcsnM5dktvdUOjCEBUyHZhdikyyXSoYNptpXA9ULpI5z0HO2VN6Jsfs4rH9W3UscBs
-	 HgvCjCr2ypi9+owOGcm9qWd/hn0dmK3lNBpwhMUGpzbUbKSecphMy4zx5qY0AMsfZv
-	 MDl2DyZ5FpQvQ==
-Message-ID: <sashiko-outbox-181631@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH] clk: qcom: dispcc-sm8750: reset the MDSS blocks at
- probe when the bootloader left them running
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Qianhui Xu" <xiaqinghuan@mail.ustc.edu.cn>
-Cc: linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
-In-Reply-To: <20261022140811.469417-1-xiaqinghuan@mail.ustc.edu.cn>
-References: <20261022140811.469417-1-xiaqinghuan@mail.ustc.edu.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 22 Oct 2026 14:26:23 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=mopEgmah
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a2001dd4e7so21891775e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 22 Oct 2026 08:57:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1792684653; x=1793289453; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=bCyNFGNC5QAv5YoFhc+XguwmFWmtXQoZNr4gvZ9GhCA=;
+        b=mopEgmahGi2LZ/MpaHEcX854qnec/UxPeuBg/hGh/Z9nqojzxFpELxS5fnOV7Ltg+9
+         Gu+BuVPMR0i/9krCj8jdSbsiDRrbzaKK9/0x3Oh6BYf7feHfZLq9C/pypGvH48fJZQNS
+         OoENBd9sWkdVdvP/6JYfb+eE8DWXUUVdJMnUm5YLcqYZ093zo6wW5TD8XhCyDUKicZAD
+         wdO2+v0YRLJ3j4PWEOrXP8MJnwWGsaqquCM89EB0hjYjSodI1yeqMauHYpgy9nEeDDWv
+         uPCsmw/luwwKeW3N7URKQ/DABaSPe9OHD4HGV0R7QRryY5gehPYFx5qxdbr8ZAoE7vx+
+         QIaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792684653; x=1793289453;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=bCyNFGNC5QAv5YoFhc+XguwmFWmtXQoZNr4gvZ9GhCA=;
+        b=P0Et2/9Ov3u+Qb/SlmT3J3/HLRMXZ+qopRkR4B6MVS31Je4w91Gu9sLdsZ72KHexVb
+         ZASjzZMyVDd4WkDazpnkLPdl7KXQcBqGQVd86yHTcdn10wn7JfQgqx/2zxgwuA0loZhU
+         65+Vpy8FtVskkrXGenNf6PGnucmbgO1nsOTQbyY+mSXMUpEhWKlX+laaDCiKNSD460Em
+         mCkGXlf2Ttck+w9/g+Y+sJikYEXEIAZTeaBr5eDJWl1io/wWbwCfO4Upvg+ozbvbAQvs
+         gOWJEoq/BjxBC+UPuH3O9Sa6uSPUp/7FAgfKqCgCrJaBCXmxNz4QEaberqRt3WngUKei
+         750Q==
+X-Gm-Message-State: AFq9FYKNWMiLrgC9Da1QT4TPSBHy95tXBweXR2uML6mXL2RazBlNhiwP
+	gn+dEa5D7UKE0aII0tvTHIxBIWedyjRM+m/C7R/lNMzKqhkQcJ7ZeGn4TFhO4rIYE9A=
+X-Gm-Gg: AYBFou0OIdRQTrTiLNR/8COmWorJOjDpOwd8ux75qRR6jDgF/BT8FUwxouGzFaEdTCQ
+	wxUXIgW/MxQg5VLXdAK+mvHZceHIgmFrCgW4sLhYeehzaY7w74etamtJ5VFss7J2pjnBpmyNhrh
+	ht5Wi5XGt+Q2PioZi5FD5OITCLmXDguSP0JEPmFflT6ottj20I5TapVHf1uZIie4yTzzfx0VbVL
+	svAMFFP4qsq1r7EI05xmP3fBqNPD0n9qtCFNs+hgYmwUWGAq6Jkb/xsnvZHfbjWsLJSKXgM/s2M
+	jHcHR6Dc7rsJFq9LDKN2N5lAQ12IP+QcMDCae1YWXsVRymEMUlTFZiSBRv3ZsA99V9eXdzSkMua
+	GkrNJbfUEd9Y2vSIJGU/JMKrLh7QyCVWZFlDtK375JjoSxQ4VUst6nFc1pI9hSDvD7AWHDHrE/q
+	olZIdI5WF1SrqXY/pJCq6WT4sLcTRr7sH5mnFBRhH5fpoZa5indsrG/AwLUJQfjhOT8jN5dK8mm
+	N4yJvGl+ZhO0zfx1ISDauKTQd9IkH2zum2cb6sm+C8ZA6LA5n/1nXC5JQBB+Z0aNEkaNLbpD9WH
+	yn09BHu4vmlQKtFpTKJZmlJPXB66
+X-Received: by 2002:a05:600c:3548:b0:4a1:e774:370c with SMTP id 5b1f17b1804b1-4a1fdd145edmr114281495e9.30.1792684652964;
+        Thu, 22 Oct 2026 08:57:32 -0700 (PDT)
+Received: from [127.0.0.1] (mob-83-225-32-96.net.vodafone.it. [83.225.32.96])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1fcd360e4sm96519725e9.4.2026.10.22.08.57.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Oct 2026 08:57:32 -0700 (PDT)
+From: Carlo Caione <ccaione@baylibre.com>
+Date: Thu, 22 Oct 2026 17:57:26 +0200
+Subject: [PATCH] MAINTAINERS: cover all the headers in ARM/Amlogic Meson
+ SoC CLOCK FRAMEWORK
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,208 +89,54 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261022-upstream-maintainers-clk-headers-v1-1-d09dd4db01d6@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWNQQrCMBBFr1Jm7UAz2CBeRVzEdGJHbSwzqQild
+ 2+qiw/vbd5fwFiFDc7NAsofMXnnKu7QQBxCvjNKXx2oJe9aIpwnK8phxDFILnWshvH1xIFDv3O
+ K5P0pHV3qAtTMpJzk+7u4XP9u8+3BsexdWNcN9iE8poQAAAA=
+X-Change-ID: 20261022-upstream-maintainers-clk-headers-fc2668f41f5a
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, linux-amlogic@lists.infradead.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Carlo Caione <ccaione@baylibre.com>
+X-Mailer: b4 0.16.0
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
-s) to consider:
-- [High] clk: qcom: dispcc-sm8750: unconditional MDSS reset in disp_cc_sm87=
-50_probe()
-- [Medium] clk: qcom: BCR resets in disp_cc_sm8750_probe() do not reset loc=
-ked PLLs
-- [Medium] clk: qcom: dispcc-sm8750: undocumented compatible in disp_cc_sm8=
-750_probe()
-- [Medium] clk: qcom: dispcc-sm8750: raw BCR regmap_write() without mask or=
- readback
---
+The ARM/Amlogic Meson SoC CLOCK FRAMEWORK section was written when the
+GXBB and Meson8 headers were the only clock headers, and only the A1
+ones were added to it since. The headers of the AXG, G12A, A9, C3, S4
+and T7 clock controllers in include/dt-bindings/clock/ are not covered,
+so ./scripts/get_maintainer.pl does not return this section for them.
 
-commit 996de5a901e9074e1f51bf1b7638e333551726e6
-Author: Qianhui Xu <xiaqinghuan@mail.ustc.edu.cn>
+Match every amlogic,* clock header, and the axg* and g12a* ones.
 
-clk: qcom: dispcc-sm8750: reset the MDSS blocks at probe when the bootloade=
-r left them running
+Signed-off-by: Carlo Caione <ccaione@baylibre.com>
+---
+ MAINTAINERS | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-This commit adds a board-specific reset sequence in disp_cc_sm8750_probe()
-for "lenovo,elden" that asserts and deasserts three display block resets
-with a 50 ms delay before configuring the display PLLs.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3a19da74d00c..e5bda99b3015 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2555,7 +2555,9 @@ L:	linux-amlogic@lists.infradead.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/clock/amlogic*
+ F:	drivers/clk/meson/
+-F:	include/dt-bindings/clock/amlogic,a1*
++F:	include/dt-bindings/clock/amlogic,*
++F:	include/dt-bindings/clock/axg*
++F:	include/dt-bindings/clock/g12a*
+ F:	include/dt-bindings/clock/gxbb*
+ F:	include/dt-bindings/clock/meson*
+ 
 
-> diff --git a/drivers/clk/qcom/dispcc-sm8750.c b/drivers/clk/qcom/dispcc-s=
-m8750.c
-> index 3205ce5c1ad9e..f38ba86b4fd54 100644
-> --- a/drivers/clk/qcom/dispcc-sm8750.c
-> +++ b/drivers/clk/qcom/dispcc-sm8750.c
+---
+base-commit: 363f97a1ce635b86be7fd263d56a040fbd87bdbb
+change-id: 20261022-upstream-maintainers-clk-headers-fc2668f41f5a
 
-[ ... ]
+Best regards,
+--  
+Carlo Caione <ccaione@baylibre.com>
 
-> @@ -1932,6 +1934,39 @@ static int disp_cc_sm8750_probe(struct platform_de=
-vice *pdev)
->  		goto err_put_rpm;
->  	}
-> =20
-> +	/*
-> +	 * Some bootloaders hand over with the display block still fully
-> +	 * active: dispcc PLLs locked and MDSS core / core_int2 / RSCC out of
-> +	 * reset. Probing on top of that live state makes the command-mode
-> +	 * panel fail to initialise (command DMA timeout, panel init -EIO).
-> +	 *
-> +	 * Assert the three block resets and release them before the PLLs are
-> +	 * configured, so the block starts from a known-zero state.
-> +	 *
-> +	 * Limited to Lenovo Elden for now: it is the only board where this
-> +	 * handover behaviour was observed and the fix verified.
-> +	 */
-> +	if (of_machine_is_compatible("lenovo,elden")) {
-
-[Severity: Medium]
-Is it valid to match against "lenovo,elden" in disp_cc_sm8750_probe() in
-drivers/clk/qcom/dispcc-sm8750.c when that compatible string is not
-documented in the device tree bindings?
-
-In Documentation/devicetree/bindings/arm/qcom.yaml, the documented board
-compatibles for qcom,sm8750 are:
-
-      - items:
-          - enum:
-              - qcom,sm8750-mtp
-              - qcom,sm8750-qrd
-          - const: qcom,sm8750
-
-Since active bootloader display handover can occur on other qcom,sm8750
-boards as well, should this handover state be handled in the display driver
-or described via documented bindings rather than hardcoding an undocumented
-board compatible in the SoC clock driver?
-
-> +		static const u16 elden_bcrs[] =3D {
-> +			DISP_CC_MDSS_CORE_BCR,
-> +			DISP_CC_MDSS_CORE_INT2_BCR,
-> +			DISP_CC_MDSS_RSCC_BCR,
-> +		};
-> +		unsigned int reg;
-> +		int i;
-> +
-> +		for (i =3D 0; i < ARRAY_SIZE(elden_bcrs); i++) {
-> +			reg =3D disp_cc_sm8750_resets[elden_bcrs[i]].reg;
-> +			regmap_write(regmap, reg, 0x1);
-> +		}
-> +		/* Hold for one full ~30 Hz frame before releasing. */
-> +		msleep(50);
-> +		for (i =3D ARRAY_SIZE(elden_bcrs) - 1; i >=3D 0; i--) {
-> +			reg =3D disp_cc_sm8750_resets[elden_bcrs[i]].reg;
-> +			regmap_write(regmap, reg, 0x0);
-> +		}
-
-[Severity: Medium]
-Should disp_cc_sm8750_probe() in drivers/clk/qcom/dispcc-sm8750.c use raw
-regmap_write() calls on the full 32-bit reset registers without a bitmask
-or readback?
-
-In drivers/clk/qcom/reset.c, qcom_reset_set_assert() updates only the
-target reset bit and reads back the register to flush posted writes across
-the interconnect:
-
-    rst =3D to_qcom_reset_controller(rcdev);
-    map =3D &rst->reset_map[id];
-    mask =3D map->bitmask ? map->bitmask : BIT(map->bit);
-
-    regmap_update_bits(rst->regmap, map->reg, mask, assert ? mask : 0);
-
-    /* Read back the register to ensure write completion, ignore the value =
-*/
-    regmap_read(rst->regmap, map->reg, &mask);
-
-Could overwriting the entire register with 0x1 and 0x0 via regmap_write()
-clobber other bits in those registers, and allow posted writes to remain
-buffered when the msleep(50) delay begins?
-
-> +	}
-
-[Severity: High]
-Can unconditionally resetting DISP_CC_MDSS_CORE_BCR,
-DISP_CC_MDSS_CORE_INT2_BCR, and DISP_CC_MDSS_RSCC_BCR in
-disp_cc_sm8750_probe() in drivers/clk/qcom/dispcc-sm8750.c cause
-regressions during boot and driver probe?
-
-disp_cc_sm8750_probe() is the clock, reset, and power domain provider,
-whereas the consumer driver in drivers/gpu/drm/msm/msm_mdss.c already
-handles resetting the display block during msm_mdss_init() via
-msm_mdss_reset():
-
-static int msm_mdss_reset(struct device *dev)
-{
-    struct reset_control *reset;
-
-    reset =3D reset_control_get_optional_exclusive(dev, NULL);
-    ...
-    reset_control_assert(reset);
-    msleep(20);
-    reset_control_deassert(reset);
-    reset_control_put(reset);
-
-    return 0;
-}
-
-Running this reset inside disp_cc_sm8750_probe() happens before the drm/msm
-driver probes and calls aperture_remove_all_conflicting_devices() in
-drivers/gpu/drm/msm/msm_kms.c. If a bootloader framebuffer (such as
-simpledrm or efifb) is active, or if drm/msm is disabled, modular, or
-deferred, asserting these resets in disp_cc_sm8750_probe() will tear down
-active display scanout and ongoing dma traffic.
-
-In addition, this reset loop executes before qcom_cc_really_probe()
-initializes mdss_gdsc and mdss_int2_gdsc via gdsc_init() in
-drivers/clk/qcom/gdsc.c and before qcom_cc_clk_regs_configure() enables
-disp_cc_sm8750_critical_cbcrs (DISP_CC_SLEEP_CLK, DISP_CC_XO_CLK,
-DISP_CC_MDSS_RSCC_AHB_CLK, and DISP_CC_MDSS_RSCC_VSYNC_CLK), without
-verifying that mdss_gdsc and mdss_int2_gdsc are powered on.
-
-Would it be safer to handle the reset requirements in msm_mdss_reset() in
-drivers/gpu/drm/msm/msm_mdss.c and the device tree reset properties rather
-than in disp_cc_sm8750_probe()?
-
-> +
->  	clk_taycan_elu_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_confi=
-g);
->  	clk_taycan_elu_pll_configure(&disp_cc_pll1, regmap, &disp_cc_pll1_confi=
-g);
->  	clk_pongo_elu_pll_configure(&disp_cc_pll2, regmap, &disp_cc_pll2_config=
-);
-
-[Severity: Medium]
-Does asserting elden_bcrs[] in disp_cc_sm8750_probe() in
-drivers/clk/qcom/dispcc-sm8750.c actually allow
-clk_taycan_elu_pll_configure() and clk_pongo_elu_pll_configure() to
-reprogram locked PLLs as described in the comment and commit message?
-
-The comment states:
-
-    Assert the three block resets and release them before the PLLs are
-    configured, so the block starts from a known-zero state.
-
-However, DISP_CC_MDSS_CORE_BCR, DISP_CC_MDSS_CORE_INT2_BCR, and
-DISP_CC_MDSS_RSCC_BCR only reset the downstream display sub-blocks and do
-not reset or unlock disp_cc_pll0, disp_cc_pll1, or disp_cc_pll2.
-
-When the bootloader leaves those PLLs locked,
-clk_taycan_elu_pll_configure() (which maps to clk_lucid_evo_pll_configure()
-in drivers/clk/qcom/clk-alpha-pll.c) still returns early without
-programming the PLL:
-
-    if (trion_pll_is_enabled(pll, regmap)) {
-        pr_debug("Lucid Evo PLL is already enabled, skipping configuration\=
-n");
-        return;
-    }
-
-And clk_pongo_elu_pll_configure() in drivers/clk/qcom/clk-alpha-pll.c does
-the same:
-
-    if (trion_pll_is_enabled(pll, regmap))
-        return;
-
-Also, disp_cc_sm8750_probe() does not check whether the display blocks or
-PLLs were left running by the bootloader before asserting the resets and
-sleeping for 50 ms. Should the code and comment be updated to reflect that
-the block resets do not reset the PLLs and check whether the hardware is
-actually active?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261022140811.4694=
-17-1-xiaqinghuan@mail.ustc.edu.cn?part=3D1
