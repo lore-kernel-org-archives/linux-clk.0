@@ -1,84 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.42
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792751713;
-	b=169jXH2FwKu045U3wuFpSJ39WZTHt+yV6N0NbedUn+nY2qDpCqmjImAUbi7HtOQfLIjA
-	 ep8FlMeqiaWSaxjwnXymujLJy4cXqLlQ3OxTGEaUyJTKjbqr/ZBOLa/k+gY4k4uQiwsMO
-	 shO+9wXf+N3HBHwnNrZHxYWtIB65pT9Qr1554dV6pTBaQowJVo6q7UstiLohq3IyrWEn1
-	 tWDW3EQ2xj0i6oDK9wuMYvvAvRGEgF2oPHkh+5Y0SaPDW3V/XefHy+ZdewmZ2A9tYKtPf
-	 ZwJTHdnPfA8hYh6aynASlWi2PxzG1btQaH3jSYfdlwzczCzSRrZR5qq/6LcKKcO7Sdg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792751713;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
-	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key;
-	bh=k9LHe1k3JJHdATvv4AfPRU7gCDBKGLYt+F9m7byWzFQ=;
-	b=BZc8daRXTvBuyxa8mZCe/0SAEiTUOfjoZgEqYlh7RKQAsiLpR3rExfnMy/IgIoZQC80n
-	 3tS3swVAdCnTKQVlaFd33kBqabMo9t0MPmnvXLCuWS8ogdpB+GDc7wKeMo11L/sCre8I4
-	 6hVJ/IKzyX3UZ41pb3Km4BK2ZINwDMAkZ0wndmoLQ+aKleUHTky9VrIenc5qTBSrrP/SI
-	 QNvInKRjUpNg+yC5mDQiPimzW+2C9RFGliDkgmdCcXg0TS7SxmsNT7aJ2cup8/qlvLKMZ
-	 WkzHb8bL3w1+5EtY0qZFNbYU2wDhQHDYb7h2URDwCTwUPFBZH2zEoRvJhBQwmBMnNjA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b="NDDB/9m7";
-	arc=none smtp.remote-ip=209.85.221.42
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
+	t=1792751701;
+	b=sp9g6EJiJhUOn1s7X+ni9Q4mx/ukmOHHiLnpj52CtWgFd0YOVzdjCiJRMrVV0GkHvdra
+	 os1/I8mvnnz5GkhBPV07mJsKFwFdIafXUba8ifcXQzuJEG9DHjj+04kVWB8QRvRKcnAok
+	 5ouQRIOtXXlY5d6JMWddAraqTW4ZcTE/ROT96hHmiZnWxcXCz+kci3p/rXQmpjf4oXoBL
+	 aGQttYqxJWOxTPujJ2NaOlwZ0eUuUOMkUSmuqaBC2IdhIdUWblQlTupdVJ4IH35xrL43t
+	 jtg6HNa+l1vS9+tQ2iKXhNPEm30dv23rooTXcr8wUxa5H1ZwqEAL/phFGdDKXkIWwiA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792751701;
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=HNeEMaOHqaFnGq1NHNwoUph5OIJEAJJ07IKtBCkeSso=;
+	b=fGKrTTGbf6NXPiUk5fQBZOk7QBLKOKppOWRgLitMUloW74+ZsqxqEW3Lj+ogDw+/GAV1
+	 6HGx/W82JTOVoEzqowxr2zEbTDk1UtitEBGO1YUjo0Xw7UHwKq2Jcfb5Vrg8JKlijgBBu
+	 zjaWjnXej4Cb59T2Te/rCsLhOuKWRvGpIL8GroO5ADlOfMuWff2KavO0+1BD0Xhl7IWhV
+	 TqYWSeX39ovm1mlXyPoorCFaK7M/UlVp+7CZhhl4CzUidIH1sS9U2Xhu2tImf7R2ivES3
+	 J+gaM0NX+8+hOTCFGzQ3n4LX9jHVn+U015xizBXPxO4vp+I9cLQObobNAVCnM/EO2NA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oi2HJwGA;
+	arc=fail smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53AE606A321;
+	Fri, 23 Oct 2026 10:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oi2HJwGA
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1792751700;
+	b=yMGsnUcGoU8qLCXyE9IqwHAC2+wEzXaZLl4tg/bHYSzt2pPYW75VHffZTbVFt5T2fTd9
+	 EF4GOZEUPsI+ycouORfq8CUTFuJwNF5XVOgzidsemzpPx3/EwPO9GBZfJCBty8JAzy4ON
+	 GjlynnTyjEoMrN/+vgoZUwqdJh/WmICteuIM0f4acMg4rDQLedy96WWRl0j41EsuBSnmZ
+	 NwdT77Z47WXyNz9DLYBfvhCN7Yqf+E4O0Em9SU+e70qc3mGnlQhiAvV/I+X6wuxEwOWaO
+	 6ZEQxoMjqjuVFJXbL2O7o67XFFkbeFOdJxt2wB0hjCf4I8wcuSi+Irs13kGD5HNCxPg==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1792751700;
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=HNeEMaOHqaFnGq1NHNwoUph5OIJEAJJ07IKtBCkeSso=;
+	b=dy/ttLhJnBaK2Bcqbw69SAfbKKoFOtOu1AZ6hwP4XIM5RYuyDomXvPAhwWbRedcCrWDw
+	 kjiT7wme7r1cXpMC3lJ/YqjGDlaW4BDFC6B6Ec2skKd/WqzRI6+F18tq13N0krfGosnxP
+	 vHAUUfUR6bZ/K+36q261xrN2js8zU/WDhHafM+gWj2R0RzLLggPaK7yUEDKwC2dkSXRGH
+	 cSXBHRQOZf3h1khRboSuxRmegXfNvSdnnNd8wzAvO0c1ANG9zi9yRc0iY2ZxI3Q/5Wb1c
+	 Mm/FZWOaHVjWeaoSok23O2VT79Oy2++PG5lXJv9vodWfAbJZWsWE4gunO+0lFE+otaQ==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CB0606A331
-	for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2026 10:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 47CB0606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=NDDB/9m7
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-48dfc0421d9so582397f8f.1
-        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2026 03:35:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1792751711; x=1793356511; darn=vger.kernel.org;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=k9LHe1k3JJHdATvv4AfPRU7gCDBKGLYt+F9m7byWzFQ=;
-        b=NDDB/9m7WFMexxS6ufWNj6127VLc8cW8McYIEpv/nIQs9o8poaFksZ8FSpQTqlqc1Q
-         MHOGkrv8ywAlTM/6f5I5g6Iv23uefVK60hF2MJR7ROPB6xmVoQUkLn/9Y35E5dugkK+D
-         1UeHvSs8364OV4C24bLn/M4CuVIspOqcg6aOACYTZ4DSso039n7iKnFj9LoMubmDTJOA
-         6LDr/DnAjDs/IfArIxMCDaJH2LGQJYeuAXxPpSxn9MLdmHn3XIgMafmlXSCsRHe+bBOP
-         u1PPP0KG4SVwMCJZ/U6cAh7wQ4Zn4CEs58GUB7f+wv7gysKTso+PDx46jUxUn9j0TjaC
-         jn3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792751711; x=1793356511;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=k9LHe1k3JJHdATvv4AfPRU7gCDBKGLYt+F9m7byWzFQ=;
-        b=DxbrlkC5JhEJ+R268+YcYPLpsFgaqi/O9tcdb74qWPZ98fdlrfAm2F+33lzP63JBYI
-         c/fDHAQ/YZhbOkZ+8EGxYjHCBeACvR4IlMrdlP1xeLoTY+lu+PsBww8ugfgrOKVffpKI
-         OmOGSFaeXkSBGPAwflCOOWUSzMu47vXYytmGLjI517sCw++SUEZ+5NYJ9uIpl22QLEOi
-         qb02qS1yaQ0Iyhl6FCnCyyOYeZlWpnHyEVLyEBT2Eve4+/ut7IwTZNZ9aolLkTVqmW5N
-         WQGvMroaEwD2qZHiNZXgbjolU1DZ+pW3CRtEPd+p/8Zaz1R+QTyfQtacJxxoHOTVFsF9
-         omVA==
-X-Forwarded-Encrypted: i=1; AKwUvBwJlSpcRPFnVxE3UyLu7Wiexv2CLvZc5o7KrZQYVz4Rba9WPrwHj/S5CrPjAChleia7QZ0Zr39EskQ=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJWumwg+NBuWLqO5fhPj3vt0fvt5U9vPI5SLM+nbw1LkLLH+nAq
-	vr2RMpPqcoW43FptmhLqOCowrFEh+tCr2zbOXc471HOAWQrVt9KZj+FZHL1xS8k3Ehg=
-X-Gm-Gg: AYBFou1ApJApXp8drZiz4cdkvpOoOM78A3zExgZ3Sgj4YsVq01J3W4Z2N5vgVdy2T7b
-	lZF+daGiukyiE5zuv11mZIKF3Nkj59l+44u8/Gu518gVRMqIoyqv0g3ldy0B4nr4xzj/qVdSuUE
-	k2iQxfpqEXSj4s//kzE0YdQjb70uKpVUkgS90YjHEZ3aaFthkyg3rOUSCrKoe0QtwGL5atWGGjm
-	fcOPEljxaNEhA14RMDnIVoeSIRolDl+DI7Ip3S5c/0f9Y+FhSHKpHdzV7TKGY/CZiDP5qagK1gY
-	9cAIe38i/WVctqIlVJxbBZU1scxO55+AAeyDsqMWUDxjJSAeE1X3EBo5Uk/xa889TM930eQiYWG
-	pzrCYY3tsjY62c4XEquORO/z+aT+oAQiDr+DxeWUTzk0U0aYXZB3waiFEtOcuC45xf10o0AKSuf
-	XcPEDvW9bjuQi0IEaHlkvJoAcdfygaRF1PS8QVgsVFwrcsMAjyqDqg+ae4j1gv0mcE3XwJXPzCP
-	QTSmkXT28GUsHsJ9t3Sks5flsN4moW4plzyFZjLypV4zuVscBwCLRyG7XIanKqB0Hr++hQuIog=
-X-Received: by 2002:a05:6000:178f:b0:48c:414f:cc12 with SMTP id ffacd0b85a97d-48e385af884mr2851431f8f.40.1792751710619;
-        Fri, 23 Oct 2026 03:35:10 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e380636bcsm4189796f8f.58.2026.10.23.03.35.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Oct 2026 03:35:10 -0700 (PDT)
+	by smtp.kernel.org (Postfix) with ESMTPS id C89481F01828;
+	Fri, 23 Oct 2026 10:34:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792751700;
+	bh=HNeEMaOHqaFnGq1NHNwoUph5OIJEAJJ07IKtBCkeSso=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=oi2HJwGAsdqKePLzCzOAGUAzTfcaUgKa5jGpcOqGrsmVIOO1Yoe4IF3U3u7R6Fclz
+	 /UhozEqXfbKFXB2ST2wxGheBcZp0+LR7cfoZvCeNTwfH/dM0WxfENlUwujVx3jhPp3
+	 YHCFXhMSpgkt1aZRzrV2uVcqF6wni1nRpOX+9VYm+35okAJv8b8tKWQiqDyX4KpTBz
+	 ipf6uNOPPk8Yl4pfWXNw3/lmNFtkWYgNqVsH+xG0MB2/JU10LxCw7QEvz9mQYuHQPy
+	 qPT4LtjgyOlQJcBCYMK/gyZ2OifbF7z/lgmCJsTmjwRbboeunHzcTMkzjiCTKd8QiZ
+	 6rDXvlv0XQ++w==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 243EE444B2;
+	Fri, 23 Oct 2026 10:34:56 +0000 (UTC)
+From: Cunhao Lu via B4 Relay <devnull+1579567540.qq.com@kernel.org>
+Subject: [PATCH v2 0/3] clk: rockchip: Add RK3572 clock and reset support
+Date: Fri, 23 Oct 2026 18:33:46 +0800
+Message-Id: <20261023-add-board-ok3572-c-clk-v2-0-90b98836be6e@qq.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -90,396 +85,612 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH RFC 01/16] clk: Propagate rate programming failures
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Viresh Kumar <vireshk@kernel.org>, 
- Nishanth Menon <nm@ti.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>, 
- Ulf Hansson <ulfh@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Abel Vesa <abelvesa@kernel.org>, Rob Herring <robh@kernel.org>, 
+X-B4-Tracking: v=1; b=H4sIAAo422oC/22NQQ6CMBBFr0Jm7Zi2pCquvIdhUTpTqSiVFomGc
+ HcB487lS/5/b4TE0XOCYzZC5MEnH9oZ1CYDW5v2wuhpZlBC7aRQORoirIKJhKHJ9V6hRXtrUBS
+ CHGmtHBUwnx+RnX+t4nP55fSsrmz7xbYsap/6EN9reZDL7hdR/yKDRIGiEo4O2uSS+dR1WxvuU
+ E7T9AGas10axwAAAA==
+X-Change-ID: 20261023-add-board-ok3572-c-clk-090dfd552fd9
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Mike Tipton <mike.tipton@oss.qualcomm.com>, 
- Taniya Das <taniya.das@oss.qualcomm.com>, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- driver-core@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20261014-topic-qc_clk_dvfs-v1-1-3041b788e9f7@oss.qualcomm.com>
-References: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
- <20261014-topic-qc_clk_dvfs-v1-1-3041b788e9f7@oss.qualcomm.com>
-Date: Fri, 23 Oct 2026 12:35:03 +0200
-Message-Id: <179275170360.4070168.921683102015750189.b4-review@b4>
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12419; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=9ddwNc90aouSZs62t2T/GwcdDeP+ivazP5j0kqFYglo=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFm3LaK2Bbtq1t9e//7ihSt7b5XNP8h07on3N82tovl3n
- ln1+DpGdpSyMIhxMciKKbLUcFeLv5PU+jJrus5tmDmsTCBDGLg4BWAi2z0ZGc6tNFu1lGHjdO+H
- RYIRH2vSzCRXX3iyVMvgfLzlxlmrunwZ/lm/eafgdjCP98sn3itXFHf/zddf8DJz0eomD04tyRf
- NPkwA
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Elaine Zhang <zhangqing@rock-chips.com>, 
+ Richard Cochran <richardcochran@gmail.com>
+Cc: Cunhao Lu <1579567540@qq.com>, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792751694; l=40840;
+ i=1579567540@qq.com; s=20261015; h=from:subject:message-id;
+ bh=nkeiL7m/403l7NGSBSn7CIsakLpw1Df6A15m3d5qJZ0=;
+ b=LLjJiUoHtF6QX59P3a3d4e91uti9igwJ5Cn+9UHv04aMfaOsVwnC41GuU+f7Xrx9x9lIQRCrP
+ jUVouI1JVCPDeAh4Y5uY4lZ6rf7o8lp4YWydBROHzsC6FeZGz+J7ghs
+X-Developer-Key: i=1579567540@qq.com; a=ed25519;
+ pk=sUTWrzlIwT4C7ctjNfVZAzzg0G7QUn2XxRGpYsw4RtM=
+X-Endpoint-Received: by B4 Relay for 1579567540@qq.com/20261015 with
+ auth_id=1177
+X-Original-From: Cunhao Lu <1579567540@qq.com>
+Reply-To: 1579567540@qq.com
 
-> The clock rate-change walk ignores runtime PM, temporary prepare and
-> enable, and provider programming failures. clk_set_rate() can therefore
-> report success after a provider rejected the operation, while later
-> clocks in the affected tree continue to be programmed. Consumers can
-> then proceed with a configuration that was never successfully applied.
-> 
-> A failed parent switch must not leave the software topology pointing at
-> the rejected source or release the old parent's references. Likewise,
-> rate notifiers must not announce success before the whole walk succeeds,
-> or lose their ABORT notification when a PRE notifier vetoes the change.
-> 
-> Propagate errors and stop the walk at the first failure. Keep topology,
-> temporary references, and terminal notifications consistent with the
-> outcome.
+This is one of the subsystem submissions for RK3572 support.
 
-I agree with the need and direction of this change in general.
-I was actually trying out some ideas for the framework and stumbled on
-the same problem.
+This series adds the CRU binding, clock and reset IDs, an internal
+Rockchip 24-bit fractional divider helper, and the RK3572 clock and
+reset driver. The helper precedes the driver that uses it.
 
-https://github.com/jbrun3t/linux/commit/c5de3ef09e6d38efc5d930befbe155eaca07884b
+The RK3572 SoC has eight CPU cores: two Cortex-A73 cores and six
+Cortex-A53 cores. It also integrates an Arm Mali-G310V2 MC1 GPU.
+The OK3572-C board provides two Gigabit Ethernet ports, three USB3 Type-A
+ports, a Type-C dual-role port, eMMC, microSD, and UART.
 
-Your change covers a few cases I missed but duplicates a bit of code.
-I'm sure we can work something out :)
+The driver provides the peripheral clock and reset trees, including the
+three audio fractional clocks. It obtains the PMU0 GRF for the AUPLL
+reference mux. CPU frequency scaling is controlled through SCMI; BPLL
+and LPLL remain enabled for firmware use.
 
-> 
-> Assisted-by: LLM
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  drivers/clk/clk.c      | 163 +++++++++++++++++++++++++++++++++++++------------
->  drivers/clk/clk_test.c |  16 ++++-
->  2 files changed, 138 insertions(+), 41 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 4d2cc86bfbeb..95669775f8cd 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -84,6 +84,7 @@ struct clk_parent_map {
->   *                     clk_core->rate every time the clock is reparented, and
->   *                     when we're doing the orphan -> !orphan transition.
->   * @new_rate:          New rate to be set during a rate change operation.
-> + * @old_rate:          Rate before the current rate change operation.
->   * @new_parent:        Pointer to new parent during parent change. This is also
->   *                     used when a clk's rate is changed.
->   * @new_child:         Pointer to new child during reparenting. This is also
-> @@ -130,6 +131,7 @@ struct clk_core {
->  	unsigned long		rate;
->  	unsigned long		req_rate;
->  	unsigned long		new_rate;
-> +	unsigned long		old_rate;
->  	struct clk_core		*new_parent;
->  	struct clk_core		*new_child;
->  	unsigned long		flags;
-> @@ -2163,11 +2165,14 @@ static void clk_reparent(struct clk_core *core, struct clk_core *new_parent)
->  	core->parent = new_parent;
->  }
->  
-> -static struct clk_core *__clk_set_parent_before(struct clk_core *core,
-> -					   struct clk_core *parent)
-> +static int __clk_set_parent_before(struct clk_core *core,
-> +				   struct clk_core *parent,
-> +				   struct clk_core **old_parent)
->  {
->  	unsigned long flags;
-> -	struct clk_core *old_parent = core->parent;
-> +	int ret;
-> +
-> +	*old_parent = core->parent;
->  
->  	/*
->  	 * 1. enable parents for CLK_OPS_PARENT_ENABLE clock
-> @@ -2191,14 +2196,24 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
->  
->  	/* enable old_parent & parent if CLK_OPS_PARENT_ENABLE is set */
->  	if (core->flags & CLK_OPS_PARENT_ENABLE) {
-> -		clk_core_prepare_enable(old_parent);
-> -		clk_core_prepare_enable(parent);
-> +		ret = clk_core_prepare_enable(*old_parent);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = clk_core_prepare_enable(parent);
-> +		if (ret)
-> +			goto disable_old_parent;
->  	}
->  
->  	/* migrate prepare count if > 0 */
->  	if (core->prepare_count) {
-> -		clk_core_prepare_enable(parent);
-> -		clk_core_enable_lock(core);
-> +		ret = clk_core_prepare_enable(parent);
-> +		if (ret)
-> +			goto disable_ops_parents;
-> +
-> +		ret = clk_core_enable_lock(core);
-> +		if (ret)
-> +			goto disable_migration_parent;
->  	}
->  
->  	/* update the clk tree topology */
-> @@ -2206,7 +2221,18 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
->  	clk_reparent(core, parent);
->  	clk_enable_unlock(flags);
->  
-> -	return old_parent;
-> +	return 0;
-> +
-> +disable_migration_parent:
-> +	clk_core_disable_unprepare(parent);
-> +disable_ops_parents:
-> +	if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +		clk_core_disable_unprepare(parent);
-> +disable_old_parent:
-> +	if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +		clk_core_disable_unprepare(*old_parent);
-> +
-> +	return ret;
->  }
->  
->  static void __clk_set_parent_after(struct clk_core *core,
-> @@ -2232,11 +2258,12 @@ static void __clk_set_parent_after(struct clk_core *core,
->  static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
->  			    u8 p_index)
->  {
-> -	unsigned long flags;
->  	int ret = 0;
->  	struct clk_core *old_parent;
->  
-> -	old_parent = __clk_set_parent_before(core, parent);
-> +	ret = __clk_set_parent_before(core, parent, &old_parent);
-> +	if (ret)
-> +		return ret;
->  
->  	trace_clk_set_parent(core, parent);
->  
-> @@ -2247,10 +2274,10 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
->  	trace_clk_set_parent_complete(core, parent);
->  
->  	if (ret) {
-> -		flags = clk_enable_lock();
-> +		unsigned long flags = clk_enable_lock();
-> +
->  		clk_reparent(core, old_parent);
->  		clk_enable_unlock(flags);
-> -
->  		__clk_set_parent_after(core, old_parent, parent);
->  
->  		return ret;
-> @@ -2312,6 +2339,7 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
->  	struct clk_core *child;
->  
->  	core->new_rate = new_rate;
-> +	core->old_rate = core->rate;
->  	core->new_parent = new_parent;
->  	core->new_parent_index = p_index;
->  	/* include clk in new parent's PRE_RATE_CHANGE notifications */
-> @@ -2420,13 +2448,20 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
->  						  unsigned long event)
->  {
->  	struct clk_core *child, *tmp_clk, *fail_clk = NULL;
-> +	unsigned long old_rate = core->rate;
-> +	unsigned long new_rate = core->new_rate;
->  	int ret = NOTIFY_DONE;
->  
-> -	if (core->rate == core->new_rate)
-> +	if (event != PRE_RATE_CHANGE)
-> +		old_rate = core->old_rate;
-> +	if (event == POST_RATE_CHANGE)
-> +		new_rate = core->rate;
-> +
-> +	if (old_rate == new_rate)
->  		return NULL;
->  
->  	if (core->notifier_count) {
-> -		ret = __clk_notify(core, event, core->rate, core->new_rate);
-> +		ret = __clk_notify(core, event, old_rate, new_rate);
->  		if (ret & NOTIFY_STOP_MASK)
->  			fail_clk = core;
->  	}
-> @@ -2454,17 +2489,17 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
->   * walk down a subtree and set the new rates notifying the rate
->   * change on the way
->   */
-> -static void clk_change_rate(struct clk_core *core)
-> +static int clk_change_rate(struct clk_core *core)
->  {
->  	struct clk_core *child;
->  	struct hlist_node *tmp;
-> -	unsigned long old_rate;
->  	unsigned long best_parent_rate = 0;
->  	bool skip_set_rate = false;
-> -	struct clk_core *old_parent;
-> +	bool rate_ungated = false;
-> +	bool parent_enabled = false;
-> +	struct clk_core *old_parent = NULL;
->  	struct clk_core *parent = NULL;
-> -
-> -	old_rate = core->rate;
-> +	int ret = 0;
->  
->  	if (core->new_parent) {
->  		parent = core->new_parent;
-> @@ -2474,53 +2509,83 @@ static void clk_change_rate(struct clk_core *core)
->  		best_parent_rate = core->parent->rate;
->  	}
->  
-> -	if (clk_pm_runtime_get(core))
-> -		return;
-> +	ret = clk_pm_runtime_get(core);
-> +	if (ret)
-> +		return ret;
->  
->  	if (core->flags & CLK_SET_RATE_UNGATE) {
-> -		clk_core_prepare(core);
-> -		clk_core_enable_lock(core);
-> +		ret = clk_core_prepare(core);
-> +		if (ret)
-> +			goto runtime_put;
-> +
-> +		ret = clk_core_enable_lock(core);
-> +		if (ret) {
-> +			clk_core_unprepare(core);
-> +			goto runtime_put;
-> +		}
-> +		rate_ungated = true;
->  	}
->  
->  	if (core->new_parent && core->new_parent != core->parent) {
-> -		old_parent = __clk_set_parent_before(core, core->new_parent);
-> +		ret = __clk_set_parent_before(core, core->new_parent,
-> +					      &old_parent);
-> +		if (ret)
-> +			goto cleanup;
->  		trace_clk_set_parent(core, core->new_parent);
->  
->  		if (core->ops->set_rate_and_parent) {
->  			skip_set_rate = true;
-> -			core->ops->set_rate_and_parent(core->hw, core->new_rate,
-> +			ret = core->ops->set_rate_and_parent(core->hw, core->new_rate,
->  					best_parent_rate,
->  					core->new_parent_index);
->  		} else if (core->ops->set_parent) {
-> -			core->ops->set_parent(core->hw, core->new_parent_index);
-> +			ret = core->ops->set_parent(core->hw,
-> +						    core->new_parent_index);
->  		}
->  
->  		trace_clk_set_parent_complete(core, core->new_parent);
-> -		__clk_set_parent_after(core, core->new_parent, old_parent);
-> +		if (ret) {
-> +			unsigned long flags = clk_enable_lock();
-> +
-> +			clk_reparent(core, old_parent);
-> +			clk_enable_unlock(flags);
-> +			__clk_set_parent_after(core, old_parent,
-> +					       core->new_parent);
-> +			goto cleanup;
-> +		}
+Testing was performed with Debian 13 minimal and Linux 7.3 on the
+OK3572-C with the FET3572-C module. Shared peripheral tests were run with
+the system booted from SD, while eMMC validation covered the complete
+boot chain.
 
-This is the rollback of __clk_set_parent() again. clk_change_rate() has
-its own copy of the parent switch, which is how the error handling got
-lost in the first place. I'd rather have clk_change_rate() call
-__clk_set_parent() so there is one place to get right.
+Passed functionality:
 
-> +
-> +		__clk_set_parent_after(core, core->new_parent,
-> +				       old_parent);
->  	}
->  
-> -	if (core->flags & CLK_OPS_PARENT_ENABLE)
-> -		clk_core_prepare_enable(parent);
-> +	if (core->flags & CLK_OPS_PARENT_ENABLE) {
-> +		ret = clk_core_prepare_enable(parent);
-> +		if (ret)
-> +			goto cleanup;
-> +		parent_enabled = true;
-> +	}
->  
->  	trace_clk_set_rate(core, core->new_rate);
->  
->  	if (!skip_set_rate && core->ops->set_rate)
-> -		core->ops->set_rate(core->hw, core->new_rate, best_parent_rate);
-> +		ret = core->ops->set_rate(core->hw, core->new_rate,
-> +					  best_parent_rate);
->  
->  	trace_clk_set_rate_complete(core, core->new_rate);
->  
->  	core->rate = clk_recalc(core, best_parent_rate);
->  
-> -	if (core->flags & CLK_SET_RATE_UNGATE) {
-> +cleanup:
-> +	if (rate_ungated) {
->  		clk_core_disable_lock(core);
->  		clk_core_unprepare(core);
->  	}
->  
-> -	if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +	if (parent_enabled)
->  		clk_core_disable_unprepare(parent);
->  
-> -	if (core->notifier_count && old_rate != core->rate)
-> -		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
-> +	if (ret)
-> +		goto runtime_put;
->  
->  	if (core->flags & CLK_RECALC_NEW_RATES)
->  		(void)clk_calc_new_rates(core, core->new_rate);
-> @@ -2533,14 +2598,22 @@ static void clk_change_rate(struct clk_core *core)
->  		/* Skip children who will be reparented to another clock */
->  		if (child->new_parent && child->new_parent != core)
->  			continue;
-> -		clk_change_rate(child);
-> +		ret = clk_change_rate(child);
-> +		if (ret)
-> +			goto runtime_put;
->  	}
->  
->  	/* handle the new child who might not be in core->children yet */
-> -	if (core->new_child)
-> -		clk_change_rate(core->new_child);
-> +	if (core->new_child) {
-> +		ret = clk_change_rate(core->new_child);
-> +		if (ret)
-> +			goto runtime_put;
-> +	}
->  
-> +runtime_put:
->  	clk_pm_runtime_put(core);
-> +
-> +	return ret;
->  }
->  
->  static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
-> @@ -2613,7 +2686,14 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->  	}
->  
->  	/* change the rates */
-> -	clk_change_rate(top);
-> +	ret = clk_change_rate(top);
-> +	if (ret) {
-> +		__clk_recalc_rates(top, true, 0);
+- SD and eMMC complete the firmware, kernel, and root filesystem
+  boot chain.
+- UART console works at 1500000 baud.
+- SD read/write and data persistence checks pass.
+- All eight CPUs start; CPU frequency scaling and hotplug checks pass.
+- Both Ethernet ports obtain IPv4 addresses and pass bidirectional file
+  transfers.
+- All three Type-A ports pass USB2 and USB3 enumeration, data transfers,
+  and reconnect persistence checks.
+- Type-C host and device modes pass in both plug orientations. Physical
+  reconnects correctly select the expected device, host, and device roles
+  in sequence.
 
-update_req = true sets req_rate to the current rate for top and every
-clock below it. Those clocks did not ask for that rate, and a later
-range change would take them back to it. Please don't touch req_rate
-on failure.
+Stability:
 
-> +		clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
+- Repeated cold and software reboots complete on SD and eMMC without data
+  integrity failures.
+- A combined CPU, memory, network, SD, and USB3 stress test completes
+  without a crash, lockup, CPU offline event, or thermal shutdown.
+- Ethernet error and drop counters do not increase during bidirectional
+  network tests.
 
-The walk stops at the first failure, but by then some clocks have been
-programmed, and the clocks below them are dragged along. They all get
-ABORT_RATE_CHANGE although their rate did change. The clocks after the
-failure also miss their set_rate(), although their parent moved. I
-think the walk should carry on with the siblings of the failing clock,
-and a notifier should be told what really happened: POST when the rate
-changed, ABORT when it did not.
+Build and checks:
 
--- 
-Jerome
+- The kernel, modules, and board DTB build successfully.
+- The series passes checkpatch with --strict; only generic reminders about
+  new MAINTAINERS entries remain.
+
+Untested hardware and paths:
+
+- NPU
+- PCIe
+- GPU, video output, and audio
+- CPU rates above 1.2 GHz and voltage scaling
+- Other low-speed external interfaces
+
+Some files in this series are derived from the Forlinx OK3572-C BSP
+Alpha1. Thanks to Forlinx for their support.
+
+AI assistance:
+
+- Codex / DeepSeek V4.1 Flash were used for:
+  - Reviewing and adjusting code style to follow community conventions
+  - Automating tests
+  - Collecting data
+
+Signed-off-by: Cunhao Lu <1579567540@qq.com>
+---
+Changes in v2:
+- Split the original RK3572 support series by subsystem.
+- Port the vendor 24-bit fractional divider to the internal Rockchip
+  clock helpers and adapt it to the determine_rate API.
+- Register audio frac0-2. Keep internal SPLL factors outside the DT
+  lookup so PPLL retains clock ID 0, and remove the unused xin12m factor.
+- Link to v1:
+  https://patch.msgid.link/20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com
+
+---
+Raw dmesg from the OK3572-C boot:
+
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+[    0.000000] Linux version 7.3.0-bleedingedge-rk3572 (build@armbian) (aarch64-linux-gnu-gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0, GNU ld (GNU Binutils for Ubuntu) 2.38) #1 SMP PREEMPT Wed Oct 21 14:04:07 CST 2026
+[    0.000000] Machine model: Forlinx OK3572-C
+[    0.000000] efi: UEFI not found.
+[    0.000000] OF: reserved mem: Reserved memory: No reserved-memory node in the DT
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: PSCIv1.1 detected in firmware.
+[    0.000000] psci: Using standard PSCI v0.2 function IDs
+[    0.000000] psci: MIGRATE_INFO_TYPE not supported.
+[    0.000000] psci: SMC Calling Convention v1.5
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000040200000-0x00000000ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000100000000-0x000000013fffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000040200000-0x000000013fffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000040200000-0x000000013fffffff]
+[    0.000000] On node 0, zone DMA: 512 pages in unavailable ranges
+[    0.000000] percpu: Embedded 30 pages/cpu s82136 r8192 d32552 u122880
+[    0.000000] pcpu-alloc: s82136 r8192 d32552 u122880 alloc=30*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7 
+[    0.000000] CPU features: detected: ARM erratum 845719
+[    0.000000] alternatives: applying boot alternatives
+[    0.000000] Kernel command line: root=UUID=2520cc50-b3ea-430f-ba9b-552afa4b6f82 rootwait rootfstype=ext4 splash=verbose console=ttyS0,1500000 console=tty1 consoleblank=0 loglevel=1 ubootpart=48cd0da4-4dfb-4b7c-b03f-e4a0c57ddacd usb-storage.quirks=0x2537:0x1066:u,0x2537:0x1068:u   cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory
+[    0.000000] Unknown kernel command line parameters "splash=verbose ubootpart=48cd0da4-4dfb-4b7c-b03f-e4a0c57ddacd cgroup_enable=memory cgroup_memory=1", will be passed to user space.
+[    0.000000] printk: log buffer data + meta data: 131072 + 458752 = 589824 bytes
+[    0.000000] Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] software IO TLB: area num 8.
+[    0.000000] software IO TLB: mapped [mem 0x00000000f7f47000-0x00000000fbf47000] (64MB)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 1048064
+[    0.000000] mem auto-init: stack:off, heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=8, Nodes=1
+[    0.000000] ftrace: allocating 40216 entries in 158 pages
+[    0.000000] ftrace: allocated 158 pages with 5 groups
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU event tracing is enabled.
+[    0.000000] 	Trampoline variant of Tasks RCU enabled.
+[    0.000000] 	Rude variant of Tasks RCU enabled.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] RCU Tasks: Setting shift to 3 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=8.
+[    0.000000] RCU Tasks Rude: Setting shift to 3 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=8.
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] GIC: Using split EOI/Deactivate mode
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.000000] arch_timer: cp15 timer running at 24.00MHz (phys).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x588fe9dc0, max_idle_ns: 440795202592 ns
+[    0.000000] sched_clock: 56 bits at 24MHz, resolution 41ns, wraps every 4398046511097ns
+[    0.000502] Console: colour dummy device 80x25
+[    0.000516] printk: legacy console [tty1] enabled
+[    0.000637] Calibrating delay loop (skipped), value calculated using timer frequency.. 48.00 BogoMIPS (lpj=96000)
+[    0.000652] pid_max: default: 32768 minimum: 301
+[    0.000874] Yama: becoming mindful.
+[    0.001075] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.001097] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.001450] VFS: Finished mounting rootfs on nullfs
+[    0.004025] rcu: Hierarchical SRCU implementation.
+[    0.004042] rcu: 	Max phase no-delay instances is 1000.
+[    0.004294] Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+[    0.004820] EFI services will not be available.
+[    0.005261] smp: Bringing up secondary CPUs ...
+[    0.006096] CPU1: Booted secondary processor 0x0000000001 [0x410fd034]
+[    0.006991] CPU2: Booted secondary processor 0x0000000002 [0x410fd034]
+[    0.007847] CPU3: Booted secondary processor 0x0000000003 [0x410fd034]
+[    0.008787] CPU4: Booted secondary processor 0x0000000100 [0x410fd034]
+[    0.009715] CPU5: Booted secondary processor 0x0000000101 [0x410fd034]
+[    0.010446] CPU features: detected: Spectre-BHB
+[    0.010459] CPU features: detected: ARM erratum 858921
+[    0.010576] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.010590] arch_timer: CPU6: Trapping CNTVCT access
+[    0.010600] CPU6: Booted secondary processor 0x0000000200 [0x411fd090]
+[    0.011335] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.011346] arch_timer: CPU7: Trapping CNTVCT access
+[    0.011354] CPU7: Booted secondary processor 0x0000000201 [0x411fd090]
+[    0.011443] smp: Brought up 1 node, 8 CPUs
+[    0.011468] SMP: Total of 8 processors activated.
+[    0.011473] CPU: All CPU(s) started at EL2
+[    0.011480] CPU features: detected: 32-bit EL0 Support
+[    0.011487] CPU features: detected: CRC32 instructions
+[    0.011563] alternatives: applying system-wide alternatives
+[    0.013503] Memory: 3994400K/4192256K available (12800K kernel code, 1804K rwdata, 8020K rodata, 4800K init, 367K bss, 188600K reserved, 0K cma-reserved)
+[    0.014586] devtmpfs: initialized
+[    0.023256] posixtimers hash table entries: 4096 (order: 4, 65536 bytes, linear)
+[    0.023390] futex hash table entries: 2048 (131072 bytes on 1 NUMA nodes, total 128 KiB, linear).
+[    0.023497] 25760 pages in range for non-PLT usage
+[    0.023504] 517280 pages in range for PLT usage
+[    0.024485] DMI: not present or invalid.
+[    0.027105] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.027775] DMA: preallocated 512 KiB GFP_KERNEL pool for atomic allocations
+[    0.027873] DMA: preallocated 512 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.027917] audit: initializing netlink subsys (disabled)
+[    0.028106] audit: type=2000 audit(0.024:1): state=initialized audit_enabled=0 res=1
+[    0.063844] thermal_sys: Registered thermal governor 'step_wise'
+[    0.063969] ASID allocator initialised with 65536 entries
+[    0.066221] /soc/i2c@2c040000/usb-typec@22/connector: Fixed dependency cycle(s) with /soc/usb@24000000
+[    0.066238] /soc/usb@24000000: Fixed dependency cycle(s) with /soc/i2c@2c040000/usb-typec@22/connector
+[    0.066401] /soc/interrupt-controller@2a601000: Fixed dependency cycle(s) with /soc/interrupt-controller@2a601000
+[    0.074302] rockchip-gpio 26300000.gpio: probed /pinctrl/gpio@26300000
+[    0.074859] rockchip-gpio 2b200000.gpio: probed /pinctrl/gpio@2b200000
+[    0.075467] rockchip-gpio 2b300000.gpio: probed /pinctrl/gpio@2b300000
+[    0.076065] rockchip-gpio 2b400000.gpio: probed /pinctrl/gpio@2b400000
+[    0.076577] rockchip-gpio 2b500000.gpio: probed /pinctrl/gpio@2b500000
+[    0.079569] iommu: Default domain type: Translated
+[    0.079581] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.087665] SCSI subsystem initialized
+[    0.087800] usbcore: registered new interface driver usbfs
+[    0.087825] usbcore: registered new interface driver hub
+[    0.087851] usbcore: registered new device driver usb
+[    0.087962] pps_core: LinuxPPS API ver. 1 registered
+[    0.087967] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    0.087977] PTP clock support registered
+[    0.088046] scmi_core: SCMI protocol bus registered
+[    0.088816] vgaarb: loaded
+[    0.089111] clocksource: Switched to clocksource arch_sys_counter
+[    0.095252] NET: Registered PF_INET protocol family
+[    0.095435] IP idents hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.098401] tcp_listen_portaddr_hash hash table entries: 2048 (order: 3, 32768 bytes, linear)
+[    0.098444] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.098456] TCP established hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.098599] TCP bind hash table entries: 32768 (order: 8, 1048576 bytes, linear)
+[    0.099208] TCP: Hash tables configured (established 32768 bind 32768)
+[    0.099320] UDP hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.099566] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.099609] PCI: CLS 0 bytes, default 64
+[    0.099809] Unpacking initramfs...
+[    0.113777] Initialise system trusted keyrings
+[    0.114004] workingset: timestamp_bits=46 (anon: 41) max_order=20 bucket_order=0 (anon: 0)
+[    0.114534] fuse: init (API version 7.46)
+[    0.114817] NET: Registered PF_ALG protocol family
+[    0.114828] Key type asymmetric registered
+[    0.114833] Asymmetric key parser 'x509' registered
+[    0.114866] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 249)
+[    0.115027] io scheduler mq-deadline registered
+[    0.115033] io scheduler kyber registered
+[    0.115065] io scheduler bfq registered
+[    0.603726] Freeing initrd memory: 13024K
+[    0.641317] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+[    0.642938] printk: console [ttyS0] disabled
+[    0.643204] 2c130000.serial: ttyS0 MMIO32:0x000000002c130000 (irq = 36, base_baud = 1500000) is a 16550A
+[    0.643447] printk: console [ttyS0] enabled
+[    0.649403] loop: module loaded
+[    0.650488] tun: Universal TUN/TAP device driver, 1.6
+[    0.657994] xhci-hcd xhci-hcd.0.auto: xHCI Host Controller
+[    0.658022] xhci-hcd xhci-hcd.0.auto: new USB bus registered, assigned bus number 1
+[    0.658098] xhci-hcd xhci-hcd.0.auto: hcc params 0x0220fe64 hci version 0x110 quirks 0x0000808002000010
+[    0.658139] xhci-hcd xhci-hcd.0.auto: irq 38, io mem 0x24400000
+[    0.658251] xhci-hcd xhci-hcd.0.auto: xHCI Host Controller
+[    0.658261] xhci-hcd xhci-hcd.0.auto: new USB bus registered, assigned bus number 2
+[    0.658273] xhci-hcd xhci-hcd.0.auto: Host supports USB 3.0 SuperSpeed
+[    0.658925] hub 1-0:1.0: USB hub found
+[    0.658955] hub 1-0:1.0: 1 port detected
+[    0.659569] usb usb2: We don't know the algorithms for LPM for this host, disabling LPM.
+[    0.659953] hub 2-0:1.0: USB hub found
+[    0.659977] hub 2-0:1.0: 1 port detected
+[    0.660444] usbcore: registered new interface driver uas
+[    0.660501] usbcore: registered new interface driver usb-storage
+[    0.660521] usbcore: registered new device driver onboard-usb-dev
+[    0.677538] vdda_hdmi_s0: Bringing 750000uV into 837500-837500uV
+[    0.691929] pca953x 2-0023: using auto increment
+[    0.704405] dwmmc_rockchip 2a090000.mmc: IDMAC supports 32-bit address mode.
+[    0.704405] arm-scmi arm-scmi.4.auto: Using scmi_smc_transport
+[    0.704420] arm-scmi arm-scmi.4.auto: SCMI max-rx-timeout: 30ms / max-msg-size: 104bytes / max-msg: 20
+[    0.704437] dwmmc_rockchip 2a090000.mmc: Using internal DMA controller.
+[    0.704446] dwmmc_rockchip 2a090000.mmc: Version ID is 270a
+[    0.704482] dwmmc_rockchip 2a090000.mmc: DW MMC controller at irq 62,32 bit host data width,256 deep fifo
+[    0.704546] scmi_protocol scmi_dev.1: Enabled polling mode TX channel - prot_id:16
+[    0.704919] arm-scmi arm-scmi.4.auto: SCMI Notifications - Core Enabled.
+[    0.704981] arm-scmi arm-scmi.4.auto: SCMI Protocol v2.0 'rockchip:' Firmware version 0x0
+[    0.705018] arm-scmi arm-scmi.4.auto: Enabling SCMI Quirk [quirk_clock_rates_triplet_out_of_spec]
+[    0.705787] mmc0: CQHCI version 5.10
+[    0.708680] SMCCC: SOC_ID: ARCH_SOC_ID not implemented, skipping ....
+[    0.708975] usbcore: registered new interface driver usbhid
+[    0.708982] usbhid: USB HID core driver
+[    0.709386] NET: Registered PF_INET6 protocol family
+[    0.710254] Segment Routing with IPv6
+[    0.710294] In-situ OAM (IOAM) with IPv6
+[    0.710341] NET: Registered PF_PACKET protocol family
+[    0.710370] bridge: filtering via arp/ip/ip6tables is no longer available by default. Update your scripts to load br_netfilter if you need this.
+[    0.715466] Loading compiled-in X.509 certificates
+[    0.717882] mmc_host mmc1: Bus speed = 400000Hz (req 400000Hz, actual 400000HZ div = 0)
+[    0.721073] Key type encrypted registered
+[    0.732592] mmc0: SDHCI controller on 2a010000.mmc [2a010000.mmc] using ADMA 64-bit
+[    0.737594] dwc3-generic-plat 24400000.usb: Failed to create device link (0x180) with supplier regulator-usb-hub-1v2 for /soc/usb@24400000/hub@2
+[    0.737903] rk_gmac-dwmac 29d20000.ethernet: IRQ sfty not found
+[    0.738262] rk_gmac-dwmac 29d20000.ethernet: clock input or output? (output).
+[    0.738271] rk_gmac-dwmac 29d20000.ethernet: TX delay(0x21).
+[    0.738279] rk_gmac-dwmac 29d20000.ethernet: Can not read property: rx_delay.
+[    0.738284] rk_gmac-dwmac 29d20000.ethernet: set rx_delay to 0x10
+[    0.738298] rk_gmac-dwmac 29d20000.ethernet: integrated PHY? (no).
+[    0.743326] rk_gmac-dwmac 29d20000.ethernet: init for RGMII_RXID
+[    0.743496] rk_gmac-dwmac 29d20000.ethernet: User ID: 0x50, Synopsys ID: 0x51
+[    0.743506] rk_gmac-dwmac 29d20000.ethernet: 	DWMAC4/5
+[    0.743513] rk_gmac-dwmac 29d20000.ethernet: DMA HW capability register supported
+[    0.743519] rk_gmac-dwmac 29d20000.ethernet: Active PHY interface: RGMII (1)
+[    0.743525] rk_gmac-dwmac 29d20000.ethernet: RX Checksum Offload Engine supported
+[    0.743530] rk_gmac-dwmac 29d20000.ethernet: TX Checksum insertion supported
+[    0.743535] rk_gmac-dwmac 29d20000.ethernet: Wake-Up On Lan supported
+[    0.743580] rk_gmac-dwmac 29d20000.ethernet: Enable RX Mitigation via HW Watchdog Timer
+[    0.743587] rk_gmac-dwmac 29d20000.ethernet: Enabled L3L4 Flow TC (entries=2)
+[    0.743594] rk_gmac-dwmac 29d20000.ethernet: Enabled RFS Flow TC (entries=10)
+[    0.743599] rk_gmac-dwmac 29d20000.ethernet: TSO supported
+[    0.743604] rk_gmac-dwmac 29d20000.ethernet: TSO feature enabled
+[    0.743609] rk_gmac-dwmac 29d20000.ethernet: SPH feature enabled
+[    0.743614] rk_gmac-dwmac 29d20000.ethernet: Using 40/40 bits DMA host/device width
+[    0.801924] sdhci-dwcmshc 2a010000.mmc: Can't reduce the clock below 52MHz in HS200/HS400 mode
+[    0.802190] mmc0: Command Queue Engine enabled
+[    0.802216] mmc0: new HS400 Enhanced strobe MMC card at address 0001
+[    0.802867] mmcblk0: mmc0:0001 C9A611 58.3 GiB
+[    0.806837]  mmcblk0: p1
+[    0.807374] mmcblk0boot0: mmc0:0001 C9A611 4.00 MiB
+[    0.809014] mmcblk0boot1: mmc0:0001 C9A611 4.00 MiB
+[    0.810526] mmcblk0rpmb: mmc0:0001 C9A611 16.0 MiB, chardev (248:0)
+[    0.884811] rk_gmac-dwmac 2a040000.ethernet: IRQ sfty not found
+[    0.885249] rk_gmac-dwmac 2a040000.ethernet: clock input or output? (output).
+[    0.885262] rk_gmac-dwmac 2a040000.ethernet: TX delay(0x20).
+[    0.885269] rk_gmac-dwmac 2a040000.ethernet: Can not read property: rx_delay.
+[    0.885275] rk_gmac-dwmac 2a040000.ethernet: set rx_delay to 0x10
+[    0.885362] rk_gmac-dwmac 2a040000.ethernet: integrated PHY? (no).
+[    0.890392] rk_gmac-dwmac 2a040000.ethernet: init for RGMII_RXID
+[    0.890584] rk_gmac-dwmac 2a040000.ethernet: User ID: 0x50, Synopsys ID: 0x51
+[    0.890595] rk_gmac-dwmac 2a040000.ethernet: 	DWMAC4/5
+[    0.890603] rk_gmac-dwmac 2a040000.ethernet: DMA HW capability register supported
+[    0.890608] rk_gmac-dwmac 2a040000.ethernet: Active PHY interface: RGMII (1)
+[    0.890615] rk_gmac-dwmac 2a040000.ethernet: RX Checksum Offload Engine supported
+[    0.890620] rk_gmac-dwmac 2a040000.ethernet: TX Checksum insertion supported
+[    0.890625] rk_gmac-dwmac 2a040000.ethernet: Wake-Up On Lan supported
+[    0.890675] rk_gmac-dwmac 2a040000.ethernet: Enable RX Mitigation via HW Watchdog Timer
+[    0.890682] rk_gmac-dwmac 2a040000.ethernet: Enabled L3L4 Flow TC (entries=2)
+[    0.890693] rk_gmac-dwmac 2a040000.ethernet: Enabled RFS Flow TC (entries=10)
+[    0.890699] rk_gmac-dwmac 2a040000.ethernet: TSO supported
+[    0.890704] rk_gmac-dwmac 2a040000.ethernet: TSO feature enabled
+[    0.890709] rk_gmac-dwmac 2a040000.ethernet: SPH feature enabled
+[    0.890714] rk_gmac-dwmac 2a040000.ethernet: Using 40/40 bits DMA host/device width
+[    0.913126] usb 1-1: new high-speed USB device number 2 using xhci-hcd
+[    1.048394] clk: Disabling unused clocks
+[    1.048873] PM: genpd: Disabling unused power domains
+[    1.051000] Freeing unused kernel memory: 4800K
+[    1.051125] Run /init as init process
+[    1.051130]   with arguments:
+[    1.051134]     /init
+[    1.051137]   with environment:
+[    1.051139]     HOME=/
+[    1.051141]     TERM=linux
+[    1.051144]     splash=verbose
+[    1.051146]     ubootpart=48cd0da4-4dfb-4b7c-b03f-e4a0c57ddacd
+[    1.051149]     cgroup_enable=memory
+[    1.051151]     cgroup_memory=1
+[    1.106465] hub 1-1:1.0: USB hub found
+[    1.106513] hub 1-1:1.0: 4 ports detected
+[    1.177969] usb 2-1: new SuperSpeed USB device number 2 using xhci-hcd
+[    1.218522] hub 2-1:1.0: USB hub found
+[    1.218968] hub 2-1:1.0: 4 ports detected
+[    1.505447] usb 2-1.2: new SuperSpeed USB device number 3 using xhci-hcd
+[    1.528547] usb-storage 2-1.2:1.0: USB Mass Storage device detected
+[    1.529653] scsi host0: usb-storage 2-1.2:1.0
+[    1.536346] rk_gmac-dwmac 29d20000.ethernet end0: renamed from eth0
+[    1.537766] rk_gmac-dwmac 2a040000.ethernet end1: renamed from eth1
+[    1.686075] raid6: using neon recovery algorithm
+[    1.717069] raid6: int64x1  gen()   847 MB/s
+[    1.737837] raid6: int64x2  gen()  1264 MB/s
+[    1.752864] raid6: int64x4  gen()  1747 MB/s
+[    1.763929] raid6: int64x8  gen()  2371 MB/s
+[    1.773319] raid6: neonx1   gen()  2796 MB/s
+[    1.781011] raid6: neonx2   gen()  3409 MB/s
+[    1.786289] raid6: neonx4   gen()  4970 MB/s
+[    1.791806] raid6: neonx8   gen()  4753 MB/s
+[    1.791809] raid6: using algorithm neonx4 gen() 4970 MB/s
+[    1.794906] raid6: .... xor() 4236 MB/s, rmw enabled
+[    1.796085] xor: measuring software checksum speed
+[    1.797076]    neon            : 13380 MB/sec
+[    1.798330]    32regs          : 10491 MB/sec
+[    1.799540]    8regs           : 10874 MB/sec
+[    1.799542] xor: using function: neon (13380 MB/sec)
+[    1.849991] Btrfs loaded, zoned=no, fsverity=no
+[    1.937396] EXT4-fs (mmcblk0p1): mounted filesystem 2520cc50-b3ea-430f-ba9b-552afa4b6f82 ro with writeback data mode. Quota mode: disabled.
+[    2.097144] usb 1-1.3: new high-speed USB device number 3 using xhci-hcd
+[    2.124255] systemd[1]: System time advanced to timestamp on /var/lib/systemd/timesync/clock: Wed 2026-10-21 09:39:33 UTC
+[    2.159722] systemd[1]: systemd 257.13-1~deb13u1 running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +IPE +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBCRYPTSETUP_PLUGINS +LIBFDISK +PCRE2 +PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD +BPF_FRAMEWORK +BTF -XKBCOMMON -UTMP +SYSVINIT +LIBARCHIVE)
+[    2.159752] systemd[1]: Detected architecture arm64.
+[    2.187497] usb-storage 1-1.3:1.0: USB Mass Storage device detected
+[    2.187840] scsi host1: usb-storage 1-1.3:1.0
+[    2.304474] systemd[1]: bpf-restrict-fs: BPF LSM hook not enabled in the kernel, BPF LSM not supported.
+[    2.333489] dw-apb-uart 2c130000.serial: forbid DMA for kernel console
+[    2.561278] scsi 0:0:0:0: Direct-Access     Generic  MassStorageClass 2962 PQ: 0 ANSI: 6
+[    2.562581] sd 0:0:0:0: [sda] Media removed, stopped polling
+[    2.563353] systemd[1]: Queued start job for default target graphical.target.
+[    2.564595] scsi 0:0:0:1: Direct-Access     Generic  MassStorageClass 2962 PQ: 0 ANSI: 6
+[    2.568510] systemd[1]: Created slice system-getty.slice - Slice /system/getty.
+[    2.570149] systemd[1]: Created slice system-modprobe.slice - Slice /system/modprobe.
+[    2.571561] systemd[1]: Created slice system-serial\x2dgetty.slice - Slice /system/serial-getty.
+[    2.572692] systemd[1]: Created slice user.slice - User and Session Slice.
+[    2.573163] systemd[1]: Started systemd-ask-password-console.path - Dispatch Password Requests to Console Directory Watch.
+[    2.573510] systemd[1]: Started systemd-ask-password-wall.path - Forward Password Requests to Wall Directory Watch.
+[    2.573797] systemd[1]: proc-sys-fs-binfmt_misc.automount - Arbitrary Executable File Formats File System Automount Point skipped, unmet condition check ConditionPathExists=/proc/sys/fs/binfmt_misc
+[    2.573881] systemd[1]: Expecting device dev-ttyS0.device - /dev/ttyS0...
+[    2.574097] systemd[1]: Reached target paths.target - Path Units.
+[    2.574254] systemd[1]: Reached target remote-fs.target - Remote File Systems.
+[    2.574386] systemd[1]: Reached target slices.target - Slice Units.
+[    2.574522] systemd[1]: Reached target swap.target - Swaps.
+[    2.575001] systemd[1]: Listening on syslog.socket - Syslog Socket.
+[    2.577411] systemd[1]: Listening on systemd-creds.socket - Credential Encryption/Decryption.
+[    2.577941] systemd[1]: Listening on systemd-initctl.socket - initctl Compatibility Named Pipe.
+[    2.578412] systemd[1]: Listening on systemd-journald-dev-log.socket - Journal Socket (/dev/log).
+[    2.578959] systemd[1]: Listening on systemd-journald.socket - Journal Sockets.
+[    2.579632] systemd[1]: Listening on systemd-networkd.socket - Network Service Netlink Socket.
+[    2.579893] systemd[1]: systemd-pcrextend.socket - TPM PCR Measurements skipped, unmet condition check ConditionSecurity=measured-uki
+[    2.579945] systemd[1]: systemd-pcrlock.socket - Make TPM PCR Policy skipped, unmet condition check ConditionSecurity=measured-uki
+[    2.580276] systemd[1]: Listening on systemd-udevd-control.socket - udev Control Socket.
+[    2.580707] systemd[1]: Listening on systemd-udevd-kernel.socket - udev Kernel Socket.
+[    2.581241] systemd[1]: dev-hugepages.mount - Huge Pages File System skipped, unmet condition check ConditionPathExists=/sys/kernel/mm/hugepages
+[    2.584057] systemd[1]: Mounting dev-mqueue.mount - POSIX Message Queue File System...
+[    2.586938] systemd[1]: Mounting run-lock.mount - Legacy Locks Directory /run/lock...
+[    2.589826] systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...
+[    2.592783] systemd[1]: Mounting sys-kernel-tracing.mount - Kernel Trace File System...
+[    2.593548] sd 0:0:0:0: [sda] Attached SCSI removable disk
+[    2.596003] systemd[1]: Starting fake-hwclock-load.service - Restore the current clock...
+[    2.600570] systemd[1]: Starting keyboard-setup.service - Set the console keyboard layout...
+[    2.604814] systemd[1]: Starting kmod-static-nodes.service - Create List of Static Device Nodes...
+[    2.613686] systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configfs...
+[    2.617598] systemd[1]: Starting modprobe@drm.service - Load Kernel Module drm...
+[    2.626158] systemd[1]: Starting modprobe@efi_pstore.service - Load Kernel Module efi_pstore...
+[    2.633752] systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
+[    2.634121] systemd[1]: netplan-ovs-cleanup.service - OpenVSwitch configuration for cleanup skipped, unmet condition check ConditionFileIsExecutable=/usr/bin/ovs-vsctl
+[    2.634358] systemd[1]: systemd-hibernate-clear.service - Clear Stale Hibernate Storage Info skipped, unmet condition check ConditionPathExists=/sys/firmware/efi/efivars/HibernateLocation-8cf2644b-4b0b-428f-9387-6d876050dc67
+[    2.639834] systemd[1]: Starting systemd-modules-load.service - Load Kernel Modules...
+[    2.643700] systemd[1]: Starting systemd-network-generator.service - Generate Network Units from Kernel Command Line...
+[    2.644139] systemd[1]: systemd-pcrmachine.service - TPM PCR Machine ID Measurement skipped, unmet condition check ConditionSecurity=measured-uki
+[    2.644383] systemd[1]: systemd-tpm2-setup-early.service - Early TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-uki
+[    2.648310] systemd[1]: Starting systemd-udev-load-credentials.service - Load udev Rules from Credentials...
+[    2.652281] systemd[1]: Starting systemd-udev-trigger.service - Coldplug All udev Devices...
+[    2.661621] systemd[1]: Mounted dev-mqueue.mount - POSIX Message Queue File System.
+[    2.663368] systemd[1]: Mounted run-lock.mount - Legacy Locks Directory /run/lock.
+[    2.664501] systemd[1]: Mounted sys-kernel-debug.mount - Kernel Debug File System.
+[    2.665462] systemd[1]: Mounted sys-kernel-tracing.mount - Kernel Trace File System.
+[    2.666583] systemd[1]: fake-hwclock-load.service: Deactivated successfully.
+[    2.667169] systemd[1]: Finished fake-hwclock-load.service - Restore the current clock.
+[    2.668734] systemd[1]: Finished kmod-static-nodes.service - Create List of Static Device Nodes.
+[    2.669954] systemd[1]: modprobe@configfs.service: Deactivated successfully.
+[    2.670577] systemd[1]: Finished modprobe@configfs.service - Load Kernel Module configfs.
+[    2.671875] systemd[1]: modprobe@drm.service: Deactivated successfully.
+[    2.672499] systemd[1]: Finished modprobe@drm.service - Load Kernel Module drm.
+[    2.673859] systemd[1]: modprobe@efi_pstore.service: Deactivated successfully.
+[    2.674460] systemd[1]: Finished modprobe@efi_pstore.service - Load Kernel Module efi_pstore.
+[    2.675669] systemd[1]: modprobe@fuse.service: Deactivated successfully.
+[    2.676291] systemd[1]: Finished modprobe@fuse.service - Load Kernel Module fuse.
+[    2.683474] systemd[1]: Mounting sys-fs-fuse-connections.mount - FUSE Control File System...
+[    2.686792] systemd[1]: Mounting sys-kernel-config.mount - Kernel Configuration File System...
+[    2.687022] systemd[1]: systemd-fsck-root.service - File System Check on Root Device skipped, unmet condition check ConditionPathExists=!/run/initramfs/fsck-root
+[    2.697694] systemd[1]: Starting systemd-remount-fs.service - Remount Root and Kernel File Systems...
+[    2.705654] systemd[1]: Starting systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully...
+[    2.708619] systemd[1]: Finished systemd-modules-load.service - Load Kernel Modules.
+[    2.714637] systemd[1]: Finished systemd-network-generator.service - Generate Network Units from Kernel Command Line.
+[    2.719008] systemd[1]: Finished systemd-udev-load-credentials.service - Load udev Rules from Credentials.
+[    2.721423] systemd[1]: Mounted sys-fs-fuse-connections.mount - FUSE Control File System.
+[    2.722109] systemd[1]: Reached target network-pre.target - Preparation for Network.
+[    2.725804] systemd[1]: Starting systemd-sysctl.service - Apply Kernel Variables...
+[    2.727801] systemd[1]: Mounted sys-kernel-config.mount - Kernel Configuration File System.
+[    2.772223] systemd[1]: Finished systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully.
+[    2.773872] EXT4-fs (mmcblk0p1): re-mounted 2520cc50-b3ea-430f-ba9b-552afa4b6f82 r/w.
+[    2.777912] systemd[1]: Finished systemd-remount-fs.service - Remount Root and Kernel File Systems.
+[    2.779673] systemd[1]: systemd-hwdb-update.service - Rebuild Hardware Database skipped, unmet condition check ConditionNeedsUpdate=/etc
+[    2.779919] systemd[1]: systemd-pstore.service - Platform Persistent Storage Archival skipped, unmet condition check ConditionDirectoryNotEmpty=/sys/fs/pstore
+[    2.783365] systemd[1]: Starting systemd-random-seed.service - Load/Save OS Random Seed...
+[    2.783733] systemd[1]: systemd-sysusers.service - Create System Users skipped, no trigger condition checks were met.
+[    2.790652] systemd[1]: Starting systemd-timesyncd.service - Network Time Synchronization...
+[    2.793619] systemd[1]: Starting systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev...
+[    2.793932] systemd[1]: systemd-tpm2-setup.service - TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-uki
+[    2.795274] systemd[1]: Finished keyboard-setup.service - Set the console keyboard layout.
+[    2.796841] systemd[1]: Finished systemd-sysctl.service - Apply Kernel Variables.
+[    2.803118] systemd[1]: Starting systemd-resolved.service - Network Name Resolution...
+[    2.852608] systemd[1]: Finished systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev.
+[    2.853310] systemd[1]: Reached target local-fs-pre.target - Preparation for Local File Systems.
+[    2.857305] systemd[1]: Starting systemd-udevd.service - Rule-based Manager for Device Events and Files...
+[    2.956019] systemd[1]: Started systemd-timesyncd.service - Network Time Synchronization.
+[    2.957257] systemd[1]: Reached target time-set.target - System Time Set.
+[    3.028829] systemd[1]: Started systemd-udevd.service - Rule-based Manager for Device Events and Files.
+[    3.037801] systemd[1]: Starting systemd-networkd.service - Network Configuration...
+[    3.108456] sd 0:0:0:1: [sdb] Spinning up disk...
+[    3.157455] systemd[1]: Finished systemd-udev-trigger.service - Coldplug All udev Devices.
+[    3.185174] random: crng init done
+[    3.193688] systemd[1]: Finished systemd-random-seed.service - Load/Save OS Random Seed.
+[    3.194566] systemd[1]: first-boot-complete.target - First Boot Complete skipped, unmet condition check ConditionFirstBoot=yes
+[    3.204351] scsi 1:0:0:0: Direct-Access     HIKSEMI  PSSD             0100 PQ: 0 ANSI: 6
+[    3.210912] sd 1:0:0:0: [sdc] 2000409264 512-byte logical blocks: (1.02 TB/954 GiB)
+[    3.212772] sd 1:0:0:0: [sdc] Write Protect is off
+[    3.212811] sd 1:0:0:0: [sdc] Mode Sense: 43 00 00 00
+[    3.213208] sd 1:0:0:0: [sdc] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+[    3.234251] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[    3.239605] systemd[1]: Found device dev-ttyS0.device - /dev/ttyS0.
+[    3.270004] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[    3.271763] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[    3.277656] systemd[1]: Started systemd-resolved.service - Network Name Resolution.
+[    3.288182]  sdc: sdc1 sdc2
+[    3.288736] sd 1:0:0:0: [sdc] Attached SCSI disk
+[    3.857154] systemd[1]: Reached target nss-lookup.target - Host and Network Name Lookups.
+[    3.857424] systemd[1]: Reached target usb-gadget.target - Hardware activated USB gadget.
+[    3.862630] systemd[1]: Mounting tmp.mount - /tmp...
+[    3.891645] systemd[1]: Mounted tmp.mount - /tmp.
+[    3.892193] systemd[1]: Reached target local-fs.target - Local File Systems.
+[    3.894856] systemd[1]: Listening on systemd-sysext.socket - System Extension Image Management.
+[    3.897761] systemd[1]: Starting armbian-zram-config.service - Armbian ZRAM config...
+[    3.900711] systemd[1]: Starting console-setup.service - Set console font and keymap...
+[    3.901703] systemd[1]: systemd-binfmt.service - Set Up Additional Binary Formats skipped, unmet condition check ConditionPathIsMountPoint=/proc/sys/fs/binfmt_misc
+[    3.901895] systemd[1]: systemd-machine-id-commit.service - Save Transient machine-id to Disk skipped, unmet condition check ConditionPathIsMountPoint=/etc/machine-id
+[    3.935051] systemd[1]: Finished console-setup.service - Set console font and keymap.
+[    4.125129] .ready
+[    4.496526] sd 0:0:0:1: [sdb] 122167296 512-byte logical blocks: (62.5 GB/58.3 GiB)
+[    4.497199] sd 0:0:0:1: [sdb] Write Protect is off
+[    4.497208] sd 0:0:0:1: [sdb] Mode Sense: 21 00 00 00
+[    4.497863] sd 0:0:0:1: [sdb] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA
+[    4.526869]  sdb: sdb1
+[    4.527177] sd 0:0:0:1: [sdb] Attached SCSI removable disk
+[    4.536274] zram: Added device: zram0
+[    4.536958] zram: Added device: zram1
+[    4.537502] zram: Added device: zram2
+[    4.560724] zswap: loaded using pool lzo
+[    4.583622] zram0: detected capacity change from 0 to 4021480
+[    4.602878] Adding 2010736k swap on /dev/zram0.  Priority:5 extents:1 across:2010736k SS
+[    4.618289] systemd[1]: Started systemd-networkd.service - Network Configuration.
+[    4.620664] rk_gmac-dwmac 2a040000.ethernet end1: Register MEM_TYPE_PAGE_POOL RxQ-0
+[    4.623308] systemd[1]: Starting systemd-networkd-persistent-storage.service - Enable Persistent Storage in systemd-networkd...
+[    4.635307] zram1: detected capacity change from 0 to 102400
+[    4.649148] rk_gmac-dwmac 2a040000.ethernet end1: PHY [stmmac-1:01] driver [RTL8211F Gigabit Ethernet] (irq=POLL)
+[    4.651091] dwmac4: Master AXI performs any burst length
+[    4.651105] rk_gmac-dwmac 2a040000.ethernet end1: No Safety Features support found
+[    4.651449] rk_gmac-dwmac 2a040000.ethernet end1: IEEE 1588-2008 Advanced Timestamp supported
+[    4.651645] rk_gmac-dwmac 2a040000.ethernet end1: registered PTP clock
+[    4.651652] rk_gmac-dwmac 2a040000.ethernet end1: configuring for phy/rgmii-rxid link mode
+[    4.672612] systemd[1]: Finished armbian-zram-config.service - Armbian ZRAM config.
+[    4.675764] systemd[1]: Starting armbian-ramlog.service - Armbian memory supported logging...
+[    4.679240] rk_gmac-dwmac 29d20000.ethernet end0: Register MEM_TYPE_PAGE_POOL RxQ-0
+[    4.705167] rk_gmac-dwmac 29d20000.ethernet end0: PHY [stmmac-0:02] driver [RTL8211F Gigabit Ethernet] (irq=POLL)
+[    4.717129] dwmac4: Master AXI performs any burst length
+[    4.717166] rk_gmac-dwmac 29d20000.ethernet end0: No Safety Features support found
+[    4.717690] rk_gmac-dwmac 29d20000.ethernet end0: IEEE 1588-2008 Advanced Timestamp supported
+[    4.718006] rk_gmac-dwmac 29d20000.ethernet end0: registered PTP clock
+[    4.718031] rk_gmac-dwmac 29d20000.ethernet end0: configuring for phy/rgmii-rxid link mode
+[    4.747457] systemd[1]: Finished systemd-networkd-persistent-storage.service - Enable Persistent Storage in systemd-networkd.
+[    4.748565] EXT4-fs (zram1): mounted filesystem 839fe5ef-a8e2-4adc-b9a0-0c76a7cc60b4 r/w without journal. Quota mode: disabled.
+[    5.000713] systemd[1]: Finished armbian-ramlog.service - Armbian memory supported logging.
+[    5.007005] systemd[1]: Starting systemd-journald.service - Journal Service...
+[    5.093778] systemd-journald[438]: Collecting audit messages is disabled.
+[    5.173135] systemd[1]: Started systemd-journald.service - Journal Service.
+[    5.231994] systemd-journald[438]: Received client request to flush runtime journal.
+[    5.588283] systemd-journald[438]: Received client request to relinquish /var/log/journal/958cd540f0e041c6b855006cbba7667a access.
+[    6.241260] NOTICE: Automounting of tracing to debugfs is deprecated and will be removed in 2030
+[    7.806604] rk_gmac-dwmac 29d20000.ethernet end0: Link is Up - 1Gbps/Full - flow control rx/tx
+[    8.766543] rk_gmac-dwmac 2a040000.ethernet end1: Link is Up - 1Gbps/Full - flow control rx/tx
+[   31.709317] vdd_npu_s0: disabling
+
+To: Stephen Boyd <sboyd@kernel.org>
+To: Brian Masney <bmasney+clk@redhat.com>
+To: Jerome Brunet <jbrunet+clk@baylibre.com>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org
+
+---
+Elaine Zhang (3):
+      dt-bindings: clock: rockchip: Add RK3572 CRU
+      clk: rockchip: Add internal support for 24-bit fractional dividers
+      clk: rockchip: Add RK3572 clock and reset support
+
+ .../bindings/clock/rockchip,rk3572-cru.yaml        |   57 +
+ drivers/clk/rockchip/Kconfig                       |    7 +
+ drivers/clk/rockchip/Makefile                      |    2 +
+ drivers/clk/rockchip/clk-fractional-divider-v2.c   |  339 ++++
+ drivers/clk/rockchip/clk-rk3572.c                  | 2004 ++++++++++++++++++++
+ drivers/clk/rockchip/clk.c                         |   10 +
+ drivers/clk/rockchip/clk.h                         |   61 +
+ drivers/clk/rockchip/rst-rk3572.c                  |  739 ++++++++
+ include/dt-bindings/clock/rockchip,rk3572-cru.h    |  560 ++++++
+ include/dt-bindings/reset/rockchip,rk3572-cru.h    |  713 +++++++
+ 10 files changed, 4492 insertions(+)
+---
+base-commit: a804c5742bff224d4cb4d25dd383554d598be32b
+change-id: 20261023-add-board-ok3572-c-clk-090dfd552fd9
+
+Best regards,
+--  
+Cunhao Lu <1579567540@qq.com>
+
 
