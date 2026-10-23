@@ -1,111 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792748764;
-	b=W4ol9SASQUJp1tn0/NEgFxmU16PuGkvWnRDDGMDyB2CAFXw3LNVlvjnPOGhwwmD6K9cp
-	 s0Xdd3aun/Ndki6V5PF+6zNowG1TpzPfOdJLeujUe9VVyxLzMj1aSKmu3TMEM14HN6FG7
-	 TO3+GAj5nKtF1iXhq51lKFL6TfyYiF0/XTGfSWw8paWePyxmuc57cZoilmQDOFEtxwPkV
-	 TtDQvrCpdV+vdXOAOy1UyB9kSnlauJSFnZ6reuNgCWMU3dmDr4Tp3EE8CygP1o8bs+4pL
-	 CnISokdhCS/Jtv7pa9/Q2NeDAtHsX/pdpdlp8jxx5bn+brZtCDOa9WgX2KEIU+NKBdg==
+	t=1792749196;
+	b=NuLOEEM/AybEYHEx5+O+8b84q9SA0XbByHUYJ0SHXf2njxuPcCwzWkxWlhxxkd5zCHJT
+	 Pk+p7XLVG2P+BCfTPgQL9RDnz7r6HwDZa1HNs65YoGnOr0WRWnv1yCIclizImWW4cX6W5
+	 HgQONmsQV7S8aXk3zVuPC6qjPQDUYaAKljMV2qlLXhtNeMoKuuDhPKbA3N8XnNnueycNs
+	 rrzTgVHUwHxQM3JMS3WRrOdasviqaTvV/Qs2trH/IvLDh1kIyNA1BiTH31YHpdtlDQJbt
+	 KLS5uBI/UIi4ginEzwGFsw2GCHVPNZOIIITaPl8s6DT6Ise2bYhrE+OWRdXIpkU2zwQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792748764;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Authority-Analysis:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-GUID:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=sv984i3EtPZRLgQvL+4afIipg3exs4lVXN/3p5iVk3M=;
-	b=LhDSK04FpoV0Sd2cEn54t6RHmk4rHfsP7ZZtSHpkOaedkmhZ5zvSyKWkcWjQA5EcXARg
-	 oEE3RInKvz4Py3rUN1S9R/WI96Ul4/jLYJ18NA4Fls3IYHkhjA+Z1Lfh79O9/NQ4VmPJb
-	 8mlDk8mROXACkZg3mkBoimbpwUhqSP+hGzBlTpeJ9ox5y5IuwmYnBTSWqI2SvLG0mfduH
-	 i3J8extC/VIE7J1SMeWihA0wDEdDImLddGIHLbWRYwKZl3Y3owAoSn+MuuexIR5rnMOLA
-	 t8aWpMg0Pml7s2j1l+oaO8x4NDAtJHEIRgghJZo/slOOuYyKRjdg7kcWUE+//+SRFrg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792749196;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=OoHuobr1W4Hg3djaW5xGjOqp6InpOS/re/XPCAIVT8Y=;
+	b=GCCsEN2lMt9xZxZ+l4iNzsx7PkriVsAJsfwYhd2kgNPKO1T0l1PYI7H3PvTsGpHhbPZ/
+	 WssDsJpv9USHBCeA4zeqs3b6YiL+ovxGURqWqs6O3BTdiiEWFwT7Zga099OHjQEDmmSyM
+	 XGpswBpjXto16ksNT1q65qp0jEkCJKPLdMh7WStoFNaRoiq8xLAXjOSRrW0g/SUcFy8nc
+	 zqT7x9lse+0CE67DEuyzOEnq+DVZkJghMJUIT/ebfYu2up0JEx80HIBrZTxqEUdpmieeG
+	 nKqrs/P7a3q5/6++P1yWMAUc4kX3F6jY035Q4Od2l85li9dE1ssOSciq7ZubdxbYaiA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=TLd1pMg+;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=YwJ0kDr7;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QT27aicZ;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0403606A31D
-	for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2026 09:46:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0403606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AB2606A31F;
+	Fri, 23 Oct 2026 09:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=TLd1pMg+;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=YwJ0kDr7
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69N7FDQw2092868
-	for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2026 09:46:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sv984i3EtPZRLgQvL+4afIipg3exs4lVXN/3p5iVk3M=; b=TLd1pMg+hsh+sdis
-	QuLNWthzsTT0eaJHxBBFbAr0m+dnNKNHG0+pHCHT4dAK71TN41vEotrFSBThAGuN
-	cPNoXPOM3EbOtRya6rlgET1hFeiH02KpqEoErtjAM5fbFEc5LLKpg7FMdgSxeah3
-	qEMqGvTA5+KiJF+L6YB5mORbgxyl/FEZw53rsd0Up6eIlWgU6RFMLey0Dumbho37
-	0tk0KBnC7N+HrhVf43wwITiYdjigP3/Omp8wurlX+LMYjTXilFSmEEaXSXAxZLe6
-	IW8OU8sbJhlaacAfmT3Oja3FYk9XhdGBgmCWyx2lhYcTKccS5tYaTC9py5tt1srj
-	i8oCzw==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hftyga8ps-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2026 09:46:02 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-53389750985so1347731cf.3
-        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2026 02:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1792748762; x=1793353562; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=sv984i3EtPZRLgQvL+4afIipg3exs4lVXN/3p5iVk3M=;
-        b=YwJ0kDr7N3llpVFNpy0AeIo2LlY7dm/xGvKkj1ELKqggFNOGXQsrWlIfEbyBolNZFK
-         9XfGpTstOptB46wc4xpl4r3wwFp2nIOH7VEvh5bo30hNli2HSuOora6PFXI/y82Uij+L
-         kDdraxB7R65rDMA+AW0GNhIboPPQ2Cz7dCgeEpOabJ4X/QNoDI3atyK7c35/4yUUftLE
-         Eu/borcPcthnJNii5GDwvYev2gDTtowp3kvgwrzKfForYBFNOLun9gmnuPQlmvwM9hvG
-         19wWR/vomnGlPZ6mzpbY3D986LaXIb/q/GynBc9CUCStC3+ZoOcuQcmZzZk6ftEeFQOz
-         HGIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792748762; x=1793353562;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=sv984i3EtPZRLgQvL+4afIipg3exs4lVXN/3p5iVk3M=;
-        b=n5ckwEKTOQhosExZbul/vBnLCwzCsiw31hKODF3/EaNlgRjwGX1u8XVcHW6XaapEVd
-         VMF513afG3Lp8CAGUj7qBnV2GRMIwIQKJ1uysEbZTHhqith9MGjMxec8uVQioarcpsRJ
-         iXPeoYuS2CnRUxgrI8umKGjTMzl1Zqn7nWsa7XLMboH+emhEVlAx0bfG+LMKFKw9I2Kl
-         mZPdnfq/nA07+QIWG0u272NFL5EdLCrk5e3+r/hdCh6xokZtF6t9rMzatDKhOXC6GlLG
-         /Cpw7x3Tf9hWgNPuamutZMqfvXjAw4Y0ykZ26/IPjJl3+ik06FqyPLTqIRPN+ByFFklF
-         G6/Q==
-X-Forwarded-Encrypted: i=1; AKwUvBw7XTK2jdJwAW0EVwdNvOQgFsIV1bEiWyonVXhlKXjIbZWnxARKrhpZZnb7eFoo2A4d17h3glHSXnA=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKSDoW2Z2eTu5ksFJimq2mrOOPmaqJckF17r6nvSLT3LlVAT1Qu
-	RWVsR2jz+wQRZg1P/gji5srUNmEgXC5vO9X7UCYZ+bzezus2ejgm+OLUd3G4H3YAXWakGFEu3rg
-	Tiou2rZzK0qado+YM+Y/PjPc8RUCDeQBm3Jx6uRprdzCJjftrWjPo1YmFfbPCDho=
-X-Gm-Gg: AYBFou2MTsjr/hct+92lXRx0zi3iHAWbc+xHbTUJjtgSe2jZtC7kblaCq20hnhES0Uv
-	nL5irn2QaCTthcrUrf2jMA6dYMmDW+zfVnhD5wjdhXA6pu3WnhCY0Ibv6uPclU7CktegyzXb399
-	2enh2a9syQaouJrKGprg6Xca7lgk4m7WWnVbPJaOD+RkorCOKehUJNA3Iuwv76SJNyQGWt7XURz
-	KiyjutK/NU+ZWXEBu16thCjhmFoqv2CnloL6+Un9EJVqEHNWqR8h7z9+wswBhCDl+Pml+p5Al8F
-	bvS7LcshySquM4hOB8pLscOeyrWIf91Zc+28M93uHuzwgjMCZBZG/5u9hR2hI5ksiHjUeNXNQHX
-	KjxDV6ZElqmo+l3irRSQWMA==
-X-Received: by 2002:a05:622a:ea06:10b0:535:162c:2e81 with SMTP id d75a77b69052e-536c293f856mr20737181cf.5.1792748761842;
-        Fri, 23 Oct 2026 02:46:01 -0700 (PDT)
-X-Received: by 2002:a05:622a:ea06:10b0:535:162c:2e81 with SMTP id d75a77b69052e-536c293f856mr20736901cf.5.1792748761235;
-        Fri, 23 Oct 2026 02:46:01 -0700 (PDT)
-Received: from [192.168.226.26] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c46a5c4d827sm85500066b.15.2026.10.23.02.45.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Oct 2026 02:46:00 -0700 (PDT)
-Message-ID: <729312d0-d48b-4c92-ac6c-98ffbb23d7c7@oss.qualcomm.com>
-Date: Fri, 23 Oct 2026 11:45:58 +0200
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QT27aicZ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 746BD1F01825;
+	Fri, 23 Oct 2026 09:53:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792749195;
+	bh=OoHuobr1W4Hg3djaW5xGjOqp6InpOS/re/XPCAIVT8Y=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=QT27aicZiX03/slaIx3sg8DyFkR2Fpt6WJazyoZfS9dPeCvpgXptJPJeH4LFDBQ2z
+	 gI7Id0vohALWjOpLItCuJeNYjdh5Nxin3uQm+9Y0ZbrWbpGF09cXQDBk5hhDIc8/Yc
+	 LwCl7ntVpgv2MFDqWRjEYJaDSW7yXBUQLcTptnrpr90VcAxIuBD7d2LEXVaekBrxSn
+	 RQ+LMsEUQPBEK7lVaUByROlvgb+1DgDCXOIR4TaCS7saumi5y7ySe2LlX7fqLdEiRd
+	 IocGAhSTSkXuAzASfdBextvzqVC+sxPXGbSTttqwXBYXF3e/Ji8DPWjYDi36osz/Jb
+	 uBoODXnTCw5bQ==
+Message-ID: <sashiko-outbox-182643@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v1 2/5] clk: cix: Handle Sky1 AUDSS DMA interrupt gates
+ as an irqchip
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Jelly Jia" <Jelly.Jia@cixtech.com>
+Cc: devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, Frank.Li@kernel.org
+In-Reply-To: <20261023093045.3248630-3-Jelly.Jia@cixtech.com>
+References: <20261023093045.3248630-1-Jelly.Jia@cixtech.com>
+ <20261023093045.3248630-3-Jelly.Jia@cixtech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 23 Oct 2026 09:53:15 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -114,94 +60,293 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-ipq6018: add fallback names for the bias
- PLL parents
-To: Robert Marko <robert.marko@sartura.hr>
-Cc: Julius Bairaktaris <julius@bairaktaris.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-        Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Vladyslav Andreichykov <vladdrako007@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20261020065430.1251541-1-julius@bairaktaris.de>
- <30c21159-3008-463c-9cd2-a07f26668a25@sartura.hr>
- <9699033c-a9e1-4b11-a55f-b1aa216c700f@oss.qualcomm.com>
- <CA+HBbNELhPAAZoUuXm3SrvgxiU0eMaiu5LB3wfup04_HuZ+yxg@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CA+HBbNELhPAAZoUuXm3SrvgxiU0eMaiu5LB3wfup04_HuZ+yxg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=cZpHPXDM c=1 sm=1 tr=0 ts=6adb2cda cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=Rp3BUHB5SiOdbJK_EPAA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIzMDAzOCBTYWx0ZWRfX3h4/JbE07jn5
- p7Ub7IWpHtgXUGa8SYKZf0wTpkPd59Pw8D6DswZdNv4U+uXSaP3j7UHClY5pA3aP/q3WKckMvHO
- TTkq9nrOb/YkuaB7X2O8p91wKslkYMw=
-X-Proofpoint-GUID: pN_7JAucUG0Kcivbwjc_izJtsEAN9jOe
-X-Proofpoint-ORIG-GUID: pN_7JAucUG0Kcivbwjc_izJtsEAN9jOe
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIzMDAzOCBTYWx0ZWRfX4iKEIab2yiem
- 4AjISCPyr6OSkIAFoifdwCYHVlfOR4U/9w35xUsK0ZZUeQ9pN3UVF6Ttj0jWq+ABa8ffeoEDs8B
- ydOS8hi9OWK3zMKUkVUSXNTNSxkl1xkcmefVxR+qeHt+InaDVaGWn4fgp5RjRMxIavwx3i2Nq+E
- LpJFZkBa/kYHNf7Y6a4fc9gHsWG/WybHOZeavsI019Js1cg8iUKEJEaSK1iKKm1KMC8ckAHVjoU
- llW7io3MWuQeC61IC9XMg0qvR4vxHRzvGSQKKPBMssVY9M4vdNADG178pQU8rnTL+IegQCocLHQ
- Xq7tkzWrGJ/RZkyoNDtm9fYFiqSu37XUFcsrAkIHfSGnNWjrog0Hn1aYvfdlSyP6ZHcwL/uGuv/
- S+9qbqUxoO8I4k5j5UtAjmrN1N11ei5NK5ZKbmhxMJQwUIk4fZYcA6KjqmFm8d7z47RBwi/9eue
- MYBkom7m9wC6GCQ+lpQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-23_02,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- clxscore=1015 spamscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610230038
 
-On 10/23/26 11:41 AM, Robert Marko wrote:
-> On Wed, Oct 21, 2026 at 10:06 AM Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
->>
->> On 10/20/26 1:39 PM, Robert Marko wrote:
->>>
->>> On 20/10/2026 08:54, Julius Bairaktaris wrote:
->>>> From: Vladyslav Andreichykov <vladdrako007@gmail.com>
->>>>
->>>> bias_pll_cc_clk and bias_pll_nss_noc_clk are outputs of the CMN PLL,
->>>> which takes its AHB and SYS clocks from GCC, so the device tree does not
->>>> pass them back to GCC. With only .fw_name these parents never resolve,
->>>> nss_ppe_clk_src stays an orphan, and setting it to 300 MHz fails with
->>>> -EINVAL. The NSS clocks below it, such as gcc_nss_edma_clk, read 0 Hz.
->>>>
->>>> Add .name fallbacks so they resolve to the clocks the CMN PLL registers,
->>>> as gcc-ipq8074 already does.
->>>>
->>>> Tested-by: Vladyslav Andreichykov <vladdrako007@gmail.com>
->>>> Assisted-by: Claude:claude-opus-5-5
->>>> Signed-off-by: Vladyslav Andreichykov <vladdrako007@gmail.com>
->>>> Signed-off-by: Julius Bairaktaris <julius@bairaktaris.de>
->>>> ---
->>>
->>> Hi,
->>>
->>> This issue does not exist upstream, as CMN PLL is not yet wired due to missing
->>> networking, even then the solution is not to add global name matching.
->>>
->>> The required clock inputs should just be passed to GCC directly which I have
->>> just pushed to OpenWrt.
->>
->> Just read your reply after writing mine, I'm looking forward to seeing
->> that patch!
-> 
-> Hi Konrad,
-> You mean the wiring for CMN PLL or?
+Thank you for your contribution! Sashiko AI review found 5 potential issue(=
+s) to consider:
+- [High] clk: cix: unclocked MMIO access in sky1_audss_irq_teardown() and I=
+RQ callbacks
+- [High] clk: cix: invalid wait context in sky1_audss_irq_handler() and mas=
+k callbacks
+- [High] clk: cix: missing irq_dispose_mapping() in sky1_audss_irq_teardown=
+()
+- [High] clk: cix: level IRQ storm with handle_untracked_irq() on lazy IRQ =
+disable
+- [Low] clk: cix: missing select IRQ_DOMAIN for CLK_SKY1_AUDSS in Kconfig
+--
 
-Yes the wiring 
+commit d366d15da9922d1961ddd48a45f4b621f1a77320
+Author: Jelly Jia <Jelly.Jia@cixtech.com>
 
-Konrad
+clk: cix: Handle Sky1 AUDSS DMA interrupt gates as an irqchip
+
+This commit adds an irqchip and linear IRQ domain to the CIX Sky1 AUDSS clo=
+ck
+driver to manage the DMA-350 channel interrupt gates in the INFO_AP_IRQC
+register. It installs a chained IRQ handler on the shared parent GIC line a=
+nd
+registers a devres teardown action to clean up the irqchip.
+
+> diff --git a/drivers/clk/cix/clk-sky1-audss.c b/drivers/clk/cix/clk-sky1-=
+audss.c
+> index e096b8121df30..789cbba631d16 100644
+> --- a/drivers/clk/cix/clk-sky1-audss.c
+> +++ b/drivers/clk/cix/clk-sky1-audss.c
+
+[ ... ]
+
+> @@ -928,6 +939,110 @@ static int sky1_audss_clks_enable(struct sky1_audss=
+_clks_priv *priv)
+>  	return err;
+>  }
+> =20
+> +static void sky1_audss_irq_mask(struct irq_data *d)
+> +{
+> +	struct sky1_audss_clks_priv *priv =3D irq_data_get_irq_chip_data(d);
+> +
+> +	regmap_update_bits(priv->regmap_cru, INFO_AP_IRQC,
+> +			   BIT(d->hwirq), 0);
+> +}
+> +
+> +static void sky1_audss_irq_unmask(struct irq_data *d)
+> +{
+> +	struct sky1_audss_clks_priv *priv =3D irq_data_get_irq_chip_data(d);
+> +
+> +	regmap_update_bits(priv->regmap_cru, INFO_AP_IRQC,
+> +			   BIT(d->hwirq), BIT(d->hwirq));
+> +}
+
+[Severity: High]
+Will calling regmap_update_bits() in sky1_audss_irq_mask() and
+sky1_audss_irq_unmask(), as well as regmap_read() in sky1_audss_irq_handler=
+(),
+trigger an invalid wait context warning under CONFIG_PROVE_RAW_LOCK_NESTING
+and sleep in atomic context on PREEMPT_RT?
+
+In drivers/clk/cix/clk-sky1-audss.c, priv->regmap_cru is initialized via
+devm_regmap_init_mmio() using sky1_audss_regmap_config:
+
+    static const struct regmap_config sky1_audss_regmap_config =3D {
+            .reg_bits =3D 32,
+            .val_bits =3D 32,
+            .reg_stride =3D 4,
+    };
+
+Because sky1_audss_regmap_config does not set .use_raw_spinlock =3D true,
+regmap initializes a non-raw spinlock_t for map->spinlock.
+
+The IRQ core invokes .irq_mask and .irq_unmask while holding irq_desc->lock
+(a raw_spinlock_t), and sky1_audss_irq_handler() runs in hardirq context.
+Acquiring the regmap spinlock_t in those paths violates raw_spinlock_t
+nesting rules. Should sky1_audss_regmap_config set .use_raw_spinlock =3D tr=
+ue?
+
+> +
+> +static struct irq_chip sky1_audss_irq_chip =3D {
+> +	.name		=3D "sky1-audss-dmac",
+> +	.irq_mask	=3D sky1_audss_irq_mask,
+> +	.irq_unmask	=3D sky1_audss_irq_unmask,
+> +	.flags		=3D IRQCHIP_SKIP_SET_WAKE,
+> +};
+> +
+> +static int sky1_audss_irq_map(struct irq_domain *d, unsigned int irq,
+> +			      irq_hw_number_t hwirq)
+> +{
+> +	if (hwirq >=3D SKY1_AUDSS_DMAC_IRQS)
+> +		return -EINVAL;
+> +
+> +	irq_set_chip_data(irq, d->host_data);
+> +	irq_set_chip_and_handler(irq, &sky1_audss_irq_chip,
+> +				 handle_untracked_irq);
+> +	irq_set_noprobe(irq);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops sky1_audss_irq_ops =3D {
+> +	.map	=3D sky1_audss_irq_map,
+> +	.xlate	=3D irq_domain_xlate_onecell,
+> +};
+> +
+> +static void sky1_audss_irq_handler(struct irq_desc *desc)
+> +{
+> +	struct sky1_audss_clks_priv *priv =3D irq_desc_get_handler_data(desc);
+> +	struct irq_chip *chip =3D irq_desc_get_chip(desc);
+> +	unsigned long enabled;
+> +	unsigned int hwirq;
+> +	u32 val;
+> +
+> +	chained_irq_enter(chip, desc);
+> +
+> +	if (!regmap_read(priv->regmap_cru, INFO_AP_IRQC, &val)) {
+> +		enabled =3D val & INFO_AP_IRQC_DMAC_MASK;
+> +		for_each_set_bit(hwirq, &enabled, SKY1_AUDSS_DMAC_IRQS)
+> +			generic_handle_domain_irq(priv->irq_domain, hwirq);
+> +	}
+> +
+> +	chained_irq_exit(chip, desc);
+> +}
+
+[Severity: High]
+What happens if a child DMA interrupt is disabled via disable_irq(),
+disable_irq_nosync(), or suspend_device_irqs() and that channel later
+asserts its level-high interrupt?
+
+Because sky1_audss_irq_chip only provides .irq_mask and .irq_unmask (without
+.irq_disable or IRQCHIP_MASK_ON_SUSPEND) and sky1_audss_irq_map() does not
+set IRQ_DISABLE_UNLAZY, irq_disable() performs a lazy disable: it marks the
+interrupt disabled in software without calling sky1_audss_irq_mask(), leavi=
+ng
+BIT(hwirq) set in INFO_AP_IRQC.
+
+Unlike handle_level_irq() and handle_fasteoi_irq(), handle_untracked_irq()
+does not call mask_irq() when an interrupt arrives while disabled:
+
+    void handle_untracked_irq(struct irq_desc *desc)
+    {
+            raw_spin_lock(&desc->lock);
+
+            if (!irq_can_handle(desc))
+                    goto out_unlock;
+            ...
+
+When the disabled channel asserts its level interrupt, sky1_audss_irq_handl=
+er()
+sees BIT(hwirq) set in INFO_AP_IRQC and calls generic_handle_domain_irq() ->
+handle_untracked_irq(), which returns immediately without masking the gate =
+or
+clearing the source. Once chained_irq_exit() unmasks the parent GIC line,
+won't the level-high parent interrupt immediately re-fire in an infinite ha=
+rd
+IRQ storm?
+
+> +
+> +static void sky1_audss_irq_teardown(void *data)
+> +{
+> +	struct sky1_audss_clks_priv *priv =3D data;
+> +
+> +	regmap_update_bits(priv->regmap_cru, INFO_AP_IRQC,
+> +			   INFO_AP_IRQC_DMAC_MASK, 0);
+> +	irq_set_chained_handler_and_data(priv->parent_irq, NULL, NULL);
+> +	irq_domain_remove(priv->irq_domain);
+> +}
+
+[Severity: High]
+Does sky1_audss_irq_teardown() leak mapped irq_desc descriptors and leave
+dangling pointers when calling irq_domain_remove(priv->irq_domain) without
+first disposing of existing mappings?
+
+When a consumer calls platform_get_irq(), irq_create_fwspec_mapping() maps =
+the
+child virq through sky1_audss_irq_map(), setting desc->irq_data.domain to
+priv->irq_domain, desc->irq_data.chip_data to priv, and desc->irq_data.chip=
+ to
+&sky1_audss_irq_chip. Platform consumers do not call irq_dispose_mapping() =
+on
+unbind.
+
+Calling irq_domain_remove() directly without iterating over the domain's
+hwirqs and calling irq_dispose_mapping(irq_find_mapping(priv->irq_domain,
+hwirq)) leaves those virtual IRQ descriptors allocated in the global IRQ tr=
+ee
+with dangling pointers to the freed domain, freed priv, and (if built as a
+module and unloaded) unmapped sky1_audss_irq_chip memory.
+
+> +
+> +static int sky1_audss_irq_init(struct platform_device *pdev,
+> +			       struct sky1_audss_clks_priv *priv)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	int ret;
+> +	int irq;
+> +
+> +	if (!of_property_read_bool(dev->of_node, "interrupt-controller"))
+> +		return 0;
+> +
+> +	irq =3D platform_get_irq(pdev, 0);
+> +	if (irq < 0)
+> +		return irq;
+> +
+> +	priv->irq_domain =3D irq_domain_add_linear(dev->of_node,
+> +						 SKY1_AUDSS_DMAC_IRQS,
+> +						 &sky1_audss_irq_ops, priv);
+
+[Severity: Low]
+Can this fail to build under CONFIG_COMPILE_TEST=3Dy when CONFIG_IRQ_DOMAIN=
+ is
+not enabled?
+
+In drivers/clk/cix/Kconfig, CLK_SKY1_AUDSS depends on ARCH_CIX || COMPILE_T=
+EST
+and selects AUXILIARY_BUS, REGMAP_MMIO, and RESET_CONTROLLER, but does not
+select IRQ_DOMAIN. Because irq_domain_add_linear(), irq_domain_remove(),
+irq_domain_xlate_onecell, and generic_handle_domain_irq() are only declared
+when CONFIG_IRQ_DOMAIN is enabled, should CLK_SKY1_AUDSS select IRQ_DOMAIN =
+as
+well?
+
+[ ... ]
+
+> @@ -1110,6 +1225,13 @@ static int sky1_audss_clk_probe(struct platform_de=
+vice *pdev)
+>  		goto fail_pm;
+>  	}
+> =20
+> +	/* Tear the irqchip down before the runtime-PM cleanup disables clocks.=
+ */
+> +	ret =3D sky1_audss_irq_init(pdev, priv);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "failed to set up AUDSS DMA IRQs\n");
+> +		goto fail_pm;
+> +	}
+> +
+>  	pm_runtime_put_sync(dev);
+> =20
+>  	return 0;
+
+[Severity: High]
+Can sky1_audss_irq_teardown(), sky1_audss_irq_mask(), sky1_audss_irq_unmask=
+(),
+and sky1_audss_irq_handler() access INFO_AP_IRQC while the AUDSS CRU is
+runtime-suspended with its NoC reset asserted and parent clocks disabled?
+
+In sky1_audss_clk_runtime_suspend(), suspending the device asserts
+priv->rst_noc and disables all four parent clocks:
+
+    reset_control_assert(priv->rst_noc);
+
+    sky1_audss_clks_disable(priv);
+
+There appear to be three paths where INFO_AP_IRQC is accessed while the CRU=
+ is
+in this unclocked/reset state:
+
+1. At the end of sky1_audss_clk_probe() (and at fail_pm), pm_runtime_put_sy=
+nc()
+suspends the device immediately if no consumer clock is prepared. Likewise,
+during driver unbind, __device_release_driver() runs pm_runtime_put_sync()
+before devres_release_all(). Because the device is already runtime-suspended
+before devres teardown starts, registering sky1_audss_irq_teardown() after
+sky1_audss_clk_rpm_cleanup() does not keep the CRU clocked when
+sky1_audss_irq_teardown() calls regmap_update_bits() on INFO_AP_IRQC.
+
+2. In sky1_audss_irq_init(), priv->irq_domain is created without calling
+irq_domain_set_pm_device(priv->irq_domain, dev). As a result, requesting or
+freeing a child DMA IRQ does not runtime-resume dev before
+sky1_audss_irq_unmask() or sky1_audss_irq_mask() accesses INFO_AP_IRQC (and
+any gate bit written while suspended would be overwritten by sky1_reg_save
+on the next runtime resume).
+
+3. In sky1_audss_clk_pm_ops, pm_runtime_force_suspend() and
+pm_runtime_force_resume() are wired to normal system sleep callbacks via
+SET_SYSTEM_SLEEP_PM_OPS() rather than noirq callbacks, so the CRU is placed
+in reset and unclocked during dpm_suspend() while the chained handler
+sky1_audss_irq_handler() and child IRQs are still active.
+
+Should the driver set irq_domain_set_pm_device(), ensure runtime PM is acti=
+ve
+around the register write in sky1_audss_irq_teardown(), and move the system
+sleep callbacks to noirq?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261023093045.3248=
+630-1-Jelly.Jia@cixtech.com?part=3D2
