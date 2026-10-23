@@ -1,106 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.74.2
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792768155;
-	b=SJ77rhaL7sUeT9m3Myd2aXglFNx13QlwxIBnr212w/mSgEfkEbme0DPOLcK8zFE+F+14
-	 Gp9kRThNv3Eya2ZSRabhVNhjf/2x1cNH6vfPPjZ6jvwmBNCy2dCf6FSLCg1Prp7rx24rC
-	 B6PkHhwfpGtFVFaabZqh+82DoZO6r88Ii/mJCkFaxZJovT0nK574ZUCwr2mayPhjGHhpr
-	 oXW4t90s861wtXSqhAIlbF18zYyGwoeDcnPPKASoPXv2tG90IM8Sqqluyjucp743GmnT6
-	 q4Qrsf2EK0kiGdk9osrtJQI08lk6VYBFjwn/ABGPfMYmEt6SI17XQ7GbPdQKZir+D7Q==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792768155;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-LD-Processed:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=otJDfu2czUDBZpoQ84WulQsGoZ/j+riuANkdJizbN0A=;
-	b=xxxR+T0txTHrKtZfiedL79K6ncp32LH+FCPXOPpkDJk3l3jUzAquv2hnttuAj62XTB5a
-	 nzluekTphzC49PRjAucEeOnAHIPWbpL64KbL5o3mqM4zK2ZP3KrwDViEuaC63lpG0z2h7
-	 TQmISeslpDZ4JRjQRpNROtCJQLn4lQI3h44YKYO0wKO5OeKegW6bjJV6pET/EdNpYw1Z2
-	 GywcMJNrJFCclgZTifWGnBs4cDEPPmxXYpV9pDH/aDH+K88/T8FdfBXC9SuBkV+xCQnfC
-	 TlMgZd3724IWEgdWjcJ6xebFFInLTUCEegLkdyUdyeJFmKVy1Z/d/PIgpA1gg/84oRA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=renesas.com;
-	spf=pass smtp.mailfrom=renesas.com;
-	dkim=pass header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=NHU9x0KC;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.74.2
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011002.outbound.protection.outlook.com [40.107.74.2])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792768818;
+	b=ca7I/ueyHKSH3WeMMKlk/wOopOjeQUKmAV8kMqvmRZllFKe3Fsi/0RO9oIAefdmUdEb5
+	 rVgNpdRRYLWYOU8lcslNjLcICFMBaIzLQBHOXFc2tcoDVf92qU/rzTlizs8IOWLIjgV3Q
+	 pTgUqsKnuWvFbGZHNmJ6adzy+sm+6YIUSHBWdZ7hMSnCmRM/TRVovVJ3t8LFu1gns3vMM
+	 OBOYGMEM2akgnd3d1bDbbD/QX7Qt1IzAeNzRBDgiQF2SFTrmFBdGEdHi8chhuAUcUtVmP
+	 49v/vdAJf9Sm6rplBPr2wPR7/9ld1gSyFXxMsdbKKnzekDURJ08QC5YCPUMQ2BdFZLg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792768818;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=QYiVcolQP4YPmyD5TVZRLEjuRTUmNUpPSBwkFHeEFNw=;
+	b=lMaZqYy8iTNumdX0rYefO24er8ykVRFK0svl/9QYSRe3cftWkotSOsg94Ep797IAJBCo
+	 OIldLW+H9I0IB9CzSrsYJ7zJl57ASlXXJIDfRsCCkuO6jzvW6eytkQjpLfwUw+hGKOJoT
+	 AYyWIwHWPCaZ1ih8hLUNuTt9mU01SUD6/6RX11cAGpxrgv9GZpOtic6HitP0Irp0aVmUA
+	 BrpvV/ZPRm0h2mOwlcBxfXooTQddv5UG9QjlQ8KrmB1AHVsVhx172OeYV0BHky1iamjnw
+	 lE3YZktIdQ34FQ9GQkk7YpkUqZ8RKiYk0ThSjUgm9M19/324iPc7HqQ3SipkZ6skXSg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="FC/YNG3J";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35745606A31A;
-	Fri, 23 Oct 2026 15:09:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 35745606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513A6606A31A
+	for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2026 15:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=NHU9x0KC
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EhL/lHZHvJE+n/HDEU4JzALlgSSFO01bsXDFfncr6s9i35k+md1A2OcpJV3My+11BmGrNQDwOzN+/bSCpUO+jhe9mFsEjtqpn+QH337o6jbKIkKMAm0ms7MKVgtG/hLybuKC2vJXXgYD9n9VnNnUZ6e2IAvAI0UcbezD8QtaEMHkU1KL2/142i7kUTDnd7sid0/umOdXUBOi+fBdrXRsOq+sovyf45BWO0+DKd7WRrLFn5MLHZoFzKYfFxarvSipBLagJ41dCD1zewVZY4KEPP7YekFJZoj0W8aKLSr/+PVCldo/38zX9KxbyEuHrhvo/5v37honWgRj3ON5CAiYbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=otJDfu2czUDBZpoQ84WulQsGoZ/j+riuANkdJizbN0A=;
- b=YW0rTP2cwpzO6ftUM/hnrb9p6yg76qim8ZL0Npvv61n+9oOr/XQFzRSYVA4Usqe16cNIAX46+YFaL5oP5RXDO9reGx6jCbDpz+szj2A/0/r0Y5KySeukVKznjaUwxdEvNFBJRwD82baFvfCemI/I+1kfXhIFAvW3Nb6A2BeXkJ4fhWMBoCZTnSiem6oan8uvFTlwuaTijlIqf537hapDJCu1DUN87UqIDzbcxWbABj3G32YSt0sktzi3HtHgF77eTzHPOE8Iv4gafZZ1XNPj/Q4zg4S5jAHKKO5P/J1zuJCHk4YVxeU5DhcMAF83Sm7omB0O8v/JRg5fkIaUjAi2Ig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=otJDfu2czUDBZpoQ84WulQsGoZ/j+riuANkdJizbN0A=;
- b=NHU9x0KCrW4Soyyd+vKDwUlteZcsPWFZGdBBO+SdFfWv9yKvzDTM7Rei7OGax59t6Zn/37aR8L0BIeUo111qxf3pKMVUlaUUhpLB2ZOV/vMzNQhsTukQTmCkhflWzfhv6gWfYqqMBIXuhRSQ3W/diruoTujBh4pxQUtqWwTK4DM=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYYPR01MB15118.jpnprd01.prod.outlook.com
- (2603:1096:405:1a1::11) by OS7PR01MB18397.jpnprd01.prod.outlook.com
- (2603:1096:604:4be::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.14; Fri, 23 Oct
- 2026 15:09:11 +0000
-Received: from TYYPR01MB15118.jpnprd01.prod.outlook.com
- ([fe80::1116:d56:8164:63b4]) by TYYPR01MB15118.jpnprd01.prod.outlook.com
- ([fe80::1116:d56:8164:63b4%6]) with mapi id 15.21.0546.017; Fri, 23 Oct 2026
- 15:09:10 +0000
-Message-ID: <1ab43b52-0ee0-4e9f-871c-708736023b4b@renesas.com>
-Date: Fri, 23 Oct 2026 16:08:58 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/8] i3c: renesas: Add RZ/G3L support
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>,
- linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20261020-divo-ssgrlpcsrc-2966-i3c-v1-0-30a47f25e515@renesas.com>
- <20261020-divo-ssgrlpcsrc-2966-i3c-v1-4-30a47f25e515@renesas.com>
- <20261023-thundering-axolotl-of-examination-aaa6ba@quoll>
-Content-Language: en-US
-From: Diogo Ivo <diogo.ivo.sx@renesas.com>
-In-Reply-To: <20261023-thundering-axolotl-of-examination-aaa6ba@quoll>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MR1P264CA0059.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:501:3e::9) To TYYPR01MB15118.jpnprd01.prod.outlook.com
- (2603:1096:405:1a1::11)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FC/YNG3J
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9FAA1F031E1;
+	Fri, 23 Oct 2026 15:20:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792768817;
+	bh=QYiVcolQP4YPmyD5TVZRLEjuRTUmNUpPSBwkFHeEFNw=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=FC/YNG3JhfheorIszishyUak+IM0cvCTSzkndfnLbkwt+CLSyMe+UBCn57AJ+Pmec
+	 ThePFzk/TTs1gwecfXhhN7UpoXJSDd/V8x6cAxIz+A4x4nTwxCOPVPfF+aZcRmJxVN
+	 lO0vYd1OxyvvCbWqV4+nNrObfP/r6sH6y7/BIQg6fRixw1MR2ouEdf0KbosPrTZ7GL
+	 CUp42BPTFwwV1aAa0gCIAmaqC/Eno2DIpqzARNy+j5CdwbYuQYntJbQ01WyWvREkml
+	 XJP85k/NOqRD+si5nkfmRfh+bROh5eRgkyMCJ1/ZqTdJfDJ4Pp7RGYg/9W2U5TRd2b
+	 hNjd5xRpX2Nig==
+Message-ID: <sashiko-outbox-182901@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 3/3] clk: ti: dpll: apply the spread spectrum
+ configuration right away
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Dario Binacchi" <dario.binacchi@amarulasolutions.com>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20261023145555.3578469-4-dario.binacchi@amarulasolutions.com>
+References: <20261023145555.3578469-1-dario.binacchi@amarulasolutions.com>
+ <20261023145555.3578469-4-dario.binacchi@amarulasolutions.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 23 Oct 2026 15:20:17 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -109,115 +60,124 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYYPR01MB15118:EE_|OS7PR01MB18397:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02d69726-1cdf-46ec-f0ee-08df31179779
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|23010399003|7416014|376014|366016|261009221227099003|261021121427099003|56012099006|4143699003|11063799006|261009223027099003|10067099003|18002099003|6133799003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	Q0mMgTSFbII9/io2tEW5uGI8MvIDG3iCyrQyFiE8HLrU31J1YzKQacbOvhFUdgnkeW8CEYcx4sqtcJ9S2SI5k9AtaIpfldMx3wsWXdBnH5MemIRdwGo22D8YZR4aO5S1uJk+XfH74hHqrGKH2eEqIeB0aJTSiqNlT4w/g/Igf6NljVrfonBxpZgtkU5XcAMWcGf9bNzb4aNjSCNF2Gv9DmeNY847WDNWI5sMI57YGy5aLraIK7cRw+NLVBASHmbiOnw0xfZCCT9CqgMmb8EuwxJVg2y//CB/HiVA3jZvyXb0xkvasGzC2XQUqE5W0baMdHVCECW4cmh6f7mhvHA3F4BLzyw2C6Z+RNLUcHHcSOb3ruVSbNDhC82C10EfMA0eEunoB6mSnfbex4OkO8DqIy1SvAVCshwVIsRSO0TqfWnScSmgh1qcYu5jePO0kMbpTxGpViBTWZZOMCd5wNR2kqaWCc6CM3OT1KtV0vm6eNcoSqqQ9/jENvrgBRgLTNUF1c1WyX2JwW6648soq5cF67ZMRJ5bSmmkfw4txke+Q63kJAzmUoLeOz0zSd6pyIHj3LU6VHsYhM7p0WfYGGw2TMS4vxisbjwSCq523sbZVMcNUt0oz/4yTc2QIj1BH1o7dKA8hAWRt6MLaUhau2Jv48+dLXw8DarzeNbVeLHgYfg=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYPR01MB15118.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(7416014)(376014)(366016)(261009221227099003)(261021121427099003)(56012099006)(4143699003)(11063799006)(261009223027099003)(10067099003)(18002099003)(6133799003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bzZILzYrOHlRMzI4MGJWQzdxeHJ5aUQzekthc2phNmdrbEVQWE1sYkJ5OGVH?=
- =?utf-8?B?MjUvdTJWTzJVa0VTUTk5VkpQNll4aEUvWXdMREt1aHRGbVFYQ0hua0dGemlj?=
- =?utf-8?B?Ly9DZ2NqU2lBUUdQeUF4aGtuNmhEeUpNa29nNnJWblJURnVtQldIZExLWDQ0?=
- =?utf-8?B?WjZFc3Voeld1WVlKbFk3MWRJL3NYODNIOWhCNzdDa0J0N3VxNUp4WGVFb3NX?=
- =?utf-8?B?ZVlUMU9rbVNFSU1lZGR6SWxYYldKNGgyNHlEcDZmSTl3Z3Z3T0Y3YWhDWHAw?=
- =?utf-8?B?SFhZYXNYYjhHbGxRMy9EYmRORkJGZHp3VUhqYU55Z1RoeUtKN05MVTZkVkxr?=
- =?utf-8?B?eTlkY0V4T3BzWWovY3grRUYxR1BUYzVRZkNvSUJtVmhFUUZQeS9hdnZQVXN1?=
- =?utf-8?B?UzlxSmpHODBDZURrT1pkUzhpemJGeGlpVU9JZVJHY2JqM0FpbEZIci9BMkVp?=
- =?utf-8?B?VklsWFBhakNtUURrVWt3RXFsV2lHaENYc1FMbEw2LzQ0SXU0a2JvMm8rcVc2?=
- =?utf-8?B?Y0RJeVkwQU5MdjdTYzJmL2hGSVJyWXdhekVhWGVIL2prWVNOKzhEcmRnVHV1?=
- =?utf-8?B?L2xSaFV0akJIalhrd3Z6SW9EK1ZqWlJza1ZEVEtpTnZSTlk3bnBLcStBaGZi?=
- =?utf-8?B?Um5RZ29tVXU3ellUZDFiTGtRaDFmMFJBMm5JWGZNSytTcDZIODNDTzNtU1p4?=
- =?utf-8?B?VDFMbFdGWHJhZTVmVCtXSHZOZUpqYmJFaXpvZDRxUmlIdFZiVFJoOXc1M3gv?=
- =?utf-8?B?eEZ6eXo2OTdpRWNaK1lxWEo0NXVtbTVhN0ovdDAvd3ZFOWJhWGNNa3psc1hs?=
- =?utf-8?B?UVVlekJtUTdqTG90ai9HVzJiSGZlYUcrSklLanVxVEdsUkkvdVVKYTAxSG9B?=
- =?utf-8?B?eDZvakx0bW50NDlWWUt4bTVaVUxnd2RmQldWNmpCWjAyeXFjaGVBYlRMRjlC?=
- =?utf-8?B?eDkzR0VISzY5QmpMMGZoMlBmT3ozZmVEMmFXRE9kQ3EvMEpDNUsreDYvSGRi?=
- =?utf-8?B?Vk1ENnE5cVdoZDdaakl3bWJkNzlSaXZRbkp5SklHa3NQQ1NIQktab3g0dXVn?=
- =?utf-8?B?TnNBaGRTbFYyQXJZL01OZ2dMMVluUjVpbEtCa2FBQjFLQjRpQU5VWFFDSjhx?=
- =?utf-8?B?S1RLVHJhcy9CejBMTDd4Uk12V2dDNU90MGcrZGNwb2N3L0NGcVBuS0NoY1hO?=
- =?utf-8?B?RVJDZDAxUG1wczRxY3gvNXFHamtRZWhpeHU1T3hrOGx5RnlianNCRW5ORllW?=
- =?utf-8?B?c3hSSWRoVDY1VXk0dWxJSUFwTXdPR1ZNbmdJMmhNTDZaeWtoa092MGpua2hr?=
- =?utf-8?B?L0tYVW15a1lwNFBseENVaU1na0c3NGI2MklnQUpXZmt4cHJPYWlhUlZoOVhi?=
- =?utf-8?B?L2tCUUsxbm9UTWdWQktPZ3VDK0FZdGdOaVhEUDgvSGhiYWx5d3MyenYwN1lD?=
- =?utf-8?B?RVhDOWtZaGt2b01kLzJtM0dzcGRxKy9hL09zMVpUUzdOTnlMK1JUODZ1ai9H?=
- =?utf-8?B?SHRRUDkxbkhxKzVNeDBhYzVCNWg2U29LWWt0ZnY5ZHdzRWU1OWtWVUlVcDIr?=
- =?utf-8?B?cFp6RXNvWkR2TThVUFlPY2RXSWtPWUZnV3lBa0xOcU5rckNhQXVkTlVSNWw2?=
- =?utf-8?B?UWY0cnhUekptVzB6U3FnckhCVVA3eUY2U2pCT2lqQmNRKzZNTUowOE9ZQk1H?=
- =?utf-8?B?WGRSV3Y2b0tCakRsQW1yYXBJRk1uc2F6TTdQdk5uS0F4L2VCbXNSZmk3b3Rq?=
- =?utf-8?B?OTJwSjlESkgyZU5UOFNocDJRYy96U2tKNkNPSjh4K25qdVk1QUJUdVdtUXpN?=
- =?utf-8?B?cVRmZXpFWFlvejFlbmZ6SHRNV3UzKzRyTmhrdU5jVzU4ME55QWx1OXNncWk5?=
- =?utf-8?B?L0prWm1vTVI2NlFkREI1QXdmaUlzYlVVVk9vR3lrUE9XanpFN2hXV2VVVmpu?=
- =?utf-8?B?bDNKMjA3ZDU4OE5GL3BvRU9yLzdMU3JUY1FyblRzTXZNSGgwSThZamFRT2U1?=
- =?utf-8?B?a1hyMDN2R0VmWm54bllzb0NmYitRa3NFYkh4UFBmc3dTajB6Z2FvYkNMVVQ5?=
- =?utf-8?B?UDU1WXRDTkRFbmMrQ0g2SFFVaUpITnhxUVVjSzMzSXppWVlPaG53L1NZcm5B?=
- =?utf-8?B?bEFXUW1JRElqNU51UXdCYSswaUk4K1Y2NXBmZDQxWmpHRGluUFBIYXpta3Ny?=
- =?utf-8?B?MEFEVGVKaWVkenNGaXFiOXAzN1RsOGRtczNVSTlNQmhQM0RjWWVMQUhRVDFt?=
- =?utf-8?B?c0dVUDBpV3NnZWhvY0ViaWcwaHExdlhRUVdwcndZb0VUdDFkU0twTUZOZG8z?=
- =?utf-8?B?YUlEQlUycGI1dUFNakYrTHpOaGsrenNtWnpoeFdwL2JDaWhBYTVqUT09?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02d69726-1cdf-46ec-f0ee-08df31179779
-X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB15118.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2026 15:09:10.8694
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: N4nXm0PJQnO9zqSyWO9z1SfkFADNv36PxfNdbPVvFnvq4f0bO1JA5v4aPoUzxfEydfte4WacK/FF/pRmLjTs+etrm84oOBMserBB+N3gb+o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB18397
 
-On 10/23/2026 9:28 AM, Krzysztof Kozlowski wrote:
-> On Tue, Oct 20, 2026 at 10:14:58AM +0100, Diogo Ivo wrote:
->> Add support for the I3C Bus Interface on the Renesas RZ/G3L (R9A08G046)
->> SoC by adding the renesas,r9a08g046-i3c compatible to the OF match
->> table.
->>
->> The controller is very similar to the IP on the RZ/G3S. However, for
->> instance the RZ/G3L variant has no HDR Exit Pattern detection interrupt:
->> RZ/G3S exposes 17 interrupts, while RZ/G3L exposes 16. A RZ/G3L node
->> therefore cannot be described with the RZ/G3S compatible, as its bindings
->> require at least 17 interrupts. The same point applies to RZ/G3E, that
->> requires 3 clocks while the RZ/G3L requires 2.
->>
->> >From the driver point of view there is no difference between the two
->> SoCs: the driver only consumes the tclk clock, the presetn and tresetn
->> resets and seven named interrupts (resp, rx, tx, st, sp, tend, nack),
->> all of which are among the 16 shared ones. No driver changes are needed
->> besides the new compatible.
->>
->> Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
->> ---
->>   drivers/i3c/master/renesas-i3c.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesas-i3c.c
->> index 4fddc1b4fdbb..80a6df1151bf 100644
->> --- a/drivers/i3c/master/renesas-i3c.c
->> +++ b/drivers/i3c/master/renesas-i3c.c
->> @@ -1625,6 +1625,7 @@ static const struct dev_pm_ops renesas_i3c_pm_ops = {
->>
->>   static const struct of_device_id renesas_i3c_of_ids[] = {
->>        { .compatible = "renesas,r9a08g045-i3c" },
->> +     { .compatible = "renesas,r9a08g046-i3c" },
-> 
-> So fully compatible? If so, drop this and express compatibility in the
-> bindings.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] clk: ti: dpll: broken bypass check in omap3_noncore_dpll_set_sprea=
+d_spectrum()
+--
 
-Ok, I will drop this patch and use the fallback to the G3S instead, as 
-per Biju's comment on the HW differences between G3{L, S} and G3E.
+commit 64256b22bd32636a50ecb98dab75abb69bbaf964
+Author: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
-Thanks for the review,
-Diogo
+clk: ti: dpll: apply the spread spectrum configuration right away
 
-> Best regards,
-> Krzysztof
+This commit updates omap3_noncore_dpll_set_spread_spectrum() to reprogram
+the DPLL at its current rate immediately when configuring spread spectrum
+clocking, unless the DPLL is in bypass mode or the configuration is
+unchanged.
 
+> diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
+> index 634fe0a1f9fda..c181bba2792db 100644
+> --- a/drivers/clk/ti/dpll3xxx.c
+> +++ b/drivers/clk/ti/dpll3xxx.c
+> @@ -690,17 +690,26 @@ int omap3_noncore_dpll_set_rate(struct clk_hw *hw, =
+unsigned long rate,
+
+[ ... ]
+
+> @@ -718,9 +727,37 @@ int omap3_noncore_dpll_set_spread_spectrum(struct cl=
+k_hw *hw,
+>  		return -EINVAL;
+>  	}
+> =20
+> +	if (!memcmp(ss_conf, &dd->ssc_conf, sizeof(*ss_conf)))
+> +		return 0;
+> +
+> +	old_conf =3D dd->ssc_conf;
+>  	dd->ssc_conf =3D *ss_conf;
+> =20
+> -	return 0;
+> +	/* In bypass: SSC is programmed along with the next rate change */
+> +	if (clk_hw_get_parent(hw) !=3D dd->clk_ref)
+> +		return 0;
+> +
+> +	/* Disabling SSC does not need to reprogram the DPLL */
+> +	if (ss_conf->method =3D=3D CLK_SPREAD_NO) {
+> +		omap3_noncore_dpll_ssc_program(clk);
+> +		return 0;
+> +	}
+> +
+> +	rate =3D clk_hw_get_rate(hw);
+> +	clk_hw_init_rate_request(hw, &req, rate);
+> +	ret =3D omap2_dpll_determine_rate(hw, &req);
+> +	if (!ret && req.rate !=3D rate)
+> +		ret =3D -EINVAL;
+> +	if (!ret)
+> +		ret =3D omap3_noncore_dpll_set_rate(hw, rate,
+> +						  clk_hw_get_rate(dd->clk_ref));
+> +	if (ret) {
+> +		pr_warn("clock: %s: rate %lu can't be kept with SSC enabled\n",
+> +			clk_hw_get_name(hw), rate);
+> +		dd->ssc_conf =3D old_conf;
+> +	}
+
+[Severity: High]
+Does comparing clk_hw_get_parent(hw) against dd->clk_ref in
+omap3_noncore_dpll_set_spread_spectrum() in drivers/clk/ti/dpll3xxx.c
+actually detect when an AM33xx or AM43xx DPLL is in bypass mode?
+
+In drivers/clk/ti/dpll.c, dd->ssc_enable_mask is only set for
+ti,am3-dpll-no-gate-clock and ti,am3-dpll-clock. In
+arch/arm/boot/dts/ti/omap/am33xx-clocks.dtsi and
+arch/arm/boot/dts/ti/omap/am43xx-clocks.dtsi, all DPLLs using these
+compatibles (such as dpll_disp_ck and dpll_extdev_ck) specify the same clock
+for both the reference clock (index 0) and the bypass clock (index 1):
+
+arch/arm/boot/dts/ti/omap/am33xx-clocks.dtsi:
+	dpll_disp_ck: clock@498 {
+		#clock-cells =3D <0>;
+		compatible =3D "ti,am3-dpll-no-gate-clock";
+		clock-output-names =3D "dpll_disp_ck";
+		clocks =3D <&sys_clkin_ck>, <&sys_clkin_ck>;
+		reg =3D <0x0498>, <0x0448>, <0x0454>, <0x044c>, <0x0450>;
+	};
+
+When _register_dpll() in drivers/clk/ti/dpll.c initializes the DPLL:
+
+	dd->clk_ref =3D __clk_get_hw(clk);
+
+	clk =3D of_clk_get(node, 1);
+	...
+	dd->clk_bypass =3D __clk_get_hw(clk);
+
+both dd->clk_ref and dd->clk_bypass point to the same struct clk_hw
+(sys_clkin_ck). Even when omap2_init_dpll_parent() in
+drivers/clk/ti/clkt_dpll.c returns parent index 1 because the hardware is in
+bypass mode, clk_hw_get_parent(hw) still returns sys_clkin_ck, so
+clk_hw_get_parent(hw) !=3D dd->clk_ref is always false.
+
+When of_clk_set_defaults() runs on a bypassed DPLL with assigned-clock-sscs,
+ the call chain is:
+
+of_clk_set_defaults()
+  __set_clk_spread_spectrum()
+    clk_hw_set_spread_spectrum()
+      omap3_noncore_dpll_set_spread_spectrum()
+
+Because __set_clk_spread_spectrum() runs before __set_clk_rates(),
+clk_hw_get_rate(hw) returns the bypass reference clock rate. Depending on
+dd->min_divider, won't this either prematurely lock the bypassed DPLL at
+ref_rate with M =3D N (where last_rounded_m < 20 triggers the out-of-range =
+SSC
+multiplier warning in omap3_noncore_dpll_ssc_program()), or fail in
+omap2_dpll_determine_rate() and revert dd->ssc_conf to old_conf so that SSC
+is lost when __set_clk_rates() runs next?
+
+Should this check the hardware bypass state via dd->control_reg and
+_omap2_dpll_is_in_bypass() (similar to omap2_init_dpll_parent() in
+drivers/clk/ti/clkt_dpll.c) instead of comparing parent pointers?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261023145555.3578=
+469-1-dario.binacchi@amarulasolutions.com?part=3D3
