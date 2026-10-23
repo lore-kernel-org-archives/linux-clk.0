@@ -1,13 +1,13 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.72.27
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.66.68
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792762101;
-	b=xifbzQrCQTzNr0i91t+TThFq/n119szxfGIoQJJ3w4L8CpGkTTADx2V11PomKV5DPQmi
-	 Ab97PtAzVMZujhkFomrrDc5v6NRASnxdIY6cc5sPiBlF845tLOgqRErUHccGnL0bO8URx
-	 0lf2FMXWO+DNC+R4vWrERjHunq5jkkQXYFZE2+L7YDO7XLMM3nTDkqCWruGlElzEKIBo8
-	 dzwIiFyiiJcjehZsYc7gcKjOuDul+k/0fyy5u9Dns2g7EdPTD+qz4+PlvnYhUC0CuuG0Y
-	 e7NX3yVRUIulxC3kFKOOE7vMXF1q+9N+mJHXyor8yHZ5YuwoJbXYcL8jH9GV99jOjxA==
+	t=1792762096;
+	b=SqELTdevvhNiXNyVHxTN4IBEscPjxyq/gyK7zUBrGxldApiWoIN4U9ADoWJvpF7cm1O/
+	 pJpTmr86QMkvP+aHRo2a+/Kt8X4F/PaIWuc4S6levCzfSfSoSkA+Gy9i3wJ9LTTIkWOno
+	 H1WJvKh1jWRNVVTcWeesQxrArXO9L6hwRwrTMr25Zz4OuUMMpsuteFM2jfJ0GjYSy1e+F
+	 +U35wRn2LMgoLLjOGNkXXFGZE/f99ImNA5NwH6ijyTlnV225ID/on5stpD1UnhmBJMM96
+	 sF2qHJWQZ4fbiICOXZNtLt59MsH9Biw0XqIoAOwIjdeGAkHXPtUQcd2ICH9GxAu/GXw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792762101;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792762096;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:
 	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
 	 Received:From:Date:Subject:MIME-Version:Content-Type:
@@ -27,76 +27,75 @@ ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
 	 X-MS-Exchange-CrossTenant-FromEntityHeader:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=9vqbPL7IWIs1Mk16EbRYrT4DS9cfLE3CXyLU53ZHXxg=;
-	b=3RdYBS34PS5ryTPnPxwWfXS6t26tx/mmZG/5c5iVAvvyFc58DjZsCJ6LeCJFlqPSEmEe
-	 SbZgKR9aRLXiq2OIoRMEsINqQBJa6I43lKpndeQgCY0md0ccMmAX2+3jjoGa8UGNohsp+
-	 8BTHJw91VocztkQ/1S0Kk3bU30ZzzVH4MyJmmXCgnMAGs2Vbsw2gahO0I+zue0+gPox2/
-	 +Bh0vwd8EJrqwfZr2wMs201ZcC6BHOJVqcW323DTKjjyd0dZDYJM+mk5gRgM+9c7ZW4yk
-	 7Ko97aFlm13+l+ZcVIGeboRvGontTUMi7UT+iwqjgRJ1okhElqzSauHFQp7FrmHREPw==
+	bh=EmxW++muCBoJP1KSzHZBk5/1E6g51EifKo5ZOv2LTxI=;
+	b=RAapcnVonSZng4El3Y7Vw29EZLInwGU0yycDCAxAVKbrwnwpJAxBGal3T1AHY/x5cSh4
+	 2AiVgul90vmnWkLjsBASx2EjdJcIaCoZghpWtyAeOhB/95aViZ1f/T5hoRnHPmuY81Q4T
+	 9vf0Ghf1QbTl5nTaYJ1fLFC75l+hCs76+Bi6AJW0MHQHHJPf/iMXMmdXwwXxMgaugHTu5
+	 irRzbAXnFhEnuUFN68uJg0eEbcy65oTp5gg0UwPEbCuB+auuM0/GPlMQADpVHzYfMWW/7
+	 WQrhyyyk9MISeHpdDra1CukgH5wMjg0Z5UTekZjUCIiiQEqu2c/YCD7dXhc0T7l8ArQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=foss.st.com;
 	spf=pass smtp.mailfrom=foss.st.com;
-	dkim=pass header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=F0HjvikR;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.72.27
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013027.outbound.protection.outlook.com [52.101.72.27])
+	dkim=pass header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b="k0Pg/GS6";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.66.68
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012068.outbound.protection.outlook.com [52.101.66.68])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0636C606A31F;
-	Fri, 23 Oct 2026 13:28:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0636C606A31F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDA1606A329;
+	Fri, 23 Oct 2026 13:28:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4DDA1606A329
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=F0HjvikR
+	dkim=pass (2048-bit key, unprotected) header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=k0Pg/GS6
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gwuoYm+o5ocQAKpTS1kCGPRH1swP91VN2d55DvBMpuBct9MGq+5anzgndJpAeJzYQTjMkGpCfxH3rBJTguV1lJZF9into/yiE98km17zYPx6KVfklXRHBDtVPQdt/Cy2UdGbaTtl8a0kT1KuokY82isCwtB0SIHc/b9OIPgJyTYDaMOVNGDcZdhQHnym9EWd9LKAXvt2GMO/342q15hIDilNGPye5P1l5+K/GIUd2mX2FnCyKTzopGrskd0kIpZzNvWOar/y96uRFUvXH+eUZgmd6L8JZaZmr2xyyH03n4ahuWybAb8xV+ypxDniBS16j+go8aaIdctqVJC4sJDStQ==
+ b=g3oxg33kaA3F0hChSUTkpVVSFnfylN/KKgKMNO4l6Sm64IMdisYP8I7UQFHUvq288SdiM1jUcEoDFL5eMqI/SnzHZ7hG/goz10M3UV+rMFrWjZu8wwZmsiGqEqAaRmdc+L0R62YXJqICkhT0iDfi7xUJF0JEijFmrqFTRYTY9CdIM/COvHUpxjm22k/kbxNWVjYBwqOItfrSBBKgTC+5tR/5eEpgUuhvrjeoA/Xs6CTdhju9jwdYy9cjWh6M83LHTzFXFYri4U2shboFqUJWn/i5lCs6DUVV3MbPFfvNk+5FbU5WatS1RblKo4BGh45TSqeekks04Fbj48q34IL/fw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9vqbPL7IWIs1Mk16EbRYrT4DS9cfLE3CXyLU53ZHXxg=;
- b=EjCjNTA7YNX4uFMy9uTBTP1wRAK0lHMDbOvTevJAlVW1D6TO0lvmFlD4LaUwleY8KKyH85YPDTrjCXKGXuPEd/BhqhUniFEjRXgObxAMMAEiMgW+617q7lPXGjDge4R+7FFLx/AnmS4+eOLu7kAm8VlNjy1EffYNhQKUWPba7GbjXnpjIkh9U7u8m02RYhoQYk5LfU/g5qoDNiFVywj7138RKgIV9ka7Q43YkXDc1kiEPgo4N4O7067QnLljPfS1gwJe3afZe/UGaJBy8oNfq3AKufQnyLIxrDWwpvMBPrjcb8KmnsYJ1Nf3FX+DtG/BfOYSkYcFW2AZHhXy+UxVFA==
+ bh=EmxW++muCBoJP1KSzHZBk5/1E6g51EifKo5ZOv2LTxI=;
+ b=aq1CrY8nCaGPO9EzpK07dV2hph+js6zAJeEfnGWnw4YfXBiRbSICB1rHagvncm7y5Xrn6B2jySdzDfY3z0nW5phlaZYmJxxufVJfcnhPiWWigfuxvOlsUri6OxG9arRAl+6cTfo2HWz54z5ib9VczhLq9ZKWM+waIqkTV+6uifMp7iWHov11rWNtCN3u9M72iklMjXmCqCXMqDyhxJ7Z4U9+G2ifwKZaNXKl5alaefBE1Pzg8CgJJtDqylI2rOZHxUhyFz2H1RdOM35/chWCyWW/tQn/XOv64/ACjjYh+q0YRwtDz2/WCde2AdnBEOOcJ6p+vhpRj8LSn20kMshJAA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.59) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
+ 164.130.1.60) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
  dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9vqbPL7IWIs1Mk16EbRYrT4DS9cfLE3CXyLU53ZHXxg=;
- b=F0HjvikRIB3G3reCtM3zk9jyrF6JXUrdQSDzU4g2OBQLgyHBpRiehsTP6In/urK77LW1f8KrLMoGFPwHb/24IA4cJ3KMvAxaGvK2W6EE36qqy1RS/qs8M6O36hxI2ezmo35Wn+570gdlr0Vnav8pfv4vUxg7CcUdeMPbPFBc5cKsyg3+6kTMV4vOQbRrBwHS5lWl+ZormYNLaat7qthk4PuK13jSSpn8noQucw1+5w5b8wn/GzfXvohs6Z8zXd0AEUvbkgTnvxscYyKgV89hvgmu2K0U+uQEZR530fI8fMCm0cstY1vQLIEu4bYItD2WtOtBlMT0Lpi+eW9IOmFyNQ==
-Received: from AS4P192CA0017.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:5e1::12)
- by AS4PR10MB5744.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4f6::9) with
+ bh=EmxW++muCBoJP1KSzHZBk5/1E6g51EifKo5ZOv2LTxI=;
+ b=k0Pg/GS6CJOLPbnemH5l5uNwq0IL1nwNQu/a/yeirfHzwasVw/ferx5DgY07lETg83QL0zIyMBV4ukgtEag+r3YNp828CsuxMyEeeJxtYhY1j4leC1nzK2XH/NIKsdeqUuk/p7vrE/LNS0d7dN7Z/V59sE8ZH/1DMBu04Mv/CSckXmvjyTOglY67Kyj8YgdgAdMWhKrRloVrcvnkhPZGaiptL2pHtfYEVQ/CcUn3AMM4vDH3sZ9+sAXmI8L9hHGL6ZzwbfWwROFxLoLSx04aWRnPzqDpPVYyZ2xuyLCEfqXeEG+7cEzJS8TDQlWYyJhIawCH7hLshR52tRR47cD9Vw==
+Received: from PAZP264CA0030.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:122::17)
+ by DUZPR10MB8228.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:4b2::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.2; Fri, 23 Oct
- 2026 13:28:13 +0000
-Received: from AM1PEPF000C1AD6.eurprd02.prod.outlook.com
- (2603:10a6:20b:5e1:cafe::5a) by AS4P192CA0017.outlook.office365.com
- (2603:10a6:20b:5e1::12) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 13:28:10 +0000
+Received: from ZR1PEPF0000E6BA.eurprd07.prod.outlook.com
+ (2603:10a6:102:122:cafe::1d) by PAZP264CA0030.outlook.office365.com
+ (2603:10a6:102:122::17) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.546.19 via Frontend Transport; Fri,
- 23 Oct 2026 13:28:13 +0000
+ 23 Oct 2026 13:28:10 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=fail (sender IP
- is 164.130.1.59) smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ is 164.130.1.60) smtp.mailfrom=foss.st.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=none header.from=foss.st.com;
 Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.59; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.59) by
- AM1PEPF000C1AD6.mail.protection.outlook.com (10.167.242.101) with Microsoft
+ designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.60; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.60) by
+ ZR1PEPF0000E6BA.mail.protection.outlook.com (10.167.241.73) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.546.15 via Frontend Transport; Fri, 23 Oct 2026 13:28:13 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
- (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
+ 15.21.546.15 via Frontend Transport; Fri, 23 Oct 2026 13:28:09 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
+ (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Fri, 23 Oct
- 2026 15:28:32 +0200
+ 2026 15:28:41 +0200
 Received: from localhost (10.252.9.175) by STKDAG1NODE2.st.com (10.75.128.133)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Fri, 23 Oct
- 2026 15:28:12 +0200
+ 2026 15:28:09 +0200
 From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Date: Fri, 23 Oct 2026 15:28:10 +0200
-Subject: [PATCH 5/7] clk: stm32mp25: add clock for D3 peripherals
- allocation for Cortex-CM0
+Date: Fri, 23 Oct 2026 15:28:07 +0200
+Subject: [PATCH 2/7] dt-bindings: stm32: add kernel clocks for ETR and STM
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -108,7 +107,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20261023-ups_mp25_clk_update-v1-5-e906e7a38cb3@foss.st.com>
+Message-ID: <20261023-ups_mp25_clk_update-v1-2-e906e7a38cb3@foss.st.com>
 References: <20261023-ups_mp25_clk_update-v1-0-e906e7a38cb3@foss.st.com>
 In-Reply-To: <20261023-ups_mp25_clk_update-v1-0-e906e7a38cb3@foss.st.com>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
@@ -119,439 +118,102 @@ To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
 CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-stm32@st-md-mailman.stormreply.com>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@foss.st.com>, Gwenael Treuveur
-	<gwenael.treuveur@foss.st.com>
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792762086; l=14590;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792762086; l=1944;
  i=gabriel.fernandez@foss.st.com; s=20261013; h=from:subject:message-id;
- bh=AOQlXOJI0aaW2OsL1LFNIHIh4Qbk5rIuY3KWN3foUac=;
- b=MPTaKyTgF30PJRnbfpGcUQQFIDurX4t7ayXAOgvEHz+RKInVqg5sZmqdqD2DHIk5JvY1FlvY6
- YQ1UuNjksXaBddoA6BgIrXSO4uK2g9MGiv2adMoz5xFUaDOwuKPvXq4
+ bh=GSgOwjZDuhrIDIdVospjwtRBccbKbUndwKmf4/tHb7w=;
+ b=X/g924sP92iO+PDejkmcPUFsLZSeqQIGVQo8O9eRVieWWvw3SkCcS4DUZsT/mM+ranj3klenM
+ Sfu1RZC+vjCAXMhiaDTZWUQJm7+ohUlcQPiGIOXH9WowI+HS4Voq06w
 X-Developer-Key: i=gabriel.fernandez@foss.st.com; a=ed25519;
  pk=BVZE1QjIfcrviw9RyyOGQGGsg9CNbaxyjYn9pAlkNyQ=
 X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
  (10.75.128.133)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM1PEPF000C1AD6:EE_|AS4PR10MB5744:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55e597c3-d659-4e6a-8a25-08df31097d12
+X-MS-TrafficTypeDiagnostic: ZR1PEPF0000E6BA:EE_|DUZPR10MB8228:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec931950-8f49-426c-3233-08df31097aff
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|23010399003|7416014|36860700016|82310400026|376014|22082099003|18002099003|11063799006|261021123027099003|261021121427099003|10067099003|261009223027099003|261022105027099003|56012099006;
+	BCL:0;ARA:13230040|36860700016|23010399003|82310400026|1800799024|7416014|376014|261021121427099003|10067099003|22082099003|18002099003|261021123027099003|11063799006|261009223027099003|56012099006;
 X-Microsoft-Antispam-Message-Info:
-	HYfrFMK1KHB7ewvRr4OaB0DDepEwVVAivX213WpBw+eBvbxxJE5caCikw7Q6bs8FLUJFu2qhEeH9aeOdIMaDfPn650PUCXrbACmFVfPeuCq1NbKvOqvrxiZUUzQIE/r9pHIfl/QTJKuwN7/cb9N/TVYXw3wPxmXPJf1CqvbN0gKNDVfQhXvW6M0b2t9mWke5NMlJuXAVbpAT2SNzz3fkJ0IzsWaumpYQKnOpX0O3xeixe+Itm3PMuqKygvIfR97M8jUSTL293QQOORW4YmNCpRQo7xZfS64H7Zhfve2awHmxkobtal4fap91tgPcVBPc0+IhMiX8GkKARbAONn9HkqjEMvo9enLSNIoiw2EQJRKWI1r/mCnQ25161r1WlFUpIgk7dHWWKeqKsyqQ2aS7SBQ4Dp2BEE5RkT+/O1E+W5oyMGbBjUyU6W/ql04etnJUq3A/SXMAffVf4QBDudXYhRtePnCGuvlVVIfYWSD/xpJWOBfpGrWdqkofUsIUBCdjqmhf+RHXwNFRfjl91aIPVwy2VRNaEd1orBX+dBH82MjY1IMQchOLMWxXjtex63Ks5fEvadw5/pXGQQGxO7nZzA7GNnqpGpuQcTSXmfpDjrrRNcMjfypRHx+QhmSNggsCv0X/c3y7YfQLUnD9FlGNIMD3WTWDo5i6+4fuaPlUvt2BpcWNIJHnRlZ4EnO3e8rSl4GtZ18MerrENpeUfHMhEQ==
+	5fnCsLR+f6NmPege+uPaageeIpR19Iy8glxWUoOmqF2UaNhZQfd9/xl2mHZJtjwuYpCoJR8c90GZCtog3jvjrV/+O2Bjjo33auVJCqPvko/oH27E+q/xla8+fGIvFeFIgurXT+Q5qtkTYkHzsFuxB2mYxqfEdbpHRbmra7NHB9QPPkH1njRN0dKDNT2G/jCvMbdzWTjLTg7TAD8X2DVp25jMBrtaTZ6BKbHcdS66d4c7CY8j4gGScsfVjTWHCfSQTce5GEckOruzlgYwk737rfq0bE97Usk0rIU1t6hS1lA1t2jmE0bBgS2tBeSjJ3iFFPdEXD00qXY4U4GaTNfe8sECt82S80Y3HtFTBix6DbpFGzxj2wgAYRQwLxoYcjzjq47IvxhHbHhXRvT+PdoKvfhNVAXAaW7Fb5lqyUZu0T/6Z3KciSULfWQOYk0MdYvmDpl33p0I64DpXP+fAG6lPGLvR6Hfs04MJ20BJXjBaYDUSefe798eQU0snOALYTL8Mxk0cB1Qc+n9I/vjkAUbYzW29zVfoWQtoEO2GG+/q/dOJne3NIW7OZL6CozAj2a64dLLYCTV1duNoe3w9DC202ge4Ghm8uW0FEcoyjvrX026jtJVTTPiGloLjaGNm6tF6sSK9mJr+94K2H+ukq5b1CD+p5C2wl3ndtkRmWXwHSxq+QF01hKNDfupapqZBO5xWPC7fOCcZDCVBv5IJp1adg==
 X-Forefront-Antispam-Report:
-	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(7416014)(36860700016)(82310400026)(376014)(22082099003)(18002099003)(11063799006)(261021123027099003)(261021121427099003)(10067099003)(261009223027099003)(261022105027099003)(56012099006);DIR:OUT;SFP:1101;
+	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(23010399003)(82310400026)(1800799024)(7416014)(376014)(261021121427099003)(10067099003)(22082099003)(18002099003)(261021123027099003)(11063799006)(261009223027099003)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	CUyAolKipbrExiNfpVLpSR76qXmKkMojLKQrmHFBp6j+TUvDbUndqi94rw4ddfDUCFadzO3GaEDDtAsQMl+pO1dL5WE7UcNo31S/2TADvZGubkOH+E05U6KikCpn494oXFHf3IEpAmJw3R0PDl6oEqbgrYwz2jvb675kDDIORQAOBXNx9rcvpq898FdghAktWY83acI0cBiQdvS4e5vjkuDLetA4V5fPO/rfGfNHRkq8DhaSGJfnL9+FVJIeuhRFPypRp0XyAzJCW6mpiNNNGDv7EIy51WfHjalEytg5UAjY9aMu5hX0H3VrJH1W3m04Qr29chkO8w6yyKosfZNTirDSn6wXko1rwHyiQMTNEW81+0486ctQ4dx0w8cgxhYMDCmLYqtXKTLDCmntfS0FfYP4EzuZwlBdzOImSaPPQS0yy8l3FTMP96Cd6gMVXeTw
+	Z2MES+1Ecrfl6+Oi36vJo6dJ77MxUskhdl6G90rKXTfKS+51l2yCeR8W9mbA+nF90txfHc3mcR+9MAa/D5sUmEimnO8vpDJ3WZ8eist0/KAr06qQimPLZuZudASMuelSDsPkg7brwnBHlFd++kUcBMKVyuz7JWILgU+3cp05cFLWb1MqbpSUwHK4Pj/SEjmW8wqs4H2z8fa4dQStyBWH0MQsqXqve7IZqsHuH8wRkbYNL8AWHGWlKlXKjju7jWGnWaV08k7mzwX6o29myvGASSq+93GDLD/tkFov5G8Iin2SkKdAgOt6yo7YV58hoEQZNdDpg2OWZD+N4LhEnr7CaauRYpYZS9UGg80mUe7qQR5qiNY3gojBQdemxxQznhlZIdHHjm6zWA/gaBjn6QD939F2532IZrAPfPLa3pXUHbAtENgXveCbk7SffroKVpf5
 X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2026 13:28:13.1941
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2026 13:28:09.7284
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55e597c3-d659-4e6a-8a25-08df31097d12
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec931950-8f49-426c-3233-08df31097aff
 X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	AM1PEPF000C1AD6.eurprd02.prod.outlook.com
+	ZR1PEPF0000E6BA.eurprd07.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB5744
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR10MB8228
 
-GATE_<IP>AM allows to enable the Autonomous Mode of the D3 peripherals.
-GATE_<IP>C3 allows to enable the allocation of the peripherals to CPU3.
+Add the kernel clocks of the ETR (CK_KER_ETR) and of the STM
+(CK_KER_STM) for STM32MP25, with the matching SCMI clocks
+(CK_SCMI_KER_ETR and CK_SCMI_KER_STM).
+These are the trace (ATB) clocks of the CoreSight Embedded
+Trace Router and System Trace Macrocell, while the bus clocks
+only provide register access (APB).
 
-For any D3 peripheral allocated to CPU3 (CPU3 domain is used and AMEN),
-MSIKERON must be set to allow the Stop modes. That is why all the
-autonomous clocks have the MSI KER clock as their parent.
+Also rename the bus clocks according to the reference manual,
+without changing their values: CK_BUS_STM500 into CK_BUS_STM,
+CK_SCMI_STM500 into CK_SCMI_BUS_STM and CK_SCMI_ETR into
+CK_SCMI_BUS_ETR.
 
-Add the HSI KER, HSE KER and MSI KER clocks as new RCC input clocks and
-register the C3 reset.
-
-Update the number of clocks of the provider to cover the new IDs.
-
-Signed-off-by: Gwenael Treuveur <gwenael.treuveur@foss.st.com>
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 ---
- drivers/clk/stm32/clk-stm32mp25.c | 176 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 175 insertions(+), 1 deletion(-)
+ include/dt-bindings/clock/st,stm32mp25-rcc.h | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/stm32/clk-stm32mp25.c b/drivers/clk/stm32/clk-stm32mp25.c
-index fa025a9f3f37..a6a1293370eb 100644
---- a/drivers/clk/stm32/clk-stm32mp25.c
-+++ b/drivers/clk/stm32/clk-stm32mp25.c
-@@ -18,7 +18,7 @@
- #include <dt-bindings/reset/st,stm32mp25-rcc.h>
+diff --git a/include/dt-bindings/clock/st,stm32mp25-rcc.h b/include/dt-bindings/clock/st,stm32mp25-rcc.h
+index 242f61205a9f..cef997508b56 100644
+--- a/include/dt-bindings/clock/st,stm32mp25-rcc.h
++++ b/include/dt-bindings/clock/st,stm32mp25-rcc.h
+@@ -109,7 +109,7 @@
+ /* LOW SPEED MCU CLOCK */
+ #define CK_ICN_LS_MCU		88
  
- /* Number of clock identifiers of the binding, SCMI ones excluded: highest ID + 1 */
--#define STM32MP25_LAST_CLK	(HSE_DIV2_CK + 1)
-+#define STM32MP25_LAST_CLK	(CK_SPI8_AM + 1)
+-#define CK_BUS_STM500		89
++#define CK_BUS_STM		89
+ #define CK_BUS_FMC		90
+ #define CK_BUS_GPU		91
+ #define CK_BUS_ETH1		92
+@@ -363,6 +363,8 @@
+ #define CK_BUS_ETHSWACMCFG	341
+ #define CK_BUS_ETHSWACMMSG	342
+ #define HSE_DIV2_CK		343
++#define CK_KER_ETR		344
++#define CK_KER_STM		345
  
- /* Clock security definition */
- #define SECF_NONE		-1
-@@ -38,6 +38,7 @@
- /* Register: RIFSC_SEMCR */
- #define RCC_SEMCR_SEMCID_MASK	GENMASK(6, 4)
+ #define CK_SCMI_ICN_HS_MCU	0
+ #define CK_SCMI_ICN_SDMMC	1
+@@ -450,7 +452,7 @@
+ #define CK_SCMI_TIMG2		83
+ #define CK_SCMI_BKPSRAM		84
+ #define CK_SCMI_BSEC		85
+-#define CK_SCMI_ETR		87
++#define CK_SCMI_BUS_ETR		87
+ #define CK_SCMI_FMC		88
+ #define CK_SCMI_GPIOA		89
+ #define CK_SCMI_GPIOB		90
+@@ -485,6 +487,8 @@
+ #define CK_SCMI_SYSDBG		119
+ #define CK_SCMI_SYSATB		120
+ #define CK_SCMI_TSDBG		121
+-#define CK_SCMI_STM500		122
++#define CK_SCMI_BUS_STM		122
++#define CK_SCMI_KER_STM		123
++#define CK_SCMI_KER_ETR		124
  
-+#define MP25_RIF_RCC_C3		72
- #define MP25_RIF_RCC_IS2M	107
- #define MP25_RIF_RCC_MCO1	108
- #define MP25_RIF_RCC_MCO2	109
-@@ -126,6 +127,9 @@ enum {
- 	TIMG2,
- 	PLL3,
- 	DSI_TXBYTE,
-+	HSI_KER_ON,
-+	HSE_KER_ON,
-+	MSI_KER_ON,
- };
- 
- static const struct clk_parent_data adc12_src[] = {
-@@ -225,6 +229,10 @@ enum enum_gate_cfg {
- 	GATE_ADC12,
- 	GATE_ADC3,
- 	GATE_ADF1,
-+	GATE_ADF1AM,
-+	GATE_ADF1C3,
-+	GATE_C3,
-+	GATE_C3AM,
- 	GATE_CCI,
- 	GATE_CRC,
- 	GATE_CRYP1,
-@@ -249,6 +257,7 @@ enum enum_gate_cfg {
- 	GATE_ETHSWMAC,
- 	GATE_ETHSWREF,
- 	GATE_FDCAN,
-+	GATE_GPIOZC3,
- 	GATE_GPU,
- 	GATE_HASH,
- 	GATE_HDP,
-@@ -260,22 +269,35 @@ enum enum_gate_cfg {
- 	GATE_I2C6,
- 	GATE_I2C7,
- 	GATE_I2C8,
-+	GATE_I2C8AM,
-+	GATE_I2C8C3,
- 	GATE_I3C1,
- 	GATE_I3C2,
- 	GATE_I3C3,
- 	GATE_I3C4,
-+	GATE_I3C4AM,
-+	GATE_I3C4C3,
- 	GATE_IS2M,
- 	GATE_IWDG1,
- 	GATE_IWDG2,
- 	GATE_IWDG3,
- 	GATE_IWDG4,
- 	GATE_IWDG5,
-+	GATE_LPDMAC3,
- 	GATE_LPTIM1,
- 	GATE_LPTIM2,
- 	GATE_LPTIM3,
-+	GATE_LPTIM3AM,
-+	GATE_LPTIM3C3,
- 	GATE_LPTIM4,
-+	GATE_LPTIM4AM,
-+	GATE_LPTIM4C3,
- 	GATE_LPTIM5,
-+	GATE_LPTIM5AM,
-+	GATE_LPTIM5C3,
- 	GATE_LPUART1,
-+	GATE_LPUART1AM,
-+	GATE_LPUART1C3,
- 	GATE_LTDC,
- 	GATE_LVDS,
- 	GATE_MCO1,
-@@ -285,6 +307,7 @@ enum enum_gate_cfg {
- 	GATE_PCIE,
- 	GATE_PKA,
- 	GATE_RNG,
-+	GATE_RTCC3,
- 	GATE_SAES,
- 	GATE_SAI1,
- 	GATE_SAI2,
-@@ -303,6 +326,8 @@ enum enum_gate_cfg {
- 	GATE_SPI6,
- 	GATE_SPI7,
- 	GATE_SPI8,
-+	GATE_SPI8AM,
-+	GATE_SPI8C3,
- 	GATE_TIM1,
- 	GATE_TIM10,
- 	GATE_TIM11,
-@@ -354,6 +379,10 @@ static const struct stm32_gate_cfg stm32mp25_gates[GATE_NB] = {
- 	GATE_CFG(GATE_ADC12,		RCC_ADC12CFGR,		1,	0),
- 	GATE_CFG(GATE_ADC3,		RCC_ADC3CFGR,		1,	0),
- 	GATE_CFG(GATE_ADF1,		RCC_ADF1CFGR,		1,	0),
-+	GATE_CFG(GATE_ADF1AM,		RCC_ADF1CFGR,		3,	0),
-+	GATE_CFG(GATE_ADF1C3,		RCC_C3CFGR,		23,	0),
-+	GATE_CFG(GATE_C3,		RCC_C3CFGR,		1,	0),
-+	GATE_CFG(GATE_C3AM,		RCC_C3CFGR,		3,	0),
- 	GATE_CFG(GATE_CCI,		RCC_CCICFGR,		1,	0),
- 	GATE_CFG(GATE_CRC,		RCC_CRCCFGR,		1,	0),
- 	GATE_CFG(GATE_CRYP1,		RCC_CRYP1CFGR,		1,	0),
-@@ -378,6 +407,7 @@ static const struct stm32_gate_cfg stm32mp25_gates[GATE_NB] = {
- 	GATE_CFG(GATE_ETHSWMAC,		RCC_ETHSWCFGR,		1,	0),
- 	GATE_CFG(GATE_ETHSWREF,		RCC_ETHSWCFGR,		21,	0),
- 	GATE_CFG(GATE_FDCAN,		RCC_FDCANCFGR,		1,	0),
-+	GATE_CFG(GATE_GPIOZC3,		RCC_C3CFGR,		24,	0),
- 	GATE_CFG(GATE_GPU,		RCC_GPUCFGR,		1,	0),
- 	GATE_CFG(GATE_HASH,		RCC_HASHCFGR,		1,	0),
- 	GATE_CFG(GATE_HDP,		RCC_HDPCFGR,		1,	0),
-@@ -389,22 +419,35 @@ static const struct stm32_gate_cfg stm32mp25_gates[GATE_NB] = {
- 	GATE_CFG(GATE_I2C6,		RCC_I2C6CFGR,		1,	0),
- 	GATE_CFG(GATE_I2C7,		RCC_I2C7CFGR,		1,	0),
- 	GATE_CFG(GATE_I2C8,		RCC_I2C8CFGR,		1,	0),
-+	GATE_CFG(GATE_I2C8AM,		RCC_I2C8CFGR,		3,	0),
-+	GATE_CFG(GATE_I2C8C3,		RCC_C3CFGR,		21,	0),
- 	GATE_CFG(GATE_I3C1,		RCC_I3C1CFGR,		1,	0),
- 	GATE_CFG(GATE_I3C2,		RCC_I3C2CFGR,		1,	0),
- 	GATE_CFG(GATE_I3C3,		RCC_I3C3CFGR,		1,	0),
- 	GATE_CFG(GATE_I3C4,		RCC_I3C4CFGR,		1,	0),
-+	GATE_CFG(GATE_I3C4AM,		RCC_I3C4CFGR,		3,	0),
-+	GATE_CFG(GATE_I3C4C3,		RCC_C3CFGR,		27,	0),
- 	GATE_CFG(GATE_IS2M,		RCC_IS2MCFGR,		1,	0),
- 	GATE_CFG(GATE_IWDG1,		RCC_IWDG1CFGR,		1,	0),
- 	GATE_CFG(GATE_IWDG2,		RCC_IWDG2CFGR,		1,	0),
- 	GATE_CFG(GATE_IWDG3,		RCC_IWDG3CFGR,		1,	0),
- 	GATE_CFG(GATE_IWDG4,		RCC_IWDG4CFGR,		1,	0),
- 	GATE_CFG(GATE_IWDG5,		RCC_IWDG5CFGR,		1,	0),
-+	GATE_CFG(GATE_LPDMAC3,		RCC_C3CFGR,		25,	0),
- 	GATE_CFG(GATE_LPTIM1,		RCC_LPTIM1CFGR,		1,	0),
- 	GATE_CFG(GATE_LPTIM2,		RCC_LPTIM2CFGR,		1,	0),
- 	GATE_CFG(GATE_LPTIM3,		RCC_LPTIM3CFGR,		1,	0),
-+	GATE_CFG(GATE_LPTIM3AM,		RCC_LPTIM3CFGR,		3,	0),
-+	GATE_CFG(GATE_LPTIM3C3,		RCC_C3CFGR,		16,	0),
- 	GATE_CFG(GATE_LPTIM4,		RCC_LPTIM4CFGR,		1,	0),
-+	GATE_CFG(GATE_LPTIM4AM,		RCC_LPTIM4CFGR,		3,	0),
-+	GATE_CFG(GATE_LPTIM4C3,		RCC_C3CFGR,		17,	0),
- 	GATE_CFG(GATE_LPTIM5,		RCC_LPTIM5CFGR,		1,	0),
-+	GATE_CFG(GATE_LPTIM5AM,		RCC_LPTIM5CFGR,		3,	0),
-+	GATE_CFG(GATE_LPTIM5C3,		RCC_C3CFGR,		18,	0),
- 	GATE_CFG(GATE_LPUART1,		RCC_LPUART1CFGR,	1,	0),
-+	GATE_CFG(GATE_LPUART1AM,	RCC_LPUART1CFGR,	3,	0),
-+	GATE_CFG(GATE_LPUART1C3,	RCC_C3CFGR,		20,	0),
- 	GATE_CFG(GATE_LTDC,		RCC_LTDCCFGR,		1,	0),
- 	GATE_CFG(GATE_LVDS,		RCC_LVDSCFGR,		1,	0),
- 	GATE_CFG(GATE_MCO1,		RCC_MCO1CFGR,		8,	0),
-@@ -413,6 +456,7 @@ static const struct stm32_gate_cfg stm32mp25_gates[GATE_NB] = {
- 	GATE_CFG(GATE_OSPIIOM,		RCC_OSPIIOMCFGR,	1,	0),
- 	GATE_CFG(GATE_PCIE,		RCC_PCIECFGR,		1,	0),
- 	GATE_CFG(GATE_PKA,		RCC_PKACFGR,		1,	0),
-+	GATE_CFG(GATE_RTCC3,		RCC_C3CFGR,		26,	0),
- 	GATE_CFG(GATE_RNG,		RCC_RNGCFGR,		1,	0),
- 	GATE_CFG(GATE_SAES,		RCC_SAESCFGR,		1,	0),
- 	GATE_CFG(GATE_SAI1,		RCC_SAI1CFGR,		1,	0),
-@@ -432,6 +476,8 @@ static const struct stm32_gate_cfg stm32mp25_gates[GATE_NB] = {
- 	GATE_CFG(GATE_SPI6,		RCC_SPI6CFGR,		1,	0),
- 	GATE_CFG(GATE_SPI7,		RCC_SPI7CFGR,		1,	0),
- 	GATE_CFG(GATE_SPI8,		RCC_SPI8CFGR,		1,	0),
-+	GATE_CFG(GATE_SPI8AM,		RCC_SPI8CFGR,		3,	0),
-+	GATE_CFG(GATE_SPI8C3,		RCC_C3CFGR,		19,	0),
- 	GATE_CFG(GATE_TIM1,		RCC_TIM1CFGR,		1,	0),
- 	GATE_CFG(GATE_TIM10,		RCC_TIM10CFGR,		1,	0),
- 	GATE_CFG(GATE_TIM11,		RCC_TIM11CFGR,		1,	0),
-@@ -518,6 +564,77 @@ static struct clk_stm32_gate ck_ker_adf1 = {
- 	.hw.init = CLK_HW_INIT_INDEX("ck_ker_adf1", FLEXGEN_42, &clk_stm32_gate_ops, 0),
- };
- 
-+static struct clk_stm32_gate ck_ker_adf1_am = {
-+	.gate_id = GATE_ADF1AM,
-+	.hw.init = CLK_HW_INIT_HW("ck_ker_adf1_am", &ck_ker_adf1.hw, &clk_stm32_gate_ops, 0),
-+};
-+
-+/* C3 */
-+static struct clk_stm32_gate ck_cpu3 = {
-+	.gate_id = GATE_C3,
-+	.hw.init = CLK_HW_INIT_INDEX("ck_cpu3", ICN_LS_MCU, &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_gate ck_cpu3_am = {
-+	.gate_id = GATE_C3AM,
-+	.hw.init = CLK_HW_INIT_HW("ck_cpu3_am", &ck_cpu3.hw, &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_gate ck_c3_adf1 = {
-+	.gate_id = GATE_ADF1C3,
-+	.hw.init = CLK_HW_INIT_INDEX("ck_c3_adf1", MSI_KER_ON, &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_gate ck_c3_gpioz = {
-+	.gate_id = GATE_GPIOZC3,
-+	.hw.init = CLK_HW_INIT_INDEX("ck_c3_gpioz", MSI_KER_ON, &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_gate ck_c3_i2c8 = {
-+	.gate_id = GATE_I2C8C3,
-+	.hw.init = CLK_HW_INIT_INDEX("ck_c3_i2c8", MSI_KER_ON, &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_gate ck_c3_i3c4 = {
-+	.gate_id = GATE_I3C4C3,
-+	.hw.init = CLK_HW_INIT_INDEX("ck_c3_i3c4", MSI_KER_ON, &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_gate ck_c3_lpdma = {
-+	.gate_id = GATE_LPDMAC3,
-+	.hw.init = CLK_HW_INIT_INDEX("ck_c3_lpdma", MSI_KER_ON, &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_gate ck_c3_lptim3 = {
-+	.gate_id = GATE_LPTIM3C3,
-+	.hw.init = CLK_HW_INIT_INDEX("ck_c3_lptim3", MSI_KER_ON, &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_gate ck_c3_lptim4 = {
-+	.gate_id = GATE_LPTIM4C3,
-+	.hw.init = CLK_HW_INIT_INDEX("ck_c3_lptim4", MSI_KER_ON, &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_gate ck_c3_lptim5 = {
-+	.gate_id = GATE_LPTIM5C3,
-+	.hw.init = CLK_HW_INIT_INDEX("ck_c3_lptim5", MSI_KER_ON, &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_gate ck_c3_lpuart1 = {
-+	.gate_id = GATE_LPUART1C3,
-+	.hw.init = CLK_HW_INIT_INDEX("ck_c3_lpuart1", MSI_KER_ON, &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_gate ck_c3_rtc = {
-+	.gate_id = GATE_RTCC3,
-+	.hw.init = CLK_HW_INIT_INDEX("ck_c3_rtc", MSI_KER_ON, &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_gate ck_c3_spi8 = {
-+	.gate_id = GATE_SPI8C3,
-+	.hw.init = CLK_HW_INIT_INDEX("ck_c3_spi8", MSI_KER_ON, &clk_stm32_gate_ops, 0),
-+};
-+
- /* DCMI */
- static struct clk_stm32_gate ck_icn_p_cci = {
- 	.gate_id = GATE_CCI,
-@@ -844,6 +961,11 @@ static struct clk_stm32_gate ck_ker_i2c8 = {
- 	.hw.init = CLK_HW_INIT_INDEX("ck_ker_i2c8", FLEXGEN_38, &clk_stm32_gate_ops, 0),
- };
- 
-+static struct clk_stm32_gate ck_ker_i2c8_am = {
-+	.gate_id = GATE_I2C8AM,
-+	.hw.init = CLK_HW_INIT_HW("ck_ker_i2c8_am", &ck_ker_i2c8.hw, &clk_stm32_gate_ops, 0),
-+};
-+
- /* I3C */
- static struct clk_stm32_gate ck_icn_p_i3c1 = {
- 	.gate_id = GATE_I3C1,
-@@ -885,6 +1007,11 @@ static struct clk_stm32_gate ck_ker_i3c4 = {
- 	.hw.init = CLK_HW_INIT_INDEX("ck_ker_i3c4", FLEXGEN_36, &clk_stm32_gate_ops, 0),
- };
- 
-+static struct clk_stm32_gate ck_ker_i3c4_am = {
-+	.gate_id = GATE_I3C4AM,
-+	.hw.init = CLK_HW_INIT_HW("ck_ker_i3c4_am", &ck_ker_i3c4.hw, &clk_stm32_gate_ops, 0),
-+};
-+
- /* I2S */
- static struct clk_stm32_gate ck_icn_p_is2m = {
- 	.gate_id = GATE_IS2M,
-@@ -958,16 +1085,31 @@ static struct clk_stm32_gate ck_ker_lptim3 = {
- 	.hw.init = CLK_HW_INIT_INDEX("ck_ker_lptim3", FLEXGEN_40, &clk_stm32_gate_ops, 0),
- };
- 
-+static struct clk_stm32_gate ck_ker_lptim3_am = {
-+	.gate_id = GATE_LPTIM3AM,
-+	.hw.init = CLK_HW_INIT_HW("ck_ker_lptim3_am", &ck_ker_lptim3.hw, &clk_stm32_gate_ops, 0),
-+};
-+
- static struct clk_stm32_gate ck_ker_lptim4 = {
- 	.gate_id = GATE_LPTIM4,
- 	.hw.init = CLK_HW_INIT_INDEX("ck_ker_lptim4", FLEXGEN_41, &clk_stm32_gate_ops, 0),
- };
- 
-+static struct clk_stm32_gate ck_ker_lptim4_am = {
-+	.gate_id = GATE_LPTIM4AM,
-+	.hw.init = CLK_HW_INIT_HW("ck_ker_lptim4_am", &ck_ker_lptim4.hw, &clk_stm32_gate_ops, 0),
-+};
-+
- static struct clk_stm32_gate ck_ker_lptim5 = {
- 	.gate_id = GATE_LPTIM5,
- 	.hw.init = CLK_HW_INIT_INDEX("ck_ker_lptim5", FLEXGEN_41, &clk_stm32_gate_ops, 0),
- };
- 
-+static struct clk_stm32_gate ck_ker_lptim5_am = {
-+	.gate_id = GATE_LPTIM5AM,
-+	.hw.init = CLK_HW_INIT_HW("ck_ker_lptim5_am", &ck_ker_lptim5.hw, &clk_stm32_gate_ops, 0),
-+};
-+
- /* LPUART */
- static struct clk_stm32_gate ck_icn_p_lpuart1 = {
- 	.gate_id = GATE_LPUART1,
-@@ -979,6 +1121,11 @@ static struct clk_stm32_gate ck_ker_lpuart1 = {
- 	.hw.init = CLK_HW_INIT_INDEX("ck_ker_lpuart1", FLEXGEN_39, &clk_stm32_gate_ops, 0),
- };
- 
-+static struct clk_stm32_gate ck_ker_lpuart1_am = {
-+	.gate_id = GATE_LPUART1AM,
-+	.hw.init = CLK_HW_INIT_HW("ck_ker_lpuart1_am", &ck_ker_lpuart1.hw, &clk_stm32_gate_ops, 0),
-+};
-+
- /* MCO1 & MCO2 */
- static struct clk_stm32_composite ck_mco1 = {
- 	.gate_id = GATE_MCO1,
-@@ -1212,6 +1359,11 @@ static struct clk_stm32_gate ck_ker_spi8 = {
- 	.hw.init = CLK_HW_INIT_INDEX("ck_ker_spi8", FLEXGEN_37, &clk_stm32_gate_ops, 0),
- };
- 
-+static struct clk_stm32_gate ck_ker_spi8_am = {
-+	.gate_id = GATE_SPI8AM,
-+	.hw.init = CLK_HW_INIT_HW("ck_ker_spi8_am", &ck_ker_spi8.hw, &clk_stm32_gate_ops, 0),
-+};
-+
- /* Timers */
- static struct clk_stm32_gate ck_icn_p_tim2 = {
- 	.gate_id = GATE_TIM2,
-@@ -1787,13 +1939,34 @@ static const struct clock_config stm32mp25_clock_cfg[] = {
- 	STM32_GATE_CFG(CK_KER_CSIPHY,		ck_ker_csiphy,		SEC_RIFSC(86)),
- 	STM32_GATE_CFG(CK_KER_USBTC,		ck_ker_usbtc,		SEC_RIFSC(69)),
- 	STM32_GATE_CFG(CK_KER_I3C4,		ck_ker_i3c4,		SEC_RIFSC(117)),
-+	STM32_GATE_CFG(CK_I3C4_AM,		ck_ker_i3c4_am,		SEC_RIFSC(117)),
- 	STM32_GATE_CFG(CK_KER_SPI8,		ck_ker_spi8,		SEC_RIFSC(29)),
-+	STM32_GATE_CFG(CK_SPI8_AM,		ck_ker_spi8_am,		SEC_RIFSC(29)),
- 	STM32_GATE_CFG(CK_KER_I2C8,		ck_ker_i2c8,		SEC_RIFSC(48)),
-+	STM32_GATE_CFG(CK_I2C8_AM,		ck_ker_i2c8_am,		SEC_RIFSC(48)),
- 	STM32_GATE_CFG(CK_KER_LPUART1,		ck_ker_lpuart1,		SEC_RIFSC(40)),
-+	STM32_GATE_CFG(CK_LPUART1_AM,		ck_ker_lpuart1_am,	SEC_RIFSC(40)),
- 	STM32_GATE_CFG(CK_KER_LPTIM3,		ck_ker_lptim3,		SEC_RIFSC(19)),
-+	STM32_GATE_CFG(CK_LPTIM3_AM,		ck_ker_lptim3_am,	SEC_RIFSC(19)),
- 	STM32_GATE_CFG(CK_KER_LPTIM4,		ck_ker_lptim4,		SEC_RIFSC(20)),
-+	STM32_GATE_CFG(CK_LPTIM4_AM,		ck_ker_lptim4_am,	SEC_RIFSC(20)),
- 	STM32_GATE_CFG(CK_KER_LPTIM5,		ck_ker_lptim5,		SEC_RIFSC(21)),
-+	STM32_GATE_CFG(CK_LPTIM5_AM,		ck_ker_lptim5_am,	SEC_RIFSC(21)),
- 	STM32_GATE_CFG(CK_KER_ADF1,		ck_ker_adf1,		SEC_RIFSC(55)),
-+	STM32_GATE_CFG(CK_ADF1_AM,		ck_ker_adf1_am,		SEC_RIFSC(55)),
-+	STM32_GATE_CFG(CK_CPU3,			ck_cpu3,		MP25_RIF_RCC_C3),
-+	STM32_GATE_CFG(CK_CPU3_AM,		ck_cpu3_am,		MP25_RIF_RCC_C3),
-+	STM32_GATE_CFG(CK_ADF1_C3,		ck_c3_adf1,		MP25_RIF_RCC_C3),
-+	STM32_GATE_CFG(CK_GPIOZ_C3,		ck_c3_gpioz,		MP25_RIF_RCC_C3),
-+	STM32_GATE_CFG(CK_I2C8_C3,		ck_c3_i2c8,		MP25_RIF_RCC_C3),
-+	STM32_GATE_CFG(CK_I3C4_C3,		ck_c3_i3c4,		MP25_RIF_RCC_C3),
-+	STM32_GATE_CFG(CK_LPDMA_C3,		ck_c3_lpdma,		MP25_RIF_RCC_C3),
-+	STM32_GATE_CFG(CK_LPTIM3_C3,		ck_c3_lptim3,		MP25_RIF_RCC_C3),
-+	STM32_GATE_CFG(CK_LPTIM4_C3,		ck_c3_lptim4,		MP25_RIF_RCC_C3),
-+	STM32_GATE_CFG(CK_LPTIM5_C3,		ck_c3_lptim5,		MP25_RIF_RCC_C3),
-+	STM32_GATE_CFG(CK_LPUART1_C3,		ck_c3_lpuart1,		MP25_RIF_RCC_C3),
-+	STM32_GATE_CFG(CK_RTC_C3,		ck_c3_rtc,		MP25_RIF_RCC_C3),
-+	STM32_GATE_CFG(CK_SPI8_C3,		ck_c3_spi8,		MP25_RIF_RCC_C3),
- 	STM32_GATE_CFG(CK_KER_SDMMC1,		ck_ker_sdmmc1,		SEC_RIFSC(76)),
- 	STM32_GATE_CFG(CK_KER_SDMMC2,		ck_ker_sdmmc2,		SEC_RIFSC(77)),
- 	STM32_GATE_CFG(CK_KER_SDMMC3,		ck_ker_sdmmc3,		SEC_RIFSC(78)),
-@@ -1942,6 +2115,7 @@ static const struct stm32_reset_cfg *stm32mp25_reset_cfg[STM32MP25_LAST_RESET] =
- 	RESET_MP25(CRYP1_R,		RCC_CRYP1CFGR,		0,	0),
- 	RESET_MP25(CRYP2_R,		RCC_CRYP2CFGR,		0,	0),
- 	RESET_MP25(PCIE_R,		RCC_PCIECFGR,		0,	0),
-+	RESET_MP25(C3_R,		RCC_C3CFGR,		0,	0),
- };
- 
- static u16 stm32mp25_cpt_gate[GATE_NB];
+ #endif /* _DT_BINDINGS_STM32MP25_CLKS_H_ */
 
 -- 
 2.43.0
