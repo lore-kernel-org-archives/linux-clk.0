@@ -1,79 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.162.27
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792760106;
-	b=QIUbhdjM7MdmbJ9zP4q8tg3pakxchY49NnDm9Q4PIeOSOLZ+HSp0miDphPj5+zI5QkBP
-	 zGvlfOm1Q2T2sHZ+0XzQqLAdwspJdoCy1r4zNGYrLpo9ermD5KRVQ6kT/vGDl6AIXLyyE
-	 uaVu2yZUUtVpp62u8uBIATtLD/pKaQsm9aI/NUdHNfkhruDiQVOSfjJXwZmMXdgRmNXez
-	 w+oyQh2RBilpbX3qys/1e5ifQPUcXtX9+iw5uNIM7sUqsJcakcIfkRWzYZtkXbk8IwfxD
-	 uxN9/jE1qrAZYhah9bR0phDHwARKhqO7ORZMGBvFmtz8Rby30kclUeKQkrdMLSHbT0w==
+	t=1792762097;
+	b=tcMGreZU3eSXegyofzZTTH4mpPETMpByMckpfWEAwEX8Ru3GGtUSpqtsuq/HG5gxy9KU
+	 3kRLGE8JtPbmjBfl7UXlbXiiAxqn2DnhhlYlpdjuTEJQ2dh6MXhVtUx1Xwm588ettAnq8
+	 FnJKxWIh8JQB3GqsZnh8OL/59jfZz3OMs7HmcUJJ++l39h4M2CJ0E9Ipa2srjIXi0hilN
+	 IBDG3qsjGKgczbddoTrkEC4OtOazXyRQnw7/sB0Ug4Nyz7ibnKKT9YuV+4NX2URd/1pME
+	 2z2nucFbFpgGcbC0EoCAHIS1mL1mFw2RhmhTG/WGKR72K/tIFwqZbwQF6hTT/KUDTtA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792760106;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=I/jsmKBkJGbIrBQf+3BPreEkWXD+Jv1M7QJlYJiZSu0=;
-	b=MRnB2yP5UtEGAeTpKafpNWOfUbphEaerNNsOBTDRIWlLJ/v+lYTTDliXFD0co2856EIy
-	 /aO6v2zSG0NmmPqpaN21Oq6WKmf6FRLJN4OKipHMgdz9GK37LyfkRwFcNrQaJgIA7hdoj
-	 byCQ0EFAUHDGStPh5ziTRExhi7g8fm9pzR6InujepCf3pWoJMcp25QrPLzuyCaRPJQL8Y
-	 JYZC40WIElJT+4e+Y62avmQOZlQMtjOmeXuR+07ofkspDiaSweKk/jvhHjy5K4g6T64G0
-	 /uuuR4GdSYHpqN2oWJXfRhwjb2zKM6LrxO402fw2PLCg++oLQpnqT6qgTR41EIn6vYA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792762097;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-ID:References:In-Reply-To:To:CC:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Originating-IP:
+	 X-ClientProxiedBy:X-EOPAttributedMessage:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=K3qvdZEbe9enl6/OgzNx29PXWLOaXXolNcKLq1YCZJc=;
+	b=YB8nPF+t5wv3sTIb/9NXvgLBuvngxPhYDa8ttHlb/eGsLq1MWrOdG/HzKG6OXc9I3W32
+	 QSc0zaPhRgGKdAQxXiin4SWiaYYnJiYjY0WDxLXSUzaNhxR5ByHBninCMTF/vQ7QuN71p
+	 uwkdKblgyWIEKycvV4YFixBXSTIEUWJiV6ZvyVmRoIv2lG2r48vmLJ8fI0EJjcyKc5DYo
+	 ZBCJHZkRy7uMQ85wTZhsp8LW5w25XlELIi8MWqxCjrqpKX/TNYywmemWCwuF9gw94m48j
+	 DiYdcpxlSdF8ImzPw2/ay0ZXrOo3jPj/+1B54FwYNi0FiAuDTlEn74nbIv2QXfuoAJw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n1SKiTB+;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=foss.st.com;
+	spf=pass smtp.mailfrom=foss.st.com;
+	dkim=pass header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=FzO2UXAu;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.162.27
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013027.outbound.protection.outlook.com [40.107.162.27])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FDC606A31D;
-	Fri, 23 Oct 2026 12:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302CE606A326;
+	Fri, 23 Oct 2026 13:28:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 302CE606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n1SKiTB+
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792760105;
-	b=uUleyBB4dDgRenUCm8N99p37N5s+RN1R5oBfmIM2lLZ22x5OyRc+pMzdFmblsupT3Ymv
-	 c8Bnvmi7X50LhOMDWYbbyXo0+N37d3IiSZBnFXMEzihOqGekfUwET3eVLMmCHnv64CTvf
-	 YMGClasTH5Cyobb2dK2e51iygPWcbaSs6KH7GAomZLtfQQmBD3ytmZWs7AU+gtqFIl/Ku
-	 EmmwgXxNqaVf6Qg1p0Q96dM+TpABnTNF51V1DCqCko/aK8g6brFiq5EildVPMxzNtqqoj
-	 QB/LC2Hp3x4RGg7ODV7fiSZGoP+uQb9TmGahFHx+VkeNtDIwq+o0dWDPnpw9T9eFQ1g==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792760105;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=I/jsmKBkJGbIrBQf+3BPreEkWXD+Jv1M7QJlYJiZSu0=;
-	b=asXR6nlBarKA+WIsQ+swPku9FTanXdqRcJGxOLs2iejsiATgImc0RRvZt1At80bg8M/C
-	 pz6IX8aiFquI7l5Nwuz6weUGbKZcfNIrn6eTWFEz1cUcI0KYJ3N/lgGM/y+8CZm96HCBp
-	 Ftvhnq24EncsoYvCEKS0bji1NKW3MiqbKbwMdqFzVc509AUfRxEEawpu2bOOlYWPu0KlQ
-	 gc2wFWSP8xjI8EjI8lg21hRciLPxRhK2VlaiGAlmJvPz04CDSoEPWBRadp3nPdqYLY8wP
-	 zurrylr23DM/ApjL0OkBBLE8iR5+7OmVx8YqmqMOno2krSTswePihKzt5wFwCWZk9TQ==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id EEB9E1F031E1;
-	Fri, 23 Oct 2026 12:55:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792760105;
-	bh=I/jsmKBkJGbIrBQf+3BPreEkWXD+Jv1M7QJlYJiZSu0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=n1SKiTB+PUZxA6OgPTo2M9OYyJpGMedkYdoD+kte+7GQ/EDiTq8GfgChXF7nwXgWI
-	 81m8iJRNnY681DpQXy9h5PUiavFW1am88sjw9VmdPRWXgdyCqpWCwrN7hquEd78Rf5
-	 GtTWpOxRGn1uC1SYRjQA5ufS1q4NTq5Qf3GdIAlvCQllAc05mdxG2Cj1jHvj9LaBsN
-	 Hrwcq0eUmnd4VCypCQmPv6fEYdn2CTnrQASrK042dE7EJPiAFtqaKYAwszFSvncR9F
-	 Pnc0qpyk3yaepeKvAHf7z5yxSkPbOqCEB73tGHRhPLdjQWerGImxFQe7vuZoMQgfcN
-	 kI/rCq6XaWUpw==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 6477E4452D;
-	Fri, 23 Oct 2026 12:55:04 +0000 (UTC)
-From: Ronald Claveau via B4 Relay <devnull+linux-kernel-dev.aliel.fr@kernel.org>
-Date: Fri, 23 Oct 2026 14:53:53 +0200
-Subject: [PATCH v2 3/3] clk: meson: g12a: fix swapped VID_PLL and
- VID_PLL_DIV clock ids for sm1
+	dkim=pass (2048-bit key, unprotected) header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=FzO2UXAu
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eFyqQpwgcZmH3k9L1UJYnl6BczqWCWYtbxRqlTzqu7epn4vclntMmSmq6XwBtyrrvYKA9a0mVajLlRe9tkay/gLgYElwWk9KD35H8k4DXinjBJF4eFGYii4NMZgn7aFWZgNCuWIHoP1kjNq4nPOTAkjTC2fReArMNTnPWbbmSPTtxb17HdGKkB5x6/B6viM180M/VUASeUyCgW2l1gOZff2gEC7rKkxUMEcBDmfxDUersOZSCj1ULA67HRFYcuoJz0WOJjtaJxy2A9jlrHzaPqnkntTtz0N0O5AF5ZHJZ2qLKOzUuqkWsVL8hXxIzzK6V3iuTuQ0QZk1vYWsk45mUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K3qvdZEbe9enl6/OgzNx29PXWLOaXXolNcKLq1YCZJc=;
+ b=CFyu9TWWGh6h5UVEQhEwVJS3FS8ipQSWIYF8ZiZCSZpLQzfIybW6xt96csUf2lEkX7KTVKGBPYYrKoYQ541e7keHT3TJ8VoLT1iwpuwo2PJJHEntU7DQvLCBNzr8E80JOiEPG77ZEsDBdEi/m8/liUjRGJoeuDkeGIv0ewyglLFHqeyyexE8zsrlh7VvZWI/DaIq1J9JEzb+goaWbipnBQKTJhQpVL+MWBmNCnacqsTD6JjftPL/3y1rts8YxadDkU4CwqZfxhi+VZ4LdsAQ9H9JsQHi/r1rmgcTIPWbQzUulcQ+hdskjwvE5ao1pVE5tOAU1s4bchTIXIUlDxK2fg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.59) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K3qvdZEbe9enl6/OgzNx29PXWLOaXXolNcKLq1YCZJc=;
+ b=FzO2UXAuD/lz4zl5HzdHWFOVuMC4bQPjQbiE4OEwgzyOiSBkD7ZYsdahC35bRizevQImU2kc293bUgigaAHi+gs08/PzFd5LHrgJIwyf4UP5dKvSREUCpyeYG1GCNOkt7sqjuRrb79udMNx5Ft9Up9GxVIwINwYTMtCtmp+7qLrmsbsCUEpB3XPHwTq0dmkBiWiGKCbKJGxLhWAxdvcEcJictpx00CzCm+H/H8iho8hz9nntKA0pmgITixwW7tQXfNzk/moKo3REhqooBVn3EUvt6bglZ6SV9CGIx3hWPXMTQUWj+zKGEJsf0SY3k9e9FwBI/DsV/WiQYrpDykcLyg==
+Received: from AS4P192CA0025.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:5e1::19)
+ by VI1PR10MB8062.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:1df::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.2; Fri, 23 Oct
+ 2026 13:28:11 +0000
+Received: from AM1PEPF000C1AD6.eurprd02.prod.outlook.com
+ (2603:10a6:20b:5e1:cafe::7) by AS4P192CA0025.outlook.office365.com
+ (2603:10a6:20b:5e1::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.546.19 via Frontend Transport; Fri,
+ 23 Oct 2026 13:28:09 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=fail (sender IP
+ is 164.130.1.59) smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.59; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.59) by
+ AM1PEPF000C1AD6.mail.protection.outlook.com (10.167.242.101) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.546.15 via Frontend Transport; Fri, 23 Oct 2026 13:28:09 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
+ (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Fri, 23 Oct
+ 2026 15:28:28 +0200
+Received: from localhost (10.252.9.175) by STKDAG1NODE2.st.com (10.75.128.133)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Fri, 23 Oct
+ 2026 15:28:08 +0200
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Date: Fri, 23 Oct 2026 15:28:06 +0200
+Subject: [PATCH 1/7] clk: stm32mp25: define the number of clocks in the
+ driver
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,64 +107,101 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261023-fix-g12a-clk-v2-3-0b0b9b86d437@aliel.fr>
-References: <20261023-fix-g12a-clk-v2-0-0b0b9b86d437@aliel.fr>
-In-Reply-To: <20261023-fix-g12a-clk-v2-0-0b0b9b86d437@aliel.fr>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Jian Hu <jian.hu@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Ronald Claveau <linux-kernel-dev@aliel.fr>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1156;
- i=linux-kernel-dev@aliel.fr; h=from:subject:message-id;
- bh=t0FIKzJfxpaKxPA7dyb99aPBQLhdoQUw5gOCwl7UOKQ=;
- b=owGbwMvMwCWm1SvKXP3cUInxtFoSQ9btSDX2pNs2x5n53oqo/7iSN/fk7M4w0as72oSulETNM
- d6rNu91RykLgxgXg6yYIkv/XMsT7y4fPfN1j3oKzBxWJpAhDFycAjCRZ1YM/z3T9+1o3bXNuF4w
- quPQhPN3FSbe/uWgGGYg4mvEWvJXkJ/hf96e4/Lsr3dIV4py6Grz+tzt2uCl4yVy9HLUYSbFPyw
- neQA=
-X-Developer-Key: i=linux-kernel-dev@aliel.fr; a=openpgp;
- fpr=DFD863F61375BF917F0012173953305EF1D0EC3E
-X-Endpoint-Received: by B4 Relay for linux-kernel-dev@aliel.fr/default with
- auth_id=744
-X-Original-From: Ronald Claveau <linux-kernel-dev@aliel.fr>
-Reply-To: linux-kernel-dev@aliel.fr
 Content-Transfer-Encoding: 7bit
+Message-ID: <20261023-ups_mp25_clk_update-v1-1-e906e7a38cb3@foss.st.com>
+References: <20261023-ups_mp25_clk_update-v1-0-e906e7a38cb3@foss.st.com>
+In-Reply-To: <20261023-ups_mp25_clk_update-v1-0-e906e7a38cb3@foss.st.com>
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792762086; l=1765;
+ i=gabriel.fernandez@foss.st.com; s=20261013; h=from:subject:message-id;
+ bh=twnI4QR92BUewKdyoUDjAQ7Mve6tD53Osw5Y047pTZc=;
+ b=5q9OgHNqff9Pe5OimAaxZkTLKm+1OWK5m8v8jIJpBp5ohL/rhBMIg5UnR1jAZa79nvUOqIYQc
+ MCaVwIDB+cCC0K6H9C8VP59QPHNvZZXOZbdB8OInsDQUfTY4wKCd4dE
+X-Developer-Key: i=gabriel.fernandez@foss.st.com; a=ed25519;
+ pk=BVZE1QjIfcrviw9RyyOGQGGsg9CNbaxyjYn9pAlkNyQ=
+X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
+ (10.75.128.133)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM1PEPF000C1AD6:EE_|VI1PR10MB8062:EE_
+X-MS-Office365-Filtering-Correlation-Id: cdb17096-abd1-4aed-37fb-08df31097ab0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|82310400026|23010399003|376014|7416014|1800799024|261021121427099003|18002099003|10067099003|22082099003|261021123027099003|11063799006|261009223027099003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	0YTJ0p8Q8OIBtClh3a8tR5eeohq8wsziHhhRER8bgQgnBAfveex1SvHV9YlAwV7ypsetYAKCDHFZufQfRkz2xEzu+htmsPGa58yhhEMkbXbPxquIy+hcJqaoksCCnak3ZklbzjlDyto2stvJefDVtUr/sM4gmJdGEkIRPOmemD/0yUKDE1wKYNi8NW3nF5TZkVyb74r8AEVUvzsMasm0GuUnkOwV/3w3aNwE2amJ2Zhtq9qZZ+bH4asAfoqOz0ZB9z6AZaPP8gvu+PjngZvKdA3EGBpgXQ0kJjb5L3fkIq+cQYfZvB+sF86ypwdFNhBG8T9WMHYEuU7vgFgLdw0olZphJGRhQ5/r4GN53xqk9h0ic3DzrIK6GzfMBoz6ORkuxWUgBBZ7CUMlOg/+4wTKeFJ8KjZ3Sp9pybtkdDTfQw3AyDt6KyocOeLczYGXoyFd+nodau3rIYSZ7wtAs7Jwxwp4KRcwgrM8YjnMSMCTitbGe2l5UsKB0fOUw9NxfLEKVD6fzJ3bVgzSaPuo1r0OpnBaGYL+RHjPa54/bbqMscHraB01fHmE3hpdI+fE08BTRIRt3TIYH3gcA0MOZfwT/rBETTWaXni8tKK/bO13Hur4ncC/ux9L1QmVv/q/J4JjwXPnFAVKWnFbAAG8XHUHjX0v8gieTttwFkS7uL4Wg6dLtJo9HRaJSv0V4IWi+1aKTGalYgLqwEqlkWveF4UczQ==
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(23010399003)(376014)(7416014)(1800799024)(261021121427099003)(18002099003)(10067099003)(22082099003)(261021123027099003)(11063799006)(261009223027099003)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	JuD3YUp7+Yx9eRz5/il/r+cr7towZfHLFDybDHL36hoJI+47bYCEVjwlN4mQRNCQ5Cgj2sRic5Pz+0xB8V991F32pDnG126YfTyGm5n1jAP6L8jfKeqfyUyKREWbid0YHz1RXypojrL2lexWHgv1xD0OQetC1ZiGzy7EJZPKQcoS4GKwwuRHNy35PF+2ah+YQuADvPo/e5aGCUw6ECrHt3JZLnlJcFQ9joki/vutPUzYPscNLfdKasIMVnYbBWrglVzRKtdUDOoZfeohP8aka0VKEAlSAab53VoRRpvxJSDu93Iyb40vGt9rgdm4vkxQdUE1fuLSCVgCwHPowLknzk0VVwdZQHPtw5n4NJE8fLsKWm3TTb1lGKfLfKHv6iKDFg1X1ETgcq28nOioTsQe/WuYJ1He87RHfyOD8l74ZUnJwBP+V230NGTPA2l2wQBg
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2026 13:28:09.1916
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdb17096-abd1-4aed-37fb-08df31097ab0
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM1PEPF000C1AD6.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB8062
 
-From: Ronald Claveau <linux-kernel-dev@aliel.fr>
+The size of the clock provider is given by STM32MP25_LAST_CLK, defined in
+the binding header. This is not part of the binding ABI: it has to be
+updated each time an ID is added, and the number of clocks handled by a
+given driver does not belong to a binding.
 
-In sm1 onecell data table CLKID_VID_PLL points to g12a_vid_pll_div
-and CLKID_VID_PLL_DIV points to g12a_vid_pll. So the ids are swapped.
+Define the number of clocks in the driver instead, as done for the
+STM32MP21 driver, and drop it from the binding header. Both are done in
+the same patch as the macro has the same name in the two places.
 
-Swap the ids back to their right entries.
+No functional change, the value is unchanged (344).
 
-Fixes: 3dd02b7334ec ("clk: meson: g12a: add support for SM1 GP1 PLL")
-Signed-off-by: Ronald Claveau <linux-kernel-dev@aliel.fr>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 ---
- drivers/clk/meson/g12a.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/stm32/clk-stm32mp25.c            | 3 +++
+ include/dt-bindings/clock/st,stm32mp25-rcc.h | 2 --
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index 0f8cca4a4caf..baa03d24e4cf 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -5117,9 +5117,9 @@ static struct clk_hw *sm1_hw_clks[] = {
- 	[CLKID_HDMI_PLL_OD]		= &g12a_hdmi_pll_od.hw,
- 	[CLKID_HDMI_PLL_OD2]		= &g12a_hdmi_pll_od2.hw,
- 	[CLKID_HDMI_PLL]		= &g12a_hdmi_pll.hw,
--	[CLKID_VID_PLL]			= &g12a_vid_pll_div.hw,
-+	[CLKID_VID_PLL]			= &g12a_vid_pll.hw,
- 	[CLKID_VID_PLL_SEL]		= &g12a_vid_pll_sel.hw,
--	[CLKID_VID_PLL_DIV]		= &g12a_vid_pll.hw,
-+	[CLKID_VID_PLL_DIV]		= &g12a_vid_pll_div.hw,
- 	[CLKID_VCLK_SEL]		= &g12a_vclk_sel.hw,
- 	[CLKID_VCLK2_SEL]		= &g12a_vclk2_sel.hw,
- 	[CLKID_VCLK_INPUT]		= &g12a_vclk_input.hw,
+diff --git a/drivers/clk/stm32/clk-stm32mp25.c b/drivers/clk/stm32/clk-stm32mp25.c
+index eb0bc918ecee..fa025a9f3f37 100644
+--- a/drivers/clk/stm32/clk-stm32mp25.c
++++ b/drivers/clk/stm32/clk-stm32mp25.c
+@@ -17,6 +17,9 @@
+ #include <dt-bindings/clock/st,stm32mp25-rcc.h>
+ #include <dt-bindings/reset/st,stm32mp25-rcc.h>
+ 
++/* Number of clock identifiers of the binding, SCMI ones excluded: highest ID + 1 */
++#define STM32MP25_LAST_CLK	(HSE_DIV2_CK + 1)
++
+ /* Clock security definition */
+ #define SECF_NONE		-1
+ 
+diff --git a/include/dt-bindings/clock/st,stm32mp25-rcc.h b/include/dt-bindings/clock/st,stm32mp25-rcc.h
+index b6cf05ad4be6..242f61205a9f 100644
+--- a/include/dt-bindings/clock/st,stm32mp25-rcc.h
++++ b/include/dt-bindings/clock/st,stm32mp25-rcc.h
+@@ -364,8 +364,6 @@
+ #define CK_BUS_ETHSWACMMSG	342
+ #define HSE_DIV2_CK		343
+ 
+-#define STM32MP25_LAST_CLK	344
+-
+ #define CK_SCMI_ICN_HS_MCU	0
+ #define CK_SCMI_ICN_SDMMC	1
+ #define CK_SCMI_ICN_DDR		2
 
 -- 
 2.43.0
-
 
