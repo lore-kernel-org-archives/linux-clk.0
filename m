@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1792760106;
-	b=1jj+Ulk9HPy5fv7Nn/v77LHvpmKlg9Hry894fkl3/v5lDFNENgGX/TF3CM7Z9xW8uzWP
-	 0zr3rxRuic9EyKC8S9J7h3XMQL6+PCMZheLUVnVeSzkrzJNSbhcIHF9F+2uh++rnaZZRK
-	 N6DlG5QQ9WeloFGrrduT7BVEoOoh+0T/nEQR2K0ZjmB3OJ5tH1C2pgrJjt+BnkIYduD0i
-	 0emSP9Nv0yUjpNX0cdG0QjwFnDWOvIFqxRUCZSnk5bj2e+Hzo2AzmQph39TQkwqdtrfto
-	 VwR4+A7967bRBX6u1SkCTb9Dqxb6HH7qGMqet02aU7/8tsUcbXNv425j7ZcAArc6rtw==
+	b=lSuv/BWwCDfjFjNjUxK24qpFKEFHpoW1swZYl/7k/qtvbCjcJ5E/sGto1wM8CK1QDl2H
+	 6lJ5UsRctGzWorTIqtpdIGKhGw+Q2zr1S0EXyx9cKaTdrRo69Mx5kbXKnSeoq1SjoBtKr
+	 AM+/nJLFSoPjlj+mPC01gvgpJP3vo+pEQ5Fj87Hz/KITNxel9BcMkQLAMSLkraIOZJ2PG
+	 mipRC4odQu+Cw56ytjMECBQ1STD6s80C8hsYgciEHuNl/S0tiPl9+g6cn6HOag1H71QD9
+	 qwUwUOSXWKQmXWTAiUJYAfCu/asGaQKTFgKClclJJelpEz4GzlGjVG9Wv51Zv3+h+Hw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1792760106;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=+997DNCqR7ECKcfajWdY1tQzietg9A83Oqx5Q3IXzQY=;
-	b=Cj1aLyCv8LWanxhYNuDDb+zaBXqjAC+fFxiNLkbgf1fdtCfu/LA4hotrBvM3y6ym5sSw
-	 GlTf3qxYfrTrJNYv4RCZ+5ri5WMmUVzEHJo5bcMu1yuCPYlJWtuLeravqhkwVvTMtNdV2
-	 u+iEjreTi8/LXFlapFUJGvPSit6psDsFtp+/mLJ0lyJ9RnsXxIILABQd9wJF9JZxm0UZr
-	 dUJLS2BlzPZZL+3U1CIwolamu01cUFVTYONMeYf7WLd3dt6bILx+Ad6m7584WBcyY5ljg
-	 0xlKzhO6zipHtPLBgnxrPDGblMWZHT023hg3At/rdQS6+YlJaSBC4F+DQ3oQTtqExbw==
+	bh=dkCw7hbi01uORZPcJo+jj+qWrgJE+/WCOjq65qj8Geo=;
+	b=ZePjTvCPJsHbQsh386OKxHzQgBrmLJBma2OvP0hm2xqrO/wly8noC7P0jtvAPfHCoKDK
+	 x7N6xYB6ITawtf0TuuCcPHXqr2kJ2KfoI1eKtaUbLCrGjQ1OeJMBI5LFOAvrz1JKC3h3K
+	 KCrIWupTEX+yTU0We0ZMcG8UTyOUpdeDhisX08zWPF1nMPdj5HK/scgZbZUw4ZohvUjMK
+	 uquJXc6l4wjviBafdBvGsxOcmd7tlWo40aUnRNjmLrKSNzy9TCc7djqbcF7CY1I1EE08R
+	 WFbh+44whb3dzxbcOO5iyBQ1w6EKe3OtJxhtDoWWa0rGLmK8z/Rt5jSbhxc7fVqo7Hg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EDwaCfQ4;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IN8OLGzU;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25090606A31E;
-	Fri, 23 Oct 2026 12:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B85A606A326;
+	Fri, 23 Oct 2026 12:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EDwaCfQ4
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IN8OLGzU
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792760105;
-	b=Z0y/XcU6+7xocWqmVHdAobbexcTTxmna1K590qxC1Qvz7DwK0u/Sq79AXJ2I419T4O1r
-	 +dEldyi+C0NQM489/0fvYhWIMptDfZWB1iK3OqeZBZq/V3aN2VpPZq0wyJB9btkZMtmX6
-	 0B/ZCbE8DN2m9OPvM9KuX9nej+pL+jFUfP8pM7/N5IKQ4Dy/ls3yMb5MFD4RWWTvTHFsj
-	 /M4C/+Zn6PbKSfQLAouXddNK6Srup2IdW17ApCsBzD7D2sGKLh1u+vn6tHq4ezEIhim1l
-	 zwdO0u+ZTG9XngZPMXZTKyiVcO8vcibA+h8TdPBN9k7WX9IQ+ttWwp9rP+h7s30mMCw==
+	t=1792760106;
+	b=oLrTutUKTTr3AyPbd/TQSgyplT9Sc09sNPzq01MlXCojDwlUt/ZrZKjiUuCqqrdH7lVH
+	 ZZLu0iP9kDK798r3lYpMu+/jtSbRO2wR9k9DPY8S3KVfvQabhdFP1OV8kB1l2A2gQYGcc
+	 6ISR/XvZqjVF1a3XrBxDnnbRSq2Y4DQc6aYFuidFbmur2EU7iZZrR1CRjur0P0Y1nRClx
+	 NqoLr1wf28o7/ONZAHayIx9eKDz5GayK1U3tYhT3gs8GT77ZSLptvKmZxTTsfQpRqXZKj
+	 XU1JEw1d8zGCnc5d83ElhrBoyh5uHMgWyEuQeiNqQ1OsEncAP+9U7pHzUOsdBGBWNXA==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792760105;
+	c=relaxed/relaxed; t=1792760106;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=+997DNCqR7ECKcfajWdY1tQzietg9A83Oqx5Q3IXzQY=;
-	b=F1858SvgBMC0cT0HDWQoLy7vU3HSsrS2N6PPqiC1w0+4CNPy7UCWkGzVghX2+n2JCHde
-	 1OAUV6+SxJBWXw1jl6UQfH/h2icCxsu35dlZaEtpoQxXuDRUkGZjWOQFIGm/gPC/R8ghc
-	 YODxUcQ4TxTCMBQNJjnsX67nzPBManVGu/LuJMGSIJcB+JqynsWc8+WCAI807EU100VGh
-	 AVZZset87mMve3YX8Q2NVKlMaGcpRT5g0RAvlGgET+YV58qYtdyDN5pTRYc9XOvSNP1hR
-	 rhtHZpScpdVn9YvwPC3qgPZU18d0CZo9sdLijBdnBqULpyLJMSzDYDIg9kL7xJhQiBw==
+	bh=dkCw7hbi01uORZPcJo+jj+qWrgJE+/WCOjq65qj8Geo=;
+	b=LcSNeeTU+4wHXg1Et0BzWAsB9GsAno4zKEbQ4amnR10vZxTaMJ7Rue5XykeIrNbmwhR1
+	 1WZARrWeIChK4u7GFZ+Mj13yfi/Ec+ZZeHFyVkZcJNuYQd7bJKrm401C2NYQMFtsKPlbN
+	 +80AXs+XhUdx0iFM/20pm17d1zHpmMr6x2KdlaG5HuFpsSLKH5U3AXv1MFmWU9P9qf0xg
+	 Doum9Svyj/shtvw5CRwJwsw02MDo7DOZqd7qwjoHfRinogB6RmWPB+LVBJI2aGdh07Vg9
+	 3zthis58w0zsiABLVDx9jq/ugusLFJiGdOViiU1pG8dafouasJOUFGoWFQ14eCZbJHw==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id EE5FC1F01829;
+	by smtp.kernel.org (Postfix) with ESMTPS id EDDFA1F01828;
 	Fri, 23 Oct 2026 12:55:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792760105;
-	bh=+997DNCqR7ECKcfajWdY1tQzietg9A83Oqx5Q3IXzQY=;
+	s=k20260515; t=1792760106;
+	bh=dkCw7hbi01uORZPcJo+jj+qWrgJE+/WCOjq65qj8Geo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=EDwaCfQ4f1QZnD0XAPgf5tJV/085B69uIZ9mEKpe/xC1m01GVwDojdn/iDp4uwcIm
-	 bcYUdjgamgFyg+7H6Yem6Fgues4fauOUQ7lbaIH1zQRxnap386hkb0qGyjiMjzDwFL
-	 z9/Co8KjzR5Nw1HZbOO3rtEKarptkI1jouNlyR8QSVgKdeLZ8lUquqq2rBRzDMlPGo
-	 hy2MoXPNO/wc/Xt/LlmoIpoYre0I3EwDxJMsuDL9dBVE3FsSkw0RQ+nzTUhLi2AKJ/
-	 nHgCEQ0iJttLYnOH1nTJsW67y/nO+i7YqcAk6+u6a/S4kF9ZPDkwYCp2w7KzjL7d8L
-	 xSS5c0vxgcDMQ==
+	b=IN8OLGzUpbKdkbH0Ptf25Bk+O0mHr+T+yn26U+2AJM+GFyCo8tO/LSXr3zAX8oPBW
+	 5Qwl7lKO/D9d7VxMH2o80flWnzDXSnuh9nrX6gZFhauaOGcUxeRUq0fX1dWIQH+imP
+	 MqkAIDFwCbzDM7KJYvlxgUX1x1T3V3Vh+VmbxqRj0/NUV0oEZP96aw++QHFAZ9RiyS
+	 C026bh+tpekZoNvyis9dUDa0qv2Ir3KtDq6Hba/eGAxrnLtgD2WrrLyNedzohS4Ib1
+	 32HbYnPwA3Qa9o6FTZp3PMin3OEtYQpog1YRsEZexEPHQ7QRT4/od+k4CAyJwdCEJt
+	 OFn32VJt9VZbQ==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 54B6644517;
+	by lkml.kernel.org (Postfix) with ESMTP id 5C8F244529;
 	Fri, 23 Oct 2026 12:55:04 +0000 (UTC)
 From: Ronald Claveau via B4 Relay <devnull+linux-kernel-dev.aliel.fr@kernel.org>
-Date: Fri, 23 Oct 2026 14:53:51 +0200
-Subject: [PATCH v2 1/3] clk: meson: g12a: fix swapped VID_PLL and
- VID_PLL_DIV clock ids
+Date: Fri, 23 Oct 2026 14:53:52 +0200
+Subject: [PATCH v2 2/3] clk: meson: g12a: fix swapped VID_PLL and
+ VID_PLL_DIV clock ids for g12b
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,7 +84,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261023-fix-g12a-clk-v2-1-0b0b9b86d437@aliel.fr>
+Message-Id: <20261023-fix-g12a-clk-v2-2-0b0b9b86d437@aliel.fr>
 References: <20261023-fix-g12a-clk-v2-0-0b0b9b86d437@aliel.fr>
 In-Reply-To: <20261023-fix-g12a-clk-v2-0-0b0b9b86d437@aliel.fr>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -96,13 +96,13 @@ Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Ronald Claveau <linux-kernel-dev@aliel.fr>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1162;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1163;
  i=linux-kernel-dev@aliel.fr; h=from:subject:message-id;
- bh=2dFhwExwBBCr5nuNL1VrJSQXreYDqbsyvEBqlLalx/E=;
- b=owGbwMvMwCWm1SvKXP3cUInxtFoSQ9btSGVuZ3ONeevX/mYy+WN19cemgF9fm4Ob+E/IvTv+b
- vPXLzxbOkpZGMS4GGTFFFn651qeeHf56Jmve9RTYOawMoEMYeDiFICJfC5hZPhScHntV127Oo9g
- Xbd7x07EHHj5Qu3q2tyXmlPz1v1d1AxUseTk0n96Ol9svUXkl07J27JSepd4yboVgjv+JH9kPJp
- yiAkA
+ bh=vi9lulUMVdXqWKaJQLHldnMTagMly0/4fVgBZE/Y5xg=;
+ b=owGbwMvMwCWm1SvKXP3cUInxtFoSQ9btSJV3c50XvD3D1pB9lLHh74c/14JvBH+IPXyiavJX+
+ T+LAo3bO0pZGMS4GGTFFFn651qeeHf56Jmve9RTYOawMoEMYeDiFICJ7P/AyNCwYkPbF8/IWTL7
+ 96w4ZTVXSWDjvKnG7edcXAzY777gWqTK8M/i0Y+Gt3tTboUUfL4ccac2YYuDapeTUvudpd7fwt/
+ dfMsAAA==
 X-Developer-Key: i=linux-kernel-dev@aliel.fr; a=openpgp;
  fpr=DFD863F61375BF917F0012173953305EF1D0EC3E
 X-Endpoint-Received: by B4 Relay for linux-kernel-dev@aliel.fr/default with
@@ -113,22 +113,22 @@ Content-Transfer-Encoding: 7bit
 
 From: Ronald Claveau <linux-kernel-dev@aliel.fr>
 
-In g12a onecell data table CLKID_VID_PLL points to g12a_vid_pll_div
+In g12b onecell data table CLKID_VID_PLL points to g12a_vid_pll_div
 and CLKID_VID_PLL_DIV points to g12a_vid_pll. So the ids are swapped.
 
 Swap the ids back to their right entries.
 
-Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+Fixes: d43628e9bca6 ("clk: meson: g12a: Add support for G12B CPUB clocks")
 Signed-off-by: Ronald Claveau <linux-kernel-dev@aliel.fr>
 ---
  drivers/clk/meson/g12a.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index d0d4c7b6dc82..57fa086b9c8b 100644
+index 57fa086b9c8b..0f8cca4a4caf 100644
 --- a/drivers/clk/meson/g12a.c
 +++ b/drivers/clk/meson/g12a.c
-@@ -4622,9 +4622,9 @@ static struct clk_hw *g12a_hw_clks[] = {
+@@ -4849,9 +4849,9 @@ static struct clk_hw *g12b_hw_clks[] = {
  	[CLKID_HDMI_PLL_OD]		= &g12a_hdmi_pll_od.hw,
  	[CLKID_HDMI_PLL_OD2]		= &g12a_hdmi_pll_od2.hw,
  	[CLKID_HDMI_PLL]		= &g12a_hdmi_pll.hw,
