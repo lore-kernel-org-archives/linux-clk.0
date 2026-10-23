@@ -1,57 +1,74 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792751902;
-	b=OGlZJ+XMnTd3FWgScBJnU2q0RBjHIo55+Sh4CLq4f3JNKVSp2smme6wo8C568OdO4Rs0
-	 CKWpRjxCUzc0Ps63pdrPB+Oj3JwnEvnFeABo6zrq5+iKBFGj+ZT8sS9Ka4Wj/WW7h5IL6
-	 u/MpanFiZZPCX40YhrwCYGbnvSPkXbYnJzQ8RHO6/UsnPHjEWh8CPwLo3PKC52geuFN1W
-	 dHDdPXYfhVwxgdv2P6eneH46E97bJj9IV+MdaoiZRgPFAhGgjxQeKMWZ6aAm9DilK9ROV
-	 1+NqqPpP5uJPdx2MmazQe2/NzsokeFFTBxYK4wlBTCkPevEYQ4kg0donjqN8QiSZGWA==
+	t=1792752340;
+	b=5axJRrNUTxM7Gm1+9Rp3klbUyBQIS7f1pdvN/BypqOzFCctJ/EPTMcGA6xwb6FhUl4Ay
+	 ufeH5Hb32EdfqIbDE58mXFu1mlZojTnrpXNq+kH6xOAiAJg/37mdy1Gbt+Eqgc3iTgE97
+	 ylRJGP4WQD5Z8o5QjQfexrdu465vag7Gl6AmevNI2Ei8d/8Ji1VAjQS6OvGvXazWe7yIq
+	 L4ihHAUMzkbGQTFu3MTY2HwmDWRFsJVj0FES9GUVUb/FEHFzXtO3N0EPy69YQjspp/5mT
+	 gCb/3x+hcqB06/7j/CNpn9ADe67KUQDW3AWHvrgHSPI5EsZaI3RAWVOdBAtt05URM9g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792751902;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=KFQUt0v3gEVvXvqowfSOoEfmhjQe6voR9s1T4EXAb7I=;
-	b=AnbvBNcUgjNxJDxW7WMNzIpLp7evDz3oXl60uHszNJIJBnCXwuksVezxs9GVuWqmllYm
-	 b7XgaOCpha4w48+Mpvj9vbXQcB/KC5VFDVnRK2n0h0MiYoVYpZyyGfcv1yj75GwDBEcFF
-	 DbJpqqn2Swk0QdtMfyykp+xRh+W0/wE8nTSXvAC5+gALmJbu76bZRUmxMSBQ+PS7tTxnJ
-	 tuvN5XFPj44UJtNbHjs3R+cdByosZT8eWgD65iWf1DlusyhO5okMxz5q5Knfb3pXKdtay
-	 zsIQTcWnbbQGxtam2XIbJU2hzLMEbY9piYJ3j9/goFMpMOitZK3MvIlxHh+53IpwzuQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792752340;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=b61N7diDmGazKFB3UaE43uvQV68VXVLWOmtAASrPvHY=;
+	b=5Nf4qlfnTuQ2hHPJ/pn6NfzArRWbXyJh1GeJXop33lUPgz4LAGs1HxKl5hmBCKQoFgbH
+	 Hu9HyMmH4TnFGsV2QjXlJ5UX12lmC9K/bD91uRNFaS87rIUxydGQ4FMgcOMFUsQdZlBMO
+	 i6EiXNoc4WgUvzGAr3bj4Mvu1kg/ug6THUuXnFv3jast+d56Ou/q9QDI6JgcbPGg/pjp2
+	 vvwtItf4XKgZ9wakCoCvGUQt92VRssngiK9K9oTYYbThCRt46OlUKpG6azKM0kBsx5NjN
+	 uK1PG1gKOXHughAXqPFjlv7W+1HVb++2kgYhUqdlNHPafo4w9ALSIM1j+JBeStw6FXw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eD7szKvZ;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=DKYsAIPw;
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC72606A31A;
-	Fri, 23 Oct 2026 10:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CFB606A31F
+	for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2026 10:45:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D5CFB606A31F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eD7szKvZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D661F01825;
-	Fri, 23 Oct 2026 10:38:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792751901;
-	bh=KFQUt0v3gEVvXvqowfSOoEfmhjQe6voR9s1T4EXAb7I=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=eD7szKvZy5uB3mY+Am+IpljFH4qlqEbIyngoviSS/o4NuTVF5hVmIGinvzWOTmcQB
-	 yACZvB5s7IlPVAC46eQeg+ZHnfTT4TzgYvoD8pD1UBg9oJ+QGkVzuAolEdHlgK7mJU
-	 HXqxG726EaMVNH8/RG7k4liKrdL53YwTda43iBMt+U+PKjPu/ueaT7iDRZk8F0f688
-	 Nx3HjlgjtLLFywe8ljQHaov2nr70Zo8VppjuD59XU1AD4XcTlGAaw2FHKPPYfbMZAl
-	 PpYzre+IdJuBMesEgmCm8z2LTHf5GYiClevNv1gTPUfmsj9u4pIYn74GJmWSEzoMRC
-	 zofPi2NqMg+Gw==
-Message-ID: <sashiko-outbox-182697@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: Document the SM7250
- display clock controller
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Ishu Brar" <patches@brar.si>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261023-dispcc-sm7250-v1-1-07bdefb99801@brar.si>
-References: <20261023-dispcc-sm7250-v1-0-07bdefb99801@brar.si>
- <20261023-dispcc-sm7250-v1-1-07bdefb99801@brar.si>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 23 Oct 2026 10:38:20 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=DKYsAIPw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=b61N
+	7diDmGazKFB3UaE43uvQV68VXVLWOmtAASrPvHY=; b=DKYsAIPwqA/Di1b5Tizp
+	TFFcsd0MEIIhMyZr0NIH3Q90HchcsSsQQGvYsiBju8er5/1V0o0IgH7QlBzvAfNh
+	/gJpzq+dDtTIwt9SDYaMt2qzEroeMJ3jARFue9aBvkEmSBdq2O3kh0cXk2CEWp8o
+	YKsmxjWdEZJ54jJPEAk9i0Mu0lgcM0nF42YYqZZMERfbYlHqZgDspMBzUGT2r1Uj
+	K/Fywzg4rJG87KGnKUUxQs6jRMDrsOhZWuLtle9FsTuavNAdNor13bA4tNjnuM5s
+	wMxkgq9PwJOCnc2n16/HB7SA3dDeu5emL2Kp7uHFv/+yb6/u2adLQtGehuFjZnhH
+	1g==
+Received: (qmail 1517709 invoked from network); 23 Oct 2026 12:45:35 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Oct 2026 12:45:35 +0200
+X-UD-Smtp-Session: l3s3148p1@cpAfrn9eFpoujnv2
+Date: Fri, 23 Oct 2026 12:45:34 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Diogo Ivo <diogo.ivo.sx@renesas.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Linus Walleij <linusw@kernel.org>, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 4/8] i3c: renesas: Add RZ/G3L support
+Message-ID: <ats6zi2lZW09Bs2e@shikoro>
+References: <20261020-divo-ssgrlpcsrc-2966-i3c-v1-0-30a47f25e515@renesas.com>
+ <20261020-divo-ssgrlpcsrc-2966-i3c-v1-4-30a47f25e515@renesas.com>
+ <20261023-thundering-axolotl-of-examination-aaa6ba@quoll>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,149 +77,59 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261023-thundering-axolotl-of-examination-aaa6ba@quoll>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [Medium] dt-bindings: clock: qcom: duplicate SM7150 DISPCC schema and hea=
-der for SM7250
-- [Medium] dt-bindings: clock: qcom: missing #power-domain-cells in sm7250-=
-dispcc required
---
+On Fri, Oct 23, 2026 at 10:28:16AM +0200, Krzysztof Kozlowski wrote:
+> On Tue, Oct 20, 2026 at 10:14:58AM +0100, Diogo Ivo wrote:
+> > Add support for the I3C Bus Interface on the Renesas RZ/G3L (R9A08G046)
+> > SoC by adding the renesas,r9a08g046-i3c compatible to the OF match
+> > table.
+> > 
+> > The controller is very similar to the IP on the RZ/G3S. However, for
+> > instance the RZ/G3L variant has no HDR Exit Pattern detection interrupt:
+> > RZ/G3S exposes 17 interrupts, while RZ/G3L exposes 16. A RZ/G3L node
+> > therefore cannot be described with the RZ/G3S compatible, as its bindings
+> > require at least 17 interrupts. The same point applies to RZ/G3E, that
+> > requires 3 clocks while the RZ/G3L requires 2.
+> > 
+> > From the driver point of view there is no difference between the two
+> > SoCs: the driver only consumes the tclk clock, the presetn and tresetn
+> > resets and seven named interrupts (resp, rx, tx, st, sp, tend, nack),
+> > all of which are among the 16 shared ones. No driver changes are needed
+> > besides the new compatible.
+> > 
+> > Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
+> > ---
+> >  drivers/i3c/master/renesas-i3c.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesas-i3c.c
+> > index 4fddc1b4fdbb..80a6df1151bf 100644
+> > --- a/drivers/i3c/master/renesas-i3c.c
+> > +++ b/drivers/i3c/master/renesas-i3c.c
+> > @@ -1625,6 +1625,7 @@ static const struct dev_pm_ops renesas_i3c_pm_ops = {
+> >  
+> >  static const struct of_device_id renesas_i3c_of_ids[] = {
+> >  	{ .compatible = "renesas,r9a08g045-i3c" },
+> > +	{ .compatible = "renesas,r9a08g046-i3c" },
+> 
+> So fully compatible? If so, drop this and express compatibility in the
+> bindings.
 
-commit 38f912b989d9f04661892eb5bd0bbd2206b4f767
-Author: Ishu Brar <patches@brar.si>
+Well, this SoC has 16 irqs / 2 clocks. The other variants have 16 / 3
+and 17 / 2. So, to which one should it be compatible? I'd think 17 / 2
+is the easier one.
 
-dt-bindings: clock: qcom: Document the SM7250 display clock controller
+Or should we even refactor r9a08g047-i3c to be compatible with
+r9a08g045-i3c ? We currently don't use the third clock as well. That
+would mean deprecation of the old plain 'r9a08g047-i3c' binding, of
+course.
 
-This commit adds the Device Tree binding schema and dt-bindings header for
-the Qualcomm SM7250 display clock controller (DISPCC).
+Opinions?
 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm7250-dispcc.y=
-aml b/Documentation/devicetree/bindings/clock/qcom,sm7250-dispcc.yaml
-> new file mode 100644
-> index 0000000000000..684aaf7bb6b48
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm7250-dispcc.yaml
-> @@ -0,0 +1,73 @@
-[ ... ]
-> +properties:
-> +  compatible:
-> +    const: qcom,sm7250-dispcc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: Board Always On XO source
-> +      - description: GPLL0 source from GCC
-> +      - description: Sleep clock source
-> +      - description: Byte clock from MDSS DSI PHY0
-> +      - description: Pixel clock from MDSS DSI PHY0
-> +      - description: Byte clock from MDSS DSI PHY1
-> +      - description: Pixel clock from MDSS DSI PHY1
-> +      - description: Link clock from DP PHY
-> +      - description: VCO DIV clock from DP PHY
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +    description:
-> +      CX power domain.
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - power-domains
-> +
-> +allOf:
-> +  - $ref: qcom,gcc.yaml#
+(And yes, hooray to having all permutations per SoC. Waiting for the
+next one to have 17 / 3 :/ )
 
-[Severity: Medium]
-Should #power-domain-cells also be listed under required in
-Documentation/devicetree/bindings/clock/qcom,sm7250-dispcc.yaml?
-
-The SM7250 DISPCC provides the MDSS_GDSC power domain, and the example node
-includes #power-domain-cells =3D <1>.
-
-However, since commit b0ef3434da07 ("dt-bindings: clock: qcom,gcc: sort out
-power-domains support"), Documentation/devicetree/bindings/clock/qcom,gcc.y=
-aml
-only lists reg, #clock-cells, and #reset-cells under required:
-
-  required:
-    - reg
-    - '#clock-cells'
-    - '#reset-cells'
-
-Without '#power-domain-cells' in required here, a qcom,sm7250-dispcc device
-tree node that omits #power-domain-cells will pass dt_binding_check
-validation and fail at runtime when consumers reference MDSS_GDSC.
-
-[ ... ]
-> diff --git a/include/dt-bindings/clock/qcom,sm7250-dispcc.h b/include/dt-=
-bindings/clock/qcom,sm7250-dispcc.h
-> new file mode 100644
-> index 0000000000000..907f4122cb19b
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,sm7250-dispcc.h
-> @@ -0,0 +1,62 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2024, Danila Tikhonov <danila@jiaxyga.com>
-> + * Copyright (c) 2024, David Wronek <david@mainlining.org>
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_DISPCC_SM7250_H
-> +#define _DT_BINDINGS_CLK_QCOM_DISPCC_SM7250_H
-> +
-> +/* DISPCC clock registers */
-> +#define DISPCC_PLL0				0
-> +#define DISPCC_MDSS_AHB_CLK			1
-
-[Severity: Medium]
-Could qcom,sm7250-dispcc be added to the existing
-Documentation/devicetree/bindings/clock/qcom,sm7150-dispcc.yaml schema and
-share include/dt-bindings/clock/qcom,sm7150-dispcc.h instead of duplicating
-both files?
-
-The commit message notes:
-
-  The header and the binding are derived from the SM7150 ones: the register
-  layout is the same, but the controller takes GPLL0 from the GCC as an
-  extra parent and has its own PLL.
-
-However, Documentation/devicetree/bindings/clock/qcom,sm7150-dispcc.yaml
-already defines the exact same properties, including "GPLL0 source from GCC"
-(<&gcc GCC_DISP_GPLL0_CLK_SRC>) as the third clock item, the same 10 input
-clocks in the same order, and the same CX power domain:
-
-  properties:
-    compatible:
-      const: qcom,sm7150-dispcc
-
-    clocks:
-      items:
-        - description: Board XO source
-        - description: Board Always On XO source
-        - description: GPLL0 source from GCC
-        - description: Sleep clock source
-        - description: Byte clock from MDSS DSI PHY0
-        - description: Pixel clock from MDSS DSI PHY0
-        - description: Byte clock from MDSS DSI PHY1
-        - description: Pixel clock from MDSS DSI PHY1
-        - description: Link clock from DP PHY
-        - description: VCO DIV clock from DP PHY
-
-Likewise, include/dt-bindings/clock/qcom,sm7150-dispcc.h already defines
-DISPCC_PLL0 as 0 along with the exact same 43 clock indices,
-DISPCC_MDSS_CORE_BCR, and MDSS_GDSC, making
-include/dt-bindings/clock/qcom,sm7250-dispcc.h a verbatim copy apart from
-the header guard.
-
-Similar Qualcomm clock bindings have been consolidated into existing schemas
-(for example, commits 0e094dd19e04 and 67044b2df840 merging SM7150 and
-SM7250 GCC into qcom,sm6375-gcc.yaml, and commit c984dde8f3f8 dropping the
-duplicate SM8650 DISPCC schema in favor of qcom,sm8550-dispcc.yaml).
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261023-dispcc-sm7=
-250-v1-0-07bdefb99801@brar.si?part=3D1
