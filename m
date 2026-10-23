@@ -1,107 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.44.76
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.215.173
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792747854;
-	b=VGUcP5G1AYzTRKH4CO5W5rlSgTM1uFW/mivhPUMCvcfU97+YjhRF2ys36fe7G6kboCNv
-	 QTDDKMb7y5gTnGFzM2qMuLrgm3b5Vto+fi26qxnQaYviPvI7rgvdhrBFU3ZF/Q7e6v2E1
-	 27Gyk9QP044KLD0v8yZBe4XrU987vIS0t63LHUYjz3qzPkTGCmSl09qJ5T+D2KZu00KLB
-	 6tL+q85/94vfzDog5MBcGxQM0uusO8/aa9ahHZM0KT8CrA7b4rT1779zsqrBUTMuk0tTv
-	 F2ucO8XITBZQuE7NDGYmrja28f3/bH5Z3U9Zc5n8SXikxh0fB1MCkIqmHnvT8pBOgBg==
+	t=1792748484;
+	b=ydAldWZcxVWukZ5tR6ucPuOlAKSgF/oBcNWFUlrKoBwOUpnAK0o1EQCRAhtuK6p/Nx7K
+	 0Muco5ah4Lk3BrJHpDCjyqI2s++kDUC24fICzOHlC+OK/8yMQOhdyL9Gi9oK+UCPWwGgB
+	 NvjrT2QLWTixb/WLd2sCaNHu+rU7XVoYRuChDuT7YHJuZ9Bu2rvOCIHmxsK+SQgb9s84i
+	 ZJOW01x19ExMFiVRI2DLq/CfXO4qqsmsPMDLVU+hT8H5XsvEHnYvyS3abYnGEIYSGagc5
+	 d8q08G+m9mHiBgivbl4pxPR2QIXmwewuXje0pq4K8eOBfUxiWIu/KlJ7pJ/TNy5N7kQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792747854;
-	h=DMARC-Filter:Received:Received:X-MS-Exchange-Authentication-Results:
-	 Received-SPF:Received:Received:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding:X-EOPAttributedMessage:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:Content-Type:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-Id:
-	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=e2DCRe2vxGhYuzWx0kViGsFjMQWVNzYzaZ2IqYJZNzE=;
-	b=wepYdoeGNgVfZR8EkFcrSGj8ulB2lZTRik9hlVT8IKx1rDCm2W0WgKoU7t3GDJc/wvwF
-	 iWfbFxy6jLaJhznYF8Phq6FVJyL28fkceL8Z2Y6yQE6IPJ8hGO0/4G+46PWc4R7WCPY+5
-	 1F4uoA8vJSLQ4ua3rdMwEHheNae9irg/si3diLpdsS8CvQAwpj+DAQxoSxVTZgdHHGPzb
-	 1VXDPdoB1jkhAJs+NVAes9/aqhZcjOV8QE8Uq30Z/g42fun7LwytqubBZ4TEnUvxHZlZS
-	 C6np/TXUiVskZtz/lI31d7IQbc9AD6whSfR+3wNZbfwwAObEYtexx3vAavNPWijrRFA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792748484;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=Okgw5IuIeyoGQZ+JzmeJO9+dqCKtCII160B3B426Y1k=;
+	b=jX0/E+GkV1fjAmpAJgJKUgRAJZ8FY+efJlB+D4OHBphIqGhCctlkfPf5fsVuF0SEPcyC
+	 y/w1IakRIDKKggL4Ka10bNdhOcxIEqSXDcafvVUT8vnZMTiu56CJ/hoxbF3hWLkMGagN2
+	 S3dUL/5PnAa4ZqXC8JdCQS5nIPfJdbkSMe5BVojfnwR2wGznN9eQ2mKExbI88QZOErRb7
+	 Xvj35J69wKDtsxrxBegITYsxv8EtzG24ASGpKemN7R/4n1tIN/dFGCO6lKrnP9FbNQxIJ
+	 fkBuyNMeU9E//EQvyF5mAuVG7m/jRc30WyrQiCYrhuGQF8hWWdp/lFbq/JFD/PSdvvA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=cixtech.com;
-	spf=pass smtp.mailfrom=cixtech.com;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.44.76
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023076.outbound.protection.outlook.com [40.107.44.76])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=sartura.hr;
+	spf=pass smtp.mailfrom=sartura.hr;
+	dkim=pass header.d=sartura.hr header.i=@sartura.hr header.a=rsa-sha256 header.s=sartura header.b=NbnFC6ic;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.215.173
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CC6606AD0C;
-	Fri, 23 Oct 2026 09:30:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 77CC6606AD0C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d4yC5SNgnxl+D0PLlrzaV/csbG6ZpRowIaEH26tPUrkAaFmMsLRpVRyagzI5Bs2JjJHqhYY2Vz0ChaxBqAI9Datlokp3X/RvR0TDdiEuBwKDPtKIt7zb+C/wdZx7b678dB3gkydTHWMKtqIeqoUpuDwTmt5wfEdd3WlS3EPPwnlCcMoatbnGmDoIuqOuzLUD56V1G0+C60QFWfIZ1qJbsrepciO2n2Iw8HwvtVJQD4+UyYtiPdvZvoA+w6HMxaal3LzpW9w2SD0g3hNHYPCA3Zbzuc81vIVSsMIGs9LCE6SCxN9WbIsaiYI+dOYi4YiqTWEsyjA87caCSGcmDoQN/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e2DCRe2vxGhYuzWx0kViGsFjMQWVNzYzaZ2IqYJZNzE=;
- b=RNnQtZ0O/unwNEFQToppYKMhxn5Xfu3cymri8Ga8giMNJlo6slw86TArYq7sMBIEnLQHcpjCpVcaKubA0xkpf+TBSXcTtTVL1kg3o+DEW1mdFsC3KnEqQfWO0i1Nhrcn7KG0TxhCiSOVPAVazq/rui9w33sifAH4gIKXwIS/KUuPY+QGAPli+jlRXpNXqI6mKe0++whnvKuVKMtuUPVJsURi9tliMS7bx4V0MuZu+ky80UcUa7GDPJcebGLKWSb6sYTnMykYaX353cw39Oo4lK/wXxSqNxeJTagEk5bVDAnG6+6TVU9UpXVWEjEjAmT/XAhzntcvUBODsbD3uCTjMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from TY4P286CA0044.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:36e::15)
- by KUXPR06MB9107.apcprd06.prod.outlook.com (2603:1096:d10:6e::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.2; Fri, 23 Oct
- 2026 09:30:49 +0000
-Received: from TY2PEPF0000AB88.apcprd03.prod.outlook.com
- (2603:1096:405:36e:cafe::4) by TY4P286CA0044.outlook.office365.com
- (2603:1096:405:36e::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.546.19 via Frontend Transport; Fri,
- 23 Oct 2026 09:30:48 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 222.71.101.198) smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- TY2PEPF0000AB88.mail.protection.outlook.com (10.167.253.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.546.15 via Frontend Transport; Fri, 23 Oct 2026 09:30:48 +0000
-Received: from ubuntu (unknown [172.20.64.99])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 5212D40920F2;
-	Fri, 23 Oct 2026 17:30:47 +0800 (CST)
-From: Jelly Jia <Jelly.Jia@cixtech.com>
-To: vkoul@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	robin.murphy@arm.com,
-	sboyd@kernel.org,
-	bmasney+clk@redhat.com,
-	jbrunet+clk@baylibre.com
-Cc: devicetree@vger.kernel.org,
-	Frank.Li@kernel.org,
-	cix-kernel-upstream@cixtech.com,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jelly.Jia@cixtech.com,
-	linux-clk@vger.kernel.org,
-	joakim.zhang@cixtech.com
-Subject: [PATCH v1 4/5] dmaengine: arm-dma350: Honour dma-channel-mask
-Date: Fri, 23 Oct 2026 17:30:44 +0800
-Message-ID: <20261023093045.3248630-5-Jelly.Jia@cixtech.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261023093045.3248630-1-Jelly.Jia@cixtech.com>
-References: <20261023093045.3248630-1-Jelly.Jia@cixtech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EA7606A31A
+	for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2026 09:41:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 66EA7606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=sartura.hr header.i=@sartura.hr header.a=rsa-sha256 header.s=sartura header.b=NbnFC6ic
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-cd8ba7c2694so221762a12.1
+        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2026 02:41:24 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792748484; cv=none;
+        d=google.com; s=arc-20260327;
+        b=J3fC9m05+8mXmI1DZpYMJiGB3Y7OSL+C+7CwuAIlhoFD7Oz18itJO52eOwwI/Jo8XK
+         ACT1D59G2qHNz89o04bW0Bahb8O+6O03vM0C4sufWRvvr8eCQhdrt2aNN62WQcR/vp6i
+         ytHKM2ZU1vn11m3iWWXMtA3TByx9yo8txuFSxSdHShIUeZzHeOl/gYKZTk6kh9I0Pa6z
+         Rpd4FN+nRhZDTd0dER13GjenKu5/H+1HHG9LjC0PuFBpajDrs1I6AVBKjLlllj+SXVbF
+         pvLzfONioWaUs74k48LqAEGkmga+q1nRPbPWwJf1Wh6dDSC+M/klotL96jz2MFzMN8bz
+         f58Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Okgw5IuIeyoGQZ+JzmeJO9+dqCKtCII160B3B426Y1k=;
+        fh=vDThYO3XF2oJ3aAPn0X9FeKm4p+4I3DMrNUbKmyWT/s=;
+        b=ejTKjX67ct79ESg5UUvQXHyjRbHQf2Nk2+15vezLUlChIzY5XSoVoPnmNkEMcDv60d
+         tdsMQbyxk9+YgIa/pY9iWBa3ZOjKWAKwJ+zvjJ/wtDOcganza8BkS/PFJP+J8Li+kbOf
+         O/rhg2Cou2xYSmKnKnhV2Goeld/hT8NLs7WIDIvOyEejA8BjXLNEKac2Z39n7nTrdbnn
+         YQfygioUAgoYnmhRE7/I/+1wdCdAc7+4t0RIWf+1B4zArS4HXEFV+Y7jD2Gir3MfGe+j
+         +lCWXiy3kSNvEby+j4xeNrwyFn8UI0ZH8BIUTzt83bHc0u3YgHH3BNQPm7Oc+hm4PtI1
+         s+Mg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sartura.hr; s=sartura; t=1792748484; x=1793353284; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Okgw5IuIeyoGQZ+JzmeJO9+dqCKtCII160B3B426Y1k=;
+        b=NbnFC6ic7YCzTwBcbpR7q/m6kM1BIsWqz6AVmGqI2UzTJ+lilYdayfl9Dyqyd8Jlj0
+         LqKSdThWJ9k/Pfw78uVKyxE95Uu5wC3zbvaeyEzFc7D8m0MkQQZtVA/zy57hGDoqcUsd
+         AuNJkeR+JiGxFYp+RWwkId8zDBR8pg16lKQEls9eA2U+PPWJLA0gTKAsCx/cP/bcYOqO
+         pcltwsbn4oP5ffSMY4fEXa7KBDsVINYTbgAEqEfuUJLUO5gNu7xKSMgVi5RkiawqerjX
+         yNSaca1p+va8vnMpfklHN7Hy3wTFru44ogGI5wpGLFj1j2e/tXOKbflXa1anevxV7Dkj
+         FoXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792748484; x=1793353284;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Okgw5IuIeyoGQZ+JzmeJO9+dqCKtCII160B3B426Y1k=;
+        b=Fww/wppOqCSEtYkgeG+H3p/keVITMbRSd1UdhQrk1wEsE0WNWBFmBxWYCMVy3vw6La
+         Z9EZpbK+sVcC026alSw08fruPOU1O5D1Jv1bCYjHFYnwBwYT28g0AIQZWuzE8h8HojuZ
+         k/44X1EjaugM3eNKczus6UGnUD7z9zj7n5oT4+++FKDwyoqWnnIs18f2kI8Vw7Bg/xBj
+         Ra+d/2HvpykDbk3tmtHK2075nLckmguwFKCnkFrsezd6jndbAj+YfadXyhEZY5BL/k17
+         VI6GbR1KvTVPdLW/f/giu8zj1VDAzmhK6JBdFfgMxtVo6vRU4lKSEM53i0vIB+ym8A7C
+         6QXw==
+X-Forwarded-Encrypted: i=1; AKwUvBygvzc3RtlZwusvrvvXrf1n8u0vGCXICCcPG6UU8sKzpBQhvE+vb+XCIpnBJNzJV9Cx+v5cmgG4DcY=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJy45sopL2bCLt9Ery0+yMq+SQuG/4vIPr0331RL+6NaHyxHw39
+	E8ZB9g54YAtVxNYtONWQClPfWo3ExRvCfhMs/trF4CVal9I7txbmzXIQph/v/AnWOF4+4F18Vqo
+	MAECGRE0nW18rhPGsLolUiPSvrYYh4cipvtCnDYHvblCoNfla9sD0Swo=
+X-Gm-Gg: AYBFou3cRp+5MLltBMd+R/d4tqFHklDapXOdK5xqwxtbSB1MLk6Dmm2ovHw0x0oqTAJ
+	lq9OnH3WFYdBKVxdREB1OdczbZ3rAW9I/zVoNMJYcoEjg6xjwGltKkmQdcpJbUEJuNGzdB4tO8R
+	X2pBbD42g5cu1JJZ6unG6+hoCv6PREEiLylEonkCe/TkdaPG2pD2pDbJkLpfcX6RIqZeOx33DSB
+	kFDLD0Q2FeRVad0BGNeKRwylgMk8OOASh33mn6FhHMjKxMGL1c29rnHCfkBB2vXQhxXSpxDN+W8
+	Ysr1+c6a6F2Uza5wI4iI9xftIwSJxUCcmjJuYWnSIbMSyB/R8v/7w5MnutmZUf9k88632FOP6eH
+	A+495GqdnfBHyTgmiHma6rczAdNeqsxdDDIFErtnNH5trU3P/4A8tA1kqxH4prc2DFZ3WVyEO4E
+	x6CmyxwHufAdesQ466
+X-Received: by 2002:a17:90b:3805:b0:3a8:59d3:530f with SMTP id
+ 98e67ed59e1d1-3adce0df541mr1412012a91.57.1792748483778; Fri, 23 Oct 2026
+ 02:41:23 -0700 (PDT)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -111,96 +105,78 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB88:EE_|KUXPR06MB9107:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: c98be298-2dec-4125-93af-08df30e852b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700016|23010399003|6133799003|10067099003|22082099003|261021123027099003|261022105027099003|18002099003|261021121427099003|261009223027099003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	OvS5Jk0D1M5ck/XnhwFkSDQBNcyTby2SwzVf7InsLw+mhv1dJdDu9KBNQg3GTAbo6ywBDV+QGKKIFYN8iIOSG5/izI+ZLYA5man82B0OaAoNES6+C9YZZje6sE7kHUfD4/+akU336D73pJo2fzkDF769n1e7LDgSbnYSINRvyt2WgssQIyqIrZF3CzbQl14DQhd5lzzjOHgw0Ozpx3Il7PEPH/60jfwtMIIOV2V3gtkkqLPigmmuW5nJHguOls27DxXYlRrsqo9NcWceyewFVGNw2HZg0kZwd5SdkFcrNXLZgQpMWLSllSK7CDLxrgoRDJeFV7rM47S/Y+A+08GxXwSSpBVJiWTb+/9sgYKWm+81fKv2QW/sPyWxmURafw9VvazBFmu9EObAxbjtUKbov9uPy26uZYCDeAudsyEPg0NdLF5y+LXtsS0jJPb170Y18d/Q/EeVKm6+ClkeISX1CarHszT+yEFXYM8ebkYHnI2DAzPk3vz6Y+/vkZT2owDW3aJX5UT4Cj8JueQKWWjCQ/IXu/uYJ4f0J9qynD61GbrPrNiYNOWAWPswsO2MKY4Sebb2RFr9+sQTzV+nLgg3JeiRqPYuIzbRZUaQt4daVsQ9e0uxsnXeuL+O8HxwFeXrX5EnsSigVxASnaNCMd+YfauEwfgwXK+/g7EGd9DRmd5cNu163oCtah4lIe+HdBDb0Klgmq4TkiOautyIc6NWyQ==
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700016)(23010399003)(6133799003)(10067099003)(22082099003)(261021123027099003)(261022105027099003)(18002099003)(261021121427099003)(261009223027099003)(56012099006);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	1pZE3jklaTHrTu97JW1+yOyxJop/xi0kHk3uoovd/GQTJwiwUrjcYJ5Zgu5Zmn1ZcNupWzOBCf4xWF8VMSuGfcGD3Wi1WW78olD1ju2G7/SerOlh6oJhGhXseMHTMxnNnRhwYxd7Gg4wReh5yeptMk+eQa8VJxgN6BWI+uaJYe3Am1ehrMvusf1EXGDIo5sdZ5nJC6px016QwAsUEr0gea9+MqARs6DDszHtmZtYhOATwxzzZrjEnzM2nHPAspjYkq38XqnW0a2mCWBWkK/Uwjmw+N/Zm6oJnbgNiMfcmCi3+Qkyp/S4PfeaX9Z2UcAjlDE9PgT8Fc/O+gJihC2Mny+5w8vO++nNSEUwCjghGZFZvJQJp7B2bJaQF4e6vts3thq2NqxNAWWEPp43rNYvCAfu8kq2dFximlzIFhNP2f0cmTjhCjnhF5AVplYlR+HT
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2026 09:30:48.5892
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c98be298-2dec-4125-93af-08df30e852b5
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	TY2PEPF0000AB88.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUXPR06MB9107
+References: <20261020065430.1251541-1-julius@bairaktaris.de>
+ <30c21159-3008-463c-9cd2-a07f26668a25@sartura.hr> <9699033c-a9e1-4b11-a55f-b1aa216c700f@oss.qualcomm.com>
+In-Reply-To: <9699033c-a9e1-4b11-a55f-b1aa216c700f@oss.qualcomm.com>
+From: Robert Marko <robert.marko@sartura.hr>
+Date: Fri, 23 Oct 2026 11:41:12 +0200
+X-Gm-Features: AclHuK_z7zkTrXcOEBJ5YdNRtSSjaBF7iP_4-bXy54P0B5j7vSDrFZjtf2Rlh6M
+Message-ID: <CA+HBbNELhPAAZoUuXm3SrvgxiU0eMaiu5LB3wfup04_HuZ+yxg@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: gcc-ipq6018: add fallback names for the bias
+ PLL parents
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Julius Bairaktaris <julius@bairaktaris.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Vladyslav Andreichykov <vladdrako007@gmail.com>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-DMA-350 channels may be reserved for firmware or another processor.
-Read the optional dma-channel-mask property and register only the channels
-whose bits are set. If the property is absent, preserve the existing
-behaviour and expose every hardware channel.
+On Wed, Oct 21, 2026 at 10:06=E2=80=AFAM Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+> On 10/20/26 1:39 PM, Robert Marko wrote:
+> >
+> > On 20/10/2026 08:54, Julius Bairaktaris wrote:
+> >> From: Vladyslav Andreichykov <vladdrako007@gmail.com>
+> >>
+> >> bias_pll_cc_clk and bias_pll_nss_noc_clk are outputs of the CMN PLL,
+> >> which takes its AHB and SYS clocks from GCC, so the device tree does n=
+ot
+> >> pass them back to GCC. With only .fw_name these parents never resolve,
+> >> nss_ppe_clk_src stays an orphan, and setting it to 300 MHz fails with
+> >> -EINVAL. The NSS clocks below it, such as gcc_nss_edma_clk, read 0 Hz.
+> >>
+> >> Add .name fallbacks so they resolve to the clocks the CMN PLL register=
+s,
+> >> as gcc-ipq8074 already does.
+> >>
+> >> Tested-by: Vladyslav Andreichykov <vladdrako007@gmail.com>
+> >> Assisted-by: Claude:claude-opus-5-5
+> >> Signed-off-by: Vladyslav Andreichykov <vladdrako007@gmail.com>
+> >> Signed-off-by: Julius Bairaktaris <julius@bairaktaris.de>
+> >> ---
+> >
+> > Hi,
+> >
+> > This issue does not exist upstream, as CMN PLL is not yet wired due to =
+missing
+> > networking, even then the solution is not to add global name matching.
+> >
+> > The required clock inputs should just be passed to GCC directly which I=
+ have
+> > just pushed to OpenWrt.
+>
+> Just read your reply after writing mine, I'm looking forward to seeing
+> that patch!
 
-Skip masked channels before accessing their channel registers or
-initializing their interrupts and virt-dma state. This avoids clearing
-or configuring channels reserved for firmware or another processor.
+Hi Konrad,
+You mean the wiring for CMN PLL or?
 
-Signed-off-by: Jelly Jia <Jelly.Jia@cixtech.com>
----
- drivers/dma/arm-dma350.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+Regards,
+Robert
 
-diff --git a/drivers/dma/arm-dma350.c b/drivers/dma/arm-dma350.c
-index 9cb5b2f03113..32ec6f061ee9 100644
---- a/drivers/dma/arm-dma350.c
-+++ b/drivers/dma/arm-dma350.c
-@@ -1205,9 +1205,10 @@ static int d350_probe(struct platform_device *pdev)
- 	struct clk *clk;
- 	struct d350 *dmac;
- 	void __iomem *base;
-+	u32 chan_mask = U32_MAX;
- 	u32 reg;
- 	int ret, nchan, dw, aw, r, p;
--	bool coherent, memset;
-+	bool coherent, has_chan_mask, memset;
- 
- 	clk = devm_clk_get_optional_enabled(dev, NULL);
- 	if (IS_ERR(clk))
-@@ -1285,6 +1286,19 @@ static int d350_probe(struct platform_device *pdev)
- 	dmac->dma.device_config = d350_config;
- 	INIT_LIST_HEAD(&dmac->dma.channels);
- 
-+	/*
-+	 * dma-channel-mask is optional. Firmware-reserved channels stay
-+	 * clear; if the property is absent, Linux may use every channel.
-+	 */
-+	has_chan_mask = device_property_present(dev, "dma-channel-mask");
-+	if (has_chan_mask) {
-+		ret = device_property_read_u32(dev, "dma-channel-mask",
-+					       &chan_mask);
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+					     "failed to read dma-channel-mask\n");
-+	}
-+
- 	reg = readl_relaxed(base + DMANSECCTRL + NSEC_CTRL);
- 	writel_relaxed(reg | INTREN_ANYCHINTR_EN,
- 		       base + DMANSECCTRL + NSEC_CTRL);
-@@ -1294,6 +1308,10 @@ static int d350_probe(struct platform_device *pdev)
- 	for (int i = 0; i < nchan; i++) {
- 		struct d350_chan *dch = &dmac->channels[i];
- 
-+		if (has_chan_mask &&
-+		    (i >= 32 || !(chan_mask & BIT(i))))
-+			continue;
-+
- 		dch->base = base + DMACH(i);
- 		writel_relaxed(CH_CMD_CLEAR, dch->base + CH_CMD);
- 
--- 
-2.54.0
+>
+> Konrad
 
+
+
+--=20
+Robert Marko
+Staff Embedded Linux Engineer
+Sartura d.d.
+Lendavska ulica 16a
+10000 Zagreb, Croatia
+Email: robert.marko@sartura.hr
+Web: www.sartura.hr
