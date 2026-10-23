@@ -1,79 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792750710;
-	b=mxkbqaqZpXOZRyx3mvk3womWTxgse023QdeAKmSEHgU2MvBOhK5YE1W6NB68ukt1vb5H
-	 tdbEIdTEf/O0eot+7ju4tduN6GtIKe6N51hJRwmgyMWfSN59V9y9DwGHl2IFlzAWorvk1
-	 g+5RQLzBs4UFeUkt6zYMS0z7BNoA2P7GKrBcVdz5vB1Kqe/2r3l62BlBlacXG/X6BlY5f
-	 KllFMfCOCJCg/1Uta49PLg8DHaLCqbjdfGo6fHkn4K7pKXi54cqHwKIkwFqtbMvKaXCo0
-	 xvrpCs+/Cd1zSp01bfmKsOI5e74XjYSu0L8yie2N4qKQt3FXwJjmiD3OaF+5tu/X8xg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792750710;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Os+4IbuR4w4I6EwpFOprhq7fwbr4xPPpn+mMOYfw1zQ=;
-	b=n+vT0u0zarpMlGoMXfyWJYHFdng9MXkoO36PSQPWhATp/SMPkvVy7zDhtmevfonY4+1V
-	 pqK5160PCmfBTQZ77plPsNkPgfy4KQfY8+ejom72y6zEFoD2DYdEwYZK2ZdtFp1i8HlVB
-	 d576ktOXotXl7pqIYTGLvl96DCSRQFsTpZjZckW13veVVD7cLstXxRYeab9nUPGieSDSX
-	 0Q+BMfiB80P8tVCwHsTpzDK98huZFImSDkrF8yfHEZwklpk41U5D+ANag3ti8SNoIU41k
-	 PMgiuSBrTaY7nzt02FufoP+Xr3G5ZLi5gwGa/YxL9PDNHfukzCPZx7owciJB7j8XOTw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M01eeUMR;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC17D606A31B;
-	Fri, 23 Oct 2026 10:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M01eeUMR
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792750709;
-	b=x5XTZWcf3VUUAYITH/RKNZVsT9QBLTzn8CwNZ4O3weHQ695mSEqZw3/It5SsVyejQw+l
-	 98/VSNVouXmdObpdtpotJPMjbdrmhJjh1L47se5sR7vYvxWE/rD81aUEq9hM7o3nQHwj+
-	 /ipYJlF/ykHIBNcSvuk+mXk1JBYJs1Rrhi9DoRhlT/bdojHMsOiby4UXKz+h1jhlbg0RC
-	 muhFfb9TMV/SIpaQXGxtfjzga+Lw9E/xAJL5avVkER8/x/WS6aKilG/3vnb+jOfaTl/9C
-	 +JUGI2NWEdsTbQh+YqwyhP0XlfKpWKhv3UZZNzzSFzuC/fVSWIVDuRHD4JcqheY+R7A==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792750709;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Os+4IbuR4w4I6EwpFOprhq7fwbr4xPPpn+mMOYfw1zQ=;
-	b=goJS2zzLZOAtIXCNEOQUaMhy1g4popU36ShKL4Z+wF0ARuV6MP/mWJuxXnAi/Qtp/VO8
-	 LKMRRXbG/TXI+OlS/sp5aqQ5QgNjZuTLx2byrrHw2BfO9qIpzMkOpW84ZSAwdLDGVxYrT
-	 6xi5+iaUUKGcYtygSg+Z7eflwJjjpjRKPYZYPTw57FT+2Nme4vEWMs69S78JX0kcW8pqs
-	 nV/OfR3ytyqPqkk0+NyvkBAirzKCOEKYavR4ARDNxfexXiaKVDEseA6H8D9gtmjFss0zW
-	 m3H4XflFlilMG4mzSvVH3DIWso3OwZBHUU8aiucHNWi0tRqpEDxRfSkUAJGjpsYA5Yg==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792751273;
+	b=m5ke3TstcQMk7KbvnSlxQOWsoAtHFG68joXhbpX5vVh5HcQCvLNlFU0ZEt9oo9TmaKmP
+	 fKmJlzrROG2oOuoJuoihcyz8zqOuDJo6w9oiUoi5JrWlrHjNY0kqWSlXfvIy1SMG4xW9B
+	 JnvQG4VSkeUg730iN4EVca75lWAMdf8LKGQOQV3K50VrO+p3iIq4IQ35OZKOd6IY4/OSr
+	 dONcYnWa4V6sZmGjbIoRwz9wl5h6je8xdGYGEPQ678/VycnuH1vEMPPJR8wWrIhtSkSt2
+	 g91cp8q24/XHWVdVZRZvKWnaGvWxC35YEW6OnKDTm7vRluWBAOXc5pE6E7R3ibADe8w==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792751273;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=qZ4/eiHVwBullnoqGWKFL11/mhEiAdGloLPRwlR6r+8=;
+	b=Bv+2yVwqsygQPr71o6fhJFiZ+MvMq/qtHDY0p1SquC6Gu0mIVp3iQpkBuiZw4ewCFhSV
+	 idLIHJjA12ShQS4bSDyxeNatarbFEZrXiF93wswFqnZCCQEVwkYRbOUhOUHXxMYsy8zb3
+	 hFl3zd30FMDWEnoWMLRA1Qh+jWPUyc46/Se0oEVESM+U4wOAkv6fVbwsL92ufQSdfzfEJ
+	 0pwlKXM5yaq5d5dhAB4lZN3tIVjPWLQzZ73yMSZLs7CTtiVMFZ6P0SquwqPRAmCXQcdmP
+	 futLzsyl1ZkES+cNQst+m4bNhj6wgSFH3gpnWkqzHdus5q8rnM0MXt4KKkTqrxmwU3A==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=ZbIMhIhr;
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id CB3CD1F01828;
-	Fri, 23 Oct 2026 10:18:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792750709;
-	bh=Os+4IbuR4w4I6EwpFOprhq7fwbr4xPPpn+mMOYfw1zQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=M01eeUMR57YB7iLCT7NSIMFXif/mUlLB0PSjA0PYJ9C/S1QMVPTdQc8W5ghmmvucv
-	 gDOfYF3ygLI/fTJ1Oncyf5Hsyc0oSGHFX0DmZdufttLDU2j8NOZgmVx2rrMkS6Feqx
-	 cl1p5ODz1MDWws6JpAe5pLC9jNjRNRSzR2L4LDmTIOwTYeQdJixbfhvwPW3dPgOcDt
-	 aspbumYnpkq4wPbqdV0Avmo4M7RhSEnBS26ii10IeXalyinrGEmQTIImpo/ElbnB+M
-	 yBosistucIDfuNk6jmWKLS9QqMUIZ3gMqaR6C4b/stq96kemNU6uD2eFxqfI0YmHpb
-	 dEQpsBdcsMCoQ==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 608A6444A6;
-	Fri, 23 Oct 2026 10:18:28 +0000 (UTC)
-From: Ishu Brar via B4 Relay <devnull+patches.brar.si@kernel.org>
-Date: Fri, 23 Oct 2026 15:48:24 +0530
-Subject: [PATCH 1/2] dt-bindings: clock: qcom: Document the SM7250 display
- clock controller
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ED7606A324
+	for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2026 10:27:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67ED7606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=ZbIMhIhr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=qZ4/
+	eiHVwBullnoqGWKFL11/mhEiAdGloLPRwlR6r+8=; b=ZbIMhIhrgXZDuqu2lwwb
+	5iRvKSTpxPy5LvrOUvYWWXaMTT1Fv5ibgEYanyUX3uSns+/xJef3M0xY1Oci9hHg
+	wZKWD9rq1XzxK/dHN1WJ/ZBauju7E8i4IMyTpYfn77fstXsYdENGLrhPBGAT4AFO
+	9DWeyYkdSVRPcJ4xUjjxGG7l85bMTL+KwoKM1YWh1e/bBrcCVz3JljNqddvRUyfS
+	y/APWvsW9z91/yPFZ8ZJYwC3Z3aEFtcpsy+OgYYzTDITYsrV4MXeC328y6SiyqWi
+	f2MtDePfCTR5mYbi07eUSoh/wL5b38GAdSOYAR09wRF95l2NfumKL8+yMk2vejs9
+	7g==
+Received: (qmail 1512031 invoked from network); 23 Oct 2026 12:27:42 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Oct 2026 12:27:42 +0200
+X-UD-Smtp-Session: l3s3148p1@oDMgbn9eTKYujnv2
+Date: Fri, 23 Oct 2026 12:27:41 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Diogo Ivo <diogo.ivo.sx@renesas.com>
+Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Linus Walleij <linusw@kernel.org>, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/8] i3c: renesas: Fix zero I2C SCL rate on pure I3C buses
+Message-ID: <ats2nSA-kV10hlje@shikoro>
+References: <20261020-divo-ssgrlpcsrc-2966-i3c-v1-0-30a47f25e515@renesas.com>
+ <20261020-divo-ssgrlpcsrc-2966-i3c-v1-1-30a47f25e515@renesas.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -83,198 +76,26 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261023-dispcc-sm7250-v1-1-07bdefb99801@brar.si>
-References: <20261023-dispcc-sm7250-v1-0-07bdefb99801@brar.si>
-In-Reply-To: <20261023-dispcc-sm7250-v1-0-07bdefb99801@brar.si>
-To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ishu Brar <patches@brar.si>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792750706; l=5475;
- i=patches@brar.si; h=from:subject:message-id;
- bh=Sc530KmGL8zaKa6SHDV02PUR6renziuJ0eqUJFmUVWM=;
- b=gSZmv1o3R88egNOvPZqRRMWUYGfrT8l7KReB53mFONMDRFASiQQFPUoMocK33yklZQixTeZHD
- ZiNyZ2So+14D/yWNi7KBI1a/hxq0WbieGAgvTtxRXNUDXlxcjjlsg+l
-X-Developer-Key: i=patches@brar.si; a=ed25519;
- pk=Ds+E23E3ntzjPzuBDyVRkOouclcNI5k75R+N42yJtCk=
-X-Endpoint-Received: by B4 Relay for patches@brar.si/default with
- auth_id=1189
-X-Original-From: Ishu Brar <patches@brar.si>
-Reply-To: patches@brar.si
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261020-divo-ssgrlpcsrc-2966-i3c-v1-1-30a47f25e515@renesas.com>
 
-From: Ishu Brar <patches@brar.si>
+On Tue, Oct 20, 2026 at 10:14:55AM +0100, Diogo Ivo wrote:
+> On a pure I3C bus there are no I2C devices, so the I3C core leaves
+> bus->scl_rate.i2c at zero if i2c-scl-hz is not specified in DT.
+> Deriving i2c_total_ticks from that zero rate programs a zero-width
+> open-drain SCL into the STDBR open-drain fields, which are still used
+> in pure I3C mode for example in DAA.
+> 
+> Fall back to the 1 MHz FM+ limit instead, the fastest rate an I2C
+> device could have, so that a sane open-drain timing is programmed.
+> 
+> Fixes: d028219a9f14 ("i3c: master: Add basic driver for the Renesas I3C controller")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
 
-Add the binding and the header with the clock, reset and GDSC indices
-for the display clock controller (DISPCC) of the Qualcomm SM7250 SoC
-(Snapdragon 765/765G/768G).
+Great catch! Kudos for adding a good comment. I agree with Geert about
+using the ternary operator, though. After that, you can add my:
 
-The header and the binding are derived from the SM7150 ones: the register
-layout is the same, but the controller takes GPLL0 from the GCC as an
-extra parent and has its own PLL.
-
-Assisted-by: Claude
-Signed-off-by: Ishu Brar <patches@brar.si>
----
- .../bindings/clock/qcom,sm7250-dispcc.yaml         | 73 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,sm7250-dispcc.h     | 62 ++++++++++++++++++
- 2 files changed, 135 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm7250-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm7250-dispcc.yaml
-new file mode 100644
-index 000000000..684aaf7bb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm7250-dispcc.yaml
-@@ -0,0 +1,73 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,sm7250-dispcc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Display Clock & Reset Controller for SM7250
-+
-+maintainers:
-+  - Ishu Brar <patches@brar.si>
-+
-+description: |
-+  Qualcomm display clock control module provides the clocks, resets and power
-+  domains on SM7250.
-+
-+  See also: include/dt-bindings/clock/qcom,sm7250-dispcc.h
-+
-+properties:
-+  compatible:
-+    const: qcom,sm7250-dispcc
-+
-+  clocks:
-+    items:
-+      - description: Board XO source
-+      - description: Board Always On XO source
-+      - description: GPLL0 source from GCC
-+      - description: Sleep clock source
-+      - description: Byte clock from MDSS DSI PHY0
-+      - description: Pixel clock from MDSS DSI PHY0
-+      - description: Byte clock from MDSS DSI PHY1
-+      - description: Pixel clock from MDSS DSI PHY1
-+      - description: Link clock from DP PHY
-+      - description: VCO DIV clock from DP PHY
-+
-+  power-domains:
-+    maxItems: 1
-+    description:
-+      CX power domain.
-+
-+required:
-+  - compatible
-+  - clocks
-+  - power-domains
-+
-+allOf:
-+  - $ref: qcom,gcc.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,sm7250-gcc.h>
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/power/qcom,rpmhpd.h>
-+    clock-controller@af00000 {
-+      compatible = "qcom,sm7250-dispcc";
-+      reg = <0x0af00000 0x20000>;
-+      clocks = <&rpmhcc RPMH_CXO_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK_A>,
-+               <&gcc GCC_DISP_GPLL0_CLK_SRC>,
-+               <&sleep_clk>,
-+               <&mdss_dsi0_phy 0>,
-+               <&mdss_dsi0_phy 1>,
-+               <&mdss_dsi1_phy 0>,
-+               <&mdss_dsi1_phy 1>,
-+               <&dp_phy 0>,
-+               <&dp_phy 1>;
-+      power-domains = <&rpmhpd RPMHPD_CX>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+      #power-domain-cells = <1>;
-+    };
-+...
-diff --git a/include/dt-bindings/clock/qcom,sm7250-dispcc.h b/include/dt-bindings/clock/qcom,sm7250-dispcc.h
-new file mode 100644
-index 000000000..907f4122c
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,sm7250-dispcc.h
-@@ -0,0 +1,62 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2024, Danila Tikhonov <danila@jiaxyga.com>
-+ * Copyright (c) 2024, David Wronek <david@mainlining.org>
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_DISPCC_SM7250_H
-+#define _DT_BINDINGS_CLK_QCOM_DISPCC_SM7250_H
-+
-+/* DISPCC clock registers */
-+#define DISPCC_PLL0				0
-+#define DISPCC_MDSS_AHB_CLK			1
-+#define DISPCC_MDSS_AHB_CLK_SRC			2
-+#define DISPCC_MDSS_BYTE0_CLK			3
-+#define DISPCC_MDSS_BYTE0_CLK_SRC		4
-+#define DISPCC_MDSS_BYTE0_DIV_CLK_SRC		5
-+#define DISPCC_MDSS_BYTE0_INTF_CLK		6
-+#define DISPCC_MDSS_BYTE1_CLK			7
-+#define DISPCC_MDSS_BYTE1_CLK_SRC		8
-+#define DISPCC_MDSS_BYTE1_DIV_CLK_SRC		9
-+#define DISPCC_MDSS_BYTE1_INTF_CLK		10
-+#define DISPCC_MDSS_DP_AUX_CLK			11
-+#define DISPCC_MDSS_DP_AUX_CLK_SRC		12
-+#define DISPCC_MDSS_DP_CRYPTO_CLK		13
-+#define DISPCC_MDSS_DP_CRYPTO_CLK_SRC		14
-+#define DISPCC_MDSS_DP_LINK_CLK			15
-+#define DISPCC_MDSS_DP_LINK_CLK_SRC		16
-+#define DISPCC_MDSS_DP_LINK_INTF_CLK		17
-+#define DISPCC_MDSS_DP_PIXEL1_CLK		18
-+#define DISPCC_MDSS_DP_PIXEL1_CLK_SRC		19
-+#define DISPCC_MDSS_DP_PIXEL_CLK		20
-+#define DISPCC_MDSS_DP_PIXEL_CLK_SRC		21
-+#define DISPCC_MDSS_ESC0_CLK			22
-+#define DISPCC_MDSS_ESC0_CLK_SRC		23
-+#define DISPCC_MDSS_ESC1_CLK			24
-+#define DISPCC_MDSS_ESC1_CLK_SRC		25
-+#define DISPCC_MDSS_MDP_CLK			26
-+#define DISPCC_MDSS_MDP_CLK_SRC			27
-+#define DISPCC_MDSS_MDP_LUT_CLK			28
-+#define DISPCC_MDSS_NON_GDSC_AHB_CLK		29
-+#define DISPCC_MDSS_PCLK0_CLK			30
-+#define DISPCC_MDSS_PCLK0_CLK_SRC		31
-+#define DISPCC_MDSS_PCLK1_CLK			32
-+#define DISPCC_MDSS_PCLK1_CLK_SRC		33
-+#define DISPCC_MDSS_ROT_CLK			34
-+#define DISPCC_MDSS_ROT_CLK_SRC			35
-+#define DISPCC_MDSS_RSCC_AHB_CLK		36
-+#define DISPCC_MDSS_RSCC_VSYNC_CLK		37
-+#define DISPCC_MDSS_VSYNC_CLK			38
-+#define DISPCC_MDSS_VSYNC_CLK_SRC		39
-+#define DISPCC_XO_CLK_SRC			40
-+#define DISPCC_SLEEP_CLK			41
-+#define DISPCC_SLEEP_CLK_SRC			42
-+
-+/* DISPCC resets */
-+#define DISPCC_MDSS_CORE_BCR			0
-+
-+/* DISPCC GDSCR */
-+#define MDSS_GDSC				0
-+
-+#endif
-
--- 
-2.56.0
-
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
