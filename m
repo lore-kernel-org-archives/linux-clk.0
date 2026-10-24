@@ -1,58 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792820113;
-	b=SZ3MCsw87wzQmBc8wgsW6+nGog5oRoVYlOD8EfGyfQXDFz+DdyV5gncNLHMBgxlb6XU2
-	 lctCqL5XdhSayapDRZaWXlZwAwqdxcqW+q6ZTOhoAiLpDW5h27rKg48/yBeOCFU9Ni2wq
-	 a43H8ZnyuhAgJ9VrpqrojooJmnM/L9Uvxk+Rn8oncPXT7s5eFUReJ8bD5gIf75DC9n7+Y
-	 dWx4QtrXVXbwVhq349c9FjNp+g8gTmQ5OSpvfIIeJjxk08K8LJ0W/wjwOQK6sCrdPbqKL
-	 /ylrCp9+/kuhRYME5sbMVXzk7eijCmqIzoVIC0L6hp4H0cRA2DzvOPFh3WWarnD21jw==
+	t=1792838053;
+	b=o1lpjAkbNW+iq8ErkHiJfD/pGQb+tqGDZWXutXpGUxu9suaZTboKdIi0kg3om0Y9rv28
+	 iQMEV6MkAd/zApcixQG/qym6LnFWFp2wC/7GvYC182TYwGODD1mUqCpu+z/r3CqffynMJ
+	 +XiYgdIfxChX7BM5FkcfGcDVQNlNBvBKQQXFKuVxoQw7vdcndVaUJuHntYMr2nec/FhuB
+	 QMG/r1JpXQ+AwuYa492HcNr/xZH/jznou2+aNYczPLKjGar842faE5WNYxLq8ZqjGi1YJ
+	 rIXbYd1O9JyZzni/Mp6gZkHK9Rnw2tX51f0/6CHR6k2h/SkKAnw4a/e9P7vyxzOjJJQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792820113;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-MBO-RS-META:X-MBO-RS-ID;
-	bh=MiVht9ym0EURv1bddnJJbI5enBTslXQ1JEWYlf28Cto=;
-	b=31/NJVYA03+/puCmtY1s+jTtffLJOILV5YBvZM5/o+HxncaA+JtwEhV5bkkydRg53vpz
-	 53yu4LCRwq//rdimkrfNPglsxszoRajDbvU0Cup5YahXbXsXPbrwStGV06nTZFOSdWIoK
-	 bDzH8Hg1Ls9zZ//BEFYyNgFGvVummO/OnmhGS6+GDnKFKS/8ak+24BFEOiDkfzOdzKwBT
-	 gr4hek5fS7dv2K0wYpMggil+K0pEReGcRk35eqYSCOA08iwXLg3HpopbSYza11S0Z7GQN
-	 LrqxJyT3UQQAuO4gPSaHEv2pw/2v5TOzDSqDP/xRm3AVwjuKzjaFqwFg7b+TlzKaMiA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792838053;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=hCXXvkDREgXehAsGvMm5K0+I2Qb1ZrSjqYAiJ+UTLTc=;
+	b=AMaFypFobW2E312LiN2ns3QGCh+RcpAgL15XE78lxjJs6XyMTvor8E2VtGoonEMkGQts
+	 3hCByOPZq4dMiwj23JDAhKTd1EulvYcWO8qvT9sObR95SbqsYlLPDWLWYXwVxAOmEDSf0
+	 7dB+1yf41bVOd0KYaqH0pqyWa0+pvhWXnzgYBVWnnu7udWFXrBUIm0A21XhQdFlUIPOAD
+	 TCzbIvVo4GPXKt3fwt4gucfboDm3uKxEaXB1hQa2RkW9dGJVwlTmxJlKibbRKXjG7xeno
+	 270fBY5U6xws0ksz50bucLIWp7QleKgNc1723j1SRn+yEdH0zpn3qSxdjSQDi6aVX7w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mailbox.org;
-	spf=pass smtp.mailfrom=mailbox.org;
-	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=prTvNw0e;
-	arc=none smtp.remote-ip=80.241.56.152
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=YKgowXyL;
+	arc=none smtp.remote-ip=209.85.221.51
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCE9606A33B;
-	Sat, 24 Oct 2026 05:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2FCE9606A33B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E7B606A31E
+	for <linux-clk@vger.kernel.org>; Sat, 24 Oct 2026 10:34:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 33E7B606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=prTvNw0e
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4jBT9m5Z5pzKnCD;
-	Sat, 24 Oct 2026 07:35:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1792820108;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MiVht9ym0EURv1bddnJJbI5enBTslXQ1JEWYlf28Cto=;
-	b=prTvNw0enYprIWmGhaUdr7P6UZhA+faYgPuaALUaN5kRnUv5IOQZXOpqRtooY2lDAjCSP1
-	7Vpi3t81dZta8GKCcNAj+qBQ0oEuqO/ft8xClKZvXGUHAhg0CJ00xyLWulOlIDLn5TWZ9z
-	rDxV8v0zN3isDvgThk8CJ3jZflJPxvmniS2D8z3mmiGWcYm+LRy+x7exPXgqV7lH0nlcXG
-	DHPRW36n+VLby7NhHJo76mMt838CfUfpE9XO91XL35NNk7dKNcS12AUoi0d03MzkXcG9V3
-	hNgIUS+wSCdgRbsqH/iprgRu10tHbIQMu11ZPjV5QlYEix+YxjnTh2vqceqfmg==
-Message-ID: <d870c163-8d90-48c0-bae0-5f6e0e38c5bc@mailbox.org>
-Date: Fri, 23 Oct 2026 22:51:33 +0200
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=YKgowXyL
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-48b060ec084so1005285f8f.0
+        for <linux-clk@vger.kernel.org>; Sat, 24 Oct 2026 03:34:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792838051; x=1793442851; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=hCXXvkDREgXehAsGvMm5K0+I2Qb1ZrSjqYAiJ+UTLTc=;
+        b=YKgowXyLWBwrg7I++LDP8W180Q8ZiqniVMWkvWW4/5iaBMr2iDr91+cTkh1b3/m4Sv
+         Lea1ql+KOC7EtGE/uJDarJSmpxelzCuHTBIVoce3HLGWesCapXCXBPK9wSsP4E9oE/KW
+         um9D8prowuOKuB8EHFlLI02pStgKNsLQlt8oLKhxZaLgwHA23puRZtrvnWuj4ryDGqBW
+         /K7w/9mWlK8LlfeKJwraHbK5ByzlQAUDD8SUCv0eVS0kEIfuyUEm3uF1LnCMQ7em7eJM
+         vYoWLjhE3IDHpIyjKzsBeLYQawgqgrYl48ympnOHRm4P5/xSLaN4WpJWZpdvcR04WiXf
+         8VOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792838051; x=1793442851;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=hCXXvkDREgXehAsGvMm5K0+I2Qb1ZrSjqYAiJ+UTLTc=;
+        b=trOexPp1QEmBy3aCji7AMI5UDy6u4WHrapYXl1eSIolBQI+LbiYGbx+o2Dp2MFMl6w
+         OBJsVnAsEdnQ1FhobDWez2AorXH0dT2R4ffMOA7PGuakTDIlDYUSB3ki8ld3VVZf49bZ
+         0jxqpRqIDKKUm19OoprI1dI+cCwj0mV+lVqzLEfGZAXAlUzMYLpPGfK4MfU3RAZjpuU2
+         AR0t6fP5bmvIXwCsTo7vtIXfNsortAeyM/T8h5pf4nfcefWGR7Jix/mq4ZJH3/Mw+S2I
+         fY6FJNIP46YTkExk8gctSyZ9FpnVhWc2KP0R6/4lhMCDsGz+CpiKTxhmIgVnmX/Gzdr/
+         Dgvw==
+X-Forwarded-Encrypted: i=1; AKwUvBxsG7WgYcPXzcH47m57+hDSoiEAiGN1m/Qw/mejU2Ml+Y8dRYL/UmY5FviQ1w0wVLNmzAOCpkKDKyM=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIHGgK3msGfCDWg9GG77zaR6n/FKqWS9vGtO0IqPQ2hGW3fb+vI
+	G5UbKD6mTivuIj26mtUlt+4u0tLd6RfXJ+ZRCyRn3dsD2h6dCwwOpC2T
+X-Gm-Gg: AYBFou3oWgSp/4M6SHjPEqoJo6r/hsWX2G3SHTDiaNnsFtnSpf8QszRcRsBQrIz2Ngh
+	4hdvdHN9lV9t3cJBCfOOvE8Rm/VVcxWhOFDtxuW3O00/wyEKGqjVdR9ZpVSA3Iqk7z+WzOOBY4/
+	Da6Iw/aMUQ04Dh9Myrx3JMbchmImJ5CRhAeCrskkuDPVt5qkxvXg//bhbhQ6tkea4pZogxnanIC
+	106QHZHLtkL1+T/8qnvmaEY04aZMDOJefptRv4GJwliqQ9tJooNkb99SLUrCpZh9cyMsM/qMHVB
+	FjVieKveFaL58m0KqGodftT1SYt5DTr0nU34Z+0Uycq60KKOXyefVhAGq2NuXSx2JofgMQ5TPLQ
+	juPtgnG+Y7d4TLMXyZ1KdVz9HW/l5xXLwbIiUAprOkylCIEnYUn3l1yJmEqlUk0ulyC+w0t/tl/
+	PP0mYWyswALhs8M66h9B8pRgXIdzRwO91cTjYtN3i5DTFxnAZgdKUrRnI9Vun9q6+7HHRG3c5Z/
+	WHQMd+anERlVZ2IOJSV1OH2KI/hvZ/Ap3e3pvSGKVLibYG1IfXBnS7f82PxgUPJ2UKYvCcO2EjT
+	G08WkUbKmGGATTBr7f4OqfjPbpUGJgXpH6wT48GhwlM+lKgCkO+PVcLHmPPZXlIh7J/B9rYv1mZ
+	3N2WK91M=
+X-Received: by 2002:a05:6000:2312:b0:48e:e98:8b64 with SMTP id ffacd0b85a97d-48e3eb8b45bmr2346024f8f.19.1792838051352;
+        Sat, 24 Oct 2026 03:34:11 -0700 (PDT)
+Received: from threadripper-fedora-workstation (d-zg2-024.globalnet.hr. [213.149.37.24])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ecd35c2sm3544825f8f.39.2026.10.24.03.34.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Oct 2026 03:34:10 -0700 (PDT)
+From: Robert Marko <robimarko@gmail.com>
+To: andersson@kernel.org,
+	abelvesa@kernel.org,
+	sboyd@kernel.org,
+	bmasney+clk@redhat.com,
+	jbrunet+clk@baylibre.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	konradybcio@kernel.org,
+	taniya.das@oss.qualcomm.com,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Robert Marko <robimarko@gmail.com>
+Subject: [PATCH 1/2] dt-bindings: clocks: qcom,gcc-ipq8074: allow CMN PLL bias clocks
+Date: Sat, 24 Oct 2026 12:33:09 +0200
+Message-ID: <20261024103401.761125-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.56.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -62,50 +107,40 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] arm64: dts: renesas: r8a78000: Add GPIO controller
- nodes
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Magnus Damm
- <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- Marek Vasut <marek.vasut+renesas@mailbox.org>
-References: <cover.1792776697.git.geert+renesas@glider.be>
- <f9de8214043ad4c8748fadce7fd2cc2fa95b1291.1792776697.git.geert+renesas@glider.be>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <f9de8214043ad4c8748fadce7fd2cc2fa95b1291.1792776697.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: 67d5bdyjkzczox9iyuyt8upuxs5tyx3t
-X-MBO-RS-ID: a841861d307c1214dd9
+Content-Transfer-Encoding: 8bit
 
-On 10/23/26 7:50 PM, Geert Uytterhoeven wrote:
-> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> 
-> Add device nodes for the General-Purpose Input/Output Ports (GPIO) on
-> the Renesas R-Car X5H (R8A78000) SoC.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> Co-developed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Changes compared to Marek's original:
->    - Use hardware clocks/power-domains/resets instead of direct SCMI
->      references,
->    - Drop gpio-ranges properties for now, as upstream lacks Pin Function
->      Controller (PFC) support.
+CMN PLL in IPQ8074 provides 2 fixed clocks to the GCC clock controller.
+In order to describe this in DTS, allow passing them as the inputs to GCC.
 
-Is that ^ OK ? If so, good, TIL.
+This has a benefit that it avoids doing a global matching by name.
 
-The rest is
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+---
+ Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
+index 00d7df75b3d6..d489c6332e6c 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
+@@ -29,6 +29,8 @@ properties:
+       - description: sleep clock
+       - description: Gen3 QMP PCIe PHY PIPE clock
+       - description: Gen2 QMP PCIe PHY PIPE clock
++      - description: 300 MHz bias clock from CMN PLL
++      - description: 416.5 MHz NSS NoC bias clock from CMN PLL
+ 
+   clock-names:
+     items:
+@@ -36,6 +38,8 @@ properties:
+       - const: sleep_clk
+       - const: pcie0_pipe
+       - const: pcie1_pipe
++      - const: bias_pll_cc_clk
++      - const: bias_pll_nss_noc_clk
+ 
+ required:
+   - compatible
+-- 
+2.56.0
 
-Thank you !
