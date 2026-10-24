@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792838107;
-	b=vt8uFlczxS8lmOJMTV6/mPquOK0/eKrk+8MztJc90o8wnH3aK21BneYkCS3/ca93O7WY
-	 RIvFPnHo+Fz6FCZ8yLUVEacFT/qs8KFxd1tf/eNiVaAxoJNxAqRFSbhtdDI8xrOuIAeGg
-	 sV/TqEdnI49uRTNlBQC4Ps/8D6BKfgiXbg0T768yN6CuFimgsb1E1p1pHx+GwUhMi3AGI
-	 2Sc3tTfamLtOtypVKTF912gLLnKHA4++I+LtnkCus12lnPIGhOIGFjqKv0pCyVWHTgYoW
-	 Jg21PkC+OuCi0FvvIaGT/uVT1b9Yf7uD2AbPVR/LqHOgS2qWx1H4qoNHbMbmHFMlngg==
+	t=1792838105;
+	b=ngZ0jySLw47PmXxHePrER7D4bo5H8pW1/wr6XTLFvtt6NGdKLVWYMNk50ZSa6TM9NYWn
+	 UXZlmHwhWX+XbDDYGNkjEocYxvLVZsfc31QkdqWB7LRDZU0A2SPTLx7CLKBCQWGNOF41T
+	 /RKBbsU5Sxa7ioT3ub3mJ5ZmbKkqbC6HEWhsP7WLczWu2ChqeXXWfWp7vTPG1pe3g2wfX
+	 9ViF3BxIFqzCb0wdouxC4HcWwy0LDG+qmfGT2QqSO/6TojVtApCHbkIqM30fqpnivHhJZ
+	 P5GrGagy5h4fRtu18/OCIsIacIWnRwzY4TvR9SAEV+GP5wnpqeGycF4Tn35tVeu79HA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792838107;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792838105;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=T8E3KuR0K0ngyRka9wB5lneWnir6PeeaNG70FQpT6Uo=;
-	b=waRsi15bml18caApoae007M7GLT6R3U4ATwBb2TSXQbYt4jQco43yMrJbpoFZCx0/7fV
-	 7ayWYGewwkU2qfGt7Bfhsip0Poeo3G4nslTG/k/b+OL8uDFphexZ4uXa10sJTFSbH8VaU
-	 5MjWLClRkqjo6bEuuLtTXBmH/ZO6xcmOqHY2x05lnEq9FkYeXcRdbrfZR9cAseqr+CF8x
-	 34bPpNoIx3mxtIDO7qLgh41k9qih32BMUtJTJ3cHOVoG3HEb39yVm7ha/t0NNvtAFGeET
-	 3pXqx/a+byJIpWyGXS2CTweBE+lKm6uhRdSdyzglCQfif/ZsHGR8xcHp4tJUp+WpGTA==
+	bh=73yYLSrxYp+5E8KgorDSDGALLhc63TH2dJs/z3r+roM=;
+	b=bwkBUqLwf0hfk+j6LSSw5Y9f4xJDY6qn058L6e/EDC1mpBWkK3pZHzcPFgzNaNV21RZU
+	 loAGeZfZhqUdbANo1hTZO5s3bxcsYYn+liIqjw54CS9NFJNjrT/asQKw0vr4re4xqJb81
+	 lz7f4gfLIzHpMBhRXE/1ZKUA3ggupp5QAXry8ALVKZP6AQ9eLEezz8zsZB/RMOaoRlwhc
+	 gBSCp8ML5WxXtXAAjl3A7rt2MjBFoYsUnfv/v9YwCYOuiChs616IMNfONce5boJrZeLGq
+	 kMAiTnbGGze9EUFhSl7blst/RiRx1O4NuIjXVVvM+KTNRGbVIdX7WeBXmyWYdMucLdw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cmBE8Z4o;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VrtWuKQk;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D672F606A321;
-	Sat, 24 Oct 2026 10:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD19606A31B;
+	Sat, 24 Oct 2026 10:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cmBE8Z4o
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 431901F01825;
-	Sat, 24 Oct 2026 10:35:06 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VrtWuKQk
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BECFF1F01825;
+	Sat, 24 Oct 2026 10:35:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792838106;
-	bh=T8E3KuR0K0ngyRka9wB5lneWnir6PeeaNG70FQpT6Uo=;
+	s=k20260515; t=1792838105;
+	bh=73yYLSrxYp+5E8KgorDSDGALLhc63TH2dJs/z3r+roM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=cmBE8Z4o5PtqqIcGo5bgZv282y2w34PVIZL7lHMh0f4MmnNgu62zRS5d4Si7SP15Z
-	 AnPCJxhsfdAl51lKwY6kfniaaQ74fglJZ34q4d0dIlZVLojzwNrjFXY97E5LtpCHfP
-	 gP1xT4QlpT5rj7rFx3ueFt1zJ0YOXB7YywZL4IQU1kk1hkWzMuO19Sk4renZe37Och
-	 sWyKAMCOMKXkz8E+sPkpdtRqbCM8Z02J0aSXpMKkP9yQ6296DUfjA6w+IVhKjlbwsu
-	 N5VKJpuXpiCoCHQxn+57wn7bwMRP1AiVyL3PJmBGFtMEWpgIFhWsYk05kGsafJHqD8
-	 n/EUT8pL+qiLg==
-Message-ID: <sashiko-outbox-183650@kernel.org>
+	b=VrtWuKQkMFbaqU1EnAC93NMviIqfL7FLRki22LnRiiPcpASpe7tbBD2KxtjP+e5/j
+	 IuBhCxpX+wVptLbKvmpb8Y0ef8CxTbEJsZo0ZHFJaDKEuSxsSYOAHO696BX7NjBmC/
+	 5Wub8D1MsKxpMjetvUhRwAewIWRY5RtmGAL6PLdc5Ysl4vxjx1T/QXpzmdfe/xV/ar
+	 qeCgKApR6amSbEd4CYim2+3ilob/O9MzUVQbOT2tAa6T39bSEd4B7Z50XA0c/T1NIs
+	 Ue00ue/QQoIDqnYm9rbHLHTtf7dF7X3db1S8RXJ7duMp3WaIwX3OCsujgKhmQb0KPw
+	 oNLxFPQp9xO7A==
+Message-ID: <sashiko-outbox-183648@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 3/3] clk: rockchip: Add RK3572 clock and reset
- support
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: rockchip: Add RK3572 CRU
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Cunhao Lu" <1579567540@qq.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261023-add-board-ok3572-c-clk-v2-3-90b98836be6e@qq.com>
+In-Reply-To: <20261023-add-board-ok3572-c-clk-v2-1-90b98836be6e@qq.com>
 References: <20261023-add-board-ok3572-c-clk-v2-0-90b98836be6e@qq.com>
- <20261023-add-board-ok3572-c-clk-v2-3-90b98836be6e@qq.com>
+ <20261023-add-board-ok3572-c-clk-v2-1-90b98836be6e@qq.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 24 Oct 2026 10:35:05 +0000
+Date: Sat, 24 Oct 2026 10:35:04 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,99 +60,165 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
-- [Low] clk: rockchip: s16 k overflow in rk3572_pll_rates[] struct initiali=
-zers
+- [Medium] dt-bindings: reset: rockchip: skipped reset ID 421 in rk3572-cru=
+.h
+- [Low] dt-bindings: clock: rockchip: CLK_NR_CLKS and ID gap in rk3572-cru.h
+- [Low] dt-bindings: clock: rockchip: schema and example issues in rk3572-c=
+ru.yaml
 --
 
-commit c2a7bfa93851b6e038e2eb4b577e1b1e53dcecfb
+commit 23f6ead5b7b62aaf8bea62aacf6220f09c8b789f
 Author: Elaine Zhang <zhangqing@rock-chips.com>
 
-clk: rockchip: Add RK3572 clock and reset support
+dt-bindings: clock: rockchip: Add RK3572 CRU
 
-This patch adds clock and reset controller support for the Rockchip RK3572
-SoC, including PLLs, CPU clock trees, branch clocks, and soft reset lookup
-tables.
+This patch adds the Devicetree binding schema and the clock and reset ID
+header files for the Rockchip RK3572 Clock and Reset Unit (CRU).
 
-> diff --git a/drivers/clk/rockchip/clk-rk3572.c b/drivers/clk/rockchip/clk=
--rk3572.c
+>     dt-bindings: clock: rockchip: Add RK3572 CRU
+>    =20
+>     The RK3572 CRU uses the PMU0 GRF for the AUPLL reference mux.
+>     Describe the controller and define its clock and reset IDs.
+>    =20
+>     Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+>    =20
+>     - Documented the xin24m input.
+>     - Made the PMU0 GRF phandle required.
+>     - Updated the example.
+>    =20
+>     Signed-off-by: Cunhao Lu <1579567540@qq.com>
+>
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3572-cru.=
+yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3572-cru.yaml
 > new file mode 100644
-> index 0000000000000..712651c6b8cf0
+> index 0000000000000..89e360ccb8846
 > --- /dev/null
-> +++ b/drivers/clk/rockchip/clk-rk3572.c
-> @@ -0,0 +1,2004 @@
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3572-cru.yaml
+> @@ -0,0 +1,57 @@
 
 [ ... ]
 
-> +static struct rockchip_pll_rate_table rk3572_pll_rates[] =3D {
-> +	/* _mhz, _p, _m, _s, _k */
-
-[ ... ]
-
-> +	RK3588_PLL_RATE(1188000000, 2, 198, 1, 0),
-> +	RK3588_PLL_RATE(1186814000, 2, 198, 1, 52581),
-> +	RK3588_PLL_RATE(1186812000, 2, 198, 1, 52559),
-> +	RK3588_PLL_RATE(1109000000, 3, 554, 2, 32767),
-> +	RK3588_PLL_RATE(1100000000, 3, 550, 2, 0),
-> +	RK3588_PLL_RATE(1051000000, 3, 525, 2, 32767),
-> +	RK3588_PLL_RATE(1008000000, 2, 336, 2, 0),
-> +	RK3588_PLL_RATE(1000000000, 3, 500, 2, 0),
-> +	RK3588_PLL_RATE(983040000, 4, 655, 2, 23592),
-> +	RK3588_PLL_RATE(955520000, 3, 478, 2, -15730),
-> +	RK3588_PLL_RATE(903168000, 6, 903, 2, 11009),
-> +	RK3588_PLL_RATE(900000000, 2, 300, 2, 0),
-> +	RK3588_PLL_RATE(816000000, 2, 272, 2, 0),
-> +	RK3588_PLL_RATE(786432000, 2, 262, 2, 9437),
-> +	RK3588_PLL_RATE(786000000, 1, 131, 2, 0),
-> +	RK3588_PLL_RATE(785560000, 3, 393, 2, -14419),
-> +	RK3588_PLL_RATE(773000000, 2, 258, 2, 43690),
-> +	RK3588_PLL_RATE(722534400, 8, 963, 2, 24850),
-> +	RK3588_PLL_RATE(697000000, 2, 232, 2, 21845),
-> +	RK3588_PLL_RATE(610400000, 3, 305, 2, 13107),
-> +	RK3588_PLL_RATE(604800000, 1, 101, 2, 52428),
-> +	RK3588_PLL_RATE(600000000, 2, 200, 2, 0),
-> +	RK3588_PLL_RATE(594000000, 2, 198, 2, 0),
-> +	RK3588_PLL_RATE(408000000, 2, 272, 3, 0),
-> +	RK3588_PLL_RATE(312000000, 2, 208, 3, 0),
-> +	RK3588_PLL_RATE(266580000, 1, 178, 4, 47185),
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xin24m
+> +
+> +  rockchip,grf:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: PMU0 GRF register block.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
+> +  - "#reset-cells"
+> +  - rockchip,grf
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@26090000 {
+> +      compatible =3D "rockchip,rk3572-cru";
+> +      reg =3D <0x26090000 0x60000>;
+> +      #clock-cells =3D <1>;
+> +      #reset-cells =3D <1>;
+> +      rockchip,grf =3D <&pmu0_grf>;
+> +    };
 
 [Severity: Low]
-Does initializing the k field in rk3572_pll_rates[] with positive constants
-above 32767 overflow s16 and trigger compiler warnings?
+In Documentation/devicetree/bindings/clock/rockchip,rk3572-cru.yaml, the
+example node body for clock-controller@26090000 uses 2-space indentation
+instead of the 4-space indentation expected by dt-check-style in strict mod=
+e.
 
-Commit 581478883477 ("clk: rockchip: Fractional PLL coefficient on
-RK3588/RK3576 is two's complement") changed the fractional coefficient k in
-struct rockchip_pll_rate_table to s16:
+Also, since clock-names only has a single entry, should it use a direct
+const: xin24m rather than a single-element items list, and should clocks and
+clock-names be listed under required and included in the example (matching
+the changelog notes left between the two Signed-off-by lines in the commit
+message)?
 
-drivers/clk/rockchip/clk.h:
-struct rockchip_pll_rate_table {
-	...
-		struct {
-			/* for RK3588 */
-			unsigned int m;	/* main divider, 10 bit unsigned */
-			unsigned int p;	/* pre-divider, 6 bit unsigned */
-			unsigned int s;	/* scaler, 3 bit unsigned */
-			s16 k;		/* fractional part, 16 bit two's complement */
-		};
-	...
-};
+> diff --git a/include/dt-bindings/clock/rockchip,rk3572-cru.h b/include/dt=
+-bindings/clock/rockchip,rk3572-cru.h
+> new file mode 100644
+> index 0000000000000..9c586d9e9ae91
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/rockchip,rk3572-cru.h
+> @@ -0,0 +1,560 @@
 
-While the 955520000 and 785560000 entries use signed negative values (-15730
-and -14419), five other entries with adjusted m values still pass unsigned
-16-bit two's complement constants exceeding 32767:
+[ ... ]
 
-- 1186814000: 52581 (instead of -12955)
-- 1186812000: 52559 (instead of -12977)
-- 773000000: 43690 (instead of -21846)
-- 604800000: 52428 (instead of -13108)
-- 266580000: 47185 (instead of -18351)
+> +#define ACLK_CRYPTO_NS				525
+> +#define CLK_PKA_CRYPTO_NS			526
+> +#define PCLK_DDR_MON				527
+> +
+> +/* Secure clocks */
+> +#define ACLK_CCI				600
+> +#define SCLK_DDR				601
 
-When CONFIG_CLK_RK3572 is enabled, this triggers -Woverflow in GCC and
--Wconstant-conversion in Clang, causing the build to fail under
-CONFIG_WERROR=3Dy. Should these five entries use their negative signed
-equivalents?
+[ ... ]
+
+> +#define PCLK_WDT_S				613
+> +#define TCLK_WDT_S				614
+> +#define HCLK_TRNG_S				615
+> +
+> +#define CLK_NR_CLKS				(HCLK_TRNG_S + 1)
+> +#endif
+
+[Severity: Low]
+Should CLK_NR_CLKS be dropped from
+include/dt-bindings/clock/rockchip,rk3572-cru.h, and should the secure clock
+IDs starting at ACLK_CCI be contiguous with PCLK_DDR_MON (527)?
+
+Exposing CLK_NR_CLKS in the Devicetree binding header couples the DT ABI to
+the total number of clocks if new clocks are added later. Rockchip clock
+drivers calculate the maximum clock ID dynamically via
+rockchip_clk_find_max_clk_id(), and CLK_NR_CLKS was previously removed from
+other Rockchip binding headers in commits 2dc66a5ab2c6 and fb234516c5a0.
+
+In addition, jumping from PCLK_DDR_MON (527) to ACLK_CCI (600) leaves an
+unused gap of 72 indices (528..599) in the clk_hw pointer table allocated by
+rockchip_clk_init().
+
+> diff --git a/include/dt-bindings/reset/rockchip,rk3572-cru.h b/include/dt=
+-bindings/reset/rockchip,rk3572-cru.h
+> new file mode 100644
+> index 0000000000000..a789475326818
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/rockchip,rk3572-cru.h
+> @@ -0,0 +1,713 @@
+
+[ ... ]
+
+> +/* CRU-->SOFTRST_CON87 */
+> +#define SRST_PRESETN_CENTER_BIU                  417
+> +#define SRST_RESETN_TEST_JUDGE_24M_CENTER        418
+> +#define SRST_RESETN_TEST_JUDGE_CENTER            419
+> +#define SRST_RESETN_LINKSYM_HDMITXPHY0           420
+> +
+> +/* PHPPHY_CRU-->SOFTRST_CON00 */
+> +#define SRST_PRESETN_PHPPHY_CRU                  422
+> +#define SRST_PRESETN_PCIE2_COMBOPHY0             423
+
+[Severity: Medium]
+Is reset ID 421 intentionally skipped between SRST_RESETN_LINKSYM_HDMITXPHY0
+(420) and SRST_PRESETN_PHPPHY_CRU (422) in
+include/dt-bindings/reset/rockchip,rk3572-cru.h?
+
+All other reset IDs in this header are sequential 0-based integers. Leaving=
+ a
+gap at 421 results in an uninitialized zero entry at index 421 in the drive=
+r's
+lookup table, which rockchip_softrst_assert() and rockchip_softrst_deassert=
+()
+would silently treat as bank 0, bit 0 (SOFTRST_CON00 bit 0) if reset ID 421=
+ is
+ever referenced in Devicetree.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261023-add-board-=
-ok3572-c-clk-v2-0-90b98836be6e@qq.com?part=3D3
+ok3572-c-clk-v2-0-90b98836be6e@qq.com?part=3D1
