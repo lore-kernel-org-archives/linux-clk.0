@@ -1,67 +1,109 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=85.13.135.14
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792951056;
-	b=J0E/chR5qY1K5ACFXatOT3Q+bEpznN8TaLwu2bXIl7042R0KnIXbGWI352IuPYY0M/aV
-	 bQx9LgXXDeqpzNbpiQbSXirQ9i3gWM05WimkVAQkRp/wb1QHVcSGqt+GcDEj4blOBGwJt
-	 37hGG35638n+kAzhbkKTqCAiW6xJRkFdPnjGZL/XyVmqM78swivYVlS/N1VxIifq5OFEI
-	 iA2yE/Q9J02NK+zqlunUU23ffnUYjWV1/UZGfbzftOQP+pLAnQiNGN+GrvRmiai/PFEWu
-	 JPfq3lE2YnXxyok6AHn1ph1CPQ0ttq7+QEWNzQ/KOCpdl9jbDNC3C1igMDn+BT5g/Eg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792951056;
-	h=DMARC-Filter:DKIM-Signature:X-KAS-Sym:Received:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
-	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding:X-Spamd-Bar;
-	bh=qe6/eBLGVXTdgL2k0ma4VIUZKkBWacKfnxS3azB/5IY=;
-	b=YB2lTat+zwCy5VaQlCyH0jnT3iBxeZbxOU3oYMYQuoW0KYraO4LJIbQaiYqt5C1yheYb
-	 dj+dZpvngr+4yq9Oedb2AwgKAq4CUrqwMedWayTw4dnemJPDVpgfsGcPRR3XJFGsiDygm
-	 ULgoddTB2ZROt90C+m71oBEVnhjmSzpHf86+l6FNIouEUptwUNNxrnii0w7TGvsDeS7/g
-	 2lylyxVa5Gzj0vLSJ1HqqLOcgb/YoQgE/7vgSYqSd9S7q04MV0tMDrRekU9B6ckVjqZaj
-	 ziMEW/Q5f9YJYbireflCdFpOdX6bnNzBivW9pkONDrE+sUjeqVwx0STL/BUfM7hxiFA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=tsv-stahl-riesa.de;
-	spf=pass smtp.mailfrom=tsv-stahl-riesa.de;
-	dkim=pass header.d=tsv-stahl-riesa.de header.i=@tsv-stahl-riesa.de header.a=rsa-sha256 header.s=kas202608160020 header.b=otUkrrgW;
-	arc=none smtp.remote-ip=85.13.135.14
-Received: from dd13108.kasserver.com (dd13108.kasserver.com [85.13.135.14])
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=85.215.255.82
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
+	t=1792955940;
+	b=kir47eH16eizPxHd/Jw+bjBSEqm4A+mJKRhUV9A7KsHV2zL+B2F30i7FztQMMLyhqwYO
+	 QpYT9Uzr/ged7ClcZq1NFiEvfiJQkckCkcqn931bS6uIvPnLkRB/UuMtoTqxd7apbOQX0
+	 QcoOyCErIH8NZBhWmsZqKtEdaQcYwIYmy+C1YY79cPERwSMu5HgJywF5zfuxCFS/BSLOy
+	 +PHtqJIC8kB2micoBYVEnSYpopfifFS3Z+abqGoxL2aHUgpp9ffu4q+xZSoAtIPaGkZtV
+	 1MoXK7Cnd43CCaFSHWvbmYfvV5I+xvuoAguLZ2zjPZ+SDkIWtMapvLoI7TI4CMSxNRA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792955940;
+	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
+	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:Content-Type;
+	bh=36Gtei9+ICpPfGhUgPGYOlNssQ2PGoXOIDVUuqX1iYU=;
+	b=ZS9qA0LbZ19lZT3HjefiYY79CnPZoa64T9dr1hoaoZsdl/yNCmqGylo7MhECGpZmPqWZ
+	 mdKNm1Hf6/t72LwDT9TSuolRlTRYQ4DbxBnMCY5vLIDLAw3txvcrCTonN2xxFMbVnlFbP
+	 dC6/gLxB4c2I9R6B6B10B5XPxgRl5q1tuks/R3Om7FxgKLjFA6FFFhuvsCduwRlRc/iMS
+	 7jceH98DNtVcSupzRDx0yHmj4IRSx43dfJSzfIMYig8AhYvKl+uInI/AAGwVF/cT+0hR2
+	 uJ5aMsTzXLrz5eg4dU28iVT6ccrogm0Oq8JUWPXDgK6J5bW//XSDbq3e4M2+nr0lMTQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=goldelico.com;
+	spf=pass smtp.mailfrom=goldelico.com;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b="oaEc/MpC";
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=Vb1FAuU0;
+	arc=fail smtp.remote-ip=85.215.255.82
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.82])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EE6606A31A;
-	Sun, 25 Oct 2026 17:57:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 90EE6606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tsv-stahl-riesa.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tsv-stahl-riesa.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A11606A32F;
+	Sun, 25 Oct 2026 19:18:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B5A11606A32F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=tsv-stahl-riesa.de header.i=@tsv-stahl-riesa.de header.a=rsa-sha256 header.s=kas202608160020 header.b=otUkrrgW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tsv-stahl-riesa.de;
-	s=kas202608160020; t=1792951045;
-	bh=qe6/eBLGVXTdgL2k0ma4VIUZKkBWacKfnxS3azB/5IY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:From;
-	b=otUkrrgW43iNCQgjpnHAUrYRxWZvL7BdMI2TB++vh1DK9NpqHFN/jtNRt9UL7VTyO
-	 PzInhL+74dncTr7L/jjEINnS/nP1XxWGmv/dvfmndvYs/eA13lB4pG8+DsHvsgC+Tl
-	 n3PiVi6jJdJTmsagmWTppZlEZFha6fkiIhlgoPQktK2XO5baScylE/0/kuEhks2XzY
-	 8ZtqHovsswkrkQD2EmbFFwqk2ByYC2INcj0k9a8y4qTJGUhAJ3Uihd7KB1hPx8wLQ5
-	 aeE7OhXLjV/cIypKj5OIdgetd4Xh3Dzx5rnzL+bxSdxg64fkcJcsbEigX2eYGZfF/u
-	 GAECEOXr8x1+A==
-X-KAS-Sym: v3:f51bdf72230551df:josnWiVTgmBszf+wJwpLyS0y+K14qpSOQdoU8G3QEBvIb
-	0WwgEC9i/8Gu08SAGV9KdjJddWkX3gX2uvaSVh70TXtKL+JtTAZbi5FtkKx07DQqhXAB4H0O6n1
-	RMKkS+sj3nbTa+pgtbCI19/nF4FiXTK10zvj6hfC0MGdy6X66CpKhXGzuElcPyth2Ej1wGscp+t
-	wvFsWLo5aNRM7WwHY5ApVFpwSsGXTVkHJTClBQNGKn/Ej+j6vo6fReIt72QGI4V+CAdjN78qWMM
-	LgEscqNmEkRKwirRcIJexQPGXmeZWa4O2x3isNXVY0qH5BjY7VRGrcse7CSbPkHPnCD7V65Q==:
-	dJ806LpPAcYoLGYx4bVJq6YD6AzYYrNLkbwY8gP+N34VKpXMJ8Gl3AUaIrBKNdE4nf0YPfTvQrz
-	jEprDIK78/06Alk5NWsraE/h/xUQdD21gsdn0XrscpxvwXpXCJ9h++xO6GHPBcXwPYtp7oI89ea
-	SJN7Snxh2tZhtl3jFKPLNE0lfrK0ep51PAkeKzOEaa6imCYDJHYN6f2XwuEwk6oj8ipq0bxK1QL
-	deZA26wvD/0wQxBVYwQ+ETC4/qRFly0ztR7JAjo6gUE3rCUqt5FohZ4o1VxptRA/X2E9QYSaVwL
-	l5ASRDQVyHl7aVUxMEsz4zEqspaoyoOQSaeZKwTC6djZf2wuQ192dkoU7VVnFW+Jf1C/xkLNGVd
-	v5sgdSf+TZ12bnShIQWJ0O+eusfdO028JziKt3YiYPVsAeSMWhWkUMZMdz/+BC+bDG7DB0NSUgm
-	F+EStcJQaUqkbINDqnlr4qlSUhI/wX1RELfU2mGUR+EUpKW7KHd04OgDDIljKIouPVTbJEhblJ+
-	jTEupmU6HetzYxKvBYOvGe6iW07BVVIIXELQoGgL8Tem9eAEtNJJn0RxyAT5S0i5r6HJRRbd3Wg
-	rZuMq/VJHKAXReMI3JSIiq8O3LXVsgT0fA==
-Received: from [192.168.2.173] (dslb-188-098-190-192.188.098.pools.vodafone-ip.de [188.98.190.192])
-	by dd13108.kasserver.com (Postfix) with ESMTPSA id C7F27782A893;
-	Sun, 25 Oct 2026 18:57:24 +0100 (CET)
-Message-ID: <258d0c04-fbf9-4de4-b009-8feff88dc69d@tsv-stahl-riesa.de>
-Date: Sun, 25 Oct 2026 18:57:19 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=oaEc/MpC;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=Vb1FAuU0
+ARC-Seal: i=1; a=rsa-sha256; t=1792955915; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=d99IEmIYWgFUj9XAfaR0y4zti/Oj40gMJwbAXgzqdjW6JMrHzHqdZXo3Rd+rng5Lql
+    NRm5PEa+t7BssAyzDpiuwdSQ0lBb8NyJJ4hcB87gIEDDj+MAccDFwGrFDcefLCc+FTed
+    vUzKiUfioEx6YnvFFWd/0znpmFm7UY+O1jA2CuI0rqunc8/xI99+i/Og3CtkhAyq6Aj2
+    bRow8brcV6myRgtVA0nVbuiDFb6foitYQDXb9V4P2Dz61XORWHEK0RZWQEyvKhs6qV12
+    +fdFOXfNEoaBA5uwwkGa8ypjABhhePRlbLYFoBoXamVK5n8qkMiEmT9BNgREpQbEKWhQ
+    5V/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1792955915;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=36Gtei9+ICpPfGhUgPGYOlNssQ2PGoXOIDVUuqX1iYU=;
+    b=FOwhQ8hCgajn+CI4hmgmvvVRLYTAsWwNcwGgG51Ux3NLcq2JiJlsSZFCDfQSnyyNN1
+    1wtH9WZUXiYfv/5mY8bAGfrFPoxdL+G5pTd1m6OIMik7BRwam0G9PiYLh378uaU5ECyC
+    DIGJbSe3NDZoO44CSEpM68WtB+48/YEVmYJ0csAbnigainwcddKST+NwelcQKOW5QL3F
+    jkMzsMiYvNsYL/7mnXw7K07A6FLy0KrpiEBlfrbsAsovaPNgkgrKV17Q2boQm/hxjxZG
+    kAyE9Kf8lSUm+n7F5iaSu70nU5hp649uzxVxpwMTSsVVakF37CVqgiyS4huH2jTx4vYu
+    BpVg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1792955915;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=36Gtei9+ICpPfGhUgPGYOlNssQ2PGoXOIDVUuqX1iYU=;
+    b=oaEc/MpCqBsQEaleQgPhp6y9RFSUPw2Pql/aN7/Jm0p90XDy+N6pZVbfm0+10XSt4/
+    HIUCePwxQNAquxz2S87seabbwBCTPbHrt0suipmpyxTVFKh9U07Qofpbkm3mk4hSG0/L
+    dJt6MnJ8ZMaS/Xik+9Wm//vH/dWE9Vpt9kG3lezAJl8EkGyDWGmKhA7/x5XrnEqHhsAq
+    WvUp1KzFe4MELi9sZTwip4lxyIevstIKWifcHLyYOy9Avlom73xZQrEAWO8ZCMIoTf3F
+    fi/W1fR/Q/z385iQz9FxTB2LtbBq0mJs5gpdQgIYo+8kmcmVq6yDgQONvg9Wnl51QGfh
+    mWlw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1792955915;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=36Gtei9+ICpPfGhUgPGYOlNssQ2PGoXOIDVUuqX1iYU=;
+    b=Vb1FAuU0ICCAab32LMUJv+Fm3CfZns4X9dnrmAF43rPpkADgnX/QmtEiqOpi/xzY5R
+    fgHe9M7y1F1u1KH8xeBQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrS2poNy8iNoc+LWkugLIF0fnfvFgpgbBBt2w=="
+Received: from iMac.fritz.box
+    by smtp.strato.de (RZmta 55.6.3 AUTH)
+    with ESMTPSA id Qb56a229PJIYzQq
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Sun, 25 Oct 2026 20:18:34 +0100 (CET)
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	letux-kernel@openphoenux.org,
+	kernel@pyra-handheld.com,
+	"H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH 3/4] clk: ingenic: jz4760-cgu: Adapt calc_m_n_od() to core framework changes
+Date: Sun, 25 Oct 2026 20:18:26 +0100
+Message-ID: <a718b428cff741a2c14fe3c022026c8a88c28abe.1792955907.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <cover.1792955907.git.hns@goldelico.com>
+References: <cover.1792955907.git.hns@goldelico.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -71,43 +113,36 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: tegra: Fix Tegra114 MIPI calibration clock parent
-To: Mikko Perttunen <mperttunen@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, clamor95@gmail.com
-References: <20260930-b4-dalmore-fixes-mipical-clk-v1-1-0518be6c7979@nvidia.com>
-Content-Language: en-US
-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
-In-Reply-To: <20260930-b4-dalmore-fixes-mipical-clk-v1-1-0518be6c7979@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Bar: /
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Sep 30, 2026 at 02:18:34PM +0900, Mikko Perttunen wrote:
-> Register the gate with pll_p_out3 as its parent. Also drop
-> CLK_SET_RATE_PARENT at the same time: the parent canonically runs at
-> 72 MHz so we shouldn't change the rate.
+The common Ingenic CGU core framework was updated to support a
+secondary post-VCO divider (OD1), which extended the signature of the
+calc_m_n_od() callback.
 
-I ran into the same problem on a Tegra Note 7 (P1640) and ended up with
-the identical change. Before it, every DSI enable logged
+Update the JZ4760 CGU driver implementation to accept the new pod1
+argument, preventing compilation errors. The parameter remains unused
+on this specific SoC architecture.
 
-  tegra-dsi 54300000.dsi: MIPI calibration failed: -110
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ drivers/clk/ingenic/jz4760-cgu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-and enabling PLL_P_OUT3 by hand made it go away. With this patch there
-is no timeout at boot or across DPMS off/on cycles.
+diff --git a/drivers/clk/ingenic/jz4760-cgu.c b/drivers/clk/ingenic/jz4760-cgu.c
+index 372fe4b079927..52cc5ce150048 100644
+--- a/drivers/clk/ingenic/jz4760-cgu.c
++++ b/drivers/clk/ingenic/jz4760-cgu.c
+@@ -56,7 +56,8 @@ static const u8 jz4760_cgu_pll_half_div_table[] = {
+ static void
+ jz4760_cgu_calc_m_n_od(const struct ingenic_cgu_pll_info *pll_info,
+ 		       unsigned long rate, unsigned long parent_rate,
+-		       unsigned int *pm, unsigned int *pn, unsigned int *pod)
++		       unsigned int *pm, unsigned int *pn, unsigned int *pod,
++		       unsigned int *pod1)
+ {
+ 	unsigned int m, n, od, m_max = (1 << pll_info->m_bits) - 1;
+ 
+-- 
+2.56.0
 
-Tested-by: Patrick Fischer <admin@tsv-stahl-riesa.de> # Tegra Note 7 (P1640)
-
-While testing I also found that tegra114_mipi_power_down() never drops
-the clock enable it takes, so with this patch PLL_P_OUT3 stays on after
-the first DPMS off. I sent a fix for that:
-
-https://lore.kernel.org/all/20261025-upstream-host1x-mipi-clk-v1-1-6bc6e755b4cb@tsv-stahl-riesa.de/
-
-Thanks,
-Patrick
