@@ -1,51 +1,51 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=138.232.1.140
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792955989;
-	b=vMmfi6GDW8tW+/vSSE7dxZuBofptwPqWqviukZqjFiXUj/KZpv2D3B0R+U6jKx7uN2cg
-	 2oyRrqHqmBOEm0T4J+TqDJ3CGV07Vl6vyQlz4XfDL7vdnKVaOzyEsKrUZsc9JefCqDwIa
-	 Rb4WpYV+WpJ3QdnEcg7ApRFzFORTGnunEX/pZYtmCJKuhPE6cKSGcmH0K54ZFoQJy8VAp
-	 BjFG5YntQ9A868OFTyeTH0SBAx3qQJr7uWUxqglwAiuo0yADGRSC4Xwpz7mvXbfx5TRVy
-	 YJ6I5i+Cpt7p8oaZlhA0RfjvkZUkqnws891RUzlROJu+g9vhKSnSJVqmRsYGekHkA3g==
+	t=1792955993;
+	b=MlgX7Yf/dHylogPQc729sumLdw4m73ejX2IsILXCbwY4oGsCWJpazDzXBSIntQFJlR57
+	 BXHJ6Lj6uQ6FLQVWs/q1fwKFEOmCxrIp1F7FJdu8CA4OOhI3KOESp5aov2BdVqI5oyFev
+	 q0/7PubuxwjPWmgM+kALZEMQSxKl++rA9up5CSMjuqiOhyeJrE8tl13T1gpOxyHNym0zg
+	 zwGdrhBLWhMQY4bWcHsUmaT2/kwNWmCo2RTGh2EOaPUWcG29ZrZ/Z3pJHv1qUmsWvfJct
+	 JXiPwczwZ2nnKncXtZrzvxs99Zxz/co/+oWf0OqWiLVHhOkTYmqO3uo/BQLLcRzk7iA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792955989;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792955993;
 	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-Spam-Score:X-Scanned-By;
-	bh=Dqs4z2NY1rb7FbmpNSV5YxzKzMNh1uksqRMZQL4TgK8=;
-	b=jWA+4UiWtpauiwJa+ivyuuCmYlkNn4u3ALTFfbZ4LIzC+YcC8nMRol/1HqZFbdboVkP6
-	 PkEXQ1zvCBV4nWf1lucjNqWNarwQaQLfwFMFoqCfsLrtTA1Bduc2bXfXud7XKlDdylyJf
-	 7oNuoLBjdDWJavdntcUSX3Zq3eknaydb1olnUUdqsH/y6vIftMLRLZm2GMugfcsBH/cF6
-	 u9ufsVUrEkDo3K/0XdaPhS2kzPtn7HpT80VppdfchDZVQnCD4ik1IIfLBMadow+6b2JPa
-	 cr+yTPpGOl6QpCchcMpVCExBjJCjcWbtUibNcVb2wisOy+C6Y0sjtKMIjNC+ydtZEcQ==
+	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-Spam-Score:X-Scanned-By;
+	bh=M8r5svHUOM8Y59Gw/fCkU5WvrtoHiBC/aQfKFdM2kxc=;
+	b=OUSeq3D/qjkxrazV49iRIOYFjz0GSOTeWs7/UYmLnM3Uy0bBObgjvKg7Y+gF1qkAzuJs
+	 Ya5E/KdaoqWit5OQs1/nONJJa68g0bkqsmqQqAEygQG2lRO60jL24XZiGXZgS+m6wFb+v
+	 baVcK/kQbPaWbcBGytaWc/m/d6KFUIOJ+IbfnC+TZ94RsbMWmdiznzb3IScvNlWuy/krk
+	 BfbfOa/nliK+Xjbta/qipSRF3vzYlz3rhoKnY+LN5gO1t1w4LgC5cbP9iB/C2fSFyhXzP
+	 HlB461lhMARMJV+yrIWzFUSSVR1nrHPwS5TzC5Ir6Xoi3cZhqiExKg/8qDZnQRDe/0A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=student.uibk.ac.at;
 	spf=pass smtp.mailfrom=student.uibk.ac.at;
-	dkim=pass header.d=student.uibk.ac.at header.i=@student.uibk.ac.at header.a=rsa-sha256 header.s=prod24a header.b=tA4kVeKE;
+	dkim=pass header.d=student.uibk.ac.at header.i=@student.uibk.ac.at header.a=rsa-sha256 header.s=prod24a header.b=cXwhVmW8;
 	arc=none smtp.remote-ip=138.232.1.140
 Received: from smtp.uibk.ac.at (smtp.uibk.ac.at [138.232.1.140])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16236606A329;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1620B606A328;
 	Sun, 25 Oct 2026 19:19:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 16236606A329
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1620B606A328
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=student.uibk.ac.at
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=student.uibk.ac.at
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=student.uibk.ac.at header.i=@student.uibk.ac.at header.a=rsa-sha256 header.s=prod24a header.b=tA4kVeKE
+	dkim=pass (1024-bit key, unprotected) header.d=student.uibk.ac.at header.i=@student.uibk.ac.at header.a=rsa-sha256 header.s=prod24a header.b=cXwhVmW8
 Received: from surface-pro-5 (178.115.151.51.wireless.dyn.drei.com [178.115.151.51])
 	(authenticated bits=0)
-	by smtp.uibk.ac.at (8.15.2/8.15.2/F1) with ESMTPSA id 69PJJ1eT514480
+	by smtp.uibk.ac.at (8.15.2/8.15.2/F1) with ESMTPSA id 69PJJ1eV514480
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Sun, 25 Oct 2026 20:19:04 +0100
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp.uibk.ac.at 69PJJ1eT514480
+	Sun, 25 Oct 2026 20:19:11 +0100
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp.uibk.ac.at 69PJJ1eV514480
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=student.uibk.ac.at;
-	s=prod24a; t=1792955945;
-	bh=Dqs4z2NY1rb7FbmpNSV5YxzKzMNh1uksqRMZQL4TgK8=;
-	h=From:To:Cc:Subject:Date;
-	b=tA4kVeKENgDnCqlEJ4/6yeAWjQe5GPl9K8OgiL9OoWKSllIreQ9QS+7hgJIIE1sI1
-	 pwhNYsgj5KbD4nNXXPpaJhuN9xkgr6XWQ0toQo/CC5+j1pfAWjpT5Yvg3hWqpTRnfQ
-	 2nlmye3svoCEB8XtpL+QrxHI5cMN5OtfdetVsQEo=
+	s=prod24a; t=1792955952;
+	bh=M8r5svHUOM8Y59Gw/fCkU5WvrtoHiBC/aQfKFdM2kxc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=cXwhVmW8y6tArl5aWad0YcF5TwCQx8nXbr9US6/nskItq6XqsLREapDVWrdL+Dcog
+	 fYa3sB8VLEskFjVvvzIFPBQRCSOEmRTv76A3T+Ir1cpFoVl2QIUGFmggGP3ZUc7Fh2
+	 +ck/vYH6QWkBbv/4vVpIAuVXF2psAb6Y7eZl/VWs=
 From: christian.koever-draxl@student.uibk.ac.at
 To: neil.armstrong@linaro.org, jbrunet@baylibre.com, sboyd@kernel.org,
         bmasney+clk@redhat.com, khilman@baylibre.com,
@@ -53,10 +53,12 @@ To: neil.armstrong@linaro.org, jbrunet@baylibre.com, sboyd@kernel.org,
 Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Christian=20Stefan=20K=C3=B6v=C3=A9r-Draxl?= <ckoever@outlook.de>
-Subject: [PATCH 0/2] clk: meson: s4: two peripheral clock fixes
-Date: Sun, 25 Oct 2026 20:18:50 +0100
-Message-ID: <20261025191852.208226-1-christian.koever-draxl@student.uibk.ac.at>
+Subject: [PATCH 2/2] clk: meson: s4: propagate rate requests through the CEC 32k muxes
+Date: Sun, 25 Oct 2026 20:18:52 +0100
+Message-ID: <20261025191852.208226-3-christian.koever-draxl@student.uibk.ac.at>
 X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20261025191852.208226-1-christian.koever-draxl@student.uibk.ac.at>
+References: <20261025191852.208226-1-christian.koever-draxl@student.uibk.ac.at>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -73,40 +75,50 @@ X-Scanned-By: MIMEDefang_3.2_at_uibk.ac.at
 
 From: Christian Stefan Kövér-Draxl <ckoever@outlook.de>
 
-Two fixes for the S4 peripheral clock controller found while bringing
-up an S905W2 TV box:
+The AO-CEC driver asks its core clock for 32768 Hz. On S4 that request
+stops at ceca_32k_sel / cecb_32k_sel: both are muxes without
+CLK_SET_RATE_PARENT, so it never reaches the dual divider that can
+produce the rate, and probe fails with
 
- - the PWM muxes may pick vid_pll, which is reprogrammed on every HDMI
-   mode set and so changes the period of any PWM that runs from it. On
-   this board that corrupted the PWM CPU regulator (first cpufreq
-   transition hung the SoC) and the 32.768 kHz clock of the SDIO wifi
-   chip;
- - the CEC 32k selectors lack CLK_SET_RATE_PARENT, so AO-CEC cannot set
-   its 32768 Hz rate and fails to probe.
+  meson-ao-cec fe044000.cec: core clock set rate failed
+  meson-ao-cec fe044000.cec: CEC controller registration failed
 
-Tool use (Documentation/process/generated-content.rst):
-This work was done with the help of an AI coding assistant, Claude
-(Anthropic), used through Claude Code over many sessions. It did a large
-part of the hands-on work: it read the vendor kernel and the firmware
-interfaces, probed registers on the board, drafted the code and the
-changelogs, and ran the builds, checkpatch, dt_binding_check and the
-tests on the hardware. I directed the work, reviewed every change and
-the final patches, and take responsibility for them. There is no single
-prompt to quote; the sessions were of the form "find out why X fails on
-this board, fix it, test it on the box".
+The equivalent G12A mux, ao_cec_sel, carries the flag, which is why CEC
+works there. Add it to both S4 selectors.
 
-Tested on an Amediatech X98Q TV box (Amlogic S905W2, S4 family, 2 GiB),
-vendor U-Boot and BL31/OP-TEE, Linux 7.3 plus this work.
+The other parent of these muxes is the RTC clock, which must not be
+reprogrammed on behalf of CEC, so boards should pin the mux parent to
+the dual divider with assigned-clock-parents.
 
-Christian Stefan Kövér-Draxl (2):
-  clk: meson: s4: keep the PWM clocks off vid_pll
-  clk: meson: s4: propagate rate requests through the CEC 32k muxes
+Only the CECA path was tested; CECB is the same defect in the
+duplicated block.
 
- drivers/clk/meson/s4-peripherals.c | 40 +++++++++++++++++++++---------
- 1 file changed, 28 insertions(+), 12 deletions(-)
+Fixes: 57b55c76aaf1 ("clk: meson: S4: add support for Amlogic S4 SoC peripheral clock controller")
+Signed-off-by: Christian Stefan Kövér-Draxl <ckoever@outlook.de>
+---
+ drivers/clk/meson/s4-peripherals.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-base-commit: 7be4bc52fd9e0e55dc9a2e0232b89427d2c4b614
+diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+index 329cd526749e..8e303db6154c 100644
+--- a/drivers/clk/meson/s4-peripherals.c
++++ b/drivers/clk/meson/s4-peripherals.c
+@@ -407,6 +407,7 @@ static struct clk_regmap s4_ceca_32k_sel = {
+ 			&s4_rtc_clk.hw
+ 		},
+ 		.num_parents = 2,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -514,6 +515,7 @@ static struct clk_regmap s4_cecb_32k_sel = {
+ 			&s4_rtc_clk.hw
+ 		},
+ 		.num_parents = 2,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
 -- 
 2.56.0
 
