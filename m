@@ -1,103 +1,61 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=85.215.255.50
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
-	t=1792955951;
-	b=L5OTd4CZal/7NlACQySF8pxsHrLsHKT7WgW8ubrQ8ydUdgPPak9nNd4CrzP8bU9J6SZl
-	 tXVnRk6GisHVC0Kjxn8etk/jq1hX5VGaBrkxIt44Iy1seOTeh8XxMRn9h8uCu11gr3HzD
-	 R+up5i1XDflxklnpPl0+G7lvDLfviW4vX1ro9mxPKV352C13JrJlXg/1l0egkpC7BiFpg
-	 SIwmnaZZs/E1m7jCQd5+Gf8zbPeRGqd9US/p7v3y0JYhCx9aHGuVJgXALy/HPte1uxtJq
-	 OrjL0yB2Qm4u3kPt4GL3tWsvXI9jcKhPJlWgxe1VcoYcuBFnidWaHsIyDwuULsnBreQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792955951;
-	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
-	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	bh=MgLdXFF/Sj4ih5qNSgMyDA1vEeVT9nxto8YHeXZw9Mw=;
-	b=2RTFS5s/FnLiMLfuf6cQQCQo2Oy0vWr0u6mBx9yFeEU8qcXgQ8n046cx0WSbX8P2fsFf
-	 3nFZC0Gt8xqKiYjijPeUrxWq6SDupLBPKRIbbZ4AD3E5ICI0YkVv0aqGwwguFtTBhgIc2
-	 OsrAOQjbbj5VC5sLiqP+IRVnklKKO2voVplUL8FTiKJqqTJDshR6SedK4CWP5oTQQD4Lg
-	 P8aEVEoofyd73BtSAFJll3+hrn+y2TW7/M4DTagHMg2I6DiMUUmxCaNgk/sDR4B3Nt1Oo
-	 blcJR2ArKZSqJ7e6bHQvoLtbHtWsggqFTcX/AcyYsVYgBlOQnlQ7wssPo5+71CyJrBQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=goldelico.com;
-	spf=pass smtp.mailfrom=goldelico.com;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=ZgzdlgHE;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=HxmJzMSm;
-	arc=fail smtp.remote-ip=85.215.255.50
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=138.232.1.140
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792955989;
+	b=vMmfi6GDW8tW+/vSSE7dxZuBofptwPqWqviukZqjFiXUj/KZpv2D3B0R+U6jKx7uN2cg
+	 2oyRrqHqmBOEm0T4J+TqDJ3CGV07Vl6vyQlz4XfDL7vdnKVaOzyEsKrUZsc9JefCqDwIa
+	 Rb4WpYV+WpJ3QdnEcg7ApRFzFORTGnunEX/pZYtmCJKuhPE6cKSGcmH0K54ZFoQJy8VAp
+	 BjFG5YntQ9A868OFTyeTH0SBAx3qQJr7uWUxqglwAiuo0yADGRSC4Xwpz7mvXbfx5TRVy
+	 YJ6I5i+Cpt7p8oaZlhA0RfjvkZUkqnws891RUzlROJu+g9vhKSnSJVqmRsYGekHkA3g==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792955989;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Spam-Score:X-Scanned-By;
+	bh=Dqs4z2NY1rb7FbmpNSV5YxzKzMNh1uksqRMZQL4TgK8=;
+	b=jWA+4UiWtpauiwJa+ivyuuCmYlkNn4u3ALTFfbZ4LIzC+YcC8nMRol/1HqZFbdboVkP6
+	 PkEXQ1zvCBV4nWf1lucjNqWNarwQaQLfwFMFoqCfsLrtTA1Bduc2bXfXud7XKlDdylyJf
+	 7oNuoLBjdDWJavdntcUSX3Zq3eknaydb1olnUUdqsH/y6vIftMLRLZm2GMugfcsBH/cF6
+	 u9ufsVUrEkDo3K/0XdaPhS2kzPtn7HpT80VppdfchDZVQnCD4ik1IIfLBMadow+6b2JPa
+	 cr+yTPpGOl6QpCchcMpVCExBjJCjcWbtUibNcVb2wisOy+C6Y0sjtKMIjNC+ydtZEcQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=student.uibk.ac.at;
+	spf=pass smtp.mailfrom=student.uibk.ac.at;
+	dkim=pass header.d=student.uibk.ac.at header.i=@student.uibk.ac.at header.a=rsa-sha256 header.s=prod24a header.b=tA4kVeKE;
+	arc=none smtp.remote-ip=138.232.1.140
+Received: from smtp.uibk.ac.at (smtp.uibk.ac.at [138.232.1.140])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A4C606A323;
-	Sun, 25 Oct 2026 19:19:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B1A4C606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16236606A329;
+	Sun, 25 Oct 2026 19:19:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 16236606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=student.uibk.ac.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=student.uibk.ac.at
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=ZgzdlgHE;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=HxmJzMSm
-ARC-Seal: i=1; a=rsa-sha256; t=1792955914; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=bEevh96a5idVHtcfogobPQzJIvBQuKHaGi0Sz7RmcAz+zk7+QWTTw27Q9O9JeOG9HF
-    FH2vioqVrD/+ZcR+BcJtt1WCpnLi0xaNyDaEZud1LasR/0/RBkGuDDnAeBRwS6LIrLoD
-    wvkOs/+DGzDGpREkfithsHmB7Z4HTPU8pvE46J7DJGCS1Q896AQaEx2u1ttJ2wGyQ/gk
-    T5doZs+D268+ryUHWXjU/yGO2BvqEwrTaBSprNHB0YHyW5YB7aeawDRM8FfNa/4qYyYn
-    ePeTUD2cgs6+iuAKYk4kbkFOQKgcjxoC4JTE0A4veBkce+vC4nNHG5uoePSDvPfKnEOS
-    +RDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1792955914;
-    s=strato-dkim-0002; d=strato.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=MgLdXFF/Sj4ih5qNSgMyDA1vEeVT9nxto8YHeXZw9Mw=;
-    b=I/Zo0TdFcyNSAm05LYG3BCrJ86fFCVn411k2fVgCBVGwjss0eTA7Q9+DtlemZDWCl8
-    Mwq5PYJraKsDQk5ZmAewAO3nMkLe1hsQrlJWZ5GRw/e6qbBTDMWo/x8a1w7eMk/KhilM
-    G9zHjwsaUSRKlLC1LizaIpzGTWPb6iJF5h2LCP1so+JKeMuQec+Sa9Rcj2OJ/FZphNkr
-    cXj2rrZm3dDWoeb037xgbZY77uD5oVNP9VbXm+P2K1GIHaR7Eall7/3J0RkEeBv6D22l
-    SdtCdwn9GVHHVy201wqlsVrxuA/sXNLzfOb4zPuJBOU9I+I/AKdnWuhfsq+YMdceYnJw
-    vwFw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1792955914;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=MgLdXFF/Sj4ih5qNSgMyDA1vEeVT9nxto8YHeXZw9Mw=;
-    b=ZgzdlgHEyi5YYZxrwhfPYx4YYKDVyjAls5PBA/MECNAhwDbROtuyBSxg7pax2D4nNq
-    VvIvqSH1mqFubVhdjUbZ6hUo4d176fmX2d3IaBqFTZLeeNXu39h1/1bTM/NlhXvMiTr6
-    nKWJbAz5GmJnox9fBL+JzBLDQYMezUYPmdljwLHcpawTS2n491zVGbpdOGZ0iw2UrdP/
-    KRlT5Z5UuWFQG+bgv+4TZAAKylAyiuqRmMa0mGD6J24lzNO56GtmZ/Ys6bkA0kiBOGY8
-    2Wrc6nNap31AU9g9pDJMnHK2VUsufq5zuMaEa7n0VXWsgeEXHlFYv/hwBfBi+AQpmA2o
-    zx6g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1792955914;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=MgLdXFF/Sj4ih5qNSgMyDA1vEeVT9nxto8YHeXZw9Mw=;
-    b=HxmJzMSmxiHGMaGynzwjo4a1FnxEKnd2YI/LpCt1uYxUEYa1KAjlNaN5D58SGih9sH
-    55BJsRbKVjfWc+tu/4AQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrS2poNy8iNoc+LWkugLIF0fnfvFgpgbBBt2w=="
-Received: from iMac.fritz.box
-    by smtp.strato.de (RZmta 55.6.3 AUTH)
-    with ESMTPSA id Qb56a229PJIXzQn
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Sun, 25 Oct 2026 20:18:33 +0100 (CET)
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	letux-kernel@openphoenux.org,
-	kernel@pyra-handheld.com,
-	"H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH 0/4] clk / clocksource: Add Ingenic X1600 SoC support
-Date: Sun, 25 Oct 2026 20:18:23 +0100
-Message-ID: <cover.1792955907.git.hns@goldelico.com>
+	dkim=pass (1024-bit key, unprotected) header.d=student.uibk.ac.at header.i=@student.uibk.ac.at header.a=rsa-sha256 header.s=prod24a header.b=tA4kVeKE
+Received: from surface-pro-5 (178.115.151.51.wireless.dyn.drei.com [178.115.151.51])
+	(authenticated bits=0)
+	by smtp.uibk.ac.at (8.15.2/8.15.2/F1) with ESMTPSA id 69PJJ1eT514480
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sun, 25 Oct 2026 20:19:04 +0100
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp.uibk.ac.at 69PJJ1eT514480
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=student.uibk.ac.at;
+	s=prod24a; t=1792955945;
+	bh=Dqs4z2NY1rb7FbmpNSV5YxzKzMNh1uksqRMZQL4TgK8=;
+	h=From:To:Cc:Subject:Date;
+	b=tA4kVeKENgDnCqlEJ4/6yeAWjQe5GPl9K8OgiL9OoWKSllIreQ9QS+7hgJIIE1sI1
+	 pwhNYsgj5KbD4nNXXPpaJhuN9xkgr6XWQ0toQo/CC5+j1pfAWjpT5Yvg3hWqpTRnfQ
+	 2nlmye3svoCEB8XtpL+QrxHI5cMN5OtfdetVsQEo=
+From: christian.koever-draxl@student.uibk.ac.at
+To: neil.armstrong@linaro.org, jbrunet@baylibre.com, sboyd@kernel.org,
+        bmasney+clk@redhat.com, khilman@baylibre.com,
+        martin.blumenstingl@googlemail.com, yu.tu@amlogic.com
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Christian=20Stefan=20K=C3=B6v=C3=A9r-Draxl?= <ckoever@outlook.de>
+Subject: [PATCH 0/2] clk: meson: s4: two peripheral clock fixes
+Date: Sun, 25 Oct 2026 20:18:50 +0100
+Message-ID: <20261025191852.208226-1-christian.koever-draxl@student.uibk.ac.at>
 X-Mailer: git-send-email 2.56.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -108,59 +66,47 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+X-Spam-Score: () -13.0 ALL_TRUSTED,RCV_SMTP_AUTH,RCV_SMTP_UIBK,U_H_APTO_LONG,U_RCPTS_11_PLUS
+X-Scanned-By: MIMEDefang_3.2_at_uibk.ac.at
 
-PATCH V1 2026-10-25 20:18:26:
-This patch series introduces hardware support for the Clock Generation Unit
-(CGU) and the Timer Clock Unit (TCU) found in the Ingenic X1600 SoC.
-To achieve this cleanly, the common Ingenic clock and timer infrastructure
-is modernized and parameterized.
+From: Christian Stefan Kövér-Draxl <ckoever@outlook.de>
 
-As a side effect of making the core structures flexible enough to handle
-the architectural layout of the X1600, it became straightforward to fully
-integrate support for the legacy JZ4730 SoC later.
+Two fixes for the S4 peripheral clock controller found while bringing
+up an S905W2 TV box:
 
-The series is structured as follows:
+ - the PWM muxes may pick vid_pll, which is reprogrammed on every HDMI
+   mode set and so changes the period of any PWM that runs from it. On
+   this board that corrupted the PWM CPU regulator (first cpufreq
+   transition hung the SoC) and the 32.768 kHz clock of the SDIO wifi
+   chip;
+ - the CEC 32k selectors lack CLK_SET_RATE_PARENT, so AO-CEC cannot set
+   its 32768 Hz rate and fails to probe.
 
-Patch 1: Adds the device tree bindings and clock definitions for the X1600,
-         incorporating the specific I2S handling, routing, and RX/TX gates.
-         
-Patch 2: Implements the Ingenic X1600 CGU clock driver. It updates the common
-         CGU core framework to support secondary post-VCO dividers (OD1),
-         and bypasses the lack of compound divider support via explicit
-         mdiv/nddiv handling for the I2S clocks.
+Tool use (Documentation/process/generated-content.rst):
+This work was done with the help of an AI coding assistant, Claude
+(Anthropic), used through Claude Code over many sessions. It did a large
+part of the hands-on work: it read the vendor kernel and the firmware
+interfaces, probed registers on the board, drafted the code and the
+changelogs, and ran the builds, checkpatch, dt_binding_check and the
+tests on the hardware. I directed the work, reviewed every change and
+the final patches, and take responsibility for them. There is no single
+prompt to quote; the sessions were of the form "find out why X fails on
+this board, fix it, test it on the box".
 
-Patch 3&4: Adapt the existing JZ4760 and X1000 CGU drivers to match the expanded
-         signature of the calc_m_n_od() callback from Patch 2, preventing
-         compilation breakages.
+Tested on an Amediatech X98Q TV box (Amlogic S905W2, S4 family, 2 GiB),
+vendor U-Boot and BL31/OP-TEE, Linux 7.3 plus this work.
 
-The changes have been successfully tested on CI20 (JZ4780), LX16 (X1600).
-And on LX20 (X2000), LX26 (X2600) boards (with additional, specific patches).
+Christian Stefan Kövér-Draxl (2):
+  clk: meson: s4: keep the PWM clocks off vid_pll
+  clk: meson: s4: propagate rate requests through the CEC 32k muxes
+
+ drivers/clk/meson/s4-peripherals.c | 40 +++++++++++++++++++++---------
+ 1 file changed, 28 insertions(+), 12 deletions(-)
 
 
-H. Nikolaus Schaller (3):
-  dt-bindings: clock: Add Ingenic X1600 CGU bindings
-  clk: ingenic: jz4760-cgu: Adapt calc_m_n_od() to core framework
-    changes
-  clk: ingenic: x1000-cgu: Adapt calc_m_n_od() to core framework changes
-
-Paul Boddie (1):
-  clk: ingenic: Add Ingenic X1600 CGU clock driver support
-
- .../bindings/clock/ingenic,cgu.yaml           |   2 +
- drivers/clk/ingenic/Kconfig                   |  10 +
- drivers/clk/ingenic/Makefile                  |   1 +
- drivers/clk/ingenic/cgu.c                     | 150 ++++--
- drivers/clk/ingenic/cgu.h                     |  42 +-
- drivers/clk/ingenic/jz4760-cgu.c              |   3 +-
- drivers/clk/ingenic/x1000-cgu.c               |   3 +-
- drivers/clk/ingenic/x1600-cgu.c               | 476 ++++++++++++++++++
- include/dt-bindings/clock/ingenic,x1600-cgu.h |  64 +++
- 9 files changed, 716 insertions(+), 35 deletions(-)
- create mode 100644 drivers/clk/ingenic/x1600-cgu.c
- create mode 100644 include/dt-bindings/clock/ingenic,x1600-cgu.h
-
+base-commit: 7be4bc52fd9e0e55dc9a2e0232b89427d2c4b614
 -- 
 2.56.0
 
