@@ -1,111 +1,111 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793020328;
-	b=kjvi+heVVcWiSC89mC6qmFI9O3dEYsMwsTgKd1xsikvZ2nmCJu6qxMmyxuvWCMSXTAz5
-	 o0xBlBPlA31huSkWgBDhJxvBVWc9wCbi+0NrxctpeyvI6kcLiLA6mfb6UJpIZ5xwUyPUA
-	 YMO5IEqL3T1eyatCF6w8u9W7jQZFjriyc4sJ2PlnyclpQpGNLdFf6ElGhUkAYqttaH4fA
-	 textoGvT6ze9BefG+IxtCvmDMh99CXoa3lr2oesX00E2TAckiXi42zs3dpJDkihDUfHtf
-	 t3YqY585GBBcug1JWpifMINBGqUpelFj19SY/hWNmSf5rUGCgDfFtfPN1L1slzlINVQ==
+	t=1793020737;
+	b=k1wNqwaSQIwSO7ALu9xs7ehLwVWJQndhbutEE/QIADoAEigcWe/NL7aHB+jgLnjKEyPv
+	 fMseRwrTPeUqruMBHKlQahXU1DqvMFl3qe21qn9MmQIO8g1xdSHrTUJdlUTnQ85VDiXbs
+	 yiyReHIu9yYc5IajIbZKPITndqlyq0kWBkC3hrhm4SSkHdv+IY43vuR3VPhvGcD97NK9H
+	 pb2AZ0NFw8DlnHyzQfMnPv8Fj/HeM2RvCqKIdlvCmIRFL3bwXZuyiNV3UY0cTBGdNXH8/
+	 D6au4XztLsrdFCEjdizEHB4oU5oFHDcXRSdfv4ADeZ5uHfebBwrOp4B4PMR4vUmDQAw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793020328;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793020737;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
 	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
 	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
 	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
-	 X-Authority-Analysis:X-Proofpoint-Spam-Info:
+	 Content-Transfer-Encoding:X-Proofpoint-Spam-Info:X-Proofpoint-GUID:
+	 X-Authority-Analysis:X-Proofpoint-ORIG-GUID:
 	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
 	 X-Proofpoint-Spam-Details;
-	bh=2+R0WVc8dxQdKiFF2JNsjD/7q81uf0HwLq4bflyvK/4=;
-	b=NOtbDexxbgQuKwM70pn3aw+ZED3VPC27x0bnYPaZP8jYF3p+qls0PT6IZlDYKKXW83oI
-	 1eJpvQeztZxhcLYEokV4MKNpxd//3fsk8+dwZb6poxry6pwtvHyyh0C+aC8EOSGc5Jnvk
-	 0hFJg7SkrUuVloamEyHjNrfwDB6yH5FpRUVspXOmNgj93nkilvtRDnnTSjHjr/AsTZL1u
-	 P5cK85BfkK7esXjeOII10EC7MW+i0hC0/KJZTuaMpYaF2Jebhew3iz8CrhDyGOnANHVIz
-	 gCpZ8fTk3AsQU2+anNmn4wTFQOI/9cAn6U15C2TQZTCKabpar/EOIC6T4CPMpCdApYQ==
+	bh=lMyf20BlZ1h0WZ9ePXYbEch50SKh1zOCdibpTfZjCDE=;
+	b=E57ePa12zFNzG7GQHfSKQR5WeZ7Se6jb3MPoH8dcOWoaRDKv7UP7UrLi9E+jCHFZ07gJ
+	 wZ3ubMoc731vUldfnkdzk5XLrA6PbsvTOLWUrwcK6CKKdufvkpE7+nZQzp0l5XaipZog3
+	 H9qxrx03YpiMChppF2L+Fi2PZdmlotTe5Pz++Qm0FWhURsmd+/SyZAKoQiZ3qTQJ27Gwr
+	 Zgl/EN+ZbQ08K5+LSNYqtKgiA/EX4BIDvoKtzzod0Vf6BWgJc888F1A5kUB6u8a+A9W1+
+	 nKwTu1t70Dw77pUYEXmYgx2gGjEDpxnx7rOqkFaKrGszR5i/tMg7iDxUG7wzm+EwMsw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=AMKFgxSe;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=QwO3z7rc;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=NGFEk8AC;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Ajt8vyrW;
 	arc=none smtp.remote-ip=205.220.168.131
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CEF606A320
-	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 13:12:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F2CEF606A320
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ADA606A321
+	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 13:18:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 99ADA606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=AMKFgxSe;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=QwO3z7rc
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69QAtNZ72542001
-	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 13:12:07 GMT
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=NGFEk8AC;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Ajt8vyrW
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69QAta4O1548003
+	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 13:18:56 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2+R0WVc8dxQdKiFF2JNsjD/7q81uf0HwLq4bflyvK/4=; b=AMKFgxSeuegHHZN8
-	YrT7ACUt4stSsxsEmR90KoI/4kYGEMrx0EEbKStDk+nT3aWJ379akLCm44Gy5MLa
-	xd2wBglGKOnnpfoSNI7DZb+EfSvwZf6KAUpb8spcbhZX3QRKhqXecACR1bS5nVKD
-	bRX+9GJq8kdiPygSOYZYB5hTFn0meW65G9iATJO7fJAxd+PnPVaHz9VOihUx6DrR
-	ZTyqWR3H3Un6NSp7kHKJSvIt+JeATgIN/NXC0LzNfbJbHqLSHtZbvxy8gYZtOXSi
-	rOcfHQSENP9Q0u452Km/53tCim9tRTy5PmyPuLgLS7PRDbxbh4tIG5tasth5V5BA
-	s+RD+Q==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hhsjdajns-1
+	lMyf20BlZ1h0WZ9ePXYbEch50SKh1zOCdibpTfZjCDE=; b=NGFEk8ACpJBSGqlN
+	l6Rk7apbp/vgUNssfJ0pPDQN1vPFwmiO+HNLvgIbC4ymQrEnhQLmHGTc8fh/lLZK
+	J4QgEVzB1cSkR1kPep3qiBeHAhx0Nc0SJJ99GDynyEl9JCJ1cEwHSrLh4g6MaE1X
+	9KMCRLDACZBmK4GVohrpX0Ud3OFIQzV8/2vEwstZ7qinPZ3WzSk4GEN2xbEXB/xs
+	Qi16szDSyqB3V6rKPiFt7GWbcHGt7MJ3blA7OwQ8zm+PsKYS/wa9q02Wt2aT0V+6
+	q6ukTSUQy73h8BIEuk964CYqjJe11YcEYBI4FKF36PmfcnSC3nMjr2MUwQ/q0Vv1
+	HN6G7A==
+Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com [209.85.222.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hhsgstkew-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 13:12:07 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-93edac58b24so83892985a.0
-        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 06:12:06 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 13:18:55 +0000 (GMT)
+Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-988b7a28291so46428241.3
+        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 06:18:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793020326; x=1793625126; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1793020735; x=1793625535; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=2+R0WVc8dxQdKiFF2JNsjD/7q81uf0HwLq4bflyvK/4=;
-        b=QwO3z7rctoZyNVb77UyM7lmsLgdXdgja7Y11/samwFYMM4FSAgKMbppDigG+O5t/8c
-         xckpr+yVvY8GOeMKhiQn6VpllR/mPIgHfAkTF5w3oMIO+/TwrkSedjbUjcwdcRpzyBTA
-         /hbgATueUXcMrZ4OkQ6f/0VqxojRNTIownqld6Sf6swvYDGOqaMLLQQZ//DCRac0Geqm
-         H/RlgiTp/Q8xDxjAvcJInxlI1KyHn5dqn60G+KEBEZZA5vYf6ifhr0tMYXdsYog08xzp
-         FENnCpLp5wL8JI3MCeDYx1EITZD+03+wafxwy8T1otjzPacPePLMMtjOAvuQcoRt+KX1
-         sAZw==
+        bh=lMyf20BlZ1h0WZ9ePXYbEch50SKh1zOCdibpTfZjCDE=;
+        b=Ajt8vyrWCeNj/FHHFBZJ+bOvhLy0eg7Fa3Uy3Lb5bntMSIDcLjzGiJE1JcpJzejkat
+         4qJfEmy4KCK/dC0kZG8zEdORzC+wzTNWKVNAsbeT/kNr2xuOEKaNjRYECtR5MwdzMq/P
+         /e+p8+P6yGODPFdwVm6N/NSgv7egb7e9aWtql69th+G47Bc8DBkqEXQqozytAQDXA4ir
+         G6Oh6CeBkw4RDtJmK1SB6JV7HO74P+VhB5PrucHvvMVD5CoW86Ru+NSgQiW7gZPLpfin
+         cu56JO37EgaOSle+DRywBgnXE5wdw2H0IID4suu9NjLBS2Qcb+J6qm3O1hKp5LC35hC9
+         JEAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793020326; x=1793625126;
+        d=1e100.net; s=20260707; t=1793020735; x=1793625535;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=2+R0WVc8dxQdKiFF2JNsjD/7q81uf0HwLq4bflyvK/4=;
-        b=XPt+A3Pyho3piF4hEyCjqiJGJ7j2PRR5GZ4udXtwQIh0WA+7fDIXTLYdwn/KonIO2u
-         Bsbh3w6bsZ4lVhLNHnIJA4E3yYCuA7TDjotL35AEzPRMarhqC0AuVtUDgpoPROBz4hJ7
-         Z+TfpEwP6nsjTsobLn/UhdCRZhEbhklXjVP+KAxBXD7erFmMFRtK180t/ltlc9ddOpPW
-         CHy+1fIs4YyYkSnjhSQUqz+Py8g3XBB5Warxzh77CKtEFck+/1sHGn5NQd3rT2IOQzUf
-         3GRFhaGWUEF+I1nAHCzrBD6WgfKnp8rSttWmF3qtIVlFRr+ifkj28taxnVZDrNNXMOUs
-         cRNw==
-X-Forwarded-Encrypted: i=1; AKwUvBwL1JZPmRiaHkbhGGyDxw4MJQt9sghzrRzxZmICiyNtu4bU1L1dE13rBl1CqATwrXnT/S3R7N/kmmU=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLgTAohav/Ig5ZB9RV4OlNWp8Br/bpPeNmmaZla+e19X/vMBy+Y
-	/R523m7+IuRKm1jSIMCGpqkChKN06uQgYDRnFGPRi7gT8jxzNTtG7/eTkFmuD5MI6wHGyo5a5zr
-	pAc15wA8iiD4Xx0NHSLx2IgI0GqrN9cMT5rmSt1IK/OuS5Tljw+kM1TI2WQM5b9E=
-X-Gm-Gg: AYBFou09iBqRCEalCai/81Hmv6HVaIXgM1PB7WP6bQtiF5vf3gktrYJ8XMK0fz79Tjq
-	FPM7UoCi14bxTw7Rv6bcDpsbU1g6xhCEy4PWq8YfQpJ+icoz/SiXbyLM0M4Txd/a5nMBXMDjmFn
-	LbdbbPzSdGdDSL6KoV8rdcAUs6IAGZTaeLgtms6aVzoAzdw73Yr7UyG8SYP1e4UO4WVIMp1vZ2+
-	Ys6WYebRJfZg5fx9v0JaF8+9XTiAeGCaaWQfnu6J75UFOXg3rg6iKM3vmrlIsDAF2gB0PU6+QbC
-	sZS8YBUadYHrfx/hmFUZtmDJ3iDrxeiC/jQ/cweufVDg453ZTxSMQmI0lQf0SbbKbot14cgLbUE
-	yxCWhOvJx1kai/J4a7B3ocA==
-X-Received: by 2002:a05:620a:4e84:b0:93a:ec4:e5f2 with SMTP id af79cd13be357-940ef9710femr1205344885a.6.1793020326035;
-        Mon, 26 Oct 2026 06:12:06 -0700 (PDT)
-X-Received: by 2002:a05:620a:4e84:b0:93a:ec4:e5f2 with SMTP id af79cd13be357-940ef9710femr1205338785a.6.1793020325533;
-        Mon, 26 Oct 2026 06:12:05 -0700 (PDT)
+        bh=lMyf20BlZ1h0WZ9ePXYbEch50SKh1zOCdibpTfZjCDE=;
+        b=fH9hnHxNnOGtmfyIkvzeNEAO5F/S3IpBcmjq/S4nCJ2toWU9KkyIOdTJJw4bWddZLk
+         1wPgGbJdK6gD0bcST9X3B1oN70QPbZVfcn1hTjAtsZrSAQnsNZ/eK7lni4WmU9SXyNyf
+         GDntkZABxS4kGE6F0vaUsyXNRXPKMWbzEbb6DJ5IivblXolRzy9hZ7FSFS5hPxShV9Vs
+         ht+0/1khSZK/nisG+2McM4uIM9LxOr2RAfwiZU4AObfm02h44EWdgqcOsNPTce1SewMd
+         odfGl61Iszie2j3SqfNO+uT/R4g55g3gyStbbzwKQoB0SxXP2kWcxGgJv2TNG1JC6eKL
+         9J4A==
+X-Forwarded-Encrypted: i=1; AKwUvBwMoryB3NY2jX/03i+UsiXdrCQx6IGxP4UdBftdgqwCrZlqyNXcnMXeV0F2W7/rFOtcJdxkAOdM044=@vger.kernel.org
+X-Gm-Message-State: AFq9FYK/iXOvxs2zOzy1v0xNBGuVa7JXZjqSLsZtnqSjCX2ai/O6BqJe
+	3ArRYMRP3tgi9IQrqFleWSOBFPpAKbyDPeVA9tiCM/B5t4+RPfYZ8zoSRj/vAllx1OjAV/6RtNO
+	cw5zfgjCdheC4p3yluTOeYFLBf2aG9KdxL6RNFtk59cT9EGR/bXPp0nR8TSAB25M=
+X-Gm-Gg: AYBFou1MHLL3DPGrJwU1YWJwUVBA9lYYHwRN+lcTdbaM8uK/qlC/uymL8M6CY1OjTJs
+	x2Ma6tVp9bd2UF5BVvWpdjXm+lL3ulHSCHbxAUnXH//QiHCWElz0GankipaS29kT+Gxs9bQItup
+	MaQPpczQ4NB+vy+i7cBJWkXNoBhqjwmhBYTnp4+bIKDJxKEopP4soSo/cetLxxOxpuwT/YG492d
+	zZCTADO2fqwQzuHISDhMK8oWbBsVmcnfY+tFoi2FJpZN9u69JBhZEBIX3+142Chqiv/+k8kCIwC
+	sLMp88G74VS3tzmwQyqg6tUndKmHyrX+7ooSjAk/vfr1AKpd9VmpHoecW8MM7Oicy7kKBGtuUuA
+	WSJU55EM8+cvHQn3gucfZTg==
+X-Received: by 2002:a05:6102:8182:20b0:7ca:21e4:8e20 with SMTP id ada2fe7eead31-7ce5cc7fd58mr1562766137.2.1793020734802;
+        Mon, 26 Oct 2026 06:18:54 -0700 (PDT)
+X-Received: by 2002:a05:6102:8182:20b0:7ca:21e4:8e20 with SMTP id ada2fe7eead31-7ce5cc7fd58mr1562727137.2.1793020734298;
+        Mon, 26 Oct 2026 06:18:54 -0700 (PDT)
 Received: from [192.168.226.26] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b445984c99sm3707047a12.28.2026.10.26.06.12.00
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b445984c99sm3713290a12.28.2026.10.26.06.18.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Oct 2026 06:12:04 -0700 (PDT)
-Message-ID: <f0ca2bd4-851e-473d-bf21-678cf964f854@oss.qualcomm.com>
-Date: Mon, 26 Oct 2026 14:11:58 +0100
+        Mon, 26 Oct 2026 06:18:52 -0700 (PDT)
+Message-ID: <343a80e4-8880-4faa-a60b-e3025f2ed40f@oss.qualcomm.com>
+Date: Mon, 26 Oct 2026 14:18:50 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -116,7 +116,8 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 02/16] clk: Acquire resources for clock transitions
+Subject: Re: [RFC PATCH 00/16] Centralize the ownership of power rail votes
+ for Qualcomm clocks
 To: Jerome Brunet <jbrunet@baylibre.com>,
         Konrad Dybcio <konradybcio@kernel.org>
 Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
@@ -138,91 +139,97 @@ Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
         driver-core@lists.linux.dev, linux-arm-msm@vger.kernel.org,
         devicetree@vger.kernel.org
 References: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
- <20261014-topic-qc_clk_dvfs-v1-2-3041b788e9f7@oss.qualcomm.com>
- <179275170360.4070168.11650113664838519061.b4-review@b4>
+ <179275170360.4070168.15401690927522463377.b4-review@b4>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <179275170360.4070168.11650113664838519061.b4-review@b4>
+In-Reply-To: <179275170360.4070168.15401690927522463377.b4-review@b4>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: yfHdSoPKloOtT9muZpOvZXZFwJ6R5AyA
-X-Proofpoint-GUID: yfHdSoPKloOtT9muZpOvZXZFwJ6R5AyA
-X-Authority-Analysis: v=2.4 cv=a4elZkSF c=1 sm=1 tr=0 ts=6adf51a7 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI2MDA1MiBTYWx0ZWRfX86LKwWUUAXEn
+ LPvZShnC6E0mds4wwYktjc3i8rU7CuQtqpeDgeMGBEXYnz2vBD23d+ROxGOyZ+SO091zu69KCzf
+ acAAq3CmV0mfXJlwBVARQWRANXX5v+M=
+X-Proofpoint-GUID: iS9Oe-sImKwZYXvDROgqgtmjRGn8Mza7
+X-Authority-Analysis: v=2.4 cv=c+8+0h9l c=1 sm=1 tr=0 ts=6adf533f cx=c_pps
+ a=KB4UBwrhAZV1kjiGHFQexw==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
  a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
- a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=Hc6wbZxCDKPXCg-kSLUA:9 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI2MDA1MiBTYWx0ZWRfXziqcGkwmVD0Y
- MyCizPh3pFnecJHB2aafMmMCpBZWtE+ICImtF18NUfwPD9ZZbPUDIdgxhEg/J6eRS0o/ogrEU3+
- pAqQeGkNM1G/+P3h8Cd2/fUdimUlQJU=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI2MDA1MiBTYWx0ZWRfX95I5oegSgdM9
- 4DBiACfOCNQPG42HgZ5wmheYVN9F3+6suHOcTUImxp1YVOr7picD7za9XpI8+PWFH4LbzUADPgb
- RCO1wa5AI9b8iP8S2W3T4BFUpNJMD4nmrcNljRgXoPZJQ9FSyvi8HPA2cgw3AZt3bG174JS+p4C
- tAuVXeSF8p8bm/AEDuE01LeY4A6abx3htQ6o4SIzZmPdgyo7je7gB1phqLEua94J41M5hW3S2J2
- AqK4EUQF2KLZhmHa4m8PHs/9g/vIUoJASVX3V3xKbSdp276Ht4phcS67MOz9u6zKif/7IdhIOn5
- Et+e25bUy/pWAyg7ZtwURdOvAG2OrLNXcyvGcaju0bdzSjKfj+njLqU3sZ1KceSiRGCqemIVuQ4
- ngAdxPBTN1dTn2gxhr5NG/eHrz6zbCrPyNZnTSeVGkdNz+kVHJQycugkjq5yRhjei7scltiAI/Z
- vtPAE2VVBOeTFSmjBHQ==
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
+ a=m6TPRz_fCz5u_OYVIq4A:9 a=QEXdDO2ut3YA:10 a=o1xkdb1NAhiiM49bd1HK:22
+X-Proofpoint-ORIG-GUID: iS9Oe-sImKwZYXvDROgqgtmjRGn8Mza7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI2MDA1MiBTYWx0ZWRfX1v9r1hiqeG6q
+ jO9zNyLlC35+7W7Vobf4aw4IEUocjdXhdk7QbLEAD6fl1tRCsCWclbuWkd4pcdYbmYVI6aZjo3x
+ Pc4NgEj2gkHcxbME6M5e7xpyK0gQbfo49Bnzo0DFbymP6XO+Zr6FpGLZnesOPSv9Tj4Uni7Qcqy
+ pciUqNkiXey6myjqTwlo2t89w2Sa6YrozdRlVRaQq5VeOgw7DSt1HxqjGlXi/VLSe+H+dvqWAw0
+ ZxSsIfwSJseLdxZoxukuuLPMNIw7T/r2zCMF6YiJVzbeP/Y8/xqrv9mcYi+/ztJUxt6WK9ncXrn
+ D8uKnOvhSlCX6n8pMlgHLCkwBmn+lPqjVXuSL1ayBOqFd17Bel6WHvKKVgYr5krToTppO4Rwbz9
+ gDyOU4Rh6md0jrCHLFYYQZPoxvBpfILGOEvG/UiXXFmB09NRklWlduUOvWupOtvQRgkSEGxutHJ
+ i2wpumAyBFEeG0FyHSw==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-10-26_02,2026-10-21_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610260052
+ malwarescore=0 lowpriorityscore=0 clxscore=1015 priorityscore=1501
+ suspectscore=0 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2610190000
+ definitions=main-2610260052
 
 On 10/23/26 12:35 PM, Jerome Brunet wrote:
->> Preparing a clock protects its current requirements, not the resources
->> needed while changing its rate or parent. A transition can temporarily
->> use both parents or access an unprepared clock, and a parent rate change
->> can cause other clocks to be programmed too. Raising resources one clock
->> at a time leaves those operations exposed to insufficient power.
+>> On Qualcomm SoCs, both the PLLs and other types of clocks alike require
+>> specific voltage rail levels to operate in-spec, but through the
+>> separation and decentralization of clock and voltage votes, these
+>> requirements are often not met and are never explicitly stated.
+>> This results in clocks being undervolted, or at the very least a state
+>> we're unable to reason about.
 >>
->> Failures make this worse: hardware may already have changed when the
->> operation returns an error. A matching cached rate is then not proof
->> that resource reconciliation finished. Retaining a temporary enable
->> reference without a corresponding prepare reference also breaks a
->> consumer's normal disable/unprepare sequence after a failed reparent.
+>> The devices consuming these clocks very rarely have their own
+>> requirements in that regard. (1)
 >>
->> Make CCF acquire the affected tree's and parent paths' resources before
->> notifiers or programming, and reconcile them only when the walk stops.
->> Keep fault recovery independent of rate shortcuts and subsequent
->> consumer reference-count changes. Require explicit recovery of an
->> ancestor's uncertain parent selection rather than reporting success
->> from a descendant request.
+>> This series moves the frequency-power_domain-perf_state mappings inside
+>> the clock drivers, ensuring a single, trusted source of truth is
+>> established and that the silicon is no longer driven at out-of-spec
+>> conditions.
+>>
+>> To illustrate the nuances involved, here's a couple examples of hidden
+>> dependencies, as found on SM8650:
+>> * video_cc_mvs0_clk requires LOW_SVS to run at 900 MHz, but the
+>>   PLL it sources the signal from requires SVS (higher corner) to
+>>   produce that frequency. Similarly, to produce 1140 MHz, the clock
+>>   requires SVS, but the PLL then requires SVS_L1.
+>>   Analogous story for mvs1_clk.
+>> * gpu_cc_gmu_clk requires MX to be at SVS to output 625 MHz, the PLL
+>>   requires SVS_L1 to produce that frequency.
+>> * A number of camera clocks follow the same pattern.
+>> * Additionally, some clocks like cam_cc_cci_{0,1,2}_clk require
+>>   MMCX to run at LOW_SVS, but the PLL has the additional requirement
+>>   of keeping MXC (a wholly different rail) at SVS_L1.
+>>
+>> There's a broad agreement that a consumer should only have to care
+>> about the clock it consumes, and that configuring its parents is the
+>> responsibility of the CCF. Requiring the consumers to care about the
+>> above cases (as is the expectation today) is a clear violation of
+>> that contract.
 > 
-> I don't think all this is necessary to address the problem described
-> here and in the cover letter.
+> This is a fairly bold statement. Yes, the CCF's task is to make it as
+> easy as possible for a consumer to enable, disable and set the rate of
+> a clock, and I agree a consumer should not have to know what the
+> parents of its clock need.
 > 
-> IMO a new provider API is the wrong layer. The framework already has
-> the hook a provider needs: the rate change notifiers. What the core
-> should do instead is fix those notifiers, which do have a few issues.
-> You are fixing one in patch 1. Another fix, about setting the parent,
-> was sent recently:
-> 
-> https://patchwork.kernel.org/project/linux-clk/patch/20261021-submit-clk-parent-abort-v1-v1-1-2936181822fc@gmail.com/
-> 
-> You want to act on some changes before anything is programmed. PRE
-> notifiers are the right tool for this. The user of this change in
-> patch 7 could use them AFAICT: PRE sets a temporary vote, POST settles
-> it, ABORT drops it.
-> 
-> Also, what is acquired here follows the requested clock. When an
-> ancestor switches parent, the chain of its new parent is not acquired,
-> although it feeds the whole subtree after the switch.
-> 
-> With notifiers, the parent fault state is not needed either. As it is,
-> it blocks every request on or below the clock until the same switch is
-> retried.
-> 
-> Could you tell me what you need from this approach that cannot be done
-> with (fixed) notifiers?
+> That does not make the framework responsible for it. Taken that far,
+> the CCF would become a de facto platform coordinator, which it is not
+> meant to be. The clock driver knows what its clocks need; the framework
+> should give it the hooks to act at the right time, and stop there.
 
-I'm a little worried about the ordering there, since some device
-drivers may also be registering listeners in parallel, so we don't
-get a clean split of what PRE means ("has power for sure " or "may
-not have power")
+I think we are more or less in agreement - especially since this
+paragraph of the cover letter is not really faithful to the 
+implementation (since the ACTUAL voting ends up in clk-dvfs.c, so
+essentially a driver and not the framework).
+
+> When coordination is needed across devices, there are dedicated
+> frameworks for it, like OPP and genpd.
+
+Right, in the specific Qualcomm case we heavily utilize all of them.
+For the problem I'm trying to solve, the clock controller is the
+"reason for the problems", so its driver gets to carry the heavy
+wait
 
 Konrad
