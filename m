@@ -1,60 +1,105 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793015511;
-	b=u5B2Yzr1FQypuIKjqHUTEOFfaMHlY5Z+/yOpOvMBw7ygze3SKXwc+GiyHpFY5WEycmeK
-	 D8fbDm5h7MrmOYiZiiYy1PpBZdIc9IYapvrMo17HaRwzDH5EQ68ecYyakyIPoQBCgN5Re
-	 ielY3mUA8f9/kUECcFRTyJBcPJXTc/33VycouIU492c11wFVHtGRM/Zg+khzbdCUMtMEX
-	 k2gkg188H9wvPlkJmStTPUnY+w5HeLqcYxV+0B3n4Vgd5ajQCCTsgC2zXZm1G1tmHkOwQ
-	 Q5xLjJHbTpuZnSWjtzMorQMdK7zBO876XAf/bprnsEWtJ/RqyXhSI9G036HtO60u31g==
+	t=1793016573;
+	b=Qw3YK9N8qtIck+pXhwLRWYe26yIizwbmdUO4Vn33ow5f4qKMnMy9a2HxzA9ELxYxbZ/e
+	 Hv8hYdCucr0X6N7ZgChPq0dBo6o0rP8DKAFgrhOjOENiYUjdLf5dZ5PQA61HW0xmhXtZ5
+	 tQPsJ3EAdsuxTYbPCWOgP5nWt0BblaUw+R5cZ3JUT0m0BjTeaYS6udp3XnBdifJt+lPg7
+	 3K6mcBmN91j3mhsGdcbXXGjbzRVAnNnyEPvk0be2mKguqIXKCBoNdThH7GY+NhZcreIEG
+	 TKLflk63uzMjxqYI7Melxl1ql9qe/Q3hCkWO2IzsMmhQYHru7Vd5/1t56DbQCR0XtHw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793015511;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
-	 Content-Language:From:In-Reply-To:Content-Transfer-Encoding:
-	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
-	 X-CMS-RootMailID:References;
-	bh=YinZmgUxjrnzRHvPSk376pdEtqCxovYcrJWpuvmDrIU=;
-	b=E3AkAWCBxOQXCUmiYg+t+0s7yzkeXcRlUWB6t4QtJ6e+rm2Al3yp0fNtdAOoVPINh0dF
-	 WwxLWmeBMOxLsZH09+0d8A30Wk+nNnZi31uqgQQ5pAQcdLlZzq3Q1Po961m17d+6/AHZi
-	 mbGwF/UIflWgH50rVLnTwIo0oHGnR6gaXzhy5vDpHbml/ZPBhUKe4gIarH7R7T/0C+/rU
-	 Za4A5C5aUkZvNd5Bsx4S7fcNADLGOe4K35doXyWG6/9MxMBai4wbIkohjjJZamtu65ofC
-	 aNahUYVqNjP5lNd90k7aCjOGQMikDv1qihA8EpT8Fqv83kRTw9El1tdqPLhX48JTFlg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793016573;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=1XPOBam7G51rl7n3GTaB7HD60REecu6em+DTE1e8j8E=;
+	b=xZdKnwQmpv8eS8T9HYq2CtPR1MiYQ8Fo3ZdgHP+E0if+c88rFzzdhsF0WxLw4bP9qw/H
+	 JoU+lfqSZQnL09331do+Nwo4IxaisRKYyMAbtcpickkzlqE7T4xWW3DzUeDdmXpfIz4LL
+	 8FK0+yEslLzbZz7p5Cd9cJCBHWMwc3r1vA+wVbdEcCMTF37QzyxoJT4yGZJYMgl/CRaaB
+	 lxt1yztFxCazqQubkHxoENg+Pdfw4l/UJ/BZI+sku65glaOcGYYHvpPPWSE0eVM8XQe/d
+	 vAOnE7ivmeBHznKhdz9sSJ5q9WGTJP9cftMou+lLc/7Ee3OovIIJc5bPNYhcpj9WpZw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=by8wIive;
-	arc=none smtp.remote-ip=210.118.77.12
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=IOOm4Ef4;
+	arc=none smtp.remote-ip=209.85.128.46
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9AA606A31E;
-	Mon, 26 Oct 2026 11:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DE9AA606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC28606A31E
+	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 12:09:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2DC28606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=by8wIive
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261026115147euoutp02fbdb3f86653841ec23ac907b4075263c~iEhrNO3qA1071610716euoutp02j;
-	Mon, 26 Oct 2026 11:51:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261026115147euoutp02fbdb3f86653841ec23ac907b4075263c~iEhrNO3qA1071610716euoutp02j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1793015508;
-	bh=YinZmgUxjrnzRHvPSk376pdEtqCxovYcrJWpuvmDrIU=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=by8wIivew9pTDGPoTkSG52zplLXz983sSizV/qELERWT5oVuqIgfot3/OW9BIxyJY
-	 zjI5cpv21ITFG69/U1uaImy/AyfYRmMZu4B7Mvz8fVXbcYDMm3KpeMYKk771I84KLW
-	 x3cAa4RB6ZuCbhrkCDU0HDDD8oZEU5jT9jLs0Ptk=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261026115147eucas1p1d8e71671cd33ce5a03eea64ec83a33b8~iEhq8pjZd2047620476eucas1p1N;
-	Mon, 26 Oct 2026 11:51:47 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261026115145eusmtip2e7bb4ae4c9084dd2b3cc1944364155c7~iEho0S8Av1075710757eusmtip2l;
-	Mon, 26 Oct 2026 11:51:45 +0000 (GMT)
-Message-ID: <1e4f872d-6b3c-4091-b570-0a9b0b501773@samsung.com>
-Date: Mon, 26 Oct 2026 12:51:44 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=IOOm4Ef4
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4a218c463d1so17420615e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 05:09:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1793016571; x=1793621371; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=1XPOBam7G51rl7n3GTaB7HD60REecu6em+DTE1e8j8E=;
+        b=IOOm4Ef4YDTqKiGToDXLmbxqjqQL1TIvvhk4ERP/ch8VUtWXD3OyfF8p+pG1NnZ5es
+         1JHByO622WHqoByvRR3qc0KFrjoNSLhPEtS/e6kyE2qtkHRZz+YN2uKJHltG52/MjNXm
+         S2Xp1R+AzbvgHiV1DFxRvyUasvOfVknS+PARmwyTg1YfamwiJqi8gNiAv8JQkVbHaD2d
+         nSgxiGBhnWjdv/Fh0lRfRyOzDgRES19kECggb9GYwIDWimthSxLb/PxGfdWNh94HkxiM
+         Ft3YgjyPk//uVZ32BqWrkLlgSF6k8mLAXe+x4dTxhU3cibtdeFvxARYLlkOUJFBfKfN8
+         +VdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793016571; x=1793621371;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=1XPOBam7G51rl7n3GTaB7HD60REecu6em+DTE1e8j8E=;
+        b=116BhAtI3RCag9ZlC+K1vkD/BpO5rYzWEee/huDsBEJOrfGgvwhKqZAP1Dp2EWCKue
+         +IEeoIXWLx2pf3vpRWycT25gY18wVEzhBvnuy20QzIO81xORCTr32D0v0SX9bfWXCi2b
+         oRUziGxN7D3yDT57MQJSVrM0XNkEzLu5KajT9Kd0jCJHlzq6rhRkfUC4g/F2O0fEhW+h
+         c/EVmGYOHZYtkKm59M6vZnoSwZCaGGa59Q3GRdy5CafZ4NMGwWsBoEFIL4GI123fjVfI
+         geaOvTBzytAUCf93shVOVOpn4+sTIm1egYuVN7dPhhxAVkqSWXx3znMeLoCinaEM6U/R
+         2kew==
+X-Forwarded-Encrypted: i=1; AKwUvByKVIi7xRH9kKwrtyjKwrJXzhJZE9AHjbQFtnqhwJB+mwgB7iY12SmHBGotbR3Lero0djiw6ciFLs8=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIZA/MzD0G/pSNdh/fOE1D//apwI+t7NlzhFdN1Hhkpfpwcwllp
+	9N8HDgvqhzz8TS1dXk6mEz6s8VlGR2WEAgTxN80uMfyWoWTpsRvOqeD/
+X-Gm-Gg: AYBFou0sEHayn7kGUk2jXT1Axaz8CrT7+LUEdvJwrgbeIThC1ylANkSbKLaBKqqMYjK
+	7hGlz9MRhKTMSoKarScO6t+scPa14kCj3pxia12hpv8UTGkETh3th26LsHZeSKdF9ViMVPdjQ7X
+	ZgwM5ErafrTltOQt/hCaH2liaooTRhLskUdTIfQ70bs4AOvo1cRDRTTHhyvz6KkkbLq6sti6+jX
+	yTPtH0hsk6o7c0dv1bTgQs7/xzoaKR/5nptdPrJtp0me4s3jxAjJzGVqp/rFGbHlHd9Oqbeg2lh
+	kfSi1MXekknpvMgAq3CNBMujV+SPwFfx2swN0zoswPUPS7ENHtI7TFcPsNjoTUgbqQtHva0HOno
+	P53RVPWJhn8m1i90CFT1en99pHxntPBBoyc8VfuQwwu+cHfIaP/VNdN9355gR6D6CDbFPyMlXdM
+	8JOZR60x3yRjazC+O8VzotNVFq8/NIL/17e/YwW35A+ZzzORgrVqSmzTz/ABpMc0jF/07cYqFNi
+	hBzxjpQ5W60J4gIaEIzVZ5DgtjPHNmUJFwzE5OgLwbLVu6JQG7vEJu4hNWn4F/wC6d7A5FA9a1L
+	1pIqK23WyCl6CZKUO+oT0QEAQbszB8haBl0y9eG5rwBI9W9qyvtRJBqbQWHF262/4E7SpMlMKsO
+	8ycZU
+X-Received: by 2002:a05:600c:8b86:b0:4a3:59c9:a754 with SMTP id 5b1f17b1804b1-4a35acb17bfmr117309135e9.22.1793016571251;
+        Mon, 26 Oct 2026 05:09:31 -0700 (PDT)
+Received: from threadripper-fedora-workstation (dh207-14-234.xnet.hr. [88.207.14.234])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a35a00e1b0sm152200695e9.3.2026.10.26.05.09.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Oct 2026 05:09:30 -0700 (PDT)
+From: Robert Marko <robimarko@gmail.com>
+To: andersson@kernel.org,
+	abelvesa@kernel.org,
+	sboyd@kernel.org,
+	bmasney+clk@redhat.com,
+	jbrunet+clk@baylibre.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	konradybcio@kernel.org,
+	taniya.das@oss.qualcomm.com,
+	ansuelsmth@gmail.com,
+	john@phrozen.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Robert Marko <robimarko@gmail.com>
+Subject: [PATCH v2 1/4] clk: qcom: ipq-cmn-pll: Correct IPQ8074 NSS NoC rate
+Date: Mon, 26 Oct 2026 13:08:12 +0100
+Message-ID: <20261026120920.1667982-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.56.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -64,112 +109,39 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 11/21] drm/bridge: inno-hdmi: Add .mode_valid
- platform operation
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Vinod Koul
-	<vkoul@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
-	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrzej
-	Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, Laurent
-	Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
-	<jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli
-	<luca.ceresoli@bootlin.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Andy Yan <andy.yan@rock-chips.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Emil Renner Berthing
-	<kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Paul Walmsley
-	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
-	Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>, Jerome
-	Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, Marek
-	Szyprowski <m.szyprowski@samsung.com>, Maud Spierings
-	<maud_spierings@murena.io>, Graham Markall <hello@big-grey.co.uk>, Icenowy
-	Zheng <zhengxingda@iscas.ac.cn>, Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	Joshua Peisach <jpeisach@ubuntu.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <6458508.5fSG56mABF@diego>
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261026115147eucas1p1d8e71671cd33ce5a03eea64ec83a33b8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260929103229eucas1p2e440f2ec00fdf7986eed7597674bf6a9
-X-EPHeader: CA
-X-CMS-RootMailID: 20260929103229eucas1p2e440f2ec00fdf7986eed7597674bf6a9
-References: <20260929-jh7110-clean-send-v5-0-82b4d8e3c6c7@samsung.com>
-	<CGME20260929103229eucas1p2e440f2ec00fdf7986eed7597674bf6a9@eucas1p2.samsung.com>
-	<20260929-jh7110-clean-send-v5-11-82b4d8e3c6c7@samsung.com>
-	<6458508.5fSG56mABF@diego>
 
+The IPQ8074 NSS NoC bias output feeds the GCC NSS NoC clock without
+a divider.
 
+GCC and SSDK (Qualcomm vendor switch driver from SDK) both configure that
+clock for 461.5 MHz, while the CMN PLL driver reports its parent at
+416.5 MHz.
 
-On 9/30/26 12:19, Heiko Stübner wrote:
-> Am Dienstag, 29. September 2026, 12:31:08 Mitteleuropäische Sommerzeit schrieb Michal Wilczynski:
->> inno_hdmi_bridge_mode_valid() validates the pixel clock against
->> hdmi->refclk, but that clock is optional and is only present on
->> platforms that describe a "ref" clock. Platforms where the pixel clock
->> is produced by a separate device - such as the StarFive JH7110, whose
->> PHY is both the clock and the PHY provider - have no "ref" clock, so
->> the check is skipped entirely and every mode is reported as valid.
->>
->> A mode the platform cannot generate is then advertised to userspace.
->> The subsequent modeset appears to succeed, since the atomic enable path
->> cannot fail, and the display silently stays blank.
->>
->> Add a .mode_valid platform operation so platforms can reject modes they
->> are unable to drive. Platforms that do not implement it are unaffected.
->>
->> Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> 
-> In patch 19 you add the jh7110-inno-hdmi-phy variant of the phy which
-> registers a clock provider for the pixel clock. Isn't that the refclk you're
-> missing?
+Report the 461.5 MHz output rate so consumers see the correct rate.
 
-It's the same clock the controller already consumes, except it is not
-the ref clock it is the pixel clock and on the JH7110 those are two
-separate clocks.
+Fixes: 4e36f8ab45c4 ("clk: qcom: ipq-cmn-pll: Add IPQ8074 SoC support")
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+---
+Changes in v2:
+- New patch to correct the IPQ8074 NSS NoC bias clock rate.
 
-From TRM [1] table 5-3 page 530 for the HDMI block:
+ drivers/clk/qcom/ipq-cmn-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-u0_hdmi_tx.clk_mclk   <- clk_hdmitx0_mclk     51.2 MHz
-u0_hdmi_tx.clk_bclk   <- clk_hdmitx0_sck      12.8 MHz
-u0_hdmi_tx.clk_sys    <- clk_disp_apb         51.2 MHz
-u0_hdmi_tx.clk_ref    <- clk_hdmi_phy_ref     24 MHz, fixed
-
-and in the Source section of the same table:
-
-clk_hdmitx0_pixelclk  <- u0_hdmi_tx.clk_pix   max 297 MHz
-
-So clk_ref is a fixed 24 MHz input, while the pixel clock is an output
-from the same block, which voutcrg then routes to the DC8200 pix0/pix1
-MUXes and the DSI TX clk_dpi. Calling it "ref" would be wrong.
-
-There is other reason as well. hdmi->refclk is fetched with
-devm_clk_get_optional_enabled() so it stays enabled for the lifetime
-of the controller, and init_hw() passes clk_get_rate(refclk) to
-inno_hdmi_i2c_init() for the DDC divider.
-Applied to a clock that moves between 25 and 297 MHz per
-mode and reads back 0 before the first modeset they would enable the
-pre PLL at probe and compute the DDC divider from a meaningless rate.
-
-[1] - https://doc-en.rvspace.org/JH7110/PDF/JH7110_TRM_StarFive_Preliminary_V2.pdf
-
-
-> 
-> Thanks
-> Heiko
-> 
-> 
-> 
-
-Best regards,
+diff --git a/drivers/clk/qcom/ipq-cmn-pll.c b/drivers/clk/qcom/ipq-cmn-pll.c
+index 74a2043632b7..76678a4d6b7d 100644
+--- a/drivers/clk/qcom/ipq-cmn-pll.c
++++ b/drivers/clk/qcom/ipq-cmn-pll.c
+@@ -237,7 +237,7 @@ static const struct cmn_pll_fixed_output_clk ipq6018_output_clks[] = {
+ 
+ static const struct cmn_pll_fixed_output_clk ipq8074_output_clks[] = {
+ 	CLK_PLL_OUTPUT(IPQ8074_BIAS_PLL_CC_CLK, "bias_pll_cc_clk", 300000000UL),
+-	CLK_PLL_OUTPUT(IPQ8074_BIAS_PLL_NSS_NOC_CLK, "bias_pll_nss_noc_clk", 416500000UL),
++	CLK_PLL_OUTPUT(IPQ8074_BIAS_PLL_NSS_NOC_CLK, "bias_pll_nss_noc_clk", 461500000UL),
+ 	{ /* Sentinel */ }
+ };
+ 
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+2.56.0
+
