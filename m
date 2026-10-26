@@ -1,98 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793004388;
-	b=3NIwBO/B/Ter0xULI4XNmYJItn0rNNb3MBpU1Fsw83LT/Po1FsQxvB/Knfmg7QNxBium
-	 pqFQIffGrzgasaBC1XBwgeOCUOLCziTA4jBfiwRGE6DT23Sa9zVMI2do/f8O7wNLcXwd2
-	 l9U13phtlPhB2USj6OyBJMJfWW6TOxicReelh7D/P976Xa1gWrg9ydC+E6l8hvRi+azP8
-	 /r8F782N7woFobyaL7GC2+dofEIxk+aNfi+sQ4cRJ1rXXihv+4Y5BVGGoUrk0Cny6sHel
-	 a2HLhYvdlVWRN29JuG7yaOuf0zyHc7f2zGaqVgFwljqzVYRCyjHYa9e0R07gUndeImg==
+	t=1793005046;
+	b=PiFwmM+WK7gzcPv8o7a0igZX/zTDyIHK8HrknketprSLJB7FEgmWd8uJqEGXn+r+7ZUh
+	 Sbad0iJAgg+O3x8Sr7mCyYUeUzjNwk+myHCgvMxzSpBX20s6UT7WOju2at+0RTBxiJw5W
+	 9LISNoDzFvf2eoIlrqufu4ttyJaHUbTKTk+ZingrAddE+gDO9ze5iOmfRp6tMaxbnNcYd
+	 NQfigWfkBqsuUc+HqA1nZeBXRx3Tz6GgLKPYygYHtranyup1GDVFjjIgsqE3E24ntAztY
+	 4TmXB4HJXPwglJ1CmIZrsWZhsDNjbU+r/TfCCV9j/wH39NqMLRcG/wf7qV54SjKwIDw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793004388;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793005046;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=5I9G++sBFZBEvdUOgC96XBerDJBhmVoXeNlZeIKbjBA=;
-	b=s9I9YxDZo/lbojxG2HE/drXDf1aIEkr5iPD6ZhvexNVLa9LCbiKb22YgX+SymTgLNaBX
-	 34XLJtnYqdYiiXiiEFme6Hgm30g+jwcbwCn/v3lbS6J6S87mnW5qdpuE+lI1OuH5nSAGI
-	 tAfdOfKp7pw44Op32A4b1w2TmVezTSyTOG2m+p4x4dCx6DE2kFgUvCD+9+tg8tzrCgx/6
-	 dHAf19SVrcSloIopf9EzH2xkqgiRrE0nq5lWCZiaGzNmx2i4K852gmNL6Pb9BffKNevsk
-	 5kwrCK8yRjFOmbgTJsGpIQdltqJP0mi8XrT1nSkUM7kQK8RU1s+izaNyzyuCokkuVMw==
+	bh=bI1K7WpjHruW52kJjg4X/MW1X2UQCXM+sxLT9XP/nlQ=;
+	b=p7tG3nKsUaKe8pvjwlnjnT5KTFr6b0iIM8dVWMo5rjSVwSWcBrTImofKWx6nDw3vaIaG
+	 GuHf8/2uNmx/0p05wg6bOqb+GZLvwc6Zmbm/J4qM+jL6Q/GZdKdvWtLDwwrt+qGKqjmKT
+	 u5Bicap7U0gfuOILfC7V6RQcPownlQuylroKx4+JfN1vyS2giPQo7J03JOHFxWt8uMXP9
+	 uRZXvIZQy85DC4Awl/HTTLWKLmSpAoQrrq1JlaAxKBZP0t91ruZ+nUlBAzN0N2eXZMCuf
+	 BazLd5m/IwHNe3XijvT45BSSzt9eUfaBgtPcg7t6gP9WKBL9QacRcgWwAJp2YteL51A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=KNGrYKqm;
-	arc=none smtp.remote-ip=209.85.128.53
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=nBILM34N;
+	arc=none smtp.remote-ip=209.85.128.54
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18E3606A31D
-	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 08:46:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C18E3606A31D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D07606A31A
+	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 08:57:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D3D07606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=KNGrYKqm
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4a1fbd52ab6so17010685e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 01:46:26 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=nBILM34N
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a20bde60a0so22288585e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 01:57:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793004385; x=1793609185; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1793005043; x=1793609843; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:message-id:date
          :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=5I9G++sBFZBEvdUOgC96XBerDJBhmVoXeNlZeIKbjBA=;
-        b=KNGrYKqmfIoQx7G26nK+hU0aEiCpetb+aODEa24JtTAW1UqmeHkN8uRhPqBtcvoyIl
-         OM+wsoA4rANZUWbhu+xg1RYG8r+spNwUHybHWEaYQS9F8skZl9NtRhDbMXaK6UpTAerh
-         oSIK44IDmEf33YtYLu/VRTt4bz0bXGJHlkCz0H2A/NeXdLB1vepv5ExBs21q5Nl81TV9
-         f3VGCHK7T5KM9xIe0O/ZkK0bqbaRq8Hj2wnqleQ9YPUnPXLuzQL4qXi/kEbypit6PmwG
-         yJoAYoNsqvjaUBDMf+QucyHqNwXJMlO6Bo8O1RR6yKHzWMOzLSpnF48RXrYKj++avAV/
-         uqAg==
+        bh=bI1K7WpjHruW52kJjg4X/MW1X2UQCXM+sxLT9XP/nlQ=;
+        b=nBILM34N+DQmcQaiOwhhjAIBvLE1X8GiwMvy8mC6GThNPWRS1nnLAFrtY3hnyPSVNE
+         Iw1wUC/FrAKhdk2E9Rv+/IZ3Uc/lKsrmo5Mo8o81Pcp3wYgTBWsY/iK1KyOY8+ku68Gr
+         tlMyY4cGuHGGSdUUxuJ7RZ3eZanC3KZDVNtmShz+O6nzvpD7y+1eqGYHNXl0RPRK9FO5
+         U1h5UehATB6b4SpLQbkpIAIfNmrGn2Y81XswDvMZerQClesyMtP3EptTEVYYe/0a2oLo
+         PM/pYmxmaKVN2IGHCumdecvCMaF1hsrQQpghaWKBGPX5Aozb9IqHi1j1Ihl8WKCh6LDx
+         cEiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793004385; x=1793609185;
+        d=1e100.net; s=20260707; t=1793005043; x=1793609843;
         h=content-transfer-encoding:content-type:mime-version:message-id:date
          :references:in-reply-to:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=5I9G++sBFZBEvdUOgC96XBerDJBhmVoXeNlZeIKbjBA=;
-        b=0SZlgG3UlTwo2oD59fVnLJ5jMA7LfiIVvSMqsrETszU6uE+j2FLK0j0UoVrqWdf0R4
-         TcnIIatF+zjBVrC7dKXjYvsw6ncHcGtJGW12dFNp0Vm+7a1KUUF+au0nlagKXsId2UO3
-         zavu3VTniZ7e7hOYVmwq//irqL2i3b7d0Gs1grRaqHLFxVZUJk/092ueKB5ClnQfSXqu
-         d2HWe3fEzSaB40N2PxR/cX2WpWxauldIf7HNAqmzr2GsdoZqIkeHIFv7PEj/rlsag78f
-         GN0v3Dx4M80JVT7XQ5A0goZatpo53FFGzLw6QVDEkDqrGA7jxBhD2o+be035Q358GYWO
-         aMfg==
-X-Forwarded-Encrypted: i=1; AKwUvBw9H/1U8TZoKYsKx91TnsAr6L9dVOOX2IyH1tGicfSqW3pt2n60vEXHWIip9RST+X7qTp3fHj7hzwA=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIS9tNTrR32zP2nBhVUKlDtX7vwher1zNot/8cbpaORDXWxX/6g
-	p0MtRLAdqpIl5VEl5rZQwtjLdlf5o43mESwYrzCjsWRVXTAKcQ/qqyjbeqmCbOrtjPg=
-X-Gm-Gg: AYBFou0tF/VEjx+5OLLFSRcOaPq93GNa4jQ6+g+miRNXnkX54yqZsgZgR10wwE9Rjvj
-	M4+gmt1qE4+5YTm1q1935N3LxvJPV34TTtb1V/KYN4d6c9zSZ930fcbPoRmk5jX/QmP4kviV2IB
-	611IRccW081LleA2BEBj2B41Raet/57Px4BvWMFhEUZxqdXZHXIk6QnOVyWBDXTrxjwO2tqepXQ
-	ZWP3a77L3FxNTT8Y9gmlLJtvLqOCtaCyL4iwfekHC/Q0wV0e5QWR+Mwy7yaCEYCK4altLAbQ6oQ
-	5Ui+H1wwK+k/YzQluORXAR329teWhomA5mmiipbK9NTVKvuLoDgrS2HDD3P0Bq8/9qjkkRCzbVf
-	9PdRaqmgT01Y1fJwhtNt+dKENF6ehI9ZR1Tj6XECpb5fUKD2vv0+I2+z24qLP5R0ksWcCMv0jtb
-	XfEoH4aEHgFgSd2aolyMHvotxXs6tWSsR3RoHIGwLZ81UBLNZMc2eN3OIwl5xXdCsqhT5P/QSpQ
-	vIPDckDAPEJWV4Lrgy7/sFSgpa6v6I7gjT8oHOjW2IdofKCsCXFVNnS6IshOl5l3RISDXthyNw=
-X-Received: by 2002:a05:600c:6384:b0:4a2:a3b:7aa8 with SMTP id 5b1f17b1804b1-4a35ac3acb7mr105232365e9.3.1793004385073;
-        Mon, 26 Oct 2026 01:46:25 -0700 (PDT)
+        bh=bI1K7WpjHruW52kJjg4X/MW1X2UQCXM+sxLT9XP/nlQ=;
+        b=e3fRr1GdcIOT1HkZTw6+kiv4l9w/1MAW2G9fj+p6sut0MzVh1iYqWRvVpBjbXP/w0W
+         kmflF5xXOLsN2cTPEUN26js1V0IM0fYN6Lq7zHz41pbrFPTZW3xK3PHHOHh+kVwkhLHA
+         M91OG26OJS+Ys5WgfJv7VKhANMNzzuuxv3ZIm3ggXQq5A8gzr/17Rm1Ku9UF3Zs/QYxU
+         TSR0nUSn/Ffj3S6BRfjpWDCfvHVoO6tx4iyWmZVMrVzzZABn5578ayOPpZ9YccH6extF
+         0jjRryhdpWT9xc0IPWcYMPBkxUvLda7ULNSigAKSWLMtgweKNgSama6V9WPsh59+jBzd
+         dYhw==
+X-Forwarded-Encrypted: i=1; AKwUvBwjSi2Xu8vzBadJNeXI+WlPa/GFcJAv0h9m3fExjtDbts8Q9t+hmZgj+2UpmWPghK9xay0ChjxR5ww=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIjS94ZiWmx3lRPLcfOrZVADdHTFlWKY9LLHJCI/ktSMJXD6o52
+	bnypggIs3HSWRPMaUv6BAc4f3IQuTVcNClVP+o+b1A8oiskj66wTI9yadoM+9pXkGrI=
+X-Gm-Gg: AYBFou2S34UTwcivpOr09A+t8nVGV0OnS5vfbxE2o8Z5cJNDddi7Mn2an6t8HbGDMWQ
+	WNrdjqRfUljTahx9iX/qZ1FhDaRYx8xkRE2ICRBjNk4OcvcubmeEV+5r9FBpTqg7G7MlZ9QJV4m
+	FZSz7mmgaK2lmykX6Lg/tCqaCsuyVW1IcdkaMWFM8/5HIGdpE7RwPxwra0d6DU/BdAJFiQUwfds
+	c7MoTW2XFvlMILYL+2hdkKTcNvtc3fr/I/DZlKUmtbUiYFrSPta9XbPaid4N8ZliR7/xiNiQDQK
+	2BT9yiOzsSEjVmxkyCyoJCl20Z79wELpxBu5VNM60cIeZG2AfTEiftvYzlQBj3IzxuLM/Aa9Ouv
+	bo+VWkUsTb3bvepOqsnxvqDWa3+l2P/Qj1fcBUIAEaH24B8IfBWT5jLL2UT+/pfxE21E7hRrYqu
+	2VRHJ0gPd6kfXSQKxF9tRnjOK+tCg+7MsLdf9VbYAPCYkXCsYecd1e9UyGym667YL+G7ZT/7Up+
+	j9FB5c1qhA59no60niXb6B2k4PCQD5GCROPdT4QIwwDyP7OzXp0umOy8m8fzUrD8ffs3l4BF5Q=
+X-Received: by 2002:a05:600c:3b25:b0:4a2:1a:a128 with SMTP id 5b1f17b1804b1-4a35ac9f1ecmr118305925e9.19.1793005043279;
+        Mon, 26 Oct 2026 01:57:23 -0700 (PDT)
 Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a35a033702sm146277845e9.2.2026.10.26.01.46.22
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a35a59d998sm187484365e9.15.2026.10.26.01.57.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2026 01:46:23 -0700 (PDT)
+        Mon, 26 Oct 2026 01:57:22 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
-To: christian.koever-draxl@student.uibk.ac.at, neil.armstrong@linaro.org,
- sboyd@kernel.org, bmasney+clk@redhat.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, lgirdwood@gmail.com,
- broonie@kernel.org, khilman@baylibre.com,
- martin.blumenstingl@googlemail.com, perex@perex.cz, tiwai@suse.com
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Christian Stefan =?utf-8?B?S8O2dsOpci1EcmF4bA==?= <ckoever@outlook.de>
-Subject: Re: [PATCH v7 0/7] Add support for S4 audio
-In-Reply-To: <20261025192404.209695-1-christian.koever-draxl@student.uibk.ac.at>
-References: <20261025192404.209695-1-christian.koever-draxl@student.uibk.ac.at>
-Date: Mon, 26 Oct 2026 09:46:21 +0100
-Message-ID: <1jik2okfxe.fsf@starbuckisacylon.baylibre.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+ christian.koever-draxl@student.uibk.ac.at
+Cc: neil.armstrong@linaro.org, sboyd@kernel.org, bmasney+clk@redhat.com,
+ khilman@baylibre.com, martin.blumenstingl@googlemail.com,
+ rafael@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, Christian Stefan =?utf-8?B?S8O2dsOpci1EcmF4?=
+ =?utf-8?B?bA==?=
+ <ckoever@outlook.de>
+Subject: Re: [PATCH 4/4] cpufreq: add an Amlogic speed-bin driver
+In-Reply-To: <at7lXEqds7ukoR2V@vireshk-B250M-D3H>
+References: <20261025192219.209137-1-christian.koever-draxl@student.uibk.ac.at>
+ <20261025192219.209137-5-christian.koever-draxl@student.uibk.ac.at>
+ <at7lXEqds7ukoR2V@vireshk-B250M-D3H>
+Date: Mon, 26 Oct 2026 09:57:22 +0100
+Message-ID: <1jbj8gkff1.fsf@starbuckisacylon.baylibre.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -105,77 +109,49 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On dim. 25 oct. 2026 at 20:23, christian.koever-draxl@student.uibk.ac.at wr=
-ote:
+On lun. 26 oct. 2026 at 11:00, Viresh Kumar <viresh.kumar@linaro.org> wrote:
 
-> From: Christian Stefan K=C3=B6v=C3=A9r-Draxl <ckoever@outlook.de>
+> On 25-10-26, 20:22, christian.koever-draxl@student.uibk.ac.at wrote:
+>> From: Christian Stefan K=C3=B6v=C3=A9r-Draxl <ckoever@outlook.de>
+>>=20
+>> Every S4 speed bin runs the same CPU frequencies but needs its own
+>> voltage curve, and the bin can only be read through the secure monitor.
+>>=20
+>> Read the bin from the firmware, select the matching
+>> "opp-microvolt-speed<bin>" property for all CPUs, then register
+>> cpufreq-dt. Bins outside the known range fall back to bin 0, which
+>> has the highest voltages. Like sun50i-cpufreq-nvmem, the driver binds
+>> on the SoC compatible and needs no node of its own, and S4 is added to
+>> the cpufreq-dt-platdev blocklist so cpufreq-dt is only created after
+>> the bin has been applied.
+>>=20
+>> Signed-off-by: Christian Stefan K=C3=B6v=C3=A9r-Draxl <ckoever@outlook.d=
+e>
+>> ---
+>>  MAINTAINERS                          |   1 +
+>>  drivers/cpufreq/Kconfig.arm          |  14 ++
+>>  drivers/cpufreq/Makefile             |   1 +
+>>  drivers/cpufreq/amlogic-cpufreq.c    | 184 +++++++++++++++++++++++++++
+>>  drivers/cpufreq/cpufreq-dt-platdev.c |   2 +
+>>  5 files changed, 202 insertions(+)
+>>  create mode 100644 drivers/cpufreq/amlogic-cpufreq.c
 >
-> This picks up Jiebing Chen's "[PATCH v6 0/4] Add support for S4 audio"
-> (and the tohdmitx S4 patch) unchanged apart from rebasing, with
-> Jiebing's authorship kept, and adds one fix on top:
->
->  6: g12a-toacodec: fix the S4 source mux read-back. The S4 DAT_SEL
->     field moved, so the mux always read back as input A and DAPM never
->     powered the selected path.
->
+> Is it safe to apply just this one ? I can take this via the PM tree then.
 
-Jiebing has posted a v7 already.
+I would advise to wait a little for Amlogic to chime in.
 
-Using AI is certainly nice but I would advise that you slow down a
-little and get used to working with the mainling before sending 7 series
-in a matter of hours.
+Patch 2 is something I already rejected back when S4 support was
+initially introduced. I suppose AI just unearthed it and did not bother
+to mention it.
 
-> [ckoever: Jiebing, if you have a newer version or prefer to post this
-> yourself, I am happy to rebase the fix onto that instead.]
->
+Amlogic was supposed to migrate to SCMI at that point, and possibly
+handle CPU frequency scaling through the secure fw entirely.
 
-For example, instead of this you could have tried to ping him privately
-before trying to takeover from him. He would probably have told you
-that he has already sent a v7 and (I suppose) is working on v8.
+They did on later SoCs, I don't know where their FW stands on the S4.
 
-So please be patient.
-
-> Tested: HDMI audio up to 192 kHz; the TDM-C to internal codec path
-> plays without errors at 44.1 to 192 kHz (not listened to).
 >
-> Tool use (Documentation/process/generated-content.rst):
-> This work was done with the help of an AI coding assistant, Claude
-> (Anthropic), used through Claude Code over many sessions. It did a large
-> part of the hands-on work: it read the vendor kernel and the firmware
-> interfaces, probed registers on the board, drafted the code and the
-> changelogs, and ran the builds, checkpatch, dt_binding_check and the
-> tests on the hardware. I directed the work, reviewed every change and
-> the final patches, and take responsibility for them. There is no single
-> prompt to quote; the sessions were of the form "find out why X fails on
-> this board, fix it, test it on the box".
->
-> Tested on an Amediatech X98Q TV box (Amlogic S905W2, S4 family, 2 GiB),
-> vendor U-Boot and BL31/OP-TEE, Linux 7.3 plus this work.
->
-> Christian Stefan K=C3=B6v=C3=A9r-Draxl (1):
->   ASoC: meson: g12a-toacodec: fix the S4 source mux read-back
->
-> Jiebing Chen (6):
->   dt-bindings: clock: meson: Add audio power domain for S4 soc
->   dt-bindings: Asoc: axg-audio: Add S4 audio tocodec
->   ASoC: meson: g12a-toacodec: Add S4 tocodec driver
->   clk: meson: axg_audio: add S4 support
->   ASoC: dt-bindings: amlogic,g12a-tohdmitx: add S4 compatible
->   ASoC: meson: g12a-tohdmitx: add S4 support
->
->  .../clock/amlogic,axg-audio-clkc.yaml         |  18 +-
->  .../bindings/sound/amlogic,g12a-toacodec.yaml |   1 +
->  .../bindings/sound/amlogic,g12a-tohdmitx.yaml |   1 +
->  drivers/clk/meson/axg-audio.c                 | 165 ++++++++++++++++++
->  sound/soc/meson/g12a-toacodec.c               |  51 ++++++
->  sound/soc/meson/g12a-tohdmitx.c               |  80 ++++++++-
->  6 files changed, 312 insertions(+), 4 deletions(-)
->
->
-> base-commit: 7be4bc52fd9e0e55dc9a2e0232b89427d2c4b614
 > --=20
-> 2.56.0
->
+> viresh
 
 --=20
 Jerome
