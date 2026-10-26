@@ -1,100 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.175
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793004245;
-	b=HBhl3MW13/U67kv6H86+fKMqwer6XkYm0T3Up0D2FT1GOxOZIXRlERBnlKk/famlW7me
-	 K6/4GFVDNxcrBsGOEbWNSyLdYhV0tLdZgrdEbMCPy6mrX8jTuikoeBPtwC5mBAoa7jgaL
-	 LxL6O//IUeuL1lYb6JQpB89bKupFVVcH4aeLdju64x1mlUmr1ehsD5l19pDt1FY0SRJbp
-	 ZxWTmVOUSY1NV7Vf2xYdwooNvG0RSZgE4BdpmqqdgzI6QNL09Hwv7WU6hs50jPx6NHscN
-	 HrrqwdueOmNnsnLCghCGel5/iQ9NXu34QRE6k5Gx7dCy6OyrmiEn4fXdyOQWPICtcyA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793004245;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.53
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793004388;
+	b=3NIwBO/B/Ter0xULI4XNmYJItn0rNNb3MBpU1Fsw83LT/Po1FsQxvB/Knfmg7QNxBium
+	 pqFQIffGrzgasaBC1XBwgeOCUOLCziTA4jBfiwRGE6DT23Sa9zVMI2do/f8O7wNLcXwd2
+	 l9U13phtlPhB2USj6OyBJMJfWW6TOxicReelh7D/P976Xa1gWrg9ydC+E6l8hvRi+azP8
+	 /r8F782N7woFobyaL7GC2+dofEIxk+aNfi+sQ4cRJ1rXXihv+4Y5BVGGoUrk0Cny6sHel
+	 a2HLhYvdlVWRN29JuG7yaOuf0zyHc7f2zGaqVgFwljqzVYRCyjHYa9e0R07gUndeImg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793004388;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=vuokd8eYBXkkOY3FeEgoxbWH+3rJnsQeEdkSp7QA0lo=;
-	b=e+GZSN82tc63RdGXoq3GNkN6CJlY516Z2ZOg43jYL0vMXhoPe9EnM3h4P1BH/8eHrGYP
-	 DjD+34rqDbe0U/8RxOxK1tK+EsTBTdthSGpUiofQ3i+XleLVg6q9FK1Z4jsle6wvnjsci
-	 A23ezDlIB5cOtuNayitIBcZX6vugmGukJ+gCiIkiIW5KprMmhlPSwvYVDsW0yNA7yl5VI
-	 GjrZMd37tsv6e4KLm1EOzAiASEeDPBmNFvY6Kb+7gWtPq2D0C2ueujQSSETIw8wg4ZLoi
-	 On5Zxs/LyjNAtwKVKOUsixQ2O+ukCdePs0/zkQ3pQkKXEv7Wasw5wyJVt2C2k7K9wEg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=DdEl3zIQ;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.175
-Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=5I9G++sBFZBEvdUOgC96XBerDJBhmVoXeNlZeIKbjBA=;
+	b=s9I9YxDZo/lbojxG2HE/drXDf1aIEkr5iPD6ZhvexNVLa9LCbiKb22YgX+SymTgLNaBX
+	 34XLJtnYqdYiiXiiEFme6Hgm30g+jwcbwCn/v3lbS6J6S87mnW5qdpuE+lI1OuH5nSAGI
+	 tAfdOfKp7pw44Op32A4b1w2TmVezTSyTOG2m+p4x4dCx6DE2kFgUvCD+9+tg8tzrCgx/6
+	 dHAf19SVrcSloIopf9EzH2xkqgiRrE0nq5lWCZiaGzNmx2i4K852gmNL6Pb9BffKNevsk
+	 5kwrCK8yRjFOmbgTJsGpIQdltqJP0mi8XrT1nSkUM7kQK8RU1s+izaNyzyuCokkuVMw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=KNGrYKqm;
+	arc=none smtp.remote-ip=209.85.128.53
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B491606A31E
-	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 08:44:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1B491606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18E3606A31D
+	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 08:46:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C18E3606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=DdEl3zIQ
-Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-35f036b17easo7457774eec.1
-        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 01:44:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793004244; cv=none;
-        d=google.com; s=arc-20260327;
-        b=B0CklpeHsvWpaHbmOAmjLzibHPxSSTvwVDcOnxFQ7KXWCo7fCXd1Hg2HkwUMAImMaQ
-         ZlJU8ACOnut6x7muYmm+KHQYPnfEnV3YnQg9G+wc14vmyH/oImCtjgPEH/aA5irD21Fs
-         CXEMl53vhIT09MpgqsuLXMP7vNYbahnHLWryTkducDOoVNiJIuEYQXrK5LwMD0hQOgrM
-         yGQ5ioeLbK+QIE44bnUWwrxCd1DwdjZ22dzC09IlWU+3T1PojcSHZpk9nuRN1fJcJ0NH
-         GV9mEUympZk5sUjyljIhY/C5EcL0yLnE2TqRNr91IUCX1JnrwZHtPz6CTu8rHfHw7Kk0
-         cqCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=vuokd8eYBXkkOY3FeEgoxbWH+3rJnsQeEdkSp7QA0lo=;
-        fh=17+5YFrG6VpW+iYADVhAbW/qkEHVySwf2mBliVQ//uM=;
-        b=odVOgjUPZ/ES+x6fh5GiVIWIss8896iZS1OFhxe4fvP/ee/dMiVi9EhMz6LZBol0Ig
-         jnHw92yAgiVW+bqPRKxXdE1crdYdeTFbynVrGTw3Gi6rggiYFPxhadRUYPBEVPKfmI4T
-         2DU0VU0lL88kpHl+Kzfsr2mgMaGU3oMp7BuYwuCd7BRL+uEub6BfiIP9qfDtWFKGR9+E
-         DvUd8cyfojZjw15l8+XRJOX0x2ABCdxZTlzVqGY0oCZuP1/w7rqKiATbfHFh3ok2d9hv
-         X8D3QYQEZBtj11L75WIJIDaBvVwJy+UIwUXSeCsfP5ssGdmr1Pwo3rfavnlYYI34sdVw
-         A5MA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=KNGrYKqm
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4a1fbd52ab6so17010685e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 01:46:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1793004244; x=1793609044; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=vuokd8eYBXkkOY3FeEgoxbWH+3rJnsQeEdkSp7QA0lo=;
-        b=DdEl3zIQt0j6Wl24x/rH/CtH549T/6yz3arfh7UpUrcj6VkIpoMyYOJF0NDjpQo/t8
-         KnIkRGw3mQKSuSLcmgmm1QRxFD7nafFegrsx97gfdpMPw9bSIdSMJkgN5ULAzH6PPtJR
-         +1211R5Q3Zhp+ThE+b19e6KHxhmdDbYmR0W8ghuKMj2H4lP20As3vXQ213+vhFNpMZcs
-         fzuE65p6rZWd3qQGy9q9CvG9GkFrGbtlh5Caj3W9g200O15HUM0hg1BMgN74DerPrTbJ
-         oOhZzxb0gPAZQ9lk1EkvIZown3WXZ+qA2Xj8kSrVd1RwXvQviFh0pvX8/AIpiShu5UJ1
-         rDOQ==
+        d=baylibre.com; s=google; t=1793004385; x=1793609185; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=5I9G++sBFZBEvdUOgC96XBerDJBhmVoXeNlZeIKbjBA=;
+        b=KNGrYKqmfIoQx7G26nK+hU0aEiCpetb+aODEa24JtTAW1UqmeHkN8uRhPqBtcvoyIl
+         OM+wsoA4rANZUWbhu+xg1RYG8r+spNwUHybHWEaYQS9F8skZl9NtRhDbMXaK6UpTAerh
+         oSIK44IDmEf33YtYLu/VRTt4bz0bXGJHlkCz0H2A/NeXdLB1vepv5ExBs21q5Nl81TV9
+         f3VGCHK7T5KM9xIe0O/ZkK0bqbaRq8Hj2wnqleQ9YPUnPXLuzQL4qXi/kEbypit6PmwG
+         yJoAYoNsqvjaUBDMf+QucyHqNwXJMlO6Bo8O1RR6yKHzWMOzLSpnF48RXrYKj++avAV/
+         uqAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793004244; x=1793609044;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1793004385; x=1793609185;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :references:in-reply-to:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=vuokd8eYBXkkOY3FeEgoxbWH+3rJnsQeEdkSp7QA0lo=;
-        b=TVrQuRTV2VlXDRtZZzUFStE3PblBC95sJsad+hpuYOJsj35vNYLuxaPm6e/IdQUM2Q
-         YHV0Yf4/9cG82eg0IeCTZwhAWl1V8ZqsIWMvGzm9jfHErA0fglsMwzNlhNoZw78T6DCs
-         S6Jr7k/Ay5/wS4FJuF0p3N0HRJALLzd+HW8PtWMtOW+J2vzuxuOnylB5JmESVFVFmm5A
-         pguAXYh+Tr+n90z0cbPwAw6W8PPRq9Q6wDj1upXTfKva/psufGDha06mQaQnpkV35CJW
-         ZN7cJ1jRlweNYjlAkN0Rc3+l4t/6SyiY9egupF8BlJ7T/udomWA6mUzMOtaWC28s9Nfe
-         7GIA==
-X-Forwarded-Encrypted: i=1; AKwUvBxSOD9B2e/9ETR8FZDfRiXXeDgeHcuKBXw87y7shYIhvsTRgMsmEsAVB/ofQLhODm87pYO68Z3W6Uc=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLferi85pbn4E0QcT8RX7ebWVFVNvtQjbIdH8swzygtNn608KY1
-	WAO2cIn8ryi5wYUAn7eGWq+Aqq3eFaNJKq5KHocOJBO19RyIJt8Xpw1NiW2ufkO/EweoPaoulyd
-	VN7hXCeRltDHEo6L9OTrN9YlF39Dw/Zg=
-X-Gm-Gg: AYBFou35o2nc9pKCXFFOa1GDm8aQawEci7gBNuuLsuqP/vZ1iVOLZ1ErUwa9tUHXsXv
-	wtqbQVIhLOxcbMgFRzxsJUhttaiDfyvXuMOLTVJ+Bjnxu1ZFjVd2XwkchMT428ZBLt9k92Mdk53
-	1sLzMXZ4TkuZZuhDckqYIiRaLhODLRvfRlL65pe/aBCEKGAhayq0BUHfzmJtw/tvy4SPsDplEfa
-	84DqmMkCaEnBoFvgy3dVkaHQmJnV2/1GFQel5DMyhFjqBR7WMLl5A4jKHHc4Z6Pw1KtyXKB40OM
-	0kKW28ABZlAd3jDbVCPKOqkl9l4stKg6E9pr/INaKDcBGlHhPPlEYfQr6OeqaGEBEHddPTo6sN+
-	esIEtooBMYRLxa2VHBfo8BkU3ANLItVf1MJv0fvgMKYylzRNuEgXiScO0N8ne6GvtVY7jnA==
-X-Received: by 2002:a05:693c:250d:b0:366:8efb:bab9 with SMTP id
- 5a478bee46e88-369e848362amr9301864eec.11.1793004244117; Mon, 26 Oct 2026
- 01:44:04 -0700 (PDT)
+        bh=5I9G++sBFZBEvdUOgC96XBerDJBhmVoXeNlZeIKbjBA=;
+        b=0SZlgG3UlTwo2oD59fVnLJ5jMA7LfiIVvSMqsrETszU6uE+j2FLK0j0UoVrqWdf0R4
+         TcnIIatF+zjBVrC7dKXjYvsw6ncHcGtJGW12dFNp0Vm+7a1KUUF+au0nlagKXsId2UO3
+         zavu3VTniZ7e7hOYVmwq//irqL2i3b7d0Gs1grRaqHLFxVZUJk/092ueKB5ClnQfSXqu
+         d2HWe3fEzSaB40N2PxR/cX2WpWxauldIf7HNAqmzr2GsdoZqIkeHIFv7PEj/rlsag78f
+         GN0v3Dx4M80JVT7XQ5A0goZatpo53FFGzLw6QVDEkDqrGA7jxBhD2o+be035Q358GYWO
+         aMfg==
+X-Forwarded-Encrypted: i=1; AKwUvBw9H/1U8TZoKYsKx91TnsAr6L9dVOOX2IyH1tGicfSqW3pt2n60vEXHWIip9RST+X7qTp3fHj7hzwA=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIS9tNTrR32zP2nBhVUKlDtX7vwher1zNot/8cbpaORDXWxX/6g
+	p0MtRLAdqpIl5VEl5rZQwtjLdlf5o43mESwYrzCjsWRVXTAKcQ/qqyjbeqmCbOrtjPg=
+X-Gm-Gg: AYBFou0tF/VEjx+5OLLFSRcOaPq93GNa4jQ6+g+miRNXnkX54yqZsgZgR10wwE9Rjvj
+	M4+gmt1qE4+5YTm1q1935N3LxvJPV34TTtb1V/KYN4d6c9zSZ930fcbPoRmk5jX/QmP4kviV2IB
+	611IRccW081LleA2BEBj2B41Raet/57Px4BvWMFhEUZxqdXZHXIk6QnOVyWBDXTrxjwO2tqepXQ
+	ZWP3a77L3FxNTT8Y9gmlLJtvLqOCtaCyL4iwfekHC/Q0wV0e5QWR+Mwy7yaCEYCK4altLAbQ6oQ
+	5Ui+H1wwK+k/YzQluORXAR329teWhomA5mmiipbK9NTVKvuLoDgrS2HDD3P0Bq8/9qjkkRCzbVf
+	9PdRaqmgT01Y1fJwhtNt+dKENF6ehI9ZR1Tj6XECpb5fUKD2vv0+I2+z24qLP5R0ksWcCMv0jtb
+	XfEoH4aEHgFgSd2aolyMHvotxXs6tWSsR3RoHIGwLZ81UBLNZMc2eN3OIwl5xXdCsqhT5P/QSpQ
+	vIPDckDAPEJWV4Lrgy7/sFSgpa6v6I7gjT8oHOjW2IdofKCsCXFVNnS6IshOl5l3RISDXthyNw=
+X-Received: by 2002:a05:600c:6384:b0:4a2:a3b:7aa8 with SMTP id 5b1f17b1804b1-4a35ac3acb7mr105232365e9.3.1793004385073;
+        Mon, 26 Oct 2026 01:46:25 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a35a033702sm146277845e9.2.2026.10.26.01.46.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Oct 2026 01:46:23 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: christian.koever-draxl@student.uibk.ac.at, neil.armstrong@linaro.org,
+ sboyd@kernel.org, bmasney+clk@redhat.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, lgirdwood@gmail.com,
+ broonie@kernel.org, khilman@baylibre.com,
+ martin.blumenstingl@googlemail.com, perex@perex.cz, tiwai@suse.com
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Christian Stefan =?utf-8?B?S8O2dsOpci1EcmF4bA==?= <ckoever@outlook.de>
+Subject: Re: [PATCH v7 0/7] Add support for S4 audio
+In-Reply-To: <20261025192404.209695-1-christian.koever-draxl@student.uibk.ac.at>
+References: <20261025192404.209695-1-christian.koever-draxl@student.uibk.ac.at>
+Date: Mon, 26 Oct 2026 09:46:21 +0100
+Message-ID: <1jik2okfxe.fsf@starbuckisacylon.baylibre.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -104,39 +102,80 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261025-b4-dalmore-fixes-mipical-clk-v2-1-0a2d1118f930@nvidia.com>
- <510d6922-5aad-4b54-8085-9a769a1a934b@tsv-stahl-riesa.de>
-In-Reply-To: <510d6922-5aad-4b54-8085-9a769a1a934b@tsv-stahl-riesa.de>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 26 Oct 2026 10:43:50 +0200
-X-Gm-Features: AclHuK9FgW54R73JYrxQZ7QKLMuuRD6TDEnSd96dbrON3jVaOynr209LUb-EVxw
-Message-ID: <CAPVz0n32UN5QtoHCCJtHtdcF29BYcP=2pPnhYo3yYy+2pBioDw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: tegra: Fix Tegra114 MIPI calibration clock parent
-To: Patrick Fischer <admin@tsv-stahl-riesa.de>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D0=BD, 26 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 00:1=
-6 Patrick Fischer <admin@tsv-stahl-riesa.de> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Sun, Oct 25, 2026 at 10:45:41AM +0900, Mikko Perttunen wrote:
-> > Fixes: 07314fc108e1 ("clk: tegra: Special-case mipi-cal parent on
-> Tegra114")
-> > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->
-> Sorry, I replied to v1 earlier by mistake. Carrying the tag over to v2,
-> the code is unchanged:
->
-> Tested-by: Patrick Fischer <admin@tsv-stahl-riesa.de> # Tegra Note 7 (P16=
-40)
->
-> Thanks,
-> Patrick
+On dim. 25 oct. 2026 at 20:23, christian.koever-draxl@student.uibk.ac.at wr=
+ote:
 
-Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # Tegratab (P1988)
-and ASUS TF701T
+> From: Christian Stefan K=C3=B6v=C3=A9r-Draxl <ckoever@outlook.de>
+>
+> This picks up Jiebing Chen's "[PATCH v6 0/4] Add support for S4 audio"
+> (and the tohdmitx S4 patch) unchanged apart from rebasing, with
+> Jiebing's authorship kept, and adds one fix on top:
+>
+>  6: g12a-toacodec: fix the S4 source mux read-back. The S4 DAT_SEL
+>     field moved, so the mux always read back as input A and DAPM never
+>     powered the selected path.
+>
+
+Jiebing has posted a v7 already.
+
+Using AI is certainly nice but I would advise that you slow down a
+little and get used to working with the mainling before sending 7 series
+in a matter of hours.
+
+> [ckoever: Jiebing, if you have a newer version or prefer to post this
+> yourself, I am happy to rebase the fix onto that instead.]
+>
+
+For example, instead of this you could have tried to ping him privately
+before trying to takeover from him. He would probably have told you
+that he has already sent a v7 and (I suppose) is working on v8.
+
+So please be patient.
+
+> Tested: HDMI audio up to 192 kHz; the TDM-C to internal codec path
+> plays without errors at 44.1 to 192 kHz (not listened to).
+>
+> Tool use (Documentation/process/generated-content.rst):
+> This work was done with the help of an AI coding assistant, Claude
+> (Anthropic), used through Claude Code over many sessions. It did a large
+> part of the hands-on work: it read the vendor kernel and the firmware
+> interfaces, probed registers on the board, drafted the code and the
+> changelogs, and ran the builds, checkpatch, dt_binding_check and the
+> tests on the hardware. I directed the work, reviewed every change and
+> the final patches, and take responsibility for them. There is no single
+> prompt to quote; the sessions were of the form "find out why X fails on
+> this board, fix it, test it on the box".
+>
+> Tested on an Amediatech X98Q TV box (Amlogic S905W2, S4 family, 2 GiB),
+> vendor U-Boot and BL31/OP-TEE, Linux 7.3 plus this work.
+>
+> Christian Stefan K=C3=B6v=C3=A9r-Draxl (1):
+>   ASoC: meson: g12a-toacodec: fix the S4 source mux read-back
+>
+> Jiebing Chen (6):
+>   dt-bindings: clock: meson: Add audio power domain for S4 soc
+>   dt-bindings: Asoc: axg-audio: Add S4 audio tocodec
+>   ASoC: meson: g12a-toacodec: Add S4 tocodec driver
+>   clk: meson: axg_audio: add S4 support
+>   ASoC: dt-bindings: amlogic,g12a-tohdmitx: add S4 compatible
+>   ASoC: meson: g12a-tohdmitx: add S4 support
+>
+>  .../clock/amlogic,axg-audio-clkc.yaml         |  18 +-
+>  .../bindings/sound/amlogic,g12a-toacodec.yaml |   1 +
+>  .../bindings/sound/amlogic,g12a-tohdmitx.yaml |   1 +
+>  drivers/clk/meson/axg-audio.c                 | 165 ++++++++++++++++++
+>  sound/soc/meson/g12a-toacodec.c               |  51 ++++++
+>  sound/soc/meson/g12a-tohdmitx.c               |  80 ++++++++-
+>  6 files changed, 312 insertions(+), 4 deletions(-)
+>
+>
+> base-commit: 7be4bc52fd9e0e55dc9a2e0232b89427d2c4b614
+> --=20
+> 2.56.0
+>
+
+--=20
+Jerome
