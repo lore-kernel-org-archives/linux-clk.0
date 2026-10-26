@@ -1,31 +1,31 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793026564;
-	b=NJ4PpFd6ibk2nC+LWt74l9a7O3rNjJgIp/pgNSWX+mT+RjlB3P2t4+XQjSxNzTOYijx0
-	 9YfCORAXvLlrmaPFj+cKASPYOSaMTf+JNC0AdYRUuVpQsyGG9ubPN6qxXX3R8RasJ6zIr
-	 zNlAIb80YuPnfFs81foHfaESc8SQJGj6vajTJWbKw0KNK+vctEKNyvz2U2xRu5hiLviGM
-	 ldfOiHN0uSN+PO+SlloGkD7dG/+6+41oybWAdQsaKZAoNOoPauQ1BYoaF2xjAZu+IVEqT
-	 SKSNJkGusw3ki2vL//YQtSd/h+dIRgocb6pL2sDsKz3nwf9TSj/dRte9pNBBZ+U31ZA==
+	t=1793026577;
+	b=qkuiKA6C2TQAt7rZx4txbdqEsfzEp52yFqCc7E7wGcMsBwgoqx8vSCywNcxiVX6Ly0i8
+	 9v/DVypACgocbDDpPMxMlgpnSARP1U291FWH+T+bf5f6lfoafkd4pwLfupdNI7Dt96QAp
+	 xdmxLn+qp9GOsIu15D+o4Rmj9LKJIF+xzxxiY47fg+1QXyAV6YqIayQxADdM6OsfiYngV
+	 dsSuJLL0NTKrAnKolJPDgn5fdJvI825B5kV5VtE3ArPmP6gf33Xb39EI0n1eYR0vMMi0q
+	 P1SLoHpagPN9ShdHeucxTDnqAU8v+eZyXRxQwXCsOPgh/UlXmf89wjpqSOSqevetfhQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793026564;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793026577;
 	h=Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding;
-	bh=wLFuu8tZf1E/YQuDfViod9+RbMD86cfFucSt/ed8wOA=;
-	b=eSJuR++976Dgzvv/y3I4RCjjgXO5btwbk6ASb26IGTe9D+C2uEfVjKP64mdD6zF1XqMV
-	 JYIbPbj7yp0CUTm7YZ+BX9s0APyBn5ruqwjR9SYD873IwEKc+/W4iH8svX/+2YOO7OfDU
-	 oK290irJTWnG5OhSbS3tjscDJ5d3fQeZB13tNYaaIBg+jI256jrpScL8swjsELBxk0ldT
-	 LHjszH0ED7EbFONV2WAOLwtsIyDgTng2kGhcvbjjxc7pZZf3d9y5mVi5zPMGgxDe0G7/e
-	 H2mgWGj6VvcZn6fD1JlcKjDsrQyP4F/zFnbSrF4hAx8ZwfTdE3g8ivXP95rabKDTM/A==
+	bh=+BXLUS8lDAmpc0E9HAwHG4tK1aoD2k15ADbFhH36gJs=;
+	b=oCyVoeRlyPYXjkVFnFmBFmatkaGpFHDc85x8aBXiTjijaBhCz1ZiYWa4lZLAY3JPEuMP
+	 vTzbLKdhjAD7D2F58CmQOpL5snd9AXDmBB/Ml74dNngodz9EMAYq8Wlluy8IAlPm9KvjQ
+	 oP5+tk+VdY8PfpGmQhOgCaoaJF2VhwG9Ijfpwe5sgS6+Iosoinkz2na+lL6yg8bKot3t4
+	 B+9SShmqoSssh+coV9naVV3d2mwDEkrTqNoEsV6pv2HqX9wqBhGdZunVLNiVcPf1rAjqz
+	 uw/7nY3+JRAATEP29/NT86qMdpWW6jtnLxuDb6a+bNrpNVQK43vbXcRemmSUV6pDc5A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73353606A31B;
-	Mon, 26 Oct 2026 14:56:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BD6E1F031E0;
-	Mon, 26 Oct 2026 14:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C55606A322;
+	Mon, 26 Oct 2026 14:56:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6A3F1F01829;
+	Mon, 26 Oct 2026 14:56:12 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
@@ -45,9 +45,9 @@ Cc: linux-pwm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-pm@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 07/11] dt-bindings: clock: renesas,r8a78000-cpg: Add PWM clocks
-Date: Mon, 26 Oct 2026 15:55:23 +0100
-Message-ID: <e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be>
+Subject: [PATCH/DNI 10/11] pmdomain: renesas: r8a78000: Add PWM support
+Date: Mon, 26 Oct 2026 15:55:26 +0100
+Message-ID: <a04faf03f3854d3eef291dd6e5dd886a54bfb0f9.1793026273.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1793026273.git.geert+renesas@glider.be>
 References: <cover.1793026273.git.geert+renesas@glider.be>
@@ -62,33 +62,31 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add definitions for the clocks used by the PWM modules on R-Car X5H:
- - R8A78000_CPG_SGASYNCD16_PERW_MAIN,
- - R8A78000_CPG_S0ASYNCD8_PERW_MAIN.
-Include R8A78000_CPG_SGASYNCD8_PERW_MAIN for ordering consistency.
+Add support for the Pulse Width Modulation (PWM) modules and the 16-Bit
+Timer Pulse Unit (TPU) on R-Car X5H.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-This depends on "[PATCH 2/7] dt-bindings: clock: renesas,r8a78000-cpg:
-Add GPIO clocks"
-https://lore.kernel.org/624a9fb09e4ec74b1995797e5121b86e7206f5f2.1792776697.git.geert+renesas@glider.be
+This depends on "[PATCH v4 7/8] pmdomain: renesas: r8a78000: Add SCMI
+remapping support"
+https://lore.kernel.org/2895c8f3cbe718dc597ad25e16c2461f0d681ab6.1792163045.git.geert+renesas@glider.be/
 ---
- include/dt-bindings/clock/renesas,r8a78000-cpg.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pmdomain/renesas/r8a78000-mdlc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/dt-bindings/clock/renesas,r8a78000-cpg.h b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-index cd7192ccecd4e22c..8c30476d41448cf5 100644
---- a/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-+++ b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-@@ -28,5 +28,8 @@
- #define R8A78000_CPG_SGD8_PERW_BUS		18
- #define R8A78000_CPG_SGD32_PERW_BUS		19
- #define R8A78000_CPG_S0D24_HSCN_OTHER		20
-+#define R8A78000_CPG_SGASYNCD8_PERW_MAIN	21
-+#define R8A78000_CPG_SGASYNCD16_PERW_MAIN	22
-+#define R8A78000_CPG_S0ASYNCD8_PERW_MAIN	23
+diff --git a/drivers/pmdomain/renesas/r8a78000-mdlc.c b/drivers/pmdomain/renesas/r8a78000-mdlc.c
+index 838566ed821e29e0..62156bfb8080e6e4 100644
+--- a/drivers/pmdomain/renesas/r8a78000-mdlc.c
++++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
+@@ -681,6 +681,8 @@ static const struct mod_map_in r8a78000_mdlc_perw_mod_fw[] = {
+ 	{ 0x55, 225, -1 },	/* HSCIF1 */
+ 	{ 0x56, 226, -1 },	/* HSCIF2 */
+ 	{ 0x57, 227, -1 },	/* HSCIF3 */
++	{ 0x70, 244, -1 },	/* PWM0 */
++	{ 0x76, 249, -1 },	/* TPU0 */
+ 	{ -1 }
+ };
  
- #endif /* __DT_BINDINGS_CLOCK_RENESAS_R8A78000_CPG_H__ */
 -- 
 2.43.0
 
