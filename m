@@ -1,130 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.11.138.130
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793032081;
-	b=QtZxuYoNtHQjdkLu9rriQAe2Nnd8MZoxcg0gs1cF4DY4lGJdS7qX8j4xLRLw0iKrJ/NP
-	 ENEhDIbNniRU2QWd5p/Njdw4xD9IU8TpLNvt9r29bv8L3mJfgBwDU0EEiMMQE1+nxnXgF
-	 pkqm+B+h8PpuIuxKZJzqL8RXHs7LdBXitB01RoPxjcCQnC+NxxKY8TZb+tyQADUObi72u
-	 ypbhbY5BINwvvTkTobZTm579y9FIGPCKiJKYAHMSG7MUipaLTN2BTn+8ipIw6uefgdVZD
-	 DkSyo8kYUQll7UFJa33+JpHmwieDj6MD7+YDfjQUPxTQCwHWZ10CFrCKLKKVGE3nPSQ==
+	t=1793035538;
+	b=1Zm9WQJN8yb38qkxMLh8/gCMgIovMadDsWMR0K5ezSni6t5mJcFRGb6tgD/iTeOqxgFf
+	 q8IUYejXhlgOxaqoewcE/ToeC+uGHRjzab7ys9CNeAMz9BQhLegFZgU0ifJX3lL4eI95a
+	 67ScHVSV2uKrhy9ewoiq+/e6/chNAlHuyJp6mNmiHbHfA+1XfWVFgRtm9so7PdIXIKF6a
+	 BQB+Kqhfrp8zsOEp0EVmAgkj64EUDEvhLVq5qhgaxR4MoTGxv/XG3/cfW9hN66qac+jYv
+	 K3XzgkfKHG9EgI/zfGQ+MPW24K0xbofuFqNG17ldc6ePQ1h5BUktlCgqzbFlYhj4Tjg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793032081;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
-	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-GUID:X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=DgbFgdGwx0LxvaVp9RgzD0rA2Eaf0b4Fh1Y0S4eeYow=;
-	b=uiv/iY9TU8aPWKBxrh+mLngJ21M4ZgYMOBHUXjdYEnW+BkrpBdtE9v8+EznXTZQYgRBD
-	 0IiNbPDm/rt/HZSAVj52YvgZ3GR7uOt0A83VchhS1+oA+8+W7eXz8+Q8anRsHkKdKzOpZ
-	 eT6gChi3vhzsAz2p5TwyaJrupKbZhc4Mctfcb+s4b1vZh6jJXuG8SD5BRnmJ5bRDzCMly
-	 r08C1KNE6PRe35fdhLpTrsQYED24/NL8bTT34tU5gcM2X+DGvoYFRcj1FTXp08ZCq8fgD
-	 /4PjEET7QRdhpwDH91AGcGXvKt5mpCQyobUpWDBDBwefWxddBG6FwmxV58hUpe/RTwg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793035538;
+	h=DMARC-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
+	 Content-Type;
+	bh=buxG7wzvUrhysQ03B60L3jHsDzOHP1rRWLo5WHGJFa8=;
+	b=RAPTtSwq4ne+eSQuNAGlDFgOJ81Gnq2akaEbaTptExT/1iJmE9yX7lmx9DMc5Ank4ep8
+	 +ZRPGhCPOrry9AKMyUed6cO6u2cnv9a3JjFSu+s7pREzfSM9CbP1/72d/VMG5pDquzogC
+	 5NpMfVwajmrx04FHhEG/PnM66duAU9nbEaxyxDZuq/JQZ2Lj3ltzXVxssb7EB7wSwMB4W
+	 Xb6TCsVZMGoJMMe+nuWnCOewvSr5099el6EMteynL0L+gDBWOHV101MjBZmvFeed64Dyv
+	 pTJZrbICADO8lsJm8ie/40esLXxBuETwbzLIU/yqNi3FtAaPC6UChAs+xJcDCri7H4Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Icvcr8v8;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=j6gLnBcl;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dmarc=pass header.from=sntech.de;
+	spf=pass smtp.mailfrom=sntech.de;
+	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=EuQoFvcT;
+	arc=none smtp.remote-ip=185.11.138.130
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2685606A321
-	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 16:28:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E2685606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77223606A31D;
+	Mon, 26 Oct 2026 17:25:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 77223606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Icvcr8v8;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=j6gLnBcl
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69QEw6qt3584353
-	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 16:28:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=DgbFgdGwx0LxvaVp9RgzD0rA
-	2Eaf0b4Fh1Y0S4eeYow=; b=Icvcr8v8v7hK8qcfYwrBYrcqCMVNXeTz3YpTKEXg
-	mdmdJ5SuXbVcw945UvK6fUFy7RYibLBAbrK9JVEJ/fBsyVazlw4CvovBwSBDax5O
-	JFmOcSwc4pt41RSCoZg1HvxRc1DExZgWUj6rf7TyerDYnGku69EpU5YAb6BbYBHl
-	Unv+vZJOfYr5sPnBUerBWR0/68KBwCeb6iec/tGteUwt+VAQlg36QDA90tpD431j
-	t36hoZZwXXNbjJsr+hg9erH4C/+HvLN0VMZSDlXwNuDpKa6TWnICxKknknZ1X29L
-	j+yCYLrKXmPub9xBgoI8c581p1fNBGyfyyLZjkwCWEt9cA==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hhvddb2s1-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 16:27:59 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-92e82060977so12875285a.1
-        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 09:27:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793032079; x=1793636879; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=DgbFgdGwx0LxvaVp9RgzD0rA2Eaf0b4Fh1Y0S4eeYow=;
-        b=j6gLnBcla2HE5aRaz6IunowyyoGLQREkoQaaGRXLUmzgEmASZ3EIX9yDjYlRi2aJCt
-         iaoPRJnVL8yHvAuXgk2VE1Y9KZ/R4QNFMaqTZhvJocKBhKo5xBHIwJcomERoxFuEKN2m
-         sQbXBCWTBalS8JM/Jq+aRBdVt+QW0FKqAQL58tKo1EEfoKgiZ6Tl7HczpZ+KPRxbIgs3
-         30pnAnMf3xxN6N1xIP557rsB0zrICK3iGqSioMzighwpAppjobXnb5Lu6ktIaInE7cmx
-         xjjLt6JznYJ3mKKl7B6WbQch4NDP7DI44wRwuU7p0EQcjv9TIlTvnNCyddQBpuJlG74W
-         2N5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793032079; x=1793636879;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=DgbFgdGwx0LxvaVp9RgzD0rA2Eaf0b4Fh1Y0S4eeYow=;
-        b=yo8WbeBIK/J2ey3etXMynn4fd1zr1XA9fRwcysK6AYJcMJfLaVEi286PdDyeFVPg/p
-         MYxGvbaQdKdzRXmB4nprTjnCxl4FCHy0P17qDCnbmsX5w3P/E4MFuQ/vD3t3E5V1TrTf
-         4qqaqx5cNNKCzP7UCq/7a2dg1mzVbcfs0Z03kUd4kebS3AV9B3Q3/1xfU520EXBR1Ek4
-         ZbUddGcJQphMoeuVGKp0Bif3cmoke8nhiryfWTZkxHZNJhLt3lrQYNWA1dNkccjqilie
-         /X9H1KyJ1yhurEIRh8WfmJjEOB3fJtmw7Iq5SmeXcLSutn3efCALqRLY1osKvSuBXQDW
-         6kSA==
-X-Forwarded-Encrypted: i=1; AKwUvBz1VcpdA5Y81BYVrRjILMxgUpmYRT/ivCZNZkCeizbS9OGAwtW2RRlH9LwefF8Sfe08y/xLc8f7knM=@vger.kernel.org
-X-Gm-Message-State: AFq9FYI/iDS2/E++Ncf6Id/lvFNrnRncxVrxe/195HzNYReQYQpcG5CR
-	540iTeatgSpEq9wjJiXmP5y/k/nn/1nL1J3exuG6MJeSbne1xoCosyxde1/hdE2SB9kDmzEAli6
-	ALUFWoQ4dO2UmKGW7s8Ji91LDmDNiHIH+EFWcNp/EGlgIaO1KiN0nU6zZFbJUZ0Y=
-X-Gm-Gg: AYBFou27P6Mziyj+nq0+YA6FyVWgoHdphsDpxRtZ3/ivUUnoZ9lZDkfHC8QcP6nAUGj
-	WZpPwbGKIzHiEnwJWKcwdJw9Eb9Fhn1sx1HZ1QlFMEBXgCMGj9TnKdXGqNCMbOPjfFR9lIsuQFo
-	yIXtSCl0hQweH5RC1jw9jnX3gG4JeAq0qbcR4/I9lwUMBzs/DczEjSkBfMACt1+CfoTYwepUWQF
-	v5YE0jl5ZYKz9FiXA9I3DksXfVa1pm8DSJW8R9X2FIF/Lx93p65uDY58RPzvQl2Rm1+hI3j6qHJ
-	H9uTS14ekzKs9FW5dIl5PhUfgfu/ppSMuTgNg8qoB+4FcZkS1Ta+Ry7RN0Jp8CPAJyWyKQmaLnB
-	Oo8NkPzEjgW+wCUpA
-X-Received: by 2002:a05:620a:27d5:b0:943:2746:3c4a with SMTP id af79cd13be357-943f4a05fb2mr32407985a.5.1793032078947;
-        Mon, 26 Oct 2026 09:27:58 -0700 (PDT)
-X-Received: by 2002:a05:620a:27d5:b0:943:2746:3c4a with SMTP id af79cd13be357-943f4a05fb2mr32399785a.5.1793032078257;
-        Mon, 26 Oct 2026 09:27:58 -0700 (PDT)
-Received: from oss.qualcomm.com ([188.27.161.187])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ebcb902sm18160539f8f.24.2026.10.26.09.27.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2026 09:27:57 -0700 (PDT)
-Date: Mon, 26 Oct 2026 18:27:55 +0200
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Linus Walleij <linusw@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 11/12] arm64: dts: qcom: sc7280: Add GP M/N clock
- controller
-Message-ID: <oxkqlvbjnlji4zyx7frurfjzf2ryfkbjjirwkewtp5trj7q5nf@pg6pogt5z6pi>
-References: <20261026-b4-pdm_clk_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com>
- <20261026-b4-pdm_clk_gp_mnd_v2-v2-11-ff8e4bc8d567@oss.qualcomm.com>
+	dkim=pass (2048-bit key, unprotected) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=EuQoFvcT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=buxG7wzvUrhysQ03B60L3jHsDzOHP1rRWLo5WHGJFa8=; b=EuQoFvcTmdF1MqhFINMp9kW4jn
+	j4134NOWSe6VQzg3ql4+9o6rRcYSKwYYS+jPZIJDAJcUNXEAG79n6U7S60Ewwx/eKpabnRmMsKd95
+	Uox2Wg7cZpNtvz1ZLGryqszWJ55+zPphKeoxIpSvElwfFvPlct1yjlrQzZ00VsB5jIMbYhnPtvbvW
+	rbuGFvT9yBMLmTOYzxWtlcFUXZIes9qbDoSYCgPoenq9R+Mw7mNLwWuJ1Aspw1qme0grL2SmA8VJR
+	Slv8bT7AHy09dEp/4zcbR7u5Qak62kGVUiFeySL1koTWdBHd5D7RuoxGxLecrCkU8+2z2nceTcPDw
+	xB03/g7w==;
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: =?UTF-8?B?5byg5pm0?= <zhangqing@rock-chips.com>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Richard Cochran <richardcochran@gmail.com>, Cunhao Lu <1579567540@qq.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+ devicetree <devicetree@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-rockchip <linux-rockchip@lists.infradead.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH v3 3/3] clk: rockchip: Add RK3572 clock and reset support
+Date: Mon, 26 Oct 2026 18:25:14 +0100
+Message-ID: <3062797.SvYEEZNnvj@diego>
+In-Reply-To: <tencent_6876096D2306016F88487E0E4D78345B3208@qq.com>
+References:
+ <20261026-add-board-ok3572-c-clk-v3-0-dbabfa39d692@qq.com>
+ <0d5de6fd-3150-4898-a652-7f5b64dcaf07@rock-chips.com>
+ <tencent_6876096D2306016F88487E0E4D78345B3208@qq.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -134,93 +71,83 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261026-b4-pdm_clk_gp_mnd_v2-v2-11-ff8e4bc8d567@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: S5YuE0U8bEwZCUroohHGl54fXdL8gl4Y
-X-Proofpoint-GUID: S5YuE0U8bEwZCUroohHGl54fXdL8gl4Y
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI2MDA2NSBTYWx0ZWRfXxZob3Opsi1hp
- 5GX2awZQMxjCb8DDqVLtRr2bWEP3Oa4azgcfBV9gdq/UAVBMEHmFSD3mg01KceP57DkMxQzaRla
- DNYiOo5LEM/AskV92pan95EBa+lTHUGSeKaGezgQT6LM0rcRtvMIsRBitCz4lWNFlYyaZIi5iRp
- lAWkzCgcBmz/T06UKt44cc/UsIYNkWqSS6jlEfx5Dze1e3VFWSXFVA6Y2XcZmDnW88ZmNrGfqrC
- FN+tQbjEyUkJhLtIjm+RnhQfLRWB45uajI6pMIJACh933aYWeLPqtJEaj4pTRKtT7bpk56JrixX
- OSL8id7fkbAiJDCnWllEJWV4stooXUkPKmXNSVfc9BJOTFFJ8Z13d2Ai5z+twPmxOwe8MvN3L/+
- GSqzDm55DnbBnRdn3Pl5e6Cn2WSojDO9umsx7UrCi4Sgn4iPVvr/A++yM7PhsA0N+mm3MGE80kG
- H5XT6IbgrvocAisiIvQ==
-X-Authority-Analysis: v=2.4 cv=N8+8hG9B c=1 sm=1 tr=0 ts=6adf7f8f cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=Qvngrl3H0rQgGg+94q4QgA==:17
- a=kj9zAlcOel0A:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=EUspDBNiAAAA:8 a=oTvOlQyMf-P45GjRKUkA:9 a=CjuIK1q_8ugA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI2MDA2NSBTYWx0ZWRfXwUv2D+PUnefl
- 1amWac9IZaGvcsod5HowGnrLYgu/0TxDcwfxup5XM4+4gfHwSmMv1Cs5INUmf12jYyhwxtcmU6L
- 8BIsyBli5C1suaRExf1J0C/c15HdHTE=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-26_03,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 adultscore=0 bulkscore=0
- malwarescore=0 suspectscore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610260065
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On 26-10-26 16:59:37, Taniya Das wrote:
-> Add the GP M/N clock controller and its pin configuration for SC7280.
-> The controller uses the PDM XO4 and AHB clocks from GCC and routes its
-> output to gpio60.
-> 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/kodiak.dtsi | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/kodiak.dtsi b/arch/arm64/boot/dts/qcom/kodiak.dtsi
-> index 8c7523602d2719775b8f5c6a8cef138a93292721..de27a051ee3b0e9046ff97b8e6fe0164985d7b17 100644
-> --- a/arch/arm64/boot/dts/qcom/kodiak.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/kodiak.dtsi
-> @@ -4442,6 +4442,20 @@ usb2_role_switch: endpoint {
->  			};
->  		};
->  
-> +		gp_mn: clock-controller@88d3000 {
-> +			compatible = "qcom,sc7280-gp-mnd";
-> +			reg = <0x0 0x088d3000 0x0 0x1000>;
-> +			clocks = <&gcc GCC_PDM_XO4_CLK>,
-> +				 <&gcc GCC_PDM_AHB_CLK>;
-> +			clock-names = "pdm_clk", "ahb_clk";
-> +			#clock-cells = <0>;
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&gp_mn_active>;
+Am Montag, 26. Oktober 2026, 15:56:06 Mitteleurop=C3=A4ische Normalzeit sch=
+rieb Cunhao Lu:
+> Hi zhangqing,
+>=20
+> > This is in clk.h, please submit it separately.
+>=20
+> Thanks for the review. I will move COMPOSITE_MUXTBL to clk.h and add it
+> in a separate preparatory patch.
+>=20
+> > This is incorrect here; there should be no negative values. Two's
+> > complement is used here, so a conversion is needed. For example,
+> > -12955 should be 52581.
+> >
+> > In clk-pll.c, cur.k & BIT(15) is used to determine the two's complement
+> > conversion.
+>=20
+> I agree that the hardware expects a 16-bit two's complement encoding:
+> -12955 is encoded as 0xcd65, which is 52581 when read as unsigned. The
+> difference here is how that coefficient is represented in the rate
+> table on the kernel version this series targets.
+>=20
+> I found the cur.k & BIT(15) branch in Rockchip's downstream develop-6.12
+> tree. There, k is unsigned int, so the driver explicitly checks bit 15
+> and subtracts the magnitude of a negative fractional coefficient.
+>=20
+> This series uses the upstream implementation. Both v2 and v3 are based
+> on a804c5742bff, which already contains commit
+> 581478883477 ("clk: rockchip: Fractional PLL coefficient on RK3588/RK3576
+> is two's complement"). That commit changed the k member of
+> struct rockchip_pll_rate_table to:
+>=20
+>         s16 k; /* fractional part, 16 bit two's complement */
+>=20
+> On this base, rockchip_rk3588_pll_recalc_rate() uses signed arithmetic:
+>=20
+>         s64 frac_rate64 =3D (s64)prate * cur.k;
+>         postdiv =3D cur.p * 65536;
+>         rate64 +=3D div_s64(frac_rate64, postdiv);
+>=20
+> The signed type represents the negative coefficient directly, so this
+> implementation does not need a separate cur.k & BIT(15) branch. For
+> example, the mainline RK3576 rate table already contains:
+>=20
+>         RK3588_PLL_RATE(955520000, 3, 478, 2, -15730),
+>         RK3588_PLL_RATE(785560000, 3, 393, 2, -14419),
+>=20
+> These are exactly the same entries as in this RK3572 patch, including
+> p, m and s. Mainline RK3588 uses the same entries as well. Since RK3572
+> uses this shared upstream PLL implementation, I will follow the
+> mainline RK3576 convention for its rate table.
+>=20
+> Writing 52581 directly into an s16 initializer would require an
+> out-of-range implicit conversion; a reduced compiler test reproduces
+> Clang's constant-conversion diagnostic. An explicit cast such as
+> (s16)52581 would produce the same signed coefficient, but would add a
+> conversion that the existing mainline tables avoid. Using -12955
+> directly makes the value used in the rate calculation clear and stays
+> consistent with RK3576.
+>=20
+> The register encoding is preserved: the write path passes k through
+> HIWORD_UPDATE() with a 0xffff mask, so -12955 still writes 0xcd65 into
+> the coefficient field. The five initializer changes from v2 to v3 only
+> make the signed values explicit; they do not change p, m, s or the
+> 16-bit coefficient encodings. In particular, no further adjustment of
+> m is needed for these representation changes.
+>=20
+> I will therefore retain the signed coefficients, following mainline
+> RK3576.
 
-pinctrl-0
-pinctrl-names
+I definitly agree. For reference the commit fixing rk3588/rk3576 and
+containing all the details is
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
+id=3D5814788834774ed6ad1a27ae91b44eeca80cd27f
 
-Same for all other patches.
+Heiko
 
-> +			assigned-clocks = <&gcc GCC_PDM_XO4_CLK>;
-> +			assigned-clock-rates = <4800000>;
-> +			status = "disabled";
-> +		};
-> +
->  		qspi: spi@88dc000 {
->  			compatible = "qcom,sc7280-qspi", "qcom,qspi-v1";
->  			reg = <0 0x088dc000 0 0x1000>;
-> @@ -6653,6 +6667,13 @@ mi2s0_sclk: mi2s0-sclk-state {
->  				function = "mi2s0_sck";
->  			};
->  
-> +			gp_mn_active: gp-mn-active-state {
-> +				pins = "gpio60";
-> +				function = "gp_mn";
-> +				drive-strength = <2>;
-> +				bias-disable;
-> +			};
-> +
->  			mi2s0_data0: mi2s0-data0-state {
->  				pins = "gpio98";
->  				function = "mi2s0_data0";
-> 
-> -- 
-> 2.34.1
-> 
+
