@@ -1,60 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793006040;
-	b=v0N7YvePrceeWMUBG/l2F4tQ/Cl/VCUGnBjGF4lDGn6VzTJQJIWOgjyv+bAvKH8t3aHN
-	 29hOsInnZPhC6lDvajjRYbHVOkOPuJC0KCzhD4e++3gGkgTMvNhzsMLBbocRVDA3ZHi6R
-	 gTH5+hMqvyO3F64JYaqtBncMQQ9NlFoanY9h32aIKDigaatQ+i9KH38S+UkDvM7w5VyJk
-	 PaR5XyHfEmWbsZD2T5Ml2W+fBZ7hDs/pwONCnmONIE2KBTwgqoiPAxtKjBBDqZVyC1u6J
-	 G9R9Vw1ccgslyHLa9puLf6v1xOkGXIa4HsqIINDYx0B0KLrOHhuT6whUG/yGWNG4VqQ==
+	t=1793006783;
+	b=QGFdkHCbnS/4oknsTjeYM9mXF0EDUuuJ1oku1nfzrcx0yAqOcbRg00WjACgJASDtA2Ls
+	 Goz6wju+rfW6eD4VOjuWXyIOm1DnB6OH+n6KDG8Hxj/G4/g0Mi6vWs3Q3b153PZpzVGyI
+	 lC60fq2LDyNnt/NXVUSUshS5nlIomOMuS+ILW6doPNnF6mZ9uq7oHXdNKjGg0vmQiPJLy
+	 5DGQfVFNYj6jjnWC/f9OMYGAGXo11Ix3pjzfJV+MhfMmCQHSYcc8iw7lrzkv8M8blmbfs
+	 5d8obAmZGvtJE4QUj8q3OJN9yJgFAHMzkKVQWhgBnjUFaDXV+l8z4O5whzKj8FlQGyg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793006040;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
-	 Content-Language:From:In-Reply-To:Content-Transfer-Encoding:
-	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
-	 X-CMS-RootMailID:References;
-	bh=BKmKriFXy7STc0ChdV4GVkhXybSuVhKoMJ3vCyY6ebQ=;
-	b=t0Y19ZSZ2KGzxCphXPkOYjf+M/4yFkiJ/3jGDTqMzH9OrZsfdrKdMUk4bSQgnV8Gho10
-	 OXTtvI8X28Fi6O8yCImm1VKyIYdPMZdNpXLjHy2wbLMul7zxO5sIjBAwt2L/aK6W9gOGu
-	 uwbKVeNxZfzyisnelsvEa+4D1NIy5xe+nB7cDs/FnCYMcc+gIFKong4HMaViSsyxPeJUB
-	 MH45DIQHFdLWGPDqTDp98jHtroj6ZDT8oXCs5zFjYK5jecKlDXhH846e5+M7AUTKUaUTq
-	 ZW4wk4dY541h4IGmfLho886VIAOhCOe6UwVgJUV/IWn20xajaEfMxSWfPz822lyfoUg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793006783;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=eCi6RalDoYn/fEWWJFXGvTr/W/++okNP5+GAu74Bms4=;
+	b=j8zoZP51l5SCTrsDWgbIt7JS3vwHtVQgYdnUMjhdLXnsnf4PSPtjRr1HYXn0PKa6uCqi
+	 YC2v5Kdzcq/5j2w7+yYc3z8nEqeLhQSappc/mjLEtIxX74Ys7EajpbGNJS8G80fc3fGAP
+	 3MsOfl6wiBybKBqyI1gdmmrG3CdywHD0M6j3RN0/emx9E8gd4QIrKrdoVELbcLrt/bvo/
+	 Wvih3ZSlge6PwiE0yRSdJ5pCj2oI1vGq3gy2rcLrr4cjvPr7+fnEHIthqh6uYrXrfB/nk
+	 VMRsM9pPaM03DzC6v6Nh8JCCsrYJ3gwEhYeUIjYtW1N5Za/E2orI3v8ppj8efabjhVw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=uesWt4mf;
-	arc=none smtp.remote-ip=210.118.77.12
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FQvHFoRi;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B71606A31F;
-	Mon, 26 Oct 2026 09:13:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 05B71606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E7A606A31B;
+	Mon, 26 Oct 2026 09:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=uesWt4mf
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261026091349euoutp0260a6484cdb132677f41b85104a90e968~iCXwB5PQU2933229332euoutp024;
-	Mon, 26 Oct 2026 09:13:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261026091349euoutp0260a6484cdb132677f41b85104a90e968~iCXwB5PQU2933229332euoutp024
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1793006029;
-	bh=BKmKriFXy7STc0ChdV4GVkhXybSuVhKoMJ3vCyY6ebQ=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=uesWt4mf7L6uH2e2D0Uz0HVRucHuV8HZkP6w6G5X4a91jpvD/uKc3BJqBUmuRXjve
-	 GgrdbGaDFfjJl73WiJG4wPNL+OImYScLzZ5eCyyvPV3LlJUGczWGKuH07jKOHSZaRq
-	 J4j2ifjZbGqdQZI5IPmFXPvANcfdee4i8r50bnPI=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261026091348eucas1p104a72aa9c878c637a7ef778613c492a9~iCXvH8nmx3193831938eucas1p1i;
-	Mon, 26 Oct 2026 09:13:48 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20261026091345eusmtip1dd488ccf4592aee32b30711c858f6c13~iCXsMa8873092630926eusmtip1x;
-	Mon, 26 Oct 2026 09:13:45 +0000 (GMT)
-Message-ID: <943aa2e7-3945-48f9-9a87-9c963f97099d@samsung.com>
-Date: Mon, 26 Oct 2026 10:13:45 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FQvHFoRi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF8C41F01825;
+	Mon, 26 Oct 2026 09:26:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793006783;
+	bh=eCi6RalDoYn/fEWWJFXGvTr/W/++okNP5+GAu74Bms4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=FQvHFoRixIyne+hUo8M2e1iPpUJqQxbWG6NgZBKZFNbHimPLrOTelIClgPEbSZXpW
+	 kM7srNyyN03M5+Z9dDsb9WZCJBFAz4RphGcvRmnakfze39y0WlgzFk9TO4yGAS6bFs
+	 wZRkzCjZog3O/AZ4W47EeIKAS/5hZDuNGrc8x2K5C20nJ1y0IP8jc0eyd1ACNReCZ8
+	 hcYxrZGp4W7oETXggItBtbo6r9PrPJRcQr6x29tiVkCO8OjaCZwlxxYusBXPzbQ8P1
+	 1iATjlcPC6i8A18thVNnR+9IrGqR2lpIK9Fm6jX63mGOnaSLmlcfJ7pReDmGxzrZQf
+	 /msEpn0KALDlA==
+Date: Mon, 26 Oct 2026 10:26:19 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ishu Brar <patches@brar.si>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: Add SM7250 graphics clock
+ controller
+Message-ID: <20261026-primitive-eggplant-albatross-737362@quoll>
+References: <20261023-gpucc-sm7250-v1-0-d9149cece8be@brar.si>
+ <20261023-gpucc-sm7250-v1-1-d9149cece8be@brar.si>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -64,138 +63,31 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 16/20] phy: Add common Innosilicon HDMI PHY helpers
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss
-	<rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
-	Yan <andy.yan@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, Emil
-	Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Paul Walmsley
-	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
-	Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>, Jerome
-	Brunet <jbrunet+clk@baylibre.com>, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, mfd@lists.linux.dev,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, Marek
-	Szyprowski <m.szyprowski@samsung.com>, Maud Spierings
-	<maud_spierings@murena.io>, Graham Markall <hello@big-grey.co.uk>, Icenowy
-	Zheng <zhengxingda@iscas.ac.cn>, Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	Joshua Peisach <jpeisach@ubuntu.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <asEPmpQTwXYADwTk@parshuram>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20261026091348eucas1p104a72aa9c878c637a7ef778613c492a9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260915153242eucas1p1394a6a5e272f106b9cab2a0f709ddeb8
-X-EPHeader: CA
-X-CMS-RootMailID: 20260915153242eucas1p1394a6a5e272f106b9cab2a0f709ddeb8
-References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
-	<CGME20260915153242eucas1p1394a6a5e272f106b9cab2a0f709ddeb8@eucas1p1.samsung.com>
-	<20260915-jh7110-clean-send-v4-16-f0e4fd6f2cc8@samsung.com>
-	<asEPmpQTwXYADwTk@parshuram>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261023-gpucc-sm7250-v1-1-d9149cece8be@brar.si>
 
-Hi Vinod,
-
-On 10/3/26 16:22, Vinod Koul wrote:
-> On 15-09-26, 17:32, Michal Wilczynski wrote:
->> The Innosilicon HDMI PHY IP is used by several SoCs. They differ in
->> where the PHY register block sits in the register space and in which
->> pixel clocks they support, but the pre-PLL programming sequence and the
->> layout of its registers are the same.
->>
->> Add a small library holding that shared part: the pre-PLL configuration
->> table format, a lookup, clk_ops determine_rate and recalc_rate helpers,
->> and the pre-PLL register programming. Callers pass a regmap, a register
->> offset for the PHY block, and their own pixel clock table.
->>
->> No driver uses it yet; the users are converted separately.
+On Fri, Oct 23, 2026 at 03:40:08PM +0530, Ishu Brar wrote:
+> Add the compatible for the graphics clock controller (GPU_CC) of the
+> Qualcomm SM7250 SoC (Snapdragon 765/765G/768G), and the header with its
+> clock, reset and GDSC indices. The clock inputs are the same as on
+> SM8250, so the existing clock and clock-names constraints apply unchanged.
 > 
-> Is there anything in phy patches here that has dependency with rest? If
-> not consider splitting it up...
+> Assisted-by: Claude
 
-The phy patches don't depend on anything else so they apply cleanly
-from this series alone. The helpers and the Rockchip conversion are
-self contained and the JH7110 phy driver only needs its parent at
-runtime not at build time.
+LLM is since long time, but checkpatch already should tell you this
+should be dropped.
 
-I kept everything in one series so a single posting applies and boots on
-its own. The patches already target three separate trees and everyone
-testing this has been applying the full set splitting would force them
-to assemble two postings in the correct order, given that the JH7110 phy
-driver build depends on the helpers. The v5 cover letter lists which
-tree each patch goes to.
+Please develop on latest trees, not some clone (e.g. postmarket).
 
-That being said, the helpers and the Rockchip conversion are the two
-patches independent of the StarFive work - happy to send those as a
-separate series if you'd rather take them that way.
 
-> 
->> +static u8 inno_read(const struct inno_hdmi_phy_pre_pll *pll, unsigned int reg)
->> +{
->> +	unsigned int val;
->> +	int ret;
->> +
->> +	ret = regmap_read(pll->regmap, inno_reg(pll, reg), &val);
->> +	if (ret)
->> +		return 0;
->> +
->> +	return val;
-> 
-> why not just return regmap_read()
-> 
-> There is no logic here, nothing. This is really not ideal.
-> Also why add a wrapper and not use regmap directly?
+> Signed-off-by: Ishu Brar <patches@brar.si>
+> ---
+>  .../devicetree/bindings/clock/qcom,gpucc.yaml      |  2 ++
+>  include/dt-bindings/clock/qcom,gpucc-sm7250.h      | 36 ++++++++++++++++++++++
 
-The same IP block is used by both Rockchip and the JH7110 but on the
-JH7110 the registers sit at a 0x100 offset.That is what inno_reg() is
-for.
-
-Dropping the error is wrong though - nd comes from one of those reads
-and then becomes the divisor in do_div(vco, nd * 5 ) so a failed read
-feeds in 0. I will make it return int and have recalc_rate check.
-
-> 
->> +/**
->> + * inno_hdmi_phy_pre_pll_determine_rate - clk_ops.determine_rate helper
->> + * @pll: pre-PLL instance
->> + * @req: rate request, updated with the rate the PHY would produce
->> + *
->> + * The PHY can only generate the pixel clocks described by its table, so a
->> + * request that does not appear there is rejected rather than rounded.
->> + *
->> + * Return: 0 on success, -EINVAL if the rate is not supported.
->> + */
->> +int inno_hdmi_phy_pre_pll_determine_rate(const struct inno_hdmi_phy_pre_pll *pll,
->> +					 struct clk_rate_request *req)
->> +{
->> +	const struct inno_hdmi_phy_pre_pll_config *cfg;
->> +	unsigned long rate = rounddown(req->rate, 1000);
->> +
->> +	for (cfg = pll->table; cfg->pixclock != 0; cfg++) {
-> 
-> Is there a chance of null/garbage if we reach end of table? You dont
-> know the size of table, and incrementing pointer without bounds does not
-> look good to me.
-
-Fair. For now both config tables end with a sentinel, so it cannot
-happen. I can add the count of the bounds though.
-
-> 
-> 
+Filename of the header must match the compatible.
 
 Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Krzysztof
+
