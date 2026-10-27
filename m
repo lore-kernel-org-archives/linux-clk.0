@@ -1,60 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793098944;
-	b=XHrZeCFVab/ye4xmnQh3stBF7qa4KX6Pdo8DEoR8LoTI5vCto1g8WcaeV+estKNBlKY7
-	 hYu3kwF04aoBHDgIy2DHvUJMBfH26+LFayxl+rgGQQqvpraN7X2BWSdrEgq13h5H+zCi4
-	 oXQw5mYskTYADHT+KX5NHndgBc8NsAiMPtWI3U4w9GitC2/dehfVgNcP9L2ivSzlz3eDM
-	 /CGLbrDBskKaYKafNRankFSD57hRhm2qq7t9H3GE0Ja6sIOjECHpXgVk3Km7y32xG5om1
-	 R5g8//Ug4WMqEfg8dVLO313f57d8cfD0hRUNgAUDaLpx0HX+wtZ84l/uMH8tPXG4fVQ==
+	t=1793099018;
+	b=EquYW9qiiXH/3eD67Rr3vOsDgBKuZWYQUnjlwc8JM/ni63YhoKRMRBn3ucle68CDM3ca
+	 lj3LY9DgVyExMMAIgTiNUl9XaAWMuysUodoOVRkFQro2RyxKXxnJVZwAB8LJwmaObhDHH
+	 cuIUTa037i7+n/gI7zcq07yRCoZ7+G0UhkE/T65ixc7TrdhgQvhC1YCnyl5wYbu21RocO
+	 O1QLEYxQrWbKEMf1lMhL51JMB5mNXoe0sT9WM7Ho174DRa2DkbA3csMoRLLXaEaGRZl6w
+	 gZ27oFLrsbuNPKVWP4RsX2f3OigroHFCSsyXiUiOvt9SGH56N+AbQP2q/3IBQgxHPTw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793098944;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
-	 Content-Language:From:In-Reply-To:Content-Transfer-Encoding:
-	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
-	 X-CMS-RootMailID:References;
-	bh=jgpI6S0BaFwhfvc2kywHp6Ib11nXJqnK3KboerxnZkI=;
-	b=vzfF1Br58md89zK3NyF+w+4xFBJ2jdLsXysBUYjHHZRCMcmOAAYrx3nCqOX7yT5f5Cva
-	 SmfMATSsRdZ4hrrcQbc28tDwh1Up0tnySAHAzKRwNYrMI0kn3uwmQA11g6sqRjcwaFyHt
-	 zWfOZqPMfuxRI2+8FSO8rOGXnFB5eYFiR5Un9gSsJ7YJxDxQjX3ac1kmcARFbvGMKLx3U
-	 G4wyNxPvaQAHCLzdm74ibCNgkqzeJDhg4BFIjIdcuhg/uNoaN36PcRjnC+f4XtMMYwGez
-	 Xd8LLOotfAe4pCINFLTX2r3ZTwxFFG01/AxPCMUZ5Zl0GijH/Qd94QwoJlGg3xNMVzA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793099018;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=yAbU5I2eU/VIR9BDkWK2xzH7j/NK2q9jtYmR8/DGsU4=;
+	b=dc933CUzGUzYo/H+g5xuDjEVXOwBlKW7WqprYdFxO4OcEvfgddGQcrNuZP64KvloYXZx
+	 o5erTFRZBjFWYvdDaHxkS2lYSlVoAjYCUuNqvz/K9PEUb7RDT4GZmE9e+db0z7GZ1Ccc8
+	 Poo1BDPysQhZzxD3DvDtESUQyx95S8RATX0liudL5cqQrgiDZu4ybZvkmsWC1JZz47T5z
+	 qGhFfPuQQnj856k+yUdl8uaodz6MIdydIW4PmFVEpOCuzRvkt4NhO1BE85KHmDUYyiiTz
+	 V9F6IzjtYO13BEg+MsLIrvgit013Pa8Wa0Th/ZA84AqkILyi+VZN9fFfvWkzoujQfcQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=nWQGHyd3;
-	arc=none smtp.remote-ip=210.118.77.12
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="WEThs2/Q";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDB3606A331;
-	Tue, 27 Oct 2026 11:02:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9DDB3606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80A5606A31D;
+	Tue, 27 Oct 2026 11:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=nWQGHyd3
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261027110211euoutp02cbe365840510890b9fa3fbb50e26a3cf~iXfpITuJq1916619166euoutp02O;
-	Tue, 27 Oct 2026 11:02:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261027110211euoutp02cbe365840510890b9fa3fbb50e26a3cf~iXfpITuJq1916619166euoutp02O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1793098931;
-	bh=jgpI6S0BaFwhfvc2kywHp6Ib11nXJqnK3KboerxnZkI=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=nWQGHyd3uZO8npHAsI3x3z0bNTOciXEMk5qhW0TGGp6BSguiBE0ZHfqmHLqbvDF0H
-	 jAsgFMaUbTRuJ/IN+QVwxm1C8lUaP1wIQPSboyhdv4t1SqODkP1rSY8nYzjAcyepN4
-	 5vIolx8QDptEdhqq8Oq8lgHHH5v1igum0Z1fTOLc=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20261027110210eucas1p200692a459e47eae4b88f5f8620738cfd~iXfokDezE2283022830eucas1p2N;
-	Tue, 27 Oct 2026 11:02:10 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20261027110208eusmtip1bba8e474a6d53be6ac9f0bd553f1da2d~iXfm8DZVs2613526135eusmtip1G;
-	Tue, 27 Oct 2026 11:02:08 +0000 (GMT)
-Message-ID: <b9380a0a-49f1-4bb9-a6b7-ca233319b8ad@samsung.com>
-Date: Tue, 27 Oct 2026 12:02:08 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WEThs2/Q
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0203D1F01829;
+	Tue, 27 Oct 2026 11:03:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793099017;
+	bh=yAbU5I2eU/VIR9BDkWK2xzH7j/NK2q9jtYmR8/DGsU4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=WEThs2/Qu3ffSZECM0r6Y8xDhs8eOr1Etzm93ywP4PoBLKeJrSb3MkpfB6JFnxHMN
+	 l2kXIklS6UZou1+p5GFf7ZFslidssCz+t1O2p8hHu87QNK532TO0EYohndrhA++7MQ
+	 UDrkDn3qMPlSSVBGuwRuNj4hJvsqpFwL7HgqQe6nXagfeDEDtxF9kiVPqQv/gh4RvU
+	 dpPAZv/uMOFGozhMKIyC5zw0lpwyPfyUYyT6bUi/zf3L4pN/Y74Teb/XQ3LlCZGIT/
+	 4fGjAODJgeCkgyh43T57CN6BWux0C9M/iW5OX7Ua8YqNsZkatntCA8yDev1sJXf9qm
+	 nO5VWdEK01W1Q==
+Message-ID: <4aba41b5-0aa9-4a3e-8d8e-efc5ee45fc54@kernel.org>
+Date: Tue, 27 Oct 2026 12:03:30 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -65,95 +52,95 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 18/21] phy: rockchip: inno-hdmi: Use the common
- Innosilicon PHY helpers
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Vinod Koul
-	<vkoul@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
-	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrzej
-	Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, Laurent
-	Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
-	<jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli
-	<luca.ceresoli@bootlin.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Andy Yan <andy.yan@rock-chips.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Emil Renner Berthing
-	<kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Paul Walmsley
-	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
-	Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>, Jerome
-	Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, Marek
-	Szyprowski <m.szyprowski@samsung.com>, Maud Spierings
-	<maud_spierings@murena.io>, Graham Markall <hello@big-grey.co.uk>, Icenowy
-	Zheng <zhengxingda@iscas.ac.cn>, Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	Joshua Peisach <jpeisach@ubuntu.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: ti: dpll: drop the ti,ssc-*
+ properties
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+ linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com, michael@amarulasolutions.com,
+ Brian Masney <bmasney+clk@redhat.com>, Conor Dooley <conor+dt@kernel.org>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20261026074654.3997494-1-dario.binacchi@amarulasolutions.com>
+ <20261026074654.3997494-2-dario.binacchi@amarulasolutions.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <7069377.kQq0lBPeGt@diego>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261027110210eucas1p200692a459e47eae4b88f5f8620738cfd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260929103243eucas1p25abf97a357cfae14640092e35fe479fc
-X-EPHeader: CA
-X-CMS-RootMailID: 20260929103243eucas1p25abf97a357cfae14640092e35fe479fc
-References: <20260929-jh7110-clean-send-v5-0-82b4d8e3c6c7@samsung.com>
-	<CGME20260929103243eucas1p25abf97a357cfae14640092e35fe479fc@eucas1p2.samsung.com>
-	<20260929-jh7110-clean-send-v5-18-82b4d8e3c6c7@samsung.com>
-	<7069377.kQq0lBPeGt@diego>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20261026074654.3997494-2-dario.binacchi@amarulasolutions.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 26/10/2026 08:46, Dario Binacchi wrote:
+> The common clock binding provides assigned-clock-sscs to configure
+> spread spectrum clocking (SSC), supported by the clock core since commit
+> a7f16660af39 ("clk: conf: Support assigned-clock-sscs"). Keeping the
+> vendor specific ti,ssc-deltam, ti,ssc-modfreq-hz and ti,ssc-downspread
+> properties would leave two ways to describe the same thing.
+> 
+> The properties have no in-tree users, so they can be dropped.
+> 
+> Existing DTS files using them continue to work, with SSC disabled,
+> until they switch to assigned-clock-sscs.
+> 
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> 
+> ---
+> If keeping the properties as deprecated is preferred, I can add a
+> fallback to the driver in v2.
+> 
+> (no changes since v1)
+> 
 
+I responded under v1, so same here:
 
-On 9/30/26 12:14, Heiko Stübner wrote:
-> Am Dienstag, 29. September 2026, 12:31:15 Mitteleuropäische Sommerzeit schrieb Michal Wilczynski:
->> The RK3328 pre-PLL programming, its table lookup and its recalc_rate and
->> determine_rate implementations are the generic Innosilicon ones, so drop
->> the local copies and use the shared helpers instead.
->>
->> The RK3228 pre-PLL sits at different register addresses, so it keeps its
->> own register level code and only shares the table lookup.
->>
->> The now unused RK3328 pre-PLL register macros go with it, as does the
->> local pre-PLL config lookup wrapper; both call sites already have the
->> TMDS clock to hand and call inno_hdmi_phy_pre_pll_lookup() directly.
->>
->> The RK3328 recalc_rate used to log the pre-PLL output as "vco". The
->> shared helper logs it too, and reports the actual VCO frequency
->> alongside the rate, which is the value with the 1.4-3.2 GHz constraint.
->>
->> The register writes, their order and the values written are unchanged.
->> No functional change intended.
->>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> Reviewed-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> 
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> 
-> Only thing I cannot really make up my mind about, is if this and the
-> previous patch should be merged ("move common code from rockchip
-> variant to shared helper").
-> 
-> As I said, can't really decide what would be the better solution ;-) .
+I see the user:
+	git grep ti,ssc-deltam
 
-I split them deliberately as I don't have Rockchip hardware. It's easier
-to verify this commit's correctness and the claims 'no functional change
-intended' and 'the register writes, their order and the values written
-are unchanged' when split, as the previous commit only adds the library
-and this one only deletes the RK3328 copy and calls into it.
-
-> 
-> 
-> Heiko
-> 
-> 
-> 
+Maybe you ordered patches incorrectly. Anyway, properties with in-tree
+users must be documented, so make them deprecated instead.
 
 Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Krzysztof
