@@ -1,112 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793082567;
-	b=GrTAgt9NUpR0TTPUr/C/ebsQieLtX1AGAyOxY/E/BwoqohwxMCJevoDSl68wWqYrdtKc
-	 a8Xi22cKKz+91x8GZF0elrXgsh7la0sRfA/EBrZeEmyfaDebCmAWSJEfNgGq8yk91VfiJ
-	 ibgJDUTJ/kx8L1+59f23aUeFmnAs/khalfGGTIoRnP7HxHxMhFMsqui8oYIfxYrpDHhDl
-	 G4e507QtIfjWdVTBPc2qQ1tYILIhjJnG59S+s5ke7LpUfnDsPCSnmBsBqqk0K7zra55ie
-	 rNzV9zjnzFAx7evJXVVWSJRo+197YTj4BzoUSpMtsZqKEWkymvlDryNnFJbcOkKq1cA==
+	t=1793084230;
+	b=zskAng6daAIDrTwylkx2liGPPwO0WQjiPkPmVs6ByMihTTxXzzKEltLOfTpU5rxGk0U9
+	 Rg22QqYCXQ7ZGmotmpgizdG3UgK1dPf52D2y1dqUgqHJX5oMhGg7+ASn/ZpjBOAcx5V+Y
+	 2A3e/UYcWY6HsznfPvWUIEQPZAmSef4YMDsjSa/GBdssH2PjT0TAJPiyMFwyPB0JXuuLE
+	 rLK2iGA+yLXeGKnQe/fmXe3R+WjqJ5JfMwA6DgwesZKZr6zLUWAxS6LnUynGd2pPniZKX
+	 q7LH+EaSjkAbHudfWo/jYlpyhoQq2A1+8OfxpDwmTANWk5Mn31Sat2+B1pEt/SK3uvg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793082567;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
-	 X-Authority-Analysis:X-Proofpoint-Spam-Details-Enc:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=O/rKuuC4wm2T8RjQTJJIR0IVY5eIr/Dxakbz4tIixkc=;
-	b=OxYJq6DioFl6y4z7iB5Uo+7sDD4ihb7e5tgJat2XFsf9reEnH+kpdWeRtGvCujnRXkxd
-	 SnfsstGeHh8HcuwRTYHV8pBSxo+8QUDHhKvEDso9LqYbatkhlR9JYFj3yjfmwpjFW0LZq
-	 noY4v6lXn9Kbb/GT4Pmi0VqNxhh1hwb4N4nIvh4g7iDM4Rng3JJ8Z76/mfdtIwhwS1BjJ
-	 ltJG5yjBzroHsH7vgFIv6K7WdkIkLYIJIwKqUi5kKy/jkkBm2nXxuzlNxPGKKVQIBidFT
-	 e8xkS5nPKh3bS5eVViAfv5HEwmxLmtGwIK0A2KOxTbair2Wm3XIGDB2/LqW4tw+qa5w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793084230;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=ovAq067dY7LLmpmjEWvt1XMlmDANlSaC85Wg4RXeSuI=;
+	b=F3sIqVt9VsrtAOl/I/VI2+4rKJC0hszmi3JvYrgjjtnKGyw0VVO/SRdlzvb5vwfHYiEV
+	 PitMr7fNMLQdVTiz1B0cJXcZy9UiDPTfimUm1aKYlgApfQBMENIrvSO3gfG3j1+UJkCMG
+	 noQBn5iU7JKxxLyKSzCVgPdDXQj+G1wKo2T4pjYjmLYwnZkOOFLsdyv1sqNHldT9m9KO8
+	 qQZDKP1xIgInpYN0HvS5w6+C4vmukg+ZG64W3vPFEDWoCZcSFC569ceS1vIueuXiGGsCC
+	 oXCMgow8092ojx1z9fT52RDMK4N0709N1031OqvqpjvZ8XxRBa59Mf6bB065AhFkgag==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=bKbobUZK;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Nnld3526;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=agzyeTnr;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C7E606A31E
-	for <linux-clk@vger.kernel.org>; Tue, 27 Oct 2026 06:29:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 35C7E606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AA3606A31A;
+	Tue, 27 Oct 2026 06:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=bKbobUZK;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Nnld3526
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69R5Ys0C2349795
-	for <linux-clk@vger.kernel.org>; Tue, 27 Oct 2026 06:29:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	O/rKuuC4wm2T8RjQTJJIR0IVY5eIr/Dxakbz4tIixkc=; b=bKbobUZKdgeegorE
-	Ynl1GjUhN9ePA5k8f3olTI/fhso3lM8IrDZIsXt9GWQqv/muihJOiB53p/glZMZ7
-	Q52QQdKM7HwrqaLNeW6qUBV1Re024YbU/EqT4UXU3/KuEucujLAqppwB/2eqd/9p
-	G7oLoAKqgUyp7OJJmloruE1GiL/9NPAzhvMmuXfdtgfeYCBPk2XxBph/D+7Hamh8
-	bFch8a0jCohJfj8XZPzoaWCAp89JmllPRzu6QsoCkrLIT6b/KGfijSopJQ8usTGi
-	uPAqbh879kGzTfR/5J7NpcJ2m0eQXuD4mTw+w82p/s4RUt4ODp2ibiGg3osBxWeq
-	966rSQ==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hjh91930u-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 27 Oct 2026 06:29:26 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3ae1d132d52so1539693a91.0
-        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 23:29:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793082566; x=1793687366; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=O/rKuuC4wm2T8RjQTJJIR0IVY5eIr/Dxakbz4tIixkc=;
-        b=Nnld3526dJYvZg2D0po+GwQiiq8RqPGhpH74W6AoBCgxZVAhf+9i33BPjzr3J8N6Gf
-         bumB6iyvHwIhzWbEs6+iqz3svoAcVALECWookEdY1WZMAbrpRbmcx9K1Yg2nE6mkH2HF
-         aLHuuG7Q361NtbUEridVBM3HeYbFLSlq9cJhJGFaWbeYaoHxMRp/KkzDEkHc3mDO58kj
-         WQrgqASq6lUG0uVV1628ovWMXydzJJMFkdPKsCpX0lBQ5SjwUzilm8HfRicQiegg2aDI
-         Wt+ivf8AvVCninL6PqKuKDly4rtOPcJdhexuO61wzIPwipqHtgjNxFgZUrpc+SnSoQRi
-         xxvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793082566; x=1793687366;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=O/rKuuC4wm2T8RjQTJJIR0IVY5eIr/Dxakbz4tIixkc=;
-        b=HPuCZuegzQnFUjsbs6w/p2D+8cLHj05h0NLBdRHiQvqiQgRVtXZOWydfjrid+po8t3
-         kVLIxAJ2334LWYTnAYgcwdkNk9r6joaEPKkWKKl+963AxoPkxswlCDs1bfmtZfJoZfIO
-         es5pkTzPpf0CCFOFw/V1+NhxArj+4lajsPactzbDppiUq6MbVYHnLzb5SJkTnk2UbW+S
-         TOODZ1EB90WRiKqByZc7EnPwUmBnyohX9S0Efg/c4tUSUjdS16ZjFnlTq3at1be7KNh5
-         nXaCdlyeVxVapNMQr5rfDbV5VvC4zdT9UO8/fDOz3cELmIqlBw51WATb1tb9tMmY7NEC
-         usKA==
-X-Forwarded-Encrypted: i=1; AKwUvBx0JCE3aUtkRrwwCIkNsTpP+BquYa+CzwB7GyfAS198rpAPtWR9haORAqaV0fIhfRgSaXZ7g0KYoiU=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJKr60Ip9PVGEBzPT3Dw8GwkQMd08vxWsw0NYaYwTi0G7ATfwcj
-	3SjQRZ+KAoZMMLpkjRmw+RRom8Y85odIZ2aDJY+cctfwnYu08Zc5VXfduKcn2JiFVt/+NVxvjZO
-	lLAkvALXbnqOjSgi/aCssmE0wPPKauRK+z5Suow+LaUVSCC/uZXTa9OJEHLPaiUF/wx7P/eo=
-X-Gm-Gg: AYBFou3oLOoChD7Ei/2TX+6jH2JkI9O3ClSByefTyK9D7SCyK8SZCFjCeuHVsT/8kke
-	Y+yLUynFhRIJERFVw2nFY3LMq48Zj9UpZ07wjOp2Vs8yxnnUlwrW5GB0jnSc3d4H7kz/czgMoL1
-	q7zwmSRhMKouCPENb9VpOfxehi/iy8SxiBu8AN/YMIoBTzxn+q3jW+9Jla9HFIZ//hJkRttAd+e
-	+iciZPHDioATqlQE4JRLqYeGf5l9Q1gygTpwEQp9uTrQDdq4mZ4ld1rcU8HGHXQpSprInId2gQy
-	x9gUliSVgqKuZihAzV37Jj28r52EEebrmp2WDVM3Cy4MLoJfFiwZ42v3D0WSIXrUApknyaiRbb/
-	0cGIMz/4UCDnGo3WV5pRgL1YVSS6yviOGFPqQSohwmo50tM4qQAnsDxJHbYJa4P2NsRY2banENK
-	U=
-X-Received: by 2002:a17:90b:4406:b0:3ac:7556:8eed with SMTP id 98e67ed59e1d1-3adeae6d6ebmr6442719a91.44.1793082565740;
-        Mon, 26 Oct 2026 23:29:25 -0700 (PDT)
-X-Received: by 2002:a17:90b:4406:b0:3ac:7556:8eed with SMTP id 98e67ed59e1d1-3adeae6d6ebmr6442693a91.44.1793082565262;
-        Mon, 26 Oct 2026 23:29:25 -0700 (PDT)
-Received: from [10.217.216.29] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ae404ddf1bsm2216463a91.2.2026.10.26.23.29.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Oct 2026 23:29:24 -0700 (PDT)
-Message-ID: <34a17861-771c-485f-ba41-6bb2d539ab3f@oss.qualcomm.com>
-Date: Tue, 27 Oct 2026 11:59:19 +0530
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=agzyeTnr
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CD551F031E0;
+	Tue, 27 Oct 2026 06:57:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793084229;
+	bh=ovAq067dY7LLmpmjEWvt1XMlmDANlSaC85Wg4RXeSuI=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=agzyeTnrMRsIVkolvI24piingYTQw40hDLmg0LCC+P1WX/97aBekDNbhxMNZnMf+d
+	 4Bkf9XPocHtW6wD0fy9P+Yy1nfjVwk168UwlORguBXObdaKcePv/BGY8hhTbVoK97S
+	 0CnM/AVEyxnpsCe7stLGK2gpNFMkoGQ/IQAJ8dLTQzH6+UFvhujpBMB4h8KOSh6HRp
+	 DKoHmHUG6A737Qy/04XL5qRFHLFESu7tM0W5p7yDZQnIhSYToLHoywXK94gbfhvoU9
+	 7+eQ0ozjtXm9nE4Dc4lTMnp4T7QlMjlEpGEgnlmd85yDRQm5hwo6mTU0Sbjnv4iq30
+	 /HCxptIHiQX8g==
+Message-ID: <sashiko-outbox-186174@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 2/3] clk: rockchip: Add internal support for 24-bit
+ fractional dividers
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Cunhao Lu" <1579567540@qq.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261026-add-board-ok3572-c-clk-v3-2-dbabfa39d692@qq.com>
+References: <20261026-add-board-ok3572-c-clk-v3-0-dbabfa39d692@qq.com>
+ <20261026-add-board-ok3572-c-clk-v3-2-dbabfa39d692@qq.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 27 Oct 2026 06:57:08 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -115,71 +60,227 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] clk: qcom: Add SM7250 graphics clock controller
- driver
-To: patches@brar.si, Bjorn Andersson <andersson@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Imran Shaik <quic_imrashai@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20261027-gpucc-sm7250-v2-0-773056e4043e@brar.si>
- <20261027-gpucc-sm7250-v2-2-773056e4043e@brar.si>
-Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <20261027-gpucc-sm7250-v2-2-773056e4043e@brar.si>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: FdUjatoXj7JdRDNrO4AFyLissscI-48h
-X-Proofpoint-GUID: FdUjatoXj7JdRDNrO4AFyLissscI-48h
-X-Authority-Analysis: v=2.4 cv=TuxzFzXh c=1 sm=1 tr=0 ts=6ae044c6 cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=X_4YwSRDM6R9hu7WxWMA:9 a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI3MDAyNSBTYWx0ZWRfX0f7kvMkX7wqM
- 6OsH6ekTDS/cZwVlqQsc0hEIzfDGKBSuYNu7uHARn8TwQynTCghuufgedrplx/9oymtG88PGrHv
- 9aA9dqaTo/DEdBofhuVWvOkUnRPIPjJe5fn8JNjLR9layWuToaEXoYHGa2ezdLuzRcpo04Qp4W3
- h/Fu6Jo8S8pm9zgd4XW+1ypfrBz4uyDlao0lr9RDrumB2zBobbqr498glkVGEU5fAksgkhvmDi0
- 5u6ouRX0I4eGQcOM17Bxkwcue6xFPoeyxAtT5dbv75EaQIyMG/KF7G8uiRs9m4kuQ4aBkwhANCv
- D7qc/Eoe75XTdDkA7migyS70ZCQb6U9Pb2zHJE7MmVbdUPj151/4DNYfNU7DDV3/o3IyMRYtFPj
- PCEEZho8RtBtuYABUg415B01HxvNVPU7P5OxD+T8n4OpdczeiVcI/ffYpsfxs7KBU8PAs2+q2Zs
- qooHtycB2ogzNLbMLZQ==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI3MDAyNSBTYWx0ZWRfX1zMrF4cvWmHq
- jtd6RRXyJ/vxzo7/8OUXpVolZrEZZQwFHi9rG+GYZw/OeNEYdpADQCBiqpUwjY14WeCiYLMNaA7
- g0+yzyXLm93GJMjtfOIwuaA96awpEJY=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-27_02,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 spamscore=0 priorityscore=1501 bulkscore=0
- adultscore=0 suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610270025
 
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
+- [Medium] clk: rockchip: wrong mask in clk_fd_v2_set_rate() and shift in r=
+ecalc_rate()
+- [Medium] clk: rockchip: broken zero-based compensation in clk_fd_v2_get_d=
+ivider()
+--
 
+commit d65663131f525c31a7aee9ed1c977edb08e8fda0
+Author: Elaine Zhang <zhangqing@rock-chips.com>
 
-On 10/27/2026 10:05 AM, Ishu Brar via B4 Relay wrote:
-> static const struct qcom_cc_desc gpu_cc_sm7250_desc = {
-> +	.config = &gpu_cc_sm7250_regmap_config,
-> +	.clks = gpu_cc_sm7250_clocks,
-> +	.num_clks = ARRAY_SIZE(gpu_cc_sm7250_clocks),
-> +	.resets = gpu_cc_sm7250_resets,
-> +	.num_resets = ARRAY_SIZE(gpu_cc_sm7250_resets),
-> +	.gdscs = gpu_cc_sm7250_gdscs,
-> +	.num_gdscs = ARRAY_SIZE(gpu_cc_sm7250_gdscs),
-> +	.driver_data = &gpu_cc_sm7250_driver_data,
+clk: rockchip: Add internal support for 24-bit fractional dividers
 
-use_rpm = true,
+This commit adds an internal fractional-divider helper and clock branch type
+for Rockchip 24-bit fractional dividers that split the numerator and
+denominator across a low register and a high register.
 
--- 
-Thanks,
-Taniya Das
+> diff --git a/drivers/clk/rockchip/clk-fractional-divider-v2.c b/drivers/c=
+lk/rockchip/clk-fractional-divider-v2.c
+> new file mode 100644
+> index 0000000000000..102e03f9d6e60
+> --- /dev/null
+> +++ b/drivers/clk/rockchip/clk-fractional-divider-v2.c
+> @@ -0,0 +1,354 @@
 
+[ ... ]
+
+> +static unsigned long clk_fd_v2_recalc_rate(struct clk_hw *hw,
+> +					   unsigned long parent_rate)
+> +{
+> +	struct clk_fractional_divider_v2 *fd =3D to_clk_fd_v2(hw);
+> +	unsigned long flags =3D 0;
+> +	unsigned long m_low, n_low, m_high, n_high, m, n;
+> +	u32 val_low, val_high;
+> +	u64 ret;
+> +
+> +	if (fd->lock)
+> +		spin_lock_irqsave(fd->lock, flags);
+> +	else
+> +		__acquire(fd->lock);
+> +
+> +	val_low =3D clk_fd_v2_readl(fd, fd->reg);
+> +	val_high =3D clk_fd_v2_readl(fd, fd->high_reg);
+> +
+> +	if (fd->lock)
+> +		spin_unlock_irqrestore(fd->lock, flags);
+> +	else
+> +		__release(fd->lock);
+> +
+> +	m_low =3D (val_low & fd->mmask) >> fd->mshift;
+> +	n_low =3D (val_low & fd->nmask) >> fd->nshift;
+> +	m_high =3D (val_high & fd->high_mmask) >> fd->high_mshift;
+> +	n_high =3D (val_high & fd->high_nmask) >> fd->high_nshift;
+> +	m =3D (m_high << 16) | m_low;
+> +	n =3D (n_high << 16) | n_low;
+> +
+> +	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
+> +		m++;
+> +		n++;
+> +	}
+
+[ ... ]
+
+> +static int clk_fd_v2_get_divider(struct clk_hw *hw, unsigned long rate,
+> +				 unsigned long parent_rate,
+> +				 unsigned long *m, unsigned long *n)
+> +{
+> +	struct clk_fractional_divider_v2 *fd =3D to_clk_fd_v2(hw);
+> +	u32 factor;
+> +
+> +	rational_best_approximation(rate, parent_rate,
+> +				    GENMASK(fd->mwidth - 1, 0),
+> +				    GENMASK(fd->nwidth - 1, 0),
+> +				    m, n);
+> +
+> +	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
+> +		(*m)--;
+> +		(*n)--;
+> +	}
+> +	/*
+> +	 * When compensation the fractional divider,
+> +	 * the [1:0] bits of the numerator register are omitted,
+> +	 * which will lead to a large deviation in the result.
+> +	 * Therefore, it is required that the numerator must
+> +	 * be at least 4.
+> +	 *
+> +	 * Note that there are some exceptions here:
+> +	 * If there is an even frac div, we need to keep the original
+> +	 * numerator(<4) and denominator. Otherwise, it may cause the
+> +	 * issue that the duty ratio is not 50%.
+> +	 */
+> +	if (*m < 4 && *m !=3D 0) {
+> +		if (*n % 2 =3D=3D 0)
+> +			factor =3D 1;
+> +		else
+> +			factor =3D DIV_ROUND_UP(4, *m);
+> +
+> +		if (*m > GENMASK(fd->mwidth - 1, 0) / factor ||
+> +		    *n > GENMASK(fd->nwidth - 1, 0) / factor)
+> +			return -EINVAL;
+> +
+> +		*n *=3D factor;
+> +		*m *=3D factor;
+> +	}
+> +
+> +	return 0;
+> +}
+
+[Severity: Medium]
+When CLK_FRAC_DIVIDER_ZERO_BASED is set in fd->flags, does decrementing *m
+and *n before the low-numerator compensation block in clk_fd_v2_get_divider=
+()
+corrupt the divider ratio?
+
+In clk_fd_v2_recalc_rate(), the register values are incremented by 1 before
+calculating the rate:
+
+	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
+		m++;
+		n++;
+	}
+
+However, clk_fd_v2_get_divider() decrements *m and *n right after
+rational_best_approximation(), and then runs the compensation logic on the
+decremented values:
+
+1. The parity check (*n % 2 =3D=3D 0) tests the decremented register value =
+(n - 1)
+   rather than the actual denominator n.
+2. When the approximated numerator m is 1, (*m)-- sets *m to 0, which skips
+   the (*m < 4 && *m !=3D 0) compensation entirely.
+3. For 1 < m <=3D 4, multiplying the already-decremented (m - 1) and (n - 1=
+) by
+   factor produces register values that hardware and clk_fd_v2_recalc_rate()
+   evaluate as ((m - 1) * factor + 1) / ((n - 1) * factor + 1) instead of
+   m / n.
+4. If rational_best_approximation() returns *m =3D=3D 0, (*m)-- underflows
+   unsigned long to ULONG_MAX, bypassing the *m < 4 check and writing all-o=
+nes
+   into the numerator register fields.
+
+Should the CLK_FRAC_DIVIDER_ZERO_BASED adjustment happen after the
+compensation multiplication (or should rational_best_approximation() bound
+the maximum numerator and denominator to 1 << width before decrementing)?
+
+[ ... ]
+
+> +static int clk_fd_v2_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			      unsigned long parent_rate)
+> +{
+> +	struct clk_fractional_divider_v2 *fd =3D to_clk_fd_v2(hw);
+> +	unsigned long flags =3D 0;
+> +	unsigned long m, n, m_low, n_low, m_high, n_high;
+> +	u32 val, val_high;
+> +	int ret;
+> +
+> +	ret =3D clk_fd_v2_get_divider(hw, rate, parent_rate, &m, &n);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (fd->lock)
+> +		spin_lock_irqsave(fd->lock, flags);
+> +	else
+> +		__acquire(fd->lock);
+> +
+> +	m_low =3D m & fd->nmask;
+> +	n_low =3D n & fd->nmask;
+> +	m_high =3D (m & GENMASK(fd->mwidth - 1, (fd->mwidth - fd->high_mwidth))=
+) >>
+> +		 (fd->mwidth - fd->high_mwidth);
+> +	n_high =3D (n & GENMASK(fd->nwidth - 1, (fd->nwidth - fd->high_nwidth))=
+) >>
+> +		 (fd->nwidth - fd->high_nwidth);
+> +
+> +	val_high =3D clk_fd_v2_readl(fd, fd->high_reg);
+> +	val_high &=3D ~(fd->high_mmask | fd->high_nmask);
+> +	val_high |=3D (m_high << fd->high_mshift) | (n_high << fd->high_nshift);
+> +
+> +	clk_fd_v2_writel(fd, fd->high_reg, val_high);
+> +
+> +	val =3D clk_fd_v2_readl(fd, fd->reg);
+> +	val &=3D ~(fd->mmask | fd->nmask);
+> +	val |=3D (m_low << fd->mshift) | (n_low << fd->nshift);
+> +	clk_fd_v2_writel(fd, fd->reg, val);
+
+[Severity: Medium]
+In clk_fd_v2_set_rate(), m_low and n_low are both masked with fd->nmask
+before being shifted by fd->mshift and fd->nshift:
+
+	m_low =3D m & fd->nmask;
+	n_low =3D n & fd->nmask;
+	...
+	val |=3D (m_low << fd->mshift) | (n_low << fd->nshift);
+
+Looking at clk_hw_register_fractional_divider_v2(), fd->mmask and fd->nmask
+are initialized as pre-shifted register masks:
+
+	fd->mshift =3D mshift;
+	fd->mwidth =3D mwidth + high_mwidth;
+	fd->mmask =3D GENMASK(mwidth - 1, 0) << mshift;
+	fd->nshift =3D nshift;
+	fd->nwidth =3D nwidth + high_nwidth;
+	fd->nmask =3D GENMASK(nwidth - 1, 0) << nshift;
+
+Doesn't masking m with fd->nmask apply the denominator mask instead of the
+unshifted low-numerator mask (fd->mmask >> fd->mshift), and wouldn't any
+non-zero fd->nshift cause n_low to be masked with already-shifted bits and
+then shifted by fd->nshift a second time?
+
+Also, while clk_fd_v2_set_rate() splits the high bits at
+(fd->mwidth - fd->high_mwidth) and (fd->nwidth - fd->high_nwidth),
+clk_fd_v2_recalc_rate() hardcodes a shift of 16:
+
+	m =3D (m_high << 16) | m_low;
+	n =3D (n_high << 16) | n_low;
+
+Should clk_fd_v2_recalc_rate() shift m_high and n_high by
+(fd->mwidth - fd->high_mwidth) and (fd->nwidth - fd->high_nwidth) as well so
+both functions agree when the low field width is not 16?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261026-add-board-=
+ok3572-c-clk-v3-0-dbabfa39d692@qq.com?part=3D2
