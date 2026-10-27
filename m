@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793100681;
-	b=s0QJB2/ETGhIvMY8TZwvlk9jYwKbp2zSouNpSvMU2GTPm+MGknQiNi65WuniaFF55DoH
-	 bdZAdyMqttGWCMFGu5F+r+MXLzzul8qKmmKNjNr5kUrWHirolFXOfwoJpHrw8vQGHvll2
-	 jPWVLQhMpLbXOJhyabGiBC6aTOg/6EUqCD5JPxBiyUSSx8vSPBD+ZSuig7QnBFaUYZO39
-	 0t0r2KSL6xZjjQNVezBQlm5kc1tqdqFLBRnpGcuvIsHYlVFrdv4SeitTuPfmssUhDad+x
-	 Z1ntxJnLwfASnFWYOKqrKw5ghfjRRgyfxR2LCW6cwZDNL08LxlgFF2ke4a8+eDC3piw==
+	t=1793100685;
+	b=tPLJFdabBTitFdH6c1j0amlMihBUtLvHwkgNgIqPK5H2Ln1GjHwMW3Se46wzu5MITh6+
+	 rCcPWDtDbBitVM/wXIkooPQnDYHDsHOrMLhf7qVvJWTU8my7wcZJXp8DLdhr1tI6AXJwS
+	 T/iu1F80680YNvBPqIQ7pLnZmqyJEeE9H7URrZlU0EfYe5qjFayuVXExvVN7L5gnGwadr
+	 tXZh2vCVsOc0yW8k0uqaOdt0xSZXhem8cNruwp0KsvFuIx8YFtk0FN//C/tRyEPn2ExqU
+	 33/3iwDyIhRdTacFpqR3dUzTk7oBvRkZUJIgNrHAi+Q/D3hvsYkEAluzVeOUvbpjybg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793100681;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793100685;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=HzM3Ak52dY4+VcEHahUyL2Ez8s1LXey16yCm0bEhJ+c=;
-	b=X61OQc1OV/CBmkLfVsC0068IPXvUX4XZyjI343fyTF/jvVuSgvBR44lO8ZuawgA4owEv
-	 Rvm7RHYqktneSVoIxme7Z0SI4jdVblzuUnaf5YunSE8OPAM4T8fZgv49S25tdLNw+CPWg
-	 Qhqv/RKDn+CDkaDwKg+aJApx0SDh9fpUYCEpu7DZGkyYI8VeH3DowdAhIMURD+Dpj55od
-	 DJwzN/jAB2PT8gsixhxSzUMSSFgVvrt8lQf57WlzFbUsc9OXP+4yIU8dbKxQ3whLJPz2g
-	 jAxCPWWlwzkhDW3R/l8fOqKfKNoRpquiqeiSHLzQ3Ki163UQEsVCCgPGIdbyOCtW9Cw==
+	bh=NVpHCNZW/C7KH8NLxeUT9lOY+xUkZJvI1gwvyB0y/4s=;
+	b=YVGnTy0xJzTa2fzrHMWQWkcOxfpoBekqNSRlAWJycp86XcrmGckFO5s1r4uj66zmMXaB
+	 GgdSCwjD7GC7Z8jBYxXRlxG5EnKTGbhW9KaRu3H3/DtXutRoqtHTjoRbONfmX1+2wbit0
+	 xQ9RIsC5XTIsnTI4eexixtC9JqWrKpgATK0K561/XYOzLP2kS3/Q5rYe/rBeYqCeHE+65
+	 33VjvMVW15GpR+zqRQN5LZgTcyIvgib01FgGjtmfmtUkpHl1hIK/s2NakDSgcx+yWLlN4
+	 66rOlYZzaAxm4Kh361ZZ1k4H6JHw6OeETT1ywaH4mFOiaKGwAcR1kc7g9RLaAfazmqQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ZPboP/BK";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Kq0KBD24;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93747606A322;
-	Tue, 27 Oct 2026 11:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B03606A33A;
+	Tue, 27 Oct 2026 11:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZPboP/BK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD7C71F031E0;
-	Tue, 27 Oct 2026 11:31:20 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Kq0KBD24
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C3AD1F031EB;
+	Tue, 27 Oct 2026 11:31:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793100681;
-	bh=HzM3Ak52dY4+VcEHahUyL2Ez8s1LXey16yCm0bEhJ+c=;
+	s=k20260515; t=1793100684;
+	bh=NVpHCNZW/C7KH8NLxeUT9lOY+xUkZJvI1gwvyB0y/4s=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ZPboP/BKpL7m16nKYOhuuHXJtufM/2gLU3gLsweCYO/i7RA7Esci99za+hqaBUaUT
-	 63kTTk8rwGGgXk+WNqD4wKfwPhVb8XksZecrc9O4fV+FmJQYCO02cEzYpwQEKpffs1
-	 J1DOasX15yBrgv8JxorIW4DVOeXcQmlLhVL9eQsUNVg6Rm1bFbZR29AObfOtqLyNw6
-	 xLvSIJk2dfcVnBHmJdNG9K+maaQQnBTaW46furxximNleWkutP0sYoGxP4fzTfMlB/
-	 6Qzy5Kk3boOSZ5gUF73HrELfcT27oFqDutH0n208EBV+2FCbazT1fHmHpQNEqBNZKV
-	 M6ukuiYIieUQA==
-Message-ID: <sashiko-outbox-186448@kernel.org>
+	b=Kq0KBD24Agz4iuDY371ofPMan2HeWm49QNMSZQfnh27FuXp4MWGtxlOIuWz/aujY4
+	 q+TX1J9TL3fHOMCI4bgKetwPkqTtD9BQ1Q3K2Uqj9Dhbmz0bjub2ME2XFRlTpS6OCW
+	 naj2qJetKZN7lAwizhYBJ6vtJ/9siOGZcsTmqV/zzUiefdDc+wu2Glfz7n07JdQ5vz
+	 ncYRDqN53WxHtwxHQgKjd53zUGNnZ+oiPYs0ixqg0WhXi2Zq84kyb0ycl88EhpsVuo
+	 sgKdQQCMMuA62gsov3Amf9wcOTtYux4mfGEd5Dprt4zbMou3rzuBRh7oiPGZ9YC08Y
+	 XN6p755tiwe2g==
+Message-ID: <sashiko-outbox-186457@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 03/12] clk: qcom: Add a driver for PDM GP_MN
- fractional clock divider
+Subject: Re: [PATCH v2 12/12] arm64: dts: qcom: qcs615: Add GP M/N clock
+ controller
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Taniya Das" <taniya.das@oss.qualcomm.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261026-b4-pdm_clk_gp_mnd_v2-v2-3-ff8e4bc8d567@oss.qualcomm.com>
+In-Reply-To: <20261026-b4-pdm_clk_gp_mnd_v2-v2-12-ff8e4bc8d567@oss.qualcomm.com>
 References: <20261026-b4-pdm_clk_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com>
- <20261026-b4-pdm_clk_gp_mnd_v2-v2-3-ff8e4bc8d567@oss.qualcomm.com>
+ <20261026-b4-pdm_clk_gp_mnd_v2-v2-12-ff8e4bc8d567@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 27 Oct 2026 11:31:20 +0000
+Date: Tue, 27 Oct 2026 11:31:23 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,165 +61,65 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] clk: qcom: clk-gp-mnd: bogus n_val and duty cycle in gp_mnd_clk_=
-recalc_rate()
-- [Low] clk: qcom: clk-gp-mnd: 64-bit division in gp_mnd_clk_set_duty_cycle=
-() on 32-bit
+- [Low] arm64: dts: qcom: talos: Undocumented gp_mn function in qcom,qcs615=
+-tlmm
 --
 
-commit 6c57ad9a80b314f181dd85480b5578fd6c5deb24
+commit 80bf224325113e6fa5a7296e11cbe281f6b0c0e8
 Author: Taniya Das <taniya.das@oss.qualcomm.com>
 
-clk: qcom: Add a driver for PDM GP_MN fractional clock divider
+arm64: dts: qcom: qcs615: Add GP M/N clock controller
 
-This commit adds a standalone platform driver for the Qualcomm PDM GP_MN
-fractional clock divider, implementing rate and duty-cycle operations
-over regmap with runtime PM clock management.
+This commit adds the GP M/N clock controller node and its gp_mn_active pin
+configuration state to arch/arm64/boot/dts/qcom/talos.dtsi.
 
-> diff --git a/drivers/clk/qcom/clk-gp-mnd.c b/drivers/clk/qcom/clk-gp-mnd.c
-> new file mode 100644
-> index 0000000000000..818726c02b615
-> --- /dev/null
-> +++ b/drivers/clk/qcom/clk-gp-mnd.c
-> @@ -0,0 +1,333 @@
-
-[ ... ]
-
-> +static unsigned long gp_mnd_clk_recalc_rate(struct clk_hw *hw,
-> +					    unsigned long parent_rate)
-> +{
-> +	struct clk_gp_mnd *gp =3D to_clk_gp_mnd(hw);
-> +	unsigned int m_val, n_val;
-> +	int ret;
-> +
-> +	ret =3D gp_mnd_clk_runtime_resume(gp);
-> +	if (ret)
-> +		return 0;
-> +
-> +	ret =3D regmap_read(gp->regmap, GP_MND_MDIV_REG, &m_val);
-> +	if (ret)
-> +		goto out_runtime_put;
-> +
-> +	m_val &=3D GP_MND_MAX_M;
-> +
-> +	ret =3D regmap_read(gp->regmap, GP_MND_NDIV_REG, &n_val);
-> +	if (ret)
-> +		goto out_runtime_put;
-> +
-> +	/* Reverse the 1's complement encoding: N =3D ~NDIV_REG + M */
-> +	n_val =3D (~n_val & GP_MND_MAX_N) + m_val;
-> +
-> +out_runtime_put:
-> +	gp_mnd_clk_runtime_put(gp);
-> +
-> +	if (ret)
-> +		return 0;
-> +
-> +	if (!n_val)
-> +		return 0;
-> +
-> +	gp->m_val =3D m_val;
-> +	gp->n_val =3D n_val;
-> +
-> +	return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * m_val, n_val);
-> +}
-> +
-> +static int gp_mnd_clk_get_duty_cycle(struct clk_hw *hw, struct clk_duty =
-*duty)
-> +{
-> +	struct clk_gp_mnd *gp =3D to_clk_gp_mnd(hw);
-> +	unsigned int d_val;
-> +	int ret;
-> +
-> +	if (!gp->n_val) {
-> +		duty->num =3D 1;
-> +		duty->den =3D 2;
-> +		return 0;
-> +	}
-> +
-> +	ret =3D gp_mnd_clk_runtime_resume(gp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D regmap_read(gp->regmap, GP_MND_DUTY_REG, &d_val);
-> +
-> +	gp_mnd_clk_runtime_put(gp);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (d_val >=3D gp->n_val)
-> +		return -EINVAL;
-> +
-> +	/* DUTY stores the low-phase count; report the high-phase duty cycle. */
-> +	duty->num =3D gp->n_val - d_val;
-> +	duty->den =3D gp->n_val;
-> +
-> +	return 0;
-> +}
-
-[Severity: Medium]
-When GP_MND_MDIV_REG and GP_MND_NDIV_REG are at their power-on reset value =
-of
-0, gp_mnd_clk_recalc_rate() reads m_val =3D 0 and computes:
-
-    n_val =3D (~n_val & GP_MND_MAX_N) + m_val;
-
-which evaluates to 8191. Because only !n_val is checked before caching,
-gp_mnd_clk_recalc_rate() stores gp->m_val =3D 0 and gp->n_val =3D 8191 even=
- though
-the divider is unconfigured and the returned rate is 0.
-
-When gp_mnd_clk_get_duty_cycle() is later called (for example via
-clk_get_scaled_duty_cycle() or debugfs clk_summary), the !gp->n_val check f=
-or
-the 50% default is bypassed because gp->n_val is 8191. Reading d_val =3D 0 =
-from
-GP_MND_DUTY_REG then reports duty->num =3D 8191 and duty->den =3D 8191 (100=
-% duty
-cycle) instead of 1/2.
-
-In addition, during clk_gp_mnd_probe() -> devm_clk_hw_register() ->
-__clk_core_init(), clk_core_update_duty_cycle_nolock() invokes
-gp_mnd_clk_get_duty_cycle() before core->ops->recalc_rate() is called, so
-gp->n_val is always 0 during initial registration even if the hardware
-registers were already programmed prior to probe.
-
-Should gp_mnd_clk_recalc_rate() also check for !m_val (or n_val <=3D 2 * m_=
-val +
-1) before caching gp->m_val and gp->n_val, and should gp_mnd_clk_get_duty_c=
-ycle()
-handle reading the hardware state or validating M < D < (N - M) directly?
-
-> +
-> +static int gp_mnd_clk_set_duty_cycle(struct clk_hw *hw, struct clk_duty =
-*duty)
-> +{
-> +	struct clk_gp_mnd *gp =3D to_clk_gp_mnd(hw);
-> +	unsigned int d_val;
-> +	int ret;
-> +
-> +	if (!gp->n_val || !gp->m_val || !duty->den || duty->num > duty->den)
-> +		return -EINVAL;
-> +
-> +	/* D =3D (1 - duty) * N, giving the low-phase count */
-> +	d_val =3D DIV_ROUND_UP((u64)(duty->den - duty->num) * gp->n_val, duty->=
-den);
+> diff --git a/arch/arm64/boot/dts/qcom/talos.dtsi b/arch/arm64/boot/dts/qc=
+om/talos.dtsi
+> index 8ed6f2755705c..c415e782804ca 100644
+> --- a/arch/arm64/boot/dts/qcom/talos.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/talos.dtsi
+> @@ -1611,6 +1611,13 @@ cam_mclk1_default: cam-mclk1-default-state {
+>  				bias-disable;
+>  			};
+> =20
+> +			gp_mn_active: gp-mn-active-state {
+> +				pins =3D "gpio29";
+> +				function =3D "gp_mn";
+> +				drive-strength =3D <2>;
+> +				bias-disable;
+> +			};
 
 [Severity: Low]
-Since QCOM_CLK_GP_MND depends on ARM64 || COMPILE_TEST, this driver can be
-built on 32-bit architectures.
+In arch/arm64/boot/dts/qcom/talos.dtsi, gp_mn_active is added under tlmm
+(compatible "qcom,qcs615-tlmm") with function =3D "gp_mn".
 
-In gp_mnd_clk_set_duty_cycle(), DIV_ROUND_UP() expands to plain C division =
-on a
-u64 dividend and a runtime unsigned int divisor (duty->den), which causes a
-link failure (__udivdi3 / __aeabi_uldivmod undefined) on 32-bit COMPILE_TEST
-builds.
+While commit 110a5e6a912b added gp_mn to enum qcs615_functions in
+drivers/pinctrl/qcom/pinctrl-qcs615.c, Documentation/devicetree/bindings/pi=
+nctrl/qcom,qcs615-tlmm.yaml
+does not list gp_mn in the function enum under qcom-qcs615-tlmm-state:
 
-Should this use DIV_ROUND_UP_ULL() instead?
+Documentation/devicetree/bindings/pinctrl/qcom,qcs615-tlmm.yaml:
+      function:
+        description:
+          Specify the alternative function to be configured for the specifi=
+ed
+          pins.
+        enum: [ gpio, adsp_ext, agera_pll, aoss_cti, atest_char, atest_tsen=
+s,
+                atest_usb, cam_mclk, cci_async, cci_i2c, cci_timer, copy_gp,
+                copy_phase, cri_trng, dbg_out_clk, ddr_bist, ddr_pxi, dp_ho=
+t,
+                edp_hot, edp_lcd, emac_gcc, emac_phy_intr, forced_usb, gcc_=
+gp,
+                gp_pdm, gps_tx, hs0_mi2s, hs1_mi2s, jitter_bist, ldo_en,
+
+Should gp_mn also be added to the function enum in
+Documentation/devicetree/bindings/pinctrl/qcom,qcs615-tlmm.yaml (as well as
+the corresponding pinctrl schemas for the other SoCs in this series) so that
+make dtbs_check does not fail validation on gp-mn-active-state?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261026-b4-pdm_clk=
-_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com?part=3D3
+_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com?part=3D12
