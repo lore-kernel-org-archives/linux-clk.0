@@ -1,95 +1,44 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=156.224.81.90
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793060671;
-	b=zBwIsERjF1K6vux2dDb7IDt5Ar7VI1cveuPMXk0uV8F25XxzDj7ADDLxoRNP7aAWTbam
-	 Fb/A7Pk3XJkVqcF5qtu/ytdn29Hurni9dMV540O8Dhj6YcFXMnq9sL6BTa4YOzdm0ngvj
-	 o1Gdvu0+kWe/zmYs/B0pkrkAi52F1Lp8P5ovjlcVYA7UFly1YP20QQ1u8loOeTdIadmdL
-	 /25zKrpe3hFGRuZbvxpkesd+1vNGEbP5v9PVfNmGkHq3BMk3pd2eLmCV8L6nduWe3KTr5
-	 X+mBDey/sn9EAjQiA/d6gD9THWPBgH82m1LxidIDJ1C/QJ6HJhXTH3oGy+2fIq7HUPQ==
+	t=1793062408;
+	b=2kPa5IRq7EJvdvjtPewsBKtrzZz6W/PIc41nKPpYlKgPJER8v0sEcGFOUub9YX1e4Elb
+	 necJqfG5Azj6x8h15DxvXe92yZq0HwpiHU6dV7xhSQfpt3MHuO8XxbdFx/lem/g7WLewc
+	 3fDtLj7ddzBJaUXESgaOJbYOC0DV2k8hfBXrU6HrFxbLTcJBJpkUt/nVnAYVQ/CJni777
+	 HPhpS/uf32WjXGktqfyMrTTI5LMEybV2UQmFeB8hDd1uotBQ5IQFFYvWo84eBh1kyakXj
+	 hcKepKE0CAfEPqhNDnwdPKWutXXD+kkMjHFioIRmLympDx01CG4F383Hgog/GIc07+g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793060671;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=N+Xvec07uoX87AO29/8Wl59FJ0uKiswGsShIgxHmlc8=;
-	b=Eg7kmDt9+ycoNOW1EAVFkW21Y2BZAwmKO3p28zfy/gcuFyzWE3tNDG2Sem6xf+IB32if
-	 CQ+SqJR+L1jePWJQNQMwR4QxKwrwG0P/ygPJ9g35jXPKy4t2fh0hu1MucGb+Y0pk5oZNo
-	 qFJU/Pi7875V3pwFiF4ZAJkWbAoQ8rWiKez4QSU0TFymjyMhSBbOQ0SbWfw0D46UKhP2m
-	 JINKtNtnJxXJx483R5y8M7WH+S6SicFfIbQ+dLvjPKjsXF5fm0YRDfcqO4SUI4deAyY5g
-	 eK2Pabgke53y71j/LVafLUO9FE+xnMS5B0nOGXPJTfW0yLtqcVZGQHrUo+OglZI1lKQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793062408;
+	h=DMARC-Filter:Received:Message-ID:Date:MIME-Version:User-Agent:Cc:
+	 Subject:To:References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-HM-Tid:X-HM-MType:X-HM-Spam-Status:
+	 DKIM-Signature;
+	bh=wghg31XooAJPKL/XTiGnCxCN5pFUy2mBUdUxi6yrLos=;
+	b=hsqc+Gv09Vibsh4zPxQF0+f1hqGEsB+xnje/B5sxXEBwklVJZTP/NAUzYwSpCEROr+kA
+	 3iOP+u1Ar1bp/EYH7+1ts8/IgloPHXyYKxP5LmSOY+1UjRC0lv+AE0F3KHlHz+n0W4Th2
+	 UjGXDRTKoIjqsU8xzcL257v5Zc4tmsGsdDsyVE+e8ivOJp9Mucud9fRZoGvL9iS60Wuwq
+	 Pxf5tFfwgM7LXxTU3EfHNOHRRVKoZ1kLOjPhNEF69gewYqa9hHjRwm6h8wAmTCJ1SbH7o
+	 OQHAVGtkWRjuoj2k2ZjA/VClm7DxoxVV2DogKQVaMmq7dFR1JJiTh3XNzJ9fIvYWD5A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=YTHQsB8K;
-	arc=none smtp.remote-ip=209.85.208.44
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=rock-chips.com;
+	spf=pass smtp.mailfrom=rock-chips.com;
+	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=IJsQys7w;
+	arc=none smtp.remote-ip=156.224.81.90
+Received: from mail-m8190.xmail.ntesmail.com (mail-m8190.xmail.ntesmail.com [156.224.81.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF90606A31A
-	for <linux-clk@vger.kernel.org>; Tue, 27 Oct 2026 00:24:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CDF90606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320C1606A31A;
+	Tue, 27 Oct 2026 00:53:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 320C1606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=YTHQsB8K
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6b408f2d936so5238825a12.1
-        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 17:24:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1793060669; x=1793665469; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=N+Xvec07uoX87AO29/8Wl59FJ0uKiswGsShIgxHmlc8=;
-        b=YTHQsB8K71Utnq1y/7rscr+4aTy1kBdRaMpUyWRrzDckgv1pLXq/TxGhXAEchcSdZ7
-         9BqLp2KGclRoUTiijnG7++I9eUCao71Sbb81RgOcvd/5nlvCC73iBasFeNo4YEbLsNTI
-         w5ZWXvKqTYb4ffQl8pP6I1JAPotaWVPotKTkssHxy2c7V8ciZ6W1u1a9Khl8GpAcYHQh
-         2O13EijZdnOiL9LBqmDV897fU92zp/L4cvZmi8iw2HqpLycd4DMAzn7fxunnHMxoOk2T
-         fA2K/oaHJ82YsvDOLPHJ5LJzw1/LyxhbG2ouQUfdx4j99q+9Wu/cZkjDr7i/0fYnrLlD
-         Uw/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793060669; x=1793665469;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=N+Xvec07uoX87AO29/8Wl59FJ0uKiswGsShIgxHmlc8=;
-        b=h8bjS+grpQHL1sPARm5pGFFx/cGxvexQEuKZaVLTVjLaTLeGvzfznrcgSS8+2gbv8I
-         L3pPfnC8CXEA8wuoc+D3AQX9K2PtaOVyVInnlTMxpSQo0MIbHBj4HiaYMiVkIPMuWny9
-         LHMqZX7odkXp5wE67pRoLdr9IeuuiCPHLMAMR9w9jme/VXjDU1lAaJX1iqAVTB9dsz01
-         w2mcVIumkrrbrc+N3q5qpDF0NMCCigFKKIo0A8tlBR0ZcqrBivY4d5wSYMN1OCaaMzH0
-         9BAoVXWxZ5ZnOkL8v+BJYQNvKtAjQDBac07KOD0i3P+LQmHlgBHj/ifgcXW38Ky5ZkEN
-         nmuQ==
-X-Forwarded-Encrypted: i=1; AKwUvBw8VngwB96YTPmHMUdPOuUiHih60l+U2eMbuu6cEvS1Q1QE8dhkv9/56b+pU9xHfeUDepWKAtq1ixk=@vger.kernel.org
-X-Gm-Message-State: AFq9FYL69FXGzZy+jRGOjRleZORCMo5CGTcHyi4w8DVbM6+efXiFiQGa
-	kXg7RC0Ptxkox2C3qqKipNGD9yUWMFBN1CkS7U95UQLVaGvMhiy02qGI
-X-Gm-Gg: AYBFou0+pGC3U1LjAboA8/Nmb2XVDT0OWrTcFkM303BnhB1ZNcNByiUONygQ5m5LPv+
-	ARTC1Cl7VQode0cT7kEhPHDT3Yv+4mdYrEv57q00+UAM7TVhQhsl85qe0euUVkyfiqfrPMHwO1z
-	o3+735ZYRP6af9S6sqOFVS2fRQIu7xyZMPq9FTaVStC1J2MEio8sxDXyKewDJQCi45sTeGCFyeT
-	hyP9BX7p3COd8+cuXgJE9ZND5Va1akwtOv/Qlodcxyv3bM4mwTBR5kK4TgIj5/+EDR3oRjTokM6
-	9GM9RgXdQWBMQF2yI+Fkv6UnhOiOYw+ldRp+j79gyaxBnWi+Jhg1R/RkxMCbxfmuvHqMxVSalwm
-	yu9b8ZcbHf64jM8kXG2XP4hULDPwvUgSBU6VFjp0WLYAWeiL6EHaTt/GSt9UPzEFltjJY6eq9sk
-	ZxU3M15DVCXvtnNLkIh3bIUGdmti7G/Oz8a7n6XGqSsWHqjdDHCZpiw+h0y/oguF9f1S36daGPI
-	GEGF33+Gk2ophGIaiZWWOi/pp9nMVhCdzkxFMcc0/GO+7AWQIsBBjmUs+ias4U=
-X-Received: by 2002:a05:6402:3d1:b0:6b4:35af:328d with SMTP id 4fb4d7f45d1cf-6b442fc9e5fmr6712467a12.14.1793060668811;
-        Mon, 26 Oct 2026 17:24:28 -0700 (PDT)
-Received: from nb-xps.ts.zxczxc.org ([78.56.243.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b445984207sm3975344a12.22.2026.10.26.17.24.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2026 17:24:28 -0700 (PDT)
-From: Nikolay Bryskin <nbryskin@gmail.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Nikolay Bryskin <nbryskin@gmail.com>
-Subject: [PATCH] clk: rockchip: rk3588: keep the OTP gates shared with the secure world on
-Date: Tue, 27 Oct 2026 02:24:19 +0200
-Message-ID: <20261027002419.2099708-1-nbryskin@gmail.com>
-X-Mailer: git-send-email 2.56.0
+	dkim=pass (1024-bit key, unprotected) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=IJsQys7w
+Received: from [172.16.12.48] (unknown [61.154.14.86])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 526e8ceb0;
+	Tue, 27 Oct 2026 08:53:12 +0800 (GMT+08:00)
+Message-ID: <bb38e2c8-1868-4a66-9e0d-78d9f68ab4be@rock-chips.com>
+Date: Tue, 27 Oct 2026 08:53:09 +0800
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -99,50 +48,137 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: shawn.lin@rock-chips.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ mfd@lists.linux.dev, linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-phy@lists.infradead.org,
+ linux-usb@vger.kernel.org
+Subject: Re: [PATCH 24/27] mmc: dw_mmc-rockchip: Keep RK3572 NVM domain
+ powered
+To: 1579567540@qq.com, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Elaine Zhang <zhangqing@rock-chips.com>, Lee Jones <lee@kernel.org>,
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ David Wu <david.wu@rock-chips.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Manivannan Sadhasivam <mani@kernel.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>
+References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
+ <20261022-add-board-ok3572-c-v1-24-0b0fd85a31ee@qq.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <20261022-add-board-ok3572-c-v1-24-0b0fd85a31ee@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0aa17ad8d47003a4kunm11e232fa473cda
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDTh1CVh1KTR9CSE1LQx4fGFYVFA
+	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSE
+	pKQk1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=IJsQys7w6ZxV+DGACFu7tp6IC2XPPwcJXSelxQSD1vTGjhE9PoZcuZz9xwdeWJyiMmawVu+MEW+G8WAm2iMk67hmhZOiMs56Iq7OGWJB2jXbZ7rtdDSqWunDi5ua9gLF9vWCsJIjLwel7Nty1TbOGwqxXT82cvpybuOOJTauLtE=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=wghg31XooAJPKL/XTiGnCxCN5pFUy2mBUdUxi6yrLos=;
+	h=date:mime-version:subject:message-id:from;
 
-The secure OTP controller (OTPC_S) shares three clock gates in
-CRU_CLKGATE_CON18 with the non-secure one: clk_otpc_arb,
-clk_otpc_auto_rd_g and clk_otp_phy_g. The kernel treats them as ordinary
-gates: clk_otpc_auto_rd_g is disabled as unused at the end of boot, and
-the rockchip-otp nvmem driver enables clk_otpc_arb and clk_otp_phy_g
-around each read and disables them again afterwards.
+Hi Cunhao,
 
-Firmware in the secure world (OP-TEE reads its hardware unique key and
-the secure boot state from OTPC_S, and programs them) has no way to take
-a reference on these clocks. Once Linux has gated them, every secure OTP
-access times out, and a normal-world nvmem read on another CPU can gate
-them in the middle of a secure access, including a fuse programming
-cycle.
+在 2026/10/22 星期四 0:11, Cunhao Lu via B4 Relay 写道:
+> From: Cunhao Lu <1579567540@qq.com>
+> 
+> Power cycling the RK3572 NVM domain causes repeated SD recovery. Keep it
+> powered during runtime suspend without disabling controller runtime PM.
+> 
 
-Mark the three gates critical so the normal world never turns them off.
-They are 24 MHz gates for the OTP block only.
+Before your v2 about this path, I would like to ask why you need this?
+The dw_mmc-rockchip controller is always under A power domain on every
+SoC, none of the predecessors need this kind of change. If you see
+some errors during RPM, perhaps you should have a look[1] and check your
+DTS.
 
-Link: https://github.com/OP-TEE/optee_os/pull/8034
-Signed-off-by: Nikolay Bryskin <nbryskin@gmail.com>
----
- drivers/clk/rockchip/clk-rk3588.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+[1] 
+https://lore.kernel.org/linux-mmc/1768524932-163929-1-git-send-email-shawn.lin@rock-chips.com/
 
-diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
-index 24baa0ef9bf3..8e0f408fdfad 100644
---- a/drivers/clk/rockchip/clk-rk3588.c
-+++ b/drivers/clk/rockchip/clk-rk3588.c
-@@ -1158,11 +1158,11 @@ static struct rockchip_clk_branch rk3588_early_clk_branches[] __initdata = {
- 			RK3588_CLKGATE_CON(18), 9, GFLAGS),
- 	GATE(CLK_OTPC_NS, "clk_otpc_ns", "xin24m", 0,
- 			RK3588_CLKGATE_CON(18), 10, GFLAGS),
--	GATE(CLK_OTPC_ARB, "clk_otpc_arb", "xin24m", 0,
-+	GATE(CLK_OTPC_ARB, "clk_otpc_arb", "xin24m", CLK_IS_CRITICAL,
- 			RK3588_CLKGATE_CON(18), 11, GFLAGS),
--	GATE(CLK_OTP_PHY_G, "clk_otp_phy_g", "xin24m", 0,
-+	GATE(CLK_OTP_PHY_G, "clk_otp_phy_g", "xin24m", CLK_IS_CRITICAL,
- 			RK3588_CLKGATE_CON(18), 13, GFLAGS),
--	GATE(CLK_OTPC_AUTO_RD_G, "clk_otpc_auto_rd_g", "xin24m", 0,
-+	GATE(CLK_OTPC_AUTO_RD_G, "clk_otpc_auto_rd_g", "xin24m", CLK_IS_CRITICAL,
- 			RK3588_CLKGATE_CON(18), 12, GFLAGS),
- 
- 	GATE(PCLK_SARADC, "pclk_saradc", "pclk_top_root", 0,
--- 
-2.56.0
+> Signed-off-by: Cunhao Lu <1579567540@qq.com>
+> ---
+>   drivers/mmc/host/dw_mmc-rockchip.c | 24 ++++++++++++++++++++++++
+>   1 file changed, 24 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
+> index 75c82ff20f177..8bc55d4b996c6 100644
+> --- a/drivers/mmc/host/dw_mmc-rockchip.c
+> +++ b/drivers/mmc/host/dw_mmc-rockchip.c
+> @@ -10,6 +10,7 @@
+>   #include <linux/mmc/host.h>
+>   #include <linux/of_address.h>
+>   #include <linux/mmc/slot-gpio.h>
+> +#include <linux/pm_domain.h>
+>   #include <linux/pm_runtime.h>
+>   #include <linux/slab.h>
+>   
+> @@ -528,6 +529,19 @@ static int dw_mci_rockchip_init(struct dw_mci *host)
+>   	return 0;
+>   }
+>   
+> +static int dw_mci_rk3572_init(struct dw_mci *host)
+> +{
+> +	int ret;
+> +
+> +	/* Power cycling the NVM domain disrupts SDMMC recovery. */
+> +	ret = dev_pm_genpd_rpm_always_on(host->dev, true);
+> +	if (ret && ret != -EOPNOTSUPP)
+> +		dev_warn(host->dev, "failed to keep power domain on: %pe\n",
+> +			 ERR_PTR(ret));
+> +
+> +	return dw_mci_rockchip_init(host);
+> +}
+> +
+>   static const struct dw_mci_drv_data rk2928_drv_data = {
+>   	.init			= dw_mci_rockchip_init,
+>   	.parse_dt		= dw_mci_rk2928_parse_dt,
+> @@ -541,6 +555,14 @@ static const struct dw_mci_drv_data rk3288_drv_data = {
+>   	.init			= dw_mci_rockchip_init,
+>   };
+>   
+> +static const struct dw_mci_drv_data rk3572_drv_data = {
+> +	.common_caps		= MMC_CAP_CMD23,
+> +	.set_ios		= dw_mci_rk3288_set_ios,
+> +	.execute_tuning		= dw_mci_rk3288_execute_tuning,
+> +	.parse_dt		= dw_mci_rk3576_parse_dt,
+> +	.init			= dw_mci_rk3572_init,
+> +};
+> +
+>   static const struct dw_mci_drv_data rk3576_drv_data = {
+>   	.common_caps		= MMC_CAP_CMD23,
+>   	.set_ios		= dw_mci_rk3288_set_ios,
+> @@ -554,6 +576,8 @@ static const struct of_device_id dw_mci_rockchip_match[] = {
+>   		.data = &rk2928_drv_data },
+>   	{ .compatible = "rockchip,rk3288-dw-mshc",
+>   		.data = &rk3288_drv_data },
+> +	{ .compatible = "rockchip,rk3572-dw-mshc",
+> +		.data = &rk3572_drv_data },
+>   	{ .compatible = "rockchip,rk3576-dw-mshc",
+>   		.data = &rk3576_drv_data },
+>   	{},
+> 
 
