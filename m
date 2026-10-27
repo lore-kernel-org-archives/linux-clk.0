@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793100685;
-	b=tPLJFdabBTitFdH6c1j0amlMihBUtLvHwkgNgIqPK5H2Ln1GjHwMW3Se46wzu5MITh6+
-	 rCcPWDtDbBitVM/wXIkooPQnDYHDsHOrMLhf7qVvJWTU8my7wcZJXp8DLdhr1tI6AXJwS
-	 T/iu1F80680YNvBPqIQ7pLnZmqyJEeE9H7URrZlU0EfYe5qjFayuVXExvVN7L5gnGwadr
-	 tXZh2vCVsOc0yW8k0uqaOdt0xSZXhem8cNruwp0KsvFuIx8YFtk0FN//C/tRyEPn2ExqU
-	 33/3iwDyIhRdTacFpqR3dUzTk7oBvRkZUJIgNrHAi+Q/D3hvsYkEAluzVeOUvbpjybg==
+	t=1793100682;
+	b=D3RyWF0L0dRtzR3csnWfr0HzCPuas4rYujqKfVntCEpqSDgVBZ605XZzrjTMvWMaRP3H
+	 xF5MlLOr+QV7ea/d3kCC7bQ2a6UHCTT6/btPZ+GUA7aZbrRFyKKvF+0VSDGtDONcsv9Hy
+	 gxCwnwe1OpKF53rXmLXm5SjcumppF0LJWg+iLmGB4ul1R8gLCClBQbRb3dcD7qOgJX588
+	 2tgOxXr4YFunQ6kubqJsIzxl+jE2LZXtOgAqpMiogQePaP0q0UoHujmn4U/Lem2BzWHIT
+	 48rZYHTnT1kSWbLbQ0QZcm71BzZ9t1E1uBV13zlr4owE6YKpxayUE7lqgnZOpjyNEhQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793100685;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793100682;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=NVpHCNZW/C7KH8NLxeUT9lOY+xUkZJvI1gwvyB0y/4s=;
-	b=YVGnTy0xJzTa2fzrHMWQWkcOxfpoBekqNSRlAWJycp86XcrmGckFO5s1r4uj66zmMXaB
-	 GgdSCwjD7GC7Z8jBYxXRlxG5EnKTGbhW9KaRu3H3/DtXutRoqtHTjoRbONfmX1+2wbit0
-	 xQ9RIsC5XTIsnTI4eexixtC9JqWrKpgATK0K561/XYOzLP2kS3/Q5rYe/rBeYqCeHE+65
-	 33VjvMVW15GpR+zqRQN5LZgTcyIvgib01FgGjtmfmtUkpHl1hIK/s2NakDSgcx+yWLlN4
-	 66rOlYZzaAxm4Kh361ZZ1k4H6JHw6OeETT1ywaH4mFOiaKGwAcR1kc7g9RLaAfazmqQ==
+	bh=G3LvWOxUnjLoQmRGKIBl8CxWX4qZcang/Y7IR5ca5Os=;
+	b=abhWQWSGnN4A/L/ZqIJrWOSnZUdLJpzmpSWdxtX9mevCNOvAZez8ksCOvrAKd8AqXRDH
+	 JbNbOCH4xdJtlDO1GX2t9UyxJlxk9btQt7GEWwCRFN2ByPfoBlKzCsNAkVJNo9UUChtvl
+	 +7d/Fnmku/p5CgR1Fnf1xuTbCadwUx9nHGsIagjjp1YGx3zbpgoQiADvLVwGWk4rgfWvR
+	 zoArGADxztYIeknuTZi551DY7BKpj4+sv8b8H7BVoj9H52e5LLQPlNSj3/728/GXR6HLW
+	 boa81SK2OFDuzCurJxikjlDeZYYRJvIk5/WFejEu6oL4c9J51RVhjHhX+cneHihSZCg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Kq0KBD24;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dyNF11sY;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B03606A33A;
-	Tue, 27 Oct 2026 11:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368FD606A327;
+	Tue, 27 Oct 2026 11:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Kq0KBD24
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C3AD1F031EB;
-	Tue, 27 Oct 2026 11:31:24 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dyNF11sY
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B503F1F031E1;
+	Tue, 27 Oct 2026 11:31:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793100684;
-	bh=NVpHCNZW/C7KH8NLxeUT9lOY+xUkZJvI1gwvyB0y/4s=;
+	s=k20260515; t=1793100682;
+	bh=G3LvWOxUnjLoQmRGKIBl8CxWX4qZcang/Y7IR5ca5Os=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Kq0KBD24Agz4iuDY371ofPMan2HeWm49QNMSZQfnh27FuXp4MWGtxlOIuWz/aujY4
-	 q+TX1J9TL3fHOMCI4bgKetwPkqTtD9BQ1Q3K2Uqj9Dhbmz0bjub2ME2XFRlTpS6OCW
-	 naj2qJetKZN7lAwizhYBJ6vtJ/9siOGZcsTmqV/zzUiefdDc+wu2Glfz7n07JdQ5vz
-	 ncYRDqN53WxHtwxHQgKjd53zUGNnZ+oiPYs0ixqg0WhXi2Zq84kyb0ycl88EhpsVuo
-	 sgKdQQCMMuA62gsov3Amf9wcOTtYux4mfGEd5Dprt4zbMou3rzuBRh7oiPGZ9YC08Y
-	 XN6p755tiwe2g==
-Message-ID: <sashiko-outbox-186457@kernel.org>
+	b=dyNF11sYND05GG2QhcJAU53sXGgNA5IFOjHiABUfOcy40uVb3CqT22RQHfwb1E1rO
+	 ZnipXhkP6VsT5mjx4pOAjaGEW8BNTMXZw3pMM2rqYVZ1arxITzmwRs9MWCmxfcbeh4
+	 OUg3KtPOuf13NVRnnZLdzJlCQonMp1WwA0/rql3jZnbl1p3L6KtZkLFVijPQPeCee+
+	 DzZpNRbslDKuqe3MargxK7Z98GgZx8qj06pXHSBr7JBASC5XHNEqpcXZWK1wHjwiy9
+	 9HQjeyibPmCmqzm9VDGVhw/Ls3HKK5qTW129wPZ1/GtgBqomU+QAZ/WRXzhg3mFsMW
+	 K2uMrqdBaJqxA==
+Message-ID: <sashiko-outbox-186454@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 12/12] arm64: dts: qcom: qcs615: Add GP M/N clock
+Subject: Re: [PATCH v2 09/12] arm64: dts: qcom: qcs8300: Add GP M/N clock
  controller
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Taniya Das" <taniya.das@oss.qualcomm.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261026-b4-pdm_clk_gp_mnd_v2-v2-12-ff8e4bc8d567@oss.qualcomm.com>
+In-Reply-To: <20261026-b4-pdm_clk_gp_mnd_v2-v2-9-ff8e4bc8d567@oss.qualcomm.com>
 References: <20261026-b4-pdm_clk_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com>
- <20261026-b4-pdm_clk_gp_mnd_v2-v2-12-ff8e4bc8d567@oss.qualcomm.com>
+ <20261026-b4-pdm_clk_gp_mnd_v2-v2-9-ff8e4bc8d567@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 27 Oct 2026 11:31:23 +0000
+Date: Tue, 27 Oct 2026 11:31:21 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -63,63 +63,61 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Low] arm64: dts: qcom: talos: Undocumented gp_mn function in qcom,qcs615=
--tlmm
+- [Low] arm64: dts: qcom: monaco: undocumented gp_mn function fails dtbs_ch=
+eck
 --
 
-commit 80bf224325113e6fa5a7296e11cbe281f6b0c0e8
+commit ec768e562985a95ab74c10638b6159100f9048cc
 Author: Taniya Das <taniya.das@oss.qualcomm.com>
 
-arm64: dts: qcom: qcs615: Add GP M/N clock controller
+arm64: dts: qcom: qcs8300: Add GP M/N clock controller
 
-This commit adds the GP M/N clock controller node and its gp_mn_active pin
-configuration state to arch/arm64/boot/dts/qcom/talos.dtsi.
+This commit adds the GP M/N clock controller node and its pin configuration=
+ on
+gpio32 to arch/arm64/boot/dts/qcom/monaco.dtsi for QCS8300.
 
-> diff --git a/arch/arm64/boot/dts/qcom/talos.dtsi b/arch/arm64/boot/dts/qc=
-om/talos.dtsi
-> index 8ed6f2755705c..c415e782804ca 100644
-> --- a/arch/arm64/boot/dts/qcom/talos.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/talos.dtsi
-> @@ -1611,6 +1611,13 @@ cam_mclk1_default: cam-mclk1-default-state {
+> diff --git a/arch/arm64/boot/dts/qcom/monaco.dtsi b/arch/arm64/boot/dts/q=
+com/monaco.dtsi
+> index 35fbee63d4c65..e122f70eaf20c 100644
+> --- a/arch/arm64/boot/dts/qcom/monaco.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/monaco.dtsi
+
+[ ... ]
+
+> @@ -6457,6 +6471,13 @@ dp_hot_plug_det: dp-hot-plug-det-state {
 >  				bias-disable;
 >  			};
 > =20
 > +			gp_mn_active: gp-mn-active-state {
-> +				pins =3D "gpio29";
+> +				pins =3D "gpio32";
 > +				function =3D "gp_mn";
 > +				drive-strength =3D <2>;
 > +				bias-disable;
 > +			};
 
 [Severity: Low]
-In arch/arm64/boot/dts/qcom/talos.dtsi, gp_mn_active is added under tlmm
-(compatible "qcom,qcs615-tlmm") with function =3D "gp_mn".
+Will adding gp_mn_active with function =3D "gp_mn" under tlmm
+(compatible =3D "qcom,qcs8300-tlmm") cause dtbs_check regressions for device
+trees including arch/arm64/boot/dts/qcom/monaco.dtsi?
 
-While commit 110a5e6a912b added gp_mn to enum qcs615_functions in
-drivers/pinctrl/qcom/pinctrl-qcs615.c, Documentation/devicetree/bindings/pi=
-nctrl/qcom,qcs615-tlmm.yaml
-does not list gp_mn in the function enum under qcom-qcs615-tlmm-state:
+While commit 70134b186a81 ("pinctrl: qcom: qcs8300: Add gp_mn mux function")
+added the gp_mn function to drivers/pinctrl/qcom/pinctrl-qcs8300.c, the sch=
+ema
+in Documentation/devicetree/bindings/pinctrl/qcom,qcs8300-tlmm.yaml does not
+list gp_mn in the function enum under $defs/qcom-qcs8300-tlmm-state:
 
-Documentation/devicetree/bindings/pinctrl/qcom,qcs615-tlmm.yaml:
-      function:
-        description:
-          Specify the alternative function to be configured for the specifi=
-ed
-          pins.
-        enum: [ gpio, adsp_ext, agera_pll, aoss_cti, atest_char, atest_tsen=
-s,
-                atest_usb, cam_mclk, cci_async, cci_i2c, cci_timer, copy_gp,
-                copy_phase, cri_trng, dbg_out_clk, ddr_bist, ddr_pxi, dp_ho=
-t,
-                edp_hot, edp_lcd, emac_gcc, emac_phy_intr, forced_usb, gcc_=
-gp,
-                gp_pdm, gps_tx, hs0_mi2s, hs1_mi2s, jitter_bist, ldo_en,
+        enum: [ aoss_cti, atest_char, atest_usb2, audio_ref, cam_mclk,
+                cci_async, cci_i2c_scl, cci_i2c_sda, cci_timer, cri_trng,
+                dbg_out, ddr_bist, ddr_pxi0, ddr_pxi1, ddr_pxi2, ddr_pxi3,
+                edp0_hot, edp0_lcd, edp1_lcd, egpio, emac0_mcg0, emac0_mcg1,
+                emac0_mcg2, emac0_mcg3, emac0_mdc, emac0_mdio, emac0_ptp_au=
+x,
+                emac0_ptp_pps, gcc_gp1, gcc_gp2, gcc_gp3, gcc_gp4, gcc_gp5,
+                gpio, hs0_mi2s, hs1_mi2s, hs2_mi2s, ibi_i3c, jitter_bist,
 
 Should gp_mn also be added to the function enum in
-Documentation/devicetree/bindings/pinctrl/qcom,qcs615-tlmm.yaml (as well as
-the corresponding pinctrl schemas for the other SoCs in this series) so that
-make dtbs_check does not fail validation on gp-mn-active-state?
+Documentation/devicetree/bindings/pinctrl/qcom,qcs8300-tlmm.yaml?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261026-b4-pdm_clk=
-_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com?part=3D12
+_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com?part=3D9
