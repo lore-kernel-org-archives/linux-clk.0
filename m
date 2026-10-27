@@ -1,68 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793088856;
-	b=Tp5tkDFbXqOE1QKlRhUVbsc3UCs3dl934Rc1F3ljSC/ICIo8EcbYvpoiY/SKyWp7+v6I
-	 fL5z60VQp5GYVMFsaGkeDvmaTA1h/5YBNI8gCS5ouvbPZfiDjmRm3KVHlAJMA5o5KNefo
-	 Aq7FuJSYKmRcFtKasYGtxbqktRFN/2/9/o9ldvNfuPxeURntF3Mpt7A13Ubu9m0SJxRx+
-	 6UpCWhjI2Uczp/kCBldbOWuGYTHgOxXrRX1wEAQpdIPya+EHuJDJjmXusxVHqKpAWzgkH
-	 Tg7fFJyZGmCSC2HcDJ/hmC8kJONyXH+k/zXQ9KNj+vY3gCZhCXPZlAWNsnUD/2bUcmw==
+	t=1793090767;
+	b=BNxudBfEE36mcZL3XOZsk//KP/0aXxtgDjoHmXhdIpfOwtgq93OxnZgZ84ttgppYEKK2
+	 n4hqFjAtn0jcFjsKsVSO+2vZrWRCTHm9w3MB0+ep1E2OQhu8aotaFpejVtvwJMeLb5qCc
+	 h+x0a6340jCM6wiGH+LxdKbctsTd9Gpn1CQq4Z9z8EcEI4064GmgaveSdlXY9riazC29f
+	 xXX0xEgHgSRCR+IVa0r3nO9GIOT16NIt6JmjmhcmPnCD7KaNpU+smvJrfJed2pkdmRxWd
+	 8QBPT9Y2zp5zmlCzuLT4qFMOogkAFZs0vg2W68yxPKDrVns3X9rPfWD/+/yHyyotosw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793088856;
-	h=DMARC-Filter:DKIM-Signature:X-QQ-XMRINFO:X-QQ-XMAILINFO:From:To:Cc:
-	 Subject:Mime-Version:Content-Type:Content-Transfer-Encoding:Date:
-	 X-Priority:Message-ID:X-QQ-MIME:X-Mailer:X-QQ-Mailer:References:
-	 In-Reply-To:X-QQ-mid;
-	bh=nGbu4upuJLgm2lXKD/Z91nFxrjKCKZHpwQrOt6s2bDY=;
-	b=fI6P/qH6I1Y7B9oJ6EPOUz3QYa2vIGj9BTYZXbpxAdaJk3X+j2kWbaVv0mLbSoxqEYFV
-	 BaDFrbuYDWbSh/YotcYxEcNA7+mUM/S+CX9G0VwN2nhkiCdErAKkI088J5VRJn50QJtk+
-	 mpbAlgsT34Wthe3Wgdq3028wGukC1a6yMHuwRggm7b8eE/E/KRv8EKfQAOVzCT15gTSp/
-	 Q/r5imqQ9reFs6lM9/TTtUxTh+g3hLLfesNtE6r4rLyvELYRHysSqc0DA6leNt+/MIuWh
-	 nnASAEXk1t0nM2zJR2WeZI1jYUBp2j6foruo6ivKtM0E4i4/mpN4vJv6FYTOpOFyvGA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793090767;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:To:Cc:
+	 Subject:In-Reply-To:References:User-Agent:Date:Message-ID:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Last-TLS-Session-Version;
+	bh=CSDnY2+EpC0A6qfUh4OJfRDawLSOsU0FBryWMPhro+0=;
+	b=fC/7SZDSU2v6DBkN1rFKLD6S36xtXvZ4bBfoirShXCILAaEH6ChmNJp6/peXZAERx4Fp
+	 XizKbOVkliPizHi1tERyh1HBLSstQPJP179OIsctQySnFujQuu3RoKehmjvlOSWoXOYxC
+	 I5pLrq6+nxvMrTZdGQDOQDeSB73LV7equr20uDT5U2fFZfWHbB26XYiWpjNJshz4oGsZ/
+	 JN9LlSEuR1CA458WVSgFxaV6uIfA28jgbIgMD8UFjDXQbASvD6o/6E3VvjxhOmQ4Nnb2v
+	 zgtuXD1B855d/pokvEkt7ttZmTV42BhiPdwuIp6AllQ8ztUjErSIGj91qM1AXSWfwAQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=qq.com;
-	spf=pass smtp.mailfrom=qq.com;
-	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=ZRB1vNch;
-	arc=none smtp.remote-ip=162.62.57.210
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b="DYY7/zi9";
+	arc=none smtp.remote-ip=185.246.85.4
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF7A606A32C;
-	Tue, 27 Oct 2026 08:14:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0FF7A606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC47606A31B
+	for <linux-clk@vger.kernel.org>; Tue, 27 Oct 2026 08:46:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2FC47606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=ZRB1vNch
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1793088845; bh=nGbu4upuJLgm2lXKD/Z91nFxrjKCKZHpwQrOt6s2bDY=;
-	h=From:To:Cc:Subject:Date:References:In-Reply-To;
-	b=ZRB1vNchEBn1xTDidt7KlotYbtlRGWLoegdUkgm34YutKGqGFS1vndGuabXwuQZ90
-	 /f0QxD6nmcPMBlMpQq6BxhjlE6opBg1xCkYHbn2pqTPsi40cCO5nyYQN/e07PWbv1P
-	 526lVXWyA9AKXODNJhPhJr8lZw09DmYOIJjw38go=
-X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
-X-QQ-XMAILINFO: M/8oWtQ8RXooJTRnGxFYe36RnPXjfz6V34oARLY5ztdCgTVzwe4zrpt0OZIqiV
-	 6WOy1tfKUMOwIp89CO5v2jtf8fTEeOq5mi2JUzH4Nef7OjAKvx4xPiylH90reQ6IHIXTUg6D63e0T
-	 481ZvsLL6TnnEWH6cGafWPYXdPkOaWIDYmQaR1TyCkbo1JAipqPJjLWdkJ7c5f9Ntm6rE/Vc85MFA
-	 6/0Yv3GuE058KwOnH34QUKfrzxTwP4bBI/d4wotgx7yzEXWjSCUkxlS5SsVZOnxqFUStijqTic+NF
-	 aNvSUUJDUS18HxXkxELs9NR1BNaF9SEdq07pweT3dgStQMYxIOxFwsx6Ap79t3P7Wda50cBNlyUzK
-	 L0nGZYeXMmxra3ro1YB2pEadf81VxEf50WmhVY2f7ZPN8y/UM4PdbyPXVRvhxVv5nxNg2J/hfK3Kw
-	 pSUJyHx1xsdjaUc/Gnio/6cqfs97icdTwq6NCBZO/byU2hnjUaTaSt9AEwM87gAki9zbOe1yZScN+
-	 PYFSmvDn44vv/ex5eNUA78ks2mSVtzQxrO7o6vvSIaJ6tqOmxNsMswoV+th2FwjbUQUCw5dIurGYx
-	 UiC98zYj+8M80tQd0v5a55xNOCWrzJMcpL9u6ctYYBOGjDYnmGgQj5BgHu3DucOOtbhhIP6iVdcse
-	 NZTX916vUU0yg5PAavrQyQmT52VA/r5Xy6Ozbu+A1EzoVqgRPIIiO+pX5cRNy8l9R/uK/vKiFdjfS
-	 Ky3dE5tvMSNS1KhWn0R+OuSWPkiRCjFJy5irVQouqZ4/77IVsPighdskAl4O9q7fgA02C+iRFllws
-	 TrKDgHhDDjWkiTzDvbHNZ+Xui1Lnl5aLZBJ/0ZBY97G6jebO3CJGueOksuo4EaO36eMoHjNsEs7jF
-	 gP2WMOd83oGx+87D1EJrlBu4GKZGwED07/KKJKyeCzvvIAfQ9zrQH9ERkrMRJD8C0oXuiXNt8am21
-	 KQeoVpouoyLgDKb99Ev+/BEPpEcXH07BurkkWIUVwhaRz5pdTGd6RB/IhJuRgQajP6VGsNTm4Hw8p
-	 61dj2p8TsB+wovP+gd5bvf5tjSyip3s4Xa6VnLxgzG1xCV2ekXBbBh4XrhkKmA+tZOsI4QpyF03f0
-	 IPelgJyNvew7LQ==
-From: "=?utf-8?B?Q3VuaGFvIEx1?=" <1579567540@qq.com>
-To: "=?utf-8?B?U2hhd24gTGlu?=" <shawn.lin@rock-chips.com>, "=?utf-8?B?U3RlcGhlbiBCb3lk?=" <sboyd@kernel.org>, "=?utf-8?B?QnJpYW4gTWFzbmV5?=" <bmasney+clk@redhat.com>, "=?utf-8?B?SmVyb21lIEJydW5ldA==?=" <jbrunet+clk@baylibre.com>, "=?utf-8?B?Um9iIEhlcnJpbmc=?=" <robh@kernel.org>, "=?utf-8?B?S3J6eXN6dG9mIEtvemxvd3NraQ==?=" <krzk+dt@kernel.org>, "=?utf-8?B?Q29ub3IgRG9vbGV5?=" <conor+dt@kernel.org>, "=?utf-8?B?SGVpa28gU3R1ZWJuZXI=?=" <heiko@sntech.de>, "=?utf-8?B?UGhpbGlwcCBaYWJlbA==?=" <p.zabel@pengutronix.de>, "=?utf-8?B?RWxhaW5lIFpoYW5n?=" <zhangqing@rock-chips.com>, "=?utf-8?B?TGVlIEpvbmVz?=" <lee@kernel.org>, "=?utf-8?B?TGludXMgV2FsbGVpag==?=" <linusw@kernel.org>, "=?utf-8?B?QmFydG9zeiBHb2xhc3pld3NraQ==?=" <brgl@kernel.org>, "=?utf-8?B?UmljaGFyZCBDb2NocmFu?=" <richardcochran@gmail.com>, 
-	"=?utf-8?B?VWxmIEhhbnNzb24=?=" <ulfh@kernel.org>, "=?utf-8?B?QW5kaSBTaHl0aQ==?=" <andi.shyti@kernel.org>, "=?utf-8?B?R3JlZyBLcm9haC1IYXJ0bWFu?=" <gregkh@linuxfoundation.org>, "=?utf-8?B?SmlyaSBTbGFieQ==?=" <jirislaby@kernel.org>, "=?utf-8?B?SmlzaGVuZyBaaGFuZw==?=" <jszhang@kernel.org>, "=?utf-8?B?QW5kcmV3IEx1bm4=?=" <andrew+netdev@lunn.ch>, "=?utf-8?B?RGF2aWQgUy4gTWlsbGVy?=" <davem@davemloft.net>, "=?utf-8?B?RXJpYyBEdW1hemV0?=" <edumazet@kernel.org>, "=?utf-8?B?SmFrdWIgS2ljaW5za2k=?=" <kuba@kernel.org>, "=?utf-8?B?UGFvbG8gQWJlbmk=?=" <pabeni@redhat.com>, "=?utf-8?B?RGF2aWQgV3U=?=" <david.wu@rock-chips.com>, "=?utf-8?B?UmFmYWVsIEouIFd5c29ja2k=?=" <rafael@kernel.org>, "=?utf-8?B?RGFuaWVsIExlemNhbm8=?=" <daniel.lezcano@kernel.org>, "=?utf-8?B?WmhhbmcgUnVp?=" <rui.zhang@intel.com>, 
-	"=?utf-8?B?THVrYXN6IEx1YmE=?=" <lukasz.luba@arm.com>, "=?utf-8?B?TWF4aW1lIENoZXZhbGxpZXI=?=" <maxime.chevallier@bootlin.com>, "=?utf-8?B?TWF4aW1lIENvcXVlbGlu?=" <mcoquelin.stm32@gmail.com>, "=?utf-8?B?QWxleGFuZHJlIFRvcmd1ZQ==?=" <alexandre.torgue@foss.st.com>, "=?utf-8?B?Vmlub2QgS291bA==?=" <vkoul@kernel.org>, "=?utf-8?B?TmVpbCBBcm1zdHJvbmc=?=" <neil.armstrong@linaro.org>, "=?utf-8?B?TWFuaXZhbm5hbiBTYWRoYXNpdmFt?=" <mani@kernel.org>, "=?utf-8?B?VGhpbmggTmd1eWVu?=" <Thinh.Nguyen@synopsys.com>, "=?utf-8?B?SmFlaG9vbiBDaHVuZw==?=" <jh80.chung@samsung.com>
-Cc: "=?utf-8?B?c2hhd24ubGlu?=" <shawn.lin@rock-chips.com>, "=?utf-8?B?bGludXgtY2xr?=" <linux-clk@vger.kernel.org>, "=?utf-8?B?ZGV2aWNldHJlZQ==?=" <devicetree@vger.kernel.org>, "=?utf-8?B?bGludXgtYXJtLWtlcm5lbA==?=" <linux-arm-kernel@lists.infradead.org>, "=?utf-8?B?bGludXgtcm9ja2NoaXA=?=" <linux-rockchip@lists.infradead.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?bWZk?=" <mfd@lists.linux.dev>, "=?utf-8?B?bGludXgtZ3Bpbw==?=" <linux-gpio@vger.kernel.org>, "=?utf-8?B?bmV0ZGV2?=" <netdev@vger.kernel.org>, "=?utf-8?B?bGludXgtcG0=?=" <linux-pm@vger.kernel.org>, "=?utf-8?B?bGludXgtaTJj?=" <linux-i2c@vger.kernel.org>, "=?utf-8?B?bGludXgtc2VyaWFs?=" <linux-serial@vger.kernel.org>, "=?utf-8?B?bGludXgtbW1j?=" <linux-mmc@vger.kernel.org>, 
-	"=?utf-8?B?bGludXgtc3RtMzI=?=" <linux-stm32@st-md-mailman.stormreply.com>, "=?utf-8?B?bGludXgtcGh5?=" <linux-phy@lists.infradead.org>, "=?utf-8?B?bGludXgtdXNi?=" <linux-usb@vger.kernel.org>
-Subject: Re: [PATCH 24/27] mmc: dw_mmc-rockchip: Keep RK3572 NVM domain powered
+	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=DYY7/zi9
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 467A04E4132E;
+	Tue, 27 Oct 2026 08:46:03 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 08AEA603BD;
+	Tue, 27 Oct 2026 08:46:03 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8809E10329093;
+	Tue, 27 Oct 2026 09:45:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1793090761; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=CSDnY2+EpC0A6qfUh4OJfRDawLSOsU0FBryWMPhro+0=;
+	b=DYY7/zi9FjTqvNbno8coXmmIEmIhesBXCpG8qUPru3z5pRo5hRi1dUaJLen1HcpjdpMA1M
+	w8RKg8cdIdliJ/mhfVVwnmFj1wOqlnv2ImO+kQu1d/xi2nTnK9D51yIAEC0EDekKIOJsj8
+	FfSRtaMME+9eD+7Q0HpILdBuaPVOAQtPYd6Y5pTefrZHUzowe31/GDgVYck8FT18Olwu88
+	3hsR2BqT4AAwlzDfQRdlmggqn0beyfB3QeeUlH6jXprZEKGrxre79Qy6vqPgugAWIrbV20
+	G4hbikkfPlJYcDGCiJEuLs+F5W5iMwZmzRdIIslJI/wzm17/a04N0NV/h96cNw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Brian Masney <bmasney@redhat.com>,  Stephen Boyd <sboyd@kernel.org>,
+  Abel Vesa <abelvesa@kernel.org>,  Peng Fan <peng.fan@nxp.com>,  Frank Li
+ <Frank.Li@nxp.com>,  Sascha Hauer <s.hauer@pengutronix.de>,  Pengutronix
+ Kernel Team <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>,
+  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>,  Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>,  Ian Ray <ian.ray@gehealthcare.com>,
+  =?utf-8?Q?Herv=C3=A9?= Codina <herve.codina@bootlin.com>,  Luca Ceresoli
+ <luca.ceresoli@bootlin.com>,  linux-clk@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  imx@lists.linux.dev,
+  linux-arm-kernel@lists.infradead.org,  devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/5] clk: Use v2 rate calculation on i.MX8MP
+In-Reply-To: <1j8q3kkd8t.fsf@starbuckisacylon.baylibre.com> (Jerome Brunet's
+	message of "Mon, 26 Oct 2026 10:44:18 +0100")
+References: <20261021-ge-clk-lcm-v1-0-246cc35b5ffb@bootlin.com>
+	<atjIIHkoNwBVDO5b@redhat.com>
+	<1jtsmch5id.fsf@starbuckisacylon.baylibre.com>
+	<87h5icnzs9.fsf@bootlin.com>
+	<1j8q3kkd8t.fsf@starbuckisacylon.baylibre.com>
+User-Agent: mu4e 1.12.12; emacs 30.2
+Date: Tue, 27 Oct 2026 09:45:55 +0100
+Message-ID: <87cxsvh6po.fsf@bootlin.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -71,47 +83,124 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Tue, 27 Oct 2026 16:14:00 +0800
-X-Priority: 3
-Message-ID: <tencent_0431D34CCA9424908F2C068820D6F9C1370A@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
- <20261022-add-board-ok3572-c-v1-24-0b0fd85a31ee@qq.com>
-	<bb38e2c8-1868-4a66-9e0d-78d9f68ab4be@rock-chips.com>
-In-Reply-To: <bb38e2c8-1868-4a66-9e0d-78d9f68ab4be@rock-chips.com>
-X-QQ-mid: xmsezb41-0t1793088840t5jwsbqnj
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-SGkgU2hhd24sCgo+IEJlZm9yZSB5b3VyIHYyIGFib3V0IHRoaXMgcGF0aCwgSSB3b3VsZCBs
-aWtlIHRvIGFzayB3aHkgeW91IG5lZWQgdGhpcz8KPiBUaGUgZHdfbW1jLXJvY2tjaGlwIGNv
-bnRyb2xsZXIgaXMgYWx3YXlzIHVuZGVyIEEgcG93ZXIgZG9tYWluIG9uIGV2ZXJ5Cj4gU29D
-LCBub25lIG9mIHRoZSBwcmVkZWNlc3NvcnMgbmVlZCB0aGlzIGtpbmQgb2YgY2hhbmdlLiBJ
-ZiB5b3Ugc2VlCj4gc29tZSBlcnJvcnMgZHVyaW5nIFJQTSwgcGVyaGFwcyB5b3Ugc2hvdWxk
-IGhhdmUgYSBsb29rWzFdIGFuZCBjaGVjayB5b3VyCj4gRFRTLgoKVGhhbmsgeW91IHZlcnkg
-bXVjaCBmb3IgcG9pbnRpbmcgb3V0IG15IG1pc3Rha2UuCgpJIHdyb3RlIHRoaXMgcGF0Y2gg
-YWZ0ZXIgb2JzZXJ2aW5nIHJlcGVhdGVkIFNEIGNhcmQgcmVzZXRzIGFuZCByZWNvdmVyeS4K
-QWZ0ZXIgc2V2ZXJhbCB0ZXN0cywgSSBmb3VuZCB0aGF0IGtlZXBpbmcgTlZNMSBwb3dlcmVk
-IHByZXZlbnRlZCB0aGUKcHJvYmxlbS4gSSBjaGVja2VkIHRoZSBTRCBzdXBwbHkgYW5kIHBp
-biBzZXR0aW5ncyBhZ2FpbnN0IEZvcmxpbngncwp2ZW5kb3IgRFRTLiBUaGUgc2V0dGluZ3Mg
-bWF0Y2hlZC4KCkkgdGhlbiBzZWFyY2hlZCB0aGUgbWFpbmxpbmUgaGlzdG9yeSBmb3IgUksz
-NTc2IGFuZCBmb3VuZCBpdHMgU0RIQ0kKd29ya2Fyb3VuZCB0aGF0IGtlZXBzIFBEX05WTSBw
-b3dlcmVkLiBJIHRoZXJlZm9yZSBhc3N1bWVkIHRoaXMgd2FzIGEKc2hhcmVkIGRlc2lnbiBp
-c3N1ZSBpbiB0aGUgUkszNTd4IGZhbWlseS4KCkFmdGVyIHlvdXIgZW1haWwsIEkgY2FyZWZ1
-bGx5IHJldmlld2VkIGFuZCBjb21wYXJlZCB0aGUgRm9ybGlueApPSzM1NzItQyBzY2hlbWF0
-aWMgYW5kIERUUy4KClRoZSBPSzM1NzItQ19MaW51eDYuMTIuNThfQWxwaGExIEJTUCBpbmNv
-cnJlY3RseSByZWZlcmVuY2VzIFJLODA2IFBMRE80CmFzIHRoZSBTRCBjYXJkIHN1cHBseS4g
-VGhlIGNhcmQgYWN0dWFsbHkgdXNlcyBhIHNlcGFyYXRlIDMuMyBWIHN1cHBseQp0aHJvdWdo
-IGEgc3dpdGNoIGNvbnRyb2xsZWQgYnkgR1BJTzBfQjYuIFRoZSBvcmlnaW5hbCBEVFMgdXNl
-cyBuYXRpdmUKUFdSRU4sIHdoaWNoIGxvc2VzIHRoZSBlbmFibGUgc3RhdGUgd2hlbiBOVk0x
-IHBvd2VycyBkb3duLgoKSSBpbmNvcnJlY3RseSBhc3N1bWVkIHRoYXQgRm9ybGlueCBoYWQg
-dmFsaWRhdGVkIGl0cyB2ZW5kb3Iga2VybmVsCmFuZCB0aGUgY29ycmVzcG9uZGluZyBkZXZp
-Y2UgdHJlZS4KSSBhbSB2ZXJ5IHNvcnJ5IGZvciB0aGlzIGluY29ycmVjdCBhc3N1bXB0aW9u
-LgoKSSB3aWxsIHJlcG9ydCB0aGlzIGlzc3VlIHRvIEZvcmxpbnggYW5kIHJlcGxhY2UgdGhp
-cyBwYXRjaCB3aXRoIHRoZSBEVFMKZml4IGluIHRoZSBuZXh0IHJldmlzaW9uLgoKQmVzdCBy
-ZWdhcmRzLApDdW5oYW8K
+Hi Jerome,
 
+>>> For rate negotiation, my suggestion would be to reuse what the
+>>> framework already has: clock ranges, and re-running .determine_rate()
+>>> on the children being dragged along, with the common ancestor's rate
+>>> pinned. When that rate does not suit a sibling's range, other ancestor
+>>> rates can be tried within the constraints, rather than giving up.
+>>>
+>>> clk_set_rate() is a best effort function. It tries to get as close to
+>>> the request as possible, honoring the ranges of every clock along the
+>>> path, and it is up to the consumer to decide whether the result is
+>>> good enough. That decision is lost if the framework recomputes the
+>>> rates of a sibling branch on its own. Ranges could help it decide:
+>>> either "I'm fine with the new rate", or -EBUSY.
+>>
+>> I see an upside with this approach: we could keep one single rate
+>> negotiation logic. But it still requires modifications to be done on a
+>> per user basis to be enabled (but that is needed from your perspective).
+>>
+>> While I fully understand all the concerns expressed above, there has
+>> been one minor point that arose while working on your series: it's
+>> very hard to determine the tolerance beyond which the clock rate shall
+>> be refused. Expect bikeshedding on a per driver basis.
+>
+> This is my point exactly. Each consumer is going to need to do its own
+> thing and it is why I would prefer if the decision was not a core or
+> a provider thing.
+>
+> A decision must be made somewhere. I don't really see where else it
+> could be made than with the consumer. It is the only one which has
+> any idea what it is trying acheive.
+
+I agree, the consumer must make that choice. But I just wanted to warn
+against the risk of endless discussions about what this tolerance should
+be in each and every user. Myself, I didn't know what tolerance would be
+fine for my own case. 1% seems ok, it leaves enough room for the CCF to
+find a working set of dividers without risking a breaking choice, but
+maybe some day someone will come with a panel that cannot be supported
+with this limit, and maybe 1.5 or 2% would have been okay for
+them. Since that's a very empirical limit, expect some back and forth on
+those. "Back and forth" also means "more load on clk maintainers".
+
+> If the range is about HW capability (from the clock side I mean),
+> a range can be set from the provider. Some already do that and I
+> think it is fine for that purpose. In the experiment I've provided,
+> I did not enable the propagation logic in that case, on purpose.
+> It could constrain the clock tree for clock that are actually
+> unused. It still participate in the decision logic if a consumer
+> enable it however.
+>
+>>
+>>> What I'm suggesting is to treat any clock with a range as one that
+>>> needs updating. Its consumer cared enough to tell us what it can and
+>>> cannot cope with. That removes the need for a specific flag, and puts
+>>> the rate policy in the consumer, which is where I'd prefer use case
+>>> choices to live, rather than in the provider or the core. It would
+>>> also fix clocks being dragged out of their range during an update.
+>>> Presumably, a clock without a range does not care enough to give us a
+>>> decider, so the framework has no basis to act on its behalf and keeps
+>>> today's behavior. I think this behavior will keep on being good enough
+>>> for the vast majority clocks out there and it is a lot lighter
+>>> on the math side (which is already quite severe as it is)
+>>
+>> Well, yeah, I see we share conclusions :-)
+>>
+>>> I've been checking whether the idea is remotely feasible. It involves
+>>> multiple planning stages and multiple tops. It is still very rough,
+>>> but there is the beginning of something:
+>>>
+>>> https://github.com/jbrun3t/linux/commits/clk/clk-rate-range-update/
+>>>
+>>> Miquel, if you fancy trying it, please let me know whether it works
+>>> for you. All you should need is to set a range on the clocks you care
+>>> about.
+>>
+>> I managed to pull most of the clock patches in your branch and apply
+>> them to my 7.2 branch (with a couple of tweaks). I then made the changes
+>> to request a tolerance as you hinted (available below) in the two
+>> relevant drivers: it worked as expected!
+>>
+>> While doing so, I realized the whole operation (set rate, set rate
+>> range, get rate and verify) needs to be repeated almost identically in
+>> every user of the "tolerance composition" logic, which probably
+>> indicates that a core helper would be relevant instead. I had in mind
+>> something like ~clk_set_rate_and_tolerance() which would do the
+>> equivalent of my fsl_ldb_link_rate_set() and lcdif_pixel_rate_set()
+>> helpers.
+>
+> Indeed, I suppose an helper could be introduced for that if we don't
+> already have one. It does not even depend on the experiment presented
+> here. As long as there is a user for it, it would be fine IMO.
+>
+> Maybe something that takes a rate and a ratio, like the duty cycle API
+> ?
+
+Definitely.
+
+>>> Sorry for this rather long explanation.
+>>>
+>>> Brian, your series is what got this discussion going, I know a lot of
+>>> efforts have gone into it already. I'd be glad to work on this together.
+>>
+>> In case that is relevant, here is below the code snippet which I used to
+>> get my panels working after removing the assigned rates from the DTS on
+>> i.MX8MP.
+
+I'll let you two discuss about the direction you prefer taking. From my
+point of view there are good and bad sides on both, but they also both
+work in my case.
+
+Let me know once settled and I will post an adapted patch series on top
+of it to adopt the selected solution in the LDB and LCDIF cases (+ the
+core helper discussed above, if relevant).
+
+Thanks,
+Miqu=C3=A8l
