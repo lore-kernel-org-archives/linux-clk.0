@@ -1,47 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793114735;
-	b=1AFMPlP7FX6fGILEFR/33Tdb2ZHlYRL6J8/NjhsPtZJfg/pRMmB7gm+3MhzvC3tVHv0g
-	 V/2j+aNvw31xTrW93/Jd7QQKCy2e0ewUImcb+sym1qS2Z3reyRulL9hDOiY23rx5RW5Gu
-	 5Fifc7RMt9/WuIuXxTpjKb0Nu/Z+odM86O/YTpYk4nm6e+mpy8zLwSwfugcLYABqTBePe
-	 Kemmy+cK6/0mP6RlUp7OxePb3SM6LbegDWop2TisD/kDppvNjyTnMzA1lO/sGcqmmP3vU
-	 GT73gEjmy9l4F39Qf8H6GkPobvysUelKF1bODprDS6+scKJEYt3l/dTpSl/BTUOk+Dg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793114735;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=MAKDx31khoefmfUOeL61lGC9ufpndRmKXdUk86UDyqw=;
-	b=WpwpprhcMW24GZrbc/2wTDAEABTqV7Xezic13fgobe7pBe8qdVrylPxkwsDXLGFWHyz6
-	 tWJXzrN9I4uaFqjyVStYm3QNaGSNkO1bz55HY4Hna2c7KN0ERvwTq/aUb/CPAHt/+Ne9b
-	 s48Q1zqDM4yJAxNS7gvdna5rcEBTpIWTDi/FdqN58PyAAD9L+9qedD8bgQi0E8/Akv7F0
-	 ztM9jvSIdr6SEfPOPMn/ujZWA+Fj0WbZKOavB9VOseCHLJrZddGvXQCyrFa0Q334Lh/VW
-	 mcdi7sPyFo3vPWs1KbjIOSMhN21WXqw8mT3AI1/IbUkS5Iz2WslGBTZFFZX/JVtzhLg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cLnckm3H;
-	arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793115424;
+	b=GDFWSvLDNWY2g5NzZizBjWeDvoQD6zxU3qn1c/bPgsYRZ4N1uRbowsUSgp7vF+qkFrQP
+	 YVJ1KemamewW8L/bsD3cYEVK15x1dh4jwfHv7OnNZucZCM52Arj1QL3r8ruPzO6JCP3Tk
+	 ZUL2xk2YyDSF1ohoocr5RT0i/Uv0E4k8PHXK0PwR5pK/hwPQKz4E+4Puu2tVgsrU1mEwi
+	 OP6qwzEI4LnEKP+1mhHEPLDmjmiq7hecugcDOryu2aG69G6qxX7iVd3cRd37g/02SwIrI
+	 BZbUck3p+/+Tqhuwkt0l4niEb5NwCctEfHZETf+xZSz1hfqMAoITQhxzQI2TTBIjXhw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793115424;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=/KGaSHBvvoWL+O7MCZ6oZvrEvuXG4eqoQUwd3V+4yyM=;
+	b=2DXZJuBEkriukKdzAFxMmfxhtk95m7wWApLlKO9WUkna1Dk2wadQeDdrczOwh11uCYpp
+	 1gXPHjkA2NQGpFPS/C+51F3ANul6KGU8GJcOBvpb0EXOqf+YclyHWLJzDsMx04wnhwTnl
+	 fx/KNmhFN/TKPV1hg57veRRHACvYanEe9oDP6h56O1tK3W2HNGKzc2Fqu2LLPIJj8/A8O
+	 MB2i5pXfPgjm8VnQPPPGtMXcwJx75jUUpIsXju8vSc5dLluiqUorh4jx/NNn/pEv02ClS
+	 UbXIMbCgFTuDG7S5KOcnI3VQOphFxCwPKgOZikIJ3gpPRTIRR6OzzgpFQiSkTRA00YQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LJCqHpSs;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B4B606A31D;
-	Tue, 27 Oct 2026 15:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFEA606A33A;
+	Tue, 27 Oct 2026 15:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cLnckm3H
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48E601F01825;
-	Tue, 27 Oct 2026 15:25:28 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LJCqHpSs
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1793115423;
+	b=gH8mfoPn3xH9A8r7KsysK4G/1vkGBTB8XVJy+N3Xv3asFinAhXgijs6VNMojjJzEjd9L
+	 0cHNcfmXDqiIwSYXhnZhEjtVBOcfrQR5rYFNvDuSEJ8+tcdiTUWgGcx033x60F17kKmSg
+	 Gb5/LKqE7A0eSVmTPfl0T0m9Ra8XEZ6wUJfqQSBFx6HW7/7rtkunEvvqqzeBvPD3YDBhd
+	 gu44xPVpifv5fRRACMa3Q+leoCKVJuPlwlbJBmdNWbTIX1ABu0UOgxHRnII6weq3IPOCR
+	 dlZYCujFgjG8EnmjV12ocFCwhzrr9MPD13P2hwDa79mP/ugYcub696+0gbDvcPyifYw==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1793115423;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=/KGaSHBvvoWL+O7MCZ6oZvrEvuXG4eqoQUwd3V+4yyM=;
+	b=M7TZbhgXivtmPzB83HT9gI0BxfsV0XeCMRIq9ptYZjcBGMdZ5g1TN497YtR/GwV+KC7x
+	 WzEnCfGCAP/VHIHwDAHkq/oSdkHeUXXVuypMdGewTIDCJoUPQTXHloz1WkJZGfgKkAYDG
+	 FxGVpgJFbu+QdY1gk/4qaaoBHi3+vjwN8ryrMGx50AC9RCp+iRSWME5GmUiSbClGJ8sbh
+	 15BDUIPo6Fp53VP7MBU8KOoH+QqMnKAVg1VHEfHBhwgsZsH8rwGI7lLsXtG8evDYA3tox
+	 loFlzjXdLDqUcemjRAG9h1IVP3uJHu4+0Sp9Suau558yBKEfUfYVuKRJVAc4WZa4zQg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id B4B791F031E5;
+	Tue, 27 Oct 2026 15:37:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793114734;
-	bh=MAKDx31khoefmfUOeL61lGC9ufpndRmKXdUk86UDyqw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=cLnckm3H8keXxOmWbcw0algepILOQqKfuYzEvH6392uZph2Sn2U1ego1hl+yvw9f/
-	 vKNa4hWvcmAW/DMABwir3vFtT5eLsFk3EpOoLSq+gWgIpgT0lPv87wkKxof/kAWNjW
-	 tWo1yY1QcmScO4OSnJjPRUAZ3DPo6Lq6jB2NtiCraOstdCAWHM54j06m5PjMTfxNKD
-	 +8c5ngOSI+33eXvYF9GMAiph0K20lCr1httWkPpCdoK+KDanveD2RH9opNqhgtZrde
-	 NZ11Rw+KCyjep/llL9tmw5kJqZHAGJeH/VhPm0agumhlY5lBvTHfpOgoGCV6LCzH7N
-	 6EIQ4Hx59Jmfw==
-Message-ID: <e6f56e97-f920-466b-9ad6-ec43be0f5e2a@kernel.org>
-Date: Tue, 27 Oct 2026 16:25:25 +0100
+	s=k20260515; t=1793115423;
+	bh=/KGaSHBvvoWL+O7MCZ6oZvrEvuXG4eqoQUwd3V+4yyM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=LJCqHpSsnpOhGArAJQTiuSh2EZrC68VWzQM9h4CnC0wnl3dHwZ5NA2enhN6Z9Njqf
+	 hHK3kPZaIn3nc9YhrmXpNtMJ1d43AFBJllgYPrwKcf1/BviaLO7UNNvYlWc+dRLclu
+	 IKkEBXmeqtEgxLdxI/ZGTWlcCt4WYm7+lUjjEAPgmSY79siFjPhZN2Qc9xracONMqx
+	 cwT6/pqAzZRMfxHpdtL7LVLB6BVu73D0zvkR+7iavkhMgcqX9nRHPNzeLT3ZCS8fzl
+	 35paNMmzT3zM28pj49izIHAZpeDO4t8OTBNJriTxOHIIBxyY4uGRtxGgEyOX92ycY6
+	 f6WeP0j2AhSrw==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 25AD04512E;
+	Tue, 27 Oct 2026 15:37:01 +0000 (UTC)
+From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
+Date: Tue, 27 Oct 2026 23:36:52 +0800
+Subject: [PATCH RFC 01/18] firmware: arm_scmi: Allow SCMI transports on
+ RISC-V
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,160 +83,74 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: introduce
- toshiba,tc9564-clock.yaml
-To: Alex Elder <elder@riscstar.com>
-Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, abelvesa@kernel.org,
- kees@kernel.org, gustavoars@kernel.org, mohd.anwar@oss.qualcomm.com,
- lorenzo.bianconi@oss.qualcomm.com, danielt@kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org, Daniel Thompson <daniel@riscstar.com>
-References: <20261005230927.2000398-1-elder@riscstar.com>
- <20261005230927.2000398-2-elder@riscstar.com>
- <20261009-gifted-stylish-tortoise-95b14d@quoll>
- <b190fe58-364b-4b94-9cab-c5f81f874289@riscstar.com>
- <aafe2703-bfb8-43da-8472-b1dfa36fa8f9@kernel.org>
- <77dacc46-7294-47c8-899a-fd56b6a2af55@riscstar.com>
- <ad511ae7-755d-42bc-a55d-12b93d49ddaf@kernel.org>
- <ee6ba585-2b87-4e38-963d-9d2731cf4d78@riscstar.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <ee6ba585-2b87-4e38-963d-9d2731cf4d78@riscstar.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261027-a210-scmi-v1-1-74d58ce85bd8@iscas.ac.cn>
+References: <20261027-a210-scmi-v1-0-74d58ce85bd8@iscas.ac.cn>
+In-Reply-To: <20261027-a210-scmi-v1-0-74d58ce85bd8@iscas.ac.cn>
+To: Sudeep Holla <sudeep.holla@kernel.org>, 
+ Cristian Marussi <cristian.marussi@arm.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Thomas Gleixner <tglx@kernel.org>, 
+ Radu Rendec <radu@rendec.net>, Samuel Holland <samuel.holland@sifive.com>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, 
+ Anup Patel <anup@brainfault.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Drew Fustini <fustini@kernel.org>, 
+ Icenowy Zheng <uwu@icenowy.me>, Inochi Amaoto <inochiama@gmail.com>, 
+ Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <me@ziyao.cc>, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, 
+ Paul Walmsley <paul.walmsley@sifive.com>, linux-clk@vger.kernel.org, 
+ linux-serial@vger.kernel.org, Han Gao <gaohan@iscas.ac.cn>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793115418; l=1013;
+ i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
+ bh=TVSlaTkcQWucNuQbo9clD2EYvUNJXp80mxvivBUzLmI=;
+ b=XVlpQR8bfbMMFzGIxQobo08oDZ+aFzeIFawIuzSgfBEgu6kQPqeL3bnZJwtQ/pcZFfd7koJGL
+ 2y8kDDbLI/rAA1wM1EraHXBsLVhI55nKGexS5Wvdgb5NUB3SVppZ1Oj
+X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
+ pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
+X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
+ auth_id=1262
+X-Original-From: Han Gao <gaohan@iscas.ac.cn>
+Reply-To: gaohan@iscas.ac.cn
 Content-Transfer-Encoding: 7bit
 
-On 09/10/2026 17:09, Alex Elder wrote:
-> On 10/9/26 9:46 AM, Krzysztof Kozlowski wrote:
->> On 09/10/2026 16:23, Alex Elder wrote:
->>> On 10/9/26 8:56 AM, Krzysztof Kozlowski wrote:
->>>> On 09/10/2026 15:44, Alex Elder wrote:
->>>>> On 10/9/26 4:31 AM, Krzysztof Kozlowski wrote:
->>>>>> On Mon, Oct 05, 2026 at 06:09:24PM -0500, Alex Elder wrote:
->>>>>>> Define the binding for the clock controller functionality present in
->>>>>>> the Toshiba TC9564 SoC.
->>>>>>>
->>>>>>> Co-developed-by: Daniel Thompson <daniel@riscstar.com>
->>>>>>> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
->>>>>>> Signed-off-by: Alex Elder <elder@riscstar.com>
->>>
->>> . . .
->>>
->>>>>>> +properties:
->>>>>>> +  compatible:
->>>>>>> +    const: toshiba,tc9564-clock
->>>>>>> +
->>>>>>> +  toshiba,config-syscon:
->>>>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>>>>>> +    description:
->>>>>>> +      Phandle for the configuration space system controller.
->>>>>>
->>>>>> I do not see my previous comment addressed - you have no resources here,
->>>>>> so this belongs to the parent. You responded something about pci-ep, but
->>>>>> the parent is not pci-ep. Open your code:
->>>>>> https://lore.kernel.org/lkml/20260918165234.687224-5-elder@riscstar.com/
->>>>>>
->>>>>> I clearly see code like:
->>>>>>      syscon {
->>>>>>        clock@ {
->>>>>>        };
->>>>>>      };
->>>>>>
->>>>>> so I do not understand what pci-ep has anything to do here.
->>>>>
->>>>> What I have now (about to send) looks like this:
->>>>>
->>>>>        syscon@0 {
->>>>>            compatible = "syscon", "simple-mfd";
->>>>>            reg = <0x0 0x2000>;
->>>>>
->>>>>            clock {
->>>>>                compatible = "toshiba,tc9564-clock";
->>>>>                #clock-cells = <1>;
->>>>>            };
->>>>>        };
->>>>>
->>>>> A reset node will also go inside the syscon, so there is another
->>>>> function for that MFD.
->>>>>
->>>>> The regmap belongs to the parent, and is looked up this way:
->>>>>
->>>>>        regmap = syscon_node_to_regmap(dev_of_node(dev->parent));
->>>>
->>>> That's driver code, so irrelevant. So how does this solve my comment
->>>> from v1?
->>>
->>> I'm trying Krzysztof.
->>
->> In v1 I asked to fold the node into the parent. v2 did not have it. v3,
->> which you are preparing, still has no node folded, because they are
->> separate.
-> 
-> Are you saying to fold it into the PCI function?
+From: Han Gao <gaohan@iscas.ac.cn>
 
-I do not see in the example the parent being PCI function, so I do not
-understand that. What is this node? What is its parent?
+Mailbox and shared-memory SCMI transports do not require ARM execution.
+Allow RISC-V platforms to use the existing SCMI core and protocol drivers;
+architecture-specific transports retain their own dependencies.
+
+Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
+---
+ drivers/firmware/arm_scmi/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
+index 783c24a20e29..1cfe2b572d18 100644
+--- a/drivers/firmware/arm_scmi/Kconfig
++++ b/drivers/firmware/arm_scmi/Kconfig
+@@ -3,7 +3,7 @@ menu "ARM System Control and Management Interface Protocol"
+ 
+ config ARM_SCMI_PROTOCOL
+ 	tristate "ARM System Control and Management Interface (SCMI) Message Protocol"
+-	depends on ARM || ARM64 || COMPILE_TEST
++	depends on ARM || ARM64 || RISCV || COMPILE_TEST
+ 	help
+ 	  ARM System Control and Management Interface (SCMI) protocol is a
+ 	  set of operating system-independent software interfaces that are
+
+-- 
+2.55.0
 
 
-> 
-> If so, could the PCI function be a clock provider and
-> define #clock-cells (and #reset-cells)?
-> 
-> Because as things stand now, clock and reset are used by
-> the two DWMAC Ethernet interfaces as well as a separate
-> interrupt controller (one for each PCI function).
-> 
-> It sounds a little like you might prefer everything being
-> wrapped up in the DWMAC driver, as we originally did six
-> months ago.
-> 
-Not sure which patchset you refer to - v1 was in September.
-
-Best regards,
-Krzysztof
