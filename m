@@ -1,74 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793054090;
-	b=hOPSWizYvXoXdUkrd3+WDrr980zJoj/1MI20jJTKxvfDOhIbFNxaphRtoq9+du3ez0P9
-	 BktqDtlsALEAQMcY64zN5U+MkhkWAzSEj6wUGk7TxSm9ZOWtK7XCRPI8GI+zQ5epTlF3C
-	 E5+2kLrTObUyNuHk5jzPDLJ9U1De1x5p/81f075G8yVXiq+KGXZQ3HJ5jdPhPWpGj7idV
-	 JosIyv51ebUZQ/K/pszwkYaSe5GI9prVek9F6SKP+d3G8S0etihyT8w41/6KdoaDZBYJ2
-	 kW/nxnbOMnXmLDQOd32YmdhgHWYGFfQs9Hd3ZVwyREqbKBA6JXRTl1ao9z3Zj2nUEvQ==
+	t=1793060671;
+	b=zBwIsERjF1K6vux2dDb7IDt5Ar7VI1cveuPMXk0uV8F25XxzDj7ADDLxoRNP7aAWTbam
+	 Fb/A7Pk3XJkVqcF5qtu/ytdn29Hurni9dMV540O8Dhj6YcFXMnq9sL6BTa4YOzdm0ngvj
+	 o1Gdvu0+kWe/zmYs/B0pkrkAi52F1Lp8P5ovjlcVYA7UFly1YP20QQ1u8loOeTdIadmdL
+	 /25zKrpe3hFGRuZbvxpkesd+1vNGEbP5v9PVfNmGkHq3BMk3pd2eLmCV8L6nduWe3KTr5
+	 X+mBDey/sn9EAjQiA/d6gD9THWPBgH82m1LxidIDJ1C/QJ6HJhXTH3oGy+2fIq7HUPQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793054090;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=v2Nrgywn65NL+RE7paBhmd1KoquJfEvns7IjUonmCkc=;
-	b=Okysfav3LdbuHBVVtOc7Ti1WwVFqTRX+XXmoK12xmjIiSfnCclUDW+LyKERTqgN+ow1h
-	 MA9IicOgcVuIM6NDTJezIje/gbpt835NHcw406+JcZczA+ogw+evoIi2RZLYEi/DU046v
-	 JJWQSn9BDiEX/U40sspFiZaqawJngJr5+Sa9hUvTuhM5tJC8b+jkBqKkIyZfRYrb+nbXY
-	 3H1t4djQO7O1sLqzGC6kp7iZjY80uybaow3senheMYJuE+M6pygUiCbzAVqeXzN2fWOPq
-	 LSE2BFGZ29x2nUjI8smyvMwB56Pv53U3Lr75TveFWvvwdUgRvwjmjBYvwIHYcn1iuEQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793060671;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=N+Xvec07uoX87AO29/8Wl59FJ0uKiswGsShIgxHmlc8=;
+	b=Eg7kmDt9+ycoNOW1EAVFkW21Y2BZAwmKO3p28zfy/gcuFyzWE3tNDG2Sem6xf+IB32if
+	 CQ+SqJR+L1jePWJQNQMwR4QxKwrwG0P/ygPJ9g35jXPKy4t2fh0hu1MucGb+Y0pk5oZNo
+	 qFJU/Pi7875V3pwFiF4ZAJkWbAoQ8rWiKez4QSU0TFymjyMhSBbOQ0SbWfw0D46UKhP2m
+	 JINKtNtnJxXJx483R5y8M7WH+S6SicFfIbQ+dLvjPKjsXF5fm0YRDfcqO4SUI4deAyY5g
+	 eK2Pabgke53y71j/LVafLUO9FE+xnMS5B0nOGXPJTfW0yLtqcVZGQHrUo+OglZI1lKQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jfr1jagI;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=YTHQsB8K;
+	arc=none smtp.remote-ip=209.85.208.44
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C13606A31F;
-	Mon, 26 Oct 2026 22:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF90606A31A
+	for <linux-clk@vger.kernel.org>; Tue, 27 Oct 2026 00:24:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CDF90606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jfr1jagI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 255931F01828;
-	Mon, 26 Oct 2026 22:34:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793054089;
-	bh=v2Nrgywn65NL+RE7paBhmd1KoquJfEvns7IjUonmCkc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jfr1jagI2Pt7wvdiivuSrWwaHZsjr7u7Ggk+4UrVhiB5fU4Je/W8tTTJCjIxJpK1J
-	 Tzeb1RBUqdUJfpPxa1yyfqbGUkdK04/mN2ACZgCpTU6LHGP/tBhQfJllPNAePmdlgv
-	 w2FMqcuwbZKetfkBm18RKMOUZLiTglEecAMrH8KVJRgxWcALpS1wsHMbbxGetnnn8x
-	 iyLLIEa5I5iQ7M1jTzvYZuPkJcIxab5Z+kank8/A6ajRzxrW+QNFbHS/XuOJAQJLq9
-	 4nGIAS98j6N+ECXwN3QSrQGmckdeTHGPoT0dOuN0TAuyngnPnRE0glbUHmUA/vBlCL
-	 /oGT3gc4ZA0sw==
-Date: Mon, 26 Oct 2026 23:34:46 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: 1579567540@qq.com
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, Lee Jones <lee@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
-	Ulf Hansson <ulfh@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, David Wu <david.wu@rock-chips.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Vinod Koul <vkoul@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Jaehoon Chung <jh80.chung@samsung.com>, 
-	Shawn Lin <shawn.lin@rock-chips.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	mfd@lists.linux.dev, linux-gpio@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-phy@lists.infradead.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 11/27] dt-bindings: i2c: rk3x: Add RK3572
-Message-ID: <at_VaLUwxn7h3Dal@zenone.zhora.eu>
-References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
- <20261022-add-board-ok3572-c-v1-11-0b0fd85a31ee@qq.com>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=YTHQsB8K
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6b408f2d936so5238825a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 17:24:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1793060669; x=1793665469; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=N+Xvec07uoX87AO29/8Wl59FJ0uKiswGsShIgxHmlc8=;
+        b=YTHQsB8K71Utnq1y/7rscr+4aTy1kBdRaMpUyWRrzDckgv1pLXq/TxGhXAEchcSdZ7
+         9BqLp2KGclRoUTiijnG7++I9eUCao71Sbb81RgOcvd/5nlvCC73iBasFeNo4YEbLsNTI
+         w5ZWXvKqTYb4ffQl8pP6I1JAPotaWVPotKTkssHxy2c7V8ciZ6W1u1a9Khl8GpAcYHQh
+         2O13EijZdnOiL9LBqmDV897fU92zp/L4cvZmi8iw2HqpLycd4DMAzn7fxunnHMxoOk2T
+         fA2K/oaHJ82YsvDOLPHJ5LJzw1/LyxhbG2ouQUfdx4j99q+9Wu/cZkjDr7i/0fYnrLlD
+         Uw/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793060669; x=1793665469;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=N+Xvec07uoX87AO29/8Wl59FJ0uKiswGsShIgxHmlc8=;
+        b=h8bjS+grpQHL1sPARm5pGFFx/cGxvexQEuKZaVLTVjLaTLeGvzfznrcgSS8+2gbv8I
+         L3pPfnC8CXEA8wuoc+D3AQX9K2PtaOVyVInnlTMxpSQo0MIbHBj4HiaYMiVkIPMuWny9
+         LHMqZX7odkXp5wE67pRoLdr9IeuuiCPHLMAMR9w9jme/VXjDU1lAaJX1iqAVTB9dsz01
+         w2mcVIumkrrbrc+N3q5qpDF0NMCCigFKKIo0A8tlBR0ZcqrBivY4d5wSYMN1OCaaMzH0
+         9BAoVXWxZ5ZnOkL8v+BJYQNvKtAjQDBac07KOD0i3P+LQmHlgBHj/ifgcXW38Ky5ZkEN
+         nmuQ==
+X-Forwarded-Encrypted: i=1; AKwUvBw8VngwB96YTPmHMUdPOuUiHih60l+U2eMbuu6cEvS1Q1QE8dhkv9/56b+pU9xHfeUDepWKAtq1ixk=@vger.kernel.org
+X-Gm-Message-State: AFq9FYL69FXGzZy+jRGOjRleZORCMo5CGTcHyi4w8DVbM6+efXiFiQGa
+	kXg7RC0Ptxkox2C3qqKipNGD9yUWMFBN1CkS7U95UQLVaGvMhiy02qGI
+X-Gm-Gg: AYBFou0+pGC3U1LjAboA8/Nmb2XVDT0OWrTcFkM303BnhB1ZNcNByiUONygQ5m5LPv+
+	ARTC1Cl7VQode0cT7kEhPHDT3Yv+4mdYrEv57q00+UAM7TVhQhsl85qe0euUVkyfiqfrPMHwO1z
+	o3+735ZYRP6af9S6sqOFVS2fRQIu7xyZMPq9FTaVStC1J2MEio8sxDXyKewDJQCi45sTeGCFyeT
+	hyP9BX7p3COd8+cuXgJE9ZND5Va1akwtOv/Qlodcxyv3bM4mwTBR5kK4TgIj5/+EDR3oRjTokM6
+	9GM9RgXdQWBMQF2yI+Fkv6UnhOiOYw+ldRp+j79gyaxBnWi+Jhg1R/RkxMCbxfmuvHqMxVSalwm
+	yu9b8ZcbHf64jM8kXG2XP4hULDPwvUgSBU6VFjp0WLYAWeiL6EHaTt/GSt9UPzEFltjJY6eq9sk
+	ZxU3M15DVCXvtnNLkIh3bIUGdmti7G/Oz8a7n6XGqSsWHqjdDHCZpiw+h0y/oguF9f1S36daGPI
+	GEGF33+Gk2ophGIaiZWWOi/pp9nMVhCdzkxFMcc0/GO+7AWQIsBBjmUs+ias4U=
+X-Received: by 2002:a05:6402:3d1:b0:6b4:35af:328d with SMTP id 4fb4d7f45d1cf-6b442fc9e5fmr6712467a12.14.1793060668811;
+        Mon, 26 Oct 2026 17:24:28 -0700 (PDT)
+Received: from nb-xps.ts.zxczxc.org ([78.56.243.43])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b445984207sm3975344a12.22.2026.10.26.17.24.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Oct 2026 17:24:28 -0700 (PDT)
+From: Nikolay Bryskin <nbryskin@gmail.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Nikolay Bryskin <nbryskin@gmail.com>
+Subject: [PATCH] clk: rockchip: rk3588: keep the OTP gates shared with the secure world on
+Date: Tue, 27 Oct 2026 02:24:19 +0200
+Message-ID: <20261027002419.2099708-1-nbryskin@gmail.com>
+X-Mailer: git-send-email 2.56.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -78,20 +99,50 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261022-add-board-ok3572-c-v1-11-0b0fd85a31ee@qq.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Cunhao,
+The secure OTP controller (OTPC_S) shares three clock gates in
+CRU_CLKGATE_CON18 with the non-secure one: clk_otpc_arb,
+clk_otpc_auto_rd_g and clk_otp_phy_g. The kernel treats them as ordinary
+gates: clk_otpc_auto_rd_g is disabled as unused at the end of boot, and
+the rockchip-otp nvmem driver enables clk_otpc_arb and clk_otp_phy_g
+around each read and disables them again afterwards.
 
-On Thu, Oct 22, 2026 at 12:11:08AM +0800, Cunhao Lu via B4 Relay wrote:
-> From: Cunhao Lu <1579567540@qq.com>
-> 
-> Add the RK3572 I2C compatible using the RK3399 fallback.
-> 
-> Signed-off-by: Cunhao Lu <1579567540@qq.com>
+Firmware in the secure world (OP-TEE reads its hardware unique key and
+the secure boot state from OTPC_S, and programs them) has no way to take
+a reference on these clocks. Once Linux has gated them, every secure OTP
+access times out, and a normal-world nvmem read on another CPU can gate
+them in the middle of a secure access, including a fuse programming
+cycle.
 
-Acked-by: Andi Shyti <andi.shyti@kernel.org>
+Mark the three gates critical so the normal world never turns them off.
+They are 24 MHz gates for the OTP block only.
 
-Thanks,
-Andi
+Link: https://github.com/OP-TEE/optee_os/pull/8034
+Signed-off-by: Nikolay Bryskin <nbryskin@gmail.com>
+---
+ drivers/clk/rockchip/clk-rk3588.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
+index 24baa0ef9bf3..8e0f408fdfad 100644
+--- a/drivers/clk/rockchip/clk-rk3588.c
++++ b/drivers/clk/rockchip/clk-rk3588.c
+@@ -1158,11 +1158,11 @@ static struct rockchip_clk_branch rk3588_early_clk_branches[] __initdata = {
+ 			RK3588_CLKGATE_CON(18), 9, GFLAGS),
+ 	GATE(CLK_OTPC_NS, "clk_otpc_ns", "xin24m", 0,
+ 			RK3588_CLKGATE_CON(18), 10, GFLAGS),
+-	GATE(CLK_OTPC_ARB, "clk_otpc_arb", "xin24m", 0,
++	GATE(CLK_OTPC_ARB, "clk_otpc_arb", "xin24m", CLK_IS_CRITICAL,
+ 			RK3588_CLKGATE_CON(18), 11, GFLAGS),
+-	GATE(CLK_OTP_PHY_G, "clk_otp_phy_g", "xin24m", 0,
++	GATE(CLK_OTP_PHY_G, "clk_otp_phy_g", "xin24m", CLK_IS_CRITICAL,
+ 			RK3588_CLKGATE_CON(18), 13, GFLAGS),
+-	GATE(CLK_OTPC_AUTO_RD_G, "clk_otpc_auto_rd_g", "xin24m", 0,
++	GATE(CLK_OTPC_AUTO_RD_G, "clk_otpc_auto_rd_g", "xin24m", CLK_IS_CRITICAL,
+ 			RK3588_CLKGATE_CON(18), 12, GFLAGS),
+ 
+ 	GATE(PCLK_SARADC, "pclk_saradc", "pclk_top_root", 0,
+-- 
+2.56.0
+
