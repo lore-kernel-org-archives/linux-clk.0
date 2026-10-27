@@ -1,66 +1,71 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.11.138.130
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793097864;
-	b=urMynnzcRs70E9UsUk22EVWh0rEmj/VgX/8cQ5r7H67x1hy8Pf2NbREP4g2omVrtj2rR
-	 B53L+ilNeQyBKBCyrCNykeo/1aZaDWAJA3fZyyRCB/1MX/1oiLw2j3pEWNOXStf1fpnou
-	 fkJdvnA/ZSJJxOBUHPfj5ZP8XTAxYHk+0WyDWcs9NJ4U0XiI6bKAf5DO0YSADByGnxiYq
-	 PdwnXXbnnIvhp4p9LYjPj0E2ecLfGjUdS2vA9cx1YLz+Oq/Z6+M1MXKHqp9CwwC3qMYSu
-	 6PmPbvp1qGTmkAL0rvDkxVxjvcmrxaXC9JENE+xUzj7iu2EsxTeM64KDF2xuBXfJ6bA==
+	t=1793098574;
+	b=065WZvUKVpX5vn1MyzsIeBoU2yY7a7/R+iXYZKTzr6RRlahM0Ldk8hASY/x6zqe96pwv
+	 HblW6vL4wTa03ix9Hy2X0SSZDHyLGg3RZYaJ7MY2LAbvdQrWJsmSdbSWrsGUv1T64sfZd
+	 UCS4wvRJnNnubJcUjPL/O1EP71LsArq//ft+GyIPLD5bIE1g+B04+MzTCvxrDQlQYBPEq
+	 cyvpX579HqNx2m6FEAS9Rejz4oMJahtJtZvBcn8p2PVvWHjm/o6bMXburrC1oHceAICOl
+	 hRP9DV7MLELCcTc7BMRxTW2NcDH9p6q+QXqUA3ZBaBQe6af13A+ZbyLSeTNu8uazpww==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793097864;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793098574;
 	h=DMARC-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
 	 Content-Type;
-	bh=EmwVVNfWTX/oFCv0ig9mplNZI03jXLrvbbZUZU4TCdw=;
-	b=nKq2gJ8CGN18peJmmnYFBIVBeoB7cNjcAusDcgOcFUd+ov9SrYOfpyHUmIliSRWeEoDU
-	 1HeF3U23jx0Ehi82BL21xGuK2YoeD3UPkGqz8WD2LnkblqMsYpdrxHPB8ZPyGL7Wj57EB
-	 fKOYu2D/TlZlknvwBgTDkwG+Jm4utaLrISKGsvzFfc+QzkPkbcTuk58zCxAeJkhCwIB5Y
-	 dgHCH/sZnfMiiMduxRJOazn9S7LsbeAlZ0Xx6JDoBWCR4/N1ZPy6S6GLHUyGTiwx5cnrW
-	 RPhlwgIsVdTH7QPs7ilTLT1VQX60XQ6Pp8AsiSBR5V4TvibCcPDS0WDP14ch2Jl5k8Q==
+	bh=iRDyXe44Y1voxIFFug2VYkvVa9+PxgdNI7cbcINaWFg=;
+	b=MJ+EhJplTBDW/uptdM46TKSKujO2IuidE7o34B/fYHG4NP4mv2Uhksr+UKZ4yUusF/bN
+	 Jm7H7hPecqOnyy+Y4pDVF6CZAtI5xxDI96z2vfp2QRmLYDtFJaUwmkdngLukYGfMWgMYr
+	 4IgUhfgoTxQfAA0ln5uB+HJehwUWUeS0g3KkwcnTFdgJO3ctqZuap/EV8v6e3tvtWQGiv
+	 ahuae+Dr8BF8NmH2GaDLpauQ3vSIs5/oCJIRElRN6PvWgP/ACLDMbyI1qa9hfZOFJjdGs
+	 KmnLmtsbrZXMxQXPsXse5YXobV8o46xntH2H9O1VIWLL9bIkwWpec1PgnmE1wZwZNkA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=sntech.de;
 	spf=pass smtp.mailfrom=sntech.de;
-	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=dzX2nS9D;
+	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=Jze5PRda;
 	arc=none smtp.remote-ip=185.11.138.130
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D10606A31B;
-	Tue, 27 Oct 2026 10:44:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E2D10606A31B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306C1606A31A;
+	Tue, 27 Oct 2026 10:56:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 306C1606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=dzX2nS9D
+	dkim=pass (2048-bit key, unprotected) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=Jze5PRda
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=EmwVVNfWTX/oFCv0ig9mplNZI03jXLrvbbZUZU4TCdw=; b=dzX2nS9D8BTfbltg7sf8EyWnIF
-	YR5/lR8p2o7W4dSnji19TWCRsn1H6oc6EmAvEpiz+FBLQKDWeEgI7pTHnlTtIvp1nsnLXX8UVC2ft
-	IPwf/6y30bWKyAuWnlAW4wtOf/pNr9jhSZ77jBW65spt2KshPXsdUzelQxnGT8T88QeTnipw4Ommm
-	Hy1HiU7KeYrnWfYkjaQczWONxNwSpZjyJ/IYOSkv1vMtYOGqCz6QPQkkXX0HUiPo0VGPzSN/v3uao
-	9gQc8Vy2Lgs9IxG+6H8yrUt8Tt+mHDKwYtFuFylXHSJtnAQEyzYFucOGzx988/fa3z7gsfQ/MCXw2
-	/RfziD/Q==;
+	bh=iRDyXe44Y1voxIFFug2VYkvVa9+PxgdNI7cbcINaWFg=; b=Jze5PRdaRk9WLOOmvuXfp6Fv5c
+	z/BRwx79xy+Bac7g8xaYFbMgRA4ELz86k5d/AfFqTIsCADA3A2n7jTE1rVlWdtA8LyfiPMNtRztjW
+	G89mdyzGt4ka6hPAT9OfTAgv9SQ5F7GVD+6fzH8mVyZ5mmdTU0WnW7hR6nal9n+n4nN6yiCA72bd0
+	vB2K+U8dlcvPuTdD6n2V1vTmP0vNMlxw2E30WIlvyFeDb2Ag5vL9n8zR3tsN0RKSSgMfswC5cV25n
+	bHbArBhy9RoRocsNbMs4ITAUdGjm3CCNtkGdNgqPa9wiqau3Sasx4Yhx9+OzdVVAhYb9ncqx4nkX0
+	OH8DZpKQ==;
 From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Cunhao Lu <1579567540@qq.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+To: Shawn Lin <shawn.lin@rock-chips.com>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
  Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Philipp Zabel <p.zabel@pengutronix.de>,
  Elaine Zhang <zhangqing@rock-chips.com>,
- Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: clock: rockchip: Add RK3572 CRU
-Date: Tue, 27 Oct 2026 11:43:56 +0100
-Message-ID: <3011736.yaVYbkx8dN@diego>
-In-Reply-To: <20261027-vagabond-gabby-caracara-4edabe@quoll>
+ Richard Cochran <richardcochran@gmail.com>, Cunhao Lu <1579567540@qq.com>
+Cc: "shawn.lin" <shawn.lin@rock-chips.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ devicetree <devicetree@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-rockchip <linux-rockchip@lists.infradead.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
+Subject:
+ Re: [PATCH v4 2/4] clk: rockchip: Add internal support for 24-bit fractional
+ dividers
+Date: Tue, 27 Oct 2026 11:56:01 +0100
+Message-ID: <6321950.31tnzDBltd@diego>
+In-Reply-To: <tencent_AE0E51DA2FACC999E65D6631016044234005@qq.com>
 References:
- <20261026-add-board-ok3572-c-clk-v3-0-dbabfa39d692@qq.com>
- <20261026-add-board-ok3572-c-clk-v3-1-dbabfa39d692@qq.com>
- <20261027-vagabond-gabby-caracara-4edabe@quoll>
+ <20261027-add-board-ok3572-c-clk-v4-0-d4152b4fedaa@qq.com>
+ <f9068153-0d6c-471f-a08b-41cff51ff748@rock-chips.com>
+ <tencent_AE0E51DA2FACC999E65D6631016044234005@qq.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -73,40 +78,32 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 
-Am Dienstag, 27. Oktober 2026, 11:17:08 Mitteleurop=C3=A4ische Normalzeit s=
-chrieb Krzysztof Kozlowski:
-> On Mon, Oct 26, 2026 at 02:56:47PM +0800, Cunhao Lu wrote:
-> > From: Elaine Zhang <zhangqing@rock-chips.com>
-> >=20
-> > The RK3572 CRU uses the PMU0 GRF for the AUPLL reference mux.
-> > Describe the controller and define its clock and reset IDs.
-> >=20
-> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> >=20
-> > - Documented the xin24m input.
-> > - Made the PMU0 GRF phandle required.
-> > - Updated the example.
-> > - Closed the reset ID gap while preserving each named reset's register
-> >   mapping.
-> > - Removed CLK_NR_CLKS from the clock binding.
-> >=20
+Am Dienstag, 27. Oktober 2026, 11:41:25 Mitteleurop=C3=A4ische Normalzeit s=
+chrieb Cunhao Lu:
+> > I guess you are describing what you changed against the
+> > original patch from Elaine. But this is not how it works.
 >=20
-> All your patches seems to have odd commit msg.
+> I'm very sorry for the mistake. After carefully reviewing the guidelines,
+> I understand that my notes about changes to Elaine's original patch should
+> have been enclosed in square brackets []. I will keep only the significant
+> changes in those notes and place them within square brackets.
 >=20
-> > Signed-off-by: Cunhao Lu <1579567540@qq.com>
+> Thank you again for pointing out my mistake. This reminds me that I still
+> have much to learn.
 
-With code originating in the vendor kernel, it is nice to know what changed,
-but I guess there is a tradeoff between brevity and more details.
-
-I guess this could be shorted to something less verbose, like
+and as I wrote in my reply to Krzysztof slightly, less verbosity is
+usually better. I.e. a short description what you did, not a detailed
+list is usually nicer, i.e. something like
 
 +++++++++++++
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 [adapted to mainline rockchip clock and reset handling (xin24m input,
-  don't introduce CLK_NR_CLKS, etc ]
+  don't introduce CLK_NR_CLKS, etc) ]
 Signed-off-by: Cunhao Lu <1579567540@qq.com>
 +++++++++++++
 
-
+And as for speed, maybe give it a bit more time between iterations.
+A version per day is a bit fast, as it doesn't give people time to actually
+respond.
 
 
