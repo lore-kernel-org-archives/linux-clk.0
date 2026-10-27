@@ -1,97 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793073221;
-	b=BeXPIauZOqjk176Ly8kXQRlVp0mM0hTIecxdYFTIy3lLt0DfvqqnKbA0lo0l5JNE/1FV
-	 eY/oWDzsowjkL+q3zWcJ6J2JOH0neODNt6qmXZzmjbl1FDBtsln2nSCZITAGxTg51UUab
-	 rM3zGa8h40SkNfzFEIqm2+5Qb1+mMWHas5D0GhnCQAGwW8065RJqHPJDTokUzXqZ83jeh
-	 wYpo6+wx94Eo5E5tw3kiQZO1iDftzGNreh52lR3R5MQ2wil7xeT/BEFwGNdHtXIsa+lNZ
-	 TRUPLfBCvW0c5ivCf7FhnD2SY1C4yLvukAKL0o9hHhL1qJwQigGQNs6eNof87tEuOag==
+	t=1793075712;
+	b=bqBxEUsVCYdlMF0O/Qr4MN+SG8b67PcBgAhoj5WeeeEq6XSh4TsxQNC64L6t3FF+CkHg
+	 li6C6hP9MQLOw6GysE6mtACZZc0VBHVeJPLJZcGaocmAB13nAQyAPGLDnuMSa+Z9jFnNJ
+	 btjGL3/YpMElJ0ec26WJzXHZ0BnFFwzR1lKF5l7MDZpJcQ5q8UIPZ1/eBHwJ5s/23zCe2
+	 /iaZWU62TPVmEryknTew60Iy1EbZLY/sDxYxJJsRAZTtTdg0nGGWZMUjpjqLMLiHF+sCn
+	 PXu2hPJawbJjFS8SbnZevNC2+Lte26pl1ewQnpRBPe5qESfwP8jEhZX4E4yRkfi8cgA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793073221;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=63XdMIgmDxPufVfDbiuncQKIwymV4Xhq1c62N9eTtiU=;
-	b=DUKLFE7+Zf71QZ3V+JahyYgSKllEP3iQHDzf0B+Q7ApUDuxDmlTJuVnRBPhopiBy/m5E
-	 WErGVJHvjPI6VOnZgpyAYgEbwiE6IAQlXkxjpBctXspCjS2BSTHJjBXfiSwWDBBEiPL+T
-	 XB0iFzFxzJJ7IlASWsNhGf+cM2JlaGiyT2ZTpXm0z4J54sbmWtfQaQf2LD6x+K0FEoX9k
-	 r9PYv+85MiJfGrzU4h3sdw85E4nfX06yP1EhGKcQHsNsDQIHtALWuGoNdq0XsbTG1kzEs
-	 U2tldP9DFr0gd/+XyyiehPIQBcpHQWJhd+1+Ka3qh99STKEn7xsHkviwC8GCvuDFYXQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793075712;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=xnl+m6EP0FIan7eNNJ6y9ahwPv53aFKtQX0CsWd3ZNA=;
+	b=qnTtpoMJG7UKoVAlPVoenOOptjO3s86drAseNGRPZgePqEa7uf68rPkknBKA9X6DMIjR
+	 cRtt5jN+WwUHuapAuuwIb5fF4IhDQ5+/boaHtGvXEAzZSQLccj2vpUvf+pvRK1zmiiXJO
+	 DIn03K1Mo4BUwZev5WO5K3yknby8jqSEUQB+hLyWST0dlGtSrzF0JuOhW6h5ZZCmEpkXv
+	 J5yIHV0XOdJgAcxaHPz5kUCeMat6KZgZQJBE0cs0vqvSMv9XHKpUm8tls1/ac9qLqwEvL
+	 2rzdk43GjsJjrmsXcjK78CfIG8BW54Qnk/J+qWBOhpeEfilyThU+CYfplcX1LB/M0zA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=chromium.org;
-	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=gmnM+VK2;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.169
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Upjrd+05;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF926606A321;
+	Tue, 27 Oct 2026 04:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Upjrd+05
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1793075711;
+	b=aw2o5jT6+JeHcpvY2pUSbUuC4H+XRnMGnfPFD5IATRokTil773o/ZUO74S9KEAOZcIf4
+	 azMZBYKhaxfQv4FyF5PChzsN8dKLoIHYmXIKTth0liHaiGKKWXFIJ0PZIAq636sHhxIAX
+	 ovADJ2md65jT4r+Lblf1KjVnWZr+zBF3UZmvYZW8N075kIIra9/yKesM2CxDxbNpcCK0Z
+	 nU204BFgpd8J+rrqWfoodnnNWucpXki2PmvsKyr7k472+ixREtxgrHHHqpCFY/n2vB8G5
+	 KfL+03tPHXNEBD/3IQtwPpO65sr8vpQfnkGxEBNUE6rBYOU7fgte8Xsde219PbzIxsA==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1793075711;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=xnl+m6EP0FIan7eNNJ6y9ahwPv53aFKtQX0CsWd3ZNA=;
+	b=VDll7Xtq+P2ugbVsp67xCmJhyOc4St4fWtNdX7g1QD92rZQhBnSdjZ/BxLuNAWN5Ibb9
+	 FACofqA29ZROhNdeRCHBGSkZg+n0B8CxCb0lhHw5Jw3FFk85lgAsWTbN6MHav//1Drj8x
+	 3zGjkvCWS9T1uIH20LUSkvzpPncrpx3ho4eTnvb61gBYssMpAaGu3A2kbn8fIhQIVZUy3
+	 h3cLOCvRBGOWF6YRl8m/KrEiG7CFiOoVlXsYS3YkAnZSdnVtXfZYbLR4ZdL3Pxjv3WhXs
+	 m+VZoR2enqkOA9C7N6nRv0F4BIEwErbRHcg3j8Ew6UTKOvOFrlFug4+oUnB/EAIAtxQ==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF300606A31B
-	for <linux-clk@vger.kernel.org>; Tue, 27 Oct 2026 03:53:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AF300606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=gmnM+VK2
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-8ab432273c5so30340697b3.3
-        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 20:53:40 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793073219; cv=none;
-        d=google.com; s=arc-20260327;
-        b=BKxFENCi0hSKx7OrthLcAg9uCec1Z/Zx9F5DvAT4p11PRurFDvDEhhBtBXE6i+uncM
-         iNhzbFgKqGVS7FcRd29Xldl3Z9yyxDK5tas9kL8gP4K+LXeRiBbdYVfUeHTkJcR7oX/O
-         p5VRBHKnOOv8V6H/M+O1YhYi2I/L16kB2n1uBQgYYngx89bwkxNio+86paT+JHuNaRlY
-         R6VacsuuHZj4hPczI5Yr1Pm0ihWNQ/y/D02biQNOqRq55kpbJMwKYJEt/9bbk9o/NtnR
-         K8qRgqDux0LIsDt4/08e0FwylxfOlmXoYFXDKGH36ByukmpSxSqVoAaGDKKHltzNEwrM
-         mRZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=63XdMIgmDxPufVfDbiuncQKIwymV4Xhq1c62N9eTtiU=;
-        fh=2J0MAxo3id1tKriY5HflXMuUIWdjlTV4H9UuNxpnlGQ=;
-        b=VKfHWoj3rMugnaPAUYR+Q3r4foXORhDjr3Fik2MVWGCF4WYsFG/NJghPbFGZl0zkEY
-         ZxLZafL1dJcUnFnWNHfAjzZ7NYG53ZDuB7AMGZSIG22P2caj0J5fN/OUVmxRDo20U7Ug
-         rdWfqJ9xPaoL2LYWPqRPHwOd3dIouZMcPA5TIRj5Vt7v/wHPt1ti+OMvZjTgReRYd3NL
-         dUOFET4LTsmePdzOFD107m9Lt6u1U13ESqxCSOV1CuU+7579wLdg2a2yZpGhFETDj/lU
-         QBVogQPM+N4rtLI4nUeckLUrf8rrtmy2sJbUfr0ExtDM7bGOV467u0KiFpypRHe4cKPY
-         ZTTw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1793073219; x=1793678019; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=63XdMIgmDxPufVfDbiuncQKIwymV4Xhq1c62N9eTtiU=;
-        b=gmnM+VK2FHfRvDryYWxHCVQLkzSvELGiTjKId2CX37exxagezn5WzGkm1vyJrhbg0U
-         0ntd9vDW9Pf1TYBBZKoovsDv6XFh/lhEacqhJOcgDdqDHPrte5YSBQNI4vMKTVLIOpoG
-         gClP0iuoiU3qugTeu9sD5xek0+2z6AgQW4IwM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793073219; x=1793678019;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=63XdMIgmDxPufVfDbiuncQKIwymV4Xhq1c62N9eTtiU=;
-        b=H2ZOnqrKDg8mbX/aeazoI5tWYS4uDH8PrH0wJXrACzVC1zgICYazACrjDyY37w0sRO
-         9PzvZsxP+/grMicGkAbSPrR9JmVG4skO7inn8gUcHm9TaW35yu2S8Zm5j9mR8In+0AgB
-         3wwojUeaK3UZzBto9F9tYxCKKY7d2fEBQHmTePAfWWomNLrXY/qPj43JQMVcZ55cwZqK
-         9ethmWdcKA0DJLXWW2YjOjU4RMm94K4dEpre662IFbNeMpVjjwHZxV70oXB7tNYub7ys
-         9H2o98EFs65IRtpBEvzxj48ikSrI2m6sfDuDaaBWTs/O7gwfEu4mDdn9mdJLi224GyWB
-         V9ig==
-X-Forwarded-Encrypted: i=1; AKwUvByl5MRzXRE3U14cAwguXpljXnEs/F1yFQjcIebQaS0QLwjF+n5amdTkc73oEbfSBovGck0HZTaixrs=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIxvfilhCSOpV6z0ePhGJA/IMDhPbkQUYD5UbhZ6aSv1yrJSYAT
-	nkOX0PaxOGDkViE30tIPk6l5Uod5l+qviEHzUhnV8wdNLEleQE0J5X+D3/CcIgs2so2yFgXr08c
-	WsC/S5NlconBRZ79yIWTfGRlsUgrl30S0Jd6kadlM
-X-Gm-Gg: AYBFou0DPQFTFumM991R99DY0dOvUyd/nrjf/H1/72Zwj0UCK4QysXRrx76CQqJlbhp
-	oqNpnhUqbgeQSnOkeQxX7mdBvXeCT7BKpUMhMyyUnHb03w6q9JedWWhyuatc2IiZarhAiLUwgQ2
-	gEQsfw8uZIgmKs5BsCnxsKG4IsbnGIYGbIl9EO2Ja5uT+GdiU+8NwWNSs9ym+ZojsaTzacpTxcj
-	kqO+n4o5wsX/dh76oqQHqeO77Ie16tEfhfevb1CbnQQWAfflD7NKWI9KXiWY/UfBTRmRiBMtsbC
-	dKl9si1fMF5sISRW/7ZOWQZI6VBmv1H0BZPtpfX1T6Sz5LKH1mPx3KqdP7oX59yrNnM7rEK1ywd
-	q+XSi4YwN6ZNE5roauivLdyyUaBDxFK9TYe8Q2Ck1x6/9n8uZ6PTOfe6mUBqJfP0PZgE=
-X-Received: by 2002:a53:b644:0:b0:677:d023:49b8 with SMTP id
- 956f58d0204a3-67a4543f2demr5622996d50.66.1793073219651; Mon, 26 Oct 2026
- 20:53:39 -0700 (PDT)
+	by smtp.kernel.org (Postfix) with ESMTPS id 7506B1F01829;
+	Tue, 27 Oct 2026 04:35:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793075711;
+	bh=xnl+m6EP0FIan7eNNJ6y9ahwPv53aFKtQX0CsWd3ZNA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=Upjrd+05R+UGPdmxIVDx/pIZH25Ku/2Y5nyTaoT1U5tFCjgslDSl7H9vWjwkeTrTm
+	 nJL7gk4R5CMYUQoWURihbneN7QQkd8+PhlkYX0HAjaSGMnf6tSgBt9Szs5Wl6rvRbp
+	 9TjspaOeKvLu2eS35CMTSNIR/UKmHXHVzKPHguLFc1r4H7nEjfS1BEnGTIbIvtrIME
+	 AW0AYVPXz7n+C70MMyUhUL9dS78xr+Oh5ZYQ7w3Hne2i6Wzz1+VTQ7+Rj221ZzxPfP
+	 N0xfZSHmF0aWMLnRd40YgWuO+2jRi99z0nvw/JoR/BimFh4h6kt1KqX9p2fJyfe97q
+	 NkIAUDaIl/l5Q==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 08F1644FA0;
+	Tue, 27 Oct 2026 04:35:10 +0000 (UTC)
+From: Ishu Brar via B4 Relay <devnull+patches.brar.si@kernel.org>
+Date: Tue, 27 Oct 2026 10:05:02 +0530
+Subject: [PATCH v2 2/2] clk: qcom: Add SM7250 graphics clock controller
+ driver
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -101,80 +83,472 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261027002419.2099708-1-nbryskin@gmail.com>
-In-Reply-To: <20261027002419.2099708-1-nbryskin@gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Tue, 27 Oct 2026 11:53:28 +0800
-X-Gm-Features: AclHuK9fP-f3Hs_1VqqYwtoVLd1mzJ767fSZbB5u4Nm7cGL3-Cn95lyNs_2rirg
-Message-ID: <CAGXv+5HiwX0R7a8gJeQMbZOB=AYEDUanD5ry6y0-X=wqO57RKg@mail.gmail.com>
-Subject: Re: [PATCH] clk: rockchip: rk3588: keep the OTP gates shared with the
- secure world on
-To: Nikolay Bryskin <nbryskin@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261027-gpucc-sm7250-v2-2-773056e4043e@brar.si>
+References: <20261027-gpucc-sm7250-v2-0-773056e4043e@brar.si>
+In-Reply-To: <20261027-gpucc-sm7250-v2-0-773056e4043e@brar.si>
+To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Taniya Das <taniya.das@oss.qualcomm.com>, 
+ Imran Shaik <quic_imrashai@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ishu Brar <patches@brar.si>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793075708; l=12439;
+ i=patches@brar.si; h=from:subject:message-id;
+ bh=JNHEoPHZa2akLYNFV9SVF6Yt4gSx3/r3x13PM2tqsl8=;
+ b=PPCW8Dnmdk9GrYEWqO7PofYh4IJQph5k/5a80vN0YkwGqWVAZlPz566++F8GHMObIg+vvlE9M
+ mRwXhTwX2LdAjB7lYUTgQlcATqccWxQwuFeWpzlsax3yOti0aaQcdED
+X-Developer-Key: i=patches@brar.si; a=ed25519;
+ pk=Ds+E23E3ntzjPzuBDyVRkOouclcNI5k75R+N42yJtCk=
+X-Endpoint-Received: by B4 Relay for patches@brar.si/default with
+ auth_id=1189
+X-Original-From: Ishu Brar <patches@brar.si>
+Reply-To: patches@brar.si
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 27, 2026 at 8:28=E2=80=AFAM Nikolay Bryskin <nbryskin@gmail.com=
-> wrote:
->
-> The secure OTP controller (OTPC_S) shares three clock gates in
-> CRU_CLKGATE_CON18 with the non-secure one: clk_otpc_arb,
-> clk_otpc_auto_rd_g and clk_otp_phy_g. The kernel treats them as ordinary
-> gates: clk_otpc_auto_rd_g is disabled as unused at the end of boot, and
-> the rockchip-otp nvmem driver enables clk_otpc_arb and clk_otp_phy_g
-> around each read and disables them again afterwards.
->
-> Firmware in the secure world (OP-TEE reads its hardware unique key and
-> the secure boot state from OTPC_S, and programs them) has no way to take
-> a reference on these clocks. Once Linux has gated them, every secure OTP
-> access times out, and a normal-world nvmem read on another CPU can gate
-> them in the middle of a secure access, including a fuse programming
-> cycle.
->
-> Mark the three gates critical so the normal world never turns them off.
-> They are 24 MHz gates for the OTP block only.
+From: Ishu Brar <patches@brar.si>
 
-If OPTEE needs some resources kept online, maybe the OPTEE DT node should
-have a reference to them?
+Add a driver for the graphics clock controller of the Qualcomm SM7250
+SoC (Snapdragon 765/765G/768G). It provides the GMU clock and its PLL,
+the GPU CX and GX power domains, and the GPU SMMU vote clock. The layout
+follows the SM8250 driver, since both use a Lucid PLL and the same GMU
+clock setup; the PLL settings, frequency table, register offsets and
+GDSC data come from the downstream driver of the platform.
 
-Otherwise everyone is just playing whack-a-mole in each separate driver.
-And for folks that don't have OPTEE, it's a potential waste of power.
+Tested on a OnePlus Nord: the controller probes and provides the clocks and
+power domains for the Adreno 620 GPU.
+
+Signed-off-by: Ishu Brar <patches@brar.si>
+---
+ drivers/clk/qcom/Kconfig        |  10 ++
+ drivers/clk/qcom/Makefile       |   1 +
+ drivers/clk/qcom/gpucc-sm7250.c | 378 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 389 insertions(+)
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 27d0ab24d50a..2df28d213246 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -1878,6 +1878,16 @@ config SM_GPUCC_6350
+ 	  Say Y if you want to support graphics controller devices and
+ 	  functionality such as 3D graphics.
+ 
++config SM_GPUCC_7250
++	tristate "SM7250 Graphics Clock Controller"
++	depends on ARM64 || COMPILE_TEST
++	select SM_GCC_7250
++	default m if ARCH_QCOM
++	help
++	  Support for the graphics clock controller on SM7250 devices.
++	  Say Y if you want to support graphics controller devices and
++	  functionality such as 3D graphics.
++
+ config SM_GPUCC_MILOS
+ 	tristate "Milos Graphics Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 6affb5073f26..421a9e5053c0 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -205,6 +205,7 @@ obj-$(CONFIG_SM_GPUCC_6115) += gpucc-sm6115.o
+ obj-$(CONFIG_SM_GPUCC_6125) += gpucc-sm6125.o
+ obj-$(CONFIG_SM_GPUCC_6350) += gpucc-sm6350.o
+ obj-$(CONFIG_SM_GPUCC_6375) += gpucc-sm6375.o
++obj-$(CONFIG_SM_GPUCC_7250) += gpucc-sm7250.o
+ obj-$(CONFIG_SM_GPUCC_8150) += gpucc-sm8150.o
+ obj-$(CONFIG_SM_GPUCC_8250) += gpucc-sm8250.o
+ obj-$(CONFIG_SM_GPUCC_8350) += gpucc-sm8350.o
+diff --git a/drivers/clk/qcom/gpucc-sm7250.c b/drivers/clk/qcom/gpucc-sm7250.c
+new file mode 100644
+index 000000000000..26ca2983b340
+--- /dev/null
++++ b/drivers/clk/qcom/gpucc-sm7250.c
+@@ -0,0 +1,378 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/clock/qcom,sm7250-gpucc.h>
++
++#include "clk-alpha-pll.h"
++#include "clk-branch.h"
++#include "clk-rcg.h"
++#include "clk-regmap.h"
++#include "common.h"
++#include "gdsc.h"
++#include "reset.h"
++
++#define CX_GMU_CBCR_SLEEP_MASK		0xf
++#define CX_GMU_CBCR_SLEEP_SHIFT		4
++#define CX_GMU_CBCR_WAKE_MASK		0xf
++#define CX_GMU_CBCR_WAKE_SHIFT		8
++
++enum {
++	DT_BI_TCXO,
++	DT_GPLL0_OUT_MAIN,
++	DT_GPLL0_OUT_MAIN_DIV,
++};
++
++enum {
++	P_BI_TCXO,
++	P_GPLL0_OUT_MAIN,
++	P_GPLL0_OUT_MAIN_DIV,
++	P_GPU_CC_PLL0_OUT_MAIN,
++	P_GPU_CC_PLL1_OUT_MAIN,
++};
++
++static const struct pll_vco lucid_vco[] = {
++	{ 249600000, 2000000000, 0 },
++};
++
++static const struct alpha_pll_config gpu_cc_pll1_config = {
++	.l = 0x1a,
++	.alpha = 0xaaa,
++	.config_ctl_val = 0x20485699,
++	.config_ctl_hi_val = 0x00002261,
++	.config_ctl_hi1_val = 0x329a699c,
++	.user_ctl_val = 0x00000001,
++	.user_ctl_hi_val = 0x00000805,
++	.user_ctl_hi1_val = 0x00000000,
++	.test_ctl_hi1_val = 0x01800000,
++};
++
++static struct clk_alpha_pll gpu_cc_pll1 = {
++	.offset = 0x100,
++	.config = &gpu_cc_pll1_config,
++	.vco_table = lucid_vco,
++	.num_vco = ARRAY_SIZE(lucid_vco),
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
++	.clkr = {
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gpu_cc_pll1",
++			.parent_data = &(const struct clk_parent_data) {
++				.index = DT_BI_TCXO,
++			},
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_lucid_ops,
++		},
++	},
++};
++
++static const struct parent_map gpu_cc_parent_map_0[] = {
++	{ P_BI_TCXO, 0 },
++	{ P_GPU_CC_PLL1_OUT_MAIN, 3 },
++	{ P_GPLL0_OUT_MAIN, 5 },
++	{ P_GPLL0_OUT_MAIN_DIV, 6 },
++};
++
++static const struct clk_parent_data gpu_cc_parent_data_0[] = {
++	{ .index = DT_BI_TCXO },
++	{ .hw = &gpu_cc_pll1.clkr.hw },
++	{ .index = DT_GPLL0_OUT_MAIN },
++	{ .index = DT_GPLL0_OUT_MAIN_DIV },
++};
++
++static const struct freq_tbl ftbl_gpu_cc_gmu_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(200000000, P_GPLL0_OUT_MAIN_DIV, 1.5, 0, 0),
++	F(500000000, P_GPU_CC_PLL1_OUT_MAIN, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 gpu_cc_gmu_clk_src = {
++	.cmd_rcgr = 0x1120,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = gpu_cc_parent_map_0,
++	.freq_tbl = ftbl_gpu_cc_gmu_clk_src,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "gpu_cc_gmu_clk_src",
++		.parent_data = gpu_cc_parent_data_0,
++		.num_parents = ARRAY_SIZE(gpu_cc_parent_data_0),
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_branch gpu_cc_ahb_clk = {
++	.halt_reg = 0x1078,
++	.halt_check = BRANCH_HALT_DELAY,
++	.clkr = {
++		.enable_reg = 0x1078,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gpu_cc_ahb_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gpu_cc_crc_ahb_clk = {
++	.halt_reg = 0x107c,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x107c,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gpu_cc_crc_ahb_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gpu_cc_cx_apb_clk = {
++	.halt_reg = 0x1088,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x1088,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gpu_cc_cx_apb_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gpu_cc_cx_gmu_clk = {
++	.halt_reg = 0x1098,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x1098,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gpu_cc_cx_gmu_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&gpu_cc_gmu_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gpu_cc_cx_snoc_dvm_clk = {
++	.halt_reg = 0x108c,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x108c,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gpu_cc_cx_snoc_dvm_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gpu_cc_cxo_aon_clk = {
++	.halt_reg = 0x1004,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x1004,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gpu_cc_cxo_aon_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gpu_cc_cxo_clk = {
++	.halt_reg = 0x109c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x109c,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gpu_cc_cxo_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gpu_cc_gx_gmu_clk = {
++	.halt_reg = 0x1064,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x1064,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gpu_cc_gx_gmu_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&gpu_cc_gmu_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gpu_cc_gx_vsense_clk = {
++	.halt_reg = 0x1058,
++	.halt_check = BRANCH_HALT_DELAY,
++	.clkr = {
++		.enable_reg = 0x1058,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gpu_cc_gx_vsense_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gpu_cc_sleep_clk = {
++	.halt_reg = 0x1090,
++	.halt_check = BRANCH_HALT_DELAY,
++	.clkr = {
++		.enable_reg = 0x1090,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gpu_cc_sleep_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gpu_cc_hlos1_vote_gpu_smmu_clk = {
++	.halt_reg = 0x5000,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x5000,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gpu_cc_hlos1_vote_gpu_smmu_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct gdsc gpu_cx_gdsc = {
++	.gdscr = 0x106c,
++	.gds_hw_ctrl = 0x1540,
++	.pd = {
++		.name = "gpu_cx_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc gpu_gx_gdsc = {
++	.gdscr = 0x100c,
++	.clamp_io_ctrl = 0x1508,
++	.pd = {
++		.name = "gpu_gx_gdsc",
++		.power_on = gdsc_gx_do_nothing_enable,
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = CLAMP_IO | AON_RESET | POLL_CFG_GDSCR,
++};
++
++static struct clk_regmap *gpu_cc_sm7250_clocks[] = {
++	[GPU_CC_AHB_CLK] = &gpu_cc_ahb_clk.clkr,
++	[GPU_CC_CRC_AHB_CLK] = &gpu_cc_crc_ahb_clk.clkr,
++	[GPU_CC_CX_APB_CLK] = &gpu_cc_cx_apb_clk.clkr,
++	[GPU_CC_CX_GMU_CLK] = &gpu_cc_cx_gmu_clk.clkr,
++	[GPU_CC_CX_SNOC_DVM_CLK] = &gpu_cc_cx_snoc_dvm_clk.clkr,
++	[GPU_CC_CXO_AON_CLK] = &gpu_cc_cxo_aon_clk.clkr,
++	[GPU_CC_CXO_CLK] = &gpu_cc_cxo_clk.clkr,
++	[GPU_CC_GMU_CLK_SRC] = &gpu_cc_gmu_clk_src.clkr,
++	[GPU_CC_GX_GMU_CLK] = &gpu_cc_gx_gmu_clk.clkr,
++	[GPU_CC_GX_VSENSE_CLK] = &gpu_cc_gx_vsense_clk.clkr,
++	[GPU_CC_PLL1] = &gpu_cc_pll1.clkr,
++	[GPU_CC_SLEEP_CLK] = &gpu_cc_sleep_clk.clkr,
++	[GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK] = &gpu_cc_hlos1_vote_gpu_smmu_clk.clkr,
++};
++
++static const struct qcom_reset_map gpu_cc_sm7250_resets[] = {
++	[GPUCC_GPU_CC_ACD_BCR] = { 0x1160 },
++	[GPUCC_GPU_CC_CX_BCR] = { 0x1068 },
++	[GPUCC_GPU_CC_GFX3D_AON_BCR] = { 0x10a0 },
++	[GPUCC_GPU_CC_GMU_BCR] = { 0x111c },
++	[GPUCC_GPU_CC_GX_BCR] = { 0x1008 },
++	[GPUCC_GPU_CC_XO_BCR] = { 0x1000 },
++};
++
++static struct gdsc *gpu_cc_sm7250_gdscs[] = {
++	[GPU_CX_GDSC] = &gpu_cx_gdsc,
++	[GPU_GX_GDSC] = &gpu_gx_gdsc,
++};
++
++static struct clk_alpha_pll *gpu_cc_sm7250_plls[] = {
++	&gpu_cc_pll1,
++};
++
++static const struct regmap_config gpu_cc_sm7250_regmap_config = {
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.max_register = 0x8008,
++	.fast_io = true,
++};
++
++static void gpu_cc_sm7250_regs_configure(struct device *dev, struct regmap *regmap)
++{
++	unsigned int value, mask;
++
++	/*
++	 * Configure gpu_cc_cx_gmu_clk with recommended
++	 * wakeup/sleep settings
++	 */
++	mask = CX_GMU_CBCR_WAKE_MASK << CX_GMU_CBCR_WAKE_SHIFT;
++	mask |= CX_GMU_CBCR_SLEEP_MASK << CX_GMU_CBCR_SLEEP_SHIFT;
++	value = 0xf << CX_GMU_CBCR_WAKE_SHIFT | 0xf << CX_GMU_CBCR_SLEEP_SHIFT;
++	regmap_update_bits(regmap, 0x1098, mask, value);
++}
++
++static const struct qcom_cc_driver_data gpu_cc_sm7250_driver_data = {
++	.alpha_plls = gpu_cc_sm7250_plls,
++	.num_alpha_plls = ARRAY_SIZE(gpu_cc_sm7250_plls),
++	.clk_regs_configure = gpu_cc_sm7250_regs_configure,
++};
++
++static const struct qcom_cc_desc gpu_cc_sm7250_desc = {
++	.config = &gpu_cc_sm7250_regmap_config,
++	.clks = gpu_cc_sm7250_clocks,
++	.num_clks = ARRAY_SIZE(gpu_cc_sm7250_clocks),
++	.resets = gpu_cc_sm7250_resets,
++	.num_resets = ARRAY_SIZE(gpu_cc_sm7250_resets),
++	.gdscs = gpu_cc_sm7250_gdscs,
++	.num_gdscs = ARRAY_SIZE(gpu_cc_sm7250_gdscs),
++	.driver_data = &gpu_cc_sm7250_driver_data,
++};
++
++static const struct of_device_id gpu_cc_sm7250_match_table[] = {
++	{ .compatible = "qcom,sm7250-gpucc" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, gpu_cc_sm7250_match_table);
++
++static int gpu_cc_sm7250_probe(struct platform_device *pdev)
++{
++	return qcom_cc_probe(pdev, &gpu_cc_sm7250_desc);
++}
++
++static struct platform_driver gpu_cc_sm7250_driver = {
++	.probe = gpu_cc_sm7250_probe,
++	.driver = {
++		.name = "sm7250-gpucc",
++		.of_match_table = gpu_cc_sm7250_match_table,
++	},
++};
++module_platform_driver(gpu_cc_sm7250_driver);
++
++MODULE_DESCRIPTION("QTI GPU_CC SM7250 Driver");
++MODULE_LICENSE("GPL");
+
+-- 
+2.56.0
 
 
-ChenYu
-
-> Link: https://github.com/OP-TEE/optee_os/pull/8034
-> Signed-off-by: Nikolay Bryskin <nbryskin@gmail.com>
-> ---
->  drivers/clk/rockchip/clk-rk3588.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk=
--rk3588.c
-> index 24baa0ef9bf3..8e0f408fdfad 100644
-> --- a/drivers/clk/rockchip/clk-rk3588.c
-> +++ b/drivers/clk/rockchip/clk-rk3588.c
-> @@ -1158,11 +1158,11 @@ static struct rockchip_clk_branch rk3588_early_cl=
-k_branches[] __initdata =3D {
->                         RK3588_CLKGATE_CON(18), 9, GFLAGS),
->         GATE(CLK_OTPC_NS, "clk_otpc_ns", "xin24m", 0,
->                         RK3588_CLKGATE_CON(18), 10, GFLAGS),
-> -       GATE(CLK_OTPC_ARB, "clk_otpc_arb", "xin24m", 0,
-> +       GATE(CLK_OTPC_ARB, "clk_otpc_arb", "xin24m", CLK_IS_CRITICAL,
->                         RK3588_CLKGATE_CON(18), 11, GFLAGS),
-> -       GATE(CLK_OTP_PHY_G, "clk_otp_phy_g", "xin24m", 0,
-> +       GATE(CLK_OTP_PHY_G, "clk_otp_phy_g", "xin24m", CLK_IS_CRITICAL,
->                         RK3588_CLKGATE_CON(18), 13, GFLAGS),
-> -       GATE(CLK_OTPC_AUTO_RD_G, "clk_otpc_auto_rd_g", "xin24m", 0,
-> +       GATE(CLK_OTPC_AUTO_RD_G, "clk_otpc_auto_rd_g", "xin24m", CLK_IS_C=
-RITICAL,
->                         RK3588_CLKGATE_CON(18), 12, GFLAGS),
->
->         GATE(PCLK_SARADC, "pclk_saradc", "pclk_top_root", 0,
-> --
-> 2.56.0
->
->
