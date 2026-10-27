@@ -1,79 +1,112 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793075711;
-	b=n0yggmBUU1JMr/K7WA4vLkVWDONcOJAE6aBVy9u2IfBqXwKw6/GLyffnRLkidKmgIZOD
-	 V2rDZVebxsGhFuj345xx5ZPfXw5ip3AkV0JwdL0q4mZiSi3xY6hE1wqnOK9DDotxhpahJ
-	 uiaZX77d/ElxYDSc5TbiqFGMWq8Yil8OCcS/p7v1naZd1H5zuqMdXyp8yI3wP8Qd2qQjn
-	 X7b3wBd6xs93MWiAnnasJPXcT528vkxdywOL/44Ef3oLv+enn1uNuOjXDZgh7zZhqT0lG
-	 ZXA4wHUu1U+XZrTYdun8in2XJiGWIn1fPvmekIlOUik2G3OW49XXdqi5fxFMUPnUa3Q==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793075711;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=V9Ntqo346qzMImZTzSh8DdvT9SawvOj4TJ2OvRn5cI0=;
-	b=C1SY9ZjG0s3+UfsUlPiA0yZNrGpnEDy5Q2hHMWfB0W0U+lfjcIUz2RIdnOVRcgoLJuKb
-	 YfB3qtFMMpeek7cKM7m4EFNbzXIVReIwUssjcapvaPUIt3RTF5fx4EhtixZemH5p92VHT
-	 LqF3bE7JO3Eqc1l5P0QLyMk/LlQnv/yXToEofrDdYi1TlgeRGyolJdjoaE5fDvZ19tToo
-	 WCMQRdeZrCtDCFIm88F4aTGpUxD2eS5iG/WhBjFKDHxIzPEVdudYKC/jv3ql0Ay7l8m0W
-	 uk/6RZRC15V0hRTSTynTGbrfNU2EuQp7eR579NaEyFeYAqVQNd+f1lNakMJIp8b7bJg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WmH6h7xX;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA3F606A31A;
-	Tue, 27 Oct 2026 04:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WmH6h7xX
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1793075711;
-	b=DZsJhRTEr8DORPfwzzVPKvynw/SeLF8Hr0m2TsDfMjDpxaxp9RhJXnlNu67deQGmVJ6T
-	 e5TAX/y3BCHOUVbJo0HlFuaKmQp1bU4CXLrQ/QDz1w46I/dGgMSwQEFNhpSDsU68GvPch
-	 L+Jjm+73YDNJmB072GDkMPFBlhKFkV/Jpup39KwM/Dv0U6l1xcJNHrLQ0OSEebPUKFc2B
-	 fDR5nchFgNUFHhvMFg9tHrjwjsYlt4v7w7g+1kEfBYWMJ160xeq6LT0WbV0ztLsYS8jha
-	 cqX4+Tf35rFlqnUJqwJmnklG3m5hZHhA9+FVVN3ahrGnKHPlbOObM3lpamtSNTsBqYA==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1793075711;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=V9Ntqo346qzMImZTzSh8DdvT9SawvOj4TJ2OvRn5cI0=;
-	b=29eIVk14CqKh9S+ubBx9mckOHlRirxJBT/9Momu0nc2HQQIHghRmdSGmh441b8JMnIi4
-	 nEVLpsPxeeAMh5dPbMrxBdUUuqc+wge6gYiKJXhhR6iYhezSx+4khpPfvIyfa+OogtiSk
-	 QfIsyTmZQwi0r0+GQ6ltP+MqfZyUv911eksiG9RRi/sYmgr8nG1f+ZlIDIrb9FwLAvIMF
-	 kPlEnY6EU8gnjlZrRJDHTyHfLl4Kz+F9nmhRP9FFuFhLfdNFFrauGTetfX6tdKpOG3dE8
-	 DnYRa8LvbOW+ysXSdohAJRKVteawZeFsbZEm4oDl6KHYtkt2AflxWysY0i1PHLSPIHA==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793082567;
+	b=GrTAgt9NUpR0TTPUr/C/ebsQieLtX1AGAyOxY/E/BwoqohwxMCJevoDSl68wWqYrdtKc
+	 a8Xi22cKKz+91x8GZF0elrXgsh7la0sRfA/EBrZeEmyfaDebCmAWSJEfNgGq8yk91VfiJ
+	 ibgJDUTJ/kx8L1+59f23aUeFmnAs/khalfGGTIoRnP7HxHxMhFMsqui8oYIfxYrpDHhDl
+	 G4e507QtIfjWdVTBPc2qQ1tYILIhjJnG59S+s5ke7LpUfnDsPCSnmBsBqqk0K7zra55ie
+	 rNzV9zjnzFAx7evJXVVWSJRo+197YTj4BzoUSpMtsZqKEWkymvlDryNnFJbcOkKq1cA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793082567;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
+	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
+	 X-Authority-Analysis:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=O/rKuuC4wm2T8RjQTJJIR0IVY5eIr/Dxakbz4tIixkc=;
+	b=OxYJq6DioFl6y4z7iB5Uo+7sDD4ihb7e5tgJat2XFsf9reEnH+kpdWeRtGvCujnRXkxd
+	 SnfsstGeHh8HcuwRTYHV8pBSxo+8QUDHhKvEDso9LqYbatkhlR9JYFj3yjfmwpjFW0LZq
+	 noY4v6lXn9Kbb/GT4Pmi0VqNxhh1hwb4N4nIvh4g7iDM4Rng3JJ8Z76/mfdtIwhwS1BjJ
+	 ltJG5yjBzroHsH7vgFIv6K7WdkIkLYIJIwKqUi5kKy/jkkBm2nXxuzlNxPGKKVQIBidFT
+	 e8xkS5nPKh3bS5eVViAfv5HEwmxLmtGwIK0A2KOxTbair2Wm3XIGDB2/LqW4tw+qa5w==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=bKbobUZK;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Nnld3526;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 6A4671F01828;
-	Tue, 27 Oct 2026 04:35:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793075710;
-	bh=V9Ntqo346qzMImZTzSh8DdvT9SawvOj4TJ2OvRn5cI0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=WmH6h7xXl/O1f8pl/dlUPpj6R+LnVaigUrAT9GuV2tpu5Nmr2RjCYFF5rDgTc1Uzt
-	 SCDk0ffh2BV7AK8o1pTnUAQIwhxekVG0CuVjqTms+VFkdHVdBwnBCYajb6wdXm2Jnn
-	 vjcIIb8RIzfzxT2SBiIt3pbkwjaaBigo2BPftsi6pw7pDxIWHtTkDR6VvwLvLsueSj
-	 NHhbAHOGO3F7zPASptY64gilaJJp4sDMPXB9l76uGZPLozhvCy2yiTHuYhjShqs35w
-	 3gqp4PrqqVuUrAJvRVLmdR1XgR57Z6NJ2REqSvP+CwUsvFPS8rS+U4g8QNOzR0Dh1r
-	 DdP5yfxBZ1pAw==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id F306144FA4;
-	Tue, 27 Oct 2026 04:35:09 +0000 (UTC)
-From: Ishu Brar via B4 Relay <devnull+patches.brar.si@kernel.org>
-Date: Tue, 27 Oct 2026 10:05:01 +0530
-Subject: [PATCH v2 1/2] dt-bindings: clock: qcom: Add SM7250 graphics clock
- controller
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C7E606A31E
+	for <linux-clk@vger.kernel.org>; Tue, 27 Oct 2026 06:29:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 35C7E606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=bKbobUZK;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Nnld3526
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69R5Ys0C2349795
+	for <linux-clk@vger.kernel.org>; Tue, 27 Oct 2026 06:29:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	O/rKuuC4wm2T8RjQTJJIR0IVY5eIr/Dxakbz4tIixkc=; b=bKbobUZKdgeegorE
+	Ynl1GjUhN9ePA5k8f3olTI/fhso3lM8IrDZIsXt9GWQqv/muihJOiB53p/glZMZ7
+	Q52QQdKM7HwrqaLNeW6qUBV1Re024YbU/EqT4UXU3/KuEucujLAqppwB/2eqd/9p
+	G7oLoAKqgUyp7OJJmloruE1GiL/9NPAzhvMmuXfdtgfeYCBPk2XxBph/D+7Hamh8
+	bFch8a0jCohJfj8XZPzoaWCAp89JmllPRzu6QsoCkrLIT6b/KGfijSopJQ8usTGi
+	uPAqbh879kGzTfR/5J7NpcJ2m0eQXuD4mTw+w82p/s4RUt4ODp2ibiGg3osBxWeq
+	966rSQ==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hjh91930u-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 27 Oct 2026 06:29:26 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3ae1d132d52so1539693a91.0
+        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2026 23:29:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1793082566; x=1793687366; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=O/rKuuC4wm2T8RjQTJJIR0IVY5eIr/Dxakbz4tIixkc=;
+        b=Nnld3526dJYvZg2D0po+GwQiiq8RqPGhpH74W6AoBCgxZVAhf+9i33BPjzr3J8N6Gf
+         bumB6iyvHwIhzWbEs6+iqz3svoAcVALECWookEdY1WZMAbrpRbmcx9K1Yg2nE6mkH2HF
+         aLHuuG7Q361NtbUEridVBM3HeYbFLSlq9cJhJGFaWbeYaoHxMRp/KkzDEkHc3mDO58kj
+         WQrgqASq6lUG0uVV1628ovWMXydzJJMFkdPKsCpX0lBQ5SjwUzilm8HfRicQiegg2aDI
+         Wt+ivf8AvVCninL6PqKuKDly4rtOPcJdhexuO61wzIPwipqHtgjNxFgZUrpc+SnSoQRi
+         xxvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793082566; x=1793687366;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=O/rKuuC4wm2T8RjQTJJIR0IVY5eIr/Dxakbz4tIixkc=;
+        b=HPuCZuegzQnFUjsbs6w/p2D+8cLHj05h0NLBdRHiQvqiQgRVtXZOWydfjrid+po8t3
+         kVLIxAJ2334LWYTnAYgcwdkNk9r6joaEPKkWKKl+963AxoPkxswlCDs1bfmtZfJoZfIO
+         es5pkTzPpf0CCFOFw/V1+NhxArj+4lajsPactzbDppiUq6MbVYHnLzb5SJkTnk2UbW+S
+         TOODZ1EB90WRiKqByZc7EnPwUmBnyohX9S0Efg/c4tUSUjdS16ZjFnlTq3at1be7KNh5
+         nXaCdlyeVxVapNMQr5rfDbV5VvC4zdT9UO8/fDOz3cELmIqlBw51WATb1tb9tMmY7NEC
+         usKA==
+X-Forwarded-Encrypted: i=1; AKwUvBx0JCE3aUtkRrwwCIkNsTpP+BquYa+CzwB7GyfAS198rpAPtWR9haORAqaV0fIhfRgSaXZ7g0KYoiU=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJKr60Ip9PVGEBzPT3Dw8GwkQMd08vxWsw0NYaYwTi0G7ATfwcj
+	3SjQRZ+KAoZMMLpkjRmw+RRom8Y85odIZ2aDJY+cctfwnYu08Zc5VXfduKcn2JiFVt/+NVxvjZO
+	lLAkvALXbnqOjSgi/aCssmE0wPPKauRK+z5Suow+LaUVSCC/uZXTa9OJEHLPaiUF/wx7P/eo=
+X-Gm-Gg: AYBFou3oLOoChD7Ei/2TX+6jH2JkI9O3ClSByefTyK9D7SCyK8SZCFjCeuHVsT/8kke
+	Y+yLUynFhRIJERFVw2nFY3LMq48Zj9UpZ07wjOp2Vs8yxnnUlwrW5GB0jnSc3d4H7kz/czgMoL1
+	q7zwmSRhMKouCPENb9VpOfxehi/iy8SxiBu8AN/YMIoBTzxn+q3jW+9Jla9HFIZ//hJkRttAd+e
+	+iciZPHDioATqlQE4JRLqYeGf5l9Q1gygTpwEQp9uTrQDdq4mZ4ld1rcU8HGHXQpSprInId2gQy
+	x9gUliSVgqKuZihAzV37Jj28r52EEebrmp2WDVM3Cy4MLoJfFiwZ42v3D0WSIXrUApknyaiRbb/
+	0cGIMz/4UCDnGo3WV5pRgL1YVSS6yviOGFPqQSohwmo50tM4qQAnsDxJHbYJa4P2NsRY2banENK
+	U=
+X-Received: by 2002:a17:90b:4406:b0:3ac:7556:8eed with SMTP id 98e67ed59e1d1-3adeae6d6ebmr6442719a91.44.1793082565740;
+        Mon, 26 Oct 2026 23:29:25 -0700 (PDT)
+X-Received: by 2002:a17:90b:4406:b0:3ac:7556:8eed with SMTP id 98e67ed59e1d1-3adeae6d6ebmr6442693a91.44.1793082565262;
+        Mon, 26 Oct 2026 23:29:25 -0700 (PDT)
+Received: from [10.217.216.29] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ae404ddf1bsm2216463a91.2.2026.10.26.23.29.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Oct 2026 23:29:24 -0700 (PDT)
+Message-ID: <34a17861-771c-485f-ba41-6bb2d539ab3f@oss.qualcomm.com>
+Date: Tue, 27 Oct 2026 11:59:19 +0530
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -83,111 +116,70 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261027-gpucc-sm7250-v2-1-773056e4043e@brar.si>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] clk: qcom: Add SM7250 graphics clock controller
+ driver
+To: patches@brar.si, Bjorn Andersson <andersson@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Imran Shaik <quic_imrashai@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20261027-gpucc-sm7250-v2-0-773056e4043e@brar.si>
-In-Reply-To: <20261027-gpucc-sm7250-v2-0-773056e4043e@brar.si>
-To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Taniya Das <taniya.das@oss.qualcomm.com>, 
- Imran Shaik <quic_imrashai@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ishu Brar <patches@brar.si>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793075708; l=2742;
- i=patches@brar.si; h=from:subject:message-id;
- bh=tY6hDzRQJRYOBlf/fKmeYB3tja46AJ3bHbMAdIz48VU=;
- b=nKR54osy3eiFYONTpGXLaw/ILpqcoB/ulyBr1v3sMCGYYPwzXiFCyZAf2dKpMrdLV8aulyxC7
- S/t6gZqv3MYCF1x5ap1cLsdIHHhqGuDPJhmYrMTUNzd1+pr0PtjtEWj
-X-Developer-Key: i=patches@brar.si; a=ed25519;
- pk=Ds+E23E3ntzjPzuBDyVRkOouclcNI5k75R+N42yJtCk=
-X-Endpoint-Received: by B4 Relay for patches@brar.si/default with
- auth_id=1189
-X-Original-From: Ishu Brar <patches@brar.si>
-Reply-To: patches@brar.si
+ <20261027-gpucc-sm7250-v2-2-773056e4043e@brar.si>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <20261027-gpucc-sm7250-v2-2-773056e4043e@brar.si>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: FdUjatoXj7JdRDNrO4AFyLissscI-48h
+X-Proofpoint-GUID: FdUjatoXj7JdRDNrO4AFyLissscI-48h
+X-Authority-Analysis: v=2.4 cv=TuxzFzXh c=1 sm=1 tr=0 ts=6ae044c6 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
+ a=X_4YwSRDM6R9hu7WxWMA:9 a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI3MDAyNSBTYWx0ZWRfX0f7kvMkX7wqM
+ 6OsH6ekTDS/cZwVlqQsc0hEIzfDGKBSuYNu7uHARn8TwQynTCghuufgedrplx/9oymtG88PGrHv
+ 9aA9dqaTo/DEdBofhuVWvOkUnRPIPjJe5fn8JNjLR9layWuToaEXoYHGa2ezdLuzRcpo04Qp4W3
+ h/Fu6Jo8S8pm9zgd4XW+1ypfrBz4uyDlao0lr9RDrumB2zBobbqr498glkVGEU5fAksgkhvmDi0
+ 5u6ouRX0I4eGQcOM17Bxkwcue6xFPoeyxAtT5dbv75EaQIyMG/KF7G8uiRs9m4kuQ4aBkwhANCv
+ D7qc/Eoe75XTdDkA7migyS70ZCQb6U9Pb2zHJE7MmVbdUPj151/4DNYfNU7DDV3/o3IyMRYtFPj
+ PCEEZho8RtBtuYABUg415B01HxvNVPU7P5OxD+T8n4OpdczeiVcI/ffYpsfxs7KBU8PAs2+q2Zs
+ qooHtycB2ogzNLbMLZQ==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI3MDAyNSBTYWx0ZWRfX1zMrF4cvWmHq
+ jtd6RRXyJ/vxzo7/8OUXpVolZrEZZQwFHi9rG+GYZw/OeNEYdpADQCBiqpUwjY14WeCiYLMNaA7
+ g0+yzyXLm93GJMjtfOIwuaA96awpEJY=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-10-27_02,2026-10-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 malwarescore=0 spamscore=0 priorityscore=1501 bulkscore=0
+ adultscore=0 suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610270025
 
-From: Ishu Brar <patches@brar.si>
 
-Add the compatible for the graphics clock controller (GPU_CC) of the
-Qualcomm SM7250 SoC (Snapdragon 765/765G/768G), and the header with its
-clock, reset and GDSC indices. The clock inputs are the same as on
-SM8250, so the existing clock and clock-names constraints apply unchanged.
 
-Signed-off-by: Ishu Brar <patches@brar.si>
----
- .../devicetree/bindings/clock/qcom,gpucc.yaml      |  2 ++
- include/dt-bindings/clock/qcom,sm7250-gpucc.h      | 36 ++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
+On 10/27/2026 10:05 AM, Ishu Brar via B4 Relay wrote:
+> static const struct qcom_cc_desc gpu_cc_sm7250_desc = {
+> +	.config = &gpu_cc_sm7250_regmap_config,
+> +	.clks = gpu_cc_sm7250_clocks,
+> +	.num_clks = ARRAY_SIZE(gpu_cc_sm7250_clocks),
+> +	.resets = gpu_cc_sm7250_resets,
+> +	.num_resets = ARRAY_SIZE(gpu_cc_sm7250_resets),
+> +	.gdscs = gpu_cc_sm7250_gdscs,
+> +	.num_gdscs = ARRAY_SIZE(gpu_cc_sm7250_gdscs),
+> +	.driver_data = &gpu_cc_sm7250_driver_data,
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-index 3ac4419009a9..262c0345836f 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-@@ -21,6 +21,7 @@ description: |
-     include/dt-bindings/clock/qcom,gpucc-sc7280.h
-     include/dt-bindings/clock/qcom,gpucc-sc8280xp.h
-     include/dt-bindings/clock/qcom,gpucc-sm6350.h
-+    include/dt-bindings/clock/qcom,sm7250-gpucc.h
-     include/dt-bindings/clock/qcom,gpucc-sm8150.h
-     include/dt-bindings/clock/qcom,gpucc-sm8250.h
-     include/dt-bindings/clock/qcom,gpucc-sm8350.h
-@@ -37,6 +38,7 @@ properties:
-       - qcom,sc8180x-gpucc
-       - qcom,sc8280xp-gpucc
-       - qcom,sm6350-gpucc
-+      - qcom,sm7250-gpucc
-       - qcom,sm8150-gpucc
-       - qcom,sm8250-gpucc
-       - qcom,sm8350-gpucc
-diff --git a/include/dt-bindings/clock/qcom,sm7250-gpucc.h b/include/dt-bindings/clock/qcom,sm7250-gpucc.h
-new file mode 100644
-index 000000000000..f4536808d4fc
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,sm7250-gpucc.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
-+/*
-+ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_SM7250_H
-+#define _DT_BINDINGS_CLK_QCOM_GPU_CC_SM7250_H
-+
-+/* GPU_CC clock registers */
-+#define GPU_CC_AHB_CLK				0
-+#define GPU_CC_CRC_AHB_CLK			1
-+#define GPU_CC_CX_APB_CLK			2
-+#define GPU_CC_CX_GMU_CLK			3
-+#define GPU_CC_CX_SNOC_DVM_CLK			4
-+#define GPU_CC_CXO_AON_CLK			5
-+#define GPU_CC_CXO_CLK				6
-+#define GPU_CC_GMU_CLK_SRC			7
-+#define GPU_CC_GX_GMU_CLK			8
-+#define GPU_CC_GX_VSENSE_CLK			9
-+#define GPU_CC_PLL1				10
-+#define GPU_CC_SLEEP_CLK			11
-+#define GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK		12
-+
-+/* GPU_CC Resets */
-+#define GPUCC_GPU_CC_ACD_BCR			0
-+#define GPUCC_GPU_CC_CX_BCR			1
-+#define GPUCC_GPU_CC_GFX3D_AON_BCR		2
-+#define GPUCC_GPU_CC_GMU_BCR			3
-+#define GPUCC_GPU_CC_GX_BCR			4
-+#define GPUCC_GPU_CC_XO_BCR			5
-+
-+/* GPU_CC GDSCRs */
-+#define GPU_CX_GDSC				0
-+#define GPU_GX_GDSC				1
-+
-+#endif
+use_rpm = true,
 
 -- 
-2.56.0
-
+Thanks,
+Taniya Das
 
