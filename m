@@ -1,67 +1,92 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793226905;
-	b=VgcJHCTpPkb6aFkWBlTaR31zTYYalzuuuBWJTIUGHbCIc5s2dOmEkq16wb8RKAhGnbfK
-	 UsGbN1agnfcwyLPkVioQUNgjnqRrMGoTC8vM6nBzjXHzIdW3PC3bkWSj462DTqJGz3ztV
-	 cTRIezD0Ci+yNJF2TJ3GpWu47+HQIeajUuvQMwVLooXruCQteCqJ3XZUu7JW2SXk5dXiZ
-	 MEbDjzmATMskm8PrLviKOrMkBd25lIGUn8sWKuhJcgfxIW91X9Jpt+LVbfusccf4RTITF
-	 SxXOwbGJY21CalcaTz33vjkkyYH2wgRSEwjooVjiA2VGV2z3a2bWnqwZ1hh+VwRwi/g==
+	t=1793231232;
+	b=2PYZCg3mThLzezw1w8n3cKmfiXois7312sqxBrg6f75mQfDuzrQrbW/WZs7xuOcOUmc3
+	 rbvAyYsmgAxwb1liL0ds61kEzS0psOySjwAOK7dXCejsRXeZKbI9hw8qfkCSpGbJGl56c
+	 ZzliyZUGe4HuKOTQJu0idfUKx4qe7qVKIb9xhmoceGfN2sArbnVHqK/zEO/p+T21gKS1B
+	 SSOy32jI7FqP7nnvp7hFQC42b0O85ETPRx+PmLrdYsy8Rppmd4YAimx363Lpmsjqq2oTI
+	 gChxwBW+3ztxI7apDI31m2qn6BEoF4vOhCmCo2980ad7MfUvrudDgMzVPSpVvbIvFQA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793226905;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding:X-CMS-MailID:X-Msg-Generator:Content-Type:
-	 X-RootMTR:X-EPHeader:X-CMS-RootMailID:References;
-	bh=IKT3fon1/d2i1xCKh6MuLfmxqe3zW+ARzjd8XukPj2w=;
-	b=aekZtFAAh2R1+LEmT7UCN2QnhbcKAiwi8oiS4B1Uf3C3OgCVd22zMXvij+ugD/A+eMfI
-	 JrfweFDxWa4GKyxxlMYrZ7pQ6VTw9pQW2t39fV12kMdcQPEHnygrUSwxytfzK13wFCNLA
-	 uIwiPqwEH6tHeCMxM2ThOnDtdofZRMxkRxRMUeMsftYE2+4nJiqpXvkIM6ApgnElhr6U2
-	 Fy9rZjzkwFOIOHFgfiITNoR4QnsXxeMVvmvHZtHqW/pEVDUhweLX6VbS+4WeDDYLcaql5
-	 TshCpVkekC37z+jfWkPkMrtYNK7B2qigdRTnv3DNrTEe7pspneN1J6ehq2/7qnYdwZw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793231232;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=neOivWsfnHbQR3N6AKh/3PoW3tIDMGi3k5qezfAAwY4=;
+	b=vbXkEV5Z5oBXMuPtH9KWc+F9vfTYPbVbrN5cEmremTKv0nHnm/7UM5fOrG9FrE/7JFUE
+	 ad/hpOcLIMtiGa8hw6thvz2TRO/TXIiLOQfSwYLm9b9ndsVh15iGYoACBqO1XTrnPy3g6
+	 QQ4S6jMU/Jj30PM5Wy4gVa5Q8w77jxf65ZhZ5aszGbjwECpywmB3psanHfgmuYMYLiy8v
+	 Uj51XEXBrGg6jmoheaGi51m/TnS2gMoZaCVLVsS7d2QJRAMyo2uISZcXupc8b4CenzMgk
+	 pW4XOb1uaxmdhfCTk+gJ42vG2R7sD1EKqH5oXwE9YZCBZdRyrmS7wx9X5XvRmlInZIQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=uzgUEhhN;
-	arc=none smtp.remote-ip=210.118.77.11
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="f/4cLrJ4";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF6C606A31D
-	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 22:35:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AEF6C606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746DF606A31A;
+	Wed, 28 Oct 2026 23:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=uzgUEhhN
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261028223456euoutp0126ba8f3ecd1903582e877fc60ebd4ed7~i0lxuWEIj2793727937euoutp01M
-	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 22:34:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261028223456euoutp0126ba8f3ecd1903582e877fc60ebd4ed7~i0lxuWEIj2793727937euoutp01M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1793226896;
-	bh=IKT3fon1/d2i1xCKh6MuLfmxqe3zW+ARzjd8XukPj2w=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=uzgUEhhN2VPvwWc7NCk977UDCWc0R+7u+3YrjcvLkdVWAsx9TGwmfmIxZ6WHGJyBa
-	 Tfzhr+KwybuckEPex05F6nwZuXSSs6y2UOa4Fg4yrhySSB0vwF0f2MBbH3WjnGR4dG
-	 2bHzXTMbYUs+Egio1F0OgioVsRKYd94GZ2BWr0TA=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20261028223455eucas1p29b3028675c392f6c0ee012f08963ab3f~i0lxdtLPe2611426114eucas1p2G;
-	Wed, 28 Oct 2026 22:34:55 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261028223455eusmtip23dad5630755bebd4db06b58c16fce3fc~i0lxDv6z01026810268eusmtip2G;
-	Wed, 28 Oct 2026 22:34:55 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bjorn Andersson
-	<andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, Stephen Boyd
-	<sboyd@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>, Krishna
-	chaitanya chundru <quic_krichai@quicinc.com>
-Subject: [PATCH] clk: qcom: gcc-sc7280: Use retention for PCIe0 power domain
-Date: Wed, 28 Oct 2026 23:34:43 +0100
-Message-ID: <20261028223444.2683120-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f/4cLrJ4
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AF611F01825;
+	Wed, 28 Oct 2026 23:46:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793231232;
+	bh=neOivWsfnHbQR3N6AKh/3PoW3tIDMGi3k5qezfAAwY4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=f/4cLrJ4TGztgvmr14VBy6t7mBV8AM+uDlLfYVyShzm7APQvQBIiI0EDLgRGe0v7z
+	 LrPP1CYrALPm5Q04g1ErXIwYEqxpncy7n/vcasP5VS7fxapXxWQMRvQ3eLtXYsxC4u
+	 pO80RH6CgwyVic6xTA3E8YyB/WqO22L05DI08uL25eIqchvragaWR3rowAwilUDAAt
+	 Xh6oVb4uczfsq1lW3toZ9+v63X4qnWgC+a2EdGz7QxrKclbDs6hRlAucgG9mlmv1zz
+	 0pRXR0bqvqejkSM04r2n2wZ9K5nHoWUM+gUptsMAuOcN5EfgGaQV+XNpzRAcoIe2zH
+	 rDwATDPNl5e/Q==
+Date: Wed, 28 Oct 2026 23:46:52 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
+ <jbrunet+clk@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Rob Clark
+ <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang
+ <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
+ <marijn.suijten@somainline.org>, Frank Li <Frank.Li@nxp.com>, Vinod Koul
+ <vkoul@kernel.org>, Yinbo Zhu <zhuyinbo@loongson.cn>, Linus Walleij
+ <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, Tiffany Lin
+ <tiffany.lin@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+ Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej
+ Hajda <andrzej.hajda@intel.com>, Ryder Lee <ryder.lee@mediatek.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5?=
+ =?UTF-8?B?xYRza2k=?= <kwilczynski@kernel.org>, Manivannan Sadhasivam
+ <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Christian Marangi
+ <ansuelsmth@gmail.com>, Eric Anholt <eric@anholt.net>, Kuogee Hsieh
+ <quic_khsieh@quicinc.com>, Peng Fan <peng.fan@nxp.com>, Aakarsh Jain
+ <aakarsh.jain@samsung.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, freedreno@lists.freedesktop.org,
+ imx@lists.linux.dev, dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: Fix property name typos in if/then schemas
+Message-ID: <20261028234652.0d075035@jic23-hlaptop>
+In-Reply-To: <20261028120216.2657397-1-robh@kernel.org>
+References: <20261028120216.2657397-1-robh@kernel.org>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -71,61 +96,236 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261028223455eucas1p29b3028675c392f6c0ee012f08963ab3f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261028223455eucas1p29b3028675c392f6c0ee012f08963ab3f
-X-EPHeader: CA
-X-CMS-RootMailID: 20261028223455eucas1p29b3028675c392f6c0ee012f08963ab3f
-References: <CGME20261028223455eucas1p29b3028675c392f6c0ee012f08963ab3f@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-As the PCIe host controller driver does not yet support dealing with the
-loss of state during suspend, it keeps the link up and the resources on
-when an endpoint is active. However, only gcc_pcie_1_gdsc was switched to
-retention by commit 1a58ee1330b2 ("clk: qcom: gcc-sc7280: Update the
-.pwrsts for PCIe GDSC"), so gcc_pcie_0_gdsc is still powered off during
-system suspend and the controller loses its state.
+On Wed, 28 Oct 2026 07:02:12 -0500
+"Rob Herring (Arm)" <robh@kernel.org> wrote:
 
-On QCS6490 (Thundercomm RubikPi3), the Renesas uPD720201 xHCI controller
-on PCIe0 doesn't survive suspend to RAM:
+> Property names within if/then schemas currently go unchecked whether
+> they have a type defined or match what's in the top-level schema. Adding
+> a check finds a number of instances of typos. The typos result in the
+> schema having no effect on constraints.
+> 
+> With this, fix the mediatek,vcodec-encoder 'clocks' count constraint
+> exposed by the name correction.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,kpss-gcc.yaml     |  2 +-
+>  .../bindings/display/brcm,bcm2711-hdmi.yaml          |  2 +-
+>  .../bindings/display/msm/dp-controller.yaml          |  2 +-
+>  .../devicetree/bindings/display/msm/hdmi.yaml        |  4 ++--
+>  Documentation/devicetree/bindings/dma/fsl,edma.yaml  |  2 +-
+>  .../devicetree/bindings/gpio/loongson,ls-gpio.yaml   |  2 +-
+>  .../bindings/iio/adc/amlogic,meson-saradc.yaml       |  2 +-
 
-    xhci-pci-renesas 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
-    pcieport 0000:00:00.0: Recovering Root Port due to Link Down
-    xhci-pci-renesas 0000:01:00.0: Controller not ready at resume -19
-    xhci-pci-renesas 0000:01:00.0: PCI post-resume error -19!
-    xhci-pci-renesas 0000:01:00.0: HC died; cleaning up
+For IIO
 
-Use retention for gcc_pcie_0_gdsc too, like it is already done for
-gcc_pcie_1_gdsc.
+Acked-by: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
 
-Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
-Fixes: 1a58ee1330b2 ("clk: qcom: gcc-sc7280: Update the .pwrsts for PCIe GDSC")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-The issue was analyzed and the patch was prepared with LLM assistance.
-The fix was tested on the real Thundercomm RubikPi3 board.
-
-Best regards
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
----
- drivers/clk/qcom/gcc-sc7280.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
-index 78399993cdce..9e141a7ac424 100644
---- a/drivers/clk/qcom/gcc-sc7280.c
-+++ b/drivers/clk/qcom/gcc-sc7280.c
-@@ -3101,7 +3101,7 @@ static struct gdsc gcc_pcie_0_gdsc = {
- 	.pd = {
- 		.name = "gcc_pcie_0_gdsc",
- 	},
--	.pwrsts = PWRSTS_OFF_ON,
-+	.pwrsts = PWRSTS_RET_ON,
- 	.flags = VOTABLE,
- };
- 
--- 
-2.43.0
+>  .../bindings/media/mediatek,vcodec-encoder.yaml      | 12 ++++--------
+>  .../devicetree/bindings/media/samsung,s5p-mfc.yaml   |  2 +-
+>  .../devicetree/bindings/pci/mediatek-pcie.yaml       | 12 ++++++------
+>  10 files changed, 19 insertions(+), 23 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
+> index 88b7672123a0..ed347096df46 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
+> @@ -62,7 +62,7 @@ then:
+>      - '#clock-cells'
+>  else:
+>    properties:
+> -    clock: false
+> +    clocks: false
+>      clock-names: false
+>      '#clock-cells': false
+>  
+> diff --git a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
+> index c1cefd547391..fd4d598f6ff8 100644
+> --- a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
+> +++ b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
+> @@ -145,7 +145,7 @@ allOf:
+>              - description: CEC stuck at low interrupt
+>              - description: Hotplug connected interrupt
+>              - description: Hotplug removed interrupt
+> -        interrupts-names:
+> +        interrupt-names:
+>            items:
+>              - const: cec-tx
+>              - const: cec-rx
+> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> index 094a6383bb77..f72d1b354007 100644
+> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> @@ -304,7 +304,7 @@ allOf:
+>          clocks:
+>            minItems: 6
+>            maxItems: 6
+> -        clocks-names:
+> +        clock-names:
+>            minItems: 6
+>            maxItems: 6
+>  
+> diff --git a/Documentation/devicetree/bindings/display/msm/hdmi.yaml b/Documentation/devicetree/bindings/display/msm/hdmi.yaml
+> index dfec6c3480f3..02d27ccad024 100644
+> --- a/Documentation/devicetree/bindings/display/msm/hdmi.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/hdmi.yaml
+> @@ -113,7 +113,7 @@ allOf:
+>              - const: core
+>              - const: master_iface
+>              - const: slave_iface
+> -        core-vcc-supplies: false
+> +        core-vcc-supply: false
+>  
+>    - if:
+>        properties:
+> @@ -136,7 +136,7 @@ allOf:
+>              - const: core
+>              - const: alt_iface
+>              - const: extp
+> -        hdmi-mux-supplies: false
+> +        hdmi-mux-supply: false
+>  
+>    - if:
+>        properties:
+> diff --git a/Documentation/devicetree/bindings/dma/fsl,edma.yaml b/Documentation/devicetree/bindings/dma/fsl,edma.yaml
+> index f609038e35ae..0260d177c7d0 100644
+> --- a/Documentation/devicetree/bindings/dma/fsl,edma.yaml
+> +++ b/Documentation/devicetree/bindings/dma/fsl,edma.yaml
+> @@ -172,7 +172,7 @@ allOf:
+>              const: fsl,imx7ulp-edma
+>      then:
+>        properties:
+> -        clock:
+> +        clocks:
+>            minItems: 2
+>            maxItems: 2
+>          clock-names:
+> diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> index 69852444df23..07c8b233c6bd 100644
+> --- a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> @@ -80,7 +80,7 @@ allOf:
+>          - resets
+>      else:
+>        properties:
+> -        "#interrupts-cells": false
+> +        "#interrupt-cells": false
+>          interrupt-controller: false
+>          resets: false
+>  
+> diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
+> index 70ab4e140e71..535213ba0c5e 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
+> @@ -92,7 +92,7 @@ allOf:
+>      else:
+>        properties:
+>          nvmem-cells: false
+> -        mvmem-cel-names: false
+> +        nvmem-cell-names: false
+>          clocks:
+>            minItems: 4
+>          clock-names:
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+> index 4505e66876a2..52f471a070d5 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+> +++ b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+> @@ -110,19 +110,15 @@ allOf:
+>  
+>      then:
+>        properties:
+> -        clock:
+> -          items:
+> -            minItems: 1
+> -            maxItems: 1
+> +        clocks:
+> +          maxItems: 1
+>          clock-names:
+>            items:
+>              - const: venc_lt_sel
+>      else:
+>        properties:
+> -        clock:
+> -          items:
+> -            minItems: 1
+> -            maxItems: 1
+> +        clocks:
+> +          maxItems: 1
+>          clock-names:
+>            items:
+>              - const: venc_sel
+> diff --git a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+> index b46cc780703c..4488d5ca9b9c 100644
+> --- a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+> +++ b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+> @@ -174,7 +174,7 @@ allOf:
+>              - const: mfc
+>          iommus:
+>            maxItems: 2
+> -        iommus-names: false
+> +        iommu-names: false
+>  
+>  examples:
+>    - |
+> diff --git a/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml b/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
+> index c009a7a52bc6..7c40361f95ec 100644
+> --- a/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
+> @@ -127,7 +127,7 @@ allOf:
+>          phy-names:
+>            const: pcie-phy1
+>  
+> -        power-domain: false
+> +        power-domains: false
+>  
+>        required:
+>          - resets
+> @@ -150,7 +150,7 @@ allOf:
+>            minItems: 2
+>            maxItems: 2
+>  
+> -        reset: false
+> +        resets: false
+>  
+>          reset-names: false
+>  
+> @@ -171,7 +171,7 @@ allOf:
+>          clocks:
+>            minItems: 6
+>  
+> -        reset: false
+> +        resets: false
+>  
+>          reset-names: false
+>  
+> @@ -193,7 +193,7 @@ allOf:
+>          clocks:
+>            minItems: 6
+>  
+> -        reset: false
+> +        resets: false
+>  
+>          reset-names: false
+>  
+> @@ -215,7 +215,7 @@ allOf:
+>          clock-names:
+>            maxItems: 1
+>  
+> -        reset: false
+> +        resets: false
+>  
+>          reset-names: false
+>  
+> @@ -223,7 +223,7 @@ allOf:
+>  
+>          phy-names: false
+>  
+> -        power-domain: false
+> +        power-domains: false
+>  
+>          mediatek,pbus-csr: false
+>  
 
