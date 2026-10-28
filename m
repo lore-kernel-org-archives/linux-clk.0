@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793181886;
-	b=g2jm5PaBnPDMlidNkMfziuGpGcEkEaeLXp8Ju+/T1s+kZ2OZ3RA9GgFxbnitxDaE/Qwi
-	 yVBLERtch8cc2bwnmOCPfWoVPL4wYazJyLo/4BB96nIJC/J2+KTKlGP+7o9oshN7VEsLB
-	 JKNMMVCKBQTCjnofpvMCuFJAN5flBJ7lFKrY/9IYMH1duKMmar/EFzhL1f/zey9I9Kvqg
-	 NynF7LFH7DPjWjDDP9K2i7PnvXj6+UwOgtPJ9E16LtSX/Nfa/ZEYExAynrUkxmnLncZN5
-	 t8uvS/j4MsSGJ9U7VJ1ubVhAdl37R3xDEWwo/HHPK4lz2zUUPZc4k1QtNGF99lVEK6w==
+	t=1793182434;
+	b=gSzn1KEItLacjuhj6M2ixmUEEeQmBY71pvRonbMv2HjZYx3WJvzbInrIEGzEDXiVPoe4
+	 kql5/IYF/whx0CXeWsw2jRZN84WABwsmb5HD+0nbGmGsF/kvceJfVFed/Gu7/MyQojOPH
+	 yZHXNzcUZMpnQj129gst2yZETWN95RBURl+9YgYX3Jp5c9R/1Krm6xMtldYet/Z9XcUXV
+	 MljJmy+r31+Z2z/+SLFZjMJXUfSoj4VYsp0QJbQTlMer6jsbm5n8CpQT8RYgZahEEz0Kv
+	 bUhb3XWzy5AbI9FY/61MwO0gx1Pk8l0j9qmOgrjZLmFFnyNfIrelj0CMVcKpQ5CTk8Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793181886;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793182434;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=CQ/2xVuqtCjtfgH6RXT+iueKwGZL/cGeRhXhl2s4LSs=;
-	b=wXcXNbXJa0C6nheuo1DXm1I9WBOlp/MpIGB+vACVF7rrQyRHeSxA978Fl38Vm2NxJFb6
-	 ReELB0nMv1lxjsSD9N2nfKgPZrMcFX6qNAYvyriyAJ0U+s/PsMjpMOvm+hDvV2Qvr/ucg
-	 V6O07251xB4S2cZwfSBNov6RKL6IIdbyh1MOUDz6XkxqZCQPe1hMxGfgraKpUfmJjyIbN
-	 G5WZd8jVO1pGVGrvEfZY8wzGim5u5X2E5S5lHtClcSNfxyZL/ae8f6gV5HeWIbvxkRSJk
-	 6rBRO/GevzGlUT/+qM37C+kG0AtOnd19W1sZRongmFP0ADb6u1JYhAQw38Dov/RvxNA==
+	bh=LVuykuiWIA6J2eBKnto+ivcOpxe5lv2bGEqxzguhQRM=;
+	b=YMN60NP3kO5JIYkYf2+qgwu6lzgpsrDpeoc7U65urFRpXcS1ZT0pSVNgO8Ps1bVOeBUk
+	 x2b3Jl2OSAF3zxK4HdL7ZvfqvGgLVhO/j880sOroXvQ46Pu/hNHhTyD78k7+wUKlpE5sv
+	 X7C7IBeQspy35qsh/2mYcamZsnn6lv9u2Wo0bSBy9dSc/B4ATTrZdC3VMxOIDkbcZzby9
+	 W78bpxHCWYUO6RzbLYLVJUbpKrM4CA+/vDKOV6l1S5DiUbAoK1sn8Duqp2E1XKAs/+reH
+	 Kas1od4ylTvSUCUmje/4MyrvOyJ8FzlikXY9aLzF/4HJ9UQZ5Wsb35uO7GaWeKWQhHg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mGYRvy5E;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m6GhsKqh;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB82C606A323;
-	Wed, 28 Oct 2026 10:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CC6606A31A
+	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 10:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mGYRvy5E
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A9701F01828;
-	Wed, 28 Oct 2026 10:04:45 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m6GhsKqh
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C071F01825;
+	Wed, 28 Oct 2026 10:13:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793181885;
-	bh=CQ/2xVuqtCjtfgH6RXT+iueKwGZL/cGeRhXhl2s4LSs=;
+	s=k20260515; t=1793182433;
+	bh=LVuykuiWIA6J2eBKnto+ivcOpxe5lv2bGEqxzguhQRM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=mGYRvy5E+m4Z9GV/OY5pscWJTB6nTH4YXR2PRm27khypOY5Us1Fgu7ZYogRombTcG
-	 QXo+rnSCuO+H8+LbzR4117P9f/8SJLOZizbRs954UBwKvityXSMxZghHMnYpOuQymm
-	 HjdpiuIY0oBQj9QS8Vk7LTrnpD82U7nC8O/VO1PENIlJRy793oMiR7bfNDbEJjmW2q
-	 Gs6MtgOSvVd/okFLaXJW21QgeAbJPR7bJOx44h9o33+IxmrSXMJAK9kvVSYa+SQMD6
-	 QXEuduw0/2kSE0pTDqfI6wVGs55KVU3Qe9Bpe5+q8Iykd4nu0AoWdfETSFNvR3dP1P
-	 FEA8W3J7j/QXg==
-Message-ID: <sashiko-outbox-187717@kernel.org>
+	b=m6GhsKqhiGYEbA55GhnDdcFdg1apmARgrev78XhBWHZvVqRPNqcit+zgWe/zV5sZD
+	 4I14Vv61TGsYxI+MCTIikWVG64h3iKp9p0nnYw0qfiPeOm44mkbFM4ev/stk/B9GKQ
+	 XVhxFRE3bfV7kcv2PZfsNYCcwhTBe+yqwq3pVoIreLDgvCvotBWEEV8+fuekIlkB9N
+	 T6MIjaMGTUd/ynTEzTXVBtTnxtSCJWMf/qzwzUx1KXg2orQfEgZwn6vdMeUPwg/lsP
+	 sRpqMWzUgiew/raQj4+QTGLyZsW0q1uQlftf+LNvqYyuFnNkimgAP1pdhG8R3HJFEE
+	 pbw6Y3rWr4RKQ==
+Message-ID: <sashiko-outbox-187735@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 2/4] clk: rockchip: Add internal support for 24-bit
- fractional dividers
+Subject: Re: [PATCH RFC 1/3] clk: Add a way to restore the clocks of a
+ provider after a power cycle
 Reply-To: sashiko-reviews@lists.linux.dev
-To: "Cunhao Lu" <1579567540@qq.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261027-add-board-ok3572-c-clk-v4-2-d4152b4fedaa@qq.com>
-References: <20261027-add-board-ok3572-c-clk-v4-0-d4152b4fedaa@qq.com>
- <20261027-add-board-ok3572-c-clk-v4-2-d4152b4fedaa@qq.com>
+To: "Abel Vesa" <abel.vesa@oss.qualcomm.com>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20261028-b4-clk-restore-after-hibernation-v1-1-86cf62747a7f@oss.qualcomm.com>
+References: <20261028-b4-clk-restore-after-hibernation-v1-0-86cf62747a7f@oss.qualcomm.com>
+ <20261028-b4-clk-restore-after-hibernation-v1-1-86cf62747a7f@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 28 Oct 2026 10:04:45 +0000
+Date: Wed, 28 Oct 2026 10:13:53 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,301 +61,265 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+Thank you for your contribution! Sashiko AI review found 5 potential issue(=
 s) to consider:
-- [High] clk: rockchip: broken rate calculation in clk_fd_v2_determine_rate=
-()
-- [Medium] clk: rockchip: broken zero-based divider math in clk_fd_v2_get_d=
-ivider()
-- [Medium] clk: rockchip: wrong low-bit mask and shift in clk_fd_v2_set_rat=
-e()
+- [High] clk: clk_core_restore_state() ignores set_rate_and_parent callback
+- [High] clk: clk_core_restore_state() ignores CLK_OPS_PARENT_ENABLE and UN=
+GATE flags
+- [High] clk: clk_core_restore_state() calls set_parent/set_rate before ena=
+ble
+- [High] clk: clk_core_restore_state() passes unvalidated boot rate to set_=
+rate()
+- [Medium] clk: clk_core_restore_state() checks enable_count outside clk_en=
+able_lock()
 --
 
-commit dfce7c81ca5864499aad504a0c7023a553587e91
-Author: Elaine Zhang <zhangqing@rock-chips.com>
+commit 78198c18d1a2d0f099c9c205f894c06eba8b44ff
+Author: Abel Vesa <abel.vesa@oss.qualcomm.com>
 
-clk: rockchip: Add internal support for 24-bit fractional dividers
+clk: Add a way to restore the clocks of a provider after a power cycle
 
-This commit adds an internal Rockchip fractional-divider helper and
-branch_fraction_divider_v2 clock type for 24-bit fractional dividers that
-split numerator and denominator across low (16-bit) and high (8-bit)
-registers.
+This commit adds clk_restore_context_dev() to reprogram the cached parent,
+rate, and prepare/enable state into hardware for all clocks registered by a
+given provider device after a power cycle such as hibernation restore.
 
-> diff --git a/drivers/clk/rockchip/clk-fractional-divider-v2.c b/drivers/c=
-lk/rockchip/clk-fractional-divider-v2.c
-> new file mode 100644
-> index 0000000000000..102e03f9d6e60
-> --- /dev/null
-> +++ b/drivers/clk/rockchip/clk-fractional-divider-v2.c
-
-[ ... ]
-
-> +static void clk_fractional_divider_general_approximation_v2(struct clk_h=
-w *hw,
-> +							    unsigned long rate,
-> +							    unsigned long *parent_rate,
-> +							    unsigned long *m, unsigned long *n)
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 4d2cc86bfbeb6..316c3c85f247d 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1449,6 +1449,74 @@ void clk_restore_context(void)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_restore_context);
+> =20
+> +static int clk_fetch_parent_index(struct clk_core *core,
+> +				  struct clk_core *parent);
+> +
+> +/* Program the cached parent, rate and prepare/enable state into the har=
+dware */
+> +static void clk_core_restore_state(struct clk_core *core)
 > +{
-> +	struct clk_fractional_divider_v2 *fd =3D to_clk_fd_v2(hw);
-> +	unsigned long scale;
+> +	struct clk_core *parent =3D core->parent;
+> +	unsigned long flags;
+> +	int index;
 > +
-> +	/*
-> +	 * Get rate closer to *parent_rate to guarantee there is no overflow
-> +	 * for m and n. In the result it will be the nearest rate left shifted
-> +	 * by (scale - fd->nwidth) bits.
-> +	 *
-> +	 * For the detailed explanation see the top comment in this file.
-> +	 */
-> +	scale =3D fls_long(*parent_rate / rate - 1);
-> +	if (scale > fd->nwidth)
-> +		rate <<=3D scale - fd->nwidth;
+> +	lockdep_assert_held(&prepare_lock);
 > +
-> +	rational_best_approximation(rate, *parent_rate,
-> +				    GENMASK(fd->mwidth - 1, 0),
-> +				    GENMASK(fd->nwidth - 1, 0),
-> +				    m, n);
-> +}
-> +
-> +static int clk_fd_v2_get_divider(struct clk_hw *hw, unsigned long rate,
-> +				 unsigned long parent_rate,
-> +				 unsigned long *m, unsigned long *n)
-> +{
-> +	struct clk_fractional_divider_v2 *fd =3D to_clk_fd_v2(hw);
-> +	u32 factor;
-> +
-> +	rational_best_approximation(rate, parent_rate,
-> +				    GENMASK(fd->mwidth - 1, 0),
-> +				    GENMASK(fd->nwidth - 1, 0),
-> +				    m, n);
-> +
-> +	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
-> +		(*m)--;
-> +		(*n)--;
-> +	}
-> +	/*
-> +	 * When compensation the fractional divider,
-> +	 * the [1:0] bits of the numerator register are omitted,
-> +	 * which will lead to a large deviation in the result.
-> +	 * Therefore, it is required that the numerator must
-> +	 * be at least 4.
-> +	 *
-> +	 * Note that there are some exceptions here:
-> +	 * If there is an even frac div, we need to keep the original
-> +	 * numerator(<4) and denominator. Otherwise, it may cause the
-> +	 * issue that the duty ratio is not 50%.
-> +	 */
-> +	if (*m < 4 && *m !=3D 0) {
-> +		if (*n % 2 =3D=3D 0)
-> +			factor =3D 1;
-> +		else
-> +			factor =3D DIV_ROUND_UP(4, *m);
-> +
-> +		if (*m > GENMASK(fd->mwidth - 1, 0) / factor ||
-> +		    *n > GENMASK(fd->nwidth - 1, 0) / factor)
-> +			return -EINVAL;
-> +
-> +		*n *=3D factor;
-> +		*m *=3D factor;
+> +	if (parent && core->num_parents > 1 && core->ops->set_parent) {
+> +		index =3D clk_fetch_parent_index(core, parent);
+> +		if (index >=3D 0)
+> +			core->ops->set_parent(core->hw, index);
 > +	}
 
-[Severity: Medium]
-In clk_fd_v2_get_divider(), when CLK_FRAC_DIVIDER_ZERO_BASED is set in
-fd->flags, (*m)-- and (*n)-- convert the 1-based values from
-rational_best_approximation() into 0-based register values before the
-*m < 4 compensation block runs.
+[Severity: High]
+What happens here when a clock implements core->ops->set_rate_and_parent
+and cannot tolerate separate .set_parent() and .set_rate() calls?
 
-Does this cause several regressions when CLK_FRAC_DIVIDER_ZERO_BASED is use=
-d?
+In drivers/clk/clk.c, clk_change_rate() prefers .set_rate_and_parent() when
+both parent and rate are updated:
 
-1. If rational_best_approximation() returns *m =3D=3D 0 for a very small ra=
-te,
-   (*m)-- underflows the unsigned long *m to ULONG_MAX, which bypasses the
-   (*m < 4 && *m !=3D 0) check and writes all-ones to the numerator register
-   fields.
-
-2. If the 1-based numerator is *m =3D=3D 1 (for example, 1/3), (*m)-- sets
-   *m =3D 0, which skips the (*m < 4 && *m !=3D 0) compensation completely.
-
-3. Decrementing *n flips its parity before (*n % 2 =3D=3D 0) is checked, so
-   factor =3D 1 is selected when the actual denominator n is odd rather than
-   even.
-
-4. Multiplying the already-decremented values by factor produces register
-   values (m - 1) * factor and (n - 1) * factor. When clk_fd_v2_recalc_rate=
-()
-   adds 1 back:
-
-	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
-		m++;
-		n++;
+	if (core->ops->set_rate_and_parent) {
+		skip_set_rate =3D true;
+		core->ops->set_rate_and_parent(core->hw, core->new_rate,
+				best_parent_rate,
+				core->new_parent_index);
+	} else if (core->ops->set_parent) {
+		core->ops->set_parent(core->hw, core->new_parent_index);
 	}
 
-   the effective ratio becomes ((m - 1) * factor + 1) / ((n - 1) * factor +=
- 1)
-   instead of m / n (for example, m =3D 3, n =3D 4 becomes 5/7 instead of 3=
-/4).
+In clk_core_restore_context_dev() -> clk_core_restore_state(), calling
+core->ops->set_parent() and core->ops->set_rate() separately without
+checking core->ops->set_rate_and_parent breaks clocks that rely on the
+combined callback. For example, in drivers/clk/qcom/clk-rcg2.c,
+clk_gfx3d_set_rate() is a no-op stub:
 
-5. Neither clk_fractional_divider_general_approximation_v2() nor
-   clk_fd_v2_get_divider() increases the maximum bounds passed to
-   rational_best_approximation() from GENMASK(width - 1, 0) to BIT(width)
-   when CLK_FRAC_DIVIDER_ZERO_BASED is set.
+static int clk_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
+			      unsigned long parent_rate)
+{
+	/*
+	 * We should never get here; clk_gfx3d_determine_rate() should always
+	 * make us use a different parent than what we're currently using, so
+	 * clk_gfx3d_set_rate_and_parent() should always be called.
+	 */
+	return 0;
+}
+
+On clk_gfx3d_ops, clk_rcg2_set_parent() only updates CFG_SRC_SEL_MASK and
+only clk_gfx3d_set_rate_and_parent() programs the divider cgfx->div into
+CFG_SRC_DIV_SHIFT. Similarly, c910_clk_set_rate() in
+drivers/clk/thead/clk-th1520-ap.c returns -EOPNOTSUPP, and on standard
+Qualcomm RCG2 and composite clocks, switching the parent mux before
+reprogramming the divider can cause a transient frequency spike while the
+divider still holds its boot value.
+
+Should clk_core_restore_state() use core->ops->set_rate_and_parent() when
+both parent and rate are being restored?
+
+[Severity: High]
+Also, could calling .set_parent() and .set_rate() here without honoring
+CLK_OPS_PARENT_ENABLE and CLK_SET_RATE_UNGATE cause hardware update
+timeouts when the parent or clock is currently disabled?
+
+In drivers/clk/clk.c, clk_change_rate() prepares and enables the clock and
+its parent around rate and parent programming when those flags are set:
+
+	if (core->flags & CLK_SET_RATE_UNGATE) {
+		clk_core_prepare(core);
+		clk_core_enable_lock(core);
+	}
+	...
+	if (core->flags & CLK_OPS_PARENT_ENABLE)
+		clk_core_prepare_enable(parent);
+
+During hibernation restore, provider restore callbacks run while many
+configured clocks and their parents have prepare_count =3D=3D 0 and
+enable_count =3D=3D 0. Even though clk_restore_context_dev() visits parents
+before children, clk_core_restore_state() only enables the parent if
+parent->enable_count is non-zero. When clk_core_restore_state() then calls
+.set_parent() or .set_rate() on a child with CLK_OPS_PARENT_ENABLE (such as
+Qualcomm RCG2 clocks using clk_rcg2_ops), update_config() in
+drivers/clk/qcom/clk-rcg2.c cannot complete its hardware handshake while
+the parent is gated:
+
+	for (count =3D 500; count > 0; count--) {
+		ret =3D regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG, &cmd);
+		if (ret)
+			return ret;
+		if (!(cmd & CMD_UPDATE))
+			return 0;
+		udelay(1);
+	}
+
+	WARN(1, "%s: rcg didn't update its configuration.", name);
+	return -EBUSY;
+
+Should clk_core_restore_state() temporarily prepare and enable the parent
+(for CLK_OPS_PARENT_ENABLE) and the clock itself (for CLK_SET_RATE_UNGATE)
+around the parent and rate restore operations?
 
 > +
-> +	return 0;
-> +}
+> +	if (core->rate && core->ops->set_rate)
+> +		core->ops->set_rate(core->hw, core->rate,
+> +				    parent ? parent->rate : 0);
+
+[Severity: High]
+Is it safe to pass core->rate unconditionally to core->ops->set_rate() if
+no consumer ever called clk_set_rate() on this clock?
+
+At registration time in __clk_core_init(), core->rate is initialized from
+core->ops->recalc_rate() based on the power-on reset register state (for
+example, 19.2 MHz from XO on Qualcomm RCG2 clocks) rather than a rate
+validated by .determine_rate().
+
+For clocks using clk_rcg2_shared_floor_ops whose frequency table only
+contains PLL frequencies above 19.2 MHz (such as
+gcc_sdcc1_ice_core_clk_src in drivers/clk/qcom/gcc-eliza.c, where the table
+starts at 100 MHz), passing the 19.2 MHz boot rate into
+clk_rcg2_shared_floor_set_rate() -> __clk_rcg2_shared_set_rate() causes
+qcom_find_freq_floor() to return NULL:
+
+	switch (policy) {
+	case FLOOR:
+		f =3D qcom_find_freq_floor(rcg->freq_tbl, rate);
+		break;
+	case CEIL:
+		f =3D qcom_find_freq(rcg->freq_tbl, rate);
+		break;
+	default:
+		return -EINVAL;
+	}
+
+	if (!clk_hw_is_enabled(hw))
+		return __clk_rcg2_configure(rcg, f, &rcg->parked_cfg);
+
+	return clk_rcg2_shared_force_enable_clear(hw, f);
+
+Because __clk_rcg2_shared_set_rate() does not check for a NULL f before
+calling __clk_rcg2_configure(), dereferencing f->src triggers a NULL
+pointer dereference. On CEIL-policy clocks (clk_rcg2_ops), passing an
+unconfigured 19.2 MHz boot rate to clk_rcg2_set_rate() rounds up to the
+lowest PLL entry in freq_tbl and switches the hardware mux to that PLL,
+desynchronizing the hardware parent and rate from core->parent and
+core->rate.
+
 > +
-> +static int clk_fd_v2_determine_rate(struct clk_hw *hw,
-> +				    struct clk_rate_request *req)
-> +{
-> +	struct clk_fractional_divider_v2 *fd =3D to_clk_fd_v2(hw);
-> +	unsigned long m, n;
-> +	u64 ret;
+> +	if (core->prepare_count && core->ops->prepare)
+> +		core->ops->prepare(core->hw);
 > +
-> +	if (!req->rate || req->rate >=3D req->best_parent_rate) {
-> +		req->rate =3D req->best_parent_rate;
-> +		return 0;
+> +	if (core->enable_count && core->ops->enable) {
+> +		flags =3D clk_enable_lock();
+> +		core->ops->enable(core->hw);
+> +		clk_enable_unlock(flags);
 > +	}
-> +
-> +	if (fd->approximation)
-> +		fd->approximation(hw, req->rate, &req->best_parent_rate, &m, &n);
-> +	else
-> +		clk_fractional_divider_general_approximation_v2(hw, req->rate,
-> +								&req->best_parent_rate,
-> +								&m, &n);
-> +
-> +	ret =3D (u64)req->best_parent_rate * m;
-> +	do_div(ret, n);
-> +	req->rate =3D ret;
-> +
-> +	/* Validate the rounded rate that set_rate() will receive. */
-> +	return clk_fd_v2_get_divider(hw, req->rate, req->best_parent_rate, &m, =
-&n);
 > +}
 
 [Severity: High]
-Can the interaction between clk_fractional_divider_general_approximation_v2=
-(),
-clk_fd_v2_determine_rate(), and clk_fd_v2_get_divider() cause valid rate
-requests to fail with -EINVAL or program a different divider than expected?
+Won't calling .set_parent() and .set_rate() before .enable() corrupt the
+restored configuration on clocks using clk_rcg2_shared_ops when
+core->enable_count > 0?
 
-1. In clk_fd_v2_get_divider(), rational_best_approximation() is given the f=
-ull
-   24-bit range GENMASK(fd->mwidth - 1, 0) and GENMASK(fd->nwidth - 1, 0)
-   (16,777,215). If the closest uncompensated ratio has *m < 4 and an odd
-   denominator *n > GENMASK(fd->nwidth - 1, 0) / factor (any odd n in
-   [4194304, 16777215] for m =3D 1, or [8388608, 16777215] for m =3D 2 or 3=
-),
-   clk_fd_v2_get_divider() returns -EINVAL instead of choosing a valid 24-b=
+In drivers/clk/clk.c, clk_core_is_enabled() falls back to
+core->enable_count when core->ops->is_enabled is not implemented:
+
+	if (!core->ops->is_enabled)
+		return core->enable_count;
+
+Because clk_rcg2_shared_ops in drivers/clk/qcom/clk-rcg2.c does not
+implement .is_enabled, clk_hw_is_enabled(hw) returns true during
+clk_core_restore_state() whenever core->enable_count > 0:
+
+1. clk_rcg2_shared_set_parent() sees clk_hw_is_enabled(hw) =3D=3D true, so =
 it
-   approximation (such as an adjacent even denominator where factor =3D 1, =
-or an
-   approximation constrained so the compensated values fit).
+   skips updating rcg->parked_cfg and calls clk_rcg2_set_parent() ->
+   update_config() without force-enabling the RCG, which times out because
+   child branches are not yet restored.
 
-2. clk_fd_v2_determine_rate() computes (m, n) once, floor-truncates req->ra=
-te
-   to an integer via do_div(ret, n), and then calls clk_fd_v2_get_divider()
-   (and later clk_fd_v2_set_rate()), which runs rational_best_approximation=
-()
-   a second time on the truncated req->rate without updating req->rate.
+2. clk_rcg2_shared_set_rate() -> __clk_rcg2_shared_set_rate() also sees
+   clk_hw_is_enabled(hw) =3D=3D true, so it writes the rate directly to
+   hardware via clk_rcg2_shared_force_enable_clear() without updating
+   rcg->parked_cfg:
 
-   Because a 24-bit divider has sub-Hz resolution at typical PLL rates,
-   re-approximating the truncated integer rate can pick a different (m, n)
-   pair than the first pass. For example:
+	if (!clk_hw_is_enabled(hw))
+		return __clk_rcg2_configure(rcg, f, &rcg->parked_cfg);
 
-   - With best_parent_rate =3D 100000000 and req->rate =3D 19, the first pa=
-ss
-     picks m =3D 1, n =3D 5263158 (even) and truncates req->rate to 18. The
-     second pass in clk_fd_v2_get_divider() approximates 18 / 100000000 as
-     m =3D 2, n =3D 11111111 (odd), which exceeds 16777215 / 2 and fails wi=
-th
-     -EINVAL.
+	return clk_rcg2_shared_force_enable_clear(hw, f);
 
-   - With a fractional PLL parent such asbest_parent_rate =3D 786431991 and
-     req->rate =3D 6144000, the first pass finds the intended divider m =3D=
- 1,
-     n =3D 128 and truncates req->rate to 6143999. The second pass in
-     clk_fd_v2_get_divider() and clk_fd_v2_set_rate() re-approximates
-     6143999 / 786431991 as m =3D 51630, n =3D 6608641 instead of 1 / 128.
+3. Immediately afterwards, clk_core_restore_state() calls
+   core->ops->enable(), which invokes clk_rcg2_shared_enable():
 
-3. In clk_fractional_divider_general_approximation_v2(), when
-   scale =3D fls_long(*parent_rate / rate - 1) exceeds fd->nwidth, rate is
-   shifted left by (scale - fd->nwidth) unconditionally without checking
-   CLK_FRAC_DIVIDER_POWER_OF_TWO_PS in fd->flags. That causes
-   clk_fd_v2_determine_rate() to return a power-of-two multiple of the
-   requested rate, whereas clk_fd_v2_get_divider() does not perform that sh=
-ift
-   (and if rational_best_approximation() saturates to *m =3D 0, *n =3D 1 fo=
-r a
-   very small rate, clk_fd_v2_get_divider() leaves *m =3D 0 uncompensated,
-   causing clk_fd_v2_recalc_rate() to return parent_rate).
+	/* Write back the stored configuration corresponding to current rate */
+	ret =3D regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, rcg->parke=
+d_cfg);
+	if (ret)
+		return ret;
 
-> +
-> +static int clk_fd_v2_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			      unsigned long parent_rate)
-> +{
-> +	struct clk_fractional_divider_v2 *fd =3D to_clk_fd_v2(hw);
-> +	unsigned long flags =3D 0;
-> +	unsigned long m, n, m_low, n_low, m_high, n_high;
-> +	u32 val, val_high;
-> +	int ret;
-> +
-> +	ret =3D clk_fd_v2_get_divider(hw, rate, parent_rate, &m, &n);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (fd->lock)
-> +		spin_lock_irqsave(fd->lock, flags);
-> +	else
-> +		__acquire(fd->lock);
-> +
-> +	m_low =3D m & fd->nmask;
-> +	n_low =3D n & fd->nmask;
-> +	m_high =3D (m & GENMASK(fd->mwidth - 1, (fd->mwidth - fd->high_mwidth))=
-) >>
-> +		 (fd->mwidth - fd->high_mwidth);
-> +	n_high =3D (n & GENMASK(fd->nwidth - 1, (fd->nwidth - fd->high_nwidth))=
-) >>
-> +		 (fd->nwidth - fd->high_nwidth);
-> +
-> +	val_high =3D clk_fd_v2_readl(fd, fd->high_reg);
-> +	val_high &=3D ~(fd->high_mmask | fd->high_nmask);
-> +	val_high |=3D (m_high << fd->high_mshift) | (n_high << fd->high_nshift);
-> +
-> +	clk_fd_v2_writel(fd, fd->high_reg, val_high);
-> +
-> +	val =3D clk_fd_v2_readl(fd, fd->reg);
-> +	val &=3D ~(fd->mmask | fd->nmask);
-> +	val |=3D (m_low << fd->mshift) | (n_low << fd->nshift);
-> +	clk_fd_v2_writel(fd, fd->reg, val);
+	ret =3D update_config(rcg);
+
+This overwrites CFG_REG with the stale rcg->parked_cfg value, clobbering
+the rate and parent that .set_parent() and .set_rate() just programmed.
 
 [Severity: Medium]
-In clk_hw_register_fractional_divider_v2(), fd->mmask and fd->nmask are
-initialized as shifted register masks:
+In addition, can checking core->enable_count before acquiring
+clk_enable_lock() race with a concurrent clk_disable()?
 
-	fd->mshift =3D mshift;
-	fd->mwidth =3D mwidth + high_mwidth;
-	fd->mmask =3D GENMASK(mwidth - 1, 0) << mshift;
-	fd->nshift =3D nshift;
-	fd->nwidth =3D nwidth + high_nwidth;
-	fd->nmask =3D GENMASK(nwidth - 1, 0) << nshift;
+In drivers/clk/clk.c, clk_core_disable() decrements core->enable_count and
+calls core->ops->disable() under enable_lock without holding prepare_lock:
 
-In clk_fd_v2_set_rate(), both m_low and n_low are masked with fd->nmask and
-then shifted by fd->mshift and fd->nshift when writing fd->reg. Shouldn't
-m_low and n_low be masked with unshifted masks for their respective low
-widths (or shifted first and then masked with fd->mmask and fd->nmask)?
+	if (--core->enable_count > 0)
+		return;
 
-Also, clk_fd_v2_set_rate() extracts m_high and n_high using the configured
-low widths (fd->mwidth - fd->high_mwidth) and (fd->nwidth - fd->high_nwidth=
-),
-whereas clk_fd_v2_recalc_rate() hardcodes a 16-bit shift:
+	trace_clk_disable(core);
 
-	m =3D (m_high << 16) | m_low;
-	n =3D (n_high << 16) | n_low;
+	if (core->ops->disable)
+		core->ops->disable(core->hw);
 
-Should clk_fd_v2_recalc_rate() shift m_high and n_high by the configured low
-widths as well so both functions stay consistent if a width other than 16 is
-passed to COMPOSITE_FRAC_V2() or rockchip_clk_register_frac_v2()?
+If core->enable_count is 1 when clk_core_restore_state() checks it outside
+clk_enable_lock(), and a concurrent clk_disable() runs before
+clk_enable_lock() is acquired, core->enable_count drops to 0 and the clock
+is disabled, after which clk_core_restore_state() acquires
+clk_enable_lock() and unconditionally calls core->ops->enable(core->hw).
+Should core->enable_count be checked after acquiring clk_enable_lock(),
+similar to clk_disable_unused_subtree()?
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261027-add-board-=
-ok3572-c-clk-v4-0-d4152b4fedaa@qq.com?part=3D2
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261028-b4-clk-res=
+tore-after-hibernation-v1-0-86cf62747a7f@oss.qualcomm.com?part=3D1
