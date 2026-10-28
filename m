@@ -1,68 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793194187;
-	b=5BJdCX0Bnijo3idozoC/u8GpEh3MdSh4DL2vfpLUpy0kTqjicZ1o2uKxoUwYdYSIHyxN
-	 VKOYdDlsLsTQpNIQSdyKT1OCm2d88BWkqI2QZLZa0MQiSHLnTBLf9e5pkUvp+0I2cPTWK
-	 iU7X70ueZr0hxveEdTeLXKCclscrJKcbHaJVVkWZP2HLcHYfnqy9Qvx3d1GUfvFzPlcxo
-	 U8pyGrMrYg5/S92FMem3u6ng3kfsiMEAuKjludfCJmvnlY50dsWYiS3bsLOtArIK8aud3
-	 IMLQrifFCPNkumtRvED9B16rneMG36rv/9ZxhJBc04aPZ4kG79KpRTqLy2Urz9AKvhg==
+	t=1793195547;
+	b=OFl5EKUI5N6ZrtomXVjOsgndrQ25qB31SZY8KoGMfR17nWPzJlA/GiseJFTYtMA6GrtR
+	 qCYGBZtCeTYIIO7xbC3aWj3mA/ktBCKRSW4no1zjoaFmm2UGDoL5p3LXE5CDjR+1Np+X5
+	 YOypA3Ha6T+kgqiaoW1QC3Zj9+tLA6+9y123bZDOD1xiDDAb4EhMPY1QPdnoyNJZxwKx7
+	 SqtQbm8az77196jUIwoXa3d7ycKkMKFUL+kbMcgSVzcEe8j5PnJbdxVEiejR49h5mAhqz
+	 OWSV2q8I1tHDAenST3sdjb76DE1hMzhGk8G0JWcr9EmX+wqUtM9X8OrxvuYgRgfaTMg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793194187;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=+ZDZrqj/BPoTA6v4mR/qLoQhcDV/UIjpuvoi1Z0zPGQ=;
-	b=dXG0ufqVBhnxEcYmYZ4Xlyih+LOo69Arr9JN3tgz5OcvcmTpj4xIvzliNX400GVJVZmY
-	 EkGUt2kBboW0wVJm7o05fCSbgVIIUVLZkPvWGtIR92UDzKuCtAfGE15A0zbp7xojrPrGZ
-	 aNiEQ7qoB0iNNnOma7/RVhfiN72O++I9+UMTzVOfilawcbeZ8RBPm8ltwAjpkcWeEDw27
-	 w2ThUkQ6LS53hDJpNR2pKcZiOUQFP4IBT/MXGEwn2cbnvIa9ojAe3JSZsz4VvFOZYySaU
-	 XOqci5zVM2VW2UGL7VAXD0hVw0bcaeS5TOBaK2TGE+gviJ5pXLiQzytypxfU4vqVfTQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793195547;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=v+WG65pANaVwCNqbqLgEEHhTXKrwC0yMtmx16EDj1JI=;
+	b=OlGJTLKSMueUgcMOYcT9zVx9mzTP/CyRd5Up4BbgA/VPfWm8urnDP7z4rWgko3XhcG6i
+	 oXTFw2dFIbvXJ5KCR21x2sbdLejmCJJIvWgRHt6SWsB7ci00SOoRextZogzrCJXHyrrOh
+	 f70JWz6U+yk71jMi2W1rdgBp5smFx41E82E9RdK1YNck1rkkKB2b+iNH6pfGtAEwzPeEQ
+	 +skp9P2FpNPp33/Zdb0Mc2Mabu2Jc0Um9rW7t+hwjMv/je5a/M5W9gWSciDJ1cq+TRqmE
+	 LeE9Y6okYK+/KEw4kf5WJq5kpDo/bt8EfUNAkfvyRNqUKJv1ji8yCRy1HHKnbZlrPHQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=DC6WunDL;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KIA2pec6;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA1B606A31E;
-	Wed, 28 Oct 2026 13:29:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8BA1B606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99659606A31C;
+	Wed, 28 Oct 2026 13:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=DC6WunDL
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DE3C034;
-	Wed, 28 Oct 2026 14:27:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1793194046;
-	bh=8cQ5CvO/2sA2dQUmqeKVIlmOQmp+Y7f2f6c5x7Y+SrY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DC6WunDLJngl6a5oLdyhXtOxCbeD47TRHBYXKqGadYb+KVLYJL2wFP2W9sAuwBbuT
-	 0ZrOdBnemjOFetphtsckixYkVX7RFSmvWk02kL7PZ8kp0LZj+sCKS0v9q3bHzCknIv
-	 9SbqSAWUkTebMzav3ZRtsAa7t8pR/VLI8J3bBbRI=
-Date: Wed, 28 Oct 2026 15:29:37 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH 07/11] dt-bindings: clock: renesas,r8a78000-cpg: Add PWM
- clocks
-Message-ID: <20261028132937.GL15441@killaraus.ideasonboard.com>
-References: <cover.1793026273.git.geert+renesas@glider.be>
- <e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KIA2pec6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E77EB1F01825;
+	Wed, 28 Oct 2026 13:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793195547;
+	bh=v+WG65pANaVwCNqbqLgEEHhTXKrwC0yMtmx16EDj1JI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=KIA2pec6cXMtBj9YkyCvNCZqBVcIswQX3vCvKJWnAU8c60i468rptoRcYRhjau0oy
+	 pUODume1dwssoa0tu0+asKKEb6CV4aslTSRw+/foFtSyOeE+E0y0W/sLqXfdbBj5qV
+	 fDlccuNes9tcy35Fk+tbhY7F8x/S38ZfZbcDhKIwC5VGy1yhRbKr5bYBLSOfEwc9cu
+	 upO72e3zUMlHxvg/vmL+FlRqc/siG3wZ+Z9RASgdbfY2X71Q0PzCYFU50/7sdEUmym
+	 ddgkAYpwQsUc6SUhP9qrHCqkQ+N5J7iOn8Du5BEAIEeXeDIeo22HzcaaTZ04ORa4kw
+	 4V33GcOxz8JAQ==
+Date: Wed, 28 Oct 2026 14:52:23 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Johnny Liu <johnliu@nvidia.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Douglas Anderson <dianders@chromium.org>, Aniruddha Rao <anrao@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: clock: Add Tegra238 BPMP clock IDs
+Message-ID: <20261028-enlightened-khaki-leech-7a3fb6@quoll>
+References: <20261028084900.1047287-1-johnliu@nvidia.com>
+ <20261028084900.1047287-2-johnliu@nvidia.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -74,49 +64,16 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be>
+In-Reply-To: <20261028084900.1047287-2-johnliu@nvidia.com>
 
-Hi Geert,
-
-Thank you for the patch.
-
-On Mon, Oct 26, 2026 at 03:55:23PM +0100, Geert Uytterhoeven wrote:
-> Add definitions for the clocks used by the PWM modules on R-Car X5H:
->  - R8A78000_CPG_SGASYNCD16_PERW_MAIN,
->  - R8A78000_CPG_S0ASYNCD8_PERW_MAIN.
-> Include R8A78000_CPG_SGASYNCD8_PERW_MAIN for ordering consistency.
+On Wed, Oct 28, 2026 at 08:48:56AM +0000, Johnny Liu wrote:
+> Add the clock IDs exposed by the BPMP firmware on Tegra238.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This depends on "[PATCH 2/7] dt-bindings: clock: renesas,r8a78000-cpg:
-> Add GPIO clocks"
-> https://lore.kernel.org/624a9fb09e4ec74b1995797e5121b86e7206f5f2.1792776697.git.geert+renesas@glider.be
-> ---
->  include/dt-bindings/clock/renesas,r8a78000-cpg.h | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/include/dt-bindings/clock/renesas,r8a78000-cpg.h b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-> index cd7192ccecd4e22c..8c30476d41448cf5 100644
-> --- a/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-> +++ b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-> @@ -28,5 +28,8 @@
->  #define R8A78000_CPG_SGD8_PERW_BUS		18
->  #define R8A78000_CPG_SGD32_PERW_BUS		19
->  #define R8A78000_CPG_S0D24_HSCN_OTHER		20
-> +#define R8A78000_CPG_SGASYNCD8_PERW_MAIN	21
-> +#define R8A78000_CPG_SGASYNCD16_PERW_MAIN	22
+> Signed-off-by: Johnny Liu <johnliu@nvidia.com>
 
-Could you also add R8A78000_CPG_SGASYNCD4_PERW_MAIN and
-R8A78000_CPG_SGASYNCD32_PERW_MAIN for ordering consistency ? The
-dependency patch should then also include R8A78000_CPG_SGD4_PERW_BUS and
-R8A78000_CPG_SGD16_PERW_BUS, as well as
-R8A78000_CPG_S0D{1,2,4,8,12,16}_HSCN_OTHER.
+And the compatible is in the next patch? Then squash them. Bindings for
+a device is one patch.
 
-> +#define R8A78000_CPG_S0ASYNCD8_PERW_MAIN	23
->  
->  #endif /* __DT_BINDINGS_CLOCK_RENESAS_R8A78000_CPG_H__ */
+Best regards,
+Krzysztof
 
--- 
-Regards,
-
-Laurent Pinchart
