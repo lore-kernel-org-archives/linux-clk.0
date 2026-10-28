@@ -1,58 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793197956;
-	b=wPdAPpeCcTF5CSSYRghnQ+lL12x22HylywnIvodoxYgBiS2Rbm4zFH5m0xer2JKaCi0p
-	 Xu0qjm6QKCBDVbCU61EPpf3D4gcp9bcShmVhtKIKC+QLqZv1J45qxt95Vks1DbBB1SbIT
-	 70N5/J6L1i1R4SKk5wUKZT05HCO2Sat6LfzYa9+2i47hBQuFuepJKr8Uh46FGuL02x14x
-	 zO3Tsl1Wg249m9r0WyNFmcUsE1voJfgytHWuxh3LtAZX7akWUztnIoC0GmvT4vVQizE1p
-	 beGiKgMbuKhvcqOeJPgg7CvqLEgWNuljOUrEtS5cPA2k9+Brif9zzpEjlPAedUjTN8A==
+	t=1793198637;
+	b=aK5Xf+8GOIsYa+ovFuFpXSqIsb+xJO+ez9oHZeTW+2FMwkAvhal+Xagb6JGlPhR7Ar89
+	 Hc/atLmt8TxCCJFP51zolDsrDO7mTPLrE/9B1jwF9QNqAN6BNbvMZIhrodCiFHRred+pq
+	 5WidS9XUnuwAdt6rFUyhR9BP5wexUpD66P+GRwQo4g4PbflYUZxb2w3jtnAsSMUEh8Buk
+	 vtwY3SS/aMl02aq0ozzxvGMS0xr8vUfI1a/eknEtLcO+IKU7DnqAQqvGRMcb1aD1iH4sK
+	 JulfIiXZX+UIShWtQbDxKkA0Tn5Z2bK0oZQeII2l1kS47BAN8xdTeM0xUZ9tv4fDesg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793197956;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:From:
-	 Content-Language:Organization:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Last-TLS-Session-Version;
-	bh=+vj3JXaH73DAc9DdU35ASSRyg7WAvYyKv+vce4COULM=;
-	b=WV5XUeWHKVK32Zd+yB4Q41jtJ+phbKY6w7vNCX6M0vCjrKsrSypL6Y/PeSx1yS3Tl/7E
-	 6cOVlpNVUfgLErCht4AmaIGqSGCIuIQQDqnwNvCjInHGSzrdBnV3xJclY8kcRgmPr+i6s
-	 fvENngoyuN81g13fLMYzuyyjKsrRYJtuHMi3+kZMrft4OeSsB4OLBqB/N60b/LteVPSi3
-	 IVkpXF1qMyP2XdAZzVGPkgBlh609iPHr0p44Q9rdeLTqFNItVo23oTvlnLSJ0PsBwK5KB
-	 HhCy3Al5WS+Zq/+mWy0/VamAg703Sd2TY2ssuT1danSKM3nGZ/2B6Jl43o1a5u/ljSg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793198637;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=gvbpjObWezyuObEIw7vWCioNUAtttLKw08sbbnbJ9pw=;
+	b=4+OkRj2fXzOGL4YYdD0JldVErO+pxUDg71MiyDXBv5U9rnlouFsrEGdK+OzXifkyI5z8
+	 VlASY7vFz8PUlSk8cstneO6Py+dmkEOl1WCfQ6GsicNAyEDtEKwvCZvQdhN6tPY+x/Z8D
+	 vYT2OvldRl9UvpU/A+dkyhSE1zKBdZQtFTlzlOEZkakI7KsEWOBswt/GUYBZMSZpFqv8D
+	 342K1SLRsY2fU0FqWtZwfEz9lA4+4NMmuqewTgeNteK2sfSfx4nAC0e08e6e8/S2SuqCi
+	 0Eu/WV5B+daFfXJDHYNOzS0gtp6ulnQZ+bWAz87fA43LfhfSBkMMb+7bZVMNvwCfcjw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=PrNxJIoI;
-	arc=none smtp.remote-ip=185.246.84.56
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.217.45
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71255606A31A;
-	Wed, 28 Oct 2026 14:32:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 71255606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=PrNxJIoI
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 8FD6C1A137B;
-	Wed, 28 Oct 2026 14:32:31 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5F5B860769;
-	Wed, 28 Oct 2026 14:32:31 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C3E6B103290D1;
-	Wed, 28 Oct 2026 15:32:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1793197945; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=+vj3JXaH73DAc9DdU35ASSRyg7WAvYyKv+vce4COULM=;
-	b=PrNxJIoIaUyhY8Zqt4SrJf4ec9/mtkg2tiyqW/XNHd1snpJ3Ho9quFY5u9M6HNrg3pe4DJ
-	rEoBT0F3Mq7YaJMxOzPhZiJ4KGmGoe9sjxvUOuV2n6qPLG2XzN05gBCubNZ1sHNqWnQBXl
-	LRmFcPNn37UP3qhOdV3tjyLwibLn8KorGjx5y5VWBzsoxMT0/oVLBKudz/EmG0A7o/PPWW
-	NCdUf//rOnMSiE3qewS9q2nksK0+jikBkQsq+OemhIk3kyGwTEiL22QBuFxNfXE8gQEKmN
-	rA5dGwbBYGMHOdRe/O2j379Co6IiS+ImdN4CA5Dgx96FKJwh3EawJv7Nihzgsw==
-Message-ID: <880e67e2-3f29-4dfd-84ee-09006dc86574@bootlin.com>
-Date: Wed, 28 Oct 2026 15:32:18 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E86606A31D
+	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 14:43:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E3E86606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-7c03744ef27so315604137.1
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 07:43:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793198636; x=1793803436;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=gvbpjObWezyuObEIw7vWCioNUAtttLKw08sbbnbJ9pw=;
+        b=SGPVv/UXxqyQ69yswuXoPLcIGCrYZQrZ+G69IeyhLadocgcfjFZQqQdEWPbZ25Nxc1
+         0OK0m9Rhu8XnWcVYzhr4usP9PWM2NI+ErgLtKfVfMbRJp6T099k84C/LlSrcL+OtAVWv
+         Sb/uD3vsDvHzwuUAKuhv0rJqmJqvrYUHoIe5X/FA4+5Tqr89cea0peRN1Hymu6se3ZDB
+         wG1SzYEUt+3KHvSvt1DB6Z4GHlvY3BdH0ROsuBhl5QTseuJo4opzydlSYsn9ZOOT7Auf
+         +ne6i5SkdEtlEYGUgRhji4GCuRL+IGfmS72Dsaav+faPdz6HQnfDceTNf4y25xAZyfXx
+         PjFw==
+X-Forwarded-Encrypted: i=1; AKwUvBwaSwMMOp5Nii+MobouENaKXw2yWFfyqOpwHBsfGBUab653o4DZnVf/PVPUZiOU8lfzHsbhuhk9x78=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKEtvEdXXp9sJ54n9SkZQhR/ZH+8YRbQmFuPHluHxY1Wslr5ql7
+	JLFADyVtbS1lGh8peuZQv66FRngjLkzogsZktBeydhOjNcLS4wM/939jhCEDKIDA
+X-Gm-Gg: AYBFou1kIYDT5CQLbT5KFB46WSWhh2xm0pKglb83aAYBFRmnZUdwnc2J8AwUYJTWDnB
+	LaqaYnEXqdptc7FH/92fb93HPgR3jXA0FznVGsx91F/ZaiWm0dyIHU1Em8eJqcoizgAnjTbPkht
+	CQ/IdNkV3aFi6uiaD9622M/gg1ycN9M9V1GiZ6ITF9TWFg+I38vPnjh4gxEfHjOCHWBPTyu0iGF
+	PZeopTLhgqNtFY3dLFMNRp+IR7/63x79j9d8rJ5kABvOSob6yPGFiUrnHRAKaoBO2gsEg9WKjKV
+	HX57XQL7ItQEJt+XWpTR4ubQX7fKgHMcJDWwaEShT/6jkGLLfU8sV6ULD7ZfWcgCtFaqIYShRKi
+	ug6FP/SMw6YmQRMOlk8ZvPO2DUDP6kA+DnSkEu+h2njINkLQyH8h62M7Oc0ednrrHLMNCn0Q6l+
+	jHwB1iqF0tR0YB3kYbD0kf0FyLA9SwGH6MMO38OY/E406ErK5qkB4oxTOPYYde/6fh6ATNlWZgk
+	09AFfoQKquVbBsWeYrpiU4HNiLNu8i9PoIf/UTxQn9jtNovJQiVYD0jctl9RSklmpn7rx86eulQ
+	snfBngQs2UobEKgpX+X1zABtu+LtCPh8WBAi96wbrrOfVbDiZjIhI8MpMzVqUw6pHlE=
+X-Received: by 2002:a05:6102:5492:b0:7cc:5c9d:7e07 with SMTP id ada2fe7eead31-7d03a50d052mr971662137.11.1793198635838;
+        Wed, 28 Oct 2026 07:43:55 -0700 (PDT)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99125931983sm6091815241.2.2026.10.28.07.43.53
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Oct 2026 07:43:54 -0700 (PDT)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-7cc81984fceso325649137.0
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 07:43:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxb/jEwhSln7LHHec+ABgYZdj/5iFjLtCJzmJ2SBDoCCULxmn73WM4ffv9vwwp/BjllucBgkkYwOSk=@vger.kernel.org
+X-Received: by 2002:a05:6102:6f07:b0:7c3:1d7:f234 with SMTP id
+ ada2fe7eead31-7d03a294a6dmr903761137.2.1793198633657; Wed, 28 Oct 2026
+ 07:43:53 -0700 (PDT)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -62,346 +80,66 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/20] pinctrl: berlin: add optional pinconf support
-To: Jisheng Zhang <jszhang@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Andi Shyti
- <andi.shyti@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Frank Li <Frank.Li@nxp.com>, Lee Jones <lee@kernel.org>,
- Linus Walleij <linusw@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-i3c@lists.infradead.org, mfd@lists.linux.dev,
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20260929061417.20733-1-jszhang@kernel.org>
- <20260929061417.20733-13-jszhang@kernel.org>
-From: Richard GENOUD <richard.genoud@bootlin.com>
-Content-Language: en-US, fr
-Organization: Bootlin
-In-Reply-To: <20260929061417.20733-13-jszhang@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <cover.1793026273.git.geert+renesas@glider.be> <e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be>
+ <20261028132937.GL15441@killaraus.ideasonboard.com>
+In-Reply-To: <20261028132937.GL15441@killaraus.ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 Oct 2026 15:43:42 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXycpJ6COtiAA-2oRRfHSfLK40n2cacStW15QJRN3EfLQ@mail.gmail.com>
+X-Gm-Features: AclHuK8gWV6NxtQKAEUrEm-e_rgKbr7fNh5k6QXPge3G8NVSao5SAOErcvAPoSI
+Message-ID: <CAMuHMdXycpJ6COtiAA-2oRRfHSfLK40n2cacStW15QJRN3EfLQ@mail.gmail.com>
+Subject: Re: [PATCH 07/11] dt-bindings: clock: renesas,r8a78000-cpg: Add PWM clocks
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Le 29/09/2026 à 08:14, Jisheng Zhang a écrit :
-> Add pinconf support for newer Synaptics SoCs.
-> 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->   drivers/pinctrl/berlin/berlin.c | 232 +++++++++++++++++++++++++++++++-
->   1 file changed, 228 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/berlin.c
-> index 0c2179b98629..06c67f00c527 100644
-> --- a/drivers/pinctrl/berlin/berlin.c
-> +++ b/drivers/pinctrl/berlin/berlin.c
-> @@ -13,6 +13,8 @@
->   #include <linux/of.h>
->   #include <linux/of_address.h>
->   #include <linux/of_device.h>
-> +#include <linux/pinctrl/pinconf-generic.h>
-> +#include <linux/pinctrl/pinconf.h>
->   #include <linux/pinctrl/pinctrl.h>
->   #include <linux/pinctrl/pinmux.h>
->   #include <linux/platform_device.h>
-> @@ -20,9 +22,24 @@
->   #include <linux/slab.h>
->   
->   #include "../core.h"
-> +#include "../pinconf.h"
->   #include "../pinctrl-utils.h"
->   #include "berlin.h"
->   
-> +#define PINCFG_DS_10BIT		GENMASK(3, 0)
-> +#define PINCFG_IE_10BIT		BIT(4)
-> +#define PINCFG_PE_10BIT		BIT(5)
-> +#define PINCFG_PS_10BIT		BIT(6)
-> +#define PINCFG_SL_10BIT		BIT(7)
-> +#define PINCFG_SPU_10BIT	BIT(8)
-> +#define PINCFG_ST_10BIT		BIT(9)
-> +#define PINCFG_DS_8BIT		GENMASK(2, 0)
-> +#define PINCFG_IE_8BIT		BIT(3)
-> +#define PINCFG_PD_8BIT		BIT(4)
-> +#define PINCFG_PU_8BIT		BIT(5)
-> +#define PINCFG_SL_8BIT		BIT(6)
-> +#define PINCFG_ST_8BIT		BIT(7)
-> +
->   struct berlin_pinctrl {
->   	struct regmap *regmap;
->   	struct device *dev;
-> @@ -56,6 +73,8 @@ static int berlin_pinctrl_dt_node_to_map(struct pinctrl_dev *pctrl_dev,
->   	struct property *prop;
->   	const char *function_name, *group_name;
->   	unsigned reserved_maps = 0;
-> +	unsigned long *configs = NULL;
-> +	unsigned int num_configs = 0;
->   	int ret, ngroups;
->   
->   	*map = NULL;
-> @@ -75,11 +94,19 @@ static int berlin_pinctrl_dt_node_to_map(struct pinctrl_dev *pctrl_dev,
->   		return -EINVAL;
->   	}
->   
-> +	ret = pinconf_generic_parse_dt_config(node, pctrl_dev, &configs,
-> +					      &num_configs);
-> +	if (ret < 0) {
-> +		dev_err(pctrl->dev, "%s: could not parse node property\n",
-> +			node->name);
-> +		return ret;
-> +	}
-> +
->   	ret = pinctrl_utils_reserve_map(pctrl_dev, map, &reserved_maps,
-> -					num_maps, ngroups);
-> +					num_maps, ngroups * (num_configs + 1));
->   	if (ret) {
->   		dev_err(pctrl->dev, "can't reserve map: %d\n", ret);
-> -		return ret;
-> +		goto exit;
->   	}
->   
->   	of_property_for_each_string(node, "groups", prop, group_name) {
-> @@ -88,11 +115,22 @@ static int berlin_pinctrl_dt_node_to_map(struct pinctrl_dev *pctrl_dev,
->   						function_name);
->   		if (ret) {
->   			dev_err(pctrl->dev, "can't add map: %d\n", ret);
-> -			return ret;
-> +			goto exit;
-> +		}
-> +
-> +		if (num_configs) {
-> +			ret = pinctrl_utils_add_map_configs(pctrl_dev, map,
-> +					&reserved_maps, num_maps, group_name,
-> +					configs, num_configs,
-> +					PIN_MAP_TYPE_CONFIGS_GROUP);
-> +			if (ret < 0)
-> +				goto exit;
->   		}
->   	}
->   
-> -	return 0;
-> +exit:
-> +	kfree(configs);
-> +	return ret;
->   }
->   
->   static const struct pinctrl_ops berlin_pinctrl_ops = {
-> @@ -177,6 +215,191 @@ static const struct pinmux_ops berlin_pinmux_ops = {
->   	.set_mux		= &berlin_pinmux_set,
->   };
->   
-> +static int berlin_pinconf_group_get(struct pinctrl_dev *pctrl_dev,
-> +				    unsigned int group, unsigned long *configs)
-> +{
-> +	enum pin_config_param param = pinconf_to_config_param(*configs);
-> +	struct berlin_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctrl_dev);
-> +	const struct berlin_desc_group *group_desc = pctrl->desc->groups + group;
-> +	bool enabled;
-> +	u32 val;
-> +	int ret;
-> +	u8 conf_bits = group_desc->conf_bits;
-> +
-> +	if (!conf_bits)
-> +		return -EOPNOTSUPP;
-> +
-> +	ret = regmap_read(pctrl->regmap, group_desc->conf_offset, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	switch (param) {
-> +	case PIN_CONFIG_BIAS_DISABLE:
-> +		if (conf_bits == 10)
-> +			enabled = !(val & PINCFG_PE_10BIT);
-> +		else
-> +			enabled = !(val & (PINCFG_PD_8BIT | PINCFG_PU_8BIT));
-> +		val = 0;
-> +		break;
-> +	case PIN_CONFIG_BIAS_PULL_DOWN:
-> +		if (conf_bits == 10)
-> +			enabled = (val & (PINCFG_PE_10BIT | PINCFG_PS_10BIT)) == PINCFG_PE_10BIT;
-> +		else
-> +			enabled = val & PINCFG_PD_8BIT;
-> +		val = enabled ? 1 : 0;
-> +		break;
-> +	case PIN_CONFIG_BIAS_PULL_UP:
-> +		if (conf_bits == 10) {
-> +			if ((val & (PINCFG_PE_10BIT | PINCFG_PS_10BIT)) == (PINCFG_PE_10BIT | PINCFG_PS_10BIT)) {
-> +				enabled = true;
-> +				if (val & PINCFG_SPU_10BIT)
-> +					val = 2;
-> +				else
-> +					val = 1;
-> +			} else {
-> +				enabled = false;
-> +				val = 0;
-> +			}
-> +		} else {
-> +			enabled = val & PINCFG_PU_8BIT;
-> +			val = enabled ? 1 : 0;
-> +		}
-> +		break;
-> +	case PIN_CONFIG_DRIVE_STRENGTH:
-> +		enabled = true;
-> +		if (conf_bits == 10)
-> +			val = FIELD_GET(PINCFG_DS_10BIT, val);
-> +		else
-> +			val = FIELD_GET(PINCFG_DS_8BIT, val);
-> +		break;
-> +	case PIN_CONFIG_INPUT_ENABLE:
-> +		if (conf_bits == 10)
-> +			enabled = val & PINCFG_IE_10BIT;
-> +		else
-> +			enabled = val & PINCFG_IE_8BIT;
-> +		val = enabled ? 1 : 0;
-> +		break;
-> +	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
-> +		if (conf_bits == 10)
-> +			enabled = val & PINCFG_ST_10BIT;
-> +		else
-> +			enabled = val & PINCFG_ST_8BIT;
-> +		val = enabled ? 1 : 0;
-> +		break;
-> +	case PIN_CONFIG_SLEW_RATE:
-> +		if (conf_bits == 10)
-> +			enabled = val & PINCFG_SL_10BIT;
-> +		else
-> +			enabled = val & PINCFG_SL_8BIT;
-> +		val = enabled ? 1 : 0;
-> +		break;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	*configs = pinconf_to_config_packed(param, val);
-> +	return enabled ? 0 : -EINVAL;
-> +}
-> +
-> +static int berlin_pinconf_group_set(struct pinctrl_dev *pctrl_dev,
-> +				    unsigned int group, unsigned long *configs,
-> +				    unsigned int nconfigs)
-> +{
-> +	struct berlin_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctrl_dev);
-> +	const struct berlin_desc_group *group_desc = pctrl->desc->groups + group;
-> +	u8 conf_bits = group_desc->conf_bits;
-> +	u32 mask = 0, val = 0;
-> +	int i;
-> +
-> +	if (!conf_bits)
-> +		return -EOPNOTSUPP;
-> +
-> +	for (i = 0; i < nconfigs; i++) {
-> +		enum pin_config_param param =
-> +					pinconf_to_config_param(configs[i]);
-> +		u32 arg = pinconf_to_config_argument(configs[i]);
-> +
-> +		switch (param) {
-> +		case PIN_CONFIG_BIAS_DISABLE:
-> +			if (conf_bits == 10)
-> +				mask |= (PINCFG_PE_10BIT | PINCFG_PS_10BIT | PINCFG_SPU_10BIT);
-> +			else
-> +				mask |= (PINCFG_PU_8BIT | PINCFG_PD_8BIT);
-> +			break;
-> +		case PIN_CONFIG_BIAS_PULL_DOWN:
-> +			if (conf_bits == 10) {
-> +				mask |= (PINCFG_PE_10BIT | PINCFG_PS_10BIT | PINCFG_SPU_10BIT);
-> +				val |= PINCFG_PE_10BIT;
-> +			} else {
-> +				mask |= (PINCFG_PU_8BIT | PINCFG_PD_8BIT);
-> +				val |= PINCFG_PD_8BIT;
-> +			}
-> +			break;
-> +		case PIN_CONFIG_BIAS_PULL_UP:
-> +			if (conf_bits == 10) {
-> +				mask |= (PINCFG_PE_10BIT | PINCFG_PS_10BIT | PINCFG_SPU_10BIT);
-> +				val |= (PINCFG_PE_10BIT | PINCFG_PS_10BIT);
-> +				if (arg == 2)
-> +					val |= PINCFG_SPU_10BIT;
-The value 2 Ohms is hijacked to be used as strong pull up.
-The more I look at that, the more it feels hacky.
+Hi Laurent,
 
-> +			} else {
-> +				mask |= (PINCFG_PU_8BIT | PINCFG_PD_8BIT);
-> +				val |= PINCFG_PU_8BIT;
-> +			}
-> +			break;
-> +		case PIN_CONFIG_DRIVE_STRENGTH:
-> +			if (conf_bits == 10)
-> +				mask |= PINCFG_DS_10BIT;
-> +			else
-> +				mask |= PINCFG_DS_8BIT;
-> +			val |= arg;
-The drive strength is assumed to be lsb (which is the case), but maybe 
-something like:
-	if (arg > FIELD_MAX(mask))
-		return -EINVAL;
-	val |= FIELD_PREP(mask, arg);
-would be more generic.
+On Wed, 28 Oct 2026 at 14:29, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Mon, Oct 26, 2026 at 03:55:23PM +0100, Geert Uytterhoeven wrote:
+> > Add definitions for the clocks used by the PWM modules on R-Car X5H:
+> >  - R8A78000_CPG_SGASYNCD16_PERW_MAIN,
+> >  - R8A78000_CPG_S0ASYNCD8_PERW_MAIN.
+> > Include R8A78000_CPG_SGASYNCD8_PERW_MAIN for ordering consistency.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +			break;
-> +		case PIN_CONFIG_INPUT_ENABLE:
-> +			if (conf_bits == 10) {
-> +				mask |= PINCFG_IE_10BIT;
-> +				if (arg)
-> +					val |= PINCFG_IE_10BIT;
-> +			} else {
-> +				mask |= PINCFG_IE_8BIT;
-> +				if (arg)
-> +					val |= PINCFG_IE_8BIT;
-> +			}
-> +			break;
-> +		case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
-> +			if (conf_bits == 10) {
-> +				mask |= PINCFG_ST_10BIT;
-> +				if (arg)
-> +					val |= PINCFG_ST_10BIT;
-> +			} else {
-> +				mask |= PINCFG_ST_8BIT;
-> +				if (arg)
-> +					val |= PINCFG_ST_8BIT;
-> +			}
-> +			break;
-> +		case PIN_CONFIG_SLEW_RATE:
-> +			if (conf_bits == 10) {
-> +				mask |= PINCFG_SL_10BIT;
-> +				if (arg)
-> +					val |= PINCFG_SL_10BIT;
-> +			} else {
-> +				mask |= PINCFG_SL_8BIT;
-> +				if (arg)
-> +					val |= PINCFG_SL_8BIT;
-> +			}
-> +			break;
-> +		default:
-> +			return -EOPNOTSUPP;
-> +		}
-> +	}
-> +
-> +	return regmap_update_bits(pctrl->regmap, group_desc->conf_offset, mask, val);
-> +}
-> +
-> +static const struct pinconf_ops berlin_confops = {
-> +	.is_generic = true,
-> +	.pin_config_group_get = berlin_pinconf_group_get,
-> +	.pin_config_group_set = berlin_pinconf_group_set,
-> +};
-> +
->   static int berlin_pinctrl_add_function(struct berlin_pinctrl *pctrl,
->   				       const char *name)
->   {
-> @@ -287,6 +510,7 @@ static const struct pinctrl_desc berlin_pctrl_desc = {
->   	.name		= "berlin-pinctrl",
->   	.pctlops	= &berlin_pinctrl_ops,
->   	.pmxops		= &berlin_pinmux_ops,
-> +	.confops	= &berlin_confops,
->   	.owner		= THIS_MODULE,
->   };
->   
-Regards,
-Richard
+> > --- a/include/dt-bindings/clock/renesas,r8a78000-cpg.h
+> > +++ b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
+> > @@ -28,5 +28,8 @@
+> >  #define R8A78000_CPG_SGD8_PERW_BUS           18
+> >  #define R8A78000_CPG_SGD32_PERW_BUS          19
+> >  #define R8A78000_CPG_S0D24_HSCN_OTHER                20
+> > +#define R8A78000_CPG_SGASYNCD8_PERW_MAIN     21
+> > +#define R8A78000_CPG_SGASYNCD16_PERW_MAIN    22
+>
+> Could you also add R8A78000_CPG_SGASYNCD4_PERW_MAIN and
+> R8A78000_CPG_SGASYNCD32_PERW_MAIN for ordering consistency ? The
+> dependency patch should then also include R8A78000_CPG_SGD4_PERW_BUS and
+> R8A78000_CPG_SGD16_PERW_BUS, as well as
+> R8A78000_CPG_S0D{1,2,4,8,12,16}_HSCN_OTHER.
+
+I could add them, but do you have any need to refer to them from DT?
+So far I only added clocks that are listed as clock supplies of on-SoC
+modules, e.g. R8A78000_CPG_SGASYNCD8_PERW_MAIN is supplied to the
+Timer Unit (TMU)).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
