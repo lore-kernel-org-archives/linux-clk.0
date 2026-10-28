@@ -1,60 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793192830;
-	b=c4OTLu3O0caN7IvKOmxXSttReNcTcwxXK0g7YqyRqC4Nh2USBXrTV3bfphZt8YS1uPqk
-	 K3gTPqFgOpN8mcnEdBMvSFytX4+JGAhsWkhFttXzAEXkIoqiE5TDCJrVbRcZqpQ04zVPj
-	 3dsuhVYxLg9ssw3JvOqQtT551/ezjEO1j/uhxqQ07u21XKNQ83Sl4S65Sgq3KF9lwEy2X
-	 hUkz/76zA9u16Im9rjSqK5Eui08Y7eczdtRQJggyLtQWdP9p8yoeoCPQtfQe4tzE7Lk72
-	 rJwJvIRcYougQpdULF2KaaMSPBj9IQIH7JoPACeNuAdWGZ1fVlAQhMwhG3bhy1hBBkQ==
+	t=1793193043;
+	b=p9dMm81/OUJOaFYXktXp0hEFz/XxTi4+P/YxG0dVr6ibAD+afTRKlTYvss8Ux8/Ey332
+	 IlktBAG8TA9/05SM7sWcwHg7XXn9TLf61t9i/vrv9ez2Q8GayuP8NWN9As3GDmy0XoRID
+	 RpEFooMzX5wj9fqz9P7WxZg/4c0xis3pYxJbkdyUYj3fk4PjDEtw+azsEY28RmkiwVyuM
+	 WIIn2ckUKbT/5u01CmiyueoI7QsBjJeOBXbFzFFcmN5H/hfJdw0plqHLUNQr56nbHHNFF
+	 UpEjNfMb5WWiFN1azH2+BUouWocNbXNA/TzaNtsJh0GJLqILxGpbaHWIAkyljRlgnUw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793192830;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793193043;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=GHlCkJUwCOHNDfNGV+Pk0+JrrHxYMGL+qd1XE/qEa4o=;
-	b=c20MEvG5Ue8sJ4H4tUbPpAZKinc8Tjt/C64wThsQ3xUU/PBLCt/ICS7lT++NWxarhpRL
-	 +F3F2tWyBruutYFN+xFhEiR1bjpTZFECBUMLsjJy5zwecRdyt9y/p44Vo7cSwnRpQRq4J
-	 Wi8hk4Vsg8aKxNEldKHTTaljHN7hqCks7u67s8lzcOR+Dl0Q13+0OyHB3pwPRRMBxlnaE
-	 urAeX+hOBv/rGqaUHbSSmUGl7nUS+xeQ/ZmKdQ9bnRZdONqtHaEDwu7zJ0Gh8UofDwBcA
-	 wkyau9DiqgQyYYvE0y4sq004mcnSmYhNKIco9i1v/Ys6+2YqdXiTa6PdYYBwvuDPvwg==
+	bh=S+BwsDySfman4KlBED+rbWuh/PEeFG4gD/brcjcRbmA=;
+	b=HRNah/ofr64Ah1hjXEx8L12v+ZYc2SfzkPU0oFXrzVurYJ4vCTJ+FR9bYJvty5Io4MXz
+	 1RUyX7Lt1QCmu9eOJ2w0ZJnbO2tJnHPtyWKmV4gpBJa/DwUswNPMTPHj1wVHlQ1vptqKJ
+	 93+KJXByNKxZDFcz9T801fupihejqvs91vjqKkXNrtDbzXRs5mE9SpoJYN/UvSly6ppkL
+	 Vzl00BlvXQHn/3Ya0/s9d9KS+8xGyHn+Vx/bGiwvRYsG19D4u+3ZTPqhepOYy2J07Lv6a
+	 kalaZB6gYfEBIGZ932DrbVeZ/pAoZiPjAbMmOJ9P1ucOQprwNL32C6dwUZBdp2wRowQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l161vgEo;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zp8PMlmm;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50A1606A31A;
-	Wed, 28 Oct 2026 13:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19183606A31A;
+	Wed, 28 Oct 2026 13:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l161vgEo
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 665211F01825;
-	Wed, 28 Oct 2026 13:07:08 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zp8PMlmm
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEB6B1F01825;
+	Wed, 28 Oct 2026 13:10:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793192829;
-	bh=GHlCkJUwCOHNDfNGV+Pk0+JrrHxYMGL+qd1XE/qEa4o=;
+	s=k20260515; t=1793193042;
+	bh=S+BwsDySfman4KlBED+rbWuh/PEeFG4gD/brcjcRbmA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=l161vgEo62t7JuyBQhX5FlU50DZRNFFOo45oMz7hoo96Eu/I71d72qkHFoOvOH3+n
-	 DkjskkfFszV8HuOG08UT1lcV2U0FnHcG7G7ZRjiMCrJjZlNwbkecbC7ubA/no937n9
-	 3h5TdF22S+rterzEJGM2Pte1NDVnV7rBzGNyFeLtY4DcnHK9qZhwks7aR940K1xdK1
-	 i0dah1QgQCuMqKy5m29zlY/UfZ/LAMwwGo+ajZE46fnGivknLBVh54UdarPV3s2QDc
-	 qciaobqdpJGR//rfc8V2w0VNh8QAw0ZyuVmQeq4ASllzoK9ZFH8crRtcp9/5tOz3FX
-	 6LrxtZjJ7XiHA==
-Date: Wed, 28 Oct 2026 14:07:06 +0100
+	b=Zp8PMlmmp+uq2NrV/CIJxtvqhDBj/gd4PK5onF/ExI55zN7hdbIuINn/Y/Bx0SQTG
+	 Pz3zRx1vjsGKw+kCvbTFuB9hwLQJ9ea+J5fitXzF5CoTeKky5T/qCnyLx3ZBS0WYBT
+	 rrelRx43Xnt15tHSb1x/LvW0ymiAvWdcZyZF4m6PaMwfkkqvcREXo7cvnKSmmzQXZG
+	 MvSFAD9MtUrvKq13ppO+VsCPE3zxuIAcco87RmHiuLJZt1lEwAZ5zQeMtyk91bjRyp
+	 MbLlVj1eC81yXn8LBED5fX5P5voF+Em9MWxTirvz1wKftBuV1ZUgogLao7zUw8Gcc9
+	 oynvvkCNg0qdw==
+Date: Wed, 28 Oct 2026 14:10:39 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Ulf Hansson <ulfh@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 07/11] dt-bindings: clock: renesas,r8a78000-cpg: Add PWM
- clocks
-Message-ID: <20261028-holistic-ultraviolet-kelpie-ead6bc@quoll>
-References: <cover.1793026273.git.geert+renesas@glider.be>
- <e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Thomas Gleixner <tglx@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
+	devicetree@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>, 
+	linux-arm-kernel@lists.infradead.org, Mariano Marciello <mmarciello@google.com>, 
+	Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org, 
+	Jakub =?utf-8?B?R8WCb3dhY2tp?= <jglow@google.com>
+Subject: Re: [PATCH 1/9] arm64: dts: google: Add Laguna CPM mailbox array
+Message-ID: <20261028-handsome-beaver-of-gallantry-b1b3bf@quoll>
+References: <20261026214359.3122870-1-briannorris@chromium.org>
+ <20261026144346.1.Iaf8214205f496225013f482f6e0035e89ac624f2@changeid>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -66,24 +68,31 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be>
+In-Reply-To: <20261026144346.1.Iaf8214205f496225013f482f6e0035e89ac624f2@changeid>
 
-On Mon, Oct 26, 2026 at 03:55:23PM +0100, Geert Uytterhoeven wrote:
-> Add definitions for the clocks used by the PWM modules on R-Car X5H:
->  - R8A78000_CPG_SGASYNCD16_PERW_MAIN,
->  - R8A78000_CPG_S0ASYNCD8_PERW_MAIN.
-> Include R8A78000_CPG_SGASYNCD8_PERW_MAIN for ordering consistency.
+On Mon, Oct 26, 2026 at 02:43:39PM -0700, Brian Norris wrote:
+> These are the request and response channels used for communicating with
+> the Central Power Manager (CPM) found on the Google Tensor SoC known as
+> Laguna.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
 > ---
-> This depends on "[PATCH 2/7] dt-bindings: clock: renesas,r8a78000-cpg:
-> Add GPIO clocks"
-> https://lore.kernel.org/624a9fb09e4ec74b1995797e5121b86e7206f5f2.1792776697.git.geert+renesas@glider.be
-> ---
->  include/dt-bindings/clock/renesas,r8a78000-cpg.h | 3 +++
->  1 file changed, 3 insertions(+)
+> Based on WIP bindings from:
+> 
+>   https://lore.kernel.org/all/20261023165211.v2.3.Ia186a29119b4b5c409815b755e0c2c3965b0495f@changeid/
+>   [PATCH v2 3/4] dt-bindings: mailbox: goog-mba: Add goog-mba mailbox bindings
+> 
+> which is part of this series:
+> 
+>   https://lore.kernel.org/all/20261023235408.3063350-1-dianders@chromium.org/
+>   [PATCH v2 0/4] mailbox: Improve the mbox core then introduce the goog-mba driver
+> 
+> The binding is still under review, but I include this anyway to help
+> prove out a working solution. This patch should not be accepted until
+> the binding is settled.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Regardless, DTS goes to the end of patchset (see submitting patches in
+DT bindings dir).
 
 Best regards,
 Krzysztof
