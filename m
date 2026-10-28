@@ -1,56 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793204454;
-	b=nTcQ+p0TefCjD5iVKmPGg5QvZDOuFP037tri0+/9YgHiW15MM+/TfzrpB+v64koFYc6q
-	 6CxRXHev4NuJBaxoweMQvHYntNxbVuSWkwHofxQx0MRoBVz+YNkJAU+q29D21yfG11Mzr
-	 Bb1Jl0/VMPed0ClVWz8oBD3HYYEadJfleo0x+u75dLtuNrgBYfv2pvSLqzSeB2v0sM9VC
-	 IOYWp/G1mAVJfADCFZD2SbkWtDWiEB0ZhdzMUEuzjbGa88OZscNpZA8JDdr+jQpjM1s+F
-	 sdyaEQTfsf+6Em+q7wnrrgpVxcAMb/lSd7y6GLbmHXzNj4h70Ct7uWO8lrpG3qZQCEA==
+	t=1793205584;
+	b=FWa0d9wLOcsbHkJ1h6IOVo0TVrhI8SxpS41OVRCMZEOvfCmcIFlib2J/dh3b04f9a4x6
+	 3DjmWFcF3/DLgWGh3cu78RfxKUXDXl/lJ600ZWIV+YG3mV4tZFbE61Iy+BZv6vnSnbhhC
+	 6tYomj/vR4MLCWnUzz2Ztf4RM+TsBtuUhH4m7gbsRzwtswXks0QOGKUU2Nh2WC8LkJb7x
+	 Vu78fwUlCICcMpsBHkm8hue/zKzQvzf2d9vGAaGuUy2fJshKH2qqZtzKx5PI4Ip+IVBWE
+	 azMI2ZKRyFKRGCESCPg8+B9e4TzrI8BiMjq3tnQkCUpOkBb5DlYg2Blxy2JmVk9u4lQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793204454;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=HLi+AFHUDMyCMFoC2gyqC6Ryd4Xwu4WFgMDpKdbYHu4=;
-	b=ka0LeyOfQUtZ/Qghxkr9xY6c3JqD5J8+KusxYQ09FFEIyp7UIPQVJU5k7bXzolL4wn9O
-	 cDcAuND4xwe/hSpF/NgP4wmFgbFngGCxCsAHpu6tV8knygoQ4dJsbatdn7FVUi+HIcSN6
-	 NwqqpNt/XEg4P+pWrU7EytBGYgLnPG9ttBdvcbvH4KLJemAGx6uSDIN9pwDl3I4DL4J8H
-	 9tZJZ/OZWDoqgKW8qgBZcIsNq0EaWLimjAf4MSk5qsuvpAda2AuOyNKrqLUJ9HN+A80ww
-	 VTSsz4FAFOO8jv/071n3ynIkxQFOcQBpfdKypM3T/sC9JqDjvWmEgwiiv2cHrBM+iBQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793205584;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To;
+	bh=TJlktW/QHwQzWX8KmM3KGgch3rcXax0gFxtt66ySgB4=;
+	b=JwTuA5jiAYChuuz7E+qQETw9nwrUw6/6Myo6fm/mXnzcgzzdN1vZy4EPLn1NykW7Znnc
+	 IB6f2C+gxCA6XSO9+mEbeLlPCVistl+7wS9AFTy4waKJCBs83br6B53MdItL5ZTCd+AJw
+	 9GaPKS5oDvLrjZcVQxzddGgXIst9HjWbyJ7nsrUkDqwesaUg6L/U0PJoMPi9s/qdt13Dd
+	 uhaD8IM/nal7pbSK/gJFIWiNWQAeD2sqX6TvmEYoA9b7BjIlEVJKbxYcOKjTKt8kH6Zwu
+	 BO7zOnQchLdWmZt1QX3IJ2wVicTMV1qqB1kC19sRQbzJ+Wfb4fpETEYJan2myLLVFqQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BSWw6fmX;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=ideasonboard.com;
+	spf=pass smtp.mailfrom=ideasonboard.com;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=aoMmoJYo;
+	arc=none smtp.remote-ip=213.167.242.64
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8D3606A31D;
-	Wed, 28 Oct 2026 16:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133AF606A335;
+	Wed, 28 Oct 2026 16:39:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 133AF606A335
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BSWw6fmX
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97B571F01825;
-	Wed, 28 Oct 2026 16:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793204453;
-	bh=HLi+AFHUDMyCMFoC2gyqC6Ryd4Xwu4WFgMDpKdbYHu4=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=BSWw6fmXDkNpmYoQXmT4jsTDQT5ZkhIvNFDiO2hwjpfAQgM0fXBdq/JbI/3CetQ2v
-	 3MfxDya/DhJzMm1jTUQQYTkbYO3uoD9ePzSKqsTUV/2aJ1kD23HjvdteJXqss5Q1Ec
-	 tSXZkf1hHXGWkcPhSm8DwVRJ8ccXNOeHFx+12BtkPDo0jSg1pyz6BoUaxQLYT/akcr
-	 Xhb3jBQ+y90WI4AJVPEs869ZmPDe1LlyxsSm1Y9V+J/YMtt2n8u1NYV+buUWh7hbTA
-	 AvAJDyAgXfbqzS5HjQwDoAmm7O0KA9gTVUcjT5Wmyqi0UAsImVoREUODFVHiQzSVwe
-	 T0ODdPHL0ZN9g==
-Message-ID: <sashiko-outbox-188157@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 3/4] firmware: tegra: bpmp: Add per-SoC EMC clock ID
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Johnny Liu" <johnliu@nvidia.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261028155000.1205739-4-johnliu@nvidia.com>
-References: <20261028155000.1205739-1-johnliu@nvidia.com>
- <20261028155000.1205739-4-johnliu@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 28 Oct 2026 16:20:53 +0000
+	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=aoMmoJYo
+Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E9BADB07;
+	Wed, 28 Oct 2026 17:37:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1793205449;
+	bh=5oFtXnzBQ98MFaco5zMv+o9V6iN5E4nNphi2zpmABz4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aoMmoJYo7EOox5Wv63orgylHjdTEx5VSBwQdf4G54k4lg1X1J25tmZPH/0b21GbOQ
+	 KV5hzzcJ6M1/2PbiGQDQVL3xCY5yuEUnAlaD92gnsz1am0ww70WreQbrmGB62HeJ0Y
+	 UJdm3Fm4e/02xIBObfm44Grlb8/rDMMSRTHEDMiM=
+Date: Wed, 28 Oct 2026 18:39:40 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Ulf Hansson <ulfh@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH 07/11] dt-bindings: clock: renesas,r8a78000-cpg: Add PWM
+ clocks
+Message-ID: <20261028163940.GA2673734@killaraus.ideasonboard.com>
+References: <cover.1793026273.git.geert+renesas@glider.be>
+ <e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be>
+ <20261028132937.GL15441@killaraus.ideasonboard.com>
+ <CAMuHMdXycpJ6COtiAA-2oRRfHSfLK40n2cacStW15QJRN3EfLQ@mail.gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,79 +73,54 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXycpJ6COtiAA-2oRRfHSfLK40n2cacStW15QJRN3EfLQ@mail.gmail.com>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] firmware: tegra: bpmp: missing emc_clk_id for Tegra186 and Tegra=
-194
---
+On Wed, Oct 28, 2026 at 03:43:42PM +0100, Geert Uytterhoeven wrote:
+> On Wed, 28 Oct 2026 at 14:29, Laurent Pinchart wrote:
+> > On Mon, Oct 26, 2026 at 03:55:23PM +0100, Geert Uytterhoeven wrote:
+> > > Add definitions for the clocks used by the PWM modules on R-Car X5H:
+> > >  - R8A78000_CPG_SGASYNCD16_PERW_MAIN,
+> > >  - R8A78000_CPG_S0ASYNCD8_PERW_MAIN.
+> > > Include R8A78000_CPG_SGASYNCD8_PERW_MAIN for ordering consistency.
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> > > --- a/include/dt-bindings/clock/renesas,r8a78000-cpg.h
+> > > +++ b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
+> > > @@ -28,5 +28,8 @@
+> > >  #define R8A78000_CPG_SGD8_PERW_BUS           18
+> > >  #define R8A78000_CPG_SGD32_PERW_BUS          19
+> > >  #define R8A78000_CPG_S0D24_HSCN_OTHER                20
+> > > +#define R8A78000_CPG_SGASYNCD8_PERW_MAIN     21
+> > > +#define R8A78000_CPG_SGASYNCD16_PERW_MAIN    22
+> >
+> > Could you also add R8A78000_CPG_SGASYNCD4_PERW_MAIN and
+> > R8A78000_CPG_SGASYNCD32_PERW_MAIN for ordering consistency ? The
+> > dependency patch should then also include R8A78000_CPG_SGD4_PERW_BUS and
+> > R8A78000_CPG_SGD16_PERW_BUS, as well as
+> > R8A78000_CPG_S0D{1,2,4,8,12,16}_HSCN_OTHER.
+> 
+> I could add them, but do you have any need to refer to them from DT?
+> So far I only added clocks that are listed as clock supplies of on-SoC
+> modules, e.g. R8A78000_CPG_SGASYNCD8_PERW_MAIN is supplied to the
+> Timer Unit (TMU)).
 
-commit cbaa54ccaf9df29aa946e309eb402aa8387ad5ef
-Author: Johnny Liu <johnliu@nvidia.com>
+So we have two conflicting goals here. One of them is to only add clocks
+that we have validated to exist (and ideally work as documented). The
+other is to keep renesas,r8a78000-cpg.h readable. We won't be able to
+satisfy them both fully.
 
-firmware: tegra: bpmp: Add per-SoC EMC clock ID
+I think we previously discussed adding whole groups of dividers in one
+go, as some sort of middle-ground approach. Those are clocks that are
+not directly controllable. There's a risk of adding clocks that don't
+exist, or clocks that we won't need to reference from DT (because
+they're only used as parents of the MDLC-controlled module clock). Do
+you think that's an issue, could it cause ABI problems in the future ?
 
-This commit adds an emc_clk_id field to struct tegra_bpmp_soc and populates
-it for Tegra234, Tegra238, and Tegra264 while leaving it unset for Tegra186
-and Tegra194.
+-- 
+Regards,
 
-> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-> index beeb385870f59..06da888535dc0 100644
-> --- a/drivers/firmware/tegra/bpmp.c
-> +++ b/drivers/firmware/tegra/bpmp.c
-
-[ ... ]
-
-> @@ -1158,14 +1162,17 @@ static const struct tegra_bpmp_soc tegra186_soc =
-=3D {
-> =20
->  static const struct tegra_bpmp_soc tegra234_soc =3D {
->  	TEGRA186_BPMP_SOC_COMMON,
-> +	.emc_clk_id =3D TEGRA234_CLK_EMC,
->  };
-
-[Severity: Medium]
-The commit message states that Tegra186 and Tegra194 have no EMC clock ID
-and leaves emc_clk_id unset in tegra186_soc. Is that accurate for those two
-SoCs?
-
-Both SoCs define BPMP EMC clock IDs in their device tree binding headers:
-
-include/dt-bindings/clock/tegra186-clock.h:
-    #define TEGRA186_CLK_EMC 58
-
-include/dt-bindings/clock/tegra194-clock.h:
-    #define TEGRA194_CLK_EMC			31
-
-Their external-memory-controller device tree nodes (handled by
-drivers/memory/tegra/tegra186-emc.c) also consume those clocks from the BPMP
-node:
-
-arch/arm64/boot/dts/nvidia/tegra186.dtsi:
-    emc: external-memory-controller@2c60000 {
-        compatible =3D "nvidia,tegra186-emc";
-        ...
-        clocks =3D <&bpmp TEGRA186_CLK_EMC>;
-
-arch/arm64/boot/dts/nvidia/tegra194.dtsi:
-    emc: external-memory-controller@2c60000 {
-        compatible =3D "nvidia,tegra194-emc";
-        ...
-        clocks =3D <&bpmp TEGRA194_CLK_EMC>;
-
-In the follow-up commit ("clk: tegra: bpmp: Do not cache the EMC clock
-rate"), tegra_bpmp_clk_register() in drivers/clk/tegra/clk-bpmp.c checks
-if (bpmp->soc->emc_clk_id && info->id =3D=3D bpmp->soc->emc_clk_id) before
-setting CLK_GET_RATE_NOCACHE. With emc_clk_id left at 0 in tegra186_soc,
-tegra_bpmp_clk_register() will skip setting CLK_GET_RATE_NOCACHE on both
-Tegra186 and Tegra194.
-
-In addition, because the BPMP node in arch/arm64/boot/dts/nvidia/tegra194.d=
-tsi
-uses compatible =3D "nvidia,tegra186-bpmp", Tegra186 and Tegra194 currently
-share tegra186_soc even though their EMC clock IDs differ (58 vs 31). Should
-Tegra186 and Tegra194 also have their EMC clock IDs configured?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261028155000.1205=
-739-1-johnliu@nvidia.com?part=3D3
+Laurent Pinchart
