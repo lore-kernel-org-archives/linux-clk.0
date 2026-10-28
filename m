@@ -1,57 +1,61 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793182434;
-	b=gSzn1KEItLacjuhj6M2ixmUEEeQmBY71pvRonbMv2HjZYx3WJvzbInrIEGzEDXiVPoe4
-	 kql5/IYF/whx0CXeWsw2jRZN84WABwsmb5HD+0nbGmGsF/kvceJfVFed/Gu7/MyQojOPH
-	 yZHXNzcUZMpnQj129gst2yZETWN95RBURl+9YgYX3Jp5c9R/1Krm6xMtldYet/Z9XcUXV
-	 MljJmy+r31+Z2z/+SLFZjMJXUfSoj4VYsp0QJbQTlMer6jsbm5n8CpQT8RYgZahEEz0Kv
-	 bUhb3XWzy5AbI9FY/61MwO0gx1Pk8l0j9qmOgrjZLmFFnyNfIrelj0CMVcKpQ5CTk8Q==
+	t=1793182572;
+	b=vx+6O1SC+SawEJAXRzbvDSpbDDBh1taCW6KTkhkCZkc795q34derijguDwwv45MtTE2G
+	 q1mxVQkeDAOgdV8/AkfTJ8dJryHzR/01CZF6LLPI6Z5hwzglrAAJdWykyjRFN3Ji5ZRmd
+	 aej8JKU+3v3PcdWACPYh/V051hjXgxuHt27Jj58C00ms2quwOtJJ0XnZg67RaScO5Skia
+	 0nPkA0FyYzjvvlPJkRKRGEKVrp98u2jWhcTGdoLP8r7T1ML23xdYrISs/yIbGWcDZH2xY
+	 ApNR0vo9cvWjniGPqKicKH2+hiPSK3LExkYHo/rB9V7+X6THmmqmuosTX5LhD2Jd/Kg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793182434;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=LVuykuiWIA6J2eBKnto+ivcOpxe5lv2bGEqxzguhQRM=;
-	b=YMN60NP3kO5JIYkYf2+qgwu6lzgpsrDpeoc7U65urFRpXcS1ZT0pSVNgO8Ps1bVOeBUk
-	 x2b3Jl2OSAF3zxK4HdL7ZvfqvGgLVhO/j880sOroXvQ46Pu/hNHhTyD78k7+wUKlpE5sv
-	 X7C7IBeQspy35qsh/2mYcamZsnn6lv9u2Wo0bSBy9dSc/B4ATTrZdC3VMxOIDkbcZzby9
-	 W78bpxHCWYUO6RzbLYLVJUbpKrM4CA+/vDKOV6l1S5DiUbAoK1sn8Duqp2E1XKAs/+reH
-	 Kas1od4ylTvSUCUmje/4MyrvOyJ8FzlikXY9aLzF/4HJ9UQZ5Wsb35uO7GaWeKWQhHg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793182572;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:Received:Received:From:In-Reply-To:
+	 MIME-Version:References:Date:X-Gmail-Original-Message-ID:
+	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
+	bh=bjLe+3f9gc9bVK8rm2L9uAXKG4i5uaLi17dzEkbJ/vQ=;
+	b=x8ZPWpzkyylIwih8CAi+W9dfPRPkpa2kY1uccVks0S5laa74xcXFS5nTtZdD+Adrle86
+	 tvJ2BFsQdfuABUhW8kOKmhWPAkXSTcy6JZmsY7VzkwT8I8yMisCZjykdZVyq4fj3zsrLe
+	 hlMrYe4upkzmgNa/2o0b/NSuvnWcLPjbByM7xRgmP0Nk/rjMtrhF9Dp7EOpOHXs8LMZVJ
+	 gIJk3m5vA/Lqc9V7ReTYqzeOevxgw6YymC0I04oViEJn2TNURpIRxJPbfrkWDMCAzdx3s
+	 Zv1qBgr1umYf+wa4kvm4fsXhyYswVfeehEdxZpUWJNJPxFT/XYDcvEd8dLR1lygFhPA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m6GhsKqh;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nzJkESHs;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CC6606A31A
-	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 10:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5442E606A31E
+	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 10:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m6GhsKqh
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C071F01825;
-	Wed, 28 Oct 2026 10:13:53 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nzJkESHs
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDCA31F031E0
+	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 10:16:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793182433;
-	bh=LVuykuiWIA6J2eBKnto+ivcOpxe5lv2bGEqxzguhQRM=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=m6GhsKqhiGYEbA55GhnDdcFdg1apmARgrev78XhBWHZvVqRPNqcit+zgWe/zV5sZD
-	 4I14Vv61TGsYxI+MCTIikWVG64h3iKp9p0nnYw0qfiPeOm44mkbFM4ev/stk/B9GKQ
-	 XVhxFRE3bfV7kcv2PZfsNYCcwhTBe+yqwq3pVoIreLDgvCvotBWEEV8+fuekIlkB9N
-	 T6MIjaMGTUd/ynTEzTXVBtTnxtSCJWMf/qzwzUx1KXg2orQfEgZwn6vdMeUPwg/lsP
-	 sRpqMWzUgiew/raQj4+QTGLyZsW0q1uQlftf+LNvqYyuFnNkimgAP1pdhG8R3HJFEE
-	 pbw6Y3rWr4RKQ==
-Message-ID: <sashiko-outbox-187735@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC 1/3] clk: Add a way to restore the clocks of a
- provider after a power cycle
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Abel Vesa" <abel.vesa@oss.qualcomm.com>
-Cc: linux-clk@vger.kernel.org
-In-Reply-To: <20261028-b4-clk-restore-after-hibernation-v1-1-86cf62747a7f@oss.qualcomm.com>
-References: <20261028-b4-clk-restore-after-hibernation-v1-0-86cf62747a7f@oss.qualcomm.com>
- <20261028-b4-clk-restore-after-hibernation-v1-1-86cf62747a7f@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 28 Oct 2026 10:13:53 +0000
+	s=k20260515; t=1793182571;
+	bh=bjLe+3f9gc9bVK8rm2L9uAXKG4i5uaLi17dzEkbJ/vQ=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=nzJkESHs9vjaBVk4IKEIk1sIw+sGwc6nv8lk9qmS7B4AtVqMCtYf6ltFjwimdSmcH
+	 hrey524MFc1VoRuk5+LQN5WiuVHoYZJsaPxxgahYceUnRsxJqIOAsSyvNFj4ekFO6A
+	 0jvORsYPiuu52tyNXskOJJcDZ5ohfHqzR+WQfjCjkL/WTgxu0vn/G/0r2X31XyXvj7
+	 DEmZggRQJpwBhh2jCg+2uzcBFuH3Kfp1stEZBZCMTiOCIz9CbHIu5G1slz6/3GMTF7
+	 fxqX/srR0LnxJPTmd53brR43Hv+lYVYWLurrwO2nDrCAhWL+1HOvnIvaqHBUUYYe2d
+	 vQxcAIVDd7SXQ==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3a9e87ba696so5928161fa.0
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 03:16:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwfIsrV5ODjO20RpgXET9scfntOa0dWMBvOgDWehbn+8N88Hx0z4kZ9/vqc4JdfZUepmOSJuQwxFoM=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIdIWRfb+Q+kab3uReKFE3pekAByQTouejK6cd2/HANAOkIgE39
+	vbaEYsiv0jW8HwYBs9Eq0UBICluqfbmR+Owqtyc7k3i35/j25KilGpNLXXPDL1NuAtLK8zXRO/h
+	yynD/JujC9IMIvsHqxiS1EepwEDDB/Wmv/1+Nuia+xA==
+X-Received: by 2002:a05:651c:509:b0:3ab:37ee:aab6 with SMTP id
+ 38308e7fff4ca-3ac9cf6327cmr3565321fa.17.1793182570561; Wed, 28 Oct 2026
+ 03:16:10 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 28 Oct 2026 03:16:09 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 28 Oct 2026 03:16:09 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20261022-add-board-ok3572-c-v1-9-0b0fd85a31ee@qq.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,266 +64,288 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com> <20261022-add-board-ok3572-c-v1-9-0b0fd85a31ee@qq.com>
+Date: Wed, 28 Oct 2026 03:16:09 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MeNF_=T2Yb6wzsQFFcpO+w7sLgaKR=sZhZRzRDFcpgumw@mail.gmail.com>
+X-Gm-Features: AclHuK_BQRJk4TIxkYuHqPCftlY-tqaqteyj8aBVDFPyNxJaNTje36_cX4YFAeQ
+Message-ID: <CAMRc=MeNF_=T2Yb6wzsQFFcpO+w7sLgaKR=sZhZRzRDFcpgumw@mail.gmail.com>
+Subject: Re: [PATCH 09/27] gpio: rockchip: Add RK3572 GPIO support
+To: 1579567540@qq.com
+Cc: Cunhao Lu via B4 Relay <devnull+1579567540.qq.com@kernel.org>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	mfd@lists.linux.dev, linux-gpio@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-phy@lists.infradead.org, 
+	linux-usb@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Elaine Zhang <zhangqing@rock-chips.com>, Lee Jones <lee@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Andi Shyti <andi.shyti@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	David Wu <david.wu@rock-chips.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	Jaehoon Chung <jh80.chung@samsung.com>, Shawn Lin <shawn.lin@rock-chips.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Thank you for your contribution! Sashiko AI review found 5 potential issue(=
-s) to consider:
-- [High] clk: clk_core_restore_state() ignores set_rate_and_parent callback
-- [High] clk: clk_core_restore_state() ignores CLK_OPS_PARENT_ENABLE and UN=
-GATE flags
-- [High] clk: clk_core_restore_state() calls set_parent/set_rate before ena=
-ble
-- [High] clk: clk_core_restore_state() passes unvalidated boot rate to set_=
-rate()
-- [Medium] clk: clk_core_restore_state() checks enable_count outside clk_en=
-able_lock()
---
+On Wed, 21 Oct 2026 18:11:06 +0200, Cunhao Lu via B4 Relay
+<devnull+1579567540.qq.com@kernel.org> said:
+> From: Cunhao Lu <1579567540@qq.com>
+>
+> Support GPIO V2.7, four parent interrupts, and firmware-provided
+> interrupt-group masks. Keep all pins on the primary interrupt when group
+> queries are unavailable.
+>
+> Signed-off-by: Cunhao Lu <1579567540@qq.com>
+> ---
+>  drivers/gpio/gpio-rockchip.c        | 91 +++++++++++++++++++++++++++++++++----
+>  drivers/pinctrl/pinctrl-rockchip.h  |  8 +++-
+>  include/soc/rockchip/rockchip_sip.h |  5 ++
+>  3 files changed, 92 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+> index 77b239a9a601e..35894a68b5446 100644
+> --- a/drivers/gpio/gpio-rockchip.c
+> +++ b/drivers/gpio/gpio-rockchip.c
+> @@ -6,6 +6,7 @@
+>   * Copyright (c) 2021 Rockchip Electronics Co. Ltd.
+>   */
+>
+> +#include <linux/arm-smccc.h>
+>  #include <linux/bitops.h>
+>  #include <linux/clk.h>
+>  #include <linux/device.h>
+> @@ -21,6 +22,7 @@
+>  #include <linux/pinctrl/pinconf-generic.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+> +#include <soc/rockchip/rockchip_sip.h>
+>
+>  #include "../pinctrl/core.h"
+>  #include "../pinctrl/pinctrl-rockchip.h"
+> @@ -35,6 +37,7 @@
+>  #define GPIO_TYPE_V2		(0x01000C2B)
+>  #define GPIO_TYPE_V2_1		(0x0101157C)
+>  #define GPIO_TYPE_V2_2		(0x010219C8)
+> +#define GPIO_TYPE_V2_7		(0x01074D2E)
+>
+>  static const struct rockchip_gpio_regs gpio_regs_v1 = {
+>  	.port_dr = 0x00,
+> @@ -209,12 +212,27 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
+>  	if (bank->gpio_type == GPIO_TYPE_V2 && !IS_ERR(bank->db_clk)) {
+>  		div_debounce_support = true;
+>  		freq = clk_get_rate(bank->db_clk);
+> -		max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
+> -		if (debounce > max_debounce)
+> -			return -EINVAL;
+>
+> -		div = debounce * freq;
+> -		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
+> +		if (of_device_is_compatible(bank->of_node, "rockchip,rk3572-gpio-bank")) {
+> +			if (!freq)
+> +				return -EINVAL;
+> +
+> +			div = (u64)(GENMASK(23, 0) + 1) * USEC_PER_SEC;
+> +			max_debounce = div_u64(div, 2 * freq);
+> +			if (debounce > max_debounce)
+> +				return -EINVAL;
+> +
+> +			div = (u64)debounce * freq * 2;
+> +			div_reg = DIV_ROUND_CLOSEST_ULL(div, USEC_PER_SEC);
+> +			div_reg = div_reg ? div_reg - 1 : 0;
+> +		} else {
+> +			max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
+> +			if (debounce > max_debounce)
+> +				return -EINVAL;
+> +
+> +			div = debounce * freq;
+> +			div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
+> +		}
+>  	} else {
+>  		div_debounce_support = false;
+>  	}
+> @@ -342,6 +360,12 @@ static void rockchip_irq_demux(struct irq_desc *desc)
+>  	chained_irq_enter(chip, desc);
+>
+>  	pending = readl_relaxed(bank->reg_base + bank->gpio_regs->int_status);
 
-commit 78198c18d1a2d0f099c9c205f894c06eba8b44ff
-Author: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Please sprinkle in some newlines for readability here...
 
-clk: Add a way to restore the clocks of a provider after a power cycle
+> +	for (unsigned int i = 0; i < bank->nr_irqs; i++) {
+> +		if (bank->irqs[i] == irq_desc_get_irq(desc)) {
+> +			pending &= bank->irq_masks[i];
+> +			break;
+> +		}
+> +	}
 
-This commit adds clk_restore_context_dev() to reprogram the cached parent,
-rate, and prepare/enable state into hardware for all clocks registered by a
-given provider device after a power cycle such as hibernation restore.
+... here ...
 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 4d2cc86bfbeb6..316c3c85f247d 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1449,6 +1449,74 @@ void clk_restore_context(void)
+>  	for_each_set_bit(irq, &pending, 32) {
+>  		dev_dbg(bank->dev, "handling irq %d\n", irq);
+>
+> @@ -568,8 +592,9 @@ static int rockchip_interrupts_register(struct rockchip_pin_bank *bank)
+>  	rockchip_gpio_writel(bank, 0xffffffff, bank->gpio_regs->int_en);
+>  	gc->mask_cache = 0xffffffff;
+>
+> -	irq_set_chained_handler_and_data(bank->irq,
+> -					 rockchip_irq_demux, bank);
+> +	for (unsigned int i = 0; i < bank->nr_irqs; i++)
+> +		irq_set_chained_handler_and_data(bank->irqs[i],
+> +						 rockchip_irq_demux, bank);
+>
+>  	return 0;
 >  }
->  EXPORT_SYMBOL_GPL(clk_restore_context);
-> =20
-> +static int clk_fetch_parent_index(struct clk_core *core,
-> +				  struct clk_core *parent);
-> +
-> +/* Program the cached parent, rate and prepare/enable state into the har=
-dware */
-> +static void clk_core_restore_state(struct clk_core *core)
+> @@ -645,6 +670,36 @@ static void rockchip_clk_put(void *data)
+>  	clk_put(clk);
+>  }
+>
+> +static int rockchip_gpio_read_irq_groups(struct rockchip_pin_bank *bank)
 > +{
-> +	struct clk_core *parent =3D core->parent;
-> +	unsigned long flags;
-> +	int index;
+> +	struct arm_smccc_res res;
+> +	u32 assigned = 0;
+> +	int status;
 > +
-> +	lockdep_assert_held(&prepare_lock);
-> +
-> +	if (parent && core->num_parents > 1 && core->ops->set_parent) {
-> +		index =3D clk_fetch_parent_index(core, parent);
-> +		if (index >=3D 0)
-> +			core->ops->set_parent(core->hw, index);
+> +	for (unsigned int i = 1; i < bank->nr_irqs; i++) {
+> +		arm_smccc_smc(ROCKCHIP_SIP_GPIO_CONFIG, ROCKCHIP_SIP_GPIO_GET_GROUP,
+> +			      bank->bank_num, i, 0, 0, 0, 0, &res);
+> +		status = (int)res.a0;
+> +		if (i == 1 && (status == SMCCC_RET_NOT_SUPPORTED ||
+> +			       status == ROCKCHIP_SIP_RET_NOT_SUPPORTED)) {
+> +			/* Older firmware leaves all pins on the primary IRQ. */
+> +			dev_dbg(bank->dev, "GPIO group query unsupported: %d\n",
+> +				status);
+> +			break;
+> +		}
+> +		if (status)
+> +			return dev_err_probe(bank->dev, -EIO,
+> +					     "cannot read interrupt group %u: %d\n",
+> +					     i, status);
+> +		bank->irq_masks[i] = res.a1;
+> +		if (assigned & bank->irq_masks[i])
+> +			return -EINVAL;
+> +		assigned |= bank->irq_masks[i];
 > +	}
 
-[Severity: High]
-What happens here when a clock implements core->ops->set_rate_and_parent
-and cannot tolerate separate .set_parent() and .set_rate() calls?
+... here, etc.
 
-In drivers/clk/clk.c, clk_change_rate() prefers .set_rate_and_parent() when
-both parent and rate are updated:
-
-	if (core->ops->set_rate_and_parent) {
-		skip_set_rate =3D true;
-		core->ops->set_rate_and_parent(core->hw, core->new_rate,
-				best_parent_rate,
-				core->new_parent_index);
-	} else if (core->ops->set_parent) {
-		core->ops->set_parent(core->hw, core->new_parent_index);
-	}
-
-In clk_core_restore_context_dev() -> clk_core_restore_state(), calling
-core->ops->set_parent() and core->ops->set_rate() separately without
-checking core->ops->set_rate_and_parent breaks clocks that rely on the
-combined callback. For example, in drivers/clk/qcom/clk-rcg2.c,
-clk_gfx3d_set_rate() is a no-op stub:
-
-static int clk_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
-			      unsigned long parent_rate)
-{
-	/*
-	 * We should never get here; clk_gfx3d_determine_rate() should always
-	 * make us use a different parent than what we're currently using, so
-	 * clk_gfx3d_set_rate_and_parent() should always be called.
-	 */
-	return 0;
-}
-
-On clk_gfx3d_ops, clk_rcg2_set_parent() only updates CFG_SRC_SEL_MASK and
-only clk_gfx3d_set_rate_and_parent() programs the divider cgfx->div into
-CFG_SRC_DIV_SHIFT. Similarly, c910_clk_set_rate() in
-drivers/clk/thead/clk-th1520-ap.c returns -EOPNOTSUPP, and on standard
-Qualcomm RCG2 and composite clocks, switching the parent mux before
-reprogramming the divider can cause a transient frequency spike while the
-divider still holds its boot value.
-
-Should clk_core_restore_state() use core->ops->set_rate_and_parent() when
-both parent and rate are being restored?
-
-[Severity: High]
-Also, could calling .set_parent() and .set_rate() here without honoring
-CLK_OPS_PARENT_ENABLE and CLK_SET_RATE_UNGATE cause hardware update
-timeouts when the parent or clock is currently disabled?
-
-In drivers/clk/clk.c, clk_change_rate() prepares and enables the clock and
-its parent around rate and parent programming when those flags are set:
-
-	if (core->flags & CLK_SET_RATE_UNGATE) {
-		clk_core_prepare(core);
-		clk_core_enable_lock(core);
-	}
-	...
-	if (core->flags & CLK_OPS_PARENT_ENABLE)
-		clk_core_prepare_enable(parent);
-
-During hibernation restore, provider restore callbacks run while many
-configured clocks and their parents have prepare_count =3D=3D 0 and
-enable_count =3D=3D 0. Even though clk_restore_context_dev() visits parents
-before children, clk_core_restore_state() only enables the parent if
-parent->enable_count is non-zero. When clk_core_restore_state() then calls
-.set_parent() or .set_rate() on a child with CLK_OPS_PARENT_ENABLE (such as
-Qualcomm RCG2 clocks using clk_rcg2_ops), update_config() in
-drivers/clk/qcom/clk-rcg2.c cannot complete its hardware handshake while
-the parent is gated:
-
-	for (count =3D 500; count > 0; count--) {
-		ret =3D regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG, &cmd);
-		if (ret)
-			return ret;
-		if (!(cmd & CMD_UPDATE))
-			return 0;
-		udelay(1);
-	}
-
-	WARN(1, "%s: rcg didn't update its configuration.", name);
-	return -EBUSY;
-
-Should clk_core_restore_state() temporarily prepare and enable the parent
-(for CLK_OPS_PARENT_ENABLE) and the clock itself (for CLK_SET_RATE_UNGATE)
-around the parent and rate restore operations?
-
-> +
-> +	if (core->rate && core->ops->set_rate)
-> +		core->ops->set_rate(core->hw, core->rate,
-> +				    parent ? parent->rate : 0);
-
-[Severity: High]
-Is it safe to pass core->rate unconditionally to core->ops->set_rate() if
-no consumer ever called clk_set_rate() on this clock?
-
-At registration time in __clk_core_init(), core->rate is initialized from
-core->ops->recalc_rate() based on the power-on reset register state (for
-example, 19.2 MHz from XO on Qualcomm RCG2 clocks) rather than a rate
-validated by .determine_rate().
-
-For clocks using clk_rcg2_shared_floor_ops whose frequency table only
-contains PLL frequencies above 19.2 MHz (such as
-gcc_sdcc1_ice_core_clk_src in drivers/clk/qcom/gcc-eliza.c, where the table
-starts at 100 MHz), passing the 19.2 MHz boot rate into
-clk_rcg2_shared_floor_set_rate() -> __clk_rcg2_shared_set_rate() causes
-qcom_find_freq_floor() to return NULL:
-
-	switch (policy) {
-	case FLOOR:
-		f =3D qcom_find_freq_floor(rcg->freq_tbl, rate);
-		break;
-	case CEIL:
-		f =3D qcom_find_freq(rcg->freq_tbl, rate);
-		break;
-	default:
-		return -EINVAL;
-	}
-
-	if (!clk_hw_is_enabled(hw))
-		return __clk_rcg2_configure(rcg, f, &rcg->parked_cfg);
-
-	return clk_rcg2_shared_force_enable_clear(hw, f);
-
-Because __clk_rcg2_shared_set_rate() does not check for a NULL f before
-calling __clk_rcg2_configure(), dereferencing f->src triggers a NULL
-pointer dereference. On CEIL-policy clocks (clk_rcg2_ops), passing an
-unconfigured 19.2 MHz boot rate to clk_rcg2_set_rate() rounds up to the
-lowest PLL entry in freq_tbl and switches the hardware mux to that PLL,
-desynchronizing the hardware parent and rate from core->parent and
-core->rate.
-
-> +
-> +	if (core->prepare_count && core->ops->prepare)
-> +		core->ops->prepare(core->hw);
-> +
-> +	if (core->enable_count && core->ops->enable) {
-> +		flags =3D clk_enable_lock();
-> +		core->ops->enable(core->hw);
-> +		clk_enable_unlock(flags);
-> +	}
+> +	bank->irq_masks[0] = ~assigned;
+> +	return 0;
 > +}
+> +
+>  static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+>  {
+>  	struct platform_device *pdev = to_platform_device(bank->dev);
+> @@ -654,10 +709,23 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+>  	if (IS_ERR(bank->reg_base))
+>  		return PTR_ERR(bank->reg_base);
+>
+> -	ret = platform_get_irq(pdev, 0);
+> +	ret = platform_irq_count(pdev);
+>  	if (ret < 0)
+>  		return ret;
+> -	bank->irq = ret;
+> +	if (ret != (of_device_is_compatible(bank->of_node,
+> +					    "rockchip,rk3572-gpio-bank") ? 4 : 1))
+> +		return -EINVAL;
+> +	bank->nr_irqs = ret;
+> +	for (unsigned int i = 0; i < bank->nr_irqs; i++) {
+> +		ret = platform_get_irq(pdev, i);
+> +		if (ret < 0)
+> +			return ret;
+> +		bank->irqs[i] = ret;
+> +	}
+> +
+> +	ret = rockchip_gpio_read_irq_groups(bank);
+> +	if (ret)
+> +		return ret;
+>
+>  	bank->clk = devm_clk_get_enabled(bank->dev, NULL);
+>  	if (IS_ERR(bank->clk))
+> @@ -669,6 +737,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+>  	case GPIO_TYPE_V2:
+>  	case GPIO_TYPE_V2_1:
+>  	case GPIO_TYPE_V2_2:
+> +	case GPIO_TYPE_V2_7:
+>  		bank->gpio_regs = &gpio_regs_v2;
+>  		bank->gpio_type = GPIO_TYPE_V2;
+>  		bank->db_clk = of_clk_get(bank->of_node, 1);
+> @@ -797,7 +866,8 @@ static void rockchip_gpio_remove(struct platform_device *pdev)
+>  {
+>  	struct rockchip_pin_bank *bank = platform_get_drvdata(pdev);
+>
+> -	irq_set_chained_handler_and_data(bank->irq, NULL, NULL);
+> +	for (unsigned int i = 0; i < bank->nr_irqs; i++)
+> +		irq_set_chained_handler_and_data(bank->irqs[i], NULL, NULL);
+>  	if (bank->domain) {
+>  		irq_domain_remove_generic_chips(bank->domain);
+>  		irq_domain_remove(bank->domain);
+> @@ -807,6 +877,7 @@ static void rockchip_gpio_remove(struct platform_device *pdev)
+>
+>  static const struct of_device_id rockchip_gpio_match[] = {
+>  	{ .compatible = "rockchip,gpio-bank", },
+> +	{ .compatible = "rockchip,rk3572-gpio-bank" },
+>  	{ .compatible = "rockchip,rk3188-gpio-bank0" },
+>  	{ },
+>  };
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.h b/drivers/pinctrl/pinctrl-rockchip.h
+> index 553197f6dc690..058b58dcde404 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.h
+> +++ b/drivers/pinctrl/pinctrl-rockchip.h
+> @@ -302,7 +302,9 @@ struct rockchip_drv {
+>   *	    bank has its own IOC block
+>   * @clk: clock of the gpio bank
+>   * @db_clk: clock of the gpio debounce
+> - * @irq: interrupt of the gpio bank
+> + * @irqs: parent interrupts of the GPIO bank
+> + * @irq_masks: pins assigned to each parent interrupt
+> + * @nr_irqs: number of parent interrupts
+>   * @saved_masks: Saved content of GPIO_INTEN at suspend time.
+>   * @pin_base: first pin number
+>   * @nr_pins: number of pins in this bank
+> @@ -331,7 +333,9 @@ struct rockchip_pin_bank {
+>  	struct regmap			*regmap_ioc;
+>  	struct clk			*clk;
+>  	struct clk			*db_clk;
+> -	int				irq;
+> +	unsigned int			irqs[4];
+> +	u32				irq_masks[4];
+> +	unsigned int			nr_irqs;
+>  	u32				saved_masks;
+>  	u32				pin_base;
+>  	u8				nr_pins;
+> diff --git a/include/soc/rockchip/rockchip_sip.h b/include/soc/rockchip/rockchip_sip.h
 
-[Severity: High]
-Won't calling .set_parent() and .set_rate() before .enable() corrupt the
-restored configuration on clocks using clk_rcg2_shared_ops when
-core->enable_count > 0?
+The changes in headers in other subsystems should be in separate patches.
 
-In drivers/clk/clk.c, clk_core_is_enabled() falls back to
-core->enable_count when core->ops->is_enabled is not implemented:
+> index 501ad1fedb201..984272ede3baf 100644
+> --- a/include/soc/rockchip/rockchip_sip.h
+> +++ b/include/soc/rockchip/rockchip_sip.h
+> @@ -20,4 +20,9 @@
+>  #define ROCKCHIP_SIP_CONFIG_DRAM_SET_PARAM	0x07
+>  #define ROCKCHIP_SIP_CONFIG_DRAM_SET_ODT_PD	0x08
+>
+> +#define ROCKCHIP_SIP_RET_NOT_SUPPORTED		-2
+> +
+> +#define ROCKCHIP_SIP_GPIO_CONFIG		0x8200002c
+> +#define ROCKCHIP_SIP_GPIO_GET_GROUP		0
+> +
+>  #endif
+>
+> --
+> 2.34.1
+>
+>
+>
 
-	if (!core->ops->is_enabled)
-		return core->enable_count;
-
-Because clk_rcg2_shared_ops in drivers/clk/qcom/clk-rcg2.c does not
-implement .is_enabled, clk_hw_is_enabled(hw) returns true during
-clk_core_restore_state() whenever core->enable_count > 0:
-
-1. clk_rcg2_shared_set_parent() sees clk_hw_is_enabled(hw) =3D=3D true, so =
-it
-   skips updating rcg->parked_cfg and calls clk_rcg2_set_parent() ->
-   update_config() without force-enabling the RCG, which times out because
-   child branches are not yet restored.
-
-2. clk_rcg2_shared_set_rate() -> __clk_rcg2_shared_set_rate() also sees
-   clk_hw_is_enabled(hw) =3D=3D true, so it writes the rate directly to
-   hardware via clk_rcg2_shared_force_enable_clear() without updating
-   rcg->parked_cfg:
-
-	if (!clk_hw_is_enabled(hw))
-		return __clk_rcg2_configure(rcg, f, &rcg->parked_cfg);
-
-	return clk_rcg2_shared_force_enable_clear(hw, f);
-
-3. Immediately afterwards, clk_core_restore_state() calls
-   core->ops->enable(), which invokes clk_rcg2_shared_enable():
-
-	/* Write back the stored configuration corresponding to current rate */
-	ret =3D regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, rcg->parke=
-d_cfg);
-	if (ret)
-		return ret;
-
-	ret =3D update_config(rcg);
-
-This overwrites CFG_REG with the stale rcg->parked_cfg value, clobbering
-the rate and parent that .set_parent() and .set_rate() just programmed.
-
-[Severity: Medium]
-In addition, can checking core->enable_count before acquiring
-clk_enable_lock() race with a concurrent clk_disable()?
-
-In drivers/clk/clk.c, clk_core_disable() decrements core->enable_count and
-calls core->ops->disable() under enable_lock without holding prepare_lock:
-
-	if (--core->enable_count > 0)
-		return;
-
-	trace_clk_disable(core);
-
-	if (core->ops->disable)
-		core->ops->disable(core->hw);
-
-If core->enable_count is 1 when clk_core_restore_state() checks it outside
-clk_enable_lock(), and a concurrent clk_disable() runs before
-clk_enable_lock() is acquired, core->enable_count drops to 0 and the clock
-is disabled, after which clk_core_restore_state() acquires
-clk_enable_lock() and unconditionally calls core->ops->enable(core->hw).
-Should core->enable_count be checked after acquiring clk_enable_lock(),
-similar to clk_disable_unused_subtree()?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261028-b4-clk-res=
-tore-after-hibernation-v1-0-86cf62747a7f@oss.qualcomm.com?part=3D1
+Bart
