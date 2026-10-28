@@ -1,82 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793173485;
-	b=vA1Cbrd4JY2Q1ckOuggWxcv1Lx5CV9ab6dgjQlBFQwzggo6UQP4W5ACPX3UhtwPYR5E+
-	 wkJzUpB1R6j4c9LYrygJoYG81ouvXteqIvxWdckcjDGsYXooG/bz2sMkIHAYk6NewZNje
-	 M4uQb0ISTXrReDo6XjaOejNKoS05GovAbw50Cn6X07R0pGsCWHd/6OchbGrwJ7fG5ju3F
-	 zrGXs49A+D7DmGrdbBptoLJNOZaQNfHyTHcd9aa91nRCUVTu9piQfXeBQP7zcGmkuRYQ0
-	 PRm5JOrtuUGHUljNsLRP21cg1ErQBJNqFc86tpjnzsP1S7VFZ72xsZhFN5TBskkNXqQ==
+	t=1793173500;
+	b=fwUVPDeDOmfG0ZIlrTfI3L1jA+3Et9Wyxe687XVJPGXdbKQJzYZm50EdNWmjkLDW/+5R
+	 INUdvr46r8ceXKhIHvu0MaZ5YxGKoEFFR2SfFl3kTn3EnxK5VEoG8Ne1iVfHgwQZTHoGK
+	 y6m11lEsSyyaAWl7bVK3UOp2sMyXsAX+Omu/3kcuBbgu6Wdx0ammgk91283qXn/NroWhn
+	 XvXWGu9V+H6QugWjNmPhWAzFcjKsayu5PQ3GTj4eYqjI+JiccPjk9lVzjaxfSo4GiFiPC
+	 ytu2+kCWkqlNjjw0k7j/ZXPMREn0GRWvhalBAqhIdunIbafdePmdD40QIcNgnO2oByw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793173485;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793173500;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=Iye3U/dlGnZ00j+zjr7HAr1TeijBnNq2JkuJKGfJwwY=;
-	b=mpaUDZSG7MGZQzhQjZd+LzXuwSCTW2lIkVEOU6BgO/MHJ0okCUXnRC4KpPr9alFP1jMC
-	 Mkpbf2DX0xp5mYmCk+qgLzvp36bCvBGxO6KQtzE5XQiONsjE5EERSDLEBERnRSR7moAb4
-	 dhZB5ydZn6AdQFDsNmBDbm+MHDOa0Lno3/9Oc2y6pykVl6hoQMVHiS+ggsxvCc2Qnyk/1
-	 igEKh7NXV4DqKWeP5hxCBa9weeJKTRGz40Bf2rIANtT4eWZphDGDivEsNudd71lYWMR65
-	 FXIE87TE5Nu0jjm5qC4M5KHydnbGQVpCyhlcQz9JEwMc+iQTqLlRPmUoxOciNskAkwA==
+	bh=QgCBPMZCOQV3dhf3hMT8g1VGDheFKuoWsIpy3UHh9yk=;
+	b=ckx41TmVEPgBNEPt4mdsNcHbWdLUy/V7Rv/Vy7wXUvQZskg7NJf7B5d5xq2/2BalpOKZ
+	 zrkdAy0f8DWTWSy14+jqHxIWfuQfCIWtodTfJga2XFGivQjUaRy9JzZrbNfSqXD9mt3NL
+	 cLVpjCqhUmGXSikxQ8Nl4dwxMW7vDheLzYFAVNmhW5Ayiq198WWqyapte4NTra/EeB8wq
+	 Vfhg0k0bD4BLoUXTJ7d1zxEj5mGv6BfZn2UDMR9YMQ/p48CSN+7IgC9O/NW+HJ7y3gRmB
+	 R0hdMslUfrXChZTTXh+dYGgTL3BJ0Do/jAdM7iUgC4ZsgdelfchX02lnXLMCt41EmGA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=amarulasolutions.com;
 	spf=pass smtp.mailfrom=amarulasolutions.com;
-	dkim=pass header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=eUFPTEYu;
-	arc=none smtp.remote-ip=209.85.221.42
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b="eN1+/EYN";
+	arc=none smtp.remote-ip=209.85.221.44
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C84606A32A
-	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 07:44:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 04C84606A32A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF3C606A332
+	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 07:44:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4CF3C606A332
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=eUFPTEYu
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-48e20ed3b9dso471980f8f.2
-        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 00:44:44 -0700 (PDT)
+	dkim=pass (1024-bit key, unprotected) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=eN1+/EYN
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-48bbb06e746so285467f8f.3
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 00:44:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1793173483; x=1793778283; darn=vger.kernel.org;
+        d=amarulasolutions.com; s=google; t=1793173485; x=1793778285; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Iye3U/dlGnZ00j+zjr7HAr1TeijBnNq2JkuJKGfJwwY=;
-        b=eUFPTEYuWWk3vbc9XWvlH2BlVk7sDoYniIKaACUAPTVadYzh2YiOHwL9bC4PjTkxKv
-         Qwucdi8AvUdnGNgB1Ox8sV01tCXYu8QotrE3MdyjPCUp8ezCPwq/ZbELSt1/+eipXh9T
-         PUrmWBOjntU+YFYIfkWzgSM1IF41jHTSxwAFM=
+        bh=QgCBPMZCOQV3dhf3hMT8g1VGDheFKuoWsIpy3UHh9yk=;
+        b=eN1+/EYNYIDktRuxOw3uNO+DZhgK1GWfGibNOD5IQI0n647iKIz1uwnOAUiKB+IaUU
+         RGmtoSAUHPd9KTANMfgITpg8Mc3y89eyII0bdCh6frOc6UEOPfv6mhFQ8haF5svShK9E
+         9KZXLr3JaUq2J+MR8hBkWNAmj+iRGkD2iXYtk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793173483; x=1793778283;
+        d=1e100.net; s=20260707; t=1793173485; x=1793778285;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Iye3U/dlGnZ00j+zjr7HAr1TeijBnNq2JkuJKGfJwwY=;
-        b=xShPD8TCvFofy/6qUHubEuec2B9KnCj7iCWgUKm/2SCnkHOXYy4YYWysRx56yZF3Jb
-         F86WBJNgmbak+/QtTcWUE2g+SwrLtxGZnyFC9RBq11++NeTgkND3lhqjTtSMaUg4N6+g
-         6vXflslXi4kNc61gKa0AmRoYGVV3CbCv/m0Scd4uFXS0otjq7udFWgK2yJURBhMbD3cL
-         Nw8dlKGtpSiRRfAGUfD73mgKNCG2paBwNSodq4pcMjfRweo9S+ygNams+Es9FRs6rvg6
-         d41jxpZ7m6ymPG5AGGOhCSuZBX2shKq3OqjQ3tvUpUj9C4MrsT3Qz3N4oprQh+uot85Z
-         fz3Q==
-X-Forwarded-Encrypted: i=1; AKwUvBxPut27vPOAKH7qx45kKKhc5UJ/b08tdXepDUwAMmyWdEIkvre8/5Iy3Ue6qRxv5O69jZ/POVW+GQI=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJoTOE5MGNSwi23/QoXQCM50WtiDjrORjuKX3kv3eeMncPlH2rm
-	ZXJ69PgnwdJ3HzSd0LHVeILQRRu4zNvIMYmDsWLos1AYSEL1mHc1wvpyofgSC4XYAFk=
-X-Gm-Gg: AYBFou39CzaFi7ral8BsiXKtuNqgOi4HMapEuHv7RMGJBuoPUe0KQXuOptfeFK9p+/z
-	WVB1ZzbuYCoWOfxYwPR97Ytrc518T634knCoyctvK8JTYQ7ncEI1LAEq7yrljhWQz1nqxtkqIFb
-	ir5/z8MY2zk/HeXSH1F34zGXYDucLg6/KNajiBNvMdrn1bhqESSyp/onwT1dDvqmuPAgrjQxr/O
-	8a3wQRTh02C2Du9t43t66SMDzAtNGEKFK6c0CZNs1tQjjWlitOBUWzIUzYC0bYvYHeBgz+qmuXu
-	UEmVz/rdhShVslUfjyrIeLn5QGrDwdzsAeGfQXV/owCGQiZxCrgdBGsK0IK6D+TX4UhVGUzFNBR
-	AEvsa3nz0gVffzaDXJWxtMUV+VxnlNt7A8HtonD6hP4I+XQW3lWrQVVtErWmcm+D+bnbwPX7W3c
-	JbJ5WlNmU2demJiQcVSfEaF0akP0OXwWW0kLQ1Cbaad4/U1qb1yXcoGQn3z3nTKuiPye/00OXFK
-	X1xzJF3CToLPLC3bmAI8F3uPhsBsyhMu0sGjDbcPt63lvReBF/OUpCCUPRS+ygt4rU4yR5ELOkO
-	D+UvpOklJua+iDz+5EzswD5rECZbQ8jv3ac/lEOytyupp16J2H8tLeUkj18IA8k0GfHIgBwa467
-	miL45q6mUeWuXZxZpuh0kmpPTYIEJk/643k1++eF1YummhS/JOkwDJOZnhyKOH8p3Zz1oFGRBMO
-	N/R4a9kW4lE1T2VgipgEaar7MUJA==
-X-Received: by 2002:a5d:4f07:0:b0:48c:7ee3:e07d with SMTP id ffacd0b85a97d-48e5d312c2bmr2716635f8f.52.1793173483413;
-        Wed, 28 Oct 2026 00:44:43 -0700 (PDT)
+        bh=QgCBPMZCOQV3dhf3hMT8g1VGDheFKuoWsIpy3UHh9yk=;
+        b=VXFh85i9iGzBUq8X8zCNBLa0T9byQZfTpjKst7AU9fNnzP7RkR6hXS9rTLZCvaxgzf
+         SCZkNL4SPnLX3H7cUTKnwzizd15I6Tyopv7pVb7/J02s96p04AZMhld+kpCg4r2PzYRU
+         QXQMQi6Kv3awaquT9Ul81/h/4bgg4Fr4w1uSThK66GrZzeEPoJaqbcqeqN0JbpdoPtwB
+         A342cqXn43+wzVflqdBJM4+3y54KuaNGSd8zmIydlmng5YwlpMmpnwpUPOoaovlRmE3r
+         E8s2wKQbnt1XiuOjFwvPVUqqvUMgfG/Q7z5+p4oWTLTt2wXr0CeDaXYcoSXK7fC383ro
+         ix+g==
+X-Forwarded-Encrypted: i=1; AKwUvBwDxqXJ2zmARG4sU4hDYqMs7vB+la2PgZnPiw+WU+a4sXi+S0ChHHYc6pHAxnZsygjqlG+1rSi8i+w=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKRXT92XOPpDD+23fTbLNDTSTwp9RsryInhygbHuAVFX8GLtXyT
+	vEmkLHNgPk1VKQF9zrHhMRKhIZOQ2r54cvd+CX/+A+nq/XxuR2dkLKFTfE09YcN5+oQ=
+X-Gm-Gg: AYBFou2B0mL/uTdKKuT+amEymzKy1P0DSNDQkbkE6bBj9ddeWQQuxzBTMWtN9pCt3tX
+	jEvD3NnfdRr+VVGXcqOFLG2KXACMKBjb9ln87i2Nq/+wkRBjJe9fmpLnNX+Y0fsOu1HT3X5lgIn
+	YYVpDnpyI++TPqydX1y+08DlRIzE6nLcgf5/xOl2x6dFHr5cJBWDMjGnRbm8MPQ2WaIU2CB62yK
+	9yqHh68nLbhWkn+rQjDnLRmxTuqzMCoqGiBxvoIZGTr7bbmiy7rmGPL9Siddangp6PbvSvCEQAP
+	eqz6RsBBn90H0j1gwSznPySjh2Bddo0N1hSDSbe4Ovqz2li62RvnjZmxIVAxlX39iL6JTwmj/HG
+	ybkX2TV0YbsCOi48X3j35OGGAd0duMZ0+chNMzSHIgIiCM8B4ksv4HZk3vzRQtI/bQPZyXM6rsz
+	hgFW/krqD4zIdnvVDleISO6tPNRnqB6+v7Z88tAR1HpqaO8ME9aPj5IGLgY1lbND6PD/LmGBfvF
+	j+Ve5DM2LOuni8K9krHacrChiUaG6SIme45gt8N8zDuqMNyHlQsR2YMQNDVxgBdxAh9czn5NRAj
+	Yt+dFoPsGtBk/C+ykFPjgPbbdRnf3tfgubxhpc8tLFccs8r4pC4CGl5cGJ4YJwWnM1t3RPt2bdP
+	keW9dT8rpCwZdjZHuse4ykJ2XDsnqzTQusWjW434RG1tS6siIC5tspkaUk6HDCKFjut81ZIQMKZ
+	LtnJ30XzJK6NZ8tGLQ3gSyatu/tw==
+X-Received: by 2002:a05:6000:29d7:b0:48d:f6d2:9c88 with SMTP id ffacd0b85a97d-48e5d5cb889mr2331992f8f.47.1793173484835;
+        Wed, 28 Oct 2026 00:44:44 -0700 (PDT)
 Received: from dario-ThinkPad-P14s-Gen-5.homenet.telecomitalia.it (host-79-14-29-58.business.telecomitalia.it. [79.14.29.58])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e412cc164sm25324882f8f.7.2026.10.28.00.44.42
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e412cc164sm25324882f8f.7.2026.10.28.00.44.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2026 00:44:42 -0700 (PDT)
+        Wed, 28 Oct 2026 00:44:44 -0700 (PDT)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-amarula@amarulasolutions.com,
@@ -88,9 +88,9 @@ Cc: linux-amarula@amarulasolutions.com,
 	Tero Kristo <kristo@kernel.org>,
 	linux-clk@vger.kernel.org,
 	linux-omap@vger.kernel.org
-Subject: [PATCH v3 2/3] clk: ti: dpll: use the generic spread spectrum configuration
-Date: Wed, 28 Oct 2026 08:44:08 +0100
-Message-ID: <20261028074436.1958132-3-dario.binacchi@amarulasolutions.com>
+Subject: [PATCH v3 3/3] clk: ti: dpll: apply the spread spectrum configuration right away
+Date: Wed, 28 Oct 2026 08:44:09 +0100
+Message-ID: <20261028074436.1958132-4-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261028074436.1958132-1-dario.binacchi@amarulasolutions.com>
 References: <20261028074436.1958132-1-dario.binacchi@amarulasolutions.com>
@@ -105,234 +105,105 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The clock framework provides a generic API and DT property for spread
-spectrum clocking (SSC) since commit c86814e70390 ("clk: Introduce
-clk_hw_set_spread_spectrum"). Implement the set_spread_spectrum callback
-and convert the deprecated vendor specific properties to the generic
-configuration, so that existing DTs keep working.
+The spread spectrum clocking (SSC) registers are only programmed by
+set_rate(), which the clock core skips when the requested rate is
+already the current one, e.g. when the bootloader has set it up.
+As a result, the SSC configuration is not applied, as it was with the
+vendor specific properties.
 
-The SSC registers are programmed at the next rate change, as with the
-vendor specific properties. The generic framework expresses the spread
-in permyriad rather than permille, hence the change in the deltaM step
-computation, and also supports up-spread, which is rejected as the
-hardware does not support it.
+Apply it from set_spread_spectrum() instead, reprogramming the DPLL
+at its current rate.
 
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 ---
 
 Changes in v3:
-- Keep parsing the deprecated vendor specific properties
+- Skip reprogramming only if the configuration is already applied
+  to the hardware
 
- drivers/clk/ti/clock.h    |  2 ++
- drivers/clk/ti/dpll.c     | 20 +++++++++----
- drivers/clk/ti/dpll3xxx.c | 61 ++++++++++++++++++++++++++++++++-------
- include/linux/clk/ti.h    |  9 ++----
- 4 files changed, 70 insertions(+), 22 deletions(-)
+Changes in v2:
+- Check the DPLL lock state instead of its parent, as the reference
+  and bypass clocks can be the same clock
 
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index d5e24fe4ae3a..83225e506314 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -271,6 +271,8 @@ int omap3_noncore_dpll_set_rate_and_parent(struct clk_hw *hw,
- 					   unsigned long rate,
- 					   unsigned long parent_rate,
- 					   u8 index);
-+int omap3_noncore_dpll_set_spread_spectrum(struct clk_hw *hw,
-+					   const struct clk_spread_spectrum *ss_conf);
- int omap3_noncore_dpll_determine_rate(struct clk_hw *hw,
- 				      struct clk_rate_request *req);
- int omap2_dpll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req);
-diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-index e01272cd628d..1329b4bc02f0 100644
---- a/drivers/clk/ti/dpll.c
-+++ b/drivers/clk/ti/dpll.c
-@@ -51,6 +51,7 @@ static const struct clk_ops dpll_ck_ops = {
- 	.set_parent	= &omap3_noncore_dpll_set_parent,
- 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
- 	.determine_rate	= &omap3_noncore_dpll_determine_rate,
-+	.set_spread_spectrum	= &omap3_noncore_dpll_set_spread_spectrum,
- 	.get_parent	= &omap2_init_dpll_parent,
- 	.save_context	= &omap3_noncore_dpll_save_context,
- 	.restore_context = &omap3_noncore_dpll_restore_context,
-@@ -63,6 +64,7 @@ static const struct clk_ops dpll_no_gate_ck_ops = {
- 	.set_parent	= &omap3_noncore_dpll_set_parent,
- 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
- 	.determine_rate	= &omap3_noncore_dpll_determine_rate,
-+	.set_spread_spectrum	= &omap3_noncore_dpll_set_spread_spectrum,
- 	.save_context	= &omap3_noncore_dpll_save_context,
- 	.restore_context = &omap3_noncore_dpll_restore_context
- };
-@@ -278,6 +280,7 @@ static void __init of_ti_dpll_setup(struct device_node *node,
- 	struct dpll_data *dd = NULL;
- 	int ssc_clk_index;
- 	u8 dpll_mode = 0;
-+	u32 ssc_modfreq = 0, ssc_deltam = 0;
- 	u32 min_div;
- 
- 	dd = kmemdup(ddt, sizeof(*dd), GFP_KERNEL);
-@@ -349,11 +352,18 @@ static void __init of_ti_dpll_setup(struct device_node *node,
- 					&dd->ssc_modfreq_reg))
- 			goto cleanup;
- 
--		of_property_read_u32(node, "ti,ssc-modfreq-hz",
--				     &dd->ssc_modfreq);
--		of_property_read_u32(node, "ti,ssc-deltam", &dd->ssc_deltam);
--		dd->ssc_downspread =
--			of_property_read_bool(node, "ti,ssc-downspread");
-+		/* Deprecated, superseded by assigned-clock-sscs */
-+		of_property_read_u32(node, "ti,ssc-modfreq-hz", &ssc_modfreq);
-+		of_property_read_u32(node, "ti,ssc-deltam", &ssc_deltam);
-+		if (ssc_modfreq && ssc_deltam) {
-+			dd->ssc_conf.modfreq_hz = ssc_modfreq;
-+			/* permille to permyriad */
-+			dd->ssc_conf.spread_bp = ssc_deltam * 10;
-+			if (of_property_read_bool(node, "ti,ssc-downspread"))
-+				dd->ssc_conf.method = CLK_SPREAD_DOWN;
-+			else
-+				dd->ssc_conf.method = CLK_SPREAD_CENTER;
-+		}
- 	}
- 
- 	if (of_property_read_bool(node, "ti,low-power-stop"))
+ drivers/clk/ti/dpll3xxx.c | 49 ++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 43 insertions(+), 6 deletions(-)
+
 diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-index 8c51b988a04f..634fe0a1f9fd 100644
+index 634fe0a1f9fd..d32d81a27bfe 100644
 --- a/drivers/clk/ti/dpll3xxx.c
 +++ b/drivers/clk/ti/dpll3xxx.c
-@@ -295,30 +295,32 @@ static void _lookup_sddiv(struct clk_hw_omap *clk, u8 *sd_div, u16 m, u8 n)
-  * omap3_noncore_dpll_ssc_program - set spread-spectrum clocking registers
-  * @clk:	struct clk * of DPLL to set
+@@ -690,17 +690,22 @@ int omap3_noncore_dpll_set_rate(struct clk_hw *hw, unsigned long rate,
+  * @hw: pointer to the clock to set the spread spectrum configuration for
+  * @ss_conf: spread spectrum configuration
   *
-- * Enable the DPLL spread spectrum clocking if frequency modulation and
-- * frequency spreading have been set, otherwise disable it.
-+ * Enable the DPLL spread spectrum clocking according to the configuration
-+ * set by omap3_noncore_dpll_set_spread_spectrum(), otherwise disable it.
+- * Stores the spread spectrum clocking (SSC) configuration of the DPLL. The
+- * configuration is programmed along with the DPLL multiplier and divider
+- * at the next rate change. The hardware supports center-spread and
+- * down-spread only. Returns 0 on success, or a negative error value on
+- * failure.
++ * Stores the spread spectrum clocking (SSC) configuration of the DPLL and,
++ * if the DPLL is locked, reprograms it at its current rate to apply it.
++ * Otherwise the configuration is applied at the next rate change. The
++ * hardware supports center-spread and down-spread only. Returns 0 on
++ * success, negative error value otherwise.
   */
- static void omap3_noncore_dpll_ssc_program(struct clk_hw_omap *clk)
+ int omap3_noncore_dpll_set_spread_spectrum(struct clk_hw *hw,
+ 					   const struct clk_spread_spectrum *ss_conf)
  {
+ 	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
  	struct dpll_data *dd = clk->dpll_data;
-+	const struct clk_spread_spectrum *conf = &dd->ssc_conf;
-+	bool downspread = conf->method == CLK_SPREAD_DOWN;
- 	unsigned long ref_rate;
- 	u32 v, ctrl, mod_freq_divider, exponent, mantissa;
- 	u32 deltam_step, deltam_ceil;
++	struct clk_spread_spectrum old_conf;
++	struct clk_rate_request req;
++	unsigned long rate;
++	int ret;
++	u32 ctrl;
  
- 	ctrl = ti_clk_ll_ops->clk_readl(&dd->control_reg);
+ 	if (!dd || !dd->ssc_enable_mask)
+ 		return -EOPNOTSUPP;
+@@ -718,9 +723,41 @@ int omap3_noncore_dpll_set_spread_spectrum(struct clk_hw *hw,
+ 		return -EINVAL;
+ 	}
  
--	if (dd->ssc_modfreq && dd->ssc_deltam) {
-+	if (conf->method != CLK_SPREAD_NO) {
- 		ctrl |= dd->ssc_enable_mask;
- 
--		if (dd->ssc_downspread)
-+		if (downspread)
- 			ctrl |= dd->ssc_downspread_mask;
- 		else
- 			ctrl &= ~dd->ssc_downspread_mask;
- 
- 		ref_rate = clk_hw_get_rate(dd->clk_ref);
- 		mod_freq_divider =
--		    (ref_rate / dd->last_rounded_n) / (4 * dd->ssc_modfreq);
--		if (dd->ssc_modfreq > (ref_rate / 70))
-+		    (ref_rate / dd->last_rounded_n) / (4 * conf->modfreq_hz);
-+		if (conf->modfreq_hz > (ref_rate / 70))
- 			pr_warn("clock: SSC modulation frequency of DPLL %s greater than %ld\n",
- 				__clk_get_name(clk->hw.clk), ref_rate / 70);
- 
-@@ -337,9 +339,10 @@ static void omap3_noncore_dpll_ssc_program(struct clk_hw_omap *clk)
- 		v |= exponent << __ffs(dd->ssc_modfreq_exp_mask);
- 		ti_clk_ll_ops->clk_writel(v, &dd->ssc_modfreq_reg);
- 
--		deltam_step = dd->last_rounded_m * dd->ssc_deltam;
--		deltam_step /= 10;
--		if (dd->ssc_downspread)
-+		/* spread_bp is in permyriad, convert to percent first */
-+		deltam_step = dd->last_rounded_m * conf->spread_bp;
-+		deltam_step /= 100;
-+		if (downspread)
- 			deltam_step /= 2;
- 
- 		deltam_step <<= __ffs(dd->ssc_deltam_int_mask);
-@@ -353,7 +356,7 @@ static void omap3_noncore_dpll_ssc_program(struct clk_hw_omap *clk)
- 		if (deltam_step & dd->ssc_deltam_frac_mask)
- 			deltam_ceil++;
- 
--		if ((dd->ssc_downspread &&
-+		if ((downspread &&
- 		     ((dd->last_rounded_m - (2 * deltam_ceil)) < 20 ||
- 		      dd->last_rounded_m > 2045)) ||
- 		    ((dd->last_rounded_m - deltam_ceil) < 20 ||
-@@ -682,6 +685,44 @@ int omap3_noncore_dpll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return ret;
- }
- 
-+/**
-+ * omap3_noncore_dpll_set_spread_spectrum - set the DPLL SSC configuration
-+ * @hw: pointer to the clock to set the spread spectrum configuration for
-+ * @ss_conf: spread spectrum configuration
-+ *
-+ * Stores the spread spectrum clocking (SSC) configuration of the DPLL. The
-+ * configuration is programmed along with the DPLL multiplier and divider
-+ * at the next rate change. The hardware supports center-spread and
-+ * down-spread only. Returns 0 on success, or a negative error value on
-+ * failure.
-+ */
-+int omap3_noncore_dpll_set_spread_spectrum(struct clk_hw *hw,
-+					   const struct clk_spread_spectrum *ss_conf)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	struct dpll_data *dd = clk->dpll_data;
++	ctrl = ti_clk_ll_ops->clk_readl(&dd->control_reg);
 +
-+	if (!dd || !dd->ssc_enable_mask)
-+		return -EOPNOTSUPP;
++	/* Already applied */
++	if (!memcmp(ss_conf, &dd->ssc_conf, sizeof(*ss_conf)) &&
++	    !!(ctrl & dd->ssc_enable_mask) == (ss_conf->method != CLK_SPREAD_NO))
++		return 0;
 +
-+	switch (ss_conf->method) {
-+	case CLK_SPREAD_NO:
-+		break;
-+	case CLK_SPREAD_CENTER:
-+	case CLK_SPREAD_DOWN:
-+		if (!ss_conf->modfreq_hz || !ss_conf->spread_bp)
-+			return -EINVAL;
-+		break;
-+	default:
-+		/* Up-spread is not supported by the hardware */
-+		return -EINVAL;
++	old_conf = dd->ssc_conf;
+ 	dd->ssc_conf = *ss_conf;
+ 
+-	return 0;
++	/* Disabling SSC does not need to reprogram the DPLL */
++	if (ss_conf->method == CLK_SPREAD_NO) {
++		omap3_noncore_dpll_ssc_program(clk);
++		return 0;
 +	}
 +
-+	dd->ssc_conf = *ss_conf;
++	/* Not locked: SSC is programmed along with the next rate change */
++	if (((ctrl & dd->enable_mask) >> __ffs(dd->enable_mask)) != DPLL_LOCKED)
++		return 0;
 +
-+	return 0;
-+}
++	rate = clk_hw_get_rate(hw);
++	clk_hw_init_rate_request(hw, &req, rate);
++	ret = omap2_dpll_determine_rate(hw, &req);
++	if (!ret && req.rate != rate)
++		ret = -EINVAL;
++	if (!ret)
++		ret = omap3_noncore_dpll_set_rate(hw, rate,
++						  clk_hw_get_rate(dd->clk_ref));
++	if (ret) {
++		pr_warn("clock: %s: rate %lu can't be kept with SSC enabled\n",
++			clk_hw_get_name(hw), rate);
++		dd->ssc_conf = old_conf;
++	}
 +
- /**
-  * omap3_noncore_dpll_set_rate_and_parent - set rate and parent for a DPLL clock
-  * @hw: pointer to the clock to set rate and parent for
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 54a3fa370004..107056120c2c 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -65,10 +65,7 @@ struct clk_omap_reg {
-  * @ssc_enable_mask: mask of the DPLL SSC enable bit in @control_reg
-  * @ssc_downspread_mask: mask of the DPLL SSC low frequency only bit in
-  *                       @control_reg
-- * @ssc_modfreq: the DPLL SSC frequency modulation in kHz
-- * @ssc_deltam: the DPLL SSC frequency spreading in permille (10th of percent)
-- * @ssc_downspread: require the only low frequency spread of the DPLL in SSC
-- *                   mode
-+ * @ssc_conf: the DPLL SSC configuration
-  * @flags: DPLL type/features (see below)
-  *
-  * Possible values for @flags:
-@@ -124,9 +121,7 @@ struct dpll_data {
- 	u32			ssc_modfreq_exp_mask;
- 	u32                     ssc_enable_mask;
- 	u32                     ssc_downspread_mask;
--	u32                     ssc_modfreq;
--	u32                     ssc_deltam;
--	bool                    ssc_downspread;
-+	struct clk_spread_spectrum ssc_conf;
- 	u8			flags;
- };
++	return ret;
+ }
  
+ /**
 -- 
 2.43.0
 
