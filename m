@@ -1,76 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793181212;
-	b=EXd3H9HAkO4Ddt4lgIQBaXuSkXBOcL9yHWV1OqGR6+exs0ej4TZjKzi3x+ro01ThzSnn
-	 FhcPxq3Fo35KlIT/aqexrclCk7vHDqzlNBAeEIjYRMvse3+Nv6QdLjAmX77o4DhzHBP1u
-	 m3ajFZQkYn6eJI29IOD5qvuujARCA9CD08dvkastFRHOT70b3FCMLuFRPI4P88eBOjEmC
-	 dn9cP/gImods9wctHOLaXMVH4NjVjlVWP5YEqfuUp3hiocN9ZnOoL9uLw/f0+Iqqwd9Gk
-	 58shF0kRbSpydV45ydm9h3yHNK46Fighh+pLifBdBIeaM5YI9fJLTs6rc5Nh3Kedd6g==
+	t=1793181886;
+	b=g2jm5PaBnPDMlidNkMfziuGpGcEkEaeLXp8Ju+/T1s+kZ2OZ3RA9GgFxbnitxDaE/Qwi
+	 yVBLERtch8cc2bwnmOCPfWoVPL4wYazJyLo/4BB96nIJC/J2+KTKlGP+7o9oshN7VEsLB
+	 JKNMMVCKBQTCjnofpvMCuFJAN5flBJ7lFKrY/9IYMH1duKMmar/EFzhL1f/zey9I9Kvqg
+	 NynF7LFH7DPjWjDDP9K2i7PnvXj6+UwOgtPJ9E16LtSX/Nfa/ZEYExAynrUkxmnLncZN5
+	 t8uvS/j4MsSGJ9U7VJ1ubVhAdl37R3xDEWwo/HHPK4lz2zUUPZc4k1QtNGF99lVEK6w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793181212;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=LaKKgg7JsBllMMsQkIPVI3Ax0Bcgu+KbcncA6nhcHSA=;
-	b=WoSn00kk3o2e1osU9eMDZGfL2TH9U+jU6xpa0xprI3cQhjE01a3Bu+kranKdFpEJ+e1H
-	 Ybo7IEpryXTTkZFvAIIxJksxqkHykhZFY6oVXfr/XfFR5ZKMV9xKGKqxWbW7g6v+TRR3K
-	 hVgxnZP+s05g+Jcwp2GWPrqSCR/B6yv+DkAEj21Q9gQ9/e54GnArd14NkbzMO8PXMhKyw
-	 OaX2nX/beOGJAhUyT0SzRCoWy15F+P+SGsu5VjQjVrSAWjtGhjfEZiLzfI0DlNmsfSPqf
-	 X8EEh1myLg1lU3T1JqCb11McQw+gm/46/M1oDgZisBssDr0ZjME064hp2jEUQadcywg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793181886;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=CQ/2xVuqtCjtfgH6RXT+iueKwGZL/cGeRhXhl2s4LSs=;
+	b=wXcXNbXJa0C6nheuo1DXm1I9WBOlp/MpIGB+vACVF7rrQyRHeSxA978Fl38Vm2NxJFb6
+	 ReELB0nMv1lxjsSD9N2nfKgPZrMcFX6qNAYvyriyAJ0U+s/PsMjpMOvm+hDvV2Qvr/ucg
+	 V6O07251xB4S2cZwfSBNov6RKL6IIdbyh1MOUDz6XkxqZCQPe1hMxGfgraKpUfmJjyIbN
+	 G5WZd8jVO1pGVGrvEfZY8wzGim5u5X2E5S5lHtClcSNfxyZL/ae8f6gV5HeWIbvxkRSJk
+	 6rBRO/GevzGlUT/+qM37C+kG0AtOnd19W1sZRongmFP0ADb6u1JYhAQw38Dov/RvxNA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.222.45
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mGYRvy5E;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C11606A31A
-	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 09:53:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 47C11606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-990835cec4bso500418241.1
-        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 02:53:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793181211; x=1793786011;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=LaKKgg7JsBllMMsQkIPVI3Ax0Bcgu+KbcncA6nhcHSA=;
-        b=mQVD4l0kyySpxeaD+XQ51KW+Lf35C0RaB/edpu35hndqyUpWQ+CNYz7BYkyl2YAK3J
-         SQb0raqYgFZYwqhQkWCH18SZzVFUm/ol+m8aF3hIBYOqnGONUgrrvSocB5xKCBoZTIxl
-         TqzFRf8uvPfyml+f3ZkkGtuOdcd906633Oe9S3V3RoinGCsZjewP9dYgO9Yr6edGzH74
-         fj2hGnchFv2O/CpZJvpPv4KmwG5i7Xz9FNpy6ybR/lqFe2cHrJavlsNZwoV7MJur9Ma0
-         jCQQsKyFjiJjo5Gh0BSBhaSdyyaK9SqQUUwS63mpkrVW3D9/x/3RKMtlxMQwqabOBFlJ
-         8RtA==
-X-Forwarded-Encrypted: i=1; AKwUvBwfZIIkP7KH/3eXUK+5B73DZkBTYNyiDUerVjcPBymgHLsGz+2h+vrxpV7ulGmSDGycuYgQsyyFjvM=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJM6qssZJE5xaQpi8h+dRA7f2cDf+wA/8pMxK9JbK4zBUXjHyo+
-	XOTQkKZWO7CKrbiShGmVb5xEeKNygJz75r5Pyqz3yLnuE4iPafLb3Qam1BbZxm5X
-X-Gm-Gg: AYBFou3mk+/uoNJCtZ/Iv42J0JD4Ew4RsLi2JKdVkuUXPctWjgYyCRfq6RI33nykrwQ
-	7EbW5T1c057DSLZ/HxSKQyDE4HmvsZUNB6uxneHspIsmcEg/5Rw5jJEXZftyERewzShqOHlftu5
-	l/geHp5EpsL02r3UhNqI0SkvqOIMguGpmqtzyrPsJx2TuRisKOEgVqdreUQPhLcRoeEvbLS8yKG
-	MTXn+3D+K9vqFXJXBFb/OMajqtVDUENN4p2TATnVlZe99dkanFtXNYqebPzSXh7F84+LSuuvPj0
-	0MJfig1JvjTSMyMNZ7P+jagd/8txGkjry1K9obRQXrMTtyf2dN51Y19a+XxGkVUoFSghhBHmi4D
-	bh/NU1hFk9e8ahQgLAq/zLs/iaK2GRhdpui0XnPRIrvNvNB3x2eE8PS+6Nwiuh8B1/TbAGF+dbs
-	1/tfnI046pQTGIpTEBk1nELBCOMAJa8vFdYcLwZh7PexP0XvWDZh95+9CvRzstl8tEvakZxmAg2
-	Ddy+8b+G7oQR0Blqm1Z+KebmBvLVYvj3njcjt8jefV2Au+JpM6P5JwdfavPmKFqo6Ar0nkSGBrf
-	L7brsNb7OiW0Z85I9AimLSnshZvv1zAKpX69yk5nkr7T1djuBVplwp86sg6i3ETUL5Q=
-X-Received: by 2002:a05:6102:3f94:b0:79e:373e:8216 with SMTP id ada2fe7eead31-7d039efc0d7mr810303137.0.1793181211124;
-        Wed, 28 Oct 2026 02:53:31 -0700 (PDT)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-991259c4dd0sm5293042241.3.2026.10.28.02.53.30
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Oct 2026 02:53:30 -0700 (PDT)
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-990835cec4bso500407241.1
-        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 02:53:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByx/MkxqMgmwofwHC2O5og0IBb+Fo53HFauizADu8vgrM3a3PlCJoG4xEVsxST7ZudXYX/mh20g9hU=@vger.kernel.org
-X-Received: by 2002:a05:6102:5244:b0:7cc:2fd1:7122 with SMTP id
- ada2fe7eead31-7d03a47e768mr803872137.18.1793181210633; Wed, 28 Oct 2026
- 02:53:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB82C606A323;
+	Wed, 28 Oct 2026 10:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mGYRvy5E
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A9701F01828;
+	Wed, 28 Oct 2026 10:04:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793181885;
+	bh=CQ/2xVuqtCjtfgH6RXT+iueKwGZL/cGeRhXhl2s4LSs=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=mGYRvy5E+m4Z9GV/OY5pscWJTB6nTH4YXR2PRm27khypOY5Us1Fgu7ZYogRombTcG
+	 QXo+rnSCuO+H8+LbzR4117P9f/8SJLOZizbRs954UBwKvityXSMxZghHMnYpOuQymm
+	 HjdpiuIY0oBQj9QS8Vk7LTrnpD82U7nC8O/VO1PENIlJRy793oMiR7bfNDbEJjmW2q
+	 Gs6MtgOSvVd/okFLaXJW21QgeAbJPR7bJOx44h9o33+IxmrSXMJAK9kvVSYa+SQMD6
+	 QXEuduw0/2kSE0pTDqfI6wVGs55KVU3Qe9Bpe5+q8Iykd4nu0AoWdfETSFNvR3dP1P
+	 FEA8W3J7j/QXg==
+Message-ID: <sashiko-outbox-187717@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v4 2/4] clk: rockchip: Add internal support for 24-bit
+ fractional dividers
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Cunhao Lu" <1579567540@qq.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261027-add-board-ok3572-c-clk-v4-2-d4152b4fedaa@qq.com>
+References: <20261027-add-board-ok3572-c-clk-v4-0-d4152b4fedaa@qq.com>
+ <20261027-add-board-ok3572-c-clk-v4-2-d4152b4fedaa@qq.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 28 Oct 2026 10:04:45 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -79,60 +60,302 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <cover.1792776697.git.geert+renesas@glider.be> <528b079a19bd4043754bfb56db8e5950bdda62f6.1792776697.git.geert+renesas@glider.be>
- <CAMRc=MdH37DhKMtagN3Ua1doY7ZgD3f+ok3V+h86kb4J8-dtQQ@mail.gmail.com>
-In-Reply-To: <CAMRc=MdH37DhKMtagN3Ua1doY7ZgD3f+ok3V+h86kb4J8-dtQQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 28 Oct 2026 10:53:18 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU=ZkOsjG_FF-raMJWEUtj0VkD=9Gs0SsWKWLwyhG5H_A@mail.gmail.com>
-X-Gm-Features: AclHuK9BGkRKGrsUq56mu96OMIK1DMZBGsGDXPyfwPmkMrcZVroZETBYHJfP3k4
-Message-ID: <CAMuHMdU=ZkOsjG_FF-raMJWEUtj0VkD=9Gs0SsWKWLwyhG5H_A@mail.gmail.com>
-Subject: Re: [PATCH 1/7] gpio: rcar: Convert to gpiochip_generic_{request,free}()
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Ulf Hansson <ulfh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Bartosz,
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+s) to consider:
+- [High] clk: rockchip: broken rate calculation in clk_fd_v2_determine_rate=
+()
+- [Medium] clk: rockchip: broken zero-based divider math in clk_fd_v2_get_d=
+ivider()
+- [Medium] clk: rockchip: wrong low-bit mask and shift in clk_fd_v2_set_rat=
+e()
+--
 
-On Wed, 28 Oct 2026 at 10:47, Bartosz Golaszewski <brgl@kernel.org> wrote:
-> On Fri, 23 Oct 2026 19:50:39 +0200, Geert Uytterhoeven
-> <geert+renesas@glider.be> said:
-> > When a gpio device node has no gpio-ranges property,
-> > pinctrl_gpio_request() returns -EPROBE_DEFER and its GPIOs are unusable.
-> >
-> > Restore the ability to use GPIOs before pin control support is added by
-> > using the gpiolib helpers instead, which cater for this use case.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> This sound like a fix? Can you add the Fixes tag? Is this patch independent
+commit dfce7c81ca5864499aad504a0c7023a553587e91
+Author: Elaine Zhang <zhangqing@rock-chips.com>
 
-Sort of, but no upstream system needs it, so I don't think it is worth
-adding a Fixes tag.
-ISTR we used to have GPIO nodes without gpio-ranges on other R-Car
-platforms before, when pin control was not yet available, but DTS
-history doesn't provide any evidence of that...
+clk: rockchip: Add internal support for 24-bit fractional dividers
 
-> from the rest?
+This commit adds an internal Rockchip fractional-divider helper and
+branch_fraction_divider_v2 clock type for 24-bit fractional dividers that
+split numerator and denominator across low (16-bit) and high (8-bit)
+registers.
 
-Yes, it can be applied independently.
-Thanks!
+> diff --git a/drivers/clk/rockchip/clk-fractional-divider-v2.c b/drivers/c=
+lk/rockchip/clk-fractional-divider-v2.c
+> new file mode 100644
+> index 0000000000000..102e03f9d6e60
+> --- /dev/null
+> +++ b/drivers/clk/rockchip/clk-fractional-divider-v2.c
 
-Gr{oetje,eeting}s,
+[ ... ]
 
-                        Geert
+> +static void clk_fractional_divider_general_approximation_v2(struct clk_h=
+w *hw,
+> +							    unsigned long rate,
+> +							    unsigned long *parent_rate,
+> +							    unsigned long *m, unsigned long *n)
+> +{
+> +	struct clk_fractional_divider_v2 *fd =3D to_clk_fd_v2(hw);
+> +	unsigned long scale;
+> +
+> +	/*
+> +	 * Get rate closer to *parent_rate to guarantee there is no overflow
+> +	 * for m and n. In the result it will be the nearest rate left shifted
+> +	 * by (scale - fd->nwidth) bits.
+> +	 *
+> +	 * For the detailed explanation see the top comment in this file.
+> +	 */
+> +	scale =3D fls_long(*parent_rate / rate - 1);
+> +	if (scale > fd->nwidth)
+> +		rate <<=3D scale - fd->nwidth;
+> +
+> +	rational_best_approximation(rate, *parent_rate,
+> +				    GENMASK(fd->mwidth - 1, 0),
+> +				    GENMASK(fd->nwidth - 1, 0),
+> +				    m, n);
+> +}
+> +
+> +static int clk_fd_v2_get_divider(struct clk_hw *hw, unsigned long rate,
+> +				 unsigned long parent_rate,
+> +				 unsigned long *m, unsigned long *n)
+> +{
+> +	struct clk_fractional_divider_v2 *fd =3D to_clk_fd_v2(hw);
+> +	u32 factor;
+> +
+> +	rational_best_approximation(rate, parent_rate,
+> +				    GENMASK(fd->mwidth - 1, 0),
+> +				    GENMASK(fd->nwidth - 1, 0),
+> +				    m, n);
+> +
+> +	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
+> +		(*m)--;
+> +		(*n)--;
+> +	}
+> +	/*
+> +	 * When compensation the fractional divider,
+> +	 * the [1:0] bits of the numerator register are omitted,
+> +	 * which will lead to a large deviation in the result.
+> +	 * Therefore, it is required that the numerator must
+> +	 * be at least 4.
+> +	 *
+> +	 * Note that there are some exceptions here:
+> +	 * If there is an even frac div, we need to keep the original
+> +	 * numerator(<4) and denominator. Otherwise, it may cause the
+> +	 * issue that the duty ratio is not 50%.
+> +	 */
+> +	if (*m < 4 && *m !=3D 0) {
+> +		if (*n % 2 =3D=3D 0)
+> +			factor =3D 1;
+> +		else
+> +			factor =3D DIV_ROUND_UP(4, *m);
+> +
+> +		if (*m > GENMASK(fd->mwidth - 1, 0) / factor ||
+> +		    *n > GENMASK(fd->nwidth - 1, 0) / factor)
+> +			return -EINVAL;
+> +
+> +		*n *=3D factor;
+> +		*m *=3D factor;
+> +	}
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+[Severity: Medium]
+In clk_fd_v2_get_divider(), when CLK_FRAC_DIVIDER_ZERO_BASED is set in
+fd->flags, (*m)-- and (*n)-- convert the 1-based values from
+rational_best_approximation() into 0-based register values before the
+*m < 4 compensation block runs.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Does this cause several regressions when CLK_FRAC_DIVIDER_ZERO_BASED is use=
+d?
+
+1. If rational_best_approximation() returns *m =3D=3D 0 for a very small ra=
+te,
+   (*m)-- underflows the unsigned long *m to ULONG_MAX, which bypasses the
+   (*m < 4 && *m !=3D 0) check and writes all-ones to the numerator register
+   fields.
+
+2. If the 1-based numerator is *m =3D=3D 1 (for example, 1/3), (*m)-- sets
+   *m =3D 0, which skips the (*m < 4 && *m !=3D 0) compensation completely.
+
+3. Decrementing *n flips its parity before (*n % 2 =3D=3D 0) is checked, so
+   factor =3D 1 is selected when the actual denominator n is odd rather than
+   even.
+
+4. Multiplying the already-decremented values by factor produces register
+   values (m - 1) * factor and (n - 1) * factor. When clk_fd_v2_recalc_rate=
+()
+   adds 1 back:
+
+	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
+		m++;
+		n++;
+	}
+
+   the effective ratio becomes ((m - 1) * factor + 1) / ((n - 1) * factor +=
+ 1)
+   instead of m / n (for example, m =3D 3, n =3D 4 becomes 5/7 instead of 3=
+/4).
+
+5. Neither clk_fractional_divider_general_approximation_v2() nor
+   clk_fd_v2_get_divider() increases the maximum bounds passed to
+   rational_best_approximation() from GENMASK(width - 1, 0) to BIT(width)
+   when CLK_FRAC_DIVIDER_ZERO_BASED is set.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int clk_fd_v2_determine_rate(struct clk_hw *hw,
+> +				    struct clk_rate_request *req)
+> +{
+> +	struct clk_fractional_divider_v2 *fd =3D to_clk_fd_v2(hw);
+> +	unsigned long m, n;
+> +	u64 ret;
+> +
+> +	if (!req->rate || req->rate >=3D req->best_parent_rate) {
+> +		req->rate =3D req->best_parent_rate;
+> +		return 0;
+> +	}
+> +
+> +	if (fd->approximation)
+> +		fd->approximation(hw, req->rate, &req->best_parent_rate, &m, &n);
+> +	else
+> +		clk_fractional_divider_general_approximation_v2(hw, req->rate,
+> +								&req->best_parent_rate,
+> +								&m, &n);
+> +
+> +	ret =3D (u64)req->best_parent_rate * m;
+> +	do_div(ret, n);
+> +	req->rate =3D ret;
+> +
+> +	/* Validate the rounded rate that set_rate() will receive. */
+> +	return clk_fd_v2_get_divider(hw, req->rate, req->best_parent_rate, &m, =
+&n);
+> +}
+
+[Severity: High]
+Can the interaction between clk_fractional_divider_general_approximation_v2=
+(),
+clk_fd_v2_determine_rate(), and clk_fd_v2_get_divider() cause valid rate
+requests to fail with -EINVAL or program a different divider than expected?
+
+1. In clk_fd_v2_get_divider(), rational_best_approximation() is given the f=
+ull
+   24-bit range GENMASK(fd->mwidth - 1, 0) and GENMASK(fd->nwidth - 1, 0)
+   (16,777,215). If the closest uncompensated ratio has *m < 4 and an odd
+   denominator *n > GENMASK(fd->nwidth - 1, 0) / factor (any odd n in
+   [4194304, 16777215] for m =3D 1, or [8388608, 16777215] for m =3D 2 or 3=
+),
+   clk_fd_v2_get_divider() returns -EINVAL instead of choosing a valid 24-b=
+it
+   approximation (such as an adjacent even denominator where factor =3D 1, =
+or an
+   approximation constrained so the compensated values fit).
+
+2. clk_fd_v2_determine_rate() computes (m, n) once, floor-truncates req->ra=
+te
+   to an integer via do_div(ret, n), and then calls clk_fd_v2_get_divider()
+   (and later clk_fd_v2_set_rate()), which runs rational_best_approximation=
+()
+   a second time on the truncated req->rate without updating req->rate.
+
+   Because a 24-bit divider has sub-Hz resolution at typical PLL rates,
+   re-approximating the truncated integer rate can pick a different (m, n)
+   pair than the first pass. For example:
+
+   - With best_parent_rate =3D 100000000 and req->rate =3D 19, the first pa=
+ss
+     picks m =3D 1, n =3D 5263158 (even) and truncates req->rate to 18. The
+     second pass in clk_fd_v2_get_divider() approximates 18 / 100000000 as
+     m =3D 2, n =3D 11111111 (odd), which exceeds 16777215 / 2 and fails wi=
+th
+     -EINVAL.
+
+   - With a fractional PLL parent such asbest_parent_rate =3D 786431991 and
+     req->rate =3D 6144000, the first pass finds the intended divider m =3D=
+ 1,
+     n =3D 128 and truncates req->rate to 6143999. The second pass in
+     clk_fd_v2_get_divider() and clk_fd_v2_set_rate() re-approximates
+     6143999 / 786431991 as m =3D 51630, n =3D 6608641 instead of 1 / 128.
+
+3. In clk_fractional_divider_general_approximation_v2(), when
+   scale =3D fls_long(*parent_rate / rate - 1) exceeds fd->nwidth, rate is
+   shifted left by (scale - fd->nwidth) unconditionally without checking
+   CLK_FRAC_DIVIDER_POWER_OF_TWO_PS in fd->flags. That causes
+   clk_fd_v2_determine_rate() to return a power-of-two multiple of the
+   requested rate, whereas clk_fd_v2_get_divider() does not perform that sh=
+ift
+   (and if rational_best_approximation() saturates to *m =3D 0, *n =3D 1 fo=
+r a
+   very small rate, clk_fd_v2_get_divider() leaves *m =3D 0 uncompensated,
+   causing clk_fd_v2_recalc_rate() to return parent_rate).
+
+> +
+> +static int clk_fd_v2_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			      unsigned long parent_rate)
+> +{
+> +	struct clk_fractional_divider_v2 *fd =3D to_clk_fd_v2(hw);
+> +	unsigned long flags =3D 0;
+> +	unsigned long m, n, m_low, n_low, m_high, n_high;
+> +	u32 val, val_high;
+> +	int ret;
+> +
+> +	ret =3D clk_fd_v2_get_divider(hw, rate, parent_rate, &m, &n);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (fd->lock)
+> +		spin_lock_irqsave(fd->lock, flags);
+> +	else
+> +		__acquire(fd->lock);
+> +
+> +	m_low =3D m & fd->nmask;
+> +	n_low =3D n & fd->nmask;
+> +	m_high =3D (m & GENMASK(fd->mwidth - 1, (fd->mwidth - fd->high_mwidth))=
+) >>
+> +		 (fd->mwidth - fd->high_mwidth);
+> +	n_high =3D (n & GENMASK(fd->nwidth - 1, (fd->nwidth - fd->high_nwidth))=
+) >>
+> +		 (fd->nwidth - fd->high_nwidth);
+> +
+> +	val_high =3D clk_fd_v2_readl(fd, fd->high_reg);
+> +	val_high &=3D ~(fd->high_mmask | fd->high_nmask);
+> +	val_high |=3D (m_high << fd->high_mshift) | (n_high << fd->high_nshift);
+> +
+> +	clk_fd_v2_writel(fd, fd->high_reg, val_high);
+> +
+> +	val =3D clk_fd_v2_readl(fd, fd->reg);
+> +	val &=3D ~(fd->mmask | fd->nmask);
+> +	val |=3D (m_low << fd->mshift) | (n_low << fd->nshift);
+> +	clk_fd_v2_writel(fd, fd->reg, val);
+
+[Severity: Medium]
+In clk_hw_register_fractional_divider_v2(), fd->mmask and fd->nmask are
+initialized as shifted register masks:
+
+	fd->mshift =3D mshift;
+	fd->mwidth =3D mwidth + high_mwidth;
+	fd->mmask =3D GENMASK(mwidth - 1, 0) << mshift;
+	fd->nshift =3D nshift;
+	fd->nwidth =3D nwidth + high_nwidth;
+	fd->nmask =3D GENMASK(nwidth - 1, 0) << nshift;
+
+In clk_fd_v2_set_rate(), both m_low and n_low are masked with fd->nmask and
+then shifted by fd->mshift and fd->nshift when writing fd->reg. Shouldn't
+m_low and n_low be masked with unshifted masks for their respective low
+widths (or shifted first and then masked with fd->mmask and fd->nmask)?
+
+Also, clk_fd_v2_set_rate() extracts m_high and n_high using the configured
+low widths (fd->mwidth - fd->high_mwidth) and (fd->nwidth - fd->high_nwidth=
+),
+whereas clk_fd_v2_recalc_rate() hardcodes a 16-bit shift:
+
+	m =3D (m_high << 16) | m_low;
+	n =3D (n_high << 16) | n_low;
+
+Should clk_fd_v2_recalc_rate() shift m_high and n_high by the configured low
+widths as well so both functions stay consistent if a width other than 16 is
+passed to COMPOSITE_FRAC_V2() or rockchip_clk_register_frac_v2()?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261027-add-board-=
+ok3572-c-clk-v4-0-d4152b4fedaa@qq.com?part=3D2
