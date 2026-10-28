@@ -1,56 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793178075;
-	b=Dyqf//c5ijaqIb5s9wPf4mgiNmBRKevO9cSn/YHkUSoh0Dk298NpDbJE54f+3dUIsLFU
-	 aU8sS733ZCC0CUVrtWyYhvF/KBOArSH2OL3sFrwxr5OPbEWwwnroBuoLqHbsNcqkek638
-	 CF5LDK9BvPA4/xFYbNdIOK9y0omVn6gvLKwkk4E6vVTSVjiwP9bnxAweoR1GbuhQ1vo1D
-	 526RTROLIXnh9DZ3Jlw5QET5xjYKJlsSnqYd+5ASNNHNCPhy86SnLsVLAN9j6RnlXCdNk
-	 sdyRMOytRvcX1edjj2T80uhYcWZM40tfchQqQR/72CK08sWsvkJpg2VjCPvKJpUicIg==
+	t=1793178800;
+	b=WF2cEVPf4QSS8pE7bTO8B+M5C6TF//pA6hSJj4Eo4ijPyFlrwguNySHGnjODunhi/HQH
+	 Vh1YCZhJBjkpr00EryLbfz1i20xIg9uDTdm2qeqeKNDmfxM6oOeqzbxYer2J7ABBiTzv+
+	 KVT9NWW72WyyFeUWssPcbqUfy5/TqfyfjuzMUTmIGiVmLTwS8niTo4u8on1orHFLONwZK
+	 nIZr6L2sZZ4E3Kq3Wp7dnm5qx9rBDUlcsricGXt3gdD/PxMiFar5N6M8nWJ2EPVI2FQDe
+	 NXNFAziT1TH0q67jlMHU7mdgsurtegx1Rva+rmNPERSJex5z4kZjR29CuFzVganS1pw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793178075;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=tGD1n35qkTRVWRh5gYerhYExxHVVeHk+oltw3BhOOkE=;
-	b=K+EWquYmUX7kQidlDXSk1balwHNw9FlM/IqGLwyga+KK9bpV1n7DGYTMfWNGjFRiBoyO
-	 hZvxrHm1eNUWuEYTD7os9GGlzbF0/nHWDb1dqq/PYE7bNeJuK3Rch2rqbnU2xZ4c7sFxv
-	 rAzgcJvgp2IkszMCVFmu08dY/AdbN8VxfIfVzA9y34d9i5sXc9wDMYfmppGQBFUwVHo6f
-	 rIq22odED1Ne/VQyxZcqwW7uB6PXqaxnETjYgbcDuJWaDXlzVh0Y+FsKe8S3EDyF4YRIL
-	 dvxA5SZUyPte+xfP9ljFn6axBcLFQwRkNu93srfs+zjLqIdz2w5taj5zj46YtZKFgPA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793178800;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:From:To:Cc:
+	 Content-Language:In-Reply-To:Content-Transfer-Encoding:X-CMS-MailID:
+	 X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:X-CMS-RootMailID:
+	 References;
+	bh=3W2zW/ASI3Ufo+rdp+J+HzrLBLxCU9YgEhL1tFo9JN8=;
+	b=pm2oiNK16FNcaAiJeb7JynJvDo3l8IyabGzJHgqJL3M3luH6hf0z7FztEVN9sbK9hbNY
+	 YDTiZUvJyij5eep1kYoh2o7V+jtYpdA3wKDwlNmYRgmh8c7QfByU5MglvPrGuYYZZSzL9
+	 j7sjyQ2T++JLFwO/jKjjJqBBbiphBwMTcQU3MY5xv3ZTg6ZwKijpZZkxLMM/pm6Z3XceN
+	 i3f7U26noQq60NhasRIrqUEZtFy1xLs+7ogtyXFqL5jDs2Ggh4lMF1pEiCvz6Uhnl+m8c
+	 w6DbARBFaJsGQKZ5mgM0xsz9fX/g4GPhQzDQ3wnVSijs7x50c0h/M6h1eiRU+UXadbw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NAeIBgmM;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	arc=none smtp.remote-ip=210.118.77.12
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DE8606A31C;
-	Wed, 28 Oct 2026 09:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NAeIBgmM
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A210C1F01829;
-	Wed, 28 Oct 2026 09:01:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793178074;
-	bh=tGD1n35qkTRVWRh5gYerhYExxHVVeHk+oltw3BhOOkE=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=NAeIBgmMi2cElXO3DkEB5l+YrMVdhDmHtHUzkWVcYmqXQJyYmTNYBuagNFa3AU1VP
-	 yb/GdUoD5Kz34pByc4piqoQlZ4Kk+43KiBgN/O14vezgMiShB7WfXPXWLxxGn64h4c
-	 Inz6g9EAp9ll7ZKwgUWrbzyVC5vstYmgljfAFxnDSoUtHdpj+GQH9bPfJZqrxl6vl2
-	 0lnfRqULtEBAJ1y9UP3kOFLPVmy+RR/sbcP6F+TFwTGgdIZ8+OMceAczUKQWUHLT2a
-	 UWdLtLS1j5y3eS2kTqIRQmI/TQVPMoH72MrZNId2fFJxSAhoPXSbYGZ8ZcSQwOhvXt
-	 Bs4lmKl7ZAGVw==
-Message-ID: <sashiko-outbox-187645@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 4/5] firmware: tegra: bpmp: Add per-SoC EMC clock ID
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Johnny Liu" <johnliu@nvidia.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261028084900.1047287-5-johnliu@nvidia.com>
-References: <20261028084900.1047287-1-johnliu@nvidia.com>
- <20261028084900.1047287-5-johnliu@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 28 Oct 2026 09:01:14 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83520606A31A;
+	Wed, 28 Oct 2026 09:13:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 83520606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261028091311euoutp024819ef823fab2c20689b5890d7ddf5ae~ippwwUXVb2349923499euoutp02J;
+	Wed, 28 Oct 2026 09:13:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261028091311euoutp024819ef823fab2c20689b5890d7ddf5ae~ippwwUXVb2349923499euoutp02J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1793178791;
+	bh=3W2zW/ASI3Ufo+rdp+J+HzrLBLxCU9YgEhL1tFo9JN8=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=YD3seNv1lTl6lfYw3bfwIkC48J0uPe3B+5wKAZPK+XeWBwINFgBm5MPb9sVHecN7v
+	 XByNXwrD0JsSH1+jN75BcFsO8ELTz7OD2T7aTRqKuYUS05jwwSQTiJ5lwYNNLhOdCb
+	 QW+IPyyDcEgIBTrDIHHnlhBaaSr8YKqqFO/n8FO4=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20261028091310eucas1p1df77aa99909e0c12fcd259596f1f2163~ippv92h803159131591eucas1p1d;
+	Wed, 28 Oct 2026 09:13:10 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20261028091308eusmtip25984a31eb02ec800271e9985aaee42c8~ippuC0ldb0063200632eusmtip2x;
+	Wed, 28 Oct 2026 09:13:08 +0000 (GMT)
+Message-ID: <f6474690-adba-43ff-90f8-cdddf857286b@samsung.com>
+Date: Wed, 28 Oct 2026 10:13:07 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,89 +60,80 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 16/20] phy: Add common Innosilicon HDMI PHY helpers
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss
+	<rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
+	Yan <andy.yan@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, Emil
+	Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Paul Walmsley
+	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
+	Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>, Jerome
+	Brunet <jbrunet+clk@baylibre.com>, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, mfd@lists.linux.dev,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, Marek
+	Szyprowski <m.szyprowski@samsung.com>, Maud Spierings
+	<maud_spierings@murena.io>, Graham Markall <hello@big-grey.co.uk>, Icenowy
+	Zheng <zhengxingda@iscas.ac.cn>, Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Joshua Peisach <jpeisach@ubuntu.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <943aa2e7-3945-48f9-9a87-9c963f97099d@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20261028091310eucas1p1df77aa99909e0c12fcd259596f1f2163
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260915153242eucas1p1394a6a5e272f106b9cab2a0f709ddeb8
+X-EPHeader: CA
+X-CMS-RootMailID: 20260915153242eucas1p1394a6a5e272f106b9cab2a0f709ddeb8
+References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
+	<CGME20260915153242eucas1p1394a6a5e272f106b9cab2a0f709ddeb8@eucas1p1.samsung.com>
+	<20260915-jh7110-clean-send-v4-16-f0e4fd6f2cc8@samsung.com>
+	<asEPmpQTwXYADwTk@parshuram>
+	<943aa2e7-3945-48f9-9a87-9c963f97099d@samsung.com>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] firmware: tegra: bpmp: missing emc_clk_id for Tegra186 and Tegra=
-194
---
 
-commit 8799d4cd04239b801d1fa35e2045aaeae3d68e3e
-Author: Johnny Liu <johnliu@nvidia.com>
 
-firmware: tegra: bpmp: Add per-SoC EMC clock ID
+On 10/26/26 10:13, Michal Wilczynski wrote:
+> Hi Vinod,
+> 
+> On 10/3/26 16:22, Vinod Koul wrote:
+>> On 15-09-26, 17:32, Michal Wilczynski wrote:
+>>> The Innosilicon HDMI PHY IP is used by several SoCs. They differ in
+>>> where the PHY register block sits in the register space and in which
+>>> pixel clocks they support, but the pre-PLL programming sequence and the
+>>> layout of its registers are the same.
+>>>
+>>> Add a small library holding that shared part: the pre-PLL configuration
+>>> table format, a lookup, clk_ops determine_rate and recalc_rate helpers,
+>>> and the pre-PLL register programming. Callers pass a regmap, a register
+>>> offset for the PHY block, and their own pixel clock table.
+>>>
+>>> No driver uses it yet; the users are converted separately.
+>>
+>> Is there anything in phy patches here that has dependency with rest? If
+>> not consider splitting it up...
+> 
 
-This commit adds an emc_clk_id field to struct tegra_bpmp_soc and sets it
-for Tegra234, Tegra238, and Tegra264 while leaving it unset for Tegra186
-and Tegra194.
+On second thought, I agree it will be easier for maintainers to merge,
+so I'll split it in v6. The PHY patches (the binding, the helpers, the
+Rockchip conversion and the JH7110 PHY driver) will go as a separate
+mini series.
 
->     firmware: tegra: bpmp: Add per-SoC EMC clock ID
->    =20
->     The EMC clock ID differs per chip (TEGRA234_CLK_EMC=3D31,
->     TEGRA238_CLK_EMC=3D43, TEGRA264_CLK_EMC=3D290).
->    =20
->     Add an emc_clk_id field to struct tegra_bpmp_soc and set it for
->     Tegra234, Tegra238 and Tegra264. Tegra186 and Tegra194 have no EMC cl=
-ock
->     ID and leave it unset.
->    =20
->     Signed-off-by: Johnny Liu <johnliu@nvidia.com>
->=20
-> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-> index beeb385870f59..06da888535dc0 100644
-> --- a/drivers/firmware/tegra/bpmp.c
-> +++ b/drivers/firmware/tegra/bpmp.c
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
-[ ... ]
-
-> @@ -1158,14 +1162,17 @@ static const struct tegra_bpmp_soc tegra186_soc =
-=3D {
-> =20
->  static const struct tegra_bpmp_soc tegra234_soc =3D {
->  	TEGRA186_BPMP_SOC_COMMON,
-> +	.emc_clk_id =3D TEGRA234_CLK_EMC,
->  };
-
-[Severity: Medium]
-Is it accurate that Tegra186 and Tegra194 have no EMC clock ID, and should
-tegra186_soc (or a dedicated Tegra194 entry) also populate emc_clk_id?
-
-The in-tree device tree bindings and device trees define and consume BPMP
-EMC clocks on both SoCs:
-
-include/dt-bindings/clock/tegra186-clock.h:
-    #define TEGRA186_CLK_EMC 58
-
-arch/arm64/boot/dts/nvidia/tegra186.dtsi:
-    emc: external-memory-controller@2c60000 {
-        ...
-        clocks =3D <&bpmp TEGRA186_CLK_EMC>;
-
-include/dt-bindings/clock/tegra194-clock.h:
-    #define TEGRA194_CLK_EMC			31
-
-arch/arm64/boot/dts/nvidia/tegra194.dtsi:
-    emc: external-memory-controller@2c60000 {
-        ...
-        clocks =3D <&bpmp TEGRA194_CLK_EMC>;
-
-In addition, drivers/memory/tegra/tegra194.c sets .icc_ops =3D &tegra_mc_ic=
-c_ops,
-which scales the EMC clock via BPMP MRQ_BWMGR_INT without clk_set_rate()
-involvement, and drivers/memory/tegra/tegra186-emc.c uses
-clk_set_rate_range(), clk_set_min_rate(), and clk_set_max_rate() on emc->clk
-across Tegra186, Tegra194, Tegra234, and Tegra264.
-
-With emc_clk_id left at 0 in tegra186_soc (which matches TEGRA186_CLK_FUSE
-on Tegra186), consumers such as tegra_bpmp_clk_register() in commit
-1346a33d1522 ("clk: tegra: bpmp: Do not cache the EMC clock rate") will not
-identify the EMC clock on Tegra186 and Tegra194, continuing to return stale
-cached EMC clock rates when BPMP scales the EMC frequency. Also, because
-arch/arm64/boot/dts/nvidia/tegra194.dtsi matches compatible =3D "nvidia,teg=
-ra186-bpmp"
-and tegra_bpmp_match has no separate entry for Tegra194, both SoCs currently
-share tegra186_soc despite having different EMC clock IDs (58 vs. 31).
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261028084900.1047=
-287-1-johnliu@nvidia.com?part=3D4
