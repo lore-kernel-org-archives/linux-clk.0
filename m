@@ -1,62 +1,61 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793198927;
-	b=G/tP+prhkH2aM2UPwT2ZjojCTaPWKOREPhs7T7r03xnRxjrrqS6k0QVj+w2i7etT7Nfz
-	 cC/qnoJgxi/GxO5irEncCC75VQsQ5hDwxQ3i3GOANn+vyr51eXYY1pCAGX8x/PkLgsR7U
-	 SG9OjdgMqDfwAUzIAoM5/zWoO+dC53ox+Vi/YLWtRmxMMoeGfMedVwHmW7sTwndQYhx9H
-	 LvPADjNBR8R5godjd5jfKtP06GvBIMxcp4NSRW7HG5trnWPecb4bLtf4I8L5zefCvvrwv
-	 NI7kNpAUhvCWXQ0Kktl+jDSHywM+fOm6EpRBtlghjPcqi2fIEMjI17EhX2/0YiOcHpw==
+	t=1793199456;
+	b=wB5+Owifwz7AYavRYuFCsf3KxVTI7Qr8O9Q0b4M8aXrndEFI6hxrpKVjpP+C+sGcBUm2
+	 5m2xqNc/76/cr1hfLkpnC84Ui+CIu1NBOXkLx+bU9sITRRZnwOj1JnN4ilq5kyQgUEigt
+	 UdU2VQoNS1E/rM6DRxl3xfuA+fJqRG3cTgCezaMA+Xo7hEFP0wRPMMHrrf5gT6EZ2LsDv
+	 fJ+zZCOIgD2h/A7+J1JSuiWHfu6wHntWJfsnVeH7IQ0356FQr20m1ItnF4li0gUlhBJVn
+	 g7duDGiOhyvOEJH7TOC8PfFwMTSRZnyzPlPwrwaLudaBz4fwI9VdLxfJ4w9wLikNxzQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793198927;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Dji3XbcxBruXL4du3GW6afPCNwFUKBPPMSrHsKB8V0o=;
-	b=OmLH4oYFGlCwmjZumUixCJUZ+x1qecPCL2e7EwM/WTVRRvRJuy5y1XiVqOsIZrm0lZKt
-	 aiYgGQN5Z6TponjZZuVZTToYsMje/WIllMOJEn/jzaUhyxtf+pKmKhPCmzUN+Y4AeabbA
-	 +FidQZZniYQXEiF5qs2FWJxdTfhigcH4JyZjLjT7ghyVwj4f6qePMXWmp7qOzqIgzofU9
-	 QQWQltA3RovEQqyRQczH17ZQdlPcOvVKlX58qDwPYWR+PwpFAs22ONdP8tM8Ve9k7csk0
-	 olYYuKfWhXTL07QT+VPyN4jnWPcSXIIgVyFxvgXJC8+Qkups+PWlTpWYJL4K3usfrCA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793199456;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:Received:Received:From:In-Reply-To:
+	 MIME-Version:References:Date:X-Gmail-Original-Message-ID:
+	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
+	bh=mIGs1095/pi5A3phf200bT5vD03Lp1U81y8sX9m5/iA=;
+	b=lInJjszxLqP5Wb+JYhjz4FHw+DdMMdX+RgslMDxYkbwPa5hUA+OWHPyzLWSdijK/Litx
+	 2Q5Q9+woJBZw23V98bqua2sa62a4BTm1tRACPrCCdysGfqu6b8FUy+AU6/3Ac3wV9Ec6v
+	 TorgDRZzkdjyHnYzB3BHqZGEodT/CHffRvzD2Eun75TOI1VLAPJ9r2VsIjU/iyH+iSTBX
+	 qhwxvi3Geq6ffFI2fMx3PKxhg4gBuwOyqZb4Ap1AXJ1T06S7ae7jBfWR2bYPOyvggfTnY
+	 nzEgxLfp4ltvWClxJlwzBZvsCbp7u6Q783jEsvuL7pPpb8Ozrx1IA3wYbH5hnERbzLA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mPDjmvlj;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="jMdI/a00";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9E4606A31A;
-	Wed, 28 Oct 2026 14:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEDD606A32E
+	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 14:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mPDjmvlj
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32D111F01825;
-	Wed, 28 Oct 2026 14:48:46 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jMdI/a00
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C8C01F01829
+	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 14:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793198927;
-	bh=Dji3XbcxBruXL4du3GW6afPCNwFUKBPPMSrHsKB8V0o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mPDjmvljOWfR2WCxVwsCMCTrrxvR3gprOSt1d3iQG3Qb0xD9wFM1J/3w9sbph10It
-	 cfx84oETwlzAKrIiQ1InLY4zxXMSOUETRFKw0qRKkk/gwxI4cFM2FgAVhHFo5R3JRy
-	 oo1c1TrYYvEb2eOouY+/Lo5PccLaI6Sb+nUbo4iLkfC3+YC91aqqBUCJBktlfYcmNh
-	 BPCHOxSPtKKcMD2o4nAQnmfSa/mbqnRBpWTp9gZpuMAr6ValcNIVVPHrnKu7fHLEsX
-	 lEoWiPm+Dcwg93VSIP3LXYCU9pY7ooaZCc4z5Tct5z6CO0IxJQoxu6KN+u9ygxEUjf
-	 s3Qp0AyDNNxsw==
-Date: Wed, 28 Oct 2026 15:48:44 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jiebing Chen <jiebing.chen@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, jian.xu@amlogic.com, 
-	shuai.li@amlogic.com, zhe.wang@amlogic.com
-Subject: Re: [PATCH v7 1/5] dt-bindings: clock: meson: Add audio power domain
- for S4 soc
-Message-ID: <20261028-sparkling-objective-cricket-a428bd@quoll>
-References: <20261021-audio_drvier-v7-0-2b9aeae9cb8a@amlogic.com>
- <20261021-audio_drvier-v7-1-2b9aeae9cb8a@amlogic.com>
+	s=k20260515; t=1793199456;
+	bh=mIGs1095/pi5A3phf200bT5vD03Lp1U81y8sX9m5/iA=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=jMdI/a00XCHeoltZkWKqXpcnERaff94e8hUKV8fOm4MaNY8O7y8prtqZlsS9V/TkO
+	 RKGsHZDgxOXPjYTyHI9CJivdGW0s6UtXpw76OxzGTPoDgIC7iHh9yHraCorypu9A24
+	 f13SbMaf8ehpJ1Vrn5gwEG45lQsOTRogifSRjAcKVDsVICaojZ3L6MiUauU5qEyNMj
+	 qdSbdcvGdfG5xCBzqJn0bcDbuYF1FWV3HjEfaA9067wejwOomt/ISv4QmQZPp64M9I
+	 2GQTCVbh2sJlrSjd6LsK2ctiDl2gbWRxESTSbGZXlkBjr7n38p7Qedfk5K1irUEH8I
+	 YCwFtpin54F8g==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3a98fc80925so12202611fa.0
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 07:57:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBz6MAGQZIaF4Td114PW07cFppaXyfa+xC+wtXxDX1IwMevht6WXKkgnGLMwZuSpvB2ZvJqTDOc0hrw=@vger.kernel.org
+X-Gm-Message-State: AFq9FYI6Ji9FkCbVvPGn38DxDpBvEPuRAFRvV+bjRz3yuh1U5aB5pwIY
+	bX841y3/uXicf34YNFaE7N3yFVEZVmpD5ITZr8Xp31dbzNSqzc1sL3pUsDZM/6dEnqs0dgF6reL
+	KkVsBc2WSG++7IzZQyDVhrjfv4ANvNEwAhLcxSjB58w==
+X-Received: by 2002:a05:651c:1543:b0:3a9:d756:bfdd with SMTP id
+ 38308e7fff4ca-3ac9cf1d2cdmr6179361fa.7.1793199454407; Wed, 28 Oct 2026
+ 07:57:34 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 28 Oct 2026 07:57:32 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 28 Oct 2026 07:57:32 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20261028120216.2657397-1-robh@kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -66,71 +65,68 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261021-audio_drvier-v7-1-2b9aeae9cb8a@amlogic.com>
+References: <20261028120216.2657397-1-robh@kernel.org>
+Date: Wed, 28 Oct 2026 07:57:32 -0700
+X-Gmail-Original-Message-ID: <CAMRc=Md2xhYPdUEQ2SeqiGq9uG1qcc9Hi77T4k3ta_wmd56BhQ@mail.gmail.com>
+X-Gm-Features: AclHuK-L3iqt92WsRHLJE8OI5aNBBhyNCiN5RHrPr_WcVOO_RomVfpU-3_RxU7E
+Message-ID: <CAMRc=Md2xhYPdUEQ2SeqiGq9uG1qcc9Hi77T4k3ta_wmd56BhQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Fix property name typos in if/then schemas
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	freedreno@lists.freedesktop.org, imx@lists.linux.dev, 
+	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-media@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, Bjorn Andersson <andersson@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Frank Li <Frank.Li@nxp.com>, Vinod Koul <vkoul@kernel.org>, Yinbo Zhu <zhuyinbo@loongson.cn>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Tiffany Lin <tiffany.lin@mediatek.com>, 
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Yunfei Dong <yunfei.dong@mediatek.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Ryder Lee <ryder.lee@mediatek.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Christian Marangi <ansuelsmth@gmail.com>, Eric Anholt <eric@anholt.net>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Peng Fan <peng.fan@nxp.com>, 
+	Aakarsh Jain <aakarsh.jain@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 21, 2026 at 03:08:28PM +0800, Jiebing Chen wrote:
-> The audio power domain has been found on S4 device.
-> It must be enabled prior to audio operations.
-> 
-> Signed-off-by: Jiebing Chen <jiebing.chen@amlogic.com>
+On Wed, 28 Oct 2026 13:02:12 +0100, "Rob Herring (Arm)" <robh@kernel.org> said:
+> Property names within if/then schemas currently go unchecked whether
+> they have a type defined or match what's in the top-level schema. Adding
+> a check finds a number of instances of typos. The typos result in the
+> schema having no effect on constraints.
+>
+> With this, fix the mediatek,vcodec-encoder 'clocks' count constraint
+> exposed by the name correction.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  .../bindings/clock/amlogic,axg-audio-clkc.yaml          | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-> index fd7982dd4cea..69f5fef5f14a 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-> @@ -20,6 +20,7 @@ properties:
->      enum:
->        - amlogic,axg-audio-clkc
->        - amlogic,g12a-audio-clkc
-> +      - amlogic,s4-audio-clkc
->        - amlogic,sm1-audio-clkc
->  
->    '#clock-cells':
-> @@ -100,6 +101,8 @@ properties:
->    resets:
->      description: internal reset line
->  
-> +  power-domains:
-> +    maxItems: 1
+>  .../devicetree/bindings/clock/qcom,kpss-gcc.yaml     |  2 +-
+>  .../bindings/display/brcm,bcm2711-hdmi.yaml          |  2 +-
+>  .../bindings/display/msm/dp-controller.yaml          |  2 +-
+>  .../devicetree/bindings/display/msm/hdmi.yaml        |  4 ++--
+>  Documentation/devicetree/bindings/dma/fsl,edma.yaml  |  2 +-
+>  .../devicetree/bindings/gpio/loongson,ls-gpio.yaml   |  2 +-
 
-Missing blank line.
+For GPIO:
 
->  required:
->    - compatible
->    - '#clock-cells'
-> @@ -115,6 +118,7 @@ allOf:
->            contains:
->              enum:
->                - amlogic,g12a-audio-clkc
-> +              - amlogic,s4-audio-clkc
->                - amlogic,sm1-audio-clkc
->      then:
->        required:
-> @@ -122,7 +126,18 @@ allOf:
->      else:
->        properties:
->          '#reset-cells': false
-> -
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - amlogic,s4-audio-clkc
-> +    then:
-> +      required:
-> +        - power-domains
-> +    else:
-> +      properties:
-> +        power-domains: false
-
-And here as well.
-
-Best regards,
-Krzysztof
-
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
