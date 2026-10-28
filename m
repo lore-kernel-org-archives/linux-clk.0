@@ -1,104 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.43
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793195978;
-	b=wqCrx2FoiWXAirUjzrOlQH6tdXKFCMvbDtM67M1Xb5ghE/duXFsUsPYZaBfLbUiOoRo0
-	 dWIV52eXesAV5jSXTjEudClL+hCG9O6UgXR7dn6s3mRNhFQCQnTzB08BH+5w65NRlrVST
-	 jszSoeTt9sZn0L4t04VxbxuSGd/iZTHbMsdmPNlb3ESOBejHWwXqf887yAeXcwbi+Jkyq
-	 mFr0cJjR2YtK4Eo0zi8B/LAIEWbo4e6BTQk49X77r1WNNngTjZrRDdZSoJw3dJOBNv6rs
-	 x6pK6hkrfM3tUoWXKE8FHkPznM27Vkv0rV9a1S1CmttkMQeW0IBdQzue3UZFOYzq3Rg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793195978;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=RBz08268AVURbWerFfGZQvoJEMhx0Fe3EfTMgya6HMo=;
-	b=N2/FXnQbhsSc7o0DbJ2ucYavjYIP+tj6ooE7QgoET5YE8u5Y72loRwYs7whzHOw5c3FF
-	 vAP0RGcxDbgb8zZdiRGMERXKjYmYhgCk9bSHFMYu4gXhwG+wz+9jeNNu0QdNUjQmwWLxb
-	 qvm9iG+EZeKJ/ZuTr6hUH2VcIg/4KRCM2SguFR8rV6sMRrg4LPYt6h6Aox/l/1H8dDR4t
-	 Lmvuc711ifyYycTtADfrPQQmSgkJAo6Yn86+P5OMWYyrMQEAKYhjGC0DeGRzt0gHdBv1I
-	 C9i/PjP+rkJOUjClzctTJTm9WZQQQ7M40w9nZYSlUDQPQjOzaT8plHa7Ji0lL7Q5dGA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amarulasolutions.com;
-	spf=pass smtp.mailfrom=amarulasolutions.com;
-	dkim=pass header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=QxoZI8sG;
-	arc=none smtp.remote-ip=209.85.221.43
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793196216;
+	b=BiKGa+FfYpvGuGQk/bZIRywcfg44XZ98l0Hef7LsnjSo2LXOpnwg/iX+WHIskSVkMUY6
+	 +V7O1pU/AFxBpZwqBmTyFEAcSx/swFbQRd+xw4zOw+jY4hoOFcLbClTXobzX/KKzIcDwM
+	 bZ0Owf29ArVbUuYm+xoYEL50ir2QboWdzJlJV69LajcIaVjCSJ2K6cuxDoS4wFfT2Mvkd
+	 xA1kMiRWjTFHlG4zfFa8q14jI88FL5uDsbLwaDj7Wk34d2sU6QbcNATrCn75v714BEPBi
+	 UIMdPrAPuvWB+SVNu3MSt1aYt5dWzJ5JXc2NF4UDtWRTIxsOCvcc7u7Z1+D3HS35jCA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793196216;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=7P6hkajrEuuwluLOAZvBDyIw6BeTtytgqv1+hRyvjaw=;
+	b=Lz5rt+X9VCn5cGxW14P8cY6ANLWwkb+7yZ6piQWjAlidNn8JhQmGFMXLeCE48+jQsuJ0
+	 VMkDbcZEsPQn+i+xFh2wIJkrLQDvj2YTbQvvX1ByPrVRU2zqH7gRmV9xDYSvCuu7XtiMx
+	 sglbTgmTxy9ukH5WjdFKks4hZKOBbf0wCVeocQOE2GLpN9tssvvM1mES0UxkAPRUv3p1N
+	 3Vd1NFV2uMurrsbBycQw9ZHAx8jk+aVvyt9PNiKZXAXEgHau2hY981D+4xA/qNESm80g5
+	 9PHma8/MRvCsh2d+cinBBpWr1EiC0UiTjZh5cHz21yEQpjkqMZMhznVcsUoLM6qutew==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=fJk0v+4g;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC9D60A260A
-	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 13:59:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9EC9D60A260A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6725606A31D;
+	Wed, 28 Oct 2026 14:03:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C6725606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=QxoZI8sG
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-48dfb76b304so169087f8f.2
-        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 06:59:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1793195963; x=1793800763; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=RBz08268AVURbWerFfGZQvoJEMhx0Fe3EfTMgya6HMo=;
-        b=QxoZI8sGgpfb3oMSDg0y3tzeghn/vzamTAXHa8vd34zrmrkTk8MxviZmBuitZF1Nn0
-         Q/UlK2HOgEdQ0eAbklP8xYuqLcA0zqFU7o41POYppomi2vmcsfvCwasAIeqg08tkLKdN
-         IFZmuqGqQ3fMMyIiTwGsdgyzM7ExnEuWwWNOk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793195963; x=1793800763;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=RBz08268AVURbWerFfGZQvoJEMhx0Fe3EfTMgya6HMo=;
-        b=PNzYQRNqh4KhDsADugmOvrAhT5s2L8xROAuZlTdrnYV1T03j3w2wjukavm2S4Ft6qG
-         yNNIzszNaKc+0rVfxQ+zD0c3idDP+GMEfvDBPgFdyq8x/6W3bd1Lvnz6MFs8Lkag8N67
-         2avmXErgcQ5CKDbaAR7MacyIQHa5lrwdXBBa5q9jWT5odl2yXKl2SVMZNyZ62sI6Tiau
-         vUoWsgsHSp5zArmeDdiyDzXQ7/S91Mx8ayBrY1YrbZAkmqUXh3And4DxJcbYJELwOn7M
-         3i3nB+Lav8vzXg4lkiA9QxxRC77WBpZtJFcT7FHYqxTwZd5l+qIoVb1Y2R4P/6LZRgy8
-         39yg==
-X-Forwarded-Encrypted: i=1; AKwUvBwUfoZJdMTjldHU65Agrg9F7idMH5q7O0uia73F4K2x9K8V0XbC8y4n/EFDupcDaFHyLOdcu2tp+wM=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLmqXbqv8OyaLmheoSj+QU0bQ2lzIZMnpM53V5wkqEri8aRlHpJ
-	fC+mHorTaGMv+PWWbzrNHrvS5ltY0bAYqiejE+Ar0RRN+3y+LRkzbR7Z+oKYBTcHe/E=
-X-Gm-Gg: AYBFou0mVnwxOSVSoirvm3xFNpP7nZf57kAVXqInlBobsa5yd7WD6/dakyBjh+MPRdj
-	eZxZdNP/unp4W3DoHSTdn4TwkK8E6mvfUadEkmEuWUBCjusibwWLl+t8DY8hIJgRFMJTmmbiTtF
-	AWvyFBnNAigeMx57yGFXx7UJ8UNcbZ+dtOnSqDsIttP9gVmCNlUvt+U1xFwIbUoa7Ed613+TLvV
-	S1LgBVxzbiGZKI5PfHiRQN7atU9P7xqfObIWuxohTO4YjV0wyOoSnzQMV/Gn3fRdVMEOC4MHuGb
-	rZmMhabMEWxJhfjAseqTx/rDMEOg4cFQwp3Pl3xmhoK2ejSWxIv7IgBVjMPuWToNe+AA+wCBAoL
-	YiOjJy1xuYS45y3aRY+QN2SPXtyUv5YsnHG/1WdUa/WpbL3SPipIlXqx7W116y754AkvqKwxkng
-	YnN24zhNcsoC5pJI9R4/zTQu7M5LNRpYkt7cYBGAUu7K5AX/WgzfWUsA+sKEl15aCL5ozRIk+9N
-	tCyb387vrf1dOCkhjmzUwRCGBTs11T+COyU7oqxDQeod2RBduDgHouMdeoamLz+cCeE7PIHHRoE
-	M5c8b3f2G1LKgI1saEkNFkqFvjP726udDnhuKt0qopqVW2yjifbVQ/tYNxa+zA94A1/a+zUDA8r
-	Nf9uS9gmfYjqfkP7PjY6nwdH3Bqc40ZyGFtXWRlTNM67v+QLb
-X-Received: by 2002:a05:600c:19c8:b0:4a1:d459:db4b with SMTP id 5b1f17b1804b1-4a966e2a979mr54893215e9.24.1793195963058;
-        Wed, 28 Oct 2026 06:59:23 -0700 (PDT)
-Received: from dario-ThinkPad-P14s-Gen-5.amarulasolutions.com ([2.196.42.39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a94f05f168sm37077165e9.4.2026.10.28.06.59.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2026 06:59:22 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Marek Vasut <marex@nabladev.com>,
-	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-	michael@amarulasolutions.com,
-	linux-amarula@amarulasolutions.com,
-	Yannick Fertre <yannick.fertre@foss.st.com>,
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: [RFC PATCH 2/4] clk: stm32: add STM32MP25 SYSCFG clock driver
-Date: Wed, 28 Oct 2026 14:59:06 +0100
-Message-ID: <20261028135915.2665857-3-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261028135915.2665857-1-dario.binacchi@amarulasolutions.com>
-References: <20261028135915.2665857-1-dario.binacchi@amarulasolutions.com>
+	dkim=pass (2048-bit key, unprotected) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=fJk0v+4g
+Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
+	(Authenticated sender: pza@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 23858202950;
+	Wed, 28 Oct 2026 15:03:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1793196205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7P6hkajrEuuwluLOAZvBDyIw6BeTtytgqv1+hRyvjaw=;
+	b=fJk0v+4ga7M4vRJu7VspWY2EHWe0tBqGwn6UYuEsrU8J7tIqos7QxaaEOtktZt6mmd9oG4
+	tToGGLOVQtMyd0VwsAL034DCpZd70a+KOypN3Pw8M25iIz2z6CMTQk8bTB4h6LYHH5LMI/
+	GpkYTVdTUUMIMXxksYKapUyLhsCfVFPcblNefrbBVwotYvdq92Ov4Ce/JGQHK1XmCBrR44
+	G/eCbiWnv5Tn7DiM61GMwJ00vjgr8Iwk54oCJyGMBOPdXIetaRJ6UHBr6nkfZ2YHYgHkdg
+	AmhyKxulPq5GBLQpez5Cjz3Oc7pwXY2FdlL23PY0g3+QMfU+obSKEAeDEeeOdQ==
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1793196205; a=rsa-sha256;
+	cv=none;
+	b=K0EsB2LyhvUVGLcLwWVrAdslwBFmPDFzgFymzsVwxmG8GDel+Q44FM+cyA1YQyjUa70bCr
+	zaaw7nep7CYdZapkD/ueEfo/EKWTbn+PQYXxXfUvWZzvvP0Wkbxx4yF2ZCS09XgQTUphvh
+	JES9Msf+INOKkobm6Z2No4WAyj7iqFa66rW2RNVqlpzjrvaq3XEBesTgXFcGP0OKF1/YUL
+	kgiGY/0s9/fQGt0IZD5Kx3WViRkNRF7DGibpfUPSatdwC00jjKeyVubysf3krFdDEyRwRZ
+	yUSZDM/agGViiRKQScZRwUHPtwCFkYbu2ioL6xbeWyvdRS+2sr/kJpB/jrlhQw==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1793196205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7P6hkajrEuuwluLOAZvBDyIw6BeTtytgqv1+hRyvjaw=;
+	b=ZMLvYx3qz7/nxsQJFZRewAGvPfe/6T/mFhonAzwIFBSuRxFtgY87l2CKgxhdMfgYNaZgYv
+	Wkj87jgAjvUxznmG2qh+Zg73PuUY6yD0NXNwypWe7qor+bk4PUrOOSvVY2hissGpRXQX7J
+	1esXry4x+WKs81rK/YdDQXrqHCXPL8XW2K+xtGjCkV1i7JnHP2WcPSFpHbhOgk2MkUWg3G
+	hDqLFIp2A6Anxg6w0z9Sh1/Ybm5t0mtKU+cSezAZHHF6KvlCM3hxit8r1luB1bWEy4aKr1
+	p7T3ZdO1soNYx8xZ+tdNtvXfGbw952EUyt6lcmcxeJdmBYUZk+g/9/sQHPi2aw==
+Message-ID: <8d57f0a1dc8a07838bf1320f9b79588196264ff5.camel@pengutronix.de>
+Subject: Re: [PATCH 6/9] reset: google: Add CPM reset driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Brian Norris <briannorris@chromium.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Stephen Boyd
+	 <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
+	 <jbrunet+clk@baylibre.com>, Thomas Gleixner <tglx@kernel.org>, Ulf Hansson
+	 <ulfh@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, =?ISO-8859-1?Q?Andr=E9?= Draszik
+ <andre.draszik@linaro.org>, 	linux-samsung-soc@vger.kernel.org,
+ linux-pm@vger.kernel.org, 	linux-kernel@vger.kernel.org, Radu Rendec
+ <radu@rendec.net>, 	linux-arm-kernel@lists.infradead.org, Mariano Marciello
+ <mmarciello@google.com>,  Douglas Anderson <dianders@chromium.org>,
+ linux-clk@vger.kernel.org, Jakub =?UTF-8?Q?G=C5=82owacki?=	
+ <jglow@google.com>
+Date: Wed, 28 Oct 2026 15:03:24 +0100
+In-Reply-To: <20261026144346.6.I0b1ad34a718a9b5f667d2481041970ea45989dd3@changeid>
+References: <20261026214359.3122870-1-briannorris@chromium.org>
+	 <20261026144346.6.I0b1ad34a718a9b5f667d2481041970ea45989dd3@changeid>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -108,180 +104,506 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-On STM32MP25 the LTDC pixel clock is selected in the SYSCFG
-DISPLAYCLKCR register among the DSI byte lane clock, the LVDS PHY pixel
-clock (reset value) and the LTDC kernel clock, the latter being the one
-needed by the RGB (DPI) output.
+On Mo, 2026-10-26 at 14:43 -0700, Brian Norris wrote:
+> Google Tensor SoCs (used on Pixel phones) manage many resources
+> (including resets) using a Central Power Manager (CPM) co-processor. We
+> communicate with CPM using mailboxes, abstracted in the
+> cpm_request_client(), etc., API.
+>=20
+> For posterity, I list a summary of changes made relative to the
+> downstream Pixel driver:
+>=20
+> * Switch to auxiliary bus, as a child of a CPM device
+>=20
+> * Use devm more heavily
+>=20
+> * Avoid representing each reset as its own Device Tree node. Use a
+>   limited per-SoC table to describe any additional per-SoC details
+>   instead.
+>=20
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+>=20
+>  drivers/reset/Kconfig            |   1 +
+>  drivers/reset/Makefile           |   1 +
+>  drivers/reset/google/Kconfig     |  11 +
+>  drivers/reset/google/Makefile    |   2 +
+>  drivers/reset/google/reset-cpm.c | 367 +++++++++++++++++++++++++++++++
+>  5 files changed, 382 insertions(+)
+>  create mode 100644 drivers/reset/google/Kconfig
+>  create mode 100644 drivers/reset/google/Makefile
+>  create mode 100644 drivers/reset/google/reset-cpm.c
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index eda9c698a95f..37dbddcd620f 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -451,6 +451,7 @@ config RESET_ZYNQMP
+>  	  This enables the reset controller driver for Xilinx ZynqMP SoCs.
+> =20
+>  source "drivers/reset/amlogic/Kconfig"
+> +source "drivers/reset/google/Kconfig"
+>  source "drivers/reset/hisilicon/Kconfig"
+>  source "drivers/reset/spacemit/Kconfig"
+>  source "drivers/reset/starfive/Kconfig"
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 489fafd6bbe3..9754c274766c 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-y +=3D core.o
+>  obj-y +=3D amlogic/
+> +obj-y +=3D google/
+>  obj-y +=3D hisilicon/
+>  obj-y +=3D spacemit/
+>  obj-y +=3D starfive/
+> diff --git a/drivers/reset/google/Kconfig b/drivers/reset/google/Kconfig
+> new file mode 100644
+> index 000000000000..38431b4f9001
+> --- /dev/null
+> +++ b/drivers/reset/google/Kconfig
+> @@ -0,0 +1,11 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +config RESET_CPM
+> +	tristate "Google CPM Reset Controller"
+> +	depends on ARCH_GOOGLE || COMPILE_TEST
+> +	depends on GOOGLE_CPM_MBA
+> +	help
+> +	  Driver support for reset controllers found on Google Tensor SoCs,
+> +	  operating over the CPM mailbox interface. This allows peripheral
+> +	  drivers to assert and deassert resets on LPCM hardware blocks.
+> +
+> +	  If unsure, say N.
+> diff --git a/drivers/reset/google/Makefile b/drivers/reset/google/Makefil=
+e
+> new file mode 100644
+> index 000000000000..437c19459464
+> --- /dev/null
+> +++ b/drivers/reset/google/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +obj-$(CONFIG_RESET_CPM) +=3D reset-cpm.o
+> diff --git a/drivers/reset/google/reset-cpm.c b/drivers/reset/google/rese=
+t-cpm.c
+> new file mode 100644
+> index 000000000000..5f144f1ad5f2
+> --- /dev/null
+> +++ b/drivers/reset/google/reset-cpm.c
+> @@ -0,0 +1,367 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Device driver to control Google SoC LPCM resets via CPM.
+> + * Copyright 2023-2026 Google LLC
+> + */
+> +
+> +#include <dt-bindings/soc/google,lga-lpcm.h>
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +#include <linux/container_of.h>
+> +#include <linux/debugfs.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/reset-controller.h>
+> +#include <soc/google/goog_cpm_service_ids.h>
+> +#include <soc/google/google-cpm-mba.h>
+> +
+> +#define MAILBOX_SEND_TIMEOUT_MS		3000
+> +#define LPCM_CMD_SET_RST		0x4
+> +
+> +#define OP_ID_BITFIELD			GENMASK(31, 24)
+> +#define RST_ID_BITFIELD			GENMASK(23, 16)
+> +#define LPCM_ID_BITFIELD		GENMASK(15, 8)
+> +#define REQ_ID_BITFIELD			GENMASK(7, 0)
+> +
+> +#define ASSERT_OP_ID			0
+> +#define DEASSERT_OP_ID			1
+> +
+> +#define NO_ERROR			0
+> +#define ERR_LPCM_NOT_SUPPORTED		(-24)
+> +#define ERR_LPCM_INVALID_ARGS		(-8)
+> +#define ERR_LPCM_TIMED_OUT		(-13)
+> +#define ERR_LPCM_GENERIC		(-1)
+> +
+> +#define CPM_RST_LPCM_ID_MASK		GENMASK(31, 16)
+> +#define CPM_RST_ID_MASK			GENMASK(15, 0)
+> +
+> +static inline unsigned long to_rstc_idx(u32 lpcm_id, u32 rst_id)
+> +{
+> +	return FIELD_PREP(CPM_RST_LPCM_ID_MASK, lpcm_id) |
+> +	       FIELD_PREP(CPM_RST_ID_MASK, rst_id);
+> +}
+> +
+> +static inline u32 lpcm_from_idx(unsigned long idx)
+> +{
+> +	return FIELD_GET(CPM_RST_LPCM_ID_MASK, idx);
+> +}
+> +
+> +static inline u32 rst_from_idx(unsigned long idx)
+> +{
+> +	return FIELD_GET(CPM_RST_ID_MASK, idx);
+> +}
+> +
+> +struct cpm_reset_data {
+> +	u32 lpcm_id;
+> +	u32 nr_resets;
+> +	const char *name;
+> +};
+> +
+> +struct cpm_reset_soc_data {
+> +	const struct cpm_reset_data *resets;
+> +	size_t num_resets;
+> +};
+> +
+> +struct goog_cpm_rst_provider {
+> +	struct device *dev;
+> +	struct reset_controller_dev rcdev;
+> +	struct cpm_client *cpm_client;
+> +	struct dentry *debugfs_root;
+> +	struct goog_cpm_rst_debugfs_entry *dbg_entries;
+> +	const struct cpm_reset_soc_data *soc_data;
+> +};
+> +
+> +#define to_provider(rc) container_of(rc, struct goog_cpm_rst_provider, r=
+cdev)
 
-The SYSCFG node already provides this clock ("#clock-cells = <0>"),
-referenced by the LTDC as "ref" clock, but no driver registers it, so
-the selection is stuck at the reset value and a display connected to
-the LTDC RGB output can't work.
+This should be an inline function.
 
-Add a driver registering this clock as a mux. The SYSCFG node is
-already bound to the STM32MP2 SYSCFG driver, so the clock driver is
-bound to an auxiliary device created by the latter, which shares the
-SYSCFG node and regmap.
+> +struct goog_cpm_rst_debugfs_entry {
+> +	struct goog_cpm_rst_provider *provider;
+> +	u32 lpcm_id;
+> +};
+> +
+> +static int goog_cpm_rst_mba_check_ret(struct device *dev, int ret)
+> +{
+> +	switch (ret) {
+> +	case NO_ERROR:
+> +		return 0;
+> +	case ERR_LPCM_NOT_SUPPORTED:
+> +		dev_err(dev, "the received request_id is invalid\n");
+> +		return -EPROTO;
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
----
+-EOPNOTSUPP?
 
- drivers/clk/stm32/Kconfig                |  12 +++
- drivers/clk/stm32/Makefile               |   1 +
- drivers/clk/stm32/clk-stm32mp25-syscfg.c | 111 +++++++++++++++++++++++
- 3 files changed, 124 insertions(+)
- create mode 100644 drivers/clk/stm32/clk-stm32mp25-syscfg.c
+> +	case ERR_LPCM_INVALID_ARGS:
+> +		dev_err(dev, "invalid lpcm_id or rst_id\n");
+> +		return -EINVAL;
+> +	case ERR_LPCM_TIMED_OUT:
+> +		dev_err(dev, "operation timed out\n");
+> +		return -ETIMEDOUT;
+> +	case ERR_LPCM_GENERIC:
+> +		dev_err(dev, "internal error occurred\n");
+> +		return -EREMOTEIO;
+> +	default:
+> +		dev_err(dev, "unknown error response from CPM\n");
+> +		return -EPROTO;
+> +	}
+> +}
 
-diff --git a/drivers/clk/stm32/Kconfig b/drivers/clk/stm32/Kconfig
-index 5dbd75cde657..906044aacaa1 100644
---- a/drivers/clk/stm32/Kconfig
-+++ b/drivers/clk/stm32/Kconfig
-@@ -39,5 +39,17 @@ config COMMON_CLK_STM32MP257
- 	help
- 	  Support for stm32mp25x SoC family clocks.
- 
-+config COMMON_CLK_STM32MP25_SYSCFG
-+	tristate "Clock driver for stm32mp25x SYSCFG clocks"
-+	depends on COMMON_CLK_STM32MP257
-+	select AUXILIARY_BUS
-+	select MFD_SYSCON
-+	default COMMON_CLK_STM32MP257
-+	help
-+	  Support for the clocks provided by the stm32mp25x SYSCFG, i.e.
-+	  the LTDC pixel clock source selection between the LTDC kernel
-+	  clock (RGB output), the LVDS PHY pixel clock and the DSI byte
-+	  lane clock.
-+
- endif
- 
-diff --git a/drivers/clk/stm32/Makefile b/drivers/clk/stm32/Makefile
-index e04727b59449..8088d172651f 100644
---- a/drivers/clk/stm32/Makefile
-+++ b/drivers/clk/stm32/Makefile
-@@ -2,3 +2,4 @@ obj-$(CONFIG_COMMON_CLK_STM32MP135)	+= clk-stm32mp13.o clk-stm32-core.o reset-st
- obj-$(CONFIG_COMMON_CLK_STM32MP157)	+= clk-stm32mp1.o reset-stm32.o
- obj-$(CONFIG_COMMON_CLK_STM32MP215)	+= clk-stm32mp21.o clk-stm32-core.o reset-stm32.o
- obj-$(CONFIG_COMMON_CLK_STM32MP257)	+= clk-stm32mp25.o clk-stm32-core.o reset-stm32.o
-+obj-$(CONFIG_COMMON_CLK_STM32MP25_SYSCFG)	+= clk-stm32mp25-syscfg.o
-diff --git a/drivers/clk/stm32/clk-stm32mp25-syscfg.c b/drivers/clk/stm32/clk-stm32mp25-syscfg.c
-new file mode 100644
-index 000000000000..1cb2459f0370
---- /dev/null
-+++ b/drivers/clk/stm32/clk-stm32mp25-syscfg.c
-@@ -0,0 +1,111 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * STM32MP25 SYSCFG clocks
-+ *
-+ * Copyright (C) 2026 Amarula Solutions, Dario Binacchi <dario.binacchi@amarulasolutions.com>
-+ */
-+
-+#include <linux/auxiliary_bus.h>
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+
-+#define SYSCFG_DISPLAYCLKCR		0x5000
-+#define DISPLAYCLKCR_DPIVSLVDS		GENMASK(1, 0)
-+
-+/*
-+ * The LTDC pixel clock source is selected in SYSCFG_DISPLAYCLKCR among
-+ * the DSI byte lane clock, the LVDS PHY pixel clock (reset value) and
-+ * the LTDC kernel clock, which is used with the RGB (DPI) output.
-+ */
-+static const char * const clk_pix_ltdc_parents[] = {
-+	"txbyteclk", "clk_pix_lvds", "ck_ker_ltdc",
-+};
-+
-+struct stm32mp25_syscfg_mux {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+};
-+
-+static inline struct stm32mp25_syscfg_mux *to_syscfg_mux(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct stm32mp25_syscfg_mux, hw);
-+}
-+
-+static u8 stm32mp25_syscfg_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct stm32mp25_syscfg_mux *mux = to_syscfg_mux(hw);
-+	unsigned int val;
-+
-+	regmap_read(mux->regmap, SYSCFG_DISPLAYCLKCR, &val);
-+
-+	return FIELD_GET(DISPLAYCLKCR_DPIVSLVDS, val);
-+}
-+
-+static int stm32mp25_syscfg_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct stm32mp25_syscfg_mux *mux = to_syscfg_mux(hw);
-+
-+	return regmap_update_bits(mux->regmap, SYSCFG_DISPLAYCLKCR,
-+				  DISPLAYCLKCR_DPIVSLVDS,
-+				  FIELD_PREP(DISPLAYCLKCR_DPIVSLVDS, index));
-+}
-+
-+static const struct clk_ops stm32mp25_syscfg_mux_ops = {
-+	.get_parent = stm32mp25_syscfg_mux_get_parent,
-+	.set_parent = stm32mp25_syscfg_mux_set_parent,
-+	.determine_rate = clk_hw_determine_rate_no_reparent,
-+};
-+
-+static int stm32mp25_syscfg_clk_probe(struct auxiliary_device *adev,
-+				      const struct auxiliary_device_id *id)
-+{
-+	struct device *dev = &adev->dev;
-+	struct clk_init_data init = { };
-+	struct stm32mp25_syscfg_mux *mux;
-+	int ret;
-+
-+	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return -ENOMEM;
-+
-+	mux->regmap = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(mux->regmap))
-+		return dev_err_probe(dev, PTR_ERR(mux->regmap),
-+				     "failed to get the SYSCFG regmap\n");
-+
-+	init.name = "clk_pix_ltdc";
-+	init.ops = &stm32mp25_syscfg_mux_ops;
-+	init.parent_names = clk_pix_ltdc_parents;
-+	init.num_parents = ARRAY_SIZE(clk_pix_ltdc_parents);
-+	init.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT;
-+	mux->hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &mux->hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register %s\n",
-+				     init.name);
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &mux->hw);
-+}
-+
-+static const struct auxiliary_device_id stm32mp25_syscfg_clk_ids[] = {
-+	{ .name = "stm32mp2_syscfg.clk" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(auxiliary, stm32mp25_syscfg_clk_ids);
-+
-+static struct auxiliary_driver stm32mp25_syscfg_clk_driver = {
-+	.probe = stm32mp25_syscfg_clk_probe,
-+	.id_table = stm32mp25_syscfg_clk_ids,
-+};
-+module_auxiliary_driver(stm32mp25_syscfg_clk_driver);
-+
-+MODULE_AUTHOR("Dario Binacchi <dario.binacchi@amarulasolutions.com>");
-+MODULE_DESCRIPTION("STM32MP25 SYSCFG clock driver");
-+MODULE_LICENSE("GPL");
--- 
-2.43.0
+Is this specific to reset functionality, or should this maybe live in
+CPM common code? I see that the return values in the power-domain
+driver are not translated, but the clock driver contains a near-
+identical copy of this function. Or maybe just printing the translated
+error with "%pe" is good enough?
 
+> +static int goog_cpm_rst_mba_resp_hdl(struct device *dev, const struct cp=
+m_request *cpm_req)
+> +{
+> +	int dst =3D cpm_req->dst_id;
+> +	int ret =3D cpm_req->resp_msg->payload[0];
+> +
+> +	dev_dbg(dev, "got resp from %u, data %d.\n", dst, ret);
+> +
+> +	return goog_cpm_rst_mba_check_ret(dev, ret);
+> +}
+> +
+> +static int goog_cpm_rst_send_mba_mail(struct goog_cpm_rst_provider *prov=
+ider,
+> +				      u32 lpcm_id, unsigned long rst_id, int op_id)
+> +{
+> +	struct device *dev =3D provider->dev;
+> +	struct cpm_payload resp_msg;
+> +	struct cpm_payload req_msg =3D {};
+> +	struct cpm_request cpm_req =3D {
+> +		.msg_type =3D REQUEST_MSG,
+> +		.req_msg =3D &req_msg,
+> +		.resp_msg =3D &resp_msg,
+> +		.dst_id =3D CPM_COMMON_LPCM_SERVICE,
+> +		.tout_ms =3D MAILBOX_SEND_TIMEOUT_MS,
+> +	};
+> +	int ret;
+> +
+> +	req_msg.payload[0] =3D FIELD_PREP(REQ_ID_BITFIELD, LPCM_CMD_SET_RST) |
+> +			     FIELD_PREP(LPCM_ID_BITFIELD, lpcm_id) |
+> +			     FIELD_PREP(RST_ID_BITFIELD, rst_id) |
+> +			     FIELD_PREP(OP_ID_BITFIELD, op_id);
+> +
+> +	dev_dbg(dev, "lpcm_id %d, rst_id %lu: send mba mail: [%u, %u, %u]\n",
+> +		lpcm_id, rst_id, req_msg.payload[0], req_msg.payload[1],
+> +		req_msg.payload[2]);
+> +
+> +	ret =3D cpm_send_message(provider->cpm_client, &cpm_req);
+> +	if (ret < 0) {
+> +		dev_err(dev,
+> +			"lpcm_id %d, rst_id %lu: failed to send request to CPM, ret=3D%d\n",
+> +			lpcm_id, rst_id, ret);
+> +		return ret;
+> +	}
+> +
+> +	return goog_cpm_rst_mba_resp_hdl(dev, &cpm_req);
+> +}
+> +
+> +static int goog_cpm_rst_assert(struct reset_controller_dev *rcdev,
+> +			       unsigned long idx)
+> +{
+> +	struct goog_cpm_rst_provider *provider =3D to_provider(rcdev);
+> +	u32 lpcm_id =3D lpcm_from_idx(idx);
+> +	u32 rst_id =3D rst_from_idx(idx);
+> +
+> +	dev_dbg(rcdev->dev, "assert reset id=3D%u of lpcm %u\n", rst_id, lpcm_i=
+d);
+> +	return goog_cpm_rst_send_mba_mail(provider, lpcm_id, rst_id, ASSERT_OP_=
+ID);
+> +}
+> +
+> +static int goog_cpm_rst_deassert(struct reset_controller_dev *rcdev,
+> +				 unsigned long idx)
+> +{
+> +	struct goog_cpm_rst_provider *provider =3D to_provider(rcdev);
+> +	u32 lpcm_id =3D lpcm_from_idx(idx);
+> +	u32 rst_id =3D rst_from_idx(idx);
+> +
+> +	dev_dbg(rcdev->dev, "deassert reset id=3D%u of lpcm %u\n", rst_id, lpcm=
+_id);
+
+This all could be deduplicated by moving it into the _send_mba_mail()
+function, using str_assert_deassert(op_id =3D=3D ASSERT_OP_ID).
+
+> +	return goog_cpm_rst_send_mba_mail(provider, lpcm_id, rst_id, DEASSERT_O=
+P_ID);
+> +}
+> +
+> +static const struct reset_control_ops goog_cpm_rst_ops =3D {
+> +	.assert =3D goog_cpm_rst_assert,
+> +	.deassert =3D goog_cpm_rst_deassert,
+> +};
+> +
+> +static int goog_cpm_rst_debugfs_assert_set(void *data, u64 rst_id)
+> +{
+> +	struct goog_cpm_rst_debugfs_entry *entry =3D data;
+> +	unsigned long idx =3D to_rstc_idx(entry->lpcm_id, rst_id);
+> +
+> +	return goog_cpm_rst_assert(&entry->provider->rcdev, idx);
+
+Calling into reset_control_ops like this bypasses all reference
+counting in the core and breaks reset controller API promises.
+
+> +}
+> +
+> +static int goog_cpm_rst_debugfs_deassert_set(void *data, u64 rst_id)
+> +{
+> +	struct goog_cpm_rst_debugfs_entry *entry =3D data;
+> +	unsigned long idx =3D to_rstc_idx(entry->lpcm_id, rst_id);
+> +
+> +	return goog_cpm_rst_deassert(&entry->provider->rcdev, idx);
+> +}
+> +
+> +DEFINE_DEBUGFS_ATTRIBUTE(goog_cpm_rst_assert_debugfs_fops, NULL,
+> +			 goog_cpm_rst_debugfs_assert_set, "%llu\n");
+> +
+> +DEFINE_DEBUGFS_ATTRIBUTE(goog_cpm_rst_deassert_debugfs_fops, NULL,
+> +			 goog_cpm_rst_debugfs_deassert_set, "%llu\n");
+> +
+> +static void goog_cpm_rst_add_debugfs(struct goog_cpm_rst_debugfs_entry *=
+entry,
+> +				     struct dentry *debugfs_root,
+> +				     const char *name)
+> +{
+> +	struct dentry *d =3D debugfs_create_dir(name, debugfs_root);
+> +
+> +	debugfs_create_file("assert", 0220, d, entry,
+> +			    &goog_cpm_rst_assert_debugfs_fops);
+> +	debugfs_create_file("deassert", 0220, d, entry,
+> +			    &goog_cpm_rst_deassert_debugfs_fops);
+> +}
+
+Please drop the debugfs functionality or explain what it is needed for.
+
+> +static int goog_cpm_rst_get_nr_resets(const struct cpm_reset_soc_data *s=
+oc_data, u32 lpcm_id)
+> +{
+> +	int i;
+> +
+> +	for (i =3D 0; i < soc_data->num_resets; i++)
+> +		if (soc_data->resets[i].lpcm_id =3D=3D lpcm_id)
+> +			return soc_data->resets[i].nr_resets;
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int goog_cpm_rst_of_xlate(struct reset_controller_dev *rcdev,
+> +				 const struct of_phandle_args *reset_spec)
+> +{
+> +	struct goog_cpm_rst_provider *provider =3D to_provider(rcdev);
+> +	u32 lpcm_id, rst_id;
+> +	int max_resets;
+> +
+> +	if (reset_spec->args_count !=3D 2)
+> +		return -EINVAL;
+> +
+> +	lpcm_id =3D reset_spec->args[0];
+> +	rst_id =3D reset_spec->args[1];
+> +
+> +	max_resets =3D goog_cpm_rst_get_nr_resets(provider->soc_data, lpcm_id);
+> +	if (max_resets < 0)
+> +		return max_resets;
+> +
+> +	if (rst_id >=3D max_resets)
+> +		return -EINVAL;
+> +
+> +	return to_rstc_idx(lpcm_id, rst_id);
+> +}
+> +
+> +static const struct cpm_reset_data cpm_resets_lga_entries[] =3D {
+> +	{
+> +		.lpcm_id =3D LGA_LPCM_HSIO_N,
+> +		.nr_resets =3D 16,
+> +		.name =3D "hsio-n",
+> +	},
+> +	{
+> +		.lpcm_id =3D LGA_LPCM_HSIO_S,
+> +		.nr_resets =3D 5,
+> +		.name =3D "hsio-s",
+> +	},
+> +	{
+> +		.lpcm_id =3D LGA_LPCM_LSIO_S,
+> +		.nr_resets =3D 45,
+> +		.name =3D "lsio-s",
+> +	},
+> +	{
+> +		.lpcm_id =3D LGA_LPCM_LSIO_N,
+> +		.nr_resets =3D 43,
+> +		.name =3D "lsio-n",
+> +	},
+> +	{
+> +		.lpcm_id =3D LGA_LPCM_LSIO_E,
+> +		.nr_resets =3D 50,
+> +		.name =3D "lsio-e",
+> +	},
+> +};
+> +
+> +static const struct cpm_reset_soc_data cpm_resets_lga =3D {
+> +	.resets =3D cpm_resets_lga_entries,
+> +	.num_resets =3D ARRAY_SIZE(cpm_resets_lga_entries),
+> +};
+> +
+> +static const struct of_device_id cpm_rst_of_match[] =3D {
+> +	{ .compatible =3D "google,lga-cpm", .data =3D &cpm_resets_lga },
+> +	{ /* sentinel */ }
+
+Please choose one style (align with goog_cpm_rst_id_table).
+
+> +};
+> +
+> +static int goog_cpm_rst_probe(struct auxiliary_device *auxdev,
+> +			      const struct auxiliary_device_id *id)
+> +{
+> +	struct device *dev =3D &auxdev->dev;
+> +	struct goog_cpm_rst_provider *provider;
+> +	const struct of_device_id *match;
+> +	int i, ret;
+> +
+> +	match =3D of_match_node(cpm_rst_of_match, dev->of_node);
+> +	if (!match) {
+> +		dev_err(dev, "no matching SoC data found\n");
+
+This should never happen, does it warrant an error message?
+
+> +		return -ENODEV;
+> +	}
+> +
+> +	provider =3D devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
+> +	if (!provider)
+> +		return -ENOMEM;
+> +
+> +	provider->dev =3D dev;
+
+This is not needed, you can just use provider->rcdev.dev.
+
+> +	provider->soc_data =3D match->data;
+> +
+> +	provider->cpm_client =3D devm_cpm_request_client(dev, 0, NULL, NULL);
+> +	if (IS_ERR(provider->cpm_client))
+> +		return dev_err_probe(dev, PTR_ERR(provider->cpm_client),
+> +				     "Failed to request cpm client\n");
+> +	auxiliary_set_drvdata(auxdev, provider);
+> +
+> +	provider->rcdev.dev =3D dev;
+> +	provider->rcdev.owner =3D THIS_MODULE;
+> +	provider->rcdev.of_node =3D dev->of_node;
+> +	provider->rcdev.ops =3D &goog_cpm_rst_ops;
+> +	provider->rcdev.of_reset_n_cells =3D 2;
+> +	provider->rcdev.of_xlate =3D goog_cpm_rst_of_xlate;
+> +
+> +	ret =3D devm_reset_controller_register(dev, &provider->rcdev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to register reset controller: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	provider->debugfs_root =3D debugfs_create_dir(dev_name(dev), NULL);
+> +	if (!IS_ERR(provider->debugfs_root)) {
+> +		provider->dbg_entries =3D devm_kcalloc(dev, provider->soc_data->num_re=
+sets,
+> +						     sizeof(*provider->dbg_entries), GFP_KERNEL);
+> +		if (!provider->dbg_entries) {
+> +			debugfs_remove_recursive(provider->debugfs_root);
+> +			return -ENOMEM;
+> +		}
+> +
+> +		for (i =3D 0; i < provider->soc_data->num_resets; i++) {
+> +			provider->dbg_entries[i].provider =3D provider;
+> +			provider->dbg_entries[i].lpcm_id =3D provider->soc_data->resets[i].lp=
+cm_id;
+> +			goog_cpm_rst_add_debugfs(&provider->dbg_entries[i],
+> +						 provider->debugfs_root,
+> +						 provider->soc_data->resets[i].name);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void goog_cpm_rst_remove(struct auxiliary_device *auxdev)
+> +{
+> +	struct goog_cpm_rst_provider *provider =3D auxiliary_get_drvdata(auxdev=
+);
+> +
+> +	debugfs_remove_recursive(provider->debugfs_root);
+> +}
+> +
+> +static const struct auxiliary_device_id goog_cpm_rst_id_table[] =3D {
+> +	{ .name =3D "google_cpm_mba.reset" },
+> +	{},
+
+Please choose one style (align with cpm_rst_of_match).
+
+> +};
+> +MODULE_DEVICE_TABLE(auxiliary, goog_cpm_rst_id_table);
+> +
+> +static struct auxiliary_driver goog_cpm_rst_driver =3D {
+> +	.probe =3D goog_cpm_rst_probe,
+> +	.remove =3D goog_cpm_rst_remove,
+> +	.name =3D "google-reset-cpm",
+> +	.id_table =3D goog_cpm_rst_id_table,
+> +};
+> +
+> +module_auxiliary_driver(goog_cpm_rst_driver);
+> +
+> +MODULE_DESCRIPTION("Google CPM Reset Driver");
+> +MODULE_LICENSE("GPL");
+
+regards
+Philipp
