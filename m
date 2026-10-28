@@ -1,47 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793224835;
-	b=2Jqvb9tx6XcHqo376YM2dI4GKC1ux7Z36Ix9eKNiB9lfycDB9KODhv/giSa6WzO/4uHi
-	 HG18+k8NUVvdhRW1JLtZ9iZQ7R5Q3LSrI8hHicCWII3btOqlpJnxqJuGqim11ftvc4r97
-	 KwvZnljxQxYrBzUL29bm9NQ9tOiOaE8xhEnPUIVatKOQ7pBub+3VnOkO1FuC/VEIa5qkN
-	 QyVMZS4atmQMZLOyMn0yI6UX3dJmDP3e4rI4bVXQ+KT6H6NR3arsm3SvF7bVDHDG4WDjo
-	 1enYceZNWUnHsazmYAY8G5gL0i0DmfMHmPGIlP8bTJhrqCerBUodXMy65jixubwb6Wg==
+	t=1793226905;
+	b=VgcJHCTpPkb6aFkWBlTaR31zTYYalzuuuBWJTIUGHbCIc5s2dOmEkq16wb8RKAhGnbfK
+	 UsGbN1agnfcwyLPkVioQUNgjnqRrMGoTC8vM6nBzjXHzIdW3PC3bkWSj462DTqJGz3ztV
+	 cTRIezD0Ci+yNJF2TJ3GpWu47+HQIeajUuvQMwVLooXruCQteCqJ3XZUu7JW2SXk5dXiZ
+	 MEbDjzmATMskm8PrLviKOrMkBd25lIGUn8sWKuhJcgfxIW91X9Jpt+LVbfusccf4RTITF
+	 SxXOwbGJY21CalcaTz33vjkkyYH2wgRSEwjooVjiA2VGV2z3a2bWnqwZ1hh+VwRwi/g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793224835;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=UpYH4m8C5Z7i/g34ppN64WV+4cVy2YgoQt8bN0alaQg=;
-	b=MnzQV+Qy9IhfghkIGh+zu1ArBO+uTbcwOc3EOK/WcxdNQNhTzXMur7Io+SS9Q5nbtyYj
-	 Dm44pmB4MFkZ0/wtFvw986QFGgrpoGibrOOfbA0VB06YIvIJfeVQN2X92i87cqimKmol0
-	 TVROQi/S9Bp4EpO0F+dTUy5jKdw6oZdm8/OaGd6BmWGASwdra1shIqiozFL10qF42zMjt
-	 RSRNuuK6kp1og6/92KfdyjfoT26U+cGAyINAgCXiPxyAllT0uCM0SXta0x+Y8HY73LrZR
-	 B7M/VGROHRtMcKUJCpPhT0JJioNsxQo9Sc4MQmXu7mlFCyEdV7rWL0obcpH8cgL66vA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793226905;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding:X-CMS-MailID:X-Msg-Generator:Content-Type:
+	 X-RootMTR:X-EPHeader:X-CMS-RootMailID:References;
+	bh=IKT3fon1/d2i1xCKh6MuLfmxqe3zW+ARzjd8XukPj2w=;
+	b=aekZtFAAh2R1+LEmT7UCN2QnhbcKAiwi8oiS4B1Uf3C3OgCVd22zMXvij+ugD/A+eMfI
+	 JrfweFDxWa4GKyxxlMYrZ7pQ6VTw9pQW2t39fV12kMdcQPEHnygrUSwxytfzK13wFCNLA
+	 uIwiPqwEH6tHeCMxM2ThOnDtdofZRMxkRxRMUeMsftYE2+4nJiqpXvkIM6ApgnElhr6U2
+	 Fy9rZjzkwFOIOHFgfiITNoR4QnsXxeMVvmvHZtHqW/pEVDUhweLX6VbS+4WeDDYLcaql5
+	 TshCpVkekC37z+jfWkPkMrtYNK7B2qigdRTnv3DNrTEe7pspneN1J6ehq2/7qnYdwZw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a0y79WAJ;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=uzgUEhhN;
+	arc=none smtp.remote-ip=210.118.77.11
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D023606A31A;
-	Wed, 28 Oct 2026 22:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF6C606A31D
+	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 22:35:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AEF6C606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a0y79WAJ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FFAF1F01825;
-	Wed, 28 Oct 2026 22:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793224834;
-	bh=UpYH4m8C5Z7i/g34ppN64WV+4cVy2YgoQt8bN0alaQg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=a0y79WAJCKiwjXicOsE9qoCh0K0q0ni1VmiXiyukuYsn8OS8JgWmqM9hsDiyACrmy
-	 DFOjdJ4ivHcA25PK3n6e+JrOM29pFxCcuvfLIJ3uuVJyeXQtUQLeN2EucohIsjrdof
-	 QlBa4dTuRL+zQbkeYoLwUE/TA398W+TG5ZM903rT6Kg/GKuVZiu1mRlyRWAoO+fd9C
-	 expmcH1pjHcbgRUF5/Jrmd7xM2uo00dyaw83IyHvCed6oKwm+c0O/SMpaPyNW74Fmq
-	 4aL32lT4KJ69X+fNLJNYbrl57MguJ6ODnBPSfVz7m1XKDycvoG+Bnd/iMqHi1450XI
-	 752/JtFga9nOA==
-Message-ID: <f0618a27-cee2-4f39-a578-fcbf3c51607a@kernel.org>
-Date: Wed, 28 Oct 2026 23:00:29 +0100
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=uzgUEhhN
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261028223456euoutp0126ba8f3ecd1903582e877fc60ebd4ed7~i0lxuWEIj2793727937euoutp01M
+	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 22:34:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261028223456euoutp0126ba8f3ecd1903582e877fc60ebd4ed7~i0lxuWEIj2793727937euoutp01M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1793226896;
+	bh=IKT3fon1/d2i1xCKh6MuLfmxqe3zW+ARzjd8XukPj2w=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=uzgUEhhN2VPvwWc7NCk977UDCWc0R+7u+3YrjcvLkdVWAsx9TGwmfmIxZ6WHGJyBa
+	 Tfzhr+KwybuckEPex05F6nwZuXSSs6y2UOa4Fg4yrhySSB0vwF0f2MBbH3WjnGR4dG
+	 2bHzXTMbYUs+Egio1F0OgioVsRKYd94GZ2BWr0TA=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20261028223455eucas1p29b3028675c392f6c0ee012f08963ab3f~i0lxdtLPe2611426114eucas1p2G;
+	Wed, 28 Oct 2026 22:34:55 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20261028223455eusmtip23dad5630755bebd4db06b58c16fce3fc~i0lxDv6z01026810268eusmtip2G;
+	Wed, 28 Oct 2026 22:34:55 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bjorn Andersson
+	<andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, Stephen Boyd
+	<sboyd@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>, Krishna
+	chaitanya chundru <quic_krichai@quicinc.com>
+Subject: [PATCH] clk: qcom: gcc-sc7280: Use retention for PCIe0 power domain
+Date: Wed, 28 Oct 2026 23:34:43 +0100
+Message-ID: <20261028223444.2683120-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,99 +71,61 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: clock: qcom,camcc-sm8250: add
- interconnect provider
-To: Atanas Filipov <atanas.filipov@oss.qualcomm.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
- Jonathan Marek <jonathan@marek.ca>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Gjorgji Rosikopulos <gjorgji.rosikopulos@oss.qualcomm.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20261016170701.1504338-1-atanas.filipov@oss.qualcomm.com>
- <20261016170701.1504338-2-atanas.filipov@oss.qualcomm.com>
- <20261020-bloodhound-of-remarkable-debate-11afe3@quoll>
- <7ca815b3-4712-42e4-996d-4a1e53cad492@oss.qualcomm.com>
- <Sm-FvdxaOiXpzzGo30wECHdQF_-LtUaJCO3mGpBUxXfnVCYjOLE5DhNWdNmOMhYdkR1RMXhPzWuHhsZJkJ_Vzw==@protonmail.internalid>
- <20261028181040.3515955-1-atanas.filipov@oss.qualcomm.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20261028181040.3515955-1-atanas.filipov@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20261028223455eucas1p29b3028675c392f6c0ee012f08963ab3f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20261028223455eucas1p29b3028675c392f6c0ee012f08963ab3f
+X-EPHeader: CA
+X-CMS-RootMailID: 20261028223455eucas1p29b3028675c392f6c0ee012f08963ab3f
+References: <CGME20261028223455eucas1p29b3028675c392f6c0ee012f08963ab3f@eucas1p2.samsung.com>
 
-On 28/10/2026 19:10, Atanas Filipov wrote:
-> What clock votes cannot express is why I think the camera NoC is an
-> interconnect:
-> 
->   - The camera NoC is a bus with several independent masters: the VFE
->     write ports, JPEG and OPE. They share it on the way to the MMSS NoC,
->     and the camnoc AXI clock sets its throughput.
+As the PCIe host controller driver does not yet support dealing with the
+loss of state during suspend, it keeps the link up and the resources on
+when an endpoint is active. However, only gcc_pcie_1_gdsc was switched to
+retention by commit 1a58ee1330b2 ("clk: qcom: gcc-sc7280: Update the
+.pwrsts for PCIe GDSC"), so gcc_pcie_0_gdsc is still powered off during
+system suspend and the controller loses its state.
 
-I've always conceptually viewed the CamNoc as just another NoC that 
-happens to live inside of the TITAN_TOP_GDSC power-island.
+On QCS6490 (Thundercomm RubikPi3), the Renesas uPD720201 xHCI controller
+on PCIe0 doesn't survive suspend to RAM:
 
-I think the trouble here is the CAMNOC_AXI_CLK is just one clock, it's 
-not interconnecting any two things at all.
+    xhci-pci-renesas 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
+    pcieport 0000:00:00.0: Recovering Root Port due to Link Down
+    xhci-pci-renesas 0000:01:00.0: Controller not ready at resume -19
+    xhci-pci-renesas 0000:01:00.0: PCI post-resume error -19!
+    xhci-pci-renesas 0000:01:00.0: HC died; cleaning up
 
-Noc entries in DT usually look like
+Use retention for gcc_pcie_0_gdsc too, like it is already done for
+gcc_pcie_1_gdsc.
 
-interconnects = <&gem_noc MASTER_AMPSS_M0 0
-		 &config_noc SLAVE_VENUS_CFG 0>,
-		<&mmss_noc MASTER_VIDEO_P0 0 &mc_virt SLAVE_EBI_CH0 0>;
-		interconnect-names = "cpu-cfg", "video-mem";
-
-In the second case we're connecting an MMSS port to a DRAM port i.e. two 
-completely separate producers/consumers and we have specific ports that 
-RPM/RPMh is involved in managing.
-
-Which is not the case for CamNoc - here really we have some shared 
-clocks which we need to calculate across components within the Camera 
-power-island.
-
-In downstream the CPAs code does that.
-
-- icc-clk would I think over-provision clocks
-- CCF would as you've observed under-provision
-
-- But a CPA's analog in upstream which components set/consume ?
-
-That would work.
-
-After all what we are doing here _is_ specific to how camera works. We 
-don't really have many - any ? other examples in Qcom SoCs where we lump 
-a number of different semi-independent components into one area - ICP, 
-CDM, VFE, JPEG and ask them to share aggregated clocks - in a way that 
-is specific to - guessing but - specific to how these components get 
-modeled in silicon test benches.
-
-My vote is to replicate CPAs in upstream with a CPA's icc provider driver.
-
-The bandwidth calculations are already proven out in downstream and if 
-we get it right - potentially its something downstream could switch to.
-
-We could even use the interconnect API inside of the CPA's driver but, I 
-think just doing votes via interconnect and icc_set_bw() into icc-clk in 
-the drivers directly won't produce the same bandwidth calculations we 
-have in downstream - which you may loathe downstream code but the clock 
-calculations we'd assume are ~ a pretty good starting point.
-
-So; make the CPAs driver an icc provider.
-
-cpas_icc_set() could/should absorb the downstream cam_cpas_hw.c 
-heuristic for calculating the aggregate clocks.
-
-Its not represented in generic icc-clk right now and as we add in more 
-clocks/SoCs this disparity will grow.
-
+Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
+Fixes: 1a58ee1330b2 ("clk: qcom: gcc-sc7280: Update the .pwrsts for PCIe GDSC")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
-bod
+The issue was analyzed and the patch was prepared with LLM assistance.
+The fix was tested on the real Thundercomm RubikPi3 board.
+
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+---
+ drivers/clk/qcom/gcc-sc7280.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+index 78399993cdce..9e141a7ac424 100644
+--- a/drivers/clk/qcom/gcc-sc7280.c
++++ b/drivers/clk/qcom/gcc-sc7280.c
+@@ -3101,7 +3101,7 @@ static struct gdsc gcc_pcie_0_gdsc = {
+ 	.pd = {
+ 		.name = "gcc_pcie_0_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ 	.flags = VOTABLE,
+ };
+ 
+-- 
+2.43.0
+
