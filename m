@@ -1,100 +1,143 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.21
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793196216;
-	b=BiKGa+FfYpvGuGQk/bZIRywcfg44XZ98l0Hef7LsnjSo2LXOpnwg/iX+WHIskSVkMUY6
-	 +V7O1pU/AFxBpZwqBmTyFEAcSx/swFbQRd+xw4zOw+jY4hoOFcLbClTXobzX/KKzIcDwM
-	 bZ0Owf29ArVbUuYm+xoYEL50ir2QboWdzJlJV69LajcIaVjCSJ2K6cuxDoS4wFfT2Mvkd
-	 xA1kMiRWjTFHlG4zfFa8q14jI88FL5uDsbLwaDj7Wk34d2sU6QbcNATrCn75v714BEPBi
-	 UIMdPrAPuvWB+SVNu3MSt1aYt5dWzJ5JXc2NF4UDtWRTIxsOCvcc7u7Z1+D3HS35jCA==
+	t=1793197603;
+	b=G77mkdDU9zVH1bPJpgI3ho9XKYUbqxq/ZyCeV+hoWJ7WoU72YeanpAZ2/PNNmen74aEg
+	 uAf/p7oj5KaleLCMoAhiycafDeI8UyNDKvPLmwNB6aMIClgWKVt5qip83JOn6jsi5Khoe
+	 2afzyaWIouhhFsM0ZMgF/ypFTtITzbYjhDnI5REIrzIV3nej1p5RpFZ8tJAZ5wko1Q5oM
+	 rsslzOyQH5jFSJPeBaEjkPnCcs0IRr09PtNpF88GvAAjBaKnOA4V+G4MW1qk4elbw/PaS
+	 TNsx9RgSPYpvknO1wmeTCzu/pnxQxsHfTLrMrrVjZreZT07laIboqZuFrbCkIegHZnw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793196216;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=7P6hkajrEuuwluLOAZvBDyIw6BeTtytgqv1+hRyvjaw=;
-	b=Lz5rt+X9VCn5cGxW14P8cY6ANLWwkb+7yZ6piQWjAlidNn8JhQmGFMXLeCE48+jQsuJ0
-	 VMkDbcZEsPQn+i+xFh2wIJkrLQDvj2YTbQvvX1ByPrVRU2zqH7gRmV9xDYSvCuu7XtiMx
-	 sglbTgmTxy9ukH5WjdFKks4hZKOBbf0wCVeocQOE2GLpN9tssvvM1mES0UxkAPRUv3p1N
-	 3Vd1NFV2uMurrsbBycQw9ZHAx8jk+aVvyt9PNiKZXAXEgHau2hY981D+4xA/qNESm80g5
-	 9PHma8/MRvCsh2d+cinBBpWr1EiC0UiTjZh5cHz21yEQpjkqMZMhznVcsUoLM6qutew==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793197603;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:Content-Type:Content-Disposition:
+	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=PugH5ADTgWBNgCzo2c+KFwnk0r1PS5zDUpNv2SsWnUo=;
+	b=e2YwDzOM4V+sC9NuoKhk2XkbWltNXlMh4wc3DnXzM02Q6qUTUxRjBL+ULtyrrbSQP0ja
+	 USQ89hwOQrLaNAgvJd06ooKONhpOjkSqWJeSV779Ll+hZw512Jp8OgHgSz1a1lLz8yml0
+	 kW3sL/pv0E4DBhKvSKtb/A0Gq8LVYthzmYz3sFOP/HhsAHWe3xY1ccgBpxkPgNH8n6+0x
+	 fdly20ws2wwzy0X+iPT/XrXsAyU4RyKSJiXGZ2XZQuUfwlJsal/+lrCEifMcC3YnDpuqs
+	 L9850BWpcuNuFRS7R5m6J6isO+5QcuGqhp+gUHRy8dRTo+6oXBX2S4E6lJCcT9uOeGg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=fJk0v+4g;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	dmarc=pass header.from=oss.nxp.com;
+	spf=pass smtp.mailfrom=oss.nxp.com;
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=iWAMacif;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.21
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013021.outbound.protection.outlook.com [52.101.83.21])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6725606A31D;
-	Wed, 28 Oct 2026 14:03:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C6725606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D739606A327;
+	Wed, 28 Oct 2026 14:26:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9D739606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=fJk0v+4g
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 23858202950;
-	Wed, 28 Oct 2026 15:03:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1793196205;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7P6hkajrEuuwluLOAZvBDyIw6BeTtytgqv1+hRyvjaw=;
-	b=fJk0v+4ga7M4vRJu7VspWY2EHWe0tBqGwn6UYuEsrU8J7tIqos7QxaaEOtktZt6mmd9oG4
-	tToGGLOVQtMyd0VwsAL034DCpZd70a+KOypN3Pw8M25iIz2z6CMTQk8bTB4h6LYHH5LMI/
-	GpkYTVdTUUMIMXxksYKapUyLhsCfVFPcblNefrbBVwotYvdq92Ov4Ce/JGQHK1XmCBrR44
-	G/eCbiWnv5Tn7DiM61GMwJ00vjgr8Iwk54oCJyGMBOPdXIetaRJ6UHBr6nkfZ2YHYgHkdg
-	AmhyKxulPq5GBLQpez5Cjz3Oc7pwXY2FdlL23PY0g3+QMfU+obSKEAeDEeeOdQ==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1793196205; a=rsa-sha256;
-	cv=none;
-	b=K0EsB2LyhvUVGLcLwWVrAdslwBFmPDFzgFymzsVwxmG8GDel+Q44FM+cyA1YQyjUa70bCr
-	zaaw7nep7CYdZapkD/ueEfo/EKWTbn+PQYXxXfUvWZzvvP0Wkbxx4yF2ZCS09XgQTUphvh
-	JES9Msf+INOKkobm6Z2No4WAyj7iqFa66rW2RNVqlpzjrvaq3XEBesTgXFcGP0OKF1/YUL
-	kgiGY/0s9/fQGt0IZD5Kx3WViRkNRF7DGibpfUPSatdwC00jjKeyVubysf3krFdDEyRwRZ
-	yUSZDM/agGViiRKQScZRwUHPtwCFkYbu2ioL6xbeWyvdRS+2sr/kJpB/jrlhQw==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1793196205;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7P6hkajrEuuwluLOAZvBDyIw6BeTtytgqv1+hRyvjaw=;
-	b=ZMLvYx3qz7/nxsQJFZRewAGvPfe/6T/mFhonAzwIFBSuRxFtgY87l2CKgxhdMfgYNaZgYv
-	Wkj87jgAjvUxznmG2qh+Zg73PuUY6yD0NXNwypWe7qor+bk4PUrOOSvVY2hissGpRXQX7J
-	1esXry4x+WKs81rK/YdDQXrqHCXPL8XW2K+xtGjCkV1i7JnHP2WcPSFpHbhOgk2MkUWg3G
-	hDqLFIp2A6Anxg6w0z9Sh1/Ybm5t0mtKU+cSezAZHHF6KvlCM3hxit8r1luB1bWEy4aKr1
-	p7T3ZdO1soNYx8xZ+tdNtvXfGbw952EUyt6lcmcxeJdmBYUZk+g/9/sQHPi2aw==
-Message-ID: <8d57f0a1dc8a07838bf1320f9b79588196264ff5.camel@pengutronix.de>
-Subject: Re: [PATCH 6/9] reset: google: Add CPM reset driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Brian Norris <briannorris@chromium.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Stephen Boyd
-	 <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
-	 <jbrunet+clk@baylibre.com>, Thomas Gleixner <tglx@kernel.org>, Ulf Hansson
-	 <ulfh@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, =?ISO-8859-1?Q?Andr=E9?= Draszik
- <andre.draszik@linaro.org>, 	linux-samsung-soc@vger.kernel.org,
- linux-pm@vger.kernel.org, 	linux-kernel@vger.kernel.org, Radu Rendec
- <radu@rendec.net>, 	linux-arm-kernel@lists.infradead.org, Mariano Marciello
- <mmarciello@google.com>,  Douglas Anderson <dianders@chromium.org>,
- linux-clk@vger.kernel.org, Jakub =?UTF-8?Q?G=C5=82owacki?=	
- <jglow@google.com>
-Date: Wed, 28 Oct 2026 15:03:24 +0100
-In-Reply-To: <20261026144346.6.I0b1ad34a718a9b5f667d2481041970ea45989dd3@changeid>
-References: <20261026214359.3122870-1-briannorris@chromium.org>
-	 <20261026144346.6.I0b1ad34a718a9b5f667d2481041970ea45989dd3@changeid>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=iWAMacif
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EUzwkxM+5U4c4djubNdkw5RXK63QafpWqgHpEtrm0fB5uAsxWrwmazQpKzNwQxPUVBDDCz6BVTiAqFuNGaF8kLJqDzY2LFJlU3nSjFHYvJr9yRgfZG83AcuyjjEcnrg/l/G1o98ikYXsdXWpHZH2H7sqB9fFXfT4zEVf0Bkd8NhNGUW8WwEABmVD7f4ZP6hNtRSWsXVJycIzu9zNS+llo/+5yhFGnH3xnpOP8N/brtbFQefVDOlYH6fBCuooh9Vccb79i/9BGUwIL2ofT+0zg0QAfav/N7B2U3+VD6+PyzUQZ+PVdyin/3eT1UH4BANC/CqW+yKQ+gDCwhr4DMu7yw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PugH5ADTgWBNgCzo2c+KFwnk0r1PS5zDUpNv2SsWnUo=;
+ b=JQVpgOrqGZHrVNs3QTVt/HbATgeZfHtJ9PnI3eXo63FfaG6+8FrdQTiFPYg9VGIBUlEakFTMP9UR90QodP8KS5UHgXtd7Ob7HqWex7BJxFX7aSiU1hYdQZtXuXiojj9SkELkMEIiY7EjLNuuuYx0sKb0qYcjMHiCiQH6KZUh2lWMC7JOrB1WDJumNTw5O6Run61xTI7YDuNNSnB5iTDiaPP/nyDEcYig1v0fmAkTbvm+Uut1w7ZPLC16CwFUA9JLCbauy1lv4jGFp8xE0hbUpP5nASzwvBaQ/CL9R62TRQnNg+8/7OOks+hmeIyGJ7UHtOmfWUHEXedfEze41eOEug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PugH5ADTgWBNgCzo2c+KFwnk0r1PS5zDUpNv2SsWnUo=;
+ b=iWAMacifbwocz+lHil0qO84MTMkMOvglnubW7bzl47kSj8aDd/2iJBVrA0AMZXLeOWpYpL1FngTp/a/DVauU9sHv2cwkDIQdvc/zSe96Vv9BV7o5/ztL7qeb5o9UGh+CfwlLY1c24Y8s7sq2ClColacayPq6oRGDMU9Lsf+cau0+iTPd+NvPDgt+1oYH2DgFfb9rLGSMx2lVizp8slVdtYwuEYnppE13e2paZvpU4TJvtAPC5NjcJTe6682OuHhdu3nO070j3rAwPrnlkd786Z/ryrx31b9WrEDMMwSZIj5V/aX7fYfMPVWNVnI2ffGsXF9IO+d1moDU4MP68ODO3g==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from MI3PR04MB12438.eurprd04.prod.outlook.com (2603:10a6:290:76::14)
+ by PAXPR04MB9186.eurprd04.prod.outlook.com (2603:10a6:102:232::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.22; Wed, 28 Oct
+ 2026 14:26:37 +0000
+Received: from MI3PR04MB12438.eurprd04.prod.outlook.com
+ ([fe80::c715:c32:8bb1:b70b]) by MI3PR04MB12438.eurprd04.prod.outlook.com
+ ([fe80::c715:c32:8bb1:b70b%6]) with mapi id 15.21.0546.021; Wed, 28 Oct 2026
+ 14:26:36 +0000
+Date: Wed, 28 Oct 2026 09:26:13 -0500
+From: Frank Li <Frank.li@oss.nxp.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Frank Li <Frank.Li@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Yinbo Zhu <zhuyinbo@loongson.cn>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Peng Fan <peng.fan@nxp.com>,
+	Aakarsh Jain <aakarsh.jain@samsung.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	freedreno@lists.freedesktop.org, imx@lists.linux.dev,
+	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: Fix property name typos in if/then schemas
+Message-ID: <auIGBc2Wo21H6Rdm@SMW015318>
+References: <20261028120216.2657397-1-robh@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261028120216.2657397-1-robh@kernel.org>
+X-ClientProxiedBy: PH7PR02CA0020.namprd02.prod.outlook.com
+ (2603:10b6:510:33d::28) To MI3PR04MB12438.eurprd04.prod.outlook.com
+ (2603:10a6:290:76::14)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -104,506 +147,287 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|PAXPR04MB9186:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee112b64-b16e-4703-361e-08df34ff7912
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|366016|376014|19092799006|7416014|1800799024|261026140227099003|11063799006|56012099006|261026121527099003|261022105027099003|261022075727099003|261021121427099003|261021123027099003|261009223027099003|10067099003|22082099003|18002099003|6133799003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	PJnUc1WGA8a9fo4wsN9yLiJ6vA5jbebBB+U2liGAOGkTaLqzc0fWb10tCiLjM+PF0yRnGzgQiNOWoSMDuKujWM3xjbJA6IVi9NRE/dO5lLDsDFuBmfACI3ffyL0XkEZ/xlItnJ67Y4Ha0xSMz9+FYO0EpiSULbJdz/HyuG0CHYgCAxnr4Mpq7eK5DldLlG6ieUrgtIR+peeX/B3VHg7e/A6NrJrtluh4szGpg8NRmKHyLVPL61pUHNX5Gmq8iNNZVCT+UXLonwxybLqKBxSLIvqujHrPfMcceSIYn2HOBlQz4CTjRrRYPon1QgttoLy1ZOmYYrAHGFtWRctZ1DwxXgyrOLR+EC1kNPbXDd1asyBBYGRzFd9nOQN9aXi8d19wiphqDemPt7KMbMTgM10sA9zsZ1bpULDbGdFUEumnzPVJ4XRWuzz6/uUnn7XATiPeOMe9S9SKsfeo+DkambXEmRxt9Xutj2bpMe1WTI26z33ni/vrf/C+03GWnXzx5HHB5AlnOukvwgpf12LTEPc6ORhOOsAuP9B4tAco03CEg2JxkLhdgRJ14QjDKGfY+TFR1QfhL63l6W84q2EkVc0dfKIrj2kTvrHW5XzY+YbjrDcLTlERuxAdA85BwC1U6GdzJNCOULrhRJuWV6xFpK49Vjn0HpJwA67A9d14uN5sMao=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(376014)(19092799006)(7416014)(1800799024)(261026140227099003)(11063799006)(56012099006)(261026121527099003)(261022105027099003)(261022075727099003)(261021121427099003)(261021123027099003)(261009223027099003)(10067099003)(22082099003)(18002099003)(6133799003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yhoz00PVsJqtF9EPEGywCcxhtZzWfcPJ2a+fSI+CijO6DYTWCvNdLXi+bPrn?=
+ =?us-ascii?Q?ZeKh1fIb0GP+Ummi+pEAjQls/FlH+Ad7FEMSo092qWc02Bak1tfgK/u2V3ka?=
+ =?us-ascii?Q?BDo1wVM+Ol2lHwOpGD4BijqT9l5cuKnZsRg4oPOaOrkpq/Sx/x3pX22AFbGb?=
+ =?us-ascii?Q?lNwJ58LQgM3x/PYjuCD7uOIVk1KalCYg2NWMjEWhDboCjEcYi04A8K865dbG?=
+ =?us-ascii?Q?YrQiocw+U3/PvvEiHkxs8l4Wkpc4cyoWB0OBhcnjXO9TCs3R4t7kW3Pn0nJO?=
+ =?us-ascii?Q?YbLS8uJsgFmoiP5kM8mCvXrg7yG9KQQvYtnVuMLRiU0juAaOnmFvxGdR9N2B?=
+ =?us-ascii?Q?Ghhx05bRvwK8vxSiry9NEJW0ZSx0yRNrmSkfTv9g9FbnDNYwz+DTZe2QNyL1?=
+ =?us-ascii?Q?B7radpUCui8gAMsbtKAgrWpPGimcDJqjj5osDs2/PUGyGqLM0YVkCY3DbGxp?=
+ =?us-ascii?Q?2dtRofJqYRg84QCxQvk2VrVVEA/WBrgJgkIMytJB5x3wX5Q3MNHYjwwBYnfk?=
+ =?us-ascii?Q?2ALEbNV3i+KzF0Pj0eqydxYwWMm3UTzim1htmPTLKchI+OP2HKDGvQ+Ohwla?=
+ =?us-ascii?Q?w6lTA15BaP46alY0xfFr2SGNX1gGfQP6RAmPwHf2jOyS1I3gUDQyfxuAb/ub?=
+ =?us-ascii?Q?KxWOW/7WXvJJJRWyERMjyxjPrJ5F0SpGo7kzY8ktCDOEgxp2l68VyFNdN8Ej?=
+ =?us-ascii?Q?icQufBWl9ibG5SXMJS1l5Xv7B4nxGD4B/zM0+1I53UtU+A3AEuKIeBju2id2?=
+ =?us-ascii?Q?X47vCHaO6QON+9yxQUAkUA60GlsiyUZEdOGywnDVTAlP5JRWsYTAdUSw09K9?=
+ =?us-ascii?Q?eV0gJw+s7LdP/SPj5AvY0nbMAREN5L/hKf/GdB9eniNOtQ3qCluDNDjshpTi?=
+ =?us-ascii?Q?K832WPxVIQ2eNy2mJZ2TPH52cGmKm+/wZwMPGyi2uHd2um1lvM4rQZ2FNZ5X?=
+ =?us-ascii?Q?swyeD1c1MXhKbMiJEYAKcItRhVC/94cauWDUVVWujZbfMieGv4sDJRPtLjGl?=
+ =?us-ascii?Q?n/66c7UWc/k5hUjIUV/7NnyznpkJ97C502iOz2eU1ZOK3l6qsEaH/HwbUh6g?=
+ =?us-ascii?Q?TdTmie/iU8eKDSd2N3xtL+h00IStPlZND/eem85Y/zJFxK4G0R5LreUL3ANp?=
+ =?us-ascii?Q?yQSzyyTvJW9ltrGUVpTjDDdr1drGRKjIuhexOF1b/bFBJExTrUUjnJcDcKGS?=
+ =?us-ascii?Q?9xDz59VM3PapXAL6dE3vd5iDby3TZzJtNAFdHsJ/j4NVkHYS4pvclaeW+mx7?=
+ =?us-ascii?Q?rynV/rKj2Kqz/rLdbRLnWUD2DyW7gsfZzF5it0yVFQI4DhTlKkLus8K9xh/t?=
+ =?us-ascii?Q?Loxo1CYtDQEir6vQEzA5Fkq53rihfyDYPgpM0vSLCTC4QL+oZ7dJ1h2cFRNO?=
+ =?us-ascii?Q?AsLLXWCovcCX+0cSQa32ja0rSe1XjONdqIcrCyBJQjsy13618dMiKIp0DoHv?=
+ =?us-ascii?Q?kdHcr9J/e348pElrKJzUgXNv2UZvnGFZaJ19sBWCbop2tasK/bapL7iXMrP3?=
+ =?us-ascii?Q?/Tc+e6sH84p7OHRrxFZj2bHZs9E4ANbG5Khv0PZ7RwpT+BjfDBLSoZht3Qok?=
+ =?us-ascii?Q?TMwmGoggaCWkowZNqzQ0+ZNvXKZz12AWOMN9XIjkDNn05/3dDRPFgjRJNvRT?=
+ =?us-ascii?Q?+6moCkdl500/4XQUaE28rAzSkv9AvzOJ4q2IXjLCzvNxXovL5KmDTCuiLMPH?=
+ =?us-ascii?Q?uxjOrKGHTFDcdB57snUoBua/nYypyM/OCICX2xm5Ypq/RAksaW+hbBxYxlF2?=
+ =?us-ascii?Q?JiVQzMzKGVIAAUNgBLWs8LmwMuHZdZ8rUDcuVFV5SXN7t1QhNkQv?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee112b64-b16e-4703-361e-08df34ff7912
+X-MS-Exchange-CrossTenant-AuthSource: MI3PR04MB12438.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2026 14:26:36.4955
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZH/uQIX74lyS4VQF0juYZ9Pq0oADROx4SlEDjn+RN7+ybXxf6O0CUlCrijxHFlbr6RQysbMT6euZyhNsqJNUkY84246+IuBVQr6rei29eBcSZtkNXqcpcgdGna8PnrEF
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9186
 
-On Mo, 2026-10-26 at 14:43 -0700, Brian Norris wrote:
-> Google Tensor SoCs (used on Pixel phones) manage many resources
-> (including resets) using a Central Power Manager (CPM) co-processor. We
-> communicate with CPM using mailboxes, abstracted in the
-> cpm_request_client(), etc., API.
->=20
-> For posterity, I list a summary of changes made relative to the
-> downstream Pixel driver:
->=20
-> * Switch to auxiliary bus, as a child of a CPM device
->=20
-> * Use devm more heavily
->=20
-> * Avoid representing each reset as its own Device Tree node. Use a
->   limited per-SoC table to describe any additional per-SoC details
->   instead.
->=20
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+On Wed, Oct 28, 2026 at 07:02:12AM -0500, Rob Herring (Arm) wrote:
+> Property names within if/then schemas currently go unchecked whether
+> they have a type defined or match what's in the top-level schema. Adding
+> a check finds a number of instances of typos. The typos result in the
+> schema having no effect on constraints.
+>
+> With this, fix the mediatek,vcodec-encoder 'clocks' count constraint
+> exposed by the name correction.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->=20
->  drivers/reset/Kconfig            |   1 +
->  drivers/reset/Makefile           |   1 +
->  drivers/reset/google/Kconfig     |  11 +
->  drivers/reset/google/Makefile    |   2 +
->  drivers/reset/google/reset-cpm.c | 367 +++++++++++++++++++++++++++++++
->  5 files changed, 382 insertions(+)
->  create mode 100644 drivers/reset/google/Kconfig
->  create mode 100644 drivers/reset/google/Makefile
->  create mode 100644 drivers/reset/google/reset-cpm.c
->=20
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index eda9c698a95f..37dbddcd620f 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -451,6 +451,7 @@ config RESET_ZYNQMP
->  	  This enables the reset controller driver for Xilinx ZynqMP SoCs.
-> =20
->  source "drivers/reset/amlogic/Kconfig"
-> +source "drivers/reset/google/Kconfig"
->  source "drivers/reset/hisilicon/Kconfig"
->  source "drivers/reset/spacemit/Kconfig"
->  source "drivers/reset/starfive/Kconfig"
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 489fafd6bbe3..9754c274766c 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-y +=3D core.o
->  obj-y +=3D amlogic/
-> +obj-y +=3D google/
->  obj-y +=3D hisilicon/
->  obj-y +=3D spacemit/
->  obj-y +=3D starfive/
-> diff --git a/drivers/reset/google/Kconfig b/drivers/reset/google/Kconfig
-> new file mode 100644
-> index 000000000000..38431b4f9001
-> --- /dev/null
-> +++ b/drivers/reset/google/Kconfig
-> @@ -0,0 +1,11 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config RESET_CPM
-> +	tristate "Google CPM Reset Controller"
-> +	depends on ARCH_GOOGLE || COMPILE_TEST
-> +	depends on GOOGLE_CPM_MBA
-> +	help
-> +	  Driver support for reset controllers found on Google Tensor SoCs,
-> +	  operating over the CPM mailbox interface. This allows peripheral
-> +	  drivers to assert and deassert resets on LPCM hardware blocks.
-> +
-> +	  If unsure, say N.
-> diff --git a/drivers/reset/google/Makefile b/drivers/reset/google/Makefil=
-e
-> new file mode 100644
-> index 000000000000..437c19459464
-> --- /dev/null
-> +++ b/drivers/reset/google/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_RESET_CPM) +=3D reset-cpm.o
-> diff --git a/drivers/reset/google/reset-cpm.c b/drivers/reset/google/rese=
-t-cpm.c
-> new file mode 100644
-> index 000000000000..5f144f1ad5f2
-> --- /dev/null
-> +++ b/drivers/reset/google/reset-cpm.c
-> @@ -0,0 +1,367 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Device driver to control Google SoC LPCM resets via CPM.
-> + * Copyright 2023-2026 Google LLC
-> + */
-> +
-> +#include <dt-bindings/soc/google,lga-lpcm.h>
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/bits.h>
-> +#include <linux/container_of.h>
-> +#include <linux/debugfs.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/reset-controller.h>
-> +#include <soc/google/goog_cpm_service_ids.h>
-> +#include <soc/google/google-cpm-mba.h>
-> +
-> +#define MAILBOX_SEND_TIMEOUT_MS		3000
-> +#define LPCM_CMD_SET_RST		0x4
-> +
-> +#define OP_ID_BITFIELD			GENMASK(31, 24)
-> +#define RST_ID_BITFIELD			GENMASK(23, 16)
-> +#define LPCM_ID_BITFIELD		GENMASK(15, 8)
-> +#define REQ_ID_BITFIELD			GENMASK(7, 0)
-> +
-> +#define ASSERT_OP_ID			0
-> +#define DEASSERT_OP_ID			1
-> +
-> +#define NO_ERROR			0
-> +#define ERR_LPCM_NOT_SUPPORTED		(-24)
-> +#define ERR_LPCM_INVALID_ARGS		(-8)
-> +#define ERR_LPCM_TIMED_OUT		(-13)
-> +#define ERR_LPCM_GENERIC		(-1)
-> +
-> +#define CPM_RST_LPCM_ID_MASK		GENMASK(31, 16)
-> +#define CPM_RST_ID_MASK			GENMASK(15, 0)
-> +
-> +static inline unsigned long to_rstc_idx(u32 lpcm_id, u32 rst_id)
-> +{
-> +	return FIELD_PREP(CPM_RST_LPCM_ID_MASK, lpcm_id) |
-> +	       FIELD_PREP(CPM_RST_ID_MASK, rst_id);
-> +}
-> +
-> +static inline u32 lpcm_from_idx(unsigned long idx)
-> +{
-> +	return FIELD_GET(CPM_RST_LPCM_ID_MASK, idx);
-> +}
-> +
-> +static inline u32 rst_from_idx(unsigned long idx)
-> +{
-> +	return FIELD_GET(CPM_RST_ID_MASK, idx);
-> +}
-> +
-> +struct cpm_reset_data {
-> +	u32 lpcm_id;
-> +	u32 nr_resets;
-> +	const char *name;
-> +};
-> +
-> +struct cpm_reset_soc_data {
-> +	const struct cpm_reset_data *resets;
-> +	size_t num_resets;
-> +};
-> +
-> +struct goog_cpm_rst_provider {
-> +	struct device *dev;
-> +	struct reset_controller_dev rcdev;
-> +	struct cpm_client *cpm_client;
-> +	struct dentry *debugfs_root;
-> +	struct goog_cpm_rst_debugfs_entry *dbg_entries;
-> +	const struct cpm_reset_soc_data *soc_data;
-> +};
-> +
-> +#define to_provider(rc) container_of(rc, struct goog_cpm_rst_provider, r=
-cdev)
+>  .../devicetree/bindings/clock/qcom,kpss-gcc.yaml     |  2 +-
+>  .../bindings/display/brcm,bcm2711-hdmi.yaml          |  2 +-
+>  .../bindings/display/msm/dp-controller.yaml          |  2 +-
+>  .../devicetree/bindings/display/msm/hdmi.yaml        |  4 ++--
+>  Documentation/devicetree/bindings/dma/fsl,edma.yaml  |  2 +-
+>  .../devicetree/bindings/gpio/loongson,ls-gpio.yaml   |  2 +-
+>  .../bindings/iio/adc/amlogic,meson-saradc.yaml       |  2 +-
+>  .../bindings/media/mediatek,vcodec-encoder.yaml      | 12 ++++--------
+>  .../devicetree/bindings/media/samsung,s5p-mfc.yaml   |  2 +-
+>  .../devicetree/bindings/pci/mediatek-pcie.yaml       | 12 ++++++------
+>  10 files changed, 19 insertions(+), 23 deletions(-)
 
-This should be an inline function.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-> +struct goog_cpm_rst_debugfs_entry {
-> +	struct goog_cpm_rst_provider *provider;
-> +	u32 lpcm_id;
-> +};
-> +
-> +static int goog_cpm_rst_mba_check_ret(struct device *dev, int ret)
-> +{
-> +	switch (ret) {
-> +	case NO_ERROR:
-> +		return 0;
-> +	case ERR_LPCM_NOT_SUPPORTED:
-> +		dev_err(dev, "the received request_id is invalid\n");
-> +		return -EPROTO;
-
--EOPNOTSUPP?
-
-> +	case ERR_LPCM_INVALID_ARGS:
-> +		dev_err(dev, "invalid lpcm_id or rst_id\n");
-> +		return -EINVAL;
-> +	case ERR_LPCM_TIMED_OUT:
-> +		dev_err(dev, "operation timed out\n");
-> +		return -ETIMEDOUT;
-> +	case ERR_LPCM_GENERIC:
-> +		dev_err(dev, "internal error occurred\n");
-> +		return -EREMOTEIO;
-> +	default:
-> +		dev_err(dev, "unknown error response from CPM\n");
-> +		return -EPROTO;
-> +	}
-> +}
-
-Is this specific to reset functionality, or should this maybe live in
-CPM common code? I see that the return values in the power-domain
-driver are not translated, but the clock driver contains a near-
-identical copy of this function. Or maybe just printing the translated
-error with "%pe" is good enough?
-
-> +static int goog_cpm_rst_mba_resp_hdl(struct device *dev, const struct cp=
-m_request *cpm_req)
-> +{
-> +	int dst =3D cpm_req->dst_id;
-> +	int ret =3D cpm_req->resp_msg->payload[0];
-> +
-> +	dev_dbg(dev, "got resp from %u, data %d.\n", dst, ret);
-> +
-> +	return goog_cpm_rst_mba_check_ret(dev, ret);
-> +}
-> +
-> +static int goog_cpm_rst_send_mba_mail(struct goog_cpm_rst_provider *prov=
-ider,
-> +				      u32 lpcm_id, unsigned long rst_id, int op_id)
-> +{
-> +	struct device *dev =3D provider->dev;
-> +	struct cpm_payload resp_msg;
-> +	struct cpm_payload req_msg =3D {};
-> +	struct cpm_request cpm_req =3D {
-> +		.msg_type =3D REQUEST_MSG,
-> +		.req_msg =3D &req_msg,
-> +		.resp_msg =3D &resp_msg,
-> +		.dst_id =3D CPM_COMMON_LPCM_SERVICE,
-> +		.tout_ms =3D MAILBOX_SEND_TIMEOUT_MS,
-> +	};
-> +	int ret;
-> +
-> +	req_msg.payload[0] =3D FIELD_PREP(REQ_ID_BITFIELD, LPCM_CMD_SET_RST) |
-> +			     FIELD_PREP(LPCM_ID_BITFIELD, lpcm_id) |
-> +			     FIELD_PREP(RST_ID_BITFIELD, rst_id) |
-> +			     FIELD_PREP(OP_ID_BITFIELD, op_id);
-> +
-> +	dev_dbg(dev, "lpcm_id %d, rst_id %lu: send mba mail: [%u, %u, %u]\n",
-> +		lpcm_id, rst_id, req_msg.payload[0], req_msg.payload[1],
-> +		req_msg.payload[2]);
-> +
-> +	ret =3D cpm_send_message(provider->cpm_client, &cpm_req);
-> +	if (ret < 0) {
-> +		dev_err(dev,
-> +			"lpcm_id %d, rst_id %lu: failed to send request to CPM, ret=3D%d\n",
-> +			lpcm_id, rst_id, ret);
-> +		return ret;
-> +	}
-> +
-> +	return goog_cpm_rst_mba_resp_hdl(dev, &cpm_req);
-> +}
-> +
-> +static int goog_cpm_rst_assert(struct reset_controller_dev *rcdev,
-> +			       unsigned long idx)
-> +{
-> +	struct goog_cpm_rst_provider *provider =3D to_provider(rcdev);
-> +	u32 lpcm_id =3D lpcm_from_idx(idx);
-> +	u32 rst_id =3D rst_from_idx(idx);
-> +
-> +	dev_dbg(rcdev->dev, "assert reset id=3D%u of lpcm %u\n", rst_id, lpcm_i=
-d);
-> +	return goog_cpm_rst_send_mba_mail(provider, lpcm_id, rst_id, ASSERT_OP_=
-ID);
-> +}
-> +
-> +static int goog_cpm_rst_deassert(struct reset_controller_dev *rcdev,
-> +				 unsigned long idx)
-> +{
-> +	struct goog_cpm_rst_provider *provider =3D to_provider(rcdev);
-> +	u32 lpcm_id =3D lpcm_from_idx(idx);
-> +	u32 rst_id =3D rst_from_idx(idx);
-> +
-> +	dev_dbg(rcdev->dev, "deassert reset id=3D%u of lpcm %u\n", rst_id, lpcm=
-_id);
-
-This all could be deduplicated by moving it into the _send_mba_mail()
-function, using str_assert_deassert(op_id =3D=3D ASSERT_OP_ID).
-
-> +	return goog_cpm_rst_send_mba_mail(provider, lpcm_id, rst_id, DEASSERT_O=
-P_ID);
-> +}
-> +
-> +static const struct reset_control_ops goog_cpm_rst_ops =3D {
-> +	.assert =3D goog_cpm_rst_assert,
-> +	.deassert =3D goog_cpm_rst_deassert,
-> +};
-> +
-> +static int goog_cpm_rst_debugfs_assert_set(void *data, u64 rst_id)
-> +{
-> +	struct goog_cpm_rst_debugfs_entry *entry =3D data;
-> +	unsigned long idx =3D to_rstc_idx(entry->lpcm_id, rst_id);
-> +
-> +	return goog_cpm_rst_assert(&entry->provider->rcdev, idx);
-
-Calling into reset_control_ops like this bypasses all reference
-counting in the core and breaks reset controller API promises.
-
-> +}
-> +
-> +static int goog_cpm_rst_debugfs_deassert_set(void *data, u64 rst_id)
-> +{
-> +	struct goog_cpm_rst_debugfs_entry *entry =3D data;
-> +	unsigned long idx =3D to_rstc_idx(entry->lpcm_id, rst_id);
-> +
-> +	return goog_cpm_rst_deassert(&entry->provider->rcdev, idx);
-> +}
-> +
-> +DEFINE_DEBUGFS_ATTRIBUTE(goog_cpm_rst_assert_debugfs_fops, NULL,
-> +			 goog_cpm_rst_debugfs_assert_set, "%llu\n");
-> +
-> +DEFINE_DEBUGFS_ATTRIBUTE(goog_cpm_rst_deassert_debugfs_fops, NULL,
-> +			 goog_cpm_rst_debugfs_deassert_set, "%llu\n");
-> +
-> +static void goog_cpm_rst_add_debugfs(struct goog_cpm_rst_debugfs_entry *=
-entry,
-> +				     struct dentry *debugfs_root,
-> +				     const char *name)
-> +{
-> +	struct dentry *d =3D debugfs_create_dir(name, debugfs_root);
-> +
-> +	debugfs_create_file("assert", 0220, d, entry,
-> +			    &goog_cpm_rst_assert_debugfs_fops);
-> +	debugfs_create_file("deassert", 0220, d, entry,
-> +			    &goog_cpm_rst_deassert_debugfs_fops);
-> +}
-
-Please drop the debugfs functionality or explain what it is needed for.
-
-> +static int goog_cpm_rst_get_nr_resets(const struct cpm_reset_soc_data *s=
-oc_data, u32 lpcm_id)
-> +{
-> +	int i;
-> +
-> +	for (i =3D 0; i < soc_data->num_resets; i++)
-> +		if (soc_data->resets[i].lpcm_id =3D=3D lpcm_id)
-> +			return soc_data->resets[i].nr_resets;
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int goog_cpm_rst_of_xlate(struct reset_controller_dev *rcdev,
-> +				 const struct of_phandle_args *reset_spec)
-> +{
-> +	struct goog_cpm_rst_provider *provider =3D to_provider(rcdev);
-> +	u32 lpcm_id, rst_id;
-> +	int max_resets;
-> +
-> +	if (reset_spec->args_count !=3D 2)
-> +		return -EINVAL;
-> +
-> +	lpcm_id =3D reset_spec->args[0];
-> +	rst_id =3D reset_spec->args[1];
-> +
-> +	max_resets =3D goog_cpm_rst_get_nr_resets(provider->soc_data, lpcm_id);
-> +	if (max_resets < 0)
-> +		return max_resets;
-> +
-> +	if (rst_id >=3D max_resets)
-> +		return -EINVAL;
-> +
-> +	return to_rstc_idx(lpcm_id, rst_id);
-> +}
-> +
-> +static const struct cpm_reset_data cpm_resets_lga_entries[] =3D {
-> +	{
-> +		.lpcm_id =3D LGA_LPCM_HSIO_N,
-> +		.nr_resets =3D 16,
-> +		.name =3D "hsio-n",
-> +	},
-> +	{
-> +		.lpcm_id =3D LGA_LPCM_HSIO_S,
-> +		.nr_resets =3D 5,
-> +		.name =3D "hsio-s",
-> +	},
-> +	{
-> +		.lpcm_id =3D LGA_LPCM_LSIO_S,
-> +		.nr_resets =3D 45,
-> +		.name =3D "lsio-s",
-> +	},
-> +	{
-> +		.lpcm_id =3D LGA_LPCM_LSIO_N,
-> +		.nr_resets =3D 43,
-> +		.name =3D "lsio-n",
-> +	},
-> +	{
-> +		.lpcm_id =3D LGA_LPCM_LSIO_E,
-> +		.nr_resets =3D 50,
-> +		.name =3D "lsio-e",
-> +	},
-> +};
-> +
-> +static const struct cpm_reset_soc_data cpm_resets_lga =3D {
-> +	.resets =3D cpm_resets_lga_entries,
-> +	.num_resets =3D ARRAY_SIZE(cpm_resets_lga_entries),
-> +};
-> +
-> +static const struct of_device_id cpm_rst_of_match[] =3D {
-> +	{ .compatible =3D "google,lga-cpm", .data =3D &cpm_resets_lga },
-> +	{ /* sentinel */ }
-
-Please choose one style (align with goog_cpm_rst_id_table).
-
-> +};
-> +
-> +static int goog_cpm_rst_probe(struct auxiliary_device *auxdev,
-> +			      const struct auxiliary_device_id *id)
-> +{
-> +	struct device *dev =3D &auxdev->dev;
-> +	struct goog_cpm_rst_provider *provider;
-> +	const struct of_device_id *match;
-> +	int i, ret;
-> +
-> +	match =3D of_match_node(cpm_rst_of_match, dev->of_node);
-> +	if (!match) {
-> +		dev_err(dev, "no matching SoC data found\n");
-
-This should never happen, does it warrant an error message?
-
-> +		return -ENODEV;
-> +	}
-> +
-> +	provider =3D devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
-> +	if (!provider)
-> +		return -ENOMEM;
-> +
-> +	provider->dev =3D dev;
-
-This is not needed, you can just use provider->rcdev.dev.
-
-> +	provider->soc_data =3D match->data;
-> +
-> +	provider->cpm_client =3D devm_cpm_request_client(dev, 0, NULL, NULL);
-> +	if (IS_ERR(provider->cpm_client))
-> +		return dev_err_probe(dev, PTR_ERR(provider->cpm_client),
-> +				     "Failed to request cpm client\n");
-> +	auxiliary_set_drvdata(auxdev, provider);
-> +
-> +	provider->rcdev.dev =3D dev;
-> +	provider->rcdev.owner =3D THIS_MODULE;
-> +	provider->rcdev.of_node =3D dev->of_node;
-> +	provider->rcdev.ops =3D &goog_cpm_rst_ops;
-> +	provider->rcdev.of_reset_n_cells =3D 2;
-> +	provider->rcdev.of_xlate =3D goog_cpm_rst_of_xlate;
-> +
-> +	ret =3D devm_reset_controller_register(dev, &provider->rcdev);
-> +	if (ret < 0) {
-> +		dev_err(dev, "failed to register reset controller: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	provider->debugfs_root =3D debugfs_create_dir(dev_name(dev), NULL);
-> +	if (!IS_ERR(provider->debugfs_root)) {
-> +		provider->dbg_entries =3D devm_kcalloc(dev, provider->soc_data->num_re=
-sets,
-> +						     sizeof(*provider->dbg_entries), GFP_KERNEL);
-> +		if (!provider->dbg_entries) {
-> +			debugfs_remove_recursive(provider->debugfs_root);
-> +			return -ENOMEM;
-> +		}
-> +
-> +		for (i =3D 0; i < provider->soc_data->num_resets; i++) {
-> +			provider->dbg_entries[i].provider =3D provider;
-> +			provider->dbg_entries[i].lpcm_id =3D provider->soc_data->resets[i].lp=
-cm_id;
-> +			goog_cpm_rst_add_debugfs(&provider->dbg_entries[i],
-> +						 provider->debugfs_root,
-> +						 provider->soc_data->resets[i].name);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void goog_cpm_rst_remove(struct auxiliary_device *auxdev)
-> +{
-> +	struct goog_cpm_rst_provider *provider =3D auxiliary_get_drvdata(auxdev=
-);
-> +
-> +	debugfs_remove_recursive(provider->debugfs_root);
-> +}
-> +
-> +static const struct auxiliary_device_id goog_cpm_rst_id_table[] =3D {
-> +	{ .name =3D "google_cpm_mba.reset" },
-> +	{},
-
-Please choose one style (align with cpm_rst_of_match).
-
-> +};
-> +MODULE_DEVICE_TABLE(auxiliary, goog_cpm_rst_id_table);
-> +
-> +static struct auxiliary_driver goog_cpm_rst_driver =3D {
-> +	.probe =3D goog_cpm_rst_probe,
-> +	.remove =3D goog_cpm_rst_remove,
-> +	.name =3D "google-reset-cpm",
-> +	.id_table =3D goog_cpm_rst_id_table,
-> +};
-> +
-> +module_auxiliary_driver(goog_cpm_rst_driver);
-> +
-> +MODULE_DESCRIPTION("Google CPM Reset Driver");
-> +MODULE_LICENSE("GPL");
-
-regards
-Philipp
+>
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
+> index 88b7672123a0..ed347096df46 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
+> @@ -62,7 +62,7 @@ then:
+>      - '#clock-cells'
+>  else:
+>    properties:
+> -    clock: false
+> +    clocks: false
+>      clock-names: false
+>      '#clock-cells': false
+>
+> diff --git a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
+> index c1cefd547391..fd4d598f6ff8 100644
+> --- a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
+> +++ b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
+> @@ -145,7 +145,7 @@ allOf:
+>              - description: CEC stuck at low interrupt
+>              - description: Hotplug connected interrupt
+>              - description: Hotplug removed interrupt
+> -        interrupts-names:
+> +        interrupt-names:
+>            items:
+>              - const: cec-tx
+>              - const: cec-rx
+> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> index 094a6383bb77..f72d1b354007 100644
+> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> @@ -304,7 +304,7 @@ allOf:
+>          clocks:
+>            minItems: 6
+>            maxItems: 6
+> -        clocks-names:
+> +        clock-names:
+>            minItems: 6
+>            maxItems: 6
+>
+> diff --git a/Documentation/devicetree/bindings/display/msm/hdmi.yaml b/Documentation/devicetree/bindings/display/msm/hdmi.yaml
+> index dfec6c3480f3..02d27ccad024 100644
+> --- a/Documentation/devicetree/bindings/display/msm/hdmi.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/hdmi.yaml
+> @@ -113,7 +113,7 @@ allOf:
+>              - const: core
+>              - const: master_iface
+>              - const: slave_iface
+> -        core-vcc-supplies: false
+> +        core-vcc-supply: false
+>
+>    - if:
+>        properties:
+> @@ -136,7 +136,7 @@ allOf:
+>              - const: core
+>              - const: alt_iface
+>              - const: extp
+> -        hdmi-mux-supplies: false
+> +        hdmi-mux-supply: false
+>
+>    - if:
+>        properties:
+> diff --git a/Documentation/devicetree/bindings/dma/fsl,edma.yaml b/Documentation/devicetree/bindings/dma/fsl,edma.yaml
+> index f609038e35ae..0260d177c7d0 100644
+> --- a/Documentation/devicetree/bindings/dma/fsl,edma.yaml
+> +++ b/Documentation/devicetree/bindings/dma/fsl,edma.yaml
+> @@ -172,7 +172,7 @@ allOf:
+>              const: fsl,imx7ulp-edma
+>      then:
+>        properties:
+> -        clock:
+> +        clocks:
+>            minItems: 2
+>            maxItems: 2
+>          clock-names:
+> diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> index 69852444df23..07c8b233c6bd 100644
+> --- a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> @@ -80,7 +80,7 @@ allOf:
+>          - resets
+>      else:
+>        properties:
+> -        "#interrupts-cells": false
+> +        "#interrupt-cells": false
+>          interrupt-controller: false
+>          resets: false
+>
+> diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
+> index 70ab4e140e71..535213ba0c5e 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
+> @@ -92,7 +92,7 @@ allOf:
+>      else:
+>        properties:
+>          nvmem-cells: false
+> -        mvmem-cel-names: false
+> +        nvmem-cell-names: false
+>          clocks:
+>            minItems: 4
+>          clock-names:
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+> index 4505e66876a2..52f471a070d5 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+> +++ b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+> @@ -110,19 +110,15 @@ allOf:
+>
+>      then:
+>        properties:
+> -        clock:
+> -          items:
+> -            minItems: 1
+> -            maxItems: 1
+> +        clocks:
+> +          maxItems: 1
+>          clock-names:
+>            items:
+>              - const: venc_lt_sel
+>      else:
+>        properties:
+> -        clock:
+> -          items:
+> -            minItems: 1
+> -            maxItems: 1
+> +        clocks:
+> +          maxItems: 1
+>          clock-names:
+>            items:
+>              - const: venc_sel
+> diff --git a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+> index b46cc780703c..4488d5ca9b9c 100644
+> --- a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+> +++ b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+> @@ -174,7 +174,7 @@ allOf:
+>              - const: mfc
+>          iommus:
+>            maxItems: 2
+> -        iommus-names: false
+> +        iommu-names: false
+>
+>  examples:
+>    - |
+> diff --git a/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml b/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
+> index c009a7a52bc6..7c40361f95ec 100644
+> --- a/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
+> @@ -127,7 +127,7 @@ allOf:
+>          phy-names:
+>            const: pcie-phy1
+>
+> -        power-domain: false
+> +        power-domains: false
+>
+>        required:
+>          - resets
+> @@ -150,7 +150,7 @@ allOf:
+>            minItems: 2
+>            maxItems: 2
+>
+> -        reset: false
+> +        resets: false
+>
+>          reset-names: false
+>
+> @@ -171,7 +171,7 @@ allOf:
+>          clocks:
+>            minItems: 6
+>
+> -        reset: false
+> +        resets: false
+>
+>          reset-names: false
+>
+> @@ -193,7 +193,7 @@ allOf:
+>          clocks:
+>            minItems: 6
+>
+> -        reset: false
+> +        resets: false
+>
+>          reset-names: false
+>
+> @@ -215,7 +215,7 @@ allOf:
+>          clock-names:
+>            maxItems: 1
+>
+> -        reset: false
+> +        resets: false
+>
+>          reset-names: false
+>
+> @@ -223,7 +223,7 @@ allOf:
+>
+>          phy-names: false
+>
+> -        power-domain: false
+> +        power-domains: false
+>
+>          mediatek,pbus-csr: false
+>
+> --
+> 2.53.0
+>
+>
