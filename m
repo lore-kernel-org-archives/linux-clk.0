@@ -1,78 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793191471;
-	b=lPxdqJCuGLg+dtWK7C2fSrI7QhZ2iXjsSf6eWFkV3E8DzGV70HO1Hfu+vEILjmQiAC7s
-	 zdkf3lFuNoPAR5BLWZB9gSC9HxWt2Nu3uXEcatw0Z75aNK1VZqxR45S3EnhzkGZx5ZO3p
-	 tsS5siXwq95GMtITws4aH/L1Ww5hoD65EsAFxpOAq9f7fVKK7xmOAVbl7FT+2qMf76RYI
-	 XxQngAxdxcbjR6xgnJlcmO6tou7zxt4eAOBKGbYqEEh31c0OcroMNeqrL3TYVIhtixILV
-	 JE8nizwAohVnNuX2soemTwQOTrgbe+d83Sf44EeERGSnBZsK5CJw5v/G1MkwPbCBiXg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793191471;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=+BPqdivArSTnDxx/nLyMyQqfSMjb+Q3SA/a4HI7G+OU=;
-	b=FmXRnFQH9AvPE5+NCwSsckAQMYYFxC5EuG5w7ZU1G/EzeJZQwpAKKi0BvWoUpOeBGtdi
-	 J6Cn3FM/ZBYpJdTDTgbK7jPteAeDSvQXlRhjF7Z5EtfHa4L2Y6eemOLqhtIKUG96j4ISd
-	 89xxWBBWR5o4EqgG7TTgkXSvl4/zRKBJSojc2Kzc7UAPZkgtVGO0HZdh1YP1M1TIwRiqy
-	 wppVhcNH1/nRyKnJsl3WbtvwbZM1/FX9TI7sc95AVR+b6IgZ2fJ5frHBaKY8SbBaDOSeN
-	 lcwxvgW4Vlp/7wt3X3/IMIZmlPqZEyQfTEGt+CoDmFeaPtD6Ul1XNU+R6ExSB25aIag==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=McjKoNXk;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39557606A31A;
-	Wed, 28 Oct 2026 12:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=McjKoNXk
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1793191470;
-	b=3qQfLR9M3Jz/X+wc5XvOARSMs4LT12IgLNnd/cXpAexOk1pO8/SEY0GdGzQXjJqZRVbn
-	 gXnTpKlq0k45xFAnyNARpJFB1JGwk7CcIwATiUfHJzD69UoKgDiQl5L8Ea06aNKltlsRQ
-	 6WIbdOXPy6OM8hn6Qly5XNfftIxn7LoRAw4Bcwckjq8Un++eTmUnZkPSNW5Rg5xcYww7z
-	 iy3XlOYbLgILpOitQTlUDVYHmcwHoYGi99HAWfmp0TuJ53lkXOIj5QV1L0S85daclOHdA
-	 5ycn2Ti+2aJmalMZ6g3UHn9PQXE1iP42BjruJIUHGI0davPUCJrOjzGk9m2XgqW2YjQ==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1793191470;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=+BPqdivArSTnDxx/nLyMyQqfSMjb+Q3SA/a4HI7G+OU=;
-	b=n7J/Uaa3Q4Z7KCPqirp0LWeSoKfYcw8287Xfq/oKgEtZjNLcFfCHix3y7TS6gSMpb4w8
-	 0ZMwqwVCZUoSt6fpB9YsjTGsc390UFOIxO/Y28vLIy4PmcfJHCSVVx0XaIJkqL/b4qB1f
-	 7ZCTQTt8zM33pDsAHwj+U/oe7Iq9TxhOM8kZYWwDlsI6aKttMJXy5rrpL0R+ywbzdZdb5
-	 KbmT06LXqh0I9eVZHVoFE6yUX3UeEeS5sk0VJG0pbEr/20lha/l95V9ukn24f3xh1qr8i
-	 4TwZWawU1FcUDuAugweyA6peMGeRHvFuqlTzWF6nTCb79htvp1lqqqIThW9L+B7K0xA==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.51
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793191522;
+	b=qGO4Od5rLw+4Gd4xHy1c1KSpUPU9VKhDQS1oPyE840Lhbmk9ESyJHXDpUPlFVd8bGvWe
+	 JuCrTatf7QJJRgQtcwVEK5a8yk8zLmXwJVQJo++XQB/Fhre1NGhB/mDXZlETOUs+q0Df/
+	 P0+gsCx7OmfXqUmHFn1WvH4pa1QW+sLsOcWtG/1ymQAFznE6cp4dTEJH+PD2XfYSLtHFx
+	 an2heuSMJPPKR85fLtxI11lJssXYOUp5LstEsJv/WtpJCgoqUZ16ArsakqyccvjyZDb7N
+	 sstTA+EDVElX6sSgHwQJ+zdgtLfp2Ed7yq27QfWbo/d41+CePAUDDkdLvbXl3jzoicg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793191522;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=QqTI4OK/fhuaR1GlqOO94iKxdKzeyM0Y5bQN/d17mzE=;
+	b=pFVZj8zsxW58jLg6MDRbbRXvYlSQiAEkDiCFSDBO7lt0d4Ey343qfYg6+tOYyvfvC85D
+	 2H+EGeC9nb2LxBMaYGG8Us9XMa6bYnwWEqvfYNPYvR8wiVCVkNyPpNCmsZGEZaXrf7iSA
+	 +m5iQD9vBHaW/PBvOl+vm0tMxKnPd/4JIKdLn+t95OO5rRVYUiR8N7jz6OHELhckTwV3W
+	 4AXupjDzpEDWC4bJn41CD0W2xFXxFdiMJvpdx9lxdRc6inuDkWeY27vnCB+KGy1IRIQdH
+	 Qc+2d2+vtDteX1NF9rpVQ1+Ir9y4QzUKe2hO62YBpPXJfkLi1W0Am7+93dwLCO35b0Q==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=tuxon.dev;
+	spf=pass smtp.mailfrom=tuxon.dev;
+	arc=none smtp.remote-ip=209.85.221.51
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 4E8D51F01825;
-	Wed, 28 Oct 2026 12:44:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793191470;
-	bh=+BPqdivArSTnDxx/nLyMyQqfSMjb+Q3SA/a4HI7G+OU=;
-	h=From:Date:Subject:To:Cc:Reply-To;
-	b=McjKoNXkLY6iD9z0dXPBPVukRkuMf7R+qpuFS/FS+BLMNL2M9SfiUlWwHndDJhBzC
-	 EoAZspVJ5JoG4yBksohrVwYPfo3qKybSt7K6KkI5yuY3Gf57JpeiLQIq63wxtRoYeH
-	 PwGjgJ78HN8GzikEDzzMSYOrkhv6fBfEOEzxEE7i0zcVl2IN5A5QPLEb0M441I8wbE
-	 h7ASsH2Hc4FUpkx57BMtUzOBHtmGK1ozdnWRWh1tUs8RjzaojcKNmvE5w7+9v9ourn
-	 MkNqfXAU8Pv16xD1sY1NLE7hKaFzZ92gchvZ3MItvdjrwZBTBASIWMfKTe7Uuoexr7
-	 6RRIEhB3fByWg==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 9DD9245466;
-	Wed, 28 Oct 2026 12:44:29 +0000 (UTC)
-From: Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>
-Date: Wed, 28 Oct 2026 20:44:27 +0800
-Subject: [PATCH] clk: meson: Fix PLL enable timing
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE14606A323
+	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 12:45:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8EE14606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-48afcfc4bf5so771878f8f.1
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 05:45:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1793191520; x=1793796320; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=QqTI4OK/fhuaR1GlqOO94iKxdKzeyM0Y5bQN/d17mzE=;
+        b=kSmYo2IApQsaZVeoI/lHS65DndOvyRY8lt50GRCZmz/jWWH8qe4s7wo/zr2/zMpq25
+         +sjQr/YIemSHfu6uSz39sV8QOjFvoudUeuFCrPfNICLHczUoyPJM2MMP2ZzljZ7g4y9C
+         e2zu+Bti1OHmJlatzf5eQK5sXxZ3i0qUYaH+sDqEm4IIQ4Nk+kHHbcDLgsKMAjNiyB+/
+         XHCS25+GfCpZiPYLwRPoWKFHsIs3BMbU1i6dviNOqXSCye9VVbinYsSDEBX24Qp54NKy
+         2ZE+Gf+jUmLFXKEj1XKHO4ETJGGRqh51DtS3Fk31LWhkvIQvA1aIATIPsXPkaoqVeUIU
+         2+rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793191520; x=1793796320;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=QqTI4OK/fhuaR1GlqOO94iKxdKzeyM0Y5bQN/d17mzE=;
+        b=DTvh3AopsOVn5ta2dJrQ00P1j0OUDcJ8HwgdpKZnlvVX2w+7VMJ+udHafVrlGribWo
+         gVQEJ70sRaXZcJh2+syKGK6o/3cxgRI8GruGQvnfZ+6ferWNRJS2WaHEZcFyqbIKEEJ0
+         xPNLQQDnDmOoCxC3EvltWD4VzaAMz4ezoB5YlCJMrxuRhO0RU/rJ/BEfNCEB/SaRviuz
+         RbK26/GtE15HS7XgOMTFxoS1sBx1flbk/9nJZgqcqEMku8xn2/RPxJlj+i2j27mkaxUa
+         CfhbKvwSuGwCrdTkLorTpJyVT33se2WujLeBDzdwEHZRTSceEyhHaUsKnzqrzNQxBNRs
+         ydjA==
+X-Forwarded-Encrypted: i=1; AKwUvBz5WI4Mbz2RmEpHSL4LRgDkpR2fLZEJXWNFctRXEtyczOA04LRF6k6AQhXZN1s3D/cw/V0QFpCHY+k=@vger.kernel.org
+X-Gm-Message-State: AFq9FYK4xlx49QJVT5+uk46YB/6dzw4w4uhJHwI0utF/RajWtCNfn4I3
+	6nNBFcRxYub5tt+hrACRtT5YUYEtltEL5EG/J1wfa6vfOc8PeLGy386fJ93IFj8n5mk=
+X-Gm-Gg: AYBFou0ZElTSyhYNkPu4YYo2dydRrszqh2vXyldF6iyfbh3EI3zMGU5ahTCLg/yxHEk
+	uvfX0JiuCY4+sztFYh5xov/RAkH67dK55rw6ol2MXSzicewd0j36kUYjcoMAUeF6Im/LQVRqoWi
+	3vCYWlDqCZBM0NnQDZDk7j22XBqSZQzI8eBshbG7jdRQb/z4oG8KGs3Pgil4dd7qpl2/dd00ly3
+	90t60hiHB3SMImqEOrdKl6jOn/4JFwhxfOuU6DKQ5zcaeSP/5eHmSSSjsQGcv9e3W7VuqpUQgFW
+	9yhiMmYzvx2vpoQXTUU4PRd7wEc0zUvoQrLM3w9U98P2ignmmPF42xr517XM8OJ1FZJeHXEBvul
+	+LTBtDH++Z6RqJeahoKOePPx/AeqghAvF2t4BYfD+P70FPEe8IFdksOE/gwrFmSF/kPMd6mo2+t
+	z1LqCrvq5n9m++dItpuSuBff5eU25niYlDar9u7NBnJQ2cvvYBZoYEfrXoujilXgftPQ1nDImwR
+	cq33G44HnDTG//L69heRQPluMZCECriMII2ZLA+RaQ3NvVGfQ6trGxbNDDvCad+S++MEdhxgfsS
+	C1Rz1OiFbJx4LfAqEWuqaFBH54QmuQQeddqTmw==
+X-Received: by 2002:a05:600c:3510:b0:4a4:7a8d:c436 with SMTP id 5b1f17b1804b1-4a96667dd75mr44218195e9.11.1793191519063;
+        Wed, 28 Oct 2026 05:45:19 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.196])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ebcb8d5sm29772912f8f.28.2026.10.28.05.45.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Oct 2026 05:45:17 -0700 (PDT)
+Message-ID: <0602847f-4fef-49b6-a1eb-3240d7c1ecbc@tuxon.dev>
+Date: Wed, 28 Oct 2026 14:45:15 +0200
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -82,99 +89,76 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261028-fix_enable_timing-v1-1-70f060ec3f2a@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIACru4WoC/x2MUQqAIBAFrxL7naAiJV0lIqxWWygLjQiku7fEf
- A3MewUyJsIMXVUg4U2Zjsii6grm1cWAghZ20FI3SupWeHpGjG7acLxopxiENXryzpqFAd6dCTn
- 6P/vhfT9ze29gYwAAAA==
-X-Change-ID: 20261027-fix_enable_timing-842bfa84d4d4
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Jian Hu <jian.hu@amlogic.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793191468; l=2238;
- i=jian.hu@amlogic.com; s=20260415; h=from:subject:message-id;
- bh=YfHg1NjHkAGSOc2XXMaHJKDSXCBv1aRkCpS0Jq7/gDQ=;
- b=qTW8KkZNLM3nV9LOBSEEfQv+uKohpmDxYarjmNUCZ87YMmcC+ZjOFJeNXG7A7twBX6tKFMe48
- rrpR1N39P4PDMv+hoT7jDY1Y1lqjTL1eiOqT7SGtztMv14yYImlyOrh
-X-Developer-Key: i=jian.hu@amlogic.com; a=ed25519;
- pk=zHUE+rNtH9z+Sb8au1/elWknjFQmy5QDVkBoxleuOIA=
-X-Endpoint-Received: by B4 Relay for jian.hu@amlogic.com/20260415 with
- auth_id=735
-X-Original-From: Jian Hu <jian.hu@amlogic.com>
-Reply-To: jian.hu@amlogic.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] watchdog: rzg2l_wdt: Power on the watchdog domain
+ in the restart handler
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+ wim@linux-watchdog.org, linux@roeck-us.net, ulf.hansson@linaro.org,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241015164732.4085249-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241015164732.4085249-5-claudiu.beznea.uj@bp.renesas.com>
+ <auC7FueGYTiLOpcX@black.igk.intel.com>
+Content-Language: en-US
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <auC7FueGYTiLOpcX@black.igk.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-From: Jian Hu <jian.hu@amlogic.com>
 
-The hardware requires a 50us delay after setting the PLL enable
-bit to meet its timing requirements.
 
-Without this delay, GP0 and HIFI PLLs on Amlogic T7, SM1 and C3
-may fail to lock under stress testing.
+On 10/27/26 16:54, Andy Shevchenko wrote:
+> On Tue, Oct 15, 2024 at 07:47:32PM +0300, Claudiu wrote:
+>>
+>> On RZ/G3S the watchdog can be part of a software-controlled PM domain. In
+>> this case, the watchdog device need to be powered on in
+>> struct watchdog_ops::restart API. This can be done though
+>> pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog
+>> device are marked as IRQ safe. We mark the watchdog PM domain as IRQ safe
+>> with GENPD_FLAG_IRQ_SAFE when the watchdog PM domain is registered and the
+>> watchdog device though pm_runtime_irq_safe().
+>>
+>> Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+>> context'") pm_runtime_get_sync() was used in watchdog restart handler
+>> (which is similar to pm_runtime_resume_and_get() except the later one
+>> handles the runtime resume errors).
+>>
+>> Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+>> context'") dropped the pm_runtime_get_sync() and replaced it with
+>> clk_prepare_enable() to avoid invalid wait context due to genpd_lock()
+>> in genpd_runtime_resume() being called from atomic context. But
+>> clk_prepare_enable() doesn't fit for this either (as reported by
+>> Ulf Hansson) as clk_prepare() can also sleep (it just not throw invalid
+>> wait context warning as it is not written for this).
+> 
+>> Because the watchdog device is marked now as IRQ safe (though this patch)
+> 
+> ...which is complete hack and has to be avoided.
+> 
+> Can it be solved differently?
 
-For example, enabling the GP0 PLL at 1512MHz may lose lock and
-result in an output I/O error:
+Can't tell ATM. This solution was suggested by Ulf.
 
-echo 1512000000 > /sys/kernel/debug/clk/gp0_pll/clk_rate
-echo 1 > /sys/kernel/debug/clk/gp0_pll/clk_prepare_enable
-sh: write error: I/O error
+> (Note, OMAP, for example, got patches in the past
+> and become pm_runtime_irq_safe()-free.)
 
-Add the required 50us delay after enabling the PLL.
+I'll look through it.
 
-Testing on GXL shows that the PLL works correctly without the
-additional delay and continues to lock successfully after the
-50us delay is added.
+Thank you,
+Claudiu
 
-On A1, remove the redundant 10us delay before enabling the
-self-adaption current module, as the new PLL enable delay already
-covers this timing requirement.
-
-Tested on: T7, C3, S4, AXG, GXL, SM1 and A1.
-
-Fixes: e40c7e3cda07 ("clk: meson: clk-pll: add enable bit")
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
----
- drivers/clk/meson/clk-pll.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 1ea6579a760f..77ea2960120f 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -368,6 +368,7 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
- 
- 	/* Enable the pll */
- 	meson_parm_write(clk->map, &pll->en, 1);
-+	udelay(50);
- 
- 	/* Take the pll out reset */
- 	if (MESON_PARM_APPLICABLE(&pll->rst))
-@@ -377,12 +378,11 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
- 	 * Compared with the previous SoCs, self-adaption current module
- 	 * is newly added for A1, keep the new power-on sequence to enable the
- 	 * PLL. The sequence is:
--	 * 1. enable the pll, delay for 10us
-+	 * 1. enable the pll, delay for 50us
- 	 * 2. enable the pll self-adaption current module, delay for 40us
- 	 * 3. enable the lock detect module
- 	 */
- 	if (MESON_PARM_APPLICABLE(&pll->current_en)) {
--		udelay(10);
- 		meson_parm_write(clk->map, &pll->current_en, 1);
- 		udelay(40);
- 	}
-
----
-base-commit: 363f97a1ce635b86be7fd263d56a040fbd87bdbb
-change-id: 20261027-fix_enable_timing-842bfa84d4d4
-
-Best regards,
--- 
-Jian Hu <jian.hu@amlogic.com>
-
+> 
+>> the irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume() returns
+>> 1 for devices not registering an IRQ safe PM domain for watchdog (as the
+>> watchdog device is IRQ safe, PM domain is not and watchdog PM domain is
+>> always-on), this being the case for RZ/G3S with old device trees and
+>> the rest of the SoCs that use this driver, we can now drop also the
+>> clk_prepare_enable() calls in restart handler and rely on
+>> pm_runtime_resume_and_get().
+> 
+>> Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in
+>> watchdog restart handler.
+> 
 
