@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793177824;
-	b=tGy60BfrWgQuuMP2SML85RM0d6IWQQQR86OL7eGWEqFcCohk+XSSRKWMBQ0U/oWicxte
-	 onvaxqswxVnl3ZZ6+/GUtt7wnOEkj/iFUgaGSQDAv6r1UEA8i5amEJ7W4i8SL97m1wHrp
-	 ovliXrKheh5ixchdBz5FUYsaNU/Cxyt/4Za0efaqMzKMJ3cEtMDJ4Y+EY8VD6ev97Mus7
-	 g4XChlMJVHyuEX2/wctNeDKBh81DseCtgcSXRTtvaWIi+IFymBeq2/G0Z+rk8+s44CzjX
-	 gWipmyl1HxTQLX4cOjnc/6vHVbsWwr8DrdrDLOI4czUqvMni7suDixP+QHHN6F3HtiQ==
+	t=1793178075;
+	b=Dyqf//c5ijaqIb5s9wPf4mgiNmBRKevO9cSn/YHkUSoh0Dk298NpDbJE54f+3dUIsLFU
+	 aU8sS733ZCC0CUVrtWyYhvF/KBOArSH2OL3sFrwxr5OPbEWwwnroBuoLqHbsNcqkek638
+	 CF5LDK9BvPA4/xFYbNdIOK9y0omVn6gvLKwkk4E6vVTSVjiwP9bnxAweoR1GbuhQ1vo1D
+	 526RTROLIXnh9DZ3Jlw5QET5xjYKJlsSnqYd+5ASNNHNCPhy86SnLsVLAN9j6RnlXCdNk
+	 sdyRMOytRvcX1edjj2T80uhYcWZM40tfchQqQR/72CK08sWsvkJpg2VjCPvKJpUicIg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793177824;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=fgalwktVNpsEZDXGOqK911Twumi/NQcKln8PLWf3Upc=;
-	b=1vJ1mqUli3I02UVBBvZF8gxeUOvVbhesGAa/+tT39uVDhKsrGa8skQ0tVy6WU0/zCXAj
-	 MMditOIV9sDVCjkAX8LLKwS4L9iInJu8vcoM3MjRvd5dg72H5Yc4FKyax2xFndef3Vvn2
-	 h9/Du0OVbpY1QEcQfLSRhdZfWY33aNtC6k/xOdyikwkotgSEfqS6Bc2azrybW2P5+klpE
-	 aS4GZH/LOmWZ+BrvJTfQBF5PsYUsMvZOap3EorRmmVauThPLsYSeIFWJArwJ3PXsV929J
-	 cMvpX21vrTGS48VmcIiAY/Fip4B2WjY9AbO2W7infuRUpNgfatowR+9hK9GQvlYW7LA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793178075;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=tGD1n35qkTRVWRh5gYerhYExxHVVeHk+oltw3BhOOkE=;
+	b=K+EWquYmUX7kQidlDXSk1balwHNw9FlM/IqGLwyga+KK9bpV1n7DGYTMfWNGjFRiBoyO
+	 hZvxrHm1eNUWuEYTD7os9GGlzbF0/nHWDb1dqq/PYE7bNeJuK3Rch2rqbnU2xZ4c7sFxv
+	 rAzgcJvgp2IkszMCVFmu08dY/AdbN8VxfIfVzA9y34d9i5sXc9wDMYfmppGQBFUwVHo6f
+	 rIq22odED1Ne/VQyxZcqwW7uB6PXqaxnETjYgbcDuJWaDXlzVh0Y+FsKe8S3EDyF4YRIL
+	 dvxA5SZUyPte+xfP9ljFn6axBcLFQwRkNu93srfs+zjLqIdz2w5taj5zj46YtZKFgPA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DQibXMXB;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NAeIBgmM;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DF2606A31D
-	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 08:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DE8606A31C;
+	Wed, 28 Oct 2026 09:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DQibXMXB
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69101F031F0
-	for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 08:56:58 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NAeIBgmM
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A210C1F01829;
+	Wed, 28 Oct 2026 09:01:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793177818;
-	bh=fgalwktVNpsEZDXGOqK911Twumi/NQcKln8PLWf3Upc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=DQibXMXBLOAEyZVKE/CFJHbMV5XqkbaoxFzHIv4VTo5A3IU0tQx7cwSKZ8rip/JWW
-	 I86vH+gOtl+DfXvkTGE6I3pts1sRPcn3XAbfdbnvlVWCZX+yqCAO6PDB3SvLfAGfj7
-	 BW4pzRvSN6QAm/Dv8rZ5PDBs5rrsWN/DgdJbc7iIMiEhbAiBiW/UerEVdQc8/f59Jd
-	 y0SlKqTzFhENavQ7ifRlwkmjMmh0xLSI4jnTCgNOFaax2EOp+bVTFxfWsg3zaEbxJH
-	 My1MzqDqBb+NlLiCKyoU0VhqcithADxt4MXYpK25hE2axgQUOKoReEdLYaEaLCDDq3
-	 hardoIB9bgoQQ==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3aca0bf7fd0so1326501fa.0
-        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 01:56:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBw2E2q3Q+kMOMVZcQtymmnjpkvr3cXgGj60UPIpaagqTS7RwyhE/2TD2vk1JRrKPvY8Ps36o2Hlh/4=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKQIj/ufaFvvbXW3ze46knGleEcHsMAU6kfx1ee+Tc7axtQBWPy
-	0g073Mow+QF7V4jcaPSIGl4HNNduz1YD6VnfeH6mWENUxGwOFggAh6/M7A6K4WuBpLcOYQ2KcIk
-	iOi8y1LVXMe/UKVEklCLkxqgQY1P2cK0TMUvrsd1H9Q==
-X-Received: by 2002:a05:651c:150d:b0:3a6:58f7:da9a with SMTP id
- 38308e7fff4ca-3ac9cfcc25emr3279141fa.27.1793177817298; Wed, 28 Oct 2026
- 01:56:57 -0700 (PDT)
+	s=k20260515; t=1793178074;
+	bh=tGD1n35qkTRVWRh5gYerhYExxHVVeHk+oltw3BhOOkE=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=NAeIBgmMi2cElXO3DkEB5l+YrMVdhDmHtHUzkWVcYmqXQJyYmTNYBuagNFa3AU1VP
+	 yb/GdUoD5Kz34pByc4piqoQlZ4Kk+43KiBgN/O14vezgMiShB7WfXPXWLxxGn64h4c
+	 Inz6g9EAp9ll7ZKwgUWrbzyVC5vstYmgljfAFxnDSoUtHdpj+GQH9bPfJZqrxl6vl2
+	 0lnfRqULtEBAJ1y9UP3kOFLPVmy+RR/sbcP6F+TFwTGgdIZ8+OMceAczUKQWUHLT2a
+	 UWdLtLS1j5y3eS2kTqIRQmI/TQVPMoH72MrZNId2fFJxSAhoPXSbYGZ8ZcSQwOhvXt
+	 Bs4lmKl7ZAGVw==
+Message-ID: <sashiko-outbox-187645@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 4/5] firmware: tegra: bpmp: Add per-SoC EMC clock ID
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Johnny Liu" <johnliu@nvidia.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261028084900.1047287-5-johnliu@nvidia.com>
+References: <20261028084900.1047287-1-johnliu@nvidia.com>
+ <20261028084900.1047287-5-johnliu@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 28 Oct 2026 09:01:14 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -58,48 +59,89 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <20261027-a210-scmi-v1-0-74d58ce85bd8@iscas.ac.cn>
-In-Reply-To: <20261027-a210-scmi-v1-0-74d58ce85bd8@iscas.ac.cn>
-From: Bartosz Golaszewski <brgl@kernel.org>
-Date: Wed, 28 Oct 2026 09:56:44 +0100
-X-Gmail-Original-Message-ID: <CAMRc=Mc0rznLufJz-KVY_d1nDU_wpMM8E0bho7KJCfG6Xn01SA@mail.gmail.com>
-X-Gm-Features: AclHuK9mMPE05cIDjki8s1mLCHmR3I47pX_uEOr7Y0FdJXyzRik8jx1n3BBNXe0
-Message-ID: <CAMRc=Mc0rznLufJz-KVY_d1nDU_wpMM8E0bho7KJCfG6Xn01SA@mail.gmail.com>
-Subject: Re: [PATCH RFC 00/18] riscv: add initial Zhihe A210 support using
- SCMI clocks and resets
-To: gaohan@iscas.ac.cn
-Cc: Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linusw@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
-	Samuel Holland <samuel.holland@sifive.com>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Anup Patel <anup@brainfault.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Drew Fustini <fustini@kernel.org>, Icenowy Zheng <uwu@icenowy.me>, Inochi Amaoto <inochiama@gmail.com>, 
-	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <me@ziyao.cc>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	linux-clk@vger.kernel.org, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 27, 2026 at 4:37=E2=80=AFPM Han Gao via B4 Relay
-<devnull+gaohan.iscas.ac.cn@kernel.org> wrote:
->
-> This adds initial support for the Zhihe A210 SoC and the Melon Pi V1
-> and V2 boards. It replaces the earlier series [1]. The way clocks and
-> resets are handled changed completely, so I am posting it as a new RFC
-> rather than as v2.
->
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] firmware: tegra: bpmp: missing emc_clk_id for Tegra186 and Tegra=
+194
+--
 
-No, please keep the numbering. You can add the RFC tag and still post
-it as v2 retaining the changelog. It makes things easier to track.
+commit 8799d4cd04239b801d1fa35e2045aaeae3d68e3e
+Author: Johnny Liu <johnliu@nvidia.com>
 
-Thanks,
-Bartosz
+firmware: tegra: bpmp: Add per-SoC EMC clock ID
+
+This commit adds an emc_clk_id field to struct tegra_bpmp_soc and sets it
+for Tegra234, Tegra238, and Tegra264 while leaving it unset for Tegra186
+and Tegra194.
+
+>     firmware: tegra: bpmp: Add per-SoC EMC clock ID
+>    =20
+>     The EMC clock ID differs per chip (TEGRA234_CLK_EMC=3D31,
+>     TEGRA238_CLK_EMC=3D43, TEGRA264_CLK_EMC=3D290).
+>    =20
+>     Add an emc_clk_id field to struct tegra_bpmp_soc and set it for
+>     Tegra234, Tegra238 and Tegra264. Tegra186 and Tegra194 have no EMC cl=
+ock
+>     ID and leave it unset.
+>    =20
+>     Signed-off-by: Johnny Liu <johnliu@nvidia.com>
+>=20
+> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+> index beeb385870f59..06da888535dc0 100644
+> --- a/drivers/firmware/tegra/bpmp.c
+> +++ b/drivers/firmware/tegra/bpmp.c
+
+[ ... ]
+
+> @@ -1158,14 +1162,17 @@ static const struct tegra_bpmp_soc tegra186_soc =
+=3D {
+> =20
+>  static const struct tegra_bpmp_soc tegra234_soc =3D {
+>  	TEGRA186_BPMP_SOC_COMMON,
+> +	.emc_clk_id =3D TEGRA234_CLK_EMC,
+>  };
+
+[Severity: Medium]
+Is it accurate that Tegra186 and Tegra194 have no EMC clock ID, and should
+tegra186_soc (or a dedicated Tegra194 entry) also populate emc_clk_id?
+
+The in-tree device tree bindings and device trees define and consume BPMP
+EMC clocks on both SoCs:
+
+include/dt-bindings/clock/tegra186-clock.h:
+    #define TEGRA186_CLK_EMC 58
+
+arch/arm64/boot/dts/nvidia/tegra186.dtsi:
+    emc: external-memory-controller@2c60000 {
+        ...
+        clocks =3D <&bpmp TEGRA186_CLK_EMC>;
+
+include/dt-bindings/clock/tegra194-clock.h:
+    #define TEGRA194_CLK_EMC			31
+
+arch/arm64/boot/dts/nvidia/tegra194.dtsi:
+    emc: external-memory-controller@2c60000 {
+        ...
+        clocks =3D <&bpmp TEGRA194_CLK_EMC>;
+
+In addition, drivers/memory/tegra/tegra194.c sets .icc_ops =3D &tegra_mc_ic=
+c_ops,
+which scales the EMC clock via BPMP MRQ_BWMGR_INT without clk_set_rate()
+involvement, and drivers/memory/tegra/tegra186-emc.c uses
+clk_set_rate_range(), clk_set_min_rate(), and clk_set_max_rate() on emc->clk
+across Tegra186, Tegra194, Tegra234, and Tegra264.
+
+With emc_clk_id left at 0 in tegra186_soc (which matches TEGRA186_CLK_FUSE
+on Tegra186), consumers such as tegra_bpmp_clk_register() in commit
+1346a33d1522 ("clk: tegra: bpmp: Do not cache the EMC clock rate") will not
+identify the EMC clock on Tegra186 and Tegra194, continuing to return stale
+cached EMC clock rates when BPMP scales the EMC frequency. Also, because
+arch/arm64/boot/dts/nvidia/tegra194.dtsi matches compatible =3D "nvidia,teg=
+ra186-bpmp"
+and tegra_bpmp_match has no separate entry for Tegra194, both SoCs currently
+share tegra186_soc despite having different EMC clock IDs (58 vs. 31).
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261028084900.1047=
+287-1-johnliu@nvidia.com?part=3D4
