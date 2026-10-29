@@ -1,111 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793261828;
-	b=ABt/DxsEy1zvcRoU6V+U8Aezv9P6+CyvqG51ggt3s8x1jfMHOlZuu70fs4VEMoFS0X79
-	 EzlpODlE242bHMNbhROUSwdzAMQrK1ie6hAM/hyAHfo25HjhuYw45sQ+ozI/yJb+sCsnW
-	 kbxR4X8TmUagq4djEWciJNKHCKDZlUrcLuX0mB5XZhVhlTBL0B8l0bzMP9hqOOMlf4ejb
-	 CF/Qudg2BYo4sR0CzwjOBAC5zrNyw5VrtKCToGmkW5enNcaq0lfyNGyiyFYkky3cU7HFf
-	 eUl1mLPhT6urfJ7E9gYzfHM33ie07FZkMNHPXE23wEnyHZsW72jNxrqurwTT2eI1azw==
+	t=1793263049;
+	b=Rl4DpNZjcCbt9JfILlieBJpIJmvglalidErLG/PN3kBCloX9cE3Zk9zdBlI414WJPDoZ
+	 +zatEkgl46c8efSeXC81eoWH73uUJvc9hwt3NWEQCOA52N3iaTei3Nwck04Y/wUkopY70
+	 UMGyb1z5QATEWhSf0sX/u/AbjeC6EOpMqaeUOsdvBEUFmlGmJBPUQtQ9k2rNcunDd0w37
+	 4wh6iAKEcHgdo7iDLDXOgSvATcO0p4NBuOhy1mGhgZso0f2qh8Q4WZKEYM3fAqpYjVMqE
+	 /oGXipVLOhsK5fk5DEIlW4sv+w32HTgsNDHegTCWVzthy2xvc6gM9n6yqrFVhcAL8og==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793261828;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-GUID:X-Authority-Analysis:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=7ObgK3uRV6cKfVdCWUDrdbBkGrdpI/d9NpKlEYbNlCY=;
-	b=qtajptg6A7i5pW6reUleHaTbqiiOWeDLwwVzM/biFnHDIRhX8IKcXyeNt2MwqDN4/k5F
-	 M7DlVPxgNtipK6UlEuMr4pe2YQ9rYhRxj0qzYGu5MFTtv6eCznpF+9SlGq/guBKrJ5O1+
-	 5VdeCt0oCdOoUIG4KO+KxflbPPSx8VU4p13gT1+xZfZrZBp4x1stdkLwqe6a3TdBNfi6j
-	 fTc5tmr2sx0WBPC+9e433J0YcHBKmtDAsxW0morZms3HKX9nqgY26Cvliqqduzx35YKlx
-	 fL5ea/fmgE040QiFxV/sRbndBvzHDXgDzKXA8ZcPRZlrWJK7FDRXPX/3LTThnWVPaoQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793263049;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=cbM7UI94oFkDkCedtoVdzhBNwgdKQYGC9IfVn2/SUnE=;
+	b=taeEZH0hIFffcT+eKuODUILwqVtilDsn47TmOUW3IP3XHoBPbF2lE2caIWczHdLavtep
+	 fFOjwEeW5rQrlDEwjd6SQWbb37b555lg+JyahHjtj0CO7aIoiS1TNFuIGAf3k+ktqBZEA
+	 6sAZv6dBFcd90EgqGi9Kpr2ge4W017/SRs5I2oUixtcJSDZ2VbqGl3gLK6XpeX3+9gRDB
+	 jG353RTgkbWJwBrRyAcefXC+870RwtPLjop30oTdst5Xh9guvOY1CveFHkuxd2a6Z/q8G
+	 wAVJqD4mtwZuGtd6oL3VwJXS4frd44UHQV9IF5Ep0umJ7fWY1Unp1SySy/H7NV524ow==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=B+v2pR7d;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=eBxwOj0v;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l+PtaMf6;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDDA606A31F
-	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 08:17:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4CDDA606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493BF606A322;
+	Thu, 29 Oct 2026 08:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=B+v2pR7d;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=eBxwOj0v
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69T5Guvl3341092
-	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 08:17:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7ObgK3uRV6cKfVdCWUDrdbBkGrdpI/d9NpKlEYbNlCY=; b=B+v2pR7dsxQThfZx
-	3QRMLymhTtIcqGnFnLyXGHkJbnbq6y7tpz6Q574+9/GIpEDUkQEyTy4dajednGk8
-	vJyfyFcfLWJjYmOHzde1tnW+cawHnUAj6lPDREGdbqSYTUVOvUiLD8dyg35bykLi
-	MIicIhyI8929VKnZ4L8cfchr5oyfGyFkZO/l6GkFfxv20+rZtCgSFm9DssRflYIW
-	Mmwcy0YKlJLhFVc8PzBCZIbtrhqGHJkA6yuZamFB6Fx8nRE/2/d//1abwZJJzqxd
-	Fc51x4+zvTbfTxHj32SjtpF01nYIC3n4H8AG2mfbXoNqUq7FWsLU6TSmFpR1xjbj
-	b5payg==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hkut3hdpu-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 08:17:06 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-91c7047e84aso4834626d6.2
-        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 01:17:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793261825; x=1793866625; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=7ObgK3uRV6cKfVdCWUDrdbBkGrdpI/d9NpKlEYbNlCY=;
-        b=eBxwOj0vENd9D8/fdkw9NSIuAVDs5RrxbMDsCtyVNXqT4a60n3pTKjh36gZUYnX44Y
-         EDNfTxjownEwwuv3/DxGqiYnWFxOYm9Pk+JLzQAii5P2vb16WEBaxHFfVCiHdh738+dv
-         M0xN+K5sxQesinEccHr91kKJF/3ksF3I14INlxZ0FHAIkj/p3SL5O3YG7M85rTjDGZNz
-         47/jq6K9F+50e//f9MQdLOo7vp1cCDTS2oIKhS6AlTeaBtMvDW/mA1I4NxQQ8eGuLlMQ
-         PfyB5tz5mDSbSt0RDM9iiFdwgsuVwI3GQMzH5WhPLro9fwaKk4fTifSRHHMfVjHrBt4T
-         F6tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793261825; x=1793866625;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=7ObgK3uRV6cKfVdCWUDrdbBkGrdpI/d9NpKlEYbNlCY=;
-        b=ESzJpg66F1fpdzd56jIODNML2oHsTnT5VcP9ZFdxSYg2+Awb+wR0vB+in5has3aJg2
-         Y0NoeOIcZwgHsBidO9Sy1T8gNK6Iw3xEkoCejntQKWSXCrhUEPijs8vNzgDEbr7mGmAN
-         TI8rgmAZjbjhz5T7e1kvCX75FFNZygser0ZobsSm2VYnB1bDnEFI2Pt/MbHFLkyalOyv
-         /k12aKoStfMigaXbF8QUkJn/wUwhkM2yfgBMhKpXFAaF8gDE22UZBH67I0rsY+ppU3zr
-         07CUCG19LfNF2/5vZhYLyNSBWdQVklN6uBR0HvLENXQDIa6blIau6Gy4bw9WBRQF5Ljl
-         AbzA==
-X-Forwarded-Encrypted: i=1; AKwUvBw1RO2oh1KJFh7XLKqHjd2dbBBM3/83CdA84zgPJ+X6U0R3jZebOWX2EFvyVqdOWuJts/IogQUTnuM=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLEqOY634h4uIfCivCzyYWpI0VCUwF0qk722waWm7ZE+bJ8Yr2E
-	cXwKxtPc7cuo3NIiJAQUuKFOKA1NhctzxMCMvn0hsVWfO0PR9i00wnm8jZyJsEms5v85TK6t83i
-	mQpQsXUMzZmJn9gHRCTbPNPhdAoPAZfcoIaNh6VnaDKpkSP6S5/X2SNkaMj5+OtM=
-X-Gm-Gg: AYBFou3DSltUPaRDcIIl6WVuEcBUean/fBeTbTdu2XX3n/wadBU5qfl5iOC7mrH5oum
-	VJLSEJo76i0h9PzUvTZ8vqjSIYU8TjPJviriN+1wG4MwsgDHkSWNWWoYDnymbaqxRvKAB/dMxDX
-	b7BV03OfNbVrMV2XESQL3pALuot8oI0fVimHUf5yElbwQQELq6ue1x+PEy7dkkLr6oNbddEfiG7
-	0SWPz5M4yarGhV2UxI+fI/ZAh5zi0nGUdCWVz2OUqZji1WEvIeySq8WoxGpbmOo4iha4t4DGjZX
-	EfGfhipje7KNJirHI1drI6ETHgL1BvRGSvi6NyroNL3CGq78ZPbgetULjawtfNEA072Qq55/VWR
-	ASXEooKbBSTgbqtp+CZOalB2jv20Wgv60fK55EgssAKKdm7/IVaPoFtxuBku20gEytB57XL0=
-X-Received: by 2002:a05:622a:e350:10b0:536:61d4:cc80 with SMTP id d75a77b69052e-53fcc9bc5e3mr77695631cf.5.1793261825230;
-        Thu, 29 Oct 2026 01:17:05 -0700 (PDT)
-X-Received: by 2002:a05:622a:e350:10b0:536:61d4:cc80 with SMTP id d75a77b69052e-53fcc9bc5e3mr77695441cf.5.1793261824787;
-        Thu, 29 Oct 2026 01:17:04 -0700 (PDT)
-Received: from [192.168.226.64] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c46bd35004asm695139566b.4.2026.10.29.01.17.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Oct 2026 01:17:03 -0700 (PDT)
-Message-ID: <c5cb80b9-6a5a-4762-8a8e-9819a09dace5@oss.qualcomm.com>
-Date: Thu, 29 Oct 2026 09:17:01 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l+PtaMf6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A304B1F01829;
+	Thu, 29 Oct 2026 08:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793263048;
+	bh=cbM7UI94oFkDkCedtoVdzhBNwgdKQYGC9IfVn2/SUnE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=l+PtaMf6G0C1re4g48P8bxO2ioCbBo21oUaJpl07ZRCHqyJp3kZVrnZoECvLVUOb0
+	 ILGmZx5XGoHjGVLVerodJJsFnP6DPn+qojNzaYoTJRcJeaIucbfOw+rTWGB2epn1pM
+	 +aQrlQW4XtZTnLkWlemfEqJtr5Go2RYomGgUjluOXylt0sisSA16aVArfti+VOwc8z
+	 MI2P42ZWroEJg7Auzpp3fUNX1yujMNdRdugTt+P5oKHDu+IjHditoD+0Zbh/sdF6Qk
+	 S3EBgjI1rJSkb+QjQkzIex0dnn+aXvdAK37P5OxU8XPox/v7+hM2FUlpaIstiiDT/+
+	 upKnuMwue8pUw==
+Date: Thu, 29 Oct 2026 14:07:24 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Frank Li <Frank.Li@nxp.com>, Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Peng Fan <peng.fan@nxp.com>,
+	Aakarsh Jain <aakarsh.jain@samsung.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	freedreno@lists.freedesktop.org, imx@lists.linux.dev,
+	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: Fix property name typos in if/then schemas
+Message-ID: <auMFxC1-5rBvL67e@parshuram>
+References: <20261028120216.2657397-1-robh@kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -115,82 +108,28 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-sc7280: Use retention for PCIe0 power
- domain
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Krishna chaitanya chundru <quic_krichai@quicinc.com>
-References: <CGME20261028223455eucas1p29b3028675c392f6c0ee012f08963ab3f@eucas1p2.samsung.com>
- <20261028223444.2683120-1-m.szyprowski@samsung.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20261028223444.2683120-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI5MDAzMSBTYWx0ZWRfX9aClLk7P8+Ye
- XZAsLaVrgJB/juY6H4/i8/wkMW/4ngsnXDTLbauH8tkh2OADAkXniPlanDbv2AHfAg+l0F9d+ar
- JpILoSfoMbcQLjim/QmBuCMEZGLuDJE=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI5MDAzMSBTYWx0ZWRfX1A+cUlYYBd8H
- woaiyf8C1SSxw6OVVM/gHifcHy1JLwBgAoXIZMRljR6MMlV4I15/SMV6O8a7Y6YX87VLGCH8gD7
- 0zC0PSRG6/F6YE1pfkhWWL8dyrlE0WRSdrbUt680rPoxXjAM3MuwIQa46p7vM7UDEeDYYc9CTK6
- hRHxgFiB9n3irwVnTkU5n9xq7jlo8LWfh9ZFgHBQYOwbGD/hFXTWLQW8l+NuInpuFQr4uV9Pm81
- K1KoMFuyH+Cw885yBoU61NHlOs3eqoxDcT3zMihpJ1dQpKGtjAISXqjt2R6nKavNHFzYcDHxSW7
- StHXxW04SJ3dylDyFywkDW4wwByJlkMSHizYq7Mzg41X2k9oj5nGaopzeDKKivZlntvbtuwIdAP
- ovPQAe6jtfxadvavqyBKIX8UueF6dlnl5JVpcne7xf5su8w1Rl/uMkb8ZJhjr3bTuAYi0Cg48hv
- 8c6veQwIoPYasygwcjA==
-X-Proofpoint-ORIG-GUID: bZvEYc5mqSJbn1XEE7ZtpzmmUDGDHgOv
-X-Proofpoint-GUID: bZvEYc5mqSJbn1XEE7ZtpzmmUDGDHgOv
-X-Authority-Analysis: v=2.4 cv=HYSB3SE8 c=1 sm=1 tr=0 ts=6ae30102 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
- a=hD80L64hAAAA:8 a=EUspDBNiAAAA:8 a=NePJl4asqtF8pCtaxCYA:9 a=QEXdDO2ut3YA:10
- a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-29_02,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 adultscore=0 suspectscore=0 clxscore=1015
- spamscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610290031
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261028120216.2657397-1-robh@kernel.org>
 
-On 10/28/26 11:34 PM, Marek Szyprowski wrote:
-> As the PCIe host controller driver does not yet support dealing with the
-> loss of state during suspend, it keeps the link up and the resources on
-> when an endpoint is active. However, only gcc_pcie_1_gdsc was switched to
-> retention by commit 1a58ee1330b2 ("clk: qcom: gcc-sc7280: Update the
-> .pwrsts for PCIe GDSC"), so gcc_pcie_0_gdsc is still powered off during
-> system suspend and the controller loses its state.
+On 28-10-26, 07:02, Rob Herring (Arm) wrote:
+> Property names within if/then schemas currently go unchecked whether
+> they have a type defined or match what's in the top-level schema. Adding
+> a check finds a number of instances of typos. The typos result in the
+> schema having no effect on constraints.
 > 
-> On QCS6490 (Thundercomm RubikPi3), the Renesas uPD720201 xHCI controller
-> on PCIe0 doesn't survive suspend to RAM:
+> With this, fix the mediatek,vcodec-encoder 'clocks' count constraint
+> exposed by the name correction.
 > 
->     xhci-pci-renesas 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
->     pcieport 0000:00:00.0: Recovering Root Port due to Link Down
->     xhci-pci-renesas 0000:01:00.0: Controller not ready at resume -19
->     xhci-pci-renesas 0000:01:00.0: PCI post-resume error -19!
->     xhci-pci-renesas 0000:01:00.0: HC died; cleaning up
-> 
-> Use retention for gcc_pcie_0_gdsc too, like it is already done for
-> gcc_pcie_1_gdsc.
-> 
-> Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
-> Fixes: 1a58ee1330b2 ("clk: qcom: gcc-sc7280: Update the .pwrsts for PCIe GDSC")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
-> The issue was analyzed and the patch was prepared with LLM assistance.
-> The fix was tested on the real Thundercomm RubikPi3 board.
-> 
-> Best regards
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
-> ---
+>  .../devicetree/bindings/clock/qcom,kpss-gcc.yaml     |  2 +-
+>  .../bindings/display/brcm,bcm2711-hdmi.yaml          |  2 +-
+>  .../bindings/display/msm/dp-controller.yaml          |  2 +-
+>  .../devicetree/bindings/display/msm/hdmi.yaml        |  4 ++--
+>  Documentation/devicetree/bindings/dma/fsl,edma.yaml  |  2 +-
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Acked-by: Vinod Koul <vkoul@kernel.org>
 
-Konrad
+-- 
+~Vinod
