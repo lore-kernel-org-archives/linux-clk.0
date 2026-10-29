@@ -1,55 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793267645;
-	b=TW+1/bhlpuSn6jUK6JKDhBIITdqTowBHjMoSx1PExSkODGKwvXmDUlAXQ90ql3b3xNy/
-	 r1ENqFP1u8M2r7OSDcNzA+7dSkltWMvBqMK+lZQQmQOyCrSU7QziOMeHAlBHhAFb0GMi5
-	 utG+JTbKsJ6hl5ESM87wCwQgk4g8osieoB+O1WWLhgemg8X8pw6tKk62k20KA18rL+EFw
-	 9RhiJ/piJmTNNwjhsxF2t9NMfodQNOTKJTDolq8qZqVdj+VOxPcSdblZBEZ1nH/pSN5UX
-	 EE1dPuDbAH6v8GGYBuDo5InWUIp7/VuTG9bqi2YfJJNa6hpygtYMiFftRliB222okHg==
+	t=1793267828;
+	b=C1jZ3yAQorqMTfgpvkzYwPcdkV53jRLGyT5OkvE5IgFYFpYZG0rzT77oMHpzoFcGPKsN
+	 HIfoaJx7EAOBnKYHWMtodr2tgy8NW+OYlczp1tyR+EXNUiNMpKaR/Ar+A6cjmUxp6aXWa
+	 B+6bNzS5mW3QDZsU5//UhZWN2Egk0hqBCxgYUM2wh9JDmYlUrE2G1MZtImy7nPqoDWM21
+	 6xTKB8u0ehLUfrpznjmoLMDyZf9jqtlNJD9IyjWf4VQko6Mf6fsi6qBxTUseyTR/tmf3t
+	 dK3p4mL5aRjd2Z7EyQ7F9Dfs0dv33ZkFLI1FNzSgs4if5DNOrpUFaYNihHLX2n9u/cQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793267645;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=OkdQNpqFK74AqsoSuQLpJuuXQ3xGNg7YSqinWqkNxfE=;
-	b=H1SQTGpGTzV0Zngf+bhWrL4gZRo9FwzG1lK4CKdACRD11qBgP9BMY7li6slkouK8s+mW
-	 Zp5VyTkDsMqsa55oRpTn7PN3SucXeO4uX20W3tM89xXp0S76Qzw5ZQg38z0vvMGoMcKhi
-	 esuzHkJybsK9c2NtDBuJTgDug5aWzUDHYsZjoghnDc0nDAsD1bpzt2PcQFanWGk4jqYQO
-	 1hn+GF6rNhk0YNqnGS9hjkglJ4GjatehtK+r15yjy3wA9P5rq4CIM9yz1SKHVgL89moUA
-	 nyKdZmtB/RLxwH6GI6xDVlW8KfPLkh922PukXIHpqSAH4R43BzqGM3S5WAK8kzNXc3w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793267828;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=FL2eR8EYUTXDFliIvq3+r6VI7BGzi6yXCZSbMiEvJYo=;
+	b=B8AqCK1YcR3EnJOP31e0578mTJaStNoGb6P3qSIKr2KLRESXK4+vQ1w0Rev3Knf8kmXl
+	 h142r1Cxx28v+DbnUrIgkRRJ/flsptaI/ALo9sujPWjc80zMhN0K2gJY/AX+0FzUOEbZb
+	 ltr6sRmSxS+6TGhZcIJ3ujVEQ2D+3SFeI1HmI4vnOcF6XNHm9hNrWKz4yZV4pMw/Nez4Q
+	 iw5QKaPaB6KMn2NaoH72KfzZLcdouNOMY+PDcNyfQspvMy1klf4E5xkGtKbRJE2l6yGR7
+	 wTW0KDCUcRpRujgkQiD2mvM2FbbM0tz+jvnOgwnu1g+TCcjtTo1o7/nH46/EU6DC3ag==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Wqm7qclk;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VfeDA2nt;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45312606A329
-	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 09:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458B2606A33A;
+	Thu, 29 Oct 2026 09:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Wqm7qclk
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD4381F031E2
-	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 09:54:03 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VfeDA2nt
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DFDA1F01829;
+	Thu, 29 Oct 2026 09:57:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793267643;
-	bh=OkdQNpqFK74AqsoSuQLpJuuXQ3xGNg7YSqinWqkNxfE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Wqm7qclkHoXKlMjWa8va4QemdTTs530yYwgHgelW2lqoy48S4AkXyDe5U3Y5twfR1
-	 41N1sTVcB2cFotlHA1yCpSndHjSIEvBwht/V+xdFUj+ydF7xPTS/7Trd9htv1NDEq1
-	 9X87+x4yTw+q5jXcTyRgZWCeYWZzmm7d5oLYj9wYii1hZ39cIJDwM94l+38HfyiaPQ
-	 KAGxRTX7ZJlLsaA1KKXPihtpuBYglVh6ynYs2e7fMn+wgGeMMqdmHWM1V7JpoSVFyw
-	 MFe0kHOS0d+PRrM+epXoh400M4s+6u+Z8L34VtGpfrFyhwP+3vC2Yw3Xp7K3RNpNsf
-	 TZ8UZWTg/9hnw==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5be3ea5a7adso1959300e87.2
-        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 02:54:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzABKtSUggUYBc3Z84kbu9VlqNUsJ5nRtDkZEtwYXN6/Ce+xAf506yNJlpHx8m6Og6Out6JcNOxQLA=@vger.kernel.org
-X-Gm-Message-State: AFq9FYI0Bh+4IVOnXfAwvdTQ0oAB0jVS0J9iiqUOEx3cLl07iBkZ0cQA
-	nhP282/pJBP9GgfThrH28yAZHjQu/yCyMx+V+/dgPFShvOsL4uwQXqxKhpkd7P8VCDpPx5krLkg
-	9uzs6QhB9Q5G1S1OOVxHWX/8HG+68ITo=
-X-Received: by 2002:a05:6512:39c5:b0:5bf:cabe:23b6 with SMTP id
- 2adb3069b0e04-5bfcad8adb2mr1930089e87.33.1793267642415; Thu, 29 Oct 2026
- 02:54:02 -0700 (PDT)
+	s=k20260515; t=1793267828;
+	bh=FL2eR8EYUTXDFliIvq3+r6VI7BGzi6yXCZSbMiEvJYo=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=VfeDA2ntD2A6A8rVIMHLYdB0UD35qsrcpyzddVxVd3eziYxFDYS6KsSG4gmR9DSUU
+	 yQEekc0zu8o/YdXb+xpL1oYtBRhQblENp7EpQ9CsiP/dWLwNqHvtaj8NHh6+rCTpbz
+	 0nomhn026dGIzHyV4+Lq3thfTvCIAVvRoidmh4xGqcbdkQer8ewjLGO3Hj+hJJhqwk
+	 n8gUV/7+ehMOPQIKMe5aIrcdmZSvPJrLwLbAKC3lnGaVY39XnKtMOzas4wSxsfLumN
+	 CAb0LCXy+FIFsqpWtlCqH8AF7XrQuMsVRn7vNY/zV8DNVr70/HCtx7KEFBWetMuVe9
+	 wsj8nA2C02D2w==
+Message-ID: <sashiko-outbox-189074@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH RFC RFT v2 3/3] clk: meson: pll: Remove the dedicated n
+ parameter
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Jian Hu" <jian.hu@amlogic.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, neil.armstrong@linaro.org
+In-Reply-To: <20261029-meson_refactor_n-v2-3-ff4ac74e527b@amlogic.com>
+References: <20261029-meson_refactor_n-v2-0-ff4ac74e527b@amlogic.com>
+ <20261029-meson_refactor_n-v2-3-ff4ac74e527b@amlogic.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 29 Oct 2026 09:57:07 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -58,246 +60,303 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <20261027-a210-scmi-v1-0-74d58ce85bd8@iscas.ac.cn> <20261027-a210-scmi-v1-7-74d58ce85bd8@iscas.ac.cn>
-In-Reply-To: <20261027-a210-scmi-v1-7-74d58ce85bd8@iscas.ac.cn>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 29 Oct 2026 10:53:50 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkwe+Vby4swUC85buxPMjm0=ZVZXY2+UfeMStemfh3fGA@mail.gmail.com>
-X-Gm-Features: AclHuK-EdA1h9oU-ad6g7JzfaGvAyb9JuROsLdwvHKxOHcdM6tjvaL_X7Nax-1E
-Message-ID: <CAD++jLkwe+Vby4swUC85buxPMjm0=ZVZXY2+UfeMStemfh3fGA@mail.gmail.com>
-Subject: Re: [PATCH RFC 07/18] pinctrl: zhihe: add A210 support
-To: gaohan@iscas.ac.cn
-Cc: Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
-	Samuel Holland <samuel.holland@sifive.com>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Anup Patel <anup@brainfault.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Drew Fustini <fustini@kernel.org>, Icenowy Zheng <uwu@icenowy.me>, Inochi Amaoto <inochiama@gmail.com>, 
-	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <me@ziyao.cc>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	linux-clk@vger.kernel.org, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Han,
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+s) to consider:
+- [High] clk: meson: pll: CLK_SET_RATE_PARENT on ro_ops PLL DCOs breaks rat=
+e rounding
+- [High] clk: meson: pll: meson_clk_get_pll_table() fails on non-exact mult=
+ipliers
+- [High] clk: meson: meson8b: missing CLK_SET_RATE_PARENT on hdmi_pll_dco_in
+- [High] clk: meson: pll: cached 0 Hz pre-divider rate on directly programm=
+ed PLLs
+--
 
-thanks for your patch!
+commit b0439d678a94dfead2cca909902c6363ae03f5d0
+Author: Jian Hu <jian.hu@amlogic.com>
 
-On Tue, Oct 27, 2026 at 4:38=E2=80=AFPM Han Gao via B4 Relay
-<devnull+gaohan.iscas.ac.cn@kernel.org> wrote:
+clk: meson: pll: Remove the dedicated n parameter
 
->  drivers/pinctrl/pinctrl-a210.c | 1212 ++++++++++++++++++++++++++++++++++=
-++++++
+This commit removes the dedicated pre-divider (n) field from
+struct meson_clk_pll_data and simplifies the Meson PLL rate calculation.
+Each PLL pre-divider is instead modeled as a standalone divider clock that
+serves as the parent of the PLL DCO clock.
 
-Can you please name this pinctrl-zhihe-a210.c
+> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+> index 280842e9cb371..e6e6b9a8030c0 100644
+> --- a/drivers/clk/meson/axg.c
+> +++ b/drivers/clk/meson/axg.c
 
-> +config PINCTRL_A210
+[ ... ]
 
-And this symbol PINCTRL_ZHIHE_A210
+> @@ -202,10 +240,11 @@ static struct clk_regmap axg_sys_pll_dco =3D {
+>  	.hw.init =3D &(struct clk_init_data){
+>  		.name =3D "sys_pll_dco",
+>  		.ops =3D &meson_clk_pll_ro_ops,
+> -		.parent_data =3D &(const struct clk_parent_data) {
+> -			.fw_name =3D "xtal",
+> +		.parent_hws =3D (const struct clk_hw *[]) {
+> +			&axg_sys_prediv.hw
+>  		},
+>  		.num_parents =3D 1,
+> +		.flags =3D CLK_SET_RATE_PARENT,
+>  	},
+>  };
 
-> +       tristate "Pinctrl driver for the ZhiHe A210 SoC"
-> +       depends on 64BIT
+[Severity: High]
+Does setting CLK_SET_RATE_PARENT on a clock using meson_clk_pll_ro_ops break
+rate rounding and rate calculation in the common clock framework?
 
-Why?
+meson_clk_pll_ro_ops only provides .init, .recalc_rate, and .is_enabled, and
+does not implement .determine_rate or .round_rate, so clk_core_can_round() =
+is
+false.
 
-> +       depends on OF && (ARCH_ZHIHE || COMPILE_TEST)
+In drivers/clk/clk.c, clk_core_round_rate_nolock() checks:
 
-Isn't this enough of constraints?
+	if (clk_core_can_round(core))
+		return core->ops->determine_rate(core->hw, req);
+	else if (core->flags & CLK_SET_RATE_PARENT)
+		return clk_core_round_rate_nolock(core->parent, req);
 
-> +       select GENERIC_PINMUX_FUNCTIONS
-> +       select GENERIC_PINCONF
-> +       select PINMUX
+When CLK_SET_RATE_PARENT is set on a clock that cannot round its own rate,
+clk_core_round_rate_nolock() and clk_calc_new_rates() treat the clock as a
+1:1 pass-through of its parent and set the rate to the parent pre-divider
+rate (24 MHz or 48 MHz) instead of the multi-GHz DCO frequency.
 
-Nice use of generic helpers!
+This affects child dividers with CLK_SET_RATE_PARENT when consumer drivers
+call clk_round_rate() or clk_set_rate(). The same pattern is also added on:
 
-> +struct a210_pinctrl;
+  - sm1_gp1_pll_dco and g12a_hdmi_pll_dco in drivers/clk/meson/g12a.c
+  - gxbb_hdmi_pll_dco, gxl_hdmi_pll_dco, and gxbb_sys_pll_dco in
+    drivers/clk/meson/gxbb.c
+  - s4_fixed_pll_dco in drivers/clk/meson/s4-pll.c
 
-Why this forward declaration? since...
+Should these meson_clk_pll_ro_ops DCO clocks omit CLK_SET_RATE_PARENT (and
+use clk_regmap_divider_ro_ops for their pre-dividers)?
 
-> +enum a210_pinctrl_type {
-> +       A210_PADCTRL_AON,
-> +       A210_PADCTRL_0,
-> +       A210_PADCTRL_1,
-> +       A210_PADCTRL_2,
+> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+> index 1ea6579a760f3..a7e3f8c8eb783 100644
+> --- a/drivers/clk/meson/clk-pll.c
+> +++ b/drivers/clk/meson/clk-pll.c
+
+[ ... ]
+
+> +static int meson_clk_get_pll_table(unsigned long rate,
+> +				   unsigned long parent_rate,
+> +				   unsigned int *m,
+> +				   struct meson_clk_pll_data *pll)
+> +{
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	for (i =3D 0, ret =3D 0; !ret; i++) {
+> +		if (!pll->table[i].m)
+> +			return -EINVAL;
+> +
+> +		if (pll->table[i].m =3D=3D rate / parent_rate) {
+> +			*m =3D pll->table[i].m;
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+
+[Severity: High]
+What happens in meson_clk_get_pll_table() when rate / parent_rate does not
+exactly match an entry in pll->table?
+
+Previously, meson_clk_get_pll_settings() iterated over pll->table and used
+meson_clk_pll_is_better() to pick either the closest entry (when
+__pll_round_closest_mult(pll) was true) or the largest table entry with a
+rate less than or equal to the requested rate.
+
+With this change, meson_clk_get_pll_table() requires an exact match for
+rate / parent_rate and returns -EINVAL otherwise:
+
+1. Sparse multiplier tables such as sys_pll_params_table (which has a gap
+   between m =3D 68 and m =3D 84 where Meson8 CPU OPPs at 1800 MHz and 1992=
+ MHz
+   fall) and meson8b_hdmi_pll_params_table in drivers/clk/meson/meson8b.c
+   will fail with -EINVAL in meson_clk_pll_determine_rate() and
+   meson_clk_pll_set_rate() when rate / parent_rate lands in a gap.
+
+2. Unlike meson_clk_get_pll_range(), which clamps to min and max and returns
+   -ENODATA, meson_clk_get_pll_table() returns -EINVAL when rate / parent_r=
+ate
+   is below the minimum or above the maximum multiplier in the table. When a
+   child post-divider runs clk_divider_bestdiv(), any candidate rate * i
+   outside the table range fails, and the fallback clk_hw_round_rate(parent=
+, 1)
+   also fails with -EINVAL because 1 / parent_rate is 0, causing
+   clk_round_rate() to return 0 Hz.
+
+3. meson_clk_get_pll_table() no longer checks __pll_round_closest_mult(pll)
+   (for example on axg_hifi_pll_dco when fractional mode is not used), and
+   leaves ret unmodified in the loop with an unreachable return 0 at the en=
+d.
+
+Should meson_clk_get_pll_table() retain the best-match and clamping behavior
+from meson_clk_get_pll_settings()?
+
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index bc029c6ab622d..0c9ba079bc51a 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+
+[ ... ]
+
+> @@ -185,15 +209,38 @@ static struct clk_regmap meson8b_fixed_pll =3D {
+>  	},
+>  };
+> =20
+> +static const struct clk_div_table meson8b_prediv_div_table[] =3D {
+> +	{ .val =3D 1, .div =3D 1 },
+> +	{ /* sentinel */ }
 > +};
 > +
-> +struct a210_pad_group {
-> +       const char *name;
-> +       const struct pinctrl_pin_desc *pins;
-> +       unsigned int npins;
-> +       unsigned int offset_mux;
-> +       unsigned int mask_mux;
-> +       unsigned int offset_cfg;
-> +       unsigned int mask_cfg;
-> +       enum a210_pinctrl_type type;
-> +};
-
-... it anyway isn't used before we get here.
-
-> +struct a210_pinctrl {
-> +       struct pinctrl_desc desc;
-> +       raw_spinlock_t lock; /* serialize register access */
-> +       void __iomem *base;
-> +       struct clk *clk;
-> +       bool clk_enabled;
-> +       unsigned int offset_mux;
-> +       unsigned int mask_mux;
-> +       unsigned int offset_cfg;
-> +       unsigned int mask_cfg;
-> +       enum a210_pinctrl_type type;
-> +       struct pinctrl_dev *pctl;
-> +#ifdef CONFIG_PM_SLEEP
-> +       struct a210_register_state cfg_state[A210_MAX_CFG_REGS];
-> +       struct a210_register_state mux_state[A210_MAX_MUX_REGS];
-> +#endif
+> +static struct clk_regmap meson8b_hdmi_prediv =3D {
+> +	.data =3D &(struct clk_regmap_div_data){
+> +		.offset =3D HHI_VID_PLL_CNTL,
+> +		.shift   =3D 10,
+> +		.width   =3D 5,
+> +		.table =3D meson8b_prediv_div_table,
+> +		.flags =3D CLK_DIVIDER_INVALID_ZERO,
+> +	},
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "hdmi_prediv",
+> +		.ops =3D &clk_regmap_divider_ops,
+> +		.parent_data =3D &(const struct clk_parent_data) {
+> +			.fw_name =3D "xtal",
+> +			.index =3D -1,
+> +		},
+> +		.num_parents =3D 1,
+> +	},
 > +};
 > +
-> +static void __iomem *a210_padcfg(struct a210_pinctrl *pp, unsigned int p=
-in)
-> +{
-> +       int width =3D hweight32(pp->mask_cfg);
-> +
-> +       return pp->base + pp->offset_cfg + 4 * (pin * width / 32);
+>  static struct clk_fixed_factor hdmi_pll_dco_in =3D {
+>  	.mult =3D 2,
+>  	.div =3D 1,
+>  	.hw.init =3D &(struct clk_init_data){
+>  		.name =3D "hdmi_pll_dco_in",
+>  		.ops =3D &clk_fixed_factor_ops,
+> -		.parent_data =3D &(const struct clk_parent_data) {
+> -			.fw_name =3D "xtal",
+> -			.index =3D -1,
+> +		.parent_hws =3D (const struct clk_hw *[]) {
+> +			&meson8b_hdmi_prediv.hw
+>  		},
+>  		.num_parents =3D 1,
+>  	},
 
-Explain in a comment in the code exactly what is going on here, why 4*
-why /32 why hweight32 etc. People can't parse this.
+[ ... ]
 
-> +static unsigned int a210_padcfg_shift(struct a210_pinctrl *pp, unsigned =
-int pin)
-> +{
-> +       int width =3D hweight32(pp->mask_cfg);
-> +
-> +       return width * (pin & (32 / width - 1));
+> @@ -279,6 +321,7 @@ static struct clk_regmap meson8b_hdmi_pll_dco =3D {
+>  			&hdmi_pll_dco_in.hw
+>  		},
+>  		.num_parents =3D 1,
+> +		.flags =3D CLK_SET_RATE_PARENT,
+>  	},
+>  };
 
-Dito.
+[Severity: High]
+Can rate requests from meson8b_hdmi_pll_dco reach meson8b_hdmi_prediv witho=
+ut
+CLK_SET_RATE_PARENT on hdmi_pll_dco_in?
 
-> +static void __iomem *a210_muxcfg(struct a210_pinctrl *pp, unsigned int p=
-in)
-> +{
-> +       int width =3D hweight32(pp->mask_mux);
-> +
-> +       return pp->base + pp->offset_mux + 4 * (pin * width / 32);
+meson8b_hdmi_pll_dco has hdmi_pll_dco_in as its parent, and hdmi_pll_dco_in
+has meson8b_hdmi_prediv as its parent:
 
-Here is is fine to reference earlier explanation.
+  meson8b_hdmi_prediv -> hdmi_pll_dco_in -> meson8b_hdmi_pll_dco
 
+Because hdmi_pll_dco_in does not set CLK_SET_RATE_PARENT, when
+meson8b_hdmi_prediv resets to 0 and reports a 0 Hz rate via
+CLK_DIVIDER_INVALID_ZERO, meson_clk_pll_determine_rate() calls
+clk_hw_round_rate() on hdmi_pll_dco_in, and clk_factor_determine_rate()
+returns 0 without rounding meson8b_hdmi_prediv.
 
-> +static unsigned int a210_muxcfg_shift(struct a210_pinctrl *pp, unsigned =
-int pin)
-> +{
-> +       int width =3D hweight32(pp->mask_mux);
-> +
-> +       if (pp->type =3D=3D A210_PADCTRL_2)
-> +               return 0;
-> +
-> +       return width * (pin & (32 / width - 1));
+This causes meson_clk_pll_determine_rate() to return -EINVAL and prevents
+clk_calc_new_rates() from propagating rate changes to program
+meson8b_hdmi_prediv. Should hdmi_pll_dco_in also have
+.flags =3D CLK_SET_RATE_PARENT?
 
-Here is is fine to reference earlier explanation.
+> diff --git a/drivers/clk/meson/t7-pll.c b/drivers/clk/meson/t7-pll.c
+> index 0a622f45fa368..28d563fcb1bd2 100644
+> --- a/drivers/clk/meson/t7-pll.c
+> +++ b/drivers/clk/meson/t7-pll.c
 
-> +enum a210_muxtype {
-> +       A210_MUX_____,
+[ ... ]
 
-I've seen this *______ stuff in other drivers, I guess it's something
-with making things readable, just explain it to me please.
-
-> +static const struct pinctrl_pin_desc a210_group0_pins[] =3D {
-> +       A210_PAD(0, OSC_CLK_IN, ____, ____, ____, ____, ____, ____, ____,=
- ____, A210_PAD_NO_PADCFG),
-
-I guess for this to mean "no pad here for this setting" or something.
-
-> +static const u8 a210_drive_strength_in_ma[16] =3D {
-> +       1, 2, 3, 5, 7, 8, 10, 12, 13, 15, 16, 18, 20, 21, 23, 25,
+> @@ -292,6 +346,24 @@ static struct clk_regmap t7_hifi_pll =3D {
+>  	},
+>  };
+> =20
+> +static struct clk_regmap t7_pcie_prediv =3D {
+> +	.data =3D &(struct clk_regmap_div_data){
+> +		.offset =3D PCIEPLL_CTRL0,
+> +		.shift =3D 10,
+> +		.width =3D 5,
+> +		.table =3D t7_prediv_div_table,
+> +		.flags =3D CLK_DIVIDER_INVALID_ZERO,
+> +	},
+> +	.hw.init =3D &(struct clk_init_data) {
+> +		.name =3D "pcie_prediv",
+> +		.ops =3D &clk_regmap_divider_ops,
+> +		.parent_data =3D &(const struct clk_parent_data) {
+> +			.fw_name =3D "in0",
+> +		},
+> +		.num_parents =3D 1,
+> +	},
 > +};
-> +
-> +static int a210_drive_strength_from_ma(u32 arg)
-> +{
-> +       unsigned int i;
-> +
-> +       for (i =3D 0; i < ARRAY_SIZE(a210_drive_strength_in_ma); i++)
-> +               if (arg =3D=3D a210_drive_strength_in_ma[i])
-> +                       return i;
 
-Don't you want some fuzzing here?
+[ ... ]
 
-arg <=3D a210_drive_strength_in_ma[i]? So you get 5 if you list 4.
+> @@ -345,10 +412,11 @@ static struct clk_regmap t7_pcie_pll_dco =3D {
+>  	.hw.init =3D &(struct clk_init_data){
+>  		.name =3D "pcie_pll_dco",
+>  		.ops =3D &meson_clk_pcie_pll_ops,
+> -		.parent_data =3D &(const struct clk_parent_data) {
+> -			.fw_name =3D "in0",
+> +		.parent_hws =3D (const struct clk_hw *[]) {
+> +			&t7_pcie_prediv.hw
+>  		},
+>  		.num_parents =3D 1,
+> +		.flags =3D CLK_SET_RATE_PARENT,
+>  	},
+>  };
 
-Default to 25 if > 25? Or no maybe that should indeed fail...
+[Severity: High]
+Will t7_pcie_prediv (as well as g12a_hdmi_prediv, gxbb_hdmi_prediv, and
+gxl_hdmi_prediv) remain stuck at a cached rate of 0 Hz if the hardware
+pre-divider field is 0 at clock registration time?
 
-> +static int a210_padcfg_rmw(struct a210_pinctrl *pp, unsigned int pin, u3=
-2 mask, u32 value)
-> +{
-> +       void __iomem *padcfg =3D a210_padcfg(pp, pin);
-> +       unsigned int shift =3D a210_padcfg_shift(pp, pin);
-> +       u32 tmp;
-> +
-> +       mask <<=3D shift;
-> +       value <<=3D shift;
+t7_pcie_pll_dco uses meson_clk_pcie_pll_ops and defines neither .table nor
+.range; it only programs PCIEPLL_CTRL0 (including N =3D 1) inside
+meson_clk_pcie_pll_enable(). If PCIEPLL_CTRL0 has N =3D 0 at registration,
+t7_pcie_prediv caches a rate of 0 Hz via CLK_DIVIDER_INVALID_ZERO. Because
+clk_set_rate() cannot be used on t7_pcie_pll_dco (meson_clk_get_pll_max_mul=
+tiplier()
+returns 0 when neither .range nor .table is set) and t7_pcie_prediv does not
+have CLK_GET_RATE_NOCACHE, t7_pcie_prediv->rate is never recalculated after
+meson_clk_pcie_pll_enable() writes PCIEPLL_CTRL0.
 
-That's pretty straight forward and easy to read, thanks!
+Similarly, in drivers/clk/meson/g12a.c (g12a_hdmi_prediv) and
+drivers/clk/meson/gxbb.c (gxbb_hdmi_prediv and gxl_hdmi_prediv), the HDMI P=
+LL
+registers are written directly by the DRM driver in
+drivers/gpu/drm/meson/meson_vclk.c rather than through clk_set_rate(). While
+hdmi_pll_dco has CLK_GET_RATE_NOCACHE, clk_core_get_rate_recalc() only
+recalculates downward from the clock with CLK_GET_RATE_NOCACHE using
+core->parent->rate. Because the parent hdmi_prediv clocks lack
+CLK_GET_RATE_NOCACHE, their cached rate stays 0 Hz even after the display
+driver programs N =3D 1, causing meson_clk_pll_recalc_rate() on hdmi_pll_dc=
+o to
+return 0 Hz.
 
-> +
-> +       scoped_guard(raw_spinlock_irqsave, &pp->lock) {
-> +               tmp =3D readl_relaxed(padcfg);
-> +               tmp =3D (tmp & ~mask) | value;
-> +               writel_relaxed(tmp, padcfg);
-> +#ifdef CONFIG_PM_SLEEP
-> +               pp->cfg_state[pin * hweight32(pp->mask_cfg) / 32].mask |=
-=3D mask;
+Should pre-dividers whose registers are programmed outside clk_set_rate() be
+marked with CLK_GET_RATE_NOCACHE?
 
-What's going on here and why? Add a comment explaining it.
-
-> +static int a210_sdio_pinconf_get(struct a210_pinctrl *pp, unsigned int p=
-in,
-> +                                unsigned long *config)
-> +{
-> +       enum pin_config_param param =3D pinconf_to_config_param(*config);
-> +       u32 value =3D readl_relaxed(a210_padcfg(pp, pin)) & A210_SDIO_BIA=
-S;
-> +
-> +       switch (param) {
-> +       case PIN_CONFIG_BIAS_DISABLE:
-> +               if (value)
-> +                       return -EINVAL;
-> +               break;
-> +       case PIN_CONFIG_BIAS_PULL_UP:
-> +               if (value !=3D A210_SDIO_PULL_UP)
-> +                       return -EINVAL;
-> +               break;
-> +       case PIN_CONFIG_BIAS_PULL_DOWN:
-> +               if (value !=3D A210_SDIO_PULL_DOWN)
-> +                       return -EINVAL;
-> +               break;
-> +       default:
-> +               return -ENOTSUPP;
-> +       }
-> +
-> +       *config =3D pinconf_to_config_packed(param, param !=3D PIN_CONFIG=
-_BIAS_DISABLE);
-
-Explain why *config is set like this in a comment.
-
-> +static int a210_sdio_pinconf_set(struct a210_pinctrl *pp, unsigned int p=
-in,
-> +                                unsigned long *configs, unsigned int num=
-_configs)
-
-This is pretty straight forward to read though.
-
-> +static int a210_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pi=
-n, unsigned long *config)
-
-So is this.
-
-Review cut short due to time problems, will review next version!
-
-Yours,
-Linus Walleij
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029-meson_refa=
+ctor_n-v2-0-ff4ac74e527b@amlogic.com?part=3D3
