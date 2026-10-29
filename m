@@ -1,88 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793261770;
-	b=dynWVvd/eCl/VtImgK18766c0z+5AOd7DlbJq8mrYv+7ZY+zhdnSXRlf6IK3JTZzidER
-	 I8Wfj0W3B2RhPGUMlZOmbcBM8XBAfEAMQsKa6/6sUcyiuOrnX1RBRjcXT4YzV6PVG5Eft
-	 Cjh63tgL/9zrl4TDDtLEsVGLusoseYGD6dxEE0J3WkNprzpccZtbQXgkX/2jmZWKxlFEA
-	 OfD8Qpe981NM6Nef9gV6M/ukdUpWUk+NeRn8GkbtjacZOXlloxGdF3+IfD05Gcod2P2u5
-	 TrGTyI+Q7LIEFTJgH//TWS0gJF6wIhOg85sdmTIlqd0Sk1XixrR0iRFHvGBOJYCRj5g==
+	t=1793261828;
+	b=ABt/DxsEy1zvcRoU6V+U8Aezv9P6+CyvqG51ggt3s8x1jfMHOlZuu70fs4VEMoFS0X79
+	 EzlpODlE242bHMNbhROUSwdzAMQrK1ie6hAM/hyAHfo25HjhuYw45sQ+ozI/yJb+sCsnW
+	 kbxR4X8TmUagq4djEWciJNKHCKDZlUrcLuX0mB5XZhVhlTBL0B8l0bzMP9hqOOMlf4ejb
+	 CF/Qudg2BYo4sR0CzwjOBAC5zrNyw5VrtKCToGmkW5enNcaq0lfyNGyiyFYkky3cU7HFf
+	 eUl1mLPhT6urfJ7E9gYzfHM33ie07FZkMNHPXE23wEnyHZsW72jNxrqurwTT2eI1azw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793261770;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	a=rsa-sha256; c=relaxed/relaxed; t=1793261828;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
+	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
 	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=yKwHsBgWsnYwW2gL1FVzWYClyycwT4ewUl/GuVtdUlo=;
-	b=C5qv3EUDqtiQ7QjnHefDzxEYhB3hjIPmnxKayQwS61TQMOaJp4303tF6Zkx9oIPyNMrb
-	 Y8bUU1J8eYlGmEBBKGUtor6PvVeMXYrOoNB3S4kVy/OkzjQNHzMk1irnVBiu6KdMPQVX5
-	 WDB4po6rPyCsOxoX67jMEsflXx+hIiTKtG+clI6g6HGbND+wBHMbrp7K9E53WO4/Zb87D
-	 C3DMK7h6V+XwjIa+rJ93LnQafsaQk+jzBi4r3YqVbETKOB9W7njE80rwCGsHd2WmnquCE
-	 oy3kg8ObzyOV7AZbSyJPX9poiIxyj9qNF1NjiSNkt/yn/yWmg/aNxdUVzNLgJ4L6m5w==
+	 Content-Transfer-Encoding:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-GUID:X-Authority-Analysis:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=7ObgK3uRV6cKfVdCWUDrdbBkGrdpI/d9NpKlEYbNlCY=;
+	b=qtajptg6A7i5pW6reUleHaTbqiiOWeDLwwVzM/biFnHDIRhX8IKcXyeNt2MwqDN4/k5F
+	 M7DlVPxgNtipK6UlEuMr4pe2YQ9rYhRxj0qzYGu5MFTtv6eCznpF+9SlGq/guBKrJ5O1+
+	 5VdeCt0oCdOoUIG4KO+KxflbPPSx8VU4p13gT1+xZfZrZBp4x1stdkLwqe6a3TdBNfi6j
+	 fTc5tmr2sx0WBPC+9e433J0YcHBKmtDAsxW0morZms3HKX9nqgY26Cvliqqduzx35YKlx
+	 fL5ea/fmgE040QiFxV/sRbndBvzHDXgDzKXA8ZcPRZlrWJK7FDRXPX/3LTThnWVPaoQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DhVm3V42;
-	arc=none smtp.remote-ip=209.85.128.41
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=B+v2pR7d;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=eBxwOj0v;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58193606A32E
-	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 08:16:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 58193606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDDA606A31F
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 08:17:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4CDDA606A31F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DhVm3V42
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a7992e2f7dso15838315e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 01:16:10 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=B+v2pR7d;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=eBxwOj0v
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69T5Guvl3341092
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 08:17:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7ObgK3uRV6cKfVdCWUDrdbBkGrdpI/d9NpKlEYbNlCY=; b=B+v2pR7dsxQThfZx
+	3QRMLymhTtIcqGnFnLyXGHkJbnbq6y7tpz6Q574+9/GIpEDUkQEyTy4dajednGk8
+	vJyfyFcfLWJjYmOHzde1tnW+cawHnUAj6lPDREGdbqSYTUVOvUiLD8dyg35bykLi
+	MIicIhyI8929VKnZ4L8cfchr5oyfGyFkZO/l6GkFfxv20+rZtCgSFm9DssRflYIW
+	Mmwcy0YKlJLhFVc8PzBCZIbtrhqGHJkA6yuZamFB6Fx8nRE/2/d//1abwZJJzqxd
+	Fc51x4+zvTbfTxHj32SjtpF01nYIC3n4H8AG2mfbXoNqUq7FWsLU6TSmFpR1xjbj
+	b5payg==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hkut3hdpu-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 08:17:06 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-91c7047e84aso4834626d6.2
+        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 01:17:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793261769; x=1793866569; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1793261825; x=1793866625; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=yKwHsBgWsnYwW2gL1FVzWYClyycwT4ewUl/GuVtdUlo=;
-        b=DhVm3V425hO9R9e8v+hQASAIDN4E8dzPnfNKYpbAAL7Ry3mgMhwOniEIFT/py07BqQ
-         m0ZtiB5OLL4rCQR/ufb209Q+iGKxHsBvmZRFAmMnCJ5h6lpT2E89H/76AVFv/bp4350y
-         EqXighxV5+Hx9qgc092i46RZDp2oBfhcbgksBYsmdBLOxLCoMKK1rdFeuyUQNSg5kq34
-         vnap7Z8XnXGepqbO7ixR+t5k9vJ9+rf5FAcT+TzoIYSobtYBU7fLvkepEouzWVO6WL7m
-         UItEvzDA+2I9Ee269dKArN11nkinerJ2Ij/Rkztimsx4mnBO/aH/KyU6UU7LHUb6ZohN
-         4Rpg==
+        bh=7ObgK3uRV6cKfVdCWUDrdbBkGrdpI/d9NpKlEYbNlCY=;
+        b=eBxwOj0vENd9D8/fdkw9NSIuAVDs5RrxbMDsCtyVNXqT4a60n3pTKjh36gZUYnX44Y
+         EDNfTxjownEwwuv3/DxGqiYnWFxOYm9Pk+JLzQAii5P2vb16WEBaxHFfVCiHdh738+dv
+         M0xN+K5sxQesinEccHr91kKJF/3ksF3I14INlxZ0FHAIkj/p3SL5O3YG7M85rTjDGZNz
+         47/jq6K9F+50e//f9MQdLOo7vp1cCDTS2oIKhS6AlTeaBtMvDW/mA1I4NxQQ8eGuLlMQ
+         PfyB5tz5mDSbSt0RDM9iiFdwgsuVwI3GQMzH5WhPLro9fwaKk4fTifSRHHMfVjHrBt4T
+         F6tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793261769; x=1793866569;
+        d=1e100.net; s=20260707; t=1793261825; x=1793866625;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=yKwHsBgWsnYwW2gL1FVzWYClyycwT4ewUl/GuVtdUlo=;
-        b=M9Dc8/0a5JrpWxdNQmkX4zj/40aQYWdol09uop5tjflHMp2XQarK9wFx8YIbaMfX9L
-         kjLYCnbURI9VI6HxquQkHijhP+r7C0Mgl7Ja9DYvildVYT9cDmEczcBPTJG10eycWAxD
-         fyULtSQXvZlA23FnuDoQbptpTCTk/OZ9KMhj0N9TCKBpdxzUwQe0K0PkBdOmWA5iKPG8
-         zhXtWjv5Ohjto2fNQ/k8rBmILOGu5ee1bKmKpWJd93gtNVuyJBTp4MFyLea6Il7cIbOv
-         2fgDNTWxfo4pGDOS5hNh9KfnvEVebB7ZlStMfmb+dlP2rGObq2Cd6HAAZ6AzpbyCzMu1
-         /TtA==
-X-Forwarded-Encrypted: i=1; AKwUvBxpXY0DEwELmtid1WTU2ZtI3r/l415IGR/4yIgmOMS/agVVdQlpmaQ1NNQQB9Zs2nsC/F8vcTMmvC0=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJj7uPzTsAa6P5o3nuxq73VmwaYLwFhUJWq09V68Gd9c22tsybY
-	UoEem3kL91JGJT7YaXkVmPRUwUO10fIyzwZcVUtecNbwK/gAxUWIF6oF
-X-Gm-Gg: AYBFou1z5ogBK6YW3GbBN7fnPRqXxJQ8dwP3rTD4TI7h8uRuwKW+5UIxx4buanFepuV
-	+DvYRcgRTV0aQzCvjrEyh5w/m7M+7EjTFwQUv77Mn2naiduSQZzrW9qVn+q9BWf+HzODccNkxXl
-	k41lOJyNc5tQ2ayUoLZLJE+ct30RQvg/IKBXVUW9MUdVGhMe133AIjdHVEOVGkuBiSkGUAMIhQ5
-	3ZiH0VjEyUuq71pbSeNzfrvnnqiiBUt1iFX0i31ru5IiFgKrQQTBb5kKSSN/NE/ewfmInYhkPNs
-	7r4q91AED2kZI+3YTy/DNyg5vykDBzcrq/DB/BwgF3bN+dLNrF5fSfFloKLKdbR9FXkvHg1hiqS
-	tOpWXabnW0tKMVL3uMdmMHo4LBI4kRxIMzPs5Fpp74K7VE42mW1C0crPg0Y66LaYHL246lI21U/
-	XeKmJqCyQmXSdNOyr3i3Srz9Wy5UM0dnHKHIC5NSG84jizzTSMvO7yljZjIKynIz764SjoWHhH+
-	tSP5bfwlZRAK6ggzdE2aD3aTDnYmIwEjZu9Q+2nEXAYbMIsvHghLWaKMpzdMhYwLn+60BWUXC/U
-	4sWVpjm2dGlFuT10vWrx2ZcYJk8psmdM0d4Q8JcQFgEyFqf9gQy6vhvmqgbxNQL1t3GL
-X-Received: by 2002:a05:600d:8496:20b0:4a1:a6e0:4ce4 with SMTP id 5b1f17b1804b1-4a9b1434621mr59499955e9.33.1793261768411;
-        Thu, 29 Oct 2026 01:16:08 -0700 (PDT)
-Received: from [192.168.20.170] (5403F394.catv.pool.telekom.hu. [84.3.243.148])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a94f05e4e4sm70001885e9.3.2026.10.29.01.16.07
+        bh=7ObgK3uRV6cKfVdCWUDrdbBkGrdpI/d9NpKlEYbNlCY=;
+        b=ESzJpg66F1fpdzd56jIODNML2oHsTnT5VcP9ZFdxSYg2+Awb+wR0vB+in5has3aJg2
+         Y0NoeOIcZwgHsBidO9Sy1T8gNK6Iw3xEkoCejntQKWSXCrhUEPijs8vNzgDEbr7mGmAN
+         TI8rgmAZjbjhz5T7e1kvCX75FFNZygser0ZobsSm2VYnB1bDnEFI2Pt/MbHFLkyalOyv
+         /k12aKoStfMigaXbF8QUkJn/wUwhkM2yfgBMhKpXFAaF8gDE22UZBH67I0rsY+ppU3zr
+         07CUCG19LfNF2/5vZhYLyNSBWdQVklN6uBR0HvLENXQDIa6blIau6Gy4bw9WBRQF5Ljl
+         AbzA==
+X-Forwarded-Encrypted: i=1; AKwUvBw1RO2oh1KJFh7XLKqHjd2dbBBM3/83CdA84zgPJ+X6U0R3jZebOWX2EFvyVqdOWuJts/IogQUTnuM=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLEqOY634h4uIfCivCzyYWpI0VCUwF0qk722waWm7ZE+bJ8Yr2E
+	cXwKxtPc7cuo3NIiJAQUuKFOKA1NhctzxMCMvn0hsVWfO0PR9i00wnm8jZyJsEms5v85TK6t83i
+	mQpQsXUMzZmJn9gHRCTbPNPhdAoPAZfcoIaNh6VnaDKpkSP6S5/X2SNkaMj5+OtM=
+X-Gm-Gg: AYBFou3DSltUPaRDcIIl6WVuEcBUean/fBeTbTdu2XX3n/wadBU5qfl5iOC7mrH5oum
+	VJLSEJo76i0h9PzUvTZ8vqjSIYU8TjPJviriN+1wG4MwsgDHkSWNWWoYDnymbaqxRvKAB/dMxDX
+	b7BV03OfNbVrMV2XESQL3pALuot8oI0fVimHUf5yElbwQQELq6ue1x+PEy7dkkLr6oNbddEfiG7
+	0SWPz5M4yarGhV2UxI+fI/ZAh5zi0nGUdCWVz2OUqZji1WEvIeySq8WoxGpbmOo4iha4t4DGjZX
+	EfGfhipje7KNJirHI1drI6ETHgL1BvRGSvi6NyroNL3CGq78ZPbgetULjawtfNEA072Qq55/VWR
+	ASXEooKbBSTgbqtp+CZOalB2jv20Wgv60fK55EgssAKKdm7/IVaPoFtxuBku20gEytB57XL0=
+X-Received: by 2002:a05:622a:e350:10b0:536:61d4:cc80 with SMTP id d75a77b69052e-53fcc9bc5e3mr77695631cf.5.1793261825230;
+        Thu, 29 Oct 2026 01:17:05 -0700 (PDT)
+X-Received: by 2002:a05:622a:e350:10b0:536:61d4:cc80 with SMTP id d75a77b69052e-53fcc9bc5e3mr77695441cf.5.1793261824787;
+        Thu, 29 Oct 2026 01:17:04 -0700 (PDT)
+Received: from [192.168.226.64] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c46bd35004asm695139566b.4.2026.10.29.01.17.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Oct 2026 01:16:07 -0700 (PDT)
-Message-ID: <974845a6-16bf-41ad-932b-244112b85cae@gmail.com>
-Date: Thu, 29 Oct 2026 09:16:05 +0100
+        Thu, 29 Oct 2026 01:17:03 -0700 (PDT)
+Message-ID: <c5cb80b9-6a5a-4762-8a8e-9819a09dace5@oss.qualcomm.com>
+Date: Thu, 29 Oct 2026 09:17:01 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -93,75 +116,81 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: rcg2: validate frequency table entry in
- __clk_rcg2_shared_set_rate()
-To: Taniya Das <taniya.das@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Dmitry Baryshkov <lumag@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20261027-rcg2-avoid-null-ptr-deref-v1-1-43c21b54cfeb@gmail.com>
- <d0492d0f-42a5-4400-80d0-987086d7d224@oss.qualcomm.com>
-Content-Language: hu
-From: Gabor Juhos <j4g8y7@gmail.com>
-In-Reply-To: <d0492d0f-42a5-4400-80d0-987086d7d224@oss.qualcomm.com>
+Subject: Re: [PATCH] clk: qcom: gcc-sc7280: Use retention for PCIe0 power
+ domain
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Krishna chaitanya chundru <quic_krichai@quicinc.com>
+References: <CGME20261028223455eucas1p29b3028675c392f6c0ee012f08963ab3f@eucas1p2.samsung.com>
+ <20261028223444.2683120-1-m.szyprowski@samsung.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20261028223444.2683120-1-m.szyprowski@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI5MDAzMSBTYWx0ZWRfX9aClLk7P8+Ye
+ XZAsLaVrgJB/juY6H4/i8/wkMW/4ngsnXDTLbauH8tkh2OADAkXniPlanDbv2AHfAg+l0F9d+ar
+ JpILoSfoMbcQLjim/QmBuCMEZGLuDJE=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI5MDAzMSBTYWx0ZWRfX1A+cUlYYBd8H
+ woaiyf8C1SSxw6OVVM/gHifcHy1JLwBgAoXIZMRljR6MMlV4I15/SMV6O8a7Y6YX87VLGCH8gD7
+ 0zC0PSRG6/F6YE1pfkhWWL8dyrlE0WRSdrbUt680rPoxXjAM3MuwIQa46p7vM7UDEeDYYc9CTK6
+ hRHxgFiB9n3irwVnTkU5n9xq7jlo8LWfh9ZFgHBQYOwbGD/hFXTWLQW8l+NuInpuFQr4uV9Pm81
+ K1KoMFuyH+Cw885yBoU61NHlOs3eqoxDcT3zMihpJ1dQpKGtjAISXqjt2R6nKavNHFzYcDHxSW7
+ StHXxW04SJ3dylDyFywkDW4wwByJlkMSHizYq7Mzg41X2k9oj5nGaopzeDKKivZlntvbtuwIdAP
+ ovPQAe6jtfxadvavqyBKIX8UueF6dlnl5JVpcne7xf5su8w1Rl/uMkb8ZJhjr3bTuAYi0Cg48hv
+ 8c6veQwIoPYasygwcjA==
+X-Proofpoint-ORIG-GUID: bZvEYc5mqSJbn1XEE7ZtpzmmUDGDHgOv
+X-Proofpoint-GUID: bZvEYc5mqSJbn1XEE7ZtpzmmUDGDHgOv
+X-Authority-Analysis: v=2.4 cv=HYSB3SE8 c=1 sm=1 tr=0 ts=6ae30102 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
+ a=hD80L64hAAAA:8 a=EUspDBNiAAAA:8 a=NePJl4asqtF8pCtaxCYA:9 a=QEXdDO2ut3YA:10
+ a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-10-29_02,2026-10-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 adultscore=0 suspectscore=0 clxscore=1015
+ spamscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610290031
 
-2026. 10. 27. 19:24 keltezéssel, Taniya Das írta:
+On 10/28/26 11:34 PM, Marek Szyprowski wrote:
+> As the PCIe host controller driver does not yet support dealing with the
+> loss of state during suspend, it keeps the link up and the resources on
+> when an endpoint is active. However, only gcc_pcie_1_gdsc was switched to
+> retention by commit 1a58ee1330b2 ("clk: qcom: gcc-sc7280: Update the
+> .pwrsts for PCIe GDSC"), so gcc_pcie_0_gdsc is still powered off during
+> system suspend and the controller loses its state.
 > 
+> On QCS6490 (Thundercomm RubikPi3), the Renesas uPD720201 xHCI controller
+> on PCIe0 doesn't survive suspend to RAM:
 > 
-> On 10/27/2026 11:35 PM, Gabor Juhos wrote:
->> Commit aec8c0e28ce4 ("clk: qcom: rcg2: add clk_rcg2_shared_floor_ops")
->> removed validating of the frequency table entry pointer returned by the
->> qcom_find_freq() or the qcom_find_freq_floor() functions.
->>
->> Since both functions can return NULL and the pointer is passed directly
->> to the __clk_rcg2_configure() function where it gets dereferenced
->> unconditionally, it could cause a panic.
->>
->> Restore the sanity check removed by the mentioned commit in order to avoid
->> a possible NULL pointer dereference.
->>
->> Compile tested only.
->>
->> Fixes: aec8c0e28ce4 ("clk: qcom: rcg2: add clk_rcg2_shared_floor_ops")
->> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
->> ---
->>  drivers/clk/qcom/clk-rcg2.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
->> index d7914e59129f..260e90f53461 100644
->> --- a/drivers/clk/qcom/clk-rcg2.c
->> +++ b/drivers/clk/qcom/clk-rcg2.c
->> @@ -1385,6 +1385,9 @@ static int __clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
->>  		return -EINVAL;
->>  	}
->>  
->> +	if (!f)
->> +		return -EINVAL;
->> +
+>     xhci-pci-renesas 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
+>     pcieport 0000:00:00.0: Recovering Root Port due to Link Down
+>     xhci-pci-renesas 0000:01:00.0: Controller not ready at resume -19
+>     xhci-pci-renesas 0000:01:00.0: PCI post-resume error -19!
+>     xhci-pci-renesas 0000:01:00.0: HC died; cleaning up
 > 
-> Normally, the CCF calls .determine_rate before .set_rate. The floor
-> determination helper already rejects a request below the lowest supported
->  frequency:
+> Use retention for gcc_pcie_0_gdsc too, like it is already done for
+> gcc_pcie_1_gdsc.
 > 
->  ```c
->    if (!f)
->       return -EINVAL;
->  ```
+> Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
+> Fixes: 1a58ee1330b2 ("clk: qcom: gcc-sc7280: Update the .pwrsts for PCIe GDSC")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> The issue was analyzed and the patch was prepared with LLM assistance.
+> The fix was tested on the real Thundercomm RubikPi3 board.
 > 
-> So an ordinary clk_set_rate() request below the table minimum should
-> fail during rate determination and typically not reach
->  __clk_rcg2_shared_set_rate().
-> 
-> 
+> Best regards
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+> ---
 
-Thank you for the explanation, it makes sense.
-In this case, we don't need the patch.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Regards,
-Gabor
-
+Konrad
