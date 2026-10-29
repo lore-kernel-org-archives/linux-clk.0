@@ -1,57 +1,128 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793258798;
-	b=5aftkwI1RUWpJkvMZ4SMgRoYrbH+4POFcK0jB4gV8tj8E5uo0J50HE4NC/zc82I4sg/F
-	 ED8SokcGbLK60TI5OsJpkS8PD5CfLUmQJhm5HPHSkg2Ca0TpyVk9EkjXwrgF25goFHMIV
-	 bnzNs+GzZmFI3QNvJfgghxAl/lCJrbH8Om7ciinn7x4Kcc1UdHKx3icSg0+DvUQO5J3TG
-	 glNJ82ftKFAwGpOiussdiMo2QbQXu2dDmLfxebZjGbDYH2qVf+BlTQnz0rHzuQxr7OPLh
-	 5vaAjB5f3jeyhA8H2/+D3RBFRUO5kjBaUGo+nGeV88tX8Mn/U/2h3sJ59mdusWwTegg==
+	t=1793260243;
+	b=W1XqD6o8XQPhBKqhx51mj7iCkKloHn7Ors42UhxduuQBnzVJyl65Q7bKCIz/SjaDdaQV
+	 rRvME5nuZfje+3csnIxWe99llCALmo8cYYiB/8NUQZQvKVI4MTBvzS5BmPS838ZkT/pSC
+	 Mofk7t22N8lY07a77MsWQOV0W0dyJonUv2qBj5Eft1bkpheLYA1lpqIuPfsALw1BaJ2u7
+	 aybnt8T7NjJCmQ+sUwzQrxqoezxhatZL81Tciy22whchqeZhe3x5844VIkjhDA6cOiDto
+	 1XFzMUENjIyUo8SNusZxLbtgSmrgQzGORgpba+XtC4pVqiczPKk7McJ65sK5bWmGiTA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793258798;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=TGujUlVHoneAQAenhErRir79HI4JtKW6U1B4x7MbHz0=;
-	b=2GhBbocpGh/cNxjjpaM635MSnOvZdUFrXHWOFGXpI4wYVwRk0RBglDVEUrVYdSWuIXIK
-	 Uq1RdRv7fDMHP+fdP/ijQ1eAR0+alFqV83tiR+017K4p49blLD9nDGLFZH4t7TvXZPdX2
-	 zLw7eLWxKOorx+gkgfPGir329qigkoLyke3BET2p+iHvYyNVkyV+wS+J9jPNlwo2Dm+Ca
-	 inD86WQGbwIHp0BUABxLvqQN78Op4T4hYZcCPKhnWK7/W8k5MjvBFKVGxq6jbcOKCiKL9
-	 bvXMtiO33DIKj6G3LXeS3yeIWtLGAmmJY2ptt2W5pJI9IxuPGi6wniBvXXk90rxmvJQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793260243;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:To:Cc:
+	 Subject:Date:Message-Id:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Info:X-Proofpoint-GUID:
+	 X-Authority-Analysis:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=NRjITIPkdmWIGWowLy1TC+g49D0fUwGLw1HxPYp7dRg=;
+	b=yX+dhwlcGP6mr6hN5f8zEyKiooSyIFw6c/lNetbza8CtS1YJ7DW48oEc/qccnbqtd5c6
+	 jIR8cpbBWkO49R2YViPzLCAUh+swRiQvn9CXhurGewwjl5DdW/iYwWb8WI6EV/zl3+LIY
+	 IU0T8e9flLTK4/Ktv1AKQycWlnuIQrIwQol7qxOhms/a2regHe7HU7YCi3H8cOsYpilq4
+	 l/1lea3TnbbQSfuOtPCYZ7jylpFJyF227eZFQGy8TVHqWaExdwEv8L+ZtRmkVPVERBnJq
+	 Cq/wyfAjiYC0WaD67nRgLClvk7+HacVYJtca6Y5pPWEmzFZv4pQSvIKwgmZiyiII/mg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RrBYn+MF;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=H9GB5CwF;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b="Dq/YHesS";
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88146606A322;
-	Thu, 29 Oct 2026 07:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E406606A31D
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 07:50:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6E406606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RrBYn+MF
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86D321F01825;
-	Thu, 29 Oct 2026 07:26:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793258797;
-	bh=TGujUlVHoneAQAenhErRir79HI4JtKW6U1B4x7MbHz0=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=RrBYn+MFLLoNwEpbrKAAvq3kA4f+nI2ss5vg+BZ+g6GWIMKPVqikF1SxMljVOS3Yj
-	 FiM8jDFdibqhyGUAlti2JaMZkmsWn887OSI93V6W+j60TtcvaZ7TUco0CGj+WLEPcC
-	 kww04VQUyvS7VRITW7X2OH6vPpEfPTmqzHnmj3aZCfy3+RGlG52ATdXXcCFkbi/ZaR
-	 18nLcgDVLEtEGVtwlqgWdTGbScxEXP7bHh+DYgtJOX4qKbBvolNRorw+6ka8hXkeXd
-	 +LleApUPkXX3vbQTu1AF1bMkhixrzwrWqox4BRhAvtwleBAUSZLtRzvJgl2KMwbDRZ
-	 QMF23ZcnuzEkw==
-Message-ID: <sashiko-outbox-188866@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RESEND v11 5/5] arm64: dts: qcom: Add SM7250 devicetree
- file
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Sreeshankar K" <sreeshankar0910@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261029-master-v11-5-2c29e382162c@gmail.com>
-References: <20261029-master-v11-0-2c29e382162c@gmail.com>
- <20261029-master-v11-5-2c29e382162c@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 29 Oct 2026 07:26:37 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=H9GB5CwF;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Dq/YHesS
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69T5HCwl2244621
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 07:50:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=NRjITIPkdmW
+	IGWowLy1TC+g49D0fUwGLw1HxPYp7dRg=; b=H9GB5CwFLiO5T00Hz8eY6N8cqBf
+	Zq+34UgfeztZ0VA5dItQCf+rQHeTHWp4qsFS7FsHIA1W/jF1/zKydiN+bhS8FEHw
+	9wZ0ClUjLSKCVL+GCkPWz72HdTm0QR2lpn5xFlAkLAyX8szPqIwGXiEUuw+hkffM
+	lR8JKMn2WfihnSjWhSbggLU/wVTK88GhfY3ovaLXwBETgVmyqyAgejiIGu8Jqm2O
+	fQ2UAEFHVpQZ4eMMVbpS+Biw4F/HrBHnOZfMCzJ7fdqQzlmUQNZjPI6dReVW7Uar
+	c3LUVr0pG8nmulbfCrc/VR4AZcavxUO970pMTxs8QKMCjmtMU1r96gZKrHg==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hky5s8n2e-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 07:50:37 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-944138ed63fso107073085a.3
+        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 00:50:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1793260237; x=1793865037; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=NRjITIPkdmWIGWowLy1TC+g49D0fUwGLw1HxPYp7dRg=;
+        b=Dq/YHesSlruM8oYYOdePIQ3WMvkiITNBWS5lRuDNeNWeKahCRRZDk77HfhE2qz5Zvc
+         +EEYnH9gPOlRSASOcK2yh+4yuQxOmXmSXXWRKPh1RD4WSrApyXEDUgWPRJmk/m6kUqVE
+         vQwIcaUt65MKuagLCfhuRD1tS7giY4rtAXeBLuzsh7SCucVehqXKNn9CMjRHpDDBRSsm
+         kgbglsVbuMT/IDJh7eMazhIHBwCOigvlORjC/O1arU8FrmxyyhkLJurLNop7HKOfrvqJ
+         UebP70DSVlvQ82XGkpyjiVPjy8qitbahkeLCyJayfpTrm22pyhC58b0uxfxrflQzzsiZ
+         4x0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793260237; x=1793865037;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=NRjITIPkdmWIGWowLy1TC+g49D0fUwGLw1HxPYp7dRg=;
+        b=pXHRtDq7oYnQS2Nu8j3brZEg+MBdtKh9Bg5pyPjbdQAb5TmCKT3HG0K64F9F3Iqs+b
+         ntCGWAmzAugGiwDGoQt9skSdN+BRDY51LIKJNa+ny1hIpswqrhwtMQ/f0qC84Kt18UTV
+         FuSjY3IhK64vtT48xLdta2nTJmxNWh9QDwAf3pGZZhGebfdTr43UwVazamNPrTTSwlhB
+         jqSfMBqmxfyVQYsZTKIBZzCAhcCp1OQbrH9g+prrMZpNQf2v2bawC/Er62daqT4FHzGm
+         Bc7mqMIeOg54P9tBFbF9mouskmnrSPgPej5yAaWOk1j+emE3HYn5Gmi9bShzZTZTih0O
+         qeeA==
+X-Forwarded-Encrypted: i=1; AKwUvBzTMIm8g2CIJ11hRqCwGh0vdaMnk4zU58FXGXCMfN8jOslILOVNvHdvKenOlesQQYIC9a7CivB0g2s=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJB/EPnOWZoJx+WkmvuES2OoGaUVHe4pP8ZkVCG2BeAMAPNlw65
+	TEteD+ahNwrXWig3GreTezKElgrQo+TZMX6hq3r8zqeHYhnCS6HD5u8I2i8SrI63YCjrUOBQ0cz
+	IPeYcaMwiH6wvREdC+HG1FT53753p8D63vGVDaXm2lOZ4xemlbpX4BERPtSFSJS4=
+X-Gm-Gg: AYBFou3o5i5QJb77OsrtzZJUiWsZcBFWUWiViqjO3EhZmbbApZtSWhIiJl/PVd9eZuU
+	jE34dsmVMYOtTBwQHaknRW9tkFj3ZquEt4QTs/g7YjnOa+u3j4YBQMn2OPxE5m7d/RCV0FgRa6e
+	gBtqG6EZfnemWm8TQwWxf2v39Mz+DKokU0qKt5Fg2xaxPbP6/VmHnd8pUdcIBBqBgyDXp5Q/VdA
+	Aolsv5VwIYXhGP4jsHkD8b4daMPSm34gvvqUsMusQvHAevo9Z8jv7bx0eAk7BGYV9Cu7+HO0a6D
+	yWk89hQd+YWHjjKIIBX3p3sEC/c6AiZYGZ2huggjnsQRK+QOUXC233TN6AR6y31/1knznBmlcpx
+	QenQBL8uuPOByi5G9OubHYS93hh9xUMLM7ZcKyhTunQpL+IzZtroQNu0uQxbL3O1XO0p7ZvLQsw
+	==
+X-Received: by 2002:a05:620a:17a9:b0:93e:94f2:ada9 with SMTP id af79cd13be357-94408cf77dbmr715124685a.58.1793260236733;
+        Thu, 29 Oct 2026 00:50:36 -0700 (PDT)
+X-Received: by 2002:a05:620a:17a9:b0:93e:94f2:ada9 with SMTP id af79cd13be357-94408cf77dbmr715122585a.58.1793260236287;
+        Thu, 29 Oct 2026 00:50:36 -0700 (PDT)
+Received: from lin-0772.qualcomm.com ([212.136.9.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ebc3dcbsm31876763f8f.14.2026.10.29.00.50.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Oct 2026 00:50:35 -0700 (PDT)
+From: Atanas Filipov <atanas.filipov@oss.qualcomm.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: atanas.filipov@oss.qualcomm.com, Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Jonathan Marek <jonathan@marek.ca>, Bryan O'Donoghue <bod@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Gjorgji Rosikopulos <gjorgji.rosikopulos@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] arm64: dts: qcom: sm8250: add camcc interconnect cells
+Date: Thu, 29 Oct 2026 09:50:33 +0200
+Message-Id: <20261029075033.3558229-1-atanas.filipov@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <6ivurpkaxe7rs5lxpbyahpst2bqzpkcb67whcymoopdgo6sjvq@xd2otcdpe6gg>
+References: <20261016170701.1504338-1-atanas.filipov@oss.qualcomm.com> <20261016170701.1504338-4-atanas.filipov@oss.qualcomm.com> <usade5zkrncpry4ufbdtaahoa2zyd5hx7tjgfvzfte2aqbkgs7@t3mej4maj6za> <3e5b7781-20ef-4e84-bb62-29a081c26d8f@oss.qualcomm.com> <x5x4av76vm3swozvwe46uq5vz2ys7bvo4bducpp7flnmhykg65@pvr3znxyktje> <a01d8d86-740e-4a25-96a4-d4dfd664af5e@oss.qualcomm.com> <20261028174523.3514860-1-atanas.filipov@oss.qualcomm.com> <6ivurpkaxe7rs5lxpbyahpst2bqzpkcb67whcymoopdgo6sjvq@xd2otcdpe6gg>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,206 +131,55 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI5MDAzMCBTYWx0ZWRfX3tBWH56Y1/mi
+ 3NyOPh1qCax05Cd/CoSVu8dC7hzzO4lXB/TCcM9XL4i4dfvH+7IT+HM3CNrkp33lG4g6WLU4B5r
+ 9nh3ev7QINQLdteINx2K7bfTKV8IHevIVa4BD/MiXW98Ay4hheTZOWnyXlfiLuL46t3rq3sKSk2
+ 4dwOLehE8OF6bBPm/fSZIhTtCq58rDHQ9T5IAbGXu9BBrUmW6SKf2gQv4by7nD3mY1J9wvmhjCA
+ sTqYJSgHJxqIT0ycPyANnle9uTnQxRG1Wq93Cgelz31ndBn/79Zws/dGY0q4KCm1OFWrdGlcG3E
+ VMh0tXKmpx1egE1tbB8xq7wMNJUooWhOq6gLHAo5b3qMhav3etzXewBXP0h1ne27gcbzuHjrSDC
+ FOD6xyMKOgRJy6V2kv66GY4CWGoptOj7qsfxPHNXXIkROJODPQhVLDn60Xm8yk8Okd4f/dpVe72
+ q+eBqxdAGviOoW2Kk6A==
+X-Proofpoint-ORIG-GUID: 2bUAvPFfjC5kGegSPxAKif-5NTuePqoq
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI5MDAzMCBTYWx0ZWRfX2je8DLPc0/s+
+ 9cg4XIjYB/be6lWvxdkzBiaKqCQbPpYuSbPLUhfOlgdnv/okP3kfiTbPG3EiCRlL4B0+/zrc8aV
+ 58eJU/Obt8HzmkP/FAwoi//CMaoUOoc=
+X-Proofpoint-GUID: 2bUAvPFfjC5kGegSPxAKif-5NTuePqoq
+X-Authority-Analysis: v=2.4 cv=f/vdl+yM c=1 sm=1 tr=0 ts=6ae2facd cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=dNlqnMcrdpbb+gQrTujlOQ==:17
+ a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22 a=tiiBXXJjtJp2WioFvjMA:9
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-10-29_02,2026-10-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 priorityscore=1501 impostorscore=0
+ malwarescore=0 bulkscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610190000
+ definitions=main-2610290030
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [High] arm64: dts: qcom: sm7250: invalid cpu-map core numbering in cluste=
-r1/cluster2
-- [Low] arm64: dts: qcom: sm7250: invalid empty ranges in timer@17c20000
-- [Low] arm64: dts: qcom: sm7250: undocumented properties in gcc node
+On 10/29/2026 3:41 AM, Dmitry Baryshkov wrote:
+> On Wed, Oct 28, 2026 at 07:45:23PM +0200, Atanas Filipov wrote:
+>> 			power-domains = <&camcc IFE_0_GDSC>,
+>> 					<&rpmhpd RPMHPD_MMCX>;
+>> 			power-domain-names = "ife", "mmcx";
+>
+> If IFE_0_GDSC is an (indirect) child of MMCX, this is an overkill. You
+> should not need to cast votes on MMCX, IFE -> TITAN_TOP -> MMCX will
+> work for you.
+
+Agreed, IFE_0_GDSC is a subdomain of TITAN_TOP_GDSC, which is a
+subdomain of MMCX. I will keep only the IFE GDSC in the VFE node.
+
+>> Does this match what you had in mind?
+>
+> Yes
+
+Thanks.
+
 --
-
-commit bf84a1845e05761eee023636ff9d6f3060fa7b0d
-Author: Sreeshankar K <sreeshankar0910@gmail.com>
-
-arm64: dts: qcom: Add SM7250 devicetree file
-
-This commit adds the base devicetree file for the Qualcomm SM7250 SoC,
-including CPU, PSCI, reserved memory, clock controller, interrupt controlle=
-r,
-RPMh, cpufreq, and timer nodes.
-
-> diff --git a/arch/arm64/boot/dts/qcom/sm7250.dtsi b/arch/arm64/boot/dts/q=
-com/sm7250.dtsi
-> new file mode 100644
-> index 0000000000000..48480e6855f0c
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sm7250.dtsi
-> @@ -0,0 +1,771 @@
-
-[ ... ]
-
-> +		cpu-map {
-> +			cluster0 {
-> +				core0 {
-> +					cpu =3D <&cpu0>;
-> +				};
-> +
-> +				core1 {
-> +					cpu =3D <&cpu1>;
-> +				};
-> +
-> +				core2 {
-> +					cpu =3D <&cpu2>;
-> +				};
-> +
-> +				core3 {
-> +					cpu =3D <&cpu3>;
-> +				};
-> +
-> +				core4 {
-> +					cpu =3D <&cpu4>;
-> +				};
-> +
-> +				core5 {
-> +					cpu =3D <&cpu5>;
-> +				};
-> +			};
-> +
-> +			cluster1 {
-> +				core6 {
-> +					cpu =3D <&cpu6>;
-> +				};
-> +			};
-> +
-> +			cluster2 {
-> +				core7 {
-> +					cpu =3D <&cpu7>;
-> +				};
-> +			};
-> +		};
-
-[Severity: High]
-Will parse_cluster() in drivers/base/arch_topology.c fail to find cpu6 and
-cpu7 with this cpu-map node layout in arch/arm64/boot/dts/qcom/sm7250.dtsi?
-
-During boot, init_cpu_topology() calls parse_dt_topology() -> parse_cluster=
-(),
-which looks up core subnodes inside each cluster sequentially starting from
-core0:
-
-drivers/base/arch_topology.c:parse_cluster() {
-	/* Now check for cores */
-	i =3D 0;
-	do {
-		snprintf(name, sizeof(name), "core%d", i);
-		struct device_node *c __free(device_node) =3D
-			of_get_child_by_name(cluster, name);
-
-		if (!c)
-			break;
-}
-
-Because cluster1 and cluster2 only contain core6 and core7 (with no core0),
-of_get_child_by_name(cluster, "core0") returns NULL on the first iteration,
-logging empty cluster warnings and never calling parse_core() ->
-get_cpu_for_node() -> topology_parse_cpu_capacity() for cpu6 or cpu7.
-
-Since parse_core() succeeds for cpu0..cpu5, raw_capacity is allocated with
-entries for cpu0..cpu5 set to 1024 while raw_capacity[6] and raw_capacity[7]
-remain 0. When parse_dt_topology() subsequently runs:
-
-drivers/base/arch_topology.c:parse_dt_topology() {
-	topology_normalize_cpu_scale();
-
-	/*
-	 * Check that all cores are in the topology; the SMP code will
-	 * only mark cores described in the DT as possible.
-	 */
-	for_each_possible_cpu(cpu)
-		if (cpu_topology[cpu].package_id < 0) {
-			return -EINVAL;
-		}
-}
-
-topology_normalize_cpu_scale() sets the scheduler capacity scale (cpu_scale)
-for cpu6 and cpu7 to 0, and parse_dt_topology() returns -EINVAL because cpu6
-and cpu7 still have package_id < 0, causing init_cpu_topology() to call
-reset_cpu_topology() and discard the DT CPU topology.
-
-Should core6 and core7 be placed under cluster0 (since all 8 cores share l3=
-_0
-and cluster_pd) or renamed to core0 within their respective clusters?
-
-[ ... ]
-
-> +	soc: soc@0 {
-> +		compatible =3D "simple-bus";
-> +		#address-cells =3D <2>;
-> +		#size-cells =3D <2>;
-> +		ranges =3D <0 0 0 0 0x10 0>;
-> +		dma-ranges =3D <0 0 0 0 0x10 0>;
-> +
-> +		gcc: clock-controller@100000 {
-> +			compatible =3D "qcom,sm7250-gcc";
-> +			reg =3D <0x0 0x00100000 0x0 0x1f0000>;
-> +			clock-names =3D "bi_tcxo",
-> +				      "bi_tcxo_ao",
-> +				      "sleep_clk";
-> +			clocks =3D <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&rpmhcc RPMH_CXO_CLK_A>,
-> +				 <&sleep_clk>;
-> +			power-domains =3D <&rpmhpd RPMHPD_CX>;
-> +			#clock-cells =3D <1>;
-> +			#reset-cells =3D <1>;
-> +			#power-domain-cells =3D <1>;
-> +		};
-
-[Severity: Low]
-Should clock-names and power-domains be dropped from the gcc
-(clock-controller@100000) node in arch/arm64/boot/dts/qcom/sm7250.dtsi, or
-documented in the binding schema?
-
-In Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml (which cove=
-rs
-qcom,sm7250-gcc and references qcom,gcc.yaml), unevaluatedProperties is set=
- to
-false and neither clock-names nor power-domains is defined, causing dtbs_ch=
-eck
-validation to fail on clock-controller@100000. In addition,
-drivers/clk/qcom/gcc-sm7250.c resolves its parent clocks by DT index rather
-than by name.
-
-[ ... ]
-
-> +		timer@17c20000 {
-> +			compatible =3D "arm,armv7-timer-mem";
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <1>;
-> +			ranges;
-> +			reg =3D <0x0 0x17c20000 0x0 0x1000>;
-
-[Severity: Low]
-Does the empty ranges property in timer@17c20000 in
-arch/arm64/boot/dts/qcom/sm7250.dtsi trigger dtc ranges_format warnings when
-building a board dtb?
-
-The parent node soc@0 uses #address-cells =3D <2> and #size-cells =3D <2>, =
-while
-timer@17c20000 uses #address-cells =3D <1> and #size-cells =3D <1> with an =
-empty
-ranges property. In scripts/dtc/checks.c, check_ranges_format() checks for
-this mismatch:
-
-scripts/dtc/checks.c:check_ranges_format() {
-	if (prop->val.len =3D=3D 0) {
-		if (p_addr_cells !=3D c_addr_cells)
-			FAIL_PROP(c, dti, node, prop, "empty \"%s\" property but its "
-				  "#address-cells (%d) differs from %s (%d)",
-				  ranges, c_addr_cells, node->parent->fullpath,
-				  p_addr_cells);
-		if (p_size_cells !=3D c_size_cells)
-			FAIL_PROP(c, dti, node, prop, "empty \"%s\" property but its "
-				  "#size-cells (%d) differs from %s (%d)",
-				  ranges, c_size_cells, node->parent->fullpath,
-				  p_size_cells);
-	}
-}
-
-Should this use an explicit mapping such as ranges =3D <0 0 0 0x20000000>; =
-as on
-other Qualcomm SoCs?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029-master-v11=
--0-2c29e382162c@gmail.com?part=3D5
+Best regards,
+Atanas
