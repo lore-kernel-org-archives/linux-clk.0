@@ -1,92 +1,133 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793231232;
-	b=2PYZCg3mThLzezw1w8n3cKmfiXois7312sqxBrg6f75mQfDuzrQrbW/WZs7xuOcOUmc3
-	 rbvAyYsmgAxwb1liL0ds61kEzS0psOySjwAOK7dXCejsRXeZKbI9hw8qfkCSpGbJGl56c
-	 ZzliyZUGe4HuKOTQJu0idfUKx4qe7qVKIb9xhmoceGfN2sArbnVHqK/zEO/p+T21gKS1B
-	 SSOy32jI7FqP7nnvp7hFQC42b0O85ETPRx+PmLrdYsy8Rppmd4YAimx363Lpmsjqq2oTI
-	 gChxwBW+3ztxI7apDI31m2qn6BEoF4vOhCmCo2980ad7MfUvrudDgMzVPSpVvbIvFQA==
+	t=1793238091;
+	b=3RT0SQePcc8BtrqCCLzYl04APDhhSbDwZ3Bp7eG5xxB3s/LqiEc9iCBYAChwxtiBwkes
+	 NSKkl/MNvSrlZUmT0y65fsyVNjZMevPtUs28sDsemodKtdcZ99aFPQ4NqHk7RIVnjmYvW
+	 v5k8tE6jMInaIy4GfLBCdwIXWP09kD2O6mbwjI6QQQN+box6UPg0o8zAkbfzoZRJ+Rg/t
+	 CVQA2d+wmiUXnqo0a9xWZN7CgObYYXd9ReSa8QIWqTrEM4Jmtyng6wJoUHnZ7Ax2b/SPI
+	 3O4v9kEZLXgZAcq6xHb29NK5XknrrYLk1ps7yGWOUQGZT9hMzyXZl6UkuRv4VyMpUug==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793231232;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=neOivWsfnHbQR3N6AKh/3PoW3tIDMGi3k5qezfAAwY4=;
-	b=vbXkEV5Z5oBXMuPtH9KWc+F9vfTYPbVbrN5cEmremTKv0nHnm/7UM5fOrG9FrE/7JFUE
-	 ad/hpOcLIMtiGa8hw6thvz2TRO/TXIiLOQfSwYLm9b9ndsVh15iGYoACBqO1XTrnPy3g6
-	 QQ4S6jMU/Jj30PM5Wy4gVa5Q8w77jxf65ZhZ5aszGbjwECpywmB3psanHfgmuYMYLiy8v
-	 Uj51XEXBrGg6jmoheaGi51m/TnS2gMoZaCVLVsS7d2QJRAMyo2uISZcXupc8b4CenzMgk
-	 pW4XOb1uaxmdhfCTk+gJ42vG2R7sD1EKqH5oXwE9YZCBZdRyrmS7wx9X5XvRmlInZIQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793238091;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
+	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
+	 X-Proofpoint-Spam-Info:X-Authority-Analysis:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=a2kuXhqVMsHVz13E2+Xy/aRM3eaxUgD5cFHLsM4u7/8=;
+	b=zp0l26XvbA09qdBHB07QzPuPKVvN/Y4Guhoet6yT1DXoIvH91Ltf4K59sUi2vyx+hpu9
+	 dSsRz66aiyg7fvmcmx1lex7sm1rG40FN1Hu401LLyQTUlI/qkiQJqhCnOppGThDLAGuiv
+	 fu6GrKSLBgCCs8H/X0egajiZpdPUqxlgGfstP1YhLHMwZ5HOUy9grO+uNFIniBMg5wmwk
+	 eIzDxM7vJQxAurBJ20BkgLddzXsNWRbWkoiQ+pMD+euGTe8jB3XiD/nK+i+SRgWa+9pFM
+	 zLC705yJZzNx6coUdzeROz3rDY7RojHwNTkEkpue703d4qe18kzv4gdIQCVfX6ItICw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="f/4cLrJ4";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="FO5r/cyj";
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b="LsKvT/JE";
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746DF606A31A;
-	Wed, 28 Oct 2026 23:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E36606A31C
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 01:41:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 80E36606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f/4cLrJ4
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AF611F01825;
-	Wed, 28 Oct 2026 23:46:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793231232;
-	bh=neOivWsfnHbQR3N6AKh/3PoW3tIDMGi3k5qezfAAwY4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=f/4cLrJ4TGztgvmr14VBy6t7mBV8AM+uDlLfYVyShzm7APQvQBIiI0EDLgRGe0v7z
-	 LrPP1CYrALPm5Q04g1ErXIwYEqxpncy7n/vcasP5VS7fxapXxWQMRvQ3eLtXYsxC4u
-	 pO80RH6CgwyVic6xTA3E8YyB/WqO22L05DI08uL25eIqchvragaWR3rowAwilUDAAt
-	 Xh6oVb4uczfsq1lW3toZ9+v63X4qnWgC+a2EdGz7QxrKclbDs6hRlAucgG9mlmv1zz
-	 0pRXR0bqvqejkSM04r2n2wZ9K5nHoWUM+gUptsMAuOcN5EfgGaQV+XNpzRAcoIe2zH
-	 rDwATDPNl5e/Q==
-Date: Wed, 28 Oct 2026 23:46:52 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
- <jbrunet+clk@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Rob Clark
- <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang
- <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
- <marijn.suijten@somainline.org>, Frank Li <Frank.Li@nxp.com>, Vinod Koul
- <vkoul@kernel.org>, Yinbo Zhu <zhuyinbo@loongson.cn>, Linus Walleij
- <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Tiffany Lin
- <tiffany.lin@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej
- Hajda <andrzej.hajda@intel.com>, Ryder Lee <ryder.lee@mediatek.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5?=
- =?UTF-8?B?xYRza2k=?= <kwilczynski@kernel.org>, Manivannan Sadhasivam
- <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Christian Marangi
- <ansuelsmth@gmail.com>, Eric Anholt <eric@anholt.net>, Kuogee Hsieh
- <quic_khsieh@quicinc.com>, Peng Fan <peng.fan@nxp.com>, Aakarsh Jain
- <aakarsh.jain@samsung.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, freedreno@lists.freedesktop.org,
- imx@lists.linux.dev, dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: Fix property name typos in if/then schemas
-Message-ID: <20261028234652.0d075035@jic23-hlaptop>
-In-Reply-To: <20261028120216.2657397-1-robh@kernel.org>
-References: <20261028120216.2657397-1-robh@kernel.org>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=FO5r/cyj;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=LsKvT/JE
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69SMACvk3458349
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 01:41:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=a2kuXhqVMsHVz13E2+Xy/aRM
+	3eaxUgD5cFHLsM4u7/8=; b=FO5r/cyjOLkBNAJFnWxgB1NUvwodRJijYg496R31
+	+KlJUmu5ZzIxTukS2wkBt+jNNXzrVBAVOniHH0vUQR7NkDw5Q14ah7KioCAvNO3L
+	Z82Kq6bnDDoU/ptI4fSoWwJSuuxS8h0RegwcKGsuou/2UeKx43kwCU+51Gi1d582
+	lT7uYlLk/tNK2hwrO4ixPCvdRH4lFzA/Rtk90AwjpOyTmCKshQs1SY5f4B43jItu
+	ZNORkbmem2nRvttm3Nc/k3F8YKHCZXb650NqhYd9hXwqjUPAM3ecRirD4riQBrFg
+	xUO9fV9KL6sY/hfbtaDgYLrVz6o5BldLV4H/W5FB6byxEQ==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hkkehtc7e-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 01:41:25 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-93f37c94ceeso50940685a.1
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2026 18:41:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1793238084; x=1793842884; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=a2kuXhqVMsHVz13E2+Xy/aRM3eaxUgD5cFHLsM4u7/8=;
+        b=LsKvT/JEXNLi43lAm3c8END4CjTzsCR1l9d6gAIPE82nsWVFSmvVT4EU+hVbDLGjxC
+         pHb/Ky4wDnILcYsGX51QKbXDnaS+lNOIGcBIM+pHqZ/T40Meei80kDwLePawR2FpYO3K
+         UNi1yo7Qbtcvx/9z/Wyw2LBmffxMylvGxMKoY6me9uznx6wt74PbvMUOyXmPDKQbDyCn
+         /FhlC47Fq4qIzK93TMT7+zpPFwDMc1dEx6vJbhxzYcoewQ+36wbV2NtO0Y6I6wlumDLe
+         DeWtmn9VyGw7ZeAGgHlTZXiYOgmQ/HKsoleLPtchwpNq+kpaozziB6p02wrudYJj9CMd
+         aRQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793238084; x=1793842884;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=a2kuXhqVMsHVz13E2+Xy/aRM3eaxUgD5cFHLsM4u7/8=;
+        b=F+LLJikl8eWoSsOJEc5Ls5j2bgQB1azd/zFn3uHcvFf8l8Dnr4yE8Ea7YXPmr15oC9
+         YnpimIr7cHgjQ87NCx+aWTp4kxYjhi0EPUEcWcH/cPIczsj/e0KGYbFNTrIa2LurnlW5
+         qQd/7yLzHVIzmzhpprH8svdInK5qLt+BZGCYgEmSh72HbaMxYe9NfhiXmzXdb3y4otWo
+         +hBfeWhm3AcyQhblul6ClBD4EhjxUwRQkKyu8DQ6Y2efj9JgKmRlgPI1qb09mtwVv612
+         sLwyUOde3qvn6mjjlSnf4pioaKsoPvoQJbe/WbYhNH2q/LeAQMCkgPPvh7fUAFSbej8o
+         mQ5w==
+X-Forwarded-Encrypted: i=1; AKwUvBwHGehCVBdpitV6K9Kyd3n4nDhT9fXqyp3og8AqCsrv7E8LuwHyZhJ0g8agUmJgHL30RiF/mc/kbKU=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIxmmDnMTp17O0ouYJQ07+VAwbEOSKa81QpWwvfCi8KDe+Ei46q
+	ztnW9ZzVbCZ2ebE5zX7FHckCSTS+hGN48kus1rlflXO1NUZZY+/EFDCBa9FTafkEGEupFr54p/r
+	FIOUYDUKDbJFSjuOlbLHiI7JPamqM8WF8n+JWAJZkvrTQc327mbmY0vqPlGldpTc=
+X-Gm-Gg: AYBFou2dyAV/NDH1GlAMgPZjdWSgugSAef14oYITWJiRgdP/nXsbggEMwvrGQPq6FTL
+	wcxmm+KdbcEwROln09MSf/eu5kYAu87IXvPxDB2jKyU/R///Y+9VEXiaHvjd3s2zkS7XC9GI/PK
+	CP539EnW+YmzYLh3BchN6xya/yZVnfqSeDe4dpM2ka0foPMMTE3H2bMA9WJ0jirS5IEF/WMwhSH
+	k4AdZ/OqmepqHV5LWypIEgPQSCHrPyksTip7o5iG6WdPJmWdbzYWO0YBYDKrX6S0TY2RR7wn+bj
+	DnDDLGKhPwkmlenlhkAvnSd8F7j+i5s3K0Nn5wNHXaPDrhCgpMLZaUSC6xepuU/EjlQ7oUBAFL0
+	T/eMcBdM53mIabucgHLt3Bxu6An9RRVzP4hZC1xe8dRSz4RYo94XWIQBDoMolgnJqMJEkZ7Cg1h
+	Fi/lUltV3zyOerXBc24XxfggBHYQ2pLZ2psA/vQV4vDyGUX5lvMOKsTbymZ5wbww==
+X-Received: by 2002:a05:620a:4104:b0:944:4e6:85d8 with SMTP id af79cd13be357-944132689a6mr211049585a.5.1793238084492;
+        Wed, 28 Oct 2026 18:41:24 -0700 (PDT)
+X-Received: by 2002:a05:620a:4104:b0:944:4e6:85d8 with SMTP id af79cd13be357-944132689a6mr211046785a.5.1793238084012;
+        Wed, 28 Oct 2026 18:41:24 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5bfd27eecedsm69199e87.2.2026.10.28.18.41.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2026 18:41:21 -0700 (PDT)
+Date: Thu, 29 Oct 2026 03:41:18 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Atanas Filipov <atanas.filipov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Jonathan Marek <jonathan@marek.ca>, Bryan O'Donoghue <bod@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Gjorgji Rosikopulos <gjorgji.rosikopulos@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] arm64: dts: qcom: sm8250: add camcc interconnect
+ cells
+Message-ID: <6ivurpkaxe7rs5lxpbyahpst2bqzpkcb67whcymoopdgo6sjvq@xd2otcdpe6gg>
+References: <20261016170701.1504338-1-atanas.filipov@oss.qualcomm.com>
+ <20261016170701.1504338-4-atanas.filipov@oss.qualcomm.com>
+ <usade5zkrncpry4ufbdtaahoa2zyd5hx7tjgfvzfte2aqbkgs7@t3mej4maj6za>
+ <3e5b7781-20ef-4e84-bb62-29a081c26d8f@oss.qualcomm.com>
+ <x5x4av76vm3swozvwe46uq5vz2ys7bvo4bducpp7flnmhykg65@pvr3znxyktje>
+ <a01d8d86-740e-4a25-96a4-d4dfd664af5e@oss.qualcomm.com>
+ <20261028174523.3514860-1-atanas.filipov@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -96,236 +137,116 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261028174523.3514860-1-atanas.filipov@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: ZY_oFPBcmEjNQ0a-gnjVgplxvE7rEGf9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI5MDAwNiBTYWx0ZWRfXxtObieBgVEGY
+ a8uOjAoClPJQ6hoXP6eJwqKfK3TI2Imix0v/GvijpZHt5BVgHtNw8dLqQTFXZVzhi87d8UWYNMK
+ NqP5LNtI1k0BZHbFlfa9/2i0nmVa7ZlZhju3sde8cdGEZGfeOdfXnLm97tLDZw8jvzspB29WH6m
+ gaR/JBfZCtF1OGV89zXqrP6QjlyGbQ6wNupqSGMA81ctARBNI9vU9ET1IRgeIRj28Le4AqMtW4C
+ ict401BKDTbwGp10SoJwMmJEH+ibN4mEVWERiaokczjPaEmoy7jBQ6iNnHbJ3nfbrF+inDXORiT
+ n/AKZjFM0IHKUkY9jgw/ic76OFR/XA/ynYlM7Id9kXL1Ky+5r/Vrl1sOGskPxbpzxWCbXvn3sMI
+ ARWszuFWQfqF5CbQLfPpLmRFGprxuh262hAVnePBvMEP0kIw7/2QWtCqgc3vKAvoC3JygCJNOd4
+ byEA+E5ADTyzNSss2xQ==
+X-Proofpoint-GUID: ZY_oFPBcmEjNQ0a-gnjVgplxvE7rEGf9
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI5MDAwNiBTYWx0ZWRfXyWpiDVL3s0xE
+ X4PUoEfFsO6PghKThvij+qMxgdTETlmr+qbxgoi87qLLixZJgXYQ6U5Oi+RdeKoZR5W9MdlL0xD
+ D3mvQh4gBCRGLJ+m+iLTuNIiwQfruFY=
+X-Authority-Analysis: v=2.4 cv=bYv+w+PB c=1 sm=1 tr=0 ts=6ae2a445 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22 a=rTgqbrGwJKAB67wPnucA:9
+ a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-10-28_07,2026-10-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 malwarescore=0 bulkscore=0 spamscore=0
+ phishscore=0 lowpriorityscore=0 clxscore=1015 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610290006
 
-On Wed, 28 Oct 2026 07:02:12 -0500
-"Rob Herring (Arm)" <robh@kernel.org> wrote:
-
-> Property names within if/then schemas currently go unchecked whether
-> they have a type defined or match what's in the top-level schema. Adding
-> a check finds a number of instances of typos. The typos result in the
-> schema having no effect on constraints.
+On Wed, Oct 28, 2026 at 07:45:23PM +0200, Atanas Filipov wrote:
+> On 10/20/2026 3:49 PM, Atanas Filipov wrote:
+> > On 10/20/2026 12:45 PM, Dmitry Baryshkov wrote:
+> >> 3. Add minimal VFE nodes and let camss use those. Converge towards the
+> >> split VFE (IFE) device tree.
+> >
+> > Agreed, I will take that up separately. To get it right the first
+> > time, could you clarify what "minimal" covers:
 > 
-> With this, fix the mediatek,vcodec-encoder 'clocks' count constraint
-> exposed by the name correction.
+> After going through the options discussed so far, I think the VFE
+> child nodes you suggested are the right approach for the per-VFE
+> votes. Below is a concrete proposal. It is separate from this series,
+> which stays limited to the icc-clk conversion as you asked.
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../devicetree/bindings/clock/qcom,kpss-gcc.yaml     |  2 +-
->  .../bindings/display/brcm,bcm2711-hdmi.yaml          |  2 +-
->  .../bindings/display/msm/dp-controller.yaml          |  2 +-
->  .../devicetree/bindings/display/msm/hdmi.yaml        |  4 ++--
->  Documentation/devicetree/bindings/dma/fsl,edma.yaml  |  2 +-
->  .../devicetree/bindings/gpio/loongson,ls-gpio.yaml   |  2 +-
->  .../bindings/iio/adc/amlogic,meson-saradc.yaml       |  2 +-
-
-For IIO
-
-Acked-by: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
-
->  .../bindings/media/mediatek,vcodec-encoder.yaml      | 12 ++++--------
->  .../devicetree/bindings/media/samsung,s5p-mfc.yaml   |  2 +-
->  .../devicetree/bindings/pci/mediatek-pcie.yaml       | 12 ++++++------
->  10 files changed, 19 insertions(+), 23 deletions(-)
+> Why a VFE node is needed, not only convenient:
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
-> index 88b7672123a0..ed347096df46 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
-> @@ -62,7 +62,7 @@ then:
->      - '#clock-cells'
->  else:
->    properties:
-> -    clock: false
-> +    clocks: false
->      clock-names: false
->      '#clock-cells': false
->  
-> diff --git a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-> index c1cefd547391..fd4d598f6ff8 100644
-> --- a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-> +++ b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-> @@ -145,7 +145,7 @@ allOf:
->              - description: CEC stuck at low interrupt
->              - description: Hotplug connected interrupt
->              - description: Hotplug removed interrupt
-> -        interrupts-names:
-> +        interrupt-names:
->            items:
->              - const: cec-tx
->              - const: cec-rx
-> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> index 094a6383bb77..f72d1b354007 100644
-> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> @@ -304,7 +304,7 @@ allOf:
->          clocks:
->            minItems: 6
->            maxItems: 6
-> -        clocks-names:
-> +        clock-names:
->            minItems: 6
->            maxItems: 6
->  
-> diff --git a/Documentation/devicetree/bindings/display/msm/hdmi.yaml b/Documentation/devicetree/bindings/display/msm/hdmi.yaml
-> index dfec6c3480f3..02d27ccad024 100644
-> --- a/Documentation/devicetree/bindings/display/msm/hdmi.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/hdmi.yaml
-> @@ -113,7 +113,7 @@ allOf:
->              - const: core
->              - const: master_iface
->              - const: slave_iface
-> -        core-vcc-supplies: false
-> +        core-vcc-supply: false
->  
->    - if:
->        properties:
-> @@ -136,7 +136,7 @@ allOf:
->              - const: core
->              - const: alt_iface
->              - const: extp
-> -        hdmi-mux-supplies: false
-> +        hdmi-mux-supply: false
->  
->    - if:
->        properties:
-> diff --git a/Documentation/devicetree/bindings/dma/fsl,edma.yaml b/Documentation/devicetree/bindings/dma/fsl,edma.yaml
-> index f609038e35ae..0260d177c7d0 100644
-> --- a/Documentation/devicetree/bindings/dma/fsl,edma.yaml
-> +++ b/Documentation/devicetree/bindings/dma/fsl,edma.yaml
-> @@ -172,7 +172,7 @@ allOf:
->              const: fsl,imx7ulp-edma
->      then:
->        properties:
-> -        clock:
-> +        clocks:
->            minItems: 2
->            maxItems: 2
->          clock-names:
-> diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
-> index 69852444df23..07c8b233c6bd 100644
-> --- a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
-> @@ -80,7 +80,7 @@ allOf:
->          - resets
->      else:
->        properties:
-> -        "#interrupts-cells": false
-> +        "#interrupt-cells": false
->          interrupt-controller: false
->          resets: false
->  
-> diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
-> index 70ab4e140e71..535213ba0c5e 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
-> @@ -92,7 +92,7 @@ allOf:
->      else:
->        properties:
->          nvmem-cells: false
-> -        mvmem-cel-names: false
-> +        nvmem-cell-names: false
->          clocks:
->            minItems: 4
->          clock-names:
-> diff --git a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
-> index 4505e66876a2..52f471a070d5 100644
-> --- a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
-> +++ b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
-> @@ -110,19 +110,15 @@ allOf:
->  
->      then:
->        properties:
-> -        clock:
-> -          items:
-> -            minItems: 1
-> -            maxItems: 1
-> +        clocks:
-> +          maxItems: 1
->          clock-names:
->            items:
->              - const: venc_lt_sel
->      else:
->        properties:
-> -        clock:
-> -          items:
-> -            minItems: 1
-> -            maxItems: 1
-> +        clocks:
-> +          maxItems: 1
->          clock-names:
->            items:
->              - const: venc_sel
-> diff --git a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-> index b46cc780703c..4488d5ca9b9c 100644
-> --- a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-> +++ b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-> @@ -174,7 +174,7 @@ allOf:
->              - const: mfc
->          iommus:
->            maxItems: 2
-> -        iommus-names: false
-> +        iommu-names: false
->  
->  examples:
->    - |
-> diff --git a/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml b/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
-> index c009a7a52bc6..7c40361f95ec 100644
-> --- a/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
-> @@ -127,7 +127,7 @@ allOf:
->          phy-names:
->            const: pcie-phy1
->  
-> -        power-domain: false
-> +        power-domains: false
->  
->        required:
->          - resets
-> @@ -150,7 +150,7 @@ allOf:
->            minItems: 2
->            maxItems: 2
->  
-> -        reset: false
-> +        resets: false
->  
->          reset-names: false
->  
-> @@ -171,7 +171,7 @@ allOf:
->          clocks:
->            minItems: 6
->  
-> -        reset: false
-> +        resets: false
->  
->          reset-names: false
->  
-> @@ -193,7 +193,7 @@ allOf:
->          clocks:
->            minItems: 6
->  
-> -        reset: false
-> +        resets: false
->  
->          reset-names: false
->  
-> @@ -215,7 +215,7 @@ allOf:
->          clock-names:
->            maxItems: 1
->  
-> -        reset: false
-> +        resets: false
->  
->          reset-names: false
->  
-> @@ -223,7 +223,7 @@ allOf:
->  
->          phy-names: false
->  
-> -        power-domain: false
-> +        power-domains: false
->  
->          mediatek,pbus-csr: false
->  
+>  - The VFEs need independent votes for three things: their own clock
+>    rate, the MMCX level that rate requires, and their own bandwidth.
+>    OPP is per device, so this needs one device per VFE.
+>  - VFE and VFE Lite have different rate tables (on SM8250 vfe0/vfe1
+>    350-720 MHz, vfe_lite0/vfe_lite1 400/480 MHz). A single
+>    frequency-keyed OPP table in the CAMSS node cannot describe both.
+>  - Today nothing scales MMCX with the VFE rates: camcc only applies
+>    its fixed required-opps, and CAMSS sets no performance state.
+> 
+> Proposed minimal node, one per VFE, as a child of the camss node:
+> 
+> 	camss: camss@ac6a000 {
+> 		...
+> 		vfe0: vfe-0 {
+> 			compatible = "qcom,sm8250-vfe";
+> 			clocks = <&camcc CAM_CC_IFE_0_CLK>;
+> 			clock-names = "core";
+> 			power-domains = <&camcc IFE_0_GDSC>,
+> 					<&rpmhpd RPMHPD_MMCX>;
+> 			power-domain-names = "ife", "mmcx";
 
+If IFE_0_GDSC is an (indirect) child of MMCX, this is an overkill. You
+should not need to cast votes on MMCX, IFE -> TITAN_TOP -> MMCX will
+work for you.
+
+> 			interconnects = <&mmss_noc MASTER_CAMNOC_HF 0
+> 					 &mc_virt SLAVE_EBI_CH0 0>,
+> 					<&camcc MASTER_CAMCC_CAMNOC_AXI
+> 					 &camcc SLAVE_CAMCC_CAMNOC_AXI>;
+> 			interconnect-names = "hf", "camnoc_axi";
+> 			operating-points-v2 = <&vfe_opp_table>;
+> 		};
+> 		...
+> 	};
+> 
+>  - Only what is needed for the votes moves: the core clock, the
+>    power domains, the OPP table with required-opps, and the
+>    interconnect paths. reg, interrupts and the remaining clocks stay
+>    in the camss node for now.
+>  - VFE and VFE Lite get separate compatibles and separate OPP tables;
+>    VFE nodes of the same kind share one table.
+>  - CAMSS populates the children and uses each child device for
+>    dev_pm_opp_set_rate() and its ICC path. The OPP core then sets the
+>    clock and the MMCX level, genpd takes the highest level across the
+>    VFEs and the other MMCX consumers, and the interconnect core
+>    aggregates the bandwidth with the other camera consumers.
+>  - Without the child nodes CAMSS keeps its current behaviour, so older
+>    DTs keep working.
+> 
+> Child nodes keep the camss node as the single entry point and keep
+> the change small for existing DTs. reg and interrupts are not needed
+> for the votes, so I would leave them in the camss node; moving them
+> would only make the child nodes look complete without changing what
+> the driver can do.
+> 
+> Does this match what you had in mind?
+
+Yes
+
+> 
+> --
+> Best regards,
+> Atanas
+
+-- 
+With best wishes
+Dmitry
