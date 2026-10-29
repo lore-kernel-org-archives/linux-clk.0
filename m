@@ -1,89 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793299076;
-	b=f24Bcm+pRZ5kHFd07ohglDnlDZenYDzoDyFvM+68wexNW6UOQD1jSlEa3Tz3SKy5WPox
-	 Hy0S1O0opqw707T5ji7UH0sNGINqOEK71dyYTjEGEWZRKiNx79/gTgBRta2N3wLT9TFJH
-	 YQcEaX7PxE+y+1k6I3vFtbpSJErj9hA2PYiQGrc3lc8M1iVUTgss20h319Y8ef5b/xTLa
-	 tt52RSB0VKzfTWgMs5bYTITKAkpczBQMkK/Yj4ZMQavJTDYAvAZytC4CVg6jT1+4sjhmN
-	 ttknuL78OzyMJU7dp4AvtMhr/RLkg0KCp2NjrTePbODOpR2dUNrKIN2ScF11Vvtw/8Q==
+	t=1793299077;
+	b=WoyUDfEcyeU2ExjliWFhlt3n8a+JcPhRBY39gCfqbP2GTpZ5dfWldR1YehuLzrqww7TZ
+	 30VCwjWiux8sfNiuinaJLrzBBvnUvI5LIZcTTBrDLQFvAgyn1ZMmqfgYmvO/M1nhaSuY4
+	 DPwPSa3jInRkIvmzGDjVOSMU2P1uLi04oLK12ot0WS02LKSyuja6JkkQvfPqxCIep4jyi
+	 aXRi+zn6rt1tLNoeqcc4ZaDxp2auY5ugRw41XAHtP7rMK/SMSojnJG3zSvKNGtwWI/omM
+	 ghje3kqQTQSZf8JXOjtZJ270glfwZKDzQl1SVx1XnSb8Kb4t4QofUA/MGCmvPOpNCVQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793299076;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793299077;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=Iq3tU2hJqbtFbeXtd3ktVw3J1WdeojLrkQfua2mm+s4=;
-	b=ps3lfNI5vQ8op6KMzJjBKn4MYBoPSl0tKU3fdD6BuApGEO2Sgg4hGJbEeqBXgA2KO/Al
-	 4o24veZVGUkg1c6tlWeIR3QfB/atqXtQ+1ZPUCSCZtejN16g8oEIlZgOCKJIHmika4Y2R
-	 a6ypStOoTzduKrJHgT4waWJGZZeg4npkJo/zXbaV5N4qozB00X5LrSpITAqnNgX65Q9rf
-	 mjl5Mj6dmw9dcB6huW/v7iHqslhM90JA7/RpNNgqjn1jo6frfNehFcx85XieAWDjqisLo
-	 CZj5XYuav+wZU/a1KdbqcyPWlb2A9tWlrnA9NICmU+kB1TLO4m+a1wR0AlxowBJC4Uw==
+	bh=DCSLRnb0vtBw+c3BivhCF1ac7dx2yv+/JlPhFH01Ir0=;
+	b=L9HgqgtEeIEyBGR1uxPcp60a4SuH6Mjn9Gas8ve4IIntA62YdcXyUVhsKwXAoec+6vHr
+	 ptiSpk9zM3V8rbmmyQoeBfu7XogjesUAE5idxzI+9iMp5foyMgCaiyAdOJbT2xRuTmpVi
+	 Zmv0Ra8Q16teygagoFeq0O5dPamps+EzPROK3YpM/Xl2xBewuUu0nedLDQ2vvluHEgEpY
+	 iKfuFkfA6HBBBHO8T7nT9q43SIITO2YMddlN7pG7BmIJ9q5uKM09LIMwO6TWnYhks6Rc7
+	 a4zjVzLpTfzPd93MZbxxdqtChmXuLkL3u01g/xdqPyjOaZtdrH94EWFDAX1yZtwuajQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=idDCvlZw;
-	arc=none smtp.remote-ip=209.85.128.42
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=PtRlp9Hi;
+	arc=none smtp.remote-ip=209.85.128.49
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3F1606A32C
-	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 18:37:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4B3F1606A32C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C25606A331
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 18:37:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 91C25606A331
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=idDCvlZw
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4a9a8d6cea8so15521165e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 11:37:55 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=PtRlp9Hi
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4a59100fa83so23041905e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 11:37:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793299074; x=1793903874; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1793299075; x=1793903875; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Iq3tU2hJqbtFbeXtd3ktVw3J1WdeojLrkQfua2mm+s4=;
-        b=idDCvlZwrzH1AQ6Td0GOxF3Jb5TUSS7FOB513TUv9EjRdA2DxJcbGJnW7qKTxi1GQU
-         tCsKkdfG3Z48ISliOrQEBTZQSYMnoG2H67Na3sNocMvnohQvZg0ljV5DMQrpYqq+eMqo
-         qN+AMiH+WuaOsTxuxHnCkagjX4NNDLswzloxnuLXEUFJVAQWxUiz8ijqdZN6MmxV2CTb
-         h26zOWOJNH6RCESgJyedRpEei4jtN7DBBS89fjzN5wyJ8Ou9zsVgJGTlTbGnQXL0+T//
-         +/fNYvyR23H0coOi4yVYegYqFLF7QtzRUahZLe+aC/cObuMHaWYGXitp4wT0KB/OozSl
-         IqLA==
+        bh=DCSLRnb0vtBw+c3BivhCF1ac7dx2yv+/JlPhFH01Ir0=;
+        b=PtRlp9HitDBZUFMr/Mb1qE3zNnxZYXubCstEyiWpdLTsCbtOuug/umH9VSHiw4vl6u
+         8tWV4xexXjwsu2qbHGIOgvKvq+t6rcxXZ53HidIIqS/LiEkYvUoL6oV08ynAKkwHDF5v
+         w0/XvAaW4Brh+Gt81HKfzuaU6R9tQ95fq4vJJOqztZqw5s21NAMHAckqIZGjYAzDoZEn
+         EpDH425E2W7CDVfDzrNCXxFIiCMM8P9/Zny32mKXCNd31GlLmEHWsNm9h7uI/FXCwNi3
+         9ty9Qtr42YXgqhuvHCpEQ9ncTpFhBSMRL3qaRbN8txhQvxQah35JAby+D+APMus9Nmep
+         4B1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793299074; x=1793903874;
+        d=1e100.net; s=20260707; t=1793299075; x=1793903875;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Iq3tU2hJqbtFbeXtd3ktVw3J1WdeojLrkQfua2mm+s4=;
-        b=N8hy9Nsjjo/fmEhKPrtUcBnKjX+zgo+TEzVdVN/6XaqAi4W8QbDxjkv9pg+MQhXle8
-         owCqR550/0hv972rwtE1HQY+cW0AHxfVCA/9+FaKXvAJepj38sKGRf84nvLk6YjntAD0
-         QQwhTHerNt5+3/5OVdzaeGGjcBaas/ijraxcheNrXyKYd3rqJR3ei/+82TzQTBwW7pdv
-         XIejHfB9lZTNyWrobBaH2xVp6k2pCX486amy5wDW9lJOLLHyfZ+SwaOvwHObScXSAbBt
-         A6shfl16wDAO0GqLGFhMfTkNI3l9EbWj7s3P+as8E0U1A72yOIuXu9JhXkt5YK3crGsQ
-         WOtQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzGOnRB8URZkOxllYU5EJhft7ZnFt9t3yRwz3pzFSEC5A+4+iHn+QoRUJZBQX5CnJ8SUOZ26B6pIlY=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIRShMidNjyFDdyvQTVKUJM2sf2Tl2bRC8YmCcTzoqhehrTrDyx
-	tYDmm2/EzHsBZi5o0fsW0t94NBuEmKmMvZfMBiIE2OtHrVOhBa8Sm9FcXJ+hphFfwZWPKA6JuAx
-	S8bTo
-X-Gm-Gg: AYBFou1OcEulh5vTR+uXxP+KqknDdCYguYFYCd0bGbfD4V0R9DCIy7UeqUX4CWfxe7W
-	N9KREOpd/InL3Nqs3Ryv/pld0w4b6v4v2HoVxSSBAKbi1e7x0kjVE0q9rjg/0c8mvERWqDkKDvV
-	UNbH8JZXSIAQRzyAeu6uAj1m8znBkn3OgsDY6IIYkmz+sRUtrNncnkkLvY1HXTkvGXBqJ42GD3M
-	lagr31NE4ADu7Eyiw3xEvI4bEw0zrXLVXBwztY1Xc2bhMGKnFR1ADcmAkNJ3F0k1tmQ6Wk9VDGx
-	dgnsG3HxB4xxED9w0B0nHBBn6WUn/upL/0pFtvpd1uIVUEhZBQ4ptCq8odZwHDxjFwp1cCNdFjV
-	Rd29JKBE1tOj2z1Uzsd/bwVqGVUF9uGjK7KyVZZ5+VYTGTsRQNSIMsMSlinSSHobC6Ue6I7vAyK
-	M/oMb3h8qaYnlcMgAUb+8pRHz3t93yqm9M6Rxe5V9UQ8yEoklsgIqacCwl7O7JSjZ/s07KGjDj+
-	MfHVK3sgv9XzQsaR0N/mjD5pcUp2mlAbN2xKqMqd3BgwFq5YzOYohhoA9ia6KNpg+zAUFfQG5HI
-	JnvvH+tPF9fTD7263tMwj243BpOtRyHbfdsjPLoPmgxqp8MuQYBaBleawI9dS+s4Ymu1O28l7El
-	Hxa3M0LJgrgdO/ZlI9w==
-X-Received: by 2002:a05:600c:3144:b0:4a0:20b4:ba93 with SMTP id 5b1f17b1804b1-4aa8823df43mr85280425e9.16.1793299073743;
-        Thu, 29 Oct 2026 11:37:53 -0700 (PDT)
+        bh=DCSLRnb0vtBw+c3BivhCF1ac7dx2yv+/JlPhFH01Ir0=;
+        b=BcjZA+h0fcIRsllcElzR5EX+GWz2P6eUzoYEG/HuFw1sccTymySUzuXlmXj1NN6xU7
+         huwBINOqy0buqhwrUns+usA2mrvl1m/zQRZTV2K52ybk+L4FpQhgnqvKmB3HQ2Dg4OId
+         qK8+gjfjKmpudCd/v3Co3oJdMEeGTIptT2cjYIKiai1sXZsbgUuvHpT1cR7E8UiEbuSy
+         zbbIImKHNp+xfRfZBJUCVdFqPnib+Fr53ThO3X0sIvimNGWqTC2uD59a75NUe2m3ujSB
+         +pEy7kZ2GY8OcjRQh1iQcAsJnCSvZoyBck8bgC6socxwHxWPFVpvHFcv2HwzlvLauj6z
+         cL4Q==
+X-Forwarded-Encrypted: i=1; AKwUvBzmVZxn+NWJiVq+owLDrbeNiKRm9zrBTIOLqIk8dPcnlibm26qi/281PmDMWDI+DDyP1VOLs+kKPMw=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKjsyF88ceEIM7dFtc53P8+bamuNgAPfI06u2JR/C83pF7lEVcL
+	zpRjAgnxgSLiuCzgGBIOp6fizB+nOgf5LLV/jM0KnrulKg4AI/Ti8qZW+HfOo3C/6y4=
+X-Gm-Gg: AYBFou0VbXbiX1O6hPbKtGY9RhyID0b/dSyzI8+lEaHyUcrojNLv4b8fasqd0dyB6W4
+	TVpkX0u90mZNjCV2fkgGntQ0vWWtP5pTCOwQ+R0iG9o9QqaYORMqqC3ULQGAa1S65Pn1l7x4S1J
+	TWlWyS2dAlAVymZStDyRKHUUGzzxvPgMNgrP4IvqSctEe+69fRkn7CjYyu5EgUO4UCzXYSTwekc
+	vGZe7ZKUnwHtIiqM1+VPi4NglZ02yuIquBC6DE128DpO9hNJ2D6hAEvj+7D3QkfL6jJ54njPh7W
+	KmSDtrEHP7Wtdb/m3yT1+4p5lg2foe5l+WdlpB0QZollRd/5hT98lWPwGX7F+maNfk544lfIVq/
+	4rXoyZXI4MxhnfYOTiH8FlCXUnzIaf5/f990iZA72rXNbGCDNIB+VumXDVdcnrsUOL7OxUWX6ZB
+	ZiI0kdypE14w93t4R9CLI4jQZQ6FsSBRf0oqhIg9JqJL8wEx0JOvSkAtcvlUcGzgK4vtGgn2I4P
+	5JCVvniZqX9Hd+jpxkOvxniL95OzlKbX+AAszRt4kPEI42IQh1jy1f2y7FITZPcxWSeejLukBf1
+	UKt+wWUOZI0vOraA+JzQIxrjSllXZKg+90HJAbbXxUJhx9kwoPhAE/0GCe7O8h246HU7QgkYBBK
+	W63LuCzaNiPM14AiLMzk=
+X-Received: by 2002:a05:600c:c8f:b0:4a6:42cc:bf6c with SMTP id 5b1f17b1804b1-4a9661ab555mr157927155e9.7.1793299074975;
+        Thu, 29 Oct 2026 11:37:54 -0700 (PDT)
 Received: from [127.0.0.1] (host-95-246-144-141.retail.telecomitalia.it. [95.246.144.141])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4aa820492cesm90118305e9.13.2026.10.29.11.37.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4aa820492cesm90118305e9.13.2026.10.29.11.37.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2026 11:37:52 -0700 (PDT)
+        Thu, 29 Oct 2026 11:37:54 -0700 (PDT)
 From: Carlo Caione <ccaione@baylibre.com>
-Date: Thu, 29 Oct 2026 19:37:35 +0100
-Subject: [PATCH v2 2/3] clk: meson: g12a: fix ENCP clock selection
+Date: Thu, 29 Oct 2026 19:37:36 +0100
+Subject: [PATCH v2 3/3] clk: meson: s4: fix ENCP clock selection
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -95,7 +94,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261029-upstream-clk-encp-sel-shift-v2-2-31ffbb6b82af@baylibre.com>
+Message-Id: <20261029-upstream-clk-encp-sel-shift-v2-3-31ffbb6b82af@baylibre.com>
 References: <20261029-upstream-clk-encp-sel-shift-v2-0-31ffbb6b82af@baylibre.com>
 In-Reply-To: <20261029-upstream-clk-encp-sel-shift-v2-0-31ffbb6b82af@baylibre.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -105,31 +104,32 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
  Jian Hu <jian.hu@amlogic.com>, Yu Tu <yu.tu@amlogic.com>
 Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Carlo Caione <ccaione@baylibre.com>
+ Carlo Caione <ccaione@baylibre.com>, Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.16.0
 
-The ENCP clock uses ENCT's settings by mistake. Change the selector
-from bits [23:20] to [27:24].
+The ENCP clock uses the wrong selector bits. Change them from [23:20]
+to [27:24].
 
-See the S905D3 datasheet 0.2, Table 6-109.
+See the S905Y4 datasheet v0.7, Table 7-58.
 
-Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+Fixes: 57b55c76aaf1 ("clk: meson: S4: add support for Amlogic S4 SoC peripheral clock controller")
+Reviewed-by: Chuan Liu <chuan.liu@amlogic.com>
 Signed-off-by: Carlo Caione <ccaione@baylibre.com>
 ---
- drivers/clk/meson/g12a.c | 2 +-
+ drivers/clk/meson/s4-peripherals.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index d0d4c7b6dc82..fdf41572be84 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -3666,7 +3666,7 @@ static struct clk_regmap g12a_cts_encp_sel = {
+diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+index ba41fcd90588..33573eb85927 100644
+--- a/drivers/clk/meson/s4-peripherals.c
++++ b/drivers/clk/meson/s4-peripherals.c
+@@ -1114,7 +1114,7 @@ static struct clk_regmap s4_cts_encp_sel = {
  	.data = &(struct clk_regmap_mux_data){
- 		.offset = HHI_VID_CLK_DIV,
+ 		.offset = CLKCTRL_VID_CLK_DIV,
  		.mask = 0xf,
 -		.shift = 20,
 +		.shift = 24,
- 		.table = g12a_cts_parents_val_table,
+ 		.table = s4_cts_parents_val_table,
  	},
  	.hw.init = &(struct clk_init_data){
 
