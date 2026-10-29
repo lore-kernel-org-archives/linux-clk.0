@@ -1,101 +1,112 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.178
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793268918;
-	b=4EdOBjqSvY/cMos13w03W+UVn7+EhAJ8llmq2K3qJNu+smm2z+NhFnE9Ij/jkZMCfAoD
-	 8mQWzR8eZTRhzep18EC8lfYnsk3ebxMJI3r/QtQH8BTMrO1tnKjGq26ueZT71LM44miZA
-	 JCfYH2sFCGrUymO4V8P2b/qcdAqXS60tWVt+fNg7mPoFef+HRVYLYu00smOSfXi24hGHs
-	 3MOWPdY1X4Qn5W77inNE5/KD/I6U+Xfi619Fy1qiPa6EMmwNkKLyvF2UjU1049Oep0XN9
-	 +3AkqOIoot+84Q78XUNb//4hAiXlHPwh/BfHjqD6KeJNXBHxi4QFeKK7wr22nV6ek8w==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793268918;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=hZhJRYKRYnpA55dTVl2RVAnPezaQl7o2LFp27rGTjlc=;
-	b=mAPC7hNEQEBDV/ZI98n0B1Tvb4bNu5XIDk3lRTwtJBwk/jMJUbXdZm2TW8JJY5KRPLhI
-	 vE8TZ8RmZuXuduWvGy6OtkzFRI2VWlK5mloIjXMFJoeOU5+/clh3p5dD2amwwZMUUx9Ea
-	 F4Td8M1ydiflaguIa7yrzeQeRn4D/lV1ZI6qWcTcwtSQrotiUx7Cf5Umz1M270hDxW39Q
-	 hVLoLZxB+jyCFPS4IHTkId5QOPGNB11jrwQDRohchWQKHYjS6IH72s2bU1mLzxqYFr1+z
-	 pjnUx6G6acSbvIJ3PXkSux7i0UQe3EArD5qWTeoUKy91VqSjkPgB+yvBwkSDvrBMIjw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yYaDw9Qa;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.178
-Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com [74.125.82.178])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793271440;
+	b=NS9DhUvsmHpzY92CzqwpWURxoTz1j7wdf8tuoP7GHQaQ+/0mdxgKxHrsYchJokrSDqeL
+	 TbNCBcyt8IQ71XJHjbjEUxMJqAfjKpVSk78k7lqP+sr51obPRyYskgo4lNPIfB/lEd3bJ
+	 INJkELIZOFDhQwBkaJL1zgUFbAaiNvnn6rmPa+U/nal2g2IgTbPixY6IZCS2wilSDeCmQ
+	 ktaEnYMaUIDhNR1bKD4BHChqEWO/xD0U856sPU/9geHKA+40bOWBsCfmD0/epmvtSTDOk
+	 /blyQC+r/+/cMTj9lEPXM+I8ifHcfn7U6srhoTWOd3GtrKfsdmp+XjJwtQmEno9RO5A==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793271440;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
+	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Proofpoint-Spam-Details-Enc:
+	 X-Authority-Analysis:X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-GUID:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=dDpjcq/H7pAjXv6ufJHIhui4B8oOc+vxhCDZdj2ZDJ4=;
+	b=bzTfx0OR0wfMBhUhk/YpnB4zT4rxAX1ijcgvV49gU9y4sl9peLmpYDEnnD/sB+rLoQP5
+	 a3paf09xpYvpT9XadwpNfjk4PtlK8G+HqLdc5Am4lVWj3Z5rNz1LghPwMcb27jO0Fjr7o
+	 9v7pZafSXERxS8u7yIQAxe568BHacGdq3L9gq2NlWdQRYDpUZGRamVXggdGs2l02XUQye
+	 FQflsbrFYKTZnil0P5bewFL8N/zhijJozUYq5MTus2CHiEW5xtlQWA2aBoV/Zju6KMOOL
+	 mEPUwjIQttfWernpINnXSbwnnl1U3pSkSyfdWB+1sXFYNcE/ifTJj/MW5Pwd5NZqHiA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="i2MZuy2/";
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=A4yLlYON;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DCF606A32C
-	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 10:15:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C8DCF606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38412606A32A
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 10:57:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 38412606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yYaDw9Qa
-Received: by mail-dy1-f178.google.com with SMTP id 5a478bee46e88-36a0f27c9f4so2980254eec.1
-        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 03:15:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793268917; cv=none;
-        d=google.com; s=arc-20260327;
-        b=LQZ40ruoPAlpSef4Onbqf2MmNzNE6eL2rV8EEThXnjiTT2CbDMm2qUB0VSUHATCB93
-         nIU784ypF46did6AD+gYX7HjRJLc3HNd6+quYOqzQuuRs2VGdnDRJffTH/Mm21v3iSye
-         S7FdHv2oueagtDBfehASiRkVIltMdlhaj3I91qEIryoJMhcxKXayUVWSVdxiKxwJu4Ec
-         nlFSiELax0LGIgK8miFfnAfM+ul55LR4NS7IpX6z52jIhIIqmtARAyfX4+CTPMDVdIsM
-         cQmvnEwHAc5WhcRh3Oz+7jIN7LA8EH3v14A15F+IOMukCNmjDZ7/vBikK8WrlxyZWv/M
-         xXTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=hZhJRYKRYnpA55dTVl2RVAnPezaQl7o2LFp27rGTjlc=;
-        fh=a5Ic7tlVHJ4HqNuXlfni5Kwlb8pEWFuoHkFAN74aJSM=;
-        b=g9z+MTSTJHE5EXzhfhCYwXTw3uEeBdK+uwnxV6JP/Lr5i+3Fd0zi7YcwAtKRRKAVJF
-         ZhTRiaDYgoUpJNktfVnN9R32H9vXh3993dOflcLL7UWtP8XYmk7ApVvaAUkcot4+ebPP
-         qcyUKAPuL2TXdIN8cy4QRKzlf7HO+3EQ3J0MCZ3+6Mqd61O41+4Oj3rfuiaqEMKGDjyz
-         Bim461QTWuHHHX3uPGIM6AJmElJ2qdFrj+X/H0G6WPuhB8cewiH5s0v/hlyjayHA77GH
-         +tDX81HPCA0+aLqoGgCLxk/CsflesiB0IWIEHBoHV2ycox9xVtWLuqDqZtu3uYE8ChU9
-         NjUw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=i2MZuy2/;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=A4yLlYON
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69TAJt4t875497
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 10:57:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dDpjcq/H7pAjXv6ufJHIhui4B8oOc+vxhCDZdj2ZDJ4=; b=i2MZuy2/yK96cTff
+	Tb89mgWGzwkD/bIkDe/ptWarvCjxPg71VlfwLNYa2tJkpmSYU125ypVl9vbjNhht
+	OgkynYu3i13PLqDWVtEwzxyHubcM27fz7cCRigLbcb9aYe8Xi2+fGLzgk+xTdOes
+	teBhzNrs1FyvGEt/zfBXJiDP2dQ+lqk8Qb2BKEcnptVeVYFjQ9ixaGmmDJ0+XhJB
+	jfZIuHJKcd8wf+epUhVimG4Ch7ymfslIP6Ffq8ie9hDSovae7RJ55PsdzVaHxqBf
+	Np/K3JfbsVTgu7CWRYy6+bQH8egrBeXFV61BDDEMkLqaVI/qxe3MV7ZfN3vJ5uXi
+	H7gFZQ==
+Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com [74.125.82.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hm4a203xx-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 10:57:18 +0000 (GMT)
+Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-35c3c370b17so3286345eec.0
+        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 03:57:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793268917; x=1793873717; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=hZhJRYKRYnpA55dTVl2RVAnPezaQl7o2LFp27rGTjlc=;
-        b=yYaDw9QaXvy/ey4C72CgmAyNvMVNhiCEbTAs49OXnei/ZdR9HQ4ujPrhIh3QcHQSf7
-         NDNxbOTB3YbR4C5RZkRF1VYNQP/S9u9CTY/EcbOtaFoOwTlwhStsSoAYDGToa1nmQtNO
-         YzwjyQR+93YuejSkGmUY0kn2j9hcgkPiDJwI1AyQp59CWfrSnG03qEcX6cdeyJsEzFsw
-         kCBMMLbhIyYKc0Cd6jkfxWdtQZ0o8y/ZdFG7wS24RfvUZMiGg+y1laVgz5IwvjdD1ZxB
-         vlAGCgNtoUkDkkfWdDnkBwwJ8+30su/Nh5RoEMMkpkUI5HlQCyjPh5KDG/1XUj1VvTak
-         iP9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793268917; x=1793873717;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=oss.qualcomm.com; s=google; t=1793271438; x=1793876238; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=hZhJRYKRYnpA55dTVl2RVAnPezaQl7o2LFp27rGTjlc=;
-        b=nko1vgoN+NLmSuggBUJ958QxepG2ht4KCBcl+Oo1aio0YzW8PH/mcsZr/eqa0bQEYU
-         y5Gdn+heatTWGOXsWz7UK+v9AvLoTe00+dtXe8Jh1ouQTEH3w7bdCTSf88N7p7l/K4dz
-         9x52cn2VoWdbXKtTJjUdizZGi0wOk7MUpa5mHMIuzxHLTYbuUp4nMO34OylXRUqtCR9u
-         gMwzvhohsF5IVULsAARKNKhVn5kcd2BUz3W0oasSG9RWQ3LxjaONAhtQo6AnZSaomWzH
-         KkNfL5gca6ByZzaUbdReMHEHZ8lseULQrWr3WIPZkFFixvzRuL8QB8DpaR6uOkI5W/Jw
-         JH9w==
-X-Forwarded-Encrypted: i=1; AKwUvBzhUyGwznHcl3Dl9mTqxfPWDmNrx9kpU/FxECzWUo6nD5pngVAA+vXiPZav47g4R7k7uYL4au1J03s=@vger.kernel.org
-X-Gm-Message-State: AFq9FYK1Qq+KtYTNwtzVYvDecUARFvVlcySyfcfyb4m0yqhpvlagkpZQ
-	pCZaOw2KQK1kIp1O7k9hlvTNbBK34ubgewyq7q7rBeip7UVNZV7oGYjpDkjZ1YtYCk38IBRMt7x
-	CAFGdIsSXnVQWUF+TrNZhDObHTRSy2hE=
-X-Gm-Gg: AYBFou1hQSKHftCbZOw6Q/K0NPnB+Qqzh83zceJ6o2dOtb9JUEnZ3wyq8no2Bt6/Ogi
-	1Qhe0YRpDOcu9yFRq8T6vDF7WgTEjMLR9ATRc4UwbFyswt02ZTkM9etGNzzOyYK3PqppKWTiJnQ
-	aCTkfjRWDa8tSjMahznWIW27BeqH1kYh7Ln2rL4RAH3Uk400z+2wVj3Zp+qov9ZCwkoiYbh4FK1
-	uM47MW/eCkomuFf7llcgk5FweJJcjyaeWuzE4aBZXZ9ZR69pgxVFZI+GZJn0d585jTuEozQyIFC
-	40BcnND4x8F/dcpRab1EEIP9gBzSbrRroNiLGt70EkTcy6MdJhPlAies9SldpM1HQMw8b+8BX6J
-	hilZnUHlOA7g7wTNDPEu0fOKvS+4wSpUazyMSxSI3nFcCu1yGvdfCoArcqq0DUBfMvNrUrclRRN
-	OrqlEtEORlgriUsJw=
-X-Received: by 2002:a05:693c:69c9:b0:36a:279:c93f with SMTP id
- 5a478bee46e88-36a203e2a52mr6817742eec.33.1793268916731; Thu, 29 Oct 2026
- 03:15:16 -0700 (PDT)
+        bh=dDpjcq/H7pAjXv6ufJHIhui4B8oOc+vxhCDZdj2ZDJ4=;
+        b=A4yLlYON7sXgJCjE37zIQmykFs7pnYaUCMusZ4R7nvJ5IDLlKbYEJ51nzqWS3Ji1P/
+         BtvgwYu59MZj6u/emQofn3Y0/jcHC5RJrX8s5a1olhuhrLPQmwcNnPRV/Iyrns28h9K6
+         T3hHalSVBgZK3sfFOAjyfBeImnEZbyLRb21Dtx6ZmFYxCzLbPgNjaEj/yl6pT2M2q2UN
+         enhNutdido0UYGBbpDCG+vojXekVa6cLyvet7nryaF1ymulQY7cvIggTbfzHWIQmcnpC
+         9gVnITPMWGlYuxBdsoSjyBbmi3p6U9q+j3G5BF4t9bDSqSXR7K6tjcS+tlFIQcTUg7XK
+         YB8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793271438; x=1793876238;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=dDpjcq/H7pAjXv6ufJHIhui4B8oOc+vxhCDZdj2ZDJ4=;
+        b=Q7XiBz1Eh70HzxUPMsQgXBKV4PpnxQx7H9XDHShHECVXlE58De+Y3zJz0SlEfSfUPl
+         wsM1lqnhN5oUmLiL1dcWGKQ6CuBntDgPT8w7xCf+VigsqfK7q522EOM6hjxi9ksyhsXO
+         LugVTFQK4Z6CjmQZ5iMvbZWRO3sODizlJw5OlmpUA5Cwod6zdq13c3iP3Cy3dW3ItWjQ
+         02QNuwODBiFxDeFYVDKWx1x8UXKZIzWF42E3nFyHMgnRUmKszB3iiGUPODlhdtiyh90H
+         Sv3c0CDARdxsq283JT0QYRDDIBMqM2TZycfm1gTdiQwNFTiPQGVoQ5kDJdjKqSkQDcQc
+         l4cw==
+X-Forwarded-Encrypted: i=1; AKwUvBy+Zedkazr7QtDcqSlXtxRCLK6SYH8f87HiTY3jWe+a5gHE/OTXGZ/4sO9uRNQOacu+zqhyFWw8Qlw=@vger.kernel.org
+X-Gm-Message-State: AFq9FYL9KWgled7Tw4r1ECTStdYyqr8GBpe0SI3SWTQcPkGmaRtO3KNb
+	/ACsnlpq+Xbjad0GQGIuI5IbMnQBRXUBVYnHJvXRq/usQgQ6Jp83cqtTgn7VEQRDrhnfK+/Q53G
+	2cBEWTWR8H1CR2c8Te8qoRwsX7EIqF2yfOViqjXCc1wsY5SwDVzmauhje3IjGXkLJA6H+axM=
+X-Gm-Gg: AYBFou2os80v3YLdGbAK1fcAr4g20ohOEyLNX1StJRFhu4KWamzYTidtIPH33QRdG6c
+	RZCHuS0gRoyK5vHF9HuyU7d3xXkCed7ZuiD+ALXFUbtbDD7fI8A4McmqknwRznYC1PiwETMp93i
+	BBnGldJsyFHmjjub+7R6AFuZKJ9I+4hyD1lOSJFE8jbJTOpjki/cDd3atfJ7IBxcj2RTu8MLZdY
+	jE72oH1PQHV0PtHjTNkTpBlw1XM4nVbPr32Shj8sQSuxD7rLQng4Vdn2gWpgW+dAUftDGknkbz2
+	6+/HsgbxPT1pAjATN5jnMzM15l3KT8ce5B7sLir3c8LYqD4dZ7TaNKxJk6+v49W/ZCFtcKGPKRM
+	V9Gv85uNg5ed3dMdKRAsp2HA5ziDNuFhzYghinQFscgRZn2+KWWenEclaZWnTubRBvdmIdP7T5N
+	75HQ==
+X-Received: by 2002:a05:7022:7f03:b0:166:9e0d:3b50 with SMTP id a92af1059eb24-1a6ce7cc6f1mr6591282c88.42.1793271437483;
+        Thu, 29 Oct 2026 03:57:17 -0700 (PDT)
+X-Received: by 2002:a05:7022:7f03:b0:166:9e0d:3b50 with SMTP id a92af1059eb24-1a6ce7cc6f1mr6591244c88.42.1793271436760;
+        Thu, 29 Oct 2026 03:57:16 -0700 (PDT)
+Received: from [10.217.217.199] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1a76037e2b5sm20562986c88.21.2026.10.29.03.57.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Oct 2026 03:57:16 -0700 (PDT)
+Message-ID: <fc2c4943-0482-4c72-b713-5a66c9995c5e@oss.qualcomm.com>
+Date: Thu, 29 Oct 2026 16:27:08 +0530
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -105,127 +116,200 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261029-upstream-speedo-t114-v1-0-81457cc9d94c@tsv-stahl-riesa.de>
- <20261029-upstream-speedo-t114-v1-3-81457cc9d94c@tsv-stahl-riesa.de>
-In-Reply-To: <20261029-upstream-speedo-t114-v1-3-81457cc9d94c@tsv-stahl-riesa.de>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 29 Oct 2026 12:15:04 +0200
-X-Gm-Features: AclHuK_nKjJOvqTdHrlTm0y6eXLR-uFJwQRZTvfrnf6NnzkRQXlz5soPbSPOmYM
-Message-ID: <CAPVz0n13YHVAGNoEYZaef7HL1HkQK9w+mLUV-h4AGC0mr3bkpQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: tegra: dfll: Get the voltage step of range-based regulators
-To: admin@tsv-stahl-riesa.de
-Cc: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/12] dt-bindings: clock: qcom: Add bindings for PDM
+ GP_MN clock divider
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Richard Cochran
+ <richardcochran@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, netdev@vger.kernel.org
+References: <20261026-b4-pdm_clk_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com>
+ <20261026-b4-pdm_clk_gp_mnd_v2-v2-1-ff8e4bc8d567@oss.qualcomm.com>
+ <20261027-inescapable-rough-viper-6cd56d@quoll>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <20261027-inescapable-rough-viper-6cd56d@quoll>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI5MDA0MiBTYWx0ZWRfXyu00kJMAmWHo
+ +Ohp6kKx+F+6yzzqDXVlvbkG9l1iXR5UGY2yCbuqpzUDE6bwIDCVjCXy2a5wlIG6ujGFY3ov4uv
+ vkEynCSz4NtxUukEWyFFI5zJr9s1LzKpDqFDR5tJJaeZl8WqzIbR+yK/wGRifRFtiuL/YHSBbTS
+ F2Ggx3CFy9GwvMF2K9OMrzz7Wx+WR0IjYqx1ao7HlTlQAZ6Fk6bII72CSqUTZpCJSRUruXr0NRy
+ 5Js1QKGsiaWLl4Zh69owaB79JC2CYQjYXbFKacft44E0XsxmGeCtCYgIFD3/Ccdz5bw3Ep8ZQVH
+ pwvEa+BwxY2rOeSIq4dtBk4iUXE4cfLq07xLUqMFZSw804I+Mm8/FXJ/CzcqLnkABJvVJYL5bfe
+ 3HGxlpZItb7tHyT6bldjX16jZjiLcrn0aCVo2lE674ekYCVadn5FMXqaNjVL6szc0kEHulobca9
+ JcUzXgt3/voia/zYVVA==
+X-Authority-Analysis: v=2.4 cv=E8tYNqdl c=1 sm=1 tr=0 ts=6ae3268e cx=c_pps
+ a=Uww141gWH0fZj/3QKPojxA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
+ a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=LB2yG9bKkngd5w-dMicA:9 a=QEXdDO2ut3YA:10
+ a=PxkB5W3o20Ba91AHUih5:22 a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI5MDA0MiBTYWx0ZWRfX9+WOBsHrZofO
+ 9vJzk/YB9Ko+Wb/IQiDDp9e7ilPz3P7IgsepvyGabBlQCNdYKvuHGDbIsz67fHrSX7bL0ABrZbG
+ IZ4jccRKX7fForToC7fi62IhpHKlANs=
+X-Proofpoint-ORIG-GUID: oSZ6URr4gysDBsQxG0fm9xOfSc3SRDUV
+X-Proofpoint-GUID: oSZ6URr4gysDBsQxG0fm9xOfSc3SRDUV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-10-29_03,2026-10-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 bulkscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 adultscore=0 malwarescore=0 spamscore=0 phishscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610190000
+ definitions=main-2610290042
 
-=D1=87=D1=82, 29 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 11:3=
-3 Patrick Fischer via B4 Relay
-<devnull+admin.tsv-stahl-riesa.de@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> From: Patrick Fischer <admin@tsv-stahl-riesa.de>
->
-> get_alignment_from_regulator() takes the voltage step from
-> regulator_get_linear_step(), which returns desc->uV_step. Regulators
-> described by linear ranges, such as the SMPS of the TI Palmas PMIC,
-> leave uV_step at 0.
->
-> With a step of 0, round_cvb_voltage() returns 0 for every OPP, which is
-> then clamped to min_millivolts, so all CPU OPPs get the same voltage.
-> The I2C LUT is broken as well: find_vdd_map_entry_exact() and
-> find_vdd_map_entry_min() divide by the step, and on ARMv7 with hardware
-> division the result is 0, so selector 0 matches every voltage. The LUT
-> ends up with a single entry and the DFLL never changes vdd_cpu.
->
-> This affects boards that run the DFLL in I2C mode with a Palmas SMPS as
-> vdd_cpu. In mainline these are the Xiaomi Mi Pad (Tegra124, since v6.19)
-> and the Asus Transformer Pad TF701T (Tegra114, DFLL enabled for v7.4).
-> The AS3722 and MAX77621 used by the other DFLL boards report a linear
-> step, and the PWM mode does not use the regulator.
->
-> On a Tegra Note 7 (Tegra114, TPS65913) all 16 CPU OPPs are at 1000 mV
-> and vdd_cpu stays at the 1.10 V left by the bootloader. The CPU runs at
-> about 1.34 GHz whatever cpufreq requests. With this patch the OPPs range
-> from 1000 mV to 1270 mV, the LUT holds the 1000 mV to 1270 mV selectors
-> and the DFLL follows cpufreq up to 1708.5 MHz.
->
-> If the regulator reports no linear step, use the smallest step between
-> the voltages that are usable on the board. Fail the probe if there is
-> none instead of running with a step of 0.
->
-> Fixes: b3cf8d069505 ("clk: tegra: dfll: CVB calculation alignment with th=
-e regulator")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
-> ---
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 26 ++++++++++++++++++++++++=
-++
->  1 file changed, 26 insertions(+)
->
-> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/teg=
-ra/clk-tegra124-dfll-fcpu.c
-> index 457a77c5bb62..5bdea4775076 100644
-> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> @@ -642,6 +642,7 @@ static int get_alignment_from_regulator(struct device=
- *dev,
->                                          struct rail_alignment *align)
->  {
->         struct regulator *reg =3D regulator_get(dev, "vdd-cpu");
-> +       int i, n_voltages, uv, prev_uv =3D 0;
->
->         if (IS_ERR(reg))
->                 return PTR_ERR(reg);
-> @@ -649,8 +650,33 @@ static int get_alignment_from_regulator(struct devic=
-e *dev,
->         align->offset_uv =3D regulator_list_voltage(reg, 0);
->         align->step_uv =3D regulator_get_linear_step(reg);
->
-> +       /*
-> +        * Regulators described by linear ranges (e.g. the Palmas SMPS) d=
-on't
-> +        * report a linear step. Use the smallest step between the voltag=
-es
-> +        * that are usable on this board instead.
-> +        */
-> +       if (!align->step_uv) {
-> +               n_voltages =3D regulator_count_voltages(reg);
-> +               for (i =3D 0; i < n_voltages; i++) {
-> +                       uv =3D regulator_list_voltage(reg, i);
-> +                       if (uv <=3D 0)
-> +                               continue;
-> +
-> +                       if (prev_uv && uv > prev_uv &&
-> +                           (!align->step_uv || uv - prev_uv < align->ste=
-p_uv))
-> +                               align->step_uv =3D uv - prev_uv;
-> +
-> +                       prev_uv =3D uv;
-> +               }
-> +       }
-> +
->         regulator_put(reg);
->
-> +       if (!align->step_uv) {
-> +               dev_err(dev, "failed to get vdd-cpu voltage step\n");
-> +               return -EINVAL;
-> +       }
-> +
->         return 0;
->  }
->
->
-> --
-> 2.56.0
->
 
-I can confirm capping CPU opps at 1000mV and this patch fixes this. I
-have tested on Tegra Note 7, ASUS Transformer Pad TF701T and Xiaomi Mi
-Pad which are all affected.
 
-Tested-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Svyatoslav Ryhel <clamor95@gmail.com>
+On 10/28/2026 12:17 AM, Krzysztof Kozlowski wrote:
+> On Mon, Oct 26, 2026 at 04:59:27PM +0530, Taniya Das wrote:
+>> Add device tree bindings for the Qualcomm Peripheral Web's PDM GP_MN
+>> clock divider. The hardware generates a fractional output frequency
+>> from a fixed input clock (typically TCXO4) using the relation
+>> Fout = Fin * (M / N), with duty cycle controlled by a separate D
+>> register. The clock output is routed over a gpio controlled pin.
+>>
+>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>> ---
+>>  .../devicetree/bindings/clock/qcom,clk-gp-mnd.yaml | 98 ++++++++++++++++++++++
+>>  1 file changed, 98 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml b/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..8141f392c5d70acfc42cf1ff4b1722e1eff23afa
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml
+> 
+> Use fallback as filename, so qcom,sc7280-gp-mnd.yaml
+
+Sorry my bad, should have renamed it.
+
+> 
+>> @@ -0,0 +1,98 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,clk-gp-mnd.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Peripheral Web's PDM GP_MN Clock Divider
+>> +
+>> +maintainers:
+>> +  - Taniya Das <taniya.das@oss.qualcomm.com>
+>> +
+>> +description: |
+>> +  The Peripheral Web's PDM GP_MN clock divider receives an input clock
+>> +  (TCXO4) with frequency Fin and generates an output clock with
+>> +  frequency Fout = Fin * (M / N) and a duty cycle controlled by D
+>> +  and routed over a gpio pin.
+>> +
+>> +  The divider is configured using three registers:
+>> +
+>> +  - GP_MN_CLK_MDIV: holds the M value.
+>> +  - GP_MN_CLK_NDIV: holds the ones complement of (N - M).
+>> +  - GP_MN_CLK_DUTY: holds the D value.
+>> +
+>> +  For every N input clock cycles the GP_MN produces M output clock
+>> +  cycles. D is the number of native clock cycles in which the GP_MN
+>> +  output is low, counted over 2^13 native clock cycles.
+>> +
+>> +  Hardware constraints:
+>> +
+>> +    M <= 511
+>> +    N <= 8191
+>> +    N > 2 * M
+>> +    M < D < (N - M)
+>> +    M and N must be coprime (no common divisor)
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - const: qcom,sc7280-gp-mnd
+>> +      - items:
+>> +          - enum:
+>> +              - qcom,sa8775p-gp-mnd
+>> +              - qcom,qcs8300-gp-mnd
+>> +              - qcom,qcs615-gp-mnd
+>> +          - const: qcom,sc7280-gp-mnd
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: PDM XO4 source clock
+>> +      - description: PDM AHB bus clock for register access
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: pdm_clk
+> 
+> pdm
+> 
+>> +      - const: ahb_clk
+> 
+> ahb
+> 
+
+will drop _clk suffix.
+
+>> +
+>> +  '#clock-cells':
+>> +    const: 0
+>> +
+>> +  assigned-clocks:
+>> +    maxItems: 1
+>> +    description: Parent clock phandle used to set the input frequency.
+>> +
+>> +  assigned-clock-rates:
+>> +    maxItems: 1
+>> +    description: |
+>> +      Rate for the parent clock in Hz.
+>> +      Supported rates: 19200000, 9600000, 6400000, 4800000.
+> 
+> Neither assigned-clocks nor assigned-clock-rates should be needed.
+> Parent clock is outside of scope of this binding.
+> 
+
+Sure I will remove, but the parent clock input is a requirement of the
+Hardware and the output of this module entirely depends on the above
+ranges of frequencies mentioned and that is the reason to keep the rates
+specifically. I will capture it in the description and hope that should
+be fine.
+
+> 
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +  - '#clock-cells'
+>> +  - assigned-clocks
+>> +  - assigned-clock-rates
+> 
+> And these two should not be required, either.
+
+Will remove.
+
+
+-- 
+Thanks,
+Taniya Das
+
