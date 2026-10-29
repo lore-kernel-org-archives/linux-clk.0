@@ -1,57 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793267828;
-	b=C1jZ3yAQorqMTfgpvkzYwPcdkV53jRLGyT5OkvE5IgFYFpYZG0rzT77oMHpzoFcGPKsN
-	 HIfoaJx7EAOBnKYHWMtodr2tgy8NW+OYlczp1tyR+EXNUiNMpKaR/Ar+A6cjmUxp6aXWa
-	 B+6bNzS5mW3QDZsU5//UhZWN2Egk0hqBCxgYUM2wh9JDmYlUrE2G1MZtImy7nPqoDWM21
-	 6xTKB8u0ehLUfrpznjmoLMDyZf9jqtlNJD9IyjWf4VQko6Mf6fsi6qBxTUseyTR/tmf3t
-	 dK3p4mL5aRjd2Z7EyQ7F9Dfs0dv33ZkFLI1FNzSgs4if5DNOrpUFaYNihHLX2n9u/cQ==
+	t=1793267834;
+	b=qbYfB4a8DaqVza6CbLJvOuVMjLlSQBOVpIl0IT7y9iyww8JP50TV6Oz6PXcA8ZZJLM2v
+	 ShcnF4GQWez4kLMmk/cXyh5DTW5lF2uXroYoijLJWGaQzJXLVbzd29dIBCfMPlivx3+7z
+	 UV5WAa0Q86p9f8UnemprAR0UJjaNv/pMlaENImk9wK4TsoK+YdZmsSU6PMbvnyu7l9hwQ
+	 7vERVFSa1iU9qEZb1KKfIM3/FxKOufYynWj3qKp5MSK+0WGrF3n+Hqi7mOX/Gm1aJ4S3q
+	 9q+NEgJDMji653+nWZzMMy/lkhrmLhw2ACOa4ltgA/JrpbHpZbJfzEabwXZrv5VqznA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793267828;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=FL2eR8EYUTXDFliIvq3+r6VI7BGzi6yXCZSbMiEvJYo=;
-	b=B8AqCK1YcR3EnJOP31e0578mTJaStNoGb6P3qSIKr2KLRESXK4+vQ1w0Rev3Knf8kmXl
-	 h142r1Cxx28v+DbnUrIgkRRJ/flsptaI/ALo9sujPWjc80zMhN0K2gJY/AX+0FzUOEbZb
-	 ltr6sRmSxS+6TGhZcIJ3ujVEQ2D+3SFeI1HmI4vnOcF6XNHm9hNrWKz4yZV4pMw/Nez4Q
-	 iw5QKaPaB6KMn2NaoH72KfzZLcdouNOMY+PDcNyfQspvMy1klf4E5xkGtKbRJE2l6yGR7
-	 wTW0KDCUcRpRujgkQiD2mvM2FbbM0tz+jvnOgwnu1g+TCcjtTo1o7/nH46/EU6DC3ag==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793267834;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=YmRNAxJyESE0wnkrH6TNuhWwf1OgBNeC7IIYTZSjnoc=;
+	b=oBnL4bRwk7FjRo9C91+T3UirrB5LDEaIubqIHNKxitlKDJHbTmQ5Vhe+pFhkT7k3wVX4
+	 y2xPxOPGIfHnrUkZENmXsMVL8+5AYmI0p359xbrGI8DGCFIKwDVvIjYUa7/1VeLZZr0lt
+	 DXQAgpN5ehbexijA9QF4XnVhLKnzh1HbTbilsmJEDGfYu91U+I7ipoSWQmjCLxVbXUHAD
+	 kt55gP8tqcApX40UrUJRHXS/o/58pwPhlkYPK4EdyxHUiut5Fdz5L3uAVFcwDJVicK7SD
+	 BeElZMIVgm0wORxGQDVR747uwZNr6AqWuexlV4cZIfvJRtkU8osIxWxwhX9oYLTLMsw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VfeDA2nt;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cy8ylQ8v;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458B2606A33A;
-	Thu, 29 Oct 2026 09:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F112606A320;
+	Thu, 29 Oct 2026 09:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VfeDA2nt
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DFDA1F01829;
-	Thu, 29 Oct 2026 09:57:07 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cy8ylQ8v
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C32301F031E1;
+	Thu, 29 Oct 2026 09:57:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793267828;
-	bh=FL2eR8EYUTXDFliIvq3+r6VI7BGzi6yXCZSbMiEvJYo=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=VfeDA2ntD2A6A8rVIMHLYdB0UD35qsrcpyzddVxVd3eziYxFDYS6KsSG4gmR9DSUU
-	 yQEekc0zu8o/YdXb+xpL1oYtBRhQblENp7EpQ9CsiP/dWLwNqHvtaj8NHh6+rCTpbz
-	 0nomhn026dGIzHyV4+Lq3thfTvCIAVvRoidmh4xGqcbdkQer8ewjLGO3Hj+hJJhqwk
-	 n8gUV/7+ehMOPQIKMe5aIrcdmZSvPJrLwLbAKC3lnGaVY39XnKtMOzas4wSxsfLumN
-	 CAb0LCXy+FIFsqpWtlCqH8AF7XrQuMsVRn7vNY/zV8DNVr70/HCtx7KEFBWetMuVe9
-	 wsj8nA2C02D2w==
-Message-ID: <sashiko-outbox-189074@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC RFT v2 3/3] clk: meson: pll: Remove the dedicated n
- parameter
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Jian Hu" <jian.hu@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, neil.armstrong@linaro.org
-In-Reply-To: <20261029-meson_refactor_n-v2-3-ff4ac74e527b@amlogic.com>
-References: <20261029-meson_refactor_n-v2-0-ff4ac74e527b@amlogic.com>
- <20261029-meson_refactor_n-v2-3-ff4ac74e527b@amlogic.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 29 Oct 2026 09:57:07 +0000
+	s=k20260515; t=1793267834;
+	bh=YmRNAxJyESE0wnkrH6TNuhWwf1OgBNeC7IIYTZSjnoc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=cy8ylQ8v4phJB4hT+VhHaRbMuQJj1trYWzmGrogeRwpFbbV9XhMq/T/5Ny70VWoDp
+	 Ix8hAUY0gIhzvykVQwFo/mLWpnw7l7YWJusqwWWmbdPcij7ukHsAUXAHEQnwRqgLj0
+	 XeUzAcqVBzG/Dt7yw2iRJE/yt/sDa1Scc5iy1yh398uT8vkPKKgBBSMYwO+QRw+gVS
+	 ALp6EZfns8A5kA9g5AYeiVM06za+BSKwVmeg4QO3/ZhfPFeriOu/elHIUxPflZT8PA
+	 54CvwuRWJ4/JzQ+8kVbIeZl3O1A9AtbLrwKO3YTBqNC78jBPTo8Dtvy65G9tySlCRQ
+	 kT47aoNiIFOBg==
+Message-ID: <f3790c3a-c85c-42e0-98c8-2f3826002e2d@kernel.org>
+Date: Thu, 29 Oct 2026 09:57:08 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,303 +50,99 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: clock: qcom,camcc-sm8250: add
+ interconnect provider
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Atanas Filipov <atanas.filipov@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+ Jonathan Marek <jonathan@marek.ca>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Gjorgji Rosikopulos <gjorgji.rosikopulos@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20261016170701.1504338-1-atanas.filipov@oss.qualcomm.com>
+ <20261016170701.1504338-2-atanas.filipov@oss.qualcomm.com>
+ <20261020-bloodhound-of-remarkable-debate-11afe3@quoll>
+ <7ca815b3-4712-42e4-996d-4a1e53cad492@oss.qualcomm.com>
+ <Sm-FvdxaOiXpzzGo30wECHdQF_-LtUaJCO3mGpBUxXfnVCYjOLE5DhNWdNmOMhYdkR1RMXhPzWuHhsZJkJ_Vzw==@protonmail.internalid>
+ <20261028181040.3515955-1-atanas.filipov@oss.qualcomm.com>
+ <f0618a27-cee2-4f39-a578-fcbf3c51607a@kernel.org>
+ <zBYtlR-V2ox_dnVeOSMcJzI4WLeTqBjFSbrCEqJyODXGG08DlsA7SBaYHmy3vaaNIZWyv15641UejQAsYoLnHA==@protonmail.internalid>
+ <uqtvrqp7rsmxcloz2fgzv2jbcofd3x7y6hm6plnan5mao4t5rr@6lxub7q3duti>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-GB
+Autocrypt: addr=bod@kernel.org; keydata=
+ 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
+In-Reply-To: <uqtvrqp7rsmxcloz2fgzv2jbcofd3x7y6hm6plnan5mao4t5rr@6lxub7q3duti>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
-s) to consider:
-- [High] clk: meson: pll: CLK_SET_RATE_PARENT on ro_ops PLL DCOs breaks rat=
-e rounding
-- [High] clk: meson: pll: meson_clk_get_pll_table() fails on non-exact mult=
-ipliers
-- [High] clk: meson: meson8b: missing CLK_SET_RATE_PARENT on hdmi_pll_dco_in
-- [High] clk: meson: pll: cached 0 Hz pre-divider rate on directly programm=
-ed PLLs
---
+On 29/10/2026 01:50, Dmitry Baryshkov wrote:
+>  From my PoV, CAMNOX_AXI, is just the same NoC clock, just not being
+> wired through RPM/RPMh. From this point of view the clock can be
+> described as as an interconnect, it gives correct abstraction: no matter
+> how the camera blocks are connected or how the connection between them
+> is managed in hardware / firmware / clock devices, there is a bus (aka
+> interconnect) between those camera blocks. If at some point the clock
+> becomes managed by RPMh, it won't (significantly) change the hardware
+> description
 
-commit b0439d678a94dfead2cca909902c6363ae03f5d0
-Author: Jian Hu <jian.hu@amlogic.com>
+yeah I think it should be an icc provider - perhaps interconnect nodes 
+make sense, not for one clock but for a number of clocks and components 
+in the system JPEG, ICP voting on the bandwidth/clocks.
 
-clk: meson: pll: Remove the dedicated n parameter
+TBH my point here is more we need to soak up the CPAs clock logic in an 
+putative cpas_icc_set() routine since I'm... as sure as I can be that 
+icc_set_bw() on its own and CCF can't really capture that logic.
 
-This commit removes the dedicated pre-divider (n) field from
-struct meson_clk_pll_data and simplifies the Meson PLL rate calculation.
-Each PLL pre-divider is instead modeled as a standalone divider clock that
-serves as the parent of the PLL DCO clock.
-
-> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-> index 280842e9cb371..e6e6b9a8030c0 100644
-> --- a/drivers/clk/meson/axg.c
-> +++ b/drivers/clk/meson/axg.c
-
-[ ... ]
-
-> @@ -202,10 +240,11 @@ static struct clk_regmap axg_sys_pll_dco =3D {
->  	.hw.init =3D &(struct clk_init_data){
->  		.name =3D "sys_pll_dco",
->  		.ops =3D &meson_clk_pll_ro_ops,
-> -		.parent_data =3D &(const struct clk_parent_data) {
-> -			.fw_name =3D "xtal",
-> +		.parent_hws =3D (const struct clk_hw *[]) {
-> +			&axg_sys_prediv.hw
->  		},
->  		.num_parents =3D 1,
-> +		.flags =3D CLK_SET_RATE_PARENT,
->  	},
->  };
-
-[Severity: High]
-Does setting CLK_SET_RATE_PARENT on a clock using meson_clk_pll_ro_ops break
-rate rounding and rate calculation in the common clock framework?
-
-meson_clk_pll_ro_ops only provides .init, .recalc_rate, and .is_enabled, and
-does not implement .determine_rate or .round_rate, so clk_core_can_round() =
-is
-false.
-
-In drivers/clk/clk.c, clk_core_round_rate_nolock() checks:
-
-	if (clk_core_can_round(core))
-		return core->ops->determine_rate(core->hw, req);
-	else if (core->flags & CLK_SET_RATE_PARENT)
-		return clk_core_round_rate_nolock(core->parent, req);
-
-When CLK_SET_RATE_PARENT is set on a clock that cannot round its own rate,
-clk_core_round_rate_nolock() and clk_calc_new_rates() treat the clock as a
-1:1 pass-through of its parent and set the rate to the parent pre-divider
-rate (24 MHz or 48 MHz) instead of the multi-GHz DCO frequency.
-
-This affects child dividers with CLK_SET_RATE_PARENT when consumer drivers
-call clk_round_rate() or clk_set_rate(). The same pattern is also added on:
-
-  - sm1_gp1_pll_dco and g12a_hdmi_pll_dco in drivers/clk/meson/g12a.c
-  - gxbb_hdmi_pll_dco, gxl_hdmi_pll_dco, and gxbb_sys_pll_dco in
-    drivers/clk/meson/gxbb.c
-  - s4_fixed_pll_dco in drivers/clk/meson/s4-pll.c
-
-Should these meson_clk_pll_ro_ops DCO clocks omit CLK_SET_RATE_PARENT (and
-use clk_regmap_divider_ro_ops for their pre-dividers)?
-
-> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> index 1ea6579a760f3..a7e3f8c8eb783 100644
-> --- a/drivers/clk/meson/clk-pll.c
-> +++ b/drivers/clk/meson/clk-pll.c
-
-[ ... ]
-
-> +static int meson_clk_get_pll_table(unsigned long rate,
-> +				   unsigned long parent_rate,
-> +				   unsigned int *m,
-> +				   struct meson_clk_pll_data *pll)
-> +{
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	for (i =3D 0, ret =3D 0; !ret; i++) {
-> +		if (!pll->table[i].m)
-> +			return -EINVAL;
-> +
-> +		if (pll->table[i].m =3D=3D rate / parent_rate) {
-> +			*m =3D pll->table[i].m;
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
-[Severity: High]
-What happens in meson_clk_get_pll_table() when rate / parent_rate does not
-exactly match an entry in pll->table?
-
-Previously, meson_clk_get_pll_settings() iterated over pll->table and used
-meson_clk_pll_is_better() to pick either the closest entry (when
-__pll_round_closest_mult(pll) was true) or the largest table entry with a
-rate less than or equal to the requested rate.
-
-With this change, meson_clk_get_pll_table() requires an exact match for
-rate / parent_rate and returns -EINVAL otherwise:
-
-1. Sparse multiplier tables such as sys_pll_params_table (which has a gap
-   between m =3D 68 and m =3D 84 where Meson8 CPU OPPs at 1800 MHz and 1992=
- MHz
-   fall) and meson8b_hdmi_pll_params_table in drivers/clk/meson/meson8b.c
-   will fail with -EINVAL in meson_clk_pll_determine_rate() and
-   meson_clk_pll_set_rate() when rate / parent_rate lands in a gap.
-
-2. Unlike meson_clk_get_pll_range(), which clamps to min and max and returns
-   -ENODATA, meson_clk_get_pll_table() returns -EINVAL when rate / parent_r=
-ate
-   is below the minimum or above the maximum multiplier in the table. When a
-   child post-divider runs clk_divider_bestdiv(), any candidate rate * i
-   outside the table range fails, and the fallback clk_hw_round_rate(parent=
-, 1)
-   also fails with -EINVAL because 1 / parent_rate is 0, causing
-   clk_round_rate() to return 0 Hz.
-
-3. meson_clk_get_pll_table() no longer checks __pll_round_closest_mult(pll)
-   (for example on axg_hifi_pll_dco when fractional mode is not used), and
-   leaves ret unmodified in the loop with an unreachable return 0 at the en=
-d.
-
-Should meson_clk_get_pll_table() retain the best-match and clamping behavior
-from meson_clk_get_pll_settings()?
-
-> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> index bc029c6ab622d..0c9ba079bc51a 100644
-> --- a/drivers/clk/meson/meson8b.c
-> +++ b/drivers/clk/meson/meson8b.c
-
-[ ... ]
-
-> @@ -185,15 +209,38 @@ static struct clk_regmap meson8b_fixed_pll =3D {
->  	},
->  };
-> =20
-> +static const struct clk_div_table meson8b_prediv_div_table[] =3D {
-> +	{ .val =3D 1, .div =3D 1 },
-> +	{ /* sentinel */ }
-> +};
-> +
-> +static struct clk_regmap meson8b_hdmi_prediv =3D {
-> +	.data =3D &(struct clk_regmap_div_data){
-> +		.offset =3D HHI_VID_PLL_CNTL,
-> +		.shift   =3D 10,
-> +		.width   =3D 5,
-> +		.table =3D meson8b_prediv_div_table,
-> +		.flags =3D CLK_DIVIDER_INVALID_ZERO,
-> +	},
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "hdmi_prediv",
-> +		.ops =3D &clk_regmap_divider_ops,
-> +		.parent_data =3D &(const struct clk_parent_data) {
-> +			.fw_name =3D "xtal",
-> +			.index =3D -1,
-> +		},
-> +		.num_parents =3D 1,
-> +	},
-> +};
-> +
->  static struct clk_fixed_factor hdmi_pll_dco_in =3D {
->  	.mult =3D 2,
->  	.div =3D 1,
->  	.hw.init =3D &(struct clk_init_data){
->  		.name =3D "hdmi_pll_dco_in",
->  		.ops =3D &clk_fixed_factor_ops,
-> -		.parent_data =3D &(const struct clk_parent_data) {
-> -			.fw_name =3D "xtal",
-> -			.index =3D -1,
-> +		.parent_hws =3D (const struct clk_hw *[]) {
-> +			&meson8b_hdmi_prediv.hw
->  		},
->  		.num_parents =3D 1,
->  	},
-
-[ ... ]
-
-> @@ -279,6 +321,7 @@ static struct clk_regmap meson8b_hdmi_pll_dco =3D {
->  			&hdmi_pll_dco_in.hw
->  		},
->  		.num_parents =3D 1,
-> +		.flags =3D CLK_SET_RATE_PARENT,
->  	},
->  };
-
-[Severity: High]
-Can rate requests from meson8b_hdmi_pll_dco reach meson8b_hdmi_prediv witho=
-ut
-CLK_SET_RATE_PARENT on hdmi_pll_dco_in?
-
-meson8b_hdmi_pll_dco has hdmi_pll_dco_in as its parent, and hdmi_pll_dco_in
-has meson8b_hdmi_prediv as its parent:
-
-  meson8b_hdmi_prediv -> hdmi_pll_dco_in -> meson8b_hdmi_pll_dco
-
-Because hdmi_pll_dco_in does not set CLK_SET_RATE_PARENT, when
-meson8b_hdmi_prediv resets to 0 and reports a 0 Hz rate via
-CLK_DIVIDER_INVALID_ZERO, meson_clk_pll_determine_rate() calls
-clk_hw_round_rate() on hdmi_pll_dco_in, and clk_factor_determine_rate()
-returns 0 without rounding meson8b_hdmi_prediv.
-
-This causes meson_clk_pll_determine_rate() to return -EINVAL and prevents
-clk_calc_new_rates() from propagating rate changes to program
-meson8b_hdmi_prediv. Should hdmi_pll_dco_in also have
-.flags =3D CLK_SET_RATE_PARENT?
-
-> diff --git a/drivers/clk/meson/t7-pll.c b/drivers/clk/meson/t7-pll.c
-> index 0a622f45fa368..28d563fcb1bd2 100644
-> --- a/drivers/clk/meson/t7-pll.c
-> +++ b/drivers/clk/meson/t7-pll.c
-
-[ ... ]
-
-> @@ -292,6 +346,24 @@ static struct clk_regmap t7_hifi_pll =3D {
->  	},
->  };
-> =20
-> +static struct clk_regmap t7_pcie_prediv =3D {
-> +	.data =3D &(struct clk_regmap_div_data){
-> +		.offset =3D PCIEPLL_CTRL0,
-> +		.shift =3D 10,
-> +		.width =3D 5,
-> +		.table =3D t7_prediv_div_table,
-> +		.flags =3D CLK_DIVIDER_INVALID_ZERO,
-> +	},
-> +	.hw.init =3D &(struct clk_init_data) {
-> +		.name =3D "pcie_prediv",
-> +		.ops =3D &clk_regmap_divider_ops,
-> +		.parent_data =3D &(const struct clk_parent_data) {
-> +			.fw_name =3D "in0",
-> +		},
-> +		.num_parents =3D 1,
-> +	},
-> +};
-
-[ ... ]
-
-> @@ -345,10 +412,11 @@ static struct clk_regmap t7_pcie_pll_dco =3D {
->  	.hw.init =3D &(struct clk_init_data){
->  		.name =3D "pcie_pll_dco",
->  		.ops =3D &meson_clk_pcie_pll_ops,
-> -		.parent_data =3D &(const struct clk_parent_data) {
-> -			.fw_name =3D "in0",
-> +		.parent_hws =3D (const struct clk_hw *[]) {
-> +			&t7_pcie_prediv.hw
->  		},
->  		.num_parents =3D 1,
-> +		.flags =3D CLK_SET_RATE_PARENT,
->  	},
->  };
-
-[Severity: High]
-Will t7_pcie_prediv (as well as g12a_hdmi_prediv, gxbb_hdmi_prediv, and
-gxl_hdmi_prediv) remain stuck at a cached rate of 0 Hz if the hardware
-pre-divider field is 0 at clock registration time?
-
-t7_pcie_pll_dco uses meson_clk_pcie_pll_ops and defines neither .table nor
-.range; it only programs PCIEPLL_CTRL0 (including N =3D 1) inside
-meson_clk_pcie_pll_enable(). If PCIEPLL_CTRL0 has N =3D 0 at registration,
-t7_pcie_prediv caches a rate of 0 Hz via CLK_DIVIDER_INVALID_ZERO. Because
-clk_set_rate() cannot be used on t7_pcie_pll_dco (meson_clk_get_pll_max_mul=
-tiplier()
-returns 0 when neither .range nor .table is set) and t7_pcie_prediv does not
-have CLK_GET_RATE_NOCACHE, t7_pcie_prediv->rate is never recalculated after
-meson_clk_pcie_pll_enable() writes PCIEPLL_CTRL0.
-
-Similarly, in drivers/clk/meson/g12a.c (g12a_hdmi_prediv) and
-drivers/clk/meson/gxbb.c (gxbb_hdmi_prediv and gxl_hdmi_prediv), the HDMI P=
-LL
-registers are written directly by the DRM driver in
-drivers/gpu/drm/meson/meson_vclk.c rather than through clk_set_rate(). While
-hdmi_pll_dco has CLK_GET_RATE_NOCACHE, clk_core_get_rate_recalc() only
-recalculates downward from the clock with CLK_GET_RATE_NOCACHE using
-core->parent->rate. Because the parent hdmi_prediv clocks lack
-CLK_GET_RATE_NOCACHE, their cached rate stays 0 Hz even after the display
-driver programs N =3D 1, causing meson_clk_pll_recalc_rate() on hdmi_pll_dc=
-o to
-return 0 Hz.
-
-Should pre-dividers whose registers are programmed outside clk_set_rate() be
-marked with CLK_GET_RATE_NOCACHE?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029-meson_refa=
-ctor_n-v2-0-ff4ac74e527b@amlogic.com?part=3D3
+---
+bod
