@@ -1,71 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793278298;
-	b=HWuGIRJcEoUuKEXwvxGPIWFyavMXWVTrqVGMIcRrZRGKR8ieJ627uAAaDtw+wMaNPt6b
-	 c1ZGFASTHSopf50Sv9mIRMybUWohm6Z32tc8lEas71BXJI3/d5jbLeuewp0d19UASbiTH
-	 WtYrE/8+C6egdMn1AFh3pdkWKRkdYAl0NTL5rWinulHox5+ttprskaqNMw+ZOdnLxkCLr
-	 MrPNqo+gfpi/OC9pi+uMcuMwhD/Ss2LWVL4YU9whAf/79+M/ZFcUefHUbYxlybNNxUV8B
-	 I7Lfs14m8RYtY+66SswBWBUhs75ILI9Yw4cZVPLn/hh15MsGEF52kkJG2MyrIZmAvGw==
+	t=1793278470;
+	b=rwbseKduJmDoQP/ZmIyzX00h/KL0ttFFhBmAm74kFawWyTv8fOcGSn5F9Hhb0ZEAUZnV
+	 c/P2uP7/lXbxu1KjPnx+X+JEdziGz2fsjszn4QEYXU8sGskGTYnXrhZfYrlakBJvYW2fm
+	 YryAv8sZkKpZFhMVo2+oP5CM9hJ7KFTw7AUl++asG261vjKvtRlF3TFFlBaPvwN1/aJQq
+	 FMIOJOkDnw5nMYthjufBC8Ze9az6KwhoIfBnLnEUow9GzysGk+mwApbv+7Y2S8hy7sFVl
+	 5mndcWMMH5tMe8TXsl3kwPAKxWxE1mExxIoVgRFd2xBxRmTF6swPw24oRjwRGmTzGNw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793278298;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:MIME-Version:
-	 Content-Transfer-Encoding:X-CMS-MailID:X-Msg-Generator:Content-Type:
-	 X-RootMTR:X-EPHeader:X-CMS-RootMailID:References;
-	bh=0z8I7+VZAbfeTmBO2ZoCkH8Xj6XUxaC9cA+avhAcoWY=;
-	b=Rzu1GKkmFKrddy0PkZzWYUytI8Nxsz29wHqkfqJYcKHgrDiL+5sTiyOwCP3YZzlJmQjv
-	 egGfXEwvDEoW5Ny3VZRowJrvncb8bVBIPMe/RqMsfjjvVnOrip0I4Z0vINMrfEagAcYGK
-	 TLBQZ1kqF2IHI7NYgXI4iD6nuPsangc2TN+RQd8HJWQbSM2FovXJnNfFfCAs7aXO/q0oH
-	 OeBxvw/jcONOXnOUe6Lm1jqlgGSc5Js0OFklgMoAmI4fwZUrA0A/GWaK8Rhh5YDYY1/ag
-	 OxxBxKED+EEPdygkm+nixBAayH2h81htJ9JLW069pMfBuU3gCQhuj4sdLOIfJ0N3u/A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793278470;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=3Pl5KEszsxbSEkrqz64pMGPD6Bkbga9OOvIN3MFGNLg=;
+	b=c+zxu+zch/WBOFeTNFoynbG4Hw9KbpyBR4uAT24asEdqgMkd7Opt5CmRJmB+IJgGZ2Ok
+	 K5oLuUucEJDvan0UhwCZXL5XvUl6Ndh72hinOZTpeSqCow7kqQU7fWpda9cSR0IFLezlB
+	 cbVIaFqd6nM+HPINC1CS/mHBfBeT9XkB717TWf1f4mHwGCdoFrb/DzS14qp7mUR5KIfGy
+	 u42MqeF2ZRe+YSlgZD5WoZe7Ie9iS1DL+UOlFlf+n5nYyf/8ItzhhQ+PKCqDHb/CKWHoE
+	 oOY+tKipiOe8l9OIyM3uytCOqwjMm+erypEPf6af1RsVPPMg3CmOs7Oz79dWlnxlv5Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=vWKczAz5;
-	arc=none smtp.remote-ip=210.118.77.12
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=none header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b="a2/GUOHg";
+	arc=none smtp.remote-ip=209.85.221.47
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC60606A32E
-	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 12:51:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1FC60606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EA5606A339
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 12:54:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E5EA5606A339
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=vWKczAz5
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261029125129euoutp02676be909a044954ea80f8ec93025bfe5~jARpwo3Xy2710727107euoutp029
-	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 12:51:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261029125129euoutp02676be909a044954ea80f8ec93025bfe5~jARpwo3Xy2710727107euoutp029
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1793278289;
-	bh=0z8I7+VZAbfeTmBO2ZoCkH8Xj6XUxaC9cA+avhAcoWY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vWKczAz5M8ASPmqV4EaK5jcatQg5a1jlm5jA7CUUes7awowc5hLgdhkq1BKUNgPVU
-	 tKPW3tulgsF7SSJ9yDB350acCmOP6x81D9odO1ovdZ2O0qORF/LVLq9f+0EL8qlrpG
-	 B0lgko+CzJnZzlBSuDoJMFYhcwclHm6FE0/9IwgU=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20261029125129eucas1p2e1c92c4797566ea359e2ccfa1c343cbe~jARpfWWo02295322953eucas1p2K;
-	Thu, 29 Oct 2026 12:51:29 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20261029125128eusmtip1cfc3b3e8c1081bad41a7bae8a52f0b7c~jARoy7IhX2755927559eusmtip1W;
-	Thu, 29 Oct 2026 12:51:28 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, Alim
-	Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, Brian
-	Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Henrik Grimler <henrik@grimler.se>, stable@vger.kernel.org
-Subject: [PATCH v2 2/3] clk: samsung: exynos5-subcmu: Use
- pm_runtime_get_sync() during probe
-Date: Thu, 29 Oct 2026 13:51:15 +0100
-Message-ID: <20261029125118.3191455-3-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261029125118.3191455-1-m.szyprowski@samsung.com>
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=a2/GUOHg
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-48e0d885929so1610601f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 05:54:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1793278467; x=1793883267; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=3Pl5KEszsxbSEkrqz64pMGPD6Bkbga9OOvIN3MFGNLg=;
+        b=a2/GUOHgM5+ewuUzOwHFnVfpqrW6kglZHhsqcf0ZezD/dsaTdRQUju6f5bzdp8Xkmn
+         cxiFbRGwkYg89QK6g+Meh2O3HZFHiA6OLt5ZIDaa9XKH8RB6LJFAqD2fLiZB7ujebcFL
+         VSMFXkdE1trmHAMPI8qSUOV/EXtB3u/8dCfaCaltZzOZ4bfCtdVf8u/QjXUxQaTieu5L
+         FxwKLuM/LgV76Q3UA5KUShW9VAC/masaNu19RTMrlw3LhtVZ6a9e0DI2cWn0C56wrfOy
+         avCMwK8iGWK7bbUQxs9VN01vuiVTzkKDwy9cAh8/3QQJ+K/rR49QIRHYBZ43i3UsZ9pM
+         AI0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793278467; x=1793883267;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=3Pl5KEszsxbSEkrqz64pMGPD6Bkbga9OOvIN3MFGNLg=;
+        b=NC1L0+ms0/QPrrMJiuBxJyrfkvA6CGqppZPPPiGUMak0qTDCZb6Y2uGg1EVOmLud7D
+         qTCPxFPVQ5rOao0LR5Ez2v8Uz9iqIKXsuVZZV5N+Ocu8gtXGFkGlKEO0CGUjJxMStEdi
+         a1+jRZSbs0Dm5QQk9UZlLAOk1dV/Q0Z/R9W8moyIB1iBwdqlfBaWYQTWZqEuHxyis871
+         A4+RJHhOmyr3BQ9KGwxv6WpBxJJqFoWMgJ1LaZrksPBu5SugKB5pH1hERHLM2j/mtgtY
+         FF6QUafkeQ9N/0v9YhMByFbLihdTlMxU/pD0kuQdxs8BCZWsUmEcCFEt7B+MbR8s2uqT
+         9uPg==
+X-Forwarded-Encrypted: i=1; AKwUvBxggw4UmS8Fnn4HRNiSj1etFrtP1izIt0IZhe56n8c3SWxFULmLNjjLRyKcVCFCayGArGF51fX3G1U=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJkH/yuwVqQDghEdpe3YRICbh2gJnLYFs03qsbT8Meu6N9+yoCY
+	PVdFLtbQG72yykVeOUI9hfuXfHqy00gqQrthxiGOoaHXeLFFgNVtXTwUTO/IICNi5eI=
+X-Gm-Gg: AYBFou0YoWGpK8Vm/r1WPmbktlEx4K+0hwE6bKwHJabMq/a/Qc523Icj6GMCSXWH4nd
+	M88TnWVnVkrC09i2WKSDfkH/3GQf0wY45/8eJ/NO7pusHoxQsOxX3UDtxiyv3sDzPSojbnZe4GY
+	ndO/mWnaCSKz4sRqF/GCb+4p9UdeE8IUIRfKIvZ95YtryE9WCzUzkPuXQLMYHfKZZtPdNtUobWi
+	J41yAZnpS0exYp5BmSzFylpMc9vnOR3ex4eGe+RQ9pAU0GrLkkRB2zPkHlmNexhxasI0mzWFelE
+	6RpUB4YLTWtMz3AojGjhjOAQsHaQIQFMG3AkaXxCRD/ybLKvbE6DJT7sB2NDamm0BkdaMb8TQnI
+	IcZsE1Uvl0P1X29rnNG9tEig+QXBHkPIe9AgeXXye+H3FEpvB8nym9EzFQ5Gzwur9ijs18P/Pm0
+	kUU5R/T5JI1hAq+x+nhIOHua/9LA0HfW/BU4CTg3VbzYyKA19A65ja5QZEiejhRTiqg+MhTKHjE
+	/CxWWQ403q+T2He67Rzm1YvlBGq0tKokOHFaMq+lNowq/8hbnL0Sb0VhpoQ4cbN5MxSzUMvAFgq
+	fnzgiRsMxpe83wit+QuEi9gZoqqCIPFuYqS25zITexXwDjCIrQsIS8nhhTstLtKQ9NTfQ8TBwk5
+	g38Z1CC057cHRcmynbnDi+MAPbBjsVIONWW+owSU6IEYcB9jlRV1uTnL9peBuIGT3npg=
+X-Received: by 2002:a05:6000:46ca:b0:48e:679a:4aeb with SMTP id ffacd0b85a97d-48e679a4fbdmr2549385f8f.3.1793278466836;
+        Thu, 29 Oct 2026 05:54:26 -0700 (PDT)
+Received: from macbook.homenet.telecomitalia.it (host-95-246-144-141.retail.telecomitalia.it. [95.246.144.141])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ebc39a8sm35034622f8f.11.2026.10.29.05.54.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Oct 2026 05:54:26 -0700 (PDT)
+From: Carlo Caione <ccaione@baylibre.com>
+Subject: [PATCH v2 0/3] Fix rate rounding for Meson read-only dividers
+Date: Thu, 29 Oct 2026 13:54:18 +0100
+Message-Id: <20261029-upstream-clk-regmap-ro-divider-v2-0-7a375fd8f88e@baylibre.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -75,42 +92,53 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261029125129eucas1p2e1c92c4797566ea359e2ccfa1c343cbe
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261029125129eucas1p2e1c92c4797566ea359e2ccfa1c343cbe
-X-EPHeader: CA
-X-CMS-RootMailID: 20261029125129eucas1p2e1c92c4797566ea359e2ccfa1c343cbe
-References: <20261029125118.3191455-1-m.szyprowski@samsung.com>
-	<CGME20261029125129eucas1p2e1c92c4797566ea359e2ccfa1c343cbe@eucas1p2.samsung.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/42OQQ6CMBBFr0K6dgwtkYgr72FYtGUKo2DJFBoJ4
+ e4WvICLv3jJz/t/FQGZMIhbtgrGSIH8O4E6ZcJ2+t0iUJNYqFyVMgXmMUyMegDbv4CxHfQI7KG
+ hSA0yuAqxuBTKGZQiSUZGR59j4FH/OMzmiXbarXujozB5Xo4HUe69v8eihBzsVcnS5M5Uhb4bv
+ fRkGM/WD6Letu0LaX4K6uEAAAA=
+X-Change-ID: 20261026-upstream-clk-regmap-ro-divider-f9ee3532fbe1
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Carlo Caione <ccaione@baylibre.com>
+X-Mailer: b4 0.16.0
 
-The clocks are registered right after pm_runtime_get(), which only
-schedules a resume asynchronously and doesn't guarantee the device (and
-its power domain) is active yet. Use pm_runtime_get_sync() to ensure the
-power domain is really on while the clock registers are accessed during
-the registration.
+Meson read-only dividers can round a requested rate using a divisor they
+cannot program. The clock core may then adjust child clocks using the
+wrong parent rate.
 
-Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+This series uses the divisor already set in hardware. The first two
+patches add a missing /4 entry to the GXL and G12A HDMI divider tables so
+that all their register values can be read correctly.
+
+Signed-off-by: Carlo Caione <ccaione@baylibre.com>
 ---
- drivers/clk/samsung/clk-exynos5-subcmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- Split the HDMI divider table fix per SoC and add Fixes tags (Jerome)
+- Add a Fixes tag to the clk-regmap patch (Jerome)
+- Add Jerome's Reviewed-by
+- Link to v1: https://patch.msgid.link/20261026-upstream-clk-regmap-ro-divider-v1-0-c8216b0fb93a@baylibre.com
 
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-index 373129847301..1d7eb98b72cf 100644
---- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -103,7 +103,7 @@ static int __init exynos5_subcmu_probe(struct platform_device *pdev)
- 
- 	pm_runtime_set_suspended(dev);
- 	pm_runtime_enable(dev);
--	pm_runtime_get(dev);
-+	pm_runtime_get_sync(dev);
- 
- 	ctx->dev = dev;
- 	samsung_clk_register_div(ctx, info->div_clks, info->nr_div_clks);
--- 
-2.43.0
+---
+Carlo Caione (3):
+      clk: meson: gxbb: add the missing HDMI divider /4 alias
+      clk: meson: g12a: add the missing HDMI divider /4 alias
+      clk: meson: regmap: use the current divisor for read-only clocks
+
+ drivers/clk/meson/clk-regmap.c | 34 +++++++++++++++++++++-------------
+ drivers/clk/meson/g12a.c       |  3 ++-
+ drivers/clk/meson/gxbb.c       |  3 ++-
+ 3 files changed, 25 insertions(+), 15 deletions(-)
+---
+base-commit: 363f97a1ce635b86be7fd263d56a040fbd87bdbb
+change-id: 20261026-upstream-clk-regmap-ro-divider-f9ee3532fbe1
+
+Best regards,
+--  
+Carlo Caione <ccaione@baylibre.com>
 
