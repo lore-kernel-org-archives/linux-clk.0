@@ -1,89 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793278471;
-	b=Ta+ANyWwJpSOYQo+a/IgwlBp7YdgTzE/eOZnbWPIeaIhU6sGBiPmyjasdjtOAC1zUL3i
-	 WKvvlD4jz5hEIE3BV4WAVYr1hQWZdXwrexKTyq8VXv4YF85EVR8Ke7cHedG8A66XB8RFk
-	 VeNLkFLuU4V6IambdcTHU85UFAjnL8mRNwCEC0yJ9TpkFjwnTVi15sE3OdLXtFciXs7qd
-	 ow170i540VepG42VyErD/ugnAZ6zRHnybnCfZZpArYDPEtBxiEnAGrQVnct1x7mJtTsex
-	 aBTRHQ5mnsZMlxOU72oKs5EP3uYZvdqGetkE1u/cYrm2WaZsif23AMa68jPHEA4AfTA==
+	t=1793278472;
+	b=1zdwFKa5iv2o8MiRFJbA1JL1bTby2C+PeUjE/Hmw6ZtSIJGUSz3zc7/2j2x10rMOdGdH
+	 E6X8k5FROAWfTiN96APm2tQX9P9V313VXJytYwvvC+JgxO0u1vrAF6Kx5x1/XSGvRHu+/
+	 MNa3di9Cb2wdylAU3hmywi/Va9IWwnWrNmc1pvbp4IogLmrutZyoUus0x4Zvr5Y4y2F3a
+	 nVISYjrq0EKtrCLT+mdzsj4epiQpxo9445qLgXwJla8/vK5j6tjS8wu/BHn1jXvV3TRd9
+	 p37a20zuy5dJuO9TrS0fcDIDXkQufzzX3y46qJnREb+cRPP/yIBywnA7UJ1clJFCotg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793278471;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793278472;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=YCZa7OrCfiqCW2NQ+HdDQnKwWKIbdOgXD9yC1aIimaI=;
-	b=IVwVQOTxV0V454H4msX/td+gsJ9t3nPWimm4kBSOg85ET/7+8eVCC1vr8RrlmQIwNK+t
-	 3AO995oLp6U5nLXlWxSChe94D9Z/887C/QylV2Ic3vUJXtYFvRvNBbbB/6/qUJ3zT/ohM
-	 beSQ++yGlo2oVO8rMZg4l71yYm6Z69Xj0G/Pp5wyoXyJg+QvBbuL5vpTly9g1Cw5mbdsS
-	 8WvD35cHi9MzrMJdhQQ37XK8sbvpddVAWAyvi8Dg5C0M/UhZr6ea2hGyyPLGGDJGNRFRH
-	 Q8IqzhTME59J6WR8xMkCy6b+SR6YRFjryyQPYTvZ757j7C5rftppNEAlG/xCUbl2TAA==
+	bh=MlnO/XQNGCl3Ib1nyxoNZ+8myRyO4vnZro6S1iLdVc4=;
+	b=c8DB1EaKGj5fi4FUa7Qk9BmBxG+5j14SF2z7iz0pJxGW9gJc3E8WOOD2ojDGeKhXN6xb
+	 swpOAHKICmyvuSoBe6gS5FDfd2mDOJnxRQEVl4JdN9s9HN5KcyzGTEOIXDwK5lw3fCiak
+	 Wev6Q2KNOTTxX5F786N7vGyQYzah3rDmK/NYUDVTUJJxuQ9O1kAlCWB4yGok+IrTL7Chb
+	 vkirDBYoHLLWcJHQA3z7LFFhSeBCCgZi4GdP4YbyspevbQ0PwnaY2SkNLNY/VnhqjK9bR
+	 5jVqPcgwQj4kVdOUZhboH0UaKJYs+aHhe32e9N+e9RXC8e1zwLg9pdvm3eAW0XbdGjA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=T08D92Le;
-	arc=none smtp.remote-ip=209.85.221.43
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=bJJhj76E;
+	arc=none smtp.remote-ip=209.85.128.41
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5CE606A322
-	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 12:54:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7B5CE606A322
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0422B606A333
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 12:54:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0422B606A333
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=T08D92Le
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-48441a2ba1bso1209131f8f.1
-        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 05:54:30 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=bJJhj76E
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a35a60499eso17325155e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 05:54:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793278469; x=1793883269; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1793278470; x=1793883270; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=YCZa7OrCfiqCW2NQ+HdDQnKwWKIbdOgXD9yC1aIimaI=;
-        b=T08D92LefxbTiOmdoszmOa3NJLcJKrIGUeL1nhfMGg4Oama2vESx4fC5TWvDtpYeNX
-         RLrwtcYscDVpJaE2rWjjUUZVPpLKVzEtoFDrX1pzYlaRkaFMP4gxcor4f8yLTDdhZEjl
-         GJJXPKGJ3OkH33PbK02Ugzxw9SUxJDteNgzyPPUq3V1/N2LBjQSyvqkfwRU8W/zeIDOq
-         CiMQhJ1+QcrdWSVU6Nw1iwVeZGiCd8vit2aHM3/FC6d+lqWxp7jt3OvznfYEi+4D4Lhi
-         0DABHB7s7X/9bMmeKF0WvKdrF54n3VaU7OvFzjLsLcxijtCmGfzzSijuIVTBrUZLFN1q
-         WliA==
+        bh=MlnO/XQNGCl3Ib1nyxoNZ+8myRyO4vnZro6S1iLdVc4=;
+        b=bJJhj76EIaQw+OBumHCnSnRaYtBXaK1DSRXb/r/grQwZ1utoTKdSq8NiUr2WfgkrAP
+         gphHcNLr9Xy5nlxomkmpqSSoKnkRHiG7cVpUL6XsuTLS5KbZxuZe2onTyKWp9o2Gr3CI
+         eOAz7wg4lIQtTbjMynRODrxgZdLgXJdT8qIpRpBlieP3SfPbZyR8Ug/b5r+tiFdvFCaZ
+         OAzUMRtEuNR8+xfRTdXHEFoeqnM/ctiJEzGdFSGrR0AU0j/TFGuE9w0mmm+Y6WLEadAC
+         CXrKbKMF9OZ7NRAozHHg9yJPbrFiCz9JH7YmqWxpJDMWnH1xBA+jPGd2mC8ckafhZ7nk
+         1J5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793278469; x=1793883269;
+        d=1e100.net; s=20260707; t=1793278470; x=1793883270;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=YCZa7OrCfiqCW2NQ+HdDQnKwWKIbdOgXD9yC1aIimaI=;
-        b=zrrcAjmAqfZfksJgjROjSeLpBLwBhmdLG8LjKGsD4OYgOlizyccRjxnjKKTaDED6II
-         ddl0QwR/vHkGnAVEmq2G2htsVuTUd3q6J9neGb+LvLhz57GrPOAtvDKm8AO216cVapz4
-         f2JA9mxKf+M2UMKUCcacz+3rhyui/5LLqZJOXPZYOg7NkmNbmyqmsvfffQ9vQCmhVWcH
-         MVqPey5ozfdOZ7FBAj6H42mHbds7tkNgVAAYDbHjF2NWaCq3339vODrXVcwPZB68O2Or
-         YUgNrPo7Dtz+fTU+29V36vFjuqprVpxK3w1IkFmMR4RiP3deBJlxDimbfkHo82DykS+P
-         7n/A==
-X-Forwarded-Encrypted: i=1; AKwUvBw+426EHPaEVx3qZTLYddkGOBz2S25qoUfMqkWsr+8ujiXXLoVG++70v0LlTbZ9eg0xyvRzK4Znpjo=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIXNv4W9vFftxyjUH9MjlEc2B2p0lusIi2Z/HRMY0y/yitQUNr0
-	0gZAF9Qs7UQcxu1/oxagWN5xh/J/kVopkM5cX47QNLyAJltZqMhfdA8pWbff63xfKvc=
-X-Gm-Gg: AYBFou3wed6/SSv+RYm3UdkECkCMGXPKQZqMNGYW0CrHdapYqP3vmZuJLokbI5T35I5
-	Zqcfx6juMhVtOkP7i3gMSXcdiQV+biaj9BctyEVKXRvEpxwI3ktg4L6RiDdjdsoo4hOa5AB7tt1
-	Nw6w2xXe7ShxG1/mBsF3OXgt1LkwLsdUXG+J6MG64xstD3FNMTe/3QZxVS1ccy9iWuix2SBglOC
-	DpoIRpYyJgLA3I3xuRlmLPJro2EYw4H7u/P3Jhi4t0RbIn8oWO8/FHmP9nP1+b5lrRhN9D19PTd
-	4FZC1r1MalMKKrHWg/ju443h4X4+3EshvxpcfJhBcwO+7Nipvj/DNDv/Gs5XIa5V1bbTC6Cwu42
-	rSu2MtJR4/hZaakhn1YizMbYZHEL2xeEBSto0PZE8LKL+lahieOoKTP3CyR4DXn+1fwyV8fo1mY
-	ZQ2H0qQmNIu8Gwdko4CY5nNbuJyw5HlSwyxJe9KUrSw1QVlmuCIhSIIrN9N1bzb2iPMaWlZuznT
-	DQMqiLYa5GdGZeOwrOnVSzYb228jLipbN2XZZVeSgHvzdROEipIA/z4LKiiRr9p9m192DOFgdKY
-	QSbDWZyi8lgvB+XGbuyL7+orl1H5wMHxC7d7+VGSnSfW68iSE7ib51SNJJ7Z0eINbMr5jChsIfF
-	grYHiJHsboQuKwHWjPptu/mc+ZGxDFSNdZuhe19xQqHchC4A=
-X-Received: by 2002:a05:6000:607:b0:48d:f034:7fcd with SMTP id ffacd0b85a97d-48e5d5d1486mr12914361f8f.51.1793278468880;
-        Thu, 29 Oct 2026 05:54:28 -0700 (PDT)
+        bh=MlnO/XQNGCl3Ib1nyxoNZ+8myRyO4vnZro6S1iLdVc4=;
+        b=DuVp2XcYRL8U+xzmeddp5rG6iD0zSxplAlqrrhiXJEzGWfO663TYito3GTA0x72hrZ
+         LPC/3W+YpA64ybvcv9EAhl+4QXtm95He/ubvDuOlLY7nc65sqIsP6adfzlAkz70d4wm0
+         dn1XK4hecHTXRCCT1PE46xeDYqACv4Ar0kb9xAe+wgWxVVyCiodJJHRfeMItDFZrTapY
+         XMnymXRDvbQU7PafY1MnHlhOGmY7SvTeh15m82d3PzBaP78vmYuyz3B/kZFada1q7gVv
+         /jwE4lmc0+Z2bGezy7V+1LQZXTac+mYqRUZynhXCsfOniACO22sKgyZuQG5kWprExlZt
+         yn8g==
+X-Forwarded-Encrypted: i=1; AKwUvBzPwRwE7uDS6gm0xmal1sfOjoMKcgJGZZscryEw8Ru3ixau6BJwRtebYgtCOz8HT7e3vZRg2dsO7DI=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJWUrj8nNfz/msiJ3s3FzCmKC1uDwV/zX5CCzYNx2TckJTDJYbM
+	vlo59UtmO7em6SjNmimFOo9wRKyjp+eok2MVBVs7ww5+DBWX2gszs7vHYF2nXMOmiiU=
+X-Gm-Gg: AYBFou2SMW20ubKqkxdMcsyh3Xd7zoHovWHrJ6NNZXkcXccnpQqAAEwB3u/v5FzzNyQ
+	pauS0uDnraJUSld/fi4pZexJR8MmQ3SEO3Tt1TO+Fk4c4CR3emYaA38eYR4S8xnOdYiWP2Olwt4
+	75fqn5roAL37uUWLEBEXaWHVmEe2jhv4yHZF1y/2QpGvfR99NpbaKwGKqCeVBQb5b6RaA16Npsd
+	es+zLcjgYikPNg6U9EHft9CBYFe6ByTjRrtpNmJdNsdmw7pyuoM938i1pZ1FN/4dMzUTJYGNmzm
+	r1sW7AkSXJPnlIuo8NnuhB3RC0J0VSbUjtyGE221JmayvSRgTK1fecjnNB96iETmCvVAiA9iLBd
+	+lZBEZsBZqwRe4/6qRWCT+ovWXG7izA0U8nO7cZwMJU95IYKXJEmxiSmA+yd9h3zZlImSqsmMl5
+	cBLI4v3p1u7wgeyEeenxaialMjOyT17w78ic8kKIVI+wVXgACsDWnE8f/cv6YYvFbkg3A3atulW
+	9tcR2ez+By8pjeReMBV9rB9DfUDoaQFYt5j0/i8VUqEfj3DOxG105puSrCqT+ApbKs0VwhbSe72
+	M5kTZ5TTDEvDxYRNXx8kkf6b3bZsAGPA/sIrtPRcZSy+Tgk5thSCjQ6g3gYu/aiFvutkRkq1TF8
+	lC1EdP7MmDEvuHtWAOJPTrcwHCeSCoVD6xbk05+JaO2ikyA==
+X-Received: by 2002:a05:600c:6095:b0:4a7:d9b1:b684 with SMTP id 5b1f17b1804b1-4a9643d51aamr113545565e9.2.1793278470416;
+        Thu, 29 Oct 2026 05:54:30 -0700 (PDT)
 Received: from macbook.homenet.telecomitalia.it (host-95-246-144-141.retail.telecomitalia.it. [95.246.144.141])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ebc39a8sm35034622f8f.11.2026.10.29.05.54.27
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ebc39a8sm35034622f8f.11.2026.10.29.05.54.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2026 05:54:28 -0700 (PDT)
+        Thu, 29 Oct 2026 05:54:29 -0700 (PDT)
 From: Carlo Caione <ccaione@baylibre.com>
-Date: Thu, 29 Oct 2026 13:54:20 +0100
-Subject: [PATCH v2 2/3] clk: meson: g12a: add the missing HDMI divider /4
- alias
+Date: Thu, 29 Oct 2026 13:54:21 +0100
+Subject: [PATCH v2 3/3] clk: meson: regmap: use the current divisor for
+ read-only clocks
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -95,7 +95,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261029-upstream-clk-regmap-ro-divider-v2-2-7a375fd8f88e@baylibre.com>
+Message-Id: <20261029-upstream-clk-regmap-ro-divider-v2-3-7a375fd8f88e@baylibre.com>
 References: <20261029-upstream-clk-regmap-ro-divider-v2-0-7a375fd8f88e@baylibre.com>
 In-Reply-To: <20261029-upstream-clk-regmap-ro-divider-v2-0-7a375fd8f88e@baylibre.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -107,38 +107,80 @@ Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  Carlo Caione <ccaione@baylibre.com>
 X-Mailer: b4 0.16.0
 
-On G12A, HDMI PLL divider values 2 and 3 both select /4, but only value 2
-is listed in the table. Reading value 3 therefore gives an unknown
-divisor and an incorrect clock rate.
+None of the Meson clocks using clk_regmap_divider_ro_ops set
+CLK_DIVIDER_READ_ONLY. Without that flag, the shared rounding callback
+can choose a new divisor even though these ops cannot program it. The
+clock core may then adjust child clocks using the wrong parent rate.
 
-Add value 3 to the table. This also avoids a division by zero when the
-read-only rate-rounding helper uses the value read from hardware.
+Make the read-only ops always round using the current hardware divisor.
+Parent rate changes remain allowed with CLK_SET_RATE_PARENT.
 
-Fixes: 7aa6c24697ef ("clk: meson: g12a: Limit the HDMI PLL OD to /4")
+Fixes: ea11dda9e091 ("clk: meson: add regmap clocks")
 Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Carlo Caione <ccaione@baylibre.com>
 ---
- drivers/clk/meson/g12a.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/meson/clk-regmap.c | 34 +++++++++++++++++++++-------------
+ 1 file changed, 21 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index d0d4c7b6dc82..b23b9514fa91 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -779,12 +779,13 @@ static struct clk_regmap g12a_hdmi_pll_dco = {
+diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
+index 1ed56fe63cae..002e16865109 100644
+--- a/drivers/clk/meson/clk-regmap.c
++++ b/drivers/clk/meson/clk-regmap.c
+@@ -120,26 +120,34 @@ static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
+ 				   div->width);
+ }
  
- /*
-  * G12/SM1 hdmi OD dividers are POWER_OF_TWO dividers but limited to /4.
-- * A divider value of 3 should map to /8 but instead map /4 so ignore it.
-+ * Divider values 2 and 3 both select /4.
-  */
- static const struct clk_div_table g12a_hdmi_pll_od_div_table[] = {
- 	{ .val = 0, .div = 1 },
- 	{ .val = 1, .div = 2 },
- 	{ .val = 2, .div = 4 },
-+	{ .val = 3, .div = 4 },
- 	{ /* sentinel */ }
+-static int clk_regmap_div_determine_rate(struct clk_hw *hw,
+-					 struct clk_rate_request *req)
++static int clk_regmap_div_ro_determine_rate(struct clk_hw *hw,
++					    struct clk_rate_request *req)
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
+ 	unsigned int val;
+ 	int ret;
+ 
+-	/* if read only, just return current value */
+-	if (div->flags & CLK_DIVIDER_READ_ONLY) {
+-		ret = regmap_read(clk->map, div->offset, &val);
+-		if (ret)
+-			return ret;
++	ret = regmap_read(clk->map, div->offset, &val);
++	if (ret)
++		return ret;
+ 
+-		val >>= div->shift;
+-		val &= clk_div_mask(div->width);
++	val >>= div->shift;
++	val &= clk_div_mask(div->width);
+ 
+-		return divider_ro_determine_rate(hw, req, div->table,
+-						 div->width, div->flags, val);
+-	}
++	return divider_ro_determine_rate(hw, req, div->table, div->width,
++					 div->flags, val);
++}
++
++static int clk_regmap_div_determine_rate(struct clk_hw *hw,
++					 struct clk_rate_request *req)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
++
++	/* if read only, just return current value */
++	if (div->flags & CLK_DIVIDER_READ_ONLY)
++		return clk_regmap_div_ro_determine_rate(hw, req);
+ 
+ 	return divider_determine_rate(hw, req, div->table, div->width,
+ 				      div->flags);
+@@ -176,7 +184,7 @@ EXPORT_SYMBOL_NS_GPL(clk_regmap_divider_ops, "CLK_MESON");
+ const struct clk_ops clk_regmap_divider_ro_ops = {
+ 	.init = clk_regmap_init,
+ 	.recalc_rate = clk_regmap_div_recalc_rate,
+-	.determine_rate = clk_regmap_div_determine_rate,
++	.determine_rate = clk_regmap_div_ro_determine_rate,
  };
+ EXPORT_SYMBOL_NS_GPL(clk_regmap_divider_ro_ops, "CLK_MESON");
  
 
 -- 
