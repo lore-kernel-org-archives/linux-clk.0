@@ -1,85 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793272076;
-	b=cmjV3A26Zf/lMYVWLehSuHuZX30IkVoYiTSQVfAjPPxU7YPS7q8K/R7SoFcFlX2Xv45y
-	 51Gj3lgRufG/v3SITRgb4RYeVB6yGcoLKQwrbx0ig8Dc+y0fIYDLchv/I7/LpU4NeDhdF
-	 vhaB0GZgbih9qORE3wRDrt8gM5KQsiQdnkoxrDMZiJX/nxE/LKktHPMcMfzqGKYVJvrlv
-	 mIOPrJwYkSj0d4rM4yKIK+4Hn1DGwP5RLraQm25vlvn9R8+AOb/w3psJubwqPO6TXmpKP
-	 Yz2RGWwTthH+GRYJrWPj9aRasMv/zyJJeXwnXMQtJdboBpo/K7GcQnKsh4YbfYFMnSw==
+	t=1793272077;
+	b=pQ1/41IKwchNq8w77SvwDWmIHZ44x829qym48XhNeCMU50pE98mGp2VHcih2m8Faqkdc
+	 KszOCJKftA0c9/2KMpt5qAF7t/MeGXRgsa1q4MpvNWdnsdU+5vWHDpcjAVkKyrHBPUSeO
+	 QwpzKMNJKm6m0HIRFfwF+MHiwpPY8jYQ8mU6HGewH2loRK4kpofOlYe/k/gwHzvf30dAB
+	 sHpMO4z02dXgyu9a52VGdCKgFEas4vBJJIp2unYk0fm/YUbZh5qUToa56rHSJnd3TymzI
+	 mptUXj9uR/1GnFVJo26jw3SLCejz1sJFpvAxmksdSSfPy7lxrN3nvVWoaxUv/A62QAg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793272076;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793272077;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
 	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=zpV8BOzWQIVCU32MdQbmtk3u7cepQKA+eLljtF6aqaE=;
-	b=ZWT2UMDz0A6fhsGH1igBLrx8rutV0sZUDy8rADTL+KZ3iSgjJmTed/65Ixr63ofhd+Dr
-	 VE/OUmACqh1UT2AhB3g/kYAZOiImBkpk58ISqDhthjkN31iJ0NO2p9ybfywg+cHIe6YMs
-	 kfwQUqWl9V8kEwuGSVMJkwVPUjWOAmv3oMuXq9aEVpfrvVuPqxN35xucqE6d6AJkubutB
-	 blpqOo5BPHFNhepittDM6CNTh3vzt4ku8LOPz+RY5YLlyM4jzjbNIIRWrcj2G+5YLDf3o
-	 eOaP/0vIfBVesDszgcfcwjvY17pb9uveyH+RiJVrXRH1GfZSt1yt5paBDO0G1Cx7/IQ==
+	bh=O73xnnUqQvELra/ffGr+ZGulR7alxp36K/afX4bZ+3s=;
+	b=GSE6qHZldAnnBvyuOFjd1C/ijdN7pPGtWZkLIhM1Z0/xzvMjqIsfsqHgZmcYnbXm9gR5
+	 O9Jw8EC3vlfnLlEBVGfTstutHvExzjcsu4zYDPBNLyfJRYWUICNPw66u7BPO6ExqNfJ13
+	 TS3kRcuC13TtzweH5hUhmoNhrjYu1zwhVjHpq+RPoqGhaVvtjzp6ovBxSL40IjcE0qW4S
+	 F4ooByeDlbuuaK9sa7JgtuYti7tJMeZdN25ny//g/FzUZDU7tX4eum5QASysBXpWj83B/
+	 nlEgIXtteZujZpRdvCLtCcY4tFm/BSrMgNTWXhH18LmO8WubN+r60p4tqVwjWobG1Ow==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=E1Q1RHj3;
-	arc=none smtp.remote-ip=209.85.221.51
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=b26XpTLp;
+	arc=none smtp.remote-ip=209.85.128.43
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EC2606A31C
-	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 11:07:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 92EC2606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DB3606A31F
+	for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 11:07:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D9DB3606A31F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=E1Q1RHj3
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-48bbb06e746so900523f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 04:07:55 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=b26XpTLp
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4a208d93758so20437495e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 04:07:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793272074; x=1793876874; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1793272075; x=1793876875; darn=vger.kernel.org;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=zpV8BOzWQIVCU32MdQbmtk3u7cepQKA+eLljtF6aqaE=;
-        b=E1Q1RHj3t5v0HrC4dd2WgBqjwVwEKuAhl7I5qZymdDVoR8p+f98yW5maZuoIVnVImy
-         IR0t3B45iUfeuQclRiiN1E22Vc86Yw/0C5gpuxbYqYqKfoL7DhjtyKKh8Q0slaML1O3U
-         k2nNV0TWnZOartvvt8SjO99Iq5cs+1tUecBdeMfW/xVVQvxToakPusly97WoMCjB7L7o
-         F+M31VmRDf7F2JeGoztcX0TPoKt3h5a5A2ZAeFrkjicealN9q3rJU4Ncn2HDdLRleAGL
-         OGMrfAjV5tJgDTtJmmiqMsGoEFU1rAU0jABF6+CgPMa7IqvRYt3CU7vqisGLNjDNDEXo
-         7iKA==
+        bh=O73xnnUqQvELra/ffGr+ZGulR7alxp36K/afX4bZ+3s=;
+        b=b26XpTLpKF6fBgd1SpM1HN3YP++sypJAEWKvuHcmC9SVClzkNN6Ro5HAoHq5Ih347h
+         CSu13J5X6sy5xPVlTGXIM4EfkbKz5t3s8YA86w1Z78aQQVqr5w5JEg+opd/RJtaPH05d
+         G9r9aEoqUR9M2UsEc6cRYBJSVno/2g9dSaf1gZEiTTZV99IWHJIqpmtK28yWeNodQWF6
+         7lIkO7o7U6Hick4F0ypvW4rcDlLCGoqHFhpYAdQzg/6muM1BuV882NhJP979ywAYYcxi
+         jRRaNTd1LLp8+jkfLjNLGeWDdW3RF/qxKEXAXInps/XspLHdp3iva/Z+J4yGr0oRBfiz
+         BrIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793272074; x=1793876874;
+        d=1e100.net; s=20260707; t=1793272075; x=1793876875;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=zpV8BOzWQIVCU32MdQbmtk3u7cepQKA+eLljtF6aqaE=;
-        b=dDJhwjmeaYmIg9CHIyUKuefrOkjHCDJWnBBNZbYkzhcPX8F2Df4z5mou+jzKdMrn2u
-         3QwQiGbur5Fs9c1cToMTH4mn6cUNd6sYo2at8NPwE5vpAVgytZ7/8InKEFLJageWfp6c
-         Qx+BOxECijeDYTP06CP5txwy/u27QEY1bS0WM1MTE673WucGYVZpgNBfZ5d516v0eBb/
-         YbWsqANXMCtJMPGEqTGGMCfaGZ0Sy7aBvGcnTjJal9hIpRP+5oD0BPRHunkuDXwKbNkh
-         dV0iBbw3Up/yXeGO8O9Ds4NcmnfiSmWuT5cO2HDzksn8J0NAtzlW3ue1gkjICG2fdi4F
-         4fXg==
-X-Forwarded-Encrypted: i=1; AKwUvBxW6Fpvs/GvEhRwy15W6TQuLYzIgp/yJNSNstOMoToOSPMF3GZDLJXtav7XKIXme2SqQBLm5S6nDmc=@vger.kernel.org
-X-Gm-Message-State: AFq9FYI+rINPbtQUKj3QfN4uOg8BOTwg1ud4udkPCUjPQk52n9KC6ITU
-	eXlw/kPQjZ6MPc3IZQbnpieNOt3b9TYQFAmqkslZDxbXA5hCqWdHwoVlpEZNz/VCKuE=
-X-Gm-Gg: AYBFou0bgc2xsELD16xbuHU5E8DNZLJPfk2pLUnsIzDk13Lt4VQe5fr7WJnkrabMosj
-	+0JOPCJaKzDt2bHAwOe0/JevsfP6+Ys2KR4jdVZb5Qbhcmi98Ha65b0PDJAWh3keMK+JvAhrhdp
-	n0tJqS03tDkPkvbwJq589MfHi7eI0uyfUNtppmqQKTErQ8+0YoJ76/HYp03zWFhQSmz1aFqYTdQ
-	SAi1qyGXBmznFu9jiOqNP/vUa6G5nfipgoY5AloA8arhlSEfaJZ5iSncZp8aw/qpoZ/SGwydngy
-	emBSj2zmJLAM9aOh3RSAuLb37rA/dBLQdJhfHij4vWSZD6nVore6I9RCivqx5AGzFszQjVpffRH
-	ZgzM/UnNyqGTwxvGGf8fBfPNy/t18p0o51djqSQI51iz74ehCuKq9heXDi02TKXJ4TQ5b4m+v+A
-	ais4UWsmmGd7jUes+rVRTdy44045zV6+rrlQH7NTSdDsbcVCcRT35nHM1sms1jsAmzIl/Q5dHjV
-	Jz/0n9CD2oa0jP9iYuUJ+aIebcTM31W5thxjepGJKsQX6Vhlnktjlv4baeoJoUPeuDyCOV3Wisb
-	3LQ6gEM4og2qnZxAk1HBMsiO2H75qDbXl13te4ovYTgVR/PN
-X-Received: by 2002:a05:6000:4308:b0:48e:6f:a9c1 with SMTP id ffacd0b85a97d-48e5d5d2236mr12412698f8f.54.1793272073992;
-        Thu, 29 Oct 2026 04:07:53 -0700 (PDT)
+        bh=O73xnnUqQvELra/ffGr+ZGulR7alxp36K/afX4bZ+3s=;
+        b=eOUjSLsBd8zXkt+EQ9RRQQAbR0ns0hDOIqV1XuQ0HEEXr9ycBPYiy0Y+Twl6+4Sfit
+         1kdmwjwrrhHdK8hL6nhksj6FpzDnXE22za7OXoM3vRO+hoqA83Czsuz++kuCHFe2YJjj
+         2GJJijn5c/5EXm0k0VWDMa8HWHbWjsuP5jGiv4OGIyV0zdkEBPOeDvkfqV8JSZaFbj/8
+         6oLCJrcT3+dqDfR8T5j1MZSB2sC7my+xTU0cspLbRxSqiDZdq/tb8X6OFRh8ixtnrcOy
+         coMab03Zk5CNt1GfDoT1rvid3HARamAPAPWYxhbiQhlHoie11nZegpsE76gKIk42LsiL
+         beUg==
+X-Forwarded-Encrypted: i=1; AKwUvBxIAn++zg5G3/lbn7fBbTzYXXuzzs6h9UcTGeSdBNWM3QmdjV26d8jyE0jbBnJWMX7I7pfLCvDE0Ow=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLXWm0mO8RFZSF9vorH+sbd4idMTy23jQbE3nKXenlYfA21qiLZ
+	awRWQ0xSVafmcCy39WenjeQ8Zlf/ZWSYQdhMWW3kn8xEUNjCci2+tScCumqmCJW2O+U=
+X-Gm-Gg: AYBFou0YZsDMR6zoTDwRwdmqhyAqxRP4VKd0DsaItqCm4pKdYbuwC4cgYYMn5SsQAKD
+	0Pu+0wrVwp8lMB8poeVZ9h6mM3CNCK6M2JcrKDWGCXMpA/vFFH8tttiyLRdmTgo9x9DuFZGttxO
+	HuukYIHed2A8Usu5a9271iyblO2b27b1m0tirO+pcoUiQdChZDIfPj9fVE8zdijypEtokKonPst
+	uMpXF3rNGVUPkgUW+ItL8sSoe3G0whhDTw37i5l/yJktx5xffB+FNVZaabY3sbimywgQjDfYOON
+	K+noGInipAp0llyrKK/om9lcMSIstv8ywvFf3Yu3Af8cSqBf9L2r9qXoVxI+zwaNQ6bvb4iYjGt
+	Krdzdea+GUgJhH1XwJ5BTL2eX6kp3EccP+E0npbUg1yQMQSYp8nIBoOdsO68Zi1B+ocUymWgLXH
+	/ZH/jEYfMP1YnywKFniOSTaOrLxQNZcRiZ42ApZF2zw3JkNu6+18JYEs9hAD1/9lesiKULMNA+I
+	7h01asEPHebgEPGP6jPjyD2TE+mRvlmzqRqlhU8R+IOHgE1cPMxj7wpDJRWoP1ej2ZuNUfa5Wcx
+	0+/2zsMQVfyJDirxALuOaSsNdwbWqhrVEyz/g+ZOvoG13DlEYWC84PYGx1W7xHSOUURLjw==
+X-Received: by 2002:a05:600c:840e:b0:4a1:813f:2a60 with SMTP id 5b1f17b1804b1-4a965dd3274mr123729855e9.11.1793272075153;
+        Thu, 29 Oct 2026 04:07:55 -0700 (PDT)
 Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ecd3555sm33268688f8f.42.2026.10.29.04.07.53
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4aa7f41895fsm51035565e9.5.2026.10.29.04.07.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2026 04:07:53 -0700 (PDT)
+        Thu, 29 Oct 2026 04:07:54 -0700 (PDT)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -91,7 +91,8 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 1/2] clk: meson: add the missing HDMI divider /4 alias
+Subject: Re: [PATCH 2/2] clk: meson: regmap: use the current divisor for
+ read-only clocks
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Carlo Caione <ccaione@baylibre.com>
 Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -100,77 +101,34 @@ Cc: Neil Armstrong <neil.armstrong@linaro.org>,
  Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
  linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20261026-upstream-clk-regmap-ro-divider-v1-1-c8216b0fb93a@baylibre.com>
+In-Reply-To: <20261026-upstream-clk-regmap-ro-divider-v1-2-c8216b0fb93a@baylibre.com>
 References: <20261026-upstream-clk-regmap-ro-divider-v1-0-c8216b0fb93a@baylibre.com>
- <20261026-upstream-clk-regmap-ro-divider-v1-1-c8216b0fb93a@baylibre.com>
+ <20261026-upstream-clk-regmap-ro-divider-v1-2-c8216b0fb93a@baylibre.com>
 Date: Thu, 29 Oct 2026 12:07:46 +0100
-Message-Id: <179327206664.1865333.17830809789470255011.b4-review@b4>
+Message-Id: <179327206664.1865333.6840169064466594528.b4-review@b4>
 X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2092; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=4F+x0mrkRCPBzUwfIYOdv4hLerpsS1UqxVbKSxM7h1U=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFmPNTnULtr1sD2x1TcLbJ/GWLeN7YqGAJtxb777L4/Ov
- vuGuW87SlkYxLgYZMUUWWq4q8XfSWp9mTVd5zbMHFYmkCEMXJwCMBHnD4wMXbJWG3ZvXC29x8C+
- 7mFf0TlH34MzVNe8Fv616pd6ZZj2RkaGh8sWl4hsXrPjhRvHxGi+1Kgzid8VAmrqlSMl/v0r433
- NAQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=586; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=nrVNC7hHxSqNoUqQLRJq4FIPYelw+3Hubgb0s4fcz7E=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFmPNTmumOoztc4onjjRI3Jmxovpf2OeJ7SY5/xuKV3pv
+ 8fffgV3RykLgxgXg6yYIksNd7X4O0mtL7Om69yGmcPKBDKEgYtTACbSJczwP03juURXa+0zXYU/
+ u56nXgy9r/GN5TiH6OJfAmbdG2vuezIyXLtkpNMdHKzwRN1b7ofSgcQb547eWz7d+AjrkuO970/
+ xsgIA
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-> On GXL and G12A, HDMI PLL divider values 2 and 3 both select /4, but
-> only value 2 is listed in the tables. Reading value 3 therefore gives
-> an unknown divisor and an incorrect clock rate.
+> None of the Meson clocks using clk_regmap_divider_ro_ops set
+> CLK_DIVIDER_READ_ONLY. Without that flag, the shared rounding callback
+> can choose a new divisor even though these ops cannot program it. The
+> clock core may then adjust child clocks using the wrong parent rate.
 > 
-> Add value 3 to both tables. This also avoids a division by zero when
-> the read-only rate-rounding helper uses the value read from hardware.
+> Make the read-only ops always round using the current hardware divisor.
+> Parent rate changes remain allowed with CLK_SET_RATE_PARENT.
 > 
 > Signed-off-by: Carlo Caione <ccaione@baylibre.com>
-> ---
->  drivers/clk/meson/g12a.c | 3 ++-
->  drivers/clk/meson/gxbb.c | 3 ++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index d0d4c7b6dc82..b23b9514fa91 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -779,12 +779,13 @@ static struct clk_regmap g12a_hdmi_pll_dco = {
->  
->  /*
->   * G12/SM1 hdmi OD dividers are POWER_OF_TWO dividers but limited to /4.
-> - * A divider value of 3 should map to /8 but instead map /4 so ignore it.
-> + * Divider values 2 and 3 both select /4.
->   */
->  static const struct clk_div_table g12a_hdmi_pll_od_div_table[] = {
->  	{ .val = 0, .div = 1 },
->  	{ .val = 1, .div = 2 },
->  	{ .val = 2, .div = 4 },
-> +	{ .val = 3, .div = 4 },
->  	{ /* sentinel */ }
->  };
->  
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index 7a7b104182ff..8cb6404c0efd 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -350,12 +350,13 @@ static struct clk_regmap gxbb_hdmi_pll = {
->  
->  /*
->   * GXL hdmi OD dividers are POWER_OF_TWO dividers but limited to /4.
-> - * A divider value of 3 should map to /8 but instead map /4 so ignore it.
-> + * Divider values 2 and 3 both select /4.
->   */
->  static const struct clk_div_table gxl_hdmi_pll_od_div_table[] = {
->  	{ .val = 0, .div = 1 },
->  	{ .val = 1, .div = 2 },
->  	{ .val = 2, .div = 4 },
-> +	{ .val = 3, .div = 4 },
->  	{ /* sentinel */ }
->  };
->  
 
-Could you split the 2 changes so you can add an approriate fixes tag
-on them ?
+Fixes tag maybe ?
 
-A part from this
+With this
 
 Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 
