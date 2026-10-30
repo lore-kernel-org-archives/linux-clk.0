@@ -1,89 +1,112 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=44.202.169.35
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793384387;
-	b=tOK2Hxt5OZJqnCCIM06Fatap9UMxGDYtu42Y2P1V0WdpBNAM0OUP0LbWSZwqE2/36lbF
-	 cZvoVInjP7gTlWb6jU0U9B4gYGYE0HSkO5Ab0aUiP1pV3aQ0MUoQFYcf44fFVcDJ1njNP
-	 nbMEaqMUkhrodt+yMW56+HYW44amTSvg4X2u6ecWzVNkyXKHs3hHK2f3d+/cYBZxIPcbM
-	 MEmiDa2V8vxpkiEeojIbaLqFOWRIGWiSAJVoeMvvtf5JDts0UgvRxN/jg/UaraJJ6kDD8
-	 gnGisfGZhQQnDjN423jJ4fvkh6J0zHd4NSV/d/R2q9wKHjawqhN5sPXy/FWFS/kGs1A==
+	t=1793389744;
+	b=F4w7OYPLS3yuLknX8+BNT5zo5Wo418WCjL4dG3tDsEuIs84fYZUbOsWhs7iPEUWON56+
+	 c5r0sdZCGWoD6OnqZSjxTgDUaKEKXHm/dZhutme+lBKcjUzK2PsvsayZwU7Rp0JAT5Hqy
+	 NkOQ3UafIYlYATG/OTegb27cxxtITH6iBqL75e2FAAaBxc+hKh2DdXFQXvwndexWPIRtH
+	 00VpLn4nALSQcH0WMwl8fxde254XLlE48oLJHuRsIEZVo5kNDD5hPA7uR/E0qcXL3A3/I
+	 20kKcwXypb/Tf7WYud4j+Et1p4ooonn9vke3rW39Dnuyi3dt/vIk8lEKqVTdZyXHC9w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793384387;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=t9k0BgLWrg0mUnaOFTvLZXWxj8nv9nzACn3VaTjGowg=;
-	b=tm9UcE9ueF6nKCARlLbix9ZQY3GLVoOPMMaDn3oNRkUQZV8qTUH1LFVre2GdboCLIfz1
-	 Hbi54qbZ+xBNMZolckRD2QxxBaBKffC7w+7ivl6uzGJIHHNwO97QykjNFMpo3Zdv7pBmB
-	 X+Ngxf7RyXrkuyiHLKLf+RErDhAmzIe56jzyerRyfKN0jT6c8Gg3nEyXRXM4UZ9p0MYH9
-	 h8d7zVYxdtyVmxw2ja3KTLjl8Rkd2YAZEHTTE+E0ARgUy4uXVeeaOYPAftpCGbZJOVBHG
-	 nxlAG2jT0YnLJL9vKb0DinOK7u/861hMPV0FT0GpR3SsUxU/jzQl3kawcBY9KZ4ETgA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793389744;
+	h=DMARC-Filter:Received:Received:X-Authority-Analysis:DKIM-Signature:
+	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To:X-AntiAbuse:X-AntiAbuse:
+	 X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-BWhitelist:X-Source-IP:
+	 X-Source-L:X-Exim-ID:X-Source:X-Source-Args:X-Source-Dir:
+	 X-Source-Sender:X-Source-Auth:X-Email-Count:X-Org:X-Source-Cap:
+	 X-Local-Domain:X-CMAE-Envelope;
+	bh=Z8g4xiibKWQuuJs7EMwmXcAQgq7/Z7zwBqVvlgwyNzc=;
+	b=HXOvGJ3y5ruQcegQumqIHj42Zb3U8nylJ6VFFEO1zFOnOElUj8cxC/PSOnY+9b0hCSR9
+	 /tIJj6hYWLk6apuBTQ+DBY45anBFz6zbLT2q/1jDToDWrd4r3fVaJGOUSw/6Vg4lLwBvw
+	 FbtHC9CJRcED8e1HTnH5y4M+ZbeUjjXbzvorhguQ+RsnGHX1a0NQZQZ9wqxf9RzF6VdYX
+	 R9nxygAQ6JsglyaaaLcPTkLucZFd3aAnYjy/RZw3bg04J/3mDc/FxHHp1iLsZMFa3V3Ed
+	 XyUHiAyZ6FJMQj/kuBSBQNJDtUT/WfAFFqWQlCUiI4W0i1TRMx1JhXcxESOThyXLmvg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="GUQgTEW/";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=roeck-us.net;
+	spf=fail smtp.mailfrom=roeck-us.net;
+	dkim=pass header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=yPk7oTaK;
+	arc=none smtp.remote-ip=44.202.169.35
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F302606A31A;
-	Fri, 30 Oct 2026 18:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA6C606A325
+	for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2026 19:49:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CAA6C606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GUQgTEW/
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D351E1F000C1;
-	Fri, 30 Oct 2026 18:19:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793384387;
-	bh=t9k0BgLWrg0mUnaOFTvLZXWxj8nv9nzACn3VaTjGowg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=GUQgTEW/T3UIswkAHLvn4oCvzwgBSpQxdyWQcY9WV9CIvLZjqNBcLb72+RvfvltfV
-	 tWQhVoH5G9sEFXejJkpQvfX3R2tTbHKbt3vFjZoFyv8oZ5HSIS0h/jQQsx0axMuO4g
-	 TxA1awu6asKWvsnoVD6+k5Dzq57ldWC8SkhjAixObYwjmARl03NJLnDIHjbFgjESk/
-	 C3I4bxi1vFVuc7qtV7gsiSVE4QSR6kInbi7l+B6sJDfuMhQ4YzTqllZQCVYsQBJXKo
-	 GHhm7najGasgVQrYJENzMvqpo0qtbJsUi41wQ7Wz7x7RnfSZ1CKX/JfMkxUHvgcE/W
-	 dBVEDTKFnqzWQ==
-Date: Fri, 30 Oct 2026 13:19:43 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Cunhao Lu <1579567540@qq.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org,
-	Zhang Rui <rui.zhang@intel.com>, Eric Dumazet <edumazet@kernel.org>,
-	Lee Jones <lee@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	David Wu <david.wu@rock-chips.com>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Linus Walleij <linusw@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Jisheng Zhang <jszhang@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	netdev@vger.kernel.org, Lukasz Luba <lukasz.luba@arm.com>,
-	linux-rockchip@lists.infradead.org, mfd@lists.linux.dev,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
+	dkim=pass (2048-bit key, unprotected) header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=yPk7oTaK
+Received: from eig-obgw-6007b.ext.cloudfilter.net ([10.0.30.166])
+	by cmsmtp with ESMTPS
+	id MkL5xMYAaLvgbMsb0xRwlP; Fri, 30 Oct 2026 19:49:02 +0000
+Received: from 162-215-252-36.unifiedlayer.com ([208.91.199.152])
+	by cmsmtp with ESMTPS
+	id MsazxmFt8kE4RMsb0xTDVL; Fri, 30 Oct 2026 19:49:02 +0000
+X-Authority-Analysis: v=2.4 cv=LuaSymdc c=1 sm=1 tr=0 ts=6ae4f4ae
+ a=QNED+QcLUkoL9qulTODnwA==:117 a=2cfIYNtKkjgZNaOwnGXpGw==:17
+ a=kj9zAlcOel0A:10 a=660iZSQnnn4A:10 a=M0FbrtG7MMAA:10 a=OuZLqq7tAAAA:8
+ a=EUspDBNiAAAA:8 a=3OfnbWqpRXkE7MXKp-4A:9 a=CjuIK1q_8ugA:10
+ a=AKGiAy9iJ-JzxKVHQNES:22 a=KPbNTLLc3YvdawN95zVk:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
+	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+	:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Z8g4xiibKWQuuJs7EMwmXcAQgq7/Z7zwBqVvlgwyNzc=; b=yPk7oTaK9jPnNUqNMPC6twzpsT
+	nytbZs7aIA1qfH8e9yM5XmhTrSl/cYbIZ9RliN0XK6PH+8fH6iMHI1gCwt/eOdzUc49xyR7pm2jYG
+	R9wLgSVekO9zz7XW1C3SjWJ2jdanQoPmO4H3xTNiPdbDJTuDCzQpc8aBllvgvys8U4au70SjQAcVr
+	9kcENVpW6s4Z+c++LnSDgqh02SbHMxe8Bio+xFCpQVb4Mg/zNG/QunFRcwYu/SoYh8Aehzm3qPknX
+	EZ4s/wFn4ZXU94FbWoY7yOx8zm4QD7ylqGwONkzT2WrVTWpzZjoPkVFtX5kt1BNNAWsdLe/GcdbYI
+	A7exSNtw==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:44054 helo=server.roeck-us.net)
+	by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <linux@roeck-us.net>)
+	id 1xMsat-00000003tHT-0RvI;
+	Sat, 31 Oct 2026 01:18:55 +0530
+Date: Fri, 30 Oct 2026 12:48:52 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Muzaffer Kadir <muzafferkadir@mainlining.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shawn Lin <shawn.lin@rock-chips.com>, linux-pm@vger.kernel.org,
-	linux-serial@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>
-Subject: Re: [PATCH 25/27] dt-bindings: arm: rockchip: Add Forlinx OK3572-C
-Message-ID: <179338438342.1201325.14780731681186218967.robh@kernel.org>
-References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
- <20261022-add-board-ok3572-c-v1-25-0b0fd85a31ee@qq.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	"Joerg Roedel (AMD)" <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krishna Manikandan <quic_mkrishn@quicinc.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	David Heidelberg <david@ixit.cz>, phone-devel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-remoteproc@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH v7 03/11] dt-bindings: watchdog: qcom-wdt: Document
+ MSM8952 watchdog
+Message-ID: <7ba73247-d832-423b-8020-21cc135cd02b@roeck-us.net>
+References: <20261030-msm8952-initial-support-v7-0-ad748ace375d@mainlining.org>
+ <20261030-msm8952-initial-support-v7-3-ad748ace375d@mainlining.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -95,18 +118,37 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261022-add-board-ok3572-c-v1-25-0b0fd85a31ee@qq.com>
+In-Reply-To: <20261030-msm8952-initial-support-v7-3-ad748ace375d@mainlining.org>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-BWhitelist: no
+X-Source-IP: 108.223.40.66
+X-Source-L: No
+X-Exim-ID: 1xMsat-00000003tHT-0RvI
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net (server.roeck-us.net) [108.223.40.66]:44054
+X-Source-Auth: guenter@roeck-us.net
+X-Email-Count: 5
+X-Org: HG=direseller_whb_net_legacy;ORG=directi;
+X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfMZCXudwsAyJ2TKKzyUvO3/Y3oE5A9iHQWnHhxFBdH841dqoZG+CQVrXMwv4zVjQHxrcL0gBkuEVMHJmDEPjBY2/6W68Gyw35cZd0V9mPIQdoWHZCmv+
+ tv1nOOH7ds779gCl4AJvwXqLc2yiz/UKehH/vEc1+H+WcKU9znWBRFdR6pJgvACSqyFTRPnnLyQmx/Cm+ZyOytZspgLGGpa2319pNexIkM/wndd0fXPJosws
 
-
-On Thu, 22 Oct 2026 00:11:22 +0800, Cunhao Lu wrote:
-> The board uses the FET3572-C system-on-module and falls back to the
-> RK3572 SoC compatible.
+On Fri, Oct 30, 2026 at 12:02:34AM +0300, Muzaffer Kadir wrote:
+> From: Muzaffer Kadir <muzafferkadir@mainlining.org>
 > 
-> Signed-off-by: Cunhao Lu <1579567540@qq.com>
-> ---
->  Documentation/devicetree/bindings/arm/rockchip.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+> Document the watchdog found on MSM8952.
 > 
+> Signed-off-by: Muzaffer Kadir <muzafferkadir@mainlining.org>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Applied.
 
+Thanks,
+Guenter
