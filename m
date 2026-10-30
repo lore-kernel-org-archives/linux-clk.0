@@ -1,57 +1,113 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793311822;
-	b=VfeVyXN+UVEfdn3VFlmsddNsIGSv2MS4JhyQEBeSUXXuI7XsTAxv/k0BKrebbJz9OP1C
-	 WLKO93CMo64Q/8hiVnhKDWXonEnSK1oQ5bgtSTK8CYnU/Gr143gnF+1g6mhNFNnS2U2vu
-	 H8/51viaszxDCpmIF9w5wIbDD9jzIYgfkpaZ1C+mgUq5XZCPrDTEQMmWUaUPGiNHftYGu
-	 eXdbRjVvI+7WDTg25IUT1k+TLvg+se6dRphXr5h1Vl3MN7fptVlsv71P5N5iGb5cmF/F0
-	 +hnj/ZMoVk1y904E6NMqPrYyBRt+6meKUUpaQeYw+RlRfWzyKDyejLrps3olb0AGZ/w==
+	t=1793321358;
+	b=1kl1mlrWBUGzj4AL6xepGGxze3a66PgK/6O1oDvJj38HHUHhUpLibH7XTSHyWI/JCB3Y
+	 2qWXN0ZJlkK7JDyj9Qbs/yJQ8pRz8UOqwrG1VeuIiBkIzEcbkWt37aTy65a3oenA47bjh
+	 j5cwgcQO2RXA4+I3+HOXowRg8RBz5gqNCgXMkgtlEu4P2az9+pkQH3SDcMh28Z/DwFbpm
+	 1RsoFixkz3mBvoGnu0/2rGLII/t+t/SkbQXEf84UACsjiw2YuF5YJImI7ouWZZ40tyq8d
+	 DOWvAfBiStBEqAbVD+xQsAJMOGKaWQOueYIiX7Drwpt2Ol4YX+zMUCBciOGAaafwZoA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793311822;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=cER8Rp0mkVj+HJCMph+6srnNJM6smXhNIXGmscx1YwU=;
-	b=jL6U1NRANsaIQrOOUdVeKSqLpNRThxF74R7DoiqCExthDBO1hxgSdPUc2h3t/s6Yetw5
-	 eF9a3p5o6KSjrznPpIxGcxrzFN2mfeZ0fH+K5nJIABHMRi1l8Rvrt8g/d3l35fH8eU9V2
-	 Nl+vzwtMC5WOY8oZyAaGeLq+DA7Y0ikWqhgnAzrOHU4yZImxrjD/RpiLURU6hi0ZDwuYD
-	 17QqGLYXI1iWKbjJFv1k7dE/wPehT+K5SQZFJto1YkrNRm/Vzty4lOraxV46psHbAvKr7
-	 gy3BB0fIqKuaH9ujdJbjDFejjmQ9LU5v8PwKYgIeiHytkHOLMY1EC1o7x0dXsx6aA4w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793321358;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=NR3OLn3RRpm9Cqw7PJJDQ7C1uwyBOEL9xRH2ABlyeNw=;
+	b=yeLu8wzAh60+hn93KiM1QngASd+gugvxMAcJ6DEINdwl5k5bSaFp1fOcaRlyxK1o4d+q
+	 P2yFaXhczvGmXmh+kX+liJO2slb92sl7i7kgrrH9elXsJFOysYPbtOybqfByUVlzb/bjM
+	 5liSuRaBD7TtgL48CSjdwaH3o/0+xo3CSm9gF83Lw/WciQJ+IuJDYYPtpj7t2nOOskuUL
+	 4lbI9PljXyOBhAz2Xip7DWG2KofBcZ6WhmZKjexbDylazkhlC5vJL83GLTX+jhxLXBjOw
+	 +KCs5wnhps4L38xLYzkXDmZDlGkxX3PI0HE5GiYs0ea/YkfnBCKYx56anVecYoFBQwQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iIedwWNr;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=mZWFBSCH;
+	arc=none smtp.remote-ip=209.85.128.46
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36651606A31A;
-	Thu, 29 Oct 2026 22:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC71606A31F
+	for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2026 00:49:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3AC71606A31F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iIedwWNr
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61CDF1F01816;
-	Thu, 29 Oct 2026 22:10:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793311821;
-	bh=cER8Rp0mkVj+HJCMph+6srnNJM6smXhNIXGmscx1YwU=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=iIedwWNr6tCBfcz03QRbc75sNGsOaMj2hWA05O5TBAwYeNG5Jvg5GerXNZqK/dEdV
-	 0fr4fojBA8G2Pt423oZIl5848i8fn1vhhI1GSlhkhlISnVLv9v7wd3C9Axa/w07it1
-	 PYKegdeyohjI81Z5xkGh7KzuEklcIbV4WFcg+decIGiDsmZgys/V1LvG+O8naGjHlU
-	 u+l3DHiIO50zk5EPosjF5Hyj0994TMjkyaW3qzwrTQPDqTxJ0BX7OaaM1AJwvtDpFA
-	 cCv05+Eodvqrl+MejBKrjzgftGwLgvAFwbpvFWmV6J+BJTIEJjypJQ0XHtJSo1daKw
-	 p9aEdnNi5a6Hg==
-Message-ID: <sashiko-outbox-190050@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v7 09/11] arm64: dts: qcom: Add initial support for
- MSM8952
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Muzaffer Kadir" <muzafferkadir@mainlining.org>
-Cc: devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, dmitry.torokhov@gmail.com
-In-Reply-To: <20261030-msm8952-initial-support-v7-9-ad748ace375d@mainlining.org>
-References: <20261030-msm8952-initial-support-v7-0-ad748ace375d@mainlining.org>
- <20261030-msm8952-initial-support-v7-9-ad748ace375d@mainlining.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 29 Oct 2026 22:10:20 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=mZWFBSCH
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4a5b2be99a8so593875e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 17:49:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793321357; x=1793926157; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=NR3OLn3RRpm9Cqw7PJJDQ7C1uwyBOEL9xRH2ABlyeNw=;
+        b=mZWFBSCHWfNScv+mYtJo4pPqB5UN/B45yA4fAL4Qu4/Uhye7VATQ3ZO+6aA/fgyzEd
+         bHlf0ptiaf7BEgVmFtcro+i4T/7est30ZQTXO2jYCQsylI+GvF3viByEYy7czkDzpc1K
+         S3f0AwtY2+KYflq4p4rqEVFYdy7ruIgQM1IShG/+6RJiJ5BL6BG+Q/wUbpGGuNhhq+cY
+         b8lMrRNbFUeQxz9txyvJn1UlKW+0rVWC1Q3VvzlpgPqjlVAscmbPCGZCQJL4wDE7HpA5
+         BXusZMeV18Td2mVZFuKBXg9HrPyTEMLPYr1cF7x0B3mBF+ZybfWpsFyP6yH3y0ldIcCR
+         YWAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793321357; x=1793926157;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=NR3OLn3RRpm9Cqw7PJJDQ7C1uwyBOEL9xRH2ABlyeNw=;
+        b=N8of5jd6mUwyfLLyeRMKpGClxQImlSEP2gwLNl5rJqMfXXBCIISzf0SN0z0RiMyOMc
+         fSA4wrohikTAoT3NY3r1zdWIdy9Z4DXdpNktPonQKgMkBWDTVzqnf1tTbx4bZGwBP80C
+         olfRb0pgYBnpuHeEK7ROq5YElnPwBurdfzdmLFDYlIt5jsH3bbt2oC5PvfHDQnJIjIBG
+         VBuyux2yyt5FHpdHHRDC4ehDfBIeZgD0qMGQzmUCMKFtxw7lX0xGCXWVdZCg+BEbjrsi
+         QK0ch9XvWB61VF/MGv9txuVVxzEzlgJxgtKLpFKaXYqbDHvyMD7RdEPr3F8e/X7QdqS6
+         Ujvg==
+X-Forwarded-Encrypted: i=1; AKwUvByl9aTWiTZ27TpALTjkeBLMVH2vHcWSaUbpaV4CzprXVOjw6WGTtGMb70sEobKe0XMtCXUwa1phFu8=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLXTdjYlgo2BvBkwmzOeBRO8UyLaNgv2/Keg8pzfDfu77d9gEDn
+	6zKH3yB+nPTmHMUndeWrW4xOwpmDw1LYhl5AEl/Qn9rn1lOBX0zpb5eQ
+X-Gm-Gg: AYBFou2ar5loGYPuGoG1ko1SOeB2+iF+T4vyjleQidOawPKXH6VELJn6YQHXrTpRig5
+	D5t41WBXV4HthDlf0iv6053gTM8r88VoISoYG+DLApEqVyfedVNNUR/9K9vLvuh0ViCidzG65My
+	hyEKOQnswRVK5bIMk5uSjpnt53lpnHIPRuYcXDYozheofqIGWdLGBU73zJxvCf04EXoH7Pybpvo
+	7naYRJoJ89xy+8RXgTfRR1IHOgDIPiJEn5TXiL0g59BWNAbWcunxC5yxiQ03KbytmHbiyJtu42t
+	lPDMI6P8hcY4GWjFMp5HMU4byoMJZOuEdq9w9nfPF1/0Ilt2nkLrj9Fd3KR8sNbgDmVjSs6Lwxh
+	HKzQeC/ftXo6sivJptWjFpraSQ8YfhiWyEc+4w9RhdWgVki9YnvZYz0cWXkRmGI+oi1+6m5BoVv
+	fMoVsXQwW9AZDxioT4fHD5scmLQwBgRoDm9XVvAMOO9BO6RZf+LJxSu4lSQdwV/R+3DH9zzT7HI
+	uyr0dzt9nqtGW7C5DN6yP/T2f4xD1xnVwmXH0dXNktEnOttjo5JkfCRusIFxL2GoLA7ZxQqRHlz
+	cLnsLIYje2wjt5LS8IX2iutIhyaWJymH5oTF3x5JCgVMc6qpoSc1+kn2fY2TFg2aIexXRl6wrdF
+	5CJ4jQ773L4Ni0y0=
+X-Received: by 2002:a5d:5d06:0:b0:48e:2a04:4ea3 with SMTP id ffacd0b85a97d-48e6e2c05e3mr2211332f8f.8.1793321356382;
+        Thu, 29 Oct 2026 17:49:16 -0700 (PDT)
+Received: from iamyoubutArch (smal-20-b2-v4wan-173097-cust1152.vm20.cable.virginm.net. [77.97.36.129])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71b728ddsm158055f8f.9.2026.10.29.17.49.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Oct 2026 17:49:15 -0700 (PDT)
+From: Filippo Falezza <effeffe99@gmail.com>
+To: Sreeshankar K <sreeshankar0910@gmail.com>
+Cc: Filippo Falezza <effeffe99@gmail.com>,
+	andersson@kernel.org,
+	sboyd@kernel.org,
+	bmasney+clk@redhat.com,
+	jbrunet+clk@baylibre.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	rafael@kernel.org,
+	viresh.kumar@linaro.org,
+	konradybcio@kernel.org,
+	danila@mainlining.org,
+	davidwronek@gmail.com,
+	mani@kernel.org,
+	robimarko@gmail.com,
+	linux@gurudas.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v11 0/5] Add initial support for Qualcomm SM7250 SoC
+Date: Fri, 30 Oct 2026 00:48:43 +0000
+Message-ID: <20261030004903.1068342-1-effeffe99@gmail.com>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20261016042432.824-1-sreeshankar0910@gmail.com>
+References: <20261016042432.824-1-sreeshankar0910@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,293 +116,58 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
-s) to consider:
-- [High] arm64: dts: qcom: msm8952: CPU cooling-maps bound to hot trips
-- [High] arm64: dts: qcom: msm8952: MPM pin 53 collision between mdss and g=
-pio62
-- [High] arm64: dts: qcom: msm8952: missing bam_clk on cryptobam and usbbam
-- [High] arm64: dts: qcom: msm8952: missing TBU clocks on mdss_mdp and gpu_=
-iommu
---
+Hello Sreeshankar,
 
-commit 209938af6e516d37174e16e2a184d278eb7397c9
-Author: Muzaffer Kadir <muzafferkadir@mainlining.org>
+I'm bringing up mainline on a Motorola Moto G 5G Plus (XT2075-3,
+"nairo", SM7250), and your series is the base of it: I carried v9 and
+have now moved to v11, on top of next-20261021. On top of it I have the
+rest of what the phone needs at SoC level: TLMM, the apps SMMU, USB 2.0,
+UFS, SDHC, the GPU and display, interconnects, IPCC/AOSS, the modem,
+Wi-Fi, IPA, TSENS and the ADSP with the LPASS codec macros.
 
-arm64: dts: qcom: Add initial support for MSM8952
+With v11 in place of v9 (only the GCC driver differs), plus the two
+sm7250.dtsi changes below, the phone boots with no stuck clocks or GDSC
+errors, and the clock messages at boot are the same as with v9. UFS, the
+SD card, the USB gadget, the GPU and display, Wi-Fi, the modem with SMS
+and calls, and audio all work, and three s2idle cycles resume with USB,
+UFS and Wi-Fi intact, as does a wakeup by SMS.
 
-This commit adds the initial device tree source include file for the
-Qualcomm MSM8952 SoC, including support for CPUs, RPM, MPM, QFPROM,
-TSENS, TLMM, GCC, MDSS, IOMMUs, SDHCI, BLSP, USB, and ADSP.
+Tested-by: Filippo Falezza <effeffe99@gmail.com> # Motorola Moto G 5G Plus (SM7250)
 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8952.dtsi b/arch/arm64/boot/dts/=
-qcom/msm8952.dtsi
-> new file mode 100644
-> index 0000000000000..ee932f6b2a9c8
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/msm8952.dtsi
-> @@ -0,0 +1,2909 @@
+Two changes to sm7250.dtsi that I carry for the phone:
 
-[ ... ]
+The cpu-map puts core6 in cluster1 and core7 in cluster2. The kernel
+then prints "/cpus/cpu-map/cluster1: empty cluster" and drops the whole
+cpu-map, since it looks for core0, core1, ... in each cluster. SM7250
+is a single DynamIQ cluster, so I put all eight cores in cluster0, as
+sm8250.dtsi does. This is the same thing the review bot raised on 5/5.
 
-> +	rpm: remoteproc {
-> +		compatible =3D "qcom,msm8952-rpm-proc",
-> +			     "qcom,rpm-proc";
-> +
-> +		mpm: interrupt-controller {
-> +			compatible =3D "qcom,mpm";
-> +
-> +			interrupts =3D <GIC_SPI 171 IRQ_TYPE_EDGE_RISING>;
-> +
-> +			mboxes =3D <&apcs1 1>;
-> +			interrupt-controller;
-> +			#interrupt-cells =3D <2>;
-> +			#power-domain-cells =3D <0>;
-> +			interrupt-parent =3D <&intc>;
-> +			qcom,rpm-msg-ram =3D <&apss_mpm>;
-> +			qcom,mpm-pin-count =3D <64>;
-> +			qcom,mpm-pin-map =3D <2 184>, /* TSENS UPLOW */
-> +					   <49 140>, /* USB ASYNC */
-> +					   <53 72>, /* MDSS */
-> +					   <58 134>, /* USB */
-> +					   <62 190>; /* SPMI */
-> +		};
+The cluster idle states: the downstream lito devicetree uses the modes
+0x224 and 0xc24 for the two cluster power-collapse states, which gives
+arm,psci-suspend-param = <0x41002244> and <0x4100c244> rather than
+<0x41001244> and <0x4100b244>. With those values the RPMh sleep stats
+show the SoC reaching CX collapse and AOSS sleep in s2idle. I haven't
+checked what the current values do.
 
-[Severity: High]
-Does mapping MPM pin 53 to GIC SPI 72 in qcom,mpm-pin-map (and routing
-mdss through <&mpm 53 IRQ_TYPE_LEVEL_HIGH> below) collide with TLMM GPIO
-62?
+I'm happy to send both as patches on top of your series, or you can
+fold them into the next version, whichever you prefer.
 
-In drivers/pinctrl/qcom/pinctrl-msm8952.c, msm8952_mpm_map[] maps GPIO 62
-to MPM wakeup pin 53:
+On 2/5, the bot's point about ftbl_gcc_cpuss_ahb_clk_src looks right to
+me: v11 changed its source from P_BI_TCXO to DT_BI_TCXO_AO, but the
+table entry needs the parent map's source value, which is P_BI_TCXO.
+Nothing sets that rate on the phone, so I can't confirm it at runtime.
 
-	{ 45, 24 }, { 46, 25 }, { 48, 26 }, { 54, 14 }, { 58, 17 }, { 62, 53 },
+Once your series is in, I'd like to send the remaining SoC support and
+the board devicetree, so that sm7250.dtsi has a board using it. Are you
+working on any of those parts yourself? I'd rather not duplicate your
+work, and I can send them as a series that depends on yours in the
+meantime.
 
-When an interrupt is requested on a wakeup-capable TLMM GPIO via
-msm_gpio_irq_domain_alloc() -> qcom_mpm_alloc(), drivers/irqchip/irq-qcom-m=
-pm.c
-checks whether the MPM pin is in qcom,mpm-pin-map:
+I did the testing and wrote this note with the help of an AI coding
+assistant (Claude Code); the results are from the phone.
 
-	map =3D get_mpm_gic_map(priv, pin);
-	if (map =3D=3D NULL)
-		return irq_domain_disconnect_hierarchy(domain->parent, virq);
-
-Because pin 53 is present in qcom,mpm-pin-map as <53 72>, get_mpm_gic_map()
-does not return NULL for GPIO 62, so qcom_mpm_alloc() fails to disconnect
-the GIC hierarchy and instead binds GPIO 62 to GIC SPI 72, colliding with
-mdss on both MPM pin 53 and GIC SPI 72.
-
-Since MDSS is in the collapsible MDSS_GDSC power domain rather than an
-always-on MPM wakeup source, should <53 72> be dropped from
-qcom,mpm-pin-map and mdss use interrupts =3D <GIC_SPI 72 IRQ_TYPE_LEVEL_HIG=
-H>
-directly?
-
-[ ... ]
-
-> +		cryptobam: dma-controller@704000 {
-> +			compatible =3D "qcom,bam-v1.7.0";
-> +			reg =3D <0x00704000 0x20000>;
-> +			interrupts =3D <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
-> +			#dma-cells =3D <1>;
-> +			num-channels =3D <16>;
-> +			qcom,ee =3D <1>;
-> +			qcom,num-ees =3D <4>;
-> +			qcom,controlled-remotely;
-> +		};
-
-[Severity: High]
-Could omitting clocks =3D <&gcc GCC_CRYPTO_AHB_CLK> and
-clock-names =3D "bam_clk" on cryptobam (and similarly omitting
-<&gcc GCC_USB_HS_AHB_CLK> on usbbam: dma-controller@78c4000 below) lead to
-unclocked MMIO accesses?
-
-When qcom,controlled-remotely is set without bam_clk in the DT node,
-bam_dma_probe() in drivers/dma/qcom/bam_dma.c sets bdev->bamclk to NULL via
-devm_clk_get_optional(bdev->dev, "bam_clk").
-
-For cryptobam, qce_crypto_probe() in drivers/crypto/qce/core.c requests the
-DMA channels and then autosuspends via qce_runtime_suspend(), gating off
-GCC_CRYPTO_AHB_CLK (or suspends immediately via the
-PM_RUNTIME_ACQUIRE_AUTOSUSPEND guard if probe fails after
-devm_qce_dma_request()). If the crypto device is later unbound or unwinds
-from a probe failure, qce_dma_release() -> dma_release_channel() ->
-bam_free_chan() resets the BAM channels and masks interrupts at 0x00704000
-while GCC_CRYPTO_AHB_CLK is disabled.
-
-Similarly, usbbam is enabled by default while usb@78db000 is disabled, so
-bam_dma_remove() will access 0x078c4000 with GCC_USB_HS_AHB_CLK gated off
-if usbbam is unbound.
-
-Should cryptobam and usbbam specify their respective AHB clocks as bam_clk?
-
-[ ... ]
-
-> +		mdss: display-subsystem@1a00000 {
-> +			compatible =3D "qcom,mdss";
-> +			reg =3D <0x01a00000 0x1000>,
-> +			      <0x01ac8000 0x3000>;
-> +			reg-names =3D "mdss_phys",
-> +				    "vbif_phys";
-> +
-> +			ranges;
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <1>;
-> +
-> +			power-domains =3D <&gcc MDSS_GDSC>;
-> +
-> +			clocks =3D <&gcc GCC_MDSS_AHB_CLK>,
-> +				 <&gcc GCC_MDSS_AXI_CLK>,
-> +				 <&gcc GCC_MDSS_VSYNC_CLK>;
-> +			clock-names =3D "iface",
-> +				      "bus",
-> +				      "vsync";
-> +
-> +			interrupts-extended =3D <&mpm 53 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			interrupt-controller;
-> +			#interrupt-cells =3D <1>;
-> +
-> +			resets =3D <&gcc GCC_MDSS_BCR>;
-> +
-> +			status =3D "disabled";
-> +
-> +			mdss_mdp: display-controller@1a01000 {
-> +				compatible =3D "qcom,msm8952-mdp5",
-> +					     "qcom,mdp5";
-> +				reg =3D <0x01a01000 0x89000>;
-> +				reg-names =3D "mdp_phys";
-> +
-> +				interrupt-parent =3D <&mdss>;
-> +				interrupts =3D <0>;
-> +
-> +				clocks =3D <&gcc GCC_MDSS_AHB_CLK>,
-> +					 <&gcc GCC_MDSS_AXI_CLK>,
-> +					 <&gcc GCC_MDSS_MDP_CLK>,
-> +					 <&gcc GCC_MDSS_VSYNC_CLK>;
-> +				clock-names =3D "iface",
-> +					      "bus",
-> +					      "core",
-> +					      "vsync";
-> +
-> +				operating-points-v2 =3D <&mdp_opp_table>;
-> +				power-domains =3D <&gcc MDSS_GDSC>;
-> +
-> +				iommus =3D <&apps_iommu 0x17>;
-
-[Severity: High]
-Are mdss_mdp and gpu_iommu (iommu@1f08000 below) missing their TBU clocks?
-
-In drivers/clk/qcom/gcc-msm8952.c, gcc_mdp_tbu_clk (GCC_MDP_TBU_CLK) and
-gcc_gfx_tbu_clk (GCC_GFX_TBU_CLK) are registered as non-critical votable
-branch clocks:
-
-	static struct clk_branch gcc_gfx_tbu_clk =3D {
-		.halt_reg =3D 0x12010,
-		.halt_check =3D BRANCH_HALT_VOTED,
-		.clkr =3D {
-			.enable_reg =3D 0x4500c,
-			.enable_mask =3D BIT(3),
-	...
-	static struct clk_branch gcc_mdp_tbu_clk =3D {
-		.halt_reg =3D 0x1201c,
-		.halt_check =3D BRANCH_HALT_VOTED,
-		.clkr =3D {
-			.enable_reg =3D 0x4500c,
-			.enable_mask =3D BIT(4),
-
-Because neither clock is referenced in msm8952.dtsi, clk_disable_unused()
-will clear their vote bits at late_initcall. When mdss_mdp enables its
-clocks in mdp5_enable() or gpu_iommu enables its clocks in
-qcom_iommu_resume(), the MDP and GPU TBUs will remain unclocked during
-IOMMU translations.
-
-Should mdss_mdp include <&gcc GCC_MDP_TBU_CLK> with clock-names "tbu", and
-gpu_iommu include <&gcc GCC_GFX_TBU_CLK> with clock-names "tbu"?
-
-[ ... ]
-
-> +	thermal-zones {
-> +		qdsp-thermal {
-> +			thermal-sensors =3D <&tsens 2>;
-> +
-> +			trips {
-> +				qdsp_alert0: trip-point0 {
-> +					temperature =3D <75000>;
-> +					hysteresis =3D <2000>;
-> +					type =3D "hot";
-> +				};
-> +			};
-> +		};
-> +
-> +		cpu4-thermal {
-> +			thermal-sensors =3D <&tsens 5>;
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip =3D <&cpu4_alert1>;
-> +					cooling-device =3D <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
-> +
-> +			trips {
-> +				cpu4_alert0: trip-point0 {
-> +					temperature =3D <75000>;
-> +					hysteresis =3D <2000>;
-> +					type =3D "passive";
-> +				};
-> +
-> +				cpu4_alert1: trip-point1 {
-> +					temperature =3D <85000>;
-> +					hysteresis =3D <2000>;
-> +					type =3D "hot";
-> +				};
-> +
-> +				cpu4_crit: cpu-crit {
-> +					temperature =3D <110000>;
-> +					hysteresis =3D <2000>;
-> +					type =3D "critical";
-> +				};
-> +			};
-> +		};
-
-[Severity: High]
-In cpu4-thermal (as well as cpu5-thermal, cpu6-thermal, cpu7-thermal, and
-cpu0-3-thermal below), map0 binds the CPU cooling devices to cpuX_alert1
-(which has type =3D "hot") while leaving cpuX_alert0 (type =3D "passive")
-unbound, and omits polling-delay-passive.
-
-In the thermal framework, thermal governors ignore THERMAL_TRIP_HOT trips
-when managing cooling devices, for example in
-drivers/thermal/gov_step_wise.c:step_wise_manage():
-
-	for_each_trip_desc(tz, td) {
-		const struct thermal_trip *trip =3D &td->trip;
-
-		if (trip->temperature =3D=3D THERMAL_TEMP_INVALID ||
-		    trip->type =3D=3D THERMAL_TRIP_CRITICAL ||
-		    trip->type =3D=3D THERMAL_TRIP_HOT)
-			continue;
-
-		thermal_zone_trip_update(tz, td, td->threshold);
-	}
-
-In addition, without polling-delay-passive in these zones,
-tz->passive_delay_jiffies is 0, so monitor_thermal_zone() in
-drivers/thermal/thermal_core.c will not schedule periodic polling while a
-passive trip is active (and pid_controller() in
-drivers/thermal/gov_power_allocator.c divides by
-jiffies_to_msecs(tz->passive_delay_jiffies)).
-
-Should map0 in cpu4-thermal, cpu5-thermal, cpu6-thermal, cpu7-thermal, and
-cpu0-3-thermal reference the passive trip (cpuX_alert0) instead of
-cpuX_alert1 (or change cpuX_alert1 to type =3D "passive"), and define
-polling-delay-passive on those zones?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261030-msm8952-in=
-itial-support-v7-0-ad748ace375d@mainlining.org?part=3D9
+Thanks,
+Filippo
