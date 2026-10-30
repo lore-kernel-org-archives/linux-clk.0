@@ -1,72 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793359398;
-	b=fpOJPDBwNnK+FcHHZxxlUcCrdBm9KXe7ggVJJd6OXMwjkBernfxq+SIgXfr5/hN/0kws
-	 FSqtiurxRw3I3lh/Jtt0GeFyn0W3QP8RB3GdRsAaoRCaQxo4j6XR1V8cuPhoiRSYzLSi6
-	 +B1ZWgQ898dcVzYN55EO21DUenNfcmKA+B0ejS0h8i/bkRrbUqimDun4Ad/GL4S5Y569R
-	 b8QGDEnGeXIyo7ZG7sFL4jorK5XOriWcF8sNAfeTLl+WuBzs5fUWqvYnWc+KjnexMHbxc
-	 Z40shyXi+7JrVXGGNtYF/7EF2rHhsboI70cI3iWtGKdZSXeqH8x5l2jiCPCAQNlRyWg==
+	t=1793359447;
+	b=Drb9fMYjFt7DEalywKUXtkw+9OvKk/PQ1UXZOIP+9QG4HHzE2GylpnoT06ak4gs3lCwY
+	 NfLXd+mb2RbGBgatOCQ6QHF3AFdDBmtXZEInh4Z5W8lIghX7SArKTKfIuQ34fc6YhvSPP
+	 rMRS17fisEKrgIAMzToFhPUQ0iM3A4JJ3+trRNBIKuOwx04xzDzCfxmBzqslG8+imLrWx
+	 Dpt/kM4AHxhfR36qkYc+D5E6FDkbQgVUAXTefKlY/enWX7zf95MW+h1jsz82IIPw9XRkx
+	 OQnFDkeKiS/XHrTh1Jqyn4OWivDhKH7bF1FSVWI81qPMK00n3iFZ7WAAE3pPeCTMb+g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793359398;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=GqD8gV1VbR94HboJm2ZWYB3hzF1YyVBGt4mXsTw30gc=;
-	b=0K5jzIX4tjpgTh6UvAIibohCzyU2L6x1RKfVxUHh+LU4nrQVmU9xk5WDbWQuKOQvP0Ud
-	 qMMBc66Es8IuSnyOIRH93BdyDY2529xI4vBcLtyncdUbuWUo8oXWKDhcZs6NjS/Vubjdz
-	 HaArkmxwsYEjwz4IAdWa15Ju6hQUJzj50JYxA1iWAHvwAinMbkrsc2i3eCnaPeQ70myJc
-	 Ok3+FWnYzwYHtc9Lbo23/0M8mfwQpLHUtc8Dh6JpFM8pmGoMfo//sDudT/+aoubLf6hkM
-	 fmaGNwDe+UEiySQd718REM8YiAGiA8wUskcAWIR3Vz3Rc0LwXaXxdnc/hiS1qRuG5UQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793359447;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=batD5VdW88T/18mgZ0vW+xFtqqRPwtJw+1uYjSTAfvg=;
+	b=OLQyFAeHTkcSbTLfH+I7PY2fGbVIgVt+q7l6csBNI4AY6q2oaJPSLOZS1bEe99mE2M9o
+	 CeURC3v4LL5mIGdPyKIY19tBbn+8yaqbz01tlAzu7czA4MT7cBgCJxYZ8uTppu+7uUI+k
+	 rad1PQnf+zXSaEaM0kXQsxAoZlLVk42m3MpBZSIB14qWZodZLLCt+1MMAwoqtSftSIOl8
+	 1EmgZf0JN56+Ay7qMdT4b4UZBDSprkIw1mq6mLTkdAR2dTb87u5EvHYuktaAOOPKFsBkI
+	 dMEJoooVHYyk967wLsagXdZjZRNhVMtUo1kooN7+Yt/vLug7JJ7Dr9g9WkZj8hOLVEQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=o5D5kxem;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UAbYgCfp;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB942606A31C;
-	Fri, 30 Oct 2026 11:23:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BB942606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3A9606A31F;
+	Fri, 30 Oct 2026 11:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=o5D5kxem
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 591D063C;
-	Fri, 30 Oct 2026 12:21:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1793359261;
-	bh=YhQvMqYGsNMsZuibcxcTlPG0LBgEnS9OCb4qiH2A3k8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o5D5kxemIEyF4yBozq8fTa89N+/Wzi7bA2crxPUq3aQMTLzQTw99Sb6nDDnqw9qgT
-	 CqMocAYB/EhZvwAYDNsDIBALcnb8qTsfL4n+sAl6utPey5FtX50WFnc1McEqHyXZLN
-	 Wx7iZIJMZpdljOlh+sxtXnuau6u1gCM4Y/306WrA=
-Date: Fri, 30 Oct 2026 13:23:14 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH 07/11] dt-bindings: clock: renesas,r8a78000-cpg: Add PWM
- clocks
-Message-ID: <20261030112314.GD2587681@killaraus.ideasonboard.com>
-References: <cover.1793026273.git.geert+renesas@glider.be>
- <e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be>
- <20261028132937.GL15441@killaraus.ideasonboard.com>
- <CAMuHMdXycpJ6COtiAA-2oRRfHSfLK40n2cacStW15QJRN3EfLQ@mail.gmail.com>
- <20261028163940.GA2673734@killaraus.ideasonboard.com>
- <CAMuHMdVOT+DTZum525kmYfP+jzzPrxMnEeRAkapxOMGz4XMHBA@mail.gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UAbYgCfp
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2879F1F000C1;
+	Fri, 30 Oct 2026 11:24:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793359447;
+	bh=batD5VdW88T/18mgZ0vW+xFtqqRPwtJw+1uYjSTAfvg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=UAbYgCfpFGcpaiGD8+RH0ecmg27j9/x8okMXUjlmytAKSYKt+x/tJngtwaCk16+0v
+	 Id/t6SqMt097czvY+oAqq7MZ38dsXTQekJ1q3tszw3uep+UpX3TWQsws+y9Xnk1PZ8
+	 aS3cC3JtHs0GqhX/dNnKBpZODA0hUorKcMaI8mrajeS6W0MY+8vbmtqDPRMeyf1Kvy
+	 smZtxDKFkh6NiF7e58uXouFp85Tpzbq24iglQeT6ip13Z4saBkYee8gfvw6p1PfG1f
+	 n8eirEqX3GHOA9vv8JgWmHoCAwZflTXDtLmZ/m746MPxaFTz1L2VCkV0SATCSNd5CF
+	 E0kcl33uUVB2A==
+Date: Fri, 30 Oct 2026 12:24:03 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Cercueil <paul@crapouillou.net>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, letux-kernel@openphoenux.org, 
+	kernel@pyra-handheld.com, Paul Boddie <paul@boddie.org.uk>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: Add Ingenic X1600 CGU bindings
+Message-ID: <20261030-dandelion-mushroom-of-tranquility-1b04bd@quoll>
+References: <cover.1792955907.git.hns@goldelico.com>
+ <13abd95aaab56ce5c9dc565db7f0198162b0c166.1792955907.git.hns@goldelico.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -78,132 +63,89 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVOT+DTZum525kmYfP+jzzPrxMnEeRAkapxOMGz4XMHBA@mail.gmail.com>
+In-Reply-To: <13abd95aaab56ce5c9dc565db7f0198162b0c166.1792955907.git.hns@goldelico.com>
 
-On Thu, Oct 29, 2026 at 10:08:28AM +0100, Geert Uytterhoeven wrote:
-> On Wed, 28 Oct 2026 at 17:39, Laurent Pinchart wrote:
-> > On Wed, Oct 28, 2026 at 03:43:42PM +0100, Geert Uytterhoeven wrote:
-> > > On Wed, 28 Oct 2026 at 14:29, Laurent Pinchart wrote:
-> > > > On Mon, Oct 26, 2026 at 03:55:23PM +0100, Geert Uytterhoeven wrote:
-> > > > > Add definitions for the clocks used by the PWM modules on R-Car X5H:
-> > > > >  - R8A78000_CPG_SGASYNCD16_PERW_MAIN,
-> > > > >  - R8A78000_CPG_S0ASYNCD8_PERW_MAIN.
-> > > > > Include R8A78000_CPG_SGASYNCD8_PERW_MAIN for ordering consistency.
-> > > > >
-> > > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > >
-> > > > > --- a/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-> > > > > +++ b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-> > > > > @@ -28,5 +28,8 @@
-> > > > >  #define R8A78000_CPG_SGD8_PERW_BUS           18
-> > > > >  #define R8A78000_CPG_SGD32_PERW_BUS          19
-> > > > >  #define R8A78000_CPG_S0D24_HSCN_OTHER                20
-> > > > > +#define R8A78000_CPG_SGASYNCD8_PERW_MAIN     21
-> > > > > +#define R8A78000_CPG_SGASYNCD16_PERW_MAIN    22
-> > > >
-> > > > Could you also add R8A78000_CPG_SGASYNCD4_PERW_MAIN and
-> > > > R8A78000_CPG_SGASYNCD32_PERW_MAIN for ordering consistency ? The
-> > > > dependency patch should then also include R8A78000_CPG_SGD4_PERW_BUS and
-> > > > R8A78000_CPG_SGD16_PERW_BUS, as well as
-> > > > R8A78000_CPG_S0D{1,2,4,8,12,16}_HSCN_OTHER.
-> > >
-> > > I could add them, but do you have any need to refer to them from DT?
-> > > So far I only added clocks that are listed as clock supplies of on-SoC
-> > > modules, e.g. R8A78000_CPG_SGASYNCD8_PERW_MAIN is supplied to the
-> > > Timer Unit (TMU)).
-> >
-> > So we have two conflicting goals here. One of them is to only add clocks
-> > that we have validated to exist (and ideally work as documented). The
-> > other is to keep renesas,r8a78000-cpg.h readable. We won't be able to
-> > satisfy them both fully.
-> >
-> > I think we previously discussed adding whole groups of dividers in one
-> > go, as some sort of middle-ground approach. Those are clocks that are
+On Sun, Oct 25, 2026 at 08:18:24PM +0100, H. Nikolaus Schaller wrote:
+> Add the device tree bindings and the clock ID definitions for the
+> Clock Generation Unit (CGU) of the Ingenic X1600 SoC.
 > 
-> That is what did in this and the previous patch: we need
->   - R8A78000_CPG_SGASYNCDn_PERW_MAIN for n=16, and added the one for
->     n=8, too.
-
-That's missing n=4 and n=32. While SGASYNCD32 isn't referenced in the
-datasheet, SGASYNCD4 is (in SCIF and HSCIF). Maybe that's just an
-oversight ?
-
->   - R8A78000_CPG_SCPBUSDn_SCP_MAIN for n=16, and added the ones for
->     n=1,2,4,6,8,32, too.
->   - R8A78000_CPG_S0Dn_PERE_MAIN for n=24, and added the ones for
->     n=1,2,3,4,8, too.
->   - R8A78000_CPG_SGDn_PERW_BUS for n=32, and added the ones for n=8,
->     too.
+> The clock layout features specific I2S handling. To properly support
+> the I2S controllers on the X1600 without relying on complex compound
+> dividers that are not yet natively supported by the drivers, split
+> the structures to explicitly describe the additional I2S divider
+> fields. This design accounts for the current driver limitations
+> regarding division encoding while matching the hardware's internal
+> gating architecture.
 > 
-> I did not includes clocks with values for n that exist according to
-> the documentation, but are not used as suppliers for modules.
-> Of course the documentation may be incorrect or incomplete, and we may
-> need to add them later. As IDs are ABI and the list is append-only,
-> they must be added at the end, which could indeed lead to not all
-> clocks of the same group being located together.  From an ABI point
-> of view that is OK, but from a human-readability point of view it is
-> indeed suboptimal.
+> Furthermore, introduce dedicated I2S0 RX and TX clock definitions to
+> allow independent and precise routing for I2S stream usage.
 > 
-> Before, we tended to add all clocks from the clock tables listed the
-> documentation upfront, ignoring clocks that are clearly internal-only.
-> Some of them turned out not to exist later.
-> Some new clocks had to be added when the documentation was updated.
-> Nothing new here, except that the list of clocks on R-Car X5H is an
-> order of magnitude longer.
+> Co-developed-by: Paul Boddie <paul@boddie.org.uk>
+> Signed-off-by: Paul Boddie <paul@boddie.org.uk>
+> Co-developed-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> ---
+>  .../bindings/clock/ingenic,cgu.yaml           |  2 +
+>  include/dt-bindings/clock/ingenic,x1600-cgu.h | 64 +++++++++++++++++++
+>  2 files changed, 66 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/ingenic,x1600-cgu.h
 > 
-> Note that we don't use a linear array of clocks indexed by clock ID
-> in the R-Car X5H CPG driver (yet), so large holes of unused clocks do
-> not hurt (they do hurt in the SCMI driver ;-)
-> 
-> > not directly controllable. There's a risk of adding clocks that don't
-> 
-> FTR, the xDn clocks are not directly controllable; clocks like
-> R8A78000_CPG_MSO_SCP_MAIN are.  We know the latter exist, as they
-> are used.
+> diff --git a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
+> index 509df06b9c9d8..c622131c5c49b 100644
+> --- a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
+> +++ b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
+> @@ -28,6 +28,7 @@ select:
+>            - ingenic,jz4770-cgu
+>            - ingenic,jz4780-cgu
+>            - ingenic,x1000-cgu
+> +          - ingenic,x1600-cgu
+>            - ingenic,x1830-cgu
+>    required:
+>      - compatible
+> @@ -58,6 +59,7 @@ properties:
+>            - ingenic,jz4770-cgu
+>            - ingenic,jz4780-cgu
+>            - ingenic,x1000-cgu
+> +          - ingenic,x1600-cgu
+>            - ingenic,x1830-cgu
+>        - const: simple-mfd
+>      minItems: 1
+> diff --git a/include/dt-bindings/clock/ingenic,x1600-cgu.h b/include/dt-bindings/clock/ingenic,x1600-cgu.h
+> new file mode 100644
+> index 0000000000000..a0001a63a6b54
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/ingenic,x1600-cgu.h
+> @@ -0,0 +1,64 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> +/*
+> + * This header provides clock numbers for the ingenic,x1600-cgu DT binding.
+> + *
+> + * They are roughly ordered as:
+> + *   - external clocks
+> + *   - PLLs
+> + *   - muxes/dividers in the order they appear in the x1600 programmers manual
+> + *   - gates in order of their bit in the CLKGR* registers
+> + */
+> +
+> +#ifndef __DT_BINDINGS_CLOCK_X1600_CGU_H__
+> +#define __DT_BINDINGS_CLOCK_X1600_CGU_H__
+> +
+> +/*
+> + * beware of unwritten rules:
+> + * - list must start with 0
+> + * - list must not have "holes"
 
-Yes, I was talking about the clocks documented in the various
-non-PLL "hierarchy" sections.
+Please drop this, no need for individual souces to document standard
+rules. If you think documentation misses them, then please update
+writing-bindings doc.
 
-> > exist, or clocks that we won't need to reference from DT (because
-> > they're only used as parents of the MDLC-controlled module clock). Do
-> 
-> The direct parent of an MDLC-controlled module clock should be in DT.
+If this is driver requirement, then please fix your driver not to impose
+such rules, although these two particularly are fine rules.
 
-An additional difficulty is that we don't actually know what clocks the
-MDLC gates :-/
+> + * - all clock parents must have lower number than a clock itself so that
+> + *   parents are initialized before
+> + */
 
-> Higher-up parents should not be needed iff the SCMI firmware exposed
-> and/or implements the proper clock hierarchy (which it does not at
-> the moment).
+Best regards,
+Krzysztof
 
-A big *iff* :-)
-
-Even in that case, we'll have (at least) two issues:
-
-- Some modules may need to know the rate of the functional clock gated
-  by the MDLC. As those clocks are controlled through power domains,
-  they are only specified as the last cell of the power-domains
-  property, and are not listed in the clocks property. How do you
-  envision this to work ?
-
-- When multiple clocks derive from the same PLL, it's common for the PLL
-  rate to be specified through assigned-clock-rates. If we want to
-  continue doing that, we need to to make the whole clock hierarchy
-  available to DT.
-
-> Still, they can be internal enum, starting after the last
-> DT clock, like we did in other R-Car clock drivers.
-> 
-> > you think that's an issue, could it cause ABI problems in the future ?
-> 
-> An ABI problem appears only when you refer in DT to a clock that does
-> not exist in hardware.  This should be caught by testing before the
-> DT user is added.
-
-So we could add e.g. SGASYNCD32 already, as long as we don't reference
-it in DT without testing.
-
--- 
-Regards,
-
-Laurent Pinchart
