@@ -1,113 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.46
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793321358;
-	b=1kl1mlrWBUGzj4AL6xepGGxze3a66PgK/6O1oDvJj38HHUHhUpLibH7XTSHyWI/JCB3Y
-	 2qWXN0ZJlkK7JDyj9Qbs/yJQ8pRz8UOqwrG1VeuIiBkIzEcbkWt37aTy65a3oenA47bjh
-	 j5cwgcQO2RXA4+I3+HOXowRg8RBz5gqNCgXMkgtlEu4P2az9+pkQH3SDcMh28Z/DwFbpm
-	 1RsoFixkz3mBvoGnu0/2rGLII/t+t/SkbQXEf84UACsjiw2YuF5YJImI7ouWZZ40tyq8d
-	 DOWvAfBiStBEqAbVD+xQsAJMOGKaWQOueYIiX7Drwpt2Ol4YX+zMUCBciOGAaafwZoA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793321358;
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.43
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793336464;
+	b=d8YdQdvYPw14EfN3q4ftve4/8OgaCaLNBeKv0jaG8OQ/NKf4jpRoJBjMw5m6cvY00i+I
+	 bESQLVLu0La1VoqqzJtfph0O/3yla/Ly5mDfgFmx+ZZXHGK06CvbS/IuQg63o4aHXuxjq
+	 YIFn8dF/wEH01aWOkwS/SQfmKgB8DyxYvU+YrMoa42D9gxzTOvNjj0/j9hP764WZiTcd0
+	 SZttCoASk2212xVqKIA4Kv5Y3tKU2YWrcz0N3N50k0JhVX2qJ+gim9AVrChHmOtUJnSVZ
+	 TTsOAeccxT6Rn47RGO2WURJBK+MWoaz+NEmvC9wDDqXL4zg02l4cXuSahbKusfrxdrQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793336464;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=NR3OLn3RRpm9Cqw7PJJDQ7C1uwyBOEL9xRH2ABlyeNw=;
-	b=yeLu8wzAh60+hn93KiM1QngASd+gugvxMAcJ6DEINdwl5k5bSaFp1fOcaRlyxK1o4d+q
-	 P2yFaXhczvGmXmh+kX+liJO2slb92sl7i7kgrrH9elXsJFOysYPbtOybqfByUVlzb/bjM
-	 5liSuRaBD7TtgL48CSjdwaH3o/0+xo3CSm9gF83Lw/WciQJ+IuJDYYPtpj7t2nOOskuUL
-	 4lbI9PljXyOBhAz2Xip7DWG2KofBcZ6WhmZKjexbDylazkhlC5vJL83GLTX+jhxLXBjOw
-	 +KCs5wnhps4L38xLYzkXDmZDlGkxX3PI0HE5GiYs0ea/YkfnBCKYx56anVecYoFBQwQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=jVHkdup9h6VAyVXa9WHVnyDXMjAy2tnvxXwmB5v5HJk=;
+	b=3SNB6VJdDy0GgvVyVH6pXSPDP7wLSn1lzfSSYn2jzlNh4JPvKrEb2+ASfHt3HSQvjTVc
+	 +QQTnZYn51Jfs9LosWwi5cMr8a07m2gMHChI6OKFijifzF1jM88x5x1Up6aKl7NATEcML
+	 tD25y21g8zSSTO5AWk3om/S5vyddjGoOUwegr4vK8ZtVsyHWY0Ul4D3zc8k3ro/VOD6F3
+	 oJXaZfFiRsi+0NxdTKphiKfFskYintxJ07+MXre4Hj1QGCNv/isFyR4hlXylEOyDYgN/Q
+	 9yVMzZu722y1SHB5aoVf5Ot6SWWkIit4AMln969kCZe6CJCRHw//aWDXpNs0pgMiFfQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=mZWFBSCH;
-	arc=none smtp.remote-ip=209.85.128.46
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TOqAbCXz;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.43
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC71606A31F
-	for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2026 00:49:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3AC71606A31F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AB8606A31C
+	for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2026 05:01:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D0AB8606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=mZWFBSCH
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4a5b2be99a8so593875e9.2
-        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 17:49:18 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TOqAbCXz
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-82380b0f55dso163493a34.1
+        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2026 22:01:03 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1793336463; cv=none;
+        d=google.com; s=arc-20260327;
+        b=XdSdj6molHVWq4FqnDtsBHp17tiJWMXejJqI5kBfc2HmkC2/2SaMZMKRvKwt9N+Aae
+         ThgdXWRLTu3UBrua9+R/mjoZU9rfp6imApjMsNwyO8bEpbYFQjNHmutdO5EPxK8FEJA3
+         ulctLizmCFzqbCuCNVg/wMo6rkHQqsjK4XjdulfSs1xg/5qhxY7DFFBouwNPWRnCwVxt
+         oBUrTqXTI+bQFDCYGmQnfWa5dLCn9XcB62lFgbWD9XyX3Pc7EfuIAX+j18uv/S4hCAls
+         kW0pipJKPWzAbv55lsOc3hmo5oi2S4rtN04aDWR0phCX0o28HaYZXh/6Y1ibVXBbFh0v
+         gSCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=jVHkdup9h6VAyVXa9WHVnyDXMjAy2tnvxXwmB5v5HJk=;
+        fh=CGaRV0hNAj/Ej2m+Q7DVxCqOUjQjcak+4q/9ZDnV38U=;
+        b=IY5PtPwbRch35lxyVa0m6BZrTcqLboMfUugyNhDKtfKReoK4YSgudrKSJ/btMqbYos
+         qRaLCOooPGrDtlE3tynzBFABojhbKDUipw+ikfPJIZQ0RIWiuLYnzwF66uHvSk1mP3pf
+         X1eBEIzzTSSx98ODbSD7b8HnswbZ/Xb9bGaM5N/m34tUy/K8Hh6dCOYIVGpsDNOADthd
+         lwJoKvVHYeAHBxqYzAmcw9d3MYzZBF8jUBl/AaQslt3/Sc5uoBnNm2jmFKR+r/vTj83S
+         x2qozYV9lJ0sMCtdTUEiI3mkYq6meNBPvLe64V+iuDPXpvLA09YNyaxLPDqMiZHFUA8e
+         6hRg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793321357; x=1793926157; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=NR3OLn3RRpm9Cqw7PJJDQ7C1uwyBOEL9xRH2ABlyeNw=;
-        b=mZWFBSCHWfNScv+mYtJo4pPqB5UN/B45yA4fAL4Qu4/Uhye7VATQ3ZO+6aA/fgyzEd
-         bHlf0ptiaf7BEgVmFtcro+i4T/7est30ZQTXO2jYCQsylI+GvF3viByEYy7czkDzpc1K
-         S3f0AwtY2+KYflq4p4rqEVFYdy7ruIgQM1IShG/+6RJiJ5BL6BG+Q/wUbpGGuNhhq+cY
-         b8lMrRNbFUeQxz9txyvJn1UlKW+0rVWC1Q3VvzlpgPqjlVAscmbPCGZCQJL4wDE7HpA5
-         BXusZMeV18Td2mVZFuKBXg9HrPyTEMLPYr1cF7x0B3mBF+ZybfWpsFyP6yH3y0ldIcCR
-         YWAA==
+        d=gmail.com; s=20260707; t=1793336463; x=1793941263; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=jVHkdup9h6VAyVXa9WHVnyDXMjAy2tnvxXwmB5v5HJk=;
+        b=TOqAbCXzDcrtYX6aSoZuVbib/4rYY24Y4DCQ3LhuKWvVCS9F6xZT4Rwrv/i4lS4wff
+         KKJxtYshSNmvchuSCdG+iFIHj8/IikdGEOYLr0dE4P96PYd5KkeNPHB2ImobORQni4Hd
+         fIDPpVv0cTbDaHitAQWnU3csBZNaq2MlPSh3z2jNde5xMTHVyxn6Ja7BmPVqcCvxLE9i
+         36eiKXBNf8zAKGHJMzrnjV2LhHQap4VdgxW9KfkCGrNGX0ruZUYM2qAOoFqDj6HoMg9F
+         8UWY7fqDKQc/tmVHO7IGrGtOb/9k4AJO8akbQDrp8AqOvNVeYukMhb0OkoSIMVcSNkxW
+         Rphw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793321357; x=1793926157;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=NR3OLn3RRpm9Cqw7PJJDQ7C1uwyBOEL9xRH2ABlyeNw=;
-        b=N8of5jd6mUwyfLLyeRMKpGClxQImlSEP2gwLNl5rJqMfXXBCIISzf0SN0z0RiMyOMc
-         fSA4wrohikTAoT3NY3r1zdWIdy9Z4DXdpNktPonQKgMkBWDTVzqnf1tTbx4bZGwBP80C
-         olfRb0pgYBnpuHeEK7ROq5YElnPwBurdfzdmLFDYlIt5jsH3bbt2oC5PvfHDQnJIjIBG
-         VBuyux2yyt5FHpdHHRDC4ehDfBIeZgD0qMGQzmUCMKFtxw7lX0xGCXWVdZCg+BEbjrsi
-         QK0ch9XvWB61VF/MGv9txuVVxzEzlgJxgtKLpFKaXYqbDHvyMD7RdEPr3F8e/X7QdqS6
-         Ujvg==
-X-Forwarded-Encrypted: i=1; AKwUvByl9aTWiTZ27TpALTjkeBLMVH2vHcWSaUbpaV4CzprXVOjw6WGTtGMb70sEobKe0XMtCXUwa1phFu8=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLXTdjYlgo2BvBkwmzOeBRO8UyLaNgv2/Keg8pzfDfu77d9gEDn
-	6zKH3yB+nPTmHMUndeWrW4xOwpmDw1LYhl5AEl/Qn9rn1lOBX0zpb5eQ
-X-Gm-Gg: AYBFou2ar5loGYPuGoG1ko1SOeB2+iF+T4vyjleQidOawPKXH6VELJn6YQHXrTpRig5
-	D5t41WBXV4HthDlf0iv6053gTM8r88VoISoYG+DLApEqVyfedVNNUR/9K9vLvuh0ViCidzG65My
-	hyEKOQnswRVK5bIMk5uSjpnt53lpnHIPRuYcXDYozheofqIGWdLGBU73zJxvCf04EXoH7Pybpvo
-	7naYRJoJ89xy+8RXgTfRR1IHOgDIPiJEn5TXiL0g59BWNAbWcunxC5yxiQ03KbytmHbiyJtu42t
-	lPDMI6P8hcY4GWjFMp5HMU4byoMJZOuEdq9w9nfPF1/0Ilt2nkLrj9Fd3KR8sNbgDmVjSs6Lwxh
-	HKzQeC/ftXo6sivJptWjFpraSQ8YfhiWyEc+4w9RhdWgVki9YnvZYz0cWXkRmGI+oi1+6m5BoVv
-	fMoVsXQwW9AZDxioT4fHD5scmLQwBgRoDm9XVvAMOO9BO6RZf+LJxSu4lSQdwV/R+3DH9zzT7HI
-	uyr0dzt9nqtGW7C5DN6yP/T2f4xD1xnVwmXH0dXNktEnOttjo5JkfCRusIFxL2GoLA7ZxQqRHlz
-	cLnsLIYje2wjt5LS8IX2iutIhyaWJymH5oTF3x5JCgVMc6qpoSc1+kn2fY2TFg2aIexXRl6wrdF
-	5CJ4jQ773L4Ni0y0=
-X-Received: by 2002:a5d:5d06:0:b0:48e:2a04:4ea3 with SMTP id ffacd0b85a97d-48e6e2c05e3mr2211332f8f.8.1793321356382;
-        Thu, 29 Oct 2026 17:49:16 -0700 (PDT)
-Received: from iamyoubutArch (smal-20-b2-v4wan-173097-cust1152.vm20.cable.virginm.net. [77.97.36.129])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71b728ddsm158055f8f.9.2026.10.29.17.49.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2026 17:49:15 -0700 (PDT)
-From: Filippo Falezza <effeffe99@gmail.com>
-To: Sreeshankar K <sreeshankar0910@gmail.com>
-Cc: Filippo Falezza <effeffe99@gmail.com>,
-	andersson@kernel.org,
-	sboyd@kernel.org,
-	bmasney+clk@redhat.com,
-	jbrunet+clk@baylibre.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	rafael@kernel.org,
-	viresh.kumar@linaro.org,
-	konradybcio@kernel.org,
-	danila@mainlining.org,
-	davidwronek@gmail.com,
-	mani@kernel.org,
-	robimarko@gmail.com,
-	linux@gurudas.dev,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v11 0/5] Add initial support for Qualcomm SM7250 SoC
-Date: Fri, 30 Oct 2026 00:48:43 +0000
-Message-ID: <20261030004903.1068342-1-effeffe99@gmail.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261016042432.824-1-sreeshankar0910@gmail.com>
-References: <20261016042432.824-1-sreeshankar0910@gmail.com>
+        d=1e100.net; s=20260707; t=1793336463; x=1793941263;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=jVHkdup9h6VAyVXa9WHVnyDXMjAy2tnvxXwmB5v5HJk=;
+        b=H9jxVWJWWGdCJe40ESHDFEDmL9sxZBfQEIiTt3iu1XP9W9wMuh4kL//azMS79ZjQE6
+         zJBeQHLkNiH0Vdo30N5m6emISaTiLWZZSWLvgBMOFQZoe7UmVk26Dr7w09tS4qDfJt/7
+         JDrybH5w0M++po0/OqK2eP36ff5etC5Ww145hX82MBhgZVQYZ+5WITWLyMm9yyBirVtP
+         uEbAWLxUckDDoDUKc3TvBBvNsQLQWgs3Z6+y/xCrB75qoMUcY2ZUzSGqvVc+Ay/a1fCC
+         qQQgmh9bEy/VzU8h73ZlNwIZCWeaT4ADjWmiRg7jw5CO2cumRUX9IVD60bLGF2KXV94P
+         gozw==
+X-Forwarded-Encrypted: i=1; AKwUvByFfnP3UVKSScAEFv+aTdQaiwI2d01zk/14L9knnf1+UaUmtD3oohLmNsxuQBpvsTdZgdN+3c25N1Q=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIa33B2w398tbDhBo2/PJGmiOqCXc5953NBHPl+EIwGpg0v/Kb2
+	a/Vu3K8v7Jv94NRJq/DwNoo1v+OFpTYrmVaE+V+3yQEZnTWEbYCjaAGgp9zHHUR5JZLwCV17BHX
+	M5Ye4sWe8/UwIQJ8mDEq6GC6Xkxj+xz4=
+X-Gm-Gg: AYBFou2IxBfQmKSfIm9KepzrwCSfst4SFgUz99/HukpTqQWo9oydhe9RURdEoi+zFZA
+	zup9FP+i1Eh9+97NygLzh7T5Dzt6mKR8V/UB0g4MJ+P8E5WOnUdbVvPC7Dj1zDrPCFgMyFcBSY7
+	s9GwNT5gXORSqs9lAfuAAX8WZ3wyfnhHGb9+cLkbDp6zsiO5rqsBaYP9VtP1xoDLyxQoHGaNR3E
+	kGCUPrriA0s7adVviRa+iQC36Ky0ZnWwwMsti45065vmNUtPRVeQZNtN4OzM0cZe2SXyxq3rPz5
+	DNZeyIaRNC4juuQ4RZu/bAR64Ff+CuZalThT1nNpu5NfeqPcsIux6r2VmOrHV5n6Dg/BcxPRXsf
+	tJpWBX5o5wyyz7Yx9wiFvGH4Plb+fvuJucIoJbbNshQiQiut1YtUYF5ASQHyc+p2PbSIq9w==
+X-Received: by 2002:a05:6808:c122:b0:55e:fa63:7001 with SMTP id
+ 5614622812f47-5640ddca9edmr954504b6e.36.1793336462734; Thu, 29 Oct 2026
+ 22:01:02 -0700 (PDT)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -117,57 +104,103 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260901234351.190506-1-anarsoul@gmail.com> <CAKTNdwFqSBt4QVCuYJxTyEDsxkW96JbUirFNAgJYWVLHzGpk4A@mail.gmail.com>
+ <CA+E=qVcizyQZytw8M6DA72YGrRDDNx_cCvYj565zf9wjMWh8tg@mail.gmail.com>
+ <CAKTNdwFQvKtHQA0JD-GAq3bgr5Brq2NyLfccenkHcrKcjeptwg@mail.gmail.com>
+ <CA+E=qVcwtnU_Gg6_oFmWqMpCEF8vOvB_G+H-ihfbiAr0PpFUJw@mail.gmail.com> <CAKTNdwGTacFvn5BEN+iu0OBG2BUas7Vfj=YYF8OhAhNq-9kmyg@mail.gmail.com>
+In-Reply-To: <CAKTNdwGTacFvn5BEN+iu0OBG2BUas7Vfj=YYF8OhAhNq-9kmyg@mail.gmail.com>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Thu, 29 Oct 2026 22:00:36 -0700
+X-Gm-Features: AclHuK91Kq4AK7MRfCEoN-bxDWWEQLSESXtbozHlwJea6SWMh0uWvQ7bm47NBQ0
+Message-ID: <CA+E=qVf=oBf9a=nrN-F2gGGY60+Gfuj3NMvuW4pWAdbU6NKceA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: rockchip: rk3399: add 85.5 MHz rate to PLL rate table
+To: Alexey Charkov <alchark@flipper.net>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Sreeshankar,
+On Sat, Sep 5, 2026 at 11:31=E2=80=AFPM Alexey Charkov <alchark@flipper.net=
+> wrote:
+> > > I believe something is hardcoding the divisor (or leaving it at the
+> > > power-on default) in the actual DCLK of a VOP which the HDMI
+> > > controller uses, instead of modelling it properly as a mux (frac/div)
+> > > feeding off VPLL via another mux - both perfectly representable in th=
+e
+> > > clock framework and already envisaged in the clock driver, making the
+> > > PLL table patching unnecessary.
+> > >
+> > > Can you please try re-pointing the "ref" clock at DCLK_VOP0 (or 1,
+> > > depending on which one your HDMI controller uses)? Your clock summary
+> > > already shows that something is assigning its parent to DCLK_VOPx_DIV
+> > > and the latter's parent to PLL_VPLL, so rate changes the current
+> > > driver code does on VPLL propagate to the muxed and divided downstrea=
+m
+> > > consumer as a side-effect rather than as an actual rate request.
+> >
+> > I don't think it is a reasonable ask. Wrong clock for the HDMI encoder
+> > would just result in non-working HDMI output and no feasible way for
+> > me to debug what is wrong.
+>
+> Hope you have a serial console or ssh connection to the board. If it
+> doesn't work you'll know soon enough.
+>
+> What I'm pointing out is that the clock setup implied by the current
+> dtsi doesn't make much sense: VOP's dclk is driven off VPLL via a mux
+> and divisor. If the encoder's pixel clock is truly driven directly off
+> VPLL then Rockchip designed the muxes and dividers for nothing, as
+> they will always be no-ops. This doesn't square, so something must be
+> wrong, and I believe it's the dtsi.
+>
+> I'll be happy to be proven wrong here.
 
-I'm bringing up mainline on a Motorola Moto G 5G Plus (XT2075-3,
-"nairo", SM7250), and your series is the base of it: I carried v9 and
-have now moved to v11, on top of next-20261021. On top of it I have the
-rest of what the phone needs at SoC level: TLMM, the apps SMMU, USB 2.0,
-UFS, SDHC, the GPU and display, interconnects, IPCC/AOSS, the modem,
-Wi-Fi, IPA, TSENS and the ADSP with the LPASS codec macros.
+Hey Alexey,
 
-With v11 in place of v9 (only the GCC driver differs), plus the two
-sm7250.dtsi changes below, the phone boots with no stuck clocks or GDSC
-errors, and the clock messages at boot are the same as with v9. UFS, the
-SD card, the USB gadget, the GPU and display, Wi-Fi, the modem with SMS
-and calls, and audio all work, and three s2idle cycles resume with USB,
-UFS and Wi-Fi intact, as does a wakeup by SMS.
+Sorry for the long delay - NVMe in my laptop died and I had to wait
+for a warranty replacement to arrive. I would have bought a new one if
+the price wasn't ridiculous :)
 
-Tested-by: Filippo Falezza <effeffe99@gmail.com> # Motorola Moto G 5G Plus (SM7250)
+The dtsi describes the hardware correctly. The HDMI PHY's reference
+clock input (TRM Part 1, 1.1.11: "13.5-600MHz input reference clock")
+is wired to VPLL with no mux or divider in between; it is not one of
+the CRU clocks in the TRM's clock tree at all.
 
-Two changes to sm7250.dtsi that I carry for the phone:
+That's exactly what the commit that introduced the "vpll" clock says,
+from Rockchip's own engineers, see 5e3bc6d1ab48 ("drm/rockchip:
+dw_hdmi: introduce the VPLL clock setting")
 
-The cpu-map puts core6 in cluster1 and core7 in cluster2. The kernel
-then prints "/cpus/cpu-map/cluster1: empty cluster" and drops the whole
-cpu-map, since it looks for core0, core1, ... in each cluster. SM7250
-is a single DynamIQ cluster, so I put all eight cores in cluster0, as
-sm8250.dtsi does. This is the same thing the review bot raised on 5/5.
+This bug report itself is a solid proof of this wiring. With VPLL left
+at 74.25 MHz and the VOP on GPLL/7 =3D 84.857 MHz, the monitor reported
+the mode as 1195x768. 74.25/84.857 =3D 0.875, and 1366 * 0.875 =3D 1195.
+The TMDS clock came from VPLL while the sync timing came from the VOP.
+If the PHY were clocked from the dclk mux output, that mismatch could
+not exist.
 
-The cluster idle states: the downstream lito devicetree uses the modes
-0x224 and 0xc24 for the two cluster power-collapse states, which gives
-arm,psci-suspend-param = <0x41002244> and <0x4100c244> rather than
-<0x41001244> and <0x4100b244>. With those values the RPMh sleep stats
-show the SoC reaching CX collapse and AOSS sleep in s2idle. I haven't
-checked what the current values do.
+The mux and dividers are not for nothing: there is one VPLL and two
+VOPs, and each VOP can also drive eDP, MIPI DSI and DP, whose PHYs
+have their own PLLs. When VOPB drives HDMI from VPLL/1, VOPL has to
+run from CPLL or GPLL through the divider, and the fractional divider
+exists for DSI panels with odd pixel clocks. For HDMI the divider is
+legitimately 1.
 
-I'm happy to send both as patches on top of your series, or you can
-fold them into the next version, whichever you prefer.
+This is also why the PLL table patch is needed under any scheme: the
+RK3399 PLL driver is table-only (rockchip_pll_determine_rate() snaps
+to the nearest lower table entry), and the PHY reference has to be
+85.5 MHz exactly because nothing between VPLL and the PHY can divide
+it.
 
-On 2/5, the bot's point about ftbl_gcc_cpuss_ahb_clk_src looks right to
-me: v11 changed its source from P_BI_TCXO to DT_BI_TCXO_AO, but the
-table entry needs the parent map's source value, which is P_BI_TCXO.
-Nothing sets that rate on the phone, so I can't confirm it at runtime.
+And the VOP patch doesn't hardcode a divisor. The VOP still makes a
+real clk_set_rate() on its dclk at enable time. The bug was ordering:
+mode_fixup() rounded the pixel clock through the dclk while VPLL was
+still at its old rate, so the composite chose GPLL/7 and the encoder
+then asked VPLL for 84.857 MHz, which the table snapped to 74.25 MHz.
+With VPLL programmed first, the composite picks VPLL with divider 1
+because it is the exact match.
 
-Once your series is in, I'd like to send the remaining SoC support and
-the board devicetree, so that sm7250.dtsi has a board using it. Are you
-working on any of those parts yourself? I'd rather not duplicate your
-work, and I can send them as a series that depends on yours in the
-meantime.
-
-I did the testing and wrote this note with the help of an AI coding
-assistant (Claude Code); the results are from the phone.
-
-Thanks,
-Filippo
+Regards,
+Vasily
