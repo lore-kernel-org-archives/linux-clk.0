@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1793346817;
-	b=DjbH+154IopYWIKRnk9FdLYcA2WPbu+Po5ZsIlnFZoGz6d64o1AalUUy8EqG+DhAGPtn
-	 WvVx+MfWIwTv2K2bpZ2KimdgGgq+LVyi097CpXRe+3f4jPN+h2S8qBE0TR3KCltmtAvKl
-	 u3+MN2QHH8J2BdPuGmenrye8w9ZhvjtJhIdPrXNmI8WMEMv3h73RarrA21VzvDVTqP6Y7
-	 3b/izOTeuDdUBMckni2GTQk9FvOGYLpSjEuf/YBHPV1YasfRPnonUcsPBLvcUsyeZB6cf
-	 sxYLXrn7AfcDaXPyV/cMH06Rg0LXT7p1dycfSTWiLZA7gKtdKwcp/QKxX5PZZYeNzSQ==
+	b=1cX2ybxyIOEcLw1cKonW0X+K6mn3Yrm2nhJmvns39KKnein1e7lBNJZ9rEOOTuPa2ISR
+	 e1WuDrT0leUB+4RWZMU9JdRvSf8PrkVi0+sDi2dJcwqXiZRd6vAIFWCUvaE31B/0DV9Tc
+	 rAjvGurgVy0gd1ArcOesgS62r7kLHP2I8KBD/OczNf/zgiO1T/MA0ejbAS/nqiRIZx64e
+	 JMXcTMJtjcQWachD1UD4gzr+XMzzI+jwAc/jK+754wKt8itStm/cNI4+O/hngyq52jOnq
+	 IJvyz3OBs1RVNB+yG9fv3yYrLKLki+O/L/e383aVubm7yVrRJHmjD0nR8iOlwWc5n2Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793346817;
 	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:MIME-Version:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
 	 Content-Transfer-Encoding:X-CMS-MailID:X-Msg-Generator:Content-Type:
 	 X-RootMTR:X-EPHeader:X-CMS-RootMailID:References;
-	bh=LXqnjPVoIvX80Y2AzOOGeUQEC4Xg6CbGHN9TjzLorQc=;
-	b=RbUM6zLaK+Vr6NJ9xYJjCuNXXRgxV0jw3mkhib3TlrCGwfyISe/SyE2zthnHK5x571Yd
-	 7l0SeVTEPV6gZYjNenahu44RZyrupxSwlbWglZNnlhc3x/DaJdY1T2MWGD9yWZubcUIT2
-	 ZVtINXjR7N31oFG+2Ipy6z8+8y8rWps6nM3lk0vkiNj/SFqE7QAkpFacdewAop65E4UDV
-	 UziCsQvbrCTC09VwVILJVoLuc5n2/7pe4Ug5FUcVOIsxYZNEYkMH0GRHVawWubx/xZQ6f
-	 I5O8JF4F84AUVG27H2Fu0aWusSmbpXoiImxPUfTe3yiVd0o18b1m49xptWnpBrdnjWg==
+	bh=zWdTOaLSFbgjXbA4YqXHKurOnWycAqU6MfmvJJox40k=;
+	b=aPJQ9NFGjMm++yNTeg+cQEYWs4ldmlxZB5RPfQ13wVH+5EU4IYr9b/KIAjaQi3XCXFN3
+	 pL6QqIB2z92sxcw5ZPjzRWHK0O6s+DlwsIBpsuhutO7i532wrasnw8URTuOhsV3SPtQm9
+	 bp9nAAAr0mhFF8J1EewsqXVGD6d2/h1SAXraISz9wwoTGkQ2MbKMjbtZcyeb+yFDtbiPL
+	 BkTnoRdeTo3dJPBm25jtOCtrwAF+mHsqP5i5QbhHT2mfgn66egVRoLnFOVPPR2fTg/Brt
+	 z2BdEJFBO7S3n0e95P+6lZQvdh2AM3qnuHgc88AncaThTJcOws1VFVbh75MUp01ob7w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=samsung.com;
 	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=VkG8BhgB;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=oHUz8VNT;
 	arc=none smtp.remote-ip=210.118.77.12
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374D0606A31C
-	for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2026 07:53:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 374D0606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED46606A31A
+	for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2026 07:53:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0ED46606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=VkG8BhgB
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=oHUz8VNT
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261030075333euoutp02b24f02e7f6f72824d5edeca3a3b13cea~jP2zwS6510463504635euoutp02Y
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261030075333euoutp022cc316fed18512e05e3d4801bfc6727e~jP2zFz-tf0463504635euoutp02X
 	for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2026 07:53:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261030075333euoutp02b24f02e7f6f72824d5edeca3a3b13cea~jP2zwS6510463504635euoutp02Y
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261030075333euoutp022cc316fed18512e05e3d4801bfc6727e~jP2zFz-tf0463504635euoutp02X
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
 	s=mail20170921; t=1793346813;
-	bh=LXqnjPVoIvX80Y2AzOOGeUQEC4Xg6CbGHN9TjzLorQc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VkG8BhgBE3ry6YvdmaSaHgOGtlV9oik14Tb7T2ZIzfaeOtw081vGlqRqAVFB3MdrD
-	 z9b2r4NUuJilhzHO0vbeNOxD572eKJXKHefEVYrZYpMzl2KA+KKSdjGT+0dJPMyFrB
-	 0g1ou0Pt1nHS/0p3ZDDHO/qdb8OxH/vVS+KXnjf0=
+	bh=zWdTOaLSFbgjXbA4YqXHKurOnWycAqU6MfmvJJox40k=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=oHUz8VNT6qVte98OCe2vlbCzYcrkBpiGxyuZJA718vyh9uiKHPmEPPDWrPBaVC9CN
+	 Y6kMmNjYr0och6CpH5uo/OKIlvjP5aaoVtTqDLdppXiJzohHt8q28MnTRxfh+EAAB2
+	 jUXihL3N6AQlUkyFqRYDg+EnM9rz0PuYrh0kWf0U=
 Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55~jP2zaCV4A0356003560eucas1p2u;
-	Fri, 30 Oct 2026 07:53:33 +0000 (GMT)
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20261030075332eucas1p16331988bd7df20db9538066a613a42f2~jP2ytTOMr3249332493eucas1p1d;
+	Fri, 30 Oct 2026 07:53:32 +0000 (GMT)
 Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
 	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261030075332eusmtip2cb3cfd6011c45526ccce1e7e135f69ad~jP2yyvwt42924129241eusmtip2c;
-	Fri, 30 Oct 2026 07:53:32 +0000 (GMT)
+	20261030075332eusmtip2166041f016f1c2f6009dab75eb4bb9b4~jP2yIhYnT3096130961eusmtip27;
+	Fri, 30 Oct 2026 07:53:31 +0000 (GMT)
 From: Marek Szyprowski <m.szyprowski@samsung.com>
 To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
@@ -59,13 +59,12 @@ Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
 	<cw00.choi@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, Alim
 	Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, Brian
 	Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Henrik Grimler <henrik@grimler.se>, stable@vger.kernel.org
-Subject: [PATCH v3 1/3] clk: samsung: exynos-audss: Propagate -EPROBE_DEFER
- from input clocks
-Date: Fri, 30 Oct 2026 08:53:14 +0100
-Message-ID: <20261030075325.517182-2-m.szyprowski@samsung.com>
+	Henrik Grimler <henrik@grimler.se>
+Subject: [PATCH v3 0/3] clk: samsung: fix probe-ordering races in
+ exynos5-subcmu
+Date: Fri, 30 Oct 2026 08:53:13 +0100
+Message-ID: <20261030075325.517182-1-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261030075325.517182-1-m.szyprowski@samsung.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -76,101 +75,58 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55
+X-CMS-MailID: 20261030075332eucas1p16331988bd7df20db9538066a613a42f2
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55
+X-RootMTR: 20261030075332eucas1p16331988bd7df20db9538066a613a42f2
 X-EPHeader: CA
-X-CMS-RootMailID: 20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55
-References: <20261030075325.517182-1-m.szyprowski@samsung.com>
-	<CGME20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20261030075332eucas1p16331988bd7df20db9538066a613a42f2
+References: <CGME20261030075332eucas1p16331988bd7df20db9538066a613a42f2@eucas1p1.samsung.com>
 
-exynos_audss_clk_probe() fetches the optional pll_ref/pll_in/cdclk/
-sclk_audio/sclk_pcm_in input clocks with devm_clk_get() and only
-checks IS_ERR() before falling back to a default parent clock name.
-This means a transient -EPROBE_DEFER (e.g. because the clock provider
-behind "pll_in" has not registered its real clock yet) is silently
-treated the same as the clock simply not being present, so the
-mout_audss/mout_i2s muxes get permanently registered with the wrong
-parent name.
+This series fixes a group of related issues around power-domain
+availability and probe ordering on Exynos5 platforms (observed on
+Exynos5800, e.g. Odroid XU3/XU4), which can leave clock muxes stuck on
+the oscillator instead of their intended PLL parent.
 
-Fix this by checking for -EPROBE_DEFER on each of these clocks right
-after fetching them, before anything is registered, and bailing out
-of probe so it gets retried once the real clocks are available.
+The issue was analyzed and patches were prepared with LLM assistance.
+The whole patchset was tested on the real Odroid XU3, XU4 and Chromebook
+Peach-Pit and Peach-Pi boards.
 
-Fixes: 547f33509ccc ("clk: exynos-audss: allow input clocks to be specified in device tree")
-Cc: stable@vger.kernel.org
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos-audss.c | 33 +++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 9 deletions(-)
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index e11ac67819ef..950c67491dad 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -152,7 +152,25 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 	clk_table = clk_data->hws;
- 
- 	pll_ref = devm_clk_get(dev, "pll_ref");
-+	if (PTR_ERR(pll_ref) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
- 	pll_in = devm_clk_get(dev, "pll_in");
-+	if (PTR_ERR(pll_in) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
-+	cdclk = devm_clk_get(dev, "cdclk");
-+	if (PTR_ERR(cdclk) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
-+	sclk_audio = devm_clk_get(dev, "sclk_audio");
-+	if (PTR_ERR(sclk_audio) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
-+	sclk_pcm_in = devm_clk_get(dev, "sclk_pcm_in");
-+	if (PTR_ERR(sclk_pcm_in) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
- 	if (!IS_ERR(pll_ref))
- 		mout_audss_p[0] = __clk_get_name(pll_ref);
- 	if (!IS_ERR(pll_in)) {
-@@ -169,6 +187,12 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 			}
- 		}
- 	}
-+	if (!IS_ERR(cdclk))
-+		mout_i2s_p[1] = __clk_get_name(cdclk);
-+	if (!IS_ERR(sclk_audio))
-+		mout_i2s_p[2] = __clk_get_name(sclk_audio);
-+	if (!IS_ERR(sclk_pcm_in))
-+		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
- 
- 	/*
- 	 * Enable runtime PM here to allow the clock core using runtime PM
-@@ -185,12 +209,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 				CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
- 
--	cdclk = devm_clk_get(dev, "cdclk");
--	sclk_audio = devm_clk_get(dev, "sclk_audio");
--	if (!IS_ERR(cdclk))
--		mout_i2s_p[1] = __clk_get_name(cdclk);
--	if (!IS_ERR(sclk_audio))
--		mout_i2s_p[2] = __clk_get_name(sclk_audio);
- 	clk_table[EXYNOS_MOUT_I2S] = clk_hw_register_mux(dev, "mout_i2s",
- 				mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
- 				CLK_SET_RATE_NO_REPARENT,
-@@ -224,9 +242,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 				 "sclk_pcm", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 4, 0, &lock);
- 
--	sclk_pcm_in = devm_clk_get(dev, "sclk_pcm_in");
--	if (!IS_ERR(sclk_pcm_in))
--		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
- 	clk_table[EXYNOS_SCLK_PCM] = clk_hw_register_gate(dev, "sclk_pcm",
- 				sclk_pcm_p, CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 5, 0, &lock);
+
+Changelog:
+
+v3:
+- instead of removing more __init annotations, simply fail driver probe after
+  the init sections have been freed; this should not happen anyway
+
+v2: https://lore.kernel.org/all/20261029125118.3191455-1-m.szyprowski@samsung.com/
+- added exynos-audss-clk driver fix, as the exynos5-subcmu change exposed
+  an issue in it
+- removed __init annotations in exynos5-subcmu to make the driver deferred
+  probe safe
+- grouped all patches into one patchset
+
+v1:
+https://lore.kernel.org/all/20261015115008.600082-1-m.szyprowski@samsung.com/
+https://lore.kernel.org/all/20261013111840.3645724-1-m.szyprowski@samsung.com/
+
+
+Patch summary:
+
+Marek Szyprowski (3):
+  clk: samsung: exynos-audss: Propagate -EPROBE_DEFER from input clocks
+  clk: samsung: exynos5-subcmu: Use pm_runtime_get_sync() during probe
+  clk: samsung: exynos5-subcmu: Defer probe until power domains are
+    available
+
+ drivers/clk/samsung/clk-exynos-audss.c   | 33 +++++++++++++++++-------
+ drivers/clk/samsung/clk-exynos5-subcmu.c | 27 ++++++++++++++++---
+ 2 files changed, 47 insertions(+), 13 deletions(-)
+
 -- 
 2.43.0
 
