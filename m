@@ -1,112 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793389744;
-	b=F4w7OYPLS3yuLknX8+BNT5zo5Wo418WCjL4dG3tDsEuIs84fYZUbOsWhs7iPEUWON56+
-	 c5r0sdZCGWoD6OnqZSjxTgDUaKEKXHm/dZhutme+lBKcjUzK2PsvsayZwU7Rp0JAT5Hqy
-	 NkOQ3UafIYlYATG/OTegb27cxxtITH6iBqL75e2FAAaBxc+hKh2DdXFQXvwndexWPIRtH
-	 00VpLn4nALSQcH0WMwl8fxde254XLlE48oLJHuRsIEZVo5kNDD5hPA7uR/E0qcXL3A3/I
-	 20kKcwXypb/Tf7WYud4j+Et1p4ooonn9vke3rW39Dnuyi3dt/vIk8lEKqVTdZyXHC9w==
+	t=1793394750;
+	b=guYrVkWZMEGoIrj2heoP9x/0XMo/RjbO+eu77oll6kWUOkutIGVisTbIEM763K/W6B+O
+	 lBoThC7ieoaiyuFTJDN1mKV1al0lTJAs0SQk/vwkE19x+kaXBONTvH/GSGuiaVpw5d+bj
+	 vJWzXsr9AXElrKKonft35tqirl5MR9C21r/CxWDx6XykPAsBqbook/ObtP1EDA3SK3Xnk
+	 GiREjm22VQ8Z/no7Hce3u950yrvxmIwFj6P0xMUZuiT63dLw549tALvo8yTwfNTKNp7z0
+	 cXZT4Zg0mnZNja7sfvNcMkkACMZvMJRW7u9LrPnUZH6iL/i19fswMkZAU83uQQ+N2Og==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793389744;
-	h=DMARC-Filter:Received:Received:X-Authority-Analysis:DKIM-Signature:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-BWhitelist:X-Source-IP:
-	 X-Source-L:X-Exim-ID:X-Source:X-Source-Args:X-Source-Dir:
-	 X-Source-Sender:X-Source-Auth:X-Email-Count:X-Org:X-Source-Cap:
-	 X-Local-Domain:X-CMAE-Envelope;
-	bh=Z8g4xiibKWQuuJs7EMwmXcAQgq7/Z7zwBqVvlgwyNzc=;
-	b=HXOvGJ3y5ruQcegQumqIHj42Zb3U8nylJ6VFFEO1zFOnOElUj8cxC/PSOnY+9b0hCSR9
-	 /tIJj6hYWLk6apuBTQ+DBY45anBFz6zbLT2q/1jDToDWrd4r3fVaJGOUSw/6Vg4lLwBvw
-	 FbtHC9CJRcED8e1HTnH5y4M+ZbeUjjXbzvorhguQ+RsnGHX1a0NQZQZ9wqxf9RzF6VdYX
-	 R9nxygAQ6JsglyaaaLcPTkLucZFd3aAnYjy/RZw3bg04J/3mDc/FxHHp1iLsZMFa3V3Ed
-	 XyUHiAyZ6FJMQj/kuBSBQNJDtUT/WfAFFqWQlCUiI4W0i1TRMx1JhXcxESOThyXLmvg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793394750;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=IEONd4jOnVyWQkHj1MJzqvWpoLIH0hBXrfM3VziQ+qI=;
+	b=JG18oeuyDmB4Mip1pcrJVm3hq3awonTqudCAr9GicMVJUEvN5DcCcePERq3aEKODJJeO
+	 jjkjrdB02/pdqETt7205b+pkVzv0pvpJIIDHqybBxadATmRU8I0U1LwfaITufCEnV/59G
+	 QrpucDulpWuYpru8WRltHRGLBhKJcsLXAqnlt8yJtmV6e2WcJjCV4M0WcSjc7YqZO2mht
+	 G8APyp3Dsdi6JZqU6u60l62rXX8Uy3cfm1JIDpTfmbz0vN2cTNYzAxefWkHJRYdifmmwu
+	 Wld4xN/8zqxEfQBpXp98K8VjRIVfGKxQr8/GjW17soJnxwmZ5gM3uLRkC8zTT/bNUMA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=roeck-us.net;
-	spf=fail smtp.mailfrom=roeck-us.net;
-	dkim=pass header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=yPk7oTaK;
-	arc=none smtp.remote-ip=44.202.169.35
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=ideasonboard.com;
+	spf=pass smtp.mailfrom=ideasonboard.com;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=kGW4GTWR;
+	arc=none smtp.remote-ip=213.167.242.64
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA6C606A325
-	for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2026 19:49:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CAA6C606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=roeck-us.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BB2606A31A;
+	Fri, 30 Oct 2026 21:12:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 83BB2606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=yPk7oTaK
-Received: from eig-obgw-6007b.ext.cloudfilter.net ([10.0.30.166])
-	by cmsmtp with ESMTPS
-	id MkL5xMYAaLvgbMsb0xRwlP; Fri, 30 Oct 2026 19:49:02 +0000
-Received: from 162-215-252-36.unifiedlayer.com ([208.91.199.152])
-	by cmsmtp with ESMTPS
-	id MsazxmFt8kE4RMsb0xTDVL; Fri, 30 Oct 2026 19:49:02 +0000
-X-Authority-Analysis: v=2.4 cv=LuaSymdc c=1 sm=1 tr=0 ts=6ae4f4ae
- a=QNED+QcLUkoL9qulTODnwA==:117 a=2cfIYNtKkjgZNaOwnGXpGw==:17
- a=kj9zAlcOel0A:10 a=660iZSQnnn4A:10 a=M0FbrtG7MMAA:10 a=OuZLqq7tAAAA:8
- a=EUspDBNiAAAA:8 a=3OfnbWqpRXkE7MXKp-4A:9 a=CjuIK1q_8ugA:10
- a=AKGiAy9iJ-JzxKVHQNES:22 a=KPbNTLLc3YvdawN95zVk:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
-	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-	:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Z8g4xiibKWQuuJs7EMwmXcAQgq7/Z7zwBqVvlgwyNzc=; b=yPk7oTaK9jPnNUqNMPC6twzpsT
-	nytbZs7aIA1qfH8e9yM5XmhTrSl/cYbIZ9RliN0XK6PH+8fH6iMHI1gCwt/eOdzUc49xyR7pm2jYG
-	R9wLgSVekO9zz7XW1C3SjWJ2jdanQoPmO4H3xTNiPdbDJTuDCzQpc8aBllvgvys8U4au70SjQAcVr
-	9kcENVpW6s4Z+c++LnSDgqh02SbHMxe8Bio+xFCpQVb4Mg/zNG/QunFRcwYu/SoYh8Aehzm3qPknX
-	EZ4s/wFn4ZXU94FbWoY7yOx8zm4QD7ylqGwONkzT2WrVTWpzZjoPkVFtX5kt1BNNAWsdLe/GcdbYI
-	A7exSNtw==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:44054 helo=server.roeck-us.net)
-	by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <linux@roeck-us.net>)
-	id 1xMsat-00000003tHT-0RvI;
-	Sat, 31 Oct 2026 01:18:55 +0530
-Date: Fri, 30 Oct 2026 12:48:52 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Muzaffer Kadir <muzafferkadir@mainlining.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Joerg Roedel (AMD)" <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=kGW4GTWR
+Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5F9934B0;
+	Fri, 30 Oct 2026 22:10:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1793394612;
+	bh=4ZcjkwBtXwpWd5YLcsKxjAoYlftpO+e2haPr8crGBDY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kGW4GTWRX2wvyUs92Hm7D+e4Tmn49DaB8rEiCWEcvqpEQpE0bEDtJ4DU6aI38BGd3
+	 5FIowGc4/rt0hw2S12LMGXi2zmZYHe+Ixd9Y7KqKi25i2OHSYWfzjkl/p+BQ0a8tKu
+	 D3QARqLMcbePtpSInZsbQzaq3bUHKuVgToZVyrRc=
+Date: Fri, 30 Oct 2026 23:12:25 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Paul Elder <paul.elder+renesas@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Krishna Manikandan <quic_mkrishn@quicinc.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	David Heidelberg <david@ixit.cz>, phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-remoteproc@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v7 03/11] dt-bindings: watchdog: qcom-wdt: Document
- MSM8952 watchdog
-Message-ID: <7ba73247-d832-423b-8020-21cc135cd02b@roeck-us.net>
-References: <20261030-msm8952-initial-support-v7-0-ad748ace375d@mainlining.org>
- <20261030-msm8952-initial-support-v7-3-ad748ace375d@mainlining.org>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH DNI v3 04/15] arm64: renesas: r8a78000: Add FCPV[BI] nodes
+Message-ID: <20261030211225.GA3144851@killaraus.ideasonboard.com>
+References: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-0-e052903a3832@ideasonboard.com>
+ <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-4-e052903a3832@ideasonboard.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -116,39 +73,200 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261030-msm8952-initial-support-v7-3-ad748ace375d@mainlining.org>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-BWhitelist: no
-X-Source-IP: 108.223.40.66
-X-Source-L: No
-X-Exim-ID: 1xMsat-00000003tHT-0RvI
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net (server.roeck-us.net) [108.223.40.66]:44054
-X-Source-Auth: guenter@roeck-us.net
-X-Email-Count: 5
-X-Org: HG=direseller_whb_net_legacy;ORG=directi;
-X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfMZCXudwsAyJ2TKKzyUvO3/Y3oE5A9iHQWnHhxFBdH841dqoZG+CQVrXMwv4zVjQHxrcL0gBkuEVMHJmDEPjBY2/6W68Gyw35cZd0V9mPIQdoWHZCmv+
- tv1nOOH7ds779gCl4AJvwXqLc2yiz/UKehH/vEc1+H+WcKU9znWBRFdR6pJgvACSqyFTRPnnLyQmx/Cm+ZyOytZspgLGGpa2319pNexIkM/wndd0fXPJosws
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-4-e052903a3832@ideasonboard.com>
 
-On Fri, Oct 30, 2026 at 12:02:34AM +0300, Muzaffer Kadir wrote:
-> From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+Hi Paul,
+
+Thank you for the patch.
+
+On Thu, Oct 15, 2026 at 04:51:44PM +0900, Paul Elder wrote:
+> Add DT nodes for the FCPVB and FCPVI IP cores in the R-Car X5H SoC.
 > 
-> Document the watchdog found on MSM8952.
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+I need to reconsider this...
+
+> Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a78000.dtsi | 72 +++++++++++++++++++++++++++++++
+>  1 file changed, 72 insertions(+)
 > 
-> Signed-off-by: Muzaffer Kadir <muzafferkadir@mainlining.org>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a78000.dtsi b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
+> index 9a07753b221541ed49a975e0c95f2f5d1fdc6ac2..2f8886f8b6545026397fd83969882f8c62afa9d3 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a78000.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
+> @@ -1000,6 +1000,78 @@ mdlc_aon: system-controller@c1338000 {
+>  			bootph-all;
+>  		};
+>  
+> +		fcpvi0: fcp@c5030000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xc5030000 0 0x1000>;
+> +			clocks = <&cpg R8A78000_CPG_SGD4_VIO_DP_TX>;
 
-Applied.
+... as this may not be the correct clock.
 
-Thanks,
-Guenter
+The user manual lists the following SGD clocks for the media-related IP
+cores:
+
+- CSI[0123]:		SGD1_VIO_CSI[0123]φ, SGD2_VIO_CSI[0123]φ,
+			SGD4_VIO_CSI[0123]φ, SGD16_VIO_CSI[0123]φ
+
+- VIN[012]:		SGD1_VIO_CSI0φ, SGD4_VIO_CSI0φ
+- VIN[345]:		SGD1_VIO_CSI1φ, SGD4_VIO_CSI1φ
+- VIN[678]:		SGD1_VIO_CSI2φ, SGD4_VIO_CSI2φ
+- VIN{9,10,11}:		SGD1_VIO_CSI3φ, SGD4_VIO_CSI3φ
+
+- ISP CS[0123]:		SGD1_VIO_CSI[0123]φ, SGD2_VIO_CSI[0123]φ
+- ISP Core[0123]:	SGD1_VIO_ISP[0123]φ, SGD2_VIO_ISP[0123]φ
+
+- FCPV[BI][0-9]:	SGD1_VIO_DP_TXφ, SGD4_VIO_DP_TXφ
+- FCPVD[ab][0-9]:	SGD1_VIO_DP_TXφ, SGD4_VIO_DP_TXφ
+- FCPVX[0123]:		SGD1_VIO_ISP[0123]φ, SGD4_VIO_ISP[0123]φ
+
+- VSP[BI][0-9]:		SGD1_VIO_DP_OTHERφ, SGD4_VIO_DP_OTHERφ
+- VSPD[ab][0-9]:	SGD1_VIO_DP_TXφ, SGD4_VIO_DP_TXφ
+- VSPX[0123]:		SGD1_VIO_ISP[0123]φ, SGD4_VIO_ISP[0123]φ
+
+- VCON[0123]:		SGD1_VIO_DP_OTHER0φ, SGD4_VIO_DP_OTHER0φ
+- VCON[4567]:		SGD1_VIO_DP_OTHER1φ, SGD4_VIO_DP_OTHER2φ
+- VCON[89]:		SGD1_VIO_DP_OTHER2φ, SGD4_VIO_DP_OTHER2φ
+
+- DPTX[012]:		SGD2_VIO_DP_TXφ, SGD16_VIO_DP_TXφ
+
+Those IP cores are connected in four types of pipelines:
+
+- FCPV[BI] -> VSP[BI]
+- FCPVD -> VSPD -> VCON -> DPTX
+- FCPVX -> VSPX -> ISP Core
+- CSI -> VIN -> ISP CS
+
+It would be quite logical for all IP cores in the same pipeline to use
+the same clock. This would be
+
+- FCPV[BI] -> VSP[BI]:			SGD*_VIO_DP_OTHERφ
+- FCPVD -> VSPD -> VCON -> DPTX:	SGD*_VIO_DP_TXφ
+- FCPVX -> VSPX -> ISP Core:		SGD*_VIO_ISP[0123]φ
+- CSI -> VIN -> ISP CS:			SGD*_VIO_CSI[0123]φ
+
+This mostly matches the clocks listed in the user manual, except for
+
+- FCPV[BI] that is listed as using SGD*_VIO_DP_TXφ
+- VCON that is listed as using SGD*_VIO_DP_OTHER[012]φ
+
+Now, note how in the clock diagram document the VIO "ISP" and "CSI"
+hierarchies both show 4 groups of SGD clocks (respectively named
+SGD*_VIO_ISP0 and SGD*_VIO_CSI0 in the first group), the VIO "DP"
+hierarchies show 3 groups of SGD clocks (named SGD*_VIO_DP0 in the first
+group) and the VIO "DP_OTHER" hierarchy shows a single group of SGD
+clocks (named SGD*_VIO_DP_OTHER).
+
+This makes me believe that, wherever the user manual lists
+SGD*_VIO_DP_TXφ, it actually means SGD*_VIO_DP[012]φ. Similarly, where
+the user manual lists SGD*_VIO_DP_OTHER[012]φ for VCON, I believe it
+should be SGD*_VIO_DP[012]φ, both because there is a single
+SGD*_VIO_DP_OTHERφ, and because the rest of the VCON pipelines (FCPVD,
+VSPD and DPTX) all use SGD*_VIO_DP[012]φ.
+
+For full consistency, I also suppose that the FCPV[BI][0-9] instances
+match the corresponding VSP[BI][0-9] and use the SGD*_VIO_DP_OTHERφ
+clocks, not the listed SGD*_VIO_DP_TXφ clocks.
+
+This being said, in practice this probably makes no difference, as all
+those clocks derive from the same SGD1_VIO_MAIN clock and none of them
+are programmable or gateable.
+
+If the above explanation makes sense to you (and to Geert), we can ask
+Renesas to check if the issue I suspect are errors in the documentation.
+
+Finally, while neither the FCP nor the VSP chapters indicate what the
+SGD1 and SGD4 clocks are used for, the VCON chapter lists SGD1 as the
+"VSPD I/F clock" and SGD4 as the "APB I/F clock", and the ISPCS chapter
+lists SGD1 as the "Processing clock of ISP CS" and SGD2 as the "APB I/F
+clock". The APB clocks are used for register access, while the "I/F
+clock" or "processing clocks" are used for the data flow. If the FCP
+driver (or the VSP driver) had a need to know any clock frequency, it
+would be the data clock. I would therefore use SGD1 instead of SGD4 here
+(same for the VSP).
+
+> +			power-domains = <&mdlc_vio 0x07 0x107>;
+> +			resets = <&mdlc_vio 0x107>;
+> +		};
+> +
+> +		fcpvi1: fcp@c5031000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xc5031000 0 0x1000>;
+> +			clocks = <&cpg R8A78000_CPG_SGD4_VIO_DP_TX>;
+> +			power-domains = <&mdlc_vio 0x07 0x108>;
+> +			resets = <&mdlc_vio 0x108>;
+> +		};
+> +
+> +		fcpvi2: fcp@c5032000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xc5032000 0 0x1000>;
+> +			clocks = <&cpg R8A78000_CPG_SGD4_VIO_DP_TX>;
+> +			power-domains = <&mdlc_vio 0x07 0x109>;
+> +			resets = <&mdlc_vio 0x109>;
+> +		};
+> +
+> +		fcpvi3: fcp@c5033000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xc5033000 0 0x1000>;
+> +			clocks = <&cpg R8A78000_CPG_SGD4_VIO_DP_TX>;
+> +			power-domains = <&mdlc_vio 0x07 0x10a>;
+> +			resets = <&mdlc_vio 0x10a>;
+> +		};
+> +
+> +		fcpvb0: fcp@c5038000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xc5038000 0 0x1000>;
+> +			clocks = <&cpg R8A78000_CPG_SGD4_VIO_DP_TX>;
+> +			power-domains = <&mdlc_vio 0x07 0x102>;
+> +			resets = <&mdlc_vio 0x102>;
+> +		};
+> +
+> +		fcpvb1: fcp@c5039000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xc5039000 0 0x1000>;
+> +			clocks = <&cpg R8A78000_CPG_SGD4_VIO_DP_TX>;
+> +			power-domains = <&mdlc_vio 0x07 0x103>;
+> +			resets = <&mdlc_vio 0x103>;
+> +		};
+> +
+> +		fcpvb2: fcp@c503a000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xc503a000 0 0x1000>;
+> +			clocks = <&cpg R8A78000_CPG_SGD4_VIO_DP_TX>;
+> +			power-domains = <&mdlc_vio 0x07 0x104>;
+> +			resets = <&mdlc_vio 0x104>;
+> +		};
+> +
+> +		fcpvb3: fcp@c503b000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xc503b000 0 0x1000>;
+> +			clocks = <&cpg R8A78000_CPG_SGD4_VIO_DP_TX>;
+> +			power-domains = <&mdlc_vio 0x07 0x105>;
+> +			resets = <&mdlc_vio 0x105>;
+> +		};
+> +
+> +		fcpvb4: fcp@c503c000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xc503c000 0 0x1000>;
+> +			clocks = <&cpg R8A78000_CPG_SGD4_VIO_DP_TX>;
+> +			power-domains = <&mdlc_vio 0x07 0x106>;
+> +			resets = <&mdlc_vio 0x106>;
+> +		};
+> +
+>  		mdlc_cmnn: system-controller@ca410000 {
+>  			compatible = "renesas,r8a78000-mdlc";
+>  			reg = <0 0xca410000 0 0x1000>;
+
+-- 
+Regards,
+
+Laurent Pinchart
