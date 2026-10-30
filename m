@@ -1,103 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793355403;
-	b=GzJgTKd99aVMhcCfr04z3WLa1I0zb6AlnvXHZWALyfXcWryheS0eoD+46a6p/hl9Kkb7
-	 1FTggY1yKmyzZ2qGOHhoLDcAxe+Jqry8CSFPNVxkAwTDbV/KtiFxtCOE2sM+zWroex4PW
-	 y5dAi0Hi0ZU8nmu7JlnOxItNWWq3VAtpVHJ1LZhNqDF1hBk3EUV8/MyBU8mHfjGhZi3Av
-	 msjThzXXU3/9uK3fCV4jfCBkv0c91bTpSAB/HpGSHT2cJebf3+qiNO/YAhT5fqfru2H5D
-	 Ny5qA5XdGeHcB+cMaCDVc357AHQoiU9MY/vkHqT6vOr+2PBhwq2u1m+LMwIKfbUY5wg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793355403;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:Content-Type:Content-Disposition:
-	 In-Reply-To:X-ClientProxiedBy:MIME-Version:
-	 X-MS-Exchange-MessageSentRepresentingType:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=jKKR4S9AQhJDStSbuwGW0EWdZumlZVGx3b3Yu5Euvig=;
-	b=1/IVfz+hzzWD8GliTGgbhvYWleQCTNTO5UDgr0eJvc9k5GwuMbW4swzl3Wy+4wqrCgqQ
-	 kytoWsYcOsOm/aRCVgDMG/8ffze/cRvpDKtVWKQkMW+hodvaZLL4vZFGdxSPL1+Fx0YsZ
-	 wOh2UCmGvwnnwMZfDZ8iB4Myoeb+g5qxlhft29Bj60ttMEReZmAB9Kf/tXJ4krkNsZ/RD
-	 Rkl1qLx0J1GgPEei9x1OOV2FQGXG0+6XMVPGlHYcU13QDWyXxWYfn881TJJu8DonQwCl2
-	 uHJ7R+NsSTshtTzAcGt/7sRE7yjCV2ka1oliyP59emiAqAJxjJciSQL6RhIjKOZdh5A==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.nxp.com;
-	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=qWMrOsrQ;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.13
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013013.outbound.protection.outlook.com [52.101.83.13])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.51
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793355569;
+	b=YkCikkUfWFkzGzabsT1lAja3sFVs4ILsOACyM306b1CVLX/nZJfoavGuhlOZ7PV22gDe
+	 RXSFq1k+/dN+cP9C3Iug4132JPS74pF12JGgtpncZZZmXclap21jj7mtJap8AdI0bzBsL
+	 +FpDwzjYtrIlFLBXdtQcRYdMl1PkqCZ/t2JyqDTr8hSktT+yy5MQuMq99f3RKczuHaoQP
+	 Bfb8OlL8v4tWAiP2U69AQw7GVG8HjBo+xnHaSI9jF4D3icBDM1OSH0AQBwpI66TYaDBWj
+	 Bmq5mtWvv6TkybnxlgIa3qak+Ay3JjAAcbyRCRi9OfIJ8pwjIyNzZq1gHsjCjeoPWQg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793355569;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=N/lKB/c9Lq//6NoMXUd+nQ4qRj1zdlYJ2/JdgAh063M=;
+	b=obKVWT8MGn0+/p31XNmxhMQm2ueIilu+GC7qIMZ1cgZ0oJy5rgT6UEfPXySurg9+7HpO
+	 6aCFJaH+lyHUmO071tEeyt2fF7omEH+LMqZQBVdKVfYAFPXYcmtxwKD5w0Hr42AnZaGLK
+	 b+GMMAS70U1i5ng73yIRHENH7NkX7H+K175IJt44F9eDaIqhPahxZgL1USNYkhUvQfMdH
+	 6oiU8vkzNvFk/YmO8Ww563xDI8rDjbpUDHtR+ZQXTc7B1ePj1kY98BNeGQ+UEOernKPGd
+	 20pqZ9EOaAsvSV314vsfFHdBd9BXryAVfR/5QfvwjGWnQ6FIceGsxjGXvvpB0z2QKOg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.222.51
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D759E606A31D;
-	Fri, 30 Oct 2026 10:16:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D759E606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=qWMrOsrQ
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xgvKyHb6Ei/Z+OiKPd/kPj24frDpRo25dpw1FJMQ2iwPIKXPRrm9ACNiLV9hqbfKiL1vnfeqeSSQAegMKRGEO+1p8fBUlX1WAr2hGYlUuGeNVz6yKxNJ/gt4J2aJ1C8WyDCEQ8dM1YPU9MLQ3ch0hmM90oNelPw1e29Jxwv/kuMxhDe3nF0AghNMdhx3NSDiA02WO2awexUYxvWJ8TjbUM66qN5vC+RBGQtyUN0X6HZ01kJf1c0FYLr+1DG8vGedh0BDdKBa2nod7VcPTAGxrY4WXxAftF3BeyQYDUukSoOgeyGqWRiiYvZxocJ9Am35g1uMwHLA0QvS9VomBNt+sw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jKKR4S9AQhJDStSbuwGW0EWdZumlZVGx3b3Yu5Euvig=;
- b=XdnC7oyZoawqZDhqku7mGzBBcguOjufpIm6yNCztT1bjAZCEtwZC08D1nFl3yf8D/0tlPQ14BMA9eYgiR6NZZD81diNZDzM+KTO2glhB/SEh4ZTKbnWqR9LAk9bjHHnEBeYU2glBcbpwRm1mizB4fpZnbCIDlJJutVnnQxk1+1+0mgvFiJCm9kS0AZH+62+hYWQ+d4seSDjTNgQBjnON1L4uObAQ0/lmXnkPZQWEzXuiFYK54sjxvT1p+Kc5p3AuaK+ghQQreHKCkkUX6yzroHDNKDI7Kfc37aLrqdNJIVtbzIAbDwWH0QswSwgHEXlJxqrXS+yXRVxzKKszSTmD9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jKKR4S9AQhJDStSbuwGW0EWdZumlZVGx3b3Yu5Euvig=;
- b=qWMrOsrQDRxIRB1M7AB2GJJUI9BVoFR8nvi9OblMHvKKGIT2xcjC0/jkoG9xcd2MtjIO1rPLCGVYeyKxjIrEumZ3tKQAamScFl/4Oj2fNwgnv5CoBmTJhfjoiMdNRACT/xwKzcO4umK5U2T3YJJ+h8HELud2OYghHY/gd7uyAm/QQWVsB0y78b5sNsWwyheaiuF76pKfebZ9gDNuIv48En+f1VfK+is9q6mtHWOcZcQL3XfEuR9GXGoglZObmfM0CIUQmnQZrQNDarqeJoc5jIVr1zrk6AGSA4YXq6jVqYlkIlwMqEX0a8v3t+9nslz4Ksy0eDpgPBO6zluZFOvKZw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB12318.eurprd04.prod.outlook.com
- (2603:10a6:150:32b::19) by VI0PR04MB12032.eurprd04.prod.outlook.com
- (2603:10a6:800:311::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.9; Fri, 30 Oct
- 2026 10:16:38 +0000
-Received: from GV2PR04MB12318.eurprd04.prod.outlook.com
- ([fe80::a498:2b5a:cbdb:d6fa]) by GV2PR04MB12318.eurprd04.prod.outlook.com
- ([fe80::a498:2b5a:cbdb:d6fa%3]) with mapi id 15.21.0569.008; Fri, 30 Oct 2026
- 10:16:37 +0000
-Date: Fri, 30 Oct 2026 12:16:33 +0200
-From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Ying Liu <victor.liu@nxp.com>, Frank Li <frank.li@oss.nxp.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v10 2/9] drm/bridge: fsl-ldb: Get the next non-panel
- bridge
-Message-ID: <auRsorXM4UQJzoWF@vm>
-References: <20261006-dcif-upstreaming-v10-0-bcfb28de0aae@oss.nxp.com>
- <20261006-dcif-upstreaming-v10-2-bcfb28de0aae@oss.nxp.com>
- <179334897994.680709.5849266352850173475.b4-review@b4>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <179334897994.680709.5849266352850173475.b4-review@b4>
-X-ClientProxiedBy: FR4P281CA0321.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:eb::13) To GV2PR04MB12318.eurprd04.prod.outlook.com
- (2603:10a6:150:32b::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F022606A322
+	for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2026 10:19:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7F022606A322
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-990a39ba4fbso103947241.0
+        for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2026 03:19:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793355568; x=1793960368;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=N/lKB/c9Lq//6NoMXUd+nQ4qRj1zdlYJ2/JdgAh063M=;
+        b=KlUtxdb02UJNAZelEVXHaJRKT5OEbloyduR5ja6ER69bZCLndyxy3pgvI6KwwawXey
+         B9fR/6cVm4GwTY6kadlFYkX8vK2s22H678H8jpwxb7/cZ540uAUT6Q6/PkG1fQrDfoSe
+         kknX5oL1rsBZaG9Hluue/ZSKf+nEHz+rjFOdcalf5duVSGhTr6oHB04qOil8dk4qGq/B
+         0aWWDgPcgM2FZF4C5J7xsHTtd5tJgSgWVBU1577QgradkE58GZMtxdjg2EjsPPq7Ho53
+         SP1iTvImGoKjBY5DWpuPe1cflbJIiqSzINom3xkbfRn1YQKoKrfpIPR7oSGlGyc47j7H
+         29wQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxxiiYhmtD/orhjZRVMCgDLmV+Du2v/qkhm45lLZyJkM638QCT/QBZK68sMIeqkb3IS/PaF4jgjMHQ=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIf603de4rfOsC/pjglCspuYJeZzTTxT2CQOUk9bTZ22j813iJU
+	fOv7d9prjgYtG6tuSyHb4N84BXpYQlTHV5m7eZe4704pVR0fS4Ou8s8roFsiYYIS
+X-Gm-Gg: AYBFou3S+8pAsaWwPHoY2oKCbaonHmEW/cnY0Mrvn+A6rfiAaJC8AxC/SMbqOvNwcaV
+	ap0NSanXkRIq/g2DlxW8Qu0WTHk7SmUCqtZLGScbMTgtcOzHZVCMnOFDXGuXsrxTfp4lUGykeHH
+	25+nQbbFhooXdpO9mw5Y8gW5lwjVEntLscVufag8t70tz5WZU5CW2BS0uNG/sMfUaqNHhCzbqHJ
+	bzc9MrUSlvYJoq4Xk2ZOgONaocdh7I2y4NoSbAiFDPGhMwNNLVUC8uLV8+kQVPcuoh8b+NUIccq
+	QV6y3RUu4SiAbU29TpcfA97xrewqfqwdK7gZGP+Pk4b/q4QhejhhfzQUBpLWhN2WK9dEEWzpD3H
+	XXAguyFC1c6DX97TlsoGCu4ghip3SNFufY2FHTnvOY/3NA2JoWxfXfCRrQNt68dZYzcSm3O4n2h
+	N5lXbHqwVBzcOLGn91xrEVsRg5zTejTJ2m2GpaM+CafqDq5Z0pMPwUn3EEUA+vrQPoWcjqONPXG
+	OhU+T7PF1p/MIH3msJ3OWdUMmQyGDZzhFdADVuKNqpuU2McNOZf5m9Q2G4mDObAWkV4cXxqKWhj
+	+4t43Z82ZBqX6KinnQDrGNluV6PbwTYUVOR4kjLeVnWtD1cIProQ72bTXuDQV7uIHYU=
+X-Received: by 2002:a05:6102:5121:b0:7cc:5c9d:7e07 with SMTP id ada2fe7eead31-7d072635de3mr683191137.11.1793355568438;
+        Fri, 30 Oct 2026 03:19:28 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7d07768d366sm1635761137.10.2026.10.30.03.19.27
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Oct 2026 03:19:27 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-7cc91ddf447so151516137.2
+        for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2026 03:19:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBza429drxFIYiBbmYIz/+jfR4KzF2Ae6XZ5FJoB771ErrOYmZqFur3jM5fzDzT1JQqEX1h4DFqfx4g=@vger.kernel.org
+X-Received: by 2002:a05:6102:9d4:b0:7ce:5952:125d with SMTP id
+ ada2fe7eead31-7d0728d38cemr726412137.36.1793355567237; Fri, 30 Oct 2026
+ 03:19:27 -0700 (PDT)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -107,191 +80,72 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB12318:EE_|VI0PR04MB12032:EE_
-X-MS-Office365-Filtering-Correlation-Id: 28724186-5cc2-4593-25f6-08df366ee1f3
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|23010399003|376014|7416014|1800799024|366016|6133799003|10067099003|22082099003|18002099003|56012099006|11063799006|4143699003|261026130827099003|261026140227099003|261026121527099003|261028144727099003|261021123027099003|261022075727099003|261021135927099003|261021130227099003|261022113327099003|261021121427099003|261022115727099003|261022105027099003|261009223027099003;
-X-Microsoft-Antispam-Message-Info:
-	svlBkGyq0gktqEMXwglYLJEd2zAT4S8N8OHx30T3ocD7m9eT80Ai8ztRuQArHGIx8+d2x0fx7ku3ybSKk7HkyoVWNK/WdlU7bq/qaNqB4mWJp/AxA83oLbKc3mMge4a2kgEow8AiZvN/a9eS4sbBD8MpHMr4k0Q1Cim6ubwmqOlV7E96MN2h0QC0NzfHEO/QpDltwKx4eTYU+RkXz7yuopawlf4artuih2wLM5fbL2Vy6HWUh6kcBA2rQcssQM4ZNjUnSlol3XlLNKd7BNEC+6vWwD6395AXh9j5OleB/c+lsZVlqZt15SyCp1KltoCcYvgxodUhOC0BCZ7+ULbYboey4xou6O7PHNddTcDqn+nD3bBBB2O1Uj9hIpKJ0cgYMu6qSqVPWSNYBATNlspoSesVjAaffNwTihxjGVLUDAThQz80SjSJ+spHTRbSXAU2ic4vTv8J18QFyp/NHVFfvezypvAvpsrcUmX+GuVVCBF2MbioFSurX8vI28A3+9QiAss+qJXTDid3YXRvdy3tdkeMcRByOtd7l9vaCR/LDghm6ffZu02ZgLhyWAu5QL3SDnhFA5enNjVYbbQgtJb6RcclgNFkEg/Q0a9ZN1SiBXo=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB12318.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(23010399003)(376014)(7416014)(1800799024)(366016)(6133799003)(10067099003)(22082099003)(18002099003)(56012099006)(11063799006)(4143699003)(261026130827099003)(261026140227099003)(261026121527099003)(261028144727099003)(261021123027099003)(261022075727099003)(261021135927099003)(261021130227099003)(261022113327099003)(261021121427099003)(261022115727099003)(261022105027099003)(261009223027099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?mkQ2BZemnFPd4RGFmY6oRcpMwlFCV3IJnN5vqdFXikWI4LtGCjPJglqWLQVx?=
- =?us-ascii?Q?HBS0BEYtp12PsvBmdPZrDi6mCExfqFFCMeMVDTQyFEWuGkFheQdDAQFUTD/G?=
- =?us-ascii?Q?qhE9TrAGCEP86ic3DPkHUMakOWGtJT/8sSsrNOS/YXwgJu6PHAizpu6rQlIL?=
- =?us-ascii?Q?C+ridy24UVWnnSjXIrx8S1CVrX2D987ukNBBZNZ1Ku0PObBrAbfXBbdzt5Md?=
- =?us-ascii?Q?1dk+4g2Xz+RkD9CxrShevOuHE0KDcm9J8m9V5Ft3gB1AQi5e792JcYTQQbrT?=
- =?us-ascii?Q?PdEuGrNkpRoTtWcr7aGIUSTVt4d5ON2U2fnIWKcIgP78V7oo4o0sVVnmdvY5?=
- =?us-ascii?Q?dhup4NNX2cjPm5dW8sDk4rL2Lu4yh9eMTfh/IR5EIeLJfmHURb65uDWiHm0v?=
- =?us-ascii?Q?DNXtfTZIiX7bzfYb55FP5cAd+JaD+DeJokW3gDtSX22FN9IiQ4cwYRWQw6LE?=
- =?us-ascii?Q?VyXOxs8GWFIKLSYJVWd+IR/1a3gjaxScXuaIayJEw+kJO7NVsg2dXWWdy4UK?=
- =?us-ascii?Q?j7+Llk9n64/K6V/d7pYUfoZlZz0WfWBgHwLJu+BkwyviuXPbldre1uz9T2t8?=
- =?us-ascii?Q?whn7SCUapcOEyDzDwQ3Iyy9xrvwJUZo5URHKOePlVhe3yJ+pa+nDK/WU3E8E?=
- =?us-ascii?Q?5FpTSncUQrEBYB8UGGM53SuGZ7y/kAQHthL/C3EW5jpe5QS5Wj6EN1qVDARm?=
- =?us-ascii?Q?uNy77+khyUEwzU9USDJKRmgBmVhdJGIrJTZfT5MuCmTG7017QxfxCAY/y0HR?=
- =?us-ascii?Q?Ja7s4wgjoNMugcCWL/PRet63xo9Jqt+5qyAy5F+HtMeJ7U2knlVUfaxNXSRc?=
- =?us-ascii?Q?uNnN2UwTTrlcKF7Rmaz66NJPmv8cQx0CXb7b9ZHBAbdtHOvPvr5yCq/TaX+M?=
- =?us-ascii?Q?s8LieEbPKbqgtoBgYXinp7pc9fzpU1A8wDyTjas8WaDEr38J6rPfJbzwo4nr?=
- =?us-ascii?Q?H1db44HsHiW08kpXUsmzWl2xZiCSxrGn5+CTHiQl5UCVsjD43zabk0DVQ+qz?=
- =?us-ascii?Q?fqCVNe2S3XfnJhRhD3OgJTarnUj97PjUj2KulGu9rvbUMsi2XT/cUphvB1sc?=
- =?us-ascii?Q?DPPHe5Tk0Tz1lW1cbc45zOBT5oAyLcitPGPWenTyfJ3yYFjHG7Pl6A40akUL?=
- =?us-ascii?Q?R+7fY1C52CfkvsXMHtHfkaUBi1XjNudi7NvKhpqj1f6FeIgQDwp4wkLt+Wcl?=
- =?us-ascii?Q?aCmniLmQpG0uaGliEqMwNeiUtvZdZwRkICERWsxwz2YAPzLssGntUmWMjrln?=
- =?us-ascii?Q?M7/wvKQxio5LYl3d1OsFtFY7VyHpJAyy0WF5pRKablo5nwaGQbzWkkNI4Gpu?=
- =?us-ascii?Q?3zTyj/By7+JZJ4E7DlObuc9Rrsi9/C2VCv1AlZ9FJOv4zkbiDoJi97CkNT6y?=
- =?us-ascii?Q?3b3fcGmt4FPErO4YhJDYh5pZ4/FvGD6CI/OzXFVbgxBjDyxQgxfrr+vKY+7b?=
- =?us-ascii?Q?Klw59qEYA7DZZCZ0CoWSqA2QouhKQEcU/TK2IUoTvJNB8pEQwGoLBfg/c00Q?=
- =?us-ascii?Q?UsRlxZaDWbeDqF9OafoDHvF7aAp2VVv+gLsBmBZ1azAhayxuJtoweeUTy7Kw?=
- =?us-ascii?Q?XAneBWxrxFV1L/6zeKfigifD6WiM8K07hJXabnywSJ0NxIRT2Of/oZIt6cm6?=
- =?us-ascii?Q?dzwawba+hvFyWIFtioVv+GZq0Lob4bNOxsHCZMPyuuO/w+zRY4+ZLD0l9Cw/?=
- =?us-ascii?Q?Rue+pn9af0fggcBg3USI5d9NxnrLG8tF3FLSatG7ecQdZ48yn8ffFWDdh4j+?=
- =?us-ascii?Q?zTnt34g5IQ=3D=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28724186-5cc2-4593-25f6-08df366ee1f3
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB12318.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2026 10:16:37.7081
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s3WsjzDIIYyL/XM1DLF375O/gNLQcy4Mugo/YLX9mpLpAXKa7DHFZIve31C5lY+2t/9VnXUwW3Rpd6QVYDLhug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB12032
+References: <cover.1793278754.git.geert+renesas@glider.be> <2f986484ade3f3ab7785a088b476b4bc6f53c157.1793278754.git.geert+renesas@glider.be>
+In-Reply-To: <2f986484ade3f3ab7785a088b476b4bc6f53c157.1793278754.git.geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Oct 2026 11:19:16 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVDs38CWQv+-1d6iMa5Et-w53iVbjSTyQS5uVcvq+E8Ag@mail.gmail.com>
+X-Gm-Features: AclHuK8TLIiJXfBZEbZO-sDHcOFpgPhdmma0xCzHFZfNFDpVgGdGYD9NeIfWwIY
+Message-ID: <CAMuHMdVDs38CWQv+-1d6iMa5Et-w53iVbjSTyQS5uVcvq+E8Ag@mail.gmail.com>
+Subject: Re: [PATCH 4/9] can: rcar_canfd: Add support for R-Car Gen5
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Marc Kleine-Budde <mkl@pengutronix.de>, 
+	Vincent Mailhol <mailhol@kernel.org>, Biju Das <biju.das.au@gmail.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Ulf Hansson <ulfh@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, linux-can@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Luca,
+On Thu, 29 Oct 2026 at 14:11, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> The CAN-FD block on R-Car Gen5 is similar to the variant on R-Car Gen4,
+> but uses split global and per-channel interrupts, like on RZ/G2L.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks for looking over this patch.
+> --- a/drivers/net/can/rcar/rcar_canfd.c
+> +++ b/drivers/net/can/rcar/rcar_canfd.c
+> @@ -636,6 +636,23 @@ static const struct rcar_canfd_hw_info rcar_gen4_hw_info = {
+>         .external_clk = 1,
+>  };
+>
+> +static const struct rcar_canfd_hw_info rcar_gen5_hw_info = {
+> +       .nom_bittiming = &rcar_canfd_gen4_nom_bittiming_const,
+> +       .data_bittiming = &rcar_canfd_gen4_data_bittiming_const,
+> +       .tdc_const = &rcar_canfd_gen4_tdc_const,
+> +       .regs = &rcar_gen4_regs,
+> +       .sh = &rcar_gen4_shift_data,
+> +       .rnc_field_width = 16,
+> +       .max_aflpn = 127,
+> +       .max_cftml = 31,
+> +       .max_channels = 8,
+> +       .postdiv = 2,
 
-On Fri, Oct 30, 2026 at 09:29:39AM +0100, Luca Ceresoli wrote:
-> Hello Laurentiu,
-> 
-> > The next bridge in bridge chain could be a panel bridge or a non-panel
-> > bridge.  Use devm_drm_of_get_bridge() to replace the combination
-> > function calls of of_drm_find_panel() and devm_drm_panel_bridge_add()
-> > to get either a panel bridge or a non-panel bridge, instead of getting
-> > a panel bridge only.
-> 
-> Since commit b7797081ccfe ("drm/panel: embed a drm_bridge into every
-> drm_panel") there is no such thing as a panel_bridge. Now every panel just
-> embeds a bridge, and there is no reason to use the panel_bridge API. All
-> bridges/encoders/whoever needing to interact with "the next component, be
-> it a bridge or a panel" should just use the bridge API.
-> 
-> The old panel_bridge APIs are deprecated [0] and by now they are just
-> complicated wrappers to the bridge API.
-> 
-> I'm addressing the conversion to bridge API and eventual removal of the
-> deprecated panel_bridge API as time permits (but pathces would be
-> welcome). This driver has already been converted by commit 802372cf316a
-> ("drm/bridge: fsl-ldb: don't create a panel_bridge"), so this patch is
-> basically not changing anything: it's still getting a pointer to the next
-> bridge, but switches to a slightly more complicated implementation.
-> 
-> So I'd drop this patch.
+R-Car X5H does not have the /2 postdivider, so this should be one.
+Else the bitrate is twice as fast as intended when the external can_clk
+is not available.
 
-Agreed
+> +       .multi_channel_irqs = 1,
+> +       .ch_interface_mode = 1,
+> +       .shared_can_regs = 1,
+> +       .external_clk = 1,
+> +};
+> +
+>  static const struct rcar_canfd_hw_info rzg2l_hw_info = {
+>         .nom_bittiming = &rcar_canfd_gen3_nom_bittiming_const,
+>         .data_bittiming = &rcar_canfd_gen3_data_bittiming_const,
 
-> 
-> Still it's good to get rid of the obsolete "panel" wording because now we
-> don't interact with a panel aymore, see below.
+Gr{oetje,eeting}s,
 
-OK, I'll replace this patch with one addressing your comments below.
-
-> 
-> [0] https://gitlab.freedesktop.org/drm/misc/kernel/-/blob/drm-misc-next/Documentation/gpu/todo.rst#remove-panel_bridge-api-functions
-> 
-> >
-> > Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> > Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> >
-> > diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
-> > index 7ec84c81cd78..52ae7f5b63c7 100644
-> > --- a/drivers/gpu/drm/bridge/fsl-ldb.c
-> > +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
-> > @@ -294,8 +294,8 @@ static const struct drm_bridge_funcs funcs = {
-> >  static int fsl_ldb_probe(struct platform_device *pdev)
-> >  {
-> >  	struct device *dev = &pdev->dev;
-> > -	struct device_node *panel_node;
-> 
-> This could be renamed remote_bridge, or next_bridge_node, or the like.
-> 
-> >  	struct device_node *remote1, *remote2;
-> > +	struct drm_bridge *next_bridge;
-> >  	struct fsl_ldb *fsl_ldb;
-> >  	int dual_link;
-> >
-> > @@ -318,19 +318,16 @@ static int fsl_ldb_probe(struct platform_device *pdev)
-> >  	if (IS_ERR(fsl_ldb->regmap))
-> >  		return PTR_ERR(fsl_ldb->regmap);
-> >
-> > -	/* Locate the remote ports and the panel node */
-> > +	/* Locate the remote ports. */
-> 
-> This is OK.
-> 
-> >  	remote1 = of_graph_get_remote_node(dev->of_node, 1, 0);
-> >  	remote2 = of_graph_get_remote_node(dev->of_node, 2, 0);
-> >  	fsl_ldb->ch0_enabled = (remote1 != NULL);
-> >  	fsl_ldb->ch1_enabled = (remote2 != NULL);
-> > -	panel_node = of_node_get(remote1 ? remote1 : remote2);
-> 
-> I'd leave it as is, it's just less code (and more efficient FWIW)
-> than... see below (*)
-> 
-> >  	of_node_put(remote1);
-> >  	of_node_put(remote2);
-> >
-> > -	if (!fsl_ldb->ch0_enabled && !fsl_ldb->ch1_enabled) {
-> > -		of_node_put(panel_node);
-> > -		return dev_err_probe(dev, -ENXIO, "No panel node found");
-> > -	}
-> > +	if (!fsl_ldb->ch0_enabled && !fsl_ldb->ch1_enabled)
-> > +		return dev_err_probe(dev, -ENXIO, "No next bridge node found");
-> 
-> This can be simplified by using a clenaup action on panel_node (or whatever
-> the new name will be), so the of_node_put() would disappear. See for
-> example commit 23bc92902edd ("drm/mxsfb/lcdif: simplify ep pointer
-> management using __free").
-> 
-> 
-> > @@ -339,10 +336,14 @@ static int fsl_ldb_probe(struct platform_device *pdev)
-> >  	if (of_property_present(dev->of_node, "nxp,enable-termination-resistor"))
-> >  		fsl_ldb->use_termination_resistor = true;
-> >
-> > -	fsl_ldb->bridge.next_bridge = of_drm_find_and_get_bridge(panel_node);
-> > -	of_node_put(panel_node);
-> > -	if (!fsl_ldb->bridge.next_bridge)
-> > -		return -ENODEV;
-> > +	next_bridge = of_drm_get_bridge_by_endpoint(dev->of_node,
-> > +						    fsl_ldb->ch0_enabled ? 1 : 2,
-> > +						    0);
-> 
-> (*) ...this code.
-> 
-> > +	if (IS_ERR(next_bridge))
-> > +		return dev_err_probe(dev, PTR_ERR(next_bridge),
-> > +				     "failed to get next bridge\n");
-> > +
-> > +	fsl_ldb->bridge.next_bridge = next_bridge;
-> >
-> >  	if (fsl_ldb_is_dual(fsl_ldb)) {
-> >  		struct device_node *port1, *port2;
-> 
-> Luca
-> 
-> -- 
-> Luca Ceresoli, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
-> 
+                        Geert
 
 -- 
-Thanks,
-Laurentiu
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
