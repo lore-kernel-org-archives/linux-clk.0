@@ -1,57 +1,81 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793359472;
-	b=SLMB6tewcLQ3v8rmC+ip6ykRi0zaHMVcjDuprI0QVawcf4KWpjj8KzWsweg+UNXn7vsQ
-	 vvuvmdWW9vVQ6ebQpdhP2ibvhFiMLXQJY3lQ/6LfFrw43F0989Y5TVFKLY7ywm2tGV+MQ
-	 h+Lqy+u391nK7aXZfVA2bfHAfwztSQcut2JE3JfVFN0Ue88KeYhCOdUf1RgmONFi9DKNY
-	 KY9x9je2fGpO26i8O8ZevQEf2mfhFiyNk5/IFePN3AscCwK2Ei8g26YZULd1VHNXO0mE6
-	 peWeyilnWGVgpanwc/zQBlf8RSO9rk8CahqbJOq93LCZ9eYX9kxcwta897FJs7vvp9A==
+	t=1793360672;
+	b=c3lChteatUb+fYCoLZ6MvutcfB0Zaa3I2zHbnXPUUi5wkXqL1pjDVp9u7wGGtnKnrrRt
+	 eCeZzPcRmAcYAHRjD0f0Kszo68sM2H2zeRfH4A1rIbxD9QqZSS4Wcukm/EuB2fO4SWZJ6
+	 SAvsrlwX4GqH/r+qAx/EHDVG3o3PdB4yOLfk2NtwV6SMfR1HEUHpok4MW93a45iiJ6zgC
+	 I2b/F7GEz7fOoG+SVpJ5l2GHoHVG2ZWmAGvBoGM4xCMf3JrJQacaaWVNTS8za9nKyH5XL
+	 8ibEet+qL/GI+18VFJxQoQraoJfGnedfbwCcuq6Af7oCeyRHgYMYzY0n9tBDes7kliQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793359472;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793360672;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=0R9mpGXaa6njmjYCQm9R79QXLjB3UNrIXfnsijCCTLY=;
-	b=WLJQHfXF5qK9K9XEhCMIHEFXhelkjGF7TsfYXoTMIvHxGvzTVv7O8TIZdnDnCQ/L8Qzi
-	 fzi5qmzxS5TB20ZufUHOn9Ynvy5WDgCPr45SwPIdpgC/RXSpDmM88r5dsM7pSvKCEMZ6X
-	 +h7sYHkO4oVHAVgGA9y/gnbFd5Cd2A2IRw2daJIFyXaxffdAO0vVvruJcMxvl8UaFe543
-	 YGJ0jC3N8aSUMmb0pJNzKPq1bDK/07AmhPZGJtLrOWd38mKVBO6JKKZKNfSQBZZC0feop
-	 9Yg1zzgmsLuBvpB3nkqAZL8b7b3Jw+tFgNRx3S0N0nfzJAS9BL2KR9qNG8CgypuYWTQ==
+	bh=u22L97/jeI13IB20ysbQZcY423yThcHnEYQlKHEzxLc=;
+	b=gS+kucei7Z6HMG27q7M5/Sl5rccD69VDEuloR30z8M2jdkfjA0STkSQkd1Eh43Otlxm2
+	 Nvi55IkfWFQtrsqwEbqP3mZREBSluMhvSoAjAyX6qfn0HGvl0C+4nAZHLP9Yrz/00d779
+	 QBPNxeaJeBJ5F2rwgsaP9jcesyp3+XyGb2eTFhknTMyWW7rtotv2/yF2AJL5f93kU8sW0
+	 Dl9AQMzk1CFqSZgtiGcO85XJ0jnhB7a/DsvMkanlw4tIuQi3GgiV+ip2h8m/sCCPbtwnY
+	 k6YAzGqPaSnX+vHUVbhdtTCGb8SZADCzxAGtPI8y/7c1zWkzXrkWkqffilswO36nRrQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iefuUdR6;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=POEHrrX+;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AF7606A31D;
-	Fri, 30 Oct 2026 11:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84F8606A31A;
+	Fri, 30 Oct 2026 11:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iefuUdR6
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 261FA1F000C1;
-	Fri, 30 Oct 2026 11:24:30 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=POEHrrX+
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C4AD1F0093A;
+	Fri, 30 Oct 2026 11:44:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793359472;
-	bh=0R9mpGXaa6njmjYCQm9R79QXLjB3UNrIXfnsijCCTLY=;
+	s=k20260515; t=1793360671;
+	bh=u22L97/jeI13IB20ysbQZcY423yThcHnEYQlKHEzxLc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iefuUdR6ndz6ACtrN42XdKtHa7dXchA1Mm+sNTQrpoOchg7HUIK2uVGzrzRtZ6Bil
-	 VNptVu0nIc9A3yPQ8zHtpmsrqL1V6wRW6I4d/7hyJ4/X92UaB92q41WhTEdB/71jCm
-	 g/YMdWf3Qt7IVk3PpHqyAU8J1RA5Uxr681N7yYZRz6z5rhUqKz4frrfjWJOXQ4bzlA
-	 l5PAmjHRhswGsbN+28UyFOdEXr/0ztaNAboXE08mHbwolKtn1Kcqz1ngarWWkFqm+5
-	 KPUHcauAOMBhDOFvnQHo+xXY5EzrPCdCNsEizcv4c1tmmimPRwzfcMuJY6O2aynycw
-	 EspApFixWqh4A==
-Date: Fri, 30 Oct 2026 12:24:28 +0100
+	b=POEHrrX+sPBo41n1mG2oZ7jZsPptJNOYuklpaJCho15lUx/hky0vAto0IGN9wUGU6
+	 ND1CBDe5rZnFil1HZM1tjiLOFUAleLd3OoRXz2gYSIc3S0vbxzEcjwCfDh4zVMpSsf
+	 EQlNPouP+PVpC+k2CwhIb/KtciGpEkUOTO8XdOVMGJFbCRhD4vWJqa17k4GdbY1Vlc
+	 +22QWJSEiJS+ic6dfb3qVSAJmBMrYs3nndjOrrxn5UsvH0+zvXfwafKrObb+dlFg75
+	 QjOl3vEY9Q5kPpMymCryWXA4Z8a6csZvMkbqWCkAqIOAa8OUIZNXAetDK6xKKo0Mfo
+	 yZ+wl5iCt+jdg==
+Date: Fri, 30 Oct 2026 12:44:28 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Cercueil <paul@crapouillou.net>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, letux-kernel@openphoenux.org, 
-	kernel@pyra-handheld.com, Paul Boddie <paul@boddie.org.uk>
-Subject: Re: [PATCH 1/4] dt-bindings: clock: Add Ingenic X1600 CGU bindings
-Message-ID: <20261030-zippy-crocodile-of-enhancement-9fb0f0@quoll>
-References: <cover.1792955907.git.hns@goldelico.com>
- <13abd95aaab56ce5c9dc565db7f0198162b0c166.1792955907.git.hns@goldelico.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Frank Li <Frank.Li@nxp.com>, Vinod Koul <vkoul@kernel.org>, 
+	Yinbo Zhu <zhuyinbo@loongson.cn>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Tiffany Lin <tiffany.lin@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, 
+	Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Ryder Lee <ryder.lee@mediatek.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Christian Marangi <ansuelsmth@gmail.com>, 
+	Eric Anholt <eric@anholt.net>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Peng Fan <peng.fan@nxp.com>, Aakarsh Jain <aakarsh.jain@samsung.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	freedreno@lists.freedesktop.org, imx@lists.linux.dev, dmaengine@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-media@vger.kernel.org, linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: Fix property name typos in if/then schemas
+Message-ID: <20261030-musical-modest-butterfly-e7734f@quoll>
+References: <20261028120216.2657397-1-robh@kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -63,35 +87,24 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <13abd95aaab56ce5c9dc565db7f0198162b0c166.1792955907.git.hns@goldelico.com>
+In-Reply-To: <20261028120216.2657397-1-robh@kernel.org>
 
-On Sun, Oct 25, 2026 at 08:18:24PM +0100, H. Nikolaus Schaller wrote:
-> Add the device tree bindings and the clock ID definitions for the
-> Clock Generation Unit (CGU) of the Ingenic X1600 SoC.
+On Wed, Oct 28, 2026 at 07:02:12AM -0500, Rob Herring (Arm) wrote:
+> Property names within if/then schemas currently go unchecked whether
+> they have a type defined or match what's in the top-level schema. Adding
+> a check finds a number of instances of typos. The typos result in the
+> schema having no effect on constraints.
 > 
-> The clock layout features specific I2S handling. To properly support
-> the I2S controllers on the X1600 without relying on complex compound
-> dividers that are not yet natively supported by the drivers, split
-> the structures to explicitly describe the additional I2S divider
-> fields. This design accounts for the current driver limitations
-> regarding division encoding while matching the hardware's internal
-> gating architecture.
+> With this, fix the mediatek,vcodec-encoder 'clocks' count constraint
+> exposed by the name correction.
 > 
-> Furthermore, introduce dedicated I2S0 RX and TX clock definitions to
-> allow independent and precise routing for I2S stream usage.
-> 
-> Co-developed-by: Paul Boddie <paul@boddie.org.uk>
-> Signed-off-by: Paul Boddie <paul@boddie.org.uk>
-> Co-developed-by: H. Nikolaus Schaller <hns@goldelico.com>
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
 
-One more nit:
+I just git grepped kernel sources and weirdly no one made a typo in
+"clocks" of forgetting the second letter. We became way too polite :).
 
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v7.1-rc7/source/Documentation/devicetree/bindings/submitting-patches.rst#L23
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
