@@ -1,52 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793397470;
-	b=SnW+GpnSMs2VhoerQM4ofmfBUH87sYRlm8UCBaReFPvK5SPcYTvGkPiO9qd4w4WHKDRD
-	 zKsT28RL4vlK0VdiB/tc4h3q+SU46rjVKB4aT53whArK78jKF7Q/+6AuklXaPZiXYNLtU
-	 cQY2DxtKRZWGXGAJDK1Awe2BXnzqr153Z3P99T79k6zrukqsqjTJvpVqvKpxVCsQg6WHO
-	 kqJ3+tYNNG771JRR9VEdmvspZ2YldLW2YoleJoFhcclMflARRtbHcKV40Zibr23Uo3x3l
-	 AVbS3tw+rC3bq8a6sWpePxDQt8kLm7YKgKgYvPMCR7cw74UwI9i0A5qfqT0lsqkgPqQ==
+	t=1793397748;
+	b=qUTnfan9jXksTY8ffScSDX3ODso3eyefQskxec3w3vlL79RBkI9k/UZ5MUOsqox/sbqk
+	 N0TAdegQ8sgxzJhpa8iHekqIVphFDeJgzJwf59rIixMIkVnIyMxzFUoeol5UTvGU3LRH1
+	 MBqgS2HnzWNw5V9GwCpaaHCNqkZyQ4oHfSKd/5DLRXUP3YcrG3G1/NvPYgPxpSRth3cP+
+	 4XGzTVQKW75WFxSuw1MhUck5ZS/VWJndf6kQJzwQVp8z7kCbxNVjYqT1AMOg1PCFOKpjk
+	 GHVC0z9yKz8ci93EBF0KyTzHx5nKCRLXRE+EqvVG9wdqWn+SkFjdBh+vE988XIyMrvw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793397470;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793397748;
 	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
 	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
 	 In-Reply-To;
-	bh=bEGOgsDVGhIJx4rlG5jGs+QKv8RNAZHyuX7MzGnejOQ=;
-	b=D/KaxP3nV4cdcdbhGCj3dtGGhck30eoKg3J9VJe+qISZcK6Cl/pIsoCGTvtSbuNbRaRz
-	 8rFlhT5Fm1RpIYf4A6MYbiKbi8PbTSuZvrJtIyi6byQQyPy/Dl9db+xseRM9d35QNtWDn
-	 TV/dq1ojsQXlRa8YHfiaQJ3Wi1gzo8iFmaSm5h0uaPS3E70lQ3tkR6eGCgy3idEW8xWOj
-	 D6NS6fYuVMLkc7wyKfAm4Aol4z0gLybs6EPNbDHeSvq3p/ciag2ZEv2tMeV8cFlP4SiBt
-	 cbieYriJSkUcf1CC2cd4HvEaxmK9URTF98xwzor5/C3VT68Bt/sLalbj8ETP+4dGfKg==
+	bh=CmhrV7WOQ1Ivtyn6HVKc1TJGgGsBZCFCnlJmc49PvXY=;
+	b=SZaShb2fgBdkB4/eGp0wkmrnE7GlHJkeS4ax1d0JdGNCz3Puxn9N8WifxmX2GpqxUBiI
+	 qOb5eSND7dAzesg5CCmNQDlmklJu2v+Go0O4KMw+Oe4ImD2fbdWlgjSYWbE/EsmnDDJxr
+	 OgwbtEPagynLiXwchcQef+pSlRTui7yw3/QVXHDDieSQ6bGxvcWyzzyySntE9RhBb/RC9
+	 NzNFyfmOS3HER3ygcw9tlY91+9jlfhZZrRdsB/GGC6SPOgTxRhSiEdvtMAj+/EnwaGE8J
+	 pPV991yZaKHNj+YGWhHzUYWUXgs8H5RvPwKWhtkhHpV/WnaOqG0sJAmW8NPM4R5KaKA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=ideasonboard.com;
 	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=KSGgq7+O;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=F4vu3pTg;
 	arc=none smtp.remote-ip=213.167.242.64
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65945606A31A;
-	Fri, 30 Oct 2026 21:57:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 65945606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D45606A31A;
+	Fri, 30 Oct 2026 22:02:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 69D45606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=KSGgq7+O
+	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=F4vu3pTg
 Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C05404B0;
-	Fri, 30 Oct 2026 22:55:33 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3734434;
+	Fri, 30 Oct 2026 23:00:11 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1793397333;
-	bh=V3JgVLQtVdb5VLqlOWN8YJQxZQDEBr6c4IsRWxr421M=;
+	s=mail; t=1793397611;
+	bh=cvfJwegAtBirKmtRHDJkgsq/4UihRm1DZ/iQ7q6bsbY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KSGgq7+O2MKnE1J4x3pkNTGoCUu+L4ZbDx/P7Mwlk0aqZvussGRm4uRHhOLZdN3y8
-	 RIqm/+a+g6zwT6xWpidRyUUJiUw3ygUeBTLd7MS7ElQ0AwSPcnlmm8JRhx0y+Gr8KK
-	 4v3sVcCrS8xnyU72gzxn5imF7PlXojPXsM0p9frQ=
-Date: Fri, 30 Oct 2026 23:57:46 +0200
+	b=F4vu3pTgWKfsuxJCQVJfZ1qDARXYRmiVyZ/wgzrrW2MeUH/vk8csX1M4uu5P3ZfOF
+	 svwjhU1p83QwoFSEtuVBkv/vFjj59uTDXITrhYExydBNuBQPqMi2POsMGjO4bD3IdJ
+	 uLDhJKrZb+GOnfwqBAyESKn3W+Ag3/Fb/2m2Cdzc=
+Date: Sat, 31 Oct 2026 00:02:24 +0200
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Paul Elder <paul.elder+renesas@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Paul Elder <paul.elder+renesas@ideasonboard.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
@@ -60,11 +60,12 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-pm@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH DNI v3 01/15] dt-bindings: clock: renesas,r8a78000-cpg:
- Add CPG_SGD4_VIO_DP_{TX,OTHER}
-Message-ID: <20261030215746.GB3144851@killaraus.ideasonboard.com>
+Subject: Re: [PATCH DNI v3 15/15] media: rcar-fcp: Check device revision at
+ probe time
+Message-ID: <20261030220224.GG3178046@killaraus.ideasonboard.com>
 References: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-0-e052903a3832@ideasonboard.com>
- <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-1-e052903a3832@ideasonboard.com>
+ <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-15-e052903a3832@ideasonboard.com>
+ <CAMuHMdXLC7Zw9x6=iz2WMeuPr=rhqKMVPpRdVqFcHJxmAYC79w@mail.gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -76,46 +77,72 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-1-e052903a3832@ideasonboard.com>
+In-Reply-To: <CAMuHMdXLC7Zw9x6=iz2WMeuPr=rhqKMVPpRdVqFcHJxmAYC79w@mail.gmail.com>
 
-Hi Paul,
-
-Thank you for the patch.
-
-On Thu, Oct 15, 2026 at 04:51:41PM +0900, Paul Elder wrote:
-> Add the CPG_SGD4_VIO_DP_TX and CPG_SGD4_VIO_DP_OTHER clocks. The former
-> is used by FCPV{B,D,I} and VSPD while the latter is used by VSP{B,I} on
-> the Renesas R-Car X5H.
-
-The comment message should probably be updated based on the discussion
-in 04/15.
-
-> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-> ---
->  include/dt-bindings/clock/renesas,r8a78000-cpg.h | 2 ++
->  1 file changed, 2 insertions(+)
+On Tue, Oct 20, 2026 at 02:20:43PM +0200, Geert Uytterhoeven wrote:
+> On Thu, 15 Oct 2026 at 09:53, Paul Elder wrote:
+> > From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> >
+> > Verify that the device revision register reports a valid value,
+> > otherwise reject the device.
+> >
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
 > 
-> diff --git a/include/dt-bindings/clock/renesas,r8a78000-cpg.h b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-> index 5851a29847f961b9b4ec270f263eb3aa19e45308..8c1a01e28ddbb26c583d7c9b387400ef6626c06c 100644
-> --- a/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-> +++ b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-> @@ -12,5 +12,7 @@
->  #define R8A78000_CPG_SGASYNCD16_PERW_BUS	2
->  #define R8A78000_CPG_S0D4_PERE_MAIN		3	// FIXME Preliminary
->  #define R8A78000_CPG_MSOCK_PERW_BUS		4	// FIXME Preliminary
-> +#define R8A78000_CPG_SGD4_VIO_DP_TX		5	// FIXME Preliminary
-> +#define R8A78000_CPG_SGD4_VIO_DP_OTHER		6	// FIXME Preliminary
-
-Rebasing the next version on top of Geert's v4 of the CPG, those won't
-be preliminary any more \o/
-
-Please define all SGD clocks in one go (see the discussion in [1]).
-
-[1] https://lore.kernel.org/all/e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be
-
->  
->  #endif /* __DT_BINDINGS_CLOCK_RENESAS_R8A78000_CPG_H__ */
+> Thanks for your patch!
 > 
+> > --- a/drivers/media/platform/renesas/rcar-fcp.c
+> > +++ b/drivers/media/platform/renesas/rcar-fcp.c
+> 
+> > +
+> > +static const struct of_device_id rcar_fcp_of_match[] = {
+> > +       { .compatible = "renesas,fcpf", .data = (void *)RCAR_FCPF },
+> > +       { .compatible = "renesas,fcpv", .data = (void *)RCAR_FCPV },
+> > +       { },
+> > +};
+> > +MODULE_DEVICE_TABLE(of, rcar_fcp_of_match);
+> 
+> I don't see a good reason for moving this around?
+
+I think it's a leftover from the original version of the patch, which
+was using of_match_device(). It's not needed any more now that the code
+below uses device_get_match_data()/
+
+> > +
+> >  static int rcar_fcp_probe(struct platform_device *pdev)
+> >  {
+> >         struct rcar_fcp_device *fcp;
+> > +       int ret;
+> >
+> >         fcp = devm_kzalloc(&pdev->dev, sizeof(*fcp), GFP_KERNEL);
+> >         if (fcp == NULL)
+> >                 return -ENOMEM;
+> >
+> >         fcp->dev = &pdev->dev;
+> > +       fcp->type = (enum rcar_fcp_type)device_get_match_data(&pdev->dev);
+> 
+> s/rcar_fcp_type/uintptr_t/, although this no longer seems to trigger
+> a conversion between pointer and integer of different sizes warning?
+> 
+> >
+> >         platform_set_drvdata(pdev, fcp);
+> >
+> 
+> > @@ -215,13 +332,6 @@ static const struct dev_pm_ops fcp_pm_ops = {
+> >         RUNTIME_PM_OPS(fcp_pm_runtime_suspend, fcp_pm_runtime_resume, NULL)
+> >  };
+> >
+> > -static const struct of_device_id rcar_fcp_of_match[] = {
+> > -       { .compatible = "renesas,fcpf" },
+> > -       { .compatible = "renesas,fcpv" },
+> > -       { },
+> > -};
+> > -MODULE_DEVICE_TABLE(of, rcar_fcp_of_match);
+> > -
+> >  static struct platform_driver rcar_fcp_platform_driver = {
+> >         .probe          = rcar_fcp_probe,
+> >         .remove         = rcar_fcp_remove,
+> >
 
 -- 
 Regards,
