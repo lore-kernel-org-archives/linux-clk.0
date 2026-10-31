@@ -1,70 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793397953;
-	b=x9uWp8SI9botKTSDW4m4v/9+w5C9JI5/rF6aNapqVUT7GuZdk77lqsIteAVa6xm7If8x
-	 KebK/Ok5reubKbtsrVr5VcFv/jL7Xf/ZCYmvTlHJauJCXrWsPTYE+PYJ1rNxwa5VJhQVX
-	 LNxGRLti4OgAyt3fLLVD5mZUEvZrOJZkBkEstlBE/KZ8Qd41ztZEdxaLu8tLaOfdmRson
-	 0Wjr+gYm1zXr7MJVBXULYMJUaXO7YigEyKoUq6g9NGNJmwfKwuQ612oJzRwy3SvVeTu0I
-	 NhWh+yJs4VgytUZyUDn+OUewUN9Lipo+LqtoY4vDoEMDD4+UNaO+wnTVSKeirSA/PYg==
+	t=1793413607;
+	b=dfoavP24nh2fKyN1+9bqHql0YLnaI2r/FqlBGsN6MhdxNpzjjI2a87T+EKLYDOF6LVuZ
+	 qbXYoY5fbLoJehnx/kdU716r55o6ECmB6KAQL0Zzh70XJQSkyhuD1Wf/LczYsTP4vS5W+
+	 /FLVyVBcb+J6rARVJ8+Md/sb8XLWQhq8IU6/wdwjMK0/ydllaRodT/LognN2v3MyM5ENP
+	 2xKY5rOlXk+3jLCMesmD/juEbwkF+tToeaUQc+AGiLl2n3cpli3OKViCU1mYrtHvCq+Uf
+	 aRAywEld6qUYfLoeuDHSmDwxryv5dgkRpLoi3/Qs/HqjP4h/Y9+MkN+PVi36Nbi3Yfg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793397953;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=vBJMC4GJvj0qjaTPwYTt5q30xb5b2ZksOkUaeaR7BVM=;
-	b=pzwk2wau/gKX3Fj97chHI3lIy54lIa8ocD3rfOjQJE4Tl4TkWmV/oUogSA/J29Pfdhq3
-	 cOf4m8DIoHt+EYiD7RjcfSeWZQWjenphwXseNk9vWwxwqi90odkB7IyoJIlLtrlU2g7cZ
-	 /i5toORuTsPkCDMJmEKneTD+QacUqoMjFX6mqxXdDtUBUgb1/rf1cPPuU7udR6YtLPkYG
-	 QheTmo1P2xS60dSCADtDKblcm2+WuoTW0vvptrabwMaX6bR7V6tCVXYmnuoqdT6jZPX4T
-	 yzMxagWl9f7LM/0tAZIDBaSyN25pyn/p4uP4uippGrSTPstQvO4/JiRh3qIi4aks6tA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793413607;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=dufq0gMTwMuobWdajbCSMPOQ8VLgRxtkcM3Ok9ZSSyg=;
+	b=35+QurRCSTunRMO8+3rESRlt0EWgVe/5yvMFraZ73mAvpYzpj8j1Ik9UMBbbEh5bJlkz
+	 W/c7RYqOjkZ0rmtnAfzSMdiMbHBzXAvcTeXdvv/WWk0St0jORzUcQOTbKvO2LJTbdLTY1
+	 lDxE4S1U/sSUPJu5jS+37RqrCTqo9UlOfMLT8LBa7C+pRUXLLI/01KICDztlaGazQAbGR
+	 Wpvj3+3eBCh3FwA9k4gIJjQnq2FVv9izyoqAEwMCNZX85TOfGnDADPKeFE/BcPCWZ+dKq
+	 kOpnyFG7ufJsKQhUjJRLMC7kBYRw/8OZQQE4dcM6lpI7G2E/oNXIY4kt8AzT6WJCbgA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=YgPQIJJc;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wGUha52a;
+	arc=none smtp.remote-ip=209.85.210.43
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9ECB606A31A;
-	Fri, 30 Oct 2026 22:05:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C9ECB606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B82D606A31A
+	for <linux-clk@vger.kernel.org>; Sat, 31 Oct 2026 02:26:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8B82D606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=YgPQIJJc
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6323F447;
-	Fri, 30 Oct 2026 23:03:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1793397816;
-	bh=X4vKdAe6tCIGUMBGk95lp3ykmxTWgC6GkF33THOI3As=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YgPQIJJcZCU7Qs0ZADaMzgFJVe0SzS1pAKe4q3A2qBJVEN//BmnybrCyMLOv3Iwjj
-	 i/FnFPBj2jPdj47R+swC22zYL4x5wp62KWb1+WVe0DxcUm94c3JkwG/xfICyMLlXcc
-	 MOdfVC6KaKYekw/iw+GuuC3e1lmSrBKqkNHfa0NY=
-Date: Sat, 31 Oct 2026 00:05:49 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Paul Elder <paul.elder+renesas@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wGUha52a
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-84a248254f4so956991a34.0
+        for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2026 19:26:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793413605; x=1794018405; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=dufq0gMTwMuobWdajbCSMPOQ8VLgRxtkcM3Ok9ZSSyg=;
+        b=wGUha52arIwmxRX8GxYpnDu7CNWUKemMAv3Man3esUDL3UxzUW9uzQA6VddzEcqDzF
+         JzweTCxtjLJtliC4LC79fRYVdsXn77H+rLgRhl7ZSFZCBXhfMUU92mzMNkEutLNkl182
+         6WZKxBZAWL/jAjAItNYaucqdWyosDRh7IpaRV3Re7okGkluYtf9lbAvioopDgg9hXZkw
+         TeESocLXct22KiNe/bSd4V8Rbkdqa9VS3EgkqbbmsPRnQya9TUCSVtXh2jt06YSKtjCA
+         Tq4lP28pPOTzktNR6rmhVqohvC2PqihPeVmzmVHwFsnGItGuTx6w7A5mQxrp0S2qA6dh
+         fNQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793413605; x=1794018405;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=dufq0gMTwMuobWdajbCSMPOQ8VLgRxtkcM3Ok9ZSSyg=;
+        b=LuZRC05CeCL+Wz8il3q/93T2WdEZ3CIp/0IRFa6sRVr6upJMp60Gmeh49oprxb4Fmk
+         3B1utK67hKi6XTdqa/WnmHjtHiGo1KqdMKDDKyTxzAgwvWaD/tvi/OBYmvJkgA2KNBI0
+         kWsVaqxg4k0VDURHpetqMCR6OHwaWBfqQTuB1ae+RuXVzQW3CFVjrmCoTouj6hMXIc4x
+         dcdKUYlvcd3ZLJzQw32Az9YCaEIqD15H7XjC0g/8FMkSQfncn5wBkgKZFnHyY7lp8qW3
+         WiYtwAibc0g+StMO6QlZWzs6JGZYoJqG/27kqJddJEC2Kzz5D4gA9bWasGwfwLeQm+Cz
+         QXZg==
+X-Gm-Message-State: AFq9FYKBBKnC9sGeBcmgDsXwk0veGXu5UnbURDZ90tfxJO9EAwQSWpGl
+	lZ4Pcj17IkbgNm5pKtrwyfG/kqSVzGklTsbaSjW+NXlQZhZJiXbptTnQ
+X-Gm-Gg: AYBFou32v3vg9xdiL03ABprFbMSxNmgt0KvcAPLDchKUsSXDMa4YBj6+MdCKtirnGyC
+	DCCmLpSyGib4gYsGlFp89aXt6Sp0iwid7KUKMxPZBDsLOWVVRu7gedsAAP6jGZg2hYuK0Admd64
+	Kb3x/rR1N8tUcW1imSDZBOgYQhOLqj1FNe4LyZSchUzpALB0kGXW+5vDRM/Yq8lFswJIHIIHpnO
+	gabWOzfcN6o5KY8/emFHsZNfP3wdyvXBoDK3KPOEP5BWaCYgH2cHPeMe1sY2yHvVSk1sR3Q3LPV
+	94goFphMqkX8Tq4sOSF65tu1BF2NQEN/YLxS5zvBRIIuPRh1quRAbAsqATKHmA1z2qqI0/Onwhp
+	lrE7f1FJUJW2IskGP67ZTzIBjRmt13fJ9r4mWF4A6K2XVjJECb9kn4tsN7lUrO0Boz+AbYmazb6
+	VTanVDcyZitoYYZwZoCaMlrxoQhkSCK3OG4EhzLP28zrX2ZgyD2hgNKnmEwfLQjLBj4/ADogjNM
+	ZMdnVam7NA25az2VNx0Tv41k5xMLSN7+vOuzPNxjQ5N2N/+XJ4RoEoLE40Ai801fmZ3gFXwEN0E
+	XDZLbJHNCb9twSkVIWRdiwizBpmzID2b3a1sGq/gypZo0lX/dZNYOR+XHTRsohfGAgs+CuiSkz3
+	UT08Z3A==
+X-Received: by 2002:a05:6830:7181:b0:81b:ac9a:5681 with SMTP id 46e09a7af769-85d3649ebddmr3195695a34.29.1793413605457;
+        Fri, 30 Oct 2026 19:26:45 -0700 (PDT)
+Received: from AMD.home.internal (dhcp-9-244-8-156.gobrightspeed.net. [9.244.8.156])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-85d355201f7sm3304636a34.23.2026.10.30.19.26.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2026 19:26:45 -0700 (PDT)
+From: Enzo Adriano <enzo.adriano.code@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH DNI v3 03/15] pmdomain: renesas: r8a78000: Add maps for
- VIO for SCP FW SDKv4.36
-Message-ID: <20261030220549.GH3178046@killaraus.ideasonboard.com>
-References: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-0-e052903a3832@ideasonboard.com>
- <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-3-e052903a3832@ideasonboard.com>
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Andre Przywara <andre.przywara@arm.com>,
+	Junhui Liu <junhui.liu@pigmoral.tech>
+Subject: [PATCH] clk: sunxi-ng: a733: preserve system-controller firmware clocks
+Date: Fri, 30 Oct 2026 22:26:43 -0400
+Message-ID: <20261031020640-263f7b05-a7s-clock@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -74,105 +102,141 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-3-e052903a3832@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 15, 2026 at 04:51:43PM +0900, Paul Elder wrote:
-> Add maps for VIO for the VSP and FCP power domains and reset domains.
+System-controller firmware uses the R-domain timer and mailboxes without
+Linux clock consumers. Disabling these clocks as unused can leave
+firmware services unavailable. On a Radxa Cubie A7S with vendor boot
+firmware, the public CCU v6 candidate reaches a Linux shell but stalls
+at warm reboot.
 
-s/reset domains/module control/ as its not just reset (and there's no
-"reset domain") but also module control clock ?
+The public A733 firmware selects the RISC-V platform, reserves R-domain
+timer0 for delays and enables both main and R-domain mailbox clocks.
+Retain r-timer0, bus-r-timer, bus-r-riscv, bus-msgbox0 and bus-r-msgbox
+with CLK_IS_CRITICAL. This keeps their modeled parents enabled as well.
+Do not change rates, muxes, reset bits or unrelated gate policy.
 
-> 
-> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-> 
-> ---
-> Changes in v2:
-> - add VSPD and FCPVD
-> ---
->  drivers/pmdomain/renesas/r8a78000-mdlc.c | 54 ++++++++++++++++++++++++++++++--
->  1 file changed, 52 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pmdomain/renesas/r8a78000-mdlc.c b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> index a0d83f27735e7deacb060e4102e510726b34e62e..cabe6435ecd791e358fd6987ce9394898d8c87f8 100644
-> --- a/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> @@ -861,6 +861,56 @@ static const struct mdlc_info r8a78000_mdlc_fw_4_28_0[] = {
->  	{ /* sentinel */ }
->  };
->  
-> +static const struct power_map_in r8a78000_mdlc_vio_power_fw_4_31_0[] = {
-> +	{ 0, 4 },	/* PD_VIO0 */
-> +	{ 1, 5 },	/* PD_VIO1 */
-> +	{ 2, 6 },	/* PD_VIO2 */
-> +	{ 3, 7 },	/* PD_VIO3 */
-> +	{ 7, 11 },	/* PD_VIO4 */
-> +	{ -1 }
-> +};
-> +static const struct mod_map_in r8a78000_mdlc_vio_mod_fw_4_31_0[] = {
-> +	{ 0x70, 26 },	/* VSPD0 */
-> +	{ 0x71, 27 },	/* VSPD1 */
-> +	{ 0x72, 28 },	/* VSPD2 */
-> +	{ 0x73, 29 },	/* VSPD3 */
-> +	{ 0x74, 30 },	/* VSPD4 */
-> +	{ 0x75, 31 },	/* VSPDB0 */
-> +	{ 0x76, 32 },	/* VSPDB1 */
-> +	{ 0x77, 33 },	/* VSPDB2 */
-> +	{ 0x78, 34 },	/* VSPDB3 */
-> +	{ 0x79, 35 },	/* VSPDB4 */
-> +	{ 0x7e, 40 },	/* FCPVD0 */
-> +	{ 0x7f, 41 },	/* FCPVD1 */
-> +	{ 0x80, 42 },	/* FCPVD2 */
-> +	{ 0x81, 43 },	/* FCPVD3 */
-> +	{ 0x82, 44 },	/* FCPVD4 */
-> +	{ 0x83, 45 },	/* FCPVD5 */
-> +	{ 0x84, 46 },	/* FCPVD6 */
-> +	{ 0x85, 47 },	/* FCPVD7 */
-> +	{ 0x86, 48 },	/* FCPVD8 */
-> +	{ 0x87, 49 },	/* FCPVD9 */
-> +	{ 0xf9, 163 },	/* VSPB0 */
-> +	{ 0xfa, 164 },	/* VSPB1 */
-> +	{ 0xfb, 165 },	/* VSPB2 */
-> +	{ 0xfc, 166 },	/* VSPB3 */
-> +	{ 0xfd, 167 },	/* VSPB4 */
-> +	{ 0xfe, 168 },	/* VSPI0 */
-> +	{ 0xff, 169 },	/* VSPI1 */
-> +	{ 0x100, 170 },	/* VSPI2 */
-> +	{ 0x101, 171 },	/* VSPI3 */
-> +	{ 0x102, 172 },	/* FCPVB0 */
-> +	{ 0x103, 173 },	/* FCPVB1 */
-> +	{ 0x104, 174 },	/* FCPVB2 */
-> +	{ 0x105, 175 },	/* FCPVB3 */
-> +	{ 0x106, 176 },	/* FCPVB4 */
-> +	{ 0x107, 177 },	/* FCPVI0 */
-> +	{ 0x108, 178 },	/* FCPVI1 */
-> +	{ 0x109, 179 },	/* FCPVI2 */
-> +	{ 0x10a, 180 },	/* FCPVI3 */
+The controlled tests distinguish the RISC-V bus gate from its separate
+special clock. They support this set for the tested A7S firmware,
+without establishing that every flag is independently minimal or that
+all firmware services are covered. The matching A7S configuration
+completed repeated warm reboots without clk_ignore_unused or a
+register-writing helper. Suspend is not qualified by these tests.
 
-The values look fine. After rebasing the MDLC v4 from Geert,
+Public firmware evidence:
+https://github.com/radxa/allwinner-arisc/tree/79086caef1f6d1fb1cf164afb018f6e873fd9910/ar100s
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+AI assistance: Codex:gpt-6-astra.
 
-> +	{ -1 }
-> +};
-> +
->  static const struct mod_map_in r8a78000_mdlc_pere_mod_fw_4_31_0[] = {
->  	{ 0x30, 193 },	/* PERE_GPIODM0 */
->  	// No CLOCK_ATTRIBUTES { 0x31, 194 },	/* PERE_GPIODM1 */
-> @@ -997,8 +1047,8 @@ static const struct mdlc_info r8a78000_mdlc_fw_4_31_0[] = {
->  		/* FIXME .mod_map = r8a78000_mdlc_vips_mod_fw_4_31_0, */
->  	}, {
->  		.base = 0xc5000000 /* mdlc_vio */,
-> -		/* FIXME .power_map = r8a78000_mdlc_vio_power_fw_4_28_0, */
-> -		/* FIXME .mod_map = r8a78000_mdlc_vio_mod_fw_4_31_0, */
-> +		.power_map = r8a78000_mdlc_vio_power_fw_4_31_0,
-> +		.mod_map = r8a78000_mdlc_vio_mod_fw_4_31_0,
->  	}, {
->  		.base = 0xc08f0000 /* mdlc_pere */,
->  		.power_map = r8a78000_mdlc_pere_power_fw_4_28_0,
+Assisted-by: LLM
+Signed-off-by: Enzo Adriano <enzo.adriano.code@gmail.com>
+---
+This is a standalone clock change for the separate A733/Cubie A7S DT
+v2. It applies to official base d89e1d186ec9271bf78e62771779e9fc03bf0fc3
+plus Junhui Liu's four clock-helper patches and A733 CCU v6 (eight):
+https://lore.kernel.org/r/20260906-sunxi-clk-no-p-v1-0-cbde21c9fe69@pigmoral.tech
+https://lore.kernel.org/r/20261009-a733-clk-v6-0-ae8178fce7e8@pigmoral.tech
 
+No Fixes tag is assigned to the unmerged CCU input. This does not
+replace or resubmit Junhui's series. The existing public MBUS_STORE
+critical flag is not part of this change.
+
+The final A7S integration passed two RAM boots, clock-summary checks
+and warm reboots with vendor U-Boot
+2018.07-17-boot-aw2501-g4c7078cfdf7-dirty. All five retained clocks
+reported enabled. The Image was built with W=1; the final DTB passed
+W=2 CHECK_DTBS=y. Earlier tests of the same five-clock change also
+passed four boots and warm reboots. These are system observations on
+one board, not proof of each flag's independent minimality or suspend.
+The DT test used a RAM-only BL31 reservation at 0x48000000/0x01000000.
+
+Final tested Image SHA-256:
+1ea68cdc5998b584f8a3e62c44a21e506a22a8144c5824d9a8485607a8f2bd09
+
+ drivers/clk/sunxi-ng/ccu-sun60i-a733-r.c | 13 +++++++++----
+ drivers/clk/sunxi-ng/ccu-sun60i-a733.c   |  3 ++-
+ 2 files changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733-r.c b/drivers/clk/sunxi-ng/ccu-sun60i-a733-r.c
+index b8f6e8c6e50735d702d4de8c6d320652358f251e..e9fca8af03cec39ac39d739d371f2d6e4f7e1044 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun60i-a733-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733-r.c
+@@ -57,11 +57,12 @@ static SUNXI_CCU_M_DATA_WITH_MUX(r_apb1_clk, "r-apb1", r_apb_parents, 0x010,
+ 				 24, 3,	/* mux */
+ 				 0);
+ 
++/* System-controller firmware uses R-domain timer0 for delays. */
+ static SUNXI_CCU_P_DATA_WITH_MUX_GATE(r_cpu_timer0, "r-timer0", r_apb_parents, 0x100,
+ 				      1, 3,	/* P */
+ 				      4, 3,	/* mux */
+ 				      BIT(0),	/* gate */
+-				      0);
++				      CLK_IS_CRITICAL);
+ static SUNXI_CCU_P_DATA_WITH_MUX_GATE(r_cpu_timer1, "r-timer1", r_apb_parents, 0x104,
+ 				      1, 3,	/* P */
+ 				      4, 3,	/* mux */
+@@ -78,7 +79,8 @@ static SUNXI_CCU_P_DATA_WITH_MUX_GATE(r_cpu_timer3, "r-timer3", r_apb_parents, 0
+ 				      BIT(0),	/* gate */
+ 				      0);
+ 
+-static SUNXI_CCU_GATE_HW(bus_r_timer_clk, "bus-r-timer", &r_ahb_clk.common.hw, 0x11c, BIT(0), 0);
++static SUNXI_CCU_GATE_HW(bus_r_timer_clk, "bus-r-timer",
++			 &r_ahb_clk.common.hw, 0x11c, BIT(0), CLK_IS_CRITICAL);
+ 
+ static const struct clk_parent_data r_pwm_parents[] = {
+ 	{ .fw_name = "hosc" },
+@@ -108,7 +110,9 @@ static SUNXI_CCU_DUALDIV_MUX_GATE(r_spi_clk, "r-spi", r_spi_parents, 0x150,
+ 				  0);
+ static SUNXI_CCU_GATE_HW(bus_r_spi_clk, "bus-r-spi", &r_ahb_clk.common.hw, 0x15c, BIT(0), 0);
+ 
+-static SUNXI_CCU_GATE_HW(bus_r_msgbox_clk, "bus-r-msgbox", &r_ahb_clk.common.hw, 0x17c, BIT(0), 0);
++/* Firmware can use this mailbox without a Linux clock consumer. */
++static SUNXI_CCU_GATE_HW(bus_r_msgbox_clk, "bus-r-msgbox",
++			 &r_ahb_clk.common.hw, 0x17c, BIT(0), CLK_IS_CRITICAL);
+ 
+ static SUNXI_CCU_GATE_HW(bus_r_uart0_clk, "bus-r-uart0", &r_apb1_clk.common.hw, 0x18c, BIT(0), 0);
+ static SUNXI_CCU_GATE_HW(bus_r_uart1_clk, "bus-r-uart1", &r_apb1_clk.common.hw, 0x18c, BIT(1), 0);
+@@ -146,8 +150,9 @@ static SUNXI_CCU_MUX_DATA_WITH_GATE(r_riscv_clk, "r-riscv", r_riscv_parents, 0x2
+ 				  24, 2,	/* mux */
+ 				  BIT(31),	/* gate */
+ 				  0);
++/* Firmware runs on the RISC-V core independently of Linux. */
+ static SUNXI_CCU_GATE_HW(bus_r_riscv_clk, "bus-r-riscv", &r_apb0_clk.common.hw,
+-			 0x21c, BIT(0), 0);
++			 0x21c, BIT(0), CLK_IS_CRITICAL);
+ static SUNXI_CCU_GATE_HW(bus_r_riscv_cfg_clk, "bus-r-riscv-cfg", &r_apb0_clk.common.hw,
+ 			 0x21c, BIT(1), 0);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+index cc2b229e2e6a6072f95086ce21cba6545012c0bb..ca0fc95fade2a66bcb90011e654a603eb676fd0b 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
++++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+@@ -635,8 +635,9 @@ static SUNXI_CCU_GATE_HWS(bus_dma1_clk, "bus-dma1", ahb_hws,
+ static SUNXI_CCU_GATE_HWS(bus_spinlock_clk, "bus-spinlock", ahb_hws,
+ 			  0x724, BIT(0), 0);
+ 
++/* Keep the mailbox available to system-controller firmware. */
+ static SUNXI_CCU_GATE_HWS(bus_msgbox0_clk, "bus-msgbox0", ahb_hws,
+-			  0x744, BIT(0), 0);
++			  0x744, BIT(0), CLK_IS_CRITICAL);
+ 
+ static SUNXI_CCU_GATE_HWS(bus_pwm0_clk, "bus-pwm0", apb0_hws,
+ 			  0x784, BIT(0), 0);
+
+base-commit: d89e1d186ec9271bf78e62771779e9fc03bf0fc3
+prerequisite-patch-id: 0df2ae41836b86fd868dfa01ddfde57f888f761a
+prerequisite-patch-id: 88f3a431e7c551a9fa732f062188f10fdd362eeb
+prerequisite-patch-id: 3e88bc873c909059d1199f82cda4013765e7a5e5
+prerequisite-patch-id: 0dbc27cd7417352319a0705a051dff35085e8922
+prerequisite-patch-id: 0ed6b92774b5b794761c7ce34db653a5435dc833
+prerequisite-patch-id: 27ed3814dbd0c7ad830532ff125625917c873b4b
+prerequisite-patch-id: 74d03898c5ce14763f4e89fb73e021de59f0fb9f
+prerequisite-patch-id: 9225cb094cf6cbb338b14ac63711d68bed12d24d
+prerequisite-patch-id: 568dae1c91a0d7318d6eb14a18054343b84b603a
+prerequisite-patch-id: ff3806332e741f0e2c8dac1c11f4c71449c16c8c
+prerequisite-patch-id: 39461e0543aefb5c40184664625cbab19ac8408a
+prerequisite-patch-id: 6fc03bfbd343042dd3b660938fcc09c5e7d48314
 -- 
-Regards,
+2.53.0
 
-Laurent Pinchart
