@@ -1,73 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=23.251.234.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793425307;
-	b=Hvz0iO/2TuVov5EmQkbweeFzmqcygXz6fXyBYeF55GBZgvzfd5sP7hoIvx7jUpJhUTBl
-	 Id78xaY3TQ5lNds9dvo2gKdLKfIK13zVpJ1X9jtFST7hTFMhVz/EfFZFIGi0A8UgptqEs
-	 gEQBze61TTBq9L0Zqjgv4YSk1nLFfmbjNjIzHLMsBEwTHsxYNpSTQXAEvtza6ZySd6eip
-	 TiIYpOAYgNmrH/ml5sF8xbykPtSn6LltXjp4u0hKcboqzoIaH1tTlUMbK4XZjMPy9TEL7
-	 jUqe7UGVnTMe4566WWYSWE9KW0SRfvX6AEBXtVDsm8ZzMrWPfMBmlSw3IEn19qyWcwA==
+	t=1793447833;
+	b=Ls49PTNxLRXR/3qPEuT/MTO59GTLRCXwVDpGkXnz/EzAftc6mv6nXqLkx32qFnixRcgE
+	 kaCdyTVmNNhBcLPvJrLbE5JzKMRAg8vuHm6ouM8DwIqZSjEzVgAsgikfbokF0RwgKxzNG
+	 0priv8gH3n9tJ0EjXIEuUP9XFUmw7XBsEWLEZhiKFIKJ7w0mOqK6AHvXjoMJsDVMTAzOY
+	 E7klg1hNjnz67J36CQ6zQCuUGP7/UCFX/k6Rguvu572Fx3RDh4ymkMoPehbJPhg6AJ9qM
+	 ckX7iY9rimB2oH/KRHP/aFeEiVyjFaLgRhlFhYLsoKFWrtvoxyyadOB5JrO80DsOTCQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793425307;
-	h=DMARC-Filter:DKIM-Signature:DKIM-Signature:In-Reply-To:Message-ID:
-	 References:X-Pmail-ID:From:To:Cc:Subject:Content-Transfer-Encoding:
-	 Date:MIME-Version:Content-Type:Feedback-ID:X-SES-Outgoing;
-	bh=jI8T5c3f3LqNpG25TWB8fWvMcJXinVSA9ZWa73qQlCQ=;
-	b=WVvmMWY3U6NauKqfBhcR18bx33ia2Pp+xGr5xsJPoglnH5aISWOkJW/y54cn0yHxP0cO
-	 LvBxy6Q5wZtkERJxWrfQ7wDEkudIqMqnYxI4h9rpEAu8vsFUG0VHxkWIU1rTJMI0FVaVB
-	 KimS326/ZCQxYpL9qSfRjoL1aQmcRbUrxwunN00g39X8AoecpiWTwsuXx94qwEUfNCUSa
-	 +BBd8kRMT1HrWeIE+qUUGOHE4SXYGcC11La5KG8seZXrbvTLqeoYp+3zmp4FHjN8Z6M16
-	 I0SdnjmapMrZtGR+rzI4KaOd25/lhgvsHj2xoiBjPSVFmxlP4Ee2Nu45NJNSGbs30vA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793447833;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=hbgrYjBJbZ044uSlWAyCxgtge92+lezD72P+VJK9EFI=;
+	b=eMrfHsD4ycHo4/NjQuhguU3sf3ARho+LjdaGsyFwqn2kWbDhinnI5dNu8JwPB6KxLLXO
+	 66eco+fehvuRHvucKnfXM00xFben3S99YwKuiJbSXx0EMIxJCrUzcjLfRcndfHNjXVPOL
+	 uvLAj57OvYzKTqlSaej6LxCleMRFBQTiJXdYTwY1H0/rS+ymYaDAn9ht30/g1Q3g3DH4/
+	 NlVCazf+eFux7kjeIaEJaU8Kjq8JJrXWHL6RD2vrx6TpO6gmswX4N/zd1g6n529SgyZqb
+	 MOosEU/JollmLO0IjNUbnOsdbmlM8RoqmkkERGBwX9L0NBILLLEr1C+vB9YHqCvHPbQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=brar.si;
-	spf=pass smtp.mailfrom=rsend.brar.si;
-	dkim=pass header.d=brar.si header.i=@brar.si header.a=rsa-sha256 header.s=resend header.b=Ka+af0qI;
-	dkim=pass header.d=amazonses.com header.i=@amazonses.com header.a=rsa-sha256 header.s=zh4gjftm6etwoq6afzugpky45synznly header.b=CfDXVVxL;
-	arc=none smtp.remote-ip=23.251.234.53
-Received: from e234-53.smtp-out.ap-northeast-1.amazonses.com (e234-53.smtp-out.ap-northeast-1.amazonses.com [23.251.234.53])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=linuxfoundation.org header.i=@linuxfoundation.org header.a=rsa-sha256 header.s=korg header.b=xhLHmUdX;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41C4606A31A;
-	Sat, 31 Oct 2026 05:41:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B41C4606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=brar.si
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rsend.brar.si
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D58606A320;
+	Sat, 31 Oct 2026 11:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=brar.si header.i=@brar.si header.a=rsa-sha256 header.s=resend header.b=Ka+af0qI;
-	dkim=pass (1024-bit key, unprotected) header.d=amazonses.com header.i=@amazonses.com header.a=rsa-sha256 header.s=zh4gjftm6etwoq6afzugpky45synznly header.b=CfDXVVxL
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; s=resend;
-	d=brar.si; t=1793425305;
-	h=In-Reply-To:Message-ID:References:From:To:Cc:Subject:Content-Transfer-Encoding:Date:MIME-Version:Content-Type;
-	bh=FEQXhvLhTuGrd5NaJDpvvxJxaBTVbUfxPfAcURqm+dE=;
-	b=Ka+af0qIkhPtHxtN3J9YkC4Af5HTcC2Nx1Zp1gHcMcEdCI+u+IQbSl6kJ38XznmX
-	EWC9ygq20weTsBwasjy6wa/kH/5B7lMP9ZqS5sBuxm/qlJJGKN90a3VwGM+0Oa1rF1H
-	DtCnIHiEsoD0lNLccdBTXnEWenmPpGwLazyvT6tQ=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=zh4gjftm6etwoq6afzugpky45synznly; d=amazonses.com; t=1793425305;
-	h=In-Reply-To:Message-ID:References:From:To:Cc:Subject:Content-Transfer-Encoding:Date:MIME-Version:Content-Type:Feedback-ID;
-	bh=FEQXhvLhTuGrd5NaJDpvvxJxaBTVbUfxPfAcURqm+dE=;
-	b=CfDXVVxLPGNFVqBzzMnWg8FWowHMxHU4V5nNOYo4y+4OYPoY7Lptv7mrbSZdblId
-	IvGnGYAaO0OoiybOFy4UnyaYMtUhny85e2UOkZ/CHKVMX+fJOk2FAN5zvoPL5ajJuxs
-	C79TLIWVQIUkKshKY6TSzrAGcJ2DFjMxUZg2OISg=
-In-Reply-To:
- <natokcic7hm2l3erd2jhghzlkg4nvy5kejms27hi6dr4xmid5h@tnhinn7yjp3i>
-Message-ID: <010601a1907a6e57-6b4897eb-cb32-47c4-8b79-1ad1c73e7613-000000@ap-northeast-1.amazonses.com>
-References: <20261027-gpucc-sm7250-v2-0-773056e4043e@brar.si>
- <20261027-gpucc-sm7250-v2-2-773056e4043e@brar.si>
- <natokcic7hm2l3erd2jhghzlkg4nvy5kejms27hi6dr4xmid5h@tnhinn7yjp3i>
-X-Pmail-ID: <1793425304285.ee9300a6194d@brar.si>
-From: Ishu Brar <patches@brar.si>
-To: abel.vesa@oss.qualcomm.com
-Cc: andersson@kernel.org, abelvesa@kernel.org, sboyd@kernel.org, 
-	bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, taniya.das@oss.qualcomm.com, 
-	quic_imrashai@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] clk: qcom: Add SM7250 graphics clock controller
- driver
-Content-Transfer-Encoding: 7bit
-Date: Sat, 31 Oct 2026 05:41:45 +0000
+	dkim=pass (1024-bit key, unprotected) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.a=rsa-sha256 header.s=korg header.b=xhLHmUdX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4E081F00A17;
+	Sat, 31 Oct 2026 11:57:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
+	s=korg; t=1793447832;
+	bh=hbgrYjBJbZ044uSlWAyCxgtge92+lezD72P+VJK9EFI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=xhLHmUdXGLq1SN6VM+aob3ThDm+CIuxO+/EGNqPEpUxUV2He/iRFp7XDsFGiODBXp
+	 9bQ1dcFeQOtFBvhBE5oe7RSODrPgGF3LBBGplcn+hlAkc5786sFz5Z1siGGfHJrngJ
+	 VHhg3LCp4smjn1gEfm+19Z1OBHcwvOQ5ygSLSxow=
+Date: Sat, 31 Oct 2026 12:36:31 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Sasha Levin <sashal@kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>
+Subject: Re: [PATCH] clk: renesas: r9a08g046: Propagate clk rate for ETH TX
+ mux clocks
+Message-ID: <2026103122-spry-laboring-8f31@gregkh>
+References: <20260914165026.184612-1-biju.das.jz@bp.renesas.com>
+ <TY3PR01MB113460768CDD4F8EA8D4928E486612@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -77,24 +62,21 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Feedback-ID: :1.ap-northeast-1.5YL5VvZ+qZ0e19wo5UdMspzrKjMAjMWs/SlfuwHJq77JVCQWpVGwyETo7FaXf+sztO4bYMxF6WHssrYHSY+K7X2T1EZhOskwm44pQQStdKG0Jdj3d5ybzIXFkMTcPBXllY63oWIrFhJN26LFqLzTuHiXuqj9UCHxIuFhxi7IM0GCfceBHtKocmWdFsR9dK9X:1.ap-northeast-1.TOS0vxEE3Ar6ai29fkp2i/jb+l2iigajCGeLfF7S3sk=:AmazonSES
-X-SES-Outgoing: 2026.10.31-23.251.234.53
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB113460768CDD4F8EA8D4928E486612@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-On Tue, 27 Oct 2026 13:32:54 +0200, Abel Vesa wrote:
->> +static struct clk_branch gpu_cc_hlos1_vote_gpu_smmu_clk = {
->> +	.halt_reg = 0x5000,
->> +	.halt_check = BRANCH_HALT_VOTED,
->
-> sm8250 uses BRANCH_VOTED here.
+On Mon, Oct 26, 2026 at 10:22:38AM +0000, Biju Das wrote:
+> 
+> Hi Greg/Sasha,
+> 
+> Sorry, I missed adding Cc: <stable@vger.kernel.org> for the below Fixes commit
+> 
+> Commit e018c27e6052 "clk: renesas: r9a08g046: Propagate clk rate for ETH TX mux clocks"
+> in Linux-next.
+> 
+> So, can it be backported to 7.3 and stable kernels?
 
-Yes, that is on purpose. BRANCH_VOTED skips the status poll on enable,
-while BRANCH_HALT_VOTED still checks that the voted clock came up. The
-newer GPU clock controller drivers (SM8350, SM8450, SM8550, SM8650,
-SM8750, X1E80100) use BRANCH_HALT_VOTED for this clock. I tested it on
-the Nord with the GPU SMMU as a consumer: the clock enables and there
-are no "stuck at off" warnings.
+Applied to 7.3.y now, thanks.
 
-Should i match SM8250 or keep BRANCH_HALT_VOTED iin v3?
-
-Ishu Brar
+greg k-h
