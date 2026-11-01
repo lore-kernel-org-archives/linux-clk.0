@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793572283;
-	b=jSJhgWMK2/nVmIfARJmR+A7DhQJ4FsRdGFEoSDS2SxVuouLgxTsWmXiT42YgKZE4qtA+
-	 anN2sngLaCVPrNN92sqQ4/QNC+wD9aeVKnFnQatCweRwe9KKgLON9BI7seVHpxVpGLVNJ
-	 LiElPsqZXQFk2GWGXqxabaqOIljeyhhMDzlTdRlIIJj0/C6gDrjxH8+uB5HfRVSGCyGmg
-	 605SdZNTdv5ZQZh8aERo2NZJgBBvI1B2xtSCXvIF+nqGkcbcVUL8MzarFr1/0N9obQo/r
-	 8Sc8oMiXewfHmEjauTvmbmWdl5ni5EmOODsGZ86qsgi1dlasXaY4AJtoJbZvkB7kozw==
+	t=1793572338;
+	b=g3B3KBlsPH4BWNzC46AkcFvvQng2BWF59tkH7PPLLV5+SXPfq0bUi3OvILRspORPE/oA
+	 kI5RzvzHgNFmDUcY/mm8EPCnruWZF4DWpWVNHIKuQOMX4BdKQHWYEBSvgNZ2pCY/5cmv3
+	 DyEqxJFzyJLOoSZaONLlYTk76oHoJ007c5djFhz2wh+tIPqr0/XM8ofk736Z+ml8gg/QH
+	 /aYNbxBLuY3oJrvS4hr5sAVDqdFVK2VMdY/zM26VpNHwabbiWYLAP1a3JUngTYyTnDHKX
+	 f2XN3Up0AfJsDyoqvBT4ckAUrjBmaqFx2EMrG9/2KjTpsNgzv+hWr/z00/gVD0GFgXQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793572283;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793572338;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ZgFhjp6JatCggkAYxg/vp+1mf90BydjF63/ncPFoYdU=;
-	b=ptSQpS6F/cKiDduMyMXRvieYE7OqNyPagWg0AfqHR6HqXzXJQQuTnvloLryZOAFnlFgk
-	 1xptKoKeuajkVNnezrqWRlKgpYZfbsN1krvA1/OkaOGPpZljcloS9wq+qlZsT8q1MhX7q
-	 izETPsypImOl5GyBbVeqDDxTCVOMORNMVhz/lfLoHPgccrdIVtFl57qXvhKjx/ydUxebe
-	 z/hNSgMcxwbctWM8RhpPm3hbX+GPRenBzulzb7zDY/NJbrW6QLPVIQl+pzrgaBZXRYrx8
-	 DzVnTleFmeodoiXXuMYNA5JZgp8SDUdTnXXG24G1EKeQ9FCTUObKVEyE9RMYt6hX+QA==
+	bh=jw2ZdFoQ6ZM9vaYuZ7JP56kRgCq/+vpMvmfDEsQ1Dtw=;
+	b=gdkpkbNBsQZTERcY4BolP7imlMmNE5hIvKj4CiPcg3xFHse68qabfOqdCFjWjlMuQoxW
+	 WFbBF/OT6vzu5lCsGRu8sF+VbZ9iZ60hs5iZ85VExDoBcbo6w3dcJV1B33amqwulIyFCw
+	 9hK60U/5NMtTYnOChEkFfW3cuq3sMwNLS/sfftVTC49vMSXLHombX3IMaaA2CFYYUMz3r
+	 uaSCzuGblFIpyu756l+I6ROPVb4KdBrhla5+pt1MmIG/rP0sFr/TMPNflkeaEpHgAXPAa
+	 Qjy4MvuQz1Uu/qfuSKRvHO4HrmTwFgof+Xv4ZP4DgiPUk8AgpLDVG9XEmlrsQIYXV5A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LBPJWFx5;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PqXreblo;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98999606A326;
-	Sun,  1 Nov 2026 22:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8167F60A2602;
+	Sun,  1 Nov 2026 22:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LBPJWFx5
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C701D1F000C1;
-	Sun,  1 Nov 2026 22:31:21 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PqXreblo
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C70DE1F0093A;
+	Sun,  1 Nov 2026 22:32:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793572282;
-	bh=ZgFhjp6JatCggkAYxg/vp+1mf90BydjF63/ncPFoYdU=;
+	s=k20260515; t=1793572338;
+	bh=jw2ZdFoQ6ZM9vaYuZ7JP56kRgCq/+vpMvmfDEsQ1Dtw=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=LBPJWFx54E6vyAJ1EllRVHLAJGHGTpOawmzgq36Z0nEM6IHNnfVtEhvj0KbTwXmER
-	 viJ+aseKEX61UirKfB1yM+0Ay2mq68xBCruzpb9ardwBY6u957EDZlL9bazV1+p/3E
-	 aLWbGtvNEa3Ce+uhw7h+HkBKKDGlVCNoQGb0xgpIpGy/PaDfD6Rs1AJEACNjfqvHd7
-	 O4X/1jUn7P+uL/Va6uwDXVCIEfuIAcwGl0nsP6tSY39ay0Ckg5ZiFXT59AwhrqDEuu
-	 47t1kNIYHlfEdOmAUMOfik/TE70xxpIcayy27meKPMCTYcm5Phhu+g7vrbeGp+aFg1
-	 +jlh++KFyrkAw==
-Message-ID: <sashiko-outbox-192713@kernel.org>
+	b=PqXreblo5xC8j7BeMqGVoA0hKJCCMPEl8b0czNO/r8ZjYFb09njIHZOdQlR/TIwQ3
+	 Qmg0Hjspodh0pJMcx7dIQ3ukWmO9uW1g9vKi1H5nN7K6hFImBMP0hmDxINUyh1ll8I
+	 nghpAzjBPtoo4X0vpJepvbMG9PVgVlfQEKG9dMfFYeI4WQboywQwpNLZRbeEj0ewsb
+	 9XywfsA+TU53nn1PIx73/gPoElKY4/3q7mB6FYjKukGvAFrdWWCNVm31oihRT3HB+t
+	 W98a1MwapoF6bQzi34ah+HYUwI9ABXoDLdPFNgkVYor6oR3dST0Q13x8QUuEhLJQSp
+	 8vyTy4ALIqy9w==
+Message-ID: <sashiko-outbox-192714@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 3/7] mfd: Add a shared BCMBCA PMC3 PMB transport
+Subject: Re: [PATCH v2 2/7] dt-bindings: soc: Describe the BCM6846 Processor
+ Monitor Bus
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Linus Walleij" <linusw@kernel.org>
 Cc: mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <20261101-xg6846b-bcmbca-xrdp-reset-v2-3-455fe9eed5ee@kernel.org>
+In-Reply-To: <20261101-xg6846b-bcmbca-xrdp-reset-v2-2-455fe9eed5ee@kernel.org>
 References: <20261101-xg6846b-bcmbca-xrdp-reset-v2-0-455fe9eed5ee@kernel.org>
- <20261101-xg6846b-bcmbca-xrdp-reset-v2-3-455fe9eed5ee@kernel.org>
+ <20261101-xg6846b-bcmbca-xrdp-reset-v2-2-455fe9eed5ee@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 01 Nov 2026 22:31:21 +0000
+Date: Sun, 01 Nov 2026 22:32:17 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,193 +61,171 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 5 potential issue(=
 s) to consider:
-- [Medium] mfd: bcmbca_pmc3_pmb: debugfs stall, WARN_ON, and HW read in bcm=
-bca_pmb_regmap_init()
-- [Low] mfd: bcmbca_pmc3_pmb: mfd_cell match data and unused drvdata in bcm=
-bca_pmb_probe()
+- [Low] dt-bindings: soc: brcm,bcm6846-pmb ordered after dependent brcm,bcm=
+6846-pmc
+- [Low] dt-bindings: hwmon: brcm,bcm6846-pmb-pvtmon uses additionalProperti=
+es with $ref
+- [Low] dt-bindings: soc: brcm,bcm6846-pmb example child nodes out of alpha=
+betical order
+- [Low] MAINTAINERS: missing S: status tag in BROADCOM BCMBCA PMC3 PMB DRIV=
+ER entry
+- [Low] dt-bindings: reset: non-contiguous reset IDs in brcm,bcm6846-pmb.h
 --
 
-commit cbd0d7381d66545c4a7f2cd3781134426406ab49
+commit 44e16c21f8b2ce99a2b8f758565676392f84eec0
 Author: Linus Walleij <linusw@kernel.org>
 
-mfd: Add a shared BCMBCA PMC3 PMB transport
+dt-bindings: soc: Describe the BCM6846 Processor Monitor Bus
 
-This commit adds an MFD driver for the Broadcom BCMBCA third generation Pow=
-er
-Management Controller (PMC3) Processor Monitor Bus (PMB) on BCM6846, exposi=
-ng
-a shared regmap to child devices while managing hardware keyhole semaphore
-locking and recovery.
+This commit adds Device Tree binding schemas and header files for the
+Broadcom BCM6846 Processor Monitor Bus (PMB) and its child clock, reset,
+and PVTMON hardware monitor controllers.
 
->     mfd: Add a shared BCMBCA PMC3 PMB transport
->
->     Add an MFD driver for shared access to the Processor Monitor Bus (PMB)
->     of the third generation Power Management Controller (PMC3), initially
->     for BCM6846.
->
->     Expose an uncached regmap to all children, encoding the bus, device a=
-nd
->     word offset in each register address. Keep keyhole semaphore acquisit=
-ion
->     and transaction recovery inside the MFD driver.
->
->     A software timeout does not abort a transaction. If the keyhole is st=
-ill
->     busy, retain its hardware lock and reject new callers until delayed w=
-ork
->     observes completion and releases it.
->
->     The keyhole register layout differs from older Broadcom PMB controlle=
-rs.
->     Match only BCM6846 for now.
->
+>     dt-bindings: soc: Describe the BCM6846 Processor Monitor Bus
+>    =20
+>     The third generation Power Management Controller (PMC3) accesses SoC
+>     block control and reset registers through the Processor Monitor Bus
+>     (PMB). Describe the BCM6846 PMC and PMB.
+>    =20
 >     Signed-off-by: Linus Walleij <linusw@kernel.org>
 
-> diff --git a/drivers/mfd/bcmbca_pmc3_pmb.c b/drivers/mfd/bcmbca_pmc3_pmb.c
+[Severity: Low]
+Should this commit be ordered before commit 39aa42d4e944 ("dt-bindings:
+mfd: Describe the BCM6846 PMC complex"), and should the commit message drop
+"PMC and"?
+
+In the parent commit 39aa42d4e944,
+Documentation/devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml references
+/schemas/soc/bcm/brcm,bcm6846-pmb.yaml# via $ref and includes
+dt-bindings/clock/brcm,bcm6846-pmb.h and
+dt-bindings/reset/brcm,bcm6846-pmb.h in its example before they are added
+here, which causes make dt_binding_check to fail at the parent commit
+during bisection.
+
+> diff --git a/Documentation/devicetree/bindings/hwmon/brcm,bcm6846-pmb-pvt=
+mon.yaml b/Documentation/devicetree/bindings/hwmon/brcm,bcm6846-pmb-pvtmon.=
+yaml
 > new file mode 100644
-> index 0000000000000..837143409ce9c
+> index 0000000000000..9bf52cf097a32
 > --- /dev/null
-> +++ b/drivers/mfd/bcmbca_pmc3_pmb.c
+> +++ b/Documentation/devicetree/bindings/hwmon/brcm,bcm6846-pmb-pvtmon.yaml
+> @@ -0,0 +1,42 @@
 [ ... ]
-> +struct bcmbca_pmb_data {
-> +	const struct mfd_cell *cells;
-> +	unsigned int num_cells;
-> +};
-[ ... ]
-> +static bool bcmbca_pmb_precious_reg(struct device *dev, unsigned int reg)
-> +{
-> +	/* Do not let debugfs probe unimplemented or firmware-owned registers. =
-*/
-> +	return true;
-> +}
+> +allOf:
+> +  - $ref: /schemas/thermal/thermal-sensor.yaml#
 > +
-> +static struct regmap *bcmbca_pmb_regmap_init(struct bcmbca_pmb *pmb)
-> +{
-> +	const struct regmap_config config =3D {
-> +		.reg_bits =3D 32,
-> +		.val_bits =3D 32,
-> +		.reg_stride =3D 1,
-> +		.max_register =3D BCMBCA_PMB_REG(3, 255, 65535),
-> +		.cache_type =3D REGCACHE_NONE,
-> +		.precious_reg =3D bcmbca_pmb_precious_reg,
-> +		.reg_read =3D bcmbca_pmb_reg_read,
-> +		.reg_write =3D bcmbca_pmb_reg_write,
-> +		.lock =3D bcmbca_pmb_regmap_lock,
-> +		.unlock =3D bcmbca_pmb_regmap_unlock,
-> +		.can_sleep =3D true,
-> +		.lock_arg =3D pmb,
-> +	};
+> +properties:
+> +  compatible:
+> +    const: brcm,bcm6846-pmb-pvtmon
 > +
-> +	return devm_regmap_init(pmb->dev, NULL, pmb, &config);
-> +}
-
-[Severity: Medium]
-What happens when CONFIG_DEBUG_FS is enabled and a user reads the regmap
-debugfs files (/sys/kernel/debug/regmap/<dev>/registers, range, or access)
-with max_register set to BCMBCA_PMB_REG(3, 255, 65535) (0x03ffffff) and
-bcmbca_pmb_precious_reg() returning true for all registers?
-
-Because config.max_register is non-zero and readable_reg is unset,
-regmap_debugfs_init() creates the registers, range, and access files.
-
-When reading the registers or range file, regmap_debugfs_get_dump_start()
-scans from 0 to 0x03ffffff (67,108,864 iterations) under map->cache_lock.
-Because every register is marked precious, regmap_printable() returns false
-for every address, leaving map->debugfs_off_cache empty and triggering a
-WARN_ON on every read:
-
-drivers/base/regmap/regmap-debugfs.c:regmap_debugfs_get_dump_start()
-	WARN_ON(list_empty(&map->debugfs_off_cache));
-	ret =3D base;
-
-Furthermore, regmap_debugfs_get_dump_start() then returns base (0) to
-regmap_read_debugfs(), which enters its loop at start_reg =3D 0 without che=
-cking
-regmap_printable(map, start_reg) and performs a hardware PMB read of regist=
-er
-0 (bus 0, device 0, offset 0) on the first iteration:
-
-drivers/base/regmap/regmap-debugfs.c:regmap_read_debugfs()
-	for (i =3D start_reg; i >=3D 0 && i <=3D to;
-	     i =3D regmap_next_readable_reg(map, i)) {
-		...
-		ret =3D regmap_read(map, i, &val);
-
-Similarly, reading the access debugfs file causes regmap_access_show() to
-iterate over all 67,108,864 addresses and call seq_printf() for each one,
-repeatedly doubling the seq_file buffer until kvzalloc() fails with -ENOMEM.
-
-Should max_register be left unset in bcmbca_pmb_regmap_init() (removing the
-need for bcmbca_pmb_precious_reg()) so regmap_debugfs_init() does not create
-the registers, range, and access debugfs files for this sparse 26-bit addre=
-ss
-space?
-
-[ ... ]
-> +static int bcmbca_pmb_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	const struct bcmbca_pmb_data *data =3D device_get_match_data(dev);
-[ ... ]
-> +	platform_set_drvdata(pdev, pmb);
-> +	pmb->regmap =3D bcmbca_pmb_regmap_init(pmb);
-> +	if (IS_ERR(pmb->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(pmb->regmap), "failed to register PM=
-B regmap\n");
-> +	ret =3D devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO, data->cells,
-> +				   data->num_cells, NULL, 0, NULL);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "failed to register PMB functions\n");
+> +  clocks:
+> +    maxItems: 1
+> +    description: PVTMON acquisition clock
 > +
-> +	return 0;
-> +}
+> +  resets:
+> +    maxItems: 1
+> +    description: PVTMON analog-acquisition reset
 > +
-> +static const struct mfd_cell bcm6846_pmb_cells[] =3D {
-> +	{
-> +		.name =3D "bcm6846-pmb-clock",
-> +		.of_compatible =3D "brcm,bcm6846-pmb-clock",
-> +	},
-> +	{
-> +		.name =3D "bcm6846-pmb-reset",
-> +		.of_compatible =3D "brcm,bcm6846-pmb-reset",
-> +	},
-> +	{
-> +		.name =3D "bcm6846-pmb-pvtmon",
-> +		.of_compatible =3D "brcm,bcm6846-pmb-pvtmon",
-> +	},
-> +};
+> +  '#thermal-sensor-cells':
+> +    const: 0
 > +
-> +static const struct bcmbca_pmb_data bcm6846_pmb_data =3D {
-> +	.cells =3D bcm6846_pmb_cells,
-> +	.num_cells =3D ARRAY_SIZE(bcm6846_pmb_cells),
-> +};
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - resets
+> +  - '#thermal-sensor-cells'
 > +
-> +static const struct of_device_id bcmbca_pmb_match[] =3D {
-> +	{ .compatible =3D "brcm,bcm6846-pmb", .data =3D &bcm6846_pmb_data },
-> +	{ }
-> +};
+> +additionalProperties: false
 
 [Severity: Low]
-This isn't a bug, but in MFD drivers, passing mfd_cell arrays through the
-.data field of struct of_device_id is discouraged in favor of either passing
-bcm6846_pmb_cells and ARRAY_SIZE(bcm6846_pmb_cells) directly to
-devm_mfd_add_devices() while only one compatible is matched, or storing a
-device ID enum in .data and selecting the static const mfd_cell array with a
-switch in bcmbca_pmb_probe().
+Since this schema includes /schemas/thermal/thermal-sensor.yaml# via allOf,
+should it use unevaluatedProperties: false instead of additionalProperties:
+false so that properties from the referenced schema are evaluated properly?
 
-Also, are platform_set_drvdata(pdev, pmb) and struct bcmbca_pmb::regmap nee=
-ded
-in bcmbca_pmb_probe(), given that struct bcmbca_pmb is private to
-drivers/mfd/bcmbca_pmc3_pmb.c and child drivers look up the regmap via
-dev_get_regmap(dev->parent, NULL)?
+> diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm6846-pmb.y=
+aml b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm6846-pmb.yaml
+> new file mode 100644
+> index 0000000000000..a4a77fed94d05
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm6846-pmb.yaml
+> @@ -0,0 +1,80 @@
+[ ... ]
+> +        pmb_clk: clock-controller {
+> +            compatible =3D "brcm,bcm6846-pmb-clock";
+> +            clocks =3D <&osc50m>;
+> +            clock-names =3D "ref";
+> +            #clock-cells =3D <1>;
+> +        };
+> +
+> +        pmb_reset: reset-controller {
+> +            compatible =3D "brcm,bcm6846-pmb-reset";
+> +            #reset-cells =3D <1>;
+> +        };
+> +
+> +        hwmon {
+> +            compatible =3D "brcm,bcm6846-pmb-pvtmon";
+> +            clocks =3D <&pmb_clk BCM6846_CLK_PVTMON>;
+> +            resets =3D <&pmb_reset BCM6846_RESET_PVTMON>;
+> +            #thermal-sensor-cells =3D <0>;
+> +        };
+> +    };
 
-Finally, could the commit subject include the driver prefix to match MFD
-conventions (for example, "mfd: bcmbca-pmb: Add a shared BCMBCA PMC3 PMB
-transport")?
+[Severity: Low]
+Should the unaddressed hwmon child node be placed before reset-controller
+in the example so that the child nodes are in alphabetical order and pass
+scripts/dtc/dt-check-style --mode=3Dstrict without a child-name-order
+warning?
+
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index eb4b3b631e82c..fa95f2dec63c5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5446,7 +5446,13 @@ N:	bcm[9]?6878
+> =20
+>  BROADCOM BCMBCA PMC3 PMB DRIVER
+>  M:	Linus Walleij <linusw@kernel.org>
+> +F:	Documentation/devicetree/bindings/clock/brcm,bcm6846-pmb-clock.yaml
+> +F:	Documentation/devicetree/bindings/hwmon/brcm,bcm6846-pmb-pvtmon.yaml
+>  F:	Documentation/devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml
+> +F:	Documentation/devicetree/bindings/reset/brcm,bcm6846-pmb-reset.yaml
+> +F:	Documentation/devicetree/bindings/soc/bcm/brcm,bcm6846-pmb.yaml
+> +F:	include/dt-bindings/clock/brcm,bcm6846-pmb.h
+> +F:	include/dt-bindings/reset/brcm,bcm6846-pmb.h
+
+[Severity: Low]
+Should the BROADCOM BCMBCA PMC3 PMB DRIVER entry in MAINTAINERS include an
+S: status tag (such as S: Maintained) so that scripts/get_maintainer.pl
+--self-test=3Dsections does not warn about a section without status?
+
+> diff --git a/include/dt-bindings/reset/brcm,bcm6846-pmb.h b/include/dt-bi=
+ndings/reset/brcm,bcm6846-pmb.h
+> new file mode 100644
+> index 0000000000000..6b1a6baac1c60
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/brcm,bcm6846-pmb.h
+> @@ -0,0 +1,11 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +#ifndef _DT_BINDINGS_RESET_BRCM_BCM6846_PMB_H
+> +#define _DT_BINDINGS_RESET_BRCM_BCM6846_PMB_H
+> +
+> +/* XRDP packet engine and its three Runner cores. */
+> +#define BCM6846_RESET_XRDP	0
+> +
+> +/* Process, voltage and temperature monitor analog acquisition reset. */
+> +#define BCM6846_RESET_PVTMON	3
+> +
+> +#endif
+
+[Severity: Low]
+Since these reset constants represent abstract logical reset group IDs
+rather than hardware register offsets or bit positions, should
+BCM6846_RESET_PVTMON be defined as 1 instead of 3 so that the IDs in this
+new binding header are contiguous starting from 0 and
+bcm6846_pmb_reset_groups[] in drivers/reset/reset-bcmbca-pmb.c does not
+carry two unused entries at indices 1 and 2?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261101-xg6846b-bc=
-mbca-xrdp-reset-v2-0-455fe9eed5ee@kernel.org?part=3D3
+mbca-xrdp-reset-v2-0-455fe9eed5ee@kernel.org?part=3D2
