@@ -1,96 +1,45 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793490877;
-	b=sWND3ttHibqpKy4AMju8lnOE/ev1yuVD5++atR+cUms3InR7Zyz8xK2UlOoN/BNDG9+w
-	 mE1VLXD7VoczL04fQJNd1hiVdWZyFLXBduVlmF3Bvtsw5zlLIMjZkaM2dLnDBnkkhmgWL
-	 4tgBqVLSjM46nLoYjzR1cGOS4aiFEwS5KuOTJ2BY+8qeQLNQUwaGfFTeYoHBJ0FuWA/9X
-	 E65Omlzzvy6756xY/yAYIOYW2bxR9XsLOSkoMIUHzg2FO/RZMn3BF1bqcIv7vU1d0E0+u
-	 8KXKMaiHqMqZBymZzZsFoqg53g1mMZYkyyfqTlHproFVZuYlFORWz6PtqToie1Xgeag==
+	t=1793530328;
+	b=Rar9Gf1jMANl7HOyZI5hpRer8xCgpb5ftEmK5H40k7sgIA8J8jT8YcqV5WQa3hUmfx2H
+	 WJxzgxPvcL68wbQlbIt9aPPzyQ+5+PkfCZnECG2hgnMsJFl3X0bCbLVQR5a2JKtWP8c/U
+	 Ittda2XXcEubmV0du+uvI6Vrd0qdz7ORcoPetT+oGjDHUoMGsFz/qkFC3td2FhikKGepN
+	 KlNtQp9lcdH/4hTJT16FmJ495612Leavj8pu+LBoX/EseOc3xN0/DoCmY5GfQ+6FFkAJq
+	 sdDMilhKLmxFhzmf3OiQGFVhie7PnbHhd3pWMEc2vWHIj1yK91+ZEw92vXhpWGjeHWQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793490877;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
-	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=/O1QuS7+tRKjJCe36mLJ5Gs9QsE8OnsKMAzsZ8ju5JA=;
-	b=jGBvnFmwEkVI04bQRcvCiILzC+P52mRWxN1ql//cNkFJ5DSwIk1eEmv/3/Jlx1v8i4jF
-	 iBobuqk2Njke0qm3tesTLEIXP51T7xnFqIVkKi12OHiLOUqzJw6ZIpe0cwUBtdx+gK2Np
-	 XDdTWdsEyQ/6cX6c/Ixl+mNxeocQwY/PIz1QQMJK0xOdYG5mew4Zx3vCs7tJi+H8jLnuB
-	 dsrDzE8K6nHVtJ0No+m2IYQJIjA1YRgDpt/NlN5bMUlyryDGayAkX95j9yn2H4SqzYAFz
-	 OJ0LkT9mPK19YBpapV0/l+VP39c+09CMgnEAx0xB/giBbL7tBuei9nGzuWw8HI4DDRw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793530328;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=pJVVKwHbhmfTEf9BsmBhWwB3UfIBhltnU3zTc/bmdjo=;
+	b=kHjfFcSIkYIZDlZecGeDHWVs4emKYwEiBKB2xZGaGKQwVQempPQPCyeJX9j2KO1Pyzev
+	 C3NVpbRNMD45aDRcK+9I/mg/L650Hy/ur6KknQQYRQI7/DtbTc2vZ6BuAwkt4iBhH4Kox
+	 l+I/rSb4rGtB9ya4furnbNQKsAx6kcVa5T6UErAvuZpx2LW+CFw1QA6Xgqc0t3ecjpnW6
+	 sGqX2KZTnu6XeZKXJOiZoATYBQaYnZnwgsEbmBtKG8wf1ZFdQap3h36r9/wJuJ/fdqGGu
+	 gCuVD8dX2gxoZTTCe+NDs6c4HGx6LRHJBpdNIaS6+cI3G/VzO7CZ3VrwsQlefjDs9KA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eTom9iFn;
-	arc=none smtp.remote-ip=192.198.163.15
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="l0c/lPT/";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EED0606A31A;
-	Sat, 31 Oct 2026 23:54:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8EED0606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6E6606A324;
+	Sun,  1 Nov 2026 10:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eTom9iFn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793490875; x=1825026875;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=onCPx45jawKu9ge3zeP6P/yMp8qkq874YfzuNRUh1dE=;
-  b=eTom9iFnz2ns+8WlvHLW97FS3h32Kz49d3YGXAlmGS10WvlgOm3fphZi
-   y2R6umxjS3aL0j4Yfcr+4FVTzr5lXJ8EFpo/FyJzDvWuq5UMib48KZ2TR
-   M0vC2PkdBdmAaZMWaZOQ/xana45ieNsk55rWElMDsY1pcOpnFbP0OPPXv
-   h3uTug49/4CnqucSph33IWWaX6zH6B+cTH88suQxzJEH6tXlJeW9+tXFc
-   OPCDlD42Fn/I+hpBdr3+COVFeBHvrCzwsCUMcSRT+T0OdywaT6d/+ZZmj
-   Srd1Ek1tJ/AfTWYbqNgrlYd/GfmFW6jX3yyDY1Uj5Z3aFhT6jr66832P0
-   g==;
-X-CSE-ConnectionGUID: /FCaWxYKSMmeduEKc8Tdxw==
-X-CSE-MsgGUID: fUhshoPWQSyixsMlsg+w5Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11952"; a="2220647"
-X-IronPort-AV: E=Sophos;i="6.27,188,1787036400"; 
-   d="scan'208";a="2220647"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2026 16:54:34 -0700
-X-CSE-ConnectionGUID: V2rALCjrSseDfEOys8L50Q==
-X-CSE-MsgGUID: OZonhpcURWKtmmbCBaLWUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,188,1787036400"; 
-   d="scan'208";a="6079165"
-Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 31 Oct 2026 16:54:29 -0700
-Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1xNIu2-00000000dH6-35cm;
-	Sat, 31 Oct 2026 23:54:26 +0000
-Date: Sun, 1 Nov 2026 07:53:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Taniya Das <taniya.das@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	Taniya Das <taniya.das@oss.qualcomm.com>
-Subject: Re: [PATCH v2 03/12] clk: qcom: Add a driver for PDM GP_MN
- fractional clock divider
-Message-ID: <202611010752.aU8NDTD1-lkp@intel.com>
-References: <20261026-b4-pdm_clk_gp_mnd_v2-v2-3-ff8e4bc8d567@oss.qualcomm.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l0c/lPT/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DC941F000C1;
+	Sun,  1 Nov 2026 10:51:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793530327;
+	bh=pJVVKwHbhmfTEf9BsmBhWwB3UfIBhltnU3zTc/bmdjo=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=l0c/lPT/eHsnt1tu0zHEi2fcjmyhFiZ/YhFGHrjw3FbL3pYqJvbloIdadawwaB612
+	 FBUXj/oiY0K3qDL8wX/neSpZzhEHZkMFvAKvNkqQTnumEInIkI6/gCd7lKUmkFdqHz
+	 PxfZ7v4jGDpZvZdkWaoBpXrQErbRQXKlIjTIeRWOR5hVqs/5jLB0rcT1poWWRrLIEx
+	 keRC/Y8Be+MNkn9QSHiLWHWKDEisoJA/OWDywAbucKI3nYaJJ9dQt8eIPH0grbMLPQ
+	 t9IDpoyBs4x4Ix9A6NGoqNrAX/wPqbatMCkyFH7cI18gzxBx4BVvfCmGl/YnX8O4C0
+	 1UBl0NAQojcig==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -100,33 +49,131 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261026-b4-pdm_clk_gp_mnd_v2-v2-3-ff8e4bc8d567@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 21/27] phy: rockchip-inno-usb2: Add RK3572 support
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Cunhao Lu <1579567540@qq.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Elaine Zhang <zhangqing@rock-chips.com>, Lee Jones <lee@kernel.org>, 
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, Ulf Hansson <ulfh@kernel.org>, 
+ Andi Shyti <andi.shyti@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ David Wu <david.wu@rock-chips.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+ Jaehoon Chung <jh80.chung@samsung.com>, 
+ Shawn Lin <shawn.lin@rock-chips.com>, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ mfd@lists.linux.dev, linux-gpio@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org, 
+ linux-serial@vger.kernel.org, linux-mmc@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-phy@lists.infradead.org, 
+ linux-usb@vger.kernel.org
+In-Reply-To: <20261022-add-board-ok3572-c-v1-21-0b0fd85a31ee@qq.com>
+References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com>
+ <20261022-add-board-ok3572-c-v1-21-0b0fd85a31ee@qq.com>
+Date: Sun, 01 Nov 2026 16:21:52 +0530
+Message-Id: <179353031285.2955.4272173079718014092.b4-reply@b4>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2049; i=mani@kernel.org;
+ h=from:subject:message-id; bh=31exuPQfsAOhnwIjmXEjjvAlTRXnnjz1PKLb/yyFj6k=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBq5xnKP2pbzdBpJAuX9SwupspI7yJNwomVsnJuz
+ aOJqq74qKuJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCaucZygAKCRBVnxHm/pHO
+ 9WQAB/96KIbnRgeB00Ab1FYAF1roqbKbj5c0aeRO93f5urNJ5r4URepXfyJP8dOuE9JZMVZcr5b
+ GALeNpvXnpsL49mzVQohe0Sp2GxQbbkDvy3WNXMFLbrkiwoNUew3PXjGrpC+WP0iMwunoMh40sM
+ +FfXLZ/BJbcm4CwP6xP2rbTgKlRX+YBDZ+5anFKAflhI8lyjzOroc6CaQKJWA1uoNR/cCsO3b/7
+ PbLuWLleLh5V6qLB832ZwG0rMmEZomEhcXEuXh11t9ERKG4ysL4hKV6TinMlLU2Ruhu+iLPuGXa
+ eWPJiKBNr/cTl6yoqPDo7ctlFKJ8f+OZjojQUZ/2GmF6FG2F
+X-Developer-Key: i=mani@kernel.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-Hi Taniya,
+On 2026-10-22 00:11 +0800, Cunhao Lu wrote:
+> Support both RK3572 USB2 PHY instances.
+> 
+> Signed-off-by: Cunhao Lu <1579567540@qq.com>
 
-kernel test robot noticed the following build errors:
+Nitpicks below. With those fixed,
 
-[auto build test ERROR on 4eb2586bd40db27d77cc5b724ca9386ed0c71d53]
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Taniya-Das/dt-bindings-clock-qcom-Add-bindings-for-PDM-GP_MN-clock-divider/20261026-165927
-base:   4eb2586bd40db27d77cc5b724ca9386ed0c71d53
-patch link:    https://lore.kernel.org/r/20261026-b4-pdm_clk_gp_mnd_v2-v2-3-ff8e4bc8d567%40oss.qualcomm.com
-patch subject: [PATCH v2 03/12] clk: qcom: Add a driver for PDM GP_MN fractional clock divider
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20261101/202611010752.aU8NDTD1-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261101/202611010752.aU8NDTD1-lkp@intel.com/reproduce)
+> ---
+>  drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 136 ++++++++++++++++++++++++++
+>  1 file changed, 136 insertions(+)
+> 
+> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> index 7d8a533f24aea..16a36e68cb6d3 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> @@ -1544,6 +1544,49 @@ static int rk3528_usb2phy_tuning(struct rockchip_usb2phy *rphy)
+>  	return 0;
+>  }
+>  
+> +static int rk3572_usb2phy_tuning(struct rockchip_usb2phy *rphy)
+> +{
+> +	u32 reg = rphy->phy_cfg->reg;
+> +	struct clk *refclk;
+> +	unsigned long rate;
+> +	u32 val;
+> +	int ret;
+> +
+> +	refclk = devm_clk_get(rphy->dev, "phyclk");
+> +	if (IS_ERR(refclk))
+> +		return PTR_ERR(refclk);
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202611010752.aU8NDTD1-lkp@intel.com/
+Please insert a newline between each operation to improve readability.
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+> +	rate = clk_get_rate(refclk);
+> +	if (rate != 24000000 && rate != 26000000)
+> +		return -EINVAL;
+> +
+> +	ret = regmap_write(rphy->grf, reg + 0x0004,
+> +			   GENMASK(18, 16) | (rate == 24000000 ? 2 : 6));
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(rphy->grf, reg + 0x0010, &val);
+> +	if (ret)
+> +		return ret;
+> +	if (val & BIT(13)) {
+> +		ret = regmap_write(rphy->grf, reg + 0x0010, BIT(29));
+> +		if (ret)
+> +			return ret;
+> +		ret = rockchip_usb2phy_reset(rphy);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	/* Set the normal line-state filter interval. */
+> +	ret = regmap_write(rphy->grf, reg + 0x0020, 0x30100);
+> +	if (ret)
+> +		return ret;
 
->> ERROR: modpost: drivers/clk/qcom/clk-gp-mnd.ko: symbol '__udivdi3' undefined!
+Here.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +	/* Increase HS voltage by 5.89% and double pre-emphasis current. */
+> +	ret = regmap_write(rphy->grf, reg + 0x000c, GENMASK(27, 24) | 0x0900);
+> +	if (ret)
+> +		return ret;
+
+And here.
+
+- Mani
+
+
