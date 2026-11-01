@@ -1,61 +1,64 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.11.138.130
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1793571409;
-	b=vkQ/Vo0+VmjxTPymLiNPQqhtzMQPXG78RvNHQfCZ5WHSoKlqq8VvS+aNp0KzoScZykLG
-	 4/kly9EXroMsTgDecluFNfzoZDZT16YEINvaCZocRrrMWkk+FEmhKjsWvOQIGhuzhLPyv
-	 gR993PzlgQv7oF4ovT/Z3I1faxnhglgaYNXfmGHqk7RPSn/IP+74qnODcBOaDQCXbo0rK
-	 zA8sdjF42iHP/jggKH+QDeLjT6zRYDpcxJiWBfE/cafAzdjz5A5/3E/uiQEyPaE5oSlcs
-	 YmlZHH6YALZlpheIxZ6M06zpBc23b4OS4phyT4IFIdKi9o9x0iE6JHEQeSnj+eF5Arw==
+	b=m2omQAVr4PMbVS0d4g3chRXHiLs9kpxBV9fWVlQhqXP7S+Hm3mn7a/tz7jedgtENuRL2
+	 aG3ltaLcslzHrvOZpW+Iaif5ysch6oFCqRTVgkcpkK7QSR3KEH6gZ1SxGPa0nHkCgv14w
+	 qsi4IAfG8mzUgMEp5zZEHCmTX/FZBrAY0jMUH8P00Lvi75aNx9l6fll/QqWga+QwK2ffn
+	 IX4jIKpRv/tiamOFq14Qrn9dJ8n1JMvbcqatp8SUfziEvY1G6ZbaBIFg/NtDKXrytOG1u
+	 qWqAdU+CsQOjVTnQycBw9VzpfhVcdmZ17M2vFomErT+G2vANoGtxm+cw6l9/3tcu2Mg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793571409;
 	h=DMARC-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
 	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=S2s+4JdjjEeOFEP8ZWyRwRLvfKHbTdhwvT6E1sN0k7A=;
-	b=lWvOZpqU5wDCUaYmU/BuMWVumW/w6NvAQ5s5d/4py8xaxM24zgRVZ1XT/LUTiX309Z9M
-	 qyDfuhf5KmTo4m6oZC0EASkrGV4mUn7df4wNSmyMqY/MiqyBPIq3rMfvUMHBiFd/6uQet
-	 d0vzDerHIpvaMP3C/HrAahP7qmBErd0nxbjKLs3mOt/wAPgBA1cqgFRgVKF0tMVKixEAz
-	 yMC0VFx3mFM3/9tSX6+epzMJ0oD35aij3NGAHupMJO8+2RhnsjXxrttgpanpaQvDzrML1
-	 UlkQZM1MGnXyXd3RGqdW+01DFKVK+qP3o9fC0VcoALPeGidUZEV/slDVCgNSvW1jhqA==
+	bh=goW7RQ5gSG9M8ONyPtIuBcVGXFA2Uc2cLxCG2sGG9h0=;
+	b=lEUcrQCgTZChaqzDDefyBvz0oUCcS07dH0fWSnO57ozkKO5wWj+cwl7FmZn+sqKbRgxY
+	 H0K29XRNnc8+9vwFEkJCPeuVy/9xM7RrL7LDJOdqqAnOi0KSmqA/BEGSS18Biv+ytt/w9
+	 Hm6gJA86bEeXqxLFe/q1XQXjQo0l+AlBvtN2IocrABqAMTdNra+RkJys9tw5tx7kJyzMI
+	 BCpTCEWk1IH0gQj3avWp3DFdO00McaZR+jFYimmtxGx28cgZUtjYxLnb/FyOK0h/fZrPe
+	 pNV6SPXyhTiGSgrYavjdrolMRaCxpRwgEHQjkUeuecuZQ7RFb1f0vOeIpbFjKAKBEgA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=sntech.de;
 	spf=pass smtp.mailfrom=sntech.de;
-	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=JEDs5hS+;
+	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=e521Ynih;
 	arc=none smtp.remote-ip=185.11.138.130
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D41F60A3831
-	for <linux-clk@vger.kernel.org>; Sun,  1 Nov 2026 22:16:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0D41F60A3831
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF5460A382B;
+	Sun,  1 Nov 2026 22:16:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DBF5460A382B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=JEDs5hS+
+	dkim=pass (2048-bit key, unprotected) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=e521Ynih
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=S2s+4JdjjEeOFEP8ZWyRwRLvfKHbTdhwvT6E1sN0k7A=; b=JEDs5hS+q4zd/+QR6XSdNL4HmD
-	cLw/K8XDCmRr8aV/Ietrn5JN9+/Vewcr/gXthGsu6VDAOiB4Buhx1JWc+rhEXeWKCFp85G4aeO0sM
-	xWKyJW7Ore2VfXk1mSmu9m5BQVJMnuSEU8MABcFoxMKqAsHKEJcHt1OUuiVfKTeMbU8j0qq2UyeiR
-	ynNct0j1ajr6ZOKLRMzTM0n4KBoO6latcs2SbnDtj8BCNDJNu6KQEtsv+3bVH5VQiqtmfcZ0HUn/q
-	vpz7EwtpqLJ599TE5T3RDyLzNxZKBka2bGbhYyvuiDGv5KOBi+NiUociceGYiZZHD6V+gKXEIErAh
-	QHXKqIVA==;
+	bh=goW7RQ5gSG9M8ONyPtIuBcVGXFA2Uc2cLxCG2sGG9h0=; b=e521Ynih/0ZP2WcELufGS4Msny
+	QdmO24BM/lDHX5CE3zgpiWVRcnsQaJImAxf2Ywz4CoNaqjYyj+CD6VeQqsbvoj9pcZU/bjrPFBTMC
+	o706mrEcaXYw9aO/SGEHyT+iBxU5YAgiA3l47huvw/w0FebKqIp6TaNx6VBz7aa9fxu9YKpVgja7M
+	ltNPL6rZKBs3AHzKTwf5idni0QRBld7Gwm1EUmozDxIiG53q33PW3EDvEQQhLfW2SmgCSa/p5JTDx
+	eUFZ6jCOBCaCjOjjVTrfo19al7nXPVWswzKxl+Xt68zDzLjjku8wlMymL61GLuzJIhVeHRAIseYkY
+	q358SY3Q==;
 From: Heiko Stuebner <heiko@sntech.de>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 Cc: Heiko Stuebner <heiko@sntech.de>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/2] Two fixes for clk driver of RV1103B and RK3562
-Date: Sun,  1 Nov 2026 23:16:36 +0100
-Message-ID: <179357139332.4108484.2588788612920888710.b4-ty@b4>
+	linux-kernel@vger.kernel.org,
+	kernel@collabora.com
+Subject: Re: [PATCH 0/2] Rockchip softrst cleanup
+Date: Sun,  1 Nov 2026 23:16:35 +0100
+Message-ID: <179357139340.4108484.8828443894202280653.b4-ty@b4>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <1791641839-74584-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1791641839-74584-1-git-send-email-shawn.lin@rock-chips.com>
+In-Reply-To: <20260901-rockchip-reset-refactor-v1-0-936576523b21@collabora.com>
+References: <20260901-rockchip-reset-refactor-v1-0-936576523b21@collabora.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -69,24 +72,22 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sat, 10 Oct 2026 22:17:17 +0800, Shawn Lin wrote:
-> They are basiclly copy-paste errors from the initial submissons.
+On Tue, 01 Sep 2026 17:13:33 +0200, Nicolas Frattaroli wrote:
+> A small bit of cleanup, prompted by me looking at the softrst driver
+> during a patch review and noticing that there's some dead code in this
+> here reset driver.
 > 
+> Testbooted on an RK3588.
 > 
-> 
-> Shawn Lin (2):
->   clk: rockchip: fix wrong gate register for clk_gpll_mux_to_ddr on
->     rk3562
->   clk: rockchip: fix wrong PMU CLKSEL register on rv1103b
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] clk: rockchip: fix wrong gate register for clk_gpll_mux_to_ddr on rk3562
-      commit: d317c599db2f8649f6f14408f34788d9f78737b5
-[2/2] clk: rockchip: fix wrong PMU CLKSEL register on rv1103b
-      commit: e937f8ec9317dbee4669d323d955ec26cd8dbcef
+[1/2] clk: rockchip: Remove dead code from softrst driver
+      commit: 3c1db9e5bea27e658c9fd2b0e5dede0949ffc0f9
+[2/2] clk: rockchip: softrst: Remove unused num_regs member
+      commit: ac718d9a906b7c85ab94f9e77d5734ae5e675249
 
 Best regards,
 -- 
