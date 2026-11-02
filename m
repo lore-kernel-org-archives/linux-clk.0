@@ -1,118 +1,118 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793629394;
-	b=4tAIDQByJwlvK2/2yvkYVOhIMHbVdEdAuQ2/U+diArvcjvZcgpRNznhSn9+Ov4QrfiWx
-	 Uz7J5mBi8q6mtFslUvSu3tm8LS8t2xLDj/bGjkg6k5Vn5QaWORzw2dFvYBjD9RbMqEfKY
-	 jZnSWUBbmvYzgXAUX+iGfww9Zvzb3Q0rmXV1esyXkSJWmt8WQtn3wWhNzpDBLc+jC3S41
-	 Nx8uazqYwHjvvb0HHUXqBEvDCP96tJByNY0NmTFUUwUmHsSq8zA31wgiG5zOb8oa9pjVG
-	 tsFpPrBsYTHNQmkpBjRYNbFUbChqyaiYNR1gFojvvzg7a3VTO/NAswQsbYcuO0HtH1g==
+	t=1793629496;
+	b=VFy8Ukb27uUWhPMWwt9brDqZ9LEjIo6McuQEuAaFO7TLeKxWC5f+UDkA8MNXNcu+H5oS
+	 cICzuyWhdjC+dsfQR66A8Sy2nyuB3MGMMPuiZhNF4kf2++QaJOUBqQY5BiU/dNxCoQk97
+	 1EjkV1aZnXL7iD88quXs6qGgIcZAXQZxxwZ10PwRcsID30ajOHTMZitGkdy6xSSGuqMZb
+	 9YTKeZa4LtgBbHaHK0/xFHsuVf7bQEOa0AgjKV69+bv96yCUZycxwRzr3gwYqRNf+Lm8b
+	 bAm0yMs0r4Yv1zwZoMhxxQbgZPF0jVdHH/gCV8PPZSk6OBJi0XABlOMg7eREB1A77Nw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793629394;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793629496;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=3gGF/z34qzW/NHH0K5bqzl6N3TvYgzHsW7PQwuk+Eb8=;
-	b=vxkC8Na5WkJAsUF31HRWBTNuufvGQn/oSfGqCQnAR5BQnxx+whj19m1OvRYdHKSTVc8l
-	 bfGaQzRFCUOdZ8v/B7K9G927YOtz6xa0UmPBK3uUN6IysZ4sNB295PoiQ4qpJIM85XGZC
-	 dobAQwlGwkX+/xHcjgvbEVDmDz5j7YYV/Q7U9LYhwP0+sp3J9Nq/C31b1Avay1bdPtdDd
-	 DKi4hwemozr7PsIXbM6G9gs1QDhesmrFQSql9aFs3GQ4iHcTvXpeF+luZcCPZ901StNR7
-	 yiQgBXEsDhKk7DEC3QKLl/bu1CaOcBXWUyE4mmsuiU5I5xOIL0f4BPsiwPD4ZmLA1tg==
+	bh=e+OZmX8JIf6s1L/six0W6PN/I70GBs5nxLKcsSZPbfs=;
+	b=3kH8rlgEaqq4dhuZ1ayS5p44jHscHBIIs+F2BknGVutpexblhynkNXFoP1yzjUhxbZGI
+	 fmH18TQukieVkWEjuKsaAU79m2eei+SDeeQIBa/7E3pWQxt8LDH8B8rfAjMUQxFM1tqRf
+	 p/Nd3ZqbTeCSbbnevfsz8Fn3M+IrnZCxqV5QjohUp1ZkLBVNi4k6rgamNbcOh7VPZrSoV
+	 YiPGDl1Y93Fpl/F7xYWf9m3/Bsl0Fz1dU3t8Nsdkt4ofTVQzWHPTqzM8lZbZ3RL+GHDXu
+	 EdSdHRyMNo84VJWkK71MBGqmsk6EmflsbqWn41JE1hri0kCqCwQldas8mqp+5decMdA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=0FsI8JKf;
-	arc=none smtp.remote-ip=209.85.214.182
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="CGf/6wG6";
+	arc=none smtp.remote-ip=209.85.214.171
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D372760A3808
-	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 14:23:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D372760A3808
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CBE60A6F6F
+	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 14:24:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 50CBE60A6F6F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=0FsI8JKf
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2e9d7791b00so24156695ad.0
-        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 06:23:13 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CGf/6wG6
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2e9ae391a05so21187555ad.1
+        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 06:24:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793629393; x=1794234193; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793629496; x=1794234296; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=3gGF/z34qzW/NHH0K5bqzl6N3TvYgzHsW7PQwuk+Eb8=;
-        b=0FsI8JKfdwQmudyzyfmTQVlPByzYNYayujLicTy5q2pnwA3kjZGMJapOQ6MTLzgTey
-         sv2u3Pk+lLXkuI+OC+/J3DjbHekDnHy+c5G087tA2Le9rNkjzfaYr2cQe7PNC7prgD4v
-         F+9K4c2P73XReb2VxRYXhhQhkKpKws04CBX4cZ5d0fhkSlP4nDszMoFcdsGkg0xPddpj
-         FAEJZ6ff2ipqfgiKbYhKpnZI7et2OEME8aCu3hutxuVw+Fj2dc2lwsCvNoRtZpmnwGCh
-         LwR0fZsw6bzXxE1UxIDLU2FvH7e6K5z679/E5PBYLQgS3k3Zkp0liWioZKsz4vJIC5wd
-         FcxA==
+        bh=e+OZmX8JIf6s1L/six0W6PN/I70GBs5nxLKcsSZPbfs=;
+        b=CGf/6wG6HrD1nXTDASXQnD+Py+nvrQdLruMml935MtSVqpMqRekdAtsa7uvlpxZ+1Y
+         8PHql+xyG69D71HRpkBzDGG5fWIdtyh83VaBKeRDHQqDRbIMw1W6jETA+ycr+1N50SaE
+         sV6L1+suxdiHPijgn/jedn0+KcMZKBsSrZ86BrY6kT+IL3OZMVjQG51injm1sd5TWBD3
+         DG6ig865RrIhZVMIrBJaF0ezJoOIHwFPWp+a7JT0kIheHXHPYBl7feIs/uW/PvSoqtoH
+         Dm1xZLNWah8+S11qO3EaH7JKiUMea+mDtohV+IcGLvEsYitZ42oM+jZLos4QqKFhOs34
+         heJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793629393; x=1794234193;
+        d=1e100.net; s=20260707; t=1793629496; x=1794234296;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=3gGF/z34qzW/NHH0K5bqzl6N3TvYgzHsW7PQwuk+Eb8=;
-        b=gaP8FkwqD2Ps0W33ccxuJQDddk0V37Hbw9xn5Lz1z0rtRviHeAHsvBsV16zUQ7T4aU
-         MkZiL7m2ZDcKs7hvhnq6hxAT6BeWv56QfbafUWD/v7zmCgFINnIczdZlKU9ycTh8YkGQ
-         9jX39ZgEggiOfa10y/StvN8sXUZq0vSxRwixDggkaTHrfwPPDZEvK6bNSLY5kxDdkHUf
-         lzjGvI0tnbLGucsp7hBIb21WbVfNO7T5eM2pJFYC5mH1nYDnSascu2bOiPbSbnobQTsx
-         v6fy/sPQrGQgnEQwMOvABfhCkMHiCVsg2Axt4Vzk/Awsxjr3DDtTpkGkCvkL2DbVlpYL
-         QdQQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxG6QH0scCodkwPcosMiasywcrRAWYpCeag72b+VBLulIj07Ea5iBlth5SnBprXtnjFZGIpqfMoBIA=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/tWKy17qwEmj/bGFOwUizDhgeyOtZvq2SzRGIINey0zySlTHHk
-	DMiZ6bsCom/b9zUjr/5ihqUi9pMf7kupQhm2AHyyMBT8I1ouM53TQT/g
-X-Gm-Gg: AYBFou3KfeSPHTQrPdqbrzWnhp7BXfEp+gg13nWjYZEsmmhquQid7S9S3GpJI8EudhL
-	vqDj7RYUhoU8YretU4FhRtIo12iM/c/il0JgaZ0rGoUlUeYlKVVWLek5rjDlFhJED9HWv9Yv83G
-	YMF4Eg1bKpjjQxnngCLXJSbtbdTcqyD1Zu+dbPN9gk2m03E4pRy9DsR/mElW5LEr5OfhTso5S1N
-	fj1CO6Db7nbMvPdc5LF/ofFvWPDjKTIcXOVZO6rWVU6UwjNzvKxm6mucEWak+iQqxH0ldLh4Twl
-	Cul4xR2M7dUyeay7PAX4AkRw0qa18TsbDjiRKiuocbB0ngsEKyhQ7T7qhHPwsBT/aGFa1d4dnDb
-	S9mLL7rFbUivD7eV5CEZm4JkcG1QjvDKnRvMhzDIBUbEfq0yGvhSi1j1V5dattPymGuVLZkb85y
-	XoJVjnJrIpausnGN79sgEvk54+AHTobLSgIfpjWiO7cLxqWhvWIFIIS5rnVx2mr1+9s4G8hsBqI
-	u9c1kX31Uv55PSFxH7BjDGdB8VPsNbLbKMIdpGLgXzCxZiX1+RiqrlVOZisyYYb5NEaBvrOT/qf
-	dcqAAhwgMc3wkHIxpNgIXaNex2z8T6ZehC0ylNY8Lz8TNqoSBmK2jetdqw==
-X-Received: by 2002:a17:902:f70c:b0:2e9:5829:9b3b with SMTP id d9443c01a7336-2eb364b55b9mr86204895ad.35.1793629392936;
-        Mon, 02 Nov 2026 06:23:12 -0800 (PST)
+        bh=e+OZmX8JIf6s1L/six0W6PN/I70GBs5nxLKcsSZPbfs=;
+        b=2LmAhMSBjT7RipAV4lhVHBviuJikXRwaIpJjJ9X8GFontMZggmLhvP38IgH6Lgu4pq
+         Hmf23W9/FoCBL+f4xgbH3Qi9PA1BTQSvXP2uL7tcoJHTEDt+cAlHV9hXgSkjBFVmTMRD
+         mq3WqT7T8AIXHrEr+oOxDMheb7jkRV1En/lp3ezSVDGjaNs5wK0/sC1g9gD+mATzyC7b
+         FmnNyClaMozugc4FHgg/8qKhM8UXoimrpI00BxTE9c21MUnVtmLot46ZkaRS5KK6AJyO
+         iBz6rsOigm1FpueQl5YHJoD+W5Q8a3Sh/18Eub8lGqeE1+6qS6QbYuSRFNlqsHaIAVry
+         3AIg==
+X-Forwarded-Encrypted: i=1; AKwUvBw0xsvgoWZmcmUMq+CpXVKbJA61jTT+MjGRJ5YKJWjE1uvBeRygTOiwtHxw2MJB0AWLFnPlkMVMJ0s=@vger.kernel.org
+X-Gm-Message-State: APuU4Z83g3LqQnicljn5nAVaOoYyEBZD7Gv2q2sN5FanBjon6rpijIOZ
+	2jL+RFiVYlOuKraLGW3blrCodASqNJuItFq6+R1ME08rS3d2qPdehuDT
+X-Gm-Gg: AYBFou38TJpx8TYZwP9pLVeAlYO2k6Rrg0Ca/WAQrhNuA+3q97HSKaFaG0BBvGN+i84
+	icozdKtPjN4Xaao0lLgMVXPNXq6g7Wwa2VVPbdASpeAMZThxwIhm3aAldUZ4reN6lwm5aUZo7Qy
+	QZ/NQ/6WymNjdj+Lb0//qCJPgX/MZBm+yzcQNOZ2B3fuV2xjbKUpjZx+QKjUJY/E/RsPEzqxPVo
+	RcabyxlBA8wAmyqtzJkwYJ3cvDMh0FIA50vdde+PQIbDU5zVTRH56q0W2Dg0fIYcm17paiPPfhS
+	3KDjNCidH+ACfeC+30aDWG6zMC4YMOMAUqvnKduMhMHn3TC7zsyAD1GtU5YUTkgsru5fAacrtrP
+	qU14baxE9yoqesJAYw0kMxIQCHySdPvNPbvMMIw0+Fzz391R3JMem8Np6HY44Gau5DQgJRpAlDX
+	q+WB/F9U7wZlUFx3ptA6OuBN3drho2i8DcDjKxgMwhPtWnlhuYrLmAHh9n4axrBLItipei3vn9o
+	JhagMslHrh1m+xnCQATm8Lsfa+OJGFrYTnkvG+qzeL0b/1duG5PeoO95jxCKgmJqEL3Hb71LrAh
+	Hq98o4c4nN5oSon5aNFOYXb9eKEjOf80aNaJEopxLy5rHD8Pyh0eSuDvlA==
+X-Received: by 2002:a17:903:1a4e:b0:2df:9e44:32f1 with SMTP id d9443c01a7336-2eb364e1741mr69092915ad.29.1793629495462;
+        Mon, 02 Nov 2026 06:24:55 -0800 (PST)
 Received: from localhost ([2.27.148.106])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2eb392486d5sm29700245ad.29.2026.11.02.06.23.08
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2eb39298543sm28720445ad.60.2026.11.02.06.24.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2026 06:23:10 -0800 (PST)
+        Mon, 02 Nov 2026 06:24:54 -0800 (PST)
 From: Han Gao <rabenda.cn@gmail.com>
-To: Conor Dooley <conor@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
 Cc: Han Gao <rabenda.cn@gmail.com>,
 	gaohan@iscas.ac.cn,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Radu Rendec <radu@rendec.net>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Anup Patel <anup@brainfault.org>,
+	Icenowy Zheng <uwu@icenowy.me>,
 	Drew Fustini <fustini@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Anup Patel <anup@brainfault.org>,
-	Radu Rendec <radu@rendec.net>,
-	Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>,
-	devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Bartosz Golaszewski <brgl@kernel.org>,
 	linux-gpio@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <pjw@kernel.org>
-Subject: Re: [PATCH 17/18] riscv: defconfig: enable A210 support
-Date: Mon,  2 Nov 2026 22:22:53 +0800
-Message-ID: <20261102142300.3784622-1-rabenda.cn@gmail.com>
+	Paul Walmsley <paul.walmsley@sifive.com>
+Subject: Re: [PATCH 14/18] riscv: dts: zhihe: add A210 UARTs
+Date: Mon,  2 Nov 2026 22:24:46 +0800
+Message-ID: <20261102142448.3784989-1-rabenda.cn@gmail.com>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261022-concrete-rebound-593001f1ac18@spud>
+In-Reply-To: <ef0957a4ceaf754989f8a7132cb6276686244d24.camel@pengutronix.de>
 References: 
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -125,60 +125,62 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Thu, 22 Oct 2026 19:50:51 +0100 Conor Dooley <conor@kernel.org> wrote:
+On Thu, 22 Oct 2026 11:22:51 +0200 Philipp Zabel <p.zabel@pengutronix.de> wrote:
 
-> On Thu, Oct 22, 2026 at 03:53:37AM +0800, Han Gao via B4 Relay wrote:
-> > From: Han Gao <gaohan@iscas.ac.cn>
+> On Do, 2026-10-22 at 03:53 +0800, Han Gao via B4 Relay wrote:
+> > From: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
 > > 
-> > Enable A210 platform drivers and reserve ten 8250 UART ports.
+> > Add the ten A210 UARTs with their clocks, resets and interrupts, using
+> > the snps,dw-apb-uart compatible.
 > > 
+> > Signed-off-by: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
+> > Co-developed-by: Han Gao <gaohan@iscas.ac.cn>
 > > Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 > > ---
-> >  arch/riscv/configs/defconfig | 4 ++++
-> >  1 file changed, 4 insertions(+)
+> >  arch/riscv/boot/dts/zhihe/a210.dtsi | 150 ++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 150 insertions(+)
 > > 
-> > diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-> > index 04ae305d5511..b9b3bca12089 100644
-> > --- a/arch/riscv/configs/defconfig
-> > +++ b/arch/riscv/configs/defconfig
-> > @@ -33,6 +33,7 @@ CONFIG_SOC_STARFIVE=y
-> >  CONFIG_ARCH_SUNXI=y
-> >  CONFIG_ARCH_TENSTORRENT=y
-> >  CONFIG_ARCH_THEAD=y
-> > +CONFIG_ARCH_ZHIHE=y
-> >  CONFIG_ARCH_ULTRARISC=y
-> >  CONFIG_ARCH_VIRT=y
-> >  CONFIG_ARCH_CANAAN=y
-> > @@ -149,6 +150,8 @@ CONFIG_KEYBOARD_GPIO=y
-> >  CONFIG_KEYBOARD_SUN4I_LRADC=m
-> >  CONFIG_SERIAL_8250=y
-> >  CONFIG_SERIAL_8250_CONSOLE=y
-> > +CONFIG_SERIAL_8250_NR_UARTS=10
-> > +CONFIG_SERIAL_8250_RUNTIME_UARTS=10
+> > diff --git a/arch/riscv/boot/dts/zhihe/a210.dtsi b/arch/riscv/boot/dts/zhihe/a210.dtsi
+> > index bbad51a3edb0..a07b67d10633 100644
+> > --- a/arch/riscv/boot/dts/zhihe/a210.dtsi
+> > +++ b/arch/riscv/boot/dts/zhihe/a210.dtsi
+> > @@ -405,6 +405,66 @@ rst_peri1: reset-controller@2010400 {
+> >  			#reset-cells = <1>;
+> >  		};
+> >  
+> > +		uart0: serial@2014000 {
+> > +			compatible = "snps,dw-apb-uart";
 > 
-> Why are these options needed?
+> Prepend a vendor compatible if you need two resets, similar to
+> "starfive,jh7100-uart"?
 
-The A210 has 10 UARTs and the TH1520 has 6. With the default of 4,
-UARTs beyond the 4th don't get a fixed ttyS index and end up in
-whatever slot is free. Raising both to 10 keeps the index stable.
+Thanks, agreed. The RFC that replaced this series adds a
+"zhihe,a210-uart" compatible and lists both resets.
 
 > 
-> >  CONFIG_SERIAL_8250_DW=y
-> >  CONFIG_SERIAL_OF_PLATFORM=y
-> >  CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
-> > @@ -167,6 +170,7 @@ CONFIG_SPI_PL022=m
-> >  CONFIG_SPI_SIFIVE=y
-> >  CONFIG_SPI_SUN6I=y
-> >  # CONFIG_PTP_1588_CLOCK is not set
-> > +CONFIG_PINCTRL_A210=y
-> >  CONFIG_PINCTRL_TH1520=y
-> >  CONFIG_PINCTRL_SOPHGO_CV1800B=y
-> >  CONFIG_PINCTRL_SOPHGO_CV1812H=y
-> > 
-> > -- 
-> > 2.55.0
-> > 
-> > 
+> > +			reg = <0x0 0x02014000 0x0 0x400>;
+> > +			clocks = <&clk_peri PERI1_UART0_SCLK_EN>,
+> > +				 <&clk_peri PERI1_UART0_PCLK_EN>;
+> > +			clock-names = "baudclk", "apb_pclk";
+> > +			interrupt-parent = <&intc>;
+> > +			interrupts = <321 IRQ_TYPE_LEVEL_HIGH>;
+> > +			reg-io-width = <4>;
+> > +			reg-shift = <2>;
+> > +			resets = <&rst_peri1 PERI1_UART0_PRST>;
 > 
+> This looks to me like it should be
+> 
+> 			resets = <&rst_peri1 PERI1_UART0_PRST>,
+> 				 <&rst_peri1 PERI1_UART0_S_RST>;
+> 
+> instead.
+> 
+> regards
+> Philipp
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
 Sent using hkml (https://github.com/sjp38/hackermail)
