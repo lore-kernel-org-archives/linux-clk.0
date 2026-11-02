@@ -1,94 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793632832;
-	b=SNcR46gceKHuxPqXa5D8CSD/GDXR/vV9LsZCF6VvN9ETACuqZhyzAKXf5UOrwCis7StR
-	 ttZ7KRiGa/OQ6JRF9EBoowmPOr9j+5U+JycYWDPeL87ASW3iMEy37rlEksCNaN246SHuG
-	 i1zqZBI/37jh/Nlp5hsZktYtTLYA0VOoJJTioL0f051Djx9wVE8gNnfj9JoPgxGT9B5+X
-	 MIjaHBCOkdVSL3Jd3mEAArJE/gCjDX3IKuERhe+Yk4RAaT2GsGj2sU6qb/NfCLY9bjyIu
-	 B9R3fkJ+COMQ6Kmk0jWFhqMZVC4c7J0lod2S8VoAnS7RZfsFE2jFOzuN9BRDleI8X/w==
+	t=1793633341;
+	b=vjbt+8Svv7oHyFuHq3UyoxegFi1zbyFGuKhwBT8SNdWOP/9GrtSaVfxbNMcERE7luAt/
+	 DceLWQlNksinazRimk9v5ONyyO3A1sRZwBJlrSMuoAag/u5hs5istmhB37aFKua/ND2Wv
+	 FNKZarT2hKKWOOZgkiyH9vtuFOGdtF+/2SUVoUNqn9WmWUPiIqdwISbSiGchk+JuiVeOy
+	 pEu3DQn1ca6dkemoB23uosuLe2erRdBWBeADHaBtIj32LcmCpP2NmfHdWmX1xNO0dAbCA
+	 Jp6nh1KJrUrNUcJTwJJOQ8CZHbhFODVzBcIdkCqI2D3/EIWhG4nlXLK7jVbc9V+mljQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793632832;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793633341;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:In-Reply-To:
-	 References:Subject:Message-Id:Date:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-Mailer:X-Developer-Signature:
-	 X-Developer-Key;
-	bh=BQALLwi0qC/ypIHZdKWUL5go/NoZZDPjZJr6kBd8GzE=;
-	b=yoCZVhM1lXugxrj3h8T2WbWjlrsx6f/P4KoqdzykFnEaB30XcuS1f1/UiazwMscD8CU1
-	 8tzMqKjkLVQTTemD7tITA7IOL5YZu5Lbak5saaGxXeo+pXJyfHg7ANwnivzlmO/ra0lh1
-	 fzOsbrBx10y4UxFIaZcKymfjafAIbYvAn09s4Grs/6HgLKXSa/ezlhWhzIn4BTdnE8cmG
-	 /0rZ3ccLxOKzwhccOFd+Cq3R616CR03zIB2Qu2LGAoiq6j4aiOZiixcmeQwCS0QiK5d6J
-	 RlNLnpQSgFpVXZfmQQgqQorHFfbCwkpEbsZ36xVgTF3pgAil0OxTd1Wr2L99xX36RKw==
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=jpYgEUXMFRpLpzuh6rGejLrl0sGWdYLAgubwEkCkQFg=;
+	b=HsgUg/tTpnXWNqIsr0/8O5lrtbHLayTxkuzmJeWX1Xj2ApP4yW5r2+nAMg1jutfW5u1W
+	 Ko+C4RR7aR1inaFByxGzeJ5ps3xyPgrTL19xQOTjFMaq2XahQBNkYHy+OF0ldcY1IKryb
+	 IrYDvZNMPc/yODmHCHcturMBoKT7F4e8ap/uqRdawLe5vzhEJ22ed7Qx+x0iZCgC3oZRO
+	 +kHVMtUFqKAhWXTL9/y0bbALwX2nrptBNN3gdUNGrpA2NaShSsigcSUVTfpUsHf1aIgdz
+	 MuVZOw1PO3U2FOQiK1jkOHacdywhdtUjrh7NskxY+uc1j1Oe5cI2CcqILk9YBoF6LJA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=ch6XNIY3;
-	arc=none smtp.remote-ip=209.85.128.52
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=RTTSir3R;
+	arc=none smtp.remote-ip=209.85.128.47
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DA460C15B9
-	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 15:20:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C1DA460C15B9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836CA60D01C8
+	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 15:29:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 836CA60D01C8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=ch6XNIY3
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a5087a5348so25479605e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 07:20:31 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=RTTSir3R
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4a5087a5348so25555375e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 07:29:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793632830; x=1794237630; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1793633339; x=1794238139; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:date:message-id
          :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=BQALLwi0qC/ypIHZdKWUL5go/NoZZDPjZJr6kBd8GzE=;
-        b=ch6XNIY3t6kF0pn9mtnGdyb7ik7pSmCyuebPty+fORrwuFfgVJJBcLf9A1rFnrR7ey
-         eXDnX/pJYkVl9R9EwGMTqsCSFSlaxGDejoqtbK3VcDawlryi1ivKRLG+N7vWM5Llzdui
-         Gn7PukEFyxcHYL+9FYwdjqnzO2SbBU9Jsd0su06Cz6mKZ3FsWiLxd3G0x+TeE714QsET
-         UrGYM2rCj1IPa+pLmkNhp6sq3rjLi2fcCjgA0oo1hEcfaPTajHbBROaKaL4BHWbjchh/
-         PARzTLmSSzaXz9Ag1zDD17FsvyDTCHAjToe4jl09oE8qNfcgwkhbzBrgC6//jx8W0mKx
-         pOEA==
+        bh=jpYgEUXMFRpLpzuh6rGejLrl0sGWdYLAgubwEkCkQFg=;
+        b=RTTSir3RL0u4FwfzJlXdc/GSHCIh4YqIPOVifKs669enMpxHfOhVq31kuGk5ELU2an
+         Iye6agOg1ySFwnedfPXavffzwNjf2EP7aXCmHREzvpIpaHkPGNiCrgzKek628Urgo39/
+         Whswk/kx88CqVTkmWR3h4fsJ9rQj5gxnfLzYM+1z8Y1pjih6u04F99ER8uRPe6J9Q6PE
+         hTRyVEgAA58dNHx3fyvLEcSFNIaUQeWlUTwEm2DQf6mw5QIGI8HGkXeGgMXJiRF0Wut/
+         jfvT45oc+p4pNPKOsBjygyqFu8NLU+RwmLQ3CpRceRXlvPH9YITkRGknjc2rs3kgWflC
+         CF2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793632830; x=1794237630;
+        d=1e100.net; s=20260707; t=1793633339; x=1794238139;
         h=content-transfer-encoding:content-type:mime-version:date:message-id
          :subject:references:in-reply-to:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=BQALLwi0qC/ypIHZdKWUL5go/NoZZDPjZJr6kBd8GzE=;
-        b=zNfbIEjsOc0YCE3V3LYBJ/Oy5EXRUpiTAgbv+v+fQS7tvWfhKYOX27MdwTpCvLYRfG
-         54hZiZrMSa2aX0wjRtiNP9knr1n5xnjVuihq3CnZnynjRqHHLvndggS/0PbUpPvLJyiS
-         DK8op0xoFcuJCoMrYc/rtVJhhYfmucJaCzORYX8PE+fLb7vVGhjUAHAj5XOrTbWGGGMQ
-         5K4U5Piz96AH+Bovpg0M3gIwQcAQuTLXl7/mKvg88O2zjpWAzawF4i4PrXmcvpM8C8LR
-         bsi93koTI/smovLQOisjj77ADloGT9cDpq7/rC60lpEDqmTikfgfo939Ldr7ouVYFaXi
-         FxQA==
-X-Gm-Message-State: AFq9FYLpXrb4AR3qhgbypF6sbtR7lEOnsDdXopPxCRxQ2SxybNgr3asu
-	WDTXisoLVaOY+b686L5LdUWYZN97WdDTtBTQqDcMTefM5O7zCcX8mpuDvsRvEJGW0QY=
-X-Gm-Gg: AYBFou2qIDrrBcaISpN7BCUCP2NH6GEOZpA2dNpQHfLjyBd2bAOx+yeE9CcIQSnnlKS
-	42LXng+ZPo7gX5nu8aDpzkwkfb7pHewgu8ydTBYN3MIv+wN0fbTIjJh4pq8gNKymT41A65ZZnj5
-	zrco4OniqsEMQ2x0Zhr4RQw4yOx4VMK5CHfGoKxIoqZ5yATeN68CkK8SNUelWI3ouG1fsxdhy0x
-	sEZsQ+K0MhueFqQeU+C95bVb7LqJ76YZFsldZpmXKwXNqXfr3T+GnvWrrwFRLfOxJXtwRUKnmKN
-	KHgfL57lKtHjKT8x3ye7O/WSy/hX1cZ3wqhwl9HrZO05gBxDDejGrGL4AK6x/0ZACAvqB59CPRF
-	P5Kc++shd2NxjnjxpCrXLMQ1JK62VpFYGDDdxy3h44uGf706prii6/QSH3MAv6IQi38AsIwOtJy
-	MzSOqPrYX7KXYtPG+cWbUvxM6CtzY+Q0rNo1v286qhJxVgOFs36NZtnVAN0QroDIed08lUnnzkh
-	+ANz+vBEbMqV6taTtlq5WhCiwGpagZD1MWNwU2gS60vd0BErw1LzpbjvIoC7YEbNtT9PjCGI+7a
-	yltk518eiUub4I7alcXecEtBdEzk7v4nCzDJeZ+X9F5inaksnmvlYFhxb7xm8ENaYjxAQg==
-X-Received: by 2002:a05:600c:46d1:b0:4ab:cc03:7f60 with SMTP id 5b1f17b1804b1-4ac18993780mr235421355e9.18.1793632829929;
-        Mon, 02 Nov 2026 07:20:29 -0800 (PST)
+        bh=jpYgEUXMFRpLpzuh6rGejLrl0sGWdYLAgubwEkCkQFg=;
+        b=q66+wXNZgm6FxX1+8bGc3vFGv4Lno6qKYVhkE16GhJGfVVA8VQVXq+hO1lzmuxAVBn
+         MX6VeGssFRfqG+JmC9tX3vDndZFTS9MtUsdyQuXGEMF2Qr1kDnXa1RhasR3uYWGLKFz/
+         RHxcJmHFiLI83agJv63KUEqAVvxGO7/+A+tw+LzAlIIIE4k082G6L/B5uAuF1uoPoVzX
+         peKm5oC6K6PdrUpe54/5WRNaqvdlCRKBe1xBK+jqTOgzvddqnuf5jdJFtuMXz/tx0lQO
+         SwZFP3Q1JFKaxzBDvwmzTPDPtN+/B9s49y6H9gF1nUk0u/NWoNK0/H5PGZAmmDWGBFfX
+         94oQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzDJvMjBrpOe0e1kRtqXNDSU7LaHQwUyf47CtxzZvvs2yZMSdWaMvCHenW6/4WYH7LEA6lhWMFbZgc=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIlFe3eAC06L0jvrEIyInled+/DcN2WWeBM/RsmVp5BJuR383Oi
+	zllZqpQQ5HLZpsagcX5ojVwe2xpudZKh4PyrruH78wgyp/XOk2BDR9ALf3883sXRm+I=
+X-Gm-Gg: AYBFou2dwwNCGyEWsy8321MeBBR6+O9Rnt/Cir5UdTc8E/GWOVQZVBkRuz6QEl1yPiC
+	ONVDg3iGLiF95lOlmQgOasKGwY4urwnATHBNXri7a4t9HR6sWHCLkmvVkOgG+LLfuynjXgUjuU2
+	AY7fhTcnF++gqmzLLKHkehk5sYJGDIcKovhFSBv6I+L6BHOWrW969AkT9skXvyF1jWrFGhheOVh
+	EgbVaQbN+LiWxfONmRdGeVo3Fnhzh6lW+4ZOUF5aCAq/SijUYGxV7JmwyQQZx4G7L3NzALoKJ9B
+	OXwpz5BU2iuiGLDgvWOM7IcrcEMM37E9+Brvg1BA7shM0eP6oK/W4uTmEzCtUKrAjvOXa6GARiD
+	9d4+D3KvwGrvMS+iA2ZWLzlbYRq45C4QE3ziFdcxJaVKRcau92EyNNmHnBszFX4ZAjnfsKWtt58
+	v0/sIs00/M0vwe2AHPgfSle+5IoK+7mVk5AaXXBjOusnn3hMiH+8NPpiJdLK81XuS7NbRHTEV+x
+	jHZ1XnBMbg9//9My4JY6vo10a7mJLtRDDyCeaHiajIa5RQc14pzsJ26hijJRqZ0Z0qIpnRMRbUX
+	6R1e0bAVpX3h9+3mR+/KS0xhJ2OnjVRH5+CnCaZYr6COj93c
+X-Received: by 2002:a05:600c:4e02:b0:4a3:59c9:a758 with SMTP id 5b1f17b1804b1-4ac19705e02mr225316555e9.32.1793633338944;
+        Mon, 02 Nov 2026 07:28:58 -0800 (PST)
 Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4abe77053fesm127731715e9.0.2026.11.02.07.20.29
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71b80eb1sm21907349f8f.34.2026.11.02.07.28.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2026 07:20:29 -0800 (PST)
+        Mon, 02 Nov 2026 07:28:58 -0800 (PST)
 From: Jerome Brunet <jbrunet@baylibre.com>
-To: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
- "Baek Kyu, Kim" <pocj8ur4in@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20261018063009.1365568-1-pocj8ur4in@gmail.com>
-References: <20261018063009.1365568-1-pocj8ur4in@gmail.com>
-Subject: Re: [PATCH] clk: devres: Skip cleanup action for absent optional
- clocks
-Message-Id: <179363282435.2870673.13424521075621537004.b4-ty@b4>
-Date: Mon, 02 Nov 2026 16:20:24 +0100
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jian Hu <jian.hu@amlogic.com>, Ronald Claveau <linux-kernel-dev@aliel.fr>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20261023-fix-g12a-clk-v2-0-0b0b9b86d437@aliel.fr>
+References: <20261023-fix-g12a-clk-v2-0-0b0b9b86d437@aliel.fr>
+Subject: Re: [PATCH v2 0/3] clk: meson: g12a: fix a few clock definition
+ errors
+Message-Id: <179363333450.2870673.5521256341441057002.b4-ty@b4>
+Date: Mon, 02 Nov 2026 16:28:54 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -101,19 +106,23 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=199; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=Yxcb0uqpdb4B4EpHRgmjN44BopM8a/VqE6zF93LxON8=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFkvVtmcrnilenNPtUrq9YX6Afvi24K9puZLbTx09eKaX
- xO37HU42VHKwiDGxSArpshSw10t/k5S68us6Tq3YeawMoEMYeDiFICJXIpkZJgXGfP2t9nCcP7p
- gj0+X/T/Ju1XZjkrVKMouui9xrZfMzYxMix3Szf5Fqg75c7a4/5Fzp+K1q4wn/xEzady/n2laxO
- jk3kB
+X-Developer-Signature: v=1; a=openpgp-sha256; l=475; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=UHmtYAda0lGZObY89vb/eGPORt1iA91FW+pe6vRHRPY=;
+ b=kA0DAAoWrRk/eyua5RcByyZiAGrorDmjByjJBe5tD6E7zTW8n2IfF2kAowjccC0RauvXZtFJ9
+ 4h1BAAWCgAdFiEEfAt7F+4ZKvSalyzbrRk/eyua5RcFAmrorDkACgkQrRk/eyua5RdrYgD+LgqT
+ qJyhqFLLMsiGPmZJS71z+tbVLAhGGnJjxQ01/0MBANcj2HeO4569Ea1fKVqMVdwkzp6fy5qRmfB
+ qRRwtdUYI
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Applied to clk/linux.git (clk-pile), thanks!
+Applied to clk/linux.git (clk-amlogic), thanks!
 
-[1/1] clk: devres: Skip cleanup action for absent optional clocks
-      https://git.kernel.org/clk/linux/c/8c30b4bf0868
+[1/3] clk: meson: g12a: fix swapped VID_PLL and VID_PLL_DIV clock ids
+      https://git.kernel.org/clk/linux/c/9458f994b92f
+[2/3] clk: meson: g12a: fix swapped VID_PLL and VID_PLL_DIV clock ids for g12b
+      https://git.kernel.org/clk/linux/c/c56b8550e390
+[3/3] clk: meson: g12a: fix swapped VID_PLL and VID_PLL_DIV clock ids for sm1
+      https://git.kernel.org/clk/linux/c/5ca65bc758dd
 
 Best regards,
 --
