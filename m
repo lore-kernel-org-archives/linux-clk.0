@@ -1,49 +1,131 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793634218;
-	b=jQZdxJKaPaF5EqgwkfktL1XRvih6KqzdZ+3oUmd0KBQo5RlJ3/erOafOOXEDJNZASxKQ
-	 FnWEbWCORrPJMaMQlTOBwYOuVHjxxgg+ORr0pppU2kPRK0DnsHFVVE2fMngzKhMbGoFv8
-	 qE7V1I02UkkXM84LY7iA/HodX0ajSJDrYICvtdFDe9g/9pkia9z5uJ5+67JwczlhdXYgT
-	 pLg2hfbJuIx/iTucsKTHg2u7pSMPgHKu4gKAe0E5zXwaU/77+Yu9seQSMpgN6+7YEPOof
-	 501oNz8t6eV/+R2UI9BJjPIOr+dv3chw0GvcPJAP0flnVP5KedJqS9lRMr0GVUEwb4g==
+	t=1793634860;
+	b=MC9gSnwlZwWMp7yAGnrmzud6V/CLpBGZF2Ojy+5Bh/WWzzJQnGJRqgzeg4t3dklAVQoA
+	 0fwa5GkrwRCjoc+vKcvykpCqyS+DiRPYoObLbT9VHO2eR1cxTNwyg9xDjI3+91p3xBosJ
+	 7OUyPGkgJwMa3wkd/AZ2HeHRhAG4J2ogdByJs7GdbHSc6UJrYoScbnOcHCDKR/+DgZFU7
+	 EQwVebX5ME2coWDGRhBj0V0yQDDQeOCYOHvzi3420X13UYREVZgsbzY5Zz7I7xtdpiAwK
+	 jqiYo5VYWvtbX65lswPSzqQBLRO7bh0ZZ9hTA5up1gKD2jn25jmtZYY2zPoIUuv3O3g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793634218;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
-	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=f4rms8U7zLHCSMuZUidm8eBtD75JSPsJZXcDQYSok00=;
-	b=FNZOo6ny3h/Yr404ei7gjoOFZ9PuaYHmELVWzWEtex7NNfrafcozDYUr9Bj8bgNX8rDr
-	 6VCB8kh/607im4JXW/DDo+oGj8URJG7zrtypOfG73WSj8n9P6JBRZ0lFEVyt9ZKsEBkIx
-	 SmRGpg/O1NxnHzWKNkFrkLNTBMB8sZrAX+x0Thlh+4dzqLykenLwdAoPnGBxVIxrYuYk1
-	 3ibA4+qQEwrOnZaPzmM/WtFWfkS+CjrUnWo3vS+IKLqAEsYHzs8gc2VKv0wqbhmac64zm
-	 542aeDZ4IWNBsQ/EcRYcQ9Uns8MAG9Thtv5iTnQ2u+MzfF+J8p3yMhESbH5J8FS4eSQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793634860;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
+	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
+	 X-Proofpoint-Spam-Info:X-Authority-Analysis:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=1LE/KEw9I1BDmogKb7eT/az3rbDg025MtnoB+zoMeP4=;
+	b=cn8ugyqmn7rQUX5C2MuU/9KZp6fX/Z7aUdorR4BSYiBdr924urpGYWtaXzwmoWkmVmMm
+	 VzElLTwjlb0mXUJc1lltmxAahwedAsRK/TVHXkHycPtbYnfwi3tCvgI5hjgu23pkADPsE
+	 IT00nDAhYLsMceRsbnpso2tmO6nayPdPXzb6K1qhqqc6IQD8/4HsxQqgUZPa/Z2HfXQxe
+	 a7esaUVy5Ao/bE6CP7zN5m9p8FddKGxEPem2odoappzE7fkjDRGCe24lpdpCQxibSFwEA
+	 AA9Q/nTILLCngxSIvwK6HjwzGJdnDgYk+vjb9u7o+Nku0F9svPN5KMMSejnsc0iXHYg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=Q9afwz7J;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BBF606D801
-	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 15:43:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 93BBF606D801
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Bj00Z0tQ;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=UDZDcA0f;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA40E606A58F
+	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 15:54:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CA40E606A58F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=Q9afwz7J
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D50AB1691;
-	Mon,  2 Nov 2026 07:43:28 -0800 (PST)
-Received: from [192.168.178.24] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C7E73F673;
-	Mon,  2 Nov 2026 07:43:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1793634211; bh=LoDP/ozuXN4coqSNOir7+A9+NIl8WuJukf+q/Sdudu0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q9afwz7JF+IVBEa+kEt0naITPT47mOKEfUBRn2m8LknqoOVM21B/2+C5xRjxu8p35
-	 TYJaEzhhQsUBz/z/c1moKyRP6rC0sgIKlwuq4EcGA1bUuYAQN9DOe/uFwBiq+Wm/tV
-	 lkZ1+jCuc3IhDePlC8FGQb3xoCGIVihy5RI8Tdlo=
-Message-ID: <b63fb278-6d75-4bcb-a23f-abe80edf2837@arm.com>
-Date: Mon, 2 Nov 2026 16:43:24 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Bj00Z0tQ;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=UDZDcA0f
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A2DpIY33102577
+	for <linux-clk@vger.kernel.org>; Mon, 2 Nov 2026 15:54:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=1LE/KEw9I1BDmogKb7eT/az3
+	rbDg025MtnoB+zoMeP4=; b=Bj00Z0tQaL+NK0Hf9+NmhfjhpVFgfhvRmAeWxiMU
+	LraM7SvRkhm/v0A7t0OZYAEikg7tytCRLBi9qfcl2Y6aQK7DieMLqO7wDAjAEj/t
+	QN8Tqb5k1cpsq6kxUmkrOcumW52s0BTUE1HPGjKvCk9RzBPPlpwQZpEhRGp51DWU
+	EKIXRIr0cJt+GykENZS/twIEXK6O2z0+/jFNKDIsE3JvOC9r4kMqnTk7DRAWbtZf
+	YGuaKBU4LjIkbvasQtfleRzBWuIPQOB2clx2AaGcwYJz19u8NqqTWB+X0xWYUFXg
+	Q3TNAn228TqkFxQsfbKoc0p1eJEqWTQxkbNOg/eTh3IS/Q==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hpk9rjpaq-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 15:54:19 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-93f5844cb60so608433285a.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 07:54:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1793634858; x=1794239658; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=1LE/KEw9I1BDmogKb7eT/az3rbDg025MtnoB+zoMeP4=;
+        b=UDZDcA0fC4h0JVD4gIXc3kYgD9PN5uvI2lJkTt4N+8iZMw/xvSZ/xLdzImAg9WiG7l
+         SMDIvaqSU/fj73GPj/EQajt8cLCf+3YDIRxF/DM+d1ls9a11JUVxbg2HcC+LBr6z59V/
+         79Lm1Znon/dGN10NZUrc06xHlpo3Ezk0BTxum3ren/RKWVzQxnbIDlXEllEJJZJdidz0
+         exQ8QHoH3bULzYl9wxVTz4GLmiwTeTf/tE8d/qHUUl1uqNsnfloRoKxxzcc9iKpkfzBf
+         AB/1S0W/GFYbYPTHPz0XA6C5FBYUH3eDxdiRzrf5HcrUaMDazzyTU2xWuludlfDGI2Kv
+         Wimg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793634858; x=1794239658;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=1LE/KEw9I1BDmogKb7eT/az3rbDg025MtnoB+zoMeP4=;
+        b=gzef5ELVteqGMhpyHa9tPewm+mAJJrTEQnKcRMaF6CteYsWi8ue2ZwnyXI4WIUyd+d
+         2TIEwaEDBuQ/905i/+51jgDkc6+pg2I1XuVD+n/UOoMn6XvjbluY2SEHbDCb0zGq7agm
+         fdEoxmxxPe5Su716a2nouI23EyCIMgnk2A6kvyvH2fSmSBEHZCldaoG5qgiL/YczSOS9
+         P94943ViidxucFkVOQpodOTvW7yYqZP6VGMTAVhOvXkJEDPeeyExlgjL5RFIMmro+6BF
+         3LrUzT46WQj3RtOLmh7pBQqC//qvFtqIQyrvTG2lMGeSsG/v4toGOVXZDePjbSs8jmfR
+         CJ1w==
+X-Forwarded-Encrypted: i=1; AKwUvBxCGPehzLhB7fq4XuO0cPY1EvhqJjo/zpYT1KjjF7tXRKIisaqspuwooMtQO+gm37JO38wUQguE2gA=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKrP9Hjx01YSGWzBxCdHNTTu9qlIL3SJNj3H1xJmQvlMfVqPYo7
+	5mrw91Wa+hsmjP0oFp5mi28u2EBxWfPIHvMYyyQtyAGHSfCoEJ5TGQwKxp6Ke4Stv3LA/y0gQXv
+	OcCyvZdUOpooW3y5fyT3E3FxXoBjRHEF35WqXb+CiYChbHacNon0jtPbNYnVYgqc=
+X-Gm-Gg: AYBFou3nIZDUP7cXRQrCkglgzA5l6YbEgQO0AK5YCiqHVbtgmscvt7Gfhc2TMhBFaKr
+	Rzda9y5qY0XD+Pzcv22UUgbzZRgBOIbAqtQRmwEZfW4uK2w7+hNqAmkvggqeW55YEBzBKGEA5Zq
+	efwq9PN9+fV8Zir9lCMidsww6ecfOi3IkXjdhZB3ALPZxsuKiRYce//j7lnliRlM5D6HVK/nA6I
+	Ux4yTpMaNXcz/Giino1sTSp9E/80d1Tf02egNRPTIOQ8FK0+QWlMr3Cy+2ixxeY7tYNoKd6ThcQ
+	gGrBS2TtVohqsmlDhYQxTTPWIkfPXMRhtnp+TJ4Lhod4BmKJIwMdAVVw12lL0dVpxQlGJrTkMKg
+	OV1q9Rv22Ra76jvbM4rxDHFynTU/tvolRaslA9VhIgawT4W8+G+7Uuw54v4Bjc3cxGMjqwn4O1+
+	RvExio85+iYXAayUDyn5OFLzGMvNE1s0fQSH+QwxO6m0+zp3GRBj/DDY0wN6ah
+X-Received: by 2002:a05:620a:410f:b0:93e:53db:d59e with SMTP id af79cd13be357-9441338b4cfmr2083218485a.23.1793634857943;
+        Mon, 02 Nov 2026 07:54:17 -0800 (PST)
+X-Received: by 2002:a05:620a:410f:b0:93e:53db:d59e with SMTP id af79cd13be357-9441338b4cfmr2083212685a.23.1793634857433;
+        Mon, 02 Nov 2026 07:54:17 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3acd5c50f25sm173191fa.38.2026.11.02.07.54.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Nov 2026 07:54:16 -0800 (PST)
+Date: Mon, 2 Nov 2026 17:54:14 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 01/12] dt-bindings: clock: qcom: Add bindings for PDM
+ GP_MN clock divider
+Message-ID: <5ekc5ibn66mc7gubh2n7htv3u64zomvfopsjnddanzayenxnpv@nczbef2enjfr>
+References: <20261026-b4-pdm_clk_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com>
+ <20261026-b4-pdm_clk_gp_mnd_v2-v2-1-ff8e4bc8d567@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -53,72 +135,110 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 6/8] clk: sunxi-ng: a733: Add mod clocks support
-To: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>,
- Junhui Liu <junhui.liu@pigmoral.tech>
-Cc: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Enzo Adriano <enzo.adriano.code@gmail.com>, linux-clk@vger.kernel.org,
- linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20261009-a733-clk-v6-0-ae8178fce7e8@pigmoral.tech>
- <20261009-a733-clk-v6-6-ae8178fce7e8@pigmoral.tech>
- <20261028180913.2829389-1-vinicius.eduardo.pedrosa@gmail.com>
-Content-Language: en-GB
-From: Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20261028180913.2829389-1-vinicius.eduardo.pedrosa@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261026-b4-pdm_clk_gp_mnd_v2-v2-1-ff8e4bc8d567@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: OWNf6S72lhYgctSIvORIclYRWonAi1H6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTAyMDA2MyBTYWx0ZWRfX0Ka3PGndgENG
+ bjmx2mrbU8SS433JDOCadFDYHPSgi5JIgucnjoLwHmED5mSKUvnsl8+gjaW3eiXRpdAgLmW8qM2
+ J6/sQT7SohjxmYPwa+dV5e+FUHcWmuLDjVXyqqoAUEzRwjTRM6s3bs3iOatyuE1/VG0pXlTzyX6
+ djwOaXh9zbpgZXyJX0g1AIuK33EilpqdjH1sEfkYaX0opIKyI20oP4WqF5wCz558gEpW7U9OUMj
+ etYm2mGaBIxE9MVKypic09qPnYcjeXnHRoAUIEGlzZMEiZaPFY2yQ/Q+WFNeukxjMGqmisyynJD
+ I6rXIimytqZs7X8RBZn4p+zEPKo8pRmpuUC6KpvRLJFeqawe0q7LKL4BCSlEtO5B1IDYkBZoFV0
+ SpYrIQJAYA2M8IUXpLkb/pacbA1nys3MGS1NIyI560PvX/JJCBXYIeB9oP7nLmU7y9qriogA9PZ
+ /ZWqzFT2GEViRJ+nCmg==
+X-Proofpoint-GUID: OWNf6S72lhYgctSIvORIclYRWonAi1H6
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTAyMDA2MyBTYWx0ZWRfX4Pq2bFIF1pLq
+ uWrhQovdFZAntj9xoFWwTBJ3IJv5rRMh6RkSPfUkpVM+pJIpKRJdSAeBml9PaLLQlSqTBnDQsrH
+ q8fVXZ4gYw6t1vn0CEjS+DaFeFX53oo=
+X-Authority-Analysis: v=2.4 cv=LvwHWXdc c=1 sm=1 tr=0 ts=6ae8b22b cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22 a=gEfo2CItAAAA:8
+ a=EUspDBNiAAAA:8 a=wGsgk0abFfW9C8vl4LYA:9 a=CjuIK1q_8ugA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-02_04,2026-11-02_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0
+ phishscore=0 priorityscore=1501 adultscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610300000 definitions=main-2611020063
 
-Hi Vinicius,
-
-On 10/28/26 19:09, Vinicius Pedrosa wrote:
-> Hi Junhui,
+On Mon, Oct 26, 2026 at 04:59:27PM +0530, Taniya Das wrote:
+> Add device tree bindings for the Qualcomm Peripheral Web's PDM GP_MN
+> clock divider. The hardware generates a fractional output frequency
+> from a fixed input clock (typically TCXO4) using the relation
+> Fout = Fin * (M / N), with duty cycle controlled by a separate D
+> register. The clock output is routed over a gpio controlled pin.
 > 
-> In patch 6/8, usb2-u2-ref is declared as a plain mux, but the manual
-
-can you please reply inline? Copy the original email, then reply after 
-the code that you have a comment on? See the other replies on this 
-series for examples.
-After all this is the reason we do this patch-inline-in-email approach 
-for review, so that the context is clear, and makes it easier for the 
-author, other reviewers and maintainers to follow the review comments.
-
-Subscribing to the linux-sunxi list is probably the easiest to get the 
-emails, or use lore to fetch the respective emails. For one-offs you can 
-also download the mbox file from lore, then import them in your email 
-application.
-
-Cheers,
-Andre
-
-P.S. This applies in general to your email replies, I see them as 
-completely from scratch text, just with the right In-reply-to header, 
-but without any context.
-
-> has a gate at bit 31 of 0x1348, and its reset value is 0. So the CCU
-> driver can't enable it.
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,clk-gp-mnd.yaml | 98 ++++++++++++++++++++++
+>  1 file changed, 98 insertions(+)
 > 
-> -static SUNXI_CCU_MUX_DATA(usb2_u2_ref_clk, "usb2-u2-ref", usb01_ref_parents, 0x1348, 24, 3, 0);
-> +static SUNXI_CCU_MUX_DATA_WITH_GATE(usb2_u2_ref_clk, "usb2-u2-ref", usb01_ref_parents,
-> +                                    0x1348, 24, 3, BIT(31), 0);
-> 
-> I hit this on my Cubie A7Z with a USB stick on the DWC3 port (the DT
-> and the USB2 PHY driver for that port are local, not posted):
-> 
-> - v6 as posted: 0x02003348 stays 0 and the DWC3 soft reset times out
->    (-110), 4/4 boots, one of them cold.
-> - same kernel, only bit 31 set from U-Boot: the host works, 3/3.
-> - with the change above: works, 3/3.
-> 
-> Same DTB and initramfs in every run. The SerDes gates were also the
-> same, so I haven't checked whether they matter on their own.
-> 
-> My boot chain (U-Boot SPL, TF-A, U-Boot) leaves bit 31 clear. I don't
-> know what the vendor one does.
-> 
-> Thanks,
-> Vinicius
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml b/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..8141f392c5d70acfc42cf1ff4b1722e1eff23afa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml
+> @@ -0,0 +1,98 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,clk-gp-mnd.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Peripheral Web's PDM GP_MN Clock Divider
+> +
+> +maintainers:
+> +  - Taniya Das <taniya.das@oss.qualcomm.com>
+> +
+> +description: |
+> +  The Peripheral Web's PDM GP_MN clock divider receives an input clock
+> +  (TCXO4) with frequency Fin and generates an output clock with
+> +  frequency Fout = Fin * (M / N) and a duty cycle controlled by D
+> +  and routed over a gpio pin.
+> +
+> +  The divider is configured using three registers:
+> +
+> +  - GP_MN_CLK_MDIV: holds the M value.
+> +  - GP_MN_CLK_NDIV: holds the ones complement of (N - M).
+> +  - GP_MN_CLK_DUTY: holds the D value.
+> +
+> +  For every N input clock cycles the GP_MN produces M output clock
+> +  cycles. D is the number of native clock cycles in which the GP_MN
+> +  output is low, counted over 2^13 native clock cycles.
+> +
+> +  Hardware constraints:
+> +
+> +    M <= 511
+> +    N <= 8191
+> +    N > 2 * M
+> +    M < D < (N - M)
+> +    M and N must be coprime (no common divisor)
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: qcom,sc7280-gp-mnd
 
+What was the first chip where these registers appeared? Was it present
+on SDM845?
+
+> +      - items:
+> +          - enum:
+> +              - qcom,sa8775p-gp-mnd
+> +              - qcom,qcs8300-gp-mnd
+> +              - qcom,qcs615-gp-mnd
+> +          - const: qcom,sc7280-gp-mnd
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> 
+
+-- 
+With best wishes
+Dmitry
