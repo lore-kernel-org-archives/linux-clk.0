@@ -1,88 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.51
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793653658;
-	b=lUiXXxna/jJ/lM4N6LBEOeEaRUAJgFZdKW8PwUOJyjG+Ew/MXwx56MdEMCKwj9zeXpM4
-	 lqerAGdKSg4WsIo2d3hxGDw5m2pZ+MWp8po/QchUnAUe6CSSbAMGnTtNcpKtnbabnTuZx
-	 Fg6rN1waRYEvS5m+oReuzIlLYcJmy2Va3y4WLqBKqOOOE4GS8LYtl9U79UCnDKl2n2z7G
-	 fWBpfsImq86cduuhcWlo54VfAwYsN14KE1Q+km2s6Nk9cmybroG5moJNbRfDje0XFi95G
-	 fQ9UOqWX0d7UJZGYC4g55VuGqsZU6FVm6mD9VII4889503iT+zt0WBj+RwwPqQ/Uo5w==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793653658;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=aSSDxY+9CyiEWW00k2jnJIS31DCHlCWmIQW8C6STWxc=;
-	b=JFTvh0w2h18JDCM35aidgVNDYfZyYDF7W7BN/jEe4Pq1X67Pz2B9z8zohUgF0SzGUBsS
-	 cSGlvM27Uzw8Xq+4YjT416AQxKxorZkAHyIr+/iFavSYCV/B2qAljhpJN9GFN64IH8DGU
-	 GNoF+RDkBHzD01epErwkEtxFxG7/9swfy3nGnv2dK4tpvY6kv1PBAydm3TzhHveesbw/q
-	 qMwYNUSh7kgR+K2bO0tIPtDAN3CQ8W78KZQgRVW7w6S9T0bwvM8I5uMchJtiC1KzxpoGs
-	 kTaIop9FtGQVNn4tEwBTIjqa4Oy/xOzNKj1NSsAsDg1a7Zw0RryoqLB6yLF5fZO0X1A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Xl56kX5B;
-	arc=none smtp.remote-ip=209.85.221.51
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.70.25
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793654217;
+	b=JNc5Zd6gAfnlo+ULtOzg4c9YNAUJsjYFoEitLPH4WWJoNuI5DFHWu8d9Z5381vT2yifZ
+	 4tcL2qTv1hdmMaYlqvYXpeimpcoSTg3JzBD9Hk/3UJcPHKQ3mvQYw/bGdPCxrvxQr5KPy
+	 TzG4eMw+fr8p6dFdylxyM7qEg5nuZzhoovYruT7UNMlOL6loF4s0gIayJfMmrTHii/NW0
+	 iD4MgJ24+9o4xM0/MkkJqmCmD5F4i0Dvl29Jf5rGOdJbiyLMxwxiZYNuzWylxNl83uek1
+	 5xd2qfctnFWNe+RJhRlsAqsmcmfR5xg9m92biIFNZLfrjXKflFiorLvRqVEGhjvYEwA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793654217;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:Content-Type:Content-Disposition:
+	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=B7oeejlljlzsKOSahHiIP7sjsDW85N7lzkaWo4d2u7w=;
+	b=mcNeRSgDGydamp+M2sKwtaXCOz2O97oTROJaazZxpYVvptapG5tLXac/QUxWt90OmlBW
+	 N4wOAJNV1K3WG569BOv1aDvUtgiqeVTdHo3VG6pQd4B9SqgDJPEtbuPtwIPhnUsS9A1nz
+	 ANIYmEb8HEqBVEcmF0akh9lvmZYx5Y2zPs0UXjoTOZIWfr3XFHzPyEdHLwsmu6YCVwOef
+	 7TdsdwfpnXjFpgGY6v+ZigzJNcfe/jXsL92z9uoD9O9nPeuQ4UUUdmy8DfJWQgtDST56k
+	 Mb0GlXYcLtSErvIXYM6XjPylS9QVC28S8C2ADR3mtoTM1uq+EGrt4BTT6fjdZT8M7rw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.nxp.com;
+	spf=pass smtp.mailfrom=oss.nxp.com;
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=JTrtsslS;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.70.25
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011025.outbound.protection.outlook.com [52.101.70.25])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577F2606D808
-	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 21:07:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 577F2606D808
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8F3606A330;
+	Mon,  2 Nov 2026 21:16:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8F8F3606A330
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Xl56kX5B
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-48b042c0759so1815155f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 13:07:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793653657; x=1794258457; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=aSSDxY+9CyiEWW00k2jnJIS31DCHlCWmIQW8C6STWxc=;
-        b=Xl56kX5BcVWqeAIlmfad96f99F/wo4b7MJAwN+QI72NRYb+SjjKVcF/hrUy3sznTnQ
-         9g90qrNncmlF8NkXvcuqOWbs8gzhqO3tNvH8aomb9LJMhwF+LRhWQsqgHuwScxvnyS8J
-         t09Fv0v6+b9vWq51ip2uMR8NIfB5a4yzlHYIdAp+Nuja+Mpo2rVP3qrLjbwZhsLTGQGh
-         2+PCdF6X9SQlaSQFOe+5foFwM/jo+XTdzoCLnQBtyYlu4WnkJJ0MgPEu733Bf1P7RSk/
-         5B+pPB3COeFtqQ0VUt/49nxnyt5dmqy9LRZ3Oc4VLEFTQUsI/qyfdOSLw5Jrt4q4eSBU
-         5bHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793653657; x=1794258457;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=aSSDxY+9CyiEWW00k2jnJIS31DCHlCWmIQW8C6STWxc=;
-        b=zg0ZZaEybiJKTQbFl+alYbmVbN7Kv3jDScU0R8npd/mdUYO/8tup5uAPq9dM7l5XhE
-         u3Qyk7whsFflc9NmjewoO2PkQtacavK4MT4PKfN7BYb/4hSbqUImSIAPweIt56KKLvNm
-         nVIAEBXhnLT9Qy8QMGNvxTIQUqGaiX1Na6RnyaPEkgjMY8OdjAkjRPxHlMFgMwGJ9f7C
-         uQ2a1OxZinIVNx2xr24LlrgM7P36xteEPSdUthvVv6RDOmjbf3OMqLirBsvVSNy/rxjy
-         XKGq+NCQEPuR4S5ylZBLBJGYP45TAhrTmFO8SffXEmGIanWsUieVzerNdeCk8Ejh11Cx
-         6RDw==
-X-Forwarded-Encrypted: i=1; AKwUvBw2Fwl3dEWbsdfS8kCSiTb8g6h1rvhbwxTQjimHckTW2D6YAM3IFyk8C+0bs+cp0IM5Nipn1mboxx8=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+BNqkPWPTRQqv+xCOxxkWSbSw+hsvf/w+QDMis/hCFXzSk59WU
-	eqo8x5FtkNkd1ujft5J6PHH4RfOay/WzsyVgOK5FIsUqf6toaDNgKqubbz+O8vr6ZCQ=
-X-Gm-Gg: AYBFou0yMAbyl4JCz21zEt+cixmK9lYMMRBa3C0scEE1OOVuZUyc3wNk9WBk/Mz47K4
-	kHJj1PmWoI9XxXqva3fXHwySHD+7uX++AYRLlZ9crMc5EFCM2VguavNbbdBGKs3c3BY1Qd8/8Ez
-	uZEi94bEJeeGBQ0kB5L9XB30n5X5uZ10vjbwQqq5gNSrhsMQ8dk3xTB8q1AJSYM02Wr9W1Tn75u
-	4ectQwroFuwsgUDS6Hl0yChMk6YPK+/n/fl5vjTX+V5fv7cWSPzXD7jDDiU5XQFdvuFzNHWlvDA
-	IGCmhH2kc/1LcvFXcDD+WYpdzIVz+hDWsagNRtbiWeS7NmMz3yB1fToQ1QX/0L2zqBLQdcv9PQc
-	sOj40ehZWTGuVtOJKPlMT4gOCymmAogC1aKheytGoi/agHSKIExGahvNGUmMQr/XoT1uX715jWN
-	BwuZYDQSf/82l6xSI/lRKS8ud6KYzCP+DvIuqIBodjBzKKyhry5l81KiDGLBNaHiO5GX5q4Yrds
-	C1ssqgOdk/AU37f9HQiuZ+dcD740uMnUoonsEIQRiCNEGZvbcBylKWZpmQhXHcW41mRDnKuC99p
-	YNLcFJ3vEOl4RUw4Joevm0ZwmPNKY+Gku4pn6XTRRRcFXc6g6hztdPlzdc6mP8OyCJEcMTuv3e3
-	aehgo+njPNi28eD54BzU=
-X-Received: by 2002:a05:6000:46c5:b0:48e:5db7:fd6c with SMTP id ffacd0b85a97d-48e6e2bde59mr15156967f8f.4.1793653656732;
-        Mon, 02 Nov 2026 13:07:36 -0800 (PST)
-Received: from [127.0.0.1] (host-95-246-144-141.retail.telecomitalia.it. [95.246.144.141])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71b8a7d1sm21765308f8f.38.2026.11.02.13.07.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2026 13:07:35 -0800 (PST)
-From: Carlo Caione <ccaione@baylibre.com>
-Date: Mon, 02 Nov 2026 22:07:21 +0100
-Subject: [PATCH 2/2] clk: divider: test: Add tests for rates above 4.29 GHz
+	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=JTrtsslS
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SXDYmPxykzb7ulamocHuhnlka17uvxQ4PizNRQPOaJzo3S4C1Hc3kGVLSxPVpfdAch1UGh2Hp64zyNS3R2XQhohYBWG/6JMaPjtpHDhuNoa1qHPbM6QSCSrV6ynGDFp9vkc7jatnMztLtU1x5f/DbpM+LWwxPe3T7DmOTE/Tliuuu+R2ZpYFin9WYGCezttLlvXDZIz9hgWIdYFD2zsok2E6p96AR/dK5mhtpEVDEJtghVSPqOLGmf/hmK1EjZnCEDdS2KzFogse9oHO6AhoqcSoXPWuq5tG4N94/XOwh1RfNF8DXS1zdS6UZwo1X/zKe7tSS1b0EqOrPnS/AbhFhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B7oeejlljlzsKOSahHiIP7sjsDW85N7lzkaWo4d2u7w=;
+ b=AdlDQ7GqLBBFBOLxmk49qh3DfOTDUaQnidiLREyJZfAHtEh2QWjrfKljg+7EdoY7Z4Zpn39uFPQxwaLaGMD6N2OTIaNcL4ia3JBtiSfoJfIG9cEfJRaxb+lgXhsXrtsVus57GpZHzG3pATIML+9211fnNNayn6V6We8zhwXJ5SvZ7UGsxkUtVnoQpuNLhv7ReYqzy7QdYBb+pOEH1dYaj1OjM97z7cwKuAOwhB00Kvtz884g/x15OTY3czM2jrW/fShpQDp9sULSAzKJ4NaNAVsYCj7Li3Sx7hhoYlMILpITmLCweUzHmVkSAF+DyYTOJ8NkIZnZX6NInoBrSUMh9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B7oeejlljlzsKOSahHiIP7sjsDW85N7lzkaWo4d2u7w=;
+ b=JTrtsslSJtW9CioWOcivlJvFQyA31JLUVkUvWQXYPam1AqIStMHjwGZcQO0eLYXrdM6ym1zAEi/jIsJL+MsKWL7Gd5MSDPKpHmicVH7CkYAYvuxPyVYacp4NYUDA8Yz2d4DpOSegBWygRlDUAHOKKlkGRyx/w2RlEDv9sFmFidy1HbkQtJLw8QAIRBaxW9DMKzVAN1Vh/chcDouylfZX64HWqtu4CIGQB8wzGBWgP/KlY1kITixndzbHQmB4HZWOCqtJFLnQd9nRWcMPB+5LjJTNQn7e6o/ZbRyXzbiFoNEm4eHODE8aXdhei34h2GovpBZS1ijEVW+ACO0i49xUKw==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from MI3PR04MB12438.eurprd04.prod.outlook.com (2603:10a6:290:76::14)
+ by DU4PR04MB10316.eurprd04.prod.outlook.com (2603:10a6:10:567::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Mon, 2 Nov
+ 2026 21:16:53 +0000
+Received: from MI3PR04MB12438.eurprd04.prod.outlook.com
+ ([fe80::c715:c32:8bb1:b70b]) by MI3PR04MB12438.eurprd04.prod.outlook.com
+ ([fe80::c715:c32:8bb1:b70b%6]) with mapi id 15.21.0569.011; Mon, 2 Nov 2026
+ 21:16:53 +0000
+Date: Mon, 2 Nov 2026 15:16:44 -0600
+From: Frank Li <Frank.li@oss.nxp.com>
+To: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Sashiko <sashiko-bot@kernel.org>
+Subject: Re: [PATCH 1/3] clk: imx: imx8qxp-lpcg: Reject duplicate clock
+ indices
+Message-ID: <auj9vB35cnh68Oio@SMW015318>
+References: <20261102-imx8qxp-lpcg-duplicate-clock-indices-v1-0-1c3fc3fe727c@oss.qualcomm.com>
+ <20261102-imx8qxp-lpcg-duplicate-clock-indices-v1-1-1c3fc3fe727c@oss.qualcomm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261102-imx8qxp-lpcg-duplicate-clock-indices-v1-1-1c3fc3fe727c@oss.qualcomm.com>
+X-ClientProxiedBy: DS7PR06CA0013.namprd06.prod.outlook.com
+ (2603:10b6:8:2a::13) To MI3PR04MB12438.eurprd04.prod.outlook.com
+ (2603:10a6:290:76::14)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -92,178 +107,110 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261102-upstream-clk-divider-large-rates-v1-2-eb17035bfad2@baylibre.com>
-References: <20261102-upstream-clk-divider-large-rates-v1-0-eb17035bfad2@baylibre.com>
-In-Reply-To: <20261102-upstream-clk-divider-large-rates-v1-0-eb17035bfad2@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Brian Norris <computersforpeace@gmail.com>
-Cc: Brian Norris <briannorris@chromium.org>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- David Laight <david.laight.linux@gmail.com>, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, 
- Carlo Caione <ccaione@baylibre.com>
-X-Mailer: b4 0.16.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|DU4PR04MB10316:EE_
+X-MS-Office365-Filtering-Correlation-Id: c7f095d4-13eb-4740-db00-08df39269dfe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|23010399003|366016|19092799006|261102123227099003|56012099006|261021121427099003|261022105027099003|5023799004|11063799006|4143699003|261028144727099003|261009223027099003|261022075727099003|261026140227099003|10067099003|22082099003|18002099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	SqmQfSVHgoap/pwGSwHRf5rMDpgIF+34NBuLsJqagOkVyAxVgNMdK+28CGF87thJYo0/lp6O3+f3WWkRclWhuyY5kjEUY5NXkMYpspth0au4r2VEtn7ZKUjiyDF9nk6TGjGbET+gsXWI3QwRDlAI2Va2qWFoksBYztQblRp4sMzZzYxViEwCJ1hZy6pWht5bFmIjlklkWBNfSVHrMzRu43MtAn1+Y7DD6LKxRhKLQgzc5yaYptn9HOJCjlqseWMP/ahH2Qi63qAIZQtyGpwQVZUy2Sc3G7gEVGu8rUS9uERTxKTd1Qs8yCHXQjGi0VUyPI/sB9MjLziGUQEYPLEPIh7SB4TcSCU+5XGn6RLRwcHBGbYBJSRQxfPVuDGk0uXVqG39jwEfNCTQ4ZJ7bkvKrvz5WaEuBdSK5Kkx5LTrjhUJkeMqxCPRAEMfT4+PvC9bXIEeAD6nRMmswEW5Wd1oXveVOtJ8Le1tgFVN/vHI++Xkbc3uwE++dMllapbquvp4VBwvi5cm9bUOyouRZjy4W8djmvK02LEcKci23gnHjJRg5IAsTVMkdfey4AOMM6SZ37So82cVyaB5b8AvvHYFZjSddVKM7aKZpuJX6Ra0Bt4=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(23010399003)(366016)(19092799006)(261102123227099003)(56012099006)(261021121427099003)(261022105027099003)(5023799004)(11063799006)(4143699003)(261028144727099003)(261009223027099003)(261022075727099003)(261026140227099003)(10067099003)(22082099003)(18002099003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WnPTG2QKGrg3dNhwE3ICvSzDErpk2tmnAp1L0cV108G4dwj3+npdYlNLp+w+?=
+ =?us-ascii?Q?wa+TKfYmqj4m8EoKGCaVN9EH7lzAq+UTJZl1S+phQEi7noxOr9ibQUjjUP1f?=
+ =?us-ascii?Q?4itvQe8TlkWKrANNyc+j7OudDERMOtGoAvNW2ERKHJtX2EIuDIjDYTsQ7W6L?=
+ =?us-ascii?Q?2rzFWxovMM2aQXFkDwZLcnMf6+BNgS7Af1MuqYSfB/GICL2KGe/+E+W6c3w6?=
+ =?us-ascii?Q?bW5x2UDv1l0Kga9Di7inZ5dg3qu8n1CCQ6AgNtQcfeAssK1DVMd+HsR66gYl?=
+ =?us-ascii?Q?K+NbFWafP0xRV4Vqjum1hLowZO0CpN+R5+KufXxHA6Aou81G3+dFSqc9uvrV?=
+ =?us-ascii?Q?kMLroP4V5aG9srdrwhY4/MIo489s0Zy7J6SOiEgrzhfLFMlSXo1TDZRoujsE?=
+ =?us-ascii?Q?bVtmq4joyfoxiP4cWmGrWWPC8MS4w89tXWLxxjBzRn8dewDqGDZFdtMdVegt?=
+ =?us-ascii?Q?o5ye7gSVeOxWyt27kuM6cfw0SEccrDUWPFM+dbBrK0r/uZriK49fFY+4CKMt?=
+ =?us-ascii?Q?f1PtvIj/sYve5GpQzOxarYqlt3vVT2/WsICqZLTHZiTsSt7rOKXA7CkfcIZB?=
+ =?us-ascii?Q?+svUHifUxOxAW3Qn90HWatTSILOk2mLuz/qIgFH6ZIhb8tdl9V4XzuHp0mLY?=
+ =?us-ascii?Q?H+7EOm68yVbWV81zNrtWtuatAg3wNaJJD4EiV8X/e+jrO8YaBYTzGRlmpS0H?=
+ =?us-ascii?Q?idmBC0BV8rth8MnksHQOyCUIv+IgjIpqhUd/fRSHtsPJ3ZeDe+Ih0ruPgs4n?=
+ =?us-ascii?Q?WfGTxC/M4tfDQdLtwtwA8W3o2kzyDfBcESY3HUEnp5qcAsGRKNk3NznGTjQD?=
+ =?us-ascii?Q?fncDRa/PSXpzt7JXQts9YginveCrUzEs9xdA4ycP+7/sxxHu9R097o8IdEdV?=
+ =?us-ascii?Q?7T4UKTzmb6E3L35vLByWpFVjqiCE+6DnFP5dZdvx0f6NHhrOoBYX3UxC3Uer?=
+ =?us-ascii?Q?vWnPXyy7q8GZEzNQoGxB8OSxs4Tf1y3bXslJAIeCmOo0E5j0MLKP5sZIGMW4?=
+ =?us-ascii?Q?y4QlID1yDlBQ0WDlQzyECMmI/QqqMRv1Q0tQkuP/z+z+CZSLSv8u7CWrc+Di?=
+ =?us-ascii?Q?71XkdKgoZ82INFjEc5ZeRkpujie8MSJ8kRIHrStRr9dbdw4vbQqnFC2Qm7Hy?=
+ =?us-ascii?Q?tAVtFmI8vMMcvxE3SSajk/gX+lEmQWwkROYarofyzkhtVGKNZzPyfW8WfxGE?=
+ =?us-ascii?Q?pIgMeDvOOHfsjhRUvrDLP+rIpoon3Kw+I/bjjCPUgEV+0/xAMuYESXRxkUFJ?=
+ =?us-ascii?Q?XjD8GixRSREDP7ntA5iX36cHq+uJ5fOlXR6U1tkS46hWdc2oawVk3VWMcd0F?=
+ =?us-ascii?Q?I+OYi0bjr+EI8a4tl9u/57PQEJ5i5ruIE06OBmdZbSzAXFtMVusmpVBrLlzB?=
+ =?us-ascii?Q?O3scVqFv0uFcEk5ZhPrM/bkrWJlUwQHgkVUY3lTJuKTi66A4qq3qeV5bDMTU?=
+ =?us-ascii?Q?0Zd4lfITZyDCT75N4AXKLu8rVDvKnjvfqeI2u2s4ol72XqoWhSxA6hh7iXbk?=
+ =?us-ascii?Q?QuxOBPgSp+LFNy4bpbMZoc/uEc10g3PR1bWpxNhYdkKJg//CprwT3UBZQHyq?=
+ =?us-ascii?Q?UWRAD30cYku7LZpaFETvMwd8XJ5oGa5oAxwHF2tSmOIBrGRoWiKiHFTH50Gb?=
+ =?us-ascii?Q?IlvHMZRvrokvNm7QkzaUOM7JZ8iRD4l8lFu66i8xElTAxZPCDSRNsvG0i83E?=
+ =?us-ascii?Q?3TQMhwOyV73YSMWpCHDXTTR5TqBFVRryOAlp0WEtkix52yiuCfXADivqKq6f?=
+ =?us-ascii?Q?O/9JCjBbGcXVd3TtB+U/J+Nt9WI+kkIBk7kp6jkV1aVLU0bNVnre?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7f095d4-13eb-4740-db00-08df39269dfe
+X-MS-Exchange-CrossTenant-AuthSource: MI3PR04MB12438.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2026 21:16:53.3864
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aAzKudHRmHZPMfHyeI+l3BK0cnYe1kMygGO120TJCGgQ6CaW05h7udSmm6G8Z0u8mwckRKeXqMxcPB5fWS+SN9x/LJbo3yf7sxRsmEvO8q7itSDFGloJknktTIme4V8j
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10316
 
-On 64-bit platforms, the divider truncated rates above 4.29 GHz when
-computing a divisor.
+On Mon, Nov 02, 2026 at 01:48:49PM +0200, Abel Vesa wrote:
+> imx_lpcg_parse_clks_from_dt() stores each clock it registers in
+> clk_hws[bit_offset / 4], as every clock output of an LPCG owns a 4-bit
+> field. Nothing checks that the clock-indices property names each field
+> only once, though. If two entries fall into the same field, the second
+> registration overwrites the first one in clk_hws[], leaking it, and if
+> a later step fails, the error path computes the same index for both
+> entries and unregisters the second clock twice.
+>
+> Reject a bit offset whose field already has a clock registered.
+>
+> Fixes: d5f1e6a2bb61 ("clk: imx: imx8qxp-lpcg: add parsing clocks from device tree")
+> Cc: stable@vger.kernel.org
+> Reported-by: Sashiko <sashiko-bot@kernel.org>
+> Closes: https://sashiko.dev/#/bug/linux-07b8d98e-feb9-4c88-afb6-3b5e0b05dc00
+> Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+> ---
 
-Add tests rounding and setting such rates on a divider with a 6 GHz
-parent, one for each divisor computation. They are skipped on 32-bit
-platforms, where rates cannot exceed 4.29 GHz.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Signed-off-by: Carlo Caione <ccaione@baylibre.com>
----
- drivers/clk/clk-divider_test.c | 117 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 115 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk-divider_test.c b/drivers/clk/clk-divider_test.c
-index 8ee1614128d0..fc96ac07ecff 100644
---- a/drivers/clk/clk-divider_test.c
-+++ b/drivers/clk/clk-divider_test.c
-@@ -1,16 +1,19 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * KUnit tests for clk_divider_bestdiv()
-+ * KUnit tests for clk divider
-  */
-+#include <kunit/clk.h>
- #include <kunit/test.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/io.h>
- #include <linux/limits.h>
- #include <linux/units.h>
- 
- #define PARENT_RATE_1GHZ	GIGA
- #define PARENT_RATE_2GHZ	(2 * GIGA)
- #define PARENT_RATE_4GHZ	(4 * GIGA)
-+#define PARENT_RATE_6GHZ	(6 * GIGA)
- 
- KUNIT_DEFINE_ACTION_WRAPPER(clk_hw_unregister_fixed_rate_wrapper,
- 			    clk_hw_unregister_fixed_rate, struct clk_hw *);
-@@ -147,7 +150,117 @@ static struct kunit_suite clk_divider_bestdiv_test_suite = {
- 	.test_cases = clk_divider_bestdiv_test_cases,
- };
- 
--kunit_test_suite(clk_divider_bestdiv_test_suite);
-+/*
-+ * Register a 6 GHz fixed-rate parent and a 3-bit divider (/1 to /8) using
-+ * @fake_reg as its register.
-+ */
-+static struct clk_hw *clk_divider_large_rate_init(struct kunit *test,
-+						  u32 *fake_reg,
-+						  unsigned long flags,
-+						  u8 div_flags)
-+{
-+	struct clk_hw *parent_hw, *div_hw;
-+
-+	if (BITS_PER_LONG < 64)
-+		kunit_skip(test, "rates above 4.29 GHz need a 64-bit unsigned long");
-+
-+	parent_hw = clk_hw_register_fixed_rate(NULL, "large-rate-parent",
-+					       NULL, 0, PARENT_RATE_6GHZ);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent_hw);
-+	KUNIT_ASSERT_EQ(test, 0,
-+			kunit_add_action_or_reset(test, clk_hw_unregister_fixed_rate_wrapper,
-+						  parent_hw));
-+
-+	div_hw = clk_hw_register_divider(NULL, "large-rate-div",
-+					 "large-rate-parent", flags,
-+					 (void __iomem __force *)fake_reg,
-+					 0, 3, div_flags, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, div_hw);
-+	KUNIT_ASSERT_EQ(test, 0,
-+			kunit_add_action_or_reset(test, clk_hw_unregister_divider_wrapper,
-+						  div_hw));
-+
-+	return div_hw;
-+}
-+
-+/*
-+ * Test that rounding a rate above 4.29 GHz computes the divisor from the
-+ * full rate: the parent rate needs /1.
-+ */
-+static void clk_divider_large_rate_round_up(struct kunit *test)
-+{
-+	struct clk_hw *div_hw;
-+	u32 *fake_reg;
-+
-+	fake_reg = kunit_kzalloc(test, sizeof(*fake_reg), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, fake_reg);
-+
-+	div_hw = clk_divider_large_rate_init(test, fake_reg, 0, 0);
-+
-+	KUNIT_EXPECT_EQ(test, clk_hw_round_rate(div_hw, PARENT_RATE_6GHZ),
-+			PARENT_RATE_6GHZ);
-+}
-+
-+/*
-+ * Same with CLK_DIVIDER_ROUND_CLOSEST: 4.4 GHz is closer to 3 GHz (/2) than
-+ * to 6 GHz (/1).
-+ */
-+static void clk_divider_large_rate_round_closest(struct kunit *test)
-+{
-+	struct clk_hw *div_hw;
-+	u32 *fake_reg;
-+
-+	fake_reg = kunit_kzalloc(test, sizeof(*fake_reg), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, fake_reg);
-+
-+	div_hw = clk_divider_large_rate_init(test, fake_reg, 0,
-+					     CLK_DIVIDER_ROUND_CLOSEST);
-+
-+	KUNIT_EXPECT_EQ(test, clk_hw_round_rate(div_hw, 4400 * MEGA),
-+			PARENT_RATE_6GHZ / 2);
-+}
-+
-+/*
-+ * Test that setting a rate above 4.29 GHz programs the right divisor.
-+ * With CLK_SET_RATE_PARENT the rounding searches the parent rates and
-+ * finds /1, so this only checks the set_rate path.
-+ */
-+static void clk_divider_large_rate_set_rate(struct kunit *test)
-+{
-+	struct clk_hw *div_hw;
-+	struct clk *clk;
-+	u32 *fake_reg;
-+
-+	fake_reg = kunit_kzalloc(test, sizeof(*fake_reg), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, fake_reg);
-+
-+	/* Start from /2 */
-+	writel(1, (void __iomem __force *)fake_reg);
-+
-+	div_hw = clk_divider_large_rate_init(test, fake_reg,
-+					     CLK_SET_RATE_PARENT, 0);
-+	clk = clk_hw_get_clk_kunit(test, div_hw, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, clk);
-+
-+	KUNIT_ASSERT_EQ(test, clk_set_rate(clk, PARENT_RATE_6GHZ), 0);
-+	KUNIT_EXPECT_EQ(test, clk_get_rate(clk), PARENT_RATE_6GHZ);
-+	KUNIT_EXPECT_EQ(test, *fake_reg, 0);
-+}
-+
-+static struct kunit_case clk_divider_large_rate_test_cases[] = {
-+	KUNIT_CASE(clk_divider_large_rate_round_up),
-+	KUNIT_CASE(clk_divider_large_rate_round_closest),
-+	KUNIT_CASE(clk_divider_large_rate_set_rate),
-+	{}
-+};
-+
-+static struct kunit_suite clk_divider_large_rate_test_suite = {
-+	.name = "clk_divider_large_rate",
-+	.test_cases = clk_divider_large_rate_test_cases,
-+};
-+
-+kunit_test_suites(&clk_divider_bestdiv_test_suite,
-+		  &clk_divider_large_rate_test_suite);
- 
- MODULE_DESCRIPTION("KUnit tests for clk divider");
- MODULE_LICENSE("GPL");
-
--- 
-2.56.0
-
+>  drivers/clk/imx/clk-imx8qxp-lpcg.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> index f0cf6cf91899..e57e7bc074a9 100644
+> --- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> @@ -251,6 +251,19 @@ static int imx_lpcg_parse_clks_from_dt(struct platform_device *pdev,
+>  			goto unreg;
+>  		}
+>
+> +		/*
+> +		 * Each clock output owns a 4-bit field, so two bit offsets in
+> +		 * the same field would describe the same clock. Registering it
+> +		 * twice would leak the first registration, and the error path
+> +		 * would then unregister the second one twice.
+> +		 */
+> +		if (clk_hws[idx]) {
+> +			dev_warn(&pdev->dev, "duplicate bit offset of clock %d\n",
+> +				 i);
+> +			ret = -EINVAL;
+> +			goto unreg;
+> +		}
+> +
+>  		clk_hws[idx] = imx_clk_lpcg_scu_dev(&pdev->dev, output_names[i],
+>  						    parent_names[i], 0, base,
+>  						    bit_offset[i], false);
+>
+> --
+> 2.54.0
+>
+>
