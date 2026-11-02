@@ -1,97 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.75.141
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793587743;
-	b=as9LU9J53mbK7NNuyj7Lj3fP9oy1qUPxipylW01FyfpJBWZ82V+JhHuehUAi0MvV5RI0
-	 1kly+SV0uRBmZ0OFi6MdTlfdw4n8aONVRRlfs4VLi7x1BVUawv1c/EUpbPjWoMShci1f0
-	 q9sKLL8RwJ/QAEIAwmsrtVaEZJuZot8yQ6ahrQkT/K0ON7sz00nAGmwP5yNt6vJW2iGlo
-	 dxulyTnIlhVPu/eRYOFUWFVl6IgDu3Pqmkg6Xohk9GvHyfrWTE/Pk/dFzxhgx4/kydNub
-	 2tZwWhR4n42wIydjJzxADD6ckT5eYWg72mp3awNhHSenmiVmYBw625lmz8XczjSwmSw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793587743;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:To:Cc:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=C4g2wP8lXATqQy1JaxG0Rdx7dfS5DOeSPCw221jeens=;
-	b=QlRQ/XmVKDg4vfd+rE6YGgWtKAo+v5FI+sXt2nhKkbTHakFWMoJ714eJTYbCEio8jA/R
-	 LI7u836KVzkwRW2kx5nQQNViM5KY3IJ3yBUAgHbnON6/1vCcIq2Zwaqt2anPXMYrNQrPX
-	 t6w1lhzp783EjpedBWcANEE94xIi9y+aLCKzue9qKgVmndNiNrE0REgbyxvNZ/8YK+cQP
-	 3igR0IIeBzrQDre5VBGxnR4taDqeDviJV77PKZAzLhj/W0VGXzEIclWCUb+ub387//tlz
-	 HZZ2DwFmif2IZCsP7OZXdX/0m//ZHkROCvS0I2PotJmk3wegEmSqRqGunP/NJjHLt9Q==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amlogic.com;
-	spf=pass smtp.mailfrom=amlogic.com;
-	dkim=pass header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=eMZS+Rpt;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.75.141
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022141.outbound.protection.outlook.com [40.107.75.141])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=44.202.169.35
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793588764;
+	b=Zmp4ZAHXgIBKcG6quYziKTcmaYhtk9TMI8uftnt38rxFIyy7Ix3s1ifeKw+UpEzujlKP
+	 naLybX0s/c8/dw8b+s2w0A/vNx3tnjgVPK1HXHU5G2UJp+a3Tn1qJZadfSkAbYq0ZzO3P
+	 Ar4bXUnC11ffnzSJuEUlVFKw/G6TwvBXZZczMlm9HUG88t+P3gLPXcPPKCv572Lr+JGmX
+	 9N4P8AuEWfzUz6PW9HvBAZKbHtGme8RaThcsriylAYJ9GvDN0YVNz/aD9CDkdozWoAirg
+	 Kv/s66PYznY5p4QGOf8wTOJMYKeju7ViBfLSm0+DIrxbW5gNzGD0IMZ8dvH+aoTY+aw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793588764;
+	h=DMARC-Filter:Received:Received:X-Authority-Analysis:DKIM-Signature:
+	 Received:Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
+	 References:Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
+	 X-AntiAbuse:X-AntiAbuse:X-BWhitelist:X-Source-IP:X-Source-L:X-Exim-ID:
+	 X-Source:X-Source-Args:X-Source-Dir:X-Source-Sender:X-Source-Auth:
+	 X-Email-Count:X-Org:X-Source-Cap:X-Local-Domain:X-CMAE-Envelope;
+	bh=OyjZ+N4a9qefmJo7byV/+mRX+hSQfs4A6Vsng69VtNY=;
+	b=CJmiqdVXjYQtwlRLNJsoylGoNASScTLohREoU7tQsdVqKM893nPbc3m6GD6ekHTcojY9
+	 h2N/rh/NSeuE2XnjSjx4FRYjeewReHDcLMAnz5TwEtRuVmhFMPpCl+/flqMhbyAJcjDhE
+	 lbPoCYz3cE5IMsOLQL/FQtmhIQosG1d7TEJE7v5vPePSQGR2mfsGyfEffusFVrDmhIyQP
+	 8LiYdYqJjSOA5xbki5fU+40FsiO4DFdKY0UN7XnNNkbURh9J3GDyEiAe53Q+GpqpOvnTI
+	 j6NcUhthusYA/jXJX2B+7HU0h4dNbhx03BrDEmMwJdSeTrXhjzmOp5TTXa72TmszRQg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=roeck-us.net;
+	spf=fail smtp.mailfrom=roeck-us.net;
+	dkim=pass header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=Jj0McUwA;
+	arc=none smtp.remote-ip=44.202.169.35
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F00F606A324;
-	Mon,  2 Nov 2026 02:49:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0F00F606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE6F606A324
+	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 03:06:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4FE6F606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=eMZS+Rpt
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UBdQ7vAcdpkJtY0thA4SL1XQ2hPSRxAGMn/c0eQ2AXWZWVyvA6+rkojdVDB/7lDUf878e/6pltFjpYv5JElokuhjo+vL9ATkehSLRlGTVUbGR0a1RnLqub+WRxM8G565Hnap8oQ1iyVGHILctBBdf+icoGq4AzIye3z7zzdCQBSvsyl7ekn1/pU7VyxcOCxWj6DalkdIS1UrroWGPLyyDRiBL9A2NGckKxm+6kiyT0db7QMQFmN2YVXAmeoXB6js1J0oSL7B+rlSVXp27czVGXV8QUp+XOD6W50mw/Q3Ho0PwRNQ7OstbH0O4yOpNjKUEo0H2lHNHxHtsdfMfFhnVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C4g2wP8lXATqQy1JaxG0Rdx7dfS5DOeSPCw221jeens=;
- b=iHGimsrCpoOp7uofBSGzoxXmEESaEVfIGGduIVU8Ye93E5ME0MGQ9Oo41XBDvkdHWWZYIjZZ8TpBVh4+airwws+Z/JyalG3xtBpQYKtjex6vD/z18I8L60+l6bNPUpp2Apy1OT50MRhPIZIcaZxXUKaUNQfgheykckAh+esxkPq/lNXjiYnzn71b0KVyg+v2lG91Dx8N88yLxdXmZxZRSM1vgVpVxUn3xEiq88xzvDpQGsBnUUU+nyNbGFRbScTJstBHrx5dSBQR/0pBUEza64zHjmpN/sfpXXmc9QzaliaM2y7/R7xbKoGO+YNbeiPc6iMhULoOcqVVXe9F0OUvSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C4g2wP8lXATqQy1JaxG0Rdx7dfS5DOeSPCw221jeens=;
- b=eMZS+RptPBBmJk6iV0Iu8onM4pvKzxbQwBFIJY1R23uL5CwnWd0VYlhV6sL74Wq69tYRpCz6RnfVqNKMx38OF/p0+tYBc/enjqe/vovvGuEoplsmZOVxasYDSkisHvDRZx8+ond+HVK1IqzEMi7LK0A/Ve1t+NQNMcXYA4eNjt56XOwuniUGKLJE7AD5c+s9qVdpCdM7mhVM7c5N1xqvtdGVja6M5DxeepOcVgsyaSHE7xNpM3+mXEWZz4G5cJuqa5b3/oXHAhCxNzzmpdwNqcR87nzTLVf40QNWPiXnGxsefVD1Bbj8DYJKgFWycXQ/yqv8NcGHlPDX2YSKTqClTw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB7149.apcprd03.prod.outlook.com (2603:1096:820:ca::7)
- by TY2PPF94EB25A41.apcprd03.prod.outlook.com (2603:1096:408::9dc) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Mon, 2 Nov
- 2026 02:48:59 +0000
-Received: from KL1PR03MB7149.apcprd03.prod.outlook.com
- ([fe80::2f06:12a:fff0:6506]) by KL1PR03MB7149.apcprd03.prod.outlook.com
- ([fe80::2f06:12a:fff0:6506%3]) with mapi id 15.21.0569.011; Mon, 2 Nov 2026
- 02:48:58 +0000
-Message-ID: <f5ccee19-ceef-4427-8d66-8feed49b5475@amlogic.com>
-Date: Mon, 2 Nov 2026 10:48:56 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: meson: Fix PLL enable timing
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20261028-fix_enable_timing-v1-1-70f060ec3f2a@amlogic.com>
- <179335104535.2573818.8004160070280286355.b4-review@b4>
-From: Jian Hu <jian.hu@amlogic.com>
-In-Reply-To: <179335104535.2573818.8004160070280286355.b4-review@b4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI1PR02CA0004.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::12) To KL1PR03MB7149.apcprd03.prod.outlook.com
- (2603:1096:820:ca::7)
+	dkim=pass (2048-bit key, unprotected) header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=Jj0McUwA
+Received: from eig-obgw-6001b.ext.cloudfilter.net ([10.0.30.143])
+	by cmsmtp with ESMTPS
+	id NamkxUeQOLvgbNiN1xdlNs; Mon, 02 Nov 2026 03:06:03 +0000
+Received: from 162-215-252-36.unifiedlayer.com ([208.91.199.152])
+	by cmsmtp with ESMTPS
+	id NiN0x1WWN1xnwNiN0xV4cu; Mon, 02 Nov 2026 03:06:02 +0000
+X-Authority-Analysis: v=2.4 cv=OsxPyz/t c=1 sm=1 tr=0 ts=6ae7fe1a
+ a=QNED+QcLUkoL9qulTODnwA==:117 a=2cfIYNtKkjgZNaOwnGXpGw==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=M0FbrtG7MMAA:10 a=VwQbUJbxAAAA:8
+ a=_jlGtV7tAAAA:8 a=BA9JajvoVav3SfIcZTsA:9 a=QEXdDO2ut3YA:10
+ a=nlm17XC03S6CtCLSeiRr:22 a=KPbNTLLc3YvdawN95zVk:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=roeck-us.net; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:
+	List-Archive; bh=OyjZ+N4a9qefmJo7byV/+mRX+hSQfs4A6Vsng69VtNY=; b=Jj0McUwAXo72
+	pfdTEsKRTiyHHnfMuY0EpKvuuYzwKf1wBSkOWqxJTrWG+5+XSfwlEPykzWGNjCsI/0G/ChziK2DVr
+	WWoZUjT9g53xKRG4Yss2N+Q9IF9wcRSGxQlRXtIIspcLiVMod3WoqtzJ5I6Ws5Tvb4pl4MgYuq4C8
+	0GO0QC9yqCtN3nkk99CalXkv5j4Rp9WuxWl36IIfZsuhXxNldTaaVkPr9sHR1wBB0zogdUl3gXFq+
+	f4csWBgI+74/0LSNhDRps/fgtIlCknx/PNkzfTQ/rQMlXD/T+SMkdSzSYlZwh2xKoKGjLp5bgBLft
+	AKvPH0T3+3KmgyHM+NKGtA==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:39052)
+	by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <linux@roeck-us.net>)
+	id 1xNiMy-000000012bx-0sK1;
+	Mon, 02 Nov 2026 08:36:00 +0530
+Message-ID: <b65ef6c6-cbcf-4793-9ba1-7c5cb270f574@roeck-us.net>
+Date: Sun, 1 Nov 2026 19:05:56 -0800
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -101,136 +76,490 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB7149:EE_|TY2PPF94EB25A41:EE_
-X-MS-Office365-Filtering-Correlation-Id: 37051901-0d8a-4115-c249-08df388bd807
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|366016|376014|7416014|261021121427099003|261021123027099003|261022105027099003|261022075727099003|261009223027099003|261026140227099003|261028144727099003|4143699003|11063799006|10067099003|56012099006|260925021911599003|260925022911599003|260925021311599003|18002099003|22082099003|3023799007;
-X-Microsoft-Antispam-Message-Info:
-	mtawj1e32p2bbG3UELCVPjQhrWS5slT3Ddr7iCG+XDOEMUmpZHD+s6CmOvwhAPsT99RCBxzkDbkXbQMlr9Jn73khYPvdQoOCQGITzhEe8KqU6jbMS15NYfjSQA1FDDnwAXBaXUWvERUcvSQaE/PqZSOF3zCVufuv3xREBOrq6qE0tSvBtPxj7V/7cHoeRh1qOH5du9/VG+G1NollNBa/poUfYVxFiYsAOTC3PwjPyG6S6LGIF/AubJdxQo1JxkgoV/ouFjDQcjye3Yx+C8hEcaGUMse6wmyYxIiiXCR7nLbvRP671Sm4rnWrj7Tv/NWM1V9YOm9yG3Z7209ugNIsYROrodz3bAXi2124oXv4J0rOyW/BjN6iWlUIhVk6sKb9TmBXx3lyLNv0XYlD0cAL/TQNAmHWyRD2havHPfVVyTyBpGKVqMl3yNdNJuTJEjh4r/zw/kwGFFfZIlbuf6GZ8pXs5+J0efABQ4++oNnRkxA4bD5mpMN6rxaB8as/uixjL8LyHFuvgAVBgGF/3z2dJE+r8vG9pQ0vzx9hLzgHLNaQuJGHL0l+qu5zSEeHuyZHvcDKgFbWTe/SkhLzZ5cPJRy/gu4wX7jhhWlEHp/XMQjv5CrwBa+kUkFyMvSjaKJ0
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB7149.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(366016)(376014)(7416014)(261021121427099003)(261021123027099003)(261022105027099003)(261022075727099003)(261009223027099003)(261026140227099003)(261028144727099003)(4143699003)(11063799006)(10067099003)(56012099006)(260925021911599003)(260925022911599003)(260925021311599003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N1lUYnhsQWs5OWg5MlE1QityMWFEN3ZzU1dwQ2d0V0IvemZRNnY4L05LaTdy?=
- =?utf-8?B?T2xUZDY2SERScTZ2UE9vS1p5WG5lTUcwMStOVVJ4REgxcVRFcm9GYnFzVHRN?=
- =?utf-8?B?RVhXUnQrL3JKYW5WWTdOODJxaitkZDRRRUJkUDNtUVJtbU9RZzQxODF1U2lp?=
- =?utf-8?B?bGJDL0F4TkZXSGVpUkNyVVFvM0hMczNudFF1Znh6ekVBVXo4MVlxa1hXZ2ph?=
- =?utf-8?B?NENFeUxXQWM2ZkdqZ1lPVVBNdnA4dFhBV292Z05BVk5nSkFkYnNWMzlRZHY5?=
- =?utf-8?B?M1d1M3JtVjhGaGs1ck5GUkVKbTUvZmZ2MHFuTmxGNUk1eTFzNW83SFZ6TjVI?=
- =?utf-8?B?Z3RwTkhlaHpuTmdnQWxzN3dwTkdUM2hJcWNlM01mckU3aStVR3RxUWJvZllE?=
- =?utf-8?B?aEtFOHFmZFRGdHp1WkdaYzlhN1JyR3lKZUtHOGNLa2xzWndsSXBMVmpBVEJD?=
- =?utf-8?B?SG5zWCt0N29rdnBEUEh4TXQ2bGlEUFdMN0lyMUI0dk56YkJxdkNPSWNNelMx?=
- =?utf-8?B?aVczV3JpWllSN2tzMlIweWhYc3VpRVlrVFpYdjJzWFhIdDQrenBhL29Xa2ZT?=
- =?utf-8?B?YTU1WDczUmZrYWRZR21nZXdtZE1wN2JZa2dWU05xSytwaGR0QzZwQmJHRHJV?=
- =?utf-8?B?dStwVXFSNE5Sbk1ZZURDODFESVdIbGJidXRIOG9aTk9QdEozaXVOcEZIRjJN?=
- =?utf-8?B?YjRwNzcvVkhBNFJydVRDQWU3T0s1SWZZZ3FzK3Fwa2VRbHpJMStrYmx5bjZz?=
- =?utf-8?B?Uk9hRUtMWGRwS0owNTRHSXBWczdMSlhQZWluVlFMU0MxdElaTWJlM3R0WXpO?=
- =?utf-8?B?TGNEK1VvNU8zSTNLSHkyZlRwaXNlaklwZ0k4U0Z0Ti9ZRFZIRzgwWFdFSWVN?=
- =?utf-8?B?U1Y2UVVQMkk2WWcxcWJ2TjJpUEk0d210L2R0NmM3TmhzSnZCeGwyNVY4MmZq?=
- =?utf-8?B?TWxRbUZMMWF2ejRhZzJneVlsYjVpMWg0VUg1WTY4OFRyMVA5U0ErcUNkZjJw?=
- =?utf-8?B?akhGeHMySmZqT25VbzZFcE9zL1FiWGI4UnREZC9QMHNyUmtYc0FjRnRncC9Q?=
- =?utf-8?B?UC8yRDFsVXdLT1NvT2NLSk1oZER5YVBIdmtWb09LWlNocDE5ZFA5ME5JSDJB?=
- =?utf-8?B?RjhVZzZjVnd5cHkyNjU3ZHFDN3FuUjl2d2JKZFJCSDd0L25pZmp6eFlIL1gv?=
- =?utf-8?B?K0pNOTJLakVpcHp6SXFqYzZ3Vm80SFNoOVVpR0V6TFBxZWtwZGNXcEZNdGpB?=
- =?utf-8?B?cENrR09vYzZMYjFINUkyY011d1RRNHlKK3ZoR2ZqaUlsWVRqTnlna2EzVEhu?=
- =?utf-8?B?TURWVFM0TTBYMW50eFQvajg4b2s4VkF6YmM4OG1xVitlMHhsOVdSdWFjSk1T?=
- =?utf-8?B?NXE3VU9vbnpJTmxLRVRneWVZY2FmellrdHFIUmhCQ3J6ajYrejRXZFB4cTNJ?=
- =?utf-8?B?cEloQndBYlNoRTB1TCtjQzN2SFBSWTBxVloyUGtOclQvSDVtamt5ajU3MDRy?=
- =?utf-8?B?Y092Q3J6bmpndVlkemtxc3JPU2hCRWtyMVk3TzBtYWU4dmtENEtJVWcrVldx?=
- =?utf-8?B?aHRlUlBIbE5iMkp2MGc2ZGVpNmlKWWIyR0piLzJVYmxwTnZ5RktZSE1EOFkv?=
- =?utf-8?B?aDQ3RFBTbEZ6QUNVRVlSMURCOEdFeTVoUTZtcWRBYmlsLzh2U2svVkE2WHBC?=
- =?utf-8?B?RUNZeVUwVWQyK20wWnY1SjU2aGFkT3I2aWkwV0pKeGF0dit3WTE3T3V2ZDdi?=
- =?utf-8?B?dHAyM0hxWHJ1a0EzVEdVMnltVDF1M0RIb3gyaXBUcmw2Q2wzcFdpTmRLOVQ3?=
- =?utf-8?B?QStHcTlzUndmcjQzSTl1c2hneHU5NTJTYUthR2hYSEk0OXlYSytUQUVvRkhz?=
- =?utf-8?B?NTdaSGRRRDlXOXFTVFluN0JIa1FSZG5xMWdHTUwrRGhkVEwydUVHb2Rod2J5?=
- =?utf-8?B?RzJiUTk1Y1dSL3NXT1pjSE90N0h5eWdyRXo5ZWlkNkEvWnR2dWpXTzhodUtM?=
- =?utf-8?B?M1I4VmlnQVJLalVLK3Y4YVdDdWZjNUpvU1pTdzlUdExzem5PQ3BBUXF6N1dV?=
- =?utf-8?B?SkJpUytETG8xYzkwMENvUGw3ZHZSMUowUWRlN2VEZkhuSytXR2RYYnJsTWlF?=
- =?utf-8?B?WkFITGhzRkM5UHdiTCtXUzJhMkVacGtsVjE5UENOSXlzYi9Ka0ZLVS94aDEr?=
- =?utf-8?B?Wmd1dkZoL0d6TGlIQ2svNGpkZXV6MjVoQW53Zkpib3RLWjZGMnozMHJ5N2lJ?=
- =?utf-8?B?VHBveWU4R1hIZ2hVVDR2T0ZwRHRuT0MzbWdzUlpGU2tBK3dnS3lVUFFuK0dj?=
- =?utf-8?B?bUlXaFhJL0VnUzV2Rkx6dzZBUzRFUVVlMS85NjB6NjZnYW1idVd6UT09?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37051901-0d8a-4115-c249-08df388bd807
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB7149.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2026 02:48:58.7224
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z1atYSiBjX0+1mqWOVHlcG8nxLbY58Hp83aS8SDBQFVHkPBPLwiNGkT7r0oLjcHc45djs7YSY/g+l5L4kVmaVg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PPF94EB25A41
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/7] hwmon: Add Broadcom PMB PVTMON monitoring
+To: Linus Walleij <linusw@kernel.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ William Zhang <william.zhang@broadcom.com>,
+ Anand Gore <anand.gore@broadcom.com>, Kursad Oney
+ <kursad.oney@broadcom.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Benjamin Larsson <benjamin.larsson@genexis.eu>
+Cc: mfd@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+References: <20261101-xg6846b-bcmbca-xrdp-reset-v2-0-455fe9eed5ee@kernel.org>
+ <20261101-xg6846b-bcmbca-xrdp-reset-v2-6-455fe9eed5ee@kernel.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20261101-xg6846b-bcmbca-xrdp-reset-v2-6-455fe9eed5ee@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-BWhitelist: no
+X-Source-IP: 108.223.40.66
+X-Source-L: No
+X-Exim-ID: 1xNiMy-000000012bx-0sK1
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net [108.223.40.66]:39052
+X-Source-Auth: guenter@roeck-us.net
+X-Email-Count: 21
+X-Org: HG=direseller_whb_net_legacy;ORG=directi;
+X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFfg6tpXr7xZQBZKLXBKXlP25ryvhJa2QgwSauDjS6yvTF93Mh9FIsYm3Z9t7/9AZWHJlvz20HqfwizFNjh9AyB55Oz+ZKfNx03xsUy58L5CCkox1Nda
+ iN7b4WY7kljR9haK0w2XAhpMMAAANSd3/TZ2bTY3UMc9ZMqyTjYejmoR+IXVHE5KzIQ8B4M86bIyiSPVZ9aXsevG+jEeMURZ3U/fBqoMjWbew0NZOHbjkC8B
 
-Hi Jerome,
+On 11/1/26 14:14, Linus Walleij wrote:
+> Expose the BCM6846 die temperature and seven voltage inputs through
+> hwmon using the shared Processor Monitor Bus (PMB) regmap.
+> 
+> Register the temperature channel with the thermal framework so
+> existing zero-cell device-tree thermal sensor references work.
+> 
+> Poll for valid samples with a bounded timeout, releasing the PMB lock
+> between reads. Report temperature in millidegrees Celsius, including
+> negative values, and voltages in millivolts.
+> 
+> Signed-off-by: Linus Walleij <linusw@kernel.org>
 
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
-Thanks for your review.
+Please let me know if you want me to take this patch through
+the hwmon subsystem.
 
-On 10/30/2026 5:04 PM, Jerome Brunet wrote:
->
->> The hardware requires a 50us delay after setting the PLL enable
->> bit to meet its timing requirements.
->>
->> Without this delay, GP0 and HIFI PLLs on Amlogic T7, SM1 and C3
->> may fail to lock under stress testing.
->>
->> For example, enabling the GP0 PLL at 1512MHz may lose lock and
->> result in an output I/O error:
->>
->> echo 1512000000 > /sys/kernel/debug/clk/gp0_pll/clk_rate
->> echo 1 > /sys/kernel/debug/clk/gp0_pll/clk_prepare_enable
->> sh: write error: I/O error
-> This is something for the cover letter or bellow the --- for a single change series.
+Thanks,
+Guenter
 
-
-Ok, I will move the example bellow the ---.
-
->> Add the required 50us delay after enabling the PLL.
->>
->> Testing on GXL shows that the PLL works correctly without the
->> additional delay and continues to lock successfully after the
->> 50us delay is added.
->>
->> On A1, remove the redundant 10us delay before enabling the
->> self-adaption current module, as the new PLL enable delay already
->> covers this timing requirement.
->>
->> Tested on: T7, C3, S4, AXG, GXL, SM1 and A1.
->>
->> Fixes: e40c7e3cda07 ("clk: meson: clk-pll: add enable bit")
-> This is the commit which introduced the enable bit and it is not really
-> what you are fixing here
->
-> A more likely candidate is b6ec400aa153 which introduced the delay
-> sequence you are modifying here.
-
-
-Ok, I will change the fix tag to b6ec400aa153.
-
-> I've got this other patch addressing PLL delays in my queue:
->
-> https://lore.kernel.org/all/20251031-optimize_pll_driver-v3-2-92f3b2f36a83@amlogic.com/
->
-> Which one is it ? both ?
-
-
-Yes, the are both addressing the PLL delays.
-
->
-> Please consolidate and resubmit.
-
-
-I will combine these two commits into one in v2.
-
->
-> --
-> Jerome
-
---
-
-Jian
+> ---
+>   Documentation/hwmon/bcm_pmb_pvtmon.rst |  53 ++++++++
+>   Documentation/hwmon/index.rst          |   1 +
+>   MAINTAINERS                            |   2 +
+>   drivers/hwmon/Kconfig                  |  18 +++
+>   drivers/hwmon/Makefile                 |   1 +
+>   drivers/hwmon/bcm_pmb_pvtmon.c         | 232 +++++++++++++++++++++++++++++++++
+>   6 files changed, 307 insertions(+)
+> 
+> diff --git a/Documentation/hwmon/bcm_pmb_pvtmon.rst b/Documentation/hwmon/bcm_pmb_pvtmon.rst
+> new file mode 100644
+> index 000000000000..7dba658bdc76
+> --- /dev/null
+> +++ b/Documentation/hwmon/bcm_pmb_pvtmon.rst
+> @@ -0,0 +1,53 @@
+> +.. SPDX-License-Identifier: GPL-2.0-only
+> +
+> +Kernel driver bcm_pmb_pvtmon
+> +============================
+> +
+> +Supported chips:
+> +
+> +  * Broadcom BCM6846 PVTMON
+> +
+> +    Access: Processor Monitor Bus (PMB), bus 1, device 6
+> +
+> +Author: Linus Walleij <linusw@kernel.org>
+> +
+> +Description
+> +-----------
+> +
+> +The process, voltage and temperature monitor (PVTMON) measures die
+> +temperature and seven voltage inputs. The driver uses the shared PMB MFD
+> +transport and obtains its clock and reset from the sibling providers.
+> +
+> +With CONFIG_THERMAL_OF enabled, the temperature channel also supplies
+> +device-tree thermal zones. The PVTMON node uses #thermal-sensor-cells = <0>;
+> +voltage inputs do not have thermal sensor indices.
+> +
+> +Sysfs attributes
+> +----------------
+> +
+> +All attributes are read-only. Temperature is reported in millidegrees
+> +Celsius and voltages in millivolts, using the BCM6846 vendor conversion
+> +formulas and input-divider ratios.
+> +
+> +================ ================================
+> +Attribute        Description
+> +================ ================================
+> +temp1_input      Die temperature
+> +in0_input        First 0.85 V input
+> +in1_input        Second 0.85 V input
+> +in2_input        VIN input
+> +in3_input        1.0 V input
+> +in4_input        1.8 V input
+> +in5_input        3.3 V input
+> +in6_input        Diagnostic test input
+> +in0_label        V0.85_1
+> +in1_label        V0.85_2
+> +in2_label        VIN
+> +in3_label        V1.0
+> +in4_label        V1.8
+> +in5_label        V3.3
+> +in6_label        Vtest
+> +================ ================================
+> +
+> +Labels follow the vendor channel names. Vtest is a diagnostic ADC input,
+> +not a supply rail. The driver does not change the analog test routing.
+> diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
+> index 199ca79621e9..5a579391cf9e 100644
+> --- a/Documentation/hwmon/index.rst
+> +++ b/Documentation/hwmon/index.rst
+> @@ -54,6 +54,7 @@ Hardware Monitoring Kernel Drivers
+>      axiado-pwm-fan
+>      axiado-tsadc
+>      bcm54140
+> +   bcm_pmb_pvtmon
+>      bel-pfe
+>      bpa-rs600
+>      cgbc-hwmon
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 74f0783d512f..124d67ea1582 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5451,7 +5451,9 @@ F:	Documentation/devicetree/bindings/hwmon/brcm,bcm6846-pmb-pvtmon.yaml
+>   F:	Documentation/devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml
+>   F:	Documentation/devicetree/bindings/reset/brcm,bcm6846-pmb-reset.yaml
+>   F:	Documentation/devicetree/bindings/soc/bcm/brcm,bcm6846-pmb.yaml
+> +F:	Documentation/hwmon/bcm_pmb_pvtmon.rst
+>   F:	drivers/clk/bcm/clk-bcmbca-pmb.c
+> +F:	drivers/hwmon/bcm_pmb_pvtmon.c
+>   F:	drivers/mfd/bcmbca_pmc3_pmb.c
+>   F:	drivers/reset/reset-bcmbca-pmb.c
+>   F:	include/dt-bindings/clock/brcm,bcm6846-pmb.h
+> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+> index 18c682e1a475..7e2bc32628d4 100644
+> --- a/drivers/hwmon/Kconfig
+> +++ b/drivers/hwmon/Kconfig
+> @@ -334,6 +334,24 @@ config SENSORS_AXIADO_TSADC
+>   	  This driver can also be built as a module. If so, the module
+>   	  will be called axiado-tsadc.
+>   
+> +config SENSORS_BCM_PMB_PVTMON
+> +	tristate "Broadcom PMB PVTMON hardware monitoring"
+> +	depends on ARCH_BCMBCA || COMPILE_TEST
+> +	depends on MFD_BCMBCA_PMB
+> +	depends on COMMON_CLK
+> +	depends on RESET_CONTROLLER
+> +	select CLK_BCMBCA_PMB
+> +	select RESET_BCMBCA_PMB
+> +	select REGMAP
+> +	default MFD_BCMBCA_PMB
+> +	help
+> +	  Enable temperature and voltage monitoring through the Processor
+> +	  Monitor Bus on Broadcom BCM6846. With THERMAL_OF enabled, the
+> +	  temperature channel also supplies the thermal zones described in
+> +	  the device tree.
+> +
+> +	  This driver can also be built as a module called bcm_pmb_pvtmon.
+> +
+>   config SENSORS_K8TEMP
+>   	tristate "AMD Athlon64/FX or Opteron temperature sensor"
+>   	depends on X86 && PCI
+> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+> index d4c345ed7261..edf8e8d2f345 100644
+> --- a/drivers/hwmon/Makefile
+> +++ b/drivers/hwmon/Makefile
+> @@ -62,6 +62,7 @@ obj-$(CONFIG_SENSORS_ATXP1)	+= atxp1.o
+>   obj-$(CONFIG_SENSORS_AXI_FAN_CONTROL) += axi-fan-control.o
+>   obj-$(CONFIG_SENSORS_AXIADO_PWM_FAN) += axiado-pwm-fan.o
+>   obj-$(CONFIG_SENSORS_AXIADO_TSADC)	+= axiado-tsadc.o
+> +obj-$(CONFIG_SENSORS_BCM_PMB_PVTMON) += bcm_pmb_pvtmon.o
+>   obj-$(CONFIG_SENSORS_CGBC)	+= cgbc-hwmon.o
+>   obj-$(CONFIG_SENSORS_CHIPCAP2) += chipcap2.o
+>   obj-$(CONFIG_SENSORS_CORETEMP)	+= coretemp.o
+> diff --git a/drivers/hwmon/bcm_pmb_pvtmon.c b/drivers/hwmon/bcm_pmb_pvtmon.c
+> new file mode 100644
+> index 000000000000..8b95dac83994
+> --- /dev/null
+> +++ b/drivers/hwmon/bcm_pmb_pvtmon.c
+> @@ -0,0 +1,232 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Broadcom BCM6846 process, voltage and temperature monitor (PVTMON).
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/clk.h>
+> +#include <linux/hwmon.h>
+> +#include <linux/mfd/bcmbca-pmb.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset.h>
+> +
+> +#define PVTMON_BUS		1
+> +#define PVTMON_DEVICE		6
+> +
+> +/* PMB register offsets are in 32-bit words. */
+> +#define PVTMON_CONFIG		17
+> +#define PVTMON_RESET_N		BIT(0)
+> +#define PVTMON_POWER_DOWN		BIT(1)
+> +
+> +#define PVTMON_ACQ_CONFIG		20
+> +#define PVTMON_ACCUM_ENABLE	BIT(0)
+> +#define PVTMON_SKIP_LENGTH	GENMASK(11, 8)
+> +
+> +#define PVTMON_CHANNEL_BASE	24
+> +#define PVTMON_NUM_CHANNELS	8
+> +#define PVTMON_VALUE		GENMASK(9, 0)
+> +#define PVTMON_VALID		BIT(18)
+> +#define PVTMON_SAMPLES		GENMASK(26, 24)
+> +#define PVTMON_CHANNEL_ENABLE	BIT(31)
+> +
+> +/* Voltage labels and divider ratios follow the BCM6846 vendor definitions. */
+> +static const struct {
+> +	const char *label;
+> +	unsigned int divisor;
+> +} bcm6846_pvtmon_voltages[] = {
+> +	{ "V0.85_1", 10 },
+> +	{ "V0.85_2", 10 },
+> +	{ "VIN", 7 },
+> +	{ "V1.0", 7 },
+> +	{ "V1.8", 4 },
+> +	{ "V3.3", 2 },
+> +	{ "Vtest", 10 },
+> +};
+> +
+> +static int bcm_pmb_pvtmon_init(struct regmap *regmap,
+> +			       struct reset_control *reset)
+> +{
+> +	unsigned int reg = BCMBCA_PMB_REG(PVTMON_BUS, PVTMON_DEVICE, PVTMON_CONFIG);
+> +	u32 config, acq, channel;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	ret = regmap_read(regmap, reg, &config);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Do not reset acquisition already running for the PMC firmware. */
+> +	if ((config & (PVTMON_RESET_N | PVTMON_POWER_DOWN)) != PVTMON_RESET_N) {
+> +		ret = regmap_update_bits(regmap, reg, PVTMON_POWER_DOWN, 0);
+> +		if (ret)
+> +			return ret;
+> +		ret = reset_control_reset(reset);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret = regmap_read(regmap, BCMBCA_PMB_REG(PVTMON_BUS, PVTMON_DEVICE,
+> +						 PVTMON_ACQ_CONFIG), &acq);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < PVTMON_NUM_CHANNELS; i++) {
+> +		reg = BCMBCA_PMB_REG(PVTMON_BUS, PVTMON_DEVICE, PVTMON_CHANNEL_BASE + i);
+> +		ret = regmap_read(regmap, reg, &channel);
+> +		if (ret)
+> +			return ret;
+> +
+> +		if (channel & PVTMON_CHANNEL_ENABLE)
+> +			continue;
+> +
+> +		/* Average 32 samples, matching the vendor acquisition setup. */
+> +		ret = regmap_update_bits(regmap, reg, PVTMON_CHANNEL_ENABLE | PVTMON_SAMPLES,
+> +					 PVTMON_CHANNEL_ENABLE | FIELD_PREP(PVTMON_SAMPLES, 5));
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	if (!(acq & PVTMON_ACCUM_ENABLE))
+> +		return regmap_update_bits(regmap,
+> +					  BCMBCA_PMB_REG(PVTMON_BUS, PVTMON_DEVICE,
+> +							 PVTMON_ACQ_CONFIG),
+> +					  PVTMON_SKIP_LENGTH | PVTMON_ACCUM_ENABLE,
+> +					  PVTMON_ACCUM_ENABLE | FIELD_PREP(PVTMON_SKIP_LENGTH, 8));
+> +
+> +	return 0;
+> +}
+> +
+> +static int bcm_pmb_pvtmon_read(struct device *dev, enum hwmon_sensor_types type,
+> +			       u32 attr, int channel, long *val)
+> +{
+> +	struct regmap *map = dev_get_drvdata(dev);
+> +	unsigned int index;
+> +	u32 value;
+> +	int ret;
+> +
+> +	switch (type) {
+> +	case hwmon_temp:
+> +		if (attr != hwmon_temp_input)
+> +			return -EOPNOTSUPP;
+> +		index = 0;
+> +		break;
+> +	case hwmon_in:
+> +		if (attr != hwmon_in_input)
+> +			return -EOPNOTSUPP;
+> +		index = channel + 1;
+> +		break;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	/* Release the PMB between samples so other clients can make progress. */
+> +	ret = regmap_read_poll_timeout(map,
+> +				       BCMBCA_PMB_REG(PVTMON_BUS, PVTMON_DEVICE,
+> +						      PVTMON_CHANNEL_BASE + index),
+> +				       value, value & PVTMON_VALID, 1000, 100000);
+> +	if (ret)
+> +		return ret;
+> +
+> +	value = FIELD_GET(PVTMON_VALUE, value);
+> +	if (type == hwmon_temp) {
+> +		/* Signed arithmetic allows temperatures below zero Celsius. */
+> +		*val = (41335000 - 49055 * (int)value) / 100;
+> +	} else {
+> +		/* 880 mV ADC reference, accounting for each input divider. */
+> +		*val = 880 * value * 10 /
+> +			(bcm6846_pvtmon_voltages[channel].divisor * 1024);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int bcm_pmb_pvtmon_read_string(struct device *dev,
+> +				      enum hwmon_sensor_types type, u32 attr,
+> +				      int channel, const char **str)
+> +{
+> +	if (type != hwmon_in || attr != hwmon_in_label)
+> +		return -EOPNOTSUPP;
+> +
+> +	*str = bcm6846_pvtmon_voltages[channel].label;
+> +	return 0;
+> +}
+> +
+> +static const struct hwmon_ops bcm_pmb_pvtmon_ops = {
+> +	.visible = 0444,
+> +	.read = bcm_pmb_pvtmon_read,
+> +	.read_string = bcm_pmb_pvtmon_read_string,
+> +};
+> +
+> +static const struct hwmon_channel_info * const bcm_pmb_pvtmon_info[] = {
+> +	HWMON_CHANNEL_INFO(chip, HWMON_C_REGISTER_TZ),
+> +	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT),
+> +	HWMON_CHANNEL_INFO(in,
+> +			   HWMON_I_INPUT | HWMON_I_LABEL,
+> +			   HWMON_I_INPUT | HWMON_I_LABEL,
+> +			   HWMON_I_INPUT | HWMON_I_LABEL,
+> +			   HWMON_I_INPUT | HWMON_I_LABEL,
+> +			   HWMON_I_INPUT | HWMON_I_LABEL,
+> +			   HWMON_I_INPUT | HWMON_I_LABEL,
+> +			   HWMON_I_INPUT | HWMON_I_LABEL),
+> +	NULL
+> +};
+> +
+> +static const struct hwmon_chip_info bcm_pmb_pvtmon_chip_info = {
+> +	.ops = &bcm_pmb_pvtmon_ops,
+> +	.info = bcm_pmb_pvtmon_info,
+> +};
+> +
+> +static int bcm_pmb_pvtmon_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct regmap *regmap = dev_get_regmap(dev->parent, NULL);
+> +	struct device *hwmon;
+> +	struct reset_control *reset;
+> +	struct clk *clk;
+> +	int ret;
+> +
+> +	if (!regmap)
+> +		return -ENODEV;
+> +
+> +	reset = devm_reset_control_get_exclusive(dev, NULL);
+> +	if (IS_ERR(reset))
+> +		return dev_err_probe(dev, PTR_ERR(reset), "failed to get PVTMON reset\n");
+> +
+> +	clk = devm_clk_get_enabled(dev, NULL);
+> +	if (IS_ERR(clk))
+> +		return dev_err_probe(dev, PTR_ERR(clk), "failed to enable PVTMON clock\n");
+> +
+> +	ret = bcm_pmb_pvtmon_init(regmap, reset);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to initialize PVTMON\n");
+> +
+> +	hwmon = devm_hwmon_device_register_with_info(dev, "bcm6846_pvtmon", regmap,
+> +						     &bcm_pmb_pvtmon_chip_info, NULL);
+> +	if (IS_ERR(hwmon))
+> +		return dev_err_probe(dev, PTR_ERR(hwmon), "failed to register hwmon device\n");
+> +
+> +	/* Acquisition remains enabled for the PMC firmware after unbinding. */
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id bcm_pmb_pvtmon_of_match[] = {
+> +	{ .compatible = "brcm,bcm6846-pmb-pvtmon" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, bcm_pmb_pvtmon_of_match);
+> +
+> +static struct platform_driver bcm_pmb_pvtmon_driver = {
+> +	.probe = bcm_pmb_pvtmon_probe,
+> +	.driver = {
+> +		.name = "bcm6846-pmb-pvtmon",
+> +		.of_match_table = bcm_pmb_pvtmon_of_match,
+> +	},
+> +};
+> +module_platform_driver(bcm_pmb_pvtmon_driver);
+> +
+> +MODULE_AUTHOR("Linus Walleij <linusw@kernel.org>");
+> +MODULE_DESCRIPTION("Broadcom PMB PVTMON hardware monitoring driver");
+> +MODULE_LICENSE("GPL");
+> 
 
