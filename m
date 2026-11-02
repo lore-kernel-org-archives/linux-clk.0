@@ -1,65 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793585049;
-	b=Jp6ySNy4jKGhh5cABNyJ5Kgwyo5fNsH1O2ncpj0LR/fxJjLqJTzTxi7uJIgPlyevjqjz
-	 6L1UKi2Sm2MqAVHoQ6o6yrITe5hmnEoKkbunnX8Gq4yzF1Iu/U6VOGl4k3Bd2t6hJiJne
-	 AX3wB2Y5VOszbQZNXPaSnlGD4ZnmQWFrGbrJVrYg43rni+AheMi9gJRr0xcz7znjammDz
-	 CqU+bPa/xXMQ/+dfUuPEGD8C9S1ppbWIBWbSZpgZIRiLK1qx/bDUVo3wPqNkOL1jU+keY
-	 Zk++WEqvo+ZgUHFSO0Iz7BRerY3Z++UFQU5vq8JBXhHUpuMPvouD27qNb13SDKqwm9g==
+	t=1793586164;
+	b=X4taJ7LA8fUnKquAiiMTH3I0cufx3ZFwSqHBLRlfGtELBRfnAih77OtPWde1tQq3CcRc
+	 +AYSrsUazLWEtxRBLwth8vEbhhEBUT2S8p1tdTfADAMgZdQOGILPLSHlbNNV0L9pJD6k5
+	 WH5yk2D31asgfyNTdWBIFzY0t1HQYY0LGqD575xxvtQ74HG0Zu59o+azjIyHXtRYrdc6u
+	 3RDANWc5laiXfig5pj6AFIuAXT3RuZFLYKGFs58kHbjF582MJrvTB86OpwWESuEQMRWGU
+	 FvjqEnXDDY7Fd/AGYrxwskzPtT2hbQRhye2Os2uwIovdHn6JWQUc9tXW3AP6TeYu/gg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793585049;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=EEbpi7PJ+4q9acxRxZPPipTgrTyR2mdkDd/Q2MjCxUI=;
-	b=hIPYSf5F56IKLXFF+qZc92XOK22keY9UGbbJj9VGe5o0M10huEyDozzbqPJdb1LW2unQ
-	 TNyys52d7RUJd32dRhsrzX2+AvQ+/ox07YDGZlOMk8HtT9FWw7QhabCSaZ3AWAeiEQjn3
-	 sx7wMrXapD0qNK0f+6rMaeMRe90e5+DjHuWojGjSVaQGDP9OGMpmiNWweBeHRP8H7cp5+
-	 oVOVIDebKjMj1u868H1Hqme/8t3qjr4W3mI8dZxtzIHPB9ocT3ftI14dRSIon4zPYrw/l
-	 ijsIFzArVxElZvj1VquVtiAYnPOTMrBQsxkXmTNGtjxwKzicWKCOmxnEsfo6A5bmExQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793586164;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=ps/qs5CWGADuVYzfGEn+VGQnXcRANVXhnQ5CyJ+SbKc=;
+	b=lPG1ONx+WHWOUR2VdTYvnGlX1W3uwJ4E+2Ycuea0JQpU4z0ZPc7NMsdH8z2W54cqrC78
+	 qESMJFG5SKnQRjmt3ixagix+1Wma6NSlZTRTNx5dXSA9/Uy6OsHFNOdhhIbdNLxJ7o5aa
+	 2oKV5ReSSz7ALpZyUvQt576JXmP0GOwE81qD4FIZzoYLJWnz9UQo6xu/h2gE/8CN8AmV/
+	 JiB1bHeGydCfzEHDheMP+38s9pASJJvjDxtOZoVPV0RF9yP4IkoRUdwDSKKcIWEwLJeCU
+	 7L/P3ZPsU8ppvB2Dzk1FURQgN9SxThtQnKWYpPWlv1NRQm1ej+Nnp3rXFSxGCrHbl5A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ikpr1yP/";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BdldPLyI;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1B9606A326;
-	Mon,  2 Nov 2026 02:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1748606A324;
+	Mon,  2 Nov 2026 02:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ikpr1yP/
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91E3C1F000C1;
-	Mon,  2 Nov 2026 02:04:06 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BdldPLyI
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC6411F000C1;
+	Mon,  2 Nov 2026 02:22:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793585048;
-	bh=EEbpi7PJ+4q9acxRxZPPipTgrTyR2mdkDd/Q2MjCxUI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=ikpr1yP/BDH+G/tY5bVXVH762hJ0j/qXhMh4OLtbq2Jrn35JaxyXC96D6sLsjmrE4
-	 KPbVzJJC+FosJYbfIowK+k57ZRWBuOKbPrYlDbhGAXM4cgtwz9V26qPqPX10VnvMYU
-	 i4UO1TQEjtEIhP4CYVBehDL8o9qxd/8wlU1umuQsgHwFKmphFgiliuWIl/96jYOaBj
-	 VwzHHcQ088BatZNotNpgFGjQvf9uZEuCR6La2nMBhwHEt1DwlncQ2C5otlcnTc+zjr
-	 BtJsCRdyVuqnKMumA54qEtXwIAIWpPxCEksi9NDtf9dGgbiCxySewoIhiBk99wG3rY
-	 Oc9RvZ0f3GYoQ==
-From: Brian Masney <masneyb@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Nicolai Buchwitz <nb@tipi-net.de>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
- Stefan Wahren <wahrenst@gmx.net>, Phil Elwell <phil@raspberrypi.com>, 
- netdev@vger.kernel.org, James Clark <jjc@jclark.com>
-In-Reply-To: <20261020-devel-bcm2711-gisb-clk-v1-0-a1728724d0f8@tipi-net.de>
-References: <20261020-devel-bcm2711-gisb-clk-v1-0-a1728724d0f8@tipi-net.de>
-Subject: Re: (subset) [PATCH 0/3] clk: bcm2835: describe the BCM2711 GISB
- clock for the GENET MDIO controller
-Message-Id: <179358503716.355577.9187303706042543606.b4-ty@b4>
-Date: Sun, 01 Nov 2026 21:03:57 -0500
+	s=k20260515; t=1793586163;
+	bh=ps/qs5CWGADuVYzfGEn+VGQnXcRANVXhnQ5CyJ+SbKc=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=BdldPLyI7rsUgAobFIathWTmBtP/I9JyKZxIjN+58RQf2UVMmdkEHiQOTIx2To7mr
+	 JmzGq3vAdJoOlCAlrScAv3TfXOWXoBnxNSAitEuG0Y5UOcPFq2RcwwcCemeFgfpbo9
+	 Z1/U6psSFy+YCoIrbD+kgUaNyOKEAfttvym3B91TtgC7Iy3uCnYyhz4+K9itr2TV9p
+	 RB4vSr3cRaibBc69qLWEKv/3ug281NcbnJ/GqjlWDgkgY++rf5LG4qzcAGFlkizx+O
+	 X3+j9fZP+6WEIFUJDkLonnzuaKQCSmBvX73LKfDDUnH8pwjUdep7MKHNweo19iXpmK
+	 AgSLG2y+rKu5g==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -71,37 +51,59 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] clk: stm32: add support for reset_control_reset()
+From: Brian Masney <masneyb@kernel.org>
+To: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20261019-ups_reset_control_reset-v2-1-be4ccf511cbb@foss.st.com>
+References: <20261019-ups_reset_control_reset-v2-1-be4ccf511cbb@foss.st.com>
+Date: Sun, 01 Nov 2026 21:22:31 -0500
+Message-Id: <179358615196.355577.6979239007950304521.b4-review@b4>
 X-Mailer: b4 0.17-dev-5d8fe
-X-Developer-Signature: v=1; a=openpgp-sha256; l=790; i=masneyb@kernel.org;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1001; i=masneyb@kernel.org;
  s=20250903; h=from:subject:message-id;
- bh=jTkvZ/L7zswWdeg8kLhuRySRfybPm2VPf54LiwO8r88=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLKev59w/eKliCdHdSStvmwWPsgaJXbK/eeLpokJ3fzFX
- KsYJAWVO0pZGMS4GGTFFFmW5BoVRKSusr13R5MFZg4rE8gQBi5OAZjItBkM/1O/vdGbIfTsxdZ5
- Xybucvh/+nWaJe/TeVXnTx05Os/618uzjAzPZDOsm0wfL/v4ZCmn3M3XunJfhV7Lr5TcsPwqz1/
- 5Y0c5AQ==
+ bh=b4zZE+9DrZ8HWU79r7L/+S6e/F34MgSto3ilXCnyf4k=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLKef37rumDRDxsh1ZOJ6wzPafFd4VTZX/izTenplteaO
+ /MzjkxL6ihlYRDjYpAVU2RZkmtUEJG6yvbeHU0WmDmsTCBDGLg4BWAiT/IZGY4HhOvtsJI5ubnv
+ 1Fmmk7o31js5XbksHKXToP35Lauq4WGGv5LdQhXL/8xfucCBeYeU6q5FFuvuFsassW4yjmvY8Ne
+ WlQMA
 X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
+Hi Gabriel,
 
-On Tue, 20 Oct 2026 16:58:08 +0200, Nicolai Buchwitz wrote:
-> clk: bcm2835: describe the BCM2711 GISB clock for the GENET MDIO controller
+> The STM32 RCC reset controller currently implements only .assert(),
+> .deassert(), and .status().
 > 
-> The timestamped MDIO write series [1] needs the reference clock the
-> GENET MDIO controller divides its MDC from. On BCM2711 that clock is
-> not described anywhere, so 5/5 of that series hardcodes 200 MHz behind
-> a compatible match, and mdio-bcm-unimac's clock-frequency handling
-> assumes the 250 MHz of the STB chips.
+> As a result, reset_control_reset() returns -ENOTSUPP, forcing consumers
+> to open-code the assert / delay / deassert sequence.
+> rs.
+
+There's an extra 'rs.' here.
+
+It looks like there's at least two in-tree consumers (stm32mp25_vpu_hw.c
+and stm32-dma3.c) that call reset_control_reset() without checking the
+result. Would it be worthwhile to call out in the commit message that
+this will actually invoke the reset in those cases? I think that would
+be useful information to have for someone deciding whether or not to
+backport this to a downstream kernel.
+
 > 
-> [...]
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> ---
+> Changes in v2:
+> - Increase the assert delay from 2 us to 50 us, a value that suits all
+>   STM32 IPs
 
-Applied, thanks!
+I think this would be useful to also include in the commit message.
 
-[1/3] dt-bindings: clock: bcm2835: add the BCM2711 GISB clock
-      https://git.kernel.org/clk/linux/c/af7994af5228
-[2/3] clk: bcm2835: register the BCM2711 GISB clock
-      https://git.kernel.org/clk/linux/c/ab94dbf30233
+Brian
 
-Best regards,
 -- 
 Brian Masney <masneyb@kernel.org>
-
