@@ -1,60 +1,65 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793584413;
-	b=gFvXVv/Pv/+4mcJPXsGQkvgX9EGHQJ44Mh4czzuEChXo9FICpkDm+jAIFT7abY/zNnFY
-	 O+wOGENL311LPs7YrJcwElDP6bWXTslnaHCbdrRznrssXEs/3BuD+D9pgaFr/CmrLKwZd
-	 qOCa/RNnJtpCNokc+H9SBRxIOHyOpcQmkWDeK4HcT/7NQM5sqbPOYeRB7nCV1zKzyK/s6
-	 tx9j1Qc/36f/p90jYiaCw4kqTIGtB0JMqBxvQ6rmGdHYQEZLmLm8CU4MbXosEsljsU5Nw
-	 Bfd+ypELO+dJ3dBfxcoQkkP9pJG3fpBeiLPUhoEY4wcfLRsoW1KlkIS+mD/h2aCFs3A==
+	t=1793585049;
+	b=Jp6ySNy4jKGhh5cABNyJ5Kgwyo5fNsH1O2ncpj0LR/fxJjLqJTzTxi7uJIgPlyevjqjz
+	 6L1UKi2Sm2MqAVHoQ6o6yrITe5hmnEoKkbunnX8Gq4yzF1Iu/U6VOGl4k3Bd2t6hJiJne
+	 AX3wB2Y5VOszbQZNXPaSnlGD4ZnmQWFrGbrJVrYg43rni+AheMi9gJRr0xcz7znjammDz
+	 CqU+bPa/xXMQ/+dfUuPEGD8C9S1ppbWIBWbSZpgZIRiLK1qx/bDUVo3wPqNkOL1jU+keY
+	 Zk++WEqvo+ZgUHFSO0Iz7BRerY3Z++UFQU5vq8JBXhHUpuMPvouD27qNb13SDKqwm9g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793584413;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793585049;
 	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
 	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=MROGN9E8EJD6Dob6PvAu9y9tvnVdyuPg06+xGcxd+JQ=;
-	b=Z+zCHLb+5Q6qmGiYzTX2Sk+KAf9nL6jXUfwxsoYfxfPpvkgDca6grAWVNfkQY4EvHZ7S
-	 EERqtkyxWGBSPTAqtL3ePBopMpT/vF5ZFFD2y+7rYozZKLoAvyBUaDVaE8aH7TENAqrbQ
-	 R1muIycYFh3YUYMgLORaF7AW26BanKX0T8muFFKs0LJCKFIPXgbU0X5cRNCJL7e47fQuB
-	 nXM2s37BQi1GGBqlgExKXko8hq2dUUycm8ahAzBFnMD5mnR74FGJpzqVaf8/poyeYO2yO
-	 1Q7NCOUoWAMQx+byIyRwGFz8VYgCZAI/0jxnF9nWfaic+n8k/LF9m2ll9f/O1sa+Vfg==
+	bh=EEbpi7PJ+4q9acxRxZPPipTgrTyR2mdkDd/Q2MjCxUI=;
+	b=hIPYSf5F56IKLXFF+qZc92XOK22keY9UGbbJj9VGe5o0M10huEyDozzbqPJdb1LW2unQ
+	 TNyys52d7RUJd32dRhsrzX2+AvQ+/ox07YDGZlOMk8HtT9FWw7QhabCSaZ3AWAeiEQjn3
+	 sx7wMrXapD0qNK0f+6rMaeMRe90e5+DjHuWojGjSVaQGDP9OGMpmiNWweBeHRP8H7cp5+
+	 oVOVIDebKjMj1u868H1Hqme/8t3qjr4W3mI8dZxtzIHPB9ocT3ftI14dRSIon4zPYrw/l
+	 ijsIFzArVxElZvj1VquVtiAYnPOTMrBQsxkXmTNGtjxwKzicWKCOmxnEsfo6A5bmExQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mKSFrJKV;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ikpr1yP/";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D06606A324;
-	Mon,  2 Nov 2026 01:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1B9606A326;
+	Mon,  2 Nov 2026 02:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mKSFrJKV
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D8951F000C1;
-	Mon,  2 Nov 2026 01:53:31 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ikpr1yP/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91E3C1F000C1;
+	Mon,  2 Nov 2026 02:04:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793584413;
-	bh=MROGN9E8EJD6Dob6PvAu9y9tvnVdyuPg06+xGcxd+JQ=;
+	s=k20260515; t=1793585048;
+	bh=EEbpi7PJ+4q9acxRxZPPipTgrTyR2mdkDd/Q2MjCxUI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=mKSFrJKVgmGVVzhHaeWprcQvTRIvHbFawicYqyIc2MXnSqdCiJDgbdAK539ODKohv
-	 pBpSj8qqZSvk3b46E+nzHPmlATgR6MnxMylMcQHlhpwCu/lti6r+F6J2NKQec/jdFV
-	 A0zHa+hdyK5GoLvyLukY5Sl1xdqGBo6aglp+aFXfUYWCqQpBLk3tGwj+Ld16+31Kcj
-	 hXLHuCm87XZVwr8gvarOxdsbQPrkBuR8r+SFam5YE6lVAng8bM88giNWnKtSlIj2ux
-	 7fn2G6TRR7p5i3u9fL2qXyWzlaWVY48mDSYnwBopckalJOKT2DFr2EfRETzUpvCQGi
-	 2iipInWf9LmWA==
+	b=ikpr1yP/BDH+G/tY5bVXVH762hJ0j/qXhMh4OLtbq2Jrn35JaxyXC96D6sLsjmrE4
+	 KPbVzJJC+FosJYbfIowK+k57ZRWBuOKbPrYlDbhGAXM4cgtwz9V26qPqPX10VnvMYU
+	 i4UO1TQEjtEIhP4CYVBehDL8o9qxd/8wlU1umuQsgHwFKmphFgiliuWIl/96jYOaBj
+	 VwzHHcQ088BatZNotNpgFGjQvf9uZEuCR6La2nMBhwHEt1DwlncQ2C5otlcnTc+zjr
+	 BtJsCRdyVuqnKMumA54qEtXwIAIWpPxCEksi9NDtf9dGgbiCxySewoIhiBk99wG3rY
+	 Oc9RvZ0f3GYoQ==
 From: Brian Masney <masneyb@kernel.org>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Cc: linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Olivier Moysan <olivier.moysan@foss.st.com>
-In-Reply-To: <20261023-ups_mp25_clk_mdf-v1-1-3043b3fd4bc9@foss.st.com>
-References: <20261023-ups_mp25_clk_mdf-v1-1-3043b3fd4bc9@foss.st.com>
-Subject: Re: [PATCH] clk: stm32mp25: allow MDF kernel clock rate changes to
- propagate to parent
-Message-Id: <179358440476.349160.7540127270699640525.b4-ty@b4>
-Date: Sun, 01 Nov 2026 20:53:24 -0500
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Nicolai Buchwitz <nb@tipi-net.de>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
+ Stefan Wahren <wahrenst@gmx.net>, Phil Elwell <phil@raspberrypi.com>, 
+ netdev@vger.kernel.org, James Clark <jjc@jclark.com>
+In-Reply-To: <20261020-devel-bcm2711-gisb-clk-v1-0-a1728724d0f8@tipi-net.de>
+References: <20261020-devel-bcm2711-gisb-clk-v1-0-a1728724d0f8@tipi-net.de>
+Subject: Re: (subset) [PATCH 0/3] clk: bcm2835: describe the BCM2711 GISB
+ clock for the GENET MDIO controller
+Message-Id: <179358503716.355577.9187303706042543606.b4-ty@b4>
+Date: Sun, 01 Nov 2026 21:03:57 -0500
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -67,24 +72,34 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.17-dev-5d8fe
-X-Developer-Signature: v=1; a=openpgp-sha256; l=356; i=masneyb@kernel.org;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=790; i=masneyb@kernel.org;
  s=20250903; h=from:subject:message-id;
- bh=sRSUhW0nCs7Zfux0rOD2DZbpMM9hzet8PA9cOK33KXg=;
- b=kA0DAAoWt9LdJ11+wIcByyZiAGrn7Rags8rSQuCbM7vJWk1bUBv99T9TC14cpchuBdRWSfk+z
- Yh1BAAWCgAdFiEEpG0ycFhlqj3e3CkEt9LdJ11+wIcFAmrn7RYACgkQt9LdJ11+wIcVrQEAm4WV
- PUi+6S6tp/poyzpg/Usc8X6VU9uPBAOw1qbgZfkA/2aHz8WlzQ7R/IhaxLS6FqDS1s4+kKOBv8e
- 3bCRXh/kG
+ bh=jTkvZ/L7zswWdeg8kLhuRySRfybPm2VPf54LiwO8r88=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLKev59w/eKliCdHdSStvmwWPsgaJXbK/eeLpokJ3fzFX
+ KsYJAWVO0pZGMS4GGTFFFmW5BoVRKSusr13R5MFZg4rE8gQBi5OAZjItBkM/1O/vdGbIfTsxdZ5
+ Xybucvh/+nWaJe/TeVXnTx05Os/618uzjAzPZDOsm0wfL/v4ZCmn3M3XunJfhV7Lr5TcsPwqz1/
+ 5Y0c5AQ==
 X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
 
-On Fri, 23 Oct 2026 08:50:23 +0200, Gabriel Fernandez wrote:
-> clk: stm32mp25: allow MDF kernel clock rate changes to propagate to parent
+On Tue, 20 Oct 2026 16:58:08 +0200, Nicolai Buchwitz wrote:
+> clk: bcm2835: describe the BCM2711 GISB clock for the GENET MDIO controller
+> 
+> The timestamped MDIO write series [1] needs the reference clock the
+> GENET MDIO controller divides its MDC from. On BCM2711 that clock is
+> not described anywhere, so 5/5 of that series hardcodes 200 MHz behind
+> a compatible match, and mdio-bcm-unimac's clock-frequency handling
+> assumes the 250 MHz of the STB chips.
+> 
+> [...]
 
 Applied, thanks!
 
-[1/1] clk: stm32mp25: allow MDF kernel clock rate changes to propagate to parent
-      https://git.kernel.org/clk/linux/c/1d6eae1cc3dd
+[1/3] dt-bindings: clock: bcm2835: add the BCM2711 GISB clock
+      https://git.kernel.org/clk/linux/c/af7994af5228
+[2/3] clk: bcm2835: register the BCM2711 GISB clock
+      https://git.kernel.org/clk/linux/c/ab94dbf30233
 
 Best regards,
 -- 
