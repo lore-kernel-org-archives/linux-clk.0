@@ -1,72 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793646717;
-	b=ZOoRy29AeixTPYPUKDstlYXySlrXSmTmC25N8Hpw66TfdPlXnpOYdfNIWr2fMftxQwkq
-	 3iXgWYzYlp4rTeyohCJn02iz91bdCKLw+q6wzdVV/OZlpbD8zuuOu8gVcbARODIraqMxw
-	 REc8Uv1ZjGrv6vLfubY4Y2P7TxdNs3hieAwiWv2fNT1zajH4GokOFBNz1lwkXjpe72teS
-	 fsKOhVoo0Q2Iwu8r+tSeZfn/d2TqSz7Yh1eUZlPrskKJ7epQudiTwvm8/olyZEh1lIIxA
-	 uFAgTWdFgCwWaRg+vbnEYyL9zrj7VYbnU8NO/hD1X/Y6EKoSr8idcm5g66Qiu/H4/kw==
+	t=1793646848;
+	b=bOhqaDX3Hfli4C0iUgcQHKEw7wiCLtEd2CsFxIVwMYX3B3Lqs1/r4gHsmYQE3gRk5Ifi
+	 pexMTaq8MoL/5eV2JuT/N9huk/6tqg5zfKq3mrEroh6l3auH5ugr6vG7sHgl+Yazv2q3+
+	 WPeyHaANE7BbK8e1AXnL3MQrugXcmIKEXF287rKa2yO6YwoIKLwO2c3tW8yPF3Z8pwRCn
+	 tvFD/YCGOsT0pEW3NCzN73AGtQJ4Cq9B1TKMCFiwAYUSlGg/GmT/+YJ2xQFM8QONodD0P
+	 qAd4Z+6p68cZOZKeoba6MYSj3g4xqzNG8IDmYV3lkO8tNJyWvQFxTdXdhg+iLzZPcGw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793646717;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=AgYWzVkrd0FAA36W9FOipwPtzV7qJco9n4AtSE0Qekc=;
-	b=t6pSg8PPARkG19BUx/4J75jZpwILNE57l4rCktDfAEiwFYm7TsFRJsCRP2c/7ifxv5j7
-	 Bo8lQLtJg2slsOYxw39fAGUzFXgz7oUFcmj5lkcel9WY83+/p9tLODn42F+Qb4VHeBbv8
-	 FQaFwNQqwtx6jqg7xkwhGVQN7W2KS9n/07YxHlYQKSi7knO61buspD4VKUec8uKZfUGtt
-	 IotyH1dPHPaiZ53SodaBC5lmrxsFtcuwgDABvjmn5kCU1gGTQcPfBmraHUzsUdW4vdQiQ
-	 WXQRCRkkxiLfwv0vL9UeWpCUgDrUxko/ewl0MUj2WqfzwnNpw3F37tG64r2zG9nTncw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793646848;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:X-Mailer:Thread-Index:Content-Language:
+	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
+	 X-CMS-RootMailID:References;
+	bh=s2e7rhOdqB7ux1alseBahOqoYTov3xDVLS0bIJyRYu0=;
+	b=roF3Sfe9jpeGmZK3mncUCxss0PPTwsiyO6cEzTSwrCq1ZpvSKov3wfQU1JZnL0Z+bhxr
+	 ASUckpWF9rYebILmufpX2wy9AWNOlIwtFRl25xGyshEOaMdtggkM2FRxO1mHnDDAS99fv
+	 l7LQyVaBbWHsTH49EyLAgCNYOQf4Q6Yj+KSq+wYquOmHPntzcVm0fpeBU9LxAP12HGIAA
+	 hPjnsFjrkV3MmPsWRjEZaveufvO/XfBrZ2iTyKMKiJJaW8XztLXbtngqNiWztFvL57b1R
+	 wDKLDfYmAWqnHDDO8ubYhFod7XEeKgpK6Zfg1GA+2xObON7eMVA9IDUNnHMcJJw2z8w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CSRZODUK;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=IDdfODWA;
+	arc=none smtp.remote-ip=210.118.77.12
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242FC606A33B;
-	Mon,  2 Nov 2026 19:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B5A606A32C
+	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 19:14:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 99B5A606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CSRZODUK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A077A1F00A16;
-	Mon,  2 Nov 2026 19:11:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793646716;
-	bh=AgYWzVkrd0FAA36W9FOipwPtzV7qJco9n4AtSE0Qekc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=CSRZODUKiphAyBEKGfeVwgnNBvUueO5U6sCBRCmxRs67dyjtWJTfBCLDQAuhqm0L5
-	 iJmYwfHwfYLIIOjFVr8YK3uMncDHOO1huqnoGMYLsfWhO4pzkbbBssdyyfiroon+fg
-	 avu6VfYlpaFzex4ztPnRoTqh6TRLTY9WkkhUZSYDSG38hIjVQW3E4L/5L9rD+mWwyK
-	 mA1Qia9mYcHjT7ikcZc+4vCuFPzcbjB1/dpLMAgCbcPJ/eV1MAJDee7kOO/44HsVvz
-	 TZeyfJH5UVInpRn5wMxZjuxayvuzK7DQ747dN32zRg5hEzGLRFz+c5dLoETU0PRQMw
-	 QD2GavBw5SSMg==
-Date: Mon, 2 Nov 2026 19:11:49 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Han Gao <rabenda.cn@gmail.com>
-Cc: gaohan@iscas.ac.cn, Drew Fustini <fustini@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, Anup Patel <anup@brainfault.org>,
-	Radu Rendec <radu@rendec.net>,
-	Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>,
-	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <pjw@kernel.org>
-Subject: Re: [PATCH 17/18] riscv: defconfig: enable A210 support
-Message-ID: <20261102-conductor-expanse-db86270fc1a6@spud>
-References: <20261022-concrete-rebound-593001f1ac18@spud>
- <20261102142300.3784622-1-rabenda.cn@gmail.com>
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=IDdfODWA
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261102191404euoutp02450e077851ebf335b46394409971ea0a~kUE1Ehw_D0304803048euoutp02c
+	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 19:14:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261102191404euoutp02450e077851ebf335b46394409971ea0a~kUE1Ehw_D0304803048euoutp02c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1793646844;
+	bh=s2e7rhOdqB7ux1alseBahOqoYTov3xDVLS0bIJyRYu0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=IDdfODWA9YvYANVuwxFWdiih5hEGTdWMuYui9lTZYzfL2x5YdYnD+xy8ZYVpVr7rm
+	 uORYJfOt7+ALFxDN5DkexOLuMdzOuZO2WZxmw5dEKItqmMl+AL2JMjlTWPBSvre5xR
+	 oWBuNjbRfG8KMDTLi48jUo4DxVGHZ4lbbAT26sbs=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20261102191403eucas1p143816f92365b447ec95071d46346e3d6~kUE0nHbmq2938329383eucas1p1Q;
+	Mon,  2 Nov 2026 19:14:03 +0000 (GMT)
+Received: from AMDN5751 (unknown [106.210.134.141]) by eusmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20261102191403eusmtip1f42027cdbbe547c1d58e82c8ae5ad0d7~kUE0IlKdS2525825258eusmtip1r;
+	Mon,  2 Nov 2026 19:14:03 +0000 (GMT)
+From: "Sylwester Nawrocki" <s.nawrocki@samsung.com>
+To: "'Marek Szyprowski'" <m.szyprowski@samsung.com>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Cc: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Chanwoo Choi'"
+	<cw00.choi@samsung.com>, "'Peter Griffin'" <peter.griffin@linaro.org>,
+	"'Alim	Akhtar'" <alim.akhtar@samsung.com>, "'Stephen Boyd'"
+	<sboyd@kernel.org>, "'Brian	Masney'" <bmasney+clk@redhat.com>, "'Jerome
+ Brunet'" <jbrunet+clk@baylibre.com>, "'Henrik Grimler'" <henrik@grimler.se>,
+	<stable@vger.kernel.org>
+In-Reply-To: <20261030075325.517182-2-m.szyprowski@samsung.com>
+Subject: RE: [PATCH v3 1/3] clk: samsung: exynos-audss: Propagate
+ -EPROBE_DEFER from input clocks
+Date: Mon, 2 Nov 2026 20:14:03 +0100
+Message-ID: <000001dd6afe$5302e900$f908bb00$@samsung.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -76,88 +76,49 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Gquej4m2ddx2wa7L"
-Content-Disposition: inline
-In-Reply-To: <20261102142300.3784622-1-rabenda.cn@gmail.com>
-
---Gquej4m2ddx2wa7L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKpVTperXi7BFRv9rlREf4hmhkl4wFbmI8MAoPLQMe1ZFafoA==
+Content-Language: pl
+X-CMS-MailID: 20261102191403eucas1p143816f92365b447ec95071d46346e3d6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55
+X-EPHeader: CA
+X-CMS-RootMailID: 20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55
+References: <20261030075325.517182-1-m.szyprowski@samsung.com>
+	<CGME20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55@eucas1p2.samsung.com>
+	<20261030075325.517182-2-m.szyprowski@samsung.com>
 
-On Mon, Nov 02, 2026 at 10:22:53PM +0800, Han Gao wrote:
-> On Thu, 22 Oct 2026 19:50:51 +0100 Conor Dooley <conor@kernel.org> wrote:
->=20
-> > On Thu, Oct 22, 2026 at 03:53:37AM +0800, Han Gao via B4 Relay wrote:
-> > > From: Han Gao <gaohan@iscas.ac.cn>
-> > >=20
-> > > Enable A210 platform drivers and reserve ten 8250 UART ports.
-> > >=20
-> > > Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
-> > > ---
-> > >  arch/riscv/configs/defconfig | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >=20
-> > > diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defcon=
-fig
-> > > index 04ae305d5511..b9b3bca12089 100644
-> > > --- a/arch/riscv/configs/defconfig
-> > > +++ b/arch/riscv/configs/defconfig
-> > > @@ -33,6 +33,7 @@ CONFIG_SOC_STARFIVE=3Dy
-> > >  CONFIG_ARCH_SUNXI=3Dy
-> > >  CONFIG_ARCH_TENSTORRENT=3Dy
-> > >  CONFIG_ARCH_THEAD=3Dy
-> > > +CONFIG_ARCH_ZHIHE=3Dy
-> > >  CONFIG_ARCH_ULTRARISC=3Dy
-> > >  CONFIG_ARCH_VIRT=3Dy
-> > >  CONFIG_ARCH_CANAAN=3Dy
-> > > @@ -149,6 +150,8 @@ CONFIG_KEYBOARD_GPIO=3Dy
-> > >  CONFIG_KEYBOARD_SUN4I_LRADC=3Dm
-> > >  CONFIG_SERIAL_8250=3Dy
-> > >  CONFIG_SERIAL_8250_CONSOLE=3Dy
-> > > +CONFIG_SERIAL_8250_NR_UARTS=3D10
-> > > +CONFIG_SERIAL_8250_RUNTIME_UARTS=3D10
-> >=20
-> > Why are these options needed?
->=20
-> The A210 has 10 UARTs and the TH1520 has 6. With the default of 4,
-> UARTs beyond the 4th don't get a fixed ttyS index and end up in
-> whatever slot is free. Raising both to 10 keeps the index stable.
-
-Put this in the commit message please.
-
->=20
-> >=20
-> > >  CONFIG_SERIAL_8250_DW=3Dy
-> > >  CONFIG_SERIAL_OF_PLATFORM=3Dy
-> > >  CONFIG_SERIAL_EARLYCON_RISCV_SBI=3Dy
-> > > @@ -167,6 +170,7 @@ CONFIG_SPI_PL022=3Dm
-> > >  CONFIG_SPI_SIFIVE=3Dy
-> > >  CONFIG_SPI_SUN6I=3Dy
-> > >  # CONFIG_PTP_1588_CLOCK is not set
-> > > +CONFIG_PINCTRL_A210=3Dy
-> > >  CONFIG_PINCTRL_TH1520=3Dy
-> > >  CONFIG_PINCTRL_SOPHGO_CV1800B=3Dy
-> > >  CONFIG_PINCTRL_SOPHGO_CV1812H=3Dy
-> > >=20
-> > > --=20
-> > > 2.55.0
-> > >=20
-> > >=20
-> >=20
->=20
-> Sent using hkml (https://github.com/sjp38/hackermail)
-
---Gquej4m2ddx2wa7L
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaujgdQAKCRB4tDGHoIJi
-0jPcAQDKI8weKUpx73/mvAz55ZSZJ2tWU0Rex9ydvDyirhyY6AEAgAFedfAkbkLn
-qFuD39PtQFQgsFubq8Zyvj5bZZDhNQw=
-=TAKE
------END PGP SIGNATURE-----
-
---Gquej4m2ddx2wa7L--
+> -----Original Message-----
+> From: Marek Szyprowski <m.szyprowski=40samsung.com>
+> Sent: pi=C4=85tek,=2030=20pa=C5=BAdziernika=202026=2008:53=0D=0A>=20To:=
+=20linux-samsung-soc=40vger.kernel.org;=20linux-clk=40vger.kernel.org=0D=0A=
+>=20Cc:=20Marek=20Szyprowski=20<m.szyprowski=40samsung.com>;=20Krzysztof=20=
+Kozlowski=0D=0A>=20<krzk=40kernel.org>;=20Sylwester=20Nawrocki=20<s.nawrock=
+i=40samsung.com>;=20Chanwoo=0D=0A>=20Choi=20<cw00.choi=40samsung.com>;=20Pe=
+ter=20Griffin=20<peter.griffin=40linaro.org>;=20Alim=0D=0A>=20Akhtar=20<ali=
+m.akhtar=40samsung.com>;=20Stephen=20Boyd=20<sboyd=40kernel.org>;=20Brian=
+=0D=0A>=20Masney=20<bmasney+clk=40redhat.com>;=20Jerome=20Brunet=0D=0A>=20<=
+jbrunet+clk=40baylibre.com>;=20Henrik=20Grimler=20<henrik=40grimler.se>;=0D=
+=0A>=20stable=40vger.kernel.org=0D=0A>=20Subject:=20=5BPATCH=20v3=201/3=5D=
+=20clk:=20samsung:=20exynos-audss:=20Propagate=20-EPROBE_DEFER=0D=0A>=20fro=
+m=20input=20clocks=0D=0A>=20=0D=0A>=20exynos_audss_clk_probe()=20fetches=20=
+the=20optional=20pll_ref/pll_in/cdclk/=0D=0A>=20sclk_audio/sclk_pcm_in=20in=
+put=20clocks=20with=20devm_clk_get()=20and=20only=0D=0A>=20checks=20IS_ERR(=
+)=20before=20falling=20back=20to=20a=20default=20parent=20clock=20name.=0D=
+=0A>=20This=20means=20a=20transient=20-EPROBE_DEFER=20(e.g.=20because=20the=
+=20clock=20provider=0D=0A>=20behind=20=22pll_in=22=20has=20not=20registered=
+=20its=20real=20clock=20yet)=20is=20silently=0D=0A>=20treated=20the=20same=
+=20as=20the=20clock=20simply=20not=20being=20present,=20so=20the=0D=0A>=20m=
+out_audss/mout_i2s=20muxes=20get=20permanently=20registered=20with=20the=20=
+wrong=0D=0A>=20parent=20name.=0D=0A>=20=0D=0A>=20Fix=20this=20by=20checking=
+=20for=20-EPROBE_DEFER=20on=20each=20of=20these=20clocks=20right=0D=0A>=20a=
+fter=20fetching=20them,=20before=20anything=20is=20registered,=20and=20bail=
+ing=20out=0D=0A>=20of=20probe=20so=20it=20gets=20retried=20once=20the=20rea=
+l=20clocks=20are=20available.=0D=0A>=20=0D=0A>=20Fixes:=20547f33509ccc=20(=
+=22clk:=20exynos-audss:=20allow=20input=20clocks=20to=20be=20specified=20in=
+=0D=0A>=20device=20tree=22)=0D=0A>=20Cc:=20stable=40vger.kernel.org=0D=0A>=
+=20Signed-off-by:=20Marek=20Szyprowski=20<m.szyprowski=40samsung.com>=0D=0A=
+=0D=0AReviewed-by:=20Sylwester=20Nawrocki=20<s.nawrocki=40samsung.com>=0D=
+=0A=0D=0A
