@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793653657;
-	b=Zz2YDm1XS1rfDV0AP1UMtgx44sqb/8Mdi6qeN4cZi5JEsUTcrz0GCbTi5w5W/Vr7xSpM
-	 u2THPvlubP+3/KjAhYRa/BAq6S1yhOd5NeKEaz88HmV6SlXqSClMiLS0Dc4E70unWrNOC
-	 XSjikhiYQfyo1jmWijUK8NO2rq9PNl4m3+eu+Hv1xHijaFkXD0XYW2fth+CSmZ6WjlQgq
-	 PO81eOykS8KxqsmgjIxUPTGhuFz52ogKkVGHkpDsHFITrQMl8dFCNEPJbwjydMb7FRw2v
-	 80/lPUL2w8WSTzvCrZsqiVpXn/1xqPJ07MrvFfIfBJLe3EuRtjPpQfsyDmcXVGItR6g==
+	t=1793653658;
+	b=lUiXXxna/jJ/lM4N6LBEOeEaRUAJgFZdKW8PwUOJyjG+Ew/MXwx56MdEMCKwj9zeXpM4
+	 lqerAGdKSg4WsIo2d3hxGDw5m2pZ+MWp8po/QchUnAUe6CSSbAMGnTtNcpKtnbabnTuZx
+	 Fg6rN1waRYEvS5m+oReuzIlLYcJmy2Va3y4WLqBKqOOOE4GS8LYtl9U79UCnDKl2n2z7G
+	 fWBpfsImq86cduuhcWlo54VfAwYsN14KE1Q+km2s6Nk9cmybroG5moJNbRfDje0XFi95G
+	 fQ9UOqWX0d7UJZGYC4g55VuGqsZU6FVm6mD9VII4889503iT+zt0WBj+RwwPqQ/Uo5w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793653657;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793653658;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=7rb+9GcHlD1YPtY41GxHcCRkjlG1NXdFn4Ml2fRtmLA=;
-	b=h5lp3qC+GXChXMhpIGORKPnf1gzd5yi+N31FJmPmftjlgHkSfYnQwQL2lIjpxKv3/jG3
-	 Mrf7Hn3XORF7BZablgOz0ZyIs5aGAD9GSYpHpfda8glS0P+smVohVxK6EszyzzA9m4FZB
-	 XkE6wDjkzWWYqa+nimeBsVXKsL6+qMdACriOysb0Q+XS2sjQOR4Pyv9NIaPg7355zUEIZ
-	 X8KIgR8rXB0+9xns8a/YyBE5B2yjbDSWmBbsSTlsqh+9P89kVWxo9BAes1vWVcoyjJpak
-	 iI4Y4rw6MeGkfSo18D7OEb76IYrep0CtC+lnnkOqodwOmmmekFlQt64/zByd3P7tj4A==
+	bh=aSSDxY+9CyiEWW00k2jnJIS31DCHlCWmIQW8C6STWxc=;
+	b=JFTvh0w2h18JDCM35aidgVNDYfZyYDF7W7BN/jEe4Pq1X67Pz2B9z8zohUgF0SzGUBsS
+	 cSGlvM27Uzw8Xq+4YjT416AQxKxorZkAHyIr+/iFavSYCV/B2qAljhpJN9GFN64IH8DGU
+	 GNoF+RDkBHzD01epErwkEtxFxG7/9swfy3nGnv2dK4tpvY6kv1PBAydm3TzhHveesbw/q
+	 qMwYNUSh7kgR+K2bO0tIPtDAN3CQ8W78KZQgRVW7w6S9T0bwvM8I5uMchJtiC1KzxpoGs
+	 kTaIop9FtGQVNn4tEwBTIjqa4Oy/xOzNKj1NSsAsDg1a7Zw0RryoqLB6yLF5fZO0X1A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=lvga68i4;
-	arc=none smtp.remote-ip=209.85.128.52
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Xl56kX5B;
+	arc=none smtp.remote-ip=209.85.221.51
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B127606A327
-	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 21:07:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8B127606A327
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577F2606D808
+	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 21:07:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 577F2606D808
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=lvga68i4
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a9a8d6cea8so842025e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 13:07:35 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Xl56kX5B
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-48b042c0759so1815155f8f.2
+        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 13:07:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793653654; x=1794258454; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1793653657; x=1794258457; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=7rb+9GcHlD1YPtY41GxHcCRkjlG1NXdFn4Ml2fRtmLA=;
-        b=lvga68i49+EIGotxRfWbtJ/gVriERQYwYxYnEBh93QJ0MNdFH3a4JZdmVh7F64jQKK
-         jIKqIfCLYu5pJmwZ9dRMSHeLd5nZWgyW1tS8yLOobaUw1CdNRP9hyuOEGbkX5HYW0yyu
-         HzXreaG1LBXakTNKDNF3rGRG08uIruD/PN/ldh+ohFHqwcIUu6Qr9HGy9NtsM8cY4Jki
-         GS8N93FZiAKkbLKXEo64mvQ5gZthujkHlsBUBHKrIX5kbFSu30M6pBNd4Iz7fgORjAhB
-         1oXoivD2j1WfC7iZSbRgAo9YjV9jAPM3tu9q8EYQOMky0ECaJrsOikoLZGUYAmw1nx19
-         Dkgw==
+        bh=aSSDxY+9CyiEWW00k2jnJIS31DCHlCWmIQW8C6STWxc=;
+        b=Xl56kX5BcVWqeAIlmfad96f99F/wo4b7MJAwN+QI72NRYb+SjjKVcF/hrUy3sznTnQ
+         9g90qrNncmlF8NkXvcuqOWbs8gzhqO3tNvH8aomb9LJMhwF+LRhWQsqgHuwScxvnyS8J
+         t09Fv0v6+b9vWq51ip2uMR8NIfB5a4yzlHYIdAp+Nuja+Mpo2rVP3qrLjbwZhsLTGQGh
+         2+PCdF6X9SQlaSQFOe+5foFwM/jo+XTdzoCLnQBtyYlu4WnkJJ0MgPEu733Bf1P7RSk/
+         5B+pPB3COeFtqQ0VUt/49nxnyt5dmqy9LRZ3Oc4VLEFTQUsI/qyfdOSLw5Jrt4q4eSBU
+         5bHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793653654; x=1794258454;
+        d=1e100.net; s=20260707; t=1793653657; x=1794258457;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=7rb+9GcHlD1YPtY41GxHcCRkjlG1NXdFn4Ml2fRtmLA=;
-        b=JpT7raJL+sOkQlMUVm3BChlzDds+ZFJPRegN8/2ERXel710XlHXHKVayQ1T3kZ0WzN
-         3TdJqMY7rmUc4rbn8k2nylfGVhz8/UcH3ccHHh1K0WGi+GnYy5NC00bTeI5+f6LJSkVW
-         7/QWFGiMLzmx2z24mVA/Yu5GX4i8m4TAB3MfX+Xcnzj9WB+/ltloAu4mRp0wuIPgCdGf
-         9shqKJdV1/+PnUEAGljTbo/f27jB4+Tv7sff1E4qv4q/UNnyZZxwz61O5QlVWiXuhRr/
-         GFZR08UuPcHh8cPIVefPee1ti3fqrbG2YrrPnU6b74r8pRWQASsXhHj3LadxQ/ZrFTYN
-         9pxA==
-X-Forwarded-Encrypted: i=1; AKwUvBw6nTPzKzuO8zg25qS8xWqjRilyvWbCZ3ugAGzKFPn2Svw+zN2f7Kx4W0OSVFKhMe+7dfgreBRtoTY=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIZ61dFOBrUtSRtvGD54zdoRE53Q39OfYdin5OmxQhhuR239Z/X
-	vp4cx4bAtqiIgI+3h3h3ZMdQDcZbU+uR+9rPOSoDWeKijERK5XT9OVmcEU5chaRUkHk=
-X-Gm-Gg: AYBFou0mnq/j0JMdlBorkGcY2VGlnZfDfHa/wMb0+O7fY5GDhly0L9afprmUx19d+C7
-	M7j6S3dvTn4dpL7irWMvkpG6Nkge0LyIMTs+V6uGC4BFSTAAHhrZ2LnkI/1BZNSGREMtih0wyAE
-	6FTbrWjplr3g5mKUlgxh5o4AhLIU6nNb1g9nx5eaUhV0sbS3zrtpANFSZjz7tFrbKSZxeMVS8+b
-	ZeOvGXuZyAuzFP8xfVEOlysMjCRpCIDAnM8F/bDMjuO/yWx3JaX2OMPKZdvr/BrUK3DAXg6Lh9h
-	o+CM/TQh9MQPRrqqpvt9jWvRDK4avawtp1DOoQz1ru8Lu4o930wX4xvc2OF9/JyruUfx/JGzqSg
-	Mqkwu2LGECkxPU/v4cAUxmUBBgtdksR3MRanhYEEiTEucH8snKaiV6DBi+pw6wJZEGORgekEh++
-	E17bePK4I8a6Kid0kMd+4363Ft7qmw3GcEFIMIgVDsvio20WOJGIJs6X1iHz4nit5g9qO3KvnHc
-	MxKQptYTxIZty8kgC+kk92ofHcENRRVF7/A6aS2D6Gq6T8MrJE0ZGq3HPLkypJCQnLdmumGyDHP
-	d1QrFp9c2MnH4LLjmi+GPEr8gWsdrvAKjLfmRpfijOIBGVGghBQyDRROqkTg1l7eGiadPdOIhfx
-	F1CqiH3IwzPtVl9JpCg==
-X-Received: by 2002:a05:600c:4715:b0:49f:ffa2:1c72 with SMTP id 5b1f17b1804b1-4ac17567cc8mr248630065e9.11.1793653654031;
-        Mon, 02 Nov 2026 13:07:34 -0800 (PST)
+        bh=aSSDxY+9CyiEWW00k2jnJIS31DCHlCWmIQW8C6STWxc=;
+        b=zg0ZZaEybiJKTQbFl+alYbmVbN7Kv3jDScU0R8npd/mdUYO/8tup5uAPq9dM7l5XhE
+         u3Qyk7whsFflc9NmjewoO2PkQtacavK4MT4PKfN7BYb/4hSbqUImSIAPweIt56KKLvNm
+         nVIAEBXhnLT9Qy8QMGNvxTIQUqGaiX1Na6RnyaPEkgjMY8OdjAkjRPxHlMFgMwGJ9f7C
+         uQ2a1OxZinIVNx2xr24LlrgM7P36xteEPSdUthvVv6RDOmjbf3OMqLirBsvVSNy/rxjy
+         XKGq+NCQEPuR4S5ylZBLBJGYP45TAhrTmFO8SffXEmGIanWsUieVzerNdeCk8Ejh11Cx
+         6RDw==
+X-Forwarded-Encrypted: i=1; AKwUvBw2Fwl3dEWbsdfS8kCSiTb8g6h1rvhbwxTQjimHckTW2D6YAM3IFyk8C+0bs+cp0IM5Nipn1mboxx8=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+BNqkPWPTRQqv+xCOxxkWSbSw+hsvf/w+QDMis/hCFXzSk59WU
+	eqo8x5FtkNkd1ujft5J6PHH4RfOay/WzsyVgOK5FIsUqf6toaDNgKqubbz+O8vr6ZCQ=
+X-Gm-Gg: AYBFou0yMAbyl4JCz21zEt+cixmK9lYMMRBa3C0scEE1OOVuZUyc3wNk9WBk/Mz47K4
+	kHJj1PmWoI9XxXqva3fXHwySHD+7uX++AYRLlZ9crMc5EFCM2VguavNbbdBGKs3c3BY1Qd8/8Ez
+	uZEi94bEJeeGBQ0kB5L9XB30n5X5uZ10vjbwQqq5gNSrhsMQ8dk3xTB8q1AJSYM02Wr9W1Tn75u
+	4ectQwroFuwsgUDS6Hl0yChMk6YPK+/n/fl5vjTX+V5fv7cWSPzXD7jDDiU5XQFdvuFzNHWlvDA
+	IGCmhH2kc/1LcvFXcDD+WYpdzIVz+hDWsagNRtbiWeS7NmMz3yB1fToQ1QX/0L2zqBLQdcv9PQc
+	sOj40ehZWTGuVtOJKPlMT4gOCymmAogC1aKheytGoi/agHSKIExGahvNGUmMQr/XoT1uX715jWN
+	BwuZYDQSf/82l6xSI/lRKS8ud6KYzCP+DvIuqIBodjBzKKyhry5l81KiDGLBNaHiO5GX5q4Yrds
+	C1ssqgOdk/AU37f9HQiuZ+dcD740uMnUoonsEIQRiCNEGZvbcBylKWZpmQhXHcW41mRDnKuC99p
+	YNLcFJ3vEOl4RUw4Joevm0ZwmPNKY+Gku4pn6XTRRRcFXc6g6hztdPlzdc6mP8OyCJEcMTuv3e3
+	aehgo+njPNi28eD54BzU=
+X-Received: by 2002:a05:6000:46c5:b0:48e:5db7:fd6c with SMTP id ffacd0b85a97d-48e6e2bde59mr15156967f8f.4.1793653656732;
+        Mon, 02 Nov 2026 13:07:36 -0800 (PST)
 Received: from [127.0.0.1] (host-95-246-144-141.retail.telecomitalia.it. [95.246.144.141])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71b8a7d1sm21765308f8f.38.2026.11.02.13.07.33
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71b8a7d1sm21765308f8f.38.2026.11.02.13.07.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2026 13:07:33 -0800 (PST)
+        Mon, 02 Nov 2026 13:07:35 -0800 (PST)
 From: Carlo Caione <ccaione@baylibre.com>
-Date: Mon, 02 Nov 2026 22:07:20 +0100
-Subject: [PATCH 1/2] clk: divider: Fix the divisor for rates above 4.29 GHz
+Date: Mon, 02 Nov 2026 22:07:21 +0100
+Subject: [PATCH 2/2] clk: divider: test: Add tests for rates above 4.29 GHz
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -94,7 +94,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261102-upstream-clk-divider-large-rates-v1-1-eb17035bfad2@baylibre.com>
+Message-Id: <20261102-upstream-clk-divider-large-rates-v1-2-eb17035bfad2@baylibre.com>
 References: <20261102-upstream-clk-divider-large-rates-v1-0-eb17035bfad2@baylibre.com>
 In-Reply-To: <20261102-upstream-clk-divider-large-rates-v1-0-eb17035bfad2@baylibre.com>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -107,52 +107,162 @@ Cc: Brian Norris <briannorris@chromium.org>,
  Carlo Caione <ccaione@baylibre.com>
 X-Mailer: b4 0.16.0
 
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
+On 64-bit platforms, the divider truncated rates above 4.29 GHz when
+computing a divisor.
 
-DIV_ROUND_UP_ULL() takes a 32-bit divisor, so on 64-bit platforms a
-requested rate above 4.29 GHz is truncated. A divider fed by a 5.94 GHz
-PLL then computes a divisor of 7, not 1, for 5.94 GHz.
+Add tests rounding and setting such rates on a divider with a 6 GHz
+parent, one for each divisor computation. They are skipped on 32-bit
+platforms, where rates cannot exceed 4.29 GHz.
 
-Use DIV64_U64_ROUND_UP(), which takes a 64-bit divisor.
-
-Fixes: 9556f9dad8f5 ("clk: divider: handle integer overflow when dividing large clock rates")
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Carlo Caione <ccaione@baylibre.com>
 ---
- drivers/clk/clk-divider.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/clk-divider_test.c | 117 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 115 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index f68216c65d3d..a446abdedcd7 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -227,7 +227,7 @@ static int _div_round_up(const struct clk_div_table *table,
- 			 unsigned long parent_rate, unsigned long rate,
- 			 unsigned long flags)
- {
--	int div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-+	int div = DIV64_U64_ROUND_UP(parent_rate, rate);
+diff --git a/drivers/clk/clk-divider_test.c b/drivers/clk/clk-divider_test.c
+index 8ee1614128d0..fc96ac07ecff 100644
+--- a/drivers/clk/clk-divider_test.c
++++ b/drivers/clk/clk-divider_test.c
+@@ -1,16 +1,19 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * KUnit tests for clk_divider_bestdiv()
++ * KUnit tests for clk divider
+  */
++#include <kunit/clk.h>
+ #include <kunit/test.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/io.h>
+ #include <linux/limits.h>
+ #include <linux/units.h>
  
- 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
- 		div = __roundup_pow_of_two(div);
-@@ -244,7 +244,7 @@ static int _div_round_closest(const struct clk_div_table *table,
- 	int up, down;
- 	unsigned long up_rate, down_rate;
+ #define PARENT_RATE_1GHZ	GIGA
+ #define PARENT_RATE_2GHZ	(2 * GIGA)
+ #define PARENT_RATE_4GHZ	(4 * GIGA)
++#define PARENT_RATE_6GHZ	(6 * GIGA)
  
--	up = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-+	up = DIV64_U64_ROUND_UP(parent_rate, rate);
- 	down = parent_rate / rate;
+ KUNIT_DEFINE_ACTION_WRAPPER(clk_hw_unregister_fixed_rate_wrapper,
+ 			    clk_hw_unregister_fixed_rate, struct clk_hw *);
+@@ -147,7 +150,117 @@ static struct kunit_suite clk_divider_bestdiv_test_suite = {
+ 	.test_cases = clk_divider_bestdiv_test_cases,
+ };
  
- 	if (flags & CLK_DIVIDER_POWER_OF_TWO) {
-@@ -423,7 +423,7 @@ int divider_get_val(unsigned long rate, unsigned long parent_rate,
- {
- 	unsigned int div, value;
+-kunit_test_suite(clk_divider_bestdiv_test_suite);
++/*
++ * Register a 6 GHz fixed-rate parent and a 3-bit divider (/1 to /8) using
++ * @fake_reg as its register.
++ */
++static struct clk_hw *clk_divider_large_rate_init(struct kunit *test,
++						  u32 *fake_reg,
++						  unsigned long flags,
++						  u8 div_flags)
++{
++	struct clk_hw *parent_hw, *div_hw;
++
++	if (BITS_PER_LONG < 64)
++		kunit_skip(test, "rates above 4.29 GHz need a 64-bit unsigned long");
++
++	parent_hw = clk_hw_register_fixed_rate(NULL, "large-rate-parent",
++					       NULL, 0, PARENT_RATE_6GHZ);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent_hw);
++	KUNIT_ASSERT_EQ(test, 0,
++			kunit_add_action_or_reset(test, clk_hw_unregister_fixed_rate_wrapper,
++						  parent_hw));
++
++	div_hw = clk_hw_register_divider(NULL, "large-rate-div",
++					 "large-rate-parent", flags,
++					 (void __iomem __force *)fake_reg,
++					 0, 3, div_flags, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, div_hw);
++	KUNIT_ASSERT_EQ(test, 0,
++			kunit_add_action_or_reset(test, clk_hw_unregister_divider_wrapper,
++						  div_hw));
++
++	return div_hw;
++}
++
++/*
++ * Test that rounding a rate above 4.29 GHz computes the divisor from the
++ * full rate: the parent rate needs /1.
++ */
++static void clk_divider_large_rate_round_up(struct kunit *test)
++{
++	struct clk_hw *div_hw;
++	u32 *fake_reg;
++
++	fake_reg = kunit_kzalloc(test, sizeof(*fake_reg), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, fake_reg);
++
++	div_hw = clk_divider_large_rate_init(test, fake_reg, 0, 0);
++
++	KUNIT_EXPECT_EQ(test, clk_hw_round_rate(div_hw, PARENT_RATE_6GHZ),
++			PARENT_RATE_6GHZ);
++}
++
++/*
++ * Same with CLK_DIVIDER_ROUND_CLOSEST: 4.4 GHz is closer to 3 GHz (/2) than
++ * to 6 GHz (/1).
++ */
++static void clk_divider_large_rate_round_closest(struct kunit *test)
++{
++	struct clk_hw *div_hw;
++	u32 *fake_reg;
++
++	fake_reg = kunit_kzalloc(test, sizeof(*fake_reg), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, fake_reg);
++
++	div_hw = clk_divider_large_rate_init(test, fake_reg, 0,
++					     CLK_DIVIDER_ROUND_CLOSEST);
++
++	KUNIT_EXPECT_EQ(test, clk_hw_round_rate(div_hw, 4400 * MEGA),
++			PARENT_RATE_6GHZ / 2);
++}
++
++/*
++ * Test that setting a rate above 4.29 GHz programs the right divisor.
++ * With CLK_SET_RATE_PARENT the rounding searches the parent rates and
++ * finds /1, so this only checks the set_rate path.
++ */
++static void clk_divider_large_rate_set_rate(struct kunit *test)
++{
++	struct clk_hw *div_hw;
++	struct clk *clk;
++	u32 *fake_reg;
++
++	fake_reg = kunit_kzalloc(test, sizeof(*fake_reg), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, fake_reg);
++
++	/* Start from /2 */
++	writel(1, (void __iomem __force *)fake_reg);
++
++	div_hw = clk_divider_large_rate_init(test, fake_reg,
++					     CLK_SET_RATE_PARENT, 0);
++	clk = clk_hw_get_clk_kunit(test, div_hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, clk);
++
++	KUNIT_ASSERT_EQ(test, clk_set_rate(clk, PARENT_RATE_6GHZ), 0);
++	KUNIT_EXPECT_EQ(test, clk_get_rate(clk), PARENT_RATE_6GHZ);
++	KUNIT_EXPECT_EQ(test, *fake_reg, 0);
++}
++
++static struct kunit_case clk_divider_large_rate_test_cases[] = {
++	KUNIT_CASE(clk_divider_large_rate_round_up),
++	KUNIT_CASE(clk_divider_large_rate_round_closest),
++	KUNIT_CASE(clk_divider_large_rate_set_rate),
++	{}
++};
++
++static struct kunit_suite clk_divider_large_rate_test_suite = {
++	.name = "clk_divider_large_rate",
++	.test_cases = clk_divider_large_rate_test_cases,
++};
++
++kunit_test_suites(&clk_divider_bestdiv_test_suite,
++		  &clk_divider_large_rate_test_suite);
  
--	div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-+	div = DIV64_U64_ROUND_UP(parent_rate, rate);
- 
- 	if (!_is_valid_div(table, div, flags))
- 		return -EINVAL;
+ MODULE_DESCRIPTION("KUnit tests for clk divider");
+ MODULE_LICENSE("GPL");
 
 -- 
 2.56.0
