@@ -1,131 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793634860;
-	b=MC9gSnwlZwWMp7yAGnrmzud6V/CLpBGZF2Ojy+5Bh/WWzzJQnGJRqgzeg4t3dklAVQoA
-	 0fwa5GkrwRCjoc+vKcvykpCqyS+DiRPYoObLbT9VHO2eR1cxTNwyg9xDjI3+91p3xBosJ
-	 7OUyPGkgJwMa3wkd/AZ2HeHRhAG4J2ogdByJs7GdbHSc6UJrYoScbnOcHCDKR/+DgZFU7
-	 EQwVebX5ME2coWDGRhBj0V0yQDDQeOCYOHvzi3420X13UYREVZgsbzY5Zz7I7xtdpiAwK
-	 jqiYo5VYWvtbX65lswPSzqQBLRO7bh0ZZ9hTA5up1gKD2jn25jmtZYY2zPoIUuv3O3g==
+	t=1793635405;
+	b=cNDo4p2HZd57YuKXvel3ZSf1jMcFXabcaBGwELeWxZ1NfzrRx/2gBOMxLERWSnOqnXyF
+	 Wj+mV1SDZm4kjjlAHH6eUnDQjkT5WoZwqWxmcQOmZ063TwSyFaJyYR5Jz1nmuhikMt4xM
+	 RkgtxtSL7hXeUtkc4re+E78SEchgBIxLLEf+H9wUXTpj1EPgXT2nHztyywqgMeBJ6+Pto
+	 JiYVd3iUF86MD5sGOJsAUzWLYhYptDshRRNL9kfh5rRZixWLA0z3W8R+BbVG+uuhO4pym
+	 hd2VF/Sy1o3HDyUzm9Pm7TsO58MCloIdLyNIBHti7Lw96PpZbvM4SoyOtP1kXmfFK1g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793634860;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
-	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Info:X-Authority-Analysis:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=1LE/KEw9I1BDmogKb7eT/az3rbDg025MtnoB+zoMeP4=;
-	b=cn8ugyqmn7rQUX5C2MuU/9KZp6fX/Z7aUdorR4BSYiBdr924urpGYWtaXzwmoWkmVmMm
-	 VzElLTwjlb0mXUJc1lltmxAahwedAsRK/TVHXkHycPtbYnfwi3tCvgI5hjgu23pkADPsE
-	 IT00nDAhYLsMceRsbnpso2tmO6nayPdPXzb6K1qhqqc6IQD8/4HsxQqgUZPa/Z2HfXQxe
-	 a7esaUVy5Ao/bE6CP7zN5m9p8FddKGxEPem2odoappzE7fkjDRGCe24lpdpCQxibSFwEA
-	 AA9Q/nTILLCngxSIvwK6HjwzGJdnDgYk+vjb9u7o+Nku0F9svPN5KMMSejnsc0iXHYg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793635405;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=3vbLOX9hUXZuFkvJUQUq81vQYgMMNAerq8+/A9OKKiU=;
+	b=F1r3UzVBYOHc9r0W6FTGZUkhV5O5IBZUq+JJtEzoQm5ELuRdLQ8LdM71wdn/nOFymh7K
+	 WJWpQefBNqM/yV7aQvC1fMmotsGPIUnrvo333R5mp2r5fWgyEdxZcc3R6SBYrzQGkm3vI
+	 Pu6lYVB54gmHKN0CifTekaOkyADWA1+g4vqUoIJrBXYiih0W/6fH8LS95szjwYGccvoFw
+	 5ku9AKRbhqX6QzA+GLzMNMH2qBgUYCUNM04WdZ2YNlvmMpVDoitFZJjiEZmDKoIDLvzJH
+	 QwaFuQiAFsoUHyHZ+OEagtSDAeasYAhVfLwD7sJM4E2bZJ77fOMCh5ULjOzopHymAxg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Bj00Z0tQ;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=UDZDcA0f;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.208.51
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA40E606A58F
-	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 15:54:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CA40E606A58F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Bj00Z0tQ;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=UDZDcA0f
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A2DpIY33102577
-	for <linux-clk@vger.kernel.org>; Mon, 2 Nov 2026 15:54:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=1LE/KEw9I1BDmogKb7eT/az3
-	rbDg025MtnoB+zoMeP4=; b=Bj00Z0tQaL+NK0Hf9+NmhfjhpVFgfhvRmAeWxiMU
-	LraM7SvRkhm/v0A7t0OZYAEikg7tytCRLBi9qfcl2Y6aQK7DieMLqO7wDAjAEj/t
-	QN8Tqb5k1cpsq6kxUmkrOcumW52s0BTUE1HPGjKvCk9RzBPPlpwQZpEhRGp51DWU
-	EKIXRIr0cJt+GykENZS/twIEXK6O2z0+/jFNKDIsE3JvOC9r4kMqnTk7DRAWbtZf
-	YGuaKBU4LjIkbvasQtfleRzBWuIPQOB2clx2AaGcwYJz19u8NqqTWB+X0xWYUFXg
-	Q3TNAn228TqkFxQsfbKoc0p1eJEqWTQxkbNOg/eTh3IS/Q==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hpk9rjpaq-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 15:54:19 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-93f5844cb60so608433285a.0
-        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 07:54:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793634858; x=1794239658; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=1LE/KEw9I1BDmogKb7eT/az3rbDg025MtnoB+zoMeP4=;
-        b=UDZDcA0fC4h0JVD4gIXc3kYgD9PN5uvI2lJkTt4N+8iZMw/xvSZ/xLdzImAg9WiG7l
-         SMDIvaqSU/fj73GPj/EQajt8cLCf+3YDIRxF/DM+d1ls9a11JUVxbg2HcC+LBr6z59V/
-         79Lm1Znon/dGN10NZUrc06xHlpo3Ezk0BTxum3ren/RKWVzQxnbIDlXEllEJJZJdidz0
-         exQ8QHoH3bULzYl9wxVTz4GLmiwTeTf/tE8d/qHUUl1uqNsnfloRoKxxzcc9iKpkfzBf
-         AB/1S0W/GFYbYPTHPz0XA6C5FBYUH3eDxdiRzrf5HcrUaMDazzyTU2xWuludlfDGI2Kv
-         Wimg==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07F5606A5A3
+	for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2026 16:03:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D07F5606A5A3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6b1aa27963eso7521903a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 08:03:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793634858; x=1794239658;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=1LE/KEw9I1BDmogKb7eT/az3rbDg025MtnoB+zoMeP4=;
-        b=gzef5ELVteqGMhpyHa9tPewm+mAJJrTEQnKcRMaF6CteYsWi8ue2ZwnyXI4WIUyd+d
-         2TIEwaEDBuQ/905i/+51jgDkc6+pg2I1XuVD+n/UOoMn6XvjbluY2SEHbDCb0zGq7agm
-         fdEoxmxxPe5Su716a2nouI23EyCIMgnk2A6kvyvH2fSmSBEHZCldaoG5qgiL/YczSOS9
-         P94943ViidxucFkVOQpodOTvW7yYqZP6VGMTAVhOvXkJEDPeeyExlgjL5RFIMmro+6BF
-         3LrUzT46WQj3RtOLmh7pBQqC//qvFtqIQyrvTG2lMGeSsG/v4toGOVXZDePjbSs8jmfR
-         CJ1w==
-X-Forwarded-Encrypted: i=1; AKwUvBxCGPehzLhB7fq4XuO0cPY1EvhqJjo/zpYT1KjjF7tXRKIisaqspuwooMtQO+gm37JO38wUQguE2gA=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKrP9Hjx01YSGWzBxCdHNTTu9qlIL3SJNj3H1xJmQvlMfVqPYo7
-	5mrw91Wa+hsmjP0oFp5mi28u2EBxWfPIHvMYyyQtyAGHSfCoEJ5TGQwKxp6Ke4Stv3LA/y0gQXv
-	OcCyvZdUOpooW3y5fyT3E3FxXoBjRHEF35WqXb+CiYChbHacNon0jtPbNYnVYgqc=
-X-Gm-Gg: AYBFou3nIZDUP7cXRQrCkglgzA5l6YbEgQO0AK5YCiqHVbtgmscvt7Gfhc2TMhBFaKr
-	Rzda9y5qY0XD+Pzcv22UUgbzZRgBOIbAqtQRmwEZfW4uK2w7+hNqAmkvggqeW55YEBzBKGEA5Zq
-	efwq9PN9+fV8Zir9lCMidsww6ecfOi3IkXjdhZB3ALPZxsuKiRYce//j7lnliRlM5D6HVK/nA6I
-	Ux4yTpMaNXcz/Giino1sTSp9E/80d1Tf02egNRPTIOQ8FK0+QWlMr3Cy+2ixxeY7tYNoKd6ThcQ
-	gGrBS2TtVohqsmlDhYQxTTPWIkfPXMRhtnp+TJ4Lhod4BmKJIwMdAVVw12lL0dVpxQlGJrTkMKg
-	OV1q9Rv22Ra76jvbM4rxDHFynTU/tvolRaslA9VhIgawT4W8+G+7Uuw54v4Bjc3cxGMjqwn4O1+
-	RvExio85+iYXAayUDyn5OFLzGMvNE1s0fQSH+QwxO6m0+zp3GRBj/DDY0wN6ah
-X-Received: by 2002:a05:620a:410f:b0:93e:53db:d59e with SMTP id af79cd13be357-9441338b4cfmr2083218485a.23.1793634857943;
-        Mon, 02 Nov 2026 07:54:17 -0800 (PST)
-X-Received: by 2002:a05:620a:410f:b0:93e:53db:d59e with SMTP id af79cd13be357-9441338b4cfmr2083212685a.23.1793634857433;
-        Mon, 02 Nov 2026 07:54:17 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3acd5c50f25sm173191fa.38.2026.11.02.07.54.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2026 07:54:16 -0800 (PST)
-Date: Mon, 2 Nov 2026 17:54:14 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Linus Walleij <linusw@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 01/12] dt-bindings: clock: qcom: Add bindings for PDM
- GP_MN clock divider
-Message-ID: <5ekc5ibn66mc7gubh2n7htv3u64zomvfopsjnddanzayenxnpv@nczbef2enjfr>
-References: <20261026-b4-pdm_clk_gp_mnd_v2-v2-0-ff8e4bc8d567@oss.qualcomm.com>
- <20261026-b4-pdm_clk_gp_mnd_v2-v2-1-ff8e4bc8d567@oss.qualcomm.com>
+        d=1e100.net; s=20260707; t=1793635403; x=1794240203;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=3vbLOX9hUXZuFkvJUQUq81vQYgMMNAerq8+/A9OKKiU=;
+        b=QmQGCOHsj+wUrmMZqRFu0vJPgIeFim9UoLLChIgA3OeCa6SrmEJ3TQ/Ow2+DOPDSb2
+         JJK+xbmaz7k4hFp0vpmSr2rTuo2g0oxkT4+QsP/AzpMvxNXJjqmVYBuupWoxyyzPThKR
+         bY74O4WsyktpMhpNZ1/BSUwSWOng0yRVs8WxlJra9471aPRhMQBwLJsOePYz4KYItRIu
+         3lyD3yRVEGIRgQ3reFz3k1aZEexuV3iMBAPAw4nb2HhtYs/od8QW+cuPQJZktWSb5PWr
+         vbgpCV3NIcR8zeQkFpwaRS22Em3X8BPgvGwBLBjSeO4nDSyrACKeallTQNy+6+Uy6yTG
+         hqDQ==
+X-Forwarded-Encrypted: i=1; AKwUvByjlTUjZQeuITj/tvC3Q7SpoC3hEPZcuj5u1WVcSd0+Mg0e12Sj9TrMKcDzIE7aigjKLxOEmV6P1ds=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+/a42m1blwgzxmjPrC9ioyy1NVZWRHYB1owT9ub8jkNah2rNm/
+	oAU5TAzPpocY/o4yJrN6aS0iOSWpAJMQFPm5Ai5l2YHmkiogsA939TgDh+zx9Voy/Eg=
+X-Gm-Gg: AYBFou21EenMc8maYW3/9Z5r0euJLHlRMknqW+CsHa0cwo8Zj60FQVXskyA/E9ORdeg
+	XEfuIwXKKZ5NhVYmHBzgtl/QPrAI2jhNnEp4ftKrY9XWcmCjwpKC7GQmajkYTBtYG5radxa3wGg
+	V3tbJ70FAODcfHoOd3kFoSucYLTNnLjTeDxK5RmmUppYO7YRyGgJWuaBhTwywOtlxW3Kw46P8WG
+	ETH/LPMHhf16u8v1pyUUAQDRgp4perDe4SnSHOg2kJFUbmS3Ez7esnO779WgE9soQaMIPCAr6Jv
+	3II/LpD6kbZtbi/CPpZ9jzrbiT+kSfcedI2VU3quN4uucnMDViOnc4N6HI/4OLGKp5gqtkGdjbk
+	ZLa9wMiH/ib/tAPskRgyzTk/adoKJ9q1UmMHuwtFJkmTsXhXqtRN/Xo26qukaQeW0MoCKS5jPjo
+	i4z8yn8KRESFMg2tcHnG9Xd4GqTKI/s6PHW+qtBXIU7TbVQxwgLUZz8tFa6TjR+zGFmr/8CwBfR
+	YPgzU463t9b8CF3EOrP7T7V0CiPbsZrb9QobqgViv3DXtGPzYFIvJrY03YL2cT6wkui72w3eZ4Y
+	FE8D/GyDImIp2y+WSCOEp1Ht0vIV0qX7MwxiM/2acjS56MCwmHlWtXEWfq82zaFpIQ==
+X-Received: by 2002:a05:6402:2b8a:b0:6b4:582e:91f0 with SMTP id 4fb4d7f45d1cf-6b4d4a7b14bmr6955682a12.4.1793635403092;
+        Mon, 02 Nov 2026 08:03:23 -0800 (PST)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b4ec9ee975sm3473270a12.13.2026.11.02.08.03.21
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Nov 2026 08:03:21 -0800 (PST)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6b1f31c63ebso6816626a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 08:03:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBymmYfw2Mj5xpHZEBPqCYZk1negSfZBh1G5wxrem0dsahoqmgvHkJWyUtjK/ZFSYY5RTDHLoq0lLWM=@vger.kernel.org
+X-Received: by 2002:a05:6402:234a:b0:6b1:a67b:d378 with SMTP id
+ 4fb4d7f45d1cf-6b4d6d83607mr7493394a12.17.1793635401030; Mon, 02 Nov 2026
+ 08:03:21 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -135,110 +80,48 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261026-b4-pdm_clk_gp_mnd_v2-v2-1-ff8e4bc8d567@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: OWNf6S72lhYgctSIvORIclYRWonAi1H6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTAyMDA2MyBTYWx0ZWRfX0Ka3PGndgENG
- bjmx2mrbU8SS433JDOCadFDYHPSgi5JIgucnjoLwHmED5mSKUvnsl8+gjaW3eiXRpdAgLmW8qM2
- J6/sQT7SohjxmYPwa+dV5e+FUHcWmuLDjVXyqqoAUEzRwjTRM6s3bs3iOatyuE1/VG0pXlTzyX6
- djwOaXh9zbpgZXyJX0g1AIuK33EilpqdjH1sEfkYaX0opIKyI20oP4WqF5wCz558gEpW7U9OUMj
- etYm2mGaBIxE9MVKypic09qPnYcjeXnHRoAUIEGlzZMEiZaPFY2yQ/Q+WFNeukxjMGqmisyynJD
- I6rXIimytqZs7X8RBZn4p+zEPKo8pRmpuUC6KpvRLJFeqawe0q7LKL4BCSlEtO5B1IDYkBZoFV0
- SpYrIQJAYA2M8IUXpLkb/pacbA1nys3MGS1NIyI560PvX/JJCBXYIeB9oP7nLmU7y9qriogA9PZ
- /ZWqzFT2GEViRJ+nCmg==
-X-Proofpoint-GUID: OWNf6S72lhYgctSIvORIclYRWonAi1H6
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTAyMDA2MyBTYWx0ZWRfX4Pq2bFIF1pLq
- uWrhQovdFZAntj9xoFWwTBJ3IJv5rRMh6RkSPfUkpVM+pJIpKRJdSAeBml9PaLLQlSqTBnDQsrH
- q8fVXZ4gYw6t1vn0CEjS+DaFeFX53oo=
-X-Authority-Analysis: v=2.4 cv=LvwHWXdc c=1 sm=1 tr=0 ts=6ae8b22b cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22 a=gEfo2CItAAAA:8
- a=EUspDBNiAAAA:8 a=wGsgk0abFfW9C8vl4LYA:9 a=CjuIK1q_8ugA:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-02_04,2026-11-02_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0
- phishscore=0 priorityscore=1501 adultscore=0 suspectscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610300000 definitions=main-2611020063
+References: <20261029-tm-ssgrlpcsrc-2083-v5-clk-duty-fixes-v1-0-47f23de6bdb1@bp.renesas.com>
+ <20261029-tm-ssgrlpcsrc-2083-v5-clk-duty-fixes-v1-1-47f23de6bdb1@bp.renesas.com>
+In-Reply-To: <20261029-tm-ssgrlpcsrc-2083-v5-clk-duty-fixes-v1-1-47f23de6bdb1@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 2 Nov 2026 17:03:07 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVv8JW2fdZ80qw+TUBjG3Rt7o3wKvbbm+T9vQCzd_mMYw@mail.gmail.com>
+X-Gm-Features: AclHuK9e8kCdmujm3UbBsCP_C2y2QUNK5imSGIGpgUeiTEwk-YufKAJHK9WyYf0
+Message-ID: <CAMuHMdVv8JW2fdZ80qw+TUBjG3Rt7o3wKvbbm+T9vQCzd_mMYw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: renesas: rzv2h: Forward PLLDSI mux rate requests
+ to the parent
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, tomm.merciai@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 26, 2026 at 04:59:27PM +0530, Taniya Das wrote:
-> Add device tree bindings for the Qualcomm Peripheral Web's PDM GP_MN
-> clock divider. The hardware generates a fractional output frequency
-> from a fixed input clock (typically TCXO4) using the relation
-> Fout = Fin * (M / N), with duty cycle controlled by a separate D
-> register. The clock output is routed over a gpio controlled pin.
-> 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/clock/qcom,clk-gp-mnd.yaml | 98 ++++++++++++++++++++++
->  1 file changed, 98 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml b/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..8141f392c5d70acfc42cf1ff4b1722e1eff23afa
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,clk-gp-mnd.yaml
-> @@ -0,0 +1,98 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,clk-gp-mnd.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Peripheral Web's PDM GP_MN Clock Divider
-> +
-> +maintainers:
-> +  - Taniya Das <taniya.das@oss.qualcomm.com>
-> +
-> +description: |
-> +  The Peripheral Web's PDM GP_MN clock divider receives an input clock
-> +  (TCXO4) with frequency Fin and generates an output clock with
-> +  frequency Fout = Fin * (M / N) and a duty cycle controlled by D
-> +  and routed over a gpio pin.
-> +
-> +  The divider is configured using three registers:
-> +
-> +  - GP_MN_CLK_MDIV: holds the M value.
-> +  - GP_MN_CLK_NDIV: holds the ones complement of (N - M).
-> +  - GP_MN_CLK_DUTY: holds the D value.
-> +
-> +  For every N input clock cycles the GP_MN produces M output clock
-> +  cycles. D is the number of native clock cycles in which the GP_MN
-> +  output is low, counted over 2^13 native clock cycles.
-> +
-> +  Hardware constraints:
-> +
-> +    M <= 511
-> +    N <= 8191
-> +    N > 2 * M
-> +    M < D < (N - M)
-> +    M and N must be coprime (no common divisor)
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: qcom,sc7280-gp-mnd
+On Thu, 29 Oct 2026 at 15:26, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> The PLLDSI mux determines rates itself, and on the LVDS path it reads the
+> PLL instance from a parent that is not the PLL, addressing the per instance
+> parameters past their end.
+>
+> Forward both inputs to clk_mux_ops.determine_rate() and let the parents
+> carry the request up to the PLL. The parent encodes the output type and is
+> selected through .set_duty_cycle(), hence CLK_SET_RATE_NO_REPARENT.
+>
+> The mux wrapper is left unused, so register a plain struct clk_mux.
+>
+> Fixes: 3afccee4a3b8 ("clk: renesas: rzv2h: Add PLLDSI clk mux support")
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-What was the first chip where these registers appeared? Was it present
-on SDM845?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v7.5.
 
-> +      - items:
-> +          - enum:
-> +              - qcom,sa8775p-gp-mnd
-> +              - qcom,qcs8300-gp-mnd
-> +              - qcom,qcs615-gp-mnd
-> +          - const: qcom,sc7280-gp-mnd
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> 
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-With best wishes
-Dmitry
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
