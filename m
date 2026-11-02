@@ -1,78 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793648723;
-	b=BZCaJHBwYbfqBuBFtvDuCA5+icGqqlfGDcJApdvNMuy0UWflfLjWkfivGcvS9zexR+xm
-	 ODRKct0WBiQ4dWOqFlWFNBsucVNj5UXm3pJlOkxTQT9xEgf7MLVhkhuYkWXyYjBm/IOdW
-	 bDCp59BnUjzNXs3TUoPK6Rq5/es3k9z35JgvUg5CpH2AikmDN9Xx0vasqXZ/E9MKeRQBV
-	 6/qF43U5GgSxf24OOPWNckLiuV6riVTYBSQQFXlD/2h9uvHHIGxeQ7YCZAdAyxVsfVlt3
-	 jXXeysOe7qzbMMhxqnYXuNNlGr0eHHvh0CUn/G8tWuNAhF+lNGEoIliF0bNpABpvUKw==
+	t=1793648718;
+	b=0/QA7PN/F3dUQnJkcjOxch6X6Yb84uOel/WvIbHD3jcY0bG9RKXwuC7Ir5RJ8T6+z5r9
+	 VjkGMryFUr8EhDuypaHgAPHnJjOw6Ac0rER3LUVSDY7cCWjGiHShQ1RCw6ghHm5oMNddu
+	 2yj42WbeaDxHTMAv/wCY6oL42KwM7VB8PnH2DoG4T9DQkBhcdk7PKXkKjao5C+8ya5nNQ
+	 rA4IGSvQWbJxnVjHS6ipN7wCJsmU3VquZVISK6l5sJqeFfqikPcuVuDbO5dDBOdcyna0I
+	 uPdvWoANGbdDN0ARi/rQfDAhmwu+6dwHYSzMKpvVFxkg2ZsizXO5/TanBhWWWk8infg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793648723;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793648718;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
-	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=vuLX4aqv2NwWnayVJvuaUsysVyU5Yw4azjI1P5BNB+M=;
-	b=XG5UibIbpeSW/k6ssXCRiYeQouyCcvwu/KAgirhbCblNIgPGPQX00u1qHa52DWv0jjid
-	 ysXrv+grcW3fAWNZS+0VJxOQoI0UzUGmei02sKAHS0BfiOhsXuK606yhPT0iAGSpjcZAU
-	 Z+X+ZKOowSbx8CNtojFa/lewzmaq6WRQoyMkCElevrTIV7rSmqRRWUvwXYEit5K0VsmPV
-	 o/2rvpLcknlztq5xDhSpzk0ExPGPhuEMcq8xH0GMUDvmil8wCTzxllRbgAMawGQnx5hIj
-	 cJCd3Uy4JOME4uDXMshTBRBpeBiE6FCyUdaaTRUqHGhlXlqjTtdwVWJa/iE4/mz9cdg==
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=VoO5psaD9DFnzn5bc1zZcOjZ9Zx/iOn4te5QyeYQEoQ=;
+	b=vqt8CNhBLJgF8O9LrvR7Dgyj/04chg1kt8+Y7enDLEdmbivWlvRvIPrx5nyd5Og2TY4K
+	 pQkhnXxkGQ1KBP85KG3Aj3lMPvF3plhckYSt53vyrl/xRfjLnAHDWpXqCC16bWoaft+bJ
+	 4SFhq8NNbWqf/AQG5LruJrx1KZG4nkmGusm+UCHKUyAwlZPlM2QQnA+geepYmbCuML1Hs
+	 SUjCUuXrXQlwojXXwCC3TCmHQlZgYTIkcHoG4oKpe5s92qV5Sz4kv//9rxSLvXYGHzS1T
+	 g1p9aURGtxHve7oyr8OUkXNM13SA20mNaS2DObZNOvUu7XFPCkcVMAHjWvDM3yOdQuA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="FC/9kbvD";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SekwYctf;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7165C608363D;
-	Mon,  2 Nov 2026 19:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7208F6082BF5;
+	Mon,  2 Nov 2026 19:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FC/9kbvD
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SekwYctf
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1793648723;
-	b=dBLmgi7e2//cg1GRlUf+f6kQP/t7/dJu+qvs9QN2+glnzFAJ2d7IV1XEIcAKN68wt1gg
-	 i98k3ep8VV+XEadxkCyjahzjlOl51TuOZDY4HWo4hdgtm9eesnaqpYHl4lyLp4H3+JqbK
-	 CrNBzqmSRPyOuiNJnv1mAlrpAcAg2UqPBjXlkviy7e3bsJgLMwQxUBntzeRfGof3pHxdp
-	 5abrtdIbJuXHnPIZes+XyUz6xDclq+UvwP/h/mUnu/PgfdG5BDRTWOGfyv4NV4njWRad/
-	 Qh0QoP/Agkr/bfvGZoTYE/rjMt/9XxKWUcKdOKBtkdaOLUIeDXfpiVJIArtwclU0cDw==
+	t=1793648718;
+	b=mj234G8tfZCAg07vFT4myHJnpt/EL3yllG6y7KXQQFV3DgxxPL8Sj9Gk++NC2TxysHrj
+	 EFJpDFRww6goBRUt+ne/iw+hPMj4mwKcT34uY5EaVilH+K5gIzTvOT3IrPd1bqXbW/8j1
+	 USMIgIETl3pHhfHdRVIt7H6W0X+v5lqGxeMVmNVoFMfwnjFi3U1a/QUmxRq2M1D1ktqdK
+	 1T98ihm0I0KVh2Df+bZbHrwZzIyknDAFYX3wNSXtZKXICxR3KUebSEswbsZeNgbXfeJN8
+	 pKLcP1HKAYUIV2mdoHmhYjVQWwq/vHlUeMFew2hmkmqcMfvyHgEi+vlXD5oLyIsrDIA==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1793648723;
+	c=relaxed/relaxed; t=1793648718;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=vuLX4aqv2NwWnayVJvuaUsysVyU5Yw4azjI1P5BNB+M=;
-	b=ueNT6Ou7wwWoZNDQRELUGaKvf3I3CWoeyrGAm8iaJvy4KTTebL6Uea9ZekonDSHpoULS
-	 UeJdvZ/Wz367r5oSVuAj+s3Pt4Tcx1VLElN++aMYYKri+deAChuAiK2XoH5neOuvp7dh4
-	 78uBoWBw/d1xKOvDejngDmayGjZrKrySpNk4N/l2s4bKz879+2XTpd2O21pdcHAW7tIv2
-	 S9+d/WrjF4riVzblFPIgnXYvh8ad/+liQP3aj1S6hI6nWqDDe7yuDG9lmz/k+Y73u6sQI
-	 h4JFc+Xf7WKXl6c3zVj3WCh/GldUIBK6LVZVHCkSyivZNPA3oJ23MdqbDdSZb45f5WQ==
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=VoO5psaD9DFnzn5bc1zZcOjZ9Zx/iOn4te5QyeYQEoQ=;
+	b=MvW1a1JzvxsoQsoodmPwMi5NjKN6WZi8r/EqDVpcWMkjZVOAu94dNzPvvyPLIIf3GP46
+	 zB4AvHqgBln9D9umV5WeV/X8kbv2mGhZTSQke9TgH7xhlDbZFYqZVorBcge+sq1LIOEBw
+	 TDD/HCAfqqa9n7XPSByKuD0ujsW8mpK8EAVeK+1W1QLJ8NTB6oNjalrBMbEGxq0HQc8vY
+	 Pv6n6ucwYueDjkAo59CVcaimumDcN4D6bByh8GYr8naxwumhnUU6nAvK+GVRCkPy9VtqK
+	 q5b0bZvLQ7zJC/hsoiKHiZTUH3H4aja9x7mMEJcgIgV/ohKzbJ05C+MJcdOQCLtprwg==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id ED3AC1F00A23;
+	by smtp.kernel.org (Postfix) with ESMTPS id 721841F00A1A;
 	Mon,  2 Nov 2026 19:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793648723;
-	bh=vuLX4aqv2NwWnayVJvuaUsysVyU5Yw4azjI1P5BNB+M=;
+	s=k20260515; t=1793648717;
+	bh=VoO5psaD9DFnzn5bc1zZcOjZ9Zx/iOn4te5QyeYQEoQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=FC/9kbvDY6OEwhAe5BNgUfTzAaoFwc+P7cJFdZ8XTWFLcDMUpWhXzjNN30ZloZiHb
-	 gIqeG6cQcbIJhTV3gjVu75z0Lg2JtFt6Q0F+cqqIdZgAc2crOuwyyJoyyYriMlfQfT
-	 UOXbqtRIchYptnfwgln8sNrOrO1niFrkVndYUbo7Id5Odm8P4yIlnjSnybHGz1eXwX
-	 zhkIiz/7/LIe8zwTbKAQVfgjJpNKlYKh8GXubGjomHdxHt1iyykHzsqbgDbEh34O19
-	 mKxc/3fuljKrLIGw43crBGUYViG0IDHkUVYatfscgbE/asFXlo8AzGjfkqjzzPRhsp
-	 Di1u5jFu8jZbQ==
+	b=SekwYctfGqRKX5oFltaManGyX0fj/7CkBatkH4+jvnKgdMlrhmpMH3kPORVTppbvp
+	 Y2GjN/IRqpw4pijL6CLSu1PtPehMGtXDi9VY2BQd21zUOxlH6f2ZBwblA6AIwUWrJB
+	 gnX+71AeE8pxYFUFb7I1PLCKW6FwZAdrkjBq2ASGsM0fZJVdCdU+AqaSV0VkpsVb3h
+	 DtRADZ+fMek+mi3OMjX5Ml7biAF57eVLIZML7Hr9Gxi8PUi0er3Ek9VWI8wf7qmYmj
+	 t6hcUYWhq1vQaU4XbIXa8jJBdfYELVoWd6Jk1dUnXpGiKiCcSq86AYVPkESmvluDzI
+	 OmFzD6luwNqNw==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 770D346635;
+	by lkml.kernel.org (Postfix) with ESMTP id 472D646629;
 	Mon,  2 Nov 2026 19:45:09 +0000 (UTC)
 From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Date: Tue, 03 Nov 2026 03:45:16 +0800
-Subject: [PATCH RFC v3 13/17] riscv: dts: zhihe: add A210 UARTs
+Date: Tue, 03 Nov 2026 03:45:13 +0800
+Subject: [PATCH RFC v3 10/17] dt-bindings: timer: add Zhihe A210 CLINT
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -83,8 +83,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261103-a210-scmi-v3-13-ee6b31580808@iscas.ac.cn>
+Message-Id: <20261103-a210-scmi-v3-10-ee6b31580808@iscas.ac.cn>
 References: <20261103-a210-scmi-v3-0-ee6b31580808@iscas.ac.cn>
 In-Reply-To: <20261103-a210-scmi-v3-0-ee6b31580808@iscas.ac.cn>
 To: Sudeep Holla <sudeep.holla@kernel.org>, 
@@ -113,209 +112,43 @@ Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, 
  Paul Walmsley <paul.walmsley@sifive.com>, linux-clk@vger.kernel.org, 
  linux-serial@vger.kernel.org, Han Gao <rabenda.cn@gmail.com>, 
- Han Gao <gaohan@iscas.ac.cn>
+ Han Gao <gaohan@iscas.ac.cn>, Conor Dooley <conor.dooley@microchip.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793648705; l=6182;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793648705; l=860;
  i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=B6tm2OM7jOdMucw1zXohh3+kCm1z/YVGQ/Bj++2MOGQ=;
- b=MdU04rFHtyT7xgYvIzJMTtd38JmLDv+MB5iQiT2A5YpllXnQHclLizyhh+Zdkkg+ee/VrTV+r
- 5KfV/TFl7h7BGdSKk48dZvSz+COQF6fQbB5vlVk/iSCwzu3kGLi2Wn0
+ bh=xDW3mj4crTCYIjLMrm7hiotLvXuQDaJfNmGBDmcpw/Y=;
+ b=jPnhhqjJYSQguFvLE9NtnRdhJ2pnOIJBkGdeFMOGQktm4CG6PWJlPA6aa0aC7ETMCM8DQqjwJ
+ BARoYkifsKZBP3NCtPK4kUUcLiUf/xOXjljT0FkuSVWrt1HIZCy3wuW
 X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
  pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
 X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
  auth_id=1262
 X-Original-From: Han Gao <gaohan@iscas.ac.cn>
 Reply-To: gaohan@iscas.ac.cn
+Content-Transfer-Encoding: 7bit
 
-From: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
+From: Han Gao <gaohan@iscas.ac.cn>
 
-Describe the ten DW APB UARTs with SCMI clocks and their separate APB
-and serial resets.
+Add the A210 CLINT compatible with the thead,c900-clint fallback.
 
-Signed-off-by: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
- arch/riscv/boot/dts/zhihe/a210.dtsi | 160 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 160 insertions(+)
+ Documentation/devicetree/bindings/timer/sifive,clint.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/riscv/boot/dts/zhihe/a210.dtsi b/arch/riscv/boot/dts/zhihe/a210.dtsi
-index 6d85d94f0af1..caa3005830ca 100644
---- a/arch/riscv/boot/dts/zhihe/a210.dtsi
-+++ b/arch/riscv/boot/dts/zhihe/a210.dtsi
-@@ -353,6 +353,70 @@ mbox_e902: mailbox@320000 {
- 			#mbox-cells = <1>;
- 		};
- 
-+		uart0: serial@2014000 {
-+			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
-+			reg = <0x0 0x02014000 0x0 0x1000>;
-+			clocks = <&scmi_clk A210_CLK_UART_SCLK(0)>,
-+				 <&scmi_clk A210_CLK_UART_PCLK(0)>;
-+			clock-names = "baudclk", "apb_pclk";
-+			interrupt-parent = <&intc>;
-+			interrupts = <321 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			resets = <&scmi_reset A210_RESET_UART_PRST(0)>,
-+				 <&scmi_reset A210_RESET_UART_SRST(0)>;
-+
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@2015000 {
-+			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
-+			reg = <0x0 0x02015000 0x0 0x1000>;
-+			clocks = <&scmi_clk A210_CLK_UART_SCLK(1)>,
-+				 <&scmi_clk A210_CLK_UART_PCLK(1)>;
-+			clock-names = "baudclk", "apb_pclk";
-+			interrupt-parent = <&intc>;
-+			interrupts = <322 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			resets = <&scmi_reset A210_RESET_UART_PRST(1)>,
-+				 <&scmi_reset A210_RESET_UART_SRST(1)>;
-+
-+			status = "disabled";
-+		};
-+
-+		uart2: serial@2016000 {
-+			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
-+			reg = <0x0 0x02016000 0x0 0x1000>;
-+			clocks = <&scmi_clk A210_CLK_UART_SCLK(2)>,
-+				 <&scmi_clk A210_CLK_UART_PCLK(2)>;
-+			clock-names = "baudclk", "apb_pclk";
-+			interrupt-parent = <&intc>;
-+			interrupts = <323 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			resets = <&scmi_reset A210_RESET_UART_PRST(2)>,
-+				 <&scmi_reset A210_RESET_UART_SRST(2)>;
-+
-+			status = "disabled";
-+		};
-+
-+		uart3: serial@2017000 {
-+			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
-+			reg = <0x0 0x02017000 0x0 0x1000>;
-+			clocks = <&scmi_clk A210_CLK_UART_SCLK(3)>,
-+				 <&scmi_clk A210_CLK_UART_PCLK(3)>;
-+			clock-names = "baudclk", "apb_pclk";
-+			interrupt-parent = <&intc>;
-+			interrupts = <324 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			resets = <&scmi_reset A210_RESET_UART_PRST(3)>,
-+				 <&scmi_reset A210_RESET_UART_SRST(3)>;
-+
-+			status = "disabled";
-+		};
-+
- 		peri1_padctrl: pinctrl@2026000 {
- 			compatible = "zhihe,a210-peri1-pinctrl";
- 			reg = <0x0 0x02026000 0x0 0x1000>;
-@@ -363,6 +427,102 @@ peri1_padctrl: pinctrl@2026000 {
- 			status = "disabled";
- 		};
- 
-+		uart4: serial@8401000 {
-+			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
-+			reg = <0x0 0x08401000 0x0 0x1000>;
-+			clocks = <&scmi_clk A210_CLK_UART_SCLK(4)>,
-+				 <&scmi_clk A210_CLK_UART_PCLK(4)>;
-+			clock-names = "baudclk", "apb_pclk";
-+			interrupt-parent = <&intc>;
-+			interrupts = <325 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			resets = <&scmi_reset A210_RESET_UART_PRST(4)>,
-+				 <&scmi_reset A210_RESET_UART_SRST(4)>;
-+
-+			status = "disabled";
-+		};
-+
-+		uart5: serial@8402000 {
-+			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
-+			reg = <0x0 0x08402000 0x0 0x1000>;
-+			clocks = <&scmi_clk A210_CLK_UART_SCLK(5)>,
-+				 <&scmi_clk A210_CLK_UART_PCLK(5)>;
-+			clock-names = "baudclk", "apb_pclk";
-+			interrupt-parent = <&intc>;
-+			interrupts = <326 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			resets = <&scmi_reset A210_RESET_UART_PRST(5)>,
-+				 <&scmi_reset A210_RESET_UART_SRST(5)>;
-+
-+			status = "disabled";
-+		};
-+
-+		uart6: serial@8403000 {
-+			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
-+			reg = <0x0 0x08403000 0x0 0x1000>;
-+			clocks = <&scmi_clk A210_CLK_UART_SCLK(6)>,
-+				 <&scmi_clk A210_CLK_UART_PCLK(6)>;
-+			clock-names = "baudclk", "apb_pclk";
-+			interrupt-parent = <&intc>;
-+			interrupts = <327 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			resets = <&scmi_reset A210_RESET_UART_PRST(6)>,
-+				 <&scmi_reset A210_RESET_UART_SRST(6)>;
-+
-+			status = "disabled";
-+		};
-+
-+		uart7: serial@8404000 {
-+			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
-+			reg = <0x0 0x08404000 0x0 0x1000>;
-+			clocks = <&scmi_clk A210_CLK_UART_SCLK(7)>,
-+				 <&scmi_clk A210_CLK_UART_PCLK(7)>;
-+			clock-names = "baudclk", "apb_pclk";
-+			interrupt-parent = <&intc>;
-+			interrupts = <328 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			resets = <&scmi_reset A210_RESET_UART_PRST(7)>,
-+				 <&scmi_reset A210_RESET_UART_SRST(7)>;
-+
-+			status = "disabled";
-+		};
-+
-+		uart8: serial@8405000 {
-+			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
-+			reg = <0x0 0x08405000 0x0 0x1000>;
-+			clocks = <&scmi_clk A210_CLK_UART_SCLK(8)>,
-+				 <&scmi_clk A210_CLK_UART_PCLK(8)>;
-+			clock-names = "baudclk", "apb_pclk";
-+			interrupt-parent = <&intc>;
-+			interrupts = <329 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			resets = <&scmi_reset A210_RESET_UART_PRST(8)>,
-+				 <&scmi_reset A210_RESET_UART_SRST(8)>;
-+
-+			status = "disabled";
-+		};
-+
-+		uart9: serial@8406000 {
-+			compatible = "zhihe,a210-uart", "snps,dw-apb-uart";
-+			reg = <0x0 0x08406000 0x0 0x1000>;
-+			clocks = <&scmi_clk A210_CLK_UART_SCLK(9)>,
-+				 <&scmi_clk A210_CLK_UART_PCLK(9)>;
-+			clock-names = "baudclk", "apb_pclk";
-+			interrupt-parent = <&intc>;
-+			interrupts = <330 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			resets = <&scmi_reset A210_RESET_UART_PRST(9)>,
-+				 <&scmi_reset A210_RESET_UART_SRST(9)>;
-+
-+			status = "disabled";
-+		};
-+
- 		peri2_padctrl: pinctrl@8411000 {
- 			compatible = "zhihe,a210-peri2-pinctrl";
- 			reg = <0x0 0x08411000 0x0 0x1000>;
+diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+index d53f52e80d88..6480c8dacf6b 100644
+--- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
++++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+@@ -55,6 +55,7 @@ properties:
+               - sophgo,sg2000-clint
+               - sophgo,sg2002-clint
+               - thead,th1520-clint
++              - zhihe,a210-clint
+           - const: thead,c900-clint
+       - items:
+           - const: sifive,clint0
 
 -- 
 2.55.0
