@@ -1,101 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793697261;
-	b=E+sBaKWJKm0XPvtSuxhN0F39NmbQAghu1n+lgWL8k+19/zBaBQwytxMiC9YBx5o4CS/q
-	 Sn00Gx15EVbcXObehxPNpL+rtKX2kE5E3bowgCZf9WYv8qcVxKpPJmVQVn44482ew+ghj
-	 j3DCqZEE8I2cy87U9IAKqJTZ17BP0DYKoiNzo7UuLpAy9A8HDbcU9PFMSXMUepFxUoKPa
-	 Mh4p44DcCHnlnKPkMFpZnW3KqkqSUYxUB+65R6EZk/FD3WdddZg4EySp46O6NTXFKtmM1
-	 x9ifW47b2sOXGNjttt1MqtZW8vkjasU6cGq0UJup+9yK1vngi7lH4whI9hIbB0iPLWQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793697261;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=xCKzQnE8sR8qGnyIMcveJ64Ln+A33qIBzCr/8Ncna5s=;
-	b=vEW3OyDTqdkJxDAMVs/AGBsZ+ZcEjrvA+di6RWih+AcWhEC2MTA4s7NNMLqYfmqAcwEw
-	 QV9FPEvtVgy2LNfRepoEaTHP6riKmLZczDwVR+bN9P0H81+NuoTE1RurpU2JEAd4mlTD9
-	 8m/Nz0UkajwnLLICi6I8W7BQ+q0KP2h72a4kuUYREkEWQokPdZLTtorUjqjKyhz/s4w17
-	 cN31zncz8rs5Dr9UwfE2UoNIAK1pYUqw7fRLPs5nt4SPtabgADAEnwPc5tAvvXc8IoQI8
-	 gAFK3yTUwUeK+Z4Oeur2LciZg9yjly0HMwku0c7+bg9hQruLffqZU64L/XY90lxwCJw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=Az16B1NT;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793698122;
+	b=O08PF2MaeKOAH5gUHNyqeb6V/P+tWPJZOizHuZIAGl8tgbN5auWSJ8pWFIcjuIHld7va
+	 BumvPQSM28Royzfr92h4zUvvmZeUMBlyfwrIBIARGqBmK9par5CbQn69uZut4NcQeIHls
+	 w5Y78jbcMOliqZ+DjuI0loUThHRWcg7Ur2bFgATnfL75xsBOHgwnA9jXxE7h7praTAv1Y
+	 GKqamqDHB+TYUzLgTcAv5yDJraFS5jUcAxb6rh4rvN+0R2bwLwvwFJz39csHujMkenGyX
+	 nZF5QWJF/vVqd0E865vs9/+gPEhSIS0IGdvSgssRldFldpq9xr2bSQ2/TOQlw4T1baw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793698122;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=Moq4UlSyobES9iCmhh9xg66edYz/c69CLXAF/tF9DxQ=;
+	b=AwPFwSCX8ZwlSxlsbUmCR+64A/wY0/leAzILCtRnW6Ll2X/8zWrX7tqY7J5ZksyG9uer
+	 g/kKaj9CWE5GOY1iD5lXNRCoSnyUj6oDqXIpjfAfpETglBGr9ZHVE4oAKlztssFQTDN/g
+	 YjINmd6s7m7pANI0xnjI+O4MmDZgKyExxQff3OMiIBdxxlQ+zOblJ+hZAJn7vuSHu3n08
+	 nqAp5LFFzeEIpNQAhfanhlLJGV6l0rrP5+xlisFUB0HDXJjgF33U9TUfYRmVh5Xb1j8pz
+	 +5lcNwg7bGCVesKKKV/Muxu3qFAwV/3u+aflUHAVWHGYSgLWW2ohJEoar0PmnF1iQWg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NaVsKJMZ;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794B4606A324;
-	Tue,  3 Nov 2026 09:14:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 794B4606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602F7606D807;
+	Tue,  3 Nov 2026 09:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=Az16B1NT
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id A9E7320103C;
-	Tue, 03 Nov 2026 10:14:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1793697257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xCKzQnE8sR8qGnyIMcveJ64Ln+A33qIBzCr/8Ncna5s=;
-	b=Az16B1NT/o8u9bVz4Vr+qtoUJMO3XnS5rLrEvivYNfOeg/KeYGFKJa8LvN/V523v7lH/79
-	dKjT1Dj0L2tkZoPLOQYbfdaLEiI4+49lt+e0MAxy8rJLme1LJMizWuHIj3IuJqhIdplKzl
-	bLdN24LfJoTlqzgYGPzLR7nqq8CoC8dBkvg2VKgJL1LKp2XvwAUqf3Q/cBzK8GgB83tSLq
-	iJQT7CebcWCXUevcw24RNeD62XHc1PVw01VapBpiNKtOAGGnKnBK9rgWhkCY3EnEB6J/J/
-	TZDqOnUvRwt7btSCyUqCt3QOIkm1cCXRPqacLNsX22HxcLv1l68DnXQC2AxoCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1793697257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xCKzQnE8sR8qGnyIMcveJ64Ln+A33qIBzCr/8Ncna5s=;
-	b=IeFNgT0IVHiRepot8IhD9+8MZxksgKp8QtZ0Q+NkRQKSzRW3F1st38bGCwY408Qds7atpb
-	ASrtbeQfpuAnNb5kkd7A+fbJ8ddafXqTtv0cWMMKVkgzhTPcwxdGEQURAVF1Bq9QZ0rgTg
-	9Vy3wLWnvjju/NCLna2Jd9dKEalVQTk8EXyJGFG8zWnPj2aNmEqFl0MlVN2ji7XxzsVrsT
-	WQO+2MIY9f1v0UNM0UDw6LyRIoKSSMVnq3fAMy5ZR/NKyOiIELMNjRr/xIJYmGGI4VnjHD
-	4JiOPXyDQ1eksy1+MAANficJxkHsVtWHcA8cTuH9WeEIu9XiQesit2LyMZgpcA==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1793697257; a=rsa-sha256;
-	cv=none;
-	b=MqelqDHcu32UrtpOsw3KKZGLgLnFSR66JSukkrD0iM4rky+LVtOW4DCdHiERKyp0wwyUUR
-	GpeDDOCAgBKM7K8U1C36Gv6NbS5q0c332HXHoL93qzyNgEhptnCF4Q7rWM42PJSwcutHq7
-	hj+C8jujlg6ifEOlQI652m1MHSw4+zhWckIyPos4F8hrlN7763yEA8xzS9Aogizms7TF/z
-	N9uxspC3AcdMXAscx5zzdN40nfJrBNAnohLxQCGiVeRKE+pr0x0NTROgrjV/fgvjOKINoW
-	XQbjuGVpvakYsEUAjDsft9Ml7OavlmNny2MoEjyxe4tOnmtQ082HCtQPFGF80g==
-Message-ID: <88963fd1fd87123496a55e2002bc8b0dc2466bd4.camel@pengutronix.de>
-Subject: Re: [PATCH 6/9] reset: google: Add CPM reset driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Brian
- Masney <bmasney+clk@redhat.com>,  Jerome Brunet <jbrunet+clk@baylibre.com>,
- Thomas Gleixner <tglx@kernel.org>, Ulf Hansson <ulfh@kernel.org>,  Peter
- Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org, Tudor
- Ambarus <tudor.ambarus@linaro.org>,  =?ISO-8859-1?Q?Andr=E9?= Draszik	
- <andre.draszik@linaro.org>, linux-samsung-soc@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Radu Rendec	
- <radu@rendec.net>, linux-arm-kernel@lists.infradead.org, Mariano Marciello	
- <mmarciello@google.com>, Douglas Anderson <dianders@chromium.org>, 
-	linux-clk@vger.kernel.org, Jakub =?UTF-8?Q?G=C5=82owacki?=
- <jglow@google.com>
-Date: Tue, 03 Nov 2026 10:14:17 +0100
-In-Reply-To: <aukyyYhDCBUdIH16@google.com>
-References: <20261026214359.3122870-1-briannorris@chromium.org>
-	 <20261026144346.6.I0b1ad34a718a9b5f667d2481041970ea45989dd3@changeid>
-	 <8d57f0a1dc8a07838bf1320f9b79588196264ff5.camel@pengutronix.de>
-	 <aukyyYhDCBUdIH16@google.com>
-Content-Type: text/plain; charset="UTF-8"
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NaVsKJMZ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBD121F000C1;
+	Tue,  3 Nov 2026 09:28:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793698122;
+	bh=Moq4UlSyobES9iCmhh9xg66edYz/c69CLXAF/tF9DxQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=NaVsKJMZYHgw5XhM83Bt6tYTl7XY/+VCUup/txT1NR6n2SOgwkg4RvOd6HWqWMo+a
+	 pZprezmvePP/VB6nv4L4O8qmOfF5RBQOA1IpXniK1NxCFxk0mevE30OqxXGq82dsKM
+	 lz//RgbZuVHkWRXREmP/9/e8pNaR4Zb7+V1h9lYvijA8LQ6UdRUdWpu+CwzrH1K1pG
+	 7VbhhyCfiaGiWEa3r+cpORP+6Sdd2byDJkGyQUDP/3n/aZtv1xOg4wsgwHiZSKJL4M
+	 RylzB79kmWoD4MioG/TmNrNywOdp6Gk7c/Sr158tLJUnJBqayHy31atIZZuQAU6gAe
+	 mhhPHjN1UPy+w==
+Message-ID: <sashiko-outbox-194955@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v11 3/5] pwm: sun8i: export the bypass outputs as clocks
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "James Hilliard" <james.hilliard1@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261103-h616-pwm-v8-v11-3-07abb59575c3@gmail.com>
+References: <20261103-h616-pwm-v8-v11-0-07abb59575c3@gmail.com>
+ <20261103-h616-pwm-v8-v11-3-07abb59575c3@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+Date: Tue, 03 Nov 2026 09:28:41 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -104,69 +59,247 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
 
-On Mo, 2026-11-02 at 17:03 -0800, Brian Norris wrote:
-> Hi Philipp,
->=20
-> On Wed, Oct 28, 2026 at 03:03:24PM +0100, Philipp Zabel wrote:
-> > On Mo, 2026-10-26 at 14:43 -0700, Brian Norris wrote:
-[...]
-> > > +DEFINE_DEBUGFS_ATTRIBUTE(goog_cpm_rst_assert_debugfs_fops, NULL,
-> > > +			 goog_cpm_rst_debugfs_assert_set, "%llu\n");
-> > > +
-> > > +DEFINE_DEBUGFS_ATTRIBUTE(goog_cpm_rst_deassert_debugfs_fops, NULL,
-> > > +			 goog_cpm_rst_debugfs_deassert_set, "%llu\n");
-> > > +
-> > > +static void goog_cpm_rst_add_debugfs(struct goog_cpm_rst_debugfs_ent=
-ry *entry,
-> > > +				     struct dentry *debugfs_root,
-> > > +				     const char *name)
-> > > +{
-> > > +	struct dentry *d =3D debugfs_create_dir(name, debugfs_root);
-> > > +
-> > > +	debugfs_create_file("assert", 0220, d, entry,
-> > > +			    &goog_cpm_rst_assert_debugfs_fops);
-> > > +	debugfs_create_file("deassert", 0220, d, entry,
-> > > +			    &goog_cpm_rst_deassert_debugfs_fops);
-> > > +}
-> >=20
-> > Please drop the debugfs functionality or explain what it is needed for.
->=20
-> Ack. I think I'll probably go with "drop", but some notes:
->=20
-> There's no real way to test and validate a "reset" driver without a
-> consumer. There is no direct (even for debug) interface into the reset
-> API, unlike in some other subsystems (e.g., GPIO). I believe the main
-> purpose here on Pixel drivers has been hardware+driver testing, so one
-> can test reset functionality before hooking it up to real client
-> drivers, and without adding fake drivers or extra debug code (a la
-> "printf debugging").
->=20
-> (One might observe these results either via /dev/mem-like access to
-> registers, or even through external debug peripherals/consoles that can
-> monitor the status of the underlying component that is being reset.)
->=20
-> This all would generally be in an early hardware bringup scenario, so
-> admittedly it probably doesn't have as much of a use case in the
-> upstream kernel  -- it's a long shot for this kind of hardware/product
-> development to *actually* work directly on an upstream kernel, with
-> upstream drivers.
->=20
-> ...but if I were imagining a better way to do this without bypassing
-> reference counting: perhaps it could be useful to a have a
-> debug-oriented "reset client" driver, that could bind to arbitrary reset
-> devices, if they're not already owned, and expose a sysfs or debugfs
-> interface like this? That could fill similar use cases for this sort of
-> hardware testing/validation area.
->=20
-> But anyway, I understand such a proposal should definitely come
-> separately from this driver submission.
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+s) to consider:
+- [Medium] pwm: sun8i: missed rate protection in sun8i_pwm_pair_rate_constr=
+ained()
+- [Medium] pwm: sun8i: sun8i_pwm_pair_rate_notifier() blocks bypass clk_set=
+_rate()
+- [Medium] pwm: sun8i: sun8i_pwm_read_waveform() clamps concurrent clk_set_=
+rate()
+- [Medium] pwm: sun8i: torn rate and constraint snapshot in sun8i_pwm_round=
+_waveform_tohw()
+--
 
-Thank you for explaining anyway. With that use case in mind, I think
-"drop" is the right choice for now. This functionality can be
-implemented in the core and use reset controls like any other consumer
-driver.
+commit 77adf52feb5fc5043dc604aa0ff2272bf2185bb6
+Author: Richard Genoud <richard.genoud@bootlin.com>
 
-regards
-Philipp
+pwm: sun8i: export the bypass outputs as clocks
+
+This commit exports each Allwinner H616 PWM channel's hardware bypass path
+as a Common Clock Framework clock and arbitrates channel ownership and pair
+rate protection between PWM consumers and clock consumers.
+
+> diff --git a/drivers/pwm/pwm-sun8i.c b/drivers/pwm/pwm-sun8i.c
+> index bcc2c57443780..56854e6218c9a 100644
+> --- a/drivers/pwm/pwm-sun8i.c
+> +++ b/drivers/pwm/pwm-sun8i.c
+
+[ ... ]
+
+> @@ -399,12 +519,20 @@ static int sun8i_pwm_read_waveform(struct pwm_chip =
+*chip,
+>  	struct sun8i_pwm_waveform *wfhw =3D _wfhw;
+>  	struct sun8i_pwm_chip *sun8i_chip =3D sun8i_pwm_from_chip(chip);
+>  	unsigned int pair =3D SUN8I_PWM_PAIR_IDX(pwm->hwpwm);
+> +	struct clk *pair_clk =3D sun8i_chip->pairs[pair].hw->clk;
+>  	unsigned long pair_rate;
+>  	u32 pccr, pcr, pdzcr, per, ppr;
+> +	int ret;
+> =20
+> -	pair_rate =3D sun8i_pwm_get_pair_rate(sun8i_chip, pwm->hwpwm);
+> -	if (pair_rate > U32_MAX)
+> -		return -ERANGE;
+> +	/*
+> +	 * An unrequested channel can be retuned and enabled by a clock
+> +	 * consumer. Keep its rate stable until the register snapshot is taken.
+> +	 * Use the provider handle, separate from the PWM rate-setting handles.
+> +	 */
+> +	ret =3D clk_rate_exclusive_get(pair_clk);
+> +	if (ret)
+> +		return ret;
+> +	pair_rate =3D clk_get_rate(pair_clk);
+> =20
+>  	scoped_guard(spinlock_irqsave, &sun8i_chip->lock) {
+>  		pccr =3D sun8i_pwm_readl(sun8i_chip, SUN8I_PWM_PCCR(pair));
+> @@ -413,6 +541,10 @@ static int sun8i_pwm_read_waveform(struct pwm_chip *=
+chip,
+>  		ppr =3D sun8i_pwm_readl(sun8i_chip, SUN8I_PWM_PPR(pwm->hwpwm));
+>  		pdzcr =3D sun8i_pwm_readl(sun8i_chip, SUN8I_PWM_PDZCR(pair));
+>  	}
+> +	clk_rate_exclusive_put(pair_clk);
+
+[Severity: Medium]
+Could holding clk_rate_exclusive_get(pair_clk) across sun8i_pwm_read_wavefo=
+rm()
+cause concurrent clk_set_rate(), clk_set_rate_exclusive(), or clk_round_rat=
+e()
+calls on a child bypass clock to silently clamp to the existing rate?
+
+In drivers/clk/clk.c, clk_rate_exclusive_get(pair_clk) increments
+pair->hw->core->protect_count and releases prepare_lock before returning.
+While sun8i_pwm_read_waveform() is between clk_rate_exclusive_get(pair_clk)
+and clk_rate_exclusive_put(pair_clk), a clock consumer calling
+clk_set_rate(bypass_clk, new_rate) or clk_set_rate_exclusive(bypass_clk,
+new_rate) on chan->bypass_hw runs clk_core_set_rate_nolock() ->
+clk_core_req_round_rate_nolock().
+
+Because the temporary rate protection was taken directly on the parent
+pair_clk handle rather than through bypass_clk, bypass_clk->core->protect_c=
+ount
+is 0, so clk_core_rate_nuke_protect() does not discount the hold on
+pair->hw->core. When clk_core_round_rate_nolock() forwards the request to
+pair->hw->core via CLK_SET_RATE_PARENT, clk_core_determine_round_nolock()
+sees clk_core_rate_is_protected(pair->hw->core) is true and clamps the
+request to the current pair rate, causing clk_core_set_rate_nolock() to
+see no rate change and return 0 without updating the hardware clock rate.
+
+[ ... ]
+
+> @@ -510,7 +642,8 @@ sun8i_pwm_pair_rate_constrained(struct sun8i_pwm_chip=
+ *sun8i_chip,
+>  	unsigned int sibling =3D idx ^ 1;
+> =20
+>  	guard(spinlock_irqsave)(&sun8i_chip->lock);
+> -	return sun8i_chip->channels[sibling].rate_exclusive ||
+> +	return sun8i_chip->channels[sibling].mode =3D=3D SUN8I_PWM_MODE_CLK ||
+> +	       sun8i_chip->channels[sibling].rate_exclusive ||
+>  	       sun8i_pwm_channel_is_enabled_locked(sun8i_chip, sibling);
+>  }
+
+[Severity: Medium]
+What happens if a consumer of the sibling bypass clock holds rate exclusivi=
+ty
+via clk_rate_exclusive_get() while the bypass clock is unprepared?
+
+In drivers/net/phy/xpowers/ac300.c, ac300_ephy_ctl_create() locks the bypass
+clock rate at probe time with devm_clk_rate_exclusive_get(dev, priv->clk),
+while only calling clk_prepare_enable(priv->clk) in ac300_ephy_ctl_power_on=
+()
+and calling clk_disable_unprepare(priv->clk) in ac300_ephy_ctl_disable().
+
+When the bypass clock is unprepared, sun8i_pwm_bypass_unprepare() resets
+chan->mode to SUN8I_PWM_MODE_NONE:
+
+drivers/pwm/pwm-sun8i.c:sun8i_pwm_bypass_unprepare() {
+	...
+	guard(spinlock_irqsave)(&sun8i_chip->lock);
+	if (chan->mode !=3D SUN8I_PWM_MODE_CLK)
+		return;
+
+	chan->mode =3D SUN8I_PWM_MODE_NONE;
+}
+
+Even though pair->hw->core->protect_count remains non-zero in CCF from the
+consumer's clk_rate_exclusive_get(), sun8i_pwm_pair_rate_constrained() sees
+mode !=3D SUN8I_PWM_MODE_CLK, rate_exclusive =3D=3D false, and the sibling =
+channel
+disabled in hardware, so it returns false.
+
+As a result, sun8i_pwm_round_waveform_tohw() treats the pair as unconstrain=
+ed
+and can pick a candidate waveform with a different pair_rate. Then in
+sun8i_pwm_write_waveform() -> sun8i_pwm_prepare_update(),
+sun8i_pwm_pair_rate_constrained() also returns false, so
+sun8i_pwm_prepare_update() disables the active PWM channel in hardware when
+stop is true and calls clk_set_rate(chan->pair_clk, wfhw->pair_rate), which
+fails with -EBUSY in CCF because the pair clock is still rate-protected.
+In addition, because chan->mode is SUN8I_PWM_MODE_NONE while unprepared,
+sun8i_pwm_request() can claim the channel for PWM, causing the clock
+consumer's next clk_prepare_enable() to fail with -EBUSY in
+sun8i_pwm_bypass_prepare().
+
+[Severity: Medium]
+Can sun8i_pwm_round_waveform_tohw() also observe a mismatched pair_rate and
+constraint state when racing with a sibling bypass clock consumer?
+
+In sun8i_pwm_round_waveform_tohw(), current_rate is sampled before checking
+sun8i_pwm_pair_rate_constrained():
+
+drivers/pwm/pwm-sun8i.c:sun8i_pwm_round_waveform_tohw() {
+	...
+	current_rate =3D sun8i_pwm_get_pair_rate(sun8i_chip, pwm->hwpwm);
+	if (!current_rate || current_rate > U32_MAX)
+		return -ERANGE;
+	rounding.current_pair_rate =3D current_rate;
+
+	if (sun8i_pwm_pair_rate_constrained(sun8i_chip, pwm->hwpwm)) {
+		sun8i_pwm_consider_pair_rate(&rounding, current_rate);
+	...
+}
+
+When the PWM channel is currently disabled (so chan->rate_exclusive is fals=
+e),
+sun8i_pwm_round_waveform_tohw() does not hold rate exclusivity on the pair
+clock. Because CCF operations on the sibling's bypass clock do not acquire
+pwmchip_lock(chip), a concurrent sibling clock consumer can call
+clk_set_rate() and clk_prepare_enable() after sun8i_pwm_get_pair_rate()
+returns the old rate but before sun8i_pwm_pair_rate_constrained() checks
+channels[sibling].mode =3D=3D SUN8I_PWM_MODE_CLK.
+
+Wouldn't sun8i_pwm_round_waveform_tohw() then round exclusively against the
+stale pre-retune current_rate instead of the rate at which the sibling just
+locked the pair clock?
+
+> @@ -1033,6 +1166,42 @@ static int sun8i_pwm_register_pair_clocks(struct d=
+evice *dev,
+>  	return 0;
+>  }
+> =20
+> +/* Register the bypass clock for each channel. */
+> +static int sun8i_pwm_register_bypass_clocks(struct device *dev,
+> +					    struct sun8i_pwm_chip *sun8i_chip)
+> +{
+> +	for (unsigned int i =3D 0; i < SUN8I_PWM_NPWM; i++) {
+> +		struct sun8i_pwm_channel *chan =3D &sun8i_chip->channels[i];
+> +		struct clk_hw *parent =3D sun8i_chip->pairs[SUN8I_PWM_PAIR_IDX(i)].hw;
+> +		const char *name;
+> +		int ret;
+> +
+> +		name =3D devm_kasprintf(dev, GFP_KERNEL, "%s#pwm-bypass%u",
+> +				      dev_name(dev), i);
+> +		if (!name)
+> +			return -ENOMEM;
+> +
+> +		chan->chip =3D sun8i_chip;
+> +		chan->index =3D i;
+> +		/*
+> +		 * Protect the shared rate while prepared. Preserve unclaimed
+> +		 * firmware outputs through CCF's unused-clock cleanup, as for
+> +		 * PWM waveforms; only a consumer may turn them off.
+> +		 */
+> +		chan->bypass_hw.init =3D
+> +			CLK_HW_INIT_HW(name, parent, &sun8i_pwm_bypass_ops,
+> +				       CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE |
+> +				       CLK_IGNORE_UNUSED);
+
+[Severity: Medium]
+If firmware leaves a channel enabled at boot, will clk_set_rate() on that
+channel's bypass clock always be rejected with -EBUSY by
+sun8i_pwm_pair_rate_notifier()?
+
+When firmware leaves a channel enabled (with SUN8I_PWM_PCCR_GATE and
+SUN8I_PWM_ENABLE(i) set), sun8i_pwm_sanitize_disabled_pairs() and
+CLK_IGNORE_UNUSED preserve the enabled state in hardware. Because
+chan->bypass_hw is registered with CLK_SET_RATE_GATE, clk_prepare() protects
+the clock rate in CCF, so any clk_set_rate() call (including from DT
+assigned-clock-rates or a consumer before clk_prepare_enable()) must happen
+while chan->bypass_hw is still unprepared and its CCF enable_count is 0.
+
+However, the hardware enable bit SUN8I_PWM_ENABLE(i) in SUN8I_PWM_PER is
+only cleared later in sun8i_pwm_bypass_enable() or sun8i_pwm_bypass_disable=
+().
+When clk_set_rate() is called on the unprepared bypass clock, CCF propagates
+PRE_RATE_CHANGE to pair->hw while SUN8I_PWM_ENABLE(i) is still set in
+SUN8I_PWM_PER:
+
+drivers/pwm/pwm-sun8i.c:sun8i_pwm_pair_rate_notifier() {
+	...
+	guard(spinlock_irqsave)(&sun8i_chip->lock);
+	active =3D sun8i_pwm_readl(sun8i_chip, SUN8I_PWM_PER) &
+		 sun8i_pwm_pair_enable_mask(pair->index);
+
+	return active ? NOTIFY_BAD : NOTIFY_OK;
+}
+
+Unlike sun8i_pwm_prepare_update() on the PWM path, which clears
+SUN8I_PWM_ENABLE(idx) before calling clk_set_rate(), nothing clears
+SUN8I_PWM_ENABLE(i) before a bypass clock rate change, so
+sun8i_pwm_pair_rate_notifier() sees active is true and aborts the rate chan=
+ge
+with NOTIFY_BAD (-EBUSY).
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261103-h616-pwm-v=
+8-v11-0-07abb59575c3@gmail.com?part=3D3
