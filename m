@@ -1,108 +1,110 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.127.113
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793699161;
-	b=bXdND+vIE4F1h6t5pHJEd0msloKunpg8zLbqzBY84YDfIlPPwQasXD6MOmtGhLQGvFel
-	 3hOmj2+TPK8AhqJMQ8lH2bY5lUVivKIyjaSP130GY9OYXi0HX49z7ExpfiLV0p0+DoI/p
-	 b3kMWxwHFQB36BhHGOI3D2EDy2kxxn8knqyvMaVMhKNEEYkrZcTNcq+9BTWQFn6ILaJmT
-	 MoMkNiodZChK6kO9eGFRrbPmGadKtva5sGF7yMRpGlkFZxX1daJTH3C9uL7Vcpneb2/Yq
-	 P1P8J1t+aKS0gLHJimqPWPWddv7YMywA05/uaUg09KvcAUIsum9sE9UiiiI9on/kfCA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793699161;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:To:Cc:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=1pkedbSPImBF3RB8Y8aTp4GtNrReIWN/JTYaP4eTwN4=;
-	b=X4eGdXz7er4f4IAoWCZdcqZYrFVSGcbGI/8qUTDOKwbu+wB+mVFPrLq3tqCaT1dRPqF5
-	 hXIkXnXaADJjrVa/IOY2vGn4MjMhpjgkUyhJZM7By0UCPC/570Qo8sx5NLRuc7QY9+98w
-	 OiMV/Q9Z5XA1ogV6iB2ErxXRRRN7EFumYgMG7V7OsD/KHN+H9G0UjjShDLLvSu9KzMdUH
-	 lLnSMu0Q0hec2CGYbnaMW292E9vCr83x56dEnqI5AcDcxTei8O61WZOktgD0hs4IjGfpZ
-	 kND3NJwDq8wxsPTYwzev+Z4+1RsuNNw9cn3akvOZjx0kKWpC17gSnxhlIIh4K105IwQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amlogic.com;
-	spf=pass smtp.mailfrom=amlogic.com;
-	dkim=pass header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=ODqXYTHC;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.127.113
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023113.outbound.protection.outlook.com [52.101.127.113])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793699238;
+	b=zr8ESCBLiY6pAWVd3Yf0bolKmjk5xfS3TdvqYDFGWIWm3T6JyPET+Zobkbm2I9Bl3dkr
+	 pwjufWX1Jte1tg8q0gSfKYEcwVQI+IQ147VD0UN8Fak/+ZB5gHzHKbgM/1Cv825iFqgPE
+	 qksPZryvIlFFGC0WMlhRww4oz+XS0llrbMR6ZtfjC0bcoTup9RD9BWDMCxaaGnj29fFEj
+	 PIbznA3a5QiGeIoVzeYs0YfJi9HPitddHqYa7Ot0fBFT0KWk2iFeZo4fh2toslBgy8O2Z
+	 oSuPifHe0ZquASoNKYiFk9pBmia7ee1eV+hI6lawbk715t95l3lO1eWP6UPuy7U1wXw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793699238;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
+	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Authority-Analysis:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=0n0HkzJNtdQjaMLzn2VLaFHeZeyP5LsybYLDB5MJ+Gw=;
+	b=vOJQp1gkXAUUuzHqal3K39r48cKz/qggIJZo1xto7Z4scH/tQ+lO2oYvtvrG9ClHbEav
+	 5cmcEdFqvPF0GW2QWdaaXZBouUs9fiGuOITVLA6y272tuQYHHjHFo5MLRHcoO6BD3XNTE
+	 2mLEFi7asm43l35rsa86AQS5v6QWJ1ey5Xl6hEkrQDiqmXQ9U3eXbfirr21vzE9Z4SyLF
+	 7JEh4nnEZgUPLeBjvjFgv0KVWLuSdbdneYRJmmiqodOAWojCd4/yeywt8/9nJ+Jnt9POw
+	 pluB6nqg9C3MB3eOI5N6kdehfPo4ROeGnlH0bdlvJCll623OXJK7vDrFePmydJ63muA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=GnNNbhwT;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=jONS5vnE;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0B1606A324;
-	Tue,  3 Nov 2026 09:46:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BC0B1606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E974F606D82F
+	for <linux-clk@vger.kernel.org>; Tue,  3 Nov 2026 09:47:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E974F606D82F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=ODqXYTHC
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PnuxprRIygwinJTsgW0TMPgejOeTbUS+Ncj3iLPKSOQGiw5EefALBtUEbzsT/mPQAnxRZRpLwZmU12X1ui+Cw1mNnLDCzVQrRDEAjDqQUAaYmzLpuRN2tkcGpo9uszHVEWwwRBDWITRYxcNYaSEHkAL2eElCgONcMVJF1HdKOjhcpUz7xgGseyoJ7YtVGgu+NvlGcOIGIQZ7AHDS86TM11Rb2zabHUl9LhjHlNCH+qXA0vBlfffrxTHJ4RZzMzNmtRakNfi4t/PsE6Fga05vZ6JYZur1Odb8MQy4J0wwguiKHR2EzW9eCiCpCj4GvTXMgHmxvJcWbWBxhClTrjBwiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1pkedbSPImBF3RB8Y8aTp4GtNrReIWN/JTYaP4eTwN4=;
- b=kJsXUFeKfEpB/IGSOv6TIlnGXUpWgn8hirQHp4F3wRj9vL5u++bzPk0EQXsp9mhH+g1zFw1JpHW54fmL6RQVNOU+MesrW/zDW4KHweGedVQ315gRD0JSfewhXZjxFOptUkPETZ/2caHBVpZCfJrLd/ce4fEPGAloPQIAdqaM6/8ieSFYCqVqcVhrhnrc4bTmcx/V3djj3vByejL5qBUQkPYtbOo7WnPouKVFD+47V989qPdq2kPxDBGojHDFV7pxGo0WIx0A2e/rM5e57pt0n2OADAK3z1QvqkcTrYLV+vvqezBUp8JJxSg8URhDTd3xSNsRFDlw/akkriBiQEONJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1pkedbSPImBF3RB8Y8aTp4GtNrReIWN/JTYaP4eTwN4=;
- b=ODqXYTHCTmD0uP8GWYl6QbvQG2e3gelR4XBsPIUclLf46u4IdarADZL7wPbk8fb1Zk1zsx0knAD/iDHCFIMXPKYQKuaIFqAhj58lLPwFDdc5K77RuB78urnK71Ng49Gyf4c2YptaeJE0hek13KC40306StMFTMyslQ7DU6rqTKimQmUUAwUyguYJPWojALyJGdTCofBZNEq0X/ZxXUYOn43VM4f7JTzTIuSn7+wvLdEg/Apky9umdSuI3O1oae2CsDnYzbL0dLOe3YyS1RBCwAdk3j5l7akcSr0a3H6SkzYu0A5jfgOI4I3BTxR2TRUFysDq7pSFbCjM4kQYQekAnQ==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by SEYPR03MB8580.apcprd03.prod.outlook.com (2603:1096:101:207::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Tue, 3 Nov
- 2026 09:45:56 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e%4]) with mapi id 15.21.0569.011; Tue, 3 Nov 2026
- 09:45:56 +0000
-Message-ID: <48b333a3-ef88-4739-a087-3ed9d8ec60a4@amlogic.com>
-Date: Tue, 3 Nov 2026 17:45:40 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] cpufreq: add an Amlogic speed-bin driver
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Christian Hewitt <christianshewitt@gmail.com>,
- Viresh Kumar <viresh.kumar@linaro.org>, Jerome Brunet
- <jbrunet@baylibre.com>, christian.koever-draxl@student.uibk.ac.at,
- neil.armstrong@linaro.org, sboyd@kernel.org, bmasney+clk@redhat.com,
- khilman@baylibre.com, rafael@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, =?UTF-8?Q?Christian_Stefan_K=C3=B6v=C3=A9r-Drax?=
- =?UTF-8?Q?l?= <ckoever@outlook.de>
-References: <20261025192219.209137-1-christian.koever-draxl@student.uibk.ac.at>
- <20261025192219.209137-5-christian.koever-draxl@student.uibk.ac.at>
- <at7lXEqds7ukoR2V@vireshk-B250M-D3H>
- <1jbj8gkff1.fsf@starbuckisacylon.baylibre.com>
- <at8WfX_G0tfTlFrm@vireshk-B250M-D3H>
- <9556e959-daf3-4c85-8794-9613e7e7a9ae@gmail.com>
- <A45EC676-5B14-4932-A4CF-87ED3B71108D@gmail.com>
- <4a51e879-708c-49dc-a08a-3f64eeec8bbf@amlogic.com>
- <CAFBinCBkJJeRPKLFBA9KYjwXMxFjow_NOtvFoKRQdxD=rOPW3w@mail.gmail.com>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <CAFBinCBkJJeRPKLFBA9KYjwXMxFjow_NOtvFoKRQdxD=rOPW3w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TP0P295CA0002.TWNP295.PROD.OUTLOOK.COM
- (2603:1096:910:2::15) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=GnNNbhwT;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=jONS5vnE
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A39QdOC1141745
+	for <linux-clk@vger.kernel.org>; Tue, 3 Nov 2026 09:47:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=0n0HkzJNtdQjaMLzn2VLaF
+	HeZeyP5LsybYLDB5MJ+Gw=; b=GnNNbhwTN83iXiav3DX1K5/quVWHfT4D2wx1kf
+	Uh1ZktXs2MF1/xeuTrRQVXzlht+LfOY7OZyYFctJCaD3j5AbGentLrNqYKWrfJF0
+	Lu5ZUxIu5DOLd4KIN59UeUOVum+scx9YYyT+SuP0ad5ekY/mzqKO14wfdO6mbRwl
+	Gz7n9wNDtOaxat16zS+UJhzlxQE4mY/BYi9UlgWSFDoOPS1cKUF3/5cDXVC2VRVA
+	Cylv0lzMsNOVo/Q9KgUu8sJIuY8p2TsNGE4H/v4BDPFIcj+MrmHQ+Jz6OBetgrBR
+	16TjekVmnGMX5CB+TRKZctpw0124hRzCB/CFzYdLRYMxiFTA==
+Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hq7ycscd6-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 03 Nov 2026 09:47:17 +0000 (GMT)
+Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-7cc01d48a1bso429386137.1
+        for <linux-clk@vger.kernel.org>; Tue, 03 Nov 2026 01:47:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1793699236; x=1794304036; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=0n0HkzJNtdQjaMLzn2VLaFHeZeyP5LsybYLDB5MJ+Gw=;
+        b=jONS5vnEp9hUF1cE56MVN33U/Q6k+9zuYs5++dT4IKO7X0w9n9hl+TGTrJi8Mn3nar
+         YsnPMhCMqB1jhye4sqjLLH32Uc+G3pmOOtvAihiGo3XP/gifCFIhGpkotYuq3/CDA61A
+         hPqogvLMvnhc//LkIhH9Os2zh8+IsjvTbQmo4chvypvd0GXcJ2Cv9flFPO2PPwUrR4Gt
+         4wf9ZRiIlY2ccF20CF4oq23atQyipZkoY70Uaw3xYzMP/7wY7YWIB6vYXzw8s610KTa5
+         J1qidPgV7bgaOAQZLOYuOa8/xaXBNZF1zX6UIupBTTRz8qRfS4Qosy5B7I+c3dKF+nc/
+         aylw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793699236; x=1794304036;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=0n0HkzJNtdQjaMLzn2VLaFHeZeyP5LsybYLDB5MJ+Gw=;
+        b=mCQWXRQsOjuFB/tbE2wxdmjL45EbqhjAtpow3Na5TZtVgWX9liugupC0CoWeQbFjCC
+         BjVwzeZLNlsBxONMMAHKdXlRQssUuxvZN4Hc7Goc13k/ZFu3gB/M7zVM8cHLNPc1o/AS
+         2r1pQInDdP0O9FPoanAQY2fGy/CSqM08mZjtkkbRizrWirKuhK/wBEbeAmUSoW0HcJeG
+         Zpt9ZDv6HMqeVgh/re2ThqSSQXzSW6f1Nj5hetdeLK5k6X0BRUBS4sHbS0vShD7jQwMI
+         wnVX3BhSTZz8aTdNJcfFDvRNuyRti+OMEFJ2GBZ8NnTc07r78jYj9u302ePiRPE4schL
+         OZrw==
+X-Forwarded-Encrypted: i=1; AKwUvByE0p75gY4Rul+3mw9Z84qB98zT/q0WNHM4F6RXUgjlli4S8AoFzGJs1hWI8046n/9XKXb0NIECxXM=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9jMMYHrOvHWkNdJyuLYXyp992aKf2nxgSkzXnXi2ZmDhicfvfq
+	Ix0LgMVn4yZ96k5Q+adOaNSTCHFewsJexcRRXjr94bEuGwtx00wvA6geCfwyh49RF3yF2brsgm3
+	A4ajvSsYONnRpuoYYGvhtUrFRZjkSpCC9PSra3F/2VcmsTjVaCwj4S8cSJgJAiIc=
+X-Gm-Gg: AYBFou2wyT5HqNlDS9aQdkKaRZ/MlA1aFEB0KF7VY1AxoglSSDRMUZ32SYt8uB1jtJ0
+	ieAP64dkwGbeQxD1w8T41OfRJ/0fXqIBJnLUKoxG/+rjK0iWyqys3UchVhIrnZGbObo2Ak7NFd7
+	F+a1ZPnVe6Cglkb0clONPaqNZOFXpQ8UYe0X/El1XkVEaGCpGJmt52iwIEPlaIfGHUHpVcyniHU
+	kQ3PuffBCjT6NLs/YXiH3ZMYdWqLX3MPQijwtZ5pI67x+EWggPMf2U/oJr66Y7durwzS5Dq8OhX
+	MFKq/kxjZRNvQvC5IDWt+VUc1hI+5HkAU+Q+fC7/En9kpZ+OlRFrBiQ/v9fAPIUxV3icfNWLSmy
+	sEpX8lf9kHLxuY9dK8ENtNEicjX2EzsibeApxci+wQPI8oVZPSwVQzlEuNg==
+X-Received: by 2002:a05:6102:e07:b0:7b3:9d2e:c1a2 with SMTP id ada2fe7eead31-7d0543af600mr4596913137.42.1793699235925;
+        Tue, 03 Nov 2026 01:47:15 -0800 (PST)
+X-Received: by 2002:a05:6102:e07:b0:7b3:9d2e:c1a2 with SMTP id ada2fe7eead31-7d0543af600mr4596907137.42.1793699235236;
+        Tue, 03 Nov 2026 01:47:15 -0800 (PST)
+Received: from [127.0.1.1] ([188.27.161.77])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71b9eaeesm24018477f8f.49.2026.11.03.01.47.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Nov 2026 01:47:14 -0800 (PST)
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Date: Tue, 03 Nov 2026 11:47:12 +0200
+Subject: [PATCH RFT] clk: qcom: clk-alpha-pll: Fix the rate of Zonda PLLs
+ with a negative alpha
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -112,240 +114,161 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SEYPR03MB8580:EE_
-X-MS-Office365-Filtering-Correlation-Id: c111d39e-1e7e-4659-641d-08df398f4203
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|23010399003|6133799003|10067099003|261102123227099003|22082099003|18002099003|56012099006|11063799006|4143699003|261022075727099003|261026121527099003|261026140227099003|261021121427099003|261022105027099003|261009223027099003|261028144727099003|261009221227099003|261021123027099003;
-X-Microsoft-Antispam-Message-Info:
-	D+y5+H9rNT5e9wHUS8YvJ2m0mZs1n7Uc83XKajEt7Oa4XueXB6DtODb8wGpPa3P8xe+c7UPyYwnKxNb1Qu9prlBd5qzRUkX85iOKQR+6taFyskJZ36DfoPiNH+WpbL3mCPyk4g48HfSPtJ8BPlS6S+NpZo5yiqM2E6kRdoubD6C5EugB6W0CVRQ44Vi9TMj3FOgngIHwcUtErdMVn4h4AbhFo9j/wCmUXQt/KK7Y13fTwEMwd20Cq3Yl2Y1L7lR0uhrm8JWHfciZFphegQZK72PTJ3oGD02obLQRevXn1P/gWmLDFZ6UB9GP7XifNuRfSG7mutRgRH+PzK5TKrndjkQg5V5hgEUCJNdxWWR0N8nUY+7iVVdNOKsvg8r3uW3w6HDK+7+sWZQg18YmmMo9hvD8sz+fQ06T7GNVQ0hbKWz917ihNh8yVYcplQesX5haQyAd1UlNdW1VQPE5xiPE37GHpDvtZCwqSN6xv2Zjic4WiKDQ658Rz6xb8ZJXJ739ibxs8+01Tn3ts2u5OLchmSFGZbUPepnGWLmslNGLwnNjF7Ni0oK7BdYbCXxWbkc+l3nC3v09Td7RkJKxDZy8gwClfpW+XKMRs6hr4Pb5aDW2GRZKAHhDCazM5tBmPz2G4NkHGvVHSuyuGvN9OYv12aUaUDQodVjAPYCVYZJWaXI=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(23010399003)(6133799003)(10067099003)(261102123227099003)(22082099003)(18002099003)(56012099006)(11063799006)(4143699003)(261022075727099003)(261026121527099003)(261026140227099003)(261021121427099003)(261022105027099003)(261009223027099003)(261028144727099003)(261009221227099003)(261021123027099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eHc3dDRWNjJNWWF1UWNqcm53bEU5bVJRNXhPdEFaRmdaWkMwY0w2aWZzb0hO?=
- =?utf-8?B?STl6UWl0c0R3NHFCcXFyWGZtT2c1Y2Y1T216UkMxYTNjVzFCUXMwM0w0MXBY?=
- =?utf-8?B?WGlPS0FlaTRxc3U1SHlnMTNNNERac1ZvUmNHVlU3RS96SUZQNXg2SVpqcGo1?=
- =?utf-8?B?cXc3ZDF3N2l4aVkrZkVCNHJnOUc0MnRhdFlQV1FyRTRHMVdCQkYzaU01SGo0?=
- =?utf-8?B?QzdnYWhBT2Y2RlNCMzA0dE1ZSm15Vi9ldENMYzlPcmJKT3pUOGNvcy9reVdh?=
- =?utf-8?B?ZjFnb0pMWGcyS3lUWDhUQXprU3VvM3hBQ2REa1I4SlVpUmhNZEVOSDN4Mk5N?=
- =?utf-8?B?TXdmUGlSOUxROGV5MVY4LzdQMnc2dklwMENGRmg3VzNjaHNGdDFQbi9lTklD?=
- =?utf-8?B?RUljQjBEMjJzN1N2N3BJT1ZHY21TSWJTRUgzMmxPcXA1TGdtUVMzSWtWb0g5?=
- =?utf-8?B?dDNNelhxaUdEbjRXNFFBUnZKSERLVzJTandwbGt1M3k4dUtMQWhZUldSNXBI?=
- =?utf-8?B?UDY0dWVIYnB1SGNCcGVSYWlaZlN1SnN3RVpHbkh2MHFjbUdkUnhvM3ViMkQx?=
- =?utf-8?B?ZFZZdHZBYXhFdm5GZnJNODRaRFlKV0RLRFFudHpFZFJQak1QSml3MzExMkto?=
- =?utf-8?B?U0c0Q3QvNmg4OS9ZTEw0aC81SjdOd2JrWCs5azd6dUJXZ3lBMThZVXQxNDZa?=
- =?utf-8?B?NFJRdHZ5dmgvL1RhM2IyaHkrTHBmQ0QvV2pxUkRjTnE2ckhRWE4zYmU0ZTl1?=
- =?utf-8?B?cVNaMUtRYU9QUThWaldNVDBWbnFQd2hQY2hCcHNRUkZSa0NzdEhpdDgydVgx?=
- =?utf-8?B?NWtFQk1WbDV2ZGM5SkhSdHFlNmF0RzM1UjlJMHRmRXhNNjZZOEp6ckxpOGJM?=
- =?utf-8?B?SHJ5Zmora2xjVEZmYjlIczZIdG1ONTJwM1VsYlJEL2l3dnpRekZTWUd3TUM1?=
- =?utf-8?B?Y1dMcmYrQmM2aXBFVDBjdkNVSlpEcCtkRFdwSGhBWGNZZkovZXB4YUMyT29i?=
- =?utf-8?B?VzZHd1BVeUtaWXVXcmVkb3BBQUJXS2Y4aWZPbHZMcmxjeldTMGMvT0ovS2pr?=
- =?utf-8?B?cVIvMVArcWZlV0VzZmdYMXE2dmR2Q1loaWNwNkdtMUNHVC90ZHlnamxBUHh4?=
- =?utf-8?B?OU92TDdUMWFCS2Z6MlI2blhnL2UxekxMc1Y4ZmhySHpRbytNVENNVHVCdElY?=
- =?utf-8?B?Y2pMT2xPZjFGSTlLTGdUMHg3NkZFcXhsYXFvTm9LdXVwMVFUNnM4dEE5N0Er?=
- =?utf-8?B?RGdwQTQxQUMzMkVJc2tzY3VBdnZYelptRXFaekY5djhvR3lxL3BaQnpkMU5G?=
- =?utf-8?B?UlJUNUdvNVlOd3BkSWNJVTlJN1BtY2ZnMVplL1pxeEZIZm9palNtY24rM2Zs?=
- =?utf-8?B?clkyU2tOQW14RFhuVUFkVmlkeDNTOW1sNmV4bTdhSWVTZDNSejdIdWtQWWwz?=
- =?utf-8?B?YWl3V1dlMzlHUFdOd1pjYVZFRWxyVmMrTmRrTzU5SHMxanBobHF4d090YlJv?=
- =?utf-8?B?TFQ0QjBLZU1FTlZDZFROcHIzVWhxUnpyY0Vxd0NHMEFuY2pJWm0zZjAxcC9r?=
- =?utf-8?B?RjhwM1JyTE51Vjc1cW1ZeGdRSVpDTHNwcGd5c0hTV1BCME9Yck05dncwSTZp?=
- =?utf-8?B?ckIyWEVjQVR4QU41SjhMSU9LUVhmZm8xaG9WcE9OdmtaSVdDbnExMEU4MkxQ?=
- =?utf-8?B?K1RpTEVZVzB2SjI0SmxJdTBjMmNqcHVvOFRRbVBlcWxsWXd0SmNLQTZsQ1dK?=
- =?utf-8?B?eitrTUc5KzNSTW1CdTNUYUU4L2N2K3VGWTBIMXJHcXlVSnBXR0g3bS9WYjdI?=
- =?utf-8?B?WHpBRmJjcHFDWXFvbGp6Y2laajlkSGNOdjJINGlFTGZEajFNQldSbGV0UVFh?=
- =?utf-8?B?Q2VYaENESTlraUdZTGk5SlNBMUQ0eG43VldYZjY2ZEkxL3IwWlBzOVpTdzlR?=
- =?utf-8?B?SkRhb2p5R1h0RStMVmtDWWhvU2tVOTJ5M2FhYUlVa0hSa1VmL2w1VXJ2dFVP?=
- =?utf-8?B?VjJPTkk1aDA5Q0RTb2JuUXd6VHJVbDQ0Z0FQUTE4MWFsYXpqbGtoVUN6aE5Y?=
- =?utf-8?B?enpRN0Z5WkZjSVN5OVRCcUEzOFdjKzVMYmFXVldtL2w2eVg2aGpNSXNiQUVI?=
- =?utf-8?B?clNhSzlGV3JiVzFrenZ1UHBlcC9uaGJuU0VUd0tUZlpFRHpDbkY4bmJZbFI1?=
- =?utf-8?B?aXFLT3VtYW5lN3FIdFFzakpZWURjVGhoWTJJcm0zbVFKSmdWMHlQWUhKaUtJ?=
- =?utf-8?B?Q1RmTCtocTVKK2haOHIyZlBYSGdtdUdHSzZuS0MzbFUyTVY0ekR0UDltUFBR?=
- =?utf-8?B?VTBEQU92Y2VFV0ZFaGs2WTFKMU5UYnRtSkovVy95Mjc0K2FtTk9Zdz09?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c111d39e-1e7e-4659-641d-08df398f4203
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2026 09:45:56.2365
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: q30Qc4FjoBmWmHb7Vc2o4SP8OEor8l1xgL76iQf7tUlmvZpSkuO/SjBiShDLDu3H8nFoOExItQJv02N0IJbJHw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB8580
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261103-clk-qcom-zonda-signed-alpha-v1-1-31559b3b872f@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAJ+t6WoC/yXMMQ7CMAxA0atUnrHUpKiKOAAHQGwVg0lMayhJi
+ QEhqt6dAOP/w5tBOQsrbKoZMj9FJcUSZlWBHyj2jBJKg61ta0xt0Y8XvPl0xXeKgVCljxyQxmk
+ gbBq3bsm44CxBEabMJ3n99A522z0c/lMfxzP7+9eFZfkAEGXSDIQAAAA=
+X-Change-ID: 20261102-clk-qcom-zonda-signed-alpha-33846a18d82a
+To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Sashiko <sashiko-bot@kernel.org>,
+        Abel Vesa <abel.vesa@oss.qualcomm.com>
+X-Mailer: b4 0.15.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3378;
+ i=abel.vesa@oss.qualcomm.com; h=from:subject:message-id;
+ bh=NGjlwTJr3xwIbJKj95ykRuhiH5GJEDrsyfPMCsr8X3E=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBq6a2gjBxk7B7wjkjrGxO/bK1L4lQ+jBG2DyEZu
+ eXrsveEt+KJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaumtoAAKCRAbX0TJAJUV
+ VnnRD/9lIFtvtsyDSD/kQEokY+dGlPYj2iqAVCVKzzr617qc4qDQOm03wA/LZgfQBbl6+giZ43J
+ fCHjSSBjsNN2o9VexxUrGBJzay6vKXgTlKpTCHI6eLhcnCU+Iv3F4PExEi8J1Xfrw6ky2MZHPz7
+ K8ioprMG16ZAZU7+GHXlIPwDL7XLbwCrYhFjrQJxIHlTskOIs/E8scQYyO+cT5SF+IHbHV0m4wj
+ niQ8ppNimue/p/J3pz5xqSbtOcbFi38p0EMm0YcVxChfrYApaasq8jBO0+yer1MGKBnTs3gms09
+ fQw3Hdbw+JUyKrTD1OCA8IhWin5x3wV99xgYX3n/0GX+6n9LhqyYTibrdC9IfyVKhiuCG68AWzF
+ 53M+m3AB4QJzZT7yWPvKnhPAJ+wWKS06G1gVh4dZTh1bJa8790ZigcIYVRrlh6zfXRqezEDxx0x
+ yNljpW4/slcUpB3i4evioPFyZW8vYe0uNyxScnmRf5vZP9ikCchGi6S9azdBoRgTrX1GO1tGxnY
+ KAUn5g9D40mTF+SOevLulS0/y6SJQLG9Rw+b6lYsyu3IKganh4aAIeJG70+RWistYFRoPNfeSfC
+ btGCmWebNhbPOb3qvM4XJr7/j+M+l581E10K/VbhbBm/rTeC37pbI6RnMnn8KNxDGPryCTAspHc
+ UViKTt4mchLGogA==
+X-Developer-Key: i=abel.vesa@oss.qualcomm.com; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+X-Authority-Analysis: v=2.4 cv=V7foQuni c=1 sm=1 tr=0 ts=6ae9ada5 cx=c_pps
+ a=N1BjEkVkxJi3uNfLdpvX3g==:117 a=asF+/XNaGoxFafzDDLC1GQ==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=c92rfblmAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=HIFZfxgX9pW5VpyTZ0YA:9
+ a=0bXxn9q0MV6snEgNplNhOjQmxlI=:19 a=QEXdDO2ut3YA:10 a=crWF4MFLhNY0qMRaF8an:22
+ a=GvGzcOZaWPEFPQC_NcjD:22
+X-Proofpoint-ORIG-GUID: Wk1BhfBVu8mioB66SptZVbSYnAGGYrzV
+X-Proofpoint-GUID: Wk1BhfBVu8mioB66SptZVbSYnAGGYrzV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTAzMDAzOCBTYWx0ZWRfX5GYyh9u0jqzk
+ RHFU7AEL9eGoi73gLaDh1mySMKoLL0XspPFOO/N3czez6tAnSbzqEUDIKvHSVanarO1DPoCmd1E
+ 0eVetAUaf5bgOfBCSkd08V2WYsyHs7/cCVN8AujuGTgQjNVkBy+SOIMsamhJHAJawZ5inRdmIWg
+ 5zKCnqzmjyBegMzyPsAlkRQR7DjNk+zb0qhpnOfd8ZDNPhMeL0WoeH2luZ+Sm+W2DFT/PCacTaQ
+ 6ff6ohKz73/MSf5ZE60jFDZQwDlOSEuxO1D4wABQa7tVZJGAGjpZc638uM8t4Yo5o7koHcZqeJD
+ I6jeT0Id+RVMOom9jTF5SoYlkf7Jv8DQLlGoMPTZii1rcwtpGsQQ7KrVSSRMREcXL/bp4v3wYcr
+ 9A8v7MT4E9biGyunrdvZwFyH8dZLz4X90vDfWmmHaEUjUeH4+oC9NcfxDDLk+nNxNnKrplcB5Hd
+ KqZXObzsqrLj3bedmBg==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTAzMDAzOCBTYWx0ZWRfX3ka9YGF9f1O7
+ 3LyJ1g5yAVV8X14tfMvMTYV2E3Y9JkTptZSn9jOLO4BLuFU1JDf8OnD3l9ORM5CLnucpBu05wTW
+ 8DRgPqvAmuypTyFSxTJ+A5eQTkRyUoU=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-03_01,2026-11-02_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 spamscore=0 clxscore=1015 bulkscore=0
+ adultscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610300000 definitions=main-2611030038
 
-Hi Martin,
-     Thank you for joining this discussion. :)
+The alpha value of the Zonda and Regera PLLs is a signed fraction.
+clk_zonda_pll_set_rate() accounts for that by programming L one higher
+whenever the alpha value has its MSB set, but both PLL types use
+clk_trion_pll_recalc_rate(), which takes the alpha value as unsigned.
+For such a configuration, the rate reported to the clock framework, and
+so to all the children of the PLL, is higher than the actual one by the
+parent rate.
 
-I have re-examined the capabilities provided by pm_opp and cpufreq-dt, 
-and it seems that we may also be able to adapt A9 fairly well based on 
-the amlogic-cpufreq.c here. So we have no objections to the driver 
-implementation in amlogic-cpufreq.c here.
+Add a recalc_rate operation for these PLLs that takes the sign of the
+alpha value into account.
 
-I was most worried about before was that cpufreq-dt might not fully 
-handle the complicated clock and supply adjustment logic between 
-multiple clusters, which would have required adding a separate 
-cpufreq_driver. But it now looks like this can be solved by adding the 
-corresponding config_clks() and config_regulators() callbacks in 
-dev_pm_opp_set_config().
+Fixes: f21b6bfecc27 ("clk: qcom: clk-alpha-pll: add support for zonda pll")
+Fixes: 0c31f6a3ab7f ("clk: qcom: clk-alpha-pll: Add support for Regera PLL ops")
+Cc: stable@vger.kernel.org
+Reported-by: Sashiko <sashiko-bot@kernel.org>
+Closes: https://sashiko.dev/#/bug/linux-17339f1f-7afb-40a5-96cd-70361917e0f2
+Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+---
+Tested on the X1E80100 CRD, which boots without new warnings, but does
+not exercise this change: the registers of gpu_cc_pll0 read as zero
+while the GX domain is off, so its rate is reported as 0 either way.
 
-On 11/2/2026 6:51 AM, Martin Blumenstingl wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> Hi Chuan,
-> 
-> On Thu, Oct 29, 2026 at 6:30 AM Chuan Liu <chuan.liu@amlogic.com> wrote:
-> [...]
->> Regarding the concern I mentioned above about supporting a unified
->> cpufreq driver across S4, C3, T7, ..., A9, let me explain it in more detail:
->>      - These SoCs fall into several hardware architecture categories, and
->> I'm wondering whether we could take all of them into consideration and
->> implement them in a single amlogic-cpufreq.c, for example:
-> I think the main question here is: how much code is shared between
-> various SoC generations.
+Prepared with help from an LLM-based assistant.
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
-In my view, the main difference lies in the code that handles the shared 
-and coupled resources; the rest should not differ much.
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 60173b076cc5..59fe8fde81c2 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -2274,6 +2274,32 @@ static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32
+ 	*l = rate + (u32)(remainder * 2 >= prate);
+ }
+ 
++static unsigned long
++clk_zonda_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	u32 l, frac, alpha_width = pll_alpha_width(pll);
++
++	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
++		return 0;
++
++	if (regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &frac))
++		return 0;
++
++	/*
++	 * The alpha value is signed, so with its MSB set, it is a negative
++	 * fraction and L is one more than the integer part of the multiplier.
++	 * See zonda_pll_adjust_l_val().
++	 */
++	if (frac & PLL_ALPHA_MSB) {
++		if (!l)
++			return 0;
++		l--;
++	}
++
++	return alpha_pll_calc_rate(parent_rate, l, frac, alpha_width);
++}
++
+ static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				  unsigned long prate)
+ {
+@@ -2322,7 +2348,7 @@ const struct clk_ops clk_alpha_pll_zonda_ops = {
+ 	.enable = clk_zonda_pll_enable,
+ 	.disable = clk_zonda_pll_disable,
+ 	.is_enabled = clk_trion_pll_is_enabled,
+-	.recalc_rate = clk_trion_pll_recalc_rate,
++	.recalc_rate = clk_zonda_pll_recalc_rate,
+ 	.determine_rate = clk_alpha_pll_determine_rate,
+ 	.set_rate = clk_zonda_pll_set_rate,
+ };
+@@ -2998,7 +3024,7 @@ const struct clk_ops clk_alpha_pll_regera_ops = {
+ 	.enable = clk_zonda_pll_enable,
+ 	.disable = clk_zonda_pll_disable,
+ 	.is_enabled = clk_alpha_pll_is_enabled,
+-	.recalc_rate = clk_trion_pll_recalc_rate,
++	.recalc_rate = clk_zonda_pll_recalc_rate,
+ 	.determine_rate = clk_alpha_pll_determine_rate,
+ 	.set_rate = clk_zonda_pll_set_rate,
+ };
 
-> 
->>        * S4/C3: 1 * cluster
->>        * T7: 2 * clusters
->>        * S7/S7D/S6: 1 * cluster + DSU
->>        * A9: 2 * clusters + DSU (the 2 clusters share one DSU)
->>      - For different hardware architectures, the resources that the
->> cpufreq driver has to manage also differ and are coupled with each
->> other, for example:
->>        * S7/S7D/S6: the CPUs and the DSU share a single power rail, and
->> the DSU frequency scales proportionally with the CPU frequency
->> (typically dsu_clk = cpu_clk * 80%)
->>        * A9: the resources that A9 needs to manage are relatively more
->> complicated ...
->>      - Optimizing the cpufreq transition latency:
->>        * Clock latency: for most S4/C3/T7 customers, the released bl31.bin
->> only supports configuring the CPU clock through SMCs with discrete clock
->> rates. Frequent set_rate()/set_parent() calls in the kernel would result
->> in a relatively large clock latency, and would cause the sugov thread to
->> consume too much CPU time, hurting scheduling performance.
-> We also support a few more SoC generations upstream:
-> - Meson8/8b/8m2 (32-bit ARM Cortex-A5/A9) where we need to reparent
-> the CPU clock to XTAL for stable operating during clock changes (which
-> should go into a cpufreq driver that implements target_intermediate).
-> There's no secure monitor or firmware involved for CPU clocks.
+---
+base-commit: 2637bdec0535a2044cd830eba9a79363651d9043
+change-id: 20261102-clk-qcom-zonda-signed-alpha-33846a18d82a
 
-BTW, could we put the CPU clock handling logic in the clock driver like 
-G12A does (though, of course, handling it in the cpufreq driver might 
-minimize the coupling between the clock and cpufreq drivers)? That way 
-we could fully reuse the existing cpufreq-dt?
-
-> - GXBB/GXL/GXM use SCPI firmware CPU clock control so to my knowledge
-> we're good with what we have (meaning: no custom cpufreq driver
-> needed)
-> - G12A single cluster, no DSU: needs a cpufreq driver that implements
-> target_intermediate (currently it's managed on clock driver side in
-> kernel space, no firmware involved)
-> - G12B multi cluster, no DSU: needs a cpufreq driver that implements
-> target_intermediate (currently it's managed on clock driver side in
-> kernel space, no firmware involved)
-
-The cpufreq-related resources on the SoCs mentioned above are relatively 
-clean: each cluster has only one independent clock and supply of its 
-own, and these SoCs also do not support voltage selection based on chip 
-binning.
-
-> - SM1 single cluster and DSU: needs a cpufreq driver that implements
-> target_intermediate (currently it's managed on clock driver side in
-> kernel space, no firmware involved)
-
-Compared with the SoCs above, the difference for SM1 is that it needs to 
-additionally manage a DSU clock. In this case, the clock-related 
-handling can be added in dev_pm_opp_set_config() in amlogic-cpufreq.c 
-(by implementing clk_names and config_clks in struct dev_pm_opp_config).
-
-> 
-> [...]
->> The amlogic-cpufreq.c as implemented here can indeed cover the case of a
->> single cluster with no shared resources, such as S4/C3/T7. However, for
->> the upcoming SoCs where multiple clusters share resources, it may not be
->> sufficient to cover: for example, on S7/S7D/S6 the CPUs and the DSU
->> share one regulator; on A9 the two clusters share the dsu_clk, and the
->> sharing relationships among cpu_reg, cpu_sram_reg, dsu_reg and
->> dsu_sram_reg are even more complicated. For such cases, extending the
->> current amlogic-cpufreq.c would be rather difficult, so we would like to
->> make an overall evaluation.
-> I think you're making a good point why it's fine to have multiple
-> cpufreq drivers for Amlogic SoCs.
-> My suggestion instead is to name the driver in this series
-> amlogic-s4-cpufreq (or similar). From what I understand C3 support
-> (maybe also T7?) can be easily added to the same driver.
-> For the 32-bit SoCs I'm planning to implement amlogic-meson8-cpufreq.
-> I don't know how relevant DSU is on SM1,
-
-On SM1 (as well as other SoCs that contain a DSU), adjusting the CPU 
-clock requires dynamically adjusting the DSU frequency as well. To 
-balance performance and power consumption, in typical scenarios the CPU 
-& DSU frequency mapping satisfies:
-   - cpu_clk <= 1 GHz (the clock sources of both cpu_clk and dsu_clk 
-come from fixed_pll, and sys_pll can be turned off to save power): 
-dsu_clk = cpu_clk
-   - 1 GHz < cpu_clk <= 1.2 GHz (the clock source of cpu_clk comes from 
-sys_pll): dsu_clk = 1 GHz
-   - cpu_clk > 1.2 GHz (the clock sources of cpu_clk and dsu_clk come 
-from their own sys_pll respectively): dsu_clk = cpu_clk * 80%
-
-> depending on how tricky it is
-> support may either go into amlogic-meson8-cpufreq or (a new)
-> amlogic-meson-g12a-cpufreq.
-> And for the newer SoCs like S7/S7D/S6/A9/... I trust your instinct on
-> whether they should be in one driver or multiple.
-
-To summarize, the characteristics of the above SoCs can roughly be 
-grouped as follows:
-   a) SoCs up to G12B: 1 * clock + 1 * supply
-   b) SM1: DSU clock handling added on top of a)
-   c) S4/C3/T7: voltage selection based on chip binning added on top of a)
-   d) S7/S7D/S6: have both the characteristics of b) and c)
-   e) A9: has these additional features on top of d):
-     - Handling the DSU clock shared by the 2 clusters
-     - cluster0 and the DSU share one supply
-     - The cpu_reg-sram_reg and dsu_reg-dsu_sram_reg voltage scaling 
-must guarantee Step-by-Step Voltage Tracking (one can refer to 
-mtk_cpufreq_voltage_tracking() in mediatek-cpufreq.c)
-
-All in all, it looks like we can currently support all Amlogic SoCs in a 
-single amlogic-cpufreq.c? Then, for the specific characteristics of 
-different SoCs, we can differentiate them through the "compatible" 
-property and add the corresponding drvdata for each.
-
-I'll also try to support S7/A9 with representative differences based on 
-this patch.
-
-> 
->> We have done a lot of optimization on these issues from both the
->> hardware and software sides, and we would like the cpufreq driver we
->> submit upstream to cover these optimizations as much as possible. For
->> example, the bl31.bin for S4/C3/T7 has already been released, and
->> updating bl31.bin may cause extra trouble for customers, so we would
->> also like to balance this and see how to minimize the impact.
-> I agree. I my opinion it would be best to allow the OS (in this case:
-> Linux) to manage clocks so (closed source) firmware binary blob
-> updates cannot cause any trouble.
-
-Since clocks such as cpu_clk are the most fundamental guarantee for the 
-system to run, in order to prevent userspace from arbitrarily modifying 
-registers and causing the system to hang, we restrict these registers so 
-that they can only be read/written in a secure environment (e.g. TEE).
-
-Regarding the closed-source firmware binary issue, we are also actively 
-exploring more flexible ways to avoid this kind of trouble.
-
-> 
-> 
-> Best regards,
-> Martin
-
--- 
 Best regards,
-Chuan
+--  
+
+Abel
 
