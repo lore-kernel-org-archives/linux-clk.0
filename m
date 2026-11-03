@@ -1,110 +1,45 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793726471;
-	b=fut2nil4185z/r+PaYfnZIrf1fUlCeWk/67qF4r7m8yqf/z5IJ1o3U1rmBYDcOM1k8sl
-	 Vml6yXX6ZPt4+oNa9THqtFhdhA/CRY/S531euTk8jSt7gJYA2P1zEkr9bV1wdFcGsc5SC
-	 nWotinS78I0ke4z/aj9qKY2lDVKzRRH1DAtG8secMiAxh6Qxh+YPahNlozfpynlCnWt2R
-	 TpEGLkcKWIeIdfodAjocwREpay6Zp6pXFktZu4nRabOzT7uj3az8Ug6HW2Do3mwfbhZwE
-	 OBwzox7eLG0B1p9L/PZTjEcuAj+HoGdJhUwoZHfNBPpIotlkHkwHBO/pTC29b+gChZw==
+	t=1793736263;
+	b=MBw3JkeoGbOK1Osp1njy9T9stCO0mHa3dyxCTCguoa0gZIoMztmZ4HYiQzMPg1V5VTU9
+	 6ydsiMmg77vo6YeATI3ukeH23AaP+iC7rehhE6KHRGp6DhZJA+2mduV2a9VEgZxtgzu3D
+	 dj+x8LtW6NyR32VKwH6YJ6PfYzWvMbGKrTv1vrjfC5hN/FzNAAxjIOW/gLoGmX/QuRS7O
+	 Tf5f67XB8jJ+j0RPyEbRGfAa6SWebGdarNw0NBD9CRakhGwP/4zQuj0u9oS0e8iDGuPZN
+	 uW6DxiEpEbsIrek/wy3+hDdgUZ/r1UHN1UhY5mapzWbq16avrjPasK+vd57JEalywug==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793726471;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=y82kaLlVdTMG/Dxoi+XgELgK4jbU4ivpOZ2fmcDfzkY=;
-	b=oAJWG9oBWjucsPdK2Qhpe7+vSOkRishfI/oK+QVMdxsCJh56ckbWJjUA1MUax6VwnmYD
-	 TdaJSAD6h4uf7Z+wL6lvhf1k0L6PuiRTzkCR1KJyTJeBeQVz2052v2ufz4kYF/Dkz+2iZ
-	 XAgwvim+n2zdFmmILghLrNS7MCxyPEaX+CAqfS4FJirumoI7C9Sl/Tgx64dkBrHEbe1/5
-	 xFLgPHREChh8+mD7k/DBa7f04bTgP6O8RyTUvbRopX0unaoSbVbcGf5FuKSeYbFX62qNW
-	 SwBLs8JremYBO9nU0Xn5p3+sAdGlXWQeXndPHh17i6HY6qi+/UijEgVQ87Jwr6UJLBw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793736263;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=DvyGW+2TDqyDyX09YOv1ylVGzTnFOJnhc9Nr54EPKMQ=;
+	b=MuYJCgcLev54I/ckUOnMzwpBkxQCWrJTztEvfSJ/Q5oOL7et6EzBhQkoqY3TsoqefFTe
+	 ArM6FBxDnnpKor1sx6cfmMu+9gybZUjrohbDoaVBdDD+JiWPAEaJJ4bZoGEuVai6waoHL
+	 XZrxQlMLtEv+/iBNNLW/Hey7nQ6Vo49+XYoLXopHLaC12WDnRvFu7Vx01ABu/asF6Kasu
+	 yznDDYKmVqwchKo1zElOUWLy8ot4oiSQNVnkpROqH+XOLWoWAW4ANICr+Zx/1pTpJoAND
+	 FSyuViJ49sppJtEKJFLZ+Li2WcRpxNWepQBGP6SBAJtv0+7IGJcPEt/Ndsq+Gw2tAgw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ldQsDtoh;
-	arc=none smtp.remote-ip=209.85.221.53
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gCAK6sRl;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06FF606D81B
-	for <linux-clk@vger.kernel.org>; Tue,  3 Nov 2026 17:21:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F06FF606D81B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A39606A31B;
+	Tue,  3 Nov 2026 20:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ldQsDtoh
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-48e4831c028so3906033f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 03 Nov 2026 09:21:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793726469; x=1794331269; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=y82kaLlVdTMG/Dxoi+XgELgK4jbU4ivpOZ2fmcDfzkY=;
-        b=ldQsDtohDharnYy2z11zHwwe7rswcAqPfTfDw7574RAaaw8KeHx16iImp5eiMDf2pE
-         upkLRmjleABpNwD91UV4XrPtrNf+nmTYgaPJkmAW2Q8vw3J++DQm+24OuVlGAAMWaaiP
-         QQdC2+3YIJ17Zqwn9drO/Z+xvHgbuXPw4dPhXdnO4ot5K155EKEie7ysO9gHSV+TtJEP
-         pX6g5lTX0j0O/P6V0IYGPIgjzdNbkiSmKuxyx+QUzo7HLM01KuSU2POBVFovBHu9qaM4
-         fa8OT1SxUKvsK+cnxlU2FEUBT25RbO0e/FbReyIyinzPYyBNZqBezvrwBL5kTwUuEEz+
-         LUyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793726469; x=1794331269;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=y82kaLlVdTMG/Dxoi+XgELgK4jbU4ivpOZ2fmcDfzkY=;
-        b=jxrgR8xGpFaSE8n03OP1riZv71sxvl3GYVrca9VUHitiWJigciiPhNd3ffuzfiYLDV
-         ufhyFrqc/cbYgd5CxETCLUvT+d0fPDh2FVNOLVB7FUVjgM33yReGGG1YHdaY4uaRVInZ
-         mj8XHeeCxW9FjN6CdW7bhSW6X5/9v4AybLEmcMiSQs+/0Wxb3f++uFtKB79UpQx5bnu6
-         KtongbeC3mwwaFq/GxuZvr9D1v9GFou0FawU+huERmoqnvahRFBaTgbhHNBgnE9iHvL0
-         JBooT19M5Zn1u9Xb/1K0CK3KdXrVhS1TX3fgt04VmFner4uEoeknD9iHTKEjHRxbAoOa
-         7dew==
-X-Forwarded-Encrypted: i=1; AKwUvByuFjA+QbFCqlWhUevd0DoArtVMucoQmO6aSlkMQ9pjFfJmiZNIFCg0nTUOk/eIWVmdNzhBYn8disc=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9D+iAqZTuepRqN2S27E2J6mg3wz+CnRLYAlb6E1Ama7tJlTdhM
-	je2AF1HHLMWGuv2IQWDY2DpnB96+tFfB3XQThwnoZ3lzdIpq04zTyvMh
-X-Gm-Gg: AYBFou2V5hnwAI0V4vJMXvuGu5MQjIG7VJBJiTzOatSdn4oq5ot2LhzV9dLfYMdE74e
-	ReEAroKB4fFz+pjkDR/dOvekN2ThrgFHepIQTdc8ZBxvkEujl6o1bqTSKyW6VJ4x1uLlR3XVPp9
-	5LuqI0WCAbrNKkr2yOnu22GN1WGRWqWqtA1OtK8foLq/AoFWBC2vafHCRu8iDTd0KMxQJInxNty
-	gvynExBL2LRWuP0nWi6E54nvK4w5ybtG5agus0TjzgxUDUXOoMAfJruH5PAKuO0yqZ0n/V4JWq4
-	0eXdiVhRFWnrvEoFC42DvvDzbwxbfd6fBzg+6ii9uDALJ8q5hZC2btYqxcUm1oT7c73SGKiLUBz
-	rf8pYgZR+YlprxreQEeg2yJ1LqGiDX3RSFiggfnTeM/FlshdJlTCt5xgePMUhDc+45cLNqJdj+V
-	UAcFIkCIRKVTbOyScUKToaqW9ajI0k3UhnYOgC3hvbSmrT8ZxuKYQ0DTQyZaNK4M895QskJStDL
-	RE7NapJXKfP7NYT0AmyMDmNr3w5H0H/rHjSOY/Czechr5UKFhM7YDS27VDGANSXcbXIwkZfN+67
-	2nYXH+SOC0EAhFqIKg9IyST4/4MpwEdEl8rgSnNtZTKDJwetfipvCcoDoG0PqIViWpReQnaUZf/
-	iecU5vthsm11akGD3Y8ZMXA4bdVSk3gBeDp44OEg=
-X-Received: by 2002:a05:600c:674f:b0:4a2:1655:87db with SMTP id 5b1f17b1804b1-4ac1228a434mr330482525e9.0.1793726469286;
-        Tue, 03 Nov 2026 09:21:09 -0800 (PST)
-Received: from iku.lan ([2a00:23c8:254f:fd01:8b77:19e1:26f7:89f2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ac08b72579sm8800675e9.2.2026.11.03.09.21.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2026 09:21:08 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Subject: [PATCH 4/4] drm: renesas: rz-du: mipi_dsi: Add fallback CPG PLLDSI parameter search
-Date: Tue,  3 Nov 2026 17:20:57 +0000
-Message-ID: <20261103172057.617203-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261103172057.617203-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20261103172057.617203-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gCAK6sRl
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7737C1F000C1;
+	Tue,  3 Nov 2026 20:04:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793736262;
+	bh=DvyGW+2TDqyDyX09YOv1ylVGzTnFOJnhc9Nr54EPKMQ=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=gCAK6sRl5Ke8SR+kHnKTqXpgxjRROYkldUT5elgxuj56kPIO462asNw5yZ/SMoy/j
+	 aElldgyjCeYrZRR+TiDaHAd3inIJDDYMVmDi2EP+w37qyQZgeH61xDDZM9NoNNzotr
+	 57Hy0QcQHHAbVe1KGzIzZjdccDiOiFXTdVC/ySOgWO0r5m2iLUudm2t3z2fqwchWNN
+	 qaT2f0yPiHFC96w4l40cI69lmBLpQORU/HDc9s+O4PsRMOWDoyZrWp9eJLeUOC05S/
+	 hDHTsqjA+3/UZ8X4kIk97gvhiSBOM2G06ZFJbJ7Yfa5GdKxeNhBtehokA1IVuObDwE
+	 OjISxVGAgD2zg==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -114,146 +49,231 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3 2/3] clk: ti: dpll: use the generic spread spectrum
+ configuration
+From: Brian Masney <masneyb@kernel.org>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+ michael@amarulasolutions.com, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Tero Kristo <kristo@kernel.org>, linux-clk@vger.kernel.org, 
+ linux-omap@vger.kernel.org, Brian Masney <masneyb@kernel.org>
+In-Reply-To: <20261028074436.1958132-3-dario.binacchi@amarulasolutions.com>
+References: <20261028074436.1958132-1-dario.binacchi@amarulasolutions.com>
+ <20261028074436.1958132-3-dario.binacchi@amarulasolutions.com>
+Date: Tue, 03 Nov 2026 15:04:08 -0500
+Message-Id: <179373624826.588706.2891486591880784812.b4-review@b4>
+X-Mailer: b4 0.17-dev-7ca47
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8378; i=masneyb@kernel.org;
+ s=20250903; h=from:subject:message-id;
+ bh=xwc+cnCouL2LKAbzzjfXwcWheG+MRb4Pss0kQBR/O2k=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJe2VlXlOWuaLn778lPkV8MR00K+dtVbA6838caUl3oU
+ dnBwZnRUcrCIMbFICumyLIk16ggInWV7b07miwwc1iZQIYwcHEKwET6+Rn+p3tLvvfsOVzg+FSx
+ 6/y8c19Kz+8/3iL0tvx7t+O6zF+dcYwM+7/t4Z0h8uc3vyLXQyZ972p/kQqJDR/X6Qm/EblUdW0
+ ZCwA=
+X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Dario,
 
-For each PLLDSI divider, rzv2h_dphy_check_instance() only considers the
-CPG PLLDSI parameters with the smallest frequency error. If they do not
-lead to a DSI PLL setting less than 0.5 Hz off the required HS clock,
-the divider is skipped, even though a CPG setting with a slightly larger
-error could work. Modes such as <mode, lanes, format> are therefore
-rejected on RZ/V2H(P), RZ/V2N and RZ/G3E.
+> The clock framework provides a generic API and DT property for spread
+> spectrum clocking (SSC) since commit c86814e70390 ("clk: Introduce
+> clk_hw_set_spread_spectrum"). Implement the set_spread_spectrum callback
+> and convert the deprecated vendor specific properties to the generic
+> configuration, so that existing DTs keep working.
+> 
+> The SSC registers are programmed at the next rate change, as with the
+> vendor specific properties. The generic framework expresses the spread
+> in permyriad rather than permille, hence the change in the deltaM step
+> computation, and also supports up-spread, which is rejected as the
+> hardware does not support it.
+> 
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> ---
+> Changes in v3:
+> - Keep parsing the deprecated vendor specific properties
+> 
+>  drivers/clk/ti/clock.h    |  2 ++
+>  drivers/clk/ti/dpll.c     | 20 +++++++++----
+>  drivers/clk/ti/dpll3xxx.c | 61 ++++++++++++++++++++++++++++++++-------
+>  include/linux/clk/ti.h    |  9 ++----
+>  4 files changed, 70 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+> index d5e24fe4ae3a..83225e506314 100644
+> --- a/drivers/clk/ti/clock.h
+> +++ b/drivers/clk/ti/clock.h
+> @@ -271,6 +271,8 @@ int omap3_noncore_dpll_set_rate_and_parent(struct clk_hw *hw,
+>  					   unsigned long rate,
+>  					   unsigned long parent_rate,
+>  					   u8 index);
+> +int omap3_noncore_dpll_set_spread_spectrum(struct clk_hw *hw,
+> +					   const struct clk_spread_spectrum *ss_conf);
+>  int omap3_noncore_dpll_determine_rate(struct clk_hw *hw,
+>  				      struct clk_rate_request *req);
+>  int omap2_dpll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req);
+> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+> index e01272cd628d..1329b4bc02f0 100644
+> --- a/drivers/clk/ti/dpll.c
+> +++ b/drivers/clk/ti/dpll.c
+> @@ -51,6 +51,7 @@ static const struct clk_ops dpll_ck_ops = {
+>  	.set_parent	= &omap3_noncore_dpll_set_parent,
+>  	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
+>  	.determine_rate	= &omap3_noncore_dpll_determine_rate,
+> +	.set_spread_spectrum	= &omap3_noncore_dpll_set_spread_spectrum,
+>  	.get_parent	= &omap2_init_dpll_parent,
+>  	.save_context	= &omap3_noncore_dpll_save_context,
+>  	.restore_context = &omap3_noncore_dpll_restore_context,
+> @@ -63,6 +64,7 @@ static const struct clk_ops dpll_no_gate_ck_ops = {
+>  	.set_parent	= &omap3_noncore_dpll_set_parent,
+>  	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
+>  	.determine_rate	= &omap3_noncore_dpll_determine_rate,
+> +	.set_spread_spectrum	= &omap3_noncore_dpll_set_spread_spectrum,
+>  	.save_context	= &omap3_noncore_dpll_save_context,
+>  	.restore_context = &omap3_noncore_dpll_restore_context
+>  };
+> @@ -278,6 +280,7 @@ static void __init of_ti_dpll_setup(struct device_node *node,
+>  	struct dpll_data *dd = NULL;
+>  	int ssc_clk_index;
+>  	u8 dpll_mode = 0;
+> +	u32 ssc_modfreq = 0, ssc_deltam = 0;
 
-If no divider gives a usable pair, search again with
-rzv2h_cpg_get_pll_pars_validate(), accepting CPG candidates up to 50 Hz
-off the target whose DSI PLL setting is less than 0.5 Hz off the HS clock.
-The first accepted pair is used, so the pixel clock may be slightly less
-accurate, but the mode can be driven.
+Please keep the reverse Christmas tree order here.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
----
- .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 85 ++++++++++++++++++-
- 1 file changed, 83 insertions(+), 2 deletions(-)
+>  	u32 min_div;
+>  
+>  	dd = kmemdup(ddt, sizeof(*dd), GFP_KERNEL);
+> @@ -349,11 +352,18 @@ static void __init of_ti_dpll_setup(struct device_node *node,
+>  					&dd->ssc_modfreq_reg))
+>  			goto cleanup;
+>  
+> -		of_property_read_u32(node, "ti,ssc-modfreq-hz",
+> -				     &dd->ssc_modfreq);
+> -		of_property_read_u32(node, "ti,ssc-deltam", &dd->ssc_deltam);
+> -		dd->ssc_downspread =
+> -			of_property_read_bool(node, "ti,ssc-downspread");
+> +		/* Deprecated, superseded by assigned-clock-sscs */
+> +		of_property_read_u32(node, "ti,ssc-modfreq-hz", &ssc_modfreq);
+> +		of_property_read_u32(node, "ti,ssc-deltam", &ssc_deltam);
+> +		if (ssc_modfreq && ssc_deltam) {
+> +			dd->ssc_conf.modfreq_hz = ssc_modfreq;
+> +			/* permille to permyriad */
+> +			dd->ssc_conf.spread_bp = ssc_deltam * 10;
 
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index 682bbb339bef..c23c7f43a560 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -42,6 +42,9 @@ MODULE_IMPORT_NS("RZV2H_CPG");
- #define RZ_MIPI_DSI_FEATURE_16BPP	BIT(0)
- #define RZ_MIPI_DSI_FEATURE_PWRRDY	BIT(1)
- 
-+#define RZV2H_DSI_PLL_MAX_ERR_MILLIHZ		500
-+#define RZV2H_CPG_PLLDSI_MAX_ERR_MILLIHZ	(50 * MILLI)
-+
- struct rzg2l_mipi_dsi;
- 
- struct rzg2l_mipi_dsi_hw_info {
-@@ -76,6 +79,13 @@ struct rzv2h_dsi_mode_calc {
- 	struct rzv2h_pll_div_pars cpg_dsi_div_parameters;
- };
- 
-+struct rzv2h_dsi_validator_context {
-+	struct rzv2h_pll_pars *dsi_pars;
-+	unsigned int lanes;
-+	unsigned int bpp;
-+	u8 base_divider;
-+};
-+
- struct rzg2l_mipi_dsi {
- 	struct device *dev;
- 	void __iomem *mmio;
-@@ -675,6 +685,67 @@ static int rzg2l_dphy_conf_clks(struct rzg2l_mipi_dsi *dsi, unsigned long mode_f
- 	return 0;
- }
- 
-+static bool rzv2h_dsi_validate_pll_pars(const struct rzv2h_pll_pars *pars, void *context)
-+{
-+	struct rzv2h_dsi_validator_context *ctx = context;
-+	u64 hsfreq_millihz;
-+
-+	/* Check error threshold for CPG PLL DSI */
-+	if (abs(pars->error_millihz) > RZV2H_CPG_PLLDSI_MAX_ERR_MILLIHZ)
-+		return false;
-+
-+	/* Calculate the required DSI frequency */
-+	hsfreq_millihz = DIV_U64_ROUND_CLOSEST(pars->freq_millihz, ctx->base_divider);
-+	hsfreq_millihz = DIV_ROUND_CLOSEST_ULL(hsfreq_millihz * ctx->bpp, ctx->lanes);
-+
-+	/* Find DSI PLL parameters */
-+	if (!rzv2h_get_pll_pars(&rzv2h_plldsi_div_limits, ctx->dsi_pars, hsfreq_millihz))
-+		return false;
-+
-+	/* Check DSI error threshold */
-+	if (abs(ctx->dsi_pars->error_millihz) >= RZV2H_DSI_PLL_MAX_ERR_MILLIHZ)
-+		return false;
-+
-+	return true;
-+}
-+
-+static bool rzv2h_dsi_get_pll_divs_pars(const struct rzv2h_pll_limits *limits,
-+					struct rzv2h_pll_div_pars *pars,
-+					const u8 *table, u8 table_size, u64 freq_millihz,
-+					unsigned int bpp, unsigned int lanes,
-+					struct rzv2h_pll_pars *dsi_pars)
-+{
-+	struct rzv2h_pll_pars temp_dsi_pars;
-+	struct rzv2h_dsi_validator_context ctx = {
-+		.dsi_pars = &temp_dsi_pars,
-+		.lanes = lanes,
-+		.bpp = bpp,
-+	};
-+	struct rzv2h_pll_validator validator = {
-+		.validate = rzv2h_dsi_validate_pll_pars,
-+		.context = &ctx,
-+	};
-+	struct rzv2h_pll_div_pars p;
-+
-+	for (unsigned int i = 0; i < table_size; i++) {
-+		ctx.base_divider = table[i];
-+
-+		if (!rzv2h_cpg_get_pll_pars_validate(limits, &p.pll,
-+						     freq_millihz * table[i], &validator))
-+			continue;
-+
-+		p.div.divider_value = table[i];
-+		p.div.freq_millihz = DIV_U64_ROUND_CLOSEST(p.pll.freq_millihz, table[i]);
-+		p.div.error_millihz = freq_millihz - p.div.freq_millihz;
-+
-+		*dsi_pars = temp_dsi_pars;
-+		*pars = p;
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static unsigned int rzv2h_dphy_check_instance(struct rzg2l_mipi_dsi *dsi,
- 					      unsigned long mode_freq,
- 					      unsigned int pll_instance)
-@@ -718,8 +789,18 @@ static unsigned int rzv2h_dphy_check_instance(struct rzg2l_mipi_dsi *dsi,
- 		}
- 	}
- 
--	if (!found_valid_parameters)
--		return MODE_CLOCK_RANGE;
-+	if (!found_valid_parameters) {
-+		parameters_found =
-+			rzv2h_dsi_get_pll_divs_pars(dsi->info->cpg_plldsi.limits[pll_instance],
-+						    &best_cpg_dsi_parameters,
-+						    dsi->info->cpg_plldsi.table,
-+						    dsi->info->cpg_plldsi.table_size,
-+						    mode_freq_millihz,
-+						    bpp, dsi->lanes,
-+						    &best_dsi_parameters);
-+		if (!parameters_found)
-+			return MODE_CLOCK_RANGE;
-+	}
- 
- 	memcpy(&dsi->mode_calc.dsi_parameters, &best_dsi_parameters,
- 	       sizeof(best_dsi_parameters));
+Would it be worthwhile to add a maximum range check here so the u32 does
+not overflow?
+
+> +			if (of_property_read_bool(node, "ti,ssc-downspread"))
+> +				dd->ssc_conf.method = CLK_SPREAD_DOWN;
+> +			else
+> +				dd->ssc_conf.method = CLK_SPREAD_CENTER;
+> +		}
+>  	}
+>  
+>  	if (of_property_read_bool(node, "ti,low-power-stop"))
+> diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
+> index 8c51b988a04f..634fe0a1f9fd 100644
+> --- a/drivers/clk/ti/dpll3xxx.c
+> +++ b/drivers/clk/ti/dpll3xxx.c
+> @@ -295,30 +295,32 @@ static void _lookup_sddiv(struct clk_hw_omap *clk, u8 *sd_div, u16 m, u8 n)
+>   * omap3_noncore_dpll_ssc_program - set spread-spectrum clocking registers
+>   * @clk:	struct clk * of DPLL to set
+>   *
+> - * Enable the DPLL spread spectrum clocking if frequency modulation and
+> - * frequency spreading have been set, otherwise disable it.
+> + * Enable the DPLL spread spectrum clocking according to the configuration
+> + * set by omap3_noncore_dpll_set_spread_spectrum(), otherwise disable it.
+>   */
+>  static void omap3_noncore_dpll_ssc_program(struct clk_hw_omap *clk)
+>  {
+>  	struct dpll_data *dd = clk->dpll_data;
+> +	const struct clk_spread_spectrum *conf = &dd->ssc_conf;
+> +	bool downspread = conf->method == CLK_SPREAD_DOWN;
+>  	unsigned long ref_rate;
+>  	u32 v, ctrl, mod_freq_divider, exponent, mantissa;
+>  	u32 deltam_step, deltam_ceil;
+>  
+>  	ctrl = ti_clk_ll_ops->clk_readl(&dd->control_reg);
+>  
+> -	if (dd->ssc_modfreq && dd->ssc_deltam) {
+> +	if (conf->method != CLK_SPREAD_NO) {
+>  		ctrl |= dd->ssc_enable_mask;
+>  
+> -		if (dd->ssc_downspread)
+> +		if (downspread)
+>  			ctrl |= dd->ssc_downspread_mask;
+>  		else
+>  			ctrl &= ~dd->ssc_downspread_mask;
+>  
+>  		ref_rate = clk_hw_get_rate(dd->clk_ref);
+>  		mod_freq_divider =
+> -		    (ref_rate / dd->last_rounded_n) / (4 * dd->ssc_modfreq);
+> -		if (dd->ssc_modfreq > (ref_rate / 70))
+> +		    (ref_rate / dd->last_rounded_n) / (4 * conf->modfreq_hz);
+> +		if (conf->modfreq_hz > (ref_rate / 70))
+>  			pr_warn("clock: SSC modulation frequency of DPLL %s greater than %ld\n",
+>  				__clk_get_name(clk->hw.clk), ref_rate / 70);
+>  
+> @@ -337,9 +339,10 @@ static void omap3_noncore_dpll_ssc_program(struct clk_hw_omap *clk)
+>  		v |= exponent << __ffs(dd->ssc_modfreq_exp_mask);
+>  		ti_clk_ll_ops->clk_writel(v, &dd->ssc_modfreq_reg);
+>  
+> -		deltam_step = dd->last_rounded_m * dd->ssc_deltam;
+> -		deltam_step /= 10;
+> -		if (dd->ssc_downspread)
+> +		/* spread_bp is in permyriad, convert to percent first */
+> +		deltam_step = dd->last_rounded_m * conf->spread_bp;
+> +		deltam_step /= 100;
+> +		if (downspread)
+>  			deltam_step /= 2;
+>  
+>  		deltam_step <<= __ffs(dd->ssc_deltam_int_mask);
+> @@ -353,7 +356,7 @@ static void omap3_noncore_dpll_ssc_program(struct clk_hw_omap *clk)
+>  		if (deltam_step & dd->ssc_deltam_frac_mask)
+>  			deltam_ceil++;
+>  
+> -		if ((dd->ssc_downspread &&
+> +		if ((downspread &&
+>  		     ((dd->last_rounded_m - (2 * deltam_ceil)) < 20 ||
+>  		      dd->last_rounded_m > 2045)) ||
+>  		    ((dd->last_rounded_m - deltam_ceil) < 20 ||
+> @@ -682,6 +685,44 @@ int omap3_noncore_dpll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	return ret;
+>  }
+>  
+> +/**
+> + * omap3_noncore_dpll_set_spread_spectrum - set the DPLL SSC configuration
+> + * @hw: pointer to the clock to set the spread spectrum configuration for
+> + * @ss_conf: spread spectrum configuration
+> + *
+> + * Stores the spread spectrum clocking (SSC) configuration of the DPLL. The
+> + * configuration is programmed along with the DPLL multiplier and divider
+> + * at the next rate change. The hardware supports center-spread and
+> + * down-spread only. Returns 0 on success, or a negative error value on
+> + * failure.
+> + */
+> +int omap3_noncore_dpll_set_spread_spectrum(struct clk_hw *hw,
+> +					   const struct clk_spread_spectrum *ss_conf)
+> +{
+> +	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
+> +	struct dpll_data *dd = clk->dpll_data;
+> +
+> +	if (!dd || !dd->ssc_enable_mask)
+> +		return -EOPNOTSUPP;
+> +
+> +	switch (ss_conf->method) {
+> +	case CLK_SPREAD_NO:
+> +		break;
+> +	case CLK_SPREAD_CENTER:
+> +	case CLK_SPREAD_DOWN:
+> +		if (!ss_conf->modfreq_hz || !ss_conf->spread_bp)
+
+clk_hw_set_spread_spectrum() already contains this check, and can be
+dropped here.
+
+Brian
+
 -- 
-2.56.0
-
+Brian Masney <masneyb@kernel.org>
