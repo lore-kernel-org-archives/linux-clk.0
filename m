@@ -1,104 +1,119 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.173
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793667791;
-	b=VKP+9irFcXB1WlZxC0OVV+VokwXtl/TWWEUsH5635d30yxTTKLP4EnGxKfUimpHek5rs
-	 kctRp+QDY5tZlZk02lfEP3JVGbMvNmb79qNAZVPvcQdaOQyKfV/J1AjW24Oc00Y7/EIL8
-	 vLTuBx9GoZ+OJNEQ7K+4dIS7o6GtVX0ctEAUgths8DbFH1OlH3xbR8br2f8kUb/zG9OcP
-	 ZEYwhrth+8J6WZfmn+n8tk/Lghm65Fh940eRx+fEUnAG8LCXw1Qwb0ika+8AkZ9zgVzrT
-	 H8YZTZzzsboXctPJdzJHGLZ7kNYxtLl5OTnPYdZTubCd4lbEzdKwQljGRgSe56h7wfg==
+	t=1793669603;
+	b=hWPKoMqbBipj4WiOfx1RzR45D2T0TfWJIYiIgMaXP7YsAlcYezzA/RtC6BKaFDVwTBN1
+	 v5DwVZHIO4vLBKYyhIbp5Q8ugMBJ7bYBBvAHxCfaP5AD25KOjCa7ZYaBxEbXLN1seZsj4
+	 yaEwC53KanN8ckWug/KTSRdqNbqlDAvuD11nahCdrZeV/jedEzG5FMYhgPxQoJq5V93ES
+	 v+1tfKL62WROQRgzZl3KHtaud1q65PUdHY8wbwSBIr2luB1V96cejlFjpQTtic39DcXR+
+	 E1GlhCdwqgLhWb/webf5hSLrav43YK8YpExT2F4rK/WhWC+iEHvWp/oTUwBzX7Hu7SQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793667791;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793669603;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=n0CzGjJGWSs7TyNtwS3AbENhTdJBxVqswg2+oAuEStg=;
-	b=aj0KC1cxpphxQ/h08DZVE7oslaRVG80BhIiIDzoUiQ3i/+H+f779FP1wxRz6tJW7bELp
-	 ARmfO3zhS90srJxCdgywkMzsJVyWgWJCxPTh1qKUA1yqc3tSP5Ozn2+7q/OMwF00G3guT
-	 RSrhYSzI16Su02dxhuaQ9CcSoWhYC13h8Bu4xj3CFe15Q8gb4r3ClUiM2QUkEcSilPAdE
-	 LZMjOcKVpdKcluR7KRAjG4gTMj0pdEuFZC+inxKz9+x1mjWFuJmxxf895zpmWZEavrH9i
-	 deHCTdr1zibsr4kVq1OjV8vnctyrzGAQWT1OLtQ4C10H1/JGCkcDfROxUcIOozG0phg==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=5tRIaiK1TzgUV/taZKqe0e877QKWP8p0z+ea1Mbb1W0=;
+	b=vnexfPjPx3Ho8UiuSR0o3x78zm7Q5OCLPW4eGKOeHRcrvKo7RaFCkSm22jdZ7Ha2TZ6O
+	 HwCAYxBgmnpgjqU0DXj+mU+mEcIgD9IyQ4ym5ljgw6wNpWoDTIp8gUypnGcvj9Qmp5KFC
+	 4FIi50J1AAsjzyyMF7GpYJPJx8LP5Fz/TM4LRJTm8K9r0RodeZAXjEQWONb//B1669u5E
+	 yE/q5xypWoNVlEflVJYVupjWRNjOkPVk9sGNpxuhPPZrDlx2/FwQwzPOOnx95vkXtvK3v
+	 6U4AzMGF+oCL8Yp0wBViEbw5hfQVqwuxHkwY7+TeDzXetu4JxFxt6rMNAAbxNVXyeGw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=chromium.org;
-	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=PZo97RUj;
-	arc=none smtp.remote-ip=74.125.82.177
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com [74.125.82.177])
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lgQNLUCB;
+	arc=none smtp.remote-ip=209.85.160.173
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1292C606A327
-	for <linux-clk@vger.kernel.org>; Tue,  3 Nov 2026 01:03:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1292C606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C00606A324
+	for <linux-clk@vger.kernel.org>; Tue,  3 Nov 2026 01:33:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 51C00606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=PZo97RUj
-Received: by mail-dy1-f177.google.com with SMTP id 5a478bee46e88-36661f953e4so5635556eec.1
-        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 17:03:09 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lgQNLUCB
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-53cd0c8614eso27779401cf.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 17:33:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1793667789; x=1794272589; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+        d=gmail.com; s=20260707; t=1793669602; x=1794274402; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=n0CzGjJGWSs7TyNtwS3AbENhTdJBxVqswg2+oAuEStg=;
-        b=PZo97RUjBjCMGZdvOa/HlTaLdNMNMxCOmFfPzjpcfg4YAk+Pn5mss95hBnF+dRw3+h
-         oRd7a5+1Te8c97EL5HNv0Ah5VXVhmUDmX6ZtLg2HdyLYOpwH2VgoB+6vPt3zSKmvJbPx
-         7Hn3H72Ihqi5nOcPcl14MwwHvTzddE+Zs16Xc=
+        bh=5tRIaiK1TzgUV/taZKqe0e877QKWP8p0z+ea1Mbb1W0=;
+        b=lgQNLUCBm2WQLGp42iXbCrYUYAs+Oi1wVQBec5h/3veTVceezeaAU3WIEwWPr+U02d
+         2Jqta9KhYiNZ5r+wA66ORykt7/O7EX6mrYjoZugMnQI7BBKjwaiVlvqOwNxSpFc1mjgP
+         Ki2FVx8XpKUdDwqV0xTB8ZONiEDPLqzP1RXHyn/vks/Ch4IOszlHvCLUvN2xnAjHDWk7
+         P8XZW/UPtjNtT0I0GsalpPdLtMTO5gXSvZJw063l7KglxNmgIGM8vHdEEwyE0YPMMzQU
+         Jp2r+69MahJzUyJv/Oe7B5Qpy0VAEJN+nXt9nO0rwgNMDj8fkMFV/odObkF+WgrigCIf
+         smsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793667789; x=1794272589;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1793669602; x=1794274402;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=n0CzGjJGWSs7TyNtwS3AbENhTdJBxVqswg2+oAuEStg=;
-        b=hrm9FZJ+1J/489BfTeC2WjEcbvHon8I7Gw40n4eiOgUs2fjfjY0jIelJiMv5gxG67G
-         VHkkorYAW8HxFnSr04jF6PUK35Mdqtp5Mf99AcVBDO2cy/NwvDehBguFmXW2KGsOsL7O
-         EtaRhSGj+km2rSFhRXF4P4DOMtinCf6gRbWx2XrJ3/6xXSkF+Le0CdefU6eUHR85UdTe
-         RqJ/VPIsQBiGq3/3+u3U7rndjoTz7twMb0vwajdeWi6f7LCaKTiU0CbzN+f5zVs4X+SE
-         wcoaZKEhodB6y0p81IaJvbaJc4OgNdDmk6w1+DMobVGeTaGn7wzI5nO6wYUfn51zm7uv
-         CqIg==
-X-Forwarded-Encrypted: i=1; AKwUvBxG9+Va5cDn7GD7yJIFv/iXTAO/0fV53NjgKxLWjrJ9a/pFx6rjFdFkdxFjqnluTBdEyCM+teSl02U=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9Ub0Hauc1TYn7VV/Csf+fyqXZNUjWwesjzgSCdhkadHdAaU+hb
-	L/+Xdt4gwB9gtJM/jaBSHl0DczGUI5CCeYau7947uhd5ZCshO8ygmLLvE7B4XUaedg==
-X-Gm-Gg: AYBFou1eoD0rkVm4lp2ZUlTDfgcIkwNrzf4I+4maZnv+gmeLwa2Dx5fg+aGdSzCt86/
-	2B4RJUTXcXqmeQkFetsBBYwMEzlKXIF7JeFGN/fzqY8rKx9b56GLYQbbPekzwNuZjWAFvz/0A4m
-	6kNd1SXCSnVipiVW1GbWYSgY+f2Cg4iPrTasES3gVlMQrfUAZP0sCmfprhSTw/JUgjYtlAXu9Kn
-	bPCRQ3kgG5eg/Lnts+6FJAmVDy7GDS17ymBsz4C4VvDYT1TT3Z+pgSRfpMaD/fN4HOKzvPiN0kI
-	a6sJK3gTMTAEOehMjkqC0PuQ4WHvrNEeSMc8yzGTqnMslnaxlWhJLQkfSEliv7xIGCfjKfRICTB
-	lEY0DorVnZC3s4xh1QDPUVF1cXqMeRdoqtLMyaTulxVU0EXFXcswhRjT6HX2q3j5rdlMZefdjV8
-	+RyKBXrdxc6eRphDYcNBFH4otd8Cars16W0Y2lMBUAJyWqr5uo2Bfzq0I0sc9/r57BZSutLt87S
-	5fzDGh7kl+zL5xbZWzySc92h2m/qkhCiUhQkfFA09vy7rzyaARcpsDXI2u4awdGaWLLPB5XtxpI
-	fEc7nVWx2OhKvTp2dyAT4S54yV4ZXN7MGRUy5XUhlJgSsH6F/fmZMhIWG3icGxqnJjM=
-X-Received: by 2002:a05:693c:60dc:b0:36a:7c69:3f83 with SMTP id 5a478bee46e88-36a7c694623mr1481055eec.3.1793667788944;
-        Mon, 02 Nov 2026 17:03:08 -0800 (PST)
-Received: from localhost ([2a00:79e0:2e7c:8:c57d:c93d:3543:aab5])
-        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-36a429000f8sm41756066eec.13.2026.11.02.17.03.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Nov 2026 17:03:07 -0800 (PST)
-Date: Mon, 2 Nov 2026 17:03:05 -0800
-From: Brian Norris <briannorris@chromium.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        bh=5tRIaiK1TzgUV/taZKqe0e877QKWP8p0z+ea1Mbb1W0=;
+        b=VVU6ozAN657vPVb1+vzuulit5M6o9PRSGYmMpbuPOhiO8zgWWvH8ZhV6uYk4xBhCqr
+         0de89kmYCWQCGlnMfjnPkcUntRsxWppa+OJCSjTbN2CTqVuf+Fjyit8iQ6N88eL41egO
+         OfZHcgTiMXkLif1YJaDxJGUSVruAhJWejxAac+HlZTAt5dQrK2l3aDSyVDdHQfpPeF/8
+         rr4vvRHgZ0a0hm62om1bxUvn1r1PG1ivL2IDNGoTLrybaUg6T1UE48udJEV7pBxBX9EE
+         Eh1yVUT3A7rkd6aY0DuBcc4kPbJYkpEJIphoeAhfBSsI+gGRWld9LVHUZWr4pkaAaXLK
+         3yuw==
+X-Forwarded-Encrypted: i=1; AKwUvBw+a6WF3tKbg31ynz80tLFKpkUiTJuGLSuJ29Se6tR9QM8R+x9kHvT2HDR+D6zoVwKksSIyfC7+l+k=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIQsDhf8VzCKFk6BVkAE8kWPyFYh9kZSMdANgF5WxbEknw8hDnV
+	ngqNsmlC04HOajzTA3vT/YDIjOm3P8UIkTU7OISB931U5KH6Zatv9zOk
+X-Gm-Gg: AYBFou1aZSg2TAKs9epZNr6HG8n1wTrht8BoYa5X3seAjbqzMkHjFH3pd3IyjW6w6c3
+	1S7DSFpoBLkGRpLJW9l3VhXAXGUVlpQensP2QPPFEU0lNipgoM2PSeoe1YAo2j1amty9GhBNxr3
+	X0l2f6X5rMqS/TpuSd4tRSev/vqyHtC46irDPDVczwZXB4S9V7TzpL8lPDG4+OaIo0WJQDIUrQb
+	daMrzD03+wj/UVA6dcHA/eaDjkGKn2PNqBRvqRncx95Ll3fZyLOcnaMWjnfzf48gcsWnifN97CS
+	E64RJLhUYq2oym8iaJfQDV0jd5huov32GBlx0uicNnhNA2JMSPsBbGc/T2CUP80jyYsHPirp1I9
+	7gux6Fud6Dbdo39wKNhJDi6t1+RzlxYLHNMZMU/E8YDuDev8ZczyrjrL9SbWaVTooEamH8gMW/+
+	w286Kiya9dSdkWSTC4VV/4D0QnXIEeH7wyGuomHA7qDwexXIP1Pb75hjiwwuBLmi/5GAbHK5z6I
+	UTk7CpY7Qh7zr1b5zP9e+lpQfowKtzNztJPZtAYZlqD/nGrKFgcmvQWR32xQstSfd0qNuOgWpLN
+	tPNLluqhM/j+d88xj5vQpFMwl6hIK2q5B+bXMNdLaw7hQ3qYjLHh5LNVgT0SihnQ7LbUfC2eAlP
+	gQu4dTcubrKR0NPTo9QsNk1SgSQ==
+X-Received: by 2002:a05:622a:3c7:b0:535:5fa:ca6e with SMTP id d75a77b69052e-542b75236b4mr201626151cf.51.1793669602205;
+        Mon, 02 Nov 2026 17:33:22 -0800 (PST)
+Received: from AMD.home.internal (dhcp-9-244-8-156.gobrightspeed.net. [9.244.8.156])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5498cb5b520sm12746021cf.26.2026.11.02.17.33.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Nov 2026 17:33:21 -0800 (PST)
+From: Enzo Adriano <enzo.adriano.code@gmail.com>
+To: junhui.liu@pigmoral.tech
+Cc: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Thomas Gleixner <tglx@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>,
 	linux-arm-kernel@lists.infradead.org,
-	Mariano Marciello <mmarciello@google.com>,
-	Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
-	Jakub =?utf-8?B?R8WCb3dhY2tp?= <jglow@google.com>
-Subject: Re: [PATCH 6/9] reset: google: Add CPM reset driver
-Message-ID: <aukyyYhDCBUdIH16@google.com>
-References: <20261026214359.3122870-1-briannorris@chromium.org>
- <20261026144346.6.I0b1ad34a718a9b5f667d2481041970ea45989dd3@changeid>
- <8d57f0a1dc8a07838bf1320f9b79588196264ff5.camel@pengutronix.de>
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	netdev@vger.kernel.org,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Norman Herms <dockseed@proton.me>,
+	Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+Subject: Re: [PATCH v6 3/8] clk: sunxi-ng: a733: Add PRCM CCU
+Date: Mon,  2 Nov 2026 20:33:19 -0500
+Message-ID: <20261103-a733-ccu-v6-fw-clocks@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261009-a733-clk-v6-3-ae8178fce7e8@pigmoral.tech>
+References: <20261009-a733-clk-v6-0-ae8178fce7e8@pigmoral.tech> <20261009-a733-clk-v6-3-ae8178fce7e8@pigmoral.tech>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -108,159 +123,36 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d57f0a1dc8a07838bf1320f9b79588196264ff5.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Philipp,
+Hi Junhui,
 
-On Wed, Oct 28, 2026 at 03:03:24PM +0100, Philipp Zabel wrote:
-> On Mo, 2026-10-26 at 14:43 -0700, Brian Norris wrote:
+On Fri, Oct 09, 2026 at 11:52:08PM +0800, Junhui Liu wrote:
+> +static SUNXI_CCU_P_DATA_WITH_MUX_GATE(r_cpu_timer0, "r-timer0", r_apb_parents, 0x100,
+> +				      1, 3,	/* P */
+> +				      4, 3,	/* mux */
+> +				      BIT(0),	/* gate */
+> +				      0);
 
-> > --- /dev/null
-> > +++ b/drivers/reset/google/reset-cpm.c
-> > @@ -0,0 +1,367 @@
+On a Cubie A7S with vendor boot firmware, v6 reaches a Linux shell but
+stalls at warm reboot. The system-controller firmware uses the R-domain
+timer and mailboxes without Linux clock consumers, so disabling these
+clocks as unused can leave its services unavailable.
 
+Could you consider marking r-timer0, bus-r-timer, bus-r-riscv and
+bus-r-msgbox here, and bus-msgbox0 in 7/8, CLK_IS_CRITICAL in the next
+revision? My standalone patch has the diff, firmware references and
+board results:
+https://lore.kernel.org/r/20261031020640-263f7b05-a7s-clock@gmail.com
 
-> > +static int goog_cpm_rst_mba_check_ret(struct device *dev, int ret)
-> > +{
-> > +	switch (ret) {
-> > +	case NO_ERROR:
-> > +		return 0;
-> > +	case ERR_LPCM_NOT_SUPPORTED:
-> > +		dev_err(dev, "the received request_id is invalid\n");
-> > +		return -EPROTO;
-> 
-> -EOPNOTSUPP?
-> 
-> > +	case ERR_LPCM_INVALID_ARGS:
-> > +		dev_err(dev, "invalid lpcm_id or rst_id\n");
-> > +		return -EINVAL;
-> > +	case ERR_LPCM_TIMED_OUT:
-> > +		dev_err(dev, "operation timed out\n");
-> > +		return -ETIMEDOUT;
-> > +	case ERR_LPCM_GENERIC:
-> > +		dev_err(dev, "internal error occurred\n");
-> > +		return -EREMOTEIO;
-> > +	default:
-> > +		dev_err(dev, "unknown error response from CPM\n");
-> > +		return -EPROTO;
-> > +	}
-> > +}
-> 
-> Is this specific to reset functionality, or should this maybe live in
-> CPM common code? I see that the return values in the power-domain
-> driver are not translated, but the clock driver contains a near-
-> identical copy of this function. Or maybe just printing the translated
-> error with "%pe" is good enough?
+With those five flags, two RAM boots of my A7S integration completed
+warm reboots without clk_ignore_unused, and all five clocks reported
+enabled. That is one board on vendor firmware. Vinicius reported native
+PSCI reboot working on an A7Z without local critical flags on
+bus-r-riscv and bus-r-msgbox, with TF-A and U-Boot built from source, so
+the boot chain may matter. I haven't tested suspend, or shown that each
+of the five flags is needed on its own.
 
-Good question. Looking into the CPM firmware, it seems like these error
-codes are more or less standardized (they're a common definition from
-the Little Kernel project (https://github.com/littlekernel/lk)), so it's
-probably fair to do the translations in a common helper on the Linux
-side.
-
-The strings are also probably unimportant, so %pe printing or similar
-seems fair.
-
-Regarding power-domain: it seems that the *use* of these "standardized"
-error codes is somewhat haphazard. The LPB services within the CPM
-firmware put error codes into different parts of the response payload,
-and use a different style of error code. So indeed, the power-domain
-driver cannot use the same helper.
-
-All in all, even scouring any additional services we have in
-not-yet-included-here CPM service drivers ... I only see clock and reset
-drivers using these. So the "commonality" is actually quite limited.
-
-Anyway, I'll see about a common helper, even if it's just for these two
-drivers.
-
-> > +	return goog_cpm_rst_send_mba_mail(provider, lpcm_id, rst_id, DEASSERT_OP_ID);
-> > +}
-> > +
-> > +static const struct reset_control_ops goog_cpm_rst_ops = {
-> > +	.assert = goog_cpm_rst_assert,
-> > +	.deassert = goog_cpm_rst_deassert,
-> > +};
-> > +
-> > +static int goog_cpm_rst_debugfs_assert_set(void *data, u64 rst_id)
-> > +{
-> > +	struct goog_cpm_rst_debugfs_entry *entry = data;
-> > +	unsigned long idx = to_rstc_idx(entry->lpcm_id, rst_id);
-> > +
-> > +	return goog_cpm_rst_assert(&entry->provider->rcdev, idx);
-> 
-> Calling into reset_control_ops like this bypasses all reference
-> counting in the core and breaks reset controller API promises.
-
-Yeah, sorry, I meant to take another pass at whether I should drop this
-entirely, or at least try to explain it better when including it. I
-clearly did not do that. More below.
-
-> > +}
-> > +
-> > +static int goog_cpm_rst_debugfs_deassert_set(void *data, u64 rst_id)
-> > +{
-> > +	struct goog_cpm_rst_debugfs_entry *entry = data;
-> > +	unsigned long idx = to_rstc_idx(entry->lpcm_id, rst_id);
-> > +
-> > +	return goog_cpm_rst_deassert(&entry->provider->rcdev, idx);
-> > +}
-> > +
-> > +DEFINE_DEBUGFS_ATTRIBUTE(goog_cpm_rst_assert_debugfs_fops, NULL,
-> > +			 goog_cpm_rst_debugfs_assert_set, "%llu\n");
-> > +
-> > +DEFINE_DEBUGFS_ATTRIBUTE(goog_cpm_rst_deassert_debugfs_fops, NULL,
-> > +			 goog_cpm_rst_debugfs_deassert_set, "%llu\n");
-> > +
-> > +static void goog_cpm_rst_add_debugfs(struct goog_cpm_rst_debugfs_entry *entry,
-> > +				     struct dentry *debugfs_root,
-> > +				     const char *name)
-> > +{
-> > +	struct dentry *d = debugfs_create_dir(name, debugfs_root);
-> > +
-> > +	debugfs_create_file("assert", 0220, d, entry,
-> > +			    &goog_cpm_rst_assert_debugfs_fops);
-> > +	debugfs_create_file("deassert", 0220, d, entry,
-> > +			    &goog_cpm_rst_deassert_debugfs_fops);
-> > +}
-> 
-> Please drop the debugfs functionality or explain what it is needed for.
-
-Ack. I think I'll probably go with "drop", but some notes:
-
-There's no real way to test and validate a "reset" driver without a
-consumer. There is no direct (even for debug) interface into the reset
-API, unlike in some other subsystems (e.g., GPIO). I believe the main
-purpose here on Pixel drivers has been hardware+driver testing, so one
-can test reset functionality before hooking it up to real client
-drivers, and without adding fake drivers or extra debug code (a la
-"printf debugging").
-
-(One might observe these results either via /dev/mem-like access to
-registers, or even through external debug peripherals/consoles that can
-monitor the status of the underlying component that is being reset.)
-
-This all would generally be in an early hardware bringup scenario, so
-admittedly it probably doesn't have as much of a use case in the
-upstream kernel  -- it's a long shot for this kind of hardware/product
-development to *actually* work directly on an upstream kernel, with
-upstream drivers.
-
-...but if I were imagining a better way to do this without bypassing
-reference counting: perhaps it could be useful to a have a
-debug-oriented "reset client" driver, that could bind to arbitrary reset
-devices, if they're not already owned, and expose a sysfs or debugfs
-interface like this? That could fill similar use cases for this sort of
-hardware testing/validation area.
-
-But anyway, I understand such a proposal should definitely come
-separately from this driver submission.
-
----
-
-Thanks for the review. I'll try to integrate the rest of the feedback in
-v2.
-
-Brian
+Thanks,
+Enzo
