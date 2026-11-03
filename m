@@ -1,83 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793671600;
-	b=1llEm/wTelz049APFj87aAXRD+bvGwg4oLECeZ/wAyv8XuHEETUu9fE19E4nDSmmCH5o
-	 V+b8XiVomB+49S2dAWcKuA5NPtGTCEm1Yzkx7sR2eqh+yCtFXxp+ZpPaeGODXgIQqDHFx
-	 LoN2S2s9cSm86oeKouAD96KFFBAoCPTjdZcQs175fNsoXK/mQc5KfL40NucO2EW1YKELz
-	 rpjIwTcZiP4adbM4Dp8Uchan6YtaNFoxwfR45hpY4RkeKX2d3D3RePBw8VZkk1YG5yRkp
-	 9nN+IekX55WF5T7oExriLSQN0s21KiXtYeIBSRseTII3/4rAfdc7jXFYHaNpCiwjXpw==
+	t=1793671668;
+	b=Ym3pxUY00JwjfUSbH1m+qhnC3yL72H1zxcs5jLEV01OYJGqcUdWgYlAN1FiR3pUHXQ8k
+	 ftkSNGIgKxhIq3rW3O2XPZzhgy13Wnj62a6um3tZpB7qCyepu7OKw6gimP9kljnrhYsMR
+	 fpie7CifzukcQUdikDuVLrSrSyBKy3t7XlCQa8mz08Z7T3NqXbHgHFm84BilS0i1WKpyy
+	 A5BHjBfHbVaSLlVDuJzKJbsvhERwMKAAo3Am8L6bGgAz76PK48PZ42OeSd2GH2bVVctxA
+	 2QWr4lL9DpWE+98DWZVTGRpTPPizgtty3A22ntz8RJToFKSsShJ4sxdwEnHBavRHXaw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793671600;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793671668;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
 	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=7edVmlDXqBmOKChW+ZBxMZA1iVKu3C6UNjM+2ZNf5wM=;
-	b=Xzru/9QCCRkiPuggILnbsuRD+BvQtQtSa/CebczBsWEGMMQZCUjTS0rUmw5/blWFSsoA
-	 vfBsdWHZ23UlYQDUqiHp1jpfrF5zEJ9OaV9+tPqa6yby8HoQL0JWvWLFwS1TaY+CcEvLX
-	 Pz2g/mv0sJF282s4uFDyS5G689zeWRtJrGX1bDk4h9Ubn+01R4z3AFnt0oyB7s8+iFlgF
-	 CAIUu8Pfmz6LU37GmmO/6b6qf+sXVnP+yMaku6WfGQnhU+hAmM4+HErGTlj/gP52M/IyE
-	 d6mAxzMImUNs2EfCFC0x4G1BTkqe0ZJ19LeKDAjoyVg3b32WG4G5D/gMK11L4r8AnQA==
+	bh=mnCMgi1Mjc7rqcgOPGVHBPcSRGGmUVFCpLTaHePthjU=;
+	b=zn4N0E+FfQKwg0gCrAO9sk/yPZCdkupD6WKAcXN/hDvGrXepXKctG0gsXfWMn0SkuMRt
+	 J3qzsIqoFoRlCoSjYxKRbywlKk1FanjfqAViI0McxE35RMkKZA7KyYKoAhER4R3yZzHmU
+	 3ak5UFffIYlVpfpjM/N9aFEViUy+TrRyTQFuHiSyQv10R8lWFOv4c/Ks5lAbL5WRIPNao
+	 2S1/DMPTOjSB8autAFEJZVT12zm/Q6ppyoy9QIevcb6XQOd6CvOjAZ96xbqA/TQuCL6Mm
+	 i8htxGoJW1eisIQRnOdIdBsE26DmP3yT/xCBv1Rvz2XOF9ed9Q2sWuPt8Sf7qQlGuSw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=chromium.org;
 	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=mAQ0+p5l;
-	arc=none smtp.remote-ip=74.125.82.173
-Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=aLjZ44wG;
+	arc=none smtp.remote-ip=74.125.82.46
+Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105A9606D80D
-	for <linux-clk@vger.kernel.org>; Tue,  3 Nov 2026 02:06:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 105A9606D80D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29312606D807
+	for <linux-clk@vger.kernel.org>; Tue,  3 Nov 2026 02:07:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 29312606D807
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=mAQ0+p5l
-Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-353804b591eso6476253eec.0
-        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 18:06:39 -0800 (PST)
+	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=aLjZ44wG
+Received: by mail-dl1-f46.google.com with SMTP id a92af1059eb24-1a8cc11ac42so3520630c88.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2026 18:07:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1793671599; x=1794276399; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1793671667; x=1794276467; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=7edVmlDXqBmOKChW+ZBxMZA1iVKu3C6UNjM+2ZNf5wM=;
-        b=mAQ0+p5lGe83v747xCyqCS4N8Akjbdkj3F4Iz2/8iImspy/v52+UuU1pE1/Bf6MR50
-         E2qDfWgV7bzTU9JYVsGuVRf/bSzdw7SGqRzm0piGjvkzs5eN3BDwZTqZ3vUQsCyWwqzT
-         eKkyuVd25qAhw0WgVLwLZD9VIBXnP3Zi75qdU=
+        bh=mnCMgi1Mjc7rqcgOPGVHBPcSRGGmUVFCpLTaHePthjU=;
+        b=aLjZ44wGmMHqn8e7JX/I8P1V8VARuQh9o/ia1bogyOm6JOCislA1YcxOmIPAwzWMj1
+         IStM6BfN0n6A/Mi7nmKeP+I/YEQ4JUI7eoCX12cJ9HDCtLihrgNPebZlvOTpH2BmP9dD
+         jawS7ea3vQz4o3ANdgnbSTDQswDHEQkKX/To8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793671599; x=1794276399;
+        d=1e100.net; s=20260707; t=1793671667; x=1794276467;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=7edVmlDXqBmOKChW+ZBxMZA1iVKu3C6UNjM+2ZNf5wM=;
-        b=jJdUxVcS01ga6V9+bb3lHOxakwzyw5UbdkWVGVST5IxQ/QNiUEr14IXW0QBa5zbcv1
-         3zcjlmEemfkPhoNlFVgsz5dFN58zzgtL/wRLDl+hCR3NqAJ/WPcTBFRpau2EdJFS30NN
-         EV6dLEc79Y02sD5ooTGdPSQrjgy4C4XlPYg012f1Z6JU0PwAj/ajLl6yaVq1fZZkq6mW
-         IhYh4ZoVJNg+joqiiwll4u8r2iEe8Oh3vlEAszr4vDRwU2eZ2Nprm6DYQX8+MRiX61vb
-         nOh2j0bjbfsvTfmn/Bh0SpleM+vWKr3VnOZK64TffdrKPJHnwxHiRoT34E8/C6I9eM9N
-         K1qQ==
-X-Forwarded-Encrypted: i=1; AKwUvByCf4pvLknVfspEaZSsBOm8xIwjpYFcfkZMhGkSOCuVCOkZlaaQyhqAba62DCv8SLTR2Af9ITYYL0Q=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIU4s0LMfbJGbBg2ErSwZ9IOpeWb3d/81ra2hBeQh7fzy087wti
-	edeHZK8rqv3bxuu7OygraKTg37dIw1SXTSAFONoKV27vJ0K71cusCtOdNT3ingIj5h75iHJnWvf
-	EOe0=
-X-Gm-Gg: AYBFou1VlHU2Uqmohgz2PY+ntZBUF836iAJ648+sr9QGbd84kGcAtfdDBUmM+U6qWWf
-	zSw/vZ6j6JL9KipM0nAmPtXHvvNcU6zxsdddXBxjPelLk80Y/jN+3+CitUNre6GvdlfXdP6DcGe
-	xpe2+lRKYWUUWkgpI39XYhrBpVJrtQphMoWIqX1v04xZzTGpH+vROsirIo4UgfD8vzYDiPaKzWA
-	K/c4r4vVaLZf0+8PPn/OTIBxZIILcXdBAfgE4sD8jOTsslCPpF3piUO1o1OPpSiFsRLZUPX9+e4
-	oVkyWFiogUo5gz2Yo9NB3ADWBfAqDisa5XDyZfqVub+wFfABsC+UIo/ADGhpiYn7SfVgNhX2yZT
-	wnVhUKYgn8dR2r1kySJ5CGn1LB/wlocwVVFDtpfwoJ0/YznifG8P0O8kqhD/vm82RvFywj5rfnV
-	/nE7KA71VN0lXIcaaPsbMfATvh3Ijq/IGz62HB2Eoxsa8KwH8TLWtpo0sC8beWZ1PgrlZhrtKeO
-	0BzX6ZDzEs01VVGn2z9EoT/UjsarQPpZQ/7qSyrAzOSrC9vS4Kn+iYZy8bpa9yeOBlMmsSyOERy
-	3zDGwH7tu31IE/lyp489GpB2uZJxgpUMHaZ1zQi1Ga/ZzYH3bYhKweOXBmDCSupRgt4=
-X-Received: by 2002:a05:7023:a56:20b0:1b2:3742:828e with SMTP id a92af1059eb24-1b23742830emr3971156c88.3.1793671599060;
-        Mon, 02 Nov 2026 18:06:39 -0800 (PST)
+        bh=mnCMgi1Mjc7rqcgOPGVHBPcSRGGmUVFCpLTaHePthjU=;
+        b=Nd6UNatj/zJXJIvI6fr3u+ymH37AJc+8+MAi1Qhf1C4zDQ+BUTCUzQ+SY3nxtvnV1A
+         B1quaOAJJjao7PEHBgEtui4ro5rlxbSsedM02jOWz4rrjGAxf/MbtIRbtasdQDUUgf8w
+         RRi8flNagpPyIConidwbr1Ca/7KCSc6GRQBTE6aimj3jfWKU1hNTOzmbh53aB2w/l/Ag
+         iiuJ5J/rc8E52v3xyvrIINW94B2jWZGvSJ9y5UMOaZ8F3RKQVAuHAT7ZfzDRLPn3GI4T
+         SpeAQaiYYJLPM3nxg42aeP51r2BTi/VniWezEWHL4xdqdUoeRTsEir8py7aGlfNsk/y0
+         47qg==
+X-Forwarded-Encrypted: i=1; AKwUvBw5qcZUtdavDRf5mtr4SRCsbV2LiabcfEeocpd9huCUnee4nVnCoW3KvxiwS1zEtSGz/IKGfjoi6ok=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJKVBTqGzf+FUul5V+mqaGOs/lN5Xss+sTsYDCEuDhjjR9o7UAS
+	tGx9t2YH8TpYY2Bvak+YaeWvkIvtfHF6mbZqGBq+kUOeooiX+mdwzLP1zT9EIaXMHg==
+X-Gm-Gg: AYBFou2KsYjBIfPLk3iLgBxzY3L4b3LcCzJHwoeu5k1l98Lks3+C5LuXiEOZGX5xCn7
+	Ezgp9drCE1b4XoCyu0SrGpbF0xyh1EhJbL3K4DOPgUDXxUIL2gESg8CCKBSDCmp/cw4CBhuI4SE
+	UB+M+03USgD2LnA4yNRCmVQbkE8euU7p8zInJ5k0+6SrPDzZfy0epzNTEhswgJi8XBv8nY+i4xJ
+	YJQD18ibFU0U7Sfk+rr8d4FHbE8/mppqgYV0O59frHeKE0Y7aTBKwvTNrxTNLR8Q+BWkRonXgVW
+	et61Uq1S0YQp1nIKPzQ8hRfTMy+Poy/kDQ3TftQlLZ23bPbNeCSzKgzb7fhJd12e4ZoOg6FsLx2
+	3gLrwAOqAMlUKiPK4ZnTXabSJ6Sl712l4RX5WsRscOiv/UO8IF+ig4jaIg/g+BUgj4B+RtzYxav
+	Y7n0GoqoZ3wgt+MjD5OoMvc087XIdjC4BWLRtT/QwaK/BvHrBpQk6UvPLa/GreyaHgKtlL4qw+6
+	zH6uyvvbWun74Lndl+5bIuMrbHWb0Z3sOIFZzQizBKS+LfF244gtciBB1c/e1hkMDFfHSyoBgYD
+	ekXBL2Xsp+s/99XTIFb6F47NMybP6uta3vdg4NYLt8A4dfCiXEKKa1lfDl6qp0/As5A=
+X-Received: by 2002:a05:7022:f105:b0:168:e942:4e62 with SMTP id a92af1059eb24-1ac601d2f3amr14793852c88.40.1793671667220;
+        Mon, 02 Nov 2026 18:07:47 -0800 (PST)
 Received: from localhost ([2a00:79e0:2e7c:8:c57d:c93d:3543:aab5])
-        by smtp.gmail.com with UTF8SMTPSA id a92af1059eb24-1ac19f4a04esm37837284c88.15.2026.11.02.18.06.37
+        by smtp.gmail.com with UTF8SMTPSA id a92af1059eb24-1b23b847348sm4090158c88.4.2026.11.02.18.07.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Nov 2026 18:06:38 -0800 (PST)
-Date: Mon, 2 Nov 2026 18:06:36 -0800
+        Mon, 02 Nov 2026 18:07:46 -0800 (PST)
+Date: Mon, 2 Nov 2026 18:07:44 -0800
 From: Brian Norris <briannorris@chromium.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -96,10 +95,11 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Mariano Marciello <mmarciello@google.com>,
 	Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
 	Jakub =?utf-8?B?R8WCb3dhY2tp?= <jglow@google.com>
-Subject: Re: [PATCH 0/9] google: Add support for Laguna CPM
-Message-ID: <aulBrFWi54E6a7Br@google.com>
+Subject: Re: [PATCH 3/9] soc: google: Add CPM over MailBox Array driver
+Message-ID: <aulB8F6hc1eDvyfj@google.com>
 References: <20261026214359.3122870-1-briannorris@chromium.org>
- <20261028-armored-glistening-cheetah-6f3070@quoll>
+ <20261026144346.3.I7bc547c83b7bf677a62670099f481a91ac737073@changeid>
+ <20261028-literate-pony-of-valor-3209fb@quoll>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -111,39 +111,23 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261028-armored-glistening-cheetah-6f3070@quoll>
+In-Reply-To: <20261028-literate-pony-of-valor-3209fb@quoll>
 
-On Wed, Oct 28, 2026 at 02:24:35PM +0100, Krzysztof Kozlowski wrote:
-> Either you expect review or not. RFC means no.
+On Wed, Oct 28, 2026 at 02:27:05PM +0100, Krzysztof Kozlowski wrote:
+> On Mon, Oct 26, 2026 at 02:43:41PM -0700, Brian Norris wrote:
+> > --- /dev/null
+> > +++ b/drivers/soc/google/Kconfig
+> > @@ -0,0 +1,13 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +
+> > +config GOOGLE_CPM_MBA
+> > +	tristate "Google Tensor CPM MailBox Array Interface"
+> > +	depends on ARCH_GOOGLE || COMPILE_TEST
+> > +	depends on MAILBOX
+> 
+> Can it be compile tested without mailbox?
 
-OK, PATCH.
-
-> If that's patch, then at
-> the top level of cover letter, as the most important thing, you explain
-> the dependency and merging proposal of this.
-
-OK, I'll try to move it up. To be fair though, every change that has any
-dependency is clearly noted in its below-the-fold notes.
-
-> You combined here like 5
-> different subsystens...
-
-What do you recommend here? I believe the general principles of DT
-binding development suggest there should be a single binding doc for
-describing the "Central Power Manager" (and the services it supports).
-CPM supports functionality covered by many subsystems.
-
-While in theory, bindings can be written without corresponding software
-support (drivers), in practice it usually works out better to develop
-them together, to prove that the binding describes the hardware/firmware
-sufficiently.
-
-And even if the binding goes separately, I don't think I can 100% split
-the driver support by subsystem, as they all require the same underlying
-CPM helpers, and those helpers don't have much meaning without their
-clients. So some multi-subsystem work is still necessary IMO.
-
-So I don't really see how I can address your complaint. But I'm open to
-your ideas.
+I don't think so. mbox_request_channel() and friends do not have stub
+implementations for the non-CONFIG_MAILBOX case.
 
 Brian
