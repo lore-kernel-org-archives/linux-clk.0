@@ -1,85 +1,106 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793726359;
-	b=sPYu5dwDz7pJSI9or7+PaIFKXgryIPP6OOVR3Jg3gl+UL2GMS4n1qVA0Pf1PO/jSb1hW
-	 reYzaMJo2U1FlpMVyGfU4bGJXgHFHS7zXnFPR9q2BUMrccbAgBIYkdDmBfMGpf4Tal6Sa
-	 jyCLctF89NOD1jZoBwFeu8tKIHaK//DvEmYC1vgocrMxeafK3HizCW89V1Ywvd6wnOlya
-	 XCGPjulTbP5jtJFe/7l741iS4unbRbqM97sQveR9LaPIhA5TSVJ50dFFn/yBUSSjW85mb
-	 co1QBtsfL6FPf4t46wU5mQmG1YS8nKUHBTsbFmzrvC22R5nVD59sDPgUAI5l0Grf8PQ==
+	t=1793726467;
+	b=bKjZMhfVXOYjerS5IwRHO3W9u7h6Z76jyrufUJr7VMimlKO/cmiNoNssRLHxeTdpcTk5
+	 VGSddyN9e1xF0y8E7EB0vs8ERb3bJXd1v2tDeYRAGBLdD81AsLoBHwJg/O1z1kvBUqEza
+	 oE0WPbfCLCwgJGpSCd4GXwRh2/HzILsPB1MCVmZDkvdytm78OYxUXKBka7JKB2gH4JZIy
+	 2nbdJtEIr4cwuRJEMxR0oBz3Zfod6BBguHv8QaTQGZtXmjgLJc/7RO+sHvFrmulbPm0ZT
+	 hlHDGgK55rpxJzIsE49XJneeG3v3VrV119VzCyDcNQRRgrrRGNXmi9KOh0OwoLMvTFQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793726359;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793726467;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
-	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key;
-	bh=E1AIQqXxMElr9XYHIFcSfJejuF++6x4Nf+fj72eanNY=;
-	b=Iw7KXowGt/mQeZSAo1jgnZ90nypmTGPYR7zyJLei859ppSU/SbZ1MvOnOJw91OlXvyfx
-	 okrKHqQkzl5EfeSuH5RPjNIfYRapGOt8Uin+pgCXAjRYPqbPXbhX7qkSq0QBpA8q+Ww+h
-	 f7uQy3UfY2EGrBNNd1P7aC9PcBts4cgofDT7ar90M4BE0jLZvKVeit8DGnRAop+r9ka3U
-	 SaY1ntJ5tqZTEzl2RE37RKfcCAlX7OqmRXWD9yrJBUda97mD+eTuqHb6KpopviCfMPQqa
-	 zmPoYqMmbfMxS2aYpyOZ+2q4etOdTV5YrjhbEVZU/DuSPzkhM4XAin5mdPKaCJxZkAg==
+	 From:X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=VdlowWmvfVZz+69VMJzw63b7hr3S2rAy0+a2cDKUzcU=;
+	b=KVKyQbXCpICC5oLULfW1EQQ+sNHYBUYYLGXPNj+12QJQ887I2FVW8ASsjBw6tFBjJ3je
+	 +aNCy/ITNMBGA6yLm/BM96DJNvxeFsSkdxEaDXqB3Qo9Fd7lKYfHFcrk10qxDoUpahZxk
+	 3u8VShP7SwZVYSwXHgyPZvSvrWz0NYNZhN/4JoNULbiEv3ObkvGTMQy4e5YGQAEQYHTd4
+	 ydEj4Dc4F2dXUDmoLxsP1LaAsGOwueXRO9NUEVTLhuo4e/JXEEnq3MJU0GT9hQDKROho2
+	 eThUYYpyhsxs2Pm1K7H5/+H8ObZowvRi2mxoDZD2o7k4zXBFg6WrZz3nujX8+GLA7rg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b="R/YhAD4c";
-	arc=none smtp.remote-ip=209.85.221.46
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=05deI4v8;
+	arc=none smtp.remote-ip=209.85.128.51
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D5C606A328
-	for <linux-clk@vger.kernel.org>; Tue,  3 Nov 2026 17:19:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D4D5C606A328
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44440606A324
+	for <linux-clk@vger.kernel.org>; Tue,  3 Nov 2026 17:21:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 44440606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=R/YhAD4c
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-48df4e9d2d4so2436364f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 03 Nov 2026 09:19:17 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=05deI4v8
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a20bde60a0so36355045e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 03 Nov 2026 09:21:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793726356; x=1794331156; darn=vger.kernel.org;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=E1AIQqXxMElr9XYHIFcSfJejuF++6x4Nf+fj72eanNY=;
-        b=R/YhAD4cjF5HWZDS12Mmaz+AKtQwFDm5TTdP7WOfrT+BN86ErsKgMJuuD0p6wMvdgb
-         uqWg9OIBWW/0jQlOjEM0nHsDOEJKBU8o+MrsPV8Vz862UFKNSEW/xRNOO8aCGJroh5fA
-         KuX0NmF0thJd1pgxQzW3+xWBCAPflB3KiPmww8fLaPznA8ilgAyad4tCLgjsfN+etHaX
-         HhvCLHebKXO5C2YdHrvuPZ/20HTlx6rRE1RcliE+Uyy3yrjmdv+ESzBlTiU4kGZbNpa2
-         X8QEbssT0s+tVG+09Si8g+Ae5Jqrd8c4s9zoCAdw6JW1YaDGxc00om1YhvkHkUbMj0AK
-         BG2w==
+        d=gmail.com; s=20260707; t=1793726466; x=1794331266; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=VdlowWmvfVZz+69VMJzw63b7hr3S2rAy0+a2cDKUzcU=;
+        b=05deI4v877peuDZQXCEGpNlQGGkY0C1DEG6mwexeXb6DKhOP/4r/F8yyJFq+u8XSVi
+         1R0zeaNPtZgl5jLlxkZsB053TbDKyphEuFYbbGLnWmaq5OWIwl0qUHVqAfWOP2sC1daX
+         EyilZNTvQD5ul3BdNUN3qdzoZEv0R1kGnG5WHFn4GyFYa9yQfupUPHQNIfB8g+qjN/It
+         XS26D5Nfm73PiA2iwcIC0Vx/xD5R1NOgH6Y+X7NZHciJzCyaDpIPr1jc57GEuwm9JqpS
+         GEDBO1piSAaLm2+vZUQLzkQ7HAZg2tSVz1aKrg1Mywp4ovv/GIBzGHXqxxK1RhfNk2Bn
+         jcZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793726356; x=1794331156;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=E1AIQqXxMElr9XYHIFcSfJejuF++6x4Nf+fj72eanNY=;
-        b=bnI56fSQEn5b1VPC6MmCBYzI+SaI/zR5IscCjAJh5jA5WuG0Eirf1xcNQ979jJkAIl
-         dGKNuc7ztaDhWvAfCiQwK/Z86BHKhV1YF5DkcxkNL59AI+2TnX031QrLtDr7j3W2rYOR
-         0nsTygWVXghSmsYB1z1LpSPW4ieIr1qbIha88V47ATwCmHm34GNCoO5BwKuNYqQyLCL3
-         MrFUXLn/uRli1ZGLpvA2c6k5vi3Ts+T7cZcbT4yxTQn7abk+jI877X+AmrVXuF0/0ijS
-         njvbork8I/mr+kCFKoLzs5NYFjCP5MVWCvu3U6ciS5TDN/74q9Av9lOpx413xunm5zh2
-         oxLQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwiC14l90Vjw/xWKr43HGDJwP8dOe67PP/c09hAP+Lzb/rkdQg5wbE4OCpk3jM+7084GLH3+xeo82g=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8D2z1UdEjA6ECFsToTFoQtrudjliRb5A7S8e3oz+DTH90/S2f4
-	SdsNLVWmrcmWj/4oidYTggCwgVWv4gbbOICP0pA/9PTuf84qRu+SQikp7etVCkENvpc=
-X-Gm-Gg: AYBFou25QLyxTTQfI2fFlMR8e2IxrRIALfQmVVkh7Jy+KqZ5o3sarP8JCn2KWB+yXz/
-	m/MaZNw+NotgbM+81MbUdoscp//2Ibs12XoS3s4NZcWrS3OPoI0tn9wG7Rxi9zOYPlYJn+roib/
-	fK/PK3PUcoVBFhMHVtQRPhppmFcwVmOPVnhUVx+wByc5y47Pi2f40Istykug0OWsF2hb1Q3e4t4
-	77f7kigtG7SQnj66ngrh/NVBpFNwnqamCPgaZPU7Wgwt2yaU7QOMA0iwBFDiiSt0jlQgRFa31bs
-	o6+nUXHWHnHaWePJxsxfGq6OKhflBmp+3qQf+LPNpvZTvMJZrbwO37xTsNf25Lrn87/n4LOcXrz
-	Z3fTrjC0w8vdkReljjk+qkU0sXodPV3uaw7X62QhvcWN+LbKggLCxxoA4IWXLFaIQWNSsl/NjMs
-	j/rCekRxblhcAJGpPqhwFx0opAAUPpN6vSKrj1Sl6uzmXH1xEq7Z9JH9Q6vtMGgdwS0tELLgOnc
-	+0Xpd8Gd7Ip89yqDRcAtgG+3MnH2sABjzpuxolfo1zWEyPwzuCt5pfDiiKxtTpKswK++cYJmJHR
-	jd9MFkTZ+rfGzSHoUzqz+NYNwV6LGbBQg57c61E0p0TY08dU
-X-Received: by 2002:a05:6000:4711:b0:48e:2371:3835 with SMTP id ffacd0b85a97d-48e6e309f7amr31462901f8f.51.1793726356301;
-        Tue, 03 Nov 2026 09:19:16 -0800 (PST)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71b80eb1sm27856601f8f.34.2026.11.03.09.19.14
+        d=1e100.net; s=20260707; t=1793726466; x=1794331266;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=VdlowWmvfVZz+69VMJzw63b7hr3S2rAy0+a2cDKUzcU=;
+        b=CQhJw02dn806JvfpWqW9XkEAqq5WlP8qKFqVp+RhCVGZHa1m/dPLcdkzdnuoxSp1Fj
+         xA8zjkSxBgCMsN7Rc5ialpFABWcNiTwUv8i5YAWiR9X7pyNl8+mO5cPI2X3oGR99yqWB
+         WlNdIK2uY/sbMLcJrz2um7XH+Osa4AcZ5kMn8J9B4XnMxBeDbojcB9USYTmTeJrV+lvP
+         nrUIEo62vvK/rmontGpcg8pdZkAKC2i8tXk6Gd7q9z0KTuaQav4SiXjoaaga9tahbM0r
+         ObEXTXxLZQHDkUUa9FY/iUS9zGMPAZ54PsNTz8gWjHZbbidAHiLg0c6OyrKm4X7TY5Zs
+         A04Q==
+X-Forwarded-Encrypted: i=1; AKwUvByhkSujT1XlP7Cdd5C449vztwsngvBkhh98wtL2S1UIXd4E/UCL/NjgtwUppDM5CMkvi3SimX3jPZI=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+EILwdE3oBp9I4u0oniv/9cRitm0xGbbwSqgaeOZhPuyP+toEw
+	m//1f/IlXhmjV0FDaqrQCdhwSYvwd448JCetbsuxk6BGFs/jQuGn+GLv
+X-Gm-Gg: AYBFou1QCE6jb432zSHhbKrTN2HzbxgtGcillRqAqbLnWAUr17LSU8HF7Y5dncLY3Rs
+	K1aZiuSxsyuXrvfafoHYGs29DhRq3mHe0bFPMLUMdX2075sp/U739Ly/3kutlxgEQn2EXVXSRqH
+	SF5JTV5/UFNkKkp/vIw025UE0ykyThIHOwYhOJCC4KyqvpVI4JQiPFPyp25e6O7rVsycsPkrc9+
+	zYWMKr7dAtwJdxKRpWun6slsLdC2P42StorVfmKuKeGG6RXlBYCEAeD1qYd9EEsz5XCUICws1mK
+	WU+ccxqlbwj/I5ynn3K2SsWp+f75p5VRd0MrqXxgIa6yG3vV1QgYhFU/m727J3W0x71DkPW0uQa
+	vtjyTXi+LChGS1t4C7iUNtUfmhqwSqUK0rEgq63+zlvHKyBZkFhjjf31Jj4jEL5VT368AR2AqiT
+	CD5YcvU6dtsiYiZfcVdFDk35FjJJOlzEQGXUxzwBl1XD2lYcJqBD2B4+y4lKeRlACZzwrN7MuMQ
+	dRvYZAk52ByV3gHXNmyOYkTAi3MPe4+eZkgzm96TaNO/wNcSsD1H5Fo3XlY+I8qKgyvvqwghzdk
+	LooLqSZgyqahmpGk7gRN4avA4BZljcTPN+UAeK9gunFxCOWvrJQq8TCCcs+z5wjwWFxys3jIT2s
+	tWd770QoC9CLGiiMsN9E8cyIZBAuhaFb3/0Y8zWY=
+X-Received: by 2002:a05:600c:4704:b0:4a3:12fb:1ef1 with SMTP id 5b1f17b1804b1-4ac18992a21mr287850375e9.29.1793726465631;
+        Tue, 03 Nov 2026 09:21:05 -0800 (PST)
+Received: from iku.lan ([2a00:23c8:254f:fd01:8b77:19e1:26f7:89f2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ac08b72579sm8800675e9.2.2026.11.03.09.21.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2026 09:19:15 -0800 (PST)
+        Tue, 03 Nov 2026 09:21:05 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/4] clk/drm: renesas: Improve RZ/V2H(P) MIPI DSI PLL parameter selection
+Date: Tue,  3 Nov 2026 17:20:53 +0000
+Message-ID: <20261103172057.617203-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.56.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -89,89 +110,98 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 5/9] clk: google: Add CPM clock driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Thomas Gleixner <tglx@kernel.org>, 
- Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>, 
- linux-arm-kernel@lists.infradead.org, 
- Mariano Marciello <mmarciello@google.com>, 
- Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org, 
- =?utf-8?q?Jakub_G=C5=82owacki?= <jglow@google.com>
-In-Reply-To: <20261026144346.5.I82dc05365979021379fe730d6d52792a87ff15ed@changeid>
-References: <20261026214359.3122870-1-briannorris@chromium.org>
- <20261026144346.5.I82dc05365979021379fe730d6d52792a87ff15ed@changeid>
-Date: Tue, 03 Nov 2026 18:19:04 +0100
-Message-Id: <179372634472.2573818.17532943286609086157.b4-review@b4>
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2561; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=fqTcKnieuf7JekGsRwrFzLg18sNZNXRDB3ktfvrRuF8=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFmvxLvWxKwtTKye09bOcqL677Xz98LyWeKzJO0s975wd
- 7Ja9XReRykLgxgXg6yYIksNd7X4O0mtL7Om69yGmcPKBDKEgYtTACbSsICR4VV9nuzFk3pBi2Zr
- S330mea5O3JtmtSmJXnzDHZHnFB9YMPIcPdp827jZbrejwUizdSOlxd4HP60etnkLR9Dtthb55w
- N4wMA
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+Content-Transfer-Encoding: 8bit
 
-> Google Tensor SoCs (used on Pixel phones) manage many resources
-> (including most clocks) using a Central Power Manager (CPM)
-> co-processor. We communicate with CPM using mailboxes, abstracted in the
-> cpm_request_client(), etc., API.
-> 
-> The clock tree is largely not represented fully by this driver, because
-> CPM hides most of the divider, mux, and parent details, instead
-> maintaining its own internal table of mappings for divider and mux
-> values. The one exception is for some of the DPU clocks, where several
-> clocks and dividers are exposed directly, and the firmware API works on
-> divider values instead of clock rates. I attempt to represent this
-> properly with dividers and parents, although I don't have the full
-> display stack running to verify everything yet.
->
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-As you say, the clock tree is not fully represented here. Beyond that, CPM
-owns the clocks themselves, as the driver acknowledges by setting
-CLK_GET_RATE_NOCACHE.
+Hi all,
 
-The driver keeps a partial copy of CPM's state in the kernel:
+On RZ/V2H(P) and RZ/V2N the DSI HS clock is derived from the pixel clock
+produced by the CPG PLLDSI and its divider (HS clock = pixel clock *
+bpp / lanes), and the PLL in the DSI block has to reproduce it to within
+0.5 Hz. A display mode is usable only if a single set of CPG parameters
+satisfies both the CPG and the DSI PLL constraints, but the two were
+checked one after the other instead of together:
 
-- Rate tables below hard-code what the FW has (or should have) instead
-  of rounding the rate, even though there seems to be a ROUND_RATE_OP_ID.
+ - Mode validation took the CPG parameters with the smallest frequency
+   error and only then checked the DSI PLL. A divider that lost on CPG
+   error alone was never tried against the DSI PLL, so modes were
+   rejected although another divider or PLL setting would have worked.
+ - The PLLDSI divider's .determine_rate() runs its own search when the
+   clock is set, so it can pick parameters other than the ones the DSI
+   driver validated.
 
-- kernel handles PLL parenting and divider math for the DP clocks, while the
-  firmware can also switch them to what looks like the oscillator, out of
-  the kernel's view. So the math is likely duplicated as well
+The first two patches add the clock-side support, the last two make the
+DSI driver use it:
 
-This middle ground cannot be kept consistent. CCF assumes it knows the
-topology and computes rates from it, but the firmware makes the actual
-decisions. The DP clocks already show it: the tree can report a parent the
-hardware does not use, and .recalc_rate()/.determine_rate() can disagree
-with what CPM programmed.
+ 1. Let the DSI driver cache the CPG divider parameters it validated,
+    per PLLDSI instance, and have .determine_rate() reuse them when the
+    requested rate matches.
+ 2. Add rzv2h_cpg_get_pll_pars_validate(), which offers each candidate
+    to a callback and returns the first one it accepts.
+    rzv2h_get_pll_pars() becomes a wrapper passing a NULL validator, so
+    existing callers are unchanged.
+ 3. Evaluate every divider against the DSI PLL limits, keep the one with
+    the smallest DSI PLL error and hand it to the CPG using the cache
+    from patch 1.
+ 4. If no divider gives a usable pair, search again using patch 2 and
+    take the first CPG candidate that is at most 50 Hz off at the PLLDSI
+    output and gives a DSI HS clock error below 0.5 Hz. 50 Hz is at most
+    2 ppm of the 25 MHz minimum PLLDSI output, so the pixel clock error
+    stays negligible.
 
-I would advise to follow a model closer SCMI. What you are doing here looks
-a lot like it.
-(see drivers/firmware/arm_scmi/clock.c and drivers/clk/clk-scmi.c)
+The cache in patch 1 is indexed by PLLDSI instance and shared by all CPG
+instances, as the DSI driver only knows which instance it targets. If
+there is a cleaner way to hand the parameters over to the CPG, I am
+happy to rework it.
 
- - Put the LPCM service protocol (request word layout, dst_id, timeout,
-   error translation) in the CPM firmware/soc driver, behind a small API
-   shared by clk and reset. Philipp asked for the error helper on 6/9; the
-   whole request encoding is common, not just the errors.
+Testing
+-------
+"modetest -c" on [RZ/V2H EVK] (DSI -> ADV7535 -> HDMI, 4 lanes,
+[monitor]) lists 27 modes instead of 21. No mode is lost, and these are
+the newly usable ones:
 
- - Make the clock driver a thin CCF adapter: each CPM clock is an opaque
-   endpoint, and gate/rate requests go to the firmware. Get rates from the
-   firmware (round-rate op) instead of local tables. Model no topology the
-   kernel does not own. If parents must be exposed, the firmware should
-   describe them, as SCMI does, rather than the kernel hard-coding them.
+  mode        refresh   pixel clock
+  1920x1080   59.94 Hz  148352 kHz
+  1280x720    59.94 Hz   74176 kHz
+  720x480     60.00 Hz   27027 kHz
+  640x480     60.00 Hz   25200 kHz
+  640x480     59.94 Hz   25175 kHz
+  720x400     70.08 Hz   28320 kHz
+
+Dependencies
+------------
+Based on next-20261102 plus two patches from Tommaso that are not in
+that tree:
+
+  [1] clk: renesas: rzv2h: Forward PLLDSI mux rate requests to the parent
+  [2] clk: renesas: rzv2h: Report the DSI duty cycle from the LVDS divider
+
+[1] https://lore.kernel.org/all/20261029-tm-ssgrlpcsrc-2083-v5-clk-duty-fixes-v1-1-47f23de6bdb1@bp.renesas.com/
+[2] https://lore.kernel.org/all/20261029-tm-ssgrlpcsrc-2083-v5-clk-duty-fixes-v1-2-47f23de6bdb1@bp.renesas.com/
+
+Geert, Biju: I would suggest taking everything via renesas-clk
+with an Ack from the DRM side, or providing an immutable branch with
+patches 1-2 for the DRM tree. Please let me know which you prefer.
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (4):
+  clk: renesas: rzv2h-cpg: Allow MIPI DSI to reuse PLL divider
+    parameters
+  clk: renesas: rzv2h-cpg: Add validation hook to PLL parameter search
+  drm: renesas: rz-du: mipi_dsi: Improve DSI PLL parameter selection and
+    cache results
+  drm: renesas: rz-du: mipi_dsi: Add fallback CPG PLLDSI parameter
+    search
+
+ drivers/clk/renesas/rzv2h-cpg-lib.c           | 109 ++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.c               |  15 +-
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 174 +++++++++++++++---
+ include/linux/clk/renesas.h                   |  38 ++++
+ 4 files changed, 300 insertions(+), 36 deletions(-)
 
 -- 
-Jerome
+2.56.0
 
