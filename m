@@ -1,101 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.62.39
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793688909;
-	b=h9RjQwQQ8El+OzRPc/6uUYrr6hNRZIBsFABkHgxsA4Stawb+ji4zYmtxOHCJ7f1+mZkr
-	 Q3BNPEuk7b8Ml2YiwELhR0SgjUuFYzzauKJJewLMiTZzECfQFa018gDy6PtEvP7X52xGd
-	 c6JQupTZKLIidLeSflmGfmwW5pOV1gftKu7yReBncoHjgedLKbt0geVATgW62WtBBMfKp
-	 mOZr+vnWQ+OQ5ISDVosGmqJsJSgtxJNpTWTxMlLjGX1MPyasA+2prmLCeOH8zRJ7troIL
-	 IVgzFL0C3WdoFz/YHXfvCmiSXBEMCHm0tjnic16viEKbcWNzm3wUQEKMRdxC6hF2/PQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793688909;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:In-Reply-To:References:Content-Transfer-Encoding:
-	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:
-	 X-MS-Exchange-AntiSpam-MessageData-1:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=Pr93mp+82LWF/v0eXGsgnrotsjXf0udIMS1fYK4OmWI=;
-	b=0GjGsYai6snKb1hBdTrKAaGbO7J3ncQxWWo26Tmz84X13yj4bRg2h51eisFShLX7P1y+
-	 +H2Y3WN4DREJB2F2Znqd4NSSxd32vDWRkvsHdhCf1mFMShn4wRXBI51d6XK4G4l2rheZS
-	 xTsgLm8fRf0lryRbdcEruTQ/fnlL8Hjk9d9qZpNfJSOYmWUOVUdALA1RO7irrBe8517kP
-	 6Dl9lgdR07TfXhwpgvqRVX0gYtpV84pWG+XEP7GPe614VqiZWi5GZL6lrzCr6RA133WOw
-	 rACmjJ2jMBWCL7xn93n98f2zHtAReO2H49vYTMCSj3pbLx/ZJi6wu7IuM1Blv+qDjJQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=nvidia.com;
-	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=gpFkYJEx;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.62.39
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011039.outbound.protection.outlook.com [52.101.62.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.42
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793695235;
+	b=bF0meFpj1g+DZVUofQvsALt5CXvSP78DZ2q6knrN6a3EIpY++MGGLKi/fkm7fPlwU+dq
+	 pzDxdPqHeqI9875ArX9PVqjzIy1Ye/U9bEgEDfajdrmaUkd5cqtMrBumg7Sj66wSWKGjG
+	 Ws10i1vpAmCF7VWvmsVJpMX9l4D09A5ZhrQ43faTyNmtoTRVkWSHnKdQN3KSiUyHfuux/
+	 HJCoO6Z8XFGLsGyOXsTPYum6dEg8LQdnUsissTF3AT2JX1m8i56FWG31f3Ggq2uJRpR/V
+	 sV6MM64/11GGd7d3zzb2MbU+fni6gSP3vgBp4JdIh2i86Opzz9/6aLwvOvwWV66tmRQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793695235;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=gKEeZqtZAu8+s0Ua1x2I8P/JLZraxDn6ha7UOnJcDMc=;
+	b=iVbMS5brE6VW27Z5LQqa/eFb7KXm1f/m1oMlFsLMOe4Rm1RDdiqQKWrklN9dRDjckzvt
+	 CCj+HgcSC4qSRta84lSJUOCNG4feIo2w2cv7Kdt4Wy4/aiUy4Ghp22x2RznUZnUG8ePTJ
+	 50NSBJicbFDP2Nr/2cRAThk8zUZC6j7uTmV6jJlLqPQ5IxGR1Gkv9cwe7sR4LvpUtaEmV
+	 W2mOtqgjGlhpjwB14E60M9VdwpqVySnFv3k7xZcuFTJNLCY8PgYbVf9OX3a0UaG1REYcE
+	 s8Ivb9TlsGjJrGm/cnYbCR2aLaQfQMKdTGr6fp2DP5yf2SrCEB0ar3SBk1fblABJsog==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Z8N8NxfK;
+	arc=none smtp.remote-ip=209.85.161.42
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3DE606A324;
-	Tue,  3 Nov 2026 06:55:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DD3DE606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA565606A972
+	for <linux-clk@vger.kernel.org>; Tue,  3 Nov 2026 08:40:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EA565606A972
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=gpFkYJEx
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rVjKefoJdAv+qfsghSQC6df2h89mj561xPxn0RTLuBAA/Me0k6A8S+OSldFeZ46OjXvmc40NJSh/B7lnHwHAPBAND8Kd/Cz5m/5l1gG4ST/bgmxe1wo6Hg+5bP6AOQrXvxhIxom5UpVjqsgWQ+wpXtY5giaw/iToeBen0JBxp15OpGjqUUyt6jxXORgaQO5NcviLpG0QKbae83/TO3OusYi1JAPjPMlg8ScI9SlzWyP6gnaIi7KNXK1Dn7iDDjiWJMVLRk6AfeXdrZYIlYJb+9ElSvsUMAx6fDJhjQlgUHrYJBa5j34GwjCH394yKd7yQXkr8lNohJtYd1i+tV4KUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Pr93mp+82LWF/v0eXGsgnrotsjXf0udIMS1fYK4OmWI=;
- b=nHN7Y2O/g4aXFSk9de6mnMuQ70TBnVvbACrSFNn2LUaPN5pCn7ofe9b01V3yh6DCgFXsCNyYRPawgA0Z2FvFvwX9r+rtOu+bPYwSvuiYFrqw9S7rK9Pt+7CMrOAk+x1WrXVyQH9fQaWTSpLwH2TS1j6yD3bW1UuJSNoFpx7n5jcOtLUBFrKuuif79QXJKMd5lrWtcNVXnvORa1ZRZ/QnZwJOm03zIgkdBSfDnfLxWKbKqVW0HMGeHA/Mu7IAfX9rrSZVckpIXTzYV1BSvC3fEktHlAXzTl26PuDD8i+F6xbqjBeJfeEPLkbTsnkZvR7PhM4G27m4ghabLVWV3OXiVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pr93mp+82LWF/v0eXGsgnrotsjXf0udIMS1fYK4OmWI=;
- b=gpFkYJExr4KGj4gijpMidVr/iKwmSTpAtFNRs86dv2wPNqPrZ8LDserDns+Yr8IqH8/370Pkx3QYKA5iie1mDYowiu1wRRpCDBcPjYm+jtHJ+Qd28moFY8p37Td0dw1E/VmfUm1twDckRi5b05tOgHZSUlAPPABW8Jn1Q9sBf+Zgd8pZUW5Od5dAvJNQl6Rs4XF4/1u/nx/uVYF9tyZrvsv3Im+et5MHhHEFBfl/zbj8OlXE9puRtbMnN5gjkRhNh1pbykZlQEN/5MLXWLOM3bd0omN0innBgSSwvRKn9IDKyI3iVEqhuxKNy9d7R6s3aHSBry8a3Tj/d3LYByN41A==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by SA1PR12MB8743.namprd12.prod.outlook.com (2603:10b6:806:37c::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.11; Tue, 3 Nov
- 2026 06:54:37 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0569.011; Tue, 3 Nov 2026
- 06:54:36 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Douglas Anderson <dianders@chromium.org>, Aniruddha Rao <anrao@nvidia.com>,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Johnny Liu <johnliu@nvidia.com>, Johnny Liu <johnliu@nvidia.com>
-Subject:
- Re: [PATCH v3 0/4] Add Tegra238 BPMP support and fix stale EMC clock rate
-Date: Tue, 03 Nov 2026 15:25:51 +0900
-Message-ID: <8Vvs2CcoQRmp5w8swuUfpw@nvidia.com>
-In-Reply-To: <20261102121202.2431928-1-johnliu@nvidia.com>
-References: <20261102121202.2431928-1-johnliu@nvidia.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TY4P301CA0044.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:36b::8) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Z8N8NxfK
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-6aa9606ddadso3010059eaf.0
+        for <linux-clk@vger.kernel.org>; Tue, 03 Nov 2026 00:40:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793695234; x=1794300034; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=gKEeZqtZAu8+s0Ua1x2I8P/JLZraxDn6ha7UOnJcDMc=;
+        b=Z8N8NxfKe55ZfisRV2CtgbD6yovTTTG75ThMC1uRTU8S+zsUPDuQjpOZU5FtVmcI8x
+         26zJ6B+PBaD4RSCDAASvYPR2yBYkPtLdLHmHMrd0+5OIOHvqmJ8MeuQeO562bhTbBEHJ
+         5ChQsjlBUU/TDIcnf/Z8MksW0WaTb4XI2hOpMtlqQ29k0/bz1cBZxIVyhpkp2R5/Qjrz
+         tmiF9SFI6x1YVrBG4e9+fHggOx9Cjd/wAJdB3aBE8ctpgWP708MLigr53S/17jrAVSwq
+         qsDsr8LkGEM+381fJMBpJxRlbMw8pbDrpduq1rVR3DUlwspZ5tFGsC0TrWJppZo95EWM
+         l5IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793695234; x=1794300034;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=gKEeZqtZAu8+s0Ua1x2I8P/JLZraxDn6ha7UOnJcDMc=;
+        b=HhHBE0hfS72cWvR95VQXxNCV1fbnPoSBdqB6TQvQR+B0lG2aQ0xaFLqTPNBzhUt1vR
+         q/Lg2zhJlHoI9yK9vdVTq6+k59G5+FC/A2UYvhqzyX+F10ZJk2T6mQQvGZNY4nhX8Mlj
+         Qkr1KONdWmMmh/LmgbTYh4qt7beluMTwx8F+RyKcPmOta5iiG27/GaG3VcnzR792fHOf
+         MjVt/D06a7WQ2gQoAAWdBPMfMaKCki9LTy5ko7aaL37X78KYMwi8lz+PD8uLLL5CdJAW
+         xbDhjd4DFjDsYpJ7x95bnQRzz6yn0nk7bLUjxFyi76mm7uGzRB9DmQjblC63OXwyqNF9
+         Nm2g==
+X-Forwarded-Encrypted: i=1; AKwUvBzvRr3HbddM3oxpJnIGb5b6RXLn3hxYMIP/pEigo7iQDho0S7xLpJQ2IQ27xZsisSHXl/ftSg5okjg=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9sAjKY2hvJt+YcdGgOgyHkSlvuMw4MBT6qTePLAjENQ3jLJVFN
+	ZORiSrn4WpQL7rlPo6Xp+Hso/yGzXrN0BCieyENDdb6yTV0I5VeX/aGG
+X-Gm-Gg: AYBFou30psx8LuyqlQdNYdlPvjHpMTa0NQDNwgSdy0gK7PQhSZ+4lqod+Q6txj8OJKx
+	ODVg9vqGoLSJ8NVgVZIvDNvUaRdx/AUNoiV3S/HRQ6WHrwf/MUxwG/0BW/O9tqnae4hlDbpD1TY
+	eQL1ZRY4JaHMvX2ntzgD05UEnsp16c+XCqULLaUESl1SuYoWPOOeJYlCOCQl6d9FaxAlbnoOf+w
+	OPS01Gkzqa02BsCNqKDQlcs9+MLcwYDKdsUwJzfPQHSd7mF+TFcZ4+0OzWgZfyYQ7n0J4b9n5sm
+	w3oxTUCVQrGLnIudhgLQpi4y8S0Fc/dfCDvnfovk77tzEkiuz68PlefEoitdf/flVtRhtDnupaB
+	+tZBP0fPX+ztnOWp08T1Wjw0NC0iLfGjIkAjUYfiQK4i0I+E8rjRDwReqzX5RlufbgUkDiUZWii
+	OMsW7bGNVN2YUu7O1Y4dvbhFZ1DHZhWKlyhkH5bV4o8vK3AJSFDmttQw44PD67u3zEbGxjPHup0
+	edb1WvHwE5wdSVRO2KNhOxb1OyP0RIa5InGgyr8ZFg6+Q3VI3lVtftUr5zeoKX35odV1MtSaYad
+	stiGdyMMjJPQD/XPMm8ZqWMuX/6Up3gnmqr2d7GBd6YxfJkzXuOA21ZebcrfeJxSZcjDY8oyxxJ
+	ZXCwkPpnpzrMwnmC9BC/iBstAlMER6ctpQd4aiTeRQvMyC6BN687+McxiZA6TwOdRfS30UrO2h/
+	VyV5/0k09GflS4sBGgYpcASwS3Rz1yRtxsxIWSzUvLuQ3IjK59mqs=
+X-Received: by 2002:a05:6820:4888:b0:70a:598b:12a9 with SMTP id 006d021491bc7-714f2a077b4mr6082560eaf.53.1793695233866;
+        Tue, 03 Nov 2026 00:40:33 -0800 (PST)
+Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-714f3081097sm10520397eaf.13.2026.11.03.00.40.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Nov 2026 00:40:33 -0800 (PST)
+From: James Hilliard <james.hilliard1@gmail.com>
+Subject: [PATCH v11 0/5] Introduce Allwinner H616 PWM controller
+Date: Tue, 03 Nov 2026 01:40:25 -0700
+Message-Id: <20261103-h616-pwm-v8-v11-0-07abb59575c3@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -105,151 +93,253 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|SA1PR12MB8743:EE_
-X-MS-Office365-Filtering-Correlation-Id: 87a11418-a4a8-4f2f-e7e7-08df397752f6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|10070799003|7416014|366016|23010399003|1800799024|18002099003|10067099003|261102123227099003|22082099003|921020|11063799006|261022105027099003|261026121527099003|261021121427099003|261026140227099003|261009223027099003|261028144727099003|56012099006|261021123027099003;
-X-Microsoft-Antispam-Message-Info:
-	tWSa+2FQnRAJeceug5OIJ/GLvoPTOahwHmskYRwr8ZbKy1VVPZq1aLTvCVRJbM+f1c4XCUNf0jfQYC5/i5MKNDXGd0aFYBLF716vH6lzqklrtzk+WykuawAjJqEYooiCiMB7lfvQRpUWCp3+TCXSxRPjHFolbolUnaUFVl8rYwRd5Ior1tZcLOjHwSn6quWdgbcd1prF+mspSovG72c9pf1lXFKBK/nSc+2OaUYd6wDuHNhDMkWfkeyn7kkp2ZJZmSlMIhNh4YYc9D1t+GlbLRQsWGMV/GBxvY55xBNDM1KwFWjaEkv/u7WW0lW80nuSZVWCW5k6fV3HV4lfkoegrtzOpZsQmqxzkwciCFGLvel40jbOYgPQTnkcoA37Y+JJfNaqZ7OjhR7VFP4y4vGJi1mZ0xhUHv3utpMyMZ1Juszr8Zg3JbL+0Vrg4yTmUop/Er2FAENF4ECDRUFKxTfJNDDm+DZ1VKhRWRd9Ihb2wD3tdoDqU5ete4sWzZsOQzh4ZuPdY/D7Zg8AHzu/Q2ljVkZh7QlvXYgyanjuLHZEB0bFFUnX7rSS0MeY0RQNbCziwm0wBw4m+X6+lc7bDGitCXRTLHhH8oLt4g0TfYQa5D0f6iOogaPBeASUqI8yk3jD+gIX1+jq2f4lGZc+Ja7T3GK02P8kiJWEVCAEYtM2/43V7Bx97c37/qZf3dH5SgOnnBHhYHkJD9wTnOihlogS9w==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(7416014)(366016)(23010399003)(1800799024)(18002099003)(10067099003)(261102123227099003)(22082099003)(921020)(11063799006)(261022105027099003)(261026121527099003)(261021121427099003)(261026140227099003)(261009223027099003)(261028144727099003)(56012099006)(261021123027099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Ukszek5iLy96L0FyZFlWSHhVdzdIbHlXUjBlcUpuSndLUGhMYWRwRWdjbHhy?=
- =?utf-8?B?YjBKQ1BQQ2NyZUw4SUl3amJQLzZUVERUZmZZazJweWRYUDU2cjVlaEtLb0NS?=
- =?utf-8?B?cGZwV2VUdTVOZHhsQ0tpU0pWT2QrS0UwUmJPLzNBdUZNVytCdkxFN0xvZEhN?=
- =?utf-8?B?NGlyMi9UVVBVZWhtb0JYV29IdE1pL1hOcEIyKzFJcW9QYzFpQ1FRV05ZeWN0?=
- =?utf-8?B?bGd1cStlRDdyT3RGRGFzTVZLTkhIUFZtbFd6TngyeG1Xd3dmS0dtemRNRFdl?=
- =?utf-8?B?eERSaThFYmszdGZKZDMvaGFrZGVkRXJpaHhjT09ScHFoWS8zcmxGV0lMdndV?=
- =?utf-8?B?VmJaMC9ZTW5nVk1JLys4VkhlNHpWaml2NmY5M0JVMnVmSmtPcnZDY1Rnb0hr?=
- =?utf-8?B?dDB0S2dvY2RWTUJhYndHQnNCMnVpNEQ1TWx4L3BZd3VhRnRNZ2wzSjljY1Ru?=
- =?utf-8?B?VFd3TjZXTEZtdk4vNnVkL3g2Z2RqVkI4aGlUUzl6bEVUTXZOM2lKaUN6R1lR?=
- =?utf-8?B?KzhzMmZTUjBldG9yWitZVy9jSHZuYWphVXpyQnlRWE9HUldocDBZTVMyUFpp?=
- =?utf-8?B?WEV6d1Z6WkxrL1dmcHU5TWJyaVlmWm5HMWEwSUZidDl4THNqUXdHalQ2NGZP?=
- =?utf-8?B?WDhoZW5lcHcwYUdhL3pqQWt0aVZ5QmJXemNCblJmd3hiVy9JTnUveEtkMGti?=
- =?utf-8?B?OUNUYUR0bW56YUJuWjJNbWp1YTRGeUpLRlFqaElCcDNoOCtOOTFJZy9VV1Z6?=
- =?utf-8?B?RUNxZlBnZTRwTGNqU2kyNm5VeDNPdkk2cTlkaHRucmptTTRKMWcrM1BIclFX?=
- =?utf-8?B?eTVpRWVYZFY2Uit2TldvWlNTcW1VZjZBQndDTzF2NkNUSUlyakNDVnQ4TEFD?=
- =?utf-8?B?czZkUSttcmtQdVNwVGFOK1FhZVl6ZVRUaGEydHNRR3pCaUxwUFRGZm5iWjEy?=
- =?utf-8?B?NG1aRWlaci81TDhPSmFJU0ZTVDRSWlUwc0FjMWdKYi9EVFBsM0h5Skc5WGRO?=
- =?utf-8?B?cGxjZjNpZnZoM1p2cHEyNGVyRm1FMVRkYUQ0NVhjN2FIeXA2R0hjYWxyZkR0?=
- =?utf-8?B?bHVod3JMMXJjMWpERDdLaUlWSEFTeWRnWlczZU4wNE5BM3RnY3pxRU5BS1lO?=
- =?utf-8?B?WGtJNlVkekJzMU5HdERjakRjQTRnc1ozSGpabUlJUDN6T1R3SXd3QjRVTXRP?=
- =?utf-8?B?ZG00WUU3ZlQ5dXYxZXhNay8wTXpxLzZvaTFDK2JFRGtFN3MvbWE3ZHEvTWpz?=
- =?utf-8?B?SWd3aWNQREVCaUFSbjNSdTREci9XajdINUtjNjZQTHV1cTd0bUhNZUxVMG1l?=
- =?utf-8?B?YUNVUUYyYVBoRjBBVzQ5THp0dUFVYlAwaVd4VEhTV1grM1hjVjFES3BSQTNY?=
- =?utf-8?B?c09FNjFScVRxQXY0OURKYXpRVzlBMzFHRjRyUUNPWUE3R1hYQlczYzI3TDZm?=
- =?utf-8?B?Ykk4MTlaWU94M09NVERNWllRZnBxN0tVS1FGdGV0Zm1yVVdzSmJpZDNMeWIy?=
- =?utf-8?B?RHd5MEJoQTZHRVZML3hSUzVzOUVOM3B5V1JCdHRNUHN1eGJBTitPQUtLRVEy?=
- =?utf-8?B?UTRsOHhxVWFGUDZrT05jTlRZbVE2YnBIeXlMaXhHRVMwT09JUEJ0V0ZhaWJP?=
- =?utf-8?B?VWxZWXR4cytNb3ZwWDBGdzJ1YzZuQ0JUZktyeXRHRndsVlhCVFp3ZzVJWUF6?=
- =?utf-8?B?SmYvTWhoZkI3aEcwdktEa3NMOUVSN2psTnFqQlV4Q3N6dzhmTk9kS29Za00x?=
- =?utf-8?B?NUZJbWdRdFpFKzQ2Q0xiU2xkTnpFT2duamgydlF3RWFKVDluSjhKdlV3dkdK?=
- =?utf-8?B?OUlZWk5YcUM1VEhUTnh0a01kVGFkT2xvMWhjeTBpdzQ2Q0NSd2NERFZia2Vy?=
- =?utf-8?B?ZGZMbCttYWR6R1lxVVlZOGpKS1BlYW95QTM3bnJqaVRnWmt2dmVaaGxIeENI?=
- =?utf-8?B?cTZ6QTYycVozU0pIdVdFdE90S3c4eDUwNXU5dXdyRS9YODBaamNYL2xrWkQw?=
- =?utf-8?B?OEZhK1NXU0F0MGFWb2ZPZE4xK0ZDS3plR2pHNGEzaUpVK1hLZnpqdE1FdEdG?=
- =?utf-8?B?bHl5YVpDL0hkZGRaeDRhbkdQM005MmhHTGRnODFOWm8wN1VnWGpjWkhYZVR3?=
- =?utf-8?B?VmdCTnI0OFNpYVVmbTlGSVpVa1pmVG9ZMENiMlVIN1JZR09yb3ViaTN2MEV4?=
- =?utf-8?B?WDVwdGFLZXVUR1NXU1lzQ1pPbVJKc0ozNjdvYnJ3bEZVSTNEWk9td1lId3pE?=
- =?utf-8?B?c2FPWmsvVGJDalR3ME9RNEhZNzhSSmZscG9NSXZXSWQ1bVB4dVZjeXQrQ3d2?=
- =?utf-8?B?NnNWMGEwb29SczZFV1pCb0NWaWJLblp3bDhSRzNqdTNxcnVWRUZYMWxTV2Zl?=
- =?utf-8?Q?Xy4iQX8tnu/pg8VaYNIHSlxKL910rYySGL2JIT50zddWO?=
-X-MS-Exchange-AntiSpam-MessageData-1: jt3iOf7hc1VQgw==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87a11418-a4a8-4f2f-e7e7-08df397752f6
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2026 06:54:36.7650
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LZ8UpgAkmCW2c9nt2CeIlYdER+vRIKRaP1l+xxi8DHsYc4jaVoNfYnq5tWOyyO4WQjIH23HERc1jiKHl4Qnb4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8743
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/5XSyWrDMBAG4FcJPldmFq095T1KD17kWKW2g+y4L
+ SHvXjmlOMmhuCAQEvr+GSSds9HH4MfseXfOop/DGIY+LRCfdlnVFv3Bi1CnjYyANFhg0WrU4vj
+ RidkKT1g4kgYccZbEMfomfF7jXl5/1uOpfPPVtEQsJ5o4dGJqoy/WVAOMighVjo6scgJFDKl4r
+ POD74dTvS+HYXoPfV4N3RLShnEa4te16RmXYkuQQgKFAMQuR6WZFf+dtHQ40w1HA5YUyNwCkd6
+ A+RdrQGJwzEQ5Mhm2bgOXK2dQ4NApl5NiYCM3cLVyiRoZJbp8uco0b+D6gctUNnENis0Gblb+v
+ we8artqC/LuU6UBoi7ZFKXVJAu/P3RFeF+tW60jvLcuWTalrzQBNo16tAi3mO4xwlK5qnxZeiy
+ KsrnVl8vlG6RM7EguAwAA
+X-Change-ID: 20260803-h616-pwm-v8-e21a92470923
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Richard Genoud <richard.genoud@bootlin.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ John Stultz <jstultz@google.com>, Joao Schim <joao@schimsalabim.eu>, 
+ bigunclemax@gmail.com, linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ James Hilliard <james.hilliard1@gmail.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.15.2
 
-On Monday, November 2, 2026 9:11=E2=80=AFPM Johnny Liu wrote:
-> EMC clock scaling is handled by the BPMP firmware without kernel
-> involvement, so clk_get_rate() on the EMC clock can return a stale value
-> cached by the common clock framework. This series makes the EMC clock
-> rate uncached on Tegra234, Tegra238 and Tegra264, and adds the pieces
-> needed to identify the EMC clock on each of these chips.
->=20
-> The EMC clock ID differs per chip (TEGRA234_CLK_EMC=3D31,
-> TEGRA238_CLK_EMC=3D43, TEGRA264_CLK_EMC=3D290), while the
-> "nvidia,tegra186-bpmp" fallback compatible and the tegra186_soc data are
-> shared across several chips. To avoid detecting the chip at runtime, the
-> EMC clock ID is carried in per-SoC BPMP data selected by the device tree
-> compatible.
->=20
-> Patch 1 adds the "nvidia,tegra238-bpmp" compatible to the binding,
-> together with the Tegra238 clock ID header. Patch 2 adds an emc_clk_id
-> field to struct tegra_bpmp_soc, together with dedicated SoC data for
-> Tegra234 and Tegra264 built on a common TEGRA186_BPMP_SOC_COMMON
-> initializer. Patch 3 adds Tegra238 support to the BPMP driver, including
-> its own SoC data and EMC clock ID. Patch 4 then sets
-> CLK_GET_RATE_NOCACHE on the clock matching that ID, so that the common
-> clock framework forwards rate queries to the BPMP instead of returning a
-> stale cached rate.
->=20
-> The series touches both the clock and the firmware code. Patch 4 depends
-> on patch 2, and patch 3 depends on patches 1 and 2, so I would suggest
-> taking the whole series through the Tegra tree with an Acked-by from the
-> clock maintainers.
->=20
-> Changes in v3:
-> - Move the TEGRA186_BPMP_SOC_COMMON refactoring out of the Tegra238
->   support patch and into the "Add per-SoC EMC clock ID" patch, as the
->   refactoring only makes sense together with the per-SoC emc_clk_id.
-> - Keep all Tegra238 specific changes (Makefile, CONFIG_ARCH_TEGRA_238_SOC
->   guards, clock ID header include, tegra238_soc data and compatible match=
-)
->   in a single "Add Tegra238 support" patch, and reorder it after the
->   per-SoC EMC clock ID patch.
-> - Reword the "Add per-SoC EMC clock ID" commit message to describe the
->   intended use of emc_clk_id: the BPMP clock provider sets
->   CLK_GET_RATE_NOCACHE on that clock, as it is completely managed by the
->   firmware and the common clock framework must pass rate queries through
->   to get the latest rate.
-> - No changes to patches 1 and 4 apart from the patch numbering.
->=20
-> Changes in v2:
-> - Squash "dt-bindings: clock: Add Tegra238 BPMP clock IDs" into
->   "dt-bindings: firmware: tegra186-bpmp: Add Tegra238 compatible".
-> - Reword the binding commit message to state that the Tegra238 SoC is
->   fully compatible with the Tegra186 BPMP.
->=20
-> v2: https://lore.kernel.org/all/20261028155000.1205739-1-johnliu@nvidia.c=
-om/
-> v1: https://lore.kernel.org/all/20261028084900.1047287-1-johnliu@nvidia.c=
-om/
->=20
-> Johnny Liu (4):
->   dt-bindings: firmware: tegra186-bpmp: Add Tegra238 BPMP
->   firmware: tegra: bpmp: Add per-SoC EMC clock ID
->   firmware: tegra: bpmp: Add Tegra238 support
->   clk: tegra: bpmp: Do not cache the EMC clock rate
->=20
->  .../firmware/nvidia,tegra186-bpmp.yaml        |   1 +
->  drivers/clk/tegra/clk-bpmp.c                  |   3 +
->  drivers/firmware/tegra/Makefile               |   1 +
->  drivers/firmware/tegra/bpmp.c                 |  61 ++--
->  include/dt-bindings/clock/nvidia,tegra238.h   | 279 ++++++++++++++++++
->  include/soc/tegra/bpmp.h                      |   1 +
->  6 files changed, 329 insertions(+), 17 deletions(-)
->  create mode 100644 include/dt-bindings/clock/nvidia,tegra238.h
->=20
-> --=20
-> 2.43.0
->=20
->=20
+The H616 controller has six PWM outputs, paired as 0/1, 2/3 and 4/5.
+Each pair shares a source mux, gate and power-of-two divider. Each channel
+adds a prescaler and waveform generator, with a bypass for clock output.
+The bypass can supply the input clock for the co-packaged AC200/AC300 PHY.
 
-Thank you!
+The series separates PWM waveform support and exported bypass clocks into
+distinct patches. Internal CCF pair clocks model
+the shared hardware, while PWM request/free and clock prepare/unprepare
+arbitrate ownership of each output. Active PWM outputs and prepared bypass
+clocks protect their shared rate against incompatible sibling requests.
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Firmware-active outputs are preserved until a consumer changes them.
+Hardware-enable checks protect their shared gate and rate even before
+Linux has an owner for them; there is no driver-local unused-output sweep.
+A conflicting shared-rate request is rejected while an inherited output
+remains enabled. In particular, assigned-clock-rates cannot override an
+incompatible firmware-active output. Firmware must leave a compatible
+configuration or disable the conflicting outputs for that request to work.
 
+The clock-provider interface reports the actual pair rate and makes rate
+protection visible to CCF. In contrast, drivers/clk/clk-pwm.c advertises a
+fixed frequency without checking the rounded PWM result: a 42 ns, 21 ns
+request selects 24 MHz bypass when available, but can become 25 MHz when
+a sibling holds the pair at 100 MHz. The direct provider still permits
+CCF rounding; it does not guarantee that every requested rate is available.
 
+The bounded TLA+ models and accompanying implementation checks are
+available with their assumptions and limitations at:
+https://github.com/jameshilliard/linux-h616-pwm-tla
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Assisted-by: Codex:gpt-5
+---
+Changes v10 -> v11:
+  - rebase onto pwm/for-next at 9ad5602d4943
+  - compare candidate waveforms before nanosecond rounding, retaining
+    period-first ordering across pair rates and bypass half-cycles
+  - protect the pair rate across waveform readback so an exported-clock
+    consumer cannot mix a new register configuration with a stale rate
+  - use the provider-owned handle for the temporary hold, separately from
+    the PWM handles used to change the rate
+  - Link to v10:
+    https://patch.msgid.link/20260922-h616-pwm-v8-v10-0-dccebbe1aabf@gmail.com
+
+Changes v9 -> v10:
+  - validate the single clock-specifier argument before reading its channel
+    index (reported by Sashiko)
+  - Link to v9:
+    https://patch.msgid.link/20260921-h616-pwm-v8-v9-0-37bec6201ff5@gmail.com
+
+Changes v8 -> v9:
+  - split PWM waveform support and exported bypass-clock support into
+    separate patches, retaining internal CCF pair clocks in the PWM patch
+  - preserve unclaimed firmware outputs instead of stopping them at
+    sync_state(); replace the empty disable_unused callback with
+    CLK_IGNORE_UNUSED
+  - embed the fixed six-channel topology in the pwm_chip allocation, remove
+    single-variant match data, and use a channel-indexed clock lookup
+  - store bypass clock state directly in each channel and recover the channel
+    from its clk_hw without a separate wrapper
+  - avoid module self-pinning by acquiring internal clock consumer handles
+    only while a PWM is requested; use provider-owned handles for notifiers
+    and rate readback
+  - use scoped locking and protect rate_exclusive with the register lock,
+    keeping CCF operations outside it; remove ownership WARN_ON_ONCE calls
+  - explain unsupported pulse/dead-zone reads and rename the waveform
+    conversion helper to match its callback
+  - pre-encode waveform registers, isolate update preparation and rollback,
+    combine candidate comparison/selection, and remove redundant rounding
+    corrections and private waveform-field checks
+  - normalize polarity readback, use ordinary boolean waveform flags, and
+    remove the redundant bypass recalc_rate callback
+  - clarify the clk-pwm rounding limitation and correct the v7 topology
+    description
+  - Link to v8:
+    https://patch.msgid.link/20260804-h616-pwm-v8-v8-0-db37ab8624ae@gmail.com
+
+Changes v7 -> v8:
+  - require both the module and bus input clocks for H616
+  - clear the complete two-bit clock-source selector field
+  - leave rate and period registers untouched when disabling a channel
+  - distinguish PWM-owned bypass signals from clock-owned bypass outputs
+  - round shortest-period requests using the fastest achievable clock
+  - encode constant levels without overflowing the 16-bit active-cycle field
+  - require #clock-cells for the H616 clock provider  (reported by Sashiko)
+  - allocate clock topology state per device, use the fixed two-parent map,
+    and use managed clock registration
+    (reported by Sashiko and suggested by Philipp)
+  - deassert reset before registering clocks and keep the reset handle local
+    (reported by Sashiko and suggested by Philipp)
+  - arbitrate channel ownership in clock prepare/unprepare and select bypass
+    only while the clock output is enabled  (reported by Sashiko)
+  - roll back failed PWM requests and serialize channel release
+    (reported by Sashiko)
+  - protect the shared pair source while either sibling channel is active
+    (reported by Sashiko)
+  - preserve the 65536-tick duty intermediate before polarity conversion
+    (reported by Sashiko)
+  - keep the hardware-waveform state within the PWM core storage limit
+  - clarify that either co-packaged AC200 or AC300 PHY uses the bypass clock
+  - drop driver Tested-by tags after the clock implementation was reworked
+  - quantize inverted waveforms in hardware ticks and report their
+    physical offset
+  - force released channels off so stale waveforms cannot restart with a
+    sibling
+  - track the active and pending cycle for the period-update handshake,
+    adapt the sleep interval to bound MMIO polling on long periods, and
+    honor the PCLK rate constraint
+  - quiesce rate, polarity and bypass transitions before reprogramming the
+    output
+  - clear unsupported pulse mode when programming periodic waveforms
+  - describe the bypass clock cells and simplify the fixed parent topology
+  - avoid resetting active pair registers during probe
+  - model only shared pair clocks in CCF and program per-channel dividers
+    directly
+  - make pair-rate changes transactional and hold exclusivity only while
+    an output is active
+  - implement formal waveform rounding across all parent, divider and
+    bypass choices
+  - preserve firmware-active outputs through generic unused-clock cleanup,
+    stop any still-unclaimed channels at sync_state(), reconcile empty pair
+    gates through CCF, and reject pair retuning while either output is
+    active
+  - clear dormant dead-zone state when both pair outputs are disabled,
+    while rejecting active dead-zone and pulse modes which the PWM API
+    cannot represent
+  - correct the hardware topology to show the pair gate before div_m
+  - Link to v7:
+    https://patch.msgid.link/20260703152215.192859-1-richard.genoud@bootlin.com
+
+Changes v6 -> v7:
+  - Cc Common Clock Framework maintainers  (suggested by Uwe)
+  - add missing static before SUN8I_PWM_X_BYPASS_GATE
+  - reorder code in probe to fix potential lifecycle issues
+  - set pwmcc_data[i].parent_names to NULL in sun8i_pwm_unregister_clk
+
+Changes v5 -> v6:
+  - remove trailing junk after the patch 4 commit message
+  - remove Tested-by tags where they do not apply
+
+Changes v4 -> v5:
+  - fix bypass handling for channels greater than 1
+  - add colons to clarify two debug messages
+  - switch from H616 to sun8i prefixes in code, filenames and module names
+  - fix consistency issues in macro parameters
+  - rename confusing macros
+
+Changes v3 -> v4:
+  - gather Acked-by and Tested-by tags
+  - fix a pointer-to-integer cast size warning on ARC
+  - add a managed action for clk_hw_unregister_composite
+    (suggested by Philipp)
+  - remove the unused pwm_remove function  (suggested by Philipp)
+
+Changes v2 -> v3:
+  - use U32_MAX instead of defining UINT32_MAX
+  - document U32_MAX usage in clk_round_rate()
+  - define clk_table_div_m using macros
+  - fix formatting
+  - correct the parent clock order
+  - simplify code using scoped_guard()
+  - add a missing const qualifier and rename to_h616_pwm_chip() to
+    h616_pwm_from_chip()
+  - add missing error messages and remove redundant ones
+  - rename cnt to period_ticks and duty_cnt to duty_ticks
+  - fix PWM_PERIOD_MAX
+  - add the remove callback
+  - replace DIV_ROUND_CLOSEST_ULL with DIV_ROUND_UP_ULL
+  - add H616 prefixes
+  - protect _reg in macros
+  - switch from apply/get_state to waveforms
+  - shrink struct h616_pwm_channel
+
+Changes v1 -> v2:
+  - add missing headers
+  - remove MODULE_ALIAS  (suggested by Krzysztof)
+  - use the sun4i-pwm binding instead of adding a new one
+    (suggested by Krzysztof)
+  - retrieve parent clocks from the device tree
+  - change num_parents to unsigned int
+
+To: Uwe Kleine-König <ukleinek@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Chen-Yu Tsai <wens@kernel.org>
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+To: Samuel Holland <samuel@sholland.org>
+To: Maxime Ripard <mripard@kernel.org>
+To: Richard Genoud <richard.genoud@bootlin.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-pwm@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-sunxi@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+
+---
+Richard Genoud (5):
+      dt-bindings: pwm: allwinner: add h616 pwm compatible
+      pwm: sun8i: Add H616 PWM support
+      pwm: sun8i: export the bypass outputs as clocks
+      arm64: dts: allwinner: h616: add PWM controller
+      MAINTAINERS: Add entry on Allwinner sun8i/H616 PWM driver
+
+ .../bindings/pwm/allwinner,sun4i-a10-pwm.yaml      |   33 +-
+ MAINTAINERS                                        |    5 +
+ arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi     |   47 +
+ drivers/pwm/Kconfig                                |   12 +
+ drivers/pwm/Makefile                               |    1 +
+ drivers/pwm/pwm-sun8i.c                            | 1317 ++++++++++++++++++++
+ 6 files changed, 1414 insertions(+), 1 deletion(-)
+---
+base-commit: 9ad5602d4943635ea2b3b73d1a720161f88da1a1
+change-id: 20260803-h616-pwm-v8-e21a92470923
+
+Best regards,
+--  
+James Hilliard <james.hilliard1@gmail.com>
 
