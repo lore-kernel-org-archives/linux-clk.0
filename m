@@ -1,119 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793707933;
-	b=LC9oR5k3sXPmZgY9xS5uTxSyFyGGw2gKbgB+AT2cbKOubTWiJoMKRCVCLSDZrAUvv3of
-	 ork6K4rdGgBOBKSpEO+o1oXAItmWCHGAqukdfiJEjpuawZNPdtbtBXAnNBD5kPA6vvbs/
-	 GEpSxGzPaK5VUjuJw0nYMYWOvtlfBHaiNYWOitwlE9swZt22GZDCPRt0Lfemzq4AtpCxj
-	 5Pz0UQhGQkzfoZqVlyMbIg5HHfJiY+EF5JMCo/hhpyHxw6rXB1X4VgiRzccHMdqZgUOd2
-	 fa6cjWr77dqIh7MUrrN2qCyp5nhsJYdqXBYprhVWY173dlR6EnS8T6NldSRIDXvYCDA==
+	t=1793726359;
+	b=sPYu5dwDz7pJSI9or7+PaIFKXgryIPP6OOVR3Jg3gl+UL2GMS4n1qVA0Pf1PO/jSb1hW
+	 reYzaMJo2U1FlpMVyGfU4bGJXgHFHS7zXnFPR9q2BUMrccbAgBIYkdDmBfMGpf4Tal6Sa
+	 jyCLctF89NOD1jZoBwFeu8tKIHaK//DvEmYC1vgocrMxeafK3HizCW89V1Ywvd6wnOlya
+	 XCGPjulTbP5jtJFe/7l741iS4unbRbqM97sQveR9LaPIhA5TSVJ50dFFn/yBUSSjW85mb
+	 co1QBtsfL6FPf4t46wU5mQmG1YS8nKUHBTsbFmzrvC22R5nVD59sDPgUAI5l0Grf8PQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793707933;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793726359;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=p7XwenWdW96OgNgWcGPygbhPSyvm8Dmo6vx2RBl2lPo=;
-	b=TWyl7cb8dLOOr2Dx8GvIZlmDPEZfRT7EvHg/93SLvGgtipUSYoMSBjJxIvbPj4k3tRp3
-	 V2eFh1ckWxIiYjBXZgky7rCbTvUQ49Yf0FQwU8XtC23ZqbLeIsptROES+r4dkvQQSLuen
-	 KTlK+TjUNvW27Cp6e+Zl3GSLB/spRNZ4OjPig9EoSiQ71HccK+02VQUPa1jUFnNzgwy5e
-	 nZzfP2+PJEZpPsooZfsIZsoIkP211IJHboVl5L0sI7yte0Dy4mr2tJhXfTVxxC9d7POt2
-	 QpPxBlchsiEWf5QANjML/tYPq91Of+f1ZV3Ngwek7pFQ97+fxAzFkQFGRFQX4UPdVmA==
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
+	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=E1AIQqXxMElr9XYHIFcSfJejuF++6x4Nf+fj72eanNY=;
+	b=Iw7KXowGt/mQeZSAo1jgnZ90nypmTGPYR7zyJLei859ppSU/SbZ1MvOnOJw91OlXvyfx
+	 okrKHqQkzl5EfeSuH5RPjNIfYRapGOt8Uin+pgCXAjRYPqbPXbhX7qkSq0QBpA8q+Ww+h
+	 f7uQy3UfY2EGrBNNd1P7aC9PcBts4cgofDT7ar90M4BE0jLZvKVeit8DGnRAop+r9ka3U
+	 SaY1ntJ5tqZTEzl2RE37RKfcCAlX7OqmRXWD9yrJBUda97mD+eTuqHb6KpopviCfMPQqa
+	 zmPoYqMmbfMxS2aYpyOZ+2q4etOdTV5YrjhbEVZU/DuSPzkhM4XAin5mdPKaCJxZkAg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DGkxPCLX;
-	arc=none smtp.remote-ip=209.85.221.174
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	dmarc=none header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b="R/YhAD4c";
+	arc=none smtp.remote-ip=209.85.221.46
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE99D606A326
-	for <linux-clk@vger.kernel.org>; Tue,  3 Nov 2026 12:12:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EE99D606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D5C606A328
+	for <linux-clk@vger.kernel.org>; Tue,  3 Nov 2026 17:19:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D4D5C606A328
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DGkxPCLX
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5eaabf28c06so3301596e0c.2
-        for <linux-clk@vger.kernel.org>; Tue, 03 Nov 2026 04:12:12 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=R/YhAD4c
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-48df4e9d2d4so2436364f8f.3
+        for <linux-clk@vger.kernel.org>; Tue, 03 Nov 2026 09:19:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793707932; x=1794312732; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=p7XwenWdW96OgNgWcGPygbhPSyvm8Dmo6vx2RBl2lPo=;
-        b=DGkxPCLX5GXvmx7M8dJnArR00vt8VtdGbHun9M0TeHbmz4k8r8YkOtmJx2Ok4rPPHu
-         +IyyaebAkT0PCI9hcq6wWzwfa4+Ir39EyF1hBUB/YTm2aqp/Od1kw10j98TRkpxAOopA
-         /YpE4umx9UMpsxEa3EJScBaoG7kCMx9RaFx0J50OYl0Ug5qm1Iu3MyvpXCjT70amlUX2
-         eF8iQyRRquy4+y3XIOlPL8Ompve33U3UDw4XHE5tjYNsw/J9X0bTDrlWIohLLzjCeAvk
-         g2lrhjn6EqumWcrGC/u0MrminOOvZ+mrLuaBfCngZZajxspfBocPmHuNRO1M1AD2OptY
-         aUAg==
+        d=baylibre.com; s=google; t=1793726356; x=1794331156; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=E1AIQqXxMElr9XYHIFcSfJejuF++6x4Nf+fj72eanNY=;
+        b=R/YhAD4cjF5HWZDS12Mmaz+AKtQwFDm5TTdP7WOfrT+BN86ErsKgMJuuD0p6wMvdgb
+         uqWg9OIBWW/0jQlOjEM0nHsDOEJKBU8o+MrsPV8Vz862UFKNSEW/xRNOO8aCGJroh5fA
+         KuX0NmF0thJd1pgxQzW3+xWBCAPflB3KiPmww8fLaPznA8ilgAyad4tCLgjsfN+etHaX
+         HhvCLHebKXO5C2YdHrvuPZ/20HTlx6rRE1RcliE+Uyy3yrjmdv+ESzBlTiU4kGZbNpa2
+         X8QEbssT0s+tVG+09Si8g+Ae5Jqrd8c4s9zoCAdw6JW1YaDGxc00om1YhvkHkUbMj0AK
+         BG2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793707932; x=1794312732;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+        d=1e100.net; s=20260707; t=1793726356; x=1794331156;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=p7XwenWdW96OgNgWcGPygbhPSyvm8Dmo6vx2RBl2lPo=;
-        b=MqjNyheChchMB8BoY7F+AHf0DZG7fAgKp0zg6RtpWskgXSbaTVgQuy8mDeaZLNd6No
-         U7p6VyW7VTlWVBx892riiJWQr979pzV67qexdKmFu6M6gMddUwANMbNcrX17aLwbJhE9
-         KAqq+OUuB52k4CD7E+bEqcErUAmuMWHyxJyqx6AKxioJaGJrQyPLLeTCBARmnNXg3X9m
-         079XONld4W2yf295OFGnyg4DzhifB/nAs2CS3akOVW7xYchTUph2pnxpFdnaOqfii2gB
-         LrO6rp30pAADiBCAk50y1uGb3NeViN2+q5QUuPHD4ugXnEa5JqkQzP6WL92Mtn6kx25a
-         /Auw==
-X-Forwarded-Encrypted: i=1; AKwUvBxJr5A2w19uXE88YeFaUP+KSb6G2ggKq99/4r0efdxsTZJsGQ/lY0LnKUBKG5xZEsG//+N/9aBDvdc=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/gqH7I/CkDgxdAM2syGTWdQAejcP4/5FvHqFtwY+7c8uMnJ4r+
-	bGSC0EM5kP3Y544W/5hZBbO2FLufZbFmPvosemjMCG8fZZ0Tpfa4zggb
-X-Gm-Gg: AYBFou3w3zLINToJjw6a8c3bYHplscGWI6aTNg5FfMQ1S3mFiRLfcWz9vHiJRh1GVpo
-	oFIEH4HyoT4r32emQ+7iE+uHNfzt4odVYbtLNGWxlCrhbz0bjmQ6ANMZ/Oh/0u0S1y55AqmBssk
-	k9HuuzgrxJGkwM4m3a+PqLDJ+lIyUyhsezJRznR+6GaPR2U+VYwtSYF7iEcSUeL88Rdy1abCgT6
-	AsgOKNAlS/FBghIuu9+WT9Mej5+G4wyqo4A9xahDVCmLO6RvtssZ4DLDkiGZMeG+yHtcOC9wdCx
-	ZrJmk/+3bxKjLR4Fke8uyBn22ChvlA+n+3/uqeAcvSI2r/v5s4NZPhYP71ShDI70e7/0Lxq1YH3
-	sX9Di8LhA3YiuDfvM57opQAqz7L5fc8aNnOetbvKWxVmULR8GMehlDPEdDX62uhlVVOfpDtLXYQ
-	PfXxOBOtRLK9K7k5MBZLweb8q7jmzyp1zh0qhvhVIbp8kS/QIv/JceFVG1lKpadjnejBtlt2Lfy
-	bAsB3LoitcVdndB6828q5VmjBmESXAVyE9k/eYab/j5wx+6X5HSHtOMJQJIQdHs9NnnXTXCLgQw
-	71gmHcqESpNfZYfCKlwVXgmn47WCrcQc1gpXDlAs3w+hVZ1njpoVCY0jC9gsQiSEfq94zYc2Tkr
-	Ytxs4XaIYCoyvn/sAQJD7w7cJ1Dk4TdUeI1tx
-X-Received: by 2002:a05:6102:fa0:b0:7c3:9982:67d7 with SMTP id ada2fe7eead31-7d072670942mr5461054137.16.1793707931886;
-        Tue, 03 Nov 2026 04:12:11 -0800 (PST)
-Received: from MaquinaLab.. ([179.179.238.247])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7d0775a716dsm12606282137.6.2026.11.03.04.12.02
+        bh=E1AIQqXxMElr9XYHIFcSfJejuF++6x4Nf+fj72eanNY=;
+        b=bnI56fSQEn5b1VPC6MmCBYzI+SaI/zR5IscCjAJh5jA5WuG0Eirf1xcNQ979jJkAIl
+         dGKNuc7ztaDhWvAfCiQwK/Z86BHKhV1YF5DkcxkNL59AI+2TnX031QrLtDr7j3W2rYOR
+         0nsTygWVXghSmsYB1z1LpSPW4ieIr1qbIha88V47ATwCmHm34GNCoO5BwKuNYqQyLCL3
+         MrFUXLn/uRli1ZGLpvA2c6k5vi3Ts+T7cZcbT4yxTQn7abk+jI877X+AmrVXuF0/0ijS
+         njvbork8I/mr+kCFKoLzs5NYFjCP5MVWCvu3U6ciS5TDN/74q9Av9lOpx413xunm5zh2
+         oxLQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwiC14l90Vjw/xWKr43HGDJwP8dOe67PP/c09hAP+Lzb/rkdQg5wbE4OCpk3jM+7084GLH3+xeo82g=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8D2z1UdEjA6ECFsToTFoQtrudjliRb5A7S8e3oz+DTH90/S2f4
+	SdsNLVWmrcmWj/4oidYTggCwgVWv4gbbOICP0pA/9PTuf84qRu+SQikp7etVCkENvpc=
+X-Gm-Gg: AYBFou25QLyxTTQfI2fFlMR8e2IxrRIALfQmVVkh7Jy+KqZ5o3sarP8JCn2KWB+yXz/
+	m/MaZNw+NotgbM+81MbUdoscp//2Ibs12XoS3s4NZcWrS3OPoI0tn9wG7Rxi9zOYPlYJn+roib/
+	fK/PK3PUcoVBFhMHVtQRPhppmFcwVmOPVnhUVx+wByc5y47Pi2f40Istykug0OWsF2hb1Q3e4t4
+	77f7kigtG7SQnj66ngrh/NVBpFNwnqamCPgaZPU7Wgwt2yaU7QOMA0iwBFDiiSt0jlQgRFa31bs
+	o6+nUXHWHnHaWePJxsxfGq6OKhflBmp+3qQf+LPNpvZTvMJZrbwO37xTsNf25Lrn87/n4LOcXrz
+	Z3fTrjC0w8vdkReljjk+qkU0sXodPV3uaw7X62QhvcWN+LbKggLCxxoA4IWXLFaIQWNSsl/NjMs
+	j/rCekRxblhcAJGpPqhwFx0opAAUPpN6vSKrj1Sl6uzmXH1xEq7Z9JH9Q6vtMGgdwS0tELLgOnc
+	+0Xpd8Gd7Ip89yqDRcAtgG+3MnH2sABjzpuxolfo1zWEyPwzuCt5pfDiiKxtTpKswK++cYJmJHR
+	jd9MFkTZ+rfGzSHoUzqz+NYNwV6LGbBQg57c61E0p0TY08dU
+X-Received: by 2002:a05:6000:4711:b0:48e:2371:3835 with SMTP id ffacd0b85a97d-48e6e309f7amr31462901f8f.51.1793726356301;
+        Tue, 03 Nov 2026 09:19:16 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71b80eb1sm27856601f8f.34.2026.11.03.09.19.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2026 04:12:11 -0800 (PST)
-From: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Junhui Liu <junhui.liu@pigmoral.tech>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Richard Cochran <richardcochran@gmail.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	netdev@vger.kernel.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Enzo Adriano <enzo.adriano.code@gmail.com>,
-	Norman Herms <dockseed@proton.me>
-Subject: Re: [PATCH v6 6/8] clk: sunxi-ng: a733: Add mod clocks support
-Date: Tue,  3 Nov 2026 09:11:49 -0300
-Message-ID: <20261103121149.33238-1-vinicius.eduardo.pedrosa@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <30e43e84-e6e8-4024-b415-dedf67070c4f@arm.com>
-References: <20261009-a733-clk-v6-0-ae8178fce7e8@pigmoral.tech> <20261009-a733-clk-v6-6-ae8178fce7e8@pigmoral.tech> <30e43e84-e6e8-4024-b415-dedf67070c4f@arm.com>
+        Tue, 03 Nov 2026 09:19:15 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -123,40 +89,89 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 5/9] clk: google: Add CPM clock driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Thomas Gleixner <tglx@kernel.org>, 
+ Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Mariano Marciello <mmarciello@google.com>, 
+ Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org, 
+ =?utf-8?q?Jakub_G=C5=82owacki?= <jglow@google.com>
+In-Reply-To: <20261026144346.5.I82dc05365979021379fe730d6d52792a87ff15ed@changeid>
+References: <20261026214359.3122870-1-briannorris@chromium.org>
+ <20261026144346.5.I82dc05365979021379fe730d6d52792a87ff15ed@changeid>
+Date: Tue, 03 Nov 2026 18:19:04 +0100
+Message-Id: <179372634472.2573818.17532943286609086157.b4-review@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2561; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=fqTcKnieuf7JekGsRwrFzLg18sNZNXRDB3ktfvrRuF8=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFmvxLvWxKwtTKye09bOcqL677Xz98LyWeKzJO0s975wd
+ 7Ja9XReRykLgxgXg6yYIksNd7X4O0mtL7Om69yGmcPKBDKEgYtTACbSsICR4VV9nuzFk3pBi2Zr
+ S330mea5O3JtmtSmJXnzDHZHnFB9YMPIcPdp827jZbrejwUizdSOlxd4HP60etnkLR9Dtthb55w
+ N4wMA
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Hi Andre,
-
-On 11/2/26 16:32, Andre Przywara wrote:
-[...]
-> > +static const struct clk_parent_data usb01_ref_parents[] = {
-> > +	{ .hw = &sys_24M_clk.hw },
-> > +	{ .fw_name = "hosc" },
-> > +};
-> > +static SUNXI_CCU_MUX_DATA(usb01_ref_clk, "usb01-ref", usb01_ref_parents, 0x1340, 24, 3, 0);
-> > +
-> > +static SUNXI_CCU_MUX_DATA(usb2_u2_ref_clk, "usb2-u2-ref", usb01_ref_parents, 0x1348, 24, 3, 0);
+> Google Tensor SoCs (used on Pixel phones) manage many resources
+> (including most clocks) using a Central Power Manager (CPM)
+> co-processor. We communicate with CPM using mailboxes, abstracted in the
+> cpm_request_client(), etc., API.
+> 
+> The clock tree is largely not represented fully by this driver, because
+> CPM hides most of the divider, mux, and parent details, instead
+> maintaining its own internal table of mappings for divider and mux
+> values. The one exception is for some of the DPU clocks, where several
+> clocks and dividers are exposed directly, and the firmware API works on
+> divider values instead of clock rates. I attempt to represent this
+> properly with dividers and parents, although I don't have the full
+> display stack running to verify everything yet.
 >
-> Don't these two clocks miss the gate at bit 31? So it should be
-> SUNXI_CCU_MUX_DATA_WITH_GATE instead?
 
-Yes, both have the gate at bit 31 in the manual, and the vendor CCU
-models 0x1340 with it too. usb2-u2-ref resets to off, which is the one
-I hit on my board. usb01-ref resets to on, so nothing breaks today.
+As you say, the clock tree is not fully represented here. Beyond that, CPM
+owns the clocks themselves, as the driver acknowledges by setting
+CLK_GET_RATE_NOCACHE.
 
-With the gate added, clk_disable_unused would switch usb01-ref off
-unless something claims it, and in my local DT nothing does (the
-USB0/USB1 PHYs take osc24M like the A523 ones). On my Cubie A7Z,
-clearing bit 31 of 0x1340 at runtime stops the USB1 Wi-Fi traffic, and
-after rebinding EHCI1/OHCI1 the device no longer enumerates (error -62),
-4 out of 4, while it enumerates again with the bit set. So at least USB1
-will need CLK_USB01_REF kept enabled once the gate is added, likely
-through a consumer in the USB controller or PHY, as suggested by the
-vendor DT. I only tested USB1, by writing the register, not the gated
-CCU itself.
+The driver keeps a partial copy of CPM's state in the kernel:
 
-Thanks also for your guidance throughout these discussions.
+- Rate tables below hard-code what the FW has (or should have) instead
+  of rounding the rate, even though there seems to be a ROUND_RATE_OP_ID.
 
-Thanks,
-Vinicius
+- kernel handles PLL parenting and divider math for the DP clocks, while the
+  firmware can also switch them to what looks like the oscillator, out of
+  the kernel's view. So the math is likely duplicated as well
+
+This middle ground cannot be kept consistent. CCF assumes it knows the
+topology and computes rates from it, but the firmware makes the actual
+decisions. The DP clocks already show it: the tree can report a parent the
+hardware does not use, and .recalc_rate()/.determine_rate() can disagree
+with what CPM programmed.
+
+I would advise to follow a model closer SCMI. What you are doing here looks
+a lot like it.
+(see drivers/firmware/arm_scmi/clock.c and drivers/clk/clk-scmi.c)
+
+ - Put the LPCM service protocol (request word layout, dst_id, timeout,
+   error translation) in the CPM firmware/soc driver, behind a small API
+   shared by clk and reset. Philipp asked for the error helper on 6/9; the
+   whole request encoding is common, not just the errors.
+
+ - Make the clock driver a thin CCF adapter: each CPM clock is an opaque
+   endpoint, and gate/rate requests go to the firmware. Get rates from the
+   firmware (round-rate op) instead of local tables. Model no topology the
+   kernel does not own. If parents must be exposed, the firmware should
+   describe them, as SCMI does, rather than the kernel hard-coding them.
+
+-- 
+Jerome
+
