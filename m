@@ -1,56 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793780281;
-	b=HJ2H3UUmmLdYGnLQVULABKItt0GXDczK1V6a/nSjmaN4hXc7BgLctSyFHbp4McLsUrbE
-	 HNye3240rSFU0iFWCTAykAJvONOsz57fY5Yg0PdkXsKqDsw7CHmbjJhXBAChrUwojD9ip
-	 Zu8R2NZMAbvUl4yYG2eIt2D6/GKi1cmvRy4TdEJXAJC9CD+RYg8l2a4vjcHrJCTjlh1N8
-	 atYBIar8zy/1p1ojcicwch8MsJeXWp/Pec6dLafjjeFR6ssY9D3u5KtytbjfIyWstHDAu
-	 HmClmWb9nh4rrH/eLU0sEP84R/v+t0ctUXPL5Wc8Ll+PMgv89IhtVnbz6on+wsReKFw==
+	t=1793780673;
+	b=bdETT/FBIWh+B+nvTdrVV1CpE7Bp1cxRZNl/uMtrR6s9q5Y4qbq8M3frcpsCmGZdGrLh
+	 ro34Ae8atidAFawMznAqagiRxj8jOYUG/hNoTA/96+JTvKTPBddHDZh2gxbsPsH5zVQye
+	 8hDRmkzZMkrdqcodBBzJgJ4I/fY2LcWSZz76igIaDvuPxd4uh5magcOrP9MEa345TWkQr
+	 7+RcZyhWJiGcw6cch4F2+yAq/WPM6oUbmBeuZDuDlaOeJbXrUFC6pyI37rpo6s0VZ7jb5
+	 GMvip3snWuDxuDXfSmBjGpIydpVsEelLJbdd5pMTwiK9FZiL5XLF3nQWXYn3bRU8LUQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793780281;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=XPtIL3s6s68TgM260sPxbQX+3w9FytSmTvOFqRvTVyA=;
-	b=gT+R2K0udGh2vLIX/qzHozS+Ydu9I9qQg8ZRAFkkZ6nMIZBlUfOlzAa0E6jKVKZaJBB4
-	 jdwsHccN+HhRgsFHBLieNXy5fu3pbFmGaF7fEZJ350WZ+GNKxtqXQzYjiM4NEa7qxAiVu
-	 rkES8srx9Fd+qZtJmlymSL8tUGnM3OX19F7GtGwOSmeX9hpxRa8wwp0riOLN2dT+h5DUX
-	 K9X6vH1IpZ4Ns9kwaKuS6lsVJHA4q2IOaV5/xaYTlT4Xmg4LbH1i8MZxo+zPb0pIcwuYs
-	 3ahU1aJ55r4+hMGrZVJT+hyPuLlAd0loQnyuscuzUXIlSWAQ+ehOtlQNqyhyIz6Ov/g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793780673;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=8vB0PZ5tIyrqi06oZoeDXV7eNQMFi8LujXvMSkvp01c=;
+	b=mV5r20WIoFNohV88ktUPN3DXGM5kbKfmwatydPQurkdgmC00ew8ddJY+rHsr6cIPGlLO
+	 NkYO6yGs7tgfgirSf3OX6SckTNadX1Ql+2lWR3CW50bNSMpCi73hZ1S4saolRf5N4TbWP
+	 Wl+6qZ0NBVRv2rKg8f8A2D+CsTAhKHlYRxxe0fTwZld+0HU+UeVJ802sXZYihu+8bzJS0
+	 X44/lvrOJ+e8C3EXOfogf/uRRu1j0dfuTBZ2FYctESM3iJ4QN1/LvuC6WkL+3cqXcJhBy
+	 kyJyUqymDsyUQgMfUBpqFxooUp05ZNhi/XPDVUP5FYMxQFdfOpJL19ZIWZ9zi/CRJtA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZIgDBGnz;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Pbpa+2DK;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3F0606A31B;
-	Wed,  4 Nov 2026 08:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0689606A329;
+	Wed,  4 Nov 2026 08:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZIgDBGnz
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2BF21F000C1;
-	Wed,  4 Nov 2026 08:18:00 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Pbpa+2DK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B19731F000C1;
+	Wed,  4 Nov 2026 08:24:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793780281;
-	bh=XPtIL3s6s68TgM260sPxbQX+3w9FytSmTvOFqRvTVyA=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ZIgDBGnz6OqRnaEpILQ7dUAmMeTFWk2Yr6U7OACaGJatJzFEhc955nqBNhi8N6jvn
-	 mKSZSdAM3KggaXugHO/h9LDxsVIWuwNj7q9n2uHBKY+qLdThz+MoI1mIIkqIWfmIdD
-	 3fLgdTAsB5mb13gc+UFYeHQIGDS2s4P9sLZ4N5b/UQ2IgzZpSRrVq0tVZ+kK9bXpw8
-	 FJZNmYZY9gPKTUIBGZHUv0MrL76DOkSFxmdgxW4mzJVNb7iskd/A0+CCqsnSd663wQ
-	 Wlwikfc2FqGF1MO2hvog0CniE24iSoOoqkTEZVaUlZ7mBhOOSZhaJKRla42Yt4YKj1
-	 as3Sm4iOF1ciA==
-Message-ID: <sashiko-outbox-196870@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v12 6/6] arm64: dts: qcom: Add SM7250 devicetree file
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Sreeshankar K" <sreeshankar0910@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261104-master-v12-6-57fbe9eef978@gmail.com>
-References: <20261104-master-v12-0-57fbe9eef978@gmail.com>
- <20261104-master-v12-6-57fbe9eef978@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Nov 2026 08:18:00 +0000
+	s=k20260515; t=1793780672;
+	bh=8vB0PZ5tIyrqi06oZoeDXV7eNQMFi8LujXvMSkvp01c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Pbpa+2DKJN9odUECxDlScQFXnrbOaBJIUKagi5ayjjpBq7bdmLKwTUIFufIIgI58l
+	 E4E60RP2PCeSibLp0AdQPzrCknnVqvSpYVsQpYM8AaLo87XQOwzONw6VEwCLsfh6f2
+	 Z8udQgVY8UNXJP1fM+jMudkWSlV/KBuK8Y5B8cblI8tLY1zPRpzhqY4U9byO7fQEgA
+	 cbw6GBPcP04JZ+dir+J7rjPWhGLON/Ui7BjbO0ft8rhMgr3eCnBKqyHS9bgdT7RaVM
+	 atFwwAsTQX5icoEp5HHhyE8I9HDvlyfIaI/LrV+/HH8jbDvF9YNe1trEvfctBbtrI5
+	 NmZlXaS8L23fQ==
+Message-ID: <9b99c531-1977-4bc1-8105-bd9c3e129951@kernel.org>
+Date: Wed, 4 Nov 2026 09:24:15 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,310 +50,103 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 00/17] riscv: add initial Zhihe A210 support using
+ SCMI clocks and resets
+To: Han Gao <gaohan@iscas.ac.cn>, Sudeep Holla <sudeep.holla@kernel.org>,
+ Cristian Marussi <cristian.marussi@arm.com>,
+ Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linusw@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Bartosz Golaszewski <brgl@kernel.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Thomas Gleixner <tglx@kernel.org>,
+ Radu Rendec <radu@rendec.net>, Samuel Holland <samuel.holland@sifive.com>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Anup Patel
+ <anup@brainfault.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Drew Fustini <fustini@kernel.org>,
+ Icenowy Zheng <uwu@icenowy.me>, Inochi Amaoto <inochiama@gmail.com>,
+ Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <me@ziyao.cc>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+ Paul Walmsley <paul.walmsley@sifive.com>, linux-clk@vger.kernel.org,
+ linux-serial@vger.kernel.org, Han Gao <rabenda.cn@gmail.com>,
+ Conor Dooley <conor.dooley@microchip.com>
+References: <20261103-a210-scmi-v3-0-ee6b31580808@iscas.ac.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20261103-a210-scmi-v3-0-ee6b31580808@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 6 potential issue(=
-s) to consider:
-- [High] arm64: dts: qcom: sm7250: lmh_cluster1 cpu6 rejected by lmh_probe()
-- [Medium] arm64: dts: qcom: sm7250: invalid PSCI parameters in domain-idle=
--states
-- [Medium] clk: qcom: gcc-sm7250: out-of-bounds -EINVAL lookup for GCC_VIDE=
-O_XO_CLK
-- [Medium] arm64: dts: qcom: sm7250: non-page-aligned ipa_gsi_mem and gpu_m=
-em regions
-- [Low] arm64: dts: qcom: sm7250: child nodes under soc@0 not sorted by add=
-ress
-- [Low] arm64: dts: qcom: sm7250: unused dt-bindings/power/qcom-rpmpd.h inc=
-lude
---
+On 02/11/2026 20:45, Han Gao wrote:
+> This adds initial support for the Zhihe A210 SoC and the Melon Pi V1
+> and V2 boards.
+> 
+> The A210 has four C908V and four C920V2 cores, plus an E902 management
+> core. The E902 firmware handles clocks, resets, power, the PMIC and
+> CPU DVFS, so Linux uses SCMI for clocks and resets. The only new SCMI
+> piece is the mailbox to the E902. [2] explains why I picked SCMI over
+> RPMI.
+> 
+Considering how vulab@iscas.ac.cn is ignoring reviews/comments and spams
+with a lot of unthreaded emails, completely disregarding any tries of
+contact over last 1.5 months, shall we ignore all contributions from
+@iscas.ac.cn?
 
-commit 133903425754af1429d60a918bf4c66666da655c
-Author: Sreeshankar K <sreeshankar0910@gmail.com>
+Maybe this will be the only way to actually be heard?
 
-arm64: dts: qcom: Add SM7250 devicetree file
-
-This commit adds the base SoC devicetree file for Qualcomm SM7250, defining
-CPU topology, PSCI idle states, reserved memory regions, clocks, interrupt
-controllers, RPMh, cpufreq, LMh, and timers needed to boot to serial consol=
-e.
-
-> diff --git a/arch/arm64/boot/dts/qcom/sm7250.dtsi b/arch/arm64/boot/dts/q=
-com/sm7250.dtsi
-> new file mode 100644
-> index 0000000000000..02901f0b08a3f
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sm7250.dtsi
-> @@ -0,0 +1,795 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2026, Sreeshankar K <sreeshankar0910@gmail.com>
-> + */
-> +
-> +#include <dt-bindings/clock/qcom,rpmh.h>
-> +#include <dt-bindings/clock/qcom,gcc-sm7250.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/power/qcom,rpmhpd.h>
-> +#include <dt-bindings/power/qcom-rpmpd.h>
-
-[Severity: Low]
-As reported by Sashiko on v11 [1], is the dt-bindings/power/qcom-rpmpd.h
-include needed here? SM7250 uses the RPMh power domain definitions from
-dt-bindings/power/qcom,rpmhpd.h, and none of the legacy RPM definitions from
-qcom-rpmpd.h are referenced in this file.
-
-[ ... ]
-
-> +		domain-idle-states {
-> +			cluster_sleep_pc: cluster-sleep-0 {
-> +				compatible =3D "domain-idle-state";
-> +				arm,psci-suspend-param =3D <0x40000004>;
-> +				entry-latency-us =3D <2752>;
-> +				exit-latency-us =3D <3048>;
-> +				min-residency-us =3D <6118>;
-> +			};
-> +
-> +			cluster_sleep_cx: cluster-sleep-1 {
-> +				compatible =3D "domain-idle-state";
-> +				arm,psci-suspend-param =3D <0x41000224>;
-> +				entry-latency-us =3D <3638>;
-> +				exit-latency-us =3D <4562>;
-> +				min-residency-us =3D <8467>;
-> +			};
-> +
-> +			cluster_sleep_aoss: cluster-sleep-2 {
-> +				compatible =3D "domain-idle-state";
-> +				arm,psci-suspend-param =3D <0x41000c24>;
-> +				entry-latency-us =3D <3263>;
-> +				exit-latency-us =3D <6562>;
-> +				min-residency-us =3D <9826>;
-> +			};
-> +		};
-
-[Severity: Medium]
-As reported by Filippo Falezza on v11 [2], are the arm,psci-suspend-param
-values in cluster_sleep_pc, cluster_sleep_cx, and cluster_sleep_aoss encoded
-as expected by psci_pd_power_off() and __psci_enter_domain_idle_state()?
-
-When cluster_pd powers off in PSCI OSI mode, __psci_enter_domain_idle_state=
-()
-replaces the per-CPU state parameter with ds->state:
-
-drivers/cpuidle/cpuidle-psci.c:__psci_enter_domain_idle_state() {
-	...
-	if (ds->state)
-		state =3D ds->state;
-
-	ret =3D psci_cpu_suspend_enter(state);
-	...
-}
-
-Because ds->state replaces the per-CPU parameter rather than being ORed with
-it, Qualcomm cluster domain-idle-state parameters encode the per-CPU rail
-power collapse state (0x4) in bits [3:0], the cluster mode shifted left by
-4 bits in bits [15:4] (0x004 << 4 =3D 0x0040, 0x224 << 4 =3D 0x2240, and
-0xc24 << 4 =3D 0xc240), and affinity level 1 in bit 24 (0x01000000).
-
-Here, cluster_sleep_pc uses 0x40000004 (which is the affinity-level-0 per-C=
-PU
-rail power collapse parameter used by little_cpu_sleep_1 and big_cpu_sleep_=
-1),
-and cluster_sleep_cx and cluster_sleep_aoss use unshifted 0x41000224 and
-0x41000c24. Should these three parameters be 0x41000044, 0x41002244, and
-0x4100c244 instead?
-
-[ ... ]
-
-> +		ipa_gsi_mem: ipa-gsi@8bc10000 {
-> +			reg =3D <0x0 0x8bc10000 0x0 0x5400>;
-> +			no-map;
-> +		};
-> +
-> +		gpu_mem: gpu@8bc15400 {
-> +			reg =3D <0x0 0x8bc15400 0x0 0x2000>;
-> +			no-map;
-> +		};
-
-[Severity: Medium]
-Can the non-page-aligned boundary between ipa_gsi_mem and gpu_mem cause page
-mapping and PAS setup issues when loading the GPU zap shader?
-
-Here ipa_gsi_mem has a size of 0x5400 (ending at 0x8bc153ff) and gpu_mem
-starts at 0x8bc15400 (ending at 0x8bc173ff), so both no-map regions share t=
-he
-4KB physical page at 0x8bc15000, while map_mem() and __free_memory_core()
-round the start of the following System RAM region up via PAGE_ALIGN() /
-PFN_UP() to 0x8bc18000, leaving the remaining 3KB at 0x8bc17400..0x8bc17fff
-unmapped.
-
-When adreno_zap_shader_load() -> zap_shader_load_mdt() in
-drivers/gpu/drm/msm/adreno/adreno_gpu.c loads the GPU zap shader, it remaps
-and initializes the region via:
-
-	mem_region =3D memremap(mem_phys, mem_size, MEMREMAP_WC);
-	...
-	ret =3D qcom_mdt_load(dev, fw, fwname, pas_id,
-			    mem_region, mem_phys, mem_size, NULL);
-
-generic_ioremap_prot() aligns mem_phys (0x8bc15400) down to page boundary
-0x8bc15000 (overlapping the tail of ipa_gsi_mem), and qcom_mdt_load() ->
-__qcom_mdt_pas_init() -> qcom_pas_mem_setup() -> qcom_scm_pas_mem_setup()
-passes the unaligned base address 0x8bc15400 to TrustZone PIL setup (similar
-to the issue fixed on SM6350 in commit 44bcded2be4f ("arm64: dts: qcom:
-sm6350: Fix ZAP region")). Should ipa_gsi_mem and gpu_mem be aligned to 4KB
-page boundaries?
-
-[ ... ]
-
-> +	soc: soc@0 {
-> +		compatible =3D "simple-bus";
-> +		#address-cells =3D <2>;
-> +		#size-cells =3D <2>;
-> +		ranges =3D <0 0 0 0 0x10 0>;
-> +		dma-ranges =3D <0 0 0 0 0x10 0>;
-> +
-> +		gcc: clock-controller@100000 {
-> +			compatible =3D "qcom,gcc-sm7250";
-> +			reg =3D <0x0 0x00100000 0x0 0x1f0000>;
-> +			clock-names =3D "bi_tcxo",
-> +				      "bi_tcxo_ao",
-> +				      "sleep_clk";
-> +			clocks =3D <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&rpmhcc RPMH_CXO_CLK_A>,
-> +				 <&sleep_clk>;
-> +			power-domains =3D <&rpmhpd RPMHPD_CX>;
-> +			#clock-cells =3D <1>;
-> +			#reset-cells =3D <1>;
-> +			#power-domain-cells =3D <1>;
-> +		};
-
-[Severity: Medium]
-Does instantiating qcom,gcc-sm7250 expose an out-of-bounds lookup for
-GCC_VIDEO_XO_CLK in qcom_cc_clk_hw_get()?
-
-In include/dt-bindings/clock/qcom,gcc-sm7250.h, GCC_VIDEO_XO_CLK is defined=
- as
-122, the highest index in the header:
-
-	#define GCC_VIDEO_AHB_CLK					120
-	#define GCC_VIDEO_AXI_CLK					121
-	#define GCC_VIDEO_XO_CLK					122
-
-In drivers/clk/qcom/gcc-sm7250.c, GCC_VIDEO_XO_CLK is enabled as a critical
-clock in gcc_sm7250_critical_cbcrs[] and omitted from gcc_sm7250_clocks[],
-where the highest designated index is [GCC_VIDEO_AXI_CLK] (121):
-
-	[GCC_VIDEO_AXI_CLK] =3D &gcc_video_axi_clk.clkr,
-	[GPLL0] =3D &gpll0.clkr,
-	[GPLL0_OUT_EVEN] =3D &gpll0_out_even.clkr,
-	[GPLL6] =3D &gpll6.clkr,
-	[GPLL9] =3D &gpll9.clkr,
-};
-
-Because ARRAY_SIZE(gcc_sm7250_clocks) (stored in cc->num_rclks) is 122, any
-consumer requesting <&gcc GCC_VIDEO_XO_CLK> hits idx >=3D cc->num_rclks in
-drivers/clk/qcom/common.c:qcom_cc_clk_hw_get() and gets ERR_PTR(-EINVAL)
-instead of NULL as returned for lower-indexed critical clocks such as
-GCC_CAMERA_XO_CLK or GCC_DISP_XO_CLK.
-
-[ ... ]
-
-> +		cpufreq_hw: cpufreq@18323000 {
-> +			compatible =3D "qcom,sm7250-cpufreq-hw", "qcom,cpufreq-hw";
-> +			reg =3D <0 0x18323000 0 0x1000>,
-> +			      <0 0x18325800 0 0x1000>,
-> +			      <0 0x18327800 0 0x1000>;
-> +			reg-names =3D "freq-domain0",
-> +				    "freq-domain1",
-> +				    "freq-domain2";
-> +			interrupts-extended =3D <&lmh_cluster0 0>,
-> +					      <&lmh_cluster1 0>;
-> +			interrupt-names =3D "dcvsh-irq-0",
-> +					  "dcvsh-irq-1";
-> +			clocks =3D <&rpmhcc RPMH_CXO_CLK>, <&gcc GPLL0>;
-> +			clock-names =3D "xo", "alternate";
-> +			#freq-domain-cells =3D <1>;
-> +			#clock-cells =3D <1>;
-> +		};
-> +
-> +		lmh_cluster0: lmh@18358800 {
-> +			compatible =3D "qcom,sm7250-lmh", "qcom,sm8150-lmh";
-> +			reg =3D <0x0 0x18358800 0x0 0x400>;
-> +			interrupts =3D <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-> +			cpus =3D <&cpu0>;
-> +			qcom,lmh-temp-arm-millicelsius =3D <60000>;
-> +			qcom,lmh-temp-low-millicelsius =3D <84500>;
-> +			qcom,lmh-temp-high-millicelsius =3D <85000>;
-> +			interrupt-controller;
-> +			#interrupt-cells =3D <1>;
-> +		};
-> +
-> +		lmh_cluster1: lmh@18350800 {
-> +			compatible =3D "qcom,sm7250-lmh", "qcom,sm8150-lmh";
-> +			reg =3D <0x0 0x18350800 0x0 0x400>;
-> +			interrupts =3D <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-> +			cpus =3D <&cpu6>;
-> +			qcom,lmh-temp-arm-millicelsius =3D <60000>;
-> +			qcom,lmh-temp-low-millicelsius =3D <84500>;
-> +			qcom,lmh-temp-high-millicelsius =3D <85000>;
-> +			interrupt-controller;
-> +			#interrupt-cells =3D <1>;
-> +		};
-
-[Severity: High]
-Will lmh_cluster1 fail to probe and prevent cpufreq_hw from initializing wh=
-en
-cpus =3D <&cpu6> is passed to lmh_probe()?
-
-In drivers/thermal/qcom/lmh.c, lmh_probe() resolves the CPU node via
-of_cpu_node_to_id() and only accepts logical CPU IDs 0 and 4:
-
-	if (cpu_id =3D=3D 0) {
-		node_id =3D LMH_CLUSTER0_NODE_ID;
-	} else if (cpu_id =3D=3D 4) {
-		node_id =3D LMH_CLUSTER1_NODE_ID;
-	} else {
-		dev_err(dev, "Wrong CPU id associated with LMh node\n");
-		return -EINVAL;
-	}
-
-Because cpu6 is logical CPU 6 on SM7250 (where cpu0..cpu5 are in frequency
-domain 0 and cpu6 is the first big core in frequency domain 1), lmh_probe()
-returns -EINVAL for lmh_cluster1 before calling irq_domain_create_linear().
-
-Because cpufreq_hw references <&lmh_cluster1 0> in interrupts-extended and
-lmh_cluster1 is enabled in DT without ever registering its IRQ domain,
-fw_devlink blocks cpufreq_hw on the unmet interrupt supplier link; even if
-cpufreq_hw probes, qcom_cpufreq_hw_cpu_init() -> qcom_cpufreq_hw_lmh_init()=
- ->
-platform_get_irq_optional() returns -EPROBE_DEFER for domain 1 (and also le=
-aks
-policy->freq_table and dynamic OPPs allocated earlier in
-qcom_cpufreq_hw_read_lut()). In addition, because qcom_cpufreq_hw_driver is
-registered at postcore_initcall while lmh_driver is registered at
-device_initcall (and cpu0 has no interconnects property to defer
-qcom_cpufreq_hw_driver_probe()), domain 0 also hits -EPROBE_DEFER during
-cpufreq_register_driver() while domain 2 (cpu7, which has no interrupt entry
-and gets -ENXIO) succeeds.
-
-> +
-> +		tcsr_mutex: hwlock@1f40000 {
-> +			compatible =3D "qcom,tcsr-mutex";
-> +			reg =3D <0x0 0x01f40000 0x0 0x40000>;
-> +			#hwlock-cells =3D <1>;
-> +		};
-> +
-> +		timer@17c20000 {
-
-[Severity: Low]
-This isn't a bug, but several child nodes under soc@0 are out of ascending
-unit-address order: interrupt-controller@17a00000 is placed before
-interrupt-controller@b220000 and spmi@c440000, lmh@18358800 is placed before
-lmh@18350800, and hwlock@1f40000 and timer@17c20000 are placed at the end
-after lmh@18350800. Could the child nodes under soc@0 be sorted by unit
-address in ascending order to match the DTS coding style?
-
-[1] https://lore.kernel.org/r/20261016042432.824-6-sreeshankar0910@gmail.com
-[2] https://lore.kernel.org/r/20261030004903.1068342-1-effeffe99@gmail.com
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104-master-v12=
--0-57fbe9eef978@gmail.com?part=3D6
+Best regards,
+Krzysztof
