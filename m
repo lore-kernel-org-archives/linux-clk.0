@@ -1,97 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.48
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793802641;
-	b=LAN92WwquCWbqwCehU4nF+lu/p2adDe6smW9pllDva33rbqtnxgBomMDYu5xPlNi8qO8
-	 f02cYzBZ/McH+bH1jh2KfN4FeJEWWZe7ISOyWHjnqHxbmibljLTCuWHTftij3eUgArWrz
-	 9Sto8uvC7jkqMqOGJvYzrU0wVQJzzjzFX42CbcmudbGpP5H3MuhuVGBPI4FzLNlLB5jDX
-	 yXIKyck3h2rU3chDr5yVzdjo8eXmo4HM+PdTMYsRus8CA64Xj+vuWahYabWuioi5jUj3s
-	 WaYB2kNj1NpfHfeRzJ0qboVn89cYymO7xVOIVsgrUsz1I5FLDiNvMT8yslGAJ+kwjJQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793802641;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=Rn0itiYWQq4UoXD7WO2n0E3/GBUM2A+vN4SJN/HSKdo=;
-	b=3xAUDn6MWGpgwsCcU4vcPjRQOBzzgyHQvzfrCFsNTN8/tdnL3t1nF9XIRhzLrxx5sB4w
-	 5r/CTqrYdQLMX8Le90il9NQHud59eK/kxVImjNV6SiDS/to0QWULV45cLlADgkwys9jES
-	 uRO0uGQwFpOgTwT2dNV3NEbBy72zcy6WpRe31fuscj6T+kFWK9iNXDqDwICQ5TwMt89ZL
-	 PCwYSUqZ5POZMjUo/60SwTTSQiFpmuJtxbOtvHadgQPRNYujMsCFD8MCJr986LPQRWre4
-	 BkG9vM6jPReO8ER14im4P2qxENLcdSywx7l0v+x17PAKXkaQqyBJaqRlQIJ57oDcQzA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amarulasolutions.com;
-	spf=pass smtp.mailfrom=amarulasolutions.com;
-	dkim=pass header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=IM3V1nfM;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.48
-Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793803887;
+	b=qyxL7WnBwpeNoZ2G+8GyYD32D38+flQdfCizXyYqT7Hwfp33x4dgdApLkuZNViLvjxm/
+	 xo1XKnj3/Lynia6VsVI0gal6WHtzsGZgrn447FInKftpWrhqW8myXBuRD4NlQkN02FitH
+	 8FnwIeq7YNCfdGD4+DAZ8Ugq9kvlCLtvFpeEefU8P3Cz0lP3CjGafrEA9sd3UNV+WZqYr
+	 +LbJ6QNgnsrEhe3AFvSXsd7o2nPK7ec7pwPpPPkOzEOjAOyP3SKA3EHGV3YGlf7+FvYn7
+	 4PXlIncBCWC8VcKv6WP3sRV8qg30mbbYOiOpJmmEvsgBhrfghHD/6okAhZmk+6+KP5g==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793803887;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=rz19ZukOAiKFRngbtnVhWHGTjfs5u+6TxsCAOoKwaNU=;
+	b=uBzqd+MTtNuxak60OpLhFy2+tYP0mmvTfhyGsa2Dj6yvI93gX05fsK0sm8rYogpz8y2z
+	 JVYqaisREyydy6hl6W5I5bQlbeJB2DsqJAeLFZb1XD8o7lLUGaumB6voo8UcMplVELNP1
+	 D+XS6npsiVIId25QmMEgdSdIdjl9ifys2bSKMrVE9C5mFA+0fClHsL8r77XLseTdsgU3H
+	 5xz1epreUcf/1/yUSo+4E4+mrQeejTFPGK34/0ZUtGqKP4nv7rJ5/XPALjzUuivxx1PU5
+	 NfJeiSCqqYLfggxJUAloPeLDMvV+BJQfdX/RKdHd9KKqaOakkC6rzI2FqV4wRVQqvNw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RYmAWIrd;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16383606A328
-	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 14:30:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 16383606A328
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086E8606A32F;
+	Wed,  4 Nov 2026 14:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=IM3V1nfM
-Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-67a2bd0c297so851944d50.2
-        for <linux-clk@vger.kernel.org>; Wed, 04 Nov 2026 06:30:39 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793802639; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Gs+eP2TBQmVDSBjHrk2mi/WsMr/JNaO/m5ZvUxb6Bw0m63EHlnM5AhMAu34hqsFNrI
-         E28LnILzVkWvImZQgM85QUJnBapwlrrPSxx7+kI+ycTNBm+Jvlj7xk6iayVV662LAWYs
-         3Qg3q1dvEA5WhZzQqnO0mcjcP1pRcdIMGObPIKoAUahDRzFRdTbHnY93pkKahuo3e+K9
-         vXFEmNal4+tJzGr7wlvkfplpMUuKqCGj93TCjWzv23e22Y6Qb6u+Fl69+ylZTE2TP1XD
-         vKM/JWp4AXqJDq7zmKeHqUrwtsz/5M0ZiWpvJkK20lDDSWxaAciXYRVvVRFzifycqOwx
-         QQdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Rn0itiYWQq4UoXD7WO2n0E3/GBUM2A+vN4SJN/HSKdo=;
-        fh=3Djcbj4Fo2RtBWVMeceGHKtoh7FxjDlg/zkCbOhy/uA=;
-        b=Z10nsk1bTKsBNXmYXY21+0LxGmhn862aHw68uKCViiV2yJ1e/pKwoGrizhTpJmTzMs
-         GRp5lIO7vKiRk7RpsdxMqNUPBQz5RFWqKl93b4429z3z0VZ+SGnOB/G0lWQAd8VTPSJ8
-         Pa0YPNIQsP+qrIDdI1cgvVioAuBb3bPx7wxi3FzTkHhSOzCfN5/e7gHlrFwaNZbeQW7/
-         QLFcYC9Y90fHjkifKT5q7XrxeC2SL5cQZy+w4MDXE7ouewbS86TOqzNp5w4+O7uq0uu/
-         Mu3C2ddG0xDaGaH+ADZR0d1+kPowyt4bt46ILZRSfLs8kZDOsMQe6nRuVk5XdCVZjMYb
-         Ic9A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1793802639; x=1794407439; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Rn0itiYWQq4UoXD7WO2n0E3/GBUM2A+vN4SJN/HSKdo=;
-        b=IM3V1nfMdyfBycwTSOze4fkQR/dg2hzQheXiDA/HdcVRW7u5PaXH4iiRmPSzQyq3N5
-         9AgNhr6sPE+C9QuZ/rDUmdBQk2/+RHPs2597wMbl3+eKt1ZBk1L58dCoizsAHMiosLCd
-         ThYZ1r8MnmKabThNKeZDx2x9lFITOSH9R1/BY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793802639; x=1794407439;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Rn0itiYWQq4UoXD7WO2n0E3/GBUM2A+vN4SJN/HSKdo=;
-        b=JE9/lfLKPHggoMJiw2hfx2VqsTdZezm3OJmmLA2sCuBtdiSleK3x8zo86UTBRbbE++
-         Uczkn3dLejQ7it+OhUxCjLSeCimk1Us7+ectzYUHl03zwT84ejxwVBAFH3BIZNjtKQQh
-         HVl+hJFGUL4nqP7/KBA4pGG+7AZvQPQJRoqotZh7E4Wm1AbLK2ALEd4SifuKxWrt8UQi
-         N2J2iJ1m/ZgNjcgPMSwULQ/KfPb9vjNNFQdvk5F2xuQTXpmqdyK61IJsIKihpNo+5NmO
-         x/j35dWYEHleM3C0NzBs/ol78bM8vJzuwzrNwrMKR8Y/NPknkBXb6gLK9cTuUBCBrU+Z
-         HA8g==
-X-Forwarded-Encrypted: i=1; AKwUvBxi8xYA0anzMdM1T8iwhS9bEY5UOcNCcbP40SRWCPvpxHT9Hs915Wtir9E1Eo/EUGzqOVfUx7KTSkk=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8ZGFxAZOWIzqaPAj4/O1aCku5CTm2qmZAe2LcosaUkT0Gqg7/E
-	9LRhSgDaVWHl58Npbqg8wGhUcnnZXeSGXlb3GXDTqnBUlmcbq8foe/vHGRtMrShbet0OAobpWOU
-	w/fb3FqznVub+sCvg3xXMtcQlZu7k8qwEey8CC0+jZQ==
-X-Gm-Gg: AYBFou1nKQjeuPiMVBgDkja2iQU+TK5e6FOZFCMoDrTktFjHndFudmt4YmY/LpoxeHV
-	KCLLw8gsSeKaVx0zme9meNwACxRusb17FZLiWc/wQDE5NazWuM9NDBLR8iUIjuikqGYr4J4VXFO
-	6miUs+tp/yM7fz5wgWxBC31EdRAFH4nGXMGbROMvxiIOS2MDpVR0BCSFAFT7OJDF96YTx2fLv+O
-	T8HNYNS3KZwjXBBL2hN4HDnn54JCaF1Cnq1fdHOeCUt7EKm6+jC0VI2TXcyZ5OPpIJxTJCzJS1i
-	iM/Q5kNiKhJKfT9JF4nCdy0ViGAgqeSZVIn20etUqGOtdeGtIzu9PutyJ+gjID6OcNusDMce8WQ
-	MErhcio8DSkNNzEkHyCWw7YLdMQnJ6mtAFVO8Tv8+gtd5YbtZXkiXVloqlKwZqxBxDyYK
-X-Received: by 2002:a05:690e:128d:b0:67b:f2b4:7ea3 with SMTP id
- 956f58d0204a3-67bf2b48061mr1185261d50.18.1793802638944; Wed, 04 Nov 2026
- 06:30:38 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RYmAWIrd
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CDA11F00A02;
+	Wed,  4 Nov 2026 14:51:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793803886;
+	bh=rz19ZukOAiKFRngbtnVhWHGTjfs5u+6TxsCAOoKwaNU=;
+	h=From:To:Cc:Subject:Date;
+	b=RYmAWIrd94owKJCFH1jduse8vXh/JC8+/sqgsJTNh/M8/mYUQUWdoCNdgcQdV+WcO
+	 U8JaGTevnGV9+5ClRYXQwtGGm0IoMEBpP/5qekVDhrvOH0C6E4QXF+bS5kijsmHw2d
+	 we3VM+rDtmolHm/a1S1VPhdqH3gxaE3ZyekVC4jNLr7YdlhulbeEqdEDwfzVnnN2oX
+	 sZb9Za3fU3vP9Ol4qUfaMBdx0imWXxSkWxqi+EO+Q5PqtO0VodrUgAz30aQgoUQ3ZL
+	 z2UJGha+PUMkWMXvxjAcso1xoVWVPFtQ60JM5bSSoObZ56jv8pgjgkqkBNTtO4W7X8
+	 bkSiLNBtUVNAA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH] clk: hisilicon: Remove hi3516cv300 driver
+Date: Wed,  4 Nov 2026 08:51:16 -0600
+Message-ID: <20261104145118.952453-1-robh@kernel.org>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -101,186 +61,420 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261028135915.2665857-1-dario.binacchi@amarulasolutions.com> <8c8908f1-ed6b-478a-ad00-c67448b25acb@foss.st.com>
-In-Reply-To: <8c8908f1-ed6b-478a-ad00-c67448b25acb@foss.st.com>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Wed, 4 Nov 2026 15:30:27 +0100
-X-Gm-Features: AclHuK-2YVD6MLpocItLoy0Jf9YnF4dS8B-jCRxYLxfAIe0sapLG1UQibi0oIPQ
-Message-ID: <CABGWkvoVrA7vaE6mKdp=2KNajREtgEi2RRV4qFcJmFqqWwQDoQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] Select the STM32MP25 LTDC pixel clock source for
- the RGB output
-To: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Marek Vasut <marex@nabladev.com>, michael@amarulasolutions.com, 
-	linux-amarula@amarulasolutions.com, 
-	Yannick Fertre <yannick.fertre@foss.st.com>, 
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, Brian Masney <bmasney+clk@redhat.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Fabrice Gasnier <fabrice.gasnier@foss.st.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Gabriel,
+Remove the hi3516cv300 clock driver as there is no such platform
+upstream and only drivers for clocks, pwm and ethernet. There's also
+been no changes other than common cleanups in 10 years since the driver
+was added.
 
-Thanks for your review.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ drivers/clk/hisilicon/Kconfig                 |   9 -
+ drivers/clk/hisilicon/Makefile                |   1 -
+ drivers/clk/hisilicon/crg-hi3516cv300.c       | 317 ------------------
+ include/dt-bindings/clock/hi3516cv300-clock.h |  36 --
+ 4 files changed, 363 deletions(-)
+ delete mode 100644 drivers/clk/hisilicon/crg-hi3516cv300.c
+ delete mode 100644 include/dt-bindings/clock/hi3516cv300-clock.h
 
-On Wed, Nov 4, 2026 at 11:42=E2=80=AFAM Gabriel FERNANDEZ
-<gabriel.fernandez@foss.st.com> wrote:
->
-> Hi Dario,
->
-> Thanks for working on this and for testing it on the Engicam board.
->
-> First, a small remark about patch 2/4: this driver is based on the one
-> we deliver to our customers in the ST kernel on GitHub [1]. Please keep
-> the original copyright and the Signed-off-by of the authors when you
-> reuse such code, and add your own on top of them (e.g. with
-> Co-developed-by).
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index e70bcfa9105b..e522c70ba8d3 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -3,15 +3,6 @@ config COMMON_CLK_HISI
+ 	bool
+ 	default ARCH_HISI
+ 
+-config COMMON_CLK_HI3516CV300
+-	tristate "HI3516CV300 Clock Driver"
+-	depends on ARCH_HISI || COMPILE_TEST
+-	select RESET_HISI
+-	select COMMON_CLK_HISI
+-	default ARCH_HISI
+-	help
+-	  Build the clock driver for hi3516cv300.
+-
+ config COMMON_CLK_HI3519
+ 	tristate "Hi3519 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
+diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+index 2978e56cb876..323b9bc563e4 100644
+--- a/drivers/clk/hisilicon/Makefile
++++ b/drivers/clk/hisilicon/Makefile
+@@ -8,7 +8,6 @@ obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o clk-hisi-phase.o
+ obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
+ obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+ obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
+-obj-$(CONFIG_COMMON_CLK_HI3516CV300)	+= crg-hi3516cv300.o
+ obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
+ obj-$(CONFIG_COMMON_CLK_HI3559A)	+= clk-hi3559a.o
+ obj-$(CONFIG_COMMON_CLK_HI3660) += clk-hi3660.o
+diff --git a/drivers/clk/hisilicon/crg-hi3516cv300.c b/drivers/clk/hisilicon/crg-hi3516cv300.c
+deleted file mode 100644
+index b66140f74c51..000000000000
+--- a/drivers/clk/hisilicon/crg-hi3516cv300.c
++++ /dev/null
+@@ -1,317 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * Hi3516CV300 Clock and Reset Generator Driver
+- *
+- * Copyright (c) 2016 HiSilicon Technologies Co., Ltd.
+- */
+-
+-#include <dt-bindings/clock/hi3516cv300-clock.h>
+-#include <linux/clk-provider.h>
+-#include <linux/module.h>
+-#include <linux/of.h>
+-#include <linux/platform_device.h>
+-#include "clk.h"
+-#include "crg.h"
+-#include "reset.h"
+-
+-/* hi3516CV300 core CRG */
+-#define HI3516CV300_INNER_CLK_OFFSET	64
+-#define HI3516CV300_FIXED_3M		65
+-#define HI3516CV300_FIXED_6M		66
+-#define HI3516CV300_FIXED_24M		67
+-#define HI3516CV300_FIXED_49P5		68
+-#define HI3516CV300_FIXED_50M		69
+-#define HI3516CV300_FIXED_83P3M		70
+-#define HI3516CV300_FIXED_99M		71
+-#define HI3516CV300_FIXED_100M		72
+-#define HI3516CV300_FIXED_148P5M	73
+-#define HI3516CV300_FIXED_198M		74
+-#define HI3516CV300_FIXED_297M		75
+-#define HI3516CV300_UART_MUX		76
+-#define HI3516CV300_FMC_MUX		77
+-#define HI3516CV300_MMC0_MUX		78
+-#define HI3516CV300_MMC1_MUX		79
+-#define HI3516CV300_MMC2_MUX		80
+-#define HI3516CV300_MMC3_MUX		81
+-#define HI3516CV300_PWM_MUX		82
+-#define HI3516CV300_CRG_NR_CLKS		128
+-
+-static const struct hisi_fixed_rate_clock hi3516cv300_fixed_rate_clks[] = {
+-	{ HI3516CV300_FIXED_3M, "3m", NULL, 0, 3000000, },
+-	{ HI3516CV300_FIXED_6M, "6m", NULL, 0, 6000000, },
+-	{ HI3516CV300_FIXED_24M, "24m", NULL, 0, 24000000, },
+-	{ HI3516CV300_FIXED_49P5, "49.5m", NULL, 0, 49500000, },
+-	{ HI3516CV300_FIXED_50M, "50m", NULL, 0, 50000000, },
+-	{ HI3516CV300_FIXED_83P3M, "83.3m", NULL, 0, 83300000, },
+-	{ HI3516CV300_FIXED_99M, "99m", NULL, 0, 99000000, },
+-	{ HI3516CV300_FIXED_100M, "100m", NULL, 0, 100000000, },
+-	{ HI3516CV300_FIXED_148P5M, "148.5m", NULL, 0, 148500000, },
+-	{ HI3516CV300_FIXED_198M, "198m", NULL, 0, 198000000, },
+-	{ HI3516CV300_FIXED_297M, "297m", NULL, 0, 297000000, },
+-	{ HI3516CV300_APB_CLK, "apb", NULL, 0, 50000000, },
+-};
+-
+-static const char *const uart_mux_p[] = {"24m", "6m"};
+-static const char *const fmc_mux_p[] = {
+-	"24m", "83.3m", "148.5m", "198m", "297m"
+-};
+-static const char *const mmc_mux_p[] = {"49.5m"};
+-static const char *const mmc2_mux_p[] = {"99m", "49.5m"};
+-static const char *const pwm_mux_p[] = {"3m", "50m", "24m", "24m"};
+-
+-static u32 uart_mux_table[] = {0, 1};
+-static u32 fmc_mux_table[] = {0, 1, 2, 3, 4};
+-static u32 mmc_mux_table[] = {0};
+-static u32 mmc2_mux_table[] = {0, 2};
+-static u32 pwm_mux_table[] = {0, 1, 2, 3};
+-
+-static const struct hisi_mux_clock hi3516cv300_mux_clks[] = {
+-	{ HI3516CV300_UART_MUX, "uart_mux", uart_mux_p, ARRAY_SIZE(uart_mux_p),
+-		CLK_SET_RATE_PARENT, 0xe4, 19, 1, 0, uart_mux_table, },
+-	{ HI3516CV300_FMC_MUX, "fmc_mux", fmc_mux_p, ARRAY_SIZE(fmc_mux_p),
+-		CLK_SET_RATE_PARENT, 0xc0, 2, 3, 0, fmc_mux_table, },
+-	{ HI3516CV300_MMC0_MUX, "mmc0_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
+-		CLK_SET_RATE_PARENT, 0xc4, 4, 2, 0, mmc_mux_table, },
+-	{ HI3516CV300_MMC1_MUX, "mmc1_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
+-		CLK_SET_RATE_PARENT, 0xc4, 12, 2, 0, mmc_mux_table, },
+-	{ HI3516CV300_MMC2_MUX, "mmc2_mux", mmc2_mux_p, ARRAY_SIZE(mmc2_mux_p),
+-		CLK_SET_RATE_PARENT, 0xc4, 20, 2, 0, mmc2_mux_table, },
+-	{ HI3516CV300_MMC3_MUX, "mmc3_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
+-		CLK_SET_RATE_PARENT, 0xc8, 4, 2, 0, mmc_mux_table, },
+-	{ HI3516CV300_PWM_MUX, "pwm_mux", pwm_mux_p, ARRAY_SIZE(pwm_mux_p),
+-		CLK_SET_RATE_PARENT, 0x38, 2, 2, 0, pwm_mux_table, },
+-};
+-
+-static const struct hisi_gate_clock hi3516cv300_gate_clks[] = {
+-
+-	{ HI3516CV300_UART0_CLK, "clk_uart0", "uart_mux", CLK_SET_RATE_PARENT,
+-		0xe4, 15, 0, },
+-	{ HI3516CV300_UART1_CLK, "clk_uart1", "uart_mux", CLK_SET_RATE_PARENT,
+-		0xe4, 16, 0, },
+-	{ HI3516CV300_UART2_CLK, "clk_uart2", "uart_mux", CLK_SET_RATE_PARENT,
+-		0xe4, 17, 0, },
+-
+-	{ HI3516CV300_SPI0_CLK, "clk_spi0", "100m", CLK_SET_RATE_PARENT,
+-		0xe4, 13, 0, },
+-	{ HI3516CV300_SPI1_CLK, "clk_spi1", "100m", CLK_SET_RATE_PARENT,
+-		0xe4, 14, 0, },
+-
+-	{ HI3516CV300_FMC_CLK, "clk_fmc", "fmc_mux", CLK_SET_RATE_PARENT,
+-		0xc0, 1, 0, },
+-	{ HI3516CV300_MMC0_CLK, "clk_mmc0", "mmc0_mux", CLK_SET_RATE_PARENT,
+-		0xc4, 1, 0, },
+-	{ HI3516CV300_MMC1_CLK, "clk_mmc1", "mmc1_mux", CLK_SET_RATE_PARENT,
+-		0xc4, 9, 0, },
+-	{ HI3516CV300_MMC2_CLK, "clk_mmc2", "mmc2_mux", CLK_SET_RATE_PARENT,
+-		0xc4, 17, 0, },
+-	{ HI3516CV300_MMC3_CLK, "clk_mmc3", "mmc3_mux", CLK_SET_RATE_PARENT,
+-		0xc8, 1, 0, },
+-
+-	{ HI3516CV300_ETH_CLK, "clk_eth", NULL, 0, 0xec, 1, 0, },
+-
+-	{ HI3516CV300_DMAC_CLK, "clk_dmac", NULL, 0, 0xd8, 5, 0, },
+-	{ HI3516CV300_PWM_CLK, "clk_pwm", "pwm_mux", CLK_SET_RATE_PARENT,
+-		0x38, 1, 0, },
+-
+-	{ HI3516CV300_USB2_BUS_CLK, "clk_usb2_bus", NULL, 0, 0xb8, 0, 0, },
+-	{ HI3516CV300_USB2_OHCI48M_CLK, "clk_usb2_ohci48m", NULL, 0,
+-		0xb8, 1, 0, },
+-	{ HI3516CV300_USB2_OHCI12M_CLK, "clk_usb2_ohci12m", NULL, 0,
+-		0xb8, 2, 0, },
+-	{ HI3516CV300_USB2_OTG_UTMI_CLK, "clk_usb2_otg_utmi", NULL, 0,
+-		0xb8, 3, 0, },
+-	{ HI3516CV300_USB2_HST_PHY_CLK, "clk_usb2_hst_phy", NULL, 0,
+-		0xb8, 4, 0, },
+-	{ HI3516CV300_USB2_UTMI0_CLK, "clk_usb2_utmi0", NULL, 0, 0xb8, 5, 0, },
+-	{ HI3516CV300_USB2_PHY_CLK, "clk_usb2_phy", NULL, 0, 0xb8, 7, 0, },
+-};
+-
+-static struct hisi_clock_data *hi3516cv300_clk_register(
+-		struct platform_device *pdev)
+-{
+-	struct hisi_clock_data *clk_data;
+-	int ret;
+-
+-	clk_data = hisi_clk_alloc(pdev, HI3516CV300_CRG_NR_CLKS);
+-	if (!clk_data)
+-		return ERR_PTR(-ENOMEM);
+-
+-	ret = hisi_clk_register_fixed_rate(hi3516cv300_fixed_rate_clks,
+-			ARRAY_SIZE(hi3516cv300_fixed_rate_clks), clk_data);
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+-	ret = hisi_clk_register_mux(hi3516cv300_mux_clks,
+-			ARRAY_SIZE(hi3516cv300_mux_clks), clk_data);
+-	if (ret)
+-		goto unregister_fixed_rate;
+-
+-	ret = hisi_clk_register_gate(hi3516cv300_gate_clks,
+-			ARRAY_SIZE(hi3516cv300_gate_clks), clk_data);
+-	if (ret)
+-		goto unregister_mux;
+-
+-	ret = of_clk_add_provider(pdev->dev.of_node,
+-			of_clk_src_onecell_get, &clk_data->clk_data);
+-	if (ret)
+-		goto unregister_gate;
+-
+-	return clk_data;
+-
+-unregister_gate:
+-	hisi_clk_unregister_gate(hi3516cv300_gate_clks,
+-				ARRAY_SIZE(hi3516cv300_gate_clks), clk_data);
+-unregister_mux:
+-	hisi_clk_unregister_mux(hi3516cv300_mux_clks,
+-			ARRAY_SIZE(hi3516cv300_mux_clks), clk_data);
+-unregister_fixed_rate:
+-	hisi_clk_unregister_fixed_rate(hi3516cv300_fixed_rate_clks,
+-			ARRAY_SIZE(hi3516cv300_fixed_rate_clks), clk_data);
+-	return ERR_PTR(ret);
+-}
+-
+-static void hi3516cv300_clk_unregister(struct platform_device *pdev)
+-{
+-	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
+-
+-	of_clk_del_provider(pdev->dev.of_node);
+-
+-	hisi_clk_unregister_gate(hi3516cv300_gate_clks,
+-			ARRAY_SIZE(hi3516cv300_gate_clks), crg->clk_data);
+-	hisi_clk_unregister_mux(hi3516cv300_mux_clks,
+-			ARRAY_SIZE(hi3516cv300_mux_clks), crg->clk_data);
+-	hisi_clk_unregister_fixed_rate(hi3516cv300_fixed_rate_clks,
+-			ARRAY_SIZE(hi3516cv300_fixed_rate_clks), crg->clk_data);
+-}
+-
+-static const struct hisi_crg_funcs hi3516cv300_crg_funcs = {
+-	.register_clks = hi3516cv300_clk_register,
+-	.unregister_clks = hi3516cv300_clk_unregister,
+-};
+-
+-/* hi3516CV300 sysctrl CRG */
+-#define HI3516CV300_SYSCTRL_NR_CLKS 16
+-
+-static const char *const wdt_mux_p[] __initconst = { "3m", "apb" };
+-static u32 wdt_mux_table[] = {0, 1};
+-
+-static const struct hisi_mux_clock hi3516cv300_sysctrl_mux_clks[] = {
+-	{ HI3516CV300_WDT_CLK, "wdt", wdt_mux_p, ARRAY_SIZE(wdt_mux_p),
+-		CLK_SET_RATE_PARENT, 0x0, 23, 1, 0, wdt_mux_table, },
+-};
+-
+-static struct hisi_clock_data *hi3516cv300_sysctrl_clk_register(
+-		struct platform_device *pdev)
+-{
+-	struct hisi_clock_data *clk_data;
+-	int ret;
+-
+-	clk_data = hisi_clk_alloc(pdev, HI3516CV300_SYSCTRL_NR_CLKS);
+-	if (!clk_data)
+-		return ERR_PTR(-ENOMEM);
+-
+-	ret = hisi_clk_register_mux(hi3516cv300_sysctrl_mux_clks,
+-			ARRAY_SIZE(hi3516cv300_sysctrl_mux_clks), clk_data);
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+-
+-	ret = of_clk_add_provider(pdev->dev.of_node,
+-			of_clk_src_onecell_get, &clk_data->clk_data);
+-	if (ret)
+-		goto unregister_mux;
+-
+-	return clk_data;
+-
+-unregister_mux:
+-	hisi_clk_unregister_mux(hi3516cv300_sysctrl_mux_clks,
+-			ARRAY_SIZE(hi3516cv300_sysctrl_mux_clks), clk_data);
+-	return ERR_PTR(ret);
+-}
+-
+-static void hi3516cv300_sysctrl_clk_unregister(struct platform_device *pdev)
+-{
+-	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
+-
+-	of_clk_del_provider(pdev->dev.of_node);
+-
+-	hisi_clk_unregister_mux(hi3516cv300_sysctrl_mux_clks,
+-			ARRAY_SIZE(hi3516cv300_sysctrl_mux_clks),
+-			crg->clk_data);
+-}
+-
+-static const struct hisi_crg_funcs hi3516cv300_sysctrl_funcs = {
+-	.register_clks = hi3516cv300_sysctrl_clk_register,
+-	.unregister_clks = hi3516cv300_sysctrl_clk_unregister,
+-};
+-
+-static const struct of_device_id hi3516cv300_crg_match_table[] = {
+-	{
+-		.compatible = "hisilicon,hi3516cv300-crg",
+-		.data = &hi3516cv300_crg_funcs
+-	},
+-	{
+-		.compatible = "hisilicon,hi3516cv300-sysctrl",
+-		.data = &hi3516cv300_sysctrl_funcs
+-	},
+-	{ }
+-};
+-MODULE_DEVICE_TABLE(of, hi3516cv300_crg_match_table);
+-
+-static int hi3516cv300_crg_probe(struct platform_device *pdev)
+-{
+-	struct hisi_crg_dev *crg;
+-
+-	crg = devm_kmalloc(&pdev->dev, sizeof(*crg), GFP_KERNEL);
+-	if (!crg)
+-		return -ENOMEM;
+-
+-	crg->funcs = of_device_get_match_data(&pdev->dev);
+-	if (!crg->funcs)
+-		return -ENOENT;
+-
+-	crg->rstc = hisi_reset_init(pdev);
+-	if (!crg->rstc)
+-		return -ENOMEM;
+-
+-	crg->clk_data = crg->funcs->register_clks(pdev);
+-	if (IS_ERR(crg->clk_data)) {
+-		hisi_reset_exit(crg->rstc);
+-		return PTR_ERR(crg->clk_data);
+-	}
+-
+-	platform_set_drvdata(pdev, crg);
+-	return 0;
+-}
+-
+-static void hi3516cv300_crg_remove(struct platform_device *pdev)
+-{
+-	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
+-
+-	hisi_reset_exit(crg->rstc);
+-	crg->funcs->unregister_clks(pdev);
+-}
+-
+-static struct platform_driver hi3516cv300_crg_driver = {
+-	.probe          = hi3516cv300_crg_probe,
+-	.remove		= hi3516cv300_crg_remove,
+-	.driver         = {
+-		.name   = "hi3516cv300-crg",
+-		.of_match_table = hi3516cv300_crg_match_table,
+-	},
+-};
+-
+-static int __init hi3516cv300_crg_init(void)
+-{
+-	return platform_driver_register(&hi3516cv300_crg_driver);
+-}
+-core_initcall(hi3516cv300_crg_init);
+-
+-static void __exit hi3516cv300_crg_exit(void)
+-{
+-	platform_driver_unregister(&hi3516cv300_crg_driver);
+-}
+-module_exit(hi3516cv300_crg_exit);
+-
+-MODULE_LICENSE("GPL v2");
+-MODULE_DESCRIPTION("HiSilicon Hi3516CV300 CRG Driver");
+diff --git a/include/dt-bindings/clock/hi3516cv300-clock.h b/include/dt-bindings/clock/hi3516cv300-clock.h
+deleted file mode 100644
+index ccea1bab7a6f..000000000000
+--- a/include/dt-bindings/clock/hi3516cv300-clock.h
++++ /dev/null
+@@ -1,36 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * Copyright (c) 2016 HiSilicon Technologies Co., Ltd.
+- */
+-
+-#ifndef __DTS_HI3516CV300_CLOCK_H
+-#define __DTS_HI3516CV300_CLOCK_H
+-
+-/* hi3516CV300 core CRG */
+-#define HI3516CV300_APB_CLK		0
+-#define HI3516CV300_UART0_CLK		1
+-#define HI3516CV300_UART1_CLK		2
+-#define HI3516CV300_UART2_CLK		3
+-#define HI3516CV300_SPI0_CLK		4
+-#define HI3516CV300_SPI1_CLK		5
+-#define HI3516CV300_FMC_CLK		6
+-#define HI3516CV300_MMC0_CLK		7
+-#define HI3516CV300_MMC1_CLK		8
+-#define HI3516CV300_MMC2_CLK		9
+-#define HI3516CV300_MMC3_CLK		10
+-#define HI3516CV300_ETH_CLK		11
+-#define HI3516CV300_ETH_MACIF_CLK	12
+-#define HI3516CV300_DMAC_CLK		13
+-#define HI3516CV300_PWM_CLK		14
+-#define HI3516CV300_USB2_BUS_CLK	15
+-#define HI3516CV300_USB2_OHCI48M_CLK	16
+-#define HI3516CV300_USB2_OHCI12M_CLK	17
+-#define HI3516CV300_USB2_OTG_UTMI_CLK	18
+-#define HI3516CV300_USB2_HST_PHY_CLK	19
+-#define HI3516CV300_USB2_UTMI0_CLK	20
+-#define HI3516CV300_USB2_PHY_CLK	21
+-
+-/* hi3516CV300 sysctrl CRG */
+-#define HI3516CV300_WDT_CLK		1
+-
+-#endif	/* __DTS_HI3516CV300_CLOCK_H */
+-- 
+2.53.0
 
-You are right, I used your downstream driver as a reference and I should
-have kept your copyright and authorship. Sorry about that.
-
->
-> Now about your two questions:
->
-> On 10/28/26 14:59, Dario Binacchi wrote:
->  > - the mux parents are referenced by their global names. Should they
->  >   rather be described by clocks/clock-names in the SYSCFG binding?
->  >   Moreover, no driver registers "txbyteclk" yet.
->
-> Yes, I would also prefer to describe them in DT. I'm working on a
-> version where the mux is described by a clock-controller sub-node of
-> the SYSCFG node. This sub-node is populated by the STM32MP2 SYSCFG
-> driver, so no auxiliary device is needed (patch 3/4 can be dropped):
->
->      syscfg: syscon@44230000 {
->          compatible =3D "st,stm32mp25-syscfg", "syscon";
->          ...
->          syscfg_clk: clock-controller {
->              compatible =3D "st,stm32mp25-syscfg-clk";
->              #clock-cells =3D <1>;
->              clocks =3D <&rcc CK_KER_LTDC>, <&lvds>, <&clk_dsi_txbyte>;
->              clock-names =3D "ltdc", "lvds", "dsi";
->          };
->      };
->
->      &ltdc {
->          clocks =3D ..., <&syscfg_clk CK_SYSCFG_PIX_LTDC>, ...;
->      };
->
-> The driver takes the parents from the "clocks" property
-> (clk_parent_data), so the inputs which don't exist on a given SoC (no
-> LVDS/DSI on STM32MP231/251) are simply omitted. For "txbyteclk", we keep
-> the existing clk_dsi_txbyte placeholder until the DSI driver provides
-> this clock.
->
-> I also want to keep "#clock-cells =3D <1>" with a onecell provider: the
-> SYSCFG has other clock selections, and I would like to be able to add
-> them later in the same driver without changing the binding again.
->
->  > - the pixel clock source is selected in the board devicetree by
->  >   assigned-clock-parents. Should the LTDC driver rather select it
->  >   according to its output (RGB, LVDS or DSI)?
->
-> I think the LTDC driver should select it: the source depends on the
-> output used, not on the board. This is what we do in our downstream
-> LTDC driver: it gets the mux as "ref" clock and calls clk_set_parent()
-> according to the encoder type (LVDS PHY clock for LVDS, LTDC kernel
-> clock otherwise) before setting the pixel clock rate. The board
-> overlays then don't need assigned-clock-parents. Yannick and Raphael
-> (in Cc) can comment on the LTDC side.
->
-> Since I have already reworked the clock driver this way (binding,
-> driver and SoC DT), would you be OK if I take over the
-> clk-stm32mp25-syscfg patch? I would send it in a series, keeping you as
-> Co-developed-by, and you could then rebase your Engicam patches on top
-> of it.
-
-Yes, please go ahead. Please Cc me on your series, I will test it on
-the Engicam
-MicroGEA-STM32MP257D-RMM with both the RGB and the LVDS displays.
-
-About patch 1/4: in your SoC DT rework, will the LTDC "lcd" clock become
-CK_KER_LTDC on STM32MP255/257, as in your downstream kernel?
-In that case I will drop it, otherwise I will resend it on its own.
-
-Thanks and regards,
-Dario
-
->
-> [1]
-> https://github.com/STMicroelectronics/linux/blob/v6.6-stm32mp/drivers/clk=
-/stm32/clk-stm32mp25-syscfg.c
->
-> Best regards,
-> Gabriel
->
->
-> On 10/28/26 14:59, Dario Binacchi wrote:
-> > On STM32MP25 the LTDC pixel clock is selected in the SYSCFG
-> > DISPLAYCLKCR register among the DSI byte lane clock, the LVDS PHY pixel
-> > clock (reset value) and the LTDC kernel clock. The SYSCFG node is
-> > already described as provider of this clock, which the LTDC references
-> > as "ref" clock, but no driver registers it, so the RGB (DPI) output
-> > can't work.
-> >
-> > This series adds a driver for this mux, probed as an auxiliary device
-> > of the STM32MP2 SYSCFG driver, and selects the pixel clock source on th=
-e
-> > Engicam MicroGEA-STM32MP257D-RMM display overlays. Patch 1 is an
-> > independent fix for the RGB display overlay.
-> >
-> > Tested on the Engicam MicroGEA-STM32MP257D-RMM board with both the RGB
-> > (Rocktech RK050HR345-CT106A) and the LVDS (Ampire AM-1280800W8TZQW-T00H=
-)
-> > displays.
-> >
-> > I am sending it as RFC since I am not sure about:
-> >
-> > - the mux parents are referenced by their global names. Should they
-> >    rather be described by clocks/clock-names in the SYSCFG binding?
-> >    Moreover, no driver registers "txbyteclk" yet.
-> >
-> > - the pixel clock source is selected in the board devicetree by
-> >    assigned-clock-parents. Should the LTDC driver rather select it
-> >    according to its output (RGB, LVDS or DSI)?
-> >
-> >
-> > Dario Binacchi (4):
-> >    arm64: dts: st: fix the Engicam RMM RGB display pixel clock
-> >    clk: stm32: add STM32MP25 SYSCFG clock driver
-> >    soc: st: stm32mp2-syscfg: register the STM32MP25 clock device
-> >    arm64: dts: st: select the Engicam RMM display pixel clock source
-> >
-> >   ...gea-rmm-overlay-am-1280800w8tzqw-t00h.dtso |   3 +
-> >   ...icrogea-rmm-overlay-rk050hr345-ct106a.dtso |   5 +
-> >   drivers/clk/stm32/Kconfig                     |  12 ++
-> >   drivers/clk/stm32/Makefile                    |   1 +
-> >   drivers/clk/stm32/clk-stm32mp25-syscfg.c      | 111 +++++++++++++++++=
-+
-> >   drivers/soc/st/Kconfig                        |   1 +
-> >   drivers/soc/st/stm32mp2-syscfg.c              |  28 ++++-
-> >   7 files changed, 159 insertions(+), 2 deletions(-)
-> >   create mode 100644 drivers/clk/stm32/clk-stm32mp25-syscfg.c
-> >
-> > ---
-> > base-commit: 65ba8f34ec886ec72b2c07ddc8cf3d815c32869d
-> > branch: stm32mp25-ltdc-pixclk
-> >
-
-
-
---=20
-Dario Binacchi
-Senior Embedded Software Engineer
-M. +39 328 0625246
-dario.binacchi@amarulasolutions.com
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95
-Amarula Solutions SRL
- Via Felice Cavallotti 25D, 41012 Carpi, MO, IT
-info@amarulasolutions.com
-www.amarulasolutions.com
