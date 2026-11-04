@@ -1,84 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793771936;
-	b=LANsAJl+c0pms6sR/R+IB++LodLyT3kC/4uA4JyV36r8krSeLKHt7sZ9KzdI7QGWFLgx
-	 9LQENLGFsjAlQS5VnsTa1MP7UaRr6XIoR5nNOcEEk0hXdIMlDfjXGYeSj2Zhv0X9r+3DF
-	 /UagHcDI4QByxs4hjLpcVXiJNVBGvSJIU2hn7Lrj7Kbc6vMygQq/0MgTtZpmLwEpducgP
-	 ohCPMPHZXR6C1UlFHg4O/3zetLeAdie3WDnVmdepQZdiY6x3smUNJ8CBt8VRku/mfq622
-	 xVNmiUmy1ea/pSNwhyhE9Y6tyk2tlXvHFqQ7yyf1WiFKRRGgFVvZuX//lEER/lWWFIw==
+	t=1793771937;
+	b=qsszAA3mG/7jKTD6MoVOFkzUT53Wk4MyUTgX55YvaXoG9h232WLGtE6QzcuN/luBbhrG
+	 Pf84ohAoiKihpp5SHmtZp1ayfZ4tFfsb2za7duV1wmB7ea6YM9mjjMQikeZ3FPx/83o+E
+	 UxS8LBexaGV0snQ9o7428JPguING9M0HU5m37QcyGF7UfRgLxEv+7RQtpPwELJZnGUqrf
+	 jQDj0dwxMWO9Ua1/uejx2LZPS56oDBUQdbtFQJKhWQqYnMKWk9Erf0FHWKkWqf+wbcbB/
+	 02zj/IBLt2cY+i6zw7hxnBI4TJUv6Im2rOhfJRd8qIyY0M664W9+GC2KrIpy4MWV1XA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793771936;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793771937;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=9xIvMSl489GZfxwmphM8YUW4yrYariUf7f4sziVKnos=;
-	b=t8Ho8XGlIGW9bY1ijQbrtw5+tUlbtnrhDPPvZe1kN6zUWczQrT98KZxofgXtZ3NU/Tmd
-	 FBfqWa2+YnbsJRGY6G7Qu0p5mTWrL4jOEjvIOVekUr4p5lf4vhBpBpQTKtFeG8emCyYQW
-	 1LvpqM6qSqR6CzLyU9VyojM3zamon66tLUFCA5A0OdejkotoAYhES8pH5w+w656LRotET
-	 feZz2nJExC62gwWGDsJAMxO9EKQfHecfpGo4gOf+SD8C6ROwFjSbUfYoHsWGWFuu8GSLn
-	 GzoG2f8PcrLv3XsNRAvuqSR90HZp/tCbO7V2/zczXtLCVIfnmT5C6XFPlX/kW8Z6A+A==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=KBXunWp616box3X7V9vV93MSQlhAq0/quw4oecuKOn4=;
+	b=wjZ9d/77JwLcpFwgHIgupNOutjURcxWevTlhJ+a3f5fAF0LATmecZMQZfeYxwb7H1vXw
+	 YpekhYLRZiX3WxNSmost0Tt9XtktzuK0bkGlaAu7GiaMTD1z98k274+hCVVtK/Psazl+Q
+	 jnUpiceDTxaYL7bR2TF+m42XMdL2EqvjdHqXh1G/TV3RwW9Lu6h92n22B0C7MWtwYxqMG
+	 UZIDZtVb5FPAuLUCZR6xgBey2MzOxLVlvc6i/EOSbAVP1xvp8vl3rABVrvuUYHJ0COggN
+	 neY82HYAk/i/iIPXH3zXInC9MY2N6XHGZsBdGQ3HHHh8qD1K0mBmI9V7Jia5FoYIVQA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=J8aLuJtt;
-	arc=none smtp.remote-ip=209.85.216.46
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=qxLqEAZc;
+	arc=none smtp.remote-ip=209.85.216.49
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DED606A326
-	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 05:58:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A4DED606A326
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33618606A335
+	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 05:58:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 33618606A335
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=J8aLuJtt
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3ae7626d14aso227401a91.2
-        for <linux-clk@vger.kernel.org>; Tue, 03 Nov 2026 21:58:55 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=qxLqEAZc
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3b08a162d4bso278899a91.3
+        for <linux-clk@vger.kernel.org>; Tue, 03 Nov 2026 21:58:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793771935; x=1794376735; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=9xIvMSl489GZfxwmphM8YUW4yrYariUf7f4sziVKnos=;
-        b=J8aLuJttePqvSGqoTtP1+p1z2IPE1DvFVdTunuPA2iw1VGMGh6t9sc7CQsJ8iMR6vA
-         wyTmTQ3jWAhV51uB7jclKCs4WhNNSbpPJX0VLcEfYUSgm8h4WqF2W4rlCGimATh5KLpy
-         FacvMpAMOx36KEre6UONSpxtmTSvko6Wpzf/syW18/pqfcN7t448/DtZNxuDmfJtX/go
-         hZ4syqNqw66Guk6J8GGOC+wSPXvE4buhzzfqGxn+inHzd+F9oGoSA2QDLsaJejiLnl3W
-         /mdfVocrBCmLJdcs8jA/17X0++i5bDiei7jWyDgJaRn1lMX98ETHRf/8obeVxExvaG1M
-         rUBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793771935; x=1794376735;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20260707; t=1793771936; x=1794376736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=9xIvMSl489GZfxwmphM8YUW4yrYariUf7f4sziVKnos=;
-        b=sRk9HSnMjgo+IpVggM2fm48P8009zNTxWHp2fxirJBdDRHbb5f5az5WPwDSEpxVuNn
-         AxlDPOJhfOLo2ClS+sshpcYmiUqCiQknVmEDy1j5proj4uwvkT4WQbSSJCkI6z5MmPMK
-         WG4q3BNl3nat4o4BY6k6jFJh07ZGeFra5wdQpQ/O8dL4/jeEOAw6Bq7ZQ9U/lQ+3cmWU
-         32vq+/QRk4TmSFzttsM/5dvx/V8sqbKkPuCMU76mOnkfaAMN8qhHkHOg1Tk83u7+4wCv
-         tHkM3KLOQDNc5E7d0cohQqzYtSyGRDUjMIX1L/749V87INWsTjSuUWSTVw/YE1uQ3le7
-         v7oA==
-X-Forwarded-Encrypted: i=1; AKwUvBw98xvOolP47HQz/aQE3dm3DJaPHpeflMUxx0J3OQMTcYVIH8hRzeOK31yLmBRnCplBokT6MNgiR0A=@vger.kernel.org
-X-Gm-Message-State: APuU4Z96w5wLXHOdQ7zYdHh2dSzydTrxGMmySzbgPKe+bNEzbcWasB6z
-	9c5CdajSWgUuIlUlZA7PSj1pvht2K867sqcXm+2ujH0gl8n6OTWH0abXh8fqXg==
-X-Gm-Gg: AYBFou1bZmaQru0HXuLvk5MUe/PymPC4FPsAzjpsK4CoiK1bzMAABdMo/P+hiYeVxpU
-	T500rE9A3QsQ3B+gU9yoDMz9fmX6LVgpOtUGCLXeyucOhvjFda5uVfkN6Km7FqWrSIepL756GwT
-	gg0V/sXvJvYaxPkqhzukGOdJ6BLvp37OORXXoRRZaxJ1KI4WaYr86vo7M5/+wFjCjXkr/0Z7344
-	gkmLcK0TE5MvTAT7RIPGGyelNHY7N2DzCatGgzEbTgUNYxErneCki5aKP8uAGsu0PpB3/uirvxL
-	Mzk4gwK98g+ISlgZjrafc345wHtpNyenP+Q3Mrmdo3vNb1tE6HeIV4E+eO5ZHW6Kkn/Syc8S/hq
-	9l4UnSgyrZ9Cf1/6bi+8a2qjIGWM3biimjhVfVekoq+9MRZJMEiMr2QVCTwrKwLqYQZNnuZM1Xf
-	8xxPsYmS1qa2beCCS/+aA/7g2Kk4jXaYVsMamdqYifxrr7Wf9yq5McfyobjvQpy5IYEBaQkYTNk
-	yJOCgnRJ7fRJbJc2XvIdPSYqVH6j+9+w0Xi/meZueIow2MHCvcPYd44HyZROtirAs9SpLlbuCUf
-	4wadWEWMKEhd4rbEW8se7Vy05xAV9wP0s31N+oIs+d5kDmKlQH+u6SUePzXi9LME2CwgnUBiYQm
-	iCLBVC8E5LzWey9LRVF+nqDnGauQqtMRTxRA5Hn+uzYeoElVch5BVT7us4FIiecHno8ey6M3ITu
-	XlXA==
-X-Received: by 2002:a17:90b:58e3:b0:3ac:80dc:f40c with SMTP id 98e67ed59e1d1-3ae897cca98mr12127224a91.14.1793771934974;
-        Tue, 03 Nov 2026 21:58:54 -0800 (PST)
+        bh=KBXunWp616box3X7V9vV93MSQlhAq0/quw4oecuKOn4=;
+        b=qxLqEAZcJHUp/cY1NqTaJSKMpFvTnLBytBsofAopex9x+pMxlnZkcmmCCu5OrwRL1K
+         CrAeHJhPbzRBfxVCYj7cdpfX2HWhDmadl2rp4oOxAtdBw+cGZyQuCi9Fs01WTSxGVJ7V
+         8Nv/X7kIfY3JwNb/zsRuXaFlShZBoW7Jvjb8j9ngaktX9tQkPkNeE2cDHe7sr+grQk7w
+         sOdXzKBkctZ8d6mUE3Lv9wjYkbBSndCH1pJ038t3kQx7AJUgCnA9LpQte8RjRzXTTZ/3
+         CnHlg4EhxozVd8/RR0b3sZ3b1md4BBLJTqYxxNToKpSTFVu4HZ4C0TmRLSpz2ib7Y1X0
+         QtCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793771936; x=1794376736;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=KBXunWp616box3X7V9vV93MSQlhAq0/quw4oecuKOn4=;
+        b=mS1ygfJJ3dLjvuLVhgyjfgsMSC44n/B+IIa5c8/iLJ9BW7jRuFNaI41rIL/95rh/z6
+         j2X3Wb7uksnvZY6wFkQ8AK/9bY0ZYYZOM6phSFKgWRwkvfY6D2U1lkTu0LlqeL+FMFGA
+         6RisC2F4wHBCyv/mvPSZZpjv4lFuJBRwPrWl9uunJYpGhXafDFSaLQYiC34nrYW17qyg
+         HPL4uvv3vAlB5Pxbx2qs6pNKImMvRcyj3kAaEalj3Ucy9mVOVuX2MygtbwIS3QF/ixKe
+         OLtIeUH4NI85y7OU7F2eHSja+GVevAD6d45KDZELYdaR2H5DBYdeYGqmvOhwGnuRdaTb
+         N0Iw==
+X-Forwarded-Encrypted: i=1; AKwUvBx190RoSnRib3xeXGbkUb6xJPfrAbez39k23QlY8bfvHx9zMzeGn2+W4lhgHrcv0Gi8O3rdKGpb/fk=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9JWMe0HIVb2HxNT9vLWL7GfA/hERDd9Koo4rKMOYdWpkvFpQXK
+	iK7nV7haYnsMuNrcYf5TrAYzRIse4aByDqtF6Qs7yVuIeDaxk090GC8r
+X-Gm-Gg: AYBFou1ddMaF6wyDNag2an7VMqEDwbXV+gdutDArU4gNC30w1cBGOIFDC+Gm5JyHEQW
+	jyHjoTPeEScVoEguyYW1/pn7Eke9NFBac/LHZ10TvQKI7USttFMrwHDBzFX4zOaooI2PchJq3Pe
+	3kAFpExbp8SKT5P0aGqp+eYN999lYi94fTrJDiD8xW4ICMoJD624o9BuEjwOZQQN8J5eu89grnx
+	YKg4/Sw7IvgjSo6sFn0cwYLX3+5S12WOSr4TXSamLJq0RX2e34aU2p8i5YNniZMyeIQglpRXAr+
+	vu63r6l81AMlH43GYvPQhuHz9J9O39d0c5xt5jM+DcHmwGplByqzYyp7+/+0rD1UKmwtCk3TTVW
+	7v3j61doOYUAtjUlgab3nCB2Fw04Z64PbDlgBWy3djct/tUNeNI8cTCKcJeC7rUQ3S4l2ObfcPO
+	Vm26AwkhfEEiviZqYwEzn0EqkF3Ojl/ooVHuZeepdQ/0zO5P7JCm5iIkZMvcSvU7w1RnF7NDXAJ
+	QQCbbfosxAkX/eQZs8A8HMMfdIWn0qjgNShe8W1JA2JUlZOLYW4INBW8uamGK8nPJRUgt0Svuv+
+	rWQZvz2/icaAK0FFTD2ktn05z7syUv9pD7Iq+0zogheC3onKKtA0vn/pJ0pHu2t9beblk+PX+Uw
+	BiirG6TuHBS6xMpS5/ICHCrGg+BaJEHpyY93gqAY4hAiKPJSLCbNR/xq3bc5nYhxvhABC9LI5uW
+	DVbQ==
+X-Received: by 2002:a17:90b:4cc8:b0:3a0:c276:1ec0 with SMTP id 98e67ed59e1d1-3ae897f673emr11389663a91.28.1793771936338;
+        Tue, 03 Nov 2026 21:58:56 -0800 (PST)
 Received: from ryzen.lan ([2601:644:8000:37f::e34])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b07c9928c4sm7840110a91.15.2026.11.03.21.58.53
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b07c9928c4sm7840110a91.15.2026.11.03.21.58.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2026 21:58:54 -0800 (PST)
+        Tue, 03 Nov 2026 21:58:55 -0800 (PST)
 From: Rosen Penev <rosenp@gmail.com>
 To: linux-mips@vger.kernel.org,
 	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
@@ -89,10 +90,12 @@ Cc: Brian Masney <bmasney+clk@redhat.com>,
 	Antony Pavlov <antonynpavlov@gmail.com>,
 	linux-kernel@vger.kernel.org (open list),
 	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH 0/8] clk: ath79: move the PLL clock driver to drivers/clk
-Date: Tue,  3 Nov 2026 21:58:44 -0800
-Message-ID: <20261104055852.152340-1-rosenp@gmail.com>
+Subject: [PATCH 1/8] MIPS: ath79: apply the QCA956x timer workaround in setup
+Date: Tue,  3 Nov 2026 21:58:45 -0800
+Message-ID: <20261104055852.152340-2-rosenp@gmail.com>
 X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20261104055852.152340-1-rosenp@gmail.com>
+References: <20261104055852.152340-1-rosenp@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -104,77 +107,66 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The ath79 PLL clock code lives in arch/mips/ath79/clock.c and uses the
-arch headers and ath79_reset_base. This series makes it a normal clk
-driver in drivers/clk and then cleans it up.
+qca956x_clocks_init() enables the MIPS timer interrupt in the misc
+interrupt controller, which QCA956x needs before the clocks are set
+up, or there are no jiffies. That has nothing to do with the clocks,
+and it ties the clock code to ath79_reset_base.
 
-Patches 1-2 remove what ties it to the arch code. The QCA956x timer
-interrupt workaround moves to plat_time_init(), and so does reading the
-reference clock rate from the bootstrap pins, for boards whose device
-tree leaves the rate out. The arch code also warns when a rate in the
-device tree disagrees with the pins.
+Do it in plat_time_init() right before of_clk_init() instead, which
+runs the clock setup. The order is the same. TP9343 boards use the
+QCA956x PLL and took this path too, so check for both.
 
-Patch 3 moves the driver, with copies of the PLL register definitions it
-uses, and adds a MAINTAINERS entry from the qca,ath79-pll binding. It
-stays a CLK_OF_DECLARE driver, as the MIPS timer needs the CPU clock.
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ arch/mips/ath79/clock.c | 10 ----------
+ arch/mips/ath79/setup.c | 13 +++++++++++++
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
-Patches 4-8 clean it up:
-- 4: use GENMASK() and FIELD_GET() for the register fields (the
-  generated code is unchanged)
-- 5: convert to clk_hw. This also fixes the AR724x and AR933x clocks,
-  whose parent was looked up by the name "ref", so they were orphans
-  when the device tree's reference clock node has a different name.
-- 6: fix the error handling: an unchecked ioremap(), clk_put() of an
-  error pointer, and panics or BUG_ON() where an error return will do
-- 7: one init function per compatible instead of re-matching it
-- 8: share the fractional PLL calculation, using 64-bit maths. This
-  fixes a 32-bit overflow of the QCA955x DDR PLL rate whenever its
-  NFRAC is above 107 with a 40 MHz reference clock, or above 171 with
-  25 MHz.
-
-The series touches both arch/mips and drivers/clk. Patches 3-8 depend on
-1-2, so it would be easiest to take it all through one tree with an ack
-from the other maintainer.
-
-Not addressed: the QCA956x PLL formula. It ignores the NFRAC_H field
-("hfrac >> 13" of a 13-bit field is always 0) and divides NFRAC_L by
-25 << 13 instead of 2^18. Mainline U-Boot has the same code, so it is
-no independent check. I left it unchanged until it can be checked
-against register values from a QCA956x board.
-
-Tool use, per Documentation/process/generated-content.rst: this series
-was developed with Claude Code (Claude Opus 5.5). It wrote most of the
-code changes and changelogs in patches 3-8, following my review of the
-driver and my requests, and reviewed patches 1-2. It also wrote the
-user space harness used to test patch 8, and it fetched and compared
-the U-Boot sources for the QCA956x formula. I reviewed and tested all
-of it and take responsibility for it.
-
-Rosen Penev (8):
-  MIPS: ath79: apply the QCA956x timer workaround in setup
-  MIPS: ath79: move the bootstrap reference clock to setup
-  clk: ath79: move the ath79 clock driver to drivers/clk
-  clk: ath79: use FIELD_GET() for the PLL register fields
-  clk: ath79: convert to clk_hw based registration
-  clk: ath79: fix the error handling
-  clk: ath79: give each compatible its own init function
-  clk: ath79: share the fractional PLL calculation
-
- MAINTAINERS              |   8 +
- arch/mips/ath79/Makefile |   2 +-
- arch/mips/ath79/clock.c  | 673 ---------------------------------------
- arch/mips/ath79/setup.c  | 100 ++++++
- drivers/clk/Kconfig      |  12 +
- drivers/clk/Makefile     |   1 +
- drivers/clk/clk-ath79.c  | 593 ++++++++++++++++++++++++++++++++++
- drivers/clk/clk-ath79.h  | 140 ++++++++
- 8 files changed, 855 insertions(+), 674 deletions(-)
- delete mode 100644 arch/mips/ath79/clock.c
- create mode 100644 drivers/clk/clk-ath79.c
- create mode 100644 drivers/clk/clk-ath79.h
-
-
-base-commit: d6bcfc94eb4da6e089c5473970cd96727292fd97
+diff --git a/arch/mips/ath79/clock.c b/arch/mips/ath79/clock.c
+index 050f6553f398..8c5eaa4ab6e0 100644
+--- a/arch/mips/ath79/clock.c
++++ b/arch/mips/ath79/clock.c
+@@ -523,16 +523,6 @@ static void __init qca956x_clocks_init(void __iomem *pll_base)
+ 	u32 cpu_pll, ddr_pll;
+ 	u32 bootstrap;
+ 
+-	/*
+-	 * QCA956x timer init workaround has to be applied right before setting
+-	 * up the clock. Else, there will be no jiffies
+-	 */
+-	u32 misc;
+-
+-	misc = ath79_reset_rr(AR71XX_RESET_REG_MISC_INT_ENABLE);
+-	misc |= MISC_INT_MIPS_SI_TIMERINT_MASK;
+-	ath79_reset_wr(AR71XX_RESET_REG_MISC_INT_ENABLE, misc);
+-
+ 	bootstrap = ath79_reset_rr(QCA956X_RESET_REG_BOOTSTRAP);
+ 	if (bootstrap &	QCA956X_BOOTSTRAP_REF_CLK_40)
+ 		ref_rate = 40 * 1000 * 1000;
+diff --git a/arch/mips/ath79/setup.c b/arch/mips/ath79/setup.c
+index 4e18cdcf65a0..d9e1cc77ad04 100644
+--- a/arch/mips/ath79/setup.c
++++ b/arch/mips/ath79/setup.c
+@@ -241,6 +241,19 @@ void __init plat_time_init(void)
+ 	struct clk *clk;
+ 	unsigned long cpu_clk_rate;
+ 
++	/*
++	 * QCA956x needs the MIPS timer interrupt enabled in the misc
++	 * interrupt controller before the clocks are set up, or there are
++	 * no jiffies.
++	 */
++	if (soc_is_qca956x() || soc_is_tp9343()) {
++		u32 misc;
++
++		misc = ath79_reset_rr(AR71XX_RESET_REG_MISC_INT_ENABLE);
++		misc |= MISC_INT_MIPS_SI_TIMERINT_MASK;
++		ath79_reset_wr(AR71XX_RESET_REG_MISC_INT_ENABLE, misc);
++	}
++
+ 	of_clk_init(NULL);
+ 
+ 	np = of_get_cpu_node(0, NULL);
 -- 
 2.56.0
 
