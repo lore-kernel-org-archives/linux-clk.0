@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793826150;
-	b=mUDK4I5kbnu37TuDzL18l7Nw8QmfjzpdBWlnxiQ7FPhoiLb8JpAwpTGoRauciATZWj7V
-	 KDaYeYuMJLrHIRe3jzRpGmWZQUB8hbFgRvYDIc5pVedJ6mvo9o5uf6wUz2ov7M86c3NHT
-	 qaAdf6AXgviaxkA/1l1XvOFF4HcDtsyqsFGjledo8Zjvx3zZ3O7aJxvjMZ2HYHCCDaXdX
-	 INkKDkZ7o+G8gkV5WtqiQzC2T1HVLuQrpac3kH4FvXb6mKWSqRyCZUHJ4AxCmAS1n0iJ/
-	 O8QBl4ppGpxT2P+KfVgMFAfQhf1lkd6A4pdFB03QYMMrgoDthupktYwbz1bDBDg7uQA==
+	t=1793826149;
+	b=K9iJDMnlD7rXIHiXKygNYItvzMWk2x2facTEmSFktct3due38hYD5E5kdCyoFg6+KuTi
+	 2XC4rquewEm2faJrmMvudR5FK3D9/jqK51Fk2YC/WHmrMA65fEDQYNgC5GYesDwOI5BDT
+	 PG6KY3kRFA2qdvD/0FOkxcE3289T8zHsLciqK5f4rgTiVghVPy2rLhKlM9yKrQl67FFOO
+	 9mR23XgLL7n8VT4haAlxGX4Tmb599WzmNulPVdkWDooStqC0hzA8nI6eJPkAg1DjLNVpl
+	 guhJ+pi7tg1o96STv2hEig977c7rpRlhk2COMqT+rvgu8PqsbbWLSGS2n78alaaP/UQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793826150;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793826149;
 	h=Received:DKIM-Signature:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
 	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=Q8kQAFfFv+Tk9IA1MC9W1/r4oqlc2CdHUpjWypDOPUA=;
-	b=mhsa08kyzHvfJFaliDkJn9psdWIaHmYlI70AmZLdzwT5xMjis1TevnS8zaVdCvlI+z6E
-	 7vodTcL3AHxDkhE3sApcKl4OCbfrTagQBwmWguE0E+RnPNUomycgH5rmHjA2ch9HN1ZsJ
-	 RMjvUy/rFtrqaqNhhEc+aOBo3KwvDkGYvuRZv/EzPcK/HcZwlVBg2n9H08Ciyt0QVTiBD
-	 pGK2Xk+PaVBTOx1o0Q5TgcQ5fAb98zfn4BtOHYwd81fESMy1PQ1kR+vNlHEbGMpQxv7Xv
-	 EoPWNUKbFZD/nTyl/FewJ8vtQccZfG/LASY0p+3teNfg/xUJ0EAUmjsLe5vrYqfbbqg==
+	bh=RWQaJx7o1r9T3C4HT9jQSAnvNhpydGKzP/mY7ruS46w=;
+	b=OMsYf+nAY/jeFGfQX33suc8JFQYEOUarpaEnV1GU4Fd1G4nEmDqCaWiVo/4QftAEYRCG
+	 4wrcstA2/y8pwpjg1G+ZxrKx0w0B8H6L4BorXnrfnKETcOzP/t6oWQUz/g/1J5toSavOY
+	 FGBHGDeHasDEyvwInrFp2f26B8OLlucPVs0K5dkhU3Ifg1zFggTvVSF40tN/GbEVF6xLx
+	 s83Ui2lCyTtCXjEKW8HNFZybDtFvYcg2PwjliFzLm5xtepP3TT3BSxhchx44ctj6m/Lit
+	 D0noPWzeXq6XxmKjB298EDqxI+t5EFjItnco2NA/4a5T5p6C8JP/YZ8i+axvXRTyq2A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dyq3j4P1;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K+rYZ2qd;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE72D606D4DB;
-	Wed,  4 Nov 2026 21:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dyq3j4P1
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A847C1F00919;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BD2606D4CC;
 	Wed,  4 Nov 2026 21:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K+rYZ2qd
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA4E51F0093A;
+	Wed,  4 Nov 2026 21:02:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793826149;
-	bh=Q8kQAFfFv+Tk9IA1MC9W1/r4oqlc2CdHUpjWypDOPUA=;
+	s=k20260515; t=1793826148;
+	bh=RWQaJx7o1r9T3C4HT9jQSAnvNhpydGKzP/mY7ruS46w=;
 	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=dyq3j4P1UAAXmEmU+jbrGKm9Gh3fOy1vMNeDL6lk4d7XnEtViiNfYfPaOvccRjVbk
-	 E4mQIlWkQ3+KCTBJI/h5gmW7WYPhOEbpcF8WGoTdwW0pW8YOPAvb8XNG30RLHAKvkH
-	 vZkm0hXuf/QJz7gog2SB57D+Q8S8pnVm1euEKqXbanaOlV40bcpEzbsXZb+1BU+ZeV
-	 fDbpU57mmWCJdXXFgnZHx8FbNnzcFTnB9z7u1VuLPecQsFNtEdKkgmHZrEFmKcw9jO
-	 D91JaM1NxVLnxoso2pASi/IY1IDwudaoLCR9AZlzqHPxTrvJjU7G81S6TgbvTk09gG
-	 OlJyKyey+EMOw==
+	b=K+rYZ2qdeYyHQWL45e7EGdqPSGvwm/bZ9KxAh5/axd/XSCRBrqSWRK1mmJBWjjf+Q
+	 U/7/iMefA5qB/Y9WOAJFgZ2yV+2LoiZrJJNFCKG6zJ2slrifiGz0Ue/chQ+5mxSXv3
+	 MIaz4QTBzGdxy+hKfsqtmbym1NmtHrRwDnTrSMPhbBQeqcfFc+B/NkEjbvPpfkbseO
+	 4EW5jeog1HoHtAArzKzjkmFk87PKcDgPbXLj9J0qbkGTAmAM9g2bgqUzLWDb/9FYa5
+	 Isc+0SFsSbpLrltuTrqpPPH6xQ8RU1ThpC0QJP1kZBWCplKTwzz1nRqGytjqUQkADK
+	 q8mIdwYVp2lpQ==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,196 +51,162 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2 2/2] clk: en7523: add support for .set_rate for
- en7581
+Subject: Re: [PATCH v2 1/2] clk: en7523: convert to full clk_hw
+ implementation for en7581
 From: Brian Masney <masneyb@kernel.org>
 To: Christian Marangi <ansuelsmth@gmail.com>
 Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20261103205500.14974-3-ansuelsmth@gmail.com>
+In-Reply-To: <20261103205500.14974-2-ansuelsmth@gmail.com>
 References: <20261103205500.14974-1-ansuelsmth@gmail.com>
- <20261103205500.14974-3-ansuelsmth@gmail.com>
+ <20261103205500.14974-2-ansuelsmth@gmail.com>
 Date: Wed, 04 Nov 2026 16:02:12 -0500
-Message-Id: <179382613236.620422.4831269606969371751.b4-review@b4>
+Message-Id: <179382613235.620422.16434713665930629800.b4-review@b4>
 X-Mailer: b4 0.17-dev-7ca47
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4773; i=masneyb@kernel.org;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4096; i=masneyb@kernel.org;
  s=20250903; h=from:subject:message-id;
- bh=dDWFZI4JaxwlPXxTETYqIbJ/iRrpsQTX+QjUXsujZCo=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJez42xyZi1PdriY+CFwLPTt/sGep86kPPfUkrbTfLuq
- vf779+U6ChlYRDjYpAVU2RZkmtUEJG6yvbeHU0WmDmsTCBDGLg4BWAiJw4z/M/esvdw3iT/2cej
- 127ufKTyzUKVTc131onfnZI/9nIxtm1mZNj210b1euvT3+dTL2xl51ScOz3pkcDdjdMPzfXl4xJ
- 9zsoAAA==
+ bh=dHa7rXu7wgdSwh0CPTWp3CoGJ6of+1H/SUSA3chwwqY=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJezw13ON+1WPd7iOI/Yb7Lix47MPY2Ms3lcA9+zRkbv
+ vHHmbypHSUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAEzE7DTDfw9FnaOrJ84/Yj1b
+ XnXepoLX2q5XGyYua1JkPXHxqZPmqXcM32NqHhZO36D40HOZ5LWpB/mcdfP1OPbvnmoqGM3z5/V
+ vRgA=
 X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
 Hi Christian,
 
-> Add support for EN7523 driver to configure rate for Airoha EN7581 SoC.
-> The SoC expose both base clock selector and clock divisor hence it's
-> possible to change the rate.
+> In preparation for support of .set_rate, convert the clock register
+> logic from fixed clock implementation to full clk_hw implementation with
+> dedicated OPs for Airoha EN7581 SoC.
 > 
-> This will be especially needed for new SoC AN7583 that require changes
-> for the MDIO and the eMMC.
-> 
-> The clock were assumed correctly configured by the bootloader but this
-> goes against the rule of "kernel should not depend on external
-> configuration".
+> This is just a rework and no behaviour change is expected.
 > 
 > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  drivers/clk/clk-en7523.c | 136 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 136 insertions(+)
+>  drivers/clk/clk-en7523.c | 86 +++++++++++++++++++++++++++++-----------
+>  1 file changed, 62 insertions(+), 24 deletions(-)
 >
 > diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> index aab4306ae037..5ce4dc692ab2 100644
+> index 24fdec2e6198..aab4306ae037 100644
 > --- a/drivers/clk/clk-en7523.c
 > +++ b/drivers/clk/clk-en7523.c
-> @@ -777,8 +777,144 @@ static unsigned long en7581_recalc_rate(struct clk_hw *hw,
->  	return rate / en7523_get_div(desc, val);
+> @@ -126,6 +126,12 @@ struct en_clk_gate {
+>  	struct clk_hw hw;
+>  };
+>  
+> +struct en_clk {
+> +	struct regmap *map;
+> +	const struct en_clk_desc *desc;
+> +	struct clk_hw hw;
+> +};
+> +
+>  struct en_rst_data {
+>  	const u16 *bank_ofs;
+>  	const u16 *idx_map;
+> @@ -742,46 +748,76 @@ static int en7523_clk_hw_init(struct platform_device *pdev,
+>  				     en7581_rst_ofs);
 >  }
 >  
-> +static int en7581_get_base_val_for_rate(const struct en_clk_desc *desc,
-> +					int div, unsigned long rate)
+> -static void en7581_register_clocks(struct device *dev, struct clk_hw_onecell_data *clk_data,
+> -				   struct regmap *map, void __iomem *base)
+> +static unsigned long en7581_recalc_rate(struct clk_hw *hw,
+> +					unsigned long parent_rate)
 > +{
-> +	int i;
+> +	struct en_clk *c = container_of(hw, struct en_clk, hw);
+> +	const struct en_clk_desc *desc = c->desc;
+> +	struct regmap *map = c->map;
+> +	u32 val, reg;
+> +	u32 rate;
+> +	int err;
 > +
-> +	/* Single base rate */
-> +	if (!desc->base_bits) {
-> +		if (rate != desc->base_value / div)
-> +			goto err;
+> +	err = regmap_read(map, desc->base_reg, &val);
+> +	if (err) {
+> +		pr_err("Failed reading fixed clk rate %s: %d\n",
+> +		       desc->name, err);
+
+Use dev_err() and elsewhere in this driver since a struct dev is
+available here.
+
+> +		return 0;
+> +	}
+> +	rate = en7523_get_base_rate(desc, val);
 > +
+> +	reg = desc->div_reg ? desc->div_reg : desc->base_reg;
+> +	err = regmap_read(map, reg, &val);
+> +	if (err) {
+> +		pr_err("Failed reading fixed clk div %s: %d\n",
+> +		       desc->name, err);
 > +		return 0;
 > +	}
 > +
-> +	/* Check every base rate with provided divisor */
-> +	for (i = 0; i < desc->n_base_values; i++)
-> +		if (rate == desc->base_values[i] / div)
-> +			return i;
-> +
-> +err:
-> +	return -EINVAL;
-> +}
-
-Can this be updated to use the common functions in clk-divider.c like
-divider_get_val() rather than rolling this same functionality in this
-driver?
-
-> +
-> +static int en7581_get_vals_for_rate(const struct en_clk_desc *desc,
-> +				    unsigned long rate,
-> +				    u32 *base_val, u32 *div_val)
-> +{
-> +	int tmp_base_val = 0;
-> +	int tmp_div_val = 0;
-> +
-> +	if (!desc->base_bits && !desc->div_bits)
-> +		return -EINVAL;
-> +
-> +	/* Divisor not supported, just search in base rate */
-> +	if (!desc->div_bits) {
-> +		tmp_base_val = en7581_get_base_val_for_rate(desc, 1, rate);
-> +		if (tmp_base_val < 0) {
-> +			pr_err("Invalid rate for clock %s\n",
-> +			       desc->name);
-> +			return -EINVAL;
-> +		}
-> +
-> +		goto exit;
-> +	}
-> +
-> +	/* Check if div0 satisfy the request */
-> +	if (desc->div_val0) {
-> +		tmp_base_val = en7581_get_base_val_for_rate(desc,
-> +							    desc->div_val0,
-> +							    rate);
-> +		if (tmp_base_val >= 0)
-> +			goto exit;
-> +
-> +		/* Skip checking first divisor val */
-> +		tmp_div_val = 1;
-> +	}
-> +
-> +	/* Simulate rate with every divisor supported */
-> +	for (; tmp_div_val < BIT(desc->div_bits); tmp_div_val++) {
-> +		int div = (tmp_div_val + desc->div_offset) * desc->div_step;
-> +
-> +		tmp_base_val = en7581_get_base_val_for_rate(desc, div,
-> +							    rate);
-> +		if (tmp_base_val >= 0)
-> +			goto exit;
-> +	}
-> +
-> +	if (tmp_div_val == BIT(desc->div_bits)) {
-
-This is always true, right?
-
-> +		pr_err("Invalid rate for clock %s\n",
-> +		       desc->name);
-> +		return -EINVAL;
-> +	}
-> +
-> +exit:
-> +	*base_val = tmp_base_val;
-> +	*div_val = tmp_div_val;
-> +
-> +	return 0;
+> +	return rate / en7523_get_div(desc, val);
 > +}
 > +
-> +static int en7581_determine_rate(struct clk_hw *hw,
-> +				 struct clk_rate_request *req)
-> +{
-> +	struct en_clk *en_clk = container_of(hw, struct en_clk, hw);
-> +	u32 div_val, base_val;
+> +static const struct clk_ops en7581_clk_ops = {
+> +	.recalc_rate = en7581_recalc_rate,
+> +};
 > +
-> +	/* Just check if the rate is possible */
-> +	return en7581_get_vals_for_rate(en_clk->desc, req->rate,
-> +					&base_val, &div_val);
-> +}
-> +
-> +static int en7581_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			   unsigned long parent_rate)
-> +{
-> +	struct en_clk *en_clk = container_of(hw, struct en_clk, hw);
-> +	const struct en_clk_desc *desc = en_clk->desc;
-> +	struct regmap *map = en_clk->map;
-> +	u32 base_val, div_val;
-> +	u32 reg, val, mask;
-> +	int err;
-> +
-> +	err = en7581_get_vals_for_rate(en_clk->desc, rate,
-> +				       &base_val, &div_val);
-> +	if (err)
-> +		return err;
-> +
-> +	if (desc->div_bits) {
-> +		reg = desc->div_reg ? desc->div_reg : desc->base_reg;
-> +
-> +		mask = (BIT(desc->div_bits) - 1) << desc->div_shift;
-> +		val = div_val << desc->div_shift;
-> +
-> +		err = regmap_update_bits(map, reg, mask, val);
-> +		if (err) {
-> +			pr_err("Failed to update div reg for clock %s\n",
-> +			       desc->name);
-> +			return -EINVAL;
+> +static int en7581_register_clocks(struct device *dev, struct clk_hw_onecell_data *clk_data,
+> +				  struct regmap *map, void __iomem *base)
+>  {
+>  	struct clk_hw *hw;
+> -	u32 rate;
+>  	int i;
+>  
+>  	for (i = 0; i < ARRAY_SIZE(en7581_base_clks); i++) {
+>  		const struct en_clk_desc *desc = &en7581_base_clks[i];
+> -		u32 val, reg = desc->div_reg ? desc->div_reg : desc->base_reg;
+> +		struct clk_init_data init = {
+> +			.ops = &en7581_clk_ops,
+> +		};
+> +		struct en_clk *en_clk;
+>  		int err;
+>  
+> -		err = regmap_read(map, desc->base_reg, &val);
+> +		en_clk = devm_kzalloc(dev, sizeof(*en_clk), GFP_KERNEL);
 
-return err;
+devm_kzalloc_obj() is now available in the tree.
 
-> +		}
-> +	}
+> +		if (!en_clk)
+> +			return -ENOMEM;
 > +
-> +	if (desc->base_bits) {
-> +		mask = (BIT(desc->base_bits) - 1) << desc->base_shift;
-> +		val = base_val << desc->base_shift;
+> +		init.name = desc->name;
+> +		en_clk->map = map;
+> +		en_clk->desc = desc;
+> +		en_clk->hw.init = &init;
 > +
-> +		err = regmap_update_bits(map, desc->base_reg, mask, val);
-> +		if (err) {
-> +			pr_err("Failed to update reg for clock %s\n",
-> +			       desc->name);
-> +			return -EINVAL;
+> +		err = devm_clk_hw_register(dev, &en_clk->hw);
+>  		if (err) {
+> -			pr_err("Failed reading fixed clk rate %s: %d\n",
+> +			pr_err("Failed to register clk %s: %d\n",
 
-return err;
+Use dev_err_probe()
+
+>  			       desc->name, err);
+> -			continue;
+> -		}
+> -		rate = en7523_get_base_rate(desc, val);
+> -
+> -		err = regmap_read(map, reg, &val);
+> -		if (err) {
+> -			pr_err("Failed reading fixed clk div %s: %d\n",
+> -			       desc->name, err);
+> -			continue;
+> -		}
+> -		rate /= en7523_get_div(desc, val);
+> -
+> -		hw = clk_hw_register_fixed_rate(dev, desc->name, NULL, 0, rate);
+> -		if (IS_ERR(hw)) {
+> -			pr_err("Failed to register clk %s: %ld\n",
+> -			       desc->name, PTR_ERR(hw));
+> -			continue;
+> +			return err;
+
+Prior to this patch, a registration failure was logged, and the other
+clocks were tried. Now the probe fails. This is fine, however the commit
+message says there is no behavior change. This change should be called
+out in the commit message.
 
 Brian
 
