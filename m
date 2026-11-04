@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793777232;
-	b=QQobbgcilc9i1H43guGT6zgYj6iT4YA98ZRsOC4GwjKo9IsfRmWNTCoAXkWAXP6/z8Eq
-	 E3jQ9Ome2RX9EL7GkLGNvgwcl/ILGjDvwA1qtiTdCHkbHGIw0e31Ji2+U4nFp3pIktbZk
-	 JOKM3Qj2Q2wkTVgp9yuPy12gFILV9f/AUgaYdggOdmH1Dc2rIDPNEY/836Xfg6EtR01/3
-	 bkeqfUOboW5/Lv06KKU3rBTkTP4/sq0uPfn5sHDzWpSxbLagoVpPoKkg9IZwWHokr6upt
-	 2IRSAbaafiTuI9nHDrvWhCmBLSAloNie9fIcWPDKigwIGBb0BfVe9aGgxDbWFheJxJg==
+	t=1793777648;
+	b=G+YU9zeWhf6d90o9waqVPb+9jXhKE6yMry/VC3aH+muEM6cy7Kg80LsajqE9Vbrohccu
+	 BM+b1tYrE+HheOfzdIjUejKSmNFAJTIM1Pc75YJxpbhu+SZm6DH4Ex0bT64F432b0ZN8w
+	 Ise55QveFCQ7HQcX5LyCVRJ//PzUjzp+ThW7aoRYWWMMu37wV4IQtcn1z3OYw4ILIjcSI
+	 EhqOJtM8WTAGdev4E8jZ0JqPVyRr87mNngMTVa0vGW86nPgdJVbKGDFzjatic3KnZGUfi
+	 daP14OMQKQy2mu8Y0W6rIuHlkWevoM5JFbsHB+xYzEN4A0Qk+jafVAlaPMx8yL+2+GQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793777232;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793777648;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=thD6MT2WRu6GWDymo0KyOlUgqml9+iUvkSckk5ytwUY=;
-	b=d9oGrahdGrp4rm+xjWnY0ZtmaAZqa7WJzLjmkyztkmaLgQKF5kBbx92ppDq55NuICnm7
-	 9TTpjDN9N4FEllqhUM2z9yMd1PBeofUhAqfty5pY1Aj6Zg+bA/2CFgv05/dG06ZsL4i3y
-	 slXzclJUiy1PLl8lDw7J0EAPHahPjcg1DEF2nBr++mN/cAQ4TK12DODZBlpI1JQcE5hRM
-	 gSLVvrG8isw4cq0ZjJzpxlSewa1WMcpzIZRuq3VvomN/elA9GEfAU0TjvjuB+eVcaL7qg
-	 DVctKlMu+MQ6i3Inzy37e9ivwPXA+OVEABqvm6BnDwIFMm4MVi5FkqPw182hITiHWpA==
+	bh=M8jgFGHooMW4aU/a48BiyWJlBXcCmjk95dZMKlMFJHY=;
+	b=PydrlZoxAeJdyAFSOhkYc4I9W/TYn2WR3QGsJyVPNLJpafiQm1W1GO0ZbOzlS1fo0plL
+	 F7M9aXQPVrULWgHOwZ3p79OedIDTmJYDW+J0aoEIc4g71sw+/8JuwQXStXzQi5wapghcT
+	 4FnmXnveNNOOjUNoMHT8Us8EAFzy1ym3MJnyizfER74NkiblR86CRt2PhK0JYa5i5iM//
+	 WCwjgMA6G+nZmMDxCsfv/psD5kEGIk5OU4IVnlgeKmOadmpsYD5wI8G1IIw2WCGXcc4Jv
+	 JYMrZtNgJuLUlUeosOIzYr2DGp1RBjb4r5e5Q6PEG8cVdgBqu9I/xckWKgjqkttUPpw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kCdmJ0Cs;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fPVie5SK;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4A2606A31B;
-	Wed,  4 Nov 2026 07:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9028606A31B;
+	Wed,  4 Nov 2026 07:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kCdmJ0Cs
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9068A1F000C1;
-	Wed,  4 Nov 2026 07:27:11 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fPVie5SK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CF831F000C1;
+	Wed,  4 Nov 2026 07:34:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793777231;
-	bh=thD6MT2WRu6GWDymo0KyOlUgqml9+iUvkSckk5ytwUY=;
+	s=k20260515; t=1793777647;
+	bh=M8jgFGHooMW4aU/a48BiyWJlBXcCmjk95dZMKlMFJHY=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=kCdmJ0CsknkmGIE8Z5etVYCt5MjT319PhCt82pnggnioiNWCpKZyUWy2bx/GC6yew
-	 PFAxaaYiTc2yqNpsE2bZOix8GqbmdXBAe/53IsvMw9NpIQiKyRVQizuHMBrucLibYP
-	 OS+H0Opp7L3yVTy6AhDX1+wDCPlSX+fKg/bCNRv/8U2aSsD1Fw1DsGepvewkTs5J+Z
-	 yM9fkDI/h+ItZbOj47N95ABg/CoOxrVuOkbxhkR021G6ufpatzEK5fp/6RXZUugtw1
-	 XEZHiAQddO4EcKrBiGAtvunXfM5Jq6d1vnt4nTf27K+BOyWEtV3/Md7bs92a7HCzO3
-	 /ZTti5C4dFAJA==
-Message-ID: <sashiko-outbox-196792@kernel.org>
+	b=fPVie5SKCJLUPbbkAhx2klMiDyuphor0dyYNXU7h1RH7uohjz/K6DlwsMAA2tpInY
+	 LnACzUU/PSF95tYY16FewpUxi315jJezAU6Ir7mg751gvAt7b/Dr378jjvP/yyyLMe
+	 gJ5JTPFDakVAxqQJveWG2CWEIqjUml/nr7dVDAulkKN4IfhJ5OciTI9jy6tDz7Lsjl
+	 LdATyURsN9ZP5cDfoO/tqrjMPP42PdOlDX7wIFEBd6Wl4YVihGlOBoKq7yNpCvrWDF
+	 n3HO+3edYOB8s5JPWSqHWCUhrIQ87FDqoHz0cGAUnezmXnI55bwMiSH97gGQna8Peb
+	 jCrf495sWrloA==
+Message-ID: <sashiko-outbox-196801@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 3/4] dt-bindings: clock: Add Siflower SF19A2890
- peripheral clock/reset managers
+Subject: Re: [PATCH 2/4] clk: siflower: Add SF19A2890 clock manager driver
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Joseph Telaak" <joseph@telaak.dev>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261104-sf19a2890-sysm-v1-3-a4fac07df823@telaak.dev>
+In-Reply-To: <20261104-sf19a2890-sysm-v1-2-a4fac07df823@telaak.dev>
 References: <20261104-sf19a2890-sysm-v1-0-a4fac07df823@telaak.dev>
- <20261104-sf19a2890-sysm-v1-3-a4fac07df823@telaak.dev>
+ <20261104-sf19a2890-sysm-v1-2-a4fac07df823@telaak.dev>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Nov 2026 07:27:11 +0000
+Date: Wed, 04 Nov 2026 07:34:06 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,157 +60,115 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [Low] dt-bindings: clock: unwieldy per-compatible if-then conditionals in=
- schema
+- [High] clk: siflower: fractional term scaled by fbdiv in sf19a28_pll_reca=
+lc_rate()
+- [High] clk: siflower: divide by zero on rate 0 in sf19a28_muxdiv_determin=
+e_rate()
 --
 
-commit a648a6a258536238fc540454eb5ccb65637262cb
-Author: Joseph Telaak <joseph@telaak.dev>
+commit d358931350f6daafe39bfeb8c6193c67ccee78b9
+Author: Chuanhong Guo <gch981213@gmail.com>
 
-dt-bindings: clock: Add Siflower SF19A2890 peripheral clock/reset managers
+clk: siflower: Add SF19A2890 clock manager driver
 
-This commit adds a Devicetree binding schema for the Siflower SF19A2890
-peripheral clock and reset managers, defining twelve compatible strings
-and their corresponding clock inputs and reset lines.
+This commit adds an early clock driver for the Siflower SF19A2890 SoC,
+supporting its CPU, DDR, and common PLLs as well as the downstream mux-divi=
+der
+clocks.
 
-> diff --git a/Documentation/devicetree/bindings/clock/siflower,sf19a2890-p=
-eriph-crm.yaml b/Documentation/devicetree/bindings/clock/siflower,sf19a2890=
--periph-crm.yaml
+> diff --git a/drivers/clk/siflower/clk-sf19a2890.c b/drivers/clk/siflower/=
+clk-sf19a2890.c
 > new file mode 100644
-> index 0000000000000..7f0bce603b423
+> index 0000000000000..f7553ac49d66f
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/siflower,sf19a2890-periph-c=
-rm.yaml
-> @@ -0,0 +1,169 @@
+> +++ b/drivers/clk/siflower/clk-sf19a2890.c
 
 [ ... ]
 
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - siflower,sf19a2890-gmac-crm
-> +      - siflower,sf19a2890-gpio-crm
-> +      - siflower,sf19a2890-i2c-crm
-> +      - siflower,sf19a2890-pwm-crm
-> +      - siflower,sf19a2890-rf-crm
-> +      - siflower,sf19a2890-spi-crm
-> +      - siflower,sf19a2890-timer-crm
-> +      - siflower,sf19a2890-uart-crm
-> +      - siflower,sf19a2890-usb-crm
-> +      - siflower,sf19a2890-wdt-crm
-> +      - siflower,sf19a2890-wlan24-crm
-> +      - siflower,sf19a2890-wlan5-crm
+> +static unsigned long sf19a28_pll_recalc_rate(struct clk_hw *hw,
+> +					     unsigned long parent_rate)
+> +{
+> +	struct sf_clk_common *cmn_priv =3D hw_to_sf_clk_common(hw);
+> +	struct sf19a2890_clk *priv =3D cmn_to_clk(cmn_priv);
+> +	u32 refdiv =3D sf_pll_param_get(priv, PLL_REFDIV_HI, PLL_REFDIV_LO);
+> +	u32 fbdiv =3D sf_pll_param_get(priv, PLL_FBDIV_HI, PLL_FBDIV_LO);
+> +	u32 postdiv1 =3D sf_pll_param_get(priv, PLL_POSTDIV1_HI, PLL_POSTDIV1_L=
+O);
+> +	u32 postdiv2 =3D sf_pll_param_get(priv, PLL_POSTDIV2_HI, PLL_POSTDIV2_L=
+O);
+> +	u32 pll_pd =3D sf_readl(cmn_priv, priv->offset + REG_PLL_PD);
+> +	u64 rate;
+> +	u32 frac;
+> +
+> +	if (!refdiv || !postdiv1 || !postdiv2)
+> +		return 0;
+> +
+> +	rate =3D (u64)(parent_rate / refdiv) * fbdiv;
+> +
+> +	if (!(pll_pd & PLL_PD_DSM)) {
+> +		frac =3D sf_pll_param_get(priv, PLL_FRAC_HI, PLL_FRAC_LO);
+> +		rate +=3D (rate * frac) >> PLL_FRAC_BITS;
+> +	}
+
+[Severity: High]
+In sf19a28_pll_recalc_rate() in drivers/clk/siflower/clk-sf19a2890.c, when =
+the
+delta-sigma modulator is enabled (!(pll_pd & PLL_PD_DSM)), does multiplying
+rate by frac scale the fractional component by an extra factor of fbdiv?
+
+Because rate is already multiplied by fbdiv before the DSM check, computing
+(rate * frac) >> PLL_FRAC_BITS evaluates to:
+
+    ((parent_rate / refdiv) * fbdiv * frac) >> PLL_FRAC_BITS
+
+For a fractional-N PLL, shouldn't the fractional term be scaled only by the
+reference frequency (parent_rate / refdiv) rather than by the integer VCO
+rate?
 
 [ ... ]
 
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: siflower,sf19a2890-gmac-crm
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: GMAC bus clock
-> +            - description: GMAC register clock
-> +            - description: RGMII transmit reference clock
-> +            - description: Timestamp unit clock
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - siflower,sf19a2890-wlan24-crm
-> +              - siflower,sf19a2890-wlan5-crm
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: AXI slave clock
-> +            - description: AXI master clock
-> +            - description: Radio platform clock
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: siflower,sf19a2890-rf-crm
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: Test clock
-> +            - description: AXI slave clock
-> +            - description: Boot clock
-> +            - description: Low-power clock
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: siflower,sf19a2890-usb-crm
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: USB controller clock
-> +            - description: AXI master clock
-> +            - description: USB PHY reference clock
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: siflower,sf19a2890-spi-crm
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: APB clock
-> +            - description: SSP clock
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: siflower,sf19a2890-uart-crm
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: UART0 APB clock
-> +            - description: UART1 APB clock
-> +            - description: UART2 APB clock
-> +            - description: UART0 clock
-> +            - description: UART1 clock
-> +            - description: UART2 clock
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - siflower,sf19a2890-gpio-crm
-> +              - siflower,sf19a2890-i2c-crm
-> +              - siflower,sf19a2890-pwm-crm
-> +              - siflower,sf19a2890-timer-crm
-> +              - siflower,sf19a2890-wdt-crm
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 1
+> +static int sf19a28_muxdiv_determine_rate(struct clk_hw *hw, struct clk_r=
+ate_request *req)
+> +{
+> +	unsigned int div;
+> +
+> +	div =3D DIV_ROUND_CLOSEST(req->best_parent_rate, req->rate);
+> +	if (!div)
+> +		div =3D 1;
+> +	else if (div > MUXDIV_RATIO_MAX + 1)
+> +		div =3D MUXDIV_RATIO_MAX + 1;
+> +
+> +	req->rate =3D req->best_parent_rate / div;
+> +	return 0;
+> +}
+> +
+> +static int sf19a28_muxdiv_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				   unsigned long parent_rate)
+> +{
+> +	struct sf_clk_common *cmn_priv =3D hw_to_sf_clk_common(hw);
+> +	struct sf19a2890_clk *priv =3D cmn_to_clk(cmn_priv);
+> +	unsigned int div;
+> +
+> +	div =3D DIV_ROUND_CLOSEST(parent_rate, rate);
 
-[Severity: Low]
-This isn't a bug, but properties.compatible in
-Documentation/devicetree/bindings/clock/siflower,sf19a2890-periph-crm.yaml
-combines twelve peripheral CRM variants that have different clock counts
-(from 1 to 6 clocks), clock roles, and reset assignments, requiring seven
-separate per-compatible if-then conditionals under allOf to constrain the
-clocks property.
+[Severity: High]
+Can sf19a28_muxdiv_determine_rate() and sf19a28_muxdiv_set_rate() in
+drivers/clk/siflower/clk-sf19a2890.c divide by zero if a consumer calls
+clk_round_rate(clk, 0) or clk_set_rate(clk, 0)?
 
-Would it be cleaner to split this binding into separate schema documents
-rather than piling these per-compatible if-then conditionals into a single
-schema?
+In the common clock framework, clk_core_init_rate_req() initializes
+req->min_rate to 0 by default, so a requested rate of 0 is passed directly
+into sf19a28_muxdiv_determine_rate() as req->rate =3D=3D 0 without being cl=
+amped.
+Similarly, if req->rate evaluates to 0, clk_change_rate() can pass rate =3D=
+=3D 0
+to sf19a28_muxdiv_set_rate().
+
+Should both functions guard against a zero target rate before calling
+DIV_ROUND_CLOSEST()?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104-sf19a2890-=
-sysm-v1-0-a4fac07df823@telaak.dev?part=3D3
+sysm-v1-0-a4fac07df823@telaak.dev?part=3D2
