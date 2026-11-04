@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793798081;
-	b=2+Mbj5SGtlkaCXO7dq+MA+UXXUz4Crye8o6/otyF+W0FPExwPk6NqlITO23sGuZCmZaY
-	 IBp9j7ofZy7ndofl+JRzGpeTCDdx3ksle/ODhHA5LgxMHijpVKFs6C3ZoOEn3CfVcHTi/
-	 wFVoxUDeXX1/PvHONNTdRvGFGZ/+9nEtBYtwcLEHE2pPmzmqBwRUx12YWklq3U8wBmEMN
-	 UaYCSpZ28797FjR/W+xfD4RmYQHOM8Qb+UHETWNYmrdM3LrCmAtGxsrYFbMb4rv9U27bv
-	 Nzh8N78V1jxUu8Rq50DiylmO0hCMxRF+J+xaXuae1I4DUAtV+D1FetUMvOtKizUNnKg==
+	t=1793798189;
+	b=D0YVJg7eLeZnlygU6mjw/f41bHP2k1d0MrnAJ/5Jw9zdMdvnulOyZeRxtHp24gFGwTfp
+	 GGpYKJv/jiGcjDLI1380ZoqGaAWq6G3Ovp8VJcShrGyhIat6lAgfrE+mywGGFPALp/ebt
+	 nAJeAE/a4CVrN24lhes+1hm2rwtCulq5xkl+1P7nTf6iC2cM14l2Bt3loACPtL93sxldt
+	 Eiz4+OKs6Vv+91GpZDGPNTTK5LSg5YDO5EB8QXelpuPlC+ogf8QY+hQiw31gwpv6t/25D
+	 CTMKuRuN4iuOmHAt6rs7j7KNR8IwPrfRUiPEen3+QOis0Pus+UShPjFgaEJpz1Pg5Ag==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793798081;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793798189;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=/p5+Pyk6coILlORdcQBpVHNHSFgdC438Pn8Lrp7EWZ4=;
-	b=48FrmfGyB7XNoozUl3Pr5M+MlaFHY4LVoe/Y3+U3PgWQKEZ6b1Wr003FcDoXc5a68L2X
-	 qCxUu0Xrd4IwjaE3OL1NZkgh5gHNYLS+EFyvkZfvR6BLy4JhgWLznVEN53YCGjMyCGbtD
-	 +IRCvh9RuNPh5EZ9WP7mqAJNriGi9HbBOpEY4K5dv9BU5ekNlgARqrGAc88aYYLdxMdOp
-	 Ld29QCygksOKNqROMt15pvQ4Hklx6TAPQFOZLl3KHOqhOtgxZM00vDgLp1sncFb9UdhB3
-	 VGGHyxdNDpO6m9KFFhe87H5OPoFKnt7iMKJ1q4GPL26JgE/vOoSQ2u9xxtBCQnLU93Q==
+	bh=H9VTlijTFGW2hK1YgmVnrnjy6rcLsJbVdxBVMKqQ5Mk=;
+	b=gmKg5l6/Nrarh+BSuNv/HEsZLOZOFo0f/CeQNeFXJ9ItZPiRb3sUSUWUd9Y0xzQcJdUF
+	 fm9zJ4BWnXkBZH0NcKaTrlNBdZfWW1TzjIKbQahKP+rWmRN4sYJhKvC3UnxvMJj+1yS3v
+	 xCvhj5nC5mWxGfDn5gn/1M3BdXaTwU3O2e2esOvG7YqLvBzoB9tiKLtKSEaX+DCB5lrAy
+	 zBx5ucgRXzpLFOXBOQ19oRzclUdv9B4IHUVQH06utPwQFr4jB2QkS3nkZoiE+p8uOSgy9
+	 vCjAxmIs7+TMm07UtWNcQMzGCZ/zIUc2sF9FIZNtJRpbe3ZgYVH4+Rm+tzcGI4va2Uw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PSwVh+0e;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=anVIaiiw;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E016E606A33B
-	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 13:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AE6606A31B
+	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 13:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PSwVh+0e
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B99ED1F00A21
-	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 13:14:40 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=anVIaiiw
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C5E1F00ADC
+	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 13:16:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793798080;
-	bh=/p5+Pyk6coILlORdcQBpVHNHSFgdC438Pn8Lrp7EWZ4=;
+	s=k20260515; t=1793798188;
+	bh=H9VTlijTFGW2hK1YgmVnrnjy6rcLsJbVdxBVMKqQ5Mk=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=PSwVh+0eCTT+b5fCxey1CsR0b6m5BP0NC9rEWv/qGoVAp7z7b/X1baMHbpDnRhHw0
-	 1IlSHrcLAlVsg55IpOJF5Nkvf2vaGC/fHZEyKH+Don9up9zSqgKV37V5nainUewRr1
-	 tAyK+1WI3fZ/i42mU5cbzo+HvC/82f7rkN3yxsVGBPX5SeP8DXJpSKARcrEvAMNSv1
-	 RLgoTtiG3rPcDWuwk0+yNZkdNee1OkZ9GCZo58XY+OQNfYVWhHMw4oNuRfTNNgiFs7
-	 4AkeoxFWz8uacgEWDIjPHFeVRqn52p+Yr5AhY/9vo5pidgnseQ+ftRBNMagtn2p8xU
-	 Pbq1Di/rgQkDA==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5bcb440d1cbso428133e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 04 Nov 2026 05:14:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBxYdHBI4MFySsyDl2735JE1W5b7+/CKkEXnm1ig4/w5YQ15FUfR7GezgDafIfkqPO7nq0SS9a0b11I=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8VX4PMlSquRew2poKxiQE71genvluvMJyUQSJb7L+Mxt/0JH/r
-	w+ACZAEXFFUUqiVED+smMjqIuOPu4qYTUJU8DdBM0t1eRXQBTgmuyjSiHaWb4wBthjyHmrY2O7p
-	+QcRg5PVWSRfLdUKMnfKzCdKc5mxnhQo=
-X-Received: by 2002:a05:6512:3d93:b0:5bf:ac46:c5d6 with SMTP id
- 2adb3069b0e04-5bfd956d81cmr4929046e87.12.1793798079384; Wed, 04 Nov 2026
- 05:14:39 -0800 (PST)
+	b=anVIaiiw1pZMJg2YZ1N3c1UamUmvnrrKGQWnO8NEpY87ayerF9aRI865xN7k4arhP
+	 0ora4PhcKUA7tc3gRf5KJPZRLzDlKLUVlUaqjd2AMjgBarla0oTMiSTZyFgbsGYlwY
+	 fsVOjVqGXMbB1lKrRbyHQGM8moEQGCArsVVqCajNxylEETrn8qtM2iWzHaOLT43wdY
+	 9CF1Ojyj4aExSItAwUd/2QmsiJWsZaO/6jXd0s8gtn7I/G6Mjw5g7TIub3bSE58eC8
+	 ii1USs42gD/OF3w97LAp+kC8W3GgxUmmbmvKzN05ws3y5BPE6ZVY/ahrli3ugfB9y1
+	 B7FSo5BHSH9EA==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5bfc3292d90so496104e87.1
+        for <linux-clk@vger.kernel.org>; Wed, 04 Nov 2026 05:16:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvByydXGprVYLx0NhIiM6M0Ik+C1TWBvPMYGH4XhHBN1NY9hVbWSrjiksvhR3NULqTfc+eFnYGCBEVoY=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+PCsNFEQG48kUa98Yu5UKXEJqHEo1TvCpt2T+vJ3ohumcFYXsC
+	4Ark4qt5G+es6eUoGXaYmTGzsbVJEFXNnnyYd5ZPm7yjkv1hH5o6tOiYfYJNwKDKVL6b8eP8Vd4
+	DdUJ2C7ZlQdKty1adsC7dxGtE2V30Lvk=
+X-Received: by 2002:a05:6512:6681:20b0:5bf:d9b4:9b48 with SMTP id
+ 2adb3069b0e04-5bfd9b49cfdmr3241637e87.23.1793798186772; Wed, 04 Nov 2026
+ 05:16:26 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,14 +59,14 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261103-a210-scmi-v3-0-ee6b31580808@iscas.ac.cn> <20261103-a210-scmi-v3-6-ee6b31580808@iscas.ac.cn>
-In-Reply-To: <20261103-a210-scmi-v3-6-ee6b31580808@iscas.ac.cn>
+References: <20261103-a210-scmi-v3-0-ee6b31580808@iscas.ac.cn> <20261103-a210-scmi-v3-7-ee6b31580808@iscas.ac.cn>
+In-Reply-To: <20261103-a210-scmi-v3-7-ee6b31580808@iscas.ac.cn>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 4 Nov 2026 14:14:27 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=5SypKyjwb71hT2pzTZ3s9qi62JG_EevyjTjGgTZiE8w@mail.gmail.com>
-X-Gm-Features: AclHuK-6MXT5O-NfPKrU9YAGzhqKyzaaZr6RTIvrirwYp92eUVqCIspXmcEerPc
-Message-ID: <CAD++jL=5SypKyjwb71hT2pzTZ3s9qi62JG_EevyjTjGgTZiE8w@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 06/17] dt-bindings: pinctrl: add Zhihe A210 pin controller
+Date: Wed, 4 Nov 2026 14:16:14 +0100
+X-Gmail-Original-Message-ID: <CAD++jLk_PJu_ViUmKSg19VEhc0=3SoyiqwkSH3vGix1qk7xpDA@mail.gmail.com>
+X-Gm-Features: AclHuK9XaDppXSCtd7Lxt5eqeFEltqu7_7zUAwED7nuqN9o1y9Frwslmkgi1DM8
+Message-ID: <CAD++jLk_PJu_ViUmKSg19VEhc0=3SoyiqwkSH3vGix1qk7xpDA@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 07/17] pinctrl: zhihe: add A210 support
 To: gaohan@iscas.ac.cn
 Cc: Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
 	Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>, 
@@ -92,20 +92,27 @@ Cc: Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@a
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
+Hi Zhiguo,
+
 On Mon, Nov 2, 2026 at 8:45=E2=80=AFPM Han Gao via B4 Relay
 <devnull+gaohan.iscas.ac.cn@kernel.org> wrote:
 
 > From: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
 >
-> Add a binding for the AON, PERI1 and PERI2 pad controllers of the Zhihe
-> A210. Every pad is muxed and configured on its own. Functions of the same
-> kind share one name unless a pad can select more than one instance of
-> them, as with the UARTs.
+> Add pin mux and pin configuration support for the AON, PERI1 and PERI2
+> pad controllers of the Zhihe A210. Each pad forms its own group. Drive
+> strength requests are rounded up to the next supported value.
+>
+> Across system suspend, restore only the register fields Linux has
+> programmed and leave the ones set up by firmware alone. Release the
+> optional pad controller reset at probe.
 >
 > Signed-off-by: Zhiguo Zhu <zhiguo.zhu@linux.alibaba.com>
+> Co-developed-by: Han Gao <gaohan@iscas.ac.cn>
 > Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 
-This LGTM, just waiting for a non-RFC version and DT bindings review.
+This looks good, just waiting for a non-RFC version and review of
+the device tree bindings.
 
 Yours,
 Linus Walleij
