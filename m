@@ -1,96 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.75.91
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793783240;
-	b=W7gQxY+us4NZ0YSrDRdLKXeHDyAI+b6MAHS5MKz7s4qq6CZPniXOX5ksKm5GnXulTDiL
-	 RK6xfM8Dv+itlYxbT8hMNH4INxWzmv9fRsRS2H1JLn56l7adjtq4821lYY/B9SA98Y746
-	 k8nSNQvlQjJpuCBYmXd3VAALSC+Dj+gi+rodzjJCyLSeD2bMfNLPHlepgLHNtqMUEyw6j
-	 gK1RR7hX3an9cqbt4yTBMIy2GYzkfT7VKpKqUb57kTXVLBdYMTsbqUlQgWQOj459zBLBv
-	 o64eHIXKrbRC6T4SJyWaRqrbzGYx8xOqI4ClYLiuI+ic2YlfB0vS9GVi6uzqoYyRwdA==
+	t=1793784350;
+	b=3yf+JzPbYCBNwAoOoEZEbv0JdacF0xF+CYJrXhrL694y1UIDAIQBOX6dwAWbHriwC1Yh
+	 ghv8fqhHDEF+mQMFEBv7mLn3KefDtr/Vuh8Dkh7HerDGZ3DjpW/JhjcLCT1ouWe5dtBZP
+	 q/Ug9eks19sKHmt4w8zx1QZVHEwQ4RLqEhrCEaWaXBYi1N5XMw3bYzyr6wOSV2ZPU/W0g
+	 jLqM/Q3S4t6X1D90s3JNZ/yRRzmkgdkKjh2ScSLBKJ8EhS304/D9k3kAgHTKScNgYrH82
+	 IVvM1RI0FYGvtLkcdvMaV3NP5u5N0AOJdDVQRRWCj6Z5gkenZsZNSUwmQuCWO+xSPOA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793783240;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:To:Cc:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=HICuV7lH3pDXmPd6wqQKVkamtD0Plu+bx3wEdAw08no=;
-	b=152YMXNb/hDwWJUVgGFGn983MVAAV/PCvcxQE3cw/75jdZRiyDVtoPguTEkLLWy1u1yQ
-	 xs9I0kAzyWjQOGPh/eFKuwlLclc40p3j+msz6uy4EUGvYhNAal8zgeITdS1TeJhxUsUw5
-	 bkgE5ajGmhl+ZBWydaW6aTRY+P0WeigIN9H5DnSphi2uoYQ+wPibT50BTjSAu4nG1ZLbm
-	 WixSzCtb8GtL71nwJ6U/IOOmaVbUejtjKCsrVIcRrZ+x6hX9g/OqwvnoQlWoIJTA6o6m3
-	 gumdRLdvxGBjPqBnVn4t2jV3tKQUPF4u/W6lx3hiTajizIMyDlAoI1ar+EOxnNcVV+Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793784350;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=w8U74U1rPUCbHA+Z6GbARhQhlRN5MR1VyTlNpkgM6Xw=;
+	b=HS3IFy9MNd23JYu8NEbmGtuvmXU50L5Xw4QpZ6Hc31LHa2Lk/3J5gq+O7GeX7SxizjAJ
+	 18cfIi0mXLFoW7aprnkdgiEDVKdpBWGWHG1VSWIZTaoid1LQAWZmvYKBxLpC/CRTYvlww
+	 shqHt+uHXbCmgjLNm7I1VN1Wpw6GiBrMmfWzEg8f+cMXixFcnUWBrHJzChANl+SI/RSyH
+	 zMzgKCh3kz12laV6ND18kNRWT9zUrC4RsQWIpjZgA2RZ2Lruo6OGyn/fV5TSj5lMFW7CE
+	 CEwZBQfcPXjpCm3mszeHnHa9FsbfM2NaRnkGA3KC+G7UVWOKGXTYMaxJ/ZjfVB5r+rA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amlogic.com;
-	spf=pass smtp.mailfrom=amlogic.com;
-	dkim=pass header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=Acb0NIjk;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.75.91
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022091.outbound.protection.outlook.com [40.107.75.91])
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=GmL0hlzE;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BA4606A31B;
-	Wed,  4 Nov 2026 09:07:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 27BA4606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743A5606A328;
+	Wed,  4 Nov 2026 09:25:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 743A5606A328
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=Acb0NIjk
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y+B6y9g/nkO2Xk+HLxxhTdgFohFz4RMdN9Q3/ScC1C+LAyek1LuLBh2eKj6dVgEkT5OBu7uNwFQgPLlmX9kpUoX60KPA1NIhqj5n16BeOLTQHN4Pj6bTd07NwUU+IDxPxA2SxCBd76bsMbKkZZf/DAMyoEtFmW0IcJBrzB8WrTHtbZoBACeL+L1Xg2gPPLHy9vkl4D2yQNAFG3noIb+DH63MEimV20OzaH/vmK+RmN0F2qQddFYzBgkLUXoAsFG0NLRviqC2bWhZzTliGW4WJCRSFtdXC6PUhzyVc966VHRFoPpsoEiqU8BX5leqny3AaPrHy5d7hF5F+2ES6IVo3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HICuV7lH3pDXmPd6wqQKVkamtD0Plu+bx3wEdAw08no=;
- b=D4lwVnS6Gnq114u499QtReYwAtiPkepAXlrzkwzWbiVgfwRyflV/4nPOWwE85xDMSyjdY5ZChjv1Xa4FUvHVrrWO0Fhgx/fnlTX4vyxL1aXWpWKkTPiJDErZXw+mtCzuHSu1PHc87+Wfb6+y9Xn0S9IrBQYX+L3lJdHrZLMLrekq09PnOHvEvehAlXGzdkRAffBz+mU0iOmAew09ZyDkZH59k4aolgGlq5VH20JwJZCGptPDXWjT/8yqxXeqa7BqaXHmNCSV8+VCVYhcSfm8Bc/BUIzzWn8ucIfB6l5O9wNVPq4NTxcXi/W1cXFSqkPsGIXza7rFuSraLv5CQWsShQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HICuV7lH3pDXmPd6wqQKVkamtD0Plu+bx3wEdAw08no=;
- b=Acb0NIjkxGNU3AYaBsg1ZMgcuJRrpPdDhz7VGGrPj5NXgr+sJqt+epuBpGRCJ+UbnXhSaI7hx1wHH5e5jgB0MWVNxiivZlj6VBTzA+08b3OxALVCiW1kbxhBykDJAAwzaBM+1UO603xuXWdsgwgAM5er2W8dwzRYPZle7usLIxuN1AZVjNMUsqbh6757toOvizA4123ae3lzItOO6kRtqMtoBfOwFUhrgeoyOjgTnAX9e23YqiwWFfgW1fGB/G/UXbJI4+ahQ+7JNUKJmQoyEZBbpbHlKYoEM1N8FMTtIaDTB+xVOk4TEUmlCHq/ZbWbVI0qdnLls32XLQwxJInxgw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB7149.apcprd03.prod.outlook.com (2603:1096:820:ca::7)
- by SEYPR03MB7507.apcprd03.prod.outlook.com (2603:1096:101:143::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.8; Wed, 4 Nov 2026
- 09:07:14 +0000
-Received: from KL1PR03MB7149.apcprd03.prod.outlook.com
- ([fe80::2f06:12a:fff0:6506]) by KL1PR03MB7149.apcprd03.prod.outlook.com
- ([fe80::2f06:12a:fff0:6506%3]) with mapi id 15.21.0592.007; Wed, 4 Nov 2026
- 09:07:13 +0000
-Message-ID: <02476c54-d8ae-479d-898f-cd89ee2f7c24@amlogic.com>
-Date: Wed, 4 Nov 2026 17:07:10 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC RFT v2 2/3] clk: divider: add CLK_DIVIDER_INVALID_ZERO
- flag
-To: sashiko-reviews@lists.linux.dev
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org,
- neil.armstrong@linaro.org
-References: <20261029-meson_refactor_n-v2-0-ff4ac74e527b@amlogic.com>
- <20261029-meson_refactor_n-v2-2-ff4ac74e527b@amlogic.com>
- <sashiko-outbox-189068@kernel.org>
-From: Jian Hu <jian.hu@amlogic.com>
-In-Reply-To: <sashiko-outbox-189068@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SEWP216CA0131.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:2c0::9) To KL1PR03MB7149.apcprd03.prod.outlook.com
- (2603:1096:820:ca::7)
+	dkim=pass (2048-bit key, unprotected) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=GmL0hlzE
+Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
+	(Authenticated sender: pza@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 50C2220109D;
+	Wed, 04 Nov 2026 10:25:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1793784346;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w8U74U1rPUCbHA+Z6GbARhQhlRN5MR1VyTlNpkgM6Xw=;
+	b=GmL0hlzEh6/zMrc7BWma8zSUIPrk78do1Ht+dBk2BZLwTFQe23LYDRufaZSjLoY79hb2IO
+	LpU0biM+xAlBhxQMKJUuoERzewEtXeVY6j2u0owQQqeKtOv2TsjZtP/LF8v4zJdBFDl+B2
+	Hh3Agkd1uZXotZjFSzzotEmEQusFhYmjYOS85E+8U/vmlkHfRXCHIrHeYRWQY4HIknNhMI
+	AlS0YUWqrCW9T3ZA/dd7ihmLM735iLBcJz6SjQUU4pKojZVnS2US0Io4ka0+R0Y87ea+uz
+	SAfutint65rU0Yh87s0Zp8+rDeA9jjHcYdB01Wmhfjx8Wz76x4q9qO4cwRbbVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1793784346;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w8U74U1rPUCbHA+Z6GbARhQhlRN5MR1VyTlNpkgM6Xw=;
+	b=VSAc9Qd159bqut/xNHfr8zIOeQUfzaz/wFf4SzWXaDxqEB6zoJ/1msq8lqNNfDEeSnLTDq
+	vvvweIeiKL+2e8BAx2P/PUZSDjIpFDKrUiA2ROhuqE19zeCrLn12CSEUNGVJdlblsdbFqR
+	tass/S2FKmyOUcfDNkYplqRtj30IywEVMGBTsBl1e5t8N5qdWDsr1/F9izmz4k1rOfcgSB
+	0BKw3eAJCwK0v6FS3BpdOWjbMRFpNvjKRAQgK1ekO0uQitaeDRJHdIyqLqwF8WBUXkZKBi
+	9lQOD5GJP4GVBnUnVuBid8MOLz3y8qtXQzmA7yFaxHOV5WJu1SMGki6QGRu4uw==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1793784346; a=rsa-sha256;
+	cv=none;
+	b=Cv7w//ohSIyW8cU/T0syoSW9QWkXrIxqlV0JKIwB9XO58jYOUtbKX0kbEG3dC+ug0iKw4z
+	DdM+c8lsqymz8uA5welyI9jAapN7RLNLvEybCQqPlP0FKuJoq1vJf7mqAh0m2A5jDHNbx6
+	AgHawSinYPc+icgh6EXbv6AfazHLu4cMiydEp6BIl5zSSeHq0VeDYAmH3ZX5YukBa+jAGh
+	m1LtZcnmEbb+NBxjp0trCxfahGdNwsCvXTc6jPGKfZ/BbDyMKRo33MVDpcS4XebKLO8+3D
+	aEMGh8DNMlmL39at/qEcRu9QjKAxLSttGgdhAZ7i2F8GbnDS7FJPTedpDkR61A==
+Message-ID: <e4474a7501c9e2a355dcc80d632bcfa10e1959e8.camel@pengutronix.de>
+Subject: Re: [PATCH 4/4] clk: siflower: Add SF19A2890 peripheral clock and
+ reset manager driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: joseph@telaak.dev, Stephen Boyd <sboyd@kernel.org>, Brian Masney	
+ <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Rob
+ Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley	 <conor+dt@kernel.org>
+Cc: Chuanhong Guo <gch981213@gmail.com>, Yao Zi <me@ziyao.cc>, 
+	linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 04 Nov 2026 10:25:46 +0100
+In-Reply-To: <20261104-sf19a2890-sysm-v1-4-a4fac07df823@telaak.dev>
+References: <20261104-sf19a2890-sysm-v1-0-a4fac07df823@telaak.dev>
+	 <20261104-sf19a2890-sysm-v1-4-a4fac07df823@telaak.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -100,147 +98,81 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB7149:EE_|SEYPR03MB7507:EE_
-X-MS-Office365-Filtering-Correlation-Id: 67941dd2-c96d-41fc-c893-08df3a530407
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|23010399003|1800799024|376014|22082099003|18002099003|4143699003|261022105027099003|5023799004|56012099006|261009223027099003|261026121527099003|261026140227099003|261028144727099003|261102123227099003|261021121427099003|261022075727099003|10067099003|11063799006|6133799003;
-X-Microsoft-Antispam-Message-Info:
-	CWSL1/0g73kJjyEEQdKsGaeciR9bHLbs5YVynNmumT6sc674vkYoMYwCHhTwl7ejR6MvgQqpMVLtRexv9sqQtHj4i13rqRnfFl15QNL6XUwN3rvndOHSLixLUD4ijL89EFpRB7vuF8Ve7+DQWPzHttCaMQ2KGsRw6aCEHDFa6B/aZrKA0lJIdhzhhoK83chr+qOq+RAC9MJbuDV5NzM9xSgyjt1J80ZQusFew+CXR5h34lsyX5LwyLQsHT8hBQl1ZR61b3AT7zuYURSg/2n6CwVL/qx0xYbOp44m3LSItuERxycRGo/uZRyZuv6+/ALzH1m33p7Nsh6bIi4/eniuhXpc+VVbTYQrcTeOWPAZC+S2VPw1ZoYHJ+tUDafKNB+MbCdSDu+YEoC5aRO2wTKWFvjpn+/aw65QqoZHgoN7wpPQ2DT52oOoFGOWL9C3Z4AF7dJTWY3wKOt+P3XCtS1KCon+F3BhEldRb01Z6Qg16neCgs14YN4Ls6gwKK5byQBchZI3Znjw+ei6fYU86C1r0Nl3ky0uSgtzhXWdomk+SChvoaZXZEpR+O1DA8L1j+Puzyj9auEPfAFWKR0CKyPhuix/m9o+jSWJcoOaGpfkBns=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB7149.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(1800799024)(376014)(22082099003)(18002099003)(4143699003)(261022105027099003)(5023799004)(56012099006)(261009223027099003)(261026121527099003)(261026140227099003)(261028144727099003)(261102123227099003)(261021121427099003)(261022075727099003)(10067099003)(11063799006)(6133799003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NjZnZ2pVYnNSMnFvaTZweHhsQVFJM3ZqL2pXZ3hLaW80dWx4b1JSV3ZFU3E2?=
- =?utf-8?B?aXd3OUo1QXg4UCtBT3FNRlpUbEpFc1lSaHZpT2l0ajZpaFNaNUlaenYyVlNY?=
- =?utf-8?B?VTNPK3NlM1pmOWkwOXBwNS9wdFhUMzgwWlo2SDZ3THdaekRHMHNkSkIza3R1?=
- =?utf-8?B?NEp1RTdTUlN2UlAycThhV2R2elFHRit4dmtZdmdrYUpMNnc3MzE4eGhlOEZq?=
- =?utf-8?B?bjdud0J3WHRGRmtGTXVacGJUYitoV3RTOWtRKzNzcDhubnhHZW1RdXdyRXds?=
- =?utf-8?B?SWRsUzRvM29EcTlpVXM2ajdldnFIbkZpajQxbkF1eDVuL29EUFhsUG1BMWRF?=
- =?utf-8?B?K0NVREpuK2piSWpNbTNvZDErSHJOQkdMTzVkZHFxOTJWRVRmdmdSa1pRR0NT?=
- =?utf-8?B?TW9EMHRHTXFlamZSMXRBSGNJZ3p1MkIxRkRwUU9kUEdYQ210RGl2dUVnZ3Vs?=
- =?utf-8?B?TG15UW9WMjJzSHB0RnBRL0JXVXJ2azB3d0JHbGpoTXUra0MycUgwRHBIaWhn?=
- =?utf-8?B?ekNKK0pucit0aFBJenBoSGxRTDl2bnZFZUpEbzJiWnpFMktYUCs3M1daeTR1?=
- =?utf-8?B?NHFTWVhQKzJUNWFSQW5YQzk3TGdONFRqa2pYY3hoQk9qYktueXpJbmswcktm?=
- =?utf-8?B?cGlKMCtYMjFVR1o1VDhLSXNsZ285WWs0N1gzc3RqV2dHVXJ0aTA4dmJPRUdL?=
- =?utf-8?B?ejA3K2orTlRwemRaSUtmLzBneWdnd1RKRHpVNDlScW9hNFpSdlVlSkxhUDFr?=
- =?utf-8?B?VDJYODMwUlRHaXRNaFZjejNGS25oRkpKVU9pZmFvRVBYbXo5NVJ4dzRraVVR?=
- =?utf-8?B?b0RSYzV3T2d3WVAwTEhUQmJ1V0Y5ZFFZekluakl5czNLS05xN21DZnVJemYy?=
- =?utf-8?B?RXFTZWdydk1XZG94S2xwZ3luSGlkUWk1U1YzNGZGZUxnUEs2dXNTL2ZFUkE2?=
- =?utf-8?B?TlU1cWhPOUM0SmJhN0VzQWdMb2l6VkJUaXJtcnhOQlNDdmdEZTBUTGJhNmJx?=
- =?utf-8?B?b2lIU0dhOTJNVnFYTExSdi9VVmw3YXhBVnlEdW5Hd3MyZE9DUFo3NlZ5L3V4?=
- =?utf-8?B?ZnNIY3ZJL0tTNTUyd1ZrT0JPWHIzV2taM2F6Y2s3aDhtNXdyZGhDcHRtZm1Z?=
- =?utf-8?B?bHQ2VE5MVjVxbDMvcktscjVtZUhzQm81UnR3NHcvRjlwR1VxbXAxdys4ajFK?=
- =?utf-8?B?blptNUh5SFR3MXNpRDhBaG9IYVY3SnV2S0prY0VVVGMwVyt4V0hNMC8rQ1pu?=
- =?utf-8?B?M2lRN0t0NXMva25QR0NUMG9GWXI1cFZIZ0o4SnBNQnM1eEQyTnE2YjlwZC94?=
- =?utf-8?B?VkZySHZ3bWZGYk9TeDNScFhseDc1aEtDUVROWWhjRytjQXNOSkt6THZvdzB6?=
- =?utf-8?B?dkdVNjgxSGt2U3QzUk01UVU5NW8xRHJNaVA5TXJGRi9IYmVwOWlvTWdJMFo4?=
- =?utf-8?B?SGN1REcwU2laRnNyNEJSY1NtcDNrOGNCTndyTzdDZEl0Ri9rUlk3OFJyMnlY?=
- =?utf-8?B?Qm4xN09tUkMwRGJPSkxaTDFYYUorSVFSdFh3aTdIVEI5U2V6Y0xxOEpSbXdj?=
- =?utf-8?B?S2xWYnJTRVJmUXhJajIxeUEvYTNENWFQeS9GQm9HRFYvL1hJOFhJKzdWekxF?=
- =?utf-8?B?anFJYWRQazJHbnhOOUVrMnBCVGgvV0VxMXEzMDZXaDB6WXNvMURId1lQcnZu?=
- =?utf-8?B?UDdXTGRmWGtKSCt0RXpodlJVVjgxZWJtbnRGR2RoVmhLZnFjRUt6elB0MHZS?=
- =?utf-8?B?SDZrTXJTQnh0TlRnbmJPOXcwWS8vT1NhOXFDWWNoMVJsVG1oZ1lpRytUa2lO?=
- =?utf-8?B?YzBnQktIWlN6Tk90ODRsOU1TTXErSWdMYklJMWdEY0x0OFJXY0VCczZtZ2Fm?=
- =?utf-8?B?NlVoNFd4MGZmSVJkYUwwTWkzbXcyN2Zkem9ySXRZWjlSbFRUWDVudFdaMHA4?=
- =?utf-8?B?endoampUazlZNmRBUzNFd3dEekJSQktuTTR5QUdvTUtMNUVad2RHRWR0VldE?=
- =?utf-8?B?U0NsM21iM1E0ejk1TTN4MUdNMklxNmtiOVl3L2JpbEY3V1VyRzN6cklYZ0VE?=
- =?utf-8?B?ZUVVNi9PL2NsSVlpRnduQXBxL0xsaFUrdmFsL0FQYnpqQWpaUWJVZDlDbW5o?=
- =?utf-8?B?bjg1ME01Z3lyMmNPd3NKMDc5MEIwTkxwM1pNUzBONFVzdWI5U25qOFhiWmZ2?=
- =?utf-8?B?OE9kbnlXUys4TkxnTzR4QTFvb2J5bHROUW5GTU1tWFo1NHFYN1pDOEVieGpk?=
- =?utf-8?B?dTJ2a3hseHVkbHZuR1pQK3dvdVBpZHZ4MkFXRFBUcW9CdGk2SEJnRFN3NTBh?=
- =?utf-8?B?aDlwd2RxQXJnT011NzBiS1pMK1JMeWNPNVI1WG95dHlXWlFpU0NVUT09?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67941dd2-c96d-41fc-c893-08df3a530407
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB7149.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 09:07:13.5734
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AQK2hsa35b9oKTbKt5tlXiiCqhNZmAMGowXVEIH5GJIOZtAOAhZtbep9252xjkMOebT7x2GNx7g6XHjRdHAZhw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB7507
+
+On Mi, 2026-11-04 at 02:21 -0500, Joseph Telaak via B4 Relay wrote:
+> From: Chuanhong Guo <gch981213@gmail.com>
+>=20
+> Add a platform driver for the peripheral clock and reset manager (CRM)
+> block found on Siflower SF19A2890 and compatible SoCs.
+>=20
+> Each CRM block manages a group of APB peripherals through three registers=
+:
+> a reset register, a clock gate register, and a shared Bus Output Enable
+> (BOE) register that must be asserted for any peripheral in the block to
+> respond to bus transactions.
+>=20
+> The driver registers a clock gate controller and a reset controller from
+> a single DT node. A shared spinlock protects all read-modify-write
+> accesses across both. BOE is managed automatically: asserted when the
+> first clock gate is enabled and deasserted when the last one is disabled.
+>=20
+> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
+> [jt: from Chuanhong's siflower-7.1 branch; one compatible per block with
+>  its gate bits, critical gates and reset masks in tables here instead of
+>  the siflower,valid-gates, siflower,critical-gates, siflower,reset-masks
+>  and siflower,num-resets properties, gate N parented to input clock N by
+>  index instead of by global name, the gate updates under the spinlock too=
+,
+>  no separator comments, Kconfig dependencies and help, subject]
+> Signed-off-by: Joseph Telaak <joseph@telaak.dev>
+> ---
+>  drivers/clk/siflower/Kconfig                   |  11 +
+>  drivers/clk/siflower/Makefile                  |   1 +
+>  drivers/clk/siflower/clk-sf19a2890-periphcrm.c | 360 +++++++++++++++++++=
+++++++
+>  3 files changed, 372 insertions(+)
+>=20
+[...]
+> diff --git a/drivers/clk/siflower/clk-sf19a2890-periphcrm.c b/drivers/clk=
+/siflower/clk-sf19a2890-periphcrm.c
+> new file mode 100644
+> index 000000000..95d4dd449
+> --- /dev/null
+> +++ b/drivers/clk/siflower/clk-sf19a2890-periphcrm.c
+> @@ -0,0 +1,360 @@
+[...]
+> +#define CRM_DATA(_g, _r)						\
+> +	{								\
+> +		.gates =3D sf19a2890_##_g##_gates,			\
+> +		.num_gates =3D ARRAY_SIZE(sf19a2890_##_g##_gates),	\
+> +		.reset_masks =3D sf19a2890_##_r##_resets,			\
+> +		.num_resets =3D ARRAY_SIZE(sf19a2890_##_r##_resets),	\
+> +	}
+> +
+> +static const u32 sf19a2890_single_resets[] =3D { BIT(0) };
+> +
+[...]
+> +
+> +static const u32 sf19a2890_gmac_resets[] =3D { GENMASK(1, 0) };
+
+Are these two bits separate resets? Are they individually controllable?
+Why are they bundled into a single reset_control like this? The commit
+message doesn't explain.
+
+[...]
+> +static const u32 sf19a2890_wlan_resets[] =3D { GENMASK(2, 0) };
+[...]
+> +static const u32 sf19a2890_usb_resets[] =3D { GENMASK(2, 0), BIT(3), BIT=
+(4) };
+[...]
+> +static const u32 sf19a2890_spi_resets[] =3D { GENMASK(5, 4) };
+[...]
+> +static const u32 sf19a2890_uart_resets[] =3D {
+> +	BIT(0) | BIT(4), BIT(1) | BIT(5), BIT(2) | BIT(6),
+> +};
+
+Same question for the other multi-bit masks.
 
 
-On 10/29/2026 5:47 PM, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
-> - [High] clk: divider: unhandled zero divisor in divider_ro_determine_rate()
-> --
->
-> commit 5ec3118aee2f03855552c58a4a8533e035b565bc
-> Author: Jian Hu <jian.hu@amlogic.com>
->
-> clk: divider: add CLK_DIVIDER_INVALID_ZERO flag
->
-> This commit introduces the CLK_DIVIDER_INVALID_ZERO flag for dividers where
-> a zero divisor value represents an invalid hardware state rather than a
-> pass-through. When this flag is set and the divisor evaluates to zero,
-> divider_recalc_rate() returns 0 without emitting a warning.
->
->> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
->> index f68216c65d3df..6c1523d22477c 100644
->> --- a/drivers/clk/clk-divider.c
->> +++ b/drivers/clk/clk-divider.c
->> @@ -143,6 +143,9 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
->>
->>        div = _get_div(table, val, flags, width);
->>        if (!div) {
->> +             if (flags & CLK_DIVIDER_INVALID_ZERO)
->> +                     return 0;
-> [Severity: High]
-> Should divider_ro_determine_rate() in drivers/clk/clk-divider.c also handle
-> a zero divisor when CLK_DIVIDER_INVALID_ZERO or CLK_DIVIDER_ALLOW_ZERO is
-> set?
->
-> When a read-only divider has a register value val that maps to div == 0 via
-> _get_div() (for example, when CLK_DIVIDER_INVALID_ZERO is combined with
-> CLK_DIVIDER_ONE_BASED or an unmapped table entry alongside
-> CLK_DIVIDER_READ_ONLY), calling clk_round_rate() or clk_set_rate() invokes
-> clk_divider_determine_rate()->divider_ro_determine_rate():
->
-> drivers/clk/clk-divider.c:divider_ro_determine_rate() {
->          int div;
->
->          div = _get_div(table, val, flags, width);
->
->          /* Even a read-only clock can propagate a rate change */
->          if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
->                  if (!req->best_parent_hw)
->                          return -EINVAL;
->
->                  req->best_parent_rate = clk_hw_round_rate(req->best_parent_hw,
->                                                            req->rate * div);
->          }
->
->          req->rate = DIV_ROUND_UP_ULL((u64)req->best_parent_rate, div);
->
->          return 0;
-> }
->
-> Unlike divider_recalc_rate(), divider_ro_determine_rate() does not check for
-> !div before calling DIV_ROUND_UP_ULL(), which will trigger a division by zero
-> in the kernel when div is 0.
-
-
-In this patch, the dividers which set CLK_DIVIDER_INVALID_ZERO use 
-divider_determine_rate(),
-
-not divider_ro_determine_rate().
-
-
-divider_ro_determine_rate() is used for read-only dividers, which do not 
-have CLK_DIVIDER_INVALID_ZERO
-
-set in the current implementation.
-
-
-
-Therefore, a zero divisor caused by CLK_DIVIDER_INVALID_ZERO cannot occur in
-
-divider_ro_determine_rate(), and no additional check is needed here.
-
-> --
-> Sashiko AI review · https://sashiko.dev/#/patchset/20261029-meson_refactor_n-v2-0-ff4ac74e527b@amlogic.com?part=2
+regards
+Philipp
