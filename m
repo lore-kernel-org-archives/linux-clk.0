@@ -1,80 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793788587;
-	b=GNlV8R2MOJMLCKG9c6+4Ggu+NgI7mxwq4xtXzgNnoC7nXwawWI7zEJo4XBUK2klg0mQI
-	 gmJub1NI1kKQBzhfT8FJESSC8laJ4HbcMHZrvLzCpXm+Truje05Sxp+v+NqZOBoj0V/sY
-	 +QP6A04JyYO7q/+Hy3gH6/OqEd+Y+DjodCcJJBmZtABi27hTKm4EbetPZTKqPMbfoZoHV
-	 hWETkO3gPD8/jmDtvo8HlufNc3/6GyGx9YEFl7bK2iSc3E379gc6icyE1HjHiAj6pU0kY
-	 dYEv49Kpf5xHkePbvkJeWSImCt5t26Tfv/PO9cIY+w/pHM3BKghWxXP5M45TvCMY0JA==
+	t=1793788589;
+	b=fxK4HmuHmQcwVdzOgt/Q/ztJZLy+Ucp9ddFDUEN+jP4a0MNeQLNzuM3zQ1IxAgN5YHin
+	 bzLky9hS0nvPrdCg9HgCjviUMcOlkAsnvuqp99FRS5fZy1JFcZsxwaDME8pyDgNAk62Hf
+	 fS4sAUboVqvTozc44wmXLvNksfHx//c3AOBFpJATh2X9vf53U1t8NodRukBVfEinLihj+
+	 7DrRyn/jNSPh2ZqVQzu2WY2GuRORUotvhzTB7Hzd6vWA9jb84RvtJrnNIQE20jfTAYRrn
+	 mO6QN/ZnJyHCTJIBpgGnlniXBudqMuUusPEz2AuKbMhUGCMImdtO34r1mq+HUlGpP2Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793788587;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793788589;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=IT2ld2hEUrh1U4ufhHP01T3lVawATcj2VlDSAq4lmcU=;
-	b=tDRuxWho2YxCYj1y9X5LJp6ZSRP5R363msSXUQVrB9TmwagIoMQJHjyNsFONH0UpS8QB
-	 czWo1khJFXw95JvabfsvPN4W0dI1OJhnD+8aJ/d73wYtNf1awYMjbuGNWjstIASrXoc89
-	 ydZ8T436AmqWrmkP26/3UmGa4HRXT7yDAUhxMxLr5MnZ4E3cvMJhT2VQR8g/TcyKQF08g
-	 zf9XciW8fidPzJOwRucm03080DhhU/CzOtwyQeIEhJXFDIefanc0iLET/vAq0vmI7iMRv
-	 qpezQHgmF6ewCwHWWImrtIAQ68LG2AxqBA0MOcBVWT8bleCFugmbdhRyqAmx8N6833w==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=g8GDWpuJEEwiEELyHxABV+752CFxaNvpiplpVAXeeOs=;
+	b=wiRl/UMlTu/W6NLMkMI9UBiP2M9DYRKcBqZ37YRLYI71XOPqKHiphpFQ2f4RpnptHrMS
+	 I88ekHgKBVmi3vyYkRdrhVeusHPb9pJkTWIuPwS3ilRzp7yfK/9B+6XuwLZNHKhk24U/G
+	 JQ6jER7tvvxnCz1oPxsA56l8WNwigwnUerz7Cn82MJkQnlV4Dl1qjzSpBq8McROu5gjK5
+	 d5QXPmAs6FBYjxZ0s8Syw41JejxBt1yt1IuU4E+qqu3ozE8pb2OxG4h3he3ekPNnaKT5J
+	 kmKpy0O6oGo7epJ+AOc6pSowaDz9OADq7E3Nknu+KI+ak9DpQ4ccYguQzX5WlLJY6GQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=amarulasolutions.com;
 	spf=pass smtp.mailfrom=amarulasolutions.com;
-	dkim=pass header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=U0y8BBhP;
-	arc=none smtp.remote-ip=209.85.128.50
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=ZoewCmxe;
+	arc=none smtp.remote-ip=209.85.221.41
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07328606A330
-	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 10:36:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 07328606A330
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5C3606A326
+	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 10:36:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4E5C3606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=U0y8BBhP
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4a35db1f202so3532825e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 04 Nov 2026 02:36:25 -0800 (PST)
+	dkim=pass (1024-bit key, unprotected) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=ZoewCmxe
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-48df4e9d2d4so330880f8f.3
+        for <linux-clk@vger.kernel.org>; Wed, 04 Nov 2026 02:36:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1793788584; x=1794393384; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=IT2ld2hEUrh1U4ufhHP01T3lVawATcj2VlDSAq4lmcU=;
-        b=U0y8BBhP4gGZQTY455sX/GrgiSG6QsvOmloXZR7Epotwvm4hNK4TwD5Drm6fEhBFvy
-         I0HE+XDKnPf7bF7O+FgzmYvogMME7v1ZH+UAi6WUMS9HfRka+zUBJNCbheK/cibGrrDT
-         q8OHm2MyVmrGVG8U6+77/pI0tvqCHr7Err45Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793788584; x=1794393384;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=amarulasolutions.com; s=google; t=1793788587; x=1794393387; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=IT2ld2hEUrh1U4ufhHP01T3lVawATcj2VlDSAq4lmcU=;
-        b=yIUeOFru7+kv3hNyyzkZnHTnDwca+mEt5WJIhWJid91LJLzl04Jz7S+9AYuJWL86WZ
-         qUrOcROAsGeellMT+IGz4Y0oW4XbRtiOVqKLG1z+W9gqPCFW6+b7JUqWMp4HDQCgUFES
-         cDsrNkOgSTcRoBEnq+tn5ekrEF3Ckm7LB9uZzWYZFFBtl/HRTlyONwDxRv3yuxdS2i+l
-         FLwL9jvaXaRoglOm2E4YS1EaQBV0t04wzuxVUIvC72ROLb8x9SXZrgg4hq7MXOX1XShx
-         jIW3mpM2QPY1MDMDDKuzOKsIwSXQk8dNRVP+eD2w7DLAwK2wf3fgqOKXlBh7lgyHKS96
-         2O4Q==
-X-Forwarded-Encrypted: i=1; AKwUvByG2jHr6Y99FBNUfGIaAWoOPCaY2JkLdPEbU+vdcqvTCPfvs9RS+g2KP0UDu0oBTc+hway9mo8KR54=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9iCjTIUGxevThYHQPQcR/S379A2YLljIIyorfCJ9mR1Ty+KsFl
-	wsS2chdrZxLkNeWbPjUKp1MlWIVXnGHATGygK24AhBjwZRdhKkggdbI6V/VTBliTHyA=
-X-Gm-Gg: AYBFou35LvyEanIMhdk89v0T0RNZ+LRCLdL1AYLqgypQI2AsoetcRSO9sM52CDec16H
-	E5RnpShOXRgAUcK3c3wF8YoA6XylxjFJwaX3hdfZEU6h9Dtb3RcAodTtgHGIE3+cNOhvUzHgYMl
-	xjv4PrMInMzl7xlaCal/KIgdzBM0MZxR9f8WMz3ZOQ/zv52dIcerLQy0piowXUHGWKnhV5I3LA3
-	q5pQ+VNVyyBQZkewmn+VG9Bed2wOqBtLf4SL1FgSumIg37vigznY3KJNHB9yEZ0/UzoDsu2BOtc
-	NNXI0OG1wK6BtOph3eblrf00WyvVmVU19G3Xdqw2YoRwIm/x6ds051t9/rqQHZM0+VhL2vP2/52
-	JfR/54EP4cnC6+AH2qiMT4B06DDrr/UywuPO8fd3AkQr4d5d22OJ5CIl6JNP9DIJjBPysYqx4wy
-	g8H0loGYN4qH76KlSV9SOIf+galumZ1RBPXyLfN9BHKCTey+/eUu0PD/yHT7tzdLqCSd/G8BLEk
-	JOcxmHUjuQJOJjAlE1jXT5NEYR+61mUH8CikgOj5aC8syt9nqNQQxkRhfh8duKSY048bVnCXDWz
-	ZZTTvF6ek0zUmCCrTOYYkFXylzVi/CU8e0EXbOt0TyKOPX3f0pts8NyCUYYBAv+T2CD+8f7wbb1
-	6gLD3Y7ZekHySnDGn2tBjqFB45ooAezgGtP5vs/7bERpGut0n7Nc=
-X-Received: by 2002:a05:600c:4fd4:b0:4a1:e250:b191 with SMTP id 5b1f17b1804b1-4ac180f2ff3mr353454585e9.17.1793788584219;
-        Wed, 04 Nov 2026 02:36:24 -0800 (PST)
+        bh=g8GDWpuJEEwiEELyHxABV+752CFxaNvpiplpVAXeeOs=;
+        b=ZoewCmxewUIzN6aiIcngtU40jl+60XtSwir+Tt5YZrbVwlPRzVt9zqOQyL/2XkaI/W
+         6eAD+yC8vtvtBhAzkm7VnlG/6CYdjB2db6CMh2Yqpz0Ej3/nkaIWTvaSb7KtqKH8ndqA
+         r322RBM1X+mbl/85NKWpX5q/wDRW9pTJ2HHx4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793788587; x=1794393387;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=g8GDWpuJEEwiEELyHxABV+752CFxaNvpiplpVAXeeOs=;
+        b=McYU9ZXFEECkEEpjWKB80CghJGiZz2sP8FEwnDObM0dRrBEqE1GxMuvIVJ3arjyLpm
+         KDLQJ3EFzIYk4bASPrQoZ02RSzDeLng5czql07OKw3me4JDUhALmVOOh7pzkj1NcswJ+
+         sQareHaO2FBaBQRVspW6cIbrk4kssCGd/0nQNw0WtimCUbovXu59DSiwufjjKq63ciJD
+         YH3vKjSc54uD+oYABMTUqE/MOQhLenExhiyi1c29bZ6lqZnCpKhk0AsZccwKjOw6Vt1Z
+         6CWdKQXUjPoFgyI0YsBQXiBtPgUm4FcrnfV1YJcFIA3ZRreedcX0WNnuEfKh/CsH32GZ
+         6qGQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzaieqZ2TojH1kny33se2CpwywPLxrvXWyzd4tUeEgdjFPM4rllLYNuVumbmX3M3WhROFi089w/ymI=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+XibTHfwczgSO4dhi1NGAN8klgv0HO+Ox70DsuP0duXF+f/RJU
+	salzAYIMPXbEnDzydSfdkXy1ckcl7cr2wN/qiedOBhJ+SZItp1sDXc7z0t+wg/sd63U=
+X-Gm-Gg: AYBFou3qapSf0QldBIIanv5KP1QZP6bFFjMkjGRHhfMZT5yvsy1NDQSZjnj7ICVooQk
+	orkRuzwLCM5Pu62iOTRkKtuRRUObRsvcJupUQjb1W43SN36dDRNo3QKQCO/sFyV9uRLMsfeW3r4
+	ObYePcV+vPU7nkfWMNI+N3oLjB5VhSSkmli1t1bck01Xfh7MgN8ajrnrf+8ZcohLISJs69EE/wM
+	X/VfJD/xyXziw5ZncV5kDUScpZQcbp+dM3P/LTstZXrSF/qqcs/o689AjVsuWQUVt/nBe9Kl4lE
+	RLLuAaHh9H6EiJyiIhT78hxY5v3/le8UpSonQrGfF6i9w1I7NNaaWV7gPoY0ZIVUUB3DSw3yfcr
+	lcRQN3CqN7wKP6fkABoRD6Ajd5h0ob/S5nMcajB9xomInrUAwWbSo4cXTDincNjoHykkauhBeGH
+	umUOnmVXQZbI0BEn5ncIppyM31a/7OsSUy4qRa18OSL/Xsyu9zO/j5fBCIdQAKHA5vLJLaFm+DI
+	ocryG7kFOULxUFpjSv4z6Lr8n9hhWjR6pLvT84VldXKQaaYMMFUwHw+RHtDFiEK7NfpBG6Ph/04
+	LRdcRlC3ZmgGEbinlXrdm+Eym8gD/tI6eaETJE7oK1h4OiztJX/WQIv0XhcXa3GdHcCeBaN+GfH
+	4H0Ghf4ycMU+mV2oOJUfUykgX9n4bg3odxzMB0yPUSfiL15y4zUY=
+X-Received: by 2002:a05:600c:6087:b0:49f:f099:6fb1 with SMTP id 5b1f17b1804b1-4ac17753befmr352610105e9.15.1793788586637;
+        Wed, 04 Nov 2026 02:36:26 -0800 (PST)
 Received: from dario-ThinkPad-P14s-Gen-5.amarulasolutions.com ([217.201.213.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b2afee292bsm141685155e9.4.2026.11.04.02.36.22
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b2afee292bsm141685155e9.4.2026.11.04.02.36.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 02:36:23 -0800 (PST)
+        Wed, 04 Nov 2026 02:36:26 -0800 (PST)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: Sudeep Holla <sudeep.holla@kernel.org>,
 	Cristian Marussi <cristian.marussi@arm.com>
@@ -84,16 +85,20 @@ Cc: imx@lists.linux.dev,
 	arm-scmi@vger.kernel.org,
 	michael@amarulasolutions.com,
 	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	stable@vger.kernel.org,
+	Sashiko <sashiko-bot@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
 	Sebin Francis <sebin.francis@ti.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v15 0/2] clk: scmi: fix the i.MX OEM spread spectrum configuration
-Date: Wed,  4 Nov 2026 11:36:01 +0100
-Message-ID: <20261104103620.4054694-1-dario.binacchi@amarulasolutions.com>
+Subject: [PATCH v15 1/2] clk: scmi: fix SSC spread conversion
+Date: Wed,  4 Nov 2026 11:36:02 +0100
+Message-ID: <20261104103620.4054694-2-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261104103620.4054694-1-dario.binacchi@amarulasolutions.com>
+References: <20261104103620.4054694-1-dario.binacchi@amarulasolutions.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -105,132 +110,62 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-These are the two patches of the v14 series [1] still pending, as
-patches 2/4 and 4/4 have been merged in 7.4-rc1.
+The spread_bp field of struct clk_spread_spectrum holds the modulation
+depth in permyriad (1/100 of a percent), as documented in
+clk-provider.h and in the assigned-clock-sscs binding, while the i.MX
+SCMI OEM extension expects a value in tenths of a percent, as pointed
+out by Peng Fan.
 
-The first one is a fix for 7.3: the i.MX SCMI OEM extension converts
-the spread to the wrong unit, so the hardware is programmed with no
-spread at all for any valid configuration. The second one rejects the
-configurations that do not fit in the OEM fields, instead of silently
-truncating them.
+The conversion divides spread_bp by 10000 instead of 10, as reported by
+Sashiko, so any valid configuration is truncated to 0 and the hardware
+is silently programmed with no spread at all.
 
-Brian is waiting for an ack from the SCMI side on both patches.
-Sudeep and the arm-scmi list were not Cc'ed on v14, as
-get_maintainer.pl does not list them for clk-scmi-oem.c.
+Divide by 10 and fix the comment accordingly.
 
-[1] https://lore.kernel.org/all/20260904101243.412006-1-dario.binacchi@amarulasolutions.com/
-
-Changes in v15:
- - Drop patches 2/4 and 4/4, merged in 7.4-rc1.
- - Rebase on v7.4-rc1.
-
-Changes in v14:
- - Move the fixes first, so that they can be picked up separately from
-   the new patches.
-
-Changes in v13:
- - Add patch "clk: scmi: reject SSC configuration out of the OEM field
-   range".
- - Rename patch "clk: scmi: fix SSC permyriad conversion" to "clk: scmi:
-   fix SSC spread conversion".
-
-Changes in v12:
- - Add patch "clk: scmi: fix SSC permyriad conversion" to fix the
-   permyriad to percent conversion in clk-scmi-oem.c, reported by
-   Sashiko AI review.
-
-Changes in v11:
- - Add patch "clk: Validate spread spectrum configuration" to reject
-   invalid parameters in the clk core before they reach the providers.
-
-Changes in v10:
-- Drop patches 1-22, superseded by the generic spread spectrum clocking
-  support from Peng Fan, merged in 7.3, so the i.MX8M specific infrastructure
-  is no longer needed. This patch is now based on the following commits:
-  - ae794aa6e88d ("dt-bindings: clock: Add spread spectrum definition")
-  - c86814e70390 ("clk: Introduce clk_hw_set_spread_spectrum")
-  - a7f16660af39 ("clk: conf: Support assigned-clock-sscs")
-  - 7d98de6ffdab ("clk: Add KUnit tests for assigned-clock-sscs")
-  https://lore.kernel.org/all/20260826165611.236321-1-sboyd@kernel.org/
-
-Changes in v9:
-- Add 'Reviewed-by' tag of Peng Fan for imx8mn platform patches
-- Fix building warning raised by the kernel test robot for patch
-  v8, 11/18 clk: imx: add support for i.MX8MN anatop clock driver
-- Add patches for imx8m{m,p} platforms:
-  - 23/23 clk: imx8mm: support spread spectrum clock generation
-  - 22/23 clk: imx: add support for i.MX8MM anatop clock driver
-  - 21/23 clk: imx8mp: support spread spectrum clock generation
-  - 20/23 clk: imx8mp: rename ccm_base to base
-  - 19/23 clk: imx: add support for i.MX8MP anatop clock driver
-
-Changes in v8:
-- Drop the patches added in version 7:
-  - 10/23 dt-bindings: clock: imx8m-clock: add phandle to the anatop
-  - 11/23 arm64: dts: imx8mm: add phandle to anatop within CCM
-  - 12/23 arm64: dts: imx8mn: add phandle to anatop within CCM
-  - 13/23 arm64: dts: imx8mp: add phandle to anatop within CCM
-  - 14/23 arm64: dts: imx8mq: add phandle to anatop within CCM
-
-Changes in v7:
-- Add and manage fsl,anatop property as phandle to the anatop node with
-  the new patches:
-  - 10/23 dt-bindings: clock: imx8m-clock: add phandle to the anatop
-  - 11/23 arm64: dts: imx8mm: add phandle to anatop within CCM
-  - 12/23 arm64: dts: imx8mn: add phandle to anatop within CCM
-  - 13/23 arm64: dts: imx8mp: add phandle to anatop within CCM
-  - 14/23 arm64: dts: imx8mq: add phandle to anatop within CCM
-
-Changes in v6:
-- Merge patches:
-  10/20 dt-bindings: clock: imx8mm: add binding definitions for anatop
-  11/20 dt-bindings: clock: imx8mn: add binding definitions for anatop
-  12/20 dt-bindings: clock: imx8mp: add binding definitions for anatop
-  to
-  05/20 dt-bindings: clock: imx8m-anatop: define clocks/clock-names
-  now renamed
-  05/18 dt-bindings: clock: imx8m-anatop: add oscillators and PLLs
-- Split the patch
-  15/20 dt-bindings-clock-imx8m-clock-support-spread-spectru.patch
-  into
-  12/18 dt-bindings: clock: imx8m-clock: add PLLs
-  16/18 dt-bindings: clock: imx8m-clock: support spread spectrum clocking
-
-Changes in v5:
-- Fix compilation errors.
-- Separate driver code from dt-bindings
-
-Changes in v4:
-- Add dt-bindings for anatop
-- Add anatop driver
-- Drop fsl,ssc-clocks from spread spectrum dt-bindings
-
-Changes in v3:
-- Patches 1/8 has been added in version 3. The dt-bindings have
-  been moved from fsl,imx8m-anatop.yaml to imx8m-clock.yaml. The
-  anatop device (fsl,imx8m-anatop.yaml) is indeed more or less a
-  syscon, so it represents a memory area accessible by ccm
-  (imx8m-clock.yaml) to setup the PLLs.
-- Patches {3,5}/8 have been added in version 3.
-- Patches {4,6,8}/8 use ccm device node instead of the anatop one.
-
-Changes in v2:
-- Add "allOf:" and place it after "required:" block, like in the
-  example schema.
-- Move the properties definition to the top-level.
-- Drop unit types as requested by the "make dt_binding_check" command.
-
-Dario Binacchi (2):
-  clk: scmi: fix SSC spread conversion
-  clk: scmi: reject SSC configuration out of the OEM field range
-
- drivers/clk/clk-scmi-oem.c | 27 +++++++++++++++++++++++----
- 1 file changed, 23 insertions(+), 4 deletions(-)
+Fixes: 77369b1e6a37 ("clk: scmi: Add i.MX95 OEM extension support for SCMI clock driver")
+Cc: stable@vger.kernel.org
+Reported-by: Sashiko <sashiko-bot@kernel.org>
+Closes: https://lore.kernel.org/r/20260901155657.6A5981F00A3A@smtp.kernel.org
+Reported-by: Peng Fan <peng.fan@nxp.com>
+Closes: https://lore.kernel.org/r/ZR6PR04MB375776A27E98F140534E8F7FE488B62@ZR6PR04MB375776.eurprd04.prod.outlook.com
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 ---
-base-commit: 05441d697f7f9a927264f4058cbbc6a03dfcac9d
-branch: imx-pll14xx-spread-spectrum
 
+Changes in v15:
+ - Add Cc to stable.
+
+Changes in v14:
+ - Add Reviewed-by of Peng Fan
+
+Changes in v13:
+ - Divide spread_bp by 10 instead of 100 as requested by Peng Fan.
+ - Rename the patch title and reword the description accordingly.
+ - Add the Reported-by/Closes tags for Sashiko and Peng Fan.
+
+ drivers/clk/clk-scmi-oem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk-scmi-oem.c b/drivers/clk/clk-scmi-oem.c
+index be11d359b4ec..c1ebbdc6bbc5 100644
+--- a/drivers/clk/clk-scmi-oem.c
++++ b/drivers/clk/clk-scmi-oem.c
+@@ -39,12 +39,12 @@ scmi_clk_imx_set_spread_spectrum(struct clk_hw *hw,
+ 	u32 val;
+ 
+ 	/*
+-	 * extConfigValue[7:0]   - spread percentage (%)
++	 * extConfigValue[7:0]   - spread percentage in tenths of a percent
+ 	 * extConfigValue[23:8]  - Modulation Frequency
+ 	 * extConfigValue[24]    - Enable/Disable
+ 	 * extConfigValue[31:25] - Reserved
+ 	 */
+-	val = FIELD_PREP(SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK, ss_conf->spread_bp / 10000);
++	val = FIELD_PREP(SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK, ss_conf->spread_bp / 10);
+ 	val |= FIELD_PREP(SCMI_CLOCK_IMX_SS_MOD_FREQ_MASK, ss_conf->modfreq_hz);
+ 	if (ss_conf->method != CLK_SPREAD_NO)
+ 		val |= SCMI_CLOCK_IMX_SS_ENABLE_MASK;
 -- 
 2.43.0
 
