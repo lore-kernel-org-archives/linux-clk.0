@@ -1,99 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793787464;
-	b=oQQrxedujA/MEzDJrt22BkJLybNWV7yuhb9lyt70MChZvzNx+gyX8NgZzomAvTSKMM3y
-	 fOdZQGEEypVP07Ejb/MmhfoHs3mlKGSYJtn5GHffbJqxKiZmpNvhqE3DOoaHo9EfkkNTs
-	 Sjfu6cApP21yCO9rldGhIQ73VHtSYaE4hqX9v2rlKIowGcg8I5eNvIZ0IgYf00rs6IV0B
-	 1VP5Ur6rHleMpLSxl5YuCJBp0tW642ScsXg7PIOmunXKPAX6ZktBZcBepsZnzfuaB7SJz
-	 FiG36Fp2wK5x2BTbHV3V4y0Ve6MLTPc8YgSGmXiqazKC7JxfKNkkAFKYjOxnM7JDpmQ==
+	t=1793787466;
+	b=G90VpuJDfYm2x/joC30aER7ZGfPjvueFYzSK9P9oRdTh/Rf9mXMaj4hrQTZqFVCqX4q0
+	 ZAKFlgeANyx925cmefUrv/V9UAG5lWdFLDzf1qWbjTwrd4q7deNgBtG20x93TZQmEyp4N
+	 bq0T2l2ewkAVwE0lVsc2QfZ9skBdFB6NNWeDQmelqQIezkH6wuFrz2yMVOrpReppmsia8
+	 c64/9IOJ4zDcab/0sYMJtvnW6IcJaCUGEI1LNwyOCR5TGgXkVZGN8Ud5ZipIGztwUAy3x
+	 YC9APjpCCur52iDuTOIqrKQ0MYwBt3hRHRcTqGj0L02ZXArWhj0R6+p+EYR+NqjzYTg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793787464;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793787466;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=U9UqJ5usnXoaVC8QtHP+44Z4GZ6155Rmc3hUzLC5hxE=;
-	b=Xi+SqvIrogPiMWR2WkGKUNk3zwNU3VcZY2rXNQIN9SPgl5ITk+tS5olWTr3MKDLsaPqY
-	 1tAHrHYNG8KdN+W49t6oN9Dt6bIc7w6IPowl3R0XAWjpERELBLF6RTENtTeC3aRRXIRSV
-	 A9dZpYsDS8kMbb1GG/T+8b+TuH0h0utgeeE60x08z/zwmO0OZ1cP3ictONlQdw5vmKr6z
-	 6LEvVwrm7qzGtc0xhNYyYfUd7DHynQPP28V8CjTULiwl6QiDw+RNSTmzgCuAmS+exKHLE
-	 qRkKGt52trkVDd1MPDJXrNGyb/9F6OFjVFVig81hYdvNGuWm25HzLJn5nM7sawFq44g==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=nafaEA1OVG7CjcE+9vFCf00bZY6KpgzCNwfvKtVMnW4=;
+	b=Lcz+4atk2/mM4MYHz/n9sTjO2yzPMsutS28JcDwvxQkwItMvMbdOvQmjDSr7/Xf1g/kq
+	 lkEt/QRXhWNThs68UlTwFRJQp23ts7T120aRh55s+sf/V1fiEZ0bmUWJb0K9rx8sgdRUE
+	 E5kWB2TXyDr5mUjpm/P7/QkxqyYLk9XLIuj6RY2XBqgBAA2HFqZBnSQR4BBBMRgNL66AR
+	 ikWBu0bd43k4uCB8RTnEWGdOFOYfeTn603pTIYuGvrTCB2B2b1zteW9g5bymbIuI3yAjt
+	 eh4XGxBWxWE51l3YyOj6OrEfRQGtRzuaFjC7YBWmDfau2dyym0dGmzZzVSpKbtvXY7Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=amarulasolutions.com;
 	spf=pass smtp.mailfrom=amarulasolutions.com;
-	dkim=pass header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=jOgHbxoj;
-	arc=none smtp.remote-ip=209.85.128.48
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=eHnPGaGy;
+	arc=none smtp.remote-ip=209.85.221.49
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC64606A328
-	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 10:17:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DFC64606A328
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F897606A32D
+	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 10:17:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5F897606A32D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=jOgHbxoj
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a35d5d4a20so4817655e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 04 Nov 2026 02:17:43 -0800 (PST)
+	dkim=pass (1024-bit key, unprotected) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=eHnPGaGy
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-48e00eee27dso269467f8f.0
+        for <linux-clk@vger.kernel.org>; Wed, 04 Nov 2026 02:17:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1793787462; x=1794392262; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=U9UqJ5usnXoaVC8QtHP+44Z4GZ6155Rmc3hUzLC5hxE=;
-        b=jOgHbxoj2iLWtbcGzwRxSE0ua0Kttx7nbiqAklxyKq9eijtUnRF7k+BwiNn3oEfVLz
-         bVuDl8AJURHh7GhBaaCcfSNGtmGpngeZMcLzOd9mXmyACHDxXdY6uuZUDguikbQ4AgdM
-         0wsmCxf/PppzCG581cuYvVYtvHSt8MGuAls8s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793787462; x=1794392262;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=amarulasolutions.com; s=google; t=1793787465; x=1794392265; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=U9UqJ5usnXoaVC8QtHP+44Z4GZ6155Rmc3hUzLC5hxE=;
-        b=d7qru6pjMmkIHp21nKtD9bn4enQ/Mb7+0gwZAZEEeBQbQpQh3XxpqBvG30R6UwxHTD
-         QFNcbE4/+iQyIOlj/dtp/a0tYUdJTA0lhW7OPQLQkWChz2GzMyxfhj9pEQA93C2rmd66
-         EpfFVpa0ATaYHGvmC8xXvv83oYu08fuMZ/qzSg4qtVufafgzgAFHyNUVBTu5LKPu+4mM
-         wXDGwaYXRSRSaKFia1elzzDL3M68kTs74NM4rOzdiPWn5NiCVeg5IAwdwBtpH6hcj/Jq
-         XGTglMiy0r10UPtgP8V47oE7o2T8KpVp+Gy1pyl81J1uFrcBz/xDPoTWDusN3uv1JFQ5
-         YfqA==
-X-Forwarded-Encrypted: i=1; AKwUvBylGsMOfdWdKLRdH4qqAsdkgTh5AZfTUHlC32i/8Hoe7Muw0m5dgcgEVrUkaQKLZaECTgYx0B+wCuo=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9VGWoBoGFcdZqgHm3CgapMbwBpicRHoZV1p+MJRj3l36ySY/vI
-	vRRntxO6j2ZPNsTHgDtyeupDbB1WRjfCXReSfP29iYyqQ1Dm0UA6OzVPdUef65DfEYY=
-X-Gm-Gg: AYBFou2P39FLsvjoRz6Ofru4cjoodTZFQBVf3iJvwQA42v0RPR/co3XaQ20xHBsDaTi
-	X3GGUNHpLx8TLLb303V45dliIi4GKDpWtTb6jJ+aRNtCEkQsmSF4bxxDykS2qoIEl+qgHOqj7Rb
-	4/6g9WxA7rsUYbNQPQSxcbltfDyi6xjl81cinLAw5mrx5HdZlfU11LuT1/7QIvKprNwfFfdG8MU
-	nnTfUkcNiX4IKk1Q9LQ9RL3Tvg1wbA+B+2/PcsankYyk2Seouar9rVO+1fQSeeR/2tw01eFGtph
-	MJrTI5SjACbH+dY0b/YjRExP7im13ATtmV1nPCvk14yVawMLH260hYldi/b4TkbhwUDW00Xorp4
-	PuzCDiumyyGwo0jtOjBN5FWG5y7gehcAhB5NJtfsCXn/XcjYGNpt5D6uBwcWr3lyW5spV7vuD1G
-	XT+jDvZPIp6NU3L1EdfoJOCfdGZMEHphrKzAd7rKhB608aW8ojE3QOGZRTmJh8A9HhBF66GUSzS
-	Nr3Xmai4NvUkMKU5VDUVC3nedbMfM2CRMRoAeYrUwO6n5xJrjl+tEHVOPXs6QfR+DDsqhMxU1Or
-	01E3xEIVMCIIOco/h3GTZ7M9YhRSxVnOo23KFNIr/XbQLLX2X3sobGDHCYADDub8HY8OmcpANKs
-	nLY2w1G5rZM2HsgLhEgAPEkQHPkteVhoFsQAHnvciSO3gXgm8fVDh
-X-Received: by 2002:a05:600c:34d6:b0:4a2:1364:252a with SMTP id 5b1f17b1804b1-4ac150b2192mr366110145e9.3.1793787462248;
-        Wed, 04 Nov 2026 02:17:42 -0800 (PST)
+        bh=nafaEA1OVG7CjcE+9vFCf00bZY6KpgzCNwfvKtVMnW4=;
+        b=eHnPGaGy9vjCz3endU7ujp9oiZUhTPhQRDiNW3N/hOwyLbS95T+qAJ0YpwEurjgD4h
+         W8PW5edMps4nIXks6isfmzvTgbMPYOe61Q+xtyVIiNv/kxY8yAPP38hl4xgFROOY2FL9
+         pvRFjtaaOel13Fqy/pwiop+UvoLlnaknkrkcE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793787465; x=1794392265;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=nafaEA1OVG7CjcE+9vFCf00bZY6KpgzCNwfvKtVMnW4=;
+        b=l53UPMPsgm/klw77PKjc7APWQvB/Tiz7x106IZPQrVSKUYDDFsRHqKzdUYYZsyEZHx
+         mQzhFYlL1HqhGfO83Q1sM6hBk7EqHmDdKUyu4kVWm/TMPcbBqxDmRyEA0MK7MNtdCLb6
+         M3I9Hzvzsen7BiVElmSe7t7TgwzbKuTnm6HeEJyDYcYMMPWdqkKndIN0L+q31Vb+fT8J
+         q3fxSl9ihJ7Tu++HgNded98Jd5cED0zJ/xk5iNhqgDCDmwvtrcHiesS41XskjF2katxC
+         6kXRvQF+MFxudJUDVhEOHM/9o04QhVcm25fa9g5KSuqqnVB3DasFanURXYN0jlI2dneh
+         eK/Q==
+X-Forwarded-Encrypted: i=1; AKwUvByuDw7C3eMzKZnodggkW0tgvBQotWAJMvqzwpaaKUjMDFDTKZpZIip+++ovEgcY2rn7aBEzreAITfM=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/P/W7jFNql13g0gIm6izXl+TLTYSltePAkr8yHiYLKHet9hi3a
+	biTTXvSMsZxjW95qC0eJ0oWpckrZwwWetbyYOHyo3N63qs+bX8nmtyj1R5BtRcMOtsk=
+X-Gm-Gg: AYBFou1WBLEicUaNgYhUF+JOiu1/hZ6ftERUOHfJ18wDWuyGaB/sRwNgjvnddW5NTzh
+	s0QugAn9ykY1FRIi4MWGs4LLZlv5s/ULO2wx2ybGFONyYghgLBrmVRsy9wtkQu57zdAJkuiHcPm
+	r7mdwwGVu5Gobh+5Vywk3HMVaUlAw5DAHoya/AzItZPLDAukKXN6U24PYIg9hTqzpIg8XYrMAjo
+	vaqOTnnGgeRAH0lT07Lsv1LWui0x13ngpd31IkWHS0oXQAkt9Yag+OZ29TjsaHgBpTgaUCkPSP4
+	mvVR+NG97QfqaS6vNSTZxObXSw/vj25C5EgkcH3fhiHmXy3wunUdVBytUKmiw0ROQh2djtWz8T5
+	SnXNkoPePpHq9NYm9ww5S1zAcs1pgukPCpRJSligG2MsI3RFuVW+jfxOI+se272Xr/Ju109MX33
+	2nXkaVIMOCEpnb5k7b7mSFS30m3GhZ4lSNw+iLCEsXG0S8lhUrQJUNawnQ3b6XQ+6tzsFbmNjMa
+	oop1U0lb/PgSEj24/MkiaYU4IFYWqDBM7qvNA8TGatFgvsltrPfDWTZRRwdgcXEORrw46KIEwJ7
+	4hftjsh/gEA8IwDbNP+HJe0OuvtUM90SsjT8tIJaLRwlH0/mmw5ynVHvgMECBQd2zfkX9zM2Vd2
+	kN/KkkJPCldaXhPK6CPgRcC+7N0WSOECH4zc2FWQzebymJMo1MQxF
+X-Received: by 2002:a5d:5d06:0:b0:48d:ef7a:e59f with SMTP id ffacd0b85a97d-48e6e2fa482mr34138879f8f.17.1793787464715;
+        Wed, 04 Nov 2026 02:17:44 -0800 (PST)
 Received: from dario-ThinkPad-P14s-Gen-5.amarulasolutions.com ([217.201.213.4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48feeb51a9csm3035105f8f.59.2026.11.04.02.17.40
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48feeb51a9csm3035105f8f.59.2026.11.04.02.17.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 02:17:41 -0800 (PST)
+        Wed, 04 Nov 2026 02:17:44 -0800 (PST)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: michael@amarulasolutions.com,
 	linux-amarula@amarulasolutions.com,
 	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Tero Kristo <kristo@kernel.org>,
 	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: [PATCH v4 0/3] clk: ti: dpll: switch spread spectrum to the generic framework
-Date: Wed,  4 Nov 2026 11:16:54 +0100
-Message-ID: <20261104101732.4043372-1-dario.binacchi@amarulasolutions.com>
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 1/3] dt-bindings: clock: ti: dpll: deprecate the ti,ssc-* properties
+Date: Wed,  4 Nov 2026 11:16:55 +0100
+Message-ID: <20261104101732.4043372-2-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261104101732.4043372-1-dario.binacchi@amarulasolutions.com>
+References: <20261104101732.4043372-1-dario.binacchi@amarulasolutions.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -105,54 +107,49 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The am33xx/am43xx DPLL spread spectrum clocking (SSC) is configured
-through vendor specific DT properties. Since 7.3 the clock framework
-provides a generic API and the assigned-clock-sscs DT property for it,
-so the series moves the TI DPLL to the generic configuration and
-deprecates the vendor specific properties.
+The common clock binding provides assigned-clock-sscs to configure
+spread spectrum clocking (SSC), supported by the clock core since commit
+a7f16660af39 ("clk: conf: Support assigned-clock-sscs"). Deprecate the
+vendor specific ti,ssc-deltam, ti,ssc-modfreq-hz and ti,ssc-downspread
+properties in favor of it, so that new DTs use a single way to describe
+the same thing.
 
-The last patch applies the configuration right away, as the clock
-core skips set_rate() when the requested rate is already the current
-one, e.g. when the bootloader has set it up.
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Tested on a BeagleBone Black with equivalent parameters, set through
-the deprecated properties, assigned-clock-sscs or both. The dpll_disp_ck
-SSC registers are programmed with the same values as before the series.
+---
 
 Changes in v4:
 - Add Reviewed-by tag of Krzysztof Kozlowski
-- Keep the reverse Christmas tree order for the variables list
-- Check the range of the deprecated ti,ssc-deltam property
-- Drop the checks already done by the clock framework
-- Split the already applied check into the disabled and enabled cases
-- Keep the reverse Christmas tree order for the variables list
 
 Changes in v3:
 - Deprecate the properties instead of dropping them
-- Keep parsing the deprecated vendor specific properties
-- Skip reprogramming only if the configuration is already applied
-  to the hardware
 
-Changes in v2:
-- Check the DPLL lock state instead of its parent, as the reference
-  and bypass clocks can be the same clock
+ Documentation/devicetree/bindings/clock/ti/dpll.txt | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Dario Binacchi (3):
-  dt-bindings: clock: ti: dpll: deprecate the ti,ssc-* properties
-  clk: ti: dpll: use the generic spread spectrum configuration
-  clk: ti: dpll: apply the spread spectrum configuration right away
-
- .../devicetree/bindings/clock/ti/dpll.txt     |  9 +-
- drivers/clk/ti/clock.h                        |  2 +
- drivers/clk/ti/dpll.c                         | 21 +++-
- drivers/clk/ti/dpll3xxx.c                     | 96 +++++++++++++++++--
- include/linux/clk/ti.h                        |  9 +-
- 5 files changed, 112 insertions(+), 25 deletions(-)
-
----
-base-commit: 05441d697f7f9a927264f4058cbbc6a03dfcac9d
-branch: am33xx-assigned-clock-sscs
-
+diff --git a/Documentation/devicetree/bindings/clock/ti/dpll.txt b/Documentation/devicetree/bindings/clock/ti/dpll.txt
+index 14a1b72c2e71..8759c328e841 100644
+--- a/Documentation/devicetree/bindings/clock/ti/dpll.txt
++++ b/Documentation/devicetree/bindings/clock/ti/dpll.txt
+@@ -57,11 +57,14 @@ Optional properties:
+ 	- ti,min-div : the minimum divisor to start from to round the DPLL
+ 		       target rate
+ 	- ti,ssc-deltam : DPLL supports spread spectrum clocking, frequency
+-			  spreading in permille (10th of a percent)
++			  spreading in permille (10th of a percent).
++			  Deprecated, use assigned-clock-sscs instead.
+ 	- ti,ssc-modfreq-hz : DPLL supports spread spectrum clocking, spread
+-			      spectrum modulation frequency
++			      spectrum modulation frequency.
++			      Deprecated, use assigned-clock-sscs instead.
+ 	- ti,ssc-downspread : DPLL supports spread spectrum clocking, boolean
+-			      to enable the downspread feature
++			      to enable the downspread feature.
++			      Deprecated, use assigned-clock-sscs instead.
+ 
+ Examples:
+ 	dpll_core_ck: dpll_core_ck@44e00490 {
 -- 
 2.43.0
 
