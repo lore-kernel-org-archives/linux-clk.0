@@ -1,78 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793758451;
-	b=B+1rLcGkpz6DQExmWNXpPoitnEqg7W6nJXMz7jDK2ygYuIZw5NlYvhwxn+fWRM+wSLcd
-	 cpB64FzXSy4OXCpkwyLXwy1gPc2C4oQweoUR2QcprYe2m7G858zguxBK9De7xb4pCw7Y7
-	 pE/ivRTHqM5L/w3A3ISV3I2BEpd9+P8heb/ZgblGpk4CON3yGB3FumzyreDwRPsVug8ni
-	 6BdOGdV80RLBzOOzdrDIqXpWWFPSVe7ONu6uO4w926k4G9wdeSf9oC4WMg7yI/5KYG4e7
-	 zwFFcC3GOH5bAylKCcU8TSrnLy0QBBOdYTwMSwCIiTp62fdcEQT5ZDpM9X+REZSLg7w==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793758451;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=QuWnynJaFtZ4mUeHAMb8ZXbGT8gjmXFWO9hN7OPXEGM=;
-	b=yZyjoWcT7pJyBiuH5yCif9le81zRq521juUE6DbDZPoYyvyu5XlgXFItc407K+rBzQHe
-	 RjaaPKTWIvGdzPT5KZFh9NB9vzpKgyJu7uuvL1eMObT2g1JTZrKuuENSlJ5/aqI9S6y/a
-	 cJaCMEe+zKc9OADRQrbc9LrcjyM9ksCDheNH5VeqLEDZFN8WqO154jXAWkvBlp8HVp3eI
-	 6gyEF6RW9VBVgG5dnbjS+F8dUFImWfoxrPpJt5eCMVni0Ksv3F0ncKE9K6yBTCBkSNfHV
-	 GlbgkuOS/S/736YNEP9pFiCeozj5RRHdLKgV4dMZq5VvAAIsMnPaeZGnfPKUyBovFrA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z9VAbBQK;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CB9606A329;
-	Wed,  4 Nov 2026 02:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z9VAbBQK
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1793758450;
-	b=aFNKdRUX2+JWSIZgrvzWn/cw2aFplahu5cvVHPy6UCoJuHwEV5vGZiJy7x5quLo494WP
-	 6LHHL2eytQ9MAWOFQY9XnadkaBuZj9TFkb6WCr9Hyc/xrc9XHL+ub1+HBRZ/8x7TKkFyI
-	 HzrGn+2kwRLwalswlgliirIfsFpxwEs6Zz8wHfaNyCD/t+XOkhuuS86obWAL/FQdwqjtG
-	 G8Z8OCWwmm1t+pdh44IOqSlvWp7zJNaflWCmbggjjliYSkWEjY+o2cWu0gduIzaDCKjhA
-	 lCa8p75QmRZ77yCmBm6foE98KmWnMLXp2rZUOsvRT8TfsNnnwZIMx0zrJHLrGy9uNgA==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1793758450;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=QuWnynJaFtZ4mUeHAMb8ZXbGT8gjmXFWO9hN7OPXEGM=;
-	b=YP3cQskzF694e/w5lVmfMMdnim+0c2o9GQ+G8JCXm4FazUhSnzDtnRAs5ICHCzmgG2cc
-	 NX7wnuj763UkSre32zlH60Mmi9ntr9X7VlIA9Z+Vki+VNiZd8mlURMHMhiNWXKaQa7qqx
-	 oehGKraWcbFgL5cvsSqzVgacTqUSZnrxRHYIzQrIaKgWLdp0e9+ykWBhQMpi98XGIeOcC
-	 /WjnP64Qr1EJeme8QGbWJnh50zNKqF8/BmL0W5xyytmBIP3iZg3Ay8wPQh2VG1/GpWgxV
-	 wQSafkV/3RS7MBXaM5WB9wNhou1se+PPo9FwjTJlcpFcISfM1HUoBBAxetfaxjIQagw==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793768914;
+	b=MjQAyRomM0FGGCHCAunyUmGwYuttfxf5rTJKxvCuAphUhNBuNwZGeUNhW6hvSKYEobV0
+	 1JK785jwFZb+bQoEGyRkoxqpqR2lQc1K09hCQpb814PzEnnSt7iU7/PC1CgJQWFb/Eo8K
+	 l378pgx3gdTrkJDFWijWp+iuz5SEuXLehT9Px8EtDptTZ4TWyZh7qGxQ8dY1v05YhwXdG
+	 k/aAhze/zaU8ipuI6lxCcKJU+eNd7sr0hCMFI/11FV5qsIGQJEnDOerWk5QDXuFCU6APS
+	 dd0G5oq5P0P5iiTcIk9whx6AUUWv7uL6+cjVPMQFviSAIkTqLZKzZgRIeDdjhCFiKBg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793768914;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:
+	 Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:X-Authority-Analysis:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=nwK1MVA9UCwz5756RDh+kT/5Gn+aYpD6Nw0j4KwOfYE=;
+	b=QO/6MoNE0xecBcpWL6Mw8ev9tpDothR+fFIdoDJF32mR1TXVWQK5+CLDuU9yfjpv+FyV
+	 1q5xb05HBuD0jGbf/Q9M1+NIu/5OfHFGIjti/i+XfSMQ+g+r0OE5OuEdKEkXO2lzuKaDn
+	 Kr7sIEeCdwwLYcgGpvAloOgoKs9p+1zQdpQ4qG0KYnat9gXAXZSkqKbr+DoQrlLO6bSaK
+	 AV7F9/Md7ZDC+tvv7XqadK6vWyhw2jjSc5Gt7+kV8cjGhgngiz9+nPGHF9jRpQSEAN0uo
+	 zxgluFq/r2LkVqryeZTg6Wqw8EMV9ybEpiqjY10tdB3gsJyaPMnVy9JiwghJsMKSwqQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=l49cRqF+;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=aqI6ATul;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 4D07D1F00919;
-	Wed,  4 Nov 2026 02:14:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793758450;
-	bh=QuWnynJaFtZ4mUeHAMb8ZXbGT8gjmXFWO9hN7OPXEGM=;
-	h=From:Date:Subject:To:Cc:Reply-To;
-	b=Z9VAbBQKfPvU6iJQrlyB6F6w5GXNLz0eGsV78q2Avwaa8u/lWLDGL7eTGuKDPhp2K
-	 0OldadH4+sT874n2OP0UOLIxjQGh4PXAw3gW0p6w5MmPfEopZ0doDaq26xrxxNOHU+
-	 zWwY2YBeM5lNvQwrsgBnWNHr/Dg/edD75x8bJF6x46DALoud6P54iKAE8klgCAHzd1
-	 9fjv3u6y/NfoEvEDwGYodFlu7Em8urPS5LwBhiW2vD6WCB5UtIX2uKJwkz+KM5YbWj
-	 H/H/USBhktkaFMxjXnXJ5vh7ZxzT6LhrFu0zqP+CbFh3fFWFGWwQINTzxnU/S42fk+
-	 ffxGO2IfzeQ1w==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id A02FF46BB9;
-	Wed,  4 Nov 2026 02:14:09 +0000 (UTC)
-From: Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>
-Date: Wed, 04 Nov 2026 10:13:53 +0800
-Subject: [PATCH v2] clk: meson: Fix PLL enable timing
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593BB606A328
+	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 05:08:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 593BB606A328
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=l49cRqF+;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=aqI6ATul
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A40RPOh230657
+	for <linux-clk@vger.kernel.org>; Wed, 4 Nov 2026 05:08:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=nwK1MVA9UCwz5756RDh+kT
+	/5Gn+aYpD6Nw0j4KwOfYE=; b=l49cRqF+4xbbkWwZgLE2bW3VTcobyp7uvlEDi1
+	yDEMEwT9d00k1aGQR2ak38exx1wGV7uqTIZKOIZdSR61sooEQ7uSlJkt5EWJWzsq
+	SuQ/v9lP30wDavM4Qdl9VsHWmmKdtnL9iaL/aBqvAjAPETgRXgXKVtFVoKTMuvXO
+	CBCozjlpoin9xUtHNd4/uXI/3pAmiQDOvMNYLeGVK10UKyKiKNnAxTkwY0aNlqrJ
+	BVyhZarudSm71vtGMJzQNVvlDtJofU1VYujqUZRsmim1HgGqNH4DXkNjPKmmFO0s
+	qtzlWC+A2OfU1cYsaWY1SqBUSrnm+dyQlcMnG5oGMZjng60A==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hqhypk7fk-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 04 Nov 2026 05:08:33 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-cd3b9e70f88so426120a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 03 Nov 2026 21:08:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1793768912; x=1794373712; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=nwK1MVA9UCwz5756RDh+kT/5Gn+aYpD6Nw0j4KwOfYE=;
+        b=aqI6ATul4fNkxNNTs75ytyRgjjHOEK30aOk243zPIdKIwnMpHSuGTD93l60w9Qi+X2
+         VufXsZZy7ZyKvYEJ2KikaNW3WutGi8BMe1OBhInpYN9AjgOLPXzUDcwQN/Zr9pOWSmYJ
+         6C4+NAmsWr7539UkDLnRh0SydcWQFVtylyM23q+aufOF250wAuBdpySEIZXbTXKC5msM
+         YNU3i6R7SxXkZIUPPmP+WU+WrinkfzsBjZ6tk95zkqadj/78mqVE3czXAlatwvI9jNYf
+         D+icL1M3l01nkIyzcwauF7QAlXKzUiWbwXADt4GlznkZiOxvoTxTB9YV9ejtwlobKgzQ
+         RQOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793768912; x=1794373712;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=nwK1MVA9UCwz5756RDh+kT/5Gn+aYpD6Nw0j4KwOfYE=;
+        b=I66GrzdeR5MhhXkrFkCmVh3Umy1gF4NSKgRJb/176YmLQ+zlo7wEihqCc1MqbwUK67
+         0km+ItHJHMfCOwc326weLrzFtEJyKG1XQyTBm1SIAYcpkcaCj7RcJiCnmRS8r2rUab1+
+         +17L69dNV7IAhc4nJlYGWTPqJ89P0Ip79NBX5rR1OyNLPXYMOTolTgC13Tko0s5af4rv
+         8kMJWAadrvy5kpR7ALsOebbCYypCCtY4hCtm2hhtZcUIyjWVNqgzQRd+5LmW/HeM3dMg
+         UQxQnTRTPT8xDWGQo4lJajuW9XFMDXlPHbG/ZXCKc0Xcz5cVdX5pqYnfLa0lccCHyyz7
+         4smQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzbnaPqsiaCKTJXDjQejivmxclC41w7m5eIQ5dRf//BFWA37PS96cJ/nPAe+5ES7L7KYR8OS5aMusE=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8rTVwqy2teOQ1yzMzKbGJUkOksVOKGSW15yORd5U6Cuik6rNSR
+	pRQ5haBVdTrGqAt3FjbjK7hv9YskSPZ1dfeNViADokzdQtBqrO96gSQWrfX78j4ZOT1PHkhzyVu
+	D0dadbi7SOQ5RIBYilsqgX3RcDhNoXEmYWr8O9oLkpN3RCPU/kXkhqrj4gHExv/c=
+X-Gm-Gg: AYBFou0YX6pK+twXHR64wHkkosg86mmrhbYtSxVagmFY0vbB2mqygqc9F8d+etCb5mv
+	qqQM1u70TkVESOD6saQZScaH+Tunr3f1vaBkknChZ/CKHRGtTptIqGQLZdoE5hF9DqvJkL8QzV4
+	fnWDu2NvtYvfRWLM2o8w/6RgAS11SakpsakG7ZKszmogaxv1TJ+MZ3a8ECN2981OYwtA/KjzG4m
+	Q2IHEsdUz/ZnDOjNMSUNvF++EpBJ0on6/WTRDd38XxB4pRLIJKuUPy7DAHMONZjALIoBrsNmEka
+	hT/D9AwECU4704GTdV5Fibe4LKY8PpR8YtjKrcUq5qbVT6B2kitkWJU3AjsG4PXtsvxi4bAHn6X
+	aj/dB7EIek9kH14vpN493KK/pKZQao5tJh5CgDcwKJDC8U4ISwax24MlEPxxl4SEZazdbckaujw
+	P4pBE=
+X-Received: by 2002:a17:90b:534d:b0:3ac:ffb8:183b with SMTP id 98e67ed59e1d1-3ae898392e6mr12971751a91.51.1793768912088;
+        Tue, 03 Nov 2026 21:08:32 -0800 (PST)
+X-Received: by 2002:a17:90b:534d:b0:3ac:ffb8:183b with SMTP id 98e67ed59e1d1-3ae898392e6mr12971712a91.51.1793768911555;
+        Tue, 03 Nov 2026 21:08:31 -0800 (PST)
+Received: from hu-jkona-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b095314e85sm1830242a91.15.2026.11.03.21.08.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Nov 2026 21:08:31 -0800 (PST)
+From: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Subject: [PATCH v2 0/4] clk: qcom: Add support for Glymur AV1E clock
+ controller
+Date: Wed, 04 Nov 2026 10:37:32 +0530
+Message-Id: <20261104-glymur-av1ecc-v2-0-7c25a73fe811@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -83,116 +116,89 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261104-fix_enable_timing-v2-1-05cdaf34fcdb@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAOCU6moC/22NQQqDMBBFryKzbkqSioaueo8iEuMkDmgiiYQW8
- e5Nhe7KrN7n/zc7JIyECe7VDhEzJQq+gLxUYCbtHTIaC4PkshFctszSq0evhxn7jRbyjqlaDla
- reiwHZbdGLKXT+ewKT5S2EN/niyy+6c+m/tiyYIK13PKGo7lZqR96mYMjczVhge44jg9Nqm6Dt
- AAAAA==
-X-Change-ID: 20261027-fix_enable_timing-842bfa84d4d4
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Chuan Liu <chuan.liu@amlogic.com>, Jian Hu <jian.hu@amlogic.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793758448; l=2881;
- i=jian.hu@amlogic.com; s=20260415; h=from:subject:message-id;
- bh=xxrXTMztdBF0a6VBQPK0bEnfAifBskZXSA2NITGHqh4=;
- b=3C/aE4+3IjlZRhPCE2+cmWyBrKfwj3h7F6xGKTAv7WFzD7Xvq/R7XnrXwbaqnesEhZ/KTy9XC
- HvDa3fB608+Bphq7/Q9ei3vd0wOxU7GPwFeplrgBqV81rLq7WR33XbQ
-X-Developer-Key: i=jian.hu@amlogic.com; a=ed25519;
- pk=zHUE+rNtH9z+Sb8au1/elWknjFQmy5QDVkBoxleuOIA=
-X-Endpoint-Received: by B4 Relay for jian.hu@amlogic.com/20260415 with
- auth_id=735
-X-Original-From: Jian Hu <jian.hu@amlogic.com>
-Reply-To: jian.hu@amlogic.com
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJS96moC/13MTQrDIBCG4auEWdeg1p/SVe9RshCdJEISW22kI
+ Xj32kA33Qy8A9+zQ8LoMcG12SFi9smHpQY/NWBHswxIvKsNnHLFKDuTYdrmNRKTGVpLtOTcoUa
+ BSkLdPCL2/n1496726NMrxO3gM/t+f5L8kzIjlAhxMUIrJ4XpbyGl9rmayYZ5buuBrpTyAUyOg
+ g+xAAAA
+X-Change-ID: 20261013-glymur-av1ecc-7522de7e4e65
+To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        Abel Vesa <abel.vesa@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA0MDAyMCBTYWx0ZWRfXzcM1QKdl1S6p
+ 7vayDF9FFtNPSsZboHJE3WWHT46at662XrMzyJVu7vhKWwspwZEAIL/u0Bko8pSkLm07vKtnHbb
+ GER8ZxPPxs2ci7rPfz7R6Kn/y/oEbqM=
+X-Proofpoint-ORIG-GUID: 6Q8z3v9WWI_rqOdhfk5jURUqCC94M4G2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA0MDAyMCBTYWx0ZWRfX0BLorun956EH
+ lJEHhCjYFuvAP6bVwPwjJJhDiDGNrJcI2zde6UDHeakYAAHBTyI36i4uPpMGxOD+4OKF/i+j0bL
+ BpzXnsq4NEsZfsXrA9k4p0zwZgKeC4gY8Ipot1NwIlmp1N4+OVGE3nRzmQO2SFItoNSKPZE7MIf
+ ayzjDCNSy0BR6smq1u7rlqdZOOh4+L9hFYgb93msAGcmUnWPDP6CX+yPvrP2sCzrtNSKORfV7Fy
+ bvC0ytiaVm84Mgc2TXdMBhSI6+ZP9sQGHe/y7+TU1vEfHkX88aEbtwHgzjGsSsgTzkdMAjMJDdm
+ vMIzLJKhgsdzaE1Fj48fw5uohSsE8q0/ztivOdV8bIhDoW+3iFmfT2dI7/h1EylzkNzQlyiybTZ
+ U1CPyI1M23K6ZjZCKhC0zC3riyv9ekbd2Qv1zDrDo7GSv0edMy/XNZm9m7KzK2Qp/XQMwpYB1EN
+ VeHl3l7A+yb/1Thgz4w==
+X-Proofpoint-GUID: 6Q8z3v9WWI_rqOdhfk5jURUqCC94M4G2
+X-Authority-Analysis: v=2.4 cv=T94Z3PKQ c=1 sm=1 tr=0 ts=6aeabdd1 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=JZxBUJHeOsY6iHg-7A4A:9 a=QEXdDO2ut3YA:10
+ a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-04_01,2026-11-03_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 clxscore=1015
+ adultscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610300000 definitions=main-2611040020
 
-From: Jian Hu <jian.hu@amlogic.com>
+Add support for Video AV1 encoder clock controller (AV1ECC)
+on Qualcomm Glymur platform.
 
-The hardware requires a 50us delay after setting the PLL enable
-bit to allow the PLL power-up sequence to complete.
-
-Without this delay, GP0 and HIFI PLLs on Amlogic T7, SM1 and C3
-may fail to lock under stress testing.
-
-Add a 50us delay after enabling the PLL and another 50us delay
-after deasserting the PLL reset.
-
-Testing on GXL shows that the PLL works correctly without the
-additional delay and continues to lock successfully after the
-50us delay is added.
-
-On A1, remove the redundant 10us delay before enabling the
-self-adaption current module, as the new PLL enable delay already
-covers this timing requirement.
-
-Fixes: b6ec400aa153 ("clk: meson: introduce new pll power-on sequence for A1 SoC family")
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
----
-For example, enabling the GP0 PLL at 1512MHz may lose lock and
-result in an output I/O error:
-
-echo 1512000000 > /sys/kernel/debug/clk/gp0_pll/clk_rate
-echo 1 > /sys/kernel/debug/clk/gp0_pll/clk_prepare_enable
-sh: write error: I/O error
-
-Tested on: T7, C3, S4, AXG, GXL, SM1 and A1.
+Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 ---
 Changes in v2:
-- Combine Chuan's patch to this patch.
-- Update the Fixes tag.
-- Move test details below the commit message.
-- Link to Chuan's patch: https://lore.kernel.org/all/20251031-optimize_pll_driver-v3-2-92f3b2f36a83@amlogic.com
-- Link to v1: https://lore.kernel.org/r/20261028-fix_enable_timing-v1-1-70f060ec3f2a@amlogic.com
----
- drivers/clk/meson/clk-pll.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 1ea6579a760f..477eb9958a8d 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -369,20 +369,25 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
- 	/* Enable the pll */
- 	meson_parm_write(clk->map, &pll->en, 1);
- 
-+	/* Wait for the PLL power-up sequence to complete */
-+	udelay(50);
-+
- 	/* Take the pll out reset */
--	if (MESON_PARM_APPLICABLE(&pll->rst))
-+	if (MESON_PARM_APPLICABLE(&pll->rst)) {
- 		meson_parm_write(clk->map, &pll->rst, 0);
-+		/* Wait for the PLL loop to stabilize */
-+		udelay(50);
-+	}
- 
- 	/*
- 	 * Compared with the previous SoCs, self-adaption current module
- 	 * is newly added for A1, keep the new power-on sequence to enable the
- 	 * PLL. The sequence is:
--	 * 1. enable the pll, delay for 10us
-+	 * 1. enable the pll, delay for 50us
- 	 * 2. enable the pll self-adaption current module, delay for 40us
- 	 * 3. enable the lock detect module
- 	 */
- 	if (MESON_PARM_APPLICABLE(&pll->current_en)) {
--		udelay(10);
- 		meson_parm_write(clk->map, &pll->current_en, 1);
- 		udelay(40);
- 	}
+- Rebased on latest linux-next & used clk_rcg2_ops for
+  av1e_cc_av1e_xo_clk_src rcg. 
+- Link to v1: https://lore.kernel.org/r/20261015-glymur-av1ecc-v1-0-448a476d54af@oss.qualcomm.com
 
 ---
-base-commit: 363f97a1ce635b86be7fd263d56a040fbd87bdbb
-change-id: 20261027-fix_enable_timing-842bfa84d4d4
+Jagadeesh Kona (4):
+      clk: qcom: gcc-glymur: Mark GCC AV1E AHB and XO clocks as critical
+      dt-bindings: clock: qcom: Add AV1E clock controller on Glymur SoC
+      clk: qcom: av1ecc-glymur: Add AV1E clock controller driver
+      arm64: dts: qcom: glymur: Add support for AV1E clock controller
+
+ .../bindings/clock/qcom,sm8450-videocc.yaml        |   2 +
+ arch/arm64/boot/dts/qcom/glymur.dtsi               |  16 +
+ drivers/clk/qcom/Kconfig                           |  11 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/av1ecc-glymur.c                   | 393 +++++++++++++++++++++
+ drivers/clk/qcom/gcc-glymur.c                      |  32 +-
+ include/dt-bindings/clock/qcom,glymur-av1ecc.h     |  35 ++
+ 7 files changed, 460 insertions(+), 30 deletions(-)
+---
+base-commit: d6bcfc94eb4da6e089c5473970cd96727292fd97
+change-id: 20261013-glymur-av1ecc-7522de7e4e65
 
 Best regards,
 -- 
-Jian Hu <jian.hu@amlogic.com>
-
+Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 
