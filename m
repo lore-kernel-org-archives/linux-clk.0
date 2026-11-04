@@ -1,89 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.174
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793820310;
-	b=0fqS2VzYyRtzZswBjuHfFpkPSibY0AGHJ0RGnJj+ozL2XlCqVdjLE00A3PtzVZmHSQC/
-	 +BrXHvmoQqa5MmtYz4CanFZ8FEEX8/Y82im1p68N4u5VHGWXCnl7uUP/BVUdKyfvrvp8s
-	 uPppn2D1nnJoJT0s6v5shw8zriUXOt7WPeot+NjD8E3yu1S/zzIubJAWMosNXCNnT/SkS
-	 Ty7sL02HPxnP4TLZ76/WLHtABygDggUITSV/TqmX0yW8hvswSZSowhSDKpBuxKZ07wYiz
-	 N9+wJm7nzpK/vLjLeQJ8IOSDz9tdU5inJNfGiXEFyYWh8ZRPMwO6W1Toe4IIWy/wHvg==
+	t=1793820312;
+	b=ugMuH9dE1nHFSu3aZv5+jz5xA9kvlsfKFiuPjs010rr5Ka4ZHSDTQbZpSF+o9UvsPOlB
+	 jUgColtvIbZIkHGakxwALGUqu8s8zHPgi2FR7Be68QCOYcg32/n9RzMXpUgNwB229RoPn
+	 YPlfqnPdM74mxnCaV3aavSbJ7R8FgXDIDHgj7DRbfpKLApAAM0DEmmO5VArhNx4q2WgDk
+	 N5VyQL/uSkkx96NAg8zRThCVv1H9Pyr/z36RG5UDJ1vtnBiXx18kgSVUgj4G/3wT3XB+K
+	 jaHaDTOSP1NYVN7bUu/xcy9pNtMODN30KWMnsOAlMNjXh8V48aLjas6uv/LfbTpWCRA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793820310;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793820312;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=eGQwnQ2neaJQ1jlowOf5tkGQBWxndnEwh30xNQGSIkQ=;
-	b=OGck0/l6kkJG6QUv0jcnrXEKEssqp3giSnTSTIL/Z4uIVAvTfa8kgB/bcpNitK45ZsIR
-	 Ee5+XoA4Gx2lqprS0i/PAGC/k963nk4gCv+5rj6hRJAdQO2zkmhAfIjQV6JhXtixmaEGm
-	 BOxA+9rFtNG32mOpURVb92TKR87sSGhKpfPvrPkUZSH/BRgOM5/AVqD79mDdHN/UgPdka
-	 fYu8+mJ4fhmDTIQzcALZcQVTUbvO35iQLzZn22ddPXGLCFj6rk3cUFBZatPX3u9cROVSC
-	 iA8XrxGzraVVZekE43wpPB31DKXBkg5XkjZJIvBVxtbvVA3+2VkaXSFPrxGwXxfNiiw==
+	bh=JUJOd9ewD2XzFuoXefvfL/kztf8QXUFxcaNj03ZJSj4=;
+	b=Q/hffablhwyZx/42DUXL20Z0gM1XKtPqUwcY17pYZUX0PCtMkAWW8m5zCTlDDonOFn8J
+	 l6jNEPRRW9KOrGUMxDcK9Onod4WfgLZfm4bL/QWOOA3CWeUtKWIlHmsAMXe5k3rp3Zj2A
+	 QNjC3/k++Feb6QAn39dx0YSdQLfCHtIyGKAlmSfZAw4JJ00YS/QSEZITEN6jrWBfyAR/E
+	 AzvRHziYwr2ftPjuk0IEI14KM8/Fh1CIvROkoqbz9eU5I5Ud0DNYawa+aykjcsv/HfED7
+	 QwZ9tOEFxifO24qg7er4Bqt4mK7ADFZLR4PGodPA++xtuGHHyfM4iewsyZsJvaSw40g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=xlkBuxiW;
-	arc=none smtp.remote-ip=209.85.161.50
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=l+q59A3+;
+	arc=none smtp.remote-ip=209.85.167.174
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C9E607F2B6
-	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 19:25:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 46C9E607F2B6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5D46080789
+	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 19:25:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7C5D46080789
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=xlkBuxiW
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-70059e4dab6so665083eaf.3
-        for <linux-clk@vger.kernel.org>; Wed, 04 Nov 2026 11:25:10 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=l+q59A3+
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-55650fe1f0dso548828b6e.2
+        for <linux-clk@vger.kernel.org>; Wed, 04 Nov 2026 11:25:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793820309; x=1794425109; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793820310; x=1794425110; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=eGQwnQ2neaJQ1jlowOf5tkGQBWxndnEwh30xNQGSIkQ=;
-        b=xlkBuxiWK9mHFZ6iN9g5y0fn16X1yn8UtEixLRdZoFQcpS9PdMwLdnlMrc4WbhdhAk
-         4SF8uJyzjT/KxvKs9sPQi70xklj1OFYTi9nUPICSitilZ+yxHJ50ss9xnE+zczj3FAJi
-         J68fk/5fDuCYRUhQGTYbx+rrKWWtyHiczRhwTTbuCPgH2qnG1rmrjDb04FqMblkYZ1mc
-         vicUzM5h3sq06bE8GkOhNKzef9nYi1s+jJTe/76FuZLPTctqdFP+KswhdQJuyBiyYjip
-         KaREhMZd0iFR64nR/VgRuNUYXFNoQ3HqY3iAcnB3p5yGnyge/AdHM7M/JCQBb8e8vQ01
-         QTVQ==
+        bh=JUJOd9ewD2XzFuoXefvfL/kztf8QXUFxcaNj03ZJSj4=;
+        b=l+q59A3+sOw7fKxiBQJb7McYT//0hRwvDg8Ct786G6Oy50j9vWzWGmZnEV7RHgdMWu
+         98SHuZlY9XUQYHhg0iDB8rrqf6CjaScx0qFGzrVUN0aP6NK7YhnwwT8RGc6I0YOYPmz7
+         /ijtTs/dmM4lZMndW+0EfVVvzaPyJMvxKkrZiE0N3yRt0lC8+mNAMspdIwrbCvG3R3LB
+         un2KOxhfWDqnY13nwSBSSUqN83H1QoAUhTwyPLwvH7CEdDYly3uur2iMlYthKDNftoGF
+         TErHkRGKcn0k6N6C6MwT6/0kSLXFRwfiMjdkjOMZkhK4PV+aHmUuewZwVzCuNNZ7bz8d
+         1Y1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793820309; x=1794425109;
+        d=1e100.net; s=20260707; t=1793820310; x=1794425110;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=eGQwnQ2neaJQ1jlowOf5tkGQBWxndnEwh30xNQGSIkQ=;
-        b=YZoOFH6m65mWEOSc7QZEzKoXtySSGouRfevwapv5TQKusiEEWdti1/ePt5/iuDaE5j
-         Ft/YpjjKT9BxpVfzHrJwrsufFn4dvF0OXXlrHU/102cmMzYBj0U8a15uxOzDrL1Q1QR8
-         6MzuCChuOdT0Lov24VMFORMG6TaAshH3J7C+g3pqiIa1HtcBJ1zSqsOUZwgGITFPwnqi
-         LII4F6XTsyJRsKhH9LTzTAWYW+kMdBPFJzGdjJDt2RaxxFihEtTbUE4URL4G2xN3lNAn
-         G9I4ZxxY8AkdLQC5hYKitY8bpynLG9TQEG1k98PpUNTEcsAastfqyWGCaZDPEfScxjKa
-         TcOw==
-X-Forwarded-Encrypted: i=1; AKwUvBzFrHaGbwZO4FHvUSZ1HGk4FGXPQRcuoFW7Hod+s4oh6LVDT9jEgZVzf37njP//LnCrqkHzI/Mk+Dc=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9Xsc1pWwy0k54Mey6dqN09FRSfE7EzmpkRWsBrft/ydgFtNwpN
-	LZrgUZ0ZFqFCFoA3KgqZSqBNK+xQekdcRhEoIveC+wkT7gsJQuXhmJ8M
-X-Gm-Gg: AYBFou0bDcP7up5aSSEhuChVaUveWiTfIKG3Se+JNtsqegoU8YEAsUdYEVxtZ5KGfp6
-	eg7s99l3O95HhjU3cSNgq3hOTShtYjSpHtLHR3cTa9WTOVywqdpaje+NTe8qEayKdhRf0+dkww8
-	YtJJeW/ZZj6kAemYG9L8qSAOtjHUnl+twZ7A/iQFsY+FeTEXBijebMGufNVtlpIvDfkO5YroSgs
-	NHVQ51nRW8ZWFdUP7ZmzdlPUE6j+9usPLE76tzk/K5LPluqg0iERtNmx1Pie3kafk2731moOh/s
-	8xabIbg7JMURHR23w+G+wb2SujSPPX04fOHtkPEWiQRZGyOAFwxfeZLYsjOwfIMTksC3nZH5oXF
-	d4Pc11ZQya0oENGMN+zuPlXkJ1cR13UYBmXVA/wMjv3BuVDlHnoB1gozuBP9a9MIZZW2uZH45PL
-	TppfhwY1Gr5WFGc+mMISh6n2vCME/VLIYngXa7byeSvacE6xsu7Uv4eX7iSjpfCiokuwoJOdEUt
-	N3jOazwisFTMNsWCZMkljSC048y0i1QGaGaX+akrN6DlnEEiR5x5Qm99MX0v6MfCRicvim1KfB6
-	z9tKnXlNz/pDS3wMYroGq2PEru8hhGKBDoDix/6Emm7K/oW4TKGFDqISkTUDPuO8m50PlK40OOl
-	U4C4Abm923brvVpJ0M3L2KgT2RG2vQ9LA8MGkKAn5WM99ERyMAycaaVaBAlmbQ108covPvDmYi4
-	KcIHEbBYRvVzyGeSOCtJtXIF5hdjrWdr09+Fgq1cEsdYozKWvQ0OWD
-X-Received: by 2002:a05:6808:2218:b0:52b:7641:33a6 with SMTP id 5614622812f47-5640deea502mr12233182b6e.14.1793820309111;
-        Wed, 04 Nov 2026 11:25:09 -0800 (PST)
+        bh=JUJOd9ewD2XzFuoXefvfL/kztf8QXUFxcaNj03ZJSj4=;
+        b=hXf95dWoH+DDRuyRd03dZ9SDKMFpPFYa29XwbwKPnSwe8/r/B3HIHnCkfGzTTkkDr7
+         MH12MR8H53tl+FhPxJiQe25TjYqIt5V/w7+FF8vZUwR9GIMUf/aA+mtAmw2yGUp4aGMs
+         ZtlQyOEhxVkPmCbjyFuDpBByzpk8ARmAmVlWqya1ylkQX+A2CaYmkRMUsdUlyB7Veh0J
+         RTTnglCyQm3IgmusrLRImvl/ahMwoeuP6I1cqEPcdxg5Sef34QTyushlRKt7iEQ8TeGM
+         pamzBf/djc/mhQOcqQr7guCXqV5op4iWfe9XPiF0ePiP4ciaAue0U3oONDRKZoZV1+3E
+         7xnQ==
+X-Forwarded-Encrypted: i=1; AKwUvByBt+ur+FI9O/e1QtELbp8sLvwgXD3xETp/+UlfaFpXclafFMumQQHJXziR4x2t6cyqll25a6v3W/4=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+5VJUD2akWT0E0enweocZtUgRWgssz+07+mV440KFTETrjIs6H
+	2z2qxYAEcmanTFUv2W8xhyyt3kxoR62vCT69L6Z2KrKWVd143PEabk2G
+X-Gm-Gg: AYBFou06luG2VF/adj8/ab6mzMna1aJ040RFuPIphMPs3tOJLfl49tktJgKO0hkiNJy
+	nCaCViMpoyA3j8r5ZxOC/TMl36jPAu32dMUwPmq+RtajKFKmsTWf5lwZQc9sf6PQFGoR3CF+RU0
+	9RgJLHFXelr6F1ZQ+znPaymVBrc/oHHI2fjtVTV50RvsnTNHPKlVYM4Ez5p5ZiDO3r+ZI5hzUWd
+	CY6fjNA9il6IdWgGreJYcEJNdxBT1HxmCbGgcb+x6jwfWAGA+A8USm8SSOPeDG0HonxiMI4MHel
+	ox0Yxdv7KGRgSKOOJgjHVj47Nt1rWdSqU4m9PQjT53wJ0+8JfVSHVVuFujNDLkAuUz3aqP+IhN5
+	5/uPe5O/TODDya1uLUaDBBY/Dx6GsKIuQqCgOYOGiU6DjJgdBBrhIMLdZ70MePXOrY/pYEGaqgN
+	lqPyc8Tj02wTmpUPZksYaHrJrOj6TAGRsglcplZfV6nuzxLmWF35zZfWjwbC9+jE48q9rV9Bsho
+	eogvMer/3ohhQqLTZRDzGRxAwh9h+/rhrt6ei8NlSTCyvD1DfgNqYXsG6lXFH5nza2bavg+C6Z7
+	SQ4x3lcaWif+SHWudTJFw6ZfsOTMF5jZLcRS26N8mW7wUh9NwHkbeJWXh6NmY62R7/fZrOYC/sb
+	50B37PwIHUK1CBMi6VOcr/KVy39DUi0j/eOzv3tBmRLCl68TcydAn0VaBKKYM2XzXR5INLGT+1B
+	MzqT4FIXNyodNmX8UnBWob5aOkV4UkjlpC7NUU1HRaaJ3xcgP9EuPC
+X-Received: by 2002:a05:6808:198e:b0:4d6:9293:9b56 with SMTP id 5614622812f47-5640de2e892mr13003756b6e.62.1793820310505;
+        Wed, 04 Nov 2026 11:25:10 -0800 (PST)
 Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-567a9c7bbcesm2328723b6e.1.2026.11.04.11.25.07
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-567a9c7bbcesm2328723b6e.1.2026.11.04.11.25.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 11:25:08 -0800 (PST)
+        Wed, 04 Nov 2026 11:25:10 -0800 (PST)
 From: James Hilliard <james.hilliard1@gmail.com>
-Date: Wed, 04 Nov 2026 12:24:54 -0700
-Subject: [PATCH v12 4/5] arm64: dts: allwinner: h616: add PWM controller
+Date: Wed, 04 Nov 2026 12:24:55 -0700
+Subject: [PATCH v12 5/5] MAINTAINERS: Add entry on Allwinner sun8i/H616 PWM
+ driver
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -95,7 +96,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261104-h616-pwm-v8-v12-4-8ed39b0dba69@gmail.com>
+Message-Id: <20261104-h616-pwm-v8-v12-5-8ed39b0dba69@gmail.com>
 References: <20261104-h616-pwm-v8-v12-0-8ed39b0dba69@gmail.com>
 In-Reply-To: <20261104-h616-pwm-v8-v12-0-8ed39b0dba69@gmail.com>
 To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
@@ -119,82 +120,30 @@ X-Mailer: b4 0.15.2
 
 From: Richard Genoud <richard.genoud@bootlin.com>
 
-The H616 has a PWM controller that can provide PWM signals, but also
-plain clocks.
-
-Add the PWM controller node and pins in the device tree.
+Add myself as maintainer of Allwinner SUN8I PWM driver.
 
 Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi | 47 ++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ MAINTAINERS | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
-index c6b3a3f8359a..b6580f0c6e0f 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
-@@ -293,6 +293,17 @@ watchdog: watchdog@30090a0 {
- 			clocks = <&osc24M>;
- 		};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 93abbb315065..b80ae0ac5eed 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -947,6 +947,11 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
+ F:	drivers/hwspinlock/sun6i_hwspinlock.c
  
-+		pwm: pwm@300a000 {
-+			compatible = "allwinner,sun50i-h616-pwm";
-+			reg = <0x0300a000 0x400>;
-+			clocks = <&osc24M>, <&ccu CLK_BUS_PWM>;
-+			clock-names = "mod", "bus";
-+			resets = <&ccu RST_BUS_PWM>;
-+			#pwm-cells = <3>;
-+			#clock-cells = <1>;
-+			status = "disabled";
-+		};
++ALLWINNER SUN8I PWM DRIVER
++M:	Richard Genoud <richard.genoud@bootlin.com>
++S:	Maintained
++F:	drivers/pwm/pwm-sun8i.c
 +
- 		pio: pinctrl@300b000 {
- 			compatible = "allwinner,sun50i-h616-pinctrl";
- 			reg = <0x0300b000 0x400>;
-@@ -397,6 +408,42 @@ nand_rb1_pin: nand-rb1-pin {
- 				bias-pull-up;
- 			};
- 
-+			/omit-if-no-ref/
-+			pwm0_pin: pwm0-pin {
-+				pins = "PD28";
-+				function = "pwm0";
-+			};
-+
-+			/omit-if-no-ref/
-+			pwm1_pin: pwm1-pin {
-+				pins = "PG19";
-+				function = "pwm1";
-+			};
-+
-+			/omit-if-no-ref/
-+			pwm2_pin: pwm2-pin {
-+				pins = "PH2";
-+				function = "pwm2";
-+			};
-+
-+			/omit-if-no-ref/
-+			pwm3_pin: pwm3-pin {
-+				pins = "PH0";
-+				function = "pwm3";
-+			};
-+
-+			/omit-if-no-ref/
-+			pwm4_pin: pwm4-pin {
-+				pins = "PI14";
-+				function = "pwm4";
-+			};
-+
-+			/omit-if-no-ref/
-+			pwm5_pin: pwm5-pin {
-+				pins = "PA12";
-+				function = "pwm5";
-+			};
-+
- 			/omit-if-no-ref/
- 			spi0_pins: spi0-pins {
- 				pins = "PC0", "PC2", "PC4";
+ ALLWINNER THERMAL DRIVER
+ M:	Vasily Khoruzhick <anarsoul@gmail.com>
+ M:	Yangtao Li <tiny.windzz@gmail.com>
 
 -- 
 2.53.0
