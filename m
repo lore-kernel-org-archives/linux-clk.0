@@ -1,101 +1,61 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793833858;
-	b=dK9gEGQN0Is/32NSyes0dL+RtTpwAQw6JR6rsN/IrzZtZQN8Y4IpyBG4zpNU+OnTDd/x
-	 GHN76EXSyyn+Xb5g2tln++/EHlj46Dn2jEm06gZ0BIImRTMoGLVhkKikRj1MGqjD0Ztv4
-	 Gp1VWX51yl+D6ejbdnDJWSDypDBbq/hlzslp5KII6A8nkchP64bN1rBGrLmH9dN15CnTh
-	 gGbXe6gBEEQtggj1wCBvg+wlEONHk9Ee2isx9S+7wsqrqgzmnok1AUG7R1fAGagoXhz77
-	 4hITfBmzDqWDyX7cv8HHNr5vUq+A0TNBxeqSR1Tu9J6xGTQBATnClA9bjy0tgl6QKFg==
+	t=1793836998;
+	b=DVdinEtXZfKdAl1P4YARSMyukus+CTU/koR6hjZe8IYEFn0eys0N04+vS9NEbf/EXyCE
+	 VW40PbWkbR0CtSbzmWW3S43LtqsqrT8s0YMpiAC+IkkBTfvIdCskvgziXsy3gG1hcoIxB
+	 sCEnGKF3SDmGl4HHqOWTYPD0hRKDu7Olrk6qnLMOKrcKjR61/+lAFh4tMSWcLTE0mYkbk
+	 xAwbfYFkaLYLN+6k7up0QwWOoOIih7OjMH3qFtVZJ8eVuEEVMTyQVGgrbOWb1OBUuYlLz
+	 VoxcIp4+/n1d6SEzbVmhiJRHcgiq5DO9pl3XWvRRQoSV9jvWXiO5B1ori69bwO1lZBQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793833858;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=L2ngttll2ZfRB1yOGTWYBs11RUTV7CaPsssPY7ZPsJ0=;
-	b=2AfuUmUNxmUQnjfH2vATlbHykymjP1xd0ItQOhHIabvBPiL0wlV1ZrvyB0dSIya7Bm5E
-	 m/Xwr5xVgQ46kEURcxXq8eaauxLLBhrqRPBePIiXWdPC8t6ple/GW71fojwo5yJ5jjgsW
-	 lRY0NgPdOj1gQF/Nk7M9Y5dciUr4Y067TwvzApMIN/D+AKMLJUiQ4Nz6P7FnOQ9ngqgcF
-	 SrItAtyMuu3siCsA7svkGdsaS4GyDtSKkcH+t71TB6Ert2K8zbU+8hi+jwkZvoSWiMF4W
-	 iWcmPdvzFYkZhXiy+4nYrF5XT1GOI6XM2LXcqnPNAbdbJH/pSGIAER6yt7yWQk2nQcw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793836998;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=Mj0OYqNWyM7ZRvEnqupH/g1QTFeLzpiA4WER+LFUBZI=;
+	b=fDh5/v4incS3xZX1ZE1JnAieRJjCY48Fdfws7FxoWPO7shJ/v1UO9uUt2kl33ik8yE7J
+	 ANc0H1YqUQIwtmPtAXHy0AuJKlo0rGx21AfYlV3u+4/THiJmv5OWmjgyCNBuwYziELMYi
+	 VCOc7FvX8Jli51twUI2Ajp28ji86hmpNgeJ+cfa9odCckIabxNCF906IgzVrcJu4JTqJZ
+	 vT0+8to1Q+35XAAcEpCuXy7FdE/YwXnjhETnoV8blmcp57buT2FeoGGEiYV/olJrlxbHa
+	 Kuuxhdt6Nn++WfZ87bzlR9IuT2YHwdEI0oUcy6AUXnsMvfq35CQhML52FDUIDXOBkaQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=VPeUnHJl;
-	arc=none smtp.remote-ip=209.85.128.42
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="mO42Ab1/";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD9F606A31B
-	for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2026 23:10:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1FD9F606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31158606A332;
+	Thu,  5 Nov 2026 00:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=VPeUnHJl
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-49d05d51553so7911165e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 04 Nov 2026 15:10:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793833856; x=1794438656; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=L2ngttll2ZfRB1yOGTWYBs11RUTV7CaPsssPY7ZPsJ0=;
-        b=VPeUnHJlodJgGXyskeDaB33g6nEXrva2NNxzBrVb74wXzoWpbrsh0hEGsT/kwrqejQ
-         6eHU/VuQiSGjbyOWeTqPwzONyTJ0PKY2osaawEYceMnGwIXR70+pCXzfPabUFyjSs+2r
-         taK6DmEZBKjtMrerLreARwg8HcsX59JZmGTTM6R5EePr4ox2rY7biFcbtx7LMjroKt4+
-         UDjPoPT1ISvSajE++5bQKm8/nkehBoLNUx/CCCpPxbQUs/TXC9w3gWgI34LAS1VG0W2T
-         gtvdv/L6Puy8FinqAZkRFGCBW1axWjoHSt8WVhQfBTQ9AJwYhaccoXeMiKj2mhVBmnhe
-         9HUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793833856; x=1794438656;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=L2ngttll2ZfRB1yOGTWYBs11RUTV7CaPsssPY7ZPsJ0=;
-        b=Zy/q+OWQpGUBQPBsyK/sbaYLuCvcNixxceHeJEATUrKSp/HDYNZlzg3p3mdbkv+y1k
-         Bw41zhNdLZE4PG/lIv32wME4to4+/SiXQ3N6UI/jdn2E3UAUH27N9YTnTnh1JWKKAXad
-         RPV4SAc6tuZgCzNP6tezwzBg4InaDtkzCqLG/d/k/e+VhKdS8fdnCMctqD+8VBuoUWJk
-         qVA43Q/B03ysam5P1E7JWAhPTd7w+SJaJXqaRjzozHMogWm5b53Xr6hMua8nTINFuyoL
-         pFgicOayMrT1xaU50ipdOOucKn57bCaS3RpFYm8170JuEzLHybwNkQ9PQNdGHIir6i+K
-         JJHg==
-X-Forwarded-Encrypted: i=1; AKwUvBzfRQ/aL7S5dfJSH6goIhJjSm44eexBS6uBg0XDSWBgajHYckN9SYZlcUyYxBrpyvAO+FHk3iu1O9I=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/sjBvZ3PIn9i+JCF3P64LXbeeAR2rjGxYkm5p7UWAnqZnud1x9
-	x3Q/pVzxxedPG+NrdXSdqabq0tL1t3oxEu5ysU3Fx3NkP3MesYoX4nZy
-X-Gm-Gg: AYBFou2UE9NpBUfHfNN8bdtI65ye7ofvAB1udKTC8pQDF3EYYYijAPU/1RB+KZ1RD69
-	Mbwe/zMkkQ1oOpMyypstj6RiADTCFMDkizeRZDbRAcI4mseLbDn8RtPfNZKhilDf+ES46U55iSG
-	V2bRdC4jOubTMzuwWI69rBr+RZkAKuRFhsKBVpQANaXNbH00EZUnCBSCMe7yg3FW3GhbdnANsjH
-	YHJ47fO2cSD+y0emiDtaG0uOuNaO5nQ2EcPoU9iY/mwgVuV5zek+Qp48R6ig3+CWt2Jur7alz1A
-	zuHyURErk9E6qt1DwHYTCLp0kfRtYO5VQ+DwxTXye/DHVnOblEUtvRyUdaTAaNkjofUWYDvQX6O
-	W2mzCDOjkzJza6xPh3KEvfk+ye3CyQ3mI6D3Pst1WStJ+KmLJGQbqQD526lMFT4Lws6AqzewXpR
-	teYjY5xHUTwII42KOeyeXuqoyw6xgddCyUPRXymWbBVbVGK3zMlMYLYTE9BrgBbooU5dst3rOnQ
-	620ar22AUaEmyV44Ocb+e5q2eBzLv8hLn9v4hyPKOau57skSNhgGWUw+jIWk52B7JFkDybDlCDC
-	jre8pFTGEJ5nOepsdkMT6eocHq+4buZENRTOT4Psejn6s4wJOlBasZfKagtcwC5c
-X-Received: by 2002:a05:600c:524c:b0:4a1:e6c5:e44c with SMTP id 5b1f17b1804b1-4ac17470f97mr396694935e9.10.1793833856460;
-        Wed, 04 Nov 2026 15:10:56 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fec8d8748sm6355951f8f.16.2026.11.04.15.10.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 15:10:56 -0800 (PST)
-Date: Wed, 4 Nov 2026 23:10:55 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Brian Masney <masneyb@kernel.org>
-Cc: Carlo Caione <ccaione@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
- <jbrunet+clk@baylibre.com>, Brian Norris <computersforpeace@gmail.com>,
- Brian Norris <briannorris@chromium.org>, Sebastian Reichel
- <sebastian.reichel@collabora.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 1/2] clk: divider: Fix the divisor for rates above 4.29
- GHz
-Message-ID: <20261104231055.5b566adb@pumpkin>
-In-Reply-To: <179382912410.620422.14715602424648962218.b4-review@b4>
-References: <20261102-upstream-clk-divider-large-rates-v1-0-eb17035bfad2@baylibre.com>
-	<20261102-upstream-clk-divider-large-rates-v1-1-eb17035bfad2@baylibre.com>
-	<179382912410.620422.14715602424648962218.b4-review@b4>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mO42Ab1/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 091C81F000C1;
+	Thu,  5 Nov 2026 00:03:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793836997;
+	bh=Mj0OYqNWyM7ZRvEnqupH/g1QTFeLzpiA4WER+LFUBZI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=mO42Ab1/pdoAuYIMDGYMDLxa6lkLKh2MsW2SZh84mibd5Hc+gSzneHs7iORpdHaHb
+	 Vkojc4ygzX/H9t6rJELt8ktMMtcBjdgc9UtW37nS6sfvOn7BrYUCjHbHxN/YUGZMLN
+	 peVPvwUrIInq4FEcBy3iTP3X5fbn2dQrfHRsZjGHt7EPlH/PuuRdL1iKU90WWknYQX
+	 ecDO2RY0gj+jiAU1Dp8NGwcER0eRVpbuc43nWJnO//VelgiJWMPprk+uWRPBh0OYsW
+	 xmQvi7be0a3rf3OAXSCFKRGGgRD4YtvPr30HpRfSxZ7I3lYpvRAZE3t0TZVn0sXpW6
+	 gaSMwqLeHrZoA==
+Date: Thu, 5 Nov 2026 00:03:13 +0000
+From: Conor Dooley <conor@kernel.org>
+To: joseph@telaak.dev
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Chuanhong Guo <gch981213@gmail.com>, Yao Zi <me@ziyao.cc>,
+	linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] dt-bindings: clock: Add Siflower SF19A2890
+ peripheral clock/reset managers
+Message-ID: <20261104-remote-festive-1e6d807ef014@spud>
+References: <20261104-sf19a2890-sysm-v1-0-a4fac07df823@telaak.dev>
+ <20261104-sf19a2890-sysm-v1-3-a4fac07df823@telaak.dev>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -105,45 +65,239 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pzTvqsj+MD13nmtr"
+Content-Disposition: inline
+In-Reply-To: <20261104-sf19a2890-sysm-v1-3-a4fac07df823@telaak.dev>
 
-On Wed, 04 Nov 2026 16:52:04 -0500
-Brian Masney <masneyb@kernel.org> wrote:
+--pzTvqsj+MD13nmtr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > DIV_ROUND_UP_ULL() takes a 32-bit divisor, so on 64-bit platforms a
-> > requested rate above 4.29 GHz is truncated. A divider fed by a 5.94 GHz
-> > PLL then computes a divisor of 7, not 1, for 5.94 GHz.
-> > 
-> > Use DIV64_U64_ROUND_UP(), which takes a 64-bit divisor.
-> > 
-> > Fixes: 9556f9dad8f5 ("clk: divider: handle integer overflow when dividing large clock rates")
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > Signed-off-by: Carlo Caione <ccaione@baylibre.com>  
-> 
-> Reviewed-by: Brian Masney <masneyb@kernel.org>
-> 
-> Since this is a core change to the framework, I'd also like to see what
-> Jerome thinks before we merge this.
+On Wed, Nov 04, 2026 at 02:21:00AM -0500, Joseph Telaak via B4 Relay wrote:
+> From: Joseph Telaak <joseph@telaak.dev>
+>=20
+> Each peripheral block of the Siflower SF19A2890 has a clock and reset
+> manager of its own, with a reset register, a clock gate register and a
+> bus output enable. The blocks differ in which gate and reset bits they
+> use, so each has its own compatible, and clock N of a manager is its
+> input clock N, gated.
 
-I've wondered about whether using 'unsigned long' for clock frequencies
-was ever right.
-Clearly the type should be the same size for 32 bit and 64 bit, and I'm
-pretty sure the choice of long predates 64bit (I guess someone was worried
-'int' might only be 16 bits?).
+This binding looks like things that we often see that are actually
+incorrect models of the devices in question - things that should be a
+syscon but not implemented as one. I'd like to see what the actual dts
+for this device looks like before signing off (or really even reviewing
+this at all). Given how the clocks look, it is probably accurate but I
+wanna be sure.
 
-But if frequencies can be over 4GHz (which no one would have imagined a few
-years back) they can be that high on 32 bit systems as well as 64bit ones.
-So there is a big 'bag of worms' being opened.
+Cheers,
+Conor.
 
-Changing the type to 64 bits is hard to check (unless you manage to build
-a kernel with the value embedded in a structure using accessor functions)
-and will be a lot of bloat for most uses on 32 bit.
-Alternatively you enforce a different api for clocks that might exceed 4GHz.
+>=20
+> Based on Chuanhong Guo's binding, which described every block with one
+> compatible and its bit layout in properties.
+>=20
+> Signed-off-by: Joseph Telaak <joseph@telaak.dev>
+> ---
+>  .../clock/siflower,sf19a2890-periph-crm.yaml       | 169 +++++++++++++++=
+++++++
+>  1 file changed, 169 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/siflower,sf19a2890-p=
+eriph-crm.yaml b/Documentation/devicetree/bindings/clock/siflower,sf19a2890=
+-periph-crm.yaml
+> new file mode 100644
+> index 000000000..7f0bce603
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/siflower,sf19a2890-periph-c=
+rm.yaml
+> @@ -0,0 +1,169 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/siflower,sf19a2890-periph-crm.y=
+aml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Siflower SF19A2890 peripheral clock and reset manager
+> +
+> +maintainers:
+> +  - Joseph Telaak <joseph@telaak.dev>
+> +
+> +description: |
+> +  Each peripheral, or group of peripherals, of the Siflower SF19A2890 has
+> +  a clock and reset manager of its own: a reset register, a clock gate
+> +  register, and a bus output enable that the peripherals need as well as
+> +  their clocks to answer bus requests.
+> +
+> +  Clock N of the manager is input clock N, gated. The reset lines are:
+> +
+> +    gmac-crm:  0 GMAC
+> +    usb-crm:   0 USB controller, 1 USB PHY power-on, 2 USB PHY
+> +    uart-crm:  0 UART0, 1 UART1, 2 UART2
+> +    the others: 0 the block
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - siflower,sf19a2890-gmac-crm
+> +      - siflower,sf19a2890-gpio-crm
+> +      - siflower,sf19a2890-i2c-crm
+> +      - siflower,sf19a2890-pwm-crm
+> +      - siflower,sf19a2890-rf-crm
+> +      - siflower,sf19a2890-spi-crm
+> +      - siflower,sf19a2890-timer-crm
+> +      - siflower,sf19a2890-uart-crm
+> +      - siflower,sf19a2890-usb-crm
+> +      - siflower,sf19a2890-wdt-crm
+> +      - siflower,sf19a2890-wlan24-crm
+> +      - siflower,sf19a2890-wlan5-crm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 6
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - "#clock-cells"
+> +  - "#reset-cells"
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: siflower,sf19a2890-gmac-crm
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: GMAC bus clock
+> +            - description: GMAC register clock
+> +            - description: RGMII transmit reference clock
+> +            - description: Timestamp unit clock
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - siflower,sf19a2890-wlan24-crm
+> +              - siflower,sf19a2890-wlan5-crm
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: AXI slave clock
+> +            - description: AXI master clock
+> +            - description: Radio platform clock
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: siflower,sf19a2890-rf-crm
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: Test clock
+> +            - description: AXI slave clock
+> +            - description: Boot clock
+> +            - description: Low-power clock
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: siflower,sf19a2890-usb-crm
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: USB controller clock
+> +            - description: AXI master clock
+> +            - description: USB PHY reference clock
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: siflower,sf19a2890-spi-crm
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: APB clock
+> +            - description: SSP clock
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: siflower,sf19a2890-uart-crm
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: UART0 APB clock
+> +            - description: UART1 APB clock
+> +            - description: UART2 APB clock
+> +            - description: UART0 clock
+> +            - description: UART1 clock
+> +            - description: UART2 clock
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - siflower,sf19a2890-gpio-crm
+> +              - siflower,sf19a2890-i2c-crm
+> +              - siflower,sf19a2890-pwm-crm
+> +              - siflower,sf19a2890-timer-crm
+> +              - siflower,sf19a2890-wdt-crm
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 1
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/siflower,sf19a2890-clk.h>
+> +
+> +    clock-controller@19e24c00 {
+> +        compatible =3D "siflower,sf19a2890-uart-crm";
+> +        reg =3D <0x19e24c00 0x10>;
+> +        clocks =3D <&clk CLK_MUXDIV_PBUS>, <&clk CLK_MUXDIV_PBUS>,
+> +                 <&clk CLK_MUXDIV_PBUS>, <&clk CLK_MUXDIV_UART>,
+> +                 <&clk CLK_MUXDIV_UART>, <&clk CLK_MUXDIV_UART>;
+> +        #clock-cells =3D <1>;
+> +        #reset-cells =3D <1>;
+> +    };
+>=20
+> --=20
+> Git-155)
+>=20
+>=20
 
-David
+--pzTvqsj+MD13nmtr
+Content-Type: application/pgp-signature; name=signature.asc
 
-> 
-> Brian
-> 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCauvHwAAKCRB4tDGHoIJi
+0tJsAP9hmAhQezOCEyCbsJRnvqw8Kn+Oogzh96Jrp+YtB8TFgwEA+IFe+z56AyHi
+f8NRcrJ/uPdeTb5jqVqP94TaDbEUzwU=
+=J/Ed
+-----END PGP SIGNATURE-----
+
+--pzTvqsj+MD13nmtr--
