@@ -1,49 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.92.40.78
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793887975;
-	b=RuWYDFVzNeEFJje5GQ5TesaBUJvab+riLqd/8A46zVztN578TPSBQhxuaKynx/HJU+Bo
-	 9zWunFk/aS92W9yJsXB1nbeTkDBrBUpZ/smjKUcEtAvs1U+LMmvlW0ws6ybZ0X9fgGIfe
-	 NKwvHfm3QpmaeO6fgr4PhCO0/bgEVTHKFcfqhk2e/rx3cI+psAnMzeTQcF5dRv1HWMGX2
-	 baJHwdnoWUjZcT7ONLbjMaKzYknTrGKlcu5CFVj7/bNqFBYPD83w0yA1b2nYgk7oc7uPy
-	 DvE1HPX7dafxnowljI89v+Hh08MThHOSKHnltj3pHy8k62ERTydNsTL1+8PgtIx278A==
+	t=1793887974;
+	b=rjuJcfwc6DEjtqpeEVBRmUSa2P7YlpKHDj5bOllB1umey1+STTcSmF9lZpVMhNE7zC9b
+	 q03i88FykVmunIMiahcsQOzAQDrSxC/f5U7+qdcdSBpticLwas3B5zUZnYmmSIouiNbRp
+	 u86cKL2a9ty/RPk0wAT9SEO1+bcyE6doK52HNrFPjdVHsxr84iKOxSWw3iufQVBK4Rth8
+	 yWm3SJEGJ5cagwYzLT5xX2au863WZgMu+OFv5UFl51QF+neAdJpxTIfc13hJmtBxSm+XB
+	 0oK0EDVa0kAKLK13WfDKa8HdzPJubFTmCA8+kyPjVeqzZUx1ObMuM3MQC2EBTWd5ajQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793887975;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793887974;
 	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
 	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:X-Last-TLS-Session-Version;
-	bh=1G50rBV01liY/Ser18phaysjoabEV3aBmHhAJ8LmX5w=;
-	b=3U72nJWDEVcgRxFGHQvTuQgXlymzD9LIEXGkyDc/gyphG3+58BLpJouHZ1+2o6N8d/xs
-	 9E4yKVXgvdkagjS5PwE7R0R5IauG1M05AgytN1UlKMVs9IilPP1YXUAC4tA8AnposEIun
-	 D11qHbMGvm+z533dXEj2/4NUb+cZcr3VM1jTEf0eu9e/IHiGCCmvGk1Hvn2TvztrX8B3J
-	 4MfvNLONcN2tSM9xtslvD4OyGhviloGowHN4EE91xEAPkG1BudOThdEPeYGFSwGdXvz6V
-	 jRvJrps3WveW8btqbwNo/0Q0yMjc1ptIAumssJds3ZMXjfIpAwkpTMyylbo/ZQqBUKg==
+	bh=3AoMLszL75RGaB8VS8iwoRVvxh/ff74HhsxQd5Z1i8I=;
+	b=PQva5vuPVIcbLaNUN90uIDdx1VZEzDxqg2BI8u94lsELk1MJep/WJgmql4GZdh4qLDmI
+	 drSv0LbdDW9SLwDB4xN9S4Ock6QL7OcXbtE070cMqpZY+eiHpx1EO0GkyihLxvLl1Sbrz
+	 g8UWTh8dmHzmRMDogzahs3LtJ46IxL1LYqqtzV9KTYHSn9bLzu5NEHnfq3fZfdF366SmQ
+	 pq4bddIE6vd4Up4vyvR+FjUyHBqxSgGGYXRMSLniKrqXrp3XbPHp/PsTdhTs+ykJPStu0
+	 MdtNkZzPs7j8kbsmkJwaOgpj2fdY2Ev7xqSwz/VaV2TCgUQeR3WDZUpHdm9va/2jeVw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=thorsis.com;
 	spf=pass smtp.mailfrom=thorsis.com;
-	dkim=pass header.d=thorsis.com header.i=@thorsis.com header.a=rsa-sha256 header.s=dkim header.b=roikVhSe;
+	dkim=pass header.d=thorsis.com header.i=@thorsis.com header.a=rsa-sha256 header.s=dkim header.b=HCZoFnt0;
 	arc=none smtp.remote-ip=217.92.40.78
 Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB184606A32C;
-	Thu,  5 Nov 2026 14:12:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AB184606A32C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B169A606A326;
+	Thu,  5 Nov 2026 14:12:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B169A606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=thorsis.com header.i=@thorsis.com header.a=rsa-sha256 header.s=dkim header.b=roikVhSe
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8C42A1496743;
-	Thu, 05 Nov 2026 15:13:27 +0100 (CET)
+	dkim=pass (2048-bit key, unprotected) header.d=thorsis.com header.i=@thorsis.com header.a=rsa-sha256 header.s=dkim header.b=HCZoFnt0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 57EE1149670D;
+	Thu, 05 Nov 2026 15:13:25 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1793888008; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1793888007; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=1G50rBV01liY/Ser18phaysjoabEV3aBmHhAJ8LmX5w=;
-	b=roikVhSeQbfcm1C6KuVfw8SvcxGxhWz1lmDJcJDSFAnjhrJbpMRpIDna/DyON5TvaT+18u
-	D2GONEaZXc4ejdjAoHPGLBE8tiRnPwSilfbMTp8Ue6rtl03cNgTFQKOvqv2/6HwD9h4Yvw
-	JsRcF6HnAdHkZbv4MUaSL8sPoqtyWX5Vqs0x7fx3Yd3gdflxanbxGpXvxYZgT+LU30s9j7
-	rj4Fx4pneUeVONE06WFshlPUOMTA7XC7Q9wS/KDtP7nQBdkiaS4F+68t7NxdmzumxP8l3U
-	9VR7xUYhM9i6+bFoFyvZbK9yJiq8sKdGeQ65DfKLw6pIwc4MypHGpi6s1abKaw==
+	bh=3AoMLszL75RGaB8VS8iwoRVvxh/ff74HhsxQd5Z1i8I=;
+	b=HCZoFnt0oKVbE4zYiGQTpDoBTsip409uGFYWZEYxqpCLpeUBPfD33kr3g8Gc4y9f0UOrWU
+	HAP6TQXXCKWF60LM7J8GKeSwgihu61xAxnHFCOSJlpeg6DHIFtp2TRZ50R2v9skT0b37Z6
+	wA9BOUQL2DULjn2e1BSGl5i8eiVw+4RT42FdTg0JJuobbd46N7TTD+VAfLq6rSIudoktSW
+	VZ4ShS9w0lawaIyBpNJ/WMbREsEj5M3kQEkgquWyypB/FzjgQb+/EaEoZBFQBM8sxUL4W2
+	cR6p09XZUyFmW3pRTCDLyeNfmO3ndsYldGPFmLWSEpyBJIkZXkPsde9hTobzcQ==
 From: Alexander Dahl <ada@thorsis.com>
 To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -53,15 +53,12 @@ Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>
-Subject: [PATCH v4 16/16] dt-bindings: clock: at91: Remove old PMC definitions
-Date: Thu,  5 Nov 2026 12:06:52 +0100
-Message-ID: <20261105110715.2486432-17-ada@thorsis.com>
+Subject: [PATCH v4 15/16] ARM: dts: microchip: sam9x60_curiosity: Enable OTP Controller
+Date: Thu,  5 Nov 2026 12:06:51 +0100
+Message-ID: <20261105110715.2486432-16-ada@thorsis.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261105110715.2486432-1-ada@thorsis.com>
 References: <20261105110715.2486432-1-ada@thorsis.com>
@@ -77,65 +74,39 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Those were split up per SoC and are not used anymore.
+Allows to access the OTP memory and Product UID now.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Alexander Dahl <ada@thorsis.com>
 ---
 
 Notes:
     v4:
-    - Added Acked-by tag (thanks Rob)
+    - no changes
     
     v3:
-    - new patch, not present in v2
+    - Reworded commit message after reordering patches
+    
+    v2:
+    - same as in v1, no changes
 
- include/dt-bindings/clock/at91.h | 32 --------------------------------
- 1 file changed, 32 deletions(-)
+ arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
-index f2a7b7d39c0d0..ebc41cb4edb92 100644
---- a/include/dt-bindings/clock/at91.h
-+++ b/include/dt-bindings/clock/at91.h
-@@ -14,38 +14,6 @@
- #define PMC_TYPE_GCK		3
- #define PMC_TYPE_PROGRAMMABLE	4
+diff --git a/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
+index b9ffd9e5faacc..c110a8e87568a 100644
+--- a/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
++++ b/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
+@@ -252,6 +252,10 @@ ethernet-phy@0 {
+ 	};
+ };
  
--#define PMC_SLOW		0
--#define PMC_MCK			1
--#define PMC_UTMI		2
--#define PMC_MAIN		3
--#define PMC_MCK2		4
--#define PMC_I2S0_MUX		5
--#define PMC_I2S1_MUX		6
--#define PMC_PLLACK		7
--#define PMC_PLLBCK		8
--#define PMC_AUDIOPLLCK		9
--#define PMC_AUDIOPINCK		10
--
--/* SAMA7G5 */
--#define PMC_CPUPLL		(PMC_MAIN + 1)
--#define PMC_SYSPLL		(PMC_MAIN + 2)
--#define PMC_DDRPLL		(PMC_MAIN + 3)
--#define PMC_IMGPLL		(PMC_MAIN + 4)
--#define PMC_BAUDPLL		(PMC_MAIN + 5)
--#define PMC_AUDIOPMCPLL		(PMC_MAIN + 6)
--#define PMC_AUDIOIOPLL		(PMC_MAIN + 7)
--#define PMC_ETHPLL		(PMC_MAIN + 8)
--#define PMC_CPU			(PMC_MAIN + 9)
--#define PMC_MCK1		(PMC_MAIN + 10)
--
--/* SAM9X7 */
--#define PMC_PLLADIV2		(PMC_MAIN + 11)
--#define PMC_LVDSPLL		(PMC_MAIN + 12)
--
--/* SAMA7D65 */
--#define PMC_MCK3		(PMC_MAIN + 13)
--#define PMC_MCK5		(PMC_MAIN + 14)
--
- #ifndef AT91_PMC_MOSCS
- #define AT91_PMC_MOSCS		0		/* MOSCS Flag */
- #define AT91_PMC_LOCKA		1		/* PLLA Lock */
++&otpc {
++	status = "okay";
++};
++
+ &pinctrl {
+ 	adc {
+ 		pinctrl_adc_default: adc-default {
 -- 
 2.47.3
 
