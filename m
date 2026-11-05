@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793888837;
-	b=nN2WHrv05p2fA2m0Ir/1yrUljE1BFU4hbJXR0+f3O94unF/TbBuRabl9aR94nZNn9mEP
-	 Ha09RRDm0lIMbOH5NJGgomGOwJrL9qtkv7TbwzmjhRQj/sF8ZOhJDJljFB4ZmE/UmXvw+
-	 mMjtxsHHz98qChA5C1XD4aeMkJX5N4gTOZwyg2uPlPwVU1AOht2tSbsRBkmFs6CnP1jX0
-	 sGMZLbwE2q26/bl0WbZmACw1qECNKlzAqhnOApDahDgFHzR0YUDUz5XznP5nxkR6JuN/N
-	 1iIwntmA+A1UTtOAHCnUBBQAfbBA7HtwYRwHX801zvOOsRyP07zovnu4hbudkwlbjJw==
+	t=1793888944;
+	b=15X2XmPX0n5mUzYfLe+da3tGsblE5cQAoFU8GjgbqTyIPi+4b9EetllLTtCifR4JAyol
+	 PsJJj0McJVHPkNmSlgXVXX6yPJ9iAg1idksANWRrjh6n6K70fTk/vfTgxABiSqAyFy/uo
+	 UzQ4BppHcCb7Ez88PxPiTSD/jFNPUaXllDRv38MEKVredIC0QeEboMr5DTPbC7xt+MlHV
+	 hX12YMQL3yu+ginpyqM/KfZ6IrRObkxYHvYtGRpCL/EzlGe0thjq2zeTqELAJP6a8tGvt
+	 b9CPnfp6WGu9rM2fQer0HsAFE9kPQtZetio6cyvprFXR9C+0b7ECH8imCqwD/G3R17g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793888837;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793888944;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=PVN0ELGdMQ7giLb20G3NaioDb+tdO+OXxmlk7zkEwyw=;
-	b=hdVdgh0Tl2GRiL7/ZOoTYjTrcra0Djl/rB5TLDi4moRbG4FQUQ2l2EWhekPralVryRNd
-	 Y1sdKqyQy97C2DA6GhChBrFR1ZsoxH8JRetR4Jf4UltFdYitj0+8uftimPajR3x4ZozJm
-	 TfDhbNHY2IVPb5MknnCzbvEBLKljjluqM7i/v9bdqpaw7WSwbTo9rYXhLuXV/ZjVAnx+g
-	 zXrvuC7OnXxzVQf2eXsfbGOZmPQOnhA9V/6AUphEs+oclPK7HNQi5u1F9nUNqzLKzCP8m
-	 WAZQWd38vS/bZJfx4Cs9GxuhFoWEs6qn28MY/E/5JvI/2yUP3KSPs8IBgpBB9ctkR9Q==
+	bh=GnqfOkxGGqfm4NELNr/v+G+Yq4Jnr7VeV22BqG+KrSY=;
+	b=xLUQc6u0Nfx4xJIqID9hwsR0mz1nVrHCmFbf1giZ+RlpXhYlPEWLwBo0+yw8KmHdthgO
+	 TLwyZWrG55/HNLLrqfE6H7rBussDXguN1i6xjraIZ+3NsXKy3V3T7rklmKervFWgu66Dv
+	 KduQFRKdYvt3xRGGnmo1RVWjGhGaPgKAD79QYKIJnis0KQF4lSef3BzlbR5NPhvahpqKe
+	 IO/6qeXUaFqfYZFMVc2El6x84htItDkhoPqAsRIFiwJ8/YzeevGqVI3NoxswNMZdDJ3ow
+	 U9UuCqxH1uV4DW4zfVydwTxhaOloC1rkBJnJQNp/Uytb8FQu88dlW6LpqdD6F3lKwlQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fYScbl4d;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YXxSw1t6;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECEA606A326;
-	Thu,  5 Nov 2026 14:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07867606A32F;
+	Thu,  5 Nov 2026 14:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fYScbl4d
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F1191F000C1;
-	Thu,  5 Nov 2026 14:27:16 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YXxSw1t6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B40F1F00A1C;
+	Thu,  5 Nov 2026 14:29:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793888836;
-	bh=PVN0ELGdMQ7giLb20G3NaioDb+tdO+OXxmlk7zkEwyw=;
+	s=k20260515; t=1793888943;
+	bh=GnqfOkxGGqfm4NELNr/v+G+Yq4Jnr7VeV22BqG+KrSY=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=fYScbl4dzb1QovStScibOTtBy+bhwgpxHF5zQol7EmtxrvvgV33DyEpZWDUC+Djg0
-	 CTaYXLyNJYoh7aznaf0IFjiXX05rBy2ryY3H0PpjMHh1IhaPAQct2duZZZSm9DB66t
-	 CV3uCkYwdZrAYsHSpabwZr17XQfnwVRIVMvkrXzMa0aHBvatPbiuY1b7CwKE+TKRIa
-	 tLwK/sAja7iNDV/Y1leHaz2OSScw2IxW478K00WcF7hETqGIvhOATYcxrzZqVX70xO
-	 WE/JjKzwbyp4m4CNUlZxsLPv++2mJ6GBIH9toi6k4MozdH7K7EjKHZwjQiqNAEmXCj
-	 T7qIX98swl8rg==
-Message-ID: <sashiko-outbox-199240@kernel.org>
+	b=YXxSw1t6CmqmV81JUhb9AaP0/s4hBQikh+sGXxHgry8CQES9tZbQh5PoiM1vRtQFE
+	 L7LgN2WlzJaXKJIOextQijYHwiNh1kFc7+Pqzwmu+ogGqJJciFh3iAq5hMPCLuB9FA
+	 0DEetuweHp4vQ3xJWeYTG4+PX1L8yhOi7EQSUSsoY0mEqzNxX8PokkblEr3uFK2bo6
+	 yul8UAJqSeySp9paH+EzQcf42DntMXBL3fdmbGu4EPVG7V4j/0/e0mCy3+/r5I3Sca
+	 bkfEuDEIZQXAUKz2Jy+HpSL+jRiaP/s1jDUAeIGk4PorvAi0Fiui7GMcZPv7cfKh1B
+	 Icf6X68UZrxfw==
+Message-ID: <sashiko-outbox-199242@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 15/16] ARM: dts: microchip: sam9x60_curiosity: Enable
- OTP Controller
+Subject: Re: [PATCH v4 06/16] clk: at91: Add peripheral clock id for OTPC
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Alexander Dahl" <ada@thorsis.com>
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261105110715.2486432-16-ada@thorsis.com>
+In-Reply-To: <20261105110715.2486432-7-ada@thorsis.com>
 References: <20261105110715.2486432-1-ada@thorsis.com>
- <20261105110715.2486432-16-ada@thorsis.com>
+ <20261105110715.2486432-7-ada@thorsis.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 05 Nov 2026 14:27:16 +0000
+Date: Thu, 05 Nov 2026 14:29:02 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,64 +60,107 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [Medium] ARM: dts: microchip: redundant otpc status in sam9x60_curiosity.=
-dts
+- [High] clk: at91: uninitialized hw assigned to chws in sama7d65/sama7g5_p=
+mc_setup()
+- [High] clk: at91: out-of-bounds chws write and lookup failure in sama7g5_=
+pmc_setup()
 --
 
-commit 3ab977663934498a6526ef5c90d107058dabd158
+commit 056fbff3f28231ae65a50d25dfabd2b4de1811af
 Author: Alexander Dahl <ada@thorsis.com>
 
-ARM: dts: microchip: sam9x60_curiosity: Enable OTP Controller
+clk: at91: Add peripheral clock id for OTPC
 
-This commit sets status =3D "okay" on the &otpc node in
-at91-sam9x60_curiosity.dts to enable the OTP controller on the SAM9X60
-Curiosity board.
+This series splits up the AT91 PMC clock binding indices per SoC, exports t=
+he
+main RC oscillator clock to Device Tree, and adds the OTPC peripheral clock
+IDs for sam9x60, sam9x7, sama7d65, and sama7g5.
 
-> diff --git a/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts b/arc=
-h/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
-> index b9ffd9e5faacc..c110a8e87568a 100644
-> --- a/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
-> +++ b/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
-> @@ -252,6 +252,10 @@ ethernet-phy@0 {
->  	};
->  };
+> diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
+> index ba8ff413fa2c6..1f3c724739133 100644
+> --- a/drivers/clk/at91/sama7d65.c
+> +++ b/drivers/clk/at91/sama7d65.c
+
+[ ... ]
+
+> @@ -1138,6 +1139,7 @@ static void __init sama7d65_pmc_setup(struct device=
+_node *np)
+>  						   50000000);
+>  	if (IS_ERR(main_rc_hw))
+>  		goto err_free;
+> +	sama7d65_pmc->chws[SAMA7D65_PMC_MAIN_RC] =3D hw;
+
+[Severity: High]
+Does this store an uninitialized pointer into
+sama7d65_pmc->chws[SAMA7D65_PMC_MAIN_RC]?
+
+In sama7d65_pmc_setup(), hw is declared without initialization and
+at91_clk_register_main_rc_osc() stores its return value in main_rc_hw:
+
+	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *main_xtal_hw;
+	...
+	main_rc_hw =3D at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 120000=
+00,
+						   50000000);
+	if (IS_ERR(main_rc_hw))
+		goto err_free;
+	sama7d65_pmc->chws[SAMA7D65_PMC_MAIN_RC] =3D hw;
+
+Should this assign main_rc_hw instead of hw?
+
+> diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+> index 1340c2b006192..3e0cfd2613851 100644
+> --- a/drivers/clk/at91/sama7g5.c
+> +++ b/drivers/clk/at91/sama7g5.c
+
+[ ... ]
+
+> @@ -997,7 +998,7 @@ static void __init sama7g5_pmc_setup(struct device_no=
+de *np)
+>  	if (IS_ERR(regmap))
+>  		return;
 > =20
-> +&otpc {
-> +	status =3D "okay";
-> +};
+> -	sama7g5_pmc =3D pmc_data_allocate(PMC_MCK1 + 1,
+> +	sama7g5_pmc =3D pmc_data_allocate(SAMA7G5_PMC_MCK1 + 1,
+>  					nck(sama7g5_systemck),
+>  					nck(sama7g5_periphck),
+>  					nck(sama7g5_gck), 8);
+> @@ -1014,6 +1015,7 @@ static void __init sama7g5_pmc_setup(struct device_=
+node *np)
+>  						   50000000);
+>  	if (IS_ERR(main_rc_hw))
+>  		goto err_free;
+> +	sama7g5_pmc->chws[SAMA7G5_PMC_MAIN_RC] =3D hw;
 
-[Severity: Medium]
-Is this status override needed, or is status =3D "disabled" missing from the
-base otpc node in arch/arm/boot/dts/microchip/sam9x60.dtsi?
+[Severity: High]
+In sama7g5_pmc_setup(), hw is also uninitialized at this point because
+at91_clk_register_main_rc_osc() assigns its result to main_rc_hw. Should th=
+is
+assign main_rc_hw here as well?
 
-In arch/arm/boot/dts/microchip/sam9x60.dtsi (added in commit 35ed4513c16e),
-the otpc node is defined without a status property:
+[Severity: High]
+Additionally, can writing to sama7g5_pmc->chws[SAMA7G5_PMC_MAIN_RC] overflow
+sama7g5_pmc->chws[] and cause lookups of SAMA7G5_PMC_MAIN_RC to fail?
 
-		otpc: efuse@eff00000 {
-			compatible =3D "microchip,sama7g5-otpc", "syscon";
-			reg =3D <0xeff00000 0xec>;
-			#address-cells =3D <1>;
-			#size-cells =3D <1>;
-			clocks =3D <&pmc PMC_TYPE_CORE SAM9X60_PMC_MAIN_RC>, <&pmc PMC_TYPE_PERI=
-PHERAL 46>;
-		};
+In include/dt-bindings/clock/microchip,sama7g5-pmc.h:
 
-Because __of_device_is_available() in drivers/of/base.c treats a node witho=
-ut
-a status property as enabled by default, the OTP controller is already
-enabled on all boards that include sam9x60.dtsi (such as at91-sam9x60ek.dts=
-).
-When mchp_otpc_probe() in drivers/nvmem/microchip-otpc.c probes the node, it
-calls devm_clk_bulk_get_all_enabled(), keeping SAM9X60_PMC_MAIN_RC and
-peripheral clock 46 permanently enabled.
+	#define SAMA7G5_PMC_MCK1	13
+	#define SAMA7G5_PMC_MAIN_RC	14
 
-Should otpc in sam9x60.dtsi have status =3D "disabled" by default so indivi=
-dual
-boards opt in with status =3D "okay", or is this override in
-at91-sam9x60_curiosity.dts redundant?
+sama7g5_pmc_setup() calls pmc_data_allocate(SAMA7G5_PMC_MCK1 + 1, ...), whi=
+ch
+sets sama7g5_pmc->ncore to 14 and places sama7g5_pmc->shws at
+sama7g5_pmc->chws + 14. Indexing sama7g5_pmc->chws[SAMA7G5_PMC_MAIN_RC] wri=
+tes
+to index 14, past the 14-element chws slice into shws[0]. Furthermore, when
+of_clk_hw_pmc_get() resolves a PMC_TYPE_CORE clock with idx =3D=3D
+SAMA7G5_PMC_MAIN_RC, the check idx < pmc_data->ncore (14 < 14) will be false
+and return ERR_PTR(-EINVAL).
+
+Should pmc_data_allocate() be called with SAMA7G5_PMC_MAIN_RC + 1 as ncore?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261105110715.2486=
-432-1-ada@thorsis.com?part=3D15
+432-1-ada@thorsis.com?part=3D6
