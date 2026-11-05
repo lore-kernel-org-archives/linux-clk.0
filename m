@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793880688;
-	b=f2CvYO0dIrAc5+uaAErwIedc6G0wxcQqdExc/6ghoHJ8gbkqXmfUsmtpwzjxCJ9x569D
-	 1pk/YX0J4VIgdtsETKQmazyaHuEzbQXETdvjnz5tL+N4xCpnGvpD7/kQnlsSUW22XrzuG
-	 8DSMi2kywAsIYFAZGod59gMZz+oYpqNNTk0wFa5B5KP0qoK24H/edPSOrOXlrnZetFQk3
-	 gBHFwb57PkPafZeQ/zJdIXsqllC+2eD4zmtnXicTh2sm22Esjbvz0oSUoWrWAt4sN+5P2
-	 LnoNd4u8uOO0/jhJQRuXWpRnxJ7dVsi+qiT9Rbr2bWvwtn9SYx8kkfuihNTOzG/fzlw==
+	t=1793880690;
+	b=5XeUcIT/pCsylisx/UjaJbeQACSoIlsE8Pw88kvX+Zkooa1F+sSYmSygqpnoH7vjCyYT
+	 dxZp2fyRANEYoNvMjIuDL+wDSbnxdFfSRiWfITxj0gNtISG2zrP/7W+D9VeFO6eg0I/LF
+	 mFhbMr3FgyGqSp0dSpgLI/oc4699uYxm4Un5+UMp0XkNE0nzc5+PC157iREDwKjp4WwXs
+	 ZTJ7RlY8I5EWE9tbH52n8VJo+HmVAWEi9fZOnZvTlJkNN5BJv7vscV7QaWg2/7DQuHsje
+	 Ac7sNSBHQJ7wKw6jQ0td/JnUz8Nnp/AXKfkYMeIk64kUHE6Mmfbp7jcjSJtTUYpiVww==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793880688;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793880690;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=QdSlhWqpADpPe9T2ErdMYqWejUZfwswA3oJg9BBjNa4=;
-	b=t4iuGCL3YzHookHaxzMubfgVyu4SQvrhVngMuGY0Pxed35cbsmeCW3CITXJHGtFnCGo/
-	 mpAvVQ4x/JLpRQLvTbWqACbQML5wnD7eaU5D4YBfTrGhAOY6iV23I/MFFbiEvPeYBb56/
-	 Aj8OqNPsiR0NzqTzy+rlFnPlZePKKL2qDuIDe9uSbP+Idj1zWxhKgNbrw19RIzUjyXBaw
-	 D/utMsoDGji2bVjMh4qv+HpX0IHbdbgus9F/qINcgDytxRCo/D49QBnROUHHbPmvWb/er
-	 PVcHLM/N3C5zgYxCR4xDPpmRQkdyBBDfq+gvV3IE+EUp9bgpHy/V8KCHJwQmn9r1XqQ==
+	bh=NK/khkk0YHVKOYK9Egb+wYboRXW4TUYyNVtUBHR24As=;
+	b=1k5jXOJxMgUsHlCuas+a5oiRvypngKCucSfuJnLoZDyJgibrCAZxk9MpVoxz8lzFeqXL
+	 31tJ0BAVWTyqtdBh4JwvxXK1PQzk9N5Uc68VwiogAlLEDr+gt3P5ZndJf8wEJI7irziRp
+	 Ia2yfwKlBmYmFZBz22R7lMxE9NSMyKX71quACZ0LflelsrJC8CIMO8FSF09SHCTa9ZM4u
+	 +W9nBjNpIXQlP+QgkxvlrMKfaLW2b/gAYDuJ1HVE6zSgZvMom/fQk3v+3dosnl3kucMb3
+	 oH6tzdjyb+6QVF6Ge71mOzP3FtYKuUonXbw9AHoVPVClQ7bLv0h8n++uJAW2XqeWZjQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="yBrj7/FL";
-	arc=none smtp.remote-ip=209.85.128.43
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="eFLj/20d";
+	arc=none smtp.remote-ip=209.85.128.54
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA84606EE98
-	for <linux-clk@vger.kernel.org>; Thu,  5 Nov 2026 12:11:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DCA84606EE98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1383F606EEB6
+	for <linux-clk@vger.kernel.org>; Thu,  5 Nov 2026 12:11:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1383F606EEB6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yBrj7/FL
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4a35a60499eso14045615e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 05 Nov 2026 04:11:27 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=eFLj/20d
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a59100fa83so16853775e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 05 Nov 2026 04:11:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793880686; x=1794485486; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793880688; x=1794485488; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=QdSlhWqpADpPe9T2ErdMYqWejUZfwswA3oJg9BBjNa4=;
-        b=yBrj7/FLS1cGfZoRHN/cXrm/vlpnCjSfwnC2lMJxvnoFtLQfkyyB8nG9K6LucI/PpF
-         Bu27Zj49vA8n82GLc4nBr11mW8i7/j5q0hN6rTtYguOnnud4Cx0y4fZLGp95/dU6hKWF
-         4fO7UlAUrGsDEdmQqjIokpAh7fPxVZsM3rf38R6JVahC5tTCTaVuhO6kjjBkKkyq+i/a
-         R6yXPI7ibx57CY/kalfOEOc+w+m6g4qiYkk++MUvARxkQHDA1/P83D39ekL4HxyXWk+d
-         cQkyVexSngGNJKY7US2Te6+Z4Z83Q+2qncAe9N5ptARV+NsX8eIA+xDcH3yTzAWDX5n2
-         UUCQ==
+        bh=NK/khkk0YHVKOYK9Egb+wYboRXW4TUYyNVtUBHR24As=;
+        b=eFLj/20d7E2DhTKN1/H5dQL1wAaW9l7kKU6DASPZtMSkPfQLdjdW/L3oEmftPW9Cp0
+         C1FgeYN+0EzLmsuISaxp8bX2yTUGV206JdTNp0BuhQOWr+Q8Yj2ByOpwWIG2ICpR+mpH
+         S3366mmWA8dx6qknIV+vy8PU9LtO3O3S4A+cbKhUMIHjUgKybRco89YSjlHBfuoolVY8
+         iEAYvjOIzOhZjSb+ni/HmnWnecUmT8Be8c5gNEqbUGizu+TMzY28h3Z7ueILKap7hkUo
+         oXUwyVw0HPOKz1vWfAHoJ8myDCcsOzLisrTGf0KFcGiQBvHA1tehDWR/B9/sFEE4LbCL
+         6eaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793880686; x=1794485486;
+        d=1e100.net; s=20260707; t=1793880688; x=1794485488;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=QdSlhWqpADpPe9T2ErdMYqWejUZfwswA3oJg9BBjNa4=;
-        b=rA0mzNi8oaAC1tXo1XfMEVov2MxTT5rjc5rVDmilLXXi+cm132Vv2FH2SFKWvpoWqw
-         rmmT9g4aVu5/n3pUfpZj1QQrTUCClSO8LVpOd7Hu8YNu+80eASqT5FO/1ubdqkoRc56f
-         lN8DbJBS/0ADFb4yBUvtVKJAHLSA9hgnvnWNHbxVvUup3dJzpW2oOYyvqrhbZtLocFeX
-         ZHlDi8Ya8kxRxS1E9koi61F5U1LplrzxKEzEHY309wzs2JQ7Wpi3mlyVcCi07tJenIMO
-         aahMGVwU+YnLEUJ1OdtnylKvfEmVThtKmVoT9CIRvf00zBf/nLLHzie1gs1FxsZkZ3az
-         2XhQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxP2d4wSZR50s0TZfQTspLlLvzWgdZ3tNAkP7X/eKcOIdkbT2y7sYF/Gc3pUL5V/ANEenwHrxCUmbg=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/cRu5Yio2mB2eGIFyopZyFeKTVMKCuQ0ZHSLCZI5NwxdLmuDSh
-	wZDCmGPj3VqiQ7am09aApPelymV3qxC87BEuRGs0gNtK1qypYD4wd1gA
-X-Gm-Gg: AYBFou0cobw3nIKvpUcqMfrmq26qjCgIo9X04LtsCEa6n3ekby760NYyYCN7FLaPosM
-	LDA4iC1+Od8BlK53KJKRC3vR5USuhnQlfnhr9wm5dDtjuB6rt6akbQMzkUG7DawmRFSsdCKtiUL
-	5vX69NxA2Ie3D4oG2MmcaminyNnnRhEBTWwyHjtCGR3v1oucdLbcAm4ex2zELv4yV3SZllHFsFk
-	i0SEWm0im+NvKIud6rStL8jN6f3kSdP2+dxG2viNRnfo1js6435SFtXCvpagc7UZuN7rlLvSanW
-	1wQGG0UnHefLa7Alb7mVlPC1cHuasA1kc7bba8L4+VZ2wlg4jb8/J2yqGW++gh0r5qNr34w+mUL
-	0azNW3EFPOhzYX8DrEITCPLRoGPlY3XcGa1TiI24Vf8gyhvz9WThLPALm9/zJIsOwMnmMa7BhC5
-	VIB+gMi2jKwTzV5+QlVLg/8YK7IYS1rVs06hJmpKPb93rvO9pYDOTOkIsNXoD2FNz8BNDRynho+
-	hWTtEYzSWJGv8OrhYXAQIdNMxJa5DeJEdXUdWiJGiyll8qNXNfLAR2hI+9k4+qJ5sT+vrgEQdsO
-	t2SSzP3ODjziAPKy7qU1x9s+8ZRhkAnt9s76uwtJgDml2HqRZ4+wDN8PmzQghWftMTRW5x4SED9
-	RybCbMdM3qPMWhdFssSGO48nc
-X-Received: by 2002:a05:600c:6212:b0:4a4:de70:2ad4 with SMTP id 5b1f17b1804b1-4ac17ffa395mr399281145e9.22.1793880686157;
-        Thu, 05 Nov 2026 04:11:26 -0800 (PST)
+        bh=NK/khkk0YHVKOYK9Egb+wYboRXW4TUYyNVtUBHR24As=;
+        b=s7lEbMERWO4ROwc7k6PzRN8ZAfqwGcTFtNVvZ9YVaGduR6C+a6FSP3IGtBpU3Tlq9A
+         25a+sqBeF/bMCNNj0I3BD8CrJ/zwOCH3CtsrqvK7jkr+cIfHjW10wol2uIefy7TZd5fr
+         WuAjaEBEgZKN921eNjHHtUsWIe6hoqlmecs3eH+YWS6P7+JstD9RmTmjF7LKgqIQPcrY
+         Ale/eE4NdY2Nx1xWKETMw0g4Tuqw3RkIsi10Aw0YGlU+Xd6eljiw7hFEbV/tQAGXCQtD
+         251xfqwzgyW+2hpjDefxi9z4x01425mTF65wDCUJ24bkjlZQRHhazA2J5vfx1o+DZbt0
+         HGZw==
+X-Forwarded-Encrypted: i=1; AKwUvBxhnffqW4U6Ad0waE1KdNQzSq6Y/yaxPu0bpD2PBv3wNa+81ppVw3IxkxvwltLLHuyOGZFC8wy+xH8=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8TXs3eYc7ttTLS8IJ6YgENKeerDeI6iGQzstsCus34xo4CeOIJ
+	xKSbyYX1AKiLyKAMChTAG1gRBW1FsxodTyV3qSUo09B+nmwaDdXJD1f/
+X-Gm-Gg: AYBFou3TVUt1ZSCMXHy+wedR3atLYwRfHKxTpipe6zC5q8yBrIzIV6b6/4mfrrXqHlS
+	I8akVgi2Kcgt+9vIKiFGkvCYOdktxvL7ohg+j0LRgVHn+R4sGBtLsYMj0enLI/gMN7Y73CVSrNT
+	bCNkFjqLEmCIIvH5AgsxGW2YGtIWGoAG5D2d5Eoi/qyvIiN6t1sOrpSUNZ3jU+popn58CEV0dpP
+	upNm6UkvBTJG6dae4F50KxSEP978ZNeUdm7RNqJ30H9ptN6DohEZ2iFSmBmLftmsaCb0vczjMIc
+	4Mqz3sXmqxLmaWuKKp7C58Vi+3sAp3bserOZMZLsQUJk3CeVnyWs9heW+GHfdZDt+sGhHik5E4a
+	qSLWKDTfRgARQunb8RPH75oqfnXMTEbjF2rgS3ldYH0WPw5MQFZr6iIVtlxMiI+hw7DByAmYQvY
+	n5bhcLzqm2L5ca72LsxpqMDYPp0IlP2h72AtDVA/A81pHgvb1B/jLg11D8toZ3H5EWvJEG63oJk
+	CtA4ki61g0wnnLhkHuTCfAer4lxxa+zf8Sk8cN/+/Etx5Sg5fEg8SDG6ROYROe2Cqp6EICh4hcY
+	x7FBpgmMkAidi16XO1pRbrOOV5RkHT9jYncZlBYA9KStyZSaiNymkhtu5VJz2I9+vRmPqCLDUcv
+	hTGkXi6SboqkDBsVuWCij4ziX
+X-Received: by 2002:a05:600c:8b0a:b0:4a2:e0c:2b0a with SMTP id 5b1f17b1804b1-4ac1709a200mr433001995e9.16.1793880688427;
+        Thu, 05 Nov 2026 04:11:28 -0800 (PST)
 Received: from Ansuel-XPS24.lan (93-34-90-148.ip49.fastwebnet.it. [93.34.90.148])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4b56f02386bsm58869885e9.7.2026.11.05.04.11.25
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4b56f02386bsm58869885e9.7.2026.11.05.04.11.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 04:11:25 -0800 (PST)
+        Thu, 05 Nov 2026 04:11:28 -0800 (PST)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
@@ -91,11 +91,10 @@ To: Stephen Boyd <sboyd@kernel.org>,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v10 1/5] dt-bindings: clock: airoha: Document support for AN7583 clock
-Date: Thu,  5 Nov 2026 13:10:54 +0100
-Message-ID: <20261105121059.11201-2-ansuelsmth@gmail.com>
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v10 3/5] clk: en7523: protect concurrent access to reset and PCI register
+Date: Thu,  5 Nov 2026 13:10:56 +0100
+Message-ID: <20261105121059.11201-4-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261105121059.11201-1-ansuelsmth@gmail.com>
 References: <20261105121059.11201-1-ansuelsmth@gmail.com>
@@ -110,170 +109,237 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document support for Airoha AN7583 clock. This is based on the EN7523
-clock schema with the new requirement of the "airoha,chip-scu".
+Use spinlock for concurrent access to reset and PCI register to catch case
+when clock is enabled/disabled while a reset is also operated at the same
+time.
 
-The register for clock and reset for normal system and PCIe are scattered
-between the "SCU" and "chip SCU" registers (they are 2 different register
-block, the name is taken from the programming guide)
-
-- Chip SCU provide register access to some clk gate and clk rate
-- SCU provide register for reset, PCIe clock, other clock gate and PHY
-  SERDES.
-
-Upcoming and current airoha clock driver all follow this pattern of
-declaring one of the 2 register and use a sysconf for the other as the 2
-register block are tighlty coupled.
-
-EN7581 internally handle the syscon with a direct reference by the use of
-syscon_regmap_lookup_by_compatible while AN7583 wants to make this
-explicit in DT with the new "airoha,chip-scu" phandle.
-
-Similar to EN7581, also AN7583 permit the selection of the serdes line.
-
-Add additional binding for additional clock and reset lines.
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- .../bindings/clock/airoha,en7523-scu.yaml     | 25 +++++++
- include/dt-bindings/clock/en7523-clk.h        |  3 +
- .../dt-bindings/reset/airoha,an7583-reset.h   | 65 +++++++++++++++++++
- 3 files changed, 93 insertions(+)
- create mode 100644 include/dt-bindings/reset/airoha,an7583-reset.h
+ drivers/clk/clk-en7523.c | 66 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 65 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-index fc37786ac7ed..05cd20ce3ab9 100644
---- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-+++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-@@ -31,6 +31,7 @@ properties:
-   compatible:
-     items:
-       - enum:
-+          - airoha,an7583-scu
-           - airoha,en7523-scu
-           - airoha,en7581-scu
-           - econet,en751221-scu
-@@ -57,12 +58,36 @@ properties:
-       available serdes port.
-     const: 1
+diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+index 2baec734df9f..c05d0bfa2340 100644
+--- a/drivers/clk/clk-en7523.c
++++ b/drivers/clk/clk-en7523.c
+@@ -123,6 +123,8 @@ struct en_clk_desc {
  
-+  airoha,chip-scu:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: phandle to the Chip SCU providing the registers required
-+      for configuring the PCIe related clocks and resets.
-+
- required:
-   - compatible
-   - reg
-   - '#clock-cells'
+ struct en_clk_gate {
+ 	void __iomem *base;
++	/* protect SCU register */
++	spinlock_t lock;
+ 	struct clk_hw hw;
+ };
  
- allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          const: airoha,an7583-scu
-+
-+    then:
-+      properties:
-+        reg:
-+          maxItems: 1
-+
-+      required:
-+        - airoha,chip-scu
-+        - '#reset-cells'
-+        - '#phy-cells'
-+
-+    else:
-+      properties:
-+        airoha,chip-scu: false
-+
-   - if:
-       properties:
-         compatible:
-diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
-index edfa64045f52..0fbbcb7b1b25 100644
---- a/include/dt-bindings/clock/en7523-clk.h
-+++ b/include/dt-bindings/clock/en7523-clk.h
-@@ -14,4 +14,7 @@
+@@ -130,6 +132,8 @@ struct en_rst_data {
+ 	const u16 *bank_ofs;
+ 	const u16 *idx_map;
+ 	void __iomem *base;
++	/* protect SCU register */
++	spinlock_t lock;
+ 	struct reset_controller_dev rcdev;
+ };
  
- #define EN7581_CLK_EMMC		8
+@@ -577,44 +581,78 @@ static u32 en7523_get_div(const struct en_clk_desc *desc, u32 val)
+ static int en7523_pci_is_enabled(struct clk_hw *hw)
+ {
+ 	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
++	unsigned long flags;
++	u32 val;
++
++	spin_lock_irqsave(&cg->lock, flags);
++	val = readl(cg->base + REG_PCI_CONTROL);
++	spin_unlock_irqrestore(&cg->lock, flags);
  
-+#define AN7583_CLK_MDIO0	9
-+#define AN7583_CLK_MDIO1	10
+-	return !!(readl(cg->base + REG_PCI_CONTROL) & REG_PCI_CONTROL_REFCLK_EN1);
++	return !!(val & REG_PCI_CONTROL_REFCLK_EN1);
+ }
+ 
+ static int en7523_pci_prepare(struct clk_hw *hw)
+ {
+ 	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
+ 	void __iomem *np_base = cg->base;
++	unsigned long flags;
+ 	u32 val, mask;
+ 
+ 	/* Need to pull device low before reset */
++	spin_lock_irqsave(&cg->lock, flags);
+ 	val = readl(np_base + REG_PCI_CONTROL);
+ 	val &= ~(REG_PCI_CONTROL_PERSTOUT1 | REG_PCI_CONTROL_PERSTOUT);
+ 	writel(val, np_base + REG_PCI_CONTROL);
++	spin_unlock_irqrestore(&cg->lock, flags);
 +
- #endif /* _DT_BINDINGS_CLOCK_AIROHA_EN7523_H_ */
-diff --git a/include/dt-bindings/reset/airoha,an7583-reset.h b/include/dt-bindings/reset/airoha,an7583-reset.h
-new file mode 100644
-index 000000000000..433a5c6180bf
---- /dev/null
-+++ b/include/dt-bindings/reset/airoha,an7583-reset.h
-@@ -0,0 +1,65 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2024 AIROHA Inc
-+ * Author: Christian Marangi <ansuelsmth@gmail.com>
-+ */
+ 	usleep_range(1000, 2000);
+ 
+ 	/* Enable PCIe port 1 */
++	spin_lock_irqsave(&cg->lock, flags);
+ 	val |= REG_PCI_CONTROL_REFCLK_EN1;
+ 	writel(val, np_base + REG_PCI_CONTROL);
++	spin_unlock_irqrestore(&cg->lock, flags);
 +
-+#ifndef __DT_BINDINGS_RESET_CONTROLLER_AIROHA_AN7583_H_
-+#define __DT_BINDINGS_RESET_CONTROLLER_AIROHA_AN7583_H_
+ 	usleep_range(1000, 2000);
+ 
+ 	/* Reset to default */
++	spin_lock_irqsave(&cg->lock, flags);
+ 	val = readl(np_base + REG_RESET_CONTROL1);
+ 	mask = REG_RESET_CONTROL_PCIE1 | REG_RESET_CONTROL_PCIE2 |
+ 	       REG_RESET_CONTROL_PCIEHB;
+ 	writel(val & ~mask, np_base + REG_RESET_CONTROL1);
++	spin_unlock_irqrestore(&cg->lock, flags);
 +
-+/* RST_CTRL2 */
-+#define AN7583_XPON_PHY_RST		 0
-+#define AN7583_GPON_OLT_RST		 1
-+#define AN7583_CPU_TIMER2_RST		 2
-+#define AN7583_HSUART_RST		 3
-+#define AN7583_UART4_RST		 4
-+#define AN7583_UART5_RST		 5
-+#define AN7583_I2C2_RST			 6
-+#define AN7583_XSI_MAC_RST		 7
-+#define AN7583_XSI_PHY_RST		 8
-+#define AN7583_NPU_RST			 9
-+#define AN7583_TRNG_MSTART_RST		10
-+#define AN7583_DUAL_HSI0_RST		11
-+#define AN7583_DUAL_HSI1_RST		12
-+#define AN7583_DUAL_HSI0_MAC_RST	13
-+#define AN7583_DUAL_HSI1_MAC_RST	14
-+#define AN7583_XPON_XFI_RST		15
-+#define AN7583_WDMA_RST			16
-+#define AN7583_WOE0_RST			17
-+#define AN7583_HSDMA_RST		18
-+#define AN7583_TDMA_RST			19
-+#define AN7583_EMMC_RST			20
-+#define AN7583_SOE_RST			21
-+#define AN7583_XFP_MAC_RST		22
-+#define AN7583_MDIO0_RST		23
-+#define AN7583_MDIO1_RST		24
-+/* RST_CTRL1 */
-+#define AN7583_PCM1_ZSI_ISI_RST		25
-+#define AN7583_FE_PDMA_RST		26
-+#define AN7583_FE_QDMA_RST		27
-+#define AN7583_PCM_SPIWP_RST		28
-+#define AN7583_CRYPTO_RST		29
-+#define AN7583_TIMER_RST		30
-+#define AN7583_PCM1_RST			31
-+#define AN7583_UART_RST			32
-+#define AN7583_GPIO_RST			33
-+#define AN7583_GDMA_RST			34
-+#define AN7583_I2C_MASTER_RST		35
-+#define AN7583_PCM2_ZSI_ISI_RST		36
-+#define AN7583_SFC_RST			37
-+#define AN7583_UART2_RST		38
-+#define AN7583_GDMP_RST			39
-+#define AN7583_FE_RST			40
-+#define AN7583_USB_HOST_P0_RST		41
-+#define AN7583_GSW_RST			42
-+#define AN7583_SFC2_PCM_RST		43
-+#define AN7583_PCIE0_RST		44
-+#define AN7583_PCIE1_RST		45
-+#define AN7583_CPU_TIMER_RST		46
-+#define AN7583_PCIE_HB_RST		47
-+#define AN7583_XPON_MAC_RST		48
-+/* RST_PCIC */
-+#define AN7583_PCIC_PERSTOUT0_RST	49
-+#define AN7583_PCIC_PERSTOUT1_RST	50
+ 	usleep_range(1000, 2000);
 +
-+#endif /* __DT_BINDINGS_RESET_CONTROLLER_AIROHA_AN7583_H_ */
++	spin_lock_irqsave(&cg->lock, flags);
++	val = readl(np_base + REG_RESET_CONTROL1);
+ 	writel(val | mask, np_base + REG_RESET_CONTROL1);
++	spin_unlock_irqrestore(&cg->lock, flags);
++
+ 	msleep(100);
++
++	spin_lock_irqsave(&cg->lock, flags);
++	val = readl(np_base + REG_RESET_CONTROL1);
+ 	writel(val & ~mask, np_base + REG_RESET_CONTROL1);
++	spin_unlock_irqrestore(&cg->lock, flags);
++
+ 	usleep_range(5000, 10000);
+ 
+ 	/* Release device */
++	spin_lock_irqsave(&cg->lock, flags);
+ 	mask = REG_PCI_CONTROL_PERSTOUT1 | REG_PCI_CONTROL_PERSTOUT;
+ 	val = readl(np_base + REG_PCI_CONTROL);
+ 	writel(val & ~mask, np_base + REG_PCI_CONTROL);
++	spin_unlock_irqrestore(&cg->lock, flags);
++
+ 	usleep_range(1000, 2000);
++
++	spin_lock_irqsave(&cg->lock, flags);
++	val = readl(np_base + REG_PCI_CONTROL);
+ 	writel(val | mask, np_base + REG_PCI_CONTROL);
++	spin_unlock_irqrestore(&cg->lock, flags);
++
+ 	msleep(250);
+ 
+ 	return 0;
+@@ -624,11 +662,14 @@ static void en7523_pci_unprepare(struct clk_hw *hw)
+ {
+ 	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
+ 	void __iomem *np_base = cg->base;
++	unsigned long flags;
+ 	u32 val;
+ 
++	spin_lock_irqsave(&cg->lock, flags);
+ 	val = readl(np_base + REG_PCI_CONTROL);
+ 	val &= ~REG_PCI_CONTROL_REFCLK_EN1;
+ 	writel(val, np_base + REG_PCI_CONTROL);
++	spin_unlock_irqrestore(&cg->lock, flags);
+ }
+ 
+ static struct clk_hw *en7523_register_pcie_clk(struct device *dev,
+@@ -646,6 +687,7 @@ static struct clk_hw *en7523_register_pcie_clk(struct device *dev,
+ 		return NULL;
+ 
+ 	cg->base = np_base;
++	spin_lock_init(&cg->lock);
+ 	cg->hw.init = &init;
+ 
+ 	if (init.ops->unprepare)
+@@ -660,10 +702,15 @@ static struct clk_hw *en7523_register_pcie_clk(struct device *dev,
+ static int en7581_pci_is_enabled(struct clk_hw *hw)
+ {
+ 	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
++	unsigned long flags;
+ 	u32 val, mask;
+ 
+ 	mask = REG_PCI_CONTROL_REFCLK_EN0 | REG_PCI_CONTROL_REFCLK_EN1;
++
++	spin_lock_irqsave(&cg->lock, flags);
+ 	val = readl(cg->base + REG_PCI_CONTROL);
++	spin_unlock_irqrestore(&cg->lock, flags);
++
+ 	return (val & mask) == mask;
+ }
+ 
+@@ -671,11 +718,15 @@ static int en7581_pci_enable(struct clk_hw *hw)
+ {
+ 	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
+ 	void __iomem *np_base = cg->base;
++	unsigned long flags;
+ 	u32 val, mask;
+ 
+ 	mask = REG_PCI_CONTROL_REFCLK_EN0 | REG_PCI_CONTROL_REFCLK_EN1;
++
++	spin_lock_irqsave(&cg->lock, flags);
+ 	val = readl(np_base + REG_PCI_CONTROL);
+ 	writel(val | mask, np_base + REG_PCI_CONTROL);
++	spin_unlock_irqrestore(&cg->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -684,11 +735,16 @@ static void en7581_pci_disable(struct clk_hw *hw)
+ {
+ 	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
+ 	void __iomem *np_base = cg->base;
++	unsigned long flags;
+ 	u32 val, mask;
+ 
+ 	mask = REG_PCI_CONTROL_REFCLK_EN0 | REG_PCI_CONTROL_REFCLK_EN1;
++
++	spin_lock_irqsave(&cg->lock, flags);
+ 	val = readl(np_base + REG_PCI_CONTROL);
+ 	writel(val & ~mask, np_base + REG_PCI_CONTROL);
++	spin_unlock_irqrestore(&cg->lock, flags);
++
+ 	usleep_range(1000, 2000);
+ }
+ 
+@@ -791,18 +847,21 @@ static int en7523_reset_update(struct reset_controller_dev *rcdev,
+ 	u32 offset = rst_data->bank_ofs[id / RST_NR_PER_BANK];
+ 	void __iomem *addr = rst_data->base + offset;
+ 	bool inverted = false;
++	unsigned long flags;
+ 	u32 val;
+ 
+ 	/* For PCIC reset logic is inverted, 0:assert 1:deassert */
+ 	if (offset == REG_NP_SCU_PCIC)
+ 		inverted = true;
+ 
++	spin_lock_irqsave(&rst_data->lock, flags);
+ 	val = readl(addr);
+ 	if (assert ^ inverted)
+ 		val |= BIT(id % RST_NR_PER_BANK);
+ 	else
+ 		val &= ~BIT(id % RST_NR_PER_BANK);
+ 	writel(val, addr);
++	spin_unlock_irqrestore(&rst_data->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -826,13 +885,17 @@ static int en7523_reset_status(struct reset_controller_dev *rcdev,
+ 	u32 offset = rst_data->bank_ofs[id / RST_NR_PER_BANK];
+ 	void __iomem *addr = rst_data->base + offset;
+ 	bool inverted = false;
++	unsigned long flags;
+ 	u32 val;
+ 
+ 	/* For PCIC reset logic is inverted, 0:assert 1:deassert */
+ 	if (offset == REG_NP_SCU_PCIC)
+ 		inverted = true;
+ 
++	spin_lock_irqsave(&rst_data->lock, flags);
+ 	val = readl(addr) & BIT(id % RST_NR_PER_BANK);
++	spin_unlock_irqrestore(&rst_data->lock, flags);
++
+ 	return inverted ? !val : !!val;
+ }
+ 
+@@ -866,6 +929,7 @@ static int en7581_reset_register(struct device *dev, void __iomem *base,
+ 	rst_data->bank_ofs = rst_reg_ofs;
+ 	rst_data->idx_map = rst_map;
+ 	rst_data->base = base;
++	spin_lock_init(&rst_data->lock);
+ 
+ 	rst_data->rcdev.nr_resets = nr_resets;
+ 	rst_data->rcdev.of_xlate = en7523_reset_xlate;
 -- 
 2.55.0
 
