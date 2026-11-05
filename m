@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793910211;
-	b=LJKV5s1uF1br/fGyLHMSLS24/BnOd4JZs359Tq0NfhwoAKNUy1okm6zw8ajN3cV6RgSe
-	 tpppGY5DB1Zj2Bwnv5I5iYfdRhU5v0+Vd3bExHH1cJ1mMUVlTPQJaOj57gc3vUQ/T7zCC
-	 nqjOZXmoHkpURHkkbodxiZ6vhBWKmR6etumQxyOqHc9DUcGEi13vbVLEjoyPR5VlhsjvM
-	 7JQW787N9dRHdBhegcGyf7ceqgRZ42QTCoyQFrY+Xfiwr4qt/m0ammB4WdiZyBXQ/MrIb
-	 4O/ODtpzf4+R3SRTlPGFQ/L3Y5MJS1nvrERSeF0I3+6+ShXN4Snolxmz0RDYLahmdHQ==
+	t=1793910370;
+	b=fWU9e7oOzhWfx9qrIWY1IEmv8Dor6H0Vxxr9K7/lgubyqKE0b3h2lWwQnuooSfFqJ0uI
+	 Mh6ZnU4ru0SBLJ1hBE+kuyj9idmwFjz+axmTnULBLVdENvEyrBJhwyPdM9vl44VOSPXCj
+	 1D8L+jPQfHcBIfyiH2LtHWCFMC0IbYrS4atiwlb7D44Hv0Eb+Qn2xQ1ezRHeGr0m/YMce
+	 nhdLpxY46AvmPSl672LE3Sm5glv3VCfR6khPKUb98G5vV8h7Xxz+MhOpyqrYZV0x6K5UC
+	 Xz2FIgLf1M+JKAUnDqlye50vJewD7FTadjkxxySRyZmdGOvxo2AsY79IgCGg2OiBWFw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793910211;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793910370;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=EW+t71jhy7LMxyaA2zPHlVI+DPJ5VusFQchtnKOjjO4=;
-	b=XCogHgPW/DSpv7BMVSkXfirB0hojc0L9frQe5ntjBaMCR64JvXYbMocp2IYAuZMd8x1O
-	 hiNpzYqzee98ITXIAOxpnv5DkUmzTWib3eGxON+G36aEgPKkOCuhd0IueDu81zdGY6rmI
-	 D/T8HPPdP4uN6JqTbVsd0w1ilRKF8vrK+88rn4d4kY3P3BRsJK+y0l+Ciqe1OhotevUIA
-	 v9iLbPL9ehCkoUPCUSxt+MIigqUQdgADrQTfPKCivAJ75TkfMYC8gAFM04ZBvCg+RC2Xe
-	 Sh8dpOpFAXuxQA2y6ofsctLpLXKBj4GEcrXtMVphuN+txS5dA7EydGt1z3b+zG6zRDw==
+	bh=6PhYnOuaolg4JTRnCvQouViB9Tyk3Jhd5dCgyqQ05EE=;
+	b=MXFmFLWy0qswSt87RwtlLzAcOTQV2fNC49oWEwBz2iZ52e+n5vUrGBOlvv3htuipnLi7
+	 elnL7XzbBVwrl5G34bOUXNT8DPZzr0UbsoiNk35Pd1t/YfuQ8KFYKgPiOxNmDvBbRHyGv
+	 3CRNtlus1IsedP51+2Z6e4BQ/3aDi9ckRZ/eMTcjNbO0nrIaN0nsbGP6cHUVyD7l+mSCk
+	 cTIiFzYm1Dqtva97Z69kkx1scQiIorzzY4brWpIgJe6iCJSH+DuGrDYkLsFyz2p9laA3h
+	 08MbkxPweztSk5jIulTAhjOs38udCUX+hddIl/OmVw63WG6LXGs6T3quexW4l2peSYw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="WtYRHUl/";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H257HZkY;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F80A606A329;
-	Thu,  5 Nov 2026 20:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB02606A326;
+	Thu,  5 Nov 2026 20:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WtYRHUl/
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 698F61F008A1;
-	Thu,  5 Nov 2026 20:23:23 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H257HZkY
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 755471F0089F;
+	Thu,  5 Nov 2026 20:26:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793910210;
-	bh=EW+t71jhy7LMxyaA2zPHlVI+DPJ5VusFQchtnKOjjO4=;
+	s=k20260515; t=1793910369;
+	bh=6PhYnOuaolg4JTRnCvQouViB9Tyk3Jhd5dCgyqQ05EE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=WtYRHUl/waP6OoYRdcQo/GE3JvGS8fKocRo+cJOuPumx17rncEQclB5f8h6X68j3Q
-	 RW729mDnYA33mXjmRcPotZRj7xg011VRnbjMvwfcdijHAl9yl0tke8azO0LeAPVmCY
-	 JG7dkMPDjpaxxx/sgbJfnjuEQkPQaKzIGQD+NG4n2mTtPvNGx8v/rf/OejnIoAyUsO
-	 DP8dyNV6cLmeEC4F8jU09BY2MZ6eDBNCSEVd+PzH32dMzkqrvMxvamTQdtfJ9p9aZR
-	 s8NVrboS0XwdAsXv36hp3JILfnfsthzQFZQTrXG6FmQv5QOkrKI4li9q77DnH3em8B
-	 yLVv1IovvmBvw==
-Message-ID: <53323b7e-5169-4a36-a051-ed1eb1718b7d@kernel.org>
-Date: Thu, 5 Nov 2026 21:23:20 +0100
+	b=H257HZkY5ZLXLGZh1ay3PnMy0GH0TJ3ZT8gnwBg5Nr15yy1uRkoGszb4bClrp63j4
+	 hUy9r64h25pMvJ25y9cjdvQFXwjSBYjn5gYoAryOUN/AOv1lrprdsfhdMaF/duKzf3
+	 TqtHSZAIaV1N3xZGlxEHIWNyHU3v7DIG/u44+6XO1zpuqdOk6rgBx+63lMdFjiIAiv
+	 NK0ZRkVg8vSX1R2RPctHfg3MnBT0ioUhyxSs2rB10Az+2u8ptgr1U4jJ2x+5fVqm19
+	 lP0UnY19PWjgYwOUXLa9pl9PZoemsC7fBxDZ24/eNB4jSzvqr2oX5zNffJw88LDS5v
+	 m6fwm7TNfX8dA==
+Message-ID: <a724d159-1509-4649-afa7-a2669d37b4f6@kernel.org>
+Date: Thu, 5 Nov 2026 21:26:00 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -52,8 +52,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: soc: introduce
- toshiba,tc9564-config-syscon.yaml
+Subject: Re: [PATCH 0/4] soc: toshiba: tc9564: config system controller
 To: Alex Elder <elder@riscstar.com>, sboyd@kernel.org,
  bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, p.zabel@pengutronix.de,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
@@ -63,7 +62,6 @@ Cc: daniel@riscstar.com, mohd.anwar@oss.qualcomm.com,
  changhuang.liang@starfivetech.com, devicetree@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20261104004332.2141282-1-elder@riscstar.com>
- <20261104004332.2141282-2-elder@riscstar.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,107 +107,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20261104004332.2141282-2-elder@riscstar.com>
+In-Reply-To: <20261104004332.2141282-1-elder@riscstar.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 04/11/2026 01:43, Alex Elder wrote:
-> Define the binding for the system controller that implements the clock
-> and reset controller functionality present in the Toshiba TC9564 SoC.
+> This series is comprised of some code that was previously sent
+> separately.  It now incorporates a new system controller driver
+> that advertises clock and reset functionality, as well as regmap
+> access to its address range.  This combination is being treated
+> as a new series.  (Details of previous versions are below.)
 > 
-> Co-developed-by: Daniel Thompson <daniel@riscstar.com>
-> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  .../toshiba/toshiba,tc9564-config-syscon.yaml | 68 +++++++++++++++++++
->  MAINTAINERS                                   |  8 +++
->  include/dt-bindings/soc/toshiba,tc9564.h      | 46 +++++++++++++
->  3 files changed, 122 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/toshiba/toshiba,tc9564-config-syscon.yaml
->  create mode 100644 include/dt-bindings/soc/toshiba,tc9564.h
+> The Toshiba TC9564 is an SoC that attaches to a host system via PCIe.
+> It includes a PCIe switch with three downstream ports.  To one of
+> these ports an embedded PCIe endpoint is attached, and that implements
+> two PCI functions.  BAR 4 for both PCI functions provides access to
+> registers controlling blocks within the SoC.
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/toshiba/toshiba,tc9564-config-syscon.yaml b/Documentation/devicetree/bindings/soc/toshiba/toshiba,tc9564-config-syscon.yaml
-> new file mode 100644
-> index 0000000000000..5a241a9c915d1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/toshiba/toshiba,tc9564-config-syscon.yaml
-> @@ -0,0 +1,68 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/toshiba/toshiba,tc9564-config-syscon.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Toshiba TC9564 Multifunction System Controller
-> +
-> +maintainers:
-> +  - Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-> +  - Alex Elder <elder@riscstar.com>
-> +  - Daniel Thompson <daniel@riscstar.com>
-> +
-> +description:
-> +  The Toshiba TC9564 is an SoC accessed by a host system through the
-> +  upstream PCIe port on the PCIe switch it implements.  The switch
-> +  includes an embedded PCIe endpoint that provides access to various
-> +  SoC peripherals via its BARs.  These peripherals include a simple
-> +  controller to gate internal clocks, as well as a reset controller.
-> +
-> +  The clock controller uses registers within the same page as a reset
-> +  controller, so this system controller controls access to both.
-> +
-> +  A total of 21 simple gated clocks are implemented within the SoC.
-> +  At this time, support for enabling and disabling only a subset of
-> +  them is provided at this time.  Similarly, the SoC implements 13
-> +  resets, but currently not all of them can be controlled.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: toshiba,tc9564-config-syscon
-> +      - const: syscon
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +    description:
-> +      Clock ids are defined in <include/dt-bindings/soc/toshiba,tc9564.h>
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +    description:
-> +      Reset ids are defined in <include/dt-bindings/soc/toshiba,tc9564.h>
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - "#clock-cells"
-> +  - "#reset-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    syscon@0 {
-> +        compatible = "toshiba,tc9564-config-syscon", "syscon";
+> The system controller driver adds the clock and reset devices
+> using the mfd_add_devices() interface.  The clocks and resets
+> are implemented by drivers included in this series.
 
-I disagree this to be syscon.
+Toshiba TC9564 bindings and DTS should be posted completely. We spent
+great amount of time on discussing already and I pointed more than once
+that big picture is missing.
 
-This is internal to the PCI device. I read Daniel Thompson answer:
-https://lore.kernel.org/all/auOI8LbZNWbNGJuN@aspen.lan/
-And I accept arguments that you want to re-use a lot of existing
-bindings like DWMAC and so on. Syscon does not count there.
+You are not describing here parts of a SoC.
 
-I remember you posted somewhere full DTS, but now I could not find it
-again and I do not see it in the cover letter here.
-
-So again, why does it have to be a syscon, which is pure
-internal-register-access thingy?
+You are describing one, single device how the host sees it and DT
+maintainers (and writing bindings) ask for complete picture in such cases.
 
 Best regards,
 Krzysztof
