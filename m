@@ -1,47 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.181
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793910370;
-	b=fWU9e7oOzhWfx9qrIWY1IEmv8Dor6H0Vxxr9K7/lgubyqKE0b3h2lWwQnuooSfFqJ0uI
-	 Mh6ZnU4ru0SBLJ1hBE+kuyj9idmwFjz+axmTnULBLVdENvEyrBJhwyPdM9vl44VOSPXCj
-	 1D8L+jPQfHcBIfyiH2LtHWCFMC0IbYrS4atiwlb7D44Hv0Eb+Qn2xQ1ezRHeGr0m/YMce
-	 nhdLpxY46AvmPSl672LE3Sm5glv3VCfR6khPKUb98G5vV8h7Xxz+MhOpyqrYZV0x6K5UC
-	 Xz2FIgLf1M+JKAUnDqlye50vJewD7FTadjkxxySRyZmdGOvxo2AsY79IgCGg2OiBWFw==
+	t=1793910768;
+	b=f1iX7rc/ZAOFv44qqqFpqjCuaEfc3nikF+QQq//mQ3MKnXyD9RSjEJmh55waqVAFZbxQ
+	 c1aPbqfMN3KyLowR6p6Y/U3UnRx+KLZ6xVTWmIPPXSCKtQnsBhIVJshSDmHJXiCOsXHF/
+	 0vStjL606G4uHYBdOJxmvMpqzM3fXek6wWTSrOnnnRgYDaH1f3sAf0n2QlIXTk+flY4bq
+	 FcQES300hzvBshqprHEhVIIQiJbk4DHVBXk59ablvibkZ06CEPE/EF3bTf1C+L1PcgWh0
+	 9a8XXb3DcnQv6KC1mInPN0zxP7ksh2VRjo8VuZZy747BMzfJNk2ytV8aYyzFuWdQreg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793910370;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=6PhYnOuaolg4JTRnCvQouViB9Tyk3Jhd5dCgyqQ05EE=;
-	b=MXFmFLWy0qswSt87RwtlLzAcOTQV2fNC49oWEwBz2iZ52e+n5vUrGBOlvv3htuipnLi7
-	 elnL7XzbBVwrl5G34bOUXNT8DPZzr0UbsoiNk35Pd1t/YfuQ8KFYKgPiOxNmDvBbRHyGv
-	 3CRNtlus1IsedP51+2Z6e4BQ/3aDi9ckRZ/eMTcjNbO0nrIaN0nsbGP6cHUVyD7l+mSCk
-	 cTIiFzYm1Dqtva97Z69kkx1scQiIorzzY4brWpIgJe6iCJSH+DuGrDYkLsFyz2p9laA3h
-	 08MbkxPweztSk5jIulTAhjOs38udCUX+hddIl/OmVw63WG6LXGs6T3quexW4l2peSYw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793910768;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=3RHnOXVW5gLhU8/6hqpC+igJ5vKbBKVncZKaS2VIdJ0=;
+	b=nJsKaVzfwEL83Ix8ldiRl4Tx4fPc9COQshA8CO8NMOb/yOGEomAGQ7cioI66OeAoep5m
+	 3PqttlXDrYiWlwjlDpeNyVE4oP0KGbof6hsU8zR/XZANzobuFIufeBSDMknfPh9C4KvxH
+	 9dYE5kaS0IyobXy2tA0Gegjj5SR3JUkLe7qWbSvsut3KuCY/W4263EnFqh/59vNo1cb2R
+	 NwYGfIM3wMHe5jpQymm1mf1UiRK3OQSXzeZdYOQ4n+hSdpTmQUWi+HlAmtFJNw66jB08A
+	 in8xoAoPfVmmy65xuCk3BmRBspt6cHG99XfFnq21xsJ9r3Q2FvscZGf2QWoaTIW+hfA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H257HZkY;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CbfReCaR;
+	arc=none smtp.remote-ip=74.125.82.181
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB02606A326;
-	Thu,  5 Nov 2026 20:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21796606A332
+	for <linux-clk@vger.kernel.org>; Thu,  5 Nov 2026 20:32:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 21796606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H257HZkY
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 755471F0089F;
-	Thu,  5 Nov 2026 20:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793910369;
-	bh=6PhYnOuaolg4JTRnCvQouViB9Tyk3Jhd5dCgyqQ05EE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=H257HZkY5ZLXLGZh1ay3PnMy0GH0TJ3ZT8gnwBg5Nr15yy1uRkoGszb4bClrp63j4
-	 hUy9r64h25pMvJ25y9cjdvQFXwjSBYjn5gYoAryOUN/AOv1lrprdsfhdMaF/duKzf3
-	 TqtHSZAIaV1N3xZGlxEHIWNyHU3v7DIG/u44+6XO1zpuqdOk6rgBx+63lMdFjiIAiv
-	 NK0ZRkVg8vSX1R2RPctHfg3MnBT0ioUhyxSs2rB10Az+2u8ptgr1U4jJ2x+5fVqm19
-	 lP0UnY19PWjgYwOUXLa9pl9PZoemsC7fBxDZ24/eNB4jSzvqr2oX5zNffJw88LDS5v
-	 m6fwm7TNfX8dA==
-Message-ID: <a724d159-1509-4649-afa7-a2669d37b4f6@kernel.org>
-Date: Thu, 5 Nov 2026 21:26:00 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CbfReCaR
+Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-36f6295304dso245819eec.1
+        for <linux-clk@vger.kernel.org>; Thu, 05 Nov 2026 12:32:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793910767; x=1794515567; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=3RHnOXVW5gLhU8/6hqpC+igJ5vKbBKVncZKaS2VIdJ0=;
+        b=CbfReCaR2ox7msv4AJ+5IvKVxHvt7xkkGjz4AN3ksoA/F/C0jG0H8EY77tTpQ0g5CZ
+         tUE2XHB0GSv1rHmE9fquea9vp6kx1iDMVBOEr5k5o4NOzNGI7kj+Au5QoHHcKDrSV17V
+         U2HSz7rLAVl8PIhE+24Cf/bot01Ab0ciACiavrXgbWgNPXISvJauopLPbrNSgPUZYz3d
+         MdaJJyhlYWGIiEAWLw+gQC3UvQr30N+DNF/SElDvrKxjcMGLYee98mgO7QgIwvY+rlFm
+         T1TEt2W46CA0+ERiKrv74KKG/EH9hNyXnrh6kE9iZ9GGX9nfFndMWzX8wEQC8ylDgiFf
+         diQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793910767; x=1794515567;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=3RHnOXVW5gLhU8/6hqpC+igJ5vKbBKVncZKaS2VIdJ0=;
+        b=gQBjFb+jqYSc5DkP6Ar3eBljCGGMoyxx+dtMVhVQEpeuRQ/5FRJ5Oeh6SyU4nLarmN
+         X2Tf2go4fFRpru+tA0vkmkeLCnjTTvJNTpCvEgtFHFI4HAugEf68X2uAS6KR/n1dSOxP
+         tNtw4Km1esLAJ/IPnqhs+P4G9Co+koXlOCyn80Y7EOaeowCWOvz7YKcX8AcySdCm3o0n
+         jZZopSbfpKenXlIt5kBUTwr+1hmh5Y2F2wvc8iY2esh1KEsOhaNWDQsdrlytOfI13rco
+         CCfP48uNqFcx5JzI9954A8rZCj6vmF9y5tfblh9zch0ymXkhdfUtghYfjMdf79Mu7cEi
+         LxYA==
+X-Forwarded-Encrypted: i=1; AKwUvBxPvdptfe4g3nSVGP8klNbWn2n4qZkzhGu1Y0En51IPmUA56hBuLYe5gI4Dd2uF52ygz9yNY+TGz98=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/XH4dtl9W0ZhX6l3WXEsmBGN59GS8pGL7LJyS9I15/B/rdOqyu
+	lIr9KxVVhHOwU/szkvHCa8XHk7MB4RP+kQbuw3zZbBXtY3ds43ZeBSK0
+X-Gm-Gg: AYBFou1GBgsEdLjeQB9lSPLh/n5B2h0buzc4UZZoMPcHKmGzSIPd9Vv2ttcOo4ipDpR
+	TdGX8p7fcFf2vAU1G6ShFDsKYWXe6BkHyVA8qbxF+OesFkY/ceL1hozjA1HFRfj5mz2lCjVfnrW
+	c2FpFemwGaqhEBVxBXiPzjiVApl6Oxak1mkdJ5HebVuJA7iYCY04Eym0OVXvZNZtD/dbSgv8wlw
+	BydkFdu9kGQSppY+s/sNPG+hc2CA+G70h0MJNzbXyFthMtJxnSAKLpxKjqSZ9bk3eqibWC68Gvm
+	Ysg6S4EZ6B+FeTAEzlzu1d1DvWYSSoQTRvXclmmBRkv464wKla9NyNmRrXdWmlai456FcFmQtja
+	fw1htzxym9d8izBVYv2RP91GytUHC93a9NyVuNRFueyLOMXPz3+0d9KTcLCMKjSVpKJBS6eQoYn
+	t3dCy0BLq0Jg1xUpM/KLXf4dR0oRc8QeB7MdtxzH17rdbrZdVsZx0EN6eCl1YIt4vAd5NjeJzM+
+	K0UBqWK50UPEWJGj7ppkY4/lr/1iSaNEqyzVuYPDqRcQu/p2fiK85DPI0CYNRhiMmAO/kImNBwU
+	Nt4TEz+/
+X-Received: by 2002:a05:7301:4145:b0:36e:20ee:b297 with SMTP id 5a478bee46e88-36f752549f1mr304325eec.6.1793910767172;
+        Thu, 05 Nov 2026 12:32:47 -0800 (PST)
+Received: from eldorado ([2600:8802:b00:1f88::287])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36f72dc30ebsm632458eec.13.2026.11.05.12.32.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Nov 2026 12:32:46 -0800 (PST)
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-mips@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Paul Burton <paulburton@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	=?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= <zhouyanjie@wanyeetech.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	"H. Nikolaus Schaller" <hns@goldelico.com>,
+	Paul Boddie <paul@boddie.org.uk>
+Subject: [PATCH 0/3] MIPS: CI20: Enable SMP with two CPUs
+Date: Thu,  5 Nov 2026 12:32:39 -0800
+Message-ID: <20261105203243.2292647-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,91 +106,34 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] soc: toshiba: tc9564: config system controller
-To: Alex Elder <elder@riscstar.com>, sboyd@kernel.org,
- bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, p.zabel@pengutronix.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: daniel@riscstar.com, mohd.anwar@oss.qualcomm.com,
- lorenzo.bianconi@oss.qualcomm.com, fabrice.gasnier@foss.st.com,
- alexandre.torgue@foss.st.com, marex@nabladev.com,
- changhuang.liang@starfivetech.com, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20261104004332.2141282-1-elder@riscstar.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20261104004332.2141282-1-elder@riscstar.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/11/2026 01:43, Alex Elder wrote:
-> This series is comprised of some code that was previously sent
-> separately.  It now incorporates a new system controller driver
-> that advertises clock and reset functionality, as well as regmap
-> access to its address range.  This combination is being treated
-> as a new series.  (Details of previous versions are below.)
-> 
-> The Toshiba TC9564 is an SoC that attaches to a host system via PCIe.
-> It includes a PCIe switch with three downstream ports.  To one of
-> these ports an embedded PCIe endpoint is attached, and that implements
-> two PCI functions.  BAR 4 for both PCI functions provides access to
-> registers controlling blocks within the SoC.
-> 
-> The system controller driver adds the clock and reset devices
-> using the mfd_add_devices() interface.  The clocks and resets
-> are implemented by drivers included in this series.
+This patch series resurrects SMP support for the CI20 board. This was
+submitted back in 2020 by Zhou Yanjie.
 
-Toshiba TC9564 bindings and DTS should be posted completely. We spent
-great amount of time on discussing already and I pointed more than once
-that big picture is missing.
+Florian Fainelli (1):
+  clk: ingenic: Poll JZ4780 CPU1 power status atomically
 
-You are not describing here parts of a SoC.
+周琰杰 (Zhou Yanjie) (2):
+  MIPS: Ingenic: Add JZ4780 SMP support to the generic platform
+  MIPS: CI20: Enable SMP with two CPUs
 
-You are describing one, single device how the host sees it and DT
-maintainers (and writing bindings) ask for complete picture in such cases.
+ MAINTAINERS                           |   1 +
+ arch/mips/configs/ci20_defconfig      |   2 +
+ arch/mips/generic/Makefile            |   1 +
+ arch/mips/generic/ingenic-smp-entry.S |  54 ++++++
+ arch/mips/generic/ingenic-smp.c       | 240 ++++++++++++++++++++++++++
+ arch/mips/generic/ingenic-smp.h       |  20 +++
+ arch/mips/generic/init.c              |   4 +
+ arch/mips/ingenic/Kconfig             |   6 +
+ arch/mips/kernel/idle.c               |  25 ++-
+ drivers/clk/ingenic/jz4780-cgu.c      |   2 +-
+ 10 files changed, 353 insertions(+), 2 deletions(-)
+ create mode 100644 arch/mips/generic/ingenic-smp-entry.S
+ create mode 100644 arch/mips/generic/ingenic-smp.c
+ create mode 100644 arch/mips/generic/ingenic-smp.h
 
-Best regards,
-Krzysztof
+-- 
+2.53.0
+
