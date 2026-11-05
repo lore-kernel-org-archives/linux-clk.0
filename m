@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793904028;
-	b=gBokfmrhXaiUQz9cRheciogWugMkNeDqPH5Gvk6RRzB/beewGtffKxKVHWZspcc6LeCj
-	 19enSxlElABPhYcTqNi0nLj9D3ksHqbpc6pyjWblryiRZMjofpnpLxCIG96mI9O5RCn/M
-	 CxH800sZ6aatrPr5NeuR0tXOiZQbNHZTKZEDZPUd/TsGJJ3WzwZvvkqbM3OcBpQFjwtGG
-	 rqlMpdjxONoxtEEGIfcbwHz6lQanyjJw181vAS3ZOrdejusolIVKc4OTgzDYhMid6RJYC
-	 J2vCCD/6jGFF+dYDrq71to9O719UrNJffXTIzEHmHJRDfMZrji+pSm9ftkdcTENL6aw==
+	t=1793904036;
+	b=sAsM2xiFbRM9xNoAk1R8Okl1TDypVbVuntcYefbM5kK6M6Rg+JTIG0HlFAPz3lETXXvb
+	 fh+3CQ+17eRfeWA9K/LLMlStj+GdT1IKbwHj/pQydCQ6Zu/UnBBc4sKw347yZ+o3MAt0k
+	 RUOc95wDtwFXoPAbWi7OzJVlSz0M0sp1xfYraI87IaAIrxxtBZks/C4LGei03Q3WQ9W/F
+	 aHzlbkboy3WPKdJTV4C1A8SyuJ4nHP1G3dP4JsRCfSwBj6eqsQizi2orE4kMAutln7J3D
+	 TQuLJ7VWHC7BG5a8mZwJhXzLAQPmTGH/3JeUYVSLe4OCR6r/ObNmbz71Zmt2KxGt4XA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793904028;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793904036;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Type:
 	 X-Developer-Signature:X-Developer-Key:Content-Transfer-Encoding;
-	bh=FWTdhllvzHmd3ZCW6mBaAn9ZyTGZc5+2hwtmFkAy1xA=;
-	b=hMgaVh7vcIYf1gqsfzbo/I7fTpqFxb1Ccd5UMWEGNxAjCEJPMV4DnrPD7oxTxzk9jTfo
-	 sf+XFi48u5894IUSDIEA+YYD7OiBb7exl0HBCDaugHdlIgnd5w3jZsA5t3ydsRnjJrxmM
-	 1cvNBHnjfgrIAxagDsM+0QS+pBWSeFU5oyOFBcS1qjk5Hiez8HbINuMgKyQde+BKTVMVG
-	 m9OG3pBfJ4dgtFNL4AaZpNIwYKpBCdJ5h2dRT6HG92lHm7Y1rlVAQFjqg0GGw3kDIvExQ
-	 +zp64NisLQnhQje8lPv/Fyj5w431wdU5z6pfFDEhKfZBvYf2L4IwCyvy86GLrTfj0zg==
+	bh=owaKlD8oLnDzryLHo6z1T1KNQuIMA+s07F6t1tORQy4=;
+	b=SuUBPU1jq2rnbmFmF4/oOb9SY7oXbWuRvrV6fU1oyCDWluCUaOj+SGysmSyMRT4Zp+VE
+	 zkgX7391Cl8v6GXfauICiyQR2WZV6m8JqXxIhKUUvo5nG7Y0JuP2YvmNfHrXmBOsKjcPO
+	 fgo+gflFNNx7OeM/2lQTrPc9ye+qbQaIXhUqq5cvVAPfY/uUsfW3VYaC5cwNG1GRWRe66
+	 65RMwH48N7UBFzUhzRm3aUFl3CBNVLHH5qIPP/sxb5EBOh3d9Plo61KlPZuazHjUo75dp
+	 7N3DvHroRcM2dzB55pHNBIC/l1y8NLlk8uyJGDLOrgM5WIuHZPkWmARUbBFfzC0mgsA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Mw+dQQKZ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KxNA6PQR;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA11E606A31B;
-	Thu,  5 Nov 2026 18:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA024606D801;
+	Thu,  5 Nov 2026 18:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Mw+dQQKZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 846111F000C1;
-	Thu,  5 Nov 2026 18:40:23 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KxNA6PQR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 808641F000C1;
+	Thu,  5 Nov 2026 18:40:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793904027;
-	bh=FWTdhllvzHmd3ZCW6mBaAn9ZyTGZc5+2hwtmFkAy1xA=;
+	s=k20260515; t=1793904035;
+	bh=owaKlD8oLnDzryLHo6z1T1KNQuIMA+s07F6t1tORQy4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Mw+dQQKZotTnJ9SZg5xPho7MFTVjDO980yFjUxbdCbS0ncLHOjSCE2W5cdqAqQPU1
-	 wo8ZvO4gWa/QjB0I0+OcdY3T7G4B9V6wsd8+2hUY9p/42M/StFjarJLVfbpOej6i3Z
-	 iPbrK43GuqwauoN3Im1yHiDlY0zJTlNE9cvdG5wib1hRVZREGaJSh9Mw3bWyZJbbfJ
-	 9AM81P/S2eC4tpuDZ7hHZ+rO9HrQHR2gCfwPx9GqjJlbjYFQAsR0+8TAmFkkTzRrNU
-	 Lxb8slp23GhPcUeKUi2Dxhi+8fK5xyqhgg1/EdvAY6Ew3UzCYSSsoOO+p7cPo6+Jf5
-	 tETwrMtGHS4VA==
+	b=KxNA6PQRF/ooZDITVNYoeJsxh4blye8mGQicqkeLhnzx3sSR9Wpuy6bYC6WxhdRnI
+	 iLpDZjY5rLhESJYSNt29rrC7kK7yblLO1JI5Sm6IBTIL/415UWOM1iSivDbErdGXTa
+	 wsizeELBGl3kKFfJX3oDSrnVkaTG+NxvmuS4IP+I7WoWo98tJ6Pps3Jh3/zhte7fkF
+	 Vk8uVFUMewyZpRKHPH95MkQLSi9G1Md6TW0XR8mU9tpdMx4Y1toRDo5gCDApTTwcgf
+	 Bv7OGeNkDm+i3rvZHQgkImZZCjl6GPlSCf2nBo+s3nzgrzii4vn9/rHly0leinzsMW
+	 gmoF4aZHXHRLQ==
 From: Conor Dooley <conor@kernel.org>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
@@ -53,22 +53,22 @@ To: Stephen Boyd <sboyd@kernel.org>,
 	Albert Ou <aou@eecs.berkeley.edu>,
 	Alexandre Ghiti <alex@ghiti.fr>,
 	Junhui Liu <junhui.liu@pigmoral.tech>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Avi Weiss <thnkslprpt@gmail.com>
+	Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Wentao Liang <vulab@iscas.ac.cn>
 Cc: Conor Dooley <conor.dooley@microchip.com>,
 	Brian Masney <bmasney@redhat.com>,
 	Yixun Lan <dlan@kernel.org>,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v3] cache: sifive_ccache: propagate IRQ count errors
-Date: Thu,  5 Nov 2026 18:39:43 +0000
-Message-ID: <179390394385.1477457.3217607972839279522.b4-ty@microchip.com>
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] soc: microchip: mpfs-sys-controller: put the flash device reference
+Date: Thu,  5 Nov 2026 18:39:44 +0000
+Message-ID: <179390394386.1477457.365561090513206596.b4-ty@microchip.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261017151651.1138811-1-thnkslprpt@gmail.com>
-References: <20261017151651.1138811-1-thnkslprpt@gmail.com>
+In-Reply-To: <20261104021435.1468301-1-vulab@iscas.ac.cn>
+References: <20261104021435.1468301-1-vulab@iscas.ac.cn>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -79,26 +79,27 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=477; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=9lOpLeSu7E2eEt0dSM5/y+xGzK0tE1L3ZW5BvwhtpnI=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDFlvzuY6TmuV2Cim/PfNpYPt/jnceeXiAXfb0hbfT9r6P lTkOq9SRykLgxgXg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACYSYM/wz2jW0ndPXhlxqE6R it7Atnnn37eL6hOerWws7z/zwMiVmY2RYdKCf+nn0zUnlgTdKhHTLj1z3ZA58+Z7Wb0+Xo4ZUum t/AA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=646; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=ie3smbEtm3ecVbEoJiIqxoXtQG2xYonjbXDjOLJfKXU=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDFlvzuZ+nl7jcuvbt2/TOHL3dQb35l1MTy9QvmnGrTGFQ XCqkUBNRykLgxgXg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACZyX5WR4ZjG0biI+Hv6ERf6 NQyTq2+J/rpqOW/TFlkXk2NG9pc2nmRk2MIlmZt3oZfx+xMzKWWR4JgCXUPxnwKu5hWKVw8r7J7 PAAA=
 X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-On Sat, 17 Oct 2026 18:16:51 +0300, Avi Weiss wrote:
-> platform_irq_count() returns -EPROBE_DEFER when the
-> interrupt provider is not ready, but
-> sifive_ccache_probe() only checks for a zero count.
+On Wed, 04 Nov 2026 02:14:35 +0000, Wentao Liang wrote:
+> of_get_mtd_device_by_node() returns an mtd_info with a reference taken
+> on the MTD device, which is stored in sys_controller->flash.  The
+> reference is never released, neither when the last sys_controller user
+> goes away nor on the probe error path that frees a freshly allocated
+> controller without initialising the kref.
 > 
-> -EPROBE_DEFER seems to be the only negative return
-> code possible here (currently).
+> Balance it with put_mtd_device() in both places.
 > 
 > [...]
 
 Applied to riscv-soc-fixes, thanks!
 
-[1/1] cache: sifive_ccache: propagate IRQ count errors
-      https://git.kernel.org/conor/c/5820e9bc940b
+[1/1] soc: microchip: mpfs-sys-controller: put the flash device reference
+      https://git.kernel.org/conor/c/6fdd47bf3736
 
 Thanks,
 Conor.
