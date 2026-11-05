@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793876828;
-	b=3UWVi+g3Lgj/vJjd4cHQ2d+TEqeAdLVdH7ZWdbdo9Oaol4NiwU3U7DrASBeVD5XN5koG
-	 YsbAleikWoZt3mjhBF5ajsOZObeOzk5W5d9ez8ebVaPrRGZkZoqi/S0hkvEqo17Y8ojfX
-	 5kjXNLQ2/pz74rnLMN7VBdHGQ0nafwjeXwvmNObjiYkPWl4Vgu4I9OTb73JWe/U8XhRo8
-	 US7lJNPTDLRLoEUwSiDs9CeLIAi8YUaF0/rKmH9/wKE6m09zZ81JIHBnSe8vhyHw+j4H3
-	 8/tl3ljWc9vYsU00vS5UjufSDHam9D9xI73wQuw5r7GoMywC8WrNVgaXh/EK+X4Ap8g==
+	t=1793876826;
+	b=WHAvdEvaDzAhcoYjBx6/cZyrctlus2AAppOsJ7X67zDbdMik+RMNviNKFRmb5C2ieKDi
+	 FgRBzM7r5lJs9gYO6e8mev+OgybnB5BZDMplvF0ZcEPCHeGbUWMR5KdTRTBxhEm3iYnMo
+	 LVIXmzzO2D24F8bXYMytHeHhTLibTiAI9Epy8McW+CuEOR0+ntrGT77zpkVXMBvmxa/Ch
+	 t5r/IOEzCPqsziEb94P0i/glzqJ5W7bSj8m/PGGc7XIpn1eD8ztwMrVzNxIVzFRIfLTeX
+	 YYQFERyGvA5cpIaDWg6apFeC3FhCOIuQZglacyHmlbKclbQMBWnhmaSxusI9+NczcJA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793876828;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793876826;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=ObLTUE4xToVrL76t6SQzh//oCgTM1txbp8jyCtXcgm8=;
-	b=krezU4xkVkUoFyjR++wKq9FFU2Ix2dHmkfXWYAFOjBJzzoUc478ZKQgJJOqpAHOvQ3le
-	 ngk23T/RX6mgFIAVQT2etmtXWmYV/dDwZ6f97l93cFlM7xnWZTVZk5LYcN30zOqvYuM0H
-	 Qhs3jJ8OaQwr28SQfKY6YhwY6EvzIyg+ptiaeFA5p6ke/VlgkDlFHF2mGWQpU2HycNGzZ
-	 HyCGxhItfIOylhIsg792g4pcJDl3r+can7n0thJlddhNOnkK7eUcIVX30NZobRJV+95QR
-	 73npMu5Rt0bBJf8J6B6LanLsdiBSsj/044zc+bUhmBhbn53IbXsWKq5X09bPeMpEzoQ==
+	bh=tBXbAkaPauO/t+CrWaIYHzrmfu0tKOxa9L0c762SX8c=;
+	b=YcqlFZHu9ep5OHF0qFv4Yx9cGApKhddd8yBImbQxV+TBmxXO7QMZB58/l2mOv1HS3M2R
+	 L58kdEqLcbNLKOSUncb0w0yVs/bYvtI9GbmUo2h02GG9h0GjOmM4EtlQKcnFjyZPvAF6n
+	 xhFy5t+hAc/aeojX8w2S6He/dKl0XV4NuAw2Nq0Nu+TLWnl7HsOsc9kxZGv7nySo0iOs0
+	 LlOLWudDRL7XCN3QYbdcLnRvZ3iTm6xu18tJ1+LPjbaSmLEWFlHEbEGKV4OxXjYHt+ZBh
+	 vszEazYjzZTohL0P0lSJFJ1110RU9N1PKB8SY3cLxHBSt95zSRe3TBH/Gxpw0pYjI+A==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nxBqbRfa;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=j2BMPAoc;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2420F606D802;
-	Thu,  5 Nov 2026 11:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0BA606A31B;
+	Thu,  5 Nov 2026 11:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nxBqbRfa
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=j2BMPAoc
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1793876827;
-	b=gq5Zu8/ZIjDSzrqRDpr0WwfvgQ5mkUXZbh/JE62ArmaDWcU0LvXX74vj6/QtpJIQ1mUs
-	 YOwDHqPeR603VXo1NTdg7IUVGezwrvyuO3tGOkAzGyIB2EQaXuIbHERyABZkqFZNNyr6a
-	 oUGvlLK0Kd+Majq5gSzBJCr1SO4lpAhKkNhrO9X/l+8YHmQMfmf9QGTsHkB+xCJMzV+Cz
-	 R45IP5sdk/DsIECg3JzXNhyrMjdxFwAR3t6DepZddozJVdyXKN6QaLVYMQ7yU7fIpgSm/
-	 zeQxtnTZczHlbOvt014Vq21kn7EtByBPmxfTbnLNKgcT3zhjAPEavuZpe/gnaxsBchA==
+	t=1793876826;
+	b=cs1HOWnn0QPOcKYr+3L9Ffu07/k8MJU97vpL0kySmjaX77w0IhANxhQhFO/X3MrK3fTh
+	 ein5SDySK07U2HPI6vA2o6Gknl58/FNAReX1vCygPn026zz2x/fTUC2ZkOcg9nlzAyxzQ
+	 b/FbIk18VOnVRW8noc/cUfjLqtvSe/+7BSicEwCxg5V6yX65ZG+m3sAsj1rdA6JMVarwM
+	 siFsI/4L2/u5riXJJEh526NUKAVGsTItWwfhMTdqlT8Y59vp95NjI6IKPZ8s5tR7lZZxB
+	 ph6MfDEg/rslSB3WxYs1eHDlsc7yJw3k0xuzUYmWPF6oEq2o5JxmLwbcIW/+On+OxMw==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1793876827;
+	c=relaxed/relaxed; t=1793876826;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=ObLTUE4xToVrL76t6SQzh//oCgTM1txbp8jyCtXcgm8=;
-	b=gXrqp6pLXMR13j76euetZMSdFirig5PGf5PmuB7PAdlSZZLbwaMv8o6NsKUlXePCAHbp
-	 GxOQzSJRdM+YuH2odDuw+eICxgyHYhA4Z76EHZrdfuxX6NuCsDkW5Ac7120QQN4sB6Itp
-	 +j6w/kgq4kjM3V2fIk8aKUakEzmtqBc4Tsx07n0sYMevh3cHwxRwAV00TRaTvjjUTT1oI
-	 tmfOM4qT2J+qGe2gqe/Z5fo2BEFQH68tehD+6XuYTv+5qkwlnOuJ1C/t1zVIg90Xw2G2f
-	 ETRjxn4nR1xx5jLoKzwoIOnZRLdavIhShwKitioUKtEEHIGdMkwrkPgvH/GrTRIDhOw==
+	bh=tBXbAkaPauO/t+CrWaIYHzrmfu0tKOxa9L0c762SX8c=;
+	b=ScjYiDdQBi+JqWGntDMEAbB8UI+pwzg+OvwU9U1uOIB+wCgyGxtLEnQ/MstgC2ouNTfa
+	 56HCegQ206yr9Xxpa+rE8Lw31msvDnxajyoz+DmsfT07Ag4BuYyTHsL8OAMVvFo8LNbZH
+	 pB23H5SvxnZ9sUYhGptjH1RBz2wIT0/rFeB85zu7fQ/x4WP4UO3kJNAqXf1cR2PQuqg9K
+	 4j6QX7n+36HKZ5yfmZkLvNoTXNwZKA7w60EPYjWDvCWuG0jHeYU2C36Wl5MiODw9+/r0i
+	 d+YlfDY878LuW+UUu9rxOung7iQKZBw9uCLPORT7PJo5CLSjv0TPJKD7hIv4hLNqLag==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id E71521F00A15;
+	by smtp.kernel.org (Postfix) with ESMTPS id D85711F00A02;
 	Thu,  5 Nov 2026 11:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793876827;
-	bh=ObLTUE4xToVrL76t6SQzh//oCgTM1txbp8jyCtXcgm8=;
+	s=k20260515; t=1793876826;
+	bh=tBXbAkaPauO/t+CrWaIYHzrmfu0tKOxa9L0c762SX8c=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=nxBqbRfatJkDVLLKevGBVnzw761oqNcLDVUN8XVAO/qfobvW3jjB3ZrSZXGm579ih
-	 pzkdZ9OsQhzr4/TFNqakhteIhc0+K406zMycwOimTR1PVroirv+mBhhYzeYNR+PELF
-	 S446rru1rPBIJyafRs3+3DsO1//t5EgLZP6EqPW2M8Tc8OCWzSFMWXum+fqyboEH8i
-	 3S5izhF1Rt3zZuhE2T/zaa8YzTbbKirhzNT7rDrhyPLGe8Z/R1EHh2OsYQF+a0sTvZ
-	 lOA6Vl9wTsm8a4tOgskzvNJo81qs0sFuxAVUY4ZAy4Tm+KUv2ZVmKlK3JLUFkeDusL
-	 E5rR8cBHW89RA==
+	b=j2BMPAocDYMQivjJRrMUmpL1QRkYiVIKg2ATMiKBheO9SDjdDBdKkxEyeW590ohl3
+	 BcTNT3IBfUH4UmiTgjjf231BT2wWVBdFEKvFC8ojxXzxTOJQNMXxmPXz7NgaeGiJJa
+	 0CokYhEsq29t6Q1WknMMilGOJPVpMJy93A+38ztdWSIN+0ZMos/EZlI0THMTjLUIQO
+	 C0ljCL62AW3DJABIWjR7I1cZjV0FjJ63NLE1bU23b28xT9gSD1nE8Fqh3wk6REfVIV
+	 n471E0Um+HAj6AHuy4qc1Idn8mCVXrpP8uHXoKPbuWYZ6V9KekGdkzmjTWQFTWFpBo
+	 948N1tEF0qbKg==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 73BC44720F;
+	by lkml.kernel.org (Postfix) with ESMTP id 487A847204;
 	Thu,  5 Nov 2026 11:07:05 +0000 (UTC)
 From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Thu, 05 Nov 2026 19:06:38 +0800
-Subject: [PATCH v11 4/5] arm64: ambarella: add ARCH_AMBARELLA and CV75 EVK
- DT
+Date: Thu, 05 Nov 2026 19:06:35 +0800
+Subject: [PATCH v11 1/5] dt-bindings: arm: add Ambarella CV75 platforms
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,7 +83,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261105-cv75-soc-v11-4-aa6ee0b2380d@ambarella.com>
+Message-Id: <20261105-cv75-soc-v11-1-aa6ee0b2380d@ambarella.com>
 References: <20261105-cv75-soc-v11-0-aa6ee0b2380d@ambarella.com>
 In-Reply-To: <20261105-cv75-soc-v11-0-aa6ee0b2380d@ambarella.com>
 To: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -103,11 +102,11 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
  Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org, 
  Linus Walleij <linusw@kernel.org>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793876823; l=8107;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793876823; l=1278;
  i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=DEAMc2vofaBUV896UxD87q9HiCotMrVdpC7L4SePgqQ=;
- b=RFqsiLUsoFkZG7dIrltmFex48Lli+4fBXlzQWfFYVCqxoJKAF1Owb9MeqlPjCqqqqIuvH1T8T
- tfYDYep+TV+CD14oeYyTVlFUjevRhRbmHT/koeoroT6Us3aquGTwybn
+ bh=3/nmC3518iJUv3pa+4TrYyrJ8fmY9AVoXsn+4KhycZM=;
+ b=sHGDFju4cllJ5Y9Odms3t4EBMsH4RYnVLSgBITJ0YNXgkrWA0vc7OuwcD2CK0z537nRpvXvgs
+ MyYgPxHpgikCDGR2JRfTWtgvNWqEFR1Es3ev8KIJtqodBbB2pQO2EnY
 X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
  pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
 X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
@@ -118,289 +117,46 @@ Content-Transfer-Encoding: 7bit
 
 From: Long Zhao <longzhao@ambarella.com>
 
-Enable ARCH_AMBARELLA and add a minimal CV75 SoC / EVK device tree for
-console bring-up with the RCT clocks, UART, pinctrl and GPIO banks.
+Document the CV75 EVK board compatible for the initial SoC bring-up.
+The ambarella vendor prefix is already applied in the devicetree tree.
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Signed-off-by: Long Zhao <longzhao@ambarella.com>
 ---
- arch/arm64/Kconfig.platforms               |   6 +
- arch/arm64/boot/dts/Makefile               |   1 +
- arch/arm64/boot/dts/ambarella/Makefile     |   3 +
- arch/arm64/boot/dts/ambarella/cv75-evk.dts |  30 +++++
- arch/arm64/boot/dts/ambarella/cv75.dtsi    | 177 +++++++++++++++++++++++++++++
- arch/arm64/configs/defconfig               |   1 +
- 6 files changed, 218 insertions(+)
+ .../devicetree/bindings/arm/ambarella.yaml         | 24 ++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index d2acfac73003..16d7e3a4c2d6 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -26,6 +26,12 @@ config ARCH_SUNXI
- 	help
- 	  This enables support for Allwinner sunxi based SoCs like the A64.
- 
-+config ARCH_AMBARELLA
-+	bool "Ambarella SoC family"
-+	select PINCTRL
-+	help
-+	  This enables support for the ARM64 based Ambarella SoCs like CV75.
-+
- config ARCH_ALPINE
- 	bool "Annapurna Labs Alpine platform"
- 	select ALPINE_MSI if PCI
-diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-index fc726b215f12..f1709eb5d915 100644
---- a/arch/arm64/boot/dts/Makefile
-+++ b/arch/arm64/boot/dts/Makefile
-@@ -4,6 +4,7 @@ subdir-y += airoha
- subdir-y += allwinner
- subdir-y += altera
- subdir-y += amazon
-+subdir-y += ambarella
- subdir-y += amd
- subdir-y += amlogic
- subdir-y += apm
-diff --git a/arch/arm64/boot/dts/ambarella/Makefile b/arch/arm64/boot/dts/ambarella/Makefile
+diff --git a/Documentation/devicetree/bindings/arm/ambarella.yaml b/Documentation/devicetree/bindings/arm/ambarella.yaml
 new file mode 100644
-index 000000000000..ddca3d7b18cc
+index 000000000000..72946e94fa76
 --- /dev/null
-+++ b/arch/arm64/boot/dts/ambarella/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
++++ b/Documentation/devicetree/bindings/arm/ambarella.yaml
+@@ -0,0 +1,24 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/ambarella.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+dtb-$(CONFIG_ARCH_AMBARELLA) += cv75-evk.dtb
-diff --git a/arch/arm64/boot/dts/ambarella/cv75-evk.dts b/arch/arm64/boot/dts/ambarella/cv75-evk.dts
-new file mode 100644
-index 000000000000..42a0fe24b83b
---- /dev/null
-+++ b/arch/arm64/boot/dts/ambarella/cv75-evk.dts
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Ambarella CV75 EVK board
-+ */
++title: Ambarella SoC platforms
 +
-+/dts-v1/;
++maintainers:
++  - Long Zhao <longzhao@ambarella.com>
 +
-+#include "cv75.dtsi"
++properties:
++  $nodename:
++    const: "/"
 +
-+/ {
-+	model = "Ambarella CV75 EVK Board";
-+	compatible = "ambarella,cv75-evk", "ambarella,cv75";
++  compatible:
++    oneOf:
++      - description: Ambarella CV75 boards
++        items:
++          - enum:
++              - ambarella,cv75-evk
++          - const: ambarella,cv75
 +
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = &uart0;
-+	};
-+
-+	memory@200000 {
-+		device_type = "memory";
-+		reg = <0x0 0x00200000 0x0 0x07e00000>;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/ambarella/cv75.dtsi b/arch/arm64/boot/dts/ambarella/cv75.dtsi
-new file mode 100644
-index 000000000000..c36b6af48237
---- /dev/null
-+++ b/arch/arm64/boot/dts/ambarella/cv75.dtsi
-@@ -0,0 +1,177 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Ambarella CV75 SoC
-+ *
-+ * Boot peripheral: UART0 console.
-+ * Clocks: a single ambarella,cv75-rct provider.
-+ */
-+
-+#include <dt-bindings/clock/ambarella,cv75-rct.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "ambarella,cv75";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			compatible = "arm,cortex-a76";
-+			device_type = "cpu";
-+			reg = <0x000>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@1 {
-+			compatible = "arm,cortex-a76";
-+			device_type = "cpu";
-+			reg = <0x100>;
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	osc: oscillator {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24000000>;
-+		clock-output-names = "osc";
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		ahb@ffe0000000 {
-+			compatible = "simple-bus";
-+			reg = <0xff 0xe0000000 0x0 0x01000000>;
-+			ranges = <0xe0000000 0xff 0xe0000000 0x01000000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			s_scratchpad_syscon: scratchpad@e002e000 {
-+				compatible = "ambarella,cv75-sec-scratchpad", "syscon";
-+				reg = <0xe002e000 0x1000>;
-+			};
-+		};
-+
-+		apb@ffe4000000 {
-+			compatible = "simple-bus";
-+			reg = <0xff 0xe4000000 0x0 0x01000000>;
-+			ranges = <0xe4000000 0xff 0xe4000000 0x01000000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			uart0: serial@e4000000 {
-+				compatible = "ambarella,cv75-uart", "snps,dw-apb-uart";
-+				reg = <0xe4000000 0x1000>;
-+				clocks = <&rct CV75_GCLK_UART0>;
-+				interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
-+				reg-shift = <2>;
-+				reg-io-width = <4>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&uart0_pins>;
-+
-+				status = "disabled";
-+			};
-+
-+			pinctrl: pinctrl@e4010000 {
-+				compatible = "ambarella,cv75-pinctrl";
-+				reg = <0xe4010000 0x1000>;
-+				ambarella,drive-strength-syscon = <&rct>;
-+				ambarella,pull-syscon = <&s_scratchpad_syscon>;
-+
-+				uart0_pins: uart0-pins {
-+					function = "uart0";
-+					groups = "uart0";
-+				};
-+			};
-+
-+			gpio0: gpio@e4013000 {
-+				compatible = "ambarella,cv75-gpio", "arm,primecell";
-+				reg = <0xe4013000 0x1000>;
-+				clocks = <&rct CV75_GCLK_APB>;
-+				clock-names = "apb_pclk";
-+				interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 0 32>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				arm,primecell-periphid = <0x000e8061>;
-+			};
-+
-+			gpio1: gpio@e4014000 {
-+				compatible = "ambarella,cv75-gpio", "arm,primecell";
-+				reg = <0xe4014000 0x1000>;
-+				clocks = <&rct CV75_GCLK_APB>;
-+				clock-names = "apb_pclk";
-+				interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 32 32>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				arm,primecell-periphid = <0x000e8061>;
-+			};
-+
-+			gpio2: gpio@e4015000 {
-+				compatible = "ambarella,cv75-gpio", "arm,primecell";
-+				reg = <0xe4015000 0x1000>;
-+				clocks = <&rct CV75_GCLK_APB>;
-+				clock-names = "apb_pclk";
-+				interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 64 32>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				arm,primecell-periphid = <0x000e8061>;
-+			};
-+		};
-+
-+		rct: clock-controller@ffed080000 {
-+			compatible = "ambarella,cv75-rct", "syscon";
-+			reg = <0xff 0xed080000 0x0 0x1000>;
-+			clocks = <&osc>;
-+			clock-names = "osc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			assigned-clocks = <&rct CV75_GCLK_UART0>;
-+			assigned-clock-parents = <&osc>;
-+			assigned-clock-rates = <24000000>;
-+		};
-+
-+		gic: interrupt-controller@fff0101000 {
-+			compatible = "arm,gic-400";
-+			reg = <0xff 0xf0101000 0x0 0x1000>,
-+			      <0xff 0xf0102000 0x0 0x2000>,
-+			      <0xff 0xf0104000 0x0 0x2000>,
-+			      <0xff 0xf0106000 0x0 0x2000>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupts = <GIC_PPI 9
-+				      (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 12 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index ad3bd3d9507b..454f07a6a6a6 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -36,6 +36,7 @@ CONFIG_CRASH_DUMP=y
- CONFIG_ARCH_ACTIONS=y
- CONFIG_ARCH_AIROHA=y
- CONFIG_ARCH_SUNXI=y
-+CONFIG_ARCH_AMBARELLA=y
- CONFIG_ARCH_ALPINE=y
- CONFIG_ARCH_APPLE=y
- CONFIG_ARCH_ARTPEC=y
++additionalProperties: true
 
 -- 
 2.34.1
