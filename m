@@ -1,63 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793841582;
-	b=X2VxlW4b7N2QRhH9y0cXEJzSajB1qio9ZS82dr4a7QKrs4eJEuwblHA8lwl3VSC7BKuJ
-	 GLoKxz+a1mM1TjckVMJM0CAmSfi89zgCVZm6tD0rnSzo3tGSu9eQeilDmNEq7eNW/TJk7
-	 gRB+xeWwFi90XFdrdFE4cnKlbYBq9LHulxSd4Tf7dI0EPdTUG83IBFtfoyY/E4+WJIlz5
-	 nilUFG7naTMUkgBQllTwphnkjAmLjW6TO6rBJB+al/fxjq0Y51BHQXA+sFmDhKpF2SlKH
-	 IhEObkFv1qfkkjonx3Jiwkvyt5etHUpsqLxU9wFtjaGy7Rh6EGpKy5Mman34lJv9u/g==
+	t=1793844570;
+	b=muCGvJTJ3gZnvC3uJjIlMbZXAljyW09bij2o3XRschPTwaVFQIkcO5FRR9jgQJbiO3v6
+	 92BR8u182W9FKfMsRLsoh9j9eTwM57dn1F0qoP05GLsfPul13IDLceg+7YQ7HlRQsdVJh
+	 SOsPfNXYhJUchDHtxwfcxYo3r/ZFd80Ge4J0V7DHlw4LWQi37Ck7m1oo0YWlN+8lEkRJX
+	 4n/ia7GI4HIsSRlXNzKGcs6n5Od7UUHXcXnZ4BcW0Nya9MClLM/X/324lxify4bs2rMCf
+	 RK0vBTQ5bcOl+ZjE3nmwXksNT2W8rgyDKt6P15MfvzSDO0TNYWltR9Yz+v2wksaC0mQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793841582;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=ipE19vO735Vlv72+ZECb9RYfcfkbe37S23ffmmXmgcA=;
-	b=eczmByu6/YwMxloLMMSK0fdt0xj1fB/bUCTWKq/9PLAxa0N1oXRP8z/mgbS3Dogrxega
-	 88yecQtCbbJjYIYuR+3KbDECfxL+tLmHKsSX7PxfxoWAtCEOWct8J8hcbbezyRrkITPbb
-	 QAb1C9Sj6Vr9OVxpNsRqRd8+EW9oFhFBuX9C1oekUplgBJN9U8M3U9KRgK7XNxZIg6rKb
-	 35oDYWRYhbZQwMAMzsN6mVV97jK3KOulr53TXiFc/a0SYb7j5pOqIt5Djl32dbg8E7nzY
-	 iYpjiPrJgRqkYDi0MBQ/ozk92EinOaWn7g4Q97Gqe/WWvcaQf+/I790BOWRNf/PBUHg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793844570;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=jDAfiOlVrfcIrnBYrikcNDpkrwfsc7W/pzfCEuEFbJk=;
+	b=1ey3/OiXTv3DJSxNoFl9xFb4SSRF+BIFw++KqSXS+BCPdJC8aJWm/3fJk5Hvm3Xz+YOJ
+	 N8YETUBaLG+WNfLgY39e91qdMB3bNSPiUh8kj6MDOEyDvvc/EIxmCow1vwnMHOSefbeOh
+	 Rl/90FvOd96AaIMWMc3CKYVER7fGjkIu/DMnuHTPUK5xI0WRZhx3tuscKs25x7fjlPqZq
+	 jhXw2ESuw57uVgO3kbkaPSa9seDDjZKffJxUNjQCSKHLuHPxzSIpijRNdh6QbEaXEp4Rt
+	 ofRscz7yqCyjf1SogQywb/rOtLj5kZHrzZvkY7A4syxGHl0qhXAsyoQqGUobGqHiiow==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aDYzKvk7;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=riscstar.com;
+	spf=pass smtp.mailfrom=riscstar.com;
+	arc=none smtp.remote-ip=209.85.210.54
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62362606A329;
-	Thu,  5 Nov 2026 01:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aDYzKvk7
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A28D1F000C1;
-	Thu,  5 Nov 2026 01:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793841582;
-	bh=ipE19vO735Vlv72+ZECb9RYfcfkbe37S23ffmmXmgcA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=aDYzKvk7o01uoSIQ/ewAQaE3leumH4vU0URqgMra4+yUfSJzVNwcGjP4BaAgx/BkA
-	 WfZK5JjJe9mCJWiHgH6Ys2KS2PsuggLY9lbiHLNlEUgAx55P5ObELyqYfUgKxwIaWI
-	 C5JxNAQIJgWr5knKVF1y3jBS+nuWU+3qY6P7qBTaSEwBEjG8tfZ2R3j3cN6Dnefp14
-	 jzD9CebeJXnEtDN6UyGnIZRPYrmIRo709KqPlWOGYzbBi1oOZWnDblLbhOiE4QNb5n
-	 m0I4BcX+pmfVs+X5ASYk3dcbYKmx/svhywTJXZT7xj/OJQ6je/g8JFJdlahLofVfHS
-	 slOKHHEowhPAA==
-Date: Thu, 5 Nov 2026 01:19:37 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Joseph Telaak <joseph@telaak.dev>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Chuanhong Guo <gch981213@gmail.com>, Yao Zi <me@ziyao.cc>,
-	linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] dt-bindings: clock: Add Siflower SF19A2890
- peripheral clock/reset managers
-Message-ID: <20261105-dreamily-quicken-31e2b446a942@spud>
-References: <20261104-sf19a2890-sysm-v1-0-a4fac07df823@telaak.dev>
- <20261104-sf19a2890-sysm-v1-3-a4fac07df823@telaak.dev>
- <20261104-remote-festive-1e6d807ef014@spud>
- <CAPY4CJ5Q7BJuay6D0F6-yvjruHvOO4UQaP1wHKK9_exbH=hUxw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CB0606A32C
+	for <linux-clk@vger.kernel.org>; Thu,  5 Nov 2026 02:09:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 05CB0606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7f84a55cc06so910456a34.2
+        for <linux-clk@vger.kernel.org>; Wed, 04 Nov 2026 18:09:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20260707.gappssmtp.com; s=20260707; t=1793844564; x=1794449364; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=jDAfiOlVrfcIrnBYrikcNDpkrwfsc7W/pzfCEuEFbJk=;
+        b=bQKdoPaYIBZlncDH+3xR78NU4SZUy1UNzYe4/3iE/eTtE3fc1boBVnfn1qAh43yNoS
+         Yv5rHw9B+zMsENMqNuSO21592z1vYg7F1Vb1HUPUBdPXtD9BbCv+q2xYF/6n43abhPLo
+         P28bN+i/ukbP2L97wRtjJUFA2G0hg8hcmztmrqIfwwPIm1DkyKgR834K4zCUMjXKhssv
+         TFNluPBDfBn1byhqxr1I546yDOtxyARPVZcWaXqv3T7oHOf591/5YXxH8guy8TAXg0pt
+         z3lGong9nI1CVZqT9ZnY7VtfMLaXAJeWRqjP0GKbqsphQ7oy+C6eiupBdbyjtT9Qatro
+         W/lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793844564; x=1794449364;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=jDAfiOlVrfcIrnBYrikcNDpkrwfsc7W/pzfCEuEFbJk=;
+        b=DZGiqtEuh1Kkkp+cZS3kyZi52FHiPFg8QArxHowHqrO63IC+TeEa3nYp7ue7/HjBxm
+         zXCbmlITDtYqjzCHo1wjhIkqlCPlkFBiCOlLNCdkiW7gLdMWqfQ0Lor3OUVJTlsTu/sv
+         Gh6hYKew9HFQFQNJfkAcTcKLrl9kIQ2M+N4lbirevFhvwe/K7Arxj6wxl/873nl/3oi1
+         YaCZgoZDRH+fEKkexCkGUUW2zLncTxwl/xANziQ+0hBHZPT99oCf8fKKpuxgAzShoXtr
+         JxoBnmloZf+HWOJ3+NMv4elkB1UJQlwLVUbNrtEE+Q5gIutG+Ejzto9WBMlyZGEyWs7q
+         K7og==
+X-Forwarded-Encrypted: i=1; AKwUvBwq6KCwAMgCNuEUtlfyKEI1Bq6RDhf8yLKzq1ro3F8g+LuJB+fb91wiw1fSjLrkfOLAxUk6wLh5Pmc=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9vWuIpz/3LElR6VPiCbvDw19Q2iRn7oFf2C8QOLhY2AWx49PC0
+	4Xuq8UU12fpSS7FInp/E+Tb0oNbIjP8n6xt+l1MQ9vDbAOPIlFtwIgWqhkOxd70QJDo=
+X-Gm-Gg: AYBFou15UgEG7+cgYXib2D7z6O0onyi1tsR6fQTPSy1V4/8In3693XKOzFOhqBR8cxT
+	u8XdF5eNxuBSF3kgJ5p9FWxGshVn4vGrG1grdmctg4pUgXZcsa1gWcEL2DsxuofD/pWeGmaz8eF
+	+lp0VGq+FvXW5t0OWxuQ40nqpjz7BWl7NLe8/gOKPBia6e9SGMTU5owNHkRuvZMQv+G6H+cpTi0
+	C3kXqcG+joPrEnOSWSbA1m12FYcci0pQlqm3Jt5Gud8usQZ+7tvLaH/a5vmGbrq/1v2miYGEfGa
+	Ogaw1AX2C0bQMS6FL+kRJs2h3doLXERNprN2EM8FTG9oFU2S24CKdvUG3lJKGDHDnj+SPSW3yue
+	i+05MSTf4FyXzkmR++NoOW3yZIc1FvHR55rDYbg+qeX3tLQ+qfFE43iL5Huhjy/m7qwSCewkmau
+	2fj29oimqrzXP4zcHLw4Db6JUANLlJTVO2ntptSCpxJVZFdUOhsFx0OnyubivfhBr/CYdXyIHW1
+	mU0DAde5TQlXlFmMF55mqJTJvRys9BWLxc/3LJVf/LwGQo+S1AV3CuaTTUJ+NzMil7VY/aTwzdC
+	VnSbVnJUp3hQptMbdx/ZXUH6mXyE7A==
+X-Received: by 2002:a05:6808:11cb:b0:55b:f88d:6ebb with SMTP id 5614622812f47-5640df0a2eemr12633362b6e.54.1793844563998;
+        Wed, 04 Nov 2026 18:09:23 -0800 (PST)
+Received: from [172.22.22.28] ([73.62.185.64])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-567a9f9115csm3235689b6e.11.2026.11.04.18.09.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Nov 2026 18:09:23 -0800 (PST)
+Message-ID: <8feef6c7-df8a-468f-863a-fb2f83c5e478@riscstar.com>
+Date: Wed, 4 Nov 2026 20:09:21 -0600
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -67,72 +89,31 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ynKIO3rf7ScFiTT8"
-Content-Disposition: inline
-In-Reply-To: <CAPY4CJ5Q7BJuay6D0F6-yvjruHvOO4UQaP1wHKK9_exbH=hUxw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: soc: introduce
+ toshiba,tc9564-config-syscon.yaml
+To: Conor Dooley <conor@kernel.org>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com,
+ p.zabel@pengutronix.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, daniel@riscstar.com, mohd.anwar@oss.qualcomm.com,
+ lorenzo.bianconi@oss.qualcomm.com, fabrice.gasnier@foss.st.com,
+ alexandre.torgue@foss.st.com, marex@nabladev.com,
+ changhuang.liang@starfivetech.com, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20261104004332.2141282-1-elder@riscstar.com>
+ <20261104004332.2141282-2-elder@riscstar.com>
+ <20261105-irregular-awaken-b329b9c37e70@spud>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20261105-irregular-awaken-b329b9c37e70@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---ynKIO3rf7ScFiTT8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 11/4/26 6:28 PM, Conor Dooley wrote:
+> Actually, can you mention the other features that this provides - the
+> service it provides to the mac, for example.
 
-On Wed, Nov 04, 2026 at 08:08:57PM -0500, Joseph Telaak wrote:
-> > This binding looks like things that we often see that are actually
-> > incorrect models of the devices in question - things that should be a
-> > syscon but not implemented as one. I'd like to see what the actual dts
-> > for this device looks like before signing off (or really even reviewing
-> > this at all). Given how the clocks look, it is probably accurate but I
-> > wanna be sure.
->=20
-> The dts is a separate series I'm holding until the bindings settle. In
-> it, each manager is a node like this one:
+Yes I will add that in the next version of the series.
+Thank you.
 
-Just link me a tree somewhere with the dts, I;m sure one exists ;)
-
->=20
-> uart_crm: clock-controller@19e24c00 {
-> compatible =3D "siflower,sf19a2890-uart-crm";
-> reg =3D <0x19e24c00 0x10>;
-> clocks =3D <&clk CLK_MUXDIV_PBUS>, <&clk CLK_MUXDIV_PBUS>,
-> <&clk CLK_MUXDIV_PBUS>, <&clk CLK_MUXDIV_UART>,
-> <&clk CLK_MUXDIV_UART>, <&clk CLK_MUXDIV_UART>;
-> #clock-cells =3D <1>;
-> #reset-cells =3D <1>;
-> };
->=20
-> with twelve of them, at 0x19e04400 (gmac), 0x19e08000 (wlan24),
-> 0x19e08800 (rf), 0x19e0c000 (usb), 0x19e0c400 (wlan5), 0x19e24400 (i2c),
-> 0x19e24800 (spi), 0x19e24c00 (uart), 0x19e25400 (pwm), 0x19e25800
-> (timer), 0x19e25c00 (wdt) and 0x19e2b400 (gpio).
->=20
-> You may well be right. I dumped the first 256 bytes of each block from
-> U-Boot: all twelve have the same four registers at 0x0-0xc (reset, clock
-> gate, one I have no documentation for, and bus output enable), and five
-> have more past that: the GMAC's interface and RGMII delay registers at
-> 0x40-0x4c, the USB PHY's at 0x40-0x8c, one register at 0x50 in each WLAN
-> block, and two at 0x48 in the SPI block. So each block looks like a
-> small system controller for its peripheral, with the clock and reset
-> manager at its start.
->=20
-> If that should be one syscon node per block, providing the clocks and
-
-No probably not.
-
-> resets and holding the peripheral's control registers, I'll restructure
-> the binding, the GMAC glue and the USB PHY that way. I can also post the
-> dts series now if that helps.
-
-
---ynKIO3rf7ScFiTT8
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCauvZqQAKCRB4tDGHoIJi
-0vJoAP48XzONgQM9jSTbYdH1mbu1z8mSDjtwafVehtu+TlEQ7AD/a4G3si1Ft8YU
-VV6kizbLXqaiAnYeBbtH7zk7GTlGDgk=
-=UKgd
------END PGP SIGNATURE-----
-
---ynKIO3rf7ScFiTT8--
+					-Alex
