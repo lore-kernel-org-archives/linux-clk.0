@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793905025;
-	b=qmvp0LGC81d2okCHK4oUVKLq09ySukuyfrVgoTSlcfNKkjbhWzFA+gBj3lp6cr2IF0wR
-	 kshRs/sf2/Ddf+oB7BGmeMRTgxE9JD0RGHIhSc/b3qQd/TIFbZqbNYiL29ZCYiOI+Wv/u
-	 z8GOlyIyy4w1vV8Gpaqyxbke2e0Hv9FAolcpGreAiXBi2AuZYHmpN0u+9HILll0W4UkKn
-	 gDtz6qggA8urRQInpVM5RMiH9y24lb/CtKZ3YdwgQOIwpWK1JWR8olYLxBQURko0FMYq1
-	 IgYEB3MTHsJLQZvsQ4SIGbQblot9EwwFHv7Cxb7c8pQaDIpK9mS+TLPxNYFeZBqt0qQ==
+	t=1793910211;
+	b=LJKV5s1uF1br/fGyLHMSLS24/BnOd4JZs359Tq0NfhwoAKNUy1okm6zw8ajN3cV6RgSe
+	 tpppGY5DB1Zj2Bwnv5I5iYfdRhU5v0+Vd3bExHH1cJ1mMUVlTPQJaOj57gc3vUQ/T7zCC
+	 nqjOZXmoHkpURHkkbodxiZ6vhBWKmR6etumQxyOqHc9DUcGEi13vbVLEjoyPR5VlhsjvM
+	 7JQW787N9dRHdBhegcGyf7ceqgRZ42QTCoyQFrY+Xfiwr4qt/m0ammB4WdiZyBXQ/MrIb
+	 4O/ODtpzf4+R3SRTlPGFQ/L3Y5MJS1nvrERSeF0I3+6+ShXN4Snolxmz0RDYLahmdHQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793905025;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793910211;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=WQ9sffyuRp/irYxXc7dRPeziYbjvSyitG8dEJ6yeqEg=;
-	b=TssEsm2WRLgvOoh7e3GIcFoDmxN5cKqge227ploT94et4jkwvnBnzb8AI2JUVkIE38El
-	 faCxr4h2N20tGtvJ3xmpOe0lhwjunCfSm9jq8brjCLNlnqunml8RvmiS0V6HtxNuj5+JB
-	 ljJBn6h3jFM6VonBg8OmDY4sBDlrsNKGe9a/ERgMsVQdkti2inyvNyZh1uQPJFcY1kfl9
-	 s2l4K0vrvd/WvwJGxuELcolMv8Wc6XU23GcSGwLAoX26ObleltJ/GQuem4v6ZNXfff2x7
-	 tDylc6XC/4/KTEb4culLsQnXopw135RlVNmC1fmxSI+JkZxnlvpbdaEbhL+M+yFMyRw==
+	bh=EW+t71jhy7LMxyaA2zPHlVI+DPJ5VusFQchtnKOjjO4=;
+	b=XCogHgPW/DSpv7BMVSkXfirB0hojc0L9frQe5ntjBaMCR64JvXYbMocp2IYAuZMd8x1O
+	 hiNpzYqzee98ITXIAOxpnv5DkUmzTWib3eGxON+G36aEgPKkOCuhd0IueDu81zdGY6rmI
+	 D/T8HPPdP4uN6JqTbVsd0w1ilRKF8vrK+88rn4d4kY3P3BRsJK+y0l+Ciqe1OhotevUIA
+	 v9iLbPL9ehCkoUPCUSxt+MIigqUQdgADrQTfPKCivAJ75TkfMYC8gAFM04ZBvCg+RC2Xe
+	 Sh8dpOpFAXuxQA2y6ofsctLpLXKBj4GEcrXtMVphuN+txS5dA7EydGt1z3b+zG6zRDw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nSRL7qeZ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="WtYRHUl/";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B877E606A31B;
-	Thu,  5 Nov 2026 18:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F80A606A329;
+	Thu,  5 Nov 2026 20:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nSRL7qeZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF3C31F00919;
-	Thu,  5 Nov 2026 18:56:55 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WtYRHUl/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 698F61F008A1;
+	Thu,  5 Nov 2026 20:23:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793905024;
-	bh=WQ9sffyuRp/irYxXc7dRPeziYbjvSyitG8dEJ6yeqEg=;
+	s=k20260515; t=1793910210;
+	bh=EW+t71jhy7LMxyaA2zPHlVI+DPJ5VusFQchtnKOjjO4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=nSRL7qeZefZsFlhbewfbotp8isdhCFKOicgcQPuFTjUejyFw8L89bYizUJWdyBeeX
-	 DSl3dtsx64ZntdIq0Euec2b587YGxISmGsI+JBa80+upYr7n0EMYVeA6a87B4QpCib
-	 E4DlTWWHYVyAyF6o6QGbkxDvFJhiEfXmvA6ZDQrse+l0HP0KWkyhM/XEHlkp/0+qDO
-	 uPv/qhdVQp7R8IMPu0vCr4Pnz6mLKt2wblai4ewjnD0U48c/s+Tyqm2tfW35BuFrqu
-	 qLfEWbX+bBsVRRzhWsEVR6+tFQgbtuJHbwMC6YtW+xyLsNiqQIDSbGocuQxtu3JRt8
-	 GfRbkJEVmHNow==
-Message-ID: <4e393e6f-34d4-4d8d-a12a-270aea843f17@kernel.org>
-Date: Thu, 5 Nov 2026 19:56:53 +0100
+	b=WtYRHUl/waP6OoYRdcQo/GE3JvGS8fKocRo+cJOuPumx17rncEQclB5f8h6X68j3Q
+	 RW729mDnYA33mXjmRcPotZRj7xg011VRnbjMvwfcdijHAl9yl0tke8azO0LeAPVmCY
+	 JG7dkMPDjpaxxx/sgbJfnjuEQkPQaKzIGQD+NG4n2mTtPvNGx8v/rf/OejnIoAyUsO
+	 DP8dyNV6cLmeEC4F8jU09BY2MZ6eDBNCSEVd+PzH32dMzkqrvMxvamTQdtfJ9p9aZR
+	 s8NVrboS0XwdAsXv36hp3JILfnfsthzQFZQTrXG6FmQv5QOkrKI4li9q77DnH3em8B
+	 yLVv1IovvmBvw==
+Message-ID: <53323b7e-5169-4a36-a051-ed1eb1718b7d@kernel.org>
+Date: Thu, 5 Nov 2026 21:23:20 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -52,25 +52,18 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/9] google: Add support for Laguna CPM
-To: Brian Norris <briannorris@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Thomas Gleixner <tglx@kernel.org>,
- Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>,
- linux-arm-kernel@lists.infradead.org,
- Mariano Marciello <mmarciello@google.com>,
- Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
- =?UTF-8?Q?Jakub_G=C5=82owacki?= <jglow@google.com>
-References: <20261026214359.3122870-1-briannorris@chromium.org>
- <20261028-armored-glistening-cheetah-6f3070@quoll>
- <aulBrFWi54E6a7Br@google.com>
+Subject: Re: [PATCH 1/4] dt-bindings: soc: introduce
+ toshiba,tc9564-config-syscon.yaml
+To: Alex Elder <elder@riscstar.com>, sboyd@kernel.org,
+ bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, p.zabel@pengutronix.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: daniel@riscstar.com, mohd.anwar@oss.qualcomm.com,
+ lorenzo.bianconi@oss.qualcomm.com, fabrice.gasnier@foss.st.com,
+ alexandre.torgue@foss.st.com, marex@nabladev.com,
+ changhuang.liang@starfivetech.com, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20261104004332.2141282-1-elder@riscstar.com>
+ <20261104004332.2141282-2-elder@riscstar.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -116,54 +109,107 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <aulBrFWi54E6a7Br@google.com>
+In-Reply-To: <20261104004332.2141282-2-elder@riscstar.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/11/2026 03:06, Brian Norris wrote:
-> On Wed, Oct 28, 2026 at 02:24:35PM +0100, Krzysztof Kozlowski wrote:
->> Either you expect review or not. RFC means no.
+On 04/11/2026 01:43, Alex Elder wrote:
+> Define the binding for the system controller that implements the clock
+> and reset controller functionality present in the Toshiba TC9564 SoC.
 > 
-> OK, PATCH.
+> Co-developed-by: Daniel Thompson <daniel@riscstar.com>
+> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+>  .../toshiba/toshiba,tc9564-config-syscon.yaml | 68 +++++++++++++++++++
+>  MAINTAINERS                                   |  8 +++
+>  include/dt-bindings/soc/toshiba,tc9564.h      | 46 +++++++++++++
+>  3 files changed, 122 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/toshiba/toshiba,tc9564-config-syscon.yaml
+>  create mode 100644 include/dt-bindings/soc/toshiba,tc9564.h
 > 
->> If that's patch, then at
->> the top level of cover letter, as the most important thing, you explain
->> the dependency and merging proposal of this.
-> 
-> OK, I'll try to move it up. To be fair though, every change that has any
-> dependency is clearly noted in its below-the-fold notes.
-> 
->> You combined here like 5
->> different subsystens...
-> 
-> What do you recommend here? I believe the general principles of DT
-> binding development suggest there should be a single binding doc for
-> describing the "Central Power Manager" (and the services it supports).
-> CPM supports functionality covered by many subsystems.
+> diff --git a/Documentation/devicetree/bindings/soc/toshiba/toshiba,tc9564-config-syscon.yaml b/Documentation/devicetree/bindings/soc/toshiba/toshiba,tc9564-config-syscon.yaml
+> new file mode 100644
+> index 0000000000000..5a241a9c915d1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/toshiba/toshiba,tc9564-config-syscon.yaml
+> @@ -0,0 +1,68 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/toshiba/toshiba,tc9564-config-syscon.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Toshiba TC9564 Multifunction System Controller
+> +
+> +maintainers:
+> +  - Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+> +  - Alex Elder <elder@riscstar.com>
+> +  - Daniel Thompson <daniel@riscstar.com>
+> +
+> +description:
+> +  The Toshiba TC9564 is an SoC accessed by a host system through the
+> +  upstream PCIe port on the PCIe switch it implements.  The switch
+> +  includes an embedded PCIe endpoint that provides access to various
+> +  SoC peripherals via its BARs.  These peripherals include a simple
+> +  controller to gate internal clocks, as well as a reset controller.
+> +
+> +  The clock controller uses registers within the same page as a reset
+> +  controller, so this system controller controls access to both.
+> +
+> +  A total of 21 simple gated clocks are implemented within the SoC.
+> +  At this time, support for enabling and disabling only a subset of
+> +  them is provided at this time.  Similarly, the SoC implements 13
+> +  resets, but currently not all of them can be controlled.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: toshiba,tc9564-config-syscon
+> +      - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +    description:
+> +      Clock ids are defined in <include/dt-bindings/soc/toshiba,tc9564.h>
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +    description:
+> +      Reset ids are defined in <include/dt-bindings/soc/toshiba,tc9564.h>
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - "#clock-cells"
+> +  - "#reset-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    syscon@0 {
+> +        compatible = "toshiba,tc9564-config-syscon", "syscon";
 
-Standard upstreaming process for new SoCs.
-https://lore.kernel.org/linux-samsung-soc/CADrjBPq_0nUYRABKpskRF_dhHu+4K=duPVZX==0pr+cjSL_caQ@mail.gmail.com/T/#m2d9130a1342ab201ab49670fa6c858ee3724c83c
+I disagree this to be syscon.
 
-and the perfect example:
-https://lore.kernel.org/all/20231121-topic-sm8650-upstream-dt-v3-0-db9d0507ffd3@linaro.org/
+This is internal to the PCI device. I read Daniel Thompson answer:
+https://lore.kernel.org/all/auOI8LbZNWbNGJuN@aspen.lan/
+And I accept arguments that you want to re-use a lot of existing
+bindings like DWMAC and so on. Syscon does not count there.
 
-> 
-> While in theory, bindings can be written without corresponding software
-> support (drivers), in practice it usually works out better to develop
-> them together, to prove that the binding describes the hardware/firmware
-> sufficiently.
-> 
-> And even if the binding goes separately, I don't think I can 100% split
-> the driver support by subsystem, as they all require the same underlying
-> CPM helpers, and those helpers don't have much meaning without their
-> clients. So some multi-subsystem work is still necessary IMO.
-> 
-> So I don't really see how I can address your complaint. But I'm open to
-You don't know how to split patchset per respective subsystems? Somehow
-Linaro, Qualcomm and many other people managed to do that, so just ask
-them. Linaro folks might be easiest to reach, through Peter Griffin for
-example.
+I remember you posted somewhere full DTS, but now I could not find it
+again and I do not see it in the cover letter here.
 
+So again, why does it have to be a syscon, which is pure
+internal-register-access thingy?
 
 Best regards,
 Krzysztof
