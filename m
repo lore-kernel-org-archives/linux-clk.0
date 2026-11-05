@@ -1,56 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793888944;
-	b=15X2XmPX0n5mUzYfLe+da3tGsblE5cQAoFU8GjgbqTyIPi+4b9EetllLTtCifR4JAyol
-	 PsJJj0McJVHPkNmSlgXVXX6yPJ9iAg1idksANWRrjh6n6K70fTk/vfTgxABiSqAyFy/uo
-	 UzQ4BppHcCb7Ez88PxPiTSD/jFNPUaXllDRv38MEKVredIC0QeEboMr5DTPbC7xt+MlHV
-	 hX12YMQL3yu+ginpyqM/KfZ6IrRObkxYHvYtGRpCL/EzlGe0thjq2zeTqELAJP6a8tGvt
-	 b9CPnfp6WGu9rM2fQer0HsAFE9kPQtZetio6cyvprFXR9C+0b7ECH8imCqwD/G3R17g==
+	t=1793889766;
+	b=O5YhpmuOBf6+h7aGsN0XGD6Bi5E62Gq17chOe7NTsSqLl+h71uNAxvNQTXmIHeD/x3dq
+	 LZPXdQM019RgLGBiudEMoyigaF4Fv8iQs4KNCYgV6mcoJ3PE8whpa4vrVXgvIA01lcJpQ
+	 5dvvdKlFDSIzPKxnmfk4gb7gr7OPH7xYrzjfD0LB8e4kR8wz6r8eBwPiJGr8XQU+SRQeM
+	 hEctpif63LiisXLswsINz92eZEkAx3sTuXqmp1eXyKCcuX+HXwiXnC7U+xhieSq6J+wTa
+	 s3BIG9qTDEbe1zprlHL2us17qBWQQkGWdNOigOsF7VKmZ5VgQQhp5e4miVDxfD84B6A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793888944;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=GnqfOkxGGqfm4NELNr/v+G+Yq4Jnr7VeV22BqG+KrSY=;
-	b=xLUQc6u0Nfx4xJIqID9hwsR0mz1nVrHCmFbf1giZ+RlpXhYlPEWLwBo0+yw8KmHdthgO
-	 TLwyZWrG55/HNLLrqfE6H7rBussDXguN1i6xjraIZ+3NsXKy3V3T7rklmKervFWgu66Dv
-	 KduQFRKdYvt3xRGGnmo1RVWjGhGaPgKAD79QYKIJnis0KQF4lSef3BzlbR5NPhvahpqKe
-	 IO/6qeXUaFqfYZFMVc2El6x84htItDkhoPqAsRIFiwJ8/YzeevGqVI3NoxswNMZdDJ3ow
-	 U9UuCqxH1uV4DW4zfVydwTxhaOloC1rkBJnJQNp/Uytb8FQu88dlW6LpqdD6F3lKwlQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793889766;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=ZL/hz+Nepjx94olTOPhIcVJMRm52prSBkVRVs4qZOx8=;
+	b=2fuFm3E/EXE8zrQRQvFcORbTjyUKmtF8bHdLjYNwHiycn07vIRucmE7LgXjVOePM6iOw
+	 lmeZhtTCjgHegCeDnQD2CtZdiJbnArqmzZeTb48Th5TokAXichH775Vbh76LLEqHo3wDe
+	 3grkeMS5dwbe4w9FIgSe/En3M8QZYGaI8msKKe3TQ28vpxDNAHAtU0ybRkABbzTFCorOX
+	 XZdKcZIeTMYXvCIN+/JlaXlZUIvrvd4NXZrhFDfsOr31kTqILQMtm9Xx/2KFcnaG2tAEJ
+	 InAtNSHqMc89dtI1kC7WBUQu1dhUQ9aeLF3YdLHWAliGNg7Q4saE4CffB1uaROSXUtg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YXxSw1t6;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bcogTeHL;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07867606A32F;
-	Thu,  5 Nov 2026 14:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809B7606A328;
+	Thu,  5 Nov 2026 14:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YXxSw1t6
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B40F1F00A1C;
-	Thu,  5 Nov 2026 14:29:03 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bcogTeHL
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D05CF1F000C1;
+	Thu,  5 Nov 2026 14:42:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793888943;
-	bh=GnqfOkxGGqfm4NELNr/v+G+Yq4Jnr7VeV22BqG+KrSY=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=YXxSw1t6CmqmV81JUhb9AaP0/s4hBQikh+sGXxHgry8CQES9tZbQh5PoiM1vRtQFE
-	 L7LgN2WlzJaXKJIOextQijYHwiNh1kFc7+Pqzwmu+ogGqJJciFh3iAq5hMPCLuB9FA
-	 0DEetuweHp4vQ3xJWeYTG4+PX1L8yhOi7EQSUSsoY0mEqzNxX8PokkblEr3uFK2bo6
-	 yul8UAJqSeySp9paH+EzQcf42DntMXBL3fdmbGu4EPVG7V4j/0/e0mCy3+/r5I3Sca
-	 bkfEuDEIZQXAUKz2Jy+HpSL+jRiaP/s1jDUAeIGk4PorvAi0Fiui7GMcZPv7cfKh1B
-	 Icf6X68UZrxfw==
-Message-ID: <sashiko-outbox-199242@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 06/16] clk: at91: Add peripheral clock id for OTPC
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Alexander Dahl" <ada@thorsis.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261105110715.2486432-7-ada@thorsis.com>
-References: <20261105110715.2486432-1-ada@thorsis.com>
- <20261105110715.2486432-7-ada@thorsis.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 05 Nov 2026 14:29:02 +0000
+	s=k20260515; t=1793889766;
+	bh=ZL/hz+Nepjx94olTOPhIcVJMRm52prSBkVRVs4qZOx8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=bcogTeHLSTgb7MGVcVWzpGaT1TgIE1ugPGn42mKAPnsuNTSU9bznghrb7qV8nPFaz
+	 DSh+6UuDLpahP5tjLiW0DxYesTxk8FQb6MARS3orD0j6ZL+nytLslzfP7tcGP6OElr
+	 uLt24cj79V54XbXWhaJRMYlmkss3GtwppzfIhKDd9K9un+2FZNtpjMxtyacvO3ZvZY
+	 7RftsFFXAwry/QBFzpwJeAt1uMtlnc8ANQKd3lNQ5WroEqUjJ5DbWpKYrduZMRAUov
+	 MdwaC05/ls/aMIuc5cRY02pDO0XcUKA5gv+A8xPh75VgxiGQhNPPTS/oRHowDAE7GL
+	 nDVESWQYF07Ow==
+Message-ID: <5c1c0b7f-392e-4ce2-9852-63cf8454520a@kernel.org>
+Date: Thu, 5 Nov 2026 15:42:37 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,108 +50,78 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 02/14] dt-bindings: clock: exynos8855: add top & peric
+ clock definitions
+To: Raghav Sharma <raghav.s@samsung.com>, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, peter.griffin@linaro.org, alim.akhtar@samsung.com,
+ sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com,
+ robh@kernel.org, conor+dt@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, is.gandhi@samsung.com, ts.amit@samsung.com,
+ pokala.reddy@samsung.com, cpgs@samsung.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <CGME20261020065546epcas5p35f2faba15dd3ba959a66cc9b7df8daa8@epcas5p3.samsung.com>
+ <973576304.21792479783510.JavaMail.epsvc@epcpadp2new>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <973576304.21792479783510.JavaMail.epsvc@epcpadp2new>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [High] clk: at91: uninitialized hw assigned to chws in sama7d65/sama7g5_p=
-mc_setup()
-- [High] clk: at91: out-of-bounds chws write and lookup failure in sama7g5_=
-pmc_setup()
---
+On 20/10/2026 09:13, Raghav Sharma wrote:
+> Add device tree clock binding definitions for CMU_TOP & CMU_PERIC
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
 
-commit 056fbff3f28231ae65a50d25dfabd2b4de1811af
-Author: Alexander Dahl <ada@thorsis.com>
+Two weeks, I am still waiting on a proper resend... Your posting misses
+threading.
 
-clk: at91: Add peripheral clock id for OTPC
-
-This series splits up the AT91 PMC clock binding indices per SoC, exports t=
-he
-main RC oscillator clock to Device Tree, and adds the OTPC peripheral clock
-IDs for sam9x60, sam9x7, sama7d65, and sama7g5.
-
-> diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
-> index ba8ff413fa2c6..1f3c724739133 100644
-> --- a/drivers/clk/at91/sama7d65.c
-> +++ b/drivers/clk/at91/sama7d65.c
-
-[ ... ]
-
-> @@ -1138,6 +1139,7 @@ static void __init sama7d65_pmc_setup(struct device=
-_node *np)
->  						   50000000);
->  	if (IS_ERR(main_rc_hw))
->  		goto err_free;
-> +	sama7d65_pmc->chws[SAMA7D65_PMC_MAIN_RC] =3D hw;
-
-[Severity: High]
-Does this store an uninitialized pointer into
-sama7d65_pmc->chws[SAMA7D65_PMC_MAIN_RC]?
-
-In sama7d65_pmc_setup(), hw is declared without initialization and
-at91_clk_register_main_rc_osc() stores its return value in main_rc_hw:
-
-	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *main_xtal_hw;
-	...
-	main_rc_hw =3D at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 120000=
-00,
-						   50000000);
-	if (IS_ERR(main_rc_hw))
-		goto err_free;
-	sama7d65_pmc->chws[SAMA7D65_PMC_MAIN_RC] =3D hw;
-
-Should this assign main_rc_hw instead of hw?
-
-> diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-> index 1340c2b006192..3e0cfd2613851 100644
-> --- a/drivers/clk/at91/sama7g5.c
-> +++ b/drivers/clk/at91/sama7g5.c
-
-[ ... ]
-
-> @@ -997,7 +998,7 @@ static void __init sama7g5_pmc_setup(struct device_no=
-de *np)
->  	if (IS_ERR(regmap))
->  		return;
-> =20
-> -	sama7g5_pmc =3D pmc_data_allocate(PMC_MCK1 + 1,
-> +	sama7g5_pmc =3D pmc_data_allocate(SAMA7G5_PMC_MCK1 + 1,
->  					nck(sama7g5_systemck),
->  					nck(sama7g5_periphck),
->  					nck(sama7g5_gck), 8);
-> @@ -1014,6 +1015,7 @@ static void __init sama7g5_pmc_setup(struct device_=
-node *np)
->  						   50000000);
->  	if (IS_ERR(main_rc_hw))
->  		goto err_free;
-> +	sama7g5_pmc->chws[SAMA7G5_PMC_MAIN_RC] =3D hw;
-
-[Severity: High]
-In sama7g5_pmc_setup(), hw is also uninitialized at this point because
-at91_clk_register_main_rc_osc() assigns its result to main_rc_hw. Should th=
-is
-assign main_rc_hw here as well?
-
-[Severity: High]
-Additionally, can writing to sama7g5_pmc->chws[SAMA7G5_PMC_MAIN_RC] overflow
-sama7g5_pmc->chws[] and cause lookups of SAMA7G5_PMC_MAIN_RC to fail?
-
-In include/dt-bindings/clock/microchip,sama7g5-pmc.h:
-
-	#define SAMA7G5_PMC_MCK1	13
-	#define SAMA7G5_PMC_MAIN_RC	14
-
-sama7g5_pmc_setup() calls pmc_data_allocate(SAMA7G5_PMC_MCK1 + 1, ...), whi=
-ch
-sets sama7g5_pmc->ncore to 14 and places sama7g5_pmc->shws at
-sama7g5_pmc->chws + 14. Indexing sama7g5_pmc->chws[SAMA7G5_PMC_MAIN_RC] wri=
-tes
-to index 14, past the 14-element chws slice into shws[0]. Furthermore, when
-of_clk_hw_pmc_get() resolves a PMC_TYPE_CORE clock with idx =3D=3D
-SAMA7G5_PMC_MAIN_RC, the check idx < pmc_data->ncore (14 < 14) will be false
-and return ERR_PTR(-EINVAL).
-
-Should pmc_data_allocate() be called with SAMA7G5_PMC_MAIN_RC + 1 as ncore?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261105110715.2486=
-432-1-ada@thorsis.com?part=3D6
+Best regards,
+Krzysztof
