@@ -1,102 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793890042;
-	b=qzDIQr2/2NPNHuXHzio6yPtQBQi4b8ZWTiFTnvN0MlybaA9IUSS/6YrFpvLiK5sH3lUj
-	 skjEVkeajHDT5KiCk8emgK2a4YvRBADzBSviLd1/Xj+hTBfhDDbpzeQq5YCPdnJB9Dx6z
-	 rb8Zc4bt4WzzA4EZ9pKRKSX/a97//FulJrw7Q4VZZSTTSfqt0ynRaTRWovE9oefm0sJew
-	 uSNLYK+8igGXqgEvrZWeMx2Q0jFVgKdbjaCS57SnFwBI4bM7XiO20YGlOcfyHlsRM48zW
-	 ulawtz7G21cIM4S8SDbrvB/MISRK6lHAHoB9Rt/Jb5sha5HfY3jXYX/Io8J2CdZqXeQ==
+	t=1793890182;
+	b=s/WwmDinmtskyWZNSXP/drRvm5bC/LbXD1gs9x9i1MYTEfMuUSvgxzluD8hoXklpt6XG
+	 bISaUuKtGY0/lVaLQ2efkEoWB6Q1XtTRGPR2QWATX/i/jDNimxLJIq+t2gPEg3hjZdhDo
+	 gWf75ZpUU8oLiBX/uyNJhr/VaIs9yxQIv9AQ5ZZPjqUSOvx8BOAhPxVbjpfRiNdTuT0rV
+	 V8U5OUn3DPSA7uHeN/cgCADYdigcNy1BpauHPmj4/kHOQ4D85TIimnLP+FFLZ35KzkwOx
+	 JxuJXRtK60+Gw6wNf6rmPhlvTe21ceNvZ0NYL4THtwXvwlvuSWB6satqJR4FhYDrr6Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793890042;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=jhh3rOfmt9+8e7tXOxSG5bPIHbOH/EzZ/+Q3I0eOuA4=;
-	b=Y/QxWUtbHerWAm0kXV+jMld2unlpuuRQ4jcw+Byipj0x8n5W/mvIk+cLTq8WsGSlvYW6
-	 8zW2GgivW10qfvESqiMASqdpZ6FSInIsxK5+iD9qG1XcAFgYr85mUWU6FWu5/8kd5Mkj3
-	 Bq69FkyLKshSVEvPYBJfPKMfI0za61xMqy6G7xrWNnxRsl+lppq9UCJOsevF1O4jDxeZi
-	 zVOSCf6/aeXoDnY74X468UBhHPExUYqCEGIYHaDKTQdRL41/F/+nDwTurtNzpanxddNQp
-	 I5wjxC2Md83lHuZmsR34bS3/CiaThrSeis2vFnVMeW8AAd540hT8K7LVyKSjotnjjJA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793890182;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=QpwPqOLAugA67x75tYz1g7ohdoIGIFAO4TwGyxZEzGk=;
+	b=ueZtjZyEXGNfYM53zwj1yw/DN3/M88H7h9RxHrMdXZ9VCUh8wshyJDGYbGtQ4ogOznbv
+	 pnDL5UyuDmX3Wg7PP8zBIdIhkv7gMjmeYhQiElNRjTbblIbHKH8GGHQzC8PGL0NX/jIoH
+	 IvicLgQgJxsHf5j+tSaU5LwyoctfPLaqWHp8+4lKBmqkcttPYcdHTBZqWL0b0JLMmdkBA
+	 W1lMz27vPb42OwutmWIpc4vnbmVEhxqV1cFf/f1Qgh/HmUlAJFtq3RDHnWeNCqtbNzYeS
+	 WFGehw9sv0uY++IiCLluJy+Lk0RrouwH6Nex1VO/TpzKtcTXgij71JKFyl0cf6Am6kw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=h41ijo8V;
-	arc=none smtp.remote-ip=209.85.128.53
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.222.51
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90D5606A329
-	for <linux-clk@vger.kernel.org>; Thu,  5 Nov 2026 14:47:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E90D5606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=h41ijo8V
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4a208d93758so22658375e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 05 Nov 2026 06:47:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793890039; x=1794494839; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=jhh3rOfmt9+8e7tXOxSG5bPIHbOH/EzZ/+Q3I0eOuA4=;
-        b=h41ijo8VLcdthRc+9RgmvYx5NsDst/AzLIN0l3Rh3PfJaoqgNrfZ7zT2ggC+7lc2kI
-         ulT7MbshSrv49Xb5yr+Pch5PAkH0NCtKrPwmJWCokIuuvMfmhEHq9E0R5eCGTcKY961y
-         HWm0H//LKYNhJ17tsnxjo2GgUSIAmgFLif7rtAfz5XgU6RY0YnmPbv099YuF4GSseCJi
-         DCQ0b2oQEMYtnwVE72KyQZ2bY72UDOxriGGd7OWIwF2ydRTeV3k5ERrR9NKkSmuvT5K9
-         RVW0/iAF69WrD8RYuNDgiU4vbm/+J/ta9DFrKDcRjRPoYUDCQ/DfNsmtIudR+h3dpxr0
-         5Wfg==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE19606A332
+	for <linux-clk@vger.kernel.org>; Thu,  5 Nov 2026 14:49:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0EE19606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-9909e82513fso614749241.0
+        for <linux-clk@vger.kernel.org>; Thu, 05 Nov 2026 06:49:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793890039; x=1794494839;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1793890181; x=1794494981;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=jhh3rOfmt9+8e7tXOxSG5bPIHbOH/EzZ/+Q3I0eOuA4=;
-        b=bawIsbP4RNOQeMssz+vteXHzCktnkIi8s43YpG6iyW5X7mGiP74DBHbcD3M4Fpp3Ma
-         QYSB0+V1BZIxRaHxjW/mrOnerQIto2RYHKkOIZmk7laOMNwmuqCzBC+wQrHebBlP0qxo
-         s9RjpTJV2UexUwrt9KNlSRDi4nZigRlaeMSNkdYwSNwwvet5zH6hdM51D65XPFTEkmv7
-         iPQfTrCAGReAeqXCuPtYhAMdzShHwTJoZQpxF6vvGCojYMM1Kjx8OszVIOFsAbGGzw1n
-         2pg2MiiSG8eDE3mESWZj30xZVbeFeAPZj3+N+gptK19crd3raNUSIDE5aT/8xO3cQqqI
-         X/kQ==
-X-Forwarded-Encrypted: i=1; AKwUvBy4JjMZhtmyJIzJXyUs7/mA0STGTvmVRCU2r79W1sLjeL9pY3FXP26gwCJSqe1mwT/TqnBE5Zo1H6c=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9wjHzS4lui8xBQBhYCo0VgvUiIZLxdv73jJYAZDExcBFuSc2FP
-	iq3zUlM7+uBNBbHpxVG8rMAxCCa4I0hl8j5palZs52JS9NosbdAbMb9Yt3PSiC2Iorw=
-X-Gm-Gg: AYBFou1ZElPGMSkkULmCbJRpzHWiE6iS2GPiuDw/AajBbT/mRoVHUfQCaztAgbfvHgQ
-	mX+hyCXrC4tPSsysIyjtEm9RUEaB0Y5euchITMwtoRh7x2PhqVCNGYbZ7s0eyBnJfoKtcno1bze
-	2MPRcl9sH+ZwJbKpgJMgi+FPtBq/71eB11I744LGo4s0P6/PnExy7whqg6cmxVYTy31v4RSEO2m
-	0vFyNSAsyhsUOsDzJOPO8OxH53h1KNeSZQtU/+RA1aZY2eAZwxoAgAeNxTxNwEMHqFxkfUT/pI0
-	MmxMi6UV5E8EGWXkgM32oS8NgOu/zp2OrdIrR7qHiERKf5T7PT9UPTqI6WBZcx7BHVO7oO45k7n
-	BP7JHV2Z0iW8bHaudFlqIo2u480W/wiMphnQu2Q1Oh7WlNWs4XfTkNji+fL0PQaVO1rS5/THhpo
-	KLFQx+Ma+0l103DaHlhbOop7tWAvFsk4csZXtaIcabbrWTc7F6tBjiQ9gkvL7PU8YwA+BifRofa
-	SFwW8K1fAFvhehyyzx7k3jtcfPD7xeqo9IzF7+Sh3aFo4QREVd2UpqNPORXNLxeG2LkaIYjcsLf
-	HoaLVjqw5NYYNRTw4e/EcfE9IjJdjCp42ZIvCCsl+wW6DTR0MCNqhkY=
-X-Received: by 2002:a05:600c:3556:b0:4a1:c6fd:4db0 with SMTP id 5b1f17b1804b1-4ac187a80b4mr460893955e9.19.1793890039475;
-        Thu, 05 Nov 2026 06:47:19 -0800 (PST)
-Received: from localhost (p50915710.dip0.t-ipconnect.de. [80.145.87.16])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4b56eb4da1esm115774655e9.6.2026.11.05.06.47.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 06:47:18 -0800 (PST)
-Date: Thu, 5 Nov 2026 15:42:56 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	William Zhang <william.zhang@broadcom.com>, Anand Gore <anand.gore@broadcom.com>, 
-	Kursad Oney <kursad.oney@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, 
-	Benjamin Larsson <benjamin.larsson@genexis.eu>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] mfd: Add a shared BCMBCA PMC3 PMB transport
-Message-ID: <auyL6UF8WWwXsXrS@monoceros>
-References: <20261101-xg6846b-bcmbca-xrdp-reset-v2-0-455fe9eed5ee@kernel.org>
- <20261101-xg6846b-bcmbca-xrdp-reset-v2-3-455fe9eed5ee@kernel.org>
+        bh=QpwPqOLAugA67x75tYz1g7ohdoIGIFAO4TwGyxZEzGk=;
+        b=TZuUtpzteJl0raExCDrGiP3NEQSNAyh8Ctbn97hUDRQFbO+o6bVZdh+Rz63dmP6eFF
+         0h8MWbdbgdxp60sjds3BcjPvpSL52GlDK3MMUHod1GFjdj4pNI9W4eZbB67SjqzE54Pq
+         AbvV1WFqEV6W0gkExAxGvTpJ9UBP6L4+2FLClMOPtVVTx1zMd49Wmq9h8MoHM2v3feR4
+         ZjEkltGD8D5nFumTSjdgL5LXu1vbV8pu61LH3WKBViCTTsCb2j9lO81+k02ujqXOnw+P
+         PeLMSyx1M/4N320J7Oy6zEJtzdoeJSGNa5tsFt8blfVcEEpqI0LIsnZ0TypTt9pVjzsc
+         F0/Q==
+X-Forwarded-Encrypted: i=1; AKwUvBxuZkV2byGkAleQtB+p3r54UGRiyZju9iQsxuLp0uYP0kqbZ2KXSooHnYf6mhmqejbE5KyAY4Q+ZA0=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/msItQI9zBf9cv0nAWiIEnE76hg0LZ1jMXRNKMwok+juojzgsN
+	oq25C6k2MuUdEpficywbTcZrLLp5Y+lW33+0w9i3KJTlUzhU4PB8mYVba9BzKVCItwI=
+X-Gm-Gg: AYBFou3z0UpajDxXxhMJuAkyUtC1odID3jQHIrjmIaWlGyhH6P7It6zZCOozcUQ0w87
+	VYJnr2NPuOZTFG1nX6XX6i6QfOP3fsfDmCL3Apy+5EryDmeU1CaSBL3kxe8TTNVHffgH2Ka8waV
+	qWR7XlNk2ErYwb9Pd44gsOO0qWqhrtlpinHAihEaeBwlatd/Xr+jVckCUIYS7D4eZZritLrTCF8
+	2pQx6d1Cq+GHCOgXMvw6UyJlRqZgIe0j++s2TNQio4lG5bC4wmC2m6qbsBMwGK5vsxayS4lfZLV
+	ShWYegiDuMZ6+mFLD9AqBqlCwy5TI/jzssENLYEK0tAoagiRbZYCz96Qq2rbJ8cFrU422tQZEWJ
+	ktYK+e39Yu8YoogBWElDNnIgV8L9De9pnFkTMADJ+POVV7JQa1lLMKcZtCy4XdT5Nr4keBbH5Ov
+	HNhmZvCqdzu7qxzqDF7gum5dwfluW1w8wUHZ1EPlSYXKuvW3c2eV39ALHWTdkYwIVeS8YJACgQr
+	Ixy/9CjpiprZztxtqut6tjvFKd0OB5Kr2e7YmaPisngNXbB2ZFIN1RKQVm0cRjOoJnzMYuYldg4
+	kDZN+zfXME/3EUo2/uC8JhSihRqhS5fp6/9BU3H740YHLXVkUkc87Ue1peKbVT/Nj6CuIw==
+X-Received: by 2002:a05:6102:6208:20b0:7cb:bb7b:77e4 with SMTP id ada2fe7eead31-7d28676b01amr1247126137.3.1793890180917;
+        Thu, 05 Nov 2026 06:49:40 -0800 (PST)
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7d2829d28d0sm2917138137.2.2026.11.05.06.49.40
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Nov 2026 06:49:40 -0800 (PST)
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5ead9f60e26so733466e0c.1
+        for <linux-clk@vger.kernel.org>; Thu, 05 Nov 2026 06:49:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBzQxasgpAFtw52dN0FNW/tRGM0X+agIcBzBNyMQo0icsps8BhzD90q5Z26cVRjPF6Kg2855rTooaRY=@vger.kernel.org
+X-Received: by 2002:a05:6102:3590:b0:7cb:91a5:7cb1 with SMTP id
+ ada2fe7eead31-7d286b9063fmr1558321137.39.1793890179880; Thu, 05 Nov 2026
+ 06:49:39 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -106,50 +81,109 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mag5oduzqhp4hkyd"
-Content-Disposition: inline
-In-Reply-To: <20261101-xg6846b-bcmbca-xrdp-reset-v2-3-455fe9eed5ee@kernel.org>
+References: <20260929113921.119489-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260929113921.119489-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdX9bJB-BUqJxvzYbaVuNziux1NhgXvkY6rgvGC6tdYe4w@mail.gmail.com> <CA+V-a8tbWcODg8E1qDwXU63ohfSgdeMm6GuEkrg=vyrNLQpbgQ@mail.gmail.com>
+In-Reply-To: <CA+V-a8tbWcODg8E1qDwXU63ohfSgdeMm6GuEkrg=vyrNLQpbgQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 5 Nov 2026 15:49:28 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX1j6G+Kd80-6s5PEVkOfG_tS2U8p47929G9kHvD1S-eQ@mail.gmail.com>
+X-Gm-Features: AclHuK8-DY11fAp-Ju55qxGdxFOla992yKCcExdnlJgG4bXumg-5poK1WA750QA
+Message-ID: <CAMuHMdX1j6G+Kd80-6s5PEVkOfG_tS2U8p47929G9kHvD1S-eQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: r9a09g056: Add ADC clocks and reset
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Prabhakar,
 
---mag5oduzqhp4hkyd
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v2 3/7] mfd: Add a shared BCMBCA PMC3 PMB transport
-MIME-Version: 1.0
+On Thu, 5 Nov 2026 at 15:03, Lad, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> On Wed, Nov 4, 2026 at 4:45=E2=80=AFPM Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
+> > On Tue, 29 Sept 2026 at 13:39, Prabhakar <prabhakar.csengg@gmail.com> w=
+rote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Add clocks and reset entries for the ADC controller.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> >
+> > Thanks for your patch!
+> >
+> > Similar comments as for "[PATCH 1/2] clk: renesas: r9a09g057: Add ADC
+> > clocks and reset".
+> >
+> Ok, I will apply the same fixes here.
+>
+> > > --- a/drivers/clk/renesas/r9a09g056-cpg.c
+> > > +++ b/drivers/clk/renesas/r9a09g056-cpg.c
+> >
+> > > @@ -539,6 +556,10 @@ static const struct rzv2h_mod_clk r9a09g056_mod_=
+clks[] __initconst =3D {
+> > >                                                 BUS_MSTOP(3, BIT(4)))=
+,
+> > >         DEF_MOD("gpu_0_ace_clk",                CLK_PLLDTY_ACPU_DIV2,=
+ 15, 2, 7, 18,
+> > >                                                 BUS_MSTOP(3, BIT(4)))=
+,
+> > > +       DEF_MOD("adc_0_pclk",                   CLK_PLLCM33_ADC_PCLK_=
+DIV2, 16, 7, 8, 7,
+> > > +                                               BUS_MSTOP(3, BIT(9)))=
+,
+> > > +       DEF_MOD("adc_0_adclk",                  CLK_PLLCM33_ADC_ADCLK=
+_GEAR, 16, 8, 8, 8,
+> > > +                                               BUS_MSTOP(3, BIT(9)))=
+,
+> Shall I also rename this adc_0 to adc_?
 
-Hello Linus,
+OK, let's match the docs.
 
-On Sun, Nov 01, 2026 at 11:14:36PM +0100, Linus Walleij wrote:
-> +#include <linux/mod_devicetable.h>
-> [...]
-> +#include <linux/platform_device.h>
+>
+> > >         DEF_MOD("tsu_0_pclk",                   CLK_QEXTAL, 16, 9, 8,=
+ 9,
+> > >                                                 BUS_MSTOP(5, BIT(2)))=
+,
+> > >         DEF_MOD("tsu_1_pclk",                   CLK_QEXTAL, 16, 10, 8=
+, 10,
+> > > @@ -634,6 +655,7 @@ static const struct rzv2h_reset r9a09g056_resets[=
+] __initconst =3D {
+> > >         DEF_RST(13, 13, 6, 14),         /* GPU_0_RESETN */
+> > >         DEF_RST(13, 14, 6, 15),         /* GPU_0_AXI_RESETN */
+> > >         DEF_RST(13, 15, 6, 16),         /* GPU_0_ACE_RESETN */
+> > > +       DEF_RST(15, 6, 7, 7),           /* ADC_ADRST_N */
+> ADC_0/1/2_ADRST_N?
+>
+> > >         DEF_RST(15, 7, 7, 8),           /* TSU_0_PRESETN */
+> > >         DEF_RST(15, 8, 7, 9),           /* TSU_1_PRESETN */
+> > >  };
+> >
+> > The lists of clock and reset signals (tables 4.4-2 and 4.4-3) claim
+> > there are 3 sets of clocks and resets, one for each ADC instance,
+> > but this does not seem to be reflected in the register bits?
+> >
+> The clock tree in r01uh1072ej0130-rzv2n (additional document).pdf
+> shows single clock is shared by all the three instances.
 
-Please don't include <linux/mod_devicetable.h>.
-<linux/platform_device.h> already provides of_device_id. Alternatively
-if you insist on full iwyu, include <linux/device-id/of.h> instead.
+I take your word on that (I only have the additional doc for RZ/V2H).
 
-<linux/mod_devicetable.h> pulls in many definitions that are unused in
-this driver and thus introduces unneeded build dependencies.
+Gr{oetje,eeting}s,
 
-The same applies to several other patches in this series.
+                        Geert
 
-Best regards
-Uwe
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
---mag5oduzqhp4hkyd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrsle0ACgkQj4D7WH0S
-/k4ILwgAu4/aIJ4jmqqXgp8ctE1FUWAaormLaedGkha0tPWWUWZFCWXzzflrAPQp
-x3SQdXc7pbe9QPylO/FE1FtFum1V1mELFB8lRrsWaexQxDdOJtfgg9sa2EtNyzON
-d0vLNNlqRg+eDysFNiyOOcwYa8AN9IWbE+14HBuzIKAdtfixCwirKoJ07ZKtQEsb
-FghiifffoIz93iEIJWklhWkMmMWHCyo7KwUjlW+YCncCdVnLfqR8fbdBo+58IcXx
-2dgAHS38lq0GpaZqg7vx8x/QrRgOxOqj6KgK724ffND0DJzxlFGTTLCkDD4AgELB
-fCGGyZ3gyhvkLj7YEXBO+Gb9upim6w==
-=fVHs
------END PGP SIGNATURE-----
-
---mag5oduzqhp4hkyd--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
