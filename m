@@ -1,55 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793951080;
-	b=3vQu1epcdfpltg6QCrg4piixjIUgDpuocjh9u4epLALZQ+e8Qh62EpqO1bowL/wtamBh
-	 ZJMFhyjioIIsg570TCkmuw4GDlWNRW+sR7FRaUbUe7+LrVtcgheJMhqW6uD6ec1TY9pZi
-	 f348dn8ODf9Y/3rTnP6ac89/tRLeOU8+hYCQoiH1f55/VEq7ViLPbm730n9sbmWLaJK/t
-	 uBFRh6aZlGxF9Uk3CE54LQRgxC3Ajikez9VYnvBWT5/puVs712olzmDXTFM7Jks/KFLji
-	 OZm1DEBQMsl2yIzNWCa8Rvj2swGRWbkTJwSPFEfACeDf6huyYgDR+C8lg9AKd8nIn1w==
+	t=1793952494;
+	b=1q4kjw2zkbxRpMgLyVrtFkRnIy7ZtrfLP6DDlkLh9qTxTrMco8A0tfUEkoAXt3HrKan4
+	 a+8hErMMvgBeg6s7VvOajE8Qhv7Mzs8mCqLOP5KC0PkTyVYT+t8+H6+wwCnhCb6+LRJN8
+	 pow6J6bTdngI0owbSghF0jvx2DIhUjfPbI+yfjzwKmERNQJJ6ZyUPNSPrdxPbvVdqF4gX
+	 3S02ISFeDTj1tNmsIqT8JKzwkkEUs+15v8F8WICpKRcW/piCAJD93kch2bT7D4Tm37yMw
+	 3GBHLgUVD3yfSWvBQ+VIedpdjIn/KwUqPS0JSm/+JIw1HNAUsUHW/StGELhjg8RwRGg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793951080;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	a=rsa-sha256; c=relaxed/relaxed; t=1793952494;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=SjVSzXWCLx+Jjtey5wy5TTeQi34u7lMXmhE20s/yWMM=;
-	b=xJtARkhjd3/DQAEUH/wD9Ibst21YI1gQqYYPb/zs1O5x4LI1+tjcHm0xmh787hfnZTtu
-	 CzPIpb7gHMyL8fZzcfTEocffrtwoiT+/2UW2yUfEJI0fNuLYFLJreZEZZ0gbC+CeJxDog
-	 08Q5wUt6ZU5pHcwkVPWc0rNhUQgNtoM3aOyVYIFlQPX1NXO83V556cdqOYjBIHSY1D8AQ
-	 /itLfR6Lo2SeTGeIVaS88+CG7i8YYrXRX5JYwQI25FbSd1EgvWxwyxoX1JKmDyWobvzsq
-	 xL2Lh04fAyhsWernewFsp0V+fQvC2nOmUFUIRMHiQDvDVzncA/C/nbl46PkhL2VnEiQ==
+	 Subject:To:Cc:Content-Type;
+	bh=9n3N1yIikpCYIu+X6VsuHby7yUa6y7Py3MWjLaVcKX8=;
+	b=pfh+2XF8uhuY3PzJTrlqOc07RnYZ3e2iAqiJqJSwuTR6NHKsZg3+NL7+glqVC6B1Dqik
+	 TEk0UgNgFb2l9sRdRkEHa8oeSIrdMzefSrsfdS3UGsHoGqXnx7j13XVwRAlZibiNqGZgN
+	 dNPWQVEWk9by2qpfRcXq97R8bU4o8x+gFdZYPU7NRoXuNVnJVDb+4HtirMWjOD94bf2iE
+	 Mxl0MUuBrZcpN1C6kiXadaZIAz5JTwgufmgdY+g0j12UrI75Dkn/9mTffHamYp0GHd7d5
+	 65RW9GdvKCYBUH5IylwW+kOZmDyCwOXswNxfUqkVdx8tqbv3Q7mGeJNOyQorMzHKtbw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jNn8gBxI;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.222.51
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC45C606A32F
-	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 07:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jNn8gBxI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9C2F1F008A2
-	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 07:44:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793951079;
-	bh=SjVSzXWCLx+Jjtey5wy5TTeQi34u7lMXmhE20s/yWMM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=jNn8gBxICYDAbumbHASNtUJNAGZaLnMzXaQakplDv1+8hPEpLanYzmowHaqYIGsdI
-	 1z1PkWmAUzIT8ZLe52KxnaXhQCarXpC7D/sJrZDPQ68Vnz7BZb8CigcFC4Wp6DNuWe
-	 bMOFNB1d9g1e4rKUYE1Tj/tEZ/dEP6n0iTcQI4+3YMxYi2B5+c3cBMIZDn1dLPJQa3
-	 mgw9ut8GdEr7gD3oPWoi9t+M5eaPAryKofexTfas+Wh0lRBnEcWJcc4a2aBcMWopZi
-	 8y8C1MKmgn1dKlZUoO/LFE1FUoJ4l5bG+QzbEB6cYCbG6mS7mkXZyqp137Ga4SfoEi
-	 By8LfhrBTlYHw==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5be4c78e8caso284082e87.1
-        for <linux-clk@vger.kernel.org>; Thu, 05 Nov 2026 23:44:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBwOwc6JjOAF6Trbl3AirKxRvc+JpWeBzCgfbSyJFa2BAjuI+cAnL04DaxgvpTg2xn7lIzcFCY+Pn6c=@vger.kernel.org
-X-Gm-Message-State: APuU4Z97Mea17n46UEDO87skjhQ/k8HWwOVUg9u7S2mFU0++5HV1zdTh
-	RvAZEN3PPmNU1b7yAMxG42COPOuYYocHOtO8DWGbQCxiAQBfjU0MDYEP02OB4Sqv3oT2iobL0LB
-	AKr3ecQDRQNKxgqd2Qg2HEieAm1mUvPU=
-X-Received: by 2002:a05:6512:12c9:b0:5bf:b603:365d with SMTP id
- 2adb3069b0e04-5c003a8ded4mr513982e87.10.1793951078173; Thu, 05 Nov 2026
- 23:44:38 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9694606A329
+	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 08:08:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B9694606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-99806b7d89aso1411378241.1
+        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 00:08:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793952493; x=1794557293;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=9n3N1yIikpCYIu+X6VsuHby7yUa6y7Py3MWjLaVcKX8=;
+        b=BVgsw0eMxKAfA+Rxqfc6VFMaWNsqvTGh1dBBlvN3DKaBR7SwZJFwMJ/FTSg9CcaFta
+         81Qpb29ahoqLUBIWlNGPMQIer6g+YTqU2yTZK8cK36mWrR4svF9LGbw3CD/YjQKyyhkV
+         GYHJt/ZyGauBrnNLhqJRoKJoCXUI72hIqpGIIiPhrHWbxg+6/gud7MD5ps2xx61ccWrT
+         AUbFXVZUCmvpojPqdKZTx+UuSc5jvEFX0OEzHN1p5XXON7ZgRGoJ1MfczEuKrJOm/JD5
+         Q8iRgEnY0niFyXWLt+aRme4h8y9G6uoFSojjN4iDEJz2oyU5Os638IDA/jTY4zUbDiTZ
+         ZrSg==
+X-Forwarded-Encrypted: i=1; AKwUvBxuXAP0RXCF98/zurfrdWnR4dYWIMPZWukPuUD6qfHAUmtqbqrUOpiPTMM/K1XjIm98+OI1BONCUkc=@vger.kernel.org
+X-Gm-Message-State: APuU4Z942HxAkgZ9R0rzDxkRbhs04OKmxvX67MkYaieY4MD7OUtBkKhh
+	5Ll3DVlhOyHFgIi3j78p4eQ9FQkLHtuuqP9n6EDmKfwbu69s+41YWEpZWPkq+B8CMBk=
+X-Gm-Gg: AYBFou1v4NaH5QbC4Qm5dDXmm6LNFz8Eq3FhNBd+sbOPZV8Y98MkEDpJKueTU1HmrDF
+	MRXJOy8gxnAw1VQ8Y/b3XThMnoBErpzww5V2Apl9XX3yUvqEULw1Y1uri1ZBiqGlfBswLwu3g4y
+	6sZdQBKu45bA82hlWSNx0boL+Cc7wX6MN+DXQTKFQ2UF4PEaETZs8EtTwXJGWfjabawekT5S5eH
+	hLH1esl8UfBHlbVJdTvxkAr/2pwDN0TZVQymaTlYdJCcMqB+gQP2+lvmWng81SwA1fdjYCftti5
+	lnOqr5Q8EtWTWE6zfSBSiWDLEaG7cyLGAHzTvx/2i6IKHPSojBU0Fgu01Amw/5RvtWUM/AgaL3t
+	qptfqqe6MNUjgF+vtInPIIj93XtQ2cAJXlmuueZ/XIr56V67E6Fi2RCv5vREgwwyad35OgJvcjJ
+	Z7FhwL1+Y3I3rg30LS8uHG3b9qiGBcvR+qgGJSalwFXGgb0cBytFUPCLEbdwmYvmcRmZN7KwM02
+	nZf2Tn3kcg5I7WzBaEPu/SYvk6Orqw7raeUDFtQuVQTw0rQZ2CpFZF6qmL/eP3ueJUADbpkBXlL
+	bx3v7QvxVHMxVQjbzpM3fbMbPoxnswNPjbMRQ/m4SkcpkeE4mpd2i2nkXeX5ngEg1A==
+X-Received: by 2002:a05:6102:6e88:b0:7b1:3ecd:3d8d with SMTP id ada2fe7eead31-7d2869bb014mr2086573137.7.1793952492677;
+        Fri, 06 Nov 2026 00:08:12 -0800 (PST)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ecc650fc3dsm838924e0c.15.2026.11.06.00.08.11
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Nov 2026 00:08:11 -0800 (PST)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-7c33cc572e6so306691137.1
+        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 00:08:11 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBzwBirRNc6HZogEB3q5uPvG4RDsOleOp8ga9Ss4bZ7sestEL2OAlfV1TOtFvDp+Ttqep1AErycPGVk=@vger.kernel.org
+X-Received: by 2002:a05:6102:a181:10b0:7d2:8735:49f6 with SMTP id
+ ada2fe7eead31-7d287354e7cmr1863139137.42.1793952490879; Fri, 06 Nov 2026
+ 00:08:10 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,55 +80,169 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261101-xg6846b-bcmbca-xrdp-reset-v2-0-455fe9eed5ee@kernel.org>
- <20261101-xg6846b-bcmbca-xrdp-reset-v2-6-455fe9eed5ee@kernel.org> <b65ef6c6-cbcf-4793-9ba1-7c5cb270f574@roeck-us.net>
-In-Reply-To: <b65ef6c6-cbcf-4793-9ba1-7c5cb270f574@roeck-us.net>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 6 Nov 2026 08:44:26 +0100
-X-Gmail-Original-Message-ID: <CAD++jLm0patDC0Vh7sh3Mr214zaF3HFDoc8y=dHVs-gQePHa3g@mail.gmail.com>
-X-Gm-Features: AclHuK-ug9wMfHMkul6is-bHRohYb321IdFcWEC09gms_v_lOAueeEGxhDLccag
-Message-ID: <CAD++jLm0patDC0Vh7sh3Mr214zaF3HFDoc8y=dHVs-gQePHa3g@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] hwmon: Add Broadcom PMB PVTMON monitoring
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	William Zhang <william.zhang@broadcom.com>, Anand Gore <anand.gore@broadcom.com>, 
-	Kursad Oney <kursad.oney@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Stephen Boyd <sboyd@kernel.org>, 
+References: <20261029-tm-ssgrlpcsrc-2083-v5-clk-duty-fixes-v1-0-47f23de6bdb1@bp.renesas.com>
+ <20261029-tm-ssgrlpcsrc-2083-v5-clk-duty-fixes-v1-2-47f23de6bdb1@bp.renesas.com>
+ <CAMuHMdX5XuDpdmcUhPHU_uNggpXq_L=6DRSN3ftWEApubu+VMw@mail.gmail.com> <TY3PR01MB11346986F12DEE0E3370264C386762@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB11346986F12DEE0E3370264C386762@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Nov 2026 09:07:59 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWiCM3JXmqTzKCAPoZgNa2ouUgF0a739Vm2UDmjC23zow@mail.gmail.com>
+X-Gm-Features: AclHuK_SUotAyJZdKz7d5Cmpgoj7rV-v-BlqVYe7acZYOqsrJWZuNWbULoxF0Eg
+Message-ID: <CAMuHMdWiCM3JXmqTzKCAPoZgNa2ouUgF0a739Vm2UDmjC23zow@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: rzv2h: Report the DSI duty cycle from
+ the LVDS divider
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, 
-	Randy Dunlap <rdunlap@infradead.org>, Benjamin Larsson <benjamin.larsson@genexis.eu>, mfd@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tommaso Merciai <tomm.merciai@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 2, 2026 at 4:06=E2=80=AFAM Guenter Roeck <linux@roeck-us.net> w=
-rote:
-> On 11/1/26 14:14, Linus Walleij wrote:
+Hi Biju,
 
-> > Expose the BCM6846 die temperature and seven voltage inputs through
-> > hwmon using the shared Processor Monitor Bus (PMB) regmap.
+On Fri, 6 Nov 2026 at 08:41, Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > From: Geert Uytterhoeven <geert@linux-m68k.org>
+> > On Thu, 29 Oct 2026 at 15:26, Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com> wrote:
+> > > The 4/7 duty cycle of the LVDS path comes from the division by 7, not
+> > > from the PLLDSI mux, as an odd divider cannot produce a 50% duty cycle.
 > >
-> > Register the temperature channel with the thermal framework so
-> > existing zero-cell device-tree thermal sensor references work.
+> > Note that the latter is not true in general: if an odd divider looks at both edges of the parent clock
+> > signal, the output will have a 50% duty cycle (assumed the parent has a 50% duty cycle).
+> > If an odd divider looks only at rising or falling edges, the output will indeed have a non-50% duty
+> > cycle.
 > >
-> > Poll for valid samples with a bounded timeout, releasing the PMB lock
-> > between reads. Report temperature in millidegrees Celsius, including
-> > negative values, and voltages in millivolts.
+> > > Report it from a dedicated LVDS divider clock type and let the core
+> > > walk up to the selected parent through CLK_DUTY_CYCLE_PARENT. The
+> > > reported values do not change, the mux keeps selecting the path, and
+> > > its duty cycle constants go away.
+> > >
+> > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 > >
-> > Signed-off-by: Linus Walleij <linusw@kernel.org>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> i.e. will queue in renesas-clk for v7.5.
+> >
+> > > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> >
+> > > @@ -890,6 +863,94 @@ rzv2h_cpg_fixed_mod_status_clk_register(const struct cpg_core_clk *core,
+> > >         return &clk_hw_data->fix.hw;
+> > >  }
+> > >
+> > > +static int rzv2h_cpg_plldsi_div_lvds_get_duty_cycle(struct clk_hw *hw,
+> > > +                                                   struct clk_duty
+> > > +*duty) {
+> > > +       struct clk_fixed_factor *fix = to_clk_fixed_factor(hw);
+> > > +
+> > > +       /*
+> > > +        * An odd divider cannot generate a 50% duty cycle: the output stays
+> > > +        * high for (div + 1) / 2 input clock cycles out of div, e.g. a divider
+> > > +        * of 7 gives a duty cycle of 4/7.
+> > > +        */
+> > > +       duty->num = DIV_ROUND_UP(fix->div, 2);
+> > > +       duty->den = fix->div;
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static int rzv2h_cpg_plldsi_div_lvds_determine_rate(struct clk_hw *hw,
+> > > +                                                   struct
+> > > +clk_rate_request *req) {
+> > > +       return clk_fixed_factor_ops.determine_rate(hw, req); }
+> > > +
+> > > +static int rzv2h_cpg_plldsi_div_lvds_set_rate(struct clk_hw *hw,
+> > > +                                             unsigned long rate,
+> > > +                                             unsigned long
+> > > +parent_rate) {
+> > > +       return clk_fixed_factor_ops.set_rate(hw, rate, parent_rate); }
+> > > +
+> > > +static unsigned long rzv2h_cpg_plldsi_div_lvds_recalc_rate(struct clk_hw *hw,
+> > > +                                                          unsigned
+> > > +long parent_rate) {
+> > > +       return clk_fixed_factor_ops.recalc_rate(hw, parent_rate); }
+> > > +
+> > > +static unsigned long
+> > > +rzv2h_cpg_plldsi_div_lvds_recalc_accuracy(struct clk_hw *hw,
+> > > +                                         unsigned long
+> > > +parent_accuracy) {
+> > > +       return clk_fixed_factor_ops.recalc_accuracy(hw,
+> > > +parent_accuracy); }
+> > > +
+> > > +static const struct clk_ops rzv2h_cpg_plldsi_div_lvds_ops = {
+> > > +       .determine_rate = rzv2h_cpg_plldsi_div_lvds_determine_rate,
+> > > +       .set_rate = rzv2h_cpg_plldsi_div_lvds_set_rate,
+> > > +       .recalc_rate = rzv2h_cpg_plldsi_div_lvds_recalc_rate,
+> > > +       .recalc_accuracy = rzv2h_cpg_plldsi_div_lvds_recalc_accuracy,
+> > > +       .get_duty_cycle = rzv2h_cpg_plldsi_div_lvds_get_duty_cycle,
+> > > +};
+> > > +
+> > > +static struct clk_hw * __init
+> > > +rzv2h_cpg_plldsi_div_lvds_clk_register(const struct cpg_core_clk *core,
+> > > +                                      struct rzv2h_cpg_priv *priv) {
+> > > +       struct clk_init_data init = { };
+> > > +       struct clk_fixed_factor *fix;
+> > > +       const struct clk_hw *parent;
+> > > +       const char *parent_name;
+> > > +       int ret;
+> > > +
+> > > +       WARN_DEBUG(core->parent >= priv->num_core_clks);
+> > > +       parent = priv->clks[core->parent];
+> > > +       if (IS_ERR(parent))
+> > > +               return ERR_CAST(parent);
+> > > +
+> > > +       parent_name = clk_hw_get_name(parent);
+> > > +
+> > > +       fix = devm_kzalloc(priv->dev, sizeof(*fix), GFP_KERNEL);
+> > > +       if (!fix)
+> > > +               return ERR_PTR(-ENOMEM);
+> > > +
+> > > +       init.name = core->name;
+> > > +       init.ops = &rzv2h_cpg_plldsi_div_lvds_ops;
+> > > +       init.flags = CLK_SET_RATE_PARENT;
+> > > +       init.parent_names = &parent_name;
+> > > +       init.num_parents = 1;
+> > > +
+> > > +       fix->hw.init = &init;
+> > > +       fix->mult = core->mult;
+> > > +       fix->div = core->div;
+> > > +
+> > > +       ret = devm_clk_hw_register(priv->dev, &fix->hw);
+> > > +       if (ret)
+> > > +               return ERR_PTR(ret);
+> > > +
+> > > +       return &fix->hw;
+> > > +}
+> > > +
+> > >  static struct clk_hw
+> > >  *rzv2h_cpg_clk_src_twocell_get(struct of_phandle_args *clkspec,
+> > >                                void *data)
+> >
+> > Since there are now two copies of this code (see rzg3l_cpg_lvds_div_*), perhaps the time is ripe to
+> > add odd duty cycle support to clk_fixed_factor?  As duty->num can be rounded up or down, I am
+> > envisioning two new mutually-exclusive fixflags parameters, e.g.:
+> >
+> >     CLK_FIXED_FACTOR_ODD_DUTY_DOWN
+> >     CLK_FIXED_FACTOR_ODD_DUTY_UP
 >
-> Acked-by: Guenter Roeck <linux@roeck-us.net>
+> For Renesas it is 4/7 odd divider
 >
-> Please let me know if you want me to take this patch through
-> the hwmon subsystem.
+> For other vendor SoCs it can be 1/7 .. 6/7
+> So not sure CLK_FIXED_FACTOR_ODD_DUTY_{UP,DOWN}
+> applies? I believe if it is generic we need to pass
+> both Nr/Dr for the duty cycle.
+>
+> I may be wrong. Please correct me if it is the case.
 
-Thanks G=C3=BCnther!
+Right, some dividers may use other duty cycle values.
+Looking at users of clk_duty, there don't seem to be many
+that could make use of this...
 
-I think it's best to take all through an MFD immutable branch as
-is custom with these all-or-nothing drivers.
+Gr{oetje,eeting}s,
 
-Yours,
-Linus Walleij
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
