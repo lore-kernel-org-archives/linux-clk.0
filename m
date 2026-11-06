@@ -1,77 +1,107 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793925262;
-	b=t+bA3NS7ptfKSq7Z04vnWEu4U+7IYIWjt51BUNVyhyDYPfTTuPYiRKljXu8el6X+B9bj
-	 uujd/Si1OsAERg0OuZXVZoFHecbUTXMtATbNv4LXCBRzZ8IcBrXnVWYMwly/d1r11VD80
-	 kgm+bDC0mbTOd0J62Zk5KQ3Qvf6H+ptiu+xMlqeRR1UxRHmRYXTC0xUXQHFDTJfu7s8gh
-	 B4jHj4iyQe/ylTVAL82PakgRvl/cb9jcvFaoFwoQ9lNMCq8trzr1NdnYqJ0rdkTjPwRkU
-	 aAW9XYt0KxWDPuIpR7JZUdqb1nsI3VPaQZkN9WT/K6LrAEgGD7XSEUKaQr4Pz/Nowuw==
+	t=1793928587;
+	b=t6Rf8npsYLGZU3t0i7LvA8ocy/roTJsi2H8f4lGGZDxZul5AxuEZLYZiyujamtKN141l
+	 T32PfGKI4slV75VAoeLSjPg/2VbE4fsHFwdANW7SSoVKd37aQ0Rq/Oxnb6B68OzN+jnsR
+	 cKsVn1vCJ3ipRL1BnnolQUm9pFPv3d+KBt+WGvzRbrS/krX8XfUmwt+m/D+TUh3FKAGI6
+	 m9gJtaObtxPREbsHd/XsofchTIxdk7FKGG9jEB+UyXX0o+X2LFSodqMv9K9VO5iiyCJ1g
+	 vvVCgsQ2Rm/VxAeM8pOp9IV7ACM3jzg6Wr2Kyc6+hbNpzuNtIEe0QQphgzseXf8qpjQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793925262;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=OVyjMpKLjhA1Rj6kFt39fijzgKw1bkGZMKnXsd9NG1I=;
-	b=kf85dqHco1NtpgtmVcEbytjmcn7DWaDXGbgepvkGb1TfMk9Hg2PmH/2KBQs/Ql6vtMXN
-	 mrU73z0gp506wif2XmBPvnjFcGFepHECWlzy59DRq2L8xxGn6a2ijPr4x5t5ZJXlMvh02
-	 SJkeOS1uKh7EAghQna03NIcuU+9sWPAR45qse66bApdn6MectEkyb6JrpXZlliZuHlUNl
-	 yaG3BwO3hojLNseYkNKgWVsnZHUQwuwSX5ES6ImiPEmPXsIoCY67DESotA7idhwZAFSJa
-	 +khiSnTsmWmU5yWUSMW5Q6Z2hCgbx8cBxKaVQ4lTO7FMCM51ig9EcNTa7tIStPWvVBg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793928587;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 X-Received:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=AX4jtNNignF/+yCJApxGo0phvhtY6ezMkAKbj47wwJ4=;
+	b=Xg3p/0vIUQY+iH/BlPrZoe61FhGDRSrdIoA99TaJkNF/mcshYPy6Qhg5L7J/WKYZRwGS
+	 mm8AnZQrpBDpnIJfxkQc/CxYApHlwWaJmvgWO94CNKDtbHu3PwI/qIlkZzCGANCu6TFNI
+	 7Z/dO2bK9AixHYcJEvWz9X4psqJl43IhrhfmD5jdhbnpsWXNnWWWCwD+jsFNGGVnkQ0ss
+	 VG8mcGVksQt/Wy3jHJQw34M2VQNmDlj1YMchUHNK1I916+mz0MDb/lZgeOu039s61cwil
+	 rCFPt5Xtg0KFQh4iOIq3Cy1/Y+O0rxvIR4LDXJxkt8sFSsJMl8KHsQBkiInG41HHLPQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=telaak.dev;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.215.182
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=hoPrTfof;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=iho2DIng;
+	arc=none smtp.remote-ip=170.10.133.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C9B606A330
-	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 00:34:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C4C9B606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=telaak.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-cd6a7e1f4e4so35894a12.2
-        for <linux-clk@vger.kernel.org>; Thu, 05 Nov 2026 16:34:21 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6221F606A31B
+	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 01:29:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6221F606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=hoPrTfof;
+	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=iho2DIng
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1793928586;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AX4jtNNignF/+yCJApxGo0phvhtY6ezMkAKbj47wwJ4=;
+	b=hoPrTfofoMsSl7OeMsycpnEnzDm8UuZ6O+VLNIr1lzc5Ho07GhZX07cZpoUnZNMJRwjDe+
+	//10HURb7DJP4lvLQzabDPTngZHf+HnpazDIbhmsbpxaz1YAdnbB5hNB3M1xmCCSPo6ZZe
+	xtw+CM+CQmVoMcbQM87lHXXaMrORivU=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-610-a7xffn1AMKK3b5s1PMQfYw-1; Thu, 05 Nov 2026 20:29:45 -0500
+X-MC-Unique: a7xffn1AMKK3b5s1PMQfYw-1
+X-Mimecast-MFC-AGG-ID: a7xffn1AMKK3b5s1PMQfYw_1793928584
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-53661e036a2so2184011cf.1
+        for <linux-clk@vger.kernel.org>; Thu, 05 Nov 2026 17:29:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1793928584; x=1794533384; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=AX4jtNNignF/+yCJApxGo0phvhtY6ezMkAKbj47wwJ4=;
+        b=iho2DIngGNdfMQZh0qNOEMMYiW1V/t002h3uJ7L+4rpamSBPxPBDs4WyVryBdpf57T
+         sapTrt2nv2h58mAXaPazBucGKlMz5Rc3RxkRbsLXfqRkFxpOSgZUVGGwv/skn/yv7Sky
+         bIaiddr41cDnJLSrnilYKoqSuqDYjvi9hNoL+kQzJGsnHtL9Za0/Eo5rD1q0kBc0HsZD
+         Buz6JE8iruHMvymb309lVxbigeHaV6NCxXTUrx5VM0Gkjgkeu6gmJD9rUEUPW9cRRanS
+         CDzmrQy194WgzZFsnTc+zRALvS0vRod15krWhRxmorw9YqMq/b2ZYZp7O4WU/bAqxdlS
+         cERw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793925261; x=1794530061;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=OVyjMpKLjhA1Rj6kFt39fijzgKw1bkGZMKnXsd9NG1I=;
-        b=iOxV0KhbunY6EjGCBOvHJBUqHu4B0Pim/pbBOl6AeIMEAhMjwivzrqygGyy1UGwCsg
-         xbNhXZMgZ1gkQq0OD/c0MTONiUfelSlap47ourrew6gFJR8kf6KG1/J/IPnB6JB/VB6R
-         GkZX0feaosRWZgPdSpuNJhe/SF9DVRynsnEJDa8nAE7ENukO8O3d/JCpHZyrnNdwzJWj
-         mlpWpg3l/rhOzBhOlq+SgC7iJptonAVKRHPwyucpKQ1ereE4avdM8i0qZ7jqeagII4XF
-         Zk9d74qHd7l/ckKZDsqrhl/ti4zxO8UvY/iHVdi7MONjVYQGCFxOH1BTuh2+LtYbwVF1
-         S6Hw==
-X-Forwarded-Encrypted: i=1; AKwUvBy+8HD2wWfFDdGmltCFe2D6S2YPOBXFwONnT87YnIGfv7nqu9pxLnGeYW2FH60n5tlWwbDb43BmJjo=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/UtHCvqz85p6+/qHznsCrrtDnYo0M1kw6QYi93GNkBucfv4ava
-	4VGDzj8MIEAXftMHt7qBripfR2qLPXXBbmP7kJ9A0MikED4v3Rkgzzelg8I+xtYH
-X-Gm-Gg: AYBFou1ZMSz4WOnw5IAlvbXwX78fQq2mN59F6B8fv/HYiyIDo1DD4Y4MFJ5kgAfcWyH
-	R50X71QJGdF2rSDKKtSWYaAyPa/rYo7zndr2X74XGEddalnOwY2ewJVAe/QsTPmHsaDyQfMKvTb
-	q+UvEWHj3vjuAvdGPGTpTpPZVmbx/oHwlnq8UIYT9os1xJ4OZ6jTmYF45ZjHy+8jFxNuBbeY35i
-	tWoGtfJXDUTLmJPwXVFtiDMs3QUOARc9r/MwfNAAVeGPXa9FUCjbvPlRgo8GWHHxuS3dYIZWveh
-	lOU6DKh4c3/liJjDXhzy8Jym7L/CGSJFBP49WUQnaBKRmiHAGpRnjVi7lV3/Vbh6CwFZrvIyDNz
-	YZaqS4ZfDnAdE3ZCbVpNQln4YDbrFeibfZ2Pup+eJEqNRa/JbCif9txXjVhzBYKHDpr63netu7H
-	l3RQXvPsEa09N24+BgSBsg+lnRSnnySwjQs66DmgJak7PMpV3hzmBlYnAU2BxHx5vI8Aa7GGgra
-	M5bE1Ay2v/0uh84M6rcrYA1RzkQl4ddV00JJzwPqzOQNlNb+EA1azwN42MKXZ1eAhlobTWJukts
-	IdDC6V2tJK1vFlfShCfBKzJWBs9A2NZRxVjDmQhiEmMqeBmqxAA9SdvJd/JLLz40k1lTPHL+u2M
-	OyMsnct5vnq4DgqCQ+S0KrVfKKu4v6kDCB3WdgdMmATM=
-X-Received: by 2002:a17:90b:2c90:b0:3aa:fc22:8aad with SMTP id 98e67ed59e1d1-3b0db711211mr731138a91.54.1793925260731;
-        Thu, 05 Nov 2026 16:34:20 -0800 (PST)
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com. [74.125.82.170])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b0d78b0a8bsm1045692a91.2.2026.11.05.16.34.19
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Nov 2026 16:34:19 -0800 (PST)
-Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-3535a54bed9so121835eec.1
-        for <linux-clk@vger.kernel.org>; Thu, 05 Nov 2026 16:34:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBwz2bk8J3XLdrjPhzyJeVP+RNM22Uv3977fmCoPTki1zRLq7yQvFFsxZb3zJpEk4Q1bf6LIqb8l8nA=@vger.kernel.org
-X-Received: by 2002:a05:693c:68c6:b0:369:d84e:eba5 with SMTP id
- 5a478bee46e88-36f75443f92mr1048026eec.11.1793925258726; Thu, 05 Nov 2026
- 16:34:18 -0800 (PST)
+        d=1e100.net; s=20260707; t=1793928584; x=1794533384;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=AX4jtNNignF/+yCJApxGo0phvhtY6ezMkAKbj47wwJ4=;
+        b=JNLI7lX45YBjWwbNc887w/2h6Od5QYguj1PPBVINGcxEOVvPMdfpOutzDcxSJqTynY
+         XTyQWTWXEWYP8ndQSPAkkZ9E3jpfl6yCpl+WRU7vDE8IBQda+yZr0nt0EglPNUpQYAU5
+         w0ZQaRBNlC+E1ZhHZZAl6cRafPlze1DDQo8If1FEgCFY8MgtByoKC026CHbEsjeqyeRP
+         PtKaAUoi20+7FUkDUdS9j/vrcq8+cqB2nI+Tfc/gl4ENy41/lTpt+j/9EukmICYJi6PH
+         IwObzBjFP14RC9qxkt1SMedmvgTqkLDIpJH5oeO9wgEy0R7FTp2QUnmPoPifjmRtFyIC
+         KvoA==
+X-Forwarded-Encrypted: i=1; AKwUvBxiuarx6Z0FDoFfJ+dMbmVel6g0Xi4MRKWP2Urkr20FEi++di89cgXHm9OxSWAR1UmXtjXtVVLdOXw=@vger.kernel.org
+X-Gm-Message-State: APuU4Z894HjhDGvdeESbrnndPeQDKabjJZCxP5PlrK+2tvgqQhB9mA/w
+	kCyv/izgOhL9wR29Lh1y9MZkFy8HMNnDuWyLYmFkssFVwNWvrWTnphvTMUCFPvxGVYbXiu9+WXo
+	XjJoZqXgxPX0X1J+VO9zVgbouwxr1+bduhM9B3Q83ZLqnv+lyBgFzzPOafvG1sQ==
+X-Gm-Gg: AYBFou2kHpDaeD4kvUH5KN1pPJY7DkPtg+8kk+F0Tz+7seSLMDws4OEi0kT9fhBNGzq
+	U4TGi+7g9h7YvsbMUvdpl8u7StDiwWhxw7yfk7wdoxmaQQ5DUOwLfPLQRTiyM/HlvuyzvjSKvBb
+	+xg8pAJQY6D8PPEu8nXju7K+uxu/ooO3sY0LoZwWmA9ERcFh1wzJkA7UE/EvOnfzLRhA6avQNkD
+	G/IjHYGFyKbYw8kWOXb1z2+ho5B/WwolylU87o2xjUJ0WP8Yo+nXddEzjcH0WovAVsnEATij/5G
+	+5EEkMyyecT72tEBUOjO2X+nYfiYjgcXgF1e94PeS8tKwqFf7t6DOYya/1wiZDnLoEXUgV09hVh
+	Itd2YPg9saCW2cU8YtzFdWv7+xvV89NjKC8Nx7y/97NyVNBh6+36IlWjT06zdkTf1LHmWL49Fg9
+	HCZor0WzM5a89LCBKW
+X-Received: by 2002:a05:622a:353:b0:536:65fb:fff5 with SMTP id d75a77b69052e-54e1596c231mr17839041cf.60.1793928584390;
+        Thu, 05 Nov 2026 17:29:44 -0800 (PST)
+X-Received: by 2002:a05:622a:353:b0:536:65fb:fff5 with SMTP id d75a77b69052e-54e1596c231mr17838791cf.60.1793928583742;
+        Thu, 05 Nov 2026 17:29:43 -0800 (PST)
+Received: from bmasney-x1.rmtuswv.csb ([69.43.42.202])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-54e26f1bd64sm7404091cf.23.2026.11.05.17.29.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Nov 2026 17:29:42 -0800 (PST)
+From: Brian Masney <bmasney@redhat.com>
+Date: Thu, 05 Nov 2026 20:29:27 -0500
+Subject: [PATCH] clk: samsung: exynos3250: convert to
+ subsys_platform_driver_probe()
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -81,30 +111,66 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261104-sf19a2890-sysm-v1-0-a4fac07df823@telaak.dev>
- <20261104-sf19a2890-sysm-v1-3-a4fac07df823@telaak.dev> <20261105-upload-golf-40927e20b7b9@spud>
-In-Reply-To: <20261105-upload-golf-40927e20b7b9@spud>
-From: Joseph Telaak <joseph@telaak.dev>
-Date: Thu, 5 Nov 2026 19:34:07 -0500
-X-Gmail-Original-Message-ID: <CAPY4CJ5B7YhuQtqvFanP5GpfK0YvJ27xcS68KtK_rZvbxYN6dA@mail.gmail.com>
-X-Gm-Features: AclHuK-ZB6vwHbkhfZNFAAIsLQdK0ZMK7LE0zya9GH_XZ9poNQEbizkJmf2GZbE
-Message-ID: <CAPY4CJ5B7YhuQtqvFanP5GpfK0YvJ27xcS68KtK_rZvbxYN6dA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] dt-bindings: clock: Add Siflower SF19A2890 peripheral
- clock/reset managers
-To: Conor Dooley <conor@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Chuanhong Guo <gch981213@gmail.com>, Yao Zi <me@ziyao.cc>, 
-	linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261105-clk-subsys-v1-1-993c474e7860@redhat.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQ5AMBCF4avIrDXRCsFVxKLawSBIByHi7orll
+ 7z3X8DoCBmK4AKHOzHNk4cMAzCdnloUZL1BRSqVMkqEGQfBW80nC6tsbrM4zoxW4A+Lw4aOL1Z
+ Wv/2yR7O+BbjvB+zBcuhuAAAA
+X-Change-ID: 20261105-clk-subsys-d2d9d8338ca2
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.17-dev-d96cb
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1153; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=7ycUhYaTHTijLETgf34xYgBmPS7y03e26r0FoL8ptEI=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLLe6jZ+3Syw76dB9vH8aLXHwRdfqzR/tl6m6Wv57V/1l
+ RJ3E63fHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAExEbhLD/8o5AYtijIRnM2W+
+ PCXU0K3huJuJv/u/k9WpNfMleSa9lWD4X3E+quGxUEJjlMKOTBshycnPN5t21InbX/0a7XMrtPY
+ aHwA=
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-> I think you should put these in a binding header file, rather than just
-> put them in a description like this.
-> I think you really need one for the clocks too, since you've got things
-> like
+Reduce boilerplate code in this driver and convert it over to use the
+macro subsys_platform_driver_probe().
 
-Thanks, v2 will add include/dt-bindings/clock/siflower,sf19a2890-periph-crm.h,
-naming the clocks and resets of each manager, and the driver and the dts
-will use it.
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+ drivers/clk/samsung/clk-exynos3250.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index 32d12658e1a9..bf36d2f2a3f8 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -1093,10 +1093,6 @@ static struct platform_driver exynos3250_cmu_isp_driver __initdata = {
+ 	},
+ };
+ 
+-static int __init exynos3250_cmu_platform_init(void)
+-{
+-	return platform_driver_probe(&exynos3250_cmu_isp_driver,
+-					exynos3250_cmu_isp_probe);
+-}
+-subsys_initcall(exynos3250_cmu_platform_init);
++subsys_platform_driver_probe(exynos3250_cmu_isp_driver,
++			     exynos3250_cmu_isp_probe);
+ 
+
+---
+base-commit: ddfe51b0a0f5dc9e415cc2c8ad8db17532dd426b
+base-tree: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+change-id: 20261105-clk-subsys-d2d9d8338ca2
+
+Best regards,
+--  
+Brian Masney <bmasney@redhat.com>
+
