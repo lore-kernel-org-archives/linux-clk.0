@@ -1,90 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.82
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793967116;
-	b=CSKwNT1s7kombexokNFkgB9Wp/QKc9Nvh+d6WiF50qJAoF/0930ouhysgAiac0KnAp1j
-	 o2XoJwhQ4dmTYTn2YISHnzXITy+F3ov5pCbU1Ed9CVXqxpWTU4DZmodJtcDU60wxAngR3
-	 N2fIOIDeBJxtx3sQtq9r2khwXjOvg8VlV1ho2R/W/Bfmg4tOX8kfCcIppvTdxAs68O3l5
-	 DU0vX13AaN8pWIpdmx3xmVCEIv8lX5qG5nDZSSgMHlCQRSA8z98y/iFoYHBkY0RDqzLZU
-	 ZEf14tlKR1GqytIKi/njLXVeuRfaIZoqBzZuChLm8jMRHjRXqyD3nxbR0D4ihuP9bLg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793967116;
-	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
-	 Received:Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Content-Transfer-Encoding:Message-Id:References:To:X-Mailer;
-	bh=iq60MpWWr1FHZNJdGeNZTv+roUBF0vhdran7YFHQ1so=;
-	b=xMOOL0/S+bJPEOfO/XDGBVeDIDHba6XqD65YLun8zfiK1GFD5MlSSw+3mrmcG0ZOFwGC
-	 vBDyXj3FfSEQhpVys9gFiKC3M8Fq8CBn1zmkHIgWNLU5GZ2u0kQX4ZboKbdbphXcrubCL
-	 dNOjrvgVgPZI0IpH1f27CZ1EgEeg3BKz6xuMUUSfVd+z/agfwJdsc2tPuNfAig0n8ODCG
-	 M0VEv43NDb+lvccpf+LBmlZJt49EL6cm+4PhgiUEuZAnoVaJQ16LC4oS1cQH5veBYfsjG
-	 5TcsOimGOmXOIne0KlDlWOJDIY1pQITvp4gffTYs5G71mn8++h0Yw3Jj6y+xHFUa0oA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=goldelico.com;
-	spf=pass smtp.mailfrom=goldelico.com;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=gAMW9fXr;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=QNnH08J2;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.82
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.82])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793967230;
+	b=i9y+L8tB8+FHomDLcb8+AUkwq7NwQhuqC0FnbnLfN3iebtXRUGCX/MkraFLcSlFkbcfP
+	 2tqMnFVJ6DQOAGHcSV1REr4i242FJGdKXKKOFgolo1IKE3WM16GdehvG6F1ktlYe2V6DP
+	 v94tmxi9fFqzZyf8PZpNkw+PNbWrKmW31pzoSElovwWo7ogqCRs2x4L4M0xBgE3oPYBU5
+	 oKyIhHJa7CUOGIzGKouKC1LGJzYLq6JDXMSxjaMU7EtQQNN7oXXJUfGEoajnDr1zq2y6a
+	 kyymVwQNmtloCLZOiqEKOhZ2WoXj5If7mhLyY84g/2n8ORp/Z46g3ZSu6owN6PabNsQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793967230;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=CJdF7YU7558EC/fyLpCrIC/iswIs8MrQY4LLw1gWtzQ=;
+	b=H3ho7vETX8WXvA+IDcAS5KP9ooe0I0QpODq6+Z4dfyNfGHXW4hM9tLA3fWTEdjBSumhR
+	 2XqH2WA7Bd81txL16wl8P28zNItkGer6rdiwDJWec92/raxz7lyOXv4LUlNh5Ic5F5PSQ
+	 8DikrKDnKW4roPxwudM4CmGJfhYXscCucaDBMZpENQ+rH00Tvax+4pidk33vyT4vjxDMz
+	 /0HkVvzKGcZpczZ1OE9zImaf4HCnu2QMdOD0JTjZ0FS/yWfmAIBBd4y4lDRz3IXc7v6BL
+	 aYiKLGrduZO9ufwyk+5MkMdagea9u0npnqA/gLXh9wGsiNjPj6JqenUjqpA3xhOvzKw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W8E4Cxbb;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF34C606D824;
-	Fri,  6 Nov 2026 12:11:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BF34C606D824
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376E5606A329;
+	Fri,  6 Nov 2026 12:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=gAMW9fXr;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=QNnH08J2
-ARC-Seal: i=1; a=rsa-sha256; t=1793967069; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=aKMLhHyAjDV2B0Kd5fN7uWTUYmUIqv7oUH20rrwDJWK4yWpydOGsDcNtTjavVRtn7Z
-    03zeLW+aoU5rEt5pGYnIMBtQnavgYvocg98sYDLA0oy5ZL5GFxlmJCpozpcgvifMb3nY
-    QJccqrrb3vSWJ9XtuB9pYSaBfR2pzvB40dmNwndtREGllP+BS7e/G56hqf8IYJbq7Vpk
-    YsmVkl86/is2bJ0V7V3QOZxj8kGFIRbklr7nF4CrV5N/6lLZV+x5I2YLnx5LOK6VEmRM
-    sI6TfAXjvkT4YD8D5e/J019M4+2q0bk9zrTMOcmSSFu/xL4awsva11FQ9IQidE7/dZEs
-    QqzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1793967069;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=iq60MpWWr1FHZNJdGeNZTv+roUBF0vhdran7YFHQ1so=;
-    b=MVJkQOBm4cfv+5I02uhULJCU+MBhU636GaWl0lNOawnAK2UD6oO5r1+nokbLVFNPhw
-    DYGFq/IKXqOWxJjBhD9D4xH5kILd4Y+/aQU0nDNW180gdo/iwCzyuDe+2bF1GoR/Ia80
-    5MXz0FPn/tS681kJeC/rcVTCHQk0rmDIwntvrbGntOJEcr01iWfguSxRk3k7W81UOKEp
-    2wVh1Ptk7n9Jh6nYAA0Xo6gdh7IVS7aUYHDb5mp0JBDMtclCk77/wq04TlL6cZ6rWWKo
-    DkdlRD+kmXDGvpPEdV//gaQoxu66TPP8/gvJxaFbgzkVVm4RdNdsH/Ocxu1mi4a+qzW/
-    PU6w==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1793967069;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=iq60MpWWr1FHZNJdGeNZTv+roUBF0vhdran7YFHQ1so=;
-    b=gAMW9fXrUqZXT4FEQgwE//sTU0b9ZDAoCznBXEg5W9zudQT89Kv/KDTyJv8jIfwU9o
-    Fq2xzWb034iJAUaceQdmsiN3qpwN3VUjxhW8OyFmFpNXr6IQsDruqlFxjLGj6VGw1fXh
-    2KaWpOZNd1DfIkARye2XnaOJIXg6nQG9xX9JfH5KVl8avHhCnnuhC/LjHPS6muhfDGcq
-    8AUT0MlXMB0YUhseE8pcGsAwQL1Kq51F8psGjroeljB0gZJ9OeO9uhvXmHP7njPBIKj2
-    R1WzTQILQVl6fywDy9Rp3Cq+Raq4VC9wuajSsO85AZazk/VKM0Ql5m8jKy1bj2gdpMHb
-    6BSQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1793967069;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=iq60MpWWr1FHZNJdGeNZTv+roUBF0vhdran7YFHQ1so=;
-    b=QNnH08J2KaocksIeZkmonMhg/dsaysJfwokZuc2yQn6canlLi1NBwz2Yvf22XBD4ZZ
-    IWr0clWIUrl9g4Cn4dBw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrVjZoMy8iN4frnsPsBQ4l+mfK4O7kvgww6TmAq"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 55.6.3 AUTH)
-    with ESMTPSA id Qb56a22A6CB7nJj
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Fri, 6 Nov 2026 13:11:07 +0100 (CET)
-Content-Type: text/plain;
-	charset=us-ascii
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W8E4Cxbb
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97D601F0089F;
+	Fri,  6 Nov 2026 12:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793967229;
+	bh=CJdF7YU7558EC/fyLpCrIC/iswIs8MrQY4LLw1gWtzQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=W8E4CxbbTgWt+uzhlbeV6quessrtRvFwxFH9NjxZTLKi3oJ0jg+pl2A+I9EHn3gQX
+	 w77LRq1Z4UfmPxMriaXlORDF6QemErNoYKJeAIR8DX/EzNdVFf1QW81aN4d7FUnJKS
+	 8KYjbA0KnK9mfdEq2SWX+nCmlVMJ9za6pWfeNL4okNZXjuN9P1cMP29KiOHdtJ0QG2
+	 RgHHxfmppb4JapPHSFU65RMThQ/uV4QwO0BfCHToAtj5OAn/GtksyG/FWYFCMEePVm
+	 krNDDN9o9P6lwvMPT4SGGLQ6zOXgfqzeA5hmI7w5zueEhfWLuWJCQWl2ZNEH3pSFtz
+	 +5WgbKuSmZTLw==
+Message-ID: <sashiko-outbox-201392@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v11 5/5] clk: en7523: add support for Airoha AN7583
+ clock
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Christian Marangi" <ansuelsmth@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Cc: robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261106115852.189098-6-ansuelsmth@gmail.com>
+References: <20261106115852.189098-1-ansuelsmth@gmail.com>
+ <20261106115852.189098-6-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 06 Nov 2026 12:13:49 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -93,46 +60,116 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.10\))
-Subject: Re: [PATCH 2/3] MIPS: Ingenic: Add JZ4780 SMP support to the generic
- platform
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <55de1cf30758cdc46c38f87520e6570d6e851a9b.camel@crapouillou.net>
-Date: Fri, 6 Nov 2026 13:10:36 +0100
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
- linux-mips@vger.kernel.org,
- =?utf-8?B?IuWRqOeQsOadsCAoWmhvdSBZYW5qaWUpIg==?= <zhouyanjie@wanyeetech.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Paul Burton <paulburton@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- Paul Boddie <paul@boddie.org.uk>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Discussions about the Letux Kernel <letux-kernel@openphoenux.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <AA66E3B9-DDEA-4D1D-86CB-1ACDDA1B9434@goldelico.com>
-References: <20261105203243.2292647-1-f.fainelli@gmail.com>
- <20261105203243.2292647-3-f.fainelli@gmail.com>
- <55de1cf30758cdc46c38f87520e6570d6e851a9b.camel@crapouillou.net>
-To: Paul Cercueil <paul@crapouillou.net>
-X-Mailer: Apple Mail (2.3826.700.81.1.10)
 
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [High] clk: en7523: NULL deref in clk_hw_get_dev() before PCIe clk
+  registration
+- [Medium] clk: en7523: AN7583 MDIO clocks registered as fixed-rate
+  clocks
+--
 
+commit aa0856354194d69ec115be8f509c3f8848e95a7f
+Author: Christian Marangi <ansuelsmth@gmail.com>
 
-> Am 06.11.2026 um 12:07 schrieb Paul Cercueil <paul@crapouillou.net>:
->=20
-> Zhou's v8 supported the 4 mailboxes, this feels like a regression.
->=20
-> I understand that we can't really test a quad-core system (unless =
-Nikolaus can?)
-> so I won't object, but that might need to change in the future.
+clk: en7523: add support for Airoha AN7583 clock
 
-Well, I am not aware that a quad core Xburst processor exists... I can
-try to ask Lumissil staff next week on the Electronica Trade Fair.
+This commit adds clock and reset controller support for the Airoha AN7583
+SoC to the en7523 clock driver.
 
-BR,
-Nikolaus=
+> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+> index 8e24eef651a17..821a5f5ad4d8e 100644
+> --- a/drivers/clk/clk-en7523.c
+> +++ b/drivers/clk/clk-en7523.c
+[ ... ]
+> @@ -368,6 +377,138 @@ static const struct en_clk_desc en7581_base_clks[] =
+=3D {
+>  	}
+>  };
+> =20
+> +static const struct en_clk_desc an7583_base_clks[] =3D {
+[ ... ]
+> +	}, {
+> +		.id =3D AN7583_CLK_MDIO0,
+> +		.name =3D "mdio0",
+> +
+> +		.base_reg =3D REG_CRYPTO_CLKSRC2,
+> +
+> +		.base_value =3D 25000000,
+> +
+> +		.div_bits =3D 4,
+> +		.div_shift =3D 15,
+> +		.div_step =3D 1,
+> +		.div_offset =3D 1,
+> +	}, {
+> +		.id =3D AN7583_CLK_MDIO1,
+> +		.name =3D "mdio1",
+> +
+> +		.base_reg =3D REG_CRYPTO_CLKSRC2,
+> +
+> +		.base_value =3D 25000000,
+> +
+> +		.div_bits =3D 4,
+> +		.div_shift =3D 19,
+> +		.div_step =3D 1,
+> +		.div_offset =3D 1,
+> +	}
+> +};
+
+[Severity: Medium]
+Can clk_set_rate() configure the divider for AN7583_CLK_MDIO0 and
+AN7583_CLK_MDIO1 when they are registered through en7581_register_clocks()?
+
+en7581_register_clocks() registers every entry in soc_data->base_clks with
+devm_clk_hw_register_fixed_rate(), whose clk_fixed_rate_ops has no
+.determine_rate or .set_rate callback.  When airoha_mdio_probe() calls
+clk_set_rate() to lower the MDIO clock from its 25 MHz default to 2.5 MHz,
+the call succeeds without writing the 4-bit divider in REG_CRYPTO_CLKSRC2,
+leaving the MDIO bus running at its boot frequency.
+
+[ ... ]
+> @@ -1323,6 +1559,18 @@ static const struct en_clk_soc_data en7581_data =
+=3D {
+>  	.hw_init =3D en7581_clk_hw_init,
+>  };
+> =20
+> +static const struct en_clk_soc_data an7583_data =3D {
+> +	.base_clks =3D an7583_base_clks,
+> +	/* We increment num_clocks by 1 to account for additional PCIe clock */
+> +	.num_clocks =3D ARRAY_SIZE(an7583_base_clks) + 1,
+> +	.pcie_ops =3D {
+> +		.is_enabled =3D en7581_pci_is_enabled,
+> +		.prepare =3D en7581_pci_enable,
+> +		.unprepare =3D en7581_pci_disable,
+> +	},
+> +	.hw_init =3D an7583_clk_hw_init,
+> +};
+
+[Severity: High]
+Does assigning en7581_pci_disable to .unprepare cause a NULL pointer
+dereference in clk_hw_get_dev() during probe?
+
+an7583_clk_hw_init() -> en7581_register_clocks() ->
+en7523_register_pcie_clk() calls init.ops->unprepare(&cg->hw) before
+devm_clk_hw_register(dev, &cg->hw) initializes cg->hw.core:
+
+drivers/clk/clk-en7523.c:en7523_register_pcie_clk() {
+    ...
+	if (init.ops->unprepare)
+		init.ops->unprepare(&cg->hw);
+
+	if (devm_clk_hw_register(dev, &cg->hw))
+		return NULL;
+    ...
+}
+
+en7581_pci_disable() calls clk_hw_get_dev(hw), which dereferences
+hw->core->dev while hw->core is still NULL.
+
+Also, pcie_ops pairs .is_enabled with .prepare and .unprepare instead of
+matching .enable/.disable or .is_prepared, whereas en7581_data wires
+en7581_pci_enable and en7581_pci_disable to .enable and .disable.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261106115852.1890=
+98-1-ansuelsmth@gmail.com?part=3D5
