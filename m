@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793954626;
-	b=iO51ytfFT7DnVgieV8QOC3AsYZ2Hm00/eXZl3h4QBOSQ3lwsQ8bvptu55t+/t4Qik3qK
-	 R7Mog6gmyOY4ieZHi4inRmKl9y0iAh1POkVvzaQJlGdU5dmJUgiGVAMMT2unehVNpjGNj
-	 OuGFAuakfJ/CO5SA9kNWUBaj2vaNt55q7QVJec4FOjqQaabyqnsKnBmzP1Nny12yK+O1U
-	 SWVOUw1TobPUA50hKtBpTN5cDTFPl2Ytd/eHmCiT0BD/xPPUh7bK9y9/Vn6uvxAy158B2
-	 qhSXPLERq/4BnF2B1S9/AdzBvOe46TgS2lt+RCki2eRkmHVLH5j7WYK3QtR67JAY+Ng==
+	t=1793955080;
+	b=wUWjFani3cLXoGfdKIYqAkIMcVJD6/15ey+X3HDwIP5smwSezPTaw0Ad6bU08UP7i3vP
+	 qTmNmTVlL2sn/4yG5eNp6Ea1rkkTNfziegbbAH4RANnlyO7vR8ExcY0l7wsYCQgw09DGl
+	 ogAjWQIqDys4tPcypb2Gb97A6GPK2KLahgc1oDMfI5tx3zGug4dkRwGYy5F0DXJhEBOa9
+	 RD+667TdRw799Vsz7s6xT+fIKKmlD/e14oJfr4kBH6hrTxJd5SKkTTlyD0wdhTuD1XBqK
+	 XpkQUSW7xWo/UTuZTCIBTtGQ8mtQujeB1ZWw8AOYKWrdZLKCtv1vSEuE8uYi/93RCKw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793954626;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793955080;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=HyGKIigqdSLl423M+2chQYvAFa3Ss1JLLb2uMO2fNSc=;
-	b=XYRzy+kiVFpsmqAp1SgVG1tfxk2kC7E58AfzIXHAmPFMtT9H4ub2WRyji3SmMNvftieS
-	 MMfE34joOLQk54UIYu4r0u3TPEaicfomTJJHnQRFdxtCLG847Ibg8umaXUDEZw4BptRTK
-	 UgXssQVvNhYNmpIkKHzclA4pYOAVvAv+HyWrHlRr/BVCZxvu1QhuSgKM+BoHTimXty6BL
-	 IUh3+ruWMvEOC3ua5bIif/NWQqrPFFjUBX3TyDHuGr9/X0IzK2TIHL7cCYscIeQ6r+mNM
-	 PfMyAIvMXsYGsvIbMNIPckhXDzaQUswxstzOf8C1gCJW6NCbG6RaVYzaQ5jOEWp4vYw==
+	bh=ZPrMxi71NV9gjGGF2lBGP+8nq9DMZ0NgKsrzGDmzMVo=;
+	b=3m8lQ1FVHveoRo5ygfItiUmZJd16aTQhcrUOBVPfy6sqL22l+nFBBiQAuhYruJB8QX4P
+	 +oo3djCtOvF8D8fb6/lp7wSjqFxn//rhP/mPXKBeOM4s2cIdbX3KDHhxSU8Ccb38cnzoh
+	 FWBkPtm9TmDN0wYlt0s7Gm9LvXicRnVmhSZE68ZL6BE4lrQ0+g7RqW1PhI8m7Azbd4QBw
+	 upYB9OGSUkb4swpdJp0VLIPUCX/GatcLUzKW5gx7gFC/aBD4eYP9GLTSw+gwrJX50xwsz
+	 qkcMoZq/ITWJ9pYcX+TqjAr2zcUPT39OZkIjuPQTT3R/uL5uZf4TiX3t7qsDkjDwNMg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dkfUEY8i;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lfsoaVgX;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4100606A326;
-	Fri,  6 Nov 2026 08:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7648A606A329;
+	Fri,  6 Nov 2026 08:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dkfUEY8i
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F09E91F0089F;
-	Fri,  6 Nov 2026 08:43:44 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lfsoaVgX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 004E11F0089F;
+	Fri,  6 Nov 2026 08:51:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793954625;
-	bh=HyGKIigqdSLl423M+2chQYvAFa3Ss1JLLb2uMO2fNSc=;
+	s=k20260515; t=1793955080;
+	bh=ZPrMxi71NV9gjGGF2lBGP+8nq9DMZ0NgKsrzGDmzMVo=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=dkfUEY8i/AScvuLID9+umPJImGqvKmczriKploG6xeK/XKneSrc9duIDZG2lHmDGu
-	 /tpvMGdXOQzyQcR8v65zS5AmEThOg4LJUjUJ+cz8oClMsqCRNWJMYVtOEew1U37Bp8
-	 /FEZlaS1is1q8t9gn06gaQuUB2bYlug/YbFMoEVTLSlWtgSNqSFvGpQBoCjwwh1ZIp
-	 RoR2qfDjvrIEIvT7Tbea+QDfQ03mF3mS6JIRyVCaGDb5VamzUnaNanO2WAA0ITMf6F
-	 umYWesoN4wL274VnViOR0AAukAqic7hNyN1cw9lqO83PXrmlgNEiJ5zekrXft42pDJ
-	 DU9MxLRaHB+fA==
-Message-ID: <sashiko-outbox-201085@kernel.org>
+	b=lfsoaVgXm+zjdv8bk+icyZunADPHDj9zgn/y/eBZBkqG+CbludKkCD+kbdiKfzkWJ
+	 thHjsfR3WXEJgAmps0KhQ6k8u8ldnwkLWaI/A3kd0JFldwVXiPA+6JmZhSgvker/82
+	 j9/Wg0sC5xMLnvUyuX0hkNACLlei75o8lBXylWo073UCwqPMV9Hwo7VgNXyeeTsjxU
+	 WqHufSzNdv09ALHlSGt0ZUG/hxKOMJybt78MxZpZddj7hlKi3YEjihxl/u6AXcI858
+	 gXaVm8+7PBRsQfD1DpmnmxZbzBE/e18R7qJnc1ba9MqGub/MK200ChaKO6lOL07MhQ
+	 Ua2JxCqWZsjGA==
+Message-ID: <sashiko-outbox-201090@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 2/7] dt-bindings: soc: Describe the BCM6846 Processor
- Monitor Bus
+Subject: Re: [PATCH 5/7] clk: amlogic: Add S7 PLL clock controller driver
 Reply-To: sashiko-reviews@lists.linux.dev
-To: "Linus Walleij" <linusw@kernel.org>
-Cc: mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <20261106-xg6846b-bcmbca-xrdp-reset-v3-2-d6adeb71afc9@kernel.org>
-References: <20261106-xg6846b-bcmbca-xrdp-reset-v3-0-d6adeb71afc9@kernel.org>
- <20261106-xg6846b-bcmbca-xrdp-reset-v3-2-d6adeb71afc9@kernel.org>
+To: "Carlo Caione" <ccaione@baylibre.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, robh@kernel.org, conor+dt@kernel.org, neil.armstrong@linaro.org
+In-Reply-To: <20261106-upstream-s7-clk-v1-5-7d501d62621f@baylibre.com>
+References: <20261106-upstream-s7-clk-v1-0-7d501d62621f@baylibre.com>
+ <20261106-upstream-s7-clk-v1-5-7d501d62621f@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 06 Nov 2026 08:43:44 +0000
+Date: Fri, 06 Nov 2026 08:51:19 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,203 +60,126 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 5 potential
-issues to consider:
-- [Low] dt-bindings: hwmon: brcm,bcm6846-pmb-pvtmon uses
-  additionalProperties with $ref
-- [Low] dt-bindings: soc: brcm,bcm6846-pmb ordered after dependent
-  brcm,bcm6846-pmc
-- [Low] dt-bindings: soc: brcm,bcm6846-pmb examples violate
-  dt-check-style strict rules
-- [Low] dt-bindings: soc: bcm: driver-model child nodes in
-  brcm,bcm6846-pmb
-- [Low] dt-bindings: soc: bcm6846-pmb: expand PMB as Power Management
-  Bus
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Medium] clk: meson: s7-pll: HDMIPLL_CTRL1 initialized after
+  s7_hdmi_pll_div0p5 rate
 --
 
-commit 6ce40c3812dd052e5e8e3945888002592aa196c2
-Author: Linus Walleij <linusw@kernel.org>
+commit 6a51c26cbe37d4a7e3b2407e903405378e1e348b
+Author: Carlo Caione <ccaione@baylibre.com>
 
-dt-bindings: soc: Describe the BCM6846 Processor Monitor Bus
+clk: amlogic: Add S7 PLL clock controller driver
 
-This commit adds Device Tree binding schemas and header constants for the
-Broadcom BCM6846 Processor Monitor Bus (PMB) and its clock, hwmon, power,
-and reset child controllers.
+This commit adds the PLL clock controller driver for the Amlogic S7 SoC,
+providing the fixed PLL and its dividers, the GP0, HIFI0 and HIFI1 PLLs,
+and the HDMI PLL.
 
-> diff --git a/Documentation/devicetree/bindings/hwmon/brcm,bcm6846-pmb-pvt=
-mon.yaml b/Documentation/devicetree/bindings/hwmon/brcm,bcm6846-pmb-pvtmon.=
-yaml
+> diff --git a/drivers/clk/meson/s7-pll.c b/drivers/clk/meson/s7-pll.c
 > new file mode 100644
-> index 0000000000000..9bf52cf097a32
+> index 0000000000000..2aa253a5f2111
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/brcm,bcm6846-pmb-pvtmon.yaml
-> @@ -0,0 +1,42 @@
-[ ... ]
-> +allOf:
-> +  - $ref: /schemas/thermal/thermal-sensor.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: brcm,bcm6846-pmb-pvtmon
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: PVTMON acquisition clock
-> +
-> +  resets:
-> +    maxItems: 1
-> +    description: PVTMON analog-acquisition reset
-> +
-> +  '#thermal-sensor-cells':
-> +    const: 0
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - resets
-> +  - '#thermal-sensor-cells'
-> +
-> +additionalProperties: false
-
-[Severity: Low]
-Should this schema use unevaluatedProperties: false instead of
-additionalProperties: false?  Because it references
-/schemas/thermal/thermal-sensor.yaml# via allOf, additionalProperties: false
-prevents properties defined only in the referenced schema from being
-evaluated cleanly.
-
-> diff --git a/Documentation/devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml =
-b/Documentation/devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml
-> index d4c927cabb3f4..77fbf92926ab3 100644
-> --- a/Documentation/devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml
-> @@ -60,6 +60,11 @@ examples:
->              compatible =3D "brcm,bcm6846-pmb";
->              reg =3D <0x20100 0x200>;
-> =20
-> +            pmb_power: power-controller {
-> +                compatible =3D "brcm,bcm6846-pmb-power";
-> +                #power-domain-cells =3D <1>;
-> +            };
-> +
->              pmb_clk: clock-controller {
->                  compatible =3D "brcm,bcm6846-pmb-clock";
->                  clocks =3D <&osc50m>;
-
-[Severity: Low]
-Should this commit be ordered before commit "dt-bindings: mfd: Describe the
-BCM6846 PMC complex"?
-
-That earlier commit introduces brcm,bcm6846-pmc.yaml referencing
-/schemas/soc/bcm/brcm,bcm6846-pmb.yaml# and including
-dt-bindings/clock/brcm,bcm6846-pmb.h and
-dt-bindings/reset/brcm,bcm6846-pmb.h before this commit adds them, which
-breaks make dt_binding_check bisectability at the parent commit.  In
-addition, the commit message here still states that it describes the PMC and
-only mentions the power controller child, omitting the clock, reset, and
-PVTMON schemas and headers introduced in this patch.
-
-> diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm6846-pmb.y=
-aml b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm6846-pmb.yaml
-> new file mode 100644
-> index 0000000000000..134a8a676dbd0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm6846-pmb.yaml
-> @@ -0,0 +1,90 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/bcm/brcm,bcm6846-pmb.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Broadcom BCM6846 Processor Monitor Bus
-> +
-> +maintainers:
-> +  - Linus Walleij <linusw@kernel.org>
-> +
-> +description:
-> +  The Processor Monitor Bus (PMB) connects the third generation Power
-> +  Management Controller (PMC3) to the control registers of miscellaneous
-> +  independent hardware blocks.
-
-[Severity: Low]
-As reported by William Zhang on v2 [1], PMB stands for Power Management Bus
-rather than Processor Monitor Bus.  The commit subject, commit message, and
-all five new binding schemas in this patch still expand PMB as Processor
-Monitor Bus.
+> +++ b/drivers/clk/meson/s7-pll.c
 
 [ ... ]
 
-> +  power-controller:
-> +    type: object
-> +    $ref: /schemas/power/brcm,bcm6846-pmb-power.yaml#
+> +static const struct reg_sequence s7_hdmi_pll_init_regs[] =3D {
+> +	{ .reg =3D HDMIPLL_CTRL0,	.def =3D 0x00881000 },
+> +	{ .reg =3D HDMIPLL_CTRL1,	.def =3D 0x2c6011cc },
+> +	{ .reg =3D HDMIPLL_CTRL2,	.def =3D 0x86801000 },
+> +	{ .reg =3D HDMIPLL_CTRL3,	.def =3D 0x00000000 },
+> +};
 > +
-> +  clock-controller:
-> +    type: object
-> +    $ref: /schemas/clock/brcm,bcm6846-pmb-clock.yaml#
+> +static const struct clk_div_table s7_hdmi_pll_div0p5_table[] =3D {
+> +	{ .val =3D 0, .div =3D 1 },
+> +	{ .val =3D 1, .div =3D 2 },
+> +	{ /* sentinel */ }
+> +};
 > +
-> +  reset-controller:
-> +    type: object
-> +    $ref: /schemas/reset/brcm,bcm6846-pmb-reset.yaml#
+> +static struct clk_regmap s7_hdmi_pll_div0p5 =3D {
+> +	.data =3D &(struct clk_regmap_div_data) {
+> +		.offset =3D HDMIPLL_CTRL1,
+> +		.shift =3D 19,
+> +		.width =3D 1,
+> +		.table =3D s7_hdmi_pll_div0p5_table,
+> +		.flags =3D CLK_DIVIDER_READ_ONLY,
+> +	},
+> +	.hw.init =3D &(struct clk_init_data) {
+> +		.name =3D "hdmi_pll_div0p5",
+> +		.ops =3D &clk_regmap_divider_ro_ops,
+> +		.parent_data =3D &(const struct clk_parent_data) {
+> +			.fw_name =3D "hdmi",
+> +		},
+> +		.num_parents =3D 1,
+> +	},
+> +};
 > +
-> +  hwmon:
-> +    type: object
-> +    $ref: /schemas/hwmon/brcm,bcm6846-pmb-pvtmon.yaml#
-
-[Severity: Low]
-As reported by Philipp Zabel on RFC [2], should #power-domain-cells,
-#clock-cells, #reset-cells, #thermal-sensor-cells, and the reference clock
-live directly on the brcm,bcm6846-pmb node instead of using four addressless
-child nodes?
-
-Neither power-controller nor reset-controller has any DT resources of its
-own, and the power, clock, reset, and hwmon drivers all access shared 32-bit
-BPCM zone control and PVTMON_CONFIG registers over the parent PMB keyhole
-interface.  Folding the provider cells into the brcm,bcm6846-pmb node avoids
-encoding the Linux MFD sub-driver split into the Device Tree ABI while still
-allowing the MFD driver to instantiate child devices internally.
+> +static struct clk_regmap s7_hdmi_pll_vco =3D {
+> +	.data =3D &(struct meson_clk_pll_data) {
+> +		.en =3D {
+> +			.reg_off =3D HDMIPLL_CTRL0,
+> +			.shift   =3D 28,
+> +			.width   =3D 1,
+> +		},
+> +		.m =3D {
+> +			.reg_off =3D HDMIPLL_CTRL0,
+> +			.shift   =3D 0,
+> +			.width   =3D 9,
+> +		},
+> +		.frac =3D {
+> +			.reg_off =3D HDMIPLL_CTRL3,
+> +			.shift   =3D 0,
+> +			.width   =3D 17,
+> +		},
+> +		.l =3D {
+> +			.reg_off =3D HDMIPLL_STS,
+> +			.shift   =3D 31,
+> +			.width   =3D 1,
+> +		},
+> +		.rst =3D {
+> +			.reg_off =3D HDMIPLL_CTRL0,
+> +			.shift   =3D 29,
+> +			.width   =3D 1,
+> +		},
+> +		.range =3D &s7_hdmi_pll_mult_range,
+> +		.init_regs =3D s7_hdmi_pll_init_regs,
+> +		.init_count =3D ARRAY_SIZE(s7_hdmi_pll_init_regs),
+> +		.flags =3D CLK_MESON_PLL_RST_ACTIVE_LOW |
+> +			 CLK_MESON_PLL_NOINIT_ENABLED,
+> +	},
+> +	.hw.init =3D &(struct clk_init_data) {
+> +		.name =3D "hdmi_pll_vco",
+> +		.ops =3D &meson_clk_pll_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) {
+> +			&s7_hdmi_pll_div0p5.hw
+> +		},
+> +		.num_parents =3D 1,
+> +	},
+> +};
 
 [ ... ]
 
-> +        pmb_power: power-controller {
-> +            compatible =3D "brcm,bcm6846-pmb-power";
-> +            #power-domain-cells =3D <1>;
-> +        };
-> +
-> +        pmb_clk: clock-controller {
-> +            compatible =3D "brcm,bcm6846-pmb-clock";
-> +            clocks =3D <&osc50m>;
-> +            clock-names =3D "ref";
-> +            #clock-cells =3D <1>;
-> +        };
-> +
-> +        pmb_reset: reset-controller {
-> +            compatible =3D "brcm,bcm6846-pmb-reset";
-> +            #reset-cells =3D <1>;
-> +        };
-> +
-> +        hwmon {
-> +            compatible =3D "brcm,bcm6846-pmb-pvtmon";
-> +            clocks =3D <&pmb_clk BCM6846_CLK_PVTMON>;
-> +            resets =3D <&pmb_reset BCM6846_RESET_PVTMON>;
-> +            #thermal-sensor-cells =3D <0>;
-> +        };
-> +    };
+> +static struct clk_hw *s7_pll_hws[] =3D {
 
-[Severity: Low]
-Does this example (and the matching example in brcm,bcm6846-pmc.yaml) trigg=
-er
-unused-labels and child-name-order warnings under scripts/dtc/dt-check-style
---mode=3Dstrict?  The pmb_power label is never referenced in the example, a=
-nd
-the unaddressed child nodes under the PMB node are not in alphabetical order
-(clock-controller, hwmon, power-controller, reset-controller).
+[ ... ]
 
-[1] https://lore.kernel.org/r/CAHi4H7GOMM9K6XG15vPyFMLOza3QQ7QPxUkCi85jA_e9=
-D6YbKg@mail.gmail.com
-[2] https://lore.kernel.org/r/f1c24a603964302ec1462b1cea790a2a7079fb3d.came=
-l@pengutronix.de
+> +	[CLKID_HDMI_PLL_DIV0P5]		=3D &s7_hdmi_pll_div0p5.hw,
+> +	[CLKID_HDMI_PLL_VCO]		=3D &s7_hdmi_pll_vco.hw,
+
+[Severity: Medium]
+Can s7_hdmi_pll_div0p5 cache a stale divide-by-2 rate before
+s7_hdmi_pll_vco initializes HDMIPLL_CTRL1?
+
+meson_clkc_init() registers s7_pll_hws[] in index order, so
+s7_hdmi_pll_div0p5 reads HDMIPLL_CTRL1 bit 19 and caches its rate before
+s7_hdmi_pll_vco runs meson_clk_pll_init() and writes
+s7_hdmi_pll_init_regs (which clears HDMIPLL_CTRL1 bit 19 to 0 when the
+PLL is not already enabled by firmware). Because s7_hdmi_pll_div0p5 uses
+clk_regmap_divider_ro_ops without CLK_GET_RATE_NOCACHE, its cached rate
+is never updated after HDMIPLL_CTRL1 is overwritten, which would leave
+s7_hdmi_pll_vco and all downstream HDMI PLL clocks calculating rates off
+by a factor of 2 if bit 19 was set prior to initialization.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261106-xg6846b-bc=
-mbca-xrdp-reset-v3-0-d6adeb71afc9@kernel.org?part=3D2
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261106-upstream-s=
+7-clk-v1-0-7d501d62621f@baylibre.com?part=3D5
