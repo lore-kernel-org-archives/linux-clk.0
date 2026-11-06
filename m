@@ -1,101 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.3
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793979367;
-	b=Bm2TyflDv8bEmc9oOfaD0kMrWoBXHO9FTpK41+VenT4bj8mmIgNSSge7i0/HhzDM8NwQ
-	 NXspJyGQaiI7Ax2jCzrBAn1I3MZS89/lxMcTWtJ9JiEVyupBvAy6obCNvjWlyzrGEEv8k
-	 dImQoulUbZA+7zxCIuGij83CkwkykzhSt2S0sgvlmuNqmw8GUri+PhajDEDua1KxEW0n3
-	 bIptMw262fd8dnXKX9eN8/j/vh9QBstIQbgNcIWlqeqLSYa6VXR2t+pwYwrJtPcmcnJ1A
-	 uOoyhgccychBvADIESHzZq78uz3ESIfZlPfLuCidk//vuJStR4PGijepj7rVJhTLG1A==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793979367;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:
-	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
-	 Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-ID:References:In-Reply-To:To:CC:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Originating-IP:
-	 X-ClientProxiedBy:X-EOPAttributedMessage:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-Id:
-	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=XewHIkWxTFmMQ4BeNxtdv86Gk5Riz4t7IY3ZuKOVSBc=;
-	b=5aJYRzUUtgZykrFW4YWFMSzaM8oxl4k5FtFQN6dsTTPUw0yx7eO+OT/BcuJBlgRBemdI
-	 pF0eSpDg7HJPQrHaYtqqUU/ULEc7W+qI16nXTiVd64vqs0HgH4uno8PMqjSqEDrS46334
-	 zhiLFmG0aKFAVHoshhRU8cTyJNgUP0/CqfG+xct1BRU3NSEQH+PPmy/DuPqkhve7ONZpe
-	 KzYQ/p93Tq8lxverQfZD15ysyOnT7XUoFzrm9zSWX/klVTEcXXWt8OWfO56fFKWZ0n7Kh
-	 +0+KyuPIZgD4D4xACjRDd1EzLkn2FZQ/xe0l49T2gCThivrdBlIz/zc/bSJiyzkz/UQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=foss.st.com;
-	spf=pass smtp.mailfrom=foss.st.com;
-	dkim=pass header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=ojst14kb;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.3
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013003.outbound.protection.outlook.com [52.101.83.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793980314;
+	b=dOPO3GFUWq8yMZUGwkEmoP7XGKSn6EvoJbeZcBHPmdhjSUVpFW/2b5obp5INaW7sl8hT
+	 j/dTYTCEQqqjESHaBKc5FbSh2coR+/p9iFbmEtHDXZ4d/38FJRaG2j7j2GI4gkGKtKovJ
+	 59z7IqFKsddb9tumtjdKREmGC+uwp8pMreVFAWfNONo1s7Tn9XcXuaFpZDIEdQ5LrweXO
+	 84NQEBVlWD5CBT7jHP7wM11licCJhVP34vjgXXhAH8clUoslNS8zSfj28nr2ZJvHnqi3y
+	 1rx5QgdLhqbKRs63Qo5tsKU4pTxkXOOefunYlsP0CNIUzwnpBXb6YbPA83HU23x7JKg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793980314;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
+	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=qp/Cn94KwArfPWCyeLZRUZTdCMFqpznPg/yTOzrJyXA=;
+	b=QV8g06ZZEC9mUA3VNVw5bejxRgw9uBlYpWjdpkCtPj7Nvcb3vRLLEThwgPV0BbgW9Qme
+	 Ybc9pIQV27THnGezOAqYj3OXQkFKH2kcntD1P1B0yf66X2vSXE+r2gCyM67bfjRtpbKjp
+	 8znhZrMli3yRBcBQoPD5iACDKICTgsGf3lFGeCjv3A18vf3UxirrhZXWx/7VFdCqLCWYB
+	 FZzyNpV3YaHd6Zhm/W23T/AQHZD3MeVqxQLUYqEW83laQR6JnLaq9IYHNbYz4+y6KSUuY
+	 NiwlrPNz1IBU0pea8eRsD04MgjVWlWlAVNXmw812o7KKOHEI3yZGa/qVPArz86xMImw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=cCim9Nrp;
+	arc=none smtp.remote-ip=209.85.128.52
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28543606D804;
-	Fri,  6 Nov 2026 15:36:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 28543606D804
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0A7606A32C
+	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 15:51:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8A0A7606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=ojst14kb
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UcwgQRqDsPWOWBjD3Dt1QXf8G61cWA+dTJqXPOdaFY/ymk6YXany8x3qFrNVDwQ7g/53vaA2TtM9VXFPwp2tDvdKgS3aSjM3V0bjagFtxD+kqTvalaC6aq271fOztvhvL+KUtig540uqsP9A13TG2Wzguff19dwLC7wjSjVdXcibkscPFmGYJEDgOUm/rSUl2ypTbUQ6AdjoX7U2/1yjCs2SFDvW8a7x9eyviKhNQORSEy7pqg/f3v01ukx5TE/nQ8cCKUEkPPpEcM2MBGd3mHNGoTq95803eM74R5u3HBFUzAAk2emfpLrdHqVuk05kMKSHWt9T1gM88O8Wz/Q0fQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XewHIkWxTFmMQ4BeNxtdv86Gk5Riz4t7IY3ZuKOVSBc=;
- b=N8CCcZj/RRUe5EEjBk4oSr7ck5AbXHX+A5Gv5BaN772ySzY8ojr9cbJ7/XW6CroC8nzHiaLvNHOS0KSJum1zO1PZXVxO3Zyi7Y+hDX/h76brGqSHkeRYI4da1vTZSpaOkGjbyyaPX2qHritipwb8YcWBNJhw8dOPQmmIPH6uljgWFWb2VkqDJ01zybbOWx30PIy75c8wgr0+8uvmcegXCqFAbFTDOtSOprEckVLilmngqz9P+UI+p2RKwRpRsZ3Lpw8ELTxoywjK5VZ7OnCkEVBF1/CNU8KSo3m0f2+8JOpBMNnL9K+4S2h7Vu9jArL6gQzFSySuDlFWCE1Ty7aagQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.60) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XewHIkWxTFmMQ4BeNxtdv86Gk5Riz4t7IY3ZuKOVSBc=;
- b=ojst14kbwnfACdSI7msseXza64kv69KgqwzdnlU1AW16StKPWo6wLR+0q4Uhd3Rn1g/wqbTiuZCYAqnCtMYV+ZYKauG9iGyvb0gHw4gwkm9NLE21l86NM2oeAOeAkW6cyOa27a/MTXDAOSs6HX2yUF4MS75DXfQg+6dpyJ3TzRrXt4+gNrMEDOHQRmwt20/Bfitk+7eQYx7qw2b8muFXNXGJBgvoMfIQrbGnRstaG3M/cVEni31jsCpwRrxIEArC7j2L9pkf8iX1Vbl4tv1q0Q9LEP3oip0/z6uOd7YpAmw48uq0JCnEDZC2F/TyFr435iJzp0u7kqX6hZXrRNoLdw==
-Received: from PA7P264CA0178.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:36f::10)
- by DU0PR10MB6754.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:475::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.4; Fri, 6 Nov 2026
- 15:35:59 +0000
-Received: from MI3PEPF00008499.eurprd03.prod.outlook.com
- (2603:10a6:102:36f:cafe::65) by PA7P264CA0178.outlook.office365.com
- (2603:10a6:102:36f::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.11 via Frontend Transport; Fri, 6
- Nov 2026 15:35:58 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=fail (sender IP
- is 164.130.1.60) smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.60; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.60) by
- MI3PEPF00008499.mail.protection.outlook.com (10.167.240.184) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.4 via Frontend Transport; Fri, 6 Nov 2026 15:35:58 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
- (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Fri, 6 Nov
- 2026 16:36:40 +0100
-Received: from localhost (10.48.87.14) by STKDAG1NODE2.st.com (10.75.128.133)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Fri, 6 Nov
- 2026 16:35:53 +0100
-From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Date: Fri, 6 Nov 2026 16:35:36 +0100
-Subject: [PATCH v3 7/8] clk: stm32mp25: add ck_ker_usb2phy1_stp clock
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=cCim9Nrp
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a35db1f202so6592375e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 07:51:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1793980312; x=1794585112; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=qp/Cn94KwArfPWCyeLZRUZTdCMFqpznPg/yTOzrJyXA=;
+        b=cCim9NrpgtZ0UMW1+22EDqlkGoHoeNlE+SAqAWEXwQ11zGfEZEQhQ5q94udT6+Rb3H
+         i35iCQ8hJp5skTJsGARR/UO8yEv03kNmSxawU+8VKwGAYlEsO3RQ691naC/BS4666M5z
+         zMYRnWR5dm8fLK5PAg4I9CgHkN1sAJL0HWdI3OO/Iw+gZSBzficMQ83ev2hVhpgKrHkD
+         fca9v7hFdDV/hXFx/ZS+sR4PhjfhOYxigoOwJryiyhXJo6wrf8HGWq2AmR5yaVBTv3OX
+         i6ZQ9fEmgN5wPtM2x/LRCHDiyqE8JGWmFB1wWpc4Bcdo1p8ju/IKnYkZ54YBbJPwIhxc
+         hAmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793980312; x=1794585112;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=qp/Cn94KwArfPWCyeLZRUZTdCMFqpznPg/yTOzrJyXA=;
+        b=R+y0CjnEuUyKKLSMtZD3FNP/Bx3SeOv+M+IPxtfr7Xfv33BaKdJvZAzzYzhs7rvTx5
+         gLxAT9sN6wJNlO7ryaeP6CfPKbSts+u6/ce8Wv+e/mKoWSsyVHjWDnveeDouJ1GZyZIJ
+         AKk8vh6hCDkReHlftXJLpvcsaaLYbRM+s3HKXyiTVllAt4JRRqUFwYNeQF2yi+Z+t/D/
+         /+0KRLAsuvIzHnWLY2IESvHl480dIQ8zX/vgMcUleKyYuyfA4EZUJ6KLopNBKBCJz3HV
+         m/pHRpCpJVO2laYXadw52i6ok4fP7+thxV1Aj+nalAKQRQFXQBoRTtyCSz9RbLNNYAOK
+         Qttw==
+X-Forwarded-Encrypted: i=1; AKwUvBy9fOIjeRpn0bmxNAMINcm3p32MhWhyiVs8T/IdoCSuld6l691UCkrrAWR0uJNO6xpSBA+nVSWm9WU=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+Gq9lJKj3sTXiA43M44sjwXWU5g5ntd7Tjg/LwuNIDGwiR0g/F
+	rEOF5T0AFEyzzpDrZ3FvV1ezIwAqNFjAcKq7mNpW+PdiQSeAP0iPISAWToMYwq0CvNw=
+X-Gm-Gg: AYBFou0biKtym3OrcSjrMFcMsmy/v0AKY4DMix04GSbzNYzg7NIVTH4aLHhcV5XIYWM
+	AmqadKzHK5KizYLswvoWzIECW2XtxhpLCq2Qyd7On+Y4OZ5Ays53wbQSjNDERJ7jFYGlsv7Jwyp
+	LtfBiI0u2TJE4ybAdBSZCDI9nwCfqay2nzUABjJ9yios+XbP5eejn4zJWuUlGtXlaO91PnM5qDs
+	kvxg0zzoScXxXt0T5uQeCu87OUfkSdE6VAd9AGfYCqteDzfSF+oJ6bltZHWh2ylpspVUg4LoyNj
+	zCl5a2EqcL6+P1XPO0LLjGFVLUhrub+12UeN/ju0oL4PpVURN9sHJ614HeYcUcSJywaQFK4h6rC
+	4PowLdBPLBlRM4T/s3dJ3bc1VFZYp7FmOEsWsoaonNoTillMwb/jgzopfK9jrIbk1gXkHvxXSOz
+	1z351e/KbtMFbH7dGj9GO1xGUrEcJcOPmDllIFtu3tEBvVUR2AH8Y1SsI/iUrhq472ZvB+7z3Iy
+	eqA6/BgDWUrU4+6+nrg/PPgwTOXPalOUtn9tEIFBWcpqfu5+QjvVR6Iw1KQymMaGCLZaNF8xxMN
+	C0HvSSIkR1bbI8IGU8TO5CaDg9SvWQY2ucaeJzXlzvYoOUWF
+X-Received: by 2002:a05:600c:1391:b0:4a6:44b:2593 with SMTP id 5b1f17b1804b1-4b6dfd97b6cmr50243775e9.29.1793980312099;
+        Fri, 06 Nov 2026 07:51:52 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b6e1b5d745sm62876215e9.6.2026.11.06.07.51.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Nov 2026 07:51:51 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -107,122 +91,61 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20261106-ups_mp25_clk_update-v3-7-4a32f68119ed@foss.st.com>
-References: <20261106-ups_mp25_clk_update-v3-0-4a32f68119ed@foss.st.com>
-In-Reply-To: <20261106-ups_mp25_clk_update-v3-0-4a32f68119ed@foss.st.com>
-To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
-	<alexandre.torgue@foss.st.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793979349; l=2839;
- i=gabriel.fernandez@foss.st.com; s=20261013; h=from:subject:message-id;
- bh=tzeOTXkKeq3tV9H6W50ELVPUNBn9EbNJLSzzkRQDRPU=;
- b=v/XrpgkcHfNTJWpEbZFi8PwuG1vDoU8nETX3FqsVeN6D6LQv9sYJGYl0zY0mZBJ5OoraYP+HO
- FGwC3Qx+1YuBtXWZd/g8txeIk2KxC1wwel0cQerDKaikxaTxl7+3SDZ
-X-Developer-Key: i=gabriel.fernandez@foss.st.com; a=ed25519;
- pk=BVZE1QjIfcrviw9RyyOGQGGsg9CNbaxyjYn9pAlkNyQ=
-X-ClientProxiedBy: STKCAS1NODE1.st.com (10.75.128.134) To STKDAG1NODE2.st.com
- (10.75.128.133)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MI3PEPF00008499:EE_|DU0PR10MB6754:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7679aa6f-7c79-4a8c-30b4-08df3c1ba7d6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700016|23010399003|10067099003|22082099003|18002099003|56012099006|11063799006|261026140227099003|261022105027099003|261028144727099003|261021121427099003|261021123027099003|261009223027099003|261102123227099003|261022075727099003;
-X-Microsoft-Antispam-Message-Info:
-	LAO15hzU63NWnIj9mw2mOHLAE/+z3+PGqdf5MmP+i1PT1w8aSqEfiff0z4kXxT2HzXhWAlbUMJ0wKVVrmRJmAx5Dyx01vodRWmp+XY9r8991ELgvRKKIOQrLLSUQLsDiVUmrKGbsi6ShjbGmPAb1ArN+b1mFuPFL/EeNlcFcS43lYBGqXkGzlRAlKPzfy+taJ+zJUJO5JK5csRFRl7+sJr62r6/QXiOur4DGbINOcNKPA7M4xCLUVlK3Dm9lw0RyHY5K5yLnQBAS0r0v3tNUzmlf0PrtVrathyq8iyrk6EVgmrfEilWS2eXYAHeHyr3mmZ3JYGFgUDRMJCWvn9S/qi81XHtrHyQ+NzuW4Lvz9yv8VQobDxjNKNjhI0ZGNIgdAnh3N9N9S7oZ8J0jXfysGJeYGQdbz5QI99iTdmV4O4npl9tGixUAEoOffwibtPiVAQmN2hftcVw7ulHLi7j7FdcrccO+jZscQ7upAI5DTt2Nv4MlG48eOfI8IcVEd1oJhKOmhk9GCbW8I8oqhTMhweHx0Bf0HwkeDoVvVtJnuthbJw6xlan/dBUjU8njgJdvUuW9/VLEhyUunhTwlwUQe8J/33E7s2Iu2r0S5Pp0MfgnrgvakKdS7D4nQu8Wz97hbv4lamw84Nch35+b0HB1+53w2Z/k0gSLFg2CPmlCVTqD8nL02Yd4SQVpD+HFK9is70MdC8Y3KKBTbk+1EaGmYw==
-X-Forefront-Antispam-Report:
-	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700016)(23010399003)(10067099003)(22082099003)(18002099003)(56012099006)(11063799006)(261026140227099003)(261022105027099003)(261028144727099003)(261021121427099003)(261021123027099003)(261009223027099003)(261102123227099003)(261022075727099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	9MI0gWTFM1Q+WEBfPo9Hr2T5AZkZR5yeLQKxWuFyTzhAhEHMEVSHHv2Ei5Ad54I22m57yXK+ved1g6RpFykO2JVrLQgZ2o00nBoFHz3W4GndFHqfD7tAXvSvIuTlleEn3h+HkMhKBMoD4DFEyr7j1+86LvoatpdpNJnOYOXHHI6Mo9mscSxUNJIRkeXVmkmfbIGFa18dOPXUlXXBwOdy+Gcr2vI7YSrZB+nb5laUkMJ4OZF3h9vwzd0CxyqQdVqfxFfDZScF/4qaCkp/cHfSwqoduG1WrQWX6CPS4CrTHkoEAbpiTo38uhnd7cAMJmLgyCaH2HYnAcUPqpBspF4Y9HfQFzq/yjPffVP0qsiTgO4ZkIIDvm+NDGKdKXzhuLezlRsV1oTlUfMe29TIJMB3PxL4/AjBynduX/b+l56pjEmv4WTWSKyj6llQ1rg0dU7Z
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2026 15:35:58.7169
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7679aa6f-7c79-4a8c-30b4-08df3c1ba7d6
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MI3PEPF00008499.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6754
+Subject: Re: [PATCH 1/2] clk: divider: Fix the divisor for rates above 4.29
+ GHz
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Brian Masney <masneyb@kernel.org>
+Cc: Carlo Caione <ccaione@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Brian Norris <computersforpeace@gmail.com>, 
+ Brian Norris <briannorris@chromium.org>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ David Laight <david.laight.linux@gmail.com>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+In-Reply-To: <179382912410.620422.14715602424648962218.b4-review@b4>
+References: <20261102-upstream-clk-divider-large-rates-v1-0-eb17035bfad2@baylibre.com>
+ <20261102-upstream-clk-divider-large-rates-v1-1-eb17035bfad2@baylibre.com>
+ <179382912410.620422.14715602424648962218.b4-review@b4>
+Date: Fri, 06 Nov 2026 16:51:50 +0100
+Message-Id: <179398031041.2573818.13317727784501684521.b4-reply@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1299; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=0DalZ75GCJ/Y2wzvrEds89TdSXOwZePw1AI9YnwLQBc=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFlvv09Terx73ppqrvAZSmWa81euZd/jNaPhw9aX59bN6
+ XR6bnttQUcpC4MYF4OsmCJLDXe1+DtJrS+zpuvchpnDygQyhIGLUwAmYp7P8L806Ue9pfPPB28P
+ GW5ROua9w9ha0rbki/rbJY5ejV9KywQZGc4tK1v6OupqOj+XzLPqtO8lay/yiMrEpXO9k1liL8N
+ wgwcA
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Add the ck_ker_usb2phy1_stp clock required for USB Host (USBH) low power
-support.
+On 2026-11-04 16:52:04-05:00, Brian Masney wrote:
+> > DIV_ROUND_UP_ULL() takes a 32-bit divisor, so on 64-bit platforms a
+> > requested rate above 4.29 GHz is truncated. A divider fed by a 5.94 GHz
+> > PLL then computes a divisor of 7, not 1, for 5.94 GHz.
+> > 
+> > Use DIV64_U64_ROUND_UP(), which takes a 64-bit divisor.
+> > 
+> > Fixes: 9556f9dad8f5 ("clk: divider: handle integer overflow when dividing large clock rates")
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> > Signed-off-by: Carlo Caione <ccaione@baylibre.com>
+> 
+> Reviewed-by: Brian Masney <masneyb@kernel.org>
+> 
+> Since this is a core change to the framework, I'd also like to see what
+> Jerome thinks before we merge this.
 
-Set hse_ker_ck as the parent clock of ck_ker_usb2phy1_stp to ensure it
-remains active during the low power modes. As this input clock is optional
-in the binding, it must be described in the device tree for the parent to
-be effective.
+I've had not problem with the change initially but then the AI told me that
+it brings back the overflow problem fixed by 9556f9dad8f5.
 
-Update the number of clocks of the provider to cover the new ID.
+At first I thought it was crazy because it would mean parent_rate + rate is
+more than 18 billion GHz ... BUT, a common way to ask for the maximum rate a
+clock supports is clk_round_rate(clk, ULONG_MAX). This could trigger the overflow
+and there are instance of this in the kernel right now.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
----
- drivers/clk/stm32/clk-stm32mp25.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/stm32/clk-stm32mp25.c b/drivers/clk/stm32/clk-stm32mp25.c
-index e3a2e5ea775c..a8bf9d570272 100644
---- a/drivers/clk/stm32/clk-stm32mp25.c
-+++ b/drivers/clk/stm32/clk-stm32mp25.c
-@@ -18,7 +18,7 @@
- #include <dt-bindings/reset/st,stm32mp25-rcc.h>
- 
- /* Number of clock identifiers of the binding, SCMI ones excluded: highest ID + 1 */
--#define STM32MP25_LAST_CLK	(CK_SPI8_AM + 1)
-+#define STM32MP25_LAST_CLK	(CK_KER_USB2PHY1STP + 1)
- 
- /* Clock security definition */
- #define SECF_NONE		-1
-@@ -356,6 +356,7 @@ enum enum_gate_cfg {
- 	GATE_USART6,
- 	GATE_USBH,
- 	GATE_USB2PHY1,
-+	GATE_USB2PHY1STP,
- 	GATE_USB2PHY2,
- 	GATE_USB3DR,
- 	GATE_USB3PCIEPHY,
-@@ -506,6 +507,7 @@ static const struct stm32_gate_cfg stm32mp25_gates[GATE_NB] = {
- 	GATE_CFG(GATE_USART6,		RCC_USART6CFGR,		1,	0),
- 	GATE_CFG(GATE_USBH,		RCC_USBHCFGR,		1,	0),
- 	GATE_CFG(GATE_USB2PHY1,		RCC_USB2PHY1CFGR,	1,	0),
-+	GATE_CFG(GATE_USB2PHY1STP,	RCC_USB2PHY1CFGR,	4,	0),
- 	GATE_CFG(GATE_USB2PHY2,		RCC_USB2PHY2CFGR,	1,	0),
- 	GATE_CFG(GATE_USB3DR,		RCC_USB3DRCFGR,		1,	0),
- 	GATE_CFG(GATE_USB3PCIEPHY,	RCC_USB3PCIEPHYCFGR,	1,	0),
-@@ -1635,6 +1637,13 @@ static struct clk_stm32_composite ck_ker_usb2phy1 = {
- 					    &clk_stm32_composite_ops, 0),
- };
- 
-+/* Parent clock of ck_ker_usb2phy1_stp is HSE_KER_ON to ensure it remains active during low power */
-+static struct clk_stm32_gate ck_ker_usb2phy1_stp = {
-+	.gate_id = GATE_USB2PHY1STP,
-+	.hw.init = CLK_HW_INIT_INDEX("ck_ker_usb2phy1_stp", HSE_KER_ON,
-+				     &clk_stm32_gate_ops, 0),
-+};
-+
- /* USB2H */
- static struct clk_stm32_gate ck_icn_m_usb2ehci = {
- 	.gate_id = GATE_USBH,
-@@ -1993,6 +2002,7 @@ static const struct clock_config stm32mp25_clock_cfg[] = {
- 	STM32_COMPOSITE_CFG(CK_KER_ADC12,	ck_ker_adc12,		SEC_RIFSC(58)),
- 	STM32_COMPOSITE_CFG(CK_KER_ADC3,	ck_ker_adc3,		SEC_RIFSC(59)),
- 	STM32_COMPOSITE_CFG(CK_KER_USB2PHY1,	ck_ker_usb2phy1,	SEC_RIFSC(63)),
-+	STM32_GATE_CFG(CK_KER_USB2PHY1STP,	ck_ker_usb2phy1_stp,	SEC_RIFSC(63)),
- 	STM32_GATE_CFG(CK_KER_USB2PHY2,		ck_ker_usb2phy2,	SEC_RIFSC(63)),
- 	STM32_COMPOSITE_CFG(CK_KER_USB2PHY2EN,	ck_ker_usb2phy2_en,	SEC_RIFSC(63)),
- 	STM32_COMPOSITE_CFG(CK_KER_USB3PCIEPHY,	ck_ker_usb3pciephy,	SEC_RIFSC(67)),
+A way to make the calculation without the overflow could be:
+parent_rate / rate + (parent_rate % rate ? 1 : 0)
 
 -- 
-2.43.0
+Jerome
 
