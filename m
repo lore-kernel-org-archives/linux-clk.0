@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793970493;
-	b=Z//p1w5+2c+8dSOmlAiSvYjou9nYooM6WOBFIcXyqMupGKK0n/JTg6xI0qz0iVzi8ID1
-	 iPb6H8NK4XFS4QkS7VSMSD+wAqMbTzcYjlMJv/rMFnR/USltKoUwBLXQkn6mt+kXBBrjM
-	 0fktWSk27HR109XIOySQ7XmxgBd+7dAzFnVqiuZS67pDfCBQK4qf9tSO+mM+VrYkOUkG6
-	 mM5caX47pwQioFd1LEHH/kUkX00zL6R4CzLsjB9N7nzSMO5Xg7kby1YNxfVZMqk1ADKTN
-	 hDnOr915oPNmdyC0wv1sEHED2gvDX7NR+dNIXH0AEWDFwng0ejPWmdBCJtrK9MvgaSg==
+	t=1793970494;
+	b=b563tQe7r9+DvrP/6YEuWyHEJLxj95HUXcu4YWcYHSbPokJZuGbtZ8alllRvE5Z3nXXH
+	 dOetVSH6+otcyQZy3OUjHpPmP8Q2LeRciHS7fUvEN+1ZudT8ubpypVDoyIXKsggSpV+8R
+	 vsjStVXjhD8Iozr8eBzcJqWaOn+82rteSEb9ABP5HG5duNsZ4ddBvCU7poUWAErQ5jMCu
+	 GOjn0yxEg1k3GgM48KuXsPQR3kwIFmloH7F+EmcYuSfwxul6iHP+KomqB4FA1SAp5kR4I
+	 cNac7ljCRB9nJJYfDFRcr4vXYeZs3j3zQct5eBUlmluDquV2V1QJclIA8tr5vQD2sFQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793970493;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793970494;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=tKk5aEZXnafMyBNTOoPm9dVXgFLC2FqyYYQz5rKBIig=;
-	b=XuU9xgE9oHgrj1yLejOyn4V195AIdTV+leUPHc0NQyMD6OPzvelKoYImiQtJAPz0ibZZ
-	 BxZQvGymH9p6FPmmfRdygYug5E3EyaWjGN071qow4zm1Z6ldonuRWtNtt1SBMsoiX/uWz
-	 0xZPeGxpo0yzom6UPAVI3NXbeQhmOicZxPzRR1ThCOr8lHoGHKmXv+053cMJ6vT7KIctQ
-	 PmWLz4dOBDnMMLFUL3L8lgch20wfBAkbBQjUxP5w8H+JKvYkzRSWMDI4N1J30yegHdCs0
-	 6GxEn47RJOEhB9/ik1RZH2Itt7gexT6JPeSJ6SujTKVSmITo3szU3S1jtFwE5EHQEmQ==
+	bh=88MFnW5CQX7DrSGCAbp3oJlbo9Ck68x3g6pfV/Ba49g=;
+	b=lX3MCzIX3Up997iZkpQ5LtJ/WeSN7v/vYnkEI/HbAMYcxr8HSwB4k3LfC38141E5hPiK
+	 Ap0TmUkkAAgkeCvWSiTGDjuNfLVR4HX/J0L0DtDdqvHsWA1dgr5TnTEtyTJnqpHENj7Er
+	 DQg0E5RwkWVkGodsaM+7nXRDHyAenYmK/SnT0v2Zddw24UwI9GPLXcEthSYXMuTkV/Q6v
+	 ozCbb9OPkv4g5WH01ycFKEQOVWP12F3WjrcRnn6k6NrOkhbd3z06NDuNilAIbZwLDcGd8
+	 d0gwuHaClDphsC3fpfvrjdwXhCgMdulguFxgFJoe48374kHmoMo4X6A7Rs+Iz8+PidA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gN1rPbZ0;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VHSell+a;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63598606A32C;
-	Fri,  6 Nov 2026 13:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FCC606A330;
+	Fri,  6 Nov 2026 13:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gN1rPbZ0
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66C3D1F008A1;
-	Fri,  6 Nov 2026 13:08:12 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VHSell+a
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D6461F008A2;
+	Fri,  6 Nov 2026 13:08:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793970492;
-	bh=tKk5aEZXnafMyBNTOoPm9dVXgFLC2FqyYYQz5rKBIig=;
+	s=k20260515; t=1793970493;
+	bh=88MFnW5CQX7DrSGCAbp3oJlbo9Ck68x3g6pfV/Ba49g=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=gN1rPbZ0oLGmpW8QUXAvm1AZiOiwUpm/YjnVNclutatvDcVeAYAdeK+WQNjObbGtj
-	 Xun4/WHtjd5XLIKOYH5YTX7sQH6WHCjn2Le521VKn39s7G3gOu7ftDx+eZrlqbR6Cw
-	 lMvUskFsobFOei8tuPHn3FqHH7+LG3RUBU7nbQczhwbiE6laXuZqKbjVpYTZWifGHe
-	 mJI+7iXBbegLbTwENmNI9O2Bmi3yIZsz8r++ZAW+j+xZxqtm1Gd1Cx3KsEPY7pVzgw
-	 Kdb/3pPmz9iGZY5Lu+GqUUsy4HcNHVOAc72CVkuq/jl6bgItygxY4K/gAYQHg6wGMz
-	 9FJ+iQddFgS+w==
-Message-ID: <sashiko-outbox-201438@kernel.org>
+	b=VHSell+aUkzCqMxmmlfl24iPFP0mOWsRXiDI3APT3N9OeBk6yX/LuoooQ0jkn8deA
+	 SmXPeEghRH/nEXCkleYNliUYjeRqA+gJETEeoYjN50hbrE0bBF4ufYvlfIZN0QkN9I
+	 uiqnQg2Vng36RJMC/cpyD02/YACRoN5kSMY27OObBxxuZtyAKS881S1ae6DvP7AHBd
+	 +nJzUzzY4lrQBVQ/qgw7L2APl/eSX6hJ9bQxpEvFCmW5kP+xMFMoHyx5usIBD1DWDz
+	 hUkLQACsJSB2DDqArZw3xJJlR37r6pPsy2ZEzaC6KAHKovuBg2hwvH5LPG0q8ANAxF
+	 l9KybLkWCwjiA==
+Message-ID: <sashiko-outbox-201440@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/5] clk: qcom: Add NSS clock controller driver for
- IPQ5210 SoC
+Subject: Re: [PATCH 4/5] arm64: dts: qcom: Update IPQ5210 xo_board to use
+ fixed factor clock
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Luo Jie" <jie.luo@oss.qualcomm.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261105-qcom_ipq5210_nsscc-v1-2-d4fcb5c32b51@oss.qualcomm.com>
+In-Reply-To: <20261105-qcom_ipq5210_nsscc-v1-4-d4fcb5c32b51@oss.qualcomm.com>
 References: <20261105-qcom_ipq5210_nsscc-v1-0-d4fcb5c32b51@oss.qualcomm.com>
- <20261105-qcom_ipq5210_nsscc-v1-2-d4fcb5c32b51@oss.qualcomm.com>
+ <20261105-qcom_ipq5210_nsscc-v1-4-d4fcb5c32b51@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 06 Nov 2026 13:08:11 +0000
+Date: Fri, 06 Nov 2026 13:08:12 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -63,77 +63,87 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential
 issue to consider:
-- [Low] clk: qcom: nsscc-ipq5210: wrap .driver.pm with pm_ptr()
+- [Medium] arm64: dts: qcom: ipq5210: xo_board uses xo_clk instead of
+  ref_48mhz_clk
 --
 
-commit 32b660ef44d1803c715de35bfad45d1be9b88559
+commit 6f35f463dd9af9e90cdf14e9597dae99779f246f
 Author: Luo Jie <jie.luo@oss.qualcomm.com>
 
-clk: qcom: Add NSS clock controller driver for IPQ5210 SoC
+arm64: dts: qcom: Update IPQ5210 xo_board to use fixed factor clock
 
-This commit adds the NSS clock controller driver for the IPQ5210 SoC to
-provide clocks, resets, and interconnect clock paths for networking blocks
-such as PPE, UNIPHY, and the integrated Ethernet PHY.
+This commit converts the IPQ5210 xo_board clock from a fixed-clock to a
+fixed-factor-clock dividing its parent clock by 2 to produce 24 MHz.
 
-> diff --git a/drivers/clk/qcom/nsscc-ipq5210.c b/drivers/clk/qcom/nsscc-ip=
-q5210.c
-> new file mode 100644
-> index 0000000000000..ca749e0af3231
-> --- /dev/null
-> +++ b/drivers/clk/qcom/nsscc-ipq5210.c
-[ ... ]
-> +static const struct dev_pm_ops nss_cc_ipq5210_pm_ops =3D {
-> +	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
-> +};
-> +
-> +static const struct of_device_id nss_cc_ipq5210_match_table[] =3D {
-> +	{ .compatible =3D "qcom,ipq5210-nsscc" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, nss_cc_ipq5210_match_table);
-> +
-> +static int nss_cc_ipq5210_probe(struct platform_device *pdev)
-> +{
-> +	int ret;
-> +
-> +	ret =3D devm_pm_runtime_enable(&pdev->dev);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "Fail to enable runtime PM\n");
-> +
-> +	ret =3D devm_pm_clk_create(&pdev->dev);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "Fail to create PM clock\n");
-> +
-> +	ret =3D pm_clk_add(&pdev->dev, "bus");
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "Fail to add bus clock\n");
-> +
-> +	ret =3D pm_runtime_resume_and_get(&pdev->dev);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "Fail to resume\n");
-> +
-> +	ret =3D qcom_cc_probe(pdev, &nss_cc_ipq5210_desc);
-> +	pm_runtime_put(&pdev->dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static struct platform_driver nss_cc_ipq5210_driver =3D {
-> +	.probe =3D nss_cc_ipq5210_probe,
-> +	.driver =3D {
-> +		.name =3D "qcom,ipq5210-nsscc",
-> +		.of_match_table =3D nss_cc_ipq5210_match_table,
-> +		.pm =3D &nss_cc_ipq5210_pm_ops,
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5210-rdp504.dts b/arch/arm64/boo=
+t/dts/qcom/ipq5210-rdp504.dts
+> index 61a53361138b1..519307c6b61e5 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5210-rdp504.dts
+> +++ b/arch/arm64/boot/dts/qcom/ipq5210-rdp504.dts
+> @@ -85,8 +85,13 @@ &uart1 {
+>  	status =3D "okay";
+>  };
+> =20
+> +/*
+> + * The frequency of xo_board is fixed to 24 MHz, which is routed
+> + * from WiFi output clock 48 MHz divided by 2.
+> + */
+>  &xo_board {
+> -	clock-frequency =3D <24000000>;
+> +	clock-div =3D <2>;
+> +	clock-mult =3D <1>;
+>  };
+> =20
+>  &xo_clk {
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5210.dtsi b/arch/arm64/boot/dts/=
+qcom/ipq5210.dtsi
+> index 52d851a0dc2b7..0c1ede0f73b21 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5210.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq5210.dtsi
+> @@ -26,7 +26,8 @@ sleep_clk: sleep-clk {
+>  		};
+> =20
+>  		xo_board: xo-board-clk {
+> -			compatible =3D "fixed-clock";
+> +			compatible =3D "fixed-factor-clock";
+> +			clocks =3D <&xo_clk>;
 
-[Severity: Low]
-This isn't a bug, but in nss_cc_ipq5210_driver, .driver.pm is assigned
-&nss_cc_ipq5210_pm_ops unconditionally while nss_cc_ipq5210_pm_ops uses
-SET_RUNTIME_PM_OPS().
+[Severity: Medium]
+Should xo_board use <&ref_48mhz_clk> as its parent clock instead of
+<&xo_clk>?
 
-Should nss_cc_ipq5210_pm_ops use RUNTIME_PM_OPS() and .driver.pm be wrapped
-with pm_ptr(&nss_cc_ipq5210_pm_ops) so the structure and callbacks can be
-dropped when CONFIG_PM is disabled?
+Both the commit message and the comment in ipq5210-rdp504.dts state that
+xo_board is fixed to 24 MHz and routed from the 48 MHz WiFi output clock
+(which is also the reference clock of the CMN PLL) divided by 2.
+
+In ipq5210.dtsi and ipq5210-rdp504.dts, xo_clk represents the external board
+crystal (which can be 48 MHz, 96 MHz, or 192 MHz depending on board
+bootstrap pins), whereas ref_48mhz_clk represents the 48 MHz WiFi output
+clock routed to cmn_pll:
+
+arch/arm64/boot/dts/qcom/ipq5210-rdp504.dts:
+/*
+ * The bootstrap pins for the board select the XO clock frequency that
+ * supports 48 MHz, 96 MHz or 192 MHz. This setting automatically
+ * enables the right dividers, to ensure the reference clock output
+ * from WiFi to the CMN PLL is 48 MHz.
+ */
+&ref_48mhz_clk {
+	clock-div =3D <1>;
+	clock-mult =3D <1>;
+};
+
+arch/arm64/boot/dts/qcom/ipq5210.dtsi:
+		cmn_pll: clock-controller@9b000 {
+			compatible =3D "qcom,ipq5210-cmn-pll";
+			reg =3D <0x0 0x0009b000 0x0 0x800>;
+			clocks =3D <&ref_48mhz_clk>,
+
+With clocks =3D <&xo_clk> and a fixed factor of 1/2, wouldn't xo_board and =
+its
+downstream consumers (gcc, sdhc, and nsscc) evaluate to 48 MHz or 96 MHz
+instead of 24 MHz on IPQ5210 boards strapped for a 96 MHz or 192 MHz xo_clk?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261105-qcom_ipq52=
-10_nsscc-v1-0-d4fcb5c32b51@oss.qualcomm.com?part=3D2
+10_nsscc-v1-0-d4fcb5c32b51@oss.qualcomm.com?part=3D4
