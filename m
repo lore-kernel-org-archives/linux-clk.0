@@ -1,155 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.74.0
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793953796;
-	b=16t88nS0CkC9J29B75BDjmdqY4NJru25CGJ7ken9j47YZNpzblsxDAYiaYqmc5btM9zr
-	 yTOOmbmiftMtsvctV2F3TdCPWWRZxDIKSvxasBE9OQWX6XfkzRzVZ9IcQoieOdlontPgr
-	 erWuLk9cNG+LxOr7USj4gvpgyg8uc/ZYChhYjUjg7xvWFwKLa6guT1Ic7h2cXenfVITXG
-	 I7z/xRfHeuxMj4oqLqVli1xYtldZ1ojblt2+kVK1V0YLWOx7COuxxs4ZB1Q7aUXCiS1w2
-	 /i31YBOxXsmKVmeYAwsw9n8imR8wPCPtUAqaz5wKmFGb8HxKjVRBxaBDn/FR+v+uWwA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793953796;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:CC:Subject:
-	 Thread-Topic:Thread-Index:Date:Message-ID:References:In-Reply-To:
-	 Accept-Language:Content-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:
-	 x-ms-publictraffictype:x-ms-traffictypediagnostic:
-	 x-ms-office365-filtering-correlation-id:x-ld-processed:
-	 x-ms-exchange-senderadcheck:x-ms-exchange-antispam-relay:
-	 x-microsoft-antispam:x-microsoft-antispam-message-info:
-	 x-forefront-antispam-report:
-	 x-ms-exchange-antispam-messagedata-chunkcount:
-	 x-ms-exchange-antispam-messagedata-0:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-AuthAs:X-MS-Exchange-CrossTenant-AuthSource:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-originalarrivaltime:
-	 X-MS-Exchange-CrossTenant-fromentityheader:
-	 X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-	 X-MS-Exchange-CrossTenant-userprincipalname:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=Ur6IVRT2TIw3h5RRedxRy9hlQoHTaFNtRY48hY8vkNM=;
-	b=URV0D6t4kXvHSHqB/J1sADpwtuxbihe5dQ4IM/EuTwY/jkKHMiTtlnvDA3Mk1yFVVO/y
-	 TFMxO+XwJbrcHGieCbN6VmuMThTJdR+YyonqDb0l96dYw3XkQefgUPIWbQl2G5trvJ0/0
-	 AwGY6qnjUxJx6gNtqUhPddWKSmQ6+fXOMF5e3D+iJm4OgXyPORWlwXIq1nkwzgEiRvanw
-	 OGwuHQU5a/65aZKNVGz0aZiebPATaJXSY7nCI97R0J7TqLrYvvesnDbA86iG5liEmNpQ6
-	 4ZPQK0Zb0JfdsnTW+VTkWJKyXvj6mw2wSiEveoSazXc2iGh00q7qwaK7nPnwn9hgC/w==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bp.renesas.com;
-	spf=pass smtp.mailfrom=bp.renesas.com;
-	dkim=pass header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b="GIn1O/kK";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.74.0
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011000.outbound.protection.outlook.com [40.107.74.0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793953836;
+	b=YSbs5j1hRJyinC1uWqXvgxwDpELYs08NGhmBRXYBnslsswsP5GLI4+LbGdAeeXxqPBuy
+	 NTxUd61XrQmMzNhx67naEhL16SHiCNHvzaGfW0mxdOlCXX0gyKt56L4+f4BW4egQEQPVF
+	 RoKixIkUUABTZEjTh8Hqi9BHlvHDfAog3noNBFabMJ27w1aMYHOy7xPOD95LhFsETBofc
+	 wBH2B2wBby4IE9KP/XrcUSHUixaFb90yzT8v96xxMRVkuBnliyo5tVY/1XbClm8/2G2iD
+	 H5KBBSoAra8IyPxcALGuRYy5zUS/YDesvChxp/K80K3Y/S9N4THqMq23vtCq2UB5jUA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793953836;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=bBvAlTqUUTVWwtpovytt9429b4fXz6tD1BdJt6T8kRk=;
+	b=A9jNk6ZvvrHI5c2SOfMLu37YQcKpk+ElB5XL3Io2x5L5CwzHWI9/L6mb5X4xNf6Dojqx
+	 PhQSacy0atDkt7r4Apwyv+NrjQdqdZEnjC6pjNiQH2BZ47wX/cUPcQzFpUJv60WgiBvqY
+	 Xrt/jhmEUyRY+4ezwkjZrrGA34+Ec9YgqpsDYEN+EmIOubb0n9m/3J67tc1evtNJdzyMr
+	 ZkJjeOy/rlt8ZW8RDtX/VxpWdVUn3HWFhIVkI0ho1Vs2npsD8YdM+qTQPtpYN0J2fBBZV
+	 WX/mVV6fexkv3hLgZcSZJ457QIkYLNL2dhw7ASDwupu6xPqcBqQxI926qKzL7UF+lRg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=KOpLB47E;
+	arc=none smtp.remote-ip=209.85.128.41
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE69606A326;
-	Fri,  6 Nov 2026 08:29:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2FE69606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5E8606A33F
+	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 08:30:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EB5E8606A33F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=GIn1O/kK
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eavd3JGUcG0XYsgdkcciQ9W+dbuAbyFApohNPO1goSzitg5M4bRI8XMdoZ5zTcpNfbyHWvwoP1mqMKGL8AMyxpBdDYXgtohNtbYzhYlw/nzjpsDnzxRupPNBoodcDyQXpnzYlrzfVAckZlKl3DtMqj9/HcEf46jC7XPqSUYJgOttXMaDMCB3hnbTVr72fUhGLsF86CRN747o5VM6GhjklV/uv3+ObiPLmYKr/FOvv70qVpWJMG+zKYTxvvoZ1SuNHEBKFwhPCiB3zKGc0kkM65Kh6EeMdAxm9090a3uqr7//KYVxLx/4lirvg1r1fQKa4dQG/scj3Tsbq0K2IvN8Hg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ur6IVRT2TIw3h5RRedxRy9hlQoHTaFNtRY48hY8vkNM=;
- b=J4WYvPULC5BHiiHyP2ctwFQZfsLyfRGWoPVNOTMz60W2SzInq2K9bFW3HDx2ywoVedDfjhuj1EG9UOS98KpHOuS1tMw8MnVRqGun2mW4DlIt+V02JkQviOBh/2M0KxmM7HXQ4EzJ0uewGZI/pF3/oaWkGCf+G1TOfkbfTmUCvKf2p1MAgQSQ5XLx4DYk3KcyBcYD76L/RMuFwhLJPagPVddKfGaXR0RraSDWs59+avwQPbjD4/3E+FQvFkaBHJDqP80+5q7onUaF1APfc7tGlSO1TmDvxCmiBlHaAJt3w790j+dNAIUpKcd60a/CYtECM8gbeyCm0i5nTB43q9+KKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ur6IVRT2TIw3h5RRedxRy9hlQoHTaFNtRY48hY8vkNM=;
- b=GIn1O/kKenp+oq1GkhkeenvPAWWBO2FEIG44nSzSYtVDCyWD8c67kF7AhDNldYr2NhAEGxxaDsKPTrbqkFrP96k/pdeIfPVrKi9w/kXVCwx2kKWNPKGx63cIwgikHNz/c7ROK2V9MZk0ryI7FEiTzfYcKNySGGr7GGrpAoMooV8=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TY4PR01MB14590.jpnprd01.prod.outlook.com (2603:1096:405:23d::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Fri, 6 Nov
- 2026 08:29:53 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%6]) with mapi id 15.21.0592.009; Fri, 6 Nov 2026
- 08:29:53 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Fabrizio Castro
-	<fabrizio.castro.jz@renesas.com>, Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol@kernel.org>, "biju.das.au" <biju.das.au@gmail.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Brian Masney
-	<bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf
- Hansson <ulfh@kernel.org>, "magnus.damm" <magnus.damm@gmail.com>
-CC: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>
-Subject: RE: [PATCH 2/9] can: rcar_canfd: Add Runtime PM support
-Thread-Topic: [PATCH 2/9] can: rcar_canfd: Add Runtime PM support
-Thread-Index: AQHdZ6cRKhqrBWVFt0GPnL02pCtZWbcgwmKg
-Date: Fri, 6 Nov 2026 08:29:52 +0000
-Message-ID:
- <TY3PR01MB11346F0FE5ADB3161E81E6EA586762@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <cover.1793278754.git.geert+renesas@glider.be>
- <011735aa3a7568229db473a7ff92681176338db0.1793278754.git.geert+renesas@glider.be>
-In-Reply-To:
- <011735aa3a7568229db473a7ff92681176338db0.1793278754.git.geert+renesas@glider.be>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY4PR01MB14590:EE_
-x-ms-office365-filtering-correlation-id: 9c69c4ff-ddb8-4481-16d2-08df3be02176
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|23010399003|376014|366016|921020|38070700021|11063799006|4143699003|56012099006|261022075727099003|261022105027099003|261021121427099003|261021123027099003|261009223027099003|261102123227099003|261026140227099003|261026121527099003|261028144727099003|10067099003|18002099003|22082099003;
-x-microsoft-antispam-message-info:
- tnIodvQCjgzYuaOi0LWYHPrVaTmMw1iGAgmE783nX8PFS+2kpGQRA8+xAfJrE069HZxv+FyUPMOsI5Sk3REnz618UoA6eA4fJHubNxuv2VO8HTUP9NbuBCB4aEv/rc54ykr0CG5tVvqNZm4cvQC8PE2ttZ6sNdkH87slWbOvNnWfMzYtGcAMDJ0PRh9ItgcW8a6q8UZkB7WNUMKgxYCH9g8oLIpcbvFM0aHVhuoM+eIASAm7Ytn9csZ6dcxOZlvsECqsvgi3//RQt78pPKiCXNAxTIiwonwrA0V//hKIZglgz1/NoHHmoMCcVZjFYj1Foct/3P3vTPirJIh3rW8TzHYFMKyxytNpYSczRCwlysNOnGEBtStQDWu2WwamCRZ4aGtDh12Cp25IYzAiwsAMd0cLwaSaOe8iugraE7XkZ/LDrlN5/PJhVy5VSYdXhffK43n3gZHioLm38Q+Y9Hg1HQyDeNDNlD3xhfVDP/Faea+uijF60qCXQKvhSLlM4jquXu3v4dvkasurWb1ZNNRccD2JrryhX3t4lcQ+op6GiLMDRZxCdwm6/VmwP4cl+mTMoocYDRad9ipo8n7QmK4toc3ykprYAIj9OZHQhiYoCeUVINHhskmXKe+7ekoiOuJzqnOAaoQdQcAsT7EklmLXjjuLRUMrMIfhf1S0bVk0YV79/wajR0VabG+9b4yERrU8NX8BTyXSXRqpybK7C7I0vGRzvFhjQo4HpXdzf29oMf2vJNLumSkySLpEr/YuHHGE
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(23010399003)(376014)(366016)(921020)(38070700021)(11063799006)(4143699003)(56012099006)(261022075727099003)(261022105027099003)(261021121427099003)(261021123027099003)(261009223027099003)(261102123227099003)(261026140227099003)(261026121527099003)(261028144727099003)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?MZEw8DzIovUCRE5vrtzlofv/40xyAT3gx8Rq7heRt9v1bxCXg2DsIitCObK+?=
- =?us-ascii?Q?SEMocwD9++H5aA5FRYsZbiLlqg3d2ZCP3G8GNTbnwXSU10DkHWHvdbCB8xmr?=
- =?us-ascii?Q?FdmsWHHKtYdC5FPwcmw4nVwBZfLk10mMU8YS/Uop/TwISqzOgRu1JkUDSyNz?=
- =?us-ascii?Q?F4hW6T/buOvG/vTAjV2f4XFV3M9bTqUW1ukY//pZctkOlJJ1FpcIwPmfxHxS?=
- =?us-ascii?Q?BURicHleIDBkYm0ySeD5ePJRck43QS5xYgznMkR+KST7cSqI12G5RTQwDl2n?=
- =?us-ascii?Q?foSOkNkItZAmcZuVRzEg7HDyr7LDcii0RV0pJXaGm5rkU+wyuy2YPcRGP9pU?=
- =?us-ascii?Q?iTa4cgsXsMUaNWzERllUDDqSbNw5s0fAVULsLjdXkar1O1GV2QAnoaF7xf45?=
- =?us-ascii?Q?jA6RTt9+GlIvWryuJedHEveSSv5bSwQ2e/8dEb0LXk4NhZHMUKM96M98jHaH?=
- =?us-ascii?Q?3g/xDUhwUk897usRUkYDy5UomFbhNcKmD9U7W3PHe3PX33DreEN6jfhyO/HZ?=
- =?us-ascii?Q?lwR+A1/0I8qIHr+3QYJTwDdR1O8weZEregl7jyc+2zFmca3cLfxq+3yFLhpS?=
- =?us-ascii?Q?DtaiCy5SgGu/EczhH4lk9JXkkp0nwuC7KPpAhbU1o7g4EcasVbvryW5bfFl4?=
- =?us-ascii?Q?1lhgoWBAz7ncYlk9Mtg/EgPlBN3F7fugO5Q4vgsIMgSwFvKOzZhFsfBSFmvh?=
- =?us-ascii?Q?Wcad6zvyYYfFsAUqspIwhhdF+w7qCM6NJqWhP1qtdgWsLa76taYnQyqz0t/8?=
- =?us-ascii?Q?dMlxdCunak0evYr+kQQQoZYJn7PEpgQedRiwGR0Y0z68rEu9wqYBHNJ1KpyN?=
- =?us-ascii?Q?OI1d61SjVq55gAfN9vd3hwbxPN14QFEbUonjYW82XQpdoBLN0mJpqrxhRhOy?=
- =?us-ascii?Q?Gn5KG+mJtrGkQmTulr7JNdpeaXjWB+qBPLktbe6nGSw+4nYVfKG46AAU/yxJ?=
- =?us-ascii?Q?BoKpp/0WIZHV5l72kHgDmfcJUcWY4723eiXHs6KyteM5RgV9rtDH/Kcp7Y5t?=
- =?us-ascii?Q?5aPk92jPDjKJOMJwcC0gXwKBi5KtH+r52VBPZD6mNVSOXotDcdnFLpVSlk6j?=
- =?us-ascii?Q?x6G/sAxjbf3Phse1Jp8rjyzZE97d3cUsiE9VF8LOhGDlRDIyOAqfTqMPD6H0?=
- =?us-ascii?Q?2KjldQxNX1JRB6sGXjyUv41WCeDi5dO/MZI0OMtu47MtU4T94/asMe5I7Brd?=
- =?us-ascii?Q?yoakuQlCzpuqT7d9MQ8Qf2ncgOFbAO7gtayxi31E80fWaj0p1sR6q2g/lFyX?=
- =?us-ascii?Q?vTVNFGelDuRoHBbvJL1WsouvMS83QK8sKJ4j6z8X9ekBJP+Mw6db7Y1Fk/LT?=
- =?us-ascii?Q?oQ6GGZHzgLhfbdsxt4bqjklUUmmIH39cX5yozh2YtM7MMBFIpGRKWyuAeqJ2?=
- =?us-ascii?Q?ANuCkOpfwdQBeA4fZRn7iyqokoj/Y7GkDJgN8sw2QfcusddM65P9GL6ZnDWd?=
- =?us-ascii?Q?qHBmFyQRgiWvI5Cji64lCuXM6XXIM76rmkyIar2N2VyxGNgL9YGgv79siFKn?=
- =?us-ascii?Q?oKfRwFuclA8zJXi/K03M12u6O7Yl1HVojCEpORrTrxuVbqPY4ZKHmGL1h4Ol?=
- =?us-ascii?Q?30bA4jeeTcrwe5qPwve8ul0v2u0XZsKrmhCDMCtz/aixIBigoiHPBPtVBnEB?=
- =?us-ascii?Q?3R5ENmgE9kD2N7l9URfnCUEH77+hxvPqmkHoY5zeaQcBzanDBVmEbxSeTFbU?=
- =?us-ascii?Q?l6l/Naq6J62uAG45/Zh7FK9VlnRJfTBSyTkSwJukG2z8U/pwYgmohljcen1Q?=
- =?us-ascii?Q?PkEsekUCJA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=KOpLB47E
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a2167bd087so2897725e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 00:30:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1793953833; x=1794558633; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=bBvAlTqUUTVWwtpovytt9429b4fXz6tD1BdJt6T8kRk=;
+        b=KOpLB47Ed4bk+JKdsP7yqQLxUdlyrMVxvYibBOjeWaQanhi64o4SrNArejPjmdbfPb
+         CtKq7OzYt9cdEl2TWRiaJvIzqSplkLYUu4gjXp0NF7LrIkcd+kP6/bZjNgSd9s94sj6+
+         2vARPHzD7YWIO75zzdXzZStAR0ld+MhW58I6OxxxYI6O9hBppbLITOMiTYE9S+dcNfLb
+         wNUvKeAX9ioMloEuyFyo6g8P97C/ozKkdv9WP4b1Oq/O4Z0FDA0dC42b3JTcUW1ZTjwN
+         TSBygiPJMElMxgnaVcJ0lPcLM+UcLH5uVyr88bS2szahmOu85ZXCNunvq/UmxOD/exY0
+         nY1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793953833; x=1794558633;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=bBvAlTqUUTVWwtpovytt9429b4fXz6tD1BdJt6T8kRk=;
+        b=etVnSmthcUgyKNqwhC4ZFDx0Nx5LUhHjuk91VOJOs0zyBXhXnIfI/BFP7AgiHq/uRC
+         HTgEX4Vcf+NCCvZIb4Z2o70ZdhhD+gDblybdLsx4GQSpq5DWC/NpaPpnWluLFK0nqYkE
+         bT7NWmSKP9wdu5JNZq0QXeLy2UfS5K6Zz+Ti49vQIKLOfCzIXLW0pfBhvsTEl3wgYoon
+         lA/GJ1cd81G2Hi4xt8uPLfe8nQxBCY7B5Uo1z24FfRgOiqWXlX1BPbwYK5uSqjSwidr8
+         JMohRKHxVtNsG035DTrx2XtcUvv/vzpqlNWenhrorh2zdpwnEpKnWXaqHL4rasjzN0KD
+         1e+g==
+X-Forwarded-Encrypted: i=1; AKwUvBxPLBwy0bKOIPukF0VK8rHSBscAv0+lLlGQijxx3Nu9SfKPyR7xWDAWCR9gmflXQ0/yKx06rBeKHI8=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+vTx50rYTRC6J0GsQBgJVCEx0QBfFH3rSOMQBsfJobKVxfP2AT
+	zR3FJrkOrJSD9p6JcFHEZbdt76ffdpM3oUPv85yWYhJ+hqvfzG+YRzxiCXbltd7pRvE=
+X-Gm-Gg: AYBFou34T9Lpg6JIB2diLtq8M5DGD4/b6UX6ybGoLRrNNIF/L4L6EXxBD3b0qPeEzFn
+	UrNgeWOeOxy53j68ayfuiGXzIDAAYCgIoL+0iikk7ypHJDo92fDkXBcZXdeFn0fR/dttO1h57z4
+	vriAZeIwiYcXTGpNHN1PWJT0im9uyUXatS9kiA564UfqoWXgKSUArn3muOmPOtigofjyCOsicAS
+	PpsUTehlLEZhEOEbRhmtR0kXFUD0Z4M2iqXyxkQzQ/tTxHKbMNQkpruJZyqm1eNMmZmJO6bSVH4
+	unADuk4z/Up1ZcwHEQRsB0wzUkEFF3Z9Sr7JxaNgzxSXFKPEIwrz9eJTOfaklMnI80wcmvXNGVz
+	TY49CjY8VLDUudYthEhe+61J9TWXrBR0kmtHNX9BSkx3LXUySD+y3p3f0/7aS3VtkfEzDWw5kqK
+	5EPdDWdtClBJ3WjeFi1F7ahBaMMZL6vLoxtYuEJg7e3PNKOYedZ7hxlz+fO8WI6AEZ9A3c+67Q2
+	A+MlCotpj/3fxwtSjAkAoLOAqCJ4Ib3S+irt3teZLCFJQd2jnX+yQLofrMzr45SXbdyLO7AjKgn
+	3pgmCMpi90jYyR9nMT7ij5IsXjignOLh6b6r3GQYvYxpyQ6Vew0Bnfzb417eqqMTHZnF/xQA1p+
+	YpxdDwiWUoKzoi6z17OR5o7Luf/EnHCjLSWFCsF2Md7SKIJeafe36l0CrgVlBUWu0hFw=
+X-Received: by 2002:a05:600d:8408:b0:4a2:526b:d410 with SMTP id 5b1f17b1804b1-4b6f7374730mr17693885e9.13.1793953832731;
+        Fri, 06 Nov 2026 00:30:32 -0800 (PST)
+Received: from macbook.homenet.telecomitalia.it (host-95-246-144-141.retail.telecomitalia.it. [95.246.144.141])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-492d8472969sm2366839f8f.58.2026.11.06.00.30.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Nov 2026 00:30:32 -0800 (PST)
+From: Carlo Caione <ccaione@baylibre.com>
+Subject: [PATCH 0/7] Add Amlogic S7 clock controllers
+Date: Fri, 06 Nov 2026 09:30:23 +0100
+Message-Id: <20261106-upstream-s7-clk-v1-0-7d501d62621f@baylibre.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -159,115 +92,65 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c69c4ff-ddb8-4481-16d2-08df3be02176
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2026 08:29:52.9983
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IEkpOXZaHO91Kw5vpShSLPeVd1AStRzZoTElTkuAt9bwp3f+tvoSZO5QannEzjsF8MFCJ2E0fQYGdyuKzIl/q3EGIac1E2Udi4exyHugVxM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB14590
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzNDINYtLSguKUpNzNUtNtdNzsnWNU5LSjVLMzY2MzVKUQLqKihKTcusAJs
+ YHQvhF5cmZaUml4CMgaooSi0sBVpVAlVWWwsAYXNdmIgAAAA=
+X-Change-ID: 20261026-upstream-s7-clk-3fbe6f33652d
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Carlo Caione <ccaione@baylibre.com>
+Cc: Jian Hu <jian.hu@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org
+X-Mailer: b4 0.16.0
 
-Hi Geert,
+This series adds the clock controllers of the Amlogic S7 SoC family
+(S905Y5, S805X3): the IDs of the clocks the firmware exposes over SCMI,
+the PLL clock controller and the peripherals clock controller.
 
-> -----Original Message-----
-> From: linux-arm-kernel <linux-arm-kernel-bounces@lists.infradead.org> On =
-Behalf Of Geert Uytterhoeven
-> Sent: 29 October 2026 13:11
-> Subject: [PATCH 2/9] can: rcar_canfd: Add Runtime PM support
->=20
-> On R-Car X5H, the CAN-FD module is part of a power domain.  This means Ru=
-ntime PM must be used to make
-> sure the domain is powered when needed.
-> The CAN-FD module is part of a Clock Domain on all supported SoCs.
-> Hence remove explicit management of the functional clock, as this is hand=
-led automatically by Runtime
-> PM.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The peripherals controller is close to the S4 one. Two changes to the
+common code come with the PLL controller: clk-pll handles PLLs without
+a pre-divider and PLLs with an active-low reset, like the HDMI PLL.
 
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+The new clock headers are covered by MAINTAINERS once [1] is applied.
 
-Cheers,
-Biju
-> ---
->  drivers/net/can/rcar/rcar_canfd.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rca=
-r_canfd.c
-> index 4d805df5ff9e8933..74d9ffd2790587b9 100644
-> --- a/drivers/net/can/rcar/rcar_canfd.c
-> +++ b/drivers/net/can/rcar/rcar_canfd.c
-> @@ -37,6 +37,7 @@
->  #include <linux/of.h>
->  #include <linux/phy/phy.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/reset.h>
->  #include <linux/types.h>
->=20
-> @@ -2004,9 +2005,9 @@ static int rcar_canfd_global_init(struct rcar_canfd=
-_global *gpriv)
->  	int err;
->=20
->  	/* Enable peripheral clock for register access */
-> -	err =3D clk_prepare_enable(gpriv->clkp);
-> +	err =3D pm_runtime_resume_and_get(dev);
->  	if (err) {
-> -		dev_err(dev, "failed to enable peripheral clock: %pe\n",
-> +		dev_err(dev, "pm_runtime_resume_and_get() failed: %pe\n",
->  			ERR_PTR(err));
->  		return err;
->  	}
-> @@ -2016,7 +2017,7 @@ static int rcar_canfd_global_init(struct rcar_canfd=
-_global *gpriv)
->  	if (err) {
->  		dev_err(dev,
->  			"failed to enable RAM clock, error %d\n", err);
-> -		goto fail_clk;
-> +		goto fail_rpm;
->  	}
->=20
->  	err =3D reset_control_reset(gpriv->rstc1);
-> @@ -2074,8 +2075,8 @@ static int rcar_canfd_global_init(struct rcar_canfd=
-_global *gpriv)
->  	reset_control_assert(gpriv->rstc1);
->  fail_ram_clk:
->  	clk_disable_unprepare(gpriv->clk_ram);
-> -fail_clk:
-> -	clk_disable_unprepare(gpriv->clkp);
-> +fail_rpm:
-> +	pm_runtime_put(dev);
->  	return err;
->  }
->=20
-> @@ -2093,7 +2094,7 @@ static void rcar_canfd_global_deinit(struct rcar_ca=
-nfd_global *gpriv, bool full)
->  	reset_control_assert(gpriv->rstc2);
->  	reset_control_assert(gpriv->rstc1);
->  	clk_disable_unprepare(gpriv->clk_ram);
-> -	clk_disable_unprepare(gpriv->clkp);
-> +	pm_runtime_put(&gpriv->pdev->dev);
->  }
->=20
->  static int rcar_canfd_probe(struct platform_device *pdev) @@ -2254,6 +22=
-55,10 @@ static int
-> rcar_canfd_probe(struct platform_device *pdev)
->  		}
->  	}
->=20
-> +	err =3D devm_pm_runtime_enable(dev);
-> +	if (err)
-> +		goto fail_dev;
-> +
->  	err =3D rcar_canfd_global_init(gpriv);
->  	if (err)
->  		goto fail_mode;
-> --
-> 2.43.0
->=20
+[1] https://lore.kernel.org/all/20261022-upstream-maintainers-clk-headers-v1-1-d09dd4db01d6@baylibre.com/
+
+---
+Carlo Caione (7):
+      dt-bindings: clock: Add Amlogic S7 SCMI clock IDs
+      clk: meson: pll: Support PLLs without a pre-divider
+      clk: meson: pll: Support active-low resets
+      dt-bindings: clock: Add Amlogic S7 PLL clock controller
+      clk: amlogic: Add S7 PLL clock controller driver
+      dt-bindings: clock: Add Amlogic S7 peripherals clock controller
+      clk: amlogic: Add S7 peripherals clock controller driver
+
+ .../clock/amlogic,s7-peripherals-clkc.yaml         |  126 ++
+ .../bindings/clock/amlogic,s7-pll-clkc.yaml        |   73 +
+ drivers/clk/meson/Kconfig                          |   30 +
+ drivers/clk/meson/Makefile                         |    2 +
+ drivers/clk/meson/clk-pll.c                        |   52 +-
+ drivers/clk/meson/clk-pll.h                        |    1 +
+ drivers/clk/meson/s7-peripherals.c                 | 2149 ++++++++++++++++++++
+ drivers/clk/meson/s7-pll.c                         |  648 ++++++
+ .../clock/amlogic,s7-peripherals-clkc.h            |  245 +++
+ include/dt-bindings/clock/amlogic,s7-pll-clkc.h    |   42 +
+ include/dt-bindings/clock/amlogic,s7-scmi-clkc.h   |   27 +
+ 11 files changed, 3380 insertions(+), 15 deletions(-)
+---
+base-commit: 363f97a1ce635b86be7fd263d56a040fbd87bdbb
+change-id: 20261026-upstream-s7-clk-3fbe6f33652d
+
+Best regards,
+--  
+Carlo Caione <ccaione@baylibre.com>
 
