@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793953837;
-	b=PJ3TxLbeftPj4bivS4uXfXNiDuWXbASEEysGi43GV69keWuoevSofdvjYD8ATdtuV8kv
-	 JaoPq3PQB/bPxkdxuLTVUibdmJrIqtOwBc/iHeKiM2FOpIQiaHgxqXUb4peHc7zR/fEnI
-	 prX2jOU5+n2FmDRc2Pqhj88zO9db+iDhIflZjPEQ3DY5A0uzPVhMyiC4n3XYEW++cPg2G
-	 GbRXndRzPU8BUmI7hopqDzdf0HotRnWg/yl8fjWTkukkvEc7LVtl5e8yKycWpgZJBtURo
-	 OHVvfcgv1I6lCYQAUOIjLCvhqULIp3mcp0DXmtwv2UcNfwtzOg7VuKDA9SLmYOO9XEQ==
+	t=1793953838;
+	b=ED2OpMtkACrnz//o/Fyh532nqmfHpI5/ArA6hsNMF+Ojoz8vC7KeCIq2fgAreWvMVfVm
+	 atp7ojciB3rFD3YHtmh11dBTG62cIMGBtyCcOyutvUeOYfaGvoijhjuImQKSg8tEbKJsr
+	 +0ctJR9wn3jgEZwtAEfpLayLVO5NAYmHqJ9TC2yQz+hMxqFgWRbSE+2JOCn1jRxUNte8l
+	 70/0rmx1Q/i3t4y996x2iIZPFaEbjQ6iSQUBD08yFNssEfp9pBAX9gov8wNUEQWVGorak
+	 sjwHyv3JmFcUYUJRNDnUlrvbZ0DOQqJBYybnII/dLFaL6hjlHFIiLbw+cHo6AgBPtfg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793953837;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793953838;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=VLpvOWiOg/0agPCz0eeaXl9nhZwnrqFnecxOWRAu+hE=;
-	b=fVIecLMkaWloyHfEZMEo0hmyHLEApWA3gNyRBFFJ4Ur8OaXbp38mL96oSFP29NKb7FHX
-	 cpl4MaECOJf6kVeR4pQXcJBqA2Y9jO5n63JGsbkPl6iLXe5+/6rOMgnrVP5RM1uNwBp71
-	 q2dMysHysUxKuuy/2VTflts6w9ChgSyvdcNqVraJo4+KSPMU9Q1W2fAJWSOHRDXVD8Ple
-	 D40zWbLTPLtheUtJcXxt7IM69K0md6Q9Z8aObZTUZGmqts9XiC/tF4a3nhFpL/IkKCUR6
-	 DpNw9pdaIXPCS8noT5Pma5FEiqG1amkeioPaZAWchDeK5fg+yaItoZFnpJtOk128SaQ==
+	bh=z5PBEnq7VF6lYD89KsFrntzTjwO4LYAxU3lHBv/vL7c=;
+	b=OB0n14tV9VmNAfNksSo4taxiK7fI4V4YDds2+h01BB5ck93r9jzKWunEg8f5vyQ0HYuC
+	 yljO9gWUqbdxX6KTyyRTYvUA+TlWtCTEmTRbFb1csEJyWUWCcewyX7DEc+Av/me6Drn6g
+	 u2oaLBeNmnUbup4Dg8wZDf+teUFO/NG3DNAMObApnjvDRffVBW5WKZX8IlwnQHOsau4NQ
+	 ZKhl5nZP2ttdPD4GVW7EtACZlWOqKvIDQSwBQ2y4A7QoVuHC1OZT8zOZvVku5zyDwvlNY
+	 IKus/sxGaCM82wdVxG2sqYlmpVQlvdOyJ8Gp9PshXBEIt+EjKdb56OPNMqsfOBS4BZw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Y1eY3KP3;
-	arc=none smtp.remote-ip=209.85.221.53
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=N6MSp7+V;
+	arc=none smtp.remote-ip=209.85.221.54
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A81606A331
-	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 08:30:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 68A81606A331
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824CF606D81A
+	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 08:30:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 824CF606D81A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Y1eY3KP3
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-491971ac844so301791f8f.2
-        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 00:30:36 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=N6MSp7+V
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-491846221ffso294329f8f.3
+        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 00:30:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793953835; x=1794558635; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1793953836; x=1794558636; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=VLpvOWiOg/0agPCz0eeaXl9nhZwnrqFnecxOWRAu+hE=;
-        b=Y1eY3KP3gUC2WREteGQ5tKEYe5s3n0BGTbCtGv1+dyHdwaZ0qcXwHLBXys/2W8YHU8
-         mMvi7yD9IXYTcxzl7tbSF8l1dcHpigt/dVkgwwENE+ZOlOi4YGsesxOuYcTqT3z5N7qj
-         IZZEIYMeLTiaa+PUjI6Bd3QrS/8Ss26PVTAc6TKY8TibOS/HEP7TABU3kI+4ZjU84I39
-         7YTLxMctNVlZsWII+ulLTV9dhdGBauvzZSdBbSt/rZ9QfMsmhHDVCFNnWO1iUQ4WFDYJ
-         450Hxqyu7Yne3NPJ+Z8hr4+EnNiZyDYYr+L3Z9K1zv8rhjlWpXi3VPsTBoQPwq7bcqU0
-         ooQw==
+        bh=z5PBEnq7VF6lYD89KsFrntzTjwO4LYAxU3lHBv/vL7c=;
+        b=N6MSp7+V8HPEY6Bt8+49slpA+THfhpi4GFCegpfPQB1BwD6XA+2XV6jk7jfCQT6GE+
+         XWkjn27k5eNayKlwF5LkRZQoyrT7VkNE9uF3NGP9eLJWffeUlKyYsI7ghz4U/ziWHPR/
+         Raq8TnQXGg7gFPb1seUKNycA6taol9D0mZeyH0lJSef//OG66qDH1ffptAis12J2ao9g
+         s8K24obObXIjdgCrAIf/OFlb+KcFQsAbPl5vqVineDW9wGoDZoacfUabloLJnS8HKPYk
+         VgTsLPCbWiYUDXwaI3DDmTY4nnKwYs59VcAcj8AI+46bxla4+nHLy5KUvEhedVS6nw6L
+         x3uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793953835; x=1794558635;
+        d=1e100.net; s=20260707; t=1793953836; x=1794558636;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=VLpvOWiOg/0agPCz0eeaXl9nhZwnrqFnecxOWRAu+hE=;
-        b=hmEfuoVg0LKTFTYQqOI8x1/9+LitmKZeeZdeLtkEejhLiazO19H6wdNTI6pgov7UCV
-         N2P9Wd5M+zlJkEJi22C1efosDI3NxkARn36u8bDjWYjgqPPZbUAYfc5ntGYzxkHJFlKh
-         iCr+P0Tq2MuLFrOK9qJbJjls5KJrh8qkai1R98Tl+DzdQfRkqEI9LO9bQuJyqQTkZz07
-         MSEArSzoUNPIKhxobl199GS1geuX8tJQ3gWfKgLMWPYtVlY60RzwoUPvavsYNk1v6YnB
-         rxl6fnuJkPpZRvYMqCtCQdQKaeh2E9i1pzcl27Jt0e6yu7LcyXihPJtV4FWSmO+Rrv8w
-         9BHw==
-X-Forwarded-Encrypted: i=1; AL+hErEiHJLqqtZNo+95BsSjSWPbkjaPfV7rnp2KArrNusIcnkipMgVCYMYtwlUMISP+ug34o3ViE1PJUik=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8AWFcpt6RktQnGnrigIWI8al7YtISpjGEq6t/OGPXvfv3YCO/5
-	5Umy5a2ytycwZVE62FBc842XRXvkrsZBUQ9njZySyFfnAdNVJokr3rNniFfZSZg2mWk=
-X-Gm-Gg: AYBFou3H5OI6iWqcdHsLDva7sf2qNGOKbQ71E/zps1yMgvrVav0eRWuP4SNkjzEuXAl
-	ledLcFeqqu4EvLkR7rtijFGks2WELEVVjvkBhXGreYdUntpqNOW3Nxo91vIDdzbYI1B8+36YdB2
-	5cXLG9bXiAd2Mx72rv7nSbf79Pzy4wP0g5+rpMrRg6yy0wsoTYcA53VmxfbMK3KHxxoUWrU20Hv
-	SNfFb/gsERRkokxmhNRuRqykiAlc850IPq74XT4km9dAKrv/GME98dEv+oA/4AdG57HpLhZpy+W
-	cqelfFsnXlmpfisY+5YGwq4DT09qMHmPfbyZt53YTmHyL5qWdLfSALIG0fVEhmD8FTVbKY+H5Be
-	H8zinKT23zcbO0WSST6pXzSdrib1GHRICbbMeNJ7vgi6Hw01o2VKDsaAOgAB+TUm0eror/NP7Nf
-	VBh8cbsqwdo02bUv7pqjd++bUqM1oYN4PW4oYYmJL473440F9jjN3XUZUqfZ9aAGIuQGQnXp2WA
-	cq5hwu3KL7MS3g6gQinbe5KirdCHw8CIB9xvW0ucQ2U9aE4Jm8btw7KwI+0xTnuTQrhqZFDZMW8
-	xj8ns8Mgsu7D5cUxMLowmW2dbFt7rSMfi8zB+Gi1UEgliEjZQo+tHMvgSrHQ4ZqWCpgxXT93/mO
-	mRKpfmA3GBX6s5Tpi8mCK9CDqMxOXrenAnO2IT1FClBj+WA==
-X-Received: by 2002:a05:6000:2384:b0:492:b880:53a7 with SMTP id ffacd0b85a97d-492b8805664mr3030579f8f.5.1793953834697;
-        Fri, 06 Nov 2026 00:30:34 -0800 (PST)
+        bh=z5PBEnq7VF6lYD89KsFrntzTjwO4LYAxU3lHBv/vL7c=;
+        b=Ece2eEgHAgbwFVB89ul7v/u0mHYbW4VI/L8O9GYgaiUc3ZqcFLsH7Fl4qjCQIUcFea
+         cGUdYYb9hPinfJ6NAStrfDcqEtcTFbIiMWBiLOeEu9Vj5nkJgK/bQT3ZdDqEi1bXCVvz
+         /Q8X1JT1S6ELkZiDx0exA/rmCcR9qt9jwjleDiCsZOigHo+dCGEF2dzD59qpbl2sFNHs
+         Ra0r9g85JDJiMJVqL5ca4k+HHVJv06dEyXM1d3fZ8BMPqthummU35T+IwVYWuBC+xu+w
+         AfPhDKkjlQKdeOt0QeU7GDwNbLjTdrmRyJ/ZB06J/DAgrpqULsjov3p0RKS49BI6Vwsr
+         MuPQ==
+X-Forwarded-Encrypted: i=1; AL+hErFIXI+3g8iDfKTMULUn/u+8BIxDI4S3eT7Qb5ZnnkDGMLYSr1w2GZtsIeI6+1nbToeWpuOSs/y2w4w=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8vZ9xdBvUjW6RjhpkW18EfCpdxLyYpVPUJBxajWgrz6oTW1qhD
+	zwUB78nr/yh1SQcZ+EP6UExLy1DObxwtwQMVVTcliniwzgibw1xtI7QJdF3bmn23KVk=
+X-Gm-Gg: AYBFou0XI+xNPdxkefHm06Hk2QIuRahaESooVzWN2ue8P7HH9nNC2/kTbPk1ffj21SW
+	8VaMlJmuEHQ7+13IdkLgUtUovdgxA61ZTvVr5g/1MRMEcrYrcAguf0adGqH5QgNQ7zNmhtRfDrS
+	hRXYzcQLBo3vBUbiDvGthawatIsNrgng4Oz4kD/8gHJh16uMjxI+f93R12dUJqPCCNwRk2dP2bY
+	fNtY+gO+F+CtnSd3DfrvffWxy7XPx0XJR7+7FVZCDYvfS2FRRGfYAD1zzhFcXTTU6oarMvPaAcA
+	NR0Lwm3sQ5KoFJS0VdpCiwzjyloKkScbZVumalkBe5AakimKIqWLO48KnZDWeovagRY7czseq1K
+	9V0aH2nu8ztHkAwGN1hZJQOz3gJHfGVbs5+pX/n7s9Yqi0N9a6KvDbvKWYG1SqHUagVH1n8ZD7s
+	mNlmXwQOnejqlo+NCj0hnl07RV61rlq+1mPAJmRDKjXJlJXbMkvNycTYaopc2HzJnfwZTB4vrv3
+	uemu1BWKZMLKcAtFG+Xn2KEdaCWdMQiPYXxjtTL4sP9i/VunUaBaVJu96/qwAlNpG6t61znlz+T
+	y4SVYcAEi2Pnt9Va8kIhsX8OXTEA6Ov7YqmwYZMkU1mxVKtOt1He7FHKcj+PvF58vvdBzg2YoZS
+	N5ti0XQ5yIGZdmS+ZWVb29GZKpu/uYV21FWtSt1T90Id0+w==
+X-Received: by 2002:a05:6000:1882:b0:487:27f9:834 with SMTP id ffacd0b85a97d-492778d1739mr3822099f8f.41.1793953835726;
+        Fri, 06 Nov 2026 00:30:35 -0800 (PST)
 Received: from macbook.homenet.telecomitalia.it (host-95-246-144-141.retail.telecomitalia.it. [95.246.144.141])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-492d8472969sm2366839f8f.58.2026.11.06.00.30.33
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-492d8472969sm2366839f8f.58.2026.11.06.00.30.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 00:30:34 -0800 (PST)
+        Fri, 06 Nov 2026 00:30:35 -0800 (PST)
 From: Carlo Caione <ccaione@baylibre.com>
-Date: Fri, 06 Nov 2026 09:30:25 +0100
-Subject: [PATCH 2/7] clk: meson: pll: Support PLLs without a pre-divider
+Date: Fri, 06 Nov 2026 09:30:26 +0100
+Subject: [PATCH 3/7] clk: meson: pll: Support active-low resets
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -94,7 +94,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261106-upstream-s7-clk-v1-2-7d501d62621f@baylibre.com>
+Message-Id: <20261106-upstream-s7-clk-v1-3-7d501d62621f@baylibre.com>
 References: <20261106-upstream-s7-clk-v1-0-7d501d62621f@baylibre.com>
 In-Reply-To: <20261106-upstream-s7-clk-v1-0-7d501d62621f@baylibre.com>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -111,52 +111,120 @@ Cc: Jian Hu <jian.hu@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>,
  linux-arm-kernel@lists.infradead.org
 X-Mailer: b4 0.16.0
 
-The common PLL code assumes that every PLL has a pre-divider. This
-does not hold for the S7 HDMI PLL, and the S7 GP0 and HIFI PLLs are
-meant to run with theirs set to 1.
+The common PLL code assumes that the reset of a PLL is active high. The
+S7 HDMI PLL has an active-low reset, and its lock flag only rises
+reliably when the PLL goes through it.
 
-Make the pre-divider optional so these PLLs can use the common
-implementation.
+Add a flag for PLLs with an active-low reset so this PLL can use the
+common implementation.
 
 Signed-off-by: Carlo Caione <ccaione@baylibre.com>
 ---
- drivers/clk/meson/clk-pll.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/clk/meson/clk-pll.c | 43 +++++++++++++++++++++++++++++++------------
+ drivers/clk/meson/clk-pll.h |  1 +
+ 2 files changed, 32 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 1ea6579a760f..44b33051405f 100644
+index 44b33051405f..4ac5e45c1e9b 100644
 --- a/drivers/clk/meson/clk-pll.c
 +++ b/drivers/clk/meson/clk-pll.c
-@@ -76,7 +76,9 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
- 	unsigned int m, n, frac;
+@@ -293,13 +293,37 @@ static int meson_clk_pll_wait_lock(struct clk_hw *hw)
+ 	return -ETIMEDOUT;
+ }
  
--	n = meson_parm_read(clk->map, &pll->n);
-+	n = MESON_PARM_APPLICABLE(&pll->n) ?
-+		meson_parm_read(clk->map, &pll->n) :
-+		1;
++static bool meson_clk_pll_in_reset(struct clk_regmap *clk,
++				   struct meson_clk_pll_data *pll)
++{
++	unsigned int rst;
++
++	if (!MESON_PARM_APPLICABLE(&pll->rst))
++		return false;
++
++	rst = meson_parm_read(clk->map, &pll->rst);
++
++	return pll->flags & CLK_MESON_PLL_RST_ACTIVE_LOW ? !rst : rst;
++}
++
++static void meson_clk_pll_reset(struct clk_regmap *clk,
++				struct meson_clk_pll_data *pll, bool reset)
++{
++	if (!MESON_PARM_APPLICABLE(&pll->rst))
++		return;
++
++	if (pll->flags & CLK_MESON_PLL_RST_ACTIVE_LOW)
++		reset = !reset;
++
++	meson_parm_write(clk->map, &pll->rst, reset);
++}
++
+ static int meson_clk_pll_is_enabled(struct clk_hw *hw)
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+ 
+-	if (MESON_PARM_APPLICABLE(&pll->rst) &&
+-	    meson_parm_read(clk->map, &pll->rst))
++	if (meson_clk_pll_in_reset(clk, pll))
+ 		return 0;
+ 
+ 	if (!meson_parm_read(clk->map, &pll->en) ||
+@@ -328,14 +352,12 @@ static int meson_clk_pll_init(struct clk_hw *hw)
+ 		return 0;
+ 
+ 	if (pll->init_count) {
+-		if (MESON_PARM_APPLICABLE(&pll->rst))
+-			meson_parm_write(clk->map, &pll->rst, 1);
++		meson_clk_pll_reset(clk, pll, true);
+ 
+ 		regmap_multi_reg_write(clk->map, pll->init_regs,
+ 				       pll->init_count);
+ 
+-		if (MESON_PARM_APPLICABLE(&pll->rst))
+-			meson_parm_write(clk->map, &pll->rst, 0);
++		meson_clk_pll_reset(clk, pll, false);
+ 	}
+ 
+ 	return 0;
+@@ -365,15 +387,13 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+ 		return 0;
+ 
+ 	/* Make sure the pll is in reset */
+-	if (MESON_PARM_APPLICABLE(&pll->rst))
+-		meson_parm_write(clk->map, &pll->rst, 1);
++	meson_clk_pll_reset(clk, pll, true);
+ 
+ 	/* Enable the pll */
+ 	meson_parm_write(clk->map, &pll->en, 1);
+ 
+ 	/* Take the pll out reset */
+-	if (MESON_PARM_APPLICABLE(&pll->rst))
+-		meson_parm_write(clk->map, &pll->rst, 0);
++	meson_clk_pll_reset(clk, pll, false);
  
  	/*
- 	 * On some HW, N is set to zero on init. This value is invalid as
-@@ -174,7 +176,7 @@ static int meson_clk_get_pll_range_index(unsigned long rate,
- 	*n = index + 1;
+ 	 * Compared with the previous SoCs, self-adaption current module
+@@ -406,8 +426,7 @@ static void meson_clk_pll_disable(struct clk_hw *hw)
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
  
- 	/* Check the predivider range */
--	if (*n >= (1 << pll->n.width))
-+	if (*n >= (MESON_PARM_APPLICABLE(&pll->n) ? 1 << pll->n.width : 2))
- 		return -EINVAL;
+ 	/* Put the pll is in reset */
+-	if (MESON_PARM_APPLICABLE(&pll->rst))
+-		meson_parm_write(clk->map, &pll->rst, 1);
++	meson_clk_pll_reset(clk, pll, true);
  
- 	if (*n == 1) {
-@@ -437,7 +439,8 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (enabled)
- 		meson_clk_pll_disable(hw);
+ 	/* Disable the pll */
+ 	meson_parm_write(clk->map, &pll->en, 0);
+diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+index 949157fb7bf5..8384b75ae38d 100644
+--- a/drivers/clk/meson/clk-pll.h
++++ b/drivers/clk/meson/clk-pll.h
+@@ -29,6 +29,7 @@ struct pll_mult_range {
  
--	meson_parm_write(clk->map, &pll->n, n);
-+	if (MESON_PARM_APPLICABLE(&pll->n))
-+		meson_parm_write(clk->map, &pll->n, n);
- 	meson_parm_write(clk->map, &pll->m, m);
+ #define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
+ #define CLK_MESON_PLL_NOINIT_ENABLED	BIT(1)
++#define CLK_MESON_PLL_RST_ACTIVE_LOW	BIT(2)
  
- 	if (MESON_PARM_APPLICABLE(&pll->frac)) {
+ struct meson_clk_pll_data {
+ 	struct parm en;
 
 -- 
 2.56.0
