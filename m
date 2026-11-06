@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1793966801;
-	b=IgJhUlv6jBio+UzrFQ61Rb91Xj/SZgDKBlbJXJBLt+Lhpn+BYJl2y8pyk8p7/6nznjiU
-	 rJCIyOwQrp7peaFf3kcZAMjqUEoi93S41qg4FSKP6stMStMVrjiYsrbbF1Hve1WLkQzq8
-	 k5JhUOZYlOujWkXw8ugffoAncXprc/sHTpMRo3fRIEXUH0S7oHkxqTPaxI7gTqJgdmmwS
-	 3vxM9CsWybQE9nz84bp393NJlc8gbDLS9uUWiAq3qS7j7fPPjSQv4CpvgaWiRELaJkDsy
-	 UEPTpHOIm5jfaE6RY+PWKu94+toKpAr2/h0/N99cPDUI1WSUcz216QTB1IXMbPixGXA==
+	b=gMep+hoTQhL26s0Y5blH/6W2qfy5wIH8CMlgO0aGPxxQ2NUrB/GCKta99O/Q6hvXTjie
+	 JTQ4e18Hwj93Y/SsZVyRST0p54vGlXi3iroRxtht4u4jdFOh77zKXFuXzeVq61WBq9Sup
+	 2+sb+MoQfppICgn9FQANwGUAvOmgIu4mbBZ6/VgvqB6KmkRuO4EDzI2msAB89Yaa0vxUs
+	 Wp5Ev8JWqCOtc+FZPhZwqFvVx0VEGvueo0D3+6CxBhyrHechy9+nWrNwLo/S9tr7klGZv
+	 WQH1YFQA29THzXflXbwyvZwuGPFAhuzi2nE+gZNxZGTFojTLcPSdMk1xVkG2GKuuu9Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793966801;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=7o7dC8sVs5kYGVKxPwaOkMHtYtBpkn3eb4t+mLT8WC8=;
-	b=GxPShR1yJ208FLc65LBKZ4DHZXTVz+O85Dq9hbzIU6uiN3W8fkma7nDAr0xe9WMwuWAF
-	 EQ76ZhoH0iZieN+06geOm9kMuVlWb/IIKPw41CTfBDhZaFk2GpDsK46l2cn0IpMxa9NtI
-	 F/R2/UBPht/vwUon7fgw+NdF9DRhksv0x6JtETmbhxDuHfu0At9SWnmp+h+nsdN308hps
-	 sN0RR+fTbYKVb0ej1ILXhESzmSsgYkD6LX7IJcXRti3rsVpiTqcUf3IhBHLgcUGJNpjOc
-	 Gh69B8TvkVc+bgl5QezKDZD046dtQ/NK35UT/CmPeHYCyyMojpEvZr8dr1N3cQS7cxQ==
+	bh=kTmDNaB5SlgqoSG11/b3GBHAL02Fkjv+AYUpj38Qgs0=;
+	b=BpupNNGFDMLVOeAPFnFqwW9H2RI5e1p3atSCdzAePRw88Adw6awdtJq1lYNLM8otNiaB
+	 k4RveHq318Ohn4XJLbV2MO/l7FIskUQB9r60zCuGEhphJA1Nj4UbuUxb6k82Gz34GpqE2
+	 tCvjCxkbJcuAtVX0RbtARCxZFajGf2A6BNb0VEwptu60eVUKCbrO+reQkdxoNfdKti9Ka
+	 7G0F7tXFg4cyp8GOD2x/hAvAXUpqebYC15Wn3DGPUMvnuU1LWNnhQTnWmUrqa50N3J/7o
+	 bcgOSjNe7nDC0UbXI8l+g/omE0N2lQAJEx63y6rJmtBIQDp727fTrw83Hab1/q7CqsQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=I6Gm8IbS;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZIwBVG8O;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D31606A33C;
-	Fri,  6 Nov 2026 12:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B662606A32F;
+	Fri,  6 Nov 2026 12:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=I6Gm8IbS
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22ABA1F008A1;
-	Fri,  6 Nov 2026 12:06:41 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZIwBVG8O
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E6161F0089F;
+	Fri,  6 Nov 2026 12:06:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793966801;
-	bh=7o7dC8sVs5kYGVKxPwaOkMHtYtBpkn3eb4t+mLT8WC8=;
+	s=k20260515; t=1793966800;
+	bh=kTmDNaB5SlgqoSG11/b3GBHAL02Fkjv+AYUpj38Qgs0=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=I6Gm8IbS6/1qLO4Zh9wcVI/eI1M6kpwcVNYs2Sq2aORbX3poX/r164MqZGBeCaDDM
-	 nAF1O4n92huDczai1PZwdZlxYbFIoPQpIoIGwIgED9Mx7r+C3/vSboSrQefw+oJWSi
-	 fBNRBEv32ATBqKwc25j6J5sQgIGsjaK/O4Xxi8M8bReT/Zo8RLSye3gBnDZR60QVn8
-	 OToffIsuUVbY2mA6BmiNQDYjY8S9xj+WyJR8k5qdMt0hEl4wtTyRH3PXZZ6+z5RgfK
-	 YJ6zA//QhK7pVFx6NXPetGc9qqlBCyMcTNsnkoz3xiAtU623FlQEo7F2uLzM07S8mJ
-	 OcSlnnJLOF0Xg==
-Message-ID: <sashiko-outbox-201378@kernel.org>
+	b=ZIwBVG8OBXH2LX8Kh6f7HFws6Ugs5mSHNP+9lTzOK7DjR1LRUhzu8trjP6u1zPRru
+	 EC2snGskcr5SRA9TDSCIUpMTMG75h3c9zAnWe3bWBcKKQJ63nxqYzLesEMPpe8mvQ/
+	 XDHIC3M/PucmIbHhjwMtC1wg2bqQPtjI1Bc2Zp0BC9bYukgtE4z686w6bBlaiCdZ2v
+	 Sed0hyn/lRW3c8WL3JDj++mkY4rhPApUWceCpii/xa7Mb3Z0uA6ULz17k0M9AjjO39
+	 Zue3+LSY0tL9v+3V7jekkRq+srZXEIIcwgWqr7Y5xDbE4/D4pv8nBhGQsrRzjZqEoE
+	 wk/Wj3wLeOMKA==
+Message-ID: <sashiko-outbox-201377@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v11 1/5] dt-bindings: clock: airoha: Document support
- for AN7583 clock
+Subject: Re: [PATCH v11 3/5] clk: en7523: protect concurrent access to reset
+ and PCI register
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Christian Marangi" <ansuelsmth@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
 Cc: robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261106115852.189098-2-ansuelsmth@gmail.com>
+In-Reply-To: <20261106115852.189098-4-ansuelsmth@gmail.com>
 References: <20261106115852.189098-1-ansuelsmth@gmail.com>
- <20261106115852.189098-2-ansuelsmth@gmail.com>
+ <20261106115852.189098-4-ansuelsmth@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 06 Nov 2026 12:06:40 +0000
+Date: Fri, 06 Nov 2026 12:06:39 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,82 +61,87 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [Low] dt-bindings: clock: airoha: unwieldy per-compatible conditionals
-  in airoha,en7523-scu.yaml
-- [Low] dt-bindings: clock: airoha: inaccurate description of
-  airoha,chip-scu in airoha,en7523-scu.yaml
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [High] clk: en7523: NULL dereference in clk_hw_get_dev() before
+  registration
 --
 
-commit 94419d913db80e12747b18f5e97b56dbea634264
+commit 9029e0297a2815d965ae1a27ae544f0b9a67fb5f
 Author: Christian Marangi <ansuelsmth@gmail.com>
 
-dt-bindings: clock: airoha: Document support for AN7583 clock
+clk: en7523: protect concurrent access to reset and PCI register
 
-This commit documents Device Tree bindings for the Airoha AN7583 clock and
-reset controller in airoha,en7523-scu.yaml, and adds clock and reset ID
-definitions for AN7583.
+This commit adds spinlock protection around PCI control and reset register
+accesses in the EN7523 clock and reset callbacks.
 
-> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.ya=
-ml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> index fc37786ac7ed8..05cd20ce3ab91 100644
-> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-
+> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+> index 2baec734df9fe..e534a5c91e618 100644
+> --- a/drivers/clk/clk-en7523.c
+> +++ b/drivers/clk/clk-en7523.c
 [ ... ]
-
-> @@ -57,12 +58,36 @@ properties:
->        available serdes port.
->      const: 1
+> @@ -623,12 +666,19 @@ static int en7523_pci_prepare(struct clk_hw *hw)
+>  static void en7523_pci_unprepare(struct clk_hw *hw)
+>  {
+>  	struct en_clk_gate *cg =3D container_of(hw, struct en_clk_gate, hw);
+> +	struct device *dev =3D clk_hw_get_dev(hw);
+>  	void __iomem *np_base =3D cg->base;
+> +	struct en_clk_priv *priv;
+> +	unsigned long flags;
+>  	u32 val;
 > =20
-> +  airoha,chip-scu:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: phandle to the Chip SCU providing the registers required
-> +      for configuring the PCIe related clocks and resets.
-
-[Severity: Low]
-As reported by Brian Masney on v9 [1], is the description of
-airoha,chip-scu accurate?  As noted in the commit message, the Chip SCU
-provides registers for clock gates, base clock rates, and dividers, whereas
-resets and PCIe clocks live in the main SCU register block.
-
+> +	priv =3D dev_get_drvdata(dev);
 > +
->  required:
->    - compatible
->    - reg
->    - '#clock-cells'
+> +	spin_lock_irqsave(&priv->lock, flags);
+>  	val =3D readl(np_base + REG_PCI_CONTROL);
+>  	val &=3D ~REG_PCI_CONTROL_REFCLK_EN1;
+>  	writel(val, np_base + REG_PCI_CONTROL);
+> +	spin_unlock_irqrestore(&priv->lock, flags);
+>  }
+[ ... ]
+> @@ -683,12 +748,20 @@ static int en7581_pci_enable(struct clk_hw *hw)
+>  static void en7581_pci_disable(struct clk_hw *hw)
+>  {
+>  	struct en_clk_gate *cg =3D container_of(hw, struct en_clk_gate, hw);
+> +	struct device *dev =3D clk_hw_get_dev(hw);
+>  	void __iomem *np_base =3D cg->base;
+> +	struct en_clk_priv *priv;
+> +	unsigned long flags;
+>  	u32 val, mask;
 > =20
->  allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: airoha,an7583-scu
+> +	priv =3D dev_get_drvdata(dev);
+>  	mask =3D REG_PCI_CONTROL_REFCLK_EN0 | REG_PCI_CONTROL_REFCLK_EN1;
 > +
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 1
+> +	spin_lock_irqsave(&priv->lock, flags);
+>  	val =3D readl(np_base + REG_PCI_CONTROL);
+>  	writel(val & ~mask, np_base + REG_PCI_CONTROL);
+> +	spin_unlock_irqrestore(&priv->lock, flags);
 > +
-> +      required:
-> +        - airoha,chip-scu
-> +        - '#reset-cells'
-> +        - '#phy-cells'
-> +
-> +    else:
-> +      properties:
-> +        airoha,chip-scu: false
+>  	usleep_range(1000, 2000);
+>  }
 
-[Severity: Low]
-This isn't a bug, but adding airoha,an7583-scu gives every compatible in
-this binding its own if-then block under allOf, with differing rules for
-reg, #phy-cells, #reset-cells, and airoha,chip-scu.  Would it be cleaner to
-split the binding into separate schema documents rather than accumulating
-per-compatible conditionals here?
+[Severity: High]
+Does clk_hw_get_dev(hw) dereference a NULL hw->core pointer when
+en7523_register_pcie_clk() calls init.ops->unprepare(&cg->hw)?
 
-[1] https://lore.kernel.org/r/179383990045.753844.10400171550739497565.b4-r=
-eview@b4
+drivers/clk/clk-en7523.c:en7523_register_pcie_clk() {
+	...
+	cg->base =3D np_base;
+	cg->hw.init =3D &init;
+
+	if (init.ops->unprepare)
+		init.ops->unprepare(&cg->hw);
+
+	if (devm_clk_hw_register(dev, &cg->hw))
+		return NULL;
+}
+
+clk_hw_get_dev() returns hw->core->dev, but hw->core is only allocated and
+assigned inside devm_clk_hw_register().  Calling init.ops->unprepare()
+before registration causes a NULL pointer dereference during probe on SoCs
+that set pcie_ops.unprepare to en7523_pci_unprepare() or
+en7581_pci_disable().
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261106115852.1890=
-98-1-ansuelsmth@gmail.com?part=3D1
+98-1-ansuelsmth@gmail.com?part=3D3
