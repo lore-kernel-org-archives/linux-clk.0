@@ -1,76 +1,155 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.51
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793952494;
-	b=1q4kjw2zkbxRpMgLyVrtFkRnIy7ZtrfLP6DDlkLh9qTxTrMco8A0tfUEkoAXt3HrKan4
-	 a+8hErMMvgBeg6s7VvOajE8Qhv7Mzs8mCqLOP5KC0PkTyVYT+t8+H6+wwCnhCb6+LRJN8
-	 pow6J6bTdngI0owbSghF0jvx2DIhUjfPbI+yfjzwKmERNQJJ6ZyUPNSPrdxPbvVdqF4gX
-	 3S02ISFeDTj1tNmsIqT8JKzwkkEUs+15v8F8WICpKRcW/piCAJD93kch2bT7D4Tm37yMw
-	 3GBHLgUVD3yfSWvBQ+VIedpdjIn/KwUqPS0JSm/+JIw1HNAUsUHW/StGELhjg8RwRGg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793952494;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=9n3N1yIikpCYIu+X6VsuHby7yUa6y7Py3MWjLaVcKX8=;
-	b=pfh+2XF8uhuY3PzJTrlqOc07RnYZ3e2iAqiJqJSwuTR6NHKsZg3+NL7+glqVC6B1Dqik
-	 TEk0UgNgFb2l9sRdRkEHa8oeSIrdMzefSrsfdS3UGsHoGqXnx7j13XVwRAlZibiNqGZgN
-	 dNPWQVEWk9by2qpfRcXq97R8bU4o8x+gFdZYPU7NRoXuNVnJVDb+4HtirMWjOD94bf2iE
-	 Mxl0MUuBrZcpN1C6kiXadaZIAz5JTwgufmgdY+g0j12UrI75Dkn/9mTffHamYp0GHd7d5
-	 65RW9GdvKCYBUH5IylwW+kOZmDyCwOXswNxfUqkVdx8tqbv3Q7mGeJNOyQorMzHKtbw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.222.51
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.125.26
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793953054;
+	b=s1E6n4tXVbV2ES3eHaqrmz816HwCJtYSJkCsGCuoQzKqlSFEcS1cKB1Ul/7uPcxADbgL
+	 cb8A1pDF7KmLdVtSctIDYPFYb4t/ZdoC2RGWeucAAJKGKSLfxOmQ1dR9tUVfgLcAnciUG
+	 uQO/dP+j2EHPbp7/uTyqXROTGmHiaVnS+0scO6aWFx5OXh9Z9C4ybxot017FmoLGV6bL9
+	 EulVXalt4P0TQUPmIrDyfxJ/mdbSHA+JHeJvOL35UOQ+Hn6zyOjG82WdtEb+GTYmpV1tz
+	 tKrqaxpNrHqsVpAQNNHQqC03CA2425JyQiMCi3NI9vzQ04RGoQz0zID1ZQykM2S+YzA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793953054;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:CC:Subject:
+	 Thread-Topic:Thread-Index:Date:Message-ID:References:In-Reply-To:
+	 Accept-Language:Content-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:
+	 x-ms-publictraffictype:x-ms-traffictypediagnostic:
+	 x-ms-office365-filtering-correlation-id:x-ld-processed:
+	 x-ms-exchange-senderadcheck:x-ms-exchange-antispam-relay:
+	 x-microsoft-antispam:x-microsoft-antispam-message-info:
+	 x-forefront-antispam-report:
+	 x-ms-exchange-antispam-messagedata-chunkcount:
+	 x-ms-exchange-antispam-messagedata-0:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-AuthAs:X-MS-Exchange-CrossTenant-AuthSource:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-originalarrivaltime:
+	 X-MS-Exchange-CrossTenant-fromentityheader:
+	 X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+	 X-MS-Exchange-CrossTenant-userprincipalname:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=5D8blpd1HRUTeNUkrcvTLG1Mz/LrfbXsp2AqJr+Clp8=;
+	b=N4tAGmUxXRxadCWipCtlHtWVIQZGt8FSZ0crOoa+wi0m9TYOoNQIpdO+y7oUY6xgMgsZ
+	 /aPDRjYITrtVmDOf7kEjiWkoMEt1mAdMjg1WguShQnwnY3/DIraioGid4j9tPwChRGfI+
+	 QfxAIwqYR4neubDjaUE87YJskRTxgwp4XzI9QrHP0ZZpQsTFHbJys1q7pH4wdabkWNXyv
+	 KbycLQ62O+tv3hoA2mTnb4afgetoS2+jzz2GJOmMgkgkSlgAs8+lcHns0jrLPa+CeIs7G
+	 OWUBmqHLoxa0LiqpcQwJ/mxgWYootQs6xLMUGClM4ZvTYCTKjPfzZv717d+gflOBUgg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=bp.renesas.com;
+	spf=pass smtp.mailfrom=bp.renesas.com;
+	dkim=pass header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=h1z9YxMa;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.125.26
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011026.outbound.protection.outlook.com [52.101.125.26])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9694606A329
-	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 08:08:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B9694606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-99806b7d89aso1411378241.1
-        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 00:08:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793952493; x=1794557293;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=9n3N1yIikpCYIu+X6VsuHby7yUa6y7Py3MWjLaVcKX8=;
-        b=BVgsw0eMxKAfA+Rxqfc6VFMaWNsqvTGh1dBBlvN3DKaBR7SwZJFwMJ/FTSg9CcaFta
-         81Qpb29ahoqLUBIWlNGPMQIer6g+YTqU2yTZK8cK36mWrR4svF9LGbw3CD/YjQKyyhkV
-         GYHJt/ZyGauBrnNLhqJRoKJoCXUI72hIqpGIIiPhrHWbxg+6/gud7MD5ps2xx61ccWrT
-         AUbFXVZUCmvpojPqdKZTx+UuSc5jvEFX0OEzHN1p5XXON7ZgRGoJ1MfczEuKrJOm/JD5
-         Q8iRgEnY0niFyXWLt+aRme4h8y9G6uoFSojjN4iDEJz2oyU5Os638IDA/jTY4zUbDiTZ
-         ZrSg==
-X-Forwarded-Encrypted: i=1; AKwUvBxuXAP0RXCF98/zurfrdWnR4dYWIMPZWukPuUD6qfHAUmtqbqrUOpiPTMM/K1XjIm98+OI1BONCUkc=@vger.kernel.org
-X-Gm-Message-State: APuU4Z942HxAkgZ9R0rzDxkRbhs04OKmxvX67MkYaieY4MD7OUtBkKhh
-	5Ll3DVlhOyHFgIi3j78p4eQ9FQkLHtuuqP9n6EDmKfwbu69s+41YWEpZWPkq+B8CMBk=
-X-Gm-Gg: AYBFou1v4NaH5QbC4Qm5dDXmm6LNFz8Eq3FhNBd+sbOPZV8Y98MkEDpJKueTU1HmrDF
-	MRXJOy8gxnAw1VQ8Y/b3XThMnoBErpzww5V2Apl9XX3yUvqEULw1Y1uri1ZBiqGlfBswLwu3g4y
-	6sZdQBKu45bA82hlWSNx0boL+Cc7wX6MN+DXQTKFQ2UF4PEaETZs8EtTwXJGWfjabawekT5S5eH
-	hLH1esl8UfBHlbVJdTvxkAr/2pwDN0TZVQymaTlYdJCcMqB+gQP2+lvmWng81SwA1fdjYCftti5
-	lnOqr5Q8EtWTWE6zfSBSiWDLEaG7cyLGAHzTvx/2i6IKHPSojBU0Fgu01Amw/5RvtWUM/AgaL3t
-	qptfqqe6MNUjgF+vtInPIIj93XtQ2cAJXlmuueZ/XIr56V67E6Fi2RCv5vREgwwyad35OgJvcjJ
-	Z7FhwL1+Y3I3rg30LS8uHG3b9qiGBcvR+qgGJSalwFXGgb0cBytFUPCLEbdwmYvmcRmZN7KwM02
-	nZf2Tn3kcg5I7WzBaEPu/SYvk6Orqw7raeUDFtQuVQTw0rQZ2CpFZF6qmL/eP3ueJUADbpkBXlL
-	bx3v7QvxVHMxVQjbzpM3fbMbPoxnswNPjbMRQ/m4SkcpkeE4mpd2i2nkXeX5ngEg1A==
-X-Received: by 2002:a05:6102:6e88:b0:7b1:3ecd:3d8d with SMTP id ada2fe7eead31-7d2869bb014mr2086573137.7.1793952492677;
-        Fri, 06 Nov 2026 00:08:12 -0800 (PST)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ecc650fc3dsm838924e0c.15.2026.11.06.00.08.11
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Nov 2026 00:08:11 -0800 (PST)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-7c33cc572e6so306691137.1
-        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 00:08:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBzwBirRNc6HZogEB3q5uPvG4RDsOleOp8ga9Ss4bZ7sestEL2OAlfV1TOtFvDp+Ttqep1AErycPGVk=@vger.kernel.org
-X-Received: by 2002:a05:6102:a181:10b0:7d2:8735:49f6 with SMTP id
- ada2fe7eead31-7d287354e7cmr1863139137.42.1793952490879; Fri, 06 Nov 2026
- 00:08:10 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C43606A32C;
+	Fri,  6 Nov 2026 08:17:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 73C43606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key, unprotected) header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=h1z9YxMa
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OB+SSv6q2hahMWHNkAqTUadq/Yvwx8jLU+D9GftMFiJyQuE4yqN085dsUKmCf46QIIM9IgK40Nc9Mft/e7xERxiBlo4rQ3xtJSEopQeHAufaWLCHSSEpw8C3lVS38VI9aXkJ16EPe8ZEvOSnTxfgftPRbRNoCRjx5UWQ+vw69USCbDvzjISKsYPHw/YW36c0XjfSzixbp26OeTY4ywEDfMEfjVj573WrWXS6o8Vlvo0G8jw20jsiR5XmIIDWblE/CUG+5KoZW+Ns29g/fW1sfQ9pzldj88jSJs6glKMKoOawNM/m8Et4gu5bVbaHXSYx008IjMdTJtUqm2eEmLNfMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5D8blpd1HRUTeNUkrcvTLG1Mz/LrfbXsp2AqJr+Clp8=;
+ b=zR5heVCVoEJcSgeJWrg7bhn8CprD8htjPT1c91+djSJCwz9/KyIRlDvnJPtIwKfcz0+p9jOqkoOAlvf9U7CMDwXiKMSGjqhsvcNfvEU+1oSoqv+mHVGkFHwbvkN4qsW3XwjGZyJ8uPrguXqRUjjd7LrMW01qtGnI+sgC/LcAlqQmDzr3PWbkmXSgXu0E1cNY+hmExxAR8pEhnkN/Tq2SgZMTOUGrTbQ2ZFB9VrJKuX2RmJzkYSPOAfUpWXucgGwBG+VzCLOhLJaXBbsHMkfamhnzbQUKBLarVg8SJf6xuVpsXwLUOck/+o65RS12GGCn25CvBJIvHw9pnKToKP1Z6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5D8blpd1HRUTeNUkrcvTLG1Mz/LrfbXsp2AqJr+Clp8=;
+ b=h1z9YxMaBivPd1vQJpvNtrMGN5WIubONChpkl1LM7dfTfstiy/nY42Iw5Ja5tpHdlPW9i4A9lUDwU0raVATzz/Ypa7VvI9A6tyjond+Fiu43piRU7R+h4M10JuKLZit5k689ff0sukPzoejghF41ajcE8yhypOxK64iqVrQ4plE=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by OS3PR01MB9529.jpnprd01.prod.outlook.com (2603:1096:604:1ca::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Fri, 6 Nov
+ 2026 08:17:30 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de%6]) with mapi id 15.21.0592.009; Fri, 6 Nov 2026
+ 08:17:30 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Fabrizio Castro
+	<fabrizio.castro.jz@renesas.com>, Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol@kernel.org>, "biju.das.au" <biju.das.au@gmail.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Brian Masney
+	<bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf
+ Hansson <ulfh@kernel.org>, "magnus.damm" <magnus.damm@gmail.com>
+CC: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>
+Subject: RE: [PATCH 3/9] can: rcar_canfd: Make clkp local
+Thread-Topic: [PATCH 3/9] can: rcar_canfd: Make clkp local
+Thread-Index: AQHdZ6ey9BsKmfUrHkS11C+eIKXt7rcgvtnw
+Date: Fri, 6 Nov 2026 08:17:30 +0000
+Message-ID:
+ <TY3PR01MB113465CCAA88F962CA6BA2E7186762@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <cover.1793278754.git.geert+renesas@glider.be>
+ <415c8b26718e2e5d53f74e65daedf9986c76dcfe.1793278754.git.geert+renesas@glider.be>
+In-Reply-To:
+ <415c8b26718e2e5d53f74e65daedf9986c76dcfe.1793278754.git.geert+renesas@glider.be>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS3PR01MB9529:EE_
+x-ms-office365-filtering-correlation-id: 804c14ee-e02a-4353-3564-08df3bde6702
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|23010399003|376014|7416014|366016|38070700021|921020|11063799006|4143699003|56012099006|261102123227099003|261021121427099003|261009223027099003|261021123027099003|10067099003|22082099003|18002099003;
+x-microsoft-antispam-message-info:
+ EOCX2jop6Ecis3gWl/BfxmMsPNTK50We3gOiE97UGdqkjZi767ILNWvjVkp+r+QBSaq2+ZihK+LOR8mSBj/EqERvK2SqEGq8zgTo9tkPvLtEoO1x0chlnZ4Hf3lwwSjy7+D+ftQQm4xhUsNAFYLXtfN9F7Q/gYhQTnDqdjp9n+ujM2KuAUk3GJkzd4ivyhDbv1vfQtH0rNxgiMR2sh6lmyYJS4vAFLsss+L3/tzumH/aKRL/epOmzrbwoohXoIWWAnT3tQWZs7dlKJ7F9AUeNqXStBz3E6fM+Ko1Ic+p/KZ9OMb2XRFa9WOKYiQyCUIBynHrOgQvSaqqROLvsu0a01ToOToHLgI3vGczdEQwxnEAibmlKLs16kNNuPnRkKf4V4UBxpA9/YU9hxggdl+iOVzcODp72Yvcs3wNdgEmMtTdUWnqHrN8TVtywu6uoxg3PCaDgWeitWdo2hzRhKtuMb0fF0YncQPWyn9PVag6waQej2uXOw1Z7u67j3HCYXmKvvor3lmLK4RZOsBeNjH6zibMiYnsaaureIqyetdf7iEI5hFCYo7Ot31eEJ08rtCQ6NHaDiSNWQPB3vcJBR84Vwf7IhPQ9ay5YWVLWqBvDLSUM9Uf68p5NYT30T/voHInpZ+bPD8sPRXBjf85ur20F2+v91Xc37Zl8KW77pOQ+Yeg4Eq/l6BTGOrIXKMmjdwFGtIUBCXou9e4k2nfpZwLajlL+PMg7fSRCUYISHJjSGRaDanwkUO02LEYk/c07DdS
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(376014)(7416014)(366016)(38070700021)(921020)(11063799006)(4143699003)(56012099006)(261102123227099003)(261021121427099003)(261009223027099003)(261021123027099003)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?GTykzw9Y6EG5X4/a54rJbhdlKejesYTofAg2kysz9vECDZw0BIfY3D23vBCA?=
+ =?us-ascii?Q?G8mz5BCRvTQtxMN6Sbl238PenpkAtDesVNB1oQsldfwT4OdjLWn2OLdgaSPE?=
+ =?us-ascii?Q?9Zjzf6JpM9RGD5aJlt+S/OgFrDuqQIVdhv3HKKvjy9Lo7Un++IBQCFjyZU78?=
+ =?us-ascii?Q?WC9h7o19Yq0sZ2oRVT0q0/tFlTngShN9qonUWhxOUJyfDfXqhLhHLVa3Inkh?=
+ =?us-ascii?Q?YN+KqCa98fLekULHwqkbzAA57OXaEmWexC9IujvW0goDV0ISenkG7XFJI4YI?=
+ =?us-ascii?Q?pk8QhDkVu6fbhKk582lyF8/I4eNtE9pSe3kCkRazv7+w9KIfNk263baUzTdf?=
+ =?us-ascii?Q?BfPhzesj7UC7bbjD3Jo10J19PgWam7HSKeeiAa43dN+GDYpsULr5Q3p1y3Lc?=
+ =?us-ascii?Q?SRSjkMYnXTsJC+HN3WH9Lywx3bt5yAmD11WVR4Ado/gNIecBqu8VJ0LJvWma?=
+ =?us-ascii?Q?iEbcA9k36Dna6m6Nl6OAtd9QuQCipDZTTr60vZvCZl/wjvgye0PCUfUWIY3m?=
+ =?us-ascii?Q?kXoLkhHTJuXVIr7I2kYT8SU++CY+TV5CADBu9Mu9WgTvwd1QTMu6TIPLja9I?=
+ =?us-ascii?Q?uSCjpuH2OSn4NLInk1qaSxJC3M0FNVXAg8Q34QYNe1QQjkwgJMcSLhV1XWQv?=
+ =?us-ascii?Q?PeUvvKI1Cy1hk/XhM+YnIvoa5kLeJjBJ4X9UZ7dtuIwfeOOKYCtmwkfPQ3wF?=
+ =?us-ascii?Q?Rsbb9Kzhu4yg28eODZdk9qRH6ERNRPxdJHe69r6SWKwEJyqKwayyifY4p4hY?=
+ =?us-ascii?Q?GwXZ9oq3xEKbpdftW+Q2AY5RyOSe9gYY3CuFY5XFEJDECABq95oGKM7LD6Fe?=
+ =?us-ascii?Q?enCZlfRRFJmYQVBkoXAaZCNMatvm2TVaVgCcDvPHTOmSi9P4SD4mUSzOQ7rO?=
+ =?us-ascii?Q?oLmXFxldjHEBU4o4cZR5j1D21YN9X5Cgi+qOka0sa0lpuMIk3HTD2ZUjDK1K?=
+ =?us-ascii?Q?bIq5gkYCXSsE7b0RpPN061ZG50LCfEMjzgdZ1jehrgoiQlN861z1+5LSUohC?=
+ =?us-ascii?Q?kwu7+8fiNwXahbd37hDDHaGjWIlwXq6xu2KJlBZlbHV3qaSY5MhJbTYjW788?=
+ =?us-ascii?Q?ztCbfPzJGoSV+50J4EnOG4feSR2yNAVcOvzLMZt/zTV726XJ6Ce9st4pK3bJ?=
+ =?us-ascii?Q?0bFp0I6+rYr5gyo+OWCvk3wDuV9BIz08hqwAF1kreXZUT/HyNYEp6VZguDn8?=
+ =?us-ascii?Q?NomywusxOguVzVYmJMim/p3yLgIIUEZXI6xUbnhz1YaEr4qwStbjQb/hse32?=
+ =?us-ascii?Q?uKv7OWCqeWtqLs6+RIR5lX8jtolnFNZd0wZoMFd+vBkZXfKtXaFG3bBVjty3?=
+ =?us-ascii?Q?tELeBZ4f1IJalZGvhB44b0ci1+HAdxNfLq12VqO6f4RpviKoPWp7yFHD2bEU?=
+ =?us-ascii?Q?g+jqgWKq2eOIh9EaZntzxsTPkkMJW7CsTaENuQo9fPKV9EwOxJ3dnear04dS?=
+ =?us-ascii?Q?G8J5doJn6er1U6k5RQDRCQNH52tCbVj0lYrIFYcTv2EQur41v4bJkSXTr4xk?=
+ =?us-ascii?Q?7lFpL2iB/uJ85xMoNejN7le4+znhRV7gAMR5OSuQpShtZpCC/DPYQ3uxv66r?=
+ =?us-ascii?Q?PAF0Px0bsu+vhvWPe+PObFfEOpuSPzac63x4DOYjpoWNJsw4JUitC19CvcbN?=
+ =?us-ascii?Q?1N6Wlt/DyMvFAiXx1pVHMUH97q9XwXElFRhjVCeHiPr6p3Cg+JYwRkiXkotZ?=
+ =?us-ascii?Q?wH/UhswDbhYVrypJIXeZEQIHSOzkHIK8dk4YXdr0WiTl7Rtz7R6232GWG46X?=
+ =?us-ascii?Q?1w6sUWLG/w=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -80,169 +159,52 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261029-tm-ssgrlpcsrc-2083-v5-clk-duty-fixes-v1-0-47f23de6bdb1@bp.renesas.com>
- <20261029-tm-ssgrlpcsrc-2083-v5-clk-duty-fixes-v1-2-47f23de6bdb1@bp.renesas.com>
- <CAMuHMdX5XuDpdmcUhPHU_uNggpXq_L=6DRSN3ftWEApubu+VMw@mail.gmail.com> <TY3PR01MB11346986F12DEE0E3370264C386762@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB11346986F12DEE0E3370264C386762@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 6 Nov 2026 09:07:59 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWiCM3JXmqTzKCAPoZgNa2ouUgF0a739Vm2UDmjC23zow@mail.gmail.com>
-X-Gm-Features: AclHuK_SUotAyJZdKz7d5Cmpgoj7rV-v-BlqVYe7acZYOqsrJWZuNWbULoxF0Eg
-Message-ID: <CAMuHMdWiCM3JXmqTzKCAPoZgNa2ouUgF0a739Vm2UDmjC23zow@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: rzv2h: Report the DSI duty cycle from
- the LVDS divider
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tommaso Merciai <tomm.merciai@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 804c14ee-e02a-4353-3564-08df3bde6702
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2026 08:17:30.6563
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: q8p1SOoNPLk8eOA0Pi7Jj6rQXtAl1coJTScqyUT3FBTrB/+r5AMuCXTz/4Tq5zpz2c2SR1NqhKFamPnvZdoMqoPWplCAbuEr6SgmqSc7QcE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB9529
 
-Hi Biju,
+Hi Geert,
 
-On Fri, 6 Nov 2026 at 08:41, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > On Thu, 29 Oct 2026 at 15:26, Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com> wrote:
-> > > The 4/7 duty cycle of the LVDS path comes from the division by 7, not
-> > > from the PLLDSI mux, as an odd divider cannot produce a 50% duty cycle.
-> >
-> > Note that the latter is not true in general: if an odd divider looks at both edges of the parent clock
-> > signal, the output will have a 50% duty cycle (assumed the parent has a 50% duty cycle).
-> > If an odd divider looks only at rising or falling edges, the output will indeed have a non-50% duty
-> > cycle.
-> >
-> > > Report it from a dedicated LVDS divider clock type and let the core
-> > > walk up to the selected parent through CLK_DUTY_CYCLE_PARENT. The
-> > > reported values do not change, the mux keeps selecting the path, and
-> > > its duty cycle constants go away.
-> > >
-> > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> i.e. will queue in renesas-clk for v7.5.
-> >
-> > > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > > +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> >
-> > > @@ -890,6 +863,94 @@ rzv2h_cpg_fixed_mod_status_clk_register(const struct cpg_core_clk *core,
-> > >         return &clk_hw_data->fix.hw;
-> > >  }
-> > >
-> > > +static int rzv2h_cpg_plldsi_div_lvds_get_duty_cycle(struct clk_hw *hw,
-> > > +                                                   struct clk_duty
-> > > +*duty) {
-> > > +       struct clk_fixed_factor *fix = to_clk_fixed_factor(hw);
-> > > +
-> > > +       /*
-> > > +        * An odd divider cannot generate a 50% duty cycle: the output stays
-> > > +        * high for (div + 1) / 2 input clock cycles out of div, e.g. a divider
-> > > +        * of 7 gives a duty cycle of 4/7.
-> > > +        */
-> > > +       duty->num = DIV_ROUND_UP(fix->div, 2);
-> > > +       duty->den = fix->div;
-> > > +
-> > > +       return 0;
-> > > +}
-> > > +
-> > > +static int rzv2h_cpg_plldsi_div_lvds_determine_rate(struct clk_hw *hw,
-> > > +                                                   struct
-> > > +clk_rate_request *req) {
-> > > +       return clk_fixed_factor_ops.determine_rate(hw, req); }
-> > > +
-> > > +static int rzv2h_cpg_plldsi_div_lvds_set_rate(struct clk_hw *hw,
-> > > +                                             unsigned long rate,
-> > > +                                             unsigned long
-> > > +parent_rate) {
-> > > +       return clk_fixed_factor_ops.set_rate(hw, rate, parent_rate); }
-> > > +
-> > > +static unsigned long rzv2h_cpg_plldsi_div_lvds_recalc_rate(struct clk_hw *hw,
-> > > +                                                          unsigned
-> > > +long parent_rate) {
-> > > +       return clk_fixed_factor_ops.recalc_rate(hw, parent_rate); }
-> > > +
-> > > +static unsigned long
-> > > +rzv2h_cpg_plldsi_div_lvds_recalc_accuracy(struct clk_hw *hw,
-> > > +                                         unsigned long
-> > > +parent_accuracy) {
-> > > +       return clk_fixed_factor_ops.recalc_accuracy(hw,
-> > > +parent_accuracy); }
-> > > +
-> > > +static const struct clk_ops rzv2h_cpg_plldsi_div_lvds_ops = {
-> > > +       .determine_rate = rzv2h_cpg_plldsi_div_lvds_determine_rate,
-> > > +       .set_rate = rzv2h_cpg_plldsi_div_lvds_set_rate,
-> > > +       .recalc_rate = rzv2h_cpg_plldsi_div_lvds_recalc_rate,
-> > > +       .recalc_accuracy = rzv2h_cpg_plldsi_div_lvds_recalc_accuracy,
-> > > +       .get_duty_cycle = rzv2h_cpg_plldsi_div_lvds_get_duty_cycle,
-> > > +};
-> > > +
-> > > +static struct clk_hw * __init
-> > > +rzv2h_cpg_plldsi_div_lvds_clk_register(const struct cpg_core_clk *core,
-> > > +                                      struct rzv2h_cpg_priv *priv) {
-> > > +       struct clk_init_data init = { };
-> > > +       struct clk_fixed_factor *fix;
-> > > +       const struct clk_hw *parent;
-> > > +       const char *parent_name;
-> > > +       int ret;
-> > > +
-> > > +       WARN_DEBUG(core->parent >= priv->num_core_clks);
-> > > +       parent = priv->clks[core->parent];
-> > > +       if (IS_ERR(parent))
-> > > +               return ERR_CAST(parent);
-> > > +
-> > > +       parent_name = clk_hw_get_name(parent);
-> > > +
-> > > +       fix = devm_kzalloc(priv->dev, sizeof(*fix), GFP_KERNEL);
-> > > +       if (!fix)
-> > > +               return ERR_PTR(-ENOMEM);
-> > > +
-> > > +       init.name = core->name;
-> > > +       init.ops = &rzv2h_cpg_plldsi_div_lvds_ops;
-> > > +       init.flags = CLK_SET_RATE_PARENT;
-> > > +       init.parent_names = &parent_name;
-> > > +       init.num_parents = 1;
-> > > +
-> > > +       fix->hw.init = &init;
-> > > +       fix->mult = core->mult;
-> > > +       fix->div = core->div;
-> > > +
-> > > +       ret = devm_clk_hw_register(priv->dev, &fix->hw);
-> > > +       if (ret)
-> > > +               return ERR_PTR(ret);
-> > > +
-> > > +       return &fix->hw;
-> > > +}
-> > > +
-> > >  static struct clk_hw
-> > >  *rzv2h_cpg_clk_src_twocell_get(struct of_phandle_args *clkspec,
-> > >                                void *data)
-> >
-> > Since there are now two copies of this code (see rzg3l_cpg_lvds_div_*), perhaps the time is ripe to
-> > add odd duty cycle support to clk_fixed_factor?  As duty->num can be rounded up or down, I am
-> > envisioning two new mutually-exclusive fixflags parameters, e.g.:
-> >
-> >     CLK_FIXED_FACTOR_ODD_DUTY_DOWN
-> >     CLK_FIXED_FACTOR_ODD_DUTY_UP
->
-> For Renesas it is 4/7 odd divider
->
-> For other vendor SoCs it can be 1/7 .. 6/7
-> So not sure CLK_FIXED_FACTOR_ODD_DUTY_{UP,DOWN}
-> applies? I believe if it is generic we need to pass
-> both Nr/Dr for the duty cycle.
->
-> I may be wrong. Please correct me if it is the case.
+Thanks for the patch.
 
-Right, some dividers may use other duty cycle values.
-Looking at users of clk_duty, there don't seem to be many
-that could make use of this...
+> -----Original Message-----
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
+> Sent: 29 October 2026 13:11
+> Subject: [PATCH 3/9] can: rcar_canfd: Make clkp local
+>=20
+> The peripheral clock is only used in rcar_canfd_probe(), so convert clkp =
+to a local variable.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/net/can/rcar/rcar_canfd.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rca=
+r_canfd.c
+> index 74d9ffd2790587b9..9dbe44710dcced80 100644
+> --- a/drivers/net/can/rcar/rcar_canfd.c
+> +++ b/drivers/net/can/rcar/rcar_canfd.c
+> @@ -467,7 +467,6 @@ struct rcar_canfd_global {
+>  	void __iomem *base;		/* Register base address */
+>  	struct rcar_canfd_f_c __iomem *fcbase;
+>  	struct platform_device *pdev;	/* Respective platform device */
+> -	struct clk *clkp;		/* Peripheral clock */
 
-Gr{oetje,eeting}s,
+Unless I am missing something, I get build error
 
-                        Geert
+drivers/net/can/rcar/rcar_canfd.c: In function 'rcar_canfd_probe':
+drivers/net/can/rcar/rcar_canfd.c:2250:55: error: 'struct rcar_canfd_global=
+' has no member named 'clkp'
+ 2250 |                         fcan_freq =3D clk_get_rate(gpriv->clkp);
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers,
+Biju
