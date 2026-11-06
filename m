@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793954122;
-	b=ApS2qyExtsxw1dvUKy2geCGbQj+oLqbmpko/Eo0LTIKpOXFEqEXAkudaPyFm3h1VUttb
-	 37AgRMJ/63pRe5Ur/YN54WoIaxQsQ5IvHQdbWBagUZ+r/XRsUlse4X8uzUHe9Vyvob09I
-	 ++4tMcFeMAAqnQL0IyBDM3/jKviw9ifztRONIK8jSt8dpQEkxntJIrHJTDUN57GxjKrLO
-	 rSbVRDOOqnb1qJ5lj6aQvN46xhgR78kigtsYYNAh4In/BvD/gmO/Li8vSvvSaLvr8rpbF
-	 4KBFqunilMB5Q0B20sZu+04CmYu+JjLt7b88FTmAQj6YorJ5lFoYIoKxDAOxmhgd8UQ==
+	t=1793954189;
+	b=t0fDVF/5rCWVOeuRD/lmUjE2EICZtBmOM2cE2L/3vsydf/4WW2aJKx+3EtwOpd2RbwnQ
+	 N2zFvSeDEalYPEGMuybrT3TUJlppOISHjQUm6ALL0xWWEX3ko4+ktxz5QMbc3QrMfGfUI
+	 JEFD+RZUdC2tsEnQ3cpoeHfUO0LQLA9lk/JbxGOXAc/qXqEn+YD/W8EQuDYFsByxd7EOB
+	 Vi+EUOAE7+X//M53COdPTgIhlBAKOGPlXOd74zCfwXok7zqm7CzX+0o7FxU/vS3Mdn44I
+	 GEb1GCz4KYc5nlyoRc1hpG+oF8KSgtG5Jo34RaQP/YtTTq8abD/SSJu0Sb9F12l/H6g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793954122;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793954189;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=f3PG1p+JcFz4gGeGrXXjHJetKWIiSij3xc+yaIrEX1o=;
-	b=SSmu+uLhVN+NnFBP3i/4U2+0BibCOvf5xZvvLV2X1HoOaN8DJk8mOV52OfsIQXYHfudc
-	 h9BueulOKClnXEXzxYNNDI8fRAhphA92irUbujsCzELjo5zXESjyHlrt579NrAOWZ0U9J
-	 C/T5xfOSlm+vNtlpEYp5z0GoUjv8dXb0uZnDSVgJQ01Tbuqhpe1aoL+7YVqwZnhi2/HjJ
-	 pkaAbcdpECfCZ1qI2wzui3bUauV5/88E2WtB84CHWGXPyalBAR3GOiOtF1YtMs77qKHij
-	 GgIvWx+VPIJpvBDzrKw05CJ4khNFAqk8Wjp8wTASSmKxpCGmG/BijhNEBwdbc0aJMkw==
+	bh=ff5g0rVHgO8K6/WwRSi43lmxO0Rst8xnR2vm/YsaX8I=;
+	b=DD++L+kiTZGsUqJAOclxB8A1TOaXvdtKGZ0nsREmZikxgIU1bLgg2WM4eEAsbXiPkEJ5
+	 VlpQWs/hBdEjTOTAR2CqJNGx1RUk6eSPcj34BLhszUCEgDJdffL304QZKJNyV2bET6Pde
+	 m1v7FCUlyGhHN1bG32vWmqtRKTgqXkWOeAqzLFpC3Z29QeZBkVBPDqmGjVGdce31+JZ54
+	 EV3LFZtkNN6lihcTzoFRFzGc0sCQ7w9cjxk6EkqS0T5AZf9nT1yozYpNwWvqFG9+W61kp
+	 YK7dGrzTj9RQrcozfr6GzkKNaCjyCdbPFxU+uuiMB9h3iY88CeR7k5lj0o9pRf9/edQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XHNjp+vt;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oZ4+FseY;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CFA606A32C;
-	Fri,  6 Nov 2026 08:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C51606A329;
+	Fri,  6 Nov 2026 08:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XHNjp+vt
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BB0B1F008A3;
-	Fri,  6 Nov 2026 08:35:21 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oZ4+FseY
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDD201F008A5;
+	Fri,  6 Nov 2026 08:36:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793954121;
-	bh=f3PG1p+JcFz4gGeGrXXjHJetKWIiSij3xc+yaIrEX1o=;
+	s=k20260515; t=1793954189;
+	bh=ff5g0rVHgO8K6/WwRSi43lmxO0Rst8xnR2vm/YsaX8I=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=XHNjp+vtPW+YXFY8uhIbZ4nb8t2tISru5MOO0SiWR30+lKr8gYkQQHi8TZbJablBi
-	 kWZNcUFEcPUjRBH2BpmWB8O3eXekvqlUxO7bTOy7nVVAxMnwPCHtLvTORNX3SjCAVZ
-	 u523B1NKo/fPdCqw95ZSAOnn/VVLuD2Lg+9PJpnH0HQjmpTF0BMv/tcK8lG4CahW2g
-	 OhPv/othBFWV47/tPYJD4F4wOEGGQP9kGLYtvWECI3WA6085JFkFoBAdtVBd28AWlL
-	 9fMNHC0YmrHXPXIB6UlVfSqwnpH5waVhcBUfaJipAPaectPQlxN6j3r7EQZNtKbzUF
-	 vtdnz/+VS2wog==
-Message-ID: <sashiko-outbox-201071@kernel.org>
+	b=oZ4+FseYggLwpzZwYZcq/w43wqpbqjDo36X8qW0NoIAMP/1r1MIsy7kdoQyKh0P7U
+	 UxGCjFWKYUoR035VBNl8joQh6uVfN6qOUxnLKK++jKPdPVDw1qGIO5UGb8pdDkznoq
+	 f+5BmF94Mcr1KbIEpRMbx7piVFzUCYjVXaMojbUs+rWxZhwNb/9rExy4UyupxJlUZS
+	 pmyJ0ZF+SUUr/IhnGygGMWcbb/96bs2kVq6d1wxRZBF+v6x09AS/RnllywoBpj0Q/0
+	 E9iIwfr1p5HTLfULF07W3ocy34jGYk4sWuSJTehuNUbytOltlch85/cPfDB8h4Qre/
+	 xBF2AOCtrp5EA==
+Message-ID: <sashiko-outbox-201075@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/7] clk: meson: pll: Support PLLs without a pre-divider
+Subject: Re: [PATCH v3 1/7] dt-bindings: mfd: Describe the BCM6846 PMC
+ complex
 Reply-To: sashiko-reviews@lists.linux.dev
-To: "Carlo Caione" <ccaione@baylibre.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, robh@kernel.org, conor+dt@kernel.org, neil.armstrong@linaro.org
-In-Reply-To: <20261106-upstream-s7-clk-v1-2-7d501d62621f@baylibre.com>
-References: <20261106-upstream-s7-clk-v1-0-7d501d62621f@baylibre.com>
- <20261106-upstream-s7-clk-v1-2-7d501d62621f@baylibre.com>
+To: "Linus Walleij" <linusw@kernel.org>
+Cc: mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
+In-Reply-To: <20261106-xg6846b-bcmbca-xrdp-reset-v3-1-d6adeb71afc9@kernel.org>
+References: <20261106-xg6846b-bcmbca-xrdp-reset-v3-0-d6adeb71afc9@kernel.org>
+ <20261106-xg6846b-bcmbca-xrdp-reset-v3-1-d6adeb71afc9@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 06 Nov 2026 08:35:20 +0000
+Date: Fri, 06 Nov 2026 08:36:28 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,79 +61,143 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found no new issues
-in this patch, but noticed 1 related pre-existing issue it does not
-introduce:
-- [High] clk: meson: 32-bit integer overflow in
-  meson_clk_get_pll_range_index() [1]
+Thank you for your contribution! Sashiko AI review found 3 potential
+issues to consider:
+- [Low] dt-bindings: mfd: brcm,bcm6846-pmc references files added in
+  next patch
+- [Low] dt-bindings: mfd: brcm,bcm6846-pmc example child nodes out of
+  name order
+- [Low] dt-bindings: mfd: brcm,bcm6846-pmc expands PMB as Processor
+  Monitor Bus
 --
 
-commit 241035ecfdb206acdcf290a5e288104a056a3f8b
-Author: Carlo Caione <ccaione@baylibre.com>
+commit 843b048574d4c45f386b5f401c61ae92d14a122f
+Author: Linus Walleij <linusw@kernel.org>
 
-clk: meson: pll: Support PLLs without a pre-divider
+dt-bindings: mfd: Describe the BCM6846 PMC complex
 
-This commit makes the PLL pre-divider parameter optional in the common Meson
-PLL driver, defaulting the divider to 1 when the parameter is not applicabl=
-e.
+This commit adds a Device Tree binding schema for the Broadcom BCM6846
+third generation Power Management Controller (PMC3) complex.
 
-> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> index 1ea6579a760f3..44b33051405f5 100644
-> --- a/drivers/clk/meson/clk-pll.c
-> +++ b/drivers/clk/meson/clk-pll.c
+> diff --git a/Documentation/devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml =
+b/Documentation/devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml
+> new file mode 100644
+> index 0000000000000..d4c927cabb3f4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml
+> @@ -0,0 +1,82 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/brcm,bcm6846-pmc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Broadcom BCM6846 Power Management Controller
+> +
+> +maintainers:
+> +  - Linus Walleij <linusw@kernel.org>
+> +
+> +description:
+> +  The third generation Power Management Controller (PMC3) contains sever=
+al
+> +  register banks. This binding describes the Processor Monitor Bus (PMB)
+> +  interface within Procmon. The PMB child owns its register bank. The pa=
+rent
+> +  provides address translation and does not own a register bank.
 
-[ ... ]
+[Severity: Low]
+As reported by William Zhang on v2 [1], should PMB be expanded as Power
+Management Bus instead of Processor Monitor Bus here and in the example
+comment below, matching Documentation/devicetree/bindings/power/brcm,bcm-pm=
+b.yaml?
 
-> @@ -174,7 +176,7 @@ static int meson_clk_get_pll_range_index(unsigned lon=
-g rate,
->  	*n =3D index + 1;
-> =20
->  	/* Check the predivider range */
-> -	if (*n >=3D (1 << pll->n.width))
-> +	if (*n >=3D (MESON_PARM_APPLICABLE(&pll->n) ? 1 << pll->n.width : 2))
->  		return -EINVAL;
-> =20
->  	if (*n =3D=3D 1) {
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: brcm,bcm6846-pmc
+> +      - const: simple-mfd
+> +
+> +  ranges:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +patternProperties:
+> +  '^bus@[0-9a-f]+$':
+> +    $ref: /schemas/soc/bcm/brcm,bcm6846-pmb.yaml#
+> +    description: PMB configuration, keyhole and address mapping registers
+> +
+> +required:
+> +  - compatible
+> +  - ranges
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/brcm,bcm6846-pmb.h>
+> +    #include <dt-bindings/reset/brcm,bcm6846-pmb.h>
 
-[Severity: High]
-This problem wasn't introduced by this patch, but can `pll->range->max *
-parent_rate` in meson_clk_get_pll_range_index() and `parent_rate * m` in
-__pll_params_with_frac() overflow 32-bit unsigned long arithmetic [1]?
+[Severity: Low]
+As reported by Krzysztof Kozlowski on RFC [2], does make dt_binding_check
+fail at this commit because /schemas/soc/bcm/brcm,bcm6846-pmb.yaml#, the
+dt-bindings/clock/brcm,bcm6846-pmb.h and dt-bindings/reset/brcm,bcm6846-pmb=
+.h
+headers, and the child node bindings used in the example are not introduced
+until the next patch in the series, commit "dt-bindings: soc: Describe the
+BCM6846 Processor Monitor Bus"?  Ordering that patch before this one would
+keep dt_binding_check bisectable across the series.
 
-drivers/clk/meson/clk-pll.c:meson_clk_get_pll_range_index() {
-	...
-	if (*n =3D=3D 1) {
-		/* Get the boundaries out the way */
-		if (rate <=3D pll->range->min * parent_rate) {
-			*m =3D pll->range->min;
-			return -ENODATA;
-		} else if (rate >=3D pll->range->max * parent_rate) {
-			*m =3D pll->range->max;
-			return -ENODATA;
-		}
-	}
-	...
-}
+> +
+> +    system-controller@ffb00000 {
+> +        /* Broadcom BCM6846 Power Management Controller complex */
+> +        compatible =3D "brcm,bcm6846-pmc", "simple-mfd";
+> +        ranges =3D <0x0 0xffb00000 0x21000>;
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <1>;
+> +
+> +        /* Processor Monitor Bus */
+> +        bus@20100 {
+> +            compatible =3D "brcm,bcm6846-pmb";
+> +            reg =3D <0x20100 0x200>;
+> +
+> +            pmb_clk: clock-controller {
+> +                compatible =3D "brcm,bcm6846-pmb-clock";
+> +                clocks =3D <&osc50m>;
+> +                clock-names =3D "ref";
+> +                #clock-cells =3D <1>;
+> +            };
+> +
+> +            pmb_reset: reset-controller {
+> +                compatible =3D "brcm,bcm6846-pmb-reset";
+> +                #reset-cells =3D <1>;
+> +            };
+> +
+> +            hwmon {
+> +                compatible =3D "brcm,bcm6846-pmb-pvtmon";
+> +                clocks =3D <&pmb_clk BCM6846_CLK_PVTMON>;
+> +                resets =3D <&pmb_reset BCM6846_RESET_PVTMON>;
+> +                #thermal-sensor-cells =3D <0>;
+> +            };
 
-drivers/clk/meson/clk-pll.c:__pll_params_with_frac() {
-	...
-	/* Bail out if we are already over the requested rate */
-	if (rate < parent_rate * m / n)
-		return 0;
-	...
-}
+[Severity: Low]
+Should the hwmon node be placed before reset-controller so that the child
+nodes without unit addresses under bus@20100 are ordered alphabetically by
+node name?  Otherwise scripts/dtc/dt-check-style --mode=3Dstrict warns that
+child node hwmon is out of name order.
 
-On 32-bit architectures, multiplying a 24 MHz `parent_rate` by a typical
-multiplier (such as `pll->range->max` of 250) reaches 6,000,000,000 and wra=
-ps
-around 32-bit `ULONG_MAX`.  This causes the range check in
-meson_clk_get_pll_range_index() to miscalculate `m` and the guard in
-__pll_params_with_frac() to be bypassed, underflowing `val -=3D m * frac_ma=
-x`
-and writing corrupted multiplier and fractional values to the PLL hardware.
-
-[1] https://sashiko.dev/#/bug/linux-8a5ec432-efbd-4d3f-83c7-2a50fc2850c7
+[1] https://lore.kernel.org/r/CAHi4H7GOMM9K6XG15vPyFMLOza3QQ7QPxUkCi85jA_e9=
+D6YbKg@mail.gmail.com
+[2] https://lore.kernel.org/r/ddfe83b7-d4b8-4d56-a295-fde63519bdde@kernel.o=
+rg
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261106-upstream-s=
-7-clk-v1-0-7d501d62621f@baylibre.com?part=3D2
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261106-xg6846b-bc=
+mbca-xrdp-reset-v3-0-d6adeb71afc9@kernel.org?part=3D1
