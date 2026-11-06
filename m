@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793953836;
-	b=YSbs5j1hRJyinC1uWqXvgxwDpELYs08NGhmBRXYBnslsswsP5GLI4+LbGdAeeXxqPBuy
-	 NTxUd61XrQmMzNhx67naEhL16SHiCNHvzaGfW0mxdOlCXX0gyKt56L4+f4BW4egQEQPVF
-	 RoKixIkUUABTZEjTh8Hqi9BHlvHDfAog3noNBFabMJ27w1aMYHOy7xPOD95LhFsETBofc
-	 wBH2B2wBby4IE9KP/XrcUSHUixaFb90yzT8v96xxMRVkuBnliyo5tVY/1XbClm8/2G2iD
-	 H5KBBSoAra8IyPxcALGuRYy5zUS/YDesvChxp/K80K3Y/S9N4THqMq23vtCq2UB5jUA==
+	t=1793953837;
+	b=PJ3TxLbeftPj4bivS4uXfXNiDuWXbASEEysGi43GV69keWuoevSofdvjYD8ATdtuV8kv
+	 JaoPq3PQB/bPxkdxuLTVUibdmJrIqtOwBc/iHeKiM2FOpIQiaHgxqXUb4peHc7zR/fEnI
+	 prX2jOU5+n2FmDRc2Pqhj88zO9db+iDhIflZjPEQ3DY5A0uzPVhMyiC4n3XYEW++cPg2G
+	 GbRXndRzPU8BUmI7hopqDzdf0HotRnWg/yl8fjWTkukkvEc7LVtl5e8yKycWpgZJBtURo
+	 OHVvfcgv1I6lCYQAUOIjLCvhqULIp3mcp0DXmtwv2UcNfwtzOg7VuKDA9SLmYOO9XEQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793953836;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793953837;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
-	bh=bBvAlTqUUTVWwtpovytt9429b4fXz6tD1BdJt6T8kRk=;
-	b=A9jNk6ZvvrHI5c2SOfMLu37YQcKpk+ElB5XL3Io2x5L5CwzHWI9/L6mb5X4xNf6Dojqx
-	 PhQSacy0atDkt7r4Apwyv+NrjQdqdZEnjC6pjNiQH2BZ47wX/cUPcQzFpUJv60WgiBvqY
-	 Xrt/jhmEUyRY+4ezwkjZrrGA34+Ec9YgqpsDYEN+EmIOubb0n9m/3J67tc1evtNJdzyMr
-	 ZkJjeOy/rlt8ZW8RDtX/VxpWdVUn3HWFhIVkI0ho1Vs2npsD8YdM+qTQPtpYN0J2fBBZV
-	 WX/mVV6fexkv3hLgZcSZJ457QIkYLNL2dhw7ASDwupu6xPqcBqQxI926qKzL7UF+lRg==
+	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
+	bh=VLpvOWiOg/0agPCz0eeaXl9nhZwnrqFnecxOWRAu+hE=;
+	b=fVIecLMkaWloyHfEZMEo0hmyHLEApWA3gNyRBFFJ4Ur8OaXbp38mL96oSFP29NKb7FHX
+	 cpl4MaECOJf6kVeR4pQXcJBqA2Y9jO5n63JGsbkPl6iLXe5+/6rOMgnrVP5RM1uNwBp71
+	 q2dMysHysUxKuuy/2VTflts6w9ChgSyvdcNqVraJo4+KSPMU9Q1W2fAJWSOHRDXVD8Ple
+	 D40zWbLTPLtheUtJcXxt7IM69K0md6Q9Z8aObZTUZGmqts9XiC/tF4a3nhFpL/IkKCUR6
+	 DpNw9pdaIXPCS8noT5Pma5FEiqG1amkeioPaZAWchDeK5fg+yaItoZFnpJtOk128SaQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=KOpLB47E;
-	arc=none smtp.remote-ip=209.85.128.41
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Y1eY3KP3;
+	arc=none smtp.remote-ip=209.85.221.53
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5E8606A33F
-	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 08:30:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EB5E8606A33F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A81606A331
+	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 08:30:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 68A81606A331
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=KOpLB47E
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a2167bd087so2897725e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 00:30:34 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Y1eY3KP3
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-491971ac844so301791f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 00:30:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793953833; x=1794558633; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=bBvAlTqUUTVWwtpovytt9429b4fXz6tD1BdJt6T8kRk=;
-        b=KOpLB47Ed4bk+JKdsP7yqQLxUdlyrMVxvYibBOjeWaQanhi64o4SrNArejPjmdbfPb
-         CtKq7OzYt9cdEl2TWRiaJvIzqSplkLYUu4gjXp0NF7LrIkcd+kP6/bZjNgSd9s94sj6+
-         2vARPHzD7YWIO75zzdXzZStAR0ld+MhW58I6OxxxYI6O9hBppbLITOMiTYE9S+dcNfLb
-         wNUvKeAX9ioMloEuyFyo6g8P97C/ozKkdv9WP4b1Oq/O4Z0FDA0dC42b3JTcUW1ZTjwN
-         TSBygiPJMElMxgnaVcJ0lPcLM+UcLH5uVyr88bS2szahmOu85ZXCNunvq/UmxOD/exY0
-         nY1A==
+        d=baylibre.com; s=google; t=1793953835; x=1794558635; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=VLpvOWiOg/0agPCz0eeaXl9nhZwnrqFnecxOWRAu+hE=;
+        b=Y1eY3KP3gUC2WREteGQ5tKEYe5s3n0BGTbCtGv1+dyHdwaZ0qcXwHLBXys/2W8YHU8
+         mMvi7yD9IXYTcxzl7tbSF8l1dcHpigt/dVkgwwENE+ZOlOi4YGsesxOuYcTqT3z5N7qj
+         IZZEIYMeLTiaa+PUjI6Bd3QrS/8Ss26PVTAc6TKY8TibOS/HEP7TABU3kI+4ZjU84I39
+         7YTLxMctNVlZsWII+ulLTV9dhdGBauvzZSdBbSt/rZ9QfMsmhHDVCFNnWO1iUQ4WFDYJ
+         450Hxqyu7Yne3NPJ+Z8hr4+EnNiZyDYYr+L3Z9K1zv8rhjlWpXi3VPsTBoQPwq7bcqU0
+         ooQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793953833; x=1794558633;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=bBvAlTqUUTVWwtpovytt9429b4fXz6tD1BdJt6T8kRk=;
-        b=etVnSmthcUgyKNqwhC4ZFDx0Nx5LUhHjuk91VOJOs0zyBXhXnIfI/BFP7AgiHq/uRC
-         HTgEX4Vcf+NCCvZIb4Z2o70ZdhhD+gDblybdLsx4GQSpq5DWC/NpaPpnWluLFK0nqYkE
-         bT7NWmSKP9wdu5JNZq0QXeLy2UfS5K6Zz+Ti49vQIKLOfCzIXLW0pfBhvsTEl3wgYoon
-         lA/GJ1cd81G2Hi4xt8uPLfe8nQxBCY7B5Uo1z24FfRgOiqWXlX1BPbwYK5uSqjSwidr8
-         JMohRKHxVtNsG035DTrx2XtcUvv/vzpqlNWenhrorh2zdpwnEpKnWXaqHL4rasjzN0KD
-         1e+g==
-X-Forwarded-Encrypted: i=1; AKwUvBxPLBwy0bKOIPukF0VK8rHSBscAv0+lLlGQijxx3Nu9SfKPyR7xWDAWCR9gmflXQ0/yKx06rBeKHI8=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+vTx50rYTRC6J0GsQBgJVCEx0QBfFH3rSOMQBsfJobKVxfP2AT
-	zR3FJrkOrJSD9p6JcFHEZbdt76ffdpM3oUPv85yWYhJ+hqvfzG+YRzxiCXbltd7pRvE=
-X-Gm-Gg: AYBFou34T9Lpg6JIB2diLtq8M5DGD4/b6UX6ybGoLRrNNIF/L4L6EXxBD3b0qPeEzFn
-	UrNgeWOeOxy53j68ayfuiGXzIDAAYCgIoL+0iikk7ypHJDo92fDkXBcZXdeFn0fR/dttO1h57z4
-	vriAZeIwiYcXTGpNHN1PWJT0im9uyUXatS9kiA564UfqoWXgKSUArn3muOmPOtigofjyCOsicAS
-	PpsUTehlLEZhEOEbRhmtR0kXFUD0Z4M2iqXyxkQzQ/tTxHKbMNQkpruJZyqm1eNMmZmJO6bSVH4
-	unADuk4z/Up1ZcwHEQRsB0wzUkEFF3Z9Sr7JxaNgzxSXFKPEIwrz9eJTOfaklMnI80wcmvXNGVz
-	TY49CjY8VLDUudYthEhe+61J9TWXrBR0kmtHNX9BSkx3LXUySD+y3p3f0/7aS3VtkfEzDWw5kqK
-	5EPdDWdtClBJ3WjeFi1F7ahBaMMZL6vLoxtYuEJg7e3PNKOYedZ7hxlz+fO8WI6AEZ9A3c+67Q2
-	A+MlCotpj/3fxwtSjAkAoLOAqCJ4Ib3S+irt3teZLCFJQd2jnX+yQLofrMzr45SXbdyLO7AjKgn
-	3pgmCMpi90jYyR9nMT7ij5IsXjignOLh6b6r3GQYvYxpyQ6Vew0Bnfzb417eqqMTHZnF/xQA1p+
-	YpxdDwiWUoKzoi6z17OR5o7Luf/EnHCjLSWFCsF2Md7SKIJeafe36l0CrgVlBUWu0hFw=
-X-Received: by 2002:a05:600d:8408:b0:4a2:526b:d410 with SMTP id 5b1f17b1804b1-4b6f7374730mr17693885e9.13.1793953832731;
-        Fri, 06 Nov 2026 00:30:32 -0800 (PST)
+        d=1e100.net; s=20260707; t=1793953835; x=1794558635;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=VLpvOWiOg/0agPCz0eeaXl9nhZwnrqFnecxOWRAu+hE=;
+        b=hmEfuoVg0LKTFTYQqOI8x1/9+LitmKZeeZdeLtkEejhLiazO19H6wdNTI6pgov7UCV
+         N2P9Wd5M+zlJkEJi22C1efosDI3NxkARn36u8bDjWYjgqPPZbUAYfc5ntGYzxkHJFlKh
+         iCr+P0Tq2MuLFrOK9qJbJjls5KJrh8qkai1R98Tl+DzdQfRkqEI9LO9bQuJyqQTkZz07
+         MSEArSzoUNPIKhxobl199GS1geuX8tJQ3gWfKgLMWPYtVlY60RzwoUPvavsYNk1v6YnB
+         rxl6fnuJkPpZRvYMqCtCQdQKaeh2E9i1pzcl27Jt0e6yu7LcyXihPJtV4FWSmO+Rrv8w
+         9BHw==
+X-Forwarded-Encrypted: i=1; AL+hErEiHJLqqtZNo+95BsSjSWPbkjaPfV7rnp2KArrNusIcnkipMgVCYMYtwlUMISP+ug34o3ViE1PJUik=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8AWFcpt6RktQnGnrigIWI8al7YtISpjGEq6t/OGPXvfv3YCO/5
+	5Umy5a2ytycwZVE62FBc842XRXvkrsZBUQ9njZySyFfnAdNVJokr3rNniFfZSZg2mWk=
+X-Gm-Gg: AYBFou3H5OI6iWqcdHsLDva7sf2qNGOKbQ71E/zps1yMgvrVav0eRWuP4SNkjzEuXAl
+	ledLcFeqqu4EvLkR7rtijFGks2WELEVVjvkBhXGreYdUntpqNOW3Nxo91vIDdzbYI1B8+36YdB2
+	5cXLG9bXiAd2Mx72rv7nSbf79Pzy4wP0g5+rpMrRg6yy0wsoTYcA53VmxfbMK3KHxxoUWrU20Hv
+	SNfFb/gsERRkokxmhNRuRqykiAlc850IPq74XT4km9dAKrv/GME98dEv+oA/4AdG57HpLhZpy+W
+	cqelfFsnXlmpfisY+5YGwq4DT09qMHmPfbyZt53YTmHyL5qWdLfSALIG0fVEhmD8FTVbKY+H5Be
+	H8zinKT23zcbO0WSST6pXzSdrib1GHRICbbMeNJ7vgi6Hw01o2VKDsaAOgAB+TUm0eror/NP7Nf
+	VBh8cbsqwdo02bUv7pqjd++bUqM1oYN4PW4oYYmJL473440F9jjN3XUZUqfZ9aAGIuQGQnXp2WA
+	cq5hwu3KL7MS3g6gQinbe5KirdCHw8CIB9xvW0ucQ2U9aE4Jm8btw7KwI+0xTnuTQrhqZFDZMW8
+	xj8ns8Mgsu7D5cUxMLowmW2dbFt7rSMfi8zB+Gi1UEgliEjZQo+tHMvgSrHQ4ZqWCpgxXT93/mO
+	mRKpfmA3GBX6s5Tpi8mCK9CDqMxOXrenAnO2IT1FClBj+WA==
+X-Received: by 2002:a05:6000:2384:b0:492:b880:53a7 with SMTP id ffacd0b85a97d-492b8805664mr3030579f8f.5.1793953834697;
+        Fri, 06 Nov 2026 00:30:34 -0800 (PST)
 Received: from macbook.homenet.telecomitalia.it (host-95-246-144-141.retail.telecomitalia.it. [95.246.144.141])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-492d8472969sm2366839f8f.58.2026.11.06.00.30.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-492d8472969sm2366839f8f.58.2026.11.06.00.30.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 00:30:32 -0800 (PST)
+        Fri, 06 Nov 2026 00:30:34 -0800 (PST)
 From: Carlo Caione <ccaione@baylibre.com>
-Subject: [PATCH 0/7] Add Amlogic S7 clock controllers
-Date: Fri, 06 Nov 2026 09:30:23 +0100
-Message-Id: <20261106-upstream-s7-clk-v1-0-7d501d62621f@baylibre.com>
+Date: Fri, 06 Nov 2026 09:30:25 +0100
+Subject: [PATCH 2/7] clk: meson: pll: Support PLLs without a pre-divider
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -94,10 +94,9 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzNDINYtLSguKUpNzNUtNtdNzsnWNU5LSjVLMzY2MzVKUQLqKihKTcusAJs
- YHQvhF5cmZaUml4CMgaooSi0sBVpVAlVWWwsAYXNdmIgAAAA=
-X-Change-ID: 20261026-upstream-s7-clk-3fbe6f33652d
+Message-Id: <20261106-upstream-s7-clk-v1-2-7d501d62621f@baylibre.com>
+References: <20261106-upstream-s7-clk-v1-0-7d501d62621f@baylibre.com>
+In-Reply-To: <20261106-upstream-s7-clk-v1-0-7d501d62621f@baylibre.com>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -112,45 +111,53 @@ Cc: Jian Hu <jian.hu@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>,
  linux-arm-kernel@lists.infradead.org
 X-Mailer: b4 0.16.0
 
-This series adds the clock controllers of the Amlogic S7 SoC family
-(S905Y5, S805X3): the IDs of the clocks the firmware exposes over SCMI,
-the PLL clock controller and the peripherals clock controller.
+The common PLL code assumes that every PLL has a pre-divider. This
+does not hold for the S7 HDMI PLL, and the S7 GP0 and HIFI PLLs are
+meant to run with theirs set to 1.
 
-The peripherals controller is close to the S4 one. Two changes to the
-common code come with the PLL controller: clk-pll handles PLLs without
-a pre-divider and PLLs with an active-low reset, like the HDMI PLL.
+Make the pre-divider optional so these PLLs can use the common
+implementation.
 
-The new clock headers are covered by MAINTAINERS once [1] is applied.
-
-[1] https://lore.kernel.org/all/20261022-upstream-maintainers-clk-headers-v1-1-d09dd4db01d6@baylibre.com/
-
+Signed-off-by: Carlo Caione <ccaione@baylibre.com>
 ---
-Carlo Caione (7):
-      dt-bindings: clock: Add Amlogic S7 SCMI clock IDs
-      clk: meson: pll: Support PLLs without a pre-divider
-      clk: meson: pll: Support active-low resets
-      dt-bindings: clock: Add Amlogic S7 PLL clock controller
-      clk: amlogic: Add S7 PLL clock controller driver
-      dt-bindings: clock: Add Amlogic S7 peripherals clock controller
-      clk: amlogic: Add S7 peripherals clock controller driver
+ drivers/clk/meson/clk-pll.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
- .../clock/amlogic,s7-peripherals-clkc.yaml         |  126 ++
- .../bindings/clock/amlogic,s7-pll-clkc.yaml        |   73 +
- drivers/clk/meson/Kconfig                          |   30 +
- drivers/clk/meson/Makefile                         |    2 +
- drivers/clk/meson/clk-pll.c                        |   52 +-
- drivers/clk/meson/clk-pll.h                        |    1 +
- drivers/clk/meson/s7-peripherals.c                 | 2149 ++++++++++++++++++++
- drivers/clk/meson/s7-pll.c                         |  648 ++++++
- .../clock/amlogic,s7-peripherals-clkc.h            |  245 +++
- include/dt-bindings/clock/amlogic,s7-pll-clkc.h    |   42 +
- include/dt-bindings/clock/amlogic,s7-scmi-clkc.h   |   27 +
- 11 files changed, 3380 insertions(+), 15 deletions(-)
----
-base-commit: 363f97a1ce635b86be7fd263d56a040fbd87bdbb
-change-id: 20261026-upstream-s7-clk-3fbe6f33652d
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 1ea6579a760f..44b33051405f 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -76,7 +76,9 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+ 	unsigned int m, n, frac;
+ 
+-	n = meson_parm_read(clk->map, &pll->n);
++	n = MESON_PARM_APPLICABLE(&pll->n) ?
++		meson_parm_read(clk->map, &pll->n) :
++		1;
+ 
+ 	/*
+ 	 * On some HW, N is set to zero on init. This value is invalid as
+@@ -174,7 +176,7 @@ static int meson_clk_get_pll_range_index(unsigned long rate,
+ 	*n = index + 1;
+ 
+ 	/* Check the predivider range */
+-	if (*n >= (1 << pll->n.width))
++	if (*n >= (MESON_PARM_APPLICABLE(&pll->n) ? 1 << pll->n.width : 2))
+ 		return -EINVAL;
+ 
+ 	if (*n == 1) {
+@@ -437,7 +439,8 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (enabled)
+ 		meson_clk_pll_disable(hw);
+ 
+-	meson_parm_write(clk->map, &pll->n, n);
++	if (MESON_PARM_APPLICABLE(&pll->n))
++		meson_parm_write(clk->map, &pll->n, n);
+ 	meson_parm_write(clk->map, &pll->m, m);
+ 
+ 	if (MESON_PARM_APPLICABLE(&pll->frac)) {
 
-Best regards,
---  
-Carlo Caione <ccaione@baylibre.com>
+-- 
+2.56.0
 
