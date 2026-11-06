@@ -1,76 +1,50 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793953299;
-	b=wt9AmlgyZ6c0NQrkkK4vOeW4pAITm3oqNnvUWHrZopd3a8X7ZqqPoahvTBk5YwQE10SX
-	 3DFdHQdZOVYVWpjxif4atDRT7EDzrWOhrR1F77ZtuNEbNr5QVQNxIx1dOMuKx3BvEm2v4
-	 w4ExtuIw6ItsezZ9EVpN79evEPvRfH/JK7XmVQznsIG6+oVKJ2ekEpDJLp5UpvzQSHKUK
-	 YWGHdpnGPGOrFQOn7o9CWfu2UXXsordTai+KRLCFuVMW1iOZMqz4hGEBNjt8emjjbJAcy
-	 qz93NYPiZSJiyU+bc7c5uD0TKdya8owYD5oaHH/SdV8ClmCW7oiKSpo4a4h+BnulCkQ==
+	t=1793953614;
+	b=3znSupo+XXDe02ep67bbNTiDM3nP7FP9pWNR8TvL4FPOrCJ/kHirdBbZfAu7b+S/1ShT
+	 HA41WlHkKhcDkd1wkZ236zoKo8ohiiMXc3dfIkTT60scwHwO+1C3sSW7YBOciGNfqyEGw
+	 irEGEuaf3zFQmpkWgexUd7Pkd0Y2GP5TW2BEr/mSMmF4xQzokw/Xfs+19ZSaDOdUDQdVm
+	 coK5cRIePNd5V+L/vCVZo6kZyf3sc8FJQHHBgpk8kpa56FWx/fwKFs0Ur70ccr7iAwd6e
+	 pMbNvrbMxwulKrFRcfA68D1Jn48oYeDXVR1VdB0KhgE9EomIEERDEbKL0AA6/kWllkg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793953299;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=B5U6R28eASu1V9FcblqPPOgTL19VFOQ1nMFsFJSdCXU=;
-	b=L1aSycU6Ml7Et2HZUNo2wrp1ZMSyAOKQppaYrUHh1aXdVSACDmDmz0xpGQYuT1G+7dzk
-	 IW2Rz/GkiimHw6Ld+WLHfpsMMwMCNkmOoDB+vBP1xeXw5cGQw+5FG//1EcmAMxV8X9SIS
-	 Hpp16S5jEBQ9zaShpx7IbF6FR9/ACFdKd31zZGoefynvVSeZfWi/pAouztKRTgDEvF/d3
-	 9kAufecdoQvbJGa032PCCkSRyUc13rFd1rzXsqYS3HabP+xQeob6pEKuYPgmHXI8ggnL1
-	 vPRZW0tfc4j0mWdejm1nYqeiT8Hy4lqMM1cajE9QhVmA+0f8+v4cXc+0DAS2u93T0Rw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793953614;
+	h=Received:DKIM-Signature:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer;
+	bh=UGfKZvZvqFhX5Ky0rm/23LKeKcQDPDoWftzic2rR5Uc=;
+	b=2B38kBWsxhE5xyYnbRjqxMVkp0R2N9CHoCmEthc8vySE8nujz8U+RlgIAup2zxAf5UoD
+	 cXf+q01oUU5x3mRF7uWQ0iO8LQEqyPLPFjNuCJvYbQTMMt8L94t8C+5ZCH7Zufu6u0CP5
+	 kK++INqCMFx7eX5qWqtBE+sIaj/0o13vNaBjVzVVs9fytAmYeE7SqEEcUwPyoWUku2wTh
+	 1A/9QTjlkG7R0Z7DoT3/xr0qjInH367tKKRlHEtl+C2uwK4lX7roc+fNvLpm08ymeC0sT
+	 vWE5NzcOtOFXrEnev2IFbRG82Myf7xwtgVicfxyGIaHY+KWUvOCcxDkLaXPyF5bodEA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.222.51
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AYVhOYyi;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEC9606A326
-	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 08:21:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CCEC9606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-980c4258105so177586241.2
-        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 00:21:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793953298; x=1794558098;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=B5U6R28eASu1V9FcblqPPOgTL19VFOQ1nMFsFJSdCXU=;
-        b=m2Lj8Poz22gXQyD9R1pKrC4udvFLiMrNto0KUFAL/xbULNLrsT+pwXQ97U94E5R3a3
-         qjUosxe0tvNYQacblnzlpt+2yQLLymrwMQjwGJmC10XBogGQkgPYIInQSCBvkb6/gmoE
-         Hv98PpYZEO8v+reUVNkzCC0NP//JE4tdU81ZN5cvcDhdBDlfJQNoGU2NvwGxDo2ijU/X
-         qd+KWbJIKwoTCzEs1NPaNE2/aUfYdqlRLPwY1TQAjb3eyJVmSGkEsPjc/Y3MoTaCdPzB
-         86Yj1XR1pJ0ZqvagKP4lvNlLpbBS1NuDotSzAAjtMlPa2Vn9aux+YRai/A8LU6sODptM
-         pGHg==
-X-Forwarded-Encrypted: i=1; AKwUvBy0sK5cOiJ4puAlSV66zgu/oHGJO4szjRCvlmNuhk5vh6GcLMxStqpqKB9eC73jRdh5vzyhMDRL4qM=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8oVgHUnUSHJoThgYTtKN/VbWvElCivSgpB4XTikLABNMnRcVNz
-	eHA06UqjDrSZUhdByp4Oiezgh6owCsIgE7lTnSWnMS0+AuHAlTsRiQiqbTSdEc4Bb00=
-X-Gm-Gg: AYBFou1ZIZdbqnf//5VnpGLCYqXJTonHM0RUhRFgdot2YB6pGaIwhyl+FsQtrv0CdDZ
-	2sfMfKY6yWPOlbMktF8IyJpHN8ETtA54smt2zFZfjQyeoUH1N/Ue6dSrt+pbH6RxlYC+SgslBFJ
-	w7/9jE+QayQfMADsNhAQy//uwoS6TqsjoIsMQ3egfBFT+rjoH0cmY9juLAglyAjg8NzpOxtW3wE
-	2qao3fmpkV7OxqVTHviRpMGsTflzWrnLc3VD5zMcKlUw6nghxj1SQwJEBnyoyEP1l8XuDc0mvLI
-	Uh4AWKiHQ8KMU+lDF7JCL95gyI5fTnkmXnwHbCr+pn3sY8ufcxv77BfjXydp17JO4NuNWe96Mog
-	cAmT/WPqtCLFS0nOl1S7BFN+Jh05OMTpfK4yRz0p45R45GeAFAW2KhdIh/xAQed5BrtRTl6eTQV
-	HMLJNuGv5dRM+l4sPgYlZ89RCnILx8k+wqKlrIOC2KlUkPvgAOI4hWNqIDHrhv1zLf3CCGe2f/D
-	vu9PLApzhNA/emyD10j8Jfn+HPGUhmJZhNRa0Rie3UjZQxFBSMQ0wt+397/hm3Hb00qe9aAq1dI
-	CGOtccYQ0m6ZKgcGZBnN6Yrg18yNLJS+7rf5xvT580L8YtAH0vB5qYNmpMUU6nsN9Q==
-X-Received: by 2002:a05:6102:6a8a:b0:7d0:6db8:dc37 with SMTP id ada2fe7eead31-7d2a15057d8mr1124865137.7.1793953297615;
-        Fri, 06 Nov 2026 00:21:37 -0800 (PST)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99badbceebdsm1266726241.3.2026.11.06.00.21.36
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Nov 2026 00:21:36 -0800 (PST)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-7c3b75caad1so298775137.0
-        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 00:21:36 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBzfIowiVpbgPp7reSEIRqypH9aYQ4EbRVFYsuA4CqVl8VjeCz5vvrQhx3sUC7H2L/d3MD+4o0j/qWM=@vger.kernel.org
-X-Received: by 2002:a05:6102:4188:b0:7c1:7ca9:94bf with SMTP id
- ada2fe7eead31-7d2a157ad1bmr1177241137.19.1793953296374; Fri, 06 Nov 2026
- 00:21:36 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C188606A326;
+	Fri,  6 Nov 2026 08:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AYVhOYyi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67B271F0089F;
+	Fri,  6 Nov 2026 08:26:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793953613;
+	bh=UGfKZvZvqFhX5Ky0rm/23LKeKcQDPDoWftzic2rR5Uc=;
+	h=From:Subject:Date:To:Cc;
+	b=AYVhOYyiPRMnaaYm2MD60GoD47kepcROp+UtvwZH5vX+qcSTwVZUmYgFySr7/+p63
+	 ckcvhLe3SkbJuwGcu6ugcOAG+zUBS0V7bhTbuaD81+tNDd2ypJ5A9rkWdEVQRxZ8us
+	 XCytBC7NOrWU0SKNr1j++T6i+shLBmAYLLxclqJ4EV0lEMC88G2tXi2kacxcfWxy58
+	 TtKamR6oCI/Y71IaNIlmdx26wVajIrNBzVAhC8XSP9kBpA4AiaiWZAXdo5/dAd8WpH
+	 akrvEO/NEoGdwKHjUCOjH2zdjdUsWpByGC1jwcNTs7dJit7jFjwbS2gJzcGMFejk5J
+	 NBx2zWiZFrBbg==
+From: Linus Walleij <linusw@kernel.org>
+Subject: [PATCH v3 0/7] BCMBCA PMB power, clock, reset and hardware
+ monitoring support
+Date: Fri, 06 Nov 2026 09:26:43 +0100
+Message-Id: <20261106-xg6846b-bcmbca-xrdp-reset-v3-0-d6adeb71afc9@kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -80,67 +54,161 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <cover.1793278754.git.geert+renesas@glider.be> <415c8b26718e2e5d53f74e65daedf9986c76dcfe.1793278754.git.geert+renesas@glider.be>
- <TY3PR01MB113465CCAA88F962CA6BA2E7186762@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB113465CCAA88F962CA6BA2E7186762@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 6 Nov 2026 09:21:24 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXObreJN74sFpqmorWFHQ+uuYQ8E8z53YLy83QWzOhSmA@mail.gmail.com>
-X-Gm-Features: AclHuK-V7fgcHmuwvDEyfPRfTLsQvNGxgbL-okuZ_HotpWdWbAS1JxTmpUbfEsQ
-Message-ID: <CAMuHMdXObreJN74sFpqmorWFHQ+uuYQ8E8z53YLy83QWzOhSmA@mail.gmail.com>
-Subject: Re: [PATCH 3/9] can: rcar_canfd: Make clkp local
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Marc Kleine-Budde <mkl@pengutronix.de>, 
-	Vincent Mailhol <mailhol@kernel.org>, "biju.das.au" <biju.das.au@gmail.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>, 
-	"magnus.damm" <magnus.damm@gmail.com>, 
-	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAA/33NQQ6CMBBA0as0s2ZMp1BQVt7DuKB0gEYF0pIGQ
+ 7i7gcQYN2z/4v0FAnvHAUqxgOfoght6KEWaCKi7qm8ZnYVSgJIqJ0kpzm1+znKDpn6ZusLZ2xE
+ 9B57QckHmLGulqwwSAaPnxs27fbsnAjoXpsG/91WkrX7V7ECNhBJt1WhLRcFE6fXBvufnafAtb
+ GxUP4okHVEKJWZaN3xhtpr5j1rX9QPd0BPNDgEAAA==
+X-Change-ID: 20261013-xg6846b-bcmbca-xrdp-reset-de71b80c25a4
+To: Linus Walleij <linusw@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ William Zhang <william.zhang@broadcom.com>, 
+ Anand Gore <anand.gore@broadcom.com>, 
+ Kursad Oney <kursad.oney@broadcom.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Guenter Roeck <linux@roeck-us.net>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, 
+ Ulf Hansson <ulfh@kernel.org>, 
+ Benjamin Larsson <benjamin.larsson@genexis.eu>
+Cc: mfd@lists.linux.dev, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-hwmon@vger.kernel.org, linux-pm@vger.kernel.org
+X-Mailer: b4 0.16.0
 
-Hi Biju,
+This is another of these big upfront design binding and driver hoards
+that is the consequence of adding new SoC support.
 
-On Fri, 6 Nov 2026 at 09:17, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > From: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Sent: 29 October 2026 13:11
-> > Subject: [PATCH 3/9] can: rcar_canfd: Make clkp local
-> >
-> > The peripheral clock is only used in rcar_canfd_probe(), so convert clkp to a local variable.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+My stake is to be able to boot and test a full featured Cortex-A7
+system and the BCM6846 XG6846B is one such system on my desk.
 
-> > --- a/drivers/net/can/rcar/rcar_canfd.c
-> > +++ b/drivers/net/can/rcar/rcar_canfd.c
-> > @@ -467,7 +467,6 @@ struct rcar_canfd_global {
-> >       void __iomem *base;             /* Register base address */
-> >       struct rcar_canfd_f_c __iomem *fcbase;
-> >       struct platform_device *pdev;   /* Respective platform device */
-> > -     struct clk *clkp;               /* Peripheral clock */
->
-> Unless I am missing something, I get build error
->
-> drivers/net/can/rcar/rcar_canfd.c: In function 'rcar_canfd_probe':
-> drivers/net/can/rcar/rcar_canfd.c:2250:55: error: 'struct rcar_canfd_global' has no member named 'clkp'
->  2250 |                         fcan_freq = clk_get_rate(gpriv->clkp);
+It's been cooking for a while in various prototype forms.
 
-If your tree has Claudiu's "[PATCH v4 3/7] can: rcar_canfd: Allow the
-CAN FD clock to be sourced from fck", you have to update the new user
-of gpriv->clkp.
+IMPLEMENTATION:
 
-Gr{oetje,eeting}s,
+The PMC contains various stuff so this needs to be a simple MFD node
+so more things can be added into it later.
 
-                        Geert
+Inside the PMC is the PMB, the processor monitor bus. This bridges
+to several individual peripherals which are very clearly distinct
+devices on that bus.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Handle the PMB with an MFD driver with power domain, clock, reset and hwmon
+providers.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Expose the standard BPCM peripheral, memory, USB and PCIe domains and
+a combined XRDP domain covering XRDP, the three Runners and WAN. Keep
+the peripheral and memory domains always on. The power domain provider
+now owns zone transitions, leaving the reset provider to pulse resets.
+The CPU and PLL blocks use different register layouts and are excluded.
+This new power domain integration has not been tested on hardware.
+
+The BCM6846 XRDP reset sequence enabled full-MTU traffic on all four LAN
+ports and copper WAN and has been tested on that series. The zone
+power-up sequence also passed direct CFE flash boot in the Linux 6.18
+OpenWrt port; this folded v7.3-rc1 revision still needs hardware testing.
+
+MERGE STRATEGY:
+
+Through an MFD immutable branch once everyone ACKs the subdrivers,
+it will take time I guess. Queue the bindings and drivers in MFD.
+
+Updates to peripheral schemas and device trees to accommodate the power
+domains will be submitted separately.
+
+The patches were authored with the assistance of an LLM.
+
+Signed-off-by: Linus Walleij <linusw@kernel.org>
+---
+Changes in v3:
+- Add a PMB power domain subdriver and binding with a combined XRDP domain.
+- Move XRDP, Runner and WAN power sequencing out of the reset driver.
+- Register the power domain MFD child.
+- MFD transport: simplify cell registration, drop unused state and
+  property.h, and add the bcmbca-pmb subject prefix.
+- Power domains: default to MFD_BCMBCA_PMB.
+- MFD transport and reset: use mutex guards; reset: use
+  str_assert_deassert().
+- Clock: use the reference clock as parent, limit CLK_GET_RATE_NOCACHE to
+  PLL outputs, drop CLK_IGNORE_UNUSED and simplify Runner registration.
+- Clock and reset: suppress manual bind/unbind.
+- MFD transport, clock, reset and hwmon: drop redundant mod_devicetable.h;
+  clock: drop slab.h.
+- Power domain, clock, reset and hwmon drivers and PMC/PMB bindings: drop
+  vendor-source references from comments.
+- Link to v2: https://patch.msgid.link/20261101-xg6846b-bcmbca-xrdp-reset-v2-0-455fe9eed5ee@kernel.org
+
+Changes in v2:
+- Use a shared PMB regmap in all child drivers, keeping keyhole semaphore
+  handling and timeout recovery inside the MFD provider.
+- Drop PCIe reset IDs and sequences pending proper power and lane
+  configuration handling.
+- Power up the XRDP, Runner and WAN zones before the XRDP reset pulse,
+  preserving the sequence tested with direct CFE flash boot in OpenWrt.
+- Describe clock, reset and PVTMON PMB child nodes with separate
+  compatibles.
+- Move the PMB transport and accessor header under MFD and register
+  clock, reset and PVTMON MFD cells matched to their child DT nodes.
+  Select reset variants through OF match data.
+- Add PMB clock support and PVTMON clock and reset bindings.
+- Add PVTMON hwmon support for temperature and all seven voltage inputs,
+  retaining the zero-cell thermal sensor through the hwmon bridge.
+- Drop the unnecessary literal block marker from the PMC description.
+- Use the BCM6846-specific "brcm,bcm6846-pmc" compatible.
+- Expand PMC as "Power Management Controller" throughout.
+- Move the LLM assistance disclosure from trailers to the cover letter.
+- Drop the RFC prefix.
+- Link to v1: https://patch.msgid.link/20261014-xg6846b-bcmbca-xrdp-reset-v1-0-daf5d177e113@kernel.org
+
+---
+Linus Walleij (7):
+      dt-bindings: mfd: Describe the BCM6846 PMC complex
+      dt-bindings: soc: Describe the BCM6846 Processor Monitor Bus
+      mfd: bcmbca-pmb: Add a shared BCMBCA PMC3 PMB transport
+      pmdomain: bcm: Add BCMBCA PMB power domains
+      reset: Add BCMBCA block resets through the PMB
+      clk: bcm: Add BCMBCA PMB clocks
+      hwmon: Add Broadcom PMB PVTMON monitoring
+
+ .../bindings/clock/brcm,bcm6846-pmb-clock.yaml     |  39 +++
+ .../bindings/hwmon/brcm,bcm6846-pmb-pvtmon.yaml    |  42 +++
+ .../devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml  |  87 +++++
+ .../bindings/power/brcm,bcm6846-pmb-power.yaml     |  44 +++
+ .../bindings/reset/brcm,bcm6846-pmb-reset.yaml     |  31 ++
+ .../bindings/soc/bcm/brcm,bcm6846-pmb.yaml         |  90 +++++
+ Documentation/hwmon/bcm_pmb_pvtmon.rst             |  53 +++
+ Documentation/hwmon/index.rst                      |   1 +
+ MAINTAINERS                                        |  20 ++
+ drivers/clk/bcm/Kconfig                            |  11 +
+ drivers/clk/bcm/Makefile                           |   1 +
+ drivers/clk/bcm/clk-bcmbca-pmb.c                   | 388 +++++++++++++++++++++
+ drivers/hwmon/Kconfig                              |  18 +
+ drivers/hwmon/Makefile                             |   1 +
+ drivers/hwmon/bcm_pmb_pvtmon.c                     | 231 ++++++++++++
+ drivers/mfd/Kconfig                                |  11 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/bcmbca_pmc3_pmb.c                      | 286 +++++++++++++++
+ drivers/pmdomain/bcm/Kconfig                       |  10 +
+ drivers/pmdomain/bcm/Makefile                      |   1 +
+ drivers/pmdomain/bcm/bcmbca-pmb.c                  | 279 +++++++++++++++
+ drivers/reset/Kconfig                              |  13 +
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-bcmbca-pmb.c                   | 243 +++++++++++++
+ include/dt-bindings/clock/brcm,bcm6846-pmb.h       |  42 +++
+ include/dt-bindings/power/brcm,bcm6846-pmb.h       |  12 +
+ include/dt-bindings/reset/brcm,bcm6846-pmb.h       |  11 +
+ include/linux/mfd/bcmbca-pmb.h                     |  11 +
+ 28 files changed, 1978 insertions(+)
+---
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+change-id: 20261013-xg6846b-bcmbca-xrdp-reset-de71b80c25a4
+
+Best regards,
+--  
+Linus Walleij <linusw@kernel.org>
+
