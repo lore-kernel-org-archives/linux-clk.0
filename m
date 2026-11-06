@@ -1,104 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793963383;
-	b=jV3mVCV9XNL+5iMqzXeOdSc0/ors7SmzkzWVPmSQbSN6rnfvImtxpVJMB/q/YwVuYV9T
-	 72K7YZdHNLzf3/pf1+Y3e4afNLZOr8204AIEQpqmKownLVv17EAb+GwBy1dXvl8Vfk2pB
-	 dVcACe8ylaECbE0bI6tHSfzVYAUccDpTF/cxAe8OmjjVCroU6AD2u4fciJ4vN20uJPIX+
-	 d5C7aYxFn8lHcoMc4ecCesJn7a71U6UckLqNU4TOivZ0oUSnBpUPGz/34h0TYAoGAUDS8
-	 isENWwsSF5mfqPLFHJ4OqMyQW5m+4Sqy3/KJ0+dhF7+wdFZ5YKQNh0bF3ZbVISJ518w==
+	t=1793964756;
+	b=PpOIMAM9ZcE1iKRHl6g/j7ZlntzkMP1WgbT6EUyJ2VEcwtV/Flu+esEMPjnRx19c31Xf
+	 rzyUP2uuu7yxpjNwwsmgavV9xpLr3+BIkyXPO93shY+hkr5GqNwrwQLWhX7a/3UVezte6
+	 LumGAm2+SOjqRWoDBIqKndjlG7qoe/JjOwsJFeeg+17gr4GDqGRGkF/sNBEqTpktHWwd3
+	 rpoW0CpMNEY9/o/8hERKKvW7zgAla5ZkaKnYZ5MNJCi7MyWHwPWsYYSiq04L5OiCj7/NL
+	 CwoOH784re1qp3Y8uED41WCJ8Kdz5lglUQzcBw+A3eUoln0sdLmccjCV+a33Wu5jOWA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793963383;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793964756;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=JTbyh58iiuFNzTp6atljdu96OB/wZRJMCHvu1cBZ0J8=;
-	b=PwbxfpIK0GUF2X7M4d2QgOJjtXxJL6Wa5CrHe6C7NWerXizAXZSWR0TKFOErvCAB+RiY
-	 bau4GXbHQD0bDhVbUbd+RNk7yOwDBKCpSOHW4cK4KA9lCMBOMAutWd/KSn9rshYKCht9O
-	 232ZXUNHOxJXqclofudhFjNo9f7SzAU1Jl8T849v7kSRYLxYatsdxxBft3EqncCRKReH6
-	 i7uksR+LChh4sFEUFKEBv1JqlcKRc0Lnk+QlFtRNXoggGho2EdSIJDn9nJdPnFihECXUu
-	 UjGgB2tV/IMzrLeG/00c+jBrdBd4zQ03a5oNP/tBjQ1InzPI6h7LV/1ImMHlJTethxQ==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=wGiOeNE8Bnji04NKLc8q6Gdt5TOl+enDfg0BQ4VBWQY=;
+	b=BPedp1AVzjCoVLGaxcFlAekWdeoNFGjFzTdtDBoTvkAKusD0yQfL/JwAVjDKPBjG+a2E
+	 AkUPVPjeXD0BfNnaqPgZDyRv7OO1WhitINQZbp2Eidq0g23N7viHZE/97Q4lj5cMT6+/U
+	 7jk03RLcyFrVfwBevr71gwKxuiPW9me4Dd2TwhIMq87PnUbr+FmIBOTrJV+KAx0X0XGXe
+	 XhYJIakiKkT4xLtcgOjrHX/+ATUHkcAjabmFNiNJql+F6kAXtMel0WP+Lk8MB9XqD5BVP
+	 DYc80HJtwWtSpPMtZuj225MRQRAJBTvqBtaby7yCh960UQNmCIGLuXSZ0Kmcm84+VUQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=NTiuM0bR;
-	arc=none smtp.remote-ip=209.85.128.52
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="o/j/VoG0";
+	arc=none smtp.remote-ip=209.85.128.47
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49941606A33C
-	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 11:09:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 49941606A33C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA5A60A262A
+	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 11:32:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DCA5A60A262A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=NTiuM0bR
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4b7252a32c8so4078615e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 03:09:42 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=o/j/VoG0
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4a208d93758so5411855e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 06 Nov 2026 03:32:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793963381; x=1794568181; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=JTbyh58iiuFNzTp6atljdu96OB/wZRJMCHvu1cBZ0J8=;
-        b=NTiuM0bRFB1dOjn1ZKrp3AYl72iiEVSCnVtVnCHMCg+IUkoVB9jaFi/3lcuEZv9je3
-         N16BCXHj5+AGuRY9mkKDiluZtiAj9Ffd20w7s+WCXIDtw7yHEXGOc/T6LR3tAKXbH6At
-         mioZqPHfzMicFPLwq/jOM9nsKW4hW8wLFG1p8LZPKZs4NN0bNva+BFTm619drhu+lpuz
-         nZ+csvW4UiPo640p3N7bybTSXHEcrpIE9GWqpmS0H/Hc+Nwxp3aCpfXg9n5yZpKVR7NW
-         xKe28lJs69cn6rpAldEXdrEr/A4PceygQl1+v6erusPsk+6sN9Foq1WAMgzJcE4z/Gj4
-         yNNA==
+        d=gmail.com; s=20260707; t=1793964754; x=1794569554; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=wGiOeNE8Bnji04NKLc8q6Gdt5TOl+enDfg0BQ4VBWQY=;
+        b=o/j/VoG0Kz9bRK7eA6PJoiXwFDQJVm1yjK/TnARbK2bUS/WJqiaZJcqZ2lgUZiLW/Y
+         HDyVieowf7v0kAUVRn/jPWCAxMF3jiZzQHeCuI9zONuIjAPNq65WqT5Dx/cqZNNfBHcp
+         KvPrVqkIvi9yJAwwnW+AJKUxQuWoJZRtXZF9DSIonGIrZuym+mWLIwdbit8Az+kSJ008
+         AD++GY50KCGdlo2ojwyZsVHPhbJCMaGkT6ELgVSutk+fnam43nYikYtu2M9/hXGomXXY
+         IemweuIopL0dAAKctMSe9blRl5fFMjm4gjORpwzRAhJ29VW8DasindMbqK24/pCriPXm
+         C2Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793963381; x=1794568181;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=JTbyh58iiuFNzTp6atljdu96OB/wZRJMCHvu1cBZ0J8=;
-        b=OG97mlN2sxClPwHoTYdajkkG1ZCS1bP7BvdUKUflsDiC/WSNhPn50b52/IkeCXAxl2
-         ertGyW5j9Oi/PH4gmLwevY94gOe48ydNYsN4SudOrbd1m4NFKzFJtVl3TCJo3s7Lh8LG
-         Ng6T2KUs/KHuXzgP2TiG6+y0VdzRzEEgoO1UkO7V2B5dPMqSKs79C/2/zgHg7iMob4J6
-         OdMXLyXPeW414M8qaCim+XTKLRmnbx9U4Rj6cofWsaIf9s5E1KN/lOeCEJnEuZZ4A0lI
-         6mO69pVoy+ZvdIVOZZqoPKFr3H8N7N3uhKRM2g/aY4ptHRiobwz8NgpI3fBkVyPOoQ2B
-         tt6w==
-X-Forwarded-Encrypted: i=1; AKwUvBydPQv+/PKC3jgXxjkcDWzra0iDhJr4P8kcuEVhlObDlc8rtGckvmZMyQ5Ism3UPx/m9ofgZxFWPq8=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8pZ6qS3GbpLNekPoLn2L0SI2kFMH7KtYL7J/YYih8zDSCWTNlc
-	Jj8TZuxngOr/MRKmOoqbLBTvPa99XlP/WGzOs04IueSM0ZCundDtsSRk
-X-Gm-Gg: AYBFou0mif1+1FvjjaL8ccdAz2syUENPP4KD7HMpyn0taghH5Ye6zb/R3hxNs8e44iy
-	GXwbmFHl2NqouZDN0SiJcL/MW4inwDAflSaU2JiUYmZEbGAWLGlwGtiQY0YIH0ykNMm0ShXjDnc
-	Oz7YJxCEdyahyfnFrkAen/sLugTNWc+SP3GZH2XiYcyp0lASoUwqWEF7J9GtOHyb/jyEZEmIdqy
-	oggs9xZ6ae4lN6cnyqNLESlPqBXcWcbFDmaMRcM4UrbPcobsnwdPONLO8pvlf2+jkUVwH1TaI2p
-	k6E14qU05Bk70md+MX9Gr0aYywBJ1+cG1GXXJ5WGAYoIUYLEEo6BnmO8WhZn5gB9IkU463YkWYm
-	ksl1FxTa/qoPD21KyCyp8XlRpXFrS40gUs1a+TT4s/t3DLaLU2LrlA6GvRz17vLh3EqLHTJj59a
-	w/We2TzilEfSr7oqrsQqYTVhPkrRAqu0L7KUYqGZsxExBDRQn7Ykwmnw/hhXsasyj/iibkxPWjv
-	38Q7O8cgUlMpfGauUg5eYikNxnSMtba4H5cg0GzRhRX++Alald0ExmwwWb3xd0s6i1zZk3Fpuwr
-	giOx9owAkmITMjDr+L/jYBqVteuZndjO7jPm1HrrWUiC8bOWfQY0VuC71RKD9UNGgYJmr06dfNj
-	nn3/3qE+l/a43OXx8SySaVw9TJSM9RnohIfYsCNr1oh4W52QMT2KFpah2VkJ4jSxVBgyyVxAc8A
-	==
-X-Received: by 2002:a05:600c:3509:b0:4a6:4d6b:a840 with SMTP id 5b1f17b1804b1-4b6e0172854mr38401445e9.31.1793963380560;
-        Fri, 06 Nov 2026 03:09:40 -0800 (PST)
-Received: from iku.lan ([2a00:23c8:254f:fd01:1de5:ca41:50c1:3f2d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-492d087a3c5sm2768243f8f.0.2026.11.06.03.09.40
+        d=1e100.net; s=20260707; t=1793964754; x=1794569554;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=wGiOeNE8Bnji04NKLc8q6Gdt5TOl+enDfg0BQ4VBWQY=;
+        b=0tLZpiu+C76iRDi+Tb9ionMavnRFITtVbXnuMwt/I/t6kEqiS7m0/rd61vl3Xf4G87
+         yBrXMoO05I3dR8dMmC0mPrlblt77Z97A2zwHJitN1zfaka6lJPEWvUqs3PShTZFFuaPh
+         qxHSFWR6SbcY7fUFNbIYtgTdcwD/NDiluNIZjz8WYccKSPPAS/HkU5k2mUx4LlNeM982
+         CbY7dha9Qli4S7i2dfvHY0itREHqB4/f83GuPGocxC7UU+eab7T4fohafUDbG7Whv8Dy
+         SNCcmXCWacuscKAf2irWwYYjG8F1crr9mncX6UQHuUafXoDGv4CiyDKqRSYYKcrv5xzZ
+         9Dzw==
+X-Forwarded-Encrypted: i=1; AKwUvBwuD8ubnKpnqSN0ujT+fWqjbjvdjUaHTfPDDmmTraO4pNxNuG4Lzh2Sd5HOyk8ifOP1rY99ZNhkFuw=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+JAVUETYp0hnNysazuBQKZMAm/9kPHz0/LaQKOll1Irwk7jeDY
+	mrRiyFeIicR2S4GMqn/5YSi810WdXkkAhRyn2We7r1Lp3ug0fa2whi8S
+X-Gm-Gg: AYBFou0rrJDlvHJukdS60aTc3uCS6mydtu4vdf5G4H9kkw9VEZMi+hygk4oep3fZJTe
+	PXWuPywcriyUcYzdYHqOc1aLl2AIMV7PO4eXwj2iMWgDLDbkgXZTKo+T8FXBItjHzsacs2T9caa
+	6wwKXYWptV0QMwvfHZdnHf4CG3/MH+KCDvJauGHFO1bSrE3STUY+Ux/tXmC3e+xgJF5nE7JYGXd
+	M/joMkOF4zjdV52j/7nRrOAx9pWIEo87CVPhtl6jnulp3BbdAVKBLnC9sDgnVMyJnHUc8J0XvvY
+	X3sk4wMkQ39fkgPNkHqXTe5Avh3nHSoUZoKVdFvP2vJyeyBf0ZBQ+ChEYQAezF+hd4AJvQ7PMQt
+	YQX/lHfYTN0gTZ6Rnyypdn+z+joorkeIUVT7It8+7kuYLp23jwlJlw5EjFcnBS65SA2Zq+1EQyG
+	kzC9n1yfI4gBwRrr3bo4Lk/Rn6YG6qPQ0B9N/3g7rflBYWPAHHWhSO+m8fJs0KRoNq16wjrYQ2Q
+	HI7oP2k/zulWkpSijVBDoBpqUPawpM5rf7i2CUKqWrnJ57Yy9LiorFdTM7MCSSr4FunpXxAT11e
+	ejth9AFH9CLryxVfOTgKZJqAbmZey99GYVSQAUvCx40fLcKdlB8PORS6hceifv+0B8nU8E4KQR9
+	eLmZgOdi99kS6Zq97cvTUy0XH58h/vr0+EA==
+X-Received: by 2002:a05:600c:4e90:b0:4a1:f7f4:7ced with SMTP id 5b1f17b1804b1-4b6df21362dmr38701455e9.17.1793964754034;
+        Fri, 06 Nov 2026 03:32:34 -0800 (PST)
+Received: from Ansuel-XPS24.localdomain (93-34-90-148.ip49.fastwebnet.it. [93.34.90.148])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-492d72333f9sm3254280f8f.29.2026.11.06.03.32.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 03:09:40 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
+        Fri, 06 Nov 2026 03:32:33 -0800 (PST)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 2/2] clk: renesas: r9a09g056: Add ADC clocks and reset
-Date: Fri,  6 Nov 2026 11:09:23 +0000
-Message-ID: <20261106110923.164090-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261106110923.164090-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20261106110923.164090-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v4 0/2] clk: en7523: full clk_hw + set_rate for en7581
+Date: Fri,  6 Nov 2026 12:32:23 +0100
+Message-ID: <20261106113227.182324-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.55.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -110,93 +100,35 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+This simple patch convert the en7523 clk for EN7581
+to full clk and adds the .set_rate OPs.
 
-Add clocks and reset entries for the ADC controller.
+Needed mostly to configure MDC clk rate.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1->v2:
-- Renamed adc_pclk_gear to pllcm33_adc_pclk_gear
-- Renamed adc_pclk_gear_div2 to pllcm33_adc_pclk_gear_div2
-- Renamed adc_adclk_gear to pllcm33_adc_adclk_gear
-- Renamed adc_0_pclk to adc_0_pclk
-- Renamed adc_0_adclk to adc_adclk
----
- drivers/clk/renesas/r9a09g056-cpg.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+This will be also implemented by AN7583 since they share the
+same exact implementation.
 
-diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
-index 51c1e322826a..9c611f12ad4e 100644
---- a/drivers/clk/renesas/r9a09g056-cpg.c
-+++ b/drivers/clk/renesas/r9a09g056-cpg.c
-@@ -35,11 +35,15 @@ enum clk_ids {
- 	CLK_PLLGPU,
- 
- 	/* Internal Core Clocks */
-+	CLK_PLLCM33_DIV2,
- 	CLK_PLLCM33_DIV3,
- 	CLK_PLLCM33_DIV4,
- 	CLK_PLLCM33_DIV5,
- 	CLK_PLLCM33_DIV16,
- 	CLK_PLLCM33_GEAR,
-+	CLK_PLLCM33_ADC_PCLK_GEAR,
-+	CLK_PLLCM33_ADC_PCLK_DIV2,
-+	CLK_PLLCM33_ADC_ADCLK_GEAR,
- 	CLK_SMUX2_XSPI_CLK0,
- 	CLK_SMUX2_XSPI_CLK1,
- 	CLK_PLLCM33_XSPI,
-@@ -135,6 +139,12 @@ static const struct clk_div_table dtable_2_100[] = {
- 	{0, 0},
- };
- 
-+static const struct clk_div_table dtable_8_10[] = {
-+	{0, 8},
-+	{1, 10},
-+	{0, 0},
-+};
-+
- static const struct clk_div_table dtable_16_128[] = {
- 	{0, 16},
- 	{1, 32},
-@@ -171,11 +181,18 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
- 	DEF_PLL(".pllgpu", CLK_PLLGPU, CLK_QEXTAL, PLLGPU),
- 
- 	/* Internal Core Clocks */
-+	DEF_FIXED(".pllcm33_div2", CLK_PLLCM33_DIV2, CLK_PLLCM33, 1, 2),
- 	DEF_FIXED(".pllcm33_div3", CLK_PLLCM33_DIV3, CLK_PLLCM33, 1, 3),
- 	DEF_FIXED(".pllcm33_div4", CLK_PLLCM33_DIV4, CLK_PLLCM33, 1, 4),
- 	DEF_FIXED(".pllcm33_div5", CLK_PLLCM33_DIV5, CLK_PLLCM33, 1, 5),
- 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
- 	DEF_DDIV(".pllcm33_gear", CLK_PLLCM33_GEAR, CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
-+	DEF_CSDIV(".pllcm33_adc_pclk_gear", CLK_PLLCM33_ADC_PCLK_GEAR, CLK_PLLCM33_DIV2,
-+		  CSDIV1_DIVCTL0, dtable_8_10),
-+	DEF_FIXED(".pllcm33_adc_pclk_gear_div2", CLK_PLLCM33_ADC_PCLK_DIV2,
-+		  CLK_PLLCM33_ADC_PCLK_GEAR, 1, 2),
-+	DEF_CSDIV(".pllcm33_adc_adclk_gear", CLK_PLLCM33_ADC_ADCLK_GEAR, CLK_PLLCM33_ADC_PCLK_GEAR,
-+		  CSDIV1_DIVCTL1, dtable_2_16),
- 	DEF_SMUX(".smux2_xspi_clk0", CLK_SMUX2_XSPI_CLK0, SSEL1_SELCTL2, smux2_xspi_clk0),
- 	DEF_SMUX(".smux2_xspi_clk1", CLK_SMUX2_XSPI_CLK1, SSEL1_SELCTL3, smux2_xspi_clk1),
- 	DEF_CSDIV(".pllcm33_xspi", CLK_PLLCM33_XSPI, CLK_SMUX2_XSPI_CLK1, CSDIV0_DIVCTL3,
-@@ -539,6 +556,10 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
- 						BUS_MSTOP(3, BIT(4))),
- 	DEF_MOD("gpu_0_ace_clk",		CLK_PLLDTY_ACPU_DIV2, 15, 2, 7, 18,
- 						BUS_MSTOP(3, BIT(4))),
-+	DEF_MOD("adc_pclk",			CLK_PLLCM33_ADC_PCLK_DIV2, 16, 7, 8, 7,
-+						BUS_MSTOP(3, BIT(9))),
-+	DEF_MOD("adc_adclk",			CLK_PLLCM33_ADC_ADCLK_GEAR, 16, 8, 8, 8,
-+						BUS_MSTOP(3, BIT(9))),
- 	DEF_MOD("tsu_0_pclk",			CLK_QEXTAL, 16, 9, 8, 9,
- 						BUS_MSTOP(5, BIT(2))),
- 	DEF_MOD("tsu_1_pclk",			CLK_QEXTAL, 16, 10, 8, 10,
-@@ -634,6 +655,7 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
- 	DEF_RST(13, 13, 6, 14),		/* GPU_0_RESETN */
- 	DEF_RST(13, 14, 6, 15),		/* GPU_0_AXI_RESETN */
- 	DEF_RST(13, 15, 6, 16),		/* GPU_0_ACE_RESETN */
-+	DEF_RST(15, 6, 7, 7),		/* ADC_ADRST_N */
- 	DEF_RST(15, 7, 7, 8),		/* TSU_0_PRESETN */
- 	DEF_RST(15, 8, 7, 9),		/* TSU_1_PRESETN */
- };
+Changes v4:
+- Fix regression where base_bits is 0
+- Handle divider_get_val returning -EINVAL
+
+Changes v3:
+- Rework to clock divisor API
+- Return error instead of -EINVAL
+- Use dev_err where possible
+- Use devm_kzalloc_obj
+- Revert to not fail on clk registration failure
+
+Changes v2:
+- Fix recalc_rate return value on error
+
+Christian Marangi (2):
+  clk: en7523: convert to full clk_hw implementation for en7581
+  clk: en7523: add support for .set_rate for en7581
+
+ drivers/clk/clk-en7523.c | 301 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 281 insertions(+), 20 deletions(-)
+
 -- 
-2.56.0
+2.55.0
 
