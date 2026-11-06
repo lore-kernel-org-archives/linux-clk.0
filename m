@@ -1,69 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.26
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=44.202.169.39
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793976353;
-	b=vSRRfex7QI+BLPDIbM1FItxDovU8G6BkL+MhmRpKQWybGEJtPHuX+Ou9PZFIwZJolUKg
-	 Z4crOqJrVWdU6elBm5F22JngJo+7DslAzByGtKJXSrb6tKbWw4FdZDst4AlOg1bdrGHDH
-	 RcOEyqWWpgcoEiLK+N32/Gm9m7j5Z1Waoumrbtqhfq4QyJjLNN6D2NEbLgoyNNwEMe0Mw
-	 j/bPz9aCBuwKjbF/4qQU9bgLktKB5EM6SgbxrPPsac6fZKUCXvsnD1Tw6/jfax59fmKig
-	 t6JBt30Bl9mbETckzVFew3GjjuloRDRTkv5775Pm0SI/xoZL+wiXFFpJJXsFdWF7O7A==
+	t=1793976704;
+	b=X0zZAtuODj61Vdwr0peU6tvhs77rZFWT3pmp9g6cS3IhRSvMGf92lyei0TEbMUzDhuGc
+	 VWuj49X6Rej+h0AJEghpKIKiCfYowO/nSOUqYant6ss9n+fDIBUYzRCJufYlyjPKFz5a7
+	 nzNOIL7jQAG1nSc4PXyotk9711zPiOYkRIYdbXUisVhs0WqT5NrCSd50dgSLMnaA1/1JV
+	 Amooj2Otne/5q/ShNzoubd0Y5etEw4lOJ2m3cML9Opw961Tt9eFWLotnkDXARDE8uVfhY
+	 A1tl7zbMbDj4LE5Y9xwFiDfFqnTvs4xEUynvk3SIFALEAUPKKbQjn13Eg0UBhYiqf8A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793976353;
-	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
-	 X-Mizu-Trace-ID:X-Migadu-Flow:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=nXpHtbwIXWqa0CUduYYty9A7kDwxd+/CalGYDzCTKjw=;
-	b=E2aNRr1sdgaBD5una6mrTJpIv45nvojRT0cPMIOJ3weld8c4hexnQVCsmNm76Nqw4OFg
-	 2f7IOFqlKN1XZCAs40SQvo3sNuHS0EDd1U4HRB+D5RyxFLfmGuABgewbC+sSIK/KuIjNy
-	 NZDhhP8D6MDMkXd2BIU/gGPHwHCM7v1biZQbuWWmDbmgN9wzdk5gpgk2TlZXLOyK9UvmY
-	 pXwHy+DwmT2yj7cpaf0SH7TVpz5Angzf/9+7MoJcc46b1rT3cakPw2TpPAGxdsRL87YBz
-	 MnotpjeI/gOCGWcGmm1sD5BqqjtFpg90uMx/CVKAZJ//Vji2FLMTiPBLHO2DCxaBy2g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793976704;
+	h=DMARC-Filter:Received:Received:X-Authority-Analysis:DKIM-Signature:
+	 Received:Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
+	 References:Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
+	 X-AntiAbuse:X-AntiAbuse:X-BWhitelist:X-Source-IP:X-Source-L:X-Exim-ID:
+	 X-Source:X-Source-Args:X-Source-Dir:X-Source-Sender:X-Source-Auth:
+	 X-Email-Count:X-Org:X-Source-Cap:X-Local-Domain:X-CMAE-Envelope;
+	bh=gOZoRfsJVnI5ad8nxzwKtcpvEQZfL4pycccmcr3SwSc=;
+	b=Lr5JJwAg8HF6ilno0t3O21dyfyCPnXsmHprOu4Qf+DouD0b36MEW6UXdeZno0kSgAD4I
+	 4hMG3A9JRmngDXEGkh/njnCAj4UEcZEvvmfMg13V1XjW8VcQiH3RomERl35C0kj2vpU2a
+	 fccD4H5Xn6A9+ReejV5MrNTVPspL98i28sSC0SNwZRXWR4Le7Z+cp+M88JRAGkvvAcH6n
+	 bk7NsM37Q4O8JLFLU1y2Nhg7ktuPo0TRzpToWu4+bkrx7T1lD6fP5y0gjrE0ffJlzfxR9
+	 FxD6rqyjx7vxj92HwZhcKHUlWzeNLlYm2jj9ehUdU09+4voRMrId6XE8QnKrXsjptrQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=grimler.se;
-	spf=pass smtp.mailfrom=grimler.se;
-	dkim=pass header.d=grimler.se header.i=@grimler.se header.a=rsa-sha256 header.s=key1 header.b=kADcVJZM;
-	arc=none smtp.remote-ip=91.218.175.26
-Received: from mta0.migadu.com (out-26.mta0.migadu.com [91.218.175.26])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=none header.from=roeck-us.net;
+	spf=fail smtp.mailfrom=roeck-us.net;
+	dkim=pass header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=z+UrwZ8m;
+	arc=none smtp.remote-ip=44.202.169.39
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1709606A339
-	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 14:45:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E1709606A339
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F44606A329
+	for <linux-clk@vger.kernel.org>; Fri,  6 Nov 2026 14:51:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 92F44606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=grimler.se header.i=@grimler.se header.a=rsa-sha256 header.s=key1 header.b=kADcVJZM
-X-Envelope-To: linux-clk@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=dsRJ/0z/yE/5s58BMhmlVSFV04GmqnxwznaEjY/5328=;
- c=simple/simple; d=grimler.se;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793976343; v=1; x=1794581143;
- b=kADcVJZMgmNCz98SwUVAOSfSrkz7gIzWbzN1tnaTaC/CyM5NEQ9+X5mynXCfvmbkw7XuInM9
- NAROZSBHoV0/9CqgXDtzIomW7cYT/ppqX/Fhy/LhrHWO5UoPgPn3onXSrZp9k+rthRSGL4m1cHm
- gD0Trg+KBvMvns8fnRoJ1Jmg=
-X-Envelope-To: linux-clk@vger.kernel.org
-Received: by mta12.migadu.com with ESMTPS id cf432eae1467532f;
-	Fri, 06 Nov 2026 14:45:39 +0000
-X-Mizu-Trace-ID: cf432eae1467532f
-X-Migadu-Flow: FLOW_OUT
-Date: Fri, 6 Nov 2026 15:45:36 +0100
-From: Henrik Grimler <henrik@grimler.se>
-To: Young-Jun Hong <nirvanah@nirvanahyj.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: samsung: exynos5420: add VPLL rates for 650,
- 700 and 750 MHz
-Message-ID: <20261106144536.GA3678@localhost>
-References: <20261106054210.2893230-1-nirvanah@nirvanahyj.com>
- <20261106054210.2893230-3-nirvanah@nirvanahyj.com>
+	dkim=pass (2048-bit key, unprotected) header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=z+UrwZ8m
+Received: from eig-obgw-5006b.ext.cloudfilter.net ([10.0.29.217])
+	by cmsmtp with ESMTPS
+	id PKthxu2KROOJnPLI0xjv4y; Fri, 06 Nov 2026 14:51:36 +0000
+Received: from 162-215-252-36.unifiedlayer.com ([208.91.199.152])
+	by cmsmtp with ESMTPS
+	id PLHzxYxvbpr6MPLI0x7zBo; Fri, 06 Nov 2026 14:51:36 +0000
+X-Authority-Analysis: v=2.4 cv=Ec3IQOmC c=1 sm=1 tr=0 ts=6aede978
+ a=QNED+QcLUkoL9qulTODnwA==:117 a=2cfIYNtKkjgZNaOwnGXpGw==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=M0FbrtG7MMAA:10 a=_jlGtV7tAAAA:8
+ a=VwQbUJbxAAAA:8 a=0IqTxCsDnYwxL-1tAq4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=nlm17XC03S6CtCLSeiRr:22 a=KPbNTLLc3YvdawN95zVk:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=roeck-us.net; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:
+	List-Archive; bh=gOZoRfsJVnI5ad8nxzwKtcpvEQZfL4pycccmcr3SwSc=; b=z+UrwZ8mR5Op
+	Dvj5DgDVYikVDoc/ThAHrbkhgeIW48rSJTdtbnGCppeFEG8AEN1DWcBcKfYE27mSyphqHkvSpewiK
+	S2JGuCVIgwengQaku7qK7aBmZXVa4A+3KZL2F7O1GEFeeT6I5oaDpN/9cT8FtllRLqhOZ96S6C1fW
+	xIE/jq3QLCfSi8wuMOAiquNrghTENquAXWtuTGyyjSuHe6ue48yNxGPz97F/hZdYsy/LQyYajdQla
+	z6b7Tyzph7WHfbPRF70UOl1930XHfTyNolpBZRZyxzFZNjz8wtRP3GWjoECAMc4O/kRQZsBF6CBBH
+	juYarmv4XwXZOZXkJ9SSsA==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:44920)
+	by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <linux@roeck-us.net>)
+	id 1xPLHx-000000046JV-1VgD;
+	Fri, 06 Nov 2026 20:21:33 +0530
+Message-ID: <566a338f-5b95-44ca-a3e4-b3bb34495792@roeck-us.net>
+Date: Fri, 6 Nov 2026 06:51:31 -0800
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -73,58 +76,126 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261106054210.2893230-3-nirvanah@nirvanahyj.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/7] hwmon: Add Broadcom PMB PVTMON monitoring
+To: Linus Walleij <linusw@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, William Zhang <william.zhang@broadcom.com>,
+ Anand Gore <anand.gore@broadcom.com>, Kursad Oney
+ <kursad.oney@broadcom.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Benjamin Larsson <benjamin.larsson@genexis.eu>, mfd@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org
+References: <20261101-xg6846b-bcmbca-xrdp-reset-v2-0-455fe9eed5ee@kernel.org>
+ <20261101-xg6846b-bcmbca-xrdp-reset-v2-6-455fe9eed5ee@kernel.org>
+ <b65ef6c6-cbcf-4793-9ba1-7c5cb270f574@roeck-us.net>
+ <CAD++jLm0patDC0Vh7sh3Mr214zaF3HFDoc8y=dHVs-gQePHa3g@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <CAD++jLm0patDC0Vh7sh3Mr214zaF3HFDoc8y=dHVs-gQePHa3g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-BWhitelist: no
+X-Source-IP: 108.223.40.66
+X-Source-L: No
+X-Exim-ID: 1xPLHx-000000046JV-1VgD
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net [108.223.40.66]:44920
+X-Source-Auth: guenter@roeck-us.net
+X-Email-Count: 7
+X-Org: HG=direseller_whb_net_legacy;ORG=directi;
+X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPj26J1UT1qQR+BEMzHlhdOfC2N4TP45wQEWsJvMsQhNPK+rue2bHE1RvfHJa9EWeHft6VXXQ4UdHSlH4KttNdrHghlleqzyqlVaP4S7PjnViR3y/26H
+ 3umJ1wHn2g/zzY9Sc8CG9QwXd03631TEjuF0WveVpSModoU9WgnfQSdizxSTKTD4phhWTKqFxNvErj8c/dQDujgM8/u8dbuOUBKodqeC/yzWCxpxIY43hE9z
 
-Hi Young-Jun,
-
-On Fri, Nov 06, 2026 at 02:41:49PM +0900, Young-Jun Hong wrote:
-> The VPLL drives the G3D (Mali) clock on Exynos 5420/5422. Its rate table
-> stops at 600 MHz, so GPU OPPs above 600 MHz cannot be reached:
-> clk_set_rate() silently keeps fout_vpll at 600 MHz.
+On 11/5/26 23:44, Linus Walleij wrote:
+> On Mon, Nov 2, 2026 at 4:06 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>> On 11/1/26 14:14, Linus Walleij wrote:
 > 
-> Add the 650, 700 and 750 MHz rows (VCO 1300/1400/1500 MHz, using the same
-> P/M/S style as the APLL rows).
-
-What you mean with "using the same P/M/S style as the APLL rows"?
-
-> Tested on Samsung ARTIK 10 (Exynos 5422): with these rows the G3D devfreq
-> reaches 700 and 750 MHz, and the OpenCL accuracy suite passes 96/96 at
-> 750 MHz with a board-specific 1.35 V OPP.
+>>> Expose the BCM6846 die temperature and seven voltage inputs through
+>>> hwmon using the shared Processor Monitor Bus (PMB) regmap.
+>>>
+>>> Register the temperature channel with the thermal framework so
+>>> existing zero-cell device-tree thermal sensor references work.
+>>>
+>>> Poll for valid samples with a bounded timeout, releasing the PMB lock
+>>> between reads. Report temperature in millidegrees Celsius, including
+>>> negative values, and voltages in millivolts.
+>>>
+>>> Signed-off-by: Linus Walleij <linusw@kernel.org>
+>>
+>> Acked-by: Guenter Roeck <linux@roeck-us.net>
+>>
+>> Please let me know if you want me to take this patch through
+>> the hwmon subsystem.
 > 
-> The analysis, the code and this changelog were produced with Claude
-> Code (Anthropic), a coding assistant.
-
-Was it tested by a human?
-
-> Signed-off-by: Young-Jun Hong <nirvanah@nirvanahyj.com>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 3 +++
->  1 file changed, 3 insertions(+)
+> Thanks Günther!
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 400a5c59815c..1b4b0ae16765 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -1451,6 +1451,9 @@ static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
->  };
->  
->  static const struct samsung_pll_rate_table exynos5420_vpll_24mhz_tbl[] = {
-> +	PLL_35XX_RATE(24 * MHZ, 750000000U,  125, 2, 1),
-> +	PLL_35XX_RATE(24 * MHZ, 700000000U,  175, 3, 1),
-> +	PLL_35XX_RATE(24 * MHZ, 650000000U,  325, 6, 1),
-
-Do you have any references, like vendor kernel sources, to back up
-these choices of dividers and scalar?
-
-Best regards,
-Henrik Grimler
-
->  	PLL_35XX_RATE(24 * MHZ, 600000000U,  200, 2, 2),
->  	PLL_35XX_RATE(24 * MHZ, 543000000U,  181, 2, 2),
->  	PLL_35XX_RATE(24 * MHZ, 480000000U,  160, 2, 2),
-> -- 
-> 2.47.3
+> I think it's best to take all through an MFD immutable branch as
+> is custom with these all-or-nothing drivers.
 > 
-> 
+I agree.
+
+Thanks,
+Guenter
+
