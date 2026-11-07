@@ -1,124 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794061368;
-	b=bx89wuI2T9eUWDmcbYkGhWECq7cn3YvVXmMh5lZ+8mTAS4oFOcrx6zWfslBf54w1RijD
-	 Vs/WvRyPzXwpZw64jJZLsA6QOg3FgTh/txpHJIGgXimgVTZUYh7eYAu76ShLeHPFACXrk
-	 JbKuCL2fQvrgPjAq9hq61oyg1eXLKp0Xb5qGAmitqcijtjcPBO7enB5dem5pPXGAfia/Y
-	 ZbX1k3CWkukvyGxSaoQr5q/ubEsUSlqIqeSDhm+ycWsTB80VaMfUV/+SlQaNF8HNpX9/H
-	 BPZsEpjBn1iVhR9dGeNZea9fLq3emnY3YWGdn3w5q6s5WHSKfSvySPTMmtydYdXnnuQ==
+	t=1794065412;
+	b=cPvtJTFLEmxBHH4BcgZuuAumCL5sWra90gm6x90h2Wbqli3cGnTSgdBAYM79EGL97e8v
+	 DmU4EnLBOZLkdal62xIgBByX+f4iV9BFTXE1wZu0EJDZ9yMo08kKMZigiKAaPA/3pUsvH
+	 O7PlxKyYknGKmLDLnIBSQIfzG8CTLIUqPJphZTg4eiMsfSCTZLr7AyfPRIOxuOWBKzUnZ
+	 2shNR0bi1bP165EogZ0DcAiGB0MDtgKoj5ssIS0zYHspOa9V3lIPklWd0yOGzPerhL0sP
+	 Ke+u5v0BAGffGQAXBM4cxjVKKpE96mQ3m6FbuVpSOu53oP73HbT3MCaAL+ONc25pHIQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794061368;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=Zc76TO6qUVRGeeHVXQdMS6eOYrg3MPsFB1Ka1Yvj58U=;
-	b=sZzKGhcoqMzBspYAPtyhm3oKJDC8bNFJeLHjKFhkgLMqbzBxbJpImdFQvtE+5uR35cdd
-	 4O/tEseoZRj/cDXa8b2acikXRjjZiJ08Lry8b4A6IIf3EKOsTcssPsLxHruYO66cvEwHa
-	 oDmP/bMElJ5FzpcF8jYu5Bn30MA6M4tVc/wEW3YIfqZpF6S5p7tYcP/0DicrPUx0r2Jqg
-	 aIyOoQ5veUI0WDKOc4TfQJifS5W8t514QF6CWXJB1p3YiXucLG3ZBSBlbz013zAwRkpZn
-	 R0s/SxHE2hRG6bdCH63H7ZzrNfHfi170tB9JATgDeZLb5uELDULQL87OLrgvk2n1isw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794065412;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=vaEs7wb0G7SPDcuD/cuH33DllgSpImjlQDOyO4ctNjc=;
+	b=TplagyQvho51Z7JzrgHDxH2BfWWbzO5fC9v5EFkL3xQLgI58aSty77XK1kvHpYMLhpn3
+	 kql5OCQVn5hGZ573PJmnqpZHgy6w3RTqRkLRHn5P2+LxZISw7o8sKu6UTuSMAer0dC6oz
+	 Ma3mhG3JdwiAKNnSwOTGxkmg1ALeLf/eeSq4kGC5T3t5K21CChdHrvt0B49oKG5PWrYfq
+	 l4N0fVvSKzBd5seMHcAYygv87OU8WEaE8/11WYYnMQsdBDuYUcmYKTJUpF81w9hIokHJe
+	 JkJJ/Ua8QRLHzJNU+Tu44syLTdmsJ39ocGsTgS8exEM/GSBnYSJE0zZlJF3sDMesE9g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=sang-engineering.com;
-	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=deMBkNlk;
-	arc=none smtp.remote-ip=194.117.254.33
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VKUrCAxH;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30DF606D813
-	for <linux-clk@vger.kernel.org>; Sat,  7 Nov 2026 14:22:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E30DF606D813
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C85606D80C;
+	Sat,  7 Nov 2026 15:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=deMBkNlk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=Zc76
-	TO6qUVRGeeHVXQdMS6eOYrg3MPsFB1Ka1Yvj58U=; b=deMBkNlkuoAHsHcvg+VW
-	/JOGUyDVHLSNz2M2P318rSNR8ihhOn/icNfH112ofFlA9vj9/Cq1/GB2kPS93Y40
-	YF/E/JzExb1+S9I1cstiBzedJlDUnUSkE30QPeWQc507bnuBni0Z3NyRW4Kbgikv
-	A33vNAj4UQjDG+RAKO5HfUR7weMBMBqiqmK0raV2oPWm0SZWyc4pewIm8g0fDZne
-	LkWZdfpDHRtTXcDecdPHMvKhMX5AroogrzfiJHaQZyQZEmMUS5nMy4dWe/94uyCo
-	CxZZl4Q8KqM0Whbjetz1A4x1NAoLWi2ICCJyuUW9bykg7e8j4gzLaz/eOC4I3nFt
-	YQ==
-Received: (qmail 2530674 invoked from network); 7 Nov 2026 15:22:35 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Nov 2026 15:22:35 +0100
-X-UD-Smtp-Session: l3s3148p1@G1+7dbBfHLcFFu4j
-Date: Sat, 7 Nov 2026 16:22:34 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Danila Tikhonov <danila@jiaxyga.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Amit Kucheria <amitk@kernel.org>,
-	Thara Gopinath <thara.gopinath@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alex Elder <elder@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Andy Gross <agross@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Georgi Djakov <djakov@kernel.org>,
-	Loic Poulain <loic.poulain@oss.qualcomm.com>,
-	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-	David Wronek <david@mainlining.org>,
-	Jens Reidel <adrian@mainlining.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
-	linux-scsi@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-hardening@vger.kernel.org,
-	linux@mainlining.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 20/33] dt-bindings: i2c: qcom-cci: Add the SM7150
- compatible
-Message-ID: <au80Kv5YDDtUW2L5@shikoro>
-References: <20250422213137.80366-1-danila@jiaxyga.com>
- <20250422213137.80366-4-danila@jiaxyga.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VKUrCAxH
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30BD41F008A3;
+	Sat,  7 Nov 2026 15:30:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794065411;
+	bh=vaEs7wb0G7SPDcuD/cuH33DllgSpImjlQDOyO4ctNjc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=VKUrCAxH8lbyUb6TJunrAzttSZjk+VI2dNHjkyIyGNU4B726AAilH+Fa3JFi5C90h
+	 PuZrt4ZSri7SSjDCBHAyQbIWJziG+5cSV5MsH/Blyn7mcoQUZxUiDS8JA4bnbsZtgo
+	 i5rpAaN4U+1aW7cgx1zWA4y4o4zBByHEm8Oii4eQFvTyxrp4TOe2rWl5VIKvuyaHdy
+	 RMXCkSmK/Gcb0MTtt1gnRp5qRzkRRshO6UzjyNGVzp3EVZq1bCQrIcEfMck60yytK9
+	 kbV77vLzpttWfvANiiKBmRHgXeGjEbr6MxcbsjCxQGc1sqMd/3Lg0CeN6sBnfo2r6q
+	 iz51vMojvDfDw==
+Message-ID: <ad7b886c-d3fc-419e-b155-3fd39fec900b@kernel.org>
+Date: Sat, 7 Nov 2026 17:29:37 +0200
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -128,18 +51,30 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422213137.80366-4-danila@jiaxyga.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] clk: qcom: Add SM8350 camera clock controller driver
+To: sashiko-reviews@lists.linux.dev
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
+ conor+dt@kernel.org, MSM <linux-arm-msm@vger.kernel.org>
+References: <20261104001704.2744766-1-vz@kernel.org>
+ <20261104001704.2744766-3-vz@kernel.org> <sashiko-outbox-199410@kernel.org>
+From: Vladimir Zapolskiy <vz@kernel.org>
+In-Reply-To: <sashiko-outbox-199410@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 23, 2025 at 12:31:24AM +0300, Danila Tikhonov wrote:
-> Add the SM7150 CCI device string compatible.
-> 
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Acked-by: Andi Shyti <andi.shyti@kernel.org>
+On 11/5/26 18:06, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 2 potential issue(s) to consider:
+> - [Medium] clk: qcom: Lucid 5LPE PLLs in camcc-sm8350 use clk_trion_pll_configure()
 
-Andi already acked this, so I guess qcom tree is fine.
+That's a valid issue, and it requires to make a formal introduction of Lucid 5LPE PLLs.
 
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> - [Medium] clk: qcom: camcc-sm8350: duplicate cam_cc_pll2 parent in cam_cc_parent_data_1
 
+This is also a valid review comment, fortunately this one is easy to fix.
+
+Will prepare v2.
+
+-- 
+Best wishes,
+Vladimir
