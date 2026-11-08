@@ -1,77 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794175500;
-	b=1l4MpaZY9aoSlTqInpp0jyrShIR5VvcAF1a9+WoLLFeMIWMKEUlwZJnX2aZ66aanCLfG
-	 FsY9OvueTbvKyzoUYiE8LsNKZioaqcilOlQ4FXkC5dpRxsMiYKl1u8EdbW4KSEEnf6yr8
-	 /PHETiE76dJVByfZgw2byVXH6t6g64GXIPFYiGpjJi+4YHOK4P4krrz0pAjpZhLL9kaMn
-	 6VrqmninE4HXM8D7g35PVY7wr3fXlKb72SGViklGoYU4dQ5IMzgqyyFWHEcJoFLHwR2wN
-	 vAguKTccVCQp7RDuwvzV2yYrxCDcet54XtX0bOPi60Yi4bfJW1KZznev6cPzffdZ6mw==
+	t=1794179833;
+	b=1TzZiPL1a3lXKiAkI5Uqx6PnwJCayuEBh/0ez5jUYcJZIjR0bv/LwudShj3jgBqwgCqC
+	 tNmcahtROL5eGkBr6Bc6Ih8lHaJCGDva91+VTl9apRKKkj1ELXg5ifhw8ENeEc6g00h0f
+	 LpSZmn+0/BMhqAB5Vtf51Hcpm81MyMTbdnT99QqWNK6VEXYUeOWkMl0fTMKltJZP7fGvV
+	 0rgrVRbOgV1TbBFKmoIfCKnICoxh5X9Wutbeq8ed/fQsJk2js8D/70jpMbJCZcEmpngVY
+	 c+EfjHVjmyV/f8DIbENzAumTzSdHF0xqK89ndx1Qqm91sVjI1djXdTMvkFdTeSeAceQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794175500;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=H/CcamKTQfMjaSJiajoERENx/3ROWxMLBiv4UmCbwv0=;
-	b=SUgNxYsdIRLLrklhqNX1N8EhI/pQTMByH5fO+IxYH2JvBwrauZgX7+2JXBWbLIx2naDh
-	 3WlvFSGWoNnsu6Fw1dEohtvRM9n8juD885myifmaFfH/S/OekSovjwBsIreeO03MYcmzi
-	 QqBsXnTJ42m7OEsIJ+aXmlK28DLl7to7holCei9LftdwnASRjUW8OnT9LDmKUDrnHeFJP
-	 /dUDMU/sw7dwWXOhVt+VgwWEIr3oZk5gAfYSbrowhVlYsM3YhD5G5EzELhNQbpls+BSk4
-	 Z7cUs6PzscBZwWZEE5kb99radStWeju1H2Dbu8m5yFLnOO1nP8ShNe6bUoRk+dcoOPg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794179833;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=C2reihoSd8+x5X3GrAOxEQiq3mx4R4XS9zazh7fb3Us=;
+	b=iKjVfM/fO1m1z3hgJTNXSaD8i2UT8rqYQDCz05zIYJ2g22Gszsx8zCQARBVEuWaBWkW5
+	 kEyaLq/UxuX23tiLYQRGBz7CaXJv/rGqXWSRMdKEqeTcU3jD3gh+UIe8jNGCiHAeRNWYP
+	 +zPpeMLCp6fv8ApV0p0H10d063PXvKTCwlPDrSlMJ1/0lrMcxmZ+L3AIjaSZgX+ijXUGQ
+	 WCejvaSzkj75Xel/KcYDN+y/KJ/Wc40BP+ZuGrbN/uODF9/3bAAw7XEZjppHHA+6q9c70
+	 UwefYwOdyadkEWchRVFkIEnr6QXj0q+OFnAzCstfsRuBXLXrf2oaFgxHd20VuSCU50g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=telaak.dev;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.215.179
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jpGUSey5;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C7F606A325
-	for <linux-clk@vger.kernel.org>; Sun,  8 Nov 2026 22:05:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 47C7F606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=telaak.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-cdb681de50eso59880a12.2
-        for <linux-clk@vger.kernel.org>; Sun, 08 Nov 2026 14:05:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794175500; x=1794780300;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=H/CcamKTQfMjaSJiajoERENx/3ROWxMLBiv4UmCbwv0=;
-        b=1h/78SFiAzFNd21c1rOc3RWMEmFnTc8/W0m75D/gdxf3WmifY9X1OFc5SnrbPuk00e
-         4PKgZOiX5ffTuNehYWGqFPOSbjG5d/A1Ubh3PZifN9GQvPJfYXVgrdYDadNMCqsNr4iz
-         gBJqkXpdgeBEacDL3vw+bMuqfZ/ircH9YgDKuciW7yB0sX1cF8POB5vPKmO969U5lyqU
-         FgN6KvuPuHpgXJwqPHvD4f9VDUSvTdkL0aMMzS4fxN9Vw1d6VKojaZgMyII0gJtfiaKQ
-         UaoRcl7+S5XW3BVPlBfXe+Sen4TppuplHAujQJl33dEtxLTk/dMqNX6Y9CbiGBlvEQBm
-         c1AA==
-X-Forwarded-Encrypted: i=1; AL+hErGSQkHs30eTtl6J87NaDEkjMtnaD9BtOG7glE4JwuCfvjf6+q3WmpUEEgg67V1umXsgztVOjnhMBUQ=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8P7/rPwR/sR4CBUTawaaG/yFfCSHoWihmsSmKhTjgBy8r0zj9t
-	2z/JryofgHA1Df4jvS/BxFXHasmL3miSyu0+ytM1rKDTj+2ZwjkRSng3KK8D9P6o
-X-Gm-Gg: AYBFou1AF5unyDD7byVklczBJv5ARLqrAP9y3zLx3TzUnKEfDr8FCqpmNnMFjZaQTwz
-	ouCZFaHcvHxRTn5HWDnAS/WO+eCprYZimEkYPbY4iCsEdylMWbPcOx+TBXOvu5WB3EMtt+ZY+oQ
-	lNBPPE2xIciAVbUdin1Wt6VBxD17nkNGoJIFA0QEFiy2h0dzr4iLAZbEmEJitMtqvbfpYYDTdl6
-	P7OPCndODXSpyJRucPTyK8EKJKdFK3XH4yhYfsr69vpkngEjWMidYyvax6hPp6JzlalGTho4ji0
-	KKGzycljJ/Ww+tj1i6ZwA3siPN0bMpUrmtoUA8czaA8kSgKVdz1SRLiOswtborp2dEOWEBf0WMU
-	xhXaoGdkmAi1L06or4mTx3yUACzmrqnageXCIcVixxbdG+jkegMOQUebQ9Mru3wqY3nhWjSkx1Q
-	Tj6DZR5S5xD1/OsRMQBPg4VIzCUyIThJYHxMwJX+IcwhK14T07yqRPwKl0PcfJo95/122+Rbtfs
-	4sAIsKzGifQJX2jUGoCeDl9vzY32bRgS9ItiBLxA4SgVUgMzNf9njyC/2oWbtzpPueLqxdNxRi3
-	IUxWH/OvrcsC7vL37jvrXwPqqhUhVRwBEt64YMOrEsNDFXDZGhXGUE+YB9FKWWdJbYmGvnrUs93
-	OElLqD62VuzAlUuilERS2JIKZiPtqKiRkIyEkCQqI5Cq0WhE17fTzsgZYTRuBZohv
-X-Received: by 2002:a17:90b:4c08:b0:3b0:da22:db62 with SMTP id 98e67ed59e1d1-3b12d560a27mr2162725a91.61.1794175499562;
-        Sun, 08 Nov 2026 14:04:59 -0800 (PST)
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com. [74.125.82.171])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1058d2faesm8648794a91.14.2026.11.08.14.04.57
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Nov 2026 14:04:58 -0800 (PST)
-Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-3720addb068so441597eec.1
-        for <linux-clk@vger.kernel.org>; Sun, 08 Nov 2026 14:04:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErF3L6sJeaDH5eC2+ts6/Q9s0XuMW2AsM4+jRwCgWeyzpbTtmooO4g9pAAjoijHaHDqC/09sbzljS9g=@vger.kernel.org
-X-Received: by 2002:a05:7301:9f03:b0:370:cc56:b61a with SMTP id
- 5a478bee46e88-37258c2acefmr5845036eec.39.1794175497365; Sun, 08 Nov 2026
- 14:04:57 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B17F606A31C;
+	Sun,  8 Nov 2026 23:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jpGUSey5
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC3A21F0089F;
+	Sun,  8 Nov 2026 23:17:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794179833;
+	bh=C2reihoSd8+x5X3GrAOxEQiq3mx4R4XS9zazh7fb3Us=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=jpGUSey5vvxY92S+HSf4OjpfJZrKayxou0qil8Xw8HI0KUYAGMdJ8qvI5skRIcVqJ
+	 V5OeCHHEYJ3Vf7jlLwQ00IKnbUyWU+PCNZ5C14m/P6TfbC4CerkGeqUBMWvt/9CSU3
+	 vOzZ1fPI7/x4s7fTfR07RFmFucr1tUU/gKar+9Xx92BCNdmPpYjJV2UMvcEC5enA99
+	 Jx1lPLuRKGwGKwbC2/W88g1DCeh6wsi5yzGUV/QN8NRyP61gx6Tuvw15s+PLAYb0jk
+	 qoWrt82mORcGdsnMmq+Iuo9quSFeAd3RLRtXGLGwClBr0T9S2hIDA3ZcbAEC6UE+kw
+	 AHaXbFVtg0DeA==
+Date: Sun, 8 Nov 2026 23:17:07 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Carlo Caione <ccaione@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Jian Hu <jian.hu@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 6/7] dt-bindings: clock: Add Amlogic S7 peripherals clock
+ controller
+Message-ID: <20261108-resurrect-mumbo-10daa7ac0cf0@spud>
+References: <20261106-upstream-s7-clk-v1-0-7d501d62621f@baylibre.com>
+ <20261106-upstream-s7-clk-v1-6-7d501d62621f@baylibre.com>
+ <20261106-unwilling-preoccupy-156dbb310448@spud>
+ <au4p0xYEFkgEU6T4@macbook>
+ <20261106-headband-buckwheat-fecbd459ee85@spud>
+ <au5RoF6BooP14xhY@macbook>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -81,33 +73,84 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261104-sf19a2890-sysm-v1-0-a4fac07df823@telaak.dev>
- <20261104-sf19a2890-sysm-v1-4-a4fac07df823@telaak.dev> <au4Hc7LAXH-ujDPj@monoceros>
-In-Reply-To: <au4Hc7LAXH-ujDPj@monoceros>
-From: Joseph Telaak <joseph@telaak.dev>
-Date: Sun, 8 Nov 2026 17:04:45 -0500
-X-Gmail-Original-Message-ID: <CAPY4CJ6PzrCkNuHEib8WrYoYw3eeUuK6rCeBYPQg+iPzbVEECQ@mail.gmail.com>
-X-Gm-Features: AclHuK94cu5PMN_CR3MHF5B50stfHn_PtAIMtZ8wHEf1hN8qZJlhM6zrg1Ysdd0
-Message-ID: <CAPY4CJ6PzrCkNuHEib8WrYoYw3eeUuK6rCeBYPQg+iPzbVEECQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] clk: siflower: Add SF19A2890 peripheral clock and
- reset manager driver
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Chuanhong Guo <gch981213@gmail.com>, Yao Zi <me@ziyao.cc>, 
-	linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hSqhUowhvI7bmoOF"
+Content-Disposition: inline
+In-Reply-To: <au5RoF6BooP14xhY@macbook>
 
-> Please don't use <linux/mod_devicetable.h>. <linux/platform_device.h> is
-> good enough to provide of_device_id already. If you insist on full iwyu,
-> please use <linux/device-id/of.h> instead.
+--hSqhUowhvI7bmoOF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v2 includes <linux/device-id/of.h> instead.
+On Fri, Nov 06, 2026 at 11:27:38PM +0100, Carlo Caione wrote:
+> On Fri, Nov 06, 2026 at 20:48:01 +0100, Conor Dooley wrote:
+> > On Fri, Nov 06, 2026 at 08:34:37PM +0100, Carlo Caione wrote:
+> > > On Fri, Nov 06, 2026 at 17:34:14 +0100, Conor Dooley wrote:
+> > >=20
+> > > > > +    #include <dt-bindings/clock/amlogic,s7-pll-clkc.h>
+> > > > > +    #include <dt-bindings/clock/amlogic,s7-scmi-clkc.h>
+> > > > > +
+> > > > > +    soc {
+> > > > > +        #address-cells =3D <2>;
+> > > > > +        #size-cells =3D <2>;
+> > > > > +
+> > > > > +        clock-controller@0 {
+> > > > > +            compatible =3D "amlogic,s7-peripherals-clkc";
+> > > > > +            reg =3D <0x0 0x0 0x0 0x49c>;
+> > > >=20
+> > > > What's with the weird numbers in this example?
+> > > >=20
+> > > > Examples don't have to be real, but when it looks like this the
+> > > > immediate thought is that the modelling of the device might be
+> > > > incorrec.t
+> > >=20
+> > > The numbers are actually real, but the example simply lost their cont=
+ext
+> > > because I copied the node from the S7 dtsi (not yet submitted), where
+> > > the controller sits under the APB bus node (bus@fe000000) and the bus
+> > > ranges make the addresses relative to it.
+> > >=20
+> > > 		apb: bus@fe000000 {
+> > > 			compatible =3D "simple-bus";
+> > > 			reg =3D <0x0 0xfe000000 0x0 0x480000>;
+> > > 			#address-cells =3D <2>;
+> > > 			#size-cells =3D <2>;
+> > > 			ranges =3D <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
+> > >=20
+> > > 			clkc_periphs: clock-controller@0 {
+> > > 				compatible =3D "amlogic,s7-peripherals-clkc";
+> > > 				reg =3D <0x0 0x0 0x0 0x49c>;
+> > > 				#clock-cells =3D <1>;
+> > > 				...
+> > >=20
+> > > In V2 I'll use an absolute address for the sake of clarity (PLL has t=
+he
+> > > same issue).
+> >=20
+> > Before you do that, can you please share with me the s7 dtsi? Cos surely
+> > you've got it in some git repo online somewhere.
+>=20
+> The S7 dtsi is already upstream at [0], the peripheral clock controller
+> and PLL will be enabled in that DTSI with a following series after the
+> bindings and the drivers in this set are acked, following the diffs that
+> will be submitted:
 
-> Please drop the trailing , after the list terminator.
+Right. The device does seem to have nodes of odd sizes and start
+addresses, so this at least is not making anything worse.
 
-Will do in v2, and in the gpio driver, which has the same.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-Thanks for the review.
+--hSqhUowhvI7bmoOF
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCavEC8wAKCRB4tDGHoIJi
+0kSzAP9D+07DueUyQidEmOTviYikdTVwB4OjYhIW3eDHUkvnNAEAw27P7rZuFiZP
+JlFXjpIzLkFe/xvXdJ5/TibIL+soSAc=
+=F15I
+-----END PGP SIGNATURE-----
+
+--hSqhUowhvI7bmoOF--
