@@ -1,114 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794138479;
-	b=hZ3/d5u1owkR8WfpGeJctZfbDxsXlAF1hdqlFf4rRjhWdwNR35K8/QkMsUIxVLOk2FW3
-	 sBdJd4t617ovbgJIOvF5Cq8wCoIlTJjmilthOuIMbs9wkTOxACTZTfkLv6P/6ZIN/IP14
-	 iUBlHhqwAoUxbF8xcdS3/kigtGDavNxqoz92VkrfdGRy3JG3Q7JTrKD8pK/ApbU6QzRAC
-	 HDsViIWdFW+1r4JjQfyAlGsf/3yB6XMQ5rdJZANXuGFOfWedBpyCmZloac71uPdGPaLNv
-	 bLFbJocHxGiwc00m9qXAIXhThn1wkRJqJdvAVNdmx3jA+mqlUY+kXbCNfjoGAsDKfnQ==
+	t=1794153495;
+	b=m9x5kP+m3rRlZaxIl2QEFkaPSyO7x/Q3Em0+EDiCHGnXsvlbepcdbQOK+pP3xZBlhGKo
+	 wFFjzQzKAYN89vRLvJYLC/ZYbxp9t+oKs27WQp7qE4lUKISEUNaVQ7HI7y0jA83R9yG91
+	 SE2vixT63gXoWaXmSmApiYoRljaA+WuraykdoM+HiqX4eqdFSTsHcLPK/4YfDxCGyY3sY
+	 iPsdufKxvjFPgHDJARfG79XEi+Wi+P8f8QMUGKx9WlUd4NotZCd5a3MgpBIO5Nn31J3P8
+	 vFekLRon3eVC1bOqfMkhyv24/ECa1R871zLDkQURkVZxnN2PzUnyQBvo6GbSjb4mRtQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794138479;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794153495;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=j5HSt05fL/4yBExZjOaP02A8KU6P3r+1mP1SAucS31o=;
-	b=K4oKrxhJGXjhMpzXUms1aIkNs3OSHsIENZd1jNn8cIa75EHExveLChMG/gizvHukzBQO
-	 5+gCOuWQ93rL7Al0V6UawAk9kV+7LAoUpB4VoOKlnmwJ3JAGBjtVGtRhIHgS1aEgnfcRw
-	 38MYYNfakXFt0ueQVfHf3OKBzIdlyoHPKse4XRuJ6Zj+ENz3OuGR02tSCG2RiS41qxcMv
-	 Od8K04QTPt4tnK44TiLZnMCdAATQ290MsnvZDgUeVCoPH00bC+IKlrdoSTbhVryqNJCYb
-	 1OAyKqU3jq/QJLbKLKIKudu0FGSUBc4BqqD7sKJTA/2c7PsnfVBH0oSytJlLnGSrE0Q==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=Z65ViVZ7QDcN9aUeeQCDhAMdMHiR8hItUu4lI1V7+r4=;
+	b=HsE/rTW2WIolSkyX98qD9qLPZij2iGZVJqnMRvr0D99TkoKug13Jvv1iJa9G0YYgevXQ
+	 woaLUVRGLMjFBouoXSJ1E902geSejftAfHL0bV9oVVF0fyJJpbrbvpSc3vhN+2haGMn3k
+	 RwBKR6/DcXAHGSFkPBzcRKatiZooV8N/JXzh9Q5FhLVIKJPXavmuU2pFIJoRcfT37xdq8
+	 4n3mQTnQUDwdDeu+WHVp0WH/T7BdcWOvu2nd4/jbZh/IraDyCnrPSJ2nMuU4CCWWrIs6o
+	 ZqwGqk4s9q/d0+S6GgLVz0cQYTq6jETxAD4fgpq7oUVIr5iullhuHROzZnp0WoYopxg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bairaktaris.de;
-	spf=pass smtp.mailfrom=bairaktaris.de;
-	dkim=pass header.d=bairaktaris.de header.i=@bairaktaris.de header.a=rsa-sha256 header.s=google header.b=efT2ubql;
-	arc=none smtp.remote-ip=209.85.218.44
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="0zi2/68F";
+	arc=none smtp.remote-ip=209.85.221.53
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2E0606D80D
-	for <linux-clk@vger.kernel.org>; Sun,  8 Nov 2026 11:47:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4B2E0606D80D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bairaktaris.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bairaktaris.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47840606A320
+	for <linux-clk@vger.kernel.org>; Sun,  8 Nov 2026 15:58:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 47840606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bairaktaris.de header.i=@bairaktaris.de header.a=rsa-sha256 header.s=google header.b=efT2ubql
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c49c32650adso6759366b.0
-        for <linux-clk@vger.kernel.org>; Sun, 08 Nov 2026 03:47:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=0zi2/68F
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-492f563d1c6so25183f8f.3
+        for <linux-clk@vger.kernel.org>; Sun, 08 Nov 2026 07:58:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bairaktaris.de; s=google; t=1794138464; x=1794743264; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=j5HSt05fL/4yBExZjOaP02A8KU6P3r+1mP1SAucS31o=;
-        b=efT2ubqlja0XxO/Em3E+kXD0/D0HEcJucdlAdSpR7OX8FUXvVR5wE7ncHvg+5rUZ+S
-         JhtWb6OAHvzz2GDO8f0f2Idz6qFPo5BV98785hXrFsPZGzzV+R+VrDlmtClDJHIsGW4e
-         4nORQjeKFQPUMCrN7Hz5pCnhwp1G4BbY5KqhPnnZx8YoUXfmp6o2Vxbzan134QaaFWkA
-         R+yXwEqWlv/sdPBOQud39jaVJ447Nw4F3ZN9vGffDt8lZqSZKcSrU5jgoFECHpY1t7Vx
-         RlRIb/VrwN2zybiNGohTXcsxMbKFIfk+4W9nVGtUy5e4haTMbU6jwAOw6NQjKBGb2vfi
-         TiFw==
+        d=gmail.com; s=20260707; t=1794153493; x=1794758293; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Z65ViVZ7QDcN9aUeeQCDhAMdMHiR8hItUu4lI1V7+r4=;
+        b=0zi2/68FnBZlkcVJrAG/c0gRwTiWBeRxILx9yNyrlpojMDY8igrViAUxTddq9gI+7Y
+         8KqNcmYbo8kc/oI+DwBimU5x7R/vhFIqGCOAdxv4UTMEQMyYoPpewVCqifrFbeOMU5cf
+         9olBo2JTQivIBw4n9UFIFIujhySNkPywO8c9ojjzwyoMq+Tn6RVbKvuy3SqK/GPKsclS
+         iMjBvEW/uOr21oZqJpGSkYKQmWAOkBbc1FwyfRLM9k+50xFjrBHwy4xpIX/cG63Yluw2
+         nY5WSN1lr7UW3LqOz8RhTYobJB3yFiEafiWmR1B4Kdahp42l7Yi0H8NW38EQlfil57Dw
+         Q+5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794138464; x=1794743264;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=j5HSt05fL/4yBExZjOaP02A8KU6P3r+1mP1SAucS31o=;
-        b=nLVkCCeZ0tQ2spv1asHVQGklOLBoLxhYWPA8JsWz0F8pyFbbwQoVeyLMkY8pjfN570
-         OPykRYvPovfC7t19neH9J/N+kR/6Vv1qvB/3EqnAUP/je/1jfrNkvK52McejL3IiuKmA
-         OA7o1RDxB2cWp3+GQ/AfLf2YXAemGn7rdl7mZIfpK9Chggyw0+pjxhhFFq6Jlas+O9vD
-         5NZiRK41G1C+ZBeBbRlm2PvDHmtz+QNDPuHKOymu9YxCYVtWKNdtVg8RjPO99iZES6da
-         qsisIlRgZ42JqiNl24M7pnxDIoCw46c5zUlyFY3jSWOMBoZcWdSsRooz+DL1EQlh7TNv
-         uvlw==
-X-Forwarded-Encrypted: i=1; AL+hErFX0mQTL9uIi1yjShtHK6Z4mY5kn6RaT1SWsoAxHY04iXo/5JrAR2pkEJDL/YjYx2XncB4DDWj2LAw=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/0Iyx9CKIrus/kWTyMQ95tRpSeXS5TcycU4b0mdCzcT86BvXIr
-	cGAGtpwR+Q3WxDhnpfP1t9lFhWs7FD494i8UjWHKh1tReYu4n+lJGyEtd1U/E2i4TA==
-X-Gm-Gg: AYBFou3zJMROzkVD6tQMcIGL7wrt88D2F4kKV/Zw3HEAqRKDPWqtgQOsM2C81larT4/
-	TNA8Z/U03ZJR1CuYaYwmSed9HG7ZmgC6m8jOpD1RiSJTlmoNW1kvTVJujs2eirnlEhPmDsOTG5q
-	ceWubyah8+NoBlVTDnJerE0Hxp6BwDgsSwFCQ/v8QC8phXtHcYiULlhLsRjaim5zlWlaGPh4mTU
-	pffq+qYZs4i2ORzAPCFq0idxn7/mGBeHSTBIcfOldTaAO7sr7b1sHwTNs/S2FkYkSuHx4trZvNh
-	UdpBYfyNkYa05sva43H2m2/Z6+B44cFmk+XCYQ0sruYSZKxX4BTbh8NdrJPNHA/lKwCN7mkDQpY
-	rvr8/WMqIiulnKjKoscRQ7cDDoDOCFk5zQEDaQqVTPXyd8Kz8GQ73l5j161YeXIvRxUrv57MpoZ
-	I+XdHbqZ13Rkn9HtT/xdXfn8zrkdHyg7x/+XHROgdJmSIeyEmu73qE7GYcJq1JIXPgNQZ5BKL0n
-	dfzpNy1H5jmYYC8/y/XG/kwSf6N8lxJh1CmiBy8WtorZ3F7F5QmEjJompuELTqV12DxvNKmS+Lg
-	e40Bza5ABaIWLGv6JoCkOupuiY3ZZczkyKM9xr+ctzo8e7JIPZ5pX5gTssTrc9OzzxMJd6UXcyH
-	/XzJlEsG2IajnESFrGejVsVVjLjRVtfvmcYrEU8vQd645vnr08P7IGgrn8sH+GnfBq1J6w4haoi
-	I6P36lcSPEw9enAc6tG/MwzWNDsvNbST/fbMEj5F7hip4aGz4IGEc9kSvoToMqZpP+oMnMQIa53
-	ugwQCCjoBdDq2V6aI/EC6eqZlpFzGHyPWkO9Wjm3PAudFQQtWYfn8VPrRgXCdkbFMSjEEPuwEsu
-	+N15EO+CWg/NjhDZPg==
-X-Received: by 2002:a17:907:ea8a:b0:c45:d8aa:6ae5 with SMTP id a640c23a62f3a-c4d6d7ecd22mr95115566b.42.1794138463689;
-        Sun, 08 Nov 2026 03:47:43 -0800 (PST)
-Received: from Desktop (p54afff19.dip0.t-ipconnect.de. [84.175.255.25])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4d6a4751desm55022466b.43.2026.11.08.03.47.42
+        d=1e100.net; s=20260707; t=1794153493; x=1794758293;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Z65ViVZ7QDcN9aUeeQCDhAMdMHiR8hItUu4lI1V7+r4=;
+        b=0E6NiC0/dRJQaCmUsLOjz/9G4/Jj1CPQUfbX2hkfqBUCbiH180rKM4go/zDjlENemC
+         7/nDOol7Rn3nRZHFIHduejLMQvPAgAwdVzwFXL45diwM9C39alPwU4Dht3t/td8g+OqD
+         3TXDo5Zqassdr053zntZwS8tgUX6sK5PdiM8LTCA9M9uDivpVSdQaMDL0POhZ+J2UrMO
+         a89vJs2Mj9+yAPysLs7LFhgcesbz2+32zn1web6LLTEqmW0c54TmOZGvD44VEfdDkSLn
+         1JqzwV9TliGL58E0r2utsNuBKS1D6CygQEBgskibTS63r2+p2dalvyt9syDgyxC5dkZP
+         nT1Q==
+X-Forwarded-Encrypted: i=1; AL+hErHOfubporOs5+COIazg6ZkS9leIlmNAnAx/+4AkE6/04g4IxzjjrHS8Cr+xrdBfICiSMvOY/dfLOlI=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+29aTor0SlnXpyQRZAB5v3lwWxqguUYW6luGHVyzwn+lXSxVl6
+	3MATdEFJu3OBuJ2UNBjjEWnOVDOohCc7P8Gk5gbdEa+/BkmCTP5G356E
+X-Gm-Gg: AYBFou0JxCw3FBj1jyOLC+XgblP/edhoy+5K1SkDBzsgkfecJOciu/5IbgY7RyJjauP
+	l1nxaN+lNmSeKWpk0+0rsqVWzbtp7wK+/r/ezIEwZBH/aJAcouB2+5cQvXsDDuAn5cq8b6Baxaw
+	SYeUdw+J7wO1iIOJmdGmTHz61rN8lv1jVdxbC1moF/NSPEt69IrvcZV95LtepaZBjHWQdo8375A
+	YQQ7mVTiR8c5wubBTdJvlGpNi47HUlSRUOGaahNeVpolz6hTGQezLJH1qVjR1VGzN1BycIBKzK1
+	jaOAlMl/lO3xvMjQjl29+l1YcwzVCROePwplt6qSqvf6alkqRuSw12Ty9XLPiJGl+jZByyV5qbc
+	M422fH1kQrw3BpUX8SvxO8qXyTA4fulwMvwE1PPiTANtakExaqCWMOOdMGY/tixypEhECvzJfj/
+	ZYPRzQna/dnnqJYAHUHBCjci2pzbZ+NT0FSHOQg/YpmGWXHF4Z30fGQFs0gZECESEuTQ+l2bj8r
+	OcWRKcFAqETNuEadsiEW9fQqopnhkY9tcfPEFSVSr+7KZ2hBNt9dBneclsujz1qF5UyT3S3eLZk
+	dMftaTe/zZWkfIYjuTdCJvOFWype0zJFb/WqECWQe3fCPblJPv1FWAHXItCLTQM95pH/UykpBKZ
+	yeCxMjRHQDA==
+X-Received: by 2002:a05:6000:2303:b0:491:ef0a:1f5d with SMTP id ffacd0b85a97d-4958530ca7amr4049074f8f.39.1794153492539;
+        Sun, 08 Nov 2026 07:58:12 -0800 (PST)
+Received: from debian (ip-78-137-176-146.broadband.digiweb.ie. [78.137.176.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-495966f316esm4753282f8f.17.2026.11.08.07.58.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Nov 2026 03:47:43 -0800 (PST)
-From: Julius Bairaktaris <julius@bairaktaris.de>
-To: robimarko@gmail.com
-Cc: andersson@kernel.org,
-	abelvesa@kernel.org,
-	sboyd@kernel.org,
-	bmasney+clk@redhat.com,
-	jbrunet+clk@baylibre.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	konradybcio@kernel.org,
-	taniya.das@oss.qualcomm.com,
-	ansuelsmth@gmail.com,
-	john@phrozen.org,
-	konrad.dybcio@oss.qualcomm.com,
-	abel.vesa@oss.qualcomm.com,
-	krzk@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+        Sun, 08 Nov 2026 07:58:12 -0800 (PST)
+From: Pablo Mazzini <pmazzini@gmail.com>
+To: Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: Pablo Mazzini <pmazzini@gmail.com>,
+	Andre Przywara <andre.przywara@arm.com>,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] arm64: dts: qcom: ipq8074: Add CMN PLL
-Date: Sun,  8 Nov 2026 12:47:44 +0100
-Message-ID: <20261108114744.125675-1-julius@bairaktaris.de>
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@lists.linux.dev
+Subject: [PATCH 0/3] clk: sunxi-ng: describe CCUs as tables, add the Allwinner B288
+Date: Sun,  8 Nov 2026 15:56:58 +0000
+Message-ID: <20261108155702.361022-1-pmazzini@gmail.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261026120920.1667982-4-robimarko@gmail.com>
-References: <20261026120920.1667982-1-robimarko@gmail.com> <20261026120920.1667982-4-robimarko@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -120,17 +104,44 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-(Resent with the lists on Cc; the first copy went to the To:
-address only.)
+sunxi-ng drivers describe each clock as a static structure, list it
+twice (ccu_clks and hw_clks) and keep a separate reset table. This adds
+a table front end: a SoC lists its clocks once, indexed by their binding
+clock ID, and the core builds the usual ccu_* clocks from that table.
+Bus resets come from the gate entries, and clocks that a SoC generation
+shares come from templates. Existing drivers and bindings are not
+affected.
 
-On Mon, Oct 26, 2026 at 13:08:15 +0100, Robert Marko wrote:
-> CMN PLL provides bias_pll_cc and bias_pll_nss_noc to GCC.
->
-> Signed-off-by: Robert Marko <robimarko@gmail.com>
+The first user is the B288. Its driver is 212 lines here, against 749
+in the current style.
 
-Tested-by: Julius Bairaktaris <julius@bairaktaris.de> # Xiaomi AX3600 (IPQ8074)
+This replaces patches 01 and 02 of the B288 series v4:
+https://lore.kernel.org/r/20261012100816.331033-1-pmazzini@gmail.com
 
-On OpenWrt with Linux 6.18: the NSS NoC clocks run at 461.5 MHz from
-bias_pll_nss_noc_clk and the PPE and EDMA clocks at 300 MHz from
-bias_pll_cc_clk, with no orphan clocks or probe deferrals, and the
-EDMA has been forwarding WAN and LAN traffic for 20 hours.
+Pablo Mazzini (3):
+  dt-bindings: clock: sun4i-a10-ccu: add Allwinner B288
+  clk: sunxi-ng: add a table front end
+  clk: sunxi-ng: add Allwinner B288 CCU driver
+
+ .../clock/allwinner,sun4i-a10-ccu.yaml        |   1 +
+ drivers/clk/sunxi-ng/Kconfig                  |   5 +
+ drivers/clk/sunxi-ng/Makefile                 |   2 +
+ drivers/clk/sunxi-ng/ccu-sun8i-b288.c         | 212 ++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-b288.h         |  11 +
+ drivers/clk/sunxi-ng/ccu_table.c              | 510 ++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_table.h              | 233 ++++++++
+ include/dt-bindings/clock/sun8i-b288-ccu.h    |  82 +++
+ include/dt-bindings/reset/sun8i-b288-ccu.h    |  45 ++
+ 9 files changed, 1101 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-b288.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-b288.h
+ create mode 100644 drivers/clk/sunxi-ng/ccu_table.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_table.h
+ create mode 100644 include/dt-bindings/clock/sun8i-b288-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-b288-ccu.h
+
+
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+-- 
+2.52.0
+
