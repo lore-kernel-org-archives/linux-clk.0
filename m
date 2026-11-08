@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794169497;
-	b=rg60ZLHDNFaWwhF7kl0UaY+cq4oeRuHoFXBA5sOuqsMT9R73M3UgIoVD1/JhRFNxDToN
-	 niHs5zcitR9veHIp/qPQgdfZn2ODJiuvCVT/AgS02/+KqYaCSOWcBelaxQ1rG4/SA7pMl
-	 Hqqq3M1q/Rp+z8c6lmEPWJeV9cz1IPyqr0yevZwCEYr9jpC+i2e7GJyal3IxjWyel7Xna
-	 VOi8frkqmrHKsNQ44bky2ixN76rzQrJpe85rOGc0dAI217TxPRXqAPT4OYjMK6P86c6hw
-	 LiFGuXTOp+QRsfu4rENnqCjH1kh3EiVGDKEdSYlFXIaDKx8qPFWqcYHW8D4qqGmFjGg==
+	t=1794169499;
+	b=HkgcudmZVoLx+7AHhQJ0fckkZYgg6MbKHjwpEyIsazSOgNCUchi+tqMysFH6Tfl/1C9/
+	 ixO0Feufmj1+rUy4VYmEHq5RzSN+T22vl8bwcghnM9oXZFKcDXzSrVAPtn2UirGCi7KNq
+	 Llmy4BAnwWxFcOSOYncKADWSJo9qtKEkx1c0j3yOkIwTpILnN5L1xGvpBmaTnoFxKyXaO
+	 unLiM0YZMgFXmDYaMboHGwzhvCWqLq99V1qPSBXzUDVHYKt4LvCQLHeWp0h5HHFjpz+r0
+	 NYXJI4YGABKSwMYHyI2UINGdsxs4LXJEj8tGoqzklun+wUa5CPjzfxneTjRm93Y3FGQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794169497;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794169499;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=SeFUowNQ0nozaEIHfSfyI4+heOEpEkVwO2iJYeXPgfI=;
-	b=v20ZfrGkL1cKpDx49rDsPa6SM2n0Kl+EqOZBwDDc8o8NmJbizO0DW4AREwAcCkLnP9ku
-	 hsjvZ4GHoYIQLAOW/OwW3xC/RmKfPqMIBp3840AO9ti//3HvMwhNlBMawVARNY1h18b8Y
-	 svPH7P7tcIDD4QuIZCiZGnmL9x0QPM3IXA7hrnNQmIz+PcO96iVU/OHE0bio701kevsPl
-	 lbBUUz+tG0cq61AtZaO1qpGAu6lAD98nXzhFL7V0GkUVO8La6hC5+xm5SWnLvTLuK4pLF
-	 pA2DtU4tNfd+3flc3aA9UkJYXr5BVQdumKMw5nLpe19/LY9fy+pLP3y/KHlI4iIt5ww==
+	bh=lP8mpE85HDMBXvaAb9Nalc0HVWoFE0TAbp5Y6y9tAU4=;
+	b=UA5XhavL+XY8CMKHmN6wv7BmAi7USekvZO3dtGXE5zYjevrM/TKqebjtQCrRnuSzMl98
+	 RLWEMSGiBS/anC6w92+iVp5FA+L5stwS4SzzYwT9PVkXbCk8LgXR/H6QixYdJJM1X3G5A
+	 QfVe7W7uSQ0z6hFLn8uS1xNkE8err68Xj1U/j8b+97PK/5FOUYbGrgWi5SV6soiDLReaI
+	 pLpHm0kMOA1GrTnik/SGdRrcKF8lwlm8S0eVM8qbRHIrr0jtLMD067m+QrXSTZTxnPQE4
+	 3yLXbInaayZT1jh1JFj6eGm88I+LvpuyvZFHObPsPD9zvp0JinIRf5d+MI+AZZg9zgA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Id2E9wE0;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RRwttH+W;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5820E6080C57;
-	Sun,  8 Nov 2026 20:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7CE6080C6A;
+	Sun,  8 Nov 2026 20:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Id2E9wE0
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E566E1F0089F;
-	Sun,  8 Nov 2026 20:24:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RRwttH+W
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 770F11F008BC;
+	Sun,  8 Nov 2026 20:24:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794169497;
-	bh=SeFUowNQ0nozaEIHfSfyI4+heOEpEkVwO2iJYeXPgfI=;
+	s=k20260515; t=1794169498;
+	bh=lP8mpE85HDMBXvaAb9Nalc0HVWoFE0TAbp5Y6y9tAU4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Id2E9wE0aO7F9kZWfTaMbE8HoWi4ZjcTd3xwUA6IG6Vx9LEiD21ryCsVSTCLmMVpk
-	 T/O9HEgakRgrCFphFdWdoWHnNtmFi6S/0d4oWCCloiICYq2OLK+Hck/uG1vaXyVhsu
-	 IlPDfB2nEPfsv6+tVjADOFZEPOnTqFjqGR0SSI+YHtsCFbFyiKQ8FHHKA2N6aOwVUL
-	 zl+txy72IQ74+8BGNRsbn+ObdT8U2TjVfEIuTYbHkxJwef/QQQyo8VWkG7swE27dIj
-	 sPR6Az/FyNA6DF1gJj5jUOPmVpWwx3WnucKbFD6QtzbEuGKv67f6Cf4xePV0SjVVY1
-	 KbJbgh0+TfQPw==
+	b=RRwttH+Wy2M4oHexM4VJghUlWsJEEoEPLl1Mxz9s9kvRho+QuPHjA3b9RVzyPZp/b
+	 6VRgyUIc4739N2mWDDeTlGLiJJkbLsky8fF36wd4T05aQtpssI4NFDgWAu/SX4mTIP
+	 Hi2OofPG9FOlEQMHuj0hYd3hWAWbGjDh3FIZ4d/L1AaAaIZpT3rLadnmsLiCHXMgb3
+	 +JV8/yp5pXkPonFWAsnRqUTgJUTJSRNeBtsiJWOhNHO5VDwrck19fLAgxTN0fXrY0S
+	 0LV3CxMp2l4ruvcT4eF+gvqxHY9gc5F3ECpoua3y2yLlZZy50i/33UTnbTPI3uSKxm
+	 o0Ra9DKjUGiKg==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Abel Vesa <abelvesa@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -51,16 +51,16 @@ To: Abel Vesa <abelvesa@kernel.org>,
 Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
 	Imran Shaik <imran.shaik@oss.qualcomm.com>,
 	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	Shawn Guo <shengchao.guo@oss.qualcomm.com>,
+	Qiang Yu <qiang.yu@oss.qualcomm.com>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: camcc-nord: Correct camera clock source tables
-Date: Sun,  8 Nov 2026 14:21:23 -0600
-Message-ID: <179416929271.628393.1303915456540798087.b4-ty@b4>
+Subject: Re: [PATCH] clk: qcom: gcc-glymur: use collapse-voting for PCIe GDSCs
+Date: Sun,  8 Nov 2026 14:21:24 -0600
+Message-ID: <179416929499.628393.4374705363796025963.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260927-fix_camcc-v1-1-9fe956f01f6d@oss.qualcomm.com>
-References: <20260927-fix_camcc-v1-1-9fe956f01f6d@oss.qualcomm.com>
+In-Reply-To: <20261028-gcc_glymur_pcie-v1-1-a2163e1d2b9b@oss.qualcomm.com>
+References: <20261028-gcc_glymur_pcie-v1-1-a2163e1d2b9b@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -74,21 +74,22 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sun, 27 Sep 2026 00:07:10 +0530, Taniya Das wrote:
-> Select the PLL0 odd output for the 200 MHz and 400 MHz CAMNOC RT
-> AXI rates.  Use PLL0 main output dividers for the 300 MHz and 400 MHz
-> CPHY RX rates.
+On Wed, 28 Oct 2026 15:05:32 +0530, Taniya Das wrote:
+> The PCIe GDSCs can be shared with other masters and should use the APCS
+> collapse-vote register when updating the power state.
 > 
-> CSID and IFE Lite use the CPHY RX rates, so share that table rather
-> than duplicating it.  Remove the unsupported 300 MHz CSI PHY timer
-> rate.
+> This is also needed to disable power domains that boot firmware enabled
+> through the vote register.
+> 
+> Describe the collapse-vote register and mask for every PCIe and PCIe PHY
+> GDSC.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: camcc-nord: Correct camera clock source tables
-      commit: 3b3328b5c58d92d8025b71cd2e11eda420dd0ad2
+[1/1] clk: qcom: gcc-glymur: use collapse-voting for PCIe GDSCs
+      commit: 60521e4ff9e7f1b41758f387842d73667a7f0410
 
 Best regards,
 -- 
