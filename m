@@ -1,63 +1,72 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794169386;
-	b=q/NamCOty1qzXY7bRjUZjgvoHCZAaJ6LWDPHZMXbzgBjTjmYw3mID3E8o5XBsb4YPKfh
-	 shx7vVXpFMu7bbWHWSu5XVsPQ4lD+ZIj17w0cyRGm6I+13E4M4F405bvtxnqm3P8JARLr
-	 87kRmNYY7svRQD88oyLIy94pgzDnAcFHZDDjBsTNGhct2krYQjI4ORNRrqULkMaOoAyI1
-	 Ubu/i7bmrgZcUuRxPJEPqZzhYpkrYDNIlvXxhsKka5YLEO96qgkCIjt895kXaDb1qC8HO
-	 7LjOunVco8xGcVj/Gr3HgJYloP5CKNNiByUM6fmELmKem6Di45i5tCAwHGDvZUlDICw==
+	t=1794169391;
+	b=c3ql4L9PuekgYMzwyerihgyW/4L1bWjQIVrlAGEGhWF3VN7LnDOVy6VN5MqHkYkpg3sA
+	 s19/f3t0RSdACT5RVfc27nleqE65GNpzFBtPYhgvxFlY1bPwFGC6R2zVlEXE5LUuJ0jno
+	 cCAJRU+OEWJoo12+hLuPqnlYUN5WGyW4xkXjKOPK/twx80HahwnlKGaFk5Yqf0NMMCaW+
+	 x2nvd38s2LBrTS+pc0RWH+WUOd6cDVn4s3eHlpThQrCM/fN4rMfSS6sIBn/59YrWsCBif
+	 GQD78C2Fuo/bSVlLwVfT1Lu/wZIFscquNn3+YTM+E7TFB8x10jtoWBxR5SuagBwNofg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794169386;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794169391;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=IMaQtWfkI2+nDAxSWxsRjzUPOhBE/O3gBqUNL4FUSOs=;
-	b=lBy7iNOfEjA7YJHZaNmUgQj6CjBXTm61NIGs3hslnamGEay1ZBz9BXcXbIHWtm0NhIs1
-	 dDXo+1FDDzEs5eO8DcCwEIBG0oj5vsEIIj1owwbWuOGVNCIN+TRf4KLoRDCzgu16gjSiy
-	 z0XBYr2EaxKx08usZ/wNhOKlYupkFeJlOD6gR8iUZV9w78KnJf7oPlVXO+uXo9oI8VYT0
-	 IPM+XEu05yh5IiWwtaU5HKuF+tc5Y7AQSauo0ZzhefbWx6WoruYUUhM/ywF/ADCaMOckD
-	 vFwFLhgeM8CiTwNI8t8r5jM+9eAGoHPgGfehV87GUMDwkbbDMtT39zAPzNNvS4ZCiTw==
+	bh=1niYB4/2ehrsrZgjTei4qsNtyyz2W1DlXFO7D7AcvtA=;
+	b=suRxqew91t8+cnHBCZlUsddOSDvTFB2EpiqI8aA9qyGZlqP5OZrjgg+fVk4aCnIe464I
+	 6S8bVl5kmoH4y2JnozFyimgn+BlV68iPgKEsFi52jX0OuQAffKhSpOyo7kVsFMJ5vbEje
+	 m4uRHirBRnAz19dBxNs905PxqpFqZ5qN9jActmJSwRFHRu+92hlvS/Kd0m1wIy2JXfl89
+	 wc85L6+VtrrzOiAPCdIWTM6S0fvsl6uJ1ntB5v3cIB/bd7KE9EpCoDnQa91vnhZgohZ3G
+	 Fkq+bjh6X4KCrQRaaB58FhDGtZfkvmKoe4jfk2q9j9lMdBV7Nv7XfNCCvPuFSF14S1g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DX5feHJO;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SUxn+aZn;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E551606D12E;
-	Sun,  8 Nov 2026 20:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9346606E51D;
+	Sun,  8 Nov 2026 20:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DX5feHJO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34E9A1F00902;
-	Sun,  8 Nov 2026 20:23:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SUxn+aZn
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 942CF1F00922;
+	Sun,  8 Nov 2026 20:23:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794169386;
-	bh=IMaQtWfkI2+nDAxSWxsRjzUPOhBE/O3gBqUNL4FUSOs=;
+	s=k20260515; t=1794169390;
+	bh=1niYB4/2ehrsrZgjTei4qsNtyyz2W1DlXFO7D7AcvtA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=DX5feHJOnRjzf9N0BsJP5nGg+9WIgOxrWw1PkxR3q9fht1Mgq1Yuzt4shUC/fG4gZ
-	 tuo0tO9Me5OgehKRlAkzH2P8c4EZ3hnZkpxHPXq/AZzCKPNTsPXlamdyylIJw+urNv
-	 MSuEMIzCC7sI+xphijghlbwWbWFyFqs0EWKjAc2LzsU+hnpY6IY+O3IgzLi6tlR7du
-	 nZiCuKPtSEIgkZ0yjtW6R2dWTCxBDanhYyAwYYUgwNsRYtP1+h5RfxCYv68c+P8ixd
-	 +t3WVhZ3lB8V4hZ6tbPdSUYEdVgMs0thgXomxhNj4tGhCTaRoCXmME0mvtbIm9DbPk
-	 Gk10fIFolbyWw==
+	b=SUxn+aZnwHL3kSmrBw3rH1SK/QJlUBYSraUs0i7rPd2qM3ysb/8lAj2o48MxBIh+6
+	 ahmC8itFtHjSWyi/ztK7/yzkjfmbwrQ4xF3JZCuAZso0iE725BvsENBIFvZ1XwAyG2
+	 mYQMIlQK15qWzdq5wrPy4a2E2gC/RYPbcdvQHOAZPvRor6HtZNQF9dTR1ZT9Og7gjc
+	 Z+Pax+6dBHyz+fQgibXoDTtxK3+ExG5A8K0ywKuyfL3ziDWe5ah59Rffg75lEb7WZ7
+	 B2nULiZ02gzNY90C072ikEbm4uA7hCrl3fl1jUnfki55xeGEx7XLe+kFzYxmDxu4e1
+	 JRi1+hoHEopXA==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Abel Vesa <abelvesa@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
 	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
 	Imran Shaik <imran.shaik@oss.qualcomm.com>,
 	Taniya Das <taniya.das@oss.qualcomm.com>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-glymur: Use PWRSTS_RET_ON flag for USB GDSCs
-Date: Sun,  8 Nov 2026 14:19:57 -0600
-Message-ID: <179416929391.628393.13767365264983463444.b4-ty@b4>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v2 2/4] dt-bindings: clock: qcom: Add AV1E clock controller on Glymur SoC
+Date: Sun,  8 Nov 2026 14:19:59 -0600
+Message-ID: <179416929559.628393.15113236846453035838.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261016-glymur-usb-ret-on-v1-1-1790a523fd9c@oss.qualcomm.com>
-References: <20261016-glymur-usb-ret-on-v1-1-1790a523fd9c@oss.qualcomm.com>
+In-Reply-To: <20261104-glymur-av1ecc-v2-2-7c25a73fe811@oss.qualcomm.com>
+References: <20261104-glymur-av1ecc-v2-2-7c25a73fe811@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -71,23 +80,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 16 Oct 2026 11:58:44 +0530, Jagadeesh Kona wrote:
-> The USB GDSCs on Glymur are currently configured with PWRSTS_OFF_ON,
-> which allows the GDSC framework to fully collapse these power domains
-> during gdsc_disable(). When these GDSCs collapse, the corresponding USB
-> configurations are not retained in USB host mode use-cases and this breaks
-> the resume of USB controller from suspend.
-> 
-> To avoid this, configure the USB GDSC power states to PWRSTS_RET_ON. This
-> prevents the GDSC from powering off during gdsc_disable(), and allows
-> hardware to retain the USB configurations across USB host mode use-cases.
-> 
-> [...]
+On Wed, 04 Nov 2026 10:37:34 +0530, Jagadeesh Kona wrote:
+> Add compatible string for video AV1 encoder clock controller (AV1ECC)
+> and the corresponding bindings for Qualcomm Glymur SoC.
 
 Applied, thanks!
 
-[1/1] clk: qcom: gcc-glymur: Use PWRSTS_RET_ON flag for USB GDSCs
-      commit: 39477c344da4ecc63229d9d7518857ff37f7fa96
+[2/4] dt-bindings: clock: qcom: Add AV1E clock controller on Glymur SoC
+      commit: b7da3a5bced40996bfe2bee44ecdde4424ccd037
 
 Best regards,
 -- 
