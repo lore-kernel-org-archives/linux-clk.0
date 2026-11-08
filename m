@@ -1,23 +1,45 @@
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794169503;
+	b=J3d/bC+RTkCkKSYl7CIA/uTK6kpl+V3Oayh73kOouU8BdQ2RY2iYgxJhkNGR+ilmtbG+
+	 IbMQzcXo/fwp6Bg22xjWa/4vHOu7NcbKGPVzln0WEMfjy1fEkNywYnzJqdDgSgEwh7iL8
+	 HxfFr4dpRoDK4a2lSYLm8TkxxiLfuneyhasadwqF7bPJjMOzT4sXTHd3DsRBe959L/Pc4
+	 BR26foU3L7AxlxxINRxnqwRzAXPKpMQFXhEftxzpQknUCHQYYFzATrLlU07mlfUNWw3L0
+	 kiYT2NC3p3VgnsbxDh6u6ULBdndxSVfJ2o0bYL+hqNA/Q35p6X68Bn42PiumiFH5O1A==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794169503;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=MbJLpQfsM3uPqy/QOJlRmCPPzENBOlXzXD7urqoXuv0=;
+	b=V+v0mhO13tRy+crIIpRrdDd6BkQZI5LjqblqtkDcFVlROrLweH5ErKMtXOM4TvsNIXdw
+	 1rA1DRFPSpTKn3CIiQLsR84BgCSBVSAlVaCpsVYC69aH7tiP0bjgH8swo1oGekFCKq5G+
+	 vAaCy86RRnsPSPnHebkAMnw7fg1ecBE5GmaKNL5dc/f9DzlYOXnFsOM9i+srYSdoNT1Ps
+	 wv+XhKE+FwjKBzI5k0yCP1faKdxPU3TZw8L+5M/DZQyiIEhEvLQlCOBfVxVLqgcBYEY2Z
+	 iY1CGObeCjGFe01Y2HYMAxfwcvA304esaPyr2v7OI6/OsR61DNrECN7J7Y7p3Vq4BXA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CqqseCRj;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C5D606AD5A;
-	Sun,  8 Nov 2026 20:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178776081EC8;
+	Sun,  8 Nov 2026 20:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LUY/NsYg
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070A81F0089F;
-	Sun,  8 Nov 2026 20:24:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CqqseCRj
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 359681F008A4;
+	Sun,  8 Nov 2026 20:25:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794169500;
-	bh=nvWk1PiyXpaqcMFTVxrKzLQiCOZWKcB8X830n01hguU=;
+	s=k20260515; t=1794169502;
+	bh=MbJLpQfsM3uPqy/QOJlRmCPPzENBOlXzXD7urqoXuv0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=LUY/NsYgH2D4mRnoL3rHqAtBb8Vx2eMWrWD34PMr1JACxeYQAuqZqn38EJgc7bBVZ
-	 0z/0npP9OGi2VnKXNCVjKf5RYcnIkiV1ZNSojwMDZr7pyNzNlbSPG9H/HgAfa6StY5
-	 vj0aLGLQLssWpD1Im6s/06xkQBX8gw/BBgoNwWJpmtgt0YURpy8Wf1gD9K/zbOrz+Y
-	 m53waUsarS8kucMVsbVkKanmzOeEauBIJZ6+1ZXadsqbY99iB8r+H4WpeZ/1kcF1fX
-	 qapExYImG/7y7oMZgWDNYv1RDfmISkM2chSV9u3flrGCKL8p6FEhQJCfhSky+gxgyk
-	 85+q55uTO3P8Q==
+	b=CqqseCRjFMYOqmQnS+D7WXqCkI40GG0rOZrsrerjv/1A7kmoa6uz2Yn/we/UCaN5V
+	 dLE8vA4Y35Ob/wm0LIIhAASYLRJakCZ/LHnBLcbnPwjNOqJ96C9N6SmvlcGEwwV3v+
+	 48y62p/dyKMxnAFdWxzATYLHlf+v+EBI90cQR83CHaMo4rkfthal7meiyeM7rjjIt/
+	 Vj+zBtXRoUeJCGC60Z8/nkUf4YNEwr3VV6j6OyeXH9+BMyQEO6zwn590GTi4M/CgUJ
+	 bhMqUpLU2OdTIbQs7gVv1vm1GOuBfCTQIO1xBt5YHlfdXI3quY6G5wP/arzPvZqdEy
+	 wDlsys0EiUBAw==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
@@ -37,16 +59,13 @@ Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	stable@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Abel Vesa <abel.vesa@oss.qualcomm.com>,
 	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v3 0/4] clk: qcom: Add Nord DPRX clock controller support
-Date: Sun,  8 Nov 2026 14:21:25 -0600
-Message-ID: <179416929494.628393.10153371199936746026.b4-ty@b4>
+Subject: Re: (subset) [PATCH v3 3/4] dt-bindings: clock: qcom: document the Nord DPRX Clock Controller
+Date: Sun,  8 Nov 2026 14:21:26 -0600
+Message-ID: <179416929491.628393.16913187836121296834.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261027-nords_dprx-v3-0-5d98b2c6c263@oss.qualcomm.com>
-References: <20261027-nords_dprx-v3-0-5d98b2c6c263@oss.qualcomm.com>
+In-Reply-To: <20261027-nords_dprx-v3-3-5d98b2c6c263@oss.qualcomm.com>
+References: <20261027-nords_dprx-v3-3-5d98b2c6c263@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,23 +79,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 27 Oct 2026 23:38:25 +0530, Taniya Das wrote:
-> Add support for the DisplayPort Receiver (DPRX) clock controllers found
-> on Qualcomm Nord devices. There are two identical DPRX clock controller
-> instances (DPRX0 and DPRX1), each providing clocks for the DPRX core,
-> audio, AHB and video memory paths, along with their core PLLs.
-> 
-> The DPRX PLLs are ZONDA_OLE instances whose PLL_ALPHA_VAL register has
-> been widened to 28 bits to carry the fractional word at a finer
-> resolution. The alpha-PLL core must support that width for the DPRX PLLs
-> to lock to and report the correct rate.
-> 
-> [...]
+On Tue, 27 Oct 2026 23:38:28 +0530, Taniya Das wrote:
+> Add bindings documentation for the Nord DisplayPort Receiver (DPRX)
+> Clock Controller.
 
 Applied, thanks!
 
-[4/4] clk: qcom: dprxcc: Add Nord DPRX clock controller support
-      commit: 8f95d9bf51467db9009a79c552caa9b58e726551
+[3/4] dt-bindings: clock: qcom: document the Nord DPRX Clock Controller
+      commit: e5182cab547786bec8d21c336f542abdf76a7968
 
 Best regards,
 -- 
