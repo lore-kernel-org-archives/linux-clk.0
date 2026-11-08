@@ -1,74 +1,63 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794169348;
-	b=fl74B1DtxvDCfGAhKw3GRNjEf2SShOucE5F0gWzB3Cbo4js26uJlYPpACDGKxCso9tsf
-	 rcqzbEgMNNCw3/Xh0qJHFDA0vvwJxepnZxs8mr0mhonnzTg4V9MEzw5mhfIaiqJ00cLiC
-	 qGCWvKVMpX4R4oIFJapKJtm8K/DUqdgyRXOCGyZ0DfpdhbGfjd2o+8PBFMsFp6ICzbxGq
-	 LG71F85utIkULIXnZyu9+7X6ICauRJXOZnkJrQTxrlXn+0EcFb18lNhAAYPGz8gV2f8cX
-	 qW3dtcbmRfTlzDiE7/t8YAZkXksH577JmV/V+83mmEQL2oPl6gsZLPIkhsVIGCs/eyA==
+	t=1794169358;
+	b=o/96FdLFgnOGMi8UIqvSr+ERpTiaFXbseBLqtrJhG+v1alg0bIofILtHJ5cgvwz4l0yV
+	 p3UVie5/54mRizCVlXyZjEA3olIRsXdw4shS31KPafpvYwzABwjdOCpA/AcITL1IcTO/o
+	 GKOY2zcDK4G9k4Cl+6MoROUQvGtEDn25AtkqlzQ79vwvgkv1Cs7FbCIZ1ccutmY1BBgaO
+	 zflu5QrsFEUE15fYxwh7tyCs875Y/X8Eit9SXioZHKom6/COhoHHXb9SeKhOSJtGGWs+B
+	 cbVcnZGFou6gzV4MG0dYgO5K5jD5GgGqSFjmzawSFtVU5cs/m6puiDS3b/kLfKvXv6g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794169348;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794169358;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=+03jTVGIFZ0Ku5cXK7wtacYgGz6NzL+g69qARhp8Fy4=;
-	b=tGzr/sjul4jZJ3abLr/U7ZGTxt3DCS7Er/cdeKsh+mnIw6Vm82wB6XnZFwv3FylTbc0L
-	 ZszfGzWyeQlHXeqW4dzRPJc7DSJMeDZm/HxotScmudWtZpOeh+ZnvxP0SBfIXteIMpZtj
-	 AcmCmJpliQEsJiDtSuhkSfMhfRKYZkno2naGsgLYIqEeYfgO9AHJ2l3W4QjJSapQWBa+V
-	 uChauQUhq2ksReb1w1zSJDpIw+Lh6VPcuUcCTnsuErZJIOFByxtKnAnqQ0Md+BUOhkARt
-	 vkh8GsTr148gYaHGPr1RkTOnEeih7unpxgc2AQBthzlsLpRWHk7KnGX/Bl6+3MLnNng==
+	bh=J59kU0NVCcqYcr4shnDVtEhKulCk9RJGDvqLm+9RUSc=;
+	b=nFxjMEr0NzGmui+3CDmtIjE4NGdbD02UTLT+XXCnCoXu0CflkAY1AdmKpCLfny6bhsIx
+	 7ZQczBLW8e/vdWtsYSVEz8VQzXCdrlqu/I6U83q0Q/k1GWYkyJTs8DxTrX7s3cB5oFIWW
+	 rADykfoVBZ8LedXsEvY9X0+J4o61YwOjVLqMFd0z+IWj8T29h1piy0FQYqtaSSz1rRQGC
+	 Wv+XiRm3M6DfTOZjNvE8/3wSwtxlTtZlUYqw6znb4qnMucdyt6pavL0+N5lxP6MRApn1n
+	 2Na+ZHJJ7MKmv1rYJHdMs8t+Apn1bKrIGEGpmvuzSZlKuFImc3n6Z9wZnkfAJ6H39nA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gcDvXr0x;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N4KPBTtw;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B37860A381C;
-	Sun,  8 Nov 2026 20:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F00F606A9C7;
+	Sun,  8 Nov 2026 20:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gcDvXr0x
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1AF1F00901;
-	Sun,  8 Nov 2026 20:22:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N4KPBTtw
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 664191F008A4;
+	Sun,  8 Nov 2026 20:22:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794169348;
-	bh=+03jTVGIFZ0Ku5cXK7wtacYgGz6NzL+g69qARhp8Fy4=;
+	s=k20260515; t=1794169358;
+	bh=J59kU0NVCcqYcr4shnDVtEhKulCk9RJGDvqLm+9RUSc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=gcDvXr0xVLxLCrEjipigauQxpwf57I/2DdGp7aX+/aMzEi8hpwA/MRqRcvwr269lH
-	 C7RiqYLLdrpRQ/tTa88M2CuZJ5T4H1zCgTkc0ZZTp8dMfjgrVyzsb8xuirfdSN1MRr
-	 v/2KtyEPDqXYEL2lS/qnl3GF1+jZ7FcnjDVs+sW6JnkkJCRVyVBkB7bxL0fCBGFj1b
-	 GtYT8wp9TYJvm/Z8tfrpL1PXLsNrBED+qn7nZwRq9IJ3Aptska4EU6z65M6nwkkVyx
-	 McbxNVgkWYTMCA7b92nQRCRiPMtOS80gprYhyI4IwNON58nb+D/ZAZxafWP4M79wMT
-	 oIZo7myGggWRQ==
+	b=N4KPBTtwxdfeO33j0snI3WixpQ5qj7i1AjR2HH6MslKeNXDaucOkegW4TbWpDMQkn
+	 babnYxm5I6dLY5mNfHI3TJFS37P1Z3btryQ41YvrOe3WTNqVA8rdzj9W1GyJ3tFsFA
+	 0Cm9NxVRiGVR1AvvXYqRQKYxABi9GTfCcDXyU/uJWloXThmgfpo/2Tw1Vecopulwr0
+	 sgtSvPUNEK69y49unFFvYE8SDY6nX1czaHwEsSQmU7+egn84BwMJI+cdvq4nAyYTW2
+	 wggxbV4Nem5+IYPx+PEY1mMs1NcoqDc4OPxvJcQlzbDfmoWPzUxi8Mu0osrAJ/QZDR
+	 W4pI07n1I46Pg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
+To: Abel Vesa <abelvesa@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
 	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jesszhan0024@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
+	Martin Botka <martin.botka@somainline.org>,
+	Fabricio Akio <fabricioakio@gmail.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v5 0/5] arm64: dts: qcom: support SDM845 HDK
-Date: Sun,  8 Nov 2026 14:19:36 -0600
-Message-ID: <179416929424.628393.17771350398079284903.b4-ty@b4>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: mmcc-sdm660: Do not keep the video core clock always on
+Date: Sun,  8 Nov 2026 14:19:43 -0600
+Message-ID: <179416929337.628393.6548300714899601564.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261019-sdm845-hdk-v5-0-4aa7e22cd0ed@oss.qualcomm.com>
-References: <20261019-sdm845-hdk-v5-0-4aa7e22cd0ed@oss.qualcomm.com>
+In-Reply-To: <20261008-mmcc-sdm660-video-core-v1-1-3a772ad6a436@gmail.com>
+References: <20261008-mmcc-sdm660-video-core-v1-1-3a772ad6a436@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -82,21 +71,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 19 Oct 2026 12:18:02 +0300, Dmitry Baryshkov wrote:
-> Lantronix HDK845 aka Qualcomm SDM845-HDK is a hardware development kit
-> for the Qualcomm SDM845 / SDA845 platform. It uses the modem-less
-> version of the chip (SDA845) and provides a rich set of the peripherals
-> and connectors. The DSI panel is an optional addon, so it is being split
-> to a separate overlay. To (hopefully) ease merging, the overlay is split
-> to a separate patch as it depends on the panel. The base DT doesn't have
-> external dependencies.
+On Thu, 08 Oct 2026 18:49:18 -0300, Fabricio Akio wrote:
+> video_core_clk_src is marked CLK_IS_CRITICAL, so it is kept prepared and
+> enabled from boot, and with it its parent XO, which the RPM then can
+> never shut down. Nothing records why: the clock only feeds the video
+> codec, whose driver enables the core clock it needs, and the same clock
+> is not critical on MSM8996 or MSM8998.
+> 
+> Drop the flag.
 > 
 > [...]
 
 Applied, thanks!
 
-[3/5] dt-bindings: arm: qcom: add Qualcomm SDM845 HDK
-      commit: 930173f0332cc16656996756a5351560a4cf6068
+[1/1] clk: qcom: mmcc-sdm660: Do not keep the video core clock always on
+      commit: 72ce3d44229962bfd63fbfe8765d83f7a22906ed
 
 Best regards,
 -- 
