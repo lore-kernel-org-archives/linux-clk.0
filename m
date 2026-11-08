@@ -1,71 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794169503;
-	b=J3d/bC+RTkCkKSYl7CIA/uTK6kpl+V3Oayh73kOouU8BdQ2RY2iYgxJhkNGR+ilmtbG+
-	 IbMQzcXo/fwp6Bg22xjWa/4vHOu7NcbKGPVzln0WEMfjy1fEkNywYnzJqdDgSgEwh7iL8
-	 HxfFr4dpRoDK4a2lSYLm8TkxxiLfuneyhasadwqF7bPJjMOzT4sXTHd3DsRBe959L/Pc4
-	 BR26foU3L7AxlxxINRxnqwRzAXPKpMQFXhEftxzpQknUCHQYYFzATrLlU07mlfUNWw3L0
-	 kiYT2NC3p3VgnsbxDh6u6ULBdndxSVfJ2o0bYL+hqNA/Q35p6X68Bn42PiumiFH5O1A==
+	t=1794169511;
+	b=UORUafD/umh2oTwOaog0Hryxyvjd2UtzXyAuw9MAdZOLWmJYbgYDKBDn2f/OW2iue+aY
+	 4H8DLk1hq5TSJNa/mvEejD2vMISdMiv+DZw97gkxhsI7l4Zk5Y9qCCo+k40zvRTpXwL57
+	 i+k5xfCiggmojmhO/2hn+sOYT3O4lfjZKyEXdxquiqodpyMF5hrjTKkex/fP1Xvb1cTON
+	 r3BEId6liDcG4CB2TGjnAZSqoQtbGj8ATzwssNNFLqaN3kATm7rjgPcxyj7/oip25DU+a
+	 qPqbwebBdLdl2OVdfZCoazB7g0RbOxPTlrpjZk81eYPsCH3vgBTqxrITmUyHx8Eh/wg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794169503;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794169511;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=MbJLpQfsM3uPqy/QOJlRmCPPzENBOlXzXD7urqoXuv0=;
-	b=V+v0mhO13tRy+crIIpRrdDd6BkQZI5LjqblqtkDcFVlROrLweH5ErKMtXOM4TvsNIXdw
-	 1rA1DRFPSpTKn3CIiQLsR84BgCSBVSAlVaCpsVYC69aH7tiP0bjgH8swo1oGekFCKq5G+
-	 vAaCy86RRnsPSPnHebkAMnw7fg1ecBE5GmaKNL5dc/f9DzlYOXnFsOM9i+srYSdoNT1Ps
-	 wv+XhKE+FwjKBzI5k0yCP1faKdxPU3TZw8L+5M/DZQyiIEhEvLQlCOBfVxVLqgcBYEY2Z
-	 iY1CGObeCjGFe01Y2HYMAxfwcvA304esaPyr2v7OI6/OsR61DNrECN7J7Y7p3Vq4BXA==
+	bh=guWYzbKXtCLlEbW80YVVHfz029+IJBpdnFJeA1ZabnY=;
+	b=W6mwdnlKObhZq2/XJh4sc2yVKkD7HLe5SJZT+2Hr1ddbi23BFmO8PiZq+gRwM/jHNfUn
+	 2pT/BCLls+KDZykyZuDISpXxpPwBqzCGwdOw1ilN04RHRAnj9TCZOTeQx+8r4EcsO43O4
+	 EERmmlLA1//oVTak8yanfU7tIziL5qdwzIoNa7QxvoQsUEw9r9061HOJ+Md7HD2YEyqdY
+	 JJ4LDs9Pih9gVfikjjUWIi6KoVhl04df7cMoW9XEoDMw2lD/voX6o0YSULwq0NEFN4hfl
+	 +SAjo7IA5MsEaF3Hw2jFrkrnWUClyBdhwuBLwV/bgoTatsLz3WQ527Tb4xuEap4DT9Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CqqseCRj;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BSHFqSZP;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178776081EC8;
-	Sun,  8 Nov 2026 20:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA9A6082BCC;
+	Sun,  8 Nov 2026 20:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CqqseCRj
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 359681F008A4;
-	Sun,  8 Nov 2026 20:25:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BSHFqSZP
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46CB61F008A7;
+	Sun,  8 Nov 2026 20:25:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794169502;
-	bh=MbJLpQfsM3uPqy/QOJlRmCPPzENBOlXzXD7urqoXuv0=;
+	s=k20260515; t=1794169511;
+	bh=guWYzbKXtCLlEbW80YVVHfz029+IJBpdnFJeA1ZabnY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=CqqseCRjFMYOqmQnS+D7WXqCkI40GG0rOZrsrerjv/1A7kmoa6uz2Yn/we/UCaN5V
-	 dLE8vA4Y35Ob/wm0LIIhAASYLRJakCZ/LHnBLcbnPwjNOqJ96C9N6SmvlcGEwwV3v+
-	 48y62p/dyKMxnAFdWxzATYLHlf+v+EBI90cQR83CHaMo4rkfthal7meiyeM7rjjIt/
-	 Vj+zBtXRoUeJCGC60Z8/nkUf4YNEwr3VV6j6OyeXH9+BMyQEO6zwn590GTi4M/CgUJ
-	 bhMqUpLU2OdTIbQs7gVv1vm1GOuBfCTQIO1xBt5YHlfdXI3quY6G5wP/arzPvZqdEy
-	 wDlsys0EiUBAw==
+	b=BSHFqSZPI+jCdQSzde3TIdTsnhAS10CdAcpKlXPuI7TFlBdtP8yLzPbXQLw+ca2ek
+	 7qKfTJBGBcmwa0HySOwmm2kzjvmk+IRiDRXGDmHLLIurtKMAEYD4R8w4cZrVfinTb2
+	 NckvV9OjeVRJVOOgdkZnzA0ZBsZfQCOsL+YbXC65pzFVYdXG7TdWFyP+i2cLVQ38cY
+	 bhO3L88IALbtgsbfibZLJLjdry/OB2nK+kTxspSDom4fV55JyeMmEsQFNLP4TglmSg
+	 UXnn4Po5qpRLlFf7/7V0ugnxRyHcs6rSiZC9lroRwZTMDnkgJW3XVCidoECGJmY/7/
+	 X/XFhRJ7vaqmg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
+To: Abel Vesa <abelvesa@kernel.org>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shengchao.guo@oss.qualcomm.com>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v3 3/4] dt-bindings: clock: qcom: document the Nord DPRX Clock Controller
-Date: Sun,  8 Nov 2026 14:21:26 -0600
-Message-ID: <179416929491.628393.16913187836121296834.b4-ty@b4>
+	Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: Re: [PATCH v2] clk: qcom: camcc-sm8450: Use clk_rcg2_shared_ops for RCGs
+Date: Sun,  8 Nov 2026 14:21:32 -0600
+Message-ID: <179416929555.628393.12847052904216857641.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261027-nords_dprx-v3-3-5d98b2c6c263@oss.qualcomm.com>
-References: <20261027-nords_dprx-v3-3-5d98b2c6c263@oss.qualcomm.com>
+In-Reply-To: <20261103200847.606884-1-vladimir.zapolskiy@linaro.org>
+References: <20261103200847.606884-1-vladimir.zapolskiy@linaro.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -79,14 +68,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 27 Oct 2026 23:38:28 +0530, Taniya Das wrote:
-> Add bindings documentation for the Nord DisplayPort Receiver (DPRX)
-> Clock Controller.
+On Tue, 03 Nov 2026 22:08:47 +0200, Vladimir Zapolskiy wrote:
+> On power on a GDSC enables the RCGs within its power domain, and if an
+> RCG is left parented to a disabled source clock, the GDSC power on gets
+> stuck. After a camera clock controller RCG is used, it is left parented
+> to a camera PLL, which is disabled together with the RCG, this leads to
+> a problem that on SM8450 the TITAN_TOP GDSC can be powered on only once
+> after boot, and every next time its power on fails with the message:
+> 
+> [...]
 
 Applied, thanks!
 
-[3/4] dt-bindings: clock: qcom: document the Nord DPRX Clock Controller
-      commit: e5182cab547786bec8d21c336f542abdf76a7968
+[1/1] clk: qcom: camcc-sm8450: Use clk_rcg2_shared_ops for RCGs
+      commit: fe1dcfcab7b61c4d3b9f9a74ce04df67f0a7b05b
 
 Best regards,
 -- 
