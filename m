@@ -1,59 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.169.15
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794165624;
-	b=IBLXx8aLkW30vbW/qpF/ZyNslKdZAIucmmRf+LVYbanCgzUL4tpKNL3+pKrMu4PLcOTQ
-	 41my5qutgT67gwZvFjypf9FSIqkmyGTYw7ehKzF+SBMR8HL3gIm+rYo4FKff9ebbtkG8J
-	 L3XF2rhDKt5scRuq30uab6RpFt/nSj/Fq4a77hZ3122hBZcuUBHbasLrj80hCUEz4ePlg
-	 6cCZtbrPJVO0fp5tA1fKBH6yv60e6ciwTDLB7TZQxUlmnz8DAi4X29kMZXxiLlrvg03r/
-	 r0TXNhsN9GIJqc8sI2r+/fLBixvGBSqhTyloLKc9bqfRfJsPQySF2x/k/qRL7eTJzRg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794165624;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:In-Reply-To:References;
-	bh=Vh/9TrYwU99E4PCgRdKtI1GiSkx+bWoa8oDdIzOoHTQ=;
-	b=CQwxA0hjywlG00j8riM5BRsy1J33lPV++1XmUOHSXauS/797Bb5tGpNboudwhx6zhRiu
-	 c3Y5GwyEHNq15Kszil8zLFUxCuf7U15jdxpfkmGsOercubeZW2NUcofYnnJV+eGPal9Gd
-	 YaZRMf/Y2ZU2wrx96PbRw4Z0RXOZpkjKfSZuYyW0ZHfb0qLwVbRyIc/6RVmCX9Lc8D1D/
-	 xVSd1jYNledflwk3nuwIdgH0PvffBdDqFpzrpqJdvox/cNXErj033VS+M5YIfdzh/6/8g
-	 j4WPwhK/tjYSpmhPVHG9ZqZ/6JuyVMtisxKX1GRAq6asc9G/Hr+egB6ihn2v7Gh6n6A==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=iav.lv;
-	spf=pass smtp.mailfrom=iav.lv;
-	dkim=pass header.d=iav.lv header.i=@iav.lv header.a=rsa-sha256 header.s=zoho header.b=AQvmD1Yz;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.169.15
-Received: from sender-op-o15.zoho.eu (sender-op-o15.zoho.eu [136.143.169.15])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794169312;
+	b=lbtayu/TIfzltt6rYagPOeyNFCJq5nWsIxaC4H+of9nAFY6F7Ncxc7sik1aVMoJXgOmF
+	 MKVfuveVtj7S+4iODOGR2NE43yBBn6H+7G9sAF7mmWgQT0yue7nWFNNka+MWBuHrYLuh/
+	 J0MPC+MQ2/sxPEai1tu4PHV/MWt3v0s61z2eiKTkq+LYgqZ0Y3387D9eI6lCykur+rsNt
+	 TMoMOVPU+NQsf1MYPnyHeMNP3akGCPItgVmlmuodU47ZhvisZXbWI9sYVPf7MqKEXSgnC
+	 qdNXtVFitNSCGY5QV0JfI0OQiavwZijtJ3MPnpmzVlW1+KX8fxR0qg9VC+WgwsxfuQA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794169312;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=64c+Sf28fmD6bZTZ86HbboT8grGImIb83Md3rFMbR18=;
+	b=mJDxEgfaWpI27XngM+pNoPdBCqgYgestfNAPOgd5bVdNSzbpefUlH1Z59eSOOkAgYGC8
+	 Bguf+CK/KtnxGUbv2iYerx5HIzEvW7RIoqfWLZk5fHHWaEWGm8//ecUjPQ51J2Zi0WwCn
+	 bCzISjm8ZNeOYY9YkG2or4/ypAYIj+3KUCUxjddbQncatXU6AUJvYToY2qznFbO/cmWis
+	 KFqfxFZkV0iOgWICVzUBiOPop4HuxQADmUceRQp8A1odkii23pwSoiUBjogfSpLoRfBiO
+	 8ivoPJEWIzF30cF/JAsAIog1gpn/s2GhowvFufS2PB3LwIU7gesevBf4PaLr7My/H0A==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IOm0QkXE;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE127606A321;
-	Sun,  8 Nov 2026 19:20:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AE127606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iav.lv
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iav.lv
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F56606A33B;
+	Sun,  8 Nov 2026 20:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iav.lv header.i=@iav.lv header.a=rsa-sha256 header.s=zoho header.b=AQvmD1Yz
-ARC-Seal: i=1; a=rsa-sha256; t=1794165599; cv=none; 
-	d=zohomail.eu; s=zohoarc; 
-	b=H1luY180cpXtbO29I367UMSNTK6y0KyF55ZvVdEna/3s7vvoWRNa7gHyBt/xypqZZMGVuk/EmUAtcvUHPvvAWQR/1veMMrR6PWvpshYeipulwQ+jpW//C7+R5QwUlYj3RD0wLQISLwxIHf96zyiqGdkZJ0JXcdkCXADBJR872f0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
-	t=1794165599; h=Cc:Cc:Date:Date:From:From:In-Reply-To:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Vh/9TrYwU99E4PCgRdKtI1GiSkx+bWoa8oDdIzOoHTQ=; 
-	b=au8oB9kOxtxGgufNSqVsCnUYGolNFTIKo4ZiWBNef9t72FTe4VNMUnBb+pIBI3iQhhAQSFyokmTJELFAp2MAF1HgtJUdAzV2q7zJJNMtUl4ZowfcpI3tKDblRcs3NxoYfLPPyRPdC+1CkkYyniDyRUC/Nep1cL4TUAw8kii+zOw=
-ARC-Authentication-Results: i=1; mx.zohomail.eu;
-	dkim=pass  header.i=iav.lv;
-	spf=pass  smtp.mailfrom=iav@iav.lv;
-	dmarc=pass header.from=<iav@iav.lv>
-DKIM-Signature: a=rsa-sha256; b=AQvmD1YzyKqMNB5XrsP9jMBdwMKIHBOezeGPp3sqpeiPnayjypwvDzH7sur3GtV1X6v7SR5FPmrMmzjnMigJuSpl6Pgh8B08Fvjq/VZh31AShvhBxrkeWGdkoM2lS/w3nbUwkJBv32S1IY4AQU8omKjuSlNVa/qo7yl4iSylw3U=; c=relaxed/relaxed; s=zoho; d=iav.lv; v=1; bh=Vh/9TrYwU99E4PCgRdKtI1GiSkx+bWoa8oDdIzOoHTQ=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
-Received: by smtp.zoho.eu with SMTPS id 1794165597779665.0347627600589;
-	Sun, 8 Nov 2026 20:19:57 +0100 (CET)
-Date: Sun, 08 Nov 2026 21:19:56 +0200
-From: Igor Velkov <iav@iav.lv>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: iav@iav.lv, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jianqun Xu <jay.xu@rock-chips.com>, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] gpio: rockchip: restore the bank registers after hibernation
-Message-ID: <20261108-re-v2-gpio-rockchip-hib-dbclk@iav.lv>
-In-Reply-To: <20261108-b4-gpio-rockchip-hib-v2-1-27d3d510cb73@iav.lv>
-References: <20261108-b4-gpio-rockchip-hib-v2-1-27d3d510cb73@iav.lv>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IOm0QkXE
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E76DB1F008A2;
+	Sun,  8 Nov 2026 20:21:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794169311;
+	bh=64c+Sf28fmD6bZTZ86HbboT8grGImIb83Md3rFMbR18=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=IOm0QkXEHVdbb1xpV364a/UPT47xH+TPCf1brxFS6BL+q0OG92aicxgqf6nJrUeSR
+	 dJUzs+8mQLi6OpYxOBE83CpOFQ5c3M/ji30K+Ivbqkv/gvZPItSWCgs19nR9hz6pHO
+	 DludD2BW6uJIdAkx+zn5y95uUlNwyQO11KgfXCIrK+I+SKoi/BAtHdvUt4jV9sOjue
+	 Wp3YnxFb1xjo7js5f2YFq9OeLro6/w8IK0E06fuubdLV5QKkllgl8aeDBE7kEcMMWv
+	 wFn+9m/t8KOH4AAy7DMD2ZJt0shFGAge2rEmiBDdQVf1qMVbZsxBaORbOz4mXp8o6u
+	 F5ZQhfn5TtYvA==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Abel Vesa <abelvesa@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Abel Vesa <abel.vesa@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: qcom: gcc-sm6375: Use common clock controller probe data
+Date: Sun,  8 Nov 2026 14:19:11 -0600
+Message-ID: <179416929296.628393.2942988667247416187.b4-ty@b4>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260930-clk-qcom-gcc-sm6375-rework-always-on-clocks-v2-1-eaa893a6103e@oss.qualcomm.com>
+References: <20260930-clk-qcom-gcc-sm6375-rework-always-on-clocks-v2-1-eaa893a6103e@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -62,21 +63,28 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Heiko,
 
-Please hold v2: Sashiko is right about the debounce clock. On ODROID-M1,
-after hybrid sleep with a power cut, a line with debounce saw 0/8 edges
-and a control line without debounce 8/8 (one run). dbclk_gpio3 and its
-parent dbclk_gpio read enable count 1 with the hardware gate closed;
-opening both by hand gave 8/8.
+On Wed, 30 Sep 2026 16:53:44 +0300, Abel Vesa wrote:
+> Move the always-on branch register offsets into a critical_cbcrs array
+> and describe the DFS RCGs through qcom_cc_driver_data.
+> 
+> Associate GPLL10, GPLL11, GPLL8 and GPLL9 with their existing configuration
+> data and list them in alpha_plls. The common PLL helper selects the Lucid
+> and Zonda configuration routines from their register layouts. This uses
+> the common initialization order, configuring the PLLs before enabling
+> the always-on branches, instead of the previous CBCR-before-PLL order.
+> 
+> [...]
 
-With WoL on, aclk_gmac0 and pclk_gmac0 come back the same way and the
-network stays down after restore. So this looks wider than GPIO, and
-fixing it per driver looks like the wrong level.
+Applied, thanks!
 
-Should the Rockchip clock driver write its gates back after restore, as
-at91, tegra210 and ti do through clk_restore_context()? I find no
-restore_context in drivers/clk/rockchip.
+[1/1] clk: qcom: gcc-sm6375: Use common clock controller probe data
+      commit: f69883c5fb57f794a5545c59530241ffd97952f6
 
-Igor
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
