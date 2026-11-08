@@ -1,63 +1,74 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794169356;
-	b=L9gikR78ryGxTcCvBodttG8ETcSAgPpaefLYr5tlQoIkTo5rHpg/UDGd3sWnSFuykNuF
-	 sd5EqV1eHJG/aq+Ayr3aMIthcpS1kvBeRyA1jTpmzI3UD+TawOpXNaVF2HKbuCG60zhKP
-	 gFBBp8BjZOa4hHQz3c+6Tf3K+8OmL6Srgq3acYqBa/9bLjezJd/Jp1B/uR+EDntEKxBH/
-	 43ZNkIU6cT8HoMu3rrm0atNPZgOuB+PmrUq979CiYE78rQALjjn5K6qVQDj2u4qMErPui
-	 xQJ3EV2++NXSADmGRYxYQtl0h/78K19IlM5DsRgenid8kV0uT5CuftNmOuA1NvqMoaQ==
+	t=1794169348;
+	b=fl74B1DtxvDCfGAhKw3GRNjEf2SShOucE5F0gWzB3Cbo4js26uJlYPpACDGKxCso9tsf
+	 rcqzbEgMNNCw3/Xh0qJHFDA0vvwJxepnZxs8mr0mhonnzTg4V9MEzw5mhfIaiqJ00cLiC
+	 qGCWvKVMpX4R4oIFJapKJtm8K/DUqdgyRXOCGyZ0DfpdhbGfjd2o+8PBFMsFp6ICzbxGq
+	 LG71F85utIkULIXnZyu9+7X6ICauRJXOZnkJrQTxrlXn+0EcFb18lNhAAYPGz8gV2f8cX
+	 qW3dtcbmRfTlzDiE7/t8YAZkXksH577JmV/V+83mmEQL2oPl6gsZLPIkhsVIGCs/eyA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794169356;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794169348;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=rGKA5Y66+GJjnLF7zU3QA2am76rz9BI/FDq7qWoumV0=;
-	b=A8cx0FH/mEL+h+x5gjR22FuIU8GavkKeUovybp5pS9jefozzqwWGD9mU+xJeseGm0axG
-	 AhmkvuVyoCrxVu2v+R3j1F/qMcLBqzceZ68OCWmiSBDGRs5cI/dPC9oNNnTh/r9aalsKl
-	 w+IB6Kh9mCZ8gWPeeI4AlBOWJNaqlTWV88aUnXdm7oUQZ2aqExwpbnFG1bKBfVpyUPuV4
-	 XXKHkGZP2/C7OHv3vc7Xae7WnIPXtt+JQRR/EVsJIjMefqMFXe10RZYt/Bxnj/0LNMCzI
-	 89rhV9xNb5Na3lO4jpwptBDgvitJwc1TvBQBQVRqVVFti86tjL3TAe2C8aXBHFhhKIA==
+	bh=+03jTVGIFZ0Ku5cXK7wtacYgGz6NzL+g69qARhp8Fy4=;
+	b=tGzr/sjul4jZJ3abLr/U7ZGTxt3DCS7Er/cdeKsh+mnIw6Vm82wB6XnZFwv3FylTbc0L
+	 ZszfGzWyeQlHXeqW4dzRPJc7DSJMeDZm/HxotScmudWtZpOeh+ZnvxP0SBfIXteIMpZtj
+	 AcmCmJpliQEsJiDtSuhkSfMhfRKYZkno2naGsgLYIqEeYfgO9AHJ2l3W4QjJSapQWBa+V
+	 uChauQUhq2ksReb1w1zSJDpIw+Lh6VPcuUcCTnsuErZJIOFByxtKnAnqQ0Md+BUOhkARt
+	 vkh8GsTr148gYaHGPr1RkTOnEeih7unpxgc2AQBthzlsLpRWHk7KnGX/Bl6+3MLnNng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P9QIbdbT;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gcDvXr0x;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297E260A6F59;
-	Sun,  8 Nov 2026 20:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B37860A381C;
+	Sun,  8 Nov 2026 20:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P9QIbdbT
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B01501F008A6;
-	Sun,  8 Nov 2026 20:22:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gcDvXr0x
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1AF1F00901;
+	Sun,  8 Nov 2026 20:22:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794169355;
-	bh=rGKA5Y66+GJjnLF7zU3QA2am76rz9BI/FDq7qWoumV0=;
+	s=k20260515; t=1794169348;
+	bh=+03jTVGIFZ0Ku5cXK7wtacYgGz6NzL+g69qARhp8Fy4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=P9QIbdbTw602BMYcdIaMLLyZ8s/oDKsdYCmI4wzZ67H+umnPN2llAu6gGZl3DeoFk
-	 8Lhb7aFeZlEul6dW0SEWDf9IvPtb89fbrUmngKqcBEogpvmTFfkyaoyEeksV/zUt8Q
-	 og/3a3cBRSnBa8n9GqQU2CP6uyCvPiviVqYqLg6OC6qR6yFOv6VHk99Y6nXooZjVxn
-	 DETh3JBMtddVf2/h80uJXbPyz81gMlsTRZTEQLcB3naWqrN50EpOdPVWPkQfPJ8pKW
-	 c45G6FioQe/oJcVchMJL3I63hUJrovtIYD59NqXCbpAR6yMq4kXA9ntg38DFTeNM1C
-	 QTs/F0eTbpmvA==
+	b=gcDvXr0xVLxLCrEjipigauQxpwf57I/2DdGp7aX+/aMzEi8hpwA/MRqRcvwr269lH
+	 C7RiqYLLdrpRQ/tTa88M2CuZJ5T4H1zCgTkc0ZZTp8dMfjgrVyzsb8xuirfdSN1MRr
+	 v/2KtyEPDqXYEL2lS/qnl3GF1+jZ7FcnjDVs+sW6JnkkJCRVyVBkB7bxL0fCBGFj1b
+	 GtYT8wp9TYJvm/Z8tfrpL1PXLsNrBED+qn7nZwRq9IJ3Aptska4EU6z65M6nwkkVyx
+	 McbxNVgkWYTMCA7b92nQRCRiPMtOS80gprYhyI4IwNON58nb+D/ZAZxafWP4M79wMT
+	 oIZo7myGggWRQ==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Abel Vesa <abelvesa@kernel.org>,
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
 	Konrad Dybcio <konradybcio@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
-	Martin Botka <martin.botka@somainline.org>,
-	Fabricio Akio <fabricioakio@gmail.com>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] clk: qcom: sdm660: keep USB across suspend, give mdss_axi_clk its parent
-Date: Sun,  8 Nov 2026 14:19:41 -0600
-Message-ID: <179416929276.628393.12600173119556698550.b4-ty@b4>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v5 0/5] arm64: dts: qcom: support SDM845 HDK
+Date: Sun,  8 Nov 2026 14:19:36 -0600
+Message-ID: <179416929424.628393.17771350398079284903.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260928-sdm660-clk-fixes-v1-0-5d5bb84e3258@gmail.com>
-References: <20260928-sdm660-clk-fixes-v1-0-5d5bb84e3258@gmail.com>
+In-Reply-To: <20261019-sdm845-hdk-v5-0-4aa7e22cd0ed@oss.qualcomm.com>
+References: <20261019-sdm845-hdk-v5-0-4aa7e22cd0ed@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -71,23 +82,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 28 Sep 2026 14:41:42 -0300, Fabricio Akio wrote:
-> Two independent fixes to the SDM660 clock controllers, found while
-> bringing up the Motorola Moto X4 (payton, SDM630).
-> 
-> The first keeps the USB GDSC in retention across system suspend, as
-> msm8996, msm8998 and sm6375 already do. Switching it off loses the
-> DWC3 glue's QSCRATCH configuration, and USB does not come back after
-> resume.
+On Mon, 19 Oct 2026 12:18:02 +0300, Dmitry Baryshkov wrote:
+> Lantronix HDK845 aka Qualcomm SDM845-HDK is a hardware development kit
+> for the Qualcomm SDM845 / SDA845 platform. It uses the modem-less
+> version of the chip (SDA845) and provides a rich set of the peripherals
+> and connectors. The DSI panel is an optional addon, so it is being split
+> to a separate overlay. To (hopefully) ease merging, the overlay is split
+> to a separate patch as it depends on the panel. The base DT doesn't have
+> external dependencies.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] clk: qcom: gcc-sdm660: Keep the USB GDSC in retention
-      commit: cc8215f6c491d846acab9706d92b38fae1ce1b2d
-[2/2] clk: qcom: mmcc-sdm660: set num_parents on mdss_axi_clk
-      commit: 69c8d5eed1c7e691678424a05f4ec003cd7f8a88
+[3/5] dt-bindings: arm: qcom: add Qualcomm SDM845 HDK
+      commit: 930173f0332cc16656996756a5351560a4cf6068
 
 Best regards,
 -- 
