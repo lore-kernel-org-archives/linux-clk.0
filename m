@@ -1,57 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794161239;
-	b=KelDo54zT25bGxsmLpkDGt2tdKSVMhBJxDN8myGSodNTJ1GBpswGVgRXaicbcCOnd2X9
-	 OQhqfG0Wm0RMiQOR97TvLoau9EM2yEPX4lCVZf5yk8RwJXeeygUphwK/lgy5po/5r/hRh
-	 6YgRLG9W1Pf3twRD4+zIKWwNjEHN9HXB3lAssdzUZbkzvXc/5vjXuNmUVDMMUVJw+YSCh
-	 PLa0O0jknEFOvg9TGqY87kiuHpdKLsCBBfrW0U83aKOFafWR2198+MeIQOobKi3tXEQNv
-	 7Tr+OHgu3T9cb7JEPT9lMTdkWAEfe6pWYjdh3/y8Mco9s4JGriexUe5ogkM4vBKCTZQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794161239;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=HxfvaLA8cIY3Y2v91Caf1CvLUDTO2eAy8BOKMcGFWJA=;
-	b=eZYx4OrN6zRYwQAO2GRiZucOIYJTMgu39PuN8qxNJ9Qd5/MDEDnztP4s0XnLKTlNhIS+
-	 yXcs2XfefXX6JIPhRYKg+mEBztektNJdNduwiPZRH+0qg2wilZQhc/yFQ1yiI7Mi0fg+0
-	 C2u6Pqdru0DjAPxXmKmY1F0qLZnUQOf/BLM4C2a1QG3vU4Jrj6k2Uf5pEIkL8w3pTfG/3
-	 tFRPzl3/uNzKCUvI1S3TreUX9CZk/uk76BEmyCfMu0flfcu8V7hb2MuEOEiKbqtsFgGzL
-	 /RjR48lnMEhba1n5OIjfLDJzX43OLT9Ir2GsfSy5pmiRcyto+e0Px7tgO9xXRL2Gsuw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lr52LkXB;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.169.15
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794165624;
+	b=IBLXx8aLkW30vbW/qpF/ZyNslKdZAIucmmRf+LVYbanCgzUL4tpKNL3+pKrMu4PLcOTQ
+	 41my5qutgT67gwZvFjypf9FSIqkmyGTYw7ehKzF+SBMR8HL3gIm+rYo4FKff9ebbtkG8J
+	 L3XF2rhDKt5scRuq30uab6RpFt/nSj/Fq4a77hZ3122hBZcuUBHbasLrj80hCUEz4ePlg
+	 6cCZtbrPJVO0fp5tA1fKBH6yv60e6ciwTDLB7TZQxUlmnz8DAi4X29kMZXxiLlrvg03r/
+	 r0TXNhsN9GIJqc8sI2r+/fLBixvGBSqhTyloLKc9bqfRfJsPQySF2x/k/qRL7eTJzRg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794165624;
+	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
+	 Message-ID:In-Reply-To:References;
+	bh=Vh/9TrYwU99E4PCgRdKtI1GiSkx+bWoa8oDdIzOoHTQ=;
+	b=CQwxA0hjywlG00j8riM5BRsy1J33lPV++1XmUOHSXauS/797Bb5tGpNboudwhx6zhRiu
+	 c3Y5GwyEHNq15Kszil8zLFUxCuf7U15jdxpfkmGsOercubeZW2NUcofYnnJV+eGPal9Gd
+	 YaZRMf/Y2ZU2wrx96PbRw4Z0RXOZpkjKfSZuYyW0ZHfb0qLwVbRyIc/6RVmCX9Lc8D1D/
+	 xVSd1jYNledflwk3nuwIdgH0PvffBdDqFpzrpqJdvox/cNXErj033VS+M5YIfdzh/6/8g
+	 j4WPwhK/tjYSpmhPVHG9ZqZ/6JuyVMtisxKX1GRAq6asc9G/Hr+egB6ihn2v7Gh6n6A==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=iav.lv;
+	spf=pass smtp.mailfrom=iav.lv;
+	dkim=pass header.d=iav.lv header.i=@iav.lv header.a=rsa-sha256 header.s=zoho header.b=AQvmD1Yz;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.169.15
+Received: from sender-op-o15.zoho.eu (sender-op-o15.zoho.eu [136.143.169.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00782606A31C;
-	Sun,  8 Nov 2026 18:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE127606A321;
+	Sun,  8 Nov 2026 19:20:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AE127606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iav.lv
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iav.lv
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lr52LkXB
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 967221F0089F;
-	Sun,  8 Nov 2026 18:07:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794161238;
-	bh=HxfvaLA8cIY3Y2v91Caf1CvLUDTO2eAy8BOKMcGFWJA=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=lr52LkXBQjd07p503ZMWIY6H63zFhwEnu2bTkmiIfJwPBX8MT+OQaiUDmeIia6byD
-	 +L9iPPpJjVjrACTumZY3Gh8Lvi+pF+b6RHjnP30Uk1k6CtnafNXlOn7oTqyDXCy9SV
-	 V70I00zOtDpA8sljfpJvczt5M+O6WELX3aZ6Z40G8Y32NQF7Kvz2z+QbVgiWxYFhry
-	 9nrtziiDkeOE7tn++lFmaaMhiLNTDcoATlEzphIKuOE2v6sXgvWFhC2ME0UxSq3bjz
-	 Kaj6XrZJyPsVRXpYh6cjWtzkHiaj8OW9Qbb1aBLBVLOyZ602OXj8ovWtyuI+XwJGQw
-	 +8PBhrhIhVmxg==
-Message-ID: <sashiko-outbox-203896@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/2] clk: qcom: segcc-nord: Add I2C and TSC clock
- support
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Taniya Das" <taniya.das@oss.qualcomm.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261107-gcc_i2c_tsc_support-v1-2-433d02972d7e@oss.qualcomm.com>
-References: <20261107-gcc_i2c_tsc_support-v1-0-433d02972d7e@oss.qualcomm.com>
- <20261107-gcc_i2c_tsc_support-v1-2-433d02972d7e@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 08 Nov 2026 18:07:18 +0000
+	dkim=pass (1024-bit key) header.d=iav.lv header.i=@iav.lv header.a=rsa-sha256 header.s=zoho header.b=AQvmD1Yz
+ARC-Seal: i=1; a=rsa-sha256; t=1794165599; cv=none; 
+	d=zohomail.eu; s=zohoarc; 
+	b=H1luY180cpXtbO29I367UMSNTK6y0KyF55ZvVdEna/3s7vvoWRNa7gHyBt/xypqZZMGVuk/EmUAtcvUHPvvAWQR/1veMMrR6PWvpshYeipulwQ+jpW//C7+R5QwUlYj3RD0wLQISLwxIHf96zyiqGdkZJ0JXcdkCXADBJR872f0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
+	t=1794165599; h=Cc:Cc:Date:Date:From:From:In-Reply-To:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Vh/9TrYwU99E4PCgRdKtI1GiSkx+bWoa8oDdIzOoHTQ=; 
+	b=au8oB9kOxtxGgufNSqVsCnUYGolNFTIKo4ZiWBNef9t72FTe4VNMUnBb+pIBI3iQhhAQSFyokmTJELFAp2MAF1HgtJUdAzV2q7zJJNMtUl4ZowfcpI3tKDblRcs3NxoYfLPPyRPdC+1CkkYyniDyRUC/Nep1cL4TUAw8kii+zOw=
+ARC-Authentication-Results: i=1; mx.zohomail.eu;
+	dkim=pass  header.i=iav.lv;
+	spf=pass  smtp.mailfrom=iav@iav.lv;
+	dmarc=pass header.from=<iav@iav.lv>
+DKIM-Signature: a=rsa-sha256; b=AQvmD1YzyKqMNB5XrsP9jMBdwMKIHBOezeGPp3sqpeiPnayjypwvDzH7sur3GtV1X6v7SR5FPmrMmzjnMigJuSpl6Pgh8B08Fvjq/VZh31AShvhBxrkeWGdkoM2lS/w3nbUwkJBv32S1IY4AQU8omKjuSlNVa/qo7yl4iSylw3U=; c=relaxed/relaxed; s=zoho; d=iav.lv; v=1; bh=Vh/9TrYwU99E4PCgRdKtI1GiSkx+bWoa8oDdIzOoHTQ=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
+Received: by smtp.zoho.eu with SMTPS id 1794165597779665.0347627600589;
+	Sun, 8 Nov 2026 20:19:57 +0100 (CET)
+Date: Sun, 08 Nov 2026 21:19:56 +0200
+From: Igor Velkov <iav@iav.lv>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: iav@iav.lv, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jianqun Xu <jay.xu@rock-chips.com>, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] gpio: rockchip: restore the bank registers after hibernation
+Message-ID: <20261108-re-v2-gpio-rockchip-hib-dbclk@iav.lv>
+In-Reply-To: <20261108-b4-gpio-rockchip-hib-v2-1-27d3d510cb73@iav.lv>
+References: <20261108-b4-gpio-rockchip-hib-v2-1-27d3d510cb73@iav.lv>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,112 +63,20 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [Medium] clk: qcom: segcc-nord: erroneous DFS registration of
-  se_gcc_cnoc_i2c_slave_clk_src
-- [Low] clk: qcom: segcc-nord: duplicate 19.2 MHz freq_tbl and misplaced
-  RCG definition
---
+Hi Heiko,
 
-commit 5e0b8aed90909a3578c24b44cabdb5fafa31fe1c
-Author: Taniya Das <taniya.das@oss.qualcomm.com>
+Please hold v2: Sashiko is right about the debounce clock. On ODROID-M1,
+after hybrid sleep with a power cut, a line with debounce saw 0/8 edges
+and a control line without debounce 8/8 (one run). dbclk_gpio3 and its
+parent dbclk_gpio read enable count 1 with the hardware gate closed;
+opening both by hand gave 8/8.
 
-clk: qcom: segcc-nord: Add I2C and TSC clock support
+With WoL on, aclk_gmac0 and pclk_gmac0 come back the same way and the
+network stays down after restore. So this looks wider than GPIO, and
+fixing it per driver looks like the wrong level.
 
-This commit adds the I2C slave and TSC subsystem clocks, reset lines, and
-GPLL1 parent PLL definitions to the Nord SE GCC driver.
+Should the Rockchip clock driver write its gates back after restore, as
+at91, tegra210 and ti do through clk_restore_context()? I find no
+restore_context in drivers/clk/rockchip.
 
-> diff --git a/drivers/clk/qcom/segcc-nord.c b/drivers/clk/qcom/segcc-nord.c
-> index ef97da3852e35..7fdfa44fb1036 100644
-> --- a/drivers/clk/qcom/segcc-nord.c
-> +++ b/drivers/clk/qcom/segcc-nord.c
-[ ... ]
-> @@ -189,6 +207,43 @@ static const struct clk_parent_data se_gcc_parent_da=
-ta_4[] =3D {
->  	{ .index =3D DT_SLEEP_CLK },
->  };
-> =20
-> +static const struct freq_tbl ftbl_se_gcc_cnoc_i2c_slave_clk_src[] =3D {
-> +	F(19200000, P_BI_TCXO, 1, 0, 0),
-> +	{ }
-> +};
-> +
-> +static struct clk_init_data se_gcc_cnoc_i2c_slave_clk_src_init =3D {
-> +	.name =3D "se_gcc_cnoc_i2c_slave_clk_src",
-> +	.parent_data =3D se_gcc_parent_data_2,
-> +	.num_parents =3D ARRAY_SIZE(se_gcc_parent_data_2),
-> +	.flags =3D CLK_SET_RATE_PARENT,
-> +	.ops =3D &clk_rcg2_shared_no_init_park_ops,
-> +};
-> +
-> +static struct clk_rcg2 se_gcc_cnoc_i2c_slave_clk_src =3D {
-> +	.cmd_rcgr =3D 0x13034,
-> +	.mnd_width =3D 0,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D se_gcc_parent_map_2,
-> +	.freq_tbl =3D ftbl_se_gcc_cnoc_i2c_slave_clk_src,
-> +	.hw_clk_ctrl =3D true,
-> +	.clkr.hw.init =3D &se_gcc_cnoc_i2c_slave_clk_src_init,
-> +};
-> +
-> +static const struct parent_map se_gcc_parent_map_5[] =3D {
-> +	{ P_BI_TCXO, 0 },
-> +	{ P_SE_GCC_GPLL0_OUT_MAIN, 1 },
-> +	{ P_SE_GCC_GPLL5_OUT_MAIN, 3 },
-> +	{ P_SE_GCC_GPLL1_OUT_MAIN, 4 },
-> +};
-> +
-> +static const struct clk_parent_data se_gcc_parent_data_5[] =3D {
-> +	{ .index =3D DT_BI_TCXO },
-> +	{ .hw =3D &se_gcc_gpll0.clkr.hw },
-> +	{ .hw =3D &se_gcc_gpll5.clkr.hw },
-> +	{ .hw =3D &se_gcc_gpll1.clkr.hw },
-> +};
-
-[Severity: Low]
-This isn't a bug, but ftbl_se_gcc_cnoc_i2c_slave_clk_src is identical to
-ftbl_se_gcc_emac0_phy_aux_clk_src, which se_gcc_emac1_phy_aux_clk_src and
-se_gcc_i2c_slave_xo_clk_src already reuse.  Could
-se_gcc_cnoc_i2c_slave_clk_src reuse ftbl_se_gcc_emac0_phy_aux_clk_src and
-be placed with the other RCG definitions after the parent map tables?
-
-[ ... ]
-
-> @@ -1570,11 +1754,14 @@ static const struct qcom_reset_map se_gcc_nord_re=
-sets[] =3D {
->  	[SE_GCC_EMAC0_BCR] =3D { 0x24000 },
->  	[SE_GCC_EMAC1_BCR] =3D { 0x25000 },
-> +	[SE_GCC_I2C_BCR] =3D { 0x2c000 },
->  	[SE_GCC_QUPV3_WRAPPER_0_BCR] =3D { 0x26000 },
->  	[SE_GCC_QUPV3_WRAPPER_1_BCR] =3D { 0x27000 },
-> +	[SE_GCC_TSCSS_BCR] =3D { 0x2a000 },
->  };
-> =20
->  static const struct clk_rcg_dfs_data se_gcc_nord_dfs_clocks[] =3D {
-> +	DEFINE_RCG_DFS(se_gcc_cnoc_i2c_slave_clk_src),
->  	DEFINE_RCG_DFS(se_gcc_qupv3_wrap0_s0_clk_src),
->  	DEFINE_RCG_DFS(se_gcc_qupv3_wrap0_s1_clk_src),
->  	DEFINE_RCG_DFS(se_gcc_qupv3_wrap0_s2_clk_src),
-
-[Severity: Medium]
-Should se_gcc_cnoc_i2c_slave_clk_src be registered in
-se_gcc_nord_dfs_clocks?
-
-se_gcc_cnoc_i2c_slave_clk_src is a fixed-19.2 MHz CNOC RCG with
-mnd_width =3D 0, not a QUPv3 GENI Serial Engine RCG.  Passing it to
-qcom_cc_register_rcg_dfs() -> clk_rcg2_enable_dfs() reads cmd_rcgr +
-SE_CMD_DFSR_OFFSET (0x13048), which is outside its 8-byte RCG register
-block.
-
-If bit 0 at 0x13048 happens to be set, clk_rcg2_enable_dfs() replaces the
-clock's ops with clk_rcg2_dfs_ops (dropping the enable, disable, and
-set_rate callbacks needed by se_gcc_i2c_slave_ahb_clk) and clears
-freq_tbl.  Any subsequent rate calculation when CFG_MODE_MASK is non-zero
-in the registers read as DFS performance levels will compute mask =3D
-BIT(rcg->mnd_width) - 1 =3D 0, leaving m =3D 0 and n =3D 0 and triggering a
-divide-by-zero in calc_rate().
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261107-gcc_i2c_ts=
-c_support-v1-0-433d02972d7e@oss.qualcomm.com?part=3D2
+Igor
