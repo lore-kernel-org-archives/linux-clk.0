@@ -1,64 +1,73 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794169360;
-	b=JMuybmAvqMNYbkarPysP99UKjlHoVsg+xfgeGoxMpfxti17zKvkycH8l9GJOkEodxhmL
-	 anMMhyJGh1yBxyaGvjaRj37S/VkWTLOML8mulFP22NRDN+DG8j5ZzXxadANunlpRm11xJ
-	 blbbEqh14BSoIzCNmJDlRkkW8kAbUDuJvo7WgL5kQ74LFohf/OAiG62moVHhIgmJ5dgXd
-	 tPb1NRPuSHwoLo/FnZTLhPjQnhbhFGiJ67gSgTl+dDWGO6UamLkWzBfivJQLlvVsuJyfq
-	 GWjFX9S9fJpjo7ERqR5I3LvpI1iYow858IUjKITML1a8eUDuWYptsu91mN9VZ5lA/Ig==
+	t=1794169389;
+	b=aTU1Y0fUw9JADxR2sFmi/YE82S2Y9erIWGiUg+Z8sK00cHUlDSbfrmWnCZzBAa2ykE19
+	 g3BT9qhYcBNHRKSEs0RaqZzJy4/8AF/oZsckbiWC+XKh6lsZImJLyVFAqVT7Q4EdXeJc/
+	 yc3P4+kVjuBklssEOoU2o1VA/JSUInFWS8iLQpiiHP9pv67DgAW9w7IzNRwONGyU1KgqF
+	 22F6CISmClChJvoC5AHJkBhPRAaHApgv40ZSyAJUI3I1qZ6lkztDJ/H/MDRVYoFl5O1wp
+	 Gk5L88CWHDuOp2cC5jftELLsUgQkV0XJvYb9ykNDGPlwrRAjzZ7kT1u1/v7tL1+f5ow==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794169360;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794169389;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=3B/ezaNWqJACgBgjt8jbMHpfCZF0rKokrSlN3ICis1o=;
-	b=oFYo5/9H0qvf66gt1EPkh1dJQfv73WBUIOtjFheiOZC/FnykKGrmCTctHE2/AbMjfGC1
-	 9cEtNZ3asTL4iRQSDd2GAOb2uKa+dUB3um86Ph9Q+5DpudVoorjh+djCQe5xA23A8M00S
-	 oWmbv1NtAPbkjEKJIC0HqOxqLsQRJiD6sy4rya+t5TVhHdMaucdWLx9iFlNt7cc3vuWH+
-	 4YUAYGqODLgJg3fshgQJFAb9Yw7MV2asqvSS1oR6JJjvugkk0zXUo1fmv78eDt0XbXDLy
-	 HPgErXY0yFNGtKF/CD5ot5Bb9V3ce++NzX1Ul17yU1li8S8i2uKnfXhfCN3LmdkYZeg==
+	bh=P+VDErKZ63vZKhJi+EBKSG0fHgr+I6l49in/SRyB3gw=;
+	b=MPMqNBIeau+UX0YymfrzzeuHPX5wOhdmm08z6YDFj8yySaJFxFGlVt/CUtz002/S2BHn
+	 V67H+R7pEDTlUz1PlyucVQku+v6uRJ5ISYpUy4btyGrdEo0ZpO7JJRCS5X4eoGKLmevg/
+	 k/o/JtQjwHpKv9mwKBupMbXm8XRaRxsTRRlVBVwV3IoSMi6KSjfoWvVJ1jqvhKX1WtanR
+	 7cfILrTCQ6YJwqMv3oN02JszLsl8KbUYLb9niGdWPN+zuf2t7jECK5Umfu1fexHXTxrnO
+	 COvJ/6Jaomv+UQJSYV0W5ZzvKc85GkYsMCT57jXLjkH8Ge/xsH5R1uRfZaRXRtOwNBA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KCE77e71;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LezOtyuJ;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C93606A9D4;
-	Sun,  8 Nov 2026 20:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFE1606BA64;
+	Sun,  8 Nov 2026 20:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KCE77e71
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B81C11F008A5;
-	Sun,  8 Nov 2026 20:22:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LezOtyuJ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AD351F008A5;
+	Sun,  8 Nov 2026 20:23:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794169359;
-	bh=3B/ezaNWqJACgBgjt8jbMHpfCZF0rKokrSlN3ICis1o=;
+	s=k20260515; t=1794169388;
+	bh=P+VDErKZ63vZKhJi+EBKSG0fHgr+I6l49in/SRyB3gw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=KCE77e71MEVSlFKYqzsHTvjNw/H2lO7UEv2x9p3BnGAy+uxX4gNNlPpt2peyB/nqg
-	 bnklz8vLOtu/XnggCnYwOtno6G/P1Gaz9trfZ1y2OJM5TU4ISx4WSLwuO1anBvYf/d
-	 4ignG3AJsPMJtm55FfsDAJTFtRXtvRE2EH4GG7kmZriZ68j8tvmMAhdW1pgkI/yuEu
-	 X9RMqZ9tJBWkwTBCD4YNGT0y3huVDqqmEsN47rm9GbcmrNgd4GkX+UW/N28bcszZ41
-	 vINkMxeBDsi74lCc1r6PYfMloUVOd0hSsuogGleFPpv4v4y9U1Ev0w2agazrG6Sv56
-	 /0OIx1P2iEfpg==
+	b=LezOtyuJHJZPU+nkAQWv9nWb4OQtoJod8I05oZw5R3dklED8QeQvyl8P9oXFTwvz+
+	 vvKJBpRtL3Lvpjrh/bkNjISFVTy/saGTytuPqs4b75CdgJ5aFe6vlWnVqc/vOmkHzj
+	 KFMPL7nxVltfzrxlB/zksgicbPE6g1+ZPvxyhfpJjtOlkB0wLihW/DRWZJHt4R28wc
+	 HuuE03z4CZ5lqLoimuJ4cEP0gjGTKozje9c/lHueUYU11TygCJW+Dm3OFrQqKqnBH2
+	 Yk3rEhWnDhUEGonQ1lwWktcdVw8IGx3Q+KZnuqZb1rJxvUajaOEX4U9bTRtQ4X7tCU
+	 ExFQ/6T76Kmng==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Abel Vesa <abelvesa@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
 	Konrad Dybcio <konradybcio@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
-	Martin Botka <martin.botka@somainline.org>,
-	Fabricio Akio <fabricioakio@gmail.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+	Imran Shaik <imran.shaik@oss.qualcomm.com>,
+	Taniya Das <taniya.das@oss.qualcomm.com>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: qcom: mmcc-sdm660: enable the parents of the pixel clock sources
-Date: Sun,  8 Nov 2026 14:19:44 -0600
-Message-ID: <179416929322.628393.9027873794730596947.b4-ty@b4>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abel Vesa <abel.vesa@oss.qualcomm.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v2 0/4] clk: qcom: Add support for Glymur AV1E clock controller
+Date: Sun,  8 Nov 2026 14:19:58 -0600
+Message-ID: <179416929561.628393.17086012699602989297.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261002-sdm660-pclk0-parent-enable-v2-1-b07f6c33e96f@gmail.com>
-References: <20261002-sdm660-pclk0-parent-enable-v2-1-b07f6c33e96f@gmail.com>
+In-Reply-To: <20261104-glymur-av1ecc-v2-0-7c25a73fe811@oss.qualcomm.com>
+References: <20261104-glymur-av1ecc-v2-0-7c25a73fe811@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -72,21 +81,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 02 Oct 2026 13:46:24 -0300, Fabricio Akio wrote:
-> pclk0_clk_src and pclk1_clk_src are fed by the DSI PHY PLLs, which
-> dsi_pll_14nm_vco_set_rate() resets and only clk_prepare() restarts. The
-> DSI host sets the link rates before it prepares the PLL, so the RCG is
-> updated against a stopped source, and if it is enabled at that point
-> the update times out:
-> 
->   pclk0_clk_src: rcg didn't update its configuration.
-> 
-> [...]
+On Wed, 04 Nov 2026 10:37:32 +0530, Jagadeesh Kona wrote:
+> Add support for Video AV1 encoder clock controller (AV1ECC)
+> on Qualcomm Glymur platform.
 
 Applied, thanks!
 
-[1/1] clk: qcom: mmcc-sdm660: enable the parents of the pixel clock sources
-      commit: 7e24ec7320f5e82f4f2d1809024de19bbee01871
+[4/4] arm64: dts: qcom: glymur: Add support for AV1E clock controller
+      commit: 317a30a3e423c411c3a5d80584e056704d6eb649
 
 Best regards,
 -- 
