@@ -1,72 +1,63 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794169391;
-	b=c3ql4L9PuekgYMzwyerihgyW/4L1bWjQIVrlAGEGhWF3VN7LnDOVy6VN5MqHkYkpg3sA
-	 s19/f3t0RSdACT5RVfc27nleqE65GNpzFBtPYhgvxFlY1bPwFGC6R2zVlEXE5LUuJ0jno
-	 cCAJRU+OEWJoo12+hLuPqnlYUN5WGyW4xkXjKOPK/twx80HahwnlKGaFk5Yqf0NMMCaW+
-	 x2nvd38s2LBrTS+pc0RWH+WUOd6cDVn4s3eHlpThQrCM/fN4rMfSS6sIBn/59YrWsCBif
-	 GQD78C2Fuo/bSVlLwVfT1Lu/wZIFscquNn3+YTM+E7TFB8x10jtoWBxR5SuagBwNofg==
+	t=1794169392;
+	b=FyfgcYynmZ6v9UJzAjLgIMq5LeEHCSA1Pu02sxcbRLLACeHWK38/qCsUckv6NdwJU5Hz
+	 swT3yCST0TLF8M4ckpbTrBZnGZQcW/ezq2qJXcN+7KK3hKgORe9PvWP01GzAL8lchQRAa
+	 AGig5WS6UySKLZrS8IqP1CRuY1Svf/YsDhW2YrskK1PR1D3GZJSSb7tW8MXmr5MRhS6ri
+	 sw13r5zmPpmoY73N0IQVQx1qfjBJTehjQoyucY8hAFelPh6YSvYW47tEedL3cT7lrDNQh
+	 kgUKoBPGC0GozE+AtsuWnLiZtwKzHZo/+UIsrBRx8uJpJWOzusKhCwWwCG/dN3I++qg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794169391;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794169392;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=1niYB4/2ehrsrZgjTei4qsNtyyz2W1DlXFO7D7AcvtA=;
-	b=suRxqew91t8+cnHBCZlUsddOSDvTFB2EpiqI8aA9qyGZlqP5OZrjgg+fVk4aCnIe464I
-	 6S8bVl5kmoH4y2JnozFyimgn+BlV68iPgKEsFi52jX0OuQAffKhSpOyo7kVsFMJ5vbEje
-	 m4uRHirBRnAz19dBxNs905PxqpFqZ5qN9jActmJSwRFHRu+92hlvS/Kd0m1wIy2JXfl89
-	 wc85L6+VtrrzOiAPCdIWTM6S0fvsl6uJ1ntB5v3cIB/bd7KE9EpCoDnQa91vnhZgohZ3G
-	 Fkq+bjh6X4KCrQRaaB58FhDGtZfkvmKoe4jfk2q9j9lMdBV7Nv7XfNCCvPuFSF14S1g==
+	bh=hrN+MbT2kW616eaMTGJT8DrhxInPFegVUzPWjQ8Lmyc=;
+	b=IxVXAG0f+6YKO+Ek0O++/laOk89Oqu8hg/BVwBa1Sz0qW5Kl0TkNP0ySP5WoI6VnBYns
+	 bUi2LUFlM2PWOMgfg/M1M4n4DUDsMEmwmOS2xTS/IXmzFGZ/qJVFgHdqHgMYsO3lD1pDQ
+	 zOTiSEXU0TKgmpsGBXQfPNhxZDTuDcG/WPaw3Wo3viKJojkbML6SSDoAVpf3BCkej/RZN
+	 XPStbIXykDWgbpuk9jg5CSrN7J0BWDeEMLLF76ABDAY81J6vtJyaG681TzGd1xjCcfApm
+	 BdkxdfLTfRr8bRyOx6DdJ1nG+ec2Kpm0SOX/0SNTgbp0OmpO2IOo2XehReP9VOs5EIw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SUxn+aZn;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a5fTpsVq;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9346606E51D;
-	Sun,  8 Nov 2026 20:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABD7606E53E;
+	Sun,  8 Nov 2026 20:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SUxn+aZn
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 942CF1F00922;
-	Sun,  8 Nov 2026 20:23:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a5fTpsVq
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98CDD1F0089F;
+	Sun,  8 Nov 2026 20:23:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794169390;
-	bh=1niYB4/2ehrsrZgjTei4qsNtyyz2W1DlXFO7D7AcvtA=;
+	s=k20260515; t=1794169391;
+	bh=hrN+MbT2kW616eaMTGJT8DrhxInPFegVUzPWjQ8Lmyc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=SUxn+aZnwHL3kSmrBw3rH1SK/QJlUBYSraUs0i7rPd2qM3ysb/8lAj2o48MxBIh+6
-	 ahmC8itFtHjSWyi/ztK7/yzkjfmbwrQ4xF3JZCuAZso0iE725BvsENBIFvZ1XwAyG2
-	 mYQMIlQK15qWzdq5wrPy4a2E2gC/RYPbcdvQHOAZPvRor6HtZNQF9dTR1ZT9Og7gjc
-	 Z+Pax+6dBHyz+fQgibXoDTtxK3+ExG5A8K0ywKuyfL3ziDWe5ah59Rffg75lEb7WZ7
-	 B2nULiZ02gzNY90C072ikEbm4uA7hCrl3fl1jUnfki55xeGEx7XLe+kFzYxmDxu4e1
-	 JRi1+hoHEopXA==
+	b=a5fTpsVqiEYMIuB7WCVdM2SmrTD6rNNd3QhWKmdFz7p/Lkgp8RueZQ2oAgVeWc+cS
+	 tyzkCadprAR+3UhH7fbWWu70hRyW0jnveb/cFz3TFGWx1NlFcGs+rWxW8/97cnAnmU
+	 eew6JgrHOEOvenzVg8hH7my0Kykaw/fK91j+xiHIwoxVw7ao9zrLcWx7m7rfK5dDm+
+	 iBTsPYH9Y1zpgZGDXq1sUbt5e6vzg9TAwZDMKX7H0C1TA8k/MVwJUqtt/XU9b1osfB
+	 toDExafEUO4Kucf1pvaz/WJF4Of5UYQEGBzbRZTiyJLbDqDqZrBhXoUtgF33419p9M
+	 2T5+vqm3Deqcg==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Abel Vesa <abelvesa@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
 	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v2 2/4] dt-bindings: clock: qcom: Add AV1E clock controller on Glymur SoC
-Date: Sun,  8 Nov 2026 14:19:59 -0600
-Message-ID: <179416929559.628393.15113236846453035838.b4-ty@b4>
+	Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+	Imran Shaik <imran.shaik@oss.qualcomm.com>,
+	Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: Re: [PATCH v2] clk: qcom: negcc-nord: Add frequencies for ne_gcc_sdcc4_apps_clk_src
+Date: Sun,  8 Nov 2026 14:20:00 -0600
+Message-ID: <179416929341.628393.17822157471511144443.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261104-glymur-av1ecc-v2-2-7c25a73fe811@oss.qualcomm.com>
-References: <20261104-glymur-av1ecc-v2-2-7c25a73fe811@oss.qualcomm.com>
+In-Reply-To: <20261009-nord-sdcc-clk-v2-1-e00ecfa321c3@oss.qualcomm.com>
+References: <20261009-nord-sdcc-clk-v2-1-e00ecfa321c3@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -80,14 +71,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 04 Nov 2026 10:37:34 +0530, Jagadeesh Kona wrote:
-> Add compatible string for video AV1 encoder clock controller (AV1ECC)
-> and the corresponding bindings for Qualcomm Glymur SoC.
+On Fri, 09 Oct 2026 11:38:29 +0530, Jagadeesh Kona wrote:
+> Add the frequency table entries for ne_gcc_sdcc4_apps_clk_src to support
+> the additional clock rates required on the Nord platform.
 
 Applied, thanks!
 
-[2/4] dt-bindings: clock: qcom: Add AV1E clock controller on Glymur SoC
-      commit: b7da3a5bced40996bfe2bee44ecdde4424ccd037
+[1/1] clk: qcom: negcc-nord: Add frequencies for ne_gcc_sdcc4_apps_clk_src
+      commit: 34e531a6dced89c5642cffeae309e403fbbc14df
 
 Best regards,
 -- 
