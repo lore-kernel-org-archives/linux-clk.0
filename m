@@ -1,55 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794156689;
-	b=Hky21z8zg2nznpULbo102gjtxeadHXXN4W3YotJpcnDCELBRLM0/zv2VTRCogrfD6Gzl
-	 SPHN/7BnRq0R1lRZN7PV207RWSb1HeYafQRIn8g0k+KPZALyWtcIHL+7RtDN5uvXnvBWL
-	 JUK4jJoge1crXusJ+X62LaXyKwg+UCLLw7HixFUDP5Z1kQ6v++g3hJ3+Mv1AZQX7sRBH4
-	 6LOFZGgOG3dZw58jHXJG8kcJJRcXDwZli3ZNQ5fO1MAtDa796m/uXXI4/nJx+OMZmz/D1
-	 1Rr1DrbV/Ud4mn73gvlcGR0FXoiyWNv0YYvi0aSm6VyxZSz7DCQR8IuKB4WJKdFMdOQ==
+	t=1794161239;
+	b=KelDo54zT25bGxsmLpkDGt2tdKSVMhBJxDN8myGSodNTJ1GBpswGVgRXaicbcCOnd2X9
+	 OQhqfG0Wm0RMiQOR97TvLoau9EM2yEPX4lCVZf5yk8RwJXeeygUphwK/lgy5po/5r/hRh
+	 6YgRLG9W1Pf3twRD4+zIKWwNjEHN9HXB3lAssdzUZbkzvXc/5vjXuNmUVDMMUVJw+YSCh
+	 PLa0O0jknEFOvg9TGqY87kiuHpdKLsCBBfrW0U83aKOFafWR2198+MeIQOobKi3tXEQNv
+	 7Tr+OHgu3T9cb7JEPT9lMTdkWAEfe6pWYjdh3/y8Mco9s4JGriexUe5ogkM4vBKCTZQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794156689;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=HYdezMpMDTFxzK1FZSXPnbV9koPM+33TOfuH3HebiDY=;
-	b=yH8CJpXgT8gkS6dET4FToy3URon3fHwXb/6k3naGLYZXA7BrRj++Zck/2ni4rFc6s6aE
-	 RYp2piQuPZbBbLtrSbXXXUa9D21SyhaHPKRhzVVdCVkRwFPTiRO4czCLnDaGAFcp//GcW
-	 EfbtnDRjCfBprI1VvKUmKq7FOZsdXIE+wAIaOfn5ZValHcmf822qnckV++pj6WqWi9nXx
-	 gLqnLCPHG6hZubtc7escrxHznmYb21sgpET1fldl5EYAMqlQ2Q3SVOpXngjmilrEFVjaj
-	 aDpg6Z9sVH3aJ/OPYvmWN/mvgvtHgNIUWTQW0wpCEktznEbEofXXQY6q2ostj3xOQtQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794161239;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=HxfvaLA8cIY3Y2v91Caf1CvLUDTO2eAy8BOKMcGFWJA=;
+	b=eZYx4OrN6zRYwQAO2GRiZucOIYJTMgu39PuN8qxNJ9Qd5/MDEDnztP4s0XnLKTlNhIS+
+	 yXcs2XfefXX6JIPhRYKg+mEBztektNJdNduwiPZRH+0qg2wilZQhc/yFQ1yiI7Mi0fg+0
+	 C2u6Pqdru0DjAPxXmKmY1F0qLZnUQOf/BLM4C2a1QG3vU4Jrj6k2Uf5pEIkL8w3pTfG/3
+	 tFRPzl3/uNzKCUvI1S3TreUX9CZk/uk76BEmyCfMu0flfcu8V7hb2MuEOEiKbqtsFgGzL
+	 /RjR48lnMEhba1n5OIjfLDJzX43OLT9Ir2GsfSy5pmiRcyto+e0Px7tgO9xXRL2Gsuw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cKY5HchF;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lr52LkXB;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3BE606A320
-	for <linux-clk@vger.kernel.org>; Sun,  8 Nov 2026 16:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00782606A31C;
+	Sun,  8 Nov 2026 18:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cKY5HchF
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F17D61F0089F
-	for <linux-clk@vger.kernel.org>; Sun,  8 Nov 2026 16:51:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lr52LkXB
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 967221F0089F;
+	Sun,  8 Nov 2026 18:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794156688;
-	bh=HYdezMpMDTFxzK1FZSXPnbV9koPM+33TOfuH3HebiDY=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=cKY5HchFPJJy/ssHlxCtcZgd7QCYCOxatgwRkpX8JEKqBjsmbhNM79r0PcpXYzo8e
-	 gh7Y2w7rK14qmB88u1U2WdH19UQJmkgX0nGJjCY0/BZASK+6NhUyBeJ2krTxzVwkEi
-	 qrex2+0GSGngAboBwHrknrxGb+Y1g3sCrGM4K/xO0YR9u4BGY5Wq3k+cAx01xlSBp8
-	 mNEPWbK7bWeEzyKZPC3AJcfCPQA76p3bw5DIIm5lTWXAfeC4md0egZbaoaSbUGG2hS
-	 14E0rScpkZw/1vIFFRgzRVOTmDRLtrtMFh4bR+wrnILPdVk6Is3NTlfO9W+8f6z+y9
-	 +32eJN5G9PJpQ==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3adf9b1f5aeso1804661fa.0
-        for <linux-clk@vger.kernel.org>; Sun, 08 Nov 2026 08:51:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErG1T2QqEvQ+b4F1ZyksR1jPnxaFDjZBaO+s7QEXrhD1flHBBzFTDoGz9BUEDVHpd2vPFIjcIoR14UQ=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8I/tn0WY6qQDFIcNBc/XtPWTU7goDmrpd/AdXcLHSt69lQr9jo
-	Yc0PPrFwlHVF6MuspI/+HdBRvlTjcLPrYgAI2MfK1fIB+8uire6WZ+Le5CRNMkOsWox9Kx7mliF
-	QIv3C9xAou8eU1s6GLwOvtsJDDJL1aCQ=
-X-Received: by 2002:a2e:bcc2:0:b0:3ac:43b3:d926 with SMTP id
- 38308e7fff4ca-3adfa427714mr2794851fa.8.1794156686440; Sun, 08 Nov 2026
- 08:51:26 -0800 (PST)
+	s=k20260515; t=1794161238;
+	bh=HxfvaLA8cIY3Y2v91Caf1CvLUDTO2eAy8BOKMcGFWJA=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=lr52LkXBQjd07p503ZMWIY6H63zFhwEnu2bTkmiIfJwPBX8MT+OQaiUDmeIia6byD
+	 +L9iPPpJjVjrACTumZY3Gh8Lvi+pF+b6RHjnP30Uk1k6CtnafNXlOn7oTqyDXCy9SV
+	 V70I00zOtDpA8sljfpJvczt5M+O6WELX3aZ6Z40G8Y32NQF7Kvz2z+QbVgiWxYFhry
+	 9nrtziiDkeOE7tn++lFmaaMhiLNTDcoATlEzphIKuOE2v6sXgvWFhC2ME0UxSq3bjz
+	 Kaj6XrZJyPsVRXpYh6cjWtzkHiaj8OW9Qbb1aBLBVLOyZ602OXj8ovWtyuI+XwJGQw
+	 +8PBhrhIhVmxg==
+Message-ID: <sashiko-outbox-203896@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 2/2] clk: qcom: segcc-nord: Add I2C and TSC clock
+ support
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Taniya Das" <taniya.das@oss.qualcomm.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261107-gcc_i2c_tsc_support-v1-2-433d02972d7e@oss.qualcomm.com>
+References: <20261107-gcc_i2c_tsc_support-v1-0-433d02972d7e@oss.qualcomm.com>
+ <20261107-gcc_i2c_tsc_support-v1-2-433d02972d7e@oss.qualcomm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 08 Nov 2026 18:07:18 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -58,75 +60,113 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <20261108155702.361022-1-pmazzini@gmail.com>
-In-Reply-To: <20261108155702.361022-1-pmazzini@gmail.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Mon, 9 Nov 2026 01:51:13 +0900
-X-Gmail-Original-Message-ID: <CAGb2v659Km1rsvEbnwtFZwX8O+rztBXc1xuSoS9_=siz0EDxRw@mail.gmail.com>
-X-Gm-Features: AclHuK-CJjXMYHavmXJ4Bjl3HAAm8K3xT0QbfHYHd9dVDpGfItJLvFreCyFJ8Tw
-Message-ID: <CAGb2v659Km1rsvEbnwtFZwX8O+rztBXc1xuSoS9_=siz0EDxRw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] clk: sunxi-ng: describe CCUs as tables, add the
- Allwinner B288
-To: Pablo Mazzini <pmazzini@gmail.com>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Andre Przywara <andre.przywara@arm.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 9, 2026 at 12:58=E2=80=AFAM Pablo Mazzini <pmazzini@gmail.com> =
-wrote:
->
-> sunxi-ng drivers describe each clock as a static structure, list it
-> twice (ccu_clks and hw_clks) and keep a separate reset table. This adds
-> a table front end: a SoC lists its clocks once, indexed by their binding
-> clock ID, and the core builds the usual ccu_* clocks from that table.
-> Bus resets come from the gate entries, and clocks that a SoC generation
-> shares come from templates. Existing drivers and bindings are not
-> affected.
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [Medium] clk: qcom: segcc-nord: erroneous DFS registration of
+  se_gcc_cnoc_i2c_slave_clk_src
+- [Low] clk: qcom: segcc-nord: duplicate 19.2 MHz freq_tbl and misplaced
+  RCG definition
+--
 
-I think you're going to have to give more justification. What do we gain?
-What are the trade-offs? Building all the data at run-time means we end
-up consuming even more memory. The tables from init time typically aren't
-dropped when a driver is built as a module.
+commit 5e0b8aed90909a3578c24b44cabdb5fafa31fe1c
+Author: Taniya Das <taniya.das@oss.qualcomm.com>
 
+clk: qcom: segcc-nord: Add I2C and TSC clock support
 
-ChenYu
+This commit adds the I2C slave and TSC subsystem clocks, reset lines, and
+GPLL1 parent PLL definitions to the Nord SE GCC driver.
 
-> The first user is the B288. Its driver is 212 lines here, against 749
-> in the current style.
->
-> This replaces patches 01 and 02 of the B288 series v4:
-> https://lore.kernel.org/r/20261012100816.331033-1-pmazzini@gmail.com
->
-> Pablo Mazzini (3):
->   dt-bindings: clock: sun4i-a10-ccu: add Allwinner B288
->   clk: sunxi-ng: add a table front end
->   clk: sunxi-ng: add Allwinner B288 CCU driver
->
->  .../clock/allwinner,sun4i-a10-ccu.yaml        |   1 +
->  drivers/clk/sunxi-ng/Kconfig                  |   5 +
->  drivers/clk/sunxi-ng/Makefile                 |   2 +
->  drivers/clk/sunxi-ng/ccu-sun8i-b288.c         | 212 ++++++++
->  drivers/clk/sunxi-ng/ccu-sun8i-b288.h         |  11 +
->  drivers/clk/sunxi-ng/ccu_table.c              | 510 ++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu_table.h              | 233 ++++++++
->  include/dt-bindings/clock/sun8i-b288-ccu.h    |  82 +++
->  include/dt-bindings/reset/sun8i-b288-ccu.h    |  45 ++
->  9 files changed, 1101 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-b288.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-b288.h
->  create mode 100644 drivers/clk/sunxi-ng/ccu_table.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu_table.h
->  create mode 100644 include/dt-bindings/clock/sun8i-b288-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun8i-b288-ccu.h
->
->
-> base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
-> --
-> 2.52.0
->
->
+> diff --git a/drivers/clk/qcom/segcc-nord.c b/drivers/clk/qcom/segcc-nord.c
+> index ef97da3852e35..7fdfa44fb1036 100644
+> --- a/drivers/clk/qcom/segcc-nord.c
+> +++ b/drivers/clk/qcom/segcc-nord.c
+[ ... ]
+> @@ -189,6 +207,43 @@ static const struct clk_parent_data se_gcc_parent_da=
+ta_4[] =3D {
+>  	{ .index =3D DT_SLEEP_CLK },
+>  };
+> =20
+> +static const struct freq_tbl ftbl_se_gcc_cnoc_i2c_slave_clk_src[] =3D {
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+> +	{ }
+> +};
+> +
+> +static struct clk_init_data se_gcc_cnoc_i2c_slave_clk_src_init =3D {
+> +	.name =3D "se_gcc_cnoc_i2c_slave_clk_src",
+> +	.parent_data =3D se_gcc_parent_data_2,
+> +	.num_parents =3D ARRAY_SIZE(se_gcc_parent_data_2),
+> +	.flags =3D CLK_SET_RATE_PARENT,
+> +	.ops =3D &clk_rcg2_shared_no_init_park_ops,
+> +};
+> +
+> +static struct clk_rcg2 se_gcc_cnoc_i2c_slave_clk_src =3D {
+> +	.cmd_rcgr =3D 0x13034,
+> +	.mnd_width =3D 0,
+> +	.hid_width =3D 5,
+> +	.parent_map =3D se_gcc_parent_map_2,
+> +	.freq_tbl =3D ftbl_se_gcc_cnoc_i2c_slave_clk_src,
+> +	.hw_clk_ctrl =3D true,
+> +	.clkr.hw.init =3D &se_gcc_cnoc_i2c_slave_clk_src_init,
+> +};
+> +
+> +static const struct parent_map se_gcc_parent_map_5[] =3D {
+> +	{ P_BI_TCXO, 0 },
+> +	{ P_SE_GCC_GPLL0_OUT_MAIN, 1 },
+> +	{ P_SE_GCC_GPLL5_OUT_MAIN, 3 },
+> +	{ P_SE_GCC_GPLL1_OUT_MAIN, 4 },
+> +};
+> +
+> +static const struct clk_parent_data se_gcc_parent_data_5[] =3D {
+> +	{ .index =3D DT_BI_TCXO },
+> +	{ .hw =3D &se_gcc_gpll0.clkr.hw },
+> +	{ .hw =3D &se_gcc_gpll5.clkr.hw },
+> +	{ .hw =3D &se_gcc_gpll1.clkr.hw },
+> +};
+
+[Severity: Low]
+This isn't a bug, but ftbl_se_gcc_cnoc_i2c_slave_clk_src is identical to
+ftbl_se_gcc_emac0_phy_aux_clk_src, which se_gcc_emac1_phy_aux_clk_src and
+se_gcc_i2c_slave_xo_clk_src already reuse.  Could
+se_gcc_cnoc_i2c_slave_clk_src reuse ftbl_se_gcc_emac0_phy_aux_clk_src and
+be placed with the other RCG definitions after the parent map tables?
+
+[ ... ]
+
+> @@ -1570,11 +1754,14 @@ static const struct qcom_reset_map se_gcc_nord_re=
+sets[] =3D {
+>  	[SE_GCC_EMAC0_BCR] =3D { 0x24000 },
+>  	[SE_GCC_EMAC1_BCR] =3D { 0x25000 },
+> +	[SE_GCC_I2C_BCR] =3D { 0x2c000 },
+>  	[SE_GCC_QUPV3_WRAPPER_0_BCR] =3D { 0x26000 },
+>  	[SE_GCC_QUPV3_WRAPPER_1_BCR] =3D { 0x27000 },
+> +	[SE_GCC_TSCSS_BCR] =3D { 0x2a000 },
+>  };
+> =20
+>  static const struct clk_rcg_dfs_data se_gcc_nord_dfs_clocks[] =3D {
+> +	DEFINE_RCG_DFS(se_gcc_cnoc_i2c_slave_clk_src),
+>  	DEFINE_RCG_DFS(se_gcc_qupv3_wrap0_s0_clk_src),
+>  	DEFINE_RCG_DFS(se_gcc_qupv3_wrap0_s1_clk_src),
+>  	DEFINE_RCG_DFS(se_gcc_qupv3_wrap0_s2_clk_src),
+
+[Severity: Medium]
+Should se_gcc_cnoc_i2c_slave_clk_src be registered in
+se_gcc_nord_dfs_clocks?
+
+se_gcc_cnoc_i2c_slave_clk_src is a fixed-19.2 MHz CNOC RCG with
+mnd_width =3D 0, not a QUPv3 GENI Serial Engine RCG.  Passing it to
+qcom_cc_register_rcg_dfs() -> clk_rcg2_enable_dfs() reads cmd_rcgr +
+SE_CMD_DFSR_OFFSET (0x13048), which is outside its 8-byte RCG register
+block.
+
+If bit 0 at 0x13048 happens to be set, clk_rcg2_enable_dfs() replaces the
+clock's ops with clk_rcg2_dfs_ops (dropping the enable, disable, and
+set_rate callbacks needed by se_gcc_i2c_slave_ahb_clk) and clears
+freq_tbl.  Any subsequent rate calculation when CFG_MODE_MASK is non-zero
+in the registers read as DFS performance levels will compute mask =3D
+BIT(rcg->mnd_width) - 1 =3D 0, leaving m =3D 0 and n =3D 0 and triggering a
+divide-by-zero in calc_rate().
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261107-gcc_i2c_ts=
+c_support-v1-0-433d02972d7e@oss.qualcomm.com?part=3D2
