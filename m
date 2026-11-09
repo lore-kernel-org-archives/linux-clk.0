@@ -1,111 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=44.202.169.35
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794236953;
-	b=SD3YGFtACnc+8Ub5HB9x7q5xKWoi8fTefuSU37JM/C04jtFqvlZG88JTATG3hslM0Eaz
-	 Hpu3mTjrKqL2qNHIHEFTFBfy1HBx72sjQovzAVsgqOjhlLKKPfpyyZZzieXF85QcQG3q4
-	 oCYoD5u9MhqXA7JRVwXSgTIbGiv2ohoPgRTNyECfDHcr/RaDnjkkEFs5NWzkmaWnUSCBY
-	 Sx5p3LVpO3MKX/NLVQujMvTW49+DXPvaMSgzlSF/7G3LrP2TSsiWtsGqO3pR2DFpbM7wZ
-	 N0xXJflOXvFOkgL5VQ4D3BPxuaaLBCQF1KtiUHqVYkA9Dc2QZZgL9tSks+BcmRvglkg==
+	t=1794238124;
+	b=kUnROHM/PgxWcTxntIqqIWIkepJYoUxwZo4qNvQ7WzX3015l6WARLTu/pBmO5/x6BzHL
+	 GHEvICxJVOymZ7YXywXnRCVSbsG/zLaesT8IGk1yLRGPCq7QqDXY1dEwnv1ijSxuazMcS
+	 pYTb20sjUF8fgCTNymUL36aQ0hp78ySxjdjLJM6k9jqFnlWxBzSHXILL3oFsDo+sDX+Mu
+	 4GiG7Jb1fyXg42t3TPwWMhk2PRVrXBmXnEQQmAv666N7uAF6XZuOTiD9ta0/Xcd1FlNnW
+	 eBuSXbHq1f3mcgSId1sigLSQMWlLZTAJ0DcOa9QJC6k9jZEJFvKTZ8/UQTKq2lrwgVg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794236953;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Authority-Analysis:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=/c2MG+QoqzfRVVPRzuXT5lQ6R8pNRM092UJK6seiUoc=;
-	b=TftRIEj9ynw/1kfe6bXngvii+I0zTUgYVexTAhbnWCJfJ+/kYefkR5A1xwZRyktdwlCz
-	 OXNdp7kFO//0UwjWoYpz46X+3m7CUj41lVLQCEMCoJdN7ciUZxyc7DLCIwDBvjtYBXqDj
-	 bLYAyRj0xez/b/9zHo7+hIc8MSMYz0I+eC6uCiNJOcLZcAiTv+e7FSNELHbxQ+vJR2fHa
-	 b1kz3yHOALuQtwmVT6V/z9MOEveGaqJVoYTfmX+PuBfoZiDrG+3uEQVIAUdwIUSv1HaKQ
-	 tO4WWVrkkUxSiQNm0mQhMJxmmpIN/dyglljM20PvkQpQLWItw9PjWuBz6sGryz9Dbdw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794238124;
+	h=DMARC-Filter:Received:Received:X-Authority-Analysis:DKIM-Signature:
+	 Received:Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
+	 References:Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
+	 X-AntiAbuse:X-AntiAbuse:X-BWhitelist:X-Source-IP:X-Source-L:X-Exim-ID:
+	 X-Source:X-Source-Args:X-Source-Dir:X-Source-Sender:X-Source-Auth:
+	 X-Email-Count:X-Org:X-Source-Cap:X-Local-Domain:X-CMAE-Envelope;
+	bh=B2vyEo5b1bt5v4hJpNTxZdeyGVePDC7Pmfk5vt9hzUc=;
+	b=2QpCCJDo//HTSCIksIb2Uj5TXXtVcKsY9w3Om1EOIliwC9+La4+KeY6iIpTEZFeLypoa
+	 YVPSoDR8qPQfKwm7D/BwYo49Qe3HYwAmwOzRXLeW9NfnDgiLPdBja6znfoxsT6LrkilT3
+	 KM4Vdva9JN1IBVp1nPf6RZm1IbAReBcIB+tv+bL8HEZlHk5aYEGH9p/+AXJ5uJtDBRdS5
+	 JygqUgusGBFs6TOtiTUvWz8ewBEQX4697ApKjdXGtKCpWCqT2XR9QxdQkScrKbQYKHB/k
+	 WDMm+1xDRMLNwcqTdI+UFPh6dlOGedwGHG8zjQuL4esuJKNWbHIrke8IjrlWy81ThtA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=FJpS75Tc;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=clWp1fF+;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=none header.from=roeck-us.net;
+	spf=fail smtp.mailfrom=roeck-us.net;
+	dkim=pass header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=lTMRzCL8;
+	arc=none smtp.remote-ip=44.202.169.35
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F479606EE87
-	for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2026 15:09:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7F479606EE87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E896C606A32A
+	for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2026 15:28:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E896C606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=FJpS75Tc;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=clWp1fF+
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A9DFB5D359256
-	for <linux-clk@vger.kernel.org>; Mon, 9 Nov 2026 15:09:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/c2MG+QoqzfRVVPRzuXT5lQ6R8pNRM092UJK6seiUoc=; b=FJpS75TcbFrT2OXs
-	WOQoCz4KVYH4VtPyWb3XgVtnnZYhuH/xQyvuynyDgW8DRbEydPCIrrU3PeYCGqyQ
-	DxZND5wwIWScDrn7IuLdpY5+F8SW9xsjrMq7bBJNhKkuWzmhtFusqx3FuwSZCj3m
-	iAqm/lPA1m8zsIZb1llxHAJdqafx5MNhenBoeuupWzA65/tTJLfuF4JtU3/LTv6k
-	22p8k8NTBFjNh8nIYlhXwO92H0kqaKoERw4FwJ8pqTVxgt+FyrUfVcEOfpduGX3s
-	BY2F346kz78huXeLEPmo8hSek5dueqtxxkrxnXe8FnDeusm2bifiMOUZD4XFvykX
-	5BJJtQ==
-Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com [209.85.221.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hu6x2j75a-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2026 15:09:11 +0000 (GMT)
-Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-5ecbb3b4696so27142e0c.0
-        for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2026 07:09:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794236951; x=1794841751; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=/c2MG+QoqzfRVVPRzuXT5lQ6R8pNRM092UJK6seiUoc=;
-        b=clWp1fF+ZhrbDzREMjnU17D2ftR5MNABk/FSmdeNvgMWdwjEvt5VR1k3WVBiB5m9Bd
-         AFVRfCvbmoEQXwASMfI07fp8SdHYwOjYKMQOfttSkGf/YXQ9rBw6dAjy/cii7JMwnzaM
-         QPxc7p5mCIvDiFaGvNmZQR6HwOciV2zikHT4SX/nVzcF85zlJcZgJo/K9Lymwc1vzgX0
-         k1/tbL9NJlCAPLXELYEr8dtLoY3LdcQ0AL1GdMKl4bmh0as419PufnhE7LkE5akngFRs
-         MZ6r7Eir9bGX9sijbOc/venRp7kpaDlH3LRag4vK17vNGfSXhyt2TnkH8Pl9PUXejpBW
-         RcxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794236951; x=1794841751;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=/c2MG+QoqzfRVVPRzuXT5lQ6R8pNRM092UJK6seiUoc=;
-        b=sa3qk4Qd2Qh6PJr/AFaTJXIfhNMI8zVjz9aq8K8x4XEVDkQd2g7RWtUFBfg54rXLva
-         xK0Fc4eyBSPM0sh2N5A01MYMhbxcqsiOCKduPQelViy0Z6bj+rPeoGO5C1HsctHqKiBe
-         qkuA6iuLsL9WtYhLCi6+IVk55AYjv4Ai6LHTxzwHqxv7tpjefGEgChTlWyIUufWjHk52
-         +HFivorkIWXnmGKfRSjIPzXJcHGX8o5RiHx2vCqESJcbYFC+TTVqfDFjz1U+0ciK7SXQ
-         gpksbN6STWbtJzLRbIOCyJaEfp4G7sRzEgRv4l4SahFMu6nL0/DItsSJ39+bSQ8HWW64
-         7Gmw==
-X-Forwarded-Encrypted: i=1; AL+hErF86RAwg5gXKiAmlJ/R16vtqgGaiox3KKy5oFZxqEGKt4YkZpr/R5swBQAodYB8iy8+oNpNUi29Jxk=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+Z/r82ZKsPSSnjiIWCAch8Dfqt+EvlhL6wryLj5GjJNM9Aq+VG
-	M1Ksuqeqa3td3wRhm/68AVZ2Wu/+4+ubf3o07e/Ijs4LQYlTpY+DRuA9lKiuD37anHxcnzyyJOc
-	M+sZ1YuIAv3nG9UTsnThnTmrUc10I0wlrFpIbut7s6ybIuaAkaB2MRxu8lrP2vrQ=
-X-Gm-Gg: AYBFou0FGN5k6xAqvSU/SVdddH6QamrJGMv9ht1nPqWyAVtBvpsR3INdIKm0XM9eC3S
-	QqVJVbIAJ6LOVlBBB3lCUQnFfFobH2sFJ/fjy/i2bJulZbowJaQJDpzHg9Kd73knDpR1ZiAcrIp
-	DrFaPcvoCQvm2NECRLq+Ffgx3K7odvnH0rbWIa6vxEPNhBafOMueoZNahcE3EMBaDJ6ubk+mn/A
-	7kGrX1kixsH6QuUBItfyp8mOLcq0r4hmqWiAcADy30W8lcr8+zyFqK7a4dY0MS7xAoha+8CLSSW
-	7XLpWHjf9NAlKQjOg3+/6JfQkoOrbYJrbwCH1nIeyf2f/7wMEXw6lqumJDJYYXpw6TzSdZ0KNDZ
-	cmiAD+PwO5SIi8ct89EcdAHuMrB28BCR3IjPmCKAJAaBN4WxCDkCrl3JlzBJf0fB13waJCA==
-X-Received: by 2002:ac5:c928:0:b0:5ec:b706:37e0 with SMTP id 71dfb90a1353d-5ece71453c0mr1087421e0c.1.1794236950734;
-        Mon, 09 Nov 2026 07:09:10 -0800 (PST)
-X-Received: by 2002:ac5:c928:0:b0:5ec:b706:37e0 with SMTP id 71dfb90a1353d-5ece71453c0mr1087380e0c.1.1794236950143;
-        Mon, 09 Nov 2026 07:09:10 -0800 (PST)
-Received: from [192.168.226.72] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4d6a474e5esm185561166b.33.2026.11.09.07.09.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Nov 2026 07:09:09 -0800 (PST)
-Message-ID: <f84e83fe-2a81-4efa-b5cf-c458531e3677@oss.qualcomm.com>
-Date: Mon, 9 Nov 2026 16:09:07 +0100
+	dkim=pass (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=lTMRzCL8
+Received: from eig-obgw-5003b.ext.cloudfilter.net ([10.0.29.155])
+	by cmsmtp with ESMTPS
+	id QN7xxnyro4vCDQRIZx85Nz; Mon, 09 Nov 2026 15:28:43 +0000
+Received: from 162-215-252-36.unifiedlayer.com ([208.91.199.152])
+	by cmsmtp with ESMTPS
+	id QRIYxcOPcSgq1QRIYxSTNR; Mon, 09 Nov 2026 15:28:43 +0000
+X-Authority-Analysis: v=2.4 cv=c8KrQQ9l c=1 sm=1 tr=0 ts=6af1e6ab
+ a=QNED+QcLUkoL9qulTODnwA==:117 a=2cfIYNtKkjgZNaOwnGXpGw==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=M0FbrtG7MMAA:10 a=VwQbUJbxAAAA:8
+ a=yC-0_ovQAAAA:8 a=pGLkceISAAAA:8 a=Bc9-fzvMU0tklgv-buwA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=KPbNTLLc3YvdawN95zVk:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=roeck-us.net; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:
+	List-Archive; bh=B2vyEo5b1bt5v4hJpNTxZdeyGVePDC7Pmfk5vt9hzUc=; b=lTMRzCL8hvXA
+	tMU+zRBnUqs/tk41gqWTSKzucfsY75DpJsHANPHGLVyEY8oOXvNPX41AkGoY1ZphnfhKFbVP2fmy2
+	7b61mJxbw56xGtARUS5/qekOtYHqpyWgSDDG5AV2neyFeeySu1RXP52CLysgIilx/DDBgZLbKrg9m
+	9aJJ04pLr8iTfD+g02+qou5HHkWgEuWBsi0PJm0J3rz3ubfunsJ6vwZJhuCqBeD+TqB4WWFzKidZ4
+	+8yd5Rmu0/86bW9hWZsiaI2IegnMf+QIU6nGI7c5rNa5Fk52kEiT5OCHMvHH3EituXuiBuKQJag3M
+	HZjP62eL6WzloiutpaJ+6A==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:58606)
+	by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <linux@roeck-us.net>)
+	id 1xQRIX-00000001ESL-1tvc;
+	Mon, 09 Nov 2026 20:58:41 +0530
+Message-ID: <744d20c9-9aa2-4f3b-b42f-cfdd0a17da65@roeck-us.net>
+Date: Mon, 9 Nov 2026 07:28:39 -0800
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -116,67 +77,166 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] clk: qcom: clk-alpha-pll: Add Lucid 5LPE PLL type
-To: Vladimir Zapolskiy <vz@kernel.org>,
-        Bjorn Andersson
- <andersson@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20261107173621.3538964-1-vz@kernel.org>
- <20261107173621.3538964-3-vz@kernel.org>
+Subject: Re: [PATCH v8 0/7] Add syscon support for Renesas WDT driver
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Magnus Damm <magnus.damm@gmail.com>, Brian Masney <bmasney+clk@redhat.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-watchdog@vger.kernel.org,
+ Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20261001165201.763882-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CA+V-a8u-3NFryZA_8GN=fR09+fcyvNGLMV-09z-mPXTePxkgvg@mail.gmail.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20261107173621.3538964-3-vz@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=TMjQ2Fla c=1 sm=1 tr=0 ts=6af1e217 cx=c_pps
- a=JIY1xp/sjQ9K5JH4t62bdg==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=EUspDBNiAAAA:8 a=amEjgA4fUcSruvVDRsIA:9 a=QEXdDO2ut3YA:10
- a=tNoRWFLymzeba-QzToBc:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA5MDA2MCBTYWx0ZWRfX5TvMCD++kqsO
- 83POX7i4JsRxZrdQr7jFu8SIdKdX+ru3M2Qw8PWGHIt6OcLqH9uga1MDeYeUKBAQdD1O9XWNG1L
- qOiq9WKddg4ILshJLjK7cVixeXA1IPJyhbmpf5u4sm5cvwHYUhcryAJehOrcXz+Le9CGZHLyj0e
- +IsS776PiCG2eXW1PKkq4ZQpKyPAA64DGoPQM+dNoIzV333TuUY8VArP3lQygwV+m3BcfI4YRfn
- bvkMh1LETuwfPwSrojNGuX8M1DhyUJU4qIHqMnLknc7Sa1RpsV1uG76Oiulk/r4bTgPnOIaCaZW
- 3sgW8tdJ+YzHfwT1cVwxaLi59bBxsHDJLVJmgLpPGo/ahy20umcR0Ov0t08UuFf+5j7Emo+T0cE
- 1u8hIYi+BQbagJk9WCg5cjr6RRu/92hvjUksO81FgxWRfwc7IT0iLcvGNCNPfSpZjnSEBd6Sq5x
- WJjeQXeZGKaAQ97QBOw==
-X-Proofpoint-GUID: 3eCrArq4kjy3jj_DB85CYdKsKm7dYIYL
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA5MDA2MCBTYWx0ZWRfX+/lX3MQ7q6QC
- hf4EhTFZbMjzf23/WzbYPviH630WGJT99SBi65+UbucPGcRPMl5vqRtW+3M3/XZcalSZOk600wI
- 0D3IZjEJuM7lZoivoprsRnv8bYeu4ss=
-X-Proofpoint-ORIG-GUID: 3eCrArq4kjy3jj_DB85CYdKsKm7dYIYL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-09_05,2026-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0
- phishscore=0 priorityscore=1501 spamscore=0 bulkscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611090060
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAmgrMyQFCSbODQkACgkQyx8mb86fmYGcWRAA
+ oRwrk7V8fULqnGGpBIjp7pvR187Yzx+lhMGUHuM5H56TFEqeVwCMLWB2x1YRolYbY4MEFlQg
+ VUFcfeW0OknSr1s6wtrtQm0gdkolM8OcCL9ptTHOg1mmXa4YpW8QJiL0AVtbpE9BroeWGl9v
+ 2TGILPm9mVp+GmMQgkNeCS7Jonq5f5pDUGumAMguWzMFEg+Imt9wr2YA7aGen7KPSqJeQPpj
+ onPKhu7O/KJKkuC50ylxizHzmGx+IUSmOZxN950pZUFvVZH9CwhAAl+NYUtcF5ry/uSYG2U7
+ DCvpzqOryJRemKN63qt1bjF6cltsXwxjKOw6CvdjJYA3n6xCWLuJ6yk6CAy1Ukh545NhgBAs
+ rGGVkl6TUBi0ixL3EF3RWLa9IMDcHN32r7OBhw6vbul8HqyTFZWY2ksTvlTl+qG3zV6AJuzT
+ WdXmbcKN+TdhO5XlxVlbZoCm7ViBj1+PvIFQZCnLAhqSd/DJlhaq8fFXx1dCUPgQDcD+wo65
+ qulV/NijfU8bzFfEPgYP/3LP+BSAyFs33y/mdP8kbMxSCjnLEhimQMrSSo/To1Gxp5C97fw5
+ 3m1CaMILGKCmfI1B8iA8zd8ib7t1Rg0qCwcAnvsM36SkrID32GfFbv873bNskJCHAISK3Xkz
+ qo7IYZmjk/IJGbsiGzxUhvicwkgKE9r7a1rOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAmgrMyQFCSbODQkACgkQyx8mb86fmYHlgg/9
+ H5JeDmB4jsreE9Bn621wZk7NMzxy9STxiVKSh8Mq4pb+IDu1RU2iLyetCY1TiJlcxnE362kj
+ njrfAdqyPteHM+LU59NtEbGwrfcXdQoh4XdMuPA5ADetPLma3YiRa3VsVkLwpnR7ilgwQw6u
+ dycEaOxQ7LUXCs0JaGVVP25Z2hMkHBwx6BlW6EZLNgzGI2rswSZ7SKcsBd1IRHVf0miwIFYy
+ j/UEfAFNW+tbtKPNn3xZTLs3quQN7GdYLh+J0XxITpBZaFOpwEKV+VS36pSLnNl0T5wm0E/y
+ scPJ0OVY7ly5Vm1nnoH4licaU5Y1nSkFR/j2douI5P7Cj687WuNMC6CcFd6j72kRfxklOqXw
+ zvy+2NEcXyziiLXp84130yxAKXfluax9sZhhrhKT6VrD45S6N3HxJpXQ/RY/EX35neH2/F7B
+ RgSloce2+zWfpELyS1qRkCUTt1tlGV2p+y2BPfXzrHn2vxvbhEn1QpQ6t+85FKN8YEhJEygJ
+ F0WaMvQMNrk9UAUziVcUkLU52NS9SXqpVg8vgrO0JKx97IXFPcNh0DWsSj/0Y8HO/RDkGXYn
+ FDMj7fZSPKyPQPmEHg+W/KzxSSfdgWIHF2QaQ0b2q1wOSec4Rti52ohmNSY+KNIW/zODhugJ
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <CA+V-a8u-3NFryZA_8GN=fR09+fcyvNGLMV-09z-mPXTePxkgvg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-BWhitelist: no
+X-Source-IP: 108.223.40.66
+X-Source-L: No
+X-Exim-ID: 1xQRIX-00000001ESL-1tvc
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net [108.223.40.66]:58606
+X-Source-Auth: guenter@roeck-us.net
+X-Email-Count: 19
+X-Org: HG=direseller_whb_net_legacy;ORG=directi;
+X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfNcbY7HTK5aRpHIlzvGjF/yhclIwDA/9ri+QOOQOVrBEslnE/3VNCg66Ruk+Sz081a0t9pVc92d32Zk/9a83nvL/HfDkomBM3LNt0RNNSAN7ddlbKi1O
+ x+ufk+XKm5wgnk9SoYW7aNnxTVtRqwih6VMgNhhsXUIIOdPLqwlNFb73fkOCgp/J73aG49U98KNwkE4qyZcHgftNOvNdm7lwqHUrgGHUbKla/HGDkFJTXI1u
 
-On 11/7/26 6:36 PM, Vladimir Zapolskiy wrote:
-> Lucid 5LPE PLLs have the same register layout as Trion and Lucid PLLs,
-> but the bitfields are not identical, for instance PLL_UPDATE_BYPASS bit
-> is not present, and the PLL configuration should be done by calling its
-> own separate clk_lucid_5lpe_pll_configure() function.
+On 11/9/26 04:27, Lad, Prabhakar wrote:
+> Hi all,
+> 
+> On Thu, Oct 1, 2026 at 5:52 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+>>
+>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>>
+>> Hi all,
+>>
+>> This series adds syscon support for the Renesas RZ/T2H and RZ/N2H SoCs in
+>> the WDT driver. The WDTDCR register is part of the CPG/MSSR block for
+>> which the CPG driver registers SYSC regmap. WDT driver now uses this
+>> syscon to access the WDTDCR register.
+>>
+>> These patches were part of two seprate series [0] and [1], out of which
+>> certain patches have been queued separately, so I have included rest of
+>> the patches into this single series.
+>>
+>> Merge strategy, as the WDT driver now includes renesas.h header file,
+>> the driver patches can go via renesas-soc.
+>>
+>> Note, patches have been rebased on top of next-20260930.
+>>
+>> v7->v8:
+>> - Dropped patch "watchdog: rzv2h: Drop enabling clocks in the
+>>    restart handler" addressing Sashiko's comments
+>>
+>> v6->v7:
+>> - Added a new patch to introduce rzt2h_cpg_wdtdcr_count_start() function
+>> - Added new patch to drop pm_runtime_resume_and_get() &
+>>    pm_runtime_put_sync() calls while accessing the WDTDCR register.
+>> - Dropped propagating WDTDCR access errors.
+>> - Dropped converting WDTDCR handling to regmap as this would require
+>>    resource address comparison to get WDT index to call
+>>    rzt2h_cpg_wdtdcr_count_start().
+>> - Made use of rzt2h_cpg_wdtdcr_count_start() in restart handler
+>> - Added if regmap is available, use it for WDTDCR access
+>> - Updated commit message
+>>
+>> v5->v6:
+>> - Used pm_runtime_put_sync() in rzv2h_wdt_stop() function.
+>> - rebased on top of next-20260922
+>>
+>> v4->v5:
+>> - patch #1 is new addressing Sashiko's comments to avoid potential deadlock
+>> - patch #4 is new addressing Sashiko's comments
+>> - Dropped checking rzt2h_wdt_wdtdcr_count_start() return value in
+>>    restart path.
+>> - Handled the regmap locking in the driver and introduced nolock
+>>    version to be used in the restart path.
+>> - Added review-by tag.
+>>
+>> [0] https://lore.kernel.org/all/20260817192540.423994-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+>> [1] https://lore.kernel.org/all/20260814191415.2110732-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+>>
+>> Cheers,
+>> Prabhakar
+>>
+>> Lad Prabhakar (7):
+>>    clk: renesas: r9a09g077: Add helper to start WDTDCR counter
+>>    watchdog: rzv2h: Use pm_runtime_put_sync()
+>>    watchdog: rzv2h: Drop WDTRCR_RSTIRQS define
+>>    watchdog: rzv2h: Drop runtime PM handling from WDTDCR init
+>>    watchdog: rzv2h_wdt: Add syscon based WDTDCR access
+>>    arm64: dts: renesas: r9a09g077: Use CPG/MSSR syscon for WDTDCR access
+>>    arm64: dts: renesas: r9a09g087: Use CPG/MSSR syscon for WDTDCR access
+>>
+> Gentle ping.
+> 
 
-Oh.. very interesting.. seems like these are used on SM8350 and
-SC8280XP across the board, including in GCC.. funny how that
-never surfaced for N years
+No feedback on the first patch of the series. If you let me know which patches
+don't depend on it, I'll be happy to apply them. AFAICS that would be patches
+2-4 ?
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Thanks,
+Guenter
 
-Konrad
