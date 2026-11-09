@@ -1,89 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794248940;
-	b=HWaxCA4xiPiMRym0NGZDffMG5z7gVXfhkd6AV3VT7TPcmne+T/E6HOwrAmEXKFtJ0pv1
-	 0+jNqvUJGpYW9FE13K0mhdGv0H5UVBvzNNT1EHfpCTKXHmzkvw88MDiyl3b6mbzMHb255
-	 FFwQ2Oe5ytpd6yA2aRn8bSK/K9YWNpR7NmJXIb1apc+sM9ACwZICUzUqH0/qiaV+jGbU/
-	 se5juocWHM0CtcT5IhIlDjAGkQrbhReHSFSs6ltAXha1Y87nRf/+1EKil9qt8EKnqKVfY
-	 7aOZWkQHvpe1FIUJ33xl4oCKpxeCWhOjh71XdR7d63k4jvEEpxBkfZYtBXq9X+3w68g==
+	t=1794249881;
+	b=hiZrS7IxDk9sx09w5TV9fQkmTHLFNL5IbdIjEmPF6qpRuXOyFMYgfu90evJPUdO5w5RH
+	 lM+Sd5HGZ+GYxr2xh7+MXws0LQwV92gYvXIrG6M+Kj6eSulGPwW+2lT6NcwiTMjFpM1vi
+	 evj4P3xhjy+3UxdF//43vrS3fwO1hPJLT2ckQr6ROdnW9pIJXeh7F+eZ65qqERGsXUc2Q
+	 UMlHfUwHV3igJNsAKcG9qTicHDM0Rz+MN5xFcOsiSzfwvioE2Jd7KWxUaSCAOWMlh0Nm9
+	 AnxQnp2kr6NrP7/nJ6J9+uOMR53JSsrucTpM15hOegpWDbB80yzELMdqy/0tMBBU/7g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794248940;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=9w0S8CsI9EhhlqLHYlJdHUn34HOfLLSbwkfkmUDEcT0=;
-	b=jtJxKCVkquUGpM0/0T2obfM9tCh//RajvtiyaZRqEKSN3cVe5s7JvbWHyd+QADYV9h9J
-	 28qmbIShbLpfwrNBoOzRDkhGyAFwe2wv/RTzt/8bqLNPCvMbIFGYzGVPxcts4eP3/PSo+
-	 jEfsd1LHCzzMr6ytZBbFEiajmSfErwQcxfCjCA+JQkdAFoulsSJJbD/MihV5CwTlOM7DP
-	 v3joMlx8fyRS7IwJfOi1q6iGJhXdz9VJvVVe0noUqjcmsX2BJ2TdxiG9p9Ej8fcfmDT/U
-	 saaJJVLbJaIQwTgadY1EAhu/f9tc0wDprTqqYUQlFp6czYLbMcacHxHYk8RWrfLe1zQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794249881;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=KgV+w1ktKyBefG0Em74eSE1E840Wrdo2wtkxuBRC6Z0=;
+	b=aHfaD81sCpn3FJU1qE8pLm6SYJqyK/Ck9soWcHft+ToAl2zf/3O4Fkqm6963iGg3nXTW
+	 keabc0d0UerpSbft+Wl/ILYRUI6dK8AiSOBv1T9jmqrcDcKzW4ellK7Sdwg6xn9j3fH7H
+	 upuyfcmb/80TuRgis5IlvFea5NxBOHf6WmvTsL2nlV17qzCtpT9N94M5Rga6uTGtgawyb
+	 wLhBSqtOhbfl09zDTV2zLUxz671LTCygRSSLWg8bdB3VPIufmxc71f1OdjkO/OruntdJl
+	 asHBHO0wCzPMW1PfSV4e2yaRFxivdm0lyAhdtkTPsvlv9Q5BTf3Q4feoZml13m9Wnmw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AlEBnYsj;
-	arc=none smtp.remote-ip=209.85.219.45
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K09qkjfb;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0283F607009D
-	for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2026 18:28:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0283F607009D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C1E606A332;
+	Mon,  9 Nov 2026 18:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AlEBnYsj
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-91ec14f4369so12927546d6.0
-        for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2026 10:28:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794248938; x=1794853738; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=9w0S8CsI9EhhlqLHYlJdHUn34HOfLLSbwkfkmUDEcT0=;
-        b=AlEBnYsjS4cQ/ZCpakl4FK8wdHhmgl33YenUgAc5gNmBjh3fw10yeQV1m6rXIrMTZm
-         6hLUZKz8VGhoG59lEi73vFlBryPYdTm6R1Mhy6zcS5NH7ZYrAOvijTth2T2LOy/Y1Edn
-         W8ObT2BsaSLL/a8c6TLcSBDDQB3lrTg3X5FdB1tpy4FktjHlPdsCwfsQZh/yzejS3Ihl
-         Hc7kcfVoZgvWoOJ002pm5uikvwlhFB+i/Ah1lKvSXWQqWwliIHWwk34Ne4QYBEfubxvI
-         21ifdGnJKvGdNpTZgyDpGOFVmz4nx7CHha7NlCzr9ek+FGkmHxlUCuTYa5FD05QrO9Rd
-         Mo2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794248938; x=1794853738;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=9w0S8CsI9EhhlqLHYlJdHUn34HOfLLSbwkfkmUDEcT0=;
-        b=Le7T9KgOgfIqi80gvksIFeZPLjYD0lNcguTktkrsgAg+UUzdJ2FwbtGEqYXark8JdW
-         gkabAmBKkuRFJ0tB7CHkUEs7nx1l2c9DOx0ikuL7PQOPKHoInuLJNzRDkvzayNOiCgCV
-         jdno4dBJbcjznj3Kv0SKrEslGDUwo0Eb9QRtHblcZ2k/0J5ERLnVdGi43ugjlbpSiHXQ
-         4jIg7O7BmdkXyQiX1jnxvvzeMQ4byK5y+A2cZhBpeU6y7TcRcNqZP9cEYNVq0kTVgp5s
-         e0CUwghFUwCIqrzOX0f1OKwDkz+q47MpYOAOZvdAy5zdocxjCk3AM/FNBbKLJaKgzIG7
-         5ejw==
-X-Forwarded-Encrypted: i=1; AL+hErGVlPkkSJ+Zz6nfrnJ7yyE0RPscLo1TWnraNzqGg4vRUeL0vdIzPvPr4FDWbQ1ppEVDf+uDKbGgXQ0=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9Lra5KuQhkerhhPbslctyYa7vmXFiYNXH80OuhkW8fZi4jTTCH
-	N8cME3WN6+UeE8eWKOKEO/R4np/9SI9g0jkIFebDLn8NebjLFWfBuy6s
-X-Gm-Gg: AYBFou0uzjtl+Vnc6aBtSuhdkBaoYfjZqJUFlUdmNAR4vFAkUInCQRwEpyMwsiwnw4u
-	3ksS1BokittwMZmwtqE3p8XuJxapZhMgvTe7jL6f1bmVVNoKwNHuAHIEkAGVuqvA4O4CoauRCH8
-	VpGQBZwp76A3/lQ5nkksENhaavi5HSkiQcR/a5C0y9elI7UlZkJNAHkEAfhUI6ro6/lzTWcfgk6
-	mC9Zjg7pg3Un5ENv9HRShrE3+SUg6hcqsDlAlf+bCUky/ep2FfLHDAVVFpRF3+Q+tL95KF3Qjlf
-	TDwjLjGxQtAHSSOKMH+doQsXT3lnq6tLPniVe8TXpsTBfNAd+si3c3t3iculwgF9FPN9bTqeEwo
-	IVrdhtsYdZHJNb1abV6WEqx8+xRf+/vd9Aolb6TvQyJYcAOPO9KYGTMWbIR4DJi/YE2LrMaLrgW
-	D4KRCMoMAQ9COU5c2R8wE8e6rfneyiDhXjJ+uqx63Ac/3uM+RjCswPhR2MDJI6Q7LWUDXTX52SN
-	vV8PGsWDsQCuqU2KFYkF77sXJHemdemE3EXxUPPcDIh2kvbr0XgXPBBLVQx2lAC222XpZTGCbVU
-	fi964oh559U4OMfazmgITHzx1mPA8TJs+bUQFQ5o3XVfU3SmfrbJoq9dz5g1+vYtCgdUA0LpSgW
-	g
-X-Received: by 2002:a05:6214:3490:b0:91e:92b0:5828 with SMTP id 6a1803df08f44-91eef89eee1mr6841486d6.20.1794248937575;
-        Mon, 09 Nov 2026 10:28:57 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91ef04ce58dsm1981226d6.16.2026.11.09.10.28.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Nov 2026 10:28:56 -0800 (PST)
-Message-ID: <0109c87b-b51b-4504-9c22-7f04ae278611@gmail.com>
-Date: Mon, 9 Nov 2026 10:28:53 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K09qkjfb
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB7E91F008A2;
+	Mon,  9 Nov 2026 18:44:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794249880;
+	bh=KgV+w1ktKyBefG0Em74eSE1E840Wrdo2wtkxuBRC6Z0=;
+	h=From:To:Cc:Subject:Date;
+	b=K09qkjfbI2aDTTu2oZQyXgDWM9NhlSJOTsKOA9zwvHBYi7bOlmgMHYTtbmCUWTF/g
+	 G3AbyZ4i4mJWer+bneqzKToFlOfft45zDV9IfK9GM7P5gsSqkJfimlIUQnZXeJIgq5
+	 8MesKL5nZTuyNTwAjhDh4zcPbAYmuQWxnLciVVBJ/iXQepRmmNWzODckfTlBEHCxpH
+	 RDcd5NUrmzCnbUWPHQc11YU+e0etaAtchjZW9X8gAgjoqtXi4ct+Q4SGPT5HLvbkdb
+	 pmLmhqgJ3i4UbilpydNNuJ6seXM83ifYbBYeDSzl/qNp4ACNKtSYeiqREmGsBlgAUV
+	 WrXU6Apj0Oz6Q==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: hisilicon: Remove hi3559a driver
+Date: Mon,  9 Nov 2026 12:44:20 -0600
+Message-ID: <20261109184424.446496-1-robh@kernel.org>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -93,593 +61,1138 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] MIPS: Ingenic: Add JZ4780 SMP support to the generic
- platform
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: linux-mips@vger.kernel.org, =?UTF-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?=
- <zhouyanjie@wanyeetech.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Paul Burton <paulburton@kernel.org>,
- Paul Cercueil <paul@crapouillou.net>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- Paul Boddie <paul@boddie.org.uk>,
- Discussions about the Letux Kernel <letux-kernel@openphoenux.org>
-References: <20261105203243.2292647-1-f.fainelli@gmail.com>
- <20261105203243.2292647-3-f.fainelli@gmail.com>
- <FDBC55AE-EAB3-4C30-A148-99FA67B15B01@goldelico.com>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <FDBC55AE-EAB3-4C30-A148-99FA67B15B01@goldelico.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 11/6/26 06:36, H. Nikolaus Schaller wrote:
-> Hi,
-> 
->> Am 05.11.2026 um 21:32 schrieb Florian Fainelli <f.fainelli@gmail.com>:
->>
->> From: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->>
->> Port the JZ4780 reset-entry and CP0 mailbox implementation from Zhou
->> Yanjie's 2020 v8 series, based on Paul Burton's original CI20 SMP code.
->> The old arch/mips/jz4740 platform has moved into the generic MIPS code,
->> so register the Ingenic SMP operations after unflattening the device
->> tree and before selecting the generic fallback implementations.
->>
->> Reuse the upstream CPU clock gates, CPU device-tree nodes and per-CPU
->> TCU timers. Enumerate only available CPU nodes within the two-core
->> hardware limit. Prepare the CPU1 clock before boot, propagate clock
->> failures, serialize mailbox accesses with a raw spinlock and publish
->> bootstrap state before releasing the secondary core from reset. Align
->> the secondary reset entry to the REIM register's 64 KiB granularity.
->> Retain the UP fallback for other SoCs in a shared Ingenic kernel.
->>
->> Write back the private data cache before WAIT, since XBurst gates its
->> clock during idle and another core must not access dirty data in that
->> sleeping cache. Return with interrupts disabled as required by the
->> current idle API. Existing per-CPU TCU events make the old forced
->> broadcast-timer workaround unnecessary.
->>
->> This adaptation incorporates the CPU-enumeration review feedback and
->> removes the old unused CPU mask. Preserve the original source credits;
->> historical Tested-by and Reviewed-by tags are not carried to this
->> substantially changed port. Adaptation and validation used Codex
->> assistance.
->>
->> Link: https://lkml.iu.edu/hypermail/linux/kernel/2005.2/03488.html
->> Link: https://lists.openwall.net/linux-kernel/2020/05/13/1482
->> Link: https://lists.openwall.net/linux-kernel/2020/05/19/1099
->> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->> [florian: forward ported to latest version]
->> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->> ---
->> MAINTAINERS                           |   1 +
->> arch/mips/generic/Makefile            |   1 +
->> arch/mips/generic/ingenic-smp-entry.S |  54 ++++++
->> arch/mips/generic/ingenic-smp.c       | 240 ++++++++++++++++++++++++++
->> arch/mips/generic/ingenic-smp.h       |  20 +++
->> arch/mips/generic/init.c              |   4 +
->> arch/mips/ingenic/Kconfig             |   6 +
->> arch/mips/kernel/idle.c               |  25 ++-
->> 8 files changed, 350 insertions(+), 1 deletion(-)
->> create mode 100644 arch/mips/generic/ingenic-smp-entry.S
->> create mode 100644 arch/mips/generic/ingenic-smp.c
->> create mode 100644 arch/mips/generic/ingenic-smp.h
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 09713dc4c6a7..101027579ccd 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -13117,6 +13117,7 @@ L: linux-mips@vger.kernel.org
->> S: Maintained
->> F: arch/mips/boot/dts/ingenic/
->> F: arch/mips/generic/board-ingenic.c
->> +F: arch/mips/generic/ingenic-smp*
->> F: arch/mips/include/asm/mach-ingenic/
->> F: arch/mips/ingenic/Kconfig
->> F: drivers/clk/ingenic/
->> diff --git a/arch/mips/generic/Makefile b/arch/mips/generic/Makefile
->> index ea0e4ad5e600..df92650c0f15 100644
->> --- a/arch/mips/generic/Makefile
->> +++ b/arch/mips/generic/Makefile
->> @@ -12,5 +12,6 @@ obj-$(CONFIG_YAMON_DT_SHIM) += yamon-dt.o
->> obj-$(CONFIG_LEGACY_BOARD_SEAD3) += board-sead3.o
->> obj-$(CONFIG_LEGACY_BOARD_OCELOT) += board-ocelot.o
->> obj-$(CONFIG_MACH_INGENIC) += board-ingenic.o
->> +obj-$(CONFIG_MIPS_INGENIC_SMP) += ingenic-smp.o ingenic-smp-entry.o
->> obj-$(CONFIG_VIRT_BOARD_RANCHU) += board-ranchu.o
->> obj-$(CONFIG_MACH_REALTEK_RTL) += board-realtek.o
->> diff --git a/arch/mips/generic/ingenic-smp-entry.S b/arch/mips/generic/ingenic-smp-entry.S
->> new file mode 100644
->> index 000000000000..828df4687e84
->> --- /dev/null
->> +++ b/arch/mips/generic/ingenic-smp-entry.S
->> @@ -0,0 +1,54 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/*
->> + * Copyright (C) 2013 Paul Burton <paul.burton@imgtec.com>
->> + * JZ4780 secondary CPU reset entry
->> + */
->> +
->> +#include <asm/addrspace.h>
->> +#include <asm/asm.h>
->> +#include <asm/asmmacro.h>
->> +#include <asm/cacheops.h>
->> +#include <asm/mipsregs.h>
->> +
->> +#define CACHE_SIZE (32 * 1024)
->> +#define CACHE_LINESIZE 32
->> +
->> + /* The CP0 REIM register only stores the upper 16 address bits. */
->> + .section .text.smp-entry, "ax"
->> + .balign 0x10000
->> + .set noreorder
->> +LEAF(jz4780_secondary_cpu_entry)
->> + mtc0 zero, CP0_CAUSE
->> + li t0, ST0_CU0
->> + mtc0 t0, CP0_STATUS
->> + ehb
->> +
->> + /* Invalidate both private caches before entering cached code. */
->> + li t0, KSEG0
->> + ori t1, t0, CACHE_SIZE
->> + mtc0 zero, CP0_TAGLO
->> + ehb
->> +1: cache Index_Store_Tag_I, 0(t0)
->> + cache Index_Store_Tag_D, 0(t0)
->> + addiu t0, t0, CACHE_LINESIZE
->> + bne t0, t1, 1b
->> + nop
->> +
->> + mfc0 t0, CP0_CONFIG
->> + li t1, ~CONF_CM_CMASK
->> + and t0, t0, t1
->> + ori t0, t0, CONF_CM_CACHABLE_NONCOHERENT
->> + mtc0 t0, CP0_CONFIG
->> + mtc0 zero, CP0_PAGEMASK
->> + ehb
->> +
->> + /* CPU0 publishes these in RAM before releasing CPU1 from reset. */
->> + la t0, jz4780_cpu_entry_sp
->> + lw sp, 0(t0)
->> + la t0, jz4780_cpu_entry_gp
->> + lw gp, 0(t0)
->> +
->> + la t0, smp_bootstrap
->> + jr t0
->> + nop
->> +END(jz4780_secondary_cpu_entry)
->> diff --git a/arch/mips/generic/ingenic-smp.c b/arch/mips/generic/ingenic-smp.c
->> new file mode 100644
->> index 000000000000..98c1fd7483db
->> --- /dev/null
->> +++ b/arch/mips/generic/ingenic-smp.c
->> @@ -0,0 +1,240 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * JZ4780 SMP support, based on Paul Burton's CI20 implementation and
->> + * Zhou Yanjie's 2020 JZ4780 SMP series.
->> + * Copyright (C) 2013 Paul Burton <paul.burton@imgtec.com>
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/cpu.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/of.h>
->> +#include <linux/of_clk.h>
->> +#include <linux/sched/task_stack.h>
->> +#include <linux/smp.h>
->> +
->> +#include <asm/addrspace.h>
->> +#include <asm/irq_cpu.h>
->> +#include <asm/mipsregs.h>
->> +#include <asm/r4kcache.h>
->> +#include <asm/smp-ops.h>
->> +
->> +#include "ingenic-smp.h"
->> +
->> +#define read_c0_corectrl() __read_32bit_c0_register($12, 2)
->> +#define write_c0_corectrl(val) __write_32bit_c0_register($12, 2, val)
->> +#define read_c0_corestatus() __read_32bit_c0_register($12, 3)
->> +#define write_c0_corestatus(val) __write_32bit_c0_register($12, 3, val)
->> +#define read_c0_reim() __read_32bit_c0_register($12, 4)
->> +#define write_c0_reim(val) __write_32bit_c0_register($12, 4, val)
->> +#define read_c0_mailbox0() __read_32bit_c0_register($20, 0)
->> +#define write_c0_mailbox0(val) __write_32bit_c0_register($20, 0, val)
->> +#define read_c0_mailbox1() __read_32bit_c0_register($20, 1)
->> +#define write_c0_mailbox1(val) __write_32bit_c0_register($20, 1, val)
->> +
->> +#define JZ4780_NR_CPUS 2
->> +#define JZ4780_MBOX_IRQ (MIPS_CPU_IRQ_BASE + 3)
->> +#define CORECTRL_SWRST(cpu) BIT(cpu)
->> +#define CORECTRL_RPC(cpu) BIT(8 + (cpu))
->> +#define CORESTATUS_MIRQ(cpu) BIT(cpu)
->> +#define REIM_ENTRY GENMASK(31, 16)
->> +#define REIM_MBOXIRQ(cpu) BIT(cpu)
->> +
->> +static struct clk *cpu1_clock;
->> +static DEFINE_RAW_SPINLOCK(smp_lock);
->> +
->> +/* Referenced by the uncached secondary CPU reset entry. */
->> +unsigned long jz4780_cpu_entry_sp;
->> +unsigned long jz4780_cpu_entry_gp;
->> +
->> +static irqreturn_t jz4780_mbox_interrupt(int irq, void *dev_id)
->> +{
->> + unsigned int cpu = cpu_logical_map(smp_processor_id());
->> + u32 action, status;
->> +
->> + raw_spin_lock(&smp_lock);
->> + if (cpu == 0) {
->> + action = read_c0_mailbox0();
->> + write_c0_mailbox0(0);
->> + } else {
->> + action = read_c0_mailbox1();
->> + write_c0_mailbox1(0);
->> + }
->> +
->> + status = read_c0_corestatus();
->> + write_c0_corestatus(status & ~CORESTATUS_MIRQ(cpu));
->> + irq_disable_hazard();
->> + raw_spin_unlock(&smp_lock);
->> +
->> + if (action & SMP_RESCHEDULE_YOURSELF)
->> + scheduler_ipi();
->> + if (action & SMP_CALL_FUNCTION)
->> + generic_smp_call_function_interrupt();
->> +
->> + return IRQ_HANDLED;
->> +}
->> +
->> +static void __init jz4780_smp_setup(void)
->> +{
->> + struct device_node *np;
->> + u32 entry, reim;
->> + u64 hwid;
->> +
->> + for_each_of_cpu_node(np) {
->> + hwid = of_get_cpu_hwid(np, 0);
->> + if (hwid >= nr_cpu_ids || hwid >= JZ4780_NR_CPUS ||
->> +    !of_device_is_available(np))
->> + continue;
->> + __cpu_number_map[hwid] = hwid;
->> + __cpu_logical_map[hwid] = hwid;
->> + set_cpu_possible(hwid, true);
->> + }
->> +
->> + /* Program the shared reset vector with mailbox delivery masked. */
->> + reim = read_c0_reim();
->> + reim &= ~(REIM_MBOXIRQ(0) | REIM_MBOXIRQ(1));
->> + write_c0_reim(reim);
->> + write_c0_mailbox0(0);
->> + write_c0_mailbox1(0);
->> + write_c0_corestatus(0);
->> +
->> + entry = KSEG1ADDR((unsigned long)jz4780_secondary_cpu_entry);
->> + write_c0_reim((reim & ~REIM_ENTRY) | (entry & REIM_ENTRY));
->> +}
->> +
->> +static void __init jz4780_prepare_cpus(unsigned int max_cpus)
->> +{
->> + struct device_node *np;
->> + u32 reim;
->> + int ret;
->> +
->> + ret = request_irq(JZ4780_MBOX_IRQ, jz4780_mbox_interrupt,
->> +  IRQF_PERCPU | IRQF_NO_THREAD, "core mailbox", NULL);
->> + if (ret)
->> + panic("JZ4780: cannot request mailbox IRQ: %d", ret);
->> +
->> + reim = read_c0_reim();
->> + write_c0_reim(reim | REIM_MBOXIRQ(0));
->> + set_c0_status(STATUSF_IP3);
->> + irq_enable_hazard();
->> +
->> + if (!cpu_possible(1))
->> + return;
->> +
->> + np = of_get_cpu_node(1, NULL);
->> + cpu1_clock = of_clk_get(np, 0);
->> + of_node_put(np);
->> + if (IS_ERR(cpu1_clock)) {
->> + pr_err("JZ4780: cannot get CPU1 clock: %ld\n",
->> +       PTR_ERR(cpu1_clock));
->> + return;
->> + }
->> +
->> + ret = clk_prepare(cpu1_clock);
->> + if (ret) {
->> + clk_put(cpu1_clock);
->> + cpu1_clock = ERR_PTR(ret);
->> + pr_err("JZ4780: cannot prepare CPU1 clock: %d\n", ret);
->> + }
->> +}
->> +
->> +static int jz4780_boot_secondary(int cpu, struct task_struct *idle)
->> +{
->> + unsigned long flags;
->> + u32 ctrl;
->> + int ret;
->> +
->> + if (cpu_logical_map(cpu) != 1 || IS_ERR_OR_NULL(cpu1_clock))
->> + return -ENODEV;
->> +
->> + raw_spin_lock_irqsave(&smp_lock, flags);
->> + ctrl = read_c0_corectrl() | CORECTRL_SWRST(1) | CORECTRL_RPC(1);
->> + write_c0_corectrl(ctrl);
->> + back_to_back_c0_hazard();
->> +
->> + ret = clk_enable(cpu1_clock);
->> + if (ret)
->> + goto unlock;
->> +
->> + jz4780_cpu_entry_sp = __KSTK_TOS(idle);
->> + jz4780_cpu_entry_gp = (unsigned long)task_thread_info(idle);
->> + /* Publish bootstrap state before CPU1 starts using its private cache. */
->> + r4k_blast_dcache();
->> + /* Complete cache writeback before releasing reset. */
->> + mb();
->> + write_c0_corectrl(ctrl & ~CORECTRL_SWRST(1));
->> + back_to_back_c0_hazard();
->> +unlock:
->> + raw_spin_unlock_irqrestore(&smp_lock, flags);
->> + return ret;
->> +}
->> +
->> +static void jz4780_init_secondary(void)
->> +{
->> + clear_c0_status(ST0_IM);
->> + irq_disable_hazard();
->> +}
->> +
->> +static void jz4780_smp_finish(void)
->> +{
->> + unsigned int cpu = cpu_logical_map(smp_processor_id());
->> + u32 reim;
->> +
->> + raw_spin_lock(&smp_lock);
->> + reim = read_c0_reim();
->> + write_c0_reim(reim | REIM_MBOXIRQ(cpu));
->> + raw_spin_unlock(&smp_lock);
->> +
->> + change_c0_status(ST0_IM, STATUSF_IP3 | STATUSF_IP2 |
->> + STATUSF_IP1 | STATUSF_IP0);
->> + irq_enable_hazard();
->> + local_irq_enable();
->> +}
->> +
->> +static void jz4780_send_ipi_locked(int cpu, unsigned int action)
->> +{
->> + if (cpu_logical_map(cpu) == 0)
->> + write_c0_mailbox0(read_c0_mailbox0() | action);
->> + else
->> + write_c0_mailbox1(read_c0_mailbox1() | action);
->> + back_to_back_c0_hazard();
->> +}
->> +
->> +static void jz4780_send_ipi_single(int cpu, unsigned int action)
->> +{
->> + unsigned long flags;
->> +
->> + raw_spin_lock_irqsave(&smp_lock, flags);
->> + jz4780_send_ipi_locked(cpu, action);
->> + raw_spin_unlock_irqrestore(&smp_lock, flags);
->> +}
->> +
->> +static void jz4780_send_ipi_mask(const struct cpumask *mask, unsigned int action)
->> +{
->> + unsigned long flags;
->> + int cpu;
->> +
->> + raw_spin_lock_irqsave(&smp_lock, flags);
->> + for_each_cpu(cpu, mask)
->> + jz4780_send_ipi_locked(cpu, action);
->> + raw_spin_unlock_irqrestore(&smp_lock, flags);
->> +}
->> +
->> +static const struct plat_smp_ops jz4780_smp_ops = {
->> + .send_ipi_single = jz4780_send_ipi_single,
->> + .send_ipi_mask = jz4780_send_ipi_mask,
->> + .init_secondary = jz4780_init_secondary,
->> + .smp_finish = jz4780_smp_finish,
->> + .boot_secondary = jz4780_boot_secondary,
->> + .smp_setup = jz4780_smp_setup,
->> + .prepare_cpus = jz4780_prepare_cpus,
->> +};
->> +
->> +int __init register_ingenic_smp_ops(void)
->> +{
->> + if (!of_machine_is_compatible("ingenic,jz4780"))
-> 
-> This will restrict to jz4780 and leave out x2000, x2600 in the future.
-> 
-> But for the moment it seems to be ok.
-> 
->> + return -ENODEV;
->> +
->> + register_smp_ops(&jz4780_smp_ops);
->> + return 0;
->> +}
->> diff --git a/arch/mips/generic/ingenic-smp.h b/arch/mips/generic/ingenic-smp.h
->> new file mode 100644
->> index 000000000000..54191be8731a
->> --- /dev/null
->> +++ b/arch/mips/generic/ingenic-smp.h
->> @@ -0,0 +1,20 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/* Copyright (C) 2013 Paul Burton <paul.burton@imgtec.com> */
->> +#ifndef __MIPS_GENERIC_INGENIC_SMP_H__
->> +#define __MIPS_GENERIC_INGENIC_SMP_H__
->> +
->> +#include <linux/errno.h>
->> +#include <linux/init.h>
->> +#include <linux/kconfig.h>
->> +
->> +#ifdef CONFIG_MIPS_INGENIC_SMP
-> 
-> is this needed if the only user is not compiled in case of undefined CONFIG_MIPS_INGENIC_SMP?
-> 
-> Makefile:
->> +obj-$(CONFIG_MIPS_INGENIC_SMP) += ingenic-smp.o ingenic-smp-entry.o
-> 
->> +int __init register_ingenic_smp_ops(void);
->> +void jz4780_secondary_cpu_entry(void);
->> +#else
->> +static inline int register_ingenic_smp_ops(void)
->> +{
->> + return -ENODEV;
->> +}
->> +#endif
->> +
->> +#endif /* __MIPS_GENERIC_INGENIC_SMP_H__ */
->> diff --git a/arch/mips/generic/init.c b/arch/mips/generic/init.c
->> index 1d712eac1617..00149bd1e9a9 100644
->> --- a/arch/mips/generic/init.c
->> +++ b/arch/mips/generic/init.c
->> @@ -20,6 +20,8 @@
->> #include <asm/smp-ops.h>
->> #include <asm/time.h>
->>
->> +#include "ingenic-smp.h"
->> +
->> static __initconst const void *fdt;
->> static __initconst const struct mips_machine *mach;
->> static __initconst const void *mach_match_data;
->> @@ -113,6 +115,8 @@ void __init device_tree_init(void)
->> unflatten_and_copy_device_tree();
->> mips_cpc_probe();
->>
->> + if (!register_ingenic_smp_ops())
->> + return;
->> if (!register_cps_smp_ops())
->> return;
->> if (!register_vsmp_smp_ops())
->> diff --git a/arch/mips/ingenic/Kconfig b/arch/mips/ingenic/Kconfig
->> index f595b339a4b8..1dfd0bfd0193 100644
->> --- a/arch/mips/ingenic/Kconfig
->> +++ b/arch/mips/ingenic/Kconfig
->> @@ -64,6 +64,12 @@ config MACH_JZ4780
->> select MIPS_CPU_SCACHE
->> select SYS_HAS_CPU_MIPS32_R2
->> select SYS_SUPPORTS_HIGHMEM
->> + select SYS_SUPPORTS_SMP
->> +
->> +config MIPS_INGENIC_SMP
->> + def_bool y
->> + depends on MACH_JZ4780 && SMP
->> + select SMP_UP
-> 
-> do we need this additional CONFIG option?
-> Ah, yes the inclusion of the code depends on it.
-> 
->>
->> config MACH_X1000
->> bool
->> diff --git a/arch/mips/kernel/idle.c b/arch/mips/kernel/idle.c
->> index 80e8a04a642e..6cabdd4825a7 100644
->> --- a/arch/mips/kernel/idle.c
->> +++ b/arch/mips/kernel/idle.c
->> @@ -18,6 +18,7 @@
->> #include <asm/cpu-type.h>
->> #include <asm/idle.h>
->> #include <asm/mipsregs.h>
->> +#include <asm/r4kcache.h>
->>
->> /*
->>   * Not all of the MIPS CPUs have the "wait" instruction available. Moreover,
->> @@ -71,6 +72,23 @@ static void __cpuidle rm7k_wait_irqoff(void)
->> " .set pop \n");
->> }
->>
->> +/* XBurst gates its private cache clock in WAIT; write back dirty data first. */
->> +static void __cpuidle ingenic_smp_wait_irqoff(void)
->> +{
->> + unsigned long pending = read_c0_cause() & read_c0_status() & CAUSEF_IP;
->> +
->> + if (!need_resched() && !pending) {
->> + r4k_blast_dcache();
->> + __asm__ __volatile__(
->> + ".set push\n"
->> + ".set mips3\n"
->> + "sync\n"
->> + "wait\n"
->> + ".set pop\n"
->> + : : : "memory");
->> + }
->> +}
->> +
->> /*
->>   * Au1 'wait' is only useful when the 32kHz counter is used as timer,
->>   * since coreclock (and the cp0 counter) stops upon executing it. Only an
->> @@ -156,10 +174,15 @@ void __init check_wait(void)
->> case CPU_CAVIUM_OCTEON_PLUS:
->> case CPU_CAVIUM_OCTEON2:
->> case CPU_CAVIUM_OCTEON3:
->> - case CPU_XBURST:
->> case CPU_LOONGSON32:
->> cpu_wait = r4k_wait;
->> break;
->> + case CPU_XBURST:
->> + if (IS_ENABLED(CONFIG_SMP))
->> + cpu_wait = ingenic_smp_wait_irqoff;
->> + else
->> + cpu_wait = r4k_wait;
->> + break;
->> case CPU_LOONGSON64:
->> if ((c->processor_id & (PRID_IMP_MASK | PRID_REV_MASK)) >=
->> (PRID_IMP_LOONGSON_64C | PRID_REV_LOONGSON3A_R2_0) ||
->> -- 
->> 2.53.0
->>
-> 
-> I just want to report that I wasn't able to bring up the second CPU:
-> 
-> [    0.108834] CPU 0 Unable to handle kernel paging request at virtual address 00000000, epc == 00000000, ra == 800239cc
-> [    0.119549] Oops[#1]:
-> [    0.121845] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 7.4.0-rc1-letux+ #8714 PREEMPT
-> [    0.130405] Hardware name: Imagination creator CI20
-> ...
-> [    0.093381] [<8006fad4>] __cpu_up+0x24/0x98
-> [    0.097618] [<800891f4>] bringup_cpu+0x48/0x124
-> [    0.102209] [<800885c4>] __cpuhp_invoke_callback_range+0xb0/0x140
-> [    0.108387] [<800f359c>] __down_trylock_console_sem.isra.40+0x28/0x58
-> [    0.114925] [<80089480>] cpu_up.constprop.24+0x190/0x344
-> [    0.120307] [<800c1950>] try_to_wake_up+0xbc/0xae4
-> [    0.125166] [<80e0bc7c>] bringup_nonboot_cpus+0xa4/0x134
-> [    0.130553] [<80e13cec>] smp_init+0x30/0x80
-> [    0.134789] [<80e07028>] kernel_init_freeable+0x120/0x2e4
-> [    0.140266] [<80b6eb4c>] kernel_init+0x28/0x124
-> [    0.144853] [<80b6eb24>] kernel_init+0x0/0x124
-> [    0.061973] [<800616e4>] ret_from_kernel_thread+0x14/0x1c
-> [    0.067462]
-> [    0.068947] Code: (Bad address in epc)
-> [    0.068947]
-> [    0.075802] ---[ end trace 0000000000000000 ]---
-> [    0.080430] Kernel panic - not syncing: Fatal exception
-> [    0.085734] Rebooting in 10 seconds..
-> [    0.138377] Reboot failed -- System halted
-> 
-> If I disable CONFIG_SMP I can boot a single core.
-> 
-> The reason may be that we have other interfering private configs in our tree
-> and/or something else is missing.
-> 
-> But I remember that the original patches by Zhou Yanjie had once worked in 2020
-> on an older kernel release.
-> 
-> So at the moment I can't dig into all this deeper.
+Remove the hi3559a clock driver as there is no such platform upstream
+and only the clk driver. There's also been no changes other than common
+cleanups in 5 years since the driver was added.
 
-Would you be able to help me track this down with:
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../clock/hisilicon,hi3559av100-clock.yaml    |  59 --
+ drivers/clk/hisilicon/Kconfig                 |   9 -
+ drivers/clk/hisilicon/Makefile                |   1 -
+ drivers/clk/hisilicon/clk-hi3559a.c           | 840 ------------------
+ include/dt-bindings/clock/hi3559av100-clock.h | 165 ----
+ 5 files changed, 1074 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
+ delete mode 100644 drivers/clk/hisilicon/clk-hi3559a.c
+ delete mode 100644 include/dt-bindings/clock/hi3559av100-clock.h
 
-  mipsel-linux-addr2line -fip -e vmlinux 0x800239cc
-   mipsel-linux-objdump -drS \
-       --start-address=0x800239a0 \
-       --stop-address=0x800239e0 vmlinux
-
-on your kernel? Thanks!
+diff --git a/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml b/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
+deleted file mode 100644
+index 3ceb29cec704..000000000000
+--- a/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
++++ /dev/null
+@@ -1,59 +0,0 @@
+-# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+-%YAML 1.2
+----
+-$id: http://devicetree.org/schemas/clock/hisilicon,hi3559av100-clock.yaml#
+-$schema: http://devicetree.org/meta-schemas/core.yaml#
+-
+-title: Hisilicon SOC Clock for HI3559AV100
+-
+-maintainers:
+-  - Dongjiu Geng <gengdongjiu@huawei.com>
+-
+-description: |
+-  Hisilicon SOC clock control module which supports the clocks, resets and
+-  power domains on HI3559AV100.
+-
+-  See also:
+-    dt-bindings/clock/hi3559av100-clock.h
+-
+-properties:
+-  compatible:
+-    enum:
+-      - hisilicon,hi3559av100-clock
+-      - hisilicon,hi3559av100-shub-clock
+-
+-  reg:
+-    minItems: 1
+-    maxItems: 2
+-
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 2
+-    description: |
+-      First cell is reset request register offset.
+-      Second cell is bit offset in reset request register.
+-
+-required:
+-  - compatible
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-
+-additionalProperties: false
+-
+-examples:
+-  - |
+-    soc {
+-        #address-cells = <2>;
+-        #size-cells = <2>;
+-
+-        clock-controller@12010000 {
+-            compatible = "hisilicon,hi3559av100-clock";
+-            #clock-cells = <1>;
+-            #reset-cells = <2>;
+-            reg = <0x0 0x12010000 0x0 0x10000>;
+-        };
+-    };
+-...
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index e70bcfa9105b..68858a0efaab 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -21,15 +21,6 @@ config COMMON_CLK_HI3519
+ 	help
+ 	  Build the clock driver for hi3519.
+ 
+-config COMMON_CLK_HI3559A
+-	bool "Hi3559A Clock Driver"
+-	depends on ARCH_HISI || COMPILE_TEST
+-	select RESET_HISI
+-	select COMMON_CLK_HISI
+-	default ARCH_HISI
+-	help
+-	  Build the clock driver for hi3559a.
+-
+ config COMMON_CLK_HI3660
+ 	bool "Hi3660 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
+diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+index 2978e56cb876..b2441b99f3d5 100644
+--- a/drivers/clk/hisilicon/Makefile
++++ b/drivers/clk/hisilicon/Makefile
+@@ -10,7 +10,6 @@ obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+ obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
+ obj-$(CONFIG_COMMON_CLK_HI3516CV300)	+= crg-hi3516cv300.o
+ obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
+-obj-$(CONFIG_COMMON_CLK_HI3559A)	+= clk-hi3559a.o
+ obj-$(CONFIG_COMMON_CLK_HI3660) += clk-hi3660.o
+ obj-$(CONFIG_COMMON_CLK_HI3670) += clk-hi3670.o
+ obj-$(CONFIG_COMMON_CLK_HI3798CV200)	+= crg-hi3798cv200.o
+diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/clk-hi3559a.c
+deleted file mode 100644
+index 85d5222a0fa8..000000000000
+--- a/drivers/clk/hisilicon/clk-hi3559a.c
++++ /dev/null
+@@ -1,840 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * Hisilicon Hi3559A clock driver
+- *
+- * Copyright (c) 2019-2020, Huawei Tech. Co., Ltd.
+- *
+- * Author: Dongjiu Geng <gengdongjiu@huawei.com>
+- */
+-
+-#include <linux/clk-provider.h>
+-#include <linux/module.h>
+-#include <linux/of.h>
+-#include <linux/platform_device.h>
+-#include <linux/slab.h>
+-
+-#include <dt-bindings/clock/hi3559av100-clock.h>
+-
+-#include "clk.h"
+-#include "crg.h"
+-#include "reset.h"
+-
+-#define CRG_BASE_ADDR  0x18020000
+-#define PLL_MASK_WIDTH 24
+-
+-struct hi3559av100_pll_clock {
+-	u32	id;
+-	const char	*name;
+-	const char	*parent_name;
+-	const u32	ctrl_reg1;
+-	const u8	frac_shift;
+-	const u8	frac_width;
+-	const u8	postdiv1_shift;
+-	const u8	postdiv1_width;
+-	const u8	postdiv2_shift;
+-	const u8	postdiv2_width;
+-	const u32	ctrl_reg2;
+-	const u8	fbdiv_shift;
+-	const u8	fbdiv_width;
+-	const u8	refdiv_shift;
+-	const u8	refdiv_width;
+-};
+-
+-struct hi3559av100_clk_pll {
+-	struct clk_hw	hw;
+-	u32	id;
+-	void __iomem	*ctrl_reg1;
+-	u8	frac_shift;
+-	u8	frac_width;
+-	u8	postdiv1_shift;
+-	u8	postdiv1_width;
+-	u8	postdiv2_shift;
+-	u8	postdiv2_width;
+-	void __iomem	*ctrl_reg2;
+-	u8	fbdiv_shift;
+-	u8	fbdiv_width;
+-	u8	refdiv_shift;
+-	u8	refdiv_width;
+-};
+-
+-/* soc clk config */
+-static const struct hisi_fixed_rate_clock hi3559av100_fixed_rate_clks_crg[] = {
+-	{ HI3559AV100_FIXED_1188M, "1188m", NULL, 0, 1188000000, },
+-	{ HI3559AV100_FIXED_1000M, "1000m", NULL, 0, 1000000000, },
+-	{ HI3559AV100_FIXED_842M, "842m", NULL, 0, 842000000, },
+-	{ HI3559AV100_FIXED_792M, "792m", NULL, 0, 792000000, },
+-	{ HI3559AV100_FIXED_750M, "750m", NULL, 0, 750000000, },
+-	{ HI3559AV100_FIXED_710M, "710m", NULL, 0, 710000000, },
+-	{ HI3559AV100_FIXED_680M, "680m", NULL, 0, 680000000, },
+-	{ HI3559AV100_FIXED_667M, "667m", NULL, 0, 667000000, },
+-	{ HI3559AV100_FIXED_631M, "631m", NULL, 0, 631000000, },
+-	{ HI3559AV100_FIXED_600M, "600m", NULL, 0, 600000000, },
+-	{ HI3559AV100_FIXED_568M, "568m", NULL, 0, 568000000, },
+-	{ HI3559AV100_FIXED_500M, "500m", NULL, 0, 500000000, },
+-	{ HI3559AV100_FIXED_475M, "475m", NULL, 0, 475000000, },
+-	{ HI3559AV100_FIXED_428M, "428m", NULL, 0, 428000000, },
+-	{ HI3559AV100_FIXED_400M, "400m", NULL, 0, 400000000, },
+-	{ HI3559AV100_FIXED_396M, "396m", NULL, 0, 396000000, },
+-	{ HI3559AV100_FIXED_300M, "300m", NULL, 0, 300000000, },
+-	{ HI3559AV100_FIXED_250M, "250m", NULL, 0, 250000000, },
+-	{ HI3559AV100_FIXED_200M, "200m", NULL, 0, 200000000, },
+-	{ HI3559AV100_FIXED_198M, "198m", NULL, 0, 198000000, },
+-	{ HI3559AV100_FIXED_187p5M, "187p5m", NULL, 0, 187500000, },
+-	{ HI3559AV100_FIXED_150M, "150m", NULL, 0, 150000000, },
+-	{ HI3559AV100_FIXED_148p5M, "148p5m", NULL, 0, 1485000000, },
+-	{ HI3559AV100_FIXED_125M, "125m", NULL, 0, 125000000, },
+-	{ HI3559AV100_FIXED_107M, "107m", NULL, 0, 107000000, },
+-	{ HI3559AV100_FIXED_100M, "100m", NULL, 0, 100000000, },
+-	{ HI3559AV100_FIXED_99M, "99m",	NULL, 0, 99000000, },
+-	{ HI3559AV100_FIXED_75M, "75m", NULL, 0, 75000000, },
+-	{ HI3559AV100_FIXED_74p25M, "74p25m", NULL, 0, 74250000, },
+-	{ HI3559AV100_FIXED_72M, "72m",	NULL, 0, 72000000, },
+-	{ HI3559AV100_FIXED_60M, "60m",	NULL, 0, 60000000, },
+-	{ HI3559AV100_FIXED_54M, "54m",	NULL, 0, 54000000, },
+-	{ HI3559AV100_FIXED_50M, "50m",	NULL, 0, 50000000, },
+-	{ HI3559AV100_FIXED_49p5M, "49p5m", NULL, 0, 49500000, },
+-	{ HI3559AV100_FIXED_37p125M, "37p125m", NULL, 0, 37125000, },
+-	{ HI3559AV100_FIXED_36M, "36m",	NULL, 0, 36000000, },
+-	{ HI3559AV100_FIXED_32p4M, "32p4m", NULL, 0, 32400000, },
+-	{ HI3559AV100_FIXED_27M, "27m",	NULL, 0, 27000000, },
+-	{ HI3559AV100_FIXED_25M, "25m",	NULL, 0, 25000000, },
+-	{ HI3559AV100_FIXED_24M, "24m",	NULL, 0, 24000000, },
+-	{ HI3559AV100_FIXED_12M, "12m",	NULL, 0, 12000000, },
+-	{ HI3559AV100_FIXED_3M,	 "3m", NULL, 0, 3000000, },
+-	{ HI3559AV100_FIXED_1p6M, "1p6m", NULL, 0, 1600000, },
+-	{ HI3559AV100_FIXED_400K, "400k", NULL, 0, 400000, },
+-	{ HI3559AV100_FIXED_100K, "100k", NULL, 0, 100000, },
+-};
+-
+-
+-static const char *fmc_mux_p[] = {
+-	"24m", "75m", "125m", "150m", "200m", "250m", "300m", "400m"
+-};
+-
+-static const char *mmc_mux_p[] = {
+-	"100k", "25m", "49p5m", "99m", "187p5m", "150m", "198m", "400k"
+-};
+-
+-static const char *sysapb_mux_p[] = {
+-	"24m", "50m",
+-};
+-
+-static const char *sysbus_mux_p[] = {
+-	"24m", "300m"
+-};
+-
+-static const char *uart_mux_p[] = { "50m", "24m", "3m" };
+-
+-static const char *a73_clksel_mux_p[] = {
+-	"24m", "apll", "1000m"
+-};
+-
+-static const u32 fmc_mux_table[]	= { 0, 1, 2, 3, 4, 5, 6, 7 };
+-static const u32 mmc_mux_table[]	= { 0, 1, 2, 3, 4, 5, 6, 7 };
+-static const u32 sysapb_mux_table[]	= { 0, 1 };
+-static const u32 sysbus_mux_table[]	= { 0, 1 };
+-static const u32 uart_mux_table[]	= { 0, 1, 2 };
+-static const u32 a73_clksel_mux_table[] = { 0, 1, 2 };
+-
+-static struct hisi_mux_clock hi3559av100_mux_clks_crg[] = {
+-	{
+-		HI3559AV100_FMC_MUX, "fmc_mux", fmc_mux_p, ARRAY_SIZE(fmc_mux_p),
+-		CLK_SET_RATE_PARENT, 0x170, 2, 3, 0, fmc_mux_table,
+-	},
+-	{
+-		HI3559AV100_MMC0_MUX, "mmc0_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
+-		CLK_SET_RATE_PARENT, 0x1a8, 24, 3, 0, mmc_mux_table,
+-	},
+-	{
+-		HI3559AV100_MMC1_MUX, "mmc1_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
+-		CLK_SET_RATE_PARENT, 0x1ec, 24, 3, 0, mmc_mux_table,
+-	},
+-
+-	{
+-		HI3559AV100_MMC2_MUX, "mmc2_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
+-		CLK_SET_RATE_PARENT, 0x214, 24, 3, 0, mmc_mux_table,
+-	},
+-
+-	{
+-		HI3559AV100_MMC3_MUX, "mmc3_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
+-		CLK_SET_RATE_PARENT, 0x23c, 24, 3, 0, mmc_mux_table,
+-	},
+-
+-	{
+-		HI3559AV100_SYSAPB_MUX, "sysapb_mux", sysapb_mux_p, ARRAY_SIZE(sysapb_mux_p),
+-		CLK_SET_RATE_PARENT, 0xe8, 3, 1, 0, sysapb_mux_table
+-	},
+-
+-	{
+-		HI3559AV100_SYSBUS_MUX, "sysbus_mux", sysbus_mux_p, ARRAY_SIZE(sysbus_mux_p),
+-		CLK_SET_RATE_PARENT, 0xe8, 0, 1, 0, sysbus_mux_table
+-	},
+-
+-	{
+-		HI3559AV100_UART_MUX, "uart_mux", uart_mux_p, ARRAY_SIZE(uart_mux_p),
+-		CLK_SET_RATE_PARENT, 0x198, 28, 2, 0, uart_mux_table
+-	},
+-
+-	{
+-		HI3559AV100_A73_MUX, "a73_mux", a73_clksel_mux_p, ARRAY_SIZE(a73_clksel_mux_p),
+-		CLK_SET_RATE_PARENT, 0xe4, 0, 2, 0, a73_clksel_mux_table
+-	},
+-};
+-
+-static struct hisi_gate_clock hi3559av100_gate_clks[] = {
+-	{
+-		HI3559AV100_FMC_CLK, "clk_fmc", "fmc_mux",
+-		CLK_SET_RATE_PARENT, 0x170, 1, 0,
+-	},
+-	{
+-		HI3559AV100_MMC0_CLK, "clk_mmc0", "mmc0_mux",
+-		CLK_SET_RATE_PARENT, 0x1a8, 28, 0,
+-	},
+-	{
+-		HI3559AV100_MMC1_CLK, "clk_mmc1", "mmc1_mux",
+-		CLK_SET_RATE_PARENT, 0x1ec, 28, 0,
+-	},
+-	{
+-		HI3559AV100_MMC2_CLK, "clk_mmc2", "mmc2_mux",
+-		CLK_SET_RATE_PARENT, 0x214, 28, 0,
+-	},
+-	{
+-		HI3559AV100_MMC3_CLK, "clk_mmc3", "mmc3_mux",
+-		CLK_SET_RATE_PARENT, 0x23c, 28, 0,
+-	},
+-	{
+-		HI3559AV100_UART0_CLK, "clk_uart0", "uart_mux",
+-		CLK_SET_RATE_PARENT, 0x198, 23, 0,
+-	},
+-	{
+-		HI3559AV100_UART1_CLK, "clk_uart1", "uart_mux",
+-		CLK_SET_RATE_PARENT, 0x198, 24, 0,
+-	},
+-	{
+-		HI3559AV100_UART2_CLK, "clk_uart2", "uart_mux",
+-		CLK_SET_RATE_PARENT, 0x198, 25, 0,
+-	},
+-	{
+-		HI3559AV100_UART3_CLK, "clk_uart3", "uart_mux",
+-		CLK_SET_RATE_PARENT, 0x198, 26, 0,
+-	},
+-	{
+-		HI3559AV100_UART4_CLK, "clk_uart4", "uart_mux",
+-		CLK_SET_RATE_PARENT, 0x198, 27, 0,
+-	},
+-	{
+-		HI3559AV100_ETH_CLK, "clk_eth", NULL,
+-		CLK_SET_RATE_PARENT, 0x0174, 1, 0,
+-	},
+-	{
+-		HI3559AV100_ETH_MACIF_CLK, "clk_eth_macif", NULL,
+-		CLK_SET_RATE_PARENT, 0x0174, 5, 0,
+-	},
+-	{
+-		HI3559AV100_ETH1_CLK, "clk_eth1", NULL,
+-		CLK_SET_RATE_PARENT, 0x0174, 3, 0,
+-	},
+-	{
+-		HI3559AV100_ETH1_MACIF_CLK, "clk_eth1_macif", NULL,
+-		CLK_SET_RATE_PARENT, 0x0174, 7, 0,
+-	},
+-	{
+-		HI3559AV100_I2C0_CLK, "clk_i2c0", "50m",
+-		CLK_SET_RATE_PARENT, 0x01a0, 16, 0,
+-	},
+-	{
+-		HI3559AV100_I2C1_CLK, "clk_i2c1", "50m",
+-		CLK_SET_RATE_PARENT, 0x01a0, 17, 0,
+-	},
+-	{
+-		HI3559AV100_I2C2_CLK, "clk_i2c2", "50m",
+-		CLK_SET_RATE_PARENT, 0x01a0, 18, 0,
+-	},
+-	{
+-		HI3559AV100_I2C3_CLK, "clk_i2c3", "50m",
+-		CLK_SET_RATE_PARENT, 0x01a0, 19, 0,
+-	},
+-	{
+-		HI3559AV100_I2C4_CLK, "clk_i2c4", "50m",
+-		CLK_SET_RATE_PARENT, 0x01a0, 20, 0,
+-	},
+-	{
+-		HI3559AV100_I2C5_CLK, "clk_i2c5", "50m",
+-		CLK_SET_RATE_PARENT, 0x01a0, 21, 0,
+-	},
+-	{
+-		HI3559AV100_I2C6_CLK, "clk_i2c6", "50m",
+-		CLK_SET_RATE_PARENT, 0x01a0, 22, 0,
+-	},
+-	{
+-		HI3559AV100_I2C7_CLK, "clk_i2c7", "50m",
+-		CLK_SET_RATE_PARENT, 0x01a0, 23, 0,
+-	},
+-	{
+-		HI3559AV100_I2C8_CLK, "clk_i2c8", "50m",
+-		CLK_SET_RATE_PARENT, 0x01a0, 24, 0,
+-	},
+-	{
+-		HI3559AV100_I2C9_CLK, "clk_i2c9", "50m",
+-		CLK_SET_RATE_PARENT, 0x01a0, 25, 0,
+-	},
+-	{
+-		HI3559AV100_I2C10_CLK, "clk_i2c10", "50m",
+-		CLK_SET_RATE_PARENT, 0x01a0, 26, 0,
+-	},
+-	{
+-		HI3559AV100_I2C11_CLK, "clk_i2c11", "50m",
+-		CLK_SET_RATE_PARENT, 0x01a0, 27, 0,
+-	},
+-	{
+-		HI3559AV100_SPI0_CLK, "clk_spi0", "100m",
+-		CLK_SET_RATE_PARENT, 0x0198, 16, 0,
+-	},
+-	{
+-		HI3559AV100_SPI1_CLK, "clk_spi1", "100m",
+-		CLK_SET_RATE_PARENT, 0x0198, 17, 0,
+-	},
+-	{
+-		HI3559AV100_SPI2_CLK, "clk_spi2", "100m",
+-		CLK_SET_RATE_PARENT, 0x0198, 18, 0,
+-	},
+-	{
+-		HI3559AV100_SPI3_CLK, "clk_spi3", "100m",
+-		CLK_SET_RATE_PARENT, 0x0198, 19, 0,
+-	},
+-	{
+-		HI3559AV100_SPI4_CLK, "clk_spi4", "100m",
+-		CLK_SET_RATE_PARENT, 0x0198, 20, 0,
+-	},
+-	{
+-		HI3559AV100_SPI5_CLK, "clk_spi5", "100m",
+-		CLK_SET_RATE_PARENT, 0x0198, 21, 0,
+-	},
+-	{
+-		HI3559AV100_SPI6_CLK, "clk_spi6", "100m",
+-		CLK_SET_RATE_PARENT, 0x0198, 22, 0,
+-	},
+-	{
+-		HI3559AV100_EDMAC_AXICLK, "axi_clk_edmac", NULL,
+-		CLK_SET_RATE_PARENT, 0x16c, 6, 0,
+-	},
+-	{
+-		HI3559AV100_EDMAC_CLK, "clk_edmac", NULL,
+-		CLK_SET_RATE_PARENT, 0x16c, 5, 0,
+-	},
+-	{
+-		HI3559AV100_EDMAC1_AXICLK, "axi_clk_edmac1", NULL,
+-		CLK_SET_RATE_PARENT, 0x16c, 9, 0,
+-	},
+-	{
+-		HI3559AV100_EDMAC1_CLK, "clk_edmac1", NULL,
+-		CLK_SET_RATE_PARENT, 0x16c, 8, 0,
+-	},
+-	{
+-		HI3559AV100_VDMAC_CLK, "clk_vdmac", NULL,
+-		CLK_SET_RATE_PARENT, 0x14c, 5, 0,
+-	},
+-};
+-
+-static struct hi3559av100_pll_clock hi3559av100_pll_clks[] = {
+-	{
+-		HI3559AV100_APLL_CLK, "apll", NULL, 0x0, 0, 24, 24, 3, 28, 3,
+-		0x4, 0, 12, 12, 6
+-	},
+-	{
+-		HI3559AV100_GPLL_CLK, "gpll", NULL, 0x20, 0, 24, 24, 3, 28, 3,
+-		0x24, 0, 12, 12, 6
+-	},
+-};
+-
+-#define to_pll_clk(_hw) container_of(_hw, struct hi3559av100_clk_pll, hw)
+-static void hi3559av100_calc_pll(u32 *frac_val, u32 *postdiv1_val,
+-				 u32 *postdiv2_val,
+-				 u32 *fbdiv_val, u32 *refdiv_val, u64 rate)
+-{
+-	u64 rem;
+-
+-	*postdiv1_val = 2;
+-	*postdiv2_val = 1;
+-
+-	rate = rate * ((*postdiv1_val) * (*postdiv2_val));
+-
+-	*frac_val = 0;
+-	rem = do_div(rate, 1000000);
+-	rem = do_div(rate, PLL_MASK_WIDTH);
+-	*fbdiv_val = rate;
+-	*refdiv_val = 1;
+-	rem = rem * (1 << PLL_MASK_WIDTH);
+-	do_div(rem, PLL_MASK_WIDTH);
+-	*frac_val = rem;
+-}
+-
+-static int clk_pll_set_rate(struct clk_hw *hw,
+-			    unsigned long rate,
+-			    unsigned long parent_rate)
+-{
+-	struct hi3559av100_clk_pll *clk = to_pll_clk(hw);
+-	u32 frac_val, postdiv1_val, postdiv2_val, fbdiv_val, refdiv_val;
+-	u32 val;
+-
+-	postdiv1_val = postdiv2_val = 0;
+-
+-	hi3559av100_calc_pll(&frac_val, &postdiv1_val, &postdiv2_val,
+-			     &fbdiv_val, &refdiv_val, (u64)rate);
+-
+-	val = readl_relaxed(clk->ctrl_reg1);
+-	val &= ~(((1 << clk->frac_width) - 1) << clk->frac_shift);
+-	val &= ~(((1 << clk->postdiv1_width) - 1) << clk->postdiv1_shift);
+-	val &= ~(((1 << clk->postdiv2_width) - 1) << clk->postdiv2_shift);
+-
+-	val |= frac_val << clk->frac_shift;
+-	val |= postdiv1_val << clk->postdiv1_shift;
+-	val |= postdiv2_val << clk->postdiv2_shift;
+-	writel_relaxed(val, clk->ctrl_reg1);
+-
+-	val = readl_relaxed(clk->ctrl_reg2);
+-	val &= ~(((1 << clk->fbdiv_width) - 1) << clk->fbdiv_shift);
+-	val &= ~(((1 << clk->refdiv_width) - 1) << clk->refdiv_shift);
+-
+-	val |= fbdiv_val << clk->fbdiv_shift;
+-	val |= refdiv_val << clk->refdiv_shift;
+-	writel_relaxed(val, clk->ctrl_reg2);
+-
+-	return 0;
+-}
+-
+-static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+-		unsigned long parent_rate)
+-{
+-	struct hi3559av100_clk_pll *clk = to_pll_clk(hw);
+-	u64 frac_val, fbdiv_val;
+-	u32 postdiv1_val, postdiv2_val;
+-	u32 val;
+-	u64 tmp, rate;
+-
+-	val = readl_relaxed(clk->ctrl_reg1);
+-	val = val >> clk->frac_shift;
+-	val &= ((1 << clk->frac_width) - 1);
+-	frac_val = val;
+-
+-	val = readl_relaxed(clk->ctrl_reg1);
+-	val = val >> clk->postdiv1_shift;
+-	val &= ((1 << clk->postdiv1_width) - 1);
+-	postdiv1_val = val;
+-
+-	val = readl_relaxed(clk->ctrl_reg1);
+-	val = val >> clk->postdiv2_shift;
+-	val &= ((1 << clk->postdiv2_width) - 1);
+-	postdiv2_val = val;
+-
+-	val = readl_relaxed(clk->ctrl_reg2);
+-	val = val >> clk->fbdiv_shift;
+-	val &= ((1 << clk->fbdiv_width) - 1);
+-	fbdiv_val = val;
+-
+-	val = readl_relaxed(clk->ctrl_reg2);
+-	val = val >> clk->refdiv_shift;
+-	val &= ((1 << clk->refdiv_width) - 1);
+-
+-	/* rate = 24000000 * (fbdiv + frac / (1<<24) ) / refdiv  */
+-	rate = 0;
+-	tmp = 24000000 * fbdiv_val + (24000000 * frac_val) / (1 << 24);
+-	rate += tmp;
+-	rate = div_u64(rate, val);
+-	rate = div_u64(rate, postdiv1_val * postdiv2_val);
+-
+-	return rate;
+-}
+-
+-static const struct clk_ops hisi_clk_pll_ops = {
+-	.set_rate = clk_pll_set_rate,
+-	.recalc_rate = clk_pll_recalc_rate,
+-};
+-
+-static void hisi_clk_register_pll(struct hi3559av100_pll_clock *clks,
+-			   int nums, struct hisi_clock_data *data, struct device *dev)
+-{
+-	void __iomem *base = data->base;
+-	struct hi3559av100_clk_pll *p_clk = NULL;
+-	struct clk_init_data init = {};
+-	struct clk *clk = NULL;
+-	int i;
+-
+-	p_clk = devm_kzalloc_objs(dev, *p_clk, nums);
+-	if (!p_clk)
+-		return;
+-
+-	for (i = 0; i < nums; i++) {
+-		init.name = clks[i].name;
+-		init.flags = 0;
+-		init.parent_names =
+-			(clks[i].parent_name ? &clks[i].parent_name : NULL);
+-		init.num_parents = (clks[i].parent_name ? 1 : 0);
+-		init.ops = &hisi_clk_pll_ops;
+-
+-		p_clk->ctrl_reg1 = base + clks[i].ctrl_reg1;
+-		p_clk->frac_shift = clks[i].frac_shift;
+-		p_clk->frac_width = clks[i].frac_width;
+-		p_clk->postdiv1_shift = clks[i].postdiv1_shift;
+-		p_clk->postdiv1_width = clks[i].postdiv1_width;
+-		p_clk->postdiv2_shift = clks[i].postdiv2_shift;
+-		p_clk->postdiv2_width = clks[i].postdiv2_width;
+-
+-		p_clk->ctrl_reg2 = base + clks[i].ctrl_reg2;
+-		p_clk->fbdiv_shift = clks[i].fbdiv_shift;
+-		p_clk->fbdiv_width = clks[i].fbdiv_width;
+-		p_clk->refdiv_shift = clks[i].refdiv_shift;
+-		p_clk->refdiv_width = clks[i].refdiv_width;
+-		p_clk->hw.init = &init;
+-
+-		clk = clk_register(NULL, &p_clk->hw);
+-		if (IS_ERR(clk)) {
+-			dev_err(dev, "%s: failed to register clock %s\n",
+-			       __func__, clks[i].name);
+-			continue;
+-		}
+-
+-		data->clk_data.clks[clks[i].id] = clk;
+-		p_clk++;
+-	}
+-}
+-
+-static struct hisi_clock_data *hi3559av100_clk_register(
+-	struct platform_device *pdev)
+-{
+-	struct hisi_clock_data *clk_data;
+-	int ret;
+-
+-	clk_data = hisi_clk_alloc(pdev, HI3559AV100_CRG_NR_CLKS);
+-	if (!clk_data)
+-		return ERR_PTR(-ENOMEM);
+-
+-	ret = hisi_clk_register_fixed_rate(hi3559av100_fixed_rate_clks_crg,
+-					   ARRAY_SIZE(hi3559av100_fixed_rate_clks_crg), clk_data);
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+-	hisi_clk_register_pll(hi3559av100_pll_clks,
+-			      ARRAY_SIZE(hi3559av100_pll_clks), clk_data, &pdev->dev);
+-
+-	ret = hisi_clk_register_mux(hi3559av100_mux_clks_crg,
+-				    ARRAY_SIZE(hi3559av100_mux_clks_crg), clk_data);
+-	if (ret)
+-		goto unregister_fixed_rate;
+-
+-	ret = hisi_clk_register_gate(hi3559av100_gate_clks,
+-				     ARRAY_SIZE(hi3559av100_gate_clks), clk_data);
+-	if (ret)
+-		goto unregister_mux;
+-
+-	ret = of_clk_add_provider(pdev->dev.of_node,
+-				  of_clk_src_onecell_get, &clk_data->clk_data);
+-	if (ret)
+-		goto unregister_gate;
+-
+-	return clk_data;
+-
+-unregister_gate:
+-	hisi_clk_unregister_gate(hi3559av100_gate_clks,
+-				 ARRAY_SIZE(hi3559av100_gate_clks), clk_data);
+-unregister_mux:
+-	hisi_clk_unregister_mux(hi3559av100_mux_clks_crg,
+-				ARRAY_SIZE(hi3559av100_mux_clks_crg), clk_data);
+-unregister_fixed_rate:
+-	hisi_clk_unregister_fixed_rate(hi3559av100_fixed_rate_clks_crg,
+-				       ARRAY_SIZE(hi3559av100_fixed_rate_clks_crg), clk_data);
+-	return ERR_PTR(ret);
+-}
+-
+-static void hi3559av100_clk_unregister(struct platform_device *pdev)
+-{
+-	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
+-
+-	of_clk_del_provider(pdev->dev.of_node);
+-
+-	hisi_clk_unregister_gate(hi3559av100_gate_clks,
+-				 ARRAY_SIZE(hi3559av100_gate_clks), crg->clk_data);
+-	hisi_clk_unregister_mux(hi3559av100_mux_clks_crg,
+-				ARRAY_SIZE(hi3559av100_mux_clks_crg), crg->clk_data);
+-	hisi_clk_unregister_fixed_rate(hi3559av100_fixed_rate_clks_crg,
+-				       ARRAY_SIZE(hi3559av100_fixed_rate_clks_crg), crg->clk_data);
+-}
+-
+-static const struct hisi_crg_funcs hi3559av100_crg_funcs = {
+-	.register_clks = hi3559av100_clk_register,
+-	.unregister_clks = hi3559av100_clk_unregister,
+-};
+-
+-static struct hisi_fixed_rate_clock hi3559av100_shub_fixed_rate_clks[] = {
+-	{ HI3559AV100_SHUB_SOURCE_SOC_24M, "clk_source_24M", NULL, 0, 24000000UL, },
+-	{ HI3559AV100_SHUB_SOURCE_SOC_200M, "clk_source_200M", NULL, 0, 200000000UL, },
+-	{ HI3559AV100_SHUB_SOURCE_SOC_300M, "clk_source_300M", NULL, 0, 300000000UL, },
+-	{ HI3559AV100_SHUB_SOURCE_PLL, "clk_source_PLL", NULL, 0, 192000000UL, },
+-	{ HI3559AV100_SHUB_I2C0_CLK, "clk_shub_i2c0", NULL, 0, 48000000UL, },
+-	{ HI3559AV100_SHUB_I2C1_CLK, "clk_shub_i2c1", NULL, 0, 48000000UL, },
+-	{ HI3559AV100_SHUB_I2C2_CLK, "clk_shub_i2c2", NULL, 0, 48000000UL, },
+-	{ HI3559AV100_SHUB_I2C3_CLK, "clk_shub_i2c3", NULL, 0, 48000000UL, },
+-	{ HI3559AV100_SHUB_I2C4_CLK, "clk_shub_i2c4", NULL, 0, 48000000UL, },
+-	{ HI3559AV100_SHUB_I2C5_CLK, "clk_shub_i2c5", NULL, 0, 48000000UL, },
+-	{ HI3559AV100_SHUB_I2C6_CLK, "clk_shub_i2c6", NULL, 0, 48000000UL, },
+-	{ HI3559AV100_SHUB_I2C7_CLK, "clk_shub_i2c7", NULL, 0, 48000000UL, },
+-	{ HI3559AV100_SHUB_UART_CLK_32K, "clk_uart_32K", NULL, 0, 32000UL, },
+-};
+-
+-/* shub mux clk */
+-static u32 shub_source_clk_mux_table[] = {0, 1, 2, 3};
+-static const char *shub_source_clk_mux_p[] = {
+-	"clk_source_24M", "clk_source_200M", "clk_source_300M", "clk_source_PLL"
+-};
+-
+-static u32 shub_uart_source_clk_mux_table[] = {0, 1, 2, 3};
+-static const char *shub_uart_source_clk_mux_p[] = {
+-	"clk_uart_32K", "clk_uart_div_clk", "clk_uart_div_clk", "clk_source_24M"
+-};
+-
+-static struct hisi_mux_clock hi3559av100_shub_mux_clks[] = {
+-	{
+-		HI3559AV100_SHUB_SOURCE_CLK, "shub_clk", shub_source_clk_mux_p,
+-		ARRAY_SIZE(shub_source_clk_mux_p),
+-		0, 0x0, 0, 2, 0, shub_source_clk_mux_table,
+-	},
+-
+-	{
+-		HI3559AV100_SHUB_UART_SOURCE_CLK, "shub_uart_source_clk",
+-		shub_uart_source_clk_mux_p, ARRAY_SIZE(shub_uart_source_clk_mux_p),
+-		0, 0x1c, 28, 2, 0, shub_uart_source_clk_mux_table,
+-	},
+-};
+-
+-
+-/* shub div clk */
+-static struct clk_div_table shub_spi_clk_table[] = {{0, 8}, {1, 4}, {2, 2}, {/*sentinel*/}};
+-static struct clk_div_table shub_uart_div_clk_table[] = {{1, 8}, {2, 4}, {/*sentinel*/}};
+-
+-static struct hisi_divider_clock hi3559av100_shub_div_clks[] = {
+-	{ HI3559AV100_SHUB_SPI_SOURCE_CLK, "clk_spi_clk", "shub_clk", 0, 0x20, 24, 2,
+-	  CLK_DIVIDER_ALLOW_ZERO, shub_spi_clk_table,
+-	},
+-	{ HI3559AV100_SHUB_UART_DIV_CLK, "clk_uart_div_clk", "shub_clk", 0, 0x1c, 28, 2,
+-	  CLK_DIVIDER_ALLOW_ZERO, shub_uart_div_clk_table,
+-	},
+-};
+-
+-/* shub gate clk */
+-static struct hisi_gate_clock hi3559av100_shub_gate_clks[] = {
+-	{
+-		HI3559AV100_SHUB_SPI0_CLK, "clk_shub_spi0", "clk_spi_clk",
+-		0, 0x20, 1, 0,
+-	},
+-	{
+-		HI3559AV100_SHUB_SPI1_CLK, "clk_shub_spi1", "clk_spi_clk",
+-		0, 0x20, 5, 0,
+-	},
+-	{
+-		HI3559AV100_SHUB_SPI2_CLK, "clk_shub_spi2", "clk_spi_clk",
+-		0, 0x20, 9, 0,
+-	},
+-
+-	{
+-		HI3559AV100_SHUB_UART0_CLK, "clk_shub_uart0", "shub_uart_source_clk",
+-		0, 0x1c, 1, 0,
+-	},
+-	{
+-		HI3559AV100_SHUB_UART1_CLK, "clk_shub_uart1", "shub_uart_source_clk",
+-		0, 0x1c, 5, 0,
+-	},
+-	{
+-		HI3559AV100_SHUB_UART2_CLK, "clk_shub_uart2", "shub_uart_source_clk",
+-		0, 0x1c, 9, 0,
+-	},
+-	{
+-		HI3559AV100_SHUB_UART3_CLK, "clk_shub_uart3", "shub_uart_source_clk",
+-		0, 0x1c, 13, 0,
+-	},
+-	{
+-		HI3559AV100_SHUB_UART4_CLK, "clk_shub_uart4", "shub_uart_source_clk",
+-		0, 0x1c, 17, 0,
+-	},
+-	{
+-		HI3559AV100_SHUB_UART5_CLK, "clk_shub_uart5", "shub_uart_source_clk",
+-		0, 0x1c, 21, 0,
+-	},
+-	{
+-		HI3559AV100_SHUB_UART6_CLK, "clk_shub_uart6", "shub_uart_source_clk",
+-		0, 0x1c, 25, 0,
+-	},
+-
+-	{
+-		HI3559AV100_SHUB_EDMAC_CLK, "clk_shub_dmac", "shub_clk",
+-		0, 0x24, 4, 0,
+-	},
+-};
+-
+-static int hi3559av100_shub_default_clk_set(void)
+-{
+-	void __iomem *crg_base;
+-	unsigned int val;
+-
+-	crg_base = ioremap(CRG_BASE_ADDR, SZ_4K);
+-
+-	/* SSP: 192M/2 */
+-	val = readl_relaxed(crg_base + 0x20);
+-	val |= (0x2 << 24);
+-	writel_relaxed(val, crg_base + 0x20);
+-
+-	/* UART: 192M/8 */
+-	val = readl_relaxed(crg_base + 0x1C);
+-	val |= (0x1 << 28);
+-	writel_relaxed(val, crg_base + 0x1C);
+-
+-	iounmap(crg_base);
+-	crg_base = NULL;
+-
+-	return 0;
+-}
+-
+-static struct hisi_clock_data *hi3559av100_shub_clk_register(
+-	struct platform_device *pdev)
+-{
+-	struct hisi_clock_data *clk_data = NULL;
+-	int ret;
+-
+-	hi3559av100_shub_default_clk_set();
+-
+-	clk_data = hisi_clk_alloc(pdev, HI3559AV100_SHUB_NR_CLKS);
+-	if (!clk_data)
+-		return ERR_PTR(-ENOMEM);
+-
+-	ret = hisi_clk_register_fixed_rate(hi3559av100_shub_fixed_rate_clks,
+-					   ARRAY_SIZE(hi3559av100_shub_fixed_rate_clks), clk_data);
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+-	ret = hisi_clk_register_mux(hi3559av100_shub_mux_clks,
+-				    ARRAY_SIZE(hi3559av100_shub_mux_clks), clk_data);
+-	if (ret)
+-		goto unregister_fixed_rate;
+-
+-	ret = hisi_clk_register_divider(hi3559av100_shub_div_clks,
+-					ARRAY_SIZE(hi3559av100_shub_div_clks), clk_data);
+-	if (ret)
+-		goto unregister_mux;
+-
+-	ret = hisi_clk_register_gate(hi3559av100_shub_gate_clks,
+-				     ARRAY_SIZE(hi3559av100_shub_gate_clks), clk_data);
+-	if (ret)
+-		goto unregister_factor;
+-
+-	ret = of_clk_add_provider(pdev->dev.of_node,
+-				  of_clk_src_onecell_get, &clk_data->clk_data);
+-	if (ret)
+-		goto unregister_gate;
+-
+-	return clk_data;
+-
+-unregister_gate:
+-	hisi_clk_unregister_gate(hi3559av100_shub_gate_clks,
+-				 ARRAY_SIZE(hi3559av100_shub_gate_clks), clk_data);
+-unregister_factor:
+-	hisi_clk_unregister_divider(hi3559av100_shub_div_clks,
+-				    ARRAY_SIZE(hi3559av100_shub_div_clks), clk_data);
+-unregister_mux:
+-	hisi_clk_unregister_mux(hi3559av100_shub_mux_clks,
+-				ARRAY_SIZE(hi3559av100_shub_mux_clks), clk_data);
+-unregister_fixed_rate:
+-	hisi_clk_unregister_fixed_rate(hi3559av100_shub_fixed_rate_clks,
+-				       ARRAY_SIZE(hi3559av100_shub_fixed_rate_clks), clk_data);
+-	return ERR_PTR(ret);
+-}
+-
+-static void hi3559av100_shub_clk_unregister(struct platform_device *pdev)
+-{
+-	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
+-
+-	of_clk_del_provider(pdev->dev.of_node);
+-
+-	hisi_clk_unregister_gate(hi3559av100_shub_gate_clks,
+-				 ARRAY_SIZE(hi3559av100_shub_gate_clks), crg->clk_data);
+-	hisi_clk_unregister_divider(hi3559av100_shub_div_clks,
+-				    ARRAY_SIZE(hi3559av100_shub_div_clks), crg->clk_data);
+-	hisi_clk_unregister_mux(hi3559av100_shub_mux_clks,
+-				ARRAY_SIZE(hi3559av100_shub_mux_clks), crg->clk_data);
+-	hisi_clk_unregister_fixed_rate(hi3559av100_shub_fixed_rate_clks,
+-				       ARRAY_SIZE(hi3559av100_shub_fixed_rate_clks), crg->clk_data);
+-}
+-
+-static const struct hisi_crg_funcs hi3559av100_shub_crg_funcs = {
+-	.register_clks = hi3559av100_shub_clk_register,
+-	.unregister_clks = hi3559av100_shub_clk_unregister,
+-};
+-
+-static const struct of_device_id hi3559av100_crg_match_table[] = {
+-	{
+-		.compatible = "hisilicon,hi3559av100-clock",
+-		.data = &hi3559av100_crg_funcs
+-	},
+-	{
+-		.compatible = "hisilicon,hi3559av100-shub-clock",
+-		.data = &hi3559av100_shub_crg_funcs
+-	},
+-	{ }
+-};
+-MODULE_DEVICE_TABLE(of, hi3559av100_crg_match_table);
+-
+-static int hi3559av100_crg_probe(struct platform_device *pdev)
+-{
+-	struct hisi_crg_dev *crg;
+-
+-	crg = devm_kmalloc_obj(&pdev->dev, *crg);
+-	if (!crg)
+-		return -ENOMEM;
+-
+-	crg->funcs = of_device_get_match_data(&pdev->dev);
+-	if (!crg->funcs)
+-		return -ENOENT;
+-
+-	crg->rstc = hisi_reset_init(pdev);
+-	if (!crg->rstc)
+-		return -ENOMEM;
+-
+-	crg->clk_data = crg->funcs->register_clks(pdev);
+-	if (IS_ERR(crg->clk_data)) {
+-		hisi_reset_exit(crg->rstc);
+-		return PTR_ERR(crg->clk_data);
+-	}
+-
+-	platform_set_drvdata(pdev, crg);
+-	return 0;
+-}
+-
+-static void hi3559av100_crg_remove(struct platform_device *pdev)
+-{
+-	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
+-
+-	hisi_reset_exit(crg->rstc);
+-	crg->funcs->unregister_clks(pdev);
+-}
+-
+-static struct platform_driver hi3559av100_crg_driver = {
+-	.probe		= hi3559av100_crg_probe,
+-	.remove		= hi3559av100_crg_remove,
+-	.driver		= {
+-		.name	= "hi3559av100-clock",
+-		.of_match_table = hi3559av100_crg_match_table,
+-	},
+-};
+-
+-static int __init hi3559av100_crg_init(void)
+-{
+-	return platform_driver_register(&hi3559av100_crg_driver);
+-}
+-core_initcall(hi3559av100_crg_init);
+-
+-static void __exit hi3559av100_crg_exit(void)
+-{
+-	platform_driver_unregister(&hi3559av100_crg_driver);
+-}
+-module_exit(hi3559av100_crg_exit);
+-
+-
+-MODULE_DESCRIPTION("HiSilicon Hi3559AV100 CRG Driver");
+diff --git a/include/dt-bindings/clock/hi3559av100-clock.h b/include/dt-bindings/clock/hi3559av100-clock.h
+deleted file mode 100644
+index a4f0e997546c..000000000000
+--- a/include/dt-bindings/clock/hi3559av100-clock.h
++++ /dev/null
+@@ -1,165 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause */
+-/*
+- * Copyright (c) 2019-2020, Huawei Tech. Co., Ltd.
+- *
+- * Author: Dongjiu Geng <gengdongjiu@huawei.com>
+- */
+-
+-#ifndef __DTS_HI3559AV100_CLOCK_H
+-#define __DTS_HI3559AV100_CLOCK_H
+-
+-/*  fixed   rate    */
+-#define HI3559AV100_FIXED_1188M     1
+-#define HI3559AV100_FIXED_1000M     2
+-#define HI3559AV100_FIXED_842M      3
+-#define HI3559AV100_FIXED_792M      4
+-#define HI3559AV100_FIXED_750M      5
+-#define HI3559AV100_FIXED_710M      6
+-#define HI3559AV100_FIXED_680M      7
+-#define HI3559AV100_FIXED_667M      8
+-#define HI3559AV100_FIXED_631M      9
+-#define HI3559AV100_FIXED_600M      10
+-#define HI3559AV100_FIXED_568M      11
+-#define HI3559AV100_FIXED_500M      12
+-#define HI3559AV100_FIXED_475M      13
+-#define HI3559AV100_FIXED_428M      14
+-#define HI3559AV100_FIXED_400M      15
+-#define HI3559AV100_FIXED_396M      16
+-#define HI3559AV100_FIXED_300M      17
+-#define HI3559AV100_FIXED_250M      18
+-#define HI3559AV100_FIXED_198M      19
+-#define HI3559AV100_FIXED_187p5M    20
+-#define HI3559AV100_FIXED_150M      21
+-#define HI3559AV100_FIXED_148p5M    22
+-#define HI3559AV100_FIXED_125M      23
+-#define HI3559AV100_FIXED_107M      24
+-#define HI3559AV100_FIXED_100M      25
+-#define HI3559AV100_FIXED_99M       26
+-#define HI3559AV100_FIXED_74p25M    27
+-#define HI3559AV100_FIXED_72M       28
+-#define HI3559AV100_FIXED_60M       29
+-#define HI3559AV100_FIXED_54M       30
+-#define HI3559AV100_FIXED_50M       31
+-#define HI3559AV100_FIXED_49p5M     32
+-#define HI3559AV100_FIXED_37p125M   33
+-#define HI3559AV100_FIXED_36M       34
+-#define HI3559AV100_FIXED_32p4M     35
+-#define HI3559AV100_FIXED_27M       36
+-#define HI3559AV100_FIXED_25M       37
+-#define HI3559AV100_FIXED_24M       38
+-#define HI3559AV100_FIXED_12M       39
+-#define HI3559AV100_FIXED_3M        40
+-#define HI3559AV100_FIXED_1p6M      41
+-#define HI3559AV100_FIXED_400K      42
+-#define HI3559AV100_FIXED_100K      43
+-#define HI3559AV100_FIXED_200M      44
+-#define HI3559AV100_FIXED_75M       75
+-
+-#define HI3559AV100_I2C0_CLK    50
+-#define HI3559AV100_I2C1_CLK    51
+-#define HI3559AV100_I2C2_CLK    52
+-#define HI3559AV100_I2C3_CLK    53
+-#define HI3559AV100_I2C4_CLK    54
+-#define HI3559AV100_I2C5_CLK    55
+-#define HI3559AV100_I2C6_CLK    56
+-#define HI3559AV100_I2C7_CLK    57
+-#define HI3559AV100_I2C8_CLK    58
+-#define HI3559AV100_I2C9_CLK    59
+-#define HI3559AV100_I2C10_CLK   60
+-#define HI3559AV100_I2C11_CLK   61
+-
+-#define HI3559AV100_SPI0_CLK    62
+-#define HI3559AV100_SPI1_CLK    63
+-#define HI3559AV100_SPI2_CLK    64
+-#define HI3559AV100_SPI3_CLK    65
+-#define HI3559AV100_SPI4_CLK    66
+-#define HI3559AV100_SPI5_CLK    67
+-#define HI3559AV100_SPI6_CLK    68
+-
+-#define HI3559AV100_EDMAC_CLK     69
+-#define HI3559AV100_EDMAC_AXICLK  70
+-#define HI3559AV100_EDMAC1_CLK    71
+-#define HI3559AV100_EDMAC1_AXICLK 72
+-#define HI3559AV100_VDMAC_CLK     73
+-
+-/*  mux clocks  */
+-#define HI3559AV100_FMC_MUX     80
+-#define HI3559AV100_SYSAPB_MUX  81
+-#define HI3559AV100_UART_MUX    82
+-#define HI3559AV100_SYSBUS_MUX  83
+-#define HI3559AV100_A73_MUX     84
+-#define HI3559AV100_MMC0_MUX    85
+-#define HI3559AV100_MMC1_MUX    86
+-#define HI3559AV100_MMC2_MUX    87
+-#define HI3559AV100_MMC3_MUX    88
+-
+-/*  gate    clocks  */
+-#define HI3559AV100_FMC_CLK     90
+-#define HI3559AV100_UART0_CLK   91
+-#define HI3559AV100_UART1_CLK   92
+-#define HI3559AV100_UART2_CLK   93
+-#define HI3559AV100_UART3_CLK   94
+-#define HI3559AV100_UART4_CLK   95
+-#define HI3559AV100_MMC0_CLK    96
+-#define HI3559AV100_MMC1_CLK    97
+-#define HI3559AV100_MMC2_CLK    98
+-#define HI3559AV100_MMC3_CLK    99
+-
+-#define HI3559AV100_ETH_CLK         100
+-#define HI3559AV100_ETH_MACIF_CLK   101
+-#define HI3559AV100_ETH1_CLK        102
+-#define HI3559AV100_ETH1_MACIF_CLK  103
+-
+-/*  complex */
+-#define HI3559AV100_MAC0_CLK                110
+-#define HI3559AV100_MAC1_CLK                111
+-#define HI3559AV100_SATA_CLK                112
+-#define HI3559AV100_USB_CLK                 113
+-#define HI3559AV100_USB1_CLK                114
+-
+-/* pll clocks */
+-#define HI3559AV100_APLL_CLK                250
+-#define HI3559AV100_GPLL_CLK                251
+-
+-#define HI3559AV100_CRG_NR_CLKS	            256
+-
+-#define HI3559AV100_SHUB_SOURCE_SOC_24M	    0
+-#define HI3559AV100_SHUB_SOURCE_SOC_200M    1
+-#define HI3559AV100_SHUB_SOURCE_SOC_300M    2
+-#define HI3559AV100_SHUB_SOURCE_PLL         3
+-#define HI3559AV100_SHUB_SOURCE_CLK         4
+-
+-#define HI3559AV100_SHUB_I2C0_CLK           10
+-#define HI3559AV100_SHUB_I2C1_CLK           11
+-#define HI3559AV100_SHUB_I2C2_CLK           12
+-#define HI3559AV100_SHUB_I2C3_CLK           13
+-#define HI3559AV100_SHUB_I2C4_CLK           14
+-#define HI3559AV100_SHUB_I2C5_CLK           15
+-#define HI3559AV100_SHUB_I2C6_CLK           16
+-#define HI3559AV100_SHUB_I2C7_CLK           17
+-
+-#define HI3559AV100_SHUB_SPI_SOURCE_CLK     20
+-#define HI3559AV100_SHUB_SPI4_SOURCE_CLK    21
+-#define HI3559AV100_SHUB_SPI0_CLK           22
+-#define HI3559AV100_SHUB_SPI1_CLK           23
+-#define HI3559AV100_SHUB_SPI2_CLK           24
+-#define HI3559AV100_SHUB_SPI3_CLK           25
+-#define HI3559AV100_SHUB_SPI4_CLK           26
+-
+-#define HI3559AV100_SHUB_UART_CLK_32K       30
+-#define HI3559AV100_SHUB_UART_SOURCE_CLK    31
+-#define HI3559AV100_SHUB_UART_DIV_CLK       32
+-#define HI3559AV100_SHUB_UART0_CLK          33
+-#define HI3559AV100_SHUB_UART1_CLK          34
+-#define HI3559AV100_SHUB_UART2_CLK          35
+-#define HI3559AV100_SHUB_UART3_CLK          36
+-#define HI3559AV100_SHUB_UART4_CLK          37
+-#define HI3559AV100_SHUB_UART5_CLK          38
+-#define HI3559AV100_SHUB_UART6_CLK          39
+-
+-#define HI3559AV100_SHUB_EDMAC_CLK          40
+-
+-#define HI3559AV100_SHUB_NR_CLKS            50
+-
+-#endif  /* __DTS_HI3559AV100_CLOCK_H */
+-
 -- 
-Florian
+2.53.0
+
