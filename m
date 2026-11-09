@@ -1,103 +1,91 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=35.89.44.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794257966;
-	b=eue1eAZDW9G5OHe+pej45BmV45OY6Z7GSIPvchAIBWjeIEwexp29Y7ho5l8AGIIJDMe2
-	 vGVp1e7l7j+8YXU1i4JGykGKP2bJ6xIf5q5NIKdQID/2wgxey+u1bnnENIa+DM3CHBoY3
-	 qTdbecASNw7GHtanSmeKRc+6BWtymCrKjjPqtUKr4IcKG9cBqs/KdXIRjfpbc2Erbe3Yu
-	 D07DkOPwXJ0beAOTjPyMVTaZshi4HBaPZPJokDNtwMNPgzo0hoQvLetNGupJP3nzqEjsi
-	 0Tj30b7GyO0foAmhPdwwh3EblD3hrSB33qb9Aqj77jZVzDF1rqsknojQrKPG8OykSSQ==
+	t=1794266216;
+	b=2WwoQeRogh2fV8CAFcSJXHk2SBQEQZgHMJq+7bt21afQBJ1ImCYskrCP8rn2PhIuVRqv
+	 A37xcMRsfWSA8jsOemlOPXnyoi/7NA5+t4MK2jJPzNsgTsoVfzphmjOnkxABcQRPr8k6N
+	 zjATpav0DvrHZZvrz3JTFvL67KGeTUtrdIdI9x86uTMm2HmQluucYuLKa4D0ynWwJIblD
+	 Ov8QHxDWt8f9z5nVnILBRzAKzM4TNvqOtfLOK+M4Ei+sG4rlU6xoI2b2oktotOU7jpqoU
+	 UC7pNn3k9T9vd5ijfYjp6ozTanbbi7II2wf4VAW7npaToQTDT5A7MyeQ0wIznAXwk/w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794257966;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=h0yneiKg7DNhOrT8jayZCJtlhVR9ITH7sa+yxZSUWfA=;
-	b=0DZpjtBbrjHqHjPXsYpv3iVseVtjlfwHL08U9KT+we46pf5hn84iOStu9AewJT0UVMyW
-	 A7dD44kUMOcMa9jeZlt6m0ZMKBAKdxXnI5QV559KRTGbSahZyQ2tlYbjcyoM0x0fdLCMk
-	 PIsO/QCbCTD9rhfSOWljaB170Ws6FZwoagGmxS+uaGNJsNSP3UCLd/03QyXleRncoMfkS
-	 XvURhjxvyEbr9FozL/5ZJidtCWNZ//Rvf+vMjVefj3UI5a7iYDxlr8R1CZ2unYlSBNHcx
-	 IqqpTmhBpbzT41sYlMjEpNlNQxRNpEGGcYGw6rJ9fExPLjPk53aa4hywx2kZoz0MRng==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794266216;
+	h=DMARC-Filter:Received:Received:X-Authority-Analysis:DKIM-Signature:
+	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To:X-AntiAbuse:X-AntiAbuse:
+	 X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-BWhitelist:X-Source-IP:
+	 X-Source-L:X-Exim-ID:X-Source:X-Source-Args:X-Source-Dir:
+	 X-Source-Sender:X-Source-Auth:X-Email-Count:X-Org:X-Source-Cap:
+	 X-Local-Domain:X-CMAE-Envelope;
+	bh=ourNGXvQ5Ub4aFSYZr4GTp+31ZYMvfjzPnbWU36+4JY=;
+	b=meN4KG0CVw49+aIp/dd3QJikFSwBSLBcB4qMnfMI9SD0J78UIoYxiYrFEQHkItKk9Z4f
+	 XTIiqkTywHFanktNYKirSLffzVFPAOYus4Oidl6JuO5u2pf3G4MrVfCwICjxmGyIxG+wm
+	 VxpgqEaL3R8cL8G4kAfcA+khSsO2Q+Z4lJCUYmgJ8hbewN4ZHliZ0D3JtnDEIaGshN2bu
+	 DHMfQwAYZM8r0IlUPK33HkMacfHYfcAY2mVSo6C8OofFtQcNW2YtRYIkDkZqNBBti3HPF
+	 qD++vZdEfa0E8skUHAX8l2RWUrCHujzDxIdE2XIv7X98heRSyQTsbzpJjiKARiM4eRA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b="HrReEgn/";
-	arc=none smtp.remote-ip=209.85.128.49
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=none header.from=roeck-us.net;
+	spf=fail smtp.mailfrom=roeck-us.net;
+	dkim=pass header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=g8OM+qIh;
+	arc=none smtp.remote-ip=35.89.44.33
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5285606A33E
-	for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2026 20:59:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B5285606A33E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762FB606A31C
+	for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2026 23:16:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 762FB606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=HrReEgn/
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4a1fbd52ab6so8829785e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2026 12:59:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1794257964; x=1794862764; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=h0yneiKg7DNhOrT8jayZCJtlhVR9ITH7sa+yxZSUWfA=;
-        b=HrReEgn/ryRpnI97jiAPLAbpUyzbD8Nu1QgEKRMLKm3Qb9ghk0pVkvKJqnZjkoU/Mo
-         pI7B2kT8G+t2yqczEFjSQH5wI4AQmm/2b2SNkvpGI7f+Cw/e/8BJpkvzYyqvHpwENrVL
-         54vgxTEAAHwMYbYL6qJ4Jvl2336kdXAhch1ZkHpOto59XHgBphOWxjXbsQcNCfMkSNJq
-         KD5v3wggFRgjUPe7ETFdhPD7+9/HwZ/UWBZDABdnZIJlrbvUB1eNJuaNGnpOHhEygA/z
-         A/eN0sdKmk+xmiRSg7aikhyolCtQwuYCFPruQWa1BsXuFjh3k3DVwQ7lRewSIiFiAP4A
-         Y2mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794257964; x=1794862764;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=h0yneiKg7DNhOrT8jayZCJtlhVR9ITH7sa+yxZSUWfA=;
-        b=UOLwXzHjjF/mn/+LwKxJUUbEZ0u5i4ushbkj+UyB8Qq7nnqoYlfLEBsQG6+SIn83ro
-         h7eZ9/kCNYmsGZhk2UiiP2iBuvCb9jAwtiXwI7kG+nBmrji3Mg0t/HJ6qWfTKZtUAika
-         dOohzGpm/rIGruoKufZ4LfyuGsRBT2z3IXnIQmsxm//kFCFRlPExoLw8Y7OEgxr+Tauc
-         8hOhS0Q+om8pPmpVZZF4Flw55/jPizB4enFkO8nAWM8+InWdrxhAioCnR8lfPATl4jF6
-         O54F5roaMickbvoO5imNY6f00UZaXDNRPAlqrhMRKdfb6V+HjP5WnKJ3eP7gajldw/tY
-         MOKQ==
-X-Forwarded-Encrypted: i=1; AL+hErG5QVEAgjBGIAAmkcZoWPTapAHRYcmvl/J+RzS5ishUNmo3mjqVUXPdrddMXh0w05IZpMDqUOw106Q=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/s3wS4V79pc6TcreQvYOSujIWLBkJsEMZIalEVzE6kr6ehj/bq
-	1C7ibjehAsa9YLWrfquF9GJykGARi9n3vQGyLdn94Zwqt0orZ7b+YEKw42H1i9AFfBs=
-X-Gm-Gg: AYBFou3UIs7TWvX2SF8wW6q1/CTO5vOg9rTlkpeReBWePmUIK8hDfA08U0YRuLZ6Wyt
-	U2FI4n1rgMn7dQJQK0fk5YBVgy2IMLyQTU3rYocwArNVq3Ji5b4FFp4AWUDFDV7qd5L0gTVYpZQ
-	z8P8Vi+y7BO/pmkCZI+i+owrCs0ERUxvAPKzFYVx5tzkDSRiGbHzUQsxTvrJS0idKjO3SvzluDf
-	l1vOFM3UqFLeSAZFwFKdg1GBTf8JXzFh5C6ilHldzq/MNza0S71NtgYBVmLxOkOhdC5sthy8ZkY
-	8bJCBaICW1am6KLrPdsdU4I1wSpG2c/x6KMlAwfAJOx3hPXSuiWpTrs1GbNvxqcy9BTTz2tDsvZ
-	vBsdidHXxeoKi35HO2VZOTw2dgvErPdxS6SCE7N5WoKHdErAcy0zHbMSA/1K09jHsyH0ABoXADi
-	k8C8QTVFs00yLLvG9YsSDRCo0y9fnmhizCMz3YX5m9ra6T547S6KkKlibHWVjihLa50Jy01hxxD
-	jJ6zdJ8A4QVjcLsec9CTM2n3Cg2ZPHdNuo689H+EB6KDyf0JadO8DSpe6kCXrpu7Cd2CeGo8huq
-	xwSEsyE1wer6ll7IiY8mezy/9gkIuW82noBaWMTEoVWj8EfE8ZF3rSKqz8e04JM2XAv/LudtTIl
-	EvGtbi02nULOrGXQXWwEXLRgLtJP7Y9Ump3UoZEcWY0ROmQ==
-X-Received: by 2002:a05:600c:3d96:b0:4a3:d327:6ed with SMTP id 5b1f17b1804b1-4ba02347dc6mr6849605e9.17.1794257964075;
-        Mon, 09 Nov 2026 12:59:24 -0800 (PST)
-Received: from macbook.homenet.telecomitalia.it (host-95-246-144-141.retail.telecomitalia.it. [95.246.144.141])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4983284c99bsm1081150f8f.7.2026.11.09.12.59.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2026 12:59:23 -0800 (PST)
-Date: Mon, 9 Nov 2026 21:59:22 +0100
-From: Carlo Caione <ccaione@baylibre.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Jian Hu <jian.hu@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/7] dt-bindings: clock: Add Amlogic S7 SCMI clock IDs
-Message-ID: <avIv2GfXHuOPWJzC@macbook.homenet.telecomitalia.it>
-References: <20261106-upstream-s7-clk-v1-0-7d501d62621f@baylibre.com>
- <20261106-upstream-s7-clk-v1-1-7d501d62621f@baylibre.com>
- <20261108-computer-backed-d98862794d18@spud>
- <1jfqxa1jv7.fsf@starbuckisacylon.baylibre.com>
- <20261109-stature-splicing-a146b4cfaad4@spud>
+	dkim=pass (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=g8OM+qIh
+Received: from eig-obgw-5001b.ext.cloudfilter.net ([10.0.29.181])
+	by cmsmtp with ESMTPS
+	id QVX9xQ8upAR1iQYbgxa7Ek; Mon, 09 Nov 2026 23:16:56 +0000
+Received: from 162-215-252-36.unifiedlayer.com ([208.91.199.152])
+	by cmsmtp with ESMTPS
+	id QYbfxlSOkxmi7QYbfxJiv8; Mon, 09 Nov 2026 23:16:56 +0000
+X-Authority-Analysis: v=2.4 cv=KuFN2XWN c=1 sm=1 tr=0 ts=6af25468
+ a=QNED+QcLUkoL9qulTODnwA==:117 a=2cfIYNtKkjgZNaOwnGXpGw==:17
+ a=kj9zAlcOel0A:10 a=zJRp6_cAMcgA:10 a=M0FbrtG7MMAA:10 a=yC-0_ovQAAAA:8
+ a=GU2OR-2u3yUetoAu5r4A:9 a=CjuIK1q_8ugA:10 a=p49Upr6YYhNo69yxWKUU:22
+ a=KPbNTLLc3YvdawN95zVk:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
+	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+	:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ourNGXvQ5Ub4aFSYZr4GTp+31ZYMvfjzPnbWU36+4JY=; b=g8OM+qIh4P8JuAXOofLquteH9V
+	GA8GU+WHHy5ORMPSZWQXI2f2OHpxFOrmM6ExzkPpZDlo/xKgsF+FSDcJttYpKH6NowrZpbtzzGyzT
+	D99Mj8eK3o8LtpxJHBQzwEKYH7KBe8tYLPJQ/7yQ22xZfiIRmrqJzNAIckR50HsbtEZfVR7puSGZu
+	M3Pq6DIFGUP/dou1iJq4r4TPSNeRgBe32TRDERfdkm+KaAGOWtmjKLSxghGkwKkH8v2Mv4QSDT8zc
+	1PY3Z99s2mFe0WYa9TvLqjk+UoN3SvAvVYe3ALxd0NIof43zNhrR0jircdZTB5idKxqkRG0rtyNe9
+	UR1ibrIA==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:47824 helo=server.roeck-us.net)
+	by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <linux@roeck-us.net>)
+	id 1xQYbd-00000000tOY-3UMs;
+	Tue, 10 Nov 2026 04:46:53 +0530
+Date: Mon, 9 Nov 2026 15:16:52 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v8 2/7] watchdog: rzv2h: Use pm_runtime_put_sync()
+Message-ID: <36f3db86-774e-4e38-9216-a5af7ccbf6a5@roeck-us.net>
+References: <20261001165201.763882-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20261001165201.763882-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -109,23 +97,40 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261109-stature-splicing-a146b4cfaad4@spud>
+In-Reply-To: <20261001165201.763882-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-BWhitelist: no
+X-Source-IP: 108.223.40.66
+X-Source-L: No
+X-Exim-ID: 1xQYbd-00000000tOY-3UMs
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net (server.roeck-us.net) [108.223.40.66]:47824
+X-Source-Auth: guenter@roeck-us.net
+X-Email-Count: 25
+X-Org: HG=direseller_whb_net_legacy;ORG=directi;
+X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfHJkychBf8S17YrXdsPYW6BmQcNwudpNgoQpaxWwQKCqsOps2Z8BDSB1APHeM2GquMY5X086OmMdzjd8qEx2zVw6uWhj5yLcFsiDaKzLD+9SvQnsRzis
+ HTPjHWg39omrWAAX4O9M0oXYCHvMkuLcl25Uuu+kXJqyl4oSAOt+dzcWbmtPIwzIrGNPr3Mf8XShx+R5HJK1m25aCDZmfQd2HopVQWFvuj3MVg3UcbFt4fB1
 
-On Mon, Nov 09, 2026 at 20:00:56 +0100, Conor Dooley wrote:
+On Thu, Oct 01, 2026 at 05:51:56PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> pm_runtime_put() may trigger the idle check after pm_runtime_disable()
+> is run as part of devm_pm_runtime_enable()'s cleanup action, leaving
+> runtime PM active.
+> 
+> Use pm_runtime_put_sync() to ensure the idle check runs synchronously.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> The "document" in this case is the source code of the firmware then.
-> The info might not be printed in the TRM, but it is determined by
-> something, Carlo had to get the numbers from somewhere?
+Applied.
 
-Yes, I got the IDs by enumerating the clocks exposed by the running
-S7 firmware, logging their IDs and names through the Linux SCMI clock
-driver (using a vendor provided firmware and kernel of course).
-
-And yes, the DT cell is the firmware's SCMI ID, passed through
-without translation. Renumbering these definitions would break that
-correspondence indeed.
-
-Cheers,
-
---
-Carlo Caione
+Thanks,
+Guenter
