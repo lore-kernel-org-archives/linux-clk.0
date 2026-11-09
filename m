@@ -1,111 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.50
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794233187;
-	b=D75PdR/WMgg0iFpEHBhAQ4+dCEsE0YpabQUCP5WXSFmEi1bGyuQvuddrf5WTbG8lwE+o
-	 z46660hGecmE2N0e9GeEl6XsJpsEvBSvIREil2rJaxkMLgUwEo2h/vVszx3UMeKB/bmK+
-	 a/zDwP/9XvLnRkC/UlYshBVUfu+CPQmrvfaPU6HgRKNCX4uzE9n1mo7ym42NsTdf+Vv82
-	 06ai9K08tjL9/d4y1vH0tHmXzZFa+tXVS11KV1Ngr5g3BLM8BObey2F/bDUVhB9TJ0u42
-	 SWyUihJvYjh5uQm8md8/4G7Wyz8Ze4GkkjrodJevH01UjwMT6scYxYALxvFMM+9lCRw==
+	t=1794233461;
+	b=HxV9jIcmd9+tMkglrT0w97qjqYqZN63ZlzkYrGm4IBLethvcXdY8ed/nPwEn5SsCEamz
+	 YVoMwQaj1LEbEqm/mdc6h3kfjOHS5CD0naIdoWBN6oar/ey9Jhht2+a+TbtQ6exG1Go4H
+	 bkuyehSiAns/7VQB7daxMOWkcvs2jTeJJII/OQmGSNBBYF1Yxe38L/sAT/Z67CnK7njEc
+	 +FF9K7Wzt19nFC2EHCUdQ/sTn0BjGwAyXMWFEn0S6w/fRXJWLDX/RnDm3MMTehOW9A1uy
+	 7j/eyX6B41lDZs/lJNlYAORu7v2ROCz3K16ydrzgrCoirL4IKiR/1oBsexQZaKDmFGQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794233187;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Info:X-Authority-Analysis:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=SZO2pxjMIijEZXAP7miXBlorgEdIzoDz/u9J3Nan4lQ=;
-	b=X1haUMGgaUKo1XySX3JkFg6WkpI9L0HOxeozMkRjTlf5IcwaiD4llDK8uwqo/I982Iw9
-	 pL6lfkEDd3rz7igy/wBIrjsyXsNzPXJAnShwQYPdSbSX8JZoXwVtUHlIfVtrza3+4wlMz
-	 JqvhKtu2y0vMwY7gIxkg9XbSQXs67nbaUKVxdefn+wligxXcz1GM1EsqkkMGkhIkidxC9
-	 nj23GH2SHpiQ2Y5dVnMIlcYkGTntuQdGxpPoIU21pEmjJQjeA9ygjg4vtPCWq8S5BFrMM
-	 cnLY5lwPjMzEPWlMXfBTodAhjBVLazip6bCMxSBl6p5MIw6vQ5OhooF08OECWubpZQQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794233461;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=Tz1cDpa5AepSCwsliEOBWV2ZbIXpdMUmAVTrHLbgBBk=;
+	b=PLfi3iRbADAEQsFDy6g3DubWLbafe807iJmokOIkNe4kf82AXFW7CmUnEXLRKadI/P7x
+	 Uj/GrNPjLtIFS3hDYsOdoPzUqfPRJd4IpOnkbBakbkrG8BkqYgkz5ADyQeOKlIu/7aPIA
+	 /NL02dHykDvAnLwY7UxRwk+P+KQ7UJM5pM8E0ivcXVfUIbfaYj/4BimFDgOPXGbq75yiM
+	 h33nG981HHwIQXaDYFt2T3NkGuqG8AIEtpqaSliMevjvu6OFq/haCUQI1TYe06bRh+e1W
+	 yz6sj+bcgexigIV9buH+roiP8C2boLgjo0Rxy9i2t7BzYuex9z+rhtwjPSURUhbhytg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=pk+5LGwY;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=JPdOO1fQ;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.208.50
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8A2606A326
-	for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2026 14:06:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9F8A2606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=pk+5LGwY;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=JPdOO1fQ
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A9DF4OD334843
-	for <linux-clk@vger.kernel.org>; Mon, 9 Nov 2026 14:06:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SZO2pxjMIijEZXAP7miXBlorgEdIzoDz/u9J3Nan4lQ=; b=pk+5LGwYMAfOSXFA
-	lecrTQTHD6VN3Lmy8W3ERVHogoxBAZJ1A1qTiGq8rGTwbGZHTJOM4gK/hVZMng2d
-	/hLXksJJ2FQIwT50rDlyW9JkjHHr4FSthKCkNi0D1VwcshthvB4zcuwz2Fhz/gx+
-	e6ca0MF62VNUL2A2gQhezg4RDfbM4YB5VkkEep9oALmlUBbKHlXGSf5oyOAfa3xb
-	wPeMyTqKsdm7KX/AjraZ5/LRui/0jHWtnn2CPteSmveQe0+AtdnsrQgWJ8JUeYo2
-	55ITnY5cWnOe0EOQVCvtYsTzOkQYIcokK+cIOs/3lo/bI9Gn1OOzFaAWIJRmXESw
-	kZHkVw==
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com [209.85.217.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hudf58gd2-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2026 14:06:25 +0000 (GMT)
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-7d2f843bacdso18395137.2
-        for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2026 06:06:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794233185; x=1794837985; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=SZO2pxjMIijEZXAP7miXBlorgEdIzoDz/u9J3Nan4lQ=;
-        b=JPdOO1fQ255VZVDrnKHesNUXl0eflubl9d0pDkGDLqlddilLDRxFRU9aq7FH6kR8rF
-         H9DepIE0Kpo2s/8rbWea4e8F28QsdV+lfXm9HeYiVE2d88lNZi29JUBEcGraWhoRYr9A
-         zEA3SeSZfhQzbDt5eC/UxKoXNSATL3bUKVLHIwZaG6gLY4YLnxRsY5k+ANLksymrWEoy
-         qXEhmog2nmrhoOHknplkVQ2NVVn/2llyFTU/3C/9yaKmrf3+/WIoJ0qAuLHR2lz7ws/Z
-         cQREcUZr6mE5F0UOd7YFdd7c6aggvzpmM8UkuDCQEeCF5Z+GMS8PPHA/ca+v7DxzcTyD
-         2zXw==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA53606A33C
+	for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2026 14:11:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BCA53606A33C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6a642495d81so1370538a12.2
+        for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2026 06:11:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794233185; x=1794837985;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=SZO2pxjMIijEZXAP7miXBlorgEdIzoDz/u9J3Nan4lQ=;
-        b=FnWAyJUbLMrawdYgZuIgZD/wclc9EaiPX1rZlWqqoYJkatQedeyt7UWu4vb1hNDWjq
-         aiwkBbvv1Mk9HDu2/M6vnXJXNhG+2WhcOVk4yeeyulAQUNnvzLvr7kI7w2IhzewBQ5Cv
-         zOwgOHBXBm46m7X09LdW0ZMoTDV0aBiY7kwRmRGvaatVkfANA8oVCyvD5+Zn0zAJn98f
-         qxgZ28sUSEXaeDvK0SisaczLRvfd+kF1/3YhiT2LQCOdcrF8EGRuCrA1XO0F9Nr6jKfm
-         UQnNukKoO0ufIVp/cfciZtx1fCHK9hBJfhg0s65fslBbZHm1DSHdvkE+cXh3KXQqMIdJ
-         g4lw==
-X-Forwarded-Encrypted: i=1; AL+hErF3Kn1+4O9L1cF+gPBSmECEjRTqSCoFbQES2uHOFcTCUQRaPPY2qdY/RS7weo7fD4uKtOl+O8tnH2U=@vger.kernel.org
-X-Gm-Message-State: APuU4Z85GN92NPsG+keyNSKj5oxCsr+ElUck6A6N4q2V74vhcjmnkBFC
-	84U8H7l/mbfZ9oM68LYLvQHmSR5PkNz6aWCglqWQEbg9pcl5bzJWtLrWcs55sn8dma26YJQrMog
-	wKKuCC5jTslAwevZkdBThUUjEWgtt2WfvP14jBm73lrWqctRfGDBxpn/0mzrq/MY=
-X-Gm-Gg: AYBFou0I64qUqZ2vcpoqejorDhJvxilu4FUnG/6K2pzeNIQ0DVZ2mwRhIcuBOMi7SAH
-	0z3S7bXjgrHutikfiHfwxpPtFPGkKs8ujKcwdD+Gpw7UEl5Qop/NfzWf9HsKebEzX4/1eOpdjqS
-	NOKoGrOfWcQsN6lLQgeGCCP3Yre52EyseOy2nrHxtUVsT7cTOKR7PoF0/YbUWKAKGzEyVpt9rJf
-	5sTyOBxACvebLkDhQxzoqADlXeMSrnaeypsdnp+f9AvcUQQP1cZ+oikvW3cMaR637VIUQxT+EJh
-	PnLuzqnzfpR7IVUv5OECG0QVQYX87ddWbVYF24y4OZQKEXlcjwUggvrj1bE82F0MG7j2fRP/iak
-	cdQqrn/75Lo2hNq8T3kGB8Mxjzmgqo8RO6AS6SnPI/0hAdYhc8Kb2oJ+xvWhtB7Y7/RTxhw==
-X-Received: by 2002:a05:6102:6116:10b0:7c3:91f5:26d4 with SMTP id ada2fe7eead31-7d2db29ef38mr947698137.3.1794233184563;
-        Mon, 09 Nov 2026 06:06:24 -0800 (PST)
-X-Received: by 2002:a05:6102:6116:10b0:7c3:91f5:26d4 with SMTP id ada2fe7eead31-7d2db29ef38mr947543137.3.1794233183505;
-        Mon, 09 Nov 2026 06:06:23 -0800 (PST)
-Received: from [192.168.226.72] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b721c8a9cbsm1525983a12.0.2026.11.09.06.06.19
+        d=1e100.net; s=20260707; t=1794233459; x=1794838259;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Tz1cDpa5AepSCwsliEOBWV2ZbIXpdMUmAVTrHLbgBBk=;
+        b=XfTfJq05oYBC904IVmOlhIXEypIGcYca+tFcPzmDLyijUQ2tLWWAvkMb5b7TuYkbTz
+         kFBLhQsBlcApKvb5kvFqde+nUfnVDHlvRd6YzLKZdl7AGVjjcHKL/EYBoc+s+e/Mq6ZM
+         gVOP6ZNsmMCBCTXZpzoaQNNd8vztvP/OoKVKqnDwngR15Cxzy46qBzJamIP4NJPcPXrv
+         Fi7k+T9r4dn0zeInrji9xsVKe7FmNzrBIG57fowB9oes1kzVj4CWxmT0Gz8EWPDQb4u1
+         3T9Fc1xan+97VJqTL4+/q8HdIvh+dAHcnjg6NP8KZdu4+7w9FSlV5NJaof4jg24TIPkp
+         m6kA==
+X-Forwarded-Encrypted: i=1; AL+hErFCRBPkitp6zfRf3VUYV7vsup02qqWD6tFPmYLwAnxRZLLeGEedC+6SweYoihFg8Jsx3aJ9QAW1gVo=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+gY70JoNl6S5mbc/PTCqGvxQub6J0v3ohpQCML35RtOmABvoyV
+	5dPBtlKkLO46ESJKincjbRTH6G8aYf7ASUoLoFWPcJ7/D7/W0BE+Kuuxu/PObOiNxgc=
+X-Gm-Gg: AYBFou0gzvDSfVPG3bMIipVK/WUXSS175GWgsl2dsa+vDqSShbITlHJuTp5mahP8DsX
+	ocik4/Jr9yIYvaXu005luk50gYKcQREOVFNSRdNeqjOJ8/yf0hXTy6af4SVDxblrBqueIr7TVi+
+	MGJUutQed+PdbXAT7QNyZq6iH4ciZEvs1qF0yhLEzdhuTYcHoF5nQRHyhUcEN0IuCfQJ1ZJdFRh
+	Y4Wv9f2nfipn5tGgvs2GOTPK0E1vOngXYeHkHbeosQ4lvrHPxtI9ZJ5KXn0KD8XndyAY+4Pue9Z
+	+6FQfT45UIt14famKzSudhseevcVkvyo4q3cw9OmYFIC/tAApeNhHGxoNXjeUVImAB5wlN2Xjrh
+	ng6HcpbiEb0TNvKsyigK2H2a/FoDwWvunSJ+lf37xf8B20NN2IR36dTHEH3rnL7lpTq7FcI+Ix0
+	+H1XVwWF2vqxYyVb+hqDgzPfdxt+bbbn9342RqVha3/VjNvIkGxBlPquNxvveY+XtaMZc9iBXzk
+	Zg16/NK3q6lm1Xz4tf+JMD4EiOCzzrYUxl7I1fgwHfFvfx4jvRt48Cn5eLbzgkIAT99ivbP0BWh
+	zOcjtc1sB17N5EN71Xolk62FOHM2iFa0waRC++Rv6BmtHmWsbATyN3Qo3q/nfSwbaw==
+X-Received: by 2002:a05:6402:1f12:b0:6b4:203:a1a1 with SMTP id 4fb4d7f45d1cf-6b72245ba00mr2718811a12.25.1794233459069;
+        Mon, 09 Nov 2026 06:10:59 -0800 (PST)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b75094be40sm155174a12.15.2026.11.09.06.10.54
+        for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Nov 2026 06:06:22 -0800 (PST)
-Message-ID: <825fbfbe-a9a0-43e2-bb54-f9e38ce779f4@oss.qualcomm.com>
-Date: Mon, 9 Nov 2026 15:06:18 +0100
+        Mon, 09 Nov 2026 06:10:55 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6b65d69f5c2so1227836a12.3
+        for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2026 06:10:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErHIdqxcO5973zBOfJKvB4R9oe4iYLDsNGDsfe9yFWX7sgt+NB7IMjSDLuLGC3hrcNqFxu6Q+pQd0Uc=@vger.kernel.org
+X-Received: by 2002:a05:6402:51d0:b0:6af:9a96:5324 with SMTP id
+ 4fb4d7f45d1cf-6b722473406mr2715103a12.33.1794233454340; Mon, 09 Nov 2026
+ 06:10:54 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -115,119 +80,90 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 02/16] clk: Acquire resources for clock transitions
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Danilo Krummrich <dakr@kernel.org>, Johan Hovold <johan@kernel.org>,
-        Ulf Hansson <ulfh@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Mike Tipton <mike.tipton@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        driver-core@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20261014-topic-qc_clk_dvfs-v1-0-3041b788e9f7@oss.qualcomm.com>
- <20261014-topic-qc_clk_dvfs-v1-2-3041b788e9f7@oss.qualcomm.com>
- <179275170360.4070168.11650113664838519061.b4-review@b4>
- <f0ca2bd4-851e-473d-bf21-678cf964f854@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <f0ca2bd4-851e-473d-bf21-678cf964f854@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: CCD7LOSA60i1Lp3QfwqGXGouzJG-yFr9
-X-Proofpoint-GUID: CCD7LOSA60i1Lp3QfwqGXGouzJG-yFr9
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA5MDA1NiBTYWx0ZWRfX3PKfoF0pjL4M
- BAh5Vh3Y3JptTWdjPFumuPiLWIhIJPHVuwwy+LM+pkH9fTfjAQQNwEeKiVKR4fKwCRh4cnPHm89
- hpUVzK6WFhR6V5I8DcTlBAD7OAuVueY=
-X-Authority-Analysis: v=2.4 cv=bar+w+PB c=1 sm=1 tr=0 ts=6af1d361 cx=c_pps
- a=DUEm7b3gzWu7BqY5nP7+9g==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=tDZyZ9LLp4Dxownb6IEA:9 a=QEXdDO2ut3YA:10
- a=-aSRE8QhW-JAV6biHavz:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA5MDA1NiBTYWx0ZWRfX2k+8MlJFDq+6
- KjvArsXCowJa/3J0cECK2B/VEgj1U+OuoXUtG2b4IaS+YUOm4W4UfLn2/yr49TJovXu9U4kPSCA
- ayJIiUCvMaTCkUvHDZRkYmmqXn+Chu+9fyZIWB1ljGuQ6nMvLH35syCJuivlJHhHxDM5C0fn327
- bVCy8jiZKUBwta2Yop8ymzljmeg8Nr0lhC/YWvvYGfruDLeebhyMiqw781FWXKIBHjVA1kZ7KUB
- auEk+cxiG0vHP3Q1zy8TJS2m8ooCCwDxC/Ei5Ym8K2FJlQpOqkY88+EMaH1SEuY77qR4JtMXocI
- QhwPEecSsBjL6mWBX24cXRYMopsOf58K/1Eepxc6sGDzJCp5O4YXmacUm08fu4Ix5qnHlt3mpkF
- xEcDK0/bL511IM0Y5rXPxjMlKoXUyqSzRxbVP2fz23puHPJ5HNVtSDTGQcOXXVxwQnMpl7Fv8jp
- YjwfsXJy2PixMTHwjew==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-09_05,2026-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 impostorscore=0 suspectscore=0 malwarescore=0
- spamscore=0 clxscore=1015 bulkscore=0 adultscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611090056
+References: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-0-1b2072e8c37e@ideasonboard.com>
+ <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-13-1b2072e8c37e@ideasonboard.com>
+In-Reply-To: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-13-1b2072e8c37e@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Nov 2026 15:10:41 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVh2RiRhBHmuYupK5H81njgaqNCuFWVUiHjTN17+8a+dQ@mail.gmail.com>
+X-Gm-Features: AclHuK_UOMGJNMSt7XpVPImhuSlb374iqFlByrKa5-w4LBZZoP4MvZOgp7Ag9nE
+Message-ID: <CAMuHMdVh2RiRhBHmuYupK5H81njgaqNCuFWVUiHjTN17+8a+dQ@mail.gmail.com>
+Subject: Re: [PATCH DNI v4 13/13] media: rcar-fcp: Check device revision at
+ probe time
+To: Paul Elder <paul.elder+renesas@ideasonboard.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-media@vger.kernel.org, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/26/26 2:11 PM, Konrad Dybcio wrote:
-> On 10/23/26 12:35 PM, Jerome Brunet wrote:
->>> Preparing a clock protects its current requirements, not the resources
->>> needed while changing its rate or parent. A transition can temporarily
->>> use both parents or access an unprepared clock, and a parent rate change
->>> can cause other clocks to be programmed too. Raising resources one clock
->>> at a time leaves those operations exposed to insufficient power.
->>>
->>> Failures make this worse: hardware may already have changed when the
->>> operation returns an error. A matching cached rate is then not proof
->>> that resource reconciliation finished. Retaining a temporary enable
->>> reference without a corresponding prepare reference also breaks a
->>> consumer's normal disable/unprepare sequence after a failed reparent.
->>>
->>> Make CCF acquire the affected tree's and parent paths' resources before
->>> notifiers or programming, and reconcile them only when the walk stops.
->>> Keep fault recovery independent of rate shortcuts and subsequent
->>> consumer reference-count changes. Require explicit recovery of an
->>> ancestor's uncertain parent selection rather than reporting success
->>> from a descendant request.
->>
->> I don't think all this is necessary to address the problem described
->> here and in the cover letter.
->>
->> IMO a new provider API is the wrong layer. The framework already has
->> the hook a provider needs: the rate change notifiers. What the core
->> should do instead is fix those notifiers, which do have a few issues.
->> You are fixing one in patch 1. Another fix, about setting the parent,
->> was sent recently:
->>
->> https://patchwork.kernel.org/project/linux-clk/patch/20261021-submit-clk-parent-abort-v1-v1-1-2936181822fc@gmail.com/
->>
->> You want to act on some changes before anything is programmed. PRE
->> notifiers are the right tool for this. The user of this change in
->> patch 7 could use them AFAICT: PRE sets a temporary vote, POST settles
->> it, ABORT drops it.
->>
->> Also, what is acquired here follows the requested clock. When an
->> ancestor switches parent, the chain of its new parent is not acquired,
->> although it feeds the whole subtree after the switch.
->>
->> With notifiers, the parent fault state is not needed either. As it is,
->> it blocks every request on or below the clock until the same switch is
->> retried.
->>
->> Could you tell me what you need from this approach that cannot be done
->> with (fixed) notifiers?
-> 
-> I'm a little worried about the ordering there, since some device
-> drivers may also be registering listeners in parallel, so we don't
-> get a clean split of what PRE means ("has power for sure " or "may
-> not have power")
+Hi Paul,
 
-Do you have any thoughts on this? I'd like to proceed with this
-series in one way or another.
+On Mon, 9 Nov 2026 at 14:36, Paul Elder
+<paul.elder+renesas@ideasonboard.com> wrote:
+> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>
+> Verify that the device revision register reports a valid value,
+> otherwise reject the device.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
 
-Konrad
+Thanks for the update!
+
+> ---
+> Changes since v2:
+
+You missed the changes since v3...
+
+> --- a/drivers/media/platform/renesas/rcar-fcp.c
+> +++ b/drivers/media/platform/renesas/rcar-fcp.c
+> @@ -14,28 +14,80 @@
+
+>
+> -#define RCAR_FCP_REG_RST               0x0010
+> -#define RCAR_FCP_REG_RST_SOFTRST       BIT(0)
+> -#define RCAR_FCP_REG_STA               0x0018
+> -#define RCAR_FCP_REG_STA_ACT           BIT(0)
+> +#define RCAR_FCP_REG_VCR                       0x0000
+> +#define RCAR_FCP_REG_VCR_CATEGORY              (1 << 8)
+> +#define RCAR_FCP_REG_VCR_REVISION_H3_ES1       (1 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_M3W          (2 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_V3M          (3 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_H3           (4 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_D3           (5 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_M3N          (6 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_V3H          (7 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_E3           (8 << 0)
+
+For R-Car V3U, the revision number is 9 (according to the documentation,
+I haven't boot-verified this), which is missing.
+
+> +#define RCAR_FCP_REG_VCR_REVISION_V4H          (10 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_V4M          (11 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_X5H_V1       (12 << 0)
+
+"git grep -l renesas,fcp -- arch/arm64/boot/dts/renesas/*dtsi"
+shows a few more SoCs having FCP blocks.
+
+Interestingly, the documentation for all of the recent RZ parts (G2UL,
+G2L, V2L, G3L, G3E, V2N, V2H, T2H, N2H) claims they use 9, just like
+R-Car V3U.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
