@@ -1,105 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794285102;
-	b=RaOwxiKQd9aLhMCPVP1bGpzJjfWFRUNKuTJuSIJvaKxfEKtOIGQmDwi9bActw2MujrpF
-	 1bbJ/oYedRTjbWTZ3Xf6/GRzKxoRgmDpcwz6r1OvGvTmqs/RDix9DEZw55h3th+wcPDtJ
-	 BG4VU9GNlZwyEpMJ7TyjwINwKhjCtSxonqt3FSZt0aAqzZqy47I0zY5k2uWIV7Y3kmtCK
-	 8ap+06ZCvxixD+OIBYyKwXZgxrkbX64p4iJK32QO24f2Ikv1g+Wikaxg9G1sj2vJ/Q7dS
-	 Zxxszt4Z5yGGIOV46h/K70v/jgq1KbPqi1woBH6kwnH37cmYDbG6tnlzOr7vKIgyMbg==
+	t=1794285306;
+	b=stSaRsORVFB2yEtjnkNjOF+M0LJHloHRvPqeFChQMYF/0RgmKoMgOK8Z/fkBtmDu2ZaO
+	 2XPxVN/1vMWcu1jPpgzhgd3v5XzGdt53kkPUDov+Ok3ZF1D18ubbaGle3DjWIFtWbqAIr
+	 FSmp5WQmodQGcFQD9bRRSjdgkw6JQbeb+c9bWvA3owKNFlxqP4IXvamC21CiohuEpujeb
+	 ouuH1W1xNE+/JuDAKze2lWKuQmQA85hYA7wo9nXVXMXtlM3tLuwq34lfgLUuyPPYuDrA9
+	 IMx4YyAJQBGPIhBDjcOmATDhrsIrb6EoYs85rtT1ScujgspOfEAWmWPIpQYcuByJHwQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794285102;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=RwxD/kp0MCQ652BLhqihyWShn3kE3wujbUgCK3EzeE4=;
-	b=THDCU1kgNYBzHCC1naep+8ZBywOXHLAAAY3lwV9CmuJNIF6RB8x9ztSS2bxW3T7P7IBF
-	 RSf/DAymMUyE38XwGSSE0P0/jK1x7uHFn2nDhbRPlVD6S+cuLnk6Pzd1Wb5ksIzExCK2d
-	 SGvjTr9UtBMHTTfdsGa8+HyOGuo4ItFNscW3yRlhww85SXokmNI+7AfQfMs+CGYGUwDxg
-	 YNGAZQ8vUldl4r/fz7LZWdfvUwCt0cQeIZrj2cfNJfOCXcMnWh9umS+qZYaC5FgvBsfLl
-	 lw3ZIFTrZ3OKEMcGppq6LN2ygR/rUpHKIXCGeUeyJG4flB8MMC6X9p4hssslCUblI/w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794285306;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=zfwjN6fG8/jvSCSqDiUFOSSPXc7FFGswmXCNW9VpGbU=;
+	b=5WFjbt4GilZayqpBBypVtajJ1J/SmV3LhX0L0MHM36D7bKKSQCV+J9Tip67yyFiAj08Q
+	 ex/Lyvh5JDlgK212auAW5UPyFGjeuWtHiRWjm/jq9vi47ax0f+KTczBwemxW+cXsAFxWG
+	 x9xfRfkQlsZos9j3PBWePVom5UFH+aTg8p8KHLb9jKyEo3vy/mgZ6r51aXYwHLPyrBBRj
+	 +THAaGILDfsQvNp/W3S3/NfKtqhb0TnMRF5jVCarBeEWjLw0a4IZ6VDPmzRvy93CJAFJH
+	 Pi69BwN+T6DDLCmcgM8cJEzxIS3g/Hu+62Kn/UhhYndGM+gnB9v/kz074peJ1EoRvlQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jBDLkMGE;
-	arc=none smtp.remote-ip=74.125.82.171
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TjZzbBPx;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9377960A2613
-	for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 04:31:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9377960A2613
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADC7606A88A;
+	Tue, 10 Nov 2026 04:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jBDLkMGE
-Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-37000e7234bso2523617eec.1
-        for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2026 20:31:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794285102; x=1794889902; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=RwxD/kp0MCQ652BLhqihyWShn3kE3wujbUgCK3EzeE4=;
-        b=jBDLkMGEiDBhFC1CIgcwJTC7ITQrTgcQC8+F6btEqq9jzX4wL++sytXmcrTwqjF7rw
-         G5KsbbSO2RB39VxpEb8ngouHVGGpf1BFFhdAhokCKKoQHCBVEnuNQnrecpPpWLlEcA+1
-         hkKMkB1dTRwlgNNa+oq+C7nxqP6HJOd6zryzBNdh4SHVF95S09ZDDqQx4AqRicHOAAZV
-         XwIGhwYHedxFaeAaKeOJoULgbdTUcaHP2NibCWg7U0yhuXoi9UwCCs1TF0ifz0VGT2KX
-         uPgrrHObBfnZggK2S3vbmu4Mgr4PEmvj4vCFaeRuXIAzdG+WBLW/EUVdmyDC6ZZIBf6S
-         iJ2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794285102; x=1794889902;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=RwxD/kp0MCQ652BLhqihyWShn3kE3wujbUgCK3EzeE4=;
-        b=xZSkWDNvXlHnBh2MUriU79uVfyfGS7HFnezb5xIfDrcCRJojJ+HreoZZeDYtPpiEv2
-         +9jOzXzrsnQ5A4XVddU/BG2b1Ao+6ttri3IOEdiBTxZIQYn0MST6JbVB+tGlShLIOaUT
-         88bHACZSamQUH+qF28ALFwj3qf82QYqkh3nIjCQJ1wjnYVDBCYPp2pudzD6IJ2Frbv8p
-         STbYIV+P0ysQfL2yAk/fpwa6ssNsA1Qkwoy1GxksLNMt3h0bCKY942vkOA8Q5HS4AVsJ
-         eJpCEa0yoTPnFY3Qhed8hPdGEjDEi6G6oJDp0jOtocw9Wap2LSqKnR7bWBdyUQ1ozMgv
-         FhqA==
-X-Forwarded-Encrypted: i=1; AL+hErFqe2k8xWDPJGZq8XsEQknK00+cF1Ixm7CCP7Ueb9Hbj1GEzWWYWXh6Vh3h1yNORl5zb1QdWOurZ2Q=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/N6cuKo4efZg74PtNOSFku1r3AmoPl95ensQN1akaThhXWxVB7
-	FXoe8PLyMNJLRe+/NjhaiwXLbe64Sl5cRI14ONZIYwlaicAnRSH2jcmh
-X-Gm-Gg: AYBFou2FQB9w61WPmIRKM0XHyHfMBWSYq8pugTsycvSNrLsP3w28xYoN/L9EbPdLRoR
-	zBJm2aO5yMWj9I8BLEO8y+hVpNTFuNiL5SW6kTbX8htKAMNoPv7Wu9vNAjOj5Bw2jNVoW5Xo2JK
-	MVzlgWAeSW8vjCHp4VKq9Fh6q80f78o5l/DvmKAEl+KMklamiD0kwPWdq7Oi5azQNqc28p+drv8
-	6n0GjcdJlyMeCNR+VLJL9//ffEuj8XhxLYOLQVgVqJAFwmLxqZlnMByxKWpNKFNwtCzEknqJmnP
-	jykQbL2Hc7nY5wVHpb4mrg7LT+CImW4W5iPHZqCoRbSLWxe2pahBgLabp34bAkTU6sK89VV7cNe
-	HCSe7+39d7OXCeKD1qUFyLxar2M/dXU71ZyzEswO+0ZexSBtjWNQw1tlGSVA3UciriAZ1zzpdl7
-	DPX1i3OL75qLkBYYdoRGgvLvEzrUIE/AKr1k3MjaAluKtWTcdtGY7Uql7TP8lVCatWa8LPFrey5
-	d6crOBxvfmygz2m+HE8oxDAPp8Dls4r3+Cf8AS8DSMiXwOdb8UA17CfMn40uU+j9zQ0RNZUTw90
-	Lg0LwEGvsA==
-X-Received: by 2002:a05:7300:8815:b0:351:207d:bff4 with SMTP id 5a478bee46e88-3751c53685amr2202305eec.4.1794285101599;
-        Mon, 09 Nov 2026 20:31:41 -0800 (PST)
-Received: from eldorado ([2600:8802:b00:1f88::287])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-375212e9d78sm3340996eec.25.2026.11.09.20.31.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2026 20:31:40 -0800 (PST)
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-mips@vger.kernel.org
-Cc: =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= <zhouyanjie@wanyeetech.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Paul Burton <paulburton@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Stephen Boyd <sboyd@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TjZzbBPx
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 783801F008A7;
+	Tue, 10 Nov 2026 04:35:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794285305;
+	bh=zfwjN6fG8/jvSCSqDiUFOSSPXc7FFGswmXCNW9VpGbU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=TjZzbBPxrAnl+wyNQBe14auTt/X/HGI56gZQdojoqaGyK50uP/bmoS+R+rqXE14Vx
+	 6TFwWyBQWhFsstYMlimHhEnXrYTuZG2qG0PBzn/trlFbRU27b2qeAFh1Ffke34H/4U
+	 nNFIUj1br6CJrFmQd+MUArj13f6CtwTCV/PGQwPkIzqe81lsDmEhB7hXvVwNfpogww
+	 H3OYDYaxI1aWzrzmb2e66/LhDK1EvyIl8XmN50mMKqQ4FlcE0VcgsLQ7z4AdYFs2F3
+	 Lom/NX8cYqIEt6RdE6zJm0i63276IjxXb1O7SM3WG4sVZrbPT8waRTCPFTY+nDFeuU
+	 3Pev26d2PfadQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	hns@goldelico.com,
-	paul@boddie.org.uk
-Subject: [PATCH v2 3/3] MIPS: CI20: Enable SMP with two CPUs
-Date: Mon,  9 Nov 2026 20:31:31 -0800
-Message-ID: <20261110043131.1985993-4-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261110043131.1985993-1-f.fainelli@gmail.com>
-References: <20261110043131.1985993-1-f.fainelli@gmail.com>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Luo Jie <jie.luo@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	quic_kkumarcs@quicinc.com,
+	quic_linchen@quicinc.com,
+	quic_leiwei@quicinc.com,
+	quic_suruchia@quicinc.com,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Abel Vesa <abel.vesa@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v4 00/12] clk: qcom: ipq-cmn-pll: Add IPQ5210 CMN PLL support
+Date: Mon,  9 Nov 2026 22:34:46 -0600
+Message-ID: <179428529342.1061455.1754522824154624445.b4-ty@b4>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260906-qcom_ipq5210_cmnpll-v4-0-aec5ed642f4f@oss.qualcomm.com>
+References: <20260906-qcom_ipq5210_cmnpll-v4-0-aec5ed642f4f@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -109,35 +74,29 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
 
-Enable both JZ4780 cores now that the generic Ingenic platform provides
-secondary CPU reset and mailbox support. The existing device tree
-already reserves TCU channels for both per-CPU clock events.
+On Sun, 06 Sep 2026 07:18:06 -0700, Luo Jie wrote:
+> The CMN (Common) PLL block of IPQ5210 is almost same as that of IPQ9574
+> which is currently supported by the driver. It accepts a 48 MHz reference
+> clock from the on-board Wi-Fi block and is configured to run at 12 GHz.
+> The difference is in the output clocks.
+> 
+> This patch series adds support for IPQ5210 into the CMN PLL clock driver.
+> On the IPQ5210, the CMN PLL block supplies a broad set of output clocks
+> to the networking hardware and GCC:
+> 
+> [...]
 
-Link: https://lists.openwall.net/linux-kernel/2020/05/19/739
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- arch/mips/configs/ci20_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Applied, thanks!
 
-diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
-index 90536cab417e..09d65094b1bd 100644
---- a/arch/mips/configs/ci20_defconfig
-+++ b/arch/mips/configs/ci20_defconfig
-@@ -22,6 +22,8 @@ CONFIG_EXPERT=y
- CONFIG_MACH_INGENIC_SOC=y
- CONFIG_JZ4780_CI20=y
- CONFIG_HIGHMEM=y
-+CONFIG_SMP=y
-+CONFIG_NR_CPUS=2
- CONFIG_HZ_100=y
- # CONFIG_SUSPEND is not set
- # CONFIG_SECCOMP is not set
+[11/12] arm64: dts: qcom: ipq5210: Add CMN PLL device node
+        commit: 4a155c4e88e0d5189724c799fbe8e610d22cb277
+[12/12] arm64: dts: qcom: Update IPQ5210 xo_board to use fixed factor clock
+        commit: 1d6abd242b45fb772190641fae374fd45ce0086b
+
+Best regards,
 -- 
-2.53.0
-
+Bjorn Andersson <andersson@kernel.org>
