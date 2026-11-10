@@ -1,57 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794271912;
-	b=zk3eS+ZJ1eNkxCTATP9d5KgUSKAJiZ5ay8K2OxF4TJwPPgwBkeSKRh213L2vUnNXdw8S
-	 V2IhErGsrjNyFWvzRNTs2au1rZhbZouvToz94L+Gkfrj3EngDOV0XEx2CJGU5G5eLqgdu
-	 fJs327B8KpUcYKL39c9ZkmVL6ZxnRC25UnXl7E5Z71vWo872Ug5EAe/7w3t2JbhfU5Dce
-	 mwdZ+bng3QWnWVaZEV8SghEaUozhN3d19p6sbWVHNfTrHdy0Ggg+EWNyVLDg3z5kpmGEn
-	 0y6U821ASOno+dVjVw/JbxuhfjdlPeEUiLurdMwnQxhzl4TGsxjwu4TMwzf1mIQrAqA==
+	t=1794272173;
+	b=vbySxjfjmd40jozlvWD6pXrGxqGf7FFuwT4fX+HIVCkFuWOFH2p+BzymeUeo/oQeTjxc
+	 lr7AeCZHRvgljY9XX9euM1OAxz1astos1hHGnJ29ozCzzElOEzPC7NVSuyfQezqfdPMS+
+	 ADpLnkE4YmD+9Tz+BCPdzrMOsPq7UEBsu1Czl9gCJFHQqJiNTV4LYEHj2rkmn7SHXoHpH
+	 g3ZqrnugKruXM7cyTlc2FT7UtyaGDy9VXqOBCINC4sMTvrVNHHBENC5Z2YkfjEtBGPx8U
+	 /tXUSz+BBRTa3mmeCKhKd+KxQH8sdxDnLof67/zt0ySpAZ3/OEE0PpKlJbB/ndTqtpg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794271912;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=/ZZGxslTPXnp2BqN/n2KIlTkyJk1Sa8ub/8ujXBLIjs=;
-	b=kOlmXAFTIiWiLNrL4PG2xWSuVeVxODZnnko/VYDbBPAK03loTroWc+qli5Tm0SmDujvd
-	 Yuul5eVVs7Lb3JKWBeYMmkITfqjMfxWznssEIPFDxL0Ga6XgXoj3tv3YeTSRCUnZKYIib
-	 I1I6JVW100vN1T3Cl8cX7S7OSQFwRtmkB8g2dbfP5f1o9DmDll1iTBNP1FEsQ8DPY0nPm
-	 gtiPyppKkrTDsS7Hz7S3RJao4yd1iRbjxqWqo6DVAB8kBw9UCxg2brbiA8J4rpt/1Jo1z
-	 BUrKl+5QlpSCSObr7RSEs328HqVpVxmjIqKf9lkc4eoe9dcCOvJDD60mbwsxkToThsw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794272173;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 User-Agent;
+	bh=mqsJpcvl5xnVXB0JO5NOaGhdm3h5WbbRjFyaS6rWLhI=;
+	b=DizPubTEEKvRUxpwnu/LtL4zNG26gPjXHwG8fc7109OEMQuxty3fjiM4UzC8SqId51CT
+	 f4XFzZymSSw7gg8inHZCnbi/t2Hj7/tfSvOFok3B6uJ1jhV+LJaiaR58W+sFJQUAqIHOD
+	 ecgptqVBqyKijY56lzB9/4Zf9tsD5rLMM3nj2wIqpNGu+5bVhcb9PRUyOS7s06Kn0yZJY
+	 LPa0RqUfTk24S0f4D5yRn/cKOhHY0yXCSEOpqGTpj3jnPt1T5eZdGArgojuKxDVYXvdHy
+	 FpploNeu6qfAauikNHfWnRoN0hiiq9bkHGMl3HwCSV9MRgw5qrBUsFCCsKR2lflvI+w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TlgirT6v;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gZhIa3Fv;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A954606A325;
-	Tue, 10 Nov 2026 00:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F02606A325;
+	Tue, 10 Nov 2026 00:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TlgirT6v
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD65C1F008A1;
-	Tue, 10 Nov 2026 00:51:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gZhIa3Fv
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A4211F0089F;
+	Tue, 10 Nov 2026 00:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794271912;
-	bh=/ZZGxslTPXnp2BqN/n2KIlTkyJk1Sa8ub/8ujXBLIjs=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=TlgirT6vLgXSXwCTnqzaDI8BwTe3uQRNXgRxXrLs8Mk7h+nzDroboJHoxqa3/qavJ
-	 v305J/NCDLX1H4rsClHO5xSaDQrz/uxUBqJZb0LfuasWWxWV+s4Zeki1qjsdVVmIpX
-	 wCWpWYO8+l1bF5JUDUsKZgTkYFApyyltj0m7WbGgf7j527vjeihun3moxyYkuOMaTV
-	 s6s32+a+9QND9LRL9jWoYUcHgTCkleMbSEGyBDIcszR66NFU+KTmsTK0r1siCkZULy
-	 8fvEsd8eg0svD4bi8qywRFwe7QtNvsnTN4dwKkbavCDc1EBflXKkrL6tEMrVcMWrtm
-	 ALPIg2TnO10UQ==
-Message-ID: <sashiko-outbox-205906@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v12 5/5] clk: en7523: add support for Airoha AN7583
- clock
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Christian Marangi" <ansuelsmth@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc: robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261110000753.508-6-ansuelsmth@gmail.com>
-References: <20261110000753.508-1-ansuelsmth@gmail.com>
- <20261110000753.508-6-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 00:51:49 +0000
+	s=k20260515; t=1794272173;
+	bh=mqsJpcvl5xnVXB0JO5NOaGhdm3h5WbbRjFyaS6rWLhI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=gZhIa3Fv0wij7Y0MyJ+UZImLtY58ZWWkKRZHSBkrI10cyghyyj+rKuOW4Usw+zr67
+	 qwH5wI9YtThAXlBxVWGi5pmYQgt/gPnvU/ZvvhRuLifF5ZKWFIleOU7MrR0feM3M6n
+	 FkmlF8khbCeGxWhxRBOy21uYg/1I+i2ZpNzfYiCsFxEobm0KySkfH99ufxUB7yo8NQ
+	 4eq1Wt5Kzqmn0wYBMFiL76yK0Ke2vz3n96kS3TgupX7E8nOpVbsJhQnS7fgaqM3F2Q
+	 eObgqPHZZqJWlvZ+fv/GHhyGBekhl2F8jHs+n+ZmqMpzAdOSI9B3Kpgs1/fMJWAulZ
+	 aZaW2BGSzXxUA==
+Date: Mon, 9 Nov 2026 19:56:08 -0500
+From: Brian Masney <masneyb@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-mips@vger.kernel.org,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Alban Bedel <albeu@free.fr>,
+	Antony Pavlov <antonynpavlov@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 3/8] clk: ath79: move the ath79 clock driver to
+ drivers/clk
+Message-ID: <avJrqNyhqZiVZQ7f@x1g10>
+References: <20261104055852.152340-1-rosenp@gmail.com>
+ <20261104055852.152340-4-rosenp@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,112 +65,34 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261104055852.152340-4-rosenp@gmail.com>
+User-Agent: Mutt/2.4.2 (2026-08-30)
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [Medium] clk: en7523: AN7583 MDIO clocks lack rate ops in
-  en7581_register_clocks()
-- [Medium] clk: en7523: mismatched clk_ops callbacks in
-  an7583_data.pcie_ops
---
+Hi Rosen,
 
-commit 80220805154b9c38bb07ac1b3edf5679520c435d
-Author: Christian Marangi <ansuelsmth@gmail.com>
+On Tue, Nov 03, 2026 at 09:58:47PM -0800, Rosen Penev wrote:
+> The ath79 PLL clock code only uses the clk API and its own PLL and SRIF
+> registers now, so move it from arch/mips/ath79 to drivers/clk, like
+> the Ralink clocks before it. Copy the register definitions it uses
+> from asm/mach-ath79/ar71xx_regs.h into the driver, so it no longer
+> needs the mach headers, and drop the unused ath79.h and common.h.
+> 
+> The driver stays a CLK_OF_DECLARE one, as the MIPS timer needs the CPU
+> clock from plat_time_init(). COMMON_CLK_ATH79 defaults to ATH79.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-clk: en7523: add support for Airoha AN7583 clock
+This patch itself looks straight forward, however looking at the
+original driver it needs a lot of work to be cleaned up. To make it
+easier to review, I suggest that you clean up the driver all in one go,
+and post it as a brand new version to drivers/clk.
 
-This commit adds clock and reset controller support for the Airoha AN7583
-SoC to the en7523 clock driver.
+Also for the CLK_OF_DECLARE, we are trying to limit new drivers that use
+this. Please have just the timer clock(s) declared with CLK_OF_DECLARE,
+and have all of the others as a standard platform driver.
 
-> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> index 7d302498c3d51..7523ec7e0d8aa 100644
-> --- a/drivers/clk/clk-en7523.c
-> +++ b/drivers/clk/clk-en7523.c
+Brian
 
-[ ... ]
-
-> @@ -369,6 +378,138 @@ static const struct en_clk_desc en7581_base_clks[] =
-=3D {
->  	}
->  };
-> =20
-> +static const struct en_clk_desc an7583_base_clks[] =3D {
-
-[ ... ]
-
-> +	}, {
-> +		.id =3D AN7583_CLK_MDIO0,
-> +		.name =3D "mdio0",
-> +
-> +		.base_reg =3D REG_CRYPTO_CLKSRC2,
-> +
-> +		.base_value =3D 25000000,
-> +
-> +		.div_bits =3D 4,
-> +		.div_shift =3D 15,
-> +		.div_step =3D 1,
-> +		.div_offset =3D 1,
-> +	}, {
-> +		.id =3D AN7583_CLK_MDIO1,
-> +		.name =3D "mdio1",
-> +
-> +		.base_reg =3D REG_CRYPTO_CLKSRC2,
-> +
-> +		.base_value =3D 25000000,
-> +
-> +		.div_bits =3D 4,
-> +		.div_shift =3D 19,
-> +		.div_step =3D 1,
-> +		.div_offset =3D 1,
-> +	}
-> +};
-
-[Severity: Medium]
-Can AN7583_CLK_MDIO0 and AN7583_CLK_MDIO1 change their rate when registered
-through en7581_register_clocks()?
-
-en7581_register_clocks() registers every entry in base_clks with
-devm_clk_hw_register_fixed_rate(), whose clk_fixed_rate_ops lacks
-.determine_rate and .set_rate callbacks.  When airoha_mdio_probe() in
-drivers/net/mdio/mdio-airoha.c calls clk_set_rate() to divide the 25 MHz
-default clock down to 2.5 MHz, clk_set_rate() returns 0 without updating
-the 4-bit divider in REG_CRYPTO_CLKSRC2, leaving the MDIO bus at 25 MHz.
-Earlier series discussion noted that adjustable clock rate support is
-planned for a separate series, but the in-tree airoha-mdio consumer already
-relies on clk_set_rate().
-
-[ ... ]
-
-> @@ -1329,6 +1565,18 @@ static const struct en_clk_soc_data en7581_data =
-=3D {
->  	.hw_init =3D en7581_clk_hw_init,
->  };
-> =20
-> +static const struct en_clk_soc_data an7583_data =3D {
-> +	.base_clks =3D an7583_base_clks,
-> +	/* We increment num_clocks by 1 to account for additional PCIe clock */
-> +	.num_clocks =3D ARRAY_SIZE(an7583_base_clks) + 1,
-> +	.pcie_ops =3D {
-> +		.is_enabled =3D en7581_pci_is_enabled,
-> +		.prepare =3D en7581_pci_enable,
-> +		.unprepare =3D en7581_pci_disable,
-> +	},
-> +	.hw_init =3D an7583_clk_hw_init,
-> +};
-
-[Severity: Medium]
-Should pcie_ops pair .prepare and .unprepare with .is_prepared rather than
-.is_enabled?
-
-Because en7581_pci_enable() and en7581_pci_disable() are wired to .prepare
-and .unprepare while .is_prepared, .disable, and .pci_unprepare are NULL,
-clk_unprepare_unused_subtree() sees prepare_count =3D=3D 0 with no .is_prep=
-ared
-callback and skips .unprepare, while clk_disable_unused_subtree() sees
-.is_enabled return true with no .disable callback.  If the PCIe clock is
-enabled in REG_PCI_CONTROL at boot and no consumer claims EN7523_CLK_PCIE,
-clk_disable_unused() never gates it.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110000753.508-=
-1-ansuelsmth@gmail.com?part=3D5
