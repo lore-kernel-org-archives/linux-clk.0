@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794269500;
-	b=Cn/GI3//ajg9PP3iU0WvldWYHDyMtUEf/EzLo55WOLr9sEkZtv3q3k7AqcDdcNhdPdOx
-	 t7LvQxrj+b52A4BsRKRuY1pFkV2bX9haazxugTBeaYrj0BW08/LuGUW7lzqsCQxcB0w1q
-	 B9M9vbi8MzwbmdKSzkA7rw0lymLoMCKOsPQHxNLbQGSclri+hruSQjPor5IwXH1fm5tsI
-	 t6Nme6u7p795hXGaADnc7bFpIzvag9oucXCGOCHWpwiOPtuk0Bs9kIlLXtU4ArfKxscsh
-	 JO8gwvr4pi89F8YruBecHdyaRd8EQLFS2XO5fF1weNVRQYb/vGiXWKm4KMprVeoGuaQ==
+	t=1794269502;
+	b=KA+pl6To6CAmyc4EwbWlKrDYPvG7bQBmhH5PpLnQ4Mmic7l4hC5cvDF2MqGb99iHLD1O
+	 nzqkvWPp7XFa3AssyZNvB0pknDMtUwf5SH4gtdTSmrQDwyivOvL5jDx5gSd1xNmcPlWBj
+	 U822FKF6bG1K7ZtdHgWlM09+Lkn4cxTynI15deq6b9FW7aGPmGj+ItYMZJMgt0tLxZbJJ
+	 PaMBROsDyDadice+mW2dTu29COVHPtJsBOY3MByXJhyDc6ablYvihJ6VhI1xVjn1PY7U1
+	 vtG1z01wOT2m2e55rMnjvd8cRFggLlp6YWX+gHfJgH0yCoGy6fAyZEogrKN0Vf0AWGw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794269500;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794269502;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=WhfC9zLe5HZoGXWudWFtnEm8q0utD3cNm8ZYGhH+ONg=;
-	b=BFS5omw4VW19XUEDoNppgEYDUaFn7EAkaKTFvasqMstlzLwOzKbdPs0fcK3DgpAA2U7L
-	 W1qO8A/8nYZERfapUmGsYgAABGvmznMs0eeqFOghJs/wJvQBB0ZgnimEsRyxlNRJBMPyU
-	 MX6zBXvimhtK3pm8PnR0Ftj3XZdiOJMm2tzdQVm8QzSG0LX1qWEfHOlcYuRoZK9K0/c9v
-	 Xz5/glPkbMITmfDmRMRYGE1A2Tp/uBCVlUP2CKoKJ7r+V2mkkjxscIN7xygvIAoyXTYv/
-	 CCnItEo4VZWz+0B1wODPKX3+DUl2BZfIWmJCPrH3bhf/tZFid+tO2T+2wzy8cntQoQA==
+	bh=9dWII4XJ1ye21F+US8gSUbGsAHaHhkJUFF5U2yG/Pl8=;
+	b=eFbFPEgaCiAbxIbqS0m4etY3fLXLoUU4winZM7Yi9fPHAsrpkeyl7khfYXQoBKu4WoMS
+	 g4cT4Rj1GJw5H59j3x8eoaEdJVr1IvKwVr/gVV5EnWh/ErpLtiPq/LR9+RG0OKhEPl74N
+	 EAO8GZSU6C13tOvoePQRFfovaavtYG11cwdVk1FGIXIOeeUzGjpXuj3cbIyH9bztDSe3W
+	 ZAAUYSHSxhYC8htIiTdrgHy+OL4VybHZWcEkku7QfAc/waozpPKHiqi4s7F+SdkFEECIL
+	 qWR413YkH3K/ZvXc1anmPgXRtYiSei+hdk7gjMOFTH8KHNOhPlY/MaZrwG6oRL4cKEA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=0ryaoZYZ;
-	arc=none smtp.remote-ip=209.85.221.47
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Q7m5m8Kg;
+	arc=none smtp.remote-ip=209.85.221.41
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B4660A2602
-	for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 00:11:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E6B4660A2602
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E184606A33D
+	for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 00:11:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5E184606A33D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=0ryaoZYZ
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-492fcbfaa88so1003063f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2026 16:11:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Q7m5m8Kg
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-491846221ffso1020937f8f.3
+        for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2026 16:11:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794269498; x=1794874298; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794269501; x=1794874301; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=WhfC9zLe5HZoGXWudWFtnEm8q0utD3cNm8ZYGhH+ONg=;
-        b=0ryaoZYZO76rs+nkoNW8Vyy8na1ii1EZ79AC9v/cHDQGiLWztsFXo4QBiE6trf6NEi
-         UEcMUhUs8zqJa7IB4/eEBXbmYXcUoE8MEh38erix/CELtdhm7PyMthJgJWGQei0zYaJP
-         vFgR4NLvlsnMvmNvrXs/1CKsmidFbnkT5z5LqY16aFjY/7XeIGMUv9pPF7/h4040wrT/
-         OAshmsqCwnWJdq57GXzFeSrrJXTeVTjaiAuCAcZJy/udtKuFy9ORTPTL4NSc92s0rLIi
-         NZUkB27ojw8m3NHg71utQfDJ7KUix6j2y4dHhJvd29pwhTMm0wjt7fb8Gt0ueb1kip76
-         fW2A==
+        bh=9dWII4XJ1ye21F+US8gSUbGsAHaHhkJUFF5U2yG/Pl8=;
+        b=Q7m5m8KgSU3i4RW1WUn6q0dHP6yRS9ZnS+8Yb8la0ehR1YN9pp9scdrZ3Xz30wITys
+         Uh6LVdwdFFYaUaR+AXbwuCFWZNgcxGmn6iNNdRQ+5gbCulJVxmBWyE5vFnsB9CQkFAE6
+         Gdg1i6tatkyFo6C5I7y8Ft2Nv5CM1b0ONKbu7VLTIuinyvzAMmQ5N7FqZdPikTv/V/CO
+         IMlPmpYolzhewSn9k9oF5BaSoYs8s3lQ7+Yh/6T7YF5aujJ6pNebaqAbvoTXISy8X+dD
+         hbYe0Xzdlc/ROJBx3tfhWPu5JoHmNvQY7j5unaM4pntP/Uw7IcQ4+bEOn59QCsmkmJmv
+         BROQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794269498; x=1794874298;
+        d=1e100.net; s=20260707; t=1794269501; x=1794874301;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=WhfC9zLe5HZoGXWudWFtnEm8q0utD3cNm8ZYGhH+ONg=;
-        b=w5EbHtpVHf0xomS1WdMqwM7HVyTgDz0A8Fv2NPc9hEVCQqEGNZvT530VmvSj4RfKCO
-         U5XE3qS9hQzdy2ZkbDTa9i7C6yYL2Vg1Tzfoj/lea1Le/nePReQ1q3m+gkbJ59N448xZ
-         SlvHeZicxiYolmt0C8DE7+a5jTBHKqQz9ph4aoq8BOuPJxfqUiG/UJn8xgNVtoz1HG+q
-         XXBmXwtCkFhqpObtKvVLp2ivv9IolVYRkXOSNpRuK9epf9E73kRxGwpF8a+9ey53sSQQ
-         /kTZkhqy7DYwV0Ff9XE8GYBWUw8bqIeaeB6GRe3WpfJ/Ztv0Cbv8zK6pAtT/xQIjOuVY
-         6B7w==
-X-Forwarded-Encrypted: i=1; AL+hErFOCqHjvZusZ7rse2FTuc6KEMLl/lP7Wrd34YHNWKS7cWY03OgfuxeAYV8bxM2vZaPWhtAA84uU0YI=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/0Pp/fVQSpKfhL1I/JXutV+PMuLYtbHdBepmft6p2oc4l+h+cm
-	zvYGC8IGb03zMOXDHDUD49NjEs1154Xq9MwemEOT0YgkX3z6YgYlvb23whUmHg==
-X-Gm-Gg: AYBFou03NFDJ+rDdINAnfytdkWDfe1rMYpsW+0y+jNffigYLWeVGFb+m9DrZfEsyhoZ
-	3GeI4U2MvzU+ynivSKLsjOxabITLG7xOEpdjVQvhni5IA5rfcM7YaLFi+WWZ0+krrdYXrTPQsK6
-	RBXelaJnivlFlmSo+9vAzO6jdDJnQYZgk7W5bQ8/T/xU+bf+oxN+YOPQHinXmoVTBgupJAKB39Y
-	HXautTatVcn/WgOrYL7t9cGRWu1P2DVDLb5bie57fZWz+yu8yjar4hh00lTQ0mJTmQ8TzCwYnfa
-	8qUGk24ezmyQEsS4ufGYLXeiZS5b/0UbT3OwI//B1WQ/kBp0OOMoHNjO8Lt37+q8RbnliAImUXt
-	KUMsISiEpxcCANe+JVIlZmn1Cf6KAhv5sTUC076CIhWOeJpQgH8s5tiZJ+qPkt2nip8Tr6jplRi
-	b27hen/xTHqaoK/MwA7T2uYsuTGrjx69HqW85xGhdYOWOEldEuQ275ujffD04YOxbWgcDZ5V4m2
-	txxqrU1dsidJovW8HSYQh1WmvZblL/P44CLxynPfKcnrsE33nwLvVV0GBZgTSFqk+SqBYjXPtAo
-	IS/23aWZaOv747O2eu9mTUOzd7v2kVl7X2gkFcwg9BkOlfRrlKdYfPfzWc0CV9ETUxrlFqwaL6W
-	Wp6a8Cy4hIsmySSXS5KF9l2wbMgP9ahUkXN1KU+M0/xOWfwTVp9c=
-X-Received: by 2002:a05:6000:2c13:b0:491:286f:8e56 with SMTP id ffacd0b85a97d-49830b979e6mr1412170f8f.33.1794269498133;
-        Mon, 09 Nov 2026 16:11:38 -0800 (PST)
+        bh=9dWII4XJ1ye21F+US8gSUbGsAHaHhkJUFF5U2yG/Pl8=;
+        b=xki0FtH3NcRttNkpPjL6+dKkcxhowK/YiKfkUpMDq7t69bFV4+uDMnj27Rxm1DMNLt
+         1R7Zao4ZgmcnhSzH+eL6ZydgIXH9PN6J1LKEUeviO3T7uJz7qMRbVwH5wR7hbNjJzmAM
+         /nKisf+dB+RafqIqMR+vFOOD7R9ZVs6Px/+HUMHPRaRSyBm60rwRn2br/v+ASNmBzHtu
+         kDUnjyR5wJQcSiD+7DaOvI5T5P2SpkPZeFCNr15SfM/s6WZE2yJFmsTPQlBcS1qZ420L
+         j5DumSS5VrpqFCSdszRGQCkVI9wnv/uwIBAD1kuXq5XAOulPB+y4jjI3kSnwWrKgoHvP
+         NxBg==
+X-Forwarded-Encrypted: i=1; AL+hErEttVBn1+eiFVbfvWlQ5+Bqm3ZccwaQiSJ6scJN5Tq0rQmdf/jELRqh4hVKZlOhumSDS3+UQhLLzfs=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+dlBoAemIh82+Y4rfpC1NDOS+TqisH6pv/2OzadzMQPGg68fQA
+	52jgl4zn3q7g2AqRM7ZZMqvehzVeTvfXMdK0H7g0Ldg42rm5jdz2afgA
+X-Gm-Gg: AYBFou0IeWFu1WEZR7Fm10WIwSmOvA1hS71k45KKXNbKRECBB/bYXMAUVqElWvplRp4
+	mQfoNlKSPNZeJKAJPFQp1sjnMhUE/SaR4mR+Hwr713CCXq2kBIvhLyQCtcYiKZtb3u17RWIF//3
+	n6zKzD1kU4NZymBByWq8tDhLnhzw4lcLxild9kvAKS3TgJpJEJERRbe2sQlreUjIqacDwyyIEgp
+	JCf5XRGBCURLlGUVNIb1W3p1eX69Nep7NxBpBVJbAYFMv6i//psCKYGh7b5gk0WqTgiO1Hqq7xk
+	FupbrTgNz1HSlsHKvK6+qhrVMy1EkB+Z78UpvFRoqCPS/gS7X9fpdKfPysr9cl0m+jekdUyH8/S
+	ttexPLhn1I+PXp9r3azYAvabppE9aSETByunSu9Dwh/oqPZAB9nRINFmRS60LEORHz0LNTo7k5k
+	vgSGFFeT0HFFpyg+sbaMidA5KrY5UY3Q8w2tu/U7jZ8sTmxZlipnds0bkJho7O38fUYnz7hOSbc
+	hO3Z/gTDUUVTBQO/7+6j5J9hHCOVmWwCSX3gg1k/LKjZ47xN4cnWI3tm6Qjvfllra2br9lwn3Wl
+	1iCiAO2K6FE2yEBMXRAo5UWzPmqq+OJBQpLwVPvNfQQ0UEEbsIsQhysmVLgFbN76gKB8BNeaROr
+	aPqYC3VWcZzQJDxMnqye33lzDYZQxpQ6vdTEUt7X7Ysd9ouALyjA=
+X-Received: by 2002:a05:6000:2913:b0:48c:571a:a1aa with SMTP id ffacd0b85a97d-4982ecf6001mr1745976f8f.19.1794269500632;
+        Mon, 09 Nov 2026 16:11:40 -0800 (PST)
 Received: from Ansuel-XPS24.localdomain (host-212-171-11-30.retail.telecomitalia.it. [212.171.11.30])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-49835c37bdfsm1779366f8f.22.2026.11.09.16.11.35
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-49835c37bdfsm1779366f8f.22.2026.11.09.16.11.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2026 16:11:37 -0800 (PST)
+        Mon, 09 Nov 2026 16:11:39 -0800 (PST)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
@@ -86,9 +86,9 @@ To: Stephen Boyd <sboyd@kernel.org>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH v5 1/2] clk: en7523: convert to full clk_hw implementation for en7581
-Date: Tue, 10 Nov 2026 01:11:26 +0100
-Message-ID: <20261110001128.1041-2-ansuelsmth@gmail.com>
+Subject: [PATCH v5 2/2] clk: en7523: add support for .set_rate for en7581
+Date: Tue, 10 Nov 2026 01:11:27 +0100
+Message-ID: <20261110001128.1041-3-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261110001128.1041-1-ansuelsmth@gmail.com>
 References: <20261110001128.1041-1-ansuelsmth@gmail.com>
@@ -103,126 +103,329 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for support of .set_rate, convert the clock register
-logic from fixed clock implementation to full clk_hw implementation with
-dedicated OPs for Airoha EN7581 SoC.
+Add support for EN7523 driver to configure rate for Airoha EN7581 SoC.
+The SoC expose both base clock selector and clock divisor hence it's
+possible to change the rate.
 
-This is just a rework and no behaviour change is expected.
+This will be especially needed for new SoC AN7583 that require changes
+for the MDIO and the eMMC.
+
+The clock were assumed correctly configured by the bootloader but this
+goes against the rule of "kernel should not depend on external
+configuration".
+
+To support the use of standard clock divider API, clock_div_table are added
+where needed (BUS, SPI and SLIC) in additionl to the previous info to
+derive and simulate the clock from the divisor registers.
+
+Recalc rate for Airoha EN7581 is updated to use the divider_recalc_rate API
+for consistency with .set_rate and .determine_rate.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/clk/clk-en7523.c | 75 +++++++++++++++++++++++++++++-----------
- 1 file changed, 55 insertions(+), 20 deletions(-)
+ drivers/clk/clk-en7523.c | 228 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 227 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index 24fdec2e6198..6640e814d36a 100644
+index 6640e814d36a..b0aed88528c5 100644
 --- a/drivers/clk/clk-en7523.c
 +++ b/drivers/clk/clk-en7523.c
-@@ -126,6 +126,12 @@ struct en_clk_gate {
- 	struct clk_hw hw;
+@@ -119,6 +119,8 @@ struct en_clk_desc {
+ 	u16 div_val0;
+ 	u8 div_step;
+ 	u8 div_offset;
++	unsigned long div_flags;
++	const struct clk_div_table *div_table;
  };
  
-+struct en_clk {
-+	struct regmap *map;
-+	const struct en_clk_desc *desc;
-+	struct clk_hw hw;
+ struct en_clk_gate {
+@@ -161,7 +163,88 @@ struct en_clk_soc_data {
+ static const u32 gsw_base[] = { 400000000, 500000000 };
+ static const u32 emi_base[] = { 333000000, 400000000 };
+ static const u32 bus_base[] = { 500000000, 540000000 };
++/* From documentation divisor 1 is n/a */
++static const struct clk_div_table bus_div[] = {
++	{ .val = 1, .div = 2 },
++	{ .val = 2, .div = 3 },
++	{ .val = 3, .div = 4 },
++	{ .val = 4, .div = 5 },
++	{ .val = 5, .div = 6 },
++	{ .val = 6, .div = 7 },
++	{ .val = 7, .div = 8 },
++	{ /* sentinel */ }
 +};
-+
- struct en_rst_data {
- 	const u16 *bank_ofs;
- 	const u16 *idx_map;
-@@ -742,42 +748,71 @@ static int en7523_clk_hw_init(struct platform_device *pdev,
- 				     en7581_rst_ofs);
- }
- 
-+static unsigned long en7581_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct en_clk *c = container_of(hw, struct en_clk, hw);
-+	const struct en_clk_desc *desc = c->desc;
-+	struct device *dev = clk_hw_get_dev(hw);
-+	struct regmap *map = c->map;
-+	u32 val, reg;
-+	u32 rate;
-+	int err;
-+
-+	err = regmap_read(map, desc->base_reg, &val);
-+	if (err) {
-+		dev_err(dev, "Failed reading fixed clk rate %s: %d\n",
-+			desc->name, err);
-+		return 0;
-+	}
-+	rate = en7523_get_base_rate(desc, val);
-+
-+	reg = desc->div_reg ? desc->div_reg : desc->base_reg;
-+	err = regmap_read(map, reg, &val);
-+	if (err) {
-+		dev_err(dev, "Failed reading fixed clk div %s: %d\n",
-+			desc->name, err);
-+		return 0;
-+	}
-+
-+	return rate / en7523_get_div(desc, val);
-+}
-+
-+static const struct clk_ops en7581_clk_ops = {
-+	.recalc_rate = en7581_recalc_rate,
+ static const u32 slic_base[] = { 100000000, 3125000 };
++static const struct clk_div_table slic_div[] = {
++	{ .val = 0, .div = 20 },
++	{ .val = 1, .div = 2 },
++	{ .val = 2, .div = 4 },
++	{ .val = 3, .div = 6 },
++	{ .val = 4, .div = 8 },
++	{ .val = 5, .div = 10 },
++	{ .val = 6, .div = 12 },
++	{ .val = 7, .div = 14 },
++	{ .val = 8, .div = 16 },
++	{ .val = 9, .div = 18 },
++	{ .val = 10, .div = 20 },
++	{ .val = 11, .div = 22 },
++	{ .val = 12, .div = 24 },
++	{ .val = 13, .div = 26 },
++	{ .val = 14, .div = 28 },
++	{ .val = 15, .div = 30 },
++	{ .val = 16, .div = 32 },
++	{ .val = 17, .div = 34 },
++	{ .val = 18, .div = 36 },
++	{ .val = 19, .div = 38 },
++	{ .val = 20, .div = 40 },
++	{ .val = 21, .div = 42 },
++	{ .val = 22, .div = 44 },
++	{ .val = 23, .div = 46 },
++	{ .val = 24, .div = 48 },
++	{ .val = 25, .div = 50 },
++	{ .val = 26, .div = 52 },
++	{ .val = 27, .div = 54 },
++	{ .val = 28, .div = 56 },
++	{ .val = 29, .div = 58 },
++	{ .val = 30, .div = 60 },
++	{ .val = 31, .div = 62 },
++	{ /* sentinel */ }
 +};
-+
- static void en7581_register_clocks(struct device *dev, struct clk_hw_onecell_data *clk_data,
- 				   struct regmap *map, void __iomem *base)
- {
- 	struct clk_hw *hw;
--	u32 rate;
- 	int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(en7581_base_clks); i++) {
- 		const struct en_clk_desc *desc = &en7581_base_clks[i];
--		u32 val, reg = desc->div_reg ? desc->div_reg : desc->base_reg;
-+		struct clk_init_data init = {
-+			.ops = &en7581_clk_ops,
-+		};
-+		struct en_clk *en_clk;
- 		int err;
- 
--		err = regmap_read(map, desc->base_reg, &val);
--		if (err) {
--			pr_err("Failed reading fixed clk rate %s: %d\n",
--			       desc->name, err);
-+		en_clk = devm_kzalloc_obj(dev, *en_clk);
-+		if (!en_clk)
- 			continue;
--		}
--		rate = en7523_get_base_rate(desc, val);
- 
--		err = regmap_read(map, reg, &val);
--		if (err) {
--			pr_err("Failed reading fixed clk div %s: %d\n",
--			       desc->name, err);
--			continue;
--		}
--		rate /= en7523_get_div(desc, val);
-+		init.name = desc->name;
-+		en_clk->map = map;
-+		en_clk->desc = desc;
-+		en_clk->hw.init = &init;
- 
--		hw = clk_hw_register_fixed_rate(dev, desc->name, NULL, 0, rate);
--		if (IS_ERR(hw)) {
--			pr_err("Failed to register clk %s: %ld\n",
--			       desc->name, PTR_ERR(hw));
-+		err = devm_clk_hw_register(dev, &en_clk->hw);
-+		if (err) {
-+			dev_err_probe(dev, err, "Failed to register clk %s\n",
-+				      desc->name);
- 			continue;
- 		}
- 
--		clk_data->hws[desc->id] = hw;
-+		clk_data->hws[desc->id] = &en_clk->hw;
++static const struct clk_div_table spi_div[] = {
++	{ .val = 0, .div = 40 },
++	{ .val = 1, .div = 2 },
++	{ .val = 2, .div = 4 },
++	{ .val = 3, .div = 6 },
++	{ .val = 4, .div = 8 },
++	{ .val = 5, .div = 10 },
++	{ .val = 6, .div = 12 },
++	{ .val = 7, .div = 14 },
++	{ .val = 8, .div = 16 },
++	{ .val = 9, .div = 18 },
++	{ .val = 10, .div = 20 },
++	{ .val = 11, .div = 22 },
++	{ .val = 12, .div = 24 },
++	{ .val = 13, .div = 26 },
++	{ .val = 14, .div = 28 },
++	{ .val = 15, .div = 30 },
++	{ .val = 16, .div = 32 },
++	{ .val = 17, .div = 34 },
++	{ .val = 18, .div = 36 },
++	{ .val = 19, .div = 38 },
++	{ .val = 20, .div = 40 },
++	{ .val = 21, .div = 42 },
++	{ .val = 22, .div = 44 },
++	{ .val = 23, .div = 46 },
++	{ .val = 24, .div = 48 },
++	{ .val = 25, .div = 50 },
++	{ .val = 26, .div = 52 },
++	{ .val = 27, .div = 54 },
++	{ .val = 28, .div = 56 },
++	{ .val = 29, .div = 58 },
++	{ .val = 30, .div = 60 },
++	{ .val = 31, .div = 62 },
++	{ /* sentinel */ }
++};
+ static const u32 npu_base[] = { 333000000, 400000000, 500000000 };
+ /* EN7581 */
+ static const u32 emi7581_base[] = { 540000000, 480000000, 400000000, 300000000 };
+@@ -215,6 +298,7 @@ static const struct en_clk_desc en7523_base_clks[] = {
+ 		.div_shift = 0,
+ 		.div_step = 1,
+ 		.div_offset = 1,
++		.div_table = bus_div,
+ 	}, {
+ 		.id = EN7523_CLK_SLIC,
+ 		.name = "slic",
+@@ -230,6 +314,7 @@ static const struct en_clk_desc en7523_base_clks[] = {
+ 		.div_shift = 24,
+ 		.div_val0 = 20,
+ 		.div_step = 2,
++		.div_table = slic_div,
+ 	}, {
+ 		.id = EN7523_CLK_SPI,
+ 		.name = "spi",
+@@ -242,6 +327,7 @@ static const struct en_clk_desc en7523_base_clks[] = {
+ 		.div_shift = 8,
+ 		.div_val0 = 40,
+ 		.div_step = 2,
++		.div_table = spi_div,
+ 	}, {
+ 		.id = EN7523_CLK_NPU,
+ 		.name = "npu",
+@@ -311,6 +397,7 @@ static const struct en_clk_desc en7581_base_clks[] = {
+ 		.div_shift = 0,
+ 		.div_step = 1,
+ 		.div_offset = 1,
++		.div_table = bus_div,
+ 	}, {
+ 		.id = EN7523_CLK_SLIC,
+ 		.name = "slic",
+@@ -326,6 +413,7 @@ static const struct en_clk_desc en7581_base_clks[] = {
+ 		.div_shift = 24,
+ 		.div_val0 = 20,
+ 		.div_step = 2,
++		.div_table = slic_div,
+ 	}, {
+ 		.id = EN7523_CLK_SPI,
+ 		.name = "spi",
+@@ -338,6 +426,7 @@ static const struct en_clk_desc en7581_base_clks[] = {
+ 		.div_shift = 8,
+ 		.div_val0 = 40,
+ 		.div_step = 2,
++		.div_table = spi_div,
+ 	}, {
+ 		.id = EN7523_CLK_NPU,
+ 		.name = "npu",
+@@ -775,11 +864,148 @@ static unsigned long en7581_recalc_rate(struct clk_hw *hw,
+ 		return 0;
  	}
  
- 	hw = en7523_register_pcie_clk(dev, base);
+-	return rate / en7523_get_div(desc, val);
++	if (desc->div_bits) {
++		val >>= desc->div_shift;
++		val &= (1 << desc->div_bits) - 1;
++
++		rate = divider_recalc_rate(hw, rate, val,
++					   desc->div_table,
++					   desc->div_flags,
++					   desc->div_bits);
++	}
++
++	return rate;
++}
++
++/*
++ * Simulate rate with every divisor supported
++ * 1. Search the divisor for the requested rate
++ * 2. Simulate the final rate with the new divisor
++ */
++static unsigned long en7581_get_div_for_rate(struct clk_hw *hw,
++					     unsigned long rate,
++					     unsigned long parent_rate,
++					     const struct en_clk_desc *desc,
++					     int *div_val)
++{
++	*div_val = divider_get_val(rate, parent_rate, desc->div_table,
++				   desc->div_bits, desc->div_flags);
++	if (*div_val < 0)
++		return 0;
++
++	return divider_recalc_rate(hw, parent_rate, *div_val,
++				   desc->div_table, desc->div_flags,
++				   desc->div_bits);
++}
++
++static int en7581_get_vals_for_rate(struct clk_hw *hw,
++				    const struct en_clk_desc *desc,
++				    unsigned long rate,
++				    u32 *base_val, u32 *div_val)
++{
++	struct device *dev = clk_hw_get_dev(hw);
++	unsigned long parent_rate, tmp_rate;
++	int tmp_base_val = 0;
++	int tmp_div_val = 0;
++
++	if (!rate || (!desc->base_bits && !desc->div_bits))
++		return -EINVAL;
++
++	if (!desc->base_bits) {
++		parent_rate = desc->base_value;
++
++		tmp_rate = en7581_get_div_for_rate(hw, rate, parent_rate,
++						   desc, &tmp_div_val);
++
++		/* Matching clock found */
++		if (tmp_rate && tmp_rate == rate)
++			goto exit;
++	}
++
++	/* Search requested rate with every matching base rate + divisor */
++	for (; tmp_base_val < desc->n_base_values; tmp_base_val++) {
++		parent_rate = desc->base_values[tmp_base_val];
++		tmp_rate = parent_rate;
++
++		if (desc->div_bits)
++			tmp_rate = en7581_get_div_for_rate(hw, rate, parent_rate,
++							   desc, &tmp_div_val);
++
++		/* Matching clock found */
++		if (tmp_rate && tmp_rate == rate)
++			break;
++	}
++
++	/* Failed to found matching clock, return error */
++	if (tmp_base_val >= desc->n_base_values) {
++		dev_err(dev, "Invalid rate for clock %s\n",
++			desc->name);
++		return -EINVAL;
++	}
++
++exit:
++	*base_val = tmp_base_val;
++	*div_val = tmp_div_val;
++
++	return 0;
++}
++
++static int en7581_determine_rate(struct clk_hw *hw,
++				 struct clk_rate_request *req)
++{
++	struct en_clk *en_clk = container_of(hw, struct en_clk, hw);
++	u32 div_val, base_val;
++
++	/* Just check if the rate is possible */
++	return en7581_get_vals_for_rate(hw, en_clk->desc, req->rate,
++					&base_val, &div_val);
++}
++
++static int en7581_set_rate(struct clk_hw *hw, unsigned long rate,
++			   unsigned long parent_rate)
++{
++	struct en_clk *en_clk = container_of(hw, struct en_clk, hw);
++	const struct en_clk_desc *desc = en_clk->desc;
++	struct device *dev = clk_hw_get_dev(hw);
++	struct regmap *map = en_clk->map;
++	u32 base_val, div_val;
++	u32 reg, val, mask;
++	int err;
++
++	err = en7581_get_vals_for_rate(hw, en_clk->desc, rate,
++				       &base_val, &div_val);
++	if (err)
++		return err;
++
++	if (desc->div_bits) {
++		reg = desc->div_reg ? desc->div_reg : desc->base_reg;
++
++		mask = (BIT(desc->div_bits) - 1) << desc->div_shift;
++		val = div_val << desc->div_shift;
++
++		err = regmap_update_bits(map, reg, mask, val);
++		if (err)
++			return dev_err_probe(dev, err, "Failed to update div reg for clock %s\n",
++					     desc->name);
++	}
++
++	if (desc->base_bits) {
++		mask = (BIT(desc->base_bits) - 1) << desc->base_shift;
++		val = base_val << desc->base_shift;
++
++		err = regmap_update_bits(map, desc->base_reg, mask, val);
++		if (err)
++			return dev_err_probe(dev, err, "Failed to update reg for clock %s\n",
++					     desc->name);
++	}
++
++	return 0;
+ }
+ 
+ static const struct clk_ops en7581_clk_ops = {
+ 	.recalc_rate = en7581_recalc_rate,
++	.determine_rate = en7581_determine_rate,
++	.set_rate = en7581_set_rate,
+ };
+ 
+ static void en7581_register_clocks(struct device *dev, struct clk_hw_onecell_data *clk_data,
 -- 
 2.55.0
 
