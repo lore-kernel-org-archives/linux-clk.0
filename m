@@ -1,50 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.119.170.32
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794325487;
-	b=vBnH59Rw6PtYgNS1G2N5+OkMrrd5DJsvUCBglMR22Pz4l4KI6vNWDBQng3ihi6IvmzYM
-	 RjLRxrGFrj2xVlNdBQAf0HQ/+jSVkaitLJMWmOHC2RirlORW2/Wj8kjLgK9X6mEnkYV0E
-	 b3Xaue/Ne4FE8T2tQNMyHsMF2oQxkTFUUyz+cBoYBRo+4REher5NrE3HVG6IksVozwUtL
-	 lV4599T4yu56M2vl3KiTU08qb5COWH+e2+9kdD5harnFQ9Ns0YK59heMhoiFpI2W3cMBL
-	 2N0Nwfs2HHupWPardboU5E5+GCKcVVEC9ztK0ta9bXx50P/pUS+SVaWFtgXko1Ti5/A==
+	t=1794326146;
+	b=s0Rli95oyR87scNy7OhpMDeNsau8LcJuNU/evDgGcRCM235m88tMy14KtcjsbEV3OIMn
+	 ljm8dJe+DJ6efZXIJqr7Kk0DZI/Cn5oni+rQ7PGt1P4FcdMIvkXZ159dFS0XHKoOm5dgI
+	 Lyrt5AOLWCG9axVDWOJSoZUfSp6Rchxvbk3pSH8qAxzuNXgUP7mENz5Oc46NGVJ/lVaD8
+	 Ra9bJUZ/8fwwm4nqlMuU5Tbys2SrdlZUJ7g3Y4rGqZ5UA9TqDObPqRdfqtytI0CwyC1lr
+	 VJMPzlCmJgkqh/RJxzvBjAKO6ubNlvm7RM2MHG9rD8pMInuu70X6SBg750BMKjUdJrQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794325487;
-	h=DMARC-Filter:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:Content-Transfer-Encoding:MIME-Version;
-	bh=q5FEyc/Q/PEgipfxVB9U/FpkGYQGxTKlpGrp5AF+G0o=;
-	b=nsMhX8VdQwuN5HJBx6UhFaOZg2i8JRgaZotkqRpncfGJ83CZA8yJh0NiGcw99cHBphmZ
-	 0OoSOOPTUtyXGXaLJn9aEW9h0+9Um0wv58YPWW1QqdhMbWc20p+OHYo4NShTxCrtZ42/H
-	 j10fagdajjHZbEDJFbisTYv6hrO5RhDi6NFJB+QfojpB2cakE77rp6SONWIajH8DqUx5z
-	 Q6b7FzuN+u05T9cFFMIg++LeBSgt+q84Sxx5hnC08BXvjRCNI2dYc+xSNSs1+QCym2BGn
-	 kGeV8ZFXRC2Zgn0hwp2dYGKIqwcfSc55qgARoWch2rQmigyWEwsQA/7y4EgGBiqdLAA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794326146;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	bh=aM5tBn3ODTZ1/FCzgvJ2PUNZD7PoTyZUo4VRYYi2yLY=;
+	b=fX+it2rdP33qRbXXkEoySKwSni2yu4iaNtOYWRswH2IEq9XaQNXlXw02dLD36MsCC7/r
+	 A+ZYuCXA9CimsEpg+FxVgMaLOjynkJH0WmdABNHhTFxvdYgabAnEW+801Yhj96wjpuBxA
+	 X1Fj1piGA1ny9DSUkVCMtXxmQGySJqE/y189Xc04/dr67ClW03LajqvFPQ/xp8BsYb1MZ
+	 LPyAeWp++jOJSi/nJno/m300hyGbKSUVrBE8T9ay1RCEM24sxx5mL/NBpHIgonuft1Gjv
+	 sWAXy9V2fk65rfMAsdE0l+DEgrjsZaQtILxqlP9RvQMaNACRJUC1pSc0JxzftefIXVg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=crapouillou.net;
-	spf=pass smtp.mailfrom=crapouillou.net;
-	arc=none smtp.remote-ip=185.119.170.32
-Received: from aposti.net (aposti.net [185.119.170.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=JC8ZByDM;
+	arc=none smtp.remote-ip=209.85.128.45
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B13D606A332;
-	Tue, 10 Nov 2026 15:44:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7B13D606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
-Message-ID: <d40bcc5d7742025db9a67af5c77796745e284e45.camel@crapouillou.net>
-Subject: Re: [PATCH v2 0/3] MIPS: CI20: Enable SMP with two CPUs
-From: Paul Cercueil <paul@crapouillou.net>
-To: Florian Fainelli <f.fainelli@gmail.com>, linux-mips@vger.kernel.org
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Paul Burton	
- <paulburton@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Brian Masney	
- <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
- =?UTF-8?Q?=E5=91=A8=E7=90=B0=E6=9D=B0?= "(Zhou Yanjie)"	
- <zhouyanjie@wanyeetech.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, open
- list	 <linux-kernel@vger.kernel.org>, "open list:COMMON CLK FRAMEWORK"	
- <linux-clk@vger.kernel.org>, hns@goldelico.com, paul@boddie.org.uk
-Date: Tue, 10 Nov 2026 16:44:41 +0100
-In-Reply-To: <20261110043131.1985993-1-f.fainelli@gmail.com>
-References: <20261110043131.1985993-1-f.fainelli@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2EE606A33F
+	for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 15:55:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1D2EE606A33F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=JC8ZByDM
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4a5036bbac7so14363265e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 07:55:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794326144; x=1794930944; darn=vger.kernel.org;
+        h=content-type:content-transfer-encoding:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=aM5tBn3ODTZ1/FCzgvJ2PUNZD7PoTyZUo4VRYYi2yLY=;
+        b=JC8ZByDMjknsyEpwTuwVgXFmocCEOhUTrbthwhiblOhrsWSGvDJo7/Rg/6oEFhuNUi
+         O1ygA4AJMvLYdlLXB8F/Ic71Fa2a+fpsHV54QBhMrofde7CTX+mnhHq1vvwUsgcAwYW1
+         qpJciVL0a2oVKA+g2iEbs73aA9+1JAkpg6dsyKW0on+P3IU47ixO+vShx0DX/NUTmURy
+         gjUTvi0Cj6LWYxSgTyTYbI6EbBfV0EvkxS5T0NktsFJopDDZ+8THjRFBq1UlLBPvr6Dc
+         dBbU7Z7JvrwMKD3qNU8vtqoO1OfbSSxXnTCIBPNX1VryJZyrK1hFuwkDt/8kyQtcjMGH
+         GO8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794326144; x=1794930944;
+        h=content-type:content-transfer-encoding:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=aM5tBn3ODTZ1/FCzgvJ2PUNZD7PoTyZUo4VRYYi2yLY=;
+        b=tKaNeMt1PDtNMTn5mXQ4qUxqKOA3FIICSmtCHosxe7M1dlEgUBaHrBKUgQ15/39Ez3
+         Eorj7yS/Ph+HL1OQlmRCp2jZUFbL9N9ngO4SL45NPd34djeBdFO8Jf/QJpF1erCbgNLe
+         oOXH99zbyxzqqT43ArJpySWN8Cq84o1/0Nev388M03bf9fTU0GUjyyhbaICtAqi5FMEC
+         AqjL9CO+n/p2pVNXEn4t7AC09PjWOYkXaKbODxi9/LhZwctTzY/0Sm49nVwqVxe7IVqw
+         z6NuU7MwNhN8+tckWjG1+oFiRs+bTGku7NU0JCRb29l0hewJLIqbC/8DW2DM4AlvlRvv
+         6xsg==
+X-Gm-Message-State: APuU4Z8KkiKFqjlxPoVO8/RjzpVBXPlOMSI8CgLbAd0dun2HHW219Ems
+	6Zn+NKbjRWFlSY9FNVjqgJ4+xc3DaK/zu7Xz2qiTMHwnrWhlbSV0VAN4
+X-Gm-Gg: AYBFou1GuKRQl+CZ+NSqv5JGXW9fEmK6bfoZ6krLn8H6d+K6SA8Ze8CKKuwgrhZ7R7u
+	2/KGowOzrKmXUEaqv6qjQEOZylZh6+IZfye4UjvzjedrXVPyffXrsZt4uEl9ZC3jBuE20BZSdgu
+	JTQ4JYWqD+enYeQz7DzQAoEesZY+ZinRPe87QMRERJcOoPGjtG5r3GeZreYer4MEjj3PxrYoI5X
+	AZ4s6fphBat1HdkugdYKJWrCEk31JSW2MEy+JHkyK1QOM4F6IQQ5jxAZpKMbLD1BJmkjnp2ckE+
+	3cTWSTuyjgABDj12TYEz/j+wL+U86MYrHF8/TUni+UdNV2iGXn6ehM8Wa6yl5d8ibm3RnJ9QCYY
+	DdvsHnw0MEXWgId98/Yra3O+/sbfEM7BVP6DR36gTgNGDKRcbqoK9W43BsU/ASLBtidUzG7jlZ9
+	wDpF+c78hAuomB28t0acYigasRtly/Obg6p+sQOcRu/YTpeS/K6Z1vd4zfLfxpM1k1qReh+tkaA
+	C1g0oezCiEsbN+sW4clFfq9qg5AtaWsUr4PMkpRBtYsN+vgRk6aTpSEEBOp7FGyVIRXVz481ad3
+	wu3Yjm1ZdqNmhSBCjdt64aJihDGL0ejM3r4NzvegV9jfYgJmWAUJm7+Il6E1z0SgUHQ97NArNWd
+	1YaV8yLO81L1wHFq6VCbtEM2E+HaeztYT2TmmxEZ5iOST6Gp9eqkfJHL+GRygHPUkiH4JDyWzXS
+	c223wiX5ywOlQKawDcEDj6wsGciSp4owYBkUZJfg5Hj35gGPjv3C66XYZ6sVQcQJlXZSnjvie8p
+	VyRDH3Bo4hGfAKv6CFJkaoGDqe//MObXxzodyUdRi9U0ClvG1frZw==
+X-Received: by 2002:a05:600c:c4a3:b0:4a1:dbdf:17a8 with SMTP id 5b1f17b1804b1-4ba02308542mr51845065e9.2.1794326144134;
+        Tue, 10 Nov 2026 07:55:44 -0800 (PST)
+Received: from jernej-laptop.localnet (86-58-12-36.dynamic.telemach.net. [86.58.12.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ba0234a5dcsm73237085e9.2.2026.11.10.07.55.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Nov 2026 07:55:43 -0800 (PST)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Chen-Yu Tsai <wens@kernel.org>,
+ Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>,
+ Andre Przywara <andre.przywara@arm.com>, aiyengar1990@gmail.com
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject:
+ Re: [PATCH 2/2] clk: sunxi-ng: h616: Let the S/PDIF clock set the audio PLL
+ rate
+Date: Tue, 10 Nov 2026 16:55:41 +0100
+Message-ID: <ThOkLORdSauix4Mt72r-lQ@gmail.com>
+In-Reply-To: <20261110-h616-clk-emac-spdif-v1-2-e5e36e8963e4@gmail.com>
+References:
+ <20261110-h616-clk-emac-spdif-v1-0-e5e36e8963e4@gmail.com>
+ <20261110-h616-clk-emac-spdif-v1-2-e5e36e8963e4@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -54,84 +107,60 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi Florian,
-
-Le lundi 09 novembre 2026 =C3=A0 20:31 -0800, Florian Fainelli a =C3=A9crit=
-=C2=A0:
-> This patch series resurrects SMP support for the CI20 board. This was
-> submitted back in 2020 by Zhou Yanjie.
+Dne torek, 10. november 2026 ob 07:03:01 Srednjeevropski standardni =C4=8Da=
+s je Arun Iyengar via B4 Relay napisal(a):
+> From: Arun Iyengar <aiyengar1990@gmail.com>
 >=20
-> Changes in v2:
+> sun4i-spdif asks for 22.5792 or 24.576 MHz on the S/PDIF (OWA) module
+> clock, depending on the sample rate family. The spdif clock has no
+> CLK_SET_RATE_PARENT, so it can only divide down the rate pll-audio
+> already runs at. Unless another audio device has already set the PLL for
+> the right family, the power-of-two divider rounds down and the request
+> succeeds at a wrong rate: about 12.3 MHz from the reset PLL value, so
+> 48 kHz content is sent at about 24 kHz.
 >=20
-> =E2=80=A2 Moved SMP sources to arch/mips/ingenic/ and the header to
-> arch/mips/include/asm/
-> =E2=80=A2 Removed CONFIG_MIPS_INGENIC_SMP, using CONFIG_MACH_JZ4780 and C=
-ONFIG_SMP
-> directly
-> =E2=80=A2 Renamed JZ4780-specific SMP symbols to XBurst names
-> =E2=80=A2 Changed CPU enumeration to assign consecutive logical IDs and r=
-emoved the
-> explicit two-core limit
-> =E2=80=A2 Changed mailbox IRQ allocation failure from panic to logging an=
-d returning
-> =E2=80=A2 Shortened commit descriptions, removed Codex attribution, and a=
-djusted
-> source credits and sign-offs
-> =E2=80=A2 Kept the clock polling patch and CI20 defconfig changes unchang=
-ed,
-> =C2=A0 added Paul's R-b for patch #1
-> =E2=80=A2 Updated the kernel baseline to include additional upstream fixe=
-s
-
-You should also have a changelog per-patch, in each patch's header.
-
-Your patch [1/3] has a Fixes: tag but does not Cc stable@vger.kernel.org, s=
-o
-you'll have to send a v3.
-
-I reviewed [2/3] and it looks good to me, but I'm a bit concerned about
-Nikolaus' reported issue.
-
-Thomas, if you can wait a few days, I can test it on my CI20 and if it work=
-s
-report back with a Tested-by: tag.
-
-Cheers,
--Paul
-
+> Propagate rate changes to the parent, like the audio codec clocks
+> already do. This is the same change as the one just applied for the H6
+> [1].
 >=20
-> Florian Fainelli (1):
-> =C2=A0 clk: ingenic: Poll JZ4780 CPU1 power status atomically
+> Link: https://lore.kernel.org/all/20261104185027.883011-1-jernej.skrabec@=
+gmail.com/ [1]
+
+There is no need to link to H6 patch. It's clear that patch is needed.
+
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+
+Best regards,
+Jernej
+
+> Fixes: 88dde5e23da1 ("clk: sunxi-ng: Add support for the Allwinner H616 C=
+CU")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Arun Iyengar <aiyengar1990@gmail.com>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) (2):
-> =C2=A0 MIPS: Ingenic: Add XBurst SMP support
-> =C2=A0 MIPS: CI20: Enable SMP with two CPUs
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-n=
+g/ccu-sun50i-h616.c
+> index d2625fec651a..f703d690a563 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+> @@ -529,7 +529,7 @@ static struct ccu_div spdif_clk =3D {
+>  		.hw.init	=3D CLK_HW_INIT_PARENTS("spdif",
+>  						      audio_parents,
+>  						      &ccu_div_ops,
+> -						      0),
+> +						      CLK_SET_RATE_PARENT),
+>  	},
+>  };
+> =20
 >=20
-> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +-
-> =C2=A0arch/mips/Kbuild=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- |=C2=A0=C2=A0 1 +
-> =C2=A0arch/mips/configs/ci20_defconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
-=A0=C2=A0 2 +
-> =C2=A0arch/mips/generic/init.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +
-> =C2=A0arch/mips/include/asm/ingenic-smp.h=C2=A0=C2=A0 |=C2=A0 20 +++
-> =C2=A0arch/mips/ingenic/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +
-> =C2=A0arch/mips/ingenic/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 5 +
-> =C2=A0arch/mips/ingenic/ingenic-smp-entry.S |=C2=A0 54 ++++++
-> =C2=A0arch/mips/ingenic/ingenic-smp.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- | 247 ++++++++++++++++++++++++++
-> =C2=A0arch/mips/kernel/idle.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 26 ++-
-> =C2=A0drivers/clk/ingenic/jz4780-cgu.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
-=A0=C2=A0 2 +-
-> =C2=A011 files changed, 362 insertions(+), 3 deletions(-)
-> =C2=A0create mode 100644 arch/mips/include/asm/ingenic-smp.h
-> =C2=A0create mode 100644 arch/mips/ingenic/Makefile
-> =C2=A0create mode 100644 arch/mips/ingenic/ingenic-smp-entry.S
-> =C2=A0create mode 100644 arch/mips/ingenic/ingenic-smp.c
+>=20
+
+
+
+
