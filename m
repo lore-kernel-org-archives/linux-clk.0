@@ -1,47 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794270397;
-	b=NgQ6+UcPdxJ7IqRODuIvhHtklugXR0sSSY+4OoKUbWZDU3wfb2FO8UH1n+OY8A4nRlij
-	 JNXlhE/FhDBb6m+92aVFryyWfCpP3pbrkYG4f5mSI0VxFwn+T9SI9Dq2+wPjQqcTC2LRj
-	 doNrF1BIaS0InjieDhfvhsZqxDECXz9ZTgEOs1t4AYV5liWQSsdadPBFedi1hNwq4wbT1
-	 g/PGklpz9D9W0mQj8mXpRPYp7bkDwdGSKOaGRWiTKg6mQETv/7pbdzCmeketRom/9C+wf
-	 6f5Vn0aMfOWbi2wdFQTYrpvfpdyS7Dz8STGHGfI4gBjm9jBgDaLmJCXVzAJh35AL66Q==
+	t=1794270765;
+	b=T7/XgWMXeMZ0aEqWBz6sgYrNeFtuSqQ96KKXRgsqJoIhTVOgEcz0Cj2HDWLr44q9BAMZ
+	 LzPUFMW3e7yT3egWH0pjypoY4GPgq5OT9nOOalAxMIQqBNjwL67ThD1Qx3DKYVJNJSihc
+	 VKcpiUxatvFP3Q1U3Lt8OJ3NmEDbmrJd1KIyg0S3DHOCiXzi4MINdpN/M99LfKr7Xwu0H
+	 XSvvshIJa5CSTPsqb8VS/LuDK6cetNR3ltajHTdqHEENrWfD0RrHs51UPdhIPcBujotf4
+	 7oTvPN2A7zDx9DHUVwEFWg8iVW/vjs2EfHV0Fl3gmCfNAq4BMfAHXN4o/W9RsGExoNA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794270397;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:Content-Language:To:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=9nRKvJ8YfqSFFEgb3DC26B8ynEEvZomzTsxeItgHMQ4=;
-	b=1ZfHPnLrWdsG2PEVqb+7AdHGfOGtnMJbc1DHgmFk2nUT+9HkgCniqBIxQY57qcZCFm36
-	 u91DJJIUyfPCFuvYR4cFeg4XMXsQs8FOGdFteXbtgYWTrobDO6EGHxfyFSNn4kDMqr2qX
-	 T4eYGK/GK3qQ2D2khjLh3nMH0mGBsdRkB4UJMYgpn5LJdRAl6STzuDryliw4x8in0+NOK
-	 hzxgY0L0T7azM5wOqGDIV6kggjc2HwBSbXnP/aFOkxbUXKKdDeydPdSpqKr17Hjm99Kwv
-	 IkOdGtGwrQrlvGWtmqAt4fv+We6lVffjAYRdG9y3Rw581uaic9mL5HEEXmrXMw1FpAg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794270765;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=lm3Ckk7zUBa3VuCIO2Nipzzmy/lvR/uITmLXcyunhpU=;
+	b=zWZiGAR3wA2jP+gfOpTDGLlwtks1xleo6pNlvIENPO/Ja7OqQBqDJgO4OnFpOtTpospW
+	 ZWOHB7ZLr7JpF6u4BmdXwwfM3Dttsvd8cY7nzRhQYvdQF4hgg6JTICiVU6XS6nbRbsbu9
+	 m7aI2Ea4TA3FVoi5oZROkuehtRpjJM2JzEvnFo6N7eFDqtpXFaLYUdenKt1hl1P30LOkB
+	 odacGq+Uhixacw/9qRqF6slJuit6luilzvEEg37CAX7WpcA43i3AtRlhRnPeTqNEP45uR
+	 bjg9gac9B3Y5R7gjcF4uqcWa80JAeX66S0RKjcclH4P5hNNA+emYdyJ6kviEG38S8iQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K950d0IY;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JheiXGj6;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0908606A31C;
-	Tue, 10 Nov 2026 00:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81EA606A321;
+	Tue, 10 Nov 2026 00:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K950d0IY
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ACC21F008A1;
-	Tue, 10 Nov 2026 00:26:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JheiXGj6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 980A21F0089F;
+	Tue, 10 Nov 2026 00:32:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794270396;
-	bh=9nRKvJ8YfqSFFEgb3DC26B8ynEEvZomzTsxeItgHMQ4=;
-	h=Date:Subject:To:References:From:In-Reply-To;
-	b=K950d0IYzKrrjibEjWw8Ag1MUAxXTluakkS+qtqJ6vDofWei1glCUAeP+6WSZr+i2
-	 cYESSeTNUlUJLZcwBIBC+gUVkTzoOJ9klb/etilSa/pfo7g5ELH0m+lZ+LxQwEMiv1
-	 hUqFzHgqLfUfHglbp7eCK6ebkqulhTGBc06VVX7v3EcCSr8aHwS1ez/18HHPY+6+eZ
-	 JcuHaU47oNGZbyCqRYChfJg2MoeCHpeVYtm4LxbNrnRW78z681BsStFNPz/teslo3l
-	 MkdjyKQssjsvsDfDODJIad5hCKoQWuPDqnVgOCt1MuVygMoecW0won2DwgfXhNkOCa
-	 PH+9FVJRLMniQ==
-Message-ID: <64cfd562-b5c5-44c2-83eb-b943d5aa7492@kernel.org>
-Date: Mon, 9 Nov 2026 18:26:35 -0600
+	s=k20260515; t=1794270764;
+	bh=lm3Ckk7zUBa3VuCIO2Nipzzmy/lvR/uITmLXcyunhpU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=JheiXGj6l9y8XIjpQmdnozxV373gnIyMnzfKETdwtmg7pD1BRcvSI0G4ycOKMhnb6
+	 MTPqRV4rSp5ZQcP9yafARmjNdyvQ75y7atcy3t0Eai9L6uBACFsX0BUZD7XkK7ZUH3
+	 jzt+gL4iP/zk5bLxUzUUtQ+MmfgDJ1ghadY6o8C2O9nq5KMd6Nmq9IHdQ6EDil+35H
+	 aKaXtQqHzkuvPznwgcNJMptaGfbUXtJx29DzXGNGp0oX3J6DgzKSzcrTGJO5KPoIVm
+	 78M3gZI2cJd3FpgHu8pvafdMAqG0AKQa5DfqcRPAfJS598SJokUOxnjYaK7C4sgRG8
+	 MqYVPu59bhhpg==
+From: Brian Masney <masneyb@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Brian Masney <masneyb@kernel.org>
+In-Reply-To: <20261109184424.446496-1-robh@kernel.org>
+References: <20261109184424.446496-1-robh@kernel.org>
+Subject: Re: [PATCH] clk: hisilicon: Remove hi3559a driver
+Message-Id: <179427054156.1057938.7033647270404048226.b4-ty@b4>
+Date: Mon, 09 Nov 2026 19:29:01 -0500
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,43 +61,34 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] clk: socfpga: stratix10: register the SP timer
- clocks early
-Content-Language: en-US
-To: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1791871090.git.adrian.ho.yin.ng@altera.com>
- <7de51d5f9c716c03fabab77d1a2b4dba3af745fd.1791871090.git.adrian.ho.yin.ng@altera.com>
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <7de51d5f9c716c03fabab77d1a2b4dba3af745fd.1791871090.git.adrian.ho.yin.ng@altera.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.17-dev-7ca47
+X-Developer-Signature: v=1; a=openpgp-sha256; l=522; i=masneyb@kernel.org;
+ s=20250903; h=from:subject:message-id;
+ bh=eZH10hqywnwJONZdj1fRHmCIecziilOFt/pDp31VKRk=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLI+palE1k3aLnCT/Z3QP/ldG/1d/4cU9GgqpM552fm89
+ tCO6Lj7HaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAEyEz5Lhn2Exb5LMmvXHaqKk
+ JNI2P+S7FrYpf38Fy7c5kef7t0cJszMyHN5os+sv37Z/0/JWbJ9XUf75006riXmH994LTdHYJJE
+ rxgoA
+X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
 
+On Mon, 09 Nov 2026 12:44:20 -0600, Rob Herring (Arm) wrote:
+> clk: hisilicon: Remove hi3559a driver
 
-On 10/13/26 02:07, Adrian Ng Ho Yin wrote:
-> The DW APB timers are probed through TIMER_OF_DECLARE() from time_init()
-> and cannot defer, but the clock manager is a platform driver registered
-> at core_initcall(). The timer's clk_get() therefore fails and the timer
-> is never brought up.
-> 
-> Register only l4_sp_clk and its parents (boot_clk, main_pll, periph_pll,
-> main_noc_base_clk, peri_noc_base_clk and noc_free_clk) from
-> of_clk_init() using CLK_OF_DECLARE_DRIVER(), with every other clock left
-> as -EPROBE_DEFER. The remaining clocks are still registered when the
-> platform driver probes, which reuses the early provider.
-> 
-> Signed-off-by: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
-> ---
-I think this needs a Fixes tag:
+NOTE: The clk tree is based on v7.4-rc1 and this patch was based on a
+newer branch that included commit 4dd10fbbeb9c ("treewide: Convert
+devm_kmalloc() family to the devm_kmalloc_obj() family") from v7.4-rc2.
+I resolved the conflict.
 
-Fixes: 07afb8db7340 ("clk: socfpga: stratix10: add clock driver for 
-Stratix10 platform")
+Applied, thanks!
 
-and the Cc: stable
+[1/1] clk: hisilicon: Remove hi3559a driver
+      https://git.kernel.org/clk/linux/c/f4897f9ed38a
 
-Other than that, it looks good to me.
+Best regards,
+-- 
+Brian Masney <masneyb@kernel.org>
 
-Dinh
