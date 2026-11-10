@@ -1,70 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794285306;
-	b=stSaRsORVFB2yEtjnkNjOF+M0LJHloHRvPqeFChQMYF/0RgmKoMgOK8Z/fkBtmDu2ZaO
-	 2XPxVN/1vMWcu1jPpgzhgd3v5XzGdt53kkPUDov+Ok3ZF1D18ubbaGle3DjWIFtWbqAIr
-	 FSmp5WQmodQGcFQD9bRRSjdgkw6JQbeb+c9bWvA3owKNFlxqP4IXvamC21CiohuEpujeb
-	 ouuH1W1xNE+/JuDAKze2lWKuQmQA85hYA7wo9nXVXMXtlM3tLuwq34lfgLUuyPPYuDrA9
-	 IMx4YyAJQBGPIhBDjcOmATDhrsIrb6EoYs85rtT1ScujgspOfEAWmWPIpQYcuByJHwQ==
+	t=1794285313;
+	b=SPlLz1rkPimeqg5W8qxCen/asoMH6k0QjwB3qa3JhOVRZaKo7QjSTOVUkMspeuo93Ti8
+	 LNOw61zhuhWdrpKrLhSrfmLtnBZQEF2V10m7M7zaEGUy7oYqLtZjkDVXuAOjXTPTBIakw
+	 8lXM7va067N2azD2rdDGHRijEQvRrMw2F1xL80eMBnYMCNTNDPXuKMAby56j9yqEwJ6I4
+	 YyLSr+5AvHeYbGsXRawb8M0zkp9O/eQSdRhJCRiaqQV6pGDTsFj+iAZImZrB4iw1rdp4O
+	 xrDZ6lvSBdBHjnhWuVboLHOELjimhujP+UV8hRjkgc9z5zOgrSogzG0Qd5HTuGYjFPw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794285306;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794285313;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=zfwjN6fG8/jvSCSqDiUFOSSPXc7FFGswmXCNW9VpGbU=;
-	b=5WFjbt4GilZayqpBBypVtajJ1J/SmV3LhX0L0MHM36D7bKKSQCV+J9Tip67yyFiAj08Q
-	 ex/Lyvh5JDlgK212auAW5UPyFGjeuWtHiRWjm/jq9vi47ax0f+KTczBwemxW+cXsAFxWG
-	 x9xfRfkQlsZos9j3PBWePVom5UFH+aTg8p8KHLb9jKyEo3vy/mgZ6r51aXYwHLPyrBBRj
-	 +THAaGILDfsQvNp/W3S3/NfKtqhb0TnMRF5jVCarBeEWjLw0a4IZ6VDPmzRvy93CJAFJH
-	 Pi69BwN+T6DDLCmcgM8cJEzxIS3g/Hu+62Kn/UhhYndGM+gnB9v/kz074peJ1EoRvlQ==
+	bh=5z+mmwdv+D6Jf8swG7oinviZ6ESeu9eruFlMRnGD6Ms=;
+	b=v60rCZVXM8QCWaP/ceMAyvlOfHCQtbKHttRZE81cxQ/oKEPCvjuj3TnQuyaSLgPZucsc
+	 Eq0PrZANgIhG9ViKIYPlQ/USH+h4OuF8+1ItS2t8/FW2R/nhuaMhtN/HfnkldaLZB26Es
+	 AJPP2DGfzafpJ26MlxBoUqMMqnRvBpTljy019++HFGlb1wy6XJK2RX57hRIqYpyf4JA+K
+	 UqpwZOdqLEjHrScw68ZpQVP+VrZVkBYFiufg7vUN5rJh08cvBa1rOtw810HWo5deuyaIG
+	 QsI6vE4nspjnExmmnAKUSn57VjhvsFjiuPjLxY3LLUOZNRKFXo96gc6RufiOSf4rMCA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TjZzbBPx;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T8A6ClZh;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADC7606A88A;
-	Tue, 10 Nov 2026 04:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64829606A8B9;
+	Tue, 10 Nov 2026 04:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TjZzbBPx
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 783801F008A7;
-	Tue, 10 Nov 2026 04:35:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T8A6ClZh
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E9751F008A5;
+	Tue, 10 Nov 2026 04:35:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794285305;
-	bh=zfwjN6fG8/jvSCSqDiUFOSSPXc7FFGswmXCNW9VpGbU=;
+	s=k20260515; t=1794285313;
+	bh=5z+mmwdv+D6Jf8swG7oinviZ6ESeu9eruFlMRnGD6Ms=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=TjZzbBPxrAnl+wyNQBe14auTt/X/HGI56gZQdojoqaGyK50uP/bmoS+R+rqXE14Vx
-	 6TFwWyBQWhFsstYMlimHhEnXrYTuZG2qG0PBzn/trlFbRU27b2qeAFh1Ffke34H/4U
-	 nNFIUj1br6CJrFmQd+MUArj13f6CtwTCV/PGQwPkIzqe81lsDmEhB7hXvVwNfpogww
-	 H3OYDYaxI1aWzrzmb2e66/LhDK1EvyIl8XmN50mMKqQ4FlcE0VcgsLQ7z4AdYFs2F3
-	 Lom/NX8cYqIEt6RdE6zJm0i63276IjxXb1O7SM3WG4sVZrbPT8waRTCPFTY+nDFeuU
-	 3Pev26d2PfadQ==
+	b=T8A6ClZhOIzn1qebE2yGvNeGU/d5IFCb64dzNRu+k1FmQwmrzXnoafdG2HUQl5Nhb
+	 nJqOIeNQYt3/IPOyaSdCBbIk0DwgONuRhR/yvCp0JYGrXU9Srh9wpcNIiOO+Iw2ir1
+	 yxM8QtKLuw+pkO/8scdAU6WFHzSpaeNg6ToXqK3Xwea5PBAkLyrQp/gMu+HCkdhdg2
+	 lslVb4n5pcVMs+UGWtfWaHnB+WDKxRSFpHpJJGCc8RGQmbiid+uEzJJ5iIKHrlHVKk
+	 VZfrQr3upfB+l57VFAfIjMAn6Ysij0UNlw5yG1ElsBuC4AKYJC2Slue91NcRpgIEOV
+	 RVz1pG0L6Rfyg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Luo Jie <jie.luo@oss.qualcomm.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Qiang Yu <qiang.yu@oss.qualcomm.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	quic_kkumarcs@quicinc.com,
-	quic_linchen@quicinc.com,
-	quic_leiwei@quicinc.com,
-	quic_suruchia@quicinc.com,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Abel Vesa <abel.vesa@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v4 00/12] clk: qcom: ipq-cmn-pll: Add IPQ5210 CMN PLL support
-Date: Mon,  9 Nov 2026 22:34:46 -0600
-Message-ID: <179428529342.1061455.1754522824154624445.b4-ty@b4>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc: Set FORCE_MEM_CORE_ON/FORCE_PERIPH_CORE_ON for PCIe pipe clocks
+Date: Mon,  9 Nov 2026 22:34:54 -0600
+Message-ID: <179428529334.1061455.7701149257476653713.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260906-qcom_ipq5210_cmnpll-v4-0-aec5ed642f4f@oss.qualcomm.com>
-References: <20260906-qcom_ipq5210_cmnpll-v4-0-aec5ed642f4f@oss.qualcomm.com>
+In-Reply-To: <20260714-mem_on-v1-1-f5bfb6def0a1@oss.qualcomm.com>
+References: <20260714-mem_on-v1-1-f5bfb6def0a1@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -78,24 +67,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sun, 06 Sep 2026 07:18:06 -0700, Luo Jie wrote:
-> The CMN (Common) PLL block of IPQ5210 is almost same as that of IPQ9574
-> which is currently supported by the driver. It accepts a 48 MHz reference
-> clock from the on-board Wi-Fi block and is configured to run at 12 GHz.
-> The difference is in the output clocks.
+On Tue, 14 Jul 2026 23:23:13 -0700, Qiang Yu wrote:
+> Setting FORCE_MEM_CORE_ON and FORCE_PERIPH_CORE_ON for the PCIe PIPE
+> clocks so that the inbound data path works correctly.
 > 
-> This patch series adds support for IPQ5210 into the CMN PLL clock driver.
-> On the IPQ5210, the CMN PLL block supplies a broad set of output clocks
-> to the networking hardware and GCC:
+> Without this, the PCIe link can come up but the endpoint can not access
+> host memory, with the host sometimes seeing a completion timeout
+> reported by the EP, even though the host can still read the EP's config
+> space.
 > 
 > [...]
 
 Applied, thanks!
 
-[11/12] arm64: dts: qcom: ipq5210: Add CMN PLL device node
-        commit: 4a155c4e88e0d5189724c799fbe8e610d22cb277
-[12/12] arm64: dts: qcom: Update IPQ5210 xo_board to use fixed factor clock
-        commit: 1d6abd242b45fb772190641fae374fd45ce0086b
+[1/1] clk: qcom: gcc: Set FORCE_MEM_CORE_ON/FORCE_PERIPH_CORE_ON for PCIe pipe clocks
+      commit: fbfe0c4beecfbd0e2958d91e5c95ff189bc489a0
 
 Best regards,
 -- 
