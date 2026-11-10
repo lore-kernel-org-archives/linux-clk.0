@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794316648;
-	b=xaLxjGMmeYs+cLoNb82nLfPXkJvRr9MrZIVcNfA5ztl0dMLOwSJlK05ZtH9r4fUz5Zut
-	 BsPWVs+n0B0skPxwM+Tf4G9Cy2JL2/vulBuL7e7SQsAfEjGVZFroZ/NY1092L2kqNq+ka
-	 ARqn4qFPYQ09h5AvLJdjE8sZRRsYmQuQWTUqTfHJRCF2Z+8XZzxI4HgP5xCJextBXb/m5
-	 1EArvrSwKSBB8BKVQ3JrF9BJmWu7i59crl5101iZHvJqRGeJ/MfRpAED5lJgiocyiiDCt
-	 fNEqDZeZklFruUiyisQCIp/neGotMmxMaDT7BCFje8Uhd8MqCJDEs5l3t+/BMf0AKNw==
+	t=1794317119;
+	b=w/fkNgSG2J1A5HtPtVopjdTKJcn6HL9ry8ORuVKi89NfN3doReADb1MJ3bZ5/1JMnfOn
+	 QcfHzIhuYNOnC7UtFqJ0YHwSCBHSvJGvRVSUl9g5x1xl1UYuXrP+yjhx/QDT1UyUf250O
+	 fRB7SAvjk60fLQS4Y86zp8ra6JKiOis53m0DCiALeURSJu75ryreZKWyquyw6hqmB0I62
+	 k9vtCml9WWXoAPel59aH6Me10KqhC8SceO+dKTgI/Be07EMt6zS2GONinHwnHOHL2eegW
+	 2qM0f/Crayuq9d9ylrMdc9yxroe4DirsiLmv8oDUBhXj1dXfXAHedg8CT+Vn62pjI+w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794316648;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=cGK07w7TYM7HqmBCdFzdjKTvX9kQsTUkfBDXOwKVYGA=;
-	b=Hg62Xm9QudB1VlG6zo1UcHAkXuBiv2Pof3LXIcQUEzNVFMZx7niBQPlOvQQQJd04Uioe
-	 kUPJg/mqmkyfLH1kbpWyGcLYg7uWuTa0H2epCrRQ6Ktkdpfxzj5l0mHRkhI3LsGE1X9Pg
-	 B1I4z3XlZhY0zRFc9e1yX0KdLhkr2GUeA88O6wW1d4GBgJY8eD3p5zz0PW/SozBM1GGEs
-	 h0i0CPsCZK0xG5BIpHzQnpXNCy7we9oOpVUmNICq2BKtb+NTlQMzG92e72Y5kR42PaLc/
-	 QrVdKOwd+EmeLgL+sjBbiJbUuZecGUZ2+FNzOHFVQPMAoCD0TK8SgtLrcCXlh6JKerg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794317119;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=ebtf6KHILfD8LLt9XRof6rEPvHJdF5mePUCzuh3M8zI=;
+	b=WIGDsEerPcc1mWn8c4qI/+Lg8AO6na9B6+i2bIuA2yAvcTGBttZ7ETkOWm4EclVGDlSY
+	 VkrHYmlBzqquvatc7PRSAHs75SnIyrsOcG6urjEzAzLAtoZWYV8aAeNT++jQwLKIU6Ts0
+	 MigBgl5NyI6zUqXmBYI65okQm4+663B7qGPFZKBaTLWr1fsthJyYjySRxv7Ng8xTS5DHE
+	 2xy24EAwoMGCAb+4MJZ2GSB43GrNyLi6jSNbir74cYUMqeFdXJ+LvWFPs8XeT39TTkpSd
+	 uJskHvLPmsmkZhgaQNkop2B5tLWpXf2P9XT+VESKQDlyAoBVRgwRQdqAlygqGqzT8yA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ialyH5vV;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="D/WuERXK";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9A16071E5B;
-	Tue, 10 Nov 2026 13:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C76606A31C;
+	Tue, 10 Nov 2026 13:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ialyH5vV
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 146A81F008A7;
-	Tue, 10 Nov 2026 13:17:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=D/WuERXK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70D441F008A1;
+	Tue, 10 Nov 2026 13:25:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794316647;
-	bh=cGK07w7TYM7HqmBCdFzdjKTvX9kQsTUkfBDXOwKVYGA=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ialyH5vViJEP12l1XVFj3sxh9FyfN36/9ZMN72LvvdR7qo3jCs3LXXmYwv4iwkuMe
-	 va15b4QVhEhLNKuzSsUwVUQZROGrxyBhuZ11KtEvd1OOF+oOq36YPnNRxNHdSOiCQn
-	 B9gE7nBY69o3BXENXptU+L0WupaSjYV6ax781/zZElY5rgqLJjInddu3BtPuGtus6S
-	 5G+bFOZ+ic5v93lfm5Ih+jZKSrA7Xx6HXX8QxiJXuU9xtnv+KF4fvRJ6C4aSkc1CLJ
-	 M8YyqQHv2jdSJPBvWXAu/bbR9pMXi6ADURNKxZm9qtQEFaZC4KXNhN0/rTZ43tcZbN
-	 yNFo7QfJe21fQ==
-Message-ID: <sashiko-outbox-207108@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 2/5] dt-bindings: arm: stm32: Add clock-controller
- sub-node to STM32MP2 SYSCFG
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Gabriel Fernandez" <gabriel.fernandez@foss.st.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261110-ups_mp25_clk_syscfg-v2-2-624559bb8ec7@foss.st.com>
-References: <20261110-ups_mp25_clk_syscfg-v2-0-624559bb8ec7@foss.st.com>
- <20261110-ups_mp25_clk_syscfg-v2-2-624559bb8ec7@foss.st.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 13:17:26 +0000
+	s=k20260515; t=1794317118;
+	bh=ebtf6KHILfD8LLt9XRof6rEPvHJdF5mePUCzuh3M8zI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=D/WuERXKsCXFJ6W/1uA4A4dNpaoGOxY+V0vAhlaP1j6zExIxwgFimKyiT4PB6sCvp
+	 72/oFccw/sA5dAu9bzKZNN+//qDLDbAGW7w/HwAELnMVqcee92OVElaEzXL9grTcqn
+	 DbfNxfchMqUarbVupXNlNFRImr+F5rqDD9Zjy4b8hs2UpoKrlX+9pqhXFUztVlCziw
+	 B4ciaAGSsFGiOfNlybObcuvLYFPTQ8Ll1X1NO53/jV+05724zRywRL28mFMskTnKvI
+	 lfcqxY0VqDIcOORjYP5P2/7iAuhL4qz9MJgV9smDLO03GL5xsFbul2T9dsih0FdRII
+	 /njhDD0CV1Mig==
+Date: Tue, 10 Nov 2026 14:25:15 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Alban Bedel <albeu@free.fr>, 
+	Antony Pavlov <antonynpavlov@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] dt-bindings: clock: ath79: add the UART1 clock
+Message-ID: <20261110-lean-pug-of-business-cbca5e@quoll>
+References: <20261110013646.1582970-1-rosenp@gmail.com>
+ <20261110013646.1582970-4-rosenp@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,79 +60,36 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261110013646.1582970-4-rosenp@gmail.com>
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Low] dt-bindings: arm: stm32: split STM32MP23/25 SYSCFG into separate
-  schema
---
+On Mon, Nov 09, 2026 at 05:36:43PM -0800, Rosen Penev wrote:
+> AR934x has a second, high speed UART that is compatible with the
+> qca,ar9330-uart one and can run from a 100 MHz clock instead of the
+> reference clock. Add an ID for its clock.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  include/dt-bindings/clock/ath79-clk.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/dt-bindings/clock/ath79-clk.h b/include/dt-bindings/clock/ath79-clk.h
+> index eec8f399b9e6..f8a98e4d206d 100644
+> --- a/include/dt-bindings/clock/ath79-clk.h
+> +++ b/include/dt-bindings/clock/ath79-clk.h
+> @@ -11,7 +11,8 @@
+>  #define ATH79_CLK_AHB		2
+>  #define ATH79_CLK_REF		3
+>  #define ATH79_CLK_MDIO		4
+> +#define ATH79_CLK_UART1		5
+>  
+> -#define ATH79_CLK_END		5
+> +#define ATH79_CLK_END		6
 
-commit a6e3f1e2b7c45d1069bba34abc7927e0b05e5a42
-Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+You cannot change that, that's fixed ABI.
 
-dt-bindings: arm: stm32: Add clock-controller sub-node to STM32MP2 SYSCFG
+Best regards,
+Krzysztof
 
-This commit adds a required clock-controller sub-node to the STM32MP23x and
-STM32MP25x SYSCFG bindings and deprecates the top-level #clock-cells
-property.
-
-> diff --git a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.=
-yaml b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-> index a559f8b03b842..13c02844a91f9 100644
-> --- a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-> +++ b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-> @@ -38,6 +38,10 @@ properties:
-> =20
->    "#clock-cells":
->      const: 0
-> +    deprecated: true
-> +    description:
-> +      The LTDC pixel clock multiplexer is described by the clock-control=
-ler
-> +      sub-node.
-> =20
->    "#address-cells":
->      const: 1
-> @@ -45,6 +49,10 @@ properties:
->    "#size-cells":
->      const: 1
-> =20
-> +  clock-controller:
-> +    type: object
-> +    $ref: /schemas/clock/st,stm32mp25-syscfg-clk.yaml#
-> +
->  patternProperties:
->    "^phy@2[48]00$":
->      type: object
-> @@ -78,8 +86,8 @@ allOf:
->      then:
->        required:
->          - "#address-cells"
-> -        - "#clock-cells"
->          - "#size-cells"
-> +        - clock-controller
->          - phy@2400
->          - phy@2800
->      else:
-> @@ -87,6 +95,7 @@ allOf:
->          '#address-cells': false
->          '#clock-cells': false
->          '#size-cells': false
-> +        clock-controller: false
->          phy@2400: false
->          phy@2800: false
-
-[Severity: Low]
-This isn't a bug, but should st,stm32mp23-syscfg and st,stm32mp25-syscfg be
-split into a separate schema document instead of adding more conditionals
-to st,stm32-syscon.yaml?
-
-Unlike the simple syscon nodes in this binding, the STM32MP23/25 variants
-forbid the top-level clocks property and require a distinct set of child
-nodes and cell properties (#address-cells, #size-cells, clock-controller,
-phy@2400, and phy@2800) that have to be explicitly disallowed for every
-other compatible in the file.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110-ups_mp25_c=
-lk_syscfg-v2-0-624559bb8ec7@foss.st.com?part=3D2
