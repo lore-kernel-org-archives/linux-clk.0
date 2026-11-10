@@ -1,64 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794336879;
-	b=ME5cIVLOHrCSoGadPxwwKh74JpoqDQf5F1C/PkVl3W9qgKCdmlAr6x3nWTjJyl9Z9leP
-	 G6QYQe6/15GBDXQQ3PrJY50BTf0OKrtTjKu3aFY5L0cM/fCIwcYO3shZwWHCvp3Wmg/bg
-	 Vl9cGTRXN0HmEZy76eW1KXXpICEG8P0aJO/q+7NZMo8c6xDfaUBerFzo9TF2YAosaorK9
-	 kU+vIMn1/GpoCse3Y/MSxuwaMDbt3nYd+1lHzkPdH8FJDp28xlA57ojWUPYF3ESGZq5QZ
-	 2BZ4RHb18i7IPpXHNJWbjUoY2xIvpZ1LW5zMOQyF1AGCBZW1uwtWDVDWvIw8iP0hhnw==
+	t=1794339160;
+	b=SmbwZ2oBLK4Vb05SvjnB9eW3lm6kTN6Qw02ST2a0y318cDUn2rOLW6y0B7mY1NO8J+N/
+	 bavOYOlOG9M4Haacpo7Yap7azTYhs5MWvM1Ck9cgBsW1F9T9qoOBA8h4ujm45jx0NDrWU
+	 IBR0LcM4m5SwWEJuEb5koQpUQGa3yTselANwSoke73g31nZCGtF1nBgJeEHVnpF5yYI2C
+	 T38YnnvCtlAGNVQN800PAGmkPcKD4+66y4+5f8A2xW9PcpcjM5uiArWfiLTerFGKED/vJ
+	 7QZZxin2ebuhxifoxEkeNdSOXU+R+bIRR0ZwjYOJSakzhF3ShPZvDU0BOYQXpwiP3Jw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794336879;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=eE5rfuFrAE7EyUnvlrVRPnNovvwKuchWNSa6LJLS/nE=;
-	b=Wai0bU/FT2dE1qaOWQGXYiMtr1sK4FFAMD3lQ968dRBGRXzVLziXskzcR8Z0G3xobxtZ
-	 mUDcst1NcITVYE7JyE5vXBrVyjJ7ZdtpvdFsN48P/7aSsLThkGUTg89blMXa6ZE6XiMv5
-	 1x4HiiIE/aR5+qgOg4FrH7k5FevCSSyK+xQoMXFSeKxDmJZn4Q2upg5O/XuH2yRizfYtE
-	 ealP2MSxeITpOfG9fSYc2gfgdTT0AEXAihPWx/fHaNVr81TwVHXmOjHgdCr7Vl9Ihhtms
-	 CnaTGkj1+zJB67e6FR0QgOqaDeXlpma7A/ED//ppl1HBJIgsFHuu4ivLrAs2nAC+6UA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794339160;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=7mEklAilVKf92dtmVDJu0KURfc8Tj/Pz0ePFWAC4NZ0=;
+	b=oj5RH6acqtAao0DZH16OEbq6qkJi1FLip4GkwcGAAvGUe8A0BDvaxh+slZigApyE4ceF
+	 kPppR632yFl/ISwjELqumNCH7cFvIlLp5mKFS+j5bP9DkeOnJlT8l9E8oPY9Nn/8OT6FT
+	 K972oMf7c2fFcfc7rfxsQf3480QP96XMRjJ2dWBX/5VsyYHdI3//9DQjHKi/SfFmloyxS
+	 J7keiJ+i258EqGw0wvzdSQXIhmwrCbrX4OsAkXJuBwENgaoxh1uXmXDlUKdZSoO0zl5lI
+	 RofGt6iR6dNNQRvpeUVUyN8pse2HenNbfYk9X6uD9OYk7AfCTDtWrfncbLjpbHpCgjQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="PPFZG21/";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JA8Wjybm;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA02606A327;
-	Tue, 10 Nov 2026 18:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0ABA606A320;
+	Tue, 10 Nov 2026 19:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PPFZG21/
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A45A1F0089F;
-	Tue, 10 Nov 2026 18:54:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JA8Wjybm
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55B8D1F0089F;
+	Tue, 10 Nov 2026 19:32:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794336878;
-	bh=eE5rfuFrAE7EyUnvlrVRPnNovvwKuchWNSa6LJLS/nE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PPFZG21/eEZ7TiuF/sGhvkL/Sh0x5mWfvE7iOxERQ8fPE0RhXyOymvrqLfDKk1Bzg
-	 Jt8fbqbDIHqfU2LocrnKqwHnpIMni2Zzn7PiNQf8sU4IrCMBv0tyMGOV2LgcHblTzG
-	 rQqVZpkMQ4rUBuCM01VPpiSNgqoz2PLSN4+9YPnJ3wM4YO+1OW4+Fxy3AvewNowAMv
-	 2w5EDNGJM0s6hfSYZ6QFCep8SounMIQvA86IS7hnWTtL1jJ3HSmHOJ6fuFQnSVnwQl
-	 SVWEvGoaBA/V/ysgN1N7xV3cTZYiTDeEMd+5QbPDBZYG47VIZlQwcY6Vu9qAoteFUX
-	 ih4QehnD971Jw==
-Date: Tue, 10 Nov 2026 18:54:33 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+	s=k20260515; t=1794339159;
+	bh=7mEklAilVKf92dtmVDJu0KURfc8Tj/Pz0ePFWAC4NZ0=;
+	h=From:To:Cc:Subject:Date;
+	b=JA8WjybmoYPULa5SpWa0fBuvhrCVrP6lBuUztr1PxnysKsVbpHEloxbT1KANUUEuD
+	 1w1iedTKgpSAl2zgLAVEkvwGmrA1+0T34yoH6HLzN9Zk/DmX7SGEmL0ncGoB7AZcJu
+	 4fQyvJHVJ/Kg1AAYMts10Bq3sQDgp/pzaPvNT28fWxp4wpuvCd11Pss3sBvQIgq9hb
+	 D6EcOfCzHrvdff76f74XnrzK7mDku3u5IvohsQ/N5hUASHquBDMYQ3Nrul8bXNYDY+
+	 03tmZI05/qes+D5qjN8/3fukFEEZv5Iak4YeojmLPhdqIeFCsLzcyuWNbqEWcxa/8z
+	 M8/ykNGLWmHCg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] dt-bindings: arm: stm32: Add clock-controller
- sub-node to STM32MP2 SYSCFG
-Message-ID: <20261110-confidant-bundle-08385b99bd78@spud>
-References: <20261110-ups_mp25_clk_syscfg-v1-0-667829cd290a@foss.st.com>
- <20261110-ups_mp25_clk_syscfg-v1-2-667829cd290a@foss.st.com>
+	Wei Xu <xuwei5@hisilicon.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: clock: Convert hisilicon,hi3519-crg to DT schema
+Date: Tue, 10 Nov 2026 13:32:28 -0600
+Message-ID: <20261110193229.1531663-1-robh@kernel.org>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -68,82 +62,149 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HHiI4yu939XMUIIC"
-Content-Disposition: inline
-In-Reply-To: <20261110-ups_mp25_clk_syscfg-v1-2-667829cd290a@foss.st.com>
+Content-Transfer-Encoding: 8bit
 
---HHiI4yu939XMUIIC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Convert the HiSilicon CRG binding to DT schema format.
 
-On Tue, Nov 10, 2026 at 11:42:17AM +0100, Gabriel Fernandez wrote:
-> The LTDC pixel clock multiplexer of the STM32MP23x and STM32MP25x
-> SYSCFG is described by a clock-controller sub-node of the SYSCFG node.
->=20
-> Add this sub-node to the SYSCFG binding. It is required on STM32MP23x
-> and STM32MP25x and not allowed on the other SoCs.
->=20
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+The allowed compatibles was not very accurate, so update them to
+match the users. Drop the hi3516cv300 compatibles as the platform
+has no DT and only a few drivers (pending removal) upstream.
 
-Why does this need a child node at all, can't the clock controller
-properties go straight into this syscon node?
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+v2:
+ - Add missing SPDX license tag
+---
+ .../devicetree/bindings/clock/hisi-crg.txt    | 50 ---------------
+ .../bindings/clock/hisilicon,hi3519-crg.yaml  | 62 +++++++++++++++++++
+ 2 files changed, 62 insertions(+), 50 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/hisi-crg.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/hisilicon,hi3519-crg.yaml
 
-Cheers,
-Conor.
+diff --git a/Documentation/devicetree/bindings/clock/hisi-crg.txt b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+deleted file mode 100644
+index cc60b3d423f3..000000000000
+--- a/Documentation/devicetree/bindings/clock/hisi-crg.txt
++++ /dev/null
+@@ -1,50 +0,0 @@
+-* HiSilicon Clock and Reset Generator(CRG)
+-
+-The CRG module provides clock and reset signals to various
+-modules within the SoC.
+-
+-This binding uses the following bindings:
+-    Documentation/devicetree/bindings/clock/clock-bindings.txt
+-    Documentation/devicetree/bindings/reset/reset.txt
+-
+-Required Properties:
+-
+-- compatible: should be one of the following.
+-  - "hisilicon,hi3516cv300-crg"
+-  - "hisilicon,hi3516cv300-sysctrl"
+-  - "hisilicon,hi3519-crg"
+-  - "hisilicon,hi3798cv200-crg"
+-  - "hisilicon,hi3798cv200-sysctrl"
+-
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-
+-- #clock-cells: should be 1.
+-
+-Each clock is assigned an identifier and client nodes use this identifier
+-to specify the clock which they consume.
+-
+-All these identifier could be found in <dt-bindings/clock/hi3519-clock.h>.
+-
+-- #reset-cells: should be 2.
+-
+-A reset signal can be controlled by writing a bit register in the CRG module.
+-The reset specifier consists of two cells. The first cell represents the
+-register offset relative to the base address. The second cell represents the
+-bit index in the register.
+-
+-Example: CRG nodes
+-CRG: clock-reset-controller@12010000 {
+-	compatible = "hisilicon,hi3519-crg";
+-	reg = <0x12010000 0x10000>;
+-	#clock-cells = <1>;
+-	#reset-cells = <2>;
+-};
+-
+-Example: consumer nodes
+-i2c0: i2c@12110000 {
+-	compatible = "hisilicon,hi3519-i2c";
+-	reg = <0x12110000 0x1000>;
+-	clocks = <&CRG HI3519_I2C0_RST>;
+-	resets = <&CRG 0xe4 0>;
+-};
+diff --git a/Documentation/devicetree/bindings/clock/hisilicon,hi3519-crg.yaml b/Documentation/devicetree/bindings/clock/hisilicon,hi3519-crg.yaml
+new file mode 100644
+index 000000000000..3c2cc3411de5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/hisilicon,hi3519-crg.yaml
+@@ -0,0 +1,62 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/hisilicon,hi3519-crg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: HiSilicon HI3519/HI3798CV200 Clock and Reset Generator (CRG)
++
++maintainers:
++  - Wei Xu <xuwei5@hisilicon.com>
++
++description:
++  The CRG module provides clock and reset signals to various modules within the
++  SoC.
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - const: hisilicon,hi3798cv200-crg
++          - const: syscon
++          - const: simple-mfd
++      - items:
++          - const: hisilicon,hi3798cv200-sysctrl
++          - const: syscon
++      - items:
++          - const: hisilicon,hi3519-crg
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    description: >
++      The identifiers for the cells can be found in:
++
++        dt-bindings/clock/hi3519-clock.h
++        dt-bindings/clock/histb-clock.h
++    const: 1
++
++  '#reset-cells':
++    description:
++      A reset signal can be controlled by writing a bit register in the CRG
++      module. The reset specifier consists of two cells. The first cell
++      represents the register offset relative to the base address. The second
++      cell represents the bit index in the register.
++    const: 2
++
++  reset-controller:
++    type: object
++    properties:
++      compatible:
++        const: ti,syscon-reset
++
++    additionalProperties: true
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++
++additionalProperties: false
+-- 
+2.53.0
 
-> ---
->  Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml | 6 +++=
-+++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.=
-yaml b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-> index a559f8b03b84..38c844e8f19d 100644
-> --- a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-> +++ b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-> @@ -45,6 +45,10 @@ properties:
->    "#size-cells":
->      const: 1
-> =20
-> +  clock-controller:
-> +    type: object
-> +    $ref: /schemas/clock/st,stm32mp25-syscfg-clk.yaml#
-> +
->  patternProperties:
->    "^phy@2[48]00$":
->      type: object
-> @@ -80,6 +84,7 @@ allOf:
->          - "#address-cells"
->          - "#clock-cells"
->          - "#size-cells"
-> +        - clock-controller
->          - phy@2400
->          - phy@2800
->      else:
-> @@ -87,6 +92,7 @@ allOf:
->          '#address-cells': false
->          '#clock-cells': false
->          '#size-cells': false
-> +        clock-controller: false
->          phy@2400: false
->          phy@2800: false
-> =20
->=20
-> --=20
-> 2.43.0
->=20
-
---HHiI4yu939XMUIIC
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCavNoaQAKCRB4tDGHoIJi
-0iZXAP9cnh198rDZ/sUSZ260FfuknKWIsjUf89bqGNDkZUL2sQEA2zKAIIi4Rl1B
-iDzxXQOq8c3ujrIfaJuAzDie/dAXkwI=
-=KdWK
------END PGP SIGNATURE-----
-
---HHiI4yu939XMUIIC--
