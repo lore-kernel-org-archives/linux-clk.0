@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794275691;
-	b=Gpn2+FxJuZrDhaudmwFc3koQqWDyVGiCJW8yP/0zeUwa7ZN70ZuDRBgKrYd4Tz3Y0gXE
-	 qhTfvOV8BIRV4yi/O0YSyy/cz0qUIFlSLGdPgLItRzdM3+2tNY+vw5WsZHXvIHA+ieUrb
-	 lyDxm1dfSU0nwMvvbZnJAtY4L8zIX4wNU4f/5SZvlGIlCBxIrLyWa1tmGybRsn5CYRyXL
-	 d1NhXAe6ZuG/kDoa87Q6wwM+h7ME+dLOq/n2p9LGHNglXkq9ip+VirEY/yYqylyN9r6WF
-	 L15KWbAIB7AOEKWKAo+aaEuXWsmLZTNGC88lZVdgxPWTRRcsWnP6mls7+FtKkPsRmDw==
+	t=1794275967;
+	b=BCNCGZLNelvQApyelDYG47KwLdBt8ywmcrghwotS+2ulpisKib8h4PjT7pUnyETmNUUx
+	 fLGRPQi8+7JLfuXVW+oXze/F2E+EbsazqR3SE0Ex+wUuViFC5V1Wq47oTQXVpmzR/M+sZ
+	 B2g/MVV6o1IvULaep31HkPYg9duFQE1cGKtrweDxbI0aLoIOwNixWodov6jvk5riRFGvd
+	 zf0sAu5H07rAv2Taovz8krINyRCVHi3vEf7ij5/H1VwsDPWdK3ExFD22pPNm6ys/qqp5f
+	 Efnx1anlenq1VdJUqzTuYGjqZl6MkFL+8qeaIGIgs6jF9J19iPRxA73u3GcXWyKhbfA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794275691;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794275967;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=O0bSKZsrizNHDJCyHgjYf8iecUY8JQEZjB3jKDHxQ0o=;
-	b=ce6FHtV8jaC0zZKrTjDxzlYirG1N8z3gNm6SvicrIRvNIRwVm2ZoiMpL/+Oh/BBTbJFJ
-	 8C2YDtYoMEsGf9T/S3/v/JfTGHOedWxYgoHmyI0RbVGLU3EhnkWyxR7QkGkEzYJGVcTMg
-	 CM0INFkCaCfIRz4/NLtHbb3zzdNf9KdxqnurxOl6WDbgRlnbHre+U7cfi35FoCKNL6z2X
-	 Y2AdY3gmk828LNIZvTiD5OLOjJPfLCcl7esBi7ghsypC4TINhylmKP9n7AU/5gwdTc6+T
-	 le1AJ/Vo56w/fcW0w+R4OtdjrcZF1tCAYsDrPMExqOwW8reqXQGOg3kMveguFjTp01A==
+	bh=9gnhEzYRhkSWThK5I4vfKZHko7AoMbBdeTpNxs74zk8=;
+	b=GHYwXCN0IrGTa0CFN8Rw/60iAnbvGeB8KDTevSH8aDL5iP9Psaw+yUPxJzVBWVVequu6
+	 XrB/DV+MwBPvQ/mmB8mWjff2U7greupBw9ZP5tLdPYJ7/zrE4BNXw6o93XD08WLT2nXRK
+	 rnr3NhsV1SvI+rs1NVwz7jfTuhWtgvPbOBQMrBWmqZxVOyGfr4MXqCFKPPL5+sPjHu2CX
+	 ybewlDZUZ2/uqi6KmYXpnyC1Xhl7axYWowJ1SVmIsjpiSqB8J+d+w0+YL1KKisxzAqhnt
+	 sbE/PPTYhjJQ02LysM+/XnccCqNhR2hsY3Re+qQTBfEhMDNy595BSIgRu6MdsUlip6w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ApdJWYcb;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IvYsK06B;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DE5606A31C;
-	Tue, 10 Nov 2026 01:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C44C606A321;
+	Tue, 10 Nov 2026 01:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ApdJWYcb
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D82FB1F008A1;
-	Tue, 10 Nov 2026 01:54:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IvYsK06B
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C461F0089F;
+	Tue, 10 Nov 2026 01:59:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794275691;
-	bh=O0bSKZsrizNHDJCyHgjYf8iecUY8JQEZjB3jKDHxQ0o=;
+	s=k20260515; t=1794275967;
+	bh=9gnhEzYRhkSWThK5I4vfKZHko7AoMbBdeTpNxs74zk8=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ApdJWYcblgf+NpT6USh/GtE+Isw2tIZnQmTEMdAq1sINuj/x4fCnlWqNZaYlB8iZX
-	 78nhou07MIvsB7t23i7nCjZKwjnWUmYWvmB3lPMXblnVOcySRC56Kc1SfyA9HeDNeC
-	 wqHT7WgGsSqTOlTUQGkAaoaUibTtF6aUQgkztthDQdkhvpnZFIKE/zuykcMYhz3HLY
-	 6GySvdFv9TuNVht+8yVl2Z1yU2RLnYFuur/g1cl+j9RXo4N/RJ/5iPa3FoIs5PgxKt
-	 cRZOHfzB07mNf0T9zADF2r7LwBb5ZjG1j+7Y7TEOJ8dyR+wxwfi/+Fbsn2+LJ0QaNK
-	 3FzD6q7MIpS/Q==
-Message-ID: <sashiko-outbox-206004@kernel.org>
+	b=IvYsK06Bj15UlKhHXmE/EWcD7l3uAaSeAIRLt6syQJiAITofCfDYVgp06tZTb3CB1
+	 6/QPatqFukI9nS3ZW+KpDgGH7ib92YP1hiZ7ZQ8U1HuhziC0/OCB6FmFCGUtXCljb/
+	 MzN5FLncTp9t15+sPiRD/fuQblEbKXYx0KcuS3SVEhi7NyQyxKO7xoV9h6zmTbRmZO
+	 6TliaGfWXQ8voo2YhPPfHweAuwrlqcTzKjHbmf3d2BTFnTAoaz7QDB16uVZKdvvSLk
+	 NdF+ydnR3LrBNJr75bBK+RVcRAp99w3pEpzRggEfBy2cEWGNzCtVpkmecE9OYUk5qh
+	 cnjl4gtHR1NFw==
+Message-ID: <sashiko-outbox-206010@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 2/6] MIPS: ath79: move the bootstrap reference clock
- to setup
+Subject: Re: [PATCH v2 5/6] clk: add a driver for the Atheros/Qualcomm ath79
+ PLL controller
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Rosen Penev" <rosenp@gmail.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261110013646.1582970-3-rosenp@gmail.com>
+In-Reply-To: <20261110013646.1582970-6-rosenp@gmail.com>
 References: <20261110013646.1582970-1-rosenp@gmail.com>
- <20261110013646.1582970-3-rosenp@gmail.com>
+ <20261110013646.1582970-6-rosenp@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 01:54:50 +0000
+Date: Tue, 10 Nov 2026 01:59:26 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,92 +61,111 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] MIPS: ath79: missing OF clock provider on ref_np in
-  ath79_setup_ref_clk()
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [Medium] clk: ath79: fw_devlink blocks ath79_clk_probe() when ref
+  lacks clock-frequency
+- [Medium] clk: ath79: missing UPDATING wait in
+  ath79_pcie_pll_unprepare()
 --
 
-commit ba6521274f3bdc958b3f63de9327877ef55638bc
+commit dd79c08de0fc1914f23e0beb52d8e93809a55692
 Author: Rosen Penev <rosenp@gmail.com>
 
-MIPS: ath79: move the bootstrap reference clock to setup
+clk: add a driver for the Atheros/Qualcomm ath79 PLL controller
 
-This commit moves the bootstrap reference clock detection to plat_time_init=
-(),
-registering a fixed-rate clock when the device tree omits clock-frequency a=
-nd
-warning on mismatches with the bootstrap pins.
+This commit adds a common clock driver for the Atheros/Qualcomm ath79 PLL
+controller, registering the reference and CPU clocks early via
+CLK_OF_DECLARE_DRIVER() and the remaining clocks from a platform driver.
 
-> diff --git a/arch/mips/ath79/setup.c b/arch/mips/ath79/setup.c
-> index d9e1cc77ad04d..dff0fbe07b047 100644
-> --- a/arch/mips/ath79/setup.c
-> +++ b/arch/mips/ath79/setup.c
+> diff --git a/drivers/clk/clk-ath79.c b/drivers/clk/clk-ath79.c
+> new file mode 100644
+> index 0000000000000..3ddbd020afb12
+> --- /dev/null
+> +++ b/drivers/clk/clk-ath79.c
+> @@ -0,0 +1,778 @@
+
 [ ... ]
-> +static void __init ath79_setup_ref_clk(void)
+
+> +static int ath79_pcie_pll_prepare(struct clk_hw *hw)
 > +{
-> +	struct device_node *np, *ref_np;
-> +	unsigned long rate, strap_rate;
-> +	struct clk *clk;
-> +	bool strapped;
-> +	u32 dt_rate;
+> +	struct ath79_pcie_pll *pll =3D to_ath79_pcie_pll(hw);
+> +	u32 t;
+> +	int ret;
 > +
-> +	strap_rate =3D ath79_bootstrap_ref_rate(&strapped);
+> +	/*
+> +	 * Every write freezes the high speed clocks for about 60 us, so
+> +	 * leave a PLL that the bootloader already started alone.
+> +	 */
+> +	if (ath79_pcie_pll_is_prepared(hw))
+> +		return 0;
 > +
-> +	np =3D of_find_matching_node(NULL, ath79_pll_ids);
-> +	ref_np =3D np ? of_parse_phandle(np, "clocks", 0) : NULL;
-> +	of_node_put(np);
+> +	t =3D readl(pll->reg) & ~pll->pwd;
+> +	writel(t, pll->reg);
+> +	ret =3D ath79_pcie_pll_wait(pll);
+> +	if (ret)
+> +		return ret;
 > +
-> +	if (ref_np && !of_property_read_u32(ref_np, "clock-frequency", &dt_rate=
-)) {
-> +		of_node_put(ref_np);
-> +		rate =3D dt_rate;
-> +		if (strapped && rate !=3D strap_rate)
-> +			pr_warn("ath79: reference clock is %lu Hz in the device tree, but the=
- bootstrap pins select %lu Hz\n",
-> +				rate, strap_rate);
-> +		return;
-> +	}
-> +	of_node_put(ref_np);
+> +	writel(t & ~pll->bypass, pll->reg);
+> +	return ath79_pcie_pll_wait(pll);
+> +}
 > +
-> +	clk =3D clk_register_fixed_rate(NULL, "ref", NULL, 0, strap_rate);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("ath79: failed to register the reference clock\n");
-> +		return;
-> +	}
+> +static void ath79_pcie_pll_unprepare(struct clk_hw *hw)
+> +{
+> +	struct ath79_pcie_pll *pll =3D to_ath79_pcie_pll(hw);
+> +	u32 t;
 > +
-> +	clk_register_clkdev(clk, "ref", NULL);
+> +	t =3D readl(pll->reg) | pll->bypass;
+> +	writel(t, pll->reg);
+> +	writel(t | pll->pwd, pll->reg);
 > +}
 
 [Severity: Medium]
-When ref_np exists in the device tree without a clock-frequency property, d=
-oes
-skipping of_clk_add_provider() for ref_np break DT consumers that reference
-<&ref> by phandle?
+Should ath79_pcie_pll_unprepare() call ath79_pcie_pll_wait(pll) after each
+write to pll->reg, like ath79_pcie_pll_prepare() does?  Without waiting
+for pll->updating to clear, the second write is issued while the ~60 us
+update from setting pll->bypass is still in progress, and the function
+returns before the PLL finishes powering down.
 
-In of_clk_init(), _of_fixed_clk_setup() fails when clock-frequency is absen=
-t,
-leaving ref_np without an OF clock provider.  ath79_clocks_init_dt() works
-around this by falling back to clk_get_sys(NULL, "ref"), but
-arch/mips/boot/dts/qca/ar9331.dtsi also wires the UART to <&ref>:
+[ ... ]
 
-arch/mips/boot/dts/qca/ar9331.dtsi:
-	uart: serial@18020000 {
-		compatible =3D "qca,ar9330-uart";
-		...
-		clocks =3D <&ref>;
-		clock-names =3D "uart";
+> +static void __init ath79_clk_early_init(struct device_node *np)
+> +{
+> +	const struct ath79_clk_soc_data *soc;
+> +	unsigned long rates[ATH79_OUT_NUM];
+> +	struct ath79_clk_regs regs =3D {};
+> +	struct clk_hw *ref, *cpu;
+> +	struct clk *ref_clk;
+> +	int ret, i;
+> +
+> +	soc =3D of_match_node(ath79_clk_of_match, np)->data;
+> +
+> +	/*
+> +	 * The board's crystal. Old device trees leave its rate out, and the
+> +	 * arch code then registers it from the bootstrap pins as "ref".
+> +	 */
+> +	ref_clk =3D of_clk_get_by_name(np, "ref");
+> +	if (IS_ERR(ref_clk))
+> +		ref_clk =3D clk_get_sys(NULL, "ref");
 
-When ar933x_uart_probe() calls devm_clk_get(&pdev->dev, "uart"),
-of_clk_get_hw() sees that ref_np is an available DT node with no registered=
- OF
-provider and returns -EPROBE_DEFER without falling back to clkdev, causing =
-the
-UART probe to fail permanently.
+[ ... ]
 
-Registering clk as an OF clock provider on ref_np via of_clk_add_provider()
-when ref_np is non-NULL would allow phandle lookups to succeed.
+> +static int ath79_clk_probe(struct platform_device *pdev)
+> +{
+
+[Severity: Medium]
+Does fw_devlink permanently block ath79_clk_probe() with -EPROBE_DEFER on
+device trees where the "ref" fixed-clock node omits clock-frequency?
+
+When the "ref" node has no clock-frequency property, _of_fixed_clk_setup()
+fails with -EIO before of_clk_add_hw_provider() can mark its fwnode
+initialized, while of_clk_init() still sets OF_POPULATED on the node so no
+platform device is created for it.  Because the PLL node has clocks =3D
+<&ref>, fw_devlink creates a fwnode_link to the uninitialized "ref" node,
+and device_links_check_suppliers() rejects probing ath79_clk_driver with
+-EPROBE_DEFER, leaving the DDR, AHB, MDIO, UART1 and PCIe clocks
+permanently at ERR_PTR(-EPROBE_DEFER).
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110013646.1582=
-970-1-rosenp@gmail.com?part=3D2
+970-1-rosenp@gmail.com?part=3D5
