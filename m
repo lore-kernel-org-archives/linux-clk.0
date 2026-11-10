@@ -1,85 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.174
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794274619;
-	b=3s5IXUkJ5KESOPZ5f2ZthYwa5MTEV2o1WqKtwroCxmi92ZQQ/UcPdCNbdqvZtzjtq2IM
-	 2i8yUtStwj52tlH+ibCljyLX0IAE6n58EX8l0jCRnSJ1OPruYsQulmENy96g3Qv7uOv08
-	 SnJxQ+DpAySw2ycpkFfw1eFy8tijy7jYR/5A8LNQHDGsEK6uae4EyvzRqs0gw7veDmeO0
-	 WFYkBWePwaIhxLcjcVQ+scTLZEfl/awqHxlGwYrYMViG91vZbkNImckc91LhkD/qEUYJo
-	 wd3HvfCpwN0960ytceq5cddK8xTdBFt9vx1vACleLYNbxbVs7RJVbXwpXffzUwPLaNg==
+	t=1794274624;
+	b=uMNLo4+DiL31Zj+8wzkswaa+K3shUwChRGDISXpTXWc74Hhj2YzS7hw4M80Gt2icn+Iq
+	 upMbzSPtya2Dz0nM5IFhkWxn6cNZNewAVhlW8KBxU/ORracOa/Hwqm9vdo6Ipry8WL8j+
+	 vfSpM6M51p9gHXRsYQezo4bLq0WoMo3VCpgyzu3mnlz4FAbeClKJc1zH3Z2Sn0jQ2jY3V
+	 45rvv2Cq5WVfiW4Uzs9BITEtpvNt4FflEsOiL3RQHqB1C4u1URItNe5Db3bgha+EaFcAr
+	 T/MQ0Uh11xtvoDf8x1OgBj/9WwKqTd8AIvAkxsP/UBJetaHHfTYP1mWs2ieL30tKZ3g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794274619;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794274624;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=PgiLeA+AUEhjknnf87xwKUw9Fc6CxmoE+hmCmn2ebwY=;
-	b=0X6QHkUkDY8giTMu6jYdMENFjRjWW1OQg0yXuAEwQXvMXZkgwvwcZEGXJaxE3fjoUTzN
-	 DOSImuoj50FuiHj3+qsU8xTRHeQBe3+7HW8PjZaS58qaHY423kgI3C/g5fC6dgxifPeuk
-	 Jkmi3bpsCva8z6kT4GeiHlj/7NeOyzT94hSsqkc31QqToKjmBPEvpKzZURXg3zh3TbDLd
-	 LI7JoV7HhwSbQF8Z9t2sg4vCqs1JISyLRRkqsG+LEtO37Irl/VU+Tcep/NRG4puB8ziuE
-	 sSgDhY4gEqTrH8NChBBKAU2aHz21fnPfpTRwyxQ2FTqugUEVHicPC41BQE8fWxPA7/A==
+	bh=yltZRaMbNObOWm6lZzKevBC+91Sq+SPr7TOnVXF5ecY=;
+	b=wRD6yrz8HEY8dWMuMrNnm4uJ2YQaHmgvclxNhYlc9PSpNabLKzJOyIY3Vl0W5PNKskBC
+	 bluEclTd0gD8YZ6smdxxGgAyIniD6kqu2ikhwtraBw9kWoNzXzoJ4DtIdfu2DKpz9g4Tk
+	 jSnioon8NHf1ylLEd90YXVFYn5+ci5rM4suaqg+sB2a4XLzzXPnH/LQt3klw2KdtiLlcE
+	 a5HXQESTRS+trbQjG0zXQQPTc9wdNPCNXV2MuUSjwMQ4VdRajcmAJxiPR1Dd50HIka9No
+	 ELbg1KwVHi7w+2+PvxBqD7BbgsQL5z8sT0/4ptSNYbaeA7L58vxe+dAxxuIGPTitwXQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="J/Rw16cP";
-	arc=none smtp.remote-ip=209.85.214.177
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=rPOneM3O;
+	arc=none smtp.remote-ip=209.85.214.174
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED3160A2617
-	for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 01:36:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0ED3160A2617
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC96760A2615
+	for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 01:37:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CC96760A2615
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=J/Rw16cP
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2ed1b9e8f43so6244985ad.1
-        for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2026 17:36:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=rPOneM3O
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2e98798cbddso7139465ad.0
+        for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2026 17:37:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794274618; x=1794879418; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794274622; x=1794879422; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=PgiLeA+AUEhjknnf87xwKUw9Fc6CxmoE+hmCmn2ebwY=;
-        b=J/Rw16cPObp3yLW1VgpFIWKU4KeUmtm3z4y2VmDbBVazCBovIs2FM5JXnEVwLXyb2X
-         9STnPdgpuFcYIdVM3DG8uWtyf4DXNvgRhjft5K91+pQhT7yhrFIrgtoXTAIJHEMp8BhT
-         quYrdUTNAh8JM7KNW1t0MQ5OVtX9gvOFWrqA6oO8k4/zq/um962HANiY1NnnRKg/KrG9
-         fOaVnSYKG8QsM2w6ProTIwSKcQr0Q655EEfVLg8h9CFjBGNo4xnQ6i8wD5wdGLBW7ZZg
-         dH4UkYQ+JHj3usvF6fExn9sBCZq4T3AwLIH/QZsRXIBt+1CImw8EVTclYFU51Amf5gvS
-         xgqQ==
+        bh=yltZRaMbNObOWm6lZzKevBC+91Sq+SPr7TOnVXF5ecY=;
+        b=rPOneM3O/0sISYavxv+ddP2Z4UJK1+xVi/4QOkF3PZDUnHe8VQX8UDQMkNJ4LRLTo3
+         HFFYLnJWvOXF0oSLiX8o0ztlRv09zKtXj99aXvAvWz3nW2htnCKdQHoRxwch2VHZkxd0
+         5F8BaK3vqd2mZIcdoV01mgxlHHY3x0opg1RUDfphYjehl0LB/kVE4+0LYI514VBYIIr6
+         63khq5fH6pFvgPkB0dmiOnrdJ1nWGyiddqFR8X0k4X8lJHL7Yereow63PSDhW4iJTahT
+         Fflh6/36HVjlrBps+VSt7LsyKnfA83IEzEFWuUqqU9GtX7N/HDeZ+PbtGsLVMqx/i/Jz
+         HN0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794274618; x=1794879418;
+        d=1e100.net; s=20260707; t=1794274622; x=1794879422;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=PgiLeA+AUEhjknnf87xwKUw9Fc6CxmoE+hmCmn2ebwY=;
-        b=OnBIEvOPC5T5NVZtu2fF0bfglq81P+rc3NWABlJH6Xa4ZXnjFaXBVS/fxFEoZd7+zR
-         YqyVGb6PmNIgix3DPJ9qUnowsYQIJqbYQ042D89j68EY8UnrU7ysk4A8YhRgwAT4edkP
-         bQ4DROpXXUYO8xOONxpSgwisPrzW5sKHwrlsV4Zuf0Md8lSFh7fxd78RVaUmwJ37N3N/
-         uLxqsZA/XXQxNay9YrNNcufTvcd4EJT7RXrLHsWziZ08CE1rfBr28Smp/wqy+TEX16oh
-         BQ27tpZcET0SpuBvuW5VrXC2cni7ZTaqIAEwMvBhgkxSNuaAG/TZeRHWknL0zsecCJkE
-         1LNw==
-X-Forwarded-Encrypted: i=1; AL+hErHPehj0uyF/kpjBR/PInDCBYihiSnysjFNMdeJQUfUL4fvqJIq1n3JWlpH5l/16XBiuU1ovbaQ4Cjs=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8V9AGNhWArMinFmB/vxBCCTPPPma2Kg5Tv395zerkBI5A41VpQ
-	MlN2Iy1PEmNs43Y/ZSpqozEbQdS02Ivkcej/WDNjc/n3oRa6y3Cxwm2V
-X-Gm-Gg: AYBFou0fS3zs+RZp1KfFFghtCBGelsAXgehIYn7LkGKhkN5eu9iJLPpkmcTFvhizq37
-	OonT14Uhgvx7Ax18PE6irArnPdLNAkSqMLn6GWHwqu0ghgpku7IkbFaKFTo94k9af48Qal8e1Ej
-	amXNhPQ/CZdkIgnW+5JYs9/uZ5D9se7HPtuRSsfgQ6iAhI26xgiAFKnJs2SzYySlmnOziDgVg/M
-	Wz6qFoy43Bm5mi19Z6unY8U4h1w1G9tWD67ieLorpG/qU4ya6w+GhxOlMlAxrKjOFTbzmMFL0bk
-	gupEs2iynBtnL0l8MgFRjltnl2g3Vd8mtW75AhOXxHsO4xjLNXqpkbWM/MHSrRKmy7xZzjYdYiM
-	C7F2+vsDGNkBGx6Hspy22WsSaGFZGROLge2devEVNp9mGRsNdOA950sXc92HJO0OG0Hj4OCey6v
-	vSfTopNHZIEZsUVBik6jd1qpSZqqxYmQShmGF/2Rty8TDqPwe66uLlyHJJ+S2XLYVc4gsOZC2UE
-	Os+LvGzH6hZFDc+S24HN6697xicgMg1VNVpOyvS9Xals5gQYPRg7GSaeUa/9Z6RXFb+3ktGuyJ1
-	XxuwInxzJUv5NYkDrIH8ik4xZBIlGjxVSe/rKtkJadB1mbinxwU58xP4wDY7kz6JMiOdmqVVXXv
-	lavJI0DqxjdEf/N+uTNhxXcbgcCPrhT8hNYUOH8L2BVE7OndM0BZiEwsSgNB6Iis0Y+GMaQDWkr
-	D8ug==
-X-Received: by 2002:a17:903:1252:b0:2e9:5c51:19d4 with SMTP id d9443c01a7336-2edb912cd82mr9735785ad.29.1794274618427;
-        Mon, 09 Nov 2026 17:36:58 -0800 (PST)
+        bh=yltZRaMbNObOWm6lZzKevBC+91Sq+SPr7TOnVXF5ecY=;
+        b=pzek9bQgEd9fCLKdEtbPKrQ3EiI8er701W2BrS43jiXnLXKF8Ef7BSTu89OU07IS5H
+         3+XFFHHmyU4A1BHrwHW7ma1BuAWGm/utUMtw4eQ/j/SEKD9vwjAOc/QqDxSF4WD5FQn4
+         LyUTjQ1+5YqC199ezbVMVCh3J5ULr0qC1ye68YBCd9ArH9oOT1N+Xd5ovs2wq4N07qmK
+         KHYqt8aIqjRnKTiJ9wKimUu+UxJdkBq4eyEXT0ugjJfmE0x25/K6iUyhtZkx1Clnkmfv
+         BBKb5H5R3EeL2ffIqoPFVdB07WzWnYl2s+WjYks4evoNLxlE3wlQrcCHvX1FCadzmvkC
+         DIPw==
+X-Forwarded-Encrypted: i=1; AL+hErGbDh6bCPzWaeEtRnY8uYdUbFt0D6Wv7iiD3q31XoMaoEP3kkBN9LHjWk6iXbyX1n+GUVceAnRjW+s=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+brG92iwb36DwxDSw95HgBbJpnpB8eEtLj04VSW+BH/Tm1vgET
+	f36FAY6sKPalEZHZYox1Hu1FDEocOsHBN0ARasjugtQaGAr5ddt/gP/u
+X-Gm-Gg: AYBFou3M/L5jLtlrvcX34TMbUP/t9GXJgglSL8cI7IztMbGA95Cb/FSpbC6luOcBOo2
+	6YuJrY645dNAkHF7SbcOkCcb8LSe0HMUW3UaaYhct2hiHIJlcdSC6Cb4yvXf0Bjq7dUZWy3SwAf
+	bNOGU8CNqX59BOT1LgCadNRQPS7EM6gY51gkdEAF92XFTG9IEZNMqn722ER/EXPlxIzakSVkwEc
+	gXttA8EsQxrq3mXF4iCGgS1LP/MtJ8G9eVq1bTC9yaEscuPv7hBdWWAXBC+RyxZOqQWi2Qm9Ruh
+	jeU/9EEVZPZmvCboKw7SRkGnM4qPUV9gWAVPJrxJxIaQmxgxsdS0eC6kGIfNfKbZ+mzVlT1RrEg
+	GKH0k9kkS1nWZuOQkgp65UwmBPpH4qa5g8QRpqsQGTR7EKdxxQVA8JhJjpolD9S7hRs0aMTP86i
+	cLh1tNUL0PdIyv4EL2qginkCJqcV7lnmfxudjkFcUK2PPFOHES8RcELpwucvxXCP+qDgumjyh5c
+	yYRRlMYacAjnBdpqRrhOLvYVm4by9vCd9Gr+M+Xgu0qBaIV6GJ8S8XVeaapKcPyv48o6EG90M7d
+	D7Ag/bn/Xmr6H9yZFkoUuTpu0SR5AvkoYWoAnxJ8ykNKI2obi+AHZuktv847HUnvP+OCrB2g7GQ
+	JFZYRbvVNmKU70d6WT+YtxS/Ejba9oucOQcfj6ibROfBU4+Jegzx2yXTvolV/JAMOWKUtTN1GnR
+	3uUg==
+X-Received: by 2002:a17:902:d550:b0:2e2:dfb8:818a with SMTP id d9443c01a7336-2edb924bcc8mr8982325ad.62.1794274622006;
+        Mon, 09 Nov 2026 17:37:02 -0800 (PST)
 Received: from ryzen.lan ([2601:644:8000:37f::e34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2edb6d9efd6sm3399055ad.50.2026.11.09.17.36.57
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2edb6d9efd6sm3399055ad.50.2026.11.09.17.36.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2026 17:36:57 -0800 (PST)
+        Mon, 09 Nov 2026 17:37:00 -0800 (PST)
 From: Rosen Penev <rosenp@gmail.com>
 To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -94,9 +94,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-mips@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH v2 4/6] dt-bindings: clock: ath79: add the PCIe PLL clock
-Date: Mon,  9 Nov 2026 17:36:44 -0800
-Message-ID: <20261110013646.1582970-5-rosenp@gmail.com>
+Subject: [PATCH v2 5/6] clk: add a driver for the Atheros/Qualcomm ath79 PLL controller
+Date: Mon,  9 Nov 2026 17:36:45 -0800
+Message-ID: <20261110013646.1582970-6-rosenp@gmail.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261110013646.1582970-1-rosenp@gmail.com>
 References: <20261110013646.1582970-1-rosenp@gmail.com>
@@ -111,28 +111,923 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add an ID for the PCIe PLL, which AR724x, AR934x, QCA953x, QCA955x and
-QCA956x have, so the PCIe host controller nodes can reference it.
+The ath79 clocks are set up by arch/mips/ath79/clock.c, a CLK_OF_DECLARE
+driver that registers every clock before the driver core is up. Add a
+replacement in drivers/clk.
+
+Only the reference and CPU clocks are registered early, with
+CLK_OF_DECLARE_DRIVER(), as the MIPS timer needs the CPU rate from
+plat_time_init(). The other clocks come from a platform driver for the
+same node, like the MT7621 clocks do. The early provider returns
+-EPROBE_DEFER for them until the platform driver fills them in.
+
+The bootloader sets up the PLLs, and the CPU, DDR and AHB clocks are
+read back from the registers as fixed rates, as before. Compared to the
+arch code:
+
+- Each SoC is described by match data: a function that reads the rates,
+  and for AR934x and later the bits of CPU_DDR_CLOCK_CONTROL that select
+  a PLL for each clock. The bypass bits and post dividers of that
+  register are the same on every SoC, so one function handles them.
+  AR934x, QCA953x and QCA955x share the fractional PLL calculation, done
+  with 64-bit intermediates.
+- The AR724x and AR933x clocks were fixed factors of a parent named
+  "ref". They are fixed rates now, like the others, all with the
+  reference clock's clk_hw as the parent.
+- Invalid register contents, a reference clock that is missing and
+  registration failures are reported instead of causing a panic or a
+  division by zero.
+- The AR934x SRIF block, which holds the CPU and DDR DPLLs, is still
+  mapped from its fixed address. It lies inside the register space of
+  the wireless MAC, which ath9k claims, so it can't be a reg entry of
+  the PLL node. The driver only reads it and doesn't claim it.
+- The clocks are no longer registered with clkdev. No driver looks them
+  up by name.
+- AR934x gets its UART1 clock: 100 MHz when UART1_CLK_SEL is set in
+  SWITCH_CLOCK_CONTROL, the reference clock otherwise and on the other
+  SoCs. This is based on an OpenWrt patch by Daniel Golle.
+- The PCIe PLL is a clock, so that a PCIe host driver can use the clk
+  API instead of poking the PLL block through the arch code. Prepare
+  powers the PLL up and takes it out of bypass, waiting for UPDATING to
+  clear after each step. Every write to the register freezes the high
+  speed clocks for about 60 us (AR7242 datasheet, 4.4.4), so a PLL the
+  bootloader already started is left alone. AR724x holds the PLL in
+  reset instead of powering it down, and the register is at 0x10 on
+  AR724x, AR934x and QCA953x, 0x0c on QCA955x and 0x14 on QCA956x. The
+  clock is CLK_IGNORE_UNUSED, so a PLL that no driver claims stays as
+  the bootloader left it.
+
+The rates match the arch code for every SoC, checked in userspace
+against it with random register values. They differ only where the
+arch code overflowed 32 bits with register values that no real
+setup uses.
+
+COMMON_CLK_ATH79 defaults to ATH79, and arch/mips/ath79/clock.c is no
+longer built when it is enabled.
 
 Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- include/dt-bindings/clock/ath79-clk.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ MAINTAINERS              |   8 +
+ arch/mips/ath79/Makefile |   5 +-
+ drivers/clk/Kconfig      |  12 +
+ drivers/clk/Makefile     |   1 +
+ drivers/clk/clk-ath79.c  | 778 +++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 803 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/clk-ath79.c
 
-diff --git a/include/dt-bindings/clock/ath79-clk.h b/include/dt-bindings/clock/ath79-clk.h
-index f8a98e4d206d..e4956afd151d 100644
---- a/include/dt-bindings/clock/ath79-clk.h
-+++ b/include/dt-bindings/clock/ath79-clk.h
-@@ -12,7 +12,8 @@
- #define ATH79_CLK_REF		3
- #define ATH79_CLK_MDIO		4
- #define ATH79_CLK_UART1		5
-+#define ATH79_CLK_PCIE		6
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c57be10c8729..98f42425b37d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4341,6 +4341,14 @@ S:	Supported
+ F:	Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml
+ F:	drivers/rtc/rtc-atcrtc100.c
  
--#define ATH79_CLK_END		6
-+#define ATH79_CLK_END		7
++ATHEROS 71XX/9XXX CLOCK DRIVER
++M:	Alban Bedel <albeu@free.fr>
++M:	Antony Pavlov <antonynpavlov@gmail.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/clock/qca,ath79-pll.yaml
++F:	drivers/clk/clk-ath79.c
++F:	include/dt-bindings/clock/ath79-clk.h
++
+ ATHEROS 71XX/9XXX GPIO DRIVER
+ M:	Alban Bedel <albeu@free.fr>
+ S:	Maintained
+diff --git a/arch/mips/ath79/Makefile b/arch/mips/ath79/Makefile
+index 0fb3aaf42149..b78ffdc9b389 100644
+--- a/arch/mips/ath79/Makefile
++++ b/arch/mips/ath79/Makefile
+@@ -6,6 +6,9 @@
+ # Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
+ #
  
- #endif /* __DT_BINDINGS_ATH79_CLK_H */
+-obj-y	:= prom.o setup.o common.o clock.o
++obj-y	:= prom.o setup.o common.o
++
++# replaced by the clk-ath79 driver
++obj-$(if $(CONFIG_COMMON_CLK_ATH79),,y) += clock.o
+ 
+ obj-$(CONFIG_EARLY_PRINTK)		+= early_printk.o
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 37a8e35d4178..bd5f77cddfe0 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -66,6 +66,18 @@ config COMMON_CLK_APPLE_NCO
+ 	  found on Apple SoCs such as t8103 (M1). The blocks are typically
+ 	  generators of audio clocks.
+ 
++config COMMON_CLK_ATH79
++	bool "Clock driver for Atheros/Qualcomm ath79 SoCs" if COMPILE_TEST
++	depends on ATH79 || COMPILE_TEST
++	depends on OF
++	default ATH79
++	help
++	  Support for the PLL controller of the Atheros/Qualcomm ath79
++	  family of MIPS SoCs: AR71xx, AR724x, AR913x, AR933x, AR934x,
++	  QCA953x, QCA955x and QCA956x. It provides the CPU, DDR, AHB,
++	  MDIO, UART1 and PCIe clocks, derived from the board's reference
++	  clock.
++
+ config COMMON_CLK_MAX77686
+ 	tristate "Clock driver for Maxim 77620/77686/77802 MFD"
+ 	depends on MFD_MAX77686 || MFD_MAX77620 || COMPILE_TEST
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 52d138d4ffc8..589d2ef9dc89 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -58,6 +58,7 @@ endif
+ # please keep this section sorted lexicographically by file path name
+ obj-$(CONFIG_COMMON_CLK_APPLE_NCO)  	+= clk-apple-nco.o
+ obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
++obj-$(CONFIG_COMMON_CLK_ATH79)		+= clk-ath79.o
+ obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
+ obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
+ obj-$(CONFIG_COMMON_CLK_BD718XX)	+= clk-bd718x7.o
+diff --git a/drivers/clk/clk-ath79.c b/drivers/clk/clk-ath79.c
+new file mode 100644
+index 000000000000..3ddbd020afb1
+--- /dev/null
++++ b/drivers/clk/clk-ath79.c
+@@ -0,0 +1,778 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Atheros/Qualcomm ath79 PLL controller
++ *
++ * Copyright (C) 2010-2011 Jaiganesh Narayanan <jnarayanan@atheros.com>
++ * Copyright (C) 2011 Gabor Juhos <juhosg@openwrt.org>
++ *
++ * Parts of this file are based on Atheros' 2.6.15/2.6.31 BSP
++ *
++ * The bootloader sets up the CPU, DDR and AHB clocks, and they are read
++ * back here as fixed rates. The CPU clock is registered early, as the
++ * MIPS timer needs it from plat_time_init(). The other clocks are
++ * registered by the platform driver.
++ */
++
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/math64.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/property.h>
++#include <linux/slab.h>
++
++#include <dt-bindings/clock/ath79-clk.h>
++
++#define AR71XX_PLL_CPU_CONFIG_REG			0x00
++#define AR71XX_PLL_FB					GENMASK(7, 3)
++#define AR71XX_CPU_DIV					GENMASK(17, 16)
++#define AR71XX_DDR_DIV					GENMASK(19, 18)
++#define AR71XX_AHB_DIV					GENMASK(22, 20)
++
++#define AR724X_PLL_CPU_CONFIG_REG			0x00
++#define AR724X_PLL_FB					GENMASK(9, 0)
++#define AR724X_PLL_REF_DIV				GENMASK(13, 10)
++#define AR724X_AHB_DIV					GENMASK(19, 19)
++#define AR724X_DDR_DIV					GENMASK(23, 22)
++#define AR724X_PLL_PCIE_CONFIG_REG			0x10
++#define AR724X_PLL_PCIE_CONFIG_PLL_BYPASS		BIT(16)
++#define AR724X_PLL_PCIE_CONFIG_UPDATING			BIT(17)
++#define AR724X_PLL_PCIE_CONFIG_PLL_RESET		BIT(25)
++
++#define AR933X_PLL_CPU_CONFIG_REG			0x00
++#define AR933X_PLL_CLOCK_CTRL_REG			0x08
++#define AR933X_PLL_CPU_CONFIG_NINT			GENMASK(15, 10)
++#define AR933X_PLL_CPU_CONFIG_REFDIV			GENMASK(20, 16)
++#define AR933X_PLL_CPU_CONFIG_OUTDIV			GENMASK(25, 23)
++#define AR933X_PLL_CLOCK_CTRL_BYPASS			BIT(2)
++#define AR933X_PLL_CLOCK_CTRL_CPU_DIV			GENMASK(6, 5)
++#define AR933X_PLL_CLOCK_CTRL_DDR_DIV			GENMASK(11, 10)
++#define AR933X_PLL_CLOCK_CTRL_AHB_DIV			GENMASK(17, 15)
++
++/* AR934x, QCA953x and QCA955x */
++#define AR934X_PLL_CPU_CONFIG_REG			0x00
++#define AR934X_PLL_DDR_CONFIG_REG			0x04
++#define AR934X_PLL_CLK_CTRL_REG				0x08
++#define AR934X_PLL_PCIE_CONFIG_REG			0x10
++#define AR934X_PLL_SWITCH_CLOCK_CONTROL_REG		0x24
++#define AR934X_PLL_CPU_CONFIG_NFRAC			GENMASK(5, 0)
++#define AR934X_PLL_CPU_CONFIG_NINT			GENMASK(11, 6)
++#define AR934X_PLL_CPU_CONFIG_REFDIV			GENMASK(16, 12)
++#define AR934X_PLL_CPU_CONFIG_OUTDIV			GENMASK(20, 19)
++#define QCA953X_PLL_CPU_CONFIG_OUTDIV			GENMASK(21, 19)
++#define AR934X_PLL_DDR_CONFIG_NFRAC			GENMASK(9, 0)
++#define AR934X_PLL_DDR_CONFIG_NINT			GENMASK(15, 10)
++#define AR934X_PLL_DDR_CONFIG_REFDIV			GENMASK(20, 16)
++#define AR934X_PLL_DDR_CONFIG_OUTDIV			GENMASK(25, 23)
++#define AR934X_PLL_SWITCH_CLOCK_CONTROL_MDIO_CLK_SEL	BIT(6)
++#define AR934X_PLL_SWITCH_CLOCK_CONTROL_UART1_CLK_SEL	BIT(7)
++#define AR934X_PLL_PCIE_CONFIG_PLL_BYPASS		BIT(16)
++#define AR934X_PLL_PCIE_CONFIG_PLL_PWD			BIT(30)
++#define AR934X_PLL_PCIE_CONFIG_UPDATING			BIT(31)
++
++#define QCA955X_PLL_PCIE_CONFIG_REG			0x0c
++
++#define QCA956X_PLL_CPU_CONFIG_REG			0x00
++#define QCA956X_PLL_CPU_CONFIG1_REG			0x04
++#define QCA956X_PLL_DDR_CONFIG_REG			0x08
++#define QCA956X_PLL_DDR_CONFIG1_REG			0x0c
++#define QCA956X_PLL_CLK_CTRL_REG			0x10
++#define QCA956X_PLL_PCIE_CONFIG_REG			0x14
++#define QCA956X_PLL_CPU_CONFIG_REFDIV			GENMASK(16, 12)
++#define QCA956X_PLL_CPU_CONFIG_OUTDIV			GENMASK(21, 19)
++#define QCA956X_PLL_DDR_CONFIG_REFDIV			GENMASK(20, 16)
++#define QCA956X_PLL_DDR_CONFIG_OUTDIV			GENMASK(25, 23)
++#define QCA956X_PLL_CONFIG1_NFRAC_L			GENMASK(4, 0)
++#define QCA956X_PLL_CONFIG1_NFRAC_H			GENMASK(17, 5)
++#define QCA956X_PLL_CONFIG1_NINT			GENMASK(26, 18)
++
++/*
++ * CPU_DDR_CLOCK_CONTROL on AR934x and later: a bypass bit and a post
++ * divider for each of the CPU, DDR and AHB clocks, at the same place on
++ * every SoC. Which PLL a clock takes and the bit selecting it differ.
++ */
++#define ATH79_CLK_CTRL_BYPASS(i)			BIT(2 + (i))
++#define ATH79_CLK_CTRL_POST_DIV_SHIFT(i)		(5 + 5 * (i))
++#define ATH79_CLK_CTRL_POST_DIV_MASK			0x1f
++
++/*
++ * The SRIF block holds the AR934x DPLLs. It sits inside the register
++ * space of the wireless MAC, which claims it, so it is mapped from its
++ * fixed address and only read.
++ */
++#define AR934X_SRIF_BASE				0x18116000
++#define AR934X_SRIF_SIZE				0x1000
++#define AR934X_SRIF_CPU_DPLL1_REG			0x1c0
++#define AR934X_SRIF_CPU_DPLL2_REG			0x1c4
++#define AR934X_SRIF_DDR_DPLL1_REG			0x240
++#define AR934X_SRIF_DDR_DPLL2_REG			0x244
++#define AR934X_SRIF_DPLL1_REFDIV			GENMASK(31, 27)
++#define AR934X_SRIF_DPLL1_NINT				GENMASK(26, 18)
++#define AR934X_SRIF_DPLL1_NFRAC				GENMASK(17, 0)
++#define AR934X_SRIF_DPLL2_LOCAL_PLL			BIT(30)
++#define AR934X_SRIF_DPLL2_OUTDIV			GENMASK(15, 13)
++
++#define ATH79_SWITCH_CLK_RATE				100000000
++
++enum { ATH79_OUT_CPU, ATH79_OUT_DDR, ATH79_OUT_AHB, ATH79_OUT_NUM };
++
++struct ath79_clk_regs {
++	void __iomem *pll;
++	void __iomem *srif;	/* AR934x only */
++};
++
++struct ath79_clk_ctrl_sel {
++	u32 bit;
++	bool set_is_cpu_pll;	/* the bit selects the CPU PLL, not the DDR PLL */
++};
++
++struct ath79_pcie_pll_desc {
++	unsigned int reg;
++	u32 pwd;	/* powers the PLL down or holds it in reset */
++	u32 bypass;
++	u32 updating;	/* set while a new setting is being applied */
++};
++
++struct ath79_clk_soc_data {
++	int (*get_rates)(const struct ath79_clk_soc_data *soc,
++			 const struct ath79_clk_regs *regs, unsigned long ref,
++			 unsigned long *rates);
++	/* AR934x, QCA953x and QCA955x */
++	u32 cpu_outdiv;
++	/* AR934x and later */
++	struct ath79_clk_ctrl_sel sel[ATH79_OUT_NUM];
++	const struct ath79_pcie_pll_desc *pcie;
++	bool has_srif;
++	bool has_switch_clk;	/* AR934x MDIO and UART1 clock selection */
++};
++
++struct ath79_pcie_pll {
++	struct clk_hw hw;
++	void __iomem *reg;
++	u32 pwd;
++	u32 bypass;
++	u32 updating;
++};
++
++#define to_ath79_pcie_pll(_hw) container_of(_hw, struct ath79_pcie_pll, hw)
++
++/*
++ * The provider registered early. It holds the reference and CPU clocks,
++ * and the platform driver fills in the others.
++ */
++static struct clk_hw_onecell_data *ath79_clk_data;
++
++/* ref * mult / div, or 0 for an unset divider */
++static unsigned long ath79_ref_mul_div(unsigned long ref, u32 mult, u32 div)
++{
++	return div ? div_u64((u64)ref * mult, div) : 0;
++}
++
++/* a fractional PLL: ref / ref_div * (nint + nfrac / frac) / 2^out_div */
++static unsigned long ath79_pll_rate(unsigned long ref, u32 ref_div, u32 nint,
++				    u32 nfrac, u32 frac, u32 out_div)
++{
++	u64 rate;
++
++	if (!ref_div)
++		return 0;
++
++	rate = div_u64((u64)ref * nint, ref_div);
++	rate += div_u64((u64)ref * nfrac, ref_div * frac);
++
++	return rate >> out_div;
++}
++
++static int ar71xx_get_rates(const struct ath79_clk_soc_data *soc,
++			    const struct ath79_clk_regs *regs,
++			    unsigned long ref, unsigned long *rates)
++{
++	unsigned long freq;
++	u32 pll;
++
++	pll = readl(regs->pll + AR71XX_PLL_CPU_CONFIG_REG);
++
++	freq = ref * (FIELD_GET(AR71XX_PLL_FB, pll) + 1);
++	rates[ATH79_OUT_CPU] = freq / (FIELD_GET(AR71XX_CPU_DIV, pll) + 1);
++	rates[ATH79_OUT_DDR] = freq / (FIELD_GET(AR71XX_DDR_DIV, pll) + 1);
++	rates[ATH79_OUT_AHB] = rates[ATH79_OUT_CPU] /
++			       ((FIELD_GET(AR71XX_AHB_DIV, pll) + 1) * 2);
++
++	return 0;
++}
++
++static int ar724x_get_rates(const struct ath79_clk_soc_data *soc,
++			    const struct ath79_clk_regs *regs,
++			    unsigned long ref, unsigned long *rates)
++{
++	u32 pll, mult, div, ddr_div, ahb_div;
++
++	pll = readl(regs->pll + AR724X_PLL_CPU_CONFIG_REG);
++
++	mult = FIELD_GET(AR724X_PLL_FB, pll);
++	div = FIELD_GET(AR724X_PLL_REF_DIV, pll) * 2;
++	ddr_div = FIELD_GET(AR724X_DDR_DIV, pll) + 1;
++	ahb_div = (FIELD_GET(AR724X_AHB_DIV, pll) + 1) * 2;
++
++	rates[ATH79_OUT_CPU] = ath79_ref_mul_div(ref, mult, div);
++	rates[ATH79_OUT_DDR] = ath79_ref_mul_div(ref, mult, div * ddr_div);
++	rates[ATH79_OUT_AHB] = ath79_ref_mul_div(ref, mult, div * ahb_div);
++
++	return 0;
++}
++
++static int ar933x_get_rates(const struct ath79_clk_soc_data *soc,
++			    const struct ath79_clk_regs *regs,
++			    unsigned long ref, unsigned long *rates)
++{
++	u32 ctrl, pll, nint, div, out_div, cpu_div, ddr_div, ahb_div;
++
++	ctrl = readl(regs->pll + AR933X_PLL_CLOCK_CTRL_REG);
++	if (ctrl & AR933X_PLL_CLOCK_CTRL_BYPASS) {
++		rates[ATH79_OUT_CPU] = ref;
++		rates[ATH79_OUT_DDR] = ref;
++		rates[ATH79_OUT_AHB] = ref;
++		return 0;
++	}
++
++	pll = readl(regs->pll + AR933X_PLL_CPU_CONFIG_REG);
++
++	nint = FIELD_GET(AR933X_PLL_CPU_CONFIG_NINT, pll);
++	out_div = FIELD_GET(AR933X_PLL_CPU_CONFIG_OUTDIV, pll);
++	div = FIELD_GET(AR933X_PLL_CPU_CONFIG_REFDIV, pll) << max(out_div, 1U);
++	cpu_div = FIELD_GET(AR933X_PLL_CLOCK_CTRL_CPU_DIV, ctrl) + 1;
++	ddr_div = FIELD_GET(AR933X_PLL_CLOCK_CTRL_DDR_DIV, ctrl) + 1;
++	ahb_div = FIELD_GET(AR933X_PLL_CLOCK_CTRL_AHB_DIV, ctrl) + 1;
++
++	rates[ATH79_OUT_CPU] = ath79_ref_mul_div(ref, nint, div * cpu_div);
++	rates[ATH79_OUT_DDR] = ath79_ref_mul_div(ref, nint, div * ddr_div);
++	rates[ATH79_OUT_AHB] = ath79_ref_mul_div(ref, nint, div * ahb_div);
++
++	return 0;
++}
++
++/* the CPU, DDR and AHB clocks from CPU_DDR_CLOCK_CONTROL */
++static void ath79_clk_ctrl_rates(const struct ath79_clk_soc_data *soc,
++				 u32 ctrl, unsigned long ref,
++				 unsigned long cpu_pll, unsigned long ddr_pll,
++				 unsigned long *rates)
++{
++	const struct ath79_clk_ctrl_sel *sel;
++	unsigned long pll;
++	u32 post_div;
++	int i;
++
++	for (i = 0; i < ATH79_OUT_NUM; i++) {
++		if (ctrl & ATH79_CLK_CTRL_BYPASS(i)) {
++			rates[i] = ref;
++			continue;
++		}
++
++		sel = &soc->sel[i];
++		pll = !!(ctrl & sel->bit) == sel->set_is_cpu_pll ? cpu_pll
++								 : ddr_pll;
++		post_div = (ctrl >> ATH79_CLK_CTRL_POST_DIV_SHIFT(i)) &
++			   ATH79_CLK_CTRL_POST_DIV_MASK;
++		rates[i] = pll / (post_div + 1);
++	}
++}
++
++/* the AR934x DPLLs in the SRIF block, when they drive the CPU or DDR clock */
++static bool ar934x_srif_pll_rate(const struct ath79_clk_regs *regs,
++				 unsigned int dpll1, unsigned int dpll2,
++				 unsigned long ref, unsigned long *rate)
++{
++	u32 pll, out_div;
++
++	if (!regs->srif)
++		return false;
++
++	pll = readl(regs->srif + dpll2);
++	if (!(pll & AR934X_SRIF_DPLL2_LOCAL_PLL))
++		return false;
++
++	out_div = FIELD_GET(AR934X_SRIF_DPLL2_OUTDIV, pll);
++	pll = readl(regs->srif + dpll1);
++	*rate = ath79_pll_rate(ref, FIELD_GET(AR934X_SRIF_DPLL1_REFDIV, pll),
++			       FIELD_GET(AR934X_SRIF_DPLL1_NINT, pll),
++			       FIELD_GET(AR934X_SRIF_DPLL1_NFRAC, pll),
++			       1 << 18, out_div);
++	return true;
++}
++
++/* AR934x, QCA953x and QCA955x */
++static int ar934x_get_rates(const struct ath79_clk_soc_data *soc,
++			    const struct ath79_clk_regs *regs,
++			    unsigned long ref, unsigned long *rates)
++{
++	unsigned long cpu_pll, ddr_pll;
++	u32 pll, ref_div, nint, nfrac, out_div;
++
++	if (!ar934x_srif_pll_rate(regs, AR934X_SRIF_CPU_DPLL1_REG,
++				  AR934X_SRIF_CPU_DPLL2_REG, ref, &cpu_pll)) {
++		pll = readl(regs->pll + AR934X_PLL_CPU_CONFIG_REG);
++		ref_div = FIELD_GET(AR934X_PLL_CPU_CONFIG_REFDIV, pll);
++		nint = FIELD_GET(AR934X_PLL_CPU_CONFIG_NINT, pll);
++		nfrac = FIELD_GET(AR934X_PLL_CPU_CONFIG_NFRAC, pll);
++		out_div = (pll & soc->cpu_outdiv) >> __ffs(soc->cpu_outdiv);
++		cpu_pll = ath79_pll_rate(ref, ref_div, nint, nfrac, 1 << 6,
++					 out_div);
++	}
++
++	if (!ar934x_srif_pll_rate(regs, AR934X_SRIF_DDR_DPLL1_REG,
++				  AR934X_SRIF_DDR_DPLL2_REG, ref, &ddr_pll)) {
++		pll = readl(regs->pll + AR934X_PLL_DDR_CONFIG_REG);
++		ref_div = FIELD_GET(AR934X_PLL_DDR_CONFIG_REFDIV, pll);
++		nint = FIELD_GET(AR934X_PLL_DDR_CONFIG_NINT, pll);
++		nfrac = FIELD_GET(AR934X_PLL_DDR_CONFIG_NFRAC, pll);
++		out_div = FIELD_GET(AR934X_PLL_DDR_CONFIG_OUTDIV, pll);
++		ddr_pll = ath79_pll_rate(ref, ref_div, nint, nfrac, 1 << 10,
++					 out_div);
++	}
++
++	ath79_clk_ctrl_rates(soc, readl(regs->pll + AR934X_PLL_CLK_CTRL_REG),
++			     ref, cpu_pll, ddr_pll, rates);
++	return 0;
++}
++
++static unsigned long qca956x_pll_rate(unsigned long ref, u32 config,
++				      u32 config1, u32 refdiv_mask,
++				      u32 outdiv_mask)
++{
++	u32 ref_div, out_div, nint, hfrac, lfrac;
++	u64 rate;
++
++	ref_div = (config & refdiv_mask) >> __ffs(refdiv_mask);
++	out_div = (config & outdiv_mask) >> __ffs(outdiv_mask);
++	nint = FIELD_GET(QCA956X_PLL_CONFIG1_NINT, config1);
++	hfrac = FIELD_GET(QCA956X_PLL_CONFIG1_NFRAC_H, config1);
++	lfrac = FIELD_GET(QCA956X_PLL_CONFIG1_NFRAC_L, config1);
++
++	if (!ref_div)
++		return 0;
++
++	rate = div_u64((u64)ref * nint, ref_div);
++	rate += div_u64((u64)ref * lfrac, (ref_div * 25) << 13);
++	rate += div_u64((u64)ref * (hfrac >> 13), ref_div);
++
++	return rate >> out_div;
++}
++
++static int qca956x_get_rates(const struct ath79_clk_soc_data *soc,
++			     const struct ath79_clk_regs *regs,
++			     unsigned long ref, unsigned long *rates)
++{
++	unsigned long cpu_pll, ddr_pll;
++
++	cpu_pll = qca956x_pll_rate(ref,
++				   readl(regs->pll + QCA956X_PLL_CPU_CONFIG_REG),
++				   readl(regs->pll + QCA956X_PLL_CPU_CONFIG1_REG),
++				   QCA956X_PLL_CPU_CONFIG_REFDIV,
++				   QCA956X_PLL_CPU_CONFIG_OUTDIV);
++	ddr_pll = qca956x_pll_rate(ref,
++				   readl(regs->pll + QCA956X_PLL_DDR_CONFIG_REG),
++				   readl(regs->pll + QCA956X_PLL_DDR_CONFIG1_REG),
++				   QCA956X_PLL_DDR_CONFIG_REFDIV,
++				   QCA956X_PLL_DDR_CONFIG_OUTDIV);
++
++	ath79_clk_ctrl_rates(soc, readl(regs->pll + QCA956X_PLL_CLK_CTRL_REG),
++			     ref, cpu_pll, ddr_pll, rates);
++	return 0;
++}
++
++static int ath79_get_rates(const struct ath79_clk_soc_data *soc,
++			   const struct ath79_clk_regs *regs, unsigned long ref,
++			   unsigned long *rates)
++{
++	int ret, i;
++
++	ret = soc->get_rates(soc, regs, ref, rates);
++	if (ret)
++		return ret;
++
++	/* a zero divider in the registers */
++	for (i = 0; i < ATH79_OUT_NUM; i++)
++		if (!rates[i])
++			return -EINVAL;
++
++	return 0;
++}
++
++static int ath79_pcie_pll_wait(struct ath79_pcie_pll *pll)
++{
++	u32 t;
++
++	return readl_poll_timeout(pll->reg, t, !(t & pll->updating), 10, 1000);
++}
++
++static int ath79_pcie_pll_is_prepared(struct clk_hw *hw)
++{
++	struct ath79_pcie_pll *pll = to_ath79_pcie_pll(hw);
++
++	return !(readl(pll->reg) & (pll->pwd | pll->bypass));
++}
++
++static int ath79_pcie_pll_prepare(struct clk_hw *hw)
++{
++	struct ath79_pcie_pll *pll = to_ath79_pcie_pll(hw);
++	u32 t;
++	int ret;
++
++	/*
++	 * Every write freezes the high speed clocks for about 60 us, so
++	 * leave a PLL that the bootloader already started alone.
++	 */
++	if (ath79_pcie_pll_is_prepared(hw))
++		return 0;
++
++	t = readl(pll->reg) & ~pll->pwd;
++	writel(t, pll->reg);
++	ret = ath79_pcie_pll_wait(pll);
++	if (ret)
++		return ret;
++
++	writel(t & ~pll->bypass, pll->reg);
++	return ath79_pcie_pll_wait(pll);
++}
++
++static void ath79_pcie_pll_unprepare(struct clk_hw *hw)
++{
++	struct ath79_pcie_pll *pll = to_ath79_pcie_pll(hw);
++	u32 t;
++
++	t = readl(pll->reg) | pll->bypass;
++	writel(t, pll->reg);
++	writel(t | pll->pwd, pll->reg);
++}
++
++static const struct clk_ops ath79_pcie_pll_ops = {
++	.prepare = ath79_pcie_pll_prepare,
++	.unprepare = ath79_pcie_pll_unprepare,
++	.is_prepared = ath79_pcie_pll_is_prepared,
++};
++
++static struct clk_hw *ath79_pcie_pll_register(struct device *dev,
++					      void __iomem *base,
++					      const struct ath79_pcie_pll_desc *desc)
++{
++	struct clk_init_data init = {
++		.name = "pcie",
++		.ops = &ath79_pcie_pll_ops,
++		/* keep a PLL that no driver claims as the bootloader left it */
++		.flags = CLK_IGNORE_UNUSED,
++	};
++	struct ath79_pcie_pll *pll;
++	int ret;
++
++	pll = devm_kzalloc_obj(dev, *pll);
++	if (!pll)
++		return ERR_PTR(-ENOMEM);
++
++	pll->reg = base + desc->reg;
++	pll->pwd = desc->pwd;
++	pll->bypass = desc->bypass;
++	pll->updating = desc->updating;
++	pll->hw.init = &init;
++
++	ret = devm_clk_hw_register(dev, &pll->hw);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return &pll->hw;
++}
++
++/* AR724x holds the PLL in reset instead of powering it down */
++static const struct ath79_pcie_pll_desc ar724x_pcie_pll = {
++	.reg = AR724X_PLL_PCIE_CONFIG_REG,
++	.pwd = AR724X_PLL_PCIE_CONFIG_PLL_RESET,
++	.bypass = AR724X_PLL_PCIE_CONFIG_PLL_BYPASS,
++	.updating = AR724X_PLL_PCIE_CONFIG_UPDATING,
++};
++
++#define AR934X_PCIE_PLL(_reg)					\
++	{							\
++		.reg = (_reg),					\
++		.pwd = AR934X_PLL_PCIE_CONFIG_PLL_PWD,		\
++		.bypass = AR934X_PLL_PCIE_CONFIG_PLL_BYPASS,	\
++		.updating = AR934X_PLL_PCIE_CONFIG_UPDATING,	\
++	}
++
++static const struct ath79_pcie_pll_desc ar934x_pcie_pll =
++	AR934X_PCIE_PLL(AR934X_PLL_PCIE_CONFIG_REG);
++static const struct ath79_pcie_pll_desc qca955x_pcie_pll =
++	AR934X_PCIE_PLL(QCA955X_PLL_PCIE_CONFIG_REG);
++static const struct ath79_pcie_pll_desc qca956x_pcie_pll =
++	AR934X_PCIE_PLL(QCA956X_PLL_PCIE_CONFIG_REG);
++
++static const struct ath79_clk_soc_data ar7100_clk_data = {
++	.get_rates = ar71xx_get_rates,
++};
++
++static const struct ath79_clk_soc_data ar7240_clk_data = {
++	.get_rates = ar724x_get_rates,
++	.pcie = &ar724x_pcie_pll,
++};
++
++/* AR913x is an AR724x without PCIe */
++static const struct ath79_clk_soc_data ar9130_clk_data = {
++	.get_rates = ar724x_get_rates,
++};
++
++static const struct ath79_clk_soc_data ar9330_clk_data = {
++	.get_rates = ar933x_get_rates,
++};
++
++static const struct ath79_clk_soc_data ar9340_clk_data = {
++	.get_rates = ar934x_get_rates,
++	.cpu_outdiv = AR934X_PLL_CPU_CONFIG_OUTDIV,
++	.sel = {
++		[ATH79_OUT_CPU] = { BIT(20), true },
++		[ATH79_OUT_DDR] = { BIT(21), false },
++		[ATH79_OUT_AHB] = { BIT(24), false },
++	},
++	.pcie = &ar934x_pcie_pll,
++	.has_srif = true,
++	.has_switch_clk = true,
++};
++
++static const struct ath79_clk_soc_data qca9530_clk_data = {
++	.get_rates = ar934x_get_rates,
++	.cpu_outdiv = QCA953X_PLL_CPU_CONFIG_OUTDIV,
++	.sel = {
++		[ATH79_OUT_CPU] = { BIT(20), true },
++		[ATH79_OUT_DDR] = { BIT(21), false },
++		[ATH79_OUT_AHB] = { BIT(24), false },
++	},
++	.pcie = &ar934x_pcie_pll,
++};
++
++static const struct ath79_clk_soc_data qca9550_clk_data = {
++	.get_rates = ar934x_get_rates,
++	.cpu_outdiv = AR934X_PLL_CPU_CONFIG_OUTDIV,
++	.sel = {
++		[ATH79_OUT_CPU] = { BIT(20), false },
++		[ATH79_OUT_DDR] = { BIT(21), true },
++		[ATH79_OUT_AHB] = { BIT(24), false },
++	},
++	.pcie = &qca955x_pcie_pll,
++};
++
++static const struct ath79_clk_soc_data qca9560_clk_data = {
++	.get_rates = qca956x_get_rates,
++	.sel = {
++		[ATH79_OUT_CPU] = { BIT(21), false },
++		[ATH79_OUT_DDR] = { BIT(20), true },
++		[ATH79_OUT_AHB] = { BIT(24), false },
++	},
++	.pcie = &qca956x_pcie_pll,
++};
++
++static const struct of_device_id ath79_clk_of_match[] = {
++	{ .compatible = "qca,ar7100-pll", .data = &ar7100_clk_data },
++	{ .compatible = "qca,ar7240-pll", .data = &ar7240_clk_data },
++	{ .compatible = "qca,ar9130-pll", .data = &ar9130_clk_data },
++	{ .compatible = "qca,ar9330-pll", .data = &ar9330_clk_data },
++	{ .compatible = "qca,ar9340-pll", .data = &ar9340_clk_data },
++	{ .compatible = "qca,qca9530-pll", .data = &qca9530_clk_data },
++	{ .compatible = "qca,qca9550-pll", .data = &qca9550_clk_data },
++	{ .compatible = "qca,qca9560-pll", .data = &qca9560_clk_data },
++	{ /* sentinel */ }
++};
++
++static void __init ath79_clk_early_init(struct device_node *np)
++{
++	const struct ath79_clk_soc_data *soc;
++	unsigned long rates[ATH79_OUT_NUM];
++	struct ath79_clk_regs regs = {};
++	struct clk_hw *ref, *cpu;
++	struct clk *ref_clk;
++	int ret, i;
++
++	soc = of_match_node(ath79_clk_of_match, np)->data;
++
++	/*
++	 * The board's crystal. Old device trees leave its rate out, and the
++	 * arch code then registers it from the bootstrap pins as "ref".
++	 */
++	ref_clk = of_clk_get_by_name(np, "ref");
++	if (IS_ERR(ref_clk))
++		ref_clk = clk_get_sys(NULL, "ref");
++	if (IS_ERR(ref_clk)) {
++		pr_err("%pOF: no reference clock\n", np);
++		return;
++	}
++	ref = __clk_get_hw(ref_clk);
++
++	regs.pll = of_iomap(np, 0);
++	if (!regs.pll) {
++		pr_err("%pOF: can't map the PLL registers\n", np);
++		goto err_put_ref;
++	}
++
++	if (soc->has_srif) {
++		regs.srif = ioremap(AR934X_SRIF_BASE, AR934X_SRIF_SIZE);
++		if (!regs.srif) {
++			pr_err("%pOF: can't map the SRIF registers\n", np);
++			iounmap(regs.pll);
++			goto err_put_ref;
++		}
++	}
++
++	ret = ath79_get_rates(soc, &regs, clk_hw_get_rate(ref), rates);
++
++	if (regs.srif)
++		iounmap(regs.srif);
++	iounmap(regs.pll);
++
++	if (ret) {
++		pr_err("%pOF: invalid PLL setup\n", np);
++		goto err_put_ref;
++	}
++
++	ath79_clk_data = kzalloc_flex(*ath79_clk_data, hws, ATH79_CLK_END);
++	if (!ath79_clk_data)
++		goto err_put_ref;
++
++	ath79_clk_data->num = ATH79_CLK_END;
++	for (i = 0; i < ATH79_CLK_END; i++)
++		ath79_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
++
++	cpu = clk_hw_register_fixed_rate_parent_hw(NULL, "cpu", ref, 0,
++						   rates[ATH79_OUT_CPU]);
++	if (IS_ERR(cpu)) {
++		pr_err("%pOF: failed to register the CPU clock: %pe\n", np, cpu);
++		goto err_free_data;
++	}
++
++	ath79_clk_data->hws[ATH79_CLK_REF] = ref;
++	ath79_clk_data->hws[ATH79_CLK_CPU] = cpu;
++
++	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, ath79_clk_data);
++	if (ret) {
++		pr_err("%pOF: failed to add the clock provider: %pe\n", np,
++		       ERR_PTR(ret));
++		clk_hw_unregister_fixed_rate(cpu);
++		goto err_free_data;
++	}
++
++	return;
++
++err_free_data:
++	kfree(ath79_clk_data);
++	ath79_clk_data = NULL;
++err_put_ref:
++	clk_put(ref_clk);
++}
++
++CLK_OF_DECLARE_DRIVER(ar7100_clk, "qca,ar7100-pll", ath79_clk_early_init);
++CLK_OF_DECLARE_DRIVER(ar7240_clk, "qca,ar7240-pll", ath79_clk_early_init);
++CLK_OF_DECLARE_DRIVER(ar9130_clk, "qca,ar9130-pll", ath79_clk_early_init);
++CLK_OF_DECLARE_DRIVER(ar9330_clk, "qca,ar9330-pll", ath79_clk_early_init);
++CLK_OF_DECLARE_DRIVER(ar9340_clk, "qca,ar9340-pll", ath79_clk_early_init);
++CLK_OF_DECLARE_DRIVER(qca9530_clk, "qca,qca9530-pll", ath79_clk_early_init);
++CLK_OF_DECLARE_DRIVER(qca9550_clk, "qca,qca9550-pll", ath79_clk_early_init);
++CLK_OF_DECLARE_DRIVER(qca9560_clk, "qca,qca9560-pll", ath79_clk_early_init);
++
++static struct clk_hw *ath79_clk_register(struct device *dev, const char *name,
++					 struct clk_hw *parent,
++					 unsigned long rate)
++{
++	struct clk_parent_data pdata = { .hw = parent };
++
++	return devm_clk_hw_register_fixed_rate_parent_data(dev, name,
++							   parent ? &pdata : NULL,
++							   0, rate);
++}
++
++static int ath79_clk_probe(struct platform_device *pdev)
++{
++	struct clk_hw *hws[ATH79_CLK_END];
++	const struct ath79_clk_soc_data *soc;
++	unsigned long rates[ATH79_OUT_NUM];
++	struct device *dev = &pdev->dev;
++	struct ath79_clk_regs regs = {};
++	struct clk_hw *ref;
++	int ret, i;
++
++	if (!ath79_clk_data)
++		return dev_err_probe(dev, -ENODEV,
++				     "the early clock setup failed\n");
++
++	soc = device_get_match_data(dev);
++	ref = ath79_clk_data->hws[ATH79_CLK_REF];
++
++	regs.pll = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(regs.pll))
++		return PTR_ERR(regs.pll);
++
++	if (soc->has_srif) {
++		regs.srif = devm_ioremap(dev, AR934X_SRIF_BASE,
++					 AR934X_SRIF_SIZE);
++		if (!regs.srif)
++			return -ENOMEM;
++	}
++
++	ret = ath79_get_rates(soc, &regs, clk_hw_get_rate(ref), rates);
++	if (ret)
++		return dev_err_probe(dev, ret, "invalid PLL setup\n");
++
++	hws[ATH79_CLK_REF] = ref;
++	hws[ATH79_CLK_CPU] = ath79_clk_data->hws[ATH79_CLK_CPU];
++	hws[ATH79_CLK_DDR] = ath79_clk_register(dev, "ddr", ref,
++						rates[ATH79_OUT_DDR]);
++	hws[ATH79_CLK_AHB] = ath79_clk_register(dev, "ahb", ref,
++						rates[ATH79_OUT_AHB]);
++	hws[ATH79_CLK_MDIO] = ref;
++	hws[ATH79_CLK_UART1] = ref;
++	hws[ATH79_CLK_PCIE] = ERR_PTR(-ENOENT);
++
++	if (soc->has_switch_clk) {
++		u32 ctrl = readl(regs.pll + AR934X_PLL_SWITCH_CLOCK_CONTROL_REG);
++
++		if (ctrl & AR934X_PLL_SWITCH_CLOCK_CONTROL_MDIO_CLK_SEL)
++			hws[ATH79_CLK_MDIO] =
++				ath79_clk_register(dev, "mdio", NULL,
++						   ATH79_SWITCH_CLK_RATE);
++
++		if (ctrl & AR934X_PLL_SWITCH_CLOCK_CONTROL_UART1_CLK_SEL)
++			hws[ATH79_CLK_UART1] =
++				ath79_clk_register(dev, "uart1", NULL,
++						   ATH79_SWITCH_CLK_RATE);
++	}
++
++	if (soc->pcie)
++		hws[ATH79_CLK_PCIE] = ath79_pcie_pll_register(dev, regs.pll,
++							      soc->pcie);
++
++	for (i = 0; i < ATH79_CLK_END; i++) {
++		if (IS_ERR(hws[i]) && PTR_ERR(hws[i]) != -ENOENT)
++			return dev_err_probe(dev, PTR_ERR(hws[i]),
++					     "failed to register clock %d\n", i);
++	}
++
++	/*
++	 * Hand the clocks to the provider registered early. Nothing can
++	 * fail from here on, and the driver can't be unbound.
++	 */
++	for (i = 0; i < ATH79_CLK_END; i++)
++		ath79_clk_data->hws[i] = hws[i];
++
++	return 0;
++}
++
++static struct platform_driver ath79_clk_driver = {
++	.probe = ath79_clk_probe,
++	.driver = {
++		.name = "ath79-clk",
++		.of_match_table = ath79_clk_of_match,
++		.suppress_bind_attrs = true,
++	},
++};
++builtin_platform_driver(ath79_clk_driver);
 -- 
 2.56.0
 
