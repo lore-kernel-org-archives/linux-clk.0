@@ -1,93 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794319921;
-	b=07fUMffk/BMRFMyJN1hRce+8lEk5ylNBfqZLnDrFilE9LtYjDneKTOrnomgT54z/m2Et
-	 ojkbSRNx56dmpG/C5X4eOPW9GRKr+zDqjKjYsTu8eRhZvCSQo5uhrkFgJ9YrJbx7K8fbv
-	 dRz7Cm3ELzbuaPQoN/u8AlIAD1jZz1DaiG3vQSxcPZmNGx+bQ5LLs9Yy3E11mPXqSUA72
-	 vbx5zTOWSd3U722khjQjpcJKASxpe6NZ0XW01q7+t374XTbbhKIMl9OJSp6JQLGNoB+/K
-	 efT3aCqip6LRbxmN6pxabtipkJe+YLXbpGrXcoIgTlnPvPKQDPkyy6PzdoByF6W9pdg==
+	t=1794320529;
+	b=DCeC/vi59h3E3xAkueAGxZpEv2MZ9DJs/WIBz9NnJn6wNDJ7h7hjSDUwqYwfzrcO/abN
+	 vnAc16pHydTOQiypgL+1J1NtU9qa3dP70GZNtYjYnih8F6J+LN90yqDFKupmgQ5b3rY8B
+	 2Q2eya07Xy/eehkSn2qCW65DWu+RbKerkB00A3U7ODE5htVj5oMsa9IRmSSP80o/3JU8B
+	 N4nzUsc2+BRvcyH1GyNUXkaejd2lmifZY0hpPrqn4p+awjM4EzWxiucupk7aftwmSmk1q
+	 A3ZMoYuu5c3MpKZZXp41zrLc/HYW7GuBPOQffgkoT5GYS4EdtqqD1alUdZ0m1ZDro1Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794319921;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	a=rsa-sha256; c=relaxed/relaxed; t=1794320529;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
 	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=JRlTB/Oq0MlZ1FntrVFpPEXr0i4FFsjXVYH+2p/mtY8=;
-	b=FrJF6sYlnhGPEPlrcPt6tU1TLuEI7y2doP++bTsc7MskuVrRmDkM3F1S3PzcFZ5oiXVT
-	 QiyTxcwAm1gwKM8ifmv/iy0KCZ4Ur8vUVL8Am+eDdUdgc8M0CbxRw85JzLZathMUAn+wY
-	 o9TLfTHXwG0XXhDKlQPrMVWaBL5ifOEGEkYKC8FA29NWDU8/YBBmHKAT2c8CfiZFZHjIn
-	 FWpHPSq1Kw5GNA88AQQ+JxgWJQKpEfGCcNDUxHcB3rRepImlu31ksrNuQSQ1sf0ecdmcR
-	 oc5LHmZx/ROfktlTLoLRvFPVLyZi8qWm0wqBEenAe92eYHfFZk87tsQJFiXE9sBQdHw==
+	 Content-Disposition:In-Reply-To;
+	bh=MZmdFrQsotgCT0wSbD7pFt39rO/eJb/iqITxSt+oBTY=;
+	b=zDKbbNv70BFkwuf62Zvf81i3ekE3YUdcYfTi+vHF4cJ8l0V0DMU+nkFwx211t4IHBIa8
+	 +t4K1egTygR6cOco3Nc8ZkSO9i3F7gUVauQ8UtnI3KbxYypZVOSbK7DwkT+vnWXsoulJx
+	 4CITlV/EnovYoh3h6esfAQ7xxffLU924V2ZyegJVVSbADTO86cRy3WzbrsIqeNKyJL9xx
+	 Px5ULfAgqBIrVVOYZfPLTEOoKupi50I/erB0vXjwJeRf+oBjyO5E5RsxEeuRy9tmvujWw
+	 2fjGgWV50wLijRdFCkK1YmUGS+4YJN7FGl2CastvmG00T4lGaTLGFDrGhwp28mNbZIg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="SyA5/nIq";
-	arc=none smtp.remote-ip=198.175.65.16
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE62060A380F;
-	Tue, 10 Nov 2026 14:11:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EE62060A380F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b="r/QOaL1i";
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92900606A32A;
+	Tue, 10 Nov 2026 14:22:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 92900606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=SyA5/nIq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794319920; x=1825855920;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qNtMH7l1kU6ZZbKE7+CnTRLFKr9x7riNWahstWq+vdw=;
-  b=SyA5/nIqpYQmyQOREPRL/ZZ/30ZIyRSDSN29juuIxOzC4+lGHc7miVRt
-   c2oLzPeZ4U1EXeLwaxbjPlxtKA1/A1lsmoP45dc8jdRF1gJWjyXgTPO3B
-   /D7OhpKoIxD/BZwqehqVmlwETEbSs907G6gTyOY8M0LZIxBKbFcSrFxt0
-   YDJDRerxrl1uIhcizRzTVtarhJrnoLHsKVvonSnnNZjStTY49CZbLY5Sh
-   aqrRsPxP2vmIDHs/1ovf/pUJGFIVqZDjK3mv4xm8Bf411cMQkE7mezfyJ
-   1zFL4Jv7W7xfK9nnvy3Icxf5coouDdpfcG2AUPayAeY0owBr+trTkN8wM
-   w==;
-X-CSE-ConnectionGUID: FouLpKS8TueSSkTrllyUZg==
-X-CSE-MsgGUID: bm5IsMSnRqWb6rnUreIdJQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="3056122"
-X-IronPort-AV: E=Sophos;i="6.27,205,1787036400"; 
-   d="scan'208";a="3056122"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2026 06:12:00 -0800
-X-CSE-ConnectionGUID: 9jp5mXF7SQ6yZQExcMRuPA==
-X-CSE-MsgGUID: FjuImkjfRqe1iQ4XjmnGHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,205,1787036400"; 
-   d="scan'208";a="8303202"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.244])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2026 06:11:55 -0800
-Date: Tue, 10 Nov 2026 16:11:52 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Brian Masney <masneyb@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Long Zhao <longzhao@ambarella.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org,
-	Linus Walleij <linusw@kernel.org>
-Subject: Re: [PATCH v11 0/5] arm64: add Ambarella CV75 SoC support
-Message-ID: <avMmKJpczepWTRdc@ashevche-desk.local>
-References: <20261105-cv75-soc-v11-0-aa6ee0b2380d@ambarella.com>
- <179427375370.1061670.4050288038934218487.b4-review@b4>
- <20261110-interesting-hilarious-shark-2dbfc0@quoll>
- <7eeaf54d-2d7d-420c-a34e-eebc6dd0effe@app.fastmail.com>
- <bbc16906-45e2-4d81-ae81-ad93e87b13be@kernel.org>
- <c67939c7-9725-459e-97dd-e104f3b14022@app.fastmail.com>
- <avMM8z-LYncKS8ip@x1g10>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=r/QOaL1i
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8F071477;
+	Tue, 10 Nov 2026 06:22:04 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D605A3F632;
+	Tue, 10 Nov 2026 06:22:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1794320527; bh=qqmX+RQD8lVwnDNULp8bZFK/Y+sCe6EIbhF7PutAMtA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r/QOaL1i1N1G96BwQV4CtnQOUTUJaFS/2qu7/VQtLdLOjD0oCPtyV7uELp66l/22v
+	 AjcibYeVw5kXy/30pgy9puKV8sa1YfJqWh1fkQVXLVU6MwlKXceVyhuGhWRVA1c3w6
+	 wMIg23XbPsmXeXiTNzBFY/8rPTX92M5EAhKtwLWU=
+Date: Tue, 10 Nov 2026 14:21:55 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>, imx@lists.linux.dev,
+	Peng Fan <peng.fan@nxp.com>, linux-amarula@amarulasolutions.com,
+	arm-scmi@vger.kernel.org, michael@amarulasolutions.com,
+	stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Sebin Francis <sebin.francis@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v15 1/2] clk: scmi: fix SSC spread conversion
+Message-ID: <avMog5kzJpsiUhXn@pluto>
+References: <20261104103620.4054694-1-dario.binacchi@amarulasolutions.com>
+ <20261104103620.4054694-2-dario.binacchi@amarulasolutions.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -99,34 +70,24 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <avMM8z-LYncKS8ip@x1g10>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20261104103620.4054694-2-dario.binacchi@amarulasolutions.com>
 
-On Tue, Nov 10, 2026 at 07:24:19AM -0500, Brian Masney wrote:
-> On Tue, Nov 10, 2026 at 09:46:29AM +0100, Arnd Bergmann wrote:
-> > On Tue, Nov 10, 2026, at 09:27, Krzysztof Kozlowski wrote:
-> > > On 10/11/2026 09:23, Arnd Bergmann wrote:
-
-...
-
-> > > There is a build dependency - DTS needs clock binding
-> > > header - so it has to be second, unless the dependency
-> > > is decoupled.
-> > 
-> > Ok, I see. Let's go with Brian's suggestion then.
+On Wed, Nov 04, 2026 at 11:36:02AM +0100, Dario Binacchi wrote:
+> The spread_bp field of struct clk_spread_spectrum holds the modulation
+> depth in permyriad (1/100 of a percent), as documented in
+> clk-provider.h and in the assigned-clock-sscs binding, while the i.MX
+> SCMI OEM extension expects a value in tenths of a percent, as pointed
+> out by Peng Fan.
 > 
-> I see that the pinctrl driver was merged into v7.4-rc1 and also
-> lists ARCH_AMBARELLA. It doesn't cause any build warnings or issues, so
-> I'm fine with this too just as long as ARCH_AMBARELLA is going to appear
-> in the tree.
+> The conversion divides spread_bp by 10000 instead of 10, as reported by
+> Sashiko, so any valid configuration is truncated to 0 and the hardware
+> is silently programmed with no spread at all.
+> 
+> Divide by 10 and fix the comment accordingly.
+> 
 
-We have a bug about dangling / orphaned symbols in Kconfig. It's discouraged to
-have them. I dunno if we get the checker patch being applied (it was some
-activity a few months ago).
+LGTM.
+Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Cristian
