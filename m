@@ -1,99 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.182
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794330175;
-	b=clyVX8L5MJIVjkgGYv9zHdktbS/noxeeql93tM9eH5lDqIbljKjDfKqa83eNgHHPYNg6
-	 KOfhutD+Gf3f9VsN8KaipJRwyYwccptsdk1ox9GqKr5hEfzrq3lVAvIvwxfVhMf93APa9
-	 3GXi/P+DGdBp/hb1APvpURsraNy7KsVsmM9b8d6hL8niWAr+gQVE2vpEt+KB4XoqNhc8e
-	 FDyIIfc12S9cUx7s1/gucWj58kGXntLjs/TmhxBzPUqyt+Nvkkp5nP6IX2vOyLOiv6nZ6
-	 u3NtZauoIczfu6utKo3LCoc19laa4N8NPhWwR2RWxXFGAwwMAenxP47yB+KhuKGna0Q==
+	t=1794330885;
+	b=HFPH/lRyrkb4jvnuem4gx3RpOtGtzX7/0lI0vsX1ouyo7vwCxqgxknmXjnWA5H+jRc9D
+	 xJMFd+EXyggQ86jJPPyt3yAbZRGbstSTE1gWU9Db5uMincJA9RKybfacW5J5hJh3ibooi
+	 Rmcrm5E5m+MaywRjaJ+9k0Sw2Ha4hqpA7Vph5+rwwm2mbC7WMiPS+IkKHNg0VkOlBLkpy
+	 PwnVfxUT0Pll1wgkxUkt5ZhBgKhT2IEJ4KEReUd3TSNstg9OtqMDBRag1tcJtyDNeEEPU
+	 5Haf5KcsrcxM3VRj1k2+Gk7Jny77h3KdAlX02WEkYp0+CEQqR0ebW4effXDfrXG9cSw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794330175;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:
-	 X-Google-DKIM-Signature:X-Forwarded-Encrypted:X-Gm-Message-State:
-	 X-Gm-Gg:X-Received:X-Received:Received:Message-ID:Date:MIME-Version:
-	 User-Agent:To:Cc:References:Subject:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=ozoC35JH09JXF0SoFXDETE/OXFxO44zArTqmVJlRrnw=;
-	b=NvpivfmFcFjQPZRBLSmimmmr6MuFqY7Z/Bgr3faLFLSt7iDIU6iw1EmNpdOeWnUzcF8T
-	 GjRY+Pgc/gbLbAHLgQERDNGudGa9TVlq3KKhMe1JxcW5hMiv7j5VwTlRZKpWWBIBja5IQ
-	 CD5hRp1dnrvzyDl3MpWszUzz08JomIm8s6jldU1qzyjjlbflU9bK9YLf89t2MCcLVNeKu
-	 zo+jOJ2C8ebEQXalIubPZpLXajsJXqFrPCGP5BnWtj+0fB2+TYrGlzm2kWKx/IU1yJ0Re
-	 kJFk10ZXgfzu9P66ADXGfGPctZ4SRHuGo8oY93Mge9EPvMlEBSjsXwL7POOUsNVKwgQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794330885;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=Oujdvcye93Xof0isVHmwpB1y2xPdgyYOn7LBWK9psyI=;
+	b=J0Pb3L2LXmK0YjH2S0Ivv36ufP7+5DSyHaSHeyinmdFOgqJ22WKaU9S2NV2eMbC/0jX6
+	 8zylLoBNG2hoteJjMcWMYfsSON4HZd8w1DtBmV6pQJJNtGr+8lGJ9YHcbwIa/6ZRaUF50
+	 GCouSWfWKrIRzuMTwLpvFK24ZU/R5Y/h4QO7ay+axyQPdLIlg0OHXrMO8ZSvztglI4IOR
+	 ntyQgdCo8hoS72Y5Ub5Vwker28uUZPPNYXZ8R6i5eg1RTA18iEYYxO0A0NJ0bfauNWqNF
+	 7Njy+ShCIv8mraOxxjL0fID76yk+9oClrs++CSeX72xHF981Tmqn93xJV4HYvIGV4Ew==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=canonical.com;
-	spf=pass smtp.mailfrom=canonical.com;
-	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=hQD9mPgX;
-	arc=none smtp.remote-ip=185.125.188.123
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Isk1ca0I;
+	arc=none smtp.remote-ip=209.85.160.182
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE86A606A321
-	for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 17:02:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BE86A606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0523606A325
+	for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 17:14:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0523606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=hQD9mPgX
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 01FF33F920
-	for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 17:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1794330166;
-	bh=ozoC35JH09JXF0SoFXDETE/OXFxO44zArTqmVJlRrnw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type;
-	b=hQD9mPgXugfhtIhDcvsq4SZThekNRzFT3sMIjicEtPufbY6ARxAAxLQP9WwXgY4CC
-	 aR/wvfhIAOuf3xGqJZo7ygWk+aKNtZBVp7lmCnO9LJjMhM5KrxcmeB8bpIIiHRMrzY
-	 PrQkHf/lANfXuOSU36xUjcvWW5YuG7yc9cPxFeqpveHCwXebfEbaeOUTnysB/U1Bfa
-	 CPGExOBT+QlJol/ka/7z/wx722r0mcwCR5XGgD0Q5CsXjt2jIbL03XUfyNoMmsSoTh
-	 azWcf7ngIBV/oFBaUnd03Yo25hSnHRyOScMrPajLZzJy5tRQmcPlyGJChgcodsy58N
-	 FmaWQlVn+De1Ouo/qWit8uxUXwv+CoTiMTgzmtBj9+o9QGitYLGM8c7Q/jbx1Yas5Y
-	 Y/48ZWEGk1Yw3ZMsowhzD+KSuKGreYgOQSxMwuhcsT8w3gjGieQ12dOUI6ZXkWpzhG
-	 8sMIACnv7Y4gRSVmbu8/sq3RVbNdvF6kvTeBTqiOTSECV65jVm7E9GQMzEHXuE4I6+
-	 4yxISxem7RcOd1JlrFHtBjJWAIfBc13cDpxb24Pe6pnOiyz2sJ0yOQF8Nn30Xsj4Se
-	 9g6K+eeCapUKBWNEHlb7hd/cxrT1Mr+c02r8iPBVBUvKS9yvI67OBzeGZE5fHy1WgH
-	 wOfMNs7ArNDVqstymZ1zmUTA=
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-49323e268aeso1770730f8f.1
-        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 09:02:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794330165; x=1794934965;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Isk1ca0I
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-53bb57f1310so24622871cf.2
+        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 09:14:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794330884; x=1794935684; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:subject:references:cc:to:user-agent:mime-version
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Oujdvcye93Xof0isVHmwpB1y2xPdgyYOn7LBWK9psyI=;
+        b=Isk1ca0I30RMY+8oOixfoUtKFUb92r+JB+FTOYbGORvjFe+4pLoPI7uWL/tCbKyIwv
+         g8Gue7qlz7uzKqJFZJZxmfyi4VVDrfyej0NqTTJbJkEeSEi2ahOGDInhkt1oy8//7Dvm
+         Jlbxg0qJF97m4s5nQYSYsZpHILdgIQ35oT/T2aA0aBilW39XdEadvUkQf94wgYxxFJPj
+         ZvkARhwpbsSpWkH3OBA1IGSqBBLxWOt+lgCanmJG2TL1sKUC0Zxf78nYDUwOBQryCIQ8
+         h+ViZhY1z7aIqM8Em8vpLa9rsx6NxlNpkswBuchqitA+MMr2JjWoXh7iImMJvvP87We/
+         1yFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794330884; x=1794935684;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=ozoC35JH09JXF0SoFXDETE/OXFxO44zArTqmVJlRrnw=;
-        b=kOcv5Iv9d5u/JfDwF/NcNsZAyOKSc9o2+ttedfqzgUqz8+rGHqIJrbxij7bolus0pE
-         aRFySeC83Db1ncW7REEwailILQl7PJIBfuPE46N5uFkVzwA1wRCX1j/7jqpQs6rRWW/i
-         ZPepP7l9BGWz3B7MOyrmWjl2Vi8Nw2mWDvUHmrxt/EZrMaix76lyZA/DA1vX6z4NnQrT
-         8N0gOO8LNbiHvMZIRUAUVSF63K9rx68rPBjjO2Wt7Ax6RcgavJezccaU2tkelhZmv/xP
-         bM8PfbvkMlBWqk22AIl9rLR+kj0VCIn9OHhf0RieXo9bbWBYhPYxmq03RegNR4zIGzwD
-         6Y/g==
-X-Forwarded-Encrypted: i=1; AL+hErFcDV3rsEDFiszaMnlreMWns7/jB8Qcwxenlsm/LBL3kI/H5RO8zI9TxDbRxqzbUv93WYstapuoXe0=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8ukKm+QOPtAIumBaC5XKmCsOJ+ZL+K41MDFvW6zIZYZe37Ztv2
-	h1URwVi6FpUZiSXUpTiy4KRsI4w/QkWoDCVRu1hYrQe3gUkAnuN1A912KzzmDU4CJogctZkY1tw
-	ySmrIkySak/VrSMc0MOum2D3MDwbZyM0q+cZIE5Ur00H7yrg6IK6q9Ud1eQywgAzXeTYC6L6YRy
-	TrZw==
-X-Gm-Gg: AYBFou3Y/xtpnN+ZwP1b5WWE7viax9nqCxDmAIF1FexGAi5FvSFMrfwaPBlWhFvy9Id
-	Bx2rRbhtJGMYCU28NquETLdZ1nwlyXHzMD5I0J5H4OFTjJVhnfm70c8xNAv96NT/RhkDop5h70G
-	wFqL37+USZLfUmfpzV2O3coV02XnGBWHcGPM67mHs7CoLh94hpTHsbvNsk14Yzc7LlT05Cb0nED
-	U3XrqH5towpP0uoGYfOa0e9RDujMoffFlBfoEcHpkTJkW9FNGIkvz/d8LEE0lfYJnhlkgs9LHzp
-	jGOjWYz+mFJaklTKb2D5skw/qlrrfuqAzyBZgHMKkHcFaOMj/jPJIQWKuzADA+RjIvsciAuRsXD
-	vGccDfwSqjolRAtdLOQR8wsnByrVMbk0+DrETd/q32HLaI3OS1EgUoxa8GCapcpXHNMUwDBvHl+
-	it4QNVusflH2ubn9VF4nA8Zg6XcJK1YPIooJdO2EiAVURjWgarPIAJ
-X-Received: by 2002:a05:6000:607:b0:48e:eb:56c5 with SMTP id ffacd0b85a97d-49992cc6a24mr288604f8f.8.1794330165614;
-        Tue, 10 Nov 2026 09:02:45 -0800 (PST)
-X-Received: by 2002:a05:6000:607:b0:48e:eb:56c5 with SMTP id ffacd0b85a97d-49992cc6a24mr288536f8f.8.1794330165190;
-        Tue, 10 Nov 2026 09:02:45 -0800 (PST)
-Received: from ?IPV6:2a01:cb19:9432:11ec::c98? (2a01cb19943211ec0000000000000c98.ipv6.abo.wanadoo.fr. [2a01:cb19:9432:11ec::c98])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49836c83432sm5386247f8f.58.2026.11.10.09.02.43
+        bh=Oujdvcye93Xof0isVHmwpB1y2xPdgyYOn7LBWK9psyI=;
+        b=z4Z/STpzr7QceX/FSzTY6zk3UGIVA1U6WG84TNH4iNBv654cHSo3gRrQOlcgksQQ2h
+         /xM09ehB9BdhLQdE3kRnFM2RP5hU9DhZYdP7OS2nuR1G/QICLidDHHjMTWz9DzCkPTSB
+         jQzkpQabHfaxEdPN0YWFpWxStqpNPa8Kji5r/6xxrjCjhpYIZgmuCfIW1oBgwBLAvv0v
+         9jUrhf6DvqlpocFwnixyejqeUWFODgVCFT9alTYL6AzpoG42gOW/jFS4bfsCaEnwmDSq
+         BFJQLtq9DMe9VVcBuTNZeWYuMC1XwMpaWJuQNTHW5spzf+FeaVMC6c+vcrG5cCZnfPyR
+         EAMw==
+X-Forwarded-Encrypted: i=1; AL+hErGW/wJmcbwTtlkbXPxOmG76Qycy+Pne9ROpla1v5JXwHD85/+TFcbTldvnL/LgvwlsRrrDjbEFOvpM=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8So6PNjFl7cA5K6wGy+9qmTW6EJyKDXoz/qnwVyOBTInZ/McUy
+	oZSQWQnI8r15wHV2lTkUIl5brxWL+byg28zgiN5xTc77kq1lXaDiEbzo
+X-Gm-Gg: AYBFou30p1ae9EYsUm99K5IniOdRhFQFoP6bi4JyTQBzmbk1vBNd1FHP3j/4azBLOtv
+	0s0JfJIYpGQVxP0WdSmh2PY2tpDF90xLvTswq3C2Fu3YhAaGupsY04AaKQR+UOsiJyl3Zor5d9O
+	iMAtCg9Sm0XDqCxpvrUzNpwVBpy6dBoEj+f+iAo3yMl/pRyVHdu5CLLL9iEjPl7Qz365UpFCIAt
+	Ptg7bI77i4p3in/6IxVmDy1t29sDaAjpxToMT6JnVOhgi/0LpSyEKfTutzYUnL0O55SXcw4gdQM
+	AE3ikUMR0ZEePAb+4+aeTVvsp6P3ErLl5Ud+T/I2L8zs5/Xi8EiNe9pTzdcv05orZJTGQo/s9kv
+	iwGdaZSdujuNpaYxkQa74Oysawo+NgTnWVJyf36S7eKop2JZmN/lqIoURSJUCE/LcrxgC9R2oZU
+	+u8tLuMjT9+3V9kUssqM4rvKHFYVQQlQvmImq2bxiQAgKRRnMIU7hCvhi/tINKw1/CADW0xsXnL
+	zL43YecwpN46S3pa7W92lkw1Ovnj/DRrb8+I3yt1o5fTPXIb4RzfVPWEXhxG9JVRnTAMpFlFvbY
+	4xUABvm+gpPGAda3Pq8fJGdH9ahhtPaC6AKkJlzewL1kthH1LhKvdpGF
+X-Received: by 2002:a05:622a:1911:b0:54d:a34f:c736 with SMTP id d75a77b69052e-555271342c7mr48254351cf.17.1794330883512;
+        Tue, 10 Nov 2026 09:14:43 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91ef04d8397sm25744446d6.18.2026.11.10.09.14.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Nov 2026 09:02:44 -0800 (PST)
-Message-ID: <546efd00-ddaf-47f4-9387-2635785a1bf5@canonical.com>
-Date: Tue, 10 Nov 2026 18:02:42 +0100
+        Tue, 10 Nov 2026 09:14:42 -0800 (PST)
+Message-ID: <135a8f3d-9eb4-43e7-a20d-056362a29c14@gmail.com>
+Date: Tue, 10 Nov 2026 09:14:40 -0800
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -104,103 +93,67 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: devnull+codykang.hk.gmail.com@kernel.org
-Cc: airlied@gmail.com, alex@ghiti.fr, aou@eecs.berkeley.edu,
- bmasney@redhat.com, codykang.hk@gmail.com, conor+dt@kernel.org,
- devicetree@vger.kernel.org, dlan@kernel.org, docular.xu@gmail.com,
- dri-devel@lists.freedesktop.org, heylenay@4d2.org, krzk+dt@kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-riscv@lists.infradead.org,
- maarten.lankhorst@linux.intel.com, me@ziyao.cc, mripard@kernel.org,
- mturquette@baylibre.com, neil.armstrong@linaro.org, p.zabel@pengutronix.de,
- palmer@dabbelt.com, pjw@kernel.org, robh@kernel.org, sboyd@kernel.org,
- simona@ffwll.ch, spacemit@lists.linux.dev, tzimmermann@suse.de,
- u.kleine-koenig@baylibre.com, vkoul@kernel.org
-References: <20260809-k3-display-v2-11-327d7910bf71@gmail.com>
-Subject: Re: [PATCH v2 11/17] drm/spacemit: add Saturn DPU DRM device driver
-Content-Language: en-US
-From: Sarah Emery <sarah.emery@canonical.com>
-In-Reply-To: <20260809-k3-display-v2-11-327d7910bf71@gmail.com>
+Subject: Re: [PATCH v2 0/3] MIPS: CI20: Enable SMP with two CPUs
+To: Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Paul Burton <paulburton@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ =?UTF-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= <zhouyanjie@wanyeetech.com>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ hns@goldelico.com, paul@boddie.org.uk
+References: <20261110043131.1985993-1-f.fainelli@gmail.com>
+ <d40bcc5d7742025db9a67af5c77796745e284e45.camel@crapouillou.net>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <d40bcc5d7742025db9a67af5c77796745e284e45.camel@crapouillou.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 11/10/26 07:44, Paul Cercueil wrote:
+> Hi Florian,
+> 
+> Le lundi 09 novembre 2026 à 20:31 -0800, Florian Fainelli a écrit :
+>> This patch series resurrects SMP support for the CI20 board. This was
+>> submitted back in 2020 by Zhou Yanjie.
+>>
+>> Changes in v2:
+>>
+>> • Moved SMP sources to arch/mips/ingenic/ and the header to
+>> arch/mips/include/asm/
+>> • Removed CONFIG_MIPS_INGENIC_SMP, using CONFIG_MACH_JZ4780 and CONFIG_SMP
+>> directly
+>> • Renamed JZ4780-specific SMP symbols to XBurst names
+>> • Changed CPU enumeration to assign consecutive logical IDs and removed the
+>> explicit two-core limit
+>> • Changed mailbox IRQ allocation failure from panic to logging and returning
+>> • Shortened commit descriptions, removed Codex attribution, and adjusted
+>> source credits and sign-offs
+>> • Kept the clock polling patch and CI20 defconfig changes unchanged,
+>>    added Paul's R-b for patch #1
+>> • Updated the kernel baseline to include additional upstream fixes
+> 
+> You should also have a changelog per-patch, in each patch's header.
 
-We have incorporated this patchset into the Ubuntu kernel for display 
-support on the K3 platforms.
+This seems to vary on per-subsystem basis, for netdev where I contribute 
+the vast majority of the time, putting the changelog in the cover letter 
+works, but I will do it on a per-patch basis next time.
 
-During testing, we found an issue: the screen would display artifacts 
-all over, kind of like black lines blinking.
+> 
+> Your patch [1/3] has a Fixes: tag but does not Cc stable@vger.kernel.org, so
+> you'll have to send a v3.
+> 
+> I reviewed [2/3] and it looks good to me, but I'm a bit concerned about
+> Nikolaus' reported issue.
+> 
+> Thomas, if you can wait a few days, I can test it on my CI20 and if it works
+> report back with a Tested-by: tag.
 
-I have implemented the following patch to fix the issue:
-
-drm/spacemit: map scanout buffers write-combining
-
-The K3 display controller is not DMA-coherent: the DPU fetches scanout
-buffers straight from memory while fbcon and userspace write them through
-a cached CPU mapping. The shmem helpers clean the buffer only once, when
-the sg table is first built, so nothing flushes later CPU writes. Dirty
-cache lines shadow what the DPU scans out, and erased fbcon text lingers
-on screen until the lines are evicted by chance.
-
-Add a gem_create_object() hook that sets map_wc on the shmem objects.
-The K3 harts implement Svpbmt, so the CPU mapping becomes genuinely
-non-cacheable and writes reach memory immediately; the one-time clean in
-dma_map_sgtable() still covers the initial contents.
-
----
-  drivers/gpu/drm/spacemit/spacemit_drm.c | 16 ++++++++++++++++
-  1 file changed, 16 insertions(+)
-
-diff --git a/drivers/gpu/drm/spacemit/spacemit_drm.c 
-b/drivers/gpu/drm/spacemit/spacemit_drm.c
-index 12b2fe8b6fc99..fe354219b996d 100644
---- a/drivers/gpu/drm/spacemit/spacemit_drm.c
-+++ b/drivers/gpu/drm/spacemit/spacemit_drm.c
-@@ -12,6 +12,7 @@
-  #include <drm/drm_fbdev_shmem.h>
-  #include <linux/component.h>
-  #include <linux/of_graph.h>
-+#include <linux/slab.h>
-
-  #include "spacemit_drm.h"
-  #include "spacemit_crtc.h"
-@@ -75,6 +76,20 @@ int spacemit_drm_mode_config_init(struct drm_device *drm)
-         return 0;
-  }
-
-+static struct drm_gem_object *spacemit_gem_create_object(struct 
-drm_device *drm,
-+                                                        size_t size)
-+{
-+       struct drm_gem_shmem_object *shmem;
-+
-+       shmem = kzalloc_obj(*shmem);
-+       if (!shmem)
-+               return ERR_PTR(-ENOMEM);
-+
-+       shmem->map_wc = true;
-+
-+       return &shmem->base;
-+}
-+
-  DEFINE_DRM_GEM_FOPS(spacemit_drm_fops);
-
-  struct drm_driver spacemit_drm_drv = {
-@@ -82,6 +97,7 @@ struct drm_driver spacemit_drm_drv = {
-         .fops = &spacemit_drm_fops,
-
-         DRM_GEM_SHMEM_DRIVER_OPS,
-+       .gem_create_object = spacemit_gem_create_object,
-         DRM_FBDEV_SHMEM_DRIVER_OPS,
-
-         .name           = DRIVER_NAME,
---
-
-I'm sending this here in the hope that it will be useful for a future 
-revision.
-Is there a v3 in preparation?
-
-Thanks,
-
-Sarah
+Thanks Paul, yes please do test it because I could not reproduce what 
+Nikolaus reported, that makes me think there must be additional 
+configuration options and/or patches being carried that could be 
+responsible.
+-- 
+Florian
