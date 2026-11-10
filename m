@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794278704;
-	b=NuTc4X++SyHZwWGUBwtn2JzBmmOioisHP1ww7sw/oQK9K6DtgMrO+vWk7k2i/PSX3EZO
-	 8XHnkMilXpJ+0H/Jql9uei6uwTErkt12QxnbzzozSvJJWGVMLE00wX6Gmjlm8IQMRRAvM
-	 cOn6l6xg7BnoKW/Z9mUDTgExLRB9Wa20d3lWXxa2SoZOBd+UBnnKBL3lPm7JJS7mlMX/O
-	 taV57WaODVLL3ZL2Ck9UxfoMgLXkMXTjtUmUmgDZ5tjLBZcaPJ6hpFs0Uu7O4Wst/UXkM
-	 kGNUhRcd1YvD/fieHO95LeW63PgeRw4gd+rwg/uTKflUCSKpkOmkz9P5+hSI/PaG5eg==
+	t=1794278947;
+	b=egq4sM5BZmex2T1xAjofjt81G/qJZSpO4n8lZSD4WXnELEsxoAKXsGXLjqhf3pU91h7K
+	 wop2OxM4USc/YGhjB8BN8WlfPklzYf8uDJMCLtk1NEOlUA+EZBybszyUexkzb+0IM+nBd
+	 8MO2BDYhdYtJa66vW5brWHG9d7AxtuHdnth/5fbwXWJM+AhcLD59V3qZ1x9pMWeocucMv
+	 qPtLF1AssXQSro/1NuyY5mXRYYz/Lt4Z6WXXivizQApRnqua17wPfmcifMBNqklouspgM
+	 450/lazuu+v4rw5QrVtnmk36fVCVEam6svxDMGqOfyHM/XNZHjedrSwZDCSItc/GSow==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794278704;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794278947;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=2dj621xlnc36AtUmapMH8WKqOt2OTF5gOx5Yx+nRFE8=;
-	b=DVxhZk59i0lbmN9PyR8qoXIY44/LG+3HW+hlJPZCUlEKBZInZUcGXSreV/EZByosUB13
-	 gZKZvAhLExogR0RUYQXk/TBREUt1RHOIQZpIzaQsSNpApoBeQNxmtfD9C7AS2t6nCQpDM
-	 ZeEwly67pXAMmucNOaUUxhK3qSsTsJQCYXQbumfT9NWlQrGEVU4w7BrM9HK5vMbiio6jB
-	 TfrPHwbkTFpW27Z1k7aJVO7LEDcGQdGgzKLSNguADgsE0m1E+PXbqixim1b8SSvS0nVse
-	 Q6vUItECp8DJt/EdTwKZZYCndAnV4JWUpT1NS8Bu0p7nvdExz+xDFrKVMq71UVj3p+Q==
+	bh=BWKvH/OjHWbKXA6A9HL2uzCDLGobFi9XpMtJ+4XFWG8=;
+	b=F6hTieAIRepHXZKYAVLxkrlmEANTHKeyHXUVOuf94H+mSUrKiVEXPZ9VainqDyjk2qFZ
+	 39orO8FEmsdpGsw87eHLHCM3sLn+aebaT1yNQp7AY7IAIrX9mNi8rNqL1J8UDPHWH0w8x
+	 +3/xrb5s3Q0JuKuUCoygE659RpbtC2ksYUgl4w5nUgc2qYLZsXMKffxDYHHN1EzM0jiV9
+	 zhK5f3FlFA3uT5sHFLOITw8dL/CoJlOMwaAoMLrhYJj5yUafyLkLAuUshpFZlplQOQq4k
+	 hS7rU/ZdAT9MRUgoWUNyVKMWpS95KBUNj5ffuGxQWfP18l1LWZOJRgnwtGh8kkarljg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oTsbMwkg;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ExmSTTIC;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABFE606A331;
-	Tue, 10 Nov 2026 02:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC73606A325;
+	Tue, 10 Nov 2026 02:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oTsbMwkg
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7976F1F0089F;
-	Tue, 10 Nov 2026 02:45:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ExmSTTIC
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61CF11F0089F;
+	Tue, 10 Nov 2026 02:49:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794278703;
-	bh=2dj621xlnc36AtUmapMH8WKqOt2OTF5gOx5Yx+nRFE8=;
+	s=k20260515; t=1794278946;
+	bh=BWKvH/OjHWbKXA6A9HL2uzCDLGobFi9XpMtJ+4XFWG8=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=oTsbMwkgclRaoLjDGoY9wp4zJdT/iULkUi/nzf1/byrsKnCWYgg86nR6/7hKdiGaF
-	 JeY+fbr67xX79T1/qczSsYkZTOHJI2+q928DkgVExf7f+NisBYBE72ZXhz3RCsPqTn
-	 t+mBTGUXvQve2Q9jLzBN1mvxXvX6oIJR+vEIA1/o6TBV5xLs0K0sf88ObnXMI5q1a0
-	 DQUIYaS85tLdrztq4vlXmNdyPi8q6gm1IE7lY4vLa2rMrrC1VvnEJyyuWSHfY8o+aS
-	 9ZElSvR9plZZhXNgcUcb7UccbbFdFznjlQAqEdpG1EStM4TimInXv/cMuZFG/3y5js
-	 ADMwPoL7JzQyA==
-Message-ID: <sashiko-outbox-206063@kernel.org>
+	b=ExmSTTICFqGUvQ/013AEAixSsbQRgn9rwwIkbZ4cDbwMvm0ajSeDtxYW28ZGIAU9P
+	 3B1V28iEmJbZSukUTXmx8ZZUGxtDeOyrv/BGxBTVZBZ9zZH8tJ8jC3rF7fTv2cpMHf
+	 vjRX3GOxf1SXNKRu9Z4qvghZ7zxXQhQAx6AQhbwqq3qPRJgffT8ia2d2NWGR/aPBek
+	 umG4/6LBhsuQFLjEfGRFndLvzevgdXSIxadq1X3nPPj0hq3vDrwxnBH2EJcpDQGAcD
+	 6wgHvhvtfaBa5vEg88IGh57YAxbLmHtPphPw5nKMPiwTGUg5PIMYevACq7J0E8Rl1V
+	 10IbQgifEI6Fw==
+Message-ID: <sashiko-outbox-206068@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v8 1/5] dt-bindings: clock: meson: Add audio power
- domain for S4 soc
+Subject: Re: [PATCH v8 5/5] arm64: dts: amlogic: Add Amlogic S4 Audio
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jiebing Chen" <jiebing.chen@amlogic.com>
 Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, neil.armstrong@linaro.org
-In-Reply-To: <20261110-audio_drvier-v8-1-1489241e4c83@amlogic.com>
+In-Reply-To: <20261110-audio_drvier-v8-5-1489241e4c83@amlogic.com>
 References: <20261110-audio_drvier-v8-0-1489241e4c83@amlogic.com>
- <20261110-audio_drvier-v8-1-1489241e4c83@amlogic.com>
+ <20261110-audio_drvier-v8-5-1489241e4c83@amlogic.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 02:45:03 +0000
+Date: Tue, 10 Nov 2026 02:49:05 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,106 +60,166 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 3 potential
+Thank you for your contribution! Sashiko AI review found 2 potential
 issues to consider:
-- [Low] dt-bindings: clock: meson: commit message omits s4-audio-clkc
-  compatible
-- [Low] dt-bindings: clock: meson: power-domains forbidden on AXG and
-  SM1 variants
-- [Low] dt-bindings: clock: meson: unwieldy per-compatible conditionals
-  in allOf
+- [Medium] arm64: dts: amlogic: wrong spdifin interrupt number in
+  meson-s4.dtsi
+- [Medium] arm64: dts: amlogic: missing pinctrl configuration for
+  spdifin on AQ222
 --
 
-commit 3f9534e5b3c2551a42b1642e1cc62923e9975fcc
+commit ba863296d8a1f9c2893c9c4c64db87474f58e6e7
 Author: Jiebing Chen <jiebing.chen@amlogic.com>
 
-> dt-bindings: clock: meson: Add audio power domain for S4 soc
->
-> The audio power domain has been found on S4 device.
-> It must be enabled prior to audio operations.
->
-> Signed-off-by: Jiebing Chen <jiebing.chen@amlogic.com>
+arm64: dts: amlogic: Add Amlogic S4 Audio
 
-[Severity: Low]
-Does the commit message omit that this patch introduces the
-amlogic,s4-audio-clkc compatible string and its #reset-cells requirement?
-The title and changelog only mention adding the audio power domain for S4,
-but amlogic,s4-audio-clkc was not present in this binding before.
+This commit adds audio controller device tree nodes for the Amlogic S4 SoC
+and enables the sound card and audio peripherals on the AQ222 board.
 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-cl=
-kc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.ya=
-ml
-> index fd7982dd4ceab..75ddaf8d80917 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-> @@ -20,6 +20,7 @@ properties:
->      enum:
->        - amlogic,axg-audio-clkc
->        - amlogic,g12a-audio-clkc
-> +      - amlogic,s4-audio-clkc
->        - amlogic,sm1-audio-clkc
-> =20
->    '#clock-cells':
-> @@ -100,6 +101,9 @@ properties:
->    resets:
->      description: internal reset line
-> =20
-> +  power-domains:
-> +    maxItems: 1
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts b/arch=
+/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
+> index 0a3f81ea0fb0a..334b57bde4def 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
+
+[ ... ]
+
+> @@ -129,6 +140,207 @@ vddcpu: regulator-vddcpu {
+>  				<699000 98>,
+>  				<689000 100>;
+>  	};
+
+[ ... ]
+
+> +		/* spdif coax input */
+> +		dai-link-11 {
+> +			sound-dai =3D <&spdifin>;
 > +
->  required:
->    - compatible
->    - '#clock-cells'
-> @@ -115,6 +119,7 @@ allOf:
->            contains:
->              enum:
->                - amlogic,g12a-audio-clkc
-> +              - amlogic,s4-audio-clkc
->                - amlogic,sm1-audio-clkc
->      then:
->        required:
-> @@ -122,6 +127,18 @@ allOf:
->      else:
->        properties:
->          '#reset-cells': false
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - amlogic,s4-audio-clkc
-> +    then:
-> +      required:
-> +        - power-domains
-> +    else:
-> +      properties:
-> +        power-domains: false
+> +			codec {
+> +				sound-dai =3D <&spdif_dir>;
+> +			};
+> +		};
 
-[Severity: Low]
-Should power-domains be set to false for the other compatibles here?  Both
-AXG and SM1 also have dedicated audio power domains in hardware, so
-disallowing power-domains in the else branch causes dtbs_check failures if
-amlogic,axg-audio-clkc or amlogic,sm1-audio-clkc nodes reference them:
+[ ... ]
 
-drivers/pmdomain/amlogic/meson-ee-pwrc.c:axg_pwrc_domains[] {
-    ...
-	[PWRC_AXG_AUDIO_ID] =3D MEM_PD("AUDIO", axg_pwrc_mem_audio),
-};
+> @@ -235,3 +447,102 @@ &ethmac {
+>  	phy-handle =3D <&internal_ephy>;
+>  	phy-mode =3D "rmii";
+>  };
 
-drivers/pmdomain/amlogic/meson-ee-pwrc.c:sm1_pwrc_domains[] {
-    ...
-	[PWRC_SM1_AUDIO_ID] =3D MEM_PD("AUDIO", sm1_pwrc_mem_audio),
-    ...
-};
+[ ... ]
 
-[Severity: Low]
-This isn't a bug, but adding another per-compatible if-then-else block to
-amlogic,axg-audio-clkc.yaml makes the shared schema harder to maintain,
-especially since S4 also diverges from AXG, G12A, and SM1 by not using the
-slv_sclk0..9 and slv_lrclk0..9 clock inputs.  Would it be cleaner to split
-amlogic,s4-audio-clkc into its own binding schema, similar to
-amlogic,s4-peripherals-clkc.yaml and amlogic,s4-pll-clkc.yaml?
+> +&spdifin {
+> +	status =3D "okay";
+> +};
+> +
+> +&spdifout_a {
+> +	pinctrl-0 =3D <&spdif_out_h_pins>;
+> +	pinctrl-names =3D "default";
+> +	status =3D "okay";
+> +};
+
+[Severity: Medium]
+Is &spdifin missing pinctrl-0 and pinctrl-names properties to mux the
+spdif_in pin (and a corresponding spdif_in pinmux node in meson-s4.dtsi)?
+
+dai-link-11 wires &spdifin to the external coaxial receiver &spdif_dir,
+and pinctrl-meson-s4.c defines the spdif_in function on the pad next to
+spdif_out_h, but unlike &spdifout_a, &spdifin has no pinctrl configuration
+and will not receive an external input signal unless the pin was already
+muxed by firmware.
+
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/=
+dts/amlogic/meson-s4.dtsi
+> index dfc0a30a6e61b..98ac01c5d6adb 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+
+[ ... ]
+
+> @@ -863,4 +878,385 @@ emmc: mmc@fe08c000 {
+
+[ ... ]
+
+> +	toddr_a: audio-controller@330100 {
+> +		compatible =3D "amlogic,sm1-toddr",
+> +				 "amlogic,axg-toddr";
+> +		reg =3D <0x0 0x330100 0x0 0x2c>;
+> +		#sound-dai-cells =3D <0>;
+> +		sound-name-prefix =3D "TODDR_A";
+> +		interrupts =3D <GIC_SPI 32 IRQ_TYPE_EDGE_RISING>;
+> +		clocks =3D <&clkc_audio AUD_CLKID_TODDR_A>;
+> +		resets =3D <&arb AXG_ARB_TODDR_A>,
+> +			 <&clkc_audio AUD_RESET_TODDR_A>;
+> +		reset-names =3D "arb", "rst";
+> +		amlogic,fifo-depth =3D <8192>;
+> +		status =3D "disabled";
+> +	};
+> +
+> +	toddr_b: audio-controller@330140 {
+> +		compatible =3D "amlogic,sm1-toddr",
+> +				 "amlogic,axg-toddr";
+> +		reg =3D <0x0 0x330140 0x0 0x2c>;
+> +		#sound-dai-cells =3D <0>;
+> +		sound-name-prefix =3D "TODDR_B";
+> +		interrupts =3D <GIC_SPI 33 IRQ_TYPE_EDGE_RISING>;
+> +		clocks =3D <&clkc_audio AUD_CLKID_TODDR_B>;
+> +		resets =3D <&arb AXG_ARB_TODDR_B>,
+> +			 <&clkc_audio AUD_RESET_TODDR_B>;
+> +		reset-names =3D "arb", "rst";
+> +		amlogic,fifo-depth =3D <256>;
+> +		status =3D "disabled";
+> +	};
+> +
+> +	toddr_c: audio-controller@330180 {
+> +		compatible =3D "amlogic,sm1-toddr",
+> +				 "amlogic,axg-toddr";
+> +		reg =3D <0x0 0x330180 0x0 0x2c>;
+> +		#sound-dai-cells =3D <0>;
+> +		sound-name-prefix =3D "TODDR_C";
+> +		interrupts =3D <GIC_SPI 34 IRQ_TYPE_EDGE_RISING>;
+> +		clocks =3D <&clkc_audio AUD_CLKID_TODDR_C>;
+> +		resets =3D <&arb AXG_ARB_TODDR_C>,
+> +			 <&clkc_audio AUD_RESET_TODDR_C>;
+> +		reset-names =3D "arb", "rst";
+> +		amlogic,fifo-depth =3D <256>;
+> +		status =3D "disabled";
+> +	};
+> +
+> +	frddr_a: audio-controller@3301c0 {
+> +		compatible =3D "amlogic,sm1-frddr",
+> +				 "amlogic,axg-frddr";
+> +		reg =3D <0x0 0x3301c0 0x0 0x2c>;
+> +		#sound-dai-cells =3D <0>;
+> +		sound-name-prefix =3D "FRDDR_A";
+> +		interrupts =3D <GIC_SPI 36 IRQ_TYPE_EDGE_RISING>;
+
+[ ... ]
+
+> +	spdifin: audio-controller@330400 {
+> +		compatible =3D "amlogic,g12a-spdifin",
+> +				 "amlogic,axg-spdifin";
+> +		reg =3D <0x0 0x330400 0x0 0x30>;
+> +		#sound-dai-cells =3D <0>;
+> +		sound-name-prefix =3D "SPDIFIN";
+> +		interrupts =3D <GIC_SPI 151 IRQ_TYPE_EDGE_RISING>;
+> +		clocks =3D <&clkc_audio AUD_CLKID_SPDIFIN>,
+> +		<&clkc_audio AUD_CLKID_SPDIFIN_CLK>;
+> +		clock-names =3D "pclk", "refclk";
+> +		resets =3D <&clkc_audio AUD_RESET_SPDIFIN>;
+> +		status =3D "disabled";
+> +	};
+
+[Severity: Medium]
+Should the spdifin interrupt be 35 instead of 151?
+
+On Amlogic SoCs (such as meson-g12.dtsi and meson-sm1.dtsi, which use
+148..154), the interrupts for toddr_a..toddr_c, spdifin, and
+frddr_a..frddr_c form a contiguous block.  Here toddr_a..toddr_c are at
+32..34 and frddr_a..frddr_c are at 36..38, while spdifin still has 151
+from G12A/SM1, so any consumer of the spdifin interrupt will bind to the
+wrong line.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110-audio_drvi=
-er-v8-0-1489241e4c83@amlogic.com?part=3D1
+er-v8-0-1489241e4c83@amlogic.com?part=3D5
