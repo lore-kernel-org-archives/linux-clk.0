@@ -1,57 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794269956;
-	b=Ik3XiSPljAKFnzo7Sljj1cZSaVzucu92/+gFaqrNdcjuvDDLaDncaww6IvnOT/MZ3rvj
-	 6Bb0/nC8chXt3si6mI4uaL+IXpVaYPo4O/ATQPNqaSIf9kKQ+aLjYPZimZLtttMln2jzG
-	 h6rw8un6NoBu0aKqr+looG7GSZZDmDIOpFVk6wfQuBaWOQD9E0udZV1pMzlE0pvERezH2
-	 a3Z+h+cPM7zEBukderyUr+XkDx50mBQDefvf0QKSj8Dla0R3XvnRVrDI2qCyJeAHCOxP3
-	 hLyGjaMIRqNeq2D+TxF5GOTKm1ZbeCCiQdOooa6k28MHcRnPb7FegLlEcBRkP/XCAQg==
+	t=1794270267;
+	b=TLd2KeZkBYxBLpVFJdB2sUgvm6f0zdBURCMEUwhscuIYLMyms/F1SwQV/frlo07siT4O
+	 vAWawLYRB+oRyE2oDVTHNBTmTgJ8GMcIAnHZkLwcyJZqFcZGULCIbpHUooIV9lRLlXpOI
+	 1+8P3GZJ9jJkxhJkhRtTuBR+KnX/O8UYLX4chUPGwJ0hLIdlqU3j9I+oziuRR2Dk+LI7g
+	 LcjNEVgaj5bbO/4W8hODJeGB/A2O17Su7yRvfci5CVXXeQZAgNYt22AEsvGJPDQhVfz4d
+	 w2wJWGtQYk9A+s8j7S/lv2dT8GYVko8dR+9R4Pi9tHHZogN+6vx5Yn4gCW9YMqZgrxw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794269956;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=k2nj6EFwtFEoGtqUTnS6Y+9lcxQ+ylbF3CebdYj5FfE=;
-	b=qeAsFQcN0pg5RHuahzCGVcdlQuXGpt1iCMccFQSjNtZfN9wG/9r0YNl5e5bnFA2DBH38
-	 SATNAyW2irG61LxKNI9UKxHr/ex4El84tkmEO9BSTL2k9tOWurjNtSqjDl1SVnyQB05YL
-	 4WqYUgWgJvTJ2OfzpTxmpSCm0If6Tw+unPxJ7sEs8GZZixOdbbSZZL/pXbbqlGZqNpv8O
-	 BEasCj1YDiPTaiO72ujV4YNwBuc+mlK2BtRVbRNPPZr6ls4+Em9vxiZrEan1i71H/a/NC
-	 wiIpZ9ZTheupA1XgvwuNiXVixoFZJ6y/UXqd3Ku728Bh6KTsxkF6R6teItfdqwNjdCg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794270267;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:References:Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=cot/NIJQFYT/JaRuXN1YSdNLoPCmSz56TVO1VgSYzR0=;
+	b=DZo0rryzMJ+WHf/xtbrRN0msMiWQXKx2hGXyBPA/wKmpj4p90sf/TlUhJjvs/rhP7Z2L
+	 UNx/cgK96GXMoVnZcXcvmscejzZU3qMgh6m7CkxMyfJ1lG4DJXUhIzxuAWH+jTXPoz2TZ
+	 J+M/pKCOB4PepeEGn57DOd776+MVSn8Kv76/9bRl3pWaeQFsTXJlHobFmwCt+6hNZAj2I
+	 q9PrEO8oCDeT4/UqMlOHnhXFzHxmLfIqVvU5BWhi/FroGJ8m1XfQXEVWSzu8GFKrnjlEH
+	 /Iy/NN6CwIos30zZT0xwBAktfJZvw2G28b9ccPRFXXE2tgBGahZmvbGJIG3mWnetUew==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="DwksX/ik";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AsbuHSJ4;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC85606A337;
-	Tue, 10 Nov 2026 00:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F711606A31C;
+	Tue, 10 Nov 2026 00:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DwksX/ik
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BFFD1F008A1;
-	Tue, 10 Nov 2026 00:19:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AsbuHSJ4
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19ED01F0089F;
+	Tue, 10 Nov 2026 00:24:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794269955;
-	bh=k2nj6EFwtFEoGtqUTnS6Y+9lcxQ+ylbF3CebdYj5FfE=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=DwksX/ikUtARzsjADm3q50PeuoQDRMxygiuyL0uIfw7in0xnoUdVRgP+/2sq0Kf3v
-	 i1dSPwcb4JBMbdJQnmvG4WXEBaarzpsCHaAcYIUnFyUqKt9MPv3Pwvll78JarIG/YD
-	 Khz/lDjbXh/BFxleQK73Fz+ITJXyYQ9odqTUFlmyG/v0bXxITltvTvuH83kVtwu2gw
-	 h+QHGnujuIKc6T1ZqF2tmHbMqRg8VN9YvgavdJnxynw62Afbi9YueGZtuphkI5bdfI
-	 pV2dnEOOnhtRwaAoC6pRq+G18MNKI19eTzal2XRKeAs212yLL7OVtraZunNugxp1Ce
-	 mHT0a+j8Ca+mQ==
-Message-ID: <sashiko-outbox-205833@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v12 1/5] dt-bindings: clock: airoha: Document support
- for AN7583 clock
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Christian Marangi" <ansuelsmth@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc: robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261110000753.508-2-ansuelsmth@gmail.com>
-References: <20261110000753.508-1-ansuelsmth@gmail.com>
- <20261110000753.508-2-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 00:19:14 +0000
+	s=k20260515; t=1794270267;
+	bh=cot/NIJQFYT/JaRuXN1YSdNLoPCmSz56TVO1VgSYzR0=;
+	h=Date:Subject:To:References:From:In-Reply-To;
+	b=AsbuHSJ4beFlEWYzINviFgnLbC4ZNtBFcbBx/RS+XSE6jyp3ilZfUvAi20tmVWHKV
+	 zMIk9LA4fIvo/b9zeZrzVzL6Z7IbMRSDjMCCyzgWKb6BhUuNlkcqDpoQFqGfLwyW1A
+	 9qubFztj886dimr38SDge0cLxzedsvMHsnSkmUEoeQr8LnFVkTw8FAYOGpejRiXEre
+	 pp1NSxnbqaBZ+o5Ov13wo6o6+2HS8oDj/GjtFGESATlxeUo+h46vn9ks2159ZdRkPP
+	 NpqhB8XdrMm2osLOXI7cewmIl47lkqTrGNrqdoN+ldQfGjv9O8R1KPBzm7jt28FwzQ
+	 57usr0mWMQwnQ==
+Message-ID: <90ba5a4e-12e6-49ee-856b-b0d9d8eec4db@kernel.org>
+Date: Mon, 9 Nov 2026 18:24:26 -0600
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,84 +50,47 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] clk: socfpga: agilex: register the SP timer clocks
+ early
+To: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1791871090.git.adrian.ho.yin.ng@altera.com>
+ <1fc28c08edede0f96b5eca860d5c344e185f18da.1791871090.git.adrian.ho.yin.ng@altera.com>
+Content-Language: en-US
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <1fc28c08edede0f96b5eca860d5c344e185f18da.1791871090.git.adrian.ho.yin.ng@altera.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [Low] dt-bindings: clock: airoha: unwieldy per-compatible conditionals
-  in schema
-- [Low] dt-bindings: clock: airoha: inaccurate description of
-  airoha,chip-scu
---
 
-commit 078856d9f139a456969b8b085cbf1d617f56642a
-Author: Christian Marangi <ansuelsmth@gmail.com>
 
-dt-bindings: clock: airoha: Document support for AN7583 clock
+On 10/13/26 02:07, Adrian Ng Ho Yin wrote:
+> The DW APB timers are probed through TIMER_OF_DECLARE() from time_init()
+> and cannot defer, but the clock manager is a platform driver registered
+> at core_initcall(). The timer's clk_get() therefore fails and the timer
+> is never brought up.
+> 
+> Register only l4_sp_clk and its parents (boot_clk, main_pll, periph_pll,
+> main_pll_c1, peri_pll_c1 and noc_free_clk) from of_clk_init() using
+> CLK_OF_DECLARE_DRIVER(), with every other clock left as -EPROBE_DEFER.
+> The remaining clocks are still registered when the platform driver
+> probes, which reuses the early provider.
+> 
+> Signed-off-by: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
+> ---
+>   drivers/clk/socfpga/clk-agilex.c | 242 ++++++++++++++++++++++++-------
+>   1 file changed, 187 insertions(+), 55 deletions(-)
+> 
+I think this needs a Fixes tag:
 
-This commit documents Device Tree bindings for the Airoha AN7583 clock and
-reset controller, adding the airoha,chip-scu property and clock/reset ID
-definitions.
+Fixes: 80c6b7a0894f ("clk: socfpga: agilex: add clock driver for the 
+Agilex platform")
 
-> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.ya=
-ml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> index fc37786ac7ed8..05cd20ce3ab91 100644
-> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+and the Cc: stable
 
-[ ... ]
+Other than that, it looks good to me.
 
-> @@ -57,12 +58,36 @@ properties:
->        available serdes port.
->      const: 1
-> =20
-> +  airoha,chip-scu:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: phandle to the Chip SCU providing the registers required
-> +      for configuring the PCIe related clocks and resets.
-
-[Severity: Low]
-As reported by Brian Masney on v9 [1], is the description of
-airoha,chip-scu swapped with the main SCU register block?  As noted in the
-commit message and implemented in drivers/clk/clk-en7523.c, the Chip SCU
-provides base clock rate and divider registers, whereas PCIe clocks and
-resets live in the main SCU region.
-
->  required:
->    - compatible
->    - reg
->    - '#clock-cells'
-> =20
->  allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: airoha,an7583-scu
-> +
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 1
-> +
-> +      required:
-> +        - airoha,chip-scu
-> +        - '#reset-cells'
-> +        - '#phy-cells'
-> +
-> +    else:
-> +      properties:
-> +        airoha,chip-scu: false
-
-[Severity: Low]
-This isn't a bug, but with airoha,an7583-scu added, every compatible in
-this binding has its own if/then block under allOf with different rules for
-reg, #phy-cells, #reset-cells, and airoha,chip-scu.  Would it be cleaner to
-split the diverging variants into a separate schema document (or at least
-consolidate the shared constraints) rather than adding another
-per-compatible conditional branch here?
-
-[1] https://lore.kernel.org/r/179383990045.753844.10400171550739497565.b4-r=
-eview@b4
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110000753.508-=
-1-ansuelsmth@gmail.com?part=3D1
+Dinh
