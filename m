@@ -1,112 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794307152;
-	b=j+1kPhIaIJnv0GiUIi+jTEBnoz8eFgGJhLEZgOuOjk1wVyumbjbJRLc5hK7vLd/wXcFs
-	 ZQfJ3j5c+d+r4Eb7FvZsyXjrKXdaiWipYknNvGgrcNpF3ZzBGNJrd3jfMCA6ye0v6/DXV
-	 pc3/EM48ZBK8Yl3bwDnYPGGsSWHlPg0genscSZXEp+Kr5uGotSqq1MTG4L/c3JMkeidGU
-	 kQ9zCeMuh7mMjp/DJ47yhzid32nmC33he3ceRoOj1nxcZf/dij2JXlgjUK7xri45MtIMs
-	 n38vzQmRxxYzEwlbvlirh3RkMTUMz1G+uKhBRoQcfmoZX4yLnzT/+CpYIvJIFn/GKWg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794307152;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-GUID:X-Authority-Analysis:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=ZG386YuIEJ6iBTpDnR8DFXW4CBJWh4A+gyfmdTuSbgg=;
-	b=NSUWGKriQLBCxVoFN62IgcyUnTYgn8liW5NN23zsBwEMRvEQPK864C3nykdPPqlO3L11
-	 GQHMUt0vx3OBSK5x7sCOEelBEn4vS/06DsYU15aM2OLpnp1i1msen2ql8zzqf4gATf4nH
-	 YG19ZOgufujMlrc6BJktwAmXvJTg8Z5mssZjjlJwB5s1wp8JpzKb9vBQKy6RJiZHgqG0Q
-	 Hk5loAG2wZ3Sd11qWhLQE6ASyLdFpYimaaMyL5i1vT/RIT7xuM7JqLlHgX9zcBISIC/oO
-	 ADGQ/xTE8jl3z2Bp+85gQr6Nk+mj5hDbWgLnjXQaTx1b3mv/nYO88HFoMxZHdhLrQKQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="WsYM/0i0";
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=S8Avzhk8;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.66.44
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794307345;
+	b=ok82Zc2aa2CilFG6u9Qync4AX2Jsb1tLDXQMmt46HRDM1HTcuhA4sFub7tJ2aJ1xfqN5
+	 JhAopfQliP+2kwiH2cg8GKa5Q2nYDvY/iXcO/k3eLbXf+KV4ZuleWTBPoPjqaKZD6IHcj
+	 RnO2Fys2YzI1F7BZ1t2V3XHvY/1x5CGlGCRtb+G+hR00yclvXjJ5Nh7bAjhQD5YSF5GWD
+	 bNvJgxT/mahpIqVBQY33oh1SwZhFJPfk/hCnTQMzkaDPJK6qIpOlXJrLQNOyYZphEOSzo
+	 KsExD40brurYvA9QeWYD8ZsD5QH/4lww9NAcEMy5UnG0ryLxswqsfJQNscrdPg8Y3fw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794307345;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-ID:References:In-Reply-To:To:CC:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Originating-IP:
+	 X-ClientProxiedBy:X-EOPAttributedMessage:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=8nzNZ+7DFggSD6/70h/NqH84134knfrrcaEjFtbNDRA=;
+	b=PxlbSnfr3OG9HGodkH71Y+z0+K+HF7ZivfNnAi5akwGjyqSbeSXV4CXlttLhkOfepR+O
+	 eMm0mbQqhtgZhg/SsTBT+8EDw2/hmrGw9pn8qTC1s3SLKzpuw0MEk/JqhY8AyrMf2gG/s
+	 GabqtnsYSpARLi2mVw/x21YJcvbPWAUWeFM9rAYw4NqquYcTouXFypaEv64l/MGoNFH0v
+	 q6Gfyo090mgOdB6f/mqZ+UKHbT/N7x0PM6U605qfXkmRTA45d6jKOEgRUNcHPPzMmKsW1
+	 5/pJRBF8FBClLJ9Stfa3pDwdvNsLIGkoRTf3OZunHV4lBsHxRmA2uLDJGTrb2wl3e3Q==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=foss.st.com;
+	spf=pass smtp.mailfrom=foss.st.com;
+	dkim=pass header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=m06SWyFB;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.66.44
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012044.outbound.protection.outlook.com [52.101.66.44])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD40060A2636
-	for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 10:39:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CD40060A2636
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167B3606A321;
+	Tue, 10 Nov 2026 10:42:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 167B3606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=WsYM/0i0;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=S8Avzhk8
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AA8WDZj2833791
-	for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 10:39:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZG386YuIEJ6iBTpDnR8DFXW4CBJWh4A+gyfmdTuSbgg=; b=WsYM/0i0nj6QVCNB
-	LD+5ZXziGhs5DAXhRYtHyjhlhZn8/Gn2PQVVq6e6pDhepOv/Grzj/YaGYZZgzzYQ
-	lsVoEtwjT8+/asdkQZ9DH+hD2KbDaXtyIIhFnQnhEMIdm8RVqSvh9CYYDKF9MoAB
-	hGA2a0ugeA+7XaweJmxcumOyUKupX6b8wh5dKzKUCGhAgeQPhjDutaBaAUz9IoZK
-	2zqxKbdlGREPrWUhXrIeLYCrAvSkpBFrMh8vlJXA/Zy6G1j0CqpNOlMCZN6y4oG+
-	9hBEnroL8BeKOstRhhBrnVqxbrthJ3Oxs2uOfI39c3DWq2l5r67Oiyw8hoatb8pN
-	dO17iA==
-Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com [74.125.82.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4huyufrf3c-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 10:39:10 +0000 (GMT)
-Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-30bcb065bfdso3389940eec.0
-        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2026 02:39:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794307150; x=1794911950; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ZG386YuIEJ6iBTpDnR8DFXW4CBJWh4A+gyfmdTuSbgg=;
-        b=S8Avzhk8BQhS4V86f2YKIuF0MCy4TSBwVJHNILESf7NgW0w4h8hLRk2/UvhjKCoL6w
-         wdC4NFyI5Sl5F4FCO1zZt1JK+9ccKNiXDmDcEWTQ2xAcUAgqbH8WyVJx07s6mZhIgv/e
-         CR35LwYczwc8MXQtswGy7WwSHeEfF5tWP3B8djCC05wWsdgrK1rckmW68kTjABDW9W/q
-         mc6nAl39IoXEd7Bzk1Y7A80MDNk3FPHL8ihMvh+NVOWntzu4XZzj/RfDorhLKS6eX+4J
-         cSHQR+tEbfg4165AtzxspCll20XlQMYoEKilvNgfduaqpwmfltGjqZ7N5CYnUbra3sGw
-         IkfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794307150; x=1794911950;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ZG386YuIEJ6iBTpDnR8DFXW4CBJWh4A+gyfmdTuSbgg=;
-        b=y6qWJPsl3woNLz3KYySZ1CBz1iDH9u36EKT4aIk4g/EEFttfQkBM9AOquuRP8SqhHA
-         ec6AXjnGk+2DXnvqxkNb3MrP957WLrEZSrsvQGIEuEr/xelKzq6xk4QJhSxtJ+/SQEJM
-         MOko/AqB1jDaqpsZPD4DAVilKgaQw6TjkTVjRU2El9o9oaO1BElWvRiJ9qO9La9iZawi
-         zvj+9jtdZriujbE4GwrNBlg/pxZc2PyF9fHVT8eLkuhSe6kKSyjkxmXO/oSbWryU2x0V
-         1qSlOi4B+MDKQoBHUPAKiQfCkq1oz6Yh8VTduzzDAv+DN1L7lUwLOeMoEUz8nXA8LkUD
-         Vorw==
-X-Forwarded-Encrypted: i=1; AL+hErGEAkZ2Rka4ZTOsuf4kfJgEIsp7IH6NR4i6HWIPYduKoXv5V5hlM77tVG+yHPsj6NqOAVUHrHwi3Qo=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/6snqDswfFTQKjav4H/fgI/aybzqi9chzmNOo2hrIlb3l1ofvr
-	3GeLf1qCFab0cpa34OB4dn6WoOkU0r53mzA7jDk1iokVgdeGD1WFqiXtoN/IbzOgRXQP9ZBEGAE
-	nDWszWb5qRmbb6CwyKN9/WYumLekP8O0nE3sa6Qbs4acv0OLmwHNWVaBT/ZopwFs=
-X-Gm-Gg: AYBFou0JsTzWoUaIB4t2W3cCQMu9UE6OeGHw1XQeHBqmrVME/rEx0CjgrDsn2jfULNB
-	M0c8vV7DFlH/u+ERBccypRS4xLKVusqZ9K7UR17KlbthvofjLBaboZW2AvH1+VLVf1AnGP7fTix
-	ZSTH4xQMsAar3arJ6Ty7fs92thsfOPne7LLfjQcRTmIpEQGt+pygF3HUVd/uEJ415XN5U8HKRuc
-	UdXB30Er7cjFwtgaR89JMJsL+7+U5EhxoD4NxF8BgjpiwW8EILAiKyODKOwXi3+xCRvBSa9+XYc
-	v7X7P/xjN1khzN4ymu5scD8gzDmVDGK4lhqusR+2W9tbyEZwHjm9UEico96srqwkJTN8w1JglBa
-	FPDg3fJqmyR2Yh7ci4nYzcH1tYtRI7znoYkKhw4pFK3skGblcISSo5j/gRZYyTGD/DosX9jaoFT
-	8s77FZJw==
-X-Received: by 2002:a05:7301:4d05:b0:36f:14ef:ad08 with SMTP id 5a478bee46e88-3751e6ae405mr2608452eec.9.1794307150122;
-        Tue, 10 Nov 2026 02:39:10 -0800 (PST)
-X-Received: by 2002:a05:7301:4d05:b0:36f:14ef:ad08 with SMTP id 5a478bee46e88-3751e6ae405mr2608420eec.9.1794307149455;
-        Tue, 10 Nov 2026 02:39:09 -0800 (PST)
-Received: from [10.219.49.187] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-375212e9d78sm6411676eec.25.2026.11.10.02.39.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Nov 2026 02:39:08 -0800 (PST)
-Message-ID: <69573381-2c8e-4744-bcad-0165de4b1406@oss.qualcomm.com>
-Date: Tue, 10 Nov 2026 16:09:03 +0530
+	dkim=pass (2048-bit key, unprotected) header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=m06SWyFB
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U4s+U+qgNqDtKqZzHTkA+GNFJd2On3KAn2bOubfCkckRHkAnQWZshvH71jB8I5hZrJY0A9+jVGEUIwSfns8EDo0GeW4zzpAYjH3IrwG+mXIr4YJDRWHLuw+w5GfOa04xOt5gBfUZfLZy/lT+3CrrqhuYfcLCzh+ArydgNu74ZQbH5ju3MbWVDtHOWqO2Jj9VOh0OXzh+sAyBdZOkNgy936ZHfQHCuXfCNQfnpRZORlGfJZoZZDAt+tJnICLFmES0fOFyi4qSm7eZDRDLmVC+melnQpvPGd1AKTxwRG76KuM5ihFeCHolvbosu8vM2GkmoxgBRqZ+9Zwkx1pKPTzSUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8nzNZ+7DFggSD6/70h/NqH84134knfrrcaEjFtbNDRA=;
+ b=nFEjH8uAWyyGrjExRHCG/dZ8MKvt8UHNuVt1avH2csWOxqk4Ml7qR6rnMN4xF4C4ErIE9zMtarUF/E9Xsa+W9OzFitjYagjd2ByYIsaJ3J8SZWSQBnlHPM5nt+sVXJSuNQ9qQG11qSlDo7BvnWTq/WUGjQ8m6Qovzrd09btSLprcPdObPY3/ySDnnfTO1SyrVFtiQd2mHngBHvlGq9Kv6zm1J0TFOc7+jt0eZRxMXgF7BMOskANJeSSuRr6IhjzQdaa2PUYM/omwdJpG41peIQpSCjmogEAju/fa9MeSsgzO3hRvHEHbnMesBWSYF1lificR4vAFhQwASAYhfaVl+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.60) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8nzNZ+7DFggSD6/70h/NqH84134knfrrcaEjFtbNDRA=;
+ b=m06SWyFB0KiJGmH25KdBLXk7II2S/B+XWDUieBisPu4mTaa33754VDJvfvspdftNNP6EDyjpnYZ5kA3eOyVdzVtDMX6QC1V/0SZuR6+nZOqt84qEuGF2SZAN2p3Z16pG72kGizICrWa5dNDK7EWdxcGwkN1WHnCEX5RVFkQDMxH+uYWll0oe6cqyud+VCdQdW8D8fQfFIdKapFJru62MDRMW7pjsO/zU1YUvYsLfiyvmdwZMMd3MDnUao/hqZjujHWbpnQQamRXnatZ9hIa5Z6Z+u4eHm3SUYrUnnfdFL6Qgz0P7eFlDIdFVJnpcA9DAXeaYGIWdDZRfgLccTUWhNg==
+Received: from DU7PR01CA0039.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:50e::12) by BR0PR10MB867675.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:2c8:5f::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.8; Tue, 10 Nov
+ 2026 10:42:22 +0000
+Received: from DU2PEPF00028D0E.eurprd03.prod.outlook.com
+ (2603:10a6:10:50e:cafe::55) by DU7PR01CA0039.outlook.office365.com
+ (2603:10a6:10:50e::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.8 via Frontend Transport; Tue, 10
+ Nov 2026 10:42:22 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=fail (sender IP
+ is 164.130.1.60) smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.60; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.60) by
+ DU2PEPF00028D0E.mail.protection.outlook.com (10.167.242.22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.615.4 via Frontend Transport; Tue, 10 Nov 2026 10:42:22 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
+ (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Tue, 10 Nov
+ 2026 11:43:18 +0100
+Received: from localhost (10.48.87.14) by STKDAG1NODE2.st.com (10.75.128.133)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Tue, 10 Nov
+ 2026 11:42:21 +0100
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Date: Tue, 10 Nov 2026 11:42:16 +0100
+Subject: [PATCH 1/5] dt-bindings: clock: Add STM32MP25 SYSCFG clock
+ controller
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -116,78 +106,165 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 0/2] Add LPASS VA CSR HeartBeat pulse clock support
-To: sarath.ganapathiraju@oss.qualcomm.com, andersson@kernel.org,
-        abelvesa@kernel.org, sboyd@kernel.org, bmasney+clk@redhat.com,
-        jbrunet+clk@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, srinivas.kandagatla@oss.qualcomm.com
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20261105-master-v13-0-dbb43cdc60e5@oss.qualcomm.com>
-Content-Language: en-US
-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-In-Reply-To: <20261105-master-v13-0-dbb43cdc60e5@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: G21bihuLLobqupTbX0RF_KLug24n4SCo
-X-Authority-Analysis: v=2.4 cv=S6lMU4sP c=1 sm=1 tr=0 ts=6af2f44e cx=c_pps
- a=Uww141gWH0fZj/3QKPojxA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
- a=EUspDBNiAAAA:8 a=4tIis3KsY0wH9TNJrrgA:9 a=QEXdDO2ut3YA:10
- a=PxkB5W3o20Ba91AHUih5:22
-X-Proofpoint-ORIG-GUID: G21bihuLLobqupTbX0RF_KLug24n4SCo
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEwMDA0MiBTYWx0ZWRfXyrI/Ldui1KUt
- /l1lB/0XKTZyvX4wyxHES+kLfs5G7PlwxgcNG5n2ZKrcbuDr6uo1C1ssvHERbEcRV8hRIWv7nmQ
- 1bHGRi5ksRmMOD09yO2VkgHV01uju2w=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEwMDA0MiBTYWx0ZWRfXxbA7QPBDwTzH
- vukxGwXKJyyVzpSZC93Km1qQsrSRlr7Rbb/PCLiICzxgD+cfdnC9vE102SYwNV2rIMbeHSK93IM
- Lv+2SibHvNWm8ZEGDGJqV411yuQZPLFo+yw+5vYY5YVQPJccSspMrTmKUPnhoW2wWeiy0mIm1hw
- bFrGuWV2TsvrkH5hHfmG8VjhYFWyIUOiVqUlvHRkqBmFMckACRH8oSmEUTaKXL6INTHlW4bpGcf
- pCgqrZsOT+oO4okNuI2pD/eCVjcm65W07abQjjkxdFqlAH1uuY5BCD4mSz1W2gIirdS2RnnFyeL
- cKlJvXhFqLmWTmqqvg/iJQKfuw5JMn3Kn7YITNpOgG1hovg7cHJquHn5OvRReMlnFPI4mSn67cR
- dNBgwpSWcdfvrJ1X7pDb4P08ZcgIKB+XJ/aXc8B8WlTjwy+61863otT6XJWf+21U8c/mwdqzacX
- sD9/eN5m2/lsmyrLHhw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-10_03,2026-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
- spamscore=0 clxscore=1011 malwarescore=0 bulkscore=0 adultscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
- definitions=main-2611100042
+Message-ID: <20261110-ups_mp25_clk_syscfg-v1-1-667829cd290a@foss.st.com>
+References: <20261110-ups_mp25_clk_syscfg-v1-0-667829cd290a@foss.st.com>
+In-Reply-To: <20261110-ups_mp25_clk_syscfg-v1-0-667829cd290a@foss.st.com>
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, Christophe Roullier
+	<christophe.roullier@foss.st.com>
+CC: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794307340; l=3587;
+ i=gabriel.fernandez@foss.st.com; s=20261013; h=from:subject:message-id;
+ bh=nTh0J6mc25gfI4XOsNXAFWvP3bq2c9SPrzMjHFRT7us=;
+ b=hmmo43WPjTim+pW4OYq+VlKhfUy5z+SMlz/B6RTl9L2Bm9xmyAPZybwBDKcO9F5K/4begwiFV
+ 4UZw8XyhRs/AL6h+JKfw6pRT3zRiH6mfIylIVJLjp+ZZRhKlWvyOSJN
+X-Developer-Key: i=gabriel.fernandez@foss.st.com; a=ed25519;
+ pk=BVZE1QjIfcrviw9RyyOGQGGsg9CNbaxyjYn9pAlkNyQ=
+X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
+ (10.75.128.133)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PEPF00028D0E:EE_|BR0PR10MB867675:EE_
+X-MS-Office365-Filtering-Correlation-Id: d2fbc012-7616-450a-114b-08df3f174d47
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|23010399003|376014|7416014|1800799024|82310400026|11063799006|56012099006|261021135927099003|261021121427099003|261022105027099003|261026140227099003|261026121527099003|261009223027099003|261028144727099003|261102123227099003|10067099003|18002099003|22082099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	U5YYNQTnjVHGbre5i336cclgxwUeQ7CngMgCP/KWXWYWWaNnmMYMr6udWCGTQPvcNEQ6KYKdcn0mS0cmIhKYrmVl+8IxXK8ZvbBtcHP4xM1Z6y55ngANj2aCTjWNdT0BugfZ7tSgwL8COlXjsLskD1eqC+uozH1bEsjPy9EYx6O4oufOnAspZPp+H5STCXKaWKqiINRsor3p+VX1fy11QQWu2+XBRVVSllI7Vqi2XBy35nhMfK7YGPpJa4cqXEtBDwmubNFI+wZUcz5eaZT7VJKnjFFYxv5AFk4sKYAo+8jsUEZLDO/SSkW0+Ca8V0H2UMdCpR6oJ9Mj2He/U1w5WrUgmNXIeZhDdF/RpD9EkoAs9K7P0phSa9xfqTh2qfzeIuqz9utyJkrxUl2JtFosNVZGqGog7PacGos9E22WEpaEnx5f+9SuDp3E5lVy8qlub/CLxXFgpQxgNVhSWmkcroLszouX+5FoHDZlEIdGPvwrwixTMMycJ05N2AMAL0An6M72O8zjlm1MmdR3LMj60/GKv+yBYhObeUyYq5ctqSOcFr2365ebkVnAeblKif+yhpLhPtVrWaxqVd6GqYgpb3P1UAGdMxY0jTWlvwmJPG9fo4EX2OnE8YfLN9ExFB0BsfGzzA2r6qEO5jgmPP2pvw==
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(23010399003)(376014)(7416014)(1800799024)(82310400026)(11063799006)(56012099006)(261021135927099003)(261021121427099003)(261022105027099003)(261026140227099003)(261026121527099003)(261009223027099003)(261028144727099003)(261102123227099003)(10067099003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	GBUU3/WYzAFzwENCnSxNTinlrMbfLcHt4/MppZGOdlZP21rkGPGRk1Hr6Zv93vON63v+93twQACH9OHyNLPjby1t03jSqVr4ZJtBoXh2Za9TmiLE99/5XWHdNpzdu6VLL8I8gwwajjPN45i9Uta16ZUqpjXdLnToVXpW/mD7ZlNcVwHo2KG44SVYOifJsqYkguC4peNtPU/Y7qGYGAs2Yr36G/2lfcl/XySqZzt/wrm3FnYXw62ot4mEPMMjAaMPVLZSEz4DfIZ7JG4VyM06RF/mpesW6DkqQGySkTTmc5MA9IaFilBVfyWoUXDUj3si3kJBcFyUNtc3WiPbIhaMDd9z1Wl0V+ezOtSH5vtpDEaW3MQ9YQJDXs6/eXfXgcCjNNwPOHZD72pwnCTEM6sgbzKEeyFaiDaxy7pUjklE2rGeuANVg98pztt31Z12C548
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2026 10:42:22.2004
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2fbc012-7616-450a-114b-08df3f174d47
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU2PEPF00028D0E.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BR0PR10MB867675
 
-> - Split the qcom,lpass-va-csr and qcom,lpass-va-macro bindings into
->    separate patches.
->
-> Changes in v1:
-> - Initial version
->
-> Signed-off-by: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
-> ---
-> Sarath Ganapathiraju (2):
->        dt-bindings: clock: qcom: Add LPASS VA CSR HeartBeat pulse clock
->        clk: qcom: Add LPASS VA CSR heartbeat pulse clock
->
->   .../bindings/clock/qcom,hawi-lpass-va-csr.yaml     |  62 ++++++
->   drivers/clk/qcom/Kconfig                           |  15 ++
->   drivers/clk/qcom/Makefile                          |   1 +
->   drivers/clk/qcom/lpass-va-csr.c                    | 210 +++++++++++++++++++++
->   4 files changed, 288 insertions(+)
-> ---
-> base-commit: 8b7179210b22f8e48a82c5ceacb9d56a9c4cfec4
-> change-id: 20260917-master-6c2778f57a9a
->
-> Best regards,
-> --
-> Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+The SYSCFG of the STM32MP23x and STM32MP25x SoCs selects the LTDC pixel
+clock among the LTDC kernel clock, the LVDS PHY pixel clock and the DSI
+PHY byte lane clock.
 
+Add the binding for this clock controller, described as a
+clock-controller sub-node of the SYSCFG node, along with the header
+defining the identifiers of the provided clocks.
 
-Reviewed-by: Prasad Kumpatla<prasad.kumpatla@oss.qualcomm.com>
-Tested-by: Prasad Kumpatla<prasad.kumpatla@oss.qualcomm.com>
+The inputs are listed in the "ltdc", "lvds", "dsi" order so that the
+ones missing on a SoC (no LVDS nor DSI on STM32MP231/233 and
+STM32MP251/253) can be omitted at the end of the list. "#clock-cells"
+is 1 so that the other clocks of the SYSCFG can be added later without
+changing the binding.
 
-Thanks,
-Prasad
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+---
+ .../bindings/clock/st,stm32mp25-syscfg-clk.yaml    | 61 ++++++++++++++++++++++
+ .../dt-bindings/clock/st,stm32mp25-syscfg-clk.h    | 12 +++++
+ 2 files changed, 73 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-syscfg-clk.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-syscfg-clk.yaml
+new file mode 100644
+index 000000000000..027d14f28b0c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-syscfg-clk.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/st,stm32mp25-syscfg-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: STMicroelectronics STM32MP2 SYSCFG clock controller
++
++maintainers:
++  - Gabriel Fernandez <gabriel.fernandez@foss.st.com>
++
++description: |
++  The SYSCFG of the STM32MP23x and STM32MP25x SoCs provides clocks, described
++  by a clock controller sub-node of the SYSCFG node.
++
++  The provided clocks are identified by the macros defined in
++  include/dt-bindings/clock/st,stm32mp25-syscfg-clk.h:
++    - CK_SYSCFG_PIX_LTDC: LTDC pixel clock, selected in the DISPLAYCLKCR
++      register among the LTDC kernel clock, used by the RGB parallel output,
++      the LVDS PHY pixel clock and the DSI PHY byte lane clock.
++
++properties:
++  compatible:
++    const: st,stm32mp25-syscfg-clk
++
++  "#clock-cells":
++    const: 1
++
++  clocks:
++    minItems: 1
++    items:
++      - description: LTDC kernel clock
++      - description: LVDS PHY pixel clock
++      - description: DSI PHY byte lane clock
++
++  clock-names:
++    minItems: 1
++    items:
++      - const: ltdc
++      - const: lvds
++      - const: dsi
++
++required:
++  - compatible
++  - "#clock-cells"
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/st,stm32mp25-rcc.h>
++
++    clock-controller {
++        compatible = "st,stm32mp25-syscfg-clk";
++        #clock-cells = <1>;
++        clocks = <&rcc CK_KER_LTDC>, <&lvds>, <&dsi>;
++        clock-names = "ltdc", "lvds", "dsi";
++    };
++...
+diff --git a/include/dt-bindings/clock/st,stm32mp25-syscfg-clk.h b/include/dt-bindings/clock/st,stm32mp25-syscfg-clk.h
+new file mode 100644
+index 000000000000..74673942898c
+--- /dev/null
++++ b/include/dt-bindings/clock/st,stm32mp25-syscfg-clk.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++/*
++ * Copyright (C) STMicroelectronics 2026 - All Rights Reserved
++ * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_ST_STM32MP25_SYSCFG_CLK_H_
++#define _DT_BINDINGS_CLOCK_ST_STM32MP25_SYSCFG_CLK_H_
++
++#define CK_SYSCFG_PIX_LTDC	0
++
++#endif /* _DT_BINDINGS_CLOCK_ST_STM32MP25_SYSCFG_CLK_H_ */
+
+-- 
+2.43.0
 
