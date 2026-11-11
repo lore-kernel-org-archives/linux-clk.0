@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794395498;
-	b=157E9mkVrDyXMOsTV29pW3Tmq6G3cT/a3/HEfBcyaXn+CqOckC+X54yZIWkwHeciMqNj
-	 pO4Y1mKElWYrvdUIWjt5kZ1dDq498oSKktQgjEJAP2fd7uMRtyyM9fuMVAEyO5Sfcgldw
-	 z31bHdsUnJrdKn1sr2VoA+MDkEKJBUyDuKPmFblm3L0xzv4fqAOZExBgM09h8JGDviFEY
-	 lim2Qk7Gy/ErhJyJLROhvJRzQtEH3wK5izolSPDWl/mzrHNgS1kYVzbG1tiV0Z7Bg8CQd
-	 H1oyNcniWG13IpeReDhGkZ931jqVLzydDGR45jTtjYIxflFpjfk96gbDBlxl6d3mysQ==
+	t=1794396070;
+	b=nVuBnCflK7c6VSqffD/MyzvFCgkW9jz5paxCUKGpc3If+TLmqiXQznzfPi//tHIBApdq
+	 XtZjE6TWIfVifPhaSxW2Q+53I/3kbSGzdfRwx4ZcOHum4o2vrQpmdiROfI3Qc0hilK3tY
+	 lA4Ghvk3KDWafFF8BB5eYjSoVAPZsh534ek8yRFv/GGCH5u/c373/cGFHGHOjRrguPvvJ
+	 Bh+Rn0EpqmcSEXn0drfwNv147MBnoxE6IZJH3QwETGe3MoAfJvtI3iq+n7hhu+OClreik
+	 sXk8gGfYtKyCouwYNbNU7Zarlj382z+3ekA3GXSNIpEfVwpdeVomSJ6HJ7bf9mWN3pg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794395498;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794396070;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=EI9+1Pe94rNtVU2rxTjoVk3Y5vhG9a5UQwsxZ4gexcc=;
-	b=XXTryxnOoRJLkW8US1jEQOMBZUQpGCOddQj/NOX52J83bkjCys7WlyyMJhKT3UE2OMQG
-	 sWGuvHdAD9YX9heB+vFOMGXztk+9WHoP2UKaYoeI0IoTHnuoVgx75zlturWY0+I/hRrTw
-	 uPDuw8FBei1BgpHKXf4cQ+ZHCYRnpyCfm1zWk5sApnrNNV+MXdCmvl5cajdDbB+eKiJcy
-	 NPuPBNTZ4qurxJFSWxMppVp3RjotP6Xd5vknul16zwv+Ivk7V8DXCwxkDl/J4bNHNah7I
-	 mDelVBng/ZdTwCMQt9sXumkp/hYRjuG739cVbl1lJBJ0mtFWUGLp7RXG5o4XVpODqTg==
+	bh=n9eMp4Ks0FZCltmngYBV5QRXUSvr6ha96eXxZ61XSW8=;
+	b=B3ysep6StGbp80HdbhTjFQxrWmANO7xRAY6gQdgB2LHiCb/fxJxPzotbWK92pe5XxJNO
+	 /YhWXHbBmZt/00digwjSIr76yytXVI1d+XXxI1hOKdgQAHHy2xwcjvNyrhMzff8chJf5x
+	 +GFHZoOL9kmkdfoUc8yWvwXoeyFiNbGSubeTZ4iQoZxFPRiMFB/Id23GVNWUTJJfMDxhW
+	 kV+E9Ojm/99zEtZ66hM5QyZ+yOH/FFQPjzKgTRvzdVH5Utt4DrJP10QywVCWFKKFNqT25
+	 KdKwfhWlBFE1tJTr6/BYUD/UUobSp3GU3VnMqfNwQvp8i46Z6zilrOoyGwm6ia/ZNbg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d7Xvs7ZD;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nq9s8uUi;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862EF606A886;
-	Wed, 11 Nov 2026 11:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23761606A324;
+	Wed, 11 Nov 2026 11:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d7Xvs7ZD
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C8E1F00A06;
-	Wed, 11 Nov 2026 11:11:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nq9s8uUi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 641541F00A05;
+	Wed, 11 Nov 2026 11:21:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794395498;
-	bh=EI9+1Pe94rNtVU2rxTjoVk3Y5vhG9a5UQwsxZ4gexcc=;
+	s=k20260515; t=1794396069;
+	bh=n9eMp4Ks0FZCltmngYBV5QRXUSvr6ha96eXxZ61XSW8=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=d7Xvs7ZDxNVnMJ0ZIIycs9v/TtpvkBrWaObuv4N6qSqAPR5r6UweMDwMd787l00r7
-	 UBEB54efQFJZ0OeEtll2xBMzGeK2b6y5zV7sooKArSlAZUB0krGwenBklUYIXtzf/a
-	 ALFNb24trK525Mp7YMlfQd4Y1SCJ8X9SHDfKLGStpDF1xRF+x/ZvNMU/7P+Ok6gH3+
-	 /Rw4YZEUFab8vHApcPnowwD57USqV6tgSNzJRVq+5fDfrMkojY323tL6V75CJiBbcl
-	 8fQgPjVGQDVTAdlj0Inwp0cakMz18+YHuKohjDlVXpk1lyK9X1kaN3XA0zb6mCTTjK
-	 FLPxvjgRtfezg==
-Message-ID: <sashiko-outbox-208856@kernel.org>
+	b=nq9s8uUiajv1IuSAJLt7CugwEflNVQaHq8pv0a5qZDdLjh5muesftq64zRDtM4n+l
+	 J6sug2e++k4OLqgjijNR7/ZbA8X9lklhxIRoF4pW9vaGmrKIzJgiK4hyC5efq/J2Ug
+	 HeqOfvxxo0Yh9uNR5sUMXWXn5tWnZ954CsDbTMXFQs9Zk8L1cvP9vzKVB96ehDJQLg
+	 tXp1C74486sd1xrFi6bZ+farNlcPBKz2+50WzxGUrQP0SdzIhVnZPO1ogQQqHGhn9I
+	 8AVl8XBQ34c30kl4crq+pw7F7/yskOGQvhZSbmZ7KTWkqM/LWBWcFcajhvqd0/YriB
+	 WDpmHqZBu9oEA==
+Message-ID: <sashiko-outbox-208862@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 1/7] dt-bindings: soc: Describe the BCM6846 Power
- Management Bus
+Subject: Re: [PATCH] clk: imx: clk-imx95-blk-ctl: fix error unwinding in
+ probe
 Reply-To: sashiko-reviews@lists.linux.dev
-To: "Linus Walleij" <linusw@kernel.org>
-Cc: mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <20261111-xg6846b-bcmbca-xrdp-reset-v4-1-17035a5e8ad2@kernel.org>
-References: <20261111-xg6846b-bcmbca-xrdp-reset-v4-0-17035a5e8ad2@kernel.org>
- <20261111-xg6846b-bcmbca-xrdp-reset-v4-1-17035a5e8ad2@kernel.org>
+To: "Manush Prajwal" <manushprajwal555@gmail.com>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, Frank.Li@kernel.org
+In-Reply-To: <6af44b5c.67914289.fe7ab.6559@mx.google.com>
+References: <6af44b5c.67914289.fe7ab.6559@mx.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 11 Nov 2026 11:11:37 +0000
+Date: Wed, 11 Nov 2026 11:21:08 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,82 +60,69 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] dt-bindings: soc: bcm6846-pmb: child nodes split single PMB
-  by Linux subsystem
+Thank you for your contribution! Sashiko AI review found no new issues
+in this patch, but noticed 1 related pre-existing issue it does not
+introduce:
+- [High] clk: imx: uninitialized register overwrite in
+  imx95_bc_runtime_resume() [1]
 --
 
-commit 6235ca071e36f4e363a6b36688dc2c4a38089eb7
-Author: Linus Walleij <linusw@kernel.org>
+commit 19a6efb010aee7e2b721c30ed7ad173ca7b7d1df
+Author: Manush Prajwal <manushprajwal555@gmail.com>
 
-dt-bindings: soc: Describe the BCM6846 Power Management Bus
+clk: imx: clk-imx95-blk-ctl: fix error unwinding in probe
 
-This commit adds Devicetree binding schemas and header constants for the
-Broadcom BCM6846 Power Management Bus (PMB) and its clock, power, reset,
-and PVTMON child controllers.
+This commit fixes error handling in imx95_bc_probe() by checking runtime PM
+return values, dropping the runtime PM reference on failure, and disabling
+bc->clk_apb on error paths.
 
-> diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm6846-pmb.y=
-aml b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm6846-pmb.yaml
-> new file mode 100644
-> index 0000000000000..9782a27ff0759
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm6846-pmb.yaml
+> diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-im=
+x95-blk-ctl.c
+> index bc6957299ceca..ad386a48ec2bb 100644
+> --- a/drivers/clk/imx/clk-imx95-blk-ctl.c
+> +++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
+> @@ -394,17 +394,29 @@ static int imx95_bc_probe(struct platform_device *p=
+dev)
 
 [ ... ]
 
-> +  Child nodes describe independent hardware blocks accessed over the PMB.
-> +  These provide global resources and even resources for each other.
+>  	if (bc->pdata->rpm_enabled) {
+> -		devm_pm_runtime_enable(&pdev->dev);
+> -		pm_runtime_resume_and_get(&pdev->dev);
+> +		ret =3D devm_pm_runtime_enable(&pdev->dev);
+> +		if (ret)
+> +			goto err_clk_disable;
 > +
-> +properties:
-> +  compatible:
-> +    const: brcm,bcm6846-pmb
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: PMB configuration, keyhole and address mapping registers
-> +
-> +  power-controller:
-> +    type: object
-> +    $ref: /schemas/power/brcm,bcm6846-pmb-power.yaml#
-> +
-> +  clock-controller:
-> +    type: object
-> +    $ref: /schemas/clock/brcm,bcm6846-pmb-clock.yaml#
-> +
-> +  reset-controller:
-> +    type: object
-> +    $ref: /schemas/reset/brcm,bcm6846-pmb-reset.yaml#
-> +
-> +  hwmon:
-> +    type: object
-> +    $ref: /schemas/hwmon/brcm,bcm6846-pmb-pvtmon.yaml#
+> +		ret =3D pm_runtime_resume_and_get(&pdev->dev);
+> +		if (ret)
+> +			goto err_clk_disable;
+>  	}
 
-[Severity: Medium]
-As reported by Philipp Zabel on RFC [1], should #clock-cells,
-#power-domain-cells, #reset-cells, #thermal-sensor-cells, and the
-reference clock be placed directly on the brcm,bcm6846-pmb node instead
-of requiring four address-less child nodes?
+[Severity: High]
+This problem wasn't introduced by this patch, but doesn't calling
+pm_runtime_resume_and_get() here [1] overwrite the hardware clock
+control register with zero before any state has been saved?
 
-The child nodes have no hardware address space of their own and partition
-the PMB keyhole interface by Linux subsystem rather than independent
-hardware blocks, encoding the Linux MFD driver split into the Devicetree
-ABI.  In the driver patches in this series, power-controller,
-clock-controller, and reset-controller all access the same BPCM slave
-devices through the parent regmap, with power-controller and
-clock-controller modifying different bitfields of the same 32-bit BPCM
-zone control words (offset 32 + zone * 8).  Similarly, the clocks and
-resets properties on the hwmon child node (BCM6846_CLK_PVTMON and
-BCM6846_RESET_PVTMON) toggle bits 12:8, 2, and 0 of PVTMON's own
-PVTMON_CONFIG register (bus 1, device 6, word 17).
+bc is allocated with devm_kzalloc(), so bc->clk_reg_restore is initially
+0.  When pm_runtime_resume_and_get() runs during probe, it synchronously
+invokes imx95_bc_runtime_resume():
 
-The Linux driver for brcm,bcm6846-pmb can still instantiate child
-platform or auxiliary devices internally while exposing the provider cells
-on the parent PMB node.
+drivers/clk/imx/clk-imx95-blk-ctl.c:imx95_bc_runtime_resume() {
+	...
+	writel(bc->clk_reg_restore, bc->base + bc->pdata->clk_reg_offset);
 
-[1] https://lore.kernel.org/r/f1c24a603964302ec1462b1cea790a2a7079fb3d.came=
-l@pengutronix.de
+	return 0;
+}
+
+Writing the uninitialized zero value clobbers the clock gate and mux
+settings configured by the bootloader, disabling active clocks and hanging
+dependent blocks such as display or LVDS.  Initializing
+bc->clk_reg_restore from the register before enabling runtime PM (or
+calling pm_runtime_set_active() before devm_pm_runtime_enable()) would
+preserve the hardware state.
+
+[1] https://sashiko.dev/#/bug/linux-2f2aa951-60e6-4afb-8098-949100502ab9
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261111-xg6846b-bc=
-mbca-xrdp-reset-v4-0-17035a5e8ad2@kernel.org?part=3D1
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/6af44b5c.67914289.f=
+e7ab.6559@mx.google.com?part=3D1
