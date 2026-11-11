@@ -1,89 +1,45 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794424890;
-	b=HKsy5pldDi+f0mt4nZWW6lbIbKgB3xsXBSg3c5qbh+mPT0OhWDVgTkLWwXdMWXfh1WwY
-	 9VMs0R6pRL5Z3fIGKCr+mMoZJ9NFDbVB/krQpO++Ga2CffS1TGVJNYjekvSa+qhoz67f2
-	 Mvkn+p8PANl2QPzCXvlo0gjuDc+Gqb549dpbpoVN40DzBXKJjDfhWkKbpyLp6aucgdGgF
-	 E+VMBNqarzq9nw+Qh5CjDs70jNS2mZF9sTap7Meww61RZu4EDmhHBDQIRXyybggpxtUiT
-	 8sKXqDwuPw538YblomFqE16rue/TnV5+nv615RBvy66vofniS6mM+pz9p1DI7K7FP5Q==
+	t=1794433436;
+	b=hUQAK4EeRskg/4hg7bqPVAVG5J21Li7LLBdKhO0teXnxaim1S2CqPrVeqvgxH3N3Q3no
+	 +3MRbeYn+DUkrR9RaJXwUci1wREcOQORGZe1aAhNFm6grq14TTgizHF8BiDTwIm+eQxW4
+	 9Tte7ebktSTbVtbt8sPQsrelgKT23nGA1g8rop9g8iFqgvtNvz4krnGbw7PnsXYtwBXxG
+	 jzfezU+JiIGKtXs5P4pVp04BaPddIrVN80anSqL/rpVqXs/QF7EadY5nU/lLjfFAXfSI8
+	 tb/7MTk0KuOuvWx+IRo3ULK/RhoNHuLxxqRgLDDtMlS1U9L6W+PEfGBKA5WZP+gkkDw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794424890;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=EOz/+k6Rphfauu1mzh1ygpzQgMQ6Co5lqmSQNO16YRU=;
-	b=Gu5ZmXrI1G4c1ZxQ3AxwGeTzoX6xpss7Ta+vsDFsukt+m2YHjSkMCyHh78zmgYR8P7i7
-	 AW8Gfw677jpQ0LKN5oFmhqfWrP1qrwmxcgFUNgNNpMA2WWmKN6Q5gH9rjO803+zWVBn0L
-	 cn2KoS+eJneCmmxeXcePAmvC5Ir1WUrXm+PTluI+F1mbyWpHNVNUYY0WfJjpFIHjnRyxt
-	 6DPuIzhpc38ThVOcyxjnfPqWmFWHhBHTG6PyMtgD5g8ppuDi0+aaniuqIxrxQE07ttrqg
-	 4ku0dKHAiTNYS5RnqqT0hqAWFwM9ZmuwUOkd8GkCaw3q09o/TI+nPb/8OCFPQ0vLffw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794433436;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=Q/j6WirJUN5GZuo8ESQMe2tD96p/TfxN7ERvmMa2eZg=;
+	b=pi6PyvcjsDRyFJE1C6n+NJK0qxaQrTq6Nc+M1VKNbeEgAYJMYc6VkgQw1wJCPKdCGjuD
+	 sVhtKVnYxyThH/nZm5VDG47wiAVVQY/DnNRddF3OKYRNaZYPlO/2C4pGvGoTD3PFw/0kn
+	 LkhE+eX8XhvkIY3erskOLmpa44SUtpF8QByvKUmeWfcbCbvSmryUydGmlzvXsRDByfSo8
+	 pfVmx615oQoGGohviwa80I09kFu8ZIW4fPHv47Ec8hIKW/eRZRtEa7zX96Sqd9sh/Uyfk
+	 JoYe5GAkS0niPjv6eivwvrztXsPrEP2vJFFkb3ilEfYMsqAMp3qb6x7taZB+K+52jpA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=t0aNYUXD;
-	arc=none smtp.remote-ip=209.85.216.48
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=anQvEdYk;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDC2606A32D
-	for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 19:21:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3CDC2606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74D1606A326;
+	Wed, 11 Nov 2026 21:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=t0aNYUXD
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3adac5c10e3so1877910a91.0
-        for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 11:21:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794424889; x=1795029689; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=EOz/+k6Rphfauu1mzh1ygpzQgMQ6Co5lqmSQNO16YRU=;
-        b=t0aNYUXDdRAZpqsbOIRoanjkWthLrq9de/FZxXADbekc3TgpX5MGsP0isyhoiLOqHg
-         04lnghKOUMfOOHWfuePk6lKRbCLcRBcNrmM7q529KZNdIGKrJNCUQnGo7ndGsSEBf6Rp
-         QssCN7HeBGbLIG2BwTcpJ0OtCo0ikqLkYlngBgW0R78Asv2OI1UtWkQ5dNkACWhvPKiQ
-         MnF/2AP9lPuNQFQwAR5etpUQ3+GU6/eSb6EkdVxWs4s8DZD+RpgXC6DwpmIUGZ0PT8UN
-         TErDiRt59CF6DjrlXofNjc5t/3SiBT7qwPf28HtWRhUTbONWCjDln5BjHvWJOLPKBsr/
-         rIVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794424889; x=1795029689;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=EOz/+k6Rphfauu1mzh1ygpzQgMQ6Co5lqmSQNO16YRU=;
-        b=PYWvOOC2AQg1J6o4Ty02csaO2AJV3ypntoNf6x90ta5en0hxfFxTiklNKoy9gSbiqW
-         6Q6tz6RxLgUqzv+61cC0ZhgQCxerStgDE52smZf2Gflppt3QW9/Jmq7gcS+U6Igb4s3l
-         jrdDAZqCTFBWGDdMqJompOp/xiy0fZ1oCV+vGmNjY619bD0fw4eEIR67W8Xpm/retqJ7
-         vjTBYDOzMH+VW+jT1Y/y+sAQRl3qUi30s+twALZIff6kBzXYvEIKnnljKIZ+AUYauswd
-         UgjdcDUdycP3ApOzAOsb0o4BK5O6t9k4Pw6fHoz68f2XDuU9AgpCCG1RpqBE1HChHeh+
-         vWNQ==
-X-Forwarded-Encrypted: i=1; AL+hErGLvj7HU2TUmnmSi/Z05kTbHilXHI9HX4wlUrVxJkQ6O48E0bl3FL7PgVk6Dlvo52Tsb463VvAWiTU=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9se4lfhJ9QAGz2MvGoejj7mNhchsu2Kgd+sND6yWfmTKl7Zu4x
-	IibBF/MEZ1pZdzvbcSuDb4KqnvAhoToI6HE3m+SBjEgafONuosQvKrO8
-X-Gm-Gg: AYBFou0Tehd8r3pHtfIm1jYk8ZAuIjVvzCS0io8y8ttpBxKx2eUK8ZAG+fsOx6inFIv
-	kPsr7f9N4NqUsP5cYxbPQcd7flWNHPgDGDm/CSSvqaYwkv7BoE4l6xFey6cmA2rwuIFD3YMMqXr
-	ohjAY2Zb8Cjo/3rfhXedq+g5uxmSCRXdSGdPdzHQSXDBx6KloJkTDoX7m7wLVq7+RM4jCbxruWS
-	eeUNkWbHu6HVlToLBrJ4gz6snkru6n8zO9rzHXtFF6hWAWbhAN3LivcsOuH1A26Eepc3W1bj+hM
-	jRiGrCtLRpmI123XolBUz7Xdchn4OfaFIXj5ajvqqMiPD3nZ7xLo0ExihzaPqugXk00u0Rbmp+9
-	Z+//Qp8QQ71A8E0er8qK0LVeHr8TSL/DdqJeWfMy6vbUkoemFpCRjHGleqmBIk1Ox1/4WwhanhE
-	SWVPdXHjYPe3xaFHczoDnCaxqyy8RBFLLYaud1eylxlq/R2cMeVp14HVU9qrGqXvOQ850s40vv+
-	nLEBD+d1EvQhyyOzRlen2QBt9PMpsCugu7zw+B5ydHJvBn9tPTTEalJ6BjkLXKGdWSC4ukcXEgD
-	b/LdPQAERns71mgoshs5GGm76/TUPoLDX/cheva2giEl9tZP58Uhq4C3TSNWE4vf5yFl1TPreGA
-	NYA==
-X-Received: by 2002:a17:90b:57cb:b0:3ac:7872:d1b7 with SMTP id 98e67ed59e1d1-3b182eec0f1mr3136688a91.32.1794424889401;
-        Wed, 11 Nov 2026 11:21:29 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b197c42a4csm596583a91.4.2026.11.11.11.21.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Nov 2026 11:21:28 -0800 (PST)
-Message-ID: <dd549ba7-8c19-4c77-aef4-b3607298f6b0@gmail.com>
-Date: Wed, 11 Nov 2026 11:21:27 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=anQvEdYk
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54D511F00A05;
+	Wed, 11 Nov 2026 21:43:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794433435;
+	bh=Q/j6WirJUN5GZuo8ESQMe2tD96p/TfxN7ERvmMa2eZg=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=anQvEdYkNx+yEjmg+V13ijEuuDvDLl2UD2AgfEmTfm6mrTUhTNgIPo6VWptfZVlgT
+	 io4xS6t8j0Zd98bRTxtBPT/ivT2WpmUieGLMXy3GFjCRCLnrPBnF52o5FoaYLT7b2C
+	 tikStScHVK0FzHyxyUn6SEY7PnxaKd8wX13BjK0NPOEhFUrzQ4DfHKWTFmANW/Dao/
+	 S27el57DnU++jrW4msHfqyCg6fCw//qdV8E30Cj/O8FtUHRUAIh2MmNaR6DvezVOTh
+	 I7yZIwwYYKTp3K+fOlTha2rts0iTWjBrpeWZtuCe/faspPExQgW18grnDLhwlktaIo
+	 zlbIVgM6DsAVw==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -93,70 +49,173 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] clk: ingenic: Poll JZ4780 CPU1 power status
- atomically
-To: Brian Masney <masneyb@kernel.org>
-Cc: linux-mips@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Paul Burton <paulburton@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- =?UTF-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= <zhouyanjie@wanyeetech.com>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, hns@goldelico.com, paul@boddie.org.uk
-References: <20261110043131.1985993-1-f.fainelli@gmail.com>
- <20261110043131.1985993-2-f.fainelli@gmail.com>
- <179442247882.1131744.13316822371180932611.b4-review@b4>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <179442247882.1131744.13316822371180932611.b4-review@b4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 2/4] clk: ingenic: Add Ingenic X1600 CGU clock driver
+ support
+From: Brian Masney <masneyb@kernel.org>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Paul Cercueil <paul@crapouillou.net>, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+ letux-kernel@openphoenux.org, kernel@pyra-handheld.com, 
+ Paul Boddie <paul@boddie.org.uk>, Brian Masney <masneyb@kernel.org>
+In-Reply-To: <50983be55e467076e83e3ffc37b30fc4e5648e15.1792955907.git.hns@goldelico.com>
+References: <cover.1792955907.git.hns@goldelico.com>
+ <50983be55e467076e83e3ffc37b30fc4e5648e15.1792955907.git.hns@goldelico.com>
+Date: Wed, 11 Nov 2026 16:43:44 -0500
+Message-Id: <179443342468.1143992.1536494507903693852.b4-review@b4>
+X-Mailer: b4 0.17-dev-7ca47
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5629; i=masneyb@kernel.org;
+ s=20250903; h=from:subject:message-id;
+ bh=zYx5gEDCYfb/4k5A01V/xuE63SeQKUuL1sqAIc16+yk=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLK+PJx42tf5qd/MXlPW5fXv7n+bUreDwUZk3bqfxoy/D
+ K38Ve/JdJSyMIhxMciKKbIsyTUqiEhdZXvvjiYLzBxWJpAhDFycAjARmRJGhs7pbQVen9nF+949
+ KLi7yZyB4ZaPsN//t19+LnplIHJXr5WRoV1CcVaAhsCN6cKfyh08Ln+VCrZ9cCSaX77x8rT1mmI
+ nOAE=
+X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-On 11/11/26 10:41, Brian Masney wrote:
-> Hi Florian,
+> Introduce clock driver support for the Clock Generation Unit (CGU)
+> found in the Ingenic X1600 SoC.
 > 
->> The CPU1 clock enable callback runs under the clock framework's spinlock
->> with interrupts disabled. Its readl_poll_timeout() can sleep between
->> reads, which is invalid in this context when SMP powers up CPU1.
->>
->> Use readl_poll_timeout_atomic() with the existing interval and timeout.
->> This is a prerequisite for the JZ4780 SMP bring-up path. The original
->> CPU1 clock implementation by Zhou Yanjie is already upstream.
->>
->> Cross-built for CI20; the subsequent SMP-enabled image brought up both
->> CPU cores. Development and validation used Codex assistance.
->>
->> Fixes: 6673db4f3f26 ("clk: JZ4780: Add function for enable the second core.")
->> Link: https://lkml.kernel.org/r/1582215889-113034-3-git-send-email-zhouyanjie@wanyeetech.com
+> To support the X1600 platform, update the common Ingenic CGU core
+> framework to accommodate a secondary post-VCO divider (OD1) within
+> the PLL configuration registers. Additionally, prevent a NULL pointer
+> dereference in the rate determination path by properly supplying the
+> secondary divider tracking during PLL calculation calls.
 > 
-> Cc: stable
+> Implement custom handling for the I2S clocks on the X1600. Since
+> complex compound hardware dividers are not yet natively supported by the
+> core framework, explicit M-divider (mdiv) and N/D-divider (nddiv)
+> structures are introduced to describe these specialized fields. This
+> avoids a compilation failure and enables a stable, though limited,
+> division encoding suitable for current needs.
+> 
+> Furthermore, this patch:
+> - Fixes the gating of the I2S0 and I2S1 clocks, matching the control
+>   bit behavior which functions as a clock enable flag.
+> - Introduces the custom OTG PHY clock operations and initialisation
+>   routines utilizing the hardware's OPCR registers.
+> - Registers the independent I2S0 RX and TX gate clocks employed by the
+>   X1600 peripheral block.
 
-OK, I will add that, thanks!
+Just from reading the commit message this patch needs to be split up
+further into several smaller patches to make it easier to review.
+Ideally try to make the different bullet points separate patches.
+
+> Tested successfully on the LX16 (X1600) boards and CI20 (JZ4780) to
+> not interefere.
+> 
+> Checkpatch complains about not 4 lines of help paragraph but the
+> style is the same as for the other machines. It also recommends
+> using 'unsigned int' for the new struct ingenic_cgu_mdiv_info
+> and struct ingenic_cgu_nddiv_info but this follows the style 'unsigned'
+> of all other structs in cgu.h. Finally it complains about the empty
+> line between struct ingenic_cgu_clk_info x1600_cgu_clocks[] = {
+> and the comment. But I think it is more readable this way.
+
+The checkpatch note can go below the --- below.
 
 > 
->> Reviewed-by: Paul Cercueil <paul@crapouillou.net>
->> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->> ---
->>   drivers/clk/ingenic/jz4780-cgu.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
->> index 1e88aef7ac0f..f5983033583a 100644
->> --- a/drivers/clk/ingenic/jz4780-cgu.c
->> +++ b/drivers/clk/ingenic/jz4780-cgu.c
->> @@ -242,7 +242,7 @@ static int jz4780_core1_enable(struct clk_hw *hw)
->>   	spin_unlock_irqrestore(&cgu->lock, flags);
->>   
->>   	/* wait for the CPU to be powered up */
->> -	retval = readl_poll_timeout(cgu->base + CGU_REG_LCR, lcr,
->> +	retval = readl_poll_timeout_atomic(cgu->base + CGU_REG_LCR, lcr,
->>   				 !(lcr & LCR_SCPUS), 10, timeout);
-> 
-> Since you are making changes here, please fix the alignment of the
-> next line with (.
+> Co-developed-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Co-developed-by: Paul Boddie <paul@boddie.org.uk>
+> Signed-off-by: Paul Boddie <paul@boddie.org.uk>
+> ---
+>  drivers/clk/ingenic/Kconfig     |  10 +
+>  drivers/clk/ingenic/Makefile    |   1 +
+>  drivers/clk/ingenic/cgu.c       | 150 +++++++---
+>  drivers/clk/ingenic/cgu.h       |  42 ++-
+>  drivers/clk/ingenic/x1600-cgu.c | 476 ++++++++++++++++++++++++++++++++
+>  5 files changed, 646 insertions(+), 33 deletions(-)
+>  create mode 100644 drivers/clk/ingenic/x1600-cgu.c
+>
+> diff --git a/drivers/clk/ingenic/Kconfig b/drivers/clk/ingenic/Kconfig
+> index f80ac4f2992b..9b8b00c9e6d1 100644
+> --- a/drivers/clk/ingenic/Kconfig
+> +++ b/drivers/clk/ingenic/Kconfig
+> @@ -75,6 +75,16 @@ config INGENIC_CGU_X1000
+>  
+>  	  If building for a X1000 SoC, you want to say Y here.
+>  
+> +config INGENIC_CGU_X1600
+> +	bool "Ingenic X1600 CGU driver"
+> +	default MACH_X1600
+> +	select INGENIC_CGU_COMMON
+> +	help
+> +	  Support the clocks provided by the CGU hardware on Ingenic X1600
+> +	  and compatible SoCs.
+> +
+> +	  If building for a X1600 SoC, you want to say Y here.
+> +
+>  config INGENIC_CGU_X1830
+>  	bool "Ingenic X1830 CGU driver"
+>  	default MACH_X1830
+> diff --git a/drivers/clk/ingenic/Makefile b/drivers/clk/ingenic/Makefile
+> index 81d8e23c2636..7e93e0893abe 100644
+> --- a/drivers/clk/ingenic/Makefile
+> +++ b/drivers/clk/ingenic/Makefile
+> @@ -7,5 +7,6 @@ obj-$(CONFIG_INGENIC_CGU_JZ4760)	+= jz4760-cgu.o
+>  obj-$(CONFIG_INGENIC_CGU_JZ4770)	+= jz4770-cgu.o
+>  obj-$(CONFIG_INGENIC_CGU_JZ4780)	+= jz4780-cgu.o
+>  obj-$(CONFIG_INGENIC_CGU_X1000)		+= x1000-cgu.o
+> +obj-$(CONFIG_INGENIC_CGU_X1600)		+= x1600-cgu.o
+>  obj-$(CONFIG_INGENIC_CGU_X1830)		+= x1830-cgu.o
+>  obj-$(CONFIG_INGENIC_TCU_CLK)		+= tcu.o
+> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+> index ad223aa20e8d..c4fbee32c3b9 100644
+> --- a/drivers/clk/ingenic/cgu.c
+> +++ b/drivers/clk/ingenic/cgu.c
+> @@ -4,6 +4,7 @@
+>   *
+>   * Copyright (c) 2013-2015 Imagination Technologies
+>   * Author: Paul Burton <paul.burton@mips.com>
+> + * Copyright (c) 2023, 2024 Paul Boddie <paul@boddie.org.uk>
+>   */
+>  
+>  #include <linux/bitops.h>
+> @@ -76,6 +77,40 @@ ingenic_cgu_gate_set(struct ingenic_cgu *cgu,
+>   * PLL operations
+>   */
+>  
+> +static unsigned
+> +ingenic_pll_recalc_rate_od(u32 ctl, u8 od_shift, u8 od_bits, u8 od_max,
+> +			   const s8 *od_encoding)
+> +{
+> +	unsigned int od, od_enc = 0;
+> +
+> +	if (od_bits > 0) {
+> +		od_enc = ctl >> od_shift;
+> +		od_enc &= GENMASK(od_bits - 1, 0);
+> +	}
+> +
+> +	/*
+> +	 * Use the encoding table if indicated. Otherwise, use the value
+> +	 * directly, interpreting an encoded value of zero as a divider
+> +	 * value of one.
+> +	 */
+> +	if (od_encoding) {
+> +		for (od = 0; od < od_max; od++)
+> +			if (od_encoding[od] == od_enc)
+> +				break;
+> +		od++;
 
-Certainly, will submit a newer version shortly.
+So if the entry is not found, then od will be set to od_max + 1, and it
+will pass through the warning checks.
+
+I started to look through the rest of the driver but I stopped because
+there's just too many unrelated changes here. This needs to be split up
+further into separate patches to make it easier to review. If your
+commit message has the word 'and' then that's a hint that you may want
+to consider splitting it up further.
+
+Also be sure to go through all of the feedback from Sashiko.
+
+Brian
+
 -- 
-Florian
+Brian Masney <masneyb@kernel.org>
