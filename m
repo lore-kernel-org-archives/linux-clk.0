@@ -1,55 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794391271;
-	b=22H1eHs5tkkNOL1sFyOISbwv1b3T47u9k+g/Q6nNC5ieLh4zBdc2KBxGogQ9Agp2sdKY
-	 QBqE4qaTdlIJlp0q0Qu+UqljuX2NR78o1mSp9WFW/G6wu5+wXfb6BcBOLbU7WdMCEJix7
-	 dTQtSTU4LUu+zspHWabDODxSEziMEVR/HC1xb0e2Vrahz4WnxSS0f3owVyIhnLqKtQE0R
-	 V8MvG2caQD/7988QsiyQbMNjxjZkHCSVaC+KbMB7uvehOx1k0MdtpXFrQSsdbdHQoHjWr
-	 suCcRGowS+1FL4auD03/j4BHXw1B8COGidZDgZeyFpik44ghsxknSXekKEhL8/CYaCA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794391271;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=mUmhg+XzSgOizBM/HTfpUu2nybv+pdSuGATpu3ukT5k=;
-	b=bBxz3nf0HoWgTmgUpofq/+AH6ROmyQWi2vCIvP/c+6Bef16FzuaEdEX3iWYd6rRKvU1i
-	 /qZ3aAqkwt6SeQ7pGnFG+79G2XnlbHW7/Rc6Q6rT0Ve9HBrpkbb1wLRkmBWoZvA32vX6m
-	 O4Ch7aCe7IwZhbOq4RVZd25VfyBGPWzxZ9lMS2L6OYUMKCFzIjAMGsqcXir+NRk39humT
-	 Vnds8NXJ+RuCOyXs41wBxCKLt+47yxVcqts/8VOHC+XNrjf02+KgnXQjgjimUKP35HrgD
-	 7EvsomhjfTsZOQTMHH18N6fHeSM62/CrPHx4T/GsM7cMEAquQD4b4sBXIE/rHuOcV3Q==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fykzx5cC;
-	arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794392095;
+	b=ohsg+8oO3O0D+KGUKIYIcnkJo5lpS/xxqW0ZgQcs5abrRWhopiRmdCC7g5fMsgP1f4lj
+	 b6ryrKNlcNwCvutHVYQCll1RmB32L8DpOddxa6/PIveKCh9DWfaffCsxo4OAmYH0555Hp
+	 sZmAG2vV4g9YTet10zG+Ba61uSiMxW+e7Rn0hrwUMfQx5ERzGLabPu300IlarTyIKv4is
+	 R0dHxk7zZxfaQ2ybwvzsr4YT1NcP/jVIXxX/429sIUVUU2/B/nMuTPWDG3/caZF0q60ir
+	 2U//qNtlFefkN14UnuV9ptoRGdPSGwunEg7j3h/qKSx1+hHZEF81S26tWnMUCp4DMqg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794392095;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=XZ4b+XzZVJKQkDZyWOAJQrEn1AJC2/ca7/9qI+oGbNk=;
+	b=xawhIFvkAan5Fdw3MAs1Q8Fy4sUGcPZB3mejNhRjI4rB5MloqAjCbHqUuD1HyE5elehQ
+	 N9kDCKWvtANY78C+h+LlDks/ciESok3Qhx09dgxxJjwUZYd3dXZRuCiPK0e4oE0vihstA
+	 LHZVsTJ1wamlAgUoD4jcicvvbkHTs2N8ddpr7xkENwog7tP93VW65zad1dtZUfyGT9azM
+	 rK59XL8h0z4s3MDTicw7m9mrbOVu+UAFPImH0NVyS6Y4r3RK2xjt8eRY/avCHj984qqFQ
+	 vxMR8e5BauFl/0SiTeQ5V1F60r6GI/K+JMtIXhDxtuxs//pBZmqYBoCsFtnvhw1HRbg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gIJumyJ+;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C219560A6F7B
-	for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 10:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77836606A31C;
+	Wed, 11 Nov 2026 10:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fykzx5cC
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D5E41F00A08
-	for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 10:01:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gIJumyJ+
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794392095;
+	b=E1pEPBcvlGLagg0bbmhQo/wPF6z1DVAJqBCdXUKpFva7PHgbIBoKKqSROeQf1xlvsfA2
+	 8HEa4TzDf+cZe7ipwBNj6LMJ8uaaKWviyWpA5bkBgWY/trEgS4rPX2RlmvuDjrG3phuMS
+	 MXeuR43ke1h97xMX1g6pbi+jMRO68VS/esNzvjVulp0+qdVNWWy8N1QBetmf6GFmqFnbw
+	 SQVnXTI29zmhCtrlO7BuYAd9WzkFwj47PtpmxyWXB4blyCfu0E1oD9igj1w0ZjH5LD7IA
+	 lHT5C915wC1ANN9Q5tQyan+ZllJVCb8nHurN2qVJOSgX6Zl6LRj+5kTG5aBHSyMsnHw==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794392095;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=XZ4b+XzZVJKQkDZyWOAJQrEn1AJC2/ca7/9qI+oGbNk=;
+	b=fpK5r5OHEVtH5APF0w9S0F4Rcb7SKn4ZHUOwkS+YDdxWYrzyNTXuLXuPC4w5M4Guixsg
+	 o/YyLT4xJneqXjhpNVkvSIe5gJPVF2ylfA8SeVQyzTalFTqkIA+oyzy5PwaXXtlgliRl1
+	 QvN9CnEH50iOiHp6SsDHFnMvDYNZNtNJr+qgqhj/DQ6Bt96TJ4VMIrANy7ac9JI+/Sgi8
+	 vKPkYaGb2fu8ae8245l3XI7YvzI/5byvy5hdV7LiZ9gZ6wVV1r8CZvGwh+kCCiv4IFAsH
+	 +x0pupjyiSHmEYGQuPB5d6FhHOVJFk/wrIE5GjEhISjyndg5Nt2c3y4inJkHQAWju8w==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id B1CD01F00A05;
+	Wed, 11 Nov 2026 10:14:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794391271;
-	bh=mUmhg+XzSgOizBM/HTfpUu2nybv+pdSuGATpu3ukT5k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=fykzx5cC3L9jM8/I6Rfitp1+muWVGMx62FgpMlSvqHw2GSFdoPfuIJu+N/ZvQiXqN
-	 13oYocRR2C/gD0bXPlhifDPN77+ETJKd7NRjZSHMcHrlUC4r267dV9XIXRh0vPrfTm
-	 RbskapgDNObCfzbG64FXCS2xVy36+Csu+vUjuiCR5B616m+p3B049AD1EKPmO7CLQh
-	 xJ2xs0zQ0tgL6ZJ9gfae6nCTpXUo8euAdOc9/LqaJfSd94T1oMUYuupRitH7xdaJ2t
-	 23cqsfeTWiYrnlu4b5CvipqjimjtgXoDybiN8Lpjzl4Fvtj1M1AZGcs/Il4HScKt3S
-	 s/lgUgRPxbY9A==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-716ea2598eeso1733761eaf.0
-        for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 02:01:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErEENBC4MlTZtJctc7u0h5FnPqFglm1HAG9varcbGPEAy0yr+6InUqcZvGbxYCuJ8xpDEgom2tETtCo=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8sCzdmcVqW2cvAdNDGcvu/nFOLrxX+Lxwk3w2DzFu/T0/sBiOI
-	JV0TA5lqOYa+kYpgLZJLJvm3eMrjWykqZ6RnIJehKb4nOXvM890BEoTbBNFOiTWCp1GHvXktJv6
-	gIYlm9Y/batDs6pNpoXaciPcvEoOGeIw=
-X-Received: by 2002:a05:6820:c453:10b0:716:c485:eba4 with SMTP id
- 006d021491bc7-719179c7cdamr758103eaf.85.1794391270535; Wed, 11 Nov 2026
- 02:01:10 -0800 (PST)
+	s=k20260515; t=1794392095;
+	bh=XZ4b+XzZVJKQkDZyWOAJQrEn1AJC2/ca7/9qI+oGbNk=;
+	h=From:Date:Subject:To:Cc:Reply-To;
+	b=gIJumyJ+Maj8VCW9xKoWHYrqA9/RZ8tjCI0OothbBPpo8/bN2Xmex0Ey6Dx4o2WPp
+	 e3Ybmf5szsnbFySvkJ9StL8RYgUKYRO+3RtHPg02LpS7DPfzwErfJ+xZqOYmvLSNiu
+	 Ai79eBaw7IfZWH4OD9NM9HSnv6w1DEdF8RkqZdu0CImTdcYwNczPMctsu4IQ4odBlB
+	 hcVplBFaX4uVpKBCiulnYx7/SpnxnC1KlTHzHeTEQuejtorTv1wxAd5a0MB4najddZ
+	 bfJ8Cb7kD+d6b+POsoZQi7tNKny6RneY2mrtbzR3y43D1x4tdk05og5rnMeN8QtLyS
+	 hCUodbkuKZ3CA==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 07C1A48F1A;
+	Wed, 11 Nov 2026 10:14:54 +0000 (UTC)
+From: Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org>
+Date: Wed, 11 Nov 2026 11:14:10 +0100
+Subject: [PATCH] clk: tegra: tegra124-emc: Skip timings whose parent rate
+ cannot be set
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,73 +83,151 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261106-xg6846b-bcmbca-xrdp-reset-v3-0-d6adeb71afc9@kernel.org>
- <20261106-xg6846b-bcmbca-xrdp-reset-v3-5-d6adeb71afc9@kernel.org> <22be96ba4139cad12e46b5e64ae95b0033bde60a.camel@pengutronix.de>
-In-Reply-To: <22be96ba4139cad12e46b5e64ae95b0033bde60a.camel@pengutronix.de>
-From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 11 Nov 2026 11:00:55 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=-VYB23V-vD91Pfsae7QJjoQmv7M7Yu+FobDY90s+NVA@mail.gmail.com>
-X-Gm-Features: AclHuK-czsJQZI3zTXq1LXffjfdefI2Xg2qfnJzhUIoxyF6N0VNLuNo5D59OV-k
-Message-ID: <CAD++jL=-VYB23V-vD91Pfsae7QJjoQmv7M7Yu+FobDY90s+NVA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/7] reset: Add BCMBCA block resets through the PMB
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	William Zhang <william.zhang@broadcom.com>, Anand Gore <anand.gore@broadcom.com>, 
-	Kursad Oney <kursad.oney@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, 
-	Randy Dunlap <rdunlap@infradead.org>, Ulf Hansson <ulfh@kernel.org>, 
-	Benjamin Larsson <benjamin.larsson@genexis.eu>, mfd@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261111-upstream-clk-emc-parent-v1-1-636eea572572@tsv-stahl-riesa.de>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMSw7CMAwA0atUXmMpKSq/qyAWqeOCgYbIThFS1
+ bs3wPItZmYwVmGDUzOD8ltMXqnCbxqgW0hXRonV0Lp2573b45StKIcR6flAHglzUE4Ft52PLtJ
+ w7OMBap2VB/n8zufL3zb1d6by3cGyrPLnGj17AAAA
+X-Change-ID: 20261107-upstream-clk-emc-parent-351d0dcf9bd8
+To: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Brian Masney <bmasney@redhat.com>, Thierry Reding <treding@nvidia.com>, 
+ linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable+noautosel@kernel.org, 
+ Patrick Fischer <admin@tsv-stahl-riesa.de>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794392093; l=5092;
+ i=admin@tsv-stahl-riesa.de; s=20261020; h=from:subject:message-id;
+ bh=6O+WzvkYoAaO5jXWXFBWqRwW5kYIxCEWKdPNp4Ndczk=;
+ b=FTrv+GtupkxKHloaZku+A8CmQfPKs7Jw2RLUllNkiQ39lY2K/SZIafaFEiPVqwi2WGVxpNsVw
+ HAh0WYWsz55CQiIDQaZpA4G58xqwqLe9lTrWmaTaUs/hp4U2nKHiw+g
+X-Developer-Key: i=admin@tsv-stahl-riesa.de; a=ed25519;
+ pk=D+v6EloYcEY9PIUHFyTM5sqcGIU/fIXzLUdkR8vjAtk=
+X-Endpoint-Received: by B4 Relay for admin@tsv-stahl-riesa.de/20261020 with
+ auth_id=1251
+X-Original-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+Reply-To: admin@tsv-stahl-riesa.de
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 6, 2026 at 12:59=E2=80=AFPM Philipp Zabel <p.zabel@pengutronix.=
-de> wrote:
-> On Fr, 2026-11-06 at 09:26 +0100, Linus Walleij wrote:
+From: Patrick Fischer <admin@tsv-stahl-riesa.de>
 
-> > Implement the BCM6846 XRDP reset group through the shared PMB regmap.
-> > Assert all blocks before releasing any of them, preserving the vendor
-> > reset masks and ordering. Provide the independent PVTMON acquisition
-> > reset as well. Serialize complete sequences and hold blocks in reset
-> > on failure.
-> >
-> > Power domain consumers must enable their domains before requesting a
-> > reset.
->
-> Before requesting or before (de)asserting?
+Each EMC timing names a parent clock and the rate that parent has to run
+at. On Tegra114, PLLM is registered with TEGRA_PLL_FIXED, so its rate
+cannot be changed, but the Tegra114 device trees still contain timings
+on pll_m at rates the bootloader did not set up, e.g. 792 MHz on a
+Tegra Note 7 where the bootloader leaves PLLM at 408 MHz.
 
-Before (de)asserting, I'll clarify or just drop the comments because
-it's kinda obvious.
+emc_set_timing() calls clk_set_rate() on the parent, which succeeds
+without changing anything, and then loads the 792 MHz timing while the
+EMC runs at 408 MHz. On the Tegra Note 7 that gives a refresh interval
+of about 15 us instead of 7.7 us (DDR3 allows 7.8 us), and the clock
+core then reports 408 MHz, so later requests for 408 MHz keep the
+792 MHz register values.
 
-> > Zone transitions belong to the PMB power domain subdriver.
->
-> Why mention it here?
+Skip timings whose parent cannot be rounded to the requested rate when
+loading them, so that the highest reachable timing is used instead.
+On Tegra124 PLLM is not fixed, so its timings should all stay; this was
+not tested on Tegra124.
 
-Thinking aloud while working on the whole patch series.
+Fixes: cf561283254d ("clk: tegra: set up proper EMC clock implementation for Tegra114")
+Cc: stable+noautosel@kernel.org # needs the Tegra114 EMC auto-calibration fixes
+Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
+---
+Tested on a Tegra Note 7 (Tegra114, P1640) with Svyatoslav's tegratab
+device tree on top of v7.3: both 792 MHz timings on pll_m are skipped at
+boot ("pll_m cannot run at 792000000 Hz, skipping"), the EMC goes up to
+624 MHz on pll_c instead, and the timing registers match the table at
+each rate. Actmon requests for 792 MHz now end up at 624 MHz without
+errors; a memory test of 3 h 20 min with mostly such requests ran
+without errors, together with the EMC series below. Before, an actmon
+request for 792 MHz left the EMC at 408 MHz with the 792 MHz register
+values.
 
-> > +static struct platform_driver bcmbca_pmb_reset_driver =3D {
-> > +     .probe =3D bcmbca_pmb_reset_probe,
-> > +     .driver =3D {
-> > +             .name =3D "brcm-pmb-reset",
-> > +             .of_match_table =3D bcmbca_pmb_reset_of_match,
-> > +             .suppress_bind_attrs =3D true,
->
-> This is new. Why?
+This came up together with a series for the Tegra114 EMC driver,
+"memory: tegra114-emc: Fix bus width and pad auto-calibration" [1],
+which I sent to the memory controller tree earlier today. This patch
+builds without it, but please do not let it land in a release without
+"memory: tegra114-emc: Stop clearing EMC_AUTO_CAL_CONFIG" from that
+series: this patch moves the EMC from 408 MHz with the wrong register
+values to a real 624 MHz on pll_c, and both kernel panics I saw on a
+change to 624 MHz were with the pad auto-calibration cleared. For the
+same reason it is not marked for stable and asks to be left out of
+AUTOSEL, despite the Fixes tag: I could not show that the wrong register
+values cause failures, while 624 MHz without calibration did.
 
-Other patches in the series got review comments (I think from Sashiko)
-that as usual it is possible to build a system where you can wreac
-havoc in sysfs by interectively unbinding and binding the drivers
-if you wanna, and it's seen as a bad thing.
+[1] https://lore.kernel.org/r/20261111-upstream-emc-t114-v1-0-54d9e1bceb6a@tsv-stahl-riesa.de
 
-So I made the same change everywhere.
+As Svyatoslav confirmed, PLLM does not have to be fixed on Tegra114, so
+the proper fix would be to make it scalable, as the downstream kernel
+does. Until then, this keeps the EMC from running with register values
+for another rate.
 
-I'll look into the rest of the comments and (hjopefully) fix them.
+Tool use (see Documentation/process/generated-content.rst): the patch,
+its changelog and this note were prepared with an LLM coding assistant
+(Claude Code). It traced the rate change through the EMC clock code,
+read the EMC registers on the device, wrote the code change and drafted
+the texts from my measurements and instructions. I reviewed the change
+and ran the tests on the device.
+---
+ drivers/clk/tegra/clk-tegra124-emc.c | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
+index 0fc74808fe39..2f4d39922b73 100644
+--- a/drivers/clk/tegra/clk-tegra124-emc.c
++++ b/drivers/clk/tegra/clk-tegra124-emc.c
+@@ -458,7 +458,7 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
+ 	tegra->num_timings += child_count;
+ 
+ 	for_each_child_of_node_scoped(node, child) {
+-		struct emc_timing *timing = timings_ptr + (i++);
++		struct emc_timing *timing = timings_ptr + i;
+ 
+ 		err = load_one_timing_from_dt(tegra, timing, child);
+ 		if (err) {
+@@ -466,11 +466,28 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
+ 			return err;
+ 		}
+ 
++		/*
++		 * The register values of a timing are only valid at its rate.
++		 * If the parent cannot provide the parent rate, for example
++		 * because the PLL has a fixed rate, the EMC would run at a
++		 * different rate with these values. Skip such a timing.
++		 */
++		if (clk_round_rate(timing->parent, timing->parent_rate) !=
++		    timing->parent_rate) {
++			pr_warn("timing %pOF: %s cannot run at %lu Hz, skipping\n",
++				child, __clk_get_name(timing->parent),
++				timing->parent_rate);
++			clk_put(timing->parent);
++			continue;
++		}
++
+ 		timing->ram_code = ram_code;
++		i++;
+ 	}
+ 
+-	sort(timings_ptr, child_count, sizeof(struct emc_timing),
+-	     cmp_timings, NULL);
++	tegra->num_timings -= child_count - i;
++
++	sort(timings_ptr, i, sizeof(struct emc_timing), cmp_timings, NULL);
+ 
+ 	return 0;
+ }
+
+---
+base-commit: f4897f9ed38a327ce63658e025c7d2229a0d9368
+change-id: 20261107-upstream-clk-emc-parent-351d0dcf9bd8
+
+Best regards,
+--  
+Patrick Fischer <admin@tsv-stahl-riesa.de>
+
+
