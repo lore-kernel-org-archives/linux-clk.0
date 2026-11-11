@@ -1,96 +1,112 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794391016;
-	b=uVLUvEdOhpB/Wp0ao/y3uftuKZJTxk6luljTrlPzW4Xif+hS6JckWOEUCP8leuxvxCPT
-	 9+RY/cfhO7jgM/GA2bhdiRyqckr5AaYkjoHmQLwUkNH7L/bM4xBFnrLHRw2OulJ6EILFn
-	 yG2ihruEYLg4k0JfAlihaXfwqbcAGAvi+h6VGHcWTp+3oV+GByg+DGsFD80sp0Lvq1QVz
-	 4wrKySBs1mlE+fzlVNm0+ExuqSHUfHZUh50ZOjhuj2K41S9tuwJM/ZaOf/Tlnf4yDfj13
-	 Bhs/xljeSMrSJKbZAbou2kYHHJTso1P2a1S5Hu/0UPQvXXGxEZ/4FczCgplMRSwJTVQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794391016;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=6yHenUJhGZAe3PKizh9M58G+KHfnu4we1gIlsuIpIDI=;
-	b=HoReiYKqrvfuiiJNi3DG6Lvzkz18ZamsKqKlWEdxYo7433mJrecwQ44TSByh0eBlAooY
-	 c4Ac3wXHO1buIjs0rAtXTt3wwWJVaVGi4toQqafsYodS/o5YQvLE8mq52B0oRfkrGRqu7
-	 fK4ruxm/zPDF13VXt46WAvYLKq7CYGJBX+myaRfGH6uxUh4eufDGi1wNRAOYnP+hOCYVL
-	 D4SRlcFqIiPqUL0Tf+EQyMC4wl0McSsYLudpYm3V18SYlLRY/NE/11XdAg4+IU+HkR2Ey
-	 DV86zJhx0S851haz6Qv+K1tD3vGmApuhbkSnDP2gexlKvheArYamTAc47t7gtAykHCA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=WXvFk3F+;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794391265;
+	b=ypv04Pl4mMIcVPyFlf1HPpIkaBaP1SgcuYNi7aJXBhKl2sA+DPIKf+yhV6Q8IZNT0jJa
+	 K7+CMl9Stio/RK1p/VPgkPFITcIn4sALkNXmSYuslH8aAMZPZ4i+ld0LrvsPj3lz0ngdy
+	 qw8lllGPwD+543QJj2jCxOfoJHdAAkhCThXIeGPqA0U5R7TRPbcr+SWYvsbSBANkUNtf5
+	 WSGjyIHe9NlVZPHdf69YD12qCTV+TnPZAnaH047dU3fil3T8irwbvpHYoMWywsHl8xGJA
+	 28jcLRGCzx3Wzzs1D/2cbypVfsl1HsTK4xQ8eS2wrHjL/sT3Nz4KDgMFBSincROuKgw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794391265;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:
+	 Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=v6371ZwO/zAJsKINRttU2qdrq8Z8ZGN1i9eIzeAJUqc=;
+	b=HmME90GJI9CZpwjVocLN3ksqatfAcm1xZpq10FMILgdPeP05fUb+LO0JvoZILwzz1rfq
+	 AC3XRITPPBOzB+ZdMgL6YZYuAU5AxP9KR0IVVJoStJPbm96CPDdiBN3vZDALeKm7YU4xp
+	 zJw0SxuVBIkG/DMb00F3LECygNEz8QrcrUPbEkFlEYK+nVzzHUQPchlTKmyzuW9pP+0mg
+	 Vo4Gd+XlxDN77bVM+/cnc4+GLQjauTc3eTt+XnNwUmOMScHDU32rV9kUMVyihOh7g1u93
+	 9+5gLgSyi+94UVr04rUwSLIqW77bLAP7VcTTi61P8iInEa2zC9jQDXLoTfUk35uBd+Q==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=EgdJAR7y;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=cwFPhT6v;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CEF606A321;
-	Wed, 11 Nov 2026 09:56:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D8CEF606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB05E60A380B
+	for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 10:00:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EB05E60A380B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=WXvFk3F+
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 05B202006B6;
-	Wed, 11 Nov 2026 10:56:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794391008;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6yHenUJhGZAe3PKizh9M58G+KHfnu4we1gIlsuIpIDI=;
-	b=WXvFk3F+61CU54Ym7trObxW9xYz/mbrKKuC2r8tnN5yObEoZn+GStCbJ3SxHmHfJlEqZH+
-	iEafUMV4dET7aYMWAhAZdy/v+ERrP2aoIO59PWV1ZmXCyvQYNLQPKlzNoWgB3O6KJpPdut
-	USk57Q3O+4o3E7s4k1WW0uYGgQPa/nNAFNtBEZt/LrBgxoDud7FYMjKhIuMLgsniyjWdrI
-	7u3hA0f6vGVmWGr8fxTB2BN0kBM0mhwijH8rmnwnLbb4CRK/vNrusJYIEN8s5JjZtbyDQC
-	4RhU5qixZszwEec8zqiOwNFeuJEz/WNQ0yhLFmhBY9IvoqBs24bNhFY/2ptu4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794391008;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6yHenUJhGZAe3PKizh9M58G+KHfnu4we1gIlsuIpIDI=;
-	b=QgnlPgyqEheFYwtRSP9gnS8v+A1gb91KJExubPo4sC1u2Q59fzAT6snSHH98reLplTAyXL
-	GnEqaTn3bKEc0Ja2NoH7gTytDShJs30YMd+Sym9ghxE5RQgUxHLuujQFqYm8dMwqYtfccX
-	lQN98LPe96ziiMGKaOiGLisboWt79zX4B9q+e2p30BtGEvA/Ls55ccR3T1GVPTfHmafh9v
-	soQOPLNOoHNLB7diCmv+FgwX9wRRwc6m8IWgyj4KYBGrJw66GeSkJ9mhgoa7TWAcBtyrl5
-	7mEwOu2Cqu65zxNT9eguHuBAiXeFAKYLzfntX12mrbWZMkAtzhkaSKaLtwFZIA==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794391008; a=rsa-sha256;
-	cv=none;
-	b=dTZhwMwmm5sSQ8oWQl2hPy5f7RGIxlq92RYKdJvCOuRoJkfv7x+LWIP/6o8uuWiEneQ+Ll
-	znOFaOKU8xd4J6vUNxH+CTrV2/cUyHK96BKltF5SX0vQL2+gk/6BdUCZSRfhGjBFNKLPyV
-	RqZgWFPOxvla7hyT26rUuUnwbY5KwhvsF5LjyY7js9jssEhv6TQXyH0/I42h/jJbLtKhjy
-	yUw6PdG5RX16XEDR/3iApQhm8RYEq+51D7eLvEigbrc1vEcIQEZ9qca5Me6DCLgJZoRYM8
-	TTL81xIMXQmY8LhTxtLQsNx+llWEIvxljT8m8+BmtZPOn9nYm+jmEh/Zujh0MQ==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-Message-ID: <d59f52d1466c515f574be1e9eb127ca3e43d155b.camel@pengutronix.de>
-Subject: Re: [PATCH v2 4/4] clk: siflower: Add SF19A2890 peripheral clock
- and reset manager driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: joseph@telaak.dev, Stephen Boyd <sboyd@kernel.org>, Brian Masney	
- <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Rob
- Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley	 <conor+dt@kernel.org>
-Cc: Chuanhong Guo <gch981213@gmail.com>, Yao Zi <me@ziyao.cc>, Uwe
- =?ISO-8859-1?Q?Kleine-K=F6nig?=
-	 <u.kleine-koenig@baylibre.com>, linux-mips@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 11 Nov 2026 10:56:47 +0100
-In-Reply-To: <20261111-sf19a2890-sysm-v2-4-d2fcb723e4f1@telaak.dev>
-References: <20261111-sf19a2890-sysm-v2-0-d2fcb723e4f1@telaak.dev>
-	 <20261111-sf19a2890-sysm-v2-4-d2fcb723e4f1@telaak.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=EgdJAR7y;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=cwFPhT6v
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AB5KFk7863641
+	for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 10:00:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=v6371ZwO/zAJsKINRttU2q
+	drq8Z8ZGN1i9eIzeAJUqc=; b=EgdJAR7ymcJOO8bQxiHAAkLF5VE/0Uj+614Co5
+	Ksv9ip7RStWBdziGphGa0SHGA/CdbszlhpNyMe8SnHFtNBA/wyQMsGuyMajfmkUL
+	QOmje9t0zCebqIMXbT0fTUM2DszOoz9kd5Gw0W5E792O3JY80QOnfoxKQzem198T
+	I+BeyxL13lqmyFRWPUjnhPE3Sl81V17QSKDckzbQmX432I0Iewx6i2UkWpE/Tlir
+	Sx+SZn42oS1zDf4gbMSS/YlhcKLjkfbWypJ51DCvIgap4gGRn3uPC+xrijU7eros
+	rR0W4/PBFFVItC5F80NiEpPlUp1McmUGvs04wuk7jVxSe4eA==
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hvfawhmeg-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 10:00:59 +0000 (GMT)
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-4ab260600easo4250090b6e.1
+        for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 02:00:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1794391258; x=1794996058; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=v6371ZwO/zAJsKINRttU2qdrq8Z8ZGN1i9eIzeAJUqc=;
+        b=cwFPhT6vOfOE7I98cCiZw2WppVMNhRXpw2wvesNxhA3uJP9n8NirgTiarB8Dm8psCZ
+         X8v7fpLJkhPJzy/sOctdSHQT1ZZsJ/HO3q6gW/e16r2BWhvL8mIMwtXT8dQpA9gkvv3H
+         P5trDSCdUUau/msTwsOiwTW0YrgERW9saZKyN+/V9qEIlQiPbVYznVRDE/kXunVb2+BV
+         DSl10jmOBra5AaUk2mAJOh988rx/AgWKx4xbtdImSlrR72fjyGx/MBsZt1nziyd1VImr
+         /8ZWysZAAq4K1mzkeW9Qdo2J4Bswce8Do9oLOIU4i1oY44nGADH/27zljolXi0ILvYI5
+         c3Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794391258; x=1794996058;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=v6371ZwO/zAJsKINRttU2qdrq8Z8ZGN1i9eIzeAJUqc=;
+        b=ZbQnRLMDHQOvnxn+mgZ9BtrrakPHPrcRSFAoXl5gaLvBRRzggpiEVCq7AKw/KjmrtB
+         o1jb+usDsyvFaMKsbC7EzcxbxbkO0a347EHq6wZ5BvWTBrxu89r7twWr6OC57bNJcdfO
+         faAyuEVdcW7JkJDbCSN4zkv+cb0CWGM6EYjdmvacujTQuV7zIQdtzL+AqR0juFdUE+kv
+         hOXAa50sasl3dns6gyow04nT6sqbVV6XPsgN7NZd8gZyjmHZuSgn3yZy7sFSe5OF0ZCg
+         yrrCdB760l4EJJF7/y8VOjHcbiFYmosv2HvumPZV+NU8BajzS/yf/XtesX6out9gGV/R
+         eSUA==
+X-Forwarded-Encrypted: i=1; AL+hErEwz0s5Wrc8XKE90C1r183Lxrg7Tf07/QznutS8iCObnDsgj/FZ8oo7/LNKEzrbx+g+s/3t8loWh44=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9+fLWha0LJ+GLOqPZopqbIuIVw3JSgX8O69TeXO/LempcX//Jk
+	CjIRiQNnEZ2/qeMxAA4UYsTdA8giW4cRg2ZsooPIzhVg+780+VM4ZAbrHyixJBlxixRn1J5fa6G
+	uFUGGFbR/PCBktUFZY/3D3kTIUx8SvfCGjWsK1n82hR206GOP5h9Ol2V5qge6VME=
+X-Gm-Gg: AYBFou1hgSiPrFDHnAHOFrzV1hcz5PJYLbIYmh1xTXmEJlQ1OjBQeAHSUCI6BvMhJac
+	SDjAO+OYuIGItgjixxqhL3rwjEmQrTaehEy12vxqwFgJMTFmaW7CIjqgpdGBPRa/RTTOxwe6+s4
+	ljwmhv8DkyLy76o8jDYeu4hpT7w9YIDbcSKA3gAvH0MciZouQA6nfHOX6V7anpZcMLJpsLF7W78
+	7Lh01S8+l6jiebtVbkpTmi0JIrIPpFNMAO3j0htJ4e+ThLD1cWx3l070HX/k6eXV/hfRQfOdnnb
+	iqoAH8ELvVDVdc7Iz2CQ4rYOHQCMg5skduiykvXXFdqNjfc6YjWYQywdn5HhYnWbdu8Lgr5TeLq
+	1ab8vIQqTych/2UrVw59e5CKDGvdhjJ2WcaPwdl+Wk/IzPRLt08pYmffzi5TvEi8adMXvuFcOH3
+	P+K7ohcz2hUnekclen
+X-Received: by 2002:a05:6808:c126:b0:546:306d:45eb with SMTP id 5614622812f47-5688134bac2mr2879940b6e.35.1794391258176;
+        Wed, 11 Nov 2026 02:00:58 -0800 (PST)
+X-Received: by 2002:a05:6808:c126:b0:546:306d:45eb with SMTP id 5614622812f47-5688134bac2mr2879910b6e.35.1794391257731;
+        Wed, 11 Nov 2026 02:00:57 -0800 (PST)
+Received: from hu-luoj-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-5690504c276sm4686111b6e.4.2026.11.11.02.00.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Nov 2026 02:00:56 -0800 (PST)
+From: Luo Jie <jie.luo@oss.qualcomm.com>
+Subject: [PATCH v2 0/3] clk: qcom: Add NSS clock controller support for
+ IPQ5210 SoC
+Date: Wed, 11 Nov 2026 02:00:54 -0800
+Message-Id: <20261111-qcom_ipq5210_nsscc-v2-0-7e2c1dda3ed2@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -100,106 +116,106 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANY89GoC/22NQQ6CMBBFr0K6tqStrSGuvIchhE6LjFEKHSAaw
+ t0tGHduJnnJm/8WRj6iJ3bOFhb9jIShS6AOGYO27m6eo0vMlFAnKYXmA4Rnhf1glBRVRwTAG6+
+ tgsJpJwuWHvvoG3zto9fyyzTZu4dxW9qMFmkM8b1XZ7l5v4D5F5glF9zpBqyBo7JGXgJRPkz1I
+ 7nPPB1Wruv6ASoesijNAAAA
+X-Change-ID: 20261104-qcom_ipq5210_nsscc-fe4b2c8d4d18
+To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Georgi Djakov <djakov@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Luo Jie <jie.luo@oss.qualcomm.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, netdev@vger.kernel.org,
+        quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+        quic_leiwei@quicinc.com
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794391255; l=1980;
+ i=jie.luo@oss.qualcomm.com; s=20251128; h=from:subject:message-id;
+ bh=ssQwJ0NVkXEo1RNZ7AhR+p1xjTksM72Hbr1MyGjEOHo=;
+ b=ELfTtgQHmQKAVD+I8fcjmKdoSmQ63d3HgGAPghBonQAWNbJzX2cwn6xE89AK6bbrIHcF97a/R
+ n1K7+DMC6nEAdr74VE+WswAMjq8sxzA0eAfb0UaHCo88wp1qmqZt3ig
+X-Developer-Key: i=jie.luo@oss.qualcomm.com; a=ed25519;
+ pk=gSsYMDakxtd6UDFYDdA9y9yjIs5Etp5GK/3DoXWPyS0=
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTExMDAzOSBTYWx0ZWRfX+XWnKKgfQ8P9
+ qqC0jCjiKzbpul+tTUAlIAYCBx9phufrUdy598CAIYVm9LN3bhKtIXiuTUyokD5LBhtLr35WofI
+ 53D3jECCiiJPLPGGFx0qCcTeGt8sjo8=
+X-Proofpoint-ORIG-GUID: xGPUqA7H4lQIK7yRbfIgJ8B8DmlbDINx
+X-Proofpoint-GUID: xGPUqA7H4lQIK7yRbfIgJ8B8DmlbDINx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTExMDAzOSBTYWx0ZWRfXxUItkx6PLlx0
+ JgsPPj9NkOgmNIDHroMLZYcbuD1XWrZg+6IKYhRhTbxSaO3jtxX9W48hcsfYaKhBmxnyRApXHI3
+ vGZEigmBnUd9aijorVTr6y5HwgMOinH54ASG/NTxCtExXm9t0g6n4uiXm5+rAECZlF+B4pt0QbT
+ EtU3PyLSg2MuqdGfdv7LFqbdZeNP6cACbYGcLvhMjUlBNEIy4gPBoMqQLhw7mPwB5ezt89lZZf3
+ TVLZdP3wc9q8gHcK5rEpisXcbAKgiZbRHSELuVmpWbGzV9mDeIh9zg6BPp4esJPkR2sd5ooI6HD
+ dgH6SzmqPvWfx5H118v0sFsmDM6DIjSzx+wPSRqzooRdK2dM+Yclg7gUHXvInrrJUTU2XqXRjk5
+ q370nkYxsoOzx/sQHVFYK+cKT/X5uJrzp//CZ+GC073PeeFh2xgQqpoYzSkgVVzkLa7Rf+nvlVV
+ z3cdPLuWH7PBzody6vA==
+X-Authority-Analysis: v=2.4 cv=CZadd7rl c=1 sm=1 tr=0 ts=6af43cdb cx=c_pps
+ a=AKZTfHrQPB8q3CcvmcIuDA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=bC-a23v3AAAA:8 a=EUspDBNiAAAA:8 a=cYQ6PdjOCuHZ1sjPTfwA:9 a=QEXdDO2ut3YA:10
+ a=pF_qn-MSjDawc0seGVz6:22 a=FO4_E8m0qiDe52t0p3_H:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-11_02,2026-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ phishscore=0 adultscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611110039
 
-On Mi, 2026-11-11 at 03:19 -0500, Joseph Telaak via B4 Relay wrote:
-> From: Chuanhong Guo <gch981213@gmail.com>
->=20
-> Add a platform driver for the peripheral clock and reset manager (CRM)
-> block found on Siflower SF19A2890 and compatible SoCs.
->=20
-> Each CRM block manages a group of APB peripherals through three registers=
-:
-> a reset register, a clock gate register, and a shared Bus Output Enable
-> (BOE) register that must be asserted for any peripheral in the block to
-> respond to bus transactions.
->=20
-> The driver registers a clock gate controller and a reset controller from
-> a single DT node. A shared spinlock protects all read-modify-write
-> accesses across both. BOE is managed automatically: asserted when the
-> first clock gate is enabled and deasserted when the last one is disabled.
->=20
-> Some peripherals have more than one reset line, one for each clock
-> domain of the same IP, like the separate UART and APB resets of a
-> PL011. The driver exposes each such group as one reset, because the
-> lines have to be asserted together: the GMAC's two lines are the two
-> sides of an asynchronous AXI bridge, and asserting one alone locks up
-> the bus.
->=20
-> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
-> [Joseph Telaak:
->   - take it from Chuanhong's siflower-7.1 branch
->   - one compatible per block, with its gate bits, critical gates and
->     reset masks in tables in the driver instead of the
->     siflower,valid-gates, siflower,critical-gates,
->     siflower,reset-masks and siflower,num-resets properties
->   - parent gate N to input clock N by index, not by global name
->   - update the gates under the spinlock too
->   - drop the separator comments
->   - Kconfig dependencies and help, subject]
-> Co-developed-by: Joseph Telaak <joseph@telaak.dev>
-> Signed-off-by: Joseph Telaak <joseph@telaak.dev>
-> ---
->  MAINTAINERS                                    |   1 +
->  drivers/clk/siflower/Kconfig                   |  11 +
->  drivers/clk/siflower/Makefile                  |   1 +
->  drivers/clk/siflower/clk-sf19a2890-periphcrm.c | 368 +++++++++++++++++++=
-++++++
->  4 files changed, 381 insertions(+)
->=20
-[...]
-> diff --git a/drivers/clk/siflower/clk-sf19a2890-periphcrm.c b/drivers/clk=
-/siflower/clk-sf19a2890-periphcrm.c
-> new file mode 100644
-> index 000000000000..349e0d7ce0c3
-> --- /dev/null
-> +++ b/drivers/clk/siflower/clk-sf19a2890-periphcrm.c
-> @@ -0,0 +1,368 @@
-[...]
-> +static inline struct sf19a2890_periphcrm *
-> +rcdev_to_periphcrm(struct reset_controller_dev *rcdev)
-> +{
-> +	return container_of(rcdev, struct sf19a2890_periphcrm, rcdev);
-> +}
-> +
-> +static int sf19a2890_periphcrm_reset_update(struct reset_controller_dev =
-*rcdev,
-> +					    unsigned long id, bool assert)
-> +{
-> +	struct sf19a2890_periphcrm *crm =3D rcdev_to_periphcrm(rcdev);
-> +	unsigned long flags;
-> +	u32 reg;
-> +
-> +	spin_lock_irqsave(&crm->lock, flags);
+The NSS (Network Subsystem) clock controller on the IPQ5210 SoC provides
+clocks and resets to the networking related hardware blocks such as the
+Packet Process Engine (PPE), the six ports, XGMAC PTP reference clocks,
+PON, EIP crypto engine, and the SoC-integrated EPHY (2.5G Ethernet PHY).
+Its parent clocks are sourced from the GCC and CMN PLL blocks.
 
-Could be simplified with guard(spinlock)(&crm->lock);
+The NSS NoC clocks are also enabled to use the icc-clk framework, enabling
+the creation of interconnect paths for the network subsystem's connections
+with these NoCs.
 
-> +	reg =3D readl(crm->base + REG_RESET);
-> +	if (assert)
-> +		reg |=3D crm->reset_masks[id];
-> +	else
-> +		reg &=3D ~crm->reset_masks[id];
-> +	writel(reg, crm->base + REG_RESET);
-> +	spin_unlock_irqrestore(&crm->lock, flags);
-> +	return 0;
-> +}
-> +
-[...]
-> +static const u32 sf19a2890_usb_resets[] =3D {
-> +	[RST_USB] =3D GENMASK(2, 0),
+The patch series is organised as follows:
 
-Do these three bits control separate reset lines?
-Does the hardware require them to be changed together?
+1/3  dt-bindings + clock/reset/interconnect ID headers for IPQ5210 NSSCC
+2/3  NSS clock controller driver for IPQ5210
+3/3  DTS: add NSS clock controller node in ipq5210.dtsi
 
-> +	[RST_USB_PHY_POR] =3D BIT(3),
-> +	[RST_USB_PHY] =3D BIT(4),
-> +};
-[...]
-> +static const u32 sf19a2890_uart_resets[] =3D {
-> +	[RST_UART0] =3D BIT(0) | BIT(4),
-> +	[RST_UART1] =3D BIT(1) | BIT(5),
-> +	[RST_UART2] =3D BIT(2) | BIT(6),
+Changes in v2:
+- Use RUNTIME_PM_OPS() and pm_ptr() for dev_pm_ops.
+- Rebase on next-20261110; drop the CMN PLL DTS patches, which are now
+  merged.
+- Link to v1: https://patch.msgid.link/20261105-qcom_ipq5210_nsscc-v1-0-d4fcb5c32b51@oss.qualcomm.com
 
-Same question as above.
+---
+Luo Jie (3):
+      dt-bindings: clock: qcom: Add NSS clock controller for IPQ5210 SoC
+      clk: qcom: Add NSS clock controller driver for IPQ5210 SoC
+      arm64: dts: qcom: ipq5210: Add NSS clock controller node
 
-regards
-Philipp
+ .../bindings/clock/qcom,ipq9574-nsscc.yaml         |   47 +-
+ arch/arm64/boot/dts/qcom/ipq5210.dtsi              |   40 +
+ drivers/clk/qcom/Kconfig                           |   12 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/nsscc-ipq5210.c                   | 2202 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq5210-nsscc.h     |  106 +
+ include/dt-bindings/interconnect/qcom,ipq5210.h    |   18 +
+ include/dt-bindings/reset/qcom,ipq5210-nsscc.h     |   60 +
+ 8 files changed, 2483 insertions(+), 3 deletions(-)
+---
+base-commit: 793807ca13bf3072fc6d16ce6d90e9ab9beff2a5
+change-id: 20261104-qcom_ipq5210_nsscc-fe4b2c8d4d18
+
+Best regards,
+--  
+Luo Jie <jie.luo@oss.qualcomm.com>
+
