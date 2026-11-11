@@ -1,90 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.53
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794433952;
-	b=kfZrGIOAXVx1j3wBwIRGquTZI4L2OoiGFxfvxUcAJV/kNugKhIyOTPfFwDZNlTPtqXA9
-	 vvNM7RfThfNiY0itfwIwf16Uvz6XagWCr2oheoakU8qtTFksz/O74YS05XKwsS2/CcdHi
-	 +SMgdZXQfLRns8XmRrNaiJ9L/GQIVB/7QKU5BxlwL9knwJEMpdET8SBthc+ML5/U+I5Mo
-	 hc5WzTB6IGbVYTGSgMcZZz4fsMbB6ho9LB1AWL7Rv8Ymlocdkex3ZY9MQuh+JnrgfPzPS
-	 Dq1jpHLBQv2iMlN1ltARiJUbZZRGaVS9iAF2goPEXTkVMW8PUoVuBvOt/+McRMeFhAg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794433952;
-	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
-	 Received:Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Content-Transfer-Encoding:Message-Id:References:To:X-Mailer;
-	bh=D6hCekAJRvtT/gsERRUrqUGcHPO5tKx1ofDScjDZRh0=;
-	b=f9SFPSCk+pFY1MKHrvyJPIqiMocdKJSWVFtC8r3Ya3dRnsO6YGuB76zAYpjpOnL226Bx
-	 1z+r+Q5Y79vaqowC8zrKQKIsmJ7/WI51HTJtHTcZ3foJvIaYqvX9IVm53js/wiuWCI/0t
-	 sPWVCweeBJVJAg42ERpSI95kTUKENmUgpcuexBtho/E8tN4ZZKFBD2TcKWcr/NjVWT3Eq
-	 gKya76ldPwJ1mF9uguBj7Lx89nyH+Ux9B7dIiGnLk1O3fCUvpRwE6oucFQNAxr2XKp1lF
-	 GV5+/KTWqUOdA+DdYmFF6iJcAkIdBNdjx6YY3xh5iPrpcykq/BKK83GWU3rJbFuMUXw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=goldelico.com;
-	spf=pass smtp.mailfrom=goldelico.com;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=iZgTz9A7;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=xcLU2iJQ;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.53
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.43
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794434258;
+	b=A0T2TV6YTQWj3eNI37Y6UDdMLCR/Oez2SMYWDm70TUF+x6RrLZNTBQxzZM16C8EFQwvb
+	 vLgYLYuFmuOrFtzNzuwQAlpt/X59VxmejV9v9zI84z3zo+u1pVLaTMYcwqTMZpqpz1xJM
+	 h/wXfZheWNmaFaULAijR5ETh0a/tJFrKvwmTT35VpMQLs/Mo/RPzZvjpM9B6/Idccp1rq
+	 8Dp0OienS8DaC7xmb3+1We9t81gHhCvX7q6hVMmKygdkDcAenfcMa7e4pzMjShPHBpuIA
+	 mP6mXbg4fbIkDLtnAKByPOh9qg+EcNEXv3RNdgkJDqnDaZRuMxA+4pAEGKeAzkgveQQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794434258;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=SlM0yBvLi14OnV7gxzFnWRbA+lvM+aJE4vd4INa5MSo=;
+	b=LY9TgzmKTNxMn5FLUmR5TJOag99zjLaNWcj5gDkeOxCFtGNxWIyaeGNMGT56EkGQvBHC
+	 xy73dZs1WCbf37SwZr7x5rX9jt7DpSCIcSqgyXPO0SBGZ7hR3dtW+OqEWzT7sqcLkSrXE
+	 Bf4AhKWvVKBbwQqCwXV3fG7OvZ/v3u7xePzV95zA1X0sLXRLp/rVjdCThKwlhvfC3OZHT
+	 bOjmSeEXFPL2msJrXA+3dlR1OPq2KQCGM1aHYS2UDRYtZHHrsFU3aTlPmskQ79Ou1vAPF
+	 IauCreofGT0kEH1y28Z7jSsfpy7rhTIKhdsOui94eRjGMffquE9z2Sk6JStYC4YPIlA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=sOR01uyR;
+	arc=none smtp.remote-ip=209.85.216.43
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CE1606A31C;
-	Wed, 11 Nov 2026 21:52:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C7CE1606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43997606A339
+	for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 21:57:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 43997606A339
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=iZgTz9A7;
-	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=xcLU2iJQ
-ARC-Seal: i=1; a=rsa-sha256; t=1794433918; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=fAPeKixB+RXe9pPCGJNsqLToji+blijLDURopXla73RsYy0/EJbf3gXFoIEJzoJecD
-    UJjVx8wxT38NETa5i8XL8MM8OsBzU4ec5Sf9AUgDWe/CPaUwTmNV9e1JQHBIguVmPLrS
-    Bu2UTqkdnmARKTKW5wwhNYyUmfkkx/NkZlRr8p4daanVhiK6wN86QIwVO5yONmol6WLo
-    c+Zc5Icn/5vXTnbrPwlguH/jTJfodMhWS0mmSttcDgXRgIUCZL8S+YpaOra1jVRuJXB9
-    gLIPvvMYNDwjY3ELCk/fiMsh6kKGuauD3qsSBC/d8XxL4HfG720ZhXk6v/uvEPtxsfQL
-    UJwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1794433918;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=D6hCekAJRvtT/gsERRUrqUGcHPO5tKx1ofDScjDZRh0=;
-    b=IWjKBWNZ1kKTuMf1Qn52NRwSc+/nRGwrNuj6fd4RsAlHWQsajBDnJq8RPO4uFMZF9y
-    4TQpInbnbOmgl+55k+XF9y5KvryHMFzO7PBPEDEnp2LUO6REGh0VNQxe706BESH2JzJ+
-    PUFQl+WsVHtDlAm29ReqDI9D+H91XevPY0BJ/FHA60gs5uPB8OvfC7QWGXdlStSm4VCc
-    8ga7LQJBjgUcHIbqZCANRjxzcsxRt5YUWV16uJH1JMDSC7f84tx3mt1pTKVmQ75D53n9
-    +uv+7uhqSPZqxys6lkYJUtrz8tYby5/n3OmuknQsFLqsm8aRFENW50y7XXc1DFCV8QQ6
-    61IA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1794433918;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=D6hCekAJRvtT/gsERRUrqUGcHPO5tKx1ofDScjDZRh0=;
-    b=iZgTz9A7cbFo0rrDbmeiZHr0Y/0nKX4vDMyiAcXAHZmey1VSUQSaugxS1pg0Wjm6yr
-    qEBJWydijzdk2SSaxrLuPp5f5vFjKe2f0I5A2TWRUjUJPHj6UxfYePhd8zR+73igc5iR
-    ttylf7+RNVIQW6ROXJNZfhRL5ShrYEFaEsaT0dkSawO7PjZlDjqug+DX/v2LUnKRMWNv
-    e4iCgMDadF/U9FYDKDBZ2r+tZ+4CpRFsTa1K5TOwAWPHxdSaDgrBusX7DrvqauIMfqci
-    X0u7kZx/GaXxTnIuZFl6dlUjLdkdQFrdbyQlnxurWwwpYqf8aChrFyEUnlyvgsKMvngo
-    CP6w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1794433918;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=D6hCekAJRvtT/gsERRUrqUGcHPO5tKx1ofDScjDZRh0=;
-    b=xcLU2iJQc/1dLhCs45OSAnHMF4WJmm9tlTC0BWINziIsBxkwkwTHrEbyqUSPGrfVK1
-    hmXgPmgVtdR9CoVdpjAw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrQjZoLz8iN2kucGv2N8YJDPry98OL4EAMbtbpe"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 55.6.3 AUTH)
-    with ESMTPSA id Qb56a22ABLpv9Ss
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Wed, 11 Nov 2026 22:51:57 +0100 (CET)
-Content-Type: text/plain;
-	charset=us-ascii
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=sOR01uyR
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3ae691283ecso158054a91.0
+        for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 13:57:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794434258; x=1795039058; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=SlM0yBvLi14OnV7gxzFnWRbA+lvM+aJE4vd4INa5MSo=;
+        b=sOR01uyRvXHgOyzCyDNY0Yq0Ast07uOYX4rPz8OcCM2Gp1XpxXLHflfejIsB2PU095
+         lS8KvPNsrhc+9na1BlAKBJ97wpV1O6iVAyNVzyUCz/dI8xbFAH+RyrPL5kSo3IP5KNAd
+         rh4v4bSbxWecqtR/soDUSkxJpcFzQe0n8Nafsh/xQHUW1k4IqVx6a/xzXOvMigmTFzPl
+         H758JXDlTcgi/nrrbLrjllIrf4zNJmmTy+rm4Ol8JwiF89D44kSgdqjjIHg+dPrSslw4
+         Gs+9OxKh6ggWSexuWQExm4hHcVgKFw3Y28s/t1fo5OZMWzfzgZT9F/abgLmoz1u1EBrm
+         NDZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794434258; x=1795039058;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=SlM0yBvLi14OnV7gxzFnWRbA+lvM+aJE4vd4INa5MSo=;
+        b=CxmiNi1h6nMdLZquUt+dOqvVc/1nRfQwg0VYbY/+CfQVV0KtF67lxVFM7OLq3NzWlE
+         nkJMNjvbzQ9totYLK8WAW4gI8nmWQh8vVcXxmcwysDbjtwu8X/oLkgIrCqgUtTYR8fM0
+         EEmEHHoU6zSfOS8Y5icV91t/IrRikJgy8QHLQNPVb6dvJW18052w810Nfj4OtWdd2PfZ
+         lTza0/x4aXRfI0mfbi715WiFNDDrFa8yz9ep7agxGmZ9HaEAFw5rYG4D3bnKkJSEVVCz
+         Y8EuQG90Qt3qNrfJ2T61kGIncxUMXJKQhEjHkSgPUfEzCyQpkwvqzY8tbpOShLv/ERBe
+         AQpg==
+X-Forwarded-Encrypted: i=1; AL+hErF3vaqEMqtUuPkl0Hrnk6AukZwJ4B/QV+qev/wY18vfghGKAAjiq3mQHmoHLOYQA0ElG7VQ44LT+bA=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+8no3+7LHpC+KpnAYzICM3KIAzjuH2eshhz2D5W/8dWiHz8Vhl
+	C/wiriCrrX3mhnSOP0g7DITN4xBMf5WiuT7aRja0ih1+2O8MZ/q2smWG
+X-Gm-Gg: AYBFou3uqjXhNzziYALptHQX2qVTgbYtfjps5e3h7s4r+TbIiJ98+ZoqwAc2uoQmU3A
+	5WS5vuQShfNVot4mWl03FJh796JIyxfwq2P1Hl0yfn6e0flJU2pJkTdYbYVtbg6TH1O+bNK6OoO
+	P4uaaY+1i5QMrP797Nt5zOQoxeGUk5DTw57Zy8NZMvTUInz+bm4Ht7KHWRSLowWFqvBxBrySa3x
+	5op+YVD9HNoFJy29NV+d6okW9jjqyHiGclE+YgrWCsfKx4dFN15trqdXirQFHzvjORBxCnXgKYQ
+	CkI3BAE0Koo/gAfo1bSeHFOrh2+vUacq87QcOdfn6XDZxmlMjZMaKiN6hNLEfbETU5piyA/fCm7
+	v5Cj1lK+g3IzTgso9xLuRthIX3twWrNoVLjQZJRbe234JNr4hXTVHKpypagknU6B5DNqDKHpbZD
+	d16xZx/98oEmOFcwkmOD8dT0IxxVYxOdfPRBCbJRQC8A9vI5MYvVL/A0neqky2URmQEmHHpuJRs
+	vHaMTyOLydXIwJQLCNvgshO8MwXzHJFu69FmVgIwaRwuycNspbynPkgZMRvA5Q7ckkMcP48iP5+
+	z24GwPLSBJDd4hWE+v7LIC25FPzPF9jjagZr/Da+6HVVzZpccfrVJth/jwT5gSoKDcxmKIl9vVf
+	6a6Z5bg86Eg0Y60m8fpdoM6VSHICOHgtZzUGkt3yOnpgVmlpRKiyKu5PuEEzES48hgo95S0DTvg
+	hysg==
+X-Received: by 2002:a17:90b:2fce:b0:3b0:9310:b255 with SMTP id 98e67ed59e1d1-3b197cce666mr391401a91.36.1794434257629;
+        Wed, 11 Nov 2026 13:57:37 -0800 (PST)
+Received: from ryzen.lan ([2601:644:8000:37f::e34])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b197ce556dsm965429a91.6.2026.11.11.13.57.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Nov 2026 13:57:36 -0800 (PST)
+From: Rosen Penev <rosenp@gmail.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Alban Bedel <albeu@free.fr>,
+	Antony Pavlov <antonynpavlov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 0/7] clk: add a driver for the ath79 PLL controller
+Date: Wed, 11 Nov 2026 13:57:22 -0800
+Message-ID: <20261111215729.10683-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.56.1
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -93,190 +105,96 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.10\))
-Subject: Re: [PATCH 2/4] clk: ingenic: Add Ingenic X1600 CGU clock driver
- support
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <179443342468.1143992.1536494507903693852.b4-review@b4>
-Date: Wed, 11 Nov 2026 22:51:27 +0100
-Cc: Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Paul Cercueil <paul@crapouillou.net>,
- linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org,
- letux-kernel@openphoenux.org,
- kernel@pyra-handheld.com,
- Paul Boddie <paul@boddie.org.uk>
-Content-Transfer-Encoding: 7bit
-Message-Id: <6E077CB3-1BAC-45E1-AB21-4DFB1E4F4777@goldelico.com>
-References: <cover.1792955907.git.hns@goldelico.com>
- <50983be55e467076e83e3ffc37b30fc4e5648e15.1792955907.git.hns@goldelico.com>
- <179443342468.1143992.1536494507903693852.b4-review@b4>
-To: Brian Masney <masneyb@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81.1.10)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Brian,
+The clocks of the Atheros/Qualcomm ath79 MIPS SoCs are set up by
+arch/mips/ath79/clock.c, a CLK_OF_DECLARE driver that registers every
+clock before the driver core is up. This series replaces it with a new
+driver in drivers/clk.
 
-> Am 11.11.2026 um 22:43 schrieb Brian Masney <masneyb@kernel.org>:
-> 
->> Introduce clock driver support for the Clock Generation Unit (CGU)
->> found in the Ingenic X1600 SoC.
->> 
->> To support the X1600 platform, update the common Ingenic CGU core
->> framework to accommodate a secondary post-VCO divider (OD1) within
->> the PLL configuration registers. Additionally, prevent a NULL pointer
->> dereference in the rate determination path by properly supplying the
->> secondary divider tracking during PLL calculation calls.
->> 
->> Implement custom handling for the I2S clocks on the X1600. Since
->> complex compound hardware dividers are not yet natively supported by the
->> core framework, explicit M-divider (mdiv) and N/D-divider (nddiv)
->> structures are introduced to describe these specialized fields. This
->> avoids a compilation failure and enables a stable, though limited,
->> division encoding suitable for current needs.
->> 
->> Furthermore, this patch:
->> - Fixes the gating of the I2S0 and I2S1 clocks, matching the control
->>  bit behavior which functions as a clock enable flag.
->> - Introduces the custom OTG PHY clock operations and initialisation
->>  routines utilizing the hardware's OPCR registers.
->> - Registers the independent I2S0 RX and TX gate clocks employed by the
->>  X1600 peripheral block.
-> 
-> Just from reading the commit message this patch needs to be split up
-> further into several smaller patches to make it easier to review.
-> Ideally try to make the different bullet points separate patches.
+Only the reference and CPU clocks are registered early, with
+CLK_OF_DECLARE_DRIVER(), because the MIPS timer needs the CPU rate from
+plat_time_init(). A platform driver bound to the same node registers the
+DDR, AHB, MDIO, UART1 and PCIe clocks. Until it does, the early provider
+returns -EPROBE_DEFER for them. clk-mt7621 uses the same scheme.
 
-Yes, that is already in preparation for a V2.
+Patches 1 and 2 move the two remaining non-clock duties out of the arch
+clock code, so that it only uses its own registers and the clk API: the
+QCA956x timer interrupt workaround, and the reference clock that is
+read from the bootstrap pins when the device tree has no rate. Patches 3
+and 4 drop ATH79_CLK_END, which is not ABI, from the binding header, and
+patch 5 adds the UART1 and PCIe PLL clock IDs. Patch 6 adds the new
+driver, and patch 7 removes the old code.
 
-We will also extend this to cover the X2000 and X2600 (and JZ4730).
+Tested on a TP-Link Archer C7 v2 (QCA9558) with an LLVM build. The CPU,
+DDR, AHB and reference rates (960, 800, 266.67 and 40 MHz) match those
+of the old code. The serial console, both GMACs, the PCIe PLL with a
+QCA9880 behind it, and the WMAC all work, and no devices are left
+deferred. The debugfs clk_summary, consumers included, is the same as
+with v2, and stays the same when the clock-frequency of the reference
+clock node is removed. The other SoCs are not tested on hardware. For
+each SoC the rate calculation was compiled in userspace together with
+the old code and fed 2 million random register sets. The results are
+identical, except where the old code overflowed 32 bits with register
+values that no real setup uses.
 
-This needs to extend the core first and then add bindings and CGU code
-tables one after the other.
+Changes in v3:
+- Register the reference clock read from the bootstrap pins as the
+  provider of the reference clock node instead of with clkdev, so that
+  its other consumers, such as the AR933x UART, find it and fw_devlink
+  doesn't hold the platform driver back when the device tree has no
+  rate. Drop the clk_get_sys() fallbacks (review feedback).
+- Wait for the PCIe PLL update to finish after each write in unprepare
+  too (review feedback).
+- Add the UART1 and PCIe PLL clock IDs in one patch (review feedback).
+- Drop ATH79_CLK_END from the binding header instead of growing it, as
+  the number of clocks is not ABI, after moving the old clock code off
+  it (review feedback).
 
-> 
->> Tested successfully on the LX16 (X1600) boards and CI20 (JZ4780) to
->> not interefere.
->> 
->> Checkpatch complains about not 4 lines of help paragraph but the
->> style is the same as for the other machines. It also recommends
->> using 'unsigned int' for the new struct ingenic_cgu_mdiv_info
->> and struct ingenic_cgu_nddiv_info but this follows the style 'unsigned'
->> of all other structs in cgu.h. Finally it complains about the empty
->> line between struct ingenic_cgu_clk_info x1600_cgu_clocks[] = {
->> and the comment. But I think it is more readable this way.
-> 
-> The checkpatch note can go below the --- below.
+v2: https://lore.kernel.org/linux-clk/20261110013646.1582970-1-rosenp@gmail.com/
 
-Fine.
+Changes in v2:
+- Post the new driver as one patch, instead of moving
+  arch/mips/ath79/clock.c to drivers/clk and cleaning it up over six
+  patches (review feedback).
+- Register only the reference and CPU clocks with CLK_OF_DECLARE, and
+  the others from a platform driver (review feedback).
+- Describe the SoCs with match data, and read the CPU, DDR and AHB
+  selection of AR934x and later with one function.
+- Keep mapping the AR934x SRIF block from its fixed address. It lies
+  inside the wireless MAC registers, which ath9k claims, so it can't be
+  a reg entry of the PLL node.
+- Drop the clkdev registrations, which have no users.
 
-> 
->> 
->> Co-developed-by: H. Nikolaus Schaller <hns@goldelico.com>
->> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->> Co-developed-by: Paul Boddie <paul@boddie.org.uk>
->> Signed-off-by: Paul Boddie <paul@boddie.org.uk>
->> ---
->> drivers/clk/ingenic/Kconfig     |  10 +
->> drivers/clk/ingenic/Makefile    |   1 +
->> drivers/clk/ingenic/cgu.c       | 150 +++++++---
->> drivers/clk/ingenic/cgu.h       |  42 ++-
->> drivers/clk/ingenic/x1600-cgu.c | 476 ++++++++++++++++++++++++++++++++
->> 5 files changed, 646 insertions(+), 33 deletions(-)
->> create mode 100644 drivers/clk/ingenic/x1600-cgu.c
->> 
->> diff --git a/drivers/clk/ingenic/Kconfig b/drivers/clk/ingenic/Kconfig
->> index f80ac4f2992b..9b8b00c9e6d1 100644
->> --- a/drivers/clk/ingenic/Kconfig
->> +++ b/drivers/clk/ingenic/Kconfig
->> @@ -75,6 +75,16 @@ config INGENIC_CGU_X1000
->> 
->>  If building for a X1000 SoC, you want to say Y here.
->> 
->> +config INGENIC_CGU_X1600
->> + bool "Ingenic X1600 CGU driver"
->> + default MACH_X1600
->> + select INGENIC_CGU_COMMON
->> + help
->> +  Support the clocks provided by the CGU hardware on Ingenic X1600
->> +  and compatible SoCs.
->> +
->> +  If building for a X1600 SoC, you want to say Y here.
->> +
->> config INGENIC_CGU_X1830
->> bool "Ingenic X1830 CGU driver"
->> default MACH_X1830
->> diff --git a/drivers/clk/ingenic/Makefile b/drivers/clk/ingenic/Makefile
->> index 81d8e23c2636..7e93e0893abe 100644
->> --- a/drivers/clk/ingenic/Makefile
->> +++ b/drivers/clk/ingenic/Makefile
->> @@ -7,5 +7,6 @@ obj-$(CONFIG_INGENIC_CGU_JZ4760) += jz4760-cgu.o
->> obj-$(CONFIG_INGENIC_CGU_JZ4770) += jz4770-cgu.o
->> obj-$(CONFIG_INGENIC_CGU_JZ4780) += jz4780-cgu.o
->> obj-$(CONFIG_INGENIC_CGU_X1000) += x1000-cgu.o
->> +obj-$(CONFIG_INGENIC_CGU_X1600) += x1600-cgu.o
->> obj-$(CONFIG_INGENIC_CGU_X1830) += x1830-cgu.o
->> obj-$(CONFIG_INGENIC_TCU_CLK) += tcu.o
->> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
->> index ad223aa20e8d..c4fbee32c3b9 100644
->> --- a/drivers/clk/ingenic/cgu.c
->> +++ b/drivers/clk/ingenic/cgu.c
->> @@ -4,6 +4,7 @@
->>  *
->>  * Copyright (c) 2013-2015 Imagination Technologies
->>  * Author: Paul Burton <paul.burton@mips.com>
->> + * Copyright (c) 2023, 2024 Paul Boddie <paul@boddie.org.uk>
->>  */
->> 
->> #include <linux/bitops.h>
->> @@ -76,6 +77,40 @@ ingenic_cgu_gate_set(struct ingenic_cgu *cgu,
->>  * PLL operations
->>  */
->> 
->> +static unsigned
->> +ingenic_pll_recalc_rate_od(u32 ctl, u8 od_shift, u8 od_bits, u8 od_max,
->> +   const s8 *od_encoding)
->> +{
->> + unsigned int od, od_enc = 0;
->> +
->> + if (od_bits > 0) {
->> + od_enc = ctl >> od_shift;
->> + od_enc &= GENMASK(od_bits - 1, 0);
->> + }
->> +
->> + /*
->> + * Use the encoding table if indicated. Otherwise, use the value
->> + * directly, interpreting an encoded value of zero as a divider
->> + * value of one.
->> + */
->> + if (od_encoding) {
->> + for (od = 0; od < od_max; od++)
->> + if (od_encoding[od] == od_enc)
->> + break;
->> + od++;
-> 
-> So if the entry is not found, then od will be set to od_max + 1, and it
-> will pass through the warning checks.
+Claude Code (Claude Opus 5.5) was used while preparing this series. It
+wrote most of the new driver from the old one, together with the
+userspace test of the rate calculation. I reviewed and tested every
+change and take responsibility for it.
 
-Sashiko also commented on such issues.
 
-> 
-> I started to look through the rest of the driver but I stopped because
-> there's just too many unrelated changes here. This needs to be split up
-> further into separate patches to make it easier to review. If your
-> commit message has the word 'and' then that's a hint that you may want
-> to consider splitting it up further.
-> 
-> Also be sure to go through all of the feedback from Sashiko.
+Rosen Penev (7):
+  MIPS: ath79: apply the QCA956x timer workaround in setup
+  MIPS: ath79: move the bootstrap reference clock to setup
+  MIPS: ath79: stop using ATH79_CLK_END
+  dt-bindings: clock: ath79: drop ATH79_CLK_END
+  dt-bindings: clock: ath79: add the UART1 and PCIe PLL clocks
+  clk: add a driver for the Atheros/Qualcomm ath79 PLL controller
+  MIPS: ath79: remove the old clock code
 
-Yes, sure.
+ MAINTAINERS                           |   8 +
+ arch/mips/ath79/Makefile              |   2 +-
+ arch/mips/ath79/clock.c               | 673 ----------------------
+ arch/mips/ath79/setup.c               | 107 ++++
+ drivers/clk/Kconfig                   |  12 +
+ drivers/clk/Makefile                  |   1 +
+ drivers/clk/clk-ath79.c               | 782 ++++++++++++++++++++++++++
+ include/dt-bindings/clock/ath79-clk.h |   4 +-
+ 8 files changed, 913 insertions(+), 676 deletions(-)
+ delete mode 100644 arch/mips/ath79/clock.c
+ create mode 100644 drivers/clk/clk-ath79.c
 
-BR and thanks,
-Nikolaus
+base-commit: 630059a5a632377b9b7b487baccde92b7ae1dd47
+-- 
+2.56.0
 
