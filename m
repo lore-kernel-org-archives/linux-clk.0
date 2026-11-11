@@ -1,21 +1,21 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=46.4.11.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794387425;
-	b=p1K6V8J1gGwhM/lY84W5F1c/CF9iNcp2O9e2Pc+wiBn9Ra69fz6/QzPTAhnCPEyE7yGH
-	 oL38bpQRo+bJF1SqSjg8w2Nc4q3EemfRynelzlexh0TqxTqFB++UvO31M4eaiVUXAJeKv
-	 /SuEm+lf5ABWLp7RQrWfO2UO2xGysY+hWmxbAHor3M48/fzCJZ6yjX7m7MR68y/wPZTMR
-	 6ohBlo4+J0Kh+quk/Ebt4o4PlZw9bsx+0EATimO5OuP6bQ833dlfk1UV1z3YIhg8uLIAi
-	 qb0PiATIAq3Lqo0ktfmJCKoJBQqcL03GmsvJzV1k4ms9Vd5Q6V5IYaOl8f57tNhAfrA==
+	t=1794387422;
+	b=G9CxaHNqxr/SIseHgm4WlJQkLVdzKv+RUCUsrtT/a5SnuPBFAlF4xpZV93IDNTs2qo/Q
+	 kkNVfEOUkehvSJ5q2ZPZ8N4fkrogD88Bs/PRq8q/wyfWOq0Vl5Ua8Pml3HsTY7+sNhP/7
+	 4w7RYBwEZ/BoNNpRh1PNRfik9W3C8/wfHp5Bwjcysk9Zfyl5ejmwSUqdOHxFkQwC7wRP2
+	 DTSWGWvqbCkvj0MDys9fTfNlPWsdTsALbl3lPpgPp9iXPeDDNNyZ4HQKbDHkh5VUt8/C3
+	 7h2gDFuDNl5/9ZNx22hja53WIxYAbkuMNciR/zM9HxX1jyyIJdvCQCkZ/Zi7lmho6nQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794387425;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794387422;
 	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=Ca4JklKbmUPAZuKF/cxiCrQi6UVL+WjieUsmSP5loTY=;
-	b=WyoD4DfTWtwaBMg9uScMZxhFEGarKCoZVOgeVwoz2Z+0+vbi/SSSMT7fPbE+6h68ZNjl
-	 A9G8T8Ld/y718rr/iW/HZ/cQYX6M1+dj2XuPbKPfiGI6xah5HlO2kG8Ho0gruyRXdBcEj
-	 aGrcfWcLCLwakXLwmmkX9rEQa5CsWlpQfN0bvztZhF+ZrnOlSw1IG3z04Z1tAUgXrAVbk
-	 6WlSU0dhR+BJqz0WA+R1HJUlWUEaNx02c3SZy4W6AjWbsdR5HnRIIxXl7eZBcz6wVI9q8
-	 eJ8pgiLWAckMUdLql50iukPY8cqMiDbf625O1iBxJQHe0IiITgryWjkoeKZelTogCXg==
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=bq4bq0oT90GXoLgNGE/Tu4QxnayujsmVrhNZxOI8hIY=;
+	b=hASWZSx+kfLeDr1sEWRV8Zs2XhyjfJpgiS40TkLweSOCJkvZH/4j06WdaEO6+v21q9kE
+	 0PCMwmeXcj9a5iuxOQxScyTw2a4CRLkjqtWY57jTFze9QV8KLy2aAcrizK1z3zijEnyN1
+	 F7o/AObiAGfmiW3lmX6x1SpfJaHjcNN2ivEzoRMiTpd1Vi66M1cp5KUIhXjUmBoXfI4Rw
+	 DyySJmUjbXqC3TA5NvFIJatn1E2HCnwqPp+BULrqoRFT0vW2G9tgoy6AGv4IJ0I9jPFon
+	 9F8icyov9sbZzO+q3jKUT8JOdmsUJiAGEdxxy/yXUo0YJkxLuokIHhRZv4LDA3vsXDQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=phrozen.org;
 	spf=pass smtp.mailfrom=phrozen.org;
@@ -24,16 +24,16 @@ Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF2560A2633;
-	Wed, 11 Nov 2026 08:57:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BCF2560A2633
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C0760A2609;
+	Wed, 11 Nov 2026 08:57:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 34C0760A2609
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phrozen.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phrozen.org
 Received: from [2a04:4540:1401:33fc:b262:f9a8:847e:6650] (helo=bertha10..)
 	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <john@phrozen.org>)
-	id 1xR48R-001TSi-2D;
+	id 1xR48Q-001TSi-38;
 	Wed, 11 Nov 2026 09:56:51 +0100
 From: John Crispin <john@phrozen.org>
 To: Stephen Boyd <sboyd@kernel.org>,
@@ -54,12 +54,10 @@ Cc: Christian Marangi <ansuelsmth@gmail.com>,
 	upstream@airoha.com,
 	Weifeng.xu@airoha.com,
 	zhengping.zhang@airoha.com
-Subject: [PATCH 2/2] clk: en7523: add a reset operation
-Date: Wed, 11 Nov 2026 09:56:50 +0100
-Message-Id: <20261111085650.632025-3-john@phrozen.org>
+Subject: [PATCH 0/2] clk: en7523: two fixes for the EN7581 clock and reset driver
+Date: Wed, 11 Nov 2026 09:56:48 +0100
+Message-Id: <20261111085650.632025-1-john@phrozen.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261111085650.632025-1-john@phrozen.org>
-References: <20261111085650.632025-1-john@phrozen.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -71,51 +69,23 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The reset controller implements assert, deassert and status but not
-reset, so device_reset() fails with -ENOTSUPP. The i2c-mt7621 driver
-calls it at probe and after a transfer timeout. Every I2C bus that
-references an SCU reset, as on the EN7581 and the AN7589, therefore
-logs "I2C reset failed!" and is never reset.
+Patch 1 stops en7581_pci_disable() from sleeping in a .disable callback,
+which the clock core calls with the enable spinlock held.
 
-Add a reset operation that asserts and then deasserts the line, as the
-MT7621 reset controller does for the same I2C block.
+Patch 2 adds a reset operation, so device_reset() works for consumers
+such as i2c-mt7621.
 
-Signed-off-by: John Crispin <john@phrozen.org>
----
- drivers/clk/clk-en7523.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+The series applies to next-20261105 and has no dependencies.
 
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index 8f63482cbb7b..eb893259d470 100644
---- a/drivers/clk/clk-en7523.c
-+++ b/drivers/clk/clk-en7523.c
-@@ -818,6 +818,18 @@ static int en7523_reset_deassert(struct reset_controller_dev *rcdev,
- 	return en7523_reset_update(rcdev, id, false);
- }
- 
-+static int en7523_reset_reset(struct reset_controller_dev *rcdev,
-+			      unsigned long id)
-+{
-+	int ret;
-+
-+	ret = en7523_reset_assert(rcdev, id);
-+	if (ret)
-+		return ret;
-+
-+	return en7523_reset_deassert(rcdev, id);
-+}
-+
- static int en7523_reset_status(struct reset_controller_dev *rcdev,
- 			       unsigned long id)
- {
-@@ -847,6 +859,7 @@ static int en7523_reset_xlate(struct reset_controller_dev *rcdev,
- }
- 
- static const struct reset_control_ops en7581_reset_ops = {
-+	.reset = en7523_reset_reset,
- 	.assert = en7523_reset_assert,
- 	.deassert = en7523_reset_deassert,
- 	.status = en7523_reset_status,
+John Crispin (2):
+  clk: en7523: do not sleep in the EN7581 PCIe clock disable
+  clk: en7523: add a reset operation
+
+ drivers/clk/clk-en7523.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+
+base-commit: ddfe51b0a0f5dc9e415cc2c8ad8db17532dd426b
 -- 
 2.34.1
 
