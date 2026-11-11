@@ -1,78 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1794385311;
-	b=EO1CrgEwZPNk2vpWOPmoiehYLM38B5mTqXNNBCKD6kTufDiy9GVZfqwMMqrtpjgpd9vg
-	 0GPLDOCVhKAUnBqYFZLb86MWn8mlfjhXwf6Zujsu4vNvzgiYllG/vHzC6hftcR7dQGu1s
-	 V0kdnnHgLj1ACdLoOHlcF/cLpavZEzoV/nQHWv9Gdb53yLcqD+2XyB8pqF7BdLvEKWecv
-	 k1CN6U4X3zGYt4rdqk7O8HwCtHORlYos+lzFxHVU0l+/E6kEd/m0ytUsSHfuuYBldUcJY
-	 TLw32ssuqnINmu9gqYqFMLXM3owEqlgH+gP0UiyF9mIt/f2wA5luKYhJmxeo/bHXyIg==
+	b=HhGeok+adGVUugV+StqDa85UdfN94/XUXBMKBOtUhxd5ZmXbTfPL+D0t9SjwedTU0iRp
+	 USIU2Qjxtws9Y8Ui7gOj9hReiTQNLJblQ76cYx46J5BgKl7nvVQ4jqWKwJqggMjo/rFqs
+	 RmfHmIWzlQdzqcm1kuZprd7oGOYg6gDFxpLmo6JREvS9rZsZY6DqUTV7mzy5V8htBOTqU
+	 LaIClgJStDAgNMuzbNHaq+1KOStqT8KI5i5z3kqkqMXarFh30eSMNmxh8Nf3bp/Q8PIhI
+	 p1bfpEHhRHUi80cGzXdq1ZuS6/PEkJT3gJT6NcV8AVfWV2/iitm0rrEk1D4g16IzPPQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794385311;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
 	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
 	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=qSyXcd+VEYY08of9XJOCUdpfd9egxEwXiN/JL+UL0tQ=;
-	b=oVQnX1Td6DR6GT7ZjWmIlWXsbtcmh2bPvrMRaShR4ioydRo5n8rJ1Mi8elMTkaFbBtdL
-	 EtapNPIB+MeRIDUc2Qx7i4BrHvHlgdDJJDiuOhtsuMKUAu9lHDxkdQeCzvsoYgYmgI051
-	 /MbMfmlAdf5zLgWD7fCC1MORtMO3+YaNpjw/wrrdW6fUDxxGlujh/VQvKAV+ZglvqNevZ
-	 R2bh+EoO0zPbe7PblFziaIBxUIwGzEK1+RcVQRNy3o8+6WYCY7ZK7/2dwBgje3Rc41Cd9
-	 6rCHm9GuS+jN5YVC/4GXsk5JnHhGX0Fvdr4qoG4ybzV7l5uq3lPMVlAJk4UDmv73H6w==
+	bh=Dj/WEshPZnsnf6+Liui/mFYvE3LE+SBj6k4UadWjNuE=;
+	b=zqnsVeeZ8B9YPG6vnOIFSzh3qa3jb6EmPz9Q7Ig6uy3sLbQog5weFoCYtJvzHKy3Egow
+	 kNi8nnDLohWg4hbpMxOQhFNJCUU8skDEC//11+6rpqrCPlwD5z3Y3+/DGFiT/pIZzKrGi
+	 PI+ZBivIdaxAkiypV7IspkVkpLZzwVlf1WxzJNJ93Aze7MhqQs4b7MIT5TPnij+CqZq6b
+	 Mf5N78qgwH3ZJ4XrtunO8g1CizyA3MqphVDPfVB6450UToCr+tZIM+d5vOUta/Pol7a1k
+	 WEmVU0fFiCmVWYkx9jrrkNRgG6GfoslTrmf9oOKBo9+NsXIfrUdauSEHyheD39q88iA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=appzrqY6;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RVww+5GB;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F6760A261E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FD960A262B;
 	Wed, 11 Nov 2026 08:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=appzrqY6
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RVww+5GB
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1794385311;
-	b=wulQ9KyJ/vLuQBYQr3bar1R4WI7ceS7/0i2Ywv+fUX8nfAE0l5qwiW1ApwyzoGilvwF3
-	 /ru57sr7fvz+DrZgDKuyGcV/GuVOkPyMyUYHelByYBcv6lNX/Pt3iKvs90WenbmzdCLmg
-	 RUU5Pk6E5nt32iULIn/UkKI3y32G2pEs+dii5ho0P5BHbBOvrShS/5zx1bsN0AKW02LOc
-	 bJmsgmIcSidE0qiiyVF+UV6gscatm9MAXZhadjKRPmqNMyZ9eBMttvo+uDKw4e6icEYzC
-	 beCRJfPYDzHvxuzgEd3ryCGBbJQ1dBCl4h9XoAk4pE3uD8+I0Ea2eIkHEOCvH4aG4Tg==
+	b=V1xRSc12tQXVJVTI3QYw8hdaH97PqOCJCM1/SE1LrcebRNBfL61iM8lPCyQ/bPU+YtWS
+	 DouetzCDYCNqMDgJfchnAmv9OfpnVZy3gua+bWc4NqNRLsADgveDhjPtCiakaILdV+jFR
+	 bnKCF+jswM1DREdw3zWgP/FOA0ZF28Q371eg32Ir7S4niPLOeX6xDoOaX+RcKKiLdn+dy
+	 mR2AHgl+IRrUEauhyBnzx+73hhru8O5jfv5ZpGjAOLw3aLG17PK1FTJj0zevQgTt89WEU
+	 gTmm20dvBu4FKKbqJOAFQTEvm13qy7IRIlpKvms6UChj4SWsI5ujTTkzAXL79mug+yw==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1794385311;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To;
-	bh=qSyXcd+VEYY08of9XJOCUdpfd9egxEwXiN/JL+UL0tQ=;
-	b=tRX4vpk06QbkN4n/iCyaMjr3QWllsam5L2z9FXjeVdSkiaCSSZuin3SczWKbOyTmM3vu
-	 FASuzGAXfZl4Ilx//fWs6n6HRj/iJCp5qFvr3iPN9w3XsvWoQodT2ck1VcgErSVyjsJrF
-	 dFKu4yfBaDNd4kuh/1vzROEZhVBzlsoaKefoVbNVwvZ6dciUIAYDod3/QLkjzgD7f5wKb
-	 1fc7kv2Qwe9xIr0kWCwXzZVaXBgVo+DsLuLZn9e7udoRlNYZBmcfhmmvw7XZWAEm9Mb1A
-	 4NJWEJRk5ZFW33+kDRdwTczHp1DJRj0lzRL+e+xuFreunpGCfGA8PbHOn6Z9M/c9zew==
+	bh=Dj/WEshPZnsnf6+Liui/mFYvE3LE+SBj6k4UadWjNuE=;
+	b=2h8m7II9gJoL7J8ZYe2ytb9CFzy3WcylMV7fqimc1iXtxBvhXhVKMA9FI/tcK5SFhPAg
+	 zh9yTMWcIZC1Jl2isQESm6cS+AVqKhhmOpS1iI8a19F41wR3F5P8OrCPHdx0HweXeKLZc
+	 w0lAZfLRASRiGFH8RgCny+uQqHKvHx22zW5Zex3ii2gfH2Co47hos8u6HZwrIb3OvbgSM
+	 r6DOqnsknCU7MTEHBWC2PcUYZeoUPOR/T9oWsyMw/eXok0oCJSsfAxw7Ie5TudfbLLRm3
+	 Y7wB0D7/nu0qI83T5sBPbRjlI4GASNEtdZLu/6x9fzbOc/HldGSBOCbEcWdvt2uQUTQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 1CF751F00A07;
+	by smtp.kernel.org (Postfix) with ESMTPS id 3C63F1F00A0B;
 	Wed, 11 Nov 2026 08:21:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1794385311;
-	bh=qSyXcd+VEYY08of9XJOCUdpfd9egxEwXiN/JL+UL0tQ=;
+	bh=Dj/WEshPZnsnf6+Liui/mFYvE3LE+SBj6k4UadWjNuE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=appzrqY6ZRTMgLGUu7JHiAaYXu9+GrSpVF8PojbaQr9hA0ki7OEGTUxUfzFqyNVgu
-	 HApCZetDdoL6ECYmAmqa6o2r4XDv9c1daX/R6rd5Vnvz9cLECCGRimmZxoGElFnAwT
-	 rqkfuzC3L7UOrj8x0tCuLv2WgyQPaKLfMG+1+YIQLrKaoZsIsPVz2stL0FyoiIkzgO
-	 8/t5ctEPFxXd/W7AaqaZIb3E2iGjMPEJSvGVkiR/IozAfbUQBxJsziDD8VQTN3l9yi
-	 9/j9SFwQZYbpdbxW+njfdJKmoasM2HPI9SDtqjXVquZTnQAQCl5qaj6f4jTDeOak7I
-	 eGUXJpKB5hQoA==
+	b=RVww+5GBuPVGd6yzeKQ54nF8i8TLDAKR1EJbSUKmHLVLL+nvf/qmaoizHW4eSQx7L
+	 jRKPaIwnT9GSWhbieZ8WTiIjr9CVNtSTSdp5tTtik+BysnkG2taoMYiYk8cdGBdMQo
+	 3Lv/FFQIyGbrrvIhiHblTCSW8+pEpoVUZ6zoNoGpeCTceVPAm/e4bvYAPYXoyEA2gB
+	 OUvxul82lqr+yf8pta3ubLBZdNufthBdmMeCm7M/8wSxUHCy6FqZkFXyqe3j+WQ+gr
+	 bpZbYK3v3TgZ7FMKBYf/4TuTnfdaJrXlwMepBjgiBgLd418FIuzD2hNw3PhF7Pkrw8
+	 qPqn2ouNzIr3w==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 9870348E80;
+	by lkml.kernel.org (Postfix) with ESMTP id BBB6F48E88;
 	Wed, 11 Nov 2026 08:21:48 +0000 (UTC)
 From: Joseph Telaak via B4 Relay <devnull+joseph.telaak.dev@kernel.org>
-Date: Wed, 11 Nov 2026 03:19:01 -0500
-Subject: [PATCH v2 2/4] clk: siflower: Add SF19A2890 clock manager driver
+Date: Wed, 11 Nov 2026 03:19:03 -0500
+Subject: [PATCH v2 4/4] clk: siflower: Add SF19A2890 peripheral clock and
+ reset manager driver
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,7 +85,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261111-sf19a2890-sysm-v2-2-d2fcb723e4f1@telaak.dev>
+Message-Id: <20261111-sf19a2890-sysm-v2-4-d2fcb723e4f1@telaak.dev>
 References: <20261111-sf19a2890-sysm-v2-0-d2fcb723e4f1@telaak.dev>
 In-Reply-To: <20261111-sf19a2890-sysm-v2-0-d2fcb723e4f1@telaak.dev>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -97,11 +98,11 @@ Cc: Chuanhong Guo <gch981213@gmail.com>, Yao Zi <me@ziyao.cc>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Joseph Telaak <joseph@telaak.dev>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794385307; l=16798;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794385307; l=15822;
  i=joseph@telaak.dev; s=20261104; h=from:subject:message-id;
- bh=hkPvepMaxE/G6iFFSQvvS3Z9ISLmC5/RmslGA/Pt7mQ=;
- b=suhR0sgMYmpvqgErtojdipBYLpjfy/lp8K8l4sGo5Ca1xEqCWHKl/0Oxc9n1G3YcPPYRYhMsd
- Mr9NIzcwji7BOM3mJwN9OABDlaSdRHdaLJ8swM4FRgLWJ5aDOQniQOU
+ bh=2AmTXqE5efqyQIH6lWbN+UN7GJK//Lq0vD1znIEZn1s=;
+ b=DHk6xZ8TqCgxKviQYevRUA29u3mktXBGM5Ui0VkErQR8CRVt7zvkITtBJbaNlNEh73ALE/DdC
+ kpttODjMT8YA/kjhaDRCHC2eWjEBlVtgkEghnWcIyFuGkei0V2IcJrA
 X-Developer-Key: i=joseph@telaak.dev; a=ed25519;
  pk=oQI+UfddlZ0wK2ac4WKOGNjUl1ZEN8j9ZVFSqEDoNP0=
 X-Endpoint-Received: by B4 Relay for joseph@telaak.dev/20261104 with
@@ -111,526 +112,459 @@ Reply-To: joseph@telaak.dev
 
 From: Chuanhong Guo <gch981213@gmail.com>
 
-Add a driver for the clock manager of the Siflower SF19A2890: the CPU,
-DDR and common PLLs, and the muxes with dividers that derive the bus,
-CPU and peripheral clocks from them. The GIC timer needs the CPU clock,
-so the driver registers early, from CLK_OF_DECLARE.
+Add a platform driver for the peripheral clock and reset manager (CRM)
+block found on Siflower SF19A2890 and compatible SoCs.
+
+Each CRM block manages a group of APB peripherals through three registers:
+a reset register, a clock gate register, and a shared Bus Output Enable
+(BOE) register that must be asserted for any peripheral in the block to
+respond to bus transactions.
+
+The driver registers a clock gate controller and a reset controller from
+a single DT node. A shared spinlock protects all read-modify-write
+accesses across both. BOE is managed automatically: asserted when the
+first clock gate is enabled and deasserted when the last one is disabled.
+
+Some peripherals have more than one reset line, one for each clock
+domain of the same IP, like the separate UART and APB resets of a
+PL011. The driver exposes each such group as one reset, because the
+lines have to be asserted together: the GMAC's two lines are the two
+sides of an asynchronous AXI bridge, and asserting one alone locks up
+the bus.
 
 Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
 [Joseph Telaak:
   - take it from Chuanhong's siflower-7.1 branch
-  - read the PLL power-down register at the PLL's offset, not at
-    offset 1
-  - take the oscillators from the node's clocks and the PLLs by
-    pointer, not by global name
-  - count the clocks in the driver, not in the binding header
-  - drop the spinlock and sf_rmw(), which nothing used
-  - unregister the clocks and unmap on errors
-  - return 0 for a zero divider and compute the VCO rate in 64 bits
-  - scale the fractional part of the VCO rate by the reference, not
-    by the integer rate
-  - reject a rate of 0 in the mux dividers instead of dividing by it
-  - pr_fmt, u32 offsets and sorted includes
-  - one Kconfig symbol without the menu, depending on
-    MACH_SIFLOWER_MIPS
-  - checkpatch --strict cleanups, commit message and subject]
+  - one compatible per block, with its gate bits, critical gates and
+    reset masks in tables in the driver instead of the
+    siflower,valid-gates, siflower,critical-gates,
+    siflower,reset-masks and siflower,num-resets properties
+  - parent gate N to input clock N by index, not by global name
+  - update the gates under the spinlock too
+  - drop the separator comments
+  - Kconfig dependencies and help, subject]
 Co-developed-by: Joseph Telaak <joseph@telaak.dev>
 Signed-off-by: Joseph Telaak <joseph@telaak.dev>
 ---
- MAINTAINERS                          |   1 +
- drivers/clk/Kconfig                  |   1 +
- drivers/clk/Makefile                 |   1 +
- drivers/clk/siflower/Kconfig         |  11 +
- drivers/clk/siflower/Makefile        |   2 +
- drivers/clk/siflower/clk-sf19a2890.c | 419 +++++++++++++++++++++++++++++++++++
- 6 files changed, 435 insertions(+)
+ MAINTAINERS                                    |   1 +
+ drivers/clk/siflower/Kconfig                   |  11 +
+ drivers/clk/siflower/Makefile                  |   1 +
+ drivers/clk/siflower/clk-sf19a2890-periphcrm.c | 368 +++++++++++++++++++++++++
+ 4 files changed, 381 insertions(+)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index ce8d0596939c..de087d1c255d 100644
+index 47a3a72a5d08..34ff7ec0b60e 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -25703,6 +25703,7 @@ M:	Joseph Telaak <joseph@telaak.dev>
- L:	linux-clk@vger.kernel.org
+@@ -25704,6 +25704,7 @@ L:	linux-clk@vger.kernel.org
  S:	Maintained
  F:	Documentation/devicetree/bindings/clock/siflower,sf19a2890-clk.yaml
-+F:	drivers/clk/siflower/clk-sf19a2890.c
+ F:	Documentation/devicetree/bindings/clock/siflower,sf19a2890-periph-crm.yaml
++F:	drivers/clk/siflower/clk-sf19a2890-periphcrm.c
+ F:	drivers/clk/siflower/clk-sf19a2890.c
  F:	include/dt-bindings/clock/siflower,sf19a2890-clk.h
- 
- SILEAD TOUCHSCREEN DRIVER
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 37a8e35d4178..8e73490cb702 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -536,6 +536,7 @@ source "drivers/clk/renesas/Kconfig"
- source "drivers/clk/rockchip/Kconfig"
- source "drivers/clk/samsung/Kconfig"
- source "drivers/clk/sifive/Kconfig"
-+source "drivers/clk/siflower/Kconfig"
- source "drivers/clk/socfpga/Kconfig"
- source "drivers/clk/sophgo/Kconfig"
- source "drivers/clk/spacemit/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 52d138d4ffc8..d2f07584783e 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -160,6 +160,7 @@ obj-y					+= renesas/
- obj-$(CONFIG_COMMON_CLK_ROCKCHIP)	+= rockchip/
- obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
- obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
-+obj-y					+= siflower/
- obj-y					+= socfpga/
- obj-y					+= sophgo/
- obj-y					+= spacemit/
+ F:	include/dt-bindings/clock/siflower,sf19a2890-periph-crm.h
 diff --git a/drivers/clk/siflower/Kconfig b/drivers/clk/siflower/Kconfig
-new file mode 100644
-index 000000000000..ad1b04b4bb9b
---- /dev/null
+index ad1b04b4bb9b..4fa6dd156b8a 100644
+--- a/drivers/clk/siflower/Kconfig
 +++ b/drivers/clk/siflower/Kconfig
-@@ -0,0 +1,11 @@
-+# SPDX-License-Identifier: GPL-2.0-only
+@@ -9,3 +9,14 @@ config CLK_SF19A2890
+ 	  and the muxes and dividers that feed the CPU, the buses and the
+ 	  peripherals. The GIC timer runs from the CPU clock, so a kernel
+ 	  for this SoC needs it built in.
 +
-+config CLK_SF19A2890
-+	bool "Clock driver for Siflower SF19A2890"
++config CLK_SF19A2890_PERIPHCRM
++	bool "Clock and reset driver for Siflower SF19A2890 peripherals"
 +	depends on MACH_SIFLOWER_MIPS || COMPILE_TEST
 +	default MACH_SIFLOWER_MIPS
++	select RESET_CONTROLLER
 +	help
-+	  Supports the clock manager of the Siflower SF19A2890: its PLLs
-+	  and the muxes and dividers that feed the CPU, the buses and the
-+	  peripherals. The GIC timer runs from the CPU clock, so a kernel
-+	  for this SoC needs it built in.
++	  Supports the peripheral clock and reset managers of the Siflower
++	  SF19A2890. Each peripheral block has one, with its clock gates,
++	  its resets and the bus output enable it needs to answer bus
++	  requests.
 diff --git a/drivers/clk/siflower/Makefile b/drivers/clk/siflower/Makefile
-new file mode 100644
-index 000000000000..3f4d689f7d9b
---- /dev/null
+index 3f4d689f7d9b..c4f4e0b8820d 100644
+--- a/drivers/clk/siflower/Makefile
 +++ b/drivers/clk/siflower/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_CLK_SF19A2890) += clk-sf19a2890.o
-diff --git a/drivers/clk/siflower/clk-sf19a2890.c b/drivers/clk/siflower/clk-sf19a2890.c
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ obj-$(CONFIG_CLK_SF19A2890) += clk-sf19a2890.o
++obj-$(CONFIG_CLK_SF19A2890_PERIPHCRM) += clk-sf19a2890-periphcrm.o
+diff --git a/drivers/clk/siflower/clk-sf19a2890-periphcrm.c b/drivers/clk/siflower/clk-sf19a2890-periphcrm.c
 new file mode 100644
-index 000000000000..b390f649a6db
+index 000000000000..349e0d7ce0c3
 --- /dev/null
-+++ b/drivers/clk/siflower/clk-sf19a2890.c
-@@ -0,0 +1,419 @@
++++ b/drivers/clk/siflower/clk-sf19a2890-periphcrm.c
+@@ -0,0 +1,368 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +
-+#define pr_fmt(fmt) "sf19a2890-clk: " fmt
++/*
++ * Siflower SF19A2890 peripheral clock and reset manager driver.
++ *
++ * Each managed block has three registers:
++ *   RESET    at base + 0x0  - per-peripheral reset bitmasks
++ *   CLK_GATE at base + 0x4  - one bit per clock gate
++ *   BOE      at base + 0xc  - shared Bus Output Enable; bits [1:0] must be set
++ *                             for any APB peripheral in the block to respond
++ */
 +
-+#include <linux/bitfield.h>
 +#include <linux/clk-provider.h>
++#include <linux/device-id/of.h>
 +#include <linux/io.h>
-+#include <linux/math64.h>
-+#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/reset-controller.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
 +
-+#include <dt-bindings/clock/siflower,sf19a2890-clk.h>
++#include <dt-bindings/clock/siflower,sf19a2890-periph-crm.h>
 +
-+#define CLK_SF19A2890_NR_CLKS	(CLK_MUXDIV_NPU_PE_CLK + 1)
++#define REG_RESET	0x0
++#define REG_CLK_GATE	0x4
++#define REG_BOE		0xc
++#define BOE_EN		GENMASK(1, 0)
 +
-+#define REG_PLL_BASE		0x0
-+#define REG_PLL_PD		0x0
-+#define  PLL_PD			BIT(0)
-+#define  PLL_PD_VCO		BIT(1)
-+#define  PLL_PD_POSTDIV		BIT(2)
-+#define  PLL_PD_4PHASE		BIT(3)
-+#define  PLL_PD_DAC		BIT(4)
-+#define  PLL_PD_DSM		BIT(5)
++struct sf19a2890_periphcrm_gate {
++	const char *name;
++	u8 bit;
++	unsigned long flags;
++};
 +
-+/*
-+ * PLL_PARAM is a 48-bit value put into 6 registers, 8-bit per register:
-+ * REFDIV = PLL_PARAM[47:42]
-+ * POSTDIV2 = PLL_PARAM[41:39]
-+ * POSTDIV1 = PLL_PARAM[38:36]
-+ * FRAC = PLL_PARAM[35:12]
-+ * FBDIV = PLL_PARAM[11:0]
-+ */
++struct sf19a2890_periphcrm_data {
++	const struct sf19a2890_periphcrm_gate *gates;
++	unsigned int num_gates;
++	const u32 *reset_masks;
++	unsigned int num_resets;
++};
 +
-+#define REG_PLL_PARAM(_x)	(0x4 + (_x) * 4)
-+#define  PLL_REFDIV_HI		47
-+#define  PLL_REFDIV_LO		42
-+#define  PLL_POSTDIV2_HI	41
-+#define  PLL_POSTDIV2_LO	39
-+#define  PLL_POSTDIV1_HI	38
-+#define  PLL_POSTDIV1_LO	36
-+#define  PLL_FRAC_HI		35
-+#define  PLL_FRAC_LO		12
-+#define  PLL_FRAC_BITS		(PLL_FRAC_HI - PLL_FRAC_LO + 1)
-+#define  PLL_FBDIV_HI		11
-+#define  PLL_FBDIV_LO		0
-+
-+#define REG_PLL_CFG 0x1c
-+#define  PLL_CFG_BYPASS		BIT(0)
-+#define  PLL_CFG_SRC		GENMASK(2, 1)
-+#define  PLL_CFG_OCLK_SEL	BIT(3)
-+#define  PLL_CFG_OCLK_GATE	BIT(4)
-+#define  PLL_CFG_LOAD_DIVS	BIT(5)
-+
-+#define REG_PLL_LOCK 0x20
-+
-+/*
-+ * Read-only register indicating the value of the hardware clock source
-+ * override pin. When the first bit of this register is set, PLL clock
-+ * source is forced to the 40M oscillator regardless of PLL_CFG_SRC
-+ * value.
-+ */
-+#define REG_PLL_SRC_OVERRIDE 0x24
-+
-+struct sf_clk_common {
++struct sf19a2890_periphcrm {
 +	void __iomem *base;
++	spinlock_t lock;	/* serializes all register updates */
++	struct reset_controller_dev rcdev;
++	const u32 *reset_masks;
++	struct clk_hw_onecell_data clk_data;
++};
++
++struct sf19a2890_periphclk {
++	struct sf19a2890_periphcrm *crm;
 +	struct clk_hw hw;
++	u32 idx;
 +};
 +
-+struct sf19a2890_clk {
-+	struct sf_clk_common common;
-+	u32 offset;
-+};
-+
-+#define SF_CLK_COMMON(_name, _parents, _op, _flags)				\
-+	{								\
-+		.hw.init = CLK_HW_INIT_PARENTS_DATA(_name, _parents, _op,	\
-+						    _flags),		\
-+	}
-+
-+static inline struct sf_clk_common *hw_to_sf_clk_common(struct clk_hw *hw)
++static inline struct sf19a2890_periphclk *hw_to_periphclk(struct clk_hw *hw)
 +{
-+	return container_of(hw, struct sf_clk_common, hw);
++	return container_of(hw, struct sf19a2890_periphclk, hw);
 +}
 +
-+static inline struct sf19a2890_clk *cmn_to_clk(struct sf_clk_common *cmn_priv)
++static int sf19a2890_periphclk_enable(struct clk_hw *hw)
 +{
-+	return container_of(cmn_priv, struct sf19a2890_clk, common);
-+}
++	struct sf19a2890_periphclk *gate = hw_to_periphclk(hw);
++	struct sf19a2890_periphcrm *crm = gate->crm;
++	unsigned long flags;
++	u32 reg;
 +
-+static inline u32 sf_readl(struct sf_clk_common *priv, u32 reg)
-+{
-+	return readl(priv->base + reg);
-+}
-+
-+static inline void sf_writel(struct sf_clk_common *priv, u32 reg, u32 val)
-+{
-+	writel(val, priv->base + reg);
-+}
-+
-+static u32 sf_pll_param_get(struct sf19a2890_clk *priv, u32 hi, u32 lo)
-+{
-+	struct sf_clk_common *cmn = &priv->common;
-+	u32 ret = 0;
-+	int reg_hi = hi / 8;
-+	int reg_lo = lo / 8;
-+	u32 reg_hi_pos = hi % 8;
-+	u32 reg_lo_pos = lo % 8;
-+	int i;
-+
-+	if (reg_hi == reg_lo) {
-+		u32 mask = (BIT(reg_hi_pos - reg_lo_pos + 1)) - 1;
-+		u32 reg_val =
-+			sf_readl(cmn, priv->offset + REG_PLL_PARAM(reg_hi));
-+		return (reg_val >> reg_lo_pos) & mask;
-+	}
-+
-+	ret = sf_readl(cmn, priv->offset + REG_PLL_PARAM(reg_hi)) &
-+	      (BIT(reg_hi_pos + 1) - 1);
-+	for (i = reg_hi - 1; i > reg_lo; i--)
-+		ret = (ret << 8) |
-+		      sf_readl(cmn, priv->offset + REG_PLL_PARAM(i));
-+	ret = (ret << (8 - reg_lo_pos)) |
-+	      (sf_readl(cmn, priv->offset + REG_PLL_PARAM(reg_lo)) >>
-+	       reg_lo_pos);
-+
-+	return ret;
-+}
-+
-+static unsigned long sf19a28_pll_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate)
-+{
-+	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
-+	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
-+	u32 refdiv = sf_pll_param_get(priv, PLL_REFDIV_HI, PLL_REFDIV_LO);
-+	u32 fbdiv = sf_pll_param_get(priv, PLL_FBDIV_HI, PLL_FBDIV_LO);
-+	u32 postdiv1 = sf_pll_param_get(priv, PLL_POSTDIV1_HI, PLL_POSTDIV1_LO);
-+	u32 postdiv2 = sf_pll_param_get(priv, PLL_POSTDIV2_HI, PLL_POSTDIV2_LO);
-+	u32 pll_pd = sf_readl(cmn_priv, priv->offset + REG_PLL_PD);
-+	unsigned long ref;
-+	u64 rate;
-+	u32 frac;
-+
-+	if (!refdiv || !postdiv1 || !postdiv2)
-+		return 0;
-+
-+	ref = parent_rate / refdiv;
-+	rate = (u64)ref * fbdiv;
-+
-+	/* With the DSM on, the VCO runs at ref * (fbdiv + frac / 2^24) */
-+	if (!(pll_pd & PLL_PD_DSM)) {
-+		frac = sf_pll_param_get(priv, PLL_FRAC_HI, PLL_FRAC_LO);
-+		rate += ((u64)ref * frac) >> PLL_FRAC_BITS;
-+	}
-+
-+	return div_u64(rate, postdiv1 * postdiv2);
-+}
-+
-+static u8 sf19a28_pll_get_parent(struct clk_hw *hw)
-+{
-+	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
-+	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
-+	u32 cfg;
-+
-+	if (sf_readl(cmn_priv, priv->offset + REG_PLL_SRC_OVERRIDE))
-+		return 1;
-+	cfg = sf_readl(cmn_priv, priv->offset + REG_PLL_CFG);
-+	return (FIELD_GET(PLL_CFG_SRC, cfg) == 1);
-+}
-+
-+static const struct clk_ops sf19a28_pll_ops = {
-+	.recalc_rate = sf19a28_pll_recalc_rate,
-+	.get_parent = sf19a28_pll_get_parent,
-+};
-+
-+static const struct clk_parent_data clk_pll_parents[] = {
-+	{ .fw_name = "osc12m" },
-+	{ .fw_name = "osc40m" },
-+};
-+
-+#define SF19A28_PLL(_name, _offset, _flags)				\
-+	struct sf19a2890_clk _name = {					\
-+		.common = SF_CLK_COMMON(#_name, clk_pll_parents,	\
-+					&sf19a28_pll_ops, _flags),	\
-+		.offset = REG_PLL_BASE + (_offset),			\
-+	}
-+
-+static SF19A28_PLL(pll_cpu, 0x0, 0);
-+static SF19A28_PLL(pll_ddr, 0x40, 0);
-+static SF19A28_PLL(pll_cmn, 0x80, 0);
-+
-+#define REG_MUXDIV_BASE		0x400
-+#define REG_MUXDIV_CFG		0x0
-+#define  MUXDIV_USE_NCO		BIT(3)
-+#define  MUXDIV_SRC_SEL		GENMASK(2, 0)
-+#define REG_MUXDIV_RATIO	0x4
-+#define  MUXDIV_RATIO_MAX	0xff
-+#define REG_MUXDIV_NCO_V	0x8
-+#define REG_MUXDIV_EN		0xc
-+#define REG_MUXDIV_XN_DIV_RATIO	0x10
-+#define  MUXDIV_XN_DIV_MAX	3
-+
-+static unsigned long sf19a28_muxdiv_recalc_rate(struct clk_hw *hw,
-+						unsigned long parent_rate)
-+{
-+	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
-+	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
-+	u32 div;
-+
-+	div = sf_readl(cmn_priv, priv->offset + REG_MUXDIV_RATIO) + 1;
-+	return parent_rate / div;
-+}
-+
-+static int sf19a28_muxdiv_determine_rate(struct clk_hw *hw,
-+					 struct clk_rate_request *req)
-+{
-+	unsigned int div;
-+
-+	if (!req->rate)
-+		div = MUXDIV_RATIO_MAX + 1;
-+	else
-+		div = DIV_ROUND_CLOSEST(req->best_parent_rate, req->rate);
-+
-+	if (!div)
-+		div = 1;
-+	else if (div > MUXDIV_RATIO_MAX + 1)
-+		div = MUXDIV_RATIO_MAX + 1;
-+
-+	req->rate = req->best_parent_rate / div;
++	spin_lock_irqsave(&crm->lock, flags);
++	reg = readl(crm->base + REG_CLK_GATE);
++	writel(reg | BIT(gate->idx), crm->base + REG_CLK_GATE);
++	writel(BOE_EN, crm->base + REG_BOE);
++	spin_unlock_irqrestore(&crm->lock, flags);
 +	return 0;
 +}
 +
-+static int sf19a28_muxdiv_set_rate(struct clk_hw *hw, unsigned long rate,
-+				   unsigned long parent_rate)
++static void sf19a2890_periphclk_disable(struct clk_hw *hw)
 +{
-+	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
-+	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
-+	unsigned int div;
++	struct sf19a2890_periphclk *gate = hw_to_periphclk(hw);
++	struct sf19a2890_periphcrm *crm = gate->crm;
++	unsigned long flags;
++	u32 reg;
 +
-+	if (!rate)
++	spin_lock_irqsave(&crm->lock, flags);
++	reg = readl(crm->base + REG_CLK_GATE);
++	reg &= ~BIT(gate->idx);
++	writel(reg, crm->base + REG_CLK_GATE);
++	if (reg == 0)
++		writel(0, crm->base + REG_BOE);
++	spin_unlock_irqrestore(&crm->lock, flags);
++}
++
++static int sf19a2890_periphclk_is_enabled(struct clk_hw *hw)
++{
++	struct sf19a2890_periphclk *gate = hw_to_periphclk(hw);
++	struct sf19a2890_periphcrm *crm = gate->crm;
++
++	return !!(readl(crm->base + REG_CLK_GATE) & BIT(gate->idx));
++}
++
++static const struct clk_ops sf19a2890_periphclk_ops = {
++	.enable = sf19a2890_periphclk_enable,
++	.disable = sf19a2890_periphclk_disable,
++	.is_enabled = sf19a2890_periphclk_is_enabled,
++};
++
++static inline struct sf19a2890_periphcrm *
++rcdev_to_periphcrm(struct reset_controller_dev *rcdev)
++{
++	return container_of(rcdev, struct sf19a2890_periphcrm, rcdev);
++}
++
++static int sf19a2890_periphcrm_reset_update(struct reset_controller_dev *rcdev,
++					    unsigned long id, bool assert)
++{
++	struct sf19a2890_periphcrm *crm = rcdev_to_periphcrm(rcdev);
++	unsigned long flags;
++	u32 reg;
++
++	spin_lock_irqsave(&crm->lock, flags);
++	reg = readl(crm->base + REG_RESET);
++	if (assert)
++		reg |= crm->reset_masks[id];
++	else
++		reg &= ~crm->reset_masks[id];
++	writel(reg, crm->base + REG_RESET);
++	spin_unlock_irqrestore(&crm->lock, flags);
++	return 0;
++}
++
++static int sf19a2890_periphcrm_reset_assert(struct reset_controller_dev *rcdev,
++					    unsigned long id)
++{
++	return sf19a2890_periphcrm_reset_update(rcdev, id, true);
++}
++
++static int
++sf19a2890_periphcrm_reset_deassert(struct reset_controller_dev *rcdev,
++				   unsigned long id)
++{
++	return sf19a2890_periphcrm_reset_update(rcdev, id, false);
++}
++
++static int sf19a2890_periphcrm_reset_status(struct reset_controller_dev *rcdev,
++					    unsigned long id)
++{
++	struct sf19a2890_periphcrm *crm = rcdev_to_periphcrm(rcdev);
++
++	return !!(readl(crm->base + REG_RESET) & crm->reset_masks[id]);
++}
++
++static const struct reset_control_ops sf19a2890_periphcrm_reset_ops = {
++	.assert = sf19a2890_periphcrm_reset_assert,
++	.deassert = sf19a2890_periphcrm_reset_deassert,
++	.status = sf19a2890_periphcrm_reset_status,
++};
++
++#define GATE(_name, _bit, _flags) { .name = _name, .bit = _bit, .flags = _flags }
++
++#define CRM_DATA(_g, _r)						\
++	{								\
++		.gates = sf19a2890_##_g##_gates,			\
++		.num_gates = ARRAY_SIZE(sf19a2890_##_g##_gates),	\
++		.reset_masks = sf19a2890_##_r##_resets,			\
++		.num_resets = ARRAY_SIZE(sf19a2890_##_r##_resets),	\
++	}
++
++static const u32 sf19a2890_single_resets[] = { BIT(0) };
++
++static const struct sf19a2890_periphcrm_gate sf19a2890_gmac_gates[] = {
++	[CLK_GMAC_BUS] = GATE("gmac", 0, 0),
++	[CLK_GMAC_REG] = GATE("gmac_pclk", 1, 0),
++	[CLK_GMAC_TX_REF] = GATE("gmac_byp_ref", 2, 0),
++	[CLK_GMAC_TSU] = GATE("ethtsu", 3, 0),
++};
++
++static const u32 sf19a2890_gmac_resets[] = { [RST_GMAC] = GENMASK(1, 0) };
++
++static const struct sf19a2890_periphcrm_data sf19a2890_gmac_crm =
++	CRM_DATA(gmac, gmac);
++
++static const struct sf19a2890_periphcrm_gate sf19a2890_wlan24_gates[] = {
++	[CLK_WLAN24_AXIS] = GATE("wlan24_axis", 0, 0),
++	[CLK_WLAN24_AXIM] = GATE("wlan24_axim", 1, 0),
++	[CLK_WLAN24_PLF] = GATE("wlan24_plf", 2, 0),
++};
++
++static const struct sf19a2890_periphcrm_gate sf19a2890_wlan5_gates[] = {
++	[CLK_WLAN5_AXIS] = GATE("wlan5_axis", 0, 0),
++	[CLK_WLAN5_AXIM] = GATE("wlan5_axim", 1, 0),
++	[CLK_WLAN5_PLF] = GATE("wlan5_plf", 2, 0),
++};
++
++static const u32 sf19a2890_wlan_resets[] = { GENMASK(2, 0) };
++
++static const struct sf19a2890_periphcrm_data sf19a2890_wlan24_crm =
++	CRM_DATA(wlan24, wlan);
++
++static const struct sf19a2890_periphcrm_data sf19a2890_wlan5_crm =
++	CRM_DATA(wlan5, wlan);
++
++static const struct sf19a2890_periphcrm_gate sf19a2890_rf_gates[] = {
++	[CLK_RF_TEST] = GATE("rf_dft", 0, 0),
++	[CLK_RF_AXIS] = GATE("rf_axis", 1, 0),
++	[CLK_RF_BOOT] = GATE("rf_boot", 2, 0),
++	[CLK_RF_LP] = GATE("rf_lp", 3, 0),
++};
++
++static const struct sf19a2890_periphcrm_data sf19a2890_rf_crm =
++	CRM_DATA(rf, wlan);
++
++/* Nothing describes a consumer of usb_axim, and gating it is not safe */
++static const struct sf19a2890_periphcrm_gate sf19a2890_usb_gates[] = {
++	[CLK_USB] = GATE("usb", 0, 0),
++	[CLK_USB_AXIM] = GATE("usb_axim", 2, CLK_IS_CRITICAL),
++	[CLK_USB_PHY_REF] = GATE("usbphy_ref", 3, 0),
++};
++
++static const u32 sf19a2890_usb_resets[] = {
++	[RST_USB] = GENMASK(2, 0),
++	[RST_USB_PHY_POR] = BIT(3),
++	[RST_USB_PHY] = BIT(4),
++};
++
++static const struct sf19a2890_periphcrm_data sf19a2890_usb_crm =
++	CRM_DATA(usb, usb);
++
++static const struct sf19a2890_periphcrm_gate sf19a2890_spi_gates[] = {
++	[CLK_SPI_APB] = GATE("spi_apb", 4, 0),
++	[CLK_SPI_SSP] = GATE("spi_ssp", 5, 0),
++};
++
++static const u32 sf19a2890_spi_resets[] = { [RST_SPI] = GENMASK(5, 4) };
++
++static const struct sf19a2890_periphcrm_data sf19a2890_spi_crm =
++	CRM_DATA(spi, spi);
++
++/* UART0 carries the console from the bootloader on */
++static const struct sf19a2890_periphcrm_gate sf19a2890_uart_gates[] = {
++	[CLK_UART0_APB] = GATE("uart0_apb", 0, CLK_IS_CRITICAL),
++	[CLK_UART1_APB] = GATE("uart1_apb", 1, 0),
++	[CLK_UART2_APB] = GATE("uart2_apb", 2, 0),
++	[CLK_UART0] = GATE("uart0", 4, CLK_IS_CRITICAL),
++	[CLK_UART1] = GATE("uart1", 5, 0),
++	[CLK_UART2] = GATE("uart2", 6, 0),
++};
++
++static const u32 sf19a2890_uart_resets[] = {
++	[RST_UART0] = BIT(0) | BIT(4),
++	[RST_UART1] = BIT(1) | BIT(5),
++	[RST_UART2] = BIT(2) | BIT(6),
++};
++
++static const struct sf19a2890_periphcrm_data sf19a2890_uart_crm =
++	CRM_DATA(uart, uart);
++
++#define SINGLE_CRM(_name)						\
++	static const struct sf19a2890_periphcrm_gate sf19a2890_##_name##_gates[] = { \
++		GATE(#_name, 0, 0),					\
++	};								\
++	static const struct sf19a2890_periphcrm_data sf19a2890_##_name##_crm = \
++		CRM_DATA(_name, single)
++
++SINGLE_CRM(i2c0);
++SINGLE_CRM(pwm);
++SINGLE_CRM(timer);
++SINGLE_CRM(wdt);
++SINGLE_CRM(gpio);
++
++static int sf19a2890_periphcrm_probe(struct platform_device *pdev)
++{
++	const struct sf19a2890_periphcrm_data *data;
++	struct device *dev = &pdev->dev;
++	struct sf19a2890_periphclk *gates;
++	struct sf19a2890_periphcrm *crm;
++	u32 valid_gates = 0;
++	unsigned int i;
++	int ret;
++	u32 reg;
++
++	data = device_get_match_data(dev);
++	if (!data)
 +		return -EINVAL;
 +
-+	div = DIV_ROUND_CLOSEST(parent_rate, rate);
-+	if (div < 1)
-+		div = 1;
-+	else if (div > MUXDIV_RATIO_MAX + 1)
-+		div = MUXDIV_RATIO_MAX + 1;
-+	div -= 1;
++	crm = devm_kzalloc(dev, struct_size(crm, clk_data.hws, data->num_gates),
++			   GFP_KERNEL);
++	if (!crm)
++		return -ENOMEM;
 +
-+	sf_writel(cmn_priv, priv->offset + REG_MUXDIV_RATIO, div);
++	crm->clk_data.num = data->num_gates;
 +
-+	return 0;
-+}
++	gates = devm_kcalloc(dev, data->num_gates, sizeof(*gates), GFP_KERNEL);
++	if (!gates)
++		return -ENOMEM;
 +
-+static int sf19a28_muxdiv_enable(struct clk_hw *hw)
-+{
-+	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
-+	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
++	crm->base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(crm->base))
++		return PTR_ERR(crm->base);
 +
-+	sf_writel(cmn_priv, priv->offset + REG_MUXDIV_EN, 1);
-+	return 0;
-+}
++	spin_lock_init(&crm->lock);
 +
-+static void sf19a28_muxdiv_disable(struct clk_hw *hw)
-+{
-+	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
-+	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
++	crm->reset_masks = data->reset_masks;
++	crm->rcdev.owner = THIS_MODULE;
++	crm->rcdev.nr_resets = data->num_resets;
++	crm->rcdev.ops = &sf19a2890_periphcrm_reset_ops;
++	crm->rcdev.of_node = dev->of_node;
 +
-+	sf_writel(cmn_priv, priv->offset + REG_MUXDIV_EN, 0);
-+}
++	ret = devm_reset_controller_register(dev, &crm->rcdev);
++	if (ret)
++		return ret;
 +
-+static int sf19a28_muxdiv_is_enabled(struct clk_hw *hw)
-+{
-+	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
-+	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
++	/*
++	 * Clear any stale bits outside the block's gates so the BOE-disable
++	 * check in periphclk_disable() works correctly.
++	 */
++	for (i = 0; i < data->num_gates; i++)
++		valid_gates |= BIT(data->gates[i].bit);
++	reg = readl(crm->base + REG_CLK_GATE) & valid_gates;
++	writel(reg, crm->base + REG_CLK_GATE);
 +
-+	return !!sf_readl(cmn_priv, priv->offset + REG_MUXDIV_EN);
-+}
++	for (i = 0; i < data->num_gates; i++) {
++		const struct clk_parent_data parent = { .index = i };
++		struct clk_init_data init = {
++			.name = data->gates[i].name,
++			.ops = &sf19a2890_periphclk_ops,
++			.parent_data = &parent,
++			.num_parents = 1,
++			.flags = data->gates[i].flags,
++		};
 +
-+static u8 sf19a28_muxdiv_get_parent(struct clk_hw *hw)
-+{
-+	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
-+	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
-+	u32 cfg = sf_readl(cmn_priv, priv->offset + REG_MUXDIV_CFG);
-+	u32 src = FIELD_GET(MUXDIV_SRC_SEL, cfg);
++		gates[i].crm = crm;
++		gates[i].idx = data->gates[i].bit;
++		gates[i].hw.init = &init;
 +
-+	if (src <= 2)
-+		return src;
-+	if (src == 4)
-+		return 3;
-+	return 4;
-+}
++		ret = devm_clk_hw_register(dev, &gates[i].hw);
++		if (ret)
++			return dev_err_probe(dev, ret,
++					     "failed to register gate %u\n", i);
 +
-+static int sf19a28_muxdiv_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
-+	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
-+	u32 src;
-+
-+	if (index <= 2)
-+		src = index;
-+	else if (index == 3)
-+		src = 4;
-+	else
-+		src = 6;
-+	sf_writel(cmn_priv, priv->offset + REG_MUXDIV_CFG, src);
-+	return 0;
-+}
-+
-+static const struct clk_parent_data clk_muxdiv_parents[] = {
-+	{ .hw = &pll_cpu.common.hw },
-+	{ .hw = &pll_ddr.common.hw },
-+	{ .hw = &pll_cmn.common.hw },
-+	{ .fw_name = "osc12m" },
-+	{ .fw_name = "osc40m" },
-+};
-+
-+static const struct clk_ops sf19a28_muxdiv_ops = {
-+	.recalc_rate = sf19a28_muxdiv_recalc_rate,
-+	.determine_rate = sf19a28_muxdiv_determine_rate,
-+	.set_rate = sf19a28_muxdiv_set_rate,
-+	.enable = sf19a28_muxdiv_enable,
-+	.disable = sf19a28_muxdiv_disable,
-+	.is_enabled = sf19a28_muxdiv_is_enabled,
-+	.get_parent = sf19a28_muxdiv_get_parent,
-+	.set_parent = sf19a28_muxdiv_set_parent,
-+};
-+
-+#define SF19A28_MUXDIV(_name, _offset, _flags)				\
-+	struct sf19a2890_clk _name = {					\
-+		.common = SF_CLK_COMMON(#_name, clk_muxdiv_parents,	\
-+					&sf19a28_muxdiv_ops, _flags),	\
-+		.offset = REG_MUXDIV_BASE + (_offset),			\
++		crm->clk_data.hws[i] = &gates[i].hw;
 +	}
 +
-+static SF19A28_MUXDIV(muxdiv_bus1, 0x0, CLK_IS_CRITICAL);
-+static SF19A28_MUXDIV(muxdiv_bus2, 0x20, CLK_IS_CRITICAL);
-+static SF19A28_MUXDIV(muxdiv_bus3, 0x40, CLK_IS_CRITICAL);
-+static SF19A28_MUXDIV(muxdiv_cpu, 0x100,
-+		      CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT);
-+static SF19A28_MUXDIV(muxdiv_pbus, 0x120, CLK_IS_CRITICAL);
-+static SF19A28_MUXDIV(muxdiv_mem_phy, 0x140, CLK_IS_CRITICAL);
-+static SF19A28_MUXDIV(muxdiv_uart, 0x180, 0);
-+static SF19A28_MUXDIV(muxdiv_eth_ref, 0x200, 0);
-+static SF19A28_MUXDIV(muxdiv_eth_byp_ref, 0x220, 0);
-+static SF19A28_MUXDIV(muxdiv_eth_tsu, 0x240, 0);
-+static SF19A28_MUXDIV(muxdiv_gmac_byp_ref, 0x260, 0);
-+static SF19A28_MUXDIV(muxdiv_m6250_0, 0x280, 0);
-+static SF19A28_MUXDIV(muxdiv_m6250_1, 0x2a0, 0);
-+static SF19A28_MUXDIV(muxdiv_wlan24_plf, 0x2c0, 0);
-+static SF19A28_MUXDIV(muxdiv_wlan5_plf, 0x2e0, 0);
-+static SF19A28_MUXDIV(muxdiv_usbphy_ref, 0x300, 0);
-+static SF19A28_MUXDIV(muxdiv_tclk, 0x320, 0);
-+static SF19A28_MUXDIV(muxdiv_npu_pe, 0x340, 0);
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
++					   &crm->clk_data);
++}
 +
-+static struct clk_hw_onecell_data sf19a2890_hw_clks = {
-+	.num = CLK_SF19A2890_NR_CLKS,
-+	.hws = {
-+		[CLK_PLL_CPU] = &pll_cpu.common.hw,
-+		[CLK_PLL_DDR] = &pll_ddr.common.hw,
-+		[CLK_PLL_CMN] = &pll_cmn.common.hw,
-+		[CLK_MUXDIV_BUS1] = &muxdiv_bus1.common.hw,
-+		[CLK_MUXDIV_BUS2] = &muxdiv_bus2.common.hw,
-+		[CLK_MUXDIV_BUS3] = &muxdiv_bus3.common.hw,
-+		[CLK_MUXDIV_CPU] = &muxdiv_cpu.common.hw,
-+		[CLK_MUXDIV_PBUS] = &muxdiv_pbus.common.hw,
-+		[CLK_MUXDIV_MEM_PHY] = &muxdiv_mem_phy.common.hw,
-+		[CLK_MUXDIV_UART] = &muxdiv_uart.common.hw,
-+		[CLK_MUXDIV_ETH_REF] = &muxdiv_eth_ref.common.hw,
-+		[CLK_MUXDIV_ETH_BYP_REF] = &muxdiv_eth_byp_ref.common.hw,
-+		[CLK_MUXDIV_ETH_TSU] = &muxdiv_eth_tsu.common.hw,
-+		[CLK_MUXDIV_GMAC_BYP_REF] = &muxdiv_gmac_byp_ref.common.hw,
-+		[CLK_MUXDIV_M6250_0] = &muxdiv_m6250_0.common.hw,
-+		[CLK_MUXDIV_M6250_1] = &muxdiv_m6250_1.common.hw,
-+		[CLK_MUXDIV_WLAN24_PLF] = &muxdiv_wlan24_plf.common.hw,
-+		[CLK_MUXDIV_WLAN5_PLF] = &muxdiv_wlan5_plf.common.hw,
-+		[CLK_MUXDIV_USBPHY_REF] = &muxdiv_usbphy_ref.common.hw,
-+		[CLK_MUXDIV_TCLK] = &muxdiv_tclk.common.hw,
-+		[CLK_MUXDIV_NPU_PE_CLK] = &muxdiv_npu_pe.common.hw,
++static const struct of_device_id sf19a2890_periphcrm_dt_ids[] = {
++	{ .compatible = "siflower,sf19a2890-gmac-crm", .data = &sf19a2890_gmac_crm },
++	{ .compatible = "siflower,sf19a2890-gpio-crm", .data = &sf19a2890_gpio_crm },
++	{ .compatible = "siflower,sf19a2890-i2c-crm", .data = &sf19a2890_i2c0_crm },
++	{ .compatible = "siflower,sf19a2890-pwm-crm", .data = &sf19a2890_pwm_crm },
++	{ .compatible = "siflower,sf19a2890-rf-crm", .data = &sf19a2890_rf_crm },
++	{ .compatible = "siflower,sf19a2890-spi-crm", .data = &sf19a2890_spi_crm },
++	{ .compatible = "siflower,sf19a2890-timer-crm", .data = &sf19a2890_timer_crm },
++	{ .compatible = "siflower,sf19a2890-uart-crm", .data = &sf19a2890_uart_crm },
++	{ .compatible = "siflower,sf19a2890-usb-crm", .data = &sf19a2890_usb_crm },
++	{ .compatible = "siflower,sf19a2890-wdt-crm", .data = &sf19a2890_wdt_crm },
++	{ .compatible = "siflower,sf19a2890-wlan24-crm", .data = &sf19a2890_wlan24_crm },
++	{ .compatible = "siflower,sf19a2890-wlan5-crm", .data = &sf19a2890_wlan5_crm },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver sf19a2890_periphcrm_driver = {
++	.probe	= sf19a2890_periphcrm_probe,
++	.driver = {
++		.name		= "sf19a2890-periph-crm",
++		.of_match_table	= sf19a2890_periphcrm_dt_ids,
 +	},
 +};
-+
-+static void __init sf19a2890_clk_init(struct device_node *node)
-+{
-+	void __iomem *base;
-+	int i, ret;
-+
-+	base = of_iomap(node, 0);
-+	if (!base) {
-+		pr_err("failed to map the registers\n");
-+		return;
-+	}
-+
-+	for (i = 0; i < sf19a2890_hw_clks.num; i++) {
-+		struct clk_hw *hw = sf19a2890_hw_clks.hws[i];
-+
-+		if (!hw)
-+			continue;
-+		hw_to_sf_clk_common(hw)->base = base;
-+		ret = of_clk_hw_register(node, hw);
-+		if (ret) {
-+			pr_err("failed to register clock %d: %d\n", i, ret);
-+			goto err;
-+		}
-+	}
-+
-+	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
-+				     &sf19a2890_hw_clks);
-+	if (ret) {
-+		pr_err("failed to add the clock provider: %d\n", ret);
-+		goto err;
-+	}
-+	return;
-+err:
-+	while (--i >= 0)
-+		if (sf19a2890_hw_clks.hws[i])
-+			clk_hw_unregister(sf19a2890_hw_clks.hws[i]);
-+	iounmap(base);
-+}
-+
-+CLK_OF_DECLARE(sf19a2890_clk, "siflower,sf19a2890-clk", sf19a2890_clk_init);
++builtin_platform_driver(sf19a2890_periphcrm_driver);
 
 -- 
 Git-155)
