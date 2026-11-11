@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794396070;
-	b=nVuBnCflK7c6VSqffD/MyzvFCgkW9jz5paxCUKGpc3If+TLmqiXQznzfPi//tHIBApdq
-	 XtZjE6TWIfVifPhaSxW2Q+53I/3kbSGzdfRwx4ZcOHum4o2vrQpmdiROfI3Qc0hilK3tY
-	 lA4Ghvk3KDWafFF8BB5eYjSoVAPZsh534ek8yRFv/GGCH5u/c373/cGFHGHOjRrguPvvJ
-	 Bh+Rn0EpqmcSEXn0drfwNv147MBnoxE6IZJH3QwETGe3MoAfJvtI3iq+n7hhu+OClreik
-	 sXk8gGfYtKyCouwYNbNU7Zarlj382z+3ekA3GXSNIpEfVwpdeVomSJ6HJ7bf9mWN3pg==
+	t=1794397977;
+	b=Z2zogUlB7/VnOonOd0MaAjMYOGYJ54HLkUeXMInLw1sZRw1i1xh2M8YVADQB5GUTS+Zi
+	 nEgv2GP6xdZi+MWyKl2dTRPLMak2jfdGJYCRDa1gxOIDmhTKYJhSiNCgig1hI6eDiebxR
+	 bTb4knbG+5UfcqAP1Vl+Jq1RcjcWfR4EsJjKt3r6996tV2ii+qVdSFL7/M3ONBbfU2yUc
+	 mne7g6H4yPekvtyNmrA0QpJUn5Q+rME773rR2LWC0A6hVi/qZp8QMhurYJE9yqk2KgbUQ
+	 qvuSBp+TejV8twUG1pPGfh+1zno71OM1kaGvVn/Z0EdNMeZ988CcxyxoJ2FI0pcengg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794396070;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=n9eMp4Ks0FZCltmngYBV5QRXUSvr6ha96eXxZ61XSW8=;
-	b=B3ysep6StGbp80HdbhTjFQxrWmANO7xRAY6gQdgB2LHiCb/fxJxPzotbWK92pe5XxJNO
-	 /YhWXHbBmZt/00digwjSIr76yytXVI1d+XXxI1hOKdgQAHHy2xwcjvNyrhMzff8chJf5x
-	 +GFHZoOL9kmkdfoUc8yWvwXoeyFiNbGSubeTZ4iQoZxFPRiMFB/Id23GVNWUTJJfMDxhW
-	 kV+E9Ojm/99zEtZ66hM5QyZ+yOH/FFQPjzKgTRvzdVH5Utt4DrJP10QywVCWFKKFNqT25
-	 KdKwfhWlBFE1tJTr6/BYUD/UUobSp3GU3VnMqfNwQvp8i46Z6zilrOoyGwm6ia/ZNbg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794397977;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=MpHh2GYNJRtOhiRbv+gl4MVWrtLcyIbDIAcJ3i7bHZo=;
+	b=jEfpg1iPpsa4ecvqw2kqXWzO3AuD+SIDu7Q34huCC2d65FoKYbIT4+BXVJZCWyaC5S6Y
+	 dBLeqtWVNaCGYJY6yx5H+sqEkI+fU5Hn1M0sdOSJUCl3Zmf08XIs7Urv9AEcsEIi75ocR
+	 d1ARvR/wEXSlwocqRwdfYl8RMoTlnZAlPQr1rt+7KlVXXOFQe6fUAyKa4EmzOlKFSxmdW
+	 qA7FTGibsZeDR4GSSOcKimdM41Q4m9ipOLFQJTk3zIWN4SL+LJ05fuJpqZJJqKomS1BEq
+	 8hQ2rrObP6Msnqhp7FYWLLmc5wj5yGtmVJcrgOj+zbIGjWQ87X+HtHI/K/mc7zKM2TA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nq9s8uUi;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="nEO/Sns4";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23761606A324;
-	Wed, 11 Nov 2026 11:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87AC606A32D
+	for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 11:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nq9s8uUi
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 641541F00A05;
-	Wed, 11 Nov 2026 11:21:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nEO/Sns4
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7250D1F00A0A
+	for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 11:52:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794396069;
-	bh=n9eMp4Ks0FZCltmngYBV5QRXUSvr6ha96eXxZ61XSW8=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=nq9s8uUiajv1IuSAJLt7CugwEflNVQaHq8pv0a5qZDdLjh5muesftq64zRDtM4n+l
-	 J6sug2e++k4OLqgjijNR7/ZbA8X9lklhxIRoF4pW9vaGmrKIzJgiK4hyC5efq/J2Ug
-	 HeqOfvxxo0Yh9uNR5sUMXWXn5tWnZ954CsDbTMXFQs9Zk8L1cvP9vzKVB96ehDJQLg
-	 tXp1C74486sd1xrFi6bZ+farNlcPBKz2+50WzxGUrQP0SdzIhVnZPO1ogQQqHGhn9I
-	 8AVl8XBQ34c30kl4crq+pw7F7/yskOGQvhZSbmZ7KTWkqM/LWBWcFcajhvqd0/YriB
-	 WDpmHqZBu9oEA==
-Message-ID: <sashiko-outbox-208862@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] clk: imx: clk-imx95-blk-ctl: fix error unwinding in
- probe
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Manush Prajwal" <manushprajwal555@gmail.com>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, Frank.Li@kernel.org
-In-Reply-To: <6af44b5c.67914289.fe7ab.6559@mx.google.com>
-References: <6af44b5c.67914289.fe7ab.6559@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 11 Nov 2026 11:21:08 +0000
+	s=k20260515; t=1794397977;
+	bh=MpHh2GYNJRtOhiRbv+gl4MVWrtLcyIbDIAcJ3i7bHZo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=nEO/Sns4SgkX25DJRlGI4E7B61nZ+38OvpTIjlYgqCAzSEtzxMfTToh4zV/TvfOuP
+	 7dsDlsKRAdcPNKg4jd0cF3HXsnai+5EiujODNzc2dBWQ0f7vzT2n5F9ejZsg0NxUnn
+	 Ef1S4W/FVDaciFpTmvqKOsRgPFf45/jQru8+wr+YcEkI1GranxNVbBNpx0qKaoeuIK
+	 JuLgV2iPhhYfRhlwTJlC6awPCByHfJlofyKile4lFdlM7OERj9QGoXtKDq+Fy94/Tq
+	 OlZ3gqACcY4TKf/WgF9k1AKKK2jToOWgQyrl+JCHvMxIntRRdzftVuD0ltTZ/Jw3kQ
+	 F00jsHD2BHVjg==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3ab46699a09so27330861fa.0
+        for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 03:52:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErHiHzY2aVULlFrq9hT+08HY5u7pnZ+KXOkAVWYdrXqJRv5v0QHDPUr/HLxQEbgLxi/OBxopWBDIX6g=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8ha+4JIZEIQ1na4rz97Dz49n0OZCdzx5UuhvKRfHBDAkUl1/JK
+	8KnDNOizL+lpC+6hzJiKnYtppteuifDvbdMxqEPUALptPtP+uTibCAWy6xTIsGWHNuQd5LngHYU
+	1LoqOm/tny+sJ1/Xe4Pcg1/2aXLS0Dxk=
+X-Received: by 2002:a05:651c:41c6:b0:3ab:43ca:1daa with SMTP id
+ 38308e7fff4ca-3ae125cd671mr4824141fa.3.1794397976185; Wed, 11 Nov 2026
+ 03:52:56 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,70 +58,40 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+References: <20261111-xg6846b-bcmbca-xrdp-reset-v4-0-17035a5e8ad2@kernel.org>
+ <20261111-xg6846b-bcmbca-xrdp-reset-v4-1-17035a5e8ad2@kernel.org> <sashiko-outbox-208856@kernel.org>
+In-Reply-To: <sashiko-outbox-208856@kernel.org>
+From: Linus Walleij <linusw@kernel.org>
+Date: Wed, 11 Nov 2026 12:52:44 +0100
+X-Gmail-Original-Message-ID: <CAD++jLkZXwXhHhvjQvbc4AT6Zt8mBVL0yujKoZOU+MsLvFFOng@mail.gmail.com>
+X-Gm-Features: AclHuK8sYNT8b4r7s3hjp4u_srEnhvmeaQbZaxImLpGAFvZ6UoeInuaEUc5FNMg
+Message-ID: <CAD++jLkZXwXhHhvjQvbc4AT6Zt8mBVL0yujKoZOU+MsLvFFOng@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] dt-bindings: soc: Describe the BCM6846 Power
+ Management Bus
+To: sashiko-reviews@lists.linux.dev
+Cc: mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-hwmon@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, 
+	lee@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for your contribution! Sashiko AI review found no new issues
-in this patch, but noticed 1 related pre-existing issue it does not
-introduce:
-- [High] clk: imx: uninitialized register overwrite in
-  imx95_bc_runtime_resume() [1]
---
+On Wed, Nov 11, 2026 at 12:11=E2=80=AFPM <sashiko-bot@kernel.org> wrote:
 
-commit 19a6efb010aee7e2b721c30ed7ad173ca7b7d1df
-Author: Manush Prajwal <manushprajwal555@gmail.com>
+> [Severity: Medium]
+> As reported by Philipp Zabel on RFC [1], should #clock-cells,
+> #power-domain-cells, #reset-cells, #thermal-sensor-cells, and the
+> reference clock be placed directly on the brcm,bcm6846-pmb node instead
+> of requiring four address-less child nodes?
 
-clk: imx: clk-imx95-blk-ctl: fix error unwinding in probe
+As was pointed out at device tree review these are different discrete devic=
+es
+and it does not properly model the hardware to bring them all into one node=
+,
+they also use resoures from each other so this will look super-messy if the
+same node is requesting a host of resources from itsef.
 
-This commit fixes error handling in imx95_bc_probe() by checking runtime PM
-return values, dropping the runtime PM reference on failure, and disabling
-bc->clk_apb on error paths.
+IOW look at the later submissions and it's clear that this doesn't work.
 
-> diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-im=
-x95-blk-ctl.c
-> index bc6957299ceca..ad386a48ec2bb 100644
-> --- a/drivers/clk/imx/clk-imx95-blk-ctl.c
-> +++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
-> @@ -394,17 +394,29 @@ static int imx95_bc_probe(struct platform_device *p=
-dev)
-
-[ ... ]
-
->  	if (bc->pdata->rpm_enabled) {
-> -		devm_pm_runtime_enable(&pdev->dev);
-> -		pm_runtime_resume_and_get(&pdev->dev);
-> +		ret =3D devm_pm_runtime_enable(&pdev->dev);
-> +		if (ret)
-> +			goto err_clk_disable;
-> +
-> +		ret =3D pm_runtime_resume_and_get(&pdev->dev);
-> +		if (ret)
-> +			goto err_clk_disable;
->  	}
-
-[Severity: High]
-This problem wasn't introduced by this patch, but doesn't calling
-pm_runtime_resume_and_get() here [1] overwrite the hardware clock
-control register with zero before any state has been saved?
-
-bc is allocated with devm_kzalloc(), so bc->clk_reg_restore is initially
-0.  When pm_runtime_resume_and_get() runs during probe, it synchronously
-invokes imx95_bc_runtime_resume():
-
-drivers/clk/imx/clk-imx95-blk-ctl.c:imx95_bc_runtime_resume() {
-	...
-	writel(bc->clk_reg_restore, bc->base + bc->pdata->clk_reg_offset);
-
-	return 0;
-}
-
-Writing the uninitialized zero value clobbers the clock gate and mux
-settings configured by the bootloader, disabling active clocks and hanging
-dependent blocks such as display or LVDS.  Initializing
-bc->clk_reg_restore from the register before enabling runtime PM (or
-calling pm_runtime_set_active() before devm_pm_runtime_enable()) would
-preserve the hardware state.
-
-[1] https://sashiko.dev/#/bug/linux-2f2aa951-60e6-4afb-8098-949100502ab9
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/6af44b5c.67914289.f=
-e7ab.6559@mx.google.com?part=3D1
+Yours,
+Linus Walleij
