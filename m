@@ -1,70 +1,66 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794417343;
-	b=W7YczGavkjOxBZAzvFWIH2JE2ZeesP2dS0udoFB+3jfoEOEca7kczTHrVn0sqYcgpBt1
-	 fIA2mP4tQKgvSV+pQUhm8r8uuSaHvQLpyPHKbloqvtO3icVN7HWnSa8WBjFxIrzMkJPD+
-	 sNtvu5n0Gk6+/hYpme0zJHsa/x4XWaFM9gciXX6Rb9lFXp34eS2MAsWPeqyrivZlyyIO+
-	 4kwABFofYClSo4rCIcssE1dNbjpnjFSvRI1b7lW3lHfaSTJOO8BBkDXNZbdKhShz35fd3
-	 QgqlSzhE99x+Ws4ZdKwqGFjoOhajIJVzsX6GdDdNyIV26ZK9J2K/qYBsiCY2YIpyCMQ==
+	t=1794417537;
+	b=og4OSYaAomFy/u/7qXt28gtpG2PsvyBKxRN91O7JlAtVBpevhYP8/KxogOLYCapzoTJJ
+	 sXVReqfHeQrXsEJmxruxPGmOs9tnDuxNkjvreeje3FCNOq6MEWzUMxt9SHNgD9cEH+iMi
+	 g6lRwp6bYwYEvlYUgeT0CEcx29T+q68zNbHplyDeGFuLcR0VkbNcNZNsmf7v62RrLCmDK
+	 Hna+BoPIjU5747OGUfPydndCrAeTQBjqFBQq6/DONiIByX8j1RVBTljMFDKSjNHtU/nxe
+	 guVQNtNHpARWGNQZ7H1s+PNjwZHASr0jEwjNUrUyj3vgf6U28mWWOwm8hls3Z7h6bzA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794417343;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794417537;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=w8vNoC9Nxsw0YxO6Po42QLoQ5/fTPMksdeWkGWXJRYg=;
-	b=QHcv/swl4Qg1GIavMNkvHwwmT4slDFl3UfOw0sqpbcCbjptT3k5Ed7zbBjT0PMY6jcwc
-	 +ap1QfUkx2PAvJ15KuLlHy0Hf1kdmx0lVtRqZwfQyaZcN2flc/X+Gem5tLIxqXEbiKB6p
-	 dN6oqolkD65pEkPZ1u4AZ9L7I38VMdBoG9sXGkzyzblp6tHbY/Wjvy4xcU970w+fwGTY7
-	 eAYpKQnLK2pO8cFAmpyiugdaCQItPcURdk4/ZnKludTAll0SGQo5SOB+pYLGYoIafYWjw
-	 dad9vnAFupWI3LS9NJSvmCESVtxRVHFhZRukMn+ZLc/SaaXSE2Whu96lniuJUXE4C9A==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-Cookie;
+	bh=SbZNDieBY9hzEjO8/yCRQWNmGrtK1StoZinKCNvVSwY=;
+	b=WG0u26OGhWy1uQa0mXSmOvIeRBRqLV0EhKEJnjDmWnlXifgZWHnKy//ZKGPsrSNYRZ1v
+	 w3Qyaij440GLHL/lZpAmgt026Jdv/lkGKudrJ6iBF2+u1e4zsFUhY/Ih0cmQi5hC7D02E
+	 Q373920jsZpu8tINVgcOi9Ca1jD5YwGwNx2+KZ2HJPYYMygLJ72nueMy7dDaqeiA6Vs7Z
+	 n/70b5TCr1sa3qjazKLoKdD3SGVXAb51dXj9RhogXPHsvsdv6cLiO8JodBsAimE65RArW
+	 twc/oHUGnm9Fi5wahLnDdrcAvQuNzisAFnpYK8xnHmb6heRGy+GuRI0O9eFXsw5+OTA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YBbd5mtS;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cQk0ITmt;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C58E606A321;
-	Wed, 11 Nov 2026 17:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE3A606A321;
+	Wed, 11 Nov 2026 17:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YBbd5mtS
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D0A1F00A05;
-	Wed, 11 Nov 2026 17:15:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cQk0ITmt
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F23E71F00A05;
+	Wed, 11 Nov 2026 17:18:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794417342;
-	bh=w8vNoC9Nxsw0YxO6Po42QLoQ5/fTPMksdeWkGWXJRYg=;
+	s=k20260515; t=1794417536;
+	bh=SbZNDieBY9hzEjO8/yCRQWNmGrtK1StoZinKCNvVSwY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YBbd5mtSUp/RiEVHPeFjrL7da0RxMdI9MfB0nbzxVOv7RTGdcgZpyua3TNCwi5Dib
-	 +Z3PbFFN4/4ztEmPqd/4p47SQA6+h066iQzBEDxlRtmsZXKhNPjIg+PKpCtC+zyy69
-	 8QHRCtTfXQb7GL16zBWUvAn+uI9nQVFSW1bpEa3iQH2DH8wPRt8B1Nuib5QYhWcp7V
-	 Y3a4aaXC4HILFVFU0N6GrG1s6+RHSBGsbq3iEH4jrcgB1X2aHe27spSiqRsbxDvQRr
-	 v1/0iHch+2nhANOHGJRXmRg67o58Ue8nhnfIDI7lBoa1IE6GIAuxtjDbzTl9agaycG
-	 K6p3Sb+ZkDSvw==
-Date: Wed, 11 Nov 2026 11:15:40 -0600
-From: Rob Herring <robh@kernel.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	b=cQk0ITmtBFI6MNWa6tcqdRP1Rrb1hw8KJqL3wDZjKkLS7qWsr8dkgtxobdWYng3pn
+	 q5ZO2KEOq/2ybyWYi1AhNEADaRFen86B9Qfc9zEijmOyQVXqJ5iAAn19vBib/ebrrg
+	 5Kf3k4DZdSx3HaFJzdPXXRcot0z8gkEkBVYvg5IY+dDOKPmybYmtL+kpMieQukIbXL
+	 hliusqQdHIYaUXsUNUmacQNVuD3WYmhX/ofmNDcaVRlplYYojaJCWxS8lj8rnQQHRj
+	 qbhT2IDffnC934hn2HpwgVmjLyCdlenDNhpkU3pmwTV7O5NULFrr+8rk8Jv1Lj8+Z0
+	 nrzWsuEDXXAHg==
+Date: Wed, 11 Nov 2026 17:18:50 +0000
+From: Mark Brown <broonie@kernel.org>
+To: jiebing.chen@amlogic.com
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	William Zhang <william.zhang@broadcom.com>,
-	Anand Gore <anand.gore@broadcom.com>,
-	Kursad Oney <kursad.oney@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Randy Dunlap <rdunlap@infradead.org>, Ulf Hansson <ulfh@kernel.org>,
-	Benjamin Larsson <benjamin.larsson@genexis.eu>, mfd@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 2/7] dt-bindings: mfd: Describe the BCM6846 PMC complex
-Message-ID: <20261111171540.GA3718375-robh@kernel.org>
-References: <20261111-xg6846b-bcmbca-xrdp-reset-v4-0-17035a5e8ad2@kernel.org>
- <20261111-xg6846b-bcmbca-xrdp-reset-v4-2-17035a5e8ad2@kernel.org>
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
+Subject: Re: [PATCH v8 2/5] dt-bindings: Asoc: axg-audio: Add S4 audio tocodec
+Message-ID: <81581939-3079-4549-9bb8-2e935c173a7f@sirena.org.uk>
+References: <20261110-audio_drvier-v8-0-1489241e4c83@amlogic.com>
+ <20261110-audio_drvier-v8-2-1489241e4c83@amlogic.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -74,90 +70,42 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oOrGjpPCIIgGz7y5"
+Content-Disposition: inline
+In-Reply-To: <20261110-audio_drvier-v8-2-1489241e4c83@amlogic.com>
+X-Cookie: Do not pick the flowers.
+
+
+--oOrGjpPCIIgGz7y5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261111-xg6846b-bcmbca-xrdp-reset-v4-2-17035a5e8ad2@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 11, 2026 at 12:00:43PM +0100, Linus Walleij wrote:
-> The third generation Power Management Controller (PMC3) has
-> different subdevices.
-> 
-> Identify the parent with the BCM6846-specific "brcm,bcm6846-pmc"
-> compatible.
-> 
-> Describe the complex as a simple-mfd with a PMB bus child owning its
-> register resource. Include the PMB power, clock and reset controllers and
-> PVTMON, with its acquisition clock and reset resources.
-> 
-> Signed-off-by: Linus Walleij <linusw@kernel.org>
-> ---
->  .../devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml  | 87 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 88 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml b/Documentation/devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml
-> new file mode 100644
-> index 000000000000..6082e30d37ec
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/brcm,bcm6846-pmc.yaml
-> @@ -0,0 +1,87 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/brcm,bcm6846-pmc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Broadcom BCM6846 Power Management Controller
-> +
-> +maintainers:
-> +  - Linus Walleij <linusw@kernel.org>
-> +
-> +description:
-> +  The third generation Power Management Controller (PMC3) contains several
-> +  register banks. This binding describes the Power Management Bus (PMB)
-> +  interface within Procmon. The PMB child owns its register bank. The parent
-> +  provides address translation and does not own a register bank.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: brcm,bcm6846-pmc
-> +      - const: simple-mfd
-> +
-> +  ranges:
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 1
-> +
-> +patternProperties:
-> +  '^bus@[0-9a-f]+$':
-> +    $ref: /schemas/soc/bcm/brcm,bcm6846-pmb.yaml#
-> +    description: PMB configuration, keyhole and address mapping registers
+On Tue, Nov 10, 2026 at 10:28:25AM +0800, Jiebing Chen via B4 Relay wrote:
+> From: Jiebing Chen <jiebing.chen@amlogic.com>
+>=20
+> Add S4 SoC tocodec compatibility support.
 
-This causes the bus node to be validated twice (once here and once when 
-applied by compatible). And then because the pmb schema does the same 
-thing with its child nodes, those will be validated 3 times. Twice I can 
-live with, 3 times not so much. The fix for all this is either merge the 
-schemas to 1 file or do:
+Please submit patches using subject lines reflecting the style for the
+subsystem, this makes it easier for people to identify relevant patches.
+Look at what existing commits in the area you're changing are doing and
+make sure your subject lines visually resemble what they're doing.
+There's no need to resubmit to fix this alone.
 
-'^bus@[0-9a-f]+$':
-  type: object
-  additionalProperties: true
-  properties:
-    compatible:
-      contains:
-        const: brcm,bcm6846-pmb
+--oOrGjpPCIIgGz7y5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  required:
-    - compatible
+-----BEGIN PGP SIGNATURE-----
 
-That ensures the node contains enough to apply the child schema. 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmr0o3kACgkQJNaLcl1U
+h9CsCwf9Elzjbf8nHCLS5M+WLOLUCXXBlKz4ioAbZpwXCXKM+LrRVNgnLw4IzNmX
+POCp7OsztudK0+BWIZeo+K2/TRsSvkV5MnHLUBJ07sUq7LzHkotnhyviWmaxqwCM
+vr96FBCba5vQ3KI8XWOH7UUNdUVXiKxuPBMpxut7ZTLvEUKNtajO8tEs+vfT9nuw
+j+oMdNOLg+QdZhAqjzkbaarX44zJ7iSHHRdlZ1sWRuX7ygFc6mMWB0OrZV+3v6X+
+dSkRdZUhBV9TTA3GavN4+DlqnCaXpzcmIbZu4nKWvLSlFM6TaM3NHoJ9aC6xdLyb
+q6fQTd6FJ01z/qrQYUlUr3chvx+7MA==
+=C328
+-----END PGP SIGNATURE-----
 
-Since there's 3 levels here, you could also do some combination of both.
-
-Rob
-
+--oOrGjpPCIIgGz7y5--
