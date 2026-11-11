@@ -1,62 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.11.138.130
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794435512;
-	b=zOElfe35k0W8nSkntfsOjO/3NUDwHfwq3S+zQhSj4t5Jxy6G6TCMQyS4kRTSaIW3t9sO
-	 ZMwW0ErXZE/JOwstYa6+1/k+P0654SnjLVKYKtXFL3ulMqdf2XaJByTpngEIM8XvciQNr
-	 f94aLk+TiPFhlty/dJV7GnjcYxhD1AbssBljic3TgoCvCbGoYk5MfKk26NEMSlkZXdOR8
-	 VWQQNXet38E0gH3J/HBnDA0Ork1CFL8Rdnsm8jWDFXfjAnvZ/8n+PidWXAVAMgVLxippN
-	 jgFRTPUbHhlGHG1szth0w6ifB7MuUVD98hl9m8n0MuccUtm+fwHPJbtVn/tUK3UAlAw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794435512;
-	h=DMARC-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
-	 Content-Type;
-	bh=sJfEnrqje2dVxymNjQcwU7Gc+3OnffsH5DyqeXyDRnw=;
-	b=smd02dv/vvCW2iCO05Cp7I2SwKIBctiNXY+2mvQhcWWcpwgzy4vzHvK4hlhIbc8SWx9W
-	 7X8DuxKpU9MKfCvEYM/rEpx0nDehXYzVaXstKyWtbkjOh6D6WBbFZv7Ml201PiF4F1jgI
-	 DIftE3SKOTbonXpFIsR4BEvyZyfcJfbyrQMBPJFbKmeqjMQDXzbvacLo8F+wXfCwO9huk
-	 avxKckezVYLhldb7ZoggYcAHs7C8cKDfyKczFpYFUXl8lF/3lBaE7G+g9SuHQ7lrIL4vY
-	 OLEP49C82RxmCmpGVIhGDplNnnYM0CTqgW0elGaEFKO4XxeAg89tSydyRbw7WjIaIEQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=sntech.de;
-	spf=pass smtp.mailfrom=sntech.de;
-	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=Ocx7SLDW;
-	arc=none smtp.remote-ip=185.11.138.130
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.49
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794436185;
+	b=BGrNvzGZpeMlrf/z3akrxUcOvmGqIx+ZPIKTei0C8Ew/UUm3t+02qPYCrExMJfyY40K9
+	 LWffFC8q2KwLjbeGq9+5Qxkj5ei4bpBEj5ZlAJbtwrgXGI56FKARNzpAzTEwpbBpOT6dE
+	 8KSmh1VZi2Pt/7hifdpC6JmD+3/I9Nb9J0HbHw7Ti2ZFvtCOwzk5+uSolO4oTtAS4vRmA
+	 3WrKr7rbxwWwdaN8i9INZBh9VVfldH6R8DcEuSf+LQtAzMEbvJyxab4bf18oe8YQJaaem
+	 C34CGMzQ2xSV87PJ4ZydhRqkukwTK2r17HYjdDsIMg9+4ySe7idtXkS/U0OdFzLK7tA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794436185;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:MIME-Version:References:
+	 In-Reply-To:From:Date:X-Gm-Features:Message-ID:Subject:To:Cc:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=l88aQEthU6YDCYl3Vpu0UwlZOCfC9J5sQ3/7Brd6dlY=;
+	b=cIoec/zF1veskasw/q1/ZOGej1VUKB54op13pTXSZTILZQRUdp2Id4kLzUlhu8j+f4Na
+	 6z2CSUFrh3YqveeJrOtyLHw7ZXTJCVz845H2lrU+ph9o6L8eGa8a+LKdKCfV/I7OGz2bQ
+	 89moE5GIkU6LloQ0fET1l1LOcVM5gwnMlNWg3Mzq3VAjoCG4z2sb5QVEnl3AVBrqbTdNZ
+	 gzQbkAujUKK+v+2asOeG75rsCCCWlw+TTlL5rDBo2yG0nAZa5Uen1+dpl6L7ozn4w5zs1
+	 4s2zvKWrRCBVGGLKcww6BlgoFt/xe0eTnMPh4lnA3oM78kLRh0yaIUBVEkfdVD+fCSA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Zh1V8q9k;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.49
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B042D606A31C;
-	Wed, 11 Nov 2026 22:18:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B042D606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED00606E20C
+	for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 22:29:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3ED00606E20C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=Ocx7SLDW
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=sJfEnrqje2dVxymNjQcwU7Gc+3OnffsH5DyqeXyDRnw=; b=Ocx7SLDWBioD5V+13ndERCvgBc
-	XYHPOYRDy+yiYBgCC8zsh4zisoDyEWjq5nTX13SAZiAeSqyTllUzVtgDj7ijNPGqmeySrNEJvL6Tb
-	OKDTCvTEW8CXLE6T+6JURg8KlF11qqbTmUe+gBe+IelA+vLGMU5InCs6z+uneuykj1ZA5pKQQw81V
-	ka1eAqjf7af5MRHOXr791ms1ndGmo2g+4liuVYplsOf58ETT+rTU93steN8uOGvWJc8xEpAVzxzxJ
-	JvX+NiF9xYIWWbv6GE7Le3HKzRVv9dJFUgKJlfOitpGfaHJ/orqZ1AWpYFUN7D3muEs4P9cDllmM8
-	Tv6GvjVg==;
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Stephen Boyd <sboyd@kernel.org>, Tim Surber <me@timsurber.de>
-Cc: Tim Surber <me@timsurber.de>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Elaine Zhang <zhangqing@rock-chips.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH] clk: rockchip: rk3588: Allow I2S5 TX and I2S6 RX frac to set
- parent rate
-Date: Wed, 11 Nov 2026 23:18:11 +0100
-Message-ID: <MgdhBsb8T_eDWUTKP6B0VQ@sntech.de>
-In-Reply-To: <20261111220656.3603628-1-me@timsurber.de>
-References: <20261111220656.3603628-1-me@timsurber.de>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Zh1V8q9k
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6b56bbf8330so4666312a12.3
+        for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 14:29:44 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794436183; cv=none;
+        d=google.com; s=arc-20260327;
+        b=AHVZwgoJwZMjzySP01oJRUI4SuEea+S1BLwjBNtf5MnX+dWCrjgumQ4yYaD81EIPQ6
+         DaLK9L9Kl/akyRxh6xoPCKF2/1bAJBgmogiYaXjJwKHOJNkEZ/VeVa++RMyBc7r982VP
+         Y48C/R+b8E0uYQLs+dEmnaPrYOzPPfm/PpkaJXKw1yHokOXJQyaO2gZo5r6xoxLWYeo6
+         r5mKHOOfHoFnv0CcPX72juSLaSYMekXaBOOy9VV6UXxqVuKszIQqIzAp5zaJ91UFcoSr
+         VDOGUTawkAL0swnIfF3hpaMlzxgpQivKK9op74swjFj39u2b3Tgfgh8vAY2VMCNteMC4
+         3y2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=l88aQEthU6YDCYl3Vpu0UwlZOCfC9J5sQ3/7Brd6dlY=;
+        fh=3vEt61QNJOheRnm9fd3Av6wBGJCAISb+cqsY1Q+5YgY=;
+        b=qK7lFL6RS7DNIC4HT+/+Cc3XlcCDj+RsRkyLSpP9TZtBJushbZ7pb0CQ4lqoooYYvY
+         htlOWXqrvv1AfccnQRGYGr/aWbf/Vi/Ik8w3r25b7KiqpqtK1HOpCaA6xQEU0rqw3mHO
+         1e9tkq0SkPd7kB91SZ7d0AVPf/yuHtwokQxwmXoZAxwIvIz0QJdrvlviedGStjwFnuH0
+         dWoSBtZhvcLxp+nm8qHYd1dmX0ndy95VX+F9wq0Qgk7rtmy7OxYvfErkpijDsKJUpAUM
+         y4E9dc2AIN1EMkDguE4YgH3aSVjYHjn8X5AKjvInB0BO0wOGjQGsP+OCp5+FZEbMrWo8
+         jR5Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794436183; x=1795040983; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=l88aQEthU6YDCYl3Vpu0UwlZOCfC9J5sQ3/7Brd6dlY=;
+        b=Zh1V8q9kqkpQMSlTai0vxhcwchFjHaXTHjbGVEyxL8NDHpebeRgslCUDB6EIEZb5Yj
+         +5+lUMVMNOoknVJUxNdnoNExBYqpG9G4r2QyRNNBisDZ2ScD1oQnOgXodbJ4ZZtnO7U3
+         bEUSrr7q6FwRSllf2g/eZMWAtUd3G6Q1OLiCkHfcjO9s6Mc45u/L+9RMTPynJuwxOr06
+         VON8kAMmC7yHGn74m8ySlqoUJADqnPEXj+RFZiJprG2kj70C3hr332mI6XsDNDKCr7sk
+         JepbhpqxjeAIQMqASoQBumn68OBEVKAOdwdKXoObid6rZScZvFgoDKc0BQuCTSJKar8D
+         lMVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794436183; x=1795040983;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=l88aQEthU6YDCYl3Vpu0UwlZOCfC9J5sQ3/7Brd6dlY=;
+        b=d11hR8cwqfoTLB4x6aVRYHoCEcOrMMotc9h+NzgvtG1xAgqCcE4CCMKg7ot0XRBfhK
+         8V3/KQa0Rz4/cyzD+BtRGBpo4JLeqHWh4NyumNLyKJMlhC/2SldMqAIQuN8La3JEgYws
+         jmhQL4/zh7nTRPEdZo45zgwdCB5zwreYDuDQJdVp/nCasvGE0UKL1u0bJcmnwE+Lj6dw
+         jQdoBBRH4Ippvdxwyi17QBZy4yCxJnxAZPjdzNcSISyox1voydXe0t3rjMGHiNJ28REH
+         aotSDcAAS6A7KVjSbGf52ZUxuufc90RYF+AX7LV90GMKTJPRanCit9J1yEY24rS4pmhB
+         gUxQ==
+X-Gm-Message-State: APuU4Z9kNWNrML8cH1hQiP+nlcQVIIDett925i3bnfyx+HhRNuZNe8nu
+	OPXmdJm/vBBtl4vcop6AER32xvYJHQbvM13GiU5v/efHlyLGgiuO9aCx3p+Rtp3ZgwuuIYGXPBJ
+	E/GNqObb41QcqnV+6zEClP8uQLHHhfsc=
+X-Gm-Gg: AYBFou3reMPhK8Hk0tEZMWzPy1Eo8FI38FKjPdQyw/j5b32BNyJBCQbvM5GMWHceSUQ
+	UozDYadbPbZWMEArs8K6oFUMh8+RwiGChd9ilmAwWR8QQF5A0mzT0D6GB7uj3Gzi+ObXqirpXgY
+	dSvSlPKVcW0Y9jJNkysSDiGR++fTluS54iCR27y29FpOW4NSR7z+/kwRiMXuipt7b3rWz7tSPOQ
+	on5Eac2ypkBku5T7jzuNy0UWyKcV8eUtYSWC4lYRtl82TYY6Es4ZvDA94+QH7JvLm6ipmSC/d5Q
+	gw5lvw+eICUlfJdRt9zczw7LQz/pu+Df9AdurpauI0C4s5YO9CB3QPU9RDxPmOA8aU0vUsgbExX
+	RbuMYOKi0Wlip0uKNfpGnyeujHxCWwbrzBQuGJhyEgRC6U8lPp2C6U7rKaYjVi1dlHHCorUChWX
+	lDK+k48EDFqbwJu+OI0RN7igDw5S5GucBTi8o6ibQw8gLvEM4wFSW6jM0Pgc/PZ6pqFIb1dCtLE
+	BSIUzj96v/4uMVxP9PCiRrjiGaaJcMbVnoxi9iVJnXPcqHSgA==
+X-Received: by 2002:a05:6402:c6c1:10b0:6b5:962e:e00f with SMTP id
+ 4fb4d7f45d1cf-6b77780f404mr2255040a12.28.1794436182455; Wed, 11 Nov 2026
+ 14:29:42 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -66,111 +105,83 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+References: <20261111215729.10683-1-rosenp@gmail.com> <20261111215729.10683-7-rosenp@gmail.com>
+ <sashiko-outbox-209774@kernel.org>
+In-Reply-To: <sashiko-outbox-209774@kernel.org>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Wed, 11 Nov 2026 14:29:31 -0800
+X-Gm-Features: AclHuK_NMj1qq8-W9ISvxeZgzbGMriIS_aT5l7uzjtRMavpKllDh5UrOmxBfjQA
+Message-ID: <CAKxU2N-DMRg=Azrb1QRmLw4zBjij_fui9s8fubK_ystZAKfBfA@mail.gmail.com>
+Subject: Re: [PATCH v3 6/7] clk: add a driver for the Atheros/Qualcomm ath79
+ PLL controller
+To: sashiko-reviews@lists.linux.dev
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, 
+	conor+dt@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Am Mittwoch, 11. November 2026, 23:06:53 Mitteleurop=C3=A4ische Normalzeit =
-schrieb Tim Surber:
-> All RK3588 audio fractional dividers except clk_i2s5_8ch_tx_frac and
-> clk_i2s6_8ch_rx_frac are registered with CLK_SET_RATE_PARENT. Without it
-> the divider cannot raise the rate of its *_src parent again once the
-> parent has been lowered.
->=20
-> That happens on HDMI0 (i2s5_8ch) after a 192 kHz stream. Its MCLK of
-> 24.576 MHz (128 * fs) is an integer divisor of AUPLL (786.432 MHz / 32),
-> so the mux selects clk_i2s5_8ch_tx_src directly and sets its divider to
-> 32. For a following 176.4 kHz stream the mux selects the fractional
-> divider. rockchip_fractional_approximation() sees that the parent is
-> less than 20 times the requested rate and computes m/n against the
-> grandparent (AUPLL) rate, but the parent is never changed. The divider
-> is then programmed with m/n =3D 147/160 from 24.576 MHz. The clock
-> framework reports the requested 22.5792 MHz, but the fractional divider
-> does not work at such a ratio and the I2S runs at about 54% of the
-> nominal rate (96000 instead of 176400 frames/s).
->=20
-> Add CLK_SET_RATE_PARENT to both dividers, as on all other I2S and SPDIF
-> fractional dividers of the RK3588 and as in the vendor kernel:
->=20
->   https://github.com/rockchip-linux/kernel/blob/470f9dccbdc42e7b8a824d0a5=
-c5640a10e9457d2/drivers/clk/rockchip/clk-rk3588.c#L2037
->   https://github.com/rockchip-linux/kernel/blob/470f9dccbdc42e7b8a824d0a5=
-c5640a10e9457d2/drivers/clk/rockchip/clk-rk3588.c#L2055
->=20
-> To reproduce, on any RK3588 board with HDMI0 audio enabled and a sink
-> that accepts 192 and 176.4 kHz LPCM: play 192 kHz, then time two
-> seconds of 176.4 kHz:
->=20
->   aplay -q -D hw:HDMI0 -t raw -f S16_LE -c 2 -r 192000 -d 1 /dev/zero
->   time aplay -q -D hw:HDMI0 -t raw -f S16_LE -c 2 -r 176400 -d 2 /dev/zero
->=20
-> On linux-rockchip for-next the second command takes 3.7 s instead of
-> 2.0 s, and clk_i2s5_8ch_tx_src stays at 24.576 MHz.
->=20
-> Tested on a FriendlyElec CM3588 NAS with HDMI0 cabled into its HDMI
-> receiver, the receiver's EDID advertising 192 and 176.4 kHz, and the
-> HDMI sound cards enabled in the device tree. Two 176.4 kHz runs after
-> boot, then three runs each preceded by a 192 kHz stream:
->=20
->                           176.4 kHz frames/s   clk_i2s5_8ch_tx_src
->                           after boot / after   after the 176.4 kHz
->                           192 kHz              stream (Hz)
->   for-next                175500 / 95600 (3x)  24576000
->   for-next + this patch   175500 / 174800 (3x) 786431991
->=20
-> With this patch the 32 to 192 kHz rates still play at their nominal
-> rate, and a frame counter played at 176.4 kHz after a 192 kHz stream
-> was captured bit-exact by the HDMI receiver. I2S6 RX is not used on
-> this board and was not tested.
->=20
-> Fixes: f1c506d152ff ("clk: rockchip: add clock controller for the RK3588")
-> Signed-off-by: Tim Surber <me@timsurber.de>
-
-This is waaaay too long for a siomple two line change. Please shorten
-this to a sane level.
-
-
-Thanks
-Heiko
-
-> ---
->  drivers/clk/rockchip/clk-rk3588.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk=
-=2Drk3588.c
-> index 24baa0ef9..63aeeb501 100644
-> --- a/drivers/clk/rockchip/clk-rk3588.c
-> +++ b/drivers/clk/rockchip/clk-rk3588.c
-> @@ -2024,7 +2024,8 @@ static struct rockchip_clk_branch rk3588_early_clk_=
-branches[] __initdata =3D {
->  	COMPOSITE(CLK_I2S5_8CH_TX_SRC, "clk_i2s5_8ch_tx_src", gpll_aupll_p, 0,
->  			RK3588_CLKSEL_CON(140), 10, 1, MFLAGS, 5, 5, DFLAGS,
->  			RK3588_CLKGATE_CON(62), 6, GFLAGS),
-> -	COMPOSITE_FRACMUX(CLK_I2S5_8CH_TX_FRAC, "clk_i2s5_8ch_tx_frac", "clk_i2=
-s5_8ch_tx_src", 0,
-> +	COMPOSITE_FRACMUX(CLK_I2S5_8CH_TX_FRAC, "clk_i2s5_8ch_tx_frac", "clk_i2=
-s5_8ch_tx_src",
-> +			CLK_SET_RATE_PARENT,
->  			RK3588_CLKSEL_CON(141), 0,
->  			RK3588_CLKGATE_CON(62), 7, GFLAGS,
->  			&rk3588_i2s5_8ch_tx_fracmux),
-> @@ -2043,7 +2044,8 @@ static struct rockchip_clk_branch rk3588_early_clk_=
-branches[] __initdata =3D {
->  	COMPOSITE(CLK_I2S6_8CH_RX_SRC, "clk_i2s6_8ch_rx_src", gpll_aupll_p, 0,
->  			RK3588_CLKSEL_CON(146), 7, 1, MFLAGS, 2, 5, DFLAGS,
->  			RK3588_CLKGATE_CON(63), 0, GFLAGS),
-> -	COMPOSITE_FRACMUX(CLK_I2S6_8CH_RX_FRAC, "clk_i2s6_8ch_rx_frac", "clk_i2=
-s6_8ch_rx_src", 0,
-> +	COMPOSITE_FRACMUX(CLK_I2S6_8CH_RX_FRAC, "clk_i2s6_8ch_rx_frac", "clk_i2=
-s6_8ch_rx_src",
-> +			CLK_SET_RATE_PARENT,
->  			RK3588_CLKSEL_CON(147), 0,
->  			RK3588_CLKGATE_CON(63), 1, GFLAGS,
->  			&rk3588_i2s6_8ch_rx_fracmux),
->=20
-> base-commit: c3baae5f1a15645cddadcb2b9abddef5df291f59
->=20
-
-
-
-
+On Wed, Nov 11, 2026 at 2:14=E2=80=AFPM <sashiko-bot@kernel.org> wrote:
+>
+> Thank you for your contribution! Sashiko AI review found 1 potential
+> issue to consider:
+> - [Medium] clk: ath79: zeroed hfrac shift in qca956x_pll_rate()
+> --
+>
+> commit 423abf763de32c1b127032d8210181c833b02aa9
+> Author: Rosen Penev <rosenp@gmail.com>
+>
+> clk: add a driver for the Atheros/Qualcomm ath79 PLL controller
+>
+> This commit adds a common clock driver for the Atheros/Qualcomm ath79 PLL
+> controller to replace the arch/mips/ath79/clock.c setup code.
+>
+> > diff --git a/drivers/clk/clk-ath79.c b/drivers/clk/clk-ath79.c
+> > new file mode 100644
+> > index 0000000000000..6eab4cd1a91f7
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-ath79.c
+> > @@ -0,0 +1,782 @@
+>
+> [ ... ]
+>
+> > +#define QCA956X_PLL_CONFIG1_NFRAC_L                  GENMASK(4, 0)
+> > +#define QCA956X_PLL_CONFIG1_NFRAC_H                  GENMASK(17, 5)
+> > +#define QCA956X_PLL_CONFIG1_NINT                     GENMASK(26, 18)
+>
+> [ ... ]
+>
+> > +static unsigned long qca956x_pll_rate(unsigned long ref, u32 config,
+> > +                                   u32 config1, u32 refdiv_mask,
+> > +                                   u32 outdiv_mask)
+> > +{
+> > +     u32 ref_div, out_div, nint, hfrac, lfrac;
+> > +     u64 rate;
+> > +
+> > +     ref_div =3D (config & refdiv_mask) >> __ffs(refdiv_mask);
+> > +     out_div =3D (config & outdiv_mask) >> __ffs(outdiv_mask);
+> > +     nint =3D FIELD_GET(QCA956X_PLL_CONFIG1_NINT, config1);
+> > +     hfrac =3D FIELD_GET(QCA956X_PLL_CONFIG1_NFRAC_H, config1);
+> > +     lfrac =3D FIELD_GET(QCA956X_PLL_CONFIG1_NFRAC_L, config1);
+> > +
+> > +     if (!ref_div)
+> > +             return 0;
+> > +
+> > +     rate =3D div_u64((u64)ref * nint, ref_div);
+> > +     rate +=3D div_u64((u64)ref * lfrac, (ref_div * 25) << 13);
+> > +     rate +=3D div_u64((u64)ref * (hfrac >> 13), ref_div);
+>
+> [Severity: Medium]
+> Does (hfrac >> 13) always evaluate to 0 here?  QCA956X_PLL_CONFIG1_NFRAC_=
+H
+> is a 13-bit mask (GENMASK(17, 5)), so hfrac is at most 0x1fff and shiftin=
+g
+> it right by 13 drops the upper fractional multiplier completely when
+> computing the QCA956x CPU, DDR, and AHB clock rates.  Matching the lfrac
+> term above, it looks like the divisor should be shifted instead:
+> div_u64((u64)ref * hfrac, ref_div << 13).
+This was present in the old code. Unfortunately, I don't have the
+hardware to test this.
+>
+> --
+> Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261111215729.10=
+683-1-rosenp@gmail.com?part=3D6
