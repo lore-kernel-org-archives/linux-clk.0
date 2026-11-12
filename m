@@ -1,70 +1,72 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.182.12
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794497695;
-	b=Qj4C22alFQi79d513p1RW137M3uaf6xIYJ8tWKrYDVtTwqto63uTUImMVvXOUDTUWDs6
-	 qZeasjeAlVLpckR9s9Iw3QAN+wojgkPFxrfs2XXH/gLP4ZloxnLh7jaD2XMD6fqabuAIl
-	 Cv9uMlHU36q09dg5aZhupFeqQHF6SJu+wFau1dLo1yYwLsFqaXn2yYyP9a/QtWGEvX9W3
-	 YFIWN4tSQ4i2GmceaUGxoz16BSYHnhoHFPnhMIQEjIv5DEtI4etpmuirs+H9DXROyWpkA
-	 acfVfvB/yYnAdM1GNUnXrrJJmXD29EcLpSQZvAqrotMQwoGbzOVVWPUrbOdVQ5zpmcw==
+	t=1794497947;
+	b=zSVPLaOZv8FeyN+sqzOZMWwqEayti2jvJSIpgoxXU/TOI3v6lbrteAsmmxB3i23feBKH
+	 80aiyC7ojVpu0LtxYKN3hjAWaV3GEQZklNxtMC+lp8H0ldrKcYaLOsPuQhn38lRjnR6ml
+	 sxtHAdV2nD2pZfv2Q2bCpp/GdLHfoxVGju0mDnVq3eMGuooUPd0u1a9vmDoMt4OARmjMV
+	 Pu854gY8dRJTN49i+FE2FRGiI0zf52YGMHwcSc4p0zmLm1YpeOuZkj+UKSvRla2e0DVOQ
+	 GQdPsLLUqT6fK3TUZU2LDa+9DE1kLnQZWMOkO1Dk/SKrF3IDH6qzqBSDZqCUxNIR24Q==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794497695;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794497947;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
 	 Subject:Message-ID:References:MIME-Version:Content-Type:
 	 Content-Disposition:In-Reply-To:X-Zoho-Virus-Status:X-Zoho-AV-Stamp:
 	 X-ZohoMailClient;
-	bh=JRagoxBDJAa5Q1wRFKByojnXq0h1AFaHVwsm+1tOWgU=;
-	b=1eViURfWpVljY4M7z7HJdjIpnDBxypiaNAmlYSDsDsjG2nn/XSIcSYtQNSubw2BddPDk
-	 hH5Cgc0KQ0uLN7uRcHtMqK7JKhxA6PfU8dyVbgEi5C8zqPwHlqXR7/GUeBK8NSVpu9vxH
-	 6jYGS1R2q2FdKrggbX1e3ESS12tAm8NMEN4btsXxlPEBy4ovrWTxxiw6djyu14GDKg4XD
-	 9Ljx1CIAgQ17UteLi5T1ol2btPBgnUYpiYsfrBaB9tdvZeH1R7qHvxYCPz5Q4cwzSZQJz
-	 mj0SMLgURwkOvSMW1RGaTmC8EdAfXbAMLg6Hd/QAyxOCyBZtWJLUz2nnNx5uwO1ppJw==
+	bh=lIXJ87kxd9eQVBK6fk3UlegeNVro2twhhnyzAdeUOME=;
+	b=jFw5+teA+yJn/1OKqbwmGVv/QLe3Aq6WSrVkMbfT6j66jke1VXB5A9WX2N5loGRSz5Zt
+	 FexpSz5UdHjq5+9oCZ7FKdADQHNZOa22CSyLaTCT2mEkJRTcnVsDtgbRVIM1B0/2CSOz0
+	 hqNgUuuhgXMhWwtCsbbnebM6JiwMz12sYnLo6abPwUUNLQ3gIHXonNOHkxgqP4yAnjYqm
+	 lIMNwaM01Kstv3HaEdk9lC2f738AkGznvoDqMrxIL+AJrNl73lksq0Y3zvkxBWKzacBRP
+	 d+O159iTZdAbvNtuV8sLShih/s4BDc0H2l/noibhexEr1qCJ+DLmhLA2ktqU/ZipPKA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=collabora.com;
 	spf=pass smtp.mailfrom=collabora.com;
-	dkim=pass header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=zohomail header.b=JxX9nc3F;
+	dkim=pass header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=zohomail header.b=kJ1YY3YW;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.182.12
 Received: from sender5-op-o12.zoho.com (sender5-op-o12.zoho.com [165.173.182.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C14606A8AD;
-	Thu, 12 Nov 2026 15:34:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E5C14606A8AD
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA59606A334;
+	Thu, 12 Nov 2026 15:39:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6BA59606A334
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=zohomail header.b=JxX9nc3F
-ARC-Seal: i=1; a=rsa-sha256; t=1794497676; cv=none; 
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=zohomail header.b=kJ1YY3YW
+ARC-Seal: i=1; a=rsa-sha256; t=1794497929; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=CZdytktonm5eT3qUQpKVdePHZ78/3rk21ik9/Ys3ImiGTeNM7yhs/Vd0oTuzZA8qoC9I4EgN2UgORtNTd64EKBePn5wZ+I8NEkozwqIVK6zKjt8XBxZzXxEWo6P62qFZWvEyQklQt5W58t+QJoFYMZq5hkbcEOdr6p6KUuu92lg=
+	b=SZo2sOXQID8TA6Vw2Ck9Giu72ukoIQNg/cYKDFY1+ZlEt4IgmhP3aP+RLKIEfO/UabdBkevEL9h7e/SvImF6vI866eA0JUUkZBlOE6CA16vheh/nweSG1dhIzWh2AYpqTqm2t2eTGsWUH2DRppMs5uKlS8MpXUVyz2iX22bniZg=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1794497676; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=JRagoxBDJAa5Q1wRFKByojnXq0h1AFaHVwsm+1tOWgU=; 
-	b=BlkpEqRiyTfHPbrjdHsE1bSL5eEaJfSqQ72R5KoSrL439EwrZICcT2X5PUseafHW+lHN7L06nmBzygWRFMNRcVwpV2gknBR8Q9CPEbI12cLBAZf+eiQV7CLhptOOE6KPJzUDF3XnNLX8PXKDvSE39Dn7dzB2Ns4OfZCKjs5iu4g=
+	t=1794497929; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=lIXJ87kxd9eQVBK6fk3UlegeNVro2twhhnyzAdeUOME=; 
+	b=D8Z5R9giGMvwqbELAOQvDF93JqnTA37YRcJ/lAq/OG81bkVn97ihcUxBYETiCet6xE8iHf6/6PQe8ncIumGp3b/NsYarDwoDtvlHRV5SgSwvo1e20W/1q9eZc4mLvvbA5ITIVhacy/SMGQFint1BvEGoZoU2L2MsmVJ9PJ1KzCs=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
 	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: a=rsa-sha256; b=JxX9nc3Fqx6Bys5vXStyOvxUTmJkEeXl05X9gSHdVOvBEtRuJJLI+ZOO3CMnEFxJrkHcyFI2cztCXC3BamEr64/uBe/3baQi7OILgA5LFurCV0rkoSa+zb+kd4ppu3+SV20uSK3VxS9K3V153dtBu3muZ1HSyjhMstxR6Jq8jvk=; c=relaxed/relaxed; s=zohomail; d=collabora.com; v=1; bh=JRagoxBDJAa5Q1wRFKByojnXq0h1AFaHVwsm+1tOWgU=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
-Received: by smtp.zohomail.com with SMTPS id 1794497675183343.2615853487197;
-	Thu, 12 Nov 2026 07:34:35 -0800 (PST)
+DKIM-Signature: a=rsa-sha256; b=kJ1YY3YW6Mk7MqC10zlRrIMspmDs4Cxh3P71adlO8fL7qTXWzgnUITF9bwyOIpfn71wWCSBvMj1Uajx9i9GCBn2R7ZAiupmIgsAbls5qBvy/Bmh3TAV5Sjxsf8PIGriPuYS6dpWfghNiPiVsenwLZb+Qz7h7QV2slDefKKl3L1U=; c=relaxed/relaxed; s=zohomail; d=collabora.com; v=1; bh=lIXJ87kxd9eQVBK6fk3UlegeNVro2twhhnyzAdeUOME=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
+Received: by smtp.zohomail.com with SMTPS id 1794497927174141.20643400838412;
+	Thu, 12 Nov 2026 07:38:47 -0800 (PST)
 Received: by venus (Postfix, from userid 1000)
-	id B986B180BC0; Thu, 12 Nov 2026 16:34:30 +0100 (CET)
-Date: Thu, 12 Nov 2026 16:34:30 +0100
+	id 83AA2180BC0; Thu, 12 Nov 2026 16:38:42 +0100 (CET)
+Date: Thu, 12 Nov 2026 16:38:42 +0100
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
 To: Carlo Caione <ccaione@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Brian Norris <computersforpeace@gmail.com>, 
-	Maxime Coquelin <maxime.coquelin@st.com>, 
+Cc: Brian Masney <masneyb@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Brian Norris <computersforpeace@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, 
 	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, 
 	Michael Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, 
 	David Laight <david.laight.linux@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Jerome Brunet <jbrunet@baylibre.com>
 Subject: Re: [PATCH v2 1/3] clk: divider: Fix the divisor for rates above
  4.29 GHz
-Message-ID: <avXcTO17vMLnmaJZ@venus>
+Message-ID: <avXcic19CqrpL3SH@venus>
 References: <20261112-upstream-clk-divider-large-rates-v2-0-18f3bb888b0c@baylibre.com>
  <20261112-upstream-clk-divider-large-rates-v2-1-18f3bb888b0c@baylibre.com>
+ <179449618653.1227210.1767827907767958978.b4-review@b4>
+ <avXa2Z3R6Xogr6Sw@macbook.homenet.telecomitalia.it>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -75,15 +77,15 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iwqnrilbg3gxhv3t"
+	protocol="application/pgp-signature"; boundary="v3zf5vaosfj6ao5d"
 Content-Disposition: inline
-In-Reply-To: <20261112-upstream-clk-divider-large-rates-v2-1-18f3bb888b0c@baylibre.com>
+In-Reply-To: <avXa2Z3R6Xogr6Sw@macbook.homenet.telecomitalia.it>
 X-Zoho-Virus-Status: 1
 X-Zoho-AV-Stamp: zmail-av-0.2.13.1.5.4/294.473.96
 X-ZohoMailClient: External
 
 
---iwqnrilbg3gxhv3t
+--v3zf5vaosfj6ao5d
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -93,103 +95,67 @@ MIME-Version: 1.0
 
 Hi,
 
-On Thu, Nov 12, 2026 at 10:36:59AM +0100, Carlo Caione wrote:
-> DIV_ROUND_UP_ULL() takes a 32-bit divisor, so on 64-bit platforms a
-> requested rate above 4.29 GHz is truncated. A divider fed by a 5.94 GHz
-> PLL then computes a divisor of 7, not 1, for 5.94 GHz.
+On Thu, Nov 12, 2026 at 04:29:55PM +0100, Carlo Caione wrote:
+> On Thu, Nov 12, 2026 at 10:09:46 +0100, Brian Masney wrote:
+> > Hi Carlo,
 >=20
-> Round up with (parent_rate - 1) / rate + 1 instead, building on an
-> earlier fix by Sebastian Reichel. It divides by the full rate and does
-> not overflow with clk_round_rate(clk, ULONG_MAX).
+> Hi Brian,
 >=20
-> Fixes: 9556f9dad8f5 ("clk: divider: handle integer overflow when dividing=
- large clock rates")
-> Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
-> Suggested-by: David Laight <david.laight.linux@gmail.com>
-> Signed-off-by: Carlo Caione <ccaione@baylibre.com>
-> ---
+> > >  static int _div_round_up(const struct clk_div_table *table,
+> > >  			 unsigned long parent_rate, unsigned long rate,
+> > >  			 unsigned long flags)
+> > >  {
+> > > -	int div =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+> > > +	int div =3D _get_div_round_up(parent_rate, rate);
+> >=20
+> > _get_div_round_up() returns an unsigned long however it's downsized to
+> > an int here.
+>=20
+> Right, but wasn't also DIV_ROUND_UP_ULL() previously returning a u64
+> that was stored in the same int?
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+I would also argue, that this is a separate fix. Looking at the code
+involved it goes all the way down to this incorrectly using int for
+a clock rate:
+
+/*
+ * ...
+ * @determine_rate: Given a target rate as input, returns the closest rate
+ *		actually supported by the clock, and optionally the parent clock
+ *		that should be used to provide the clock rate.
+ * ...
+ */
+struct clk_ops {
+    ...
+    int (*determine_rate)(struct clk_hw *hw,
+                          struct clk_rate_request *req);
+    ...
+}
+
+Fixing that will be a bigger task.
 
 Greetings,
 
 -- Sebastian
 
->  drivers/clk/clk-divider.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index f68216c65d3d..c3f46f9ee451 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -223,11 +223,21 @@ static int _round_down_table(const struct clk_div_t=
-able *table, int div)
->  	return down;
->  }
-> =20
-> +/*
-> + * DIV_ROUND_UP() without the addition, which overflows for rates close =
-to
-> + * ULONG_MAX, as with clk_round_rate(clk, ULONG_MAX)
-> + */
-> +static unsigned long _get_div_round_up(unsigned long parent_rate,
-> +				       unsigned long rate)
-> +{
-> +	return parent_rate ? (parent_rate - 1) / rate + 1 : 0;
-> +}
-> +
->  static int _div_round_up(const struct clk_div_table *table,
->  			 unsigned long parent_rate, unsigned long rate,
->  			 unsigned long flags)
->  {
-> -	int div =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-> +	int div =3D _get_div_round_up(parent_rate, rate);
-> =20
->  	if (flags & CLK_DIVIDER_POWER_OF_TWO)
->  		div =3D __roundup_pow_of_two(div);
-> @@ -244,7 +254,7 @@ static int _div_round_closest(const struct clk_div_ta=
-ble *table,
->  	int up, down;
->  	unsigned long up_rate, down_rate;
-> =20
-> -	up =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-> +	up =3D _get_div_round_up(parent_rate, rate);
->  	down =3D parent_rate / rate;
-> =20
->  	if (flags & CLK_DIVIDER_POWER_OF_TWO) {
-> @@ -423,7 +433,7 @@ int divider_get_val(unsigned long rate, unsigned long=
- parent_rate,
->  {
->  	unsigned int div, value;
-> =20
-> -	div =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-> +	div =3D _get_div_round_up(parent_rate, rate);
-> =20
->  	if (!_is_valid_div(table, div, flags))
->  		return -EINVAL;
->=20
-> --=20
-> 2.56.0
->=20
-
---iwqnrilbg3gxhv3t
+--v3zf5vaosfj6ao5d
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmr13IMACgkQ2O7X88g7
-+pp12w/+Jtgek0qMQ0a6JHmqzow6wkNT4+GjgGGKbd5CRBkx/uT1G8llmBdQ0GsT
-89CBohhtcExHdubCspJD2ZFR3SidaGzOe1EElFfG5iSUTVIL9ptpY1HZfQtlkTL8
-Q13lT2sr62yPExDHZVAYkxTsEKKVxycxcFSn+GrDPwzJaPqLqrM8GvvvJmorK8hE
-v413+HPtFVZIi2OH98diCDcDiymZO8XdkxVOYT579at1P6EJNdnRoixPsp4MIiDZ
-mbsHC/w+4xfbtpTgI8uZ5DoyAQV/K+P1vmrYyHCWEXOE9kjk1msJbLmI1hAzwoLG
-xFl/NdclkfhwzHbFrSXyEPwYMfy5HezV32n2RBMciiSekTW3ga0Yri/p5MnX+XAv
-LtmsoPIin7OrixZ59uRKsTDwE8gatqe4PfwlQBVykYkVbvptJ5rOQY5jqffxM3IS
-9DpwMDixCZ78U34lppQURQhnqrX8KqLzpT6T8HZo6JUrRkncp1z/j06Tk3M3GjBj
-uB1nhksHWIjS/7vGg0XhXTL2DfKWFsiGKj1mZ7tserSbN1Td2wG4Phga4xfJlbno
-m4ARK5XTM1nYbvt7zHD+Icjci5qV3VS/qAFSDUlPHbMSNiQnHuRW4otd49S9Faul
-tUHTTHMWi9Y28C28gdvfWd45ORUp6h936emA/VQl2IZw8YZfDGg=
-=KjnP
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmr13YIACgkQ2O7X88g7
++pq9MA//VjlOYlQKPIhGRt9s18w0TNK/1g7sv6eo6UVp+cp3fI2t4tDOPd1X7XY4
+a5qxhjd7e9HkaPO/G8oEeP2EY0BzYXOCjXrt7djjKtzSJz62hauxsBGFNdJHC0NK
+FND471nMdxvFPbWQCfdcZY+EDhDZPpPgpN/72OeVHJx4AOWgSi5WVzx1xN5dSjbd
+b8/pZhdbW9Fz4Du88m85Y0lBmz+WjCxcDeAwHn3IbSESqKn3t65LzFh2C3cXUe9h
+mcWJjNdGAIPczEZH3N58LviUEeix47IM09DJnPaN9hgtqMYsPgsI0Bh/jtS/4F5X
+wsZBLL/2ehvfrcFoCOxqNo1kIaqgcnNGQBqOJdErzdjaLsb+fPezlmuh8OuA267c
+fsK/lHaZhJon9KpB50B9c/2mn3WlDO+RVDCNJpU4FyPgjMJCqxDNQrnT6PDKeypW
+nC4WgsafpPGnGuPvsA2mqeJuvZ3cT4eE8lIptrYMJwpn6lqZiEmkVrzGPDePIf/P
+6oHOoXFHWbcgoqZkx5u/W08K2G/FhD26qCm/dFdT3lfKKZipxYEczR3Z0e0/mi2d
+WbuNRDNwhfInH+Gz35nRp1SCjY0DSdj9OCnh5L1XK+OMP5tAe22HWjG1F3LFdHrT
+NE2Li21dKYIhFZD8wxyawUpJhM3HaszRjaTXFs0HqLsf8HjLiRE=
+=dBFs
 -----END PGP SIGNATURE-----
 
---iwqnrilbg3gxhv3t--
+--v3zf5vaosfj6ao5d--
