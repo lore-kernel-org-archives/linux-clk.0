@@ -1,60 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.13.80.246
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794485374;
-	b=HYsPaDzLUCZSj27C1D/Q6K5gS17AfS4zbBkYNZs1//ifiZm4R+5MOhxHswZZ7iKI+0CL
-	 rLixCRtGcH3tf3hlq6AkTKmg5ZInr5o0Z91OtKy42fv2ikvwwdRKYqhr5CPNkFbYh00Mb
-	 WUB4O99Q2IBkXsntmi60nsIMleJXozjJ0Brhn6AbRP5EphyEeeP0GtOJY9/Fb4NQodavb
-	 jlel0OM8b+mGtXYalbKh+o2ah9B5n9p1SrYSeheES/nRmW3LcBUc/tPt5Tc43+9PS3vfU
-	 hGyAU9yYVLgB6Wip6KgBQzhktB46tpjdyvDkyiA3hIGuckzuQ1OAOXifODRkqAR79yg==
+	t=1794487708;
+	b=VDo/BFSffETgnheP44DGsTPU8JD4LEJfDHs/h6+JGqp0Q/SXKVjmKF3J1xz3AxRBYGcd
+	 5n+bmMB9UXuxKQPVbfUX6WH40GydYtmuJ46Q5U0PxgAq1e9BGoUPtEjCDvO/AHaSftm95
+	 iy556ZQ3wlVNfBnL8fuPKEZZSBmzLRiaXVUWJY4oK5BVShMRpEgLMKOsmkSSze+IZY3nD
+	 e+aWT3J0e0Ng1bIxKaHsTRBZuWqh8k9cbARix/6/cCRT1Pt73j8T8qGGkDZiV+lmuJ0nn
+	 QviisvKmWpT63dQ9PCDAbhxqqBjNmOeMFrCSQRMao3fGDOsd4YNECVVFgglpx4areDg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794485374;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=UikW9uf/xFnA2N8rJ0SI/amxaDAWBP7DQO//iFgbEYA=;
-	b=AVCjPS+bjtcoc7sSvPPs606HlMs55K/zGkKJMNHQJh+fPgI6gaAjJzxZfEoXEn9WpVQr
-	 VyfsaulGVBPdTzSHsb1t0fuaZ5VONyhd76X2AAK3toRj6fE/ie2d9Y3yCUAuJbV7+poRa
-	 PNDDPB0PX6lAcudfddvaqIlIYrH0wjAMGnT1p6dS0nc+nA7ax057/S7I0VpdWPHk8gX23
-	 N2Fh2brT5cGjOJHubqUw5h5gJKeZwYDynWa/0yKLlSTYQ5o1ACGxqUpKcsu3zoBw/P+aI
-	 zjaKcg2/0UmNzopJEycPINS51ET+YFsNkePPza18QWDOciW/AI9zF10CU+urZFP1gkQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794487708;
+	h=DMARC-Filter:Received:DKIM-Signature:MIME-Version:Date:From:To:Cc:
+	 Subject:In-Reply-To:References:Message-ID:X-Sender:Content-Type:
+	 Content-Transfer-Encoding:X-Last-TLS-Session-Version;
+	bh=2ydDXOxFBj0SVycf8TwirFfYbpVr31/wQtaeKtsEhMo=;
+	b=tiNic/c4Sfa+f+bfquFWtScp9N/jsD/B7T5J8IxXlirAjPvqhbDFFKeJihhUN+nlllfn
+	 VJEf5hnARtHBWUocJKZTAum4UzQcL7RCXthucG6x9P26GSwi7rnjwKwfIqKqNcE65H31O
+	 TWBYIdZH3mJUdpS2zuwsEn2Re9cL89pFfsLj8K0VBgRhi9Jd3icExHZys/uzkL0js46XP
+	 tvTNl/F50sBCWL7NghCPhYxHTgbq+9ZePXVJrTQTS19vBm2s/pEg6Q3wypm+PoQF8RH6b
+	 PODpK4a35MrNsKuK+YsmhbGeoacFY8W0MYUl69RWWX8uPd4YN4hJOfc2IEtsMI/b9dQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oMBL3i1x;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=tipi-net.de;
+	spf=pass smtp.mailfrom=tipi-net.de;
+	dkim=pass header.d=tipi-net.de header.i=@tipi-net.de header.a=rsa-sha256 header.s=dkim header.b=D7HcLpg6;
+	arc=none smtp.remote-ip=194.13.80.246
+Received: from mail.tipi-net.de (mail.tipi-net.de [194.13.80.246])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43993606A31C;
-	Thu, 12 Nov 2026 12:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB06606A32A;
+	Thu, 12 Nov 2026 12:48:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3AB06606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tipi-net.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tipi-net.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oMBL3i1x
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACD0C1F00A06;
-	Thu, 12 Nov 2026 12:09:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794485373;
-	bh=UikW9uf/xFnA2N8rJ0SI/amxaDAWBP7DQO//iFgbEYA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=oMBL3i1xkKLBRWn6/ATajmAx/jiD8aMP3hh+WJeClwzsuQPuQKrqmGb5H5+1IVZ9M
-	 j8DmwJzKzTfcZlNIqa/dBcacFTGey1dM6O/PGAe0Vglb9Xv7BWuEAGnSUav7WReLBE
-	 DuL03vZK7iDhCyfd2BuBFln6lMnjXowXb1ZyNa/F/FZJwbmA4KZ1sBuC0/baS3hpuz
-	 zBVdllTc1HmsOSgiFJObK36lHjlCGz1jiW/ATLmvIX7eKM3Dx2qp3q0J5VaA2OXp/h
-	 +Y5IFFxioN2dLew/njScHCWhM6t/L31KE4K59OAwhdb1nUac+N41H/9xYc0RuPFXIT
-	 4WJO79GhvOVgA==
-From: Brian Masney <masneyb@kernel.org>
-To: Michal Simek <michal.simek@amd.com>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Linkai Gong <gonglinkai@kylinos.cn>
-Cc: Mike Turquette <mturquette@linaro.org>, 
- Soren Brinkmann <soren.brinkmann@xilinx.com>, Kees Cook <kees@kernel.org>, 
- Babanpreet Singh <bbnpreetsingh@gmail.com>, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20260908084727.1552042-1-gonglinkai@kylinos.cn>
-References: <20260908084727.1552042-1-gonglinkai@kylinos.cn>
-Subject: Re: [PATCH v2] clk: zynq: return -ETIMEDOUT if the PLL never locks
-Message-Id: <179448514302.1202846.1111029538170940837.b4-ty@b4>
-Date: Thu, 12 Nov 2026 07:05:43 -0500
+	dkim=pass (2048-bit key) header.d=tipi-net.de header.i=@tipi-net.de header.a=rsa-sha256 header.s=dkim header.b=D7HcLpg6
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 49B8BA1563;
+	Thu, 12 Nov 2026 13:48:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tipi-net.de; s=dkim;
+	t=1794487705; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=2ydDXOxFBj0SVycf8TwirFfYbpVr31/wQtaeKtsEhMo=;
+	b=D7HcLpg63LrjbttMO0pxYYrV4lPsjGVL0AmomQUy6vklnuvaQd47hBSSw4M9yWYO0IvDS7
+	EVJQkjzDstRV1nWS5gxD9evSHMU00LKFV2Uzinb5em+0lDA7Pv3vUfuE1n02P9x7z2s8AL
+	udl0MFHopqM+m2nkP2W7T3sJtdIog6KxIRdIsNS1gCUOPuQXJhis4QC2AkFRo6aQKBUfGc
+	kC50mM3sfe5RaXlFC85b7EaySfN3e/FHI1IoNH9JX1HzYioAuS/YdW44UO6AA3UPtA++Jk
+	qFmO1Wp7Uy3WXtCFl4AojrHhJbA82rGMQDAnvR5sBbBMlpea4W8bxk5/tz98vg==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -64,35 +53,53 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Date: Thu, 12 Nov 2026 13:48:24 +0100
+From: Nicolai Buchwitz <nb@tipi-net.de>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott
+ Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andrew
+ Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>, Phil Elwell
+ <phil@raspberrypi.com>, netdev@vger.kernel.org, James Clark <jjc@jclark.com>
+Subject: Re: [PATCH 3/3] ARM: dts: bcm2711: give the GENET MDIO controller its
+ clock
+In-Reply-To: <6125aa53-4fad-46ed-b627-e0fce7df7b84@broadcom.com>
+References: <20261020-devel-bcm2711-gisb-clk-v1-0-a1728724d0f8@tipi-net.de>
+ <20261020-devel-bcm2711-gisb-clk-v1-3-a1728724d0f8@tipi-net.de>
+ <6125aa53-4fad-46ed-b627-e0fce7df7b84@broadcom.com>
+Message-ID: <c00ede37512d46c8155647eed7e39450@tipi-net.de>
+X-Sender: nb@tipi-net.de
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev-7ca47
-X-Developer-Signature: v=1; a=openpgp-sha256; l=469; i=masneyb@kernel.org;
- s=20250903; h=from:subject:message-id;
- bh=gzP4VH5mbkB9Vv26t1n4TjvafvjC91W5uK6Td8dMPhA=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLK+rilp4s7Tf+h0wCeEQyrDfea3yC8nK/brb7bk5irVj
- 7C1SvbpKGVhEONikBVTZFmSa1QQkbrK9t4dTRaYOaxMIEMYuDgFYCI7DBkZ2p/qFPc1T9ywIfDy
- xMmGS4tjzGstu7eUrlv/xZ8n2OCxESPDR0uPzGXynWGbdvan2+0wKhXsuF3blW6cvdQkf++pr5e
- YAQ==
-X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hi Florian
 
-On Tue, 08 Sep 2026 16:47:27 +0800, Linkai Gong wrote:
-> clk: zynq: return -ETIMEDOUT if the PLL never locks
+On 20.10.2026 17:40, Florian Fainelli wrote:
+> On 10/20/26 07:58, Nicolai Buchwitz wrote:
+>> The MDC of the GENET MDIO controller comes from the GISB clock.
+>> Describe it, so mdio-bcm-unimac can get the real 200 MHz from
+>> clk_get_rate() instead of assuming the 250 MHz of the STB chips, and
+>> can put bounds on when an MDIO write completes for PTP.
+>> 
+>> Signed-off-by: Nicolai Buchwitz <nb@tipi-net.de>
+> 
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
-Note: I reworded the commit message to drop the changelog.
+sorry for ignorance, but I'm not familiar with how the ordering between
+these trees is usually handled. Patches 1+1 are in clk-next now 
+(af7994af5228,
+ab94dbf30233), and the last one for your dt tree needs the define from 
+the first patch
 
-Also, please consider posting another patch that allows compiling this
-driver with COMPILE_TEST.
+Do you take the dt patch for devicetree/next, or should I wait until the 
+rest lands
+in mainline? Thanks!
 
-
-Applied, thanks!
-
-[1/1] clk: zynq: return -ETIMEDOUT if the PLL never locks
-      https://git.kernel.org/clk/linux/c/b015dff34319
-
-Best regards,
--- 
-Brian Masney <masneyb@kernel.org>
-
+Nicolai
