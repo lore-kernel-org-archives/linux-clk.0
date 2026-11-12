@@ -1,47 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794475984;
-	b=r1lw/wVDPyv042+p+gvuauz9TskR08DkR9LBJO0rYmBT7z9fxRDDstghMIA4mxF3EbOM
-	 oSyAFKcxjdnWC5QjkbX6WEVI30S/m4AuTeJHOMecleAs1H0V49kKGoWtROf6FQ7kNz0NA
-	 AhmoDmJlxAPCRq6hk98Mf3q6721JYuord6+6xkrPqsOFAPaKQBR2ipinAiduhDwlhjdBQ
-	 CddIjDzmYzJc0ODEFl5CupNHbzPi5HtBKjsM1u/1cXNNT8CtwRmE7KGBBBrQFulGdL5iH
-	 ZPcqA/YQe+2wQShbisGDxA/v/ashYL95iCXDD32xo/mEqpwUYHTBGt2vSO/xw7I4Ueg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794475984;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=jnzr15QD+tJBeXzKgcGnqHoGqOduvA9S3WgQRBozxH8=;
-	b=X9EU8sH2tRLAc6hA4cLIWg9DM3KOXUfPRh90XL5eaoNivjG+AiU+16H1Cd1BtKLLHI53
-	 AWG9JFZaAJaXBsjCPKw5+nX80h2i1ZFvz/e2Zi4bE06SDuNIy7EYcx0G7Xf1glL5I3ris
-	 ENEBzgpdy77k8XeE9kru8sS1tsWU8MKD6+EjrK7sVmMOEhjlIRScrmoiQKgdjYDSx9R4d
-	 QJc4IaTjVDzoyMeCsCAfKnXMAwdxiY0D3ookYWZdOj+p1fKSjjCIeQBPolkYxpIO5FYe7
-	 wsPUGc8KJhOdEZ1XUtypLCd2omUgRDf9N03gd4oxX1NdekxOP3XlSM/Hg2/PdO/S/7A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R5j+wwXF;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794476063;
+	b=tRhL8Yu3/VHbjbIeI3DLPDVVN7UrZlXUpvKoqzb/Gnh+hYBlvGaDGaNf7scCFq/K8h1b
+	 Hyvv/MM/vwHWH5gh0CSMTV9RnAkuGi+5croM5j/8itMYI7jxwe2byrF5mYZ5NDNCX/BW8
+	 bR1h3fbKTIPfXt9UTRL+UVr9nSa27wq/k/8d5AnCWiWRtfcDs+P2nRBHfpHDw3iAWenKC
+	 Jdv8NwE3Xfj5mMc4MQlbdmaSpRvJ/URxy1NyyafbAIK+1WJrBRoPcgRBmPXKWa+lV1kKG
+	 Xa+SSIHTNJgBp736FzQEyxk5aBmy2/9dA1fsH69+5d2A98ZrEa6cRO3RhaS02CLngDQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794476063;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=0mwJLfkCKM4Ex+W3HdtHCenUOHq2LFEypD9rBYF7gtE=;
+	b=bzzoCPKX6sXcOdnXuL/G9UB5uuXMfJ+xHZZsQnAge5SaXEXOhnOdj1dt946T+RycJRxt
+	 cBWY8mVZmnTuaeEUBaiCrGpdGo5ff03XoTkdyMBgKTvlPyVoAHlQChnblaUhvzCkxXXg2
+	 D8oYYEpI9boJSS1OVb8sDEucbznIrxLh3i4PgVCFHOjwV4l2Rr0YxmsR13ofelg9iLDTi
+	 PpyYEKXhznao9Yq+TH5TAiYvgDYsSGIvZSVKJo0a7I3xEN6LydDcRP+kAbyeH12nxZJp7
+	 Wo1iH/T5zEnG014jWsS85szyRXjqqV04rdLBx070RYBHk26QcLt8U5tZgm9jVTLgRkw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=bsf0A2Om;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B82D606A32E;
-	Thu, 12 Nov 2026 09:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB63606A321;
+	Thu, 12 Nov 2026 09:34:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5CB63606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R5j+wwXF
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD4311F00A05;
-	Thu, 12 Nov 2026 09:32:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794475984;
-	bh=jnzr15QD+tJBeXzKgcGnqHoGqOduvA9S3WgQRBozxH8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=R5j+wwXF6pxh6my/nS2TUy+RaRN/63e/mW0WQir+0wbxcAU7oGlmH+pWaHXoa9gU+
-	 OGUIgQ2k/cEIw/DcN4rPCLpmjnnXSVVCvyRRvDtJXhGZ6wm3gI0huRr4VUWQ2RjBUR
-	 GFMcl0uUOFmU+QGRun35q1unBHxOSs82iSU/KPdGiBk5isY+13Su/8b2ErghhBd1AM
-	 ftHc24ulpQc6Wn+rFtdDcIGa3kQDb6iPnKWRPqQjx3pORULigJ3Er5Mz96f46O8hUP
-	 4WvIaG6B5gDGXES1VTt6zEm9pQmZ4cV7ZE3lZmyi0smDgZY2TtAYycEy/msbqpdB/D
-	 bJJL1hyJp5aFg==
-Message-ID: <ed3c4e4b-7c6a-46ea-b07c-ba7ce6214830@kernel.org>
-Date: Thu, 12 Nov 2026 10:32:56 +0100
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=bsf0A2Om
+Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
+	(Authenticated sender: pza@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 3C4902006B6;
+	Thu, 12 Nov 2026 10:34:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1794476059;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0mwJLfkCKM4Ex+W3HdtHCenUOHq2LFEypD9rBYF7gtE=;
+	b=bsf0A2OmIo4OBsbuBshB9FsFX+F+TlhG4Gz8KkGEF7/js8khUKc4FI8vayYVMoucxWt5Ko
+	OSe+42Jyd2PWyVH14xSLE5tWctlwWI5lrWBCo5sVnzIa3vqW/dtMAY0RyiDUO8i/jjLGIB
+	rTcVhWyyHueMksggRKGjb8Cr4pbO1YxIH/y+dZvjDMm7W+Qm3sqsTriUtrJMghd7MJCHk5
+	9HJ6ZUCw88gRvuW7vDyRAh/pvFXC5HcfyH0ls0VClY/szhjbvXmhugdmUTqMatmHWMdE9W
+	y3/CQfAD6KLC5jJyhVhVlEiuSEJZO14inIkgiocsGmop7a13sSD3yfXA2gUL5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1794476059;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0mwJLfkCKM4Ex+W3HdtHCenUOHq2LFEypD9rBYF7gtE=;
+	b=M1xp41demAYY1JUSaNTDwVYwai2XVErtg/5rY82QD66dsMfcSGVvcCGvdnK1iCTS4vsuRG
+	0g2v+8SS/0o8UoYCYk4xTCd5HOZhs7G74GoSjhGboBY3rzaGKEr3igoER60lWq3YBfoems
+	LC6yAO0ULo8LzWZsukM9Hfvoj9OYWwoJaWA+NTXYcl2uX4hY0dFY/ZBg0d9MaEiiCTRzCS
+	WGYlJ8lBDVHFlCuhMbSNgorxvZ/OhfmoN86+PsX8fdMbJnstsGZd+Ca6WKIl1hV96V4LEU
+	NmPE57+T7tHrO47mYGqt8S24mu98zwfwpoWHHg5dL/1/8TUsOewL3/Cb5maPCQ==
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794476059; a=rsa-sha256;
+	cv=none;
+	b=JXsBro+kIRWK2d9mYT2oon7XgCLOHsT+5BFR9eephMZg2hha8kNBOPeJWpw/6AarlhCBt+
+	PJrwDM+U2obtY0XoH/w7g4ENdE2YDw7jVCTptfy/a1LhoUx6rG3ZiQ+G63LBeTtEYG7fDU
+	NvmPdTX53nmIGlamlP85Yax6nEF8asBfcpSAUqu7HQk1l3SMf8p5m9JX2xROYoo7NZjUIN
+	lE5zbpyKrmZf1Bu8ZfUdAF4C4leSAajMcBpTbZcLpJKvubWThEvrl0is7gYnqYOcvTj7ZA
+	OgcjgU2kSIIxU82R9kn7HZhGHq0+CPOFK9i4vzE3lmJzR63DvKZJtZ2qefqh6w==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
+Message-ID: <65b603d24fa606b075a81b4e2211863a52c51d3e.camel@pengutronix.de>
+Subject: Re: [PATCH v2 4/4] clk: siflower: Add SF19A2890 peripheral clock
+ and reset manager driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Joseph Telaak <joseph@telaak.dev>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chuanhong Guo	 <gch981213@gmail.com>, Yao Zi
+ <me@ziyao.cc>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=	
+ <u.kleine-koenig@baylibre.com>, linux-mips@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 12 Nov 2026 10:34:19 +0100
+In-Reply-To: <CAPY4CJ5_Qa2vf7_GiFU-T92HDkA3mdY_x2Dt5DXZ5dMfS-oUwQ@mail.gmail.com>
+References: <20261111-sf19a2890-sysm-v2-0-d2fcb723e4f1@telaak.dev>
+	 <20261111-sf19a2890-sysm-v2-4-d2fcb723e4f1@telaak.dev>
+	 <d59f52d1466c515f574be1e9eb127ca3e43d155b.camel@pengutronix.de>
+	 <CAPY4CJ5_Qa2vf7_GiFU-T92HDkA3mdY_x2Dt5DXZ5dMfS-oUwQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,194 +102,67 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/11] dt-bindings: clock: qcom: ipq5332-gcc: Describe
- clock inputs per compatible
-To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Georgi Djakov <djakov@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
- Abel Vesa <abelvesa@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20260921-ipq_clk_changes-v1-0-d242e3d49648@oss.qualcomm.com>
- <20260921-ipq_clk_changes-v1-5-d242e3d49648@oss.qualcomm.com>
- <62a5fabc-3a06-42fa-9c6b-6504650e712b@kernel.org>
- <7bcffc7c-5dda-4ead-a053-7eb4980e43a4@oss.qualcomm.com>
- <bec2bee4-dd38-4846-91d7-006fe38fc9da@kernel.org>
- <af43c724-89b9-456d-a5da-0d8ba46a9b8d@oss.qualcomm.com>
- <e8dadc91-226d-4b05-8de1-4b22318fc7ea@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <e8dadc91-226d-4b05-8de1-4b22318fc7ea@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 12/11/2026 10:12, Kathiravan Thirumoorthy wrote:
-> 
-> On 9/25/2026 12:09 PM, Kathiravan Thirumoorthy wrote:
->>
->> On 9/24/2026 4:28 PM, Krzysztof Kozlowski wrote:
->>> On 24/09/2026 11:15, Kathiravan Thirumoorthy wrote:
->>>> On 9/23/2026 2:17 PM, Krzysztof Kozlowski wrote:
->>>>> On 21/09/2026 08:19, Kathiravan Thirumoorthy wrote:
->>>>>> The IPQ5332 and IPQ5424 GCC blocks use different clock input 
->>>>>> orderings.
->>>>>> Document the clock inputs in compatible-specific schema 
->>>>>> constraints instead
->>>>>> of using a common clock description.
->>>>>>
->>>>>> Also add the 375 MHz PPE clock generated by the CMN PLL to the 
->>>>>> IPQ5424
->>>>>> clock input list.
->>>>>>
->>>>>> This keeps the binding aligned with the clock ordering used by the
->>>>>> existing DTS and GCC driver implementations.
->>>>>>
->>>>>> Signed-off-by: Kathiravan Thirumoorthy 
->>>>>> <kathiravan.thirumoorthy@oss.qualcomm.com>
->>>>>> ---
->>>>>>    .../bindings/clock/qcom,ipq5332-gcc.yaml           | 26 
->>>>>> +++++++++++++---------
->>>>>>    1 file changed, 16 insertions(+), 10 deletions(-)
->>>>>>
->>>>>> diff --git 
->>>>>> a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml 
->>>>>> b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
->>>>>> index 1230183fc0a9..fb39dffca988 100644
->>>>>> --- a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
->>>>>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
->>>>>> @@ -25,14 +25,7 @@ properties:
->>>>>>         clocks:
->>>>>>        minItems: 5
->>>>>> -    items:
->>>>>> -      - description: Board XO clock source
->>>>>> -      - description: Sleep clock source
->>>>>> -      - description: PCIE 2lane PHY pipe clock source
->>>>>> -      - description: PCIE 2lane x1 PHY pipe clock source (For 
->>>>>> second lane)
->>>>>> -      - description: USB PCIE wrapper pipe clock source
->>>>>> -      - description: PCIE 2-lane PHY2 pipe clock source
->>>>>> -      - description: PCIE 2-lane PHY3 pipe clock source
->>>>> You are changing the order which is ABI break. Describe the actual
->>>>> problem to justify such change. Are you saying this was broken since
->>>>> beginning or what exactly is not working here? The driver was added by
->>>>> Qualcomm in 2024, so how did it even work? It's not some 10 yo legacy
->>>>> where we did some mistakes in binding while converting from TXT.
->>>>>
->>>>> Also, I do not get why the list cannot be shared.
->>>> When the bindings was posted, list is combined for both IPQ5332 and
->>>> IPQ5424. But the driver wasn't updated and it was following the below
->>>> order, so was DTS, which is not compatible the DT binding description.
->>>>
->>>> enum {
->>>>           DT_XO,
->>>>           DT_SLEEP_CLK,
->>>>           DT_PCIE30_PHY0_PIPE_CLK,
->>>>           DT_PCIE30_PHY1_PIPE_CLK,
->>>>           DT_PCIE30_PHY2_PIPE_CLK,
->>>>           DT_PCIE30_PHY3_PIPE_CLK,
->>>>           DT_USB_PCIE_WRAPPER_PIPE_CLK,
->>>>           DT_CMN_PLL_NSS_375M_CLK,
->>>> };
->>>>
->>>> So I'm splitting the description between IPQ5332 and IPQ5424 to 
->>>> matching
->>>> with the DTS and the driver description.
->>> So we asked back in 2024 to have the common part of the list. I even did
->>> the effort to dig it:
->>>
->>> https://lore.kernel.org/all/ruti7hmkxkayzmqfbme6rw6j2vbhlx4ul4ptcckwamcpd4cyfx@owufhxwpvlcj/ 
->>>
->>>
->>> Authors implemented it partially, broken drivers. Now you basically
->>> revert what we asked, which is BTW logical option. It's logical and
->>> reasonable, but leaves bitter feeling.
->>>
->>> I have feeling there is no accountability and no responsibility of the
->>> IPQ at all.
->>>
->>> No, that's not going to work. You cannot come 1.5 year later and revert
->>> what reviewer asked you, even if issue was just by mistake in the first
->>> place. And you should not even try to do that.
->>
->> I understand the concern, and I agree this should have been caught much
->> earlier.
->>
->> I only discovered the mismatch while working on the IPQ5424 clock
->> additions. My intent here is resolve the inconsistency that currently
->> exists between the binding and implementation.
->>
->>>
->>> NAK
->>
->> I'm happy to explore an alternative approach if updating the binding is
->> not considered acceptable.
-> 
-> Krzysztof, I understand the frustration behind this, and we will make 
-> sure issues like this are caught earlier going forward.
-> 
-> Could you please advise us on the acceptable way forward for this series?
-> 
+On Mi, 2026-11-11 at 14:08 -0500, Joseph Telaak wrote:
+> On Wed, Nov 11, 2026 at 10:56:47AM +0100, Philipp Zabel wrote:
+> > > + spin_lock_irqsave(&crm->lock, flags);
+> >=20
+> > Could be simplified with guard(spinlock)(&crm->lock);
+>=20
+> Will do in v3, as guard(spinlock_irqsave)(), since the clock gates take
+> the same lock from clk_enable(), which can run in interrupt context. I'll
+> convert the gate enable and disable paths as well.
+>=20
+> > > +static const u32 sf19a2890_usb_resets[] =3D {
+> > > + [RST_USB] =3D GENMASK(2, 0),
+> >=20
+> > Do these three bits control separate reset lines?
+> > Does the hardware require them to be changed together?
+>=20
+> Yes, they are separate lines, one per clock domain of the DWC2
+> controller. Bit 0 matches the controller's gate and bit 2 its AXI
+> master's (usb_axim). Bit 1 has no gate, so it is probably the PHY clock
+> domain, whose clock comes from the PHY rather than from this block.
+>=20
+> There is no public documentation for this block. Chuanhong explained in
+> v1 that the lines of one IP's clock domains have to be asserted together
+> [1], the same as the GMAC's.
 
-Unfortunately I don't know what to advise. I cannot Ack it, because
-people look at history commits, take them out of context and use as
-arguments in discussion ("oh look, here you acked such change, so I can
-do the same").
+Ah, I got confused by the commit message, which to me looked like the
+bus lockup issue is limited to GMAC.
 
-Maintainer's feedback was basically only partially implemented and now
-you want to revert that part which was implemented, basically opening
-the gate to allow such patterns in the future. I don't know how you are
-going to guarantee such issues will not happen in the future, so I guess
-you need to live with broken platform. Please align with Qualcomm SoC
-maintainers on this, because I will not ack it.
+> The dwc2 binding also takes a single reset for the controller.
 
-Best regards,
-Krzysztof
+That is irrelevant from my PoV, the binding could be insufficient for
+this integration.
+
+>=20
+> > > +static const u32 sf19a2890_uart_resets[] =3D {
+> > > + [RST_UART0] =3D BIT(0) | BIT(4),
+> > > + [RST_UART1] =3D BIT(1) | BIT(5),
+> > > + [RST_UART2] =3D BIT(2) | BIT(6),
+> >=20
+> > Same question as above.
+>=20
+> Yes, they are separate. Going by the gates at the same bit positions,
+> bits 0-2 are the UARTs' APB resets (PRESETn) and bits 4-6 their UART
+> clock domain resets (nUARTRST). The PL011 TRM (DDI 0183, section 2.4.1)
+> says the reset controller must use PRESETn to assert nUARTRST. This block
+> leaves both to software, so the driver asserts them together. The pl011
+> binding also allows a single reset.
+>=20
+> The same goes for the other two groups. The SPI block's bits 4 and 5 are
+> the PL022's PRESETn and nSSPRST, which its TRM (DDI 0194) ties together i=
+n
+> the same way. The WLAN blocks' bits 0-2 match their AXI slave, AXI master
+> and platform gates.
+>=20
+> v3 will explain each multi-bit group in the commit message, not just the
+> GMAC's.
+
+Please do. With that,
+
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+regards
+Philipp
