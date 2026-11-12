@@ -1,110 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794474730;
-	b=OnusfJH4M93/LCQPn6HgkDXrD2Cp0r+wucznOPbmzA8LyNvdqXlChKwW7YkQzPv0m4zK
-	 7+2YMzqExYM09sEN82+sOCTU1cskmA3zwMNJzonS/jJ/NKJokJMWfcLLasGiFGlPWD+o2
-	 EDS+8rLMtuz5ZXBXvOg1MtskwxPZIqNOhVvNDJaYzniRRAOWlQAvRCrW4900oSrhKzBNE
-	 vtCK8jVb0uSKH4C+eMTV0ftKjA1L0f67tF2oYY2T1Q2hHIyK4rIA41ju3BRJdthzVEPxB
-	 +Rp6qpeh/JMVa60Arf2OXrWsEooxpGJnxCrdOy2zOCCgPjaZCjDRa65kt+uVZzmFuOw==
+	t=1794475425;
+	b=rivjUQW/jPq0lSbH430HA3X01hjx5fZAZcXk9TKyT0VUNyDAsAH6FZpkTU6f63HIq4kJ
+	 Vrpqzq7/tnAIV2bCIzAL4oyvJzhHPtrKzlM9vi+njZIEgDSISYsuS3sgEiFbfdeObzMhC
+	 0NoKFCvDbTdsuK56TMT8V/3s9/UdNnv7kTWeRzgAdQkZem8qnZDJX0I0PfXuWKrGPozj2
+	 iWRfDQJEoPyH7ht+s2HL6dIM1ZfqpL8Rt0/D/eYB+sPIcgP0G5qcMUWEqSBpL0wI4Wno9
+	 jVuVFtAmH+ntXpECT/W6gbsaJj6b9d/YKcKJYRI5xC5rVb5NVbAUY7q/eRIUtwJNqZw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794474730;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:From:To:Cc:References:
-	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Info:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=vGd4ARJYz5mi6yrOckAYjghiaMIrs6g7+qy725Lhpyk=;
-	b=Q2d9bR70EiYgDQdvEyDQV+Hr261TbzLlZZrl4meU1uZF+d/QmtmX8cXZQ78+ItVEoK3D
-	 K2cFFDc6BGmMHqurmYu5kHMleHYlcr8zzRh0pbTXLs3rfBi3fUPPIypWy0Y2EycvXkfl2
-	 ykuGihVETJF8n159FNtjT3yPpvGJ5H90oJ5TaQzsoh+jUH3KeJ+qllmYZv4YVt+fCzaGf
-	 EWqDGWDwQKIzEwHvh3gimsjVBpPldUEdLwPVx1LBffFXfpJu1lCTB69vA6YkbpHyjC7l+
-	 Ylv5+L9vmkhwr3t/bAp0qf48XwecyXXrNxWLPiKXqU2YSkvSgBIKR88dPNeKiavHdNg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794475425;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=p3/q9baVarjH5p8c4QmSR6WdUwezO7jqcS3keXwu9c4=;
+	b=3Ct7gwxRDQGxs7Owgcqv59ad92u+e45tPO4JxxGjzHhyvW5c46AMzv24QmP2tk+r9iRe
+	 UJTcjcIP3XAmdvmGFpySjwySHMU5Ji5CTGWUhQJL31RkLMyzzJlTTsmCCIhBiR1olPmgF
+	 5KBHDWiK8MFxrD2v4DPYBXCLZxIijCPyV9kzVq4ezGp3dq2A5F89qetf+Ey8zUS5dFyGN
+	 VUR+rvxBn7chZdnKDcynnHVuHylPVcO7tZ7Le4HDqilYy5fM6mPlVbeT0jBc9bzuGu7VC
+	 HU7V0e10q+N4YFI/dvGf0Y8A9xMGddnPJgbdhhCHmDK1AOIVCLtojpbC3RaOSZU2I0Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=lxQW47zd;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=eeEftbmO;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dhHNOE5H;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DAC606A323
-	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 09:12:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B2DAC606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CED606A8AF;
+	Thu, 12 Nov 2026 09:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=lxQW47zd;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=eeEftbmO
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AC5nlVb441999
-	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 09:12:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vGd4ARJYz5mi6yrOckAYjghiaMIrs6g7+qy725Lhpyk=; b=lxQW47zdhk0z5+OK
-	8IZmzr9xGD9eMroMoDQ2Sxl1oSs9cOFJh1ukpgqvhThGEPPDbJfmOnErNGyP8vKs
-	9oYrdIp96TKWiFz+eoc87U8HrkQ6jZU9SPV5SL3ohDjK6RkhlYv3PXpale21kE4S
-	JjS/XOm9ILchByGOJ4u9pF9DbTZuJcCxQwgjtJlA4qkPL7elP/c98RCfFOaMRk1k
-	E4w2QSP8fp7UeqRkI99uwXyT0acls/u8dkGqaTs3gVAstY2GSVcE0eh4okUFxLCQ
-	10UErvrriq1boI7pcfo9JjN03Trf16oO1s+jnkCQSr6w6cErER7l62If9JPcd1ts
-	WzEtFQ==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hw7nc0r30-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 09:12:08 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-8b97460a133so3119723b3a.3
-        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 01:12:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794474728; x=1795079528; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=vGd4ARJYz5mi6yrOckAYjghiaMIrs6g7+qy725Lhpyk=;
-        b=eeEftbmOMOHqgsGnUZDg6ko21h0TA4rqYdleY5dOmqZvlOZElx53ytfhh2iC1xQbzS
-         6d7iLNnFPDSODHkp0D05cZ/92f7qyusq9LUxVH0tSFw8zQgxCiTlP6t0Yql7LbDxNU8k
-         BrzzHbUmZ69TXU6zScMTHfMQI55l56sM7R7e/qtLv1giGBlNtRZp7Q++xn2zPOx+Yl1U
-         VcBTluNCf7l5CE8a8IVMmnhHXQTn53HhHCZpujHCjbfvPgdUkTt+Z5EPMqYqbEIaGHuR
-         5VyR0P5xJiUuwvPy8bSfijzg2ETZx5O4bAtCZxnxWNDNx78/2zJ2fFHaWAzkH6S1nCSx
-         949g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794474728; x=1795079528;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=vGd4ARJYz5mi6yrOckAYjghiaMIrs6g7+qy725Lhpyk=;
-        b=NGBegKP+X2YktFZKVl0WsoDLKLudutyi/yB5mhC4e+UdU7vu4lJD4ni0y43BGF9F7W
-         JfUAeUGx7948R093VavLbgtJuHyMKl5oz9SKEJ3mFNXpWX7HxzJLrniQmYojdD4bzZDx
-         Vc8ceOwEB+nphieH1Zu1SMztXNDgSiKX3/MYuvhLT1Zzdfpv0UkY0s5CUsFWvBO7IFkc
-         bveLINXoBcLFG/yUPgDAMcYHzeLy+NK2lmU4B7yQsvUA8uNiHOXqaALrRHUsXBal2m/f
-         7IouvDya79xy5wlgvjS+nJIdc0DGXlNEku8YCZO9BzT/O820kniH8zknJit2qQv2+aJT
-         upmg==
-X-Forwarded-Encrypted: i=1; AL+hErEtqowZUJc1RZtnvnTu/bnh7sSR5Rr9kRwfeihssem2HXVm3Hntkr3r0Xio8h7RaZsGfgjY0BGEcDQ=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8JQNbx7xilSZjP7BTfaig5iABfgg7ieJc4beNTT4XUijT9fxI3
-	T6nFOBUlsZ0e+NN9Zp3OOxU8gf6fOR9M9j09KXqTFWLBFEgWzKiNoNQL5T8+vQxS4nj+a1i7nh6
-	KqNe0I9CeaWnX/blkdSEbpa5fVM1OFAXLljJzXmnolMsj/jSrCS8iFkJ9kGPW7fI=
-X-Gm-Gg: AYBFou05hWN5SsDZgBWQfCxGcBkwp3QwrXOP1d/5HQ1r3Thi+O5Ic2SMt2Og5mOa8eC
-	k2q8rzry60g6VLLodmrjaF8RPxo7olGb2DMRF/wX3miqgp+j+vZ35s4bdxa9JzF5zCeOOKgfBc1
-	ZLnVAThyFRE5GT23fshj/8DoDQViQUILlJZ63lMYfNoIwBCzaU8SryH2wKI19/udCe5zM2aUkbY
-	nL0kof5rKJHNgDwcE8fh/+sShlXSzACvVSQgPXHR4TmT95jtgwk82QkPiKKKQWBc3EpVBYB76Oe
-	Wwv7LxHloH2DzLsr7JXan09eRVCNoE6LS+hUAi6Mnk4MDzDAoBluYjK89cp8pPsA7ZBkUr8kIiE
-	vZXEWgzsMAV8sur/HPthIgTqfq7N/fIVcViXpWZMpdCSSk2L7fkjvoYfjFlpYhsmzsvE4y2X/35
-	QW1xj88LPqcBjBOvZYRg==
-X-Received: by 2002:a05:6a00:c1c7:20b0:8a0:1a6b:59fa with SMTP id d2e1a72fcca58-8bca925fef5mr2785354b3a.37.1794474728156;
-        Thu, 12 Nov 2026 01:12:08 -0800 (PST)
-X-Received: by 2002:a05:6a00:c1c7:20b0:8a0:1a6b:59fa with SMTP id d2e1a72fcca58-8bca925fef5mr2785331b3a.37.1794474727682;
-        Thu, 12 Nov 2026 01:12:07 -0800 (PST)
-Received: from [10.151.37.217] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8baaa1b27e8sm3026131b3a.16.2026.11.12.01.12.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Nov 2026 01:12:07 -0800 (PST)
-Message-ID: <e8dadc91-226d-4b05-8de1-4b22318fc7ea@oss.qualcomm.com>
-Date: Thu, 12 Nov 2026 14:42:00 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dhHNOE5H
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 073F11F00A05;
+	Thu, 12 Nov 2026 09:23:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794475425;
+	bh=p3/q9baVarjH5p8c4QmSR6WdUwezO7jqcS3keXwu9c4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=dhHNOE5HJlI8/HZF95GSqvbXlSXOQPBaAfqlsslRFWBOsuCJ1cc49EeQo6a0GhP+J
+	 XzC4TmZF4fo5QqA4i5DfSg8io7p+GbY8BzJcT/aExqxZc4rUVpHe8zN/utOXn7zoJk
+	 7Wj6/VXk42pstkDZfPZ7gLAeWWDUNiiYyTwkB8Af1AaxvnIzehd0crik/tglyPIkpl
+	 gT26cZHHHdQRnpWYcZde/AZfiSPFw4GjBFJ1Rj2wGpwC9LfF9c10MlAUDlo9Ce/HQ3
+	 VLlo7ZwLGvrRmxfSUbVvjSxZVJn2kn/JBsieOBFiX117GB986z9aJky/m7/OHe3Wqo
+	 HyfwwuyESt7KA==
+Date: Thu, 12 Nov 2026 10:23:41 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yu-Chun Lin <eleanor.lin@realtek.com>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, cylee12@realtek.com, 
+	afaerber@suse.com, jyanchou@realtek.com, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-realtek-soc@lists.infradead.org, james.tai@realtek.com, 
+	cy.huang@realtek.com, stanley_chang@realtek.com
+Subject: Re: [PATCH v16 1/9] dt-bindings: clock: Add Realtek RTD1625 Clock &
+ Reset Controller
+Message-ID: <20261112-screeching-marvellous-crocodile-f7bc0b@quoll>
+References: <20261112052544.555563-1-eleanor.lin@realtek.com>
+ <20261112052544.555563-2-eleanor.lin@realtek.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -114,167 +62,43 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/11] dt-bindings: clock: qcom: ipq5332-gcc: Describe
- clock inputs per compatible
-From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>, Abel Vesa <abelvesa@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20260921-ipq_clk_changes-v1-0-d242e3d49648@oss.qualcomm.com>
- <20260921-ipq_clk_changes-v1-5-d242e3d49648@oss.qualcomm.com>
- <62a5fabc-3a06-42fa-9c6b-6504650e712b@kernel.org>
- <7bcffc7c-5dda-4ead-a053-7eb4980e43a4@oss.qualcomm.com>
- <bec2bee4-dd38-4846-91d7-006fe38fc9da@kernel.org>
- <af43c724-89b9-456d-a5da-0d8ba46a9b8d@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <af43c724-89b9-456d-a5da-0d8ba46a9b8d@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: w0v_EY-A8_zjl6sEphpACDzDJMinxQZc
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEyMDAzNiBTYWx0ZWRfXz8TOcZnoYMrP
- cqpA4XqcmktIEHz567s9K1HCc7dTx5aVriUWPT8RXtmFPFcdO3ktOoz7NZe5FLVC3NC/hI5O9bF
- TsQ59qlgFL4Rq268apzjRGmIVrnfJ3g=
-X-Proofpoint-GUID: w0v_EY-A8_zjl6sEphpACDzDJMinxQZc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEyMDAzNiBTYWx0ZWRfX8S6+R8VfUwjp
- YpJeF1UhA+u67FXakRSh2x64XW8I+C0a2yuwdH+wCMsNrH2a8jiyPyPHIBwdXcTCbvRxOtV2TTw
- kg5xxZiqzjPRSSuv7/UKNZ0dm8w1Dxx33ktR+8gV+edJAs14oKopKfUvf/zs7EG7EHHCOsrHN2A
- fSQpZA38GVtJQfvhmoimzZQTXeEbrf99tpTomYIgv3fiN0oqmCDpvnwa6DHLGULGdGusQT3Y91S
- 8ehVy55Es1zM3j4C6reOeQoCQdXo7bVnm6wCnb/SN7IJpoaOAUC4kW1IXvUucH0gGxnlapSv+67
- cx4jIaZ+rxhPrBBl5MqN1ds+RhPz9ZreuPlTB/vi2OI3K9S0SDronUTVddhPk3ONzlu29i/M/zc
- GRO2S+hnmrf2Xqb4bksGcJRgu5Ii6cb8jkBbmnJPhG7WbK+/U6+eIx9L/1a51GeNTyoYa5sspFK
- AkfmfT43nevf7BwxA+A==
-X-Authority-Analysis: v=2.4 cv=A8b5rKWG c=1 sm=1 tr=0 ts=6af582e8 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=bsvW812kIstMtjDHHLsA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-12_01,2026-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 malwarescore=0 spamscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 suspectscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611120036
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261112052544.555563-2-eleanor.lin@realtek.com>
 
+On Thu, Nov 12, 2026 at 01:25:36PM +0800, Yu-Chun Lin wrote:
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External 27 MHz oscillator
+> +            - description: CRT SYS clock input
+> +            - description: CRT SYSH clock input
+> +            - description: CRT DDSA divide-by-four clock input
+> +            - description: CRT miscellaneous gate clock input
+> +
+> +        clock-names:
+> +          items:
+> +            - const: osc27m
+> +            - const: clk_sys
+> +            - const: clk_sysh
+> +            - const: clk_ddsa_div4
+> +            - const: clk_en_misc
 
-On 9/25/2026 12:09 PM, Kathiravan Thirumoorthy wrote:
->
-> On 9/24/2026 4:28 PM, Krzysztof Kozlowski wrote:
->> On 24/09/2026 11:15, Kathiravan Thirumoorthy wrote:
->>> On 9/23/2026 2:17 PM, Krzysztof Kozlowski wrote:
->>>> On 21/09/2026 08:19, Kathiravan Thirumoorthy wrote:
->>>>> The IPQ5332 and IPQ5424 GCC blocks use different clock input 
->>>>> orderings.
->>>>> Document the clock inputs in compatible-specific schema 
->>>>> constraints instead
->>>>> of using a common clock description.
->>>>>
->>>>> Also add the 375 MHz PPE clock generated by the CMN PLL to the 
->>>>> IPQ5424
->>>>> clock input list.
->>>>>
->>>>> This keeps the binding aligned with the clock ordering used by the
->>>>> existing DTS and GCC driver implementations.
->>>>>
->>>>> Signed-off-by: Kathiravan Thirumoorthy 
->>>>> <kathiravan.thirumoorthy@oss.qualcomm.com>
->>>>> ---
->>>>>    .../bindings/clock/qcom,ipq5332-gcc.yaml           | 26 
->>>>> +++++++++++++---------
->>>>>    1 file changed, 16 insertions(+), 10 deletions(-)
->>>>>
->>>>> diff --git 
->>>>> a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml 
->>>>> b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
->>>>> index 1230183fc0a9..fb39dffca988 100644
->>>>> --- a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
->>>>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
->>>>> @@ -25,14 +25,7 @@ properties:
->>>>>         clocks:
->>>>>        minItems: 5
->>>>> -    items:
->>>>> -      - description: Board XO clock source
->>>>> -      - description: Sleep clock source
->>>>> -      - description: PCIE 2lane PHY pipe clock source
->>>>> -      - description: PCIE 2lane x1 PHY pipe clock source (For 
->>>>> second lane)
->>>>> -      - description: USB PCIE wrapper pipe clock source
->>>>> -      - description: PCIE 2-lane PHY2 pipe clock source
->>>>> -      - description: PCIE 2-lane PHY3 pipe clock source
->>>> You are changing the order which is ABI break. Describe the actual
->>>> problem to justify such change. Are you saying this was broken since
->>>> beginning or what exactly is not working here? The driver was added by
->>>> Qualcomm in 2024, so how did it even work? It's not some 10 yo legacy
->>>> where we did some mistakes in binding while converting from TXT.
->>>>
->>>> Also, I do not get why the list cannot be shared.
->>> When the bindings was posted, list is combined for both IPQ5332 and
->>> IPQ5424. But the driver wasn't updated and it was following the below
->>> order, so was DTS, which is not compatible the DT binding description.
->>>
->>> enum {
->>>           DT_XO,
->>>           DT_SLEEP_CLK,
->>>           DT_PCIE30_PHY0_PIPE_CLK,
->>>           DT_PCIE30_PHY1_PIPE_CLK,
->>>           DT_PCIE30_PHY2_PIPE_CLK,
->>>           DT_PCIE30_PHY3_PIPE_CLK,
->>>           DT_USB_PCIE_WRAPPER_PIPE_CLK,
->>>           DT_CMN_PLL_NSS_375M_CLK,
->>> };
->>>
->>> So I'm splitting the description between IPQ5332 and IPQ5424 to 
->>> matching
->>> with the DTS and the driver description.
->> So we asked back in 2024 to have the common part of the list. I even did
->> the effort to dig it:
->>
->> https://lore.kernel.org/all/ruti7hmkxkayzmqfbme6rw6j2vbhlx4ul4ptcckwamcpd4cyfx@owufhxwpvlcj/ 
->>
->>
->> Authors implemented it partially, broken drivers. Now you basically
->> revert what we asked, which is BTW logical option. It's logical and
->> reasonable, but leaves bitter feeling.
->>
->> I have feeling there is no accountability and no responsibility of the
->> IPQ at all.
->>
->> No, that's not going to work. You cannot come 1.5 year later and revert
->> what reviewer asked you, even if issue was just by mistake in the first
->> place. And you should not even try to do that.
->
-> I understand the concern, and I agree this should have been caught much
-> earlier.
->
-> I only discovered the mismatch while working on the IPQ5424 clock
-> additions. My intent here is resolve the inconsistency that currently
-> exists between the binding and implementation.
->
->>
->> NAK
->
-> I'm happy to explore an alternative approach if updating the binding is
-> not considered acceptable.
+Put the list in the top level with minItems: 1, then here you only set
+minItems: 5 or maxItems: 1.
 
-Krzysztof, I understand the frustration behind this, and we will make 
-sure issues like this are caught earlier going forward.
+> +
+> +    else:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External 27 MHz oscillator
+> +
+> +        clock-names:
+> +          items:
+> +            - const: osc27m
 
-Could you please advise us on the acceptable way forward for this series?
+Best regards,
+Krzysztof
 
->
->>
->> Best regards,
->> Krzysztof
