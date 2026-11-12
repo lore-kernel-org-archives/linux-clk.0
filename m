@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794492545;
-	b=OmLvKHcsi9nVRWI7hcXhEZnoRW6pjJ5MCYgNPAfaCvLC5ifoQHZS/zUoH0ezHG40uQOQ
-	 Qza9MG1yhhAbjIFgm2fePcggBoQnBiT4kfowQscp1eG2u4afOZKmNmvRQtuWzav9demGo
-	 9/ZyFQ61O4lJ17n/aU5upJe7ISv6pFAELuN4prkZ5SzZLzXAaeVZnBkOcWxAAC3qXnbQt
-	 9+q7j05kSTSEIptp6FrfgtOuQm2xzpm35bKbTk0WyFAlWvPmLER4XHaoeU4vFwpF+yrsA
-	 Ls2K/pTs6PbBZRpt9rg2aIaw+P59exGUV5L+faHVtVM1fCrblg1YvUjHEJJeiiITR7g==
+	t=1794492585;
+	b=km4/wwiWiMQSK71B2L7yxr636AqHKlMhOFL03/x/HuDPDh4qoXQr2Idg/5hoZui5rZP9
+	 BEJMcJ9FeVZt5uiBcPHITptGpGNwkWmeqyY6ven2ZBFCuwq5WJN+36QROW04UjGWR1IYb
+	 My6HSSDejp1EkXP6NuIlKarHAD+BYwpwARu3r0AeRdD67mDZZ+G3pNFZglakq6T9KJSvp
+	 VRaE70QPTZj5tUN2t2dm0tpVM8+hyKw8Y3GtCjqP2Kz9eALx4W116+H4jdaPJ/e+Ge/yX
+	 Z8hh1LnOJgSqa9RwDpIEzZEbXeg5gr9Jio28icHJAfwvSGwsWV5RJUEXNdp/J8ldudQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794492545;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794492585;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=3r3YK91+4doEhazd+Tla/QmKvzSykFfCA7OhTKV88Mc=;
-	b=cZthGBvYsMLY9vG6eop4JyKbBAg+JQl+uP3x1zXr4BeQ6nQBpYhiX16zbBDw79zAHVme
-	 S49LI7iLYYDVTFcVXSnbZg60o6rn2oL944utR7w4Dh5q+Yf8uaRjHG/4svMEfFqhDCcwu
-	 RGyzeZYzf0is2XTJSg4/fjVA7ebSEb6KO0gv/ps3hV+4zEzL+j8bRmhRkWOKVsUVI0Zyn
-	 rPzytCh0/uecgTZTi7ZYah3TPaQ26fU/oIcSHQkg8sOvrg43YIGZIzpbT+/nq8075E2JL
-	 fQUOLqRUx0VGo7FoNVYMjnjLDPCP64j0dAYgGJ6AoA1NVNjFJWFuBYydFo3tmjDfb7Q==
+	bh=SmLZ8gf1GKBz7EI8vmfSH7lLCzmVzRkRLb0jnz0/qbk=;
+	b=h5VmJ7q/VT9mEz+pcHqUrFQfbgQ6Xm5diYf9bI/xjU0GrlED1BJT4SCtA4e059CjMUaq
+	 RkA2BBuukZ+cYZR5Nvnjcm5vi4JiiSWsbn2DcXswqcAIcLlM0ozTcZsBOOk1JbqBO9eDw
+	 0AqqOb/pva913We3rUdRaSj2yluqznkXmOy1TPKRvMB+P2gm1VHcfcr8vJ9gq4IijJGtd
+	 B+6M/W/7qzsERck8xrMDMIDqBEpOJAo6UOkMeyTqUdelzmjrtZK69UyPCDCX6/O43l1qa
+	 ESlGxG4Ajgd7YrB6GCDUrmJmEgXLoMAgGpRXwzlphWVu5MTK66uQjqWPPV42lAY/xow==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="jZrKInB/";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="XZNd7Am/";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42EA606A323;
-	Thu, 12 Nov 2026 14:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8766606A31C;
+	Thu, 12 Nov 2026 14:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jZrKInB/
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E82231F00A05;
-	Thu, 12 Nov 2026 14:09:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XZNd7Am/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 213BF1F00A05;
+	Thu, 12 Nov 2026 14:09:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794492545;
-	bh=3r3YK91+4doEhazd+Tla/QmKvzSykFfCA7OhTKV88Mc=;
+	s=k20260515; t=1794492585;
+	bh=SmLZ8gf1GKBz7EI8vmfSH7lLCzmVzRkRLb0jnz0/qbk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jZrKInB/dw9y7sshA7jXo61/laxLjxtNTGogkJSw4mbYJdGM5Z0lvvgBXztPKXOMU
-	 h2cDV1ssFEl1HHKGRP5V45NJEAA3j+/Oxd6QEmEtEtFnk4uPGaArZBYLUvOV6FwD3g
-	 JdAj9NqyACwoZDbUYb50924lD3+tZmdiDWSTVHLqGKd/MHfSaVUFBYGThoEvNHy28o
-	 cHfsQ5hddnsnmcw/Diuopv9jRDmWXkMOKk4H3DQmBZ2eUq7gJYa6KceOqCmYSLzmKo
-	 sHYzZHqfPMPcRdKrOkmAWdZuYgoH7uhzzuVTZ3eoWbgq/6ral1ujjDn0am+NHOY+2r
-	 fEJq2rZC0QjJQ==
-Date: Thu, 12 Nov 2026 08:09:02 -0600
+	b=XZNd7Am/j2siX5Bd4nG4XDFcC61MusmSOn062NE0PVt+q1l5BHBXMWjmuVxKwlocd
+	 sUlxcuWxs7+4FaEUeLOATmg+F3XyC4tjkpMo0oZ9kmoDfe/eJB80BssqOZ11c2V7Yp
+	 N7D0PZW0nPtNxgWzPcqWIpiIg8FXcbtr+IawNhlPm11pqotdYaH4pRQtjCSAxomHMs
+	 rt6B2Kxe3GvRL1sG2IWxUuTSZAmlyUtCy5+xDcP79C2yUjIiea6WCjbYmWmCZNnxdL
+	 x7VkDDdxx0pYCwPN27hWU+aEyxZldmtkQ3Rn9xXPDBR0XVjn+GazatHC28+dvdIkBA
+	 3gl9W7Exo5TSw==
+Date: Thu, 12 Nov 2026 08:09:43 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc: jbrunet+clk@baylibre.com, p.zabel@pengutronix.de, krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	michal.simek@amd.com, conor+dt@kernel.org, bmasney+clk@redhat.com,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: clock: convert zynq-7000.txt to yaml
-Message-ID: <179449254210.403147.12378067448658354620.robh@kernel.org>
+Cc: jbrunet+clk@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bmasney+clk@redhat.com,
+	michal.simek@amd.com, devicetree@vger.kernel.org, sboyd@kernel.org,
+	krzk+dt@kernel.org, p.zabel@pengutronix.de, conor+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] dt-bindings: reset: convert zynq-reset.txt to yaml
+Message-ID: <179449258263.406339.11789920788113048063.robh@kernel.org>
 References: <20261111150812.1874449-1-radhey.shyam.pandey@amd.com>
- <20261111150812.1874449-3-radhey.shyam.pandey@amd.com>
+ <20261111150812.1874449-2-radhey.shyam.pandey@amd.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -62,35 +62,30 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261111150812.1874449-3-radhey.shyam.pandey@amd.com>
+In-Reply-To: <20261111150812.1874449-2-radhey.shyam.pandey@amd.com>
 
 
-On Wed, 11 Nov 2026 20:38:12 +0530, Radhey Shyam Pandey wrote:
-> Convert the Zynq 7000 clock controller binding to DT schema format.
+On Wed, 11 Nov 2026 20:38:11 +0530, Radhey Shyam Pandey wrote:
+> Convert the Xilinx Zynq reset manager binding to DT schema format.
 > 
-> ps-clk-frequency becomes optional with a documented 33 MHz default. The
-> text version listed it as required, but zynq-7000.dtsi does not set it
-> and five in-tree boards (zynq-cc108 and zynq-zc770-xm010 through xm013)
-> never override it, so requiring it would reject device trees that are
-> already in use.
+> The reset output list is kept, hung off #reset-cells since that is what
+> the numbers describe. It is preceded by the encoding the text version
+> left implicit: the cell is the register's position in the block times 32
+> plus the bit number within that register. This also explains the gaps in
+> the list, which are reserved bits and, in the case of 0x23c, a reserved
+> register.
 > 
-> trace_emio_clk is added to the clock inputs. It is the external trace
-> clock feeding the debug trace mux, which the text version never listed.
-> The example is corrected the same way: it used can_mio_clk_23, which
-> does not match the mio_clk_XX form this binding defines for an EMIO
-> clock on a MIO pin.
-> 
-> clock-output-names is enumerated as 48 const entries instead of the
-> prose "shall be a list of the outputs below", so the names and their
-> order are now checked. The clock cell is an index into that list.
+> No dt-bindings header is added. Unlike the firmware-defined IDs in
+> xlnx,zynqmp-reset, these indices are derived from the SLCR register map
+> in UG585, and no in-tree device tree references them.
 > 
 > Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
 > ---
->  .../bindings/clock/xlnx,ps7-clkc.yaml         | 145 ++++++++++++++++++
->  .../devicetree/bindings/clock/zynq-7000.txt   | 110 -------------
->  2 files changed, 145 insertions(+), 110 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,ps7-clkc.yaml
->  delete mode 100644 Documentation/devicetree/bindings/clock/zynq-7000.txt
+>  .../bindings/reset/xlnx,zynq-reset.yaml       | 99 +++++++++++++++++++
+>  .../devicetree/bindings/reset/zynq-reset.txt  | 68 -------------
+>  2 files changed, 99 insertions(+), 68 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/reset/xlnx,zynq-reset.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/reset/zynq-reset.txt
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
