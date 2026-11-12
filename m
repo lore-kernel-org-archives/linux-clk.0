@@ -1,49 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.13.80.246
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794487708;
-	b=VDo/BFSffETgnheP44DGsTPU8JD4LEJfDHs/h6+JGqp0Q/SXKVjmKF3J1xz3AxRBYGcd
-	 5n+bmMB9UXuxKQPVbfUX6WH40GydYtmuJ46Q5U0PxgAq1e9BGoUPtEjCDvO/AHaSftm95
-	 iy556ZQ3wlVNfBnL8fuPKEZZSBmzLRiaXVUWJY4oK5BVShMRpEgLMKOsmkSSze+IZY3nD
-	 e+aWT3J0e0Ng1bIxKaHsTRBZuWqh8k9cbARix/6/cCRT1Pt73j8T8qGGkDZiV+lmuJ0nn
-	 QviisvKmWpT63dQ9PCDAbhxqqBjNmOeMFrCSQRMao3fGDOsd4YNECVVFgglpx4areDg==
+	t=1794490280;
+	b=mwiee1mBGN5Bz5LCZFAClD2tPQtIMwAQo0jCOZRyOQW5jOyGg49/P2hIJ9HPOLJwBXXT
+	 gIj1tziRIKcKHn5kWHq+WAYPxjpsPuReyWZOlKqQlLAA8MY9fDqzM0wgwzS+mzxY/18/o
+	 7KdVFG+rmf9fVqFtD2iv1DlajX77JqvS2mxDXZP1MXDF3+qKfrgtCYE6CmGmzotg/Rwwj
+	 KgqR6zDZuEfOyV9ykAI6EcNAMlgV8HHkqmxkga+kbPlvxFqzkvaojqBPSkbolr7c0LZgS
+	 jkVLlahk68hS8+sGDK55uBzQnikVrsIp1NtzzkDHQlfTLzRLkroPBi7WWGqln+T4dhA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794487708;
-	h=DMARC-Filter:Received:DKIM-Signature:MIME-Version:Date:From:To:Cc:
-	 Subject:In-Reply-To:References:Message-ID:X-Sender:Content-Type:
-	 Content-Transfer-Encoding:X-Last-TLS-Session-Version;
-	bh=2ydDXOxFBj0SVycf8TwirFfYbpVr31/wQtaeKtsEhMo=;
-	b=tiNic/c4Sfa+f+bfquFWtScp9N/jsD/B7T5J8IxXlirAjPvqhbDFFKeJihhUN+nlllfn
-	 VJEf5hnARtHBWUocJKZTAum4UzQcL7RCXthucG6x9P26GSwi7rnjwKwfIqKqNcE65H31O
-	 TWBYIdZH3mJUdpS2zuwsEn2Re9cL89pFfsLj8K0VBgRhi9Jd3icExHZys/uzkL0js46XP
-	 tvTNl/F50sBCWL7NghCPhYxHTgbq+9ZePXVJrTQTS19vBm2s/pEg6Q3wypm+PoQF8RH6b
-	 PODpK4a35MrNsKuK+YsmhbGeoacFY8W0MYUl69RWWX8uPd4YN4hJOfc2IEtsMI/b9dQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794490280;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=1fM5NXzkTcAWiQAQgLoEWCpD82btNGq5kH0npBQW3Q0=;
+	b=QEZUhCzCJw7aFFuIAjrVGlKt2E4d3bOF8YmB/tTljWcjwm0bZQsOGCmNHRe0rst/se4W
+	 LynIjK8no6p57CqSWy5/00Qo9As9hlY6JKxB9302/bmDyyq61bPUBD5ty/SyzYrKn6UxS
+	 VuMvFgAij2RDKV5JFzbBiD1zr6Gehz93yuIAH7k7Ou2Jg4yL1/m2pvusaxEeC+iYRpPSD
+	 6Oo931Jk5+hfxEShfNVw35V0LlAzZ54Ys4O+C/IoC9UeUffB4nC3DL/5NJpdBRzRpe8d5
+	 1UGH1jdur2pc32gzbW04ekzZ8nivVyAngRjc4SVQPhbDxRMrFWogUJ57CjCnFlkKkBg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=tipi-net.de;
-	spf=pass smtp.mailfrom=tipi-net.de;
-	dkim=pass header.d=tipi-net.de header.i=@tipi-net.de header.a=rsa-sha256 header.s=dkim header.b=D7HcLpg6;
-	arc=none smtp.remote-ip=194.13.80.246
-Received: from mail.tipi-net.de (mail.tipi-net.de [194.13.80.246])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ESsu16Sc;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB06606A32A;
-	Thu, 12 Nov 2026 12:48:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3AB06606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tipi-net.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tipi-net.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51C2606A332;
+	Thu, 12 Nov 2026 13:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tipi-net.de header.i=@tipi-net.de header.a=rsa-sha256 header.s=dkim header.b=D7HcLpg6
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 49B8BA1563;
-	Thu, 12 Nov 2026 13:48:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tipi-net.de; s=dkim;
-	t=1794487705; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=2ydDXOxFBj0SVycf8TwirFfYbpVr31/wQtaeKtsEhMo=;
-	b=D7HcLpg63LrjbttMO0pxYYrV4lPsjGVL0AmomQUy6vklnuvaQd47hBSSw4M9yWYO0IvDS7
-	EVJQkjzDstRV1nWS5gxD9evSHMU00LKFV2Uzinb5em+0lDA7Pv3vUfuE1n02P9x7z2s8AL
-	udl0MFHopqM+m2nkP2W7T3sJtdIog6KxIRdIsNS1gCUOPuQXJhis4QC2AkFRo6aQKBUfGc
-	kC50mM3sfe5RaXlFC85b7EaySfN3e/FHI1IoNH9JX1HzYioAuS/YdW44UO6AA3UPtA++Jk
-	qFmO1Wp7Uy3WXtCFl4AojrHhJbA82rGMQDAnvR5sBbBMlpea4W8bxk5/tz98vg==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ESsu16Sc
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6B9C1F00A05;
+	Thu, 12 Nov 2026 13:31:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794490280;
+	bh=1fM5NXzkTcAWiQAQgLoEWCpD82btNGq5kH0npBQW3Q0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=ESsu16Sc8FXowF7wtVWIjgg/IKMQ9/lh8S8ufwkZ+iQlQf22rKCElrKjgwIInuZN3
+	 YOiVl1Mf+IJi9UzCS9y5yRrsJUpjtK1MVPvg0h9f8S3k2wxwAuB7i7o3DpcQEKXYpw
+	 ceMy4vtPUKSknw2w99nZRWWa7oBoxH27Foxy4UtVKUTkKxtKK6YOVyiAsigswNrnr4
+	 1GQU+qNxc+DxpZLBgcZL98zfApNqZ7rYrCUDd2R0ixzWBQvQHeiTEFqAogXD/l+eVk
+	 d07Yi/4k2c9V0Yg+/pT2wjjkbnDjOgqh6lFcIYyCporMVDmIxtiCJtEY4xwz6V1qeQ
+	 VROvOC0225paA==
+From: Brian Masney <masneyb@kernel.org>
+To: Dinh Nguyen <dinguyen@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
+Cc: Brian Masney <masneyb@kernel.org>
+In-Reply-To: <cover.1794287244.git.adrian.ho.yin.ng@altera.com>
+References: <cover.1794287244.git.adrian.ho.yin.ng@altera.com>
+Subject: Re: [PATCH v4 0/3] clk: socfpga: register the SP timer clocks
+ early
+Message-Id: <179449026823.1202846.5650024380038955514.b4-ty@b4>
+Date: Thu, 12 Nov 2026 08:31:08 -0500
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -53,53 +62,42 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Date: Thu, 12 Nov 2026 13:48:24 +0100
-From: Nicolai Buchwitz <nb@tipi-net.de>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott
- Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andrew
- Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>, Phil Elwell
- <phil@raspberrypi.com>, netdev@vger.kernel.org, James Clark <jjc@jclark.com>
-Subject: Re: [PATCH 3/3] ARM: dts: bcm2711: give the GENET MDIO controller its
- clock
-In-Reply-To: <6125aa53-4fad-46ed-b627-e0fce7df7b84@broadcom.com>
-References: <20261020-devel-bcm2711-gisb-clk-v1-0-a1728724d0f8@tipi-net.de>
- <20261020-devel-bcm2711-gisb-clk-v1-3-a1728724d0f8@tipi-net.de>
- <6125aa53-4fad-46ed-b627-e0fce7df7b84@broadcom.com>
-Message-ID: <c00ede37512d46c8155647eed7e39450@tipi-net.de>
-X-Sender: nb@tipi-net.de
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-Mailer: b4 0.17-dev-7ca47
+X-Developer-Signature: v=1; a=openpgp-sha256; l=999; i=masneyb@kernel.org;
+ s=20250903; h=from:subject:message-id;
+ bh=Ik+ShRUAdc9W8RdMQ5+RUBn3TDZawyttamRtgHJtvwM=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLK+7l9cx8HVtV56ZdrmuoYVCfnTZN2frjGxi7/wsEMl6
+ 3FvZ0VbRykLgxgXg6yYIsuSXKOCiNRVtvfuaLLAzGFlAhnCwMUpABP5r8rwP/Wu8xGR11Zp5euk
+ TEuWqpvESdV+3fqU75AJp4mkoS2bMCPD6lNrGCrOaT5XvF9gccH13Y2lLYGLX156lyh+7t6tN6k
+ b+QE=
+X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Hi Florian
 
-On 20.10.2026 17:40, Florian Fainelli wrote:
-> On 10/20/26 07:58, Nicolai Buchwitz wrote:
->> The MDC of the GENET MDIO controller comes from the GISB clock.
->> Describe it, so mdio-bcm-unimac can get the real 200 MHz from
->> clk_get_rate() instead of assuming the 250 MHz of the STB chips, and
->> can put bounds on when an MDIO write completes for PTP.
->> 
->> Signed-off-by: Nicolai Buchwitz <nb@tipi-net.de>
+On Tue, 10 Nov 2026 14:12:37 +0800, Adrian Ng Ho Yin wrote:
+> clk: socfpga: register the SP timer clocks early
 > 
-> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> The DW APB timers on Stratix10, Agilex (including eASIC N5X) and Agilex5
+> are probed through TIMER_OF_DECLARE() from time_init(), but their clock,
+> l4_sp_clk, comes from a clock manager that is a platform driver
+> registered at core_initcall(). The timer's clk_get() returns
+> -EPROBE_DEFER, which timer_probe() does not report, and the timer is
+> never registered because TIMER_OF_DECLARE() callbacks are not retried.
+> 
+> [...]
 
-sorry for ignorance, but I'm not familiar with how the ordering between
-these trees is usually handled. Patches 1+1 are in clk-next now 
-(af7994af5228,
-ab94dbf30233), and the last one for your dt tree needs the define from 
-the first patch
+Applied, thanks!
 
-Do you take the dt patch for devicetree/next, or should I wait until the 
-rest lands
-in mainline? Thanks!
+[1/3] clk: socfpga: agilex: register the SP timer clocks early
+      https://git.kernel.org/clk/linux/c/0b95e3ec699a
+[2/3] clk: socfpga: agilex5: register the SP timer clocks early
+      https://git.kernel.org/clk/linux/c/a13f8c1e4afc
+[3/3] clk: socfpga: stratix10: register the SP timer clocks early
+      https://git.kernel.org/clk/linux/c/51805c5218c7
 
-Nicolai
+Best regards,
+-- 
+Brian Masney <masneyb@kernel.org>
+
