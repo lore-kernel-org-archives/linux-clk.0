@@ -1,45 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794491915;
-	b=NlMuMQTlpAYZYGH3OoJ1cJQi88YOa2Mn0k1oms9jRaX/NWFCIFDOn86TrRt7NWihHZHt
-	 3l0k19M0umB7vABr632WghATNR/wc+b9QAtTDUJda5C+0ZqOtV9q+b0QH8eXQ5+iOof3l
-	 BczRZmCyhgg2m+5xSI9yFmNctYxJkeINto3QkmQPUAx0lbd/Bg3VFPfhbDI8Mnu7Ot3Lh
-	 snoi/WDRKo0ISxoXw3QP7pIpWQeDUy/PRZY3zlrH2uRukqWFEkytaLor2BjhKd8aTEQlk
-	 ACbcl1er+y7ZofcQsfEw5ZJvsfGSu5u/2cKeeshoAgTisqmWg3jmvS0NXpoXlAMiBew==
+	t=1794492545;
+	b=OmLvKHcsi9nVRWI7hcXhEZnoRW6pjJ5MCYgNPAfaCvLC5ifoQHZS/zUoH0ezHG40uQOQ
+	 Qza9MG1yhhAbjIFgm2fePcggBoQnBiT4kfowQscp1eG2u4afOZKmNmvRQtuWzav9demGo
+	 9/ZyFQ61O4lJ17n/aU5upJe7ISv6pFAELuN4prkZ5SzZLzXAaeVZnBkOcWxAAC3qXnbQt
+	 9+q7j05kSTSEIptp6FrfgtOuQm2xzpm35bKbTk0WyFAlWvPmLER4XHaoeU4vFwpF+yrsA
+	 Ls2K/pTs6PbBZRpt9rg2aIaw+P59exGUV5L+faHVtVM1fCrblg1YvUjHEJJeiiITR7g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794491915;
-	h=Received:DKIM-Signature:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=3qK75ks52nk2OhdqDIRGQrGiq6Cnz7HxfpZQKI/KNAQ=;
-	b=gaZSWGLlloEfp9tPW3ZNRQcxqLiDvEZjsE4clQK3IOPzh3xp6L3tlSIN4eFl7PFOwOeS
-	 exiKbh+hqUzWyw/ld+diiW5s7pQpuaM/SZV4bhrhG4RxHRRGis7AjO5BeYbSCqX6RkGP1
-	 edTC985KNcNilHZjfHoWkZZhAZGB5RkcYiw7eSAj5TxkZV7UwniyEascLv1Hw3hrib4MC
-	 52tb+DJpmdIipi4VCCuHY04CATaEjf9qIBrBxbat0T3YO14c3cLNSKaZ4zWsW9xPki5rL
-	 YbT1dZOMX9Emg7t8y+nb1FQn/V0sVHLCOddQJCoQbnmDE9CCsa3KuGDxsf33RBdk2uQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794492545;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=3r3YK91+4doEhazd+Tla/QmKvzSykFfCA7OhTKV88Mc=;
+	b=cZthGBvYsMLY9vG6eop4JyKbBAg+JQl+uP3x1zXr4BeQ6nQBpYhiX16zbBDw79zAHVme
+	 S49LI7iLYYDVTFcVXSnbZg60o6rn2oL944utR7w4Dh5q+Yf8uaRjHG/4svMEfFqhDCcwu
+	 RGyzeZYzf0is2XTJSg4/fjVA7ebSEb6KO0gv/ps3hV+4zEzL+j8bRmhRkWOKVsUVI0Zyn
+	 rPzytCh0/uecgTZTi7ZYah3TPaQ26fU/oIcSHQkg8sOvrg43YIGZIzpbT+/nq8075E2JL
+	 fQUOLqRUx0VGo7FoNVYMjnjLDPCP64j0dAYgGJ6AoA1NVNjFJWFuBYydFo3tmjDfb7Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y3uIJDmV;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="jZrKInB/";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF3B606A330;
-	Thu, 12 Nov 2026 13:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42EA606A323;
+	Thu, 12 Nov 2026 14:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y3uIJDmV
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E52581F00A0A;
-	Thu, 12 Nov 2026 13:58:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jZrKInB/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E82231F00A05;
+	Thu, 12 Nov 2026 14:09:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794491915;
-	bh=3qK75ks52nk2OhdqDIRGQrGiq6Cnz7HxfpZQKI/KNAQ=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=Y3uIJDmVvCDh5voNMl19wu28hbwD1rXp14sZthY/q01Zk2uaF6DFEd131ALHyzC10
-	 DihF5Xt+moRHhZjRQvA41Jeiprq3ljUHjeWx+M8cZcf5aWXewYNtmPpf64pHxXJZWl
-	 ltOok2ej+oXTHLidcpZMc+aSo9rvEUipi2AKiJ+iMQkJK06QjYA5BYPi0qDzlOpE/I
-	 JaLV7L4MdFVAKtT1LhMcebQOhegcEBgnGeprqhRgON13eEyfVI1gk5GcC14i+qDAch
-	 YSnR9Jdjf5crPsROHeV0FuplwrFVCTsZsbdrqCVLXbC5BJAg1JaSIb0nT/p0P24kwb
-	 EXopyZ/myjaKA==
+	s=k20260515; t=1794492545;
+	bh=3r3YK91+4doEhazd+Tla/QmKvzSykFfCA7OhTKV88Mc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=jZrKInB/dw9y7sshA7jXo61/laxLjxtNTGogkJSw4mbYJdGM5Z0lvvgBXztPKXOMU
+	 h2cDV1ssFEl1HHKGRP5V45NJEAA3j+/Oxd6QEmEtEtFnk4uPGaArZBYLUvOV6FwD3g
+	 JdAj9NqyACwoZDbUYb50924lD3+tZmdiDWSTVHLqGKd/MHfSaVUFBYGThoEvNHy28o
+	 cHfsQ5hddnsnmcw/Diuopv9jRDmWXkMOKk4H3DQmBZ2eUq7gJYa6KceOqCmYSLzmKo
+	 sHYzZHqfPMPcRdKrOkmAWdZuYgoH7uhzzuVTZ3eoWbgq/6ral1ujjDn0am+NHOY+2r
+	 fEJq2rZC0QjJQ==
+Date: Thu, 12 Nov 2026 08:09:02 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc: jbrunet+clk@baylibre.com, p.zabel@pengutronix.de, krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	michal.simek@amd.com, conor+dt@kernel.org, bmasney+clk@redhat.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: clock: convert zynq-7000.txt to yaml
+Message-ID: <179449254210.403147.12378067448658354620.robh@kernel.org>
+References: <20261111150812.1874449-1-radhey.shyam.pandey@amd.com>
+ <20261111150812.1874449-3-radhey.shyam.pandey@amd.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -49,62 +60,38 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v4 6/7] clk: bcm: Add BCMBCA PMB clocks
-From: Brian Masney <masneyb@kernel.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- William Zhang <william.zhang@broadcom.com>, 
- Anand Gore <anand.gore@broadcom.com>, 
- Kursad Oney <kursad.oney@broadcom.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Guenter Roeck <linux@roeck-us.net>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, 
- Ulf Hansson <ulfh@kernel.org>, 
- Benjamin Larsson <benjamin.larsson@genexis.eu>, mfd@lists.linux.dev, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org, 
- linux-pm@vger.kernel.org, Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20261111-xg6846b-bcmbca-xrdp-reset-v4-6-17035a5e8ad2@kernel.org>
-References: <20261111-xg6846b-bcmbca-xrdp-reset-v4-0-17035a5e8ad2@kernel.org>
- <20261111-xg6846b-bcmbca-xrdp-reset-v4-6-17035a5e8ad2@kernel.org>
-Date: Thu, 12 Nov 2026 08:58:26 -0500
-Message-Id: <179449190684.1220086.2034099469330026473.b4-review@b4>
-X-Mailer: b4 0.17-dev-7ca47
-X-Developer-Signature: v=1; a=openpgp-sha256; l=626; i=masneyb@kernel.org;
- s=20250903; h=from:subject:message-id;
- bh=7vI5ainOfrrxAECdVE4Ka6p8NFP0cAJd1sALUJmEwV4=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLK+HmPJy+0ydnl+an6y7JIgz5tKZQ9NwnRFHHb/5smab
- O+zQd6zo5SFQYyLQVZMkWVJrlFBROoq23t3NFlg5rAygQxh4OIUgIm8zGH4H6fCddeBw/vGjX+/
- RfbXlS/XrPaVW2Uc67zr90SHQ9xvSxkZvh2/yrfn26z34k92CNyqP+1mJDft3ObnPxdcN578OJ8
- jgAsA
-X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261111150812.1874449-3-radhey.shyam.pandey@amd.com>
 
-Hi Linus,
 
-> Add a BCM6846 clock provider for the Power Management Bus (PMB) MFD
-> cell. Expose six outputs from each of the RDP and BIU PLLs, the Runner
-> clock divided from RDP PLL channel 1, the crystal output, PVTMON and
-> block-zone clock gates.
+On Wed, 11 Nov 2026 20:38:12 +0530, Radhey Shyam Pandey wrote:
+> Convert the Zynq 7000 clock controller binding to DT schema format.
 > 
-> PVTMON and zone clocks provide gate control only.
+> ps-clk-frequency becomes optional with a documented 33 MHz default. The
+> text version listed it as required, but zynq-7000.dtsi does not set it
+> and five in-tree boards (zynq-cc108 and zynq-zc770-xm010 through xm013)
+> never override it, so requiring it would reject device trees that are
+> already in use.
 > 
-> Signed-off-by: Linus Walleij <linusw@kernel.org>
+> trace_emio_clk is added to the clock inputs. It is the external trace
+> clock feeding the debug trace mux, which the text version never listed.
+> The example is corrected the same way: it used can_mio_clk_23, which
+> does not match the mio_clk_XX form this binding defines for an EMIO
+> clock on a MIO pin.
+> 
+> clock-output-names is enumerated as 48 const entries instead of the
+> prose "shall be a list of the outputs below", so the names and their
+> order are now checked. The clock cell is an index into that list.
+> 
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> ---
+>  .../bindings/clock/xlnx,ps7-clkc.yaml         | 145 ++++++++++++++++++
+>  .../devicetree/bindings/clock/zynq-7000.txt   | 110 -------------
+>  2 files changed, 145 insertions(+), 110 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,ps7-clkc.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/clock/zynq-7000.txt
+> 
 
-I missed that you sent a v4 yesterday and I left comments and a question
-on the v3 that are still relevant.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-https://lore.kernel.org/linux-clk/179440936574.1126566.13988760065429157595.b4-review@b4/
-
-Brian
-
--- 
-Brian Masney <masneyb@kernel.org>
