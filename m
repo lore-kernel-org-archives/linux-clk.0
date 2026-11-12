@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794462029;
-	b=H5Dek2CDYhB/idQ2H3zirVKTgK1T4WjRrjs7MWhhtFKBfydvqpVUiKYMWou/uymJmN6V
-	 cEcQS764nEAj05LSH7xEEcf0r0qjZL+beWewEEBR1UapSAE0KbMLhJx970+r9WX3NfBS2
-	 jRqC7zNUfr+tVE2WrDdIVEhyb/ZpJvXUJZZoRStLeTsHqGgXYXt6Q2Ya4VzEYFMu72WxB
-	 wdlglt9IjFhuOm6pXR0hNcfP8bloopOSxjDwnNQSp2BRUQvm7P54U77FZn8pv06k1/kUC
-	 fT7JjcZZNv8PWrexQp2+spr3fVyeOahrJqbozJUnRKaNPYkhyWQw5xAFp2b8CXTlqvQ==
+	t=1794462074;
+	b=arP487DsfpiL2E6FELJ30UU+xN18BymGltBNc0YrdsSE09QrndNBL1VeqEfIkAwvrDwy
+	 dkg1We17cmiv410AFu4BvoPyncJCDPUoOvjoOdK++e/GSFUcma3owp7LGIEwCPaNLfs7f
+	 GljXBtd1CU1IJeCB+mmXZbxv1PREwC9LwF2s6OzqNd+ie/YqRyDMWJBu6jeI75hxzqjm/
+	 VqoCKZiVZHebRP+66tz16sj1o7l7mq5BxqHIEwMR0zQLSk7Ovsvd/vhtLnKXtk8owkUZw
+	 XAm+0GJpDbglpFP2NBbvAzrKgjjFNoO2+Lr9IJW53YGfWzwCCgLyWMR4fMtt5JnqJIQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794462029;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794462074;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=lYdL7jrYYii1WZ2z9xES6pouJBvuGmUd4y+dHMiQKmc=;
-	b=PZJm44vuOOguVcSewktTtRGZeyStB1q+42CGO3UUVZeYZQHb6N+cAQp07sWdz3+yVsBU
-	 rNivaIO9Vvc/dgwAxaOBJha+w6rN9KRLZbcmmQkiO5FRfuiov2i7cWgKhE+4WoTXaWKvO
-	 PP7yd0jV96h83DMug9cqPTi7VPIn5lMiQYSWe0wHgSO+/BJ0tmGUZbwNoTYpsS8VHXYe0
-	 EV8Qf3fmqXweOUgDSmBRUT79LFWPVqtcAIjtMQLpMCjZqtuuJ+MTl3cFqg0HGVf2+ud/0
-	 t3QjH1DhHuYoX6BJKf7yG92fnE5C2YMmQTeO2+plLVs5RAmVZtTADY7iBySCKqsBoZg==
+	bh=jj2X9dt30Fe2WUsQUpllRmEAQwPcVx25v5WNX8im3fo=;
+	b=M1AbGoCWwIlvNx0EWxLKe0rgynuXoiiBJf8Qtq7jCgMP39iQ7rNNqn7EhtbZp51xaUm2
+	 yovhR+9NgF2tbpGEuFA2zv8pyW1CWaGFYLKfYqQO7/X7zNPXLNpb3vnvVDiMO5ZeuZ1wc
+	 AsAOe5WYUHufiS3HbbxrxLdPoIPjw3J4DuT8aRZVpxcG0FohT/WZb1ihyo+9TOpTm+OIN
+	 dJjNCdFtzbdp2aSnB75M1LJVfvwJKCoqPC0SJIw35/2vAU6NpWevxagjofKTWyytyIsT1
+	 dCkCuVIGlaczI8Lio635SCvK35gfWP8noEEDIcu9zsYnWgSBcr880DDDNQRMY0uCiKQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=irde78kZ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VW0j3asg;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB30C606A33A;
-	Thu, 12 Nov 2026 05:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99F7606A321;
+	Thu, 12 Nov 2026 05:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=irde78kZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BC381F00A0A;
-	Thu, 12 Nov 2026 05:40:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VW0j3asg
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31FBE1F00A05;
+	Thu, 12 Nov 2026 05:41:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794462028;
-	bh=lYdL7jrYYii1WZ2z9xES6pouJBvuGmUd4y+dHMiQKmc=;
+	s=k20260515; t=1794462074;
+	bh=jj2X9dt30Fe2WUsQUpllRmEAQwPcVx25v5WNX8im3fo=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=irde78kZU5KKterB8ScjXL1ugOtBjMPpX7xUi1MY8cNw4Pu16/p4ej6lqvO2GVT+0
-	 1KEq6HiKt6WZ++kuUSANb0Mwhr+BBtdM9MlnGvqM1Z0Y8++QvwU9YSWAaAYgDiEo2V
-	 XmPQXDRv3SbDqpXqx2757sQajncFw3btWezNdQDzc3UJtE65RnCDuXGhbeZmab59Op
-	 zCLiVNg66acTEcErqyp+FRZ57i+1eFtJrsztLnw7W75HLb/MoE9q7J28tegKXLB+kS
-	 O+bg/f0Fx9rpMXZ8KTdZVAT1oaUksARaO3AcY/IyzO3KL+rTolHHye49ndggkXKAvi
-	 ThCWCZby7Vd7Q==
-Message-ID: <sashiko-outbox-210468@kernel.org>
+	b=VW0j3asgzbsWVdXK7Zvdbw5afdLiE6FW9aES3TXbx+f/G+5ohOqx+4RgAgB+lmjpT
+	 xlQFP838NDbf+OpHJqyx7CT4dyzJMlBWymw562omEDBF3zWpxJSxi0PGnQeNv3uhGW
+	 VGBGA03Q1AYNRQk5XHZAUucIqU/mFTYG37I9O/zj8C4OiKPUH3LfAkuVxVkXgwR5fc
+	 1in9KqE6XsqbrJWJbOu9qICJErAQSvyEeZo96pjcr9OAgsYlSDunSo/01vx2bT2XE4
+	 ywT8Q05eMdLSVxV289KWqOwTUh+6sQs4fo8jrx/cCb83xnAq5aOXPkRnpkg6fnvr5Y
+	 Qs1A+hHwe26yg==
+Message-ID: <sashiko-outbox-210470@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v16 3/9] clk: realtek: Add support for phase locked
- loops (PLLs)
+Subject: Re: [PATCH v16 6/9] clk: realtek: Add support for MMC-tuned PLL
+ clocks
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Yu-Chun Lin" <eleanor.lin@realtek.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261112052544.555563-4-eleanor.lin@realtek.com>
+In-Reply-To: <20261112052544.555563-7-eleanor.lin@realtek.com>
 References: <20261112052544.555563-1-eleanor.lin@realtek.com>
- <20261112052544.555563-4-eleanor.lin@realtek.com>
+ <20261112052544.555563-7-eleanor.lin@realtek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 12 Nov 2026 05:40:27 +0000
+Date: Thu, 12 Nov 2026 05:41:13 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -63,50 +63,39 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential
 issue to consider:
-- [High] clk: realtek: missing linux/limits.h include in freq_table.c
-  breaks build
+- [Medium] clk: realtek: misplaced linux/limits.h include in
+  freq_table.c breaks bisect
 --
 
-commit 05422d9707f4d9d5ef01c91a7d3ca363d63c729c
+commit bb40f458c667a0d1463f9b5c0600dafb76a332e7
 Author: Cheng-Yu Lee <cylee12@realtek.com>
 
-clk: realtek: Add support for phase locked loops (PLLs)
+clk: realtek: Add support for MMC-tuned PLL clocks
 
-This commit adds regmap-based PLL clock operations and frequency table
-lookup helpers for Realtek SoCs.
+This commit adds clock operations for Realtek MMC-tuned PLL clocks,
+supporting rate control, enable/disable, and phase get/set operations.
 
 > diff --git a/drivers/clk/realtek/freq_table.c b/drivers/clk/realtek/freq_=
 table.c
-> new file mode 100644
-> index 0000000000000..0f977a3fc9021
-> --- /dev/null
+> index 0f977a3fc9021..d0e015131e57a 100644
+> --- a/drivers/clk/realtek/freq_table.c
 > +++ b/drivers/clk/realtek/freq_table.c
-> @@ -0,0 +1,62 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +#include <linux/types.h>
-> +#include "freq_table.h"
-> +
-> +#define IS_FREQ_TABLE_END(_f) ((_f)->rate =3D=3D 0)
-> +
-> +const struct rtk_freq_table *ftbl_find_closest_by_rate(const struct rtk_=
-freq_table *ftbl,
-> +						       unsigned long rate,
-> +						       unsigned long min_rate,
-> +						       unsigned long max_rate)
-> +{
-> +	const struct rtk_freq_table *best =3D NULL;
-> +	unsigned long best_delta =3D ULONG_MAX;
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+> =20
+> +#include <linux/limits.h>
+>  #include <linux/types.h>
+>  #include "freq_table.h"
 
-[Severity: High]
-Does freq_table.c need to include <linux/limits.h> for ULONG_MAX?
+[Severity: Medium]
+Should this #include <linux/limits.h> be folded into earlier commit
+"clk: realtek: Add support for phase locked loops (PLLs)" instead?
 
-Neither <linux/types.h> nor freq_table.h pulls in <linux/limits.h>, so
-building with CONFIG_RTK_CLK_COMMON enabled fails at this commit with an
-undeclared identifier error for ULONG_MAX.  The include is added later in
-the series by commit "clk: realtek: Add support for MMC-tuned PLL clocks",
-leaving the intermediate commits unbuildable during bisection.
+That earlier patch introduces ftbl_find_closest_by_rate() in
+drivers/clk/realtek/freq_table.c using ULONG_MAX without including
+linux/limits.h, so building at the intermediate commits in this series
+fails and breaks git bisect.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261112052544.5555=
-63-1-eleanor.lin@realtek.com?part=3D3
+63-1-eleanor.lin@realtek.com?part=3D6
