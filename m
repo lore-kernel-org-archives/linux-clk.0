@@ -1,58 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794490759;
-	b=fxRmF2SpUb22mERUnL/zt/hXzfqo5y/1AKktYYR+hKUsMd8yR77gqwqk01UWl8W3Hf9k
-	 4avfWTv0Y5YrnGfUmTnMYIK6GSFYqOsPG6fa5Q4Zq3zuQujp5JJoNN0hCauBcu3e7I1gN
-	 Z+eG8skTxyHu+8ai0wyv8eM2/qayZxCS2OqS4IUgwuQd2mMu0XlmUEx4QDN99uGyqyy05
-	 zooBD+w0s9dPn4UC/56PHYfV+Sa8IDq/H+eLFxLbSWaDIvNTabPa3Tc0HYIIAy10TKUnP
-	 KnmblN2Q5Yg1WDl+vrm6iIFX2nzKH91wbwa2t+Umf1bfaYlPzL2RLRiQDeH01ceQIrg==
+	t=1794491915;
+	b=NlMuMQTlpAYZYGH3OoJ1cJQi88YOa2Mn0k1oms9jRaX/NWFCIFDOn86TrRt7NWihHZHt
+	 3l0k19M0umB7vABr632WghATNR/wc+b9QAtTDUJda5C+0ZqOtV9q+b0QH8eXQ5+iOof3l
+	 BczRZmCyhgg2m+5xSI9yFmNctYxJkeINto3QkmQPUAx0lbd/Bg3VFPfhbDI8Mnu7Ot3Lh
+	 snoi/WDRKo0ISxoXw3QP7pIpWQeDUy/PRZY3zlrH2uRukqWFEkytaLor2BjhKd8aTEQlk
+	 ACbcl1er+y7ZofcQsfEw5ZJvsfGSu5u/2cKeeshoAgTisqmWg3jmvS0NXpoXlAMiBew==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794490759;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=qFTI2rh6Wb+SXEbi777yJ3KF0nbeBHPf0drV1H9EPYk=;
-	b=jsdMPjWA9vUxrK0LVDyiNgdQP1eCvbfw//S62oO8yb1wuLyA1eA1g2pewCqCoS+9eE06
-	 H4t67IgB2lCSn3Z5KOyfJrT7jUu4LtmmeqJs/W3hwbxNhB30MFjocx38T3/KgYUNBSI5d
-	 ZpoOWtl7kbE3O0qKKWrfEP7HxlxrEgrvYE8IBlOAPh5cEeXpzLz149ysHnPxDOaNU7Vee
-	 x0aQ2jSjB97H/PJYH3N7Eu1QOQgQIFnvTJfTx/zKknW/mHOR4bULKdOEzG2A9mqugF6Hf
-	 4V2/ucjeqpdtyTLnvHN9bJU/Nc8iy9IZ7MUlao2mkD4JPLb0CvpzL2thKKS4rCmrnfw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794491915;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=3qK75ks52nk2OhdqDIRGQrGiq6Cnz7HxfpZQKI/KNAQ=;
+	b=gaZSWGLlloEfp9tPW3ZNRQcxqLiDvEZjsE4clQK3IOPzh3xp6L3tlSIN4eFl7PFOwOeS
+	 exiKbh+hqUzWyw/ld+diiW5s7pQpuaM/SZV4bhrhG4RxHRRGis7AjO5BeYbSCqX6RkGP1
+	 edTC985KNcNilHZjfHoWkZZhAZGB5RkcYiw7eSAj5TxkZV7UwniyEascLv1Hw3hrib4MC
+	 52tb+DJpmdIipi4VCCuHY04CATaEjf9qIBrBxbat0T3YO14c3cLNSKaZ4zWsW9xPki5rL
+	 YbT1dZOMX9Emg7t8y+nb1FQn/V0sVHLCOddQJCoQbnmDE9CCsa3KuGDxsf33RBdk2uQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mFlj9QOa;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y3uIJDmV;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AF2606A31C;
-	Thu, 12 Nov 2026 13:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF3B606A330;
+	Thu, 12 Nov 2026 13:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mFlj9QOa
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA81D1F00A05;
-	Thu, 12 Nov 2026 13:39:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y3uIJDmV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E52581F00A0A;
+	Thu, 12 Nov 2026 13:58:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794490759;
-	bh=qFTI2rh6Wb+SXEbi777yJ3KF0nbeBHPf0drV1H9EPYk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=mFlj9QOanzsMZ6WWagFbNGETSE2jxucuBUF6Sgkf4TdedTQA4cnALGAyPBtOB/TPH
-	 3/ophthQSILY8jiOD0inuwNyhcPNBwv97yFF0v88VNltvWpl7wJYGfHr3sjla0cuhq
-	 0qYD0j2E7OAItIZYGb3Pny8qtI4He1lEXeYIHMSFQ3OkVvneF+TtFm9HboMyCRGAhz
-	 kaIAxK5ooBAovUykpgOWj4U3y756nK16mgP6ZazSSl9vv0nhmjmT3zdlaTy6nlkNxm
-	 9q3I5R6M8lvdTdeuUhCprpxGEmdu9WktVn+ey9seAjRFmPS89silxVC0ugqNMm+lAk
-	 WhsM4PGiN/Q8Q==
-From: Brian Masney <masneyb@kernel.org>
-To: sboyd@kernel.org, Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
- mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, 
- linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20261112023158.118273-1-zhujun2@cmss.chinamobile.com>
-References: <20261112023158.118273-1-zhujun2@cmss.chinamobile.com>
-Subject: Re: [PATCH] clk: stm32f4: Return ENOMEM when allocating clock
- components fails
-Message-Id: <179449074604.1202846.959369471118504586.b4-ty@b4>
-Date: Thu, 12 Nov 2026 08:39:06 -0500
+	s=k20260515; t=1794491915;
+	bh=3qK75ks52nk2OhdqDIRGQrGiq6Cnz7HxfpZQKI/KNAQ=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=Y3uIJDmVvCDh5voNMl19wu28hbwD1rXp14sZthY/q01Zk2uaF6DFEd131ALHyzC10
+	 DihF5Xt+moRHhZjRQvA41Jeiprq3ljUHjeWx+M8cZcf5aWXewYNtmPpf64pHxXJZWl
+	 ltOok2ej+oXTHLidcpZMc+aSo9rvEUipi2AKiJ+iMQkJK06QjYA5BYPi0qDzlOpE/I
+	 JaLV7L4MdFVAKtT1LhMcebQOhegcEBgnGeprqhRgON13eEyfVI1gk5GcC14i+qDAch
+	 YSnR9Jdjf5crPsROHeV0FuplwrFVCTsZsbdrqCVLXbC5BJAg1JaSIb0nT/p0P24kwb
+	 EXopyZ/myjaKA==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -64,27 +51,60 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v4 6/7] clk: bcm: Add BCMBCA PMB clocks
+From: Brian Masney <masneyb@kernel.org>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ William Zhang <william.zhang@broadcom.com>, 
+ Anand Gore <anand.gore@broadcom.com>, 
+ Kursad Oney <kursad.oney@broadcom.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Guenter Roeck <linux@roeck-us.net>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, 
+ Ulf Hansson <ulfh@kernel.org>, 
+ Benjamin Larsson <benjamin.larsson@genexis.eu>, mfd@lists.linux.dev, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Brian Masney <masneyb@kernel.org>
+In-Reply-To: <20261111-xg6846b-bcmbca-xrdp-reset-v4-6-17035a5e8ad2@kernel.org>
+References: <20261111-xg6846b-bcmbca-xrdp-reset-v4-0-17035a5e8ad2@kernel.org>
+ <20261111-xg6846b-bcmbca-xrdp-reset-v4-6-17035a5e8ad2@kernel.org>
+Date: Thu, 12 Nov 2026 08:58:26 -0500
+Message-Id: <179449190684.1220086.2034099469330026473.b4-review@b4>
 X-Mailer: b4 0.17-dev-7ca47
-X-Developer-Signature: v=1; a=openpgp-sha256; l=330; i=masneyb@kernel.org;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=626; i=masneyb@kernel.org;
  s=20250903; h=from:subject:message-id;
- bh=f7yy/zf1d5VX2fCP6jBnGVSYsuIFMB5qCte7qyiUQY8=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLK+Hqy32yPIs66TYbE4Y8jS5CdXts7MD1BUnJyXe8WXl
- UdogWN7RykLgxgXg6yYIsuSXKOCiNRVtvfuaLLAzGFlAhnCwMUpABPJmsnI0N9Ue+d5Olemo6Jp
- a7o5x76+9P3zl06fm/pd66q6j+HGY4wM95+HHfQI3LLf766ezQHhu/EbO4/wr5N37je7uMG4Rno
- iDwA=
+ bh=7vI5ainOfrrxAECdVE4Ka6p8NFP0cAJd1sALUJmEwV4=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLK+HmPJy+0ydnl+an6y7JIgz5tKZQ9NwnRFHHb/5smab
+ O+zQd6zo5SFQYyLQVZMkWVJrlFBROoq23t3NFlg5rAygQxh4OIUgIm8zGH4H6fCddeBw/vGjX+/
+ RfbXlS/XrPaVW2Uc67zr90SHQ9xvSxkZvh2/yrfn26z34k92CNyqP+1mJDft3ObnPxdcN578OJ8
+ jgAsA
 X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
+Hi Linus,
 
-On Thu, 12 Nov 2026 10:31:58 +0800, Zhu Jun wrote:
-> clk: stm32f4: Return ENOMEM when allocating clock components fails
+> Add a BCM6846 clock provider for the Power Management Bus (PMB) MFD
+> cell. Expose six outputs from each of the RDP and BIU PLLs, the Runner
+> clock divided from RDP PLL channel 1, the crystal output, PVTMON and
+> block-zone clock gates.
+> 
+> PVTMON and zone clocks provide gate control only.
+> 
+> Signed-off-by: Linus Walleij <linusw@kernel.org>
 
-Applied, thanks!
+I missed that you sent a v4 yesterday and I left comments and a question
+on the v3 that are still relevant.
 
-[1/1] clk: stm32f4: Return ENOMEM when allocating clock components fails
-      https://git.kernel.org/clk/linux/c/f2c959a3b2ba
+https://lore.kernel.org/linux-clk/179440936574.1126566.13988760065429157595.b4-review@b4/
 
-Best regards,
+Brian
+
 -- 
 Brian Masney <masneyb@kernel.org>
-
