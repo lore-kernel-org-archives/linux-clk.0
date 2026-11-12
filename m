@@ -1,76 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794495030;
-	b=aEr8oLZ9rDZseP9gLwBnyK+rMURc5/MOBs3vqNoOUEC2F2K7+pwziRjh9ud/akDVUeRl
-	 JJXzTpfswAtHTgmmMfW0G37lAnjmM6Wh2N0jRSUbrsAktP7+nHbamTiwRVWH4iMY/ty9i
-	 Bzhw576+hyEtIsszdhwHZFBztFg9yhs9mmTwEeyepKi3D/GdgibNsfL0qrMIf9nz0giIC
-	 WUQhv6clSnsfmcFJBcpUeaJyeJ/qywvhzfFeNCuQLvKlEJ19+6B415t1Y7cVSPMl2pDSC
-	 Gf/qCU7K/23X5Rqt2kehAJyah25pJp5kmAiXvkRpLZRjRq6GEeswyNuxzrnzIKyNtQw==
+	t=1794495528;
+	b=rgNju+Oi54M+eT1l9VbuCufCrv4VWcX4Rbj/o4ec3JfYO2y+/GZGRfM+j2LKlBYYzuj2
+	 tvSSi6f3ZWoFhAJykN05Ghwv2LOQlkfcHANkO/yC6P6OWEx3ZTYlI0B872SFr0EQa7ENM
+	 GABlygM85/Y8+10l/q8+YTLqDdslMxQbzC1YoIk8SoTae8i3CQSbGYCjckjNV+tQdtJuA
+	 c+yIlrZ8502iI/ECzwIqMyAhzOk6/HSzpohFED7EXkkQYrS/fUMPxXsZLCdupAyR80ELD
+	 OPFDNhDqdoOtNm5L7YIV8n9NY58WQp6FjZH9ai6PLoX1ZjGUMi/c7VkiH5iv1TGEWPQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794495030;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=+5BCTHh1J6xXvkZ55mDmFJRrwUlGVc7lU2YIf178GaQ=;
-	b=M9AYltvdglKR0ElhNUMB4HeGh4o+vhOIPPh6BKJQ/0tkyy8juNOJM0t2gImaa2EC2vxF
-	 oTa+LVQs5aHrjL34bqzbtiTza6K1tSyQszc9nITxpeO+twFowP8x+bz/XYTZDY9Q+19rM
-	 WcRPNs4uzdjipHFAm67C0jnCK/VrInhE6HiK4YkBgk1hk4uf19dNEy4sYGx50bl7K70nI
-	 S+4T0VIQ8Hy1o0UU6dJp+kbnJ7e+K10uxw3cuYMnD+0xH0ToXKx8hhDcT39Utx3tB49Oo
-	 gnQeCDHOCZc0NrS9H5zmjeEMILEUmbC6ApCz38vWF6nabYbyxVRquEpeJ2leLdiUhTQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794495528;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=Ahp2R8XXPiuO6iEjfb6UKUnsMrVVlx0bOA5QMiN/SCg=;
+	b=qpU63gtxjgshOcN0nVPhVZ6V6A/MqIo2X6/UfPRw4Z7vJ8P/2s5tf190tJlR+id9OLFA
+	 fiuMnTsOSWyjQjfLm39/XH93++Kdsos6d+VSuo5uuUNQ3fgPOB/5nw+dWjTuq1Byozth2
+	 p3hEZJn9sN6HZH7MPaiHYqNKQoKIiMKP0bJIYyEF9jOlY3bm94DL+AxkpAFl23Od/bkik
+	 0VHLInqYyjsjank/mFiCdFv9eeEquqaaZ2APR4Jcrp/oZ0h+2Gbf9b4+2hPbR3PdCyqKi
+	 GDjWPrnWfh47ZJQYp3eJxS0eqJOgj6ce/8no0TMHbaCl/fHFV3iX8hZROFRe10o8zdA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.217.47
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=evi7clWU;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91B0606A897
-	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 14:50:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C91B0606A897
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-7cc0ccc2fddso1429866137.1
-        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 06:50:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794495029; x=1795099829;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=+5BCTHh1J6xXvkZ55mDmFJRrwUlGVc7lU2YIf178GaQ=;
-        b=XQ4SAJ6yg/nBI6NpGTRH1c32POoSCF+b80eW8d12qq3m5vHM+EOm9t1S16+Ipzd+Fu
-         IS7n6saFhw5wdVao+H7OJK0PgK+JqRGmDv3/ZjoXfixM0wjKINn40aalcl4KNLgPP5+b
-         Lz7vBncgg+eA72NFOcHClxUU7SWdxOrYklpFM+SaDQva6OQXN7ON9tVLjBBs0vSOfbaY
-         7pnp7n5/P2RwZKSHQgl2Sp7yGoO9Ctj07pzLY1QABLzxPZvdqhu2j3i0rBpsb0FCC6D7
-         18aG4LV8ysA/bRpFZ1PJgeZbawamKh0uGOrBpglXvaGXNEi5YeUIVlaiTGzJVrgBcg5A
-         WlLQ==
-X-Forwarded-Encrypted: i=1; AL+hErETsGpC0MckVbwWnKnRdlDXf23kx1Jmm+9pFyst0lNrcTfV5QfVpKgrNaHdcQFp6VuiIsF+8KSBxcM=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/puqDdxJb37s9H/LhYvWEPBxQAwJSI6ZjnJy6Nip0IhEqoMKUj
-	jBsb6LcgmfJbN89zNcJa1OoqR14iM+iLqaqLB4AizCEau38/YLX+lOpurHayV+530ag=
-X-Gm-Gg: AYBFou3Sit33gZOAGUQl4JoZ0zeACbe9Tux+T7m9k9nP52V7MLKjWlOnSl3yN+rHVIP
-	boh9mE2R1ne7QoZDskFvJFfjThn7P6gBgTnr45S337B/LK4gFRWubaTXbDoF1SbuIg1ztJaSXqJ
-	PP4Q2kcRU4x0W3y3/DKaVaj2JHKGvhJz22udnfwJVuHHDIRpfLtVi0fGjSm+fPe9RV9J8lBDTCs
-	ho5zE9cI4o5TaRWfiWWlD8IvS8XIsdkbizEHCURIQ7mK2H1XXa9YcAVqU6Cf5YsM1imOBQ9Y2Uw
-	Iq+wu4hqNPii5pulxE6rf6q45FmpilyRypYk2/0Oq9ptbFxxUhOVswd/duQQgX8xCXa9rLnUE+Q
-	A6z09T+wSX3LlyjEwQQHH2yrREZAYrAjehPjtXB+jL6oux29U0siQD3LK0fGwisoEEw1EbKIkee
-	F6vAf3Nl+tFH0sAcBanmP0UbyyMSGfVGCaLcAbw+B22OhQa+yro8iEyDmS9WNw4GZz0zj7dOan1
-	+Tpi9jqcT66NqiXBkLOFq1jJqkYAeBNYlWUJ6X7N8RLYFTe79St1mzJXJUuWCQdij2rrGIaO7sq
-	3Urgd0vryj+POHAN/0kDjmbOe/i2wPl0r50TFj1IquPmsabG58/IwaD5nERD8sOQZfc=
-X-Received: by 2002:a05:6102:f9c:b0:7d2:d45e:5c9d with SMTP id ada2fe7eead31-7d4fb257b3cmr2041089137.13.1794495028882;
-        Thu, 12 Nov 2026 06:50:28 -0800 (PST)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99c2019bf87sm6075984241.11.2026.11.12.06.50.26
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Nov 2026 06:50:27 -0800 (PST)
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-9999f21f617so1161254241.1
-        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 06:50:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErHLpFjEV0Pu4VKM0Pl11Ocjiv5aoOW3CFREmOgkqeOJBC2EeC2r+WiDE/XzG7a6Hpx6T2hsQmSTamk=@vger.kernel.org
-X-Received: by 2002:a05:6102:2925:b0:7d0:5688:f511 with SMTP id
- ada2fe7eead31-7d4fb2b4baemr1940643137.16.1794495026588; Thu, 12 Nov 2026
- 06:50:26 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FA9606A321
+	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 14:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=evi7clWU
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82BD41F00A07
+	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 14:58:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794495528;
+	bh=Ahp2R8XXPiuO6iEjfb6UKUnsMrVVlx0bOA5QMiN/SCg=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=evi7clWUqzfu5IwbwBr1JJlISMJDxPDhvh6uAAOyCg4ZnCnklbxu8+ZjPmsyAJp/0
+	 aP8kAcEIz52VuMwJki7SyO4fuxYHvB3MavOJRR03w0bl2i7fAv32f91k/+09mGMrj3
+	 iWt4HXcH3d0ZZxsnA6Rm9vsEqznM4YC0+n0a6kqqns3tv22HaO3JdV6Q+ZvJtYkBfF
+	 h9guIvmInAtJSD2Thdtkqr1TC4gRLGYeJpVypaDuYlIneKDv92USZioY1YD+c92ZTM
+	 GNRqYI1l0LabEgiidIKy/Ghen9POAU1/k4/CNgnT6u71WupklB+95qmRViP8rE0x3t
+	 oi8M7RhZ7wVeQ==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3ae25c846edso4951641fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 06:58:48 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErFG34Mv8TzEhLolU5Y9EUu1OMpG8mjqI10JIK+UydzMMvcvltOd3ie2K48ce/u04H9tM78jg+stAgU=@vger.kernel.org
+X-Gm-Message-State: APuU4Z89BZnTlR6IjZfdMnAMtgi8tXCXQkMeucf7tu4iaINM8Gss5dWK
+	lzgkOWM+j5Gn15Y9BN1qgtWPRRgoNS1Y4OtXrUZ7tbneIYldNdlimGdRpsR6kR6bKopRYPpoZ4y
+	XYdbkV8E3uo+CGvOR7kpoHqQqlVVBF4A=
+X-Received: by 2002:a05:651c:e0c4:10b0:3ae:25db:795 with SMTP id
+ 38308e7fff4ca-3ae25db0827mr3381781fa.12.1794495527049; Thu, 12 Nov 2026
+ 06:58:47 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -80,70 +59,101 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-0-1b2072e8c37e@ideasonboard.com>
- <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-4-1b2072e8c37e@ideasonboard.com>
-In-Reply-To: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-4-1b2072e8c37e@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Nov 2026 15:50:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWw2O1k44Rn03VOFJ_0RJAFZro-bzmzP2gSD+Hc8UbPaA@mail.gmail.com>
-X-Gm-Features: AclHuK8sy96nMijWIpulMeqo_3YMpISU_WECBzNl3ZKvutsCseDDYG3iuq5rfEs
-Message-ID: <CAMuHMdWw2O1k44Rn03VOFJ_0RJAFZro-bzmzP2gSD+Hc8UbPaA@mail.gmail.com>
-Subject: Re: [PATCH v4 04/13] arm64: renesas: r8a78000: Add VSP[BI] nodes
-To: Paul Elder <paul.elder+renesas@ideasonboard.com>
+References: <20261112-a733-clk-v7-0-db7c5451ffa2@pigmoral.tech> <20261112-a733-clk-v7-6-db7c5451ffa2@pigmoral.tech>
+In-Reply-To: <20261112-a733-clk-v7-6-db7c5451ffa2@pigmoral.tech>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Thu, 12 Nov 2026 23:58:33 +0900
+X-Gmail-Original-Message-ID: <CAGb2v64Ye4wEiE3y2msoFh1P5Cs7dvXQ_vESmVFEJ=qhkp9PVQ@mail.gmail.com>
+X-Gm-Features: AclHuK-IX9I87FO9BVEBpEeLaHk1PETWtM0mWihOigloFLp60Bd_bejTc7ChEns
+Message-ID: <CAGb2v64Ye4wEiE3y2msoFh1P5Cs7dvXQ_vESmVFEJ=qhkp9PVQ@mail.gmail.com>
+Subject: Re: [PATCH v7 6/8] clk: sunxi-ng: a733: Add mod clocks support
+To: Junhui Liu <junhui.liu@pigmoral.tech>
 Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
 	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-media@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, netdev@vger.kernel.org, 
+	Jerome Brunet <jbrunet@baylibre.com>, Enzo Adriano <enzo.adriano.code@gmail.com>, 
+	Andre Przywara <andre.przywara@arm.com>, Norman Herms <dockseed@proton.me>, 
+	Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi,
 
-On Mon, 9 Nov 2026 at 14:35, Paul Elder
-<paul.elder+renesas@ideasonboard.com> wrote:
-> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On Thu, Nov 12, 2026 at 4:15=E2=80=AFPM Junhui Liu <junhui.liu@pigmoral.tec=
+h> wrote:
 >
-> Add DT nodes for the VSPB and VSPI IP cores in the R-Car X5H SoC.
+> Add the module clocks found in the Allwinner A733 SoC, including video,
+> storage, interfaces and others. While most of these clocks are similar
+> to those in the A523 SoC, this implementation accounts for changes in
+> register offsets and introduces support for new modules.
 >
-> Use the SGD1 clock as it is likely to be the clock used for data flow.
+> Tested-by: Jerome Brunet <jbrunet@baylibre.com>
+> Tested-by: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun60i-a733.c | 1087 ++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 1087 insertions(+)
 >
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-n=
+g/ccu-sun60i-a733.c
+> index 8bc603393f5a..5ea65bf5b5e0 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
 
-Thanks for your patch!
+[...]
 
-> --- a/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-> @@ -1646,6 +1646,105 @@ fcpvb4: fcp@c503c000 {
->                         resets = <&mdlc_vio 0x106>;
->                 };
->
-> +               vspi0: vsp@c5080000 {
+> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(i2spcm2_asrc_clk, "i2spcm2_asrc", i2=
+spcm2_asrc_parents, 0x1224,
 
-> +               vspb0: vsp@c50c0000 {
+This and the csi master clocks later have an underscore in the clk name str=
+ing.
+They should have hyphens instead. I will fix it when I apply the patches.
+No need to resend just for this.
 
-Do you want to sort the VSPs within the VSP group by unit address, or by
-label? This matters especially when also considering the next patch...
+> +static SUNXI_CCU_DUALDIV_MUX_GATE(csi_master0_clk, "csi_master0", csi_ma=
+ster_parents, 0x1800,
 
-For the contents of the nodes (except for the renesas,fcp properties,
-as I couldn't find the VSP<->FCP links in the documentation):
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This one.
 
-Gr{oetje,eeting}s,
+> +                                 0, 5,         /* M */
+> +                                 8, 5,         /* N */
+> +                                 24, 3,        /* mux */
+> +                                 BIT(31),      /* gate */
+> +                                 0);
+> +static SUNXI_CCU_DUALDIV_MUX_GATE(csi_master1_clk, "csi_master1", csi_ma=
+ster_parents, 0x1804,
 
-                        Geert
+This one.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +                                 0, 5,         /* M */
+> +                                 8, 5,         /* N */
+> +                                 24, 3,        /* mux */
+> +                                 BIT(31),      /* gate */
+> +                                 0);
+> +static SUNXI_CCU_DUALDIV_MUX_GATE(csi_master2_clk, "csi_master2", csi_ma=
+ster_parents, 0x1808,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+And this one.
+
+> +                                 0, 5,         /* M */
+> +                                 8, 5,         /* N */
+> +                                 24, 3,        /* mux */
+> +                                 BIT(31),      /* gate */
+> +                                 0);
+
+
+These were flagged by a review agent comparing the driver against the datas=
+heet
+and BSP code.
+
+
+ChenYu
