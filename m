@@ -1,56 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.182.15
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.69.27
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794467774;
-	b=NBLWTYyDP6Go7cuHDaufWZIYD83JS+G/E9YihgvQ30K2iQ8g5nPzuIRQwQ6qL+ZyM+8y
-	 YW8p/JvvH7UiBw4K4IRh71d7lIdmBzkkXLNcCuplLgSuEAW+9GAHdCQvNJ+3ylQwxzGJn
-	 umI6RPdEC+BeBRNOWJTocsdq8aS5+IOEuPkzZMZUqdcTRVGCrFuTfgtsMgI2AzXlNJARt
-	 Re4IWgGVSpP0oByaMTH0PWYwCRuImFX+w9v7GU8dfsxUJKQJE7NFR/8F0+9OKNuCOv8Fm
-	 k7bsfd7FNMlpF0fGTgiT+LP/7x5/IADjR9LjotPb3ZoZAvd6ekRqPv5ib0tzvC5UAdw==
+	t=1794472625;
+	b=idWuknWcTJ4vo+hwysZNBCdj35073kLe8dvkkVci8yOy/vK909PHgki3nzTuHwVrBJwd
+	 uaqSsRIPH/PaMcWjGN7USBpKJAy2n1ghhBtPSByQzZGTr9L662OaVksIqimA/fwzGnFQp
+	 lsliv33UoUjXys4SToElIJufjsLBpUGeSqPMrj2qNPAjk70Ey9lcG94j4/yq+9KpQMBQl
+	 EmZPMCooOeNRY9jDxDnCLWZzKq7C9NI8Kubv8tFzTDstDgm2/nVAHggz6hyxWYVD05PYZ
+	 9hZ15TnDGyibfHfqt67dp6BuWVVkS/WWof0l1sFcrcW0pDeNmi/k8zWDu3MvpaZj4qQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794467774;
-	h=DMARC-Filter:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
-	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-ZohoMailClient;
-	bh=/PD4UpFBO687A1NJczwBo6I69uScaHLmvAb6f6geHA4=;
-	b=P5nNluApkikbEy3shpEgA18uTa4uBBorywqafHo0tZYdAMeZtyEb5e6pyp0K4YZPGS7d
-	 dQFEo7smISPaaFj/YXLGbPEV0TC0aNFiLUOjRbB2SXDkuanAUF9UpNNFhziNd0fsjRGGh
-	 cNBlPX6wCNb8mkt0KuS6xfQgUK9G33p3OwdmbcKrEjcH2PTiMlbvMzcf1acs7HRn5ar0m
-	 hE2qlQVYENOblmaq+5EYupPXn/raSrJ1EkyVqIz9VLZQYrtDllqnLW5RlWUG8p5zeZ6iI
-	 PhPejn9X2JMHQintDdGMR0O6F8AH0QAoQFxUhMYaSqcjw3wXHww6uXQ5j+t+DIj8mwg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794472625;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 Received:Message-ID:Date:MIME-Version:User-Agent:Subject:To:CC:
+	 References:Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy:
+	 X-EOPAttributedMessage:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=w2zn7zBKFnW3u0uo/c51wplsYOKWCwojPLE2KnPlAx8=;
+	b=yncIUOqjZ+FzkwGEo3pga40i8xVtnFwdDRpKD/FsDylDfA8xe4HemlA4onsHqxHLl4AP
+	 GRmZ2G178Omy8KguWsJyqdF6qsbNWVH8rTcxqWe536rRhbT+cVxr4Sp6cD9YjQu5g1Spk
+	 nh2WzViDoVduMsI9r3jXqRIYGRwkqyzYSGLGUhNrt1KR6vSivBllV47Fxd6iW0NLEYj5i
+	 fXsuTbW4e0EH/n4ZVmrm/OqLLq8W+IBiK6MctgTkKFflNXO9QeK+PKhfkoreiZnLWeWpi
+	 j+uml/adctMHtFdbnOO7IvbHKJr3UjYt8Qpmj6ucO6fwZol/aR4bK3b5xTmWmjocfcQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pigmoral.tech;
-	spf=pass smtp.mailfrom=pigmoral.tech;
-	dkim=pass header.d=pigmoral.tech header.i=@pigmoral.tech header.a=rsa-sha256 header.s=zmail header.b=k7Dk75Wh;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.182.15
-Received: from sender5-op-o15.zoho.com (sender5-op-o15.zoho.com [165.173.182.15])
+	dmarc=pass header.from=foss.st.com;
+	spf=pass smtp.mailfrom=foss.st.com;
+	dkim=pass header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=BPQ4oeOj;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.69.27
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010027.outbound.protection.outlook.com [52.101.69.27])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5902606A321;
-	Thu, 12 Nov 2026 07:16:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B5902606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C71606A890;
+	Thu, 12 Nov 2026 08:37:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 33C71606A890
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=@pigmoral.tech header.a=rsa-sha256 header.s=zmail header.b=k7Dk75Wh
-ARC-Seal: i=1; a=rsa-sha256; t=1794467707; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=eFvschK8nZYrFe9JQHPertlYcRoIjgArR1RC/CWEZKB7i9wd42awydqDGp0mwt8hcp6bNAKlw5NxjpE+Cqv2VD1D+hwVFAZqOUpLwkHcAF6oETwsq5brMQo52U9RbJoVidfkcYuD4xLt/KwblXrVXtHx357nwI7KhOOiFhpnojU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1794467707; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=/PD4UpFBO687A1NJczwBo6I69uScaHLmvAb6f6geHA4=; 
-	b=N2fEyqOsOeD/juA3luX2fAvtnGQt0LgfRzOuHdD7N8uEjysH3a4hgAnCHWZv3sumaJNt8RYedbLRrt5Gs4tpPpCY2972RTBUf9l+/A+USd8gIFPocnML7mrYXTycUDXuYe+YFDkboAWKebPbqoKzUVzRxlO+L+h6acWlNFQhBqM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: a=rsa-sha256; b=k7Dk75WhuBJASTWIiahHcnm5WCE78SLceo/06UG1KwNCYpsw4O4bLIAxoj16bRfH3h+gcQVUHxdXSbRrIqFdC5L+yz72ytlsN7aNJ9OoJFTt7r5PUIpa+ArIKatqfo05jHMXTJVgcXntQGXyj8qPfjeuTb+DYTjo0gz2Thh1ff8=; c=relaxed/relaxed; s=zmail; d=pigmoral.tech; v=1; bh=/PD4UpFBO687A1NJczwBo6I69uScaHLmvAb6f6geHA4=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
-Received: by smtp.zohomail.com with SMTPS id 1794467705581366.7408594193287;
-	Wed, 11 Nov 2026 23:15:05 -0800 (PST)
-From: Junhui Liu <junhui.liu@pigmoral.tech>
-Date: Thu, 12 Nov 2026 15:11:57 +0800
-Subject: [PATCH v7 8/8] clk: sunxi-ng: a733: Add reset lines
+	dkim=pass (2048-bit key, unprotected) header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=BPQ4oeOj
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y0oZZHlewf7fhulE/R4I1i5g0nrzh6ksqUSSlCm8096DXTNUS8lSWi99EZckhEKHSzFebR9Y0tN6a829jbIa+xyDxgHf4CvB6rJdrLjusy4Nmdf93XocRlIfE6kyx3L0ma1JPS/U9I4bwMzjFAlw19JYCn/nBHXFNiaRSvplzV7sQSAp2IulopewzaX22jWQGw4FvrlL6HCzyeAaIcu2qjCjlek47ZLNZwS52FTIh96f5HqZnqxtODjwCGqIokZRCGea0FdnVA+kx0FM2SaK+g3YVRVF4KyneLBmPFLMIie4luHPvB+Ozv5zUJ4ocgyXHN7YWhTbXHXVvnCu5DmDvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=w2zn7zBKFnW3u0uo/c51wplsYOKWCwojPLE2KnPlAx8=;
+ b=thh1Rpwv0uhEI4i6rXJ0tBV18d5++VDt146KL8DW1vmh1HWYoXsn32TQ3NK2FTkNllC14cZ/SmgJ1xLBD5m36rjrgmNdLse+fog4b+OO6sxGo54XQ1Q/PBYZt3SB53NChM5i4DM+O+XBimzxojQe11ppB2COFFDs9EpJPD08NsAMyAwXaBMm1+V1nNmy6nYp9erbLkP83tst6IR+nykXxDfpiC9V6M9/GfZGI/HN7AMoWyVrDqzwddt7s8pKiSCCiE0NCdfSewaimCCHP4TveZAvOaUsue4m0v8i1dV+Ox5FVSGH+NbSuJOzJiV9htXZCiNT+h1VNpaTGV1yOOmSLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.59) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w2zn7zBKFnW3u0uo/c51wplsYOKWCwojPLE2KnPlAx8=;
+ b=BPQ4oeOj5ylKa9G4ONOKMCvt5EwpflUI02d3TxRG6hSey79T1rXHAudZAoZ38+bgwzwqm7beZI8eReO0vzrCCvz41WKkQiuS8oy2Jtzkyq6xxz9D4PGdxrSXqTqDGHj9OFjvsiW8GVSL4LJjV/t1sGtIJSXY6X6fSClVVWA8dryIwV+CMcUSGlFbTbMBZs3Pa3bzAKZCzWLxv9nCcRZi6/Eg+QwbKYAHfZi4OPuhq9jvpz7DNW1mA/j89aF7UnOodXjSTf3x6qf5e+voDmZQGD9x3Jkx9xhQPUHvcEKWl4e9gw/JTyVTK0BY1hsUjVr7xwFepvCj1jQn94foWjEsPQ==
+Received: from DUZPR01CA0237.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b5::20) by AS8PR10MB7546.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5ad::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.8; Thu, 12 Nov
+ 2026 08:37:01 +0000
+Received: from DB1PEPF000509E7.eurprd03.prod.outlook.com
+ (2603:10a6:10:4b5:cafe::83) by DUZPR01CA0237.outlook.office365.com
+ (2603:10a6:10:4b5::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.10 via Frontend Transport; Thu,
+ 12 Nov 2026 08:37:00 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=fail (sender IP
+ is 164.130.1.59) smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.59; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.59) by
+ DB1PEPF000509E7.mail.protection.outlook.com (10.167.242.57) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.615.4 via Frontend Transport; Thu, 12 Nov 2026 08:37:00 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
+ (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Thu, 12 Nov
+ 2026 09:37:41 +0100
+Received: from [10.48.87.14] (10.48.87.14) by STKDAG1NODE2.st.com
+ (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Thu, 12 Nov
+ 2026 09:36:59 +0100
+Message-ID: <c4f08bb7-cea5-4f79-8a11-4045220f3b89@foss.st.com>
+Date: Thu, 12 Nov 2026 09:36:59 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,206 +104,153 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] dt-bindings: arm: stm32: Add clock-controller
+ sub-node to STM32MP2 SYSCFG
+To: Conor Dooley <conor@kernel.org>
+CC: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, Christophe Roullier
+	<christophe.roullier@foss.st.com>, Dario Binacchi
+	<dario.binacchi@amarulasolutions.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20261110-ups_mp25_clk_syscfg-v1-0-667829cd290a@foss.st.com>
+ <20261110-ups_mp25_clk_syscfg-v1-2-667829cd290a@foss.st.com>
+ <20261110-confidant-bundle-08385b99bd78@spud>
+Content-Language: en-US
+From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+In-Reply-To: <20261110-confidant-bundle-08385b99bd78@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261112-a733-clk-v7-8-db7c5451ffa2@pigmoral.tech>
-References: <20261112-a733-clk-v7-0-db7c5451ffa2@pigmoral.tech>
-In-Reply-To: <20261112-a733-clk-v7-0-db7c5451ffa2@pigmoral.tech>
-To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Junhui Liu <junhui.liu@pigmoral.tech>, Paul Walmsley <pjw@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- netdev@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, 
- Enzo Adriano <enzo.adriano.code@gmail.com>, 
- Andre Przywara <andre.przywara@arm.com>, Norman Herms <dockseed@proton.me>, 
- Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7125;
- i=junhui.liu@pigmoral.tech; h=from:subject:message-id;
- bh=PdP5eXOJZa8KfZvKjdJwSEED0Kqy+w7Th+f5pcd/5qQ=;
- b=owGbwMvMwCWWvDb1VEXc8j+Mp9WSGLK+pjP8qhAvKYyNszjk9GbribsX+J5b3369UajvxtRHN
- UcN5gid7yhlYRDjYpAVU2Th8hf/Z63D8+2IQOt9mDmsTCBDGLg4BWAilksZGa60PhZeWG8gu59T
- vprrw0pBpkz23XG/LvatuXPO4saMiSaMDLMUAk9VWopzT3uc+ZpzppzR9VeP2K2fKbh6s/1jSzW
- RZgEA
-X-Developer-Key: i=junhui.liu@pigmoral.tech; a=openpgp;
- fpr=15B30CC69C4BF0CC3C08F85A2A90CDC122DF37BF
-X-ZohoMailClient: External
+X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
+ (10.75.128.133)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF000509E7:EE_|AS8PR10MB7546:EE_
+X-MS-Office365-Filtering-Correlation-Id: 157f1756-290f-487a-1953-08df40981ec5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|7416014|376014|82310400026|36860700016|1800799024|4143699003|11063799006|56012099006|261026140227099003|261009223027099003|261022105027099003|261026121527099003|261021121427099003|261028144727099003|261102123227099003|261022075727099003|22082099003|18002099003|10067099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	8afAIice5/xMROc+8noieLgUbu7ah63yTUM51Oa+ysbbqpm7YmiCy8FYKBDvmC5Pasx/JA87gLckV3TapSTTium5DdnsiC/M4TndEc+J+2yu3PXwhS+I5XQlJ1+IQRYHrxtLPynVScQHYNX5tiZ2JJJ4/6ywDUE6f1RLkX/wAjDULqaPeSrcm97pX7qHw2Ai6QrhWWI/6obqQAZ1tyLI5y19NBe0QfPcFKJpDI+QkUv2tMzZS/bRzjV0sZxBhcQEai/E/reGCZDy0XHGYN6M9o8nl/w4koUgqHRCVmvBj1eCN1OoK2uiTj+QOM6mELw1HVIsZBrNG8lM54Ms20eGqKH8KTjni+Av4CcjeN9Yhn1MEQjGu9CzeZFu/yXyf3/hlry4UlUk7xizMIzSs0d9yimTUsuLYAZm8UIcuelEvf045vqQo/MDtBVNIdgmXm/IUdUiMBtPK6HslZyl+Ywmd37TpWGkvO24qEW2KtvcIDKMhlB7ChC6wJHJwpa9/M509Frc/nWGS/NKi0QatqbsW2tqdE9rZ3dN2M53EQPZ1ZIcTpwQnwrrzTCF+8jIxM5wu5MtxqATR/FuprqtBdzI5CAlJQ759BBWQXkhQ9RIxcqGPaUuJ11h+OfvDsNpz59/IwWqGBafkH3c9ksAsWD+zKgXrr0Y0TGZpAkYtVk4Pvw=
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(82310400026)(36860700016)(1800799024)(4143699003)(11063799006)(56012099006)(261026140227099003)(261009223027099003)(261022105027099003)(261026121527099003)(261021121427099003)(261028144727099003)(261102123227099003)(261022075727099003)(22082099003)(18002099003)(10067099003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	p5WFCKE7dc8DUtGymDXbQhDbAyypED6vtFxzoEnU9x8XW5dSQ2/OHGX41LjdLJN32PWxqerfAdMEDoNMxCum5qrGQ1m8cD5Xir1QaqyN69q/+0Yq+GKx68bZGPlSdSiVzBSt5Jp36PmGdijB9S6ikNA8GPhc6LqCmh3/Erf9ratzQgR+q5EqRwkXzThK0Dg9SFPK/1WGlWm/LjxnbYXslixBWzK4PB3Vcx+0tTKDJOJ58cOjCe8n89MVV058vFqVNNHqOZh5IpgBHTG7TR/SE6nVE4otv6NJLCIvkDOlj8vFSViv2Qq7RaxzN6/2OTNoOS4VCooW/sar723Mlj2b4RSz/FbEmsCwmMyUJxz8c/Fy0vi8cr83ikBNnPcnOpeEIUjVvviGLwMAELsNJV1EuTI/VCV7praT5mYHysv88HVfMiCzg/Ar2NZwZ+BALekS
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2026 08:37:00.4256
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 157f1756-290f-487a-1953-08df40981ec5
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509E7.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7546
 
-Add the reset lines for the Allwinner A733 SoC. These reset control bits
-are integrated into the Bus Gate Reset (BGR) registers, typically
-sharing the same register address with their corresponding bus clock
-gates. Integrate them into the main CCU driver using the existing
-sunxi-ng ccu_reset framework, allowing the CCU to also function as a
-reset controller for the SoC.
+Hi Conor,
 
-Tested-by: Jerome Brunet <jbrunet@baylibre.com>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
-Tested-by: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
-Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
----
- drivers/clk/sunxi-ng/ccu-sun60i-a733.c | 126 +++++++++++++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
+Thanks for review
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-index 47bb73cbc81f..50fd7c11821f 100644
---- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-@@ -26,6 +26,7 @@
- #include <dt-bindings/reset/allwinner,sun60i-a733-ccu.h>
- 
- #include "ccu_common.h"
-+#include "ccu_reset.h"
- 
- #include "ccu_div.h"
- #include "ccu_gate.h"
-@@ -2192,11 +2193,136 @@ static struct clk_hw_onecell_data sun60i_a733_hw_clks = {
- 	.num	= CLK_FANOUT3 + 1,
- };
- 
-+static const struct ccu_reset_map sun60i_a733_ccu_resets[] = {
-+	[RST_BUS_ITS_PCIE0]		= { 0x574, BIT(16) },
-+	[RST_BUS_IOMMU0_SYS]		= { 0x58c, BIT(16) },
-+	[RST_BUS_MSI_LITE0_AHB]		= { 0x594, BIT(16) },
-+	[RST_BUS_MSI_LITE0_MBUS]	= { 0x594, BIT(17) },
-+	[RST_BUS_MSI_LITE1_AHB]		= { 0x59c, BIT(16) },
-+	[RST_BUS_MSI_LITE1_MBUS]	= { 0x59c, BIT(17) },
-+	[RST_BUS_MSI_LITE2_AHB]		= { 0x5a4, BIT(16) },
-+	[RST_BUS_MSI_LITE2_MBUS]	= { 0x5a4, BIT(17) },
-+	[RST_BUS_IOMMU1_SYS]		= { 0x5b4, BIT(16) },
-+	[RST_BUS_DMA0]			= { 0x704, BIT(16) },
-+	[RST_BUS_DMA1]			= { 0x70c, BIT(16) },
-+	[RST_BUS_SPINLOCK]		= { 0x724, BIT(16) },
-+	[RST_BUS_MSGBOX]		= { 0x744, BIT(16) },
-+	[RST_BUS_PWM0]			= { 0x784, BIT(16) },
-+	[RST_BUS_PWM1]			= { 0x78c, BIT(16) },
-+	[RST_BUS_DBG]			= { 0x7a4, BIT(16) },
-+	[RST_BUS_SYSDAP]		= { 0x7ac, BIT(16) },
-+	[RST_BUS_TIMER0]		= { 0x850, BIT(16) },
-+	[RST_BUS_DE0]			= { 0xa04, BIT(16) },
-+	[RST_BUS_DI]			= { 0xa24, BIT(16) },
-+	[RST_BUS_G2D]			= { 0xa44, BIT(16) },
-+	[RST_BUS_EINK]			= { 0xa6c, BIT(16) },
-+	[RST_BUS_DE_SYS]		= { 0xa74, BIT(16) },
-+	[RST_BUS_VE_ENC0]		= { 0xa8c, BIT(16) },
-+	[RST_BUS_VE_DEC0]		= { 0xa8c, BIT(18) },
-+	[RST_BUS_CE]			= { 0xac4, BIT(16) },
-+	[RST_BUS_CE_SYS]		= { 0xac4, BIT(17) },
-+	[RST_BUS_NPU_CORE]		= { 0xb04, BIT(16) },
-+	[RST_BUS_NPU_AXI]		= { 0xb04, BIT(17) },
-+	[RST_BUS_NPU_AHB]		= { 0xb04, BIT(18) },
-+	[RST_BUS_NPU_SRAM]		= { 0xb04, BIT(19) },
-+	[RST_BUS_GPU0]			= { 0xb24, BIT(16) },
-+	[RST_BUS_DRAM0]			= { 0xc0c, BIT(16) },
-+	[RST_BUS_NAND0]			= { 0xc8c, BIT(16) },
-+	[RST_BUS_MMC0]			= { 0xd0c, BIT(16) },
-+	[RST_BUS_MMC1]			= { 0xd1c, BIT(16) },
-+	[RST_BUS_MMC2]			= { 0xd2c, BIT(16) },
-+	[RST_BUS_MMC3]			= { 0xd3c, BIT(16) },
-+	[RST_BUS_UFS_AHB]		= { 0xd8c, BIT(16) },
-+	[RST_BUS_UFS_AXI]		= { 0xd8c, BIT(17) },
-+	[RST_BUS_UFS_PHY]		= { 0xd8c, BIT(18) },
-+	[RST_BUS_UFS_CORE]		= { 0xd8c, BIT(19) },
-+	[RST_BUS_UART0]			= { 0xe00, BIT(16) },
-+	[RST_BUS_UART1]			= { 0xe04, BIT(16) },
-+	[RST_BUS_UART2]			= { 0xe08, BIT(16) },
-+	[RST_BUS_UART3]			= { 0xe0c, BIT(16) },
-+	[RST_BUS_UART4]			= { 0xe10, BIT(16) },
-+	[RST_BUS_UART5]			= { 0xe14, BIT(16) },
-+	[RST_BUS_UART6]			= { 0xe18, BIT(16) },
-+	[RST_BUS_I2C0]			= { 0xe80, BIT(16) },
-+	[RST_BUS_I2C1]			= { 0xe84, BIT(16) },
-+	[RST_BUS_I2C2]			= { 0xe88, BIT(16) },
-+	[RST_BUS_I2C3]			= { 0xe8c, BIT(16) },
-+	[RST_BUS_I2C4]			= { 0xe90, BIT(16) },
-+	[RST_BUS_I2C5]			= { 0xe94, BIT(16) },
-+	[RST_BUS_I2C6]			= { 0xe98, BIT(16) },
-+	[RST_BUS_I2C7]			= { 0xe9c, BIT(16) },
-+	[RST_BUS_I2C8]			= { 0xea0, BIT(16) },
-+	[RST_BUS_I2C9]			= { 0xea4, BIT(16) },
-+	[RST_BUS_I2C10]			= { 0xea8, BIT(16) },
-+	[RST_BUS_I2C11]			= { 0xeac, BIT(16) },
-+	[RST_BUS_I2C12]			= { 0xeb0, BIT(16) },
-+	[RST_BUS_SPI0]			= { 0xf04, BIT(16) },
-+	[RST_BUS_SPI1]			= { 0xf0c, BIT(16) },
-+	[RST_BUS_SPI2]			= { 0xf14, BIT(16) },
-+	[RST_BUS_SPIF]			= { 0xf1c, BIT(16) },
-+	[RST_BUS_SPI3]			= { 0xf24, BIT(16) },
-+	[RST_BUS_SPI4]			= { 0xf2c, BIT(16) }, /* From the vendor kernel. */
-+	[RST_BUS_GPADC0]		= { 0xfc4, BIT(16) },
-+	[RST_BUS_THS0]			= { 0xfe4, BIT(16) },
-+	[RST_BUS_IRRX]			= { 0x1004, BIT(16) },
-+	[RST_BUS_IRTX]			= { 0x100c, BIT(16) },
-+	[RST_BUS_LRADC]			= { 0x1024, BIT(16) },
-+	[RST_BUS_SGPIO]			= { 0x1064, BIT(16) }, /* From the vendor kernel. */
-+	[RST_BUS_LPC]			= { 0x1084, BIT(16) }, /* From the vendor kernel. */
-+	[RST_BUS_I2SPCM0]		= { 0x120c, BIT(16) },
-+	[RST_BUS_I2SPCM1]		= { 0x121c, BIT(16) },
-+	[RST_BUS_I2SPCM2]		= { 0x122c, BIT(16) },
-+	[RST_BUS_I2SPCM3]		= { 0x123c, BIT(16) },
-+	[RST_BUS_I2SPCM4]		= { 0x124c, BIT(16) },
-+	[RST_BUS_SPDIF]			= { 0x128c, BIT(16) },
-+	[RST_BUS_DMIC]			= { 0x12cc, BIT(16) },
-+	[RST_USB_PHY0]			= { 0x1300, BIT(30) },
-+	[RST_BUS_OHCI0]			= { 0x1304, BIT(16) },
-+	[RST_BUS_EHCI0]			= { 0x1304, BIT(20) },
-+	[RST_BUS_OTG]			= { 0x1304, BIT(24) },
-+	[RST_USB_PHY1]			= { 0x1308, BIT(30) },
-+	[RST_BUS_OHCI1]			= { 0x130c, BIT(16) },
-+	[RST_BUS_EHCI1]			= { 0x130c, BIT(20) },
-+	[RST_BUS_USB2]			= { 0x135c, BIT(16) },
-+	[RST_BUS_PCIE_PWRUP]		= { 0x138c, BIT(16) },
-+	[RST_BUS_PCIE]			= { 0x138c, BIT(17) },
-+	[RST_BUS_SERDES]		= { 0x13c4, BIT(16) },
-+	[RST_BUS_GMAC0]			= { 0x141c, BIT(16) },
-+	[RST_BUS_GMAC0_AXI]		= { 0x141c, BIT(17) },
-+	[RST_BUS_GMAC1]			= { 0x142c, BIT(16) }, /* From the vendor kernel. */
-+	[RST_BUS_GMAC1_AXI]		= { 0x142c, BIT(17) }, /* From the vendor kernel. */
-+	[RST_BUS_TCON_LCD0]		= { 0x1504, BIT(16) },
-+	[RST_BUS_TCON_LCD1]		= { 0x150c, BIT(16) },
-+	[RST_BUS_TCON_LCD2]		= { 0x1514, BIT(16) }, /* From the vendor kernel. */
-+	[RST_BUS_LVDS0]			= { 0x1544, BIT(16) },
-+	[RST_BUS_LVDS1]			= { 0x154c, BIT(16) },
-+	[RST_BUS_DSI0]			= { 0x1584, BIT(16) },
-+	[RST_BUS_DSI1]			= { 0x158c, BIT(16) },
-+	[RST_BUS_TCON_TV0]		= { 0x1604, BIT(16) },
-+	[RST_BUS_TCON_TV1]		= { 0x160c, BIT(16) },
-+	[RST_BUS_EDP]			= { 0x164c, BIT(16) },
-+	[RST_BUS_HDMI_MAIN]		= { 0x168c, BIT(16) },
-+	[RST_BUS_HDMI_SUB]		= { 0x168c, BIT(17) },
-+	[RST_BUS_HDMI_HDCP]		= { 0x168c, BIT(18) },
-+	[RST_BUS_DPSS_TOP0]		= { 0x16c4, BIT(16) },
-+	[RST_BUS_DPSS_TOP1]		= { 0x16cc, BIT(16) },
-+	[RST_BUS_VIDEO_OUT0]		= { 0x16e4, BIT(16) },
-+	[RST_BUS_VIDEO_OUT1]		= { 0x16ec, BIT(16) },
-+	[RST_BUS_LEDC]			= { 0x1704, BIT(16) },
-+	[RST_BUS_DSC]			= { 0x1744, BIT(16) },
-+	[RST_BUS_CSI]			= { 0x1844, BIT(16) },
-+	[RST_BUS_VIDEO_IN]		= { 0x1884, BIT(16) },
-+	[RST_BUS_APB2JTAG]		= { 0x1c04, BIT(16) },
-+};
-+
- static const struct sunxi_ccu_desc sun60i_a733_ccu_desc = {
- 	.ccu_clks	= sun60i_a733_ccu_clks,
- 	.num_ccu_clks	= ARRAY_SIZE(sun60i_a733_ccu_clks),
- 
- 	.hw_clks	= &sun60i_a733_hw_clks,
-+
-+	.resets		= sun60i_a733_ccu_resets,
-+	.num_resets	= ARRAY_SIZE(sun60i_a733_ccu_resets),
- };
- 
- static const u32 pll_regs[] = {
+On 11/10/26 19:54, Conor Dooley wrote:
+> On Tue, Nov 10, 2026 at 11:42:17AM +0100, Gabriel Fernandez wrote:
+>> The LTDC pixel clock multiplexer of the STM32MP23x and STM32MP25x
+>> SYSCFG is described by a clock-controller sub-node of the SYSCFG node.
+>>
+>> Add this sub-node to the SYSCFG binding. It is required on STM32MP23x
+>> and STM32MP25x and not allowed on the other SoCs.
+>>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> Why does this need a child node at all, can't the clock controller
+> properties go straight into this syscon node?
+>
+> Cheers,
+> Conor.
 
--- 
-2.56.0
+I sent a v2 [1] shortly before your reply, which explains this in the
+commit message, but the question still applies to it, so let me answer
+here.
 
+ From a hardware point of view, the mux inputs could indeed be described
+in the SYSCFG node. The problem is that this node is a "syscon": when
+the syscon core creates the regmap of the node (syscon_node_to_regmap()
+or syscon_regmap_lookup_by_*()), it takes the first clock of the node as
+the clock of the registers, keeps it prepared and enables/disables it
+around each register access.
+
+The SYSCFG has no clock gate in the RCC, so this first clock would be
+the LTDC kernel clock, i.e. the first input of the mux. It would then be
+enabled on every SYSCFG access by all the users of this syscon (PCIe,
+ComboPHY, Ethernet, OMM...).
+
+Registering our own regmap with of_syscon_register_regmap() from the
+SYSCFG driver doesn't solve it either: these users reach the SYSCFG
+through vendor phandles (st,syscon, st,syscfg-amcr) or by compatible,
+which are not tracked by fw_devlink, so one of them can create the
+syscon regmap, with the clock, before the SYSCFG driver probes.
+
+Apart from adding a dummy clock in first position, which would describe
+something which doesn't exist in the hardware, I didn't find a way to
+keep these properties in the SYSCFG node. So the mux is described by a
+sub-node with its own clock inputs, like the USB2 PHYs of the SYSCFG
+which are already described as sub-nodes.
+
+In v2, the '#clock-cells' property of the SYSCFG node is deprecated, so
+that the sub-node is the only provider of this clock. No driver ever
+registered a clock on the SYSCFG node, so this doesn't change anything
+for existing devicetrees.
+
+[1] 
+https://lore.kernel.org/r/20261110-ups_mp25_clk_syscfg-v2-0-624559bb8ec7@foss.st.com
+
+Best regards,
+
+Gabriel
+
+
+>
+>> ---
+>>   Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
+>> index a559f8b03b84..38c844e8f19d 100644
+>> --- a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
+>> @@ -45,6 +45,10 @@ properties:
+>>     "#size-cells":
+>>       const: 1
+>>   
+>> +  clock-controller:
+>> +    type: object
+>> +    $ref: /schemas/clock/st,stm32mp25-syscfg-clk.yaml#
+>> +
+>>   patternProperties:
+>>     "^phy@2[48]00$":
+>>       type: object
+>> @@ -80,6 +84,7 @@ allOf:
+>>           - "#address-cells"
+>>           - "#clock-cells"
+>>           - "#size-cells"
+>> +        - clock-controller
+>>           - phy@2400
+>>           - phy@2800
+>>       else:
+>> @@ -87,6 +92,7 @@ allOf:
+>>           '#address-cells': false
+>>           '#clock-cells': false
+>>           '#size-cells': false
+>> +        clock-controller: false
+>>           phy@2400: false
+>>           phy@2800: false
+>>   
+>>
+>> -- 
+>> 2.43.0
+>>
