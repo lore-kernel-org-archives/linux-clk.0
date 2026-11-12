@@ -1,55 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.179
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794495528;
-	b=rgNju+Oi54M+eT1l9VbuCufCrv4VWcX4Rbj/o4ec3JfYO2y+/GZGRfM+j2LKlBYYzuj2
-	 tvSSi6f3ZWoFhAJykN05Ghwv2LOQlkfcHANkO/yC6P6OWEx3ZTYlI0B872SFr0EQa7ENM
-	 GABlygM85/Y8+10l/q8+YTLqDdslMxQbzC1YoIk8SoTae8i3CQSbGYCjckjNV+tQdtJuA
-	 c+yIlrZ8502iI/ECzwIqMyAhzOk6/HSzpohFED7EXkkQYrS/fUMPxXsZLCdupAyR80ELD
-	 OPFDNhDqdoOtNm5L7YIV8n9NY58WQp6FjZH9ai6PLoX1ZjGUMi/c7VkiH5iv1TGEWPQ==
+	t=1794495812;
+	b=JMIKl6Qfj7+ep1ut+jfSbjhh2XFLw1E9yGHfMlBCJ1M/aNlV53EBsXTaX6SUVId5AuN6
+	 hW4vLMnO0+8EZEchldo9VQtcmuuOr1wWIhHEFwk4TLKy5zgjk/kcabYuvtc3ZsBMIQkTl
+	 zjE8j9Bu2pNIshpTiSFRzW3jRVvWEv+FWPFDSSWDnFzP4U7fGZZbIvlHqtr1GJZ6Ut3h4
+	 MyqL3uz6Rgw7KiVBfqZLZhK0n+8BhMqPlBossbddKYFKmscqwn6c5j9M73TEnWA3mRFKt
+	 TgEUx4FxxUgTyx5gxJ/sdjO2x1WVxP6kbManw7glTOIH4jExfbwSYsz1x2wsQqb6MUQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794495528;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=Ahp2R8XXPiuO6iEjfb6UKUnsMrVVlx0bOA5QMiN/SCg=;
-	b=qpU63gtxjgshOcN0nVPhVZ6V6A/MqIo2X6/UfPRw4Z7vJ8P/2s5tf190tJlR+id9OLFA
-	 fiuMnTsOSWyjQjfLm39/XH93++Kdsos6d+VSuo5uuUNQ3fgPOB/5nw+dWjTuq1Byozth2
-	 p3hEZJn9sN6HZH7MPaiHYqNKQoKIiMKP0bJIYyEF9jOlY3bm94DL+AxkpAFl23Od/bkik
-	 0VHLInqYyjsjank/mFiCdFv9eeEquqaaZ2APR4Jcrp/oZ0h+2Gbf9b4+2hPbR3PdCyqKi
-	 GDjWPrnWfh47ZJQYp3eJxS0eqJOgj6ce/8no0TMHbaCl/fHFV3iX8hZROFRe10o8zdA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794495812;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=mS1ut25pAkhX06KpI5+b6SzLMFwF8RaPMcofkkPb8+I=;
+	b=lPwYKQvlPo/ciGrLKo0Agr88x0jNZzembjOJAgX8ENzRw7XBDa2Rp8rHobIsW+8aRbj4
+	 A/QFK/CJw5nfG8CZ9tAU6ArnYPzvvfTuhud02WQOYTEHkBSDHFhxXC5tqpZ4sJHSWFuSF
+	 CjbYz4qAOtfoYWb7QklufghtrGtuL/BXsYeDy2y1pa9wUBvP1oDz1OhanDvEjPz400Dew
+	 qKfCL4jiyGFmLiRSchdrqYT5SjIXbtfZUhzmNgMS/ER0NynZk2zFRyL3Ni/QxCmmGKpKD
+	 EKKrFPRBiz/SFnb+2vsNY8jpbubrVam3At5a6QvPFOPy4CmRXdomp8fvlWfyrgI8v4g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=evi7clWU;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.128.179
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FA9606A321
-	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 14:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=evi7clWU
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82BD41F00A07
-	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 14:58:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794495528;
-	bh=Ahp2R8XXPiuO6iEjfb6UKUnsMrVVlx0bOA5QMiN/SCg=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=evi7clWUqzfu5IwbwBr1JJlISMJDxPDhvh6uAAOyCg4ZnCnklbxu8+ZjPmsyAJp/0
-	 aP8kAcEIz52VuMwJki7SyO4fuxYHvB3MavOJRR03w0bl2i7fAv32f91k/+09mGMrj3
-	 iWt4HXcH3d0ZZxsnA6Rm9vsEqznM4YC0+n0a6kqqns3tv22HaO3JdV6Q+ZvJtYkBfF
-	 h9guIvmInAtJSD2Thdtkqr1TC4gRLGYeJpVypaDuYlIneKDv92USZioY1YD+c92ZTM
-	 GNRqYI1l0LabEgiidIKy/Ghen9POAU1/k4/CNgnT6u71WupklB+95qmRViP8rE0x3t
-	 oi8M7RhZ7wVeQ==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3ae25c846edso4951641fa.2
-        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 06:58:48 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErFG34Mv8TzEhLolU5Y9EUu1OMpG8mjqI10JIK+UydzMMvcvltOd3ie2K48ce/u04H9tM78jg+stAgU=@vger.kernel.org
-X-Gm-Message-State: APuU4Z89BZnTlR6IjZfdMnAMtgi8tXCXQkMeucf7tu4iaINM8Gss5dWK
-	lzgkOWM+j5Gn15Y9BN1qgtWPRRgoNS1Y4OtXrUZ7tbneIYldNdlimGdRpsR6kR6bKopRYPpoZ4y
-	XYdbkV8E3uo+CGvOR7kpoHqQqlVVBF4A=
-X-Received: by 2002:a05:651c:e0c4:10b0:3ae:25db:795 with SMTP id
- 38308e7fff4ca-3ae25db0827mr3381781fa.12.1794495527049; Thu, 12 Nov 2026
- 06:58:47 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23124606A323
+	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 15:03:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23124606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-8b3541bb1a2so26752217b3.1
+        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 07:03:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794495811; x=1795100611;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=mS1ut25pAkhX06KpI5+b6SzLMFwF8RaPMcofkkPb8+I=;
+        b=QCI4gIfoMpy4RwARW/na5Vmu8e2/2KnZ6+niDzQgv9AVEextkzK6CmewCXuwGrTH3M
+         QKX58oT3oQ3x7aKYxQrEdJa3YnyykbR8c0w3gM2AnsyxnRdcFcf8dYRD9iQnadHHfT15
+         oZyCW7QuIHuO4FoZeFo9AtmGBs6QpJ+KZX1xzFKEoFcQLMHE6P+q1c+TMRQfTh+5v2a4
+         I7pRly6ihx8x5HQqlFjpPNgYe5fR5BQGO801uEMiQ2vG9KIYFVFXHIXKMw1w4IKVwHpq
+         MuckKFnJ+ceZqtyy0Q8jEi+W9K8yYajyNwNyt5+SlMuEFtigU81dlJJylvVFYQet9v70
+         UfVw==
+X-Forwarded-Encrypted: i=1; AL+hErEe7iXet8/vKV6Jo+qR3f0zQVEri9+TdtwW1giKpz2YkopMPgHApi74QMJVxit/BjT3/aAo39Xm7Nw=@vger.kernel.org
+X-Gm-Message-State: APuU4Z90kxGnmoanKkxPBbGoVpDU9Wu5nhxFc1KM9/gkcKCd3hHfpv65
+	t27O+HAEQsfHAgDWeJbaw2YtlYQrZSDs39Ud4xRr2oDxFf8i6DUD2N/ddi8bQtcTVOE=
+X-Gm-Gg: AYBFou1p3Z5lpGrSHt+k9VncREwWJAlL+fN/BQ/GUO6FzlI4Ay7rRLsS1WnoEUoJR8s
+	LErRvZBhqe3beS1+EzL/F0SgVTlSgHQ0x8BivXTbrCXomWaVRPfZbv6cC6wM1lZWLmxUGOJ7kdm
+	38MdrZKa3s6RMPyDMz3BQ37g+mVyfYox1cZQZvXtdwwPWiiLuz/Mmfq+Z0mDMpPUV1KdGtgFQHG
+	lN4CMcJ6VN1Wm2i2Q2G8nQHM0rBeppMNaW/j96uNSOXRZcVrsQ2AF8GOHNYVDHUuVnX7gNiC9Xj
+	70/1XSHj2CG9CtdXhxjwv+uaLb6AbjxYxuRAFGyjGGmqgJEVKb4Ha3+CB4PwADXeeiuZZ6pSU3g
+	miUwCbS8JZK1d85LfSlWbI7vhPhZWamNQHi9FrJAndpRXckdiDLDY7fVcFs4lBm1w2Dgy/tGYrB
+	+lXGKL9p9q4dB9XH5HhSCgXkqDJPvG5ZpDgzOETfX9gmf4r+D5KpGvFvcS+s4gO4v2cDvFJnke5
+	vKKBdpl7B9XaYB6NHafBNUeCmJsUBXyT4lWvZ2ymqw6fldMJo9rQcnnz/KlDrwYNLT1QM6JS7dC
+	P4cSuCgO8WpvhFT7JfnrIwLRGalAJdEjB5f3IsQdJdlfe0nBiBy1A321/RI6SE2itLE=
+X-Received: by 2002:a05:690c:7482:b0:8b3:b06d:68de with SMTP id 00721157ae682-8b3b06dbad2mr29362067b3.106.1794495811121;
+        Thu, 12 Nov 2026 07:03:31 -0800 (PST)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com. [209.85.219.52])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-9479e76b1c3sm745590285a.16.2026.11.12.07.03.29
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Nov 2026 07:03:29 -0800 (PST)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-91e98301805so42910146d6.1
+        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 07:03:29 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErFId8/yLPFBxOy9eEwZB8WGYeLOoQgwPSCl/V/sNfVps1U2p6gvbwHiaSsvPetKbXH4qWQa0jsRJ+g=@vger.kernel.org
+X-Received: by 2002:a05:6102:f10:b0:7c3:9982:67d7 with SMTP id
+ ada2fe7eead31-7d50609c9damr2546296137.16.1794495444511; Thu, 12 Nov 2026
+ 06:57:24 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,101 +80,113 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261112-a733-clk-v7-0-db7c5451ffa2@pigmoral.tech> <20261112-a733-clk-v7-6-db7c5451ffa2@pigmoral.tech>
-In-Reply-To: <20261112-a733-clk-v7-6-db7c5451ffa2@pigmoral.tech>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Thu, 12 Nov 2026 23:58:33 +0900
-X-Gmail-Original-Message-ID: <CAGb2v64Ye4wEiE3y2msoFh1P5Cs7dvXQ_vESmVFEJ=qhkp9PVQ@mail.gmail.com>
-X-Gm-Features: AclHuK-IX9I87FO9BVEBpEeLaHk1PETWtM0mWihOigloFLp60Bd_bejTc7ChEns
-Message-ID: <CAGb2v64Ye4wEiE3y2msoFh1P5Cs7dvXQ_vESmVFEJ=qhkp9PVQ@mail.gmail.com>
-Subject: Re: [PATCH v7 6/8] clk: sunxi-ng: a733: Add mod clocks support
-To: Junhui Liu <junhui.liu@pigmoral.tech>
+References: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-0-1b2072e8c37e@ideasonboard.com>
+ <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-5-1b2072e8c37e@ideasonboard.com>
+In-Reply-To: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-5-1b2072e8c37e@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Nov 2026 15:57:11 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUUvhf=zEmd2tfodo7zf1hh9n8m88Okk7KZpq0n=mDR2A@mail.gmail.com>
+X-Gm-Features: AclHuK_otbzgK2u3WYfd1DmRW9SD98NHgBcVxYwHNEPtms-IkWdgisCPqESp0Ec
+Message-ID: <CAMuHMdUUvhf=zEmd2tfodo7zf1hh9n8m88Okk7KZpq0n=mDR2A@mail.gmail.com>
+Subject: Re: [PATCH v4 05/13] arm64: renesas: r8a78000: Add FCPVD and VSPD nodes
+To: Paul Elder <paul.elder+renesas@ideasonboard.com>
 Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
 	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, netdev@vger.kernel.org, 
-	Jerome Brunet <jbrunet@baylibre.com>, Enzo Adriano <enzo.adriano.code@gmail.com>, 
-	Andre Przywara <andre.przywara@arm.com>, Norman Herms <dockseed@proton.me>, 
-	Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-media@vger.kernel.org, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Paul,
 
-On Thu, Nov 12, 2026 at 4:15=E2=80=AFPM Junhui Liu <junhui.liu@pigmoral.tec=
-h> wrote:
+On Mon, 9 Nov 2026 at 14:35, Paul Elder
+<paul.elder+renesas@ideasonboard.com> wrote:
+> Add DT nodes for the FCPVD and VSPD IP cores in the R-Car X5H SoC.
 >
-> Add the module clocks found in the Allwinner A733 SoC, including video,
-> storage, interfaces and others. While most of these clocks are similar
-> to those in the A523 SoC, this implementation accounts for changes in
-> register offsets and introduces support for new modules.
+> Use the SGD1 clock as it is likely to be the clock used for data flow.
 >
-> Tested-by: Jerome Brunet <jbrunet@baylibre.com>
-> Tested-by: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
-> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun60i-a733.c | 1087 ++++++++++++++++++++++++++=
-++++++
->  1 file changed, 1087 insertions(+)
+> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+Thanks for your patch!
+
+> --- a/arch/arm64/boot/dts/renesas/r8a78000.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
+> @@ -1574,6 +1574,196 @@ mdlc_aon: system-controller@c1338000 {
+>                         bootph-all;
+>                 };
 >
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-n=
-g/ccu-sun60i-a733.c
-> index 8bc603393f5a..5ea65bf5b5e0 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+> +               fcpvd0: fcp@c5010000 {
+
+Please preserve sort order:
+  1. Sort by unit address,
+  2. Keep similar nodes together.
 
 [...]
 
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(i2spcm2_asrc_clk, "i2spcm2_asrc", i2=
-spcm2_asrc_parents, 0x1224,
+> +               fcpvd9: fcp@c5019000 {
 
-This and the csi master clocks later have an underscore in the clk name str=
-ing.
-They should have hyphens instead. I will fix it when I apply the patches.
-No need to resend just for this.
+> +               vspd0: vsp@c4800000 {
 
-> +static SUNXI_CCU_DUALDIV_MUX_GATE(csi_master0_clk, "csi_master0", csi_ma=
-ster_parents, 0x1800,
+Do you want to sort the VSPs within the VSP group by unit address,
+or by label?
 
-This one.
+By unit address:
 
-> +                                 0, 5,         /* M */
-> +                                 8, 5,         /* N */
-> +                                 24, 3,        /* mux */
-> +                                 BIT(31),      /* gate */
-> +                                 0);
-> +static SUNXI_CCU_DUALDIV_MUX_GATE(csi_master1_clk, "csi_master1", csi_ma=
-ster_parents, 0x1804,
+    "vspd0: vsp@c4800000"
+    "vspb0: vsp@c50c0000"
 
-This one.
+Note that adding the vspd* in a later patch than the vspb*
+means the latter need to be moved in front of the fcp* :-(
 
-> +                                 0, 5,         /* M */
-> +                                 8, 5,         /* N */
-> +                                 24, 3,        /* mux */
-> +                                 BIT(31),      /* gate */
-> +                                 0);
-> +static SUNXI_CCU_DUALDIV_MUX_GATE(csi_master2_clk, "csi_master2", csi_ma=
-ster_parents, 0x1808,
+By label:
 
-And this one.
+    "vspb0: vsp@c50c0000"
+    "vspd0: vsp@c4800000"
 
-> +                                 0, 5,         /* M */
-> +                                 8, 5,         /* N */
-> +                                 24, 3,        /* mux */
-> +                                 BIT(31),      /* gate */
-> +                                 0);
+> +               vspd1: vsp@c4808000 {
 
+> +               vspd2: vsp@c4810000 {
 
-These were flagged by a review agent comparing the driver against the datas=
-heet
-and BSP code.
+> +               vspd3: vsp@c4818000 {
 
+> +               vspd4: vsp@c4820000 {
 
-ChenYu
+> +               vspdb0: vsp@c4828000 {
+
+> +               vspdb1: vsp@c4830000 {
+
+> +               vspdb2: vsp@c4838000 {
+
+> +               vspdb3: vsp@c4840000 {
+
+> +               vspdb4: vsp@c4848000 {
+
+>                 fcpvi0: fcp@c5030000 {
+
+Shouldn't we keep al FCP nodes together?
+Same for the VSP nodes.
+
+>                         compatible = "renesas,fcpv";
+>                         reg = <0 0xc5030000 0 0x1000>;
+
+For the contents of the nodes (except for the renesas,fcp properties,
+as I couldn't find the VSP<->FCP links in the documentation):
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
