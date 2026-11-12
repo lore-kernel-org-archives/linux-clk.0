@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794477040;
-	b=03o4Nd1Lsk8aU+o69FY0iyyfazDjAcA7y9IrEhnbl5MzPbg+AP5McBqSAcKArkOvw34/
-	 haCFpt5epCgC14ZONlqqXU8rBk0RaRkAQtSR8+2RAhzZH6uugD7zYrbcW9W5yu0Lqj+ak
-	 hEi9+E4dxQZJbBCZVSMxE8jpkob+FO8Ttbiw2E/hc/AL8qGgAUaOH9drm4Bi2nRhp820f
-	 3oAiVT75mLvyMXIUjY+6eFje/6m+tyTWlmZHt/SN05F7ENQNmzH4Xv+j0cBu9u55HW3Qj
-	 /lkUHRCJWQqi8oBCrNEuYBz8hplLm8k+AtvQucKf6OXIOoKCyAjqTxISULk4oxWTE2A==
+	t=1794477675;
+	b=iUwFLO6a4/gfv9tRT3s6LOdVL0Jc1gSmtzQun8gg0UfiY7arQ3ZmN/4CPTpXtrZ8obHC
+	 VpQbEyzay/mLyp6Sx8nIQ5YZDeS2a9V4ZTajJNjcbMi3xzPSc/WegY7rk+MDk9Wbq2Kc6
+	 UJP7ZSH9F2Ycxv1UiRYvhu/HjLDFu4J3/ksGGtIGQjs9qUB/PGpllZoV8lkRLeNCdQplV
+	 2eawQ/lSE69+cfP8CWKgwfsZJBDjy6H+s8F+YK2/2NH8MfPoQ2CofsGBW/GjbQXueivQ8
+	 KzhUCv0dN5h8baZ6pTOI7nsfXHhHVWM8ztXJTDtEmxHDQ/W1SKCTGoO+tBl2LTVVsrQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794477040;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794477675;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=HMNGGYuioNirshm6SHU2flY32c5/fdYBjO7AF+mOo8U=;
-	b=dJ/x98R/bK+r2/qA7VKRIMH7J4dgOhEBZRzBvHibR30DjFyjVQce0l7yktjRR4rwTQ9F
-	 gv/MXbpTmoeBHNz6+IVMxaDpLNhlzSGhFxjRKvAfFdyniqhx0jfv/z+IevxrHXPJYl12D
-	 Amo9SkugAY4XiQFCMrVVT3yLXrZ/NWb8WIPLqOKbfQ9mmAuzGghv2JZB8BqJYVD2hHcrf
-	 g0hL/loVIdmQTJJCTWRyt6iUwJMN6PtQ0Wit97v3osVDsrdxypbQeCpuWMtigu5dcyBtq
-	 2qVvBIWPgZywK8BcUXX37HRe9eLzcnGJjcJh0VjkFQKxMzFt7b4fNZdzZgkzE/kYkNQ==
+	bh=VMlOl837uqKQtppBwv9KRWnMoG9E9SFyzKVLYp9RwEM=;
+	b=CC2imLSJgeks6HfkHO1QbiXkLiD1TNtGZnt8Lha0lkfVxNkE5xwm10OArLrrWHWb7796
+	 hkVB8j/skC/PPaCU3eHFK/AAjMREIFnMD52TuYzWEkSiNz6ZeRwG+4oS4o4TJ67tbZlIe
+	 Elw+G1jFEyApsyUIehy7sGC9cZNNzqPlMmEyj8jOx3Hdx66tMlzcImLyREr6CZQmltsUr
+	 ChUI6DFzFleeVf3mRx0Lo5XRRVIyb8c0hFEnQY518qaQhMDAOYVB8+fjVRp2BsvFLpcG1
+	 9wAYfdfcY/3s8M98187CYH/c3ySnpGdFtC8Z7HAUTWUxdsNDi5hJeMZcvPoAXi7HhAQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bxSBl4kM;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TF4HbZR7;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D62606A321
-	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 09:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9ED606A321;
+	Thu, 12 Nov 2026 10:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bxSBl4kM
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F521F00A05;
-	Thu, 12 Nov 2026 09:50:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TF4HbZR7
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 024A81F00A05;
+	Thu, 12 Nov 2026 10:01:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794477039;
-	bh=HMNGGYuioNirshm6SHU2flY32c5/fdYBjO7AF+mOo8U=;
+	s=k20260515; t=1794477675;
+	bh=VMlOl837uqKQtppBwv9KRWnMoG9E9SFyzKVLYp9RwEM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=bxSBl4kMGtNzDZXQflAzQlUN12cn4ZSVfUcp8DrlnBuET6dmnCNQD5I0TtfDjmHKg
-	 WSRM5rkeru8z5h6cj/wcVwXupX1HK/wMVwkgNvAIqPmWPkIFoIDjC46W58V82IzF54
-	 nxo+1Qta+mBOXzxxPbx4SPAHIB//Q7c+RM2LO3A942ahro9aS5O9yn1WmD9slPNUn+
-	 GBttXe0+ByfJjLJAMYKQ/fEHVywiHtZ+ccVmeMlmda91U7foBGuxaLX3hIk1Xymky1
-	 KTGNHcrkFsOE5fS33dF5jy69lLog+Jgv20RXEtNXmxHU24fVUVldihCSdAOz1hBiQ9
-	 6LMhPFs9299yA==
-Message-ID: <sashiko-outbox-210906@kernel.org>
+	b=TF4HbZR70c5bl/jRfcrHBJmvmOIpk/iOqynSXjXUrMWpCk7GIjEkL0mKzxrE5aWTI
+	 +JqzeFr0n57Gt3GD0IJy26nVtq6x19ie2UDx1q2ZtkOZFK1s3/VqHnDH2/ojfA1dqa
+	 Hea5go25Car81wAks7UywHFwl1oqCmXRGTaphGj7WSQocqZjGi6UC13jlBOzY5vyaM
+	 ODRhB4/6uUrFRweFFuOrN2FEL7l6qHGkr5lU7UIxdE5J41TblAd+6g92sVVs8qEiDm
+	 Eh1hSd/2MDtrmOuTDi/3/R9Z6Of9D5FJEvfqO0iC7VaHe9gk7fsMb2i/czWc3ZcBYB
+	 NodMZOgMVew4w==
+Message-ID: <sashiko-outbox-210917@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 3/3] clk: divider: test: Add tests for rates above
- 4.29 GHz
+Subject: Re: [PATCH v2 2/3] clk: qcom: Add NSS clock controller driver for
+ IPQ5210 SoC
 Reply-To: sashiko-reviews@lists.linux.dev
-To: "Carlo Caione" <ccaione@baylibre.com>
-Cc: linux-clk@vger.kernel.org
-In-Reply-To: <20261112-upstream-clk-divider-large-rates-v2-3-18f3bb888b0c@baylibre.com>
-References: <20261112-upstream-clk-divider-large-rates-v2-0-18f3bb888b0c@baylibre.com>
- <20261112-upstream-clk-divider-large-rates-v2-3-18f3bb888b0c@baylibre.com>
+To: "Luo Jie" <jie.luo@oss.qualcomm.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261111-qcom_ipq5210_nsscc-v2-2-7e2c1dda3ed2@oss.qualcomm.com>
+References: <20261111-qcom_ipq5210_nsscc-v2-0-7e2c1dda3ed2@oss.qualcomm.com>
+ <20261111-qcom_ipq5210_nsscc-v2-2-7e2c1dda3ed2@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 12 Nov 2026 09:50:39 +0000
+Date: Thu, 12 Nov 2026 10:01:14 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -63,52 +63,110 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential
 issue to consider:
-- [Low] clk: divider: test: unlocked clk_hw_round_rate() calls trigger
-  lockdep warning
+- [Medium] clk: qcom: nsscc-ipq5210: CLK_SET_RATE_PARENT on XGMAC PTP
+  dividers
 --
 
-commit 25eaef0a68df414370fdc908fa118bc3dbfa005e
-Author: Carlo Caione <ccaione@baylibre.com>
+commit ba0d35b1d755dedd51b7ae9f8752c3443ce8f41c
+Author: Luo Jie <jie.luo@oss.qualcomm.com>
 
-clk: divider: test: Add tests for rates above 4.29 GHz
+clk: qcom: Add NSS clock controller driver for IPQ5210 SoC
 
-This commit adds KUnit test suites for clk dividers covering rates above
-4.29 GHz on 64-bit platforms and round-closest dividers requested above
-their parent rate.
+This commit adds the NSS clock controller driver for IPQ5210, providing
+clocks, resets, and interconnect clock paths for the networking subsystem.
 
-> diff --git a/drivers/clk/clk-divider_test.c b/drivers/clk/clk-divider_tes=
-t.c
-> index 8ee1614128d09..734cbdad55ddf 100644
-> --- a/drivers/clk/clk-divider_test.c
-> +++ b/drivers/clk/clk-divider_test.c
+> diff --git a/drivers/clk/qcom/nsscc-ipq5210.c b/drivers/clk/qcom/nsscc-ip=
+q5210.c
+> new file mode 100644
+> index 0000000000000..97673d01c9569
+> --- /dev/null
+> +++ b/drivers/clk/qcom/nsscc-ipq5210.c
+> @@ -0,0 +1,2202 @@
 
 [ ... ]
 
-> +static void clk_divider_large_rate_round_up(struct kunit *test)
-> +{
-> +	struct clk_hw *div_hw;
-> +	u32 *fake_reg;
+> +static const struct freq_tbl ftbl_nss_cc_ppe_clk_src[] =3D {
+> +	F(24000000, P_XO, 1, 0, 0),
+> +	F(429000000, P_CMN_PLL_NSS_CLK_429M, 1, 0, 0),
+> +	{ }
+> +};
 > +
-> +	fake_reg =3D kunit_kzalloc(test, sizeof(*fake_reg), GFP_KERNEL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, fake_reg);
+> +static struct clk_rcg2 nss_cc_ppe_clk_src =3D {
+> +	.cmd_rcgr =3D 0x3ec,
+> +	.mnd_width =3D 0,
+> +	.hid_width =3D 5,
+> +	.parent_map =3D nss_cc_parent_map_ppe,
+> +	.freq_tbl =3D ftbl_nss_cc_ppe_clk_src,
+> +	.clkr.hw.init =3D &(const struct clk_init_data){
+> +		.name =3D "nss_cc_ppe_clk_src",
+> +		.parent_data =3D nss_cc_ppe_parent_data_ppe,
+> +		.num_parents =3D ARRAY_SIZE(nss_cc_ppe_parent_data_ppe),
+> +		.ops =3D &clk_rcg2_ops,
+> +	},
+> +};
 > +
-> +	div_hw =3D clk_divider_large_rate_init(test, fake_reg, PARENT_RATE_6GHZ,
-> +					     0, 0);
+> +/*
+> + * The XGMAC PTP reference clock rate needs to be configurable, so the
+> + * PTP reference dividers use the writable divider ops.
+> + */
+> +static struct clk_regmap_div nss_cc_xgmac0_ptp_ref_div_clk_src =3D {
+> +	.reg =3D 0x3f4,
+> +	.shift =3D 0,
+> +	.width =3D 4,
+> +	.clkr.hw.init =3D &(const struct clk_init_data) {
+> +		.name =3D "nss_cc_xgmac0_ptp_ref_div_clk_src",
+> +		.parent_hws =3D (const struct clk_hw*[]){
+> +			&nss_cc_ppe_clk_src.clkr.hw,
+> +		},
+> +		.num_parents =3D 1,
+> +		.flags =3D CLK_SET_RATE_PARENT,
+> +		.ops =3D &clk_regmap_div_ops,
+> +	},
+> +};
 > +
-> +	KUNIT_EXPECT_EQ(test, clk_hw_round_rate(div_hw, PARENT_RATE_6GHZ),
-> +			PARENT_RATE_6GHZ);
-> +}
+> +static struct clk_regmap_div nss_cc_xgmac1_ptp_ref_div_clk_src =3D {
+> +	.reg =3D 0x3f8,
+> +	.shift =3D 0,
+> +	.width =3D 4,
+> +	.clkr.hw.init =3D &(const struct clk_init_data) {
+> +		.name =3D "nss_cc_xgmac1_ptp_ref_div_clk_src",
+> +		.parent_hws =3D (const struct clk_hw*[]){
+> +			&nss_cc_ppe_clk_src.clkr.hw,
+> +		},
+> +		.num_parents =3D 1,
+> +		.flags =3D CLK_SET_RATE_PARENT,
+> +		.ops =3D &clk_regmap_div_ops,
+> +	},
+> +};
+> +
+> +static struct clk_regmap_div nss_cc_xgmac2_ptp_ref_div_clk_src =3D {
+> +	.reg =3D 0x3fc,
+> +	.shift =3D 0,
+> +	.width =3D 4,
+> +	.clkr.hw.init =3D &(const struct clk_init_data) {
+> +		.name =3D "nss_cc_xgmac2_ptp_ref_div_clk_src",
+> +		.parent_hws =3D (const struct clk_hw*[]){
+> +			&nss_cc_ppe_clk_src.clkr.hw,
+> +		},
+> +		.num_parents =3D 1,
+> +		.flags =3D CLK_SET_RATE_PARENT,
+> +		.ops =3D &clk_regmap_div_ops,
+> +	},
+> +};
 
-[Severity: Low]
-Does calling clk_hw_round_rate() here (and in the other rounding test
-cases below) trigger a lockdep warning when CONFIG_LOCKDEP is enabled?
+[Severity: Medium]
+Should nss_cc_xgmac0_ptp_ref_div_clk_src,
+nss_cc_xgmac1_ptp_ref_div_clk_src, and nss_cc_xgmac2_ptp_ref_div_clk_src
+omit CLK_SET_RATE_PARENT now that they use writable clk_regmap_div_ops
+(like nss_cc_uniphy_port1_rx_div4_clk_src)?
 
-clk_hw_round_rate() is a provider helper that expects prepare_lock to be
-held and calls clk_core_init_rate_req() and clk_core_round_rate_nolock(),
-which assert lockdep_assert_held(&prepare_lock).  Obtaining a struct clk
-via clk_hw_get_clk_kunit() and calling clk_round_rate() instead would
-acquire prepare_lock properly.
+Because these 4-bit dividers can only divide the 429 MHz parent down to
+429000000 / 16 =3D 26812500 Hz, requesting a PTP reference rate of 25 MHz or
+24 MHz causes clk_divider_bestdiv() (with CLK_DIVIDER_ROUND_CLOSEST) to
+select F(24000000, P_XO, 1, 0, 0) on nss_cc_ppe_clk_src.  That reparents
+the shared nss_cc_ppe_clk_src root clock from 429 MHz to the 24 MHz XO,
+throttling the PPE switch, EDMA, MACs, PON, and NSSNOC PPE.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261112-upstream-c=
-lk-divider-large-rates-v2-0-18f3bb888b0c@baylibre.com?part=3D3
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261111-qcom_ipq52=
+10_nsscc-v2-0-7e2c1dda3ed2@oss.qualcomm.com?part=3D2
