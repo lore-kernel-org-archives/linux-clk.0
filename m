@@ -1,94 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794482471;
-	b=HIxrfXbgh43MsgGsuVj03kvi51f5zDl7NF2hZi6WiqjXBOujVjbJT/6Z5d3wDpfbpxpZ
-	 Jqw4h1xE18SSApDBSqCdc0qXb9vs4YDyv7BpC3tsNwJad/gA03bQTsJf11Vy2vKCdOy/w
-	 Y1pUhLvPUwhE2mXvQcZGXPU2pM2dC4JAVrTiY+V8/wV/KS+O/U0r2qfz0xiG8OyNgBms7
-	 i/DHZhMQKSzafYhajpFqUbQwfQ9j0ArJ+kTAMphHBHUANkn/XpdEO+AcLFFTpBevVtUeh
-	 7z7L8HLo2xnLjsLqGijupyneoivx9+Pf2pIi1ZJOXuZJxd9zusceS2XIIIA+SdRn1PA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794482471;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=JAI4OUL2TrWY37F5xvd0X+8qNL/eL8wyTrg+ONCjoEs=;
-	b=b+/YgCJKWDaitoaKQ23bElJdSVqFj8jUuz6FYGsmoTL/vcIZUNVBPLIsihb2R3lLA5XB
-	 ekk8t32QsPh+5+Jbkm4apuuJbYe8s7J1JR5LZrklU5Jn+iWl9/jy9QWdMIXaCjtkgj6nG
-	 OQMmKZ/Ounlh2A3BHvZylCbOrlwCT9h67yc1bte8g10harx/LQ847e+DVjiB8bwOFggff
-	 N9KuVWipHk/cTJFFpp+FdQ1Yzmt25qX8rADnpmjMo6JtHq8ecKqXfoZ5Xv1HWP0ZvGJh3
-	 o7scc6OJrLLAsTpW9TnO/9q31Af39GVMRaqR5WvhmW51uSsAMO44djUzoh1WFbk0qqA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=KJquWBYd;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794484754;
+	b=WYKj9VtNjORSKTzqwjvcTUU17k5PG+5pYLke3lyC2sboZV/AuEz1yB/W5hb7m7DN7nAC
+	 3bkmPTTr3DQrKPAqGdcZgS05SrWFzrJg5/x+hDH6zDO2bYyc1w6EzXlPLc9wqKDpx7mvK
+	 sd1mSFMmNSfu6guAVsMI05KnTrONYm5NLGy1i6Y4yQ/0s6MUxLCjQfDdoi24ESVOr6wbE
+	 yLlywrZJP5Cc1mr+hiAngsBERVj6j2f3j/kguH1jFa+nPuXblyWoYO46aHhfPPVVmQUtZ
+	 WlT28nUdpPZOix+wSwB0KZGCYkJgFp6k7b3rCNYryCYfTgjoihYm6VU7s7QvCqE53hg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794484754;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 User-Agent;
+	bh=Kii4d1l8a9WqO76mq39yEuoHq+1skubE8Z+vWj++inQ=;
+	b=qCHZSa0U4vNDxPE9QqJuM5M7qowP/WdOIKigjUJFvpBHC47YvvpwL7b4QyZocv3AJHXA
+	 CwSLup2DcUGTFdMBMcFA0vzJKDMp2BCYHEyJRnJUYngfbGV/TfTIbrtP68jkMh+VyMxjI
+	 vRh71fICcnNCeYC72vcKCSUhfOtgev/IQl2ldRVua+AZfmoVvVhJ0hQMd9wPqjfWT0HrV
+	 gy8GwSoMwpEXWkGxz8LsjvQDGrIoOSfHk90qsPT8zXIVkiK/b8wSJbJLNTgggTmhq4yqL
+	 FKFLWNDtZIKZQa5upUs6HeRtZaKub45JDmtbVvxHC4sWEv7ZDEaAUrZyF5ySu4VeLFA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NZr9jiYM;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FF5606A32A;
-	Thu, 12 Nov 2026 11:21:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 71FF5606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BFD606A31C;
+	Thu, 12 Nov 2026 11:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=KJquWBYd
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 0529D202C92;
-	Thu, 12 Nov 2026 12:21:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794482469;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JAI4OUL2TrWY37F5xvd0X+8qNL/eL8wyTrg+ONCjoEs=;
-	b=KJquWBYdNO1p925AQ2jlEP1Br5a9Mv2C66vC3uv2eUhDSMbM9gunU33rBNI0DT90fdgjQ3
-	xrSx7CTPKVmyBq47XMOpD1/V02W673G1jKnu6OFLCxi4ts9Xpy7laauDW/QR2yPQaYNtaH
-	a79bqRMYx0qC2AkMzITaUxMytkLC2j5GeerenUqYjlwNSFT+OMwPtkB/TVnznRN9leoHQy
-	snA3fHwYVC+aqQvLlrfx5qlRFezAV+dIFr7vUN3AYVcad3S2L/F8ZtkuzzMbzrm2m8GXej
-	hbItJV4XXuUdcF/2jMI/EPKkXqEQOw7CEakVrrlUqVv2JbVqieghKr2N3lcaMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794482469;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JAI4OUL2TrWY37F5xvd0X+8qNL/eL8wyTrg+ONCjoEs=;
-	b=PES9tuqo9Rc2Gnym6fcwG8dfYWu1DGmo17wmPa9qqTQHjTS8hP1WW4PtkxX/r6LYy9gBJN
-	8BjLO3tCeaspT9vRtBWGmvXnCUOZIJ5qkHZHVH+jJJixfA2BQnm/XP0XCN/1QLylEiJYXU
-	qql9Icoea27xCOmdNq5cMMNEKsmhJsZOpIWXoi1Y0MMj6kLVX8h4F4lZEzY1HAFR30KY/j
-	OesXXmzpix65Q3jzfj1n3JYRVVHe5/7uEi3iQ9dDSTfbeAEGZ6eginhNJqqOL8W2K9pDqM
-	3rLyN8RORqpJoKlf2ALWPtOkz7St8mngyFDx99Jb1E4ReWoUfbvR1iwdw8osyA==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794482469; a=rsa-sha256;
-	cv=none;
-	b=RbCN62QjvVPGiuIyH0q18mcoTd+ZabtKUJhZO45YrUSkyoQ6yXvhc1+ZXSREh4PTcVW+xs
-	wd+E6hGHT/NVYmp2Qpd1gpM+oIhO7xlNSFe4qaJFvqbZe4nw2XPPryzAgYeK+sm0A6SqO9
-	Rbso7sB5rtOBbsPaGLShEzL4rp6jPnVFeINhHKK7maTw/xLtEthnCQI++w0uiiwgPi/cFz
-	lEYIxx0iuudGCyVAkhqN5NbJKuY1C65yxKZvtsehYVdxTwq5RZkrpZikDCJJ1wbrV1tyub
-	hFqGdrca+Pb8ByyB5dJwMjaxTV9rVPeDPcpkW2sc14Rezd0u5i057oJIBsj1Sw==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-Message-ID: <45683ba0cf239f394b621d84cbd5535f7eae410f.camel@pengutronix.de>
-Subject: Re: [PATCH v6 14/15] reset: starfive: jh71x0: Support discontiguous
- reset IDs
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>, Brian Masney	
- <bmasney@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Stephen
- Boyd	 <sboyd@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NZr9jiYM
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D6321F00A05;
+	Thu, 12 Nov 2026 11:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794484754;
+	bh=Kii4d1l8a9WqO76mq39yEuoHq+1skubE8Z+vWj++inQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=NZr9jiYMQACePlXmIejgrEHj9jfkpM7XdYH7LrYIm+P3nN3FYtwkXntutAt3tAYbH
+	 IvltLuN71gbyPWXRf2r27zZc7mIDyWIOlEk+vIIb1mL//qJcmvKU8yPoqWPQu9Rduz
+	 dk+PCON81vO8RZji9RPoqyuLNpPWMNvQqk9Ds/UEPHwL554Eut6UcCyqzAjh7zMteH
+	 aNJ0CMDLEztnJU+PLluUS3PampaBI58wXJGinfXnWcsq9f31q2yT7TypRZwWMJUXS6
+	 ki0RABOv5U29mzYd5Ct6b1T6WWjY9ZnScIXcDR11EamBvUJrfcPONZxmiOljWau9Z1
+	 htrTqKjGReABA==
+Date: Thu, 12 Nov 2026 06:59:11 -0500
+From: Brian Masney <masneyb@kernel.org>
+To: Johnny Liu <johnliu@nvidia.com>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-riscv@lists.infradead.org, Hal Feng
- <hal.feng@starfivetech.com>
-Date: Thu, 12 Nov 2026 12:21:08 +0100
-In-Reply-To: <20261008123338.11081-15-changhuang.liang@starfivetech.com>
-References: <20261008123338.11081-1-changhuang.liang@starfivetech.com>
-	 <20261008123338.11081-15-changhuang.liang@starfivetech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Aniruddha Rao <anrao@nvidia.com>, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 4/4] clk: tegra: bpmp: Do not cache the EMC clock rate
+Message-ID: <avWqD-Rm5-85Dj5c@x1g10>
+References: <20261102121202.2431928-1-johnliu@nvidia.com>
+ <20261102121202.2431928-5-johnliu@nvidia.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -98,163 +68,22 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261102121202.2431928-5-johnliu@nvidia.com>
+User-Agent: Mutt/2.4.2 (2026-08-30)
 
-On Do, 2026-10-08 at 05:33 -0700, Changhuang Liang wrote:
-> The reset IDs exposed to consumers of the StarFive JHB100 reset
-> controllers do not map one-to-one to the hardware reset bits.
->=20
-> Add struct jh71x0_reset_info, which describes the number of resets, the
-> assert/status register offsets and, for discontiguous controllers, a
-> table mapping reset IDs to hardware bits. Add
-> reset_starfive_jh71x0_register_with_info() to register such a
-> controller, and translate the reset ID in the update and status
-> callbacks when a map is provided.
->=20
-> Existing users of reset_starfive_jh71x0_register() are unaffected.
->=20
-> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> ---
->  .../reset/starfive/reset-starfive-jh71x0.c    | 99 ++++++++++++++++---
->  .../reset/starfive/reset-starfive-jh71x0.h    | 19 ++++
->  2 files changed, 107 insertions(+), 11 deletions(-)
->=20
-> diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.c b/drivers/res=
-et/starfive/reset-starfive-jh71x0.c
-> index 29ce3486752f..fd1c755a0017 100644
-> --- a/drivers/reset/starfive/reset-starfive-jh71x0.c
-> +++ b/drivers/reset/starfive/reset-starfive-jh71x0.c
-[...]
-> @@ -29,19 +36,40 @@ jh71x0_reset_from(struct reset_controller_dev *rcdev)
->  	return container_of(rcdev, struct jh71x0_reset, rcdev);
->  }
-> =20
-> +static unsigned long
-> +jh71x0_reset_id_to_hw_id(const struct jh71x0_reset_map *map, unsigned in=
-t nr_resets,
-> +			 unsigned long reset_id)
-> +{
-> +	for (u32 i =3D 0; i < nr_resets; i++) {
-> +		if (map[i].reset_id =3D=3D reset_id)
-> +			return map[i].hw_id;
-> +	}
-> +
-> +	return JH71X0_RESET_ID_INVALID;
-> +}
-> +
->  static int jh71x0_reset_update(struct reset_controller_dev *rcdev,
->  			       unsigned long id, bool assert)
->  {
->  	struct jh71x0_reset *data =3D jh71x0_reset_from(rcdev);
-> -	unsigned long offset =3D id / 32;
-> -	u32 mask =3D BIT(id % 32);
-> -	void __iomem *reg_assert =3D data->assert + offset * sizeof(u32);
-> -	void __iomem *reg_status =3D data->status + offset * sizeof(u32);
-> -	u32 done =3D data->asserted ? data->asserted[offset] & mask : 0;
-> -	u32 value;
-> -	unsigned long flags;
-> +	unsigned long offset, flags;
-> +	void __iomem *reg_assert;
-> +	void __iomem *reg_status;
-> +	u32 mask, done, value;
->  	int ret;
-> =20
-> +	if (data->info && data->info->discontiguous) {
-> +		id =3D jh71x0_reset_id_to_hw_id(data->info->map, data->info->nr_resets=
-, id);
-> +		if (id =3D=3D JH71X0_RESET_ID_INVALID)
-> +			return -EINVAL;
-> +	}
+On Mon, Nov 02, 2026 at 12:12:02PM +0000, Johnny Liu wrote:
+> EMC clock scaling is managed by the BPMP itself without kernel
+> involvement. When the rate changes on the BPMP side, clk_get_rate() on
+> the kernel side returns the stale value cached by the common clock
+> framework instead of the rate programmed by the BPMP.
+> 
+> Set CLK_GET_RATE_NOCACHE on the EMC clock, identified by the per-SoC
+> emc_clk_id from the BPMP SoC data, so that rate queries are forwarded to
+> the BPMP.
+> 
+> Signed-off-by: Johnny Liu <johnliu@nvidia.com>
 
-Why is this lookup done in the ops?
-It should be done once in fwnode_xlate instead.
+Acked-by: Brian Masney <masneyb@kernel.org>
 
-> +
-> +	offset =3D id / 32;
-> +	mask =3D BIT(id % 32);
-> +	reg_assert =3D data->assert + offset * sizeof(u32);
-> +	reg_status =3D data->status + offset * sizeof(u32);
-> +	done =3D data->asserted ? data->asserted[offset] & mask : 0;
-> +
->  	if (!assert)
->  		done ^=3D mask;
-> =20
->=20
-[...]
-> @@ -132,3 +170,42 @@ int reset_starfive_jh71x0_register(struct device *de=
-v, struct device_node *of_no
->  	return devm_reset_controller_register(dev, &data->rcdev);
->  }
->  EXPORT_SYMBOL_GPL(reset_starfive_jh71x0_register);
-> +
-> +int reset_starfive_jh71x0_register_with_info(struct device *dev, struct =
-device_node *of_node,
-> +					     void __iomem *assert, void __iomem *status,
-> +					     const u32 *asserted,
-> +					     const struct jh71x0_reset_info *info,
-> +					     struct module *owner)
-> +{
-> +	struct jh71x0_reset *data;
-> +	int ret;
-> +
-> +	if (info->discontiguous && (!info->map || !info->nr_resets))
-> +		return dev_err_probe(dev, -EINVAL,
-> +				     "discontiguous controller without a valid ID map\n");
-> +
-> +	data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	data->rcdev.ops =3D &jh71x0_reset_ops;
-> +	data->rcdev.owner =3D owner;
-> +	data->rcdev.nr_resets =3D info->nr_resets;
-> +	data->rcdev.dev =3D dev;
-> +	data->rcdev.of_node =3D of_node;
-
-You can add a custom fwnode_xlate that does the
-jh71x0_reset_id_to_hw_id() translation if info->map is set.
-
-> +
-> +	spin_lock_init(&data->lock);
-> +	data->assert =3D assert;
-> +	data->status =3D status;
-> +	data->asserted =3D asserted;
-> +	data->info =3D info;
-> +
-> +	ret =3D devm_reset_controller_register(dev, &data->rcdev);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "Failed to register reset controller\n"=
-);
-> +
-> +	dev_info(dev, "Registered %u resets\n", data->rcdev.nr_resets);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(reset_starfive_jh71x0_register_with_info);
-> diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.h b/drivers/res=
-et/starfive/reset-starfive-jh71x0.h
-> index db7d39a87f87..36f198139602 100644
-> --- a/drivers/reset/starfive/reset-starfive-jh71x0.h
-> +++ b/drivers/reset/starfive/reset-starfive-jh71x0.h
-> @@ -6,9 +6,28 @@
->  #ifndef __RESET_STARFIVE_JH71X0_H
->  #define __RESET_STARFIVE_JH71X0_H
-> =20
-> +struct jh71x0_reset_map {
-> +	unsigned long reset_id;
-> +	unsigned long hw_id;
-> +};
-> +
-> +struct jh71x0_reset_info {
-> +	unsigned int nr_resets;
-> +	unsigned int assert_offset;
-> +	unsigned int status_offset;
-> +	bool discontiguous;
-
-This seems superfluous, (map !=3D NULL) means discontiguous already.
-
-> +	const struct jh71x0_reset_map *map;
-> +};
-> +
-
-regards
-Philipp
