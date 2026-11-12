@@ -1,62 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794481032;
-	b=hZY+H0pwNiG/c8mQzWr69zXMChn3widNzrWG1SVii927Hfisnv6nBY8ZIQKEtiICQhPQ
-	 J0iC0FdRWEDej+nLN3XtrdPX70F0pNAE3UtlAWtc2NZ2ojJKAtsKJY3eA7Jn3e7LtR+UO
-	 fA7aYJjReQWnXbUC96XcS3EJz8uMiR/XI1O0C1b5xk5zOD5U9lbUGTv3IDTo6tIkAtR23
-	 6IL30tESlaECELW2OIJNyVYTS4LLAT7wsx68HIjyXnoXVFEu0QL3dakadJYlTgyvb5A/X
-	 sLjOyd+2l8NrlKpQyasHo+L5m4zwhG8K+49yf6SlVyw5NmiLoA0Ex/HQugqeigbMFZQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794481032;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=CaAlmqccaq1A08RrxIHF9ttWnYDk4b0C2sEgkxs45mk=;
-	b=tl4iFf1kBXjvWR0I4IerNhKGBYbaksXOtWroGsp0BoUw0J/Y15/3zrtW8kkLQ/Ls1UGc
-	 2vhFJRnIDg/97jnpG2p+tvngo3jqvmAJ1SHqJ2RrTFrPsuJUW2PVpkF/R6H3nbhjX/MwQ
-	 pb85ggNjJOK5uyDD1ak7GLQfXTHnN054B9yOXkgbRN3YwF6yMgZkPDR+8aE1heoX3e2TK
-	 5/qBmCDUKgtuQMFNWbmc7Pcia6XZVuWuSI0ohYiQWq0scnf8r7f31XO1RvECINI1fZd3r
-	 T/efcGDNy4//PCeBTHeC7gsv4V8a2eArCTGHOCCV4anqMX8aaUW1d7H/H/OwzLn/yOA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KrBnMRkg;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794482471;
+	b=HIxrfXbgh43MsgGsuVj03kvi51f5zDl7NF2hZi6WiqjXBOujVjbJT/6Z5d3wDpfbpxpZ
+	 Jqw4h1xE18SSApDBSqCdc0qXb9vs4YDyv7BpC3tsNwJad/gA03bQTsJf11Vy2vKCdOy/w
+	 Y1pUhLvPUwhE2mXvQcZGXPU2pM2dC4JAVrTiY+V8/wV/KS+O/U0r2qfz0xiG8OyNgBms7
+	 i/DHZhMQKSzafYhajpFqUbQwfQ9j0ArJ+kTAMphHBHUANkn/XpdEO+AcLFFTpBevVtUeh
+	 7z7L8HLo2xnLjsLqGijupyneoivx9+Pf2pIi1ZJOXuZJxd9zusceS2XIIIA+SdRn1PA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794482471;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=JAI4OUL2TrWY37F5xvd0X+8qNL/eL8wyTrg+ONCjoEs=;
+	b=b+/YgCJKWDaitoaKQ23bElJdSVqFj8jUuz6FYGsmoTL/vcIZUNVBPLIsihb2R3lLA5XB
+	 ekk8t32QsPh+5+Jbkm4apuuJbYe8s7J1JR5LZrklU5Jn+iWl9/jy9QWdMIXaCjtkgj6nG
+	 OQMmKZ/Ounlh2A3BHvZylCbOrlwCT9h67yc1bte8g10harx/LQ847e+DVjiB8bwOFggff
+	 N9KuVWipHk/cTJFFpp+FdQ1Yzmt25qX8rADnpmjMo6JtHq8ecKqXfoZ5Xv1HWP0ZvGJh3
+	 o7scc6OJrLLAsTpW9TnO/9q31Af39GVMRaqR5WvhmW51uSsAMO44djUzoh1WFbk0qqA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=KJquWBYd;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489E7606A31C;
-	Thu, 12 Nov 2026 10:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FF5606A32A;
+	Thu, 12 Nov 2026 11:21:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 71FF5606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KrBnMRkg
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A98A1F00A06;
-	Thu, 12 Nov 2026 10:57:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794481031;
-	bh=CaAlmqccaq1A08RrxIHF9ttWnYDk4b0C2sEgkxs45mk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=KrBnMRkgr+lw9sIuVkgMOvSYBLAvEUefXnyijCRf7+tQyW0bguz6XLIpkdyqGjnaf
-	 y2rzXO0GPX+NnOIXGUUW2zrp6DTG6fjDIBOyc6aFPAY4UJtN3j6cz/TUguqfD18bDI
-	 sMkrBH/eRYZAR6T2MI7rOa7Mh/NlK/JiIDVmFTe9DiJRvRwz81BZH0hnJgIwxormtf
-	 8RB2gzEaQE2NKzSElZMY48v1qJ26emDJWdpNxxCpRrBPXDw/+aSwpxo+dTfEtKVPWM
-	 XFwwxOrrYXUIX07w8xL+k+Pw/C5YDpG26usPgnoRM2MpvIkeWFvysJ8IB3f7d9zPlR
-	 ZcZVu0Nx7mz0w==
-Date: Thu, 12 Nov 2026 11:57:08 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Luo Jie <jie.luo@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Georgi Djakov <djakov@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Richard Cochran <richardcochran@gmail.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	netdev@vger.kernel.org, quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com, 
-	quic_leiwei@quicinc.com
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: qcom: Add NSS clock
- controller for IPQ5210 SoC
-Message-ID: <20261112-wild-accurate-cockatrice-a80efa@quoll>
-References: <20261111-qcom_ipq5210_nsscc-v2-0-7e2c1dda3ed2@oss.qualcomm.com>
- <20261111-qcom_ipq5210_nsscc-v2-1-7e2c1dda3ed2@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=KJquWBYd
+Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
+	(Authenticated sender: pza@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 0529D202C92;
+	Thu, 12 Nov 2026 12:21:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1794482469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JAI4OUL2TrWY37F5xvd0X+8qNL/eL8wyTrg+ONCjoEs=;
+	b=KJquWBYdNO1p925AQ2jlEP1Br5a9Mv2C66vC3uv2eUhDSMbM9gunU33rBNI0DT90fdgjQ3
+	xrSx7CTPKVmyBq47XMOpD1/V02W673G1jKnu6OFLCxi4ts9Xpy7laauDW/QR2yPQaYNtaH
+	a79bqRMYx0qC2AkMzITaUxMytkLC2j5GeerenUqYjlwNSFT+OMwPtkB/TVnznRN9leoHQy
+	snA3fHwYVC+aqQvLlrfx5qlRFezAV+dIFr7vUN3AYVcad3S2L/F8ZtkuzzMbzrm2m8GXej
+	hbItJV4XXuUdcF/2jMI/EPKkXqEQOw7CEakVrrlUqVv2JbVqieghKr2N3lcaMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1794482469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JAI4OUL2TrWY37F5xvd0X+8qNL/eL8wyTrg+ONCjoEs=;
+	b=PES9tuqo9Rc2Gnym6fcwG8dfYWu1DGmo17wmPa9qqTQHjTS8hP1WW4PtkxX/r6LYy9gBJN
+	8BjLO3tCeaspT9vRtBWGmvXnCUOZIJ5qkHZHVH+jJJixfA2BQnm/XP0XCN/1QLylEiJYXU
+	qql9Icoea27xCOmdNq5cMMNEKsmhJsZOpIWXoi1Y0MMj6kLVX8h4F4lZEzY1HAFR30KY/j
+	OesXXmzpix65Q3jzfj1n3JYRVVHe5/7uEi3iQ9dDSTfbeAEGZ6eginhNJqqOL8W2K9pDqM
+	3rLyN8RORqpJoKlf2ALWPtOkz7St8mngyFDx99Jb1E4ReWoUfbvR1iwdw8osyA==
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794482469; a=rsa-sha256;
+	cv=none;
+	b=RbCN62QjvVPGiuIyH0q18mcoTd+ZabtKUJhZO45YrUSkyoQ6yXvhc1+ZXSREh4PTcVW+xs
+	wd+E6hGHT/NVYmp2Qpd1gpM+oIhO7xlNSFe4qaJFvqbZe4nw2XPPryzAgYeK+sm0A6SqO9
+	Rbso7sB5rtOBbsPaGLShEzL4rp6jPnVFeINhHKK7maTw/xLtEthnCQI++w0uiiwgPi/cFz
+	lEYIxx0iuudGCyVAkhqN5NbJKuY1C65yxKZvtsehYVdxTwq5RZkrpZikDCJJ1wbrV1tyub
+	hFqGdrca+Pb8ByyB5dJwMjaxTV9rVPeDPcpkW2sc14Rezd0u5i057oJIBsj1Sw==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
+Message-ID: <45683ba0cf239f394b621d84cbd5535f7eae410f.camel@pengutronix.de>
+Subject: Re: [PATCH v6 14/15] reset: starfive: jh71x0: Support discontiguous
+ reset IDs
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>, Brian Masney	
+ <bmasney@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Stephen
+ Boyd	 <sboyd@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-riscv@lists.infradead.org, Hal Feng
+ <hal.feng@starfivetech.com>
+Date: Thu, 12 Nov 2026 12:21:08 +0100
+In-Reply-To: <20261008123338.11081-15-changhuang.liang@starfivetech.com>
+References: <20261008123338.11081-1-changhuang.liang@starfivetech.com>
+	 <20261008123338.11081-15-changhuang.liang@starfivetech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -66,93 +98,163 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261111-qcom_ipq5210_nsscc-v2-1-7e2c1dda3ed2@oss.qualcomm.com>
 
-On Wed, Nov 11, 2026 at 02:00:55AM -0800, Luo Jie wrote:
-> NSS clock controller provides the clocks and resets to the networking
-> blocks such as PPE (Packet Process Engine), UNIPHY (PCS) and EPHY on
-> IPQ5210 devices.
-> 
-> Add support for the compatible string "qcom,ipq5210-nsscc" based on the
-> existing IPQ9574/IPQ5424 NSS clock controller Device Tree binding. IPQ5210
-> additionally exposes a pair of EPHY-RAW Rx/Tx clock sources used to derive
-> the clocks for its integrated 2.5G Ethernet PHY, so extend the clocks and
-> clock-names lists with "ephy_rx" and "ephy_tx".
-> 
-> Also add master/slave ids for IPQ5210 networking interfaces, which are used
-> by the nsscc-ipq5210 driver for providing interconnect services using the
-> icc-clk framework.
-> 
-> Signed-off-by: Luo Jie <jie.luo@oss.qualcomm.com>
+On Do, 2026-10-08 at 05:33 -0700, Changhuang Liang wrote:
+> The reset IDs exposed to consumers of the StarFive JHB100 reset
+> controllers do not map one-to-one to the hardware reset bits.
+>=20
+> Add struct jh71x0_reset_info, which describes the number of resets, the
+> assert/status register offsets and, for discontiguous controllers, a
+> table mapping reset IDs to hardware bits. Add
+> reset_starfive_jh71x0_register_with_info() to register such a
+> controller, and translate the reset ID in the update and status
+> callbacks when a map is provided.
+>=20
+> Existing users of reset_starfive_jh71x0_register() are unaffected.
+>=20
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 > ---
->  .../bindings/clock/qcom,ipq9574-nsscc.yaml         |  47 ++++++++-
->  include/dt-bindings/clock/qcom,ipq5210-nsscc.h     | 106 +++++++++++++++++++++
->  include/dt-bindings/interconnect/qcom,ipq5210.h    |  18 ++++
->  include/dt-bindings/reset/qcom,ipq5210-nsscc.h     |  60 ++++++++++++
->  4 files changed, 228 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
-> index a35bbc7b1924..dc7d90a99dc7 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
-> @@ -4,24 +4,28 @@
->  $id: http://devicetree.org/schemas/clock/qcom,ipq9574-nsscc.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Qualcomm Networking Sub System Clock & Reset Controller on IPQ9574 and IPQ5424
-> +title: Qualcomm Networking Sub System Clock & Reset Controller on IPQ SoCs
->  
->  maintainers:
->    - Bjorn Andersson <andersson@kernel.org>
-> +  - Luo Jie <jie.luo@oss.qualcomm.com>
->  
->  description: |
->    Qualcomm networking sub system clock control module provides the clocks,
-> -  resets on IPQ9574 and IPQ5424
-> +  resets on IPQ9574, IPQ5424 and IPQ5210
->  
->    See also:
-> +    include/dt-bindings/clock/qcom,ipq5210-nsscc.h
->      include/dt-bindings/clock/qcom,ipq5424-nsscc.h
->      include/dt-bindings/clock/qcom,ipq9574-nsscc.h
-> +    include/dt-bindings/reset/qcom,ipq5210-nsscc.h
->      include/dt-bindings/reset/qcom,ipq5424-nsscc.h
->      include/dt-bindings/reset/qcom,ipq9574-nsscc.h
->  
->  properties:
->    compatible:
->      enum:
-> +      - qcom,ipq5210-nsscc
->        - qcom,ipq5424-nsscc
->        - qcom,ipq9574-nsscc
->  
-> @@ -42,6 +46,9 @@ properties:
->        - description: Uniphy2 NSS Rx clock source
->        - description: Uniphy2 NSS Tx clock source
->        - description: GCC NSSCC clock source
-> +      - description: CMN_PLL EPHY-RAW Rx clock source
-> +      - description: CMN_PLL EPHY-RAW Tx clock source
-> +    minItems: 11
+>  .../reset/starfive/reset-starfive-jh71x0.c    | 99 ++++++++++++++++---
+>  .../reset/starfive/reset-starfive-jh71x0.h    | 19 ++++
+>  2 files changed, 107 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.c b/drivers/res=
+et/starfive/reset-starfive-jh71x0.c
+> index 29ce3486752f..fd1c755a0017 100644
+> --- a/drivers/reset/starfive/reset-starfive-jh71x0.c
+> +++ b/drivers/reset/starfive/reset-starfive-jh71x0.c
+[...]
+> @@ -29,19 +36,40 @@ jh71x0_reset_from(struct reset_controller_dev *rcdev)
+>  	return container_of(rcdev, struct jh71x0_reset, rcdev);
+>  }
+> =20
+> +static unsigned long
+> +jh71x0_reset_id_to_hw_id(const struct jh71x0_reset_map *map, unsigned in=
+t nr_resets,
+> +			 unsigned long reset_id)
+> +{
+> +	for (u32 i =3D 0; i < nr_resets; i++) {
+> +		if (map[i].reset_id =3D=3D reset_id)
+> +			return map[i].hw_id;
+> +	}
+> +
+> +	return JH71X0_RESET_ID_INVALID;
+> +}
+> +
+>  static int jh71x0_reset_update(struct reset_controller_dev *rcdev,
+>  			       unsigned long id, bool assert)
+>  {
+>  	struct jh71x0_reset *data =3D jh71x0_reset_from(rcdev);
+> -	unsigned long offset =3D id / 32;
+> -	u32 mask =3D BIT(id % 32);
+> -	void __iomem *reg_assert =3D data->assert + offset * sizeof(u32);
+> -	void __iomem *reg_status =3D data->status + offset * sizeof(u32);
+> -	u32 done =3D data->asserted ? data->asserted[offset] & mask : 0;
+> -	u32 value;
+> -	unsigned long flags;
+> +	unsigned long offset, flags;
+> +	void __iomem *reg_assert;
+> +	void __iomem *reg_status;
+> +	u32 mask, done, value;
+>  	int ret;
+> =20
+> +	if (data->info && data->info->discontiguous) {
+> +		id =3D jh71x0_reset_id_to_hw_id(data->info->map, data->info->nr_resets=
+, id);
+> +		if (id =3D=3D JH71X0_RESET_ID_INVALID)
+> +			return -EINVAL;
+> +	}
 
-Please place minItems at the beginning, before "items:".
+Why is this lookup done in the ops?
+It should be done once in fwnode_xlate instead.
 
->  
->    '#interconnect-cells':
->      const: 1
-> @@ -63,6 +70,9 @@ properties:
->        - const: uniphy2_rx
->        - const: uniphy2_tx
->        - const: bus
-> +      - const: ephy_rx
-> +      - const: ephy_tx
-> +    minItems: 11
+> +
+> +	offset =3D id / 32;
+> +	mask =3D BIT(id % 32);
+> +	reg_assert =3D data->assert + offset * sizeof(u32);
+> +	reg_status =3D data->status + offset * sizeof(u32);
+> +	done =3D data->asserted ? data->asserted[offset] & mask : 0;
+> +
+>  	if (!assert)
+>  		done ^=3D mask;
+> =20
+>=20
+[...]
+> @@ -132,3 +170,42 @@ int reset_starfive_jh71x0_register(struct device *de=
+v, struct device_node *of_no
+>  	return devm_reset_controller_register(dev, &data->rcdev);
+>  }
+>  EXPORT_SYMBOL_GPL(reset_starfive_jh71x0_register);
+> +
+> +int reset_starfive_jh71x0_register_with_info(struct device *dev, struct =
+device_node *of_node,
+> +					     void __iomem *assert, void __iomem *status,
+> +					     const u32 *asserted,
+> +					     const struct jh71x0_reset_info *info,
+> +					     struct module *owner)
+> +{
+> +	struct jh71x0_reset *data;
+> +	int ret;
+> +
+> +	if (info->discontiguous && (!info->map || !info->nr_resets))
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "discontiguous controller without a valid ID map\n");
+> +
+> +	data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	data->rcdev.ops =3D &jh71x0_reset_ops;
+> +	data->rcdev.owner =3D owner;
+> +	data->rcdev.nr_resets =3D info->nr_resets;
+> +	data->rcdev.dev =3D dev;
+> +	data->rcdev.of_node =3D of_node;
 
-Same here
+You can add a custom fwnode_xlate that does the
+jh71x0_reset_id_to_hw_id() translation if info->map is set.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> +
+> +	spin_lock_init(&data->lock);
+> +	data->assert =3D assert;
+> +	data->status =3D status;
+> +	data->asserted =3D asserted;
+> +	data->info =3D info;
+> +
+> +	ret =3D devm_reset_controller_register(dev, &data->rcdev);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Failed to register reset controller\n"=
+);
+> +
+> +	dev_info(dev, "Registered %u resets\n", data->rcdev.nr_resets);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(reset_starfive_jh71x0_register_with_info);
+> diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.h b/drivers/res=
+et/starfive/reset-starfive-jh71x0.h
+> index db7d39a87f87..36f198139602 100644
+> --- a/drivers/reset/starfive/reset-starfive-jh71x0.h
+> +++ b/drivers/reset/starfive/reset-starfive-jh71x0.h
+> @@ -6,9 +6,28 @@
+>  #ifndef __RESET_STARFIVE_JH71X0_H
+>  #define __RESET_STARFIVE_JH71X0_H
+> =20
+> +struct jh71x0_reset_map {
+> +	unsigned long reset_id;
+> +	unsigned long hw_id;
+> +};
+> +
+> +struct jh71x0_reset_info {
+> +	unsigned int nr_resets;
+> +	unsigned int assert_offset;
+> +	unsigned int status_offset;
+> +	bool discontiguous;
 
-Best regards,
-Krzysztof
+This seems superfluous, (map !=3D NULL) means discontiguous already.
 
+> +	const struct jh71x0_reset_map *map;
+> +};
+> +
+
+regards
+Philipp
