@@ -1,55 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794497030;
-	b=4b7CClKtBUM8o2hyXwRD2yAwFyi1Ff9hR4qHulx5afyBz9DhInV8upY4v4c3LMZdmPj0
-	 Zc5eMMThXkrVuQuJzwolNNzb+x2PTCbRixHjQy0n4xpcPCjADLqvCfHVP48RAV99C1WxL
-	 A6ZoJ1l5jVuMIkKx/2GvsuX/RNHA0uNSfspG8kOy/OSnrH61a6Oo9JlcjVacaVw5ypfnz
-	 GLLPvRzMyCNnHBluL49nBEPjpMKGaJZT84bR2LzvVLp7sgpbjmqzUk4VorOE11jTINeK5
-	 TKkVUlyE3zjk5QoIB2YdQEIrcfkhnRDmzYbl/zrQPPbo2APbg4aNhO/N/QH04e15yaw==
+	t=1794497400;
+	b=zsJhaD2QhpdeIgWghOPJaD4+/6iZQ3JaUnRJkXsQCEtOH7aEhD08i6fWwzJ6utYx03Ik
+	 hfvFa+11LU02DBIWb1E4gkzQl+XFGlFhK7RJpSVraNjb4EWi2P4tgHVXJnC30Nkk7/Bs2
+	 yXdWTefKpZIdtA4NHTopPN5hYR9VOsGyacttgpdqqXUY638lPqkWC6qNWJey38utjd/nj
+	 mBJNzIvOkY1WwLIze5CmFrT3m1rF7Z5D55rXLfC2cxdswQlF6U12REDQa34M8rGCLDXoF
+	 FHqFoEOHIVhGycW524vg4JHn1eh7pOtn94cVaMk2so3+V7lvK8sxvwkBbrxuIEy+WWA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794497030;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id:X-Mailer:X-Last-TLS-Session-Version;
-	bh=4cdhS9H/Scvqwuce1Cg7h8YKsQsIO3wekg4L5Z7bkvw=;
-	b=lou8UxT/p59r3lB281U1Dj6zVjG/CNiZWkyz6+ONmJIO5h4t2gkR97tjXHH5WjI4awnC
-	 KZRyURUhFZcPvq1fJksReviVEGo6BnzQmmYJ9hwJpufWesOEtTDFRu5P9qK7BokCidppA
-	 7Q/Eh27vD9KS4TXJkblE+pyv/KEIC5VCUh1khDTBertQwJQpklw0A8GBEOpmf2gTTMYa0
-	 1Kde8D/PFVnyV3w79W339TYOHgzI01csSLy5eLwLhVdoapXvX8wu3dmRX3XDiRsfjcRK2
-	 Mskq+V0fZ2g88K9kV7Dfc9j0wNhJvEF6XgFJvpfw7KoSN3ZRxP5+qG4zwIWWm1RrYCw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794497400;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=sXKCxy+bE4cVo53T4AreBZzLm1An/Wq3dYnZ7+mgP64=;
+	b=oiDFBeiADnnUWIG7h35jCft3k6mCNKl8qgVeaabHgYu7Rz/16RPUKdGwi+dr3i5Ryn+e
+	 6xEQWfDBOPlVhbTKThKYkycIJLoNp0Y+7TmihMG8L4TtUVwaHXFEiGFHfpNmPgBxAXDPA
+	 +gR9ljhomaHePtZd00ysFmge0nAp4Sr/6bttCl4eb/NMIV/meJc/7tQnMlpgnB9eQ3Nux
+	 TAcO5lMl3o0SbVL8HETUw08kpdDF/N2wG9oP+V7UXVmqib14mbI/CJOYOINj+YNhP8VMQ
+	 Y890Cydf+rGMRnBOpxSC95/JHLwCsg6lof6LhPrynClH3eiHYPpL8vSW6svBzfjcOKQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=f+HhI8VP;
-	arc=none smtp.remote-ip=185.246.84.56
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=XQo2I8AU;
+	arc=none smtp.remote-ip=209.85.128.51
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA2560A382F;
-	Thu, 12 Nov 2026 15:23:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7BA2560A382F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3DD606A33E
+	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 15:29:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6A3DD606A33E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=f+HhI8VP
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 8CD9F1A1632;
-	Thu, 12 Nov 2026 15:23:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6058B5FF85;
-	Thu, 12 Nov 2026 15:23:46 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9C6CD11BC07CF;
-	Thu, 12 Nov 2026 16:23:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1794497025; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=4cdhS9H/Scvqwuce1Cg7h8YKsQsIO3wekg4L5Z7bkvw=;
-	b=f+HhI8VPkOBIjANjnGDhGowwywBgE+KjjI34rpXWHGwPYpj3DVKYp4PPKjSmy1ajfDFpNC
-	rVI5E2XPc8Vs3eu1qNaBXU1Ox6qME9KJX/zN+oMkYWCzqJMFnQn84CguQAdUyqNU8A+eeH
-	UznEayOaNkXiVUZAplZffPzN5tHuIQgO2D5Q7H7xAD2H3AIeYC+D7X3NUVPpRBfGRCXlPn
-	oAL3ae+pj/4I8HPAP54uKyiR7QuXYgMWmNvS66Z1y7UWNi0FUOkW1BC1M6EyBptInvgLZ1
-	n7l1GXatBWVjwgds9I8PEmjCVUMRm5KKx7WK5kMxpj+uvWU1IJu7i2D0AoCguA==
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=XQo2I8AU
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a59100fa83so39207885e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 07:29:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1794497398; x=1795102198; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=sXKCxy+bE4cVo53T4AreBZzLm1An/Wq3dYnZ7+mgP64=;
+        b=XQo2I8AU2JZFjXotOEh/MtTS520xxs8DfEfBd9wETl+E2ZmtkRe79gDj74QYO89b5x
+         hf4QSQ+sIe8piZ0lCKDt+R+t/q7G+nHZ8+pU+AGurpVT7TBiakfL9gt6X3tuuQNmqU3G
+         Tm3HEmQDjKnijAlrjvI/wgQPntEOZZqlwvATW2+LZho74rNSNN9ww282P2cQqNFA0nVW
+         T60Y1ex3JVvHZqgs/wS29aF3MPa3JVY8X/KGe7fxSxIwym4+qpo0pZXm93nZEg6iexhZ
+         SLXbhCjrTQRWzMkrfmx6A82OrJvmCB5OarjoigTmLttYcsPVLjDWqYquHUz2EN2kUjoi
+         HHTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794497398; x=1795102198;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=sXKCxy+bE4cVo53T4AreBZzLm1An/Wq3dYnZ7+mgP64=;
+        b=SSa0GQRdcRcXHoqmDPNuD5ZFExdBhPMoW5VQ/oU0fW+CEutHXzkDfcWmbU7IbCJatM
+         cIEwjGs8d251O+Fo0Yy9HNwg9wV3uEP3YK/O73OHQoyhjbhB9bciAghiEaxzUf4lBpac
+         y6g5OLWaKVQE3G1OB5S+HdvUDnK232IC9e8EZF9RE1cRRJKV+5g8cU2Q9PsbKteChLBv
+         vwC8WR2cnW5H/+jSH2MDt19i3lW4DuAEqVn79OW36PK5DTa5VII+jppMcxl+s7JL+0Ll
+         SXraR9lt0zKO2oe/IEcPRXkVfBmSsOm04Ev/cyYtnRRI+Om0gLJd9xTn20CL/8ZKOJe0
+         208g==
+X-Forwarded-Encrypted: i=1; AL+hErG2GVTwmQw/sMz/ZhhFvOftK05bvATRZ9pRXCgqDXiLs+jkUmFGxDirFKN/XEaNUvlmyLJrwH2qTUk=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9S1v+TPrQ+N0hrif1keBtJcOAheLS9XtpLsNPn10bnSFFXe42v
+	xAnPu2BnePOyRJYGBcdeELjYLzm99MDW3x7GMVpsoyCzcAgRUKK3u5ohUUiW2IRVdjw=
+X-Gm-Gg: AYBFou3slUY0rhnkyXTePPyHfwvvI7RBTE30twCR8LZefJ97A4TwbAc1pnYrUJTq/Jn
+	3V+0rS3nVKX6fE0dEiGh9OUsJxT5yyzaVlM/qlck6OCooUsOIKpFHegVSIYnDnqFrrQ9XRJTffF
+	GGGWV/vRYXZxmEACPi0PiLPueKDLNe0kdcSrRQ/itz+Z39UGNEojMMW7+pBGPBOUouSqFbMZHz6
+	z8uJQ5NEcY3Qezqf5q9YIOlHFAluj6KFbqwUodasXOI1Wn89l00u7YGjTWXy65REHz/MxdFLDxS
+	siOt7BUBVxcK5SZSi4JVTXKXxmF+0mtye1jjYYtuHrtSb+NaR5cqAWomXBRClgMsxI/Wg2QT0F2
+	hfeOY0xefTb0KDjauqN3BXEQDKCLFl1Q+S+SJOu6RHAEdr8gRkulANl3OQ/Ojzmhbs2KPqB8pJq
+	sImJ98QJjJdYuUmdtxPiOCgMVfxMIDzVu93SIcsuG5nqDQ9a+ClY175HjQFUTjafYD6pJaat8uS
+	1wInuErQyybYkH0wZM02zkJos2vuuIlCK56xkldy8TqpLKbg0Up1vT2edsupPszxtvBLoZWyT+b
+	gMi4tVygNtP69vAMUI2DTn48M/UpBzPVMp5619zVYGqiFyfs2MJadKmjmwypDSDMgg1KE6fbQg1
+	LZt8BBfbdtVb0zAAtjyEwDZcR1ioxYU0CbqDa/wozU8xK4zs=
+X-Received: by 2002:a05:600c:1911:b0:4b7:6b0a:a2f6 with SMTP id 5b1f17b1804b1-4ba09381509mr118693605e9.21.1794497397629;
+        Thu, 12 Nov 2026 07:29:57 -0800 (PST)
+Received: from macbook.homenet.telecomitalia.it (host-95-246-144-141.retail.telecomitalia.it. [95.246.144.141])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb4e26700fsm86582715e9.10.2026.11.12.07.29.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Nov 2026 07:29:56 -0800 (PST)
+Date: Thu, 12 Nov 2026 16:29:55 +0100
+From: Carlo Caione <ccaione@baylibre.com>
+To: Brian Masney <masneyb@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Brian Norris <computersforpeace@gmail.com>, 
+	Maxime Coquelin <maxime.coquelin@st.com>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Michael Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, 
+	David Laight <david.laight.linux@gmail.com>, Sebastian Reichel <sebastian.reichel@collabora.com>, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH v2 1/3] clk: divider: Fix the divisor for rates above
+ 4.29 GHz
+Message-ID: <avXa2Z3R6Xogr6Sw@macbook.homenet.telecomitalia.it>
+References: <20261112-upstream-clk-divider-large-rates-v2-0-18f3bb888b0c@baylibre.com>
+ <20261112-upstream-clk-divider-large-rates-v2-1-18f3bb888b0c@baylibre.com>
+ <179449618653.1227210.1767827907767958978.b4-review@b4>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,145 +106,29 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v11 4/7] drm/imx: Add support for i.MX94 DCIF
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, linux-clk@vger.kernel.org, 
- imx@lists.linux.dev, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org
-In-Reply-To: <20261110-dcif-upstreaming-v11-4-9e13c85ae0d8@oss.nxp.com>
-References: <20261110-dcif-upstreaming-v11-0-9e13c85ae0d8@oss.nxp.com>
- <20261110-dcif-upstreaming-v11-4-9e13c85ae0d8@oss.nxp.com>
-Date: Thu, 12 Nov 2026 16:23:36 +0100
-Message-Id: <179449701677.2030221.6593749298448668349.b4-review@b4>
-X-Mailer: b4 0.16.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <179449618653.1227210.1767827907767958978.b4-review@b4>
 
-Hello Laurentiu,
+On Thu, Nov 12, 2026 at 10:09:46 +0100, Brian Masney wrote:
+> Hi Carlo,
 
-> The i.MX94 Display Control Interface features:
->  * Up to maximum 3 layers of alpha blending:
->     - 1 background layer(Layer 0);
->     - 1 foreground layer(Layer 1);
->     - A programmable constant color behind the background layer;
->  * Each layer supports:
->     - programmable plane size;
->     - programmable background color;
->     - embedded alpha and global alpha;
->  * Data output with CRC checksum for 4 programmable regions;
->
-> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # bridge refcounting
-> Signed-off-by: Sandor Yu <sandor.yu@nxp.com>
-> Co-developed-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Hi Brian,
 
-Looks OK, I just have a small remark and a few minor nitpicks, see below.
+> >  static int _div_round_up(const struct clk_div_table *table,
+> >  			 unsigned long parent_rate, unsigned long rate,
+> >  			 unsigned long flags)
+> >  {
+> > -	int div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+> > +	int div = _get_div_round_up(parent_rate, rate);
+> 
+> _get_div_round_up() returns an unsigned long however it's downsized to
+> an int here.
 
-> +++ b/drivers/gpu/drm/imx/dcif/Kconfig
-> @@ -0,0 +1,16 @@
-> +config DRM_IMX_DCIF
-> +	tristate "DRM support for NXP i.MX94 DCIF"
-> +	select DRM_KMS_HELPER
-> +	select DRM_GEM_DMA_HELPER
-> +	select DRM_DISPLAY_HELPER
-> +	select DRM_PANEL_BRIDGE
+Right, but wasn't also DIV_ROUND_UP_ULL() previously returning a u64
+that was stored in the same int?
 
-This should be unneeded now. As o fnow it is basically a complicated way to
-say 'select DRM_PANEL'. And you are (rightfully) not using the panel API,
-so this line should probably just be removed. Please double check by
-building multiple configs, including an allmodconfig.
+thanks,
 
-> +++ b/drivers/gpu/drm/imx/dcif/dcif-crc.c
-> @@ -0,0 +1,221 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * Copyright 2025 NXP
-
-2026 I guess... v11, a long journey, hopefully it won't slip to 2027! :)
-
-> +++ b/drivers/gpu/drm/imx/dcif/dcif-crtc.c
-...
-> +static int dcif_crtc_query_output_bus_format(struct drm_crtc *crtc,
-> +					     struct drm_crtc_state *crtc_state)
-> +{
-> +	struct dcif_crtc_state *dcif_state = to_dcif_crtc_state(crtc_state);
-> +	struct drm_bridge *bridge __free(drm_bridge_put) = NULL;
-
-While this is OK, there is generally a preference to declare and assign in
-the same statement when using cleanup actions, so...
-
-> +	struct drm_bridge_state *bridge_state;
-> +	u32 bus_format;
-> +
-> +	dcif_state->bus_format = MEDIA_BUS_FMT_RGB888_1X24;
-> +	dcif_state->bus_flags = 0;
-> +
-> +	bridge = dcif_crtc_get_bridge(crtc, crtc_state);
-
-...it should all happen here, as:
-
-	struct drm_bridge *bridge __free(drm_bridge_put) =
-		dcif_crtc_get_bridge(crtc, crtc_state);
-
-> +++ b/drivers/gpu/drm/imx/dcif/dcif-kms.c
-> @@ -0,0 +1,168 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * Copyright 2025 NXP
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/of.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include <drm/drm_atomic.h>
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_bridge.h>
-> +#include <drm/drm_bridge_connector.h>
-> +#include <drm/drm_gem_framebuffer_helper.h>
-> +#include <drm/drm_panel.h>
-
-Unused include?
-
-> +static int dcif_kms_init(struct dcif_dev *dcif)
-> +{
-> +	struct drm_device *drm = &dcif->drm;
-> +	struct device_node *np = drm->dev->of_node;
-> +	struct drm_connector *connector;
-> +	struct drm_bridge *bridge;
-> +	int ret;
-> +
-> +	ret = dcif_crtc_init(dcif);
-> +	if (ret)
-> +		return ret;
-> +
-> +	bridge = devm_drm_of_get_bridge(drm->dev, np, 0, 0);
-
-This function is deprecated. You can use of_drm_get_bridge_by_endpoint()
-instead, which returns a refcounted bridge pointer. And since the bridge
-pointer is a local variable you can just use a cleanup action to put it
-easily:
-
-  struct drm_bridge *bridge __free(drm_bridge_put) = of_drm_get_bridge_by_endpoint(...);
-
-Otherwise LGTM.
-
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+--
+Carlo Caione
