@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794474087;
-	b=Seo4hNMHNBzqFXcBuw75D8xN1aSHuZvh38/cxJgRdRrnpnKzUhyHoqrPxcQ0KLC9S2R9
-	 t9u7s9qauGkZQiLpPM340cDMiYDMWWA4MAyNKtDeMu1xJ6VbBgHiGBUXbtyK69LnKqOCd
-	 twqrkgwfsKsqEUEq0sd1Pn05Cb1UeDV4bLpyDiI/ikpu0HWX4Ixgu3JsIwN4VV7UCUEdE
-	 /o5ka7h9OLEXpZXeitVRPwVlzSpTr/xqFNr/buEmhRRQl3bn/+5N68SNyHLg0ZcID95aC
-	 3Ljqa+s1J/x/Fw+4uuXAvpSls2asfFdOsBGFQRZnzmYh7yxMtzja3feCTojxiaL4n3Q==
+	t=1794474093;
+	b=4PBBkP+A42ndeDaQfM8+Pt9PqToeVKdrrLE6VeK4WKfokYy+nv2k3SNP3gZQC7nYz7bn
+	 Eizwl4DgStbkx/HQDbmsn0p3Rv31iIKUPIb8WUHmR1ErEMPRUu2CIU8qGzR+qOnTO7PTc
+	 XmSuw/YmI3o8dU5ISkysauLytSqVLoSd7dn7te97jjJLU8tPEXgIp6l/eMv1h19HCe4UB
+	 CDax4EoatrMic5oc+e751yvzdNG4LGRsbJxv0ibOswssS7Q/BxkaNcjmwoOfw/a+SLksE
+	 mwi/zPvG51PkXY5tgjoNhXqELC+j4f2yIOpdTQ4kBv43AmldSoWR31YrBrLa9pnv6Fg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794474087;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794474093;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=i3FgasHjyeNw1wR+BYY/om5o5tw8bjHKXSi15Wq1abU=;
-	b=fwGAHqkOCVS0phYCnMw5nCalZeEp201G4LyeHrbsFDzrQhmrGYOyJNj8wQgO3kL1ER94
-	 e5VlLPbyxx1oZSOcG1kGJDehSc2SX0BI+cb7i9DW5Oq//gU+LrcK/o0uVLYng28KiNGOF
-	 DXwWBZYEYXtmpZWdISpY+TYqnMU3MbSgrtl3bBN0VIzXwjerxC4j1qZlTmzsBckgc9iCb
-	 x3+DiM5o1wUGpQGfzvZh1pW4U8GeTapsSD/VXomN0INLVKZAMtd1vwLcNfrxXqrGjOCI8
-	 v16DbHtQaITDSkb+tU8/jkibxsZ3C40chArNY/jPFWBri7g43/0r7TBWq1RBt5uVuFg==
+	bh=UU03pdQXvnZhnp48bfMOqGxzcN0ycFpUm4aKAjaRGoU=;
+	b=0t2XyAXDOTBRWEJ9vLi4Y3DPYj8Si/icWCiykkpLSAwxH1Q1SfnDq3OJWRpCVXDitU0i
+	 +lBM1y3oa/r1zywWzPhzytCJ7TzQICmUguxaBC5TW0SaTub20ycCTbOM/JGoZ+sAc7bg8
+	 Mvukg8lsmRF5CZEtgy+dqlTYi5u4wXJRGjg36+WjaYzATrz+qE60O901VXTaKTkAhiXCF
+	 zY/bglsf5Mph7UDBYEUlSf6juVk7Q2aCxkXQahq4HrFe4hNW+P1opm4pzfc6RkxN0mXCQ
+	 lowGTN9sq9seF2XMehdyJUXD3wBm/5/N4MxJccGnALLmMV/0aFIu2Vq1YI6/dv+B/Yg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="K6QH/V3i";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A+QlnDLN;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1C9606A8B4;
-	Thu, 12 Nov 2026 09:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF173606A327;
+	Thu, 12 Nov 2026 09:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K6QH/V3i
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 171F71F00A06;
-	Thu, 12 Nov 2026 09:01:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A+QlnDLN
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F165E1F00A0D;
+	Thu, 12 Nov 2026 09:01:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794474087;
-	bh=i3FgasHjyeNw1wR+BYY/om5o5tw8bjHKXSi15Wq1abU=;
+	s=k20260515; t=1794474093;
+	bh=UU03pdQXvnZhnp48bfMOqGxzcN0ycFpUm4aKAjaRGoU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=K6QH/V3i6m8OlPuQcrnR4DJXczGkWXP+0tfQ3d8I0DXmzsaPDMqkqe6lUjW1HnPiN
-	 7w6FTybfw9K8V16x4sA5Zcyb0spzDJUq7v8wcPp5BBIKFT57YSoR6ev7AYMtOjKHpG
-	 YxfR6qWpiM1Ympxr/y0+V0QYkSrzHSSlqvUStZm74jPsEqlNbAHgKJeLADpO0fyRIQ
-	 hZtJ3C29Zjqbt04y+rswZ8fZkAvUhFK9E10pTBrCDDqWTgINMQSFKIH+jTfG+xsE2h
-	 NOKNeZdI38vs5nRwSnVz30n4ze6BaX6du53db/lqPin7rKrki+nwWDc3dA6jCP7v9H
-	 HbTO0b/TAlfLw==
-Message-ID: <83e3e025-f877-4dfd-bc84-2cc90b601884@kernel.org>
-Date: Thu, 12 Nov 2026 10:01:16 +0100
+	b=A+QlnDLN4dqpSwg7GeMb7nW0Xx0z9WIMvCnlPG8lRaZJSW5f56yU7Qer41MbaOXtc
+	 sztGXvox+GkmXBvRml4izMX+ncvN5+z36z4179Urvn2nFNl/LPe5Bq6puWEX6mZ8N4
+	 +a5JxJinzw1yrxncWvdyYgHG5rg4rFAOrysxFNDOuhlLAgEoNY+D4HwPORfDb4V0BU
+	 +jb1Pl4TF+U4atES3OZ/YvEa4G25d5yjJ8uRZi0SJRrSc5sw29Mx1KdM9cWJluyij4
+	 L5TArHVaN4gaeINIVp7ROwmBmsJGVFXBv7b6XjWt26tO1rUugEfJtPYHDiWr0kk5NR
+	 4oIXjvjoASsFA==
+Message-ID: <6a897be9-8732-41c7-890b-ac943fe106e6@kernel.org>
+Date: Thu, 12 Nov 2026 10:01:22 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -52,7 +52,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] soc: toshiba: tc9564: add a new syscon driver
+Subject: Re: [PATCH 0/4] soc: toshiba: tc9564: config system controller
 To: Alex Elder <elder@riscstar.com>, sboyd@kernel.org,
  bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, p.zabel@pengutronix.de,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
@@ -62,7 +62,8 @@ Cc: daniel@riscstar.com, mohd.anwar@oss.qualcomm.com,
  changhuang.liang@starfivetech.com, devicetree@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20261104004332.2141282-1-elder@riscstar.com>
- <20261104004332.2141282-3-elder@riscstar.com>
+ <a724d159-1509-4649-afa7-a2669d37b4f6@kernel.org>
+ <675dec20-1cd7-4d37-89b4-23237b760f33@riscstar.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,53 +109,70 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20261104004332.2141282-3-elder@riscstar.com>
+In-Reply-To: <675dec20-1cd7-4d37-89b4-23237b760f33@riscstar.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/11/2026 01:43, Alex Elder wrote:
-> Introduce a new system controller driver for devices found within the
-> Toshiba TC9564 SoC.  The system controller manages access to an 8 KB
-> region, and implements controllers for a set of clocks as well as a
-> set of resets.  The region also includes registers that indicate when
-> initialization is done for the chip's two Ethernet interfaces.
+On 09/11/2026 18:42, Alex Elder wrote:
+> On 11/5/26 2:26 PM, Krzysztof Kozlowski wrote:
+>> On 04/11/2026 01:43, Alex Elder wrote:
+>>> This series is comprised of some code that was previously sent
+>>> separately.  It now incorporates a new system controller driver
+>>> that advertises clock and reset functionality, as well as regmap
+>>> access to its address range.  This combination is being treated
+>>> as a new series.  (Details of previous versions are below.)
+>>>
+>>> The Toshiba TC9564 is an SoC that attaches to a host system via PCIe.
+>>> It includes a PCIe switch with three downstream ports.  To one of
+>>> these ports an embedded PCIe endpoint is attached, and that implements
+>>> two PCI functions.  BAR 4 for both PCI functions provides access to
+>>> registers controlling blocks within the SoC.
+>>>
+>>> The system controller driver adds the clock and reset devices
+>>> using the mfd_add_devices() interface.  The clocks and resets
+>>> are implemented by drivers included in this series.
+>>
+>> Toshiba TC9564 bindings and DTS should be posted completely. We spent
+>> great amount of time on discussing already and I pointed more than once
+>> that big picture is missing.
 > 
-> The SoC has a single 25 MHz input clock, and from that derives clocks
-> of various rates used by functional blocks within the chip.
+> https://github.com/riscstar/linux/blob/tc9564-dts/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
 > 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  MAINTAINERS                         |  1 +
->  drivers/soc/Kconfig                 |  1 +
->  drivers/soc/Makefile                |  1 +
->  drivers/soc/toshiba/Kconfig         | 12 +++++++++
->  drivers/soc/toshiba/Makefile        |  3 +++
->  drivers/soc/toshiba/tc9564-syscon.c | 42 +++++++++++++++++++++++++++++
->  6 files changed, 60 insertions(+)
->  create mode 100644 drivers/soc/toshiba/Kconfig
->  create mode 100644 drivers/soc/toshiba/Makefile
->  create mode 100644 drivers/soc/toshiba/tc9564-syscon.c
+> Node pcie@3,0 is the third switch port (within the TC9564), which
+> has an embedded PCIe endpoint with two functions.  (You can ignore
+> pci-ep-bus@0 for now.)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 2b1b29169e0e9..c25ee6e0f1c68 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -28345,6 +28345,7 @@ M:	Alex Elder <elder@kernel.org>
->  M:	Daniel Thompson <danielt@kernel.org>
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/soc/toshiba/toshiba,tc9564-config-syscon.yaml
-> +F:	drivers/soc/toshiba/tc9564-syscon.c
+>> You are not describing here parts of a SoC.
+>>
+>> You are describing one, single device how the host sees it and DT
+>> maintainers (and writing bindings) ask for complete picture in such cases.
+> 
+> I'm glad to provide whatever information you need.  There is more
+> than one way to provide the "complete picture" however, and I don't
+> want to send something that isn't helpful.
+> 
+> If you want something different from just the DTS file linked above,
+> please say so and I'll put something together.
 
-No, this has to stop. There IS NO TOSHIBA SOC here, how we understand SoC.
+The DTS was enough and it shows that you described internals of the
+device. I keep my claim, that is not correct representation because it
+is too detailed and too complicated.
 
-drivers/soc/ are ONLY for SoCs running Linux, not for regular devices,
-which you are describing here. You have standard PCI device, not
-drivers/soc/
+Nothing related to the syscon should be represented in DT, because these
+are internal registers handled by the device itself. DT does not
+describe internals of the devices, but how the device is being
+represented for the host.
 
-And if this was Toshiba SoC, you did not even Cc Toshiba maintainer.
+And Rob Herring already expressed that, if I understand correctly:
+https://lore.kernel.org/lkml/20260605144032.GA3659201-robh@kernel.org/
 
-Nacked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+"And really, a DT node for them should be completely optional (unless
+there's some power on ctrl needed)."
 
+"Everything else like SPI, GPIO, UART, etc. should be under the PCIe
+switch upstream node in a pci-ep-bus."
+
+You don't get multiple syscons and other internal routing elements.
 
 Best regards,
 Krzysztof
