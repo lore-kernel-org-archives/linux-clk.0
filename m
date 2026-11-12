@@ -1,105 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794456985;
-	b=USri7Hbg1Ig54iDeq2JbOPMqn8lP58c+1UKa8FsJTV0whwh8V3Zj0aO2rqQHrYevkkNL
-	 C3a4R6JuKNyAzUKGGxmGuOdXiSR9cszD4qUMQaiK/8sGc1Q2mCshmzEz/g+zihBYfWr3u
-	 RnfoKxQOBEj9RuKDlYYDJ+ZMB/6c+c5LruGrNaSmQR12CcAIOziNWoh4Y63tk/Is2wvIU
-	 5lKhLnmmoXmhfpExc0j6Yv7BAXDMl7SiI19/9yA5O/M+Jz1rbTvSDlBhs16s6PJ0TbVOS
-	 /B8hvKQJSRS269p+gnXWOeb76pA8vCmXaQeAVfcWsktU1pn3Nsw5DLaluIalNPeYEvQ==
+	t=1794457871;
+	b=ccE6Msg3ovgodn9oQnsmBABkMVUWHIn0Dn2hDKShn0HQ6zzePGKmksIUUat5yFK5VskV
+	 JLOs/OMoqDzlTIFCDTfGoYZQQCUZmn1C0b+ldqok7Fy0xYBuuS7RBMT+hEDqo9pi0ji18
+	 Zm/NY6NB4et46Q/1mWeqGoz9Gy8Ycsk+P2fR82l8qVkYkWr7bQywGvilrPGjenyygh5vN
+	 lInMkATzrj3g6ComW82x+Fm7bvSzhR7xcd9w6VkySs2jdb9HJrQHoC9G2PXaXS0JWid8r
+	 zCtl5Ku5qgKemATcr7sJVgqGzivhvry14gZhapoJ2gZjGB1TuxtH7ivRcVEfIf6hfRA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794456985;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=A5kGUYlL1s6wl8StQOQ7ah5ktYL6JARyi0H/D6FL9bs=;
-	b=IDDZQvFtM2A4lgrIcro8/seglHvZt+ZpY6J3CviH8FvzHzwGTwy6HF5hhD6dhlxX5SZd
-	 3k58YRxVMh3mMBdReB/kgs26iwjL4ktupI/rNaRoRvFkejxTJNuuUupw/t2SkENThh++e
-	 nDmUp0AF71Ic5PWBbDd/dLwuxfQvt+dUunx7y0ILnarrUglU6/o7mlYFUkZNIA0jCcL+z
-	 /tQ76fp2ZsKKSUyTqrKkrv+MvvUrtynzWm/yYKc42c4UkkO/Y/AaCwFi1ErqUgiBzY8/o
-	 HA7ijHeY4PUn+nrbID5oDTzEsfa6XxhPGyWWJiHeN8nm2ZpTEby4ZjzuWCqbrKr+MwQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794457871;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=Ihfh+0QNZR1KVi9SFPscheM95rSSTp3dL6n/JmBPhac=;
+	b=0mvGfR/gPRoqSO0Oge8qkdLD3GZFNVrQd1ttbm4Mt1ZlXLKbe8GLwex/QYx73URYze/V
+	 d/5Sgun1F41imtVOSZHvaSO3US7L8f7CBP12kTyd4BKN67dMA2p5WCIitKgBGDSWMRrVd
+	 gY+OmaCUJcxVsM1+iphToFaCqZYDgxL54oogZzWmErguYklanX4sZ0OJigkn9KGNJixEb
+	 07KtbIhEyoNoSuXKV2L2vUzvMQWBYdd/Ut6jB876xBJbTPvb1AuQeE6v3JqsOGulfbhlW
+	 vzsumOypGUZaZO4Xa9DkRR9Iewo3nB6agMYuDG8MZPX1V09WWnWagEnvkEr6qgmFe2A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DsRLzKHA;
-	arc=none smtp.remote-ip=74.125.82.51
-Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ftw7RDIr;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D432606A88E
-	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 04:16:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6D432606A88E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DF7606A321
+	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 04:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DsRLzKHA
-Received: by mail-dl1-f51.google.com with SMTP id a92af1059eb24-15dd124bbe7so5978502c88.1
-        for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2026 20:16:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794456985; x=1795061785; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=A5kGUYlL1s6wl8StQOQ7ah5ktYL6JARyi0H/D6FL9bs=;
-        b=DsRLzKHAwiCRqiKX8u5aP4CaTd39d9ywi0CRFk4wiv9LG3fx87WtfWVgpEif6uFyl6
-         tEn5pH0xujfK9oKD0gc31SJiU7moP+QUlV0NweGe7+e7puW/kt0KV0+G2uUvEOmnPqiC
-         47pvKaCDRHnYJ/mfmv8ra5eu6RyS656R+zkdrfkc79FoOgS2nYNWyBjW321i49jEY+j+
-         paBe0p0Fvkep04H4ACT1ZQwyo7NLKsIDxQni2yvXwDq2yj64D2IWN/LRRRELtawjHika
-         GBxFno3Tf71hWH/OzogTZbY5TdX3DBrLAazM5gJOuWOvfQsfEj2kMnLzwC0RQnheO+oZ
-         7CCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794456985; x=1795061785;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=A5kGUYlL1s6wl8StQOQ7ah5ktYL6JARyi0H/D6FL9bs=;
-        b=JMoqijTqvIwcN4omZUNkjM0q8fG9cUBDGF9cdz4i2T9NdABRqjxYgjRX8755Jf/Kdq
-         f7M47mHxLDeenW8iwkYwZCtMf74DNnKjYBYv5DqH9jUL0v9Cbd9xvmmB8G4afnjJFKEF
-         GKhHuhHfKYt/4qR6w8vX+WB16HwkYCUe/g5CXy+o2vgfGoem+DRiPnfOwHqJ5qgYlnGO
-         /fbDT6Fcat4soEiSpBHfdqEtwcWcTPJALe8jWUfCS4/CIK+cHgK8A2p8Jzc+7dteeX/X
-         gh2nGnSUwy1hKz+Y/xB8NcylAJHsO7kpjks1R5rSBUtNYPYIk/8b9uM8nyNCtzrqrN/4
-         39/w==
-X-Forwarded-Encrypted: i=1; AL+hErEDM0vN18xcN4WXVapDVW7iVaIwdOu6U82fLHu9TW8fvAAWXqZbUrYna70Hl5zjARlUZxh9ImljCLg=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9e4BUE2DCpbvouCGN3GqExQ8USI/A3C1fMS+XN718x22YCpiVV
-	nSvayyPg1yYmoB65d9/aj5Ke5UJNeQIyufbWrG8aQ2LJY9nFJQsLt2M7
-X-Gm-Gg: AYBFou2outgLh/XSSBho6zNkP5enohjHtWeCODb5WAvPIheP5v9dMjvgwuUcGXlCMlB
-	j5wr21SPVBMuRdc4nSp3bena3ZBGiSMnyOnaZf+e0tSIHM/jXtR3H2Afc3XpWioftm5WILPYx9T
-	CDtZTz1DCUhm0sDuc8+GnsC/EK+i6ntEt4HoCa0E6jyaf2HOlQFUHOfAAummSmJDJRWQ0oRCkLJ
-	vF2fhywyU2lqcje7CO0/GX7fvqlvHcNzaJP9xsvfISHttLXQK6b4Zv9r+QEjgwHQHEgWjs0jsA1
-	uBDTYZp6e1v6SQLgIiKb8kGkYgzeSZvxsCLdQ5W38EGtY1RS6GK3TO2spj9oW/fjJ55Ex9cyUWv
-	ieAXQHy+6vujzDEv8z5sJs1KQ9zV1sdbZTzk1voTuYwMtC8sm8FEK0jPPna9d6mn0muq3pKsD1W
-	NL0hoUbJeG1Sj05zH188PQPhqjYzJH+pgp/JUD5zDxDs01SQMfyGartLm/dwBKF233LpQdbgU5F
-	Ewxm2NpzAoGTl02KDAb9xIQ//TXzqJ/NYoRGX7Ine7R4cOZ9/b0djc1Kpi/FlPDyA0bQmuDTUgd
-	wsOl/K7x
-X-Received: by 2002:a05:7023:d0d:b0:1ae:e0f5:2cdd with SMTP id a92af1059eb24-1b3c0324aa4mr4176471c88.28.1794456984463;
-        Wed, 11 Nov 2026 20:16:24 -0800 (PST)
-Received: from eldorado ([2600:8802:b00:1f88::287])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b3b5890c0esm21300801c88.1.2026.11.11.20.16.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Nov 2026 20:16:23 -0800 (PST)
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-mips@vger.kernel.org
-Cc: =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= <zhouyanjie@wanyeetech.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Paul Burton <paulburton@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	hns@goldelico.com,
-	paul@boddie.org.uk
-Subject: [PATCH v3 3/3] MIPS: CI20: Enable SMP with two CPUs
-Date: Wed, 11 Nov 2026 20:14:22 -0800
-Message-ID: <20261112041422.2997275-4-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261112041422.2997275-1-f.fainelli@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ftw7RDIr
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44B631F00A05;
+	Thu, 12 Nov 2026 04:31:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794457871;
+	bh=Ihfh+0QNZR1KVi9SFPscheM95rSSTp3dL6n/JmBPhac=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=Ftw7RDIruHS6VYGy9mz/5fsjbhigoU/U4B9N9QMaqYY5uc7y049FtOlSdjcDOz7zS
+	 Z704tHrjzKL6FMv1Ahv1OiOtk52KNoKAYk0e7Yaw6KhBzJifzf0hEOvzBdwy9/CkMo
+	 RjpQsPD6eGxvB4bGo0Us4b9aTsqB5e5DxzkEA+wqgr5t9lw/Q1nYdabKq3m1Cx7Hnj
+	 8QfxeCnsSh+2II5z2mHAA6O9a9xmek7/EYfQ6UNIhjWSkppitbJ8YO5NG6Z7tEGHZQ
+	 fhJwKN5BeirFMRmTjTy3gr6N6c0OcDX1Kr5h4HvV7yDcLWWzqqR8/Xi1BsDvyHaJ+n
+	 9Qmb71R4t668w==
+Message-ID: <sashiko-outbox-210344@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 3/3] MIPS: CI20: Enable SMP with two CPUs
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Florian Fainelli" <f.fainelli@gmail.com>
+Cc: =?utf-8?b?b3BlbiBsaXN0OkNPTU1PTiBDTEsgRlJBTUVXT1JL?= <linux-clk@vger.kernel.org>
+In-Reply-To: <20261112041422.2997275-4-f.fainelli@gmail.com>
 References: <20261112041422.2997275-1-f.fainelli@gmail.com>
+ <20261112041422.2997275-4-f.fainelli@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 12 Nov 2026 04:31:10 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -108,38 +59,130 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-From: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+Thank you for your contribution! Sashiko AI review found 4 potential
+issues to consider:
+- [High] mips: ingenic: invalid lock nesting in xburst_boot_secondary()
+- [High] mips: ingenic: boot BUG_ON in mips_smp_ipi_allocate() and
+  missing present mask
+- [High] mips: ingenic: missing cpu_set_core() skips cache IPIs under
+  CONFIG_MIPS_CPS
+- [Low] mips: ingenic: 64-bit build failure in xburst_smp_setup() and
+  entry asm
+--
 
-Enable both JZ4780 cores now that the generic Ingenic platform provides
-secondary CPU reset and mailbox support. The existing device tree
-already reserves TCU channels for both per-CPU clock events.
+commit 2540a85d35c671f5a1df0622376784adb3fe4123
+Author: =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) <zhouyanjie@wanyeetech.co=
+m>
+
+MIPS: CI20: Enable SMP with two CPUs
+
+This commit enables SMP support with two CPUs in ci20_defconfig so both
+JZ4780 cores are used on the CI20 board.
 
 Link: https://lists.openwall.net/linux-kernel/2020/05/19/739
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Paul Cercueil <paul@crapouillou.net>
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- arch/mips/configs/ci20_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
-index 90536cab417e..09d65094b1bd 100644
---- a/arch/mips/configs/ci20_defconfig
-+++ b/arch/mips/configs/ci20_defconfig
-@@ -22,6 +22,8 @@ CONFIG_EXPERT=y
- CONFIG_MACH_INGENIC_SOC=y
- CONFIG_JZ4780_CI20=y
- CONFIG_HIGHMEM=y
-+CONFIG_SMP=y
-+CONFIG_NR_CPUS=2
- CONFIG_HZ_100=y
- # CONFIG_SUSPEND is not set
- # CONFIG_SECCOMP is not set
--- 
-2.53.0
+> diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_de=
+fconfig
+> index 90536cab417ee..09d65094b1bd2 100644
+> --- a/arch/mips/configs/ci20_defconfig
+> +++ b/arch/mips/configs/ci20_defconfig
+> @@ -22,6 +22,8 @@ CONFIG_EXPERT=3Dy
+>  CONFIG_MACH_INGENIC_SOC=3Dy
+>  CONFIG_JZ4780_CI20=3Dy
+>  CONFIG_HIGHMEM=3Dy
+> +CONFIG_SMP=3Dy
+> +CONFIG_NR_CPUS=3D2
+>  CONFIG_HZ_100=3Dy
+>  # CONFIG_SUSPEND is not set
+>  # CONFIG_SECCOMP is not set
 
+[Severity: High]
+Does xburst_boot_secondary() in commit "MIPS: Ingenic: Add XBurst SMP
+support" violate lock nesting rules by calling clk_enable(cpu1_clock)
+while holding smp_lock?
+
+arch/mips/ingenic/ingenic-smp.c:xburst_boot_secondary() {
+    ...
+	raw_spin_lock_irqsave(&smp_lock, flags);
+	ctrl =3D read_c0_corectrl() | CORECTRL_SWRST(1) | CORECTRL_RPC(1);
+	write_c0_corectrl(ctrl);
+	back_to_back_c0_hazard();
+
+	ret =3D clk_enable(cpu1_clock);
+    ...
+}
+
+smp_lock is a raw_spinlock_t, whereas clk_enable() -> clk_enable_lock()
+acquires the non-raw spinlock_t enable_lock and jz4780_core1_enable()
+acquires the non-raw spinlock_t cgu->lock.  Booting CPU1 triggers a
+lockdep invalid wait context splat and sleeps while atomic on preempt-rt
+kernels, while also holding smp_lock with interrupts disabled across the
+5000 us power-status poll in jz4780_core1_enable().
+
+[Severity: Low]
+Can arch/mips/ingenic/ingenic-smp.c and
+arch/mips/ingenic/ingenic-smp-entry.S in commit "MIPS: Ingenic: Add XBurst
+SMP support" fail to build on 64-bit generic kernels?
+
+arch/mips/ingenic/ingenic-smp.c:xburst_smp_setup() {
+    ...
+	entry =3D KSEG1ADDR((unsigned long)xburst_secondary_cpu_entry);
+	write_c0_reim((reim & ~REIM_ENTRY) | (entry & REIM_ENTRY));
+}
+
+arch/mips/ingenic/ingenic-smp-entry.S:xburst_secondary_cpu_entry() {
+    ...
+	li	t0, KSEG0
+    ...
+	la	t0, xburst_cpu_entry_sp
+	lw	sp, 0(t0)
+	la	t0, xburst_cpu_entry_gp
+	lw	gp, 0(t0)
+
+	la	t0, smp_bootstrap
+}
+
+BOARD_INGENIC can be enabled in a 64-bit generic kernel build, where
+asm/addrspace.h only defines CKSEG1ADDR and CKSEG0 (not KSEG1ADDR or
+KSEG0), and the 32-bit la and lw instructions in
+xburst_secondary_cpu_entry fail to assemble against 64-bit unsigned long
+and pointer symbols instead of using PTR_LA and LONG_L.
+
+[Severity: High]
+Does xburst_smp_setup() in commit "MIPS: Ingenic: Add XBurst SMP support"
+leave CPU1 out of cpu_present_mask and trigger a boot crash in
+mips_smp_ipi_allocate() on generic kernels?
+
+arch/mips/ingenic/ingenic-smp.c:xburst_smp_setup() {
+	for_each_of_cpu_node(np) {
+    ...
+		__cpu_number_map[hwid] =3D cpu;
+		__cpu_logical_map[cpu] =3D hwid;
+		set_cpu_possible(cpu, true);
+		cpu++;
+	}
+}
+
+Neither xburst_smp_setup() nor xburst_prepare_cpus() calls
+set_cpu_present(cpu, true), and smp_prepare_cpus() only copies
+cpu_possible_mask to cpu_present_mask when CPU hotplug is disabled, so
+CPU1 is never brought up when hotplug is enabled.  In addition, generic
+MIPS kernels select GENERIC_IRQ_IPI, which causes mips_smp_ipi_init() ->
+mips_smp_ipi_allocate() to hit BUG_ON(num_present_cpus() > 1) at boot
+because JZ4780 uses custom mailbox callbacks in xburst_smp_ops without
+registering an IPI irq domain.
+
+[Severity: High]
+Does xburst_smp_setup() in commit "MIPS: Ingenic: Add XBurst SMP support"
+miss calling cpu_set_core(&cpu_data[cpu], hwid)?
+
+When MIPS_CPS is enabled (such as in generic_defconfig), decode_configs()
+skips cpu_set_core(), leaving both JZ4780 cores with core ID 0.
+cpus_are_siblings(0, 1) then returns true and leaves cpu_foreign_map
+empty, causing r4k_on_each_cpu() to skip cross-CPU L1 I-cache and D-cache
+flush IPIs between the two cores' non-coherent private caches.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261112041422.2997=
+275-1-f.fainelli@gmail.com?part=3D3
