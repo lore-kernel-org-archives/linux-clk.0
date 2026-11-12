@@ -1,65 +1,65 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=211.75.126.72
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1794461197;
-	b=g/D6RCnN0W5YrUIRbIRnOxxrQQW+vGLGKcWGdvW9nQX3jM/mMdjCO4JNZKGL7Ksdhj5C
-	 9z7NPo16oJmW4YPLbiQ4MJXvb/BMS+iolxd5NoAaI/3ix/qqx7Fe3Wg3dumSRn3fsOu5r
-	 gL3uAIoiJ5ufZrm3fOET9RlBfFS98JwhYyukYTOkYnzBf2bhWEBKCTBZQUhtKcQ9/X+k+
-	 TLO8TJqL5BGagnl/A48opZ6oDbcuNWduv0R/Ro0vA5TmkN0mwfp6sBW8mSh0A52Kv6mUM
-	 wm6VyD6WdqtPsE90jsw/z+vZsYROyAnEeTWosH661zZWCuEhjFxcmVKMJrXh48Ehi3Q==
+	b=5L//iKG8SJ3noEWmDKgWEfw9ZoDw1SFaidfiN837qPRU4NuLgDSdVEr8as525cK/MdO8
+	 I0nCk6rE1f9yb6TutVy0bIzhNshuH50ok8IkMVSPL8Gr9UcgwRk0Om++UhYCxoLib+nsz
+	 UUzoYncd2kp4qLtn4MJyY6lCqdlu9JCKbwZZIvaK1MVMk9h4ksXvY+kTRNZqZyBWEOID/
+	 sPcDkz6CMb+3Ijtz7FP257TWIwu4RkpCTwJFlRZRqOiDSpwcNeGODWTY5dpm2ahBf3fDw
+	 bsUOrBR0eIde3jMSkH9IGWoASj6xkqHUhm8zUKUHVTlIHVsYUm99KBDLpMro415TIwg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794461197;
 	h=DMARC-Filter:X-SpamFilter-By:DKIM-Signature:Received:Received:
 	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
 	 Content-Type;
-	bh=tM4pNSHLAPwOpeucdIgBAigue7mEMqKvbnx19Qg+iBM=;
-	b=T+UD/b+wPPwVcSVMUHPMaynG4kyi8ur5WXd8Kattb/yUW7dl8ug8VS4ORGrhbgk578rB
-	 3kC6uT9AUDALSnjzDOVdjETfGNHlvXyZiTBtF4qK2bdr212DYUrUjIZHO6osJh9DDy2TB
-	 39xWnoDjg+ojgbo2PyDzhT5iql50kxUK3hmuYwJM1VTxpoZAQm8Un8wsb2qL6rGfkp/rL
-	 ekYUd6ahUf30Qe1n3UJhvw+9yNTiEV4evvYpk/CW9Mf6fOtqWdY8DN9VNKFMCTKXiUewx
-	 uXXl7qyX4X5ZlGqT1laI0Ean6tmfYtvI/3EMbc9c6bbMJ2ktg+E5T3lcZgjZ/osrnfQ==
+	bh=8kwBotODzMSYfdscIp2QveyNCjYFwzaukreF66iIfeE=;
+	b=mhn8H2KBaRM7q9g7WbRE+cg0560hMl+N5HG5luedjSz3JA8nnK08M8rzJ4dZJMTHX0o2
+	 vgFftGEofS/UIVN+T0uUJl9GhYCDkHOM/wTbUJtmW/N3ld159xuFscrf1J2YWUZgYq/+7
+	 /xMmuBoegsw9sYBHWGsZ2cTi8MrIyF2E+5vvlyQb8Ez56NkidoUgvK6OMwjaEPxHEkF0c
+	 jVxidK/OVJTEHmLWyqelD/DXrREcKQGRirbi+nSv47vSBdYnFWaxQWx+wydJwhR8NeQID
+	 pVHTOuPnS3cmQe002i04nBTA3btFVhqyZlRS7Lw4ljkiEd4kkYocEm83WHqFz/4ypBw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=realtek.com;
 	spf=pass smtp.mailfrom=realtek.com;
-	dkim=pass header.d=realtek.com header.i=@realtek.com header.a=rsa-sha256 header.s=dkim header.b=iTX57LLl;
+	dkim=pass header.d=realtek.com header.i=@realtek.com header.a=rsa-sha256 header.s=dkim header.b=kaesRnjC;
 	arc=none smtp.remote-ip=211.75.126.72
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA8B606A886;
-	Thu, 12 Nov 2026 05:26:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0DA8B606A886
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21AD9606A89F;
+	Thu, 12 Nov 2026 05:26:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 21AD9606A89F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.a=rsa-sha256 header.s=dkim header.b=iTX57LLl
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6AC5PjKW23459328, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.a=rsa-sha256 header.s=dkim header.b=kaesRnjC
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6AC5Pkz863459336, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1794461145; bh=tM4pNSHLAPwOpeucdIgBAigue7mEMqKvbnx19Qg+iBM=;
+	t=1794461146; bh=8kwBotODzMSYfdscIp2QveyNCjYFwzaukreF66iIfeE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=iTX57LLlmxDK4t2ttp3xpdP5TnadGPc9HPtNzd30vcLzgdbZ3ZEPLl3dviJsl01Bt
-	 MTJBUpFhxzLQXScOLp0iwfpUNZmPlxRUzkPzgBMvJZkFEQ37EOcsRy8mtN97c5J2+F
-	 aQW3C/Eb7zoIdZdo7F8T4w1PArkNNvJnwuU948OdSx5KDe/VHABVMfUqz6T3h43vHp
-	 MDcs5n9xVvFz6qckbeICBbuU/S4Ni/EImOCYC0zvBjCn7KJcvPnO9LZEg3ZWEpyeML
-	 XVWySNWD3Xt2o42yhheoilfz260wH4mGdgq7SBV/d80Ba4RfDAsoyg+wToQUngI1V6
-	 9jh79j6wdoasg==
+	b=kaesRnjCtVfeysVuReBW2FiWBQwltCT7yxnk1dQUPFdQbdfztgoT8Fdwv9Im0AWtl
+	 0qK5aaEaoUiYgum/vg6Dy616o+hFblgQi9OUzDqWeEDgWgvsb7kcuYz/v1yyhQYRNq
+	 vAIyIobs20Cr1bxreE8JM9RerwFv8b5GDXoz/CgqwtTpQhpzv6BKjTKoPPncfWIZUt
+	 YV+P/iFy/C3knGIwFBX157iA5GZorW8LloMMXVgaf0zVu1vUkE58/hSkMiRzkhCY+I
+	 X147BGsB2fVG7XQdEjNLoYf8c4nJO4rS0xVlLCDSAYwPuwLZS5+L55nNMkAMs+3z7J
+	 mkYN8OdW9EMBA==
 Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 6AC5PjKW23459328
+	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 6AC5Pkz863459336
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 12 Nov 2026 13:25:45 +0800
+	Thu, 12 Nov 2026 13:25:46 +0800
 Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
  RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Thu, 12 Nov 2026 13:25:45 +0800
+ 15.2.2562.56; Thu, 12 Nov 2026 13:25:46 +0800
 Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
  RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.2562.56; Thu, 12 Nov 2026 13:25:45 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
  (10.21.1.56) with Microsoft SMTP Server id 15.2.2562.56 via Frontend
- Transport; Thu, 12 Nov 2026 13:25:44 +0800
+ Transport; Thu, 12 Nov 2026 13:25:45 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <sboyd@kernel.org>, <bmasney+clk@redhat.com>, <jbrunet+clk@baylibre.com>,
 	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
@@ -69,9 +69,9 @@ CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-realtek-soc@lists.infradead.org>, <james.tai@realtek.com>,
 	<cy.huang@realtek.com>, <stanley_chang@realtek.com>,
 	<eleanor.lin@realtek.com>
-Subject: [PATCH v16 1/9] dt-bindings: clock: Add Realtek RTD1625 Clock & Reset Controller
-Date: Thu, 12 Nov 2026 13:25:36 +0800
-Message-ID: <20261112052544.555563-2-eleanor.lin@realtek.com>
+Subject: [PATCH v16 3/9] clk: realtek: Add support for phase locked loops (PLLs)
+Date: Thu, 12 Nov 2026 13:25:38 +0800
+Message-ID: <20261112052544.555563-4-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20261112052544.555563-1-eleanor.lin@realtek.com>
 References: <20261112052544.555563-1-eleanor.lin@realtek.com>
@@ -87,315 +87,427 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add DT binding schema for Realtek RTD1625 clock and reset controller
+From: Cheng-Yu Lee <cylee12@realtek.com>
 
-Co-developed-by: Cheng-Yu Lee <cylee12@realtek.com>
+Provide a full set of PLL operations for programmable PLLs and a read-only
+variant for fixed or hardware-managed PLLs.
+
 Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
+Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
 Changes in v16:
-- Remove Krzysztof's reviewed-by tag.
-- Add 'clock-name' property with a predefined enum list.
-- Update 'clocks' property constraints.
-- Move the reset ID header to the reset controller series.
+- Remove Brian's reviewed-by tag.
+-  Introduce 'expected_parent_rate' validation in '.determine_rate()' and
+'.set_rate()' to safely enforce the fixed input rate requirement.
+- In determined_rate, replacing the floor/ceil algorithm with a closest-match
+search within [min_rate, max_rate] boundaries.
+- Improve comments for spinlock. 
+- Add '.is_enabled' callback to 'rtk_clk_pll_ro_ops'
 ---
- .../bindings/clock/realtek,rtd1625-clk.yaml   |  95 ++++++++++
- MAINTAINERS                                   |   6 +
- .../dt-bindings/clock/realtek,rtd1625-clk.h   | 166 ++++++++++++++++++
- 3 files changed, 267 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/realtek,rtd1625-clk.yaml
- create mode 100644 include/dt-bindings/clock/realtek,rtd1625-clk.h
+ drivers/clk/realtek/Makefile         |   2 +
+ drivers/clk/realtek/clk-regmap-pll.c | 219 +++++++++++++++++++++++++++
+ drivers/clk/realtek/clk-regmap-pll.h |  53 +++++++
+ drivers/clk/realtek/freq_table.c     |  62 ++++++++
+ drivers/clk/realtek/freq_table.h     |  24 +++
+ 5 files changed, 360 insertions(+)
+ create mode 100644 drivers/clk/realtek/clk-regmap-pll.c
+ create mode 100644 drivers/clk/realtek/clk-regmap-pll.h
+ create mode 100644 drivers/clk/realtek/freq_table.c
+ create mode 100644 drivers/clk/realtek/freq_table.h
 
-diff --git a/Documentation/devicetree/bindings/clock/realtek,rtd1625-clk.yaml b/Documentation/devicetree/bindings/clock/realtek,rtd1625-clk.yaml
-new file mode 100644
-index 000000000000..31213e401111
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/realtek,rtd1625-clk.yaml
-@@ -0,0 +1,95 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/realtek,rtd1625-clk.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Realtek RTD1625 Clock & Reset Controller
-+
-+maintainers:
-+  - Cheng-Yu Lee <cylee12@realtek.com>
-+  - Yu-Chun Lin <eleanor.lin@realtek.com>
-+
-+description:
-+  The Realtek RTD1625 Clock Controller manages and distributes clock
-+  signals to various controllers and implements a Reset Controller for the
-+  SoC peripherals.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - realtek,rtd1625-crt-clk
-+      - realtek,rtd1625-iso-clk
-+      - realtek,rtd1625-iso-s-clk
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 5
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 5
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - "#clock-cells"
-+  - "#reset-cells"
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          const: realtek,rtd1625-iso-clk
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External 27 MHz oscillator
-+            - description: CRT SYS clock input
-+            - description: CRT SYSH clock input
-+            - description: CRT DDSA divide-by-four clock input
-+            - description: CRT miscellaneous gate clock input
-+
-+        clock-names:
-+          items:
-+            - const: osc27m
-+            - const: clk_sys
-+            - const: clk_sysh
-+            - const: clk_ddsa_div4
-+            - const: clk_en_misc
-+
-+    else:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External 27 MHz oscillator
-+
-+        clock-names:
-+          items:
-+            - const: osc27m
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@98000000 {
-+      compatible = "realtek,rtd1625-crt-clk";
-+      reg = <0x98000000 0x1000>;
-+      clocks = <&osc27m>;
-+      clock-names = "osc27m";
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 93abbb315065..c51f9fc157c8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23537,6 +23537,12 @@ S:	Maintained
- F:	include/sound/rt*.h
- F:	sound/soc/codecs/rt*
+diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
+index 13000ed4ba11..6fbe6e07b760 100644
+--- a/drivers/clk/realtek/Makefile
++++ b/drivers/clk/realtek/Makefile
+@@ -2,3 +2,5 @@
+ obj-$(CONFIG_RTK_CLK_COMMON) += clk-rtk.o
  
-+REALTEK CLOCK DRIVERS
-+M:	Cheng-Yu Lee <cylee12@realtek.com>
-+M:	Yu-Chun Lin <eleanor.lin@realtek.com>
-+S:	Supported
-+F:	include/dt-bindings/clock/realtek*
-+
- REALTEK OTTO WATCHDOG
- M:	Sander Vanheule <sander@svanheule.net>
- L:	linux-watchdog@vger.kernel.org
-diff --git a/include/dt-bindings/clock/realtek,rtd1625-clk.h b/include/dt-bindings/clock/realtek,rtd1625-clk.h
+ clk-rtk-y += clk-rtk-common.o
++clk-rtk-y += clk-regmap-pll.o
++clk-rtk-y += freq_table.o
+diff --git a/drivers/clk/realtek/clk-regmap-pll.c b/drivers/clk/realtek/clk-regmap-pll.c
 new file mode 100644
-index 000000000000..ea4e6bb77736
+index 000000000000..e43e78a36647
 --- /dev/null
-+++ b/include/dt-bindings/clock/realtek,rtd1625-clk.h
-@@ -0,0 +1,166 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++++ b/drivers/clk/realtek/clk-regmap-pll.c
+@@ -0,0 +1,219 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Copyright (C) 2026 Realtek Semiconductor Corp.
++ * Copyright (C) 2024-2026 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
 + */
-+#ifndef __DT_BINDINGS_RTK_CLOCK_RTD1625_H
-+#define __DT_BINDINGS_RTK_CLOCK_RTD1625_H
 +
-+#define RTD1625_CRT_CLK_EN_MISC           0
-+#define RTD1625_CRT_CLK_EN_PCIE0          1
-+#define RTD1625_CRT_CLK_EN_DIP            2
-+#define RTD1625_CRT_CLK_EN_GSPI           3
-+#define RTD1625_CRT_CLK_EN_ISO_MISC       5
-+#define RTD1625_CRT_CLK_EN_SDS            6
-+#define RTD1625_CRT_CLK_EN_HDMI           7
-+#define RTD1625_CRT_CLK_EN_GPU            9
-+#define RTD1625_CRT_CLK_EN_VE1            10
-+#define RTD1625_CRT_CLK_EN_VE2            11
-+#define RTD1625_CRT_CLK_EN_MD             18
-+#define RTD1625_CRT_CLK_EN_TP             19
-+#define RTD1625_CRT_CLK_EN_RCIC           20
-+#define RTD1625_CRT_CLK_EN_NF             21
-+#define RTD1625_CRT_CLK_EN_EMMC           22
-+#define RTD1625_CRT_CLK_EN_SD             23
-+#define RTD1625_CRT_CLK_EN_SDIO_IP        24
-+#define RTD1625_CRT_CLK_EN_MIPI_CSI       25
-+#define RTD1625_CRT_CLK_EN_EMMC_IP        26
-+#define RTD1625_CRT_CLK_EN_SDIO           27
-+#define RTD1625_CRT_CLK_EN_SD_IP          28
-+#define RTD1625_CRT_CLK_EN_TPB            30
-+#define RTD1625_CRT_CLK_EN_MISC_SC1       31
-+#define RTD1625_CRT_CLK_EN_MISC_I2C_3     32
-+#define RTD1625_CRT_CLK_EN_ACPU           33
-+#define RTD1625_CRT_CLK_EN_JPEG           34
-+#define RTD1625_CRT_CLK_EN_MISC_SC0       37
-+#define RTD1625_CRT_CLK_EN_HDMIRX         45
-+#define RTD1625_CRT_CLK_EN_HSE            46
-+#define RTD1625_CRT_CLK_EN_FAN            49
-+#define RTD1625_CRT_CLK_EN_SATA_WRAP_SYS  52
-+#define RTD1625_CRT_CLK_EN_SATA_WRAP_SYSH 53
-+#define RTD1625_CRT_CLK_EN_SATA_MAC_SYSH  54
-+#define RTD1625_CRT_CLK_EN_R2RDSC         55
-+#define RTD1625_CRT_CLK_EN_TPC            56
-+#define RTD1625_CRT_CLK_EN_PCIE1          57
-+#define RTD1625_CRT_CLK_EN_MISC_I2C_4     58
-+#define RTD1625_CRT_CLK_EN_MISC_I2C_5     59
-+#define RTD1625_CRT_CLK_EN_TSIO           60
-+#define RTD1625_CRT_CLK_EN_VE4            61
-+#define RTD1625_CRT_CLK_EN_EDP            62
-+#define RTD1625_CRT_CLK_EN_TSIO_TRX       63
-+#define RTD1625_CRT_CLK_EN_PCIE2          64
-+#define RTD1625_CRT_CLK_EN_EARC           66
-+#define RTD1625_CRT_CLK_EN_LITE           67
-+#define RTD1625_CRT_CLK_EN_MIPI_DSI       68
-+#define RTD1625_CRT_CLK_EN_NPUPP          69
-+#define RTD1625_CRT_CLK_EN_NPU            70
-+#define RTD1625_CRT_CLK_EN_AUCPU0         71
-+#define RTD1625_CRT_CLK_EN_AUCPU1         72
-+#define RTD1625_CRT_CLK_EN_NSRAM          73
-+#define RTD1625_CRT_CLK_EN_HDMITOP        74
-+#define RTD1625_CRT_CLK_EN_AUCPU_ISO_NPU  76
-+#define RTD1625_CRT_CLK_EN_KEYLADDER      77
-+#define RTD1625_CRT_CLK_EN_IFCP_KLM       78
-+#define RTD1625_CRT_CLK_EN_IFCP           79
-+#define RTD1625_CRT_CLK_EN_MDL_GENPW      80
-+#define RTD1625_CRT_CLK_EN_MDL_CHIP       81
-+#define RTD1625_CRT_CLK_EN_MDL_IP         82
-+#define RTD1625_CRT_CLK_EN_MDLM2M         83
-+#define RTD1625_CRT_CLK_EN_MDL_XTAL       84
-+#define RTD1625_CRT_CLK_EN_TEST_MUX       85
-+#define RTD1625_CRT_CLK_EN_DLA            86
-+#define RTD1625_CRT_CLK_EN_TPCW           88
-+#define RTD1625_CRT_CLK_EN_GPU_TS_SRC     89
-+#define RTD1625_CRT_CLK_EN_VI             91
-+#define RTD1625_CRT_CLK_EN_LVDS1          92
-+#define RTD1625_CRT_CLK_EN_LVDS2          93
-+#define RTD1625_CRT_CLK_EN_AUCPU          94
-+#define RTD1625_CRT_CLK_EN_UR1            96
-+#define RTD1625_CRT_CLK_EN_UR2            97
-+#define RTD1625_CRT_CLK_EN_UR3            98
-+#define RTD1625_CRT_CLK_EN_UR4            99
-+#define RTD1625_CRT_CLK_EN_UR5            100
-+#define RTD1625_CRT_CLK_EN_UR6            101
-+#define RTD1625_CRT_CLK_EN_UR7            102
-+#define RTD1625_CRT_CLK_EN_UR8            103
-+#define RTD1625_CRT_CLK_EN_UR9            104
-+#define RTD1625_CRT_CLK_EN_UR_TOP         105
-+#define RTD1625_CRT_CLK_EN_MISC_I2C_7     110
-+#define RTD1625_CRT_CLK_EN_MISC_I2C_6     111
-+#define RTD1625_CRT_CLK_EN_SPI0           112
-+#define RTD1625_CRT_CLK_EN_SPI1           113
-+#define RTD1625_CRT_CLK_EN_SPI2           114
-+#define RTD1625_CRT_CLK_EN_LSADC0         120
-+#define RTD1625_CRT_CLK_EN_LSADC1         121
-+#define RTD1625_CRT_CLK_EN_ISOMIS_DMA     122
-+#define RTD1625_CRT_CLK_EN_DPTX           124
-+#define RTD1625_CRT_CLK_EN_NPU_MIPI_CSI   125
-+#define RTD1625_CRT_CLK_EN_EDPTX          126
-+#define RTD1625_CRT_CLK_HIFI              128
-+#define RTD1625_CRT_CLK_NPU_MIPI_CSI      129
-+#define RTD1625_CRT_CLK_NPU               130
-+#define RTD1625_CRT_CLK_NPU_SYSH          132
-+#define RTD1625_CRT_CLK_HIFI_SCPU         133
-+#define RTD1625_CRT_CLK_GPU               134
-+#define RTD1625_CRT_CLK_GPU2D             135
-+#define RTD1625_CRT_CLK_MIPI_DSI_PCLK     136
-+#define RTD1625_CRT_CLK_VE1               137
-+#define RTD1625_CRT_CLK_VE2               138
-+#define RTD1625_CRT_CLK_VE4               139
-+#define RTD1625_CRT_CLK_SYS               141
-+#define RTD1625_CRT_CLK_SYSH              142
-+#define RTD1625_CRT_PLL_SDIO_REF          145
-+#define RTD1625_CRT_PLL_CR_REF            146
-+#define RTD1625_CRT_PLL_EMMC_REF          147
-+#define RTD1625_CRT_CLK_MIS_SC0           148
-+#define RTD1625_CRT_CLK_MIS_SC1           149
-+#define RTD1625_CRT_PLL_SCPU              150
-+#define RTD1625_CRT_PLL_VE1               151
-+#define RTD1625_CRT_PLL_DDSA              152
-+#define RTD1625_CRT_PLL_PSAUDA1           153
-+#define RTD1625_CRT_PLL_PSAUDA2           154
-+#define RTD1625_CRT_PLL_BUS               155
-+#define RTD1625_CRT_PLL_SDIO              156
-+#define RTD1625_CRT_PLL_SDIO_VP0          157
-+#define RTD1625_CRT_PLL_SDIO_VP1          158
-+#define RTD1625_CRT_PLL_DCSB              159
-+#define RTD1625_CRT_PLL_GPU               160
-+#define RTD1625_CRT_PLL_NPU               161
-+#define RTD1625_CRT_PLL_VE2               162
-+#define RTD1625_CRT_PLL_HIFI              163
-+#define RTD1625_CRT_PLL_SD                164
-+#define RTD1625_CRT_PLL_SD_VP0            165
-+#define RTD1625_CRT_PLL_SD_VP1            166
-+#define RTD1625_CRT_PLL_EMMC              167
-+#define RTD1625_CRT_PLL_EMMC_VP0          168
-+#define RTD1625_CRT_PLL_EMMC_VP1          169
-+#define RTD1625_CRT_PLL_ACPU              170
-+#define RTD1625_CRT_CLK_DET               171
-+#define RTD1625_CRT_PLL_VODMA             172
-+#define RTD1625_CRT_CLK_DDSA_DIV4         173
++#include <linux/export.h>
++#include <linux/regmap.h>
++#include <linux/spinlock.h>
++#include "clk-regmap-pll.h"
 +
-+#define RTD1625_ISO_CLK_EN_USB_P4         0
-+#define RTD1625_ISO_CLK_EN_USB_P3         1
-+#define RTD1625_ISO_CLK_EN_MISC_CEC0      2
-+#define RTD1625_ISO_CLK_EN_CBUSRX_SYS     3
-+#define RTD1625_ISO_CLK_EN_CBUSTX_SYS     4
-+#define RTD1625_ISO_CLK_EN_CBUS_SYS       5
-+#define RTD1625_ISO_CLK_EN_CBUS_OSC       6
-+#define RTD1625_ISO_CLK_EN_MISC_UR0       8
-+#define RTD1625_ISO_CLK_EN_I2C0           9
-+#define RTD1625_ISO_CLK_EN_I2C1           10
-+#define RTD1625_ISO_CLK_EN_ETN_250M       11
-+#define RTD1625_ISO_CLK_EN_ETN_SYS        12
-+#define RTD1625_ISO_CLK_EN_USB_DRD        13
-+#define RTD1625_ISO_CLK_EN_USB_HOST       14
-+#define RTD1625_ISO_CLK_EN_USB_U3_HOST    15
-+#define RTD1625_ISO_CLK_EN_USB            16
-+#define RTD1625_ISO_CLK_EN_VTC            17
-+#define RTD1625_ISO_CLK_EN_MISC_VFD       18
++#define TIMEOUT 500
 +
-+#define RTD1625_ISO_S_CLK_EN_ISOM_MIS     0
-+#define RTD1625_ISO_S_CLK_EN_ISOM_GPIOM   1
-+#define RTD1625_ISO_S_CLK_EN_TIMER7       2
-+#define RTD1625_ISO_S_CLK_EN_IRDA         3
-+#define RTD1625_ISO_S_CLK_EN_UR10         4
++static inline struct rtk_clk_regmap_pll *to_rtk_clk_regmap_pll(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap *clkr = to_rtk_clk_regmap(hw);
 +
-+#endif /* __DT_BINDINGS_RTK_CLOCK_RTD1625_H */
++	return container_of(clkr, struct rtk_clk_regmap_pll, clkr);
++}
++
++static int wait_freq_ready(struct rtk_clk_regmap_pll *clkp)
++{
++	u32 pollval;
++
++	/*
++	 * Optional register: return success if not provided.
++	 */
++	if (!clkp->freq_ready_reg)
++		return 0;
++
++	return regmap_read_poll_timeout_atomic(clkp->clkr.regmap, clkp->freq_ready_reg, pollval,
++		(pollval & clkp->freq_ready_mask) == clkp->freq_ready_val, 1, TIMEOUT);
++}
++
++static bool is_power_on(struct rtk_clk_regmap_pll *clkp)
++{
++	u32 val;
++
++	/*
++	 * If the PLL does not provide a power register, it is considered
++	 * to be always powered.
++	 */
++	if (!clkp->power_reg)
++		return true;
++
++	if (regmap_read(clkp->clkr.regmap, clkp->power_reg, &val))
++		return false;
++
++	return (val & clkp->power_mask) == clkp->power_val_on;
++}
++
++static void rtk_clk_regmap_pll_disable(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
++	unsigned long flags;
++
++	if (!clkp->seq_power_off)
++		return;
++
++	spin_lock_irqsave(&clkp->lock, flags);
++
++	regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_power_off,
++			       clkp->num_seq_power_off);
++
++	spin_unlock_irqrestore(&clkp->lock, flags);
++}
++
++static int rtk_clk_regmap_pll_is_enabled(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
++	unsigned long flags;
++	int ret;
++
++	spin_lock_irqsave(&clkp->lock, flags);
++
++	ret = is_power_on(clkp);
++
++	spin_unlock_irqrestore(&clkp->lock, flags);
++
++	return ret;
++}
++
++static int rtk_clk_regmap_pll_determine_rate(struct clk_hw *hw,
++					     struct clk_rate_request *req)
++{
++	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
++	const struct rtk_freq_table *ftblv = NULL;
++
++	if (clkp->expected_parent_rate &&
++	    req->best_parent_rate != clkp->expected_parent_rate)
++		return -EINVAL;
++
++	ftblv = ftbl_find_closest_by_rate(clkp->freq_tbl, req->rate,
++					  req->min_rate, req->max_rate);
++	if (!ftblv)
++		return -EINVAL;
++
++	req->rate = ftblv->rate;
++
++	return 0;
++}
++
++static unsigned long rtk_clk_regmap_pll_recalc_rate(struct clk_hw *hw,
++						    unsigned long parent_rate)
++{
++	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
++	const struct rtk_freq_table *fv;
++	unsigned long flags;
++	u32 freq_val;
++
++	spin_lock_irqsave(&clkp->lock, flags);
++
++	if (regmap_read(clkp->clkr.regmap, clkp->freq_reg, &freq_val)) {
++		spin_unlock_irqrestore(&clkp->lock, flags);
++		return 0;
++	}
++
++	freq_val &= clkp->freq_mask;
++
++	fv = ftbl_find_by_val_with_mask(clkp->freq_tbl, clkp->freq_mask,
++					freq_val);
++
++	spin_unlock_irqrestore(&clkp->lock, flags);
++
++	return fv ? fv->rate : 0;
++}
++
++static int rtk_clk_regmap_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++				       unsigned long parent_rate)
++{
++	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
++	const struct rtk_freq_table *fv;
++	unsigned long flags;
++	int ret;
++
++	if (clkp->expected_parent_rate && parent_rate != clkp->expected_parent_rate)
++		return -EINVAL;
++
++	fv = ftbl_find_by_rate(clkp->freq_tbl, rate);
++	if (!fv || fv->rate != rate)
++		return -EINVAL;
++
++	spin_lock_irqsave(&clkp->lock, flags);
++
++	if (clkp->seq_pre_set_freq) {
++		ret = regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_pre_set_freq,
++					     clkp->num_seq_pre_set_freq);
++		if (ret)
++			goto unlock;
++	}
++
++	ret = regmap_update_bits(clkp->clkr.regmap, clkp->freq_reg,
++				 clkp->freq_mask, fv->val);
++	if (ret)
++		goto unlock;
++
++	if (clkp->seq_post_set_freq) {
++		ret = regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_post_set_freq,
++					     clkp->num_seq_post_set_freq);
++		if (ret)
++			goto unlock;
++	}
++
++	if (is_power_on(clkp)) {
++		ret = wait_freq_ready(clkp);
++		if (ret)
++			goto unlock;
++	}
++
++unlock:
++	spin_unlock_irqrestore(&clkp->lock, flags);
++
++	return ret;
++}
++
++static int rtk_clk_regmap_pll_enable(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap_pll *clkp = to_rtk_clk_regmap_pll(hw);
++	unsigned long flags;
++	int ret = 0;
++
++	if (!clkp->seq_power_on)
++		return ret;
++
++	spin_lock_irqsave(&clkp->lock, flags);
++
++	if (is_power_on(clkp))
++		goto unlock;
++
++	ret = regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_power_on,
++				     clkp->num_seq_power_on);
++	if (ret)
++		goto unlock;
++
++	ret = wait_freq_ready(clkp);
++	if (ret)
++		goto unlock;
++
++unlock:
++	spin_unlock_irqrestore(&clkp->lock, flags);
++
++	return ret;
++}
++
++const struct clk_ops rtk_clk_pll_ops = {
++	.enable         = rtk_clk_regmap_pll_enable,
++	.disable        = rtk_clk_regmap_pll_disable,
++	.is_enabled     = rtk_clk_regmap_pll_is_enabled,
++	.recalc_rate    = rtk_clk_regmap_pll_recalc_rate,
++	.determine_rate = rtk_clk_regmap_pll_determine_rate,
++	.set_rate       = rtk_clk_regmap_pll_set_rate,
++};
++EXPORT_SYMBOL_NS_GPL(rtk_clk_pll_ops, "CLK_REALTEK");
++
++const struct clk_ops rtk_clk_pll_ro_ops = {
++	.is_enabled     = rtk_clk_regmap_pll_is_enabled,
++	.recalc_rate = rtk_clk_regmap_pll_recalc_rate,
++};
++EXPORT_SYMBOL_NS_GPL(rtk_clk_pll_ro_ops, "CLK_REALTEK");
+diff --git a/drivers/clk/realtek/clk-regmap-pll.h b/drivers/clk/realtek/clk-regmap-pll.h
+new file mode 100644
+index 000000000000..f6fac6b4ac90
+--- /dev/null
++++ b/drivers/clk/realtek/clk-regmap-pll.h
+@@ -0,0 +1,53 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2017-2026 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ */
++
++#ifndef __CLK_REALTEK_CLK_PLL_H
++#define __CLK_REALTEK_CLK_PLL_H
++
++#include <linux/spinlock.h>
++#include "clk-rtk-common.h"
++#include "freq_table.h"
++
++struct reg_sequence;
++
++struct rtk_clk_regmap_pll {
++	struct rtk_clk_regmap clkr;
++	const struct reg_sequence *seq_power_on;
++	u32 num_seq_power_on;
++	const struct reg_sequence *seq_power_off;
++	u32 num_seq_power_off;
++	const struct reg_sequence *seq_pre_set_freq;
++	u32 num_seq_pre_set_freq;
++	const struct reg_sequence *seq_post_set_freq;
++	u32 num_seq_post_set_freq;
++	const struct rtk_freq_table *freq_tbl;
++	u32 freq_reg;
++	u32 freq_mask;
++	u32 freq_ready_mask;
++	u32 freq_ready_reg;
++	u32 freq_ready_val;
++	u32 power_reg;
++	u32 power_mask;
++	u32 power_val_on;
++
++	/* Expected input rate for the preset frequency table; zero disables check. */
++	unsigned long expected_parent_rate;
++
++	/*
++	 * Serialize the multi-step register sequences in .set_rate() against
++	 * .enable()/.disable(). CCF protects them with different locks
++	 * (prepare_lock vs. enable_lock), and regmap only guarantees atomicity of
++	 * individual register accesses.
++	 */
++	spinlock_t lock;
++};
++
++#define __rtk_clk_regmap_pll_hw(_ptr)  __rtk_clk_regmap_hw(&(_ptr)->clkr)
++
++extern const struct clk_ops rtk_clk_pll_ops;
++extern const struct clk_ops rtk_clk_pll_ro_ops;
++
++#endif /* __CLK_REALTEK_CLK_PLL_H */
+diff --git a/drivers/clk/realtek/freq_table.c b/drivers/clk/realtek/freq_table.c
+new file mode 100644
+index 000000000000..0f977a3fc902
+--- /dev/null
++++ b/drivers/clk/realtek/freq_table.c
+@@ -0,0 +1,62 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <linux/types.h>
++#include "freq_table.h"
++
++#define IS_FREQ_TABLE_END(_f) ((_f)->rate == 0)
++
++const struct rtk_freq_table *ftbl_find_closest_by_rate(const struct rtk_freq_table *ftbl,
++						       unsigned long rate,
++						       unsigned long min_rate,
++						       unsigned long max_rate)
++{
++	const struct rtk_freq_table *best = NULL;
++	unsigned long best_delta = ULONG_MAX;
++
++	for ( ; !IS_FREQ_TABLE_END(ftbl); ftbl++) {
++		unsigned long delta;
++
++		if (ftbl->rate < min_rate || ftbl->rate > max_rate)
++			continue;
++
++		delta = ftbl->rate >= rate ? ftbl->rate - rate : rate - ftbl->rate;
++		if (delta < best_delta) {
++			best_delta = delta;
++			best = ftbl;
++		}
++	}
++
++	return best;
++}
++
++const struct rtk_freq_table *ftbl_find_by_rate(const struct rtk_freq_table *ftbl,
++					       unsigned long rate)
++{
++	const struct rtk_freq_table *best = NULL;
++	unsigned long best_rate = 0;
++
++	for (; !IS_FREQ_TABLE_END(ftbl); ftbl++) {
++		if (ftbl->rate == rate)
++			return ftbl;
++
++		if (ftbl->rate > rate)
++			continue;
++
++		if (ftbl->rate > best_rate) {
++			best_rate = ftbl->rate;
++			best = ftbl;
++		}
++	}
++
++	return best;
++}
++
++const struct rtk_freq_table *ftbl_find_by_val_with_mask(const struct rtk_freq_table *ftbl,
++							u32 mask, u32 value)
++{
++	for (; !IS_FREQ_TABLE_END(ftbl); ftbl++) {
++		if ((ftbl->val & mask) == (value & mask))
++			return ftbl;
++	}
++	return NULL;
++}
+diff --git a/drivers/clk/realtek/freq_table.h b/drivers/clk/realtek/freq_table.h
+new file mode 100644
+index 000000000000..801f4882a891
+--- /dev/null
++++ b/drivers/clk/realtek/freq_table.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++#ifndef __CLK_REALTEK_FREQ_TABLE_H
++#define __CLK_REALTEK_FREQ_TABLE_H
++
++struct rtk_freq_table {
++	u32 val;
++	unsigned long rate;
++};
++
++#define FREQ_TABLE_END    \
++	{                 \
++		.rate = 0 \
++	}
++
++const struct rtk_freq_table *ftbl_find_closest_by_rate(const struct rtk_freq_table *ftbl,
++						       unsigned long rate,
++						       unsigned long min_rate,
++						       unsigned long max_rate);
++const struct rtk_freq_table *ftbl_find_by_rate(const struct rtk_freq_table *ftbl,
++					       unsigned long rate);
++const struct rtk_freq_table *
++ftbl_find_by_val_with_mask(const struct rtk_freq_table *ftbl, u32 mask, u32 value);
++
++#endif /* __CLK_REALTEK_FREQ_TABLE_H */
 -- 
 2.43.0
 
