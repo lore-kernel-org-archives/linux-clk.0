@@ -1,70 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794450722;
-	b=f5bqwiSYwdAyrEyujzjApAReYu5iwu0xgI+oOxnKn/5zxUBVP17swUZQ5EGYZt9RYaLK
-	 44/Z0P0dK2b+PQbEa49UgJ8nFHr3bpKl6uuvAsmaS096pC0x7NM2mqPU0GdPggFhzFke/
-	 jN0HAnsflJiQ+knDqAToyuO2KtWbD9ZINroClVZpB0Hin3LlvRg71aXAzZkRgkQ4NvcEJ
-	 hgQIhOOgo3zAmVb7Ehl0h9IU06vUbVdtGeFoLwNGL+464kMO66k+vpu0VqYGhGVHKcDoZ
-	 lZaB1sJlRnYaIHAq7lUqnk596NCLSuZiVvQRZR730ZLH6rlCcPIyoFqEVBIxWkNcC0Q==
+	t=1794451046;
+	b=rdJ8YJ43gbkBva1UWi6f0wf0HTGnUonz9Xlr25lh0CkcqBVVfr71KdksCvdkYJr/ASi6
+	 i7fkAJLh2zjaP3bNSHiR95tJd4bapxBGQftphntbEBL+8tyVaa3S7gsCzac9P1VhQuv5r
+	 Jvq5NatAri7aprvm8kOq4/qconB6Qbp/Q8FHpUWRsTiJ3/Qv4h37SRA5P+NHnCnd3YCDy
+	 L2OG+M3avELS2maOtAR8b0y2Ce1bKoBjZmA8/xqySxbAD0LdtemD6sg8X52tKn0eeFJEk
+	 6+nIAyr8ulvDEdn2RUWEJOSVdXkEalOkoZGa5P74r8gK7+L1Bf2BS3hOLWKzmbcaDvA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794450722;
-	h=DMARC-Filter:DKIM-Signature:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:
-	 X-RM-TRANSID:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:X-RM-TRANSID:From:
-	 To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=IVjZ58U4WqJtvnbqVGQmwoIG35zU3s+Yzi58o6NmRfc=;
-	b=IqhCJTCa7aayZNMQqP/jVzkofNmfamdVLXVtyDROeV4G/Uxxb1mFdyutI0tpwO7lRZ0a
-	 lXOS42kko7T8DSeRMU1xeo0a6OUqxlcVkT3pUVs7+sVGGLLK0awdcQLIpnt1P/3ROCEwA
-	 mpmn8X0uZhZk22p4m6hZMc3OJy3wn7RemDjDrwGIBVJg+LaS+aTUmwqn9G82tu3bO0zYZ
-	 va9qSARKTMxt5mGkZNXRtmu2gqwr8AaQFUCp7YQ35JOPrK5mZyCbmCZYsrhekNEr/otN7
-	 G4gmUZK0EsL51oxpT406caYfIJe/ISiOGBnysPGRhvJ7N03wTWktaySbsV2vUy3EFyg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794451046;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=xCVjWYZyX6MIl7NK/C6S5kd8YAB1SgNtQl9A3ey/kVs=;
+	b=GXdwwXkmYb9e5JqcMxRhfXm4khnGifZNLouCxSk1eiqBBBmARBDvu4JpR27kQJK9boAP
+	 J0QG/cTo5ooSGfsAU0r+qCeUBU4YzMlf4pTQF+76cU6C5ab4Karht4oKhlkm+7XqdwV/g
+	 A05SHOdHF1QS7ZSG4+rkW3O83jJ2WXhVSsbKd/t59SGsSpqsqP4yMhKdVDIwBXOeRBl59
+	 wdnnxlfYtOjU0Hx2H2ucIZ5YZxIz2P00afU8JfFxub8Eu3QudLcIbWujXWdcV0lTnwf3g
+	 deIaiZsKyBtpBRKy58E+EyYB6jpcwraTZxe7xz5lZeZIaAx2hDosKBG90JllCQp1xIA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=cmss.chinamobile.com;
-	spf=pass smtp.mailfrom=cmss.chinamobile.com;
-	dkim=pass header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=ezwQ56No;
-	arc=none smtp.remote-ip=111.22.67.137
-Received: from cmccmta4.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2F1606A32E;
-	Thu, 12 Nov 2026 02:32:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DC2F1606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A4m1sYP5;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D141606A323
+	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 02:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=ezwQ56No
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=cmss.chinamobile.com; s=default; l=0;
-	h=from:subject:message-id:to:cc:mime-version;
-	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	b=ezwQ56NoBPCJcl12Ibf2rMHbt4d+MYsAxqViYAS4VwKdcyNAu95ME9q7/ig81JPIhsAW5FF87Gcnz
-	 d56dVTlulnIisLDAtwxVrp3Q/4n/4FUn5vDFUJK2yMoCK1Ldk5KWRaD3qOC7dc3050gH2q9XGgzV3d
-	 bPB7mdiN4VRhHlm4=
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee46af5251e636-7c5fc;
-	Thu, 12 Nov 2026 10:31:59 +0800 (CST)
-X-RM-TRANSID:2ee46af5251e636-7c5fc
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from devin-VMware-Virtual-Platform (unknown[10.55.1.72])
-	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee16af5251e178-ef4df;
-	Thu, 12 Nov 2026 10:31:59 +0800 (CST)
-X-RM-TRANSID:2ee16af5251e178-ef4df
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: sboyd@kernel.org
-Cc: bmasney+clk@redhat.com,
-	jbrunet+clk@baylibre.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	linux-clk@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Zhu Jun <zhujun2@cmss.chinamobile.com>
-Subject: [PATCH] clk: stm32f4: Return ENOMEM when allocating clock components fails
-Date: Thu, 12 Nov 2026 10:31:58 +0800
-Message-ID: <20261112023158.118273-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A4m1sYP5
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 456491F00A05;
+	Thu, 12 Nov 2026 02:37:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794451046;
+	bh=xCVjWYZyX6MIl7NK/C6S5kd8YAB1SgNtQl9A3ey/kVs=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=A4m1sYP5QIub9u2jHv9x4fxxJOmgUVJEwFcEzBaFtywMc89gyfUd8WwzpY9L0bcZY
+	 2DpjMgWOGSVzt81PN64LHyfhW/Jk9KTRsLjWZfc2TETLiBUBVszzbcupuvfpMxyUXC
+	 65afwwFC2aXR2JFJq/iFeDPel0tAGpOBesHhF3xv5vLGo5Wf1Qoh4fccUl1rKpxCC1
+	 pqwaLMZcg1ZD7xMuGScJ06/k7hMJBDyYcucnyGb6dw3A+GG/9tKmFI40ie5I/ybmVQ
+	 cWDkMFfaRhmgzvsN0oz5NPWPxixwTvX6f2vbXAJQW/eXVmSpsv41u1Z9yGpvUhL6hC
+	 3YRnsqQO4rIGg==
+Message-ID: <sashiko-outbox-210209@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] clk: keystone: sci-clk: Release nodes while scanning DT
+ clocks
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Zhu Jun" <zhujun2@cmss.chinamobile.com>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20261112023137.118241-1-zhujun2@cmss.chinamobile.com>
+References: <20261112023137.118241-1-zhujun2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 12 Nov 2026 02:37:25 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -73,66 +59,56 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-stm32_register_cclk() and stm32_register_aux_clk() return -EINVAL when
-allocating a gate or mux fails. These paths indicate memory exhaustion,
-not an invalid clock configuration.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] clk: keystone: sci-clk: split __free() definition in
+  ti_sci_scan_clocks_from_dt()
+--
 
-Return -ENOMEM for those allocation failures. Keep -EINVAL for an
-auxiliary clock with neither a gate nor a mux.
+commit f771030e1cdc7fd996c4caa11e1e8cac88d5ff99
+Author: Zhu Jun <zhujun2@cmss.chinamobile.com>
 
-OpenAI Codex assisted with analysis and patch preparation.
+clk: keystone: sci-clk: Release nodes while scanning DT clocks
 
-Fixes: 4261a881cfee ("clk: stm32f4: Add RTC clock")
-Fixes: daf2d117cbca ("clk: stm32f4: Add lcd-tft clock")
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- drivers/clk/clk-stm32f4.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+This commit adds __free(device_node) annotations in
+ti_sci_scan_clocks_from_dt() to release device_node references obtained
+while scanning the device tree.
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 6603d4815514..bf78fd1744c3 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -1204,14 +1204,14 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
- 
- 	gate = kzalloc_obj(*gate);
- 	if (!gate) {
--		hw = ERR_PTR(-EINVAL);
-+		hw = ERR_PTR(-ENOMEM);
- 		goto fail;
- 	}
- 
- 	mux = kzalloc_obj(*mux);
- 	if (!mux) {
- 		kfree(gate);
--		hw = ERR_PTR(-EINVAL);
-+		hw = ERR_PTR(-ENOMEM);
- 		goto fail;
- 	}
- 
-@@ -1778,7 +1778,7 @@ static struct clk_hw *stm32_register_aux_clk(const char *name,
- 	if (offset_gate != NO_GATE) {
- 		gate = kzalloc_obj(*gate);
- 		if (!gate) {
--			hw = ERR_PTR(-EINVAL);
-+			hw = ERR_PTR(-ENOMEM);
- 			goto fail;
- 		}
- 
-@@ -1793,7 +1793,7 @@ static struct clk_hw *stm32_register_aux_clk(const char *name,
- 	if (offset_mux != NO_MUX) {
- 		mux = kzalloc_obj(*mux);
- 		if (!mux) {
--			hw = ERR_PTR(-EINVAL);
-+			hw = ERR_PTR(-ENOMEM);
- 			goto fail;
- 		}
- 
--- 
-2.51.0
+> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-cl=
+k.c
+> index 967f779003587..433bdca8ac836 100644
+> --- a/drivers/clk/keystone/sci-clk.c
+> +++ b/drivers/clk/keystone/sci-clk.c
 
+[ ... ]
 
+> @@ -573,13 +573,16 @@ static int ti_sci_scan_clocks_from_dt(struct sci_cl=
+k_provider *provider)
+>  		index =3D 0;
+> =20
+>  		do {
+> +			struct device_node *clk_node __free(device_node) =3D NULL;
+> +
+>  			ret =3D of_parse_phandle_with_args(np, *clk_name,
+>  							 "#clock-cells", index,
+>  							 &args);
+>  			if (ret)
+>  				break;
+> =20
+> -			if (args.args_count =3D=3D 2 && args.np =3D=3D dev->of_node) {
+> +			clk_node =3D args.np;
+> +			if (args.args_count =3D=3D 2 && clk_node =3D=3D dev->of_node) {
 
+[Severity: Low]
+This isn't a bug, but cleanup.h recommends defining and initializing
+__free() variables in a single statement rather than initializing to NULL
+and assigning later when the scope allows it.  Since the error check on
+ret breaks out of the loop before clk_node is used, clk_node can be
+defined directly at the assignment:
+
+	struct device_node *clk_node __free(device_node) =3D args.np;
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261112023137.1182=
+41-1-zhujun2@cmss.chinamobile.com?part=3D1
