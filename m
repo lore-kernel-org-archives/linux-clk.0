@@ -1,76 +1,45 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794495812;
-	b=JMIKl6Qfj7+ep1ut+jfSbjhh2XFLw1E9yGHfMlBCJ1M/aNlV53EBsXTaX6SUVId5AuN6
-	 hW4vLMnO0+8EZEchldo9VQtcmuuOr1wWIhHEFwk4TLKy5zgjk/kcabYuvtc3ZsBMIQkTl
-	 zjE8j9Bu2pNIshpTiSFRzW3jRVvWEv+FWPFDSSWDnFzP4U7fGZZbIvlHqtr1GJZ6Ut3h4
-	 MyqL3uz6Rgw7KiVBfqZLZhK0n+8BhMqPlBossbddKYFKmscqwn6c5j9M73TEnWA3mRFKt
-	 TgEUx4FxxUgTyx5gxJ/sdjO2x1WVxP6kbManw7glTOIH4jExfbwSYsz1x2wsQqb6MUQ==
+	t=1794496204;
+	b=LMFnRM273uiLeTHzzRguhiVS2Lyk7grgfGGETebPqPgeI1Pp4A8Ji7Qsm/i8xlIZGHef
+	 PLvBiP+pHkme7hALY2U/i7x9H+SdIof+nLOAu0aR7kELlMW48vxF5wJn7Rr86V1ITclPf
+	 YUTLIUuxr46tQ5TwtMgSd08ITdmojwXZd/UtMSjksdIzWsHQc00Yd/dHH/lflYsDRum6Y
+	 Yb7A2NFU/CPwF2q9+D0IW4v3/A6cI/xqdwq6OEuPMGWRQCS4Gaaj5hpsGeCUSTVVhm2sU
+	 XtGXTCjd5nXQhGlOF9BTW1SzNRlN8xHl+p5YSHvxoIcF8mL84EUKbicf5DgW2DX8VBw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794495812;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=mS1ut25pAkhX06KpI5+b6SzLMFwF8RaPMcofkkPb8+I=;
-	b=lPwYKQvlPo/ciGrLKo0Agr88x0jNZzembjOJAgX8ENzRw7XBDa2Rp8rHobIsW+8aRbj4
-	 A/QFK/CJw5nfG8CZ9tAU6ArnYPzvvfTuhud02WQOYTEHkBSDHFhxXC5tqpZ4sJHSWFuSF
-	 CjbYz4qAOtfoYWb7QklufghtrGtuL/BXsYeDy2y1pa9wUBvP1oDz1OhanDvEjPz400Dew
-	 qKfCL4jiyGFmLiRSchdrqYT5SjIXbtfZUhzmNgMS/ER0NynZk2zFRyL3Ni/QxCmmGKpKD
-	 EKKrFPRBiz/SFnb+2vsNY8jpbubrVam3At5a6QvPFOPy4CmRXdomp8fvlWfyrgI8v4g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794496204;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=sLnwBv1TTo0jw6HGBpVSrrS1iM2G2gH95/4vkvQjm44=;
+	b=Kwh9F7xvsxioeYz4Wi2YPhs2YAzOqVg7Gbe1oTf4dCgAKtCT+1Nwj1Labt+YxBIWdJXE
+	 2Fs6u42TCguO9DmBnvrmShQrh/QPzQBThOAbKQFBTsOuUHCcOgkhdUqSrJUMNsPKLFvL4
+	 vN2fUouY9ySI9jRwzqnZkv3Lh88CPJGaGGuzCV/BGLKT2B3tplbzS3DLGT6P4Wm/mm6A8
+	 UcFoqrYDPkwJZw8YC4JKO/cbWfg+b981tPigz6PSKe4j4wnmF7kBcYw6ZPEk7D6w8M0T5
+	 tCyVIuucX5j3OBAVi9pmilXqXoVtFXEKv2VEys3BHfkCSmdQwog31qt75X8SElTvQ3A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.128.179
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QjIom4gE;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23124606A323
-	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 15:03:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23124606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-8b3541bb1a2so26752217b3.1
-        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 07:03:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794495811; x=1795100611;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=mS1ut25pAkhX06KpI5+b6SzLMFwF8RaPMcofkkPb8+I=;
-        b=QCI4gIfoMpy4RwARW/na5Vmu8e2/2KnZ6+niDzQgv9AVEextkzK6CmewCXuwGrTH3M
-         QKX58oT3oQ3x7aKYxQrEdJa3YnyykbR8c0w3gM2AnsyxnRdcFcf8dYRD9iQnadHHfT15
-         oZyCW7QuIHuO4FoZeFo9AtmGBs6QpJ+KZX1xzFKEoFcQLMHE6P+q1c+TMRQfTh+5v2a4
-         I7pRly6ihx8x5HQqlFjpPNgYe5fR5BQGO801uEMiQ2vG9KIYFVFXHIXKMw1w4IKVwHpq
-         MuckKFnJ+ceZqtyy0Q8jEi+W9K8yYajyNwNyt5+SlMuEFtigU81dlJJylvVFYQet9v70
-         UfVw==
-X-Forwarded-Encrypted: i=1; AL+hErEe7iXet8/vKV6Jo+qR3f0zQVEri9+TdtwW1giKpz2YkopMPgHApi74QMJVxit/BjT3/aAo39Xm7Nw=@vger.kernel.org
-X-Gm-Message-State: APuU4Z90kxGnmoanKkxPBbGoVpDU9Wu5nhxFc1KM9/gkcKCd3hHfpv65
-	t27O+HAEQsfHAgDWeJbaw2YtlYQrZSDs39Ud4xRr2oDxFf8i6DUD2N/ddi8bQtcTVOE=
-X-Gm-Gg: AYBFou1p3Z5lpGrSHt+k9VncREwWJAlL+fN/BQ/GUO6FzlI4Ay7rRLsS1WnoEUoJR8s
-	LErRvZBhqe3beS1+EzL/F0SgVTlSgHQ0x8BivXTbrCXomWaVRPfZbv6cC6wM1lZWLmxUGOJ7kdm
-	38MdrZKa3s6RMPyDMz3BQ37g+mVyfYox1cZQZvXtdwwPWiiLuz/Mmfq+Z0mDMpPUV1KdGtgFQHG
-	lN4CMcJ6VN1Wm2i2Q2G8nQHM0rBeppMNaW/j96uNSOXRZcVrsQ2AF8GOHNYVDHUuVnX7gNiC9Xj
-	70/1XSHj2CG9CtdXhxjwv+uaLb6AbjxYxuRAFGyjGGmqgJEVKb4Ha3+CB4PwADXeeiuZZ6pSU3g
-	miUwCbS8JZK1d85LfSlWbI7vhPhZWamNQHi9FrJAndpRXckdiDLDY7fVcFs4lBm1w2Dgy/tGYrB
-	+lXGKL9p9q4dB9XH5HhSCgXkqDJPvG5ZpDgzOETfX9gmf4r+D5KpGvFvcS+s4gO4v2cDvFJnke5
-	vKKBdpl7B9XaYB6NHafBNUeCmJsUBXyT4lWvZ2ymqw6fldMJo9rQcnnz/KlDrwYNLT1QM6JS7dC
-	P4cSuCgO8WpvhFT7JfnrIwLRGalAJdEjB5f3IsQdJdlfe0nBiBy1A321/RI6SE2itLE=
-X-Received: by 2002:a05:690c:7482:b0:8b3:b06d:68de with SMTP id 00721157ae682-8b3b06dbad2mr29362067b3.106.1794495811121;
-        Thu, 12 Nov 2026 07:03:31 -0800 (PST)
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com. [209.85.219.52])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9479e76b1c3sm745590285a.16.2026.11.12.07.03.29
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Nov 2026 07:03:29 -0800 (PST)
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-91e98301805so42910146d6.1
-        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 07:03:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErFId8/yLPFBxOy9eEwZB8WGYeLOoQgwPSCl/V/sNfVps1U2p6gvbwHiaSsvPetKbXH4qWQa0jsRJ+g=@vger.kernel.org
-X-Received: by 2002:a05:6102:f10:b0:7c3:9982:67d7 with SMTP id
- ada2fe7eead31-7d50609c9damr2546296137.16.1794495444511; Thu, 12 Nov 2026
- 06:57:24 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACFC606A321;
+	Thu, 12 Nov 2026 15:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QjIom4gE
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A49F51F00A05;
+	Thu, 12 Nov 2026 15:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794496203;
+	bh=sLnwBv1TTo0jw6HGBpVSrrS1iM2G2gH95/4vkvQjm44=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=QjIom4gE0SWzo7Xjca1GxtjD7qvez5AfkHZzHb6yVz5b/lV6yuM1ozwzu8McdzHk5
+	 3F/cjxKcWxRcV1IRdz+UYlo6ddXgkAjBBp5rUChlhh1EYcI1QedLfjjNkpGzxQdM1o
+	 tsT/sOQ45tsY0r6Kma1BdW8lrmuTLFzVQzJ1D16AuwGdZSCVWJ3oz48m/KCAII+w/h
+	 ggfjWt/YVnSm57wRUNIn75IjmIlpZdBLM67kRPeox2KL0GW+/v9qyOzVOw2Tahw5CA
+	 eTAl4JPMgF8R4sBWZrtEZMg2EIXKV5marCq9l3vUBYyRbdIBcRSMimUc2xtd5SRNLG
+	 hovsoCX34YP+Q==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -80,113 +49,87 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-0-1b2072e8c37e@ideasonboard.com>
- <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-5-1b2072e8c37e@ideasonboard.com>
-In-Reply-To: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-5-1b2072e8c37e@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Nov 2026 15:57:11 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUUvhf=zEmd2tfodo7zf1hh9n8m88Okk7KZpq0n=mDR2A@mail.gmail.com>
-X-Gm-Features: AclHuK_otbzgK2u3WYfd1DmRW9SD98NHgBcVxYwHNEPtms-IkWdgisCPqESp0Ec
-Message-ID: <CAMuHMdUUvhf=zEmd2tfodo7zf1hh9n8m88Okk7KZpq0n=mDR2A@mail.gmail.com>
-Subject: Re: [PATCH v4 05/13] arm64: renesas: r8a78000: Add FCPVD and VSPD nodes
-To: Paul Elder <paul.elder+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 1/3] clk: divider: Fix the divisor for rates above
+ 4.29 GHz
+From: Brian Masney <masneyb@kernel.org>
+To: Carlo Caione <ccaione@baylibre.com>
 Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-media@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Brian Norris <computersforpeace@gmail.com>, 
+ Maxime Coquelin <maxime.coquelin@st.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Michael Turquette <mturquette@linaro.org>, 
+ Stephen Boyd <sboyd@codeaurora.org>, 
+ David Laight <david.laight.linux@gmail.com>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jerome Brunet <jbrunet@baylibre.com>, Brian Masney <masneyb@kernel.org>
+In-Reply-To: <20261112-upstream-clk-divider-large-rates-v2-1-18f3bb888b0c@baylibre.com>
+References: <20261112-upstream-clk-divider-large-rates-v2-0-18f3bb888b0c@baylibre.com>
+ <20261112-upstream-clk-divider-large-rates-v2-1-18f3bb888b0c@baylibre.com>
+Date: Thu, 12 Nov 2026 10:09:46 -0500
+Message-Id: <179449618653.1227210.1767827907767958978.b4-review@b4>
+X-Mailer: b4 0.17-dev-7ca47
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1849; i=masneyb@kernel.org;
+ s=20250903; h=from:subject:message-id;
+ bh=uRUZd5KmKjguEG/aJHwwml+0Gh3Ha8KtG313fNh371w=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLK+XttdNJtRd+bmPat1jvesYXBivaF+a2LTqQ2/jgT2X
+ 1YK2cLE0VHKwiDGxSArpsiyJNeoICJ1le29O5osMHNYmUCGMHBxCsBEpn9g+O+8j8c46prtXPHy
+ i04t+8L43SZ/Of/aaPOrJfndrSz+X00Z/nA4+jcpeTYxRQu4O827OvV00hKH3Te5Y1+suLTu+zn
+ zNC4A
+X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Hi Paul,
+Hi Carlo,
 
-On Mon, 9 Nov 2026 at 14:35, Paul Elder
-<paul.elder+renesas@ideasonboard.com> wrote:
-> Add DT nodes for the FCPVD and VSPD IP cores in the R-Car X5H SoC.
+> DIV_ROUND_UP_ULL() takes a 32-bit divisor, so on 64-bit platforms a
+> requested rate above 4.29 GHz is truncated. A divider fed by a 5.94 GHz
+> PLL then computes a divisor of 7, not 1, for 5.94 GHz.
+> 
+> Round up with (parent_rate - 1) / rate + 1 instead, building on an
+> earlier fix by Sebastian Reichel. It divides by the full rate and does
+> not overflow with clk_round_rate(clk, ULONG_MAX).
+> 
+> Fixes: 9556f9dad8f5 ("clk: divider: handle integer overflow when dividing large clock rates")
+> Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
+> Suggested-by: David Laight <david.laight.linux@gmail.com>
+> Signed-off-by: Carlo Caione <ccaione@baylibre.com>
+> ---
+>  drivers/clk/clk-divider.c | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
 >
-> Use the SGD1 clock as it is likely to be the clock used for data flow.
->
-> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index f68216c65d3d..c3f46f9ee451 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -223,11 +223,21 @@ static int _round_down_table(const struct clk_div_table *table, int div)
+>  	return down;
+>  }
+>  
+> +/*
+> + * DIV_ROUND_UP() without the addition, which overflows for rates close to
+> + * ULONG_MAX, as with clk_round_rate(clk, ULONG_MAX)
+> + */
+> +static unsigned long _get_div_round_up(unsigned long parent_rate,
+> +				       unsigned long rate)
+> +{
+> +	return parent_rate ? (parent_rate - 1) / rate + 1 : 0;
+> +}
+> +
+>  static int _div_round_up(const struct clk_div_table *table,
+>  			 unsigned long parent_rate, unsigned long rate,
+>  			 unsigned long flags)
+>  {
+> -	int div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+> +	int div = _get_div_round_up(parent_rate, rate);
 
-Thanks for your patch!
+_get_div_round_up() returns an unsigned long however it's downsized to
+an int here.
 
-> --- a/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-> @@ -1574,6 +1574,196 @@ mdlc_aon: system-controller@c1338000 {
->                         bootph-all;
->                 };
->
-> +               fcpvd0: fcp@c5010000 {
-
-Please preserve sort order:
-  1. Sort by unit address,
-  2. Keep similar nodes together.
-
-[...]
-
-> +               fcpvd9: fcp@c5019000 {
-
-> +               vspd0: vsp@c4800000 {
-
-Do you want to sort the VSPs within the VSP group by unit address,
-or by label?
-
-By unit address:
-
-    "vspd0: vsp@c4800000"
-    "vspb0: vsp@c50c0000"
-
-Note that adding the vspd* in a later patch than the vspb*
-means the latter need to be moved in front of the fcp* :-(
-
-By label:
-
-    "vspb0: vsp@c50c0000"
-    "vspd0: vsp@c4800000"
-
-> +               vspd1: vsp@c4808000 {
-
-> +               vspd2: vsp@c4810000 {
-
-> +               vspd3: vsp@c4818000 {
-
-> +               vspd4: vsp@c4820000 {
-
-> +               vspdb0: vsp@c4828000 {
-
-> +               vspdb1: vsp@c4830000 {
-
-> +               vspdb2: vsp@c4838000 {
-
-> +               vspdb3: vsp@c4840000 {
-
-> +               vspdb4: vsp@c4848000 {
-
->                 fcpvi0: fcp@c5030000 {
-
-Shouldn't we keep al FCP nodes together?
-Same for the VSP nodes.
-
->                         compatible = "renesas,fcpv";
->                         reg = <0 0xc5030000 0 0x1000>;
-
-For the contents of the nodes (except for the renesas,fcp properties,
-as I couldn't find the VSP<->FCP links in the documentation):
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Brian
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Brian Masney <masneyb@kernel.org>
