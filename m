@@ -1,76 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794496570;
-	b=vVG7H6ckNdjXHMpwxVKU2L+duni49niS7LAq6mIqi/5Fl6hJ3eBFgSxfpHz+0mGN5pAm
-	 6iLEhSHlU0+rxhKCbs7W7TiZMmAr1aiouMEIEEDxduQZ4iDS8EbyutDPVpWDq6HKKI6Ck
-	 byB/fiY2pqbtuuy9eCExzf902i45uvfg7OAub/cnjbUw2ZF70zJiupMjMDzEN1cArEdF+
-	 za+C8EnUxxFpPvVF6HAyR1Io3bLf9dBqMIDWP5Br/0VNu9tWA3SsdaRU66sjyegQ/OFjM
-	 QMfDsBvpFMPxWTlUpV59I/HOkAVT3gO4x5M9susbYYfEr8x4m4bxUR0tak9AduSIr4g==
+	t=1794497030;
+	b=4b7CClKtBUM8o2hyXwRD2yAwFyi1Ff9hR4qHulx5afyBz9DhInV8upY4v4c3LMZdmPj0
+	 Zc5eMMThXkrVuQuJzwolNNzb+x2PTCbRixHjQy0n4xpcPCjADLqvCfHVP48RAV99C1WxL
+	 A6ZoJ1l5jVuMIkKx/2GvsuX/RNHA0uNSfspG8kOy/OSnrH61a6Oo9JlcjVacaVw5ypfnz
+	 GLLPvRzMyCNnHBluL49nBEPjpMKGaJZT84bR2LzvVLp7sgpbjmqzUk4VorOE11jTINeK5
+	 TKkVUlyE3zjk5QoIB2YdQEIrcfkhnRDmzYbl/zrQPPbo2APbg4aNhO/N/QH04e15yaw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794496570;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=f2HclZgC7BHSQ1+tdHxuenXtHwqaRuALZpayUv998n0=;
-	b=DOTSY5gFWLtVVRbZ+lSjLLfwNKyr1+T/ix9fhFcfRzJBbnSl5YMN2rWgbBEElLw9KAfW
-	 1MD1tsMjlu4fAx9Y2PV2PWx7UnOTD1Ncf9/ryg+96nDdsynCN5omzgYqg8PYBafAQRreT
-	 3dMM3x/rJPwnA3WD0wSM8fyF3zTr8/Dt2wjxvFC/fWbTH9xmB5g6P1LYivpMCa93l5Df8
-	 H/JbrB01SyinBeo/MGFTUPI6NSHfRUgtnLoa+XiVIKhvKM8dKNoNLy9olLgBZUvS50e06
-	 //kbvsLhOTO0eLOpisLqvXXEJMGu/0csPIEp6QZlxqpO4QaQKP0spHR9gay5EBAIzjQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794497030;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id:X-Mailer:X-Last-TLS-Session-Version;
+	bh=4cdhS9H/Scvqwuce1Cg7h8YKsQsIO3wekg4L5Z7bkvw=;
+	b=lou8UxT/p59r3lB281U1Dj6zVjG/CNiZWkyz6+ONmJIO5h4t2gkR97tjXHH5WjI4awnC
+	 KZRyURUhFZcPvq1fJksReviVEGo6BnzQmmYJ9hwJpufWesOEtTDFRu5P9qK7BokCidppA
+	 7Q/Eh27vD9KS4TXJkblE+pyv/KEIC5VCUh1khDTBertQwJQpklw0A8GBEOpmf2gTTMYa0
+	 1Kde8D/PFVnyV3w79W339TYOHgzI01csSLy5eLwLhVdoapXvX8wu3dmRX3XDiRsfjcRK2
+	 Mskq+V0fZ2g88K9kV7Dfc9j0wNhJvEF6XgFJvpfw7KoSN3ZRxP5+qG4zwIWWm1RrYCw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.222.173
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=f+HhI8VP;
+	arc=none smtp.remote-ip=185.246.84.56
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A442606A883
-	for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 15:16:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0A442606A883
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-93f3c8958d5so501943485a.2
-        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 07:16:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794496568; x=1795101368;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=f2HclZgC7BHSQ1+tdHxuenXtHwqaRuALZpayUv998n0=;
-        b=JecOMiCEfqpspedK2HU5Xc7aCEgf00pha2+LrwCwSKjIkzTAu71OYrd5KJOrrQgkwq
-         Rx3UAltcpJFjxraims60FhoU9K4BbB4qC6UeX35bVkIeeCc8l/qh+UamZ+Lig0nUPRf1
-         QCfrUFYmlL8Z0MBHBwhpKtwHmf0q7SXR4kRTd2aOFqbRSe7T7xzZ2mq9LgpXWsuHIwFO
-         3TSBK1uEUJ6x7kfvuhWzSOhSsiMakt75rwCofS8pKg5RW8Y+FyBmWR3GhTzFeZvoTIU9
-         wvZ2PTxL8RJbyi1RXZl5ufYJhfz7KUPjQQ0GxVfzSfDMomLMdqse8e+Ps2HAt/K6BrqB
-         Zs/g==
-X-Forwarded-Encrypted: i=1; AL+hErGJfslcZkiXsP9QF6f2iw4eI2pUlcUojkpfhHhdY5O2M4Hgo3gXE+iPBlgkKzfe/D/hUBSudkyRkl4=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8eoiEzRwxOZZQOhhmkDbXySldPWHXPbgw2/kMleNAzvnImnlNo
-	s32niMqi6TZTMDSqnNLBLpBDY6tu9CVqh6vRniGC7MYKRfg2c1JQVdQmlm6uA/SZiKE=
-X-Gm-Gg: AYBFou3H6q/9i/EEM7Skcnwn+04JYjqpuaLgxg/VEw6UOeKnQPLIKNi7/Jd8Da+YwFU
-	tJUs7xDu4hB6l2R2P6c4/4WLYYwpHT89jI8y52fb7m+BqkKufrrNVBXy4mX8tDciVYlRC1VlCR6
-	aZjM4Ne+iVj/mxS4+THyGf8V7SeGSNlmWvCo+nbdz3kawVTrNQIdJGIYeKXE3J6S2LcfxkM5H9a
-	eLFay2ykCs3HGXbvmUxMXVk3pW5Z7WeiXZxah41zaOdkJ/lde0gSUysPg2QPThGXKC4bO+7N30e
-	fVtfI90zZgRPQA61D8F0udiXxeT3RidaERMmpG5thCRxvnw+tF1fJceeFCt1vfCA6JGBTBvcVBb
-	tzRumN66TSe0fEx4EQ1cmx4uiHK7Ty/l+9ytxn1s7xFVAp53NbynPSeJSym9KTeETakkjEd1a0r
-	X+zqQXeZehoR+TYGcMCvHyggjH25DeWorrHCGG/LeWztRIyrdlFf+A7k/vaa4B6bru+t7dQK4Ej
-	y4MTXVYPwJcwSOjE9V5y07T2svc/ca/c4cPQlVaEiKhy/xPLZimsAVcM8oooEjthsu0mIJtn8Eg
-	ezaGPSzrbJFwPvOgBnzPtTZyKzCoHtMrBLYV02vbQIoBcN3LEMyiHmHygxtDaGhpqDQUqRQ=
-X-Received: by 2002:a05:620a:458a:b0:93e:d7f0:497a with SMTP id af79cd13be357-947aff97221mr964474585a.16.1794496565565;
-        Thu, 12 Nov 2026 07:16:05 -0800 (PST)
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com. [209.85.160.177])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9479e7ffa11sm745133085a.43.2026.11.12.07.16.05
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Nov 2026 07:16:05 -0800 (PST)
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-5365f9a04c5so55342951cf.1
-        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 07:16:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErFSsBfjcRilIecz7g8fQTt0OzTT+TKpuKuFf//5E6OZeAxklHhiZMpEhe3DdRJHPmVlImR47nHSs38=@vger.kernel.org
-X-Received: by 2002:a05:6122:54b:b0:5ea:b294:f0ab with SMTP id
- 71dfb90a1353d-5ee1c298abdmr2507584e0c.2.1794496158519; Thu, 12 Nov 2026
- 07:09:18 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA2560A382F;
+	Thu, 12 Nov 2026 15:23:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7BA2560A382F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=f+HhI8VP
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 8CD9F1A1632;
+	Thu, 12 Nov 2026 15:23:46 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6058B5FF85;
+	Thu, 12 Nov 2026 15:23:46 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9C6CD11BC07CF;
+	Thu, 12 Nov 2026 16:23:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1794497025; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=4cdhS9H/Scvqwuce1Cg7h8YKsQsIO3wekg4L5Z7bkvw=;
+	b=f+HhI8VPkOBIjANjnGDhGowwywBgE+KjjI34rpXWHGwPYpj3DVKYp4PPKjSmy1ajfDFpNC
+	rVI5E2XPc8Vs3eu1qNaBXU1Ox6qME9KJX/zN+oMkYWCzqJMFnQn84CguQAdUyqNU8A+eeH
+	UznEayOaNkXiVUZAplZffPzN5tHuIQgO2D5Q7H7xAD2H3AIeYC+D7X3NUVPpRBfGRCXlPn
+	oAL3ae+pj/4I8HPAP54uKyiR7QuXYgMWmNvS66Z1y7UWNi0FUOkW1BC1M6EyBptInvgLZ1
+	n7l1GXatBWVjwgds9I8PEmjCVUMRm5KKx7WK5kMxpj+uvWU1IJu7i2D0AoCguA==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -80,98 +59,145 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-0-1b2072e8c37e@ideasonboard.com>
- <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-11-1b2072e8c37e@ideasonboard.com>
-In-Reply-To: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-11-1b2072e8c37e@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Nov 2026 16:09:05 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUBEjh6YSazKAyBv8xAq1+oFG-dfEf=O58otP1wB9gRvA@mail.gmail.com>
-X-Gm-Features: AclHuK9Zmur2PVIdNvv46swJ-VbufJjxD1dvyJf5R-d3EopJYyWzLSJYUjPuDQE
-Message-ID: <CAMuHMdUBEjh6YSazKAyBv8xAq1+oFG-dfEf=O58otP1wB9gRvA@mail.gmail.com>
-Subject: Re: [PATCH v4 11/13] dt-bindings: Increase Renesas X5H MDLC PD
- specifier bit width
-To: Paul Elder <paul.elder+renesas@ideasonboard.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-media@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v11 4/7] drm/imx: Add support for i.MX94 DCIF
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, linux-clk@vger.kernel.org, 
+ imx@lists.linux.dev, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org
+In-Reply-To: <20261110-dcif-upstreaming-v11-4-9e13c85ae0d8@oss.nxp.com>
+References: <20261110-dcif-upstreaming-v11-0-9e13c85ae0d8@oss.nxp.com>
+ <20261110-dcif-upstreaming-v11-4-9e13c85ae0d8@oss.nxp.com>
+Date: Thu, 12 Nov 2026 16:23:36 +0100
+Message-Id: <179449701677.2030221.6593749298448668349.b4-review@b4>
+X-Mailer: b4 0.16.0
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Paul,
+Hello Laurentiu,
 
-On Mon, 9 Nov 2026 at 14:35, Paul Elder
-<paul.elder+renesas@ideasonboard.com> wrote:
-> In the Renesas R-Car X5H, the module controller's power domain specifier
-> cell's bit width has been increased. Update the bindings documentation
-> to reflect this.
+> The i.MX94 Display Control Interface features:
+>  * Up to maximum 3 layers of alpha blending:
+>     - 1 background layer(Layer 0);
+>     - 1 foreground layer(Layer 1);
+>     - A programmable constant color behind the background layer;
+>  * Each layer supports:
+>     - programmable plane size;
+>     - programmable background color;
+>     - embedded alpha and global alpha;
+>  * Data output with CRC checksum for 4 programmable regions;
 >
-> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # bridge refcounting
+> Signed-off-by: Sandor Yu <sandor.yu@nxp.com>
+> Co-developed-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
 
-Thanks for your patch!
+Looks OK, I just have a small remark and a few minor nitpicks, see below.
 
-> I'm guessing that the maximum number is now 512 but I can't find
-> definite proof of this.
+> +++ b/drivers/gpu/drm/imx/dcif/Kconfig
+> @@ -0,0 +1,16 @@
+> +config DRM_IMX_DCIF
+> +	tristate "DRM support for NXP i.MX94 DCIF"
+> +	select DRM_KMS_HELPER
+> +	select DRM_GEM_DMA_HELPER
+> +	select DRM_DISPLAY_HELPER
+> +	select DRM_PANEL_BRIDGE
 
-As the Module System Reset Registers are at offset 0x900 + l * 4,
-and the Module System Reset Status Registers at offset 0x960 + l * 4,
-there is room for 24 registers holding bitfields for 16 modules each,
-thus maximum 384 modules.
+This should be unneeded now. As o fnow it is basically a complicated way to
+say 'select DRM_PANEL'. And you are (rightfully) not using the panel API,
+so this line should probably just be removed. Please double check by
+building multiple configs, including an allmodconfig.
 
-> --- a/Documentation/devicetree/bindings/power/renesas,r8a78000-mdlc.yaml
-> +++ b/Documentation/devicetree/bindings/power/renesas,r8a78000-mdlc.yaml
-> @@ -12,7 +12,8 @@ maintainers:
->  description:
->    Each instance of the R-Car X5H Module Controller (MODULE CONTROL) provides
->    Power Gating for up to 64 Power Domains, and Module Standby and Reset for up
-> -  to 256 modules in the Power Domain of each Module hierarchy.
-> +  to 256 modules in the Power Domain of each Module hierarchy. Recent hardware
-> +  versions have increased the number of supported modules.
+> +++ b/drivers/gpu/drm/imx/dcif/dcif-crc.c
+> @@ -0,0 +1,221 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Copyright 2025 NXP
 
-Just change 256 to 384?
+2026 I guess... v11, a long journey, hopefully it won't slip to 2027! :)
 
->
->  properties:
->    compatible:
-> @@ -32,14 +33,14 @@ properties:
->          are always on, and for which there are no MPDG bits to control them.
->
->        - The second power domain specifier cell is the module standby part, and
-> -        must be the module number (0x00-0xff), composed of the Module System
-> +        must be the module number (0x00-0x1ff), composed of the Module System
+> +++ b/drivers/gpu/drm/imx/dcif/dcif-crtc.c
+...
+> +static int dcif_crtc_query_output_bus_format(struct drm_crtc *crtc,
+> +					     struct drm_crtc_state *crtc_state)
+> +{
+> +	struct dcif_crtc_state *dcif_state = to_dcif_crtc_state(crtc_state);
+> +	struct drm_bridge *bridge __free(drm_bridge_put) = NULL;
 
-0x17f
+While this is OK, there is generally a preference to declare and assign in
+the same statement when using cleanup actions, so...
 
->          Reset (MSRES) register index in the high nibble, and the Module Reset
->          Destination bitfield index in the low nibble.
->      const: 2
->
->    '#reset-cells':
->      description:
-> -      The single reset specifier cell must be the module number (0x00-0xff),
-> +      The single reset specifier cell must be the module number (0x00-0x1ff),
+> +	struct drm_bridge_state *bridge_state;
+> +	u32 bus_format;
+> +
+> +	dcif_state->bus_format = MEDIA_BUS_FMT_RGB888_1X24;
+> +	dcif_state->bus_flags = 0;
+> +
+> +	bridge = dcif_crtc_get_bridge(crtc, crtc_state);
 
-0x17f
+...it should all happen here, as:
 
->        and thus identical to the second power domain specifier cell.
->      const: 1
+	struct drm_bridge *bridge __free(drm_bridge_put) =
+		dcif_crtc_get_bridge(crtc, crtc_state);
 
-Gr{oetje,eeting}s,
+> +++ b/drivers/gpu/drm/imx/dcif/dcif-kms.c
+> @@ -0,0 +1,168 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Copyright 2025 NXP
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <drm/drm_atomic.h>
+> +#include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_bridge.h>
+> +#include <drm/drm_bridge_connector.h>
+> +#include <drm/drm_gem_framebuffer_helper.h>
+> +#include <drm/drm_panel.h>
 
-                        Geert
+Unused include?
+
+> +static int dcif_kms_init(struct dcif_dev *dcif)
+> +{
+> +	struct drm_device *drm = &dcif->drm;
+> +	struct device_node *np = drm->dev->of_node;
+> +	struct drm_connector *connector;
+> +	struct drm_bridge *bridge;
+> +	int ret;
+> +
+> +	ret = dcif_crtc_init(dcif);
+> +	if (ret)
+> +		return ret;
+> +
+> +	bridge = devm_drm_of_get_bridge(drm->dev, np, 0, 0);
+
+This function is deprecated. You can use of_drm_get_bridge_by_endpoint()
+instead, which returns a refcounted bridge pointer. And since the bridge
+pointer is a local variable you can just use a cleanup action to put it
+easily:
+
+  struct drm_bridge *bridge __free(drm_bridge_put) = of_drm_get_bridge_by_endpoint(...);
+
+Otherwise LGTM.
+
+Luca
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
