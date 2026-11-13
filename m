@@ -1,61 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794559485;
-	b=FOMR3UGE5PUMZDGnzJtvG0DUHb+i8D95bGbAzIglaoDP5Ed3UXzefWcrZbPeqETS5v6Q
-	 ZzxM9ULQxprLxA2ClUKbzpbtffD70OK85TfRG+uD6l9j1nkKvvuakDmwzG0PsPikOI31W
-	 oTOF91x/VDvfJZWoW4ODbrJ6C0aNo401mrJF2XAsblHX87Vp0svZHGmdpyc3sWdzRuPGI
-	 P0R09TyN3kVF70I0ngZu17H2ePspwjHqISuar6HFdNC1jNC3F55TFs4BI9GoOgHDy9ds0
-	 0YSrFoAlMY83nvbp0etKQmS7qCpj1BM3XHgLTGv9vgPEwmQZB/55G56vohlZ60gxQ3w==
+	t=1794565085;
+	b=vLnmOki1rE7A1LDjIdok2CE71z3fMm8EYcoY3X6F7Nbyb0GwfQuj7lH7Vb/kq29Mwfvi
+	 oadxXtLW3U4VunUk3F1fY812j1Pxl4SlfZSkRtVaDt4+7BVU6EmXTHJjDpGkMwHs5DlLl
+	 cyOB/Mh+DDVD+S8VRXMUK+QF2lD/9eU/h0NXufC7yBJWxFcoWEl4x3d8X8Jd6/OQMuci9
+	 rrhDgx/muMywXKB5UWKP4L4994rIdEG+Hn0LWz0JB9tyc4JHAkUlr4oP46oNskV/0mEV0
+	 DOQAKklF+IApabEmDzVMG1L9w/hsp4hgbAfp1ccuidDkcsn6XVyCI9Rgpfp8TMQE3Iw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794559485;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=yXyM6hInDsEKLWc7KcDerii+PLDeTJXkz+ckDBd2y54=;
-	b=EPq2j3mDHDgL2Y+z/VI1arGKuAW6IGnRINss+FMgxXtWNDbvKp9CZ07slEnY4vW8dQWT
-	 jvS2zMfvvqnW1OIOEM9Ipa/z1sD9u+R51OPFMgvCZug72FH0EQLWmtIguvmKyapzbp4Nd
-	 LwYqImEBkedi5lOFgKtgd4/9VuvpTILoLqpYKD+cNEedeyv7kzb1Qx/8KKSDGbYOfnXLY
-	 NtfSZKaL58dvCkhjJkQaeq4nubqUbugVJ/DXiUUr4hWz52YQzKt/k24ODu94KfAByFYAE
-	 92PBTS5dWusTk28OmMjUnClL9VM0hCcXsUJ3H1eTVHmHojN2HlX71u0nqp0pxb0fTqw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794565085;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=oWpj+fMcU0ldZMemXXF2GwJUPPqvOroaTzblSr6zsuI=;
+	b=j+fzfQSbh2YeIyWEeg6J6UPLsu80dCckLvrYYiP7PQjwiX8rSn1qOcYT6CxvsAd2KiB9
+	 JZqLPQUDFpnZp50oXycnRhrf78OQ5vt3fYp/STRXaOVoZFKYIHyEmy7HEwpuIiuJX/Vdf
+	 TY0gM9KGGswkFcMbpNy8IiKLq4hzjy0KLz1jfvsRcSKXWhkJXXtJI74Q3N4omM4NPlYij
+	 Jc4J9Simp25jlmSEGUSM6TPNReUdoRxGiZxsNmvWxrslx1T2LqXSs/PjoJdxZK4xh5s72
+	 E4y7csQkiCxSG2wKbZqGbFNsyB6wByH55/CEla7zj2LSatEGoF2bwhRZAtSgxyky6Bw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="X/LCPl55";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IEGnZ9s7;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86DD60A2604;
-	Fri, 13 Nov 2026 08:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D777606A884
+	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 10:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=X/LCPl55
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C03701F000C6;
-	Fri, 13 Nov 2026 08:44:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IEGnZ9s7
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B0B81F000C5
+	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 10:18:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794559485;
-	bh=yXyM6hInDsEKLWc7KcDerii+PLDeTJXkz+ckDBd2y54=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=X/LCPl55qYD6SeFZ97GcEsZgUIkxJnRvc2a4PHzGkPZWmGaH3M2YdPhJI8nFCLr/J
-	 xwYzT9UYmONMc7y4BcjJ78Ryfj7oQCwPIKricR7P0C1Eotbh+mmy1kWFdMQMMXCpat
-	 hjorlMnB5+YnaTXovPQEXkGYXuaTUO/Mm2V+Iwwb5Plw0p7vV8uwaFRsEiHqwixd40
-	 EwsjL1KPOvLBTJ2NKmV03gkz9FUz/Gi0Uecv7Q+git9Z5LpO3dgyTpTzn/rQvzduvk
-	 NTO7VIEST6hPQPtL42ixv7cMCK+JSEvWmRKqtIYBsVGRZ4jryRQcKCJVBxGFT/wzS8
-	 i9LwUVUmbHrXg==
-Date: Fri, 13 Nov 2026 09:44:43 +0100
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: John Crispin <john@phrozen.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Christian Marangi <ansuelsmth@gmail.com>, lei.dong@airoha.com,
-	Linqi.zhang@airoha.com, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, Rajeev.kumar@airoha.com,
-	upstream@airoha.com, Weifeng.xu@airoha.com,
-	zhengping.zhang@airoha.com, Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v2] clk: en7523: do not sleep in the EN7581 PCIe clock
- disable
-Message-ID: <avbN-3nL6JNHozzz@lore-desk>
-References: <20261112185329.1314427-1-john@phrozen.org>
+	s=k20260515; t=1794565085;
+	bh=oWpj+fMcU0ldZMemXXF2GwJUPPqvOroaTzblSr6zsuI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=IEGnZ9s71CxuM1FatGWVZ7MjS/Ksms7wsHnU0cCjvI8yD6ri1brzQWsOTKwvf9scE
+	 1x6Ik/hWXwA68bNMOJ2qk0IELCj40VL2vurKZg2CBldMMMeZzCnayO4J2Gnj0Az3+8
+	 sLcpEApwpShOgzgYGnsC5zQ/BTQA1pPyK8jNvC4x12yPuP5UtkKRgIIy+9jLBgNocB
+	 L9MMZWBtHuoQNREggu7MnqN8y/aUPyWkH6bNpbqXdfg0nDqFJKcg78yywZyRRLPCde
+	 WmTYkuNtdC17dgd1l0oq+eyfgjAcECX5WMpRB1C91OhxyakR/QzDsp75gUIpaHPi3l
+	 K27CaA5AGXzPw==
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-717080a2d50so1192082eaf.0
+        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 02:18:05 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErG9XTIskDQ+qVzaQUuX3+kQ6PPC7qzG8KgeKp3mkj7zJPkLKJCY2GaYO13fvLMxUSRIIuPr46fsj2o=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8sFqJMPr8ZYo8kummw3n4pn3urPvaQbxebxsIyJWTUnF6pnVCD
+	dOcqdX72pytQa8qWnEzDUZgoEBQP02DOIDwdLhK++T4TALQ0lOhFTVMkb0TZWR6af5iVLRtEqWQ
+	1ELT/QJf4vyjQMvYAo0RJDdvNLalSowA=
+X-Received: by 2002:a05:6820:2228:b0:70a:1787:2696 with SMTP id
+ 006d021491bc7-71ab50522aamr1246436eaf.61.1794565084106; Fri, 13 Nov 2026
+ 02:18:04 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -65,71 +59,54 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="F4RPVZbwfNP5GRwu"
-Content-Disposition: inline
-In-Reply-To: <20261112185329.1314427-1-john@phrozen.org>
-
---F4RPVZbwfNP5GRwu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com> <20261022-add-board-ok3572-c-v1-8-0b0fd85a31ee@qq.com>
+In-Reply-To: <20261022-add-board-ok3572-c-v1-8-0b0fd85a31ee@qq.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Fri, 13 Nov 2026 11:17:47 +0100
+X-Gmail-Original-Message-ID: <CAD++jLkJsYtjKOF7wpiUqSLoBuiOe+C5sMEQo7XZ1dW773+pJQ@mail.gmail.com>
+X-Gm-Features: AclHuK9FczXasoO8qxg9IxepytTJahNxlbbuShGYzvO1iLyvCzMkO5H7q2dWjZE
+Message-ID: <CAD++jLkJsYtjKOF7wpiUqSLoBuiOe+C5sMEQo7XZ1dW773+pJQ@mail.gmail.com>
+Subject: Re: [PATCH 08/27] pinctrl: rockchip: Add RK3572 support
+To: 1579567540@qq.com
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Elaine Zhang <zhangqing@rock-chips.com>, Lee Jones <lee@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
+	Ulf Hansson <ulfh@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Jisheng Zhang <jszhang@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, David Wu <david.wu@rock-chips.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Maxime Chevallier <maxime.chevallier@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Jaehoon Chung <jh80.chung@samsung.com>, 
+	Shawn Lin <shawn.lin@rock-chips.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	mfd@lists.linux.dev, linux-gpio@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-phy@lists.infradead.org, 
+	linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-> en7581_pci_disable() is the .disable callback of the PCIe clock gate.
-> The clock core calls .disable with the enable spinlock held and
-> interrupts off, but the callback sleeps with usleep_range(). Every boot
-> where no consumer holds the clock reports "BUG: scheduling while atomic"
-> from clk_disable_unused(), and so does the unwind of a PCIe probe that
-> finds no link.
->=20
-> Drop the sleep. Commit 90d4e466c9ea ("PCI: mediatek-gen3: Move reset
-> delay in mtk_pcie_en7581_power_up()") already moved the wait of the
-> enable side into the PCIe driver, and nothing depends on a wait after
-> the disable.
->=20
-> Fixes: 66bc47326ce2 ("clk: en7523: Add EN7581 support")
-> Signed-off-by: John Crispin <john@phrozen.org>
+On Wed, Oct 21, 2026 at 6:12=E2=80=AFPM Cunhao Lu via B4 Relay
+<devnull+1579567540.qq.com@kernel.org> wrote:
 
-Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> From: Cunhao Lu <1579567540@qq.com>
+>
+> Support RK3572 pinmux, bias, drive-strength, and Schmitt controls.
+> Enable input buffers during mux changes for the RGMII receive clocks.
+>
+> Signed-off-by: Cunhao Lu <1579567540@qq.com>
 
-> ---
-> Changes in v2:
-> - Drop "clk: en7523: add a reset operation". i2c-mt7621 now asserts
->   and deasserts the reset line instead (Philipp).
-> - Link to v1: https://lore.kernel.org/r/20261111085650.632025-1-john@phro=
-zen.org
->=20
->  drivers/clk/clk-en7523.c | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> index 24fdec2e6198..8f63482cbb7b 100644
-> --- a/drivers/clk/clk-en7523.c
-> +++ b/drivers/clk/clk-en7523.c
-> @@ -689,7 +689,6 @@ static void en7581_pci_disable(struct clk_hw *hw)
->  	mask =3D REG_PCI_CONTROL_REFCLK_EN0 | REG_PCI_CONTROL_REFCLK_EN1;
->  	val =3D readl(np_base + REG_PCI_CONTROL);
->  	writel(val & ~mask, np_base + REG_PCI_CONTROL);
-> -	usleep_range(1000, 2000);
->  }
-> =20
->  static void en7523_register_clocks(struct device *dev, struct clk_hw_one=
-cell_data *clk_data,
->=20
-> base-commit: ddfe51b0a0f5dc9e415cc2c8ad8db17532dd426b
-> --=20
-> 2.34.1
->=20
+This patch 8/27 applied to the pinctrl tree.
 
---F4RPVZbwfNP5GRwu
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCavbN+wAKCRA6cBh0uS2t
-rJtDAPwLVmxAglv0nHD3+CuXP6UA0RXL4MmaMltEsCU4oiQIsgD9FhTEPRAQ6ARI
-lviULhURGR9ZX/xyrmm1dTiXdAaaVgc=
-=ezYL
------END PGP SIGNATURE-----
-
---F4RPVZbwfNP5GRwu--
+Yours,
+Linus Walleij
