@@ -1,91 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794530144;
-	b=eRLXf/EzPRr4St8pp7Pt7RWoFhdIvJrwRmS8skjhTiqDNa/XItIb6ejDcD0RFd5tsarQ
-	 HDquXluYDryKF8NmCvddv4W6kEa5QHpE2WZ8N8QBuf9+r0dY2RouBYrXQidPcKD1elNa7
-	 o5I9Qx8n/zvW2gVGFpCEjqCtkYQsEjNJwU4TN+LbswPnN0sKhduXkesjkATsfc+NtPPcK
-	 UzEx3JvXS7wEkQUh589lF0xQYw7Jx17m4dC19BfI4Vgi3xH8jIaKggvhcEaduUoKn2JF/
-	 iu5LWcJV/ohUy0EsbTDY/2OL+SQDRkfU3C6FTulde6BJxcAC4OALojhgqrnsO3LZxmg==
+	t=1794530247;
+	b=4oVcH6CEGmnkpJYxqsP8juqfmXnRWpzyMlJvtQ5XZXdShcFjnKXBaRCTwNI4LDxz/a3G
+	 ryBh0YG6C7ktw6ujzthbC1BkF3uv0Py93mYU2pkJirA5b3F5w9jVLyQ7XkcvNH28hibF8
+	 2mSuLUUiv2yRCGtqqjO2VSqWxQlSpXJ5wQrV5p8Pb5e/wuei9zbQbri/KLFQTd0OVh035
+	 O0pNEabEucyi11UYu/u0ZjNQTMqtFpf3KGwVUxblZX1C/8Yt7hCH9KQhI8O0ftO4RUYM9
+	 GzmyHM1t2QLW8KFvDYQYde3bOFYvR3Q7LDWWteP3U+TtSXxumznljzHcUyNDeWAHVOQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794530144;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794530247;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=3/VnFgYINlRlhY1yu2VcR+eAdnoCreCST0T9Cq05K6U=;
-	b=hr1SKRdhRQgz1RtOvzL+Kt3g5gkIgWjj7NOyfndaVP/Uk943BUXVyblDI3wW+MjwRML4
-	 FuFdKtJCkkwoU68WrL/lVSEJT7SbHpKJ95QfQXA/+UJYPXsX16B2UA4kxSVgVWeZ64zo9
-	 wzhAkZeZa/V6qwZjXKfqdXRLTQVQky6lAMxlegRW3oOBoq4p/TO3giQYxsEJVRmjL3X6Q
-	 1fksz5NtiCy96UeGd2x5QCKPujVEt0Z51PJ0gV5aLrC1niUL6qly8NlSGLCQsYH1j2iXK
-	 cSU1iHaUoOYFj2qOnHaep870ERGcXG0pl64gA1vS3nxCtgmGNn0Es2JccCQwnm2HnLg==
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=5W7kX9rp2XBF1bJ27nT4HG77OkJIXZJCoQWjVdRY9vA=;
+	b=XZkA/2t8TPEJNw093a3Fms5vHEko3QexhW31uYqrf/GiRttRN+Rrdmrgefi9i/iDbWEA
+	 M2q+jOjhTdVWDvjbA1V1+64s7vntReaIf3QpliLe3HsoUw1p3QS3bUSvb8XFYJnvvpS5x
+	 sKrR25SRniutXuqen9rwhcwI24DXYnPMu6LydilFEyy6meZKVtR1gTjZzb2SJFPH30/9o
+	 z4dM9dQph8l/ODLZIAJ22JupF6p1wfvQdqSe+H70tkTBQvOcQbc+pikGdJTEuUrGzY2Tf
+	 ux5kESCXKLs2PSH9XR/4T9ytvDlHcrexosud12Kv1LILHePsNijN9zED8nxdU0sKdCQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=b9kFqplF;
-	arc=none smtp.remote-ip=209.85.221.48
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=hTEz5d3W;
+	arc=none smtp.remote-ip=209.85.221.54
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BBD606B7C6
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 00:35:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D8BBD606B7C6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97A8606B567
+	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 00:37:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A97A8606B567
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=b9kFqplF
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-490d59c3f0aso112138f8f.1
-        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 16:35:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=hTEz5d3W
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-491aaed7565so135200f8f.2
+        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 16:37:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794530142; x=1795134942; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=3/VnFgYINlRlhY1yu2VcR+eAdnoCreCST0T9Cq05K6U=;
-        b=b9kFqplFB4ksjcPB11g7wrzFIgvzhQf4VQ4LwRLiHJrvjQT+Z84PDUc7IV2LD5JEPl
-         ZmMlqSn9Zfs6NtZ5wlylT9/0/DhKh8W90+YzWktylsMglqS0lxW/g71dgzPKRJ8jt9IY
-         JLK24g9M5vDKhDWDxa1bRSz4655xxriCK1KUYGW1mNMUcX6vzl47Gp8Mlw5DtFUJ/RsJ
-         wO5PfU4yhMpc3rzSJg2zZFSD5xQTCBEGbrzXzByK8OhXHaWtE/RXDBYwZNv77HkmOBcv
-         l+X3FQNWyF7m1Vg8n7ekhqOs8ngNSPfEAOWc8Dwzx2HOPa01dBCIlB9bWvkjlDMsCdRs
-         OrOA==
+        d=gmail.com; s=20260707; t=1794530245; x=1795135045; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=5W7kX9rp2XBF1bJ27nT4HG77OkJIXZJCoQWjVdRY9vA=;
+        b=hTEz5d3WaREJ7ysbOywNEF1KN5ZyBCj5690RiF0asHXetT32w34pPUJoObRiJNSims
+         XG/c3EOAZP+oTRD8QqudIefWN1UcSGIaxz6drRr2GgcmjRCBctCIqrvj8wEhOk127D1G
+         XsCGs856Lwncv613nP7uDgbfZl5yE3c1C9tbQ0pEhsd4Ef1uDeEfSZXQMMe1xbHbXy5u
+         XezoQ5cMs9fN0y7kKRhsOKMoI5jtiPIurMEQJ+eZUxYRX2TCoD9vMxto7Pr/c1JjMoCW
+         J1zfOk98xReIr+9782nVk1iwv6lHo23M8tOUY+DS4Sop7VIUchrHUWqtWxctxelkW/Fh
+         lApw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794530142; x=1795134942;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=3/VnFgYINlRlhY1yu2VcR+eAdnoCreCST0T9Cq05K6U=;
-        b=V4o7cFr5mAxkuBx7E1uzjRYxs8B2CGz4lomQBAlhlC8MSKf1kW049caXSKE8tj+y6Y
-         8df6jBmfFBSGPBQ/AGdpmKBph2E4OIt3AuzOUkys8x89E2r7oO3jV0Fz3bCYbMBIkpAo
-         EoUCCgnIrb9DnaYiGNdBNVle+9w1Jl7bwSGBBmLOWTbd3Gz02ivV/8PhgFTm2M5DYNQC
-         aJ7tHE6ximAx441Eldf6CRqFaZen9S2Gry+/zFQaJrkUt+tH8HrF7I+CuP72FjNjeufK
-         SZWk/a7c9n642EE3ILjvnCfFcEaB0MI3sXOHxOafW+/vGJQluNUMJ5Eddc5+HqmcrUKh
-         sSFA==
-X-Forwarded-Encrypted: i=1; AL+hErEpvZKJwyd2EXuiTxVwcvsu+HKstLgP8DDxSW7Q7GwjgXLTLLAS4LP5ZhCRpAQIcJJoL4uV+5CVpMc=@vger.kernel.org
-X-Gm-Message-State: APuU4Z81LrE8+YMpI+dOFwESdgdMZWUYo2BPHiKU7FwWr+EbAIeh8daq
-	SbcP4hgEmzTFawIBH9wGFEy166FrjYE1bRPJsgoJDwCcCq1qZeI7LxKu
-X-Gm-Gg: AYBFou0m9KOC5MAM8xoaUqNepymZ/AQloGqyHGkC+erqmcDC6W+pC9nuUziQDFWZ9Fh
-	Ojyjh5q6K95FuNZdEEC9J/LZ9Wk9hIFvuX+y0jABmhNkmHxtNePYcZW2fgi85gCzdMHSMI9ZsDa
-	BzEL1lTb4pZfg2cajfHKnsIcQKO/ClthL1dzBniI5PUXskGvsPa2rkc2Cw4FMxR7DY5ruQ6tx5l
-	aeobWvTMilLZxxXV/vL1hiz6SN//6xSKk6tOo7QI5YggsSJUUZRLRJSu60ILk3840EKT7zTdEXx
-	NgQyCzxuMgJWfumqMmSeRAEEXahem7TyyX5iz6gW7iZWeBsZ8uzWO2hqmqtEkQUobzrtgh/Y7gk
-	B4Sr8aj0XNdw2t+9CrG99LlIk8ZXcWetHGf75T0XNX0MliCMuvKF1jChJDg2SIkyPY8Ps1UKkHE
-	NNruuIxKL0VOvIOfe4a9+Hvh15e8W8T3TANRoIceesVzXtNNDIyp4d9n8KA3wDiodz3LLahEd7f
-	Hldwy4dVp2smhJl5I6W5epShAb+i68Nh9/AOGlgsYRA248j6ME3EDzRhT1uEa0hR5QyD5piSMss
-	262SYBq0foIOCYvXdedDVAFNOCdhgwRaWl11ryM01P8YhhGxjCXa+TaZOxRupFUJis3z9MOQLAP
-	mP9Em4ypB8usTXqxb+Q8Xrkg/85rYHeSPfVPzQwcCrN+ObSB/Mj74KgKs9PHAzPbi3sjSjN3xkr
-	0Gbf4nkeXnPNaQ4NjK
-X-Received: by 2002:a5d:6f05:0:b0:48e:d27:bef2 with SMTP id ffacd0b85a97d-49c723fc07dmr1853264f8f.21.1794530142217;
-        Thu, 12 Nov 2026 16:35:42 -0800 (PST)
+        d=1e100.net; s=20260707; t=1794530245; x=1795135045;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=5W7kX9rp2XBF1bJ27nT4HG77OkJIXZJCoQWjVdRY9vA=;
+        b=i9OGXRhe9Vcwy0dcTP/iaTYUKH3zJMScOKPJZZH3gwzv/P6hWJJEY/gJhiynhgwLnC
+         7j+Fazkz4z57PcqC1QjVtOzj2O395SuybkW/noXLhyYI45Cw47n2B89cnddMdGq8NKpD
+         0l7NgGqVZIl6edumJIbedRKsaYsoQgOvato8GdFxOkufMGltSTdmZJOhAXTGeI8fqnR/
+         qoPihKo+ocgVPXr5b9+T2em0fvB9r94PSRXro0M33uXeOgCCc8HzTpLMarkOVnqLyuc7
+         EO7cwlB0OD+PdAmBQEVrq/r5c1ENXOUWUn8geUbXebIVMGvFCPZGvj9pQV5BnBFc7CE1
+         wlDA==
+X-Forwarded-Encrypted: i=1; AL+hErGh4XNxNiGAVnjsrbA1PHZQUHtQ8jZsggA+cvuXdqhHHtSJsGFKeHFGyO8MGLGloVB3L0MlQt62eBs=@vger.kernel.org
+X-Gm-Message-State: APuU4Z86rYTFFUNcoPhFvFLCxEZ+UKbMN/Bg72zN1i8ZRApBv5vj3tSo
+	HTAzZ9iV1vJqts7TUxCtBZ7zOm1SxaW4xs0I0ACRjVR8swMdV8GcK5++
+X-Gm-Gg: AYBFou0nGyo30ZExSRMBi2Tg3aSKAf6rZVGTbgSzMGP6fjA4PJzmWPvkeCFy8XIxGm3
+	L/qqSXmeRq5/vurNvaTAwHjV3PRDsBLr9cpD7EbL0oV+PFEm/BtDiXV19cKQ01uH4T8wEAv+5oe
+	bMQTrZ22XZDTqv4Zvn8k+ir3iGaqFNybJXRWtbdor2lbgwQBvsh5pNDnEYdsQjTJk8PRq0Q1Kyd
+	hVBQdkX3WFRksq0MnzGj87e6vGW11IjF6dI91Gi4RBQpKNUGLPqHp4QzfT45ydFMAnmJBZBaHon
+	eO59JmhqYTEHzU1kO8VcdNjrISzrXYy8Ab4DQ6O9m4T7hxJvN++W9TFtmOLoVT/nC/lIcbHA4V3
+	ntvSd83Wlce/4T1lz5ZmEuEj8b8M0n5WpH9LGOJIa+RmffUIcZ1ySO+SDnQWqSzAjLqVUvVpdfZ
+	E0la1iZsM6+IrvkYl21oIYcNP8VYgqjfC3zK3C/b0OYqg4W03+0vH/g3NVxEpQplup9xj8GZn7b
+	TjGpX7oPFfBtHG5OV2C8RzWXkI6o2mphw21oFtCM+UUZWFNEvDR9/x9/OnQvqAKnhwomLsjcTv8
+	rAl+JYtSTokLn63J17bWEoPc6DDYAAELV/icoVugeIhkKzlyPzKEHvsv3q+XNGRfxQW2caeFwMo
+	dS/AmBkD1umZdvbfpHr/0dj9wPnMkiQF72QMVpELhjxrpMQS01IlTpLKlsm5e7JKi25gA0HH/8H
+	2fACnGyRC8m40nlKON
+X-Received: by 2002:a05:6000:1885:b0:499:d9a9:5158 with SMTP id ffacd0b85a97d-49c727d1e47mr2139782f8f.31.1794530245167;
+        Thu, 12 Nov 2026 16:37:25 -0800 (PST)
 Received: from navid-pc ([2a01:4b00:a856:6220::a11])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c609c6451sm2251812f8f.45.2026.11.12.16.35.40
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c608d10b2sm2702533f8f.44.2026.11.12.16.37.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2026 16:35:41 -0800 (PST)
+        Thu, 12 Nov 2026 16:37:24 -0800 (PST)
 From: Navid Ghahremani <ghahramani.navid@gmail.com>
-To: =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: linux-arm-kernel@lists.infradead.org,
 	arnd@arndb.de,
-	krzk@kernel.org,
+	stefandoesinger@gmail.com,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
@@ -96,11 +95,11 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v2 04/24] dt-bindings: clock: Add ZTE ZX279128S CRM clock bindings
-Date: Fri, 13 Nov 2026 00:35:40 +0000
-Message-ID: <20261113003540.3660753-1-ghahramani.navid@gmail.com>
+Date: Fri, 13 Nov 2026 00:37:22 +0000
+Message-ID: <20261113003722.3667081-1-ghahramani.navid@gmail.com>
 X-Mailer: git-send-email 2.56.0
-In-Reply-To: <P2sItgLkRqGZa4OOeZAnJw@gmail.com>
-References: <20261014072109.1759502-1-ghahramani.navid@gmail.com> <20261014072109.1759502-5-ghahramani.navid@gmail.com> <P2sItgLkRqGZa4OOeZAnJw@gmail.com>
+In-Reply-To: <20261015-misty-lively-galago-693c57@quoll>
+References: <20261014072109.1759502-1-ghahramani.navid@gmail.com> <20261014072109.1759502-5-ghahramani.navid@gmail.com> <20261015-misty-lively-galago-693c57@quoll>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -110,54 +109,33 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Stefan,
+Hi Krzysztof,
 
-Stefan Dösinger wrote:
-> This would be easier to review if it were split in 3 patches, one yaml per
-> patch.
+Krzysztof Kozlowski wrote:
+> This is odd. Device is specific, fixed. It either is or is not
+> compatible, not both.
 
-The next version will have one binding per patch.
+Right, the next version drops the syscon compatible from crm2.
 
-> Afaiu this makes "syscon" optional. Why do you need syscon? Why might you not
-> need syscon?
+> Do not need '|' unless you need to preserve formatting.
 
-It turned out I don't need it, so I dropped syscon from crm2 in my
-tree. All I have found in crm2 so far are the PCIe clock gates and
-resets.
+Will fix.
 
-> I think you should be the maintainer alone here, I don't have the hardware to
-> do proper testing of patches.
+> So the PHY does not need any resources from the parent? It gets its own
+> clocks? See explanation of simple-mfd.
 
-OK, I will be the only maintainer there.
+The next version has no PHY child nodes. The PHY registers are inside
+topcrm, so topcrm itself gets #phy-cells.
 
-> I think splitting those into different bindings is still a viable choice.
+> Incomplete example.
 
-The next version will have separate bindings for lsp0crpm and
-lsp1crpm.
+The next version turns topcrm into an MFD like Stefan's zx297520v3 CRM,
+and I will make sure its example is complete.
 
-> You can drop the phy child node and just add "#phy-cells=1".
-
-Will do. topcrm gets #phy-cells = <1> and no PHY child nodes, and once
-topcrm is an MFD the PHY driver will use device_set_of_node_from_dev()
-like you described.
-
-> I'd suggest to rename clock/zte,zx279128s-crm.h to clock/zte,zx279128s-clk.h.
-
-Will do.
-
-> Do they all need to be exported? You only need those that will be used for a
-> clock = <&topcrm ZX279128S_TOP_SOMETHING> handle.
-
-No. The next version will only export the clocks that device tree nodes
-use, mostly gates, and the PLLs stay inside the driver.
-
-You also asked on the RFC whether lsp0crpm really has no resets. I have
-not tested that yet. I will try your method on the router, clearing the
-bits, seeing what breaks and then checking whether the device kept its
-state, and I will reply with what I find.
+From your other mail on this patch, none of the subjects in the next
+version will have the redundant word bindings.
 
 Best regards,
 Navid
