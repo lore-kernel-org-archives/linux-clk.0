@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794577265;
-	b=yXhgl5SZAxkwDr+13bBE6BGl1UmeDMwerMskbCgnT70Txwo7rNIFsOlmsGaq/vSa6J44
-	 8rtLsh3ZLcZN8S1m/iRFKytYUONc9r71TEg6JKzYJ6rTyKfGX0dPSwxdz3Sc/FOx33fnw
-	 qUCit8Y8jfX/vodN6PFPHuhfJWeEWNfY4Hpvd2hUC84XoTTVdXkv/6t6ylCJ8/H5WHEXn
-	 srnoYn5mDlSrb42EhSLfzV6WW6sUnSVGKcPC/7HQAaGcAdMO3DFd6UczMneSU6OALtMOx
-	 Mz9eX6zMfndpCPzXNEh2h6hQFbgs5D74n/I+T2+8z9w8ggTRcb8o3VfDyKJDMFdIn8g==
+	t=1794577760;
+	b=Qa41S+K/Mb0DJ+vyKs5DmFYPM1Zl5dJkFftbgydv9MqFPlAfq1drq9qKiQoAB/sZxW4z
+	 9QOzVolxTFNYt8Zr3LLkysdEG6UItNZS3uL/MuFe2VIb+f22ZszKWz6Kb9vSh7XkHy60E
+	 XEs1lr/DqSLQDDn6jbGndFjYrJSpB2Ye/CTqX9q82N3Zv4HfNWMsWobYC0CFHR9K7Wvdf
+	 op4uq0njbm9drN8vdvz1DwtSyY2ZoqSbguXp/Z0Eg4oHu9+ItFIHWDyRZI+P+ROSzfujH
+	 FE+XP81yxuCMzEuexrNXZmWTwPmGAXNLRAOtmO4YMzFg6W40zim0zGQZnKCSZJEs2jg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794577265;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794577760;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=aGIgCT2XLPOAbhqgptBw6fw1WJ13dYXLnhaEMNGCQQE=;
-	b=Rv2P7FChEXn0kT1G/3A6d1s7UEwBphVX7LQ//k/a9jUaOKzZkCd6GNOHVwlEdkd504AS
-	 mgkPz5U4NULlL/5tv1HhKMN5w1QPZ0jJJIS3BRg+uMwgA9y9KZcV5Xj5VOZNDmF+G8WJU
-	 FyHM5m0fjUPKnLN+puLbEmLecM0XHXEV7ZV6Cw1r9NJFT2RL1mZSr6SE3LUr8SLoPs10y
-	 5STDg8ucdnh/tGIVub0momrzxym/U1sSK2Y04lTtO2mQNSmoYFgIC4q2+55Jj7Dgfewn/
-	 DZHgGeewvFiUqkqw5Bc6B0zGdwG2t3I4dWS+xp3pUfLAT3gs8VGi0XMA7hpsyve7j8Q==
+	bh=6mKcZAd9NMRyiOkDlvbqYYERhFh3G/8TS8qOE88jIQg=;
+	b=n9kPP99HoQUAk5z8a1dPdQrg8SeEfgA+V9zCe6OcUcCMs5+QMU7JdPi4+/nclDcnctcj
+	 tROjAIZfP7LjjwWW30gUh5lYQwiLVz4nUx0YWV537PDqWBwWYAzdiiSVJkWdftZsij4t+
+	 CsHlV2UVJ3RJWgoO4FO+IxDOyQ2GyO2hJW0qcY4G8ldOzVcezDHtEq53JvFOMxdEdK1O5
+	 WumGqwMKRCpTtEoj/2J+iBsZEjLTtHntKn0GM7xxbw/BTBOvZ0ldsLn9Pei7C9WydD7tt
+	 sT8J+pW0FY9Loh3QIGz6kKQciTywG4xEs2lUG/G+DI03zIRpQN0R1qiPLZzy2uK4nPg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jt96ETE9;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VACMJQDm;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDF5606A327
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 13:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1543F60A263C
+	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 13:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jt96ETE9
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDC941F000C4;
-	Fri, 13 Nov 2026 13:41:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VACMJQDm
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 806971F00926;
+	Fri, 13 Nov 2026 13:49:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794577264;
-	bh=aGIgCT2XLPOAbhqgptBw6fw1WJ13dYXLnhaEMNGCQQE=;
+	s=k20260515; t=1794577759;
+	bh=6mKcZAd9NMRyiOkDlvbqYYERhFh3G/8TS8qOE88jIQg=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Jt96ETE9sktQI52f4FmQWS9eqOjAc7ejjp7AHZzKjkY+A22Au6I9151rIMVVbWLHy
-	 FgxAryc1CnvsqADXGDohxw8m4ih8VdPIjVMfeO36Gt/S1FtqG3UDCcoTPVeABNoq3U
-	 Rss4YBCDazSGWQi6PT7WHoQoPJ3cuBtB5H9PvDJIjus/HOEec/T/V1z4N3uimgDa1S
-	 HsZbUczwWV+Y5x2u4BVJlN/Kozj+UGutnVbvqydi1OghaVUMQWLKor6jrFdU0LJaMb
-	 9la0t03DaFhTmlhaPiUxGsVM3FqyhBdbcTp2/b9BMrJaMNE7AHu7oaoNOEVSi5ewTp
-	 7rbzN8YXFVKhg==
-Message-ID: <sashiko-outbox-212912@kernel.org>
+	b=VACMJQDmdQWb79ii7x3LP8Pzq+Zhvg6uE6QmswhyhkUuiYkqGBGfe684I7QQfRlDr
+	 Sz/LwnfOgDg5jrmcc6i4XGzxTCnH/2cF3UNMyusYk/JNf60oc8KNCqS0F19V/U0C50
+	 EVbmS957HR7zQaN7/EZRToShyAWw693fs0lNGSTbJgLDzIiYtmCCg1wydMHNTbkTYv
+	 p3PKLWNR1has6uN1j0JPYWPyBhEOLybqUndftHsDBSVqQMp5tbOKXjW4NPuQ7dks2f
+	 7SgvHvK6qM2UAEivv7J+Q+infKjkb1dOtiDcoVcuIMCBomSSPcdboKl2DimlWriJEC
+	 9dD2jgBcsfPIw==
+Message-ID: <sashiko-outbox-212926@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC 2/2] clk: scmi: optionally register only clocks
- referenced in the device tree
+Subject: Re: [PATCH RFC 1/2] firmware: arm_scmi: clock: discover clock
+ domains on first use
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Ghennadi Procopciuc" <ghennadi.procopciuc@oss.nxp.com>
 Cc: linux-clk@vger.kernel.org
-In-Reply-To: <20261113-b4-scmi-clk-on-demand-v1-2-7fd162097b57@oss.nxp.com>
+In-Reply-To: <20261113-b4-scmi-clk-on-demand-v1-1-7fd162097b57@oss.nxp.com>
 References: <20261113-b4-scmi-clk-on-demand-v1-0-7fd162097b57@oss.nxp.com>
- <20261113-b4-scmi-clk-on-demand-v1-2-7fd162097b57@oss.nxp.com>
+ <20261113-b4-scmi-clk-on-demand-v1-1-7fd162097b57@oss.nxp.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 13 Nov 2026 13:41:04 +0000
+Date: Fri, 13 Nov 2026 13:49:19 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -63,81 +63,123 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential
 issue to consider:
-- [Medium] clk: scmi: ERR_PTR(-EINVAL) from scmi_clk_get_hw() turned
-  into -ENOENT by clk_get()
+- [Medium] firmware: arm_scmi: refcount underflow in __scmi_enable_evt()
+  on clock notify
 --
 
-commit 37cea3339cbbcf997cf01fad1c4be8bccecc21cd
+commit 8fa43ba288f69bdf8d875f87946751f895ce422b
 Author: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
 
-clk: scmi: optionally register only clocks referenced in the device tree
+firmware: arm_scmi: clock: discover clock domains on first use
 
-This commit adds the dt_referenced_only module parameter and Kconfig
-option to register only the SCMI clocks referenced by enabled device tree
-nodes and their parents, setting omitted entries in clk_data->hws to
-ERR_PTR(-EINVAL).
+This commit defers SCMI clock domain discovery from protocol initialization
+to the first operation on each clock, freeing the discovered arrays in an
+instance_deinit callback.
 
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> index 2dd50c5b4ea8f..a8ec782ac279b 100644
-> --- a/drivers/clk/clk-scmi.c
-> +++ b/drivers/clk/clk-scmi.c
-
+> diff --git a/drivers/firmware/arm/scmi/clock.c b/drivers/firmware/arm/scm=
+i/clock.c
+> index 0278705d809e8..010b63b637030 100644
+> --- a/drivers/firmware/arm/scmi/clock.c
+> +++ b/drivers/firmware/arm/scmi/clock.c
 [ ... ]
-
-> @@ -391,14 +480,31 @@ static int scmi_clocks_probe(struct scmi_device *sd=
-ev)
->  	transport_is_atomic =3D handle->is_transport_atomic(handle,
->  							  &atomic_threshold_us);
+> @@ -1113,23 +1176,16 @@ static const struct scmi_clk_proto_ops clk_proto_=
+ops =3D {
+>  static bool scmi_clk_notify_supported(const struct scmi_protocol_handle =
+*ph,
+>  				      u8 evt_id, u32 src_id)
+>  {
+> -	bool supported;
+> -	struct scmi_clock_info *clk;
+>  	struct clock_info *ci =3D ph->get_priv(ph);
 > =20
-> +	unsigned long *ids __free(bitmap) =3D bitmap_zalloc(count, GFP_KERNEL);
-> +
-> +	if (!ids)
-> +		return -ENOMEM;
-> +
-> +	if (dt_referenced_only && np) {
-> +		scmi_clk_mark_dt_refs(np, ids, count);
-> +		err =3D scmi_clk_mark_parents(ph, ids, count);
-> +		if (err)
-> +			return err;
-> +
-> +		if (bitmap_empty(ids, count))
-> +			dev_warn(dev, "no clock referenced in the device tree, none registere=
-d\n");
-> +	} else {
-> +		bitmap_fill(ids, count);
-> +	}
-> +
->  	sclks =3D devm_kcalloc(dev, count, sizeof(*sclks), GFP_KERNEL);
->  	if (!sclks)
->  		return -ENOMEM;
+> -	if (evt_id >=3D ARRAY_SIZE(evt_2_cmd))
+> -		return false;
+> -
+> -	clk =3D scmi_clock_domain_lookup(ci, src_id);
+> -	if (IS_ERR(clk))
+> +	if (evt_id >=3D ARRAY_SIZE(evt_2_cmd) || src_id >=3D ci->num_clocks)
+>  		return false;
 > =20
->  	for (idx =3D 0; idx < count; idx++)
-> -		hws[idx] =3D &sclks[idx].hw;
-> +		hws[idx] =3D test_bit(idx, ids) ? &sclks[idx].hw : ERR_PTR(-EINVAL);
+> +	/* No clock is discovered yet, so report the protocol level support */
+>  	if (evt_id =3D=3D SCMI_EVENT_CLOCK_RATE_CHANGED)
+> -		supported =3D clk->rate_changed_notifications;
+> -	else
+> -		supported =3D clk->rate_change_requested_notifications;
+> +		return ci->notify_rate_changed_cmd;
+> =20
+> -	return supported;
+> +	return ci->notify_rate_change_requested_cmd;
+>  }
+> =20
+>  static int scmi_clk_rate_notify(const struct scmi_protocol_handle *ph,
+> @@ -1157,10 +1213,23 @@ static int scmi_clk_set_notify_enabled(const stru=
+ct scmi_protocol_handle *ph,
+>  				       u8 evt_id, u32 src_id, bool enable)
+>  {
+>  	int ret, cmd_id;
+> +	bool supported;
+> +	struct scmi_clock_info *clk;
+> +	struct clock_info *ci =3D ph->get_priv(ph);
+> =20
+>  	if (evt_id >=3D ARRAY_SIZE(evt_2_cmd))
+>  		return -EINVAL;
+> =20
+> +	clk =3D scmi_clock_domain_lookup(ph, ci, src_id, false);
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk);
+> +
+> +	supported =3D evt_id =3D=3D SCMI_EVENT_CLOCK_RATE_CHANGED ?
+> +		    clk->rate_changed_notifications :
+> +		    clk->rate_change_requested_notifications;
+> +	if (!supported)
+> +		return -EOPNOTSUPP;
+> +
+>  	cmd_id =3D evt_2_cmd[evt_id];
+>  	ret =3D scmi_clk_rate_notify(ph, src_id, cmd_id, enable);
+>  	if (ret)
 
 [Severity: Medium]
-Does setting hws[idx] to ERR_PTR(-EINVAL) actually prevent
-clk_get_optional() from returning a NULL clock?
+Can this underflow r_evt->sources[src_id] in __scmi_enable_evt() when an
+all-sources clock notifier is unregistered?
 
-When a consumer looks up a clock via clk_get() (including
-devm_clk_get_optional()), clk_get() ignores any error from
-of_clk_get_hw() other than -EPROBE_DEFER and falls back to
-__clk_get_sys():
+Because scmi_clk_notify_supported() now returns true for every clock when
+the protocol supports the notification command,
+scmi_register_protocol_events() leaves r_evt->sources[src_id] at 0 instead
+of NOTIF_UNSUPP for clocks that do not support notifications.  When an
+event is enabled for all sources (SRC_ID_MASK), __scmi_enable_evt() gets
+-EOPNOTSUPP from scmi_clk_set_notify_enabled() for those clocks and leaves
+their refcount at 0, while still succeeding overall if at least one clock
+supports the event.  When the notifier is later unregistered, the disable
+path in __scmi_enable_evt() only skips NOTIF_UNSUPP:
 
-drivers/clk/clkdev.c:clk_get() {
-	if (dev && dev->of_node) {
-		hw =3D of_clk_get_hw(dev->of_node, 0, con_id);
-		if (!IS_ERR(hw) || PTR_ERR(hw) =3D=3D -EPROBE_DEFER)
-			return clk_hw_create_clk(dev, hw, dev_id, con_id, NULL);
-	}
-
-	return __clk_get_sys(dev, dev_id, con_id);
+drivers/firmware/arm/scmi/notify.c:__scmi_enable_evt() {
+	...
+			} else if (refcount_read(sid) =3D=3D 0) {
+				ret =3D REVT_NOTIFY_ENABLE(r_evt, r_evt->evt->id,
+							 src_id);
+				if (!ret)
+					refcount_set(sid, 1);
+			} else {
+				refcount_inc(sid);
+			}
+			retvals +=3D !ret;
+		}
+	} else {
+		for (; num_sources; src_id++, num_sources--) {
+			sid =3D &r_evt->sources[src_id];
+			if (refcount_read(sid) =3D=3D NOTIF_UNSUPP)
+				continue;
+			if (refcount_dec_and_test(sid))
+				REVT_NOTIFY_DISABLE(r_evt,
+						    r_evt->evt->id, src_id);
+	...
 }
 
-__clk_get_sys() then fails to find a matching clkdev entry and returns
-ERR_PTR(-ENOENT), which clk_get_optional() turns into NULL instead of
-failing the lookup with -EINVAL.
+Calling refcount_dec_and_test(sid) on the clocks left at 0 triggers a
+refcount underflow warning and saturates r_evt->sources[src_id], causing
+subsequent enable calls on those sources to hit the refcount_inc(sid) path
+and report success without enabling notifications.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261113-b4-scmi-cl=
-k-on-demand-v1-0-7fd162097b57@oss.nxp.com?part=3D2
+k-on-demand-v1-0-7fd162097b57@oss.nxp.com?part=3D1
