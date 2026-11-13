@@ -1,66 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.238.236.174
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794607413;
-	b=n1n8eFgYTh3nFnls4h3ac4vAXD9QSAjawLkCrMzJWkCqM5Pg3C606jinzihJ6S3bQKBG
-	 UHmw2CezwGzejuappy//DTT/EtIBZlbiB+xEjxhh/oj0Ib4151cuBuAo8K8JmebE/RTYw
-	 nmiGv0myuNHg/r0th9LAb5zG4/voz71HEQzAA5kBpO1BbaO/qEmtYbOR7d/G1VQWyYqbE
-	 0atl/ZoW4Dd3JEx4eLPFXhgH5sa1IRA9cLtVHEaK+RR38X2ZY9moWMuDJB+Z7hp2im7Sh
-	 zQQv/AbXBysfzpt47bE3HjqlckLgsPh/0vu8Zut1cKmfccDFKbPEwy/302/Vll/NCTA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794607413;
-	h=DMARC-Filter:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=FcupKOGqfpw0UNQH/cvoTfEyJODmJfv3s32n2xsq6tc=;
-	b=0z/rykEK19T8Qw43B4jX7O4lVYWVw0asJzJ+TYrMRfyQQXv/nEQKxkGWYr3a50dPr0/x
-	 5Ab7AG2E042O1LOL8pg0YB+HLLD9HIzGYgbUe3oGrtRUG022XS0/cMXATtqyMpgQa8e97
-	 WoAdFfImJzIOLoRJFcobfFFGpfM6Bp0MFYFrRN/03xBBPWQjjf2b6VxhnGiCPAGkyFhR0
-	 csBoBOwH//DgBazmhquhhw8E2R1nvgIGjA/DtS5s5TYE3Qb1gMjbbjlCtVbI2t6JJGXjk
-	 qE12JEjAKy7Z8shNS9hb2NLPPBELah/z9qtOgsxQyfuy9GnIZGZm3I6Hrgsw9DqwI9A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=kemnade.info;
-	spf=pass smtp.mailfrom=kemnade.info;
-	dkim=pass header.d=kemnade.info header.i=@kemnade.info header.a=rsa-sha256 header.s=20220719 header.b=WTcF5h3A;
-	arc=none smtp.remote-ip=178.238.236.174
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794609214;
+	b=SFgrQN8DknnmdLxHPdghslYeaPHne7dEhb2Oip0zZE7K+8ZTT030rF8+eOEk2ZuYR54I
+	 j01C7iLSRnHta9J3HZR7jEOuvNHIePmZq4bfQy1PDn9xViXwPYQwQOiFMD5v3b/ZOibt3
+	 DN7QTLMYwtKNXhkN1+t6hFuAsxFzWY+gF9wJAn3aIZdz/l7XFMOf9TRuFF7NYdHjpj7Lu
+	 hOjqgukh5SIoWNWK15f+LKkQtfTEqtw+NMZ4gxxCS9lGd5RtOmu5UHDbxoJoH0MmVmEwK
+	 5dgfcHglpg4TC5cdHTiFB0+vYqSozFOpgPQllAmVwFmPfLW7xudGLuKG+jr+D8DALqw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794609214;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=HyiTVbeXPQu8fkPfhfD3gHjXLJEZSVzM7qOeO91NGRg=;
+	b=ko5hGJ61DsjZ77irB5L/IeGWmi6m6wus3oYCu4Dh6lWouwMl/PaxzRzKg7TbjEUy77fc
+	 ZrnKqMnTiUOQktp/Zxmf1hI4XmF6/LUPRqzHXw8EcrDi/ulG4W/7x8eTmKa/n/SY+czhK
+	 MrKIS7g6KOM3qgwOG0vta+613riN3M/TcBt7KT3vnzG/R2DuLkiktjRVPhk+L++T67aQE
+	 xfY2EKdkLIlMbSixuC9q59IgmgjnEqGOEiglCrkcfC0HMhTwvgr90HIICmsVreA2OUoEv
+	 l8SYPesk69K0jGIGxvdpLSijN7hk2x/zCBeUZyvZfNzQsQSNpaq8WYnT+AqmAIl6iLQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UtZMtRuy;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAAD606A334;
-	Fri, 13 Nov 2026 22:03:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CCAAD606A334
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5262C606A883;
+	Fri, 13 Nov 2026 22:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kemnade.info header.i=@kemnade.info header.a=rsa-sha256 header.s=20220719 header.b=WTcF5h3A
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
-	Reply-To:Content-ID:Content-Description;
-	bh=FcupKOGqfpw0UNQH/cvoTfEyJODmJfv3s32n2xsq6tc=; t=1794607412; x=1795817012; 
-	b=WTcF5h3AOOpUMW5KkWJxKDXVXYIh7gW4I7Cx8Dh6TfCtMj2hZaDVN+yV02G8hQ92S8FDQlMsSFR
-	hEXYkpYGR7yv/pEnY5AaoQaq5fsZpGhOjY1wvn5g942Xr4PhuC6Fic8CCYJ+ilezTWWbpEAJxSiMO
-	wQB7qLt5JLAnAl6OzAHmh9bPNsHkNqbrPtaoXJbtm6RLTUxbK9M8EJDRDxKmcfBVqphlGL/Q0E3Dw
-	7LVFMwuEgUQ4ccbckeA15qWVXT1UF9l4vjDNzE1B3bCSGfT5gwqDRFccD6+GuQdEPLLWwzti95K4W
-	CTuAQStTJcbiysEDOgsUeTyup9NuDk/t1uWw==;
-Date: Fri, 13 Nov 2026 23:02:08 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Ettore Chimenti <ettore.chimenti@linaro.org>
-Cc: Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Brian
- Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>,
- Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
- Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Andrew Goodbody
- <andrew.goodbody@linaro.org>, Rouven Czerwinski
- <rouven.czerwinski@linaro.org>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 4/4] ARM: OMAP2+: ti81xx: use non-scalable voltage
- domains
-Message-ID: <20261113230208.68ec07dd@kemnade.info>
-In-Reply-To: <20261113-patch-ektor5-dm8168-clk-v3-4-a42cd1edc5f3@linaro.org>
-References: <20261113-patch-ektor5-dm8168-clk-v3-0-a42cd1edc5f3@linaro.org>
-	<20261113-patch-ektor5-dm8168-clk-v3-4-a42cd1edc5f3@linaro.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UtZMtRuy
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794609213;
+	b=rx6seLmVjtfP07fRicajwW4gcx5wTTRbDzYT/2gEVSZRGbyPFLYvc4JlMdzz9wPMVm1a
+	 o4Wuma0RFECZuk23+K6yj7gf8Gz4WLeCKlH9CFfJRe/GPpNr7vJAr2eg1TMTpEDUpRwtP
+	 Za15H9KpVjHzMgQf/1l1/k7d+3haLKmyom/SUlFVrTA2UVxDndp5dK0N95zUePAVTdB/S
+	 V1VBxMJkp8/OknttbjsfI6FY2z2RxQXnPDWU95byeomE+1lRfskkZn5dAWF4SYPIJ77Zg
+	 0Vx41wCqd0Q+oY5pTh1jUq4nKJ6Q2NJDfYwYRZyIFRbk9Opx9y7y/aqdldWRRIir2Mw==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794609213;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=HyiTVbeXPQu8fkPfhfD3gHjXLJEZSVzM7qOeO91NGRg=;
+	b=VWI/WkEdcF2Xlv6G3k41B0/FezxAS/CfJTmpL2XNORrf1xYrtNvDP1vaZnlCf1iqvuKY
+	 scjDd2YAE39vLXSGev5jkdeMhGTU7sQvOTxr6OgIFyJV+vO4L5PBb7s2Ly8ozZVSDcYlO
+	 otUPDdpbO8cuphtgIPD9st5EG0kcXb3XghlZ6Mc0FpjXYjXMzOFS69zUeCsL+yFZHpvo2
+	 mes6Lea+P/yUQT5WV4GlpqlTenXCVCLSQArjsIoo+Bf1J67BEdQUMhug6NZwxixaHzrhu
+	 IIgylUwAxaEqud62qoLY5JfYgGpECXS3FlMHizW6NqYEQwSDENqmBfSs2Z+SFxiCReQ==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id 314461F000C4;
+	Fri, 13 Nov 2026 22:33:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794609213;
+	bh=HyiTVbeXPQu8fkPfhfD3gHjXLJEZSVzM7qOeO91NGRg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=UtZMtRuy2RreIXnt6Vk6e1sTpBtQ42hqFvY/BLiBEfGCx4AjqmVAkYmV1ALjqjy9F
+	 VGgIrQa6TV9iILRc4ZtrjGqseyIhml3nkASLmeYP36fJvdWR9LL9EBW+VzRgV3yO3x
+	 jq2yE/dyD/YyOHwxa4uhfZ4X1693xNj+zD3+JrYHaY1Fm8ztHfdJ8/60mc6XnXjYCu
+	 K0aeGfZZd7k9Qbb2illPSJSUWJ5vfFBIl6K07SLfMHdo1VKv17IiphIZoIWI+kxZK3
+	 8UlXv/aS3/U+0yePxo51ddZFjPOJPCuM4iGO8axqUf3gSXu9ph6wYw8O7tc5eDeV7I
+	 wK9bQSwv3aBVA==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 9E3E349B58;
+	Fri, 13 Nov 2026 22:33:32 +0000 (UTC)
+From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
+Date: Sat, 14 Nov 2026 06:33:27 +0800
+Subject: [PATCH 01/19] riscv: sunxi: describe the wider Allwinner SoC
+ family
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -70,53 +83,80 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261114-v861-v1-1-eb71ec3ee523@iscas.ac.cn>
+References: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
+In-Reply-To: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
+To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Guo Ren <guoren@kernel.org>, 
+ Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, 
+ Anup Patel <anup@brainfault.org>, Han Gao <gaohan@iscas.ac.cn>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Chen-Yu Tsai <wens@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Maxime Ripard <mripard@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Andre Przywara <andre.przywara@arm.com>
+Cc: Han Gao <rabenda.cn@gmail.com>, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>, 
+ devicetree@vger.kernel.org, linux-csky@vger.kernel.org, 
+ linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794609209; l=987;
+ i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
+ bh=iIMXHW4ncH9rYCfV6gqeS1VFiDJbleuDtC++QacYRuM=;
+ b=1qagKD3rCKA24HqW1EY7WOksbBJolj6tNk+/fSKplFvFfQFmuICjc/3HRPonNK6YXjTtHCQMd
+ k+l2SiI9Az4DbHj5RDb1WJdE+MlgzAKOR89f9hwcRwjPTczallY0Cjt
+X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
+ pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
+X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
+ auth_id=1262
+X-Original-From: Han Gao <gaohan@iscas.ac.cn>
+Reply-To: gaohan@iscas.ac.cn
 Content-Transfer-Encoding: 7bit
 
-On Fri, 13 Nov 2026 22:30:50 +0100
-Ettore Chimenti <ettore.chimenti@linaro.org> wrote:
+From: Han Gao <gaohan@iscas.ac.cn>
 
-> TI81xx SoCs reuse omap3xxx_voltagedomains_init(), which registers the
-> OMAP34xx/36xx voltage domains for every SoC except AM35xx. Those
-> domains are marked scalable and reference OMAP3 Voltage Controller and
-> Voltage Processor instances, which do not exist on DM814x/DM816x, and
-> no PMIC data is registered for these SoCs either.
-> 
-> As a result, omap_voltage_late_init() tries to set them up on every
-> boot and bails out early with:
-> 
->   omap_voltage_late_init: Could not get sys clk.
-> 
-> Adding a "sys_ck" clock alias would only push the failure further into
-> omap_vc_init_channel() and omap_vp_init(), which then complain about
-> missing PMIC data.
-> 
-> TI81xx has no voltage scaling support in mainline, so, as done for
-> AM35xx in commit ddf536d0d7e1 ("ARM: OMAP: AM3517/3505: fix crash on
-> boot due to incorrect voltagedomain data"), register the non-scalable
-> voltage domains instead. They still provide the "mpu_iva", "core" and
-> "wkup" domains needed by the powerdomain data, and
-> omap_voltage_late_init() now skips them.
-> 
-> Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
+ARCH_SUNXI is about to cover the V861 as well. Update its prompt and
+help text instead of adding another option.
 
-Reviewed-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  arch/arm/mach-omap2/voltagedomains3xxx_data.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-omap2/voltagedomains3xxx_data.c b/arch/arm/mach-omap2/voltagedomains3xxx_data.c
-> index e98a3f289c27..478f5eb2a17f 100644
-> --- a/arch/arm/mach-omap2/voltagedomains3xxx_data.c
-> +++ b/arch/arm/mach-omap2/voltagedomains3xxx_data.c
-> @@ -119,7 +119,7 @@ void __init omap3xxx_voltagedomains_init(void)
->  	omap3_voltdm_mpu.vc_param = &omap3_mpu_vc_data;
->  	omap3_voltdm_core.vc_param = &omap3_core_vc_data;
->  
-> -	if (soc_is_am35xx())
-> +	if (soc_is_am35xx() || soc_is_ti81xx())
->  		voltdms = voltagedomains_am35xx;
->  	else
->  		voltdms = voltagedomains_omap3;
-> 
+Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
+---
+ arch/riscv/Kconfig.socs | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index cecbce0c4983..4cf3b24467e8 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -61,13 +61,13 @@ config SOC_STARFIVE
+ 	  This enables support for StarFive SoC platform hardware.
+ 
+ config ARCH_SUNXI
+-	bool "Allwinner sun20i SoCs"
++	bool "Allwinner SoCs"
+ 	depends on MMU
+ 	select ERRATA_THEAD
+ 	select SUN4I_TIMER
+ 	help
+-	  This enables support for Allwinner sun20i platform hardware,
+-	  including boards based on the D1 and D1s SoCs.
++	  This enables support for Allwinner SoC platform hardware,
++	  including boards based on the D1, D1s and V861 SoCs.
+ 
+ config ARCH_TENSTORRENT
+ 	bool "Tenstorrent SoCs"
+
+-- 
+2.55.0
+
 
