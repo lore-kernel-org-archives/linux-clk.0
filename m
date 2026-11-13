@@ -1,56 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794554309;
-	b=lOJKm1vt90OizjrapPlM6p77+s68WejxQn3d3mLjl0yvTM1E4j8ffzhsG2PuzcaZfORV
-	 +az7qo2AOYAfOkK0WozfXR+E+2X6v9AS8YoGRg350EmbcEhLEjtiwWmU+mu5wizRSUjRL
-	 cRshKTI/UIgdlqmtWatykWMeVLEyj2bBhCuZMgeRoXlZpAfkKlfSpvlXDMawdDsyK3ko6
-	 HSWohUomWxCjek0FRvkZhp8rpD9MGDjRgoBNxi+2A7S3HCQS+jypsUhCDSS6H8M+7A1Hw
-	 veQ2PJAEAfnKHefksQp3HWe9JHo41Rh0tZN/wek/Cl3PJGjCM4ElrGHXjhkk8pokm1w==
+	t=1794554311;
+	b=qiQdJ8eBToildZw7y+uVvZlU/1mNkUoEogJE6uM7l5i+o8x2l2k3YnvdcBxp7T9+jp+u
+	 kwZ9gksbids3AItU15NbY2MF+WdxWEpIFfy9uQiG2dRptgbg14AgWtWFGyHSRUa/MV+R2
+	 ELuBNau8PQ4PWZ/i63mxFoYY6v7WTcYXsXPPDWJsIavjNmvqDbz10A2OX8zMsMYTn3CuZ
+	 i44yOqQATX9d8BMjETu5EdxovuNJD48e3wd6/4VspaZvesDSWZ5rsfLfPu5h9Rc7JEQyU
+	 Gx1B+MFCoag3sWe7MXjmAkhJOotD4krmL52JXh90XK4w7BEreYL01wlR+zd1l9LWnaA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794554309;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=DsD9LGXBj6Jra4Jv7udCvBynd7rLvaV97w5MkBs8GCs=;
-	b=TCo0OjRlJGJ+LKbF1j8FCbFYSJCnQlPs6sI29vfpkXDD/HTFoyk3CmP/k7ryQgyBKX40
-	 vBmcEoUOnK+GBlAmcl7T/2qfkXPZG1Qe0Ua1Sm6Ot8hNrq1ARXFweaisG3pY66WPIVc4M
-	 OjI+1y0bqXafAop9bGOxlEiMFj0X5Lq6PVt2BFZwUuQMfVBA3ZCXt85N/EadQdiXFFbdj
-	 xwC5roIuBiumH9O22Bo0UVcjRiX6CwBitwquoZ9dMWwiJhN63asovqYLYsbQdGUH6Z7pp
-	 p46BVyYbdTnpZPcw77AKMeZanMU9DTc2eeQMTZoYLbtuOsRob8M9v6QSq32b8Ywi/TQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794554311;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:X-Developer-Signature:X-Developer-Key:
+	 Content-Transfer-Encoding;
+	bh=hGCfbyCJsatkOZcGyPvaz22z0CZVHI0yVRmeT7Qfv/0=;
+	b=aGkMGuhUTsdefXCrjE2CQaYh3/AVJGKXkaD3TTZURtwNe+Fry7jyrghXOB/jnv+YAsDH
+	 3o7mLpZ1N6xuGgTbU4PxtxkDLwxIGAIUyZNOCW6T1vgRmRPFMlBFzA7gtTyZmqj1LGdtO
+	 BcD2zgaunEzirljAMIqEy4GZ5HkNYOShXG0r4idAHViNr/J1oxw82/4fHpnbhj/h14OTP
+	 JqDNu91kmm01ECoEHnrLF2ZG0DOjI3K4EnnmCvsUL2x3qBwy1xcz1KWJ+xGzHcQOBQoW3
+	 w35cwXQZekudJJFNNWIG6e8gFzZK7TpRuu0/vZtqeY8IYj5BHLa6YYJpvdulM4maTQA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cRPtodh2;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VqepA2xz;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0166606A321;
-	Fri, 13 Nov 2026 07:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7057606A321;
+	Fri, 13 Nov 2026 07:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cRPtodh2
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27AF01F000C4;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VqepA2xz
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8648D1F000C6;
 	Fri, 13 Nov 2026 07:18:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794554309;
-	bh=DsD9LGXBj6Jra4Jv7udCvBynd7rLvaV97w5MkBs8GCs=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=cRPtodh29JWVeppnMdQ9WQuFH6Iyi6jALbJX4J+RlbVLKElvq8m1egQTRazM9P1Bd
-	 q47UNV0nG5COxA//Mtt+PzIyBKJkFE/sjG/giP117p3HVPgnid6zij9QgAQeunVEfH
-	 3bUkOE7E9LBcZhrWWgfT9Kg0I5jV3xAa5DNMIdI/bE16Rw/PvyfU5bfsd1Pxp2BPah
-	 ZHV0WAmoKmkheHW1L4wgJVMWq/lX0+RhGYSVrMv+Jy4VxN2qKvUptPCryr1XyX8wPO
-	 Ps5DymzNocuh0/2fjS7JXfsEHUlgDP8TkKg+yy0vJlauGxBjgGYLk8aUoDjYZ35H3H
-	 xwEcwzRTyM8EA==
-Message-ID: <sashiko-outbox-212336@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v7 6/8] clk: sunxi-ng: a733: Add mod clocks support
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Junhui Liu" <junhui.liu@pigmoral.tech>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261112-a733-clk-v7-6-db7c5451ffa2@pigmoral.tech>
-References: <20261112-a733-clk-v7-0-db7c5451ffa2@pigmoral.tech>
- <20261112-a733-clk-v7-6-db7c5451ffa2@pigmoral.tech>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 13 Nov 2026 07:18:25 +0000
+	s=k20260515; t=1794554310;
+	bh=hGCfbyCJsatkOZcGyPvaz22z0CZVHI0yVRmeT7Qfv/0=;
+	h=From:To:Cc:Subject:Date;
+	b=VqepA2xz0eaGF4+ni23s0aMGQdeIqpeCt8t8EIaAE//wNxgHc996tFmoDFJUsARWT
+	 GzdOPDG/BdruxK0YOfMj4eQ56a9lCF+VAeD7mw7xx3rXgJmHfexzBDy5LB86QB16Xl
+	 eIQrEJ2RurtWs2WKush7eRFxjeGazR7cax7rjLkpx9OML3Ot5rxBrKpOTh3rD696yp
+	 p+SV5tEHrZxgNXvnv1S/VoCozF475SjRmTR7QU+M9LuP4AaDxJPg6lYu9P1lt/ghlE
+	 nq/+YzbHi4zASXTv34M9wpvmclLJTjY2EhferYGFweAgMR8igiPnGU/RKxn1D4982T
+	 vWpOJjdSjMsHA==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	linux-clk@vger.kernel.org,
+	Sylwester Nawrocki <snawrocki@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk: samsung: fixes for v7.4
+Date: Fri, 13 Nov 2026 08:18:18 +0100
+Message-ID: <20261113071818.14923-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,151 +65,38 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1388; i=krzk@kernel.org; h=from:subject; bh=QbdDdxnPdZV3D1DrHdQyyiRI9zlwNeF0YbmXq17qR/s=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBq9rm645q+UnPMfPgsn7fdEiEBwkwRsQErpRJbw 7KTwI0QBeuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCava5ugAKCRDBN2bmhouD 1yZ0EACZ5XXxrXy3WArKICb+kjvjDZjd4C0yMcueBsvZoWd9G0blpYbagdLcuk3q8GDrBVE8DiN Z8rtfJyJraVWhqCrbfGj6HBGdlveDfj57+KRfoRYqWEEuohGk03m4HXLSX1TlbZGfqSJoj17Sbt UtCYxVkJFv9hjs6P/B4+1tGJ5UhBPHu/4RdYBKDgqW5nECPQHC6sSbom98PdFhFkvNPaOcppBp8 gdmRrZNBIMay10d2YfHXVaqI3uQ9cKMtVZtzpeVV/7/g3lhb+YUwb6L3n+acE/afzfUBJql8b42 XjyJT4+Li6RowkXQvQflfHShqLeLa/G/RTtm3rLZbFyqLRDQlnk8xy4CDXAhUC3nINcLBtCpm6V RNlQPuNW0tng1PlotrpVQiXzwguafCQQAjKQ3u9k4v67vm2ZHGS+DF/jmUt7SKzpCVd1o6RfFfF Njhdr+mxk3CI8heQV4NiX6Zttm6DWqGVgMvZOY0i0bAwNjRRxyAGlQi2cZAdZ8z/jxJ+cJF0KPp Pibm7Mz9J5LY1ge/TGY0ONUCLRErpIaHoruNePPMWEtYABohy67xw7mZSSrTZevyBM61eqIO3RJ 7TUPZeBLCQ5omARFwnf5HRb1Dwn+J1YtZfzPuQGJpZzCyrt+p/RMYmt/oJbSFbM/oMF0JfsHvMo r9RouQfIELHujVQ==
+X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [Medium] clk: sunxi-ng: a733: unintended CLK_SET_RATE_PARENT on
-  eink_clk
-- [Medium] clk: sunxi-ng: a733: missing CLK_SET_RATE_PARENT on media mod
-  clocks
---
+The following changes since commit 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4:
 
-commit 6e107a79cabf47c1760cd7e323625401bc6ffc47
-Author: Junhui Liu <junhui.liu@pigmoral.tech>
+  Linux 7.4-rc1 (2026-11-01 13:26:31 -0800)
 
-clk: sunxi-ng: a733: Add mod clocks support
+are available in the Git repository at:
 
-This commit adds module clock definitions for the Allwinner A733 SoC to the
-sun60i-a733 CCU driver.
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-fixes-7.4
 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-n=
-g/ccu-sun60i-a733.c
-> index 8bc603393f5a5..5ea65bf5b5e05 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+for you to fetch changes up to 5fbe2d229bd3738ed63c7c9177466ad6bc130f18:
 
-[ ... ]
+  clk: samsung: exynos5-subcmu: Defer probe until power domains are available (2026-11-02 13:24:59 +0100)
 
-> @@ -511,6 +521,893 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE_FEAT(mbus_clk=
-, "mbus", mbus_parents, 0x588
+----------------------------------------------------------------
+Samsung clock drivers fixes for v7.4
 
-[ ... ]
+1. Properly handle deferred probe of the Exynos AudioSubsystem clock
+   controller.
+2. Fix integration of clock controller and power domains on Exynos5250
+   and Exynos5420: be sure device runtime resumed before proceeding with
+   probe and defer probe till the power domain is available.
 
-> +static const struct clk_hw *eink_parents[] =3D {
-> +	&pll_periph0_480M_clk.common.hw,
-> +	&pll_periph0_400M_clk.hw,
-> +};
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(eink_clk, "eink", eink_parents, 0xa6=
-0,
-> +				    0, 5,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    CLK_SET_RATE_PARENT);
+----------------------------------------------------------------
+Marek Szyprowski (3):
+      clk: samsung: exynos-audss: Propagate -EPROBE_DEFER from input clocks
+      clk: samsung: exynos5-subcmu: Use pm_runtime_get_sync() during probe
+      clk: samsung: exynos5-subcmu: Defer probe until power domains are available
 
-[Severity: Medium]
-Should eink_clk omit CLK_SET_RATE_PARENT?  Unlike eink_panel_clk, eink_pare=
-nts
-only contains pll_periph0_480M_clk and pll_periph0_400M_clk.  Because
-pll_periph0_480M_clk uses writable ccu_div_ops without read-only or gate
-protection, calling clk_set_rate() on eink_clk can reprogram the shared
-480 MHz peripheral PLL divider used by UART, GIC, MBUS, SPI, UFS, and USB
-clocks.
-
-[ ... ]
-
-> +static const struct clk_hw *npu_parents[] =3D {
-> +	&pll_npu_clk.common.hw,
-> +	&pll_periph0_800M_clk.common.hw,
-> +	&pll_periph0_600M_clk.hw,
-> +	&pll_periph0_480M_clk.common.hw,
-> +	&pll_ve0_clk.common.hw,
-> +	&pll_ve1_clk.common.hw,
-> +	&pll_de_3x_clk.common.hw,
-> +};
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(npu_clk, "npu", npu_parents, 0xb00,
-> +				    0, 5,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    0);
-> +
-> +/*
-> + * GPU_CLK =3D ClockSource * ((16 - M) / 16)
-> + * Here we use a div_table to select M values that result in integer div=
-isors.
-> + */
-> +static struct clk_div_table gpu_div_table[] =3D {
-> +	{ .val =3D 0, .div =3D 1 },
-> +	{ .val =3D 8, .div =3D 2 },
-> +	{ .val =3D 12, .div =3D 4 },
-> +	{ .val =3D 14, .div =3D 8 },
-> +	{ .val =3D 15, .div =3D 16 },
-> +	{ /* sentinel */ },
-> +};
-> +static const struct clk_parent_data gpu_parents[] =3D {
-> +	{ .hw =3D &pll_gpu0_clk.common.hw, },
-> +	{ .hw =3D &pll_periph0_800M_clk.common.hw, },
-> +	{ .hw =3D &pll_periph0_600M_clk.hw, },
-> +	{ .hw =3D &pll_periph0_400M_clk.hw, },
-> +	{ .hw =3D &pll_periph0_300M_clk.hw, },
-> +	{ .hw =3D &pll_periph0_200M_clk.hw, },
-> +};
-> +static struct ccu_div gpu0_clk =3D {
-> +	.enable		=3D BIT(31),
-> +	.div		=3D _SUNXI_CCU_DIV_TABLE(0, 4, gpu_div_table),
-> +	.mux		=3D _SUNXI_CCU_MUX(24, 3),
-> +	.common		=3D {
-> +		.reg		=3D 0xb20,
-> +		.features	=3D CCU_FEATURE_UPDATE_BIT,
-> +		.hw.init	=3D CLK_HW_INIT_PARENTS_DATA("gpu0", gpu_parents,
-> +							   &ccu_div_ops, 0),
-> +	}
-> +};
-
-[ ... ]
-
-> +static const struct clk_hw *i2spcm_parents[] =3D {
-> +	&pll_audio0_4x_clk.common.hw,
-> +	&pll_audio1_div2_clk.hw,
-> +	&pll_audio1_div5_clk.hw,
-> +	&pll_periph0_200M_clk.hw,
-> +};
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(i2spcm0_clk, "i2spcm0", i2spcm_paren=
-ts, 0x1200,
-> +				    0, 5,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    0);
-
-[ ... ]
-
-> +static const struct clk_parent_data display_parents[] =3D {
-> +	{ .hw =3D &pll_video0_4x_clk.common.hw },
-> +	{ .hw =3D &pll_video1_4x_clk.common.hw },
-> +	{ .hw =3D &pll_video2_4x_clk.common.hw },
-> +	{ .hw =3D &pll_periph0_2x_clk.common.hw },
-> +};
-> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(tcon_lcd0_clk, "tcon-lcd0", displa=
-y_parents, 0x1500,
-> +				      0, 5,	/* M */
-> +				      24, 3,	/* mux */
-> +				      BIT(31),	/* gate */
-> +				      0);
-
-[Severity: Medium]
-Are the display (tcon_lcd0..2_clk, combphy0..1_clk, edp_tv_clk, hdmi_tv_clk=
-),
-audio (i2spcm0..4_clk, i2spcm2_asrc_clk, spdif_tx_clk, dmic_clk), GPU
-(gpu0_clk), and NPU (npu_clk) module clocks missing CLK_SET_RATE_PARENT?
-
-The parent video and audio PLL post-dividers (pll_video0..2_4x/3x_clk and
-pll_audio1_div2/div5_clk) set CLK_SET_RATE_PARENT specifically so downstream
-module clocks can adjust the dedicated video and audio PLLs, and pll_audio0,
-pll_gpu0, and pll_npu are likewise dedicated to those blocks.  Without
-CLK_SET_RATE_PARENT on these module clocks, clk_set_rate() is limited to
-dividing the boot-time PLL rate and cannot configure exact pixel clocks, au=
-dio
-sample rates, or GPU/NPU frequencies.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261112-a733-clk-v=
-7-0-db7c5451ffa2@pigmoral.tech?part=3D6
+ drivers/clk/samsung/clk-exynos-audss.c   | 33 +++++++++++++++++++++++---------
+ drivers/clk/samsung/clk-exynos5-subcmu.c | 27 ++++++++++++++++++++++----
+ 2 files changed, 47 insertions(+), 13 deletions(-)
