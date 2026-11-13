@@ -1,86 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794593744;
-	b=IGdBWVTCMHBd09f7qbklJBXhLHWQC1qQcAiwtftyoaEqwdgGoxUHvgSu/tJ1rH5Bv8BU
-	 qXL8N3hSFo1EIaDS7ug6QZ4Miu9WfILnhB3FchPxb6Ok40Cj87VIjmLWFYGfzkVvgzENQ
-	 RGflkJvQcOQN+lJwHDp/EgGEB8k8AVOaHhmR/3lr5uH9MdBkQz0ywdz5jMXJC4yayxgvn
-	 8KebJZA7JaH6YiFtyTehoGcqdi1sLYfat28NVZl8xTkQUWBVI0RiLdH0LEIalcJRSnX91
-	 XrSnTpJ9OqC604VbDuDlI/AxWzbrfzwT18HqqYt0mRLJiCLBUz//AK2J3MQerc05zKQ==
+	t=1794595118;
+	b=FOnKzUa5CWIhQLFRj5L7oduHyuVDlWGwN8zmnS6NqkBPRi4tcEXeWCpZ16tdh6JyUE6J
+	 bdtdQDK2Aa/0L71sFzqhdKTQgj60eTlOwNK/Lkr1YUxAwl6og/txtU7uGR4fz+tSFKDjp
+	 7wvZGfgMhoOHukAUkdn4UL6xo5MZt5wSRKnBP85Asqg406DUWGWGqgZtp0XJujj2tCwUS
+	 2ti4NCEBvzkyBwTEeSU5aBJhos8BbAE5iU3FJs7JTlup9StUR+6wLYOrApUILAkeJjGE8
+	 W0s3agtw4qL7awUaUqQEuHpyyB32T9xPJ3EZWd7utG2qIJKPmvsw45GDvX4g27K+HIA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794593744;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794595118;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:From:To:Cc:References:
-	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=Qb0UkJf0VrVHdKGXACE+JKh+6CxNNCz7RSuZaWY+rFc=;
-	b=xrwwhEYCMtGwY4AFMCWfNusL+h4WBZ+HZ8rGC5nifFvR0DC2C2TRmjZLG4RMnTJRQ0lr
-	 6GFfPFI4KwWbX/6y8aXDVtrIa887cZ9nxhGpircrK0QUQVOnR9TBgkllD4gz61xj23Jho
-	 2XklvG9NvEbmDXrMsFJEpbC75INPbZ5t98UZ0Nn2ipu+7z19bWgagzNNnVQcAcSYZsVFf
-	 my50PtsgtW2NLa5Ci5SvFbxPGkhIn9r9efJxQ01IyOltseewkrsF7cnTufDHNfx6D6v8f
-	 +wqBG//93dk1ZEy6EOT6388UmMnM+6VsCLL1sPBgGpHcQUH7eJl/I7A2Bx0dUmbMQ0Q==
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=w2uTsZDSakSIiYfZCZm4T/XmbPQKfvOaN5W1vDGvmkk=;
+	b=tjoNDP9w0jW000iCdMPpxyGm3q4SYUeNqy7tHJhMh507nyDN+eDur0mSKB5BPGKCB4IP
+	 FinrANQNl7eDHr4JwibvMxbqxI94ETImZWyM7gvymIEagJhK5OodaPwFRWFnPr4HMGYS/
+	 62FBSHqE0US2eEJtUzjYwWkjbGifH5z0LXAT1Vvs86J+k7GszvC+cnBxQKlDx1/I441Xd
+	 p3PQzMUtYkg6CIZvAx8FpQE1o6Z2lFgvhJEx+fYIKX6ed3tpkZteDK8W36m5qQNtg7gyv
+	 SyD6UkK+l6ZDnDxrP8qnyPm63fwSy3o9dmMDyQ4AVbSWfwWh8icc9x0+dZkaghMgp+w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kTBcLH97;
-	arc=none smtp.remote-ip=209.85.215.176
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=BxjxiFJr;
+	arc=none smtp.remote-ip=209.85.221.48
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7C0606B502
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 18:15:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2B7C0606B502
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F07606A65A
+	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 18:38:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 13F07606A65A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kTBcLH97
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-cdd89d84521so878573a12.1
-        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 10:15:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=BxjxiFJr
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-491aaed7565so589790f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 10:38:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794593743; x=1795198543; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Qb0UkJf0VrVHdKGXACE+JKh+6CxNNCz7RSuZaWY+rFc=;
-        b=kTBcLH97rUrnJ4KURpQ1dhq3yExaNpCXKEffASOv9H47vMKspCGnaACNxMDNQw5951
-         Dq+Lcn90SYUs/ohaGnBmt669QXi2WdG41vDvENc6ZPTZvPt9CnHL5+vG7rtwxU3ltH4K
-         lGlOQbHZy84fitgauXGO2AOcVb+vaeGwHTSLI2k8D3sBppVN+chc1jekUcIJr8kUaZ9J
-         /Cm1RT2l2UzMaD0dBgm1xy38IcVHz7cs5dMQqKv9yu8eIPdIUDmuq3rhhGrVj2N6G9DX
-         isLUv0bCDHhBZnvjDBiTb1Nkqx/VBCsB6hPow7CZ0e9YOjthYYorGBq6y6aVuGOOaO7s
-         R1mA==
+        d=linaro.org; s=google; t=1794595115; x=1795199915; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=w2uTsZDSakSIiYfZCZm4T/XmbPQKfvOaN5W1vDGvmkk=;
+        b=BxjxiFJrM+M5Fan2rzxhw8amdOeFldpsV6DZ/IqNYozeMs26pNhTUj/YiYfbcQg8Ib
+         MRpWEWwoEYOE1pCY/0smk6YXReJWHtI2r0lBvX1Dk+JHpW/Jrk6353E+gC4j07ku6k30
+         F0HqHzeO9rqzBvRFq1eUR4gDM7M/U8lGaaOeI5+FXTbPBanMMxpZ2H60gmxJV2nNkD+o
+         SC+jA1h5YnEBEReCxRHCYXUGDxWMx+1YteqgHtpWPCkFpwpcCKIfvaRAuqJtTqJlQsD5
+         G0RQUPWGpigtC2esCR5zGE95T2V2/CnozL42iBKdsys/Yy+ccpzZKet/cYfoyC8pggDV
+         BKMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794593743; x=1795198543;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Qb0UkJf0VrVHdKGXACE+JKh+6CxNNCz7RSuZaWY+rFc=;
-        b=zAdBt/x14MQSQSSYSbEGFEMG/OZ39a9v4zVTRFl2Dc1QWlX21HyVaxUPUjZeQ3q9WE
-         2ZYoxy2vHjqPBvBoilf3i+3RN40Th72UvlPm1/xJ9VXnNpCfOT8oOqvLNjqyELms4RCT
-         G55DVJ0u8yvTKuTjZZuUvazN/XzVH4kaNVPg9U7Z7qVbgJ3dwqVwgJ8y+kp6gOCzyWFo
-         qgzo4T5jQvnZzKD1cqyRmWdBPiDtjotT0mz/I2xypb5a/lsKoWfpSXeI9sUVZokB5N8w
-         upD2L5fcc7NavtVYWy3eatt/CrWpi60Gqh0xytPBw3mjkK02RC1iqGNnv3JjMdn/DwD4
-         PKsw==
-X-Forwarded-Encrypted: i=1; AL+hErGxWl7pjegQ7GgnjmOJ35cDpQ5YjwM1IKQ3s62DuMJf7tycHVcwc02VHQTmDxwcMy+sPSl5UNxpinY=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8Pv4jADiQ3mndALutxOqIoIxLSNWp8y/ZBt1s3RX5tQzOuJ8iK
-	B2XO1cIsaPN7GG9pnok9nuPZiVp17j8qphQXUqMfmch5CK4nJYpimdWw
-X-Gm-Gg: AYBFou0XAUMkUGi8Gn+2qOADYMQrbs61SlYogsLv/U0dsm3QMyrl5DF61CUdyLCF0Og
-	oJJm7rwkgQ7bcdV438Tht5kSAhS+bItTApmhPMwks660ija6EpoOivBa1DSOvR+NzgU/vpON6Gp
-	iaJ07rUQe5NNQVPTxhy+zJF2qfHfkTr8D/oIMyC2ckyzHzZOZ6EIdgftErINP9U14Dv4XjsSBJg
-	PKoHhRvDI3RyVnrQ2JL8xvVanRNuJdEZuUFq7QCAqAoMYvmCU/QPaTIXH9lQE2T7aM6KmCxsQ1a
-	NvGGegfUzpJhMQYLPyt1ILg2HFQLdIMrhthpdpi9E1LWoSnb2fOxsR+I2rUYSELrFJ83+p6g7s4
-	yInAQCJKWrNKtDCtMk9kL7QRjfGMhkvsKqSZITTNI2fI2/aFuK8HJPir9HdXc6KbugIhYz3Zgpm
-	b9NNZCTLErgLe38fuLZTuXolRNfBkIf/hTQoc9QoXr0WUc7Re64iTXgQfl4W1DLMKXD04Ugbz+F
-	SyHffukKXCGWIarn77g6JKp8tGw9jHaS4E5l0CdY1/UxQoiYYfl6UUxHVLAEcWPzkofyiBV0kF6
-	w23C8m3lyq1iD1bBvKkPBokNffszRUXd3PpcYnKAtdFzeVfKtB12LC5X
-X-Received: by 2002:a17:90b:4f41:b0:3b0:a1c6:95ae with SMTP id 98e67ed59e1d1-3b1b0ccfbfcmr1844303a91.31.1794593743599;
-        Fri, 13 Nov 2026 10:15:43 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1aeb17042sm5421608a91.6.2026.11.13.10.15.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Nov 2026 10:15:42 -0800 (PST)
-Message-ID: <85af50eb-9fe3-4327-b05d-18eda5993446@gmail.com>
-Date: Fri, 13 Nov 2026 10:15:41 -0800
+        d=1e100.net; s=20260707; t=1794595115; x=1795199915;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=w2uTsZDSakSIiYfZCZm4T/XmbPQKfvOaN5W1vDGvmkk=;
+        b=lqUwf1e8m1e+E3w6e5Ld4vsvsPIy24Hnd1pr+ZniWE1uN+m5JeYSUF/kA5IBHz2BpI
+         Ha1R7uYf7Clb4+GyXhICpzzKTJklxfBIAL1VUlXv1HK8CuCJ41ZYsJqa7lGdIG88PSws
+         gQOmUijOEobiXzLPiMOOow7lwlqwC02eUa0bH0qwrPy3J2YdBE/jO3DDyD2CFJ/YkuVP
+         8pgxZOd3sMwSV2VsLXGZ499UPWXZqcsx/FBJ7NkObcxADh8h1DfpxnrXTFQctLXDI2hz
+         wA+9vie7aaDWR1RrOWKSI0HNyvrIA55uRiA1krPL07ROp5w8ZIs0O4MEyjIg9nt0WfSx
+         v/lw==
+X-Forwarded-Encrypted: i=1; AL+hErHfipBPITImN4mRolFsvK/C6mRnJpf99LS/jkM3CwAcVwdNOxeo+Vb9mevYJ/NGdM0/QfdWoS7mqoY=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+HGdBVRlQTVOXTgONGCilWGQ065vPX7z4yD+9HeqeO3FxVqpRX
+	WYq6I6pK7jsRUdToJlQFVaouy2CcXBDs2zy4j1VGErb8uCNiFzAehPP+ygLgcYprGjE=
+X-Gm-Gg: AYBFou1uZXIxeoxMlw5pSeJhIMIi/YLy9WA5YKPXnpvunPuD4t6ow7RmOTln/5poJmP
+	/GOSSlmdBqtNCVilsy9arbn+OVioG73Gu8lJEPga3SekfMUPtyl2PdB8QbCKOTHeiLM+ghXwlqe
+	SoEdG7PH8AHuIxIEuRMSEqNwXxWCAMZYssaSRSUg44wj8o9K5JmfWcbSuq1yCGUMVx4qQ2wX2be
+	8/lE4vYLrXwM2vYEpIEy+VTjQ4nwXtHpMtGkBioUTrfITYe+uRpBy8YQMsvpILjF7yMESKrpdIF
+	tJ+cOT1a/0+ZG8zqHhSLBYK7YpeZ/J0clpwZYc6OI33DTd3/4b5hhnaOTi6gPFOdAz9SqSxZ3So
+	a4lwmCCBwVFEDmK5GK9mMCjlpBBIqem9aJNHa744kj1OrAyzYEaeeXtvs01xMFEEzHSg1WCbRY2
+	VxLXjEG7Zmfqr/OUUpLzoZPsdgPoJKZkjkVoJiiNdJJ5DR4/50BW4/xaxXgvlXHc16sw91Oq/Oo
+	irz0CkHU2iW8umOz2DqqUu+O+qx3FvA7G8W5TEKd9+SjJUqNK9D+3AU62j8JVZ1ZKUwknd4r63z
+	NQXuSOEk2DXYty8ZrM59NGxz0xQKsHR7aqefgJOqqbPjTCjhsi5c50pJp6iXCrQi
+X-Received: by 2002:adf:e008:0:20b0:48e:6f76:de98 with SMTP id ffacd0b85a97d-49c71e3e1c0mr5943328f8f.9.1794595115227;
+        Fri, 13 Nov 2026 10:38:35 -0800 (PST)
+Received: from arrakeen-2.home ([2a01:e0a:106d:1080:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5f7828a4sm6865870f8f.23.2026.11.13.10.38.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Nov 2026 10:38:34 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH RFC 00/23] arm64: qcom: enable SM8650 audio without ADSP
+ firmware
+Date: Fri, 13 Nov 2026 19:38:14 +0100
+Message-Id: <20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -90,39 +93,141 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] MIPS: Ingenic: Add XBurst SMP support
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org
-Cc: =?UTF-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= <zhouyanjie@wanyeetech.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Paul Burton <paulburton@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- hns@goldelico.com, paul@boddie.org.uk
-References: <20261112184441.3724150-1-f.fainelli@gmail.com>
- <20261112184441.3724150-3-f.fainelli@gmail.com>
- <ea78059f26aa3e25822665a1a462951695bd1e80.camel@crapouillou.net>
- <18bc9378-3f8c-4212-98cb-40e876bf996b@gmail.com>
-Content-Language: en-US, fr-FR
-In-Reply-To: <18bc9378-3f8c-4212-98cb-40e876bf996b@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABZZ92oC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzNDQ0Nj3ZL8gsxk3eJcCzNTA93UHCPdZLPkxDQTI2Pz5ERzJaC2gqLUtMw
+ KsJHRSkFuzkqxEMHi0qSs1OQSkGFKtbUAxccrKHkAAAA=
+X-Change-ID: 20261113-topic-sm8650-el2-c6caf4237ca7
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, 
+ Rohit kumar <quic_rohkumar@quicinc.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+ linux-gpio@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5790;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=nNsA+r5juXKjiRcSwoHtRAKZZ9Tqefl8bh/M49w5Yxs=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBq91kct6ILQiiCLBdkeOYZBX88DapotPq1jQSJmYtF
+ TxO++kKJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCavdZHAAKCRB33NvayMhJ0Qt3D/
+ 4ypug2YvyBD2m7gomADVISy/gSHyEitoz0M8hnoOG086qtlX7QAs3zWxhG9WDSNbqImwU0LbZFHgo7
+ Uiyk5KZ7aUvHg7L8sW0OUiFWbTDDmx8ihF6GJiJm4cPsrO3PaBMQcjca4eaR29JjQafpKE9u8rSPbR
+ UaxgAiGGeAEqEXcK8muyQuUGBJOdCL6o9o2yNo7ckfQDg9K5HI3mDkcdD0er4ax+pJ7aRN1ZpB993R
+ nZx15WZ01xd8vtp0jCd91qCzL/B832FQnwygf6Lp2zwbYElCarQ5d7wxTWFMuJOLJ1vHhFavnXJxb1
+ FFZW3luqvZAREglP+Q1o05SO1N/H3Y3aRFyf/ob9+KPVt83xNSk77jrcSyx0stAJhRndbnMNZOFyPs
+ zbr6V5N0zL4BMFw/ye18a8UpedA93NeohI80VDEfnYwjTHNC5H9GDc0UKBNHK7lJxoMyc3zvDgDNmd
+ OYvbRhzSbVZFWbcNpWVVo3SXFEPolkQBQd8+1ZRnZ/j/XyoN/8F7HyPTYw2K7vAdh9NclY2fbo34Ma
+ /N9qBQqqVvf93PL9mXQgWMNwuGPM1y8Ki/YKzcaYHBhB+wLBuT+nyeajeJj7X5CGI8KVIzCI9CsV6V
+ QiS7q0nqc4VDLj8TiY/mLqSNNFgCPGexp5j6CQi58uspXjJgw38SaaYve4Ww==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-On 11/13/26 10:07, Florian Fainelli wrote:
->> Drop the macro guards:
->> .cpu_disable = IF_PTR(IS_ENABLED(CONFIG_HOTPLUG_CPU), 
->> xburst_cpu_disable),
-> 
-> OK.
+This patchset adds the necessary plumbing to drive the SM8650 audio
+interfaces directly from Linux. This is required for boards like the
+Valve Deckard that boot Linux at EL2 without the ADSP audio firmware,
+meaning the audio interfaces must be driven directly by the application
+processor through lpass-cpu.
 
-On that suggestion specifically, the member cpu_disable does not exist 
-when CONFIG_HOTPLUG_CPU is not defined, so although PTR_IF() evaluates 
-to NULL, we are still trying to assign to a non-existent member, which 
-won't work. I did make the callback always defined and used 
-__maybe_unused instead.
--- 
-Florian
+Without the ADSP firmware, the LPASS clocks (MI2S bit clocks,
+codec macro MCLKs, LPM memory clocks) and memory zones must be
+controlled by Linux.
+
+To support this, the series introduces the following changes:
+- Bindings: Adds dt-bindings for the SM8650 LPASS core & audio clock
+  controllers, LPASS CPU, WSA RX/TX channel ids, and Senary/Septenary MI2S ids.
+- Clocks: Adds drivers for the SM8650 LPASS HM, core, audio, and
+  AON clock controllers.
+- ASoC LPASS core: Prepares the lpass and lpass-cdc-dma drivers to
+  handle multiple LPAIFs for I2S ports, allocates and maps LPM buffer
+  memory for DAIs, and adds support for the optional WSA interface
+  and Senary/Septenary MI2S ports.
+- ASoC SM8650: Introduces the SM8650 lpass-cpu variant and allows the
+  sc8280xp machine driver to be used with lpass-cpu to keep sound card
+  bindings working.
+- Device Tree: Refactors the SM8650 dts to move EL1-specific Gunyah nodes
+  to a dedicated sm8650-el1.dtsi. Introduces sm8650-lpass-cpu.dtsi for
+  boards booting at EL2, and wires up the speakers (Senary MI2S) and
+  DMICs (VA macro) on the sm8650-valve-deckard board.
+- Defconfig: Enables the SM8650 LPASS CPU driver as a module in arm64 defconfig
+
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Neil Armstrong (23):
+      dt-bindings: clock: qcom: add SM8650 LPASS core & audio clock controllers
+      clk: qcom: add SM8650 LPASS core & audio clock controllers
+      dt-bindings: pinctrl: qcom,sm8650-lpass-lpi-pinctrl: document clocks and power domaines when ADSP is not used
+      ASoC: dt-bindings: qcom,lpass: add Senary & Septenary MI2S ids
+      ASoC: dt-bindings: qcom,lpass: add WSA RX and TX channels ids
+      ASoC: dt-bindings: qcom,lpass-*-macro: document less clock when ADSP is not used
+      ASoC: dt-bindings: qcom,lpass-cpu: document the SM8650 LPASS
+      ASoC: qcom: lpass-cpu: get the optional codec_mem3 clock
+      ASoC: qcom: lpass: add support for optional WSA interface
+      ASoC: qcom: lpass-cdc-dma: add support for WSA codec DMA
+      ASoC: qcom: lpass: prepare to handle multiple lpaifs for i2s
+      ASoC: qcom: lpass: add support for MI2S_SENARY & MI2S_SEPTENARY
+      ASoC: qcom: lpass: support mapping I2S ports to multiple LPAIFs
+      ASoC: qcom: lpass: support LPM memory type for I2S LPAIFs
+      ASoC: qcom: lpass: allocate LPM buffer memory to DAIs
+      ASoC: qcom: lpass: enable the right codec_mem clock when usin LPM memory
+      ASoC: qcom: add SM8650 LPASS CPU driver
+      ASoC: qcom: swd: allow LPASS_CDC_DMA_WSA_RX0 as soundwire dai
+      ASoC: qcom: sc8280xp: allow using the sc8280xp card with lpass-cpu
+      arm64: dts: qcom: sm8650: move EL1 Gunyah nodes to sm8650-el1.dtsi
+      arm64: dts: qcom: add SM8650 LPASS CPU dtsi
+      arm64: dts: qcom: sm8650-valve-deckard: enable audio
+      arm64: defconfig: enable the SM8650 LPASS CPU driver
+
+ .../bindings/clock/qcom,sm8650-lpasscorecc.yaml    | 179 +++++
+ .../pinctrl/qcom,sm8650-lpass-lpi-pinctrl.yaml     |  20 +-
+ .../devicetree/bindings/sound/qcom,lpass-cpu.yaml  |  74 +-
+ .../bindings/sound/qcom,lpass-rx-macro.yaml        |  17 +-
+ .../bindings/sound/qcom,lpass-tx-macro.yaml        |  20 +-
+ .../bindings/sound/qcom,lpass-va-macro.yaml        |  13 +-
+ .../bindings/sound/qcom,lpass-wsa-macro.yaml       |  21 +-
+ .../boot/dts/qcom/sm8650-ayaneo-pocket-s2.dts      |   1 +
+ arch/arm64/boot/dts/qcom/sm8650-el1.dtsi           | 775 ++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sm8650-hdk.dts            |   1 +
+ arch/arm64/boot/dts/qcom/sm8650-lpass-cpu.dtsi     | 222 ++++++
+ arch/arm64/boot/dts/qcom/sm8650-mtp.dts            |   1 +
+ arch/arm64/boot/dts/qcom/sm8650-qrd.dts            |   1 +
+ arch/arm64/boot/dts/qcom/sm8650-valve-deckard.dts  |  85 ++-
+ arch/arm64/boot/dts/qcom/sm8650.dtsi               | 799 ++-------------------
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/clk/qcom/Kconfig                           |  12 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/lpassaudiocc-sm8650.c             | 777 ++++++++++++++++++++
+ drivers/clk/qcom/lpasscorecc-sm8650.c              | 509 +++++++++++++
+ .../dt-bindings/clock/qcom,lpassaudiocc-sm8650.h   |  47 ++
+ .../dt-bindings/clock/qcom,lpasscorecc-sm8650.h    |  30 +
+ include/dt-bindings/sound/qcom,lpass.h             |  24 +
+ sound/soc/qcom/Kconfig                             |  12 +
+ sound/soc/qcom/Makefile                            |   2 +
+ sound/soc/qcom/lpass-apq8016.c                     |   9 +-
+ sound/soc/qcom/lpass-cdc-dma.c                     |  47 +-
+ sound/soc/qcom/lpass-cpu.c                         | 344 ++++++---
+ sound/soc/qcom/lpass-lpaif-reg.h                   |  51 +-
+ sound/soc/qcom/lpass-platform.c                    | 482 +++++++++++--
+ sound/soc/qcom/lpass-sc7180.c                      |  10 +-
+ sound/soc/qcom/lpass-sc7280.c                      |  10 +-
+ sound/soc/qcom/lpass-sm8650.c                      | 651 +++++++++++++++++
+ sound/soc/qcom/lpass.h                             | 198 ++++-
+ sound/soc/qcom/sc8280xp.c                          |  16 +-
+ sound/soc/qcom/sdw.c                               |   1 +
+ 36 files changed, 4471 insertions(+), 992 deletions(-)
+---
+base-commit: ddfe51b0a0f5dc9e415cc2c8ad8db17532dd426b
+change-id: 20261113-topic-sm8650-el2-c6caf4237ca7
+
+Best regards,
+--  
+Neil Armstrong <neil.armstrong@linaro.org>
+
