@@ -1,89 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794605478;
-	b=nSY3iwlKCl8r+4s/+ZXp+3PpdbaDefxahtzsjmRbxVpgSznrNVdnRfD+TeysQvcUpjo+
-	 ZqPfd9Oxv2+lGn3i64uCH5yvqPmCCGuPay6sYUBSH5WGYDC5sgQtdsk4txA/bfozsJ9J5
-	 YNNkeMfk1hLQpK3cBEBoefcacZ1Wco01wy/usbZBwM5EptJOzTYz63e10yI5b3DWMe/GP
-	 5k5u22HwLINBjmx0xvI1N9nCto1zD+RvnkzsznLUq+qrsrz3j2IuNp3SW83udyFek/7es
-	 H7iBCpnveIRSi6RstxLCQoh2f06skdlS2iPZg8NY0sn40y5Z5ds6BADrDqNXgiOEX0Q==
+	t=1794605480;
+	b=MJwKlYgxGWDuhZPPu+4C7r2Qd4T+cNyEnCZzTiBnBbgO99cHdCGbRxbpuT2t2flLOjsf
+	 cbncWGfC2HXFhOOTSHtsEP/KQ4TV9N/v3fOj8SDi4RpyWl1OY2HM1V1LKd+A29P4FP2Pd
+	 /31ebjTDMp0LBBmSh4B7vj5DX0S3dJr1PuXqYIwL35i9vjirxertiWIPKQmpQLZMimDj8
+	 aTPJzhsW/7Exq6+7+bZcOBhqG+s+aA1zYR5OMWxmwuF23P1eAqOV3iz09MKQ3fLs5VD06
+	 W76f/HB5dXVBrkx9qrF1/KSdkyAleDhVhT50DS4IGA4FUDuippZW9gMNoL0j0Yc7NFw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794605478;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794605480;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=kMoMcD1Lt/e75Xj6NwZBeN1pbuvertD/cK+qW6+KjfM=;
-	b=C73+PKEVLjt0r16X2TyLheV601T0Y8FwWBlofhUK3PuxFNQPheuBhRL80yNB/TZMTSCY
-	 8O0RMgUScz0E79ezsOSCj8cfN9dUAB0Eq7P9hLRpRYnnx57cnpRxZyGdafkWKdygnzump
-	 owkv9Dd2yTMG5UgpAkl39CrqkhpOFMBv2DBHj1KwuBn8wf60K2Gt4iDNV4obcOhOEM1V1
-	 p18lcplo3uPplPuwMu4o/fseWGLhqe00uEo2sH9PcC63nipv0SECB1E8xg2aPIAAoryFV
-	 PKGXbEpYI5HZiKU2+SzNpo1liaZfw0Mfcf0aPpVD7iKsnhY+ZL7UMfq8SDL0US+wG4Q==
+	bh=1Z97KMLhks2eUt1zVFkZTVVZd8kDUivIxgxGyFdw6i8=;
+	b=MiO3yEFiHsYf8keT1nem323pHj6cZ2iDpQGcRNpTdY/A96JXaPlGkzuREUcFBUlCIbUF
+	 6tqbDZSuD21ofyXOu/C0C4O+H3y+0b13M6ZYQRLeRhIO9oqUwOeex0NSPc5eo8gidcToy
+	 hoJXUmSzgIWHxtQ8mCc4oGNCxzC22jbV1a7M/qkHvb3fSgnUn4ZZQgv0SqISpDmvddiEz
+	 vI6ZQHsmB8497buoFxfq1QVu3HDW9Mlj0lvH/y3fZ3I3JE6mZ5IAK/yA+cBi67Wf1Ak5O
+	 I/1MYZn2GJwAfxLO6P8/oA5zORuPoMKwtO64n+qJrp0VRFeF7wiqunH/+0bATNbMJbA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=W0icztte;
-	arc=none smtp.remote-ip=209.85.128.54
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=iXISRmA+;
+	arc=none smtp.remote-ip=209.85.221.47
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A55606A883
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 21:31:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F1A55606A883
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BC8606A333
+	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 21:31:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 49BC8606A333
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=W0icztte
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a20bdaf39cso23748615e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 13:31:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=iXISRmA+
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-490f38e9688so1014436f8f.0
+        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 13:31:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794605475; x=1795210275; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1794605479; x=1795210279; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=kMoMcD1Lt/e75Xj6NwZBeN1pbuvertD/cK+qW6+KjfM=;
-        b=W0icztteFaa6NYbT/QAMgfvslUHIGvz9Q9hJaV5MZastAiI+FLdz/e3yH+fhEBn/pc
-         xuiBT9kq3STl/OlC3L1g+Bt/1ph1fZrxBZT/9WQ9eLfovE7WrH9tgQu8/d2ix61SlKEx
-         ANrZGg28xLox5Feob815ZcshJq6JM5aFXbW1wHezRmb5Os9ZkviBm1TvtgjJIzW1quHQ
-         FY7ZPzOF3L7xDjVGcHXCZFMKaK/iKVssyVWFNX/S3ZT6uMO+mb7vsjMYj+DUgk9wmC7d
-         xaSnf0QiPf6L5Las0YvQ1K2JQlD5TJOMJe/XcopA9sKocYMqns2USzVGZ1B5wTkKD2y5
-         xJUQ==
+        bh=1Z97KMLhks2eUt1zVFkZTVVZd8kDUivIxgxGyFdw6i8=;
+        b=iXISRmA+oktDtrSv4kMbnArkrGEcskye3m/DKWMCHC3TWyVdckPnyUctcpisWOiEkB
+         sMVbcaILkheEaGTGyIknfeMxWCMVG9EDCFoIxLwY8PZv/YW4/EybM5Z6VkGITfmSU0l/
+         ymf5zvwoZur1gbqZef7QlNw+/jqJCae1/2e4E8jqEodtr9rrYIuh1WU4SVTTs9WV08R0
+         VFiYpo8EX7uxwTjXipkDm94WVOLKYE4AWLtO3R1LZyr0QbXgpt9uHfy4nQlBnWSFUdBr
+         hYLEUdFGx35sr04h5U5gbSECsGEKti1kElQ830u7UwVGVI2F1VZZjkS6TmWilQecauRs
+         hMpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794605475; x=1795210275;
+        d=1e100.net; s=20260707; t=1794605479; x=1795210279;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=kMoMcD1Lt/e75Xj6NwZBeN1pbuvertD/cK+qW6+KjfM=;
-        b=gIhcrAzhi6pMyvh3ZiHSSIMErc4G24icu/NGDGidqqBecD/x/oRytrLkF0ebq7vvUe
-         icyMuf5S7ASBmC6J9cdIi+Ffnp92O9waCPbdDdLBceoOjc9IsjcxecPRdZr1QmzgWTyv
-         0flV2RP+gkwZ9Tfkflr/SmphjZSP7Rog83ZVnO4WO+wUkc5WR09bx28niocAdukypwxI
-         f+lWWpIAnv5fIhy5nfN+aPHN3XL/j+mSZdp5LdkcJCYe5Iqd6Oe79LMKJJGlCT7Bbkh5
-         BDK46BstcQAVO8yo5aInczVh2/XgiIBbqxss5d4q6hk4BgLdCyfRRaPMIKFdY/so+kbF
-         rEVA==
-X-Forwarded-Encrypted: i=1; AL+hErFOHsu+JFgn77m/RTWAdb6ZJ4j+z+rRZMp9jmqyjImzr7LiZSfhaHPxhOQNnnlTf88tvU3HFkReUNs=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+wsA0WjI6Q7S79LhD1/eLlj6WMHqCXf6tGyPrgAKLeKi598SOu
-	ovV/Sd14CDhziHvlKrwaoazw3OiydsaX8sjbnwJh+ysFFeGtwC7PeIA6lrXIfHTOnZQ=
-X-Gm-Gg: AYBFou2ZqFYXxf6nRZqY0ojlYS5mckOHWtI+SkA6Uuev4LQDPvwGFwg0mHawG/GUOjr
-	ks/vEjXK4vARsO2wZHzoZLT6NCq3xO2qrBhMsH4XYhVmt7jYne5tcgUJoVskocbPqo8o9DqitL2
-	VnyIhYVDKAiBSvS1+xRNLrIZjjJZCmSlwd/tnanbCD/WdvRmHJ39oSn6fwRzFlNjiEnvU5rQsTx
-	MGGcFFhjhgN0qmD1AUYaDrs+o2gXYpbtfS8lwL2JsEijYYdWQD7HrFHCK/4038xT20lHI+pa9c9
-	7hIC7JHyQpgYEqiSRV8MsSiPy692Q6Iz39NifuVUCJ8JqERabOrz+mw0R6cKX2MUlVDBBr4q4I6
-	3OgkmT4FR2Ya4hzCfV9GxyvOiG9UPZEckwcnZ0RyEWR6eDydHaeKW2Py7mMPASv3I8F2rKbXwgb
-	k/hvve58lZgFQ5TEcFs9V5Ut5YgKfrAq4pvveMH6wDPdWkzVMHaXYEk10pGHz4J+i29q70HKzZx
-	cKHEkSEpXWdDoN9TO7DPAESZZ12krF25eOb3OIxyu43XL9YY6CX3AxkKVvtNZLVwKUviGi2hH6q
-	q5N3CjuSArxqgmmwfuUwKHRafG9iWtFOdezYbhW22oeJg5SsvU/XgjycqEZA8zusLsOv0Ctk6JI
-	o04rasEC7pBtbZUwzXrYDKncNdQ==
-X-Received: by 2002:a05:600c:46c9:b0:4a3:d327:6ed with SMTP id 5b1f17b1804b1-4bb55a5fdf6mr84563715e9.17.1794605475200;
-        Fri, 13 Nov 2026 13:31:15 -0800 (PST)
+        bh=1Z97KMLhks2eUt1zVFkZTVVZd8kDUivIxgxGyFdw6i8=;
+        b=2jaYWEu9RNuxgZX3vcTXT94dvhQSaNLXF5a0ktvOEIEZXV3Bm+tsOIIM3YbmSnv5bg
+         lSyrVTo3/n1JiVoOvJl30F4hcZat3svMbRLMKU2cmnZEeFoPHiP6+haXpc30xP0ODKEE
+         uPVV2mdIAZQpMm2agIeBmN0il52MOprkK2E/3RmfDCTMaPOs7ObdPMVnQeTJu/Qrs+b/
+         nIvqlBtS7f16p3veYwfqIpQrWK8W0VViQF0mqRHWRl3vBnhzQKB+6FT0YPk4EZBH9snu
+         0P1v80C3M4sEvvly8L1Yck8JdLKhCd9UPXEH+4aYEbOWf8j6TFq7eEXgxnl45nFwieNK
+         OF1A==
+X-Forwarded-Encrypted: i=1; AL+hErEGg+LgtePaYVT8KW41r+qBUgR+ZdgxBKb3OP0cpLwcAFiNsPwmZifB8alQ1nKT0oAucoJiZcUu8Wk=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+NqTa5C2nx1Q/VQ4TFTsTNegZ0xooehUV+o/cOVvXXy1XxCODI
+	hZ4T4hrKhQHD6B+92PPPR9oH0EXXrk66+wdj3fksvTy7d+xaJRtyO/hqlkFACzhHd9M=
+X-Gm-Gg: AYBFou09z/xftfrOmJWkIJRBEAAEKRoqcDWZ7EqRt7MOUCb/Uh7XbyxNg1Glv6vtWbM
+	TKmLS46OKHZ7CQSrDH7aRTNiLFDY+hXnvfhKmjdlzUrDhKwS0WXVLOjP6eXuVFWsb0M1ENRhOuS
+	Xswww9zfdOaLewPveAUFh0xPzoPHtU+9iBB3MWoldKeIz/wqWOPrYRGC90g90Oxgfx8Bes8EZ/Z
+	RN+uKRyzCHy0zV3n8dVAlc4zD8oXa0yVFppSOvjaNIjGJSQgFxp9//7tauDjoltUyYEJyzw9z7b
+	1TmtsNrVNLn8zc01ZLy2hdWIgSvwPu/jEC1OWSCmjaGADxdfwdDj0kMc2L1REbUa1kcFOdEc16C
+	rcJzxfQXpZl935FFqfmqxpubP9jDhSNHhVCTO9A66BoZ1/dBCS9ne4v8ikza4BegYdsGRlN25KL
+	QoQ7iZ2jEkMAPzWJzObYz/sDeCt+GdkoQyMviRfaWg7ca0EkgoJ1ZiW3pl4on0LFvOQpsNUFmAF
+	r977qC1Ivni7vyGIOltTy90INkhVBdH2zFoDYXKYAxevtX/k4nK0JxK52FSLbUqupHsjhY6bBBK
+	3tj62EZbectBDWwP07HjVp9KIhuT/d9MQ+33dSFFcln4qNU2e0pd0WFO/wDedL2LBsjVGuefFQp
+	Bir77M4yxgWQuMYfuANQJ+8f2lg==
+X-Received: by 2002:a05:6000:4305:b0:49b:d8e6:1723 with SMTP id ffacd0b85a97d-49c6d452d42mr9891966f8f.2.1794605478667;
+        Fri, 13 Nov 2026 13:31:18 -0800 (PST)
 Received: from z13-ek5.local ([151.40.161.170])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c609c8a77sm7447727f8f.49.2026.11.13.13.31.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c609c8a77sm7447727f8f.49.2026.11.13.13.31.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Nov 2026 13:31:14 -0800 (PST)
+        Fri, 13 Nov 2026 13:31:18 -0800 (PST)
 From: Ettore Chimenti <ettore.chimenti@linaro.org>
-Date: Fri, 13 Nov 2026 22:30:47 +0100
-Subject: [PATCH v3 1/4] clk: ti: fapll: remove ti_dt_clk_name helper
+Date: Fri, 13 Nov 2026 22:30:50 +0100
+Subject: [PATCH v3 4/4] ARM: OMAP2+: ti81xx: use non-scalable voltage
+ domains
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -95,7 +96,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261113-patch-ektor5-dm8168-clk-v3-1-a42cd1edc5f3@linaro.org>
+Message-Id: <20261113-patch-ektor5-dm8168-clk-v3-4-a42cd1edc5f3@linaro.org>
 References: <20261113-patch-ektor5-dm8168-clk-v3-0-a42cd1edc5f3@linaro.org>
 In-Reply-To: <20261113-patch-ektor5-dm8168-clk-v3-0-a42cd1edc5f3@linaro.org>
 To: Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
@@ -110,93 +111,54 @@ Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  Ettore Chimenti <ettore.chimenti@linaro.org>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794605472; l=2570;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794605472; l=1792;
  i=ettore.chimenti@linaro.org; s=20261014; h=from:subject:message-id;
- bh=FcaXkSbmbLoEIeujNjI02i1V62uXoYWuhvh7robgIBw=;
- b=yLzZpIemdaez6TzWeagpbhxQd2QIPUczwuLxkq3FTp3SnHfFkFs2ln3YalKRTVg4zPqtLR4Zq
- gaAXhu0n3+tB3801Yk1hXh8pMvLRuRWqQDG22Hw4QL2NW+kQgCF34IM
+ bh=IKFwMoPwqeJrJOd6paqyhsFrEgkIZs2drKUuLxdD8no=;
+ b=AERHNgcVKZvhpwIQt1j4A6/AX353m/5rBEbtNJaMMfUtPJAmy0ZnFJTKThqFJVvq3htmRF3v/
+ p2RyPKtI4iJBfzcDoXyR3witwvXGXrcp/sEgpjcxpBju2m8aSdYnfkN
 X-Developer-Key: i=ettore.chimenti@linaro.org; a=ed25519;
  pk=wCaUblFVaqhuBTQt/hAtysafsAaEsqj/yOD9SPlz6NM=
 
-From: Rouven Czerwinski <rouven.czerwinski@linaro.org>
+TI81xx SoCs reuse omap3xxx_voltagedomains_init(), which registers the
+OMAP34xx/36xx voltage domains for every SoC except AM35xx. Those
+domains are marked scalable and reference OMAP3 Voltage Controller and
+Voltage Processor instances, which do not exist on DM814x/DM816x, and
+no PMIC data is registered for these SoCs either.
 
-The fapll driver uses multiple `clock-output-names`, so we cannot use the
-DT helper in this driver because that would assign the first clock
-output name as the parent name. Otherwise, the clock hierarchy would
-look like this:
+As a result, omap_voltage_late_init() tries to set them up on every
+boot and bails out early with:
 
-        main_pll_clk1       <--- main PLL should be parent of other PLLs.
-           sysclk1_ck
-           main_pll_clk7
-                    ...
-           main_pll_clk6
-                    ...
-           main_pll_clk5
-                    ...
-           main_pll_clk4
-                    ...
+  omap_voltage_late_init: Could not get sys clk.
 
-Reverting to not using `ti_dt_clk_name()` solves this problem, assigning
-the correct parent.  This change do not affect other SoCs as the only
-consumer is DM816x.
+Adding a "sys_ck" clock alias would only push the failure further into
+omap_vc_init_channel() and omap_vp_init(), which then complain about
+missing PMIC data.
 
-Fixes: 9e56a7d4263c ("clk: ti: Update pll and clockdomain clocks to use ti_dt_clk_name()")
-Signed-off-by: Rouven Czerwinski <rouven.czerwinski@linaro.org>
-Tested-by: Andrew Goodbody <andrew.goodbody@linaro.org>
+TI81xx has no voltage scaling support in mainline, so, as done for
+AM35xx in commit ddf536d0d7e1 ("ARM: OMAP: AM3517/3505: fix crash on
+boot due to incorrect voltagedomain data"), register the non-scalable
+voltage domains instead. They still provide the "mpu_iva", "core" and
+"wkup" domains needed by the powerdomain data, and
+omap_voltage_late_init() now skips them.
+
 Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
 ---
- drivers/clk/ti/fapll.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ arch/arm/mach-omap2/voltagedomains3xxx_data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-index e54b1df3436e..ae2f6fed10f6 100644
---- a/drivers/clk/ti/fapll.c
-+++ b/drivers/clk/ti/fapll.c
-@@ -10,8 +10,6 @@
- #include <linux/of_address.h>
- #include <linux/clk/ti.h>
+diff --git a/arch/arm/mach-omap2/voltagedomains3xxx_data.c b/arch/arm/mach-omap2/voltagedomains3xxx_data.c
+index e98a3f289c27..478f5eb2a17f 100644
+--- a/arch/arm/mach-omap2/voltagedomains3xxx_data.c
++++ b/arch/arm/mach-omap2/voltagedomains3xxx_data.c
+@@ -119,7 +119,7 @@ void __init omap3xxx_voltagedomains_init(void)
+ 	omap3_voltdm_mpu.vc_param = &omap3_mpu_vc_data;
+ 	omap3_voltdm_core.vc_param = &omap3_core_vc_data;
  
--#include "clock.h"
--
- /* FAPLL Control Register PLL_CTRL */
- #define FAPLL_MAIN_MULT_N_SHIFT	16
- #define FAPLL_MAIN_DIV_P_SHIFT	8
-@@ -541,7 +539,6 @@ static void __init ti_fapll_setup(struct device_node *node)
- 	struct clk_init_data *init = NULL;
- 	const char *parent_name[2];
- 	struct clk *pll_clk;
--	const char *name;
- 	int i;
- 
- 	fd = kzalloc_obj(*fd);
-@@ -559,8 +556,7 @@ static void __init ti_fapll_setup(struct device_node *node)
- 		goto free;
- 
- 	init->ops = &ti_fapll_ops;
--	name = ti_dt_clk_name(node);
--	init->name = name;
-+	init->name = node->name;
- 
- 	init->num_parents = of_clk_get_parent_count(node);
- 	if (init->num_parents != 2) {
-@@ -592,7 +588,7 @@ static void __init ti_fapll_setup(struct device_node *node)
- 	if (fapll_is_ddr_pll(fd->base))
- 		fd->bypass_bit_inverted = true;
- 
--	fd->name = name;
-+	fd->name = node->name;
- 	fd->hw.init = init;
- 
- 	/* Register the parent PLL */
-@@ -639,7 +635,7 @@ static void __init ti_fapll_setup(struct device_node *node)
- 				freq = NULL;
- 		}
- 		synth_clk = ti_fapll_synth_setup(fd, freq, div, output_instance,
--						 output_name, name, pll_clk);
-+						 output_name, node->name, pll_clk);
- 		if (IS_ERR(synth_clk))
- 			continue;
- 
+-	if (soc_is_am35xx())
++	if (soc_is_am35xx() || soc_is_ti81xx())
+ 		voltdms = voltagedomains_am35xx;
+ 	else
+ 		voltdms = voltagedomains_omap3;
 
 -- 
 2.56.1
