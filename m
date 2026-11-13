@@ -1,67 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794605171;
-	b=u4RcayElfzz5TLiFqr5VgbNJYU9gSYZar7F+5mrLBOLnaVortZc9X//OWeR+88HlzEwp
-	 gktI1c53qwLzTfsmND8lASt2stjTU9aieTlJ3Pt1KgR7Uwwd7sAkkbDk7KanwBCHkLvWT
-	 b7D2rDRjZINmW+o837HWhJBcw7x9ueKU5nG0Gd87/X2zCUmkTDXhI78wjj4Jx/VmndqEe
-	 J0o4K2Vo9etWVKm5iQDX5+X72vZLlfMunG3zDfkRKW5jCVEiVBRmzLbr+y454ar/9PAAG
-	 F1t5dyL3/fikQgLbE/K5/EaLevfDu2411rvw8yxtTDKnW4jiOL8qnxxsTGiSVXNY1eg==
+	t=1794605476;
+	b=y1MczohqAnBBE1QeN6tPcL4czVZL1iNIjO6EeEzpVKaiEhKUwvmNGjDiopkiZtUyaNHn
+	 hpxhe6EDKAPNz9NbK0Y7kujxDpasZvyozJK8kzUPSz++BdFVM2tQDHc6L6ReZD2LZFEZn
+	 4AmflHEyNl2FjlbcnuCdwfCigUhzP/G8hnIiObFI2C0hjXwAUmvYwvf2QWY3J+EUlz1VI
+	 vujCIl4A5Lc+96qIBNrfP8ZoSxmvvY2ZkxD4TCbnii0MjD4RGJVQ83y9XwVvXdT2R6TCg
+	 Keg6w2QCpI+bShyPKYpZGc7BZUeSxEV9O43FuqwjWvyMpFcfBq9URCh/ZYRJ+pY98Cg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794605171;
-	h=DMARC-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
-	 Content-Type;
-	bh=14DbhITib14ppVX3i7Picll2u9OpRT8wBV6cw1FaJPg=;
-	b=QmRYyoT+MV6l3t4uE9qR+y7p/ZpOFVQUghzUGCvm5c2yd9Ny3YJ9OIiGvShndZzJHsLf
-	 zV2oL3an01eqe/co+4DFQlQCSNEb2sseo/Xbg/o96oHywPqnZI3Oi0V5xlosw19KqPIYY
-	 zbbmrgzhNftQ/6QKvOY/PKom0ZgPx3Mm1ttezezD0mCjdbz5sh2tu9+ikh/6Tu7TEFKXq
-	 dq+Grj6DAos0Uy2wdcNoNojk/vkm4KZMSGB48cVb2r+c82hR17eOKgQOqIeNw6FE/Znt1
-	 csf31x2bWui4ZYGNehFcva4SlbpqBnPI2DvUvjAwCjtt096qIFyaN6j72ZlY0NmBmWw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794605476;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=jcVvNA1LksN88nh/Er3FQFE79HxWvLX+M8oefDd7Y4U=;
+	b=q923iXXOtdqgBwVhiyZrF9LEEBME5bcNUdcUKCdwGx8Te3trcGjjABTnfP42vqX3YFM3
+	 8Uj9TuXNgYXxSLX77Oto1wxmypKVIxWfVRvaIsFVsuSU8Mz1mO4oOvtigrGEJhE73CuHs
+	 4m/tU3vOLzRbQuYrAU8rkEeNi3HfC/gghU1bOfQ5rH23kjnMBnY4iVDlGChEnszox0bln
+	 XuUeKF6gs1VzTVlUv/Xo330OT2B73w+xCp50oR0LVuKQhMtO8djEkEJLZCpwv1i6SPZmB
+	 iJn8/2vvikRrFfM78+zVwmBLbqJUq5/0+Mda+p3jOxku4/pNvdQo6BampJkBhTAd5Qw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=sntech.de;
-	spf=pass smtp.mailfrom=sntech.de;
-	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=AKqtjcn9;
-	arc=none smtp.remote-ip=185.11.138.130
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b="CPx8/6vJ";
+	arc=none smtp.remote-ip=209.85.221.48
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C5A606A32D;
-	Fri, 13 Nov 2026 21:26:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B5C5A606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB10606A327
+	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 21:31:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8AB10606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=AKqtjcn9
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=14DbhITib14ppVX3i7Picll2u9OpRT8wBV6cw1FaJPg=; b=AKqtjcn9H5nJ/tb/KVjKAhGI/L
-	6FHDvu1Aj51VzpM+SCyLiV+/0BrV/gxyS4fhEbHJMP3ms9/TUQ4ZGw/uNwga4LPjxV8/p3vEn2YkL
-	TMkSrJEDq1rDTm4Z5oedrU7wQMQ+OLvF67lqIuaiiJkxAr4yNehWj191xEz0tdHRfad74DdfHm5u6
-	aY2fvq0o5kloTw6OExdw6AmUFgG4fBTLwPMeBKvYg8u0mf5sKJctUAMHv5xTS0TV2nhYhdryNvVsq
-	8/DEv4d4D+blQJR3R9kEA45UGOGXMWNXxYC4OXvcKNa8qAgQwUj1ZEj44d4nAk6zZFxMhVFD0QNOs
-	ESQ1gGXw==;
-From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Elaine Zhang <zhangqing@rock-chips.com>,
- Richard Cochran <richardcochran@gmail.com>, 1579567540@qq.com
-Cc: Cunhao Lu <1579567540@qq.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-Subject:
- Re: [PATCH v5 2/4] clk: rockchip: Add internal support for 24-bit fractional
- dividers
-Date: Fri, 13 Nov 2026 22:25:55 +0100
-Message-ID: <Yf6NfRPFTxKjDagKAm6hpw@sntech.de>
-In-Reply-To: <20261030-add-board-ok3572-c-clk-v5-2-9a43403cb149@qq.com>
-References:
- <20261030-add-board-ok3572-c-clk-v5-0-9a43403cb149@qq.com>
- <20261030-add-board-ok3572-c-clk-v5-2-9a43403cb149@qq.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=CPx8/6vJ
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-49318428d98so589785f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 13:31:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1794605474; x=1795210274; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=jcVvNA1LksN88nh/Er3FQFE79HxWvLX+M8oefDd7Y4U=;
+        b=CPx8/6vJoAXqRB91bmXoRqhowyKjq3PrBoeeN/TxCMY3qZ9y9aacgjWaDu0oMC7Ich
+         2kxH7niecbiyXurohkjI/BbKtNPrFzaVMd/PAVnrWnA7ePIbBgdLYTs2ZnZUXbFq+Zrg
+         iqbnv8AXHw6A9BqU2/zamEsv6ziBnMyEqteOAOqQfg0/GGpUZDr9V1sNyY4CYJmFQxN/
+         jnkzsWKhObxXithy5hrnWemgUpVHIGVB3VvX6jqyTE5NB9VbiTocf6IqDmTxIKcD65V3
+         Zx8kFrIYofgxIsNCgxkqpACznD75hXnS9rqgjZ7GqUTaN0OVgCc/CgPPJ3naH1jxwdgY
+         Rfzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794605474; x=1795210274;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=jcVvNA1LksN88nh/Er3FQFE79HxWvLX+M8oefDd7Y4U=;
+        b=WPpUS9guj61Fy3EZ1unPF8tJXc1F6AWqqR7Do8YG5l4ulbEPk+hMloJ1VO3EehX0xH
+         ZBtyF9p3tGw8ASH492wpLscoY5KWv561WoRe2TizJ7AoOmWcjqQ8YMAZeG4K3FATUo14
+         DChi1xomNoTWgqmvUVuHk05eHl8zMUAioPtQpRefuxQjglNP7vE79PL0yRbBmnbhPiWG
+         0+Ei2Dp8HoPA9yb5cib/kyt+LiLI1+/YTCXM7vsf5AbU0bJbwBqIJpvyihAD6QzviX3W
+         ptkGDXxySUdbV4cPAY+sTOanKyMVOTO70/OHMPpZBSj6RlsylawXGs2qvaHAX4eFwATD
+         t/Sw==
+X-Forwarded-Encrypted: i=1; AL+hErHmybIJd3EkZWUXBfRny0JLTtaoV0GFukv99tw/xtTnuQwYCDTr4H2ocnpMWXuH9gA584Vz+GuHJyo=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9/TTAu/P8pEX1G5VhbP2g3m5w2kZPVR7WtpYrx+a7Fh1cuDynq
+	TOIlCiKGmjqmN/+V46Ngz6DMbrOIE4AREQT5f65eEvrszRx7C8TXsmPgwY7TuqPo1XU=
+X-Gm-Gg: AYBFou2mJKve6UfeU0mBIsQjEfOfzVOF0FhwA5mZYJjWHCdtETpZqfczDrzCHdxagEj
+	WMksJObl8ilr2+s2Ij0zClAj6a0dvWe4GvOPoe62XdARs6Q2HaUDnqvJunXmdPLcsUf4KWSln+e
+	Skq42UnHr7hqviKi1M0Dv/up4AxxfXAJ5FL2jdSA8PTMkYOqcy2doSSEwwP+AWRhoFI+3ru6QVA
+	9Rz97ak+Pb5Au23ECv+AaXcMul6mdUSApw7zzNOj0JuyAxV6LN8cSaGJiKrNoTBoXvF2TakVzDU
+	xexvXNVS8wFfuV+UjPnUNbiRBOv2z7TVzIH+RFSVUda3jwElHyWAxOdT3tbIg7WZ9+dUuxOoUOC
+	FFpYY/fGSj1mO9W4zwWHxdqCuWdgA2drAK8Y/I3q//UOZYzQTpatzKfhxnE2aP6d2Jg2e5EjRyq
+	d/ZNDutPinVeulc8hntgZna20HqLRLTsnzAj74vJ2eyjA/KfbcMQnst3m9PjTnuQa8dF18NymV9
+	kTDel8opLcM3xl/mHE0XZ/hGQ/PwgB3kJOLUNevKT8BLfuLWDuYv8bxE28RWeQ8XCFxuetgDGXz
+	RD3Mk+uPXMJLJ7aw+23Ag0MfUy/gpcjkDqZUDMdPvPJwFUu7pzmPlnDMGD8KBUw7miA+xJYh4OI
+	fJwB+wtCnaQdUYsmB+QIwKV/Y3Xq1gDPJuYVy0kPDQeBbWU0=
+X-Received: by 2002:a05:6000:25e4:b0:488:823d:5086 with SMTP id ffacd0b85a97d-49c6b788c35mr8390429f8f.0.1794605473829;
+        Fri, 13 Nov 2026 13:31:13 -0800 (PST)
+Received: from z13-ek5.local ([151.40.161.170])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c609c8a77sm7447727f8f.49.2026.11.13.13.31.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Nov 2026 13:31:13 -0800 (PST)
+From: Ettore Chimenti <ettore.chimenti@linaro.org>
+Subject: [PATCH v3 0/4] clk: ti: fapll/dm816x: clock tree and calculation
+ fixes
+Date: Fri, 13 Nov 2026 22:30:46 +0100
+Message-Id: <20261113-patch-ektor5-dm8168-clk-v3-0-a42cd1edc5f3@linaro.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -71,132 +94,93 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3WNQQ6CMBQFr0K69pu2UlJceQ/joi0fqCCQFomGc
+ HdbiIkuWL5k3sxMPDqLnpyTmTicrLd9F8bpkBBTq65CsEXYhFOeMcpSGNRoasBm7J2A4iFZJsG
+ 0DWC6AUxoSsJ7cFja12q+3rbtn/qOZoy6SNTWB8l7TU8sct+K2K1MDChInedGmEKIlF1a2ynXH
+ 3tXkZiZ+I+Iy30RD6LCZLqkpdIK0z/Rsiwfr7YkUxoBAAA=
+X-Change-ID: 20261014-patch-ektor5-dm8168-clk-e426101415b0
+To: Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Tony Lindgren <tony@atomide.com>, 
+ Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+ Roger Quadros <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Andrew Goodbody <andrew.goodbody@linaro.org>, 
+ Rouven Czerwinski <rouven.czerwinski@linaro.org>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Ettore Chimenti <ettore.chimenti@linaro.org>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794605472; l=2296;
+ i=ettore.chimenti@linaro.org; s=20261014; h=from:subject:message-id;
+ bh=eEMKCkSJZRXgEvsvPPTkLeYwfdGBsD85wJfM19/qpMw=;
+ b=nYfXjSOrK0IvytX8ZmDY54G1+AthZRvB7qQoAfcIeKA6shrkMCKVrsoLXk6sJvHuDsGSbWnuA
+ SrgM+duc8H+BWEYcmNr5U5KDYo7RPbkYIZhaSvQ7Anm/5NtMzNB03ka
+X-Developer-Key: i=ettore.chimenti@linaro.org; a=ed25519;
+ pk=wCaUblFVaqhuBTQt/hAtysafsAaEsqj/yOD9SPlz6NM=
 
-Hi,
+During TI DM8168-EVM board testing we found that the clock hierarchy and
+clock calculation was broken already on 6.12:
 
+    main_pll_clk1       <--- main PLL should be parent of other PLLs.
+       sysclk1_ck                   
+       main_pll_clk7            
+		...
+       main_pll_clk6            
+		...
+       main_pll_clk5            
+		...
+       main_pll_clk4            
+		...
 
-sorry it took me a bit to get to clock driver patches :-)
+This series brings fixes and additions for TI DM816x / FAPLL clock tree
+and frequency calculation.
 
-Am Freitag, 30. Oktober 2026, 10:43:58 Mitteleurop=C3=A4ische Normalzeit sc=
-hrieb Cunhao Lu via B4 Relay:
-> From: Elaine Zhang <zhangqing@rock-chips.com>
->=20
-> Some Rockchip clocks split each 24-bit numerator and denominator between
-> a low register containing 16 bits of each value and a high register
-> containing the remaining 8 bits.
->=20
-> Add an internal Rockchip fractional-divider helper and clock branch type
-> for this register layout. This provides the support needed by the RK3572
-> audio fractional clocks.
+Summary:
+- Fix clock tree hierarchy by not using ti_dt_clk_name() helper, that
+  causes the first PLL as the parent of all clocks in DM816x.
+- Correct rate calculation logic in fapll driver (1/2^24, was 1/10^7).
+- Add sys_ck alias required for DM816x clock lookup, fixing a boot
+  error.
+- Add error logging for clocks failing registration to ease debugging.
 
-Please add a paragraph about the "v2" naming.
-I assume the v2 is a Rockchip naming, because v1 was the other one that
-could still fit the regular franctional divider.
+Fixing clock tree hierarchy is critical as it fixes DM8168-EVM boot
+failure in 7.3-rc7. These fixes are affecting DM816x SoCs only.
 
+Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
+---
+Changes in v3:
+- Picked up Brian's review suggestions to extend commit message.
+- Added constant macros in speed calculations, removing "magic numbers".
+- Link to v2: https://patch.msgid.link/20261028-patch-ektor5-dm8168-clk-v2-0-dc6bf0fabae4@linaro.org
 
+Changes in v2:
+- Fixed off-by-one error in clock calculation (Sashiko).
+- Fixed clock calculation also in the set rate path.
+- Added Fixes tag to clock calculation fix patch.
+- Link to v1: https://patch.msgid.link/20261015-patch-ektor5-dm8168-clk-v1-0-8b99c5cd5541@linaro.org
 
-> +static inline u32 clk_fd_v2_readl(struct clk_fractional_divider_v2 *fd,
-> +				  void __iomem *reg)
-> +{
-> +	return readl(reg);
-> +}
-> +
-> +static inline void clk_fd_v2_writel(struct clk_fractional_divider_v2 *fd,
-> +				    void __iomem *reg, u32 val)
-> +{
-> +	writel(val, reg);
-> +}
+---
+Andrew Goodbody (1):
+      clk: ti: fapll: Fix clock speed calculation
 
+Ettore Chimenti (1):
+      ARM: OMAP2+: ti81xx: use non-scalable voltage domains
 
-why do we have those? They do not serve any purpose I can see.
-So please just use readl and writel directly at the appropriate places.
+Rouven Czerwinski (2):
+      clk: ti: fapll: remove ti_dt_clk_name helper
+      clk: ti: fapll: print clock name that fails to register
 
+ arch/arm/mach-omap2/voltagedomains3xxx_data.c |  2 +-
+ drivers/clk/ti/fapll.c                        | 26 +++++++++++++-------------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
+---
+base-commit: 2800868f63227c8237d70c41e70d441c919620d6
+change-id: 20261014-patch-ektor5-dm8168-clk-e426101415b0
 
-> +static int clk_fd_v2_get_divider(struct clk_hw *hw, unsigned long rate,
-> +				 unsigned long parent_rate,
-> +				 unsigned long *m, unsigned long *n)
-> +{
-> +	struct clk_fractional_divider_v2 *fd =3D to_clk_fd_v2(hw);
-> +	u32 factor;
-> +
-> +	if (!parent_rate)
-> +		return -EINVAL;
-> +	if (!rate || rate > parent_rate)
-> +		rate =3D parent_rate;
-> +
-> +	rational_best_approximation(rate, parent_rate,
-> +				    GENMASK(fd->mwidth - 1, 0),
-> +				    GENMASK(fd->nwidth - 1, 0),
-> +				    m, n);
-> +
-> +	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
-> +		(*m)--;
-> +		(*n)--;
-> +	}
-
-=2E.. blank line please ...
-
-> +	if (!*m && !(fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED))
-> +		return clk_fd_v2_get_low_rate_divider(fd, rate, parent_rate, m, n);
-
-=2E.. blank line please ...
-
-> +	/*
-> +	 * When compensation the fractional divider,
-> +	 * the [1:0] bits of the numerator register are omitted,
-> +	 * which will lead to a large deviation in the result.
-> +	 * Therefore, it is required that the numerator must
-> +	 * be at least 4.
-> +	 *
-> +	 * Note that there are some exceptions here:
-> +	 * If there is an even frac div, we need to keep the original
-> +	 * numerator(<4) and denominator. Otherwise, it may cause the
-> +	 * issue that the duty ratio is not 50%.
-> +	 */
-> +	if (*m < 4 && *m !=3D 0) {
-> +		if (*n % 2 =3D=3D 0)
-> +			factor =3D 1;
-> +		else
-> +			factor =3D DIV_ROUND_UP(4, *m);
-> +
-> +		if (*m > GENMASK(fd->mwidth - 1, 0) / factor ||
-> +		    *n > GENMASK(fd->nwidth - 1, 0) / factor) {
-> +			if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED)
-> +				return -EINVAL;
-> +			return clk_fd_v2_get_low_rate_divider(fd, rate, parent_rate, m, n);
-> +		}
-> +
-> +		*n *=3D factor;
-> +		*m *=3D factor;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-
-[...]
-
-> +
-> +static const struct clk_ops clk_fractional_divider_ops_v2 =3D {
-> +	.recalc_rate =3D clk_fd_v2_recalc_rate,
-> +	.determine_rate =3D clk_fd_v2_determine_rate,
-> +	.set_rate =3D clk_fd_v2_set_rate,
-> +};
-> +
-> +static struct clk_hw *clk_hw_register_fractional_divider_v2(struct devic=
-e *dev,
-
-maybe adapt the function name.
-=46unction above abbreviated things to
-
-clk_fd_v2_something, so naming this clk_hw_register_fd_v2()
-might make that line less unwieldy?
-
-
-
-Thanks
-Heiko
-
+Best regards,
+--  
+Ettore Chimenti <ettore.chimenti@linaro.org>
 
