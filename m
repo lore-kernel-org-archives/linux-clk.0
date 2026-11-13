@@ -1,99 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794551774;
-	b=etdppWilaV7Cq1ELWHOVVBPFQ5L7bzT6QdlLGqbeNH8ZDHK7WWimp2zitvfSZpwCthie
-	 bE2rwdOr2oT7vU/eowzFLf8im2jDqVD9FAcqvTcJNTGeoNt1mR/iep5k4RZABL3MGJapR
-	 8fd0EKxw4XwMAtotL5qGgKHOU8bYmv/g0dF31unDiuphIeO0LGwiwvvwjIEWI+yy0CNp5
-	 /Sqfv4vI1hmQypCNdHBCnhmA7shp+FOlfxbnDUfZlORy8f9pdv8AXNaCuNK6zFl50Y/Tm
-	 +T2654deR8UVG7Pm5MJIvmJuCKaIHjiNS/TTr0mnbKpGXMfAS6yFyw6IfiJmWw3y1fA==
+	t=1794554309;
+	b=lOJKm1vt90OizjrapPlM6p77+s68WejxQn3d3mLjl0yvTM1E4j8ffzhsG2PuzcaZfORV
+	 +az7qo2AOYAfOkK0WozfXR+E+2X6v9AS8YoGRg350EmbcEhLEjtiwWmU+mu5wizRSUjRL
+	 cRshKTI/UIgdlqmtWatykWMeVLEyj2bBhCuZMgeRoXlZpAfkKlfSpvlXDMawdDsyK3ko6
+	 HSWohUomWxCjek0FRvkZhp8rpD9MGDjRgoBNxi+2A7S3HCQS+jypsUhCDSS6H8M+7A1Hw
+	 veQ2PJAEAfnKHefksQp3HWe9JHo41Rh0tZN/wek/Cl3PJGjCM4ElrGHXjhkk8pokm1w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794551774;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=oY6Sw2eupDcreXCwLDckh5hNjgWiUywnz949Uvx33tA=;
-	b=VOr7mhMTJaVzgFPdrKEYklqjGkTPk1DYVEhHKtn6tkHyh90Fqruw+NrrRyINHkKLwVKJ
-	 AY+fn3r3Y/2x/tQ84Bh7g9nv6sB/F7nPstiuC3p+V/C0HAdoVC+EjAfv57zEav2oQ+gTh
-	 uPcu+8Bq3dPYOrYlgS2lkoI4tdcWggd//uNVBslQyqA1gx8gTC5vFjk05czSA1U0yc0GQ
-	 7SRbh3smF+cZpbPLgfz1AFwpYae9/P5Jx7DgYaB24OxvfWsgRNVfkGZB0k2nH79R0+pWJ
-	 0b8LsaW3I3DJ1LT21aCdhlPHAWU8NCKwoW5XyiTH5lebUoPGMgSV6Ngkes3JqsFP1hQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794554309;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=DsD9LGXBj6Jra4Jv7udCvBynd7rLvaV97w5MkBs8GCs=;
+	b=TCo0OjRlJGJ+LKbF1j8FCbFYSJCnQlPs6sI29vfpkXDD/HTFoyk3CmP/k7ryQgyBKX40
+	 vBmcEoUOnK+GBlAmcl7T/2qfkXPZG1Qe0Ua1Sm6Ot8hNrq1ARXFweaisG3pY66WPIVc4M
+	 OjI+1y0bqXafAop9bGOxlEiMFj0X5Lq6PVt2BFZwUuQMfVBA3ZCXt85N/EadQdiXFFbdj
+	 xwC5roIuBiumH9O22Bo0UVcjRiX6CwBitwquoZ9dMWwiJhN63asovqYLYsbQdGUH6Z7pp
+	 p46BVyYbdTnpZPcw77AKMeZanMU9DTc2eeQMTZoYLbtuOsRob8M9v6QSq32b8Ywi/TQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=p0pKQlVL;
-	arc=none smtp.remote-ip=209.85.128.45
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cRPtodh2;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF72B606A327
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 06:36:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EF72B606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0166606A321;
+	Fri, 13 Nov 2026 07:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=p0pKQlVL
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4a35a60499eso3326085e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 22:36:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1794551772; x=1795156572; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=oY6Sw2eupDcreXCwLDckh5hNjgWiUywnz949Uvx33tA=;
-        b=p0pKQlVL7CG9eGWvQln57Smu0NN9pCnm1mnPUVAj/UmTklt/UszoRYj8hQfYXlIrwy
-         kMzdLKYUHpFQl3S6frWGST7Pc62GUmKnHPK+NGidwzvBivn0sP6oXJTN9orf5ia2OGgV
-         p7fpHcuUr44iI9GaSCGsEKXjElFSFsxUNFnGREj5vxDFrRTtjKIGfXuDdnqZX3tYJDhh
-         afc2UFp+4Nur21wZHEuEZ3AiJtdaxUQl8G8wR3Au5J2FZ0l3fgjd0y/MbOuwgoZgkaNQ
-         TTtJ04biYuEeePTRzatAs6scDzVrAAfHAK1S/E2uS61rBZxF14AQxTNdJo5tfJ+3fp02
-         DuqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794551772; x=1795156572;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=oY6Sw2eupDcreXCwLDckh5hNjgWiUywnz949Uvx33tA=;
-        b=MqVVKsnALXCKOByXQVIDkWLmRfycAHtdt+YlAgJnUXblXse1N3AHx5tFWI7Hj3TjyF
-         OxfOTTv603eCM36JMxm2v6fSySb8Rn4SJUVeNFZyi7R8haoxmaZDI6YJQNTwK//vKTzO
-         rgFme66HgMDmmPYVEvVi11yNQVMv5jJmH+KwUPF6ouuujhK3YSikjbMWbiGngJfVNNc8
-         km+OdBgnv59FMIwehJdXsM1Uj+xfpMjeJJln+sH48jz98h1bZc+WjbKeNuWxuySootQi
-         R7DyCHg6Key5tW+gKhCGeatZulXY+f2eR+jV+03MyrwxgMR8RRSmrVwY/y/bFvP2wmwL
-         h2Lg==
-X-Forwarded-Encrypted: i=1; AL+hErGzpZ9q6ze0R0wWILQYh06cqSTAFNp6Mx92tn6WFBmTHTuOQcxqwY70DterOCce7akNE0Hr6ee20yQ=@vger.kernel.org
-X-Gm-Message-State: APuU4Z87DE0lCeQoePSFKg7a8el5nhfc6Yu3eVZaJ29/GaNW0wMxY2UL
-	USUMgwvodE8Hzgw7Lcdiqq1s0Xzv9p+e/p87mwCS/7lUTXB8239V02Zn+rzMJ9BhjlA=
-X-Gm-Gg: AYBFou05ok1oya/lPKNGTcKUYaADP6m0KfcUQfbgVIWhwuuqxvwvmPTdsMr29YKACJn
-	mc8OFpsC+n87gzFAtEnx3oi6bo1zYWNggG/rrZuZzrxC751Oh44Andv361VwbhMvgMsHlnMpky/
-	OSEiAoYZK9GLpcCjCffQlfW0q9cf5djVqY+1hJg52l0J7USUTY26bNAE3FU5gtPc7nQCoBKWwJu
-	ESS8USTgx+UNWJtiNCjIHIYw3ldE6Rj+eYfoTzTGDLQ3T0kmTfQNg7b3z1Q69rdsYN5fH2hnv8O
-	pXAlAWIU85DNuUYAKkAjEfAqyhXD3N2YfCU8f0lfkrp6gsFHwGg4VgBmZ8Vt89HWluwICffcqcG
-	nL+gLkz5oj7qw+dvPGYuNd+NWnR6koL3bdX9eeAG3ZmCxeArg9XWd7nFLk9DXaAkGzoaj5irbeD
-	zpp/Km/8nDRKupq/oBHD2xwDrkuTr8NgFchtG6wzZfypSdsfaIhxQdRwG7zgLkRhtkVf+/C3rnc
-	/N9L5hm6IqbcCD80NU6DvYGhm69kXZ7wq9P6mCCwUYeC1gSSvPSeNLV2sWGsF4hF4bGjUCH3Ug1
-	+eC2vcn8hFgywt19InxdO/YOaxO0VHpm3A==
-X-Received: by 2002:a05:600c:a00d:b0:4a0:4a8:d444 with SMTP id 5b1f17b1804b1-4bb55aa854dmr30515515e9.33.1794551772311;
-        Thu, 12 Nov 2026 22:36:12 -0800 (PST)
-Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-49c8d286480sm4583537f8f.7.2026.11.12.22.36.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2026 22:36:11 -0800 (PST)
-Date: Fri, 13 Nov 2026 07:36:09 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Christophe Roullier <christophe.roullier@foss.st.com>, Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] clk: stm32: Add STM32MP25 SYSCFG clock driver
-Message-ID: <avavgGbj8WupEstn@monoceros>
-References: <20261110-ups_mp25_clk_syscfg-v2-0-624559bb8ec7@foss.st.com>
- <20261110-ups_mp25_clk_syscfg-v2-3-624559bb8ec7@foss.st.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cRPtodh2
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27AF01F000C4;
+	Fri, 13 Nov 2026 07:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794554309;
+	bh=DsD9LGXBj6Jra4Jv7udCvBynd7rLvaV97w5MkBs8GCs=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=cRPtodh29JWVeppnMdQ9WQuFH6Iyi6jALbJX4J+RlbVLKElvq8m1egQTRazM9P1Bd
+	 q47UNV0nG5COxA//Mtt+PzIyBKJkFE/sjG/giP117p3HVPgnid6zij9QgAQeunVEfH
+	 3bUkOE7E9LBcZhrWWgfT9Kg0I5jV3xAa5DNMIdI/bE16Rw/PvyfU5bfsd1Pxp2BPah
+	 ZHV0WAmoKmkheHW1L4wgJVMWq/lX0+RhGYSVrMv+Jy4VxN2qKvUptPCryr1XyX8wPO
+	 Ps5DymzNocuh0/2fjS7JXfsEHUlgDP8TkKg+yy0vJlauGxBjgGYLk8aUoDjYZ35H3H
+	 xwEcwzRTyM8EA==
+Message-ID: <sashiko-outbox-212336@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v7 6/8] clk: sunxi-ng: a733: Add mod clocks support
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Junhui Liu" <junhui.liu@pigmoral.tech>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261112-a733-clk-v7-6-db7c5451ffa2@pigmoral.tech>
+References: <20261112-a733-clk-v7-0-db7c5451ffa2@pigmoral.tech>
+ <20261112-a733-clk-v7-6-db7c5451ffa2@pigmoral.tech>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 13 Nov 2026 07:18:25 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -102,44 +59,151 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gkwqr7dnu5cjjahz"
-Content-Disposition: inline
-In-Reply-To: <20261110-ups_mp25_clk_syscfg-v2-3-624559bb8ec7@foss.st.com>
 
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [Medium] clk: sunxi-ng: a733: unintended CLK_SET_RATE_PARENT on
+  eink_clk
+- [Medium] clk: sunxi-ng: a733: missing CLK_SET_RATE_PARENT on media mod
+  clocks
+--
 
---gkwqr7dnu5cjjahz
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v2 3/5] clk: stm32: Add STM32MP25 SYSCFG clock driver
-MIME-Version: 1.0
+commit 6e107a79cabf47c1760cd7e323625401bc6ffc47
+Author: Junhui Liu <junhui.liu@pigmoral.tech>
 
-On Tue, Nov 10, 2026 at 02:10:23PM +0100, Gabriel Fernandez wrote:
-> +#include <linux/mod_devicetable.h>
-> [...]
-> +#include <linux/platform_device.h>
+clk: sunxi-ng: a733: Add mod clocks support
 
-<linux/mod_devicetable.h> introduces a lot of unneeded build
-dependencies and <linux/platform_device.h> already provides
-of_device_id. So please just drop the former.
+This commit adds module clock definitions for the Allwinner A733 SoC to the
+sun60i-a733 CCU driver.
 
-Best regards
-Uwe
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-n=
+g/ccu-sun60i-a733.c
+> index 8bc603393f5a5..5ea65bf5b5e05 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
 
---gkwqr7dnu5cjjahz
-Content-Type: application/pgp-signature; name="signature.asc"
+[ ... ]
 
------BEGIN PGP SIGNATURE-----
+> @@ -511,6 +521,893 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE_FEAT(mbus_clk=
+, "mbus", mbus_parents, 0x588
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmr2r9YACgkQj4D7WH0S
-/k550Af/ViscKIb63+PVQx/zXwL2fH1N+c0J0B6+Wy1MxiLTwJFXkjS0mu9bkBlw
-CLifRBkJubxD6KiW9nuvesALuaWyKACFL64L/M8rnUTgMEQtIzbxaJP1/fdakEdU
-NGqid7VZx3OLkHgHRSws9AOsMV6rJAKvG29HF2mjA7Sr100t/T7kfAskHU60dDRT
-oooiNIkRAXDZzowGQREV0WePP+KhHjYDXNY8XL8kp5fc5oxRJxUcSTCFZCWxxgT7
-Y7FkmxVSxQA07Pn07yy0KF4rBoj6O+JrpsfW1vJ25VKLi4BaW4Iyl/EMLXHhi+rS
-IiIDqmj4rco9HRt+45lVPGX7qe4gPA==
-=gLbT
------END PGP SIGNATURE-----
+[ ... ]
 
---gkwqr7dnu5cjjahz--
+> +static const struct clk_hw *eink_parents[] =3D {
+> +	&pll_periph0_480M_clk.common.hw,
+> +	&pll_periph0_400M_clk.hw,
+> +};
+> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(eink_clk, "eink", eink_parents, 0xa6=
+0,
+> +				    0, 5,	/* M */
+> +				    24, 3,	/* mux */
+> +				    BIT(31),	/* gate */
+> +				    CLK_SET_RATE_PARENT);
+
+[Severity: Medium]
+Should eink_clk omit CLK_SET_RATE_PARENT?  Unlike eink_panel_clk, eink_pare=
+nts
+only contains pll_periph0_480M_clk and pll_periph0_400M_clk.  Because
+pll_periph0_480M_clk uses writable ccu_div_ops without read-only or gate
+protection, calling clk_set_rate() on eink_clk can reprogram the shared
+480 MHz peripheral PLL divider used by UART, GIC, MBUS, SPI, UFS, and USB
+clocks.
+
+[ ... ]
+
+> +static const struct clk_hw *npu_parents[] =3D {
+> +	&pll_npu_clk.common.hw,
+> +	&pll_periph0_800M_clk.common.hw,
+> +	&pll_periph0_600M_clk.hw,
+> +	&pll_periph0_480M_clk.common.hw,
+> +	&pll_ve0_clk.common.hw,
+> +	&pll_ve1_clk.common.hw,
+> +	&pll_de_3x_clk.common.hw,
+> +};
+> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(npu_clk, "npu", npu_parents, 0xb00,
+> +				    0, 5,	/* M */
+> +				    24, 3,	/* mux */
+> +				    BIT(31),	/* gate */
+> +				    0);
+> +
+> +/*
+> + * GPU_CLK =3D ClockSource * ((16 - M) / 16)
+> + * Here we use a div_table to select M values that result in integer div=
+isors.
+> + */
+> +static struct clk_div_table gpu_div_table[] =3D {
+> +	{ .val =3D 0, .div =3D 1 },
+> +	{ .val =3D 8, .div =3D 2 },
+> +	{ .val =3D 12, .div =3D 4 },
+> +	{ .val =3D 14, .div =3D 8 },
+> +	{ .val =3D 15, .div =3D 16 },
+> +	{ /* sentinel */ },
+> +};
+> +static const struct clk_parent_data gpu_parents[] =3D {
+> +	{ .hw =3D &pll_gpu0_clk.common.hw, },
+> +	{ .hw =3D &pll_periph0_800M_clk.common.hw, },
+> +	{ .hw =3D &pll_periph0_600M_clk.hw, },
+> +	{ .hw =3D &pll_periph0_400M_clk.hw, },
+> +	{ .hw =3D &pll_periph0_300M_clk.hw, },
+> +	{ .hw =3D &pll_periph0_200M_clk.hw, },
+> +};
+> +static struct ccu_div gpu0_clk =3D {
+> +	.enable		=3D BIT(31),
+> +	.div		=3D _SUNXI_CCU_DIV_TABLE(0, 4, gpu_div_table),
+> +	.mux		=3D _SUNXI_CCU_MUX(24, 3),
+> +	.common		=3D {
+> +		.reg		=3D 0xb20,
+> +		.features	=3D CCU_FEATURE_UPDATE_BIT,
+> +		.hw.init	=3D CLK_HW_INIT_PARENTS_DATA("gpu0", gpu_parents,
+> +							   &ccu_div_ops, 0),
+> +	}
+> +};
+
+[ ... ]
+
+> +static const struct clk_hw *i2spcm_parents[] =3D {
+> +	&pll_audio0_4x_clk.common.hw,
+> +	&pll_audio1_div2_clk.hw,
+> +	&pll_audio1_div5_clk.hw,
+> +	&pll_periph0_200M_clk.hw,
+> +};
+> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(i2spcm0_clk, "i2spcm0", i2spcm_paren=
+ts, 0x1200,
+> +				    0, 5,	/* M */
+> +				    24, 3,	/* mux */
+> +				    BIT(31),	/* gate */
+> +				    0);
+
+[ ... ]
+
+> +static const struct clk_parent_data display_parents[] =3D {
+> +	{ .hw =3D &pll_video0_4x_clk.common.hw },
+> +	{ .hw =3D &pll_video1_4x_clk.common.hw },
+> +	{ .hw =3D &pll_video2_4x_clk.common.hw },
+> +	{ .hw =3D &pll_periph0_2x_clk.common.hw },
+> +};
+> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(tcon_lcd0_clk, "tcon-lcd0", displa=
+y_parents, 0x1500,
+> +				      0, 5,	/* M */
+> +				      24, 3,	/* mux */
+> +				      BIT(31),	/* gate */
+> +				      0);
+
+[Severity: Medium]
+Are the display (tcon_lcd0..2_clk, combphy0..1_clk, edp_tv_clk, hdmi_tv_clk=
+),
+audio (i2spcm0..4_clk, i2spcm2_asrc_clk, spdif_tx_clk, dmic_clk), GPU
+(gpu0_clk), and NPU (npu_clk) module clocks missing CLK_SET_RATE_PARENT?
+
+The parent video and audio PLL post-dividers (pll_video0..2_4x/3x_clk and
+pll_audio1_div2/div5_clk) set CLK_SET_RATE_PARENT specifically so downstream
+module clocks can adjust the dedicated video and audio PLLs, and pll_audio0,
+pll_gpu0, and pll_npu are likewise dedicated to those blocks.  Without
+CLK_SET_RATE_PARENT on these module clocks, clk_set_rate() is limited to
+dividing the boot-time PLL rate and cannot configure exact pixel clocks, au=
+dio
+sample rates, or GPU/NPU frequencies.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261112-a733-clk-v=
+7-0-db7c5451ffa2@pigmoral.tech?part=3D6
