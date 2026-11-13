@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794566033;
-	b=f7n8B8sRN/nPrZ5bwo30HFF/lWbPSYgDsIKV3t/IVswwb/hBITeh/SBjZ/ITvXsWXDuP
-	 h56VNpthWTnywQAE5UduR5YVD9pxWjBpbJL/zYZUCWPRtnVLJ+tlUC3r9V+ZQb+X32P6b
-	 c6ODpnRyK3Si/R/Fzt4Uvhm6dJxqmFUMUJQX6BmZtaZA+Jtj+A/M+fDMpzRL/W0NJ9pqU
-	 vGQYan44GLrY67cb2pUTvfJKwf45T6yNZ5s0jah6m9WOvL63eoD1xZ2M6+8gqNHTmHEd1
-	 EjM3kqmstH0bwUwyxoN/0sd2kKh94/paT2UBm32ISX6j0TQOLDL7E+j1OU5sqAeqmWQ==
+	t=1794566083;
+	b=Yooh9THJMdNh9hKiNWvprSuTNvotz2ouMk6fUvCiuPH/LP4imdkUa01fzsixv7n7dJph
+	 5Qe6fkKVwmByi8WBHsejJOMCRegcOUBU7F9cfSTyQZBIpSAn7czAABUxIfxJdthE9mryK
+	 SL3F4YJNjC5TMDzmYnyEp2l6soZwXq22hBw2jPWhnhHvX8o5XBG+2hth70yq0gM5pHnBb
+	 kIl/evesYva9GStCLpIVSwq8G5Gf+jgnKgh+Pw8PmKJLWIzMOEotk9FU3MVL416yWJoOH
+	 WQUNvVaEMsVqJWVLFvBi0UWr1Zha+cDg08S9RmkvhBV2aNjTfWnQUiutfUy9QlN0fFQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794566033;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794566083;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=nAAFN+kL6XGhKEZD2gSfH/OYoLpix4o1w/mgKhSRkLQ=;
-	b=UMAMMWs63UxW9pFGHo5HWgGr8h+2Q96uDeKmAMmJ/HJoMwPBv0BlPWtUwB0nHZX171ix
-	 LjdgOtY4QgF1qFgY4/hgLh2Nbd9yEwsBVbEfzqZeBkkd0zcrMDpr7AWKGtSaX9e2D5Ern
-	 38985XaozByiVMo/LZZ9Cnw2D5gqLZroiWYYxrFqII38xz5SwCVwX9R9ZOmGyyQi9h9kY
-	 ymVOPK5XjwATfK4KWXSOoGZa9Z0fWy/T+V7NlKbWimhFpLFyEy36eALfDww9roP1ywuYT
-	 /+SeoyLtCTGaLYB2C73+hb27NrjHe/PDp49PLPBHBicm6nsIH2zbwb9t7WnVtOxNVxA==
+	bh=+B0Hzro04HKSBx8B6hqvtXYL5NBA3bspW8TBMch595Q=;
+	b=EnbCDeX8YrRe4b9dTMNeO8yrOYfU2sTdplYTrnjYtjVAvkuFAZqJcPz+0hFR5DpIef5O
+	 DkMOAtEtJfgqkAQ6KX71oeAX1PB+y/rF4Evl0itQ1vyioRu9tBkQ950UX+BbE1mAsttQl
+	 v2aT/W5YWtzaeEkVkXlj36Vd4h1waJoU8Zg2WvkjGQP0esDXEpPgwvhZk+RjX8NO+Q4ji
+	 zzj8UkzXmdA5xww3QILkLMRoDmlsRWvjvhFEf8/qkMw19lCWe7xZAYqkb+9KtsZgL7Ege
+	 9X9KoDgaIifFrXhwCbYtZS9dvPTd+MpoRaT5kUh9OQuxmIhWDw9AUq6zzQsDxFUOrOA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V7gOJf2U;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OHBB+DH2;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC4D606A31C;
-	Fri, 13 Nov 2026 10:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10D0606A33A;
+	Fri, 13 Nov 2026 10:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V7gOJf2U
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3251A1F000C4;
-	Fri, 13 Nov 2026 10:33:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OHBB+DH2
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 973DB1F000C5;
+	Fri, 13 Nov 2026 10:34:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794566032;
-	bh=nAAFN+kL6XGhKEZD2gSfH/OYoLpix4o1w/mgKhSRkLQ=;
+	s=k20260515; t=1794566083;
+	bh=+B0Hzro04HKSBx8B6hqvtXYL5NBA3bspW8TBMch595Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=V7gOJf2ULdroqhBcdMGkYE3PPyOnjFBbK6WVKcCn6xdNxvMnajN3kBDa5CuamsF1r
-	 f+awvpW3r0BPaGMnSMKwjKb91w3g6lBMfbrbJEo84lRZ+3KDrTSM/bFqnFOsX7KW+Q
-	 uT3POWzPHh2eK7Wt6UgiztzDgdSqf/gUff3GzrOwac5xA5nspcXKEaQ/iH65r7YXbi
-	 QGK3ezjpSWv5pvqsaLbA7bLhcBUiq/z/oV+qHzid5yoJpb2x+acL5xaHc5GMkzSHyH
-	 jWOTUENKrsxWk9xACDwXSnYwsllet5Q+7TkJUpgiDIDb2WVHdu/3GDjDa8+mrxjt/e
-	 WRQoy0BoYU4KQ==
-Date: Fri, 13 Nov 2026 11:33:49 +0100
+	b=OHBB+DH2cclHIMBDWicPvoSffhLVbPAOszqMC8YYkdKNptoQdDoUM5YU6kVH4snmU
+	 UK4PofaA5ufGPt51BqL22TezEs84WyLl2ckwNvMImNNYVThFin8U8UUMv8QGEHIqNN
+	 tfD/OkU9JOOfQW2dU8JHq9lpVL+XYJjOrtRdr1tEMQtm67PlQ0ktJEgVkxTJnI/LTa
+	 36BqAcGC3Dp3v2zK4ttkW5RVzhRjE5Mzg0V3Wd0ANB9CPJBI7vD3WuJjky35sdY1II
+	 2FDd3BLgdIvOIFgKQluTi9re2aRmiygyYvkYQ4qUfawpg7r9V5f9eKsrbJZ4jXI3Tr
+	 P7J0lh1JsFp+w==
+Date: Fri, 13 Nov 2026 11:34:40 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Stanislav Aleksandrov <lightofmysoul@gmail.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -50,11 +50,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Qiang Yu <qiang.yu@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
 	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] dt-bindings: clock: qcom: document the Halliday RPMh
- Clock Controller
-Message-ID: <20261113-fast-red-mackerel-2faaff@quoll>
+Subject: Re: [PATCH 3/5] dt-bindings: clock: qcom: document the Halliday
+ Global Clock Controller
+Message-ID: <20261113-resolute-speedy-lion-ffff1d@quoll>
 References: <20261109-halliday-clk-v1-0-20c3ba8be0bd@gmail.com>
- <20261109-halliday-clk-v1-1-20c3ba8be0bd@gmail.com>
+ <20261109-halliday-clk-v1-3-20c3ba8be0bd@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -66,16 +66,23 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261109-halliday-clk-v1-1-20c3ba8be0bd@gmail.com>
+In-Reply-To: <20261109-halliday-clk-v1-3-20c3ba8be0bd@gmail.com>
 
-On Mon, Nov 09, 2026 at 12:29:10AM +0000, Stanislav Aleksandrov wrote:
-> Document the RPMh Clock Controller on the Qualcomm Halliday SoC
-> (SXR2250P).
+On Mon, Nov 09, 2026 at 12:29:12AM +0000, Stanislav Aleksandrov wrote:
+> Add the bindings and the dt-bindings header for the Global Clock
+> Controller on the Qualcomm Halliday SoC (SXR2250P).
+> 
+> The clkref_en clocks gate the reference clock from the QREF block to
+> the PHYs. QREF is powered by two supplies, vdda-refgen-0p9 and
+> vdda-refgen-1p2. Downstream only lists the 0.9 V one, as the USB PHYs'
+> refgen-supply, and keeps the 1.2 V one on as the USB3 PHY's supply, but
+> the USB HS PHY stops working when either of them is off.
 > 
 > Signed-off-by: Stanislav Aleksandrov <lightofmysoul@gmail.com>
 > ---
->  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  .../bindings/clock/qcom,halliday-gcc.yaml          |  84 +++++++
+>  include/dt-bindings/clock/qcom,halliday-gcc.h      | 249 +++++++++++++++++++++
+>  2 files changed, 333 insertions(+)
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
