@@ -1,105 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794530247;
-	b=4oVcH6CEGmnkpJYxqsP8juqfmXnRWpzyMlJvtQ5XZXdShcFjnKXBaRCTwNI4LDxz/a3G
-	 ryBh0YG6C7ktw6ujzthbC1BkF3uv0Py93mYU2pkJirA5b3F5w9jVLyQ7XkcvNH28hibF8
-	 2mSuLUUiv2yRCGtqqjO2VSqWxQlSpXJ5wQrV5p8Pb5e/wuei9zbQbri/KLFQTd0OVh035
-	 O0pNEabEucyi11UYu/u0ZjNQTMqtFpf3KGwVUxblZX1C/8Yt7hCH9KQhI8O0ftO4RUYM9
-	 GzmyHM1t2QLW8KFvDYQYde3bOFYvR3Q7LDWWteP3U+TtSXxumznljzHcUyNDeWAHVOQ==
+	t=1794530294;
+	b=Dc9Ny4TUtygIpeh1xrbImAaZAiel505+oZK738MXzxvx2iX2Fe52LQveihqhCSN1cND5
+	 +KgBJNTZDeS4suhokZbmGBtZBHoRI5W+/HBkjfZLLdJ8P441OhgVA7Pyplot7YXH3Oynx
+	 pAUQyosC7MNYyEmvcNbe4rBml7nQdvkLkcc8ainzXYLJm9didjmEBt43Nu3Fy5u2zMavC
+	 EH/mphJuqqBjvLJI2BW4oOHQy/ly6WgoOLmVGrvZrk2k+4a0cABTafygqBMW9SX2R4WQF
+	 LraUxjKlsuXwQUrDV37G1Zkrwk+owWq6mRrdq0DTciufw0Yf83Dr9AkHer6XDg/xV3g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794530247;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794530294;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=5W7kX9rp2XBF1bJ27nT4HG77OkJIXZJCoQWjVdRY9vA=;
-	b=XZkA/2t8TPEJNw093a3Fms5vHEko3QexhW31uYqrf/GiRttRN+Rrdmrgefi9i/iDbWEA
-	 M2q+jOjhTdVWDvjbA1V1+64s7vntReaIf3QpliLe3HsoUw1p3QS3bUSvb8XFYJnvvpS5x
-	 sKrR25SRniutXuqen9rwhcwI24DXYnPMu6LydilFEyy6meZKVtR1gTjZzb2SJFPH30/9o
-	 z4dM9dQph8l/ODLZIAJ22JupF6p1wfvQdqSe+H70tkTBQvOcQbc+pikGdJTEuUrGzY2Tf
-	 ux5kESCXKLs2PSH9XR/4T9ytvDlHcrexosud12Kv1LILHePsNijN9zED8nxdU0sKdCQ==
+	bh=duoDFkSq7fe9og5fEiEDZZmXvPbbqJk+mbywRo7M0do=;
+	b=KsOFq9WR2GmJLHdAYB1lhIqzMG/DfRwGG8il8tIzxCUEZC7cPoDT2y0zh3LSXvw1QzFH
+	 yaddGDaMk31pr0mN37Nx8Kw5bYfy1SnC/3gOoGpuRlYFTPYjz8bU5lKDB9BzxRMIphLZ4
+	 Qygw2bS77sTV6qSpp4xPY5AvmPzz70FKi81AK3DvljHpPSoJGj2C0a4mDi7HraYGR3qcS
+	 6aXehN52gnGNkQrU4k2UCmX9OXH34/yjIb1pUZttWUtAxR9ej9Ii7548h5Y7J1kyKd/Xh
+	 rNRPkmg0thvFqZnry1NdhIcwe2z31D0ZO5EUqohW/WdYQEds1zH45zhJs7MSFfZJHkw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=hTEz5d3W;
-	arc=none smtp.remote-ip=209.85.221.54
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Hx8WV6GI;
+	arc=none smtp.remote-ip=209.85.128.54
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97A8606B567
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 00:37:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A97A8606B567
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712BB606A895
+	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 00:38:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 712BB606A895
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=hTEz5d3W
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-491aaed7565so135200f8f.2
-        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 16:37:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Hx8WV6GI
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a60f9474c4so6271245e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2026 16:38:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794530245; x=1795135045; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794530293; x=1795135093; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=5W7kX9rp2XBF1bJ27nT4HG77OkJIXZJCoQWjVdRY9vA=;
-        b=hTEz5d3WaREJ7ysbOywNEF1KN5ZyBCj5690RiF0asHXetT32w34pPUJoObRiJNSims
-         XG/c3EOAZP+oTRD8QqudIefWN1UcSGIaxz6drRr2GgcmjRCBctCIqrvj8wEhOk127D1G
-         XsCGs856Lwncv613nP7uDgbfZl5yE3c1C9tbQ0pEhsd4Ef1uDeEfSZXQMMe1xbHbXy5u
-         XezoQ5cMs9fN0y7kKRhsOKMoI5jtiPIurMEQJ+eZUxYRX2TCoD9vMxto7Pr/c1JjMoCW
-         J1zfOk98xReIr+9782nVk1iwv6lHo23M8tOUY+DS4Sop7VIUchrHUWqtWxctxelkW/Fh
-         lApw==
+        bh=duoDFkSq7fe9og5fEiEDZZmXvPbbqJk+mbywRo7M0do=;
+        b=Hx8WV6GI7COrYTUITlY83lA3f62jv3xrBMYJO3vPpozhkrFj4asH14WDng6QIkPr9A
+         FRfwe07ZcGtuqaVBq56nrdgYiz5KiwN98vqSzWMPTOpq59lmQxTxwN3C8RacbNafNh6J
+         Cu90jUZ0sdUl/LeTbo+RhMK9/mvOq/2a/fx/Y2hw7dcWBfyudhpSsFj51SFRG2f69XFs
+         C+Rq2GaSED0uVYoq1LII/tm3O4YxvNLULJom7zFGbmq4qnR0LchSOlAKdeUBpRAXsDtD
+         uZUxYec3QGwEIZ42VCSKGe1hlDYgw5H6G3P7hgKKMHSVU7LYg1meVBBXARarfVZmVxNp
+         L1pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794530245; x=1795135045;
+        d=1e100.net; s=20260707; t=1794530293; x=1795135093;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=5W7kX9rp2XBF1bJ27nT4HG77OkJIXZJCoQWjVdRY9vA=;
-        b=i9OGXRhe9Vcwy0dcTP/iaTYUKH3zJMScOKPJZZH3gwzv/P6hWJJEY/gJhiynhgwLnC
-         7j+Fazkz4z57PcqC1QjVtOzj2O395SuybkW/noXLhyYI45Cw47n2B89cnddMdGq8NKpD
-         0l7NgGqVZIl6edumJIbedRKsaYsoQgOvato8GdFxOkufMGltSTdmZJOhAXTGeI8fqnR/
-         qoPihKo+ocgVPXr5b9+T2em0fvB9r94PSRXro0M33uXeOgCCc8HzTpLMarkOVnqLyuc7
-         EO7cwlB0OD+PdAmBQEVrq/r5c1ENXOUWUn8geUbXebIVMGvFCPZGvj9pQV5BnBFc7CE1
-         wlDA==
-X-Forwarded-Encrypted: i=1; AL+hErGh4XNxNiGAVnjsrbA1PHZQUHtQ8jZsggA+cvuXdqhHHtSJsGFKeHFGyO8MGLGloVB3L0MlQt62eBs=@vger.kernel.org
-X-Gm-Message-State: APuU4Z86rYTFFUNcoPhFvFLCxEZ+UKbMN/Bg72zN1i8ZRApBv5vj3tSo
-	HTAzZ9iV1vJqts7TUxCtBZ7zOm1SxaW4xs0I0ACRjVR8swMdV8GcK5++
-X-Gm-Gg: AYBFou0nGyo30ZExSRMBi2Tg3aSKAf6rZVGTbgSzMGP6fjA4PJzmWPvkeCFy8XIxGm3
-	L/qqSXmeRq5/vurNvaTAwHjV3PRDsBLr9cpD7EbL0oV+PFEm/BtDiXV19cKQ01uH4T8wEAv+5oe
-	bMQTrZ22XZDTqv4Zvn8k+ir3iGaqFNybJXRWtbdor2lbgwQBvsh5pNDnEYdsQjTJk8PRq0Q1Kyd
-	hVBQdkX3WFRksq0MnzGj87e6vGW11IjF6dI91Gi4RBQpKNUGLPqHp4QzfT45ydFMAnmJBZBaHon
-	eO59JmhqYTEHzU1kO8VcdNjrISzrXYy8Ab4DQ6O9m4T7hxJvN++W9TFtmOLoVT/nC/lIcbHA4V3
-	ntvSd83Wlce/4T1lz5ZmEuEj8b8M0n5WpH9LGOJIa+RmffUIcZ1ySO+SDnQWqSzAjLqVUvVpdfZ
-	E0la1iZsM6+IrvkYl21oIYcNP8VYgqjfC3zK3C/b0OYqg4W03+0vH/g3NVxEpQplup9xj8GZn7b
-	TjGpX7oPFfBtHG5OV2C8RzWXkI6o2mphw21oFtCM+UUZWFNEvDR9/x9/OnQvqAKnhwomLsjcTv8
-	rAl+JYtSTokLn63J17bWEoPc6DDYAAELV/icoVugeIhkKzlyPzKEHvsv3q+XNGRfxQW2caeFwMo
-	dS/AmBkD1umZdvbfpHr/0dj9wPnMkiQF72QMVpELhjxrpMQS01IlTpLKlsm5e7JKi25gA0HH/8H
-	2fACnGyRC8m40nlKON
-X-Received: by 2002:a05:6000:1885:b0:499:d9a9:5158 with SMTP id ffacd0b85a97d-49c727d1e47mr2139782f8f.31.1794530245167;
-        Thu, 12 Nov 2026 16:37:25 -0800 (PST)
+        bh=duoDFkSq7fe9og5fEiEDZZmXvPbbqJk+mbywRo7M0do=;
+        b=zJwwuHs+lVPWdnganHhdiWc0asco1ZEbZz12xSfSJluVL6fEZ6OzcfITPIRaIzYLs+
+         HrKmLk4e5nFbmyc2jPfi2QSpNz4bYPSStFhrJN0nN1QKYfGcItl1LAHLO7XNaeILtnJe
+         yT6RpwZtRE71/AkpNi7cg/UI5DsUbllrEEl8Btcz4Kz1KMz8cwxNzCMpE76dsFSA1ukA
+         GjJdmAgE47xueqOHb81YtHAQtcWySeK8S8l7Ml5I0zMG1JjQkOfVzo+VeRgE6YT86SHn
+         xF8sWaiLOYYSK/qLlEe/pbfRPVTvCDzZJzoLn0he0qNRVxQoERhVSTwFXafXyozfkCsp
+         6TUA==
+X-Forwarded-Encrypted: i=1; AL+hErH4Li4VHeJrsTx+zHOdDkvixEU71SDbVrfd9UI0ZYy6GTy8fixWSqM7+2BgOCdEJ/4NOMbmVJ3/AsA=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8nLcOf5Ur2hvLp6PDzO0V6cNy362BiXjo3lfcCOfRglBK+czgj
+	3LpXJPLtfsMFyLubV2r6PxPZB3zJ5WO1nFKNrck6W6KBiQ+dOVjJY0LQ
+X-Gm-Gg: AYBFou3rXh1bmTgj2hgaJ7ZK6reNHdkj3DMHvbdAY+uvG/BzGdL6VzStInC0abDtFp5
+	z54iZkPxTaTaLdhuBZxaCBd1lQ+WT0uUN16v23O1rz2eBrIQrIxgBjOE4QeoZ2R4wAigNwmmNyA
+	sOOw/fim8gEoXsMeopyVcNLnWvk71i6xbPFAzw2isL83G4QQ3xrqzuRRSRIDi9Z3OPLYx6Ozxw2
+	hAnMGl9StZwwpUr8WHjeJIPPHKgI9qE26WIOL/ohN1z1jntnWdZW+RYbCuGo1QDlJrdvoVCSSna
+	E1lCa2JVj/TNkmnar1uj/W39WLpm7effSlh3b5zsy5465pUxwnb2rnY/Z8zqRYl1lAkvsn7Eob6
+	P2b6kCmQbiHOCpHLXr/Mn41jYz79obyMOU5trRD07g50hh5EcQiOfyI2pWkDxrj/1nFneIMctSX
+	BSP9Z+sDMr/fdv32QoQRilUucmAI1mV6bKjEbxs+bnDxm8vHmMQLmIuNcIPcK+YVlo4kVzj+89/
+	+5F9x2NZtasEi++2EI0B91+wy9LLTUfc+ZdMaOAMC/aBFh4wKD1q2hTmL+PuIXLCNfEe5YHPx17
+	ioylS6RkvyDgR7Vh/QPiGm6wf4tbEB5jtpDVuyxkOffKvvSqOxPkg6oDRWCkkfK52+brKALJC8s
+	qdIXu1lTiAu7dKkr1pY128j6r4eYMOmA1RQYOz1VUE4pj6UvPlegf06+C9rv3y19+ZWYkj7mgqx
+	z0HIEHf8d40C38U7Fut47K5X0Du1bu5ew8znf462U=
+X-Received: by 2002:a05:6000:611:b0:48d:f02e:f7cc with SMTP id ffacd0b85a97d-49c7044c3f5mr2386582f8f.24.1794530292921;
+        Thu, 12 Nov 2026 16:38:12 -0800 (PST)
 Received: from navid-pc ([2a01:4b00:a856:6220::a11])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c608d10b2sm2702533f8f.44.2026.11.12.16.37.23
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c60116323sm1975267f8f.32.2026.11.12.16.38.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2026 16:37:24 -0800 (PST)
+        Thu, 12 Nov 2026 16:38:12 -0800 (PST)
 From: Navid Ghahremani <ghahramani.navid@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
 Cc: linux-arm-kernel@lists.infradead.org,
 	arnd@arndb.de,
 	stefandoesinger@gmail.com,
+	krzk@kernel.org,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 04/24] dt-bindings: clock: Add ZTE ZX279128S CRM clock bindings
-Date: Fri, 13 Nov 2026 00:37:22 +0000
-Message-ID: <20261113003722.3667081-1-ghahramani.navid@gmail.com>
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 06/24] clk: zte: Add ZX279128S CRM clock and reset driver
+Date: Fri, 13 Nov 2026 00:38:11 +0000
+Message-ID: <20261113003811.3670011-1-ghahramani.navid@gmail.com>
 X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261015-misty-lively-galago-693c57@quoll>
-References: <20261014072109.1759502-1-ghahramani.navid@gmail.com> <20261014072109.1759502-5-ghahramani.navid@gmail.com> <20261015-misty-lively-galago-693c57@quoll>
+In-Reply-To: <95690313aa006369e994b6c4a7af69b809a84337.camel@pengutronix.de>
+References: <20261014072109.1759502-1-ghahramani.navid@gmail.com> <20261014072109.1759502-7-ghahramani.navid@gmail.com> <95690313aa006369e994b6c4a7af69b809a84337.camel@pengutronix.de>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -111,31 +108,38 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+Hi Philipp,
 
-Krzysztof Kozlowski wrote:
-> This is odd. Device is specific, fixed. It either is or is not
-> compatible, not both.
+Thanks for the review. The next version splits this up like Stefan
+asked. The resets move out of drivers/clk into a reset driver in
+drivers/reset that uses the CRM regmap and is probed from an MFD
+parent, like Stefan's zx297520v3 reset driver that you reviewed. Your
+points apply to that driver.
 
-Right, the next version drops the syscon compatible from crm2.
+Philipp Zabel wrote:
+> Don't select RESET_SIMPLE without using it.
 
-> Do not need '|' unless you need to preserve formatting.
+The new driver won't select it.
 
-Will fix.
+> Why share the lock? Each reset controller has its own register.
 
-> So the PHY does not need any resources from the parent? It gets its own
-> clocks? See explanation of simple-mfd.
+The new driver doesn't share a lock, the regmap has its own.
 
-The next version has no PHY child nodes. The PHY registers are inside
-topcrm, so topcrm itself gets #phy-cells.
+> This check is unnecessary, fwnode_reset_simple_xlate() already checked
+> this before the reset control was created.
 
-> Incomplete example.
+That check is gone in the new driver.
 
-The next version turns topcrm into an MFD like Stefan's zx297520v3 CRM,
-and I will make sure its example is complete.
+> Why is this initialized from CLK_OF_DECLARE_DRIVER()?
+> Surely USB resets are not required early?
 
-From your other mail on this patch, none of the subjects in the next
-version will have the redundant word bindings.
+Only because the reset code was part of the early clock driver. Nothing
+needs these resets early, and the new driver is a normal platform
+driver.
+
+> This is exactly the same as zx_reset_data, why duplicate it?
+
+The two controllers will share one data structure and one set of ops.
 
 Best regards,
 Navid
