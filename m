@@ -1,99 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.45
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794574469;
-	b=skdHsAKmo6mZdxwVXizxKpRp9KpyvTL+kZ0utPq0M/NwwezOdZnqZHusaSy4hSXpnUI6
-	 UBHzpNmmyUmdrd5GjG69BsotRA6nF7O6zpew5Yt9aXRgWkpUDj4NUEuBY31et/0PMMTzT
-	 vjq9G544RD8NPhy2RX2UYkAQpk0pHvdy+C7yjKutN8l3xMPhexf8AKdavp9eCftWZD5nj
-	 JgDVm76YdeIjlKS0SWu7HcSuudaHaz3vCbt4swb7QQ7tVo3zSdVIdNm58H3TmHH0072qM
-	 YZ5UY8nqq0u4KJlcn470bSP06LjOBduayLsTOya85aYoDjGHAoW6w77J7yP2/WDkEyQ==
+	t=1794574794;
+	b=02331J6dps0UhPcIGfyRH3UkMU97Ix0DB+9vrrtqKSP4dOvVMyQ2rZACstfYdUAJnMom
+	 5EnoMvJE25Q8obQyDuo+7i4HGOsBoMbEKmECkG6/KuM8PChYRgTCdlNmeZYpemZk+Qeg8
+	 dSxGb0tGQNRkelwxchLuc3TBJ5rBXIQqbw0GH9Ag8Wtt0woWAfKDmG9DsPLy9gDFrTzwO
+	 SyU340oXBnYyvpJgOtWk1rgNuZEaRIzG9K8k2wrpHoHL7Niou7c6kjOj0CSx8dXHZBX17
+	 yH5o+TOSn8Gwh3995OSMJVif2dNIeOzh+ial9YnLMnV6kgaUMGebIoygwQZAoe7DZ3w==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794574469;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794574794;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type;
-	bh=mLlFdlAUsckIoBDaS7lANsUL8Pv2vCZkw0CEClRgKQA=;
-	b=ueejAllnBLzxiGuVTJ6clSRdHp/LdRe107tGVuNDBxLYGXa7ogkk6rBK8uxIdxBCQCnZ
-	 1Tv7IT59LuukAeVnhiTwGntQ/wbGms0MF1R0UWXFFUeYY9yV9iZMkIsG8hL3u+QQQy929
-	 0F+JkMbEon8a+xdy3gemGbERS8jkE8Kbd1N+0uusNHg+aYXfxn4IbRxmEatH9kMBDYXrd
-	 JeUGjt30kXLrvl/mVYhmWVBSeuhf5ou6oPiU8irdjoGOCeU1mwsrbnIqrb9WDpNFS/9Pa
-	 +aRuCbxeVTmzwK9iUi2Rspk++ezPo9ajNH85ewr3V73PZxSRll8uJO/x97NAAIi8LGw==
+	bh=bTBnO03FVproqb/6aEaVwSKFkOKpvQT6/xIPPhFQktM=;
+	b=UcYjgladBT8s15mMK9k+HZvyiGpTJhVssu64ZEjuXr2oO39VZScf+sBpOLKNfcDgHYMW
+	 qzFshj/1O0IC42B4jiKMs4st63uIuozXbQczBcpOZcgieWT5Y5YjPRg/BKWrdZ3KkxyDj
+	 iYlmFr3RDMWb4AdTe9iMoD51H3BKT1vwWWjF0AtLAjUqng+zXq+opwUrs6IckG0aq/lSy
+	 b0mFb1bZE1y7JK5bg00Qm9g6XCnQ5OJIMTpgwiBT+H8kno5aVa4Mt7vC3eF6OGmAZA8D4
+	 8yUpM+EVy+G61eN7RwYGpwLW2IAvI+LBhzJ0WcbAJnuusrBsLRVJZRLAfBffKcrRU3A==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=WKaeb2l4;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.53
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=AkroMdRT;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.45
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A203606A330
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 12:54:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1A203606A330
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252E4606A32E
+	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 12:59:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 252E4606A32E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=WKaeb2l4
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6b6f42095bcso1759980a12.3
-        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 04:54:28 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794574467; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=AkroMdRT
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6b7245ab5e2so3780352a12.1
+        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 04:59:53 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794574792; cv=none;
         d=google.com; s=arc-20260327;
-        b=cqwGw63peuKZnaflYIHTEwD/uOxfCkE6CyAwUHKkNtnk8oIjX4mBegw+2aoJr0CIre
-         VWFBc87fjIZ3T5nMz5e4jEs91VRZpj5Q5EmR7x8fzV/icSFNr6DDJ6J7Qovq0s/2J6Js
-         6poUvuvx71wutkil4jEq2jGVVcqdo2z3HV08t85gg3eKTpNb2DrjutBzGGSUllPbssmD
-         RF/Wxbr5fP+8hbKbotk1hU+Vsu55X0+bgxINBH/mU1rVVXhMw38AeOZkxmZIPCa+iBFg
-         c/cwcZwbddfo4SryVvFrsqXYX8ANCgAUqogI+q1cKEJqeUBphyANHCA683jSLON356Xu
-         hGrQ==
+        b=NZ+eowAkrdrmVNWeQWpehvtGJb2hhpC+TutGbfdke6N2nqLgHqalcT3nFa9X+MVPNI
+         PB6VVdgyKkuVyx4wgtkOzVbii1OJ1YhIgotnqXKnxU5XlX45N89ibbzJRcGeyp3dYWGl
+         pgv1zpGErpx/vds04+jR8KF3/KjY5GE4efiCrFKpO1/MnQ/IEOnynCFx9Dy4gHEfKqcq
+         CY/egpEZmrXZfpP58WNO+je/6wEcrBDQxW+gAVzBzx+wDS8Qne1bAq0gucjaiRPCMi7t
+         3KrBOLh8vdKhBHkhzb3Ep/l/A4JNKOb7mVegTRroukMdCa/lK0aQA80MGYbAwNinuSQP
+         s62w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=mLlFdlAUsckIoBDaS7lANsUL8Pv2vCZkw0CEClRgKQA=;
-        fh=FsRUhxqNwaNQ+XG//dS1hRbBTxKcMmNTBS/iihw1jeA=;
-        b=jL4TJWOJ5WpkOKvV5ZP3zGAluLD4KGdWJwvT01ddJm+0AqxkAnmGilawxwbsR+CeKv
-         CA+0OZB8Cy2A61t36PpRGLU4uLB1sFowNA52fUOlRV7M+uyX7PEDtnUIn6Vy5PnYCkqq
-         UI4JIsgog87kN9p6V6XowwmVdyxhIXTIkwxs4RHs0B8Cyo/nV9FOlbEnp50kczrJJmGL
-         mVWy4//FnMQkkbmEsq+Lb9W5tIPUNZpaW67HPM+MAJuHz93obC16EOkejl//Hko4IujX
-         xtSHMwgQXqFOdp16baWNxAyf919NM4bCdxvy/HHmjGpN/44RrkDs5wnfP7ADiHlcQYQK
-         Dy9Q==;
+        bh=bTBnO03FVproqb/6aEaVwSKFkOKpvQT6/xIPPhFQktM=;
+        fh=Y2a6g4zFUVt1ES9EzANu0BoB/D8E/DEiqg1UYUGQ6aM=;
+        b=pvfYOIc34C7ydIZhDDPJ3H9fjLZwAAYJT/R++oHd48dOo0LUo4xybtV0FTO078eeRo
+         rUdgyaeKlVBm0Z+iER1adsSTrAdP4/j/1lXG/cBYQVWpxMk37AMAu/d/FdfhkrgRoYKR
+         slYpLoixGwRQUyVGHfeIbAf88QgFTCmG/ASgSzwSN84NO2ef8pLir53+xjYe914bb2og
+         Np91veW2QR7peKKYFgmYe5Yk3HBJne54LANsvOfob5Vp7S72JdFPqXreIqkrpKrbrXnC
+         uTlpvUoKqP+kZ9WV23E6SKhCypMYipuoH4B/JNrVXxAQFVwZIU1l7XhTbO+Xe9cjqGr8
+         ihuw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794574467; x=1795179267; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1794574792; x=1795179592; darn=vger.kernel.org;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=mLlFdlAUsckIoBDaS7lANsUL8Pv2vCZkw0CEClRgKQA=;
-        b=WKaeb2l4pVzBS87XlMfPO1VmDqptC/3pLusWhgieqeXXXbpQOD/MIp0MA41pPGaSFE
-         UGPcR7i6V3UxRV/TUJfwrRDVWP1rRhkfW2bv5f3NKIh7u65gSoBnWc3Smn0ZYEC1mG59
-         9c6J0EwwIbANh6fVCNqaE+Sh+OrShJvWjxXx6MXf+bORf3/36vfNUdBbbOHoGqqHfsEC
-         sjhXCaXM03ov3jzCLS+fNlnP85J/nu4r9Jy4UZgLRRt4sSmQTCKs9VTP14lzhYH0OT5X
-         XIqDjGH1/R319J2ZswfccQWGwNAO+p9bfzHnzjuzlF/O/NaF7SFfrUot6bmtetdPzbED
-         pgkg==
+        bh=bTBnO03FVproqb/6aEaVwSKFkOKpvQT6/xIPPhFQktM=;
+        b=AkroMdRTCJEU56zCl5mRMi6rrvafd2Mh879g64RVhOfD34YxgOzOtrBsT8yx4NkQl8
+         gSv1yRzVbhdBh7graboeUHyOjVxnWYWXqTxrq5bwqTXLdODgtOJ2GOfvja1i9wZBs4H9
+         fcb9zmhVDOC+WUd7SGVWyfxFQP93w/xQqb2FnisylYb2rXsRhjc4CRnja+NBnS2rKhXF
+         cLontnuKm89vJ8lgs810EU0/SMd4hbxtRDKKGG1T7m/yNzjT4qqUkxsmm7hHJo35Whfx
+         tDrQsm7X93e0qnvrkO6hPhp7RxKzDVtK1uhz9g5bxTs3CjlOANpOM/WN/oFPwtcbJAz3
+         hkcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794574467; x=1795179267;
+        d=1e100.net; s=20260707; t=1794574792; x=1795179592;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=mLlFdlAUsckIoBDaS7lANsUL8Pv2vCZkw0CEClRgKQA=;
-        b=NgPQ4fsBDrvWqxwS06GE6gtHln66tAbVJUK6AlUZ+7ehLFsi9uDNA7m/C+mVYna/tt
-         dNzdt5Wgd2/LM9AN1zwTCY5NalxuAQhAwvcQ/n7AkkhYkWQSBpf0qiHbJIMtIkTwrphF
-         vmrW4xZnzp8yKI624tz2i56PkOvUlT3sgrc6HhlqWxg800KvogbMrgniGW4vgkrJ4uYc
-         hIP5KOXsxLrhD5gVCU5AsrZfLICZkJ8T/nzbd/wSFQnc9Q/yUXwqAVKeiC+gJFCotXpB
-         f8dXJhYLrN84YanhMugHrQsPuyEFOgRSZ1Fz50WzPCBeG52ADktgnxMD2hmL+FPeeTB4
-         bWTw==
-X-Forwarded-Encrypted: i=1; AL+hErF5NKtyLsYTKCo3vsmw/5CQetFovRbel8mpZotK0I+PBKPk6pUGUUxm0ocA43wduPXOB32qkiunF7E=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8tVx5HaYvrxnDn57hXMHsQFgZ+M60dscqiLphxKLUiF6HCsmWg
-	1+9pqRoLeiV0GihuKwykQ9A182Q8AoXjtY1cNee+dp5Hnzec7UMkFDvDZnpFw+lQSKy9fsnXYxa
-	6L77cl7WstNPNZhjWYeNrpzLt6a+4kb0ihN+sgRaNwQ==
-X-Gm-Gg: AYBFou0Im5G/0/wWME0DcU/wMXCVrMLLu+EpVGOH0BDTSw7zmTXC2RiCTeo+pomabml
-	C2T3d/uYMpWwcE6SB98pFHagh4enHyK6CQ7gb2YeQNa+9BT6tcH1vXLyeThDz+5tyo2VAesKKMs
-	+Wa9pDAuVUZMI46fg9KWlDivzJ6RXuNeOadDOq8RydXzkTgGSdMW8+xYW7aFImboamKvMEk6BJ2
-	PqaJdjS3qMxNycYuomJwarMq1aM/bVdrmUDv1aQLARx8cXWyk5rkaXuONv+iKiF3H6chW1V8j1f
-	er4zPkCsqZK9O3jO9GRKzTQHr09q8gyLMHs1aRumNzvZOZSOekgM0YSgp8h26VPsmAChi2f9EpH
-	gLhLl3+hDufKGlxGeyTBsxTSv30Deiml7yANIDz/AyhCxI1lkkfiIQOklUGY4bVwi930XqA==
-X-Received: by 2002:a05:6402:2804:b0:6b7:245a:a509 with SMTP id
- 4fb4d7f45d1cf-6b7c0d166cfmr1777902a12.40.1794574467313; Fri, 13 Nov 2026
- 04:54:27 -0800 (PST)
+        bh=bTBnO03FVproqb/6aEaVwSKFkOKpvQT6/xIPPhFQktM=;
+        b=Jw2iNzU70dbt7bilxw48SAlsk+w7MoncPBmbQnthy/a/iE3lg+bMPF0o/LS6piHhQy
+         BDFG5yA1qfIzHUcoAnpc6hX4EbMD6TgcVbQyOyHTzQHujDFhS4i6zFiUzQlHUr4v6nAZ
+         jjlQa1eOUYDhBBgLVHQlsAZtqOKet+vNcavB2HLXjr3ngYCB4OVAU4VMqBxxdN59nEmI
+         i7rzAe7cCIGqjLnXupC8RKKz3N4BV+m+qX5IJSa70tpKNe7ZSBUQVZ7VlYkfFUB1WADb
+         zwl8K2U0ZGyDNuRMyioh/Q1M3Tve2IbvfvOjBiPjzxOoHYNiAWVD5Y7Anch+QprT3IeE
+         4YJQ==
+X-Forwarded-Encrypted: i=1; AL+hErHwHacw7+0ox2VVqJQUC1+FPuSRA5GQBiNsqvI5DcZxCM5Mn5KFx+K+fBf+EkEaZctB+NOB7oq5b3c=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8PwPVDVWW8lwvJA4Oy7BCFKaPaPjwEF1W3fI4UR2pqVlP89n1n
+	Pi7tkrJ5woLd0M5OZFgnWyYkPlmIt0Yjzyb86pSjVcCrn9inDFGMNEVUTEHwONLi5OUh6crhmdZ
+	rmdPMTYWiGTOWoWHgic6WmsD024e5xceCb7Rr3/UFIA==
+X-Gm-Gg: AYBFou0cOn7ERgcrK2r2nQpInhIVWmEaT5aZG1CioxykfmTLxoE7t85oL3orWmzcKN6
+	m2Vj4zIl65HYfv2BmROZ2NY8bm2cnihfh5YYwpBZ0oMH/wkzRQ3YeN+FyiNBnfWQHXoeP54wWJ1
+	/xOhnzm9d0adSrkqtgoXPsEU/oPjQ4E4EFhdWDPSeABmuXkxkJpJkGwykCT7XtajQqsqC+JMX4r
+	q9s63tHYY2VHad8zP094acDGxiUojwlWyhYi2R0nBt/Lon06oezZSv+wszSuj6PXLE94gf7myjB
+	7T8XTLKWSGrVGecL2yzy9Zu/y6ZG8onJiVk8f+ARN35JQs/Pgxzr7OftBukRmYMYyuXmq/UD8sB
+	5Y9x6hEzi09+TGQdvVgtNR6fBWVY6g2/2jLJHEShMUabBLxhKWbBhnf43ZLt25mnocLJan090it
+	rdbwE3cIEhyMNyCHQ=
+X-Received: by 2002:a17:907:3f9e:b0:c46:ca2b:84ab with SMTP id
+ a640c23a62f3a-c507bca4549mr587358566b.13.1794574792499; Fri, 13 Nov 2026
+ 04:59:52 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -103,15 +104,15 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <CGME20261113104853epcas5p175c566a1ced2547e533c21b21e60e993@epcas5p1.samsung.com>
- <20261113110612.3265841-1-raghav.s@samsung.com> <20261113110612.3265841-9-raghav.s@samsung.com>
-In-Reply-To: <20261113110612.3265841-9-raghav.s@samsung.com>
+References: <CGME20261113104901epcas5p26c1b8e9a324f133216b7980ac7ded44a@epcas5p2.samsung.com>
+ <20261113110612.3265841-1-raghav.s@samsung.com> <20261113110612.3265841-12-raghav.s@samsung.com>
+In-Reply-To: <20261113110612.3265841-12-raghav.s@samsung.com>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 13 Nov 2026 12:54:14 +0000
-X-Gm-Features: AclHuK9WcGq9tEUmProC1B7yOVe2Lz9yBCRU5dHo1y04eEg6YkemqWw0onfqCbI
-Message-ID: <CADrjBPrzHP_97OgAYacJKKqeCcp9FURoi6=Dmopk6nisTdEbdA@mail.gmail.com>
-Subject: Re: [PATCH v3 08/14 RESEND] clk: samsung: exynos8855: add block peris
- clock support
+Date: Fri, 13 Nov 2026 12:59:40 +0000
+X-Gm-Features: AclHuK9cm82mhKCf1OM8U8MOAQmGsMU4pcM69WzWfUaEMzCzm0cQud7ofsYoc9E
+Message-ID: <CADrjBPpf_-pnzQRYrpqpzWUewgF_U5EbOA1CJprnH1XzQoDuLg@mail.gmail.com>
+Subject: Re: [PATCH v3 11/14 RESEND] arm64: dts: exynos8855: add cmu_top &
+ cmu_peric clock DT nodes
 To: Raghav Sharma <raghav.s@samsung.com>
 Cc: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
 	alim.akhtar@samsung.com, sboyd@kernel.org, bmasney+clk@redhat.com, 
@@ -122,129 +123,77 @@ Cc: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
 	pokala.reddy@samsung.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Raghav,
-
 On Fri, 13 Nov 2026 at 10:54, Raghav Sharma <raghav.s@samsung.com> wrote:
 >
-> Register compatible and cmu_info data to support clocks.
-> CMU_PERIS, this provides clocks for PERIS
+> Add required dt node for cmu_top & cmu_peric block.
+> This also add sysreg_peric node. sysreg_peric contains
+> DRCG and MEMCLK SFRs bits which are used in clock driver.
 >
-> Co-developed-by: Alim Akhtar <alim.akhtar@samsung.com>
 > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 > Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
 > ---
->  drivers/clk/samsung/clk-exynos8855.c | 97 ++++++++++++++++++++++++++++
->  1 file changed, 97 insertions(+)
+
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+
+>  arch/arm64/boot/dts/exynos/exynos8855.dtsi | 32 ++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 >
-> diff --git a/drivers/clk/samsung/clk-exynos8855.c b/drivers/clk/samsung/clk-exynos8855.c
-> index dcf58f2459b0..12b5ae54b560 100644
-> --- a/drivers/clk/samsung/clk-exynos8855.c
-> +++ b/drivers/clk/samsung/clk-exynos8855.c
-> @@ -18,7 +18,9 @@
->  /* NOTE: Must be equal to the last clock ID increased by one */
->  #define CLKS_NR_TOP                     (CLKCMU_DOUT_G3D_HTU + 1)
->  #define CLKS_NR_PERIC                   (CLK_GOUT_USI_PERIC + 1)
-> +#define CLKS_NR_PERIS                   (CLK_GOUT_WDT1_PERIS + 1)
+> diff --git a/arch/arm64/boot/dts/exynos/exynos8855.dtsi b/arch/arm64/boot/dts/exynos/exynos8855.dtsi
+> index 0333b80eba84..2e5dc79d66bc 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos8855.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos8855.dtsi
+> @@ -10,6 +10,7 @@
+>   */
 >
-> +#define EXYNOS8855_PERIS_GATE_DBG_OFFSET      0x2004
->  #define EXYNOS8855_PERIC_GATE_DBG_OFFSET      0x2024
->  #define EXYNOS8855_TOP_GATE_DBG_OFFSET      0x20A0
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/samsung,exynos8855.h>
 >
-> @@ -1092,6 +1094,98 @@ static const struct samsung_cmu_info peric_cmu_info __initconst = {
->         .memclk_offset          = EXYNOS8855_MEMCLK_OFFSET,
->  };
+>  / {
+>         compatible = "samsung,exynos8855";
+> @@ -170,12 +171,43 @@ pinctrl_cmgp: pinctrl@12030000 {
+>                         interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
+>                 };
 >
-> +/* ---- CMU_PERIS --------------------------------------------------------- */
+> +               cmu_top: clock-controller@13900000 {
+> +                       compatible = "samsung,exynos8855-cmu-top";
+> +                       reg = <0x13900000 0x10000>;
+> +                       #clock-cells = <1>;
+> +                       clocks = <&oscclk>;
+> +                       clock-names = "oscclk";
+> +               };
 > +
-> +/* Register Offset definitions for CMU_PERIS (0x10030000) */
-> +#define CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER           0x600
-> +#define CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC                    0x1000
-> +#define CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER              0x610
-> +#define CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP                   0x1800
-> +#define CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP                    0x1804
-> +#define CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK     0x201c
-> +#define CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_PCLK  0x2040
-> +#define CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK          0x2048
-> +#define CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK          0x204c
-> +#define CMU_PERIS_CONTROLLER_OPTION0_CMU_CTRL                  0x800
+>                 pinctrl_usi: pinctrl@15030000 {
+>                         compatible = "samsung,exynos8855-pinctrl";
+>                         reg = <0x15030000 0x1000>;
+>                         interrupts = <GIC_SPI 440 IRQ_TYPE_LEVEL_HIGH>;
+>                 };
+>
+> +               cmu_peric: clock-controller@15400000 {
+> +                       compatible = "samsung,exynos8855-cmu-peric";
+> +                       reg = <0x15400000 0x10000>;
+> +                       #clock-cells = <1>;
 > +
-> +static const unsigned long peris_clk_regs[] __initconst = {
-> +       CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER,
-> +       CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC,
-> +       CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER,
-> +       CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP,
-> +       CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP,
-> +       CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK,
-> +       CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_PCLK,
-> +       CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK,
-> +       CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK,
-> +       CMU_PERIS_CONTROLLER_OPTION0_CMU_CTRL,
-> +};
-
-Same comment about preserving register state from the bootloader when
-powering off/on PERIS block.
-
+> +                       clocks = <&oscclk>,
+> +                                <&cmu_top CLKCMU_DOUT_PERIC_NOC>,
+> +                                <&cmu_top CLKCMU_DOUT_PERIC_MMC_CARD>,
+> +                                <&cmu_top CLKCMU_DOUT_PERIC_IP>;
+> +                       clock-names = "oscclk",
+> +                                     "bus",
+> +                                     "mmc_card",
+> +                                     "ip";
+> +                       samsung,sysreg = <&sysreg_peric>;
+> +               };
 > +
-> +/* List of parent clocks for Muxes in CMU_PERIS */
-> +PNAME(mout_clkcmu_peris_noc_user_p) = { "oscclk", "dout_clkcmu_peris_noc" };
-> +PNAME(mout_clk_peris_gic_p) = { "oscclk", "mout_clkcmu_peris_gic_user" };
-> +PNAME(mout_clkcmu_peris_gic_user_p) = { "oscclk", "dout_clkcmu_peris_gic" };
+> +               sysreg_peric: syscon@15420000 {
+> +                       compatible = "samsung,exynos8855-peric-sysreg",
+> +                                     "syscon";
+> +                       reg = <0x15420000 0x10000>;
+> +                       clocks = <&cmu_peric CLK_GOUT_SYSREG_PERIC>;
+> +               };
 > +
-> +static const struct samsung_mux_clock peris_mux_clks[] __initconst = {
-> +       MUX(CLK_MOUT_PERIS_NOC_USER, "mout_clkcmu_peris_noc_user",
-> +           mout_clkcmu_peris_noc_user_p, CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER, 4, 1),
-> +       MUX(CLK_MOUT_PERIS_GIC, "mout_clk_peris_gic",
-> +           mout_clk_peris_gic_p, CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC, 0, 1),
-> +       MUX(CLK_MOUT_PERIS_GIC_USER, "mout_clkcmu_peris_gic_user",
-> +           mout_clkcmu_peris_gic_user_p, CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER, 4, 1),
-> +};
-> +
-> +static const struct samsung_div_clock peris_div_clks[] __initconst = {
-> +       DIV(CLK_DOUT_PERIS_NOCP, "dout_clkcmu_peris_nocp",
-> +           "mout_clkcmu_peris_noc_user", CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP,
-> +           0, 4),
-> +       DIV(CLK_DOUT_PERIS_OTP, "dout_clkcmu_peris_otp",
-> +           "oscclk", CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP,
-> +           0, 4),
-> +};
-> +
-> +static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
-> +       GATE(CLK_GOUT_CMU_PERIS, "gout_cmu_peris",
-> +            "dout_clkcmu_peris_nocp",
-> +            CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK,
-> +            21, 0, 0),
-> +       GATE(CLK_GOUT_SYSREG_PERIS, "gout_sysreg_peris",
-> +            "dout_clkcmu_peris_nocp",
-> +            CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_PCLK,
-> +            21, 0, 0),
-> +       GATE(CLK_GOUT_WDT0_PERIS, "gout_wdt0_peris",
-> +            "dout_clkcmu_peris_nocp",
-> +            CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK,
-> +            21, 0, 0),
-> +       GATE(CLK_GOUT_WDT1_PERIS, "gout_wdt1_peris",
-> +            "dout_clkcmu_peris_nocp",
-> +            CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK,
-> +            21, 0, 0),
-
-The Linux clock name strings look wrong here. It looks like you've
-generally followed the clk-gs101 clock name mangling in this series so
-it should be "gout_<block-name>_<IP-clock-name>, but you have
-"gout_IP-clock_name>-<block-name>". I know there is some "name
-diversity" in-tree for various SoCs, but with new SoCs using auto
-clocks I would like to keep the naming scheme following a similar
-style to clk-gs101.
-
-Also I guess with auto clocks now enabled from the start you may never
-need to expose all the CMU bus clocks, but I worry a bit you may have
-mangled the names here a bit too much. If you do need to expose extra
-gates you might get name collisions. For example in clk-gs101 we have
-both
-
-gout_apm_apm_usi0_uart_ipclk
-gout_apm_apm_usi0_uart_pclk
-
-So we kept the _pclk suffix in the Linux name to avoid a name collision.
-
-Thanks,
-
-Peter
+>                 pinctrl_peric: pinctrl@15440000 {
+>                         compatible = "samsung,exynos8855-pinctrl";
+>                         reg = <0x15440000 0x1000>;
+> --
+> 2.34.1
+>
