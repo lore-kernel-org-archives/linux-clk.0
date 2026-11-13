@@ -1,109 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794556992;
-	b=tb/4OmoyfXKlAC4kqTPzOOpZAkKW9/4DlA3K2hmdnFNMfbGSaF16BraK5DMc4cdx6PNJ
-	 bGzbTTPYU06h0s1Qv16kbXE/0LWmEhs3yOTETOjNv6ED5IsXkkg3xhrh6qQYf0GTqv4Tv
-	 oLO/baCQjNqAEgklU7JGwI3+vq4E6cjDUhGTWQeO0Oz+XOAPy9ynOp86fe0ULdAVnMtp8
-	 ntDK+RwGtBOmRJh7Gc1mZKyvUmx7U7KvUdrlrFxaGCWBR/GjqbNuon1f6BGBcjYoPQBW8
-	 Qup6tLcyS4UkBE/la+/lyZ3JNfAEmEDPWCUOYBLGaZSfzYAKi6P8KjiwXdmz8JVXuFg==
+	t=1794558155;
+	b=RM0ZW7UZWg0jlxpIstsEhITUMSSCBi6nkyGF0LnKid/tyo/Zpgzb3lGH3tMj9HlG11pg
+	 DDo4Uq0fXxE4lXVQ29tiC7x/fknioA7FBdiYDBadYKDNCTwDHGbdM5/9GT3WDtv+CaRhB
+	 72jACJSzfL80UC0jPh/pdThQ0cuk2XqB571qo2Xph3qY/dVGQYlbqqSd/FwZuV+93oFu6
+	 klyOQCJXs/a/v7bcGqDI2809B0mGSpFTaCEVYA96tH5QKbmSm0TswEWPDQOVlnT8NIJ1+
+	 9IgKIByuHA90NlkRuPHnKAwpFzcT3ee0Wv9z/xOylHgAm6Ge+7TbEWOTNP2khStsxgg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794556992;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:References:Content-Language:
-	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Details-Enc:
-	 X-Proofpoint-Spam-Info:X-Authority-Analysis:X-Proofpoint-GUID:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=zVzEyTZk+1HeWp1LRvu76rixuMIXyO9jzfzAeGraCds=;
-	b=YWJj+6FIKtwDfZ/iOl+233MsnW/r61nlpOGew8w8oilXFj00rtThNo6GFhybF8z3T1kS
-	 9hIMi5eDOcmo83S+bUkO9fRZGaGGx1pAsV6t/K4pDSonePQkNy7XpbBmyzRRGEwmd7kQH
-	 ZY3seO1dBzrvrxC5DcXMar02S6Zx1WMgSPMLk7/seaWmvVmaJPWDb7sv8WOxstH4qN2K5
-	 814oA5xC1rTAtPbQjt9PC1MU9cswAteOMfQmm58eDPRbn4yR0IGlXAs3mAM5kx8GPDlWZ
-	 4ij8TQlrpHF6OlRxkgewY7QWuSxsgUYcPKP/jT+r7PS90D26ToerMsTAHFtuz/omA0g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794558155;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=UXvFu+Wn1ESA3yGz4gkc3wR7DuZbJgWGF7pWZKVFO4w=;
+	b=gY7dUDwom3LlM7Mr3DveVKkTXv8/jjGTqtbvE7+ACegsHtHVdfuJ4cc1ZCRFxX10VPvJ
+	 WVcTa0HBmEmPeIKUdnEr+P9mTWJzvoOhHLdrjAgCw2Pi0vDKgb2Bn2QQGCmy5WEhjJllI
+	 20EtCvmrR2owRqmOci2Y+uvtNTJveKst4O+KSAtpvb5WRAi2IE/WJ/70U+pYvUfJHJ50O
+	 O7vPFRRSuvD4lqqzxciabYQxeyC/DpL2k7Ih53O0AZ+yvCJC8xnxvpi2208jBF5utfj0u
+	 SMdoY1LC4ILsFZZLglzgUUgLTbV+7iiYeUmhKCMW8NOUq/I9OwaEgzxgm4UI3rV2Fxg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Oy4vo9zS;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=EriXx1d4;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SnzyokXF;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA013606A331
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 08:03:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EA013606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2C8606A323;
+	Fri, 13 Nov 2026 08:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Oy4vo9zS;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=EriXx1d4
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AD56wtG2618536
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 08:03:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zVzEyTZk+1HeWp1LRvu76rixuMIXyO9jzfzAeGraCds=; b=Oy4vo9zSfXOnTriV
-	FVhy+t9/cBbMbZiP9Mhymkf+ac0TsPPXlAAXr62o2Igb7Ls2H8fJLUvazYafDGjd
-	i7o4tG2yusJN/vwcR+jKWVM+KReKmtRbtB8R5/9fD9URbEUSruSXvT50TZUUCK7g
-	vXkbyjuslOwYOwscZl97TgTTAm6+0cwyyXGAdMD5tp/AzrwZasMG+OQVGl5zUbV7
-	E4JgYY69T200s8axZA11tJwEMKNQcbggyldDwZuzeFyqJEsgCW1HNLMujqDcuHgA
-	WwqcO709jr0CH17N/OJi5vEAXOpoiywNdey7lP4Sok9XYsnEMz+05yFN9UKzyg+K
-	ef28vQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hwu2mrta0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 08:03:11 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-92eebb130dcso20976785a.1
-        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 00:03:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794556990; x=1795161790; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=zVzEyTZk+1HeWp1LRvu76rixuMIXyO9jzfzAeGraCds=;
-        b=EriXx1d4uN9we6P4Nk/oR7djMWkTEblwJH3AYRtHXrmjlloyAOH23+V72vD20vIR6M
-         0vhZJJB2Kqb1fVSeYxiVAYR5B0Wo5vXWw9R30A7hq0P+wIPvzKrmcOoGHa59Z3Co86XG
-         nxqKH2POQ535lHIkL1bUEB7tCvh2ZSiDdMmrqP659HX8uLrfm/Oovp3iad/2n2eN8ZIu
-         rzPJauERCOE58BcSa9ut8mCmCelmTmL6TV5KMTHd6ivqinF1TUBeyBUCZgmALACOIvMc
-         hbFKXsXk9AlkS776qSMmmdxt3SYBRhtT7GgmW1GftGvb326JoGuXqj5XozXRH9YFqE+t
-         3RYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794556990; x=1795161790;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=zVzEyTZk+1HeWp1LRvu76rixuMIXyO9jzfzAeGraCds=;
-        b=YoXpm7qv5OFkjAOiofUITfdkzV0oi7Z3s1Ek6L4NId9rlZFoSted8ILc+sfE/ShM76
-         mIE02dQHG5bnk6je40JwlOtqeks2MzISrbY3Dx1zyKN/QpHnJsjgoFRv6OP25NAHunXz
-         n6tOPw822j56RObDRDQF6cxIwKo9OxGe73+z88ZR9sHHq+rhJwTulyKakWrc5Yd9NKdy
-         PGe5fiP1I3ySUTxUKkhcs72ZbN5EzCkavzTzcz4svUDi3s0p8dQEgekYx/feyG5FU+WN
-         LEWx/dKN6+bDKKxbo3sOWZaNnxt4ECPqAiMl4805Nnhmca6nue9sLgLQLLMWwTqV7KpY
-         0s6A==
-X-Forwarded-Encrypted: i=1; AL+hErGNjaaHdgqup9/TUMCnmvRD0yO8mNyuq38JlKKAON2WNFHVNmP31kIVO/ZqtCxFj3hCrFCK2xGkBQk=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8Hqe1h4I98ZKkmdRGLjVjPLyH2N/Y+UNszL0TYNa4iXXeXjaUN
-	m++cZQUDpcOjSdDnbbcRXgkDOKMTTgpfrNDCMoWwlrmKc32Xbkc7RVPX6CPLCAa95rXYaAVcuIg
-	mnu04/RV/WFlIKi7fWjEGqGGHcbWDaakzYAXInCJ0bzfWWPqrje/zSsxausJ/Mtw=
-X-Gm-Gg: AYBFou1+z+wBfTt0mxKojX5TsllZeNsqJLgNFFENuzUQtRq0wy2Pw0u3l5vj7WC/vJl
-	0ewnh0k0IMeDWk63IDTZU5d0zr4rzCGKX0WOnibfLQhPzK7fq5V5euemLL5iYm1HK1guoZMO9J4
-	tfD1i29jc8p7c5BzcgA7rV484lQRgX0Yz+DwiBE4L8ZEj8+X2h82nZIvLAwH1unUJMTc9g8GFyt
-	wbK3KZi8QqKeVOkVIdHJANsPd4r4OS/UPXV+bR6AgxoyscUr33hjFUxTbxEGvJowMDkE3eWTydG
-	RDplYRxTDG/R+0a/iM8eil4dCThSs08zvfpHiXaP+xpblvksS6UcGCghV4JTvbU6e+7Rxsm073O
-	lL/2yYV+wUA03mzF50wy/KbFIksfofDdcbDaDukB+oRw5AVe12/B2gj0VUy+fTj0t7dRQqL8=
-X-Received: by 2002:a05:620a:a790:10b0:93e:6d87:4f69 with SMTP id af79cd13be357-9494bbc8d7dmr268107685a.3.1794556990263;
-        Fri, 13 Nov 2026 00:03:10 -0800 (PST)
-X-Received: by 2002:a05:620a:a790:10b0:93e:6d87:4f69 with SMTP id af79cd13be357-9494bbc8d7dmr268098985a.3.1794556989293;
-        Fri, 13 Nov 2026 00:03:09 -0800 (PST)
-Received: from [192.168.226.72] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c5095b7e5cfsm63171966b.76.2026.11.13.00.03.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Nov 2026 00:03:08 -0800 (PST)
-Message-ID: <ff19f124-ccb1-4f17-b047-da01d839bd36@oss.qualcomm.com>
-Date: Fri, 13 Nov 2026 09:03:07 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SnzyokXF
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 528591F000C5;
+	Fri, 13 Nov 2026 08:22:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794558155;
+	bh=UXvFu+Wn1ESA3yGz4gkc3wR7DuZbJgWGF7pWZKVFO4w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=SnzyokXFuhEVSMurbyoM4lz70Pmp7QX1+Vry1yBy9/1gqKkwg/B3Ao5+tQQuQghZo
+	 12IIuHadRtw9ptiOib143gO88XOQ4esR1jwITNxwt56TEMUGH1W3+UKSCmoFPRmFQa
+	 BL633Sz6dAuGseT1ze7jSWShyfPUGbt5xuilY49Io5l0VTGQFDMdclwWlVa2Rapiq/
+	 gSlXbqNpnd0wnMCYTfWdqh2MCQoHratcRN4ZasaXyu9nw+J7WiIwulblIvFpzUT0aF
+	 E4YJUXGHhw4T++mqHxVzF7Ujyn1GrVV+U3qeQYxvZuo5lsgUgQe7EgDP/CO8lbkbm3
+	 QGiKHn4NgYqZQ==
+Date: Fri, 13 Nov 2026 09:22:31 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Christophe Roullier <christophe.roullier@foss.st.com>, Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: clock: Add STM32MP25 SYSCFG clock
+ controller
+Message-ID: <20261113-charming-admirable-pronghorn-bdc26c@quoll>
+References: <20261110-ups_mp25_clk_syscfg-v2-0-624559bb8ec7@foss.st.com>
+ <20261110-ups_mp25_clk_syscfg-v2-1-624559bb8ec7@foss.st.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -113,57 +64,95 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: hawi: Constify known static data
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20261112154357.271072-2-krzysztof.kozlowski@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20261112154357.271072-2-krzysztof.kozlowski@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: h9x7-F3OqRyvpA-HDgA8pHDYMQbh342b
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEzMDAzMSBTYWx0ZWRfX36LabO7wTpam
- QV7QIk4/IXvQLSsn4tFhxl0AAn7LYqFBSvjmU3DiNcLvKD7Rney+7dIqwurYreYQP1GNfR/3WT8
- N7vzMdvEC652biZZu32NLYxXhQ3ax6u59cxPF67ZyGoYVx8iR44yUKakW12tW6XwjDuDgn9BpEC
- lRAR2s4PkbqlPYDlLehte9GcdnyYWMwY5W/ZfPyeJPLT/sNtubjzYufK/W2dRVrTkqDIZV9lzun
- J+AEgbpW3qlZ5eHLtpTrn5uu7Q7QJG8Go9iVDqPGyVsTEoH1FGj1XkxJXZ3u9tAuiT3bgzeIoMA
- RS9kmcVXYqeyfKXrNJx0M0+OqmDhG+VIeJbS5/H/fiZ1rcLZjkUzGKhtMhG9Z9ikOfL92lQdzmS
- cRTT/F1OHPN0kKpbK1dsdytzBz/VW9Tp/djcaC/950gYtRtwoU00MRrksgI04hsrIKhmxHo0hJN
- azI8o0Yubd06D1rAtWA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEzMDAzMSBTYWx0ZWRfX/Lq0VyZQc4zX
- cM/Q++bnmccSlNZsGiHW04q/oL/r50SJMvenfgbEbCRNswvJ0vYZnF6ZrkGd5yyw53i0D+1IiuC
- 68E+DMY2ndPE4uxjIUCRyGfDTtJALfg=
-X-Authority-Analysis: v=2.4 cv=ddQVTnXe c=1 sm=1 tr=0 ts=6af6c43f cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
- a=EUspDBNiAAAA:8 a=yez1amU5zvzsZwMJzWkA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-GUID: h9x7-F3OqRyvpA-HDgA8pHDYMQbh342b
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-13_02,2026-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 bulkscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- suspectscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611130031
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261110-ups_mp25_clk_syscfg-v2-1-624559bb8ec7@foss.st.com>
 
-On 11/12/26 4:43 PM, Krzysztof Kozlowski wrote:
-> The static 'struct qcom_cc_driver_data' and array 'xxx_critical_cbcrs'
-> are already treated by common.c code as pointers to const, so constify
-> few remaining pieces.
+On Tue, Nov 10, 2026 at 02:10:21PM +0100, Gabriel Fernandez wrote:
+> The SYSCFG of the STM32MP23x and STM32MP25x SoCs selects the LTDC pixel
+> clock among the LTDC kernel clock, the LVDS PHY pixel clock and the DSI
+> PHY byte lane clock.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Add the binding for this clock controller, described as a
+> clock-controller sub-node of the SYSCFG node, along with the header
+> defining the identifiers of the provided clocks.
+> 
+> A sub-node is needed since the inputs of the mux can't be described by
+> the "clocks" property of the SYSCFG node: the SYSCFG is a syscon, whose
+> first clock is taken as the clock of its registers and enabled around
+> each register access.
+> 
+> The inputs are listed in the "ltdc", "lvds", "dsi" order so that the
+> ones missing on a SoC (no LVDS nor DSI on STM32MP231/233 and
+> STM32MP251/253) can be omitted at the end of the list. "#clock-cells"
+> is 1 so that the other clocks of the SYSCFG can be added later without
+> changing the binding.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 > ---
+>  .../bindings/clock/st,stm32mp25-syscfg-clk.yaml    | 61 ++++++++++++++++++++++
+>  .../dt-bindings/clock/st,stm32mp25-syscfg-clk.h    | 12 +++++
+>  2 files changed, 73 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-syscfg-clk.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-syscfg-clk.yaml
+> new file mode 100644
+> index 000000000000..027d14f28b0c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-syscfg-clk.yaml
+> @@ -0,0 +1,61 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/st,stm32mp25-syscfg-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: STMicroelectronics STM32MP2 SYSCFG clock controller
+> +
+> +maintainers:
+> +  - Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> +
+> +description: |
+> +  The SYSCFG of the STM32MP23x and STM32MP25x SoCs provides clocks, described
+> +  by a clock controller sub-node of the SYSCFG node.
+> +
+> +  The provided clocks are identified by the macros defined in
+> +  include/dt-bindings/clock/st,stm32mp25-syscfg-clk.h:
+> +    - CK_SYSCFG_PIX_LTDC: LTDC pixel clock, selected in the DISPLAYCLKCR
+> +      register among the LTDC kernel clock, used by the RGB parallel output,
+> +      the LVDS PHY pixel clock and the DSI PHY byte lane clock.
+> +
+> +properties:
+> +  compatible:
+> +    const: st,stm32mp25-syscfg-clk
+> +
+> +  "#clock-cells":
+> +    const: 1
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+So you have 1 clock, thus drop the header and here you have cells=0.
+> +
+> +  clocks:
+> +    minItems: 1
 
-Konrad
+Why is this flexible? Device either has or has not these inputs.
+
+> +    items:
+> +      - description: LTDC kernel clock
+> +      - description: LVDS PHY pixel clock
+> +      - description: DSI PHY byte lane clock
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    items:
+> +      - const: ltdc
+> +      - const: lvds
+> +      - const: dsi
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+
+Best regards,
+Krzysztof
+
