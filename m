@@ -1,55 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794565085;
-	b=vLnmOki1rE7A1LDjIdok2CE71z3fMm8EYcoY3X6F7Nbyb0GwfQuj7lH7Vb/kq29Mwfvi
-	 oadxXtLW3U4VunUk3F1fY812j1Pxl4SlfZSkRtVaDt4+7BVU6EmXTHJjDpGkMwHs5DlLl
-	 cyOB/Mh+DDVD+S8VRXMUK+QF2lD/9eU/h0NXufC7yBJWxFcoWEl4x3d8X8Jd6/OQMuci9
-	 rrhDgx/muMywXKB5UWKP4L4994rIdEG+Hn0LWz0JB9tyc4JHAkUlr4oP46oNskV/0mEV0
-	 DOQAKklF+IApabEmDzVMG1L9w/hsp4hgbAfp1ccuidDkcsn6XVyCI9Rgpfp8TMQE3Iw==
+	t=1794566033;
+	b=f7n8B8sRN/nPrZ5bwo30HFF/lWbPSYgDsIKV3t/IVswwb/hBITeh/SBjZ/ITvXsWXDuP
+	 h56VNpthWTnywQAE5UduR5YVD9pxWjBpbJL/zYZUCWPRtnVLJ+tlUC3r9V+ZQb+X32P6b
+	 c6ODpnRyK3Si/R/Fzt4Uvhm6dJxqmFUMUJQX6BmZtaZA+Jtj+A/M+fDMpzRL/W0NJ9pqU
+	 vGQYan44GLrY67cb2pUTvfJKwf45T6yNZ5s0jah6m9WOvL63eoD1xZ2M6+8gqNHTmHEd1
+	 EjM3kqmstH0bwUwyxoN/0sd2kKh94/paT2UBm32ISX6j0TQOLDL7E+j1OU5sqAeqmWQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794565085;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=oWpj+fMcU0ldZMemXXF2GwJUPPqvOroaTzblSr6zsuI=;
-	b=j+fzfQSbh2YeIyWEeg6J6UPLsu80dCckLvrYYiP7PQjwiX8rSn1qOcYT6CxvsAd2KiB9
-	 JZqLPQUDFpnZp50oXycnRhrf78OQ5vt3fYp/STRXaOVoZFKYIHyEmy7HEwpuIiuJX/Vdf
-	 TY0gM9KGGswkFcMbpNy8IiKLq4hzjy0KLz1jfvsRcSKXWhkJXXtJI74Q3N4omM4NPlYij
-	 Jc4J9Simp25jlmSEGUSM6TPNReUdoRxGiZxsNmvWxrslx1T2LqXSs/PjoJdxZK4xh5s72
-	 E4y7csQkiCxSG2wKbZqGbFNsyB6wByH55/CEla7zj2LSatEGoF2bwhRZAtSgxyky6Bw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794566033;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=nAAFN+kL6XGhKEZD2gSfH/OYoLpix4o1w/mgKhSRkLQ=;
+	b=UMAMMWs63UxW9pFGHo5HWgGr8h+2Q96uDeKmAMmJ/HJoMwPBv0BlPWtUwB0nHZX171ix
+	 LjdgOtY4QgF1qFgY4/hgLh2Nbd9yEwsBVbEfzqZeBkkd0zcrMDpr7AWKGtSaX9e2D5Ern
+	 38985XaozByiVMo/LZZ9Cnw2D5gqLZroiWYYxrFqII38xz5SwCVwX9R9ZOmGyyQi9h9kY
+	 ymVOPK5XjwATfK4KWXSOoGZa9Z0fWy/T+V7NlKbWimhFpLFyEy36eALfDww9roP1ywuYT
+	 /+SeoyLtCTGaLYB2C73+hb27NrjHe/PDp49PLPBHBicm6nsIH2zbwb9t7WnVtOxNVxA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IEGnZ9s7;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V7gOJf2U;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D777606A884
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 10:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC4D606A31C;
+	Fri, 13 Nov 2026 10:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IEGnZ9s7
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B0B81F000C5
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 10:18:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V7gOJf2U
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3251A1F000C4;
+	Fri, 13 Nov 2026 10:33:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794565085;
-	bh=oWpj+fMcU0ldZMemXXF2GwJUPPqvOroaTzblSr6zsuI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=IEGnZ9s71CxuM1FatGWVZ7MjS/Ksms7wsHnU0cCjvI8yD6ri1brzQWsOTKwvf9scE
-	 1x6Ik/hWXwA68bNMOJ2qk0IELCj40VL2vurKZg2CBldMMMeZzCnayO4J2Gnj0Az3+8
-	 sLcpEApwpShOgzgYGnsC5zQ/BTQA1pPyK8jNvC4x12yPuP5UtkKRgIIy+9jLBgNocB
-	 L9MMZWBtHuoQNREggu7MnqN8y/aUPyWkH6bNpbqXdfg0nDqFJKcg78yywZyRRLPCde
-	 WmTYkuNtdC17dgd1l0oq+eyfgjAcECX5WMpRB1C91OhxyakR/QzDsp75gUIpaHPi3l
-	 K27CaA5AGXzPw==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-717080a2d50so1192082eaf.0
-        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 02:18:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErG9XTIskDQ+qVzaQUuX3+kQ6PPC7qzG8KgeKp3mkj7zJPkLKJCY2GaYO13fvLMxUSRIIuPr46fsj2o=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8sFqJMPr8ZYo8kummw3n4pn3urPvaQbxebxsIyJWTUnF6pnVCD
-	dOcqdX72pytQa8qWnEzDUZgoEBQP02DOIDwdLhK++T4TALQ0lOhFTVMkb0TZWR6af5iVLRtEqWQ
-	1ELT/QJf4vyjQMvYAo0RJDdvNLalSowA=
-X-Received: by 2002:a05:6820:2228:b0:70a:1787:2696 with SMTP id
- 006d021491bc7-71ab50522aamr1246436eaf.61.1794565084106; Fri, 13 Nov 2026
- 02:18:04 -0800 (PST)
+	s=k20260515; t=1794566032;
+	bh=nAAFN+kL6XGhKEZD2gSfH/OYoLpix4o1w/mgKhSRkLQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=V7gOJf2ULdroqhBcdMGkYE3PPyOnjFBbK6WVKcCn6xdNxvMnajN3kBDa5CuamsF1r
+	 f+awvpW3r0BPaGMnSMKwjKb91w3g6lBMfbrbJEo84lRZ+3KDrTSM/bFqnFOsX7KW+Q
+	 uT3POWzPHh2eK7Wt6UgiztzDgdSqf/gUff3GzrOwac5xA5nspcXKEaQ/iH65r7YXbi
+	 QGK3ezjpSWv5pvqsaLbA7bLhcBUiq/z/oV+qHzid5yoJpb2x+acL5xaHc5GMkzSHyH
+	 jWOTUENKrsxWk9xACDwXSnYwsllet5Q+7TkJUpgiDIDb2WVHdu/3GDjDa8+mrxjt/e
+	 WRQoy0BoYU4KQ==
+Date: Fri, 13 Nov 2026 11:33:49 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Stanislav Aleksandrov <lightofmysoul@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>, 
+	Qiang Yu <qiang.yu@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: clock: qcom: document the Halliday RPMh
+ Clock Controller
+Message-ID: <20261113-fast-red-mackerel-2faaff@quoll>
+References: <20261109-halliday-clk-v1-0-20c3ba8be0bd@gmail.com>
+ <20261109-halliday-clk-v1-1-20c3ba8be0bd@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,54 +64,21 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261022-add-board-ok3572-c-v1-0-0b0fd85a31ee@qq.com> <20261022-add-board-ok3572-c-v1-8-0b0fd85a31ee@qq.com>
-In-Reply-To: <20261022-add-board-ok3572-c-v1-8-0b0fd85a31ee@qq.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 13 Nov 2026 11:17:47 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkJsYtjKOF7wpiUqSLoBuiOe+C5sMEQo7XZ1dW773+pJQ@mail.gmail.com>
-X-Gm-Features: AclHuK9FczXasoO8qxg9IxepytTJahNxlbbuShGYzvO1iLyvCzMkO5H7q2dWjZE
-Message-ID: <CAD++jLkJsYtjKOF7wpiUqSLoBuiOe+C5sMEQo7XZ1dW773+pJQ@mail.gmail.com>
-Subject: Re: [PATCH 08/27] pinctrl: rockchip: Add RK3572 support
-To: 1579567540@qq.com
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, Lee Jones <lee@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
-	Ulf Hansson <ulfh@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, David Wu <david.wu@rock-chips.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Vinod Koul <vkoul@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Jaehoon Chung <jh80.chung@samsung.com>, 
-	Shawn Lin <shawn.lin@rock-chips.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	mfd@lists.linux.dev, linux-gpio@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-phy@lists.infradead.org, 
-	linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261109-halliday-clk-v1-1-20c3ba8be0bd@gmail.com>
 
-On Wed, Oct 21, 2026 at 6:12=E2=80=AFPM Cunhao Lu via B4 Relay
-<devnull+1579567540.qq.com@kernel.org> wrote:
+On Mon, Nov 09, 2026 at 12:29:10AM +0000, Stanislav Aleksandrov wrote:
+> Document the RPMh Clock Controller on the Qualcomm Halliday SoC
+> (SXR2250P).
+> 
+> Signed-off-by: Stanislav Aleksandrov <lightofmysoul@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-> From: Cunhao Lu <1579567540@qq.com>
->
-> Support RK3572 pinmux, bias, drive-strength, and Schmitt controls.
-> Enable input buffers during mux changes for the RGMII receive clocks.
->
-> Signed-off-by: Cunhao Lu <1579567540@qq.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-This patch 8/27 applied to the pinctrl tree.
+Best regards,
+Krzysztof
 
-Yours,
-Linus Walleij
