@@ -1,89 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794596921;
-	b=o1170bJLAlQYt2OVkeVsvNEftqsBxgP2rknz1ugH96P/udZe4Q3OAzijBHglVyYE9LOH
-	 PV9sWAhSYE65bZgjk2FJGsPWMQSs1xNTRgKiIpwtc2vqWyWwUsS+gx/A/ociqqHfl/c+A
-	 pT605uLBnE7JkNKqrVw8Gy56FOXZJTHJsRRbggWLTJ7m94j7Hz758xSrpJhDhr+tBE6n/
-	 j6RmVefuBjtR5n9Lup5jllZHZDbqSphc4JCPrIX7x/Rnz9JVzDmA62bND2XiB3nbQ7Dyr
-	 496BmfnLrB6Hf36BKU087nmuMog+/klE0poeNngDZfYnHW9/NhqK0jRsDr34l7W4siQ==
+	t=1794596924;
+	b=PRRl3IUg0GArbzfgqviiHCAoUPdTltx8MtnaFCUpP9xD8upukm6zWqSPuPeHorYU9qYD
+	 a/fuDAuFXv0GMODv3m0xyIanHZNZNTH4cRUgSnpOTozkFm+nvoOj4+OzjohgWBUeE5o4E
+	 WosjM7jgaeHID7iYvL5HhcE29OICtXQs7ZBZZsopwe3YTwh2tCHu1iUs2RuL+weWGzlC4
+	 q+Y9+TEu9zXVx+LpjCXxkZKM8H+Dqq15T0UB9EL/BAj44IBbTjzoN5qU8t/MbsvR1oda8
+	 IJLek+UJs2JgpG/DzavEujHw0Qij1ClaclSYY4Dn7/XIsTCQ1MDJ6YaOdWJc2ZEpDAg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794596921;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794596924;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=7zVRWdksbk2GmJApPG4YI4MTzgCoDOVGLlN4Rb98bD4=;
-	b=SOHR+6VQn/DMFAhqt8MchhL8B2+wvknm1ezWh5oItEw7V7hbL59NVp36gVUGcvMbZjFH
-	 UQvWwgJtQZma0mUESRcLN3r5OOurO4gvMRxmUywqEpcj0ugsIrkcr7vaHP2pCBL+B7IGq
-	 eHMS8T1ONtKHniS3J8FSbpcljAtWQXhS0LW26Ewy9ue+Tu20oAqFN4W8my8zBUjuyPigz
-	 X9yA/Mg/8RdfDgMeAzC2YWws+oSk7MHxmW0AlG3oikl0DyiCvXgPTiaIuc+ylV5qN0ktQ
-	 b5gaWDNFYpV5DK84U0oWcP0YEkCJ905yu0Yv4+fP4G7I8gKtW6ycVjaZYVm4t1wG8qg==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=O+cYsgzT2IYrnjn4UHawDYzQU1HcpnMtWbFIeQ3G3aw=;
+	b=1P4AtQdYwOYAoSr8+hGT6BfReTA+aoNjo49wvurqnGliLm1WM5n94AsLH0yh8bcmz8zL
+	 8BGQmiKg/2tvV22VDhXYBcFXTCJZn4nSr3d7wiXfwfRCawNOmefqRx+J3dJGr9aaPKF4f
+	 NIkNxEE5VPGm+oiTtbJ1BUVa6poBBlWpoIsyCv5Xqp+ZAuOickLBs4J8QHdqO9B3qn97b
+	 m85JtAPla8YaSPptRnxQ/cp8YWLdXRCF2QJwT10YzjxjTIbdzl/0U57HnHBRQyjlQdWTb
+	 bHYGVtATCmDUE2C/NRf3CAeHse+gW3aboRQg4Fr2vPUjlW1+U9SNcoyaHceQ2RzzK7Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Oi6n14bJ;
-	arc=none smtp.remote-ip=74.125.82.177
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com [74.125.82.177])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=EwDKDm9n;
+	arc=none smtp.remote-ip=74.125.82.172
+Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com [74.125.82.172])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB89606A890
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 19:08:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7AB89606A890
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B2960A2626
+	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 19:08:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 27B2960A2626
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Oi6n14bJ
-Received: by mail-dy1-f177.google.com with SMTP id 5a478bee46e88-3720addb068so2132782eec.1
-        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 11:08:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=EwDKDm9n
+Received: by mail-dy1-f172.google.com with SMTP id 5a478bee46e88-3282db206d3so3845290eec.0
+        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 11:08:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794596921; x=1795201721; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=7zVRWdksbk2GmJApPG4YI4MTzgCoDOVGLlN4Rb98bD4=;
-        b=Oi6n14bJsuA3MZESR2IVpCx1+TTNYhFtsSxeR6Rlc/yu4ih3w3su2fUaAAiDCICSHF
-         lxpCMYkvk5kZMYo6LVjuR68e+p2CGzY+iMcOBvs1WBwZSUPFfmNE+Bt4uaLd/Iyr043d
-         jL+yLtHUi7Yjzba1ksZmoNThvzrpL/ARk8jz7pRyEHZGfdE6yRPqLAr+TUILJZebSPn9
-         2IBS4KyXPkjzPUPmMo2TbXpm3vnGOmYxVohRxSLOfvqMFURsv6MKanVa9YT9B9UuoHPH
-         tkyMFjuJH0uBF455JpeLfAJRLK36xUvmXx//gkwEsYSB+18vt1GpaaZ0FN4QKjj++I37
-         0+Pg==
+        d=gmail.com; s=20260707; t=1794596922; x=1795201722; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=O+cYsgzT2IYrnjn4UHawDYzQU1HcpnMtWbFIeQ3G3aw=;
+        b=EwDKDm9nSU/jTREYh/cxN3W6tdK7apu5/SNw9Sd8IdmwUrbor7u3aICaiXChfvL9OM
+         VQycw7+qsKqg4eC90CZnMTRNUkY62Ia1g0AzusTqzDqJkEiwFzgOv/HLB946Nrhb3tRj
+         s7DIXsl4bjbvz7uj6gON8JywTmnjpklHFULgI48JHqjSFlXex7kMr/nHX1qQKZqmhVmW
+         GucmXILq0IZe2+Lt8woy0b7GjNUBvXnPu/ni5zSIYu5VPAkDZuYfSCXsgmZRchcH9CoT
+         5MIpFADNyJaB+YsYZgQpdupPLYhj7naI4sqtwXUI0Iv00nORkHpOFwTsR2jFwlErKJAi
+         gbpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794596921; x=1795201721;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=7zVRWdksbk2GmJApPG4YI4MTzgCoDOVGLlN4Rb98bD4=;
-        b=2rQqWvykVbdsoUN+yAPC731nmASajvFZYgMLyJX92uz8XwxFW+zKMqu7JP6Cgu2oYF
-         tgb6Kb/19J0kcxAcImXADBvI4Dqfr5Qb+/CuXPKrsPgyxRiQWs+BKs2IpHvNCc9HhmAL
-         hiv3erDYNSxKzIRFZlUV3P+rzqjYES2np4uZL6wXUsOT+bWiMRz+HBBld64RjuEWwN8M
-         gTu9sg4XMs4tqHulXeyA6emC/L52Xu4ALHzOUqOoAgv4pZrZVN2xnvPY8P6kxjv4bOsE
-         GbTflsVRbV/U5R09nplwDmgCQ6OK5F+QOOnC+o7zKkGnm6TG+OWzIWdMGFmYG2KSdP0z
-         ct2Q==
-X-Forwarded-Encrypted: i=1; AL+hErFvZC6R4VWEKH7Lx+stqIoRUN0VbnjWXYtERZbawvXC7EMd0fH/VJqaoWMCAcqKFyYwWvNQXA9AY9s=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/0eN+RlRMMP7/zvN6vJJHnxqHUpB/JjmZmTiFeEjn3XbZ6RU0b
-	tHceepDQV+e79Se4YPAi7xi5QzaeiqwnaBzabatC0sdDTtkVNI/0nZzM
-X-Gm-Gg: AYBFou26FXi6U/2aCP8ikSj6IS6zOUGq4kQz9mklaliCSzqDjHSKSPQB4VKx1FLayL8
-	b+VD0fYcrFu5morY/J7qW9PFHbeRFcrfA36x0WqF+Ixgi4P38bMF5fRoDV9dzQ1pIooWyv5qEL8
-	eLRRseelFxzvOXGDRxxrbRVCHpDMDKvtC3WAznrfQUwyKeZwYqe7VfeOpXvppDVQXzXuCznc+mS
-	zNYAA4vPxPGLFqYodXaF4L2/DmJ9aYLJsxBCyT+f7rNtAED6UXn2EUYj2VaCldb9XXB5Cio+dP+
-	rhkxLJRF7rzpi6OQx4XL4yA18NzvgDkfEexZY42RY1LmJew+ercSHEXMP8q0HvUbscQkNcwqDZ3
-	4BYeCz9ZyoUqdfJCdM1kK/aBVTf6pVYc1Ms009+yDWcXzO51T3lrSrneyHQLWA0gddWznDBizy6
-	Lvbkk0FECnOpSkXTmCWOuyuXWz2YUtfY8rlJdlz5psLQKXELm0MLBJJw51rNSLYuYy7lvMc2Uz3
-	rg3bYl4HK2O0KKc0GJ70iwzZmsmFt/4njJPk6d1UiWhYjA/25+rMtLB0ibXcLtpMlac6unOOYw7
-	quxCn1EpZQ==
-X-Received: by 2002:a05:7300:8a19:b0:377:1bfe:14d6 with SMTP id 5a478bee46e88-37965f9d236mr2579200eec.6.1794596920459;
-        Fri, 13 Nov 2026 11:08:40 -0800 (PST)
+        d=1e100.net; s=20260707; t=1794596922; x=1795201722;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=O+cYsgzT2IYrnjn4UHawDYzQU1HcpnMtWbFIeQ3G3aw=;
+        b=gQcG/3jlPBr2e6zWMIYNIlSe5Wu62oKT8SYPSW0KkSMhClcQrekySB3tkYjQVT1e8+
+         FJfTXwerHSR0olIbtBCa37W6ycdYaW6svz2tRbgZlKFuKJ1vNw7fUhNtd2T0AJAnGdiZ
+         3qkmcNnDtzomoyuphsekdKSrUd503BK5CXe0u50BWFcFie0jT4kHcdB2HpsTRosi/Bia
+         ZwV6F8xW+5UvI4D1ZBUsA+iaGVsS0G4V3piULKQXlAMKtneOlg1qyFtoI0kbsBxlvOqd
+         Sn69uID6Ek1XHuNEazBi4heEyNsBI6FWy3pvIY7wcWdek2vBT+/lo0WGZ58Vm00nKFIC
+         QIFQ==
+X-Forwarded-Encrypted: i=1; AL+hErHwZBf9Rt+IiEyPtuw6uPwzhO7rybK9mnswpODzbh9/3Ku48ocC22pU06HIUiDRY2yOv4maGjW6l9g=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/onPlhc1OYEDoZw+FBdvzTy5dP4JAVOGdjF7kNTps+O0ME171m
+	RMwg4qxwXHKZjA+WTx9gLMU//kFdPNXz3uRQdGYRQ7t6vj1OZ7UE7cCH
+X-Gm-Gg: AYBFou1c3rKGE4++YM6psXt7aEtKBz3U7wmJepjgzE+eBO1JOcos352UX1TpZHxYEu4
+	uoB4HakRO0etKMB9EuIpx9oztr2jygnCBQwUyUEoIscM0YnFAWSs1zor7SO52na5SVADfQQoYZT
+	B2iQ2QDNF20zG+NudiSAPj86HH1FH37zGYaaeXUJhRMIWFRm4pq4YdmuMgJ3tojDS3wxyhGSrQJ
+	ZZtDSiaNfrSxsxGuyG9ZKEHn74mdGLwRPWNP8kw9V4uEwuayVzn3OOGR8W5yeEcyGjOEIfKfMao
+	E8OGhvcy4TjlA+csl6eZo3n5YXXItncerMRUWU5FHVYGZ5Ffm8e3vBgBkK+3/XJXhUi0plOzya8
+	4kpSuDYSRzSwIG9lwRBv4AyitLjYRlJiDYPXNtdvr124EvrURcZQhYb2Pf51ALr6fNoT8r7iMiy
+	/Nb/qskxyJLIlPgPN1zLhWDJsxcuUmGN49yToBQiYE3kamb1DpA+Ot8/YEyb82DBPaUU170zFOL
+	dSuebqeadXdb9ClwoX1mhKmmX4366vQcdBjyjvZhrg4EpRjDHG12h9PLXSr0hi+r7buACVnZwWS
+	hvTG4MUDAOjIeKRoouvMPb25cdAYEg==
+X-Received: by 2002:a05:7300:478d:b0:369:fc93:eda5 with SMTP id 5a478bee46e88-379681c6a08mr4217184eec.39.1794596922321;
+        Fri, 13 Nov 2026 11:08:42 -0800 (PST)
 Received: from eldorado ([2600:8802:b00:1f88::287])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-379569b8389sm15714037eec.25.2026.11.13.11.08.39
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-379569b8389sm15714037eec.25.2026.11.13.11.08.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Nov 2026 11:08:39 -0800 (PST)
+        Fri, 13 Nov 2026 11:08:41 -0800 (PST)
 From: Florian Fainelli <f.fainelli@gmail.com>
 To: linux-mips@vger.kernel.org
 Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	stable@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>,
 	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
 	Paul Burton <paulburton@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
@@ -93,10 +94,12 @@ Cc: Florian Fainelli <f.fainelli@gmail.com>,
 	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
 	hns@goldelico.com,
 	paul@boddie.org.uk
-Subject: [PATCH v6 0/4] MIPS: CI20: Enable SMP with two CPUs
-Date: Fri, 13 Nov 2026 11:08:32 -0800
-Message-ID: <20261113190836.470937-1-f.fainelli@gmail.com>
+Subject: [PATCH v6 1/4] clk: ingenic: Poll JZ4780 CPU1 power status atomically
+Date: Fri, 13 Nov 2026 11:08:33 -0800
+Message-ID: <20261113190836.470937-2-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261113190836.470937-1-f.fainelli@gmail.com>
+References: <20261113190836.470937-1-f.fainelli@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -106,74 +109,44 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This patch series resurrects SMP support for the CI20 board. This was
-submitted back in 2020 by Zhou Yanjie.
+The CPU1 clock enable callback runs under the clock framework's spinlock
+with interrupts disabled. Its readl_poll_timeout() can sleep between
+reads, which is invalid in this context when SMP powers up CPU1.
 
-Changes in v6:
+Use readl_poll_timeout_atomic() with the existing interval and timeout.
+This is a prerequisite for the JZ4780 SMP bring-up path. The original
+CPU1 clock implementation by Zhou Yanjie is already upstream.
 
-• Added missing Signed-off-by tag to patch #2
+Cross-built for CI20; the subsequent SMP-enabled image brought up both
+CPU cores. Development and validation used Codex assistance.
 
-Changes in v5:
+CC: stable@vger.kernel.org
+Fixes: 6673db4f3f26 ("clk: JZ4780: Add function for enable the second core.")
+Link: https://lkml.kernel.org/r/1582215889-113034-3-git-send-email-zhouyanjie@wanyeetech.com
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+Changes since previous posting:
+- No changes to this patch.
 
-• Added changelog per-patch
-• Split the generic IPI setup check
-• Added comments explaining both need_resched()
-• Removed void Reviewed/Tested-by tags
+ drivers/clk/ingenic/jz4780-cgu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes in v4:
-
-• Enable the secondary CPU clock outside the raw spinlock
-• Mark enumerated CPUs present and assign hardware core IDs
-• Skip generic IPI allocation when the platform supplies both IPI callbacks
-• Fix generic 64-bit builds using CKSEG aliases and pointer-sized assembly macros
-• Reject unsupported CPU offlining with -EOPNOTSUPP
-• Restrict the XBurst SMP idle handler to multicore systems and recheck
-  pending interrupts after flushing the cache
-
-Changes in v3:
-
-• Align the second line of the readl_poll_timeout_atomic() per Brian's
-  feedback
-• Collected Paul's R-b and T-b tags
-
-Changes in v2:
-
-• Moved SMP sources to arch/mips/ingenic/ and the header to arch/mips/include/asm/
-• Removed CONFIG_MIPS_INGENIC_SMP, using CONFIG_MACH_JZ4780 and CONFIG_SMP directly
-• Renamed JZ4780-specific SMP symbols to XBurst names
-• Changed CPU enumeration to assign consecutive logical IDs and removed the explicit two-core limit
-• Changed mailbox IRQ allocation failure from panic to logging and returning
-• Shortened commit descriptions, removed Codex attribution, and adjusted source credits and sign-offs
-• Kept the clock polling patch and CI20 defconfig changes unchanged,
-  added Paul's R-b for patch #1
-• Updated the kernel baseline to include additional upstream fixes
-
-Florian Fainelli (2):
-  clk: ingenic: Poll JZ4780 CPU1 power status atomically
-  MIPS: Skip generic IPI setup for platform-specific callbacks
-
-周琰杰 (Zhou Yanjie) (2):
-  MIPS: Ingenic: Add XBurst SMP support
-  MIPS: CI20: Enable SMP with two CPUs
-
- MAINTAINERS                           |   3 +-
- arch/mips/Kbuild                      |   1 +
- arch/mips/configs/ci20_defconfig      |   2 +
- arch/mips/generic/init.c              |   3 +
- arch/mips/include/asm/ingenic-smp.h   |  20 ++
- arch/mips/ingenic/Kconfig             |   2 +
- arch/mips/ingenic/Makefile            |   5 +
- arch/mips/ingenic/ingenic-smp-entry.S |  54 ++++++
- arch/mips/ingenic/ingenic-smp.c       | 260 ++++++++++++++++++++++++++
- arch/mips/kernel/idle.c               |  31 ++-
- arch/mips/kernel/smp.c                |   6 +-
- drivers/clk/ingenic/jz4780-cgu.c      |   4 +-
- 12 files changed, 386 insertions(+), 5 deletions(-)
- create mode 100644 arch/mips/include/asm/ingenic-smp.h
- create mode 100644 arch/mips/ingenic/Makefile
- create mode 100644 arch/mips/ingenic/ingenic-smp-entry.S
- create mode 100644 arch/mips/ingenic/ingenic-smp.c
-
+diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
+index 1e88aef7ac0f..1809f8859c7e 100644
+--- a/drivers/clk/ingenic/jz4780-cgu.c
++++ b/drivers/clk/ingenic/jz4780-cgu.c
+@@ -242,8 +242,8 @@ static int jz4780_core1_enable(struct clk_hw *hw)
+ 	spin_unlock_irqrestore(&cgu->lock, flags);
+ 
+ 	/* wait for the CPU to be powered up */
+-	retval = readl_poll_timeout(cgu->base + CGU_REG_LCR, lcr,
+-				 !(lcr & LCR_SCPUS), 10, timeout);
++	retval = readl_poll_timeout_atomic(cgu->base + CGU_REG_LCR, lcr,
++					   !(lcr & LCR_SCPUS), 10, timeout);
+ 	if (retval == -ETIMEDOUT) {
+ 		pr_err("%s: Wait for power up core1 timeout\n", __func__);
+ 		return retval;
