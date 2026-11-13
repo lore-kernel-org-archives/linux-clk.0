@@ -1,99 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.45
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794567827;
-	b=RgjzfNUviOm9oqk1Y7ACQg9L+N4BTJiZYsJHCKgTLFyde4vOHbIlN4qt7JT6cwMHBkgk
-	 +IcT8TZMQCsN4RzSg9RIzfRb49dL5gqZlinNED0bzW0Xmnw1dpMia2RiumSvgC8DCVEaR
-	 ODVcxVFfoS5u0rAnmK/TynbfjK1BR3korLgoGsEoa6EpH/k97BwQqYEQTwtNa1m5OVvBg
-	 r3DyzFLhpYsMVTfdmGMabi3vxSIOeE84vL5sdk1n+azHNp7bhYsRhlD8uQSr7tp/x4uEG
-	 Uckxwv+F9y1AEUphPUGm6PVJFYAavg34bP37rSszSdN3zzSeb5Ib610sCz9QYNCPSBg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794567827;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type;
-	bh=WrGUC4aP2CzOib9bfxPwXz4WnawgPNUWDRuOBMHlbso=;
-	b=CeY/G1N3E8hHlwVqEqolRTFdWgv/mMqNGTRcGjJ9Ik49Un4txmjHeXvkOpx70ZfFnUKy
-	 O62QaiVS+kWskF5gXg7OA8CPTj6SmIOwgJSDtdDK8lPl310JViu+yc4N4w+lWvwak7rTt
-	 kmqCD9/FBbOBFgQjk33ASvmRAbs48hxVkfguCFlcOydH10rKUfzfiHy4HiMgC61GssIe3
-	 Ey4NpxAjo6iDL73AQiUaGYoFgIWKbJHCYOAr7lLuPkM2zKYeIlKgEu6mv4XMWRU6GWx4N
-	 izm+OEMRFwlyZ8JAW1z72RVP12efI7CpX4z0iy5isQ0vE5OqZ5AMZF8wN5LeK6ATO8g==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=uO1PZR9z;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.45
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794569049;
+	b=G4BwiWKK5vPLWNg1DTLFdfGGOQOClztkLVxEDDKzloMJx9eDn9CLcLjyXu/5202FSEvr
+	 XpPNUvzpuO07hhXQRDYX8ST1svVSmRZgUBJfHdSjBvUMFBy+8UvK+0ncJ05wCeO4NmVZ9
+	 Yl9jdSzuSxj0Zn9rBiUrg/aT/s+ihrnbC4Z2ZSOflb3Mu6Nu7a7Dptvw/8sY6out8Pid2
+	 T2VFh80hzXmoYovvUj5U7CVc+A1422RNEALuHf0yax2ii4Lh3RB20giJEZKgoDcTnD5Yw
+	 ZxGVC8ak9i59ZeTWCFDndstW7vSsA7xfrLGeHO6B4jK21xgu9yZTRUl95ygqVy9looA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794569049;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=esHi9Jl9r/e/B+A/8aDlJfOciGV79Ba0QhT6F94neVY=;
+	b=aVkwcfhjuiVTtxtlOT7FGWEY+T179M3Swh9o6cQudYfPZYQ83RXai15x7bmAo174Bz59
+	 ytbyWW06dYx25FN6KF0fDO7tlblYDDxzfNqBmKKnhAt7tYvn9ZcmZK5uYkOWcQAgS5oTw
+	 zmcti8jH3vcQeRfAXgwC8tuAx6Jhy4XX+BvtL578ZYoYnT4jefQzHtgRKLr6l2NRbnMFO
+	 oQVVOaLrvisUfstdgdqu8Z1YGKJPqSBkWc3NgZBpa0I2Rd6z/rpsO8A0ziVvrUGm/uHxt
+	 nf4mu1SH0PS2Sd/f3DyRZjFrVvWbIGWKHOSi1XZju7M/iLkxEf4kVubdZAagCzb67Kw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Va+JA+tZ;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3706E606A89B
-	for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 11:03:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3706E606A89B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067F4606A321;
+	Fri, 13 Nov 2026 11:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=uO1PZR9z
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6b56c428212so1247332a12.2
-        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 03:03:46 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794567825; cv=none;
-        d=google.com; s=arc-20260327;
-        b=ZzwT+xnqyELvG2Bw6YcPhyRLBI94UihZKPAZVKv2rRiKS17A8Gva3aBy5E9K6wsAO7
-         qFjQTevD7n/bOyHvKM50u+Ux/QIbRpznACqXs2fsELBZL4T0qc4mzqHOZ1cV6S0QnqfV
-         ZhCsXGvCxxyiUHQXf8nzjBkkFOeULocZVQ55a3fenPH2yxgOlzLKDtvnVXmkQMNrKM8e
-         tu1fuPcsaJcfSrxfv8LPjVjDJopcKY64A3kGbzv0fK2Wo//sx0VVdEUoAkkidL2m6D16
-         i5xMOa3gtVxjdeSwK3FfjBQkeBh4Sn0+5Ey8BWyZCIXvY/UbayMT6gpNCsYXqv1wgTBF
-         i2aA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=WrGUC4aP2CzOib9bfxPwXz4WnawgPNUWDRuOBMHlbso=;
-        fh=o2pQ0K359YNw9XMfTK+m56+/xeNt7SvJz+qNOMMJZPk=;
-        b=M34dh+xc1DfeKoeKrx76U174gMVjQfU7SiJZtTGV1HQt9CuRgSRqltdpbwo3/GuGA2
-         QbrjWrFA651H00Bi4A7MO4KzNYCfeAVO9Iteb2ma4eM9G3o8Lf75ldvC2/nk4Vj6PYJg
-         Jsuv+9t3kDDi6y2bsav4t+cFOdnMFyZI852ee9/4K1UdPoCDMpj4ESLvOpnSbKxuFTRJ
-         uPYUA6KCtviZS7Rpm2U7ha1+mBU/2DqYICKAgBLwzqKgAgh9noljc2taU9oBHIP23pTA
-         Spyg2EQM1A9giSYmKk1aGORknjpJWmg/5vZiQSsFsYp10zBLCLHaL0bRfJJkLIwKzAfq
-         rBSA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794567825; x=1795172625; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=WrGUC4aP2CzOib9bfxPwXz4WnawgPNUWDRuOBMHlbso=;
-        b=uO1PZR9z6dSSdZdruiUCP+ylb+AYRNL3Bg9MtPyNPpe8quBN5+x0kSfhdc6XsXvP2l
-         1EWqQ7J0agbDYHQH0axqwgMEmrDrhg1Oc3m0uRsq4mARWFpqfAlD8wPuiR+2zD/3uQAc
-         qgBCiukndMVmJs/IVJpM4hd8qCyxWsLVVoqfyR4MHzajp1b/LSldKdhNuz5xTQf6BwtW
-         G7ZtYItfHSpGNE6iBtAws9xro9RsQwnAsuAKn7ImZtuJ2ZhVdKtgkjXPgc1xO9XBrdh1
-         DQ+AxJpHhiSmL+tPFg8JVylQURvnnB2fa73o0q3biC5HUIGOevOCFFQGY0cLG1WYTKPB
-         RWcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794567825; x=1795172625;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=WrGUC4aP2CzOib9bfxPwXz4WnawgPNUWDRuOBMHlbso=;
-        b=0sJvRe4UYLk2zu9V0kh90hDj744btt5hQsCt6e+oiW+NcwwCke0dF31GuQF4sGkopt
-         PQ8M308Q1bi9eM+JS8tHrE3shkz6AVr9ySv/qOdqyzzSWdevd4Qb0qkn2JyWgCjTXLy0
-         6fpt8WwtaumrlEB1467h1wKR8//VrxlgnN/PY5n/ThLSEaAvAfvYUCesN0xY4TVzWILs
-         2hFQPQWQ74Wpo2M9Xpc/0/P9NrfSRhtFKZvUzh594IbHOpJOGz+bVk0ZOhfoeva2R4am
-         GghKVWEwyF5MXcX6P6ATRnpVrJbOCuKKGui0GH5YA4nNqKmjPBaJx+J8sHWLTS4r7IED
-         OuRA==
-X-Forwarded-Encrypted: i=1; AL+hErGsVEkTa7jLuYaP9nUVVqcXhZZ092ZOHuYPUjJdPBSSAJ5FMWvxnkkBStXIAVUvUNRvqTxmgb3Tfds=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9CW7eeVJnBeav24Ln9WVRxebubnpq/5qQy4BGE5uKz22uBNJTH
-	HR3cF4OKV3NjEpdQe8xLM95K05Xfp09/66KMtSaRENbQ3hSTBs2Fcq3gwnb1cFIEcwb2GR/o5+Z
-	avrVkpPm1jWdmwRqw8DkkiHexuDkIVNO2ngIwcBQvow==
-X-Gm-Gg: AYBFou3HlGBag1+J/zvmkZjV+mpNWUMW+LIlWCxVPypGpjJvDYi6gh2UhsI4aGhVAix
-	tJ/UX+R4L25qv0tV3RqeU5HYj9Da+6RqZGh73evgLRMxPxghXba6pbxTk9Ipug8grh2/euroAhz
-	vs9SlbZRLW1+SoQUUo9FPjyhgLIigRZKLRQ2cSA29VjzW+zcxOaC8HcprbBDtDa3zYnVPmQlzXq
-	mruxUScJez4meBQ9vqMBEneoxGQNs3D3M0Ew9IPJIC7xh1CPvgTaGjNOwi9WKWB6+mAyYMLbmQb
-	cKmDT2M8iGU4GJP+nHbUbRER/i5ATT6fu+ZvX1jPPljtXfetJj56SaGS2B/ack8wZ31Uu1ukqI8
-	QG5IDiKNaKWoqaphn6JIJGMs60eUX4A+PfIvvpFoESMc8hjQ3CYjPkKlubBwPOPSqkT2gDg==
-X-Received: by 2002:a05:6402:42cb:b0:6b1:d439:5c5 with SMTP id
- 4fb4d7f45d1cf-6b7c088fadfmr1814259a12.3.1794567825002; Fri, 13 Nov 2026
- 03:03:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Va+JA+tZ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84DB81F000C4;
+	Fri, 13 Nov 2026 11:24:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794569048;
+	bh=esHi9Jl9r/e/B+A/8aDlJfOciGV79Ba0QhT6F94neVY=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=Va+JA+tZPB+I7TptcB+3yCdDkmTL0968Hqnmk5xtxxUS7V0gBPbUtGw7XOWf6Apl1
+	 DDQPQ2qScLKx50lh93875605v62rLIYo2/SUfxd42YG4ZPhIn9CpmCEgY/noqAov8u
+	 PMvmf7k6GBG+CsB18DYeu7pm0JP6rPQuNMS8+nAxB3KL9XuzYJ975UIj/0ISBWy1mf
+	 flmrPRoAr0RVa+Q+bVpAX/vz6r+PMywUdnVp8E8yrZpBhres2UzTq0SMY3rGej79wX
+	 X8FzrVFpW4jc89CAwvtp7t1ZU0tWzZcZUwvFrL0FOWFmcC67AmUao8bDJzxU5iltXb
+	 ZSdPHGIZI6aAw==
+Message-ID: <sashiko-outbox-212713@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 07/14 RESEND] clk: samsung: exynos8855: add block top
+ and peric clock support
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Raghav Sharma" <raghav.s@samsung.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261113110612.3265841-8-raghav.s@samsung.com>
+References: <20261113110612.3265841-1-raghav.s@samsung.com>
+ <CGME20261113104850epcas5p4ef9292af100475b1f12a2601bf5e1a84@epcas5p4.samsung.com>
+ <20261113110612.3265841-8-raghav.s@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 13 Nov 2026 11:24:08 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -102,98 +61,99 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <CGME20261113104844epcas5p4c1cb0c31de8b5b445f7f0060f81cf753@epcas5p4.samsung.com>
- <20261113110612.3265841-1-raghav.s@samsung.com> <927327686.61794567483016.JavaMail.epsvc@epcpadp2new>
-In-Reply-To: <927327686.61794567483016.JavaMail.epsvc@epcpadp2new>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 13 Nov 2026 11:03:32 +0000
-X-Gm-Features: AclHuK-nQAzdHNmzELAlgOYeQ9PIbGnRzQK2xJ_UxA7DGsqbyIcTqa_Es6uaAxk
-Message-ID: <CADrjBPpUSot+jCUBKb4S4A8C5HazvqQbB-+wDvjJtjB5XGCytw@mail.gmail.com>
-Subject: Re: [PATCH v3 05/14 RESEND] dt-bindings: clock: exynos8855: add usb
- clock definitions
-To: Raghav Sharma <raghav.s@samsung.com>
-Cc: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
-	alim.akhtar@samsung.com, sboyd@kernel.org, bmasney+clk@redhat.com, 
-	jbrunet+clk@baylibre.com, robh@kernel.org, conor+dt@kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, is.gandhi@samsung.com, ts.amit@samsung.com, 
-	pokala.reddy@samsung.com, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 13 Nov 2026 at 10:58, Raghav Sharma <raghav.s@samsung.com> wrote:
->
-> Add device tree clock binding definitions for CMU_USB
->
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
-> ---
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [Medium] clk: samsung: exynos8855: wrong parent clock for
+  CLK_GOUT_UART_DBG_PERIC
+- [Low] clk: samsung: exynos8855: duplicate cmu-top entry in
+  exynos8855_cmu_of_match
+--
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+commit 2beaee0a6e639b45324bd65007b59d1e589e9da3
+Author: Raghav Sharma <raghav.s@samsung.com>
 
->  .../clock/samsung,exynos8855-clock.yaml       | 21 +++++++++++++++++++
->  .../dt-bindings/clock/samsung,exynos8855.h    |  8 +++++++
->  2 files changed, 29 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos8855-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos8855-clock.yaml
-> index 21928235d131..c68a64eb35c5 100644
-> --- a/Documentation/devicetree/bindings/clock/samsung,exynos8855-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos8855-clock.yaml
-> @@ -32,6 +32,7 @@ properties:
->        - samsung,exynos8855-cmu-peric
->        - samsung,exynos8855-cmu-peris
->        - samsung,exynos8855-cmu-top
-> +      - samsung,exynos8855-cmu-usb
->
->    clocks:
->      minItems: 1
-> @@ -143,6 +144,26 @@ allOf:
->        required:
->          - samsung,sysreg
->
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos8855-cmu-usb
+clk: samsung: exynos8855: add block top and peric clock support
+
+This commit adds Common Clock Framework support for the CMU_TOP and
+CMU_PERIC clock management units on the Samsung Exynos 8855 SoC.
+
+> diff --git a/drivers/clk/samsung/clk-exynos8855.c b/drivers/clk/samsung/c=
+lk-exynos8855.c
+> new file mode 100644
+> index 0000000000000..dcf58f2459b0f
+> --- /dev/null
+> +++ b/drivers/clk/samsung/clk-exynos8855.c
+
+[ ... ]
+
+> +static void __init exynos8855_cmu_top_init(struct device_node *np)
+> +{
+> +	exynos_arm64_register_cmu(NULL, np, &top_cmu_info);
+> +}
 > +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (76.8 MHz)
-> +            - description: CMU_USB NOC clock (from CMU_TOP)
-> +            - description: CMU_USB USB20DRD clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: bus
-> +            - const: usb20drd
-> +
->  required:
->    - compatible
->    - "#clock-cells"
-> diff --git a/include/dt-bindings/clock/samsung,exynos8855.h b/include/dt-bindings/clock/samsung,exynos8855.h
-> index 67cd97d8fab8..f4261956ab4a 100644
-> --- a/include/dt-bindings/clock/samsung,exynos8855.h
-> +++ b/include/dt-bindings/clock/samsung,exynos8855.h
-> @@ -222,4 +222,12 @@
->  #define CLK_GOUT_UFS_EMBD_ACLK_HSI         5
->  #define CLK_GOUT_UFS_EMBD_UNIPRO_HSI       6
->
-> +/* CMU_USB */
-> +#define CLK_MOUT_USB_NOC_USER              1
-> +#define CLK_MOUT_USB_USB20DRD              2
-> +#define CLK_MOUT_USB_USB20DRD_USER         3
-> +#define CLK_DOUT_USB_NOC_DIV3              4
-> +#define CLK_GOUT_CMU_USB                   5
-> +#define CLK_GOUT_SYSREG_USB                6
-> +
->  #endif /* _DT_BINDINGS_CLOCK_EXYNOS8855_H */
-> --
-> 2.34.1
->
->
+> +/* Register CMU_TOP early, as it's a dependency for other early domains =
+*/
+> +CLK_OF_DECLARE(exynos8855_cmu_top, "samsung,exynos8855-cmu-top",
+> +	       exynos8855_cmu_top_init);
+
+[ ... ]
+
+> +static const struct samsung_gate_clock peric_gate_clks[] __initconst =3D=
+ {
+> +	GATE(CLK_GOUT_CMU_PERIC, "gout_cmu_peric",
+> +	     "dout_clkcmu_peric_nocp",
+> +	     CMU_PERIC_CLK_CON_GAT_BLK_PERIC_UID_CMU_PERIC_IPCLKPORT_PCLK,
+> +	     21, 0, 0),
+> +	GATE(CLK_GOUT_SYSREG_PERIC, "gout_sysreg_peric",
+> +	     "dout_clkcmu_peric_nocp",
+> +	     CMU_PERIC_CLK_CON_GAT_BLK_PERIC_UID_SYSREG_PERIC_IPCLKPORT_PCLK,
+> +	     21, 0, 0),
+> +	GATE(CLK_GOUT_UART_DBG_PERIC, "gout_uart_dbg_peric",
+> +	     "dout_clkcmu_peric_uart_dbg",
+> +	     CMU_PERIC_CLK_CON_GAT_BLK_PERIC_UID_UART_DBG_IPCLKPORT_PCLK,
+> +	     21, 0, 0),
+> +	GATE(CLK_GOUT_USI_PERIC, "gout_usi_peric",
+> +	     "dout_clkcmu_peric_nocp",
+> +	     CMU_PERIC_CLK_CON_GAT_BLK_PERIC_UID_USI00_USI_IPCLKPORT_PCLK,
+> +	     21, 0, 0),
+> +};
+
+[Severity: Medium]
+Should CLK_GOUT_UART_DBG_PERIC have dout_clkcmu_peric_nocp as its parent
+instead of dout_clkcmu_peric_uart_dbg?
+
+CMU_PERIC_CLK_CON_GAT_BLK_PERIC_UID_UART_DBG_IPCLKPORT_PCLK is the APB
+PCLK gate register, and all other IPCLKPORT_PCLK gates in peric_gate_clks
+(including gout_usi_peric) are parented to the APB bus clock
+dout_clkcmu_peric_nocp.  Parenting this PCLK gate to the UART baud clock
+divider reports the wrong PCLK rate and does not propagate enable counts
+to dout_clkcmu_peric_nocp.
+
+[ ... ]
+
+> +static const struct of_device_id exynos8855_cmu_of_match[] =3D {
+> +	{
+> +		.compatible =3D "samsung,exynos8855-cmu-peric",
+> +		.data =3D &peric_cmu_info,
+> +	}, {
+> +		.compatible =3D "samsung,exynos8855-cmu-top",
+> +		.data =3D &top_cmu_info,
+> +	},
+> +	{ }
+> +};
+
+[Severity: Low]
+Should "samsung,exynos8855-cmu-top" be dropped from
+exynos8855_cmu_of_match?
+
+CMU_TOP is already registered early via CLK_OF_DECLARE(), which marks the
+device node OF_POPULATED so the platform driver match entry is unused
+during normal boot, and if a matching platform device were ever probed via
+exynos8855_cmu_probe(), samsung_cmu_register_one() would attempt to
+register top_cmu_info a second time and panic in
+samsung_clk_of_add_provider().
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261113110612.3265=
+841-1-raghav.s@samsung.com?part=3D7
