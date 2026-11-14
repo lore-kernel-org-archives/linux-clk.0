@@ -1,21 +1,21 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.142.180.65
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794668121;
-	b=YhiwnxaK6I5w7/yLXb+FWYMSNIH2r5Qf6Rip4yObQn0KAE5r1HdT/XJEqQXO1u03Zm9q
-	 OxQraULh9BJYtQvTbcUiwnqHvZuINTePSqORnAaBRJmhDzU5UKov+OMsEVHhih65wvKOv
-	 QNbpFYXr8Up0v9sqTh3iav+Md6pMy3/I4Eshs6CScXbYpOFTrwa/yfQS8HF8wdmrHMgiT
-	 K18yqaTucFSLFH2x41c6vxqKQBoypftPWjo8kzxdew9x01W9+NOeu5Ks7yXQxMrkyVXD8
-	 d+zBDQAhfSah9TJ+zH3xygfzIGP3qFkAx8jG5ONSZHz93MRt7hH8g9xdmXd2AZ0LKLw==
+	t=1794668129;
+	b=eUPIaop8GY/H4VtdinYoDg+DFuyYXKvSbiKPC6t5a/9s5jJCSwfvTMUKMbWKrTpnJbTG
+	 uQ+/VIaAFldQj1u8Qgfd3a0SEGDbAivhezjTRa24rmgURa+LF28xgh0brH40mEhDAVwpe
+	 EBvvXe5I0v6Vyh+FbCgHd8HNkw17fTSSAbshoq5fvXZ0zixx1uqtk96NP8tnizqgVl5kM
+	 cGPsAlDfDmKhkvkLGN/vIcnfgBHb34l6zHEM56NgZugic2ZHnmIgispKBp3c+VqsWwUGk
+	 fr38oLMFGdDr0VU0SbT4wPdt3dExfAhFnSPdQUzHGDhBPRforDaRCA4e/RFB+7ldQ3w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794668121;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794668129;
 	h=DMARC-Filter:Received:Date:From:To:Cc:Subject:Message-ID:References:
 	 MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Me8Ddrl4qdedvCqBvHI/CaV+I9ZnUue9ZLooGkUz6FA=;
-	b=NC2IMPKdrCGJhFxlN/toB32lwq5/Y1izhLwvpCojorEZIvAbVA0LoDBTxUzeR7suUvER
-	 ekxycOkwmnq89NO82Y32mFgkka6t/mszqyvhDU8nIfxs+g3xqCozyTT0W8/Vm2GTPiGgg
-	 XmPGoaU3z+PUReb1G8cO0ZNx5q0Nya385SRcMZaOyQ/sns5xB7FVvZbKdTAiPn0pvv6/S
-	 BUGP9HlcM8/Zhnw2BsqGjnX9NcCNgJTp7dBj1y7qTaaBDGfGGc4lliUqa3tFoaW2NWzQ+
-	 j62C1LKXdLu7VjBvMbBT0VIe3Yb7LQKU5A1duFT+qFA9eJfoSTDmEQa15CrCupGCtQg==
+	bh=gz37XyZx72Rdv6G3EZXgKHiqk5BLFb3U4GXcq8oitTI=;
+	b=YLGX0FCP1Y4Xt9JmGfqF0mg0hCfY8RvZKRMvd9qGm22cIA/8WTHMDeQzY05QbwE4/Naw
+	 tI+1T23le+oyBqoWSwLlQ35OGwLeP42qrBz5BE7RWxCB5+WJbT/st/w/rqXiVfkNTNXpe
+	 OZBS9DKlDYcPrQISfcbsnPFHnAAKtmqIugLvz+LkpGGgPmqyJ2NTUjgsEfzWYo2wmlRZQ
+	 /bVAVCdixTblXMPk9tT2VmF2tJDO0cOVFTKDNadiSxQON/23ljOm++QcutxWFW7FWs+YI
+	 yihU2uUH1kbxlyw0r3S5fMYvsfcCCM65/6zixURu8gG4Mh0034FcTfipPz7dtihyUUQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=makrotopia.org;
 	spf=pass smtp.mailfrom=makrotopia.org;
@@ -24,18 +24,18 @@ Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EAF606A881;
-	Sat, 14 Nov 2026 14:55:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 53EAF606A881
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E1F606A336;
+	Sat, 14 Nov 2026 14:55:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 60E1F606A336
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
 Received: from local
 	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256:X25519MLKEM768)
 	 (Exim 4.100.1)
 	(envelope-from <daniel@makrotopia.org>)
-	id 1xSF9t-000000005IO-1BVR;
-	Sat, 14 Nov 2026 14:55:13 +0000
-Date: Sat, 14 Nov 2026 14:55:09 +0000
+	id 1xSFA1-000000005Il-07Wg;
+	Sat, 14 Nov 2026 14:55:21 +0000
+Date: Sat, 14 Nov 2026 14:55:17 +0000
 From: Daniel Golle <daniel@makrotopia.org>
 To: Daniel Golle <daniel@makrotopia.org>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -56,8 +56,9 @@ To: Daniel Golle <daniel@makrotopia.org>,
 	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Cc: nicolas.dufresne@collabora.com, detlev.casanova@collabora.com,
 	paulk@sys-base.io, ezequiel@vanguardiasur.com.ar
-Subject: [RFC PATCH 5/6] ARM: dts: rockchip: Add RKVENC encoder to RV1126
-Message-ID: <7eb3e4d947b7f8a7b2ec068f15f02662b950f697.1794666330.git.daniel@makrotopia.org>
+Subject: [RFC PATCH 6/6] ARM: dts: rockchip: Add RKVENC operating points to
+ RV1126
+Message-ID: <13212e28d26fde53f49c1838bb099f1f6b419dfd.1794666330.git.daniel@makrotopia.org>
 References: <cover.1794666330.git.daniel@makrotopia.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,93 +73,61 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1794666330.git.daniel@makrotopia.org>
 
-Add the encoder with its IOMMU, the VEPU power domain and the three
-QoS nodes of the encoder ports. The encoder AXI clock is set to
-297 MHz and the core clock to 396 MHz.
+Add the four core clock rates of the encoder, 297, 396, 500 and 594
+MHz, which the clock tree provides as GPLL/4, GPLL/3, CPLL and GPLL/2,
+with the voltages of 725, 725, 750 and 825 mV that the vendor device
+tree gives them. The voltages apply on boards that describe the supply
+of the encoder as venc-supply. Make the encoder a cooling device so
+that thermal zones can use it.
 
 Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 ---
- arch/arm/boot/dts/rockchip/rv1126.dtsi | 54 ++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+ arch/arm/boot/dts/rockchip/rv1126.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/arch/arm/boot/dts/rockchip/rv1126.dtsi b/arch/arm/boot/dts/rockchip/rv1126.dtsi
-index 74f238e13533c..63705291dd3ce 100644
+index 63705291dd3ce..7e37fd89609a7 100644
 --- a/arch/arm/boot/dts/rockchip/rv1126.dtsi
 +++ b/arch/arm/boot/dts/rockchip/rv1126.dtsi
-@@ -139,6 +139,21 @@ qos_sdio: qos@fe86c000 {
- 		reg = <0xfe86c000 0x20>;
+@@ -104,6 +104,30 @@ xin24m: oscillator {
+ 		#clock-cells = <0>;
  	};
  
-+	qos_venc_rd_m0: qos@fe870000 {
-+		compatible = "rockchip,rv1126-qos", "syscon";
-+		reg = <0xfe870000 0x20>;
++	venc_opp_table: opp-table-venc {
++		compatible = "operating-points-v2";
++
++		opp-297000000 {
++			opp-hz = /bits/ 64 <297000000>;
++			opp-microvolt = <725000 725000 1000000>;
++		};
++
++		opp-396000000 {
++			opp-hz = /bits/ 64 <396000000>;
++			opp-microvolt = <725000 725000 1000000>;
++		};
++
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <750000 750000 1000000>;
++		};
++
++		opp-594000000 {
++			opp-hz = /bits/ 64 <594000000>;
++			opp-microvolt = <825000 825000 1000000>;
++		};
 +	};
 +
-+	qos_venc_rd_m1: qos@fe870080 {
-+		compatible = "rockchip,rv1126-qos", "syscon";
-+		reg = <0xfe870080 0x20>;
-+	};
-+
-+	qos_venc_wr: qos@fe870100 {
-+		compatible = "rockchip,rv1126-qos", "syscon";
-+		reg = <0xfe870100 0x20>;
-+	};
-+
- 	qos_iep: qos@fe8a0000 {
- 		compatible = "rockchip,rv1126-qos", "syscon";
- 		reg = <0xfe8a0000 0x20>;
-@@ -223,6 +238,17 @@ power-domain@RV1126_PD_VO {
- 					 <&qos_iep>;
- 				#power-domain-cells = <0>;
- 			};
-+
-+			power-domain@RV1126_PD_VEPU {
-+				reg = <RV1126_PD_VEPU>;
-+				clocks = <&cru ACLK_VENC>,
-+					 <&cru HCLK_VENC>,
-+					 <&cru CLK_VENC_CORE>;
-+				pm_qos = <&qos_venc_rd_m0>,
-+					 <&qos_venc_rd_m1>,
-+					 <&qos_venc_wr>;
-+				#power-domain-cells = <0>;
-+			};
- 		};
- 	};
- 
-@@ -630,6 +656,34 @@ vop_mmu: iommu@ffb00f00 {
- 		status = "disabled";
- 	};
- 
-+	venc: video-codec@ffbb0000 {
-+		compatible = "rockchip,rv1126-rkvenc";
-+		reg = <0xffbb0000 0xf00>;
-+		interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru ACLK_VENC>, <&cru HCLK_VENC>,
-+			 <&cru CLK_VENC_CORE>;
-+		clock-names = "axi", "ahb", "core";
-+		assigned-clocks = <&cru ACLK_VENC>, <&cru CLK_VENC_CORE>;
-+		assigned-clock-rates = <297000000>, <396000000>;
-+		resets = <&cru SRST_VENC_A>, <&cru SRST_VENC_H>,
-+			 <&cru SRST_VENC_CORE>;
-+		reset-names = "axi", "ahb", "core";
-+		iommus = <&venc_mmu>;
-+		power-domains = <&power RV1126_PD_VEPU>;
-+	};
-+
-+	venc_mmu: iommu@ffbb0f00 {
-+		compatible = "rockchip,iommu";
-+		reg = <0xffbb0f00 0x40>, <0xffbb0f40 0x40>;
-+		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru ACLK_VENC>, <&cru HCLK_VENC>;
-+		clock-names = "aclk", "iface";
-+		#iommu-cells = <0>;
-+		power-domains = <&power RV1126_PD_VEPU>;
-+		rockchip,disable-mmu-reset;
-+	};
-+
- 	gmac: ethernet@ffc40000 {
- 		compatible = "rockchip,rv1126-gmac", "snps,dwmac-4.20a";
- 		reg = <0xffc40000 0x4000>;
+ 	grf: syscon@fe000000 {
+ 		compatible = "rockchip,rv1126-grf", "syscon", "simple-mfd";
+ 		reg = <0xfe000000 0x20000>;
+@@ -665,6 +689,8 @@ venc: video-codec@ffbb0000 {
+ 		clock-names = "axi", "ahb", "core";
+ 		assigned-clocks = <&cru ACLK_VENC>, <&cru CLK_VENC_CORE>;
+ 		assigned-clock-rates = <297000000>, <396000000>;
++		operating-points-v2 = <&venc_opp_table>;
++		#cooling-cells = <2>;
+ 		resets = <&cru SRST_VENC_A>, <&cru SRST_VENC_H>,
+ 			 <&cru SRST_VENC_CORE>;
+ 		reset-names = "axi", "ahb", "core";
 -- 
 2.56.0
