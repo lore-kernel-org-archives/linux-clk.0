@@ -1,58 +1,127 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.226
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794609995;
-	b=O1IiCNLsPS5OC3L8XBaWfDfRkb9Q+oEIfAiIt9A5TX18B+4qpqCgpI/FM+p3s+Q6E3K+
-	 x8x0pla8MqNNZ4px70/diddWVXz1s5IdYfS3C73972TaNQG9T8mbNXOD8Tgdxr/DtHDW8
-	 p4kRydOeJr63k0+AiAnFdlYWA7W5Mok18P1O1nooyJO8DhI66ldQJZYEKGa2NmUeH6681
-	 h7vmOxJkHBvcjikqm1J5DExAIGUUU7uel/gwPUFVUml5nKnH/ujvp6lYzpITCb4RMBi38
-	 SwylMWdEokj39R7pyTLfmEoYEkWjegHYpIUNWUALnP7DDO2DVAAPHBX+5NvpDC1D1eQ==
+	t=1794627271;
+	b=bP5mq/bagwm/N/I1bQTcU9UM18IG0EFQMyYxNnYV5UYdrBasBjNvfWoBuuR9EiMUDcnI
+	 JjccFeZOGA54OrejcwNP9ksXrZJ+1Rqk5UofFBcuqCquBXWbBynp3OcEhIdi3+HW2/sqo
+	 FtA4JiLeeuT30XpJCpaFjikxZIBx/o3d+g5BKy7WICSS9i6kH6V0nv+IvbvKglMWwayYh
+	 vyf/Yh+/KbDYrd0j9PcZVa2CCVwM6bS5X1K0RmQDLnGe0jpWEXQkjUYOyF1Mk4MYsFMZD
+	 saq4t1Cn4/b+M+lRcvZ84jxLWeNYhv1iDJk6gMXBllAhDLANOKSZ2mA7n/5EGYLDBig==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794609995;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=SJJFXFJOjUb6U2UtiZQNfL1AoPB2mBR7cd+kQxd45dI=;
-	b=D5vZC0LspIxfLBzwP+l7PQg0E6s4Ji3Fwx4X/bXBCpTdGTEP1M/U0w7SAXGbfg39KgXN
-	 uS40cxx9aeKusk50OnZXgDLBe5vclKxhNoJtwfbhU1Esxiwq3Le/2WuReZU9IlyImtb/p
-	 yE+39zo8S3Ch6bzu0Eym875nKAakMxfYNNiU4LDwWZ0I6jOCddbYu9T6Qhw56cHupRDX+
-	 aeyBotZN0+VKf8HUaO+xL1qmAtEbtMUGnT5ZKyP52BAm/IFHaFTmehPpfSmT19PCzdpD4
-	 BhOl9rXAfX7ErPHtWAHqJDanEFXB/YorgYQwnRZxb2gkMSAn2Z3qGzq1/kV/9KHiRiQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794627271;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:X-Relaying-Domain:
+	 X-CFilter-Loop:Received:DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Received:X-Received:Received:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:X-DetectorID-Processed;
+	bh=ddgPaijUvIbheBZatU1W8+gATV3/IFQSBsN9yaAotzY=;
+	b=mmkHc3qiqW/AtKRuJ3p79rbixVCZmHJQKwSDaQZt4d2/PClJmUOvyCevpLyn266jI1d+
+	 zZ58tcFfPNlXbftlwD3+SvifQrKvOFB4Nt6+lmBIu82iA4aBy0p/ZVfUGGBv3AatPNNxp
+	 PRSAxUORRqUYgFyJoJsvhVM7WeHYwYKMCCkVSRm86V4rwwHQIWKDeQ7/OIQEL0VEuMSbW
+	 tR9eglNbFFJwxje7i8rkgtxk+UsFvAlA3JqoPECN0+TftbcydAjN8uFR/UhppE/rC+Jct
+	 7LIj8F0kLuJ2iA8OrBVLsXSNum0UgQb+UXUXdRdXeQh4gnqnxQeFe0a0IkYGZFR4ulQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OXykTpMI;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=broadcom.com;
+	spf=fail smtp.mailfrom=broadcom.com;
+	dkim=pass header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=FsqjNyMf;
+	arc=none smtp.remote-ip=209.85.160.226
+Received: from mail-qt1-f226.google.com (mail-qt1-f226.google.com [209.85.160.226])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8658606A32D;
-	Fri, 13 Nov 2026 22:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B49606A32E
+	for <linux-clk@vger.kernel.org>; Sat, 14 Nov 2026 03:34:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 97B49606A32E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OXykTpMI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E48301F000C4;
-	Fri, 13 Nov 2026 22:46:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794609995;
-	bh=SJJFXFJOjUb6U2UtiZQNfL1AoPB2mBR7cd+kQxd45dI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=OXykTpMI6vEGjfkrx9j5PULfAFNQfq1W/F9Y+XHVbp7+FwSM6ZbExMxaMZ+gI6k89
-	 tXWJwfOV+eb4lw7s4q/FShR14KKetT9HCLR9EQD989h26yMA+5LRC6AMNJkEFVNulV
-	 H4lvEqOtc5eGN+DKlC+6WBidSD6rsgWbJRaX/fPvoR2S+XGfrvayXp56WlDUg7tQx+
-	 L4yDRYSx0xMYffnyXBbJeA9AN9SkprcoL+UuqoexHfyj2f0dUijWpwEOdKIm6a7nqH
-	 PSmfQq28+hk/H11vWxH+xKf5snBLbkPLuV6e/5mRzdbw0DOg6jwgjARJnnud3dCOSD
-	 zfdFXe6JIdjjg==
-Message-ID: <sashiko-outbox-213839@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 06/19] clk: sunxi-ng: add support for the Allwinner V861
- CCU
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Han Gao" <gaohan@iscas.ac.cn>
-Cc: devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, "Alexandre
- Belloni" <alexandre.belloni@bootlin.com>
-In-Reply-To: <20261114-v861-v1-6-eb71ec3ee523@iscas.ac.cn>
-References: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
- <20261114-v861-v1-6-eb71ec3ee523@iscas.ac.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 13 Nov 2026 22:46:34 +0000
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=FsqjNyMf
+Received: by mail-qt1-f226.google.com with SMTP id d75a77b69052e-537548b811aso10713391cf.3
+        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 19:34:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794627269; x=1795232069;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ddgPaijUvIbheBZatU1W8+gATV3/IFQSBsN9yaAotzY=;
+        b=GEUc6PJZX+EuqYM8ThR8DHNRswlsl1yTosyiYbpJSlsY/uN9z3rqaKyvnonRuKhaEp
+         Kmm32MI12KLsPeAmjeyw/y9Z23Nr43cP7wCyxuhmGmdnP6nA9yIiY88tzGZCKY78UUXN
+         RomzU2mVWbiZY7A2z0lOepbx/Z2ddOPyF1G4Qc1dvQDA8gfbWENCjPdsJpjo2OEODdgB
+         Hm9GDh5is5lYX79a8Bz5+WVjYDZZFpctfzeI3grDe8l6QTu2Dnoj1QyqJJ79K2PXkeb+
+         wh/iHRFFP8DRxRQ/ETf2jkgs/E8bZaOsDMusg1qmRr5OtI742rv6B7njXz3QTP1eBZEw
+         TJQg==
+X-Forwarded-Encrypted: i=1; AL+hErHwMw59VCq8+sgqTlk12H6CTsnMOC6Yx14MX0v/eFAUk28HrWa6qDP10Nrq0I9v8KYbt1OJF76otcM=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8G5ktP1QngAR0o/hKUBkrnS3ffPH3oeZNgnvlgiK2NacFxKEMY
+	iy6fQ+2cBTKim/+69pAFQ7K6apYFRuNfWY/MdBRmDl5iImY+1dKSmNEJPtSkuTqSH+pSEyWgyTm
+	REUFcRvp27MjfAs/GN7AZR+UFqZra4w6Lj7gAe7xIo4ZW2YvVXW6rExzyzfIEas2TkE/Gz75FoF
+	UNYdxwZTa2yOEY44iWZ1MLvS+B3bWOTlUdGQVAzHiftXYsNroZOTUQn3p8oRRbZpW1Q8c+Uft4d
+	S33eVB8ql/6aADzZv1y
+X-Gm-Gg: AYBFou2qZFOjA9vtXVHi1M5JR+OxqkwBSMUjdNpbIp5VB6ggZ2YEO8IuMlDFwafhAoH
+	diBGK0dB40CW1T891HFkWS8yAI6qmBU3kqxPCJ+1OrOWMhduZA/tu/qaxRwftExeKu8+a1l4DBp
+	6dHRmgkev8c8REmRQQu+6dMFGPnIuz5BS091FROglDtYz6X5G1C+YBqwXzPEgPmUuOaen23x9Eu
+	XrOUHezNyofEpc4U3D71IDTUqkg8mvmgEyzwyYNC18/cgRrpsg/l1n6M8givqHfcPMQxre/Y+NQ
+	fr3vPmwb6zOcF1m3YJUzxUjssdPgdmwpTA6N/iSDGQWI2WaS8rNcgBIfxCtiBuorJF/RHKp4G+1
+	wzucXinp1kBYapWZPI+9/9m54Irt+8EHZ8AiB63Xt7BbGL064upRZes5oiGjXLqtmQyuJU1MMl3
+	O4Ep3Ynkl7EN0lTjd+xm5LTkFWs2LKlVRDy/lp8uSi3uY=
+X-Received: by 2002:ac8:5c85:0:b0:533:438a:2aa9 with SMTP id d75a77b69052e-55ac977ff12mr70013361cf.61.1794627269500;
+        Fri, 13 Nov 2026 19:34:29 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-123.dlp.protect.broadcom.com. [144.49.247.123])
+        by smtp-relay.gmail.com with ESMTPS id d75a77b69052e-55ad11f75e9sm1223601cf.16.2026.11.13.19.34.29
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Nov 2026 19:34:29 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-dy1-f199.google.com with SMTP id 5a478bee46e88-370230d93efso7071821eec.1
+        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2026 19:34:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1794627268; x=1795232068; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ddgPaijUvIbheBZatU1W8+gATV3/IFQSBsN9yaAotzY=;
+        b=FsqjNyMfYgeS4j2kNrm/zfVVwKD8gp6v3yQOf5DVh7CEU0zFvg6tiYf8uA+setgmAo
+         J7xTH3iu1L9zPuzHHGjVEHcV20AoHjk/tS0Kcpmel0PAmHFTmFlVzj2B2J6+1m5LVU9w
+         EbEkdeU+675PubUrj3KbEAmaTvpfBvl6GU3S8=
+X-Forwarded-Encrypted: i=1; AL+hErHyhSrLZuccC5Yc5GlK3u2jnxYy5JizHPusRpA3+N7hx9nr0ZhfHI2yybbpa1XsAx6vBalrG30aYe0=@vger.kernel.org
+X-Received: by 2002:a05:7300:269b:b0:37a:cafa:6d78 with SMTP id 5a478bee46e88-37acafac54amr1253755eec.33.1794627268057;
+        Fri, 13 Nov 2026 19:34:28 -0800 (PST)
+X-Received: by 2002:a05:7300:269b:b0:37a:cafa:6d78 with SMTP id 5a478bee46e88-37acafac54amr1253710eec.33.1794627267158;
+        Fri, 13 Nov 2026 19:34:27 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-37956bb0c40sm12865283eec.28.2026.11.13.19.34.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Nov 2026 19:34:26 -0800 (PST)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+	Nicolai Buchwitz <nb@tipi-net.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Phil Elwell <phil@raspberrypi.com>,
+	netdev@vger.kernel.org,
+	James Clark <jjc@jclark.com>
+Subject: Re: [PATCH 3/3] ARM: dts: bcm2711: give the GENET MDIO controller its clock
+Date: Fri, 13 Nov 2026 19:34:25 -0800
+Message-ID: <20261114033425.876398-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261020-devel-bcm2711-gisb-clk-v1-3-a1728724d0f8@tipi-net.de>
+References: <20261020-devel-bcm2711-gisb-clk-v1-0-a1728724d0f8@tipi-net.de> <20261020-devel-bcm2711-gisb-clk-v1-3-a1728724d0f8@tipi-net.de>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,69 +130,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] clk: sunxi-ng: ccu_mp_set_rate() ignores
-  CCU_FEATURE_UPDATE_BIT for dram_clk
+From: Florian Fainelli <f.fainelli@gmail.com>
+
+On Tue, 20 Oct 2026 16:58:11 +0200, Nicolai Buchwitz <nb@tipi-net.de> wrote:
+> The MDC of the GENET MDIO controller comes from the GISB clock.
+> Describe it, so mdio-bcm-unimac can get the real 200 MHz from
+> clk_get_rate() instead of assuming the 250 MHz of the STB chips, and
+> can put bounds on when an MDIO write completes for PTP.
+> 
+> Signed-off-by: Nicolai Buchwitz <nb@tipi-net.de>
+> ---
+
+Applied to https://github.com/Broadcom/stblinux/commits/devicetree/next, thanks!
 --
-
-commit 4dcfa888826dc579312b5e254290daa03aed3f59
-Author: Han Gao <gaohan@iscas.ac.cn>
-
-clk: sunxi-ng: add support for the Allwinner V861 CCU
-
-This commit adds the main CCU clock and reset driver for the Allwinner
-V861 SoC.
-
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun252i-v861.c b/drivers/clk/sunxi-=
-ng/ccu-sun252i-v861.c
-> new file mode 100644
-> index 0000000000000..af84c49fbaf16
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu-sun252i-v861.c
-[ ... ]
-> +static const struct clk_parent_data dram_parents[] =3D {
-> +	{ .fw_name =3D "hosc" },
-> +	{ .hw =3D &pll_ddr_clk.common.hw },
-> +	{ .hw =3D &pll_periph0_2x_clk.common.hw },
-> +	{ .hw =3D &pll_periph0_800M_clk.common.hw },
-> +};
-> +
-> +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE_FEAT(dram_clk, "dram", dram_paren=
-ts,
-> +					    0x800,
-> +					    0, 5,	/* M */
-> +					    8, 2,	/* P */
-> +					    24, 3,	/* mux */
-> +					    BIT(31),	/* gate */
-> +					    CLK_IS_CRITICAL,
-> +					    CCU_FEATURE_UPDATE_BIT);
-
-[Severity: Medium]
-Does changing the rate of dram_clk actually latch the new dividers in
-hardware?
-
-dram_clk uses ccu_mp_ops with CCU_FEATURE_UPDATE_BIT, but unlike
-ccu_div_set_rate(), ccu_mp_set_rate() never checks CCU_FEATURE_UPDATE_BIT
-or sets CCU_SUNXI_UPDATE_BIT before writing the register:
-
-drivers/clk/sunxi-ng/ccu_mp.c:ccu_mp_set_rate() {
-    ...
-	if (shift)
-		reg |=3D ilog2(p) << cmp->p.shift;
-	else
-		reg |=3D (p - cmp->p.offset) << cmp->p.shift;
-
-	writel(reg, cmp->common.base + cmp->common.reg);
-    ...
-}
-
-When clk_set_rate() updates the M or P dividers without a parent mux or
-gate change, the hardware ignores the unlatched divider update while
-ccu_mp_recalc_rate() reads back the new register fields and reports the
-wrong rate to the clock framework and child clocks such as mbus_clk.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261114-v861-v1-0-=
-eb71ec3ee523@iscas.ac.cn?part=3D6
+Florian
