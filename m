@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794662044;
-	b=olH6YA0hBap6tyNSzmVs/ybgMnhhd7cth5hfHz/79XlB2wfVsKvN4MQ4oKOBoGgE7RXQ
-	 IJZBIKyKU0TbAcuXAD5O3YHYIFp1oi3JpSlDVk6ZFbfOqMg7Hy7B2oIRrhtri63E8rGmB
-	 utXxicTvTrKBPrimWUARqR2t0+nSwYP+GUrnCGnMZhevOsOJB8MPWneXVixSAZtfQPgs+
-	 2x7E40y+s1xsC2tUQAbd6pQI+5PTCZ9NkVxujltJQ5ucX5jG7F6BfxEkcV/XP5ktxabhR
-	 J4snwmJ6GXxhzddMGGJp/yjuvJ8I7qNzFIV8itvK3IB+WTL0ERiq0H/imC9DBEXQhiQ==
+	t=1794662119;
+	b=lb/vwmrmnkFD6MAHz0w1KOsod24r1EiYCZi0BjIq0+EWOumu/5Ar97f/LvIIOR2OugVO
+	 q1t13ZnIk3W2kKA3rbMPOQKHJyJ4wwcRdhDl4NGe9Ph45o4B51CaumO85awmv3VvnubRM
+	 FLYClbKNsDqNBrUEo8nFljOef048rJHa0jf2gs0KI0RmDwypk8DnpF278hf0hKD6I390K
+	 sK3iz+BQmx7iEOVLhBOfV2EasKOUWBU+lZCcJUbmZzZRkMA0CE89SNcsdUloP1SVHHILB
+	 58bSyqHFEzcXTdj/9jgdDf+tAX6s0U7WYiSj54iD2Br1sLiHaDBhXBzcJV3JPlfT0UA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794662044;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794662119;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=Xu1Ch5SXzmukBzjwhfrUVAX6Y1aXdcS/DpJ5yAXyxco=;
-	b=1oVVxZIEVufXCdegX2cjCSy82ZbUVCodCBc1kxhKV33H4IoTt6pNTO5GmBpqDciuDqp0
-	 2aPTT381IhwDbz2SulnlbsleyX8vRWmRTj6y7fmdvtSMXK9bHIuj7825ViboKWQMbtm63
-	 l1Aay4luM+iM6R9BIhmJa97PDrk2iaRR/5kwTC/9hhWpYGVb3mSchCrh4TMrNa5rwfHbd
-	 N4rdr/GlEy+cmPXsAV/W4Uv8b1bQoHHmUxGcAQ2PF7A/1LXrv4gpFpcIrI0zzVwzzzhoG
-	 B6+9J++KDfw25YT8fvYbo9SASr5eVL/l934tDEU0wFiSP/8GdbYTpMaBnCXFy5aHlJg==
+	bh=vNQVHHIZZSTfT1nrplfEiIhLIPg6pXBmqlh+M+H8vW4=;
+	b=CUq3zVAaV2GQ9J1htzkVTdlAfHn5xfcKCzoupRN/TcJ9SeyOtoe9CXz4IeF9Isfe+3Vn
+	 5hkbgFcD9DjTdLYr32lP7FKslWaod706CZHadr5Z37P+gRzR2LIbu6VqwkbwxeNijkfhb
+	 5aAkgTPGzO5pDUhSF9pA6ix49C/yIt7/miZQPXWEPB5fQj4weWbInNGEP5DOJvR+aRl4g
+	 PVnHKa2WhwxTJBp2+2IRAMYmpT2Zmm9ZPF1n+YyQfcc8lFmCFxS/ei2P+9XppuyrPSWWx
+	 P3VfpriAKtQg+tYqANtWyN5r7pRHq8zw0lduEfS75RbMiWu89gBfV3shW5b8tYxp/vw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zv0p5Oqa;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lf7YOYxV;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1774606A33B
-	for <linux-clk@vger.kernel.org>; Sat, 14 Nov 2026 13:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E34606A8B7
+	for <linux-clk@vger.kernel.org>; Sat, 14 Nov 2026 13:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zv0p5Oqa
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B4921F00935
-	for <linux-clk@vger.kernel.org>; Sat, 14 Nov 2026 13:14:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lf7YOYxV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F5AE1F000D4
+	for <linux-clk@vger.kernel.org>; Sat, 14 Nov 2026 13:15:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794662044;
-	bh=Xu1Ch5SXzmukBzjwhfrUVAX6Y1aXdcS/DpJ5yAXyxco=;
+	s=k20260515; t=1794662119;
+	bh=vNQVHHIZZSTfT1nrplfEiIhLIPg6pXBmqlh+M+H8vW4=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Zv0p5OqaUOwOAG7H6IinOG7MKZZLjNtn8OpRuk/AMQ7IhMTG2AbPgDz35aF4yoDo8
-	 DMBl1Cjp+ggQQPruYxZxsi4T92QMfMU7YlzFFCLOeYooScYmtjd+qfYgMLJ+TgLlZv
-	 Z5NtnB0j5jlAg9G7Dixlnfug9472vn/X8f9ftZe5sM+2bpZcK0t8gwsnTeKc3X1OM4
-	 VP1RHgjt/00kaQLWuTi1rmeqCC+huv95dY1n93DRFw8FixtteLaYiG6SVGFZdNtvti
-	 m/lJLJz1BEC4f2Lfd6Ewa3QZYnKvvjbtwSDGU/EnnIotuM/pp1L34UTab1BhcblTYD
-	 SlTYSEgtX6IJg==
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-498f5fa4f70so2336177f8f.0
-        for <linux-clk@vger.kernel.org>; Sat, 14 Nov 2026 05:14:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErHDqExpuvcVZSmHtknjZRr6XO8hH1CQXM/Qn04PtqTcjgHLGu4rlGUK4nEQqBlABEsJc8W35O0c4wY=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+7Mak+Z0oPHAo2voTE+StHtMU4bUJVzf/jtHXEMX4uEd6sBh4o
-	lDIkV/QkD8rwGGYWHAyVw3zO//TzIW0JpuiozJepOtthhukOro8Y1q3fPIFD7kRlqlYNvCfpMHq
-	1oz0XCcdyQvy1y4eOCM44afuTkUrG4yU=
-X-Received: by 2002:adf:e00b:0:20b0:491:45bc:d69a with SMTP id
- ffacd0b85a97d-49c72e852c4mr9010555f8f.44.1794662042739; Sat, 14 Nov 2026
- 05:14:02 -0800 (PST)
+	b=lf7YOYxVYTo5d0Tbx5gjgNZgPFz3MxuFXw29Z0fXtpyvQLlRrt2F0jRnECvFS16r7
+	 430u/94eNRLSN8StKFXd5LKPWVBYC1YmrUZCOGWBSbDeS2mC0JiTT+JGiARRZNMo20
+	 Vf/baGSX3peSR8oLnSEzJDLJ+cSDFHAri6ZstYW4/MNQe+8OTtzEScdG1Tt3kOzQz5
+	 EkInjFMaSoynkqxUCzlB+LBP17jf5p+BjAXmQT5Afitek8u6KhlK5VTbb3IU9EAq4Y
+	 09a/neI1QYgYvPd8juYRJOS+ySsYJOjR26YtDPUj9Sob509vbXEM6thWCsomRplVQW
+	 rED+Vwwv0D4sw==
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4bb5b8ef642so9146225e9.1
+        for <linux-clk@vger.kernel.org>; Sat, 14 Nov 2026 05:15:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErFxxTRU58xbwKNtR0cyUZs48AIlFqo1ah9cA3X9ARxURzUGmTLwJIqVmjVrKza93ex6IMs3rNHy4/w=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+xDWU0jhZvmkwCsTT/JfwBNzyua3i2C7oHm3TqvEt3X12YckHN
+	nCEzsAvvVfnX1i8D2p+TUmsJ8XNCbPKJMSXWduKgySOfcbjVRV2f8cHrL2ZG+aGv35gUQBusX8w
+	9+Z6uSCX66vwbOhqajTfN4CPGS1zsl0c=
+X-Received: by 2002:a05:600c:470a:b0:4ac:b0b2:fa12 with SMTP id
+ 5b1f17b1804b1-4bb559f5d44mr107933255e9.1.1794662118139; Sat, 14 Nov 2026
+ 05:15:18 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,14 +59,14 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn> <20261114-v861-v1-1-eb71ec3ee523@iscas.ac.cn>
-In-Reply-To: <20261114-v861-v1-1-eb71ec3ee523@iscas.ac.cn>
+References: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn> <20261114-v861-v1-19-eb71ec3ee523@iscas.ac.cn>
+In-Reply-To: <20261114-v861-v1-19-eb71ec3ee523@iscas.ac.cn>
 From: Guo Ren <guoren@kernel.org>
-Date: Sat, 14 Nov 2026 21:13:49 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTTF0b-dkLdznGzwYZmC6rP6GozX1j0Rre5t-aw6i5uDvg@mail.gmail.com>
-X-Gm-Features: AclHuK-h5N3J841s1gOOr7kF2F78LtoydmQ7sQ-jEgbZErj4cvRoD35qUys8ixA
-Message-ID: <CAJF2gTTF0b-dkLdznGzwYZmC6rP6GozX1j0Rre5t-aw6i5uDvg@mail.gmail.com>
-Subject: Re: [PATCH 01/19] riscv: sunxi: describe the wider Allwinner SoC family
+Date: Sat, 14 Nov 2026 21:15:06 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTQQhhDe6vxjNSUfoC87D5hW_DFS+gUnrt3ojnzQJEd5jw@mail.gmail.com>
+X-Gm-Features: AclHuK9KtD0Arqx9onqXzPVHTGELkECSfl6DqyPNiPMBBAgZM_jcqAKpqYXH_44
+Message-ID: <CAJF2gTQQhhDe6vxjNSUfoC87D5hW_DFS+gUnrt3ojnzQJEd5jw@mail.gmail.com>
+Subject: Re: [PATCH 19/19] MAINTAINERS: add an entry for the Allwinner V861 SoC
 To: gaohan@iscas.ac.cn
 Cc: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
 	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>, 
@@ -93,46 +93,38 @@ On Sat, Nov 14, 2026 at 6:33=E2=80=AFAM Han Gao via B4 Relay
 >
 > From: Han Gao <gaohan@iscas.ac.cn>
 >
-> ARCH_SUNXI is about to cover the V861 as well. Update its prompt and
-> help text instead of adding another option.
+> Add myself as maintainer for the V861 bindings, clock and pin control
+> drivers and device trees.
 >
 > Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 > ---
->  arch/riscv/Kconfig.socs | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  MAINTAINERS | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 >
-> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-> index cecbce0c4983..4cf3b24467e8 100644
-> --- a/arch/riscv/Kconfig.socs
-> +++ b/arch/riscv/Kconfig.socs
-> @@ -61,13 +61,13 @@ config SOC_STARFIVE
->           This enables support for StarFive SoC platform hardware.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 93abbb315065..dfc300dc1eb2 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -24031,6 +24031,18 @@ F:     drivers/irqchip/irq-riscv-intc.c
+>  F:     include/linux/irqchip/riscv-aplic.h
+>  F:     include/linux/irqchip/riscv-imsic.h
 >
->  config ARCH_SUNXI
-> -       bool "Allwinner sun20i SoCs"
-> +       bool "Allwinner SoCs"
->         depends on MMU
->         select ERRATA_THEAD
->         select SUN4I_TIMER
->         help
-> -         This enables support for Allwinner sun20i platform hardware,
-> -         including boards based on the D1 and D1s SoCs.
-> +         This enables support for Allwinner SoC platform hardware,
-> +         including boards based on the D1, D1s and V861 SoCs.
-Perhaps we could keep the help text generic and omit the specific SoC
-models, so it won't need updating whenever support for another
-Allwinner SoC is added:
-This enables support for Allwinner SoC platform hardware.
+> +RISC-V ALLWINNER V861 SoC SUPPORT
+> +M:     Han Gao <gaohan@iscas.ac.cn>
+> +L:     linux-riscv@lists.infradead.org
+> +L:     linux-sunxi@lists.linux.dev
+> +S:     Maintained
+> +F:     Documentation/devicetree/bindings/clock/allwinner,sun252i-v861-cc=
+u.yaml
+> +F:     arch/riscv/boot/dts/allwinner/sun252i-v861*
+> +F:     drivers/clk/sunxi-ng/ccu-sun252i-v861*.c
+> +F:     drivers/pinctrl/sunxi/pinctrl-sun252i-v861*.c
+> +F:     include/dt-bindings/clock/sun252i-v861*.h
+> +F:     include/dt-bindings/reset/sun252i-v861*.h
+> +
+Good Work, thx for maintaining these.
 
->
->  config ARCH_TENSTORRENT
->         bool "Tenstorrent SoCs"
->
-> --
-> 2.55.0
->
->
-
+Acked-by: GUO Ren (XuanTie) <guoren@kernel.org>
 
 --=20
 Best Regards
