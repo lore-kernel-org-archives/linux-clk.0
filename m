@@ -1,21 +1,21 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.142.180.65
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794668094;
-	b=nANVy+S6nW1m+LvWT50JZTMP9YLjk7KWjYhlMkMmeY3/e5lYKn+qcWZnwEftHHDOC4bx
-	 vh7Sueim7IJxEQVo+vAonGep9gRa2kMjGLKVW4vpVkZFp0LA3HuboiqLSkXq+CZPHg9NR
-	 mZSFMTOj6SCf18+OnpRKSrA299IHb03KCko6Pu8GE44NKFpn4a+FOQhfp0he++wf1tjcp
-	 8T48T76sUumEvST6dZ6DmgTj+p2+OnEBpa2mU5x0VB1fp6I0/p2lxjyMAj049UBcXNdJE
-	 g7IHUEtor4hg8x0flvgP3/8iKfxg/13sLLQdvsNHgbfL8KUapBYiKdLP/aJNfkyTgsA==
+	t=1794668100;
+	b=hLeoVxjdlZ9d8tSKE8xVy4q+Hl1BXj/K3AYH0uLbscdlNy9yH4LaezPBUAD8lwU+bp91
+	 XiBJVCKVZTyvUIFfx3nQX0KUUoqjdMVtQeTsrvzlCKJiwHSWGnVfuoJ3Nf3Q1ZllUZflY
+	 1Hgbwa/YwLKLqsxnxmmgaTLlZOqa88o5Ca/lxGu6Lwgzv2bR3AVVe1v9v7T/J1jQa2FyA
+	 2NgHtAUicS+tAMZg1o61hMEyJfT+D4Z/wgczqJ08pEKrphZOzwjNev8zwaZcJf54fK9+V
+	 S1gvXvongpjydp6feY5CBsrBEkBzJzDMqHQH10jf3WMzGMFhEFJ6hRD1iYYNxQCc4uw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794668094;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794668100;
 	h=DMARC-Filter:Received:Date:From:To:Cc:Subject:Message-ID:References:
 	 MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=qU4Ln5CxBhVjmkEhfipukTuR2scl1fb16n9ll8nNZug=;
-	b=h+r19kGyQPaB87dzxKWZTTJCjZ5dtqgla+KsUXIBTBw+rf+h6gijkG0H0sYSuUr5dHcK
-	 Iyc4BepgGjHI17glJi7BG4RE86zTTmTrh8fr1LdzpPXFS016svXcrbtJU2dIeS9aGAEBz
-	 HqDHaD8GMKeYrb2d91I7Z60om1yspkI9Yqddh0hDBLQjX+nxhvzl5Q7jivm8MJNC4qolu
-	 MsYUVcKiNA2/PBEwg6Xld+EGaVR7OY55ExD23AGC/T9Pb9KGiUI3DVs9AUHBNU/QuOcOC
-	 43RzyvIdcy6BfattTp/jKWoZJIHGKF3d9HCRnIlm9KLohiraoYfLHqzUtZHriTwSYxw==
+	bh=BiKncMYBCZs5gJx1ophytALHk5lCtmyYZ4hUu5vrHW4=;
+	b=YamLMzfeT7wnH8Uvc8VNPRdBaCmt+iMDIlqHCfKLZpjBOWCYD8F246BZNkaoPewadllG
+	 qZNN+aSVync1JgTLjEicNelOQFwbXiwNU71ABSng4G9bz35sTwTqLh8jCusfIR2PS/gIl
+	 pZGTuNVOzxUGYfGYuWQ/cDb6Ls0GGnNDEilMQxthlimHmmWRcn9wIn3rL1UFjb8dwPA8g
+	 rOL9CfcGnsIhDy5mhgd4tGJ3G7KzfEjEa6WjPq42t8dhQeAbFrC+e0JorYpxa4cioiBYQ
+	 ODF9SsfxjfLOlATgVd4CUsZLhYZxsmbtmJ0RqnCO91G0RxWMofRsf41UOy6vFYy91Ng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=makrotopia.org;
 	spf=pass smtp.mailfrom=makrotopia.org;
@@ -24,18 +24,18 @@ Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6437606A329;
-	Sat, 14 Nov 2026 14:54:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E6437606A329
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93993606A33F;
+	Sat, 14 Nov 2026 14:55:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 93993606A33F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
 Received: from local
 	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256:X25519MLKEM768)
 	 (Exim 4.100.1)
 	(envelope-from <daniel@makrotopia.org>)
-	id 1xSF9R-000000005Gr-2Ug2;
-	Sat, 14 Nov 2026 14:54:45 +0000
-Date: Sat, 14 Nov 2026 14:54:42 +0000
+	id 1xSF9Y-000000005HI-2cWW;
+	Sat, 14 Nov 2026 14:54:52 +0000
+Date: Sat, 14 Nov 2026 14:54:49 +0000
 From: Daniel Golle <daniel@makrotopia.org>
 To: Daniel Golle <daniel@makrotopia.org>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -56,9 +56,8 @@ To: Daniel Golle <daniel@makrotopia.org>,
 	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Cc: nicolas.dufresne@collabora.com, detlev.casanova@collabora.com,
 	paulk@sys-base.io, ezequiel@vanguardiasur.com.ar
-Subject: [RFC PATCH 1/6] dt-bindings: media: Add Rockchip RKVENC v1 video
- encoder
-Message-ID: <8db82947fc17304e785815a7180d59cbb94b4b35.1794666330.git.daniel@makrotopia.org>
+Subject: [RFC PATCH 2/6] clk: rockchip: rv1126: Add PD_VEPU clock tree
+Message-ID: <f06eeff485ae8cf4f0a2b73352ab1234017a6ca9.1794666330.git.daniel@makrotopia.org>
 References: <cover.1794666330.git.daniel@makrotopia.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -73,150 +72,55 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1794666330.git.daniel@makrotopia.org>
 
-Add the binding of the RKVENC v1 video encoder found in the RV1109 and
-RV1126 ("vepu541") and in the RK3566 and RK3568 ("vepu540"). The block
-encodes H.264 and HEVC from raw frames and reaches memory through an
-IOMMU.
-
-Describe the register space, the interrupt, the AXI, AHB and core
-clocks and resets, the power domain and the IOMMU. The core clock is
-scaled between operating points with an optional supply, and the
-encoder is a cooling device of the thermal zones.
+The video encoder power domain of the RV1126 contains the RKVENC
+encoder. Add its AXI and AHB bus clocks, the AXI and AHB clocks of the
+encoder and the encoder core clock, together with the two interconnect
+gates that stay enabled and the two parent selections of the bus and
+core clocks.
 
 Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 ---
- .../media/rockchip,rv1126-rkvenc.yaml         | 104 ++++++++++++++++++
- MAINTAINERS                                   |   7 ++
- 2 files changed, 111 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/rockchip,rv1126-rkvenc.yaml
+ drivers/clk/rockchip/clk-rv1126.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/rockchip,rv1126-rkvenc.yaml b/Documentation/devicetree/bindings/media/rockchip,rv1126-rkvenc.yaml
-new file mode 100644
-index 0000000000000..9a83ce1499493
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/rockchip,rv1126-rkvenc.yaml
-@@ -0,0 +1,104 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/rockchip,rv1126-rkvenc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Rockchip RKVENC v1 H.264/HEVC video encoder
-+
-+maintainers:
-+  - Daniel Golle <daniel@makrotopia.org>
-+
-+description:
-+  The RKVENC v1 encoder found in the RV1109, RV1126, RK3566 and RK3568
-+  encodes H.264 and HEVC from raw YUV or RGB frames. It reads and writes
-+  memory through an IOMMU with two MMU instances.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - rockchip,rk3568-rkvenc
-+      - rockchip,rv1126-rkvenc
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: AXI master clock
-+      - description: AHB register interface clock
-+      - description: Encoder core clock
-+
-+  clock-names:
-+    items:
-+      - const: axi
-+      - const: ahb
-+      - const: core
-+
-+  assigned-clocks: true
-+
-+  assigned-clock-rates: true
-+
-+  operating-points-v2: true
-+
-+  venc-supply:
-+    description: Supply of the encoder core, scaled with the operating points.
-+
-+  "#cooling-cells":
-+    const: 2
-+
-+  resets:
-+    items:
-+      - description: AXI reset
-+      - description: AHB reset
-+      - description: Encoder core reset
-+
-+  reset-names:
-+    items:
-+      - const: axi
-+      - const: ahb
-+      - const: core
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  iommus:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - power-domains
-+  - iommus
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/rockchip,rv1126-cru.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/power/rockchip,rv1126-power.h>
-+
-+    video-codec@ffbb0000 {
-+        compatible = "rockchip,rv1126-rkvenc";
-+        reg = <0xffbb0000 0xf00>;
-+        interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&cru ACLK_VENC>, <&cru HCLK_VENC>, <&cru CLK_VENC_CORE>;
-+        clock-names = "axi", "ahb", "core";
-+        assigned-clocks = <&cru ACLK_VENC>, <&cru CLK_VENC_CORE>;
-+        assigned-clock-rates = <297000000>, <396000000>;
-+        resets = <&cru SRST_VENC_A>, <&cru SRST_VENC_H>,
-+                 <&cru SRST_VENC_CORE>;
-+        reset-names = "axi", "ahb", "core";
-+        iommus = <&venc_mmu>;
-+        power-domains = <&power RV1126_PD_VEPU>;
-+    };
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9cd098f0d91f3..26991dd3a3569 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -24544,6 +24544,13 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/media/rockchip,vdec.yaml
- F:	drivers/media/platform/rockchip/rkvdec/
+diff --git a/drivers/clk/rockchip/clk-rv1126.c b/drivers/clk/rockchip/clk-rv1126.c
+index f35bc9670c274..111595c9d990d 100644
+--- a/drivers/clk/rockchip/clk-rv1126.c
++++ b/drivers/clk/rockchip/clk-rv1126.c
+@@ -176,6 +176,8 @@ PNAME(mux_i2s2_out2io_p)		= { "mclk_i2s2", "xin12m" };
+ PNAME(mux_gpll_cpll_xin24m_p)		= { "gpll", "cpll", "xin24m" };
+ PNAME(mux_audpwm_p)			= { "sclk_audpwm_div", "sclk_audpwm_fracdiv", "xin24m" };
+ PNAME(mux_dclk_vop_p)			= { "dclk_vop_div", "dclk_vop_fracdiv", "xin24m" };
++PNAME(mux_cpll_gpll_hpll_p) = { "cpll", "gpll", "hpll" };
++PNAME(mux_cpll_hpll_gpll_p) = { "cpll", "hpll", "gpll" };
+ PNAME(mux_usb480m_gpll_p)		= { "usb480m", "gpll" };
+ PNAME(clk_gmac_src_m0_p)		= { "clk_gmac_div", "clk_gmac_rgmii_m0" };
+ PNAME(clk_gmac_src_m1_p)		= { "clk_gmac_div", "clk_gmac_rgmii_m1" };
+@@ -719,6 +721,25 @@ static struct rockchip_clk_branch rv1126_clk_branches[] __initdata = {
+ 			RV1126_CLKSEL_CON(72), 8, 1, MFLAGS, 0, 7, DFLAGS,
+ 			RV1126_CLKGATE_CON(11), 1, GFLAGS),
  
-+ROCKCHIP RKVENC VIDEO ENCODER DRIVER
-+M:	Daniel Golle <daniel@makrotopia.org>
-+L:	linux-media@vger.kernel.org
-+L:	linux-rockchip@lists.infradead.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/media/rockchip,rv1126-rkvenc.yaml
++	/* PD_VEPU */
++	COMPOSITE(ACLK_PDVEPU, "aclk_pdvepu", mux_cpll_hpll_gpll_p, 0,
++		  RV1126_CLKSEL_CON(40), 6, 2, MFLAGS, 0, 5, DFLAGS,
++		  RV1126_CLKGATE_CON(12), 0, GFLAGS),
++	COMPOSITE_NOMUX(HCLK_PDVEPU, "hclk_pdvepu", "aclk_pdvepu", 0,
++			RV1126_CLKSEL_CON(41), 0, 5, DFLAGS,
++			RV1126_CLKGATE_CON(12), 2, GFLAGS),
++	GATE(ACLK_VENC, "aclk_venc", "aclk_pdvepu", 0,
++	     RV1126_CLKGATE_CON(12), 5, GFLAGS),
++	GATE(HCLK_VENC, "hclk_venc", "hclk_pdvepu", 0,
++	     RV1126_CLKGATE_CON(12), 6, GFLAGS),
++	COMPOSITE(CLK_VENC_CORE, "clk_venc_core", mux_cpll_gpll_hpll_p, 0,
++		  RV1126_CLKSEL_CON(40), 14, 2, MFLAGS, 8, 5, DFLAGS,
++		  RV1126_CLKGATE_CON(12), 1, GFLAGS),
++	GATE(0, "aclk_pdvepu_niu", "aclk_pdvepu", CLK_IGNORE_UNUSED,
++	     RV1126_CLKGATE_CON(12), 3, GFLAGS),
++	GATE(0, "hclk_pdvepu_niu", "hclk_pdvepu", CLK_IGNORE_UNUSED,
++	     RV1126_CLKGATE_CON(12), 4, GFLAGS),
 +
- ROCKCHIP RK3308 INTERNAL AUDIO CODEC
- M:	Luca Ceresoli <luca.ceresoli@bootlin.com>
- S:	Maintained
+ 	/*
+ 	 * Clock-Architecture Diagram 9
+ 	 */
 -- 
 2.56.0
