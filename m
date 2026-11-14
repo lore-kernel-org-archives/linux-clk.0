@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794669310;
-	b=yjpJkACCipMNfO9gskli19Iw+t2Chz2xOm+dd/lVwRJ55sB1JhVp9KpYwyQ/K6kStwi5
-	 sRZETCMSgLwB7umIfi+rFE4JSrlzVwNIJKAwlvxSjYsv/e9O5xrMb/3d4jP0cHZwmBlHY
-	 cuo84z6RUPcSiDrZeZc1CTSICqmR8Lh6VDjiEKQRF34JVMIOdV1LmdcuM9DEw9yzuHjRg
-	 QHx64VI15EQLfK2UTxRZtPlOzCoRcClIXnyHGofAitiV/8wiC9kK5nen77Jjy2/rWN9FE
-	 ipuQ5XehGb4nSYIe3WAJD+snPc95vwpYDQ04qQc31ZNZWNUKotLpNmKDNH9zUGBXEMA==
+	t=1794669682;
+	b=rKmntORbstHmsTB8ZJbIw+lrC/kANqC8BFCRPmuhfAaRidf2TWukiJtvMgP5BRFz/tCw
+	 YVy/cSzmB9Kqy+DjUbUCsm9K2NCJO+EgC660F/du+/BMUQL518GROxJcqqZ8nZAQ4JK7q
+	 LUkAngLzVlbfHAMoHm4VVgmG6ZvgIJNlXZbQJHzjhQokqXKkaQeZ2kbazy8o5MtX5mjxD
+	 SuRnalEfD/GuKPM5mloM5MQB581uNKhumTGU4lY9ITGbjAI99C5HTAqFiFWGIegLmT7ht
+	 2w/+QK7XUE7USTxL8on/KZNWY5lSM6xX96AX33n4jF5t3gt8FxNKrOWQU1/bSf4Jxpg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794669310;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794669682;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=hfXozuOrfnsjtn7Dwq094tyoh/kCv611XtsLq2FcXaI=;
-	b=v61J82p7s5K5Rm0X1nlF9tLIbQWpWr5rEu/UZ0xtLTLnQxjJRXKjFgIo5bWwPPz9auhm
-	 HPNlTmrN8ulxUTQmQxmQ9yhnwPEL4zMtQ6CX4xz07pEzUe0vadQAMW+YDiGkD8jCOHmxC
-	 Snn5Ukj5kDznsVdmmGHuw2CUcbX2M3ydoQMbkJEs4PnFXT3sprPUYnAowrRo6GwCk/oqw
-	 G3CtF3qqTXJlKq8+V/7diG2n8EraDe4gOsJvPbCtLorvqxZol60mwQQ/TXQDRC7AzCE+U
-	 2ct0/orJ5CAyi9yzWDsrcPgmfhYQ5VDR+TiQHeBirQkYyD23mZF2qzt9s4YfuygfF7g==
+	bh=wzPQIx8Z0+gIZTyMDMpKF3VQjIGnBi5IkQQQfxx5pdk=;
+	b=YcR9QokhIfv+5BOZDj/7kYPILPZHVl3XG4JD5ksjFafa4mXF7FuPQgUrGLcusYTRkKCg
+	 stlX4tIKhnWNd885dOV+sowG5GAuWc5Wd3jrRzwEKre0Q305iDosk1W541UpebHEIU2ux
+	 qa4Jlj8YqEhZX3ek4ATX0RfP0Q+N/mM7FGKCnQ9MP8gElO9zWSQ+q3YCrzJhZ3NAqCYdI
+	 QNuI+/qko8aNtl/sk89+1twf1wRX7HAFHhpIjRQZ/DZ+wlMblY0M0qKYvC+nFtx6oFSjE
+	 FPRh4CdoxKj7mnao20heqaoEi1Bj7/ML2nTV9wKPwndqPfAI9qMwa05Nr8lSYsEfPPQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z4LXO8cZ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E5wTdWFw;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E64606A323;
-	Sat, 14 Nov 2026 15:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB8A606A323;
+	Sat, 14 Nov 2026 15:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z4LXO8cZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED601F000C4;
-	Sat, 14 Nov 2026 15:15:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E5wTdWFw
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F0C61F000C4;
+	Sat, 14 Nov 2026 15:21:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794669309;
-	bh=hfXozuOrfnsjtn7Dwq094tyoh/kCv611XtsLq2FcXaI=;
+	s=k20260515; t=1794669681;
+	bh=wzPQIx8Z0+gIZTyMDMpKF3VQjIGnBi5IkQQQfxx5pdk=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Z4LXO8cZSYjPbqhqfFkocQKQeAHoriNIiV8zTkQUxplgNuQMiFFTvOa6xxR/E+UNE
-	 DSlcBiuwh5w0gh9AQrXDFpsLYWQoC89mnSuMGGdT3LSlHLSI810g4n+zp6hoP+k7EF
-	 xkVjPVoBwa78z91pgUJW89hmokrDmDVjBy+5iMy5mxgW0ikOKqlLI4tY2KisRFiht1
-	 fIOsr/cXF0SvPmjCkf4XrkrIoliJykrpGvtKKwKeD2/HC8ztkHeNCY3kswNnUoz3g+
-	 AVcmYEL38MVRGhrUI+G4X+NiZ+yyxJZT0tg13vzFICYJA6U19hOnDYgfv3aldEIx4z
-	 MkPr7q6sv9vJA==
-Message-ID: <sashiko-outbox-214680@kernel.org>
+	b=E5wTdWFwsbRGocmX4nWlswBTj7xCsP/oCaembQuRQ2D8Ur+LpHl6T8PqXyqeCabO2
+	 Nu3xZGs9b3nbqnzrNoecmWqkzXhO8OAh6pDiaxyqIVLQuyeJa0/T9ae1d7IXy7/HUe
+	 L0auaegzInDtU2xA4MgRaz0ej/ajFPFJOBifYsczKNMtGMMlxJgZyEfcxO6uAI04Yt
+	 04LINECD90kEChzfpL/w2nIRYkJ1pD7htzKoX+ttM/1a/UXWrWkAbstRGvDQ3uBtCx
+	 1kncC8aiM4WmmCAFsqAGxbINcliTOnvvCPq31/MBP9MPsSuIBcuZTD/92FhPs1kxCc
+	 MKdH5eQ39wm2Q==
+Message-ID: <sashiko-outbox-214695@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH 6/6] ARM: dts: rockchip: Add RKVENC operating points
- to RV1126
+Subject: Re: [RFC PATCH 4/6] media: rockchip: rkvenc: Add frequency scaling
+ and cooling
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Daniel Golle" <daniel@makrotopia.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
 Cc: robh@kernel.org, conor+dt@kernel.org, media-ci@linuxtv.org
-In-Reply-To: <13212e28d26fde53f49c1838bb099f1f6b419dfd.1794666330.git.daniel@makrotopia.org>
+In-Reply-To: <c15929e16f343db702381ddc214b4732cf7c483a.1794666330.git.daniel@makrotopia.org>
 References: <cover.1794666330.git.daniel@makrotopia.org>
- <13212e28d26fde53f49c1838bb099f1f6b419dfd.1794666330.git.daniel@makrotopia.org>
+ <c15929e16f343db702381ddc214b4732cf7c483a.1794666330.git.daniel@makrotopia.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 14 Nov 2026 15:15:08 +0000
+Date: Sat, 14 Nov 2026 15:21:21 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,240 +61,305 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 6 potential
+Thank you for your contribution! Sashiko AI review found 7 potential
 issues to consider:
-- [High] media: rkvenc: probe fails in rkvenc_dvfs_cooling_init()
-  without THERMAL_OF
-- [High] media: rkvenc: teardown race in rkvenc_remove() and UAF in
-  rkvenc_release()
-- [High] media: rkvenc: SCLR_DONE IRQ and unlocked job_running race in
-  rkvenc
-- [High] media: rkvenc: slot DMA buffer overflow via
-  rkvenc_s_fmt_vid_out()
-- [Medium] media: rkvenc: missing initial OPP and PM lifecycle for
-  venc-supply
-- [Medium] media: rkvenc: unbalanced pm_runtime_enable() in
-  rkvenc_probe()
+- [High] media: rockchip: rkvenc: rkvenc_dvfs_init() leaves initial OPP
+  and venc-supply unconfigured
+- [High] media: rkvenc: UAF and teardown race in rkvenc_remove() and
+  rkvenc_dvfs_exit()
+- [Medium] media: rockchip: rkvenc: probe fails in
+  rkvenc_dvfs_cooling_init() without THERMAL_OF
+- [Medium] media: rockchip: rkvenc: thermal duty-cycle throttling
+  bypassed in rkvenc_dvfs_start_allowed()
+- [Medium] media: rockchip: rkvenc: devfreq updates stall in
+  rkvenc_dvfs_job_end() when round_ctx idles
+- [Medium] media: rockchip: rkvenc: unreset last_eval in
+  rkvenc_dvfs_job_end() skews first round load
+- [Low] media: rockchip: rkvenc: freq / HZ_PER_KHZ truncation in
+  rkvenc_cdev_set_state()
 --
 
-commit f41b6ddf3d36774f6ef1b61d948fc7c27e1896c8
+commit f718f2271f482c079204fa578dffff0091dcfc44
 Author: Daniel Golle <daniel@makrotopia.org>
 
-ARM: dts: rockchip: Add RKVENC operating points to RV1126
+media: rockchip: rkvenc: Add frequency scaling and cooling
 
-This commit adds the operating points table for the RKVENC video encoder on
-RV1126 and registers the encoder node as a cooling device.
+This commit adds devfreq-based frequency scaling for the RKVENC core clock
+andvenc-supply regulator, along with a thermal cooling device that caps the
+maximum frequency via PM QoS and throttles job execution duty cycle.
 
-> diff --git a/arch/arm/boot/dts/rockchip/rv1126.dtsi b/arch/arm/boot/dts/r=
-ockchip/rv1126.dtsi
-> index 63705291dd3ce..7e37fd89609a7 100644
-> --- a/arch/arm/boot/dts/rockchip/rv1126.dtsi
-> +++ b/arch/arm/boot/dts/rockchip/rv1126.dtsi
-> @@ -104,6 +104,30 @@ xin24m: oscillator {
->  		#clock-cells =3D <0>;
->  	};
-> =20
-> +	venc_opp_table: opp-table-venc {
-> +		compatible =3D "operating-points-v2";
+> diff --git a/drivers/media/platform/rockchip/rkvenc/rkvenc-dvfs.c b/drive=
+rs/media/platform/rockchip/rkvenc/rkvenc-dvfs.c
+> new file mode 100644
+> index 0000000000000..8b59122d5d983
+> --- /dev/null
+> +++ b/drivers/media/platform/rockchip/rkvenc/rkvenc-dvfs.c
+[ ... ]
+> @@ -0,0 +1,364 @@
+[ ... ]
+> +bool rkvenc_dvfs_start_allowed(struct rkvenc_dev *rkvenc)
+> +{
+> +	struct rkvenc_dvfs *dvfs =3D &rkvenc->dvfs;
+> +	unsigned long flags, delay;
+> +	s64 delay_us;
+> +	bool allowed;
 > +
-> +		opp-297000000 {
-> +			opp-hz =3D /bits/ 64 <297000000>;
-> +			opp-microvolt =3D <725000 725000 1000000>;
-> +		};
+> +	spin_lock_irqsave(&dvfs->lock, flags);
+> +	delay_us =3D ktime_to_us(ktime_sub(dvfs->next_start, ktime_get()));
+> +	allowed =3D dvfs->duty_pct >=3D 100 || delay_us <=3D 0;
+> +	delay =3D usecs_to_jiffies(clamp_t(s64, delay_us, 0, UINT_MAX));
+> +	if (!allowed)
+> +		queue_delayed_work(system_wq, &dvfs->throttle_work, delay);
+> +	spin_unlock_irqrestore(&dvfs->lock, flags);
+> +
+> +	return allowed;
+> +}
 
 [Severity: Medium]
-On boards that define venc-supply, does rkvenc_dvfs_init() ever apply the
-initial OPP voltage or disable venc-supply across runtime suspend?
+Can multiple contexts bypass duty-cycle throttling when dvfs->duty_pct < 10=
+0?
 
-In commit "media: rockchip: rkvenc: Add frequency scaling and cooling",
-devm_pm_opp_set_config() acquires venc-supply without enabling it or
-setting its voltage, and devfreq_add_device() does not run an initial
-update_devfreq() because polling_ms is 0:
+v4l2_m2m only checks .job_ready() in __v4l2_m2m_try_queue() before placing a
+context onto m2m_dev->job_queue; once queued, v4l2_m2m_try_run() pops and
+runs contexts via .device_run() without calling .job_ready() again. Because
+dvfs->next_start is only updated when a job finishes in
+rkvenc_dvfs_job_end() and rkvenc_dvfs_start_allowed() does not check
+dvfs->busy, every context scheduled by rkvenc_dvfs_throttle_work() (or via
+VIDIOC_QBUF while the first job is running) sees delay_us <=3D 0 and enters
+m2m_dev->job_queue to run back-to-back without throttling.
 
-drivers/media/platform/rockchip/rkvenc/rkvenc-dvfs.c:rkvenc_dvfs_init() {
-    ...
-	if (of_property_present(dev->of_node, "venc-supply"))
-		opp_config.regulator_names =3D supply_names;
+In addition, when rkvenc_finish_job() retries a frame on bitstream overflow,
+it calls rkvenc_dvfs_job_end() followed directly by
+rkvenc_m2m_ops.device_run(ctx), bypassing rkvenc_dvfs_start_allowed()
+completely.
 
-	ret =3D devm_pm_opp_set_config(dev, &opp_config);
-	if (ret)
-		return ret;
+> +
+> +void rkvenc_dvfs_job_end(struct rkvenc_dev *rkvenc, struct rkvenc_ctx *c=
+tx)
+> +{
+> +	struct rkvenc_dvfs *dvfs =3D &rkvenc->dvfs;
+> +	struct devfreq *devfreq =3D dvfs->devfreq;
+> +	unsigned long flags;
+> +	bool evaluate;
+> +	ktime_t now;
+> +
+> +	spin_lock_irqsave(&dvfs->lock, flags);
+> +	now =3D ktime_get();
+> +	dvfs->busy_total =3D
+> +		ktime_add(dvfs->busy_total, ktime_sub(now, dvfs->busy_since));
+> +	dvfs->next_start =3D ktime_add_ns(
+> +		dvfs->job_start,
+> +		div_u64(ktime_to_ns(ktime_sub(now, dvfs->job_start)) * 100,
+> +			dvfs->duty_pct));
+> +	dvfs->busy =3D false;
+> +	/* A round ends with the context that opened it, covering every other o=
+ne */
+> +	evaluate =3D dvfs->round_ctx =3D=3D ctx;
+> +	if (!dvfs->round_ctx)
+> +		dvfs->round_ctx =3D ctx;
 
-	ret =3D devm_pm_opp_of_add_table(dev);
-    ...
-}
+[Severity: Medium]
+Does opening a new evaluation round when dvfs->round_ctx is NULL leave a
+stale dvfs->last_eval from before the encoder was idle?
 
-As a result, the first batch of encode jobs runs at the 396 MHz assigned
-clock rate before dev_pm_opp_set_rate() has ever configured or enabled
-venc-supply. Once rkvenc_dvfs_job_end() later triggers dev_pm_opp_set_rate(=
-),
-rkvenc_runtime_suspend() only disables clocks without calling
-dev_pm_opp_set_rate(dev, 0), leaving venc-supply enabled at the last active
-OPP voltage (up to 825 mV) while idle.
+dvfs->last_eval is only initialized in rkvenc_dvfs_init() and updated in
+rkvenc_dvfs_status(). When the first job after boot or after VIDIOC_STREAMO=
+FF
+sets dvfs->round_ctx =3D ctx, dvfs->last_eval and dvfs->busy_total are not
+reset, so on the next job completion rkvenc_dvfs_status() computes
+stat->total_time across the entire preceding idle period and drops the clock
+to the lowest OPP.
+
+> +	spin_unlock_irqrestore(&dvfs->lock, flags);
+> +	wake_up(&dvfs->idle_wq);
+> +
+> +	if (!devfreq || !evaluate)
+> +		return;
+> +
+> +	mutex_lock(&devfreq->lock);
+> +	update_devfreq(devfreq);
+> +	mutex_unlock(&devfreq->lock);
+> +}
+
+[Severity: Medium]
+What happens to frequency scaling if the context stored in dvfs->round_ctx
+stops submitting jobs without calling VIDIOC_STREAMOFF or closing the fd?
+
+dvfs->round_ctx is only cleared in rkvenc_dvfs_ctx_idle() from
+rkvenc_stop_streaming() and rkvenc_release(). If that context finishes
+draining via v4l2_m2m_mark_stopped() or hits vb2_queue_error() in
+rkvenc_finish_job() (which then calls rkvenc_dvfs_job_end() and keeps or
+assigns dvfs->round_ctx =3D ctx), or if userspace simply pauses queueing
+frames on that context while other contexts keep streaming, evaluate will
+never be true again and update_devfreq() stops running.
 
 [ ... ]
 
-> @@ -665,6 +689,8 @@ venc: video-codec@ffbb0000 {
->  		clock-names =3D "axi", "ahb", "core";
->  		assigned-clocks =3D <&cru ACLK_VENC>, <&cru CLK_VENC_CORE>;
->  		assigned-clock-rates =3D <297000000>, <396000000>;
-> +		operating-points-v2 =3D <&venc_opp_table>;
-> +		#cooling-cells =3D <2>;
+> +static int rkvenc_cdev_set_state(struct thermal_cooling_device *cdev,
+> +				 unsigned long state)
+> +{
+> +	struct rkvenc_dvfs *dvfs =3D cdev->devdata;
+> +	unsigned long idx =3D min_t(unsigned long, state, dvfs->num_freqs - 1);
+> +	unsigned long freq =3D dvfs->freqs[dvfs->num_freqs - 1 - idx];
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	ret =3D dev_pm_qos_update_request(&dvfs->max_freq_req, freq / HZ_PER_KH=
+Z);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	spin_lock_irqsave(&dvfs->lock, flags);
+> +	dvfs->duty_pct =3D 100 - RKVENC_THROTTLE_STEP_PCT * (state - idx);
+> +	spin_unlock_irqrestore(&dvfs->lock, flags);
+> +	dvfs->cooling_state =3D state;
+> +
+> +	return 0;
+> +}
 
-[Severity: High]
-Does adding #cooling-cells =3D <2> cause rkvenc_probe() to fail with -ENODEV
-when CONFIG_THERMAL_OF is disabled?
+[Severity: Low]
+Should freq / HZ_PER_KHZ use DIV_ROUND_UP(freq, HZ_PER_KHZ) here?
 
-VIDEO_ROCKCHIP_RKVENC does not depend on or select THERMAL or THERMAL_OF,
-and thermal_of_cooling_device_register() returns ERR_PTR(-ENODEV) when
-CONFIG_THERMAL_OF is disabled, which rkvenc_dvfs_cooling_init() treats as a
-fatal probe error:
+devfreq converts the PM QoS maximum frequency back to Hz via
+HZ_PER_KHZ * qos_max_freq and looks up the target OPP with
+DEVFREQ_FLAG_LEAST_UPPER_BOUND (floor), so truncating an OPP frequency that
+is not an exact multiple of 1000 Hz drops the limit below that OPP and
+selects the next lower one. Also, state is not bounds-checked against
+dvfs->num_freqs - 1 + RKVENC_THROTTLE_STEPS before computing dvfs->duty_pct.
 
-drivers/media/platform/rockchip/rkvenc/rkvenc-dvfs.c:rkvenc_dvfs_cooling_in=
-it() {
-	if (!of_property_present(dev->of_node, "#cooling-cells"))
-		return 0;
-    ...
-	dvfs->cdev =3D thermal_of_cooling_device_register(
-		dev->of_node, 0, "rkvenc", dvfs, &rkvenc_cdev_ops);
-	if (IS_ERR(dvfs->cdev)) {
-		ret =3D PTR_ERR(dvfs->cdev);
-		dvfs->cdev =3D NULL;
-		return dev_err_probe(dev, ret,
-				     "could not add the cooling device\n");
-	}
-}
+[ ... ]
+
+> +static int rkvenc_dvfs_cooling_init(struct rkvenc_dev *rkvenc)
+> +{
+> +	struct rkvenc_dvfs *dvfs =3D &rkvenc->dvfs;
+> +	struct device *dev =3D rkvenc->dev;
+> +	int ret;
+> +
+> +	if (!of_property_present(dev->of_node, "#cooling-cells"))
+> +		return 0;
+> +
+> +	ret =3D dev_pm_qos_add_request(dev, &dvfs->max_freq_req,
+> +				     DEV_PM_QOS_MAX_FREQUENCY,
+> +				     PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE);
+> +	if (ret < 0)
+> +		return ret;
+> +	dvfs->qos_added =3D true;
+> +
+> +	dvfs->cdev =3D thermal_of_cooling_device_register(
+> +		dev->of_node, 0, "rkvenc", dvfs, &rkvenc_cdev_ops);
+> +	if (IS_ERR(dvfs->cdev)) {
+> +		ret =3D PTR_ERR(dvfs->cdev);
+> +		dvfs->cdev =3D NULL;
+> +		return dev_err_probe(dev, ret,
+> +				     "could not add the cooling device\n");
+> +	}
+> +
+> +	return 0;
+> +}
 
 [Severity: Medium]
-In commit "media: rockchip: Add RKVENC v1 video encoder driver", does
-rkvenc_probe() leave runtime PM enabled if pm_runtime_resume_and_get()
-fails?
+Does rkvenc_probe() fail with -ENODEV when CONFIG_THERMAL_OF is disabled?
 
-drivers/media/platform/rockchip/rkvenc/rkvenc.c:rkvenc_probe() {
-    ...
-	pm_runtime_enable(dev);
+VIDEO_ROCKCHIP_RKVENC does not depend on or select THERMAL or THERMAL_OF in
+Kconfig. When CONFIG_THERMAL_OF is disabled, the
+thermal_of_cooling_device_register() stub returns ERR_PTR(-ENODEV), which
+aborts probe on any board whose device tree node has #cooling-cells.
 
-	ret =3D pm_runtime_resume_and_get(dev);
-	if (ret)
-		return ret;
-    ...
-err_pm_disable:
-	pm_runtime_disable(dev);
-	return ret;
-}
-
-Returning directly instead of jumping to err_pm_disable leaves
-dev->power.disable_depth unbalanced.
+> +
+> +int rkvenc_dvfs_init(struct rkvenc_dev *rkvenc)
+> +{
+[ ... ]
+> +	if (of_property_present(dev->of_node, "venc-supply"))
+> +		opp_config.regulator_names =3D supply_names;
+> +
+> +	ret =3D devm_pm_opp_set_config(dev, &opp_config);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D devm_pm_opp_of_add_table(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D rkvenc_dvfs_freqs_get(rkvenc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	dvfs->profile.target =3D rkvenc_dvfs_target;
+> +	dvfs->profile.get_dev_status =3D rkvenc_dvfs_status;
+> +	dvfs->profile.get_cur_freq =3D rkvenc_dvfs_cur_freq;
+> +	dvfs->profile.freq_table =3D dvfs->freqs;
+> +	dvfs->profile.max_state =3D dvfs->num_freqs;
+> +	rkvenc_dvfs_cur_freq(dev, &dvfs->profile.initial_freq);
+> +
+> +	devfreq =3D devfreq_add_device(dev, &dvfs->profile,
+> +				     DEVFREQ_GOV_SIMPLE_ONDEMAND, NULL);
 
 [Severity: High]
-In commits "media: rockchip: Add RKVENC v1 video encoder driver" and
-"media: rockchip: rkvenc: Add frequency scaling and cooling", can
-rkvenc_remove() and rkvenc_release() trigger a use-after-free on
-dvfs->devfreq, rkvenc_dev, and rkvenc->m2m_dev?
+Does anything enable and configure venc-supply or set an initial OPP before
+the first round of encoding jobs completes?
 
-drivers/media/platform/rockchip/rkvenc/rkvenc.c:rkvenc_remove() {
-	struct rkvenc_dev *rkvenc =3D platform_get_drvdata(pdev);
+devm_pm_opp_set_config() only acquires venc-supply via
+regulator_get_optional(); the OPP core does not enable the regulator or
+configure its voltage until dev_pm_opp_set_rate() or dev_pm_opp_set_opp() is
+called. Because polling is disabled, devfreq_add_device() does not invoke
+rkvenc_dvfs_target() at registration time, so RKVENC_VERSION is read in
+rkvenc_probe() and the first round of jobs runs on the hardware before
+dev_pm_opp_set_rate() is ever called (and regulator_init_complete() can
+disable a boot-on venc-supply as unused). In addition, setting
+dvfs->profile.initial_freq directly from clk_get_rate() without rounding it
+to an OPP entry causes devfreq_update_status() to fail with -EINVAL on the
+first transition if the boot clock rate does not exactly match an OPP.
 
-	cancel_delayed_work_sync(&rkvenc->watchdog);
-	rkvenc_dvfs_exit(rkvenc);
-	rkvenc_v4l2_cleanup(rkvenc);
-	v4l2_m2m_release(rkvenc->m2m_dev);
-	v4l2_device_unregister(&rkvenc->v4l2_dev);
-	pm_runtime_disable(&pdev->dev);
-}
+> diff --git a/drivers/media/platform/rockchip/rkvenc/rkvenc.c b/drivers/me=
+dia/platform/rockchip/rkvenc/rkvenc.c
+> index 00778e97686d7..f15a0922059f1 100644
+> --- a/drivers/media/platform/rockchip/rkvenc/rkvenc.c
+> +++ b/drivers/media/platform/rockchip/rkvenc/rkvenc.c
+[ ... ]
+> @@ -442,6 +450,7 @@ static void rkvenc_remove(struct platform_device *pde=
+v)
+>  	struct rkvenc_dev *rkvenc =3D platform_get_drvdata(pdev);
+> =20
+>  	cancel_delayed_work_sync(&rkvenc->watchdog);
+> +	rkvenc_dvfs_exit(rkvenc);
+>  	rkvenc_v4l2_cleanup(rkvenc);
+>  	v4l2_m2m_release(rkvenc->m2m_dev);
+>  	v4l2_device_unregister(&rkvenc->v4l2_dev);
 
-rkvenc_remove() cancels the watchdog and tears down DVFS before stopping
-V4L2/M2M:
+[Severity: High]
+Can calling rkvenc_dvfs_exit() before rkvenc_v4l2_cleanup() and
+v4l2_m2m_release() cause a use-after-free during driver teardown?
 
-CPU0                              CPU1
+While V4L2 contexts and an in-flight job are still active, rkvenc_dvfs_exit=
+()
+frees dvfs->devfreq before clearing the pointer and cancels
+dvfs->throttle_work while dvfs->duty_pct can still be below 100:
+
+CPU0                                  CPU1
 rkvenc_remove()
   rkvenc_dvfs_exit()
-                                  rkvenc_irq_thread()
-                                    rkvenc_finish_job()
-                                      rkvenc_dvfs_job_end()
-                                        devfreq =3D dvfs->devfreq
-    devfreq_remove_device(devfreq)
-                                        mutex_lock(&devfreq->lock)
-                                          <-- use-after-free
+    devfreq_remove_device(dvfs->devfreq)
+                                      rkvenc_irq_thread()
+                                        rkvenc_finish_job()
+                                          rkvenc_dvfs_job_end()
+                                            mutex_lock(&devfreq->lock)
+                                              <-- use-after-free
+    cancel_delayed_work_sync(&dvfs->throttle_work)
+                                          v4l2_m2m_buf_done_and_job_finish()
+                                            ...
+                                              rkvenc_dvfs_start_allowed()
+                                                queue_delayed_work(...,
+                                                  &dvfs->throttle_work, ...)
+  ...
+  (devm frees rkvenc)
+                                      rkvenc_dvfs_throttle_work()
+                                        <-- use-after-free on rkvenc
 
-In addition, active jobs during rkvenc_dvfs_exit() can re-queue
-dvfs->throttle_work and rkvenc->watchdog after cancel_delayed_work_sync().
-Finally, because struct rkvenc_dev is allocated with devm_kzalloc() and
-rkvenc->m2m_dev is freed in rkvenc_remove(), closing an open V4L2 file
-descriptor after unbind runs rkvenc_release() ->
-rkvenc_dvfs_ctx_del(ctx->dev, ctx) and v4l2_m2m_ctx_release(ctx->m2m_ctx)
-on freed ctx->dev and rkvenc->m2m_dev memory.
-
-[Severity: High]
-In commit "media: rockchip: Add RKVENC v1 video encoder driver", can
-rkvenc_hw_recover() and unlocked updates to dev->job_running race with
-rkvenc_irq_thread() and rkvenc_watchdog_work()?
-
-First, the IRQ is registered with IRQF_ONESHOT, which keeps the interrupt
-line masked while rkvenc_irq_thread() is running. When rkvenc_finish_job()
--> rkvenc_hw_recover() waits on dev->sclr_done from inside
-rkvenc_irq_thread(), RKVENC_INT_SCLR_DONE cannot be delivered until
-rkvenc_irq_thread() returns, so wait_for_completion_timeout() always times
-out and the subsequent RKVENC_INT_SCLR_DONE interrupt wakes a spurious
-rkvenc_irq_thread().
-
-Second, rkvenc_device_run() sets dev->job_ctx and dev->job_running =3D true
-without holding dev->irq_lock and before sleeping in
-rkvenc_dvfs_job_begin(), calling pm_runtime_resume_and_get(), and starting
-the hardware in rkvenc_hw_run():
-
-CPU0                              CPU1
-rkvenc_device_run()
-  dev->job_ctx =3D ctx
-  dev->job_running =3D true
-  rkvenc_dvfs_job_begin()
-                                  rkvenc_irq_thread() /
-                                  rkvenc_watchdog_work()
-                                    spin_lock_irqsave(&dev->irq_lock)
-                                    if (dev->job_running)
-                                      dev->job_running =3D false
-                                    spin_unlock_irqrestore(&dev->irq_lock)
-                                    rkvenc_finish_job()
-                                      pm_runtime_put()
-                                      v4l2_m2m_buf_done_and_job_finish()
-  pm_runtime_resume_and_get()
-  rkvenc_hw_run()  <-- starts DMA on completed vb2 buffers
-
-When the spurious rkvenc_irq_thread() or a racing rkvenc_watchdog_work()
-(since rkvenc_irq_thread() uses non-sync cancel_delayed_work()) runs in
-that window, rkvenc_finish_job() reads MMIO while the device may be
-suspended, underflows the runtime PM usage count, and returns the vb2
-buffers to userspace before rkvenc_hw_run() starts DMA on them.
-
-[Severity: High]
-In commit "media: rockchip: Add RKVENC v1 video encoder driver", can
-changing the OUTPUT format while CAPTURE is streaming overflow the
-reference frame DMA buffers?
-
-rkvenc_start_streaming() only calls rkvenc_ref_alloc() when starting the
-CAPTURE queue, sizing ctx->slot[] from ctx->width and ctx->height once while
-ctx->slots_alloc is false. However, rkvenc_s_fmt_vid_out() only checks
-whether the OUTPUT queue is busy before updating ctx->width and ctx->height:
-
-drivers/media/platform/rockchip/rkvenc/rkvenc-v4l2.c:rkvenc_s_fmt_vid_out()=
- {
-	struct rkvenc_ctx *ctx =3D fh_to_rkvenc_ctx(file->private_data);
-	struct vb2_queue *vq =3D v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
-
-	if (vb2_is_busy(vq))
-		return -EBUSY;
-
-	rkvenc_try_fmt_vid_out(ctx, f);
-    ...
-	ctx->width =3D f->fmt.pix_mp.width;
-	ctx->height =3D f->fmt.pix_mp.height;
-}
-
-If userspace starts streaming on CAPTURE first and then increases the
-OUTPUT dimensions with VIDIOC_S_FMT before starting OUTPUT,
-rkvenc_device_run() programs the encoder with the larger resolution while
-DMA-writing reconstructed frames into the smaller ctx->slot[] buffers.
+Also, in rkvenc_dvfs_exit(), calling dev_pm_qos_remove_request() before
+devfreq_remove_device() fires devfreq's max-frequency QoS notifier and runs
+update_devfreq() -> rkvenc_dvfs_target() during teardown right before
+devfreq is removed.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1794666330.gi=
-t.daniel@makrotopia.org?part=3D6
+t.daniel@makrotopia.org?part=3D4
