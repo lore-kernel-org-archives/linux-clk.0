@@ -1,67 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794779417;
-	b=Z0KZ9fgK7LtFLGnA8TozGRpnBMA531R3YYQmVxgMhmdVYuO9yAz2cxg3nUy6g+Ss+GUE
-	 lua4raENHBIOw5vkjtZcFn4V17/blZ46BLH/xMUvV0s/c0p5b71kKS8WfDSpel0+09F88
-	 OiX+hG66ZgDwt0SqsrQlXBLOSrQXYclqEM+BPbSsD6gBe5G3pkjbLg19HHEUUXoyx4Qyt
-	 78ZY4zh/JrU/JKkNPgIDTkzj96zj11P8Ur59dY/zctmh0GVqLzrh1PUACOjNbfMsH0y9v
-	 zXo45M7R5mGea8NMXgZIcqk4JxD7h4qR8ArEyR2QqCsbbcKPnyX86CYJICDWL5SHdUg==
+	t=1794782052;
+	b=jrjebMqQtEv+C/CMfj3rr3+7tpwIM3qltl4cessUzIUcvVp59oFnaRKTlCdzIGf+BpCB
+	 EjyAzspMIKJmQUgnd01Io9z8Jd1ryCxv8WVsQd5wTkIn+HdZO9gDfL5J/qP6GRVTRbqht
+	 Jdr4kd6P2swmDQps5MilToSWva0FCyrMu5IVE6N5kJNSFz6J4NDZW31zK3XTlJlWtWYX8
+	 VY5isQOzUTr7nHFXl/V0PRbtlOtj+ynEAb/IvqOd4Q4ULVbVYVnVBEc5lqF2Hbm1XfpMA
+	 NQ2tXy18ofOFrfkiO68ifpQ4UzGkKsmqJBTi38ezRcn2Q+i+t3HswlZJp3uMqgAIwNA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794779417;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 User-Agent;
-	bh=6XvkMDi42j7sY0SuX8WsFlM/u5/0v+BfHkwMgWB/hdM=;
-	b=atG5ac1XGQbnUJAx5FTMY4tbXEW1OWpdAXGzHYwBM41MJ1I8DL0/aTSQH2wfnVgPGv0A
-	 dIEy92UNa3cRkCFGWeRW89Y2KY4U/9Y4wusTAk5YjuyDukdsbP1oyOohMBmH5TdIqh1pr
-	 v5YS3G3qO6uCU/nvTzR9vvjroQwDENkCxaRC4mPRUI9SEmfIWDyuguR+Bli+C1aDFhS7c
-	 MqNKn+JPu8HbrdRPyPQJGn7G23koRkC/YeFY/6cSGf7Rm6KMao87KhQ1njpPazeLZ9/oy
-	 nr8APXusiJ9YMNb73BZRqHt6hh8/a0QcWLszGhmRfeo2lCsPM+ZKrRQx2mjhL7ewLLw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794782052;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
+	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=hLJ6bSKi+ZgPvgTZTEL6AiSyPJLqudm0XPJJoELWh0Q=;
+	b=vRcpb0BtoYz3fiEdS/Gept+FGzb/Ie+nCAX7r7+V1foYKOujsf3+aFeHJtxIPRjulEJO
+	 L3LOTHsAFDTv5X/yx93EDRwJTFkyU62qeAbJ8pKP79FrFuvf3HtG8rDftm0bxQFAJupXW
+	 +p6fGTPcNmetfkpJqh//yGnWAmk1LZ+jU6y/UjpAdkkdOcOcES2XSooH49QRM8TCSjec1
+	 gdtjlRVquKIRZI2ugL+3h0/C0nn9CH7mk+0K9s8MreszC+srThAMCnsIaeYHBIXIPiGTD
+	 iN1KzKfw1Snlg4vyc5YAIOs8HY5dyeLj0RtyAdgXznKLwdIszOUKNoRY0XEfdddeNhw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nFEZvwMx;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=CJd3QEEj;
+	arc=none smtp.remote-ip=209.85.128.49
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D670D606A323;
-	Sun, 15 Nov 2026 21:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362D7606A331
+	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 22:34:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 362D7606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nFEZvwMx
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE831F000C6;
-	Sun, 15 Nov 2026 21:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794779417;
-	bh=6XvkMDi42j7sY0SuX8WsFlM/u5/0v+BfHkwMgWB/hdM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=nFEZvwMxQUzhZeELmnZEHAe8BYEEgWRUOfxA44QqBHDNEHKqgSvZInB5g+iW8EEVD
-	 pj76uae/e92fD9oa7MNfKcgyS4hY2nZlIL17HBe7xjGKguIZu4LibMj7CQX65gLdlC
-	 yUo+VjdlP1+vkZAuaIRoxfs1kj5AwLhAQdCo42VQe8nfnuhcZ3hXYN39CpJgvecOuQ
-	 OPbR4u1buCNQRULF38yfpYWseRPD1F7jg8lXJQQJYmcs8oZQa6WkiiLB7B5pkjQTHZ
-	 K+MwzTlKdAZbS9JOeVLV4XkiLpInJkLVuIRCWXH6oroJApZnFqC5JG6gu0J1Vnd/Zo
-	 nMGHujxVcHOZg==
-Date: Sun, 15 Nov 2026 16:50:10 -0500
-From: Brian Masney <masneyb@kernel.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Nicolai Buchwitz <nb@tipi-net.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>,
-	Phil Elwell <phil@raspberrypi.com>, netdev@vger.kernel.org,
-	James Clark <jjc@jclark.com>
-Subject: Re: (subset) [PATCH 0/3] clk: bcm2835: describe the BCM2711 GISB
- clock for the GENET MDIO controller
-Message-ID: <avopEsR4AqMUUKBU@x1g10>
-References: <20261020-devel-bcm2711-gisb-clk-v1-0-a1728724d0f8@tipi-net.de>
- <179358503716.355577.9187303706042543606.b4-ty@b4>
- <2e846fdb-32e9-4ba9-a6e7-ef67d24c4f8d@broadcom.com>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=CJd3QEEj
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4bb64c99d2fso14784375e9.3
+        for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 14:34:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1794782049; x=1795386849; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=hLJ6bSKi+ZgPvgTZTEL6AiSyPJLqudm0XPJJoELWh0Q=;
+        b=CJd3QEEj8pQwODGjB/Hvsm1Kz8XiytWNDpUjUiysP8iwPosQ6yW3gdLOLRH20X4Owa
+         0JtLC5im59ZkIs5S3uiF2dyb1/b0W6sEAIXxh3hqmTeNyMKe7nwPlu17c/gf4iAu6cBU
+         4y0sp2DgHz6LvxI92R/65FyuHGltuJnCbV89+YgAYch/er4OOAO4xTog7mzZDiYoN7/w
+         sRBEaSqnhB/VU7CFPMMVnakJq0S5UBmp9QqWpa4hHjWni9z2K4sonGaN/XYvwXyXKbqW
+         15MumIhxvuJhPEyRyEbNm3tCt2dmSbs/6BsQifBNlgTCuSlf+tnV/IyEeqPPeVV8jLc3
+         /sOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794782049; x=1795386849;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=hLJ6bSKi+ZgPvgTZTEL6AiSyPJLqudm0XPJJoELWh0Q=;
+        b=wZgav+8CaPsIshktRbk2E00cLdrdmTD5dYKChNcFxNB9PngwhmHRKGY8kCS5wnBQqw
+         FY/bDXVZEuN9fYZ5cl21Fpg0MutiJePPxjYAWJtNr0rEEAaCb5G/6/dpegwM91vx3oOo
+         XeVE2Z+D8jiEdgt9RWxqZn6QFzkWR9jfx5MI42I+OTI63Ja4fD8VE/2Lgvxox3fSN8EV
+         T/0170subakbHgMc53HA/scubsYsF7P8EaA01uSC+Kh5LlWxwcYfVk5Ze7/evzjA7dLE
+         RnY+5D/qbVR4kmFWgxxvB4n7qv5pVm7CFBGGOGNJpzS8xqBCqKtt4DPeAf0ekYNiRmkr
+         dP/g==
+X-Forwarded-Encrypted: i=1; AL+hErEj9+Io0KWJKShkPfDqhyhvGBlL+bakQUmaXQcS1YUbaHxMx9lH0sMblTR9yeSSkcS+VVF0j0W1tb8=@vger.kernel.org
+X-Gm-Message-State: APuU4Z85kE0AsbYUqyF2VzyZOEvr2whKHEJTKfpxxk4eAVx80rafRqR/
+	IbLBAcjqYuBBcbAlYq6FmNDUiva5Gaur74+5NbnZPXVDvHrIzxVIA8H6CakPwUrWEfA=
+X-Gm-Gg: AYBFou0pGuosN4E0rl47O/KBO66vfPmjPWYn+TyzBjQkMFYf76jeoYfNvORArbaMONQ
+	zBSPzZAbUGZbGsCm8HPhyF21I/7NFrHR31h4MgwMcgrMOE7IAavDwT7oKgBihIJx8ClYynto5sH
+	2lYSbF2PJ322gKLwyWJCD7KFkdoOv8vqyweFvuC/Rg/+tGWAc8ik4JelWVtfM517Nm5BIM2SCfz
+	jWxvdpFAZuu3+42eRMT7HsoR+R6htcsj8tS4og+5mGJmJiP8h9M7C4kiT6oTHA6UD0M6/WxxFQg
+	yBPyJajVONkr0ah4GCapnsrwjQsZ/6J/4FKInCL2sz39eAOrKwi4bFtPh38XKGzjUQ+e1Wu9aI3
+	auyMEoRUWI0Fy23TvyYPJ7dad2u2hniInCcc1SMUhX/gUeezivjCAKI2T9C6E7kXmWDNksKUTG6
+	QwAUjv7O6H+1J9MMhDWN9h4b1ysZ5NfcMBJT4U3c3BMuVVC57PXOEVQ3pABGwvXwjoZa/piHG70
+	/+/m5OtDFAvTvz/MjyFJKh17gioYpXxPwzc4mh5HC75OmfuzpNjcYkk8vaKhQ9nIn2lPBXkelYO
+	JzWG3YjpFX6Sl/syop6C8hYtKuM4pKinhjYrwaJugWFW1nuf
+X-Received: by 2002:a05:600c:3e0d:b0:4bb:6f41:39be with SMTP id 5b1f17b1804b1-4bb6f413bfbmr46240405e9.15.1794782049461;
+        Sun, 15 Nov 2026 14:34:09 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb55acdfebsm222898225e9.7.2026.11.15.14.34.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Nov 2026 14:34:08 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -71,39 +89,107 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e846fdb-32e9-4ba9-a6e7-ef67d24c4f8d@broadcom.com>
-User-Agent: Mutt/2.4.3 (2026-10-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH RFC 0/3] clk: Restore the clocks of a provider after a
+ hibernation
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Taniya Das <taniya.das@oss.qualcomm.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20261028-b4-clk-restore-after-hibernation-v1-0-86cf62747a7f@oss.qualcomm.com>
+References: <20261028-b4-clk-restore-after-hibernation-v1-0-86cf62747a7f@oss.qualcomm.com>
+Date: Sun, 15 Nov 2026 23:33:56 +0100
+Message-Id: <179478203647.13037.1560944178171749849.b4-review@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3673; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=Ig1JMbXRCmJfdJcT1sGueTmWJmoPRP4AdJybNvm12MY=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFm/jCPjSy54XHH/JcHw7lbPogWvLvcvvvPHcV4z5/k4g
+ 23ccZ+mdpSyMIhxMciKKbLUcFeLv5PU+jJrus5tmDmsTCBDGLg4BWAiOxIY/keyTtq72s/setcz
+ ngy5rDnH4sWbDvWxb7S9uny2/2GP1Q2MDE/Lj7BLzb3MN1Oyfb9IzkeXggVrTYRME/cLcl+U+V/
+ GzAIA
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On Fri, Nov 13, 2026 at 07:39:42PM -0800, Florian Fainelli wrote:
-> On 11/1/2026 6:03 PM, Brian Masney wrote:
-> > 
-> > On Tue, 20 Oct 2026 16:58:08 +0200, Nicolai Buchwitz wrote:
-> > > clk: bcm2835: describe the BCM2711 GISB clock for the GENET MDIO controller
-> > > 
-> > > The timestamped MDIO write series [1] needs the reference clock the
-> > > GENET MDIO controller divides its MDC from. On BCM2711 that clock is
-> > > not described anywhere, so 5/5 of that series hardcodes 200 MHz behind
-> > > a compatible match, and mdio-bcm-unimac's clock-frequency handling
-> > > assumes the 250 MHz of the STB chips.
-> > > 
-> > > [...]
-> > 
-> > Applied, thanks!
-> > 
-> > [1/3] dt-bindings: clock: bcm2835: add the BCM2711 GISB clock
-> >        https://git.kernel.org/clk/linux/c/af7994af5228
-> > [2/3] clk: bcm2835: register the BCM2711 GISB clock
-> >        https://git.kernel.org/clk/linux/c/ab94dbf30233
+> When a hibernation image is restored, the clock hardware has been through
+> a power cycle and a boot kernel, while the clock framework in the image
+> still holds the rates, parents and enable state the consumers asked for
+> before the image was created. The consumers ask for the same rates again
+> when they resume, the framework sees no change, and the clocks the boot
+> kernel did not touch keep whatever the boot firmware left in them.
 > 
-> Brian, can you also take patch #3, or you would have create an immutable
-> branch for me to pull from. Patch #3 depends upon the BCM2711_CLOCK_GISB
-> constant being defined.
+> Whether the kernel that loads the image probed a given controller at
+> all depends on whether its driver is built in or available from the
+> initramfs. On the Qualcomm Glymur CRD, the display clock controller
+> driver is a module that it does not probe, so after the restore the DPU
+> runs at the 333MHz the firmware configured the PLL for instead of the
+> 717MHz the framework believes it runs at, underflows, and the panel
+> shows a solid blue screen.
+> 
+> The first patch adds clk_restore_context_dev(), which re-applies the
+> cached state of the clocks registered by a provider device, parents
+> first, as an alternative to the global clk_restore_context() that
+> depends on every clock implementing the restore_context operation. The
+> second one adds a hibernation restore callback to the Qualcomm clock
+> controller common code, which redoes the probe time configuration and
+> restores the clocks, and the third one uses it for the Glymur display
+> clock controller.
+> 
+> Sent as RFC, as the same applies to every clock controller and I would
+> like to know whether this is the right level to handle it at before
+> wiring up the rest. In particular:
+> 
+> - Instead of programming the cached state into the hardware, the
+>   framework could read the parents and rates back from the hardware
+>   after the restore, so that the consumers asking for the same rates
+>   again go through the normal clk_set_rate() path. Would that be
+>   preferred?
 
-It's a bit late to do the immutable branch now and I don't want to have
-to rebase the clk trees.
+I would much prefer this approach. IMO, we should not try to restore
+the cached values. There is no way to be sure we would get it right:
+the HW may require a specific sequence to reach the final state,
+intermediate values, timings, who knows what else! I'd rather not go
+down that path.
 
-Can you provide an Acked-by for patch 3 so I can take it?
+Consumers know (or should know) what they need, so they should release
+their clocks when suspending and request what they need again when
+resuming.
 
-Brian
+On the provider side, it should just resync with the HW from its
+.restore callback: re-read the parents and rates, a bit like
+CLK_GET_RATE_NOCACHE does, as well as the accuracy, phase and duty
+cycle, and re-enable the CLK_IS_CRITICAL clocks.
+
+CCF should provide a helper for this. It is likely going to redo a fair
+share of what __clk_core_init() does. The prototype could be fairly
+simple, something like clk_resume_hw_sync(struct device *dev), to
+resync the clocks registered by that device.
+
+> 
+> - Programming the cached rate of a clock that is not enabled may not
+>   work on every clock type, for example on an RCG whose source is off.
+
+What I'm suggesting should not have such problem I think
+
+> 
+> - The Qualcomm callback finds its state through devres, which only
+>   covers drivers that call qcom_cc_really_probe() once per device.
+> 
+> Clocks left enabled by the firmware but not by the framework stay
+> enabled, and the phase and duty cycle are not restored.
+
+CCF has no sync_state support (yet!), so the unused clocks of providers
+built as modules are never disabled, even on a normal boot. You would
+not be creating a new problem here.
+
+Anything cached needs to be resynced though, including the phase and
+duty cycle, everything else.
+
+-- 
+Jerome
+
