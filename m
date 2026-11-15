@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794739482;
-	b=dGLHKz/kfb/Bg8HSr9ne2pGfnShPGdpbGw37upYPNfAjokzTLY4yZB5cmmQGhi9dgoLU
-	 7D039u87wi2HeeilDabau9dW/5DZKTjeJsQpNcClgYlCCblWEuYIDvGeNJkZMCzqiOA6J
-	 XRGfHvvOJOdzayrEmucaMOmnh/oszz1ALp3cBYyaQbzJ1W1QFHnKnq19s4dSH5c0hJsiI
-	 9z+EKuoCufNJl47aP3X8S+K6quvgGiZSOWkvCnDGqkTLAw693vSyDbKrfXVsvltDoGqaW
-	 VKmM8zDtmBmrnLLuY/0M1odOcz5C+j3ENuIz0Mat9O5oPT9cFnhJGkCw2yAfoBmtCkg==
+	t=1794739487;
+	b=p2EvPDFqCAn9vp44kn6DVXbZzRo3PI0yw+htQ5LyDR6EclblfbkKSJiTDHHbcEa/YteC
+	 TSlga1f06zY9Fokm3/ZYHnK3jwbCI+oiqSQD9nWsLPim0LFDTjpBm2lJv5DhiDEAr4eBm
+	 Yi6il0ioOemkw5xzIsY2KPDRAo7iwD+/4N4WYmnn/Xw/wb2jT+DEKkOKEP8cjXrpfyJ4N
+	 g3Ez5zwDodonLaZi962PWXGSiWf0jOaedZlhDlI2P5r0UOMM98SiezhBis+PK3F4nlTVt
+	 AVLJ2EDKl/FmIBxTWmQ387SzUQ9G6QBzeCZ5rbtO1vf8RcxOeSPpT/MAEHFsVNmnD0w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794739482;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794739487;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=oxCJiOICUUs74Xo0MPxD2a6PIQWU/RA5n1ab3q90to4=;
-	b=RvPTXx/sqMI2ETVtI40MkFLD03+uWRE9ZbTewvwClye1V4gvuG4ZAGUWgloHGyiETp0V
-	 Cad8aeRl1JeAwrtrhCxyx9is3NON26sDPD7SX/pntVpUq52WZjWam/IUiEE8PsaHDJeKJ
-	 ZDCVQo2rGxhRBC3tR2VjQs1gGO+zdSdYRK8zKDbWPdSynsnaWS21uxydErxCmZQ6n5M0b
-	 WrBFVLZJYRFHr2xVl5md6djZI6h5cfgVgu9PGwykTZRJf2XTNKL7MBXGySEb0/1r9MUUx
-	 c5Harz3dI/pR6l0KwZH/V5aIzn3ApNiqbbP2xB/nakMhNttN1nk+/n2O3VRw7jApH1g==
+	bh=flzTljZaFRQx/jUo4nd9R1iWKcBGyf/HIN2QRt0GDSc=;
+	b=fCg++a9z6qlx2Euk9/9WXiwE0op+n1bFjMYmvyKSYF2cog6nVf7ctyqM6drDgrD114pO
+	 FXsa54w8MsraiCpwLQEHDTi1y0oqmRmFMyhsA3hrDipgeY9Be59CMO0FT6H/8BasOQQ9n
+	 9gU7P0qdSh1ViFWOkGBZAT4coCIahv5JgjrN4Ruu+upKT4XVK4s2/rNs6KhuKdk5vo9dZ
+	 9PvYVFpqYwsoAShgh/BJhlyOHvncPmWyqHXH22FLC4aN2BlQ1bF/M58rVdOtDrDWYKkoQ
+	 bIzHTvjSxbr13OiH9dCsUg4j9tjLAv9GA5spCZXHR9KfkW0o6hr+iwV+2jMiD0m1FAw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JiiBcW3X;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KgPc9291;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1FE606A884;
-	Sun, 15 Nov 2026 10:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0990A606A31F;
+	Sun, 15 Nov 2026 10:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JiiBcW3X
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 601241F000CA;
-	Sun, 15 Nov 2026 10:44:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KgPc9291
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 887371F000C7;
+	Sun, 15 Nov 2026 10:44:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794739482;
-	bh=oxCJiOICUUs74Xo0MPxD2a6PIQWU/RA5n1ab3q90to4=;
+	s=k20260515; t=1794739486;
+	bh=flzTljZaFRQx/jUo4nd9R1iWKcBGyf/HIN2QRt0GDSc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=JiiBcW3Xpm7P0APa3wxcDnkfwrNAoJA+QbjpuCDRZjfL3pUBVBsWBu5BCOFxWEBgO
-	 6EJKHYL1iF5GKBbOMIUnKYefftNdDoieFrxvmo8p/ad01psduSjcqnwhvkmHz9wjBe
-	 iFCyDdg96a/eJe4dBxFmwW4Xg895S/lEOgN202ZZJGlRNGfYXxvk8ImzXonx/PEkGE
-	 as+o5Lzwf7tsmTpmgzY7MPUKT9rplqRIkhL7IVpPHETosMF2rTAFP7qU7darMacrOD
-	 5UU5fDxLmV2dez+B0wZrJjZHadJ6MEMYabEosj8czI2O8eryo6tABgKTACu9TuAlbD
-	 zMRrOw1F4k12A==
+	b=KgPc9291/NdZVFdU5ucoWbsp7rxGMzN2ZZd/0hEItNdo4iFJd+aRa781eQay4TCrr
+	 Tnpo66lxIQ2+cf2zu6/7gi+bUxpYDzX8e59J03opLcU91OXuv+H+t+43PCgaFwLEQd
+	 F13rcjVJ29nrAhE0AHVQXlMfz/c+ZH1nv/CIOyOdBjaYnCaq+7cI5h12tEGWsH9zLs
+	 JJhEs313/b1cLk7o22+I7q8VFjzrDFszu8gAWWNjFMR//I3Y9jQV18BSjXfGOaJPRl
+	 QBbTFQsRGCZpoJ4kQoieK6jI00KBln5piRPrsBNgNqGLe/pQYRPBBZidm7Ac5XveV+
+	 niYeswr7c2hgQ==
 From: Jisheng Zhang <jszhang@kernel.org>
 To: Rob Herring <robh@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -57,9 +57,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	linux-gpio@vger.kernel.org
-Subject: [PATCH v2 05/13] dt-bindings: soc: synaptics: add SL2610 system controllers
-Date: Sun, 15 Nov 2026 18:23:44 +0800
-Message-ID: <20261115102401.3520-6-jszhang@kernel.org>
+Subject: [PATCH v2 06/13] soc: synaptics: add SL2610 system controller support
+Date: Sun, 15 Nov 2026 18:23:45 +0800
+Message-ID: <20261115102401.3520-7-jszhang@kernel.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261115102401.3520-1-jszhang@kernel.org>
 References: <20261115102401.3520-1-jszhang@kernel.org>
@@ -74,447 +74,178 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Describe the SoC, MCU, AVIO and CPU system control blocks, including their
-clock inputs, clock and reset providers, and pin configuration subnodes.
-The clock and reset providers share each register block node.
-
-Add the clock and reset identifiers used by consumers of these blocks.
+Create the clock, reset and pin controller platform devices implemented
+by each SL2610 system control block. Select the appropriate MFD cells
+from per-block compatible data while keeping register access available
+through the shared syscon.
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- .../soc/synaptics/syna,sl2610-soc-syscon.yaml | 178 ++++++++++++++++++
- MAINTAINERS                                   |   3 +
- include/dt-bindings/clock/syna,sl2610.h       | 131 +++++++++++++
- include/dt-bindings/reset/syna,sl2610-reset.h |  80 ++++++++
- 4 files changed, 392 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/synaptics/syna,sl2610-soc-syscon.yaml
- create mode 100644 include/dt-bindings/clock/syna,sl2610.h
- create mode 100644 include/dt-bindings/reset/syna,sl2610-reset.h
+ MAINTAINERS                           |  1 +
+ drivers/soc/Kconfig                   |  1 +
+ drivers/soc/Makefile                  |  1 +
+ drivers/soc/synaptics/Kconfig         | 14 +++++
+ drivers/soc/synaptics/Makefile        |  2 +
+ drivers/soc/synaptics/sl2610-syscon.c | 84 +++++++++++++++++++++++++++
+ 6 files changed, 103 insertions(+)
+ create mode 100644 drivers/soc/synaptics/Kconfig
+ create mode 100644 drivers/soc/synaptics/Makefile
+ create mode 100644 drivers/soc/synaptics/sl2610-syscon.c
 
-diff --git a/Documentation/devicetree/bindings/soc/synaptics/syna,sl2610-soc-syscon.yaml b/Documentation/devicetree/bindings/soc/synaptics/syna,sl2610-soc-syscon.yaml
-new file mode 100644
-index 000000000000..cdf947cb3e0f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/synaptics/syna,sl2610-soc-syscon.yaml
-@@ -0,0 +1,178 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/synaptics/syna,sl2610-soc-syscon.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Synaptics SL2610 system control registers
-+
-+maintainers:
-+  - Jisheng Zhang <jszhang@kernel.org>
-+
-+description: |
-+  The SL2610 family has separate SoC, MCU, AVIO, and CPU system control
-+  register blocks. The SoC and MCU blocks provide clocks, resets, and pin
-+  control. The CPU block provides clocks. The AVIO block contains audio PLLs.
-+
-+  Clock and reset specifiers refer directly to the system control node.
-+  Pin group configurations are direct children of the SoC or MCU node.
-+  There are no separate clock, reset, or pin controller child nodes.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - syna,sl2610-soc-syscon
-+          - syna,sl2610-mcu-syscon
-+          - syna,sl2610-avio-syscon
-+          - syna,sl2610-cpu-syscon
-+      - const: syscon
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+    description: External reference clock input.
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  syna,gbl-syscon:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Phandle to the SoC system control registers for CPU PLL bypass.
-+
-+patternProperties:
-+  '-(pmux|pins)$':
-+    type: object
-+    description: Pin group mux and electrical configuration.
-+    allOf:
-+      - $ref: /schemas/pinctrl/pinmux-node.yaml#
-+      - $ref: /schemas/pinctrl/pincfg-node.yaml#
-+    properties:
-+      groups:
-+        $ref: /schemas/types.yaml#/definitions/string-array
-+      function:
-+        $ref: /schemas/types.yaml#/definitions/string
-+      bias-pull-up:
-+        description: |
-+          Enable pull-up bias and select its strength. A value of 0 selects
-+          normal pull-up and 1 selects strong pull-up. The boolean form is
-+          equivalent to 1 and selects strong pull-up. Use bias-disable to
-+          disable pull bias. Values are mode selectors, not resistance in Ohms.
-+        oneOf:
-+          - type: boolean
-+          - $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [0, 1]
-+      bias-pull-down:
-+        description: |
-+          Enable the default pull-down with a boolean or 1, or disable it with 0.
-+          Pull resistance is not selectable.
-+        oneOf:
-+          - type: boolean
-+          - $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [0, 1]
-+    required:
-+      - groups
-+      - function
-+    unevaluatedProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - syna,sl2610-soc-syscon
-+              - syna,sl2610-mcu-syscon
-+    then:
-+      required:
-+        - '#clock-cells'
-+        - '#reset-cells'
-+    else:
-+      properties:
-+        '#reset-cells': false
-+      patternProperties:
-+        '-(pmux|pins)$': false
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: syna,sl2610-cpu-syscon
-+    then:
-+      required:
-+        - '#clock-cells'
-+        - syna,gbl-syscon
-+    else:
-+      properties:
-+        syna,gbl-syscon: false
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: syna,sl2610-avio-syscon
-+    then:
-+      properties:
-+        '#clock-cells': false
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    soc_syscon: syscon@f7e10000 {
-+        compatible = "syna,sl2610-soc-syscon", "syscon";
-+        reg = <0xf7e10000 0x10000>;
-+        clocks = <&osc>;
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+
-+        i2c2-pmux {
-+            groups = "GPIO23", "GPIO24";
-+            function = "tw2";
-+            bias-pull-up = <0>;
-+        };
-+
-+        i2c3-pmux {
-+            groups = "GPIO27", "GPIO28";
-+            function = "tw3";
-+            bias-pull-up;
-+        };
-+    };
-+
-+    syscon@e5025000 {
-+        compatible = "syna,sl2610-mcu-syscon", "syscon";
-+        reg = <0xe5025000 0x1000>;
-+        clocks = <&osc>;
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+
-+        i2c0-pmux {
-+            groups = "SM_GPIO12", "SM_GPIO13";
-+            function = "tw0";
-+        };
-+    };
-+
-+    syscon@f7e30000 {
-+        compatible = "syna,sl2610-cpu-syscon", "syscon";
-+        reg = <0xf7e30000 0x4000>;
-+        clocks = <&osc>;
-+        #clock-cells = <1>;
-+        syna,gbl-syscon = <&soc_syscon>;
-+    };
-+
-+    syscon@f7490000 {
-+        compatible = "syna,sl2610-avio-syscon", "syscon";
-+        reg = <0xf7490000 0x4000>;
-+        clocks = <&osc>;
-+    };
-+...
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 222b7fc2c3aa..e7c061ae5a87 100644
+index e7c061ae5a87..eae1493485ee 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -3808,9 +3808,12 @@ M:	Jisheng Zhang <jszhang@kernel.org>
- M:	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
-+F:	Documentation/devicetree/bindings/soc/synaptics/
+@@ -3812,6 +3812,7 @@ F:	Documentation/devicetree/bindings/soc/synaptics/
  F:	arch/arm/boot/dts/synaptics/
  F:	arch/arm/mach-berlin/
  F:	arch/arm64/boot/dts/synaptics/
-+F:	include/dt-bindings/clock/syna,sl2610.h
-+F:	include/dt-bindings/reset/syna,sl2610-reset.h
++F:	drivers/soc/synaptics/
+ F:	include/dt-bindings/clock/syna,sl2610.h
+ F:	include/dt-bindings/reset/syna,sl2610-reset.h
  
- ARM/TEGRA HDMI CEC SUBSYSTEM SUPPORT
- M:	Hans Verkuil <hverkuil@kernel.org>
-diff --git a/include/dt-bindings/clock/syna,sl2610.h b/include/dt-bindings/clock/syna,sl2610.h
+diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+index 483cbdcae153..5fe7348cddab 100644
+--- a/drivers/soc/Kconfig
++++ b/drivers/soc/Kconfig
+@@ -27,6 +27,7 @@ source "drivers/soc/sophgo/Kconfig"
+ source "drivers/soc/st/Kconfig"
+ source "drivers/soc/starfive/Kconfig"
+ source "drivers/soc/sunxi/Kconfig"
++source "drivers/soc/synaptics/Kconfig"
+ source "drivers/soc/tegra/Kconfig"
+ source "drivers/soc/ti/Kconfig"
+ source "drivers/soc/ux500/Kconfig"
+diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+index 5a3efd68355c..3e51563b914c 100644
+--- a/drivers/soc/Makefile
++++ b/drivers/soc/Makefile
+@@ -33,6 +33,7 @@ obj-y				+= sophgo/
+ obj-y				+= st/
+ obj-y				+= starfive/
+ obj-y				+= sunxi/
++obj-y				+= synaptics/
+ obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
+ obj-y				+= ti/
+ obj-$(CONFIG_ARCH_U8500)	+= ux500/
+diff --git a/drivers/soc/synaptics/Kconfig b/drivers/soc/synaptics/Kconfig
 new file mode 100644
-index 000000000000..c563a2b5ed06
+index 000000000000..9f0324a1a3b7
 --- /dev/null
-+++ b/include/dt-bindings/clock/syna,sl2610.h
-@@ -0,0 +1,131 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-+/*
-+ * Synaptics SL2610 clock tree IDs
-+ *
-+ * Copyright (C) 2025 Synaptics Incorporated
-+ *
-+ * Author: Jisheng Zhang <jszhang@kernel.org>
-+ */
++++ b/drivers/soc/synaptics/Kconfig
+@@ -0,0 +1,14 @@
++# SPDX-License-Identifier: GPL-2.0-only
 +
-+/* SoC domain */
++config SOC_SL2610_SYSCON
++	tristate "Synaptics SL2610 system controller"
++	depends on ARCH_BERLIN || COMPILE_TEST
++	depends on OF && HAS_IOMEM
++	select MFD_CORE
++	select MFD_SYSCON
++	help
++	  Support the global and control register blocks on Synaptics SL2610
++	  SoCs. This creates devices for the clock, reset and pin controllers
++	  provided by each register block.
 +
-+/* GBL common clks */
-+#define CLK_CPUFASTREF		0
-+#define CLK_MEMFASTREF		1
-+#define CLK_CFG			2
-+#define CLK_SYS			3
-+#define CLK_PERIFSYS		4
-+#define CLK_APBCORE		5
-+#define CLK_APBSER		6
-+#define CLK_ATB			7
-+#define CLK_HPC			8
-+#define CLK_EMMC		9
-+#define CLK_SD0			10
-+#define CLK_SD1			11
-+#define CLK_GETHRGMII		12
-+#define CLK_GETHRGMII1		13
-+#define CLK_GE0_PTP_REF		14
-+#define CLK_GE1_PTP_REF		15
-+#define CLK_USB2TEST		16
-+#define CLK_USB2TEST480MG0	17
-+#define CLK_USB2TEST480MG1	18
-+#define CLK_USB2TEST480MG2	19
-+#define CLK_USB2TEST100MG0	20
-+#define CLK_USB2TEST100MG1	21
-+#define CLK_USB2TEST100MG2	22
-+#define CLK_USB2TEST100MG3	23
-+#define CLK_PERIFTEST125MG0	24
-+#define CLK_PERIFTEST200MG0	25
-+#define CLK_PERIFTEST200MG1	26
-+#define CLK_GPU			27
-+#define CLK_NPU			28
-+#define CLK_AVIOSYS		29
-+#define CLK_AIOSYS		30
-+#define CLK_AVIO_LCDC2SCAN	31
-+#define CLK_AVIO_IPI		32
-+#define CLK_AVIO_P		33
-+#define CLK_AVIO_DPHYRXTXESC	34
-+#define CLK_AVIOFPLL		35
-+#define CLK_AVIO_RX_SCANBYTE	36
-+#define CLK_AVIO_RX_SCANTEST	37
-+
-+/* GBL gate clks */
-+#define CLK_USB0CORE		38
-+#define CLK_SDIOSYS		39
-+#define CLK_EMMCSYS		40
-+#define CLK_GPUAXI		41
-+#define CLK_GETHRGMIISYS	42
-+#define CLK_SDIO1SYS		43
-+#define CLK_USB1CORE		44
-+#define CLK_GETHRGMII1SYS	45
-+#define CLK_USB0PHYREF		46
-+#define CLK_USB1PHYREF		47
-+#define CLK_APBUART0		48
-+#define CLK_APBUART1		49
-+#define CLK_APBUART2		50
-+#define CLK_APBUART3		51
-+#define CLK_APBI2C0		52
-+#define CLK_APBI2C1		53
-+#define CLK_APBSPI0		54
-+#define CLK_APBSPI1		55
-+#define CLK_APBSPI2		56
-+#define CLK_APBSPI3		57
-+#define CLK_APBGPIO		58
-+#define CLK_APBTIMERS		59
-+#define CLK_APBSYSCNT		60
-+#define CLK_APBWDT		61
-+#define CLK_APBDMA		62
-+#define SL2610_CLK_MAX		63
-+
-+/* cpuss */
-+#define CLK_CPU0		0
-+#define CLK_CPU1		1
-+#define CLK_DSU			2
-+#define SL2610_CPU_CLK_MAX	3
-+
-+
-+/* sysmgr domain */
-+
-+#define CLK_CFG_UART0		0
-+#define CLK_SER_UART0		1
-+#define CLK_CFG_UART1		2
-+#define CLK_CFG_UART2		3
-+#define CLK_CFG_UART3		4
-+#define CLK_CFG_GPIO		5
-+#define CLK_CFG_I2CM0		6
-+#define CLK_CFG_I2CM1		7
-+#define CLK_CFG_SPIM		8
-+#define CLK_CFG_SPIS		9
-+#define CLK_CFG_I3C		10
-+#define CLK_CFG_XSPI		11
-+#define CLK_AXI_XSPI		12
-+#define CLK_CFG_PVT		13
-+#define CLK_CFG_ADC		14
-+#define CLK_CFG_PWM		15
-+#define CLK_BUS_CAN0		16
-+#define CLK_BUS_CAN1		17
-+#define CLK_CFG_PDM		18
-+
-+#define CLK_SER_UART1		19
-+#define CLK_SER_UART2		20
-+#define CLK_SER_UART3		21
-+#define CLK_DEB_GPIO		22
-+#define CLK_SER_I2CM0		23
-+#define CLK_SER_I2CM1		24
-+#define CLK_SER_SPIM		25
-+#define CLK_SER_SPIS		26
-+#define CLK_SER_I3C		27
-+#define CLK_SER_XSPI		28
-+#define CLK_HS_PVT		29
-+#define CLK_CORE_ADC		30
-+#define CLK_SER_PWM		31
-+#define CLK_SER_CAN0		32
-+#define CLK_SER_CAN1		33
-+#define CLK_SER_PDM		34
-+#define CLK_REF_CALIB		35
-+
-+#define CLK_MCU_REF		36
-+#define CLK_MCU_PLL		37
-+#define CLK_MCU_IO_PLL		38
-+#define CLK_MCU_APB		39
-+#define CLK_MCU_AXI		40
-diff --git a/include/dt-bindings/reset/syna,sl2610-reset.h b/include/dt-bindings/reset/syna,sl2610-reset.h
++	  Say Y here to enable access to these functions on SL2610 systems.
+diff --git a/drivers/soc/synaptics/Makefile b/drivers/soc/synaptics/Makefile
 new file mode 100644
-index 000000000000..909d63147692
+index 000000000000..13710fc58903
 --- /dev/null
-+++ b/include/dt-bindings/reset/syna,sl2610-reset.h
-@@ -0,0 +1,80 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
++++ b/drivers/soc/synaptics/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_SOC_SL2610_SYSCON) += sl2610-syscon.o
+diff --git a/drivers/soc/synaptics/sl2610-syscon.c b/drivers/soc/synaptics/sl2610-syscon.c
+new file mode 100644
+index 000000000000..c6fc2955ac0d
+--- /dev/null
++++ b/drivers/soc/synaptics/sl2610-syscon.c
+@@ -0,0 +1,84 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
 + * Copyright (C) 2026 Synaptics Incorporated
-+ *
-+ * Author: Jisheng Zhang <jszhang@kernel.org>
 + */
 +
-+#ifndef _DT_BINDINGS_SL2610_RESET_H
-+#define _DT_BINDINGS_SL2610_RESET_H
++#include <linux/mfd/core.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
 +
-+/* ACPU subsystem */
-+#define RST_SOC_SDIO0		0
-+#define RST_SOC_USB0		1
-+#define RST_SOC_EMMC		2
-+#define RST_SOC_GETH0		3
-+#define RST_SOC_SDIO1		4
-+#define RST_SOC_USB1		5
-+#define RST_SOC_GETH1		6
-+#define RST_SOC_USB0PHY		7
-+#define RST_SOC_USB0CORE	8
-+#define RST_SOC_USB0MAHB	9
-+#define RST_SOC_USB1PHY		10
-+#define RST_SOC_USB1CORE	11
-+#define RST_SOC_USB1MAHB	12
-+#define RST_SOC_UART0		13
-+#define RST_SOC_UART1		14
-+#define RST_SOC_UART2		15
-+#define RST_SOC_UART3		16
-+#define RST_SOC_I2C0		17
-+#define RST_SOC_I2C1		18
-+#define RST_SOC_SPI0		19
-+#define RST_SOC_SPI1		20
-+#define RST_SOC_SPI2		21
-+#define RST_SOC_SPI3		22
-+#define RST_SOC_APBTIMERS	23
-+#define RST_SOC_APBSYSCNT	24
-+#define RST_SOC_APBWDT		25
-+#define RST_SOC_APBGPIO		26
-+#define RST_SOC_APBDMA		27
-+#define RST_SOC_GPUCORE		28
-+#define RST_SOC_NPUCORE		29
-+#define RST_SOC_AVIOAIOG	30
-+#define RST_SOC_AVIOVPPG	31
-+#define RST_SOC_AVIOVIPG	32
++struct sl2610_syscon_data {
++	const struct mfd_cell *cells;
++	unsigned int num_cells;
++};
 +
-+/* system subsystem */
-+#define RST_SM_ADCCORE		0
-+#define RST_SM_ADCPRST		1
-+#define RST_SM_CAN0PRST		2
-+#define RST_SM_CAN0SRST		3
-+#define RST_SM_CAN1PRST		4
-+#define RST_SM_CAN1SRST		5
-+#define RST_SM_GPIOPRST		6
-+#define RST_SM_GPIOSRST		7
-+#define RST_SM_I2CM0PRST	8
-+#define RST_SM_I2CM0SRST	9
-+#define RST_SM_I2CM1PRST	10
-+#define RST_SM_I2CM1SRST	11
-+#define RST_SM_I3CPRST		12
-+#define RST_SM_I3CSRST		13
-+#define RST_SM_PDMPRST		14
-+#define RST_SM_PDMSRST		15
-+#define RST_SM_PVTHSRST		16
-+#define RST_SM_PVTPRST		17
-+#define RST_SM_PWMPERIRST	18
-+#define RST_SM_PWMPRST		19
-+#define RST_SM_SPIMPRST		20
-+#define RST_SM_SPIMSRST		21
-+#define RST_SM_SPISPRST		22
-+#define RST_SM_SPISSRST		23
-+#define RST_SM_UART0PRST	24
-+#define RST_SM_UART0SRST	25
-+#define RST_SM_UART1PRST	26
-+#define RST_SM_UART1SRST	27
-+#define RST_SM_UART2PRST	28
-+#define RST_SM_UART2SRST	29
-+#define RST_SM_UART3PRST	30
-+#define RST_SM_UART3SRST	31
++static const struct mfd_cell sl2610_soc_cells[] = {
++	MFD_CELL_NAME("sl2610-soc-clk"),
++	MFD_CELL_NAME("sl2610-soc-reset"),
++	MFD_CELL_NAME("sl2610-soc-pinctrl"),
++};
 +
-+#endif /* _DT_BINDINGS_SL2610_RESET_H */
++static const struct mfd_cell sl2610_mcu_cells[] = {
++	MFD_CELL_NAME("sl2610-mcu-clk"),
++	MFD_CELL_NAME("sl2610-mcu-reset"),
++	MFD_CELL_NAME("sl2610-mcu-pinctrl"),
++};
++
++static const struct mfd_cell sl2610_avio_cells[] = {
++	MFD_CELL_NAME("sl2610-avio-clk"),
++};
++
++static const struct mfd_cell sl2610_cpu_cells[] = {
++	MFD_CELL_NAME("sl2610-cpu-clk"),
++};
++
++static const struct sl2610_syscon_data sl2610_soc_data = {
++	.cells = sl2610_soc_cells,
++	.num_cells = ARRAY_SIZE(sl2610_soc_cells),
++};
++
++static const struct sl2610_syscon_data sl2610_mcu_data = {
++	.cells = sl2610_mcu_cells,
++	.num_cells = ARRAY_SIZE(sl2610_mcu_cells),
++};
++
++static const struct sl2610_syscon_data sl2610_avio_data = {
++	.cells = sl2610_avio_cells,
++	.num_cells = ARRAY_SIZE(sl2610_avio_cells),
++};
++
++static const struct sl2610_syscon_data sl2610_cpu_data = {
++	.cells = sl2610_cpu_cells,
++	.num_cells = ARRAY_SIZE(sl2610_cpu_cells),
++};
++
++static int sl2610_syscon_probe(struct platform_device *pdev)
++{
++	const struct sl2610_syscon_data *data = device_get_match_data(&pdev->dev);
++
++	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
++				    data->cells, data->num_cells, NULL, 0, NULL);
++}
++
++static const struct of_device_id sl2610_syscon_of_match[] = {
++	{ .compatible = "syna,sl2610-soc-syscon", .data = &sl2610_soc_data },
++	{ .compatible = "syna,sl2610-mcu-syscon", .data = &sl2610_mcu_data },
++	{ .compatible = "syna,sl2610-avio-syscon", .data = &sl2610_avio_data },
++	{ .compatible = "syna,sl2610-cpu-syscon", .data = &sl2610_cpu_data },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, sl2610_syscon_of_match);
++
++static struct platform_driver sl2610_syscon_driver = {
++	.probe = sl2610_syscon_probe,
++	.driver = {
++		.name = "sl2610-syscon",
++		.of_match_table = sl2610_syscon_of_match,
++	},
++};
++module_platform_driver(sl2610_syscon_driver);
++
++MODULE_AUTHOR("Jisheng Zhang <jszhang@kernel.org>");
++MODULE_DESCRIPTION("Synaptics SL2610 system controller");
++MODULE_LICENSE("GPL");
 -- 
 2.55.0
 
