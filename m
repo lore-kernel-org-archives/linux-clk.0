@@ -1,54 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794743746;
-	b=LmNmHHV013W8mN/SMkDmyd/u2xzUnACpro0JoarYjQcqm5XGZT803iLKrWQhS8cFhMjv
-	 GcZJTuUjk1Uc3xe3WMWqZC1wEyZcKALQPAzARGa0FfcEA6qKQm3B4xBond6U/2h+FCkat
-	 2pAGp1gEjcXsEVKhN5e4bH3RghGm9t6gwL4qTie1vyIDQY9px8A3nivhE7dE8HmhVXTg0
-	 hgBwCDUa5ZLUbpg/RCY3/2o3GajQn2YUJOPRLLPI1Fg9/qyoRGBfpB/7NLdtUuc4uOXmX
-	 0RSB5a7JdLDPWS+lOZhbml+997n1y20Nll8akBBa95mp8oUAT7aTrwIZtRUUv4azQEg==
+	t=1794744454;
+	b=42mdMPeIYhwAPUw7mzawLzU6ZIa85oap5oYt0bGiFIHTNyBimK61rkpiKor8eKIZtj8A
+	 42S01/BrrllLGZFvOLrkMAqc+nFk5q/icV1APK+06a84tv5Eam2ANsNGkFZ/S7Ddxo6gk
+	 U+lFgQivv4npSUxnJ6Ujy5+zPjEaUJSkRobBdozoWxBizXrb9z4H1tZe4tAQlIIiTuXoq
+	 i5W1B4un0s+gi09NcYOKTvTmKswK1b9SjYJN01VG5SFVKFnfzqAIY9dUBfqtfSsbypZrI
+	 j1874amDML4d8b8C9hsaiZQhxWddfoksyy6tXXSXVlkV8adGb/E1IsOo/3fhL0qLXzA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794743746;
-	h=Received:DKIM-Signature:Received:X-Gm-Message-State:X-Received:
-	 MIME-Version:References:In-Reply-To:Reply-To:From:Date:
-	 X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:Subject:To:Cc:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=si1tSdkMmrU6Pinznwemqt1kiFpuGNbFlT8OV4JIa60=;
-	b=wJat20aUmDXB1mw7ZzEh/y41ONcGzznncI8z7FY1I36L2JZmLdcHaaln+8obRhvcW8TC
-	 mBHCfuj3XiXEVwloNcyu2Wknvw4SJ45EaAfn+ORSI4i+It0E4Jvt56lSgS2zohJbcO6u/
-	 nODocH8RQgvUhYo0g1fRegnkHEF9xxbKOFXNnhK8cJgsQL9fAl/SPQNKq6xE+uG881kiy
-	 1Tg7+eP6ANGeiR2XyL3wyO2JlD7I4ybbwSAcMhjJ+PdxBm2f8fITjR1dRCV6VnBcdO/gm
-	 Ydcgy8yNw19G/KAXyLmvW3+n/rl39Qz7CHf26rIUXGWzmxWLmhwxhWLC5u5LgRQcUgg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794744454;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=pAyFOMytrC+WHeplIQk/P9QT+U18pl2Kv43Ux7MJxzk=;
+	b=WbpDp8/JpKMs0jvacncEG4H2kDE0zspX9Rr10KhXJM1mUL7nGtZ2db2LviYfYkIsAM6i
+	 fl9yKoqmPcOjBQUr1QHzpiEgNVcL3hDZO2kqSW38TkZo5/zrjAtc+7gVqyWEHE0wcIDd4
+	 yK96AWpIkldph8xdyZFNYz4tyv3YJQegNjFS7peSomdaWDFBKA5WvTLsS4+iUYDyHa+dP
+	 T2zEPjOu6n7Keo//3sjzKVV0DTmOrjr6CsOJlCvUIPueoL3I0I0aXCjkmpg1aGiEd3HE/
+	 dwMNdzvGuBS1LaPHH3KZc+Nj/RdXiXm38vYRHnNZCNj2bsbI24OY13UaQ6ABlC7PsIQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jk3LtHSK;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4326F606A323
-	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 11:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jk3LtHSK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4F741F000CA
-	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 11:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16258606A323
+	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 12:07:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E1421F000C4
+	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 12:07:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794743745;
-	bh=si1tSdkMmrU6Pinznwemqt1kiFpuGNbFlT8OV4JIa60=;
+	s=k20260515; t=1794744451;
+	bh=pAyFOMytrC+WHeplIQk/P9QT+U18pl2Kv43Ux7MJxzk=;
 	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=jk3LtHSKi3Mkp6oMCVw35WfpC5ZEaiFTAVoH781KG0YGTYFGCrAjxI93EMvCKKz4A
-	 1MqFwsGjYsaKlp+ANtMH8LS1tcZ/wj+MoRC1oWWBx86rlQVIqMS9Z5256LOW8U6I4w
-	 6Ilw/ju9rU+BbgG+13tWbl64hBO2FGClyCNqd80kOI8pN35zLG7Gtvvix4HgTcZwwx
-	 VAHlZgMoA2C9p5TuuWzAkQg4MFqRm3TG547No2QaNHXRRRGToW8sRbYUxL2eWsiaA0
-	 j748WrDPEjPZfeCEVKqun8xU2oXra0MgeIfEyEo9Y1/lKLabTSYyjkiHyMqHB5npAt
-	 G/7WxtO6r+d1w==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3ae417eb235so5377961fa.3
-        for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 03:55:45 -0800 (PST)
-X-Gm-Message-State: APuU4Z+B0o358paFgp9uheMVyZ84NXUB1V7ccxiBgwlGi8xWjOwaHvb+
-	NjdoVu0H6iiD19jGi1dhIYj5VhTPg6VNES2Dtn0ZJVLCaOwZDh5urJ/Q0Ro6ALbzsNqAQ1hIO79
-	Hx0B8/Hhs6xEzIYMYdprHwD1ChUsEfpo=
-X-Received: by 2002:a05:651c:421b:b0:3ab:751:6ba8 with SMTP id
- 38308e7fff4ca-3ae2b5564f5mr20174841fa.28.1794743744142; Sun, 15 Nov 2026
- 03:55:44 -0800 (PST)
+	b=QmryQVy3E4N4wEuCGP5CyTEkNTyKEYCUZRKbip0gcAAbNA8XjVCONvX1P27ojkmK2
+	 7wlRSq6lkiWMj3EkWkwQgJdwRLGN7RGgtGvjP8nhcKGYuwoA7jYvt25xAHHvQj7G0+
+	 zhaffkcEJHF9LY/5rfg8kj/dyKMuUp1emC6EF0WDhzRWkh8e8ehO6K2cwPgIPToN2w
+	 y1nhTkR+Z2VIr1K7WGDrFwhGbNfmFstNZRPdMB3BL8jzHwGas9wcBEF0bxFKT6y3uc
+	 /A3bifvu+XZpGDBD9fN14pMIu81f8POg8z4RcF0j/qFeYnsE3dJmsJc176FcysyTvV
+	 rPFzIWhB+6NuQ==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3ae3a5d440aso10633581fa.2
+        for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 04:07:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErEbN207Ardbz3WO19dK0IjbEeJNPHJfF/IA7OKv2cMI/eVtyNw+mkZgmjUyBIFcqMvf8g1Fx8OVxAQ=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+nwWZoguu00SkrFfikhWDBpJjr9aFj+3RbEns+TrrpxX66iAts
+	HmLu4B7vq71MKk4bYheXxzbYi0rHyl9KEV+/QC/3psBndcH0zTrIa6/2rgWQdgHKKw98YzHliM3
+	4E1WxmdlW4SiIhlzi3JpzIRAUHFTOCWg=
+X-Received: by 2002:a05:651c:b26:b0:3ab:3bf3:1606 with SMTP id
+ 38308e7fff4ca-3ae2b52ecbemr25194061fa.24.1794744450062; Sun, 15 Nov 2026
+ 04:07:30 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -58,187 +56,86 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261112-a733-clk-v7-0-db7c5451ffa2@pigmoral.tech>
- <20261112-a733-clk-v7-6-db7c5451ffa2@pigmoral.tech> <sashiko-outbox-212336@kernel.org>
-In-Reply-To: <sashiko-outbox-212336@kernel.org>
+References: <20261115061102.229680-1-jernej.skrabec@gmail.com>
+ <20261115061102.229680-3-jernej.skrabec@gmail.com> <sashiko-outbox-215249@kernel.org>
+In-Reply-To: <sashiko-outbox-215249@kernel.org>
 Reply-To: wens@kernel.org
 From: Chen-Yu Tsai <wens@kernel.org>
-Date: Sun, 15 Nov 2026 19:55:30 +0800
-X-Gmail-Original-Message-ID: <CAGb2v658ba1c441OM88wLA5fP_89HX3=Q4dPhq0pmY9y=Whx2A@mail.gmail.com>
-X-Gm-Features: AclHuK_d3htjuLr3x8BIcggSBQikkOMEOBotOaL5HIOpBAn8HEtebLRwKXpMKpI
-Message-ID: <CAGb2v658ba1c441OM88wLA5fP_89HX3=Q4dPhq0pmY9y=Whx2A@mail.gmail.com>
-Subject: Re: [PATCH v7 6/8] clk: sunxi-ng: a733: Add mod clocks support
-To: sashiko-reviews@lists.linux.dev, Junhui Liu <junhui.liu@pigmoral.tech>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, robh@kernel.org, conor+dt@kernel.org, 
-	Jernej Skrabec <jernej@kernel.org>
+Date: Sun, 15 Nov 2026 20:07:17 +0800
+X-Gmail-Original-Message-ID: <CAGb2v6544+a2Cv65u8ZCsJmP4d6DD8W2Kb3WOtvo8=Q2+snt2w@mail.gmail.com>
+X-Gm-Features: AclHuK_eMLnNxsMBol5YFdkTkMTb1ru6MI-INl_vc-Xaa50KKeV9dybfAnsle1E
+Message-ID: <CAGb2v6544+a2Cv65u8ZCsJmP4d6DD8W2Kb3WOtvo8=Q2+snt2w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/8] clk: sunxi-ng: de2: Export register regmap for DE33
+To: sashiko-reviews@lists.linux.dev, Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org, robh@kernel.org, 
+	conor+dt@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 13, 2026 at 3:18=E2=80=AFPM <sashiko-bot@kernel.org> wrote:
+On Sun, Nov 15, 2026 at 2:27=E2=80=AFPM <sashiko-bot@kernel.org> wrote:
 >
-> Thank you for your contribution! Sashiko AI review found 2 potential
-> issues to consider:
-> - [Medium] clk: sunxi-ng: a733: unintended CLK_SET_RATE_PARENT on
->   eink_clk
-> - [Medium] clk: sunxi-ng: a733: missing CLK_SET_RATE_PARENT on media mod
->   clocks
+> Thank you for your contribution! Sashiko AI review found 1 potential
+> issue to consider:
+> - [Medium] clk: sunxi-ng: de2: missing select REGMAP_MMIO for
+>   SUN8I_DE2_CCU
+
+Added while applying.
+
 > --
 >
-> commit 6e107a79cabf47c1760cd7e323625401bc6ffc47
-> Author: Junhui Liu <junhui.liu@pigmoral.tech>
+> commit d1c006fcc75e6e1facbfb7f265581bef0d4d672a
+> Author: Jernej Skrabec <jernej.skrabec@gmail.com>
 >
-> clk: sunxi-ng: a733: Add mod clocks support
+> clk: sunxi-ng: de2: Export register regmap for DE33
 >
-> This commit adds module clock definitions for the Allwinner A733 SoC to t=
-he
-> sun60i-a733 CCU driver.
+> This commit removes the hardcoded DE33 plane mapping writes from the cloc=
+k
+> driver and exports those registers via an MMIO regmap instead.
 >
-> > diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi=
--ng/ccu-sun60i-a733.c
-> > index 8bc603393f5a5..5ea65bf5b5e05 100644
-> > --- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-> > +++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
->
-> [ ... ]
->
-> > @@ -511,6 +521,893 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE_FEAT(mbus_c=
-lk, "mbus", mbus_parents, 0x588
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-n=
+g/ccu-sun8i-de2.c
+> > index 6ec6c0dc4c261..f17570efafaae 100644
+> > --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
 >
 > [ ... ]
 >
-> > +static const struct clk_hw *eink_parents[] =3D {
-> > +     &pll_periph0_480M_clk.common.hw,
-> > +     &pll_periph0_400M_clk.hw,
-> > +};
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(eink_clk, "eink", eink_parents, 0x=
-a60,
-> > +                                 0, 5,       /* M */
-> > +                                 24, 3,      /* mux */
-> > +                                 BIT(31),    /* gate */
-> > +                                 CLK_SET_RATE_PARENT);
->
-> [Severity: Medium]
-> Should eink_clk omit CLK_SET_RATE_PARENT?  Unlike eink_panel_clk, eink_pa=
-rents
-> only contains pll_periph0_480M_clk and pll_periph0_400M_clk.  Because
-> pll_periph0_480M_clk uses writable ccu_div_ops without read-only or gate
-> protection, calling clk_set_rate() on eink_clk can reprogram the shared
-> 480 MHz peripheral PLL divider used by UART, GIC, MBUS, SPI, UFS, and USB
-> clocks.
-
-I dropped this flag when applying.
-
-> [ ... ]
->
-> > +static const struct clk_hw *npu_parents[] =3D {
-> > +     &pll_npu_clk.common.hw,
-> > +     &pll_periph0_800M_clk.common.hw,
-> > +     &pll_periph0_600M_clk.hw,
-> > +     &pll_periph0_480M_clk.common.hw,
-> > +     &pll_ve0_clk.common.hw,
-> > +     &pll_ve1_clk.common.hw,
-> > +     &pll_de_3x_clk.common.hw,
-> > +};
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(npu_clk, "npu", npu_parents, 0xb00=
-,
-> > +                                 0, 5,       /* M */
-> > +                                 24, 3,      /* mux */
-> > +                                 BIT(31),    /* gate */
-> > +                                 0);
+> > @@ -336,13 +367,19 @@ static int sunxi_de2_clk_probe(struct platform_de=
+vice *pdev)
+> >       }
+> >
+> >       /*
+> > -      * The DE33 requires these additional (unknown) registers set
+> > +      * The DE33 requires these additional plane mapping registers set
+> >        * during initialisation.
+> >        */
+> >       if (of_device_is_compatible(pdev->dev.of_node,
+> >                                   "allwinner,sun50i-h616-de33-clk")) {
+> > -             writel(0, reg + 0x24);
+> > -             writel(0x0000a980, reg + 0x28);
+> > +             struct regmap *regmap;
 > > +
-> > +/*
-> > + * GPU_CLK =3D ClockSource * ((16 - M) / 16)
-> > + * Here we use a div_table to select M values that result in integer d=
-ivisors.
-> > + */
-> > +static struct clk_div_table gpu_div_table[] =3D {
-> > +     { .val =3D 0, .div =3D 1 },
-> > +     { .val =3D 8, .div =3D 2 },
-> > +     { .val =3D 12, .div =3D 4 },
-> > +     { .val =3D 14, .div =3D 8 },
-> > +     { .val =3D 15, .div =3D 16 },
-> > +     { /* sentinel */ },
-> > +};
-> > +static const struct clk_parent_data gpu_parents[] =3D {
-> > +     { .hw =3D &pll_gpu0_clk.common.hw, },
-> > +     { .hw =3D &pll_periph0_800M_clk.common.hw, },
-> > +     { .hw =3D &pll_periph0_600M_clk.hw, },
-> > +     { .hw =3D &pll_periph0_400M_clk.hw, },
-> > +     { .hw =3D &pll_periph0_300M_clk.hw, },
-> > +     { .hw =3D &pll_periph0_200M_clk.hw, },
-> > +};
-> > +static struct ccu_div gpu0_clk =3D {
-> > +     .enable         =3D BIT(31),
-> > +     .div            =3D _SUNXI_CCU_DIV_TABLE(0, 4, gpu_div_table),
-> > +     .mux            =3D _SUNXI_CCU_MUX(24, 3),
-> > +     .common         =3D {
-> > +             .reg            =3D 0xb20,
-> > +             .features       =3D CCU_FEATURE_UPDATE_BIT,
-> > +             .hw.init        =3D CLK_HW_INIT_PARENTS_DATA("gpu0", gpu_=
-parents,
-> > +                                                        &ccu_div_ops, =
-0),
-> > +     }
-> > +};
->
-> [ ... ]
->
-> > +static const struct clk_hw *i2spcm_parents[] =3D {
-> > +     &pll_audio0_4x_clk.common.hw,
-> > +     &pll_audio1_div2_clk.hw,
-> > +     &pll_audio1_div5_clk.hw,
-> > +     &pll_periph0_200M_clk.hw,
-> > +};
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(i2spcm0_clk, "i2spcm0", i2spcm_par=
-ents, 0x1200,
-> > +                                 0, 5,       /* M */
-> > +                                 24, 3,      /* mux */
-> > +                                 BIT(31),    /* gate */
-> > +                                 0);
->
-> [ ... ]
->
-> > +static const struct clk_parent_data display_parents[] =3D {
-> > +     { .hw =3D &pll_video0_4x_clk.common.hw },
-> > +     { .hw =3D &pll_video1_4x_clk.common.hw },
-> > +     { .hw =3D &pll_video2_4x_clk.common.hw },
-> > +     { .hw =3D &pll_periph0_2x_clk.common.hw },
-> > +};
-> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(tcon_lcd0_clk, "tcon-lcd0", disp=
-lay_parents, 0x1500,
-> > +                                   0, 5,     /* M */
-> > +                                   24, 3,    /* mux */
-> > +                                   BIT(31),  /* gate */
-> > +                                   0);
+> > +             regmap =3D devm_regmap_init_mmio(&pdev->dev, reg,
+> > +                                            &sun8i_de2_ccu_regmap_conf=
+ig);
+> > +             if (IS_ERR(regmap)) {
+> > +                     ret =3D PTR_ERR(regmap);
+> > +                     goto err_assert_reset;
+> > +             }
+> >       }
 >
 > [Severity: Medium]
-> Are the display (tcon_lcd0..2_clk, combphy0..1_clk, edp_tv_clk, hdmi_tv_c=
-lk),
-> audio (i2spcm0..4_clk, i2spcm2_asrc_clk, spdif_tx_clk, dmic_clk), GPU
-> (gpu0_clk), and NPU (npu_clk) module clocks missing CLK_SET_RATE_PARENT?
+> Should SUN8I_DE2_CCU select REGMAP_MMIO in drivers/clk/sunxi-ng/Kconfig?
 >
-> The parent video and audio PLL post-dividers (pll_video0..2_4x/3x_clk and
-> pll_audio1_div2/div5_clk) set CLK_SET_RATE_PARENT specifically so downstr=
-eam
-> module clocks can adjust the dedicated video and audio PLLs, and pll_audi=
-o0,
-> pll_gpu0, and pll_npu are likewise dedicated to those blocks.  Without
-> CLK_SET_RATE_PARENT on these module clocks, clk_set_rate() is limited to
-> dividing the boot-time PLL rate and cannot configure exact pixel clocks, =
-audio
-> sample rates, or GPU/NPU frequencies.
-
-I added CLK_SET_RATE_PARENT to all the audio clocks and CSI master clocks.
-
-We need to revisit the other ones later. They have at least one of the
-configurable dividers from the periph PLLs, so if we set CLK_SET_RATE_PAREN=
-T
-here it's possible that the common PLL rate would get changed (like what
-Sashiko mentioned above?!).
-
-I would prefer that the PLL outputs that have rates mentioned be changed
-into fixed factor or read-only dividers (now that we do support this type).
-
-
-ChenYu
+> Without it, enabling SUN8I_DE2_CCU when REGMAP_MMIO is disabled (for
+> example under COMPILE_TEST=3Dy with ARCH_SUNXI=3Dn) or built as a module =
+with
+> SUN8I_DE2_CCU=3Dy breaks compilation on sun8i_de2_ccu_regmap_config or fa=
+ils
+> to link __devm_regmap_init_mmio_clk().
+>
+> --
+> Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261115061102.22=
+9680-1-jernej.skrabec@gmail.com?part=3D2
+>
