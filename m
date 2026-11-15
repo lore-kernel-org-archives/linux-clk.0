@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794752933;
-	b=ZtQf2WH2FUrhBLRdPDKgDJCsSNmxdALHnUV8tEVWTtj1s9Qr3Zik+A6VDg3kH+DEqosd
-	 DtZHmGElsFjObybnsoAK5tj8nqy71APcrmQcpBxR4uaGHB7+Afm91kXE2dfaiRAjrlD7e
-	 uDucoTG+zgbcidzsHjBpXXHBWTmS3QV0xXGgOwyLQjCv2IXqLw2RIPdLwxrDdsevt7p4X
-	 x703J7H5JHWgBDCI/5Gei5/UPzu6Ve2R/Ig7jNYsuaohNJuahZIJV5+AuGpPuNlNwVdU6
-	 xsE+EDAPxWSYDGwfw4cR3MOaqzZlC9gLakrgVZK7jq6+78x+ac27K9f893WvyLPlo1A==
+	t=1794752948;
+	b=1JNh5UGSa1nUSrmLRtly4QWBs2Ytr1tN4Srvzpaw/1o0s4c0EwIxAXPekjWivdu0hJBh
+	 sjUND46bhTe8oybHUwNyEZsptoeDLhF1rcgneKyF1xb3PA5Oirj2Res8p85O5aYh9Zsrd
+	 ohS4KVlzOoMc1GM7uuJZUrxvsgbWw8fpeHpP6E0m/JLDgi4SwVXHOoJm7nTLhijlJgMGb
+	 tCWploLiW1WVBIwEnwgs+Alv9Lc+eZrHcwTD2LMPlHj/0+CHrDSMAFkPL1krJ4i82jfIJ
+	 i50oWqNLM+IFsA6i4ZMCcYb8L5ozMbRTETa7ME1HYOhIFVSm/Wuw+/ScwD8tJTfOmWA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794752933;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794752948;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=qd7T0XQeMuB4TEUS/4gTtVnEGv53KlVhW/3K24NUHPs=;
-	b=VJ+2046cYLiADOVt2gZz2HXrE0l7ClO2JbLFQtGMkSYtQWv0nk2Nb3uJGuzWbn+4Ah/n
-	 wPalSCAAlnCsn5TxZs1FTYZ4z13LsFgBwa5k5ok4xQ0b9vfl3yFPnIFjbDcZj45fPN8aL
-	 5YslfYBAUeyb3ON0Q5uFe86IOH6U+btXit9LSPSNcUN12HiIUoh1lHgwYSCXQi4qjrAwG
-	 53WQ6Jlg2SreKR6Yozx6Oj6XfwfBrlXHK8P5GKrRSpcl2aocnS719vMl5cKvzzHTfPUEF
-	 u28R0Hn/arbrwfdoh0gDeSagQXzhjAYK5M0yUcbw+yMRILUSOJ//uJaDfQyHyD9eP5g==
+	bh=bgmHtN/2PdMynT9bP6VE3sLHcXorlitWbwyp8VUnuZ8=;
+	b=zu0ZTugb3XboMQCpB+O3k2tBfuZjrNu/df6RMaSq2iffcft0ryHczdywSHmyqs6YDds/
+	 RLiuWiXWCOl8orUKcGx7o9J4IinDUQoUtoTFlPpS8mqPsIHB2nYQGSoioT3DPdF6ngjg2
+	 BrbHIDNofIc9hEODr1E64cMsYwplcp+bFNIAdJmeAk3zGSrJMZUQG+EMvL+tWgWlDxu3B
+	 R7A9gnkUq6INWbBScgmo4woCZrESjBSK/2sA4curaj3Hzp83eoHYT0EYv33Yj1WXtvXuK
+	 Fx6nCbEwrQij7/DZ3MDSAn7OTgmsadojHZ5nQnqpw5xmI0TLKeWhQOLBrfAandFizlA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SA9ROFUh;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Vqpq04bn;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83628606A31D;
-	Sun, 15 Nov 2026 14:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472F1606A31D;
+	Sun, 15 Nov 2026 14:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SA9ROFUh
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C3681F000C4;
-	Sun, 15 Nov 2026 14:28:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Vqpq04bn
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E70A1F000C5;
+	Sun, 15 Nov 2026 14:29:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794752933;
-	bh=qd7T0XQeMuB4TEUS/4gTtVnEGv53KlVhW/3K24NUHPs=;
+	s=k20260515; t=1794752947;
+	bh=bgmHtN/2PdMynT9bP6VE3sLHcXorlitWbwyp8VUnuZ8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=SA9ROFUhfxPEAFREHKzDoyWDaBYsQ4kUcYlJx2NGd/sMgXCMtfpojGTHsNC4i999z
-	 d4I3L4lryfiZXUzgec6OxBQRTBrBlHbt93uC6i1TCNWKE1SMUMP3Fwg41U+pOp5F3k
-	 a32CduoNmbTSFmOj/4j7NJwLGemJHpQ6YtXDz2z6ACh3qMuMFVKpj2Ex9IHRZNxzMO
-	 Er3r7f0kqD96nXQHn5jTUBCLbsoaLNl5quiB4uRtMMsTEvqMRziX4fpc5hcOxlInj1
-	 vM6zAPWz5G36jNtUz9TS6pvggryMDlpwy9XQndt7Hm/U2BB2xsUQu0Mq/fYzTkemhJ
-	 hz4jb7Z2cVbUQ==
-Message-ID: <b485a0cc-91ed-44bc-80bb-fb61d10feccb@kernel.org>
-Date: Sun, 15 Nov 2026 16:28:48 +0200
+	b=Vqpq04bnF9Yte5CZmjLtY8Ag47WsXok909DICTc3Q+9ZEaWfe/milJi/fsBg1MjbX
+	 l4o8ENyNkRxMorAinGma/UWFwtk0Hl/PfRJ8H9PfJwWjJ3dNUJ+X4tOxmLqg6MzHe0
+	 9mm++t1sGQYzkxwvlEAEB/ueWNAHLWPzoBt8et+xBeXgWY46iwEU77bXmB6nPjqaLR
+	 Z1ROVHkkK4fJ4yUsilAYlLZRvYeRBs0SDGTjkvzL6BUitqBR+s/UPgk6bTFArUFSLi
+	 sf/Opau+cPE16xoqXSQ5tHiuyqdWnx6PCK01Ra63KdjdKOcGCBmFmYLW861Yy9hcWx
+	 zGDuc8yGq0gUw==
+Message-ID: <c05aefdc-7b60-472b-ae08-2c3af3cd533f@kernel.org>
+Date: Sun, 15 Nov 2026 16:29:03 +0200
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -52,7 +52,8 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/16] clk: at91: Add peripheral clock id for OTPC
+Subject: Re: [PATCH v4 04/16] clk: at91: Use new per SoC PMC clock index
+ definitions
 To: Alexander Dahl <ada@thorsis.com>
 Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
  Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -62,27 +63,28 @@ Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
  Jerome Brunet <jbrunet+clk@baylibre.com>,
  Mihai Sain <mihai.sain@microchip.com>,
- Durai Manickam KR <durai.manickamkr@microchip.com>,
- Manikandan Muralidharan <manikandan.m@microchip.com>
+ Manikandan Muralidharan <manikandan.m@microchip.com>,
+ Durai Manickam KR <durai.manickamkr@microchip.com>
 References: <20261105110715.2486432-1-ada@thorsis.com>
- <20261105110715.2486432-7-ada@thorsis.com>
+ <20261105110715.2486432-5-ada@thorsis.com>
 Content-Language: en-US
 From: Claudiu Beznea <claudiu.beznea@kernel.org>
-In-Reply-To: <20261105110715.2486432-7-ada@thorsis.com>
+In-Reply-To: <20261105110715.2486432-5-ada@thorsis.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 On 11/5/26 13:06, Alexander Dahl wrote:
-> Add the peripheral clock IDs for OTPC.
-> This clock is required for proper OTPC operation.
-
-Next time, please wrap it at 75 chars according to the submitting patches 
-requirements [1].
-
-[1] https://docs.kernel.org/process/submitting-patches.html
-
+> Adding missing clocks for only some (more recent) SoCs got more and more
+> complex and confusing with the old common definitions, while there was
+> no actual need to have them common.
+> 
+> A splitup of the definitions in the bindings was prosoded and done per
+> SoC, before adding new array members for missing clocks.
+> 
+> Switch from the old common indexes to the new per SoC indexes.
+> No functional change.  Old defines can be removed later.
 > 
 > Signed-off-by: Alexander Dahl<ada@thorsis.com>
 
