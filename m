@@ -1,57 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794724024;
-	b=m0Bv+0tRxP26Nth1mxFRk0bp+H7jgLph3jVASV2TeEwqHh2I6UHeLiWUVTEPnAWWPcL6
-	 7JKTzSM+4TiehLAOsQwQq7TeqJW+FnypBmzYH35nkWsQupkFH5OMXzMjIzM1kZQsKG1uH
-	 4aDEc6wND1X2dt6NPRuzzSfap7ZIde+FQ7HlkotVN3CM/9ttI/8eEKSPiyNT5hC5XrpTq
-	 vqoarJKfyPIcRC7e9Uj1ebn5ntl+gqxTwj15YZCumbl93vOt+uBUnLzEjbz51BtrARqRS
-	 ukV5dTL6EZ8xbyeBNjmQVbWup2hH3oQM8DfkwMHJH7bYOFqFR4N/DoeDMwxsibmf2Tg==
+	t=1794726208;
+	b=ohkVqJSpCob4hv0+apI9XE2rUQAJyThhmA0gfydiX2GQ6CWIURKrYMxGxn3WemJiRMnP
+	 w9pLLWbhk9Sum6VvpEkSbhRY2VZqP44nf4BIBoR/LV9fYKsDd1fE1FmQ6FCquWJf60gjN
+	 I6LyiHVsybIjTV6tcx6GjYIClpo9W+cDzZ5oOD1m5RPePTNUfAfe83CL2UykwiXdoa+CP
+	 GXFBu14L5LBk52/j0NpNA4ecVTuK/wvxvr5P/dudgL0bryvSQJNxyWdCPFYuOG1hMUk8c
+	 fMQvMazQ1RL1Y1Hrff3GJ9L3CNMbJiiSsU58+gE85/X7oQoHphXDcjfY33L5HKSe5Ow==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794724024;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=iVTcBxQQMl4QzfL9Wdiozi+f51d/Q7jY5E2o0iqZOks=;
-	b=zJWWwdpOu3T6ks/M9CzLTywIQeXEHm5HjZXIduR9x1+3Congazj+SRGuUXiC5KQLirim
-	 MvSX+OC6V+utlOflz31VgEnQqaWzbXFU4sSJkNjqetFe3ELQGf4SRCIGaUxq+8d1AM5W6
-	 Qb2bIPXC3f+0gPLhgz70EzW4rIb4TzktfI+bmKxaon8bIr6zUY/J/KcYqN6q7kng/FXtv
-	 88sBV05I6mDLfc3PGmxaYVituYfrSS8Rhk7x8PW/S5520r+vYZXhlfPFb5gB+/xBfY3FI
-	 W1Govu1EVWu39CEaBA5ImLA1d3a/RUcq9SKlLWmpJ6ApYrU7m2kvFDG8/mDMhynANAA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794726208;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type;
+	bh=a0wnVTzo2SMTqUhE+Yi1XoqVrkmPjT5CK9ef37B0JVo=;
+	b=4f4fJPNws/UAyj2te7zOSZutHuBBOfy0vHRxFx8NyNR7Xrn31RvFEPzBM4pFZCHx+eEd
+	 fY4dzMO8MayzZgp9zkv0Gyq9j9jfdYavbVkButsyn4h/VMWwPpnvTHMjuXGqa8R+HzW0g
+	 zwFSQRvic153gSrlntm06w1BVr0/xxyxIJOdx2LKp3oGMrUnZ2jGyPm8DYAnRi40zA5Fs
+	 TBtzIcmA5qbKP9cwkNcyvWrd8yP9X7L5DKmcRRIMuj+mAyeoYz8TQ8Lz4RDptNJVfS/VM
+	 1wA/l39ZROdt/nxifjk8bpUh67SjAPP6scs+BzaeqLfQWef9XjrvnwT3aEb4Mx9bdTQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W6Tmr4oD;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="KHnA/YKk";
+	arc=none smtp.remote-ip=209.85.128.47
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3F2606A323;
-	Sun, 15 Nov 2026 06:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F89606A327
+	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 07:03:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A3F89606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W6Tmr4oD
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC37F1F000C4;
-	Sun, 15 Nov 2026 06:27:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794724024;
-	bh=iVTcBxQQMl4QzfL9Wdiozi+f51d/Q7jY5E2o0iqZOks=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=W6Tmr4oDHfCtdgw/mn8gk1am3AOunmQEzWCVaHlo+C38Q38TIpM/Va0iNihGLgj97
-	 oWdVVyR1aFu3kSWSyr7BRNSg8FypnDw+lhEPic63LahlAun78swqc/zOt0Z3bRp9Qm
-	 TZlRreph8au3yoSth1yhBgu/5yAIsYSQwyFUEVcxfiJWaGQsR+oKUMzHINFdAMtlfE
-	 j3MKvhTFvB8oHPNSRyGdNv1Qa/Dv34VjZ0MVDj5nZJ3XIXiaVf0I/2h00wEkAE2jMY
-	 gSi4DU+BdNvbkzi/YGmY4ADuVi/5xwg/MD4GoOML4H9HCA6h1KjIitvUlbvZBy35Nv
-	 MPMe7ebcJ5e2A==
-Message-ID: <sashiko-outbox-215249@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 2/8] clk: sunxi-ng: de2: Export register regmap for
- DE33
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Jernej Skrabec" <jernej.skrabec@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261115061102.229680-3-jernej.skrabec@gmail.com>
-References: <20261115061102.229680-1-jernej.skrabec@gmail.com>
- <20261115061102.229680-3-jernej.skrabec@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 15 Nov 2026 06:27:03 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=KHnA/YKk
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4a214c5c4c0so25768525e9.3
+        for <linux-clk@vger.kernel.org>; Sat, 14 Nov 2026 23:03:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794726206; x=1795331006; darn=vger.kernel.org;
+        h=content-type:content-transfer-encoding:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=a0wnVTzo2SMTqUhE+Yi1XoqVrkmPjT5CK9ef37B0JVo=;
+        b=KHnA/YKklGJIxa0kJ8/uPpiypIOP1BDnfL44ExRGNmJC8MfDs8cWMEIseZMYZfK6H0
+         4OjzdwBj0SLY3+gKqeWIFCqtoVeOhsjbk2WGupMtXaiSGxmVFyEPk8Z3AxppEpFGRU1s
+         RkygTQGAoHek5T9RDo6mQgTWDrL0/MEPk3eCK0w7IH3868+KDzId6EAySbenPnLSX08h
+         BdkPJ8aEnV5JnPPmGCocv//35onidcvdnz7en7j/y70R9KKxBrCC1cASzt6ALGEwr9MZ
+         kJ8gjkymKKNGfG5NIZaSUL8JV6E1LB4IQu+GsBWD6NBx+Gg/SPov7IxR3b49wvtz36Og
+         37SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794726206; x=1795331006;
+        h=content-type:content-transfer-encoding:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=a0wnVTzo2SMTqUhE+Yi1XoqVrkmPjT5CK9ef37B0JVo=;
+        b=TORExnWCd4JfdhwR6xaCMY1wH/MwdnLW+IFgE2W/jGhnVzf6Wn6o+G2rBNoWDhNcME
+         qKtd9Yr2hibWmdC+e3NTwOECPPLkwrm1hIh5VDm0YtNuAWgYG0SNCwk7v4Y5ld+HypRx
+         8Ndz0SYWW53zuqS5hpha+Y7Ybbk4BrTzHtghH3cc1w9ni3IjRKu3qV5A7mFHpKShWBDk
+         3yN5MVE6wS+0RdJWXemt0/PNLXq4gZuh09C+m/h5B62P4YcyTmYdAPNAmrtiBBEcvc/K
+         95a8yKAx4wI/2apevwK0J6Gzj/18wlKuzjHkYeE/e1Az80gcQue/EcN42vRrZYKE8zGI
+         dWag==
+X-Forwarded-Encrypted: i=1; AL+hErGbuQyovEkVXsdMqt7MpulK0SQ7q16RvYXJva13SKcSpdU0eTjgDq00cuhze8ptqq6hi3g2NBCddWY=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+asEII2HD/Z+Ed7FeerpoCeoQt/cM/xZX9dg55URSRMcpENJsB
+	gVAVd4ATcDiOWUmT/G49XViWjWrwwKXWwAZPkDWE0ZxDUMh1wZRGO9tR
+X-Gm-Gg: AYBFou38bALHIgVtC1ffPM+YmaWL0DzfNSjsRxifHt1dIZi6KCTKT1wJ7hRHrFnNHGD
+	33ow5Uvu+0QiSIn2KSXLSfIr/8WPdYBJAjBSt/OCg//OiuI40zjbYPLyZ1vB23zaZM+9qCUNLEj
+	teo0r59Rq4PEBLBoXfNkX15cZdepMmPob5vM6u4fam944Whe7RJoWG5j54fXE9U1IPwvG/Lte5I
+	IVzgDzNx/VLR1WoYI7Skkc1LV7Ts8uTWNzFfW78oo0tsZ7JsVgZlvw2Bqm2EWYUYkd0cYhHFRXQ
+	zgheJSHw6XXsw+7vBKLhYzQ17h+akO84g1L7S0TaJ/9Zx94OnrUYq3ZND1dhML1J7J7hq3tHQkg
+	qtSdsD0WvddYshn9ls3/JcN9jf0Kv4w4sJm8kGsXCBNRBt9i2yV4LbdjYQ8YoKPA8tCz6p2t7V6
+	DD7EufkUEPOCcqOeGVwbsj8v+5BnyPmIYWXrrUW3qkeRFt2NMWaM0ZyeJgKywuq7byhUb8CnotL
+	WadLXPPR0U6HvCl6HLCJeC5rS3RD/JJKET8OGRPhNEe0EWvpbdOLXkyxhV5Kj7ibvEC3xYsU8Ny
+	S84xh6nq4cRPcJzzEW5HfFJMFogxsSXzSGTy8XbtHVZXu7OVqumAMrEh7pQJdykjZhevetEw+HM
+	YOrnw/0m3hQJ/lceT9coMSShnjAHWtNq4tpWdqUmeOUQfgS/Az1mRIld4Yc9eVuw6+shePsVoRa
+	2Drqr7YBrr+Nhzf5V/iksdoxbITljuOvlV+JmL+XvlZBp0q7oZPrdn4TEom5rxjnAETJWl36iNW
+	7t9LpCAlBlEXymbe+GrHcsyfrdIWioTy+itLkYSDQvXbeg=
+X-Received: by 2002:a05:600c:840c:b0:49c:d019:70c5 with SMTP id 5b1f17b1804b1-4bb5599bda8mr154094045e9.0.1794726205780;
+        Sat, 14 Nov 2026 23:03:25 -0800 (PST)
+Received: from jernej-laptop.localnet ([2a00:ee2:6a02:9300:bb69:6bcf:1b11:e85b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c608d10b2sm25768458f8f.44.2026.11.14.23.03.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Nov 2026 23:03:25 -0800 (PST)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>,
+ Romain TISSERAND <romain.tisserand@gmail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Maxime Ripard <mripard@kernel.org>,
+ Frank Oltmanns <frank@oltmanns.dev>, linux-clk@vger.kernel.org,
+ linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, sashiko-reviews@lists.linux.dev
+Subject:
+ Re: [PATCH] clk: sunxi-ng: nkm: avoid 32-bit overflow in rate calculations
+Date: Sun, 15 Nov 2026 08:03:21 +0100
+Message-ID: <TB0DvSOtTYKNXNEXzDrlwg@gmail.com>
+In-Reply-To: <20261101203336.1360239-1-romain.tisserand@gmail.com>
+References: <20261101203336.1360239-1-romain.tisserand@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,61 +104,156 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] clk: sunxi-ng: de2: missing select REGMAP_MMIO for
-  SUN8I_DE2_CCU
---
+Dne nedelja, 1. november 2026 ob 21:33:36 Srednjeevropski standardni =C4=8D=
+as je Romain TISSERAND napisal(a):
+> The N-K-M rate code computes parent * n * k / m in an unsigned long,
+> which wraps on 32-bit ARM as soon as parent * n * k passes 4.29 GHz.
+>=20
+> On the A33, pll-mipi (parent pll-video at 297 MHz) with N =3D 14, K =3D 2,
+> M =3D 14 runs at 594 MHz, but 297 MHz * 14 * 2 wraps around to
+> 4021032704 and the code computes 287.2 MHz. ccu_nkm_find_best() then
+> picks these factors for a 288 MHz request, and clk_get_rate() reports
+> 287.2 MHz while the PLL runs at twice that. On a PocketGo S30 (A33,
+> ILI9488 panel on one MIPI-DSI lane) the lane ended up at about
+> 594 Mbit/s instead of 288 and the picture broke up.
+>=20
+> Do the multiplications in 64 bits, saturating at ULONG_MAX, in
+> ccu_nkm_recalc_rate(), in both best-rate searches, and for the parent
+> rate request of the parent-adjusting search, where rate * m overflows
+> the same way.
+>=20
+> Without the saturation, a candidate above 4.29 GHz in the search would
+> be truncated again on return and could look like a valid low rate.
+>=20
+> 64-bit kernels are not affected. On 32-bit ones, every N-K-M clock can
+> hit it (A31, A23, A33, R40, H3, V3s and F1C100s use them), whenever the
+> parent rate times N * K goes above 2^32.
+>=20
+> Fixes: df6561e60244 ("clk: sunxi-ng: Add N-K-M Factor clock")
+> Fixes: 3492e4f6db5f ("clk: sunxi-ng: nkm: consider alternative parent rat=
+es when determining rate")
+> Signed-off-by: Romain TISSERAND <romain.tisserand@gmail.com>
 
-commit d1c006fcc75e6e1facbfb7f265581bef0d4d672a
-Author: Jernej Skrabec <jernej.skrabec@gmail.com>
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-clk: sunxi-ng: de2: Export register regmap for DE33
+Best regards,
+Jernej
 
-This commit removes the hardcoded DE33 plane mapping writes from the clock
-driver and exports those registers via an MMIO regmap instead.
-
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/=
-ccu-sun8i-de2.c
-> index 6ec6c0dc4c261..f17570efafaae 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-
-[ ... ]
-
-> @@ -336,13 +367,19 @@ static int sunxi_de2_clk_probe(struct platform_devi=
-ce *pdev)
->  	}
+> ---
+> Notes:
+> - Testing: built with W=3D1 for arm (multi_v7_defconfig with the A31, A23,
+>   A33, R40 and H3 CCUs) and arm64 (defconfig), SUNXI_CCU=3Dy and =3Dm, no
+>   warnings; on arm the 64-bit divisions go through __do_div64 (no libgcc
+>   helper). Tested on a PocketGo S30 (A33) running 6.18.54 with this
+>   change, without the ULONG_MAX saturation (same results for rates that
+>   fit, which is the only case the hardware hits): before, pll-mipi was
+>   programmed with N =3D 14, K =3D 2, M =3D 14 (594 MHz measured as a 2x l=
+ane
+>   rate) while clk_get_rate() returned 287216621; after, N =3D 15, K =3D 1,
+>   M =3D 16, 278437500 Hz in both the register and clk_get_rate(), and the
+>   panel picture is right. This version, with the saturation, then on
+>   the same board on 7.3.1: pll-mipi again programmed with N =3D 15, K =3D=
+ 1,
+>   M =3D 16 (278.4 MHz from the 297 MHz pll-video0) and the picture is
+>   right. Not tested on the other SoCs.
+> - Tool disclosure: this patch was prepared with Claude Opus 5.5
+>   (Anthropic) as a coding assistant, in an interactive session where I
+>   asked it to bring up the PocketGo S30 display. It found the mismatch
+>   between the pll-mipi register and the rate the clock framework
+>   reported, traced it to this overflow and drafted the fix and the
+>   message. I reviewed and understand the change and tested it as
+>   described above.
+>=20
+>  drivers/clk/sunxi-ng/ccu_nkm.c | 30 ++++++++++++++++++++++++++----
+>  1 file changed, 26 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nk=
+m.c
+> index 401fbb7524..e5a8f22d50 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> @@ -6,6 +6,7 @@
 > =20
->  	/*
-> -	 * The DE33 requires these additional (unknown) registers set
-> +	 * The DE33 requires these additional plane mapping registers set
->  	 * during initialisation.
->  	 */
->  	if (of_device_is_compatible(pdev->dev.of_node,
->  				    "allwinner,sun50i-h616-de33-clk")) {
-> -		writel(0, reg + 0x24);
-> -		writel(0x0000a980, reg + 0x28);
-> +		struct regmap *regmap;
+>  #include <linux/clk-provider.h>
+>  #include <linux/io.h>
+> +#include <linux/math64.h>
+> =20
+>  #include "ccu_gate.h"
+>  #include "ccu_nkm.h"
+> @@ -30,6 +31,26 @@ static bool ccu_nkm_is_valid_rate(struct ccu_common *c=
+ommon, unsigned long paren
+>  	return true;
+>  }
+> =20
+> +static unsigned long ccu_nkm_calc_rate(unsigned long parent,
+> +				       unsigned long n, unsigned long k,
+> +				       unsigned long m)
+> +{
+> +	u64 rate =3D (u64)parent * n * k;
 > +
-> +		regmap =3D devm_regmap_init_mmio(&pdev->dev, reg,
-> +					       &sun8i_de2_ccu_regmap_config);
-> +		if (IS_ERR(regmap)) {
-> +			ret =3D PTR_ERR(regmap);
-> +			goto err_assert_reset;
-> +		}
->  	}
+> +	do_div(rate, m);
+> +	return min_t(u64, rate, ULONG_MAX);
+> +}
+> +
+> +static unsigned long ccu_nkm_calc_parent_rate(unsigned long rate,
+> +					      unsigned long n, unsigned long k,
+> +					      unsigned long m)
+> +{
+> +	u64 parent =3D (u64)rate * m;
+> +
+> +	do_div(parent, n * k);
+> +	return min_t(u64, parent, ULONG_MAX);
+> +}
+> +
+>  static unsigned long ccu_nkm_find_best_with_parent_adj(struct ccu_common=
+ *common,
+>  						       struct clk_hw *parent_hw,
+>  						       unsigned long *parent, unsigned long rate,
+> @@ -44,12 +65,13 @@ static unsigned long ccu_nkm_find_best_with_parent_ad=
+j(struct ccu_common *common
+>  			for (_m =3D nkm->min_m; _m <=3D nkm->max_m; _m++) {
+>  				unsigned long tmp_rate, tmp_parent;
+> =20
+> -				tmp_parent =3D clk_hw_round_rate(parent_hw, rate * _m / (_n * _k));
+> +				tmp_parent =3D ccu_nkm_calc_parent_rate(rate, _n, _k, _m);
+> +				tmp_parent =3D clk_hw_round_rate(parent_hw, tmp_parent);
+> =20
+>  				if (!ccu_nkm_is_valid_rate(common, tmp_parent, _n, _m))
+>  					continue;
+> =20
+> -				tmp_rate =3D tmp_parent * _n * _k / _m;
+> +				tmp_rate =3D ccu_nkm_calc_rate(tmp_parent, _n, _k, _m);
+> =20
+>  				if (ccu_is_better_rate(common, rate, tmp_rate, best_rate) ||
+>  				    (tmp_parent =3D=3D *parent && tmp_rate =3D=3D best_rate)) {
+> @@ -87,7 +109,7 @@ static unsigned long ccu_nkm_find_best(unsigned long p=
+arent, unsigned long rate,
+> =20
+>  				unsigned long tmp_rate;
+> =20
+> -				tmp_rate =3D parent * _n * _k / _m;
+> +				tmp_rate =3D ccu_nkm_calc_rate(parent, _n, _k, _m);
+> =20
+>  				if (ccu_is_better_rate(common, rate, tmp_rate, best_rate)) {
+>  					best_rate =3D tmp_rate;
+> @@ -154,7 +176,7 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_h=
+w *hw,
+>  	if (!m)
+>  		m++;
+> =20
+> -	rate =3D parent_rate * n  * k / m;
+> +	rate =3D ccu_nkm_calc_rate(parent_rate, n, k, m);
+> =20
+>  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>  		rate /=3D nkm->fixed_post_div;
+>=20
+> base-commit: 5243bd55dfe63a5f806622878f6fbdd78172fac9
+>=20
 
-[Severity: Medium]
-Should SUN8I_DE2_CCU select REGMAP_MMIO in drivers/clk/sunxi-ng/Kconfig?
 
-Without it, enabling SUN8I_DE2_CCU when REGMAP_MMIO is disabled (for
-example under COMPILE_TEST=3Dy with ARCH_SUNXI=3Dn) or built as a module wi=
-th
-SUN8I_DE2_CCU=3Dy breaks compilation on sun8i_de2_ccu_regmap_config or fails
-to link __devm_regmap_init_mmio_clk().
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261115061102.2296=
-80-1-jernej.skrabec@gmail.com?part=3D2
+
