@@ -1,55 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794751588;
-	b=WbOkC+IRe4o1RYhjdalrCMPZjIdJvEcSzR9/jTbFHi8Xnb9p9MQs2VCleK9pAkPl9oaM
-	 OTPNDvADeUdK+SEibroJU2oPtkw6MHICC8xQb4vdVvwlH5GQlLmKc9G2IzsWK8MH8/rhF
-	 PxAcGW1UrQ7rAay3974tn6xfq9IiMa33lrmwKsqSYWvXjv8cNJTN/8eRrVwjAwHsigdAR
-	 TrMa8cT3obSP6yHvqHpH6SxEpax9poXhsq8GLUlnr/UrJ6+uu1eDEOVnWJ3cQFic/DKrU
-	 k1ORmgpyN90eyuA39pvZmz9FMDqlec5zHRmj65QRP3Vjbxy9D4LXXRfBCLNUNCrzZqQ==
+	t=1794752316;
+	b=5TO5TPtP+3wmkusdKZ8X6q0TYT8nOedHWjPGtennseFWUb4bMXECrH+UPtCnzVqXA58R
+	 Nnqc4ItTSt55dNBulRFPng2WEiH11wYdQu4P7BVcL++lbCkN3nClrnbsiWgj4D5unoUr8
+	 odMwRaQWUQpwhN4C7mb8zq6uOzg0FkUzv88fcS9qczdkbxPGx4YEoSrC/0ySVHbmiogLC
+	 uYvykl7tZ/jdzKC0IRuzQ1YPyXF8cdCCtulx2e4M7R1NPGrl8oa3JfpuNwsy54NXHKH6a
+	 PtJisWIE3VbZvGTSYHAp12JY0uLUd1vZXbQ0b+zJ5o3Bdt1NTlmMeJ1n3bSyKQRK7ww==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794751588;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=Yjh8Gm7XLBcgfYiYP3LTQh3dAygMMLi9uTvlwpldUyI=;
-	b=KKHSXH9yRTYjpIx+sPV68e46odoFdYzNKuBt2tSKgdZbUgERVFMkrjel+eMtiqbc+XF+
-	 b/lo3DuyPLGRp7BNFx+b5gMocUljSjE6thCEjziSlaEqTjAj5HOhGOXBeaV2Jt/ePDlIJ
-	 Ts8uk47CG9hHL5FqIRiTP8sMnptZpjZHH07hQtPQFYT8euC0OKq9o0HNVvbG/dbVheAcQ
-	 7DnEodgpiHh6JDpxfYxqH/0PN8H/NtQiqSGqkAez5VdgjO3rmiyv5m52w6OQjDKfYhoAv
-	 lrj+zH0CiIjCx7KsaFm5GIsryOeSyzg32EMCVdmV6NDlVvx06ERi9ETdUczoX1hEtTg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794752316;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
+	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=S704AU5qbUN5VbRr+2O0ZeqFrfEN5c1p3S93iVWr7So=;
+	b=VG47BYHU//MQ6+/0JshojSEz8MOvgjAupdqXC/V/sjxOx7btBCcMSjWr1A9t37VkFRd5
+	 /s/bZ4sr76xQAMexiYd4RJNOh3LQCW8h4GxTEERaKLNJ6tCBoCisxtl8Y8V6uE6ytpoPL
+	 ++S6BIn1UyvbIN5aEE70MILZF+4lt3f2XV6llpodvFBoDDL345Vaggjsp7AwUn4Iwcevi
+	 AaBqbMkDGDgif3KrRAs8QCC6xFXnwUxDGvoUYPhMXLAXZwtoD7BQTMfosJ1+QqG1+0O/9
+	 JteSasIY641LnCcIDfQL2yTQR/VRLJPzA1V93vRdgAmZVXzFxYWMAXVjrmDyJgCcddA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mz+siG7D;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=AEKq45wr;
+	arc=none smtp.remote-ip=209.85.128.54
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F45606A323
-	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 14:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15957606A31F
+	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 14:18:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 15957606A31F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mz+siG7D
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 749B21F000D2
-	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 14:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794751588;
-	bh=Yjh8Gm7XLBcgfYiYP3LTQh3dAygMMLi9uTvlwpldUyI=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=mz+siG7D/yfCsaQUtmvyh2TtPp6RSL+xZHuVfQQpgQhiqnFA2hy66sFqJDYv/zhNN
-	 PZdl2f5jnz2cqc1ntx0TIL/cO1Z0Kh+VIfLZI8tPEkRNIx2NwRPylPxwO04vLWiK/C
-	 S/tzsizO2aQtz305oM/Q/OG/w+H4MHYJduUfF7hKbiu9ouFFLGxed4MMPRDyLH/eDG
-	 hMtlbugIRv5AqQQEF5MAIKv7X7WhfHNaoVQIgvD4XmINyiuNwknyiWuDimQGiag2xB
-	 vmscKeRolp3ztysYOwCMZUOKT9oN5lIzDVQYCH3SP/dTdMtB1CQAPEP/qgiHKxh2iZ
-	 XHTmXMjR20iDA==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3ae2fb3fe2fso21801131fa.2
-        for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 06:06:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErHjWW4muzyAKfZhFyLhWuo5ardGaiVQg/VatLMXDwTdH60srZNCmRQ4ObNep6E7qqOXyl2DXp8NJP8=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8duKKAOuG3wINQl6B38lClYh3oe6iZZ4r2Q4EasX2YaLyxsXGi
-	6PTrIPEyxLwa4YlcpkQi4La3kriPF2fbq40AMisBJdsVXW+PihKX7uaXe4nI/ewIAQL3EN1UuEl
-	DknbYF7MYVLsSmcrg8A4IM93Z26VsP0g=
-X-Received: by 2002:a05:651c:41d1:b0:3ab:1207:bd2f with SMTP id
- 38308e7fff4ca-3ae2b4bad8cmr29149331fa.11.1794751586867; Sun, 15 Nov 2026
- 06:06:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=AEKq45wr
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a1b07c3c5fso29626755e9.1
+        for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 06:18:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1794752313; x=1795357113; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=S704AU5qbUN5VbRr+2O0ZeqFrfEN5c1p3S93iVWr7So=;
+        b=AEKq45wrETpWcBoHsbmJ3tPNJ6GNH1SiKODswaqPbUOk8UJjpTOgLMM8Zt6QrBgel0
+         gsHKx5HXdyfDJofwu9Vq8Fz+XJeesKYdOmSbgGGxrRgRNmLWfFEnZeus7L2SInTqmd2c
+         lfQOTVjgmimMrzi7sU3sYmd7ieAFjA6Y/aoafEsWK9LXYMW/Kj2c5Csg6DqWq3Vbh6BT
+         Z0ZbhCTeu3UyZLpDFEcs8R1YsoYR/OIMI9GG9+oT8cGDLozprBpjqroQeVZYkBC/VP2H
+         hx3X/Sgsu1XszM5xS1/5BQbqI6C93q8OsfbqDsudSSalaloJxrVjARxbviFFI5hDS7k7
+         Rsgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794752313; x=1795357113;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=S704AU5qbUN5VbRr+2O0ZeqFrfEN5c1p3S93iVWr7So=;
+        b=INuemJ5XqecMoXeWASjJOIsJtolXZrI5odCytJqI7t70cH5wvkavbvfKkJpen3+ulZ
+         v8BZBINCS6UniDJEl83lUDH2tydYfliqth4+Jc4nYOx5lXNjDewvawUDsfcHMzzkl9PG
+         x0Hhu90B/ob3eVZ2EjBLYv2J61SEaItI40rEhsyEeLDJWUk9vxHDxh49p5af66BDAhzT
+         JyRpsqNh5Sp3haaoRRB7U7ySVhnTaYZc7yzM37ZcL9xVYwaJv0ywsQzoIG6Lo99UGOvY
+         nNl6cYotTAvaWHak5rnuFzvBaUtMS/a4XsERpd9JJ00NdWp88mr/MRa5Qt1Rv+jdSFMH
+         amGw==
+X-Forwarded-Encrypted: i=1; AL+hErGiASgEs311F65CxUvnmok5mOclOl/Jiod3Ohvxerxk8zkrx/UFq+c2dQCKgG3lIWz3qSfabqsEySc=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9QtjIK6zr5lcUH1nYNRrxUdTXnT1RV1yUuKfvso3jQwkabiXb2
+	w11biF8qJeyGhVh0l9c3fufLHQ0pJ+gHs4kau1qv8E5C56eTtJ0cZ89S8ENwY6UYLvs=
+X-Gm-Gg: AYBFou3BSG3J8E3R5Iehcfqx1aqGY83CjjrAlECuVOAF6X5JuyX15FVZsrT8iICo6h+
+	fOWnL70HHedI5E1O1rJkrzVn6mNPhXsjaev4ujAt/1MZLtQPg0n7yBF0skaNQePIwwhLuEhsJ5U
+	VIgtTDZXp/CBrmk//K4C+BsbnL6zZsSp3Uk+2+0hclzHbXHu2rjNh6Iz0eaTshDD4zP5sUoNRqH
+	BEukTmv8Lag6ZM+op+FSv2Y106L27uy3tAA8a3It0MiURhi2ISPg3Mn2Wf79R8VhrxIwpSw2ypC
+	AcR+hgSj4Do4hCiboTTGesqrRaxHSnyBA3BQ5O6Sq3/EUSrlkMIqSkJlLgMlw3LML3+MUAvMzKb
+	D2d9TNwFFL8Qdp6zEwVxNvJWOvNzaanOGEL+P/ONlQxB/1NagHLXmYbCDwmQ3HUTPvaQzQf/E7z
+	Zbr/qTuudJByUfTxR/Qna064kXnXT9iBZBz+Zz5FA2vQx1RU8JIWU3N4BKJoixauXwVGbLB0RUw
+	KhUz/wCv9+88dvLygg9qijo6vGrh9YTq1606QxouX99wGFCGmNudNJmjqxZDkBDct8912e68mOm
+	/pjPml94eODMqe24UC28DRsCzz8uvRVVbH4KjmaPgqCcNBFntw==
+X-Received: by 2002:a05:600c:34d6:b0:4bb:5c92:ce22 with SMTP id 5b1f17b1804b1-4bb5c92d047mr132126085e9.8.1794752313396;
+        Sun, 15 Nov 2026 06:18:33 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5d223b21sm18530520f8f.2.2026.11.15.06.18.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Nov 2026 06:18:32 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,126 +89,99 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261115061102.229680-1-jernej.skrabec@gmail.com> <20261115061102.229680-8-jernej.skrabec@gmail.com>
-In-Reply-To: <20261115061102.229680-8-jernej.skrabec@gmail.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Sun, 15 Nov 2026 22:06:13 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67Kkiz=ns+DGS-nGeX7c_nT61B-CkXggqq0K2uxXGQ1UQ@mail.gmail.com>
-X-Gm-Features: AclHuK-7yda1JGDc_9OgA1yiAcJwBx1hvDReZ63bJlhLUfk9UlCfGoWhOH0aQLI
-Message-ID: <CAGb2v67Kkiz=ns+DGS-nGeX7c_nT61B-CkXggqq0K2uxXGQ1UQ@mail.gmail.com>
-Subject: Re: [PATCH v3 7/8] dt-bindings: display: allwinner: Split H616 DE33
- layer reg space
-To: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: Samuel Holland <samuel@sholland.org>, mripard@kernel.org, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, 
-	simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, sboyd@kernel.org, 
-	Andre Przywara <andre.przywara@arm.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v1 2/6] clk: starfive: jh71x0: Move reset controller
+ registration to jh71x0 common code
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Brian Masney <bmasney@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <20261013102707.9207-3-changhuang.liang@starfivetech.com>
+References: <20261013102707.9207-1-changhuang.liang@starfivetech.com>
+ <20261013102707.9207-3-changhuang.liang@starfivetech.com>
+Date: Sun, 15 Nov 2026 15:18:28 +0100
+Message-Id: <179475230833.3873592.13070196353304136001.b4-review@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3026; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=SzFQdbzAtEZ1BnfFOUSY0w8toQFX6y0M+FCu3Ru7vsw=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFk/95vzHzn/Wm9uzcPMf6oFG0Wunll3x/DbhM5fr+XsQ
+ iez9HiKdpSyMIhxMciKKbLUcFeLv5PU+jJrus5tmDmsTCBDGLg4BWAiLqEM/ysdn089x/jq+N6j
+ 4Q1p+dVaEm9m6+e/vf7hfrst902ebEGGv3Lhkd56y34ulv/k/zPkvat185OPuy6rGDg9z594TP/
+ BXFYA
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On Sun, Nov 15, 2026 at 2:11=E2=80=AFPM Jernej Skrabec <jernej.skrabec@gmai=
-l.com> wrote:
->
-> As it turns out, current H616 DE33 binding was written based on
-> incomplete understanding of DE33 design. Namely, planes are shared
-> resource and not tied to specific mixer, which was the case for previous
-> generations of Display Engine (DE3 and earlier).
->
-> This means that current DE33 binding doesn't properly reflect HW and
-> using it would mean that second mixer (used for second display output)
-> can't be supported.
->
-> Remove layer register space, which will be represented with additional
-> node, and replace it with phandle, which will point to that new, shared
-> node. That way, all mixers can share same layers.
->
-> This change is intentionally not backward compatible and the old binding
-> will not be supported by the driver, for the following reasons:
->
-> - It can't describe the hardware. Plane register space is shared
->   between all mixers, but the old binding puts it in the mixer node, so
->   only one mixer can ever claim it. The second mixer can't be supported
->   with the old binding at all. It also has no way to reference plane to
->   mixer mapping registers, which live in display clocks register space.
->
-> - Supporting it would mean keeping a second, mixer-local plane
->   management path in the driver, with hardcoded plane mapping, which
->   doesn't match the hardware and which can't be tested, since nothing
->   uses it.
->
-> - It was never used. Upstream H616 DT has no Display Engine nodes and
->   the rest of H616 display pipeline (TCON, HDMI, PHY) is not supported
->   upstream yet, so the old binding never produced a working display.
->   Vendor BSP kernels use a completely different DT structure and no
->   other known DT consumer (U-Boot, *BSD, Zephyr, TF-A, ...) implements
->   H616 display support. Only out of tree WIP patches used it and those
->   are updated together with the kernel.
->
-> The driver will print an error, asking to update the device tree, when
-> the old binding is detected.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
-
+> jh7110_reset_controller_register() is only tied to the JH7110 system
+> clock driver by its location. Its logic is generic: hand the CRG
+> register base to the reset driver through an auxiliary device.
+> 
+> Move it to clk-starfive-jh71x0.c as jh71x0_reset_controller_register()
+> so that the clock drivers of other StarFive SoCs can reuse it, and make
+> CLK_STARFIVE_JH71X0 select AUXILIARY_BUS accordingly.
+> 
+> While at it, replace the open-coded auxiliary device allocation, init,
+> add and release handling with devm_auxiliary_device_create(), which
+> already implements all of it. The register base is now passed to the
+> reset driver as platform data of the auxiliary device, so struct
+> jh71x0_reset_adev and the embedded auxiliary device go away.
+> 
+> The auxiliary device ID is dropped: every CRG already uses a distinct
+> auxiliary device name, so the ID is not needed to keep the device names
+> unique, and it is always 0 now.
+> 
+> Since the helper now lives in clk-starfive-jh71x0.c, the auxiliary
+> device names are prefixed with "clk_starfive_jh71x0" instead of
+> "clk_starfive_jh7110_sys". Update the auxiliary_device_id table of the
+> JH7110 reset driver in the same patch to keep the tree bisectable.
+> 
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 > ---
->  .../display/allwinner,sun8i-a83t-de2-mixer.yaml  | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
+>  drivers/clk/starfive/Kconfig                  |  2 +-
+>  .../clk/starfive/clk-starfive-jh7110-aon.c    |  2 +-
+>  .../clk/starfive/clk-starfive-jh7110-isp.c    |  2 +-
+>  .../clk/starfive/clk-starfive-jh7110-stg.c    |  2 +-
+>  .../clk/starfive/clk-starfive-jh7110-sys.c    | 59 +------------------
+>  .../clk/starfive/clk-starfive-jh7110-vout.c   |  2 +-
+>  drivers/clk/starfive/clk-starfive-jh7110.h    |  4 --
+>  drivers/clk/starfive/clk-starfive-jh71x0.c    | 24 ++++++++
+>  drivers/clk/starfive/clk-starfive-jh71x0.h    |  2 +
+>  .../reset/starfive/reset-starfive-jh7110.c    | 19 +++---
+>  include/soc/starfive/reset-starfive-jh71x0.h  | 10 ++--
+>  11 files changed, 45 insertions(+), 83 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/display/allwinner,sun8i-a8=
-3t-de2-mixer.yaml b/Documentation/devicetree/bindings/display/allwinner,sun=
-8i-a83t-de2-mixer.yaml
-> index cbd18fd83e52..064e4ca7e419 100644
-> --- a/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-=
-mixer.yaml
-> +++ b/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-=
-mixer.yaml
-> @@ -46,6 +46,10 @@ properties:
->    resets:
->      maxItems: 1
->
-> +  allwinner,planes:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: Phandle of Display Engine 3.3 planes node
-> +
->    ports:
->      $ref: /schemas/graph.yaml#/properties/ports
->
-> @@ -74,22 +78,22 @@ allOf:
->        properties:
->          reg:
->            description: |
-> -            Registers for controlling individual layers of the display
-> -            engine (layers), global control (top), and display blending
-> -            control (display). Names are from Allwinner BSP kernel.
-> -          maxItems: 3
-> +            Registers for display blending control (display) and global
-> +            control (top). Names are from Allwinner BSP kernel.
-> +          maxItems: 2
->          reg-names:
->            items:
-> -            - const: layers
-> -            - const: top
->              - const: display
-> +            - const: top
->        required:
->          - reg-names
-> +        - allwinner,planes
->
->      else:
->        properties:
->          reg:
->            maxItems: 1
-> +        allwinner,planes: false
->
->  required:
->    - compatible
-> --
-> 2.43.0
->
->
+> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
+> index bd29358ffeec..51716655554f 100644
+> --- a/drivers/clk/starfive/Kconfig
+> +++ b/drivers/clk/starfive/Kconfig
+> @@ -2,6 +2,7 @@
+>  
+>  config CLK_STARFIVE_JH71X0
+>  	bool
+> +	select AUXILIARY_BUS
+>  
+>  config CLK_STARFIVE_JH7100
+>  	bool "StarFive JH7100 clock support"
+> @@ -32,7 +33,6 @@ config CLK_STARFIVE_JH7110_PLL
+>  config CLK_STARFIVE_JH7110_SYS
+>  	bool "StarFive JH7110 system clock support"
+>  	depends on ARCH_STARFIVE || COMPILE_TEST
+> -	select AUXILIARY_BUS
+>  	select CLK_STARFIVE_JH71X0
+>  	select RESET_STARFIVE_JH7110 if RESET_CONTROLLER
+
+You've switched to imply for the new controller you are introducing later in this series.
+You should probably be consistent and align this one too. Not in this change though, it would
+be unrelated.
+
+This change otherwise looks good to me. It requires Philipp's opinion as it is touching reset too.
+
+-- 
+Jerome
+
