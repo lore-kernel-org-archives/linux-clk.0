@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1794773968;
-	b=TyocSVwMS/uBWGTxmxPwz/yQ0c8PGPLZOBSjSs27x+YvIuHas+wJmYPku0rsgJ9u044L
-	 ltqmPw94R8It1oizn7Pd3+MYuHCEH6PHTXubWyjhBeOsDA2wjAUBhn0hL6thK2k+RuJz2
-	 m/l3U2QVGU5PZR5qt6CB6sC4Xv3RNS5kkJPApac/RmnL5IhD0esM+e+wbXcuRKw9yJTVA
-	 NZNvOwsJP+VVtM0YRNiTSecZdC8x3q+X7mSV/8A+7etRKNQZ9PYrvtZF7rJ7W31AdtwBw
-	 a4MSxj7EQK5jYxcmqWu/UZI5Iuu7sCHCuVFSfYd0Ma36fprKbGtgeY5yGj97sRFDpVQ==
+	b=ejQ3HdK/hfJP9pKQSR+wSYt1fDXh7ezVCuO4xLsX8EB1PDJOtYqewTI+Ap60TLqJsWdD
+	 n2bACMcSbC1Ne5+56hZ1/BBNvi7UhzgcaVh69ESy2HYcNw1nxiiBY0hcerRho9SjMP9j6
+	 zxhdQCDjUnsThIbzPoFq9u7HTYaaVID4qjALzHlfmfuk65ZgZC/uhLO/G1LBpF+OTK1Gf
+	 3CP1kNXAnrpSgCW+sBBd38NSi5MB/Tqb6f9UCVAEuIXVc/pP7LLs8FQF2GvZdRBmKzuR7
+	 aeeYG4fZUihJNENl48BGodbblmzDrRS9syNITboIYWm2PxxLigwPBNDAxBEWP5S8k+g==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794773968;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=7ndt2cfEqLXAyi5+BTS23mgZKfifPOIvVbQiP/cMxMY=;
-	b=W510nY40O2pyXkbXGgjGZz8eXxMvWgq3OqGrM3AQoxnJwb2BfSCaDi8BFCG3H9DY5/bS
-	 QhTXIYuA/d/kt5+s1oInxey8jE7gqCy59Xg7fAvHZLM9jZahZvj/ZijPz1vT5QQbVVtfn
-	 CZVLy0fD+GOjk+h4YHD3zs01+Oxf79mmGICNASoggx65K9Z0cHHLJN8K2GubKLU0+li/z
-	 3m3wtcaySGyC97bhdOBJn90T1ezWg12nC3rp14amdA8ssSA+AA01b55a0Ru7+s+NlJhnz
-	 ovD9pb9hY5X27GzRAWzq9SunzOb7HjI4sPvTK4BwpS6WAgZKzUe3nlPlTolB1FTe9xQ==
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=N/I/0Pxndct9nS3tOyPfTo1LC1fR11t5dySOMgpU4YU=;
+	b=Tdhkb7oQxEp9qgSkMBsIAyd3eHu3hcpAkyzLCq60bdaI0/jenk2FQ1JTe63s/H3hVTKU
+	 0NW7kc3iTcdOUqGZOvPe9dyWEbk4IEpu1eNAlro66dNcFZnKKjX9VIPpRZSQI7oJt2UHc
+	 wXBDYLwIzH4nAIv5mXaVJkd1A8qmsNjMZGOg4JgVPMzdt95qXVJCyaa/TB88N4/SjM3DR
+	 vIa7k5Ny3lJxSHc/5EMCvLWaHaYVfYz6lx62SvuQx3luszyqdcZnmN1t5xEuVIj+lDf3V
+	 ytu4ytLGK1OOUaAoqjMxxETxC2vK0V1JIfIAd9uJXheRowZuF6XoTEWJumD7ewPR6VA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DC18DA7M;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AgDwSDwk;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A7B606A336;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A3C606A331;
 	Sun, 15 Nov 2026 20:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DC18DA7M
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AgDwSDwk
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1794773968;
-	b=GjUYHjo4BkyvOZmxuPPJ+o70rezCk9AWioX3ClUf1AyIdidoZ2NZ7qUZDfqaUBf2yyWc
-	 qOqzDuiwKyh4iclMDtGtbkifRxN/1NJWm+XfM6fhPqOloeRFv3MB6LzdzDcoPfAF9coZU
-	 CDwwOforBGCa7Sy8ddO6Nftbj3CjBqzpuR/IRF+XzRZkVI413T3rNzJuRNLQP0NJfS4Ej
-	 sW0v6x6xX/yfbLxXBHdMqzHYO3DmngKMntoYbF8y2PkFjfg+bAckU0tKG35ncuXAV1QI4
-	 jQAU++aLrOfg0WhZurOv6fcOti+YBVWJfiQ4FADKnsvNURKhiiE0ioHKfKj4w+4nHpg==
+	b=mzWd6KPVmfNz8Ax96TiamCjTslekw9wXkANac1I0q8DDi4j0XymE3lheB7VOYqPZ4ipo
+	 a143g/RDBQXykYgRxbXKQ3hHubRBXP7pixHOo5aptNij5PVyDfFTRl/DOSFATMem/RghI
+	 Q1Wulu2cghYDFgkCOwaTinIUae53RctjOrPyIj/MQberGDqtEZvzpUp+czShg8cfpE8jp
+	 59fI2Me7RLHHUy2eKHlz1Ddfj7vILYo5q9COKpOj74bV8iEI5CxY08wrhuDhEzQkIx7v5
+	 jj3IWc/s9JPH4elFOSFrQcb8/jP6wPuhP0CSBbW9A3V9UjpBs1C24GYmIpVLF8Afw1w==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1794773968;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=7ndt2cfEqLXAyi5+BTS23mgZKfifPOIvVbQiP/cMxMY=;
-	b=kaj619dSFM/7X63ukZdGTevbZSXOIqpGt6lKTTsNOckYVWC/8/Uvz3wzotLuXFhotHW1
-	 bzLzrVpaA7DoV+w667h66SZ4coujmZB4ZIk4jvvuGevz1kn19Kis+nzI/SSK1zBEbVi20
-	 4y+e/BkbSgAB/VAavZM8WuIaPNoBmR89ya37luXszsgA23QQRcrxB2Pj7SntkR58orR5n
-	 LaSD7wEM2dxPUF72jRobsYrbPIv4P7+tzHpKlGUiwjFxL2ywkDbfylS0lksRL3a269KWe
-	 uw8ud/7eAkVm1qdgGav2FKFHsajKx/mnT8bw5wjGy2pLLCQbrmdnJH9TpG0X2xtfTBQ==
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=N/I/0Pxndct9nS3tOyPfTo1LC1fR11t5dySOMgpU4YU=;
+	b=uAepX4tAwhKJpHGNBicGMwEWogg7djKf7HUWseaHS5si+ddAVjRrfGBZsyx/5+11RFXj
+	 S0JUWXri4q5iOYptsUzNs6Tq5MsL9+v44bAhzzDSgyUavPRKcIJ50jLGjYKuwHO4Mj7PO
+	 QQ7enof0BGzvL9k5vDEOcocuEYeiz6Pms1oyKEeC/+iBjeidytMCjUlDMu/etkTNe73vu
+	 3LXrbjUuMoL/t+rzjs0V+AtZj79cKODEPSE88n4sJg7DQVLJw0ZAc4n/jO7o4uyXqaxjY
+	 CfmL56N6MyEhS+y+lOa695jIGvW+0d3OvLDgmwSbgVAyaRcK6G69uD256V3E2SF/dAA==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id E43081F0092A;
+	by smtp.kernel.org (Postfix) with ESMTPS id C86DD1F000CD;
 	Sun, 15 Nov 2026 20:19:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1794773968;
-	bh=7ndt2cfEqLXAyi5+BTS23mgZKfifPOIvVbQiP/cMxMY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=DC18DA7MNm1nXH7eCoQXWPO3t8aiXpn+wfSJLsor9sOg3cCqPNGB41guVEz0hWLYE
-	 M+/wVwklaI+4Buda1ef8f31iEeawKBxXFGID0tgfD0nkRxMonuDF1Fpct0z4hxqVNt
-	 SmKpZ9z1nKVMf4fUThlt60JaIrrOcN9ccFTwKrRaZQo6GCvb6+YeK/+IH8hrDRZXFy
-	 QLtSJ4ezXRPFjX46DoF96+9fsI8IMnYpJ7HFk/UGoCvIVRxv+6PNw5NAFuI5K4UbGr
-	 WEJ/APr3D45+jZcPyIe/TjvxlSgPyWPxjgZEjjU/Kb8N1qa6qSD774TqnnPq4noQCM
-	 ErVZwdPHA9VaQ==
+	bh=N/I/0Pxndct9nS3tOyPfTo1LC1fR11t5dySOMgpU4YU=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=AgDwSDwk+Nh4obmkzysM9Wgij7eBZP/h5CxYfgnAgbbj7q/1ENNjyPMTXlnFb+TEg
+	 p6zv2ZD1uEZLhnpQcjzbWSztDY2TfkI8n9kPO8AdMMvy3sdHJxNCRW3BqOxHUB6inH
+	 /ZKcCmx5bwQMRt/R9a1e60xkIwM/X/NC2xwItxdEXRogr9QCkO9MhsAjKzgeehDhNy
+	 NrlYj3c5tNbRUeExvOUDA/SoPuNsiXH8U39R8gG/CVnyBfpNIxMlXY6Ot9udBoCGsf
+	 kyRgYEZetpWLQZEwTvfMAlawVc7ysZjrWfm30ChYsbYNUxh+EzVvzgpjO3/klJgDYJ
+	 T/LL7x423Og3A==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 7116E4A194;
+	by lkml.kernel.org (Postfix) with ESMTP id 59C414A17E;
 	Sun, 15 Nov 2026 20:19:27 +0000 (UTC)
 From: Venkat Yadlapati via B4 Relay <devnull+venkat.yadlapati.yahoo.com@kernel.org>
-Date: Mon, 16 Nov 2026 01:49:27 +0530
-Subject: [PATCH 1/2] dt-bindings: clock: qcom: sm8450-gpucc: Add Molokai
- GPU clock controller
+Subject: [PATCH 0/2] clk: qcom: Add the Molokai GPU clock controller
+Date: Mon, 16 Nov 2026 01:49:26 +0530
+Message-Id: <20261116-molokai-gpucc-v1-0-07cb3bf37c78@yahoo.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,9 +84,11 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261116-molokai-gpucc-v1-1-07cb3bf37c78@yahoo.com>
-References: <20261116-molokai-gpucc-v1-0-07cb3bf37c78@yahoo.com>
-In-Reply-To: <20261116-molokai-gpucc-v1-0-07cb3bf37c78@yahoo.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMOQqAMBBA0avI1AZMwAWvIhZZRh23SGJEEO9u1
+ PIV/1/g0RF6qJMLHB7kya4RPE1AD3LtkZGJBpGJgnNesMXOdpLE+i1ozYxEZUSZVyo3EJvNYUf
+ n92va3z6oEfX+TuC+H7asA8pxAAAA
+X-Change-ID: 20261116-molokai-gpucc-daebd2758b5d
 To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
@@ -97,46 +99,47 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Venkat Yadlapati <venkat.yadlapati@yahoo.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794773966; l=1014;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794773966; l=1228;
  i=venkat.yadlapati@yahoo.com; s=20261023; h=from:subject:message-id;
- bh=e0GmbRVbOneNgtdi0twGJ0KyCrMgnbqGUTQplz7+HHk=;
- b=KeSbHUuS2dURMP2SyRTWeJtBpjccQkUq2fxIYif0kcWMqbjW6DNhetYxb7Nw16hXVcG6n0CAf
- 1BEDGnfvLBQAAQOm3gweBZOHEtB2xyRBn0j6PqxxbmJSnMkcgFN0014
+ bh=7bCsfM7c1Cgrcs1XC/fQ/iOLDVlgSCphsmSr/082ak4=;
+ b=MaAwnUUSajp+ZCWlFfSL3p07s8gH2w1ka58g1gXrOVAkwJRoAjIFe5keenY83dNY1bdCNhcjM
+ DGFQz/BJBO9AHGXsZXntiSpVOp8rHPXwnXvANTsKjmlIK5WX6E06CCA
 X-Developer-Key: i=venkat.yadlapati@yahoo.com; a=ed25519;
  pk=e8KStCtEMvUP1Se/riB/KVnDAQFEVR2Dw2PcuA8/eME=
 X-Endpoint-Received: by B4 Relay for venkat.yadlapati@yahoo.com/20261023
  with auth_id=1303
 X-Original-From: Venkat Yadlapati <venkat.yadlapati@yahoo.com>
 Reply-To: venkat.yadlapati@yahoo.com
-Content-Transfer-Encoding: 7bit
 
-From: Venkat Yadlapati <venkat.yadlapati@yahoo.com>
+The graphics clock controller of the Qualcomm Molokai (SM8845) SoC is the
+Kaanapali one, except for the PLL0 CONFIG_CTL_HI value and three branch
+clocks that sit one register further. This documents a compatible for it
+and handles it in the Kaanapali driver.
 
-Document the graphics clock controller of the Qualcomm Molokai (SM8845)
-SoC. It is the Kaanapali one with a different PLL configuration and three
-branch clocks at different offsets, so it is not compatible with it.
+The SoC devicetree that uses it is sent separately in "Add support for
+the Qualcomm Molokai (SM8845) and the Motorola Signature".
 
-An LLM was used to help write this commit message.
+Tested on the Motorola Signature: the GPU clocks come up and the Adreno
+829 runs.
 
-Signed-off-by: Venkat Yadlapati <venkat.yadlapati@yahoo.com>
+I used an LLM (Claude) to help write these patches and their commit
+messages. I reviewed all of them and tested the result on the device.
+
 ---
- Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Venkat Yadlapati (2):
+      dt-bindings: clock: qcom: sm8450-gpucc: Add Molokai GPU clock controller
+      clk: qcom: gpucc-kaanapali: Add support for Molokai
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-index 7eca456211e4..e62e6127b06f 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-@@ -37,6 +37,7 @@ properties:
-       - qcom,glymur-gpucc
-       - qcom,kaanapali-gpucc
-       - qcom,milos-gpucc
-+      - qcom,molokai-gpucc
-       - qcom,nord-gpu2cc
-       - qcom,nord-gpucc
-       - qcom,sar2130p-gpucc
+ .../bindings/clock/qcom,sm8450-gpucc.yaml          |  1 +
+ drivers/clk/qcom/Kconfig                           |  3 ++-
+ drivers/clk/qcom/gpucc-kaanapali.c                 | 25 ++++++++++++++++++++++
+ 3 files changed, 28 insertions(+), 1 deletion(-)
+---
+base-commit: 6a876df4686788cd39128b62d7fcbff62f39278f
+change-id: 20261116-molokai-gpucc-daebd2758b5d
 
--- 
-2.56.0
+Best regards,
+--  
+Venkat Yadlapati <venkat.yadlapati@yahoo.com>
 
 
