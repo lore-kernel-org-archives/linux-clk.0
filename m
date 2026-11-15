@@ -1,85 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794752317;
-	b=ObW0lSYi2lGO45iGA3CeZPMGm5yE29Ow3ngtGTKIvB/GUxOT8agj1yuNCFGjcn5W0shp
-	 /mpRUZRxysAdYbrKRIcQwjBDIVfbzqk5VxGXrnGQXlGdbPQypYrT4BtOvnXxM9CQxxTUd
-	 +nZRaZhdxXd9OiKrpsEApxPmu0DKO41QLtBsDyCYmM45pV1G3C7UsSt8+HgP6yboLBlTz
-	 1vhHfDFIaacD4Mrpmb4S5iHNUeV/NA1xzZ6Wr3hjywjIPHJjKiH92tZ2SbIlv9++WNyvY
-	 BsEeZAXgGGYDegY7oBYnRQAHl1ywdZiO+qbp2YZ9igfVKzGK2ICK4+3zz2UB50TC3Jg==
+	t=1794752319;
+	b=uofeDpWQCf/JrwrObUyAmjMfAJG6kaicIHqFzkeQ/3oKf8gYCesCNl4GLaIADMhR+stS
+	 IXhER7orodf15GnDEnklXhS2KVbM7ulABQkHfebiA+TTj4YcMFJlEo2Fwm8srdM+COtz5
+	 kCGwu2b8u9R/LYdNCPtEWWTtAUGXS7r+HCYgWbN3XE5kWdX2LfW2ElDpSQp2eGRUjFbIo
+	 LgznEBH2Ab988dzhUeTKjaB3bEIvkWItgKuCQiiZNIMhPB+9toywdz4Kj8QmTAJ2CjdTl
+	 Qnp8DmA0CXoVmcpEk8Mdoyb4UszlHgHHPOjzFE3HlaDIojV2qXEYpNhuCh2aSP5mjGw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794752317;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794752319;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
 	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=WQoftNx1+ky9AuggiK3VoWKz8ajkaLtdnex4l8Hd7yE=;
-	b=nDK8+YsrZV+ZiYDsXj4u3BmnmhbfmC1Gl078B919DMTUqY/T+c6/9EUu1LMpFBi8sF+8
-	 6/CjcXDiYLfhW/C/r6L6FEY9SOY7hqDNCS6Agxj5bPPWXPTinxwdxpz+6w1Xgzt3+x7+O
-	 jNA1AIyF0ASa8ILHs4Ocno3UqQ67qLypOXPxNQw7fLr91TUwgjyPbq+D0Wwzmo+Q7nGUq
-	 wH0H/52y8dO/OC8Gs/Yali93wa7j9/CUJkMisBzrIM05I/oK3J/karLojdoG4l6zWUD7d
-	 o/cVBhRbd6rNONIUTTM0GZeVjP3gk3aMMQzyTws35+mGMDwD0At8AX8MHw8NSQ1TAsg==
+	bh=eRXocFNPHTDFcDxqvK37Nsoc4c3iJpE3zFJQsev+8wc=;
+	b=t1Kcrg0FqsdYjenW55e9MQPtVkVXtmlJ9CbQyfBilyLoAtZ4l+Ewn+yRHYEpkUuqRHP+
+	 lcFy38gW8EKUdKivOEGtT2EslqVpb//TIarrHO0ud12LTc+wWFIubXgrVlmSe6NzYmn37
+	 Ts03drrD9d3A7jccrUcN1WqE5qaoKcaCl341ev0aIKWsYA5W792ywij5DT/OojM20VSwY
+	 yBVoyDymdr2rGMsYAVOPE8AvTzJSwWdsweDmh1pdua4tj4Hn2j4OlVsDp9E+B9BT4Vtzd
+	 PHjuTjwRic58hYIm02Y4jGqAMux1gHawrE1FPdDqTLq9aws+VA/kNNYLMrzJov0tKaQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=jpcm5JZ0;
-	arc=none smtp.remote-ip=209.85.128.41
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=P5RIs5Wq;
+	arc=none smtp.remote-ip=209.85.221.44
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E656D606A32F
-	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 14:18:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E656D606A32F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC33606A323
+	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 14:18:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1FC33606A323
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=jpcm5JZ0
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4bb702a7548so723845e9.1
-        for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 06:18:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=P5RIs5Wq
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-4919a880834so1205489f8f.0
+        for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 06:18:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1794752315; x=1795357115; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1794752317; x=1795357117; darn=vger.kernel.org;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=WQoftNx1+ky9AuggiK3VoWKz8ajkaLtdnex4l8Hd7yE=;
-        b=jpcm5JZ0Yp9TZw3bmop2xrImBXAEdl5HF3fIdnf/p/jaHBcWWEtqMOWu42+dbUGDF+
-         Klk+ayFUq4iR5j0O/GXvBGp0w0hx3wh7jIP51b2WNhLPvVSS9nnnXyy0X96uycjWWfV9
-         2U2auiXd4grLhzE2gRmz9Vt8GH7xJOtNyoIY4BU6rFzi7L5vmCe6VazYuEqjdCi0MbaZ
-         C1jw5911LgiOQaKMoTY6z/LeWwnTyJPq0cNxSgV0DRI1BcfaXYrfZfyZtx3qqvYJLOTp
-         agNbLtZdn5Th5smVTdlqUI2EytYkal+H3UeDDU/s6QcScLRT5bLyQxm0EH5nB1b86q4X
-         dKoA==
+        bh=eRXocFNPHTDFcDxqvK37Nsoc4c3iJpE3zFJQsev+8wc=;
+        b=P5RIs5WqvBJXJys4r64Vc9p4f4XQ8vj0mv1u3YgepuRR+IQkicaqErb/VrktUy5M3T
+         EfwJF1KIdRVJbWBDzcilsBgTMjE+SX90teSuqBAKpagjgrJKg1rugGz+v8If1LWvbGNQ
+         +yo46DY5w/PolyHmv0kEbExE6iZPyH31nSqxspsxMx1tUPjviSCMrH+A2da8WGe/xw0K
+         x1aH5zR9W26ndXrv5rfy3c0DuMEGA8p12+2OB8L719NZuBtAIs50GMV3M0z2nplvYu51
+         noZHs3xQCY9jIEGGBrJxQXSj8KMz7V29AwWRvJMJlt+dcDTlzbWsqF4Vnn/q2vkxV524
+         vwqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794752315; x=1795357115;
+        d=1e100.net; s=20260707; t=1794752317; x=1795357117;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=WQoftNx1+ky9AuggiK3VoWKz8ajkaLtdnex4l8Hd7yE=;
-        b=TcsF9zjXHoRfztu/YgvpU4ZzB/VSnQfkXfzEbPkZYSPhbS/C5KV8+H9fix88XYzn8K
-         fB+oGOF86osgVdciOZL+MJBKUeNnvmbzyZe4ZlRWw6QiyAdMkh2Zz3mgkKjrnVJwa9Fk
-         /kke3JQVJ/KoygmtJrZ9r3rlO4YjGO/BgqA7JN1fqfBKoGO8Ni2hfBHX+BNbLQSMOw1r
-         H87wYb0Fp8wmCsk0HkFrenKTJk6slpIPaJ/LqZCmidFnDQB+/d1wvaqiAHSLmPlO/CUG
-         tNDkYemsUbvEokXJcbWykOXiKW+zAt5nd1FBToYt4+Py4Kip6m8YEqtERk8PooY2rWVJ
-         BBGw==
-X-Forwarded-Encrypted: i=1; AL+hErEfgI1aoUWKTj3IES5PFKe1r9c2zUsXrIQul5sFLzR8V1M2sKFP0i/Tn0/J0ALBDoIpo0P4iDbFK30=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9wwXcNQT+9tfqnK3Q/5J3bMRC3ctOrV6DXlvExvQey7zfgdfSg
-	MMDi3I8vn8YUEpAEn1/lrq5pjcrCmUIwLtjYp2x1SQq3v8CK/L9vtgf46JMR2JPnFqY=
-X-Gm-Gg: AYBFou0Kkn8gTdc3pq6WYxO2PB/K/4DoSftS/V2IFlRUqjp4H5nR4sE4eewHr2NJJI2
-	O1OlfhVUa/Pot7y+xN6p2CgHwgv4LSadOSWFnoFdBwGB6W6rjPgi1NG0j5kFQJOn85ntJzEtS+R
-	8/rRlNzbMNQorcTlKzttJMDro/dgrVAel0wihyL9QMzT5PgRjvkStYx6UhDBfdnX/33h+6prE/9
-	+4hKS6+Cd3Pekm82kJpIVOkQXO1+WdZ8uG/PHTbng0aFo/CDF2fiJOWxmKpTxYw3JoIU/bgReJG
-	n9/7PynfcGnaHdRNn2rlFCoTK6D9C6PqFWy/R/vfNeZ7hLa7BMB4cNpuynafzbDs2VdwCMs19au
-	yO3jSh3L8FTrSQHZNG/w7tPUjS5DHZzp+CdSQY9NRlDXcL0tkz+420sr8ZvX2gi1FykauPTnKij
-	8mCOMeYgXyY1tiOaoegor41wunvDNxPD6ODBHsVMnhnPjzNYRe8KCDMWGbnhU1auYrEWnSM+ez2
-	d9FS6scd7USKjJ6m6EB3bT+sCXk5q1lhYgANC/QToVFo1v2J1McZ8vHfeVhjdP3TU+Kq3f9khFA
-	CuYmnuwgVu74cLXonhIOdiN8El/1YNjbZ1sgrN8/Jrifl7DR
-X-Received: by 2002:a05:600c:4e43:b0:4a7:c366:d791 with SMTP id 5b1f17b1804b1-4bb559f24ffmr166728745e9.1.1794752315503;
-        Sun, 15 Nov 2026 06:18:35 -0800 (PST)
+        bh=eRXocFNPHTDFcDxqvK37Nsoc4c3iJpE3zFJQsev+8wc=;
+        b=h0doVVGhGnQdut6Z1zUxNYraNeh3iDTMrO6dhUkabRRtSTeByugpoCRVk2IGkYHfWG
+         Fx/OiHMRmbpawvACngKwwZ+gcPXgDBgP9SUp8yFPz/vTvP/wJHr9X1m6tmKhpiGLDUAG
+         YWZ+MsbbU1RHGAwyjXRFLgknS2n6OA7cx9dYpP6pfdr6FjEEgtQps8rhUrIO1Bkk5b1G
+         fd+lFzyBqs3ZkP9cmMYFPy435BnKv7LlYOzmo2OdStnDQqysb888ilxOX0InMyCF3Ot0
+         ltryPv6+84FDazODoweiGoMQNdBq0j35p9mZqxMY75gJG8DYlOiVux2y3PTvHbwelDKE
+         M4Tw==
+X-Forwarded-Encrypted: i=1; AL+hErEtf4B618RK/fAybghRBH35IhTyHQwBieZDaB0qyC1n1eoFdOg+i2fpxQqaOrx+6nLqo4ydrcLGnH0=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8h4PEs+XX941pT8Ypa+3eUR2qSezaGHD5ysxs2bEcj52kd2Cu6
+	A6B1VWSPNV5APAeeuLCSzaodcTG/z5vVhXAM5oQdifcUmP7QONJAIL9dXapKVz0wGR4=
+X-Gm-Gg: AYBFou1oaJi0cUuHWloas61DNYp06fvZy2biBFcCOs0yPfHCh8hGlnfxSkt7XibA+9S
+	/Bie5oXIZj1z6PpDSVpZuohfpYdKOTYK8fiRzqy36aGL1g6aRl8Iv8zGf4AHrY/CXkhY1nJopih
+	hqzY1+rQgoBm8eNlULAsSSRFFqIoTcOsMRRfaiEUNQ/3FSxgBtQQupYxzRSn+cXvPqRT3pVdPYY
+	q3rdQGXNI2/QIVwbqqaXlCiP0YCq/C/kvItUdCLv1p9O58n6coXXV/skuhYdArefHMz1juvIW2u
+	cfVj4KMnog7UaUUSCrH4/kz26RuSyNBeTzuSQff7WlEIeKlW3yH/5F/E8LH62xDlEUrU6rApKK2
+	/8LEDr0kYDSQ+kMlgaeQoo7L9Aoq9uJBFRieLCzo/CNsbeoUf70SVTmgolA0E3FvNL4AtEtpxbR
+	X7D22qu7J2ND6AEr1ZppFDhvkCxuoangPzvOFYDx7OPd4BE5D29PSOxQYxSGx9Q4iplZI/M0kkT
+	gMTMdGoq9yzgvGpPDkOPox1FEy5/LiNhuGrXZ1f3c0gcN0k2nXEdvKvMx8iPJtUTayFRMUv/kBd
+	FsPR4MQ7ZpP3GAvcDLHDFgwKRWCJXUqkfiEHnmlOJZk1/4QI
+X-Received: by 2002:a05:6000:18ac:b0:48e:68d5:818d with SMTP id ffacd0b85a97d-49c70ed9222mr16798800f8f.16.1794752317494;
+        Sun, 15 Nov 2026 06:18:37 -0800 (PST)
 Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb56f97257sm137451805e9.4.2026.11.15.06.18.34
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c609c6934sm16286752f8f.48.2026.11.15.06.18.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Nov 2026 06:18:34 -0800 (PST)
+        Sun, 15 Nov 2026 06:18:37 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -91,8 +91,8 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v1 3/6] clk: starfive: jh71x0: Add generic CRG probe
- helper
+Subject: Re: [PATCH v1 4/6] clk: starfive: Add JHB100 System-0 clock
+ generator driver
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Changhuang Liang <changhuang.liang@starfivetech.com>
 Cc: Brian Masney <bmasney@redhat.com>, 
@@ -103,205 +103,215 @@ Cc: Brian Masney <bmasney@redhat.com>,
  Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
  Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <20261013102707.9207-4-changhuang.liang@starfivetech.com>
+In-Reply-To: <20261013102707.9207-5-changhuang.liang@starfivetech.com>
 References: <20261013102707.9207-1-changhuang.liang@starfivetech.com>
- <20261013102707.9207-4-changhuang.liang@starfivetech.com>
+ <20261013102707.9207-5-changhuang.liang@starfivetech.com>
 Date: Sun, 15 Nov 2026 15:18:28 +0100
-Message-Id: <179475230833.3873592.10035326269756392801.b4-review@b4>
+Message-Id: <179475230833.3873592.8310507156583636155.b4-review@b4>
 X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6706; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=VtBrKLm2TGieOwhTBnDIxjnhWjQzoOwdJZi+yiLRkd8=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFk/95vPYUsyZ/7yQy20T9Joyetv7rvPOPozxi4JOp3Q4
- 7L08PygjlIWBjEuBlkxRZYa7mrxd5JaX2ZN17kNM4eVCWQIAxenAEyk+DDD//CnhTkpiXPL93+f
- ueJR2HcFJf5vL036zX4qGTRPDXS/5MDIcMDvy+VbPzd6fk0rdHtUvzTgu8N1zS28M/+xvN9ps8t
- 1BQsA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8368; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=TxbedSC4eUXLevyLtulFrGyDmY5zaUcSjNZDAxD2f5s=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFk/95uXva9fbZTEol5vsL2et+fTt40MLvvvLzzdOSt/E
+ 7N6gahhRykLgxgXg6yYIksNd7X4O0mtL7Om69yGmcPKBDKEgYtTACbiJ83wh9tgx62r1x/0HPul
+ KDrNh9M+8s1b1ulZF2e5dFxZ0PgiaAojw70re5WL5PYwvuHQ0zxU9OYyp0IoGwO7RMukZ60vayv
+ rOQA=
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-> The StarFive JHB100 SoC has several clock and reset generators (CRGs)
-> which share the same probe flow: map the registers, register all the
-> clocks described by a table, add the clock provider and register the
-> auxiliary reset device.
-> 
-> Add jh71x0_crg_probe() together with struct jh71x0_crg_domain_info so
-> that each CRG driver only needs to provide its clock table, external
-> clock names and reset auxiliary device name. The reset auxiliary device
-> is registered with jh71x0_reset_controller_register().
-> 
-> Parents that refer to an external clock are tagged with
-> JH71X0_EXT_CLK_FLAG in the parent index, so the external clock indexes
-> of a driver do not depend on how many clocks the CRG provides and do
-> not shift when a clock is added to the binding.
-> 
-> The clock index space of these CRGs is sparse, so also make
-> jh71x0_clk_get() reject indexes that were never registered when the
-> domain info is available.
+> Add support for JHB100 System-0 clock generator (SYS0CRG).
 > 
 > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 > ---
->  drivers/clk/starfive/clk-starfive-jh71x0.c | 96 +++++++++++++++++++++-
->  drivers/clk/starfive/clk-starfive-jh71x0.h | 21 +++++
->  2 files changed, 114 insertions(+), 3 deletions(-)
+>  MAINTAINERS                                   |   7 +
+>  drivers/clk/starfive/Kconfig                  |  10 ++
+>  drivers/clk/starfive/Makefile                 |   2 +
+>  .../clk/starfive/clk-starfive-jhb100-sys0.c   | 148 ++++++++++++++++++
+>  4 files changed, 167 insertions(+)
+>  create mode 100644 drivers/clk/starfive/clk-starfive-jhb100-sys0.c
 >
-> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.c b/drivers/clk/starfive/clk-starfive-jh71x0.c
-> index 37bab563c5e0..52c5ae737dbd 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh71x0.c
-> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.c
-> @@ -10,6 +10,7 @@
->  #include <linux/debugfs.h>
->  #include <linux/device.h>
->  #include <linux/io.h>
-> +#include <linux/property.h>
->  #include <soc/starfive/reset-starfive-jh71x0.h>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 93abbb315065..f66998e8eb64 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -26837,6 +26837,13 @@ F:	Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy.yaml
+>  F:	drivers/phy/starfive/phy-jh7110-pcie.c
+>  F:	drivers/phy/starfive/phy-jh7110-usb.c
 >  
->  #include "clk-starfive-jh71x0.h"
-> @@ -333,10 +334,14 @@ struct clk_hw *jh71x0_clk_get(struct of_phandle_args *clkspec, void *data)
->  	struct jh71x0_clk_priv *priv = data;
->  	unsigned int idx = clkspec->args[0];
->  
-> -	if (idx < priv->num_reg)
-> -		return &priv->reg[idx].hw;
-> +	if (idx >= priv->num_reg)
-> +		return ERR_PTR(-EINVAL);
->  
-> -	return ERR_PTR(-EINVAL);
-> +	/* Index space is sparse: reject holes that were never registered. */
-> +	if (priv->info && !priv->info->clk_data[idx].name)
-> +		return ERR_PTR(-ENOENT);
+> +STARFIVE JHB100 CLOCK DRIVERS
+> +M:	Changhuang Liang <changhuang.liang@starfivetech.com>
+> +S:	Supported
+> +F:	Documentation/devicetree/bindings/clock/starfive,jhb1*.yaml
+> +F:	drivers/clk/starfive/clk-starfive-jhb1*
+> +F:	include/dt-bindings/clock/starfive,jhb1*.h
 > +
-> +	return &priv->reg[idx].hw;
->  }
->  EXPORT_SYMBOL_GPL(jh71x0_clk_get);
->  
-> @@ -361,3 +366,88 @@ int jh71x0_reset_controller_register(struct jh71x0_clk_priv *priv,
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(jh71x0_reset_controller_register);
+>  STARFIVE JHB100 EXTERNAL INTERRUPT CONTROLLER DRIVER
+>  M:	Changhuang Liang <changhuang.liang@starfivetech.com>
+>  S:	Supported
+> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
+> index 51716655554f..cb246ae12c08 100644
+> --- a/drivers/clk/starfive/Kconfig
+> +++ b/drivers/clk/starfive/Kconfig
+> @@ -72,3 +72,13 @@ config CLK_STARFIVE_JH7110_VOUT
+>  	help
+>  	  Say yes here to support the Video-Output clock controller
+>  	  on the StarFive JH7110 SoC.
 > +
-> +int jh71x0_crg_probe(struct platform_device *pdev)
-> +{
-> +	const struct jh71x0_crg_domain_info *info;
-> +	struct jh71x0_clk_priv *priv;
-> +	unsigned int idx;
-> +	int ret;
+> +config CLK_STARFIVE_JHB100_SYS0
+> +	bool "StarFive JHB100 system-0 clock support"
+> +	depends on ARCH_STARFIVE || COMPILE_TEST
+> +	select CLK_STARFIVE_JH71X0
+> +	imply RESET_STARFIVE_JHB100
+> +	default ARCH_STARFIVE
+> +	help
+> +	  Say yes here to support the system-0 clock controller on the
+> +	  StarFive JHB100 SoC.
+> diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
+> index 199ac0f37a2f..d2ba83d7d02c 100644
+> --- a/drivers/clk/starfive/Makefile
+> +++ b/drivers/clk/starfive/Makefile
+> @@ -10,3 +10,5 @@ obj-$(CONFIG_CLK_STARFIVE_JH7110_AON)	+= clk-starfive-jh7110-aon.o
+>  obj-$(CONFIG_CLK_STARFIVE_JH7110_STG)	+= clk-starfive-jh7110-stg.o
+>  obj-$(CONFIG_CLK_STARFIVE_JH7110_ISP)	+= clk-starfive-jh7110-isp.o
+>  obj-$(CONFIG_CLK_STARFIVE_JH7110_VOUT)	+= clk-starfive-jh7110-vout.o
 > +
-> +	info = device_get_match_data(&pdev->dev);
-> +	if (!info)
-> +		return -ENODEV;
-> +
-> +	priv = devm_kzalloc(&pdev->dev, struct_size(priv, reg, info->num_clk),
-> +			    GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	spin_lock_init(&priv->rmw_lock);
-> +	priv->info = info;
-> +	priv->num_reg = info->num_clk;
-> +	priv->dev = &pdev->dev;
-> +	priv->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(priv->base))
-> +		return PTR_ERR(priv->base);
-> +
-> +	for (idx = 0; idx < info->num_clk; idx++) {
-> +		u32 max = info->clk_data[idx].max;
-> +		struct clk_parent_data parents[4] = {};
-> +		struct clk_init_data init = {
-> +			.name = info->clk_data[idx].name,
-> +			.ops = starfive_jh71x0_clk_ops(max),
-> +			.parent_data = parents,
-> +			.num_parents =
-> +				((max & JH71X0_CLK_MUX_MASK) >> JH71X0_CLK_MUX_SHIFT) + 1,
-> +			.flags = info->clk_data[idx].flags,
-> +		};
-> +		struct jh71x0_clk *clk = &priv->reg[idx];
-> +		unsigned int i;
-> +
-> +		if (!init.name)
-> +			continue;
-> +
-> +		if (init.num_parents > ARRAY_SIZE(parents))
-> +			return dev_err_probe(priv->dev, -EINVAL,
-> +					     "clock %s: too many parents (%u > %zu)\n",
-> +					     init.name, init.num_parents, ARRAY_SIZE(parents));
-> +
-> +		for (i = 0; i < init.num_parents; i++) {
-> +			unsigned int pidx = info->clk_data[idx].parents[i];
-> +
-> +			if (pidx & JH71X0_EXT_CLK_FLAG) {
-> +				pidx &= ~JH71X0_EXT_CLK_FLAG;
-> +				if (pidx >= info->num_ext_clk)
-> +					return dev_err_probe(priv->dev, -EINVAL,
-> +							     "clock %s: invalid external parent %u\n",
-> +							     init.name, pidx);
-> +
-> +				parents[i].fw_name = info->ext_clk[pidx];
-> +			} else {
-> +				if (pidx >= info->num_clk)
-> +					return dev_err_probe(priv->dev, -EINVAL,
-> +							     "clock %s: invalid parent index %u\n",
-> +							     init.name, pidx);
-> +
-> +				parents[i].hw = &priv->reg[pidx].hw;
-> +			}
-> +		}
-> +
-> +		clk->hw.init = &init;
-> +		clk->idx = idx;
-> +		clk->max_div = max & JH71X0_CLK_DIV_MASK;
-> +
-> +		ret = devm_clk_hw_register(&pdev->dev, &clk->hw);
-> +		if (ret)
-> +			return dev_err_probe(priv->dev, ret, "Failed to register clock %s\n",
-> +					     init.name);
-> +	}
-> +
-> +	ret = devm_of_clk_add_hw_provider(&pdev->dev, jh71x0_clk_get, priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return jh71x0_reset_controller_register(priv, info->rst_name);
-> +}
-> +EXPORT_SYMBOL_GPL(jh71x0_crg_probe);
-> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
-> index 322a05157faf..666d44e6a752 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh71x0.h
-> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.h
-> @@ -5,6 +5,7 @@
->  #include <linux/bits.h>
->  #include <linux/clk-provider.h>
->  #include <linux/device.h>
-> +#include <linux/platform_device.h>
->  #include <linux/spinlock.h>
->  
->  /* register fields */
-> @@ -29,6 +30,16 @@ struct jh71x0_clk_data {
->  	u8 parents[4];
->  };
->  
+> +obj-$(CONFIG_CLK_STARFIVE_JHB100_SYS0)		+= clk-starfive-jhb100-sys0.o
+> diff --git a/drivers/clk/starfive/clk-starfive-jhb100-sys0.c b/drivers/clk/starfive/clk-starfive-jhb100-sys0.c
+> new file mode 100644
+> index 000000000000..dd4d65f4e682
+> --- /dev/null
+> +++ b/drivers/clk/starfive/clk-starfive-jhb100-sys0.c
+> @@ -0,0 +1,148 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * Parent indexes with this bit set refer to an external clock, i.e. an entry
-> + * of jh71x0_crg_domain_info::ext_clk, instead of a clock provided by the CRG
-> + * itself. This keeps the external clock indexes independent of the number of
-> + * clocks the CRG provides, which in turn must stay below the flag; drivers
-> + * check this with a static_assert() on their clock table.
+> + * StarFive JHB100 System-0 Clock Driver
+> + *
+> + * Copyright (C) 2024 StarFive Technology Co., Ltd.
+> + *
+> + * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
+> + *
 > + */
-> +#define JH71X0_EXT_CLK_FLAG	BIT(7)
+> +
+> +#include <dt-bindings/clock/starfive,jhb100-crg.h>
+> +#include <linux/init.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "clk-starfive-jh71x0.h"
+> +
+> +/* external clocks */
+> +#define JHB100_SYS0CLK_OSC			JH71X0_EXT_CLK(0)
+> +#define JHB100_SYS0CLK_PLL0			JH71X0_EXT_CLK(1)
+> +#define JHB100_SYS0CLK_PLL1			JH71X0_EXT_CLK(2)
+> +#define JHB100_SYS0CLK_PLL2			JH71X0_EXT_CLK(3)
+> +
+> +static const char * const jhb100_sys0_ext_clk[] = {
+> +	"osc",
+> +	"pll0",
+> +	"pll1",
+> +	"pll2",
+> +};
 
-I'm really not a fan of this hack.
-In addition to being hackish it will limit your controllers to 127 internal clocks
-which I'm pretty sure is a limit you'll hit eventually.
+These are the hackish part I was referring to.
 
-I'd prefer if a parent was defined by a struct of yours, something like
+> +
+> +static const struct jh71x0_clk_data jhb100_sys0crg_clk_data[] = {
+> +	/* bmcpcierp */
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCPCIERP_NCNOC_MAIN, "bmcpcierp_ncnoc_main", 6,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCPCIERP_NCNOC_CFG, "bmcpcierp_ncnoc_cfg", 12,
+> +		    JHB100_SYS0CLK_PLL1),
+> +	JH71X0__DIV(JHB100_SYS0CLK_PCIE_REF_CML, "pcie_ref_cml", 24,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0_GATE(JHB100_SYS0CLK_BMCPCIERP_NCNOC_DATA_INIT, "bmcpcierp_ncnoc_data_init",
+> +		    0, JHB100_SYS0CLK_BMCPCIERP_NCNOC_MAIN),
 
-struct jh71x0_parent_data {
-	const char *fw_name; // <= external if not NULL
-	unsigned int internal_id; // <= id in your table if the above is NULL
-}
+I think the v6 that came before this had a bunch of critical clocks. None of those were critical after all ?
+You did test without passing clk_ignore_unused in the boot arguments ?
 
-With this, the bit, the macro that goes with and the table of external clock
-can all go away.
+> +	JH71X0_GATE(JHB100_SYS0CLK_BMCPCIERP_NCNOC_CFG_INIT, "bmcpcierp_ncnoc_cfg_init",
+> +		    0, JHB100_SYS0CLK_BMCPCIERP_NCNOC_CFG),
+> +	JH71X0_GATE(JHB100_SYS0CLK_BMCPCIERP_NCNOC_TARG, "bmcpcierp_ncnoc_targ",
+> +		    0, JHB100_SYS0CLK_BMCPCIERP_NCNOC_MAIN),
+> +	JH71X0_GATE(JHB100_SYS0CLK_BMCPCIERP_PCU, "bmcpcierp_pcu", 0, JHB100_SYS0CLK_OSC),
+> +	/* hostss0 */
+> +	JH71X0__DIV(JHB100_SYS0CLK_HOSTSS0_NCNOC_CFG, "hostss0_ncnoc_cfg", 12,
+> +		    JHB100_SYS0CLK_PLL1),
+> +	JH71X0__DIV(JHB100_SYS0CLK_HOSTSS0_NCNOC_DATA, "hostss0_ncnoc_data", 6,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0__DIV(JHB100_SYS0CLK_HOSTSS0_PHY_SCAN_400, "hostss0_phy_scan_400", 6,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0__DIV(JHB100_SYS0CLK_GPIO_ESPI0_EXT, "gpio_espi0_ext", 14,
+> +		    JHB100_SYS0CLK_PLL2),
+> +	/* bmcusb */
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCUSB_NCNOC_INIT, "bmcusb_ncnoc_init", 6,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCUSB_NCNOC_TARG, "bmcusb_ncnoc_targ", 6,
+> +		    JHB100_SYS0CLK_PLL1),
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCUSB_SCANCLK, "bmcusb_scanclk", 5,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0_GATE(JHB100_SYS0CLK_BMCUSB_480M_SCANCLK, "bmcusb_480m_scanclk",
+> +		    0, JHB100_SYS0CLK_BMCUSB_SCANCLK),
+> +	/* vce */
+> +	JH71X0__DIV(JHB100_SYS0CLK_VCE_NCNOC_INIT, "vce_ncnoc_init", 10,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0__DIV(JHB100_SYS0CLK_VCE_NCNOC_TARG, "vce_ncnoc_targ", 12,
+> +		    JHB100_SYS0CLK_PLL1),
+> +	/* bmcperiph2 */
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCPER2_NCNOC_INIT, "bmcper2_ncnoc_init", 6,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCPER2_NCNOC_TARG, "bmcper2_ncnoc_targ", 12,
+> +		    JHB100_SYS0CLK_PLL1),
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCPER2_CFG_400, "bmcper2_cfg_400", 8,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCPER2_CFG_125, "bmcper2_cfg_125", 10,
+> +		    JHB100_SYS0CLK_PLL1),
+> +	/* hostss1 */
+> +	JH71X0__DIV(JHB100_SYS0CLK_HOSTSS1_NCNOC_DATA, "hostss1_ncnoc_data", 6,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0__DIV(JHB100_SYS0CLK_HOSTSS1_PHY_SCAN_400, "hostss1_phy_scan_400", 6,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0_GATE(JHB100_SYS0CLK_HOSTSS1_PHY_SCAN_400_ICG_BUF,
+> +		    "hostss1_phy_scan_400_icg_buf", 0,
+> +		    JHB100_SYS0CLK_HOSTSS1_PHY_SCAN_400),
+> +	/* npu */
+> +	JH71X0__DIV(JHB100_SYS0CLK_NPU_NCNOC_INIT, "npu_ncnoc_init", 6,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	/* vout */
+> +	JH71X0__DIV(JHB100_SYS0CLK_VOUT_NCNOC_INIT, "vout_ncnoc_init", 6,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0__DIV(JHB100_SYS0CLK_VOUT_AUX, "vout_aux", 150,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	/* bmcperiph3 */
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCPER3_NCNOC_INIT, "bmcper3_ncnoc_init", 6,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	/* hostusb */
+> +	JH71X0__DIV(JHB100_SYS0CLK_HOSTUSB_NCNOC_INIT, "hostusb_ncnoc_init", 6,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	/* hostusbcmn */
+> +	JH71X0__DIV(JHB100_SYS0CLK_HOSTUSBCMN_CFG_480, "hostusbcmn_cfg_480", 5,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	/* bmcperiph1 */
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCPER1_NCNOC_INIT, "bmcper1_ncnoc_init", 6,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCPER1_CFG_800, "bmcper1_cfg_800", 4,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	/* bmcperiph0 */
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCPER0_NCNOC_INIT, "bmcper0_ncnoc_init", 6,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCPER0_CFG_400, "bmcper0_cfg_400", 8,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	JH71X0__DIV(JHB100_SYS0CLK_BMCPER0_CFG_800, "bmcper0_cfg_800", 8,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	/* gpu0 */
+> +	JH71X0__DIV(JHB100_SYS0CLK_GPU0_NCNOC_INIT, "gpu0_ncnoc_init", 10,
+> +		    JHB100_SYS0CLK_PLL0),
+> +	/* gpu1 */
+> +	JH71X0__DIV(JHB100_SYS0CLK_GPU1_NCNOC_INIT, "gpu1_ncnoc_init", 10,
+> +		    JHB100_SYS0CLK_PLL0),
+> +};
+> +
+> +static_assert(ARRAY_SIZE(jhb100_sys0crg_clk_data) <= JH71X0_EXT_CLK_FLAG);
 
-I suppose it means some change in your existing drivers too
+This could go away too with the rework I have suggested.
 
 -- 
 Jerome
