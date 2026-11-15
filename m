@@ -1,88 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794748827;
-	b=3Ok6l1X/a8IB96aU257uYAp6uKPNXuxClMJJLGaLw0IKsNMLndnJDb8V9BuM3kHsw0Ij
-	 YSprp++Dhj2jJxZBTHF094P79yckqlOKVzqY5G1c7IU4WK7N7QNl5sKruVxJNO9UFSOnu
-	 dYLsntCFAo42tsycU1mJIqaFjWFhbkTIl4SJzPRylHhqceQH6ClwnE/EiwUEG52LLDygv
-	 3MZNKA5y0qv4hxLvUFf3sEvfUMeMUnvuEsrrPTNAOepFWqaJY+KXJHAzFPba7OMaEwDmT
-	 Jh8xD0mnL+hXTYuRBDEuGqLeKRS1RvgJU5ERyUL/n1yWVRYN3KEYt9G1QaUrKC7lrVQ==
+	t=1794751333;
+	b=gCU/tpab7PfKialZi/fe+59hEP0OyKQjoQiEYohsfEphbnODcZzrM1QN0v1xlA3dntKy
+	 Ys0UGT3WDNerpbWkuISSQV7+vFIFImWbxlKnbCI04TC3uamAzMmCQm3ys7SYEkshXoyjD
+	 0IzI/n0KDXH43BjNZae5QEBTLoaWcwb35nOjYEN46GGNpTiYa/Jqu4lxSgSlFsDqjvYmg
+	 o0QpnZNaWKcdQp7Mpfza6XKctxM3HBD1sl+dqfLxSTlZkp0nHTbOiOIh6ivRUh2HtRLww
+	 QA3HT0bWiP78Wv5MxGArU3wEveBSO5psRYqlKkZkhNPF3NulOFWrGlF899Rxzxr+4Gw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794748827;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Reply-To:Subject:
-	 Content-Language:To:Cc:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=/rYsyjftvDCPeS9SbbyhKVYUDY9LVQRgCngM6FVnSFQ=;
-	b=Hd9ptD/KadYmn/6UX6wnhSI2C5qVTBI7kPaiGZDipPv5Y1gCneVE2p107GjvYm56+VEy
-	 E61ZzcbKZIwF7XNPkj+y3gOAV/20UUoFwlfDOMajkWA0RrvA51uABWl7w0VCRcjKx+XZe
-	 nenCnhuJxAi/kcC8O3cEdogHij77pTgQRRs2Wdazb+LSki0FWbeIXn+H+Dp6gzpzTHYnW
-	 vIXoPdLkvS7zw9w1+Ruf7vkYBz+x0nRWkYxXddyx3CTDr3XBY7kS6d6MHw+N3GDW38BcA
-	 N/ZTlzR5ndCbhZr73pgf/m+XBPxQpEbcl/IIQnHkeFo98N7qHzBn9HMp2M78cqbJCIw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794751333;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=z2MWIKnJJ/fCIM3N2m1iMGulOZFzm+PJBkPqJtMbyaA=;
+	b=wE3TyP+Ut8B7fdu5JHXV32jVa/671kHEcBuLT+qPdtvVUwpDEBXv6fY/kTu0n6cO/YhZ
+	 JTlRleZ0sTL0+LbJnCVhsYdOJ4uFUVYxtY9Gblv5K5mdcxgSgmQt/FqP2Y0a3PaI57ypr
+	 IxhsLFU4e6nuotp7rWxgxmgc6zmhq/WS3Ht/NzeKf0NuVBGWk7eJsCpilNoMJ+0wyttAt
+	 IzK6TVH4Hq8K+8jcWKcezTEQB7cr/T262fW7AKAehIO5zkN4CbIYEodLnzUnoAfYtrLB6
+	 4ZIN9PUwnrlHy+fjND4wre2OwnW303kKntmCFSuGYYHtm+gZIgzFFpgfciXZEgJlZQA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=zYyWL4GB;
-	arc=none smtp.remote-ip=74.125.82.44
-Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LawYJ4Tw;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E8C606A31E
-	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 13:20:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C9E8C606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BB8606A334
+	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 14:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=zYyWL4GB
-Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-1b3beeaf6f9so2822078c88.0
-        for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 05:20:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794748826; x=1795353626; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:content-language:subject:reply-to:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=/rYsyjftvDCPeS9SbbyhKVYUDY9LVQRgCngM6FVnSFQ=;
-        b=zYyWL4GBuf0DsAdvhYGsk1HKtQ4dzGXDITV2wnSBhAUnJTmKOesAjxxSywEZ2hHpzq
-         llR+jTI4Z1JZxjB9Zs0fQVKGcq7BQFZZHAXztEp/1F0X6UaDtEtWTPCGHc89IEy566yp
-         KA62XuLoFmxtWbwk/nye62TtvNTJZWospqclUElyMRJjlHq5ON5zlaLp3WAxDHFfiefR
-         xCc5jg/iosd6Uivwmng7ZT2W/KXXSPREMO6aEKpdQDmj6tLVYqjK0ys3pGi9AjM8db0U
-         5fifSAbg1/WkWX0MF0Ed+a6jZRero+oWYiNrPY0Jdu0dBlXkIjwPEWAEbIcliiwPxzni
-         Vp3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794748826; x=1795353626;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:content-language:subject:reply-to:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=/rYsyjftvDCPeS9SbbyhKVYUDY9LVQRgCngM6FVnSFQ=;
-        b=nCd+UmKTgUZL2qkIPxD0wz2wZpQ6jBzAPIZVrVUb6htBFwjMrPquS8SaPTWpyka1K9
-         rvShcA+IizMiCArh0Q5tgWl+LIooB6hEogUKxVxAc2gIPDZinkIygdtzElRncMbg8eq/
-         ap28laMOCHY8R3crRRzCGMeOGS6kBb0ijcXNiBKDXaB+NTZpT/ZpjKu+snfZpBD6Tkaf
-         ntzKQEKTD0IhoCn4Ar9zwGcoYpVzUnJY2Zl7uLLXRFEGiWjVUiIZzRAV042velprR0zW
-         eIjLkYj7RkjT0NWWsI1VjJaVpPTxfD80oSvPUlD07FBIqs9MEOm1oVAOcBO8ALVVIPEt
-         6eaA==
-X-Forwarded-Encrypted: i=1; AL+hErEUAMenLAcwePjV+zvXV91WNJ3IlBOlJ1w1LrklRYHtTW/hH3Kji0kKjQy5uZbOrkKgktEJv7vuzjw=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8dZ3ccVPlhab5S/95qh3NCUvE1RlOTzmM81Nt8sBdHaqWuHrtX
-	bKASBUFreHpFINuDnl8fV6+lH8pbrvbJs6T6i09/cIrsCOa0SCjiVMXR
-X-Gm-Gg: AYBFou3aeSCSZceAlD6hsJNgv0XRZF/GKClP7MZXEp2GI3894Yveq9ERPI4hfnunR7C
-	nyCsi9vCQ9PInz0I8e2iIOhLwWezikQxXUN8sqk5NJVJ7ep5NqHzkHVjrM4kfk5pUQRGVA2Ze2F
-	1KdItkacQ30K0qGxu2iaQLOZU2zCkmBpso5p+sq4afLWh6RqlMSSLIGc8NnZuRRl8ZXrw8kT/pT
-	5AGPBJxgdQe4JSF0yuBza3jm6KhFJQB719Ng5S/0oW6JKyVGWVpDzWXQfGVBysB1agtNdBP/hTE
-	TgnC8WUPLiJdDcpBvMsxp+yu70IzghrtgzERICF5SRnm2wVoTg92WBqpjfIrkCAcGtSogfDRLPb
-	VlG4vAaqCZ3SIx8YT+EOBf9TFdqSAwpjT0wfmEb4f/6YlWks8Tnjxi0pHl4s5YyPbvHeI1f5nBE
-	GoRL+s7NU0OQbOIvX52QGxCgaOcpLaDX3sitRVhwWUjLzZ9IAtc9sZRD1qKAwK8RfoJ2YSaR7tE
-	f1dCgXSvVXfKJ2y3EIZm2bUPP5/UfeblFLdkF/XlUmDmY8YWtGtuNfZiA8tyW62Io7X+Fb2y2e0
-	OJFiPT6LGkUjld5rx/QxG0YYlj5LE/sk0LIPYKivd/yr0MBwdWS+sWTnxtBGf+8TWnoJ
-X-Received: by 2002:a05:701a:c9c1:20b0:1ae:e7c4:9a15 with SMTP id a92af1059eb24-1b51828ef74mr4571335c88.3.1794748825692;
-        Sun, 15 Nov 2026 05:20:25 -0800 (PST)
-Received: from [192.168.35.213] ([218.50.238.131])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-379565d3e37sm28084123eec.24.2026.11.15.05.20.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Nov 2026 05:20:25 -0800 (PST)
-Message-ID: <9f85f4a5-ee4a-4c0e-b902-abea050bb204@gmail.com>
-Date: Sun, 15 Nov 2026 22:20:20 +0900
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LawYJ4Tw
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A03421F000C8
+	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 14:02:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794751333;
+	bh=z2MWIKnJJ/fCIM3N2m1iMGulOZFzm+PJBkPqJtMbyaA=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=LawYJ4TwvGqTNp8ftm33rlEmgQF3Qu6fFx3HWWsA9SN0Im34MzTtzf+j+A1wyPCvh
+	 Xls3Csqza885jSb8m5SaSsvHhLX7T7R9cY1ePWG8q88y/y4SrvOpjryA/Pzfzv2QDq
+	 SvUyiZGySPrGLe81mdDVZ4xavICgQm/qLcFzSLMwzUzdE9MOe58Y/11qdqmAo7bbBo
+	 5pJFIn4m0CD+T0u20JZE8hf3jFa0rZ5mVRd+8kPDRNevX/5z2h/8KYif0rQzxhhPJT
+	 wv5qsH7JSwFoacej9r/wLZ4I/mrxC8tYnaEUIZAn8FW7a6vzb57KGFtlWXlVo34iOZ
+	 dxCJqkKh44ApQ==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3ab4354db11so27182281fa.1
+        for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 06:02:13 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErGMqF/wlYIqFxDhaodxBBlokiQVwBofOGmG4juG30BzXj8QPPrvox8i9JWolin+7TfFy2NUF+m4nOI=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9rpnPkpMvIIWtFATXmoZbB+JzQADfBlEI4wEXLdPQpAhopAzZp
+	HqhkLVHeOqPEf6j7in6BA7dCH8ekbkPdFiuoPzv5Lyp72F9T9ZjCNP3r0fdDiKhZIajtoJpwaBQ
+	uG8lMIZI2Hocxf3WypuBfMZfED8yVbGU=
+X-Received: by 2002:a05:651c:a150:b0:3a9:d70c:f75e with SMTP id
+ 38308e7fff4ca-3ae2b4a1dd7mr26302241fa.7.1794751332015; Sun, 15 Nov 2026
+ 06:02:12 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -92,78 +59,384 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: chanwoo@kernel.org
-Subject: Re: [PATCH v2 0/8] PM / devfreq: rockchip-dfi: cleanups
-Content-Language: ko
-To: Sebastian Reichel <sebastian.reichel@collabora.com>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham
- <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
- Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, kernel@collabora.com
-References: <20260921-rockchip-dfi-cleanup-v2-0-43ff34ac8599@collabora.com>
-From: Choi Chanwoo <cwchoi00@gmail.com>
-In-Reply-To: <20260921-rockchip-dfi-cleanup-v2-0-43ff34ac8599@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20261115061102.229680-1-jernej.skrabec@gmail.com> <20261115061102.229680-7-jernej.skrabec@gmail.com>
+In-Reply-To: <20261115061102.229680-7-jernej.skrabec@gmail.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Sun, 15 Nov 2026 22:01:58 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64X2hbU4wjv7C4NNkQ6W=0PW5C0xSUp1bzdDiAGrJF+ww@mail.gmail.com>
+X-Gm-Features: AclHuK8-o_bvwblkCzsTqNM8KJ9djH1Jg7AEAEwZv4SuwLt3JJu8d-EKluowQT0
+Message-ID: <CAGb2v64X2hbU4wjv7C4NNkQ6W=0PW5C0xSUp1bzdDiAGrJF+ww@mail.gmail.com>
+Subject: Re: [PATCH v3 6/8] drm/sun4i: Add DE33 shared plane driver
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Samuel Holland <samuel@sholland.org>, mripard@kernel.org, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, 
+	simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, sboyd@kernel.org, 
+	Andre Przywara <andre.przywara@arm.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/22/2026 5:32 AM, Sebastian Reichel wrote:
-> This adds proper handling of the RK3588 clocks required for DDR memory
-> monitoring, which involves adding them to the clock driver and the DT
-> bindings first. The change is done in a backwards compatible way by
-> marking them as CLK_IGNORE_UNUSED and using optional clock get in the
-> DFI driver. The series also applies a few cleanups to the DFI driver
-> while at it. This is done in preparation for RK3576 support, which
-> will also come with some DFI specific clocks.
-> 
-> As everything is done backwards compatible, patches do not need to
-> be merged together. So Heiko can take the Rockchip specific patches
-> and Chanwoo Choi can take the DFI driver patches.
-> 
-> Changes in v2:
-> - Link to v1: https://patch.msgid.link/20260917-rockchip-dfi-cleanup-v1-0-4f00a97a69a6@collabora.com
-> - DT binding: Do not specify maxItems in the generic part as it has a list
->   of items
-> - DT binding: Only set minItems/maxItems for specific SoCs
-> 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+On Sun, Nov 15, 2026 at 2:11=E2=80=AFPM Jernej Skrabec <jernej.skrabec@gmai=
+l.com> wrote:
+>
+> DE33 makes its plane channels shared resources that mixers select through
+> routing registers in the display clock block. The existing mixer-local
+> plane initialization cannot represent that topology.
+>
+> Add a component that owns the shared plane register space, programs the
+> default channel-to-mixer mapping and creates each mixer's DRM planes
+> from that mapping.
+
+Just some nits.
+
+This should mention that this driver only gets hooked up in the last
+patch of the series. This patch alone doesn't register the driver.
+
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 > ---
-> Nicolas Frattaroli (8):
->       dt-bindings: clock: rk3588: add PCLK_DDR_MON_CH clocks
->       dt-bindings: devfreq: event: rockchip,dfi: add clocks to rk3588
->       PM / devfreq: rockchip-dfi: move to per-variant const structs
->       PM / devfreq: rockchip-dfi: add NO_INTERRUPT perf capability
->       PM / devfreq: rockchip-dfi: use bulk clock APIs
->       clk: rockchip: rk3588: add PCLK_DDR_MON_CH gate branches
->       PM / devfreq: rockchip-dfi: make RK3588 use its clocks
->       arm64: dts: rockchip: add dfi clocks on RK3588
-> 
->  .../bindings/devfreq/event/rockchip,dfi.yaml       |  70 +++++++--
->  arch/arm64/boot/dts/rockchip/rk3588-base.dtsi      |   4 +
->  drivers/clk/rockchip/clk-rk3588.c                  |   8 ++
->  drivers/devfreq/event/rockchip-dfi.c               | 160 ++++++++++++++-------
->  include/dt-bindings/clock/rockchip,rk3588-cru.h    |   4 +
->  5 files changed, 184 insertions(+), 62 deletions(-)
-> ---
-> base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
-> change-id: 20260917-rockchip-dfi-cleanup-feae6eefae9c
-> 
-> Best regards,
-> --  
-> Sebastian Reichel <sebastian.reichel@collabora.com>
+>  drivers/gpu/drm/sun4i/Makefile        |   3 +-
+>  drivers/gpu/drm/sun4i/sun50i_planes.c | 215 ++++++++++++++++++++++++++
+>  drivers/gpu/drm/sun4i/sun50i_planes.h |  43 ++++++
+>  3 files changed, 260 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/sun4i/sun50i_planes.c
+>  create mode 100644 drivers/gpu/drm/sun4i/sun50i_planes.h
+>
+> diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makef=
+ile
+> index bad7497a0d11..501e3d867918 100644
+> --- a/drivers/gpu/drm/sun4i/Makefile
+> +++ b/drivers/gpu/drm/sun4i/Makefile
+> @@ -16,7 +16,8 @@ sun8i-drm-hdmi-y              +=3D sun8i_hdmi_phy_clk.o
+>
+>  sun8i-mixer-y                  +=3D sun8i_mixer.o sun8i_ui_layer.o \
+>                                    sun8i_vi_layer.o sun8i_ui_scaler.o \
+> -                                  sun8i_vi_scaler.o sun8i_csc.o
+> +                                  sun8i_vi_scaler.o sun8i_csc.o \
+> +                                  sun50i_planes.o
+>
+>  sun4i-tcon-y                   +=3D sun4i_crtc.o
+>  sun4i-tcon-y                   +=3D sun4i_tcon_dclk.o
+> diff --git a/drivers/gpu/drm/sun4i/sun50i_planes.c b/drivers/gpu/drm/sun4=
+i/sun50i_planes.c
+> new file mode 100644
+> index 000000000000..22b9f104a391
+> --- /dev/null
+> +++ b/drivers/gpu/drm/sun4i/sun50i_planes.c
+> @@ -0,0 +1,215 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/* Copyright (c) 2025 Jernej Skrabec <jernej.skrabec@gmail.com> */
+
+Need to update the year.
+
+> +
+> +#include <drm/drm_device.h>
+> +
+> +#include <linux/device.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+
+> +#include <linux/of_graph.h>
+
+This is unused. Leftover from an older version?
+
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#include "sun50i_planes.h"
+> +#include "sun8i_ui_layer.h"
+> +#include "sun8i_vi_layer.h"
+> +
+> +static const struct sun50i_planes_quirks sun50i_h616_planes_quirks =3D {
+> +       .def_map =3D {
+> +               {
+> +                       .map =3D {0, 6, 7},
+> +                       .num_ch =3D 3,
+> +               },
+> +               {
+> +                       .map =3D {1, 2, 8},
+> +                       .num_ch =3D 3,
+> +               },
+> +       },
+> +       .cfg =3D {
+> +               .de_type        =3D SUN8I_MIXER_DE33,
+> +               /*
+> +                * TODO: All planes support scaling, but driver needs
+> +                * improvements to properly support it.
+> +                */
+> +               .scaler_mask    =3D 0,
+> +               .scanline_yuv   =3D 4096,
+> +       },
+> +};
+> +
+> +static const struct of_device_id sun50i_planes_of_table[] =3D {
+> +       {
+> +               .compatible =3D "allwinner,sun50i-h616-de33-planes",
+> +               .data =3D &sun50i_h616_planes_quirks
+> +       },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(of, sun50i_planes_of_table);
+> +
+> +struct drm_plane **
+> +sun50i_planes_setup(struct device *dev, struct drm_device *drm,
+> +                   unsigned int mixer)
+> +{
+> +       struct sun50i_planes *planes =3D dev_get_drvdata(dev);
+> +       const struct sun50i_planes_quirks *quirks;
+> +       struct drm_plane **drm_planes;
+> +       const struct default_map *map;
+> +       unsigned int i;
+> +
+> +       if (!of_match_node(sun50i_planes_of_table, dev->of_node)) {
+> +               dev_err(dev, "Device is not planes driver!\n");
+> +               return ERR_PTR(-EINVAL);
+
+return dev_err_probe();
+
+> +       }
+> +
+> +       if (!planes) {
+> +               dev_err(dev, "Planes driver is not loaded yet!\n");
+> +               return ERR_PTR(-EINVAL);
+
+return dev_err_probe();
+
+> +       }
+> +
+> +       if (mixer > 1) {
+
+Use ">=3D MAX_DISP" or  "!(mixer < MAX_DISP)" here?
+
+> +               dev_err(dev, "Mixer index is too high!\n");
+> +               return ERR_PTR(-EINVAL);
+
+return dev_err_probe();
 
 
-When I tried to apply them, there is conflict on devfreq-next branch.
-I'd like you to resend this series on based on devfreq-next and [PATCH v2 0/7] PM / devfreq: rockchip-dfi: RK3576 support.
+> +       }
+> +
+> +       quirks =3D planes->quirks;
+> +       map =3D &quirks->def_map[mixer];
+> +
+> +       drm_planes =3D devm_kcalloc(drm->dev, map->num_ch + 1,
+> +                                 sizeof(*drm_planes), GFP_KERNEL);
+> +       if (!drm_planes)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       for (i =3D 0; i < map->num_ch; i++) {
+> +               unsigned int phy_ch =3D map->map[i];
+> +               struct sun8i_layer *layer;
+> +               enum drm_plane_type type;
+> +
+> +               if ((i =3D=3D 0 && map->num_ch =3D=3D 1) || i =3D=3D 1)
+> +                       type =3D DRM_PLANE_TYPE_PRIMARY;
+> +               else
+> +                       type =3D DRM_PLANE_TYPE_OVERLAY;
+> +
+> +               if (phy_ch < UI_PLANE_OFFSET)
+> +                       layer =3D sun8i_vi_layer_init_one(drm, type, plan=
+es->regs,
+> +                                                       i, phy_ch, map->n=
+um_ch,
+> +                                                       &quirks->cfg);
+> +               else
+> +                       layer =3D sun8i_ui_layer_init_one(drm, type, plan=
+es->regs,
+> +                                                       i, phy_ch, map->n=
+um_ch,
+> +                                                       &quirks->cfg);
+> +
+> +               if (IS_ERR(layer)) {
+> +                       dev_err(drm->dev,
+> +                               "Couldn't initialize DRM plane\n");
+> +                       return ERR_CAST(layer);
 
--- 
-Best Regards,
-Chanwoo Choi
-Principal Engineer, Samsung Electronics
+return dev_err_probe();
+
+
+Otherwise,
+
+Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+
+> +               }
+> +
+> +               drm_planes[i] =3D &layer->plane;
+> +       }
+> +
+> +       return drm_planes;
+> +}
+> +
+> +static void sun50i_planes_init_mapping(struct sun50i_planes *planes)
+> +{
+> +       const struct sun50i_planes_quirks *quirks =3D planes->quirks;
+> +       unsigned int i, j;
+> +       u32 mapping;
+> +
+> +       mapping =3D 0;
+> +       for (j =3D 0; j < MAX_DISP; j++)
+> +               for (i =3D 0; i < quirks->def_map[j].num_ch; i++) {
+> +                       unsigned int ch =3D quirks->def_map[j].map[i];
+> +
+> +                       if (ch < UI_PLANE_OFFSET)
+> +                               mapping |=3D j << (ch * 2);
+> +                       else
+> +                               mapping |=3D j << ((ch - UI_PLANE_OFFSET)=
+ * 2 + 16);
+> +               }
+> +       regmap_write(planes->mapping, SUNXI_DE33_DE_CHN2CORE_MUX_REG, map=
+ping);
+> +
+> +       for (j =3D 0; j < MAX_DISP; j++) {
+> +               mapping =3D 0;
+> +               for (i =3D 0; i < quirks->def_map[j].num_ch; i++) {
+> +                       unsigned int ch =3D quirks->def_map[j].map[i];
+> +
+> +                       if (ch >=3D UI_PLANE_OFFSET)
+> +                               ch +=3D 2;
+> +
+> +                       mapping |=3D ch << (i * 4);
+> +               }
+> +               regmap_write(planes->mapping, SUNXI_DE33_DE_PORT02CHN_MUX=
+_REG + j * 4, mapping);
+> +       }
+> +}
+> +
+> +static const struct regmap_config sun50i_planes_regmap_config =3D {
+> +       .name           =3D "planes",
+> +       .reg_bits       =3D 32,
+> +       .val_bits       =3D 32,
+> +       .reg_stride     =3D 4,
+> +       .max_register   =3D 0x17fffc,
+> +};
+> +
+> +static int sun50i_planes_probe(struct platform_device *pdev)
+> +{
+> +       struct platform_device *clk_pdev;
+> +       struct device *dev =3D &pdev->dev;
+> +       struct sun50i_planes *planes;
+> +       struct device_node *np;
+> +       void __iomem *regs;
+> +
+> +       planes =3D devm_kzalloc(dev, sizeof(*planes), GFP_KERNEL);
+> +       if (!planes)
+> +               return -ENOMEM;
+> +
+> +       planes->quirks =3D of_device_get_match_data(dev);
+> +       if (!planes->quirks)
+> +               return dev_err_probe(dev, -EINVAL, "Unable to get quirks\=
+n");
+> +
+> +       np =3D of_parse_phandle(dev->of_node,
+> +                             "allwinner,plane-mapping", 0);
+> +       if (!np)
+> +               return dev_err_probe(dev, -EINVAL, "Missing mapping phand=
+le\n");
+> +
+> +       clk_pdev =3D of_find_device_by_node(np);
+> +       of_node_put(np);
+> +       if (!clk_pdev)
+> +               return dev_err_probe(dev, -EPROBE_DEFER, "Unable to get m=
+apping\n");
+> +
+> +       /* Regmap is registered by display clocks driver during its probe=
+. */
+> +       planes->mapping =3D dev_get_regmap(&clk_pdev->dev, NULL);
+> +       if (!planes->mapping) {
+> +               platform_device_put(clk_pdev);
+> +               return dev_err_probe(dev, -EPROBE_DEFER, "Unable to get r=
+egmap\n");
+> +       }
+> +
+> +       if (!device_link_add(dev, &clk_pdev->dev,
+> +                            DL_FLAG_AUTOREMOVE_CONSUMER)) {
+> +               platform_device_put(clk_pdev);
+> +               return dev_err_probe(dev, -EINVAL, "Failed to create link=
+\n");
+> +       }
+> +       platform_device_put(clk_pdev);
+> +
+> +       regs =3D devm_platform_ioremap_resource(pdev, 0);
+> +       if (IS_ERR(regs))
+> +               return PTR_ERR(regs);
+> +
+> +       planes->regs =3D devm_regmap_init_mmio(dev, regs, &sun50i_planes_=
+regmap_config);
+> +       if (IS_ERR(planes->regs))
+> +               return PTR_ERR(planes->regs);
+> +
+> +       sun50i_planes_init_mapping(planes);
+> +
+> +       dev_set_drvdata(dev, planes);
+> +
+> +       return 0;
+> +}
+> +
+> +struct platform_driver sun50i_planes_platform_driver =3D {
+> +       .probe          =3D sun50i_planes_probe,
+> +       .driver         =3D {
+> +               .name           =3D "sun50i-planes",
+> +               .of_match_table =3D sun50i_planes_of_table,
+> +       },
+> +};
+> diff --git a/drivers/gpu/drm/sun4i/sun50i_planes.h b/drivers/gpu/drm/sun4=
+i/sun50i_planes.h
+> new file mode 100644
+> index 000000000000..7be969491f9c
+> --- /dev/null
+> +++ b/drivers/gpu/drm/sun4i/sun50i_planes.h
+> @@ -0,0 +1,43 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/* Copyright (c) 2025 Jernej Skrabec <jernej.skrabec@gmail.com> */
+
+2026 now (and almost over ...)
+
+> +
+> +#ifndef _SUN50I_PLANES_H_
+> +#define _SUN50I_PLANES_H_
+> +
+> +#include "sun8i_mixer.h"
+> +
+> +/* mapping registers, located in clock register space */
+> +#define SUNXI_DE33_DE_CHN2CORE_MUX_REG 0x24
+> +#define SUNXI_DE33_DE_PORT02CHN_MUX_REG        0x28
+> +#define SUNXI_DE33_DE_PORT12CHN_MUX_REG        0x2c
+> +
+> +#define MAX_DISP       2
+> +#define MAX_CHANNELS   8
+> +#define UI_PLANE_OFFSET        6
+> +
+> +struct regmap;
+> +struct drm_device;
+> +
+> +struct default_map {
+> +       unsigned int map[MAX_CHANNELS];
+> +       unsigned int num_ch;
+> +};
+> +
+> +struct sun50i_planes_quirks {
+> +       struct default_map      def_map[MAX_DISP];
+> +       struct sun8i_layer_cfg  cfg;
+> +};
+> +
+> +struct sun50i_planes {
+> +       struct regmap                           *regs;
+> +       struct regmap                           *mapping;
+> +       const struct sun50i_planes_quirks       *quirks;
+> +};
+> +
+> +struct drm_plane **
+> +sun50i_planes_setup(struct device *dev, struct drm_device *drm,
+> +                   unsigned int mixer);
+> +
+> +extern struct platform_driver sun50i_planes_platform_driver;
+> +
+> +#endif /* _SUN50I_PLANES_H_ */
+> --
+> 2.43.0
+>
