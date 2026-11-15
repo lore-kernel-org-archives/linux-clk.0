@@ -1,88 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794753354;
-	b=QedRZRIc9yNhKe4z2Fz3Yq8xQboApNR5giM//++q3YyRJKOdyUHRm+YqGHZwB/tnZB/c
-	 3sSv7SsK3ksPobyQu64QPSHqOceiBulv9sXWuBS737oA9prvU7g563T9mglD7uzhw7+gH
-	 MlQif8/eWY0TiwZz2/+9dS/usbcdxAPr1EZwhMkG6uIZl+ADZ2ESwtuhKO87QiB8QSbOu
-	 Z1hprKOBM7UXLucTRMhLJQBdeuxSZ02TCB/zXVRw6ZWTsamjwvpdkmUPaxLUHGtdPo5lr
-	 gexHrbz3433JXpY0mn0nLgr8+P7Y5B/N3XQiEp2QuuP+O2Vj/hMU3tpX+i3urCFDzXA==
+	t=1794753458;
+	b=EJjJsoETSscgolqOuIPyBS5GFm6dtTgVerNrI5zKHdpD4iRpsl96MVlukoEzK4lbbcii
+	 JwJrvkIeuvYedq/X9Xw2DJ9Jd6/hPCTdx+xAYiRNUttL9+mEuG7kEWFAiZ1lGwyb4RADh
+	 daK1o2xu9xO5gsKvlB8DScJ5mj6G7suQFTCHr35YSripHs892kutXo3wuwuH41uXbvRqp
+	 qe33ZHrkZyl7djJkJhQAjUgZR7KQZJbYIC0RinhjhgmPZuJeOzVneolCHRkU0YUjkweNN
+	 lutoCxi+nbbyb0BPk5dGv7uHKS5AYYeeATvHUUiIFH1qWcZgxaxRVc1/bIhMWmWsQUQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794753354;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=Q25AUv/nmZnCtJRHkg8euYpXtkTU5reDQI8K/4xuZBI=;
-	b=fAHdZbtFA6yqdAvl929msbqr6J+quTeljvMjtijiluFOwkcHZcnF9qiLYfm+W/lDF/FV
-	 T3Gv9GggJyXNAJl5EWl1zMqA9iD+dfKGv/4nw4M9xcCuQ2MBkhYjq1Eq7cZq6IzU4N42n
-	 z1bk+iziA33YblxFJd5V8S2d62N8FoXLiekBIehvxcu65vybo385F614uKkbKV/L42pNK
-	 evDhn9Tu32CnBfuiN1pI7meUORODTBsJJFKyjIc8DK66tVgULyFoBXVcF2s5YJ6JEzkBa
-	 OBuzxfd5IgxP0fcp8qAK8RQ5Uox1hOE78xv503R/0VJ892FdNF854ldSrzfwVR1z9rw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794753458;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=Ou+D8+UafU+jp4Hw7Aa+E+nQ0dVT5dxPA488UsJVsjg=;
+	b=uuPCWtAuaokyTDEX40c/bilYF2gPL6ibQ9PeToBfV+/3ArJUWs8LFmdOtivLArmLcZRc
+	 22YhZSghNTrtOCbzP0XiMXcP9j7+9jc7VmfVbaSIS0SxtOX29OpbgLURXn/x6yi+IRT6x
+	 DUMRBIvx6kev40lLmtRZySxFcNKHSsARr6Q6BcPNRnfW4Boc2qZAUngx2Y2ROTBE4FkNf
+	 KiAxRt/UmjVm0z7rj9mZD1+c60TDCFr9LGMzx6euZHjIWxBmvOIRN6omWVejAD8i6s9Iu
+	 ctWc6TTTgVQ88qdJ0nulOH7AOvdjan0Q/Hlw87fZ7VN8sw9zdKYiXZh4UGgPHeYykZA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=tuxon.dev;
-	spf=pass smtp.mailfrom=tuxon.dev;
-	dkim=pass header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=NJvpdGf0;
-	arc=none smtp.remote-ip=209.85.221.46
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NAg6Qxne;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E885606A31E
-	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 14:35:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2E885606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BDB606A334
+	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 14:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=NJvpdGf0
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-49134c8509fso2652593f8f.1
-        for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 06:35:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1794753351; x=1795358151; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Q25AUv/nmZnCtJRHkg8euYpXtkTU5reDQI8K/4xuZBI=;
-        b=NJvpdGf0UljWwfUO9d+YyB8mADHGzofjIzmwLCya/rTM8Bc9ALk2m6nDoj0t6EhwSG
-         0PeRu0vK4OLX+5DuPPZRGfktsuzvxCKLMLjsXw+kPYsPHWBZ9pGI2Udfs+97w+qVfS9F
-         WBWgEHFIItS5MLUuIej3LZxdmUaXUETIx8T6Fsx6NpBPCj8hTqqsZhGtoQooz9vqIiSd
-         cb7F/57SoXjzWtu7Vo+aT2HordLafTWl/rDTIG162mILcWEy9qps9Xoe9HgrfpO+qB+F
-         t+P7BFo5JzbQWrJiFRZeCw3yA3NNSrFnuX+q7r5eO7VV43kjy2NV3XKODJLSHfQP5lK1
-         t+YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794753351; x=1795358151;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Q25AUv/nmZnCtJRHkg8euYpXtkTU5reDQI8K/4xuZBI=;
-        b=h70KiUXTnRakMXtIka1XGRCPB6DYLS5Za9ngoSqEG8fy06Y3CCcK672Kbqn66joCfV
-         VvTPVP6qGxQAkMBLWvYtvivkBiAeQe8y7qpncZ1s66GqBjIyTM7j9K5Ag81X0JebYrSN
-         QMx7ppH33qyrgzSE909ieANqbItJ/NPYwknlWIdFc0NYpHNY9n6yo5xBmW6fMaEp4Bjd
-         sXdeyj/g/eAznheh9cSPSn+CVI7z7Af7Z8qTjbCfIKP0eubqpIAmAD6aUgIGwCmJQNO6
-         VfVstLJhqzZJIGgOPNEaeJvGmYqT/Ak34M5Q3M7okueAO3XXtMeTwhX4vzWqOhTsOeWq
-         fejA==
-X-Forwarded-Encrypted: i=1; AL+hErE3hom3w9Ap/pbotuleU8Nm1ff5WYwmmer3bo1VN6xpXbCyUxtXAdlPt2t4vLBjzwr8drclDAHznZw=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/q0+UdO5zXws+3SGUW1D63AmgsEj+aga5zHV0Xc74srnK75igY
-	TuLlzux4I3h3QEMwd9AhA9doMoeTlFpJqYIkPS/SstFzGtuTYEv0KTy1+2e0QLosGU8=
-X-Gm-Gg: AYBFou3WtPHzPlqQLnLn5JCScVDjnMw4pvAEqi2gTwlWmu5ZtRWgnVPJaRZH7c4gq9p
-	c3ryQYmb5N3oacoqWuUFemWdK5eQSr9lS8joRdKS7f6GzQ0q9mZDGfTxXIyXMDcmxXQpM4A1szP
-	eZzjSHPeRqTivoZPP2w8d+O6DAgV2E7sWbaeCLj/nBygpQlzAX1iER1byq3OtWvk+tmRYAgMS/i
-	KJ4/camC3BQAXwQCKCl8SgzYbnmC/SX3SYqdFecUbFdjgUSS4hCCj4FGEykwppzoi3mDVjN9+MA
-	n+diiubB3AIKsSi90LlaU3R8ywd67k46T7mAFLtxlzaNecP63icKgoJ7ex5B2uVV2QkUs4rmJEa
-	qbHbnO/HjlhrH/WaiyvYVHClokifwnG1H940zIgJaLKVYsmKk/kE5bdMKuE7NUgNjG37L+c2gU8
-	xbhdE5jAA92zCs389WdhQYiK9bll64lL3of5CZSjng1x4oR9Mjo4nvzhs69Np7wKrfS8Loj3FEw
-	4k1v7/xf6Mjtm0RY4rrP/fxE2NXRetd7nrr/O5HTPjq4ylg8jWglASPetE0hTOt6Llu/kN01Y6o
-	6hPfzcde09ihyzrfFMPzXtR3mU0wyTUErmtKQw==
-X-Received: by 2002:a05:6000:1614:b0:48e:7b12:aca5 with SMTP id ffacd0b85a97d-49c72e85eadmr12207691f8f.46.1794753350909;
-        Sun, 15 Nov 2026 06:35:50 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.114])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5d03b10fsm18730077f8f.1.2026.11.15.06.35.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Nov 2026 06:35:49 -0800 (PST)
-Message-ID: <0ab96156-9c28-48bf-9c91-d1c9ecf90d5d@tuxon.dev>
-Date: Sun, 15 Nov 2026 16:35:47 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NAg6Qxne
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 775AA1F00925
+	for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 14:37:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794753458;
+	bh=Ou+D8+UafU+jp4Hw7Aa+E+nQ0dVT5dxPA488UsJVsjg=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=NAg6QxneUukEEMO/5KyW40RXWbYpgoyRdO8F0fApuPvpzdbZcgBdFBzuCnHyRQKm3
+	 1i6xmcO08M3XbiEER05ZsQg9jmA1Vy/qXSm+OWetsz18ImZeiLjNaR7UPDWW9aaU5I
+	 rsLIS80li64OvTApTvnSGNz7LwuLNAvHA45p+thSHkKJ+LcDj9MqbNkZg0mTsuQd0D
+	 7R6vbWgXJT+G5IOfRUY+hU6vUdr32dk0l0VlJng9RBdywzBNq7vPLXCkl8muse76JR
+	 XjTnh0GNCu2oTpBV9xi4gQi54wL67zSbAJkPQlWlZzkJ7wfd+DOBLocz7YsULyMr0T
+	 TCXWp2BHHKLaQ==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3adfe77d336so27722051fa.1
+        for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 06:37:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErHt4S/odaXGsvN2Bd0zIN8op5ZE43AiqmzCe2BIOTU+/TDzU7aTXpFnmNvmis7p8pWX6ikYlos8qvU=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8nYrMu0Sbya9ZpZaP7EajLMfInFL0WrHqBjUliSDUPFVDq6MA2
+	ksICu6zs1qVxWdUjZ2KU5h+xV59NE1T+WHwqUL6shB4NV2FkYgb7Kl8M62Qf92YKwgb+oUrLvi8
+	BfxyVwmNnKpAShrOBsWkoAq9/wv2rG1I=
+X-Received: by 2002:a2e:be8c:0:b0:3a9:9a2e:27fd with SMTP id
+ 38308e7fff4ca-3ae2b35bc76mr26369541fa.0.1794753456820; Sun, 15 Nov 2026
+ 06:37:36 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -92,67 +59,138 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 14/16] ARM: dts: microchip: sam9x60: Add OTPC node
-To: Alexander Dahl <ada@thorsis.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Ryan Wanner <ryan.wanner@microchip.com>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-References: <20261105110715.2486432-1-ada@thorsis.com>
- <20261105110715.2486432-15-ada@thorsis.com>
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20261105110715.2486432-15-ada@thorsis.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20261115061102.229680-1-jernej.skrabec@gmail.com>
+ <20261115061102.229680-9-jernej.skrabec@gmail.com> <CAGb2v64wZv7TV1Jb-r0qtvRz=dWWO_YkhYxMwxBNcyVUoKi9VQ@mail.gmail.com>
+In-Reply-To: <CAGb2v64wZv7TV1Jb-r0qtvRz=dWWO_YkhYxMwxBNcyVUoKi9VQ@mail.gmail.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Sun, 15 Nov 2026 22:37:23 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67Kh_dTmZ715-RSsQD=Y=hjmi2kZ0ESLqxxs8aPZ7ydaA@mail.gmail.com>
+X-Gm-Features: AclHuK_SACmwWg6PkvqxFn5K18kN5QhlBxadj6BOscc2Q_hjlnBtJkiANF8wPgA
+Message-ID: <CAGb2v67Kh_dTmZ715-RSsQD=Y=hjmi2kZ0ESLqxxs8aPZ7ydaA@mail.gmail.com>
+Subject: Re: [PATCH v3 8/8] drm/sun4i: Switch DE33 to split plane bindings
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Samuel Holland <samuel@sholland.org>, mripard@kernel.org, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, 
+	simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, sboyd@kernel.org, 
+	Andre Przywara <andre.przywara@arm.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Alexander,
+On Sun, Nov 15, 2026 at 10:26=E2=80=AFPM Chen-Yu Tsai <wens@kernel.org> wro=
+te:
+>
+> On Sun, Nov 15, 2026 at 2:11=E2=80=AFPM Jernej Skrabec <jernej.skrabec@gm=
+ail.com> wrote:
+> >
+> > The shared plane driver and split register resources are now in place.
+> > Switch DE33 mixer discovery to the new bindings and remove the legacy
+> > per-mixer plane setup. Mixer register space now covers only display
+> > blending control, so limit its regmap accordingly.
+> >
+> > The old DE33 binding is not supported anymore, since it can't describe
+> > shared planes and was never used by any device tree. If it's detected,
+> > print an error asking the user to update the device tree, instead of
+> > failing silently or misusing the plane register space as blender
+> > registers.
+> >
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun8i_mixer.c | 195 ++++++++++++++++++++--------
+> >  drivers/gpu/drm/sun4i/sun8i_mixer.h |  10 +-
+> >  2 files changed, 140 insertions(+), 65 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4=
+i/sun8i_mixer.c
+> > index dbde80b32080..0970be6aa035 100644
+> > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > @@ -13,6 +13,7 @@
+> >  #include <linux/of.h>
+> >  #include <linux/of_device.h>
+> >  #include <linux/of_graph.h>
+> > +#include <linux/of_platform.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/reset.h>
+> >
+> > @@ -25,6 +26,7 @@
+> >  #include <drm/drm_probe_helper.h>
+> >
+> >  #include "sun4i_drv.h"
+> > +#include "sun50i_planes.h"
+>
+> Nit: doesn't seem to follow the order we use elsewhere. I think we normal=
+ly
+> would do:
+>
+>     sun4i_drv.h
+>     sun8i_*
+>     sun50i_planes.h
+>
+> >  #include "sun8i_mixer.h"
+> >  #include "sun8i_ui_layer.h"
+> >  #include "sun8i_vi_layer.h"
+>
+> [...]
+>
+> > @@ -566,12 +582,34 @@ static int sun8i_mixer_bind(struct device *dev, s=
+truct device *master,
+> >         if (!mixer->cfg)
+> >                 return -EINVAL;
+> >
+> > +       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33) {
+> > +               /*
+> > +                * The original DE33 binding described planes as part o=
+f
+> > +                * the mixer, which can't work with more than one mixer=
+.
+> > +                * It was never used by any device tree, so it's not
+> > +                * supported.
+> > +                */
+> > +               if (of_property_match_string(dev->of_node, "reg-names",
+> > +                                            "layers") >=3D 0 ||
+>
+> No need to wrap this bit.
+>
+> > +                   !of_property_present(dev->of_node, "allwinner,plane=
+s"))
+> > +                       return dev_err_probe(dev, -EINVAL,
+> > +                                            "Unsupported DE33 mixer bi=
+nding, please update the device tree\n");
+> > +
+> > +               mixer->engine.ops =3D &sun50i_engine_ops;
+> > +       } else {
+> > +               mixer->engine.ops =3D &sun8i_engine_ops;
+> > +       }
+> > +
+> >         regs =3D devm_platform_ioremap_resource(pdev, 0);
+> >         if (IS_ERR(regs))
+> >                 return PTR_ERR(regs);
+> >
+> > -       mixer->engine.regs =3D devm_regmap_init_mmio(dev, regs,
+> > -                                                  &sun8i_mixer_regmap_=
+config);
+> > +       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33)
+> > +               mixer->engine.regs =3D devm_regmap_init_mmio(dev, regs,
+> > +                                                          &sun50i_mixe=
+r33_regmap_config);
+> > +       else
+> > +               mixer->engine.regs =3D devm_regmap_init_mmio(dev, regs,
+> > +                                                          &sun8i_mixer=
+_regmap_config);
+>
+> At some point we need to move most of the bind function to the probe func=
+tion.
+> None of the devm_* stuff gets released if the bind function fails.
 
-On 11/5/26 13:06, Alexander Dahl wrote:
-> The One-Time Programmable (OTP) Memory Controller (OTPC) is the secure
-> interface between the system and the OTP memory.  It also features the
-> Unique Product ID (UID) registers containing a unique serial number.
-> 
-> See datasheet (DS60001579G) sections "7. Memories" and "23. OTP Memory
-> Controller (OTPC)" for reference.
-> 
-> Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> ---
-> 
-> Notes:
->      v4:
->      - Dropped new microchip,sam9x60-otpc compatible,
->        use microchip,sama7g5-otpc instead
->      
->      v3:
->      - Removed needless header include
->      - Removed clock-names, not part of bindings anymore, and not used by driver
->      
->      v2:
->      - squashed with patch adding the clock properties
-> 
->   arch/arm/boot/dts/microchip/sam9x60.dtsi | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> index 4b777c61c1e09..996b13300ca06 100644
-> --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> @@ -155,6 +155,14 @@ sdmmc1: sdio-host@90000000 {
->   			status = "disabled";
->   		};
->   
-> +		otpc: efuse@eff00000 {
-> +			compatible = "microchip,sama7g5-otpc", "syscon";
-> +			reg = <0xeff00000 0xec>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
+It seems I was wrong. Though it probably still makes sense to move anything
+that could return -EPROBE_DEFER to the probe function to make it fail / ret=
+ry
+early.
 
-#address-cells, #size-cells are not needed as of now.
 
-Thank you,
-Claudiu
+ChenYu
