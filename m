@@ -1,86 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.180.15
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794729328;
-	b=FnTGQ/gfjYEt+f5zEZXniOZVE83QBC292/xv1JrvCKN3zG5AgPofbvsjQ9KqQjXQOMZl
-	 Bt3HL4gy2e8z1IvjPi8PwdBkcH7mVAC8mVg/oHLcYtQ6ifChO5pl0z8Rzbo0WaWrE9W1s
-	 TkOo7JHTfu4B0XZgcs2RretSLFM6jUapLlRAC/EgTE7qe2wpZJYwPOLA26ZMt7tBY8yGR
-	 yzBBURhh0qafvCGQ/5gmWGgiU21ECGy0C86iO71PX38tBg11QzOzl/eH1vI80rexJfVTx
-	 wkXiJiqridf8Wsujxf8pNFO30el6rQ2EFRGwMz670unJuA74taskO4JDwQHvt4nWrHQ==
+	t=1794731503;
+	b=IJ0UjhKRqBLvzT6n3W7SSPGV34ITt7N4hNDQftloyi1qbBzhiCe9mdSVZPi+NLPYbGNq
+	 j8clypshlKhthiTZd3kyGvvCBL3aRbH2EpI2NQuv7Z+4dRXQ8bWor2YYpED08LFHmjU5Y
+	 T1RumuKa22k7NZhkise36qRugrY75wTARTAVg+UnkmIzLwm3jQxAw5WKNWbZdMjiV4y2Z
+	 pQj7g7WjJ4Yii3ab5SAae0O6Lf8IIG8/IjYAViF3ZDMgygEYGCrQz5nuuKwOAEC/z2u9h
+	 VFziWmkFJv8UaacbK+HPvsgylHJn07kG6TI/eCHNFLkEe/WqpkO0LIRUvC2H6V4ahpw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794729328;
-	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version:X-ZohoMailClient;
-	bh=uLrkbNalekNKLkCB0XNj+22wcuzKD0fuIFqvheTwm3o=;
-	b=SPHoOvqq+OCP/NI/BMqWL1MHq1EFBEQ4SPyA2AQ2+JnUzCK9rQN2qHz4bah196NGjNSU
-	 qqaC9liJZ8f7krhEhs4fdb2ZS37ON7QQifADpF0nv8birfGn2pDD0N0ppCz2ot6xDcc9m
-	 zu0wKvYw+Fyrf/2f34Y7mOXwd15UytotYx6jTxs94TC2W5SYjvJyNe4WT6KJfhRM2O7gC
-	 Jpvsr4P9k8b3hY0PC68q1q6Rg8H0Gt2zkbExKcsDFZngEMxApLkWTt1GmzTd3Nc51H0Z6
-	 Y6mKfYycqoTaxYWB1uXqV4wyrf9fSXCaWklV+y04hhYDHA5MnUW3wyoffNAKbU8Qpig==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794731503;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=aFeYl4T8YSSyDpYz53OCJzQoOO6eMGhxEhZmG97u5pM=;
+	b=qMHt03FlHCEsSIC7SbbEzlu4WF26ZgvlVgBnOmoDZsEf7ly9Xnee6/NgHEu7/0GkkIrv
+	 uBxVGSxzIaTvsz632TLedHboDnfIEOUUeNE0d6VGb2zUPWyjPQAZOt1F01aiBUlXXvzPi
+	 VPo8hkh/w2YM44Yvn5kdLFIXSXoT6LzBvRDrEGaf3857UKqkYsLcr55tLtssCihOk/IYA
+	 aDQSqKyK3mfEURXoS0ij7vhydhPr/iRAV6bBSmIp8HGrm0Owy8nPGUUtA66IEKGYFqSrG
+	 n8yUolEzwUlZ45eNNuXMiZa61GjGtrFdHytywAQAUrgwftPm5pOWJ9+i5hotkeoe6QQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=icenowy.me;
-	spf=pass smtp.mailfrom=icenowy.me;
-	dkim=pass header.d=icenowy.me header.i=@icenowy.me header.a=rsa-sha256 header.s=zmail2 header.b=HXT89uKD;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.180.15
-Received: from sender6-op-o15.zoho.com (sender6-op-o15.zoho.com [165.173.180.15])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YXpjp03n;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0F2606A31A;
-	Sun, 15 Nov 2026 07:55:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1E0F2606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696B9606A31F;
+	Sun, 15 Nov 2026 08:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=@icenowy.me header.a=rsa-sha256 header.s=zmail2 header.b=HXT89uKD
-ARC-Seal: i=1; a=rsa-sha256; t=1794729276; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=PzpbNvrjLiWmMMQpYIFs6kNtE5aAFPG95KjK5KvlXphkFJSQWxIkxHJ4ewsm4PYP3Mu0PpJusYSynaTno95IPepvJSuojmDTtnqDPrMUmq4G0/DTo6yfAJQOclFVYQvcm8r9jx8WmNHum1iqeQh818u9gkDKzaozdGAAGHtdC0Q=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1794729276; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=uLrkbNalekNKLkCB0XNj+22wcuzKD0fuIFqvheTwm3o=; 
-	b=UY3QFzh2y8YKc6dOyLqCWIN0cb0Dg83WZRST7n5TKEVlzHkytkmluI80+r9b3AeVwHbIKNNmnJpUiRGJWOlG6Oq0XE7DX4O/OVg10DOFJm/HQlxdTTmMviT9RldpbxtRZK4bQjwZBY01n70Wg4cSQz26p/LS7DENhlA37eiS7S0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: a=rsa-sha256; b=HXT89uKDo45p/IEIvQZmTbsoA3f6lkwMkgKc83FYWPHSHvSS15qcZRoGwBJLRFlK3r88KFW6epg9hZH4+rukeSGfXRkgyl8GBU8U4o+d67P6qUoaL0v4Yb7iW8sEeP4dCB5mNz08q3mkik23j6b8f3x9/z9Dkdu91sV4nbhUU124g6M50i1ZHcaboD1mp9kVDGqn16XGZ+iuOyT5ZYmtQIVLzVE5ONA+HqL48LJIG0cJqY2hBYAiW7gg5VRq1n3xH9RaU8xdBXCa6d97Jg67wDJu+K4XcnskstUIPVU0vYe8dbOM1UW5DzEoRv1CsSaC6v3iV3GdQZsrqRdYtx57OQ==; c=relaxed/relaxed; s=zmail2; d=icenowy.me; v=1; bh=uLrkbNalekNKLkCB0XNj+22wcuzKD0fuIFqvheTwm3o=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
-Received: by smtp.zohomail.com with SMTPS id 1794728372584790.9071811696919;
-	Sat, 14 Nov 2026 23:39:32 -0800 (PST)
-Message-ID: <a6b616df57285440326043f5546affe9a64fd1ca.camel@icenowy.me>
-Subject: Re: [PATCH 19/19] MAINTAINERS: add an entry for the Allwinner V861
- SoC
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Jernej =?gb2312?Q?=810=947krabec?= <jernej.skrabec@gmail.com>, 
-	gaohan@iscas.ac.cn, Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt	
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti	
- <alex@ghiti.fr>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Guo Ren	
- <guoren@kernel.org>, Thomas Gleixner <tglx@kernel.org>, Radu Rendec	
- <radu@rendec.net>, Samuel Holland <samuel.holland@sifive.com>, Daniel
- Lezcano	 <daniel.lezcano@kernel.org>, Anup Patel <anup@brainfault.org>,
- Stephen Boyd	 <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet	 <jbrunet+clk@baylibre.com>, Chen-Yu Tsai <wens@kernel.org>,
- Samuel Holland	 <samuel@sholland.org>, Philipp Zabel
- <p.zabel@pengutronix.de>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Maxime Ripard <mripard@kernel.org>, Linus
- Walleij	 <linusw@kernel.org>, Andre Przywara <andre.przywara@arm.com>, 
-	linux-sunxi@lists.linux.dev
-Cc: Han Gao <rabenda.cn@gmail.com>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>,
- devicetree@vger.kernel.org, 	linux-csky@vger.kernel.org,
- linux-clk@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
- linux-rtc@vger.kernel.org, 	linux-gpio@vger.kernel.org
-Date: Sun, 15 Nov 2026 15:39:17 +0800
-In-Reply-To: <G7_h6i47RcuqvaGeHxw_dw@gmail.com>
-References: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
-	 <20261114-v861-v1-19-eb71ec3ee523@iscas.ac.cn>
-	 <45f41ca4bcc76a6c5d0b9180c6492308ec3e85c9.camel@icenowy.me>
-	 <G7_h6i47RcuqvaGeHxw_dw@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YXpjp03n
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794731503;
+	b=RCm1fi/bqNf9QtzHIv8cjl5611YMFo3m83QDyBDXKg5Z+CfEtisyBMLkzMvdmBBBi2MJ
+	 vGlZR5OpNdtwncrcm4VPP4X5rMAkOpxCaPNLN1jJ5XLqRQRdVgecGpSd2RiwBPt46Q/Q8
+	 cHI7MC/JijIPb6u8kVD9f2yavnm0C47jGNiEzb30DJGxCHh4CXeTt2CclGXIzzSmV+flX
+	 UkTHZhDdKM78M9EmZxiY1sAsIKjNKI/t0mqRpPSO27BmAHj/8RkF9wqhFajIBuRCWoxtU
+	 PMSMZfv3NQEAwa0pM5U4nQ1BEmnngTYqBfauKERU6GZPbCZHMR6XeMHEmjTlRVDDCmQ==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794731503;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=aFeYl4T8YSSyDpYz53OCJzQoOO6eMGhxEhZmG97u5pM=;
+	b=O3QwJi5BmVSqmMaikZLDqbhsGj2xdq4szwfAf7IfEWFgLcdKsqQBK812wAljyN2Iz6ia
+	 +Mt2rOxQ0O1abgVey8PbQwuEKyjIR0iaVhUpyrdpFYxWrtuDPfeI2xCj11I8CXTKjnhEb
+	 tRncRhVktJkN/kJmeldeZq6UxMhEzx+0FksmQJ4h+0YAvnG36MGJZ/Np8wlJmX2mQDfKh
+	 TanNBkTC6uLym+n+/gbduTc304fvh9/IY/ScwFY3Pl92yFF8xKwGYNxv5Y3P3ZOOwlg/i
+	 KcJbuywnLv4DBMBQNvhNS6EGz1oV7RPE2ufHIppOeF0j4pwDlUkkfZ5fQrTKjWv06Rw==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id A32111F000C4;
+	Sun, 15 Nov 2026 08:31:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794731503;
+	bh=aFeYl4T8YSSyDpYz53OCJzQoOO6eMGhxEhZmG97u5pM=;
+	h=From:Date:Subject:To:Cc:Reply-To;
+	b=YXpjp03nCUNQHMutdG82lQRp+51FuSkwy2Oi8jJAk9vOe33BLDS4OPXLtFYHBaeks
+	 FFsgGsnjSg1x5X3aOqEEAW2zTSwXpIDq2AEecAda2BUXa7mUtiz0It5oj3YxmnQs15
+	 gZ89vO56FTsz5PJWFpnUshZ339mD6v0a3Y62Y2g7xu4z8/lRAQ50ltU3iUAg88nzXr
+	 GNNqEXKo6Tmj026fBD3x18KUxT/Oc7c7qj2K3+GYUeBSeDzWSkPBQiwRRSxOJX5vrO
+	 nw73f5+CUUmHDsIcwCTNN6xdmA+K4wEel2ZHsM7zamrUYPj6twDazDJpHbQKj8f07C
+	 zH3sOwsXOeQ1A==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 06E3A49FE6;
+	Sun, 15 Nov 2026 08:31:42 +0000 (UTC)
+From: Arun Iyengar via B4 Relay <devnull+aiyengar1990.gmail.com@kernel.org>
+Date: Sun, 15 Nov 2026 08:31:42 +0000
+Subject: [PATCH] clk: sunxi-ng: h616: Gate the PLLs with their output
+ enable bit
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -90,83 +83,188 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261115-h616-pll-output-gate-v1-1-4cb3fc4d6c48@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMTQqDMBBA4avIrDvg2BCIV5EuYjLVKaIhP1IQ7
+ 25sl9/ivQMSR+EEfXNA5F2SbGsFPRpws10nRvHV0LWdJiKFsyaNYVlwKzmUjJPNjM74p1dWtYY
+ N1DREfsv3tx1ef6cyftjl+wXneQFswm10eAAAAA==
+X-Change-ID: 20261114-h616-pll-output-gate-c9d3d4a409e9
+To: Chen-Yu Tsai <wens@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: Andre Przywara <andre.przywara@arm.com>, linux-clk@vger.kernel.org, 
+ linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Arun Iyengar <aiyengar1990@gmail.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794731501; l=5371;
+ i=aiyengar1990@gmail.com; s=20261110; h=from:subject:message-id;
+ bh=5Vv85VfVPju/Igwsb+cpuc7jYn8XWlxuDjDD7l4TQCg=;
+ b=QCRHF0O3JplLAB6RsnHmUj4RBDxn54eIU3pvv4s3WPOBKl1ni4J/ys9QUw1OQKW1ERki6XpdX
+ WcXhHQLNsjxC4yOr27rLRlEnzJtvn0NIrqp2V24ANDTjX/Rk8AxfZpV
+X-Developer-Key: i=aiyengar1990@gmail.com; a=ed25519;
+ pk=zXpRgUTrhaFe6jLyPqbBy3ccfkj04w0g2690Wv3mg+0=
+X-Endpoint-Received: by B4 Relay for aiyengar1990@gmail.com/20261110 with
+ auth_id=1480
+X-Original-From: Arun Iyengar <aiyengar1990@gmail.com>
+Reply-To: aiyengar1990@gmail.com
+Content-Transfer-Encoding: 7bit
 
-=E5=9C=A8 2026-11-15=E6=97=A5=E7=9A=84 08:32 +0100=EF=BC=8CJernej =C5=A0kra=
-bec=E5=86=99=E9=81=93=EF=BC=9A
-> Dne nedelja, 15. november 2026 ob 06:11:31 Srednjeevropski standardni
-> =C4=8Das je Icenowy Zheng napisal(a):
-> > =E5=9C=A8 2026-11-14=E5=85=AD=E7=9A=84 06:33 +0800=EF=BC=8CHan Gao via =
-B4 Relay=E5=86=99=E9=81=93=EF=BC=9A
-> > > From: Han Gao <gaohan@iscas.ac.cn>
-> > >=20
-> > > Add myself as maintainer for the V861 bindings, clock and pin
-> > > control
-> > > drivers and device trees.
-> >=20
-> > I think traditionally sunxi do not add maintainers for specific
-> > SoCs.
-> >=20
-> > Maybe you should patch the regexp of "ARM/Allwinner sunXi SoC
-> > support"
-> > item instead.
->=20
-> Usually no entries are added at all.
->=20
+From: Arun Iyengar <aiyengar1990@gmail.com>
 
-The N: clause in "ARM/Allwinner sunXi SoC support" currently only
-contains `sun[25]0i` for two-digit IDs, so I think sun55i/sun60i is
-also not matched yet?
+Gate the H616 PLLs with the output enable bit (27) instead of the enable
+bit (31), which powers the PLL down, as the manual (3.3.3.6) recommends
+and the A100, D1 and A523 drivers do. Power them up once at probe.
 
-BTW a random thought: should sunXiwN be accepted name now? I found that
-qcom now speaks SoC codenames (e.g. nord, kodiak, etc) instead of
-market names, and this might help pre-launch mainlining (well, if
-Allwinner, or at least some contractor, is going to do it...).
+On an Orange Pi Zero2, powering pll-video0 down at 453 MHz crashes the
+CPU doing the write.
 
-Thanks,
-Icenowy
+Fixes: 88dde5e23da1 ("clk: sunxi-ng: Add support for the Allwinner H616 CCU")
+Signed-off-by: Arun Iyengar <aiyengar1990@gmail.com>
+---
+No Cc: stable: the crash needs out-of-tree H616 HDMI. Tested on an
+Orange Pi Zero2 (7.3.4 with HDMI patches): the failing mode set 40
+times without an oops. Idle power not measured.
 
->=20
-> Best regards,
-> Jernej
->=20
-> >=20
-> > Thanks,
-> > Icenowy
-> >=20
-> > >=20
-> > > Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
-> > > ---
-> > > =C2=A0MAINTAINERS | 12 ++++++++++++
-> > > =C2=A01 file changed, 12 insertions(+)
-> > >=20
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 93abbb315065..dfc300dc1eb2 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -24031,6 +24031,18 @@ F:	drivers/irqchip/irq-riscv-intc.c
-> > > =C2=A0F:	include/linux/irqchip/riscv-aplic.h
-> > > =C2=A0F:	include/linux/irqchip/riscv-imsic.h
-> > > =C2=A0
-> > > +RISC-V ALLWINNER V861 SoC SUPPORT
-> > > +M:	Han Gao <gaohan@iscas.ac.cn>
-> > > +L:	linux-riscv@lists.infradead.org
-> > > +L:	linux-sunxi@lists.linux.dev
-> > > +S:	Maintained
-> > > +F:	Documentation/devicetree/bindings/clock/allwinner,sun252
-> > > i-
-> > > v861-ccu.yaml
-> > > +F:	arch/riscv/boot/dts/allwinner/sun252i-v861*
-> > > +F:	drivers/clk/sunxi-ng/ccu-sun252i-v861*.c
-> > > +F:	drivers/pinctrl/sunxi/pinctrl-sun252i-v861*.c
-> > > +F:	include/dt-bindings/clock/sun252i-v861*.h
-> > > +F:	include/dt-bindings/reset/sun252i-v861*.h
-> > > +
-> > > =C2=A0RISC-V ANDES SoC Support
-> > > =C2=A0M:	Ben Zong-You Xie <ben717@andestech.com>
-> > > =C2=A0S:	Maintained
-> >=20
-> >=20
->=20
->=20
->=20
+Developed with Claude (Anthropic); I reviewed it.
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+index 955c614830fa..da4156b39c2c 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+@@ -36,7 +36,7 @@
+  */
+ #define SUN50I_H616_PLL_CPUX_REG	0x000
+ static struct ccu_mult pll_cpux_clk = {
+-	.enable		= BIT(31),
++	.enable		= BIT(27),
+ 	.lock		= BIT(28),
+ 	.mult		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.common		= {
+@@ -50,7 +50,7 @@ static struct ccu_mult pll_cpux_clk = {
+ /* Some PLLs are input * N / div1 / P. Model them as NKMP with no K */
+ #define SUN50I_H616_PLL_DDR0_REG	0x010
+ static struct ccu_nkmp pll_ddr0_clk = {
+-	.enable		= BIT(31),
++	.enable		= BIT(27),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+@@ -65,7 +65,7 @@ static struct ccu_nkmp pll_ddr0_clk = {
+ 
+ #define SUN50I_H616_PLL_DDR1_REG	0x018
+ static struct ccu_nkmp pll_ddr1_clk = {
+-	.enable		= BIT(31),
++	.enable		= BIT(27),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+@@ -80,7 +80,7 @@ static struct ccu_nkmp pll_ddr1_clk = {
+ 
+ #define SUN50I_H616_PLL_PERIPH0_REG	0x020
+ static struct ccu_nkmp pll_periph0_clk = {
+-	.enable		= BIT(31),
++	.enable		= BIT(27),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+@@ -97,7 +97,7 @@ static struct ccu_nkmp pll_periph0_clk = {
+ 
+ #define SUN50I_H616_PLL_PERIPH1_REG	0x028
+ static struct ccu_nkmp pll_periph1_clk = {
+-	.enable		= BIT(31),
++	.enable		= BIT(27),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+@@ -114,7 +114,7 @@ static struct ccu_nkmp pll_periph1_clk = {
+ 
+ #define SUN50I_H616_PLL_GPU_REG		0x030
+ static struct ccu_nkmp pll_gpu_clk = {
+-	.enable		= BIT(31),
++	.enable		= BIT(27),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+@@ -133,7 +133,7 @@ static struct ccu_nkmp pll_gpu_clk = {
+  */
+ #define SUN50I_H616_PLL_VIDEO0_REG	0x040
+ static struct ccu_nm pll_video0_clk = {
+-	.enable		= BIT(31),
++	.enable		= BIT(27),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+@@ -151,7 +151,7 @@ static struct ccu_nm pll_video0_clk = {
+ 
+ #define SUN50I_H616_PLL_VIDEO1_REG	0x048
+ static struct ccu_nm pll_video1_clk = {
+-	.enable		= BIT(31),
++	.enable		= BIT(27),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+@@ -169,7 +169,7 @@ static struct ccu_nm pll_video1_clk = {
+ 
+ #define SUN50I_H616_PLL_VIDEO2_REG	0x050
+ static struct ccu_nm pll_video2_clk = {
+-	.enable		= BIT(31),
++	.enable		= BIT(27),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+@@ -187,7 +187,7 @@ static struct ccu_nm pll_video2_clk = {
+ 
+ #define SUN50I_H616_PLL_VE_REG		0x058
+ static struct ccu_nkmp pll_ve_clk = {
+-	.enable		= BIT(31),
++	.enable		= BIT(27),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+@@ -202,7 +202,7 @@ static struct ccu_nkmp pll_ve_clk = {
+ 
+ #define SUN50I_H616_PLL_DE_REG		0x060
+ static struct ccu_nkmp pll_de_clk = {
+-	.enable		= BIT(31),
++	.enable		= BIT(27),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+@@ -229,7 +229,7 @@ static struct ccu_sdm_setting pll_audio_sdm_table[] = {
+ 
+ #define SUN50I_H616_PLL_AUDIO_REG	0x078
+ static struct ccu_nm pll_audio_hs_clk = {
+-	.enable		= BIT(31),
++	.enable		= BIT(27),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(16, 6),
+@@ -1214,6 +1214,13 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
+ 	val |= BIT(0);
+ 	writel(val, reg + SUN50I_H616_PLL_AUDIO_REG);
+ 
++	/* Keep the PLLs powered and gate them with bit 27 (manual 3.3.3.6). */
++	for (i = 0; i < ARRAY_SIZE(pll_regs); i++) {
++		val = readl(reg + pll_regs[i]);
++		val |= BIT(31);
++		writel(val, reg + pll_regs[i]);
++	}
++
+ 	/*
+ 	 * Set the input-divider for the gpu1 clock to 3, to reach a safe 400 MHz.
+ 	 */
+
+---
+base-commit: 280af24c860569000b375edda6436ba8e3ee4b3a
+change-id: 20261114-h616-pll-output-gate-c9d3d4a409e9
+
+Best regards,
+--  
+Arun Iyengar <aiyengar1990@gmail.com>
+
+
