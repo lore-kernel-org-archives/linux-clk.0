@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794744584;
-	b=VY1JzArXO94TKAIqhzVwwNt4CWj7jU+kDTVcX+yrIAyfxpIPUYoCrOi0li4JUYlq7KPD
-	 1j0K/GdPeD+VVvmc5DXuqEs/MaF1vhb4z2wq+QyU2PN7J3Q1HKw21ETGtAF8Gjmhop1Dm
-	 7O54DGgoFdXrnavmB3UfvGHBvor7ddWJR0GhhkrSQ7qG2E/X+eA/77Anr+rj/6SsuZ6w+
-	 9TVkKnzAKndnXBQHg29tk3NvG9wXA9v2kCiN3eaoxa27NpNFhN8/qgLzPX8PGQUHnYByc
-	 nI0A2InEyEgxLJZltX7OkVCtsoxrBVhr0QWsxMkXeo0ftqvNSwx/7DjsYMZaraPt27w==
+	t=1794744589;
+	b=Cx+dFpnWtW55uNVNJS3+m/+qQCCOFH/PWxlsSF31WLdxJpGITSB/kJUl096nHWXW67wO
+	 UKoBe6NcQr5bSQ2eyjUDE2BjDLM6AWEkbPMZSPETns6a6ooizQjWs//lLxtfqNnPU320G
+	 Xh9NZIBAlnkT7yWjH48iGaVNndlxfrLGOOGyisBjk77PqDU1l26x3wJFGvwARRyMDe5le
+	 r2X28RHhBFzuOfEUnkpH5H3W6+btyfh0Nwxz/gRSmbkDpJE+UCBVPGvomrdHSlbw7xXoL
+	 x7PE+60a+XDTvTHLAxjTPQR+Wmz9VCzUBZ1LSiCCyoajrZMWQqvPVXA2u++vWkZgndA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794744584;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794744589;
 	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
 	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 X-Mailer;
-	bh=2xp0eogThoE+rovAfkLgs59Clib+FqRuadwEreWDQ+Y=;
-	b=YChH0RsrgoyY9e4/zO+vU5u+GlveBrtryONU/NwEQwEYhS0NteM/D3L0Da693LIkrMH4
-	 u0C4NoodygM15x235zaWeEy1rphSkJhrGQJyeiOYQyCLieH2l2dVBDZaGz/Y7mu0BW+9b
-	 /CepS+GhuhPbQGhmLMD2if95KseZ3VSDcQBAp0r2yM6HwWsuTLnOX3ofi/XLJJtcF4mO6
-	 yYcv64ufneUap1L41C0vxBHSbwvnw/tJIRImVmyWEpcngnSbug4ELqxlyLuDE6+AnZmkI
-	 MiE0CnTnK7aHyALXkLX4d5q4Z4CWvnuURXxNSNkvPz5VQ1hOOpcQ1SNE8xbvgxjJIHQ==
+	bh=FNh/mYJ+0jsVySuFyl1eF/vkWOtkKDGeVp6wS/ZBews=;
+	b=YUIUregmZVsjdeQXxg4nCW7HtwNAbEICcvtXmdRa0W/X8yrsYNVJMCMoCSTgBnCMkRYi
+	 sBY6SyUyXc1RXmfKGxPF9/tkpDNbIeySEwgZDYQroTNUH5qDj8yl+sW6LJBv7ALll7aVB
+	 /YyMGodrM/IS/Sz8lqO+V5bDnu3880fUL3FscSAk+KRtGVVIOqOdsObTT8FZVC0FYtaZL
+	 G9s7KByD587VxMWD6vlfv1Hk1HkQbacEG8z/asd8tZvU77wgUGX0ogf4cDqVXP9IR0xB2
+	 /6lGqGt5Y3hl/DiCT9VA4yf8g1Ez/WKNoOB7idHEi/T2pFf4eLovobjzzTD/SexIFgQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DIAb3eAK;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=COQR12yc;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40F9606A31A;
-	Sun, 15 Nov 2026 12:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75018606A31E;
+	Sun, 15 Nov 2026 12:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DIAb3eAK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F6001F000C4;
-	Sun, 15 Nov 2026 12:09:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=COQR12yc
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0E8E1F000C5;
+	Sun, 15 Nov 2026 12:09:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794744584;
-	bh=2xp0eogThoE+rovAfkLgs59Clib+FqRuadwEreWDQ+Y=;
+	s=k20260515; t=1794744589;
+	bh=FNh/mYJ+0jsVySuFyl1eF/vkWOtkKDGeVp6wS/ZBews=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=DIAb3eAKgNniFbOJwEDkQkBz9z+WB2l6R5hN5iFMBnAOW9aV9DDBeCS8xb+bsLzLG
-	 01csHw3w6kebtIozMHxRp4NBkp8f/r2SWC/YNRJz0Ehnv9z49A+UI6vae7UGHr1wFt
-	 YchQYn2wB/ghIVce8v6DroPEUZzydvs0Hgc+iVpE7Ppkr7RtG4dKKcil/Wf9hntH48
-	 RPI0BTeehAEno6IKUDAOc18O/aeDfYArcbemwj2SuuQZ4Pq6MP3+ciMpg9dB5ch6D5
-	 X5HR0U3J0ybHdS3sLZxNFBatl0PnR0m85if88FfZphFen6Qdaa0IIZdTvx9Li3dPJc
-	 eWZ9I+OMqzUNg==
+	b=COQR12ycgObj/tV9ywWCW5uOL6FzCyVdAqEyCCOkqcWAMBoIsZ8+0eCVe3GiqLntm
+	 nxCHBsePYJaWCeZop9ugxWHjlb16dOzKOCe/vdsb9SoXo/+PSl2LmVwP8sIClw25XF
+	 JEolYk1mjcto2obTzm2rdyLvpgzeIZuuHioWYMSnEuxfynPxTxrBIJlSnwQ9H7HLy5
+	 slZnoZ191iSiPiHqeBLScoG3de8cv7HOonAFbGYzA6GSzB+idNwm6EP2Dr/tuOwF57
+	 ZrHQ48I3rKqzYQqW2GBk4mUUICYx0nDCHzwRjdL/7uhZqERMPqjQuA4W4KowrbUeB4
+	 zieXkY1lpVoyg==
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
@@ -56,14 +56,15 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
  netdev@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, 
  Enzo Adriano <enzo.adriano.code@gmail.com>, 
- Andre Przywara <andre.przywara@arm.com>, 
+ Andre Przywara <andre.przywara@arm.com>, Norman Herms <dockseed@proton.me>, 
+ Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-In-Reply-To: <20260930-a733-clk-v5-0-11175b41cd2d@pigmoral.tech>
-References: <20260930-a733-clk-v5-0-11175b41cd2d@pigmoral.tech>
-Subject: Re: [PATCH v5 0/8] clk: sunxi-ng: Add support for Allwinner A733
+In-Reply-To: <20261112-a733-clk-v7-0-db7c5451ffa2@pigmoral.tech>
+References: <20261112-a733-clk-v7-0-db7c5451ffa2@pigmoral.tech>
+Subject: Re: [PATCH v7 0/8] clk: sunxi-ng: Add support for Allwinner A733
  CCU and PRCM
-Message-Id: <179474458009.3130971.4987693724545718972.b4-ty@kernel.org>
-Date: Sun, 15 Nov 2026 20:09:40 +0800
+Message-Id: <179474458449.3130971.12008198786411487989.b4-ty@kernel.org>
+Date: Sun, 15 Nov 2026 20:09:44 +0800
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -77,7 +78,7 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
-On Wed, 30 Sep 2026 01:26:07 +0800, Junhui Liu wrote:
+On Thu, 12 Nov 2026 15:11:49 +0800, Junhui Liu wrote:
 > Add support for the main CCU and the PRCM module (R-CCU) found in the
 > Allwinner A733 SoC. The clock architecture is derived from the previous
 > A523 design, with the MCU_CCU removed and the clock tree extended for
