@@ -1,56 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794802056;
-	b=fNN+nugd4k4b/gm42A/pR0blqu2H8GYGb48q1Y5RS2nuFFpTRR3meMLoL0DJijpTYJqQ
-	 z7lrD6GmBlFOXSSOUZEv6YYI3auopuWOjN7XSgjluUlVPwjNs8RMxt1sId3d4js9LjTdK
-	 TuXgd8ixiaBlB6j11CC2KTolqutxS3uK0Zr2HH5LBjJsROKv5nAdMEFq3ITpDA67gCZ9M
-	 WAVQlVUXj+tImymYQCuq5biESBRDg1N+bVSNsPz7b0vVQiDxNWvAjds/Qb/7qsoXjRuPf
-	 4lCaBI0sYBY0eBkILKw6eyevWeMhoNOh68wITaTURCsBD/2WuVkL6XuG6AlWRM8Fynw==
+	t=1794806881;
+	b=5t/URU1Cix4PQ5QXV6XSquw9XBwlBYfgKhza7Z96J6DzbKlaALeeWgnC1JKW0nvVUCeK
+	 lNcRP6Aw2lnUIYWiozasYt6K9MPcR1PtIWxfTO/TVx9riKKSEsGxvvMp0fZUxPdqoSi01
+	 uCgDs37sZEgNxUzPn2ANey/vLKQ4Cy+A+TCuQohwJGSW0jdSe0OPPA+upF/8mrlnQQbHX
+	 hlPxD9eYyusnIg6UlytEiO8367jmK1lzwvlv2OdIkIkAytfNfvenqxIXTGJSfEfNijJ+A
+	 8BfwteNwwFWMXt0oUFodhIPTBZiMVgF6Auno4k6SOc/k+3TGyB8gOVdCQc/ONxpRSWA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794802056;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=POgJ0lr1p32tYYsOR7CFXhP4Km/ENY10BeM38jrQKX0=;
-	b=oMvItPLt34ja8lYDvqm6T7DguZRnE6qvMW/TThHpLkLgeI+AewVpbas9WRQ00w7x0ekU
-	 bSq3kL94vKZOT4S57it7GS/7iI2ovMWN32v41FzGeD4btG6C/evoiUqQBN9C/tBqpumKW
-	 q3jft19OmRuwQNAXynDfRjkAPlGuaxzkTkx1XjNpbam2RDMVErGYVTv19fVBnL3Nt4w2c
-	 ox6SbHb9X7FOvfe7fnwv1hNXbMthlZofHI934BwT+NZ25B53vnaUPIN90KLJETHAF+0kQ
-	 4zonzXEekgHPI4nSyZgxeGA2tZEIBDqvUEAMK/7cJqdOtPALt2a2qLlEBp/04rNV1RQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794806881;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:
+	 Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Proofpoint-GUID:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=+weSNdgV6tyUTxoHk6wCxY0+uFMGSPWr+uTDp0Ozmq0=;
+	b=5cWr+0uW3eg7JxmxQMpi6J0ywonWi/VurAqBFb3SIiIJaLSjmE50ky5LKeSPUOVwMWX4
+	 BiY/Rr30I4IoRk/gcrLsFRptkQ06X7WzwZSefZ5IL7wFG0SeWsG2X1/GVvVeX5kpbAdQv
+	 IDKd3n/H9p2bgRPLCcdvArZX3xi2WvZCBfUZgf1DbUbo3tfTVet3jZyI4+t/pn4jWYexB
+	 kEDxfozsGcv9NXFRNnh57s7DaBp9M+nzCY2k7xtpTTYZJhKgr3LuceNPu0m4UCFi1JEsR
+	 UAsMBdj+FG34DAywiQGvf8xY5RMOVXycppsGOpS2KK/bP82j5L7B4nyd73G7lxAUK1w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EtnmeSOn;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Hnu0e8Ca;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=gRQh3tXW;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2C1606A31F
-	for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 04:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFF9606A330
+	for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 05:27:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DCFF9606A330
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EtnmeSOn
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D31CC1F000C4;
-	Mon, 16 Nov 2026 04:07:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794802056;
-	bh=POgJ0lr1p32tYYsOR7CFXhP4Km/ENY10BeM38jrQKX0=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=EtnmeSOnL8g4xe7KI+GvVJwnpEyqNe38NnjUdon3g6KIf4A0g7ofmNWwpqObKa2jE
-	 3gW7fAziBaoh1cxL9LVpk8tKqAr1/TjgOlnBBJw2Gx4bkGgLwjx4ZEzl11xQ6J1vlx
-	 6v6WYUhlmvHGoZgSlaxfISULpXy2/YtPO79ru6XgC8LhYvFFC7bv1vGRsvVJbpzrYb
-	 QaM34BRjNEZ0mAkMsguaDvNk0+8MzL9ccsGf8W6vwlWoTMK8AEmKnpf1t54c1d/vk7
-	 HnD4pXLydiWW2IvVrdwmyog8yEnGYRc7inkbIB5/URa9N0zKqfc0E5Lx5R6ZfHB2q7
-	 Fa1rRzCil4zxw==
-Message-ID: <sashiko-outbox-216161@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 4/5] mailbox: document direct synchronous transmit
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Anup Patel" <anup.patel@oss.qualcomm.com>
-Cc: linux-clk@vger.kernel.org
-In-Reply-To: <20261116040049.1795610-5-anup.patel@oss.qualcomm.com>
-References: <20261116040049.1795610-1-anup.patel@oss.qualcomm.com>
- <20261116040049.1795610-5-anup.patel@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 16 Nov 2026 04:07:35 +0000
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Hnu0e8Ca;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=gRQh3tXW
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AG5LbhL3839121
+	for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 05:27:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+weSNdgV6tyUTxoHk6wCxY
+	0+uFMGSPWr+uTDp0Ozmq0=; b=Hnu0e8CaUWlDnfFFRPHUq5eArNphCs1EIWdpQu
+	9Xq3HonxFTlBt8kgDrV1w3cPlOpIHUC9/ehVqHV4r/yKKcuP5MVPesE2XAlZtOwV
+	WZlOgTvtisKbrAqvYhEkBXt1yCKFs1vb/gjPy8hxOazAv7YUud4Q4v4NHgg5VM5u
+	aiYQ2K/ZcLPjh8OcmW+U/CciXkJ7w7R+1JBhP1e9G7dtnfoA3K8oxNEkT0BWYcIW
+	SYc/NOirU651yYiGlGchxcF45D9q3zPTpALOqtcUANfDZfNinZlYbYfNgkpgNiBK
+	yAmI6m06HV5unUFj7MPiY/c/0nOT4sz7gD1KpgI2UUun4KeQ==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hxhmhmuh4-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 05:27:59 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-cddf34086c8so561347a12.3
+        for <linux-clk@vger.kernel.org>; Sun, 15 Nov 2026 21:27:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1794806878; x=1795411678; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=+weSNdgV6tyUTxoHk6wCxY0+uFMGSPWr+uTDp0Ozmq0=;
+        b=gRQh3tXWDi19GaaY3LckQIvctxQqriqHApjB5+26o7s/OEBIYUkCAoRF5HRDCGR0te
+         iYMFa1xg/Bq1VS6M3Sx8xPOrE8EmoKc1Dj+vDxdKJK62LIsMuEp7tUs0OhpIpAIVqA6K
+         ly6JxBZ0VYCoOqCvYMCmc/6CHlm6LTeczDwjPz26yoIpyOEASXnRncJGvhOeX3Larwx3
+         BJB/CNsszg0EehCB9huTGkhJ5MY6AjGyHpqIwhQsV6BL80RwlbD4GdPPd8+6nNkTpk3D
+         gd877+prVfX2oAUPqd6Agf/hlxkL9xh4+y0aoGAkqmTzHp9mt1G9Y/WYYiG+6LByQXyx
+         CYuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794806878; x=1795411678;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=+weSNdgV6tyUTxoHk6wCxY0+uFMGSPWr+uTDp0Ozmq0=;
+        b=FB45hWpiMQ4xGE+oXf4pBt8wfDx51YmhKZd4/zMCEp8ZnZ4Gy5tVZ93xMGjDDe+Uvc
+         8LHji889ZWaTndYzgKNxuGsLusOWIGvB5F0zZYQzTsEWBAl9u/eoLtGulYaHxvH7xCdT
+         kQpgHKPSWxw5HfJj0adE8tLH1HwFN9UiM5Zf+2Fbk0wRbr6dXw63X+YYWBEwxmuHnD4A
+         ecGXrtcPQeBqz/J615nrYIGThpQ3lkEGVY5gTivKzOM75sKigEnEYJfUPB7+oMrH58qp
+         xmN6WUqlL7N4F+P+Ib3EWQoGquF53WUJiWv19Ce+7u73IvAqpKTktyF3mExA+44n3DVO
+         93nA==
+X-Forwarded-Encrypted: i=1; AL+hErHcAxlvEZlzQWidk6eSBwxUjSG7DT5h4mipqzwnS0ZHLCKirBGmBm/lj10HSM3QWkR0kZmF/AV/hjE=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8rgLxhwiOvOxD7z3iBVx6hk6UR7gvNn9RgM5TPYD3AUlzLntNU
+	PsnpdweTGzBO7NIi2bxBi+ETfcvDOq/hiUjvRmo2bt/ccG61DjXGv/5WZ8rSUCIvTcLpkz9SG5z
+	BOmtu5tFfS63zJQI6tDVx3qbnkGbmZt4uEfEksjMyvL1g2LqKRogKOdv1q/quVfA=
+X-Gm-Gg: AYBFou2sIwDMGcgmRWvRHfW+G0MeStLGE6Pke8Eexm7Ai05f1vIKF7BPWOma86bBxNq
+	KhmzpADo7bBW/owpkRVBXympf3SV1SYMN2ygqj/Uta/RfC8Ckzx9DQYM5aBoOklYwF9+VZMHH3Y
+	KR0xJkpYhXpIiff6633VkRU6NiMd6u7k19PB/MMCGiUcAqUf93uVJq93prdqlbZtxE9JJHJTkac
+	34+PWyUqOj5C4/uIpQlAQvqwoDpyWG5wD/d3B6E798XluF3Kdul0D0mhqzs5KK6GG435TpolXn4
+	Wvyt6K8TxjePbPiPhFtZB6l2ZpD3H0t44z3PlRIW4Rbe64IKgrcOlPY2tFVKGNiMoDomyvG+WB/
+	vaEmrXkOdaj7pC1vVna+Qjn9O5PgyoTa6V2Zjgr0c6lZ6POdD35TOSGleg1v/l+1uV40WktDgHg
+	==
+X-Received: by 2002:a17:903:41ce:b0:2dd:c100:7cc8 with SMTP id d9443c01a7336-2ee0dde7798mr94023295ad.68.1794806878442;
+        Sun, 15 Nov 2026 21:27:58 -0800 (PST)
+X-Received: by 2002:a17:903:41ce:b0:2dd:c100:7cc8 with SMTP id d9443c01a7336-2ee0dde7798mr94023115ad.68.1794806877971;
+        Sun, 15 Nov 2026 21:27:57 -0800 (PST)
+Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ee0f4ad519sm31478885ad.2.2026.11.15.21.27.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Nov 2026 21:27:57 -0800 (PST)
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: [PATCH 0/2] clk: qcom: gcc-shikra: add PWM XO512 source clock
+Date: Mon, 16 Nov 2026 10:57:43 +0530
+Message-Id: <20261116-pwm_clocks_shikra-v1-0-55fc11501821@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,92 +114,77 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE+U+moC/x3M3QpAQBCG4VvRHNvyIcmtSFprMPltp1By7zaHz
+ 8H7PqTshZWq6CHPp6jsWwDiiNxkt5GN9MGUJmkBoDDHtbZu2d2srU4ye2uQJSU6IEfmKHSH50H
+ u/1k37/sBvwa3N2MAAAA=
+X-Change-ID: 20261116-pwm_clocks_shikra-13081b11413c
+To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-aa3f6
+X-Proofpoint-GUID: 2gNT10ewizHUUuAB96j_QgbLfVG7nMqu
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE2MDAyMSBTYWx0ZWRfX0yuBLDgvkssm
+ C5XfnzjgEzyR4Cqdpy+/mj2MMPQjQGVXZ86WK1ayrkH7KXZMb5/D/FRx6T9/DlA+9Hab938nNEE
+ +/L9ozZZMJJfevCKbPHPBADsXHyZWJQ=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE2MDAyMSBTYWx0ZWRfX4XWrjhgj7BrF
+ lztXZ5O+S4nc6MZBHUykri04iLu2XoB1RmxxhWVAOID23K0exEjcglPVRJTGXwE9KoUyMzwoxjs
+ I2pIcyhA1lsd7izsYEyYBSACWazQAeGYbKr+pjcmAG/a/lGs9/5tsOPeDb6GpEI4i6Po9mMc0n0
+ eR64kHEcPLxW3Y6BahTQTcr9S/bz5aCXjQEKi/CYpUjgvRDiKqKxNX+3gbWcR4747lADUCq+TRF
+ zTEXKNa0qQhITT5yDOerqWce6dOt+1u8CAka/UfJlCF5MHzDVrf7tQLTVe9Her73sQrG2Rt1OLo
+ /n1QwYAJ8kcO0RgW9DVJqdHobK8qjj3CYZ1WsBkjjRxhKgVOoDrBByAN6pDX4IMEFhJ/eCrCwGs
+ mpqxzypxqVmSg3HoXz4X/b+XCBvopZk73Bm+ekJD8KLSMG5Du93CekGFWm0JVPL3l6XfdrOfgmc
+ +qXVbDFwGw7dpI9JMwg==
+X-Authority-Analysis: v=2.4 cv=e/2T2qp/ c=1 sm=1 tr=0 ts=6afa945f cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
+ a=EUspDBNiAAAA:8 a=P8prvrSLuabxu7ghDDQA:9 a=QEXdDO2ut3YA:10
+ a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-ORIG-GUID: 2gNT10ewizHUUuAB96j_QgbLfVG7nMqu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-16_02,2026-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 impostorscore=0 bulkscore=0 priorityscore=1501
+ malwarescore=0 spamscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611160021
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [Low] mailbox: doc: reference to missing
-  drivers/mailbox/mailbox-sync-test.c
-- [Low] mailbox: doc: unreachable busy check in my_send_data_sync()
-  example
---
+The PWM controller on Qualcomm Shikra SoCs is fed by the GCC PWM XO512
+clock, which derives its rate from a programmable divider sitting
+between the TCXO and the PWM core output. Model that divider as a
+dedicated source clock so the full TCXO -> divider -> PWM output path
+is described and the PWM core rate can be configured at runtime.
 
-commit 4b8cb40412b27f0da57b15f1c45c7531d427eab2
-Author: Jassi Brar <jassisinghbrar@gmail.com>
+Add the clock-ID binding and the gcc-shikra divider clock implementing
+the source, with the existing PWM output branch reparented onto it.
 
-mailbox: document direct synchronous transmit
+Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+---
+Taniya Das (2):
+      dt-bindings: clock: qcom: add Shikra PWM XO512 source clock
+      clk: qcom: gcc-shikra: add PWM XO512 source clock
 
-This commit documents the non-blocking queued, blocking queued, and direct
-synchronous transmit models in the mailbox framework, along with controller
-and client contracts and examples.
+ drivers/clk/qcom/gcc-shikra.c               | 21 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,shikra-gcc.h |  1 +
+ 2 files changed, 22 insertions(+)
+---
+base-commit: 84abb955b1015477aa11a96e2f3ac1b938b77f48
+change-id: 20261116-pwm_clocks_shikra-13081b11413c
 
-> diff --git a/Documentation/driver-api/mailbox.rst b/Documentation/driver-=
-api/mailbox.rst
-> index d46c60bd5df64..81d4710275391 100644
-> --- a/Documentation/driver-api/mailbox.rst
-> +++ b/Documentation/driver-api/mailbox.rst
+Best regards,
+-- 
+Taniya Das <taniya.das@oss.qualcomm.com>
 
-[ ... ]
-
-> @@ -35,14 +49,197 @@ The method in order of preference is IRQ -> Poll -> =
-None, which
->  the controller driver should set via 'txdone_irq' or 'txdone_poll'
->  or neither.
-
-[ ... ]
-
-> +    static int my_send_data_sync(struct mbox_chan *chan, void *data)
-> +    {
-> +        struct my_chan *c =3D chan->con_priv;
-> +        unsigned long flags;
-> +        u32 status;
-> +        int ret =3D 0;
-> +
-> +        /*
-> +         * The framework does not serialize direct callers and does not
-> +         * disable IRQs.  This controller shares one register block acro=
-ss
-> +         * all CPUs, so it uses its own IRQ-safe lock.
-> +         */
-> +        spin_lock_irqsave(&c->lock, flags);
-> +        if (c->busy) {
-> +            ret =3D -EBUSY;
-> +            goto out;
-> +        }
-> +
-> +        c->busy =3D true;
-> +        writel(*(u32 *)data, c->tx_reg);
-> +        if (readl_poll_timeout_atomic(c->tx_reg + MY_STATUS, status,
-> +                                      status & MY_DONE, 1, 1000))
-> +            ret =3D -ETIMEDOUT;
-> +        c->busy =3D false;
-> +    out:
-> +        spin_unlock_irqrestore(&c->lock, flags);
-> +        return ret;
-> +    }
-
-[Severity: Low]
-Can the c->busy check in my_send_data_sync() ever be true?  c->busy is only
-set and cleared while c->lock is held with local IRQs disabled, so every
-other CPU waits at spin_lock_irqsave() until c->busy is false again.
-Either c->busy can be dropped because c->lock already serializes the entire
-transfer, or the example could use spin_trylock_irqsave() to return -EBUSY
-on contention.
-
-[ ... ]
-
-> @@ -116,14 +313,125 @@ a message and a callback function to the API and r=
-eturn immediately).
-
-[ ... ]
-
-> +The KUnit suite in ``drivers/mailbox/mailbox-sync-test.c`` exercises the
-> +capability matrix, registration validation, per-call results, multi-CPU
-> +concurrency, hardirq context, queued compatibility, and free/rebind.
-
-[Severity: Low]
-Does drivers/mailbox/mailbox-sync-test.c exist in the tree?  Referencing a
-nonexistent file here will trip scripts/documentation-file-ref-check.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261116040049.1795=
-610-1-anup.patel@oss.qualcomm.com?part=3D4
