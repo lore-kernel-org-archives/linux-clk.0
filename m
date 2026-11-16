@@ -1,80 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1794810110;
-	b=Zu8nGLy+zpm9u6mebFVUYsTBXIrRrgdCRBSRP/OVW1Jp9+a/ZFsRTVoP3MWP+WfocUnC
-	 n2D1JZ24/LUDA3vB2Pii58+KPjyt12oHsBqELqDZMTT+HuNdV1noC6gfWexowzR6/jM61
-	 ieAkF3YIIXzy7SCGTLO92Dg+BVRmsDt/g8rXk+sH0NR39yyPDBA/jUaTJXlsu4c0wrS2h
-	 1Vkd9ApzOey0kPmJwYrPzzfVmIHxRUIf2QrxDzFzCixS6rtVe3E3JcBZDUmABm3vk2/yD
-	 7JOeVUZdZ3ojvcRZqcoMzD/kDBw7t8AEirT1sq53U46z3dLImW4FIrFqKDOHWDS7IIQ==
+	b=TquThk3g6z3I5SBmTVpqpUFEqMrBM/bNUNjy/H6McfimKpebAdvImfzxsUTCoBhqGfc0
+	 iVFqWV9HlO8NxomciqCGRX6uf6sHufc7CQov4FHPlAOT6zPJHvVH+B32uZ1Vy9ZEoIhde
+	 U/cl3+ORrN7gB2t9os8twqE5YOVSF9HsOq8bGS8Ot2vWIsUWWxTeom+X9gAPvE9fyc4GM
+	 fvM5/8DfLcg7nO3tRAbkB7vlCvZye7wQIt+Cisp//1JiRqSpEWuCLtw7LnmJwPmZT123n
+	 PKPSnjVngZHJJK9AmkFZq7oLpn7Dh2NJgAvCxrcQ26/n/ncxkOC28XX0YLt8Ndm3jPQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794810110;
-	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=KPgfhl/DVFiQluvknLrE2yUG2LAGndG/AH+oeLL0W+o=;
-	b=Q6NzgfWdJDsTCPW6IzeFLvpdfMtsVdnXIhD2v3TkFui1/sUKJC90IIaztCtAr9cwafQ5
-	 3ztwZbnK6iLmr0/GQn4qTHSut0j3YtAEb3aFuYuQPItER3HrCPOVL3obeh7mOubEw5tUx
-	 Z6Yd0BffFcCKAdF0B4jdkdoaNtnUiCBiEdyDnHknE0/6sqdPeHeMTgm79SXekK/12mFEE
-	 24+sKyNJhZuvKiLDzAiKf0tXGlxUIR+79Ulu0MlZqlb+FhVwav0qNILaZZUSu+kLwdH92
-	 HXwHFEnqkuu7PcZ4XOz7690/Jm0w4bRPKkTekrg6bKwltuDitt7MxLerg0YuEYI4uzQ==
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=RrRlNaKDw3lqoWr2bRm4+2M2WPJ+R45REBK+M1MdOcg=;
+	b=3ZFxui1VIaYl2TaQI0Sto7iYWsfxIDLtj5vCCkadAYxvuJIxIF1k6usW3RkRL9oEgtef
+	 4v4vSNVPfMX84NCeejTG0xglyNHytRuOQFWOLvWGh0kkS/odm4iA7VWLiInYqSvq+vNOK
+	 G/gSfqcK39lLVXpgLpod3KEB7o0i2m8mmP33k41SK0/2HQtjHCMykta5NM48wZ2ZsNZam
+	 IeT448TxyMvka249hrlQNV3+2tJtjf75r9vZL/3hMB4mavrkBaPvS8n8YGKSgkuqUwz1p
+	 PAyaLs5h+YZOpkiAJ3CRahohwQTQXA95MprJea+Ip96tnPujpR7iDCRZ17UUw9U+PeA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IwzHRCul;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a8Ic7mir;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCA2606A31C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDDD606A32F;
 	Mon, 16 Nov 2026 06:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IwzHRCul
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a8Ic7mir
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1794810110;
-	b=EQG24TdehKKSsdR9tGV9/5BzrYePF/UuJggbAvTlqh7VHN/qqV9/RtKIneQWGIcE5Moa
-	 ep9wOOuXPZfd1UPvblk1d2WTR+Va14dwlFok0owGXNM0vzOuhjPUdZEh+5mmf4C+ipDi2
-	 6Vj9BeQUrfKzq2XlhbANl0YRa+iyHAqyOC2+clzXKWezVnU326WqNgwqUmfpj3TV8EIbm
-	 uRJclMYdNZ/SM67XsMAY0KQZXVlVf0raiv8gmzoDbme1Hy2Fb74oskXMEsqtUXCPYWMAG
-	 PymGudeWEnOvSJKDqf7ug4LvF0pxHv3B3/QEjzir756vrB0sd9uHPMmD4eYT5e+A2Wg==
+	b=FNRRXmXDhoTJNgJd3Q2thJIUgSZJMdNL4MDihzvb0wFc5I6eDXOj3nYhihRTGlwh7otl
+	 Sq2Ftv2ZaDN+bwTpYHtXQCZkKjGfTxPuFM8q5vkgPAVIbc1rOFuH4luIYrD/q4b7U4rh0
+	 L3lhczyYL2VEIfWBoDKrF+r/XkjSSapraFA9C2OBdEIVoG0nXdjPCXMUVJ7Sv2YaWcotK
+	 X28DLr9lTLRXpXQ3SCeG22kmujh28PP+XopN+Nj5ufTSnSyO2TRDA5h8bqJ7T+ip39Xpg
+	 lCAI6M8Xp9TNb4uPqtWXI4XAJ9oQIh7tfanCzsGF7EbRhNwM/1zaEKajIJhZllwXkxQ==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1794810110;
-	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
-	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=KPgfhl/DVFiQluvknLrE2yUG2LAGndG/AH+oeLL0W+o=;
-	b=vP/TMGChV0dgP6Uu0LW4WBPyR9MD7A0K+fPAWnSXm7F3yGdQ2XpTshaX/1IflUbLwz0s
-	 p3NOuxWR3ln0WXROWLbkk90BRXEFQrYn4a8Q4dRcBpNQm9hCiNNV7JIoo8Go5jDLntG3t
-	 jr9rpQwxp+X3/KHgusoe6kWEZ7xpvUksltkVV5OthtEO0zORL9c4D9f9rvSxgS7qN07gU
-	 XsRYJtRgt2QSHu/BJYk4IR4bqyxTbTzeXt9q6v4LgoV8pMSjlhqJUOz5l8f2U80GLP9XI
-	 OtWaaSmKCoLPIhxzgAZ3UfrJ1U4loIoBF1nAhCF+vW1fJHKtA+B4zSJYwQyyogW0bMw==
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=RrRlNaKDw3lqoWr2bRm4+2M2WPJ+R45REBK+M1MdOcg=;
+	b=eKGuZTX4D3hARgAoywsB2no1sN7IWy9hMF9tU/rQ+9A0nFSzXUzI0kcWQL+AV6JlMhvH
+	 Gwk+jkP9QPUjgnkE6PQPVQbotXVFDPAFo5y1Y1+GiAUm/WgwJjDAEy58rR2ONCisNq6RV
+	 2aM/0zlElygYgnUXbDI2BFAyO8aRTptVdMnfaAItk2rAloHo7HnePQymzI5dP+16ad3YQ
+	 WoFyQm2PxxyKe1gJkfn1531W9oTF0NbVqkiQ7rNxlQ3sMu9cPLJ6kBq4qlG3V5L7Yr87B
+	 +36Xvwtwcupddli27zZFryF6J4Ntf2K4joSd8mRtGEW6hwZCiYvJ6HpJSEIuDGO1auQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 629CD1F000C4;
+	by smtp.kernel.org (Postfix) with ESMTPS id 7D8141F000C5;
 	Mon, 16 Nov 2026 06:21:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1794810110;
-	bh=KPgfhl/DVFiQluvknLrE2yUG2LAGndG/AH+oeLL0W+o=;
-	h=From:Subject:Date:To:Cc:Reply-To;
-	b=IwzHRCul8ZSi5nnbuNCCzbPnv4OkU5WUHDHjIArXrcnb/alXk5si+AL/Fi4VPJlQ5
-	 AyPM2XBgITiI85KTknf2Int5JABjFSE4p5qRA/93FG3exMNQnvum+WtrOs5qrKcBUg
-	 aapYjt3wqxsbXt89np52CN5CkDp6TFDhMRbJlqlllUyGhE7KYt6laWyoUtNnDrM5nK
-	 vCBNHtXCOoz5Vl7jLbaSFlS5ORoxUHZ50dc59sJE+9Nb7D6XQJgU6teL8mw1UeyQZX
-	 oKntVcvVUk94C8UBGdPmpnAGQVOz+uEizVMCiNC2fqAE+OuNfdTDmsqNQ2acGVVk0M
-	 iObolnN4cbP3w==
+	bh=RrRlNaKDw3lqoWr2bRm4+2M2WPJ+R45REBK+M1MdOcg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=a8Ic7miro1AmouYpRzZ0ADaIGM9WV5nF1hBfR9t7UYTObz/0Kn0FiqTL8MSWZonSW
+	 /yprO9StQjiB7uoT5hdXbXhD8dOsZHpe8E7YMi4oh2w5dpybjbMkKD032WEhZfpBVu
+	 TiEinHEscjNPcta8kB9VnoGNFotuTCoV7S6askSDzN+bpvz3siIw0oVGq195pEEihd
+	 p50ITxspltjih0KJvU2bgUJQH217aA5RuuRE5MtLNmiNnDGkQthOnFOm9S+qcVLLVj
+	 gBds8tIOitZClhMqaL67kV+cLiBCdUHtleo5kdq4a0N98+XlIktGI7RS2K4TKOG6Wi
+	 R36fK90IPSl9g==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id E77B44A34A;
-	Mon, 16 Nov 2026 06:21:48 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id 0DD834A347;
+	Mon, 16 Nov 2026 06:21:49 +0000 (UTC)
 From: Ishu Brar via B4 Relay <devnull+patches.brar.si@kernel.org>
-Subject: [PATCH RESEND v3 0/2] clk: qcom: Add SM7250 graphics clock
- controller
-Date: Mon, 16 Nov 2026 11:51:31 +0530
-Message-Id: <20261116-gpucc-sm7250-v3-0-df68449f0e36@brar.si>
+Date: Mon, 16 Nov 2026 11:51:32 +0530
+Subject: [PATCH RESEND v3 1/2] dt-bindings: clock: qcom: Add SM7250
+ graphics clock controller
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -85,14 +84,9 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/22QS0/DMBCE/0rkM47s9aupEOqBXjnAEXHwY9MaS
- FPsJAJV+e+4aQ8V4jir/WZm90QypoiZrKsTSTjFHPtDEeKuIn5vDzukMRRNgIHmDATdHUfvae4
- MKEY1BxuU0My0SApyTNjG78XulTxvX7ZPj+TtMs+je0c/nL2umwm/xpI3XNc7zNkueevq/hLHN
- ZMgBdQrkJTTnBBzKfVhE2s42+w6Gz9r33cPZ0dnM9Iiujisq1ZpA1aEtmXQ8KCtVOiYB7VyTQB
- n0cnglTFLu33MQ59+lh9MfCnz/7kTp4yGhsvGo8eVw41LNtU5LjYT3KLmDwoFNUYwpVEyKW7Qe
- Z5/AQ4NbiCHAQAA
-X-Change-ID: 20261023-gpucc-sm7250-612ad53607fe
+Message-Id: <20261116-gpucc-sm7250-v3-1-df68449f0e36@brar.si>
+References: <20261116-gpucc-sm7250-v3-0-df68449f0e36@brar.si>
+In-Reply-To: <20261116-gpucc-sm7250-v3-0-df68449f0e36@brar.si>
 To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
@@ -105,103 +99,97 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
  Ishu Brar <patches@brar.si>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794810107; l=4051;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794810107; l=2815;
  i=patches@brar.si; h=from:subject:message-id;
- bh=ic5XdO1AeDrgCu2w9+lfdrzstjc+aLj8SGbXgvtd4Bo=;
- b=Ls1XolrLfUy5tvbN6P1zkARSElvjuS7Mk6vnbbnGIyo+//9rwZuBLcHVd6Kf8vp7S9ENndmKJ
- TM7KxpNrdqxCoe70Be5y02pfL3pOP1qyRozAoag/pHETcn/fIbRc6lg
+ bh=/m3X7feB3glBQsDaikVR00KHiwSBK04jEo5m5JeK04s=;
+ b=O0srdmk7HPlkzzC6MVerBjjABVwBWjznplsRCg8sWSFhxUK/KZEwEK/fnp7NxNAGZ9a4/d9de
+ tevtQBTV5jdAEtoJtEn5ShzSyOjelUN7ccP3o06gzF+2ZD/0W8FLgyw
 X-Developer-Key: i=patches@brar.si; a=ed25519;
  pk=Ds+E23E3ntzjPzuBDyVRkOouclcNI5k75R+N42yJtCk=
 X-Endpoint-Received: by B4 Relay for patches@brar.si/default with
  auth_id=1189
 X-Original-From: Ishu Brar <patches@brar.si>
 Reply-To: patches@brar.si
+Content-Transfer-Encoding: 7bit
 
-Add the graphics clock controller (GPU_CC) of the Qualcomm SM7250 SoC
-(Snapdragon 765/765G/768G): a binding patch with the header, and the
-driver. It provides the GMU clock with its Lucid PLL, the GPU CX and GX
-power domains and the GPU SMMU vote clock. The driver is written in the
-current style of the qcom gpucc drivers; the PLL settings, frequency table,
-register offsets and GDSC data come from the downstream driver of the
-platform.
+From: Ishu Brar <patches@brar.si>
 
-This series depends on the SM7250 GCC series from Shreeshankar [1] (the
-Kconfig symbol SM_GCC_7250 and the parent clocks come from it). The
-Adreno 620 series [2] needs this controller for the GMU clock and the GPU
-power domains. The SoC devicetree nodes are not part of this series.
+Add the compatible for the graphics clock controller (GPU_CC) of the
+Qualcomm SM7250 SoC (Snapdragon 765/765G/768G), and the header with its
+clock, reset and GDSC indices. The clock inputs are the same as on
+SM8250, so the existing clock and clock-names constraints apply unchanged.
 
-Tested on a OnePlus Nord (a 7.3 based tree): the controller probes, and
-the Adreno 620 powers up its CX and GX domains and runs Vulkan work with
-these clocks.
-
-[1] https://lore.kernel.org/r/20261016042432.824-1-sreeshankar0910@gmail.com
-[2] https://lore.kernel.org/r/20261023-adreno-a620-v3-0-2d1d566e5e13@brar.si
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Signed-off-by: Ishu Brar <patches@brar.si>
 ---
-Changes in v3 RESEND:
-- No changes; resending after the merge window.
+ .../devicetree/bindings/clock/qcom,gpucc.yaml      |  2 ++
+ include/dt-bindings/clock/qcom,sm7250-gpucc.h      | 36 ++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-Changes in v3:
-- Use GENMASK() and FIELD_PREP() for the GMU CBCR wake/sleep fields; the
-  mask and value written to 0x1098 are unchanged (0xff0 and 0xff0)
-  (Konrad Dybcio)
-- Set .use_rpm in the qcom_cc_desc, as the newer GPU clock controller
-  drivers do (Taniya Das, Konrad Dybcio)
-- Keep BRANCH_HALT_VOTED for gpu_cc_hlos1_vote_gpu_smmu_clk instead of
-  BRANCH_VOTED as in the SM8250 driver (Abel Vesa): the clock is a
-  voted branch and the newer drivers (SM8350, SM8450, SM8550, SM8650,
-  SM8750, X1E80100 and others) all use BRANCH_HALT_VOTED, so the status
-  is polled on enable; this was changed in v2 on purpose
-- Link to v2: https://patch.msgid.link/20261027-gpucc-sm7250-v2-0-773056e4043e@brar.si
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+index 3ac4419009a9..262c0345836f 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+@@ -21,6 +21,7 @@ description: |
+     include/dt-bindings/clock/qcom,gpucc-sc7280.h
+     include/dt-bindings/clock/qcom,gpucc-sc8280xp.h
+     include/dt-bindings/clock/qcom,gpucc-sm6350.h
++    include/dt-bindings/clock/qcom,sm7250-gpucc.h
+     include/dt-bindings/clock/qcom,gpucc-sm8150.h
+     include/dt-bindings/clock/qcom,gpucc-sm8250.h
+     include/dt-bindings/clock/qcom,gpucc-sm8350.h
+@@ -37,6 +38,7 @@ properties:
+       - qcom,sc8180x-gpucc
+       - qcom,sc8280xp-gpucc
+       - qcom,sm6350-gpucc
++      - qcom,sm7250-gpucc
+       - qcom,sm8150-gpucc
+       - qcom,sm8250-gpucc
+       - qcom,sm8350-gpucc
+diff --git a/include/dt-bindings/clock/qcom,sm7250-gpucc.h b/include/dt-bindings/clock/qcom,sm7250-gpucc.h
+new file mode 100644
+index 000000000000..f4536808d4fc
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,sm7250-gpucc.h
+@@ -0,0 +1,36 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
++/*
++ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_SM7250_H
++#define _DT_BINDINGS_CLK_QCOM_GPU_CC_SM7250_H
++
++/* GPU_CC clock registers */
++#define GPU_CC_AHB_CLK				0
++#define GPU_CC_CRC_AHB_CLK			1
++#define GPU_CC_CX_APB_CLK			2
++#define GPU_CC_CX_GMU_CLK			3
++#define GPU_CC_CX_SNOC_DVM_CLK			4
++#define GPU_CC_CXO_AON_CLK			5
++#define GPU_CC_CXO_CLK				6
++#define GPU_CC_GMU_CLK_SRC			7
++#define GPU_CC_GX_GMU_CLK			8
++#define GPU_CC_GX_VSENSE_CLK			9
++#define GPU_CC_PLL1				10
++#define GPU_CC_SLEEP_CLK			11
++#define GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK		12
++
++/* GPU_CC Resets */
++#define GPUCC_GPU_CC_ACD_BCR			0
++#define GPUCC_GPU_CC_CX_BCR			1
++#define GPUCC_GPU_CC_GFX3D_AON_BCR		2
++#define GPUCC_GPU_CC_GMU_BCR			3
++#define GPUCC_GPU_CC_GX_BCR			4
++#define GPUCC_GPU_CC_XO_BCR			5
++
++/* GPU_CC GDSCRs */
++#define GPU_CX_GDSC				0
++#define GPU_GX_GDSC				1
++
++#endif
 
-Changes in v2:
-- Renamed the header to qcom,sm7250-gpucc.h to match the compatible (Krzysztof)
-- Converted the driver to the current qcom_cc_driver_data style: the PLL is
-  configured by the common code and the GMU CBCR settings by the
-  clk_regs_configure callback, with const clk_init_data and DT parent
-  indices (Krzysztof)
-- Use BRANCH_HALT_VOTED for the GPU SMMU vote clock, so its status is
-  polled on enable, as in the newer GPU clock controller drivers
-- Link to v1: https://patch.msgid.link/20261023-gpucc-sm7250-v1-0-d9149cece8be@brar.si
-
-To: Bjorn Andersson <andersson@kernel.org>
-To: Abel Vesa <abelvesa@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Brian Masney <bmasney+clk@redhat.com>
-To: Jerome Brunet <jbrunet+clk@baylibre.com>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-To: Imran Shaik <quic_imrashai@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-
----
-Ishu Brar (2):
-      dt-bindings: clock: qcom: Add SM7250 graphics clock controller
-      clk: qcom: Add SM7250 graphics clock controller driver
-
- .../devicetree/bindings/clock/qcom,gpucc.yaml      |   2 +
- drivers/clk/qcom/Kconfig                           |  10 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/gpucc-sm7250.c                    | 379 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,sm7250-gpucc.h      |  36 ++
- 5 files changed, 428 insertions(+)
----
-base-commit: f5672a3dff0291d6a45eb0c258b9d2baeb4dc577
-change-id: 20261023-gpucc-sm7250-612ad53607fe
-prerequisite-message-id: <20261016042432.824-1-sreeshankar0910@gmail.com>
-prerequisite-patch-id: 73b48e3c0861782784c45684336c1cb2c8b37852
-prerequisite-patch-id: fb97b00b62996e3d3634185a803a33eb545522dd
-prerequisite-patch-id: 8190bf61e50dbe2e09859505e8e4d8cb4ab02ddb
-prerequisite-patch-id: 8c34692012f724a93c58e1df02338acec497344d
-prerequisite-patch-id: 983ca91f160cca12047d9b0829c8cbbf4cc32e98
-
-Best regards,
---  
-Ishu Brar <patches@brar.si>
+-- 
+2.56.1
 
 
