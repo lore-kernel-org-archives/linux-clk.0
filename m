@@ -1,102 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794823035;
-	b=okjUXAWbI5kWEdpIdv0MxkRA8WY7TeOy2rS2G8h+o8qlEhcS3L/8zQD12zC3+B/z/0Bj
-	 XcYemc3dEuPZmBs1kbyTUXtrbeRCt55eKdGCQ1t+PC5bHjUr2Wlbp3sDHIju4u0FNuVYJ
-	 sTidNyU3oPHJUTrI2yjwrx8wDvW7W1CrB8Zz5YSehC+yt1eniEKGvMHPcK99dLHTesxH5
-	 gePWNaueUlENHJuTBQVX8IHtUwq5dw8C6ADEz/r3yIosMPPIhea1wT7aqVI/kzRHf1Txw
-	 aTiixuJzgXCBS1ywS7V/7P84swDsXSUVQ01fb/lgt9MyXS10m54A8CgF3wFe3XcfxcA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794823035;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=BKwH/iPsGpBgdjotukbv47/XMRavn61B5PvO9PeiRxY=;
-	b=q4sxxGboYwA4uikzlqA4T+DzQDFo7Zzz2sG/K9ClRkSz78N8VvVETwmP6yjN4HhfBSoP
-	 8+vuFuPhzKUYkj65a/BIgBAK8hPsJcnMg4KN1ITGXuOQr5IJQe2gWJncKPfSPLUwJ3UUg
-	 6oqYp6R0NhmNHljA1nBYSYgAAAzAzUIU1xZpuV/YwjfJU10awmfyemi6cwlIiItaFjS01
-	 LfoMvKtBV3pAXb7RanfvZHAyABfxpbjdSJ8Lw86sN8wRCdc6c6fJ8UE1bA5EJ5YmY4bRY
-	 Q1Gm6X40WRi+eOueHYJtgzumSGgeU/dfp7Z6KKNcwfIn3xfbJa+bQMr14JSOvS0MEoA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=e77DMDMx;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794823305;
+	b=XFw2b2CSg0dc9tqwfr49u65k57gyV0e05gbRdYeCT+WAT2Jc7ewdzdyQxLBfoVlXaBjR
+	 eZAjEzs082qMZf7baQ0H2Og4tyWaj+TLoJQMNbUAa7xcjObQd2NUxfwNn01C1lyOvFXI9
+	 lXnGRrYKrXRHUdf4YezEYI1/5KUOdBQVq+SpBAOWJDwex1DojDETGgzP9tttIOt7jmdSP
+	 j9kCod1ygpemXWQioPUcj8lkjwVR6AF4tBrKEJM/8e1OVVAkiZgJbwbBLDaBdoKmn4CVP
+	 OhRa2xQwaGI/WLek45W3BeVQHgQ+HehM0EyEHRBkNGQIq2d76nb3w1Z/S6ovHve8hnA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794823305;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer;
+	bh=WGx4yjZhEde7TvTLPPi9oLKwIm2f2ZhCwsVI7E4TU3s=;
+	b=dBMxKxx+z6TB8REapraEiGNs1wKfk11b8W+zrwYvgOw8nF7gy37Ln1yLtaHG4SaSHxuQ
+	 cz0915eo09g/Vilr1/IsQ20JUfcyEffdhxoVevXSAPrOuC8A4NuZ/aQtCz1I+eMblZJk8
+	 ZfUYF5z0IMDNB3tDPVecMadJnZoDu7sG6eJlf9S1m/mokggHu9YaCcde2hXrrI1qSTVID
+	 1vVHFz24ppfIuucINhIMl/1Bv30JjSpRfOVS9EE6YQbSS15YeERoqcAHS3SPPC2KBosef
+	 lkRQrdNFRvcAvs50SZ+gwn4twB9UvGN87r/Lk5r4nhd+cwUY+m5Y/CC99JB2ZOUJsEQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fu8tBIfc;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94934606A33D;
-	Mon, 16 Nov 2026 09:57:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 94934606A33D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7099C606A31C;
+	Mon, 16 Nov 2026 10:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=e77DMDMx
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id C930720059B;
-	Mon, 16 Nov 2026 10:57:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794823032;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BKwH/iPsGpBgdjotukbv47/XMRavn61B5PvO9PeiRxY=;
-	b=e77DMDMxYre+lT0XsCkBPm6hniRa/0AKlIuy3d+048vtiK7EOeN76xZGEXQV1xWz/LsEpd
-	+Oq4JRLLrMpOXGo9Kay5U6gtFdYh4/MbSoL+uT/R8dBcQ4omhoWI04Uc0rxHrfxjgOvsGA
-	MYDII28WbWKFPbgqpsmtF+ruObzviCmsJmyHManqwfsZbjxqzQZfsz+Qdxbixn+C6tgpsE
-	nm/tY+hGooOvQV9Ib0TrB57BdQdMafeqeBr2DxEBZpX+iMMPSpWlg/z4HoaZuSGWvn4RBZ
-	p1yO8mUBhURyaMmuXUo6rOj66b1oYq/kYCo1tEehZQXBugBW/JsE4l1S2QuOEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794823032;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BKwH/iPsGpBgdjotukbv47/XMRavn61B5PvO9PeiRxY=;
-	b=ZUruFCBkOh5XjH83QYSicDz/2wzBRnfd7CBdbuBGh03CddG9P4OMOam+bFujPXK1aUv/59
-	0qcxKSIq1rSWr3KEms3Mhvx5F9K8lq96lnovSKWJVzgTbFbvcQeP0y6FiqUTjTU42wPdiu
-	iozyjJ2zUgyfNfHgloQgH5DW1Y95yKdJy6HLNVkt060faWQoAx3iNj7AxWq9a+sU9Xut8i
-	blQsULChDYFSfe52iuHM6GpfpZ83vhV9aNXf0LfzJk9NpT6NWGYuj9R8Qy5DO3JATSNVuM
-	yHHPgoifue+MhG14SkNOV921ONcYGIaha7D/2uFgiUlIpz1wZY6SsUyR1bgUvg==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794823032; a=rsa-sha256;
-	cv=none;
-	b=Sh4oh/QqUDxHSdEQodkdsbc4tb0Wo9LbXyM4Wgk32fnwZiAha1ikyFBqAhePPO9lDvN1kC
-	AOUR2KKCfaS4lsd70Ss/g0NuEymuJlBuyeXaULg4S0IJCGSHa78xqRO+CrsL12FR6I4NzZ
-	EYehOABDF594URR48QRRv6TIMkziWwjvHIBd+ldUqBwB2Md6ArbxNdImPEiwYp+aXi9tjT
-	T8rIieD4Tkv56eOyd1gIeRmTykg26BzV4P5Ha2NzN5PRpTynmMLcrLymGO1i9JWzWdOtJq
-	w4fZrI9USOQqyUBYy4JAkWVdC/pV+DeujrCMA99faBOZ2MWFX6KXaAwiW2ilLQ==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-Message-ID: <2bf193a0353fe74cd2d2faf48528e40df00d36bc.camel@pengutronix.de>
-Subject: Re: [PATCH v4 5/7] reset: Add BCMBCA block resets through the PMB
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Linus Walleij <linusw@kernel.org>, Lee Jones <lee@kernel.org>, Rob
- Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley	 <conor+dt@kernel.org>, William Zhang <william.zhang@broadcom.com>,
- Anand Gore	 <anand.gore@broadcom.com>, Kursad Oney
- <kursad.oney@broadcom.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?=
- <rafal@milecki.pl>,  Broadcom internal kernel review list	
- <bcm-kernel-feedback-list@broadcom.com>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
- <jbrunet+clk@baylibre.com>, Guenter Roeck	 <linux@roeck-us.net>, Jonathan
- Corbet <corbet@lwn.net>, Randy Dunlap	 <rdunlap@infradead.org>, Ulf Hansson
- <ulfh@kernel.org>, Benjamin Larsson	 <benjamin.larsson@genexis.eu>
-Cc: mfd@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-pm@vger.kernel.org
-Date: Mon, 16 Nov 2026 10:57:12 +0100
-In-Reply-To: <20261111-xg6846b-bcmbca-xrdp-reset-v4-5-17035a5e8ad2@kernel.org>
-References: 
-	<20261111-xg6846b-bcmbca-xrdp-reset-v4-0-17035a5e8ad2@kernel.org>
-	 <20261111-xg6846b-bcmbca-xrdp-reset-v4-5-17035a5e8ad2@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fu8tBIfc
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9BAD1F000C4;
+	Mon, 16 Nov 2026 10:01:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794823305;
+	bh=WGx4yjZhEde7TvTLPPi9oLKwIm2f2ZhCwsVI7E4TU3s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=fu8tBIfcVgM+sIFEkI+nzsaLohduaXylLOLdJs7oPhIpZCaDgGRyDIwJM7KV3Aoad
+	 BmtIT2/JFmw6YO1hF/rcga34joJ5I9WOraeQnrA5cUA4EUn+s7uBOF2TmHaoYsGuBz
+	 Y+nhu+yln62MU5CXk7p/hBiGCeKX/JMC4lH6TfAIksvDn3i2iekbooR3cehX+Jw3U5
+	 s8IQo0YnfGwghCMROSe2atJSsqTagxds9e/Rgmq+6plXldjiO1JO8v9OVmCe9iXiBZ
+	 nEzmb9iSUus4zrJZrkWPB6RDr6faY95ftNVNp/4YW56Bg6rzNz3RoVROlSPb1T/To9
+	 AaOv3q662vvBQ==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: s.nawrocki@samsung.com, cw00.choi@samsung.com, peter.griffin@linaro.org, 
+ alim.akhtar@samsung.com, sboyd@kernel.org, bmasney+clk@redhat.com, 
+ jbrunet+clk@baylibre.com, robh@kernel.org, conor+dt@kernel.org, 
+ Raghav Sharma <raghav.s@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, is.gandhi@samsung.com, ts.amit@samsung.com, 
+ pokala.reddy@samsung.com
+In-Reply-To: <20261113110612.3265841-2-raghav.s@samsung.com>
+References: <20261113110612.3265841-2-raghav.s@samsung.com>
+Subject: Re: (subset) [PATCH v3 01/14 RESEND] dt-bindings: soc: samsung:
+ Exynos8855 SYSREG compatibles
+Message-Id: <179482329921.39377.1080590759697882936.b4-ty@b4>
+Date: Mon, 16 Nov 2026 11:01:39 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -106,23 +64,20 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16.0
 
-On Mi, 2026-11-11 at 12:00 +0100, Linus Walleij wrote:
-> Implement the BCM6846 XRDP reset group through the shared PMB regmap.
-> Assert all blocks before releasing any of them, preserving the vendor
-> reset masks and ordering. Provide the independent PVTMON acquisition
-> reset as well. Serialize complete sequences and hold blocks in reset
-> on failure.
->=20
-> Consumers must enable their power domains before triggering a reset
-> pulse (i.e. the cycle of asserting/deasserting reset).
->=20
-> Suppress bind attributes: it's not good to be able to unbind the
-> reset driver for the SoC manually.
->=20
-> Signed-off-by: Linus Walleij <linusw@kernel.org>
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+On Fri, 13 Nov 2026 16:35:59 +0530, Raghav Sharma wrote:
+> Add exynos8855 sysreg compatibles in bindings
 
-regards
-Philipp
+Applied, thanks!
+
+[01/14] dt-bindings: soc: samsung: Exynos8855 SYSREG compatibles
+        (no commit info)
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
+
