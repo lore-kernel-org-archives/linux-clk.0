@@ -1,77 +1,77 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794829782;
-	b=Tsm3UvVgqbuZ6oTJ/TGv0UbFiw1X0W0Mzsksvcm6akpkklUIgJzNye78Wvvjq2H2GN5B
-	 AD+GA1vWMhqoxLqJ+QyxlDK1YxiRzSFRnkpow1CrGylmRGWckLvBXoV06P+R3pOoLM8dT
-	 vudE7Ib1O0JPtonkfMJizNsA5tjyLV9FTWmCOtPUhdhLdzZPCVdR07zxH5JZ5t3OH/81X
-	 nWRInqJkMHYgj1bZiswDuyKxoFNdYnd5uulpd20YW9qBqr67LP7ClOvtJv0frD88M1hR2
-	 ssgcOrq5TOiLFrfVJH+fjryMl94AsTDGvaSUgh25Xwt/jMLd7rrDPXLiLHeHog4IULA==
+	t=1794830723;
+	b=UOkRt85+XYChrW13uJj2auZ7pWob29ZuV6nR7N7r7AzUhL00hN5PEiTqhmqSKmz906yV
+	 6+L248xjahvL7F0RuxUFYPg5hI1rqnLHRQrR6rmba7NGTOL2nHuvCIMT1RJyB/qBkLWi1
+	 wUksw4B41zfoYc+VtLyffMJVzNyAGzFWKV5GLGsTfPXCql4fhAIlgw+Q3+AQD+mFVAwgD
+	 bl0prtqRYHKfQuX9NDwpDsV/s19/GriSCjjHOJZX9Q3wWxrYAliQMDUNJXdEUQ0/HaaID
+	 Vq8iF/ol3qabVIjiQTXsUc+UpKROrOiGyjGs4De65fHSNQMKURjI9VOfsdPWDAJ0XEw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794829782;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794830723;
 	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
 	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
 	 User-Agent:MIME-Version;
-	bh=m4J7Coq8r/xqjCecsg9Er+GxXxxD28PbpsvCfJr5jlM=;
-	b=PXm1oRbrWGAusbjaOcqVy/d95YmUhKSrbZVY2+ndaEbVVqma5EDVa2Qq/4aOzeb2SSOj
-	 r0iLUWupNjQXcn3lM1P4VzsU1plqgLktXO9g7g+cdNyrCYMsMMwWTSqBO2sWUJl9WoYsT
-	 4TjjSN14Utpj5o2hG2P7k1gI9slA/29PNQU2OspDDmQWoAOJxEH7e3B+TmE+ZhrOZ03uZ
-	 t/dig1kVHQ7gx+XTt1aITZBS32hym4+hgKwRtwnbs92v8hGxhQxB8jQlXRNs4nWAhfdXB
-	 /ynsHkiacuwfqJbdmEuzZ2u07M+3kMLMZNO1leVQ3t+wPEjKQVc4XruRPhkepM2anhQ==
+	bh=myLB4OwHBzyw4fpYYsjbE0atdhucZNjAIWIIh+XxrN4=;
+	b=PHAJ2B7HFn98khjcqP56hTgs+0PJUjdPjUsoYSYhI54c+lxpiwND+XyFFZ2/Z/fX2Kn3
+	 aH5fi7pN67l9OHs8Vj79A03zt2kgXBprJa7uQRS6V5xWos7lxI1FbyQ8ZyYmw2XweMp/y
+	 oAnYk+O1bNv94V1A7EyYH60wDa1QF4VMvTJukFOQPgh1PbpRFsi4dRVsIS9aE2kbEDTHy
+	 hqImzCUpfHSRonEveQC8wceo1xxb0MR4hQh0P8xrn5KZRXw6ruKZhxYSHCJ8dr0fcr5IN
+	 WKS2FlZ5GfDDVK4NHLYQPGMxSpndAryvht6S9HpDhsHZSFxjmvHxCzyACUFLbFnkefA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=none header.from=pengutronix.de;
 	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=TCxJiKsk;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=Ce6XbNuH;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
 Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CEF606A323;
-	Mon, 16 Nov 2026 11:49:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 34CEF606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B7E606A31C;
+	Mon, 16 Nov 2026 12:05:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23B7E606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=TCxJiKsk
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=Ce6XbNuH
 Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
 	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 2F5B3200AD7;
-	Mon, 16 Nov 2026 12:49:39 +0100 (CET)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 53F71200563;
+	Mon, 16 Nov 2026 13:05:20 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794829779;
+	s=20260414; t=1794830720;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m4J7Coq8r/xqjCecsg9Er+GxXxxD28PbpsvCfJr5jlM=;
-	b=TCxJiKskoA4zEC33jJD8RNwpMWe2fWbiQysXdhyFbET5LT3ak66+0+sVSJGBQJI3ZNYOy1
-	etmGIUzeAAtUhwF5L5di9tg/8oJwH1tWh12kJAkCU61aOQWG6+uJt13COdNXvypQHGHx/w
-	rpV02KzxRK5ukg2pXFygbpXEHf7LgAhKtlVEDfz+jTJ1Y3rGqnHT8uFfQ1sPlwCKAGf+U1
-	zO3LyMvJHHMI63YUIu2sWyWOCs9DWZtWCoozgTz6SrzcXx/GDJnJKXwjuPHEG/a6Bzt1JC
-	Mb+lVdJRkt0n2PceRMKJw6+efx/cxdFKq30HZWd06atfIz9yb3J+W5wM/pNYjA==
+	bh=myLB4OwHBzyw4fpYYsjbE0atdhucZNjAIWIIh+XxrN4=;
+	b=Ce6XbNuH5brNZhdbUzFVfiOQWZuIors5ZDiGHZbq0H7heC+CJAV03821lq6MmKMKV9XoZD
+	BTyf9IhZYlJxqCbCfj9XlRAWZ25crA3wkkrruTuzS45AeOipgjY5dQtNIRhtYHeVgoV/7n
+	XnI5zPCkBK/VI/AbcJkZm2uNVq7BbbJWYKiLFyKWmuh4wkYKksrl86rP+pQTceQgZiykWj
+	7DpmecXjt1ilPM8a816IguIp1drfqcEEUmQgGsBR2OZTXDZsCJvBotLDRGz//ie1/p8ktC
+	Fqu2BM+hQ/dp7KTph2vh5zncXCsFO7V9mfK9M9j3N2ObQh+xQLR/SsqZzXnq3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794829779;
+	s=20260414; t=1794830720;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m4J7Coq8r/xqjCecsg9Er+GxXxxD28PbpsvCfJr5jlM=;
-	b=bhb5gt1s6T2CLoIn/WkEEKUFkiCJfuLzsBiov/r2AT0+WDgL6/Zi1GrtClImVckmhYmmXF
-	ubPEImde4nZygvCWDNecbGuT++VbNtsNTgaJ7aQ/s9u5Ogv7p/So5uoBeMHAzg0AmWOKgh
-	4XJPFN9jLpr9Sq7uNrzzun3lwDsC5QlMQ+T3nulSxHUrSywIccblHZzbVah/LT/DcwmqND
-	eBjilWReeBou5AcnaR+DuvfAHBvMDvcnqmyprx9lLvtxmjD4OCD4+CVRTdd+KFShZl3Uz7
-	wb6WBpjQLJq1uMw0QyHdLU17uqgumyucihewa0GtICRgaJgQhTq6+b9gC+xbdA==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794829779; a=rsa-sha256;
+	bh=myLB4OwHBzyw4fpYYsjbE0atdhucZNjAIWIIh+XxrN4=;
+	b=SMy3PkaQYVUKR3rltjraWfns01w0zxrh9UgoUXYbVER4fulioewJUvI9H7vYBvbQXRz133
+	h8OLDsjkvu8BUAsQq5pQ526HlxcQ3eH+Ii4QcIq8wUwH8PlHSHnr6NTzaL9UBqpaecEGwg
+	cYFaelKZmN1RSfbtxG0axVPYwDTz3Vgl9Whds07omSbRVx8uojIljS2lfukkqrd+6TtTb1
+	IgtoLxJP9UNJIey3UyZmjSC2IQh/RcqkNcVcBfU+8EjNTQAHQAOrNbjCxyQazF0A66JvrE
+	7YtIVB7xsnF0TsMZpxdrzNEjix/6/X49PdJcA+Vbj4Q1wMosFZ0vxEz7EjtkxA==
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794830720; a=rsa-sha256;
 	cv=none;
-	b=Q/GTP5h5iQHyLUddqPQpEnZOgcdwmSwpAHmQJd8kO6lR3N3oIFZDGuoeZaga1Wd+Y6VNov
-	fveCRaFRD/oLqzcTj//y8jWXZ8zFdTshHLPmzB9Empre5mur/qm1smIFBtZ2/GRTWhxmbc
-	WfGpk8e/pXhCuaDejdoG5lQhChgIJqSuNuEGGR3q36tnfksFoDqdrW0GedInlpUB3tSFSt
-	TTMlYRwWCnny6EJEJkYd+8ROY6yMDYtXk/WMH4gAkzeNXO64Uc+RxKCdH0QONE04Amkqmu
-	1ykfHeM2QpAlNVQ5GkcmbNv3ktrsWcSmDF0y5+IWT9CnzhskS9wr7IOGMjYjUQ==
+	b=d631/ZkM9Ikmiwd4yVTINxrLF6GTwIFVHvDISAG5stxcDBhx3DcAIr4AojkGqcqbZcKHmd
+	ICnxsKWCkTPL1FbddoK8od4Gd+MTDwER6NEHyPxDpxIlS7egWdkCQxSoo+VvSsXAavRymC
+	lJSxacXKlycJhl0KgiRrP5VmA/2yjMYTHmOKcbANRhCB5asKesMZiiwjt/E7JvBw7rz1yy
+	/Js0i3NVVdlqGwqDOIKMBiMLBDaU2m2yx5hNobeKGGJs9MzxqTa+Egj8bMwle+yWUzZNJW
+	4Q2GyXcj6h69uwhjChMx14tONM5vda/T21KFVM79pE7cHpDRLBlIjYGRRuomvw==
 ARC-Authentication-Results: i=1;
 	ORIGINATING;
 	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-Message-ID: <6ff41e4f76419d8f66b85f5a838e81f189f93521.camel@pengutronix.de>
+Message-ID: <782e5c69196cd5618841abeadb1563d67f6e93a7.camel@pengutronix.de>
 Subject: Re: [PATCH v2 07/13] reset: add Synaptics SL2610 reset controller
  support
 From: Philipp Zabel <p.zabel@pengutronix.de>
@@ -85,7 +85,7 @@ To: Jisheng Zhang <jszhang@kernel.org>, Rob Herring <robh@kernel.org>, Conor
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
 	linux-gpio@vger.kernel.org
-Date: Mon, 16 Nov 2026 12:49:39 +0100
+Date: Mon, 16 Nov 2026 13:05:20 +0100
 In-Reply-To: <20261115102401.3520-8-jszhang@kernel.org>
 References: <20261115102401.3520-1-jszhang@kernel.org>
 	 <20261115102401.3520-8-jszhang@kernel.org>
@@ -144,6 +144,9 @@ On So, 2026-11-15 at 18:23 +0800, Jisheng Zhang wrote:
 > +	depends on ARCH_BERLIN || COMPILE_TEST
 > +	depends on OF && HAS_IOMEM
 > +	select SOC_SL2610_SYSCON
+
+Why is this select needed?
+
 > +	help
 > +	  Support the reset controllers in the SoC and MCU system control
 > +	  blocks of Synaptics SL2610 SoCs. Both pulse and sticky reset lines
@@ -207,6 +210,9 @@ On So, 2026-11-15 at 18:23 +0800, Jisheng Zhang wrote:
 > +
 > +#define to_sl2610_reset_priv(p)	container_of((p), struct sl2610_reset_pr=
 iv, rcdev)
+
+Turn this into an inline function, please.
+
 > +
 > +#define SL2610_RESET(id, reg, bit, sticky)[id] =3D { reg, BIT(bit), stic=
 ky }
@@ -317,6 +323,9 @@ ky }
 > +
 > +	if (!cfg->sticky)
 > +		return -EINVAL;
+
+The core uses -ENOTSUPP for this.
+
 > +
 > +	return regmap_clear_bits(priv->regmap, cfg->reg, cfg->bit);
 > +}
@@ -329,6 +338,9 @@ ky }
 > +
 > +	if (!cfg->sticky)
 > +		return -EINVAL;
+
+This could just return 0.
+
 > +
 > +	return regmap_set_bits(priv->regmap, cfg->reg, cfg->bit);
 > +}
@@ -344,6 +356,9 @@ ky }
 > +		usleep_range(10, 15);
 > +		return regmap_set_bits(priv->regmap, cfg->reg, cfg->bit);
 > +	}
+
+Why is this needed? Could you just return -ENOTSUPP?
+
 > +
 > +	return regmap_set_bits(priv->regmap, cfg->reg, cfg->bit);
 > +}
@@ -374,28 +389,10 @@ ky }
 > +	priv->rcdev.dev =3D &pdev->dev;
 > +	priv->rcdev.of_node =3D parent_np;
 > +	priv->rcdev.of_reset_n_cells =3D 1;
-> +	priv->rcdev.nr_resets =3D data->num;
-> +	priv->cfgs =3D data->cfgs;
-> +
-> +	return devm_reset_controller_register(&pdev->dev, &priv->rcdev);
-> +}
-> +
-> +static const struct platform_device_id sl2610_reset_ids[] =3D {
-> +	{ "sl2610-soc-reset", (kernel_ulong_t)&sl2610_reset_data },
-> +	{ "sl2610-mcu-reset", (kernel_ulong_t)&sl2610_system_reset_data },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(platform, sl2610_reset_ids);
-> +
-> +static struct platform_driver sl2610_reset_driver =3D {
-> +	.probe =3D sl2610_reset_probe,
-> +	.id_table =3D sl2610_reset_ids,
-> +	.driver =3D {
-> +		.name =3D "sl2610-reset",
-> +	},
-> +};
-> +module_platform_driver(sl2610_reset_driver);
-> +
-> +MODULE_AUTHOR("Jisheng Zhang <jszhang@kernel.org>");
-> +MODULE_DESCRIPTION("Synaptics SL2610 reset controller");
-> +MODULE_LICENSE("GPL");
+
+Please don't set of_reset_n_cells. This is ignored since of_xlate is
+not set. reset_controller_register() already sets fwnode_reset_n_cells
+to 1 by default.
+
+regards
+Philipp
