@@ -1,79 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794818709;
-	b=nHgNd1HDKxX6kqgC89MFLD9QXgG4b2Nt+uQeY5QbBmhajT3N6UVg44xAWPGCuH8e/xGO
-	 429pYFRFbxh5DazKZKAs6vBl3SE/CFFIqEgTnsar43povp5k9By2fVKGIub7OrOBr6uHw
-	 D+9/I8ygsohL8Ewm15oCaVTmPhHO3mbZqWggrNHdrdgNHkGfz6dbQiCtW4kG64F1C3/Kd
-	 gmCNuzzyA2ShzKGb57WnB0C4hTdhK4MBeG9CG2ULGb9Ke6TgIo4oa4GsJuUKJH73o71eC
-	 drxKC6ak1khDqoezMcG/oo1uHnBZj/bgqg+6mLuOBzSOp+lCFzz8xm8vSCnsUk3TffA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794818709;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Z4qmgXwM2I+am+EKwmSmoiLxNulMJ5aJrfNpjBxX2QM=;
-	b=oSWDOJA7GL+YPFdHsrACaWrggjXFhgEaqBo/4dvdicBOvXSsLq+GT/v2+k2+2yVenKnG
-	 EfkhPIyu2C2EbcG0XDmpE8aWiEska5sRGfsbhyjMfy4AjRji/AjLKxXv6xymJesqZvna3
-	 2iK6xaYOy2vqwqCRJrScSw3gvZlGEYUfk2yJAf+yYnNEgpJmVED4yJjKEWzSPt6lBpqe1
-	 XdB3Ahk4fxElB72tqQC86dL7BBXqZaIj2emy4OUvus0bpXcrDMxfrJjHJCrIDfHUeILmt
-	 Y0io2brGrAkREY4lqak2fhEFdVC1wRPSPVtvbx3z1jwECI7pI0CR925rZV4A/fiW8kg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TyKTOqIy;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E725606A332;
-	Mon, 16 Nov 2026 08:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=218.76.62.146
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794822152;
+	b=xaC4sJY+O1sVr1kC/URzo32WomWe10VvZ5XJtlEDjuZnleUDJilw11PC3CyX9D4edXZ0
+	 KEpRfeopD2RwooF51me7Vl4CLNb9YfAsWJ2VV95cfhEbxv0hIR+fhcJvg+yChxM6uQOgS
+	 HpsBiIKnnnFVrY23VgmnJ6ci5HK5XrLXD+tp7NjpECnrZiSYPxPlu1GyM+/DsVW1vqxg5
+	 36DjppC4UIXIvhoAI8jOHdRp+53cK7kucJbAqiv0q5YPNs/LDLBNCnaUn4R+iUGuunfl6
+	 JnSQlyEpLVDJDU19jcI+OT+fY+kdj+TFyS0I3S30tf0WDw/NJMSC0BhTGiLgIPvANXA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794822152;
+	h=DMARC-Filter:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Message-Id:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-CM-TRANSID:X-Coremail-Antispam:X-CM-SenderInfo;
+	bh=An7UuIxp03IASJQVhCkrJ11j5LJvQXg6N+oWMG7q8QQ=;
+	b=F60g6BydugNe5jL8lJk7h/JZwt56ZE+Oaj8HQNkkn6WfeMEeLVF6H0275x1URgomGWJu
+	 aozA6lxtytiAA5qJQDSx8gBOWnzw1WUo49Y1sIXJS99/UplwwETi/7jKI4Oq5RkBSGnsR
+	 hPE+ytxEXTxLnie3ckvQJ2ho5XHcckQkgTX7oPObAx2XTEeKjfkXvU70BNv7Uj4uRjLk/
+	 abZCYEEXiQ8m9pOI8JiLfdWsL7IiPAl78CZiovpDMAvGdNFjl/SpF60ss4CuOavVrSAjg
+	 LLfJRfrkGk2nxv0lLunNTHIgsbhRKEKOzVk19iBfZcZt6j67lHfwFO0jAwsInMu96GQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=ultrarisc.com;
+	spf=pass smtp.mailfrom=ultrarisc.com;
+	dkim=pass header.d=ultrarisc.com header.i=@ultrarisc.com header.a=rsa-sha256 header.s=dkim header.b=f9ipurVX;
+	arc=none smtp.remote-ip=218.76.62.146
+Received: from ultrarisc.com (unknown [218.76.62.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40C5606A31C;
+	Mon, 16 Nov 2026 09:42:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C40C5606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ultrarisc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TyKTOqIy
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794818709;
-	b=D+D+St9UKRC0rB/ZIg3lEl1+BpFUf8TnhF+Ej3tE15hSm1UqyRuEv3P6DwYZqvRjWIA8
-	 65jEvaz1PKCL5NSjRNn2spwcIjQXe2wKO5ZyNrHQMdJJcO4gUl6BWR3fePLHz1lhEMLZo
-	 XYnYom+i78Jbtp6XKa9Nk2xeAdxwY614Yh9gY+Mowczl7TlS26sVjeMDf+bDh+VJhoLPY
-	 CcxEsp2S/sBiS8yJXVdoLFU33Zp5HvwWvJ4vBwCnWJveKcHJ5ut+nH98kj+Mv7jjXYj6p
-	 0TwcY62HI95LBWYXmOFCytW9mB2xwkmcV3K/z4WOfkZbz30cI+NO2Gm1DvSC0aTvFqQ==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794818709;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Z4qmgXwM2I+am+EKwmSmoiLxNulMJ5aJrfNpjBxX2QM=;
-	b=k1cbD5TCviaeLzLs6vx0rOoBal7Td5p3DT0o9alKBMIGKs74SlYjGt9aOTB8iBlWCU3W
-	 iRRBdJ7p2bCakqgD6k+oyMxeGc54d8vQdduUJf3cgYF/W46tP15smSV7UeNyZx4CVbEJ6
-	 fZ2ARpozJbe2w/xE1AuVOGU1H56TNBa6GmY1ir7W4cpxPuPapmPOJC/f/ENT6B81tPAL/
-	 AtFf67sqNMRCCGxu889JaQDzTghQjMu/CALzEx7o0wsLCRGUuvdmKfRuZlK7t3aCDeJvn
-	 tmFqEffpE+0+UU/yXIlWCMtZMjEMEwRgJIrfeu6ToFYdJA13jBtHcnxiTfFVla0UhgA==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 06C671F000C4;
-	Mon, 16 Nov 2026 08:45:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794818709;
-	bh=Z4qmgXwM2I+am+EKwmSmoiLxNulMJ5aJrfNpjBxX2QM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=TyKTOqIylekrsjRO3i6r75Muw0/Qohjr/Ij/v33WpTiTdh1/V2PnER/pL9XmTJRuj
-	 MGFxowdNGWCg4irxUfjbEd01ag8T3xPBEoHaIshuh6+ivfO1YCcSkZ1E3layFU4H25
-	 YpUKDPjezrfDI9L8/iOCuhEMAoSSwSrQOAc2iVnK8IVQLhCOFOVP2uokGyprsMkPr2
-	 ID+1PfYI/3OJM68Yl+tnSnY9SWtROaZxhQNp2V44SJMpPpIXOI2i41idWZw9Cv/xzM
-	 0IT/iKXyqASr+X6ARSzauZduV0VtxUmSeN2SscDSpA930+PsXhYpcasnhywQU56PEB
-	 Yd1d1Uhg9unkQ==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 741D84A3D1;
-	Mon, 16 Nov 2026 08:45:07 +0000 (UTC)
-From: Arun Iyengar via B4 Relay <devnull+aiyengar1990.gmail.com@kernel.org>
-Date: Mon, 16 Nov 2026 08:45:07 +0000
-Subject: [PATCH v2 1/2] clk: sunxi-ng: h616: Gate the PLLs with their
- output enable bit
+	dkim=pass (1024-bit key, unprotected) header.d=ultrarisc.com header.i=@ultrarisc.com header.a=rsa-sha256 header.s=dkim header.b=f9ipurVX
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=ultrarisc.com; s=dkim; h=Received:From:Date:Subject:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
+	To:Cc; bh=An7UuIxp03IASJQVhCkrJ11j5LJvQXg6N+oWMG7q8QQ=; b=f9ipur
+	VX/UghcfN/mb558IYBHJS+c63qswbFranYLmCjgbj/iokuRDa0D2fMmMXEZueWi8
+	4eBZKfLOqSYxXm8kMIeCMGHRmkhN+xGSgrLDdOQiMs/VbJBY5KpGBlRni+TMjA33
+	K+NLZ9kXCoIvYrziIQsGg88KXVcP/SPVFS4sg=
+Received: from [127.0.0.1] (unknown [192.168.100.1])
+	by localhost.localdomain (Coremail) with SMTP id AQAAfwDnrwbGz_pqSvUDAA--.1734S2;
+	Mon, 16 Nov 2026 17:41:26 +0800 (CST)
+From: Xincheng Ji <jixincheng@ultrarisc.com>
+Date: Mon, 16 Nov 2026 17:41:31 +0800
+Subject: [PATCH] MAINTAINERS: Update UltraRISC driver maintainers
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,176 +54,139 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261116-h616-pll-output-gate-v2-1-a418026ffae6@gmail.com>
-References: <20261116-h616-pll-output-gate-v2-0-a418026ffae6@gmail.com>
-In-Reply-To: <20261116-h616-pll-output-gate-v2-0-a418026ffae6@gmail.com>
-To: Chen-Yu Tsai <wens@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: Andre Przywara <andre.przywara@arm.com>, 
- Maxime Ripard <mripard@kernel.org>, 
- Philippe Simons <simons.philippe@gmail.com>, 
- Ilya Titov <ilya.titov@wirenboard.com>, linux-clk@vger.kernel.org, 
- linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Arun Iyengar <aiyengar1990@gmail.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794818707; l=4955;
- i=aiyengar1990@gmail.com; s=20261110; h=from:subject:message-id;
- bh=8jODp0ifglQsXJHJh7FAOxppXVcA5WOgGJP8Gd4G8UQ=;
- b=lcVILKaaUIqNwmfPoDq7OsVPyU9PQI7Va8OL8g2mnN5zlfOtrwpotn90YOF1jCKJOVHhuRWM/
- oHmTpOlEoxABhhLOnTwnJ3zjebpso2ewYjnN8rF+mPt2w2mOgYgKyCH
-X-Developer-Key: i=aiyengar1990@gmail.com; a=ed25519;
- pk=zXpRgUTrhaFe6jLyPqbBy3ccfkj04w0g2690Wv3mg+0=
-X-Endpoint-Received: by B4 Relay for aiyengar1990@gmail.com/20261110 with
- auth_id=1480
-X-Original-From: Arun Iyengar <aiyengar1990@gmail.com>
-Reply-To: aiyengar1990@gmail.com
 Content-Transfer-Encoding: 7bit
+Message-Id: <20261116-ultrarisc-maintainer-v1-1-f58706ae438c@ultrarisc.com>
+X-B4-Tracking: v=1; b=H4sIAMrP+moC/yXMQQqDMBCF4avIrBtwIkr1KqWLGEc7oqnMRCmId
+ 2/UxVt8i/fvoCRMCk22g9DGyt+QgI8M/MeFgQx3yWBzWyFibtYpihNWb2bHIaaRmLoqu2dZo3V
+ FC+m6CPX8u7Kv921d25F8PFtwHH+phzXFeAAAAA==
+X-Change-ID: 20261110-ultrarisc-maintainer-965d85912a3b
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Linus Walleij <linusw@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+ linux-clk@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, Fei Chen <chenfei@ultrarisc.com>, 
+ Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Xincheng Ji <jixincheng@ultrarisc.com>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794822092; l=3017;
+ i=jixincheng@ultrarisc.com; s=20260922; h=from:subject:message-id;
+ bh=ISg1g4ONyICVsyMrVHbkY7NCHgvfTE297DDq/TSYiOU=;
+ b=nczyInXsPH5sXfo1MLZNPno9PuLSKd3gFkJQMiE/xCgmrwPeQuSEY8uiC49TYcn3m9dHbb7IP
+ QWW6JkKynTlAaOBT2GxoeMmkYPYBFn/kkvxpTc/A8PIQFWZtE/f5n+S
+X-Developer-Key: i=jixincheng@ultrarisc.com; a=ed25519;
+ pk=n848dcS5D6g0vLad/rjp4Gf/1eedTe1a3pYUrkt2260=
+X-CM-TRANSID:AQAAfwDnrwbGz_pqSvUDAA--.1734S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAFy8ZFWDKrW5JFWxuw1rZwb_yoW5Cw1fpr
+	45CF15Cr97Jr13Wan7Ka4fZas5X3W0krWUCasrKw1jyF1Fkw18Jrs5Kw15u3Wq9F48AFZI
+	yw13urnrta109a7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I
+	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
+	xVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
+	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
+	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
+	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRM6wCDUUUU
+X-CM-SenderInfo: pml0x0xfkh0wg6xo325dul2uoofrz/1tbiAQAKDmr2s7AAAQALsQ
 
-From: Arun Iyengar <aiyengar1990@gmail.com>
+Jia Wang and Xincheng Zhang have left UltraRISC and are no longer
+maintaining its drivers. Jia's listed company email address is
+no longer available.
 
-Gate the H616 PLLs with the output enable bit (27) instead of the enable
-bit (31), which powers the PLL down, as the manual (3.3.3.6) recommends
-and the A100, D1 and A523 drivers do. Power them up once at probe.
+Replace Jia Wang with Xincheng Ji and add Fei Chen as a co-maintainer
+for the DP1000 PCIe, clock, DWMAC and pinctrl drivers. Remove
+Xincheng Zhang from the PCIe maintainer entry.
 
-On an Orange Pi Zero2, powering pll-video0 down at 453 MHz crashes the
-CPU doing the write.
+Having two maintainers provides continuity for maintenance and
+patch review when either maintainer is unavailable, as suggested
+by Conor Dooley during the UltraRISC maintenance handover.
 
-Fixes: 88dde5e23da1 ("clk: sunxi-ng: Add support for the Allwinner H616 CCU")
-Signed-off-by: Arun Iyengar <aiyengar1990@gmail.com>
+Link: https://lore.kernel.org/all/20261112-legend-outcast-c2226b5e02a1@spud/
+
+Signed-off-by: Xincheng Ji <jixincheng@ultrarisc.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+Hi all,
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-index c5e5b3f78846..4037c5f022a8 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-@@ -36,7 +36,7 @@
-  */
- #define SUN50I_H616_PLL_CPUX_REG	0x000
- static struct ccu_mult pll_cpux_clk = {
--	.enable		= BIT(31),
-+	.enable		= BIT(27),
- 	.lock		= BIT(28),
- 	.mult		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.common		= {
-@@ -50,7 +50,7 @@ static struct ccu_mult pll_cpux_clk = {
- /* Some PLLs are input * N / div1 / P. Model them as NKMP with no K */
- #define SUN50I_H616_PLL_DDR0_REG	0x010
- static struct ccu_nkmp pll_ddr0_clk = {
--	.enable		= BIT(31),
-+	.enable		= BIT(27),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-@@ -65,7 +65,7 @@ static struct ccu_nkmp pll_ddr0_clk = {
- 
- #define SUN50I_H616_PLL_DDR1_REG	0x018
- static struct ccu_nkmp pll_ddr1_clk = {
--	.enable		= BIT(31),
-+	.enable		= BIT(27),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-@@ -80,7 +80,7 @@ static struct ccu_nkmp pll_ddr1_clk = {
- 
- #define SUN50I_H616_PLL_PERIPH0_REG	0x020
- static struct ccu_nkmp pll_periph0_clk = {
--	.enable		= BIT(31),
-+	.enable		= BIT(27),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-@@ -97,7 +97,7 @@ static struct ccu_nkmp pll_periph0_clk = {
- 
- #define SUN50I_H616_PLL_PERIPH1_REG	0x028
- static struct ccu_nkmp pll_periph1_clk = {
--	.enable		= BIT(31),
-+	.enable		= BIT(27),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-@@ -114,7 +114,7 @@ static struct ccu_nkmp pll_periph1_clk = {
- 
- #define SUN50I_H616_PLL_GPU_REG		0x030
- static struct ccu_nkmp pll_gpu_clk = {
--	.enable		= BIT(31),
-+	.enable		= BIT(27),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-@@ -133,7 +133,7 @@ static struct ccu_nkmp pll_gpu_clk = {
-  */
- #define SUN50I_H616_PLL_VIDEO0_REG	0x040
- static struct ccu_nm pll_video0_clk = {
--	.enable		= BIT(31),
-+	.enable		= BIT(27),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-@@ -151,7 +151,7 @@ static struct ccu_nm pll_video0_clk = {
- 
- #define SUN50I_H616_PLL_VIDEO1_REG	0x048
- static struct ccu_nm pll_video1_clk = {
--	.enable		= BIT(31),
-+	.enable		= BIT(27),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-@@ -169,7 +169,7 @@ static struct ccu_nm pll_video1_clk = {
- 
- #define SUN50I_H616_PLL_VIDEO2_REG	0x050
- static struct ccu_nm pll_video2_clk = {
--	.enable		= BIT(31),
-+	.enable		= BIT(27),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-@@ -187,7 +187,7 @@ static struct ccu_nm pll_video2_clk = {
- 
- #define SUN50I_H616_PLL_VE_REG		0x058
- static struct ccu_nkmp pll_ve_clk = {
--	.enable		= BIT(31),
-+	.enable		= BIT(27),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-@@ -202,7 +202,7 @@ static struct ccu_nkmp pll_ve_clk = {
- 
- #define SUN50I_H616_PLL_DE_REG		0x060
- static struct ccu_nkmp pll_de_clk = {
--	.enable		= BIT(31),
-+	.enable		= BIT(27),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-@@ -229,7 +229,7 @@ static struct ccu_sdm_setting pll_audio_sdm_table[] = {
- 
- #define SUN50I_H616_PLL_AUDIO_REG	0x078
- static struct ccu_nm pll_audio_hs_clk = {
--	.enable		= BIT(31),
-+	.enable		= BIT(27),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(16, 6),
-@@ -1183,10 +1183,10 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
- 	if (IS_ERR(reg))
- 		return PTR_ERR(reg);
- 
--	/* Enable the lock bits and the output enable bits on all PLLs */
-+	/* Power up and lock-enable all PLLs; bit 27 gates them (3.3.3.6) */
- 	for (i = 0; i < ARRAY_SIZE(pll_regs); i++) {
- 		val = readl(reg + pll_regs[i]);
--		val |= BIT(29) | BIT(27);
-+		val |= BIT(31) | BIT(29);
- 		writel(val, reg + pll_regs[i]);
- 	}
- 
+Jia Wang and Xincheng Zhang have left UltraRISC and no longer
+maintain these drivers. Jia's listed company email address is
+no longer available.
 
--- 
-2.55.0
+Fei Chen and I will share maintenance and patch review for the
+UltraRISC DP1000 PCIe, clock, DWMAC and pinctrl drivers. Having two
+maintainers provides continuity when either of us is unavailable,
+as suggested by Conor Dooley during the maintenance handover.
 
+Thanks,
+Xincheng
+---
+ MAINTAINERS | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ccbcdc0799b9..994c3555c423 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -21869,8 +21869,8 @@ F:	Documentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml
+ F:	drivers/pci/controller/plda/pcie-starfive.c
+ 
+ PCIE DRIVER FOR ULTRARISC DP1000
+-M:	Xincheng Zhang <zhangxincheng@ultrarisc.com>
+-M:	Jia Wang <wangjia@ultrarisc.com>
++M:	Xincheng Ji <jixincheng@ultrarisc.com>
++M:	Fei Chen <chenfei@ultrarisc.com>
+ L:	linux-pci@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/pci/ultrarisc,dp1000-pcie.yaml
+@@ -28749,7 +28749,8 @@ F:	drivers/usb/common/ulpi.c
+ F:	include/linux/ulpi/
+ 
+ ULTRARISC DP1000 CLOCK DRIVER
+-M:	Jia Wang <wangjia@ultrarisc.com>
++M:	Xincheng Ji <jixincheng@ultrarisc.com>
++M:	Fei Chen <chenfei@ultrarisc.com>
+ L:	linux-clk@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
+@@ -28757,13 +28758,15 @@ F:	drivers/clk/ultrarisc/*
+ F:	include/dt-bindings/clock/ultrarisc,dp1000-clk.h
+ 
+ ULTRARISC DP1000 DWMAC GLUE LAYER
+-M:	Jia Wang <wangjia@ultrarisc.com>
++M:	Xincheng Ji <jixincheng@ultrarisc.com>
++M:	Fei Chen <chenfei@ultrarisc.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/net/ultrarisc,dp1000-gmac.yaml
+ F:	drivers/net/ethernet/stmicro/stmmac/dwmac-ultrarisc.c
+ 
+ ULTRARISC DP1000 PINCTRL DRIVER
+-M:	Jia Wang <wangjia@ultrarisc.com>
++M:	Xincheng Ji <jixincheng@ultrarisc.com>
++M:	Fei Chen <chenfei@ultrarisc.com>
+ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/pinctrl/ultrarisc,dp1000-pinctrl.yaml
+
+---
+base-commit: aebb7274476403040d582c61478df8f4a7bf9cd3
+change-id: 20261110-ultrarisc-maintainer-965d85912a3b
+
+Best regards,
+--  
+Xincheng Ji <jixincheng@ultrarisc.com>
 
