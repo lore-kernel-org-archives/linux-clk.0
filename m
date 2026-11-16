@@ -1,101 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.179
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794824643;
-	b=objhj2N2uYK2Q5fO9nttZ2cFMDzsv4SD3/omVE+nspAmvVo1bGLnfATIp8+mWooAE2gq
-	 SkWaQGdboDDu/SSacQEc7y03CUuZUnMW8rD2scm4MeMXDVXoC+ZmOdsOKixB+JfUkQA9a
-	 2C94bwgVA9lPwP6wI3PYQMzliqyUy4rajrj+boK9nad5a7B1KN9gb4CBh8DA5otxesM6t
-	 rr3CwFOr2XmJ59Ir9ocO1cNMOeLqCA8MqY7jzeBvPT9BgqPMjVB2SubyAVxhnIA6EQVjz
-	 JvKms3sTJb3oeVkLOoL4svvncrCCTDKLkk9GvFS1xWiA+O5hAs2Zo8XF6s6MP3+Wljw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794824643;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.42
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794826875;
+	b=Y9viqYRACTKIpfPqakARtjaBJVUpF0sFvYOWA1+3P9h6bvftOS3zsS0oMBYTA884yPSA
+	 tNj1O9sbOqMt99C7knvKSELdN08wtzZ15f/DUvlm13eVP29J+XlAgCHiQBsMGKjOVrA4V
+	 QFas2z8rKI9D5JarmmhjO1FnnsEjyrfjGf3fQCwI8mGxAHUVkCrADcrvITQaB/LnjUaRF
+	 fR1QrJikZtMchUNgLdmP/YfepS4URFhzmzkLOmSWxmk+xG0W0X4qO7iqrswVcgFClgtjC
+	 +AUm4rLeBrnoLfFSKg6CeWed6qSR/wEMAQgm8rmMzHjeiazlyYfh6O0mF8Z3sccqRFQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794826875;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=JbqGOOCkMK2aUyWlzLwbx028m+dzfMAfr1ojena/7dQ=;
-	b=uKcgjJR83C8ihUX9sZfeLusWfWIQ4kx1gnRPwxVaTH5xZcbBWIltIw98xecElzZUlDXX
-	 GQtntA9V04lfoS60xiDQOHJzglCrXr7R9V6HqwO0hcu6K7q993Oq/ebV2rZ4l3wv+rejl
-	 hp3Ehx8hplfm3+yRKVoBecniSoaMhHQOZMz5wtjCSu53bPNmcgM4T+d210Mcvn6f+80p6
-	 jIdMvmeuSiGL4nX4Eoe8mbKB8/VGDdGDglKhCHgYgrS/b65vCk/cYU8LaOLhs+BVCJ1YZ
-	 Z9iK9hosCvNH5n4o1aS6YV/shN87A1gJhhosulBQrnp2XG2Oj4+ktTmN9KvSeguJAJA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ZX435Zha;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.179
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type;
+	bh=PO8kzyBm9V5PzLhTMJiyGSgb8yl8oDzcJ3dWIao7QlY=;
+	b=MH9S5WzweH+4mEsl11DLRkeOw73vZPj9vLTPX9GhWV8e817WEJNuYX81h1d2qO/46uRD
+	 iA+h3/y027+cAdFo14tLWMXdGkYqry2YxWjiVMSzbb8KuYwsGG8sGypRnfSpwP77ZpAuK
+	 P9Wu45bwD7RCI+baL1kF4H0GR3cIUrPgJrgxn0WK1ipcPO2IY9zgVygs/Xh3DkX8bJssA
+	 glhW48d22kv6DG4v0MYqEjNU62KgdiLaOXiIyaS2JO1Ah7YN7Mxli7u06YlJJDfHbzLVw
+	 dizFOa+QeB2SB8zAv1eVt+79r6Br2cke3GhFtOq9KFouEWuZ0uVjNFANPliYm9XQ6uw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=SvotkKRl;
+	arc=none smtp.remote-ip=209.85.208.42
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82257606A330
-	for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 10:24:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 82257606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6811E606A334
+	for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 11:01:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6811E606A334
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ZX435Zha
-Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-3282db206d3so9323952eec.0
-        for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 02:24:02 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794824642; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Mgz29eDs7qCHaSfCQE4/7tBVKVRcDsOaYSviyQFf/U2QDTG5W98261BU2cSJ+3UF7H
-         nMRxgcYscRM37Hhm1iccv6DUUBULM3FDZaCudpLaBOiPPdtCWr1kgTXwNWL6yE5QHbmV
-         aL3RLv6+DNerJpjqKePaSFazRlWoNO5zRpZbU+GCfDvcC6rmMN8ZGN080yLx6ToeyCm5
-         RnWzscZQihP9rKxwKNzw0rRjSQq9zsTKWW/WMDBPxrAdxF5m/2zgixKhydn+fvGVhfY+
-         3INp/GS5FBiZa6gHYG0xCZmqqvcGnwt5pfrrFmlnUEQM0NP0Dgal03I5praVwfmfYcMr
-         PVdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=JbqGOOCkMK2aUyWlzLwbx028m+dzfMAfr1ojena/7dQ=;
-        fh=oZSnDyJFToFSz5KzLkHZLfkSNTIOx1XSH7G5O56Ql7k=;
-        b=N0RFln1JSVTv/9Wo8tjdMjG5ReFMRCnxHaMZWTdWjzyQk2yYSDG0QrhinZI9LFrao9
-         DQKrOLKs0nRNIv+BJZZG/bBxZsMvDP1RlCY1NTP333iQ70KzNqh/QeeLknUJe1fl05AD
-         X18XoOyLoF5nfv6V92xZIuAlEt5uyVpRwjjdA4O4THSZyaABPz65BejBBntvQpY8O5lP
-         hUo/2M0grCg2Tgg/Eafu2CysbYwfgQf8jR9vv3wHxk5Gp45XAetWnF1raEMqwBPoOi9M
-         XVxc9XO//HsH5MRtyqqYIdMGkRKiXXMNDTNcfNWXvf6qyiP7ETt1O7jphcFzzVz/NztN
-         R2IQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=SvotkKRl
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6b65d69f5c2so4641692a12.3
+        for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 03:01:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794824642; x=1795429442; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=JbqGOOCkMK2aUyWlzLwbx028m+dzfMAfr1ojena/7dQ=;
-        b=ZX435ZhasskBrHhsjUgMP8cj896c1igrqorRzLaGT99+Rk0Gxy0oLjQgxiD+VMpKvH
-         D4U/tJpsIbzYFrDIoGSW3/RDIYkG+0LbH1+2de59HTrHz6bH8aGzM0nu9Ry7YWcuqrQX
-         jjFe3WyoteY5ZsEsJQclpDK/18FEkpjdJ/PgBADOljyIGLYUou7waKJYgwxlHtzQLAQQ
-         gaOQMidMuDB/sBsRSiJN5PrLFAYv8GN9IL3MJGgEP+PWSlUy0COJMLIsK27tZtPdkOOQ
-         aU2ELLzPlC+ajDK/grAFwSF0Bwf/yHKHGmDd4g5/1GIh/bDbZl2gpu9Jv9a4O3g8+sYV
-         Gv7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794824642; x=1795429442;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=baylibre.com; s=google; t=1794826873; x=1795431673; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=JbqGOOCkMK2aUyWlzLwbx028m+dzfMAfr1ojena/7dQ=;
-        b=uVFA1bp4PUPsVn1If6UF/09n1GXwr6zZeWA7VPSo+IFFzAHxLAZPmvcC/ix9U1+4jk
-         ySsGdUbvA2k0UlDo8rTXuq3boLJC/oKOOJwSCKZH63lbDtvsUpMhemaWnXRf3IPocii3
-         o6mTgmXT3OzEbcHIK4hRDSvBHd/rcnyMZwP598yOLyp85GyP9JIHN9O66nA+1Xb5x8Pt
-         8LaGb3p2dHF9kXMcXrQ5nRQaPNFiNBAIp5keDr0+uJRLSG10fYM7S/ZiKUstrw387zxC
-         QkXyIxMEFJQzFlZgwRVVj+qWBQTJfKOBfNQzAxqKqYht92OPQ3Nh4XE7dU9yoAQ07Tmj
-         0qqw==
-X-Forwarded-Encrypted: i=1; AL+hErHaB3q1yk967VNOJF3fzz9+B2adJIQgJA95E53Eag92vyfJIclc/WdfNqrSAhkIzKgcPdGrMHWibNU=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+ctPAYVwd/8mkmYwCCz7I+zd4Q6x6JECQ899Imp28s9mYD8uZk
-	ORh2XW58pBiWmwG1l9iBfXozEwfXE5gkM5gf2mpH22ZTIANNlwq0naqS4n6Z1e/RczIIo3iY4dK
-	WUqY0vlqZaftD+CxACU+Vp2rs/wXbqvA=
-X-Gm-Gg: AYBFou2ZgFBKIs/t/L9ACZo8/Qv8LEfFwbuMGUrDbW6rT8U0au37j13l9HUgaR57qT9
-	mvf74u8f6XKU4BRdZU1qCU7fwNwyvQThuh3PSojGmDu1inQN6W4gRs3PpflZUPvf5BiI84yO043
-	5ezzRdbbdQe677h6k9QK2k7mWtGwKbxL0Z6jxve74NW/9yf3hb1FLmXdGFG4kF2G5swHt89DF2o
-	HUf6TROI0RbnTftAUvjgcmIDKjPDMnn5FYf/Dog7/13kq7fKwnb3HWOQO6jRSgAvBqaWjIiO93K
-	i7XOQOga0JdQ+CE4HeDK/T+GKzY93hpf4Pv7meMF8Dr1lMLZAtk7FPjhME0gxiv4h6ZLtV2XGbD
-	a9/pQR2a2t9p212YQ3Cccs8mDfaHf5D2BKDLTX/nWxIY6sb/UkZ/5+G1R1CLfNG1ACqk/R180XI
-	Ef+GZSwtWbMNnecnl5c+dCt+z5i0UZbg==
-X-Received: by 2002:a05:7300:b0a5:b0:375:f846:5b50 with SMTP id
- 5a478bee46e88-37967316379mr9974671eec.26.1794824641398; Mon, 16 Nov 2026
- 02:24:01 -0800 (PST)
+        bh=PO8kzyBm9V5PzLhTMJiyGSgb8yl8oDzcJ3dWIao7QlY=;
+        b=SvotkKRlYBvwtIFWsX8nRzjtx/PzkSgkwTPAjzhHDPZbgzyc//SjhL3Da1P/qC8Z6M
+         KfC65hlK1ug1C9hhXyMscIf1OtiNcuApPmhy8IovSx5LQk6xiSxawQ8rrU4Gt+Q45krb
+         BCWAfTIAAbRSvtGro0l8FfuMwk8syj8t6LDfS63dghDVCmmH0hBQ8AjHf5D4a5vkDIza
+         IWMIqfrtfRsjsk183LcRkcpEylAhLhz/qeo5hyzpSV2Lh1EDmupHS6ySwIJ5/m8Cu/RD
+         166FXiA1HVe7HcxJTyaF1RhFCGZfQxg/4AUibgcqjpcbboqRqF4wz2h1daCYqgoJz/Pl
+         F3XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794826873; x=1795431673;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=PO8kzyBm9V5PzLhTMJiyGSgb8yl8oDzcJ3dWIao7QlY=;
+        b=yFGySCMt4PEQ14pQg13Rwu4zeThTYzClXxrwMQtJ5aCsVMrdfGJoNj3H1xa7QDDwda
+         9nF1XWlnvgpaSFfdzLULcgOe+fVFWHYuTRKLZW/sXh8CizRxHyK6S/ajYM78hwVu/AU8
+         0UrpkasXAIKpeg5oyf7AatfSZfEqWLQQUKGuDuFGKi6n4I4lwD8SYnkRK0wfnkRQGhjN
+         0ICnsEB4EGdsJIEfNt7G0EuDe71lzLSIK6CZfKggIcP+0hpGtbj5t6YUt8rEUGIEIWDL
+         c7HtaiykWfKqAmOy2ViQJeE1n18SqdcGnb46g/lG+UptWgsXP+BXC4YXlgl01Z0BJFbd
+         qylg==
+X-Forwarded-Encrypted: i=1; AL+hErGLDX9Xvh2wcLjg88HjvKZ/6DXC1GCZgWlvxKdMoxTpSFFbQfoJeBsDn7nYgx/1cL4E+gDBGgoOEGU=@vger.kernel.org
+X-Gm-Message-State: APuU4Z81ZjJ/pmfFQ/iVzCoDchJHljCidK0XyR4gPKtvI26LwAupeTeV
+	Mx34fDrdnlmBN1yA9FIBDwOVtJj4cGPPCefspxxe7+uvo/ib8lJ6dG4gvdlQgV8fAEw=
+X-Gm-Gg: AYBFou2WlYUQ8XMQwC6KeJDNZbQCd2MNYo1mwZs+V3+gVvlvfzshrdhUcDvhvW+hno6
+	ME7l/PLVg+XT/mQYVLmSp/RtMOPLib+GWhYXjclRSukKiUhTRCDnTBKOCvEphsT1lCwr6sGH3zx
+	oW9UmB8N8KMziiZ45T7YcsS/3XSKo2T8+ZzyLAZ1y0fr19MJlmPni9pOo0Edb0XOfPJyL7MFC1r
+	kZGfrztrjRTuW2G7zEMJk4EnnDhj2AapihcYpnwLBIzSNeByNXDy5Y8f4XXq76vy+9j31vse8O8
+	Yp92fyiP+42+PLrydXxKJhi8YWyCllG56jGcPMjJ+IPslVM8ydvi4b7gU3Ob3vx5pNaYmOEeQck
+	ONFfiSreOhX0ljKN3YjIBPCnUttEXWiqwrvK1AfSkD/L5itpXFO/h2Fk0R+sWUL4G3sv/XvS3RC
+	hIhJjHpa9bfp8rtoKkJcTDP2WxpywL6qBbKSSeEYuThajGYqwbDZoCD3ihOk30YDYkkjlB/AC4L
+	xzg5cJcmroMQ0wy/nDBnsJ1XTIHFjuxzO3W/DUDn8ut+7rlzpPNj/PnUm3JAEo+y/EsWTIr13FP
+	nOJV19MC803i9k8xuaaHrOOaABU0nkmqjPVLVBBSOy6ex6U5
+X-Received: by 2002:a05:6402:4024:b0:6b6:4dcd:968c with SMTP id 4fb4d7f45d1cf-6b7c0997f8fmr7094170a12.16.1794826872584;
+        Mon, 16 Nov 2026 03:01:12 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c69406640sm21221288f8f.12.2026.11.16.03.01.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Nov 2026 03:01:10 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Brian Masney <bmasney@redhat.com>, Jerome Brunet
+ <jbrunet+clk@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Emil Renner Berthing <kernel@esmil.dk>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-riscv@lists.infradead.org"
+ <linux-riscv@lists.infradead.org>, Hal Feng <hal.feng@starfivetech.com>
+Subject: Re: [PATCH v1 2/6] clk: starfive: jh71x0: Move reset controller
+ registration to jh71x0 common code
+In-Reply-To: <ZQ4PR01MB1202C1DD9DE098DB4674A940F27C2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+References: <20261013102707.9207-1-changhuang.liang@starfivetech.com>
+ <20261013102707.9207-3-changhuang.liang@starfivetech.com>
+ <179475230833.3873592.13070196353304136001.b4-review@b4>
+ <ZQ4PR01MB1202C1DD9DE098DB4674A940F27C2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+Date: Mon, 16 Nov 2026 12:01:09 +0100
+Message-ID: <1jqzgl2g7e.fsf@starbuckisacylon.baylibre.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -105,130 +106,92 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261113145708.261530-1-clamor95@gmail.com> <20261113145708.261530-3-clamor95@gmail.com>
- <179474058020.3790083.7531788945003507652.b4-review@b4> <CAPVz0n154OuYUG2RObrdh4TmASjRhKF9svF0Z=4iCrPyyNt0pA@mail.gmail.com>
- <179478265643.13037.17097457582246933781.b4-reply@b4> <CAPVz0n21-_+G3cEVg98MwcYqhcaGi9nBa42YebNWiqUdo+vqjg@mail.gmail.com>
- <179482363653.13037.14387881069650442772.b4-reply@b4>
-In-Reply-To: <179482363653.13037.14387881069650442772.b4-reply@b4>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 16 Nov 2026 12:23:50 +0200
-X-Gm-Features: Aa3M54omU2sMa-s9Lr8odEO1dEUj9Cu5RuZQ3PyJtArCZqRb5bI6Ga-XTy7PHCQ
-Message-ID: <CAPVz0n2OamOweoLJLBvyt2KD+Zuino1ViYTFsSjL3mTA2V3F1Q@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] clk: tegra114: Add CSI pad clock gates
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, linux-clk@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-=D0=BF=D0=BD, 16 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 12:0=
-7 Jerome Brunet <jbrunet@baylibre.com> =D0=BF=D0=B8=D1=88=D0=B5:
+On lun. 16 nov. 2026 at 08:01, Changhuang Liang <changhuang.liang@starfivetech.com> wrote:
+
+> Hi, Jerome
 >
-> On 2026-11-16 10:43 +0200, Svyatoslav Ryhel wrote:
-> > =D0=BF=D0=BD, 16 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE =
-00:44 Jerome Brunet <jbrunet@baylibre.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > On 2026-11-15 13:54 +0200, Svyatoslav Ryhel wrote:
-> > > > =D0=BD=D0=B4, 15 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=
-=BE 13:03 Jerome Brunet <jbrunet@baylibre.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > >
-> > > > > > Tegra114 has CSI pad bits in both PLLD and PLLD2 clocks that ar=
-e required
-> > > > > > for the correct work of the CSI block. Add CSI pad A and pad B =
-clock gates
-> > > > > > with PLLD/PLLD2 parents, respectively.
-> > > > > >
-> > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > > ---
-> > > > > >  drivers/clk/tegra/clk-tegra114.c | 10 ++++++++++
-> > > > > >  1 file changed, 10 insertions(+)
-> > > > > >
-> > > > > > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/teg=
-ra/clk-tegra114.c
-> > > > > > index ec537efac692..08e425365469 100644
-> > > > > > --- a/drivers/clk/tegra/clk-tegra114.c
-> > > > > > +++ b/drivers/clk/tegra/clk-tegra114.c
-> > > > > > @@ -1041,6 +1041,16 @@ static __init void tegra114_periph_clk_i=
-nit(void __iomem *clk_base,
-> > > > > >                                            0, 82, periph_clk_en=
-b_refcnt);
-> > > > > >       clks[TEGRA114_CLK_DSIB] =3D clk;
-> > > > > >
-> > > > > > +     /* csia_pad */
-> > > > > > +     clk =3D clk_register_gate(NULL, "csia_pad", "pll_d", CLK_=
-SET_RATE_PARENT,
-> > > > > > +                             clk_base + PLLD_BASE, 26, 0, &pll=
-_d_lock);
-> > > > > > +     clks[TEGRA114_CLK_CSIA_PAD] =3D clk;
-> > > > > > +
-> > > > > > +     /* csib_pad */
-> > > > > > +     clk =3D clk_register_gate(NULL, "csib_pad", "pll_d2", CLK=
-_SET_RATE_PARENT,
-> > > > > > +                             clk_base + PLLD2_BASE, 26, 0, &pl=
-l_d2_lock);
-> > > > > > +     clks[TEGRA114_CLK_CSIB_PAD] =3D clk;
-> > > > > > +
-> > > > >
-> > > > > Change seems ok in itself, just a couple of things I'd like to ch=
-eck with you.
-> > > > >
-> > > > > Seems both the CSI and DSI can use the PLL D and D2. Can they be =
-used concurrently ?
-> > > > > If yes, are you sure you want to add CLK_SET_RATE_PARENT which th=
-e
-> > > > > DSI counter part does not have ?
-> > > > >
-> > > >
-> > > > CSI pad clocks are used only by CSI and CSI does not change rate of
-> > > > pad clocks. Saying "DSI counter part" would not be correct, DSI mux
-> > > > switched DSI clock parent while csi pad clocks do not touch clock
-> > > > layout of CSI nor DSI.
-> > >
-> > > Ok but they end up possibly using the same PLL from what I can see he=
-re.
-> > >
-> > > So if the consumer of csiX_pad calls clk_set_rate() on it, while the =
-DSI
-> > > is using it, it won't go well. The rate of the underlying PLL may cha=
-nge
-> > > since you have set CLK_SET_RATE_PARENT. Taken alone, there is no prob=
-lem
-> > > with this but can't CSI and DSI be active at the same time ?
-> > >
-> >
-> > The clk_set_rate() call for csi pad and csi cil clocks for dynamic
-> > adjustments is not possible. These clocks are used only by CSI block
-> > and among 6 clocks CSI uses it can change clock rate only for its own
-> > clock (TEGRA114_CLK_CSI) PAD and CIL clocks must remain fixed  by CSI
-> > design and are not touched by any other driver.
+>> > jh7110_reset_controller_register() is only tied to the JH7110 system
+>> > clock driver by its location. Its logic is generic: hand the CRG
+>> > register base to the reset driver through an auxiliary device.
+>> >
+>> > Move it to clk-starfive-jh71x0.c as jh71x0_reset_controller_register()
+>> > so that the clock drivers of other StarFive SoCs can reuse it, and
+>> > make
+>> > CLK_STARFIVE_JH71X0 select AUXILIARY_BUS accordingly.
+>> >
+>> > While at it, replace the open-coded auxiliary device allocation, init,
+>> > add and release handling with devm_auxiliary_device_create(), which
+>> > already implements all of it. The register base is now passed to the
+>> > reset driver as platform data of the auxiliary device, so struct
+>> > jh71x0_reset_adev and the embedded auxiliary device go away.
+>> >
+>> > The auxiliary device ID is dropped: every CRG already uses a distinct
+>> > auxiliary device name, so the ID is not needed to keep the device
+>> > names unique, and it is always 0 now.
+>> >
+>> > Since the helper now lives in clk-starfive-jh71x0.c, the auxiliary
+>> > device names are prefixed with "clk_starfive_jh71x0" instead of
+>> > "clk_starfive_jh7110_sys". Update the auxiliary_device_id table of the
+>> > JH7110 reset driver in the same patch to keep the tree bisectable.
+>> >
+>> > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+>> > ---
+>> >  drivers/clk/starfive/Kconfig                  |  2 +-
+>> >  .../clk/starfive/clk-starfive-jh7110-aon.c    |  2 +-
+>> >  .../clk/starfive/clk-starfive-jh7110-isp.c    |  2 +-
+>> >  .../clk/starfive/clk-starfive-jh7110-stg.c    |  2 +-
+>> >  .../clk/starfive/clk-starfive-jh7110-sys.c    | 59 +------------------
+>> >  .../clk/starfive/clk-starfive-jh7110-vout.c   |  2 +-
+>> >  drivers/clk/starfive/clk-starfive-jh7110.h    |  4 --
+>> >  drivers/clk/starfive/clk-starfive-jh71x0.c    | 24 ++++++++
+>> >  drivers/clk/starfive/clk-starfive-jh71x0.h    |  2 +
+>> >  .../reset/starfive/reset-starfive-jh7110.c    | 19 +++---
+>> >  include/soc/starfive/reset-starfive-jh71x0.h  | 10 ++--
+>> >  11 files changed, 45 insertions(+), 83 deletions(-)
+>> >
+>> > diff --git a/drivers/clk/starfive/Kconfig
+>> > b/drivers/clk/starfive/Kconfig index bd29358ffeec..51716655554f 100644
+>> > --- a/drivers/clk/starfive/Kconfig
+>> > +++ b/drivers/clk/starfive/Kconfig
+>> > @@ -2,6 +2,7 @@
+>> >
+>> >  config CLK_STARFIVE_JH71X0
+>> >  	bool
+>> > +	select AUXILIARY_BUS
+>> >
+>> >  config CLK_STARFIVE_JH7100
+>> >  	bool "StarFive JH7100 clock support"
+>> > @@ -32,7 +33,6 @@ config CLK_STARFIVE_JH7110_PLL  config
+>> > CLK_STARFIVE_JH7110_SYS
+>> >  	bool "StarFive JH7110 system clock support"
+>> >  	depends on ARCH_STARFIVE || COMPILE_TEST
+>> > -	select AUXILIARY_BUS
+>> >  	select CLK_STARFIVE_JH71X0
+>> >  	select RESET_STARFIVE_JH7110 if RESET_CONTROLLER
+>> 
+>> You've switched to imply for the new controller you are introducing later in
+>> this series.
+>> You should probably be consistent and align this one too. Not in this change
+>> though, it would be unrelated.
 >
-> This is not my point, and you are not really answering my question AFAICT=
-.
+> I'm not going to put this suggestion into the current series for now. I plan to send it 
+> as a separate patch later. Do you think that's okay?
+
+Ok
+
 >
-> Right now you have 2 CSIs clock each linked to a PLL, with CLK_SET_RATE_P=
-ARENT.
-> So a call to clk_set_rate() may change the PLL rate.
+>> 
+>> This change otherwise looks good to me. It requires Philipp's opinion as it is
+>> touching reset too.
+>> 
+>> --
+>> Jerome
 >
-> At the same time, I'm seeing 2 DSI clocks linked to the same PLL, without
-> CLK_SET_RATE_PARENT, so those clock will use the PLL as it is.
->
-> The difference in the model used is odd. If it needs to stay that way, it=
- requires
-> an explanation. If adjustements "are not possible", then why set CLK_SET_=
-RATE_PARENT ?
->
-> If the PLL is fixed by design, then you should not set CLK_SET_RATE_PAREN=
-T here,
-> and possibly use assigned-rate to setup the PLL, as designed.
+> Best Regards,
+> Changhuang
 >
 
-ok
-
-> --
-> Jerome
->
+-- 
+Jerome
