@@ -1,47 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794831303;
-	b=JAQDQ5rorvDGmieClOi3yeMWwFO+YNtTia7JyAgrv9Pl6atmxJYjgy7rw7Go8S3fCb1d
-	 Ti5DnriPDTCWyIigXWGcQTJdptkQq844/T2oWxXHBqXP0KIv8u+SBquNus+gri2o7zqnG
-	 4K1ID+ZcYtUaRjmp7BhICLxi5wK4yE361DF05hwknpD5I8VrEYPZS2DSYxOEyMNfvIfxK
-	 9jMX4vWXrNeOqQD4naDvG4bJ9UAP2YwVlC0gjGzFJ5cD0foAob4m6mVIFf4M5dhKjZL0b
-	 v+O1Mwo0DhTnQ4nvsILt/EWjYKV3s/eXyLD9afyxoJJHgf9XGVci5Sgd5jl2bBz/fng==
+	t=1794832024;
+	b=Df+hlYcGyRoqxvnZUd8AZ85RypKG5h3fqKlyK93KJXVC7BdUzJ1sRH2c0bCl6YznDA8E
+	 HfGixSvSALsoJD1489KMqiKLieptSf0pjY9bCPB62qgOsekdMj2UfGPkf6DiLsY8zLNHV
+	 BVf2UO6OVfehm/SyJF6GCJ6s0Y/umoNVZ3Qp+omYpPkWXH7fT3b/Da8LgaLVN+aPIZd+T
+	 gRjZbcu3ESs877jllUjl+EuWZ2+/o1gqoRiKCkbFBX6+sVlNL7LV9rC2CdVyOjX9Retah
+	 DEic3QNJPYB89BzeyFNRAmpmYLxZguWOlxBkr5yoiGPlDTL/1FAjQtjaSpDlQHtqN1A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794831303;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=p0OKzksFkMy4s+l/0Lf5EK/s0OAUHxiIj6XZiD2cZBw=;
-	b=T3bnTLqNxyWIgBKYaICvRn2l2k8YdtzFlx4jNOeUV8DRib/BzLBL7hNKkgGtzlalix3T
-	 Ep+nnyuBl25etbe5G5Oo9zXUBdPiVqQctOGnwB+Y7Xy5zoYct7ThaLFM/ro4qlh8pkPJj
-	 UfHnOR7k6NvMkfoDPLAVeNXpThbvIeXjnar9/V3hzDgA607qJJsps3Ub2l5xPCQNFHF4/
-	 63jZlq1yUqhv8KhNaA3xS5+NRlvNv0jPsg9foJhciR9FeewrbXkXJ1az2wRRNjB5Co+3n
-	 6jQzgNygP4Rx9f7MCw7QcHULVmMlA4IGi2lUTWUKjqE16DIAhbtErOuS8aDSNL96QoA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794832024;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=dnDC8kwE7249tTFrvzPYMbaxuX3Yw02/TxaNtz8codw=;
+	b=x+1TRWCWCnc6P0MLrS3J21qMjka/1JbfBCM9BD5kGQq4llIU2p/ZRPIMBn+cIv8GMajU
+	 T0RvWdbtnYb4LjIpSmL4VQYxMrBXV62YX0hL/2+W+1GUiT2NeG6SplbRemR51LirF/xCS
+	 EjCGYILC8MwGXorMJDmkxrm5Y4gGI4oDfHMYDwBhlFusRpgQgydJ2UKYZgANW7mOITACw
+	 eG/BvPuQkdAf5eXvFrpt/gWNa7vT2pgmKs6Oohgw0OcaffORwvOp/f2aOVh6crAVBDr4j
+	 n/N23qUTlAu9xMrWjPCXhejiYDNMglgaN+GZWN/PuE7jPd7tHz0anpEr6Imgi+KDMtA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VcTD0VCT;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JsH4mFLy;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751A4606A32C;
-	Mon, 16 Nov 2026 12:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AB7606A330;
+	Mon, 16 Nov 2026 12:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VcTD0VCT
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08A141F000C6;
-	Mon, 16 Nov 2026 12:14:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JsH4mFLy
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD6041F000C5;
+	Mon, 16 Nov 2026 12:27:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794831303;
-	bh=p0OKzksFkMy4s+l/0Lf5EK/s0OAUHxiIj6XZiD2cZBw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=VcTD0VCThQIzd4aIf36tVET88367f7K5m94QAhwtBRVCNL0ZOljOaSLs58Qw4/Uh0
-	 iQ4tstAoMQggG23lGLC6GiX+qZofYzFrSp+dfXrZ/DF/avw8/1tGa75nQ7EV26Np8T
-	 urSBmB4GQb4gDprK86/fjB5m/xjFfZQQXizaMCajNcdewOFrH4z/S/f4XnPDFCRCNk
-	 vPb3Q7Fdlgoi4JSSaszWl1bOIlV9GfMaC1JMo1cx/RZ4tWvmey96/d6deZjomV8Lnj
-	 c3kurvoSqPCM8d7X0AsfKaydu10Rf/HU0jBeQ/m8LaHQI7n43+tV0fB2+BfHiOmTEH
-	 mm2ZJAL5z3jvQ==
-Message-ID: <640b5d23-6007-4e6d-b374-52b079186751@kernel.org>
-Date: Mon, 16 Nov 2026 14:14:51 +0200
+	s=k20260515; t=1794832024;
+	bh=dnDC8kwE7249tTFrvzPYMbaxuX3Yw02/TxaNtz8codw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=JsH4mFLyhjbwt935HUxFSnSGaThutUlYFl27mkdSbELFBjMksm+AGEioTf0gfmrIV
+	 YXmBIWgkpIB9TgVMDX3IAcAFB8vb2JJewrMXpQEiFybwtGnfCjmwgC9+NeUJpJQ12W
+	 haEGxO45ej2LQOaHaA5n2vbx0BgurCFs732yVjIaGw8BdHh/fdibB7nroBgDX4Zar5
+	 isek0VL+Uv1T1uSC1W/lqC3zarCjaLiTniIxwxkQ2JYLh5ESU57ipBmrlchdU5+xZy
+	 JDPFRpgcsBbD7VeOYGLhb9bak80v1Usu0xhkc4qCcfo9w/MkTAaIeGl2evIWYAgNrD
+	 2encfW80TtAzQ==
+Date: Mon, 16 Nov 2026 20:06:48 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 00/13] arm64: add Synaptics SL2610 SoCs and RDK boards
+Message-ID: <avrx2EhgZ10ED40P@xhacker>
+References: <20261115102401.3520-1-jszhang@kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,50 +66,124 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] dt-bindings: clock: qcom: Add NSS clock controller
- for IPQ5210 SoC
-To: Luo Jie <jie.luo@oss.qualcomm.com>, Bjorn Andersson
- <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Richard Cochran <richardcochran@gmail.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, netdev@vger.kernel.org, quic_kkumarcs@quicinc.com,
- quic_linchen@quicinc.com, quic_leiwei@quicinc.com,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-References: <20261116-qcom_ipq5210_nsscc-v3-0-1eaf92698379@oss.qualcomm.com>
- <20261116-qcom_ipq5210_nsscc-v3-2-1eaf92698379@oss.qualcomm.com>
-From: Georgi Djakov <djakov@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20261116-qcom_ipq5210_nsscc-v3-2-1eaf92698379@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261115102401.3520-1-jszhang@kernel.org>
 
-On 11/16/26 12:19 PM, Luo Jie wrote:
-> NSS clock controller provides the clocks and resets to the networking
-> blocks such as PPE (Packet Process Engine), UNIPHY (PCS) and EPHY on
-> IPQ5210 devices.
+On Sun, Nov 15, 2026 at 06:23:39PM +0800, Jisheng Zhang wrote:
+> Add initial support for the Synaptics SL261X SoCs and corresponding
+> RDK boards.
 > 
-> Add support for the compatible string "qcom,ipq5210-nsscc" based on the
-> existing IPQ9574/IPQ5424 NSS clock controller Device Tree binding. IPQ5210
-> additionally exposes a pair of EPHY-RAW Rx/Tx clock sources used to derive
-> the clocks for its integrated 2.5G Ethernet PHY, so extend the clocks and
-> clock-names lists with "ephy_rx" and "ephy_tx".
+> The SL261X SoCs include five pin-to-pin compatible SoCs: SL2611, SL2613,
+> SL2615, SL2617, and SL2619.
 > 
-> Also add master/slave ids for IPQ5210 networking interfaces, which are used
-> by the nsscc-ipq5210 driver for providing interconnect services using the
-> icc-clk framework.
+> Only reset, pinctrl, clk/pll, uart, gpio, i2c, spi, i3c are included in
+> this series. The support for Ethernet, USB, SDHCI, CAN, DMAC, XSPI will
+> be submitted after this series is merged.
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> Signed-off-by: Luo Jie <jie.luo@oss.qualcomm.com>
-> ---
->   .../bindings/clock/qcom,ipq9574-nsscc.yaml         |  47 ++++++++-
->   include/dt-bindings/clock/qcom,ipq5210-nsscc.h     | 106 +++++++++++++++++++++
->   include/dt-bindings/interconnect/qcom,ipq5210.h    |  18 ++++
+> since v1:
+>  - rebase on latest rcN
+>  - drop some patches which have been merged
+>  - let the "gbl" node export pinctrl/reset/clk devices with
+>    MFD_CELL_NAME()
+>  - use <linux/platform_device.h> instead of <linux/mod_devicetable.h>
+>  - adopt some coding suggestions from Uwe
+>  - Use 0 and 1 to select normal and strong pull-up on 10-bit pads 
 
-Acked-by: Georgi Djakov <djakov@kernel.org>
+Other SoCs doesn't use this defintion for pull up or strong pull up.
+After consulting our HW people, the strong pull up isn't used at
+all, so I will remove strong pull up support in newer version. We can
+add back its support when it's really needed in the future, nothing
+breaks.
+
+>  - collect Acked-by tag
+> 
+> Jisheng Zhang (13):
+>   arm64: kconfig: let ARCH_BERLIN cover Synaptics arm64 SoCs
+>   pinctrl: berlin: use u16 instead of u8 for the offset
+>   pinctrl: berlin: enable module build support
+>   pinctrl: berlin: add optional pinconf support
+>   dt-bindings: soc: synaptics: add SL2610 system controllers
+>   soc: synaptics: add SL2610 system controller support
+>   reset: add Synaptics SL2610 reset controller support
+>   pinctrl: berlin: add Synaptics SL2610 pin controller support
+>   clk: berlin: add Synaptics clock controller helpers
+>   clk: berlin: add Synaptics SL2610 clocks and PLLs
+>   dt-bindings: arm: berlin: add Synaptics SL2610 SoCs and RDK boards
+>   arm64: dts: synaptics: add SL2610 family SoCs
+>   arm64: dts: synaptics: add SL2610 family RDK boards
+> 
+>  .../bindings/arm/marvell,berlin.yaml          |  20 +
+>  .../soc/synaptics/syna,sl2610-soc-syscon.yaml | 178 ++++
+>  MAINTAINERS                                   |   8 +
+>  arch/arm64/Kconfig.platforms                  |   4 +-
+>  arch/arm64/boot/dts/synaptics/Makefile        |   5 +
+>  arch/arm64/boot/dts/synaptics/sl2611-rdk.dts  |  16 +
+>  arch/arm64/boot/dts/synaptics/sl2611.dtsi     | 457 +++++++++++
+>  arch/arm64/boot/dts/synaptics/sl2613-rdk.dts  |  16 +
+>  arch/arm64/boot/dts/synaptics/sl2613.dtsi     |  12 +
+>  arch/arm64/boot/dts/synaptics/sl2615-rdk.dts  |  16 +
+>  arch/arm64/boot/dts/synaptics/sl2615.dtsi     |  46 ++
+>  arch/arm64/boot/dts/synaptics/sl2617-rdk.dts  |  16 +
+>  arch/arm64/boot/dts/synaptics/sl2617.dtsi     |  46 ++
+>  arch/arm64/boot/dts/synaptics/sl2619-rdk.dts  |  16 +
+>  arch/arm64/boot/dts/synaptics/sl2619.dtsi     |  44 +
+>  .../boot/dts/synaptics/sl261x-rdk-common.dtsi | 135 ++++
+>  drivers/clk/Kconfig                           |   1 +
+>  drivers/clk/berlin/Kconfig                    |  34 +
+>  drivers/clk/berlin/Makefile                   |   4 +
+>  drivers/clk/berlin/clk-sl2610.c               | 360 +++++++++
+>  drivers/clk/berlin/sl-clk.c                   | 279 +++++++
+>  drivers/clk/berlin/sl-clk.h                   |  31 +
+>  drivers/clk/berlin/sl-sysmgr-clk.c            | 241 ++++++
+>  drivers/clk/berlin/sl-sysmgr-clk.h            |  44 +
+>  drivers/clk/berlin/sl2610-pll.c               | 145 ++++
+>  drivers/clk/berlin/sl2610-pll.h               |  14 +
+>  drivers/pinctrl/berlin/Kconfig                |  16 +
+>  drivers/pinctrl/berlin/Makefile               |   1 +
+>  drivers/pinctrl/berlin/berlin.c               | 259 +++++-
+>  drivers/pinctrl/berlin/berlin.h               |  17 +-
+>  drivers/pinctrl/berlin/pinctrl-sl2610.c       | 759 ++++++++++++++++++
+>  drivers/reset/Kconfig                         |  13 +
+>  drivers/reset/Makefile                        |   1 +
+>  drivers/reset/reset-sl2610.c                  | 224 ++++++
+>  drivers/soc/Kconfig                           |   1 +
+>  drivers/soc/Makefile                          |   1 +
+>  drivers/soc/synaptics/Kconfig                 |  14 +
+>  drivers/soc/synaptics/Makefile                |   2 +
+>  drivers/soc/synaptics/sl2610-syscon.c         |  84 ++
+>  include/dt-bindings/clock/syna,sl2610.h       | 131 +++
+>  include/dt-bindings/reset/syna,sl2610-reset.h |  80 ++
+>  41 files changed, 3771 insertions(+), 20 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/soc/synaptics/syna,sl2610-soc-syscon.yaml
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2611-rdk.dts
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2611.dtsi
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2613-rdk.dts
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2613.dtsi
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2615-rdk.dts
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2615.dtsi
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2617-rdk.dts
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2617.dtsi
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2619-rdk.dts
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl2619.dtsi
+>  create mode 100644 arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
+>  create mode 100644 drivers/clk/berlin/Kconfig
+>  create mode 100644 drivers/clk/berlin/clk-sl2610.c
+>  create mode 100644 drivers/clk/berlin/sl-clk.c
+>  create mode 100644 drivers/clk/berlin/sl-clk.h
+>  create mode 100644 drivers/clk/berlin/sl-sysmgr-clk.c
+>  create mode 100644 drivers/clk/berlin/sl-sysmgr-clk.h
+>  create mode 100644 drivers/clk/berlin/sl2610-pll.c
+>  create mode 100644 drivers/clk/berlin/sl2610-pll.h
+>  create mode 100644 drivers/pinctrl/berlin/pinctrl-sl2610.c
+>  create mode 100644 drivers/reset/reset-sl2610.c
+>  create mode 100644 drivers/soc/synaptics/Kconfig
+>  create mode 100644 drivers/soc/synaptics/Makefile
+>  create mode 100644 drivers/soc/synaptics/sl2610-syscon.c
+>  create mode 100644 include/dt-bindings/clock/syna,sl2610.h
+>  create mode 100644 include/dt-bindings/reset/syna,sl2610-reset.h
+> 
+> -- 
+> 2.55.0
+> 
+> 
