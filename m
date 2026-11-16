@@ -1,67 +1,67 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794801679;
-	b=H3S6z3cHkl3RUk5zQibHK2aP8OSjCz6TK/eAh05NHRQthIOULXkttsBVN6TcyaPwf/gu
-	 /8wU7ecIcvWFWPpyGt2CxQ9AaiXNh9C3Y2rPfq+nPZ96QeRvQoAH6wzl+VVrvk0Cwcqsc
-	 nrwYr0O8Lbl3Z95wL8CKHSw6i18eup+RvNAReyDMa7gFGgGeHAfgenIUoFP8WJyzKzr+p
-	 qjD2/fuKMYYFBNyBSUwQzPkgkbwEChygl/vMZGhr3ZXwCePvf2EgGhtgliyk0QxAB4fni
-	 pAD7wV+CggTHwA+Ryf5mdREOUc7+yKbY5XnPONs/ZdGrtzRgfDqucWjUTbV1tyyi6yQ==
+	t=1794801680;
+	b=DEEibqSaR3lw/Z//q9spMiP8slyUpj61HhwrMORn9xG3ET/ocr4IdYm+haTPtWeDICGX
+	 YMhKbBYwa8xvhDz10OGZ4hFhheoiVM8J3vbvLK0YDoW0mgB3W9/m/paXZe2GZP2ldglGI
+	 B7vvsREYUyb7pVh3NnWVKIo2QaDNJw3NyjcmNBFsg0Nt/NBLw3WQCG9W0yKWVABTE+lZu
+	 mH/10Yo3CgTRKv47PbCLi/c17tqigFfoTtlQcWSoORB08HAHM68m3vRqpicl0gwDeaGWE
+	 xmNGxZEBnRIQU7aucLGHctzRmNC+LosJ0zh1kCceLmmY//5DtoWqHVQA5FtfIAtGv1A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794801679;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794801680;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
 	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:
-	 X-Proofpoint-Reinject:X-QCInternal:X-QCInternal:X-Authority-Analysis:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
+	 X-Proofpoint-Reinject:X-QCInternal:X-QCInternal:
+	 X-Proofpoint-Spam-Info:X-Authority-Analysis:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-GUID:X-Proofpoint-Spam-Details-Enc:
 	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=fRf5xepwjSpktpBUQ7VtQQKjr3U48ab62yyms0EYm9o=;
-	b=JEkzN1ZnvFF75inytsvEPsPwSFxoTIRMgV3RTTLu75W9oU2qsiX9l7C4fV3JzfJbl6qk
-	 KmLRqet6TheyraAqizt/nxQ8f14rhqRLPRV/BBlYa6P+KL0mf1oUcAKSA1vSUvbmDmHbO
-	 eSmXbVplgp25+VfxJ1x2GEaZ1Y6LC5mHrw/mV/IHyZwm/FgogLddgxwtOolw+o/DSkMy7
-	 cbULOyuigCku2SIe62s0t/CdvkTZtE36u2i8JqSeJaA023XLAnHVcpvgljhfZXsQKMTvl
-	 rwDPebbJC0e7usBjs3S8b0Si2lANTIZhO9IdhV+04TOnX/RFu79c5LmsGLw1jWlvlfg==
+	bh=yBlZGqxZmmqBHZK9PXeqyyO15uTxkOk+mAZ9crDI7po=;
+	b=1ZHU00uT0lX2bTsCHFR+HZLMLHw70DNEH+v0wVqjYr35OMSOBTY1sJ2D+1MUA8Gjs3nt
+	 6zfNf4kUdwa/975n4eXAlYBtMt2uUqi7VOSrol7bom+NkYJxnaWC5JupKkLS2ZbXx/jsZ
+	 Tv0pLVY9iY4a94dNq1RHO/3Pmu+cDzygL3bip6WxzeC/vFas1WsDlZ5wT4aJkQrWADjRy
+	 O78i0KSlnOVCKydQWLxzTHNtSwWD/yAxaoWQeZYVpx3pnRWddr+uaPlBDzWLYr056GQfk
+	 KSG/GlE3H5Z2y8kV8uPXVImphlOWGpVcyEs6Ha7uRkMW2xo9NMPbvU/X89+Dtj9Vauw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=o8GQ+xiY;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=gzTHIjgd;
 	arc=none smtp.remote-ip=205.220.168.131
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7148606A8B0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C710C606A8AF;
 	Mon, 16 Nov 2026 04:01:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C7148606A8B0
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C710C606A8AF
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=o8GQ+xiY
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AG1LPTo1069950;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=gzTHIjgd
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AG1vCGs349811;
 	Mon, 16 Nov 2026 04:00:55 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=fRf5xepwjSp
-	ktpBUQ7VtQQKjr3U48ab62yyms0EYm9o=; b=o8GQ+xiYho1/BM/fuazgXZDJ+vF
-	cBJa0acKGPXfFVwiC1hkezjqvXRkNtM6m/hQl4Sijf3TlnAlw30sT3oIe87TA67V
-	LdP1LJcT0cXf0+2Rt3u7q6EwyKUmBNgLFG++zEVfcqz8Mi9dNw5Lfv2Y7dtymD76
-	0xDkSn65hFnnf62zkfSablR5MQ5W8u0p0niXeY80cOAbUcr0jNLyTlIeynyvPE2l
-	Guzp9Vv+1f75pMOvZtcg3fPV5uGgvzBnYanCmNkes/i75kiuS00ootKD+X+oP8N+
-	EstmqTnHazQLQ9KxiEoGViXt4Jwp1oP1abIKUKYi5tl31QsRDsWaSfTQkHg==
+	:mime-version:references:subject:to; s=qcppdkim1; bh=yBlZGqxZmmq
+	BHZK9PXeqyyO15uTxkOk+mAZ9crDI7po=; b=gzTHIjgdTT6GSbLmJBbZCNTEj7V
+	w8eLgyvp6EZs8dU4rBkw7hQjlMcXImKUuofPV9/ImQ67ScWzc09Naz5SBYkbHEMa
+	xFlC9DPisGVHPNWBczAvAI42ro/+0IgGsJScX+m8u1B7v7bojpTE0vodvTOJIBJS
+	oEm4Lvf9B7KuGN3utlMbJFf8tgkX8sUOieAHLeDrOfwJlJ6LSe0x/fRjfKwhMwmd
+	Rd8JbJKdYAQeIXWxYqXZT4UoZAwKJtCEx3z3jprTvI72UPii4iR7aSUiV1yZbTrT
+	dxlqUvs45T413uoER+X4tLNo+ebcA3SpoJJjxOKPaaAzKfRTfa5qxLtAVpA==
 Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hxhhdvk3k-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hyrmc0as8-1
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
 	Mon, 16 Nov 2026 04:00:54 +0000 (GMT)
 Received: from pps.filterd (apblrppmta01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.11/8.18.1.11) with ESMTP id 6AG40qoe1809014;
+	by APBLRPPMTA01.qualcomm.com (8.18.1.11/8.18.1.11) with ESMTP id 6AG40qf81809012;
 	Mon, 16 Nov 2026 04:00:52 GMT
 Received: from hu-devc-blr-u24-a.qualcomm.com (hu-anuppate-blr.qualcomm.com [10.131.36.165])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 6AG40ptL1808994
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 6AG40pUa1808993
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
 	Mon, 16 Nov 2026 04:00:51 +0000 (GMT)
 Received: by hu-devc-blr-u24-a.qualcomm.com (Postfix, from userid 486687)
-	id E7C2B21C6F; Mon, 16 Nov 2026 09:30:50 +0530 (+0530)
+	id F3B2B24922; Mon, 16 Nov 2026 09:30:50 +0530 (+0530)
 From: Anup Patel <anup.patel@oss.qualcomm.com>
 To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
         Rahul Pathak <rahul@summations.net>, Stephen Boyd <sboyd@kernel.org>,
@@ -75,9 +75,9 @@ Cc: Sunil V L <sunilvl@oss.qualcomm.com>,
         Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, Anup Patel <anup.patel@oss.qualcomm.com>
-Subject: [PATCH v2 1/5] RISC-V: Move common MPXY helper routines to arch/riscv
-Date: Mon, 16 Nov 2026 09:30:45 +0530
-Message-ID: <20261116040049.1795610-2-anup.patel@oss.qualcomm.com>
+Subject: [PATCH v2 4/5] mailbox: document direct synchronous transmit
+Date: Mon, 16 Nov 2026 09:30:48 +0530
+Message-ID: <20261116040049.1795610-5-anup.patel@oss.qualcomm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261116040049.1795610-1-anup.patel@oss.qualcomm.com>
 References: <20261116040049.1795610-1-anup.patel@oss.qualcomm.com>
@@ -94,1026 +94,460 @@ Content-Transfer-Encoding: 8bit
 X-Proofpoint-Reinject: loops=2 maxloops=12
 X-QCInternal: smtphost
 X-QCInternal: smtphost
-X-Authority-Analysis: v=2.4 cv=VOVIDNPX c=1 sm=1 tr=0 ts=6afa7ff6 cx=c_pps
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE2MDAxNSBTYWx0ZWRfX9MsHyeoQpXog
+ bhH9NQ8gjSebtrZ8zSuW2uww8T1lNL1amwOF/uFZgHidLNDtW185WK4U1sV1frjFHP8lZmVc6in
+ puf2z+E/xqrN+FGmdCrcng59HYH3YrU=
+X-Authority-Analysis: v=2.4 cv=C9N8WgP+ c=1 sm=1 tr=0 ts=6afa7ff6 cx=c_pps
  a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
  a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=eoimf2acIAo5FJnRuUoq:22 a=EUspDBNiAAAA:8 a=ndT2cITx6XjDZpHkP44A:9
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE2MDAxNSBTYWx0ZWRfX2LKuUwc28jmT
- MUtxC28bVG8aSenZuyO4fRFDfdnm6qP9EO7GCQqpfmbGxK0fxTe1rxxnx9SEjXdjAwVjGcTB5Rm
- TDwobfyEBO1slnpKA0E0LSo1FouH7eo=
-X-Proofpoint-ORIG-GUID: ox8vFB_CFgruoBPeySPvEymNmEqh-3L6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE2MDAxNSBTYWx0ZWRfX8pUEMGwdewwA
- JZs8U9FO+YWK3i4UZNLf+7RFpJWOvEk6mI1K+KFhPBLtdmg4Dkh96PU51dR2CS8ryrbyozQ5EbN
- 25y/9A8Xr1MFJqVh7pvzATxA99T8OWqSd9njeHEGtjZjktPcxeLs7BqHaAoFgDjXq3tgye/h4ad
- XQST/Afd2jsGJ5pokjAL/kSMmJTxk6EOZiqBj1LrctCF93+rbhsqyVAABJSphBdVNTFKqlGK4im
- YEcjuJG3Omp+nUAFbD5i9yCG4Vwbug1LJHOW5AeJXnI7YxUzDPwjQsTuWgjZ1QQTuMuo/SKjNMl
- 1ZbSJClHrGHk6HZNdNS7tUATc6arcnUhx8m3j69BdWVl0EvHRCGWmTyLvPb2+S+KfXbrI/AiHqE
- zAPSjBrKpcRErqqqsc8rAzPF9HhDSnvyfss20AdiuO/gEaipRUHVhOlrJJtAXqD5rmlkd0tDXJs
- ua3zMXwIe/Xs8C6r3SQ==
-X-Proofpoint-GUID: ox8vFB_CFgruoBPeySPvEymNmEqh-3L6
+ a=Um2Pa8k9VHT-vaBCBUpS:22 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8
+ a=ptEufTgBBeyebgs3zHwA:9
+X-Proofpoint-ORIG-GUID: khUrW83L8s-lh2zkZKfFRj67XkaawoMG
+X-Proofpoint-GUID: khUrW83L8s-lh2zkZKfFRj67XkaawoMG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE2MDAxNSBTYWx0ZWRfXyA6UFZyWypPt
+ PdIFrBUJG9BJ+r6F8jMIVX1K/fhRaTY3WPj7GaSJ9M2TpDy+yyu1lwnA0sjJ7O9I+/Kw7/XQql6
+ N8Q8DBqr+ziu95B2L7ySoBa7V4LqipKOyh2nAE5548Oh2jrh2cfSUkPu0HnhQlKQPz1pdRTiLsH
+ YqWeE761OP2Kw9AM8paTOK19J/a1tCcYToNwqMhooCKsac5cQ4QwUkXeFqKZ2BrbbMOFPArS5TD
+ deKjndVsgb2VKPGEGYsyNez275+F81NryKdomqRhBKWGkF8xeHM4BR3qfhjfIvdbmJRtiOblqdD
+ gH+LHX+RieZ8Zb1r348ovv07KRbdp3ve1UR7Gpo10yNVAO1ZT2uBMORRKRu0hRIaZjuSoj8RQEg
+ 15031j7Es6e88+Mb1t3XrH8tNE8QYr0qJtSdfiuZVsQ2RWsBMncabcfaq/yT2OnxErWxuqvnAxv
+ AJ2CmNB1A1fYFvIRtBA==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-11-16_01,2026-11-11_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- suspectscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611160015
+ malwarescore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ clxscore=1015 spamscore=0 adultscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
+ definitions=main-2611160015
 
-There are upcoming kernel changes (such as RISC-V EINJ FFH support)
-where the MPXY channel_id is known but the Linux mailbox channel
-instance is not available. For such cases, the kernel will directly
-do SBI MPXY calls bypassing the Linux mailbox framework and share
-the MPXY shared memory with the Linux SBI MPXY mailbox driver.
+From: Jassi Brar <jassisinghbrar@gmail.com>
 
-To support the above, move the common MPXY helper routines and
-MPXY shared memory management from Linux SBI MPXY mailbox driver
-to arch/riscv.
+Document the three transmit models supported by the mailbox
+framework: non-blocking queued, blocking queued, and direct
+synchronous.
 
-Co-developed-by: Himanshu Chauhan <himanshu.chauhan@oss.qualcomm.com>
-Signed-off-by: Himanshu Chauhan <himanshu.chauhan@oss.qualcomm.com>
+Describe the controller-side capability advertisement and
+operation contracts, including atomic versus sleepable
+operations, per-CPU and controller-wide resource protection,
+registration validation, and the client-side context,
+lifetime, and free/unbind rules.  Add the normative interaction
+table for the queued APIs on a direct channel and examples for
+atomic-safe and per-CPU controllers.
+
+Co-developed-by: Anup Patel <anup.patel@oss.qualcomm.com>
 Signed-off-by: Anup Patel <anup.patel@oss.qualcomm.com>
+Signed-off-by: Jassi Brar <jassisinghbrar@gmail.com>
 ---
- arch/riscv/include/asm/sbi.h          |  86 +++++-
- arch/riscv/kernel/Makefile            |   2 +-
- arch/riscv/kernel/sbi_mpxy.c          | 340 +++++++++++++++++++++++
- drivers/mailbox/riscv-sbi-mpxy-mbox.c | 386 +++-----------------------
- 4 files changed, 460 insertions(+), 354 deletions(-)
- create mode 100644 arch/riscv/kernel/sbi_mpxy.c
+ Documentation/driver-api/mailbox.rst | 350 +++++++++++++++++++++++++--
+ 1 file changed, 329 insertions(+), 21 deletions(-)
 
-diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-index fd6266a7b339..1ba1f66af02c 100644
---- a/arch/riscv/include/asm/sbi.h
-+++ b/arch/riscv/include/asm/sbi.h
-@@ -693,6 +693,37 @@ static inline int sbi_fwft_set_online_cpus(u32 feature, unsigned long value,
- 	return sbi_fwft_set_cpumask(cpu_online_mask, feature, value, flags);
- }
+diff --git a/Documentation/driver-api/mailbox.rst b/Documentation/driver-api/mailbox.rst
+index d46c60bd5df6..81d471027539 100644
+--- a/Documentation/driver-api/mailbox.rst
++++ b/Documentation/driver-api/mailbox.rst
+@@ -20,14 +20,28 @@ ever deal at client's protocol level.
+ Some of the choices made during implementation are the result of this
+ peculiarity of this "common" framework.
  
-+/* SBI MPXY notification data in shared memory */
-+struct sbi_mpxy_notification_data {
-+	/* Remaining number of notification events */
-+	__le32 remaining;
-+	/* Number of notification events returned */
-+	__le32 returned;
-+	/* Number of notification events lost */
-+	__le32 lost;
-+	/* Reserved for future use */
-+	__le32 reserved;
-+	/* Returned channel id array */
-+	u8 events_data[];
-+};
++The framework supports three transmit models:
 +
-+unsigned long sbi_mpxy_shmem_size(void);
-+int sbi_mpxy_get_channel_count(u32 *channel_count);
-+int sbi_mpxy_get_channel_ids(u32 channel_count, u32 *channel_ids);
-+int sbi_mpxy_read_attrs(u32 channel_id, u32 base_attrid, u32 attr_count,
-+			u32 *attrs_buf);
-+int sbi_mpxy_write_attrs(u32 channel_id, u32 base_attrid, u32 attr_count,
-+			 u32 *attrs_buf);
-+int sbi_mpxy_send_message_with_resp(u32 channel_id, u32 msg_id,
-+				    void *tx, unsigned long tx_len,
-+				    void *rx, unsigned long max_rx_len,
-+				    unsigned long *rx_len);
-+int sbi_mpxy_send_message_without_resp(u32 channel_id, u32 msg_id,
-+				       void *tx, unsigned long tx_len);
-+int sbi_mpxy_get_notifications(u32 channel_id,
-+			       struct sbi_mpxy_notification_data *notif_data,
-+			       unsigned long *events_data_len);
++* non-blocking queued: ``mbox_send_message()`` returns a queue token and
++  completion is reported later through ``tx_done``;
++* blocking queued: ``tx_block`` is set and the caller waits on the
++  channel completion;
++* direct synchronous: the controller completes the transfer in the
++  caller's context and the client receives the per-call result directly.
 +
- /* Check if current SBI specification version is 0.1 or not */
- static inline int sbi_spec_is_0_1(void)
- {
-@@ -754,7 +785,60 @@ int sbi_debug_console_read(char *bytes, unsigned int num_bytes);
++The first two models share the per-channel queue and TX-done state
++machine.  The direct model is opt-in per channel and bypasses that state
++machine entirely.
  
- #else /* CONFIG_RISCV_SBI */
- static inline int sbi_remote_fence_i(const struct cpumask *cpu_mask) { return -1; }
--static inline void sbi_init(void) {}
-+static inline void sbi_init(void)
-+{
-+}
-+
-+struct sbi_mpxy_notification_data;
-+
-+static inline unsigned long sbi_mpxy_shmem_size(void)
-+{
-+	return 0;
-+}
-+
-+static inline int sbi_mpxy_get_channel_count(u32 *channel_count)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline int sbi_mpxy_get_channel_ids(u32 channel_count, u32 *channel_ids)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline int sbi_mpxy_read_attrs(u32 channel_id, u32 base_attrid, u32 attr_count,
-+				      u32 *attrs_buf)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline int sbi_mpxy_write_attrs(u32 channel_id, u32 base_attrid, u32 attr_count,
-+				       u32 *attrs_buf)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline int sbi_mpxy_send_message_with_resp(u32 channel_id, u32 msg_id,
-+						  void *tx, unsigned long tx_len,
-+						  void *rx, unsigned long max_rx_len,
-+						  unsigned long *rx_len)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline int sbi_mpxy_send_message_without_resp(u32 channel_id, u32 msg_id,
-+						     void *tx, unsigned long tx_len)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline int sbi_mpxy_get_notifications(u32 channel_id,
-+					     struct sbi_mpxy_notification_data *notif_data,
-+					     unsigned long *events_data_len)
-+{
-+	return -ENODEV;
-+}
-+
- #endif /* CONFIG_RISCV_SBI */
  
- unsigned long riscv_get_mvendorid(void);
-diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-index 7f52ae724225..cb2578182ee5 100644
---- a/arch/riscv/kernel/Makefile
-+++ b/arch/riscv/kernel/Makefile
-@@ -101,7 +101,7 @@ obj-$(CONFIG_DYNAMIC_FTRACE)	+= mcount-dyn.o
+ Controller Driver (See include/linux/mailbox_controller.h)
+ ==========================================================
  
- obj-$(CONFIG_PERF_EVENTS)	+= perf_callchain.o
- obj-$(CONFIG_HAVE_PERF_REGS)	+= perf_regs.o
--obj-$(CONFIG_RISCV_SBI)		+= sbi.o sbi_ecall.o
-+obj-$(CONFIG_RISCV_SBI)		+= sbi.o sbi_ecall.o sbi_mpxy.o
- ifeq ($(CONFIG_RISCV_SBI), y)
- obj-$(CONFIG_SMP)		+= sbi-ipi.o
- obj-$(CONFIG_SMP) += cpu_ops_sbi.o
-diff --git a/arch/riscv/kernel/sbi_mpxy.c b/arch/riscv/kernel/sbi_mpxy.c
-new file mode 100644
-index 000000000000..17a2cee21311
---- /dev/null
-+++ b/arch/riscv/kernel/sbi_mpxy.c
-@@ -0,0 +1,340 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Common SBI MPXY access library.
-+ *
-+ * Copyright (c) 2026 Qualcomm Technologies, Inc.
-+ */
-+
-+#define pr_fmt(fmt) "riscv: " fmt
-+#include <linux/cpu.h>
-+#include <linux/init.h>
-+#include <linux/mm.h>
-+#include <linux/percpu.h>
-+#include <linux/printk.h>
-+#include <linux/string.h>
-+#include <linux/types.h>
-+#include <asm/byteorder.h>
-+#include <asm/sbi.h>
-+
-+/* SBI MPXY channel IDs data in shared memory */
-+struct sbi_mpxy_channel_ids_data {
-+	/* Remaining number of channel ids */
-+	__le32 remaining;
-+	/* Returned channel ids in current function call */
-+	__le32 returned;
-+	/* Returned channel id array */
-+	__le32 channel_array[];
-+};
-+
-+/* MPXY Per-CPU or local context */
-+struct mpxy_local {
-+	/* Shared memory base address */
-+	void *shmem;
-+	/* Shared memory physical address */
-+	phys_addr_t shmem_phys_addr;
-+	/* Flag representing whether shared memory is active or not */
-+	bool shmem_active;
-+};
-+
-+static DEFINE_PER_CPU(struct mpxy_local, mpxy_local);
-+static unsigned long mpxy_shmem_size;
-+static bool mpxy_shmem_init_done;
-+
-+unsigned long sbi_mpxy_shmem_size(void)
-+{
-+	if (!mpxy_shmem_init_done)
-+		return 0;
-+	return mpxy_shmem_size;
-+}
-+EXPORT_SYMBOL_GPL(sbi_mpxy_shmem_size);
-+
-+int sbi_mpxy_get_channel_count(u32 *channel_count)
-+{
-+	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
-+	struct sbi_mpxy_channel_ids_data *sdata = mpxy->shmem;
-+	u32 remaining, returned;
-+	struct sbiret sret;
-+
-+	if (!mpxy->shmem_active)
-+		return -ENODEV;
-+	if (!channel_count)
-+		return -EINVAL;
-+
-+	get_cpu();
-+
-+	/* Get the remaining and returned fields to calculate total */
-+	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_GET_CHANNEL_IDS,
-+			 0, 0, 0, 0, 0, 0);
-+	if (sret.error)
-+		goto err_put_cpu;
-+
-+	remaining = le32_to_cpu(sdata->remaining);
-+	returned = le32_to_cpu(sdata->returned);
-+	*channel_count = remaining + returned;
-+
-+err_put_cpu:
-+	put_cpu();
-+	return sbi_err_map_linux_errno(sret.error);
-+}
-+EXPORT_SYMBOL_GPL(sbi_mpxy_get_channel_count);
-+
-+int sbi_mpxy_get_channel_ids(u32 channel_count, u32 *channel_ids)
-+{
-+	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
-+	struct sbi_mpxy_channel_ids_data *sdata = mpxy->shmem;
-+	u32 remaining, returned, count, start_index = 0;
-+	struct sbiret sret;
-+
-+	if (!mpxy->shmem_active)
-+		return -ENODEV;
-+	if (!channel_count || !channel_ids)
-+		return -EINVAL;
-+
-+	get_cpu();
-+
-+	do {
-+		sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_GET_CHANNEL_IDS,
-+				 start_index, 0, 0, 0, 0, 0);
-+		if (sret.error)
-+			goto err_put_cpu;
-+
-+		remaining = le32_to_cpu(sdata->remaining);
-+		returned = le32_to_cpu(sdata->returned);
-+
-+		count = returned < (channel_count - start_index) ?
-+			returned : (channel_count - start_index);
-+		memcpy_from_le32(&channel_ids[start_index], sdata->channel_array, count);
-+		start_index += count;
-+	} while (remaining && start_index < channel_count);
-+
-+err_put_cpu:
-+	put_cpu();
-+	return sbi_err_map_linux_errno(sret.error);
-+}
-+EXPORT_SYMBOL_GPL(sbi_mpxy_get_channel_ids);
-+
-+int sbi_mpxy_read_attrs(u32 channel_id, u32 base_attrid, u32 attr_count,
-+			u32 *attrs_buf)
-+{
-+	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
-+	struct sbiret sret;
-+
-+	if (!mpxy->shmem_active)
-+		return -ENODEV;
-+	if (!attr_count || !attrs_buf)
-+		return -EINVAL;
-+
-+	get_cpu();
-+
-+	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_READ_ATTRS,
-+			 channel_id, base_attrid, attr_count, 0, 0, 0);
-+	if (sret.error)
-+		goto err_put_cpu;
-+
-+	memcpy_from_le32(attrs_buf, (__le32 *)mpxy->shmem, attr_count);
-+
-+err_put_cpu:
-+	put_cpu();
-+	return sbi_err_map_linux_errno(sret.error);
-+}
-+EXPORT_SYMBOL_GPL(sbi_mpxy_read_attrs);
-+
-+int sbi_mpxy_write_attrs(u32 channel_id, u32 base_attrid, u32 attr_count,
-+			 u32 *attrs_buf)
-+{
-+	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
-+	struct sbiret sret;
-+
-+	if (!mpxy->shmem_active)
-+		return -ENODEV;
-+	if (!attr_count || !attrs_buf)
-+		return -EINVAL;
-+
-+	get_cpu();
-+
-+	memcpy_to_le32((__le32 *)mpxy->shmem, attrs_buf, attr_count);
-+	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_WRITE_ATTRS,
-+			 channel_id, base_attrid, attr_count, 0, 0, 0);
-+
-+	put_cpu();
-+	return sbi_err_map_linux_errno(sret.error);
-+}
-+EXPORT_SYMBOL_GPL(sbi_mpxy_write_attrs);
-+
-+int sbi_mpxy_send_message_with_resp(u32 channel_id, u32 msg_id,
-+				    void *tx, unsigned long tx_len,
-+				    void *rx, unsigned long max_rx_len,
-+				    unsigned long *rx_len)
-+{
-+	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
-+	unsigned long rx_bytes;
-+	struct sbiret sret;
-+
-+	if (!mpxy->shmem_active)
-+		return -ENODEV;
-+	if (!tx && tx_len)
-+		return -EINVAL;
-+
-+	get_cpu();
-+
-+	/* Message protocols allowed to have no data in messages */
-+	if (tx_len)
-+		memcpy(mpxy->shmem, tx, tx_len);
-+
-+	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_SEND_MSG_WITH_RESP,
-+			 channel_id, msg_id, tx_len, 0, 0, 0);
-+	if (rx && !sret.error) {
-+		rx_bytes = sret.value;
-+		if (rx_bytes > max_rx_len) {
-+			put_cpu();
-+			return -ENOSPC;
-+		}
-+
-+		memcpy(rx, mpxy->shmem, rx_bytes);
-+		if (rx_len)
-+			*rx_len = rx_bytes;
-+	}
-+
-+	put_cpu();
-+	return sbi_err_map_linux_errno(sret.error);
-+}
-+EXPORT_SYMBOL_GPL(sbi_mpxy_send_message_with_resp);
-+
-+int sbi_mpxy_send_message_without_resp(u32 channel_id, u32 msg_id,
-+				       void *tx, unsigned long tx_len)
-+{
-+	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
-+	struct sbiret sret;
-+
-+	if (!mpxy->shmem_active)
-+		return -ENODEV;
-+	if (!tx && tx_len)
-+		return -EINVAL;
-+
-+	get_cpu();
-+
-+	/* Message protocols allowed to have no data in messages */
-+	if (tx_len)
-+		memcpy(mpxy->shmem, tx, tx_len);
-+
-+	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_SEND_MSG_WITHOUT_RESP,
-+			 channel_id, msg_id, tx_len, 0, 0, 0);
-+
-+	put_cpu();
-+	return sbi_err_map_linux_errno(sret.error);
-+}
-+EXPORT_SYMBOL_GPL(sbi_mpxy_send_message_without_resp);
-+
-+int sbi_mpxy_get_notifications(u32 channel_id,
-+			       struct sbi_mpxy_notification_data *notif_data,
-+			       unsigned long *events_data_len)
-+{
-+	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
-+	struct sbiret sret;
-+
-+	if (!mpxy->shmem_active)
-+		return -ENODEV;
-+	if (!notif_data || !events_data_len)
-+		return -EINVAL;
-+
-+	get_cpu();
-+
-+	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_GET_NOTIFICATION_EVENTS,
-+			 channel_id, 0, 0, 0, 0, 0);
-+	if (sret.error)
-+		goto err_put_cpu;
-+	if (sret.value < 0 || mpxy_shmem_size < sizeof(*notif_data) ||
-+	    sret.value > mpxy_shmem_size - sizeof(*notif_data)) {
-+		put_cpu();
-+		return -EOVERFLOW;
-+	}
-+
-+	memcpy(notif_data, mpxy->shmem, sret.value + sizeof(*notif_data));
-+	*events_data_len = sret.value;
-+
-+err_put_cpu:
-+	put_cpu();
-+	return sbi_err_map_linux_errno(sret.error);
-+}
-+EXPORT_SYMBOL_GPL(sbi_mpxy_get_notifications);
-+
-+static int mpxy_get_shmem_size(unsigned long *shmem_size)
-+{
-+	struct sbiret sret;
-+
-+	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_GET_SHMEM_SIZE,
-+			 0, 0, 0, 0, 0, 0);
-+	if (sret.error)
-+		return sbi_err_map_linux_errno(sret.error);
-+	if (shmem_size)
-+		*shmem_size = sret.value;
-+	return 0;
-+}
-+
-+static int mpxy_setup_shmem(unsigned int cpu)
-+{
-+	struct page *shmem_page;
-+	struct mpxy_local *mpxy;
-+	struct sbiret sret;
-+
-+	mpxy = per_cpu_ptr(&mpxy_local, cpu);
-+	if (mpxy->shmem_active)
-+		return 0;
-+
-+	shmem_page = alloc_pages(GFP_KERNEL | __GFP_ZERO, get_order(mpxy_shmem_size));
-+	if (!shmem_page)
-+		return -ENOMEM;
-+
-+	/*
-+	 * Linux setup of shmem is done in mpxy OVERWRITE mode.
-+	 * flags[1:0] = 00b
-+	 */
-+	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_SET_SHMEM,
-+			 page_to_phys(shmem_page), 0, 0, 0, 0, 0);
-+	if (sret.error) {
-+		free_pages((unsigned long)page_to_virt(shmem_page),
-+			   get_order(mpxy_shmem_size));
-+		return sbi_err_map_linux_errno(sret.error);
-+	}
-+
-+	mpxy->shmem = page_to_virt(shmem_page);
-+	mpxy->shmem_phys_addr = page_to_phys(shmem_page);
-+	mpxy->shmem_active = true;
-+
-+	return 0;
-+}
-+
-+static int __init sbi_mpxy_init(void)
-+{
-+	int rc;
-+
-+	/* Skip quietly when MPXY extension is not supported. */
-+	if (sbi_spec_version < sbi_mk_version(3, 0) ||
-+	    !sbi_probe_extension(SBI_EXT_MPXY))
-+		return 0;
-+	pr_info("SBI MPXY extension detected\n");
-+
-+	/* Find-out shared memory size */
-+	rc = mpxy_get_shmem_size(&mpxy_shmem_size);
-+	if (rc) {
-+		pr_err("failed to get MPXY shared memory size\n");
-+		return rc;
-+	}
-+
-+	/*
-+	 * Setup MPXY shared memory on each CPU
-+	 *
-+	 * Note: Don't cleanup MPXY shared memory upon CPU power-down
-+	 * because the RPMI System MSI irqchip driver needs it to be
-+	 * available when migrating IRQs in CPU power-down path.
-+	 */
-+	rc = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "riscv/sbi-mpxy-shmem",
-+			       mpxy_setup_shmem, NULL);
-+	if (rc < 0)
-+		return rc;
-+
-+	/* Mark as MPXY shared memory initialization done */
-+	mpxy_shmem_init_done = true;
-+	return 0;
-+}
-+arch_initcall(sbi_mpxy_init);
-diff --git a/drivers/mailbox/riscv-sbi-mpxy-mbox.c b/drivers/mailbox/riscv-sbi-mpxy-mbox.c
-index 2134ceea1044..432972195e46 100644
---- a/drivers/mailbox/riscv-sbi-mpxy-mbox.c
-+++ b/drivers/mailbox/riscv-sbi-mpxy-mbox.c
-@@ -17,7 +17,6 @@
- #include <linux/module.h>
- #include <linux/msi.h>
- #include <linux/of_irq.h>
--#include <linux/percpu.h>
- #include <linux/platform_device.h>
- #include <linux/smp.h>
- #include <linux/string.h>
-@@ -85,295 +84,6 @@ struct sbi_mpxy_rpmi_channel_attrs {
- 	u32 impl_version;
- };
+-
+ Allocate mbox_controller and the array of mbox_chan.
+-Populate mbox_chan_ops, except flush() and peek_data() all are mandatory.
++Populate mbox_chan_ops.  ``send_data`` is mandatory for queued channels;
++``flush``, ``startup``, ``shutdown``, ``last_tx_done``, and ``peek_data``
++are optional depending on the controller's capabilities and the selected
++TX-done method.
+ The controller driver might know a message has been consumed
+ by the remote by getting an IRQ or polling some hardware flag
+ or it can never know (the client knows by way of the protocol).
+@@ -35,14 +49,197 @@ The method in order of preference is IRQ -> Poll -> None, which
+ the controller driver should set via 'txdone_irq' or 'txdone_poll'
+ or neither.
  
--/* SBI MPXY channel IDs data in shared memory */
--struct sbi_mpxy_channel_ids_data {
--	/* Remaining number of channel ids */
--	__le32 remaining;
--	/* Returned channel ids in current function call */
--	__le32 returned;
--	/* Returned channel id array */
--	__le32 channel_array[];
--};
--
--/* SBI MPXY notification data in shared memory */
--struct sbi_mpxy_notification_data {
--	/* Remaining number of notification events */
--	__le32 remaining;
--	/* Number of notification events returned */
--	__le32 returned;
--	/* Number of notification events lost */
--	__le32 lost;
--	/* Reserved for future use */
--	__le32 reserved;
--	/* Returned channel id array */
--	u8 events_data[];
--};
--
--/* ====== MPXY data structures & helper routines ====== */
--
--/* MPXY Per-CPU or local context */
--struct mpxy_local {
--	/* Shared memory base address */
--	void *shmem;
--	/* Shared memory physical address */
--	phys_addr_t shmem_phys_addr;
--	/* Flag representing whether shared memory is active or not */
--	bool shmem_active;
--};
--
--static DEFINE_PER_CPU(struct mpxy_local, mpxy_local);
--static unsigned long mpxy_shmem_size;
--static bool mpxy_shmem_init_done;
--
--static int mpxy_get_channel_count(u32 *channel_count)
--{
--	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
--	struct sbi_mpxy_channel_ids_data *sdata = mpxy->shmem;
--	u32 remaining, returned;
--	struct sbiret sret;
--
--	if (!mpxy->shmem_active)
--		return -ENODEV;
--	if (!channel_count)
--		return -EINVAL;
--
--	get_cpu();
--
--	/* Get the remaining and returned fields to calculate total */
--	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_GET_CHANNEL_IDS,
--			 0, 0, 0, 0, 0, 0);
--	if (sret.error)
--		goto err_put_cpu;
--
--	remaining = le32_to_cpu(sdata->remaining);
--	returned = le32_to_cpu(sdata->returned);
--	*channel_count = remaining + returned;
--
--err_put_cpu:
--	put_cpu();
--	return sbi_err_map_linux_errno(sret.error);
--}
--
--static int mpxy_get_channel_ids(u32 channel_count, u32 *channel_ids)
--{
--	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
--	struct sbi_mpxy_channel_ids_data *sdata = mpxy->shmem;
--	u32 remaining, returned, count, start_index = 0;
--	struct sbiret sret;
--
--	if (!mpxy->shmem_active)
--		return -ENODEV;
--	if (!channel_count || !channel_ids)
--		return -EINVAL;
--
--	get_cpu();
--
--	do {
--		sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_GET_CHANNEL_IDS,
--				 start_index, 0, 0, 0, 0, 0);
--		if (sret.error)
--			goto err_put_cpu;
--
--		remaining = le32_to_cpu(sdata->remaining);
--		returned = le32_to_cpu(sdata->returned);
--
--		count = returned < (channel_count - start_index) ?
--			returned : (channel_count - start_index);
--		memcpy_from_le32(&channel_ids[start_index], sdata->channel_array, count);
--		start_index += count;
--	} while (remaining && start_index < channel_count);
--
--err_put_cpu:
--	put_cpu();
--	return sbi_err_map_linux_errno(sret.error);
--}
--
--static int mpxy_read_attrs(u32 channel_id, u32 base_attrid, u32 attr_count,
--			   u32 *attrs_buf)
--{
--	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
--	struct sbiret sret;
--
--	if (!mpxy->shmem_active)
--		return -ENODEV;
--	if (!attr_count || !attrs_buf)
--		return -EINVAL;
--
--	get_cpu();
--
--	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_READ_ATTRS,
--			 channel_id, base_attrid, attr_count, 0, 0, 0);
--	if (sret.error)
--		goto err_put_cpu;
--
--	memcpy_from_le32(attrs_buf, (__le32 *)mpxy->shmem, attr_count);
--
--err_put_cpu:
--	put_cpu();
--	return sbi_err_map_linux_errno(sret.error);
--}
--
--static int mpxy_write_attrs(u32 channel_id, u32 base_attrid, u32 attr_count,
--			    u32 *attrs_buf)
--{
--	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
--	struct sbiret sret;
--
--	if (!mpxy->shmem_active)
--		return -ENODEV;
--	if (!attr_count || !attrs_buf)
--		return -EINVAL;
--
--	get_cpu();
--
--	memcpy_to_le32((__le32 *)mpxy->shmem, attrs_buf, attr_count);
--	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_WRITE_ATTRS,
--			 channel_id, base_attrid, attr_count, 0, 0, 0);
--
--	put_cpu();
--	return sbi_err_map_linux_errno(sret.error);
--}
--
--static int mpxy_send_message_with_resp(u32 channel_id, u32 msg_id,
--				       void *tx, unsigned long tx_len,
--				       void *rx, unsigned long max_rx_len,
--				       unsigned long *rx_len)
--{
--	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
--	unsigned long rx_bytes;
--	struct sbiret sret;
--
--	if (!mpxy->shmem_active)
--		return -ENODEV;
--	if (!tx && tx_len)
--		return -EINVAL;
--
--	get_cpu();
--
--	/* Message protocols allowed to have no data in messages */
--	if (tx_len)
--		memcpy(mpxy->shmem, tx, tx_len);
--
--	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_SEND_MSG_WITH_RESP,
--			 channel_id, msg_id, tx_len, 0, 0, 0);
--	if (rx && !sret.error) {
--		rx_bytes = sret.value;
--		if (rx_bytes > max_rx_len) {
--			put_cpu();
--			return -ENOSPC;
--		}
--
--		memcpy(rx, mpxy->shmem, rx_bytes);
--		if (rx_len)
--			*rx_len = rx_bytes;
--	}
--
--	put_cpu();
--	return sbi_err_map_linux_errno(sret.error);
--}
--
--static int mpxy_send_message_without_resp(u32 channel_id, u32 msg_id,
--					  void *tx, unsigned long tx_len)
--{
--	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
--	struct sbiret sret;
--
--	if (!mpxy->shmem_active)
--		return -ENODEV;
--	if (!tx && tx_len)
--		return -EINVAL;
--
--	get_cpu();
--
--	/* Message protocols allowed to have no data in messages */
--	if (tx_len)
--		memcpy(mpxy->shmem, tx, tx_len);
--
--	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_SEND_MSG_WITHOUT_RESP,
--			 channel_id, msg_id, tx_len, 0, 0, 0);
--
--	put_cpu();
--	return sbi_err_map_linux_errno(sret.error);
--}
--
--static int mpxy_get_notifications(u32 channel_id,
--				  struct sbi_mpxy_notification_data *notif_data,
--				  unsigned long *events_data_len)
--{
--	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
--	struct sbiret sret;
--
--	if (!mpxy->shmem_active)
--		return -ENODEV;
--	if (!notif_data || !events_data_len)
--		return -EINVAL;
--
--	get_cpu();
--
--	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_GET_NOTIFICATION_EVENTS,
--			 channel_id, 0, 0, 0, 0, 0);
--	if (sret.error)
--		goto err_put_cpu;
--	if (sret.value < 0 || mpxy_shmem_size < sizeof(*notif_data) ||
--	    sret.value > mpxy_shmem_size - sizeof(*notif_data)) {
--		put_cpu();
--		return -EOVERFLOW;
--	}
--
--	memcpy(notif_data, mpxy->shmem, sret.value + sizeof(*notif_data));
--	*events_data_len = sret.value;
--
--err_put_cpu:
--	put_cpu();
--	return sbi_err_map_linux_errno(sret.error);
--}
--
--static int mpxy_get_shmem_size(unsigned long *shmem_size)
--{
--	struct sbiret sret;
--
--	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_GET_SHMEM_SIZE,
--			 0, 0, 0, 0, 0, 0);
--	if (sret.error)
--		return sbi_err_map_linux_errno(sret.error);
--	if (shmem_size)
--		*shmem_size = sret.value;
--	return 0;
--}
--
--static int mpxy_setup_shmem(unsigned int cpu)
--{
--	struct page *shmem_page;
--	struct mpxy_local *mpxy;
--	struct sbiret sret;
--
--	mpxy = per_cpu_ptr(&mpxy_local, cpu);
--	if (mpxy->shmem_active)
--		return 0;
--
--	shmem_page = alloc_pages(GFP_KERNEL | __GFP_ZERO, get_order(mpxy_shmem_size));
--	if (!shmem_page)
--		return -ENOMEM;
--
--	/*
--	 * Linux setup of shmem is done in mpxy OVERWRITE mode.
--	 * flags[1:0] = 00b
--	 */
--	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_SET_SHMEM,
--			 page_to_phys(shmem_page), 0, 0, 0, 0, 0);
--	if (sret.error) {
--		free_pages((unsigned long)page_to_virt(shmem_page),
--			   get_order(mpxy_shmem_size));
--		return sbi_err_map_linux_errno(sret.error);
--	}
--
--	mpxy->shmem = page_to_virt(shmem_page);
--	mpxy->shmem_phys_addr = page_to_phys(shmem_page);
--	mpxy->shmem_active = true;
--
--	return 0;
--}
--
- /* ====== MPXY mailbox data structures ====== */
++Queued transmit
++---------------
++
++``send_data()`` is called by ``msg_submit()`` with ``chan->lock`` held and
++local IRQs disabled.  It must not sleep.  It should return 0 if the message
++was accepted, or a negative errno (for example ``-EBUSY``) if it could not
++be accepted.  Completion is reported later with ``mbox_chan_txdone()``
++(IRQ mode) or by the polling timer calling ``last_tx_done()``.  A client
++using the ``knows_txdone`` retrofit calls ``mbox_client_txdone()`` itself.
++
++The queue and TX-done state machine assume a single outstanding request
++per channel.  All senders on a queued channel are therefore serialized by
++the framework, and ``tx_block`` callers must serialize themselves.
++
++Direct synchronous transmit
++---------------------------
++
++Some controllers complete a transfer synchronously in the calling context
++and can return the result immediately.  Such a controller may advertise a
++direct channel by setting ``struct mbox_chan.sync_caps`` before calling
++``mbox_controller_register()``:
++
++.. code-block:: c
++
++    #define MBOX_CHAN_CAP_SYNC_ATOMIC	BIT(0)
++    #define MBOX_CHAN_CAP_SYNC_SLEEPABLE	BIT(1)
++
++A channel with either bit set is a *direct channel*.  ``sync_caps`` is
++immutable after registration; zero means the channel keeps the existing
++queued behavior.  Controllers must therefore initialize it to zero for
++queued channels; ``kzalloc()`` and static storage already do so.
++
++The controller implements one or both of these operations:
++
++.. code-block:: c
++
++    int (*send_data_sync)(struct mbox_chan *chan, void *data);
++    int (*send_data_sync_sleepable)(struct mbox_chan *chan, void *data);
++
++``send_data_sync()``
++    Atomic-safe direct transmit.  It must not sleep, must complete the
++    transfer (or return a per-call error) before returning, and must not
++    use a later TX-done interrupt, polling timer, or ``mbox_chan_txdone()``.
++    It must not call the txdone APIs or any client callback recursively.
++    It must not retain ``data`` after returning.
++
++``send_data_sync_sleepable()``
++    Sleepable direct transmit.  It has the same per-call, no-retained-buffer
++    contract but may use mutexes, completions, sleeping bus access, and other
++    sleepable primitives.  It must only be called from sleepable context.
++
++Both operations are called in the client's context with no framework lock
++held and with the caller's IRQ and preemption state.  The framework calls
++the operation exactly once per client call and returns its result to that
++same caller.
++
++A controller that implements a direct operation but does not set the
++matching capability bit is valid; the operation is then simply unused.
++Registration rejects unknown capability bits, a capability bit without the
++matching operation, and a queued channel without ``send_data``.
++
++Concurrency and resource ownership
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++The framework does not serialize direct callers.  Multiple CPUs may call
++the direct API on the same channel concurrently.  This is deliberate: a
++per-channel framework lock would violate the concurrency contract and would
++still not protect controller-wide or per-CPU resources.
++
++The controller owns protection of everything its direct operation touches:
++
++* controller-wide registers and shared FIFOs;
++* per-channel state, which may live in ``chan->con_priv``;
++* per-CPU scratch memory and other per-CPU state;
++* resources shared with non-mailbox users of the same controller helpers.
++
++The controller may take its own lock to serialize, or may return ``-EBUSY``
++to a caller it cannot serve concurrently.  It must not assume that the
++framework disabled IRQs for it.
++
++If the operation uses per-CPU state, it must also prevent same-CPU IRQ
++re-entry.  ``local_irq_save()`` is the portable hardirq-safe choice.
++``local_lock_irqsave()`` gives lockdep coverage on non-RT kernels, but on
++PREEMPT_RT it maps to a per-CPU sleeping spinlock and must not be used from
++hardirq context.  A per-CPU ``raw_spinlock_t`` taken with IRQs disabled is
++another option.  A plain ``get_cpu()``/``put_cpu()`` pair only disables
++preemption and does not stop an IRQ on the same CPU from re-entering.
++
++Example: atomic-safe controller
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++.. code-block:: c
++
++    struct my_chan {
++        void __iomem *tx_reg;
++        spinlock_t lock;	/* protects this controller's registers */
++        bool busy;
++    };
++
++    static int my_send_data_sync(struct mbox_chan *chan, void *data)
++    {
++        struct my_chan *c = chan->con_priv;
++        unsigned long flags;
++        u32 status;
++        int ret = 0;
++
++        /*
++         * The framework does not serialize direct callers and does not
++         * disable IRQs.  This controller shares one register block across
++         * all CPUs, so it uses its own IRQ-safe lock.
++         */
++        spin_lock_irqsave(&c->lock, flags);
++        if (c->busy) {
++            ret = -EBUSY;
++            goto out;
++        }
++
++        c->busy = true;
++        writel(*(u32 *)data, c->tx_reg);
++        if (readl_poll_timeout_atomic(c->tx_reg + MY_STATUS, status,
++                                      status & MY_DONE, 1, 1000))
++            ret = -ETIMEDOUT;
++        c->busy = false;
++    out:
++        spin_unlock_irqrestore(&c->lock, flags);
++        return ret;
++    }
++
++    static const struct mbox_chan_ops my_ops = {
++        .send_data_sync = my_send_data_sync,
++        /* .send_data may be NULL if every channel is direct-only. */
++    };
++
++    static int my_probe(struct platform_device *pdev)
++    {
++        ...
++        for (i = 0; i < MY_NUM_CHANS; i++)
++            mbox->chans[i].sync_caps = MBOX_CHAN_CAP_SYNC_ATOMIC;
++        ...
++        return devm_mbox_controller_register(dev, &mbox->controller);
++    }
++
++Example: per-CPU shared-memory controller
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++A controller that hands a per-CPU buffer to firmware must guard the whole
++copy/firmware-call/copy sequence, not just the copy:
++
++.. code-block:: c
++
++    static int my_send_data_sync(struct mbox_chan *chan, void *data)
++    {
++        struct my_msg *msg = data;
++        int ret;
++
++        /*
++         * The firmware uses per-CPU scratch memory.  A hardirq on this CPU
++         * could otherwise re-enter and clobber it between the copy and the
++         * firmware call.
++         */
++        guard(irqsave)();
++        memcpy(this_cpu_ptr(&my_buf)->data, msg->tx, msg->len);
++        ret = my_firmware_call(this_cpu_ptr(&my_buf)->phys, msg->len);
++        if (!ret)
++            memcpy(msg->rx, this_cpu_ptr(&my_buf)->data, msg->rx_len);
++        return ret;
++    }
++
++Every user of the per-CPU buffer must take the same guard.  Attribute
++queries, notification fetches, MSI programming, and non-mailbox users that
++share the buffer are all part of the same critical section.  Delivering RX
++through ``mbox_chan_received_data()`` while holding that guard can deadlock
++if the client sends from ``rx_callback``; release the guard first or use a
++separate RX lock.
++
  
- /* MPXY mailbox channel */
-@@ -447,13 +157,13 @@ static void mpxy_mbox_send_rpmi_data(struct mpxy_mbox_channel *mchan,
- 			msg->error = -EIO;
- 			break;
- 		}
--		msg->error = mpxy_send_message_with_resp(mchan->channel_id,
--							 msg->data.service_id,
--							 msg->data.request,
--							 msg->data.request_len,
--							 msg->data.response,
--							 msg->data.max_response_len,
--							 &msg->data.out_response_len);
-+		msg->error = sbi_mpxy_send_message_with_resp(mchan->channel_id,
-+							     msg->data.service_id,
-+							     msg->data.request,
-+							     msg->data.request_len,
-+							     msg->data.response,
-+							     msg->data.max_response_len,
-+							     &msg->data.out_response_len);
- 		break;
- 	case RPMI_MBOX_MSG_TYPE_SEND_WITHOUT_RESPONSE:
- 		if ((!msg->data.request && msg->data.request_len) ||
-@@ -465,10 +175,10 @@ static void mpxy_mbox_send_rpmi_data(struct mpxy_mbox_channel *mchan,
- 			msg->error = -EIO;
- 			break;
- 		}
--		msg->error = mpxy_send_message_without_resp(mchan->channel_id,
--							    msg->data.service_id,
--							    msg->data.request,
--							    msg->data.request_len);
-+		msg->error = sbi_mpxy_send_message_without_resp(mchan->channel_id,
-+								msg->data.service_id,
-+								msg->data.request,
-+								msg->data.request_len);
- 		break;
- 	default:
- 		msg->error = -EOPNOTSUPP;
-@@ -504,10 +214,10 @@ static void mpxy_mbox_peek_rpmi_data(struct mbox_chan *chan,
+ Client Driver (See include/linux/mailbox_client.h)
+ ==================================================
  
- static int mpxy_mbox_read_rpmi_attrs(struct mpxy_mbox_channel *mchan)
- {
--	return mpxy_read_attrs(mchan->channel_id,
--			       SBI_MPXY_ATTR_MSGPROTO_ATTR_START,
--			       sizeof(mchan->rpmi_attrs) / sizeof(u32),
--			       (u32 *)&mchan->rpmi_attrs);
-+	return sbi_mpxy_read_attrs(mchan->channel_id,
-+				   SBI_MPXY_ATTR_MSGPROTO_ATTR_START,
-+				   sizeof(mchan->rpmi_attrs) / sizeof(u32),
-+				   (u32 *)&mchan->rpmi_attrs);
- }
++The client might want to operate in one of three modes:
  
- /* ====== MPXY mailbox callbacks ====== */
-@@ -536,7 +246,7 @@ static bool mpxy_mbox_peek_data(struct mbox_chan *chan)
- 		return false;
+-The client might want to operate in blocking mode (synchronously
+-send a message through before returning) or non-blocking/async mode (submit
+-a message and a callback function to the API and return immediately).
++* non-blocking queued: submit a message and a callback, return immediately;
++* blocking queued: wait until the queued transfer completes or times out;
++* direct synchronous: call the controller operation and receive its result.
++
++The first two use ``mbox_send_message()`` and the queued state machine.
++The third uses ``mbox_send_message_sync()`` or
++``mbox_send_message_sync_sleepable()`` and must be used on a direct channel.
++
++Blocking and non-blocking queued modes
++--------------------------------------
  
- 	do {
--		rc = mpxy_get_notifications(mchan->channel_id, notif, &data_len);
-+		rc = sbi_mpxy_get_notifications(mchan->channel_id, notif, &data_len);
- 		if (rc || !data_len)
- 			break;
+ ::
  
-@@ -580,8 +290,8 @@ static int mpxy_mbox_setup_msi(struct mbox_chan *chan,
+@@ -82,12 +279,12 @@ a message and a callback function to the API and return immediately).
  
- 	/* Enable channel MSI control */
- 	mchan->attrs.msi_control = 1;
--	rc = mpxy_write_attrs(mchan->channel_id, SBI_MPXY_ATTR_MSI_CONTROL,
--			      1, &mchan->attrs.msi_control);
-+	rc = sbi_mpxy_write_attrs(mchan->channel_id, SBI_MPXY_ATTR_MSI_CONTROL,
-+				  1, &mchan->attrs.msi_control);
- 	if (rc) {
- 		dev_err(dev, "enable MSI control failed for MPXY channel 0x%x\n",
- 			mchan->channel_id);
-@@ -609,8 +319,8 @@ static void mpxy_mbox_cleanup_msi(struct mbox_chan *chan,
+ 	static void client_demo(struct platform_device *pdev)
+ 	{
+-		struct demo_client *dc_sync, *dc_async;
+-		/* The controller already knows async_pkt and sync_pkt */
++		struct demo_client *dc_blocking, *dc_async;
++		/* The controller already knows async_pkt and blocking_pkt */
+ 		struct async_pkt ap;
+-		struct sync_pkt sp;
++		struct blocking_pkt bp;
  
- 	/* Disable channel MSI control */
- 	mchan->attrs.msi_control = 0;
--	rc = mpxy_write_attrs(mchan->channel_id, SBI_MPXY_ATTR_MSI_CONTROL,
--			      1, &mchan->attrs.msi_control);
-+	rc = sbi_mpxy_write_attrs(mchan->channel_id, SBI_MPXY_ATTR_MSI_CONTROL,
-+				  1, &mchan->attrs.msi_control);
- 	if (rc) {
- 		dev_err(dev, "disable MSI control failed for MPXY channel 0x%x\n",
- 			mchan->channel_id);
-@@ -635,8 +345,8 @@ static int mpxy_mbox_setup_events(struct mpxy_mbox_channel *mchan)
+-		dc_sync = kzalloc_obj(*dc_sync);
++		dc_blocking = kzalloc_obj(*dc_blocking);
+ 		dc_async = kzalloc_obj(*dc_async);
  
- 	/* Enable channel events state */
- 	mchan->attrs.events_state_ctrl = 1;
--	rc = mpxy_write_attrs(mchan->channel_id, SBI_MPXY_ATTR_EVENTS_STATE_CONTROL,
--			      1, &mchan->attrs.events_state_ctrl);
-+	rc = sbi_mpxy_write_attrs(mchan->channel_id, SBI_MPXY_ATTR_EVENTS_STATE_CONTROL,
-+				  1, &mchan->attrs.events_state_ctrl);
- 	if (rc) {
- 		dev_err(dev, "enable events state failed for MPXY channel 0x%x\n",
- 			mchan->channel_id);
-@@ -662,8 +372,8 @@ static void mpxy_mbox_cleanup_events(struct mpxy_mbox_channel *mchan)
+ 		/* Populate non-blocking mode client */
+@@ -101,13 +298,13 @@ a message and a callback function to the API and return immediately).
+ 		init_completion(&dc_async->c);
  
- 	/* Disable channel events state */
- 	mchan->attrs.events_state_ctrl = 0;
--	rc = mpxy_write_attrs(mchan->channel_id, SBI_MPXY_ATTR_EVENTS_STATE_CONTROL,
--			      1, &mchan->attrs.events_state_ctrl);
-+	rc = sbi_mpxy_write_attrs(mchan->channel_id, SBI_MPXY_ATTR_EVENTS_STATE_CONTROL,
-+				  1, &mchan->attrs.events_state_ctrl);
- 	if (rc)
- 		dev_err(dev, "disable events state failed for MPXY channel 0x%x\n",
- 			mchan->channel_id);
-@@ -741,8 +451,8 @@ static void mpxy_mbox_msi_write(struct msi_desc *desc, struct msi_msg *msg)
- 	minfo->msi_addr_hi = msg->address_hi;
- 	minfo->msi_data = msg->data;
+ 		/* Populate blocking mode client */
+-		dc_sync->cl.dev = &pdev->dev;
+-		dc_sync->cl.rx_callback = message_from_remote;
+-		dc_sync->cl.tx_done = NULL; /* operate in blocking mode */
+-		dc_sync->cl.tx_block = true;
+-		dc_sync->cl.tx_tout = 500; /* by half a second */
+-		dc_sync->cl.knows_txdone = false; /* depending upon protocol */
+-		dc_sync->async = false;
++		dc_blocking->cl.dev = &pdev->dev;
++		dc_blocking->cl.rx_callback = message_from_remote;
++		dc_blocking->cl.tx_done = NULL; /* operate in blocking mode */
++		dc_blocking->cl.tx_block = true;
++		dc_blocking->cl.tx_tout = 500; /* by half a second */
++		dc_blocking->cl.knows_txdone = false; /* depending upon protocol */
++		dc_blocking->async = false;
  
--	rc = mpxy_write_attrs(mchan->channel_id, SBI_MPXY_ATTR_MSI_ADDR_LO,
--			      sizeof(*minfo) / sizeof(u32), (u32 *)minfo);
-+	rc = sbi_mpxy_write_attrs(mchan->channel_id, SBI_MPXY_ATTR_MSI_ADDR_LO,
-+				  sizeof(*minfo) / sizeof(u32), (u32 *)minfo);
- 	if (rc) {
- 		dev_warn(dev, "failed to write MSI info for MPXY channel 0x%x\n",
- 			 mchan->channel_id);
-@@ -776,7 +486,7 @@ static int mpxy_mbox_populate_channels(struct mpxy_mbox *mbox)
- 	int rc;
+ 		/* ASync mailbox is listed second in 'mboxes' property */
+ 		dc_async->mbox = mbox_request_channel(&dc_async->cl, 1);
+@@ -116,14 +313,125 @@ a message and a callback function to the API and return immediately).
+ 		/* Send async message to remote */
+ 		mbox_send_message(dc_async->mbox, &ap);
  
- 	/* Find-out of number of channels */
--	rc = mpxy_get_channel_count(&mbox->channel_count);
-+	rc = sbi_mpxy_get_channel_count(&mbox->channel_count);
- 	if (rc)
- 		return dev_err_probe(mbox->dev, rc, "failed to get number of MPXY channels\n");
- 	if (!mbox->channel_count)
-@@ -786,7 +496,7 @@ static int mpxy_mbox_populate_channels(struct mpxy_mbox *mbox)
- 	channel_ids = kzalloc_objs(*channel_ids, mbox->channel_count);
- 	if (!channel_ids)
- 		return -ENOMEM;
--	rc = mpxy_get_channel_ids(mbox->channel_count, channel_ids);
-+	rc = sbi_mpxy_get_channel_ids(mbox->channel_count, channel_ids);
- 	if (rc)
- 		return dev_err_probe(mbox->dev, rc, "failed to get MPXY channel IDs\n");
+-		/* Sync mailbox is listed first in 'mboxes' property */
+-		dc_sync->mbox = mbox_request_channel(&dc_sync->cl, 0);
++		/* Blocking mailbox is listed first in 'mboxes' property */
++		dc_blocking->mbox = mbox_request_channel(&dc_blocking->cl, 0);
+ 		/* Populate data packet */
+-		/* sp.abc = 123; etc */
++		/* bp.abc = 123; etc */
+ 		/* Send message to remote in blocking mode */
+-		mbox_send_message(dc_sync->mbox, &sp);
+-		/* At this point 'sp' has been sent */
++		mbox_send_message(dc_blocking->mbox, &bp);
++		/* At this point 'bp' has been sent */
  
-@@ -800,9 +510,9 @@ static int mpxy_mbox_populate_channels(struct mpxy_mbox *mbox)
- 		mchan->mbox = mbox;
- 		mchan->channel_id = channel_ids[i];
- 
--		rc = mpxy_read_attrs(mchan->channel_id, SBI_MPXY_ATTR_MSG_PROT_ID,
--				     sizeof(mchan->attrs) / sizeof(u32),
--				     (u32 *)&mchan->attrs);
-+		rc = sbi_mpxy_read_attrs(mchan->channel_id, SBI_MPXY_ATTR_MSG_PROT_ID,
-+					 sizeof(mchan->attrs) / sizeof(u32),
-+					 (u32 *)&mchan->attrs);
- 		if (rc) {
- 			return dev_err_probe(mbox->dev, rc,
- 					     "MPXY channel 0x%x read attrs failed\n",
-@@ -818,11 +528,11 @@ static int mpxy_mbox_populate_channels(struct mpxy_mbox *mbox)
- 			}
- 		}
- 
--		mchan->notif = devm_kzalloc(mbox->dev, mpxy_shmem_size, GFP_KERNEL);
-+		mchan->notif = devm_kzalloc(mbox->dev, sbi_mpxy_shmem_size(), GFP_KERNEL);
- 		if (!mchan->notif)
- 			return -ENOMEM;
- 
--		mchan->max_xfer_len = min(mpxy_shmem_size, mchan->attrs.msg_max_len);
-+		mchan->max_xfer_len = min(sbi_mpxy_shmem_size(), mchan->attrs.msg_max_len);
- 
- 		if ((mchan->attrs.capability & SBI_MPXY_CHAN_CAP_GET_NOTIFICATIONS) &&
- 		    (mchan->attrs.capability & SBI_MPXY_CHAN_CAP_EVENTS_STATE))
-@@ -847,40 +557,12 @@ static int mpxy_mbox_probe(struct platform_device *pdev)
- 	int msi_idx, rc;
- 	u32 i;
- 
--	/*
--	 * Initialize MPXY shared memory only once. This also ensures
--	 * that SBI MPXY mailbox is probed only once.
--	 */
--	if (mpxy_shmem_init_done) {
--		dev_err(dev, "SBI MPXY mailbox already initialized\n");
--		return -EALREADY;
--	}
--
- 	/* Probe for SBI MPXY extension */
--	if (sbi_spec_version < sbi_mk_version(1, 0) ||
--	    sbi_probe_extension(SBI_EXT_MPXY) <= 0) {
-+	if (!sbi_mpxy_shmem_size()) {
- 		dev_info(dev, "SBI MPXY extension not available\n");
- 		return -ENODEV;
+ 		/* Now wait for async chan to be done */
+ 		wait_for_completion(&dc_async->c);
  	}
- 
--	/* Find-out shared memory size */
--	rc = mpxy_get_shmem_size(&mpxy_shmem_size);
--	if (rc)
--		return dev_err_probe(dev, rc, "failed to get MPXY shared memory size\n");
--
--	/*
--	 * Setup MPXY shared memory on each CPU
--	 *
--	 * Note: Don't cleanup MPXY shared memory upon CPU power-down
--	 * because the RPMI System MSI irqchip driver needs it to be
--	 * available when migrating IRQs in CPU power-down path.
--	 */
--	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "riscv/sbi-mpxy-shmem",
--			  mpxy_setup_shmem, NULL);
--
--	/* Mark as MPXY shared memory initialization done */
--	mpxy_shmem_init_done = true;
--
- 	/* Allocate mailbox instance */
- 	mbox = devm_kzalloc_obj(dev, *mbox);
- 	if (!mbox)
++
++The documentation uses "blocking queued" rather than "sync" for
++``tx_block=true`` so that it is not confused with direct synchronous
++transmit.  ``tx_block`` callers must serialize themselves on a channel.
++
++Direct synchronous mode
++-----------------------
++
++.. code-block:: c
++
++    int __must_check mbox_send_message_sync(struct mbox_chan *chan,
++                                            void *mssg);
++    int __must_check mbox_send_message_sync_sleepable(struct mbox_chan *chan,
++                                                      void *mssg);
++
++``mbox_send_message_sync()``
++    Calls ``send_data_sync()``.  It never sleeps and may be called from any
++    context in which the controller operation is safe, including hardirq.
++    It does not fall back to a sleepable operation.
++
++``mbox_send_message_sync_sleepable()``
++    Calls ``send_data_sync_sleepable()`` when the channel advertises it.
++    If only ``MBOX_CHAN_CAP_SYNC_ATOMIC`` is advertised, it calls the
++    stronger ``send_data_sync()`` instead.  It calls ``might_sleep()`` and
++    may therefore be used only from sleepable context.
++
++Both functions return 0 on success, ``-EINVAL`` for invalid arguments,
++``-EOPNOTSUPP`` when the channel does not support the requested direct
++mode, or another negative errno from the controller.  Positive values are
++not used by the direct API; controllers must return 0 or a negative errno.
++The declarations are ``__must_check`` because the per-call result is the
++whole point of the API.
++
++The caller must keep the message buffer valid until the call returns.  The
++controller must not retain the pointer afterwards.  The caller is also
++responsible for serializing the call against ``mbox_free_channel()`` and
++driver removal; the framework does not wait for or refcount in-flight direct
++calls.  The ``chan->cl`` check in the wrapper is only a best-effort sanity
++check.
++
++The capability probe is the call itself: a client may attempt the direct
++API and handle ``-EOPNOTSUPP``.  There is no capability query helper in the
++minimal API.
++
++Example:
++
++.. code-block:: c
++
++    ret = mbox_send_message_sync(client->chan, msg);
++    if (ret)
++        /* Handle the per-call error. */
++
++The direct path calls neither ``tx_prepare`` nor ``tx_done``.  The client
++prepares its buffer before the call, and the return value is the completion
++notification.  ``tx_block``, ``tx_tout``, and ``knows_txdone`` are ignored
++on a direct channel because ``mbox_send_message()`` and
++``mbox_client_txdone()`` are rejected there.
++
++Interaction with the existing API
++=================================
++
++The following table is normative for a direct channel
++(``sync_caps != 0``):
++
++.. list-table:: Interaction with the existing API on a direct channel
++   :header-rows: 1
++   :widths: 30 70
++
++   * - API / callback
++     - Behavior on a direct channel
++   * - ``mbox_send_message()``
++     - Returns ``-EOPNOTSUPP``.  Mixing queued and direct paths would
++       reintroduce the single-request state machine.
++   * - ``mbox_flush()``
++     - Returns ``-EOPNOTSUPP``.  There is no framework transmission to
++       flush.
++   * - ``tx_prepare``
++     - Never called.  The client prepares its own buffer.
++   * - ``tx_done``
++     - Never called.  The direct return value is the notification.
++   * - ``mbox_chan_txdone()``
++     - ``WARN_ON_ONCE()`` and no-op.  The controller must return the result
++       from the direct operation.
++   * - ``mbox_client_txdone()``
++     - ``WARN_ON_ONCE()`` and no-op.  Same reason.
++   * - ``mbox_chan_tx_slots_available()``
++     - Returns 0.  A direct channel has no queue.
++   * - ``tx_block`` / ``tx_tout``
++     - Ignored.  ``mbox_send_message()`` is rejected.
++   * - ``knows_txdone``
++     - Ignored.  ``mbox_client_txdone()`` is rejected.
++   * - ``startup`` / ``shutdown``
++     - Unchanged.  Called on bind/unbind and may sleep.
++   * - ``rx_callback`` / ``peek_data`` / ``mbox_chan_received_data()``
++     - Unchanged.  Receive delivery is independent of the transmit mode.
++   * - ``mbox_free_channel()``
++     - Unchanged.  The client must serialize it against in-flight direct
++       calls.
++   * - debugfs mailbox summary
++     - Unchanged; it only reports channel ownership.
++
++Debugging aids provided by the framework are
++``lockdep_assert_not_held(&chan->lock)`` in both direct wrappers,
++``might_sleep()`` in the sleepable wrapper, txdone misuse warnings, and
++registration-time capability validation.  ``CONFIG_DEBUG_ATOMIC_SLEEP`` and
++``CONFIG_PROVE_LOCKING`` catch controller bugs that the framework cannot
++detect statically.
++
++The KUnit suite in ``drivers/mailbox/mailbox-sync-test.c`` exercises the
++capability matrix, registration validation, per-call results, multi-CPU
++concurrency, hardirq context, queued compatibility, and free/rebind.
 -- 
 2.43.0
 
