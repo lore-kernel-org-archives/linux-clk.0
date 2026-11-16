@@ -1,101 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.173
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794818607;
-	b=J6tAQ+NwoG3D8+HgT4uNNW03Ra894wN7GtymgmTZLPcSKSzz5f79O8XKyDxUFZZmxGdq
-	 3LmK59zGkoZcBvwrCZMZp3w8W/Xzh1J3eMF857qdYseymzEAQ8uZCjfGFU5LJ9tR1B/M9
-	 gfI3N5j1wXe0797m569QdKFAV/BCEhNG6B54Gqt2WO2tgIQZnPRWUe0Yct54+TXjcB0st
-	 3WFsvq2vIEL7cb1RFJUpsellS+y6iatOK5tDkkLWY2fA4tVslfPPnfQcsRZfHWxh8tVQ7
-	 iomWLT5H8ArwKB/krKgp4GB5dbdjkYpCBvVb2QPmUVB628gqB1ZILZbwdVfZegQ9kYA==
+	t=1794818709;
+	b=x1SK1W0N18c1hsSb9zTfinqhIRLrjG+V9lkvXunxkvxboEJGqSK76Vho/OC4QBON1aCo
+	 2dotGk+8RZ1ZcMpk2hFvS7Ov3WT5lx7mpoFEuubW895gyiYDlPvtD84kmYDhq5xg/UI+Q
+	 BuLRSTDXwGDy1ftC3pztosP0DZ4hLDS4jpXG76qVa7tROJKmbhqUYD6dV5LR+5zecIjCi
+	 0LQjnc7JBy4Ft/bDwYVGkoCOWpxr+YCTHN9ZKozGX/A4vEHgagmcuSuldNM7g8KHTsV6j
+	 ZUWHJ0kPEDhu00pE7mjOu8C1+dwI+PZX5lLb6WWRHq9ZHc8hQueiaXf5D7rO7J3g2LQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794818607;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=nY+h2b3wsrKb5mJ3LIlCYXVGjCOvqpxj3QbUvlrfjKE=;
-	b=EU2r+As+AVzj+Wp092zPmb0UknlymN+LvekIA2ihi2a3f9uKeDxDyEwPqoqVXH6pvubD
-	 +fBuNMcGeGNlYlLwrWApG6GmHh7odgYm1MkRJQ45d4qugu/WoeuODAJ8xKhGGWJTsy5vP
-	 mv/K8DeICjYaon6OC0lfVbakRj/1g6mCWby7XdZmH2Xrh7C8mVJtAxU/FC1N4dOq+1stg
-	 ES8iWKLkiqjO041bV5G7Se4Gc7qCGQoKos2U6fRgu2XOgLj/MtrdDbsA2njX3doXNIivB
-	 xl1P37JFYgIHn198lnqU4cwMUlpWvO6dGdMBhe6JWlB6HKotchfp8hvrj/VPuOiz15Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794818709;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=78oIkokJZirdbrk9ibRh931gBhzKbqHoRYpE62Jld9U=;
+	b=uclWl8q/bRh3zPVe5GUTL8jjEdCc44JDSeKS0R9X+D69uGVA9P3iosWlDW5QH/LvD0Pg
+	 aLAXEc8diVmw0priXq3nScT9GaxhTZezSAlMFPwR/9I1j2t79dDTtubqvUFYT3/hPt5xI
+	 td4p7JL7io/3/mXChQI3Vu/PVYoSyR/WMWmW6DsWxNJhNlaFecTDCEfmrT3wpcdIW56ki
+	 Bgs07jSojnJ02IpW07mfBrf6CpudkKtcX+TZXX87ENNhqQWsw9PjhBWrWC/z2eSVNtNtg
+	 rAhV5DQ2qAWmn/XozOYaUlL9QgIbp4hDVKCencidl4J293znIiKG76k9fRKk66uCAIg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=aFoLXRey;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.173
-Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B4pcMMA4;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50C5606A32C;
+	Mon, 16 Nov 2026 08:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B4pcMMA4
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794818708;
+	b=yw+ctRDtUPXtaLb0/SPqvwx3UUgEXrslQ7cyP0wmtWdAcFbOv4qTmqtRVSLNwe7k4xBn
+	 JXAJPdjOTk6ZNT5GIxw7lr+v1jFlg28JnP/v/r1RaI7G5ilsUa7GeucbQW7f9VE6EBpwY
+	 VIuNwtFHKdl4hzA9ZSUU9bC6MbnVI1itnNfpC4iGr3Kg6Wc4nhE5eYBb4LOC54lHBllWw
+	 olK9QSSNs3VnZ/3KfCrUxG7LhQVIMoHhG/C+UqpLY4hifsi0R5NEq/hwguq9YI/bEmTjd
+	 it2DQ8Nc/cvlDJ3GICm2nOn9SnbdyGPtzr/ZOVn3p035aHtNmcexTkb43lJDPOlOlgA==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794818708;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=78oIkokJZirdbrk9ibRh931gBhzKbqHoRYpE62Jld9U=;
+	b=uo3lO7OS9lnp3fwMgrkSbs3xWLa+7MdnBy4Ac32bwLwv8D7WVh/tioEtUcHeaQttYVou
+	 F1F3cm8FPADVEbyxz2x/1M3KgA0zCmTltD8NDLr+wIgQRm6tl64vLWngN8rwC8D06zO7v
+	 RLFV3bCmQMwrMGtl+1i6SvWeiqqJTXamgLAFjwUNIbBpej3rpe8rnV0PLSBgiiTahmnCU
+	 AHNZdA7Pd7fMJd6d3nR0yvxKwVYKpIAG+iXVH9kDEjt/Wqf/oDzM8RLtjOQLTtqvNE0IM
+	 r72hAYZYy/Lg2DhXK7CeDZbAhZUPtfKeFZOr10oc4CGVSAnA/wH7cDvFEr9pCaJUwwg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1159606A323
-	for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 08:43:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F1159606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=aFoLXRey
-Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-33fb4680717so8672582eec.1
-        for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 00:43:26 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794818606; cv=none;
-        d=google.com; s=arc-20260327;
-        b=n7togouPpZRE7h8L8Mt7Qn/oOAC0hJyjjyr0Bm2pauCrKXjQNBmfRNGyys/wzcDiK6
-         9CQ/v90wA3Nrhzr5R/DldcbWNG/SH3UGcl1gDKvYywG+V6PNjrsnlSIioYcVtiQoeirr
-         IEEB2O7PybZlgStYBjRd8yqxmFNYb+xUrsrDEWKqZ+yUEzADyuy/YdxvXg94ow1zDzaP
-         2/1zIGRvNtFsdNaFKf7r8EKxtsshmNj1DdZIRFkYGfPojblQRoL8P1efinJVyQuSClrO
-         4ipoATCza6C06Gkd7X/A92+118PNNRqfYGLRj9Ao+Lz0IUGQDt9MFxzlOGvbXWfYs1f7
-         mkXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=nY+h2b3wsrKb5mJ3LIlCYXVGjCOvqpxj3QbUvlrfjKE=;
-        fh=xQLUfWy/DIP2CubwKpIRggZu/8/1KzPQxZiUAH9mbIs=;
-        b=CIT0krHBDkE4xBJjmu+r/L+5WIhgXuqUMnRIQ0sGhEFdHo+grlLF93hDETQBZJsRC5
-         HXp4QE66Iwlmu9kekUr642NQ0Hs1cXPWERxVnO19mYKIutLu+DqjFP97N/0+wDHpdKfT
-         8epF37OJQqpmzsQ1GhS6dBqBRBh1Dn+HEVqtJK1geABmCozHTW7+835VvFqD/14p5sf7
-         h+EE2JALOs98otUODstriepulROvhTJS8s3+JtR53vSq1pZ1qGG5XmI/fCWQcB9wDyLT
-         1qHLoUFmTl02MkBAg73bhtTCE575kWbpWbw0EdnT1mPwYtQX2udtaVLaOWW4kn1Kydli
-         L/wA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794818606; x=1795423406; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=nY+h2b3wsrKb5mJ3LIlCYXVGjCOvqpxj3QbUvlrfjKE=;
-        b=aFoLXReyupk43dXE0Bd8Ij6BK2NiknSHpzjU1u40qyGksAAyb1bLMBlYS0s6NFh1AY
-         dPupndtPEV5CcQ8zlesWggleFHSp6R7olXSiJO/2jaHX6dNXjIL/Nctv8liWpvh4lo14
-         8aKPlNa22PYGuYtosrzw7gWAVoaVV9tiAIydtZySFSBvKhuIWR2RZKnknmWx95H6ADSQ
-         DDUwPCOZGSB9bbc4bNTzxEDs+Gmtb0YnMyaqE2WmqcTLu2vdEjquvLLrjkp21BNAJ0ek
-         fAYPIAfEfLo0z3CcBiFhWbmJwgnSrNENJLZ0ieUXzsWh1NwQ2KgwqBnU/Vc/zfqSGHa2
-         2NoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794818606; x=1795423406;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=nY+h2b3wsrKb5mJ3LIlCYXVGjCOvqpxj3QbUvlrfjKE=;
-        b=H6raIASEks3xSDVfWLxcgxdI391ks5OaaGbINIIhVXy/fFCOhkrj5K9lfhAXa5HIJ+
-         iUJ1ko7VNYKbtV2kBgXAX5kFWi7ONDePHxD9TIWi3gXM9wxFN4s9eCar3A619vfDHpyQ
-         vjNhxD+rjKzFGB6Qns4K58I5jrnFaaRX5WAz3VdtQhKb6O2JD48kQOJFYOdK5VevvRJO
-         hkYLESUP+1MRzzYG9NpC2p1wcSwbStbm0ro8T7rBA4pG4alNDV2Zdu/YcBWyAPcIj70t
-         kN2B15djoOy9Wngp5PEfr6YWhY7kR3EoRoHPwmvQjUomMmfcXpR6D6SAnrC1LAupUG2K
-         JpSg==
-X-Forwarded-Encrypted: i=1; AL+hErFXpJ4lo4Z6rzDnSeWLBR0bXXApFKDkDxNK3DlZfbXxWlo2yi7g2g2ixTYKt6ZrvtE/n3yZFJ+wyps=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9QJXSIotHdwJedPA/ETUppsJBOQlxJZKukb6ZUykDiItHl5hUL
-	FfRMQO7idL+gtMwpodI5atQfsfUm8zhPxBmPWI5lNIrMGB2/IioGOH8yQZyG5Dj7abuMZE2RsDn
-	zaxnyZJfMcSD96GVfib0qloFNHhbmQGE=
-X-Gm-Gg: AZFdTZetnvPKxEggSfhme0slTlKGq0CZ7if8zTDEVSDUl5ibDevYCVHgCXpVjn02hMT
-	hX/Jz+kwj0S/AJqYDfftWanx/h5fZh6QLIJmClJUCSnaUldFs+4e8+favGTXQyfBL7+h3WAJOeZ
-	lgv7JDq8sn42rVPnU9etkQaqVWUgoaMJT4hJlrtgluWTfChxnDFLaQXJnEWce2j0nyM3X4+lA/a
-	rtyDz9yKQx6LilGlEM+KZbmkhmzl6x1Zkz5+BsOuMNe1oL/mb56Qkyg2VwYiuHEubmKZ7a5b4KQ
-	qb2lQ+WnIfps+EX7u/4lmklFSILRdVil4OfPS9cZUaA6ipjDQ7iVAp3TeugqNpUdFKtpa1YZJPh
-	zFRfWee/lZrY+A0ahWnIHbbZ03sKhTmLIhDGyABnIRWKJNZNbY+0OihDWTkQSqI7Kr4nogx0NLy
-	BPIji4riZlQnWcW7fll9P9Gn4+0jJsdJmftuKdIO9jCd4Rbcdepvo=
-X-Received: by 2002:a05:7300:dd03:b0:36a:437a:4c00 with SMTP id
- 5a478bee46e88-37967314a08mr9190579eec.24.1794818606016; Mon, 16 Nov 2026
- 00:43:26 -0800 (PST)
+	by smtp.kernel.org (Postfix) with ESMTPS id 0A9D91F000C6;
+	Mon, 16 Nov 2026 08:45:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794818708;
+	bh=78oIkokJZirdbrk9ibRh931gBhzKbqHoRYpE62Jld9U=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=B4pcMMA4BJqIPjhjMnjzKs0EdRb6/d2cskScb/0ONtBSX8ZDRpMighL8FX0/JImPB
+	 cherqBXTxCrDKoZxksNTCFsxd3wtItrFSwVLEbbvTnldSt3K9T1CNixhZ9C0ErV1Bd
+	 RTJMiWqeO3yZCgsQPaiNujziQcbf8S1YULiqYJU9oTzOB2OfBXtmKoFdIVuVBcH8md
+	 W1LzuPR9dhAUdw72Rh6Gs/29KhIQxD1IAUhGTnkCqrbO9VO1A0najE7IcO8xbOskQ1
+	 xBun5Zu+c56rZz7PksugmM0rfdhdxVMizNglaxbo4r+HWlrLaAlEHTO9TOalAnqeZB
+	 yfenFN24Z04dg==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 896204A3E2;
+	Mon, 16 Nov 2026 08:45:07 +0000 (UTC)
+From: Arun Iyengar via B4 Relay <devnull+aiyengar1990.gmail.com@kernel.org>
+Date: Mon, 16 Nov 2026 08:45:08 +0000
+Subject: [PATCH v2 2/2] clk: sunxi-ng: h616: Register GPU PLL notifier
+ before mux notifier
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -105,115 +83,75 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261113145708.261530-1-clamor95@gmail.com> <20261113145708.261530-3-clamor95@gmail.com>
- <179474058020.3790083.7531788945003507652.b4-review@b4> <CAPVz0n154OuYUG2RObrdh4TmASjRhKF9svF0Z=4iCrPyyNt0pA@mail.gmail.com>
- <179478265643.13037.17097457582246933781.b4-reply@b4>
-In-Reply-To: <179478265643.13037.17097457582246933781.b4-reply@b4>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 16 Nov 2026 10:43:14 +0200
-X-Gm-Features: Aa3M54pMEr9UjE1zw6W6dd5jtUGbWeQ0qW9zBZkFj9pK7Jh0wgW3qgyddXi81sY
-Message-ID: <CAPVz0n21-_+G3cEVg98MwcYqhcaGi9nBa42YebNWiqUdo+vqjg@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] clk: tegra114: Add CSI pad clock gates
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, linux-clk@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261116-h616-pll-output-gate-v2-2-a418026ffae6@gmail.com>
+References: <20261116-h616-pll-output-gate-v2-0-a418026ffae6@gmail.com>
+In-Reply-To: <20261116-h616-pll-output-gate-v2-0-a418026ffae6@gmail.com>
+To: Chen-Yu Tsai <wens@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: Andre Przywara <andre.przywara@arm.com>, 
+ Maxime Ripard <mripard@kernel.org>, 
+ Philippe Simons <simons.philippe@gmail.com>, 
+ Ilya Titov <ilya.titov@wirenboard.com>, linux-clk@vger.kernel.org, 
+ linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Arun Iyengar <aiyengar1990@gmail.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794818707; l=1471;
+ i=aiyengar1990@gmail.com; s=20261110; h=from:subject:message-id;
+ bh=QL/weaZ6VGxEBkGAwe9yYKN6VnO0kkiDcNvaqnoXQSE=;
+ b=77W17WrT9nFCzC+g6lJHQ5hR7OvFqbPOm6VA8sd65vxexQQJGeaCX4IXRt/PSOBZ0yJZ8Jt5Q
+ ZJfHeM/omhGBwPsMy926W+02bT/vUWgreFPRf7oIuJYzzYK6vuEvh8w
+X-Developer-Key: i=aiyengar1990@gmail.com; a=ed25519;
+ pk=zXpRgUTrhaFe6jLyPqbBy3ccfkj04w0g2690Wv3mg+0=
+X-Endpoint-Received: by B4 Relay for aiyengar1990@gmail.com/20261110 with
+ auth_id=1480
+X-Original-From: Arun Iyengar <aiyengar1990@gmail.com>
+Reply-To: aiyengar1990@gmail.com
+Content-Transfer-Encoding: 7bit
 
-=D0=BF=D0=BD, 16 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 00:4=
-4 Jerome Brunet <jbrunet@baylibre.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On 2026-11-15 13:54 +0200, Svyatoslav Ryhel wrote:
-> > =D0=BD=D0=B4, 15 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE =
-13:03 Jerome Brunet <jbrunet@baylibre.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > > Tegra114 has CSI pad bits in both PLLD and PLLD2 clocks that are re=
-quired
-> > > > for the correct work of the CSI block. Add CSI pad A and pad B cloc=
-k gates
-> > > > with PLLD/PLLD2 parents, respectively.
-> > > >
-> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > ---
-> > > >  drivers/clk/tegra/clk-tegra114.c | 10 ++++++++++
-> > > >  1 file changed, 10 insertions(+)
-> > > >
-> > > > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/c=
-lk-tegra114.c
-> > > > index ec537efac692..08e425365469 100644
-> > > > --- a/drivers/clk/tegra/clk-tegra114.c
-> > > > +++ b/drivers/clk/tegra/clk-tegra114.c
-> > > > @@ -1041,6 +1041,16 @@ static __init void tegra114_periph_clk_init(=
-void __iomem *clk_base,
-> > > >                                            0, 82, periph_clk_enb_re=
-fcnt);
-> > > >       clks[TEGRA114_CLK_DSIB] =3D clk;
-> > > >
-> > > > +     /* csia_pad */
-> > > > +     clk =3D clk_register_gate(NULL, "csia_pad", "pll_d", CLK_SET_=
-RATE_PARENT,
-> > > > +                             clk_base + PLLD_BASE, 26, 0, &pll_d_l=
-ock);
-> > > > +     clks[TEGRA114_CLK_CSIA_PAD] =3D clk;
-> > > > +
-> > > > +     /* csib_pad */
-> > > > +     clk =3D clk_register_gate(NULL, "csib_pad", "pll_d2", CLK_SET=
-_RATE_PARENT,
-> > > > +                             clk_base + PLLD2_BASE, 26, 0, &pll_d2=
-_lock);
-> > > > +     clks[TEGRA114_CLK_CSIB_PAD] =3D clk;
-> > > > +
-> > >
-> > > Change seems ok in itself, just a couple of things I'd like to check =
-with you.
-> > >
-> > > Seems both the CSI and DSI can use the PLL D and D2. Can they be used=
- concurrently ?
-> > > If yes, are you sure you want to add CLK_SET_RATE_PARENT which the
-> > > DSI counter part does not have ?
-> > >
-> >
-> > CSI pad clocks are used only by CSI and CSI does not change rate of
-> > pad clocks. Saying "DSI counter part" would not be correct, DSI mux
-> > switched DSI clock parent while csi pad clocks do not touch clock
-> > layout of CSI nor DSI.
->
-> Ok but they end up possibly using the same PLL from what I can see here.
->
-> So if the consumer of csiX_pad calls clk_set_rate() on it, while the DSI
-> is using it, it won't go well. The rate of the underlying PLL may change
-> since you have set CLK_SET_RATE_PARENT. Taken alone, there is no problem
-> with this but can't CSI and DSI be active at the same time ?
->
+From: Arun Iyengar <aiyengar1990@gmail.com>
 
-The clk_set_rate() call for csi pad and csi cil clocks for dynamic
-adjustments is not possible. These clocks are used only by CSI block
-and among 6 clocks CSI uses it can change clock rate only for its own
-clock (TEGRA114_CLK_CSI) PAD and CIL clocks must remain fixed  by CSI
-design and are not touched by any other driver.
+Register the GPU PLL notifier first, so the GPU goes back to the PLL
+only after it has re-locked, as required by commit 02ae2bc6febd
+("clk: sunxi-ng: Add clk notifier to gate then ungate PLL clocks").
+Commit 0ec5e7572ddc ("clk: sunxi-ng: h616: register CPU PLL notifier
+before mux notifier") did this for the CPU.
 
-This layout is used by Tegra30 for quite some time and I did not
-observe any regressions of DSI/CSI caused by this configuration.
+Fixes: eb963d7948ce ("clk: sunxi-ng: h616: Reparent GPU clock during frequency changes")
+Signed-off-by: Arun Iyengar <aiyengar1990@gmail.com>
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-> >
-> > Same layout is used in Tegra30 and Tegra114 inherits it.
-> >
-> > > Also the DSI get the PLL through a fixed factor 'out0' but not the CS=
-I ? is it something
-> > > you have checked ? it just seems a little odd.
-> > >
-> >
-> > Yes, out0 is a fixed div2 of DSI clocks and that is code reflection of
-> > hardware. CSI pad clocks do not have this setup in the hardware.
-> >
->
-> Ok
->
-> --
-> Jerome
->
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+index 4037c5f022a8..8f53605eaafa 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+@@ -1254,13 +1254,16 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
+ 	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
+ 				  &sun50i_h616_cpu_nb);
+ 
++	/*
++	 * Re-lock the GPU PLL after any rate changes. Must be registered
++	 * before the mux notifier, so GPU goes back to a locked PLL.
++	 */
++	ccu_pll_notifier_register(&sun50i_h616_pll_gpu_nb);
++
+ 	/* Reparent GPU during GPU PLL rate changes */
+ 	ccu_mux_notifier_register(pll_gpu_clk.common.hw.clk,
+ 				  &sun50i_h616_gpu_nb);
+ 
+-	/* Re-lock the GPU PLL after any rate changes */
+-	ccu_pll_notifier_register(&sun50i_h616_pll_gpu_nb);
+-
+ 	return 0;
+ }
+ 
+
+-- 
+2.55.0
+
+
