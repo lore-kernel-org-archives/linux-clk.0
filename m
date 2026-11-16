@@ -1,99 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794852398;
-	b=HEr53MUCyKDay9f9zjyWJsZvPyCGIlXut/Qobi2y0ovlo5lwVyKc+HjwKIYrTTdK/WOg
-	 7ZVpXcnW1dzicxw1wi6eaFPf86STvmhoptlkjJanXlhxpbJ7kApWDsLNXsBrVapPmrjB6
-	 zPs/K6r+snjtWAj9Zh8Ok2HPPFXUMdFi1fNPlqbDGX6Vk8mupKhXcx2wkr/P0JvbHuOMb
-	 jAFE3YaGB6GJji3YNk7S9oryReDhgjNhymmdwroJg40417QaMTg8GgTThYWPCArnmUD1t
-	 +589kjNg6mgzq/oKIp8mdFr3jo2PZhmNuNUBR4NeSuGNReS0EnLtqO3R1GOPewuqTLg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794852398;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type;
-	bh=MVQsk47kw1zX3SrceBrKkf0gFD1EshqJX1nVwLz5v/w=;
-	b=O1mSihLclmNJ3nCtMYdVyt5XOpygyGvgXYcWmU/gA6AGZYqHadF3evHTPGOn5JeRGPAM
-	 InerF+04Hcw1YgD3Sye40p+1xK6XkNTRe5INh/IaKwtLQJOSgK33DCy4N9F3GMhaLprG5
-	 AwbOsY7kStxvg9Lvmkib0B3N2+NVTJGEwxEA5Bfked+OJ6ZdVlX3qxyJ63gTsxYK0hiwv
-	 XOHGLRneXwXaxsTNdd1YCzWzTc8EFD3LMpCQ2j+GWsS2HfmSAasFS8ZRc73m3asGfDYZu
-	 yWWdyjHPz9hudlqnzFdqTNdFCn/0CX7nF04Tlb3YH1rRmdskllR96T24wfS5qiJjFPQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=kmfEtmJS;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794853816;
+	b=LiSDk9wuyc3JcxqNZZyYJb4x7sQqwl8kgFb9bouAPUCUFVunWzjsJbJHJjkE/3XUSWlz
+	 gkEGBlfjRCiZNI7vIdT+vTJkhVsGnDXUgIEcOvhojlWtfPXdHo47+jOC9k6iv/6K4r7O3
+	 KChpuCuiRxNAN0iNhGSrt2NOJLWqvRVmmY3kyH16D3jGdjUzfTcNTpg6lwoSOyf7zPGLw
+	 lr4t3Xkv+k6Tyl58vOToQG9a8Xo5IBmgKOtGSOiq4rRqh/CHM41ZXGtWs68yxLCNQEBhR
+	 TFxN2PUuZePzoC7DxpXEvOA/XdThsUpRk9sNhxvrzk21UA+1RmbAxQ/Fw/WuBYDesLQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794853816;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=xapfgAJCLoQlkir661XJW8UeByt6AZ52Hqz2AFLNh5k=;
+	b=CoFCtTTi47rw4cxyqI7p16ufgggle54lmezU9/lNITSkDFvdp7+O0g4LK4vUVWIdmFwT
+	 Ur1rNxpksXAg576oZNg6XWqxbRUghLTE9tzZh93lpy2Wl4BxYH4/qHKuWFS8KKn1IcbBP
+	 tsw/JKzmUe9FKa9IT/qVIsfg7o7sFYcDWK7UHtfokF1kkndscBHE3N44WncHhhUF+5F2i
+	 /eR24/wG8znhNrYuvxhVD5mJmSHqXTiJrRmbjJ+HX6fAQBqJ2GBtV0VWUzsFelRU8UqoC
+	 Tb2Vkazu31/doMM3mUSaAwKnTzHYnmj3M2aZxwjo6lXyezQfoQgkBXdjpUgRqrCB9cA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PhQwyLG4;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A353606A329
-	for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 18:06:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9A353606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B75606A337;
+	Mon, 16 Nov 2026 18:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=kmfEtmJS
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6b570ff3dfdso3794140a12.3
-        for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 10:06:37 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794852396; cv=none;
-        d=google.com; s=arc-20260327;
-        b=gsGN6XpI2vjHlNUF1zNE+C43mZGoNRVh+kDuxhcs2FOLmnFWjoBFHSiV1M+s6/yI5C
-         xWdMDIYABeBM5k467/JOVm2IgaJieRJmOq9Wb07KBMN6cm3kwfM3pyWDDznM964Lk7Fp
-         gauscdssjd2kq6xt8PN+tZUs3FUyQTmxPJFgNvKKQojXzol+fidr+R/gG+WNJUujWYE+
-         PuAKH+/PDT5VroRY60M3p2XFHNPFYy7CNVHMQ+SSVqMU8HdA8lhWZTvkA586ylSfuxMs
-         9L7RRGH5TtO7Fb8sIFRK+1f027fSpCbJzuAJwZnJenT30KaijagMmaSh7b/oWqIVhINA
-         x2uA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=MVQsk47kw1zX3SrceBrKkf0gFD1EshqJX1nVwLz5v/w=;
-        fh=9YCFVzVIYXWt23tskLypdBEqE6OQLqKBbwFC/DMpVIE=;
-        b=ck1IO6eaFsl19+fKgQu2qOZx5/OcQxvigaKq5REz4+/dj5DMfbuWuNB92hyXcLH71T
-         j4yXkbEhJaiIt5BWxFp7nDA74k3MPoze5MlGo5KlWjntQkQJ+GeQSGDiYnQAWLltMZiS
-         FY3NTBFr/7Nv8OnBLetjMp6bEqcGu5rad4JF8Xqgfx6EOz66+Vl3vQ+zWMaB9kz+IicL
-         0QmxkG7Z1WLwC59ne4D5dP7ElOlhVZbg/zoiwqG/QjipWX1eSjIttfc2SzQ2o+MUUqwj
-         2NWubrwMOS/VbWJuNzxbrVhg1rPign1xuj3XYjWbW2i66hvt0b2COXikM9grzoA0SBfZ
-         0XQg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794852396; x=1795457196; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=MVQsk47kw1zX3SrceBrKkf0gFD1EshqJX1nVwLz5v/w=;
-        b=kmfEtmJSUQOj12O65RS6VbY1Mw683v1ljPvF36Xaq8xyWwxLcE7Rgpv+P0xUSOOzWS
-         CBohX4JEJNdoeAcC6jydgpFDt1yU41+HXutDjQAdyI8vLLYBoI/h4Emm3DiFQfqcNQUR
-         ypxdcXFHdYJd6ZaX146We7oygm0fSjC2yeM8PoUbco8QbD2GyNZxH/fdgbsFR/SwJvJ0
-         YDxEGIMYJYTUooX4Xp5OmSdS+fQ41EkMyu65zgulLxKykbDLEkMOPCpoBmrMKZQrTqxO
-         KU7rr9M7eUtWKa9Fv0ia4lwZPdGN45eJodeXwq8zBsEC1Ei5SPQXIPFCGxuJR4mijPDa
-         g54w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794852396; x=1795457196;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=MVQsk47kw1zX3SrceBrKkf0gFD1EshqJX1nVwLz5v/w=;
-        b=DZStebAHjZh82iiJdK5uXt9JHlQkJZZVGfPLbRPu4TQqUlLJBH4Q9igxiQ2BIc/xDS
-         +KG8Th996IJF+CMZQAegiSWtGV01CTp8XAxXhrL7FOd56wMkjwGXSg/pgW3DXhk00KxA
-         nIb7wyI94DXHuTAG/waz5jIOQ61EmINEloor23NnsWIfxl0p+Bvk4NDYpXcwIwTvovpD
-         zEvkAeL5XWdohJSVaxrnSPvQmj6V1NwGv2Q7cweFUoHW8q+RSPCDD+U4BeceMUaozdEq
-         Bifuev2QsH2opOLMHB5ofckJDuF+6LcEwwZqSE8sfY8vn9i9HKfhtDQdc91y9TRgptE4
-         jZ3g==
-X-Forwarded-Encrypted: i=1; AL+hErEQEZ6hJ7yvb5EaVqFflTv2at70jLSfu0sZRJzL26CV0gR98gAIwcdP8ikq2lidpUQJu3epVf3tFQ8=@vger.kernel.org
-X-Gm-Message-State: APuU4Z//qpR9805OWtgJ3ELL4C4iJi9/Brqi51ZHeZuYHx91kNVgiAAZ
-	GXDyCkxgka3ReMm4SQwdi6QGJKHzlaCJ6x4+kdR3r4vu6wajZzNL9Wh/yI8Yos7cH6igl1AIx6l
-	4TFfyRxOXhxzFAtYGx8sVuv5pxqBzplAGpOmmX49WkA==
-X-Gm-Gg: AYBFou2aF1S6pHFbBYUOIpMNxqyoxhz7Mlq1OjZpY41CdzM3DxRuBxDMBiFqIGCly3r
-	c2CJnIzdG6uU/vpVxUNLXYIphyY3HwF5WhcROEGehWELUu6kajgz69W512P+OHUozcvqEyul+RN
-	SPpv+zYBrnRK7S2idLSYupJe6x9kTNFgnGnz4ZEdavVdqBsWPpqQTxZtHqXzABezszrcpILxrmM
-	HyfYkkLwoho+J3hg8NQbTsd0s381AMAtS30gll23M5RgwG9c17cXlutG+8lz2QsKrgAbE17pSiR
-	19kSKPiRH0WdHVodFV/oz7REkub2ZajZ94Hhfxkesuxs7nLso/dWYd6nrFhgSnd1gnT04EPm1I5
-	D2tSFiw9z6DYfX5LKCSbp5gKHJVvEPbD79zioItYu+iKZL4o9J0Wk66SpPrYw5l6YoVKuOb0R
-X-Received: by 2002:a05:6402:1389:b0:6b7:d672:7834 with SMTP id
- 4fb4d7f45d1cf-6b7d6727942mr5514347a12.36.1794852396101; Mon, 16 Nov 2026
- 10:06:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PhQwyLG4
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A77891F000C9;
+	Mon, 16 Nov 2026 18:30:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794853816;
+	bh=xapfgAJCLoQlkir661XJW8UeByt6AZ52Hqz2AFLNh5k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=PhQwyLG4wCSOQLVyfRixgXJK3VEZYeY5REj0ashzJROReKe6Uvn+SuPF4IyAXHrsj
+	 oGiE2SdYAqVF2UbGrb9Awhy2lWoW5GUHf1N5Vp730kcQ/yyXp/GkFsj3YZfiQTNPG9
+	 qMquaRasjXN0GJ0WA4u7O/6pmO78BNG7XJ+t2ZZXPkf0RxF17vM/IMtppAN0GVHegP
+	 pDtMEz/gYs8hQLB+TgLCIaHYx9n3OZjAUTKroECMuCHnmaIG7qVNwfcEQ7VdMURx1e
+	 FLi9N+pcEIetBSlYuMal2Rc0mjKnurfH6/fa0Yz6KHUgrp/40PJAqreDgv7D2l9dt/
+	 zWThTZinjb9PA==
+Date: Mon, 16 Nov 2026 18:30:07 +0000
+From: Conor Dooley <conor@kernel.org>
+To: gaohan@iscas.ac.cn
+Cc: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Anup Patel <anup@brainfault.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Han Gao <rabenda.cn@gmail.com>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@sifive.com>, devicetree@vger.kernel.org,
+	linux-csky@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rtc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 02/19] dt-bindings: riscv: cpus: add the XuanTie C907
+Message-ID: <20261116-habitual-oxidant-dfbbe0c4829d@spud>
+References: <20261114-v861-v1-0-eb71ec3ee523@iscas.ac.cn>
+ <20261114-v861-v1-2-eb71ec3ee523@iscas.ac.cn>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -103,58 +81,27 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <CGME20261113104829epcas5p13695795bc337b89816b05eec610a0dba@epcas5p1.samsung.com>
- <20261113110612.3265841-1-raghav.s@samsung.com> <a7b901f4-59d1-4671-bfed-0d11f9e505e2@kernel.org>
-In-Reply-To: <a7b901f4-59d1-4671-bfed-0d11f9e505e2@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 16 Nov 2026 18:06:24 +0000
-X-Gm-Features: AclHuK-FFknY5syd2Sq_iB3mSD9v2WzoQZ6qZmiqFZ7TfMDgzML0F8GxXx83h_c
-Message-ID: <CADrjBPpecGbRo2PhH_zqGfNf3L=bNf81q3SMXnSvD2n0Lx-cbA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/14 RESEND] Add clock support for Exynos8855 SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Raghav Sharma <raghav.s@samsung.com>, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
-	alim.akhtar@samsung.com, sboyd@kernel.org, bmasney+clk@redhat.com, 
-	jbrunet+clk@baylibre.com, robh@kernel.org, conor+dt@kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, is.gandhi@samsung.com, ts.amit@samsung.com, 
-	pokala.reddy@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WkjwqmRm5O2s7mCk"
+Content-Disposition: inline
+In-Reply-To: <20261114-v861-v1-2-eb71ec3ee523@iscas.ac.cn>
 
-Hi Krzysztof,
+--WkjwqmRm5O2s7mCk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 16 Nov 2026 at 10:02, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 13/11/2026 12:05, Raghav Sharma wrote:
-> > This patch series adds clock support for below blocks
-> > found in Exynos8855 SoC
-> > TOP & PERIC
-> > PERIS
-> > HSI
-> > USB
-> > There are many other blocks, for which the support will be
-> > added in a forthcoming patch series.
-> > Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
-> > ---
->
->
-> Thanks, entire set applied (even if b4 thank-you letters show partial).
-> for-next will be updated later today after builds.
->
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-Just FYI, there were a couple of outstanding review points on this series.
-https://lore.kernel.org/lkml/CADrjBPoR7_LDZmxC_bOFigvqDaagVihmybfX5AdvSPr9-FVb8w@mail.gmail.com/
-https://lore.kernel.org/lkml/CADrjBPrzHP_97OgAYacJKKqeCcp9FURoi6=Dmopk6nisTdEbdA@mail.gmail.com/
-https://lore.kernel.org/lkml/CADrjBPoAVMdxgU4P+shh+9O5rGJp+m3sRQMDd2c-7zbJ8qhiBQ@mail.gmail.com/
+--WkjwqmRm5O2s7mCk
+Content-Type: application/pgp-signature; name=signature.asc
 
-I guess the main thing that would be intrusive to fix in a follow up
-patch was introducing a slightly different naming scheme (compared to
-most existing Exynos SoCs). The clock names being
-"gout_<IP-clock_name>-<block-name>" as opposed to
-"gout_<block-name>_<IP-clock-name>" that we have for many SoCs. That
-also applies to the dt-bindings header "CLK_GOUT_WDT0_PERIS" not
-"CLK_GOUT_PERIS_WDT0" etc.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCavtLrwAKCRB4tDGHoIJi
+0lnpAP9C3fwKbN6HqfeFdwuatnKF0/9dHaDjmwYnhpF9IPCROQD/QgX5d1rfH6O5
+yDgfnkvfBWYk3vACy1JoglUaB4u6uwM=
+=wtAm
+-----END PGP SIGNATURE-----
 
-Peter
+--WkjwqmRm5O2s7mCk--
