@@ -1,64 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794855402;
-	b=I62stbdtraJ7TnPLANx8jPI3cMi0GvHkTX9t6CR72eNTIrWO+nQhcjf50747GKojbWlT
-	 HoXdrxnFxtnoMEEEIGnabSveAIFhWts6Yz87ZzONRXwUG59dc+W6m6eQDTGOEHYAjqXI0
-	 r6pVb83BpGww3i3vJiTF5peERW76hV2guazRsUfop1tLM3xB5FB9tPnGJ7/RSXUKbWeME
-	 Ry6DgWO89LqqzG1Nd1r8MJFeLgZ0MBBQleCZyWWqiE7yVP1mCxqKVjNLFPjpZppS110Ac
-	 RdNehlSbh5tzDObS8Yor13FJ+oKECLfIkc047d3Ni+DZHgpUa99uN1Sm1UT1v5+1Tiw==
+	t=1794863862;
+	b=N2ZIcKoy52yvDGZtKXoWvBxAZoWtQ+MrfBPgTaRC0+KspuR1MC4qhXO9yBtgu9VWsRWh
+	 Ixk/VtvcSCsgmiv7vuqJz64FWq22MxEGppYoZlsXtjicf6qTmwKa4TAwyYUzpUnHgdcUr
+	 cXsc22cdK9d1iQ8OiZrLvDhPbI1LfnhnPpjvDJ7Z9aAr30bLC0M+aJn1fA3UsMd4SRRUz
+	 2e1MbJ6XM+voI/uy1HLZ705JeI5OMGvYSOLEu7BIkOm7SBSvDA+8+aO0AWFL3k7+ghlHl
+	 kcaTCws/Kz0g2o90P+NKz5YMD3YBoiDrXUI0BCxUwW15QR2rbW4DTo9qqUDdJF2N8AA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794855402;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=QPBj2OiHEsD8oSSw9ct6pezY21YN5Ixn4FQ3VxqCYUE=;
-	b=E2eZlbfh9lylE1ouQQi2426qRU+X2ZJhiCQiFlKzms2gcYuPD1OEhFLtBj3AENn0hqBL
-	 5bnSh7m7DcHj2d9UXjiUGjgf31nDBs6sJv8N8LDV4PLSPI7/rN9y6SKKWrGv4nydP4wsu
-	 ygC2K2urgFIozQSvC4tR0+LgV674lmHCU9ITK+2OYJZdWc+XbVN/K10ygoX7KjoEEEb+A
-	 96kAABBglG6NLg0VpHA7k7ieNE4sKkcciEcmLlZmx0VpQ2BFb/A8r7TM4MjVWM35o1Asz
-	 OxEGCSlMnAOiZvSVjyqJlcSgFesZ/UL8iQEMv3y06ZU4Ip/JNPd+tjjctQzPLTlmOAg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794863862;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=mAEZQLkzA5rc+bXHU//DRX1Kle/RYd2cpmXMc5t2/VM=;
+	b=Em/ITgllGGsU4VM8dfkriC4v2zg5JyYn1/68c6G1EBExxYuwu54AEQGZCkHD5G6+VAFR
+	 mxOYs2wypN6wp7lAHnagqlOODM999btBpQFkYVjxtS64gISqucMrMx+Jg/pq2yQ8+EN24
+	 8ZQ1JWjMVpdkc8dBeupXdfBa4LsjeJeu9cMFQxbfd6kfguTxAn2RpKudvuBDA31dvjaqg
+	 HnvVT48Kahq+vgO9VW9kwSbR05WBZYxerRCmkbNj6CvxVF3is1niNNP8PK21xhGRZbO0i
+	 FRUqIFdSZZejS7QuxlNGNRll8QmvCbrP/EtyjNV5WI8Rnby5wBWFJRYr2jcTV3eOgog==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ehO0nWie;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M52cFIyR;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C89606A31C;
-	Mon, 16 Nov 2026 18:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D95E606A322;
+	Mon, 16 Nov 2026 21:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ehO0nWie
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1041F000C4;
-	Mon, 16 Nov 2026 18:56:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M52cFIyR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15FA51F000C5;
+	Mon, 16 Nov 2026 21:17:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794855401;
-	bh=QPBj2OiHEsD8oSSw9ct6pezY21YN5Ixn4FQ3VxqCYUE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=ehO0nWie3OgQn1m4ccsYGi9+2nJiGb+rA5FI+/MBk/fy+WAfsvXOSt4u5Ka1VxN6J
-	 4L/OIo6XoAYx+2NzjpM7lKhHX4GXxaWpW9OXysumThPNdIGJulqh7mqX96IgbUUw+r
-	 6HtDr83dLU9V+oFMFyRHxCqm9jxBLNYGQpWQyeKR7abWEZjxmcAWqdv6PB27UAUqvx
-	 raIDiceFGm6kbbc9FY+n7oS6fgUS1txDFV8LnEh7XGbh8ktVdh7T4Azy9dUgNW1WmY
-	 mJ/sxkXj3TfaXak9acb3qvrRMdpY+QU/0H6Vr1omES+5MOZRPV3j9cFpG+7qhYgdv1
-	 a51cZQCev8NaQ==
-From: Brian Masney <masneyb@kernel.org>
-To: Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Tony Lindgren <tony@atomide.com>, 
- Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
- Roger Quadros <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>, 
- Andrew Goodbody <andrew.goodbody@linaro.org>, 
- Rouven Czerwinski <rouven.czerwinski@linaro.org>, 
- Ettore Chimenti <ettore.chimenti@linaro.org>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20261113-patch-ektor5-dm8168-clk-v3-0-a42cd1edc5f3@linaro.org>
-References: <20261113-patch-ektor5-dm8168-clk-v3-0-a42cd1edc5f3@linaro.org>
-Subject: Re: (subset) [PATCH v3 0/4] clk: ti: fapll/dm816x: clock tree and
- calculation fixes
-Message-Id: <179485539142.153342.17977965808888261924.b4-ty@b4>
-Date: Mon, 16 Nov 2026 13:56:31 -0500
+	s=k20260515; t=1794863861;
+	bh=mAEZQLkzA5rc+bXHU//DRX1Kle/RYd2cpmXMc5t2/VM=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=M52cFIyRCeQECNB55sWMDz0h7ctVheI4KZppMUbnDyMkYs7l0MleFsKQWdv785n48
+	 QNJs78WvHwjB2gxe13aCltgrmu1en/NhpiUTR8GdR8Zuqn5E3FjI2oqtGAfZWYNoLa
+	 TC85cNxdWkmPFNoEt5kr/R/UTEdWlELMiTjexQcUnC8/gF674NVCg/nzR+QxC3R7Yt
+	 SWBVcDeX/8NK7EPDyj7m/geX9T9KYj227Lxv3jOwtClkXhNS93QERUPrkkBHjhNUWY
+	 2uS19AdJlRYuzNvWOKUpcZ6WTGLOncYehPrNZQFepPgXTVD3XzTWYmvdFV46EaRgpN
+	 eptwbZdPtZZsQ==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -70,47 +51,50 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 2/3] clk: divider: Fix round-closest for rates above
+ the parent rate
+From: Brian Masney <masneyb@kernel.org>
+To: Carlo Caione <ccaione@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Brian Norris <computersforpeace@gmail.com>, 
+ Maxime Coquelin <maxime.coquelin@st.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Michael Turquette <mturquette@linaro.org>, 
+ Stephen Boyd <sboyd@codeaurora.org>, 
+ David Laight <david.laight.linux@gmail.com>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Brian Masney <masneyb@kernel.org>
+In-Reply-To: <20261112-upstream-clk-divider-large-rates-v2-2-18f3bb888b0c@baylibre.com>
+References: <20261112-upstream-clk-divider-large-rates-v2-0-18f3bb888b0c@baylibre.com>
+ <20261112-upstream-clk-divider-large-rates-v2-2-18f3bb888b0c@baylibre.com>
+Date: Mon, 16 Nov 2026 16:17:29 -0500
+Message-Id: <179486384987.178014.11385996366214068516.b4-review@b4>
 X-Mailer: b4 0.17-dev-ca76d
-X-Developer-Signature: v=1; a=openpgp-sha256; l=901; i=masneyb@kernel.org;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=647; i=masneyb@kernel.org;
  s=20250903; h=from:subject:message-id;
- bh=s8Tw7ZNGmtvgURa5ttmZPdTGfAUInI9PvqI1Tfk0Qig=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJ+Bz6sPyjw6kPqxe2vGb5XS7+ptDe8wOtdqrf//X+Nk
- uJEx4kmHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAEwkVYmRYUtnhMyV1OIHjudM
- 6u+ZNayNeSk5q2Yiu0D51wuLj+XYpzH8T12XpyYSa/Ki8jmv7yTd+DKnL57n6prPrrljvGTGWVF
- fZgA=
+ bh=n2y8y3b6tA+v7XGUBT99cGRLyn9XrqJrgZpSeOMyMqM=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJ+F70qWf/vLHNtO/u373Oe6R/V+JhwMGPtloqTvFpb1
+ aR9edOcO0pZGMS4GGTFFFmW5BoVRKSusr13R5MFZg4rE8gQBi5OAZjI1w0M/50uK9ll30pMPPvS
+ oWbj+QD7uVO7S+Ma/afcqfjxzLf74kdGhjNfrh+R4W1xDPjAIsVYaS72njNn07ZN1Y8tLBM+sH2
+ I4AAA
 X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-
-On Fri, 13 Nov 2026 22:30:46 +0100, Ettore Chimenti wrote:
-> clk: ti: fapll/dm816x: clock tree and calculation fixes
+> When the requested rate is above the parent rate, _div_round_closest()
+> computes a down divider of 0 and divides the parent rate by it. Asking a
+> CLK_DIVIDER_ROUND_CLOSEST divider without CLK_SET_RATE_PARENT for its
+> maximum rate with clk_round_rate(clk, ULONG_MAX) then traps on x86.
 > 
-> During TI DM8168-EVM board testing we found that the clock hierarchy and
-> clock calculation was broken already on 6.12:
+> No divider goes above the parent rate, so the smallest one is the
+> closest. Return it before dividing.
 > 
->     main_pll_clk1       <--- main PLL should be parent of other PLLs.
->        sysclk1_ck
->        main_pll_clk7
-> 		...
->        main_pll_clk6
-> 		...
->        main_pll_clk5
-> 		...
->        main_pll_clk4
-> 		...
-> 
-> [...]
+> Fixes: 26bac95aa88c ("clk: divider: fix selection of divider when rounding to closest")
+> Signed-off-by: Carlo Caione <ccaione@baylibre.com>
 
-Applied, thanks!
+Reviewed-by: Brian Masney <masneyb@kernel.org>
 
-[1/4] clk: ti: fapll: remove ti_dt_clk_name helper
-      https://git.kernel.org/clk/linux/c/b8cec302edf5
-[2/4] clk: ti: fapll: Fix clock speed calculation
-      https://git.kernel.org/clk/linux/c/7f64adfdf118
-[3/4] clk: ti: fapll: print clock name that fails to register
-      https://git.kernel.org/clk/linux/c/9d081472626d
-
-Best regards,
 -- 
 Brian Masney <masneyb@kernel.org>
-
