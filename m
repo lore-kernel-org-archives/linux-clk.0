@@ -1,89 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794816252;
-	b=X2SmcvQh1C5MPXvoLDU3X0xfyGuHH7oTpvPhfTZYXht7pGV1ayPi6gN6gvciObAWFz1C
-	 AwXKbSRNarvWWYXz2GVTGOltJQ9D3oBs28UyswW9KFlhD1MbJyJKuJ6+jb1eFV0aEwzrg
-	 w2aAKfRCWAUAJy/pCcCJHUf1krh85RXqiqPKmyeq2S1ev7LxO30DZp9ZTaisyZbMs5ZSK
-	 FsO6xDkU+zqq8gI9fteQMgMgCY8MyOw1PpPdh5EauDw8fOnSqvvdE5y07j6U+Ooo2Xois
-	 bSL8kkFm/mHmvXlF/hagSuL/UaBqRpPwHQScKxsi91whM24E/OxkaqAM1MV9RUCZVUg==
+	t=1794816303;
+	b=taITopCz5DcfRsoLhiYqEARssQexKX/scTew3QutpqxhhKl3+1sJFpaeY1Z419l0nvsX
+	 bkh9RvLjltj/IVsokP+ZUARBY6mXJb4kEPSU8EZBugvY9TBL51R2pLRyzmk4MLHJGYU2o
+	 1h0q6ZAzl5GoMzaKvy9b1RmkQn0llo31u1jVAUrqeWQslLjmkFCLDBUTMtFBPvAqzMAm9
+	 spmHNiPZ8i6EG+6Hgt7PIZPZfWIL8M0d6cf1k7fyZW3iGkHvSQSyHTu//lR6TQphFmecW
+	 KUx9NPRmBidaBW/cu+OU2mu4Ssm0gwBPf0WG3H4/xqlZbgWFVKClXvE/eUKPhE0ANGQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794816252;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794816303;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Message-ID:Date:MIME-Version:User-Agent:From:Reply-To:Subject:To:Cc:
 	 References:Content-Language:Autocrypt:Organization:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=6jY49psiB3PmDwv6JClsZ3y00dtoVgDtQ7FZWnd6meM=;
-	b=goXnyGeCKNT/KLuNHqU43iGIHKwNW/2XIhv0wIG/oocaAXSoT5PeMeM2MsRnJ5xXbl/O
-	 xaGRPbs/7osD1lRFg7XjH6rAP4WfWWnRTvOOQ7E5OzfgbRntR8kaXFT8y1lGA8VRXd02L
-	 vgnlVKNuBRfYeKov7gnoUx+1SRGxRtfuxN73vzbry3XFKtZFIMGy/KpDP4Y2D58pqwU5g
-	 nJDLTI3CyXIJRErYuRDU+4NLYO/xTq4BXHQ8miEhQbr1usIXhd+JtPbduaO+h1C8B1J+4
-	 DHZnIXYq+jQNG0k661r07cxXvqpWJ6uAU3WroewM1weD3ezJvp8cGrZF1dMcy1pJ8EQ==
+	bh=y1R2N6M3oJAu4skO9jjhh/J+EeOiDnr68oIITnSGPag=;
+	b=HwOLsS8lIztJokWSAbE/UpfqCxM4wSRHHe1+eXliHnCMItOxRLI3gP0XgfJalQqzS3D7
+	 HjcBOCCoY60AWBCttS/cQe0YTCAjC6uEGi/Y4h86dyogvk/Q90J5ysWw6K0sqzX55/XjL
+	 Qz5x+DtdCbjTx1fsaLDwMb11uFnZF6Wu7yxnoYWBqOeG4cxHr1neCYdkzslCXqza9TIyl
+	 vvl+MirjzP/bdZ9HWh0UjnqQkB0JqObyBcmK263zj9BmApVkDM6M3lEkcuuGbM0fpen1p
+	 r6fApex+9Z7wyv6XgcYnY6kV0CvFHsL8Jcmn1CA8oXCOioyh3IJAdFRHA3pMkL0L4wg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Pzts7zlg;
-	arc=none smtp.remote-ip=209.85.128.44
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=DsDP1t3q;
+	arc=none smtp.remote-ip=209.85.221.43
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD56F606A331
-	for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 08:04:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DD56F606A331
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5659C606A329
+	for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 08:05:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5659C606A329
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Pzts7zlg
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4a1b07c3c5fso35138905e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 00:04:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=DsDP1t3q
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-49d64a88222so1194303f8f.1
+        for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 00:05:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794816250; x=1795421050; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1794816302; x=1795421102; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:content-language:references:cc:to:subject:reply-to:from
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=6jY49psiB3PmDwv6JClsZ3y00dtoVgDtQ7FZWnd6meM=;
-        b=Pzts7zlgDfj56w9EG4lfMKSxrp3tfwQ7m7kwVQvJI0cZfqjDvzRN30tpfOOrTo74UP
-         8c7l5Ny+3LUIvLLEl1e4zelshUy8mWazRgVtLDaFs+yAeuhttAsAG2rwXHYHgnbzI7wG
-         ypsY94ptJCyC3t8XcqxGcGDB9zFWAgVFecW3YORK8mkO+c6orulzAAU/pGovglCU/d2j
-         5qf/fE62fDAJSCCE5u+Usd3diUtmcBOSQjaxzfzhyYX+zbAPQjxUpN9W4cYw422tHOYn
-         f3BssU0f1L9RmDV0qIjwabZJXsSAmCqGOr3NlUOlgwf8/VLDBFsYXgj6Aa11VytoaIp7
-         CIeA==
+        bh=y1R2N6M3oJAu4skO9jjhh/J+EeOiDnr68oIITnSGPag=;
+        b=DsDP1t3q4gSo2MbZa6tz0CRtQ/ENkpOJw64bGTuQ7mTM7BNmMrrJVk0fDGemkO6ySY
+         u7bh1fbkSX6n1Mlk1nG7RpRMhz2e1N4dRog+xibQRLa3+jFbHwfp/ksAM/2JgV2Reswy
+         S845Egr1ETUIsWBas99vWMV7WWrYBkrp2lbaIZDfP0qqB/59bddRbibQYRnEb7ytn6Uh
+         g48WXedNKs+awhRCgnE5c0p2y5tTzlqT5sCOq56bnSNJCkjQH1lNs0QTmSAVd+aJjG5J
+         Knu4/Nv9NMhs+7d93KKifm2N47Smy3OewSnuDMVa6qdw8aO06BRJNLo15LFfnJuh3ooU
+         LHrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794816250; x=1795421050;
+        d=1e100.net; s=20260707; t=1794816302; x=1795421102;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:content-language:references:cc:to:subject:reply-to:from
          :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=6jY49psiB3PmDwv6JClsZ3y00dtoVgDtQ7FZWnd6meM=;
-        b=DOdjVf1bvwjTBBJE83hppg9nJN1NRvniVBNELKhyV1Sft50G6QNQSv4XBlXAEbmKVK
-         AaVsa2C6U4i/qD6DInIB44fmwfB77BGr1pVqFSCvbwVHSg+2Hri2reofVORetE8IOyx+
-         Da0bb2uDgltADe5Psv0AImr3NDn+gFP6XMz052s6icJa2bnTYSenf1V6/wfv878jrd0w
-         QHIgN7xl4AE4W/N3kaDUrGcx/U49zzJnpX7AoiDHt8skA65MSvCDTMhFBrk7VlbRebl2
-         B5JdUaCRpT2XAtL8M7c6YBi229HNqWhvH5fr5jgbx9ilPhp3yzS2gT1R+kbNMtA/ERYq
-         6YRA==
-X-Forwarded-Encrypted: i=1; AL+hErGbWVM1/Sl6UAPXBF1m+TEStQf36PxFoWbF/9AA1iMxxcHNJ1+UqpyFjhjFtz6iGFn5+NtPgcFciMc=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/CSq24xZ32IuBGYdM7PUMu6QLct0EZ8sLOmgkI5xj7G2Y2bEZ0
-	uJMmG1EZfNTjA/kCU3QpnSY3t6d86e+tQhTZVOeIga/8E1kGx131M6IRN1oRJEkifbo=
-X-Gm-Gg: AYBFou2gtMJgkNVptOOLYoXc0M5uPsSzE3EV0kBCS8RsB4PN8S1uwPM5Etk2n084202
-	m3iO6q1n14xANoBmIM0E8xNAtAb/fmF9kHcDvWfqkrqsHbXlwWWPrmq09Oh6qJgqMBCkzm0yeQe
-	2ugPsKqNUjb7zPGhGRpVhnBs5kmwkokIdNQASqat6UexFa7Tk7XjqcQ/KHcYSMsB8yi/B+3l2Tx
-	IWM/dH0iHuXWzvjQVAK4j/9MPVly12guZ/FFy+G199aCrUt267dSkQTzHHDUmxVvAy3IIvyWi6Z
-	JHYPg+OXMwj4JcRE71xsxTpA4ywRbRUG557RsG9zZgqvoKxCVa2AVUaYiaWymci6JFGybAk23g0
-	qcfBT8T8vuUPcnDzAhJRAhqdORhMYTNE0sE8unLTfaj6yJArqZkv0kmuWIkeuNAFrQ4Q+/GbnhG
-	sfli7Eex2yS0jIuMUU0hmMUzrOhZyqhE7VG/nIV8N1EGef29LX0z4OqfLMFCpLOMWcVkgtM8myN
-	k7WEgZy5Ud57c6gBeGpl8twBM6YQTiUw+q+oGqt9B4uOYOmkDVi32N+w76oZ70h7qnFZ1mEBx0p
-	yVFMZBF/JmYBMdIylXznq4SliDrxrKDZcnTmCU+pHhSY9EQQN7TVDrXMTichPJw5yr4dz7YhTT8
-	cJx2G2qqx
-X-Received: by 2002:a05:600c:1f96:b0:4ac:aae6:6401 with SMTP id 5b1f17b1804b1-4bb55a4d990mr217913585e9.12.1794816249974;
-        Mon, 16 Nov 2026 00:04:09 -0800 (PST)
+        bh=y1R2N6M3oJAu4skO9jjhh/J+EeOiDnr68oIITnSGPag=;
+        b=G81rcTdHi9R0mR41XNFHZW0+VSKwiyKXsKB/ZttEvcxHEuXNNioDvzzIkSheHMewuB
+         DbuR3tc5wlVoLPBGpF7Tz4T1DP0IO3GFAi6WsVMRaeiz1SicX9CGba6et6lth2lmV3T6
+         aSLalJX4fECZTvopGSjCT9QOSPuQrcFBqpY8j6/rsLoh/gd8o7eg7VD7VlrfUfnV6xwC
+         UAuH+HyRfvoHWYIjmyepPRzD9bUeFcvhPdnPqm7Q42qjmeV6F+59b6GvLen3VRgTxFLK
+         fSmfZU33R9ynptB/TBAg+8C/0R/CInS67YJIaCH4kKmnl3GhJk/UevBF54/sgjVJsMHF
+         vPwQ==
+X-Forwarded-Encrypted: i=1; AL+hErEmUlQuIBXDA1iLXzxeyypQ7oqEIa3B9jqa71SBBtrky9BzqTbyifpPxCV3UwM3IerJn0v2Midtq7g=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9u4s3vg4vM7xmSxnhiElduIpldcJi4JWpTeXspvQC9bZmtw6xC
+	WROd6BRcBTVb/+4qAL3k6fBG4N7woVhfrdd+uZjIS71s8sfZVejZzSNefx0LKIUGR80=
+X-Gm-Gg: AYBFou2QZtCFzrVedc08d7QCdcZtagCD/uiECYs9KHky3iF/xAVE125Dn1BJQPsOKE3
+	olTOX8eDM1MfwVkXRnR59j/UwDUhkM8RHOhHAqZKhpTwk2yiA/dUVuhbrRNZgdBiyIFlqDWmX8v
+	uPMKo0oEWSD6U4GE0w7IVVnOgj++9cDIsL0GowyIpsI0Cplr1BB4O8AxiG00TcyBpPaPXuh96u8
+	UDoOo8CWOCfKD3Xo5P5dAfksJAwoJ85xaIWZengav5X/qXQL13GFUsqht+eC2QEbbRLZjFz0OAJ
+	nrUjIEcSoYVgifS9rf/TRqg/Y/qTxNPvXSO0jaGH4DljCgLFB7/Vtt73/3H43AD+W/t1qt68Rgm
+	jgtKcqtB7MnXPC42l/7O377k+HD1njKQpQgbT9kc67UF1dIBZYv6/uYmTI2Lpz6Ic111sdJNA+w
+	FadYZDO6d/k3IIN9WPZEFp8vhIHm/EGRlI4pjviBmYJ42tGVf4Euu9GaoEclkqemRD9UX2ag5Pr
+	4/pKHCdb2zSY829aNvPwVgGTiDngOC8KTIhgBctBfg0D6aIE7ao+vmEw3HiCL+QPcInYTWuNeEB
+	ii9EZq6bPSTgXDAyC/U1Bokgqs8lyDuOkZqQE+/aEBXy2sCyP3m+N+HX6RgpVYyf9N0PP04QZWy
+	tDkSidEeoAPklcYtLt4PFXTr9YzMYu+o=
+X-Received: by 2002:a05:600c:4703:b0:4ba:4928:8aec with SMTP id 5b1f17b1804b1-4bb55a755b2mr211614395e9.9.1794816301471;
+        Mon, 16 Nov 2026 00:05:01 -0800 (PST)
 Received: from ?IPV6:2a01:e0a:106d:1080:575d:8fcf:e30d:5aed? ([2a01:e0a:106d:1080:575d:8fcf:e30d:5aed])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c60f8e794sm19919314f8f.59.2026.11.16.00.04.09
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb55acdfebsm249389925e9.7.2026.11.16.00.05.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Nov 2026 00:04:09 -0800 (PST)
-Message-ID: <8a4f5390-951e-4718-9aa4-91dba93958b3@linaro.org>
-Date: Mon, 16 Nov 2026 09:04:09 +0100
+        Mon, 16 Nov 2026 00:05:01 -0800 (PST)
+Message-ID: <931bd5ff-2bae-4835-9788-563835e6c4e7@linaro.org>
+Date: Mon, 16 Nov 2026 09:05:00 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -96,14 +96,15 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH RFC 21/23] arm64: dts: qcom: add SM8650 LPASS CPU dtsi
+Subject: Re: [PATCH RFC 22/23] arm64: dts: qcom: sm8650-valve-deckard: enable
+ audio
 To: sashiko-reviews@lists.linux.dev
 Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org,
  conor+dt@kernel.org
 References: <20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org>
- <20261113-topic-sm8650-el2-v1-21-5183f6aab9fc@linaro.org>
- <sashiko-outbox-213539@kernel.org>
+ <20261113-topic-sm8650-el2-v1-22-5183f6aab9fc@linaro.org>
+ <sashiko-outbox-213545@kernel.org>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -130,199 +131,109 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <sashiko-outbox-213539@kernel.org>
+In-Reply-To: <sashiko-outbox-213545@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/13/26 20:18, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 4 potential
+On 11/13/26 20:23, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 2 potential
 > issues to consider:
-> - [Medium] arm64: dts: qcom: unsupported power-domains on WSA macros in
->    sm8650-lpass-cpu
-> - [Medium] arm64: dts: qcom: unattached multiple power-domains on
->    lpass_tlmm
-> - [Medium] arm64: dts: qcom: lpass_core clock count mismatches
->    lpasscorecc-sm8650 driver
-> - [Low] arm64: dts: qcom: node and property ordering in
->    sm8650-lpass-cpu.dtsi
+> - [Medium] arm64: dts: qcom: sm8650-valve-deckard: missing VA DMIC1
+>    route in audio-routing
+> - [Low] arm64: dts: qcom: sm8650-valve-deckard: unused lpass_rxmacro and
+>    lpass_txmacro enabled
 > --
 > 
-> commit 1f3d7332ea1210e666215d104062d22d42ebae2c
+> commit 159b85c8d3e0dd02d73b32823f4b0aaab92103dd
 > Author: Neil Armstrong <neil.armstrong@linaro.org>
 > 
-> arm64: dts: qcom: add SM8650 LPASS CPU dtsi
+> arm64: dts: qcom: sm8650-valve-deckard: enable audio
 > 
-> This commit adds sm8650-lpass-cpu.dtsi with the LPASS clock controllers,
-> lpass-cpu node, LPASS macro clocks, and I2S2 pinctrl state for SM8650
-> boards booting at EL2 without ADSP audio firmware.
+> This commit includes sm8650-lpass-cpu.dtsi and configures the SM8650 sound
+> card, lpass_cpu, and macro nodes to drive the speakers on Senary MI2S and
+> the DMICs on the VA macro.
 > 
->> diff --git a/arch/arm64/boot/dts/qcom/sm8650-lpass-cpu.dtsi b/arch/arm64/boot/dts/qcom/sm8650-lpass-cpu.dtsi
->> new file mode 100644
->> index 0000000000000..43d0d8daa4fe2
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/sm8650-lpass-cpu.dtsi
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8650-valve-deckard.dts b/arch/arm64/boot/dts/qcom/sm8650-valve-deckard.dts
+>> index a365caa28cee4..723f7911fc547 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8650-valve-deckard.dts
+>> +++ b/arch/arm64/boot/dts/qcom/sm8650-valve-deckard.dts
 > 
 > [ ... ]
 > 
->> +&lpass_tlmm {
->> +	clocks = <&lpass_core LPASS_CORE_CC_CORE_CLK>;
->> +	clock-names = "core";
+>> @@ -160,6 +161,37 @@ framebuffer_mem: framebuffer-region@af400000 {
+>>   		};
+>>   	};
+>>   
+>> +	sound: sound {
+>> +		compatible = "qcom,sm8650-sndcard", "qcom,sm8450-sndcard";
+>> +		model = "VALVE-DECKARD";
 >> +
->> +	power-domains = <&lpass_hm LPASS_CORE_HM_GDSC>,
->> +			<&lpass_aon LPASS_AON_CC_LPASS_AUDIO_HM_GDSC>;
->> +	power-domain-names = "core",
->> +			     "audio";
+>> +		audio-routing = "VA DMIC0", "vdd-micb";
+> 
+> [Severity: Medium]
+> Should audio-routing also include "VA DMIC1", "vdd-micb"?
+> 
+> lpass_vamacro uses dmic01_default and the LPASS_CDC_DMA_VA_TX0 DAI in
+> sound/soc/qcom/lpass-sm8650.c sets channels_min = 2.  In
+> sound/soc/codecs/lpass-va-macro.c, "VA DMIC0" and "VA DMIC1" are separate
+> DAPM ADC widgets, so without routing "VA DMIC1" to "vdd-micb", enabling VA
+> DMIC1 without VA DMIC0 will not power the vdd-micb regulator supply.
+
+Will investigate
+
+> 
 >> +
+>> +		speaker-dai-link {
+>> +			link-name = "SPKR Playback";
+>> +
+>> +			cpu {
+>> +				sound-dai = <&lpass_cpu MI2S_SENARY>;
+>> +			};
+>> +
+>> +			codec {
+>> +				sound-dai = <&left_spkr_i2s>, <&right_spkr_i2s>;
+>> +			};
+>> +		};
+>> +
+>> +		va-dai-link {
+>> +			link-name = "VA Capture";
+>> +
+>> +			cpu {
+>> +				sound-dai = <&lpass_cpu LPASS_CDC_DMA_VA_TX0>;
+>> +			};
+>> +
+>> +			codec {
+>> +				sound-dai = <&lpass_vamacro 0>;
+>> +			};
+>> +		};
+>> +	};
+> 
+> [ ... ]
+> 
+>> +&lpass_rxmacro {
 >> +	status = "okay";
 >> +};
-> 
-> [Severity: Medium]
-> Does specifying two entries in power-domains leave both GDSCs unattached on
-> lpass_tlmm?
-> 
-> genpd_dev_pm_attach() returns early without attaching any domain when a node
-> lists more than one power domain, and lpi_pinctrl_probe() only sets up PM
-> clocks without calling devm_pm_domain_attach_list() or
-> dev_pm_domain_attach_by_name().  As a result, runtime PM resume of
-> lpass_tlmm will not power on LPASS_AON_CC_LPASS_AUDIO_HM_GDSC before
-> accessing LPI TLMM registers.
-
-Good catch will investigate
-
-> 
-> [ ... ]
-> 
->> +&lpass_wsa2macro {
->> +	clocks = <&lpass_audiocc LPASS_AUDIO_CC_WSA2_MCLK_CLK>,
->> +		 <&lpass_audiocc LPASS_AUDIO_CC_TX_MCLK_WSA2_CLK>,
->> +		 <&lpass_vamacro>;
->> +	clock-names = "mclk",
->> +		      "macro",
->> +		      "fsgen";
 >> +
->> +	power-domains = <&lpass_hm LPASS_CORE_HM_GDSC>,
->> +			<&lpass_aon LPASS_AON_CC_LPASS_AUDIO_HM_GDSC>;
->> +	power-domain-names = "macro",
->> +			     "dcodec";
+>> +&lpass_txmacro {
+>> +	status = "okay";
 >> +};
 >> +
->> +&lpass_wsamacro {
->> +	clocks = <&lpass_audiocc LPASS_AUDIO_CC_WSA_MCLK_CLK>,
->> +		 <&lpass_audiocc LPASS_AUDIO_CC_TX_MCLK_WSA_CLK>,
->> +		 <&lpass_vamacro>;
->> +	clock-names = "mclk",
->> +		      "macro",
->> +		      "fsgen";
->> +
->> +	power-domains = <&lpass_hm LPASS_CORE_HM_GDSC>,
->> +			<&lpass_aon LPASS_AON_CC_LPASS_AUDIO_HM_GDSC>;
->> +	power-domain-names = "macro",
->> +			     "dcodec";
+>> +&lpass_vamacro {
+>> +	pinctrl-0 = <&dmic01_default>;
+>> +	pinctrl-names = "default";
+>> +	vdd-micb-supply = <&vreg_l10b_1p8>;
+>> +	qcom,dmic-sample-rate = <2400000>;
 >> +};
-> 
-> [Severity: Medium]
-> Are power-domains and power-domain-names supported on lpass_wsa2macro and
-> lpass_wsamacro?
-> 
-> Documentation/devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml does not
-> define power-domains or power-domain-names and sets unevaluatedProperties:
-> false, so dtbs_check fails when sm8650-lpass-cpu.dtsi is included.  In
-> addition, unlike the rx, tx, and va macro drivers, wsa_macro_probe() never
-> calls lpass_macro_pds_init(), while genpd_dev_pm_attach() skips automatic
-> attachment when more than one domain is listed, leaving both GDSCs
-> unattached during register access.
-
-Good catch, will add
-
-> 
->> +
->> +&soc {
->> +	lpass_audiocc: clock-controller@6bc0000 {
->> +		reg = <0 0x06bc0000 0 0x38000>;
->> +		compatible = "qcom,sm8650-lpassaudiocc";
->> +
->> +		clocks = <&bi_tcxo_div2>,
->> +			 <&lpass_aon LPASS_AON_CC_MAIN_RCG_CLK_SRC>;
->> +		clock-names = "bi_tcxo",
->> +			      "iface";
->> +
->> +		power-domains = <&lpass_aon LPASS_AON_CC_LPASS_AUDIO_HM_GDSC>;
->> +
->> +		#clock-cells = <1>;
->> +	};
->> +
->> +	lpass_aon: clock-controller@6e00000 {
->> +		reg = <0 0x06e00000 0 0x30000>;
->> +		compatible = "qcom,sm8650-lpassaoncc";
->> +
->> +		clocks = <&bi_tcxo_div2>,
->> +			 <&lpass_core LPASS_CORE_CC_CORE_CLK>;
->> +		clock-names = "bi_tcxo",
->> +			      "iface";
->> +
->> +		#clock-cells = <1>;
->> +		#power-domain-cells = <1>;
->> +	};
->> +
->> +	lpass_core: clock-controller@7b00000 {
->> +		compatible = "qcom,sm8650-lpasscorecc";
->> +		reg = <0 0x07b00000 0 0x58000>;
->> +
->> +		clocks = <&bi_tcxo_div2>;
->> +		clock-names = "bi_tcxo";
->> +
->> +		power-domains = <&lpass_hm LPASS_CORE_HM_GDSC>;
->> +
->> +		#clock-cells = <1>;
->> +	};
-> 
-> [Severity: Medium]
-> Does providing only a single clock at index 0 on lpass_core leave the
-> P_BI_TCXO parent of lpass_core_cc_core_clk_src unresolved?
-> 
-> In drivers/clk/qcom/lpasscorecc-sm8650.c, lpass_core_cc_parent_data_ao_2
-> looks up DT clock index 1 for P_BI_TCXO:
-> 
-> drivers/clk/qcom/lpasscorecc-sm8650.c:
-> static const struct clk_parent_data lpass_core_cc_parent_data_ao_2[] = {
-> 	{ .index = 1 },
-> 	{ .hw = &lpass_core_cc_dig_pll.clkr.hw },
-> 	{ .hw = &lpass_core_cc_dig_pll_out_main_div_clk_src.clkr.hw },
-> };
-> 
-> Because lpass_core only provides index 0, of_parse_clkspec() fails with
-> -ENOENT for index 1, leaving lpass_core_cc_core_clk_src and its child
-> branch clocks (such as LPASS_CORE_CC_CORE_CLK and
-> LPASS_CORE_CC_SYSNOC_MPORT_CORE_CLK) without their safe XO parent when
-> clk_rcg2_shared_init() parks the RCG.
-
-Will fix the clk driver
-
-> 
->> +
->> +	lpass_hm: clock-controller@7e00000 {
->> +		compatible = "qcom,sm8650-lpasshm";
->> +		reg = <0 0x07e00000 0 0xa000>;
->> +
->> +		clocks = <&bi_tcxo_div2>;
->> +		clock-names = "bi_tcxo";
->> +
->> +		power-domains = <&rpmhpd RPMHPD_LCX>;
->> +
->> +		required-opps = <&rpmhpd_opp_nom>;
->> +
->> +		#clock-cells = <1>;
->> +		#power-domain-cells = <1>;
->> +	};
->> +
->> +	lpass_cpu: audio@7b87000 {
->> +		compatible = "qcom,sm8650-lpass-cpu";
 > 
 > [Severity: Low]
-> This isn't a bug, but audio@7b87000 is placed after
-> clock-controller@7e00000 instead of in unit-address order, and compatible
-> is placed after reg in clock-controller@6bc0000 and
-> clock-controller@6e00000 above.
+> Are lpass_rxmacro and lpass_txmacro intentionally enabled here?
+> 
+> The sound card only uses MI2S_SENARY and lpass_vamacro, and nothing on this
+> board consumes DAIs or clocks from lpass_rxmacro or lpass_txmacro.  Probing
+> them registers unused ASoC components and calls lpass_macro_pds_init(),
+> which holds active runtime PM references on the macro and dcodec power
+> domains for the lifetime of the drivers.
 > 
 
-Will reorder
+Good catch will remove them
+
