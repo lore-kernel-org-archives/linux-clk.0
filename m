@@ -1,107 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794938638;
-	b=aeCAAEk4gyuQutOUry8i0Oka+yXB3/b+Kd8tJu7Yo7XD0SYbO2xLRghE/d2VUBE/iRcU
-	 dyMjpIQWQvk1wL/y5HsLTz/xfk/3zVYITAGYk+T9u3g0GnyHqo6BfjNZRR9RFKf8YeQOX
-	 ZUwoONmKE320IcaUCot+TirP9xAyQtFP8YoSM7M6TzUcy+9QcTsvIRjm+XDY9AtfKhFdb
-	 TgF/rBdlbkTRgg6JF2DjtyeREtKIuRhKvqy3i1MnVa4vYdeNBeTevAh+aO0nnH9zGz/eP
-	 mi1N/2YT/P2gtVwEkOucQR8Mkz+NCtksjtXH69brQnCCusOwfLGVUhBP+QNCwLq3ISA==
+	t=1794939321;
+	b=odgl+RLjjhUJReUMLLxjo6eYKpRtfrX/6k3WEVKrn/Uz6j3XRel6hB+vVLDl2hh8sN93
+	 4JMg2twEEn+X5Hu+PigVim+6dDWsFg44SWnLE0DoysGPtUP0q7gbxm9prxUYxWgWAZOvq
+	 7OPG21hCjYAuvbTfQfwsIW7aY2BsMey9p6cA/uVi0uF9uVEPZgbW53Pn2rDQ+4Q7nY+Qu
+	 y2hke9R5U1/AwJf6jABLfUDqpWDb3fwZPMtEWN16d3lJCKvz8s4f4xo00Ncfqlyvq1lQP
+	 Ait8no7arQXoIPQpkEZuLqLNK9WTHnZVuSxmkfcwhYj5aeXTtETar1UG+6ZFW+xckCg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794938638;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=0VS5qw0tDHXtIn5LwXxf+fwugty/kad7Ay611ZyzaX4=;
-	b=Mbyb3LSg9nUvpMXKDOcvn5cRvnXtZ6zzWcXofBWJQ076U/nzc8lEQZZtW9f7CyDRPZyX
-	 0FyvlcJWazaMvZS+5/UXPhcDuM+uzdOoiOWsNG8lJxJb9qhtDOmPC0H/QOyVX3+P+p/fc
-	 YqZMHHAmcp6u7rTLyQUUmL7AlrOH/jiYnmelHhFUShlW+EJL7dnyVstsc6ttNiua9bw0m
-	 mKutC6n+C8TLt3w47J7mGZbZGB5gZqc3V6cVHf1CBLOdapezV41OrOUYE/ngPbXZ2uKew
-	 aUNZparn2qoe5Ofa/yHztewNHKNJOG7x8M2sMV0Gy40VOOYbJ1eLWJw9/y8T6C+Hycg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794939321;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=tgphSOA9aU0l2b8cExZcGrYaMgpbrWhvWwIZQpvsVSQ=;
+	b=DaLq7hdoZL65XMv77/hiZahc31kNiKjwe29A7Sno7lH8pmSTXy0hH/p/rULlNAeEwAH6
+	 TfJvBzQ/WmEOmC9fP+vgSAW5/M4PVjqKxp7elcjaOZnIYdaqxq+Wdnt7Ys3ceaegzznLC
+	 9hqcgciSAfZVtwz7GDP3a6/iT3FW+IUwNR4c96DyMNW2BijL/L2AXcagMAaorJ9zQarK3
+	 ABXEUs6N7jOgan6oKeST9wyxjKxy8BZGhWxkHD5FtuLm8d3AeKpGk0Lb9yvNWjWksqOUK
+	 O9GqldBXh7vZCm7yW69j8OL2RvTfPCJIL+QF7cVTwGz2MkJSEK9vysnPceSLCfg9KJg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=YpD0FpDD;
-	arc=none smtp.remote-ip=209.85.128.51
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iA1WXVQd;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DDF606A330
-	for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2026 18:03:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 19DDF606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B450606A330
+	for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2026 18:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=YpD0FpDD
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4bb6c7b6dbdso2641705e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2026 10:03:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1794938635; x=1795543435; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=0VS5qw0tDHXtIn5LwXxf+fwugty/kad7Ay611ZyzaX4=;
-        b=YpD0FpDDwRYk0+tTDmxkLlPBd1kyejPedJ5+xOxM/EcL4d4r+LLb1C5UTFjzFDbyHn
-         lc8CA8zc0kpx1QqrFK8MRm45z69yXPEqhaARuSnbcFGPXf3Nm01/FQG9hmhjRE0Tv44X
-         zlRDlB916srIukvu4S0uA24/EJktwNQboQh2nKfSB/sV4NNph8SJ2NzpwcXQPWC0YJOM
-         Jb5+XQj7vndiTD9RboYhHMRDqX3dUBW/3OK3h5jSoNG7549u7exgeuds6ElelV5mZlII
-         E4IVOAL70g4E4TawfnDbnk4kKgLd18gvQzUpvMGuT/GT+QYhyeBFkrUg2TFRLOjx+4y8
-         wCCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794938635; x=1795543435;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=0VS5qw0tDHXtIn5LwXxf+fwugty/kad7Ay611ZyzaX4=;
-        b=Xp+TXNZK0TfsBzRIlsbESmzA2aCDn6CEHjPz9gx1NU9tHoWaJbLn7C7dXwp0fLEpXT
-         OsVSCx1NyoQD7lPm4AJC7ulrAuhL9B+MNbzY2AdVfpGhZjpl2euRfDbj8AzEIzWp4txm
-         vhkheX9TLovMTHv6Cj2Kij7AkWNnfbn6X1FeQZogws4PsUuT8TtP24vNFJkz5kgvwxRa
-         9/ios8NfQHG4OkJlEdOc/1iXNQjNe/Jlo9fikrnVAtfP2LZE2wRqssBXgIDeFmu2ScWH
-         3q6Tk1vRvy7sKztRDj1FrLU4607r5mGIsIYRnN61Z9G4edsdzwcpuY2FxYxbXU90KpLj
-         mnaA==
-X-Forwarded-Encrypted: i=1; AL+hErHhmI04qQhRiXyE4YH/AtwP7+Zi4iZRwxaAodl3ZQWv/6SoQAhf+x+5+gL+FrPhDC5AN55btxUgQWk=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+vPugi8UjjgdWpeOe9lbX8V6CJKme6Kq8BH3dHKIO27B32rS6K
-	2IWLxoGILDQCrgvCDpyaWvlS+EGi2a/uquBnJ57I28sv7UgxMzeG/RAkLVmABU3h5l0=
-X-Gm-Gg: AYBFou2fwgzHST5iX7uHS01ZBJbXwRs/fwCnde/CXlFUGu6iff+CgJh64f0hmC4IBai
-	HwQ5BavouZc9r3JTUxbq2D1YcMfJpniq5vRlyO5dPMugD9ALluNua7Ps1xXBZN1F+MIb9quVfsq
-	94f8JvkpU0fXhmvnHaGoz0TrgBSgBPBmchWNQQGaPU6ODucfK199yUt0OOyBUoFSGo7NQBsL+n9
-	XkErQft9SDivM7EDOxhC2+FXIy4pn19PP++f80Qa+9pwnAf6xiEhdpqzQLOofCNiqWcX0PGAht8
-	qRUxY7BbaLCVxYcsY6uQ8G/G62hOg/OYPM0OGWeV/Ls0YZalFnoFzlFLn9qXSy1MNE5OV8yfnNA
-	cednO9kee8FaEZJQuuEUOdmiT/OTY2yoixJSJkovQjaykaMMqFnQLwHoRQURDfkPMuHQhraWh3U
-	t3TYY9HBT1mfusSVVOveqz+CfPLBcw7C5KrEYLFuOz8K9I0+SdqUa1jzTDhH7WQ39jkzyoDcbY+
-	McYlbm5IXr/Zytn5cczALJ0SY5yC/UPcU4lyzPNN5CuVue8vTTaUJMOB3X/mb+FhYFcsS6hjbkC
-	YRv9oVpsxP7WmvFVt+sU+PFow9+FtGJUdT43COlrZjJ9qYsz
-X-Received: by 2002:a05:600c:3547:b0:4ba:73f:ef5 with SMTP id 5b1f17b1804b1-4bb55aa4fa9mr306817705e9.34.1794938635593;
-        Tue, 17 Nov 2026 10:03:55 -0800 (PST)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb7843bd79sm81197935e9.14.2026.11.17.10.03.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Nov 2026 10:03:54 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] clk: tegra114: Add CSI pad clock gates
-Date: Tue, 17 Nov 2026 19:03:45 +0100
-Message-ID: <179493854888.412784.10630903001767923804.b4-ty@b4>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261116150239.264139-1-clamor95@gmail.com>
-References: <20261116150239.264139-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iA1WXVQd
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A1C01F000C6;
+	Tue, 17 Nov 2026 18:15:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794939321;
+	bh=tgphSOA9aU0l2b8cExZcGrYaMgpbrWhvWwIZQpvsVSQ=;
+	h=From:Subject:Reply-To:To:In-Reply-To:References:Date;
+	b=iA1WXVQdtUdPy9OOUlQTona/DgWCWh1qiFGeV2dqCLeSam6zdyP64bX4DtDh0qnc3
+	 QzKeRHwFd6HH2nbZHoHkkpcrhl5wZbCmYAOvY7skUijpr6ZbAZhPj4KnPweg0wXheY
+	 uCnh2uT9YG7fFqxjTR/IJ9/WI5oX0MvZg5PgPeecdHv6OVZ/GWmls0G6e36FlzwuSb
+	 Tz2rwxo0BLQz8PV/Nw6R12g3/rrVDu5ewZrQFjRxUV8/tKokv5VIOM1pfuzoINTyhH
+	 tyasx7Bg1jgdkmoNVj6pU1DyKN4g2v3qDqolBdxt7GX1XcSWz1iUl7yR9DWYMao/Td
+	 4YWJQs9iKrYxA==
+Message-ID: <sashiko-outbox-219321@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v6 2/2] clk: en7523: add support for .set_rate for
+ en7581
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Christian Marangi" <ansuelsmth@gmail.com>, linux-clk@vger.kernel.org
+In-Reply-To: <20261117180213.88046-3-ansuelsmth@gmail.com>
+References: <20261117180213.88046-1-ansuelsmth@gmail.com>
+ <20261117180213.88046-3-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 17 Nov 2026 18:15:20 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -110,19 +59,134 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-Applied to clk/linux.git (clk-next), thanks!
-
-[1/3] dt-bindings: clock: tegra114: Add IDs for CSI pad clocks
-      https://git.kernel.org/clk/linux/c/61b67dfc9c24
-[2/3] clk: tegra114: Add CSI pad clock gates
-      https://git.kernel.org/clk/linux/c/ecb755d4fe97
-[3/3] clk: tegra30: Remove CLK_SET_RATE_PARENT from CSI pad clock gates
-      https://git.kernel.org/clk/linux/c/4d55ffabc35d
-
-Best regards,
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Medium] clk: en7523: en7581_determine_rate() fails on unrounded
+  div_table rates
 --
-Jerome
+
+commit 2aba0750bb722a13abf74ccd375ad0f3b952c3b5
+Author: Christian Marangi <ansuelsmth@gmail.com>
+
+clk: en7523: add support for .set_rate for en7581
+
+This commit adds .determine_rate and .set_rate clock operations for the
+Airoha EN7581 SoC and converts the BUS, SLIC, and SPI clock dividers to use
+clk_div_table arrays with the standard clock divider helpers.
+
+> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+> index 27ead83b639eb..a41eabd40401d 100644
+> --- a/drivers/clk/clk-en7523.c
+> +++ b/drivers/clk/clk-en7523.c
+
+[ ... ]
+
+> @@ -774,11 +847,192 @@ static unsigned long en7581_recalc_rate(struct clk=
+_hw *hw,
+
+[ ... ]
+
+> +static unsigned long en7581_get_div_for_rate(struct clk_hw *hw,
+> +					     unsigned long rate,
+> +					     unsigned long parent_rate,
+> +					     const struct en_clk_desc *desc,
+> +					     int *div_val)
+> +{
+> +	*div_val =3D divider_get_val(rate, parent_rate, desc->div_table,
+> +				   desc->div_bits, 0);
+> +	if (*div_val < 0)
+> +		return 0;
+> +
+> +	return divider_recalc_rate(hw, parent_rate, *div_val,
+> +				   desc->div_table, 0,
+> +				   desc->div_bits);
+> +}
+
+[ ... ]
+
+> +static void en7581_find_best_rate(struct clk_hw *hw, struct clk_rate_req=
+uest *req,
+> +				  const struct en_clk_desc *desc,
+> +				  unsigned long parent_rate,
+> +				  unsigned long requested_rate,
+> +				  unsigned long *best_diff)
+> +{
+> +	unsigned long tmp_rate, diff;
+> +	int tmp_div_val;
+> +
+> +	tmp_rate =3D parent_rate;
+> +	if (desc->div_bits)
+> +		tmp_rate =3D en7581_get_div_for_rate(hw, requested_rate, parent_rate,
+> +						   desc, &tmp_div_val);
+> +
+> +	if (!tmp_rate || tmp_rate < req->min_rate ||
+> +	    tmp_rate > req->max_rate)
+> +		return;
+> +
+> +	diff =3D abs_diff(requested_rate, tmp_rate);
+> +	if (diff < *best_diff) {
+> +		*best_diff =3D diff;
+> +		req->rate =3D tmp_rate;
+> +	}
+> +}
+> +
+> +static int en7581_determine_rate(struct clk_hw *hw,
+> +				 struct clk_rate_request *req)
+> +{
+> +	struct en_clk *en_clk =3D container_of(hw, struct en_clk, hw);
+> +	const struct en_clk_desc *desc =3D en_clk->desc;
+> +	unsigned long best_diff =3D ULONG_MAX;
+> +	unsigned long rate =3D req->rate;
+> +	int tmp_base_val =3D 0;
+> +
+> +	if (!rate || (!desc->base_bits && !desc->div_bits))
+> +		return -EINVAL;
+> +
+> +	if (!desc->base_bits) {
+> +		en7581_find_best_rate(hw, req, desc, desc->base_value,
+> +				      rate, &best_diff);
+> +		goto exit;
+> +	}
+> +
+> +	for (; tmp_base_val < desc->n_base_values; tmp_base_val++)
+> +		en7581_find_best_rate(hw, req, desc,
+> +				      desc->base_values[tmp_base_val],
+> +				      rate, &best_diff);
+> +
+> +exit:
+> +	return best_diff =3D=3D ULONG_MAX ? -EINVAL : 0;
+> +}
+
+[Severity: Medium]
+As reported by Brian Masney on v5 [1], can en7581_determine_rate() fail with
+-EINVAL when a caller requests an unrounded rate on a clock with a
+div_table?
+
+en7581_find_best_rate() passes the unrounded requested_rate to
+en7581_get_div_for_rate(), which calls divider_get_val():
+
+drivers/clk/clk-divider.c:divider_get_val() {
+	div =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+
+	if (!_is_valid_div(table, div, flags))
+		return -EINVAL;
+    ...
+}
+
+Unlike divider_determine_rate() or divider_ro_round_rate(), divider_get_val=
+()
+does not round or clamp div to the closest entry in desc->div_table; it
+requires DIV_ROUND_UP_ULL(parent_rate, rate) to match a table divisor
+exactly. For EN7523_CLK_SPI (400 MHz base, spi_div containing only even
+divisors 2..62), requesting a rate such as 150 MHz (div =3D 3) or 400 MHz
+(div =3D 1) makes divider_get_val() return -EINVAL, causing clk_round_rate()
+and clk_set_rate() to fail instead of rounding to the nearest supported
+rate.
+
+[1] https://lore.kernel.org/r/179444135864.1126566.13931750325129218557.b4-=
+review@b4
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117180213.8804=
+6-1-ansuelsmth@gmail.com?part=3D2
