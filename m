@@ -1,63 +1,63 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.199.235.221
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794949253;
-	b=2hha8eedHUc2J3CrUGeay8NB2HxnbLWVBgQcywDnQlCkTRVkGkGUlFGK5im/WoqCewL9
-	 uNx60d5k0wYFxUOP+6h3clAXUXtqkNbpYhDS/0hYBRhIJ1UwoV2V/W7IoJC6LaDRawrRJ
-	 ietF1bdqPZFknMTO+IUcRdGRLf+aENLW+A7JIgKIQCu1a86Av93x261c61BA28k2mMIFc
-	 K+FkRzUHo/Fy+9dFAQ6zksynOhkd2nuOOfKL4IVq/YPsUHle/8ljr40TKD5dkLzzZC5Ip
-	 hKt9s2WDAP0dxJrm80idNjelz5SAFMIoZoR3XhzcYrVWUVw41BwgYNav3hLkhA1QujA==
+	t=1794949258;
+	b=ac7zyGfLPRKbFGCwb6ruQvguqiCXf62+I8AQEo5m2DZtRmkdO1KGqyZN1sQ72VQHc4dk
+	 awGWMspibzb7IBF4OoZM+KfyUHhbUB2/s7T+Ba9rIkqI/vRfDLEKUD1NTWJpnW27qX9gx
+	 Qat4vSE+xGOK3740xY08a1PONlEyS2lfFuE3TIZxKYiDpI0wuINQ57rdaQwubXe/rP9BC
+	 vC2OAlGxRkqfW6seyGAppsMHBTW3rkJwhHRFp4/PtK35ON0RBzIsWG7mcQ0GmpNxwgE2G
+	 MSDeCvNJjf2NV6+oXL1kXN0vh0Wq9WZuuTaYFyEbdL049Fm3vmWtB+YQNbfvOVKcMsw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794949253;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794949258;
 	h=DMARC-Filter:Received:Received:DKIM-Filter:DKIM-Signature:
 	 X-Virus-Scanned:Received:Received:From:To:Cc:Subject:Date:Message-ID:
 	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=cBPXI6LEpLwntDX1+2Poix+I2lZgirJA88Apc29UVrM=;
-	b=WAbWY5f/uUrFwZZe5RSU42fEWYEdnBd6osiwNoHXVfhc03iwgdl8Tkwa/HFMWNGQYuDa
-	 mTRpmXb3FH8iPFI7iGSBs/flmA66BEu48GBv1QdI/e+GqqBClCiWuq/A9vsNH4asqVjnM
-	 9one8lqL4brJV14vqRRluosTxwhnbxXw5gBzhL2m0KzPAyefgA+mesIxGpklv7wYMSmoY
-	 sdhRJ9I1KchYqv8RVRfvNf/Hw63iFmrvh5pmp13pJFNGhz0WrJHOr64Vm8+NRYQvIF9zU
-	 2et8Yu4Ity/ANLTU8b8LAJF9JrzVCmtA8bwqKsubj08VJ4zEj2Mxk2DTiXbDcKQ6O9A==
+	bh=kzHAg5Xh51fP70+LSsatQn4NLaZ7XSs7gxDHYO+Tamc=;
+	b=ZrFdKAyfeKXW1Xw1J155fPE8a0wcvFdimS46lvXnebkt5OiAvLQauSCacNsKNgxZPoHj
+	 0vHT7c/ZNwfQ0bi4+HHDFWEEMIVPB+INWMIle3HKTOgd/wIZQYYOk5QSz8JdWAnPaMOZ5
+	 N3sIIhRqvaArh0+tpBi/GLPFWF50sacU5rvnhc5IB3l4/S1RhOejBl7GFi6+9V7xnz9Gj
+	 G1xtWAr8YOJfG1Rpp+lbHe2q64sMs9436aUnWqzyKsHAu1CfqjWVroRGaXiTudDZsojJY
+	 Jo73/XyIcMMcDWXxJQRLqc4Txd7u0Og49+vNiXfj935WxbE/agEqs+WtrrCtLxDLx7g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=cirad.fr;
 	spf=pass smtp.mailfrom=cirad.fr;
-	dkim=pass header.d=cirad.fr header.i=@cirad.fr header.a=rsa-sha256 header.s=573E3878-7916-11F1-BF4B-F68474317960 header.b=lT5yxuwr;
+	dkim=pass header.d=cirad.fr header.i=@cirad.fr header.a=rsa-sha256 header.s=573E3878-7916-11F1-BF4B-F68474317960 header.b="Svf/8GAU";
 	arc=none smtp.remote-ip=194.199.235.221
 Received: from retz.cirad.fr (retz.cirad.fr [194.199.235.221])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2C8606A332;
-	Tue, 17 Nov 2026 21:00:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2A2C8606A332
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA61606A32A;
+	Tue, 17 Nov 2026 21:00:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5EA61606A32A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cirad.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirad.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirad.fr header.i=@cirad.fr header.a=rsa-sha256 header.s=573E3878-7916-11F1-BF4B-F68474317960 header.b=lT5yxuwr
+	dkim=pass (2048-bit key) header.d=cirad.fr header.i=@cirad.fr header.a=rsa-sha256 header.s=573E3878-7916-11F1-BF4B-F68474317960 header.b=Svf/8GAU
 Received: from retz.cirad.fr (localhost [127.0.0.1])
-	by retz.cirad.fr (Postfix) with ESMTPS id 765FD20D78CF;
-	Tue, 17 Nov 2026 22:00:51 +0100 (CET)
+	by retz.cirad.fr (Postfix) with ESMTPS id 08F3920D5578;
+	Tue, 17 Nov 2026 22:00:57 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-	by retz.cirad.fr (Postfix) with ESMTP id 4406020D556E;
-	Tue, 17 Nov 2026 22:00:51 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.10.3 retz.cirad.fr 4406020D556E
+	by retz.cirad.fr (Postfix) with ESMTP id DBDFD20D531A;
+	Tue, 17 Nov 2026 22:00:56 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.10.3 retz.cirad.fr DBDFD20D531A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirad.fr;
-	s=573E3878-7916-11F1-BF4B-F68474317960; t=1794949251;
-	bh=cBPXI6LEpLwntDX1+2Poix+I2lZgirJA88Apc29UVrM=;
+	s=573E3878-7916-11F1-BF4B-F68474317960; t=1794949256;
+	bh=kzHAg5Xh51fP70+LSsatQn4NLaZ7XSs7gxDHYO+Tamc=;
 	h=From:To:Date:Message-ID:MIME-Version;
-	b=lT5yxuwrxJSF+u0qlWNXw7HkIMVGehZzeU/Jk3cOgjdxghmXkuOTXmJHD3IZdcQcW
-	 JctVOJ72lWTC99ZgGAwQ3MXz3GDK9H0Ez41d/SNfgmfaZAab7RunQZ+F1fffneuh/X
-	 Fd4Y6vPGiGM++r4bOqkoTct8GTNW1nU6PBwfMpfaeEhjdn9KgKlCY9FJJH/x6Ndjnr
-	 eQQgURlRdpsu6x2R57nRrokhG0tRXComZw/Fm2WfexFuIrHNuX8yjbsZIXP35Cipra
-	 6edrQtRmcb1vYhrEupifRPaKitc/vuGR+/M/7JeD3pWI/V3OFicNKuClpciN5vl2cz
-	 cgpV8KVFHJu6A==
+	b=Svf/8GAUvon8ObnHU8kOk8plxxqSCi9mPASh6f0DrVCsJjhiLGHBQ7T3aQtb8uloj
+	 polYikkuRbtA1s3T+9iBxISHacSmLuPZIXPVasTd+XlYRbnrbLho6gL8jUgKeoFOBf
+	 a1ofuF+Ewy0Iq7EhEqOFRqRWqOxmrjO+Hgk6Pb++XpRXLd2m0ZGAqjF3fLg83JgNV9
+	 Kw/mg8jOyq/LLGzj3uoPwjjwXS6/MdgstwQBvnA8Rb3kOq5nUyhphh/+7JZdxMm+8Q
+	 5P2k4G6O/YGXAsXv1/ZB6jMkCJfAK6U2I2u3nt8tLTmBFrQ9nqq/eSFtRrfhPoMyas
+	 84gvgGS808U4g==
 X-Virus-Scanned: amavis at retz.cirad.fr
 Received: from retz.cirad.fr ([127.0.0.1])
  by localhost (retz.cirad.fr [127.0.0.1]) (amavis, port 10026) with ESMTP
- id b--yicO4KfRK; Tue, 17 Nov 2026 22:00:51 +0100 (CET)
+ id JqeTOOPlcujr; Tue, 17 Nov 2026 22:00:56 +0100 (CET)
 Received: from localhost.localdomain (78-196-243-100.subs.proxad.net [78.196.243.100])
-	by retz.cirad.fr (Postfix) with ESMTPSA id D80D720D78CF;
-	Tue, 17 Nov 2026 22:00:49 +0100 (CET)
+	by retz.cirad.fr (Postfix) with ESMTPSA id B84B420D5578;
+	Tue, 17 Nov 2026 22:00:55 +0100 (CET)
 From: =?UTF-8?q?Fr=C3=A9d=C3=A9ric=20Mah=C3=A9?= <frederic.mahe@cirad.fr>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Yixun Lan <dlan@kernel.org>
@@ -79,9 +79,9 @@ Cc: Brian Masney <bmasney+clk@redhat.com>,
 	spacemit@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	=?UTF-8?q?Fr=C3=A9d=C3=A9ric=20Mah=C3=A9?= <frederic.mahe@cirad.fr>
-Subject: [PATCH 1/6] dt-bindings: clock: spacemit: k1: Add RCPU2 PWM clocks
-Date: Tue, 17 Nov 2026 21:59:46 +0100
-Message-ID: <20261117205951.140146-2-frederic.mahe@cirad.fr>
+Subject: [PATCH 3/6] clk: spacemit: k1: Add RCPU2 PWM clocks
+Date: Tue, 17 Nov 2026 21:59:48 +0100
+Message-ID: <20261117205951.140146-4-frederic.mahe@cirad.fr>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261117205951.140146-1-frederic.mahe@cirad.fr>
 References: <20261117205951.140146-1-frederic.mahe@cirad.fr>
@@ -97,40 +97,94 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Add IDs for the ten PWM clocks of the K1 RCPU2 system controller.
+The ten RCPU2 PWMs each have a mux/divider/gate clock in the RCPU2
+system controller, fed by pll1_aud_24p5 or pll1_aud_245p7. Register
+layout from the vendor kernel.
 
 Written with help from Claude (Anthropic); reviewed and tested on hardwar=
 e.
 
 Signed-off-by: Fr=C3=A9d=C3=A9ric Mah=C3=A9 <frederic.mahe@cirad.fr>
 ---
- include/dt-bindings/clock/spacemit,k1-syscon.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/clk/spacemit/ccu-k1.c | 42 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-=
-bindings/clock/spacemit,k1-syscon.h
-index 0f8b59d67..29d478774 100644
---- a/include/dt-bindings/clock/spacemit,k1-syscon.h
-+++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
-@@ -370,6 +370,18 @@
- #define RESET_RCPU_UART0	5
- #define RESET_RCPU_HDMI_AUDIO	6
+diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.=
+c
+index 364388ff8..25be335eb 100644
+--- a/drivers/clk/spacemit/ccu-k1.c
++++ b/drivers/clk/spacemit/ccu-k1.c
+@@ -705,6 +705,33 @@ CCU_GATE_DEFINE(emac1_ptp_clk, CCU_PARENT_HW(pll2_d6=
+), APMU_EMAC1_CLK_RES_CTRL,
+ CCU_GATE_DEFINE(emmc_bus_clk, CCU_PARENT_HW(pmua_aclk), APMU_PMUA_EM_CLK=
+_RES_CTRL, BIT(3), 0);
+ /* APMU clocks end */
 =20
-+/*	RCPU2 clocks	*/
-+#define CLK_RCPU2_PWM0		0
-+#define CLK_RCPU2_PWM1		1
-+#define CLK_RCPU2_PWM2		2
-+#define CLK_RCPU2_PWM3		3
-+#define CLK_RCPU2_PWM4		4
-+#define CLK_RCPU2_PWM5		5
-+#define CLK_RCPU2_PWM6		6
-+#define CLK_RCPU2_PWM7		7
-+#define CLK_RCPU2_PWM8		8
-+#define CLK_RCPU2_PWM9		9
++/* RCPU2 clocks start */
++static const struct clk_parent_data rcpu2_pwm_parents[] =3D {
++	CCU_PARENT_HW(pll1_aud_24p5),
++	CCU_PARENT_HW(pll1_aud_245p7),
++};
++CCU_MUX_DIV_GATE_DEFINE(rcpu2_pwm0_clk, rcpu2_pwm_parents, RCPU2_PWM0_CL=
+K_RST, 8, 11, 4, 2,
++			BIT(1), 0);
++CCU_MUX_DIV_GATE_DEFINE(rcpu2_pwm1_clk, rcpu2_pwm_parents, RCPU2_PWM1_CL=
+K_RST, 8, 11, 4, 2,
++			BIT(1), 0);
++CCU_MUX_DIV_GATE_DEFINE(rcpu2_pwm2_clk, rcpu2_pwm_parents, RCPU2_PWM2_CL=
+K_RST, 8, 11, 4, 2,
++			BIT(1), 0);
++CCU_MUX_DIV_GATE_DEFINE(rcpu2_pwm3_clk, rcpu2_pwm_parents, RCPU2_PWM3_CL=
+K_RST, 8, 11, 4, 2,
++			BIT(1), 0);
++CCU_MUX_DIV_GATE_DEFINE(rcpu2_pwm4_clk, rcpu2_pwm_parents, RCPU2_PWM4_CL=
+K_RST, 8, 11, 4, 2,
++			BIT(1), 0);
++CCU_MUX_DIV_GATE_DEFINE(rcpu2_pwm5_clk, rcpu2_pwm_parents, RCPU2_PWM5_CL=
+K_RST, 8, 11, 4, 2,
++			BIT(1), 0);
++CCU_MUX_DIV_GATE_DEFINE(rcpu2_pwm6_clk, rcpu2_pwm_parents, RCPU2_PWM6_CL=
+K_RST, 8, 11, 4, 2,
++			BIT(1), 0);
++CCU_MUX_DIV_GATE_DEFINE(rcpu2_pwm7_clk, rcpu2_pwm_parents, RCPU2_PWM7_CL=
+K_RST, 8, 11, 4, 2,
++			BIT(1), 0);
++CCU_MUX_DIV_GATE_DEFINE(rcpu2_pwm8_clk, rcpu2_pwm_parents, RCPU2_PWM8_CL=
+K_RST, 8, 11, 4, 2,
++			BIT(1), 0);
++CCU_MUX_DIV_GATE_DEFINE(rcpu2_pwm9_clk, rcpu2_pwm_parents, RCPU2_PWM9_CL=
+K_RST, 8, 11, 4, 2,
++			BIT(1), 0);
++/* RCPU2 clocks end */
 +
- /*	RCPU2 resets	*/
- #define RESET_RCPU2_PWM0	0
- #define RESET_RCPU2_PWM1	1
+ static struct clk_hw *k1_ccu_pll_hws[] =3D {
+ 	[CLK_PLL1]		=3D &pll1.common.hw,
+ 	[CLK_PLL2]		=3D &pll2.common.hw,
+@@ -981,8 +1008,23 @@ static const struct spacemit_ccu_data k1_ccu_rcpu_d=
+ata =3D {
+ 	.reset_name	=3D "k1-rcpu-reset",
+ };
+=20
++static struct clk_hw *k1_ccu_rcpu2_hws[] =3D {
++	[CLK_RCPU2_PWM0]	=3D &rcpu2_pwm0_clk.common.hw,
++	[CLK_RCPU2_PWM1]	=3D &rcpu2_pwm1_clk.common.hw,
++	[CLK_RCPU2_PWM2]	=3D &rcpu2_pwm2_clk.common.hw,
++	[CLK_RCPU2_PWM3]	=3D &rcpu2_pwm3_clk.common.hw,
++	[CLK_RCPU2_PWM4]	=3D &rcpu2_pwm4_clk.common.hw,
++	[CLK_RCPU2_PWM5]	=3D &rcpu2_pwm5_clk.common.hw,
++	[CLK_RCPU2_PWM6]	=3D &rcpu2_pwm6_clk.common.hw,
++	[CLK_RCPU2_PWM7]	=3D &rcpu2_pwm7_clk.common.hw,
++	[CLK_RCPU2_PWM8]	=3D &rcpu2_pwm8_clk.common.hw,
++	[CLK_RCPU2_PWM9]	=3D &rcpu2_pwm9_clk.common.hw,
++};
++
+ static const struct spacemit_ccu_data k1_ccu_rcpu2_data =3D {
+ 	.reset_name	=3D "k1-rcpu2-reset",
++	.hws		=3D k1_ccu_rcpu2_hws,
++	.num		=3D ARRAY_SIZE(k1_ccu_rcpu2_hws),
+ };
+=20
+ static const struct spacemit_ccu_data k1_ccu_apbc2_data =3D {
 --=20
 2.47.3
 
