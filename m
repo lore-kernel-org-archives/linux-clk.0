@@ -1,98 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=193.175.24.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794934316;
-	b=tv4SEQXT300MQU5qX+87e34L3dYY376YwYYDljKz7sCCPPabf2LJ3jMNHKyxZuh8x0e6
-	 cbmWWXHKc8Qt2AumZm0QfLcIzldKRnKFAHV9KF+boZm7L5I26aZqqfQabBpXdhvgI8pM+
-	 RZ/gFK8aAgEInPOATBYX4gZShJBe/TNnWNn3MbibK0oW+nRO0uSlenVes/0o6+wMEG6s5
-	 i9EMWaSAs9jhID2lTdnrp9iIbTfZlujMmA2wQ8BAZdPyBKiesNRgka/msLmORRP/AKXb8
-	 unkUAvpNl0HDGL5ATQ2cAcuSficHyKCCjeBHrr4dCPuB4c8KTzlhe5FjxM+VM0WBeCw==
+	t=1794934987;
+	b=m8UjUZRgrgGSpbwRsIbJfkdMzxWUReDTYwlsEwxLhP3RLPikGVfWcCLMQMyZVXYc5BR6
+	 uOHeVSC0ewtcwn6d7/r5kt3N0GboZGKBArRl562Pcpdvkwbo1tMKP2b3hruXSp/RJC7Ke
+	 T423m8XX1CboOd5aEKJWhNgXX4dR2Bnr1rtEKzYzVJR3zcCcUwJ5vrpt5IUMZ1A/he5+8
+	 biBGnwcTl4gDufiZkJ38h1iYZTSg6ltK6BvLWMLZ60bIGhWtT/xuvIfxXAjIAowbVAt21
+	 aVgPg3tm1TOB5QBIStlCcO+7tisJxfNYubEY+f+nzU409/ag38GXNmmu2HAE+EpT/3g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794934316;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:X-Google-Original-Message-ID:Date:From:To:Cc:Subject:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=UQhNopprSz0AVSKjleR7Xe3nJdZYPpFFlx8w8ov+7HM=;
-	b=B6tx45rYiMSOsmdZeyVy+5ZBOXXiXcLRintf9t+S/difVRzRRydac93EqiW+TUiXp1HV
-	 IoaVxHkySMqqs0VtT0VdFqcTuXcgEeqSbcloOl5Rg7EoDvgeFmX66MGt5fJGbUoT1ovp/
-	 IypdHqDXoz1F2QFUaGx774AIvP1h8IRX2osRn8U1JpBuMcE2Depw2kW9HUGMmxdQm6Wqp
-	 TSphDvEIV8Fp5op4aidAAE1v1QmL57sZFZMPos0QjAQnxZtBZEKhFTYL85hYr2j6kLw4x
-	 Zf57mHI+Eb3pI08CZIpv1NlVEVyQazb6tc/EEGH7/tjTIBrAjmRJRC1EkWL8AeEw/yQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794934987;
+	h=DMARC-Filter:Received:Received:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=cIxOkuDgAt3nvVeZJWB6lTTqLbOQW10EnqjTlsgLwjk=;
+	b=GQQKBSkdRGbEWOMFUpUlo1PKTow5SOULICXJUdOD4U2l4UzEYliyV3H8Dwq4DeWCqQJq
+	 AKV9j9fYZKWMXLyD274eWQF1j7qmosVfWBtQlijRXn2tvgZpobMRFaB7J1IeychIWpDst
+	 VvWV5jOy46vwUpE309MyQMg7SuzMKvAb2oTc3XjLoy0BSHIyBwLy+W+DHQOhOjqSNOKDy
+	 jGEZghT92pgOs9z/hTFxOCG7eRGbMZeuimzhjFhEUa9KELAHsTaSDri2xrjNq9mobj0aT
+	 yAq1f9rEpDfTAaYkJy8yzgawnX4T9br5Vp5g+sCkJaEDnYuEotwmoge8YkjpOdGJdXw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=m3lm6A1h;
-	arc=none smtp.remote-ip=209.85.221.50
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0910D606A339
-	for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2026 16:51:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0910D606A339
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=m3lm6A1h
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-48e46e449e8so3601314f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2026 08:51:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794934314; x=1795539114; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:subject:cc:to:from:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=UQhNopprSz0AVSKjleR7Xe3nJdZYPpFFlx8w8ov+7HM=;
-        b=m3lm6A1h/g3+iQL8eExyC3I2hvkQjMSCtoivGEv+A9rz1CMkEeXo11qkgi9C56129d
-         ZStkj+u9+4oTRYLOAA8H7gU2VpyjrTPUY8HcH1+n+EBixlFu7+OKzuA8dfuUBNiJIp7b
-         3wnhZtAT54lSxLGIn7U1R6tfV/yy9tgRv67KljQsVJZ+QCPBw8rhAx8xIFenF68UTLKz
-         sGRlQfnKcOiP0p9ndB+7ZGpmwOK/EUyfrI5hs5ahw0EGcMWju81ysSZqNtxncPnQ0giY
-         WjfamWL6wndgQq8BMtYB385J0v5z+5NVWwNaEa4R6E/QvoatGc8X0NUKxrdVvA0HW/wB
-         fwMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794934314; x=1795539114;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:subject:cc:to:from:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UQhNopprSz0AVSKjleR7Xe3nJdZYPpFFlx8w8ov+7HM=;
-        b=WFHEQitcCg3wGLfHpc/YG7voY72IMnjwe4Je1dIIosevlL3wFM43jfAZnwngNU8rvk
-         AfSQiveA8qjTNQ7GWSBuCSSQl7XsMPNuV5ymvqqqNdFFEg8VO1Je/8cHME2ocmIQqtbb
-         8C3L2KWXFsAmGkTIKgZEVfNG5uyfAO/wieDpOE/p/CdDCkfZz4mD84y+vz4yGIvwKZOW
-         /JbOLX0Q4JTUAZy9wBUiQWeQ6ahxk9Cqx0zlYR+/77sFBtt8bqSnmgrgO0ZGgmJD8N6Y
-         vHoE+xmBWv3B+0zwslBbnPhLIN16M85TWzVesAp1NgTOWmsAd3BONSFSHzBu+zOAUDCg
-         SwYA==
-X-Forwarded-Encrypted: i=1; AL+hErGT1elLhBGz172Wcz9kmMHedUwU+ZopcrxqHIXSBUJ/T21Qu5AtCARV+rusFNqA4b5pmCNYjvr9vpw=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8yEyOUeg3+lI1bOMSATi4PiZfthkNr7D7qF80epkhclQnzaCdD
-	1VJxMbbZhcNQ+WuNRO+4XL37kuoP4gSEWCtjyHMYJeLrXueepDAF9DE5
-X-Gm-Gg: AZFdTZeP8r11yCPwbgWrOa3aGdnuseJlLT2gaNru21Mion1lFXYxHoUjDkIJ7mnEAf2
-	m0pk5ePfgxMQ5ue6JIB9N4ZUBxubqSbeRqwAyOSLHJ0WQPrGOyeXT63j/Rr8AqdBCduuQ/PdXAK
-	b/6AGm1ORMLjoSE1FwveXxA+EhLtGwL5GmTUHbvkGDUgCBXNRXhSiaLV7a1n+04zUoAK6aIK7TF
-	k1D1UYQZFgS7aSBPEvyHD6zBZJQjmNtWReXB1uAODIinu+/hNPdTHsmAs/O6EQiysdoyIhgEoxA
-	pUDWKvgWyLfunZIzszbEKmtecyk4tgj3E/Tc+TELORfRdNnWzCofJBwz8c2r6N15/lyhEjN3mfb
-	imGMZ18sQIHthqaYN690D9bb7KZtHYZ9RMZVLxRZaC4nKoqs1emFZulB1HxfVgxM3mT+omM08y0
-	8y91D7GO58BcQYebgjQfQEUz8hwpH/ik7JEYNyqB7u0rbBan5SZDqV+oStteeOJvnCeUfeKylL3
-	Tkdq5/BgJoGEjUZtqs1Ggj5PTOce2YRMd/6l30dFrqGldRd+L+of4rVjMOYngJJ8D1BqA2dtZjv
-	W+sayKpIsZ41f63Kmoy6Uh+0hBLG3jnE/F6DxMrVgQ3ajyjJNcHhXF6zT9f7Eqo2aeY7RvnBo+L
-	oUPKsLloIFoI7Uhj1
-X-Received: by 2002:a5d:5888:0:b0:48f:f26d:c5c with SMTP id ffacd0b85a97d-4a638058303mr43112f8f.9.1794934314251;
-        Tue, 17 Nov 2026 08:51:54 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-92-103.ip49.fastwebnet.it. [93.34.92.103])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c605e5b2fsm30846431f8f.40.2026.11.17.08.51.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Nov 2026 08:51:53 -0800 (PST)
-Message-ID: <6afc8629.c6df0648.3437b8.c961@mx.google.com>
-X-Google-Original-Message-ID: <avyGJqEgNXfFXb8s@Ansuel-XPS.>
-Date: Tue, 17 Nov 2026 17:51:50 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Brian Masney <masneyb@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] clk: en7523: convert to full clk_hw
- implementation for en7581
-References: <20261110001128.1041-1-ansuelsmth@gmail.com>
- <20261110001128.1041-2-ansuelsmth@gmail.com>
- <179444135864.1126566.17591616173966524369.b4-review@b4>
+	dmarc=none header.from=alpha.franken.de;
+	spf=pass smtp.mailfrom=alpha.franken.de;
+	arc=none smtp.remote-ip=193.175.24.41
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E88C606A89B;
+	Tue, 17 Nov 2026 17:03:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8E88C606A89B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1xTMaC-0005GT-00; Tue, 17 Nov 2026 18:03:00 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 93FB4C05C3; Tue, 17 Nov 2026 17:59:51 +0100 (CET)
+Date: Tue, 17 Nov 2026 17:59:51 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-mips@vger.kernel.org, Paul Burton <paulburton@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	=?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= <zhouyanjie@wanyeetech.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	hns@goldelico.com, paul@boddie.org.uk
+Subject: Re: [PATCH v6 0/4] MIPS: CI20: Enable SMP with two CPUs
+Message-ID: <avyIB2SOZwjqnKNc@alpha.franken.de>
+References: <20261113190836.470937-1-f.fainelli@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -102,106 +56,85 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <179444135864.1126566.17591616173966524369.b4-review@b4>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261113190836.470937-1-f.fainelli@gmail.com>
 
-On Wed, Nov 11, 2026 at 06:55:58PM -0500, Brian Masney wrote:
-> Hi Christian,
+On Fri, Nov 13, 2026 at 11:08:32AM -0800, Florian Fainelli wrote:
+> This patch series resurrects SMP support for the CI20 board. This was
+> submitted back in 2020 by Zhou Yanjie.
 > 
-> > In preparation for support of .set_rate, convert the clock register
-> > logic from fixed clock implementation to full clk_hw implementation with
-> > dedicated OPs for Airoha EN7581 SoC.
-> > 
-> > This is just a rework and no behaviour change is expected.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  drivers/clk/clk-en7523.c | 75 +++++++++++++++++++++++++++++-----------
-> >  1 file changed, 55 insertions(+), 20 deletions(-)
-> >
-> > diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> > index 24fdec2e6198..6640e814d36a 100644
-> > --- a/drivers/clk/clk-en7523.c
-> > +++ b/drivers/clk/clk-en7523.c
-> > @@ -126,6 +126,12 @@ struct en_clk_gate {
-> >  	struct clk_hw hw;
-> >  };
-> >  
-> > +struct en_clk {
-> > +	struct regmap *map;
-> > +	const struct en_clk_desc *desc;
-> > +	struct clk_hw hw;
-> > +};
-> > +
-> >  struct en_rst_data {
-> >  	const u16 *bank_ofs;
-> >  	const u16 *idx_map;
-> > @@ -742,42 +748,71 @@ static int en7523_clk_hw_init(struct platform_device *pdev,
-> >  				     en7581_rst_ofs);
-> >  }
-> >  
-> > +static unsigned long en7581_recalc_rate(struct clk_hw *hw,
-> > +					unsigned long parent_rate)
-> > +{
-> > +	struct en_clk *c = container_of(hw, struct en_clk, hw);
-> > +	const struct en_clk_desc *desc = c->desc;
-> > +	struct device *dev = clk_hw_get_dev(hw);
-> > +	struct regmap *map = c->map;
-> > +	u32 val, reg;
-> > +	u32 rate;
-> > +	int err;
-> > +
-> > +	err = regmap_read(map, desc->base_reg, &val);
-> > +	if (err) {
-> > +		dev_err(dev, "Failed reading fixed clk rate %s: %d\n",
-> > +			desc->name, err);
-> > +		return 0;
-> > +	}
-> > +	rate = en7523_get_base_rate(desc, val);
-> > +
-> > +	reg = desc->div_reg ? desc->div_reg : desc->base_reg;
-> > +	err = regmap_read(map, reg, &val);
-> > +	if (err) {
-> > +		dev_err(dev, "Failed reading fixed clk div %s: %d\n",
-> > +			desc->name, err);
-> > +		return 0;
-> > +	}
-> > +
-> > +	return rate / en7523_get_div(desc, val);
-> > +}
-> > +
-> > +static const struct clk_ops en7581_clk_ops = {
-> > +	.recalc_rate = en7581_recalc_rate,
-> > +};
-> > +
-> >  static void en7581_register_clocks(struct device *dev, struct clk_hw_onecell_data *clk_data,
-> >  				   struct regmap *map, void __iomem *base)
-> >  {
-> >  	struct clk_hw *hw;
-> > -	u32 rate;
-> >  	int i;
-> >  
-> >  	for (i = 0; i < ARRAY_SIZE(en7581_base_clks); i++) {
-> >  		const struct en_clk_desc *desc = &en7581_base_clks[i];
-> > -		u32 val, reg = desc->div_reg ? desc->div_reg : desc->base_reg;
-> > +		struct clk_init_data init = {
-> > +			.ops = &en7581_clk_ops,
-> > +		};
-> > +		struct en_clk *en_clk;
-> >  		int err;
-> >  
-> > -		err = regmap_read(map, desc->base_reg, &val);
-> > +		en_clk = devm_kzalloc_obj(dev, *en_clk);
-> > +		if (!en_clk)
-> > +			continue;
->
-> return -ENOMEM;
+> Changes in v6:
+> 
+> • Added missing Signed-off-by tag to patch #2
+> 
+> Changes in v5:
+> 
+> • Added changelog per-patch
+> • Split the generic IPI setup check
+> • Added comments explaining both need_resched()
+> • Removed void Reviewed/Tested-by tags
+> 
+> Changes in v4:
+> 
+> • Enable the secondary CPU clock outside the raw spinlock
+> • Mark enumerated CPUs present and assign hardware core IDs
+> • Skip generic IPI allocation when the platform supplies both IPI callbacks
+> • Fix generic 64-bit builds using CKSEG aliases and pointer-sized assembly macros
+> • Reject unsupported CPU offlining with -EOPNOTSUPP
+> • Restrict the XBurst SMP idle handler to multicore systems and recheck
+>   pending interrupts after flushing the cache
+> 
+> Changes in v3:
+> 
+> • Align the second line of the readl_poll_timeout_atomic() per Brian's
+>   feedback
+> • Collected Paul's R-b and T-b tags
+> 
+> Changes in v2:
+> 
+> • Moved SMP sources to arch/mips/ingenic/ and the header to arch/mips/include/asm/
+> • Removed CONFIG_MIPS_INGENIC_SMP, using CONFIG_MACH_JZ4780 and CONFIG_SMP directly
+> • Renamed JZ4780-specific SMP symbols to XBurst names
+> • Changed CPU enumeration to assign consecutive logical IDs and removed the explicit two-core limit
+> • Changed mailbox IRQ allocation failure from panic to logging and returning
+> • Shortened commit descriptions, removed Codex attribution, and adjusted source credits and sign-offs
+> • Kept the clock polling patch and CI20 defconfig changes unchanged,
+>   added Paul's R-b for patch #1
+> • Updated the kernel baseline to include additional upstream fixes
+> 
+> Florian Fainelli (2):
+>   clk: ingenic: Poll JZ4780 CPU1 power status atomically
+>   MIPS: Skip generic IPI setup for platform-specific callbacks
+> 
+> 周琰杰 (Zhou Yanjie) (2):
+>   MIPS: Ingenic: Add XBurst SMP support
+>   MIPS: CI20: Enable SMP with two CPUs
+> 
+>  MAINTAINERS                           |   3 +-
+>  arch/mips/Kbuild                      |   1 +
+>  arch/mips/configs/ci20_defconfig      |   2 +
+>  arch/mips/generic/init.c              |   3 +
+>  arch/mips/include/asm/ingenic-smp.h   |  20 ++
+>  arch/mips/ingenic/Kconfig             |   2 +
+>  arch/mips/ingenic/Makefile            |   5 +
+>  arch/mips/ingenic/ingenic-smp-entry.S |  54 ++++++
+>  arch/mips/ingenic/ingenic-smp.c       | 260 ++++++++++++++++++++++++++
+>  arch/mips/kernel/idle.c               |  31 ++-
+>  arch/mips/kernel/smp.c                |   6 +-
+>  drivers/clk/ingenic/jz4780-cgu.c      |   4 +-
+>  12 files changed, 386 insertions(+), 5 deletions(-)
+>  create mode 100644 arch/mips/include/asm/ingenic-smp.h
+>  create mode 100644 arch/mips/ingenic/Makefile
+>  create mode 100644 arch/mips/ingenic/ingenic-smp-entry.S
+>  create mode 100644 arch/mips/ingenic/ingenic-smp.c
+> 
 
-Hi Brain,
+series applied to mips-next
 
-as you pointed out in the previous revision, returning would change the
-behaviour so I currently skip the clock in such case...
- 
+Thomas.
+
 -- 
-	Ansuel
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
