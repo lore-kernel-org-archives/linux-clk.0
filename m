@@ -1,86 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=94.124.121.40
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794930315;
-	b=YhHwqydTB6FpgnEUh8INVYcgKMk2O2+gJ981KunElgjFLPD8VF8dqISJK5QYI7iaYLmG
-	 bnL0m1iLT9VXVmgOsu4NSWsBtor4jYA35cNZGLw8vTslbQIYENH2GpuFR9awJ2r2FztNR
-	 357AhjzXYOCz2F2iwP19Utm19eFGI1aGHAWO0HlSNdPGpy53IUW1MOXCBvP6QjjgpmFWd
-	 xtCXzX9/Yzehts3YcbumIXfvOrADqd5Aw/36r+2/y8PfatMc4aU2/QZ4iJ0BovVgvk7mC
-	 VeM0Vznkn/vQHyhL6E4X4izfKJcp6KUoaZKr7HjvtnD2x+egqJUiNLVGMFikgE0rk/Q==
+	t=1794932266;
+	b=CKR+/r4YQTskq8Zdk1jvgCRl1gyTmuHwgNdSFKl5IY1esxZ8oiSCi9zDu9Pfb9vbkClW
+	 ROy0B2u6yUtlzank19dAvYj+kfQT5U5aY0ShMZaRVoXV7BW5SQ41AQofeM86DJnNzmDaZ
+	 sYSq32Do6pZnglLgKoJcc3wWmxih3HUkMyuQXD+3t9YCBH0NyJeV8oCWKV7GB2v6j8Zgy
+	 OXVx4KLyEo0QM2ml1cZW7ka0DDIrBHMu6fTCexNR6y0U8FgpulXamq8h6AIceu02Y3kDQ
+	 8r9otewpkSG6bl6JUvsFgxgV/S1zM+SKOZgzgb2uJs56l5kx7jLMeilj9sk1WX+ReOA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794930315;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer;
-	bh=yx0f3Yir639syvYfkg79O7Kpd9xzBO9aaexbdF9atUs=;
-	b=izB1FUCNGMrwxHcIZjpnwC1s2oUedyCZZITd0m7/wgMoerXdp2hkp1yzWyqUo7z+hlFw
-	 y6uvXq22q+w3ubakcRXyXcSweedHNdhWvQr2zN/zcOu9qrwxegdLLq08VjZxvd+tR43cF
-	 sCq31I8NeImohJdFYBvqzvSbl1k8VvEGkOSOnJMX8GEuwFGzabaZ4ZZkxQsK+Ni2eISMh
-	 +EK9xWu5RrXS7jLpITGyrSM51epQaapmMHGMqIAZYlDjHZAxr7aQYxSHCKMmFWkNasMdY
-	 EqPqJdvKYp0lhduxM8YCUTF15wYq19B5HtzG3c0z7LOD5RbtXK6ydJCxn11VInEbyWA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794932266;
+	h=DMARC-Filter:DKIM-Signature:X-MSG-ID:From:Date:Subject:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Message-Id:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=UZawLPyDnVL4+sMKVmjUKh3WLcBWYaI8OlarGb9V+Go=;
+	b=dXcEEZBAaA1WolhA48kXdv89pOSUr7qPHxkCPi4qHtK6TSfisPEBLVep247eUsSNz4ZO
+	 RgNX96u/LbUIzP1p6+CKULGT4dtpjeY5hldIoh86qwPT9BADWrf45eFJTPEcSMt2Fu9t+
+	 busfTBDYersok/XZKrM+Fl6xgWCR2Nn4diV2R3oUVCXcfXypsDee8woN0HTM7oOdJ6nFb
+	 bFD/UvgQop8Z4q7WiKeoA9LEm0ZpvgrI0INQus3PvlNONUISGc5QsgT5lRrGT/02f+Fyv
+	 OQP6bHC5hYknghAgIr3ZRyVnE/Fg6cq9oIf9zyH5hcAXirmjlmQ9Cnk4aoNcacH6eIw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FUFEc8xz;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=zanders.be;
+	spf=pass smtp.mailfrom=zanders.be;
+	dkim=pass header.d=zanders.be header.i=@zanders.be header.a=rsa-sha256 header.s=202002 header.b=QChQft8L;
+	arc=none smtp.remote-ip=94.124.121.40
+Received: from smtp28.bhosted.nl (smtp28.bhosted.nl [94.124.121.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A514606A32C;
-	Tue, 17 Nov 2026 15:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FD6606A8AC
+	for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2026 16:17:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A4FD6606A8AC
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zanders.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zanders.be
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FUFEc8xz
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5285A1F000C4;
-	Tue, 17 Nov 2026 15:45:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794930315;
-	bh=yx0f3Yir639syvYfkg79O7Kpd9xzBO9aaexbdF9atUs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=FUFEc8xz6COW3EN33vCksYZgW8fYeid15xpqnE6bkjYb8ds8GnfyBq3Jbse/StGin
-	 aFc60FNTgNgw3W7d5QemIGS0no4qXZ1Y57Q9TPuawziXH2c0TuhNEaoDdCicQt1eXO
-	 mLINKQJOly7zZT9EFWEI89QXybe9XKEKLynkfDPWAdsbnbF1QJFyvbCGaJTiW5m1kG
-	 XV+aUd9kYT4zdS55zGYU4rzkdTaIqOWm/F3pmctvLM4fIiS4R5++zvkDuE/N2nVRgc
-	 xtB6/ntvlXr7/lq7RG0/fxX7qf/mQPblvAEk0mrhKHaLqmggThe5uOeR1czsdpOvVx
-	 mwyhL/Fo9nomA==
-From: Srinivas Kandagatla <srini@kernel.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, "Joerg Roedel (AMD)" <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Jassi Brar <jassisinghbrar@gmail.com>, Abel Vesa <abelvesa@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Krishna Manikandan <quic_mkrishn@quicinc.com>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, Kees Cook <kees@kernel.org>, 
- Tony Luck <tony.luck@intel.com>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Muzaffer Kadir <muzafferkadir@mainlining.org>
-Cc: David Heidelberg <david@ixit.cz>, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
- linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- linux-remoteproc@vger.kernel.org, linux-input@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20261105-msm8952-initial-support-v8-0-311ae8e8f14b@mainlining.org>
-References: <20261105-msm8952-initial-support-v8-0-311ae8e8f14b@mainlining.org>
-Subject: Re: (subset) [PATCH v8 00/11] Add Initial Support For MSM8952, Add
- General Mobile Shamrock
-Message-Id: <179493030479.124445.18019484431206678491.b4-ty@kernel.org>
-Date: Tue, 17 Nov 2026 15:45:04 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=zanders.be header.i=@zanders.be header.a=rsa-sha256 header.s=202002 header.b=QChQft8L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=zanders.be; s=202002;
+	h=cc:to:message-id:content-transfer-encoding:content-type:mime-version:subject:
+	 date:from:from;
+	bh=UZawLPyDnVL4+sMKVmjUKh3WLcBWYaI8OlarGb9V+Go=;
+	b=QChQft8L6U/kdfRFoFlQzk7vwmBQPBuPqV2YeO+8FScUQtrHCtg7P9cyFYbiIrPYPor8Q8vpR8T/a
+	 rom0ZEPI2ZpNr7KqMXscTLfs21OX8E2IphYdkhnW/A1Ndr+aI/UYJZLJSM3XsgAzmHJfvE93Rl711/
+	 PNaRAWELL3zAOI35MThyTUh9bjaXdTpzEKHoaR+oo8TgW9hLmHnF54DOIfgtLNOdUHwjWICFYVr+tt
+	 /6bWTip40US10c4brkBQkgoGbvjN/xeJ2Nf0wfgQPTh0pZhSvLDxZrsuZz/DGeG7V3XxQUsz3I7XwL
+	 XDiSqvFySSSa5l4DtKoOkNSU1Y1m/mQ==
+X-MSG-ID: 5be7e631-e2a2-11f1-a524-0050568164d1
+From: Maarten Zanders <maarten@zanders.be>
+Date: Tue, 17 Nov 2026 17:16:49 +0100
+Subject: [PATCH] clk: vc5: Enable PFD frequency doubler for VersaClock 6E
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -92,26 +58,71 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Message-Id: <20261117-vc5-6975-dbl-v1-1-d332b89964dc@zanders.be>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMwQ5EMBCA4VeROe8kHUXDq2wctAYjGystIhHvr
+ jh+h/8/ILAXDlAlB3jeJMh/iqBPAm5opp5R2mhIVVoQkcHN5ViUJsfW/lArzqwhzZ0qISaz507
+ 2Z/etX4fVjuyW+wHneQHRtjZNcAAAAA==
+X-Change-ID: 20261117-vc5-6975-dbl-30e4b713ef09
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Matthias Fend <matthias.fend@emfend.at>, Adam Ford <aford173@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Maarten Zanders <maarten@zanders.be>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794932255; l=1665;
+ i=maarten@zanders.be; s=20261117; h=from:subject:message-id;
+ bh=ivgRUAw+BjhjkWLq2nx/trZxYSQ6Tfor0pqfyiqefKw=;
+ b=YmRxxD137KgXdAm7fEiZNIeTuiaq8Wi/2LXmvmsw2twhYQCK2LeA1BRQdzc/uuFQOjRCXAAVl
+ VRqhxwUWfBxDGZJrUPQGFyqw1hY71dLscFwBQ23D+NksgqRuqVYAecJ
+X-Developer-Key: i=maarten@zanders.be; a=ed25519;
+ pk=9vkWF6gtn9DS+97n+W487XUEhrI3+9cvA7Fdon8T1uI=
 
+The VersaClock 6E family (5P49V6965, 5P49V6975) supports the
+reference frequency doubler, but VC5_HAS_PFD_FREQ_DBL is not set for
+these devices. As a result, the doubler setting is ignored and all
+PLL and output rates are reported at half their actual value when it
+is enabled.
 
-On Thu, 05 Nov 2026 13:54:04 +0300, Muzaffer Kadir wrote:
-> MSM8952 is a SoC with 8 core cpu and Adreno 405 gpu.
-> 
-> Ported without uart connection. ramoops and usb
-> mainly used to debug.
-> USB is not enabled in this series because it
-> depends on the not yet upstreamed (and not developed by me)
-> pmi8950_smbcharger.
-> 
-> [...]
+Set VC5_HAS_PFD_FREQ_DBL for the 5P49V6965 and 5P49V6975. Tested on
+5P49V6975 only.
 
-Applied, thanks!
+Fixes: 2bda748e6ad8 ("clk: vc5: Add support for IDT VersaClock 5P49V6965")
+Fixes: d8473831066b ("clk: vc5: Add support for IDT/Renesas VersaClock 5P49V6975")
+Signed-off-by: Maarten Zanders <maarten@zanders.be>
+---
+ drivers/clk/clk-versaclock5.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[01/11] dt-bindings: nvmem: Add compatible for MSM8952
-        commit: a3543a8b163f1edb45f0e631ea0f5905256a3684
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 1cf8526975eb..7a7691841b7b 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -1299,7 +1299,7 @@ static const struct vc5_chip_info idt_5p49v6965_info = {
+ 	.model = IDT_VC6_5P49V6965,
+ 	.clk_fod_cnt = 4,
+ 	.clk_out_cnt = 5,
+-	.flags = VC5_HAS_BYPASS_SYNC_BIT,
++	.flags = VC5_HAS_PFD_FREQ_DBL | VC5_HAS_BYPASS_SYNC_BIT,
+ 	.vco_max = 3000000000UL,
+ };
+ 
+@@ -1307,7 +1307,7 @@ static const struct vc5_chip_info idt_5p49v6975_info = {
+ 	.model = IDT_VC6_5P49V6975,
+ 	.clk_fod_cnt = 4,
+ 	.clk_out_cnt = 5,
+-	.flags = VC5_HAS_BYPASS_SYNC_BIT | VC5_HAS_INTERNAL_XTAL,
++	.flags = VC5_HAS_PFD_FREQ_DBL | VC5_HAS_BYPASS_SYNC_BIT | VC5_HAS_INTERNAL_XTAL,
+ 	.vco_max = 3000000000UL,
+ };
+ 
+
+---
+base-commit: 77987cd64bd6f58d3d35ccbac548fa064b892950
+change-id: 20261117-vc5-6975-dbl-30e4b713ef09
 
 Best regards,
--- 
-Srinivas Kandagatla <srini@kernel.org>
+--  
+Maarten Zanders <maarten@zanders.be>
 
