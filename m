@@ -1,80 +1,83 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.251.105.195
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1794911868;
-	b=k8sybZZ+GNrH91LcSZ5Trhc86iIXtRRiGdz4P24hwvJQkCEJ/+Kb1VuPisJH31TFcaai
-	 6eMbcf849RUZ5xNtkpNr1KrdTDASIC9MKerp1H3tmIw4931cpe+u62qrPIgaSRcK2PtMZ
-	 XPYbzkwwQGpKrzChG8ZVIOP+Uewq918dY1Ywq3ccbQujwvsQMIIdryrAtMtYBm6pdWxcI
-	 GfTSzy/s1AgsZuf+cLGcY2ZxTgHUyaMa1l0hSqdMq0d7sSP5/SkIDLDAdF8ufUAF0IGdg
-	 zCCnINy5xVxDtQbnCIcoqymM36+44DhjjxSuj3xtTVFQcQdesnBUu1cJh9WqikadYzA==
+	b=fzi9rSM65hzko2VEH2E/LTIpPr3Sbt5avQjcLeN42OEb2Z21GqxEUz4pk17bFe0Bjp78
+	 ViNNrd9YWkRldienKvb9swYZe7I0b+ZrKmbTJamKs5E5850QQDeI9E0493UYenLZHoXy0
+	 6lDdMd94yGI2cupR/LozWgzLus8aY7rNX+pEymRJ0a0UT/sz7R8/NPwpaDy6md1cfvz+w
+	 BVcLoKL1HQtm/h5VFwzb+3Oq9/UU39ELHPheOiaiCWTWs+cmNmCR27YaNdeHiI0ODziAK
+	 Qpu5rx7hNMe24LRAv9TfiNDOOqHH3LJ2z6dIXBX48bbHdSMkSD6+IiR8UIDeLXup8Qw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794911868;
 	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
 	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=43e2SNcVBWzb1UbgyRe/OhyamtAg+Km+Wi6/wDg0QSQ=;
-	b=487ltK30gCEJIhIRuXh6532o5/8CRgUH51mYi/1zSaQp8k+yRGoNdptJb2M/u7doKa19
-	 TKrW1n/nSPntOfq6Pfd+q6xxdQ4W0lP8lQtv1XLfirVahCyDGgyZjZU5+XDSiNPD/7s0o
-	 tP2ZOVpbrzS8kH0msm8QXyjN81+pUiZw+u0UAKHoZM8yyJl/LdXkS62TnXNLoYNfCdFGo
-	 p/VGArMcML7lpYCd3b3njkMcKhbbVNMBVy5xdvB4u6GWdRfuRu5JG5dHOoA0ktATOXRSm
-	 fRR1AIif6Ph7T2ok5CSgLKQyMa+lCeOFQwrmo15HLQ+CEfbav/s/DQyMAOtIgv3yrVA==
+	bh=/oGiJHm/jh1FUNLOdXcbYyLNEuc+U0PJnk+ui2av96o=;
+	b=YXtHgKgTxLSDFPUJGvMC9ueoi0zkLZUh6/ryunrle+/jEqeo/3b73ivMypr74E4PpliT
+	 9pAQ5N9/xFViKXF9qcjVFpiiiwkmEZTtwua4WHNBGsv9sjzUqGmXDr2OOssENsfGkBnmV
+	 jASZ7W9BvJZ8kOhCL0+sFxT9RZvWD/H/+p6F2/IO1aPCqOGDlJonKiEkpWRKhe6MzI3Sq
+	 m2cKaAsZDrEFIWmyr2tarHAEyQg5SokvFtUtBc6/D8LUvQDKbXWLzrTJ/mk3NNBPU1ggX
+	 jzlUJlPsBC8CjWFvGDt343sGBGepSnypT8dKMx4JKXIAanxRcL4tq4pmyXV7Onjv4SQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=collabora.com;
 	spf=pass smtp.mailfrom=collabora.com;
-	dkim=pass header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=mail header.b=lWzhVbeX;
+	dkim=pass header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=mail header.b=aG0yeLuY;
 	arc=none smtp.remote-ip=148.251.105.195
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF89606A8BA;
-	Tue, 17 Nov 2026 10:37:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9CF89606A8BA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66706606A334;
+	Tue, 17 Nov 2026 10:37:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 66706606A334
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=mail header.b=lWzhVbeX
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=mail header.b=aG0yeLuY
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
 	s=mail; t=1794911866;
-	bh=BPi/q9qq8U5jbtOV/H4x+dghN6V5mYBj2nUNtLxFRAg=;
+	bh=VOW3N+kuAOhlQXMVPIKqUw8yVwXy/w9NQurJNFZ3824=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lWzhVbeXhrHpZSfg1vhi0IYmf/uKR95T7TPw6Zak3JApn5n99ftHqDojn+nDc2B9B
-	 z208WnI1LuuPqfcF+xLklrPJppJvQdgKBzs++nvv7ncNEuo+7ckHp55uUtTbIaj8EL
-	 pFhuDgRkcDNFtKV2tD34/k5ZmLSm0orzrIV1//2hUQXdjRyqr9Ft2FFpw4xb9L4Id6
-	 5m2Ou3eXGLXj35SZD9krDppHxm8O5WhsAsL0x0sA6OhU6k5JcWa3JcpVN5GlGpLYrO
-	 yxB/Cn549c5Vz12LO91+twaA9J3MQ1+FYxo2onOt1LbkP89qxinRSafmslzcidzGXR
-	 vNezYw/UTo1SA==
+	b=aG0yeLuY8OMnE6Cf2ENdM+pBOa2xVk8BB7i+rUJa3ZPKf6EEagNeE/cLqZj+KDzMl
+	 B+2rit060SVf8Fl0Lb7R3KzJZMEeBDhWXqwjsDKf1vgbevsUfdCsjxjckuPrj+389h
+	 AuxR/9X3ZVWCtd8ir9+Z9q8SeT50dODfe0CmmBa6EzqtzEWvE2W3VAtT/KPvGFYTBI
+	 SvjHgwie7k2wL5k7v6U71LmuXpSrB3it2GQWuYBuClo3+gMgn+P3uiGLHX/4YBbl32
+	 2V7DEgaj4Cj1+Wbf6qoVb09V098q9GC9hNq4FepGPCD/qZffIu1aBs70eMa1+hS7qy
+	 unczhdnjFCVIQ==
 Received: from IcarusMOD.eternityproject.eu (unknown [100.64.1.21])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5680A17E0EF0;
-	Tue, 17 Nov 2026 11:37:45 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2C3F817E0390;
+	Tue, 17 Nov 2026 11:37:46 +0100 (CET)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
 	zoan37 <agentzoan@gmail.com>,
+	linux-clk@vger.kernel.org,
+	Shiji Yang <yangshiji66@outlook.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
 	Matthias Brugger <matthias.bgg@gmail.com>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Ryan Brue <ryanbrue.dev@gmail.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
 	Edward-JW Yang <edward-jw.yang@mediatek.com>,
 	Irving-CH Lin <irving-ch.lin@mediatek.com>,
 	kernel@collabora.com,
-	linux-clk@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Brian Masney <bmasney@redhat.com>
-Subject: Re: [PATCH v2] clk: mediatek: mt8173-mfgtop: do not use the clk API from power_on
-Date: Tue, 17 Nov 2026 11:37:33 +0100
-Message-ID: <179491184093.148303.15758957296593434573.b4-ty@b4>
+	Mark Brown <broonie@kernel.org>,
+	Jianhui Zhao <zhaojh329@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: mediatek: mt7981: fix "emmc_400m_sel" clock mux sources
+Date: Tue, 17 Nov 2026 11:37:34 +0100
+Message-ID: <179491184091.148303.8587843697634686350.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260913-mfgtop-no-clk-api-power-on-v2-1-b84771a3d5bd@gmail.com>
-References: <20260913-mfgtop-no-clk-api-power-on-v2-1-b84771a3d5bd@gmail.com>
+In-Reply-To: <OSCPR01MB1501934D1DC407B535D78F02EBC992@OSCPR01MB15019.jpnprd01.prod.outlook.com>
+References: <OSCPR01MB1501934D1DC407B535D78F02EBC992@OSCPR01MB15019.jpnprd01.prod.outlook.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -87,20 +90,14 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Sun, 13 Sep 2026 16:47:53 -0500, Ryan Brue wrote:
-> clk_mt8173_mfgtop_power_on() calls clk_prepare_enable() on the mfg_26m gate
-> that this same driver provides. That is a layering inversion which cannot
-> work: clk_core_prepare() calls clk_pm_runtime_get() on the clock provider
-> -- this driver's own device -- and genpd power transitions run at _noirq
-> time, where runtime PM is disabled and pm_runtime_resume_and_get() returns
-> -EACCES.
-> 
-> [...]
+On Sun, 18 Oct 2026 13:50:16 +0800, Shiji Yang wrote:
+> According to the document "MT7981B Platform: Registers Part 1", the
+> 4th clock source of "emmc_400m_sel" group is "cb_net2_d4".
 
 Applied to v7.4-next/clk, thanks!
 
-[1/1] clk: mediatek: mt8173-mfgtop: do not use the clk API from power_on
-      commit: 8f1cb3fc8cae44baffef31d73c772dc77e4a9061
+[1/1] clk: mediatek: mt7981: fix "emmc_400m_sel" clock mux sources
+      commit: af557feaed1f9344666296284cda362d4ed53a9c
 
 Cheers,
 Angelo
