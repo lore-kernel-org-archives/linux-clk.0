@@ -1,90 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.199.235.221
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794950202;
-	b=cpT/wusI5KmPs3K1RW/Fj+sDtspVKoBsQ1v3DoQF+P/2jCqI5Ej3N/tRzz+P1Mvyr+7x
-	 6M3v6S8MAOVZMoPkYT9FPCDZtMbe4Qxo6DclJxGBgqyeKXdosdaG0CHAaBaaJyVJxU2PZ
-	 VsBbIFWH4pVLDEta6WzsOpHGtpthq1R30c0HemkhP0OPkOP6vYXd9rjdGCzk61qVsi5yR
-	 Me0gXriF7u9gfr8ILhi1dvBVk2JOzQOBI1MYlAf3W704QREyyc469un6TADfy01vPOpnA
-	 M9aWdtvKcv7IMPhG+/5jJ/kRbsb7YG3rqQ7PIuCMEbUqdQjc3+m+FlihmaIUrIJ7tdA==
+	t=1794950295;
+	b=vjLfkGPN25qoJwOlnuDmeF9vHObvnPlt6haRBB7Gh4ti1wtTeLWQm2Ts+5+RXZTvTMR5
+	 grbSQJ0PN4zN98I63TWfJFV8oDXcyk37fnRZ2fNAd3jWOX0xXQF7MuTgILR4WI7JF4CzE
+	 IOgLfcq4Elfm66902yHccUNYg44wFtloHt5irg1orD7Lk4fkco4GXNt5myj686RVZxxT6
+	 N8a3JIQ8alnZbuhBeY79NyyOlOS59Yg9rvdIUEpkxCqAKd/9dKMlcNQkhsec7hPqbOQ5t
+	 F+UtaCwBTwA/OWj54XW3Vf+RBZ16MBkQs9e3EOJ47xM/7W48ZLBcobbW5r1CIXiyq3A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794950202;
-	h=DMARC-Filter:Received:Received:DKIM-Filter:DKIM-Signature:
-	 X-Virus-Scanned:Received:Received:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=nRqTMJzShimxvHzfTCPPnMzUFgDsbxOw3020xqbA690=;
-	b=vvLbWQ49ZyqBRwoQsnwkbT/fX7nIW2RR0lcmrQ0BvrwASWK+sgUQ9cea9QMVvUtfmSF6
-	 6iKKuZzH1NvjLGTdQ+CGU5E2FK7ixquKNjD+rJe6/IcKllZO9BtHEvHpbZffhckY8KiD9
-	 qmmgWDBYRwmvL1oDia65NyawzwyeZPefMN4WNswrNmKUpe4R/2U31oRCtaLDVK87iXkPg
-	 Qnf/j9cv8qP0o99tJ2t2f+iuuyE7yCwnoDdqF0eJwvcOQrrFys4VRIyC8CLPavtOpAG46
-	 WEjslOD6fCwx8CPv/gewYj7YkqRcMSUmaPqF/g9UFredIhOBhjgc03+WqUF/rYI1HfA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794950295;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=92a5QTE9bIytS0D2KgcmY1YbSMRJpUe/xEcnpBP3gnM=;
+	b=FwDt7IWLt6QVyKBP0NFjuz7uumSi/mQJI2sQatSgXq3zReNqR5Dw9aRpsmUV1gUrIRqM
+	 vT/rJZ66YzQhzQvFTt+ju33nY8cvVs3Y7OgU8+vr450jMuw4uRcQzO7lZn1OTdPbbATaH
+	 Kv+dQZHmtw7zEbmxINwOXI2YU36A02bkydsrl3t98wvSX6FrDuyJ33CQJ5Bqb+fI5SPtY
+	 4Q3t9HSH0GVpTHbAW4pFfL/oViW3GDKv+Kq1vozkNpdP49jFZGho4YbaNE++cmVvFrIlP
+	 O/Vz7e4X8S4EpExu1y196zfB3pCIXbsanTiaiv/NKb3EEdkcWvI12mzzwbLIA6l74oQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=cirad.fr;
-	spf=pass smtp.mailfrom=cirad.fr;
-	dkim=pass header.d=cirad.fr header.i=@cirad.fr header.a=rsa-sha256 header.s=573E3878-7916-11F1-BF4B-F68474317960 header.b=Gud2wEmi;
-	arc=none smtp.remote-ip=194.199.235.221
-Received: from retz.cirad.fr (retz.cirad.fr [194.199.235.221])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oVurTKnv;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E66606A32C;
-	Tue, 17 Nov 2026 21:16:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 53E66606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cirad.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirad.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4BA606A31C;
+	Tue, 17 Nov 2026 21:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirad.fr header.i=@cirad.fr header.a=rsa-sha256 header.s=573E3878-7916-11F1-BF4B-F68474317960 header.b=Gud2wEmi
-Received: from retz.cirad.fr (localhost [127.0.0.1])
-	by retz.cirad.fr (Postfix) with ESMTPS id A586E20DC134;
-	Tue, 17 Nov 2026 22:16:39 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by retz.cirad.fr (Postfix) with ESMTP id 7BC4B20D5578;
-	Tue, 17 Nov 2026 22:16:39 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.10.3 retz.cirad.fr 7BC4B20D5578
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirad.fr;
-	s=573E3878-7916-11F1-BF4B-F68474317960; t=1794950199;
-	bh=nRqTMJzShimxvHzfTCPPnMzUFgDsbxOw3020xqbA690=;
-	h=From:To:Date:Message-ID:MIME-Version;
-	b=Gud2wEmiaIQS+G9oDe+ppbi8YJDwz3F5MYC0RXhiJXIjVG2uZgEeHopbDxXr/dlfS
-	 xHP9aurbGcSRBxJLXOJNqTJMYidrOqwxdLKUbzWi14nS90jSWEJ5xtxg8a/x5bztRL
-	 W6PooeL3SZuYaRhzb0ROSZUucanEKf5W7rgicRYBgQ53WSc+6KODHdg6COXrPpYOy3
-	 +jeaLMGWl6CfUt7R5ntrIULj4rOPdlSGAl4rVr51xcmuvaBN4YU/1AnG57ttuBqA3s
-	 ierLl20iJ/xbOJRGXK9nhseC2PthgpWeHVGkOvpiLNBVgHlHST9wazquJXMXBsjS2p
-	 H0JiGtDE7ne0Q==
-X-Virus-Scanned: amavis at retz.cirad.fr
-Received: from retz.cirad.fr ([127.0.0.1])
- by localhost (retz.cirad.fr [127.0.0.1]) (amavis, port 10026) with ESMTP
- id a40u_yxKLD6u; Tue, 17 Nov 2026 22:16:39 +0100 (CET)
-Received: from localhost.localdomain (78-196-243-100.subs.proxad.net [78.196.243.100])
-	by retz.cirad.fr (Postfix) with ESMTPSA id BE8FB20DC134;
-	Tue, 17 Nov 2026 22:16:37 +0100 (CET)
-From: =?UTF-8?q?Fr=C3=A9d=C3=A9ric=20Mah=C3=A9?= <frederic.mahe@cirad.fr>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Yixun Lan <dlan@kernel.org>
-Cc: =?UTF-8?q?Fr=C3=A9d=C3=A9ric=20Mah=C3=A9?= <frederic.mahe@cirad.fr>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@4d2.org>,
-	Hung-Chun Tseng <alan.tseng.cs@gmail.com>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] riscv: spacemit: k1: RCPU2 PWM clocks and the BPI-F3 fan
-Date: Tue, 17 Nov 2026 22:16:23 +0100
-Message-ID: <20261117211626.141105-1-frederic.mahe@cirad.fr>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261117205951.140146-1-frederic.mahe@cirad.fr>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oVurTKnv
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE1531F000C4;
+	Tue, 17 Nov 2026 21:18:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794950295;
+	bh=92a5QTE9bIytS0D2KgcmY1YbSMRJpUe/xEcnpBP3gnM=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=oVurTKnvVD9ETD9zGwONbuxAzdB5qgMqmJBQP/lfCm9kOIQXPLG+5UNNuOcoUdjJc
+	 z0V1F38orcdia04E3Lhb8SFUY9Q/KbbTxxD+gX1EAY22o/IKuQWRhckn7kZFAsTlqQ
+	 bD9LPOHkeaLr9eJoXnRqzVPPX2a2INXDb3qbD7YDLNGg52DZjxH64Sj6z8pj9yZaHu
+	 AMMKlWUy/BapBla21mCmOBuJHUfn3ojaeR/0JwkKiOecT0exdDq7YmVf2092bMgXpV
+	 wcOAUgUihfPAL0DgT5h/GKQTyGhyJXWqWMYf61ng7m7eXJ1nG7HJHDF9NIf1VwDy9w
+	 1GhL0K91O2Msw==
+Message-ID: <sashiko-outbox-219683@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 2/6] clk: spacemit: k1: Keep pll1_aud_245p7 enabled
+Reply-To: sashiko-reviews@lists.linux.dev
+To: =?utf-8?b?RnLDqWTDqXJpYyBNYWjDqQ==?= <frederic.mahe@cirad.fr>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261117205951.140146-3-frederic.mahe@cirad.fr>
 References: <20261117205951.140146-1-frederic.mahe@cirad.fr>
+ <20261117205951.140146-3-frederic.mahe@cirad.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 17 Nov 2026 21:18:14 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -93,11 +59,41 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 
-Adding Troy, whose address I mistyped in the series (sorry). When
-replying, please drop troy.mitchell@linux.spacemit.co.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] clk: spacemit: k1: missing Fixes trailer for pll1_aud_245p7
+  critical clock fix
+--
 
-Fr=C3=A9d=C3=A9ric
+commit 83873cc8722c58b6ef8102ec78a68b9664559a72
+Author: Fr=C3=A9d=C3=A9ric Mah=C3=A9 <frederic.mahe@cirad.fr>
+
+> clk: spacemit: k1: Keep pll1_aud_245p7 enabled
+>
+> Accesses to the RCPU2 block (0xc0888000) hang once pll1_aud_245p7 is
+> gated: the CPU stops responding, even to NMIs. Nothing claims this
+> clock in mainline, so clk_disable_unused() turns it off at boot, and
+> probing an RCPU2 PWM afterwards hangs the board. The RCPU2 clock and
+> reset registers live in the same block.
+>
+> Mark it critical, as was done for the K3 RCPU clock.
+>
+> Tested on a BPI-F3: without this, probing an RCPU2 PWM hangs the
+> board; with it, no hang, also with no PWM in use.
+>
+> Written with help from Claude (Anthropic); reviewed and tested on hardwar=
+e.
+>
+> Signed-off-by: Fr=C3=A9d=C3=A9ric Mah=C3=A9 <frederic.mahe@cirad.fr>
+
+[Severity: Low]
+Since this fixes a hardware hang when clk_disable_unused() gates
+pll1_aud_245p7, should this include a Fixes tag?
+
+  Fixes: 1b72c59db0ad ("clk: spacemit: Add clock support for SpacemiT K1 So=
+C")
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117205951.1401=
+46-1-frederic.mahe@cirad.fr?part=3D2
