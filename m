@@ -1,63 +1,63 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.199.235.221
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794949260;
-	b=SAcrSmb8c2lFLWWVP2FW6iTkDqgrdyKyDUybsa18qpVnMnXqUHVouNCeUZgFBf0OGqQo
-	 yVJDasSd1QX1mDfT3bboD/r3rtSLoe0zQZRpx61037ljph80/3h/fXqizjMQhH8KnRlZv
-	 hPi3zGyyWFpS2AcGe9ZTQ4FyNsBuZUtCUUyf9PCUyplhHuIaXzP6xhjBa+znD1FbGHjtZ
-	 fG3RJsYwGsxAgpJS2MTb8p2/Ep2s0O3kf43ru8j45A1mnZa9Bp/5ubjdLdgDwzIAe9zNO
-	 KvnsDxIsnUTy8vpgiRJwa5vUBjD+Opw5+/s2/cYkpTiv+tVBltPij6lCyAQ9OcWbN8A==
+	t=1794949261;
+	b=PR426myfVBQ8e+nGAkL3mDlteHGmbXrfZgRKMooyrLgMhlbalV3v+5zaQtcL7lEPrduB
+	 wXGZ7vqAvTEasOAaVsgI9IlclHhWalsmsPmsjeYt8hb6TyxZX333nB6ZpemfWSistzHgQ
+	 KmSqHvY7rjIrJPrEkHxGxvITijFVHNwSP5fcRSbMKp7nwojNTGjk5lcNPINE3dT46w7FT
+	 4fd+gFiBXT/CUTMPyYcw0HxJWrABqVRwFH1bJ3GVvafcWpttftxRGWO+dTeGm6vy/9YqB
+	 34fSD26CPZAmMp8AgKoRB3K2FusLmvGz0e7eJeuoXNGckYvPvYcB0LNBgQANBSsI8vA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794949260;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794949261;
 	h=DMARC-Filter:Received:Received:DKIM-Filter:DKIM-Signature:
 	 X-Virus-Scanned:Received:Received:From:To:Cc:Subject:Date:Message-ID:
 	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=mS8VJ60KbJ7B3GE2mbAaQevEqhL/UeJY3gNnsa1WmB8=;
-	b=AiRvduVm4CYRcJgcmZ2rGbjSu+d/1ZY3YRVe25/5AQvufJcWyYn3l53dRg7izG7l8Vl2
-	 eaq5Wvy0Rb0QTDjASfjTIVCRRJdzEZuUOilMlZMVDIKBWoO0/w4pbTNJx5g0s2ty6hMOb
-	 bKtQYnDZ3mPHKkQW0FdjhT/bppf4M5cXVmGhzzAW9bdg6HYMAtHUIM721qHpqSPE3COZH
-	 xZreR6zLKC1hVolTd9ouNIYroBkfkVRpjTnUwUQ5rIUCP8/AlTWAkodLyDzWj3nBpOvnc
-	 8KSrtRyWO+e4ROV8lvacPS7qg3W2VY/5/Ty/5JmLmAAmY+E71OeyDcERt8cZcXfJyXw==
+	bh=79OIXfIsBYtCzhqjtjT5JmD6bsEywr7cWxOeYpj9/3I=;
+	b=jg97Bnr0YWlJI91ObD76kgwnCTkI3sVxVuI+4YdAxV+1VlxvqIEgNHxMtWRKESQIcUY0
+	 706evQuQc+ibzSdFocRZbgkYdbgh4twvP1V1m43/zIIXpZayjKeoPG5y9aEPzU5ND3P8L
+	 nRKz+KXqqV+mMv1wet691BUrof5nvPNgDVizCH3oHaGrifG8o8S/StEYeGlImzR8R25PN
+	 NiFbzhUm6tXsE65kzePhp+WP+w65b+n8efhJm0Tp7WOg8PQL4hCAfiVkZrdsz7BkkD2PZ
+	 puzep+3hGZYe34sBlspXh0KGJEUAQxmQqWHX8n4r+crr7372PDFeUtlVklRYIL7NjPw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=cirad.fr;
 	spf=pass smtp.mailfrom=cirad.fr;
-	dkim=pass header.d=cirad.fr header.i=@cirad.fr header.a=rsa-sha256 header.s=573E3878-7916-11F1-BF4B-F68474317960 header.b=Xycq8THx;
+	dkim=pass header.d=cirad.fr header.i=@cirad.fr header.a=rsa-sha256 header.s=573E3878-7916-11F1-BF4B-F68474317960 header.b=HhTZP2CC;
 	arc=none smtp.remote-ip=194.199.235.221
 Received: from retz.cirad.fr (retz.cirad.fr [194.199.235.221])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87896606A339;
-	Tue, 17 Nov 2026 21:00:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 87896606A339
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D439E606A88E;
+	Tue, 17 Nov 2026 21:01:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D439E606A88E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cirad.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirad.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirad.fr header.i=@cirad.fr header.a=rsa-sha256 header.s=573E3878-7916-11F1-BF4B-F68474317960 header.b=Xycq8THx
+	dkim=pass (2048-bit key) header.d=cirad.fr header.i=@cirad.fr header.a=rsa-sha256 header.s=573E3878-7916-11F1-BF4B-F68474317960 header.b=HhTZP2CC
 Received: from retz.cirad.fr (localhost [127.0.0.1])
-	by retz.cirad.fr (Postfix) with ESMTPS id 3F0B120D557C;
-	Tue, 17 Nov 2026 22:00:58 +0100 (CET)
+	by retz.cirad.fr (Postfix) with ESMTPS id 63EEA20D531A;
+	Tue, 17 Nov 2026 22:00:59 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-	by retz.cirad.fr (Postfix) with ESMTP id 1E66520D4EBD;
-	Tue, 17 Nov 2026 22:00:58 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.10.3 retz.cirad.fr 1E66520D4EBD
+	by retz.cirad.fr (Postfix) with ESMTP id 42E0320D4DE5;
+	Tue, 17 Nov 2026 22:00:59 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.10.3 retz.cirad.fr 42E0320D4DE5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirad.fr;
-	s=573E3878-7916-11F1-BF4B-F68474317960; t=1794949258;
-	bh=mS8VJ60KbJ7B3GE2mbAaQevEqhL/UeJY3gNnsa1WmB8=;
+	s=573E3878-7916-11F1-BF4B-F68474317960; t=1794949259;
+	bh=79OIXfIsBYtCzhqjtjT5JmD6bsEywr7cWxOeYpj9/3I=;
 	h=From:To:Date:Message-ID:MIME-Version;
-	b=Xycq8THxrxJ+E8r+YRoMrPY1u1DelbY1f+i0cHx5gHBoLTtBaNwD0vx4jXhugdW9m
-	 gOqtmI2netarfeK7iyJvs2paMu0iW9228VN/u+bJWXrF5aH2XAXEySJcB5yZDk+1Dh
-	 okVc4KpetSCj9o1CkryDDkr7wol9/pd5H6QQ8Nrj+n89PpFRAN94mUjnTG1DkwKeUJ
-	 oqAR/1YoI581ye+CwJg1745MSvG5zYeF0jWKhG+RNLQlQ+nSXNCF8hKFtrXquU9Ntz
-	 QxiO7qD6cGLggkxHBHq2upfV1VjSotKPM7R070aBhAinqs5jouApjB/VWE7bhKGeiu
-	 H1fiy1hxzjb5g==
+	b=HhTZP2CCXyGKEnGrVW1AMyoqWRYY4gvuQT0syrcDyOS4V+msempD7LDKU2Xfr2WVO
+	 y0tr7vX7DRmqvCuIoo/grWYWTGcrK1SImwcGDT14deyGD4V8cxt+JT4QqnJyRRJFXI
+	 WZi3nngoK150nniPAxMBSVCcHvQoaNoAr375TDEgnxW9eC6buIx6ZAUCmtMmKcmrNU
+	 58SQZvIZRuUMqerIgcl441wFTrFqc3+/BmCFozU/X9p8tBOeZv70CjTQT4CW49yjLz
+	 KrP5BAM/nHizCEH3yuONAL4ulJrW5B/g8EbHxR/T2b1gtncl4RN1UObkriMcoBedUa
+	 OgBc96YNQ+S/g==
 X-Virus-Scanned: amavis at retz.cirad.fr
 Received: from retz.cirad.fr ([127.0.0.1])
  by localhost (retz.cirad.fr [127.0.0.1]) (amavis, port 10026) with ESMTP
- id 7dw6BMPIIR3a; Tue, 17 Nov 2026 22:00:58 +0100 (CET)
+ id Xmq_IYexV-t8; Tue, 17 Nov 2026 22:00:59 +0100 (CET)
 Received: from localhost.localdomain (78-196-243-100.subs.proxad.net [78.196.243.100])
-	by retz.cirad.fr (Postfix) with ESMTPSA id D75C120D557C;
-	Tue, 17 Nov 2026 22:00:56 +0100 (CET)
+	by retz.cirad.fr (Postfix) with ESMTPSA id 18EC720D531A;
+	Tue, 17 Nov 2026 22:00:58 +0100 (CET)
 From: =?UTF-8?q?Fr=C3=A9d=C3=A9ric=20Mah=C3=A9?= <frederic.mahe@cirad.fr>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Yixun Lan <dlan@kernel.org>
@@ -79,9 +79,9 @@ Cc: Brian Masney <bmasney+clk@redhat.com>,
 	spacemit@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	=?UTF-8?q?Fr=C3=A9d=C3=A9ric=20Mah=C3=A9?= <frederic.mahe@cirad.fr>
-Subject: [PATCH 4/6] riscv: dts: spacemit: k1: Add RCPU2 PWM nodes
-Date: Tue, 17 Nov 2026 21:59:49 +0100
-Message-ID: <20261117205951.140146-5-frederic.mahe@cirad.fr>
+Subject: [PATCH 5/6] riscv: dts: spacemit: k1-bananapi-f3: Add PWM fan
+Date: Tue, 17 Nov 2026 21:59:50 +0100
+Message-ID: <20261117205951.140146-6-frederic.mahe@cirad.fr>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261117205951.140146-1-frederic.mahe@cirad.fr>
 References: <20261117205951.140146-1-frederic.mahe@cirad.fr>
@@ -97,123 +97,122 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Add the ten PWM controllers of the RCPU2 block, and make the RCPU2
-system controller a clock provider for them.
+The fan header (J27) has a PWM line driven by GPIO 79 in its RCPU2
+PWM2 function. Add the pin group, the fan with the vendor's four
+levels at 100 kHz, and active trips on the package sensor at 40, 55,
+70 and 85 C, as in the vendor DT.
+
+Tested on a BPI-F3: J27 pin 3 averages 0.86, 1.76, 2.74 and 4.66 V
+for 25, 50, 75 and 100% duty (multimeter, 0.04 V off), and the fan
+goes to level 1 when the package reaches 40 C under load.
 
 Written with help from Claude (Anthropic); reviewed and tested on hardwar=
 e.
 
 Signed-off-by: Fr=C3=A9d=C3=A9ric Mah=C3=A9 <frederic.mahe@cirad.fr>
 ---
- arch/riscv/boot/dts/spacemit/k1.dtsi | 91 ++++++++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
+ .../boot/dts/spacemit/k1-bananapi-f3.dts      | 63 +++++++++++++++++++
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  |  7 +++
+ 2 files changed, 70 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/s=
-pacemit/k1.dtsi
-index 542bfc0d1..3339ff56c 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -456,9 +456,100 @@ syscon_rcpu: system-controller@c0880000 {
- 		syscon_rcpu2: system-controller@c0888000 {
- 			compatible =3D "spacemit,k1-syscon-rcpu2";
- 			reg =3D <0x0 0xc0888000 0x0 0x28>;
-+			#clock-cells =3D <1>;
- 			#reset-cells =3D <1>;
+diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv=
+/boot/dts/spacemit/k1-bananapi-f3.dts
+index 58035d886..e69289cc0 100644
+--- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
++++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+@@ -37,6 +37,13 @@ led1 {
  		};
+ 	};
 =20
-+		rpwm0: pwm@c0888100 {
-+			compatible =3D "spacemit,k1-pwm", "marvell,pxa910-pwm";
-+			reg =3D <0x0 0xc0888100 0x0 0x10>;
-+			#pwm-cells =3D <3>;
-+			clocks =3D <&syscon_rcpu2 CLK_RCPU2_PWM0>;
-+			resets =3D <&syscon_rcpu2 RESET_RCPU2_PWM0>;
-+			status =3D "disabled";
++	fan: pwm-fan {
++		compatible =3D "pwm-fan";
++		pwms =3D <&rpwm2 0 10000 0>;
++		cooling-levels =3D <0 64 128 192 255>;
++		#cooling-cells =3D <2>;
++	};
++
+ 	pcie_vcc_3v3: regulator-pcie-vcc3v3 {
+ 		compatible =3D "regulator-fixed";
+ 		regulator-name =3D "PCIE_VCC3V3";
+@@ -427,3 +434,59 @@ &sdhci0 {
+ 	sd-uhs-sdr104;
+ 	status =3D "okay";
+ };
++
++&rpwm2 {
++	pinctrl-names =3D "default";
++	pinctrl-0 =3D <&rpwm2_0_cfg>;
++	status =3D "okay";
++};
++
++&{/thermal-zones/package-thermal} {
++	trips {
++		package_fan0: package-fan0 {
++			temperature =3D <40000>;
++			hysteresis =3D <5000>;
++			type =3D "active";
 +		};
 +
-+		rpwm1: pwm@c0888200 {
-+			compatible =3D "spacemit,k1-pwm", "marvell,pxa910-pwm";
-+			reg =3D <0x0 0xc0888200 0x0 0x10>;
-+			#pwm-cells =3D <3>;
-+			clocks =3D <&syscon_rcpu2 CLK_RCPU2_PWM1>;
-+			resets =3D <&syscon_rcpu2 RESET_RCPU2_PWM1>;
-+			status =3D "disabled";
++		package_fan1: package-fan1 {
++			temperature =3D <55000>;
++			hysteresis =3D <5000>;
++			type =3D "active";
 +		};
 +
-+		rpwm2: pwm@c0888300 {
-+			compatible =3D "spacemit,k1-pwm", "marvell,pxa910-pwm";
-+			reg =3D <0x0 0xc0888300 0x0 0x10>;
-+			#pwm-cells =3D <3>;
-+			clocks =3D <&syscon_rcpu2 CLK_RCPU2_PWM2>;
-+			resets =3D <&syscon_rcpu2 RESET_RCPU2_PWM2>;
-+			status =3D "disabled";
++		package_fan2: package-fan2 {
++			temperature =3D <70000>;
++			hysteresis =3D <5000>;
++			type =3D "active";
 +		};
 +
-+		rpwm3: pwm@c0888400 {
-+			compatible =3D "spacemit,k1-pwm", "marvell,pxa910-pwm";
-+			reg =3D <0x0 0xc0888400 0x0 0x10>;
-+			#pwm-cells =3D <3>;
-+			clocks =3D <&syscon_rcpu2 CLK_RCPU2_PWM3>;
-+			resets =3D <&syscon_rcpu2 RESET_RCPU2_PWM3>;
-+			status =3D "disabled";
++		package_fan3: package-fan3 {
++			temperature =3D <85000>;
++			hysteresis =3D <5000>;
++			type =3D "active";
++		};
++	};
++
++	cooling-maps {
++		map0 {
++			trip =3D <&package_fan0>;
++			cooling-device =3D <&fan 0 1>;
 +		};
 +
-+		rpwm4: pwm@c0888500 {
-+			compatible =3D "spacemit,k1-pwm", "marvell,pxa910-pwm";
-+			reg =3D <0x0 0xc0888500 0x0 0x10>;
-+			#pwm-cells =3D <3>;
-+			clocks =3D <&syscon_rcpu2 CLK_RCPU2_PWM4>;
-+			resets =3D <&syscon_rcpu2 RESET_RCPU2_PWM4>;
-+			status =3D "disabled";
++		map1 {
++			trip =3D <&package_fan1>;
++			cooling-device =3D <&fan 1 2>;
 +		};
 +
-+		rpwm5: pwm@c0888600 {
-+			compatible =3D "spacemit,k1-pwm", "marvell,pxa910-pwm";
-+			reg =3D <0x0 0xc0888600 0x0 0x10>;
-+			#pwm-cells =3D <3>;
-+			clocks =3D <&syscon_rcpu2 CLK_RCPU2_PWM5>;
-+			resets =3D <&syscon_rcpu2 RESET_RCPU2_PWM5>;
-+			status =3D "disabled";
++		map2 {
++			trip =3D <&package_fan2>;
++			cooling-device =3D <&fan 2 3>;
 +		};
 +
-+		rpwm6: pwm@c0888700 {
-+			compatible =3D "spacemit,k1-pwm", "marvell,pxa910-pwm";
-+			reg =3D <0x0 0xc0888700 0x0 0x10>;
-+			#pwm-cells =3D <3>;
-+			clocks =3D <&syscon_rcpu2 CLK_RCPU2_PWM6>;
-+			resets =3D <&syscon_rcpu2 RESET_RCPU2_PWM6>;
-+			status =3D "disabled";
++		map3 {
++			trip =3D <&package_fan3>;
++			cooling-device =3D <&fan 3 4>;
 +		};
-+
-+		rpwm7: pwm@c0888800 {
-+			compatible =3D "spacemit,k1-pwm", "marvell,pxa910-pwm";
-+			reg =3D <0x0 0xc0888800 0x0 0x10>;
-+			#pwm-cells =3D <3>;
-+			clocks =3D <&syscon_rcpu2 CLK_RCPU2_PWM7>;
-+			resets =3D <&syscon_rcpu2 RESET_RCPU2_PWM7>;
-+			status =3D "disabled";
++	};
++};
+diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/bo=
+ot/dts/spacemit/k1-pinctrl.dtsi
+index 8c57ca05d..1f31f3177 100644
+--- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
++++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
+@@ -587,6 +587,13 @@ pwm14-1-pins {
+ 		};
+ 	};
+=20
++	rpwm2_0_cfg: rpwm2-0-cfg {
++		rpwm2-0-pins {
++			pinmux =3D <K1_PADCONF(79, 2)>;
++			bias-pull-down;
 +		};
++	};
 +
-+		rpwm8: pwm@c0888900 {
-+			compatible =3D "spacemit,k1-pwm", "marvell,pxa910-pwm";
-+			reg =3D <0x0 0xc0888900 0x0 0x10>;
-+			#pwm-cells =3D <3>;
-+			clocks =3D <&syscon_rcpu2 CLK_RCPU2_PWM8>;
-+			resets =3D <&syscon_rcpu2 RESET_RCPU2_PWM8>;
-+			status =3D "disabled";
-+		};
-+
-+		rpwm9: pwm@c0888a00 {
-+			compatible =3D "spacemit,k1-pwm", "marvell,pxa910-pwm";
-+			reg =3D <0x0 0xc0888a00 0x0 0x10>;
-+			#pwm-cells =3D <3>;
-+			clocks =3D <&syscon_rcpu2 CLK_RCPU2_PWM9>;
-+			resets =3D <&syscon_rcpu2 RESET_RCPU2_PWM9>;
-+			status =3D "disabled";
-+		};
-+
- 		usbphy2: phy@c0a30000 {
- 			compatible =3D "spacemit,k1-usb2-phy";
- 			reg =3D <0x0 0xc0a30000 0x0 0x200>;
+ 	ssp3_0_cfg: ssp3-0-cfg {
+ 		ssp3-0-pins {
+ 			pinmux =3D <K1_PADCONF(75, 2)>,	/* SCLK */
 --=20
 2.47.3
 
