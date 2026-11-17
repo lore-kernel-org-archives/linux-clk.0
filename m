@@ -1,57 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.50
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794940727;
-	b=NHr0ZFxVLvS0HIVULlMvxqegPA540gQ7SdmKZMJAX4uy6Ytr5Ui1Vj7OM+LWqRHs71ur
-	 OyEl7g6mIZpob2FtEIzFPJbrd7LNBoLA5xmZz0Ohxr6aLv6vd/6GnlB5+luFMp06yzl6N
-	 XcjZDKLpeCgp37AYfTtEx7l952ruYM3AEl57kDCDwWqistEZrkl2B8ssfIfn4DtALZcS6
-	 3kAhipwLCeRmMR8u6wQckge+EUWiV8PIdWvZZZHDf+Fk5lcJRwTuD5V8+JMkNkIxPb8Bv
-	 /Vz6E06iynXhve0nflgsONe/99M78V6tOGCHuln0jcsubMXEwc8+OKirpRbqIPZBY9Q==
+	t=1794942969;
+	b=cBA6DcZzoSDwzueZNHXprNHRglortuE1bSzjvCw2KYYXkc8k9IxkOCg0ZI8KITL/WHFa
+	 dBgSkwnskqp38qG0nqUfvqccaJHgdH0rYpjB9dd4UtyBmXK4l5cqK/C++OT39lsm4Rs6z
+	 vXXu8cniEyxMdk7ma6N5ls1D+1L+Vaer8/CF/FLqVr1SjLnmkiaabqr0p4g00gtfDPLGI
+	 RJdGWp3fs8nk4IEiRwM8sqypxCOubtBjzfbI4BP8mH70b0ApOZhAAryFgnqrA6vtLROnZ
+	 vOTQON5upHGGh/UNHEAJodthEn8FUDrF+B+uvvnKdWSHtKp3rnTWL5vkSL7n7+UROvg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794940727;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=498/SRosxuf74j2B1/ejrSWjqtLlhrtmrvXGiH9fxp0=;
-	b=kBMtiZby02FxixiDJ5DyBxvOmNHxW8MyvgctqvVenOdmLms7lO20eMlTm7dal7RK7KLh
-	 weXtRSG8tIZv9pZ389ecb4g7KLu8Ia925HrAxj2SGtUUQ5i8MVVGke+yN2TfBQwv+Q4/0
-	 /OR0ruMUO+XiqdwhT5vNmrQ3QXWUhR2GrFpJZ4Jh5oPXfX6hmTCD4XEWhYLvgjnfznZMS
-	 i9C6BOtpZVbU1CqIA1mGFHQeJn/cVDsM1+2kbvTGPqF0HzXWmBoksNmq1hN2cLGAaz+my
-	 4ofzUHuJ66wL5vu6w8E2XSi8E9iBRTsWnV5OWmMRody8P6LG/Q+d2Ksrc2LQcH7R9OQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794942969;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=saTeE4vmtn0WPySBkxUfsYGBUMOtngMCE/Ho+pVY+9E=;
+	b=SSwmkWKC7IgY+iyK9AwLxE/B++Syl1LAPb5ECohF/9jVlnY6N4hVZfsGX+e6M4HEAA9n
+	 6zNFmjnn4RuHET5U1k4tqrvTmgfqNnuvabkQjGGKCYp0GmT7ou8OPDNiaManPPrUPsDxz
+	 JlGLzyZnxOa9sJ1uyuH1x1SSe+UbB23F4zzlORQp3wXsUhu+yn7b5cQrwyI7qNciLpdMT
+	 xJK1wtsdepXWaQXSH4CBf2Xsp+LoX52iHuU/eyzvPm1ruUlAmt9OwIIkXHG5InnsC8Y+C
+	 W3LPxr8hWU/I87PIjxGxx3+lx/6bpIReswcRyRLvmvHtMCZWfpDR8ams9+uzg1x9dDg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KfqeKhWU;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=mz0pJHTw;
+	arc=none smtp.remote-ip=209.85.128.50
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3E0606A31C;
-	Tue, 17 Nov 2026 18:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564E7606A337
+	for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2026 19:16:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 564E7606A337
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KfqeKhWU
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B64DD1F000C4;
-	Tue, 17 Nov 2026 18:38:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794940727;
-	bh=498/SRosxuf74j2B1/ejrSWjqtLlhrtmrvXGiH9fxp0=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=KfqeKhWUAI2pO72QRnGnWJoiZc+0BXlXTDrkW1uF7t7t1m/6H0DfRVKq/EQib9VdI
-	 4Pim4MV3h166SdKhFfPfPH91kpE/NE34tSH12NzUCAk+b5RMoOd2fYJj2W83myWULC
-	 E0pol8TkhLnBf6vWfEjuDteJ/fUK1/E0o+Nc/SepwfM6ngBvgoUJhqfEiHZPDMR6Qy
-	 SlKcPi48P91YqvOOQAs5f3DFmkY1Fk7c5puHKZxVMW/rAHVEhdqqtzkxqQQANSrttj
-	 i/YIMNOTDlolN5V+uNhkpeWOEwcS6gDnqXkORvCPHOl5vxXrjDLbSx/Bmmkz0NoE9y
-	 LM9mjhBhS0qOQ==
-Message-ID: <sashiko-outbox-219368@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v13 5/5] clk: en7523: add support for Airoha AN7583
- clock
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Christian Marangi" <ansuelsmth@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc: robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261117182444.103123-6-ansuelsmth@gmail.com>
-References: <20261117182444.103123-1-ansuelsmth@gmail.com>
- <20261117182444.103123-6-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 17 Nov 2026 18:38:46 +0000
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=mz0pJHTw
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4bb64c99d2fso2359695e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2026 11:16:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1794942967; x=1795547767; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=saTeE4vmtn0WPySBkxUfsYGBUMOtngMCE/Ho+pVY+9E=;
+        b=mz0pJHTw+7QpxzzAKLuXN6/+s2NFA3soOVmbRbVNrqy9Yj66hIqODj7kB2i0gD/Fjd
+         iHhZPAIaVP7va9Du8/DCsHiUqAUUCwhCp6jI5UoBoPvJZoLHekheEgx2eaZ3HonuPAI3
+         nm/B6dxOsR8RI9uwg3qZfol5spcmO6U0IIgTgDIc+tKJoN6hx7r/uN1nafOG3tmzR0PP
+         UGmAKbm6lkptFPo8lYDQVR/DDO1IB0C8P1qoOpMNPCr2ld+kJWrW3qjbH3P9lXxq4cWh
+         /C7ct7q39AQdLdz6GMaZvcRJyzAPt44Q3qSCdpiwVNl7i7ZrTMKOlJwfL4o6YpiRT/KX
+         Vi5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794942967; x=1795547767;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=saTeE4vmtn0WPySBkxUfsYGBUMOtngMCE/Ho+pVY+9E=;
+        b=K8GoUtgiIv7tOSbqK66ynDApTXeDkwraM3WKNct2akjaEFLTm0gzondvpdtn3eVE2E
+         CBU6uRck5PLDjf9aa9841qe+egKgcwfmcWqMdMtShvNpn6m271ixrJ4tDXkBs5f4JS6M
+         5IzTsYw2kKluNkcGARrcw6w5BwGtMIPgHpuajP63Qsza3dIOznwg1O+6xTzQzkN5Xkwg
+         H9Nkpy6580Q4yLJIIDXBAEYyWgEjD0rROJMHHE8g8izejbFJdCKOzeM3OcsJALOmJZJx
+         AIgEBtK92mFx4En6lexuh4gkiqxja9MvHy0rT04Xyl2afThim+05dRiIHkCWad6MJbf7
+         Y6+g==
+X-Forwarded-Encrypted: i=1; AL+hErGI7Uk6k6e+aO7B1xoNINJgvpRTDCDDCMOnZrcyW5qO0A1KXBBOZTLdaCQg+pI9Uvr13OGpJajXJtA=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+t45wiqrq0AM2oGB04kD0+/b3qCcNuUORNFxxdkH3o73WdquFo
+	kDRCsPp4wyACq/I2+DKGkaLnTcFXlJwDyV3pSPt827E4WL+fPyMxFgZ/0mchkqP4pdI=
+X-Gm-Gg: AYBFou0OD+UzA06HBEFTbQuSz9hoGyB2igx/fPd/LS1EAzxLdMa8aFiky0D0UqPpcX4
+	6egOWLTc7OVH/pA4zG3GKMl/nUsu7GEJuqcDPC/PWNT98PnJ5pfe4XppQSwf/4jrlKsDsJt//6Y
+	gnVOi5iJa9Y9UHI2xyTu84bEtRLycicwi/5X+RSOjMCjhF+OY8rSoRCVmm1k6Vb3E9B0DuJb0H+
+	wFP87TqQW3mt0/zofpu6NRQxa3nrzqWPY0XQkTH3K+PpmP8KgzycNyEUwAirIN5hs1H97pZfypC
+	vrn7c26u6U3eBXOHknMYi8QaRrNYtbYcKwj1+tabWlpV1YsHWpAN5lzMqV3EmcC6jeAZ2Vh84OW
+	NiehAQ07kq/fk/267akJVA2Sc8T+ncAnCD6c85jTwqCKpnpsLEjfArBs1tGjK7eU07/3ODO9uTx
+	l7Vmvh0tY0zRPeLMrS+x3bqADFYdlPGBqzX05Nnnfe/V+J7TqWrsEAJmJta5abu5zUFwY2X9VXm
+	Cwp2SxnpdDuUnD6Vty+y8zHsFQfnt7QUJGK8dAgFXQTO24sOuNXNjw0QydJsanNfNEzBv1+9vwI
+	TjNJeRAVUAldWjFmjAsqtEl3K4cGz2gO2zYr+5HJUJviAvP2YW0smoja
+X-Received: by 2002:a05:600c:8b8a:b0:4bb:52bd:a3c7 with SMTP id 5b1f17b1804b1-4bb7da2240amr3295515e9.6.1794942966666;
+        Tue, 17 Nov 2026 11:16:06 -0800 (PST)
+Received: from [127.0.1.1] (82-230-44-19.subs.proxad.net. [82.230.44.19])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4bb7d2b8032sm5658625e9.10.2026.11.17.11.16.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Nov 2026 11:16:06 -0800 (PST)
+From: Alexandre Mergnat <amergnat@baylibre.com>
+Subject: [PATCH 0/3] clk: mediatek: Model MT8196 PWM source selectors
+Date: Tue, 17 Nov 2026 19:16:01 +0000
+Message-Id: <20261117-mt8196-pwm-clk-v1-0-d8725bcea9f4@baylibre.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,112 +90,52 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPGn/GoC/y2Nyw7CIBQFf6VhLQkgD/FXTBc8LopKW4GqSdN/F
+ 63LSebMWVCBHKGgY7egDM9Y4jg0oLsOuYsZzoCjb4wYYZJSqnCqB6olnl4Ju/sNk0AFN4aAYgS
+ 10ZQhxPcveOo3LrO9gqvfyt/I8JjbU900ZE0B7MaUYj12QUoutdeaCLvXnjkmiaHCKy+95YIE7
+ q1UjqJ+XT8P9MwYvgAAAA==
+X-Change-ID: 20261117-mt8196-pwm-clk-0f154aa0e720
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>, 
+ Laura Nao <laura.nao@collabora.com>
+Cc: Chris Chen <chris-qj.chen@mediatek.com>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
+ Alexandre Mergnat <amergnat@baylibre.com>
+X-Mailer: b4 0.16.0
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] clk: en7523: AN7583 MDIO clocks lack rate ops in
-  en7581_register_clocks()
---
+On MT8196, a PWM channel can run at the wrong period: on the test
+board, a 10 ms request on PWM1 gives a period of about 8 s. The
+clock driver does not model the selector that picks the input of
+each PWM channel clock, so the PWM driver can compute its counters
+for the wrong rate.
 
-commit 1cdcca32a0679ec11e0c737e0957ebcf9e9e90ec
-Author: Christian Marangi <ansuelsmth@gmail.com>
+Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+---
+Alexandre Mergnat (2):
+      clk: mediatek: clk-mtk: Add composite mux tables
+      clk: mediatek: Add MT8196 PWM source muxes
 
-clk: en7523: add support for Airoha AN7583 clock
+Chris Chen (1):
+      dt-bindings: clock: mediatek: Add MT8196 PWM muxes
 
-This commit adds clock and reset controller support for the Airoha AN7583
-SoC to the en7523 clock driver.
+ drivers/clk/mediatek/clk-mt8196-peri_ao.c         | 38 ++++++++++++++++++++---
+ drivers/clk/mediatek/clk-mtk.c                    |  1 +
+ drivers/clk/mediatek/clk-mtk.h                    | 16 ++++++++++
+ include/dt-bindings/clock/mediatek,mt8196-clock.h |  5 +++
+ 4 files changed, 55 insertions(+), 5 deletions(-)
+---
+base-commit: f66469d9905b39d2c260a15d7d6db450f4db67c1
+change-id: 20261117-mt8196-pwm-clk-0f154aa0e720
 
-> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> index f12b69f8d4539..f8eef9fcff472 100644
-> --- a/drivers/clk/clk-en7523.c
-> +++ b/drivers/clk/clk-en7523.c
-[ ... ]
-> @@ -369,6 +378,138 @@ static const struct en_clk_desc en7581_base_clks[] =
-=3D {
-[ ... ]
-> +	}, {
-> +		.id =3D AN7583_CLK_MDIO0,
-> +		.name =3D "mdio0",
-> +
-> +		.base_reg =3D REG_CRYPTO_CLKSRC2,
-> +
-> +		.base_value =3D 25000000,
-> +
-> +		.div_bits =3D 4,
-> +		.div_shift =3D 15,
-> +		.div_step =3D 1,
-> +		.div_offset =3D 1,
-> +	}, {
-> +		.id =3D AN7583_CLK_MDIO1,
-> +		.name =3D "mdio1",
-> +
-> +		.base_reg =3D REG_CRYPTO_CLKSRC2,
-> +
-> +		.base_value =3D 25000000,
-> +
-> +		.div_bits =3D 4,
-> +		.div_shift =3D 19,
-> +		.div_step =3D 1,
-> +		.div_offset =3D 1,
-> +	}
-> +};
-[ ... ]
-> @@ -1148,6 +1347,43 @@ static int en7581_clk_hw_init(struct platform_devi=
-ce *pdev,
->  	return en7581_serdes_phy_register(&pdev->dev);
->  }
-> =20
-> +static int an7583_clk_hw_init(struct platform_device *pdev,
-> +			      struct clk_hw_onecell_data *clk_data)
-> +{
-> +	struct en_clk_priv *priv =3D platform_get_drvdata(pdev);
-> +	struct device *dev =3D &pdev->dev;
-> +	struct regmap *map;
-> +	void __iomem *base;
-> +	u32 val;
-> +	int ret;
-> +
-> +	map =3D syscon_regmap_lookup_by_phandle(dev->of_node, "airoha,chip-scu"=
-);
-> +	if (IS_ERR(map))
-> +		return PTR_ERR(map);
-> +
-> +	base =3D devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	priv->base =3D base;
-> +
-> +	en7581_register_clocks(dev, clk_data, map, base);
+Best regards,
+--  
+Alexandre Mergnat <amergnat@baylibre.com>
 
-[Severity: Medium]
-Does registering AN7583_CLK_MDIO0 and AN7583_CLK_MDIO1 via
-en7581_register_clocks() prevent clk_set_rate() from updating their
-hardware dividers?
-
-en7581_register_clocks() registers every entry in soc_data->base_clks with
-devm_clk_hw_register_fixed_rate(), which uses clk_fixed_rate_ops and
-provides no .set_rate, .round_rate, or .determine_rate callbacks.  When the
-MDIO controller driver probes, its clk_set_rate() call is a no-op that
-returns 0 without programming the 4-bit divider in REG_CRYPTO_CLKSRC2,
-leaving the MDIO bus at its 25 MHz boot default instead of 2.5 MHz:
-
-drivers/net/mdio/mdio-airoha.c:airoha_mdio_probe() {
-	...
-	/* Check if a custom frequency is defined in DT or default to 2.5 MHz */
-	if (of_property_read_u32(dev->of_node, "clock-frequency", &freq))
-		freq =3D 2500000;
-
-	ret =3D clk_set_rate(priv->clk, freq);
-	if (ret)
-		return ret;
-	...
-}
-
-Although adjustable clock rate support was noted on v10 as planned for a
-separate series, the in-tree airoha-mdio consumer already relies on
-clk_set_rate() at this commit.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117182444.1031=
-23-1-ansuelsmth@gmail.com?part=3D5
