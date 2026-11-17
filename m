@@ -1,80 +1,74 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794877504;
-	b=B9WqbTsuHkonvvxk7IGRm0l77tvpUtHFwuZh+tL3bX+TzflQns5lL3Rh/UiI1Hfw63Dv
-	 OATXARcyw/nPQ0XDqWPcG/Abg6Z9uh10+U4qCrZ1qd0i35HaX0stgBr7TrQLri+EE8hOo
-	 neB+KSFj0u76Ib/Vw9x/KiKRuKbHqX6rJQdVQnKCXhJmw2vTThIO07BWxEwOU5qk/eqGb
-	 N81dEIY66JbiWtRI0tMPyxn+01ioF0lwF8Q9e2m8Tqx67L/xBpM8w2XuYDVo6G0BwS6PN
-	 L9YIr5ssWdft7MbV32z8307R7CD7XF3T8FbEj9ne83xWVS68e17k6PG+L0EaMnTYSKA==
+	t=1794877506;
+	b=wZnR9mW9F+FEy+2jg7mlWX5ZvUMPL4JWWH6dXrogcZx4Gio1UesgCK1Ou1Onf2xcUF4f
+	 r26vLeF04EoEwuI2Xy5C6Q8adbZRUdSvpAkkin+le8Mf/WvctKHC7PjPPXwnlqpdRcuhz
+	 Xmi9LjWU0Y/uHI4zkM3/K+79GpZOAt3biL/0+qBvrKp0cJhhZu3M2ujUFqrlDsBd1qRwJ
+	 4QU8FflU+6BMdTLGsJOprF9eASxcsRUmlY4bSuRS/175yEyW2D7oEqkTbqm+/9O0iXFKW
+	 PVyd7BnVnmLkwcd/MRPGAtN8ZLEuxgezt3r3ESmaqCaP7yFoS6c2UTIWBNGRlmX8/jA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794877504;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794877506;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=P1GbrACwDJFLCQ00w48sjT3/YMiKr4B3U/MTFVQ9cU8=;
-	b=g+Wwe/+4MU1NLllbsTq7NngdzmuaBdB2HREtEDcVfydYJtjPbdzT/wwYzZZ8DUGLMjxB
-	 1gin9+c7Ldkcx1tnAo+zrZpUjQeRCpIlcqdIykHUKo8jO3tDZadu0nZByK2+0HHfJzoxo
-	 1zw8zFuGNUYaAboA+w0lNBpfI73pkHY2QBqCIi8ZBbwEIhpWcKJ+r2b0oyD3XAWZkC++J
-	 uTNd6d7IQaRmUTqt7yNddfdyptjQpjk2INZosCsDxUzgQotJgewXQWCpYEnkk2nVjf3Lm
-	 BQfynyeUMDbGvp5TKCmWHWErtaYMMQtKtVn7h0xiav2HDfm8Xoj6q2QrSh8e2RdxFoA==
+	bh=YxNXRFV2tfHnN9zjEBdLST7EXKRWTkncONoWrmBal2M=;
+	b=HSCaNwB6Dpqttr8/Ej3t5bmN3Fe2ehtb6M3ethAauu71zXmrWDilojrE4L3SWoWY2eVV
+	 ibnM4D0Y8ZeHmeP2udGliw9JUwxIOdUpgOKuZESsvBv9rIsLd2qNCit3k1DgrlueNLdpN
+	 Ngoo7Xn+CE6ha1DW8qsNyN8WyIHpOPH5ZmoG7tw4RN/6txccI0m7d61VAePrhQ0am8TO0
+	 IipxjeKC1Vi8nfNsAbxkk1u8RhSD0OEqd+sfeYTESUcAI5Gy59zRBtSMPmlZthreZRxug
+	 j9r13DNjpH3yhIZMZDuH3Jc6QrU09Bo85pyZ/SLdojqzKk5PxrWkC1bAoZrxn5Q3f2w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=e6X67APH;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ihiBjnmR;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A3C606A332;
-	Tue, 17 Nov 2026 01:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D70606A334;
+	Tue, 17 Nov 2026 01:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=e6X67APH
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC2771F000C6;
-	Tue, 17 Nov 2026 01:05:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ihiBjnmR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F4421F000CD;
+	Tue, 17 Nov 2026 01:05:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794877504;
-	bh=P1GbrACwDJFLCQ00w48sjT3/YMiKr4B3U/MTFVQ9cU8=;
+	s=k20260515; t=1794877505;
+	bh=YxNXRFV2tfHnN9zjEBdLST7EXKRWTkncONoWrmBal2M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=e6X67APHkqpxvINqIFMPGoNU+Wsdqe7QScwFqn30wo3d9irGn7GEns0YozCHY/cZw
-	 R/oh48MT/xswmMPTTfdkOH07S0z5EN1uTcQC1PsJDVEcP6oN2PboT0nUkW1xiTTLIR
-	 Ug6Rx7phB1R/6WBvVH38iy7Ymt+80RvTfVSIbv83Vm/c9FLd/N6R6z4M2TlbEt/DVl
-	 6/faf7aF8skowd0UuSyU0sV3z1+UzZJ+6F3/X9W/A9Fsk3Mx74rGlUMr/1dWS2CRnu
-	 1/j4OXR9FoFkbb7qPpEu0u8EPK/1hLF9ncYb07E4wP2lTY7G/QhhemIv+Z36SLndfW
-	 N6A1Q8zkj8SXg==
+	b=ihiBjnmRjKcU2lWBTMOD6ZsOSL23L8g7JtHfDU/jie6aoauMKrFgyB3jCWTlCEb0H
+	 av/sznex8DjoOG06+ViORXzDpSAxzWglbsD3r1dNrm7ijV6DdQTBnmPpQ3WF1gaepv
+	 8arGYdTFmp270YLkd3C1vhm++82NEBm06pGWjWnqv5sLIlZSqzc2Q8Td+1yjAWdDFL
+	 cv9LQB4L4UJmSdPKvdXiFR2wRAvFtYzd4p4g/gpHNrAEDwz1+xtDCiA508cttz459C
+	 5xYUy/wHOw4WLFNwflwdRGnVIxG60Ja++5yKAzSn1xFnyCzYdgUhjY2orbf8rVKNpJ
+	 LTTf9qgzJ2Lpg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Abel Vesa <abelvesa@kernel.org>,
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Joonwoo Park <joonwoop@codeaurora.org>,
-	Imran Khan <kimran@codeaurora.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Bryan O'Donoghue <bod@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Ilia Lin <ilialin@codeaurora.org>,
-	Loic Poulain <loic.poulain@oss.qualcomm.com>,
 	Konrad Dybcio <konradybcio@kernel.org>,
-	Yassine Oudjana <y.oudjana@protonmail.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>,
 	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	Christopher Obbard <chris.obbard@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH 00/10] clk: qcom: several fixes for stability on MSM8996/98 platforms
-Date: Mon, 16 Nov 2026 19:04:41 -0600
-Message-ID: <179487749319.432567.7239081834486864574.b4-ty@b4>
+	dri-devel@lists.freedesktop.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v5 0/5] arm64: dts: qcom: support SDM845 HDK
+Date: Mon, 16 Nov 2026 19:04:42 -0600
+Message-ID: <179487749311.432567.13731277200090621528.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261019-msm8998-fix-clocks-v1-0-370949e4d8a0@oss.qualcomm.com>
-References: <20261019-msm8998-fix-clocks-v1-0-370949e4d8a0@oss.qualcomm.com>
+In-Reply-To: <20261019-sdm845-hdk-v5-0-4aa7e22cd0ed@oss.qualcomm.com>
+References: <20261019-sdm845-hdk-v5-0-4aa7e22cd0ed@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -88,22 +82,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 19 Oct 2026 16:40:59 +0300, Dmitry Baryshkov wrote:
-> The MSM8996/MSM8998/SDM630/SDM660 platforms face several issues with
-> stability (e.g. setting running at the halved frequency after certain
-> frequency switches, resetting if run without clk_ignore_unused, failing
-> to scale GPU clock, etc.). In preparation for scaling core, cluster, CBF
-> and GPU voltages, fix these issues affecting platform stability.
-> 
-> Compared to other patches in the series the patches for MSM8996-Pro were
-> lightly tested, as a part of the larger series and only remotely.
+On Mon, 19 Oct 2026 12:18:02 +0300, Dmitry Baryshkov wrote:
+> Lantronix HDK845 aka Qualcomm SDM845-HDK is a hardware development kit
+> for the Qualcomm SDM845 / SDA845 platform. It uses the modem-less
+> version of the chip (SDA845) and provides a rich set of the peripherals
+> and connectors. The DSI panel is an optional addon, so it is being split
+> to a separate overlay. To (hopefully) ease merging, the overlay is split
+> to a separate patch as it depends on the panel. The base DT doesn't have
+> external dependencies.
 > 
 > [...]
 
 Applied, thanks!
 
-[10/10] arm64: dts: qcom: msm8996pro: use the MSM8996 Pro CPU clock compatible
-        commit: 0f45504f2319e2ba423c7996740746e4fbc8129c
+[4/5] arm64: dts: qcom: add device tree for SDM845-HDK
+      commit: 30eb04d28111e83d2ada48f46be2d314e1a47860
+[5/5] arm64: dts: qcom: sdm845-hdk: add display card overlay
+      commit: e0bcadc233e6f0876eb66130389db9909c831dc3
 
 Best regards,
 -- 
