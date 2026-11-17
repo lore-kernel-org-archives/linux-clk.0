@@ -1,55 +1,80 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794874266;
-	b=2Yvtk8shCXiDfArgTZXipd3jkUQuDEbxy8s+Og4h4km1Tmq0U1kYAskANDYYlhXeGmMp
-	 l30SSRCASMwhS4i8t7LODRPXXVunWnZ+ofISoK8cX7JuQc96ohYXU9VqXgRtyRspm+oWy
-	 QgMefhQ3EC5cP6NDjqf1nOwkTfy70XmmAuLCsjChfVJM13GrUpTSzjyBoEm+k8cohV5lB
-	 mGJIP39CHELF+9Jo3peD8cu6+0HNWySRrP6c512ObMTk4Is1aIq3ZsVrfd/pvTTkl4MCC
-	 XmdKUlZnn30JahnVyLz1HbBYTnaaySQ8EXCI+YMaSElaSadVyAFqABgT/FluXbeMliw==
+	t=1794877504;
+	b=B9WqbTsuHkonvvxk7IGRm0l77tvpUtHFwuZh+tL3bX+TzflQns5lL3Rh/UiI1Hfw63Dv
+	 OATXARcyw/nPQ0XDqWPcG/Abg6Z9uh10+U4qCrZ1qd0i35HaX0stgBr7TrQLri+EE8hOo
+	 neB+KSFj0u76Ib/Vw9x/KiKRuKbHqX6rJQdVQnKCXhJmw2vTThIO07BWxEwOU5qk/eqGb
+	 N81dEIY66JbiWtRI0tMPyxn+01ioF0lwF8Q9e2m8Tqx67L/xBpM8w2XuYDVo6G0BwS6PN
+	 L9YIr5ssWdft7MbV32z8307R7CD7XF3T8FbEj9ne83xWVS68e17k6PG+L0EaMnTYSKA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794874266;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=YjKQ2PdbHkjHFZ+hN04dl+fGzrnZtXKbmZaR+wm1jOg=;
-	b=0o5jHsv8KWAzJyG2OZq0rXUDUXjHe57KgH5DkNo2wvoa2biGehVh/IPlchAgoKufffBp
-	 ZKV0f3795Eg0z+w9oapQvi6uoKKVixKdlOaMRSQO3j/B8UDwQoOiUeVGcniMzhQi4VgER
-	 sC9Gfc+wxz8h6RWLSWyoQT22cFIM0ZCB6O/0uukmj18jlIa/V5yNcXgCQ63dI/d+JIiEo
-	 CRi29MhoK9C3EikSktIn061Vv8sDt/KnVXBHmkSjCjfmpbVabu2y+/jubScCi3WHtpvKG
-	 7aPk4ByNMu9+tnGqB2c0IHIfptU7OHLNV2Dz1CACzaY+mRQWL9IYkXtHawqwFYJWN4w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794877504;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=P1GbrACwDJFLCQ00w48sjT3/YMiKr4B3U/MTFVQ9cU8=;
+	b=g+Wwe/+4MU1NLllbsTq7NngdzmuaBdB2HREtEDcVfydYJtjPbdzT/wwYzZZ8DUGLMjxB
+	 1gin9+c7Ldkcx1tnAo+zrZpUjQeRCpIlcqdIykHUKo8jO3tDZadu0nZByK2+0HHfJzoxo
+	 1zw8zFuGNUYaAboA+w0lNBpfI73pkHY2QBqCIi8ZBbwEIhpWcKJ+r2b0oyD3XAWZkC++J
+	 uTNd6d7IQaRmUTqt7yNddfdyptjQpjk2INZosCsDxUzgQotJgewXQWCpYEnkk2nVjf3Lm
+	 BQfynyeUMDbGvp5TKCmWHWErtaYMMQtKtVn7h0xiav2HDfm8Xoj6q2QrSh8e2RdxFoA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QZGxqJln;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=e6X67APH;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F61606A331
-	for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2026 00:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A3C606A332;
+	Tue, 17 Nov 2026 01:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QZGxqJln
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8DC21F000C9
-	for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2026 00:11:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=e6X67APH
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC2771F000C6;
+	Tue, 17 Nov 2026 01:05:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794874265;
-	bh=YjKQ2PdbHkjHFZ+hN04dl+fGzrnZtXKbmZaR+wm1jOg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=QZGxqJlnFAM93hsizrM154QuW/4jTifan+hgL0/vdwLtJ7Sa3Kt9qXsYyx0Dn9IcO
-	 KBYlZmf2GmhMlpygHXpgO3oYd433qlxTMOAA4/GDa2TkY6jS5OC+SJFz5xnjtoSoDD
-	 8fKTcIZPrHMnXKlUozahNvcnL/CRVq0OyM6qaSk0EHl+0Rcv2O7gE276rln/sjy82H
-	 8V7krPMh+GTWYREisb8jxAFtqyIWTyUXxn4nFKQs5GkClcVxR/rdfjKT+oON3aHd8M
-	 Y8RSZKVka5gmPed6iQ/XR3zK+9m7fwofxSbCd/gcr12TcdNXWzuEMAi5iE29rSSHZC
-	 O2CdyMDCf+Uvg==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3ace304021eso39498051fa.2
-        for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2026 16:11:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErE+XgVn/ACqIUoJdeLWDaIUhIwY7+20WCVovs7wbbdwBERYtM8rlQDNLjjInSEasqQBM1B20YtCy5A=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/p2oZEQU5qzBHghR42ZbP8Maqgtnnh+Dq592FbhUR82739mz2h
-	rNKV7tehnSm6ExggMc9l0RNc+57AgsyHeY++S3t33WmEw5lHKqdIyQvZ0f5+x23k2p6dWBtc+p+
-	opTcUOzUkE8mSstugoHA/5WIuaHnt5rs=
-X-Received: by 2002:a05:6512:230e:b0:5c1:4f2b:a2ba with SMTP id
- 2adb3069b0e04-5c1709f75b9mr4513682e87.34.1794874264502; Mon, 16 Nov 2026
- 16:11:04 -0800 (PST)
+	s=k20260515; t=1794877504;
+	bh=P1GbrACwDJFLCQ00w48sjT3/YMiKr4B3U/MTFVQ9cU8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=e6X67APHkqpxvINqIFMPGoNU+Wsdqe7QScwFqn30wo3d9irGn7GEns0YozCHY/cZw
+	 R/oh48MT/xswmMPTTfdkOH07S0z5EN1uTcQC1PsJDVEcP6oN2PboT0nUkW1xiTTLIR
+	 Ug6Rx7phB1R/6WBvVH38iy7Ymt+80RvTfVSIbv83Vm/c9FLd/N6R6z4M2TlbEt/DVl
+	 6/faf7aF8skowd0UuSyU0sV3z1+UzZJ+6F3/X9W/A9Fsk3Mx74rGlUMr/1dWS2CRnu
+	 1/j4OXR9FoFkbb7qPpEu0u8EPK/1hLF9ncYb07E4wP2lTY7G/QhhemIv+Z36SLndfW
+	 N6A1Q8zkj8SXg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Abel Vesa <abelvesa@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Joonwoo Park <joonwoop@codeaurora.org>,
+	Imran Khan <kimran@codeaurora.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+	Bryan O'Donoghue <bod@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Ilia Lin <ilialin@codeaurora.org>,
+	Loic Poulain <loic.poulain@oss.qualcomm.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Yassine Oudjana <y.oudjana@protonmail.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Christopher Obbard <chris.obbard@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH 00/10] clk: qcom: several fixes for stability on MSM8996/98 platforms
+Date: Mon, 16 Nov 2026 19:04:41 -0600
+Message-ID: <179487749319.432567.7239081834486864574.b4-ty@b4>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261019-msm8998-fix-clocks-v1-0-370949e4d8a0@oss.qualcomm.com>
+References: <20261019-msm8998-fix-clocks-v1-0-370949e4d8a0@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,34 +84,27 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261117-xg6846b-bcmbca-xrdp-reset-v5-0-f584e8b8e696@kernel.org>
- <20261117-xg6846b-bcmbca-xrdp-reset-v5-1-f584e8b8e696@kernel.org> <sashiko-outbox-217953@kernel.org>
-In-Reply-To: <sashiko-outbox-217953@kernel.org>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 17 Nov 2026 01:10:52 +0100
-X-Gmail-Original-Message-ID: <CAD++jLnNALhUhekMvUxes-+Wmq+g01Tck9NNvViy+ofFSL+N4A@mail.gmail.com>
-X-Gm-Features: Aa3M54rQwu5Yk_Bv4F8GS-3F1wpvPataOkYjkIAgSEJnOZCG3CWzAbrtg66X8GU
-Message-ID: <CAD++jLnNALhUhekMvUxes-+Wmq+g01Tck9NNvViy+ofFSL+N4A@mail.gmail.com>
-Subject: Re: [PATCH v5 1/6] dt-bindings: mfd: Describe the BCM6846 PMC complex
-To: sashiko-reviews@lists.linux.dev
-Cc: mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, 
-	lee@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 17, 2026 at 12:57=E2=80=AFAM <sashiko-bot@kernel.org> wrote:
->
-> [Severity: Medium]
-> As reported by Philipp Zabel on RFC [1], why are power-controller,
-> clock-controller, reset-controller, and hwmon modeled as separate
-> address-less child nodes rather than putting the provider cell properties
-> directly on the brcm,bcm6846-pmb node?
 
-Parroting Sashiko.
+On Mon, 19 Oct 2026 16:40:59 +0300, Dmitry Baryshkov wrote:
+> The MSM8996/MSM8998/SDM630/SDM660 platforms face several issues with
+> stability (e.g. setting running at the halved frequency after certain
+> frequency switches, resetting if run without clk_ignore_unused, failing
+> to scale GPU clock, etc.). In preparation for scaling core, cluster, CBF
+> and GPU voltages, fix these issues affecting platform stability.
+> 
+> Compared to other patches in the series the patches for MSM8996-Pro were
+> lightly tested, as a part of the larger series and only remotely.
+> 
+> [...]
 
-This question has already been answered in earlier iterations of
-the patch.
+Applied, thanks!
 
-Yours,
-Linus Walleij
+[10/10] arm64: dts: qcom: msm8996pro: use the MSM8996 Pro CPU clock compatible
+        commit: 0f45504f2319e2ba423c7996740746e4fbc8129c
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
