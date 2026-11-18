@@ -1,60 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795009103;
-	b=iQajjQUHG8QzIL1b+0rdtgPzzd1ref6GfNAymXXba0m1vHNVnuxcsGGqoeDcOoT7Ewok
-	 E2xObF+l4LJ+beErzbdgSkUG7evwvR3uybyH8nENFcJxw8vSacYyvvTH1Ac/xUpVdlyhm
-	 7Rl9Ojp/xWZzc+Tl98u1ig3Ixpf5puMvFij9c5ktRWcZAR+rRn0Y8xdH80aj+7UgLbZ0e
-	 emhTBBtJWBTKyGW9cNKA5lEFNgg222FAJQPSEqSyXZJp5J4M65xi/YwoQWs+VJ2C1WMBV
-	 5BHEhl0GfbZrVjoM7nsFdDpKD+gtTBiMmN1S3W+XnYiMbFeJ1DIVNTa7cJz045OHX6g==
+	t=1795009108;
+	b=nzOR9rW9Gm9GrKoCdCyfjcpK2r6Xf+ucE4chnrPaOJjfiomxL20bE9/KMVc1A4WhPLAR
+	 eWBbR28MIioXPZozzgwgo9gbmfX7Pz589PR5Phncqoy0TqWJPSyIu19Qrw9R93S+Ah1f1
+	 K8eowbMSYJQCk18CYvKHV4yuTuB2iDXEoiRcBSO/3U7LMwzGznKz4HkQIqA5Q/Ah2Z1BW
+	 pnkMCFswF1otMXCQZ3R7atnXRHDVcMnxYg/mMEm1vS1c7ajdmoilUUn71ph/HnaswxQjp
+	 gGT6NbnoyeKz2TM9cSAJmTA5Dk3iFVIuhIPHJE8Yh8/eIXb7kYUHDyLcUGr+slAMXyQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795009103;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795009108;
 	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:Date:
 	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Last-TLS-Session-Version;
-	bh=AGWE2RmMJrveHquIEAsn/34An2cqTpUBjzB0QA5yts0=;
-	b=KcXI52LXm5IqO7IsMF4r/xiwFde/vuxaiIZVWWY+WBeTSZRwvXHd0X7A5yiPu4ZhusmM
-	 alCojPkFZY/45kTdQyXt4ISaVlNgD0WVLJpvaeegTcQMgOmE1knq0g0Laltuyoc8oevnt
-	 q9ekEeTRdkPMaQ69FuspUiuJcnEC23XPCMaguVrvqbvsCewmOsQbse4cgdec1e9ljOnyC
-	 R2Iu8kOWxX8Xdy4fP1tE78xb8XC4g8VJR/ric6/GvyANxU5bRVxHAI120QoXM1HM2zZ6W
-	 JxVGAtK1Stqz5RilXyL2yS6d1QitUO/pVY0ahAuA/2I6cI/Nj8CQAztEibjwr5gOTGg==
+	bh=kFZC9tucpVhNJbgeqCn+d/WcROzjtP2rv0y3T4mg1tY=;
+	b=vUZCPEyl2XDXzmhALGKtzv1B4oImbS9pwSpjiPE0UN+On2YcLaXTCcU5ka9l6Mh3b1Bg
+	 PbJy7EEtUkzZlrNH6VMM24tNucz0TuQ/FkW4bw2YvcQmdsd71iyLrWyevHWiC0nKREg0z
+	 5hETwW6vlbylNQ3Z+N6feMHY9WJQty9oXNwnpnZMGrPr8NT+louQstgLsN0xKSyGUWJPG
+	 ZVUYE3c7TEAZYFwpUPv00Ov2b10XPoFen0ZcGwJHCFsAAsnSHEeUBJG5O95mxBXUoiTCw
+	 8ATODrLaJmhBEhN9vICPYJI0a3Q6cj57kBGO7vhURMnZqv8wxuoqzbPdyWx919DSGkw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=bootlin.com;
 	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=vaN3vp91;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=OZ0sjl4v;
 	arc=none smtp.remote-ip=185.246.85.4
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF0A606A330
-	for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2026 13:38:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5CF0A606A330
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BA0606A336
+	for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2026 13:38:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 73BA0606A336
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=vaN3vp91
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=OZ0sjl4v
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 3EC744E4162A;
-	Wed, 18 Nov 2026 13:38:22 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 34CAE4E41627;
+	Wed, 18 Nov 2026 13:38:27 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id EDE585FE9B;
-	Wed, 18 Nov 2026 13:38:21 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CA73411BC1FF3;
-	Wed, 18 Nov 2026 14:38:15 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id EE9555FE9B;
+	Wed, 18 Nov 2026 13:38:26 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8D06711BC206A;
+	Wed, 18 Nov 2026 14:38:20 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1795009100; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1795009104; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=AGWE2RmMJrveHquIEAsn/34An2cqTpUBjzB0QA5yts0=;
-	b=vaN3vp91o/s1mJ8OSC6zzue1loB7dwLglWh4yRkkgN9Txa+1D6SatnDzblqGScjqtbbBed
-	qV7fG0QgshHPErJ30v1wxpDG5KbrGj0WyTs8U3HX2JvKZsyQUXpeIcIZBuHF28rPPXRFWM
-	3HHG2vonPuEALyKzhCpHQdDsrwvROO4kyWI0TbhM+4M+qAkb0RA5zQpgkO1byHz27h5fl6
-	x8bpUFAVWxdel2LGPQqG9q3CN0EscoLuuRL6Pzn3nhW6annxGazDNipi9JI6Lz6nEtT8pe
-	wQ65x2EkFYiIgqW+eKWCxbUocxn3iLkoFtEXTL1kxNC/Hj7ERtTjRMhefbMJwA==
+	bh=kFZC9tucpVhNJbgeqCn+d/WcROzjtP2rv0y3T4mg1tY=;
+	b=OZ0sjl4vmh27yEtpI5NUr4MmRGxIyVVTfCvJ5u0WaWUQMFETlxEAQO342LSuvqacew+b1a
+	CmSP7RvUtqtyu+DTbJAlrMwJzAMBFbF0ip1Udw2INht7rnMEOxPB2HQmaktqPw6T7Jf2NK
+	hFsuRPeLNTfcfTYoP4JCM/LXqZmMMX01KeInKb7XFVYSiatCqm/ui8vzqiBzpvJH4s7f+8
+	/E95gn1nq1v4oT4vq0rhbWuyeskz0XoqH36T9gqTTz8HDWJJJ0oVpBGZHfuUDz4emNk6oM
+	vVeqBI5873gIqbkdPq324yBTc9R3f2us/VGKLmfAPq91NJkyEcvSQshsa6Gd6w==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Wed, 18 Nov 2026 14:37:13 +0100
-Subject: [PATCH v11 06/10] clk: nuvoton: ma35d1: Use device managed helpers
- for fixed rate clocks
+Date: Wed, 18 Nov 2026 14:37:14 +0100
+Subject: [PATCH v11 07/10] clk: Create
+ devm_clk_hw_register_fixed_rate_parent_hw()
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -66,7 +66,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261118-perso-ma35d1-upstream-clk-v11-6-bd1d1e060926@bootlin.com>
+Message-Id: <20261118-perso-ma35d1-upstream-clk-v11-7-bd1d1e060926@bootlin.com>
 References: <20261118-perso-ma35d1-upstream-clk-v11-0-bd1d1e060926@bootlin.com>
 In-Reply-To: <20261118-perso-ma35d1-upstream-clk-v11-0-bd1d1e060926@bootlin.com>
 To: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
@@ -84,76 +84,49 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Steam Lin <STLin2@winbond.com>, linux-arm-kernel@lists.infradead.org, 
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- openbmc@lists.ozlabs.org, Miquel Raynal <miquel.raynal@bootlin.com>
+ openbmc@lists.ozlabs.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Most of the clocks are already registered with device managed helpers,
-except the fixed clocks. Harmonize the driver by using the already
-available managed helper for that.
+clk-provider.h exposes many different helpers to help registering
+clocks. Most of them expose both a 'basic' variant and their 'devm_'
+extension (with just the last parameter of the inner function call
+becoming true instead of false). Do the same with:
 
+     clk_hw_register_fixed_rate_parent_hw() by creating
+devm_clk_hw_register_fixed_rate_parent_hw().
+
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/clk/nuvoton/clk-ma35d1.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ include/linux/clk-provider.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk-ma35d1.c
-index 65a2691002a7..8fab3c563316 100644
---- a/drivers/clk/nuvoton/clk-ma35d1.c
-+++ b/drivers/clk/nuvoton/clk-ma35d1.c
-@@ -139,9 +139,9 @@ static const struct clk_div_table eadc_div_table[] = {
- 	{13, 28}, {14, 30}, {15, 32}, {0, 0},
- };
- 
--static struct clk_hw *ma35d1_clk_fixed(const char *name, int rate)
-+static struct clk_hw *ma35d1_clk_fixed(struct device *dev, const char *name, int rate)
- {
--	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
-+	return devm_clk_hw_register_fixed_rate(dev, name, NULL, 0, rate);
- }
- 
- static struct clk_hw *ma35d1_clk_mux(struct device *dev, const char *name,
-@@ -280,24 +280,24 @@ static int ma35d1_clocks_probe(struct platform_device *pdev)
- 	 * purposes.
- 	 */
- 	if (num_clks == 1) {
--		hws[HXT] = ma35d1_clk_fixed("hxt", 24000000);
--		hws[LXT] = ma35d1_clk_fixed("lxt", 32768);
-+		hws[HXT] = ma35d1_clk_fixed(dev, "hxt", 24000000);
-+		hws[LXT] = ma35d1_clk_fixed(dev, "lxt", 32768);
- 	}
- 
- 	hws[HXT_GATE] = ma35d1_clk_gate_parent_data(dev, "hxt_gate", hxtg_parent_data,
- 						    clk_base + REG_CLK_PWRCTL, 0);
- 	hws[LXT_GATE] = ma35d1_clk_gate_parent_data(dev, "lxt_gate", lxtg_parent_data,
- 						    clk_base + REG_CLK_PWRCTL, 1);
--	hws[HIRC] = ma35d1_clk_fixed("hirc", 12000000);
-+	hws[HIRC] = ma35d1_clk_fixed(dev, "hirc", 12000000);
- 	hws[HIRC_GATE] = ma35d1_clk_gate(dev, "hirc_gate", "hirc",
- 					 clk_base + REG_CLK_PWRCTL, 2);
--	hws[LIRC] = ma35d1_clk_fixed("lirc", 32000);
-+	hws[LIRC] = ma35d1_clk_fixed(dev, "lirc", 32000);
- 	hws[LIRC_GATE] = ma35d1_clk_gate(dev, "lirc_gate", "lirc",
- 					 clk_base + REG_CLK_PWRCTL, 3);
- 
- 	hws[CAPLL] = ma35d1_reg_clk_pll(dev, CAPLL, pllmode[0], "capll",
- 					hws[HXT_GATE], clk_base + REG_CLK_PLL0CTL0);
--	hws[SYSPLL] = ma35d1_clk_fixed("syspll", 180000000);
-+	hws[SYSPLL] = ma35d1_clk_fixed(dev, "syspll", 180000000);
- 	hws[DDRPLL] = ma35d1_reg_clk_pll(dev, DDRPLL, pllmode[1], "ddrpll",
- 					hws[HXT_GATE], clk_base + REG_CLK_PLL2CTL0);
- 	hws[APLL] = ma35d1_reg_clk_pll(dev, APLL, pllmode[2], "apll",
-@@ -338,8 +338,8 @@ static int ma35d1_clocks_probe(struct platform_device *pdev)
- 	hws[PCLK3_DIV4096] = ma35d1_clk_fixed_factor(dev, "pclk3_div4096", "pclk3", 1, 4096);
- 	hws[PCLK4_DIV4096] = ma35d1_clk_fixed_factor(dev, "pclk4_div4096", "pclk4", 1, 4096);
- 
--	hws[USBPHY0] = ma35d1_clk_fixed("usbphy0", 480000000);
--	hws[USBPHY1] = ma35d1_clk_fixed("usbphy1", 480000000);
-+	hws[USBPHY0] = ma35d1_clk_fixed(dev, "usbphy0", 480000000);
-+	hws[USBPHY1] = ma35d1_clk_fixed(dev, "usbphy1", 480000000);
- 
- 	/* DDR */
- 	hws[DDR0_GATE] = ma35d1_clk_gate(dev, "ddr0_gate", "ddrpll",
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index a355d1ee5189..c2b80cb3ab0b 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -458,6 +458,19 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+ 					     fixed_rate)		      \
+ 	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, (parent_hw),  \
+ 				     NULL, (flags), (fixed_rate), 0, 0, false)
++/**
++ * devm_clk_hw_register_fixed_rate_parent_hw - register fixed-rate clock with
++ * the clock framework
++ * @dev: device that is registering this clock
++ * @name: name of this clock
++ * @parent_hw: pointer to parent clk
++ * @flags: framework-specific flags
++ * @fixed_rate: non-adjustable clock rate
++ */
++#define devm_clk_hw_register_fixed_rate_parent_hw(dev, name, parent_hw, flags, \
++						  fixed_rate)		       \
++	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, (parent_hw),   \
++				     NULL, (flags), (fixed_rate), 0, 0, true)
+ /**
+  * clk_hw_register_fixed_rate_parent_data - register fixed-rate clock with
+  * the clock framework
 
 -- 
 2.56.0
