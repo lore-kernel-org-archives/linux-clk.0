@@ -1,100 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.84.6
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795015635;
-	b=dfPDVV8xoSxiTAFRoqipHV+1suUjGcHC6HoDGuUw0gUt0Jq4RioOHQQpU693/NTTmpj8
-	 2H/C07Epq29mI/fKQx5ptl5u5es/ouD2IzEgJwLW3H7I7aPpN1tfj4YnKfm8Y0ooTMXkE
-	 +5q8mPWTotxBZJvyLJ65iQfh93AQ7oIafeUuRAgp77DgGomZRcwOq8wPz+WfaI3OKphX9
-	 7gXRGVxTdDmkDkX4fOfO7IRjrhMImaTsFwJMb6SmePLkZLOlhNlCc/RKh+anbaajB7emv
-	 uoIUMN/Zc4mEYFCq1dJKB8qZaiDjOOaEC5BRTDYaw+4l8Co8QHvsxMVwvD0iUX0M3fg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795015635;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:Content-Type:Content-Disposition:
-	 In-Reply-To:X-ClientProxiedBy:MIME-Version:
-	 X-MS-Exchange-MessageSentRepresentingType:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=eY2hHNDdt1qZV3S19uhVtiep8ZuUlQu9tochO15/uXs=;
-	b=u8ErW3UtysNXxVa2N0mH02mZvEmL5su4mcPW24TuNOHddWer3ckC7S8I2bPK5038OSMh
-	 cCVbw7ieqmuwr/cgRYBIDHYiyf6fNOEJrE1kkd6EXZPRKb+N8AJef7NBl6MrZLTx/i099
-	 B9QMNIUNWZhcQWxe555VumBGFohwgSEH9VSGoanvwGbcDTKiam33Kcz7ii8IjFss+XrrI
-	 G/CFZwmngjkkmg2ZP2FpOs4n20FnJjJaZO7JXyoq+MYVePeZe95zWRGjqdCechJ6C5BT/
-	 rouIfTG1G3A5QWQspc+qwWugwFTtPKxSZ2SixK8zjfAOnMWgPpWPXBZsBkJober3OFw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.nxp.com;
-	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=mDBBfEnI;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.84.6
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010006.outbound.protection.outlook.com [52.101.84.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CC9606A32F;
-	Wed, 18 Nov 2026 15:27:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 37CC9606A32F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795016404;
+	b=mHDGjyv2m7wYBojksbFilU8mSz3mEAgflId1NXtgyntkRCvIFnlSZ/WGy4NePMlb0JC1
+	 JQMKHCtdndJNxacnqXpe7xRKAC2hLVqx6fZ+fLxqEHTO/IsRa7qjIGXJfv4uUS6+jU7+u
+	 vKjK4MHcELnpPPrW+qgJhEX0QMc3ufbgzdlFozobh67yMJx6drtt5e/rDOCmhGSLlyEzY
+	 6uVdgjaCj03mU3ofx1Bdj+IzK0+2rTzyQQ2je0bADRhqldsRyITXnETkNdNYtG9s9SFMv
+	 q8swX9BOgfpMfVxWU+3F6YvUg6hCt2ifY4jDk44xcU+kA5C5pLTusCCqpSBFmRjE+Xw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795016404;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
+	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
+	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=j2BNbivZPHPibCEyc+H9GBBrQYs+VsZCs/2qn47xLAI=;
+	b=TxS4vRFACUTOERntXZ0eKge1Un3r+ZBxjfH0zsgQ2wU6buAp77DL4Kpazg1R6a8zmgvW
+	 /R04UPi4yoWDnELzHWXjULkplrTsvA6PXgSHUNFHd5KljSmAxwb8nvduwnnMOxvA3Iwnh
+	 DiE9QnrPKZlHanOo4ff4eaTHFFgvdb07V5ntrjc1Xvjifq59sWK3+GhDTe/NTkB9B5xnd
+	 uUaN6n5drz6lqd5MNzP5nj2ztxQE5Bm9pPycOT++gzJHPB7vgvoa2WZE1mFJOsC3I2FqR
+	 1oSxo4mGvEiWCvykLjE0X2bz/VrSv2dxwEp1MA9FpaTdBPFvYIMrGf0Bb2u5xBzenpw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=i4AadcTo;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8464160A2624;
+	Wed, 18 Nov 2026 15:40:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8464160A2624
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=mDBBfEnI
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=v3EnXgYFMZ8CSRzqmBDtnTrK/HJSL4aci41Xo4F6XqtScpy2CAV/I/3OltaOHV53DJaQU+gBF+SeawlRnSydIJxD2rUk+wXJW/2uILMmDGX3y+andt/pgivnSft7MIvUlf9mTXEY+KzQhxLB1MGO4hbgeozpXlV9FvOPBXEYOG9cx405cGU4wfbanqUleM34RzuysQ2cHODiSkS33193Iy6dSNEn9VZFuarKxxx5kMCoATYB9gvGf5NGA2yAVrqi0qQNZSthv8U8ARkStBmV0Dzy9IDY59J9wvnKcwHYhKXetJGIojXSnoWtchBl9HYraewp7MLoNRwMVgNL0qv30w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eY2hHNDdt1qZV3S19uhVtiep8ZuUlQu9tochO15/uXs=;
- b=kHx0xyrbjD316E1FwydkVe/LL93FMtpxRYhg+7hJZM8XMtBE5FMzvPZqMGi9I+m/iCeEgKkaq2SQ6z3070jskSkWpxlOGTNsnaVaAST7sJ7zHFl7KtcWabfC8ewy7GKF1J6hnnTXwF3VVS1OE0kHMzUpu+sOZ4Fq0OxUd81/aF2g9VozESw6BwDifvRmtsrGAXZiS0un5+eX6jiMgwzNw7axn7zAWrpbj8nYtSrnHuaXunckwLCUpzyD1TSNgkdVcjU473Rg2ls4Vj5XHp997BmrWdW8yDWGHXl1tPv+u6cGEGegoRAp5sao1gJ8E/knGkcqgTp7VV1P1Ru9OO+P7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eY2hHNDdt1qZV3S19uhVtiep8ZuUlQu9tochO15/uXs=;
- b=mDBBfEnIdJvr+FR6hnjhgiLsYq/DP3eLxYRE5qLItKYdyLj3QDUD42i9JnaI7NVX8wXeuzahcKg+u5zx/RVJJ8GuSyWuGiJAjzZki7QAZFVQr63FRYa2mknNXXCOQrYeEwQpE1Od1+9Z4rAAfOrP+E4Po+vtLcR2db6kJe8q1mO1BlcNfEPa59Z355TWIaaGbJzVKs+Jb9oqiCnV1/LNMsD4+LETmWLgN2rPoQA5EQgZghU2Pla/qKipSgPSWOy8GsafmvWm9NU1ksJrvfv20uHd/Ui2zBCq2OG/oyhP2dHDeKofxJ/C4GrJ0VNdELqlck8hLRhqrpljP5HkKvm27Q==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB12318.eurprd04.prod.outlook.com
- (2603:10a6:150:32b::19) by PAXPR04MB8974.eurprd04.prod.outlook.com
- (2603:10a6:102:20d::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.9; Wed, 18 Nov
- 2026 15:27:10 +0000
-Received: from GV2PR04MB12318.eurprd04.prod.outlook.com
- ([fe80::a498:2b5a:cbdb:d6fa]) by GV2PR04MB12318.eurprd04.prod.outlook.com
- ([fe80::a498:2b5a:cbdb:d6fa%3]) with mapi id 15.21.0615.013; Wed, 18 Nov 2026
- 15:27:10 +0000
-Date: Wed, 18 Nov 2026 17:27:06 +0200
-From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v11 4/7] drm/imx: Add support for i.MX94 DCIF
-Message-ID: <av3C0ietJXI1ax3X@vm>
-References: <20261110-dcif-upstreaming-v11-0-9e13c85ae0d8@oss.nxp.com>
- <20261110-dcif-upstreaming-v11-4-9e13c85ae0d8@oss.nxp.com>
- <179449701677.2030221.6593749298448668349.b4-review@b4>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <179449701677.2030221.6593749298448668349.b4-review@b4>
-X-ClientProxiedBy: AS4P189CA0047.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:20b:659::19) To GV2PR04MB12318.eurprd04.prod.outlook.com
- (2603:10a6:150:32b::19)
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=i4AadcTo
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E80641477;
+	Wed, 18 Nov 2026 07:39:59 -0800 (PST)
+Received: from [10.57.69.78] (unknown [10.57.69.78])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1988D3F632;
+	Wed, 18 Nov 2026 07:39:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1795016402; bh=UmjalxywmS7cNpDQUWtopHm/4dset/da/ZsuV9sIQp4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=i4AadcToOCPgX632yqW2lnrSqScyRtw9QtO2o3OxZKLKLdOUdMia2PtHh/ABU/HxR
+	 8Fa1If1Dumx3yG9CNeisIFfYXssDXYPXrNj8IoWLqqKk+HTJFXs1zscm+UxOhVGqq6
+	 ZgiAMXhgWMFCf+l0zwEIO6v4b8RFRSIcQs/hLplg=
+Message-ID: <35a06829-dd6d-4ef1-aadf-245d1e7ca433@arm.com>
+Date: Wed, 18 Nov 2026 16:39:58 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -104,194 +53,220 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB12318:EE_|PAXPR04MB8974:EE_
-X-MS-Office365-Filtering-Correlation-Id: 79f7bb89-8be6-4f17-470c-08df458869c3
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|19092799006|7416014|1800799024|366016|23010399003|261009223027099003|261009221727099003|261009220027099003|4143699003|11063799006|261022105027099003|261028144727099003|261102123227099003|56012099006|261026121527099003|261009223327099003|261009221227099003|261026140227099003|261021121427099003|10067099003|22082099003|18002099003|3023799007;
-X-Microsoft-Antispam-Message-Info:
-	2XMeuwlxi3I0rS4TcYTYs3FJ2SZYzUEVbcWUl3ryi80h9SIZdtTZ2mO7EusxnV4f8PlrvqqSYn1VOkryjMhXJOjjrX0+xhynHAO6iwITNmsG15l0bYwz+V2PVxf08pnYOSluG1FvcOmL3Ous6kLdMFmAfs6kOw0hZig/R60zspWVY3SdnvbpOgAOPJhNOpLop47qTz5FMivuvHC1cWp4Cfhda2I/7MzVgGWUez5sGFipfi8UbYAweuYNIlfiaMFGyQEOaucEM7oGJDOys6pE+iG13zmynXdPNOKXrJnHipWCKINSLVxpU1LOKELBi+82okAIWWP5ckVs8Xp1Fe/iQ2HhEbSgXzA6Rv6phoEvHVX/CVeU3ZnJ7d39p4C3tRxAsc58OhaPzTloMQQX4as0RZR6E39/rWnO3VF8F6T29ytQiuaHqpDr25LpBdEVh2ti3PCEm5yn74QoIP4hDwpe0nV6A8FVRymhxoHJr2jridGt1O33Vxc9qhb1CO5DjI/r+Jy0tSLGZYdRvJL6q2dTFYaL3B9Rkv+W8JeAO00r2/eMe+HBakAw3hyWr/bW2blvwWg4av3mBCYTFYhMPYsyxjSPifJH3iXvH8RmG8wThoaKEuxwCIZv5uMjm74gEkGDbB+o363XBy6HlIhXfZiEbzKw4yL0OACA7CvkuDrGGR4=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB12318.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(7416014)(1800799024)(366016)(23010399003)(261009223027099003)(261009221727099003)(261009220027099003)(4143699003)(11063799006)(261022105027099003)(261028144727099003)(261102123227099003)(56012099006)(261026121527099003)(261009223327099003)(261009221227099003)(261026140227099003)(261021121427099003)(10067099003)(22082099003)(18002099003)(3023799007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?O+xQBYzhPfo2I5pjwaVBqPy3imeA9CNdNgS1IRuI/fVmJVaicUxORySfJYYI?=
- =?us-ascii?Q?urJv3Q8BFxu7apcgFDqHvqUk2dgdxbFcB4tVJ0hW8uUD1y7IqorLzNgMgxsz?=
- =?us-ascii?Q?KSLq5iIXgGe3fF6mYnws1fKjCO1L8c+PmGi8VOUVsrngHAR72mQr6Zf09q0r?=
- =?us-ascii?Q?4KTl/hBPuIX6jz9Sj5HsPHcvEJpD57jBFXC2x/0F5MOeW6hgdfWnR6p/olNu?=
- =?us-ascii?Q?Ib94P2CM1ODohL6QSAG3hJ28+Dc5jWVmfs+HPkHbChOa8CdNN8MWax9798Qm?=
- =?us-ascii?Q?AiO7xdIEZF9c7xaNeFaGjt6E4Gfdhbf46WmJJWApkOR7Uh4HUFX0ByaOnmVn?=
- =?us-ascii?Q?vP/qrTkTK7rAOLPjQrdhRwYBfHDXDGFP7jugqPKaui0L4uB99dupM+fmuOfB?=
- =?us-ascii?Q?VUhNfgRjbFIN0PaMNdukjjVA1JB5az96A4XY9MGcgE/kN6DCg3p1/G4eKGMC?=
- =?us-ascii?Q?UHMCMRaANKx5d/vq4Q1ozUQClSOhX9f7nme4aiKfp0Zfgz2A8TtDOf5+0HNQ?=
- =?us-ascii?Q?OF3wGDR+Sxr1PuD5qD0Qnf5BEeJupqkUmseYvr1kjRZxYtDtCCJ/i/oduE03?=
- =?us-ascii?Q?ql8kMJSiD1lJyj9xmFozTtM97Z2NaImdoxeuXOAVWNh1WrhGShsDyGaLc1Y9?=
- =?us-ascii?Q?SprR3P2eCkemk79NLPrZaifP48PtxrxSAG3y2EV5VtRakNh57X0+I/z+tEdV?=
- =?us-ascii?Q?DGIwdBh/t1gYoyXZ2kxc2ha3xUuYKz5vPaRKdQXHW0EO1h+Q1bBMEFasCcYH?=
- =?us-ascii?Q?RaGwQu9hid81bT/a97y68UyHb7MqrbvmeVOlfb6cyYiWtSukzhaG5pDWPpDi?=
- =?us-ascii?Q?bDefV5e4vvNEBZ0IEKFpBFxXoB3nUzOuWzTJP+ZaRsxslxHUjZNu7RnBN7km?=
- =?us-ascii?Q?ZbmRe7PB4kgOEq00NmbJxh7sBqrnDcI6XyG+4pF6UeS8r2blXnMcd1g2rXVG?=
- =?us-ascii?Q?BGOZ/rmPBMrlnYlDNDRyhL0hw/Nj47wdUw/rcnHoaQIfFBQIMStpQ+/dYOyl?=
- =?us-ascii?Q?iLcKD/5fHHTVAPX69NefbK5Z4CCmWmUOUd3/A0LVWBAlr3u0YrftiiLFXIXz?=
- =?us-ascii?Q?fTexIMpP/nTYJDGtBVJ/rARtAPlO3fqn6WX3ilFmwIQJHvWzRK+ItihIT79B?=
- =?us-ascii?Q?OjJkwIKzya+vDu8rHqQgLfFms8bxGuAByDzQBSGfhRGAHIbv5tJxza/JtRek?=
- =?us-ascii?Q?6gdVGKFAQ6x8qvh74b+Gl3KNlir7KxsRgluOX8W1/s2AFHRaG0dzUhmW29vB?=
- =?us-ascii?Q?Oue2zaJecstaduxtHXNCDWGp1DBaK1B7NPlUsTTWoZqGNlooVPSy7hX+QnQu?=
- =?us-ascii?Q?YAj4dMFqSzXLf9Y/5QWphxqfrf7pRZFYj8J/WqbKqunbazE/WFaLGP0xbfhA?=
- =?us-ascii?Q?BIC7CKTTLwKG91VPFFiO3pszS/6Kwak/PwgI95CIlZsNqJDVlxzduC6Kneni?=
- =?us-ascii?Q?suI5yzqqefj6f/bg/NGXdJ1GSvSneRJe2VREofnQ/PYei8Y3+SDX2RfWxwq5?=
- =?us-ascii?Q?/fhrLB6/+0g1H8OcAVf+CwMKo+nTfkMEysp3YX92U7KX7M5GMv36TW1siZcX?=
- =?us-ascii?Q?czk8fl529mev71XPbIHNFX392DgcScVBfx8LYq8xbc726UMRIu0g/wzl3xLF?=
- =?us-ascii?Q?4Uzd0BMkaUxO9LiL5LFnDB0LPWMHWKdDdQ2KCwxj+ojFNYz1kQERFYrqIr6g?=
- =?us-ascii?Q?T8P/JhuvUSIsq0k7nEL5GRmrNr6QchomMEDLkvsdFx9j8Webed0dCDSQO1yA?=
- =?us-ascii?Q?Zfk8gFtm79X7ACTtrlMlBJgi/qa3Auw=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79f7bb89-8be6-4f17-470c-08df458869c3
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB12318.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2026 15:27:10.3727
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OIU4ERWak21ngOiqd+AyCDd5V9kvaW2bq9uFaoXIcXnFpjuf7f56hGYYRRD93jATa+A8hIlfNmQov1GLxwo0/Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8974
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clk: sunxi-ng: a733: Keep SCP firmware bus clocks
+ enabled
+To: wens@kernel.org
+Cc: Enzo Adriano <enzo.adriano.code@gmail.com>, sboyd@kernel.org,
+ bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, jernej.skrabec@gmail.com,
+ samuel@sholland.org, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Junhui Liu <junhui.liu@pigmoral.tech>,
+ Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+References: <20261112-a733-fwclk-v2@gmail.com>
+ <2374cc08-fd47-435a-b1e8-c7e9a61954c4@arm.com>
+ <CAGb2v66w9XYO7CUFrvJq2HL7ELABptg=3Bs4XbZxMh7VU0pepw@mail.gmail.com>
+ <124bb855-f2f6-4b10-b0be-99fb53cc2ee8@arm.com>
+ <CAGb2v65A4rAFTFYyB_sZBC9O7fb0TJWE1YRjdGrLeNgwyVzcSw@mail.gmail.com>
+Content-Language: en-GB
+From: Andre Przywara <andre.przywara@arm.com>
+In-Reply-To: <CAGb2v65A4rAFTFYyB_sZBC9O7fb0TJWE1YRjdGrLeNgwyVzcSw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Luca,
+Hi,
 
-Thanks for the review.
+On 11/18/26 16:15, Chen-Yu Tsai wrote:
+> On Wed, Nov 18, 2026 at 10:51 PM Andre Przywara <andre.przywara@arm.com> wrote:
+>>
+>> Hi,
+>>
+>> On 11/18/26 14:41, Chen-Yu Tsai wrote:
+>>> On Wed, Nov 18, 2026 at 1:18 AM Andre Przywara <andre.przywara@arm.com> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> the patch itself looks fine, but the comments and the commit message are
+>>>> not entirely correct, I think.
+>>>>
+>>>> On 11/12/26 22:38, Enzo Adriano wrote:
+>>>>> The A733 PRCM's bus-r-riscv and bus-r-msgbox gates have no Linux
+>>>>> consumers, so unused-clock cleanup gates them. With vendor SCP firmware
+>>>>> running on the E902 as shipped on Cubie A7S, warm reboot then stalls.
+>>>>
+>>>> Please note that we don't support "vendor firmware" with mainline Linux.
+>>>> That was mostly incompatible in the past, and while it might work these
+>>>> days, this is not something we control and want to endorse.
+>>>> So we would be quite reluctant (to put it mildly) about merging patches
+>>>> that are solely needed for BSP firmware bits.
+>>>>
+>>>>> Keep both critical until remoteproc/mailbox drivers can claim them.
+>>>>
+>>>> I don't think this "until" is an argument. Even if we'd have Linux
+>>>> driver support, they would be optional to use (not compiled, not
+>>>> loaded), and would only be needed to *communicate* with the firmware.
+>>>>
+>>>> But those clocks are actually there to drive the RISC-V core clock, and
+>>>> also the "RISC-V side" of the peripherals, due to a lack of separate
+>>>> clock controls in the SoC in the Allwinner design. So the kernel should
+>>>> not care about or touch those clocks at all - which is what
+>>>> CLK_IS_CRITICAL does.
+>>>
+>>> No. CLK_IS_CRITICAL also tells the kernel to turn it on, and you then
+>>> can never turn it off. You get a big warning if you try to defeat the
+>>> refcounting, but nothing else happens.
+>>
+>> Good point, so is CLK_IGNORE_UNUSED a better flag? As far as I can see,
+>> it only prevents turning it off if unclaimed, it doesn't turn it on if
+>> it was off initially, and it doesn't disallow turning it off.
+> 
+> Yes. It's like an uncoordinated simplefb? :p
 
-On Thu, Nov 12, 2026 at 04:23:36PM +0100, Luca Ceresoli wrote:
-> Hello Laurentiu,
-> 
-> > The i.MX94 Display Control Interface features:
-> >  * Up to maximum 3 layers of alpha blending:
-> >     - 1 background layer(Layer 0);
-> >     - 1 foreground layer(Layer 1);
-> >     - A programmable constant color behind the background layer;
-> >  * Each layer supports:
-> >     - programmable plane size;
-> >     - programmable background color;
-> >     - embedded alpha and global alpha;
-> >  * Data output with CRC checksum for 4 programmable regions;
-> >
-> > Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # bridge refcounting
-> > Signed-off-by: Sandor Yu <sandor.yu@nxp.com>
-> > Co-developed-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> > Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> 
-> Looks OK, I just have a small remark and a few minor nitpicks, see below.
-> 
-> > +++ b/drivers/gpu/drm/imx/dcif/Kconfig
-> > @@ -0,0 +1,16 @@
-> > +config DRM_IMX_DCIF
-> > +	tristate "DRM support for NXP i.MX94 DCIF"
-> > +	select DRM_KMS_HELPER
-> > +	select DRM_GEM_DMA_HELPER
-> > +	select DRM_DISPLAY_HELPER
-> > +	select DRM_PANEL_BRIDGE
-> 
-> This should be unneeded now. As o fnow it is basically a complicated way to
-> say 'select DRM_PANEL'. And you are (rightfully) not using the panel API,
-> so this line should probably just be removed. Please double check by
-> building multiple configs, including an allmodconfig.
+I guess you could see it that way, although Linux wouldn't directly know 
+about it.
 
-Indeed, I addressed this in v12 and compiled DCIF with allmodconfig for
-i386, x86_64 and arm, 
+>>> So what if the *real* remoteproc driver needs to turn the clock off to
+>>> pause the RISC-V core? It can't
+>>
+>> I guess this depends on the use case, which isn't very well defined. If
+>> this E902 is really a remoteproc device entirely controlled by Linux,
+>> then sure: Linux should have full control over its clock.
+>> But if it's running some kind of firmware component, then the kernel
+>> shouldn't mess with it, IMHO. But I think there is still the arisc on
+>> the A733, so this would more likely run the management processor (SCP) code?
+> 
+> Even if it had firmware already running, if it provides some interface to
+> the OS (other than PSCI / SCMI), then you'd probably still have a remoteproc
+> driver claiming and somewhat controlling it, plus rpmsg or something else
+> to bridge the firmware interface.
+> 
+> OTOH, AFAIK some SCP, such as crust, are pretty much transparent to the OS,
+> i.e. the OS doesn't know about it. The RISC-V core is probably useful beyond
+> just being the SCP. You could offload control of various hardware blocks to
+> it if you wanted, or you could have it be an always on sensor hub. Either way
+> the OS would have some control over it and some defined interface to it.
 
-> 
-> > +++ b/drivers/gpu/drm/imx/dcif/dcif-crc.c
-> > @@ -0,0 +1,221 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +/*
-> > + * Copyright 2025 NXP
-> 
-> 2026 I guess... v11, a long journey, hopefully it won't slip to 2027! :)
+Yes, that is what I mean: there are two distinct use cases: the realtime 
+one, where Linux uses remoteproc to offload timing critical load, and 
+the "SCP" one, where it just runs in the background, and the kernel is 
+not directly involved. For this latter case we would need to not turn 
+off the clocks.
 
-Thanks, I guess I forgot to update this. It was/is a long journey
-indeed... :/ Addressed in v12.
+The question now is whether this SCP use case is something we deem 
+useful, for mainline. If it's just about to run the BSP firmware, I 
+think we shouldn't bother, we just don't support that. But if we end up 
+running something like crust on the E902, then it's a different story.
 
-> 
-> > +++ b/drivers/gpu/drm/imx/dcif/dcif-crtc.c
-> ...
-> > +static int dcif_crtc_query_output_bus_format(struct drm_crtc *crtc,
-> > +					     struct drm_crtc_state *crtc_state)
-> > +{
-> > +	struct dcif_crtc_state *dcif_state = to_dcif_crtc_state(crtc_state);
-> > +	struct drm_bridge *bridge __free(drm_bridge_put) = NULL;
-> 
-> While this is OK, there is generally a preference to declare and assign in
-> the same statement when using cleanup actions, so...
-> 
-> > +	struct drm_bridge_state *bridge_state;
-> > +	u32 bus_format;
-> > +
-> > +	dcif_state->bus_format = MEDIA_BUS_FMT_RGB888_1X24;
-> > +	dcif_state->bus_flags = 0;
-> > +
-> > +	bridge = dcif_crtc_get_bridge(crtc, crtc_state);
-> 
-> ...it should all happen here, as:
-> 
-> 	struct drm_bridge *bridge __free(drm_bridge_put) =
-> 		dcif_crtc_get_bridge(crtc, crtc_state);
+So I wonder if we should just pragmatically add CLK_IGNORE_UNUSED, to 
+not shut on the door on this SCP use case later.
+If we ever only want to use remoteproc, I think we don't need this patch.
 
-Addressed in v12.
+Cheers,
+Andre
 
+>>> So, not a fan of this. If the loaded firmware somehow needs some resources
+>>> then perhaps the software that loaded it needs to somehow tell the kernel
+>>> they are needed, like the bootloader patching the DT passed to the kernel.
+>>>
+>>> If the firmware needs a piece of DRAM, you don't say in the kernel that
+>>> this piece of DRAM is off-limits. You let the bootloader tell the kernel.
+>>> Static DRAM carve outs with reserved-memory nodes in the DT source is also
+>>> ugly, as you could end up with mismatches if the firmware somehow changed.
+>>>
+>>> IMO CLK_IS_CRITICAL should be used for things that the kernel knows it needs
+>>> but there's nothing to claim it.
+>>>
+>>>
+>>> ChenYu
+>>>
+>>>>> This follows A523 bus-r-cpucfg in commit 1dba74abf3e2 ("clk: sunxi-ng:
+>>>>> Mark A523 bus-r-cpucfg clock as critical") and the temporary SCPI firmware
+>>>>> clock protection for Meson AXG fclk_div3 in drivers/clk/meson/axg.c.
+>>>>>
+>>>>> On Cubie A7S with vendor boot0/BL31/SCP/U-Boot and without
+>>>>> clk_ignore_unused, warm reboot returns with both clocks critical and
+>>>>> stalls without them. Vinicius found either flag alone insufficient on
+>>>>> Cubie A7Z. Power-off, suspend, single flags on A7S, other
+>>>>> boards/firmware and upstream TF-A were not tested.
+>>>>>
+>>>>> Link: https://lore.kernel.org/r/20261005183038.417798-1-vinicius.eduardo.pedrosa@gmail.com
+>>>>> Signed-off-by: Enzo Adriano <enzo.adriano.code@gmail.com>
+>>>>> ---
+>>>>> Changes in v2:
+>>>>> - Drop r-timer0, bus-r-timer and bus-msgbox0: A7S warm reboot works with
+>>>>>      these at 0/0. Keep only the two E902/mailbox bus gates after Junhui's
+>>>>>      review, pending remoteproc/mailbox ownership.
+>>>>> - Rebase on CCU v7; its PRCM clock definitions are unchanged from v6.
+>>>>>
+>>>>> v1:
+>>>>> https://lore.kernel.org/r/20261031020640-263f7b05-a7s-clock@gmail.com
+>>>>>
+>>>>> Base: v7.4-rc1. Depends on CCU v7 (all eight patches):
+>>>>> https://lore.kernel.org/r/20261112-a733-clk-v7-0-db7c5451ffa2@pigmoral.tech
+>>>>>
+>>>>> November 12 board test: two RAM boots and warm reboot -f returns on
+>>>>> Cubie A7S with vendor boot0/BL31/SCP/U-Boot, without clk_ignore_unused.
+>>>>> Both retained clocks were 1/1; all three dropped clocks were 0/0.
+>>>>> The no-flag stall was observed with CCU v6 on Nov 10; PRCM code is
+>>>>> byte-identical in v7, where the no-flag control was not repeated.
+>>>>> Runtime used DT v3 and its dependencies (all four UART v2 patches),
+>>>>> with the PMIC identifier and pinctrl IRQ-map context adapted to the base:
+>>>>> https://lore.kernel.org/r/cover.1794227241.git.enzo.adriano.code@gmail.com
+>>>>
+>>>> I don't think there is any need for those longish test descriptions,
+>>>> especially if they pass.
+>>>>
+>>>>>
+>>>>>     drivers/clk/sunxi-ng/ccu-sun60i-a733-r.c | 7 +++++--
+>>>>>     1 file changed, 5 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733-r.c b/drivers/clk/sunxi-ng/ccu-sun60i-a733-r.c
+>>>>> index b8f6e8c6e507..f2965daba0d3 100644
+>>>>> --- a/drivers/clk/sunxi-ng/ccu-sun60i-a733-r.c
+>>>>> +++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733-r.c
+>>>>> @@ -108,7 +108,9 @@ static SUNXI_CCU_DUALDIV_MUX_GATE(r_spi_clk, "r-spi", r_spi_parents, 0x150,
+>>>>>                                   0);
+>>>>>     static SUNXI_CCU_GATE_HW(bus_r_spi_clk, "bus-r-spi", &r_ahb_clk.common.hw, 0x15c, BIT(0), 0);
+>>>>>
+>>>>> -static SUNXI_CCU_GATE_HW(bus_r_msgbox_clk, "bus-r-msgbox", &r_ahb_clk.common.hw, 0x17c, BIT(0), 0);
+>>>>> +/* Vendor SCP firmware on E902 needs this until a remoteproc/mailbox driver claims it. */
+>>>>
+>>>> Please change this comment. Something like the msgbox clock is shared
+>>>> between the E902 core and the Arm APs.
+>>>>
+>>>>> +static SUNXI_CCU_GATE_HW(bus_r_msgbox_clk, "bus-r-msgbox", &r_ahb_clk.common.hw,
+>>>>> +                      0x17c, BIT(0), CLK_IS_CRITICAL);
+>>>>>
+>>>>>     static SUNXI_CCU_GATE_HW(bus_r_uart0_clk, "bus-r-uart0", &r_apb1_clk.common.hw, 0x18c, BIT(0), 0);
+>>>>>     static SUNXI_CCU_GATE_HW(bus_r_uart1_clk, "bus-r-uart1", &r_apb1_clk.common.hw, 0x18c, BIT(1), 0);
+>>>>> @@ -146,8 +148,9 @@ static SUNXI_CCU_MUX_DATA_WITH_GATE(r_riscv_clk, "r-riscv", r_riscv_parents, 0x2
+>>>>>                                   24, 2,        /* mux */
+>>>>>                                   BIT(31),      /* gate */
+>>>>>                                   0);
+>>>>> +/* Vendor SCP firmware on E902 needs this until a remoteproc/mailbox driver claims it. */
+>>>>
+>>>> and this. Just note that the E902 might be running on its own, in a pure
+>>>> firmware role, or even completely separate from the main kernel.
+>>>>
+>>>> Oh, and also please put somewhere that this is based on the linux-sunxi
+>>>> for-next tree, aside from just having the base-commit ID below.
+>>>>
+>>>> Cheers,
+>>>> Andre
+>>>>
+>>>>>     static SUNXI_CCU_GATE_HW(bus_r_riscv_clk, "bus-r-riscv", &r_apb0_clk.common.hw,
+>>>>> -                      0x21c, BIT(0), 0);
+>>>>> +                      0x21c, BIT(0), CLK_IS_CRITICAL);
+>>>>>     static SUNXI_CCU_GATE_HW(bus_r_riscv_cfg_clk, "bus-r-riscv-cfg", &r_apb0_clk.common.hw,
+>>>>>                          0x21c, BIT(1), 0);
+>>>>>
+>>>>>
+>>>>> base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+>>>>
+>>
+>>
 > 
-> > +++ b/drivers/gpu/drm/imx/dcif/dcif-kms.c
-> > @@ -0,0 +1,168 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +/*
-> > + * Copyright 2025 NXP
-> > + */
-> > +
-> > +#include <linux/device.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_platform.h>
-> > +#include <linux/platform_device.h>
-> > +
-> > +#include <drm/drm_atomic.h>
-> > +#include <drm/drm_atomic_helper.h>
-> > +#include <drm/drm_bridge.h>
-> > +#include <drm/drm_bridge_connector.h>
-> > +#include <drm/drm_gem_framebuffer_helper.h>
-> > +#include <drm/drm_panel.h>
-> 
-> Unused include?
 
-Removed, thanks.
-
-> 
-> > +static int dcif_kms_init(struct dcif_dev *dcif)
-> > +{
-> > +	struct drm_device *drm = &dcif->drm;
-> > +	struct device_node *np = drm->dev->of_node;
-> > +	struct drm_connector *connector;
-> > +	struct drm_bridge *bridge;
-> > +	int ret;
-> > +
-> > +	ret = dcif_crtc_init(dcif);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	bridge = devm_drm_of_get_bridge(drm->dev, np, 0, 0);
-> 
-> This function is deprecated. You can use of_drm_get_bridge_by_endpoint()
-> instead, which returns a refcounted bridge pointer. And since the bridge
-> pointer is a local variable you can just use a cleanup action to put it
-> easily:
-> 
->   struct drm_bridge *bridge __free(drm_bridge_put) = of_drm_get_bridge_by_endpoint(...);
-
-Thanks for the hint. I updated the driver to use the new function.
-
--- 
-Thanks,
-Laurentiu
