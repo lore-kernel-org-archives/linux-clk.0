@@ -1,60 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795021588;
-	b=ohCpy7EDmp7gbStOIVLy5brivTshjoUZ3Gd10SxJasbotUrgJtJLL50RpV9wK92+TAW7
-	 wqzlk/llWZR0h27cmujrhSy64KFGxV86E5YlFey87VE2u7MtZ+Da+qB2RT2HAuCP3R+Cd
-	 N/k+epCr+E9VhFZa3v6O2FlD/63YAE/HlIMBnIpcoHYuioH7YW+f0c8MLuzquaF84bixy
-	 R+E16ApXaCsxbmJ3LHLrcTPxJ9dMvjzED0LhT+VfMdmY+9ucJFFImxk8VHUoKm386qDQC
-	 86746qshsoo0Q9aKbvkgTVNeqSQGw33/qD5xsDNuzzFkEzBw7geg75GJV2isY972FKg==
+	t=1795021592;
+	b=M1z+AN8zi5J2vybIvw826ohd/KncuUUgzfr2OmAFGM/iOQ/rNuDmaJfh17pnmIWyqngI
+	 ppiCfx8XY7nvxBSlYMeKXr8OrWQg/Ev0F64PZgYGUZFMFF575jDQti0VaQiizdQd3rNWV
+	 wCtMm3yFssbPbZ51XQYE5oDC0HXaO+g5T4fekXIHWYQ+2cZt7/JBtuyueodj4h7HSXlpA
+	 IxAIeu+KeXrXTyM7G2vgcLTK+dZ3XM51OdDSt2ie4NrRRbGbnx8iyV3XGcS+HcgCs+2Q1
+	 ptX4EgVP/JKYbYxZ1HtkAc1C9/gXhSLDm+tFY6TJ3zkHfQ2sRuo5ea0rx2OSu6bk+gQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795021588;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795021592;
 	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:Date:
 	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Last-TLS-Session-Version;
-	bh=n/KnFPEXkZk4mn/ZwqdLrpMQFF2e10V2K2RI4DEGki8=;
-	b=irOIthWc+HF3ZbcZrEauweyPPFeKYixNsQZGgzaVNRXw/cUIknMpP6gyB1RJfG1OJ3hK
-	 r/ACtjmxrftWc3jjU3ApziLjjhJ2U1Xavh/HfBUaA+OmCljUoxj6JjTlhExUWovUKEk5M
-	 AKQThPcRhYIMdUQH5vTnKgh7SL4SmpDik+MHRQzWWYkFe1w7eDFZTkWG3RXTJtllB2sig
-	 u1ubSFXNGRiPxpKmlWR03EAijN8j5xdr1GyRUbw8eV9pxx3DVwsVhle4x90sHxMn4yQ+P
-	 mrxdnHYNwpVW/BlWZjtpvn5fHZTwFS5dztTkKv1eaauVgxUaChtOXzIB53IXFjxw8ew==
+	bh=7wdiwY+9OKkEo4k0U8r8LO5bXp2VcIxl3SWuQS1sSLg=;
+	b=EYnHxYbSgiMJFZX/3bec/mt/+y0VnBVq0WzExj1BJIsaiSisSww+bRGKfTTeLtGMESD/
+	 dWkxjzASHKgXJJySfXsm2oB4hGgnht8Y60w4RvnMX0y79eLS2bILYDhgjqvcM6FGZ380o
+	 3Mv5QV7c2C+8zuyl1XZ2rZmnIIsUrZ4inyyf2aRcfKYVJ8Uo6Sq/XFGhaZxGZ9EsIsy7o
+	 KKmiHogP5w1ABhPotuGWhV/Ys4KVoe6h2euLugKHaCXCi9377djrKmchFhBK+ltFYQkQm
+	 +XEFLBFHePBFlNaTV5zY4pSzdTcd4usPwBNEbug9+ZAF6tBDTt/lHmf2cWGVNbHTddw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=bootlin.com;
 	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=xXTIiLXL;
-	arc=none smtp.remote-ip=185.171.202.116
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=bx9i1rDG;
+	arc=none smtp.remote-ip=185.246.85.4
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EC5606A325
-	for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2026 17:06:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 27EC5606A325
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946E560A263A;
+	Wed, 18 Nov 2026 17:06:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 946E560A263A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=xXTIiLXL
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=bx9i1rDG
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 90AF4C4F77B;
-	Wed, 18 Nov 2026 17:06:31 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 470A44E41635;
+	Wed, 18 Nov 2026 17:06:30 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A95465FE9B;
-	Wed, 18 Nov 2026 17:06:26 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B88DD11BC29F0;
-	Wed, 18 Nov 2026 18:06:20 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 110AD5FE9B;
+	Wed, 18 Nov 2026 17:06:30 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0019C11BC2986;
+	Wed, 18 Nov 2026 18:06:24 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1795021584; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1795021588; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=n/KnFPEXkZk4mn/ZwqdLrpMQFF2e10V2K2RI4DEGki8=;
-	b=xXTIiLXLapr6q0xRhwdqKZhf2E/byMMV5xrMkJnGVLXaMzq0H5YU9GjvBgTzX8nVbkMlFA
-	wi/cMla2b1aORd/KyVJHcrNkfgX1T3JRZAG/Vgy0tKP+cPv4ZRtmK3yUc37w9BGP9E23eG
-	R21S618eoCaJZ1LHcSdZuVsNGoOL35yCU6qPF1N81gmVnWGSOP2CdyHutapgivjs+VPJtV
-	Us6GU1t+h0A2CDmwQAMQVDi55hQtiICHSgG2L9LSrtM0WcO2pH9aVVonTFE0rz2ltWa+Vm
-	qPqFlczebmJ3pvmW+lYPGnZuDj+LEzu1+k5C4UY/yL0uPQtRWHp+uogeBPGO6g==
+	bh=7wdiwY+9OKkEo4k0U8r8LO5bXp2VcIxl3SWuQS1sSLg=;
+	b=bx9i1rDGJUtQFZ7kj3dOBf7OVdUTVrRAEk+0BKomP1eqlzaGygaMKIHJpsGGEoUOKiQh0S
+	a1AOEq5nDMumA6N5wfXzcVuzlKD4gmsnIyiboH3HAlD4eNY4VN18t0As3XlUAOIWWJmTAn
+	AP2t4Z5/5OpYkM7oo20seF9475ngjG8iu8cBVXx5wWQYxI0Xzwue0S1rskAWrvmdrskpai
+	rhWr/oxyEoTa3AZtw4nj1DxScsBfbQck4nosYTxCPl71MZuOK9QLxl8A9QQmhHly4iNBbY
+	cCNl6bGQtNGCBJfCU0beZw3pRx1CVTRUdiN+iYxBlLmabeYK3J8nMX1rEu12Nw==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Wed, 18 Nov 2026 17:59:14 +0100
-Subject: [PATCH v12 05/10] clk: nuvoton: ma35d1: Reparent the gates
- correctly
+Date: Wed, 18 Nov 2026 17:59:15 +0100
+Subject: [PATCH v12 06/10] clk: nuvoton: ma35d1: Use device managed helpers
+ for fixed rate clocks
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -66,7 +66,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261118-perso-ma35d1-upstream-clk-v12-5-bee2c8dad4e1@bootlin.com>
+Message-Id: <20261118-perso-ma35d1-upstream-clk-v12-6-bee2c8dad4e1@bootlin.com>
 References: <20261118-perso-ma35d1-upstream-clk-v12-0-bee2c8dad4e1@bootlin.com>
 In-Reply-To: <20261118-perso-ma35d1-upstream-clk-v12-0-bee2c8dad4e1@bootlin.com>
 To: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
@@ -84,164 +84,76 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Steam Lin <STLin2@winbond.com>, linux-arm-kernel@lists.infradead.org, 
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- openbmc@lists.ozlabs.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
- stable@vger.kernel.org
+ openbmc@lists.ozlabs.org, Miquel Raynal <miquel.raynal@bootlin.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-The clock tree is still incorrect. There are four main clocks in this
-system:
-- HXT: external high-speed crystal oscillator
-- LXT: external low-speed crystal oscillator
-- HIRC: internal high-speed RC oscillator
-- LIRC: internal low-speed RC oscillator
-Each clock has a 'gate' control to disable it. While in the TRM the
-'gate' appears aside, in the CCF topology, the gates should be
-below. This is because if we gate one of those clocks, none of the
-children clocks continue ticking.
+Most of the clocks are already registered with device managed helpers,
+except the fixed clocks. Harmonize the driver by using the already
+available managed helper for that.
 
-Reparent hxt_gate under hxt, and all hxt children under hxt_gate.
-Do the same for the three other clock sources listed above.
-
-After this change, the frequencies are identical, but the clock tree
-looks much closer to the reality.
-
-Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
-Cc: stable@vger.kernel.org
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/clk/nuvoton/clk-ma35d1.c | 78 +++++++++++++++++++++++-----------------
- 1 file changed, 45 insertions(+), 33 deletions(-)
+ drivers/clk/nuvoton/clk-ma35d1.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk-ma35d1.c
-index 4019df22a74e..d69c9fc0f39e 100644
+index d69c9fc0f39e..c11afc2f8f6d 100644
 --- a/drivers/clk/nuvoton/clk-ma35d1.c
 +++ b/drivers/clk/nuvoton/clk-ma35d1.c
-@@ -74,34 +74,46 @@ static const struct clk_parent_data lxtg_parent_data[] = {
+@@ -139,9 +139,9 @@ static const struct clk_div_table eadc_div_table[] = {
+ 	{13, 28}, {14, 30}, {15, 32}, {0, 0},
  };
  
- /* Mux parent selection, by index into the controller's clock table */
--static const int ca35clk_parent_idx[] = { HXT, CAPLL, DDRPLL };
-+static const int ca35clk_parent_idx[] = { HXT_GATE, CAPLL, DDRPLL };
- static const int sysclk0_parent_idx[] = { EPLL_DIV2, SYSPLL };
--static const int sysclk1_parent_idx[] = { HXT, SYSPLL };
-+static const int sysclk1_parent_idx[] = { HXT_GATE, SYSPLL };
- static const int axiclk_parent_idx[] = { AXICLK_DIV2, AXICLK_DIV4 };
--static const int ccap_parent_idx[] = { HXT, VPLL, APLL, SYSPLL };
-+static const int ccap_parent_idx[] = { HXT_GATE, VPLL, APLL, SYSPLL };
- static const int sdh_parent_idx[] = { SYSPLL, APLL };
- static const int dcu_parent_idx[] = { EPLL_DIV2, SYSPLL };
- static const int gfx_parent_idx[] = { EPLL, SYSPLL };
--static const int dbg_parent_idx[] = { HIRC, SYSPLL };
--static const int timer0_parent_idx[] = { HXT, LXT, PCLK0, -1, -1, LIRC, -1, HIRC };
--static const int timer1_parent_idx[] = { HXT, LXT, PCLK0, -1, -1, LIRC, -1, HIRC };
--static const int timer2_parent_idx[] = { HXT, LXT, PCLK1, -1, -1, LIRC, -1, HIRC };
--static const int timer3_parent_idx[] = { HXT, LXT, PCLK1, -1, -1, LIRC, -1, HIRC };
--static const int timer4_parent_idx[] = { HXT, LXT, PCLK2, -1, -1, LIRC, -1, HIRC };
--static const int timer5_parent_idx[] = { HXT, LXT, PCLK2, -1, -1, LIRC, -1, HIRC };
--static const int timer6_parent_idx[] = { HXT, LXT, PCLK0, -1, -1, LIRC, -1, HIRC };
--static const int timer7_parent_idx[] = { HXT, LXT, PCLK0, -1, -1, LIRC, -1, HIRC };
--static const int timer8_parent_idx[] = { HXT, LXT, PCLK1, -1, -1, LIRC, -1, HIRC };
--static const int timer9_parent_idx[] = { HXT, LXT, PCLK1, -1, -1, LIRC, -1, HIRC };
--static const int timer10_parent_idx[] = { HXT, LXT, PCLK2, -1, -1, LIRC, -1, HIRC };
--static const int timer11_parent_idx[] = { HXT, LXT, PCLK2, -1, -1, LIRC, -1, HIRC };
--static const int uart_parent_idx[] = { HXT, SYSCLK1_DIV2 };
--static const int wdt0_parent_idx[] = { -1, LXT, PCLK3_DIV4096, LIRC };
--static const int wdt1_parent_idx[] = { -1, LXT, PCLK3_DIV4096, LIRC };
--static const int wdt2_parent_idx[] = { -1, LXT, PCLK4_DIV4096, LIRC };
--static const int wwdt0_parent_idx[] = { -1, -1, PCLK3_DIV4096, LIRC };
--static const int wwdt1_parent_idx[] = { -1, -1, PCLK3_DIV4096, LIRC };
--static const int wwdt2_parent_idx[] = { -1, -1, PCLK4_DIV4096, LIRC };
-+static const int dbg_parent_idx[] = { HIRC_GATE, SYSPLL };
-+static const int timer0_parent_idx[] = { HXT_GATE, LXT_GATE, PCLK0, -1, -1,
-+					 LIRC_GATE, -1, HIRC_GATE };
-+static const int timer1_parent_idx[] = { HXT_GATE, LXT_GATE, PCLK0, -1, -1,
-+					 LIRC_GATE, -1, HIRC_GATE };
-+static const int timer2_parent_idx[] = { HXT_GATE, LXT_GATE, PCLK1, -1, -1,
-+					 LIRC_GATE, -1, HIRC_GATE };
-+static const int timer3_parent_idx[] = { HXT_GATE, LXT_GATE, PCLK1, -1, -1,
-+					 LIRC_GATE, -1, HIRC_GATE };
-+static const int timer4_parent_idx[] = { HXT_GATE, LXT_GATE, PCLK2, -1, -1,
-+					 LIRC_GATE, -1, HIRC_GATE };
-+static const int timer5_parent_idx[] = { HXT_GATE, LXT_GATE, PCLK2, -1, -1,
-+					 LIRC_GATE, -1, HIRC_GATE };
-+static const int timer6_parent_idx[] = { HXT_GATE, LXT_GATE, PCLK0, -1, -1,
-+					 LIRC_GATE, -1, HIRC_GATE };
-+static const int timer7_parent_idx[] = { HXT_GATE, LXT_GATE, PCLK0, -1, -1,
-+					 LIRC_GATE, -1, HIRC_GATE };
-+static const int timer8_parent_idx[] = { HXT_GATE, LXT_GATE, PCLK1, -1, -1,
-+					 LIRC_GATE, -1, HIRC_GATE };
-+static const int timer9_parent_idx[] = { HXT_GATE, LXT_GATE, PCLK1, -1, -1,
-+					 LIRC_GATE, -1, HIRC_GATE };
-+static const int timer10_parent_idx[] = { HXT_GATE, LXT_GATE, PCLK2, -1, -1,
-+					  LIRC_GATE, -1, HIRC_GATE };
-+static const int timer11_parent_idx[] = { HXT_GATE, LXT_GATE, PCLK2, -1, -1,
-+					  LIRC_GATE, -1, HIRC_GATE };
-+static const int uart_parent_idx[] = { HXT_GATE, SYSCLK1_DIV2 };
-+static const int wdt0_parent_idx[] = { -1, LXT_GATE, PCLK3_DIV4096, LIRC_GATE };
-+static const int wdt1_parent_idx[] = { -1, LXT_GATE, PCLK3_DIV4096, LIRC_GATE };
-+static const int wdt2_parent_idx[] = { -1, LXT_GATE, PCLK4_DIV4096, LIRC_GATE };
-+static const int wwdt0_parent_idx[] = { -1, -1, PCLK3_DIV4096, LIRC_GATE };
-+static const int wwdt1_parent_idx[] = { -1, -1, PCLK3_DIV4096, LIRC_GATE };
-+static const int wwdt2_parent_idx[] = { -1, -1, PCLK4_DIV4096, LIRC_GATE };
- static const int spi0_parent_idx[] = { PCLK1, APLL };
- static const int spi1_parent_idx[] = { PCLK2, APLL };
- static const int spi2_parent_idx[] = { PCLK1, APLL };
-@@ -109,11 +121,11 @@ static const int spi3_parent_idx[] = { PCLK2, APLL };
- static const int qspi_parent_idx[] = { PCLK0, APLL };
- static const int i2s_parent_idx[] = { APLL, SYSCLK1_DIV2 };
- static const int can_parent_idx[] = { APLL, VPLL };
--static const int cko_parent_idx[] = { HXT, LXT, HIRC, LIRC,
-+static const int cko_parent_idx[] = { HXT_GATE, LXT_GATE, HIRC_GATE, LIRC_GATE,
- 				      AXICLK_DIV4, SYSPLL, DDRPLL,
- 				      EPLL_DIV2, APLL, VPLL };
--static const int smc_parent_idx[] = { HXT, PCLK4 };
--static const int kpi_parent_idx[] = { HXT, LXT };
-+static const int smc_parent_idx[] = { HXT_GATE, PCLK4 };
-+static const int kpi_parent_idx[] = { HXT_GATE, LXT_GATE };
+-static struct clk_hw *ma35d1_clk_fixed(const char *name, int rate)
++static struct clk_hw *ma35d1_clk_fixed(struct device *dev, const char *name, int rate)
+ {
+-	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
++	return devm_clk_hw_register_fixed_rate(dev, name, NULL, 0, rate);
+ }
  
- static const struct clk_div_table ip_div_table[] = {
- 	{0, 2}, {1, 4}, {2, 6}, {3, 8}, {4, 10},
-@@ -283,16 +295,16 @@ static int ma35d1_clocks_probe(struct platform_device *pdev)
+ static struct clk_hw *ma35d1_clk_mux(struct device *dev, const char *name,
+@@ -279,24 +279,24 @@ static int ma35d1_clocks_probe(struct platform_device *pdev)
+ 	 * purposes.
+ 	 */
+ 	if (num_clks == 1) {
+-		hws[HXT] = ma35d1_clk_fixed("hxt", 24000000);
+-		hws[LXT] = ma35d1_clk_fixed("lxt", 32768);
++		hws[HXT] = ma35d1_clk_fixed(dev, "hxt", 24000000);
++		hws[LXT] = ma35d1_clk_fixed(dev, "lxt", 32768);
+ 	}
+ 
+ 	hws[HXT_GATE] = ma35d1_clk_gate_parent_data(dev, "hxt_gate", hxtg_parent_data,
+ 						    clk_base + REG_CLK_PWRCTL, 0);
+ 	hws[LXT_GATE] = ma35d1_clk_gate_parent_data(dev, "lxt_gate", lxtg_parent_data,
+ 						    clk_base + REG_CLK_PWRCTL, 1);
+-	hws[HIRC] = ma35d1_clk_fixed("hirc", 12000000);
++	hws[HIRC] = ma35d1_clk_fixed(dev, "hirc", 12000000);
+ 	hws[HIRC_GATE] = ma35d1_clk_gate(dev, "hirc_gate", "hirc",
+ 					 clk_base + REG_CLK_PWRCTL, 2);
+-	hws[LIRC] = ma35d1_clk_fixed("lirc", 32000);
++	hws[LIRC] = ma35d1_clk_fixed(dev, "lirc", 32000);
+ 	hws[LIRC_GATE] = ma35d1_clk_gate(dev, "lirc_gate", "lirc",
  					 clk_base + REG_CLK_PWRCTL, 3);
  
  	hws[CAPLL] = ma35d1_reg_clk_pll(dev, CAPLL, pllmode[0], "capll",
--					hws[HXT], clk_base + REG_CLK_PLL0CTL0);
-+					hws[HXT_GATE], clk_base + REG_CLK_PLL0CTL0);
- 	hws[SYSPLL] = ma35d1_clk_fixed("syspll", 180000000);
+ 					hws[HXT_GATE], clk_base + REG_CLK_PLL0CTL0);
+-	hws[SYSPLL] = ma35d1_clk_fixed("syspll", 180000000);
++	hws[SYSPLL] = ma35d1_clk_fixed(dev, "syspll", 180000000);
  	hws[DDRPLL] = ma35d1_reg_clk_pll(dev, DDRPLL, pllmode[1], "ddrpll",
--					hws[HXT], clk_base + REG_CLK_PLL2CTL0);
-+					hws[HXT_GATE], clk_base + REG_CLK_PLL2CTL0);
+ 					hws[HXT_GATE], clk_base + REG_CLK_PLL2CTL0);
  	hws[APLL] = ma35d1_reg_clk_pll(dev, APLL, pllmode[2], "apll",
--				       hws[HXT], clk_base + REG_CLK_PLL3CTL0);
-+				       hws[HXT_GATE], clk_base + REG_CLK_PLL3CTL0);
- 	hws[EPLL] = ma35d1_reg_clk_pll(dev, EPLL, pllmode[3], "epll",
--				       hws[HXT], clk_base + REG_CLK_PLL4CTL0);
-+				       hws[HXT_GATE], clk_base + REG_CLK_PLL4CTL0);
- 	hws[VPLL] = ma35d1_reg_clk_pll(dev, VPLL, pllmode[4], "vpll",
--				       hws[HXT], clk_base + REG_CLK_PLL5CTL0);
-+				       hws[HXT_GATE], clk_base + REG_CLK_PLL5CTL0);
+@@ -337,8 +337,8 @@ static int ma35d1_clocks_probe(struct platform_device *pdev)
+ 	hws[PCLK3_DIV4096] = ma35d1_clk_fixed_factor(dev, "pclk3_div4096", "pclk3", 1, 4096);
+ 	hws[PCLK4_DIV4096] = ma35d1_clk_fixed_factor(dev, "pclk4_div4096", "pclk4", 1, 4096);
  
- 	hws[EPLL_DIV2] = ma35d1_clk_fixed_factor(dev, "epll_div2", "epll", 1, 2);
- 	hws[EPLL_DIV4] = ma35d1_clk_fixed_factor(dev, "epll_div4", "epll", 1, 4);
-@@ -460,7 +472,7 @@ static int ma35d1_clocks_probe(struct platform_device *pdev)
- 	hws[CKO_GATE] = ma35d1_clk_gate(dev, "cko_gate", "cko_div",
- 					clk_base + REG_CLK_SYSCLK1, 13);
+-	hws[USBPHY0] = ma35d1_clk_fixed("usbphy0", 480000000);
+-	hws[USBPHY1] = ma35d1_clk_fixed("usbphy1", 480000000);
++	hws[USBPHY0] = ma35d1_clk_fixed(dev, "usbphy0", 480000000);
++	hws[USBPHY1] = ma35d1_clk_fixed(dev, "usbphy1", 480000000);
  
--	hws[GTMR_GATE] = ma35d1_clk_gate(dev, "gtmr_gate", "hirc",
-+	hws[GTMR_GATE] = ma35d1_clk_gate(dev, "gtmr_gate", "hirc_gate",
- 					 clk_base + REG_CLK_SYSCLK1, 14);
- 
- 	hws[GPA_GATE] = ma35d1_clk_gate(dev, "gpa_gate", "hclk0",
-@@ -661,7 +673,7 @@ static int ma35d1_clocks_probe(struct platform_device *pdev)
- 	hws[UART16_GATE] = ma35d1_clk_gate(dev, "uart16_gate", "uart16_div",
- 					   clk_base + REG_CLK_APBCLK0, 28);
- 
--	hws[RTC_GATE] = ma35d1_clk_gate(dev, "rtc_gate", "lxt",
-+	hws[RTC_GATE] = ma35d1_clk_gate(dev, "rtc_gate", "lxt_gate",
- 					clk_base + REG_CLK_APBCLK0, 29);
- 	hws[DDR_GATE] = ma35d1_clk_gate(dev, "ddr_gate", "ddrpll",
- 					clk_base + REG_CLK_APBCLK0, 30);
+ 	/* DDR */
+ 	hws[DDR0_GATE] = ma35d1_clk_gate(dev, "ddr0_gate", "ddrpll",
 
 -- 
 2.56.0
