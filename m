@@ -1,58 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794988454;
-	b=x0xY9SuRaO/KlrZsxqEQDtPi6PisGzSVm+HwmygdjwnAcV6mSSGejl9LIvnIXJrZKlIG
-	 kH3j3Zpsjy+ihN3zXcwajvNKQwFue8c0o8aB1wbajs46asI3Af3+yc/5TUji3N58c+zpy
-	 3XtO+50dr1Dh00+6rTEn4lJuPoc+TAlY6JOTjs/63NXoPXjP7RxPW/xCz9rUQULV25Fp1
-	 ocnLHJV6fmOcpoqeFJW/7lw5J46PGjn+SfFvHI1HQ2AIcgUBM2rdsjXuNmUKxIErvShXG
-	 hl/jhJxBDn2Lhot5qhRWLkZ/GquwKUiKKouAau7+0PmF7EFgd8Yt1RSg8iMDIO3odjA==
+	t=1794990236;
+	b=XV7Q+WGoZgF8gq1QuEBAXIpf+dcmJpTlgDjOYXsH5dOgy4S8b7vxjfkUWg9Y2/ruUEaG
+	 NGWH8rtUX3YclnT7VipvzhakYTrN1RubtbmIdpgLURXuATWY5CyROT7qDBHZ0IeX50SJN
+	 5Nb85xtNwmvQD/UwJBBuOvn/9Zpnr1RDf9f53fRP7s9DSpLaJCs/UWLr4Qa1ht541SfJB
+	 vYbK7pW0/ax54oDtb/w3kmlcABmZI47YqqKH64k8LSPC2QtNaR2WoB/n/ARCkz1fjnHYi
+	 4SvWvLHxHhWRxVTUVVniaWerfhEWIklcP8g/nzAcFmpS72ai647KXq8BjJMfUkhQT0w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794988454;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:From:
-	 Content-Language:Organization:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Last-TLS-Session-Version;
-	bh=tb4WIW6lqZ5+Z3GQF5djG9Xnbu4tg/4H1vvuQxWHZEg=;
-	b=P4VOcRBCwBmVbrzdxh6xMrUldSI2/tVd5V1ReQXBdNH5bMALC+IxVzs51vkZnAaLPZ0Q
-	 E4xcXlFgPVu7uSh78zXOEQ8wvgZShcCeePoPGxa62VLAp9H0fYu46R3qwU9gGqGqCR3Nc
-	 kYs1fTNraWbNky7PNf7kpBO4DWzi/ksOzMiuQvSI56DZ7Ml/Ez/aNzSmVT4N28HuRDPtu
-	 ssK6W0RwWsCJPNpcnFFgD3EIso7eWY/AK18J/4/Fo42y4Khy4lQyBORQ7WYaGxf+0z3Lz
-	 ZDlTE3DPYF556Ipet+HPhrOR6Eh03XSCuiP301Y4ZZcGiSN9dy0TIosFoLTxu/NMbzA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794990236;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=W34DDB2cLnsAExSKGg1C86iBQOL5I+MWli8p7NMuBbs=;
+	b=F+9dk54KD4mf7CsZdjw+aeUVoOSH09CEJ84hlxcl82EENChS1cPJ9vEn03790txuE/Az
+	 87fxqmiJCjhzYn+5P8LDnYO3mnto/tU4gBaQSnMijHNQXGqQb29GtsxvNdx8KhRD3vLdI
+	 PNePsCF2gN6TQ1AqrUwhBCFLJeYbBvDSBXO/nGYySONANO9XyOyyRZvwY6X1uU4J0QJdq
+	 cWfrIswWPMyXIlwq5afeTi7L90inLG3PQxBtv0OUPy3TlXn7kuJa2O2S33lf34djUHZrA
+	 Vwe6SxOb54+bLscL8RJdMtqyOPwXp0Z0ybJMxOAKL0rw+5F+m13WnVsOHXl8JSrN5EQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=ehFSdTb7;
-	arc=none smtp.remote-ip=185.246.85.4
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T7l0I5Ut;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3E4606A31C
-	for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2026 07:54:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9A3E4606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5893606A31C;
+	Wed, 18 Nov 2026 08:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=ehFSdTb7
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id E77054E4160A;
-	Wed, 18 Nov 2026 07:54:11 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B37195FE9B;
-	Wed, 18 Nov 2026 07:54:11 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 433CB11BC05A5;
-	Wed, 18 Nov 2026 08:54:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1794988450; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=tb4WIW6lqZ5+Z3GQF5djG9Xnbu4tg/4H1vvuQxWHZEg=;
-	b=ehFSdTb7uzrE6rWYmg35Q80WHEhS+LYoh5/jgxjMBUtq3YOPIPQRNGsHszTdpZDhC0eM+h
-	+Z3t9bGej6AxdCqgXoUS40XFXxMHaFCkeB5XmXEtEBOfc8UIa4zUko7flR9Yj2eRi2ARIl
-	zmRXEpcBIlSf3oPeCV1DeD9lc+W+zOztiZJFW4hGoTy5pixgPuCVFuqH4mg9euuq4OMoOR
-	c3YH3rjGHsxXELQXYqWaG/m0ycwKUr6t8xa2wkIde2j+85OG04m696IEyDZ3LZ7kLRsAV5
-	EPKg1J4Vp4wedu0QFepN1tbPB+blaLolM0E2FQTvOZRk6tvDmSCRossHxazw8w==
-Message-ID: <26aa0b74-e3f8-4405-ab87-743f5f8ef197@bootlin.com>
-Date: Wed, 18 Nov 2026 08:54:05 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T7l0I5Ut
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A84D1F000C4;
+	Wed, 18 Nov 2026 08:23:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794990236;
+	bh=W34DDB2cLnsAExSKGg1C86iBQOL5I+MWli8p7NMuBbs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=T7l0I5UtBLZnK2lk3AF7CxS691KFZVgFUzzAPZy8+aDGgoY1Eqg2ON+PtbMrOW6WX
+	 glYV6pPkUQc4SNPZjJrnZRJc4x3O1vXciX7pKs61CFGS0feijmNChr6C4L2omWHDN3
+	 pE7+Iph73a6OVRBC40p6jtkSkz/Rx/0Vt0vyEZ9snHls1EXA8I+Z1fYKSUuMjU5Wue
+	 1CopnkXs6qfUk3ICvFi4umn071UZ+0yfmOCn1cH/IJmniGAsQvPE+iLN/wMpKTtXdb
+	 cstPbKCQZNVDc1KVmVtFl/fBISEj4ATrzZs9LhfkGcFmur5FeXQf50Ed82E9tWLUgC
+	 A0aN6XIixOJyg==
+Message-ID: <27677095-4f84-453b-934e-4451d8c549c6@kernel.org>
+Date: Wed, 18 Nov 2026 09:23:48 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -63,163 +52,104 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/13] arm64: add Synaptics SL2610 SoCs and RDK boards
-To: Jisheng Zhang <jszhang@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <20261115102401.3520-1-jszhang@kernel.org>
- <avrx2EhgZ10ED40P@xhacker>
-From: Richard GENOUD <richard.genoud@bootlin.com>
-Content-Language: en-US, fr
-Organization: Bootlin
-In-Reply-To: <avrx2EhgZ10ED40P@xhacker>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: Re: [PATCH v3 00/14 RESEND] Add clock support for Exynos8855 SoC
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: Raghav Sharma <raghav.s@samsung.com>, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, sboyd@kernel.org,
+ bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, robh@kernel.org,
+ conor+dt@kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ is.gandhi@samsung.com, ts.amit@samsung.com, pokala.reddy@samsung.com
+References: <CGME20261113104829epcas5p13695795bc337b89816b05eec610a0dba@epcas5p1.samsung.com>
+ <20261113110612.3265841-1-raghav.s@samsung.com>
+ <a7b901f4-59d1-4671-bfed-0d11f9e505e2@kernel.org>
+ <CADrjBPpecGbRo2PhH_zqGfNf3L=bNf81q3SMXnSvD2n0Lx-cbA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <CADrjBPpecGbRo2PhH_zqGfNf3L=bNf81q3SMXnSvD2n0Lx-cbA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le 16/11/2026 à 13:06, Jisheng Zhang a écrit :
-> On Sun, Nov 15, 2026 at 06:23:39PM +0800, Jisheng Zhang wrote:
->> Add initial support for the Synaptics SL261X SoCs and corresponding
->> RDK boards.
->>
->> The SL261X SoCs include five pin-to-pin compatible SoCs: SL2611, SL2613,
->> SL2615, SL2617, and SL2619.
->>
->> Only reset, pinctrl, clk/pll, uart, gpio, i2c, spi, i3c are included in
->> this series. The support for Ethernet, USB, SDHCI, CAN, DMAC, XSPI will
->> be submitted after this series is merged.
->>
->> since v1:
->>   - rebase on latest rcN
->>   - drop some patches which have been merged
->>   - let the "gbl" node export pinctrl/reset/clk devices with
->>     MFD_CELL_NAME()
->>   - use <linux/platform_device.h> instead of <linux/mod_devicetable.h>
->>   - adopt some coding suggestions from Uwe
->>   - Use 0 and 1 to select normal and strong pull-up on 10-bit pads
+On 16/11/2026 19:06, Peter Griffin wrote:
+> Hi Krzysztof,
 > 
-> Other SoCs doesn't use this defintion for pull up or strong pull up.
-> After consulting our HW people, the strong pull up isn't used at
-> all, so I will remove strong pull up support in newer version. We can
-> add back its support when it's really needed in the future, nothing
-> breaks.
-I've found a similar definition here:
-https://elixir.bootlin.com/linux/v7.3.1/source/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml#L73-L78
-But also a plain new property here:
-https://elixir.bootlin.com/linux/v7.3.1/source/Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml#L153-L155
-And another with the real strong pull-up value:
-https://elixir.bootlin.com/linux/v7.3.1/source/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml#L94-L99
-As you said, if it's not used, we can skip it and add a property in
-the future (or the real value if we have it).
-
-But we won't be able to use 1 for strong and 0 for normal.
-
-Regards,
-Richard
-> 
->>   - collect Acked-by tag
+> On Mon, 16 Nov 2026 at 10:02, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >>
->> Jisheng Zhang (13):
->>    arm64: kconfig: let ARCH_BERLIN cover Synaptics arm64 SoCs
->>    pinctrl: berlin: use u16 instead of u8 for the offset
->>    pinctrl: berlin: enable module build support
->>    pinctrl: berlin: add optional pinconf support
->>    dt-bindings: soc: synaptics: add SL2610 system controllers
->>    soc: synaptics: add SL2610 system controller support
->>    reset: add Synaptics SL2610 reset controller support
->>    pinctrl: berlin: add Synaptics SL2610 pin controller support
->>    clk: berlin: add Synaptics clock controller helpers
->>    clk: berlin: add Synaptics SL2610 clocks and PLLs
->>    dt-bindings: arm: berlin: add Synaptics SL2610 SoCs and RDK boards
->>    arm64: dts: synaptics: add SL2610 family SoCs
->>    arm64: dts: synaptics: add SL2610 family RDK boards
+>> On 13/11/2026 12:05, Raghav Sharma wrote:
+>>> This patch series adds clock support for below blocks
+>>> found in Exynos8855 SoC
+>>> TOP & PERIC
+>>> PERIS
+>>> HSI
+>>> USB
+>>> There are many other blocks, for which the support will be
+>>> added in a forthcoming patch series.
+>>> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+>>> ---
 >>
->>   .../bindings/arm/marvell,berlin.yaml          |  20 +
->>   .../soc/synaptics/syna,sl2610-soc-syscon.yaml | 178 ++++
->>   MAINTAINERS                                   |   8 +
->>   arch/arm64/Kconfig.platforms                  |   4 +-
->>   arch/arm64/boot/dts/synaptics/Makefile        |   5 +
->>   arch/arm64/boot/dts/synaptics/sl2611-rdk.dts  |  16 +
->>   arch/arm64/boot/dts/synaptics/sl2611.dtsi     | 457 +++++++++++
->>   arch/arm64/boot/dts/synaptics/sl2613-rdk.dts  |  16 +
->>   arch/arm64/boot/dts/synaptics/sl2613.dtsi     |  12 +
->>   arch/arm64/boot/dts/synaptics/sl2615-rdk.dts  |  16 +
->>   arch/arm64/boot/dts/synaptics/sl2615.dtsi     |  46 ++
->>   arch/arm64/boot/dts/synaptics/sl2617-rdk.dts  |  16 +
->>   arch/arm64/boot/dts/synaptics/sl2617.dtsi     |  46 ++
->>   arch/arm64/boot/dts/synaptics/sl2619-rdk.dts  |  16 +
->>   arch/arm64/boot/dts/synaptics/sl2619.dtsi     |  44 +
->>   .../boot/dts/synaptics/sl261x-rdk-common.dtsi | 135 ++++
->>   drivers/clk/Kconfig                           |   1 +
->>   drivers/clk/berlin/Kconfig                    |  34 +
->>   drivers/clk/berlin/Makefile                   |   4 +
->>   drivers/clk/berlin/clk-sl2610.c               | 360 +++++++++
->>   drivers/clk/berlin/sl-clk.c                   | 279 +++++++
->>   drivers/clk/berlin/sl-clk.h                   |  31 +
->>   drivers/clk/berlin/sl-sysmgr-clk.c            | 241 ++++++
->>   drivers/clk/berlin/sl-sysmgr-clk.h            |  44 +
->>   drivers/clk/berlin/sl2610-pll.c               | 145 ++++
->>   drivers/clk/berlin/sl2610-pll.h               |  14 +
->>   drivers/pinctrl/berlin/Kconfig                |  16 +
->>   drivers/pinctrl/berlin/Makefile               |   1 +
->>   drivers/pinctrl/berlin/berlin.c               | 259 +++++-
->>   drivers/pinctrl/berlin/berlin.h               |  17 +-
->>   drivers/pinctrl/berlin/pinctrl-sl2610.c       | 759 ++++++++++++++++++
->>   drivers/reset/Kconfig                         |  13 +
->>   drivers/reset/Makefile                        |   1 +
->>   drivers/reset/reset-sl2610.c                  | 224 ++++++
->>   drivers/soc/Kconfig                           |   1 +
->>   drivers/soc/Makefile                          |   1 +
->>   drivers/soc/synaptics/Kconfig                 |  14 +
->>   drivers/soc/synaptics/Makefile                |   2 +
->>   drivers/soc/synaptics/sl2610-syscon.c         |  84 ++
->>   include/dt-bindings/clock/syna,sl2610.h       | 131 +++
->>   include/dt-bindings/reset/syna,sl2610-reset.h |  80 ++
->>   41 files changed, 3771 insertions(+), 20 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/soc/synaptics/syna,sl2610-soc-syscon.yaml
->>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2611-rdk.dts
->>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2611.dtsi
->>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2613-rdk.dts
->>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2613.dtsi
->>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2615-rdk.dts
->>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2615.dtsi
->>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2617-rdk.dts
->>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2617.dtsi
->>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2619-rdk.dts
->>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2619.dtsi
->>   create mode 100644 arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
->>   create mode 100644 drivers/clk/berlin/Kconfig
->>   create mode 100644 drivers/clk/berlin/clk-sl2610.c
->>   create mode 100644 drivers/clk/berlin/sl-clk.c
->>   create mode 100644 drivers/clk/berlin/sl-clk.h
->>   create mode 100644 drivers/clk/berlin/sl-sysmgr-clk.c
->>   create mode 100644 drivers/clk/berlin/sl-sysmgr-clk.h
->>   create mode 100644 drivers/clk/berlin/sl2610-pll.c
->>   create mode 100644 drivers/clk/berlin/sl2610-pll.h
->>   create mode 100644 drivers/pinctrl/berlin/pinctrl-sl2610.c
->>   create mode 100644 drivers/reset/reset-sl2610.c
->>   create mode 100644 drivers/soc/synaptics/Kconfig
->>   create mode 100644 drivers/soc/synaptics/Makefile
->>   create mode 100644 drivers/soc/synaptics/sl2610-syscon.c
->>   create mode 100644 include/dt-bindings/clock/syna,sl2610.h
->>   create mode 100644 include/dt-bindings/reset/syna,sl2610-reset.h
 >>
->> -- 
->> 2.55.0
->>
+>> Thanks, entire set applied (even if b4 thank-you letters show partial).
+>> for-next will be updated later today after builds.
 >>
 > 
+> Just FYI, there were a couple of outstanding review points on this series.
+> https://lore.kernel.org/lkml/CADrjBPoR7_LDZmxC_bOFigvqDaagVihmybfX5AdvSPr9-FVb8w@mail.gmail.com/
+> https://lore.kernel.org/lkml/CADrjBPrzHP_97OgAYacJKKqeCcp9FURoi6=Dmopk6nisTdEbdA@mail.gmail.com/
+> https://lore.kernel.org/lkml/CADrjBPoAVMdxgU4P+shh+9O5rGJp+m3sRQMDd2c-7zbJ8qhiBQ@mail.gmail.com/
+> 
+> I guess the main thing that would be intrusive to fix in a follow up
+> patch was introducing a slightly different naming scheme (compared to
+> most existing Exynos SoCs). The clock names being
+> "gout_<IP-clock_name>-<block-name>" as opposed to
+> "gout_<block-name>_<IP-clock-name>" that we have for many SoCs. That
+> also applies to the dt-bindings header "CLK_GOUT_WDT0_PERIS" not
+> "CLK_GOUT_PERIS_WDT0" etc.
 
+Oh, I completely missed these. I'll drop the series.
 
--- 
-Richard Genoud, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Best regards,
+Krzysztof
