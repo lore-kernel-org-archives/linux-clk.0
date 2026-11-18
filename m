@@ -1,57 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794988413;
-	b=P+wgYKG5ogxQM50n4rEYGS44VDz5BSN8migOOS9stDUxXmmOcUvafpYXsY88TDDMjzY2
-	 tpaUETrrHT4DhszlN0D2p1VdFTT/i9Qv2gTQhefk/Fpt49F9Qn2BJ6q3Sy2i3vlq9jceX
-	 xNwatcpHriEAY7uuf3yq7ZsxgvUBRhtuarZkV+xRbEdybJMdM0dhRKQCWl7O5i5p16b4e
-	 ar7iT9EcojHdkM27X6aNvcKvYtsAzTzYgDNpgbu9Lv4hhqI83Czzb0vmPKZwW7kMyqmJ/
-	 yBjNLbp5II5sWgn9FKE5X7ZN7MY2zl0lecshHiwnsWhWEMtiyMeMHwBw8EKzFP2bXOA==
+	t=1794988454;
+	b=x0xY9SuRaO/KlrZsxqEQDtPi6PisGzSVm+HwmygdjwnAcV6mSSGejl9LIvnIXJrZKlIG
+	 kH3j3Zpsjy+ihN3zXcwajvNKQwFue8c0o8aB1wbajs46asI3Af3+yc/5TUji3N58c+zpy
+	 3XtO+50dr1Dh00+6rTEn4lJuPoc+TAlY6JOTjs/63NXoPXjP7RxPW/xCz9rUQULV25Fp1
+	 ocnLHJV6fmOcpoqeFJW/7lw5J46PGjn+SfFvHI1HQ2AIcgUBM2rdsjXuNmUKxIErvShXG
+	 hl/jhJxBDn2Lhot5qhRWLkZ/GquwKUiKKouAau7+0PmF7EFgd8Yt1RSg8iMDIO3odjA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794988413;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=2Ncz86jXOJFJCGcSH3J6ZEsRklddBnnYpXTmonyOUMU=;
-	b=yJ1H7clrsNTD1lDflTX1cRTaiwhz8QQV4QfOokq4lpsaFP/ZNg5q8BtpJ4QSZNeDymEX
-	 aP5UfaXLT3Ewq6DgbzpWAXVm1XprZ8tUD5ynGF2MZfKQjz7MfZlrh03pnKaTj0iLnoaxB
-	 An2UFpAiB0zIvtxVNQydI1pjAKCpQPBWCbf5VWC0hbFWrSKMIN+KNouKveRcexOH3oS8U
-	 1343i+wDTWszMD0RehhRZ7z6bGduEWmpWDBW1+GKjwhaFewLggm6xwjR91jCUUBRhktzh
-	 QI6l97x+6ncUnKc+pWyUUXI7rwR295KZfxrXeMBV3TPJFtOo0ErJ+xB0Km0uOlZNx+Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794988454;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Message-ID:
+	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:From:
+	 Content-Language:Organization:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Last-TLS-Session-Version;
+	bh=tb4WIW6lqZ5+Z3GQF5djG9Xnbu4tg/4H1vvuQxWHZEg=;
+	b=P4VOcRBCwBmVbrzdxh6xMrUldSI2/tVd5V1ReQXBdNH5bMALC+IxVzs51vkZnAaLPZ0Q
+	 E4xcXlFgPVu7uSh78zXOEQ8wvgZShcCeePoPGxa62VLAp9H0fYu46R3qwU9gGqGqCR3Nc
+	 kYs1fTNraWbNky7PNf7kpBO4DWzi/ksOzMiuQvSI56DZ7Ml/Ez/aNzSmVT4N28HuRDPtu
+	 ssK6W0RwWsCJPNpcnFFgD3EIso7eWY/AK18J/4/Fo42y4Khy4lQyBORQ7WYaGxf+0z3Lz
+	 ZDlTE3DPYF556Ipet+HPhrOR6Eh03XSCuiP301Y4ZZcGiSN9dy0TIosFoLTxu/NMbzA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LuvHfogg;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=ehFSdTb7;
+	arc=none smtp.remote-ip=185.246.85.4
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AA6606A31C;
-	Wed, 18 Nov 2026 07:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3E4606A31C
+	for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2026 07:54:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9A3E4606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LuvHfogg
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADE241F000C4;
-	Wed, 18 Nov 2026 07:53:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794988413;
-	bh=2Ncz86jXOJFJCGcSH3J6ZEsRklddBnnYpXTmonyOUMU=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=LuvHfoggLcKxiJt7s76UfdAwUXvv1U4+7uT4uG8gUc+KZoJzZb46cvdbkSb23GCKL
-	 h+jnrL/G5B/pLZFpxak10GYIFND54kVbxK+E0mo5+0eM416NgGcNUUM7o/FZcDgzBd
-	 Vrkgk+NhawwAvV3Pv6uOaYDOFIpPoxAsi6nCC75vkqmrJM+43/Jo/7iDQTo8jd1yuT
-	 51fWl1JRfZBOTA4FkcjWHU6VnTpFcY4sDihZAZ5dUQ/QbI0Tl5ume5+D90fmdrNArK
-	 tzNeLYixUAqxGlwwreQ1g3HZc37C3uZLkq1jMqIp1oGzapPmlySjowstoyQyf1Wd27
-	 XGYUWY5Xd8rFQ==
-Message-ID: <sashiko-outbox-220374@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/4] clk: qcom: camcc-eliza: Declare icc path dependency
- for TITAN_TOP_GDSC
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Wenmeng Liu" <wenmeng.liu@oss.qualcomm.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261118-camcc-fix-v1-2-279d269e343b@oss.qualcomm.com>
-References: <20261118-camcc-fix-v1-0-279d269e343b@oss.qualcomm.com>
- <20261118-camcc-fix-v1-2-279d269e343b@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 18 Nov 2026 07:53:32 +0000
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=ehFSdTb7
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id E77054E4160A;
+	Wed, 18 Nov 2026 07:54:11 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B37195FE9B;
+	Wed, 18 Nov 2026 07:54:11 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 433CB11BC05A5;
+	Wed, 18 Nov 2026 08:54:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1794988450; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=tb4WIW6lqZ5+Z3GQF5djG9Xnbu4tg/4H1vvuQxWHZEg=;
+	b=ehFSdTb7uzrE6rWYmg35Q80WHEhS+LYoh5/jgxjMBUtq3YOPIPQRNGsHszTdpZDhC0eM+h
+	+Z3t9bGej6AxdCqgXoUS40XFXxMHaFCkeB5XmXEtEBOfc8UIa4zUko7flR9Yj2eRi2ARIl
+	zmRXEpcBIlSf3oPeCV1DeD9lc+W+zOztiZJFW4hGoTy5pixgPuCVFuqH4mg9euuq4OMoOR
+	c3YH3rjGHsxXELQXYqWaG/m0ycwKUr6t8xa2wkIde2j+85OG04m696IEyDZ3LZ7kLRsAV5
+	EPKg1J4Vp4wedu0QFepN1tbPB+blaLolM0E2FQTvOZRk6tvDmSCRossHxazw8w==
+Message-ID: <26aa0b74-e3f8-4405-ab87-743f5f8ef197@bootlin.com>
+Date: Wed, 18 Nov 2026 08:54:05 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,38 +61,165 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/13] arm64: add Synaptics SL2610 SoCs and RDK boards
+To: Jisheng Zhang <jszhang@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+References: <20261115102401.3520-1-jszhang@kernel.org>
+ <avrx2EhgZ10ED40P@xhacker>
+From: Richard GENOUD <richard.genoud@bootlin.com>
+Content-Language: en-US, fr
+Organization: Bootlin
+In-Reply-To: <avrx2EhgZ10ED40P@xhacker>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Low] clk: qcom: camcc-eliza: missing Fixes trailer for TITAN_TOP_GDSC
-  icc fix
---
+Le 16/11/2026 à 13:06, Jisheng Zhang a écrit :
+> On Sun, Nov 15, 2026 at 06:23:39PM +0800, Jisheng Zhang wrote:
+>> Add initial support for the Synaptics SL261X SoCs and corresponding
+>> RDK boards.
+>>
+>> The SL261X SoCs include five pin-to-pin compatible SoCs: SL2611, SL2613,
+>> SL2615, SL2617, and SL2619.
+>>
+>> Only reset, pinctrl, clk/pll, uart, gpio, i2c, spi, i3c are included in
+>> this series. The support for Ethernet, USB, SDHCI, CAN, DMAC, XSPI will
+>> be submitted after this series is merged.
+>>
+>> since v1:
+>>   - rebase on latest rcN
+>>   - drop some patches which have been merged
+>>   - let the "gbl" node export pinctrl/reset/clk devices with
+>>     MFD_CELL_NAME()
+>>   - use <linux/platform_device.h> instead of <linux/mod_devicetable.h>
+>>   - adopt some coding suggestions from Uwe
+>>   - Use 0 and 1 to select normal and strong pull-up on 10-bit pads
+> 
+> Other SoCs doesn't use this defintion for pull up or strong pull up.
+> After consulting our HW people, the strong pull up isn't used at
+> all, so I will remove strong pull up support in newer version. We can
+> add back its support when it's really needed in the future, nothing
+> breaks.
+I've found a similar definition here:
+https://elixir.bootlin.com/linux/v7.3.1/source/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml#L73-L78
+But also a plain new property here:
+https://elixir.bootlin.com/linux/v7.3.1/source/Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml#L153-L155
+And another with the real strong pull-up value:
+https://elixir.bootlin.com/linux/v7.3.1/source/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml#L94-L99
+As you said, if it's not used, we can skip it and add a property in
+the future (or the real value if we have it).
 
-commit c65859d436b87a36e0406115c287548cdbaf30c1
-Author: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>
+But we won't be able to use 1 for strong and 0 for normal.
 
-> clk: qcom: camcc-eliza: Declare icc path dependency for TITAN_TOP_GDSC
->
-> The TITAN_TOP GDSC hosts the camera NoC (camnoc). If MMNOC is left
-> without any client vote while TITAN_TOP is still on, MMNOC attempts a
-> power collapse while camnoc may still be active (QACTIVE high). The
-> power collapse then gets stuck, and so does the MMNOC BCM, so any later
-> bandwidth request through it times out in RPMh:
->
->   Error sending AMC RPMH requests (-110)
->
-> Declare the interconnect path for TITAN_TOP_GDSC, so that MMNOC is kept
-> voted for as long as the GDSC is on.
->
-> Signed-off-by: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>
+Regards,
+Richard
+> 
+>>   - collect Acked-by tag
+>>
+>> Jisheng Zhang (13):
+>>    arm64: kconfig: let ARCH_BERLIN cover Synaptics arm64 SoCs
+>>    pinctrl: berlin: use u16 instead of u8 for the offset
+>>    pinctrl: berlin: enable module build support
+>>    pinctrl: berlin: add optional pinconf support
+>>    dt-bindings: soc: synaptics: add SL2610 system controllers
+>>    soc: synaptics: add SL2610 system controller support
+>>    reset: add Synaptics SL2610 reset controller support
+>>    pinctrl: berlin: add Synaptics SL2610 pin controller support
+>>    clk: berlin: add Synaptics clock controller helpers
+>>    clk: berlin: add Synaptics SL2610 clocks and PLLs
+>>    dt-bindings: arm: berlin: add Synaptics SL2610 SoCs and RDK boards
+>>    arm64: dts: synaptics: add SL2610 family SoCs
+>>    arm64: dts: synaptics: add SL2610 family RDK boards
+>>
+>>   .../bindings/arm/marvell,berlin.yaml          |  20 +
+>>   .../soc/synaptics/syna,sl2610-soc-syscon.yaml | 178 ++++
+>>   MAINTAINERS                                   |   8 +
+>>   arch/arm64/Kconfig.platforms                  |   4 +-
+>>   arch/arm64/boot/dts/synaptics/Makefile        |   5 +
+>>   arch/arm64/boot/dts/synaptics/sl2611-rdk.dts  |  16 +
+>>   arch/arm64/boot/dts/synaptics/sl2611.dtsi     | 457 +++++++++++
+>>   arch/arm64/boot/dts/synaptics/sl2613-rdk.dts  |  16 +
+>>   arch/arm64/boot/dts/synaptics/sl2613.dtsi     |  12 +
+>>   arch/arm64/boot/dts/synaptics/sl2615-rdk.dts  |  16 +
+>>   arch/arm64/boot/dts/synaptics/sl2615.dtsi     |  46 ++
+>>   arch/arm64/boot/dts/synaptics/sl2617-rdk.dts  |  16 +
+>>   arch/arm64/boot/dts/synaptics/sl2617.dtsi     |  46 ++
+>>   arch/arm64/boot/dts/synaptics/sl2619-rdk.dts  |  16 +
+>>   arch/arm64/boot/dts/synaptics/sl2619.dtsi     |  44 +
+>>   .../boot/dts/synaptics/sl261x-rdk-common.dtsi | 135 ++++
+>>   drivers/clk/Kconfig                           |   1 +
+>>   drivers/clk/berlin/Kconfig                    |  34 +
+>>   drivers/clk/berlin/Makefile                   |   4 +
+>>   drivers/clk/berlin/clk-sl2610.c               | 360 +++++++++
+>>   drivers/clk/berlin/sl-clk.c                   | 279 +++++++
+>>   drivers/clk/berlin/sl-clk.h                   |  31 +
+>>   drivers/clk/berlin/sl-sysmgr-clk.c            | 241 ++++++
+>>   drivers/clk/berlin/sl-sysmgr-clk.h            |  44 +
+>>   drivers/clk/berlin/sl2610-pll.c               | 145 ++++
+>>   drivers/clk/berlin/sl2610-pll.h               |  14 +
+>>   drivers/pinctrl/berlin/Kconfig                |  16 +
+>>   drivers/pinctrl/berlin/Makefile               |   1 +
+>>   drivers/pinctrl/berlin/berlin.c               | 259 +++++-
+>>   drivers/pinctrl/berlin/berlin.h               |  17 +-
+>>   drivers/pinctrl/berlin/pinctrl-sl2610.c       | 759 ++++++++++++++++++
+>>   drivers/reset/Kconfig                         |  13 +
+>>   drivers/reset/Makefile                        |   1 +
+>>   drivers/reset/reset-sl2610.c                  | 224 ++++++
+>>   drivers/soc/Kconfig                           |   1 +
+>>   drivers/soc/Makefile                          |   1 +
+>>   drivers/soc/synaptics/Kconfig                 |  14 +
+>>   drivers/soc/synaptics/Makefile                |   2 +
+>>   drivers/soc/synaptics/sl2610-syscon.c         |  84 ++
+>>   include/dt-bindings/clock/syna,sl2610.h       | 131 +++
+>>   include/dt-bindings/reset/syna,sl2610-reset.h |  80 ++
+>>   41 files changed, 3771 insertions(+), 20 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/soc/synaptics/syna,sl2610-soc-syscon.yaml
+>>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2611-rdk.dts
+>>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2611.dtsi
+>>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2613-rdk.dts
+>>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2613.dtsi
+>>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2615-rdk.dts
+>>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2615.dtsi
+>>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2617-rdk.dts
+>>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2617.dtsi
+>>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2619-rdk.dts
+>>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2619.dtsi
+>>   create mode 100644 arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
+>>   create mode 100644 drivers/clk/berlin/Kconfig
+>>   create mode 100644 drivers/clk/berlin/clk-sl2610.c
+>>   create mode 100644 drivers/clk/berlin/sl-clk.c
+>>   create mode 100644 drivers/clk/berlin/sl-clk.h
+>>   create mode 100644 drivers/clk/berlin/sl-sysmgr-clk.c
+>>   create mode 100644 drivers/clk/berlin/sl-sysmgr-clk.h
+>>   create mode 100644 drivers/clk/berlin/sl2610-pll.c
+>>   create mode 100644 drivers/clk/berlin/sl2610-pll.h
+>>   create mode 100644 drivers/pinctrl/berlin/pinctrl-sl2610.c
+>>   create mode 100644 drivers/reset/reset-sl2610.c
+>>   create mode 100644 drivers/soc/synaptics/Kconfig
+>>   create mode 100644 drivers/soc/synaptics/Makefile
+>>   create mode 100644 drivers/soc/synaptics/sl2610-syscon.c
+>>   create mode 100644 include/dt-bindings/clock/syna,sl2610.h
+>>   create mode 100644 include/dt-bindings/reset/syna,sl2610-reset.h
+>>
+>> -- 
+>> 2.55.0
+>>
+>>
+> 
 
-[Severity: Low]
-This fixes an MMNOC power-collapse hang and RPMh timeout when
-cam_cc_titan_top_gdsc is enabled. Should it include:
 
-  Fixes: 115631176f8a ("clk: qcom: camcc: Add support for camera clock cont=
-roller for Eliza")
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261118-camcc-fix-=
-v1-0-279d269e343b@oss.qualcomm.com?part=3D2
+-- 
+Richard Genoud, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
