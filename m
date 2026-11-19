@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795117949;
-	b=yeTk0KaYAn3+oxbnvv88czTztLGIQXTTIulci09++qLW2bxmx5dWIj4gcmM/WVbzofYi
-	 MKXooIGTB1B8wcm2HkmVUGwXGL2Km+Nx9kQC6RXW7The1+Ufzj0MFEFoVW/zdkqxho8m6
-	 ZivPECTxsCQUtyyf4vz4nkOEEtzdacOe3R8cKhbo00oZTnMFOEHw0vX4jTXCwy405KPwq
-	 w6l1pR1WqMm/JwAK2mA4VNPFdROPZd9MlfzNFCxsQjYh6V9cD+Gg38vIT4w+vj7q0GlPD
-	 17yLxY/02wvv1AAI1P36LduAj31+zO/BBNF6HzKzKrDQQ0BhLIlur4evcCAL4rLjyZQ==
+	t=1795117950;
+	b=T6xIpy+kX5eJVh5ceEBNp1QmmMqCyCsHRlQBuvFponukkRtmKuWvQ0V73fM8EC5DLKLu
+	 q5zzvYWzJTcH1DphFRBfZJJq36FPnf6DJM5V17T1Xc7anoL9zoKa1zHPawOUXXcZEDjQx
+	 TvT9c5PGRvsgm+z68C2IQocao4JVXKgYhoYzsV/SFwyBkGwxzLhT1cLgMCF/kZRwJEB9k
+	 ZJYyez7DyPSzszj3H9oiaf6QgnEW/oDLkHbyNtbsbZSYcRLKWcvMR35c78KGM33SasqiL
+	 JD5PIkTWf7puXdPNupueDXbg0KabaltunFzkRZgdU0JHam8ixLL9j2pCQ5vMxkiJZHA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795117949;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795117950;
 	h=Received:DKIM-Signature:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
 	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=X2FvG0ad5eCUYCLKQwToE2PJoUCfL1c541yWsdz/YTo=;
-	b=Vfwd6rZCbh95SfUsq8aZqcx02ZGMiN023u3PyTC8Tm4il3fkS6e0YH4qT0gXEHKviAbb
-	 0N8kRCarOovJcAACbFjnblaKRJHcZRQuSvR2NhvUeFQkTITgVKq82PWMlvcQ3xlMkxM04
-	 XoUSht5ZSV4xjoUsQBDg2qLqPQgdCdo1ifcm+nV80dOiCfLmpttv5l5QpysF2qpKmccao
-	 vf54w4+/l8uNYDsg1XWJqXzrDRiPHY4875M5MkLkTtzt+oUyNrPL04XCjYdWpV+7GDs7N
-	 O20C1LIyoQZQcVVRB5lGdEHsh4wSil27CelzopcFU04G1iEjMjepIeyhLNd1+2Tpt8Q==
+	bh=hldyOmuovudpDZcKBZAqxwujml3hMneSLgSVnKSFBdw=;
+	b=DjHfAMGjCAIHvACcwmILPP6v0WRssdNw+oiZ8ufUbWOM9BRlnWqaK0gnP2u17bYjMGLI
+	 yl3FYKBBKRyE0MhFwVcIghaDuEeD+LSECnfuwyPsfdj81TQoGv3ytrvEXyQDi8Cin4mv+
+	 yvSTUmnRxSoD3bkNhzY8zT5yFD8FmsZb3hyyymdFSnXm42K6y355U87qKhv/pajhi/a66
+	 xhB5qb9umb0BnkV9XBUrMtSCgNfIzIsbnwANU1iv+IvQqa9OCFhqxZ+pN15d3XoYhnQ7V
+	 r/zjRaVu36FJD2P2yDZy2D9H4pJsz2BbvIkJ06Vy1mnlFmGDV+tI6pgXAh9KfO2sy3w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H86DdZ5a;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y79EQ6XN;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C97C606A325
-	for <linux-clk@vger.kernel.org>; Thu, 19 Nov 2026 19:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDAC606A325
+	for <linux-clk@vger.kernel.org>; Thu, 19 Nov 2026 19:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H86DdZ5a
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D329E1F000C6;
-	Thu, 19 Nov 2026 19:52:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y79EQ6XN
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41B91F000C4;
+	Thu, 19 Nov 2026 19:52:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795117949;
-	bh=X2FvG0ad5eCUYCLKQwToE2PJoUCfL1c541yWsdz/YTo=;
+	s=k20260515; t=1795117950;
+	bh=hldyOmuovudpDZcKBZAqxwujml3hMneSLgSVnKSFBdw=;
 	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=H86DdZ5ag7p7gvJW9oHcN//MdWrkb4euq+isSu2c7DcM+6wC1m9ZuZdGYOCU0IPSm
-	 RdXmkIH/udGgVFJFFmYCMeIzYW6feM/JC4WUbujTDVZBWdiMn7NMEcE8iZdbvYt9BK
-	 aDEGQWmXCjpx16JSTCCG+Fg7NyqX5jVMmp8/RMXJNtyFBl6FlyEsDK+DtTBP2d6Gs1
-	 7IZUtPAarWJlZGPvktvq3/wbUgmg4z/hRsL/jpq7Xo/FhZTBR1JFm3YIronbpFEqdj
-	 pGgvyNTJLDtqparaB3nxVJkyIfErp7W0cylN5/1HoyQXZqofOlpucg8ZFN6At9U+Y8
-	 2Tie+wfq4PeYQ==
+	b=Y79EQ6XNFGDSG2VVOEY+lw87K8NMrc2l04VTQvkewIvs5ubFzi151j+k+GMMIxDI1
+	 jGBUmmpU8rrz8EHnUE4a3LX8vNnUZVmw2g8UvIJRDIttPm2/Sy8K0uUnLb0eok92HK
+	 f5pFK3a3BKIxoApq7GR0eYwQT9VHBleOLyBf30r8bXFVN27K6jkGoVrLt0Kz/wkjFT
+	 Hl3MFTo6y3qFi2LafxiQ2Ciy6VLO5M7aA0qtiJxXVkA9dY1fz3MxrHAA13LWOuHgPu
+	 gtIWMDBCaH+wKeJmoU3rw9FIq00aZfsuRtHZeY0FvP3WJIEdzIaMOFmxfAwZ4y0+6u
+	 AdCS5zeDw9XEA==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,122 +51,482 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v6 1/2] clk: en7523: convert to full clk_hw
- implementation for en7581
+Subject: Re: [PATCH v6 2/2] clk: en7523: add support for .set_rate for
+ en7581
 From: Brian Masney <masneyb@kernel.org>
 To: Christian Marangi <ansuelsmth@gmail.com>
 Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org, 
  Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20261117180213.88046-2-ansuelsmth@gmail.com>
+In-Reply-To: <20261117180213.88046-3-ansuelsmth@gmail.com>
 References: <20261117180213.88046-1-ansuelsmth@gmail.com>
- <20261117180213.88046-2-ansuelsmth@gmail.com>
+ <20261117180213.88046-3-ansuelsmth@gmail.com>
 Date: Thu, 19 Nov 2026 14:52:23 -0500
-Message-Id: <179511794323.284394.6522107183623644996.b4-review@b4>
+Message-Id: <179511794323.284394.3927169878877033939.b4-review@b4>
 X-Mailer: b4 0.17-dev-8145e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2774; i=masneyb@kernel.org;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13497; i=masneyb@kernel.org;
  s=20250903; h=from:subject:message-id;
- bh=tQRLcRbFPyh5z2MGY/JRZ+BkE+GDOTjgxRdJqdC2X+s=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLL+B1c4LtvXX1b9aPKlKaenh91m3BhjIL9Q69Sy46rXp
- 5rduBW9tKOUhUGMi0FWTJFlSa5RQUTqKtt7dzRZYOawMoEMYeDiFICJiIkwMtx82RfvkaH0b9mH
- D1d9jSb37jReemmzVMHPd7xppqdnKZ9gZJjYGboqYemJh8K6P4Wv7DpjOPO2gySPZb6IrbLz2f7
- 8y/wA
+ bh=XJR3JlA4Rw42xdwb7ukhSNCmmgO0poQPaO4nxbh2kOY=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLL+B1fFNjv9Wpcu4e9yoNNLbEawiFj1mUsCi2OVxS1TZ
+ 66bHujcUcrCIMbFICumyLIk16ggInWV7b07miwwc1iZQIYwcHEKwEQSUhgZHq5dPmFuQ5bqOQfd
+ dS2LrtzpUK96Jfr1ia/tos4t7yr/NTIyNNve955VdYMlLstCWbP7c3BdrK7O1y2am1QiBEUYbJh
+ 5AQ==
 X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
 Hi Christian,
 
-> In preparation for support of .set_rate, convert the clock register
-> logic from fixed clock implementation to full clk_hw implementation with
-> dedicated OPs for Airoha EN7581 SoC.
+> Add support for EN7523 driver to configure rate for Airoha EN7581 SoC.
+> The SoC expose both base clock selector and clock divisor hence it's
+> possible to change the rate.
 > 
-> This is just a rework and no behaviour change is expected.
+> This will be especially needed for new SoC AN7583 that require changes
+> for the MDIO and the eMMC.
+> 
+> The clock were assumed correctly configured by the bootloader but this
+> goes against the rule of "kernel should not depend on external
+> configuration".
+> 
+> To support the use of standard clock divider API, clock_div_table are added
+> where needed (BUS, SPI and SLIC) in additionl to the previous info to
+> derive and simulate the clock from the divisor registers.
+> 
+> Recalc rate for Airoha EN7581 is updated to use the divider_recalc_rate API
+> for consistency with .set_rate and .determine_rate.
+> 
+> en7523_get_div() is updated to use the div table to drop redundant values.
 > 
 > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  drivers/clk/clk-en7523.c | 75 +++++++++++++++++++++++++++++-----------
->  1 file changed, 55 insertions(+), 20 deletions(-)
+>  drivers/clk/clk-en7523.c | 322 ++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 288 insertions(+), 34 deletions(-)
 >
 > diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> index 8f63482cbb7b..634e75348c71 100644
+> index 634e75348c71..2bbc1e71fa2d 100644
 > --- a/drivers/clk/clk-en7523.c
 > +++ b/drivers/clk/clk-en7523.c
-> @@ -126,6 +126,12 @@ struct en_clk_gate {
->  	struct clk_hw hw;
+> @@ -116,9 +116,7 @@ struct en_clk_desc {
+>  	u16 div_reg;
+>  	u8 div_bits;
+>  	u8 div_shift;
+> -	u16 div_val0;
+> -	u8 div_step;
+> -	u8 div_offset;
+> +	const struct clk_div_table *div_table;
 >  };
 >  
-> +struct en_clk {
-> +	struct regmap *map;
-> +	const struct en_clk_desc *desc;
-> +	struct clk_hw hw;
+>  struct en_clk_gate {
+> @@ -161,7 +159,88 @@ struct en_clk_soc_data {
+>  static const u32 gsw_base[] = { 400000000, 500000000 };
+>  static const u32 emi_base[] = { 333000000, 400000000 };
+>  static const u32 bus_base[] = { 500000000, 540000000 };
+> +/* From documentation divisor 1 is n/a */
+> +static const struct clk_div_table bus_div[] = {
+> +	{ .val = 1, .div = 2 },
+> +	{ .val = 2, .div = 3 },
+> +	{ .val = 3, .div = 4 },
+> +	{ .val = 4, .div = 5 },
+> +	{ .val = 5, .div = 6 },
+> +	{ .val = 6, .div = 7 },
+> +	{ .val = 7, .div = 8 },
+> +	{ /* sentinel */ }
 > +};
+>  static const u32 slic_base[] = { 100000000, 3125000 };
+> +static const struct clk_div_table slic_div[] = {
+> +	{ .val = 0, .div = 20 },
+> +	{ .val = 1, .div = 2 },
+> +	{ .val = 2, .div = 4 },
+> +	{ .val = 3, .div = 6 },
+> +	{ .val = 4, .div = 8 },
+> +	{ .val = 5, .div = 10 },
+> +	{ .val = 6, .div = 12 },
+> +	{ .val = 7, .div = 14 },
+> +	{ .val = 8, .div = 16 },
+> +	{ .val = 9, .div = 18 },
+> +	{ .val = 10, .div = 20 },
+> +	{ .val = 11, .div = 22 },
+> +	{ .val = 12, .div = 24 },
+> +	{ .val = 13, .div = 26 },
+> +	{ .val = 14, .div = 28 },
+> +	{ .val = 15, .div = 30 },
+> +	{ .val = 16, .div = 32 },
+> +	{ .val = 17, .div = 34 },
+> +	{ .val = 18, .div = 36 },
+> +	{ .val = 19, .div = 38 },
+> +	{ .val = 20, .div = 40 },
+> +	{ .val = 21, .div = 42 },
+> +	{ .val = 22, .div = 44 },
+> +	{ .val = 23, .div = 46 },
+> +	{ .val = 24, .div = 48 },
+> +	{ .val = 25, .div = 50 },
+> +	{ .val = 26, .div = 52 },
+> +	{ .val = 27, .div = 54 },
+> +	{ .val = 28, .div = 56 },
+> +	{ .val = 29, .div = 58 },
+> +	{ .val = 30, .div = 60 },
+> +	{ .val = 31, .div = 62 },
+> +	{ /* sentinel */ }
+> +};
+> +static const struct clk_div_table spi_div[] = {
+> +	{ .val = 0, .div = 40 },
+> +	{ .val = 1, .div = 2 },
+> +	{ .val = 2, .div = 4 },
+> +	{ .val = 3, .div = 6 },
+> +	{ .val = 4, .div = 8 },
+> +	{ .val = 5, .div = 10 },
+> +	{ .val = 6, .div = 12 },
+> +	{ .val = 7, .div = 14 },
+> +	{ .val = 8, .div = 16 },
+> +	{ .val = 9, .div = 18 },
+> +	{ .val = 10, .div = 20 },
+> +	{ .val = 11, .div = 22 },
+> +	{ .val = 12, .div = 24 },
+> +	{ .val = 13, .div = 26 },
+> +	{ .val = 14, .div = 28 },
+> +	{ .val = 15, .div = 30 },
+> +	{ .val = 16, .div = 32 },
+> +	{ .val = 17, .div = 34 },
+> +	{ .val = 18, .div = 36 },
+> +	{ .val = 19, .div = 38 },
+> +	{ .val = 20, .div = 40 },
+> +	{ .val = 21, .div = 42 },
+> +	{ .val = 22, .div = 44 },
+> +	{ .val = 23, .div = 46 },
+> +	{ .val = 24, .div = 48 },
+> +	{ .val = 25, .div = 50 },
+> +	{ .val = 26, .div = 52 },
+> +	{ .val = 27, .div = 54 },
+> +	{ .val = 28, .div = 56 },
+> +	{ .val = 29, .div = 58 },
+> +	{ .val = 30, .div = 60 },
+> +	{ .val = 31, .div = 62 },
+> +	{ /* sentinel */ }
+> +};
+>  static const u32 npu_base[] = { 333000000, 400000000, 500000000 };
+>  /* EN7581 */
+>  static const u32 emi7581_base[] = { 540000000, 480000000, 400000000, 300000000 };
+> @@ -185,8 +264,6 @@ static const struct en_clk_desc en7523_base_clks[] = {
+>  
+>  		.div_bits = 3,
+>  		.div_shift = 0,
+> -		.div_step = 1,
+> -		.div_offset = 1,
+>  	}, {
+>  		.id = EN7523_CLK_EMI,
+>  		.name = "emi",
+> @@ -199,8 +276,6 @@ static const struct en_clk_desc en7523_base_clks[] = {
+>  
+>  		.div_bits = 3,
+>  		.div_shift = 0,
+> -		.div_step = 1,
+> -		.div_offset = 1,
+>  	}, {
+>  		.id = EN7523_CLK_BUS,
+>  		.name = "bus",
+> @@ -213,8 +288,7 @@ static const struct en_clk_desc en7523_base_clks[] = {
+>  
+>  		.div_bits = 3,
+>  		.div_shift = 0,
+> -		.div_step = 1,
+> -		.div_offset = 1,
+> +		.div_table = bus_div,
+>  	}, {
+>  		.id = EN7523_CLK_SLIC,
+>  		.name = "slic",
+> @@ -228,8 +302,7 @@ static const struct en_clk_desc en7523_base_clks[] = {
+>  		.div_reg = REG_SPI_CLK_DIV_SEL,
+>  		.div_bits = 5,
+>  		.div_shift = 24,
+> -		.div_val0 = 20,
+> -		.div_step = 2,
+> +		.div_table = slic_div,
+>  	}, {
+>  		.id = EN7523_CLK_SPI,
+>  		.name = "spi",
+> @@ -240,8 +313,7 @@ static const struct en_clk_desc en7523_base_clks[] = {
+>  
+>  		.div_bits = 5,
+>  		.div_shift = 8,
+> -		.div_val0 = 40,
+> -		.div_step = 2,
+> +		.div_table = spi_div,
+>  	}, {
+>  		.id = EN7523_CLK_NPU,
+>  		.name = "npu",
+> @@ -254,8 +326,6 @@ static const struct en_clk_desc en7523_base_clks[] = {
+>  
+>  		.div_bits = 3,
+>  		.div_shift = 0,
+> -		.div_step = 1,
+> -		.div_offset = 1,
+>  	}, {
+>  		.id = EN7523_CLK_CRYPTO,
+>  		.name = "crypto",
+> @@ -281,8 +351,6 @@ static const struct en_clk_desc en7581_base_clks[] = {
+>  
+>  		.div_bits = 3,
+>  		.div_shift = 0,
+> -		.div_step = 1,
+> -		.div_offset = 1,
+>  	}, {
+>  		.id = EN7523_CLK_EMI,
+>  		.name = "emi",
+> @@ -295,8 +363,6 @@ static const struct en_clk_desc en7581_base_clks[] = {
+>  
+>  		.div_bits = 3,
+>  		.div_shift = 0,
+> -		.div_step = 1,
+> -		.div_offset = 1,
+>  	}, {
+>  		.id = EN7523_CLK_BUS,
+>  		.name = "bus",
+> @@ -309,8 +375,7 @@ static const struct en_clk_desc en7581_base_clks[] = {
+>  
+>  		.div_bits = 3,
+>  		.div_shift = 0,
+> -		.div_step = 1,
+> -		.div_offset = 1,
+> +		.div_table = bus_div,
+>  	}, {
+>  		.id = EN7523_CLK_SLIC,
+>  		.name = "slic",
+> @@ -324,8 +389,7 @@ static const struct en_clk_desc en7581_base_clks[] = {
+>  		.div_reg = REG_SPI_CLK_DIV_SEL,
+>  		.div_bits = 5,
+>  		.div_shift = 24,
+> -		.div_val0 = 20,
+> -		.div_step = 2,
+> +		.div_table = slic_div,
+>  	}, {
+>  		.id = EN7523_CLK_SPI,
+>  		.name = "spi",
+> @@ -336,8 +400,7 @@ static const struct en_clk_desc en7581_base_clks[] = {
+>  
+>  		.div_bits = 5,
+>  		.div_shift = 8,
+> -		.div_val0 = 40,
+> -		.div_step = 2,
+> +		.div_table = spi_div,
+>  	}, {
+>  		.id = EN7523_CLK_NPU,
+>  		.name = "npu",
+> @@ -350,8 +413,6 @@ static const struct en_clk_desc en7581_base_clks[] = {
+>  
+>  		.div_bits = 3,
+>  		.div_shift = 0,
+> -		.div_step = 1,
+> -		.div_offset = 1,
+>  	}, {
+>  		.id = EN7523_CLK_CRYPTO,
+>  		.name = "crypto",
+> @@ -568,16 +629,20 @@ static u32 en7523_get_base_rate(const struct en_clk_desc *desc, u32 val)
+>  
+>  static u32 en7523_get_div(const struct en_clk_desc *desc, u32 val)
+>  {
+> -	if (!desc->div_bits)
+> -		return 1;
+> +	const struct clk_div_table *clkt;
+>  
+>  	val >>= desc->div_shift;
+>  	val &= (1 << desc->div_bits) - 1;
+>  
+> -	if (!val && desc->div_val0)
+> -		return desc->div_val0;
+> +	if (desc->div_table) {
+> +		for (clkt = desc->div_table; clkt->div; clkt++)
+> +			if (clkt->val == val)
+> +				return clkt->div;
+>  
+> -	return (val + desc->div_offset) * desc->div_step;
+> +		return 0;
+> +	}
 > +
->  struct en_rst_data {
->  	const u16 *bank_ofs;
->  	const u16 *idx_map;
-> @@ -741,42 +747,71 @@ static int en7523_clk_hw_init(struct platform_device *pdev,
->  				     en7581_rst_ofs);
+> +	return val + 1;
 >  }
 >  
-> +static unsigned long en7581_recalc_rate(struct clk_hw *hw,
-> +					unsigned long parent_rate)
-> +{
-> +	struct en_clk *c = container_of(hw, struct en_clk, hw);
-> +	const struct en_clk_desc *desc = c->desc;
-> +	struct device *dev = clk_hw_get_dev(hw);
-> +	struct regmap *map = c->map;
-> +	u32 val, reg;
-> +	u32 rate;
+>  static int en7523_pci_is_enabled(struct clk_hw *hw)
+> @@ -708,10 +773,18 @@ static void en7523_register_clocks(struct device *dev, struct clk_hw_onecell_dat
+>  		const struct en_clk_desc *desc = &en7523_base_clks[i];
+>  		u32 reg = desc->div_reg ? desc->div_reg : desc->base_reg;
+>  		u32 val = readl(base + desc->base_reg);
+> +		u32 div;
+>  
+>  		rate = en7523_get_base_rate(desc, val);
+> +
+>  		val = readl(base + reg);
+> -		rate /= en7523_get_div(desc, val);
+> +		if (desc->div_bits) {
+> +			div = en7523_get_div(desc, val);
+> +			if (!div)
+> +				continue;
+> +
+> +			rate /= div;
+> +		}
+>  
+>  		hw = clk_hw_register_fixed_rate(dev, desc->name, NULL, 0, rate);
+>  		if (IS_ERR(hw)) {
+> @@ -774,11 +847,192 @@ static unsigned long en7581_recalc_rate(struct clk_hw *hw,
+>  		return 0;
+>  	}
+>  
+> -	return rate / en7523_get_div(desc, val);
+> +	if (desc->div_bits) {
+> +		val >>= desc->div_shift;
+> +		val &= (1 << desc->div_bits) - 1;
+> +
+> +		rate = divider_recalc_rate(hw, rate, val,
+> +					   desc->div_table, 0,
+> +					   desc->div_bits);
 
-The u32 lines can be combined.
+You can combine these into two lines.
 
-> +	int err;
-> +
-> +	err = regmap_read(map, desc->base_reg, &val);
-> +	if (err) {
-> +		dev_err(dev, "Failed reading fixed clk rate %s: %d\n",
-> +			desc->name, err);
-> +		return 0;
-> +	}
-> +	rate = en7523_get_base_rate(desc, val);
-> +
-> +	reg = desc->div_reg ? desc->div_reg : desc->base_reg;
-> +	err = regmap_read(map, reg, &val);
-> +	if (err) {
-> +		dev_err(dev, "Failed reading fixed clk div %s: %d\n",
-> +			desc->name, err);
-> +		return 0;
 > +	}
 > +
-> +	return rate / en7523_get_div(desc, val);
+> +	return rate;
 > +}
 > +
-> +static const struct clk_ops en7581_clk_ops = {
-> +	.recalc_rate = en7581_recalc_rate,
-> +};
-> +
->  static void en7581_register_clocks(struct device *dev, struct clk_hw_onecell_data *clk_data,
->  				   struct regmap *map, void __iomem *base)
->  {
->  	struct clk_hw *hw;
-> -	u32 rate;
->  	int i;
->  
->  	for (i = 0; i < ARRAY_SIZE(en7581_base_clks); i++) {
->  		const struct en_clk_desc *desc = &en7581_base_clks[i];
-> -		u32 val, reg = desc->div_reg ? desc->div_reg : desc->base_reg;
-> +		struct clk_init_data init = {
-> +			.ops = &en7581_clk_ops,
-> +		};
-> +		struct en_clk *en_clk;
->  		int err;
->  
-> -		err = regmap_read(map, desc->base_reg, &val);
-> +		en_clk = devm_kzalloc_obj(dev, *en_clk);
-> +		if (!en_clk)
-> +			continue;
+> +/*
+> + * Simulate rate with every divisor supported
+> + * 1. Search the divisor for the requested rate
+> + * 2. Simulate the final rate with the new divisor
+> + */
+> +static unsigned long en7581_get_div_for_rate(struct clk_hw *hw,
+> +					     unsigned long rate,
+> +					     unsigned long parent_rate,
+> +					     const struct en_clk_desc *desc,
+> +					     int *div_val)
+> +{
+> +	*div_val = divider_get_val(rate, parent_rate, desc->div_table,
+> +				   desc->div_bits, 0);
 
-return -ENOMEM;
+I think you should use divider_determine_rate instead for the rounding.
+
+> +	if (*div_val < 0)
+> +		return 0;
+> +
+> +	return divider_recalc_rate(hw, parent_rate, *div_val,
+> +				   desc->div_table, 0,
+> +				   desc->div_bits);
+> +}
+> +
+> +static int en7581_get_vals_for_rate(struct clk_hw *hw,
+> +				    const struct en_clk_desc *desc,
+> +				    unsigned long rate,
+> +				    u32 *base_val, u32 *div_val)
+> +{
+> +	struct device *dev = clk_hw_get_dev(hw);
+> +	unsigned long parent_rate, tmp_rate;
+> +	int tmp_base_val = 0;
+> +	int tmp_div_val = 0;
+
+The two int lines can be combined.
+
+> +
+> +	if (!rate || (!desc->base_bits && !desc->div_bits))
+> +		return -EINVAL;
+> +
+> +	if (!desc->base_bits) {
+> +		parent_rate = desc->base_value;
+> +
+> +		tmp_rate = en7581_get_div_for_rate(hw, rate, parent_rate,
+> +						   desc, &tmp_div_val);
+> +
+> +		/* Matching clock found */
+> +		if (tmp_rate == rate)
+> +			goto exit;
+> +	}
+> +
+> +	/* Search requested rate with every matching base rate + divisor */
+> +	for (; tmp_base_val < desc->n_base_values; tmp_base_val++) {
+> +		parent_rate = desc->base_values[tmp_base_val];
+> +		tmp_rate = parent_rate;
+> +
+> +		if (desc->div_bits)
+> +			tmp_rate = en7581_get_div_for_rate(hw, rate, parent_rate,
+> +							   desc, &tmp_div_val);
+> +
+> +		/* Matching clock found */
+> +		if (tmp_rate == rate)
+> +			break;
+> +	}
+> +
+> +	/* Impossible, should be validated by determine rate */
+> +	if (tmp_base_val >= desc->n_base_values) {
+> +		dev_err(dev, "Invalid rate for clock %s\n",
+> +			desc->name);
+> +		return -EINVAL;
+> +	}
+> +
+> +exit:
+> +	*base_val = tmp_base_val;
+> +	*div_val = tmp_div_val;
+> +
+> +	return 0;
+> +}
+> +
+> +static void en7581_find_best_rate(struct clk_hw *hw, struct clk_rate_request *req,
+> +				  const struct en_clk_desc *desc,
+> +				  unsigned long parent_rate,
+> +				  unsigned long requested_rate,
+> +				  unsigned long *best_diff)
+> +{
+> +	unsigned long tmp_rate, diff;
+> +	int tmp_div_val;
+> +
+> +	tmp_rate = parent_rate;
+> +	if (desc->div_bits)
+> +		tmp_rate = en7581_get_div_for_rate(hw, requested_rate, parent_rate,
+> +						   desc, &tmp_div_val);
+> +
+> +	if (!tmp_rate || tmp_rate < req->min_rate ||
+> +	    tmp_rate > req->max_rate)
+> +		return;
+> +
+> +	diff = abs_diff(requested_rate, tmp_rate);
+> +	if (diff < *best_diff) {
+> +		*best_diff = diff;
+> +		req->rate = tmp_rate;
+> +	}
+> +}
+> +
+> +static int en7581_determine_rate(struct clk_hw *hw,
+> +				 struct clk_rate_request *req)
+> +{
+> +	struct en_clk *en_clk = container_of(hw, struct en_clk, hw);
+> +	const struct en_clk_desc *desc = en_clk->desc;
+> +	unsigned long best_diff = ULONG_MAX;
+> +	unsigned long rate = req->rate;
+> +	int tmp_base_val = 0;
+> +
+> +	if (!rate || (!desc->base_bits && !desc->div_bits))
+> +		return -EINVAL;
+> +
+> +	if (!desc->base_bits) {
+> +		en7581_find_best_rate(hw, req, desc, desc->base_value,
+> +				      rate, &best_diff);
+> +		goto exit;
+> +	}
+> +
+> +	for (; tmp_base_val < desc->n_base_values; tmp_base_val++)
+> +		en7581_find_best_rate(hw, req, desc,
+> +				      desc->base_values[tmp_base_val],
+> +				      rate, &best_diff);
+> +
+> +exit:
+> +	return best_diff == ULONG_MAX ? -EINVAL : 0;
+> +}
+> +
+> +static int en7581_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			   unsigned long parent_rate)
+> +{
+> +	struct en_clk *en_clk = container_of(hw, struct en_clk, hw);
+> +	const struct en_clk_desc *desc = en_clk->desc;
+> +	struct device *dev = clk_hw_get_dev(hw);
+> +	struct regmap *map = en_clk->map;
+> +	u32 base_val, div_val;
+> +	u32 reg, val, mask;
+
+The u32 lines can be combined.
 
 Brian
 
