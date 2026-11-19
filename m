@@ -1,51 +1,51 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=46.101.248.176
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795076102;
-	b=mz8EhGgnI5/vc4cADLa4ANLnzN238s/qZX8LK+ometX4G96sgC7PjM2j7FtUgwCnFAD2
-	 JjqyLfpJcOpZqFUK7XdGJtSyO4Tyh/+Ro2BsHBrDW00d26SU5I4/r3MF4dbn0B0ahnw4S
-	 fnkUVyyTZVjFfQiWxRW3lnOOltaIYCW+TqolOy+zB6rFXzVoDxGQRrCg0iO5BdWJAsAFM
-	 a+bw8L9Mid0Y3D2NG5DKQaQkQDYllgvi4Z9reFc9ED6OZQeSNSnGNbHcGzZC89Am7Jcpe
-	 fNNkBt9EYBxejv2BF4396HqCJttvJTDc18ioLS4wmAADhxJWXe0Z/6wBkKxbuOanVGg==
+	t=1795076104;
+	b=Ob4xRpLD27JADWbXrKDoF1tltUwblcxC1vAhrhlSjVwNyMngRILZe4JGFompRQxovagI
+	 jOByWSO70pu5JbIb3SsjwXq5rbHDm+la3ElnVSHX8Ht7QkPappNoEzyiW1mGhy0mSRFsJ
+	 rJwPYMXUWQ7AW4K05nUwHODBcG3orsB2FEf+s5RrE5Zcmx9WRSk3RU9byAe5XpqXAhV3d
+	 Tb5iGHc9pT/hto/rMxwHdYgqnKhqfuALXUkBZMkYMaOXidpV6345YaDPRs2RurIbyyK5x
+	 A4MhWibS1Q0DRzNsXMy5NRHgIINwN+RRcRZTbdLYnB+LJQ7tdE6FPmUYyXAlAQgK2HQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795076102;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795076104;
 	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
 	 Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 X-CM-TRANSID:X-Coremail-Antispam:X-CM-SenderInfo;
-	bh=D1dY7f066MKoc6DHSpjnnySbufNUCKf/+aqmf+2mNmg=;
-	b=GLazcoWn0ShVb4odC0Lt/hvcW3N5oFWYvYCVdiAbsK9Mj8lIC+uwllx58ZB+t2pEDip2
-	 xSrIcUd9umaYxSIX5P7X/YRl9cYKCiA5RfWFi24/s4xQaVX2PEVq/hHUJbfP6mj/qB+b+
-	 1kQnFrUOp9fHTmjJggM2aUEjpinP+ToGV6Dn1ggoR3MbSrDbS/77qwbh31piQPZreIPhD
-	 3EOp3cKeaJBJX0bjx1M2TGpd2GT8NkOtdpclXUPH2taqnbXb7PPqB1xHkUedUJyCLb0sL
-	 DnUIXuoIumM6DUIFonXgLlWGWVEb2xgAzsqmHVLgZ9KhNN0jSBOtmJQUP0Wm397SsQA==
+	bh=98mB3tNx1Zqx3Y3TXzTbQ9lVMgUg1AIjcAlJeoXROiA=;
+	b=W7dF4vQEikTp7upZMGinBIScoVLUY2Yx9UMWQG5xDhH4h09VQ+YOpDd3hAZLU25FTx8I
+	 tNoLcrFoaNm5SCCLnKI1nmZvbR9+nOxpN/s4wHvWQR89Uhm7CVv2WA1AKurFbAbW1bN1H
+	 nzLOTDSjtVVzH9RnC3WEL4H2JvtCfem0XOQqQXMNCW7UnyJLFeAf4C6smVUBAXmB6pOow
+	 0SXLBcBENilXqgZxTfxc3j4N5D/eGOCF9IkKrGPw2Kctz0iXc+Wf9xWvNp0V/m2WRNVoN
+	 qiB41fb2aSEDukEplTknpVnEEVYImIhvKIx68sC1XN4/1NKZtQMKp50VrPx3WMnAv/w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=mail.zgclab.edu.cn;
 	spf=pass smtp.mailfrom=mail.zgclab.edu.cn;
-	dkim=pass header.d=mail.zgclab.edu.cn header.i=@mail.zgclab.edu.cn header.a=rsa-sha256 header.s=dkim header.b=ehoEUjDz;
+	dkim=pass header.d=mail.zgclab.edu.cn header.i=@mail.zgclab.edu.cn header.a=rsa-sha256 header.s=dkim header.b=W+Abe8Dd;
 	arc=none smtp.remote-ip=46.101.248.176
 Received: from zg8tndyumtaxlji0oc4xnzya.icoremail.net (zg8tndyumtaxlji0oc4xnzya.icoremail.net [46.101.248.176])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E4E606A333;
-	Thu, 19 Nov 2026 08:14:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 03E4E606A333
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB8660A2619;
+	Thu, 19 Nov 2026 08:15:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AEB8660A2619
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.zgclab.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.zgclab.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=mail.zgclab.edu.cn header.i=@mail.zgclab.edu.cn header.a=rsa-sha256 header.s=dkim header.b=ehoEUjDz
+	dkim=pass (1024-bit key) header.d=mail.zgclab.edu.cn header.i=@mail.zgclab.edu.cn header.a=rsa-sha256 header.s=dkim header.b=W+Abe8Dd
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=mail.zgclab.edu.cn; s=dkim; h=Received:From:To:Cc:Subject:Date:
 	Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=D1dY7f066MKoc6DHSpjnnySbufNUCKf/+aqmf+2mNmg=; b=ehoEUjDzfJb84
-	vrgX3NYsyOQheniojAEscDWsLTP4ZycbyUTulXsZoiqtMVcrwsWfXTKwUWEeUkFf
-	TqHeAgztiwokFPdapNG7Tai7ZbiFLvOlKKLC3MZLdcLHzyi5SJhK5lZPWF1rRlWo
-	RYOFpb8D7SRpKp/eNCyHiCoyp8H8Co=
-Received: from 02.eml (unknown [58.206.202.11])
-	by web3 (Coremail) with SMTP id ygQGZQCHKYz5r_5q41HEAA--.1411S2;
-	Thu, 19 Nov 2026 16:14:49 +0800 (CST)
+	bh=98mB3tNx1Zqx3Y3TXzTbQ9lVMgUg1AIjcAlJeoXROiA=; b=W+Abe8DdNUkur
+	gwI933OxO6aMKmuKqHTdzCjRjdB1sJDkR1DumvIw3LpjUFi8mVO/zPm0kyejQWJA
+	tWjZZfP9A8/+vb32KEbObkcMvFaxw3ECFbElLev8Zd6SX17oH4cWTETvzriUgOEQ
+	aOVJksV+g2IrZwsYkoZ1pAMa6/Opts=
+Received: from 03.eml (unknown [58.206.202.11])
+	by web2 (Coremail) with SMTP id yQQGZQBnlmr8r_5qPiJLAQ--.41774S2;
+	Thu, 19 Nov 2026 16:14:52 +0800 (CST)
 From: Wang Haoran <wanghr2026@mail.zgclab.edu.cn>
-To: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, wanghr2026@mail.zgclab.edu.cn
-Subject: [PATCH] clk: max9485: Disable vdd on probe failure
-Date: Thu, 19 Nov 2026 16:14:49 +0800
-Message-ID: <1795076089649-2-ff3d027f@mail.zgclab.edu.cn>
+To: linusw@kernel.org
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, wanghr2026@mail.zgclab.edu.cn
+Subject: [PATCH] clk: versatile-icst: release regmap on registration failure
+Date: Thu, 19 Nov 2026 16:14:53 +0800
+Message-ID: <1795076093787-3-ba1f065a@mail.zgclab.edu.cn>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -57,67 +57,64 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:ygQGZQCHKYz5r_5q41HEAA--.1411S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr1xGF1DGFW5CF45tFWxCrg_yoW5WFyDpr
-	4kWFZYkr1rXFWIkw4DXa4xC3WSyrWUJFykCrn5W34rZ3Z8CayxXF4xA345Z3WjqrWvka1a
-	yFZrAFy0yF9F9FJanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPG14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+X-CM-TRANSID:yQQGZQBnlmr8r_5qPiJLAQ--.41774S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJF43JF1rWw18tFWfXw48Crg_yoW5Wr18pr
+	Z3ZayrKw4Igr4vgFWYqa18uFy5KF92yFW5uw1fJw1vy3Z0gryrtr43Xay3C3Wqgr4rGa1j
+	qayqk3yIkw4DAaUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
 	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
 	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
 	1j6F4UJwAaw2AFwI0_Jrv_JF1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28I
-	cVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx
+	cVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx
 	0Ex4A2jsIE14v26F4j6r4UJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I2
 	1c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8ZwCF04
 	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC2
 	0s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI
-	0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv2
+	0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv2
 	0xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2js
-	IE14v26F4j6r4UJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIF
-	yTuYvjfUeuWlDUUUU
-X-CM-SenderInfo: pzdqwxbusqjlo62juzldeovvfxof0/1tbiAQEQD2r+rmUDKAAAsr
+	IE14v26F4j6r4UJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI
+	43ZEXa7VUb58n5UUUUU==
+X-CM-SenderInfo: pzdqwxbusqjlo62juzldeovvfxof0/1tbiAgAQD2r+rloDXgAAsg
 
-max9485_i2c_probe() enables the vdd regulator but never disables it: the
-driver has no remove callback and no failure-path unwind, so the rail
-stays enabled after a failed probe (including -EPROBE_DEFER retries, which
-re-enable it each round) and after unbind, and _regulator_put() then warns
-on the leaked enable.
+icst_clk_register() creates a non-devm regmap with regmap_init_mmio() and
+hands it to icst_clk_setup(), which on clk_register() failure only frees
+its own structs and drops the regmap pointer, so the regmap and its
+debugfs entry leak permanently. A name clash is a natural trigger: a DT
+with N same-named auxosc children registers "osc" once and then fails
+-EEXIST on every subsequent registration, leaking N-1 regmaps per boot.
 
-Use devm_regulator_get_enable() instead of the manual get and enable, so
-the core registers an automatic disable that runs on probe failure and on
-removal without adding a new error path.
+Release the regmap with regmap_exit() when icst_clk_setup() fails.
 
 Signed-off-by: Wang Haoran <wanghr2026@mail.zgclab.edu.cn>
-Fixes: 33f5104624b9 ("clk: Add driver for MAX9485")
+Fixes: 179c8fb3c2a6 ("clk: versatile-icst: convert to use regmap")
 ---
 
-diff --git a/drivers/clk/clk-max9485.c b/drivers/clk/clk-max9485.c
-index 9c48c0c3a998..68df62ac148c 100644
---- a/drivers/clk/clk-max9485.c
-+++ b/drivers/clk/clk-max9485.c
-@@ -78,7 +78,6 @@ struct max9485_driver_data {
- 	struct clk *xclk;
- 	struct i2c_client *client;
- 	u8 reg_value;
--	struct regulator *supply;
- 	struct gpio_desc *reset_gpio;
- 	struct max9485_clk_hw hw[MAX9485_NUM_CLKS];
- };
-@@ -278,12 +277,8 @@ static int max9485_i2c_probe(struct i2c_client *client)
+diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+index 37334afee040..e9c7353aa5d5 100644
+--- a/drivers/clk/versatile/clk-icst.c
++++ b/drivers/clk/versatile/clk-icst.c
+@@ -407,14 +407,18 @@ struct clk *icst_clk_register(struct device *dev,
+ 		.reg_stride = 4,
+ 	};
+ 	struct regmap *map;
++	struct clk *clk;
  
- 	xclk_name = __clk_get_name(drvdata->xclk);
+ 	map = regmap_init_mmio(dev, base, &icst_regmap_conf);
+ 	if (IS_ERR(map)) {
+ 		pr_err("could not initialize ICST regmap\n");
+ 		return ERR_CAST(map);
+ 	}
+-	return icst_clk_setup(dev, desc, name, parent_name, map,
+-			      ICST_VERSATILE);
++	clk = icst_clk_setup(dev, desc, name, parent_name, map, ICST_VERSATILE);
++	if (IS_ERR(clk))
++		regmap_exit(map);
++
++	return clk;
+ }
+ EXPORT_SYMBOL_GPL(icst_clk_register);
  
--	drvdata->supply = devm_regulator_get(dev, "vdd");
--	if (IS_ERR(drvdata->supply))
--		return PTR_ERR(drvdata->supply);
--
--	ret = regulator_enable(drvdata->supply);
--	if (ret < 0)
-+	ret = devm_regulator_get_enable(dev, "vdd");
-+	if (ret)
- 		return ret;
- 
- 	drvdata->reset_gpio =
 
 ---
 
@@ -125,34 +122,26 @@ PoC reproduction (7.4.0-rc2, arm64 QEMU virt, unmodified kernel):
 
 Device tree injection, spliced into the QEMU virt machine DT:
 
-    xclk: clock-0 { compatible = "fixed-clock"; #clock-cells = <0>;
-        clock-frequency = <12288000>; };
+    reserved-memory { #address-cells = <2>; #size-cells = <2>; ranges;
+        icst-regs@7f200000 { no-map; reg = <0x0 0x7f200000 0x0 0x1000>; }; };
 
-    reg_vdd: regulator-0 { compatible = "regulator-fixed";
-        regulator-name = "max9485-vdd"; regulator-min-microvolt = <3300000>;
-        regulator-max-microvolt = <3300000>; };
+    syscon@7f200000 { compatible = "syscon"; reg = <0x0 0x7f200000 0x0 0x1000>;
+        osc@0 { compatible = "arm,versatile-cm-auxosc"; #clock-cells = <0>; };
+        osc@1 { compatible = "arm,versatile-cm-auxosc"; #clock-cells = <0>; }; };
 
-    i2c@0 { compatible = "i2c-gpio";
-        sda-gpios = <&gpio0 0 0>; scl-gpios = <&gpio0 1 0>;
-        i2c-gpio,delay-us = <2>; #address-cells = <1>; #size-cells = <0>;
-        max9485@63 { compatible = "maxim,max9485"; reg = <0x63>;
-            clocks = <&xclk>; clock-names = "xclk"; vdd-supply = <&reg_vdd>; }; };
-
-The i2c register read fails on the unanswered bus, so the probe enables vdd
-and then returns without disabling it.
-
-Trigger:
-
-    modprobe i2c-gpio
-    modprobe clk-max9485
+Two same-compatible auxosc children make cm_osc_setup() run twice at boot
+via CLK_OF_DECLARE: the first clk_register("osc") succeeds, the second hits
+-EEXIST and its regmap is leaked. No trigger action is needed.
 
 Result:
 
-    max9485 0-0063: Unable to read device register: -6
-    WARNING: drivers/regulator/core.c:2678 at _regulator_put
+    (null): error -EEXIST: failed to register clk 'osc' (0xffff000003407600)
+    ===== LIVE REGMAP INSTANCES =====
+    drwxr-xr-x  dummy0
+    drwxr-xr-x  dummy1
 
-The regulator summary shows max9485-vdd with a use count of 2 after the
-failed probe.
+dummy1 is the regmap leaked on the failed registration (dummy0 belongs to
+the successfully registered clock). N duplicate nodes leak N-1 regmaps.
 
 Note: the PoC was generated with AI assistance and the vulnerability was
 found by static analysis. The device tree is trusted input (a bad DT
