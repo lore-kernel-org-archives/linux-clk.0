@@ -1,60 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795095680;
-	b=0j4PxYCWeb4LwfVvkKszIMyVv6eBnbfBcW7nkh8s1xHtGL2qbexO5vq8CZ9KSIO1QxQ9
-	 hTxq3FFxOliMj19pmSwMz/To5GaDxxRPNbNWzr0h3bs1DqejcrIB9Ch2EdQaU2mR3uG2/
-	 UgoDkwkcgNk5yW2pfcZKK1tLAEtJHB5/saJaD1m5fME5bIcNHVUgojMXczYveVHoeJg89
-	 gB9LysDYM8Z6emI3fXiqmqUyN9JDF6gCI/kDPuF1FemQTkcufIkV7LAv8Mvl424TmO/+l
-	 GKBfMnEthiPaCGz63vrA37A2B74EH/W1H3EMCCxaCFfvfUY65ONRL0QPeDBwPKTQnmw==
+	t=1795096068;
+	b=fGtb1Z2iQafsVGEq8B3SeBOxeCCKXo6I9wUorNp+eBEjbiGFxcaqyFhqTbK6OPjXW/Vg
+	 Ggxc1T4EaseeVTmr047oCZEAiStj25t7kR3sjeE9HO8oszXEoCekfDF3UjHHZCop4d6O1
+	 FNHALZ1GRdYshfQQWodoAKBIZgyXVoaWgIkGRHGvLSgf1BfCNP1/+zQ8Qc3BbxZsd1f40
+	 nJm9VEqmG6fMw4YmY9pufi6MWo05lBgCvKOThCoYqG/D70Jw2LrcaHaigzJODzaARihBd
+	 EDwe3UqKVvpamxTthuQ8RoiCUXVB+UFsYLS8Be5dBffvNBrPs61JJZlizCXTbmtB1QQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795095680;
-	h=Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding;
-	bh=zczQURdkD0wwkwD7Y44TgccHjIB8bGM2wiIzQ/0bd2s=;
-	b=Aw4HSYggHmuVfH7uN8G+/30z7HydfoNKwWh7+yHKUjB5ApLjLwqRPmWVrVJx2HYKF6vR
-	 HWG7mplF8BgcFyeljTO+k7oQWKmiwTBzfuLKie8kWxsLogaVXeGTtzXanKZyX9XUWd70h
-	 AiIfrDIUO3NOLLqB339RmUIXCA4ikgoqoi9pPoECqUUnAjNnLSGqEF5WnldFf6lGP6HIs
-	 8GWpLNpFnPcJgj6Fz/ihtgJEjqsbriNIEz/ZjBKS97eG63XJqVm/FaYkt7uLZEkOntMcn
-	 NJMGEtyGu7icOsaeqvEmzgMSOxjIYvvssBmdrYiOsHxUV4duvTXY1E6aBF8Wuq8ORrA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795096068;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=/aUkR2dZtbFzFdTxiIcu8jaum48sVObo0flYILxu/V8=;
+	b=lPemvpvauTMaBm6+Uj3C5quyTbm1WYqxsm76MMaR9tUpmYHlK7FZzBcIvcKRGwevR8+7
+	 7JbIOZ+Dmc7qo/jNjg1Wqf0M5Tn0jU6ICFRPIIuuWfiSTBCRxV8dqc6Zvy1TuQ+ge9Dr9
+	 ZM1mvOeWX85wpU4J1nhMHVkZP0WZzNH4rj2rAXQFrIWcYmUxJozMMSoxMobMcI9L2gZAI
+	 RO3YsYjYnfMSy/3fTaVv4ubthqzMuOTZEKUeScrJsx4jD2edFUWo212LvLNCAFttOeT5N
+	 sYXWZWKkw5qqS4oExAMnXzfaFkwqTxNQZSKMMUeXscYKP/5KIVZehdP39mDazJrTCVQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ed8chs7W;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24ED560A262D;
-	Thu, 19 Nov 2026 13:41:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3C381F00932;
-	Thu, 19 Nov 2026 13:41:15 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Roger Quadros <rogerq@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Paul Walmsley <paul@pwsan.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andyshrk@163.com>,
-	Ulf Hansson <ulfh@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 6/6] [RFC] pmdomain: renesas: r8a78000: Convert to dev_clk_get_from_provider()
-Date: Thu, 19 Nov 2026 14:40:39 +0100
-Message-ID: <81de8a7aadf587377916763d24181c44b5d13775.1795094688.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1795094688.git.geert+renesas@glider.be>
-References: <cover.1795094688.git.geert+renesas@glider.be>
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 470CE606A336;
+	Thu, 19 Nov 2026 13:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ed8chs7W
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 0908C1F000CF;
+	Thu, 19 Nov 2026 13:47:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795096067;
+	bh=/aUkR2dZtbFzFdTxiIcu8jaum48sVObo0flYILxu/V8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ed8chs7WaJt8q6FQslIocScqdEwLnMEhjIx8ewmFiCjgE2EP06utqiIHU4wtGkB6n
+	 4U0k8+sTi01VtzUmpxUZcxdtdYtI4lhoe9gz0+7BuejhwrlCdFYq8YuzxThgOlQFnx
+	 lzlMJsvIFpPzqGirTmEqPUj3OZZ3uomwZYDiO+0ZDihK7S7Ae+aYPTBCDMXMsRgu3W
+	 ISdwYbaFEFRw9GjOMGLonNR9SmIYvz3FB1lnv9FMWmHmwt8Yub/jrgqokAN3skuwU6
+	 dmE5NClPdYarXRP47ucWwGB9kIT7RxXrmbO+ZZI8mtyWBBIFEtI8aepz98jGlIZfeP
+	 hw7cuVbhkdA6g==
+Date: Thu, 19 Nov 2026 14:47:44 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Karl Chan <exxxxkc@getgoogleoff.me>
+Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org, 
+	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v6 4/5] pinctrl: qcom: ipq5018: allow it to be bulid on
+ arm32
+Message-ID: <ehikivdig5q4hvfdb76p2l6xtw5dlyhhvxfj5sfhjlj4btc27r@ickrtvtsi4ui>
+References: <20241007163414.32458-1-exxxxkc@getgoogleoff.me>
+ <20241007163414.32458-5-exxxxkc@getgoogleoff.me>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -64,41 +61,18 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007163414.32458-5-exxxxkc@getgoogleoff.me>
 
-The R-Car X5H clock domain callback uses of_clk_get_from_provider() to
-obtain clocks used for power management, so the latter show up as
-"deviceless" in the consumer column of the clk_summary file in debugfs.
+On Tue, Oct 08, 2024 at 12:34:13AM +0800, Karl Chan wrote:
+> There are some ipq5018 based device's firmware only can able to boot
+> arm32 but the pinctrl driver dont allow it to be compiled on
+> arm32.Therefore this patch needed for those devices.
+> 
+> Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
+> ---
 
-Fix this by using dev_clk_get_from_provider() instead, letting us pass
-the consumer device, too.
+This doesn't apply on top of current linux-next.
 
-Sample clk_summary change snippet on R-Car X5H Ironhide:
-    - hscif0 1 1 0 0 0 0 50000 Y deviceless      dev_clk_get_from_provider
-    + hscif0 1 1 0 0 0 0 50000 Y c0710000.serial dev_clk_get_from_provider
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This depends on "[PATCH v5 14/15] pmdomain: renesas: r8a78000: Add SCMI
-remapping support"
-https://lore.kernel.org/e6816327da51f9fbeef67f13aac723b891e5042f.1795029012.git.geert+renesas@glider.be/
----
- drivers/pmdomain/renesas/r8a78000-mdlc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pmdomain/renesas/r8a78000-mdlc.c b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-index 79f6f1a9ae95d245..bb8c9f2b68fbf746 100644
---- a/drivers/pmdomain/renesas/r8a78000-mdlc.c
-+++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-@@ -232,7 +232,7 @@ static struct clk *scmi_get_clk(struct device *dev, struct device_node *np,
- 	if (fw_id < 0)
- 		return NULL;
- 
--	clk = of_clk_get_from_provider(&scmi_spec);
-+	clk = dev_clk_get_from_provider(dev, &scmi_spec);
- 	if (IS_ERR(clk))
- 		dev_err(dev, "Cannot get SCMI clock %d: %pe\n", fw_id, clk);
- 	else
--- 
-2.43.0
-
+Bart
