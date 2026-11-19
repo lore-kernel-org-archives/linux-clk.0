@@ -1,51 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=46.101.248.176
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795076104;
-	b=Ob4xRpLD27JADWbXrKDoF1tltUwblcxC1vAhrhlSjVwNyMngRILZe4JGFompRQxovagI
-	 jOByWSO70pu5JbIb3SsjwXq5rbHDm+la3ElnVSHX8Ht7QkPappNoEzyiW1mGhy0mSRFsJ
-	 rJwPYMXUWQ7AW4K05nUwHODBcG3orsB2FEf+s5RrE5Zcmx9WRSk3RU9byAe5XpqXAhV3d
-	 Tb5iGHc9pT/hto/rMxwHdYgqnKhqfuALXUkBZMkYMaOXidpV6345YaDPRs2RurIbyyK5x
-	 A4MhWibS1Q0DRzNsXMy5NRHgIINwN+RRcRZTbdLYnB+LJQ7tdE6FPmUYyXAlAQgK2HQ==
+	t=1795076166;
+	b=0S5bYOnIaa0su9ozz8rnqJ9l6YWMJ1gh6oBL2PLz3KTY19MIASroKFeju9BSZ9V++pny
+	 w45I3lKFe7049FyzAyJ5H4aywWla+v8HZJc9zD3TJZfT7wArDNWjkKMbiiqFJ7NMeKHaX
+	 ID4Q/YSgDM5B2RnTcZw3nUb1FSI8zxJ003s580GW0/Ksq77PJVMb/ZuW2MvzhDciHp5Rx
+	 TDgi4Llfu62x5GTuFJkEUtzYzVA3sdvjtmkXuyIR7F5gY9M1yByU6jFOydZu8bFRO68y2
+	 b/VLZsXlYjCXkyfvgqe51k4gjebj2wtKyWEm8+NtvYK6D9y3cYusskeY8y1vS0ALUzw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795076104;
-	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-CM-TRANSID:X-Coremail-Antispam:X-CM-SenderInfo;
-	bh=98mB3tNx1Zqx3Y3TXzTbQ9lVMgUg1AIjcAlJeoXROiA=;
-	b=W7dF4vQEikTp7upZMGinBIScoVLUY2Yx9UMWQG5xDhH4h09VQ+YOpDd3hAZLU25FTx8I
-	 tNoLcrFoaNm5SCCLnKI1nmZvbR9+nOxpN/s4wHvWQR89Uhm7CVv2WA1AKurFbAbW1bN1H
-	 nzLOTDSjtVVzH9RnC3WEL4H2JvtCfem0XOQqQXMNCW7UnyJLFeAf4C6smVUBAXmB6pOow
-	 0SXLBcBENilXqgZxTfxc3j4N5D/eGOCF9IkKrGPw2Kctz0iXc+Wf9xWvNp0V/m2WRNVoN
-	 qiB41fb2aSEDukEplTknpVnEEVYImIhvKIx68sC1XN4/1NKZtQMKp50VrPx3WMnAv/w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795076166;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=2o47jhHmYHT//X3omKszhwHYceBmTsWtcg/c2jRgkMw=;
+	b=5WVQH473ehMu5RfWfrgikAYNtARgDPk12KkZgzf1gdQ9mZXALvn6mnrzu0zQf2Ahj3/6
+	 Euf6vKk47XWhweZQHxCX1pWl20PLESWi0lksidXIqm0BSHirItIHf0KA/ao1vZ0C5qbUP
+	 9D9hn5aFclnbdC+pxxBn/wNfGT7M3YiG8IiG7WKnuYHJmmdA9D9znkjWVHMS/0OqiR8JK
+	 UObqt88HrpVTG9fzaF5+EelZ/jSlfENFQAEJEwztpBAgX90FRA2QkfmSafY/VRiXtmEAX
+	 qatPm9crxQmTj1QEqBDv0mxAYFR/oz7ZbUpo8v0MtOaSLa/+LiugBvnwy4A+hoPakLg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mail.zgclab.edu.cn;
-	spf=pass smtp.mailfrom=mail.zgclab.edu.cn;
-	dkim=pass header.d=mail.zgclab.edu.cn header.i=@mail.zgclab.edu.cn header.a=rsa-sha256 header.s=dkim header.b=W+Abe8Dd;
-	arc=none smtp.remote-ip=46.101.248.176
-Received: from zg8tndyumtaxlji0oc4xnzya.icoremail.net (zg8tndyumtaxlji0oc4xnzya.icoremail.net [46.101.248.176])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB8660A2619;
-	Thu, 19 Nov 2026 08:15:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AEB8660A2619
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.zgclab.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.zgclab.edu.cn
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eXerYpgX;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A06A606A32C;
+	Thu, 19 Nov 2026 08:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mail.zgclab.edu.cn header.i=@mail.zgclab.edu.cn header.a=rsa-sha256 header.s=dkim header.b=W+Abe8Dd
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=mail.zgclab.edu.cn; s=dkim; h=Received:From:To:Cc:Subject:Date:
-	Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=98mB3tNx1Zqx3Y3TXzTbQ9lVMgUg1AIjcAlJeoXROiA=; b=W+Abe8DdNUkur
-	gwI933OxO6aMKmuKqHTdzCjRjdB1sJDkR1DumvIw3LpjUFi8mVO/zPm0kyejQWJA
-	tWjZZfP9A8/+vb32KEbObkcMvFaxw3ECFbElLev8Zd6SX17oH4cWTETvzriUgOEQ
-	aOVJksV+g2IrZwsYkoZ1pAMa6/Opts=
-Received: from 03.eml (unknown [58.206.202.11])
-	by web2 (Coremail) with SMTP id yQQGZQBnlmr8r_5qPiJLAQ--.41774S2;
-	Thu, 19 Nov 2026 16:14:52 +0800 (CST)
-From: Wang Haoran <wanghr2026@mail.zgclab.edu.cn>
-To: linusw@kernel.org
-Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, wanghr2026@mail.zgclab.edu.cn
-Subject: [PATCH] clk: versatile-icst: release regmap on registration failure
-Date: Thu, 19 Nov 2026 16:14:53 +0800
-Message-ID: <1795076093787-3-ba1f065a@mail.zgclab.edu.cn>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eXerYpgX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E56751F000C4;
+	Thu, 19 Nov 2026 08:16:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795076165;
+	bh=2o47jhHmYHT//X3omKszhwHYceBmTsWtcg/c2jRgkMw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=eXerYpgXVxTbdJEgtLng6D1Aqab+qrwslX6ekxwSisWqlQ4jQ5ANPC/pGLyajv6tl
+	 q6RKoAl4QzDh85Hxmwu6oZHkqYV9M+3AXCQuGPyoRsoFfellDeA+tvb7rn8P6HDKM3
+	 vDKtPvLOYAyIJOF7R5xuLIQ4TlNpsWYXNW2IaTDNWVPe7R9Q5i3UmO5+NvKJ6R+8Rf
+	 aE5i/PXXTFWNqs9MSrSTuKyZotbwjZnCxMS2siSHO16c5x1xhZT7hapfZXMIjnadcM
+	 0M0PczkVKalb0rBttLlRwgIPHZROkQRefjSnCJBvlTbOoNIeomL2I84wpUUIJm886/
+	 V0f1CGtisG79A==
+Message-ID: <7fd94d9d-9ce8-4c1b-8a2b-4a1d334aeffb@kernel.org>
+Date: Thu, 19 Nov 2026 09:15:59 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -55,97 +51,86 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:yQQGZQBnlmr8r_5qPiJLAQ--.41774S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF43JF1rWw18tFWfXw48Crg_yoW5Wr18pr
-	Z3ZayrKw4Igr4vgFWYqa18uFy5KF92yFW5uw1fJw1vy3Z0gryrtr43Xay3C3Wqgr4rGa1j
-	qayqk3yIkw4DAaUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-	1j6F4UJwAaw2AFwI0_Jrv_JF1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28I
-	cVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx
-	0Ex4A2jsIE14v26F4j6r4UJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I2
-	1c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8ZwCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC2
-	0s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI
-	0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv2
-	0xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2js
-	IE14v26F4j6r4UJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI
-	43ZEXa7VUb58n5UUUUU==
-X-CM-SenderInfo: pzdqwxbusqjlo62juzldeovvfxof0/1tbiAgAQD2r+rloDXgAAsg
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: clock: Add STM32MP25 SYSCFG clock
+ controller
+To: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Christophe Roullier <christophe.roullier@foss.st.com>,
+ Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20261110-ups_mp25_clk_syscfg-v2-0-624559bb8ec7@foss.st.com>
+ <20261110-ups_mp25_clk_syscfg-v2-1-624559bb8ec7@foss.st.com>
+ <20261113-charming-admirable-pronghorn-bdc26c@quoll>
+ <c76d9618-1e77-4259-92dd-8b8b3d6ade2e@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <c76d9618-1e77-4259-92dd-8b8b3d6ade2e@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-icst_clk_register() creates a non-devm regmap with regmap_init_mmio() and
-hands it to icst_clk_setup(), which on clk_register() failure only frees
-its own structs and drops the regmap pointer, so the regmap and its
-debugfs entry leak permanently. A name clash is a natural trigger: a DT
-with N same-named auxosc children registers "osc" once and then fails
--EEXIST on every subsequent registration, leaking N-1 regmaps per boot.
+On 18/11/2026 13:17, Gabriel FERNANDEZ wrote:
+>>> +
+>>> +  clocks:
+>>> +    minItems: 1
+>> Why is this flexible? Device either has or has not these inputs.
+> Because each SYSCFG compatible is shared by SoCs which don't have the
+> same inputs: "st,stm32mp25-syscfg" is used by STM32MP251/253, which have
+> neither LVDS nor DSI, and by STM32MP255/257, which have both. The same
+> applies to "st,stm32mp23-syscfg" with STM32MP231/233 and STM32MP235.
 
-Release the regmap with regmap_exit() when icst_clk_setup() fails.
+Aren't these different SoCs? I miss the point apparently. The rules
+explicitly ask for integration compatible, if you skip it, then it means
+all are the same. But then you say they are not the same...
 
-Signed-off-by: Wang Haoran <wanghr2026@mail.zgclab.edu.cn>
-Fixes: 179c8fb3c2a6 ("clk: versatile-icst: convert to use regmap")
----
-
-diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-index 37334afee040..e9c7353aa5d5 100644
---- a/drivers/clk/versatile/clk-icst.c
-+++ b/drivers/clk/versatile/clk-icst.c
-@@ -407,14 +407,18 @@ struct clk *icst_clk_register(struct device *dev,
- 		.reg_stride = 4,
- 	};
- 	struct regmap *map;
-+	struct clk *clk;
- 
- 	map = regmap_init_mmio(dev, base, &icst_regmap_conf);
- 	if (IS_ERR(map)) {
- 		pr_err("could not initialize ICST regmap\n");
- 		return ERR_CAST(map);
- 	}
--	return icst_clk_setup(dev, desc, name, parent_name, map,
--			      ICST_VERSATILE);
-+	clk = icst_clk_setup(dev, desc, name, parent_name, map, ICST_VERSATILE);
-+	if (IS_ERR(clk))
-+		regmap_exit(map);
-+
-+	return clk;
- }
- EXPORT_SYMBOL_GPL(icst_clk_register);
- 
-
----
-
-PoC reproduction (7.4.0-rc2, arm64 QEMU virt, unmodified kernel):
-
-Device tree injection, spliced into the QEMU virt machine DT:
-
-    reserved-memory { #address-cells = <2>; #size-cells = <2>; ranges;
-        icst-regs@7f200000 { no-map; reg = <0x0 0x7f200000 0x0 0x1000>; }; };
-
-    syscon@7f200000 { compatible = "syscon"; reg = <0x0 0x7f200000 0x0 0x1000>;
-        osc@0 { compatible = "arm,versatile-cm-auxosc"; #clock-cells = <0>; };
-        osc@1 { compatible = "arm,versatile-cm-auxosc"; #clock-cells = <0>; }; };
-
-Two same-compatible auxosc children make cm_osc_setup() run twice at boot
-via CLK_OF_DECLARE: the first clk_register("osc") succeeds, the second hits
--EEXIST and its regmap is leaked. No trigger action is needed.
-
-Result:
-
-    (null): error -EEXIST: failed to register clk 'osc' (0xffff000003407600)
-    ===== LIVE REGMAP INSTANCES =====
-    drwxr-xr-x  dummy0
-    drwxr-xr-x  dummy1
-
-dummy1 is the regmap leaked on the failed registration (dummy0 belongs to
-the successfully registered clock). N duplicate nodes leak N-1 regmaps.
-
-Note: the PoC was generated with AI assistance and the vulnerability was
-found by static analysis. The device tree is trusted input (a bad DT
-requires root or physical access), so this is not a security fix, but it
-prevents a potential resource leak or system failure on a failed probe or
-an old or malformed DT.
-
+Best regards,
+Krzysztof
