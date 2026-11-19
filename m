@@ -1,45 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795116008;
-	b=urSvBTNuTAi088nN33bqxg2+231kX+Zqz9x52SLOTF/yrCHeO8/5SnI+VuRqZMgJyXHH
-	 IskJqSTi5N/qeQKk5g9xwZ6OJZJHSMFR/OlYdL2aKbCNzoSelhj9yiYvmqi5Z8M9Gs0p8
-	 vLxSJfr4gZn6Fmx44GOWAlrL76bkG4fM59ZGhv7rK7tt0uXhcVQrKKXpTqqQ5LriV4NzO
-	 vw3e2dX3NozmRuYRx1TzbL0DxAQVIkDcCl6s8/QtSr59CVwXGMYNoKQrbnMG24isVcqRz
-	 D2mtynb2aVvWCJE3WUlXPKTOima2Eh+QretNHy1EFkawvL2YuMt5+quLL9QXy+uVhrA==
+	t=1795116930;
+	b=vS+OTim4UpuapBeMYX9n0ZBzQpIQBRuW3XuErx+9dE/U/U7irYv2554TCH5E4/VdfVOq
+	 2PHbtXJCUV8xRV7QFTU/AmTaGCvwYukZpB8+RpCng/pykghKMF1t7eoFEyg/HgwdOZSGs
+	 98bj5kcj7kAxZE1W6VXIoCzj1clrHtWkpMPeuTroaoPAaikKLulDTWjdrcLRTgWUwZrU8
+	 LjUNBFGaVwlOeGmFljyOYlLIXdLgtQrkeG+NXRbUPDbt6sNzzpHfn1EDfeTfI7z0y4rT1
+	 MDA0t9/MwxrBFLEu1ALzAd/FYd1JD4pkEfaU0bZUBG/OMAXgn5kNxmCEhY6HK9NE31A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795116008;
-	h=Received:DKIM-Signature:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=IxjtbWG22D3H0LD2xyy6Ek7u5QBa/mRGy/Vj/Al56Uc=;
-	b=csJElgamiczkk8kSU5tYL6tPn0Du8qGBfIv0A7KSPRE4QQpGt+8ezIMaRSZt3YSjz/BX
-	 4l0CMBY5LcHJfG2zwKzYCrZ8KtiQSNeX0p2OIxGeW1nKaqjPK52R67FHewnOM4iukWKuw
-	 XjPePv+NOYTzU4GNEZ/L3VHbqy39Fri4yVNapEQiAwMuoC8GMCGgVljqmxlmkfSkItW+z
-	 AZXqQuPlguvp+TmFufaol+ggWb/nqGDE/TIDK9xxWPFewQXL6I7gLkpX1bm809uaZWlKG
-	 ED5iS+hWNYf5V0Nq3pYQlUOANUUmcVrK+kFBPWSjuVMw3WGjItNT8DBTGBMViqPHteg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795116930;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 User-Agent;
+	bh=XKkr8NiBSfAxaPY+xmJ+lmd22XwqR6e5oteLmwQ0jc4=;
+	b=EPkOKhuVoDfq2fVsPi/smWTfv8mvr39fRH6WXDuUkyi1pCDCECCHjRkLPE3o8wCmnIAD
+	 g3HfNXR/x1cFmxFfZKaVZZwKwQEZvZ8UfGIDXJxc1zWZ0llNVHGOyldw7oloNVku58ULU
+	 S1W+C6dT36l0JG/Y2xxpWD+94Ra/h1xWMJk+4YHLeq2alLZozDJ4v4anAtMBitY7Oibmc
+	 jx/ZYFMo5M7pjFagO0a+8vb44NDCXPmcR0dOZ6oQXVLpKGBiJ3Nq0stzN0yTYSy5OhUCs
+	 Lz1kER22NqE5fx9qudmC36Bz3FfYZeNalWSokCMpa+uDukeVZhE9Pg7yGphreCVTkow==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KqEuCO9Z;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TLBmGYo5;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FA6606A32A;
-	Thu, 19 Nov 2026 19:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D24E606A330;
+	Thu, 19 Nov 2026 19:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KqEuCO9Z
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86A6B1F000C5;
-	Thu, 19 Nov 2026 19:20:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TLBmGYo5
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5740E1F000C5;
+	Thu, 19 Nov 2026 19:35:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795116008;
-	bh=IxjtbWG22D3H0LD2xyy6Ek7u5QBa/mRGy/Vj/Al56Uc=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=KqEuCO9ZWwrB2uwDzwq9segyOQeOUmu2o9b/LzED7rWOHP9xVOhryBKY9qQ+mwurt
-	 760d9sKR7qJf86XZrw1Ys3+kKeCY3S65cysFyVqAolQfwbY2Cwuo7bw4fMU76oRcko
-	 59FMTc4IkvmP/qVPY/Z+waP21a/S14MEwU21ZFiltVm126f8ZtCYP+NvYajvZIOEJk
-	 lryGNRqy6cQcdExVIM48LDN30oPk0o3qrtphCgSupMM9ijRh9ukaKETAveb2JKpyU+
-	 z6ApKsdmzgR59lm1EJ+CFSoBJpgYHWfY5IxoJSjsOF18THPqJt8Qvuz14h5hw2pODH
-	 Rc1sOD8qpe/EQ==
+	s=k20260515; t=1795116930;
+	bh=XKkr8NiBSfAxaPY+xmJ+lmd22XwqR6e5oteLmwQ0jc4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=TLBmGYo5ak00zcdtdDmARhL65KF/0mgK42lYCvBTVNRxq8Ar2HJ81SIE/9GiJsv+a
+	 rtzLqtoqA9DG6De6jfFrDLAxz556XX2xDetpNeFDOK1EjBMNAxwR9BmY0YnYiBNrt8
+	 HP8rLPUUdACSH/eTiw2cArBwzQ65gfKKyCybIHVLUcwO05Nt81TwPDZq0ACtcve4wf
+	 hSlt1oNu8MIVN5QT4JKN+weM2JPC58G3hIqRD7fJ4flnXrxRlwEZdyGynBB+9Lk+Ie
+	 DYJFLl/x2XjP9Jm7XRMzkRD/xfSHY1s5aoEJ5NkDGJCnRPkDazjj0jqUAJ6MHhoYkt
+	 wAKkWbb7igOJg==
+Date: Thu, 19 Nov 2026 14:35:28 -0500
+From: Brian Masney <masneyb@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] clk: en7523: convert to full clk_hw
+ implementation for en7581
+Message-ID: <av9PgKqFIjNPSkTt@x1g10>
+References: <20261110001128.1041-1-ansuelsmth@gmail.com>
+ <20261110001128.1041-2-ansuelsmth@gmail.com>
+ <179444135864.1126566.17591616173966524369.b4-review@b4>
+ <6afc8629.c6df0648.3437b8.c961@mx.google.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -49,166 +62,112 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v3 3/6] clk: stm32: Add STM32MP25 SYSCFG clock driver
-From: Brian Masney <masneyb@kernel.org>
-To: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Christophe Roullier <christophe.roullier@foss.st.com>, 
- patrick.delaunay@foss.st.com, yannick.fertre@foss.st.com, 
- Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20261118-ups_mp25_clk_syscfg-v3-3-935de791a4ce@foss.st.com>
-References: <20261118-ups_mp25_clk_syscfg-v3-0-935de791a4ce@foss.st.com>
- <20261118-ups_mp25_clk_syscfg-v3-3-935de791a4ce@foss.st.com>
-Date: Thu, 19 Nov 2026 14:20:00 -0500
-Message-Id: <179511600099.284394.14789205221596558006.b4-review@b4>
-X-Mailer: b4 0.17-dev-8145e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5087; i=masneyb@kernel.org;
- s=20250903; h=from:subject:message-id;
- bh=NUz9r9Je5FkkaO9SUloJr0wbmOONkOdtBuVqAan6A4M=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLL+ez+aol28/wv3bts+1ZV2MWEJTCdeZB54fcAqvojZo
- yt4ldCtjlIWBjEuBlkxRZYluUYFEamrbO/d0WSBmcPKBDKEgYtTACZiUMjI0NY30d0j4yJf1t13
- PybOObY62/n4B2vVf10FiTaXrgV2LWVkWHVK7dpXgan9yZc5Hlu6phyzdhZepxJaw7KTYa/RFdN
- gHgA=
-X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6afc8629.c6df0648.3437b8.c961@mx.google.com>
+User-Agent: Mutt/2.4.3 (2026-10-09)
 
-Hi Gabriel,
+Hi Christian,
 
-> On STM32MP23x and STM32MP25x, the LTDC pixel clock is selected in the
-> SYSCFG DISPLAYCLKCR register among the DSI PHY byte lane clock, the LVDS
-> PHY pixel clock (reset value) and the LTDC kernel clock, the latter
-> being the one needed by the RGB (DPI) output.
+On Tue, Nov 17, 2026 at 05:51:50PM +0100, Christian Marangi wrote:
+> On Wed, Nov 11, 2026 at 06:55:58PM -0500, Brian Masney wrote:
+> > > In preparation for support of .set_rate, convert the clock register
+> > > logic from fixed clock implementation to full clk_hw implementation with
+> > > dedicated OPs for Airoha EN7581 SoC.
+> > > 
+> > > This is just a rework and no behaviour change is expected.
+> > > 
+> > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > > ---
+> > >  drivers/clk/clk-en7523.c | 75 +++++++++++++++++++++++++++++-----------
+> > >  1 file changed, 55 insertions(+), 20 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+> > > index 24fdec2e6198..6640e814d36a 100644
+> > > --- a/drivers/clk/clk-en7523.c
+> > > +++ b/drivers/clk/clk-en7523.c
+> > > @@ -126,6 +126,12 @@ struct en_clk_gate {
+> > >  	struct clk_hw hw;
+> > >  };
+> > >  
+> > > +struct en_clk {
+> > > +	struct regmap *map;
+> > > +	const struct en_clk_desc *desc;
+> > > +	struct clk_hw hw;
+> > > +};
+> > > +
+> > >  struct en_rst_data {
+> > >  	const u16 *bank_ofs;
+> > >  	const u16 *idx_map;
+> > > @@ -742,42 +748,71 @@ static int en7523_clk_hw_init(struct platform_device *pdev,
+> > >  				     en7581_rst_ofs);
+> > >  }
+> > >  
+> > > +static unsigned long en7581_recalc_rate(struct clk_hw *hw,
+> > > +					unsigned long parent_rate)
+> > > +{
+> > > +	struct en_clk *c = container_of(hw, struct en_clk, hw);
+> > > +	const struct en_clk_desc *desc = c->desc;
+> > > +	struct device *dev = clk_hw_get_dev(hw);
+> > > +	struct regmap *map = c->map;
+> > > +	u32 val, reg;
+> > > +	u32 rate;
+> > > +	int err;
+> > > +
+> > > +	err = regmap_read(map, desc->base_reg, &val);
+> > > +	if (err) {
+> > > +		dev_err(dev, "Failed reading fixed clk rate %s: %d\n",
+> > > +			desc->name, err);
+> > > +		return 0;
+> > > +	}
+> > > +	rate = en7523_get_base_rate(desc, val);
+> > > +
+> > > +	reg = desc->div_reg ? desc->div_reg : desc->base_reg;
+> > > +	err = regmap_read(map, reg, &val);
+> > > +	if (err) {
+> > > +		dev_err(dev, "Failed reading fixed clk div %s: %d\n",
+> > > +			desc->name, err);
+> > > +		return 0;
+> > > +	}
+> > > +
+> > > +	return rate / en7523_get_div(desc, val);
+> > > +}
+> > > +
+> > > +static const struct clk_ops en7581_clk_ops = {
+> > > +	.recalc_rate = en7581_recalc_rate,
+> > > +};
+> > > +
+> > >  static void en7581_register_clocks(struct device *dev, struct clk_hw_onecell_data *clk_data,
+> > >  				   struct regmap *map, void __iomem *base)
+> > >  {
+> > >  	struct clk_hw *hw;
+> > > -	u32 rate;
+> > >  	int i;
+> > >  
+> > >  	for (i = 0; i < ARRAY_SIZE(en7581_base_clks); i++) {
+> > >  		const struct en_clk_desc *desc = &en7581_base_clks[i];
+> > > -		u32 val, reg = desc->div_reg ? desc->div_reg : desc->base_reg;
+> > > +		struct clk_init_data init = {
+> > > +			.ops = &en7581_clk_ops,
+> > > +		};
+> > > +		struct en_clk *en_clk;
+> > >  		int err;
+> > >  
+> > > -		err = regmap_read(map, desc->base_reg, &val);
+> > > +		en_clk = devm_kzalloc_obj(dev, *en_clk);
+> > > +		if (!en_clk)
+> > > +			continue;
+> >
+> > return -ENOMEM;
 > 
-> The SYSCFG node is described as the provider of this clock, but no
-> driver registers it, so the selection can't be changed from its reset
-> value and a display connected to the LTDC RGB output can't work.
+> Hi Brain,
 > 
-> Add a driver registering this clock as a mux. The SYSCFG node is bound
-> to the STM32MP2 SYSCFG driver, so this driver is an auxiliary driver,
-> probed from an auxiliary device which shares the SYSCFG node. The mux
-> parents are taken from the "clocks" property of the SYSCFG node, which
-> remains the clock provider.
-> 
-> Co-developed-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> ---
->  drivers/clk/stm32/Kconfig                |  13 ++++
->  drivers/clk/stm32/Makefile               |   1 +
->  drivers/clk/stm32/clk-stm32mp25-syscfg.c | 125 +++++++++++++++++++++++++++++++
->  3 files changed, 139 insertions(+)
->
-> diff --git a/drivers/clk/stm32/Kconfig b/drivers/clk/stm32/Kconfig
-> index 5dbd75cde657..18289816f030 100644
-> --- a/drivers/clk/stm32/Kconfig
-> +++ b/drivers/clk/stm32/Kconfig
-> @@ -39,5 +39,18 @@ config COMMON_CLK_STM32MP257
->  	help
->  	  Support for stm32mp25x SoC family clocks.
->  
-> +config COMMON_CLK_STM32MP25_SYSCFG
-> +	tristate "Clock driver for stm32mp25x SYSCFG clocks"
-> +	depends on COMMON_CLK_STM32MP257
-> +	depends on SOC_STM32MP2 || COMPILE_TEST
-> +	select AUXILIARY_BUS
-> +	select MFD_SYSCON
-> +	default COMMON_CLK_STM32MP257
-> +	help
-> +	  Support for the clocks provided by the stm32mp25x SYSCFG, i.e.
-> +	  the LTDC pixel clock source selection between the LTDC kernel
-> +	  clock (RGB output), the LVDS PHY pixel clock and the DSI byte
-> +	  lane clock.
-> +
->  endif
->  
-> diff --git a/drivers/clk/stm32/Makefile b/drivers/clk/stm32/Makefile
-> index e04727b59449..8088d172651f 100644
-> --- a/drivers/clk/stm32/Makefile
-> +++ b/drivers/clk/stm32/Makefile
-> @@ -2,3 +2,4 @@ obj-$(CONFIG_COMMON_CLK_STM32MP135)	+= clk-stm32mp13.o clk-stm32-core.o reset-st
->  obj-$(CONFIG_COMMON_CLK_STM32MP157)	+= clk-stm32mp1.o reset-stm32.o
->  obj-$(CONFIG_COMMON_CLK_STM32MP215)	+= clk-stm32mp21.o clk-stm32-core.o reset-stm32.o
->  obj-$(CONFIG_COMMON_CLK_STM32MP257)	+= clk-stm32mp25.o clk-stm32-core.o reset-stm32.o
-> +obj-$(CONFIG_COMMON_CLK_STM32MP25_SYSCFG)	+= clk-stm32mp25-syscfg.o
-> diff --git a/drivers/clk/stm32/clk-stm32mp25-syscfg.c b/drivers/clk/stm32/clk-stm32mp25-syscfg.c
-> new file mode 100644
-> index 000000000000..41f40325a10f
-> --- /dev/null
-> +++ b/drivers/clk/stm32/clk-stm32mp25-syscfg.c
-> @@ -0,0 +1,125 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) STMicroelectronics 2026 - All Rights Reserved
-> + * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
-> + */
-> +
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/bits.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/limits.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/printk.h>
-> +#include <linux/regmap.h>
-> +
-> +#define SYSCFG_DISPLAYCLKCR		0x5000
-> +#define DISPLAYCLKCR_DPIVSLVDS		GENMASK(1, 0)
-> +
-> +/*
-> + * The LTDC pixel clock source is selected in SYSCFG_DISPLAYCLKCR among
-> + * the DSI byte lane clock, the LVDS PHY pixel clock (reset value) and
-> + * the LTDC kernel clock, which is used with the RGB (DPI) output.
-> + *
-> + * The parents are listed in the DPIVSLVDS field order, while .index refers
-> + * to the "clocks" property of the SYSCFG node, ordered "ltdc", "lvds", "dsi"
-> + * so that the inputs missing on a SoC can be omitted at the end of the list.
-> + */
-> +static const struct clk_parent_data clk_pix_ltdc_parents[] = {
-> +	{ .index = 2 },	/* dsi */
-> +	{ .index = 1 },	/* lvds */
-> +	{ .index = 0 },	/* ltdc */
-> +};
-> +
-> +struct stm32mp25_syscfg_mux {
-> +	struct clk_hw hw;
-> +	struct regmap *regmap;
-> +};
-> +
-> +static inline struct stm32mp25_syscfg_mux *to_syscfg_mux(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct stm32mp25_syscfg_mux, hw);
-> +}
-> +
-> +static u8 stm32mp25_syscfg_mux_get_parent(struct clk_hw *hw)
-> +{
-> +	struct stm32mp25_syscfg_mux *mux = to_syscfg_mux(hw);
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	ret = regmap_read(mux->regmap, SYSCFG_DISPLAYCLKCR, &val);
-> +	if (ret) {
-> +		pr_err("%s: failed to read the parent: %pe\n",
+> as you pointed out in the previous revision, returning would change the
+> behaviour so I currently skip the clock in such case...
 
-You have the struct dev in the probe function below. Save a pointer to
-the dev in struct stm32mp25_syscfg_mux, and then you can use dev_err()
-here.
+It's ok if it changes the behavior to make things interact with the
+framework correctly. I just pointed out that the commit message says
+there is no behavior change. You can drop that sentence and just
+describe the behavior change in the commit message.
 
-With that fixed:
-
-Reviewed-by: Brian Masney <masneyb@kernel.org>
-
--- 
-Brian Masney <masneyb@kernel.org>
+Brian
