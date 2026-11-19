@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795111099;
-	b=4cBmy0tWFeyPggB3iah8t14ewbtG3B1SroQa/V9+iK3UZvrAmSVFNTLP/UYpzku4Gyni
-	 88zN4MnEa2vz93q/RSSSzIFWz6cS4mw+FwYG2K0K9esOLXxrrYEaQabs1cx2NvisiL3+s
-	 pTnbOV6fDx8qHKGMPMFB+Bxo0xgLgXB9S9Bhe1vj9yz/YZiZFhc5zFYbUsawG1RQ45dCP
-	 5h35QCKiBdrxkp28EyXrNTrB/wL7bl3d7j4HuUfALcgaPV3Dole4v5s9wkbHTfGviDoSw
-	 iNrKtip1u/s2E1U1RcDmIHzWtVNc7RJnzq1WAb4G6fh9Y0IqhRyquAgGmjjaszVx5BQ==
+	t=1795111100;
+	b=eA+hHTVHEP4GEkryT6tCWs4mpBX6Pt0DQ/aIrnAKyykjorVqW+Nk1Tfl6tCrdIfh9Q+Z
+	 6ao7WMXeHolFfIJLT/kFMJ/XumWK2kQou2dQkS12iKKmCCUdvATgipZgFJn7nzKTT0wQd
+	 3NryEJsg7o6rl3N/YLinrgIqaGIVHu1gTu5Pn/2Td15l4Cf7wcKs2ouLZ5rTtZDKN6QeO
+	 ba1324IM12usP5e0pbXgRmui2+8ox2Mtyjuk8886I5nEdzw1SltbyGMMFQovkpSwLss8D
+	 Z7SyAqTq/3ZKDdGGTnOAtH0ByK5W9pbdiL42HA4koh8Rx4higfWGz50sTMVwbWIX/Zw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795111099;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795111100;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=UXOIE+Lb0btn4l/XTdxQeU9rcXoPhYMDROX7/rKQ2xU=;
-	b=DpqyndnLmjBBTjVUwEOxn6gzc6UYsm7XaYTDDEcwD0rEGLlY8HHyDF2uVjPMvOO/Jg4M
-	 QLFRiQEKE6qyH/E7WE/rRnSnSXlPVRD+a3gUXhn0uqTa/0scd2PyqbBDsSLowzk4zGZxL
-	 t2QJAl4NEopSuq8c5deV5ycPSXeJMvlf+dGZWil7BAiHgsKzOOm7YvBgMKEemcldjpSlK
-	 gay1mM1oWobAqLP4eXz89L7QwWUDd/s2E2yQ2e0JmmbvchwzUvB9xdlmULKW9WtHoSVVb
-	 Sjq6r2rFZvQoLHGGMAZwL6cpI9/ugq9GCpajBbTFvHVks9q1NYRk3oTX16jTfMEJXHw==
+	bh=U7I0g+bU0sdoTYJW10ATCi0RI2EUlSB1/X8r7zW5Y8w=;
+	b=vLpUgrBLKpD4QGqvcpvR6dsNUf3PQNH1489Isi/Rbj2AqT0yyM4TAt5L9G+a9BaTOb39
+	 GJF1IUc7RO+JVl2xTY3Y80NfAz4JCncKKUvUdFjfOtVepftqsWzNj3b1UjmfXuCe2HOeN
+	 +FW7gkMSHbTfyit2rfWL6+/ANYGVGKDt3hhGhT9UsN0KIczCoHiqcTIkFRvJx1OaWH4Xa
+	 +UtXwxlEEtcGJYwVLnOeOJdhpBXa7WTh8wfiUW6nU8nMDYTM174vxisIkAtMj7FmOWJqw
+	 V8AlIXHr2qZUtEpv+0pB0TxXEnpCNfERqhJS/+c99y5TNOTe3L0JGJdauMv0abZ8KSg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OqREfhaO;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=URMegtIw;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1BA606A333;
-	Thu, 19 Nov 2026 17:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0462E606A337;
+	Thu, 19 Nov 2026 17:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OqREfhaO
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=URMegtIw
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1795111099;
-	b=c9+hIWQL4s13Jf5BeOvHFNRT/ee5bkVCK0j7kTGSfmlyyx+gjio8chj0tcchLk0UpDZc
-	 hrZQqcsR7fWlJy+nRTSVpmavEmbnW52RqClmx1TNii10M5usuWLDLZDLcO5Y2/A6KL9fu
-	 Eaqzj6n5LDf4CSFiK60wkFV9aKD0hMwIxtQ79oM46t1jOqaR43W7vGE8MfIgK9brO703y
-	 d0HjhUXv82UVpRbWolc0ohILW5mobWmce5g/Jz8pmG9qKgCckL8LE25X/GZts0VjoQzk/
-	 HTDTMIzyQM+AoEJUvGMyQLdNtOsCoCrGC1nH+3GON/O2Yq3MRyAKbviUFOHnK54ukjA==
+	b=YvKfuKEiOnNVlxfEy484aajO6O5Fw2mCLswYiU5AsUk3OsHHAN98HGI77fKdQfeOPWjN
+	 EXlnEFdvST88ezr7RRvU8GAQPcOlUhlQBW/hIXwlOTaR3BKPWDfz2c6RfvD0SaOzRBC2W
+	 j0wWtK+zzORozp7BEDJzwuJpU5u/Z+kJP45NX7KCNCeIl/eIFcR+xR72SJVuh0xwBTRQO
+	 StHHz/TNDgderGk4XdpXtDNIsrGIkW50V9LD0/cJw0EeuBBHWjMYkLXRg8FwLCtfuILDJ
+	 S8V1jDmi5tVnpZZ5gIiaD+Cj6dAWXrIULTu8t+ntxoyOYkFPA9NnGip10FtJMUtu5Wg==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1795111099;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=UXOIE+Lb0btn4l/XTdxQeU9rcXoPhYMDROX7/rKQ2xU=;
-	b=uZ5QBxtm+lWlGIxkE9sxcIE7vFEF+9u3EHrBu0F6HZ8VTqQs05g/FLYoaPbfF7wo534s
-	 Gj6fCh8MjeGD4owQ2BbI1uo6ZT19YLCsOC60U/bZ3IudMVbiALhrDTTQeBHQn1Ynh/BJl
-	 fwqD6LDr+tq6W1dj8DUU28J12AUD/YkBgqIi7ukPpWVB8+aXPkJ9ysaWlqVkbIntUxu17
-	 yLXxBeuZ5Z04jT+hM5NbI31gloV0ztYtIkQmCrUEmOPu/jQuEOAQEDzhYHlBpqrLnRRr4
-	 prn2XBdEOnWvNmvHK9GuwExmDC0fll4JnKgQ7z5MTHtAuRu51tZba1nwbCq7m/CYfOA==
+	bh=U7I0g+bU0sdoTYJW10ATCi0RI2EUlSB1/X8r7zW5Y8w=;
+	b=MsAZtNZq7xPGtNMnGqlvhr9Q5nLN0SN8ItIXB0vj0VNj3hY1SFExHhnTZ69Y+QrLpZNf
+	 Ogas1Grnc+WvrkwNJRSAW4FgMYVMThFBYJQtqJ+FGb1kRQ9VFqBB6Z7bTU8aCsve0Ca5L
+	 AXyWywNFI0jDGJiwVor5ScjvUvaaOnDA3h3V+PjFHCHXizaWq7bWX0/3Ih0zq0AQaY8M/
+	 La5doXLLDynV8rFCsIoq5HPdzoS5OuLjpVSZnwCOD1rb19SyuedWaH4ymtiYzaqf+KJb1
+	 0vLPs3BZ57M6A8grAX+sCQzAdrnNLea/nDbO8Kcsm9Jhl2LlyQev53Fh6UzZYsLytKQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id CE8D41F000C7;
+	by smtp.kernel.org (Postfix) with ESMTPS id B6D4E1F000C6;
 	Thu, 19 Nov 2026 17:58:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1795111099;
-	bh=UXOIE+Lb0btn4l/XTdxQeU9rcXoPhYMDROX7/rKQ2xU=;
+	bh=U7I0g+bU0sdoTYJW10ATCi0RI2EUlSB1/X8r7zW5Y8w=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=OqREfhaOxmaVWjlizJou9DWh++ihZuEVpF2Qdw9RGUb/JWv4pwdEVGbshZjbA0Rid
-	 8Bl+Kd/QwfvNXfkuaIKJ3H3yesLFXsHlI66D+r6ENoEpZTFVNJLHz/UP5Uzr17AobV
-	 O5+ZWxYAyrKiM+JKS8XASxG9P+LuXh/LG+l0F1Mtel6uV/q7bwpFX++BNfV42AzIzA
-	 Qo4uudw1tZU0w5C7ZJ0zU9Clv6njKHOelJnegDBHMBhpYpLCKCCfJT2EogPHeA/CDK
-	 o5HypkHta1ekgznkPcjkoNyFIf29FYXsEpryGkyB2QXWd4N3k/x6phQ/3gxDwun59m
-	 Yj6BpGh9KkIAw==
+	b=URMegtIw4PK6kjLmYIiYUyiZ2rXuX2I3sEyXimq+9UjRfdgaQBR7wFaD3tzhHxkAz
+	 OHNLLJAcMa0orudjI9ekVtxpvpfLGmRg/5vhal9/DNopLCYc+QZ/Vq/UwXpQ1bevlm
+	 LwmtBOSgCYGDuIdJriEb+UEFeQPOMN+Zehna8VM4pFsqLmmWylHcdqkKkidivIhzCU
+	 PK5s2u8UgOKCEsyYUyrXSJv1xoXA3tZs9U5kfT63Z0FpmeLJoUHZGveMMT6zhnvE6X
+	 8zdFJk8y4YpmT85GJR6JpvzcQ47KH/+WL0kHiZb2guo6UXGQ0ueGU3ka0SkL50sB/2
+	 8rOGxeGgtIZUA==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 5BB614B3AA;
+	by lkml.kernel.org (Postfix) with ESMTP id 425984B3A6;
 	Thu, 19 Nov 2026 17:58:18 +0000 (UTC)
 From: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>
-Date: Thu, 19 Nov 2026 09:57:45 -0800
-Subject: [PATCH 3/6] ARM: dts: renesas: r9a06g032: Add #reset-cells to
- system controller node
+Date: Thu, 19 Nov 2026 09:57:44 -0800
+Subject: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,7 +83,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261119-rzn1-miic-resets-v1-3-feee2bb28bb4@reliablecontrols.com>
+Message-Id: <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
 References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
 In-Reply-To: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>, 
@@ -105,11 +104,11 @@ Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  netdev@vger.kernel.org, Kyle Hendry <khendry@reliablecontrols.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795111097; l=742;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795111097; l=3698;
  i=khendry@reliablecontrols.com; s=20260813; h=from:subject:message-id;
- bh=+MYagGpleI9cljL2vJhNov8A+HH3o1Sf6uAHaCyWxlc=;
- b=wbDGZ/A+rly1Lo5TqI/yqXCGDYFXaHLDdGsT2obz+a/oGv4vLzQYZU92XB5OfKkB+hA7xUf+u
- vqgqMg1wuEjA32OPmh1TsxklbtpXci4b6TRzvqrutJGn3rCX0XkN5H3
+ bh=K55PGhDwoeO0SnRKw9KIc71iX+MI6F5UGeo6Fl4rgqg=;
+ b=/xzBEMOSa6Ag5ThW111yAz4JSl7e4KnR37Ab2clbt8Jk+rmxL1fmeISH6HFSHk14JLdZLQ0rY
+ UOyw+PTObnyDihP9ReuckRXnsv1MEMkerCQCaPpz7bAT++Rk5kh5kF0
 X-Developer-Key: i=khendry@reliablecontrols.com; a=ed25519;
  pk=gbK6oghz3qBlBiaGCsEzALLOtj5VklmsuolHQNhDV5M=
 X-Endpoint-Received: by B4 Relay for khendry@reliablecontrols.com/20260813
@@ -120,25 +119,118 @@ Content-Transfer-Encoding: 7bit
 
 From: Kyle Hendry <khendry@reliablecontrols.com>
 
-Update the rzn1 system controller node with cells for the reset controller
+The rzn1 system controller has two resets that need to be cleared for the
+mii converter to work. They are not directly associated with any clocks
+so they need a reset controller to set them.
+
+They are documented in the PWRCTRL_SWITCHCTRL (0x4000C188) register as:
+
+Bit 3: RSTN_CLK25 - Active low Reset for Timestamp signal selection logic
+Bit 4: RSTN_ETH - Active low Reset for RGMII/RMII Converter (50 MHz).
+
+Add a reset controller and add resets for those bits.
 
 Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
 ---
- arch/arm/boot/dts/renesas/r9a06g032.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/renesas/r9a06g032-clocks.c | 64 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-index 5455dccfbdd0..f2bf087f7ad2 100644
---- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-@@ -146,6 +146,7 @@ sysctrl: system-controller@4000c000 {
- 			compatible = "renesas,r9a06g032-sysctrl";
- 			reg = <0x4000c000 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 			#power-domain-cells = <0>;
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 3df3f2b2c6de..547e8d82f1cf 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -21,6 +21,7 @@
+ #include <linux/pm_clock.h>
+ #include <linux/pm_domain.h>
+ #include <linux/reboot.h>
++#include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/soc/renesas/r9a06g032-sysctrl.h>
+ #include <linux/spinlock.h>
+@@ -675,6 +676,11 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
+ 		RB(0xec, 16), RB(0xec, 17), RB(0xec, 18), RB(0xec, 19)),
+ };
  
- 			clocks = <&ext_mclk>, <&ext_rtc_clk>,
++static const struct regbit r9a06g032_resets[] = {
++	RB(0x188, 3),
++	RB(0x188, 4),
++};
++
+ struct r9a06g032_priv {
+ 	struct clk_onecell_data data;
+ 	spinlock_t lock; /* protects concurrent access to gates */
+@@ -1307,6 +1313,56 @@ static void __init r9a06g032_init_h2mode(struct r9a06g032_priv *clocks)
+ 	writel(usb, clocks->reg + R9A06G032_SYSCTRL_USB);
+ }
+ 
++
++#define rcdev_to_priv(x)	container_of(x, struct r9a06g032_priv, rcdev)
++
++static int r9a06g032_reset_set(struct reset_controller_dev *rcdev,
++				  const char *func, bool set, unsigned long id)
++{
++	struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
++	unsigned long flags;
++
++	spin_lock_irqsave(&priv->lock, flags);
++	clk_rdesc_set(priv, r9a06g032_resets[id], set);
++	spin_unlock_irqrestore(&priv->lock, flags);
++
++	return 0;
++}
++
++static int r9a06g032_reset(struct reset_controller_dev *rcdev,
++			  unsigned long id)
++{
++	r9a06g032_reset_set(rcdev, "reset", true, id);
++	udelay(5);
++	return r9a06g032_reset_set(rcdev, NULL, false, id);
++}
++
++static int r9a06g032_reset_assert(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	return r9a06g032_reset_set(rcdev, "assert", false, id);
++}
++
++static int r9a06g032_reset_deassert(struct reset_controller_dev *rcdev,
++			     unsigned long id)
++{
++	return r9a06g032_reset_set(rcdev, "deassert", true, id);
++}
++
++static int r9a06g032_reset_status(struct reset_controller_dev *rcdev,
++			   unsigned long id)
++{
++	struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
++
++	return clk_rdesc_get(priv, r9a06g032_resets[id]);
++}
++
++static const struct reset_control_ops r9a06g032_reset_ops = {
++	.reset = r9a06g032_reset,
++	.assert = r9a06g032_reset_assert,
++	.deassert = r9a06g032_reset_deassert,
++	.status = r9a06g032_reset_status,
++};
++
+ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -1404,6 +1460,14 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ 	if (error)
+ 		dev_err(dev, "Failed to populate children (%d)\n", error);
+ 
++	clocks->rcdev.ops = &r9a06g032_reset_ops;
++	clocks->rcdev.of_node = np;
++	clocks->rcdev.of_reset_n_cells = 1;
++	clocks->rcdev.nr_resets = ARRAY_SIZE(r9a06g032_resets);
++	error =  devm_reset_controller_register(dev, &clocks->rcdev);
++	if (error)
++		return error;
++
+ 	return 0;
+ }
+ 
 
 -- 
 2.53.0
