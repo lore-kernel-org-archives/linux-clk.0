@@ -1,76 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795074551;
-	b=E4G/KvbQQsrj8vWP3w/1UM8wxZRP6ttAYvOx20W1S1+RQXaC4hRTm1ez9SeX2hoIS/8H
-	 6GwRMqVRkfZzeqE/Dy9Y33RKt+jUraK+djb15V0QcEDz3Q1HFwyl1eD6cYO++g4W1E0C3
-	 6znYFDOI1uQo3jix2ypHay9M4QRI8LIDUFGF2QBWBTiIlDLCsG3qVf9coWKwzr0Ne9aGk
-	 fEUSqq2v2kyJBNWlZq79Bwob7sa9wDgVC9PSQyvh3iNn+jlWp30Lcg9DQ9kOrnnZ3tjQ3
-	 +I/Ve3dWFrfvsY8DQbl9QHMdoWCd/aoyWsY9CNQclscXQ3DzQQ+PSdSk+eEfnyWaJ1w==
+	t=1795075877;
+	b=fZBqfB2aWqN5ETdh/1n96pD8UhbOedpp71+Q/DsLzbm0by9Ru6bMZgVJIrODRIWq36Sk
+	 xetsjdKz18orw4wi6xPi5G/RTz3bID7ZWfI8Ga7Kp+jWx28rw646Kz8OA17SKMGi+NURX
+	 zvHGmI6Oqv2/TgabKIouxGIAjDQV90pbnaG065+CMQYHJu677uOCYPhd+coqeiDwdpimj
+	 uwSQW8ZSVYMfWkZhcydpW4AVL+5DiVGfQfPHR778LHeG+whQnsC/YsDn8V9Rai0bsN1Gg
+	 KzObFlmJjOPh6e6ZF8tRJCQybIbn2A/wj8xqCKfk2V0jexzMzD6B+11fxxwp1c9LDPw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795074551;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=AlwETNNCgQuoL3olEu8hotUVCo0wqZYULOda47vcNrw=;
-	b=g2EMVxAapDYmHWom65c4LX9rs8A6+N55zkclwldt1A/3zzSBn+XaG5fn+4FX/tLOiVSp
-	 4V2MbjxYRSNBC1xNs6fSNtpsr9CRmgSFyUw3LiX11g8r4i0gMWCHYFRfHDMYRdrlfcd7W
-	 8faXTp528BJ/VsKYndbi4mW8VDaLo5/eC2rkXzcyvsTbXbvHfzyupOAxKtyfdr8mcrLSP
-	 VrT6O9oV7T4z8MPGFTi5+7a/wLCdfpEkFDu0pJ9OWuoTrb0R2xYq+Ez1TnFycScr9Id31
-	 aydTTBqzonpADD+Y30jV8VUUWvFMYx3ovThP6aF3r3WGMRKIWv75CxmL1u+m6sJj6BQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795075877;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
+	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=K0w6PkVxkXL/Xi4LQWFqwmMKxwRSK2toKIJ5FNqLRfQ=;
+	b=u9DwYk3hTcKz+/rdQdHDEXCaGjsqVmDfUOP810355TJ+mXfaE1RABunZVmlIH3WoyVvV
+	 OYlwEuoMfTh1+jHb/nwsGyY0enodBaKS8WYt8E4hY3WcGhtAvNsbOEVObeanY8hTCRtDl
+	 b0oUSmBTxn1adLrlMHCYuLyNH1F9pqLUMeQoN8d0xo6pHN82eAfxSnng09Dq687AalfVX
+	 0qaeNrmo6zCa75MnAEpaQh+c2IpzyA62yX8JKxlR54JiQ66zrVNSSTuMbw074lc9PMzkF
+	 BPErIOXtKv9dugpmA9/XLhWfoNuvV4HpawCeBp5uI9IWdGe7zM7MXRJPLACMgZEYnag==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=fail header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.222.52
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=LcEPjWCr;
+	arc=none smtp.remote-ip=209.85.128.54
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34836606A32A
-	for <linux-clk@vger.kernel.org>; Thu, 19 Nov 2026 07:49:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 34836606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-99e09f4c44bso552086241.1
-        for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2026 23:49:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795074550; x=1795679350;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17F4606A320
+	for <linux-clk@vger.kernel.org>; Thu, 19 Nov 2026 08:11:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E17F4606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=LcEPjWCr
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a5177d78c7so16685405e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 19 Nov 2026 00:11:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1795075874; x=1795680674; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=AlwETNNCgQuoL3olEu8hotUVCo0wqZYULOda47vcNrw=;
-        b=b00bn4Rex8UMNDL2rb70rZom3Wmu/qyEOGVMxsijmd5dEjCyvWZMV0NTHUirhzksQv
-         L86eSh0EAO0HaADGvCpJL4p5Gwdx7TFnZ/ZfZNpTSSHHhSf5OLf3YKXwZ1TxDfxurS0H
-         5Oyr85MBVRBDkWBUbDuxR1XZzx9+uOJvbqRloqflAy9kIuxTHfyIl6OaPGszyS1pCLLT
-         lQJOf6fJ60raIz4jaCjM5ZOeArGWiqH7oYFRfdsUqFX6vH8fn4KQDUDBKERNtLp90wYS
-         Ezbd1rFjJdITAmkiZAcT8V8HZ5cdiaqFPkHZ3XhXCiXm/BtId1rJHii8gs1s34dYH4Ve
-         CaNw==
-X-Forwarded-Encrypted: i=1; AL+hErGpgpi2CvQmk7AHz11zHYKglW0R1jyvnTz0WW9lDAsDCW09ijfrPvCq034OY4+984Q2GlTATkCgUq4=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/JEGYUwf6lxIRTSFjsntdYVe+CkKol1IcxkoAicIOfieryVAYG
-	itewfuRmOcBSMYNI0+E2MizlGD8Xtndbk+UJNsgiRFdf6LXrwyW6PYOF/CBU9Mwm
-X-Gm-Gg: AYBFou2uMoxYEk4xZbwZAlKkjUcOECyv0szYQOT9t5DV/SYPzvdoEc5xfxK14ZlE7Al
-	6wIhh56ocKnPvROpJAfh3RehxFkB4o0/A3vcAN2s9te03d/5PSVoyuxHc/cmqJGtLQREYTQ1aU8
-	UbP3CyeUeSmlNyvgOLBjh7Y/r1o5x/2nVXRn/EcSnBHaeS/IEcn6WeyWh6I6DjgPpVXx6KNjggs
-	d5v/cCnhJWqjcWSK+7LscrBZHgKsYM9+emcgEEifPURR3UzvSpI4sgVqT5cS1ye1LlaHTnIE3da
-	0is/0uyukA+kL825Kb4/6nX0YkDrRv3+mJBEOvX+EgtOloZbqUqUl0hfe5xPyKLJNwlwOqePAUc
-	IsxAG5Lmzqxi/v15MlK4M1xPtcq/6mOOhyKDfXrN6gi0Jm0vmdhJGCGOfJFl+YEG2ThmLTIeusX
-	YvAGAgT+Jvi9Idb5ETH2DzF9sXwCIQJ/NSmKMNpuFDnG6AyWZssbFSuP0Lh4STpi653NElR9enb
-	f00r9Gt/8Ds9H4BUTTClcPDkh3uHTg6Ihs5hMlFKZ9ZWEMRuA7i5DjFim1Xl+4M6g/ONxJun3Mo
-	TyICeQHg+Yx9NsIigIfwcuuG4z4y5Zf6tSjt61Ja9HW73yTvlwHMze3wf+TZIFbsll4=
-X-Received: by 2002:a05:6102:578c:b0:7c0:4d52:8cc9 with SMTP id ada2fe7eead31-7d6ba434401mr2421069137.14.1795074550104;
-        Wed, 18 Nov 2026 23:49:10 -0800 (PST)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99e4a1cb543sm3756520241.5.2026.11.18.23.49.09
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Nov 2026 23:49:09 -0800 (PST)
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-7d2e14babc8so1151391137.2
-        for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2026 23:49:09 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErHm7GHauWWM/4T4m23Bel42FufNfEwJTrwlneYq0gtkDYJB51VsIJ1Ru3KB+765kFapbNnnnIS/Sac=@vger.kernel.org
-X-Received: by 2002:a05:6102:370c:b0:7d2:c903:515d with SMTP id
- ada2fe7eead31-7d6ba3e8cc5mr2280659137.7.1795074549276; Wed, 18 Nov 2026
- 23:49:09 -0800 (PST)
+        bh=K0w6PkVxkXL/Xi4LQWFqwmMKxwRSK2toKIJ5FNqLRfQ=;
+        b=LcEPjWCrO0y4SAy1MDddWs6Qw5Eq/jxNqjXdJnCuw5GugceTyPYuLmPQdYLzxMvd2O
+         oakdhu48o40QMt/QKgQ72HtVKfcd46YN3YhqeAoGIgScnwq6hlP+2cK60xjbB/VB5/AD
+         itqVUUJZNjminTWNE8+S02wFGQkYlvN0EAI9l+f8o58WByEVRSQRK5v+IjqDBZBbaAYK
+         NrJ1/7VEZVbQCXUa2GTbeaAyAvpqrjDMj+K7Pty3Nzw2ukhNuNZU6jgy9HFfal/xTfkp
+         NQ8pJ/hCRCzAJ4zJN0fz1FTIwuGweYwvvJKDQ8dTUbQSnKr5dm2PsjKaqwciIDFXbDo6
+         wqjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795075874; x=1795680674;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=K0w6PkVxkXL/Xi4LQWFqwmMKxwRSK2toKIJ5FNqLRfQ=;
+        b=quixGRLa6zjm6DcxBnZnIfLMuBCIDSRg3VPl1Ry3BvMavCd+934tNVzE+YvJmYiSJO
+         4jVOkqKAQqP8nf33WDnc71bQoELzYpQt6OtsTyTnLlyz1SHJXsFryJHdYk0ttZeOvD+Z
+         6QEFNnG+BgBqFcOBGJcTYcnAZCCBzmfS2yM2jgwoa2lm6sB5PEj4bwppz29jox8ZOhSl
+         p+k2QRa8DLmvwDwjVYBnQZASXmdAf0OzJnQBUbcAESZXSNqejaHuyuELL4C0sxnaz7o6
+         uuFYMuawihUA7cUv+/tVI+3xLgEh8u9cpXorlhQ4kGppZvyUy1KP4V8jinGqr6vzNWTQ
+         gw5w==
+X-Forwarded-Encrypted: i=1; AL+hErHKM/U1Silnqs3u0mbLShs+OlACPbh3s15BdLeedYtKobihs+yRSrOkIbuOlYkNmRQuDXfpsMHTR6Q=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+2NjzVoRFhGebKNJy47H6kIzRJ4e++pRLI3OkcDr0iP3U10AOV
+	N705EKI5Nr9BAckBEhwW8EwMpFChB+vjn5PJ2DRPn+WHWSfy54ffcek0jjkv1uSiEtU=
+X-Gm-Gg: AYBFou3kMZvdCv89FBbtrVEp3rxZMbR9l36llWMbZQNG2abBgtL1ASZfshwpQK13a9R
+	xs6bTUNWCWk2tqGYTMnmpHUht6/WRjqkhPkQf74cPAn48jgqUhFDIgapZzggszP18gW9xbXpv5T
+	maOuy8yw4tmBy7XkUasSPQCcwYYo2wve47irW1XBEwg8zsK7jsYDmYzibtTPRXdOC+BxeqvBczS
+	fsZcBlylKEM0oizzxRXhrojbiykBiam3o6qvwRehbBeYxJVQSOa9O8Pk+QD0OkA0y9a0j6Rx8XA
+	0YBBRVcCT0Sd0c7wzLChz1WfzIDzJZ8dbVrAsMqcfy5vRTfYRbsuqoNsHTuQHPEwuiTRkeIluj5
+	TYWFKky0k7vgI3WnRSAbNnssxhNUN/aYZjXnyscN5g+12XDWSp2Z38sf6aBtOOWrzYvQXhcmbV0
+	hOFznwtYp6UNMZWuIX/urwsFAU9GSMDEiXP2A7SeU7VSaiwXLuHL0TyjPPxka5dlDztxtxSQ0st
+	1iOezmVBofJC9kAKCiZF2N+YXgG7ZHyDGQf8L4eO/NcXBBo/xcmMxfftfVMvdk+HMnfMccDWdQT
+	gCclul4QqDWK59eKXqoVZ3hv3iLqRHcz4s5K4PQrr8qkbSl9nQ9J2li5WOnnkrG6Pvi7Ww==
+X-Received: by 2002:a05:600c:6095:b0:4a2:c2b:a91b with SMTP id 5b1f17b1804b1-4bb7da03b45mr88477785e9.10.1795075874056;
+        Thu, 19 Nov 2026 00:11:14 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb85343607sm21511305e9.6.2026.11.19.00.11.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Nov 2026 00:11:13 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -80,246 +89,136 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <cover.1795029012.git.geert+renesas@glider.be> <e6816327da51f9fbeef67f13aac723b891e5042f.1795029012.git.geert+renesas@glider.be>
- <sashiko-outbox-221928@kernel.org>
-In-Reply-To: <sashiko-outbox-221928@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 19 Nov 2026 08:48:57 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXgOvdAAJEEydip_-Aakf8j3ORXnZAS-=NqCMBxHwrfZA@mail.gmail.com>
-X-Gm-Features: Aa3M54qMY9KEs6Xlpwbmw0a9TWCYDcZMChPHFmIneFq8gUbTr8Q3_1H7DUbenEE
-Message-ID: <CAMuHMdXgOvdAAJEEydip_-Aakf8j3ORXnZAS-=NqCMBxHwrfZA@mail.gmail.com>
-Subject: Re: [PATCH v5 14/15] pmdomain: renesas: r8a78000: Add SCMI remapping support
-To: sashiko-reviews@lists.linux.dev
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, 
-	conor+dt@kernel.org, wsa+renesas@sang-engineering.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 5/7] clk: amlogic: Add S7 PLL clock controller driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Carlo Caione <ccaione@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jian Hu <jian.hu@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org
+In-Reply-To: <av2kitSLJNxlAKiv@macbook.homenet.telecomitalia.it>
+References: <20261106-upstream-s7-clk-v1-0-7d501d62621f@baylibre.com>
+ <20261106-upstream-s7-clk-v1-5-7d501d62621f@baylibre.com>
+ <179499607256.413320.18141155995846183804.b4-review@b4>
+ <av2kitSLJNxlAKiv@macbook.homenet.telecomitalia.it>
+Date: Thu, 19 Nov 2026 09:11:12 +0100
+Message-Id: <179507587229.639563.16969059581009770947.b4-reply@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3952; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=S/MfAZNg1Wj0rP92aDgSVxBVGdkD8yDNkTKcT4QFMoE=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFn/1iu8i1iwfEKNoRkvi4zy/bIXjwRtU6/s8V0fuO3VT
+ TWRBxHXO0pZGMS4GGTFFFlquKvF30lqfZk1Xec2zBxWJpAhDFycAjAR7z8M/2t8bt7abX4m7O3v
+ 3dPPaMWWVe2yjevLrM38W560U2uPUTzDP7Pci74zz3e+mZJ1qb+nmYnXff7OG779u5Xu/7N/fv3
+ 3eT4A
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Hi Sashiko,
-
-On Wed, 18 Nov 2026 at 21:22, <sashiko-bot@kernel.org> wrote:
-> Thank you for your contribution! Sashiko AI review found 3 potential
-> issues to consider:
-> - [Medium] pmdomain: renesas: leak of exclusive reset controls in
->   r8a78000_mdlc_probe()
-> - [Medium] pmdomain: renesas: leak of scmi_clk_np reference in
->   r8a78000_mdlc_probe()
-> - [Low] pmdomain: renesas: mixed scoped_guard() and goto in
->   r8a78000_mdlc_attach_dev()
-> --
+On 2026-11-18 19:51 +0100, Carlo Caione wrote:
+> On Wed, Nov 18, 2026 at 11:01:12 +0100, Jerome Brunet wrote:
+> > > The S7 PLL controller provides the fixed PLL with its fclk dividers,
+> > > the GP0, HIFI0 and HIFI1 PLLs, and the HDMI PLL.
+> > > 
+> > > Add a driver for it. The GP0 and HIFI PLLs are expected to run with
+> > > their input divided by 2 (div0p5) and the HDMI PLL without it, as the
+> > > firmware and the init sequences set them up.
+> > > 
+> > > Signed-off-by: Carlo Caione <ccaione@baylibre.com>> > +
+> 
+> [...]
+> > > +/* The datasheet documents FIXPLL_CTRL1[30:26] as a single fclk_en field */
+> > 
+> > Not sure what this imply ?
+> 
+> It means that each of the five bits enables one divider, while the
+> datasheet only documents the five bits as a single field. I'll reword
+> the comment to say that.
+> 
+> > > +S7_FCLK(fclk_div2, 1, 2, FIXPLL_CTRL1, 30);
+> > > +S7_FCLK(fclk_div3, 1, 3, FIXPLL_CTRL1, 26);
+> > > +S7_FCLK(fclk_div4, 1, 4, FIXPLL_CTRL1, 27);
+> > > +S7_FCLK(fclk_div5, 1, 5, FIXPLL_CTRL1, 28);
+> > > +S7_FCLK(fclk_div7, 1, 7, FIXPLL_CTRL1, 29);
+> > > +S7_FCLK(fclk_div2p5, 2, 5, FIXPLL_CTRL0, 25);
+> > > +
+> > > +static const struct pll_mult_range s7_pll_mult_range = {
+> > > +	.min = 134,
+> > > +	.max = 265,
+> > > +};
+> > > +
+> > > +static const struct reg_sequence s7_gp0_pll_init_regs[] = {
+> > > +	{ .reg = GP0PLL_CTRL0,	.def = 0x02520800 },
+> > > +	{ .reg = GP0PLL_CTRL1,	.def = 0x09900322 },
+> > > +	{ .reg = GP0PLL_CTRL2,	.def = 0x00000000 },
+> > > +	{ .reg = GP0PLL_CTRL3,	.def = 0x00000006 },
+> > > +};
+> > > +
+> > > +static struct clk_fixed_factor s7_gp0_pll_div0p5 = {
+> > > +	.mult = 1,
+> > > +	.div = 2,
+> > > +	.hw.init = &(struct clk_init_data) {
+> > > +		.name = "gp0_pll_div0p5",
+> > > +		.ops = &clk_fixed_factor_ops,
+> > > +		.parent_data = &(const struct clk_parent_data) {
+> > > +			.fw_name = "gp0",
+> > > +		},
+> > > +		.num_parents = 1,
+> > > +	},
+> > 
+> > Is it the good old predivider here ? Shouldn't it be modelled with
+> > a read-only divider rather that a fixed factor ? just in case whatever
+> > came before did not leave things as we first expected ?
+> > 
+> > Applies to the other PLL instances
+> 
+> Nope, not the good old provider, this is separate from N: N is in CTRL0
+> and our init sequence sets it to 1. This is CTRL1[27], div0p5_en.
 >
-> commit 35d53b7b58584e545d3609ea7bb1ae4726d2bdc8
-> Author: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> pmdomain: renesas: r8a78000: Add SCMI remapping support
->
-> This commit extends the R-Car X5H Module Controller driver to remap
-> hardware power domain, module clock, and reset IDs to SCMI power domains,
-> clocks, and resets when SCMI firmware support is available.
 
-Thanks for your review!
+Humm, still looks very much like it ...
 
-> > --- a/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> > +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> [ ... ]
-> > @@ -178,8 +280,148 @@ static int r8a78000_mdlc_attach_dev(struct generic_pm_domain *domain,
-> >               return -ENOENT;
-> >       }
-> >
-> > -     dev_dbg(dev, "Ignoring HW module 0x%x\n", id);
-> > +     if (!priv->scmi_clk_np) {
-> > +             dev_dbg(dev, "Ignoring HW module 0x%x\n", id);
-> > +             return 0;
-> > +     }
-> > +
-> > +     entry = &priv->mod_map->entries[idx];
-> > +     dev_dbg(dev, "Mapping HW module 0x%x to SCMI clock %d fck parent %d\n",
-> > +             id, entry->fw_id, entry->fw_fck_parent);
-> > +
-> > +     clk = scmi_get_clk(dev, priv->scmi_clk_np, entry->fw_id);
-> > +     if (IS_ERR(clk))
-> > +             return PTR_ERR(clk);
-> > +
-> > +     parent = scmi_get_clk(dev, priv->scmi_clk_np, entry->fw_fck_parent);
-> > +     if (IS_ERR(parent)) {
-> > +             ret = PTR_ERR(parent);
-> > +             goto fail_put_clk;
-> > +     }
-> > +
-> > +     if (!clk && !parent) {
-> > +             /* Ignore missing SCMI clocks */
-> > +             return 0;
-> > +     }
-> > +
-> > +     ret = pm_clk_create(dev);
-> > +     if (ret)
-> > +             goto fail_put_parent;
-> > +
-> > +     if (parent) {
-> > +             ret = pm_clk_add_clk(dev, parent);
-> > +             if (ret) {
-> > +                     pm_clk_destroy(dev);
-> > +                     goto fail_put_parent;
-> > +             }
-> > +     }
-> > +     if (clk) {
-> > +             ret = pm_clk_add_clk(dev, clk);
-> > +             if (ret) {
-> > +                     pm_clk_destroy(dev);
-> > +                     goto fail_put_clk;
-> > +             }
-> > +     }
-> >       return 0;
-> > +
-> > +fail_put_parent:
-> > +     clk_put(parent);
-> > +fail_put_clk:
-> > +     clk_put(clk);
-> > +     return ret;
-> > +}
+> Now, it was indeed a read-only divider in an earlier (messier and
+> unpublished) version. The problem was that with a cold PLL it could
+> cache the power-on setting (/1) at registration, then the VCO init
+> sequence would enable /2 without updating that cached parent rate
+> basically breaking both rate reporting and set_rate. The fixed factor
+> avoids this mismatch when Linux initializes the PLL.
 >
-> [Severity: Low]
-> This isn't a bug, but r8a78000_mdlc_attach_dev() already uses
-> scoped_guard(mutex, &r8a78000_mdlc_lock), and adding goto-based error
-> unwinding in the same function mixes cleanup.h helpers with goto labels.
-> Factoring either the list lookup or the PM clock setup into a helper
-> would keep them separate.
 
-Not a bug, will see if I get to it...
+If the divider is part of the VCO init (which I'm not a fan of),
+this makes sense but it needs a comment near the fixed factor to
+explain how this works on the HW, that you are setting this up
+with the VCO init() otherwise it looks like there is an actual fixed
+divider in front of the VCO no matter what.
 
-> > +static struct reset_control **get_rstcs(struct r8a78000_mdlc_priv *priv,
-> > +                                     struct fwnode_handle *scmi_reset_fwnode)
-> > +{
-> > +     const struct mod_id_map *map = priv->mod_map;
-> > +     struct fwnode_reference_args scmi_spec;
-> > +     struct reset_control **rstcs, *rstc;
-> > +     struct device *dev = priv->dev;
-> > +     s16 fw_id;
-> > +
-> > +     if (!map)
-> > +             return NULL;
-> > +
-> > +     rstcs = devm_kzalloc_objs(dev, *rstcs, map->size);
-> > +     if (!rstcs)
-> > +             return ERR_PTR(-ENOMEM);
-> > +
-> > +     for (unsigned int i = 0; i < map->size; i++) {
-> > +             fw_id = map->entries[i].fw_id;
-> > +             if (!scmi_reset_fwnode || fw_id < 0)
-> > +                     continue;
-> > +
-> > +             scmi_spec.fwnode = scmi_reset_fwnode;
-> > +             scmi_spec.nargs = 1;
-> > +             scmi_spec.args[0] = fw_id;
-> > +
-> > +             rstc = reset_control_get_from_provider_exclusive(&scmi_spec);
-> > +             if (IS_ERR(rstc)) {
-> > +                     while (i--)
-> > +                             reset_control_put(rstcs[i]);
-> > +
-> > +                     return dev_err_cast_probe(dev, rstc,
-> > +                                     "Failed to get SCMI reset %u\n", fw_id);
-> > +             }
-> > +
-> > +             rstcs[i] = rstc;
-> > +     }
-> > +
-> > +     return rstcs;
-> >  }
+> After dropping NOINIT_ENABLED from the HIFI PLLs, the remaining
+> assumption is that an already-running GP0 has div0p5 enabled. That
+> matches the firmware I tested, but the driver does not check it.
 >
-> [Severity: Medium]
-> Does r8a78000_mdlc_probe() leak the exclusive reset_control objects in
-> priv->rstcs if a later registration step fails?
->
-> reset_control_get_from_provider_exclusive() returns unmanaged references,
-> and get_rstcs() only calls reset_control_put() when its own loop fails.
-> If a subsequent call in r8a78000_mdlc_probe() such as
-> of_genpd_add_provider_onecell() or devm_reset_controller_register() fails,
-> the reset controls are leaked and remain marked exclusively acquired, so a
-> later probe retry will fail with -EBUSY.  Registering a
-> devm_add_action_or_reset() callback in get_rstcs() would release them on
-> probe failure.
 
-Thanks, will do.
+If a PLL is going to use NOINIT_ENABLED, then a RO divider is the
+required approach because you no longer control the init.
 
-> > @@ -249,6 +500,47 @@ static int r8a78000_mdlc_probe(struct platform_device *pdev)
-> >       priv->dev = dev;
-> >       priv->np = np;
-> >
-> > +     if (!IS_ENABLED(CONFIG_ARM_SCMI_POWER_DOMAIN) ||
-> > +         !IS_ENABLED(CONFIG_COMMON_CLK_SCMI) ||
-> > +         !IS_ENABLED(CONFIG_RESET_SCMI)) {
-> > +             dev_dbg(dev, "SCMI pmdomain/clock/reset support is disabled\n");
-> > +             goto fallback;
-> > +     }
-> > +
-> > +     scmi = of_find_compatible_node(NULL, NULL, "arm,scmi");
-> > +     if (!scmi) {
-> > +             dev_dbg(dev, "Cannot find SCMI firmware node\n");
-> > +             goto fallback;
-> > +     }
-> > +
-> > +     if (!of_device_is_available(scmi)) {
-> > +             dev_dbg(dev, "SCMI firmware node is not available\n");
-> > +             goto fallback;
-> > +     }
-> > +
-> > +     scmi_power_np = scmi_find_proto(scmi, SCMI_PROTOCOL_POWER);
-> > +     if (!scmi_power_np) {
-> > +             dev_dbg(dev,
-> > +                     "Cannot find SCMI power domain management protocol\n");
-> > +             goto fallback;
-> > +     }
-> > +
-> > +     scmi_clk_np = scmi_find_proto(scmi, SCMI_PROTOCOL_CLOCK);
-> > +     if (!scmi_clk_np) {
-> > +             dev_dbg(dev, "Cannot find SCMI clock management protocol\n");
-> > +             goto fallback;
-> > +     }
-> > +
-> > +     scmi_reset_np = scmi_find_proto(scmi, SCMI_PROTOCOL_RESET);
-> > +     if (!scmi_reset_np) {
-> > +             dev_dbg(dev, "Cannot find SCMI reset management protocol\n");
-> > +             goto fallback;
-> > +     }
-> > +
-> > +     priv->scmi_clk_np = scmi_clk_np;
-> > +     info = mdlc_data->fw_info;
-> > +
-> > +fallback:
->
-> [ ... ]
->
-> > @@ -295,11 +604,14 @@ static int r8a78000_mdlc_probe(struct platform_device *pdev)
-> >               return dev_err_probe(dev, ret,
-> >                                    "Failed to register reset controller\n");
-> >
-> > +     /* Retained in priv->scmi_clk_np */
-> > +     retain_and_null_ptr(scmi_clk_np);
-> > +
-> >       return 0;
-> >  }
->
-> [Severity: Medium]
-> Does retain_and_null_ptr(scmi_clk_np) leak the scmi_clk_np device_node
-> reference when the fallback path is taken after scmi_clk_np has been
-> found?
->
-> If scmi_find_proto(scmi, SCMI_PROTOCOL_CLOCK) succeeds but
-> scmi_find_proto(scmi, SCMI_PROTOCOL_RESET) returns NULL, probe jumps to
-> fallback before setting priv->scmi_clk_np = scmi_clk_np, and then
-> unconditionally clears scmi_clk_np via retain_and_null_ptr(scmi_clk_np)
-> at the end of r8a78000_mdlc_probe().
+To get the rate right, we could play a little trick but it would need
+a BIG FAT WARNING comment.
 
-That is correct behavior, as scmi_clk_np won't be handed to
-priv->scmi_clk_np in the fallback case.
+Register VCO first - basically re-order the IDs. .init() runs if the PLL is
+disabled or if it does not have NOINIT_ENABLED. At this point you know the
+predivider is set and the VCO orphaned. Then register the RO divider with
+NOCACHE, it should pick up its correct rate.
 
-Gr{oetje,eeting}s,
-
-                        Geert
+It is a bit fragile but safer and more correct that the fixed_factor
+approach IMO.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Jerome
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
