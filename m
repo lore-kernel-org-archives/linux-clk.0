@@ -1,64 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.92.40.78
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795100638;
-	b=mvtQQZ9lMhME4SxoQMUQmDxY5hJTFF1MDlz/JOrqcr0UmTyXzR2r8hS9TKl82FIo7Iyf
-	 iqckyGngewWW/42FY/aI0nErhDkEAz/qk/m+HQBA3omhXMZxFeWHAf5ygHPX+yX7sLcLs
-	 nR2qTEfiZoGOJuVbU9irkzQfcHovqESrvT6AnUSeyBp7C/lRv0xtTsnc2Expe+LBJPbIo
-	 5uCzI2dQ3/Vhm2gwMqVJBzOaasui+MoBebsJXo0ntmvVGVzXPZrwoshJEGQI/lDjF2+sX
-	 hWCZh9V1da76n0vrIqVpyNyqyc1hog10Q1gHEoMgsDU4l/iWoKAgmhgsdyyPbn5PQVQ==
+	t=1795101441;
+	b=TnDDkTM6wRWutWnnEnNPMUr3RFi4RoguXY/uAhEmeUkY0vaJb5WUXdRVgyVhcDmBrOA5
+	 clK3TxEZ7KJg4P/vLniBum242L304UlxmPPekbXuYBaU7hQQaYBdxPQuty08lMyg4PhDK
+	 6CGdVpNR16PKVDXaQPg9z2YTbuEMynDVvppK2m4Db3ohQniCzNM/Ezc3YKtwMNONYcZ0e
+	 Ik8rTn/Gm/Kbw3nJcKYG5sUuqajaPeEHnErfQL5eWKiPQcWmkw8RrnYMwbxciZJhgv5Lq
+	 F0L8Fbd5flsWzp1xf5G+u9mHHA49KT0VQLdo5BGST4mE/7ACnLbkJ8Wl2EGy3EO1IsA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795100638;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 User-Agent;
-	bh=hj0mLQTbYwlxqjWQICMElpvI8PErrkWWgWwZ4J2oTr0=;
-	b=Jr3iKk2n7Y116z3ZAM7vtlBX9UoekxTBQ94HM8UNwwwkdTII2PGc7BYtTBc+rpUFs+69
-	 yaljSCZUoBZxgJH+/WOtn5+aJe+DK3/jwoGK+VD7sXZsW/Lny/Ps5wtbIAFeA668iwhLN
-	 FMLHNo0w5rf3kXFnrIDDLDl4eJa6DvUwZm5MX6ZKbXX5REHISlW65MRsA4K4xz5ewS5wm
-	 Y01H/WaLd/vlaXqvRoc+m4lkbJqhGGVUEt06yOs28vFbFfbKMNaXD8S7Rc33n2AYp2721
-	 ej8SZJFCAfakkJEOR5tVAyi87ElsEiXSQj6VmiHvDnAbPF+kgAukA7zm6o7y/GCzKGQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795101441;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:Mail-Followup-To:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:User-Agent:
+	 X-Last-TLS-Session-Version;
+	bh=zMUOTf/upqWE8PmKUGyV8pTt0i4NWtIy6Bb7m2a+O3k=;
+	b=JVFgAS8SHNwkpYMtCNztrq0kV8le9cyd5roJp05Wyi03bnFlN2/chQYCfuhheWsUWIoY
+	 HzpubCwEa27kHEgWPtDX7DLXYZ+ddvzVEU7x316ziIkQBIk7Y4tEdJ58vBFXDgxxDe67i
+	 5xQ65APQQg7mpP8oOmZ3Dp3zMgLE6O1+ZLDm80Yw1Y30s6CMCk1mFWx7HOwVxdhBdUBIH
+	 NLer9io0e9UnOadq2BnMLPdh3xIeCB9BwvGwuLn11TPLaVn+MVYyumtNN43ARa91fkIVP
+	 1vMkZw330XQ6jbxp7vGKWFLITB7skjXLJKvUBe51rrhRiVWIdiECtl9gC6qDLpDDwIQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fopXDmVo;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=thorsis.com;
+	spf=pass smtp.mailfrom=thorsis.com;
+	dkim=pass header.d=thorsis.com header.i=@thorsis.com header.a=rsa-sha256 header.s=dkim header.b=lp7z7ZXU;
+	arc=none smtp.remote-ip=217.92.40.78
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34272606A320;
-	Thu, 19 Nov 2026 15:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF4C60A2604;
+	Thu, 19 Nov 2026 15:17:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1EF4C60A2604
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fopXDmVo
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98FD61F000C6;
-	Thu, 19 Nov 2026 15:03:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795100638;
-	bh=hj0mLQTbYwlxqjWQICMElpvI8PErrkWWgWwZ4J2oTr0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fopXDmVoCTo9q4U7FaLcnpixE/r5cBKsGpAfSyLOy+q/5KnEHoJpt9Rgk7KNJFQbk
-	 kfmEcuowIjFZZ98wyLbo3/09k4bskb2tZwDz/v83L470WPnLjb8ha5+mX9ejbtxG+T
-	 8QzyY5sFVm6saOVGnTjWu9IPp6/x4Ve9lxpI1arjNWNNNy9zrngnmE/gE04lNMvOOL
-	 P1VPxBpmlDF6wBjYs2z5xDHmqwUgL58Sigtp6ETTxyGC4wYyKFa1fmtRFPtO/Prdr6
-	 6P2b1xqIPHlEGjdpMQIjPU17xixCRa5TKNc/nIKDaOCuXTBMALGOpfg3cW0skVKmqF
-	 ZgxL+RPDUCDjw==
-Date: Thu, 19 Nov 2026 10:03:55 -0500
-From: Brian Masney <masneyb@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.a=rsa-sha256 header.s=dkim header.b=lp7z7ZXU
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 020F81483750;
+	Thu, 19 Nov 2026 16:17:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1795101445; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=zMUOTf/upqWE8PmKUGyV8pTt0i4NWtIy6Bb7m2a+O3k=;
+	b=lp7z7ZXUBpEBkO652IcK2/GVHonbqF10yhwWr0qa0dlru3OSuGktfPpoJxyDUFrhZnxo9B
+	0y3UZGGW6fhgF+w4uhec61zFDLdz1KMeh1yaTFZ2lKrnveB2L5a9ARYaXrThhddPlh6Mrb
+	3gSsv8m9cqqq+Ojs9s9fJMqmmG7SwNs+1O3UbwS/VUv5cQLuD5E7qPahHld1hpSPU2d2Yx
+	TfU/5K9lqKmvVW5LT3goXtFv8b58eIz0AYglMWZDR5b/QHc1fZde/xR7fxZjjsWGYnnN+p
+	WBmQxL/PdVHhOyVqY7lAmZb0d+WnH+lwV39XtVgAqgizEo8y84oxx/fAeagQhg==
+Date: Thu, 19 Nov 2026 16:17:16 +0100
+From: Alexander Dahl <ada@thorsis.com>
+To: Claudiu Beznea <claudiu.beznea@kernel.org>
+Cc: Alexander Dahl <ada@thorsis.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Ryan Wanner <ryan.wanner@microchip.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Subject: Re: [PATCH v4 8/8] dt-bindings: stm32: use reference manual names
- for ETR and STM bus clocks (ATTN: Krzysztof)
-Message-ID: <av8P26kub_rYdnFX@x1g10>
-References: <20261106-ups_mp25_clk_update-v4-0-9e32b817c38d@foss.st.com>
- <20261106-ups_mp25_clk_update-v4-8-9e32b817c38d@foss.st.com>
- <179443632478.1143992.14086932638988907034.b4-review@b4>
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v4 15/16] ARM: dts: microchip: sam9x60_curiosity: Enable
+ OTP Controller
+Message-ID: <20261119-gaming-employed-e2f29d4756aa@thorsis.com>
+Mail-Followup-To: Claudiu Beznea <claudiu.beznea@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Ryan Wanner <ryan.wanner@microchip.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+References: <20261105110715.2486432-1-ada@thorsis.com>
+ <20261105110715.2486432-16-ada@thorsis.com>
+ <1d45ab58-9e5a-4b9f-adc4-691a99f0e05e@kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -70,33 +82,29 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <179443632478.1143992.14086932638988907034.b4-review@b4>
-User-Agent: Mutt/2.4.3 (2026-10-09)
+In-Reply-To: <1d45ab58-9e5a-4b9f-adc4-691a99f0e05e@kernel.org>
+User-Agent: Mutt/2.2.13 (2024-03-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Krzysztof,
+Hello Claudiu,
 
-On Wed, Nov 11, 2026 at 05:32:04PM -0500, Brian Masney wrote:
-> > The bus clocks of the STM and of the ETR are identified by CK_BUS_STM500,
-> > CK_SCMI_STM500 and CK_SCMI_ETR. Now that their kernel clocks are
-> > described as CK_KER_STM and CK_KER_ETR, and as the RCC bus clock of the
-> > ETR is already CK_BUS_ETR, these names are confusing. They also differ
-> > from the reference manual and from the STM32MP21 binding, which uses
-> > CK_BUS_STM, CK_SCMI_BUS_ETR and CK_SCMI_BUS_STM for the same clocks.
-> > 
-> > Use CK_BUS_STM, CK_SCMI_BUS_ETR and CK_SCMI_BUS_STM, with unchanged
-> > values, and keep the old names as deprecated aliases so that the
-> > existing users are not affected.
-> > 
-> > No functional change.
-> > 
-> > Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Am Sun, Nov 15, 2026 at 04:27:35PM +0200 schrieb Claudiu Beznea:
 > 
-> You acked the other dt-binding patches in this series. Can you take a
-> look at this patch as well?
 > 
-> The other clock patches look good to me.
+> On 11/5/26 13:06, Alexander Dahl wrote:
+> > Allows to access the OTP memory and Product UID now.
+> > 
+> > Signed-off-by: Alexander Dahl<ada@thorsis.com>
+> 
+> Reviewed-by: Claudiu Beznea <claudiu.beznea@kernel.org>
 
-Gentle ping to take a look at the last patch in this series please.
+Well, in feedback to v4 sashiko suggested [1] it is not necessary to
+enable the node in board dts, because the node is implicitly enabled
+already in SoC dtsi.  Can confirm this from testing.  I would therefor
+drop this patch for v5 of the series.  Or is it better to keep it to
+make it explicit?
 
-Thanks,
-Brian
+Greets
+Alex
+
+[1] https://lore.kernel.org/linux-devicetree/sashiko-outbox-199240@kernel.org/
