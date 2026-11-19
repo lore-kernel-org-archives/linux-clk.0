@@ -1,55 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795099754;
-	b=hXcTARkA0Gbon7JUirZwYvZ0zkZ/iuXWPkVMQmG7aJWA69owZqK2LOgd/gkE5VvSMzDF
-	 X+zhFyA5MEiBkxYPBtr8IMJ9vmPuqvF8kqEbWfHLlPjXGhWinERnBwMCLjqCptJacOPfW
-	 KzKlqKKhCcT6ectARUiNhkxr4ZviHcbK39sp8BcpFzaxSP5tuWMBQt6EjGjnXPkQhF0zc
-	 F3YoGUa36RspAqHRcQk+3dCDR9jUOOK54u3ZK+mmYJJ3J8/bIyvBCanHhs12RDr90fh2z
-	 qHnINuMA0VURz5soRl3fErf/6x8Y2XHaHoN0CnC6rSowkcWuQ1oTNHfoK62CPMlDoWA==
+	t=1795099977;
+	b=RCw8rkC4xowZS9EN+wB93xBnd3LYclmqqSZey3Xa2NWulgImBhf1dNoQ8dSv6EGYKRTp
+	 z9ywUgu67Dc6T8FJhhDf/g2tfd0JSZ/qkyf8v9spOsIWybOjE2BIgId6G0ZPi9Mqpk6wh
+	 PosrzeWCrq6Bc7CW3PFRCQMxnSXepi1IYpZhXVSmKX7+yvKpWQc84UyVLGK5mRus/X4Pq
+	 46umj1aZKic8qC+YMMucRB9lA3A4sV9u0KPoToPbv/VIoaAASozr6I1l43t5m87syM3Ih
+	 /ZHvT/W/y2NlqEUhH2a+157SsCc2/QgcZ6JkLDue+zwQCVvdWPPIFySi2dZyv3L/PhA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795099754;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=21c4+zgwVBT+1QWvCPKRC/FFd/nxiq2/og3mAEhgoUQ=;
-	b=moXpz8WsTfR0s5c+z0Tvokas5hNH3PoYNb63/5vQ/qU/ap4g3pRiorHE6dgNhYKQ+t/L
-	 6+Y8Ckqm4qJ/AqwdcMIqesuZYpuUh0gs4OgPq7E8UPr2urmPTU1jx3tfnTtfkFQVB18QG
-	 MEzPSglNdJVEKNsfQTj9KJffM4zy32t4mok3QsYMtwLis3evXcfehbG+zqzft6x2lCMUy
-	 Kh39zJsZACGpY6QSnCfXNF4IXMi0ysNz4tUD5t/SKKBvQFV5mcnu7X27EPkXgTF4Kt2GR
-	 JhmlYuKzFMYG05NtjaFwYX7Y4K4SwwHGOpg3hnTAxm4LO+D4BMHXWTWkdcc7MKrTJRQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795099977;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=9HvdgseMfTKpHE8dS7B3pYeHdBQRYZw5ymckPY9PWeA=;
+	b=SFq6exl5Bki67EdClSbJx/bMkiTSxXlFB7btXqqlAzpopjsxkkclulnH/VrGLzjI1pMg
+	 rgNtVstZ48l8SkB62qT1dNWpMw7Ls2YVAFowTQ+MRTCcC4NOJ/ewmMmoyA/H8NkAvfyf9
+	 o49uDkRbMSiadUGitu+uQJXnQAdRnI8HMCe0CNeOjP0pCc4ZItLI+s+fib89LqWCn1GHo
+	 dnRArXYaKadEknzFctSyGvOm5IYe0lBFw+HoWLqA4GuvsNMsFAcxvwIVelJ8EG+7405Oy
+	 xfq+VSIdzQhBY2QRjsv8WH3LEo1aYcAZAVd6oE0yorYso2loM9OjNRHVKXXvFlZnFcQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NBFdPLoL;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OSTdCAqG;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9420606A337;
-	Thu, 19 Nov 2026 14:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037B1606A320;
+	Thu, 19 Nov 2026 14:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NBFdPLoL
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0FFF1F000C4;
-	Thu, 19 Nov 2026 14:49:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OSTdCAqG
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07E661F000C5;
+	Thu, 19 Nov 2026 14:52:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795099754;
-	bh=21c4+zgwVBT+1QWvCPKRC/FFd/nxiq2/og3mAEhgoUQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=NBFdPLoL3zSFkmR3/SNpfivEx3SWdETE0tSzP5JjT7didubcMwfl+kS1NE653OGnk
-	 bsc1qsLvVeVQIwl7UzHF7+LNlt3c6XhctPDnqcBnGvjBI4nxxKBIj0O/YqHIPpIum1
-	 cfw2dGuK2s4whnPreFfq87Yq6oJGe1cmMNp+qy60ftNqpx2HM2PpQ9h8tSNB7MvLsr
-	 1t89pH/SulEFHhFQO4F+IMjjApAjZgRCMtyeOxFfYXT/kvQbIBhQkx821+RK9qnSG7
-	 ECLYihvY2y8gI9lUaZP/WMK6O1gRLqkARNfnpNUkvxl1aY+dvsIcZVXWrMkA5IWF/x
-	 0dgZ3buB1w3Vg==
-From: Brian Masney <masneyb@kernel.org>
-To: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
- Wang Haoran <wanghr2026@mail.zgclab.edu.cn>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Brian Masney <masneyb@kernel.org>
-In-Reply-To: <1795076089649-2-ff3d027f@mail.zgclab.edu.cn>
-References: <1795076089649-2-ff3d027f@mail.zgclab.edu.cn>
-Subject: Re: [PATCH] clk: max9485: Disable vdd on probe failure
-Message-Id: <179509969945.279474.9150888941184932744.b4-ty@b4>
-Date: Thu, 19 Nov 2026 09:48:19 -0500
+	s=k20260515; t=1795099976;
+	bh=9HvdgseMfTKpHE8dS7B3pYeHdBQRYZw5ymckPY9PWeA=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=OSTdCAqGwAjilRcTlg4QnCf4oEeBAfqTv/gDQYUG2FpPEPB/n8EunHLn/ONPaXpOu
+	 SveUU66MKBns7yz2FK4OhCBjxYp1PDtv1le5N1J++22XgFxvAKocSTYouN8buMMtOc
+	 q8nU6wmgmzv0fx7asYyJsuYH8mlXiUmRrtDC9etNXqNBfNRxc9qDmbE99UFyUyYn8W
+	 OP3tIju7rPcyzu+qRKdetAwV5lNB58iA+mtwpfLteNmvIyKpcTryoxRGXnPbBlF9Ho
+	 Spe1tuIdFhF+e4DgQTsv9g8ynhmtkuDo7VL+SvcGktdWX7sDpW0CEkq/nCJLidF9N7
+	 m6NVjjBWc24vw==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,27 +51,68 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] clk: versatile-icst: release regmap on registration
+ failure
+From: Brian Masney <masneyb@kernel.org>
+To: Wang Haoran <wanghr2026@mail.zgclab.edu.cn>
+Cc: linusw@kernel.org, sboyd@kernel.org, bmasney+clk@redhat.com, 
+ jbrunet+clk@baylibre.com, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Brian Masney <masneyb@kernel.org>
+In-Reply-To: <1795076093787-3-ba1f065a@mail.zgclab.edu.cn>
+References: <1795076093787-3-ba1f065a@mail.zgclab.edu.cn>
+Date: Thu, 19 Nov 2026 09:52:51 -0500
+Message-Id: <179509997129.279270.1694900680492734463.b4-review@b4>
 X-Mailer: b4 0.17-dev-8145e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=286; i=masneyb@kernel.org;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1571; i=masneyb@kernel.org;
  s=20250903; h=from:subject:message-id;
- bh=8AWIotaLDnCZYTTD6i9PDnx6h/PbZidKAXLgE9CsCjs=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLL+8yQKlYRemP3AOzXLrJFJ5MDESRW+oZzru6wij0T7h
- RbPq7nTUcrCIMbFICumyLIk16ggInWV7b07miwwc1iZQIYwcHEKwEQmnmf4pyf3kUPq1kuzlVee
- LD2slbrA8NvE/dybdjWfOyUgXa9xWJ3hf7rJix+VqnPuzdgRP+Ogf8nzxj+tn51zXORTtx0/u58
- xhwkA
+ bh=B3WrOR4IcxJX+5GntM1nT2+WMxCDlN3APdPaTM4MK4I=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLL+87oYxPGlPtwbYn+L9dRvmymhj7jua76KFkpv0OPeM
+ P2FzUb5jlIWBjEuBlkxRZYluUYFEamrbO/d0WSBmcPKBDKEgYtTACZSc4/hF3Ot+UztXB4OA3GX
+ xeeyp+7p2T7Xas50j0qF/Xt/OvDYn2L4H5u/5uhGe8lDG5oN9z54FcvnkSsl98Ht59pWeZ+vt9V
+ TeAA=
 X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
+Hi Wang,
 
-On Thu, 19 Nov 2026 16:14:49 +0800, Wang Haoran wrote:
-> clk: max9485: Disable vdd on probe failure
+> icst_clk_register() creates a non-devm regmap with regmap_init_mmio() and
+> hands it to icst_clk_setup(), which on clk_register() failure only frees
+> its own structs and drops the regmap pointer, so the regmap and its
+> debugfs entry leak permanently. A name clash is a natural trigger: a DT
+> with N same-named auxosc children registers "osc" once and then fails
+> -EEXIST on every subsequent registration, leaking N-1 regmaps per boot.
+> 
+> Release the regmap with regmap_exit() when icst_clk_setup() fails.
+> 
+> Signed-off-by: Wang Haoran <wanghr2026@mail.zgclab.edu.cn>
+> Fixes: 179c8fb3c2a6 ("clk: versatile-icst: convert to use regmap")
+>
+> diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+> index 37334afee040..e9c7353aa5d5 100644
+> --- a/drivers/clk/versatile/clk-icst.c
+> +++ b/drivers/clk/versatile/clk-icst.c
+> @@ -407,14 +407,18 @@ struct clk *icst_clk_register(struct device *dev,
+>  		.reg_stride = 4,
+>  	};
+>  	struct regmap *map;
+> +	struct clk *clk;
+>  
+>  	map = regmap_init_mmio(dev, base, &icst_regmap_conf);
+>  	if (IS_ERR(map)) {
+>  		pr_err("could not initialize ICST regmap\n");
+>  		return ERR_CAST(map);
+>  	}
+> -	return icst_clk_setup(dev, desc, name, parent_name, map,
+> -			      ICST_VERSATILE);
+> +	clk = icst_clk_setup(dev, desc, name, parent_name, map, ICST_VERSATILE);
+> +	if (IS_ERR(clk))
+> +		regmap_exit(map);
 
-Applied, thanks!
+There is a struct dev here, so devm_regmap_init_mmio() should fix this
+in a cleaner way.
 
-[1/1] clk: max9485: Disable vdd on probe failure
-      https://git.kernel.org/clk/linux/c/b9b50795d5ba
+Brian
 
-Best regards,
 -- 
 Brian Masney <masneyb@kernel.org>
-
