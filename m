@@ -1,47 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795076166;
-	b=0S5bYOnIaa0su9ozz8rnqJ9l6YWMJ1gh6oBL2PLz3KTY19MIASroKFeju9BSZ9V++pny
-	 w45I3lKFe7049FyzAyJ5H4aywWla+v8HZJc9zD3TJZfT7wArDNWjkKMbiiqFJ7NMeKHaX
-	 ID4Q/YSgDM5B2RnTcZw3nUb1FSI8zxJ003s580GW0/Ksq77PJVMb/ZuW2MvzhDciHp5Rx
-	 TDgi4Llfu62x5GTuFJkEUtzYzVA3sdvjtmkXuyIR7F5gY9M1yByU6jFOydZu8bFRO68y2
-	 b/VLZsXlYjCXkyfvgqe51k4gjebj2wtKyWEm8+NtvYK6D9y3cYusskeY8y1vS0ALUzw==
+	t=1795076388;
+	b=UjiJu56Qbk9FOm1Ihd8zai9c8+l02uz2gWIy4ClsvsbN+DKMao1WnE859y9+wijRGgcm
+	 r6UZMTZO7HR988NbamjA80CvY5+zszFUKhs0DI+KOoQsNYg7HWPcQeovfsu23V+tU3AFU
+	 s+7b/IQV32LlG4k9owipnCmRMpsfrRhjI1QqNF3ztJ6Tj2cUtM/bkdYjf4lJPz5ctbHFB
+	 m+C2VNoVfk8qUwJZIaQsuRVLXosUxDC2fp7jMPhrzHLR5nCgZQd1hGcnsRxGNGmFyEvcx
+	 Giv9s65VUr5yrIV1ZbPGH7F3VT0/n/3vU6aGsbXEpvXussIYNjILeG0isvTthxNtHcw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795076166;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=2o47jhHmYHT//X3omKszhwHYceBmTsWtcg/c2jRgkMw=;
-	b=5WVQH473ehMu5RfWfrgikAYNtARgDPk12KkZgzf1gdQ9mZXALvn6mnrzu0zQf2Ahj3/6
-	 Euf6vKk47XWhweZQHxCX1pWl20PLESWi0lksidXIqm0BSHirItIHf0KA/ao1vZ0C5qbUP
-	 9D9hn5aFclnbdC+pxxBn/wNfGT7M3YiG8IiG7WKnuYHJmmdA9D9znkjWVHMS/0OqiR8JK
-	 UObqt88HrpVTG9fzaF5+EelZ/jSlfENFQAEJEwztpBAgX90FRA2QkfmSafY/VRiXtmEAX
-	 qatPm9crxQmTj1QEqBDv0mxAYFR/oz7ZbUpo8v0MtOaSLa/+LiugBvnwy4A+hoPakLg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795076388;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type;
+	bh=p+dKc+IASGuU74BQrkjO8c1LFAuMGojRAMZOBhZUcyk=;
+	b=3++DU+W4uNQTuLYBYfoqDjUUQthmlRmRN3gozgxGo8zSMmh/O09EJMdy5lyIq2FIeF16
+	 VllfyvfINKx7nMnJnjsa4NBrnPpkqYIrpkIQIHwyJ2QG5zSwIEOpNNmaLhGMhl1vfF86c
+	 M5Uw8RNQdGUgLc6POLgor0saN3dHbIcrciG2LFI4I3DN9IvLS8tfhHBSOoXJ5x4snmgzv
+	 bVRRtfYloB3UY/C2GpoQPbb6XQZ00KpTp9oeMfR3n5rU+0aNvKX9v7xYVDd4LhRzJKEI0
+	 ku/LoRLcPH8UTb6LAlZYOKWUU+lNoUtftmwqsKQFgCnN6d/rujHI9//1fstPTeH4UIw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eXerYpgX;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Wknl9oxm;
+	arc=none smtp.remote-ip=209.85.128.42
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A06A606A32C;
-	Thu, 19 Nov 2026 08:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EB8606A326
+	for <linux-clk@vger.kernel.org>; Thu, 19 Nov 2026 08:19:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D4EB8606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eXerYpgX
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E56751F000C4;
-	Thu, 19 Nov 2026 08:16:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795076165;
-	bh=2o47jhHmYHT//X3omKszhwHYceBmTsWtcg/c2jRgkMw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=eXerYpgXVxTbdJEgtLng6D1Aqab+qrwslX6ekxwSisWqlQ4jQ5ANPC/pGLyajv6tl
-	 q6RKoAl4QzDh85Hxmwu6oZHkqYV9M+3AXCQuGPyoRsoFfellDeA+tvb7rn8P6HDKM3
-	 vDKtPvLOYAyIJOF7R5xuLIQ4TlNpsWYXNW2IaTDNWVPe7R9Q5i3UmO5+NvKJ6R+8Rf
-	 aE5i/PXXTFWNqs9MSrSTuKyZotbwjZnCxMS2siSHO16c5x1xhZT7hapfZXMIjnadcM
-	 0M0PczkVKalb0rBttLlRwgIPHZROkQRefjSnCJBvlTbOoNIeomL2I84wpUUIJm886/
-	 V0f1CGtisG79A==
-Message-ID: <7fd94d9d-9ce8-4c1b-8a2b-4a1d334aeffb@kernel.org>
-Date: Thu, 19 Nov 2026 09:15:59 +0100
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Wknl9oxm
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4bb5b8ef642so16759815e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 19 Nov 2026 00:19:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1795076386; x=1795681186; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=p+dKc+IASGuU74BQrkjO8c1LFAuMGojRAMZOBhZUcyk=;
+        b=Wknl9oxm/wTcyejMFrf5muGsLwjYaLksGm1GPXm/Z4mLQhEZEwO5VKcss/pY83dgBl
+         ZQZUU8SifI3V4VdMDA+xJaPUTFPwXsAtmhWh3SOfzBIR4EgyHND1fMDq+lhD017iSI0Q
+         49ZXq/2NCZ6tGI4VNzjIvNHEA8iOlT5Qz431acJqtpWGdIk09FMJA4rJO9A/gajNjKEN
+         dyEOso9ykAZurpuzpofjEI1WKIVp/tS3t25X00ve7J017D4KMiFF4mpt7+xHpUMQxWzZ
+         K+5BDHi6WK4scNhXr3nn6GEt79Q+PsDfk3e9yncGm7RVGronLz57IA5nFEcyc3B071/2
+         wBBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795076386; x=1795681186;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=p+dKc+IASGuU74BQrkjO8c1LFAuMGojRAMZOBhZUcyk=;
+        b=LRzDMTmoFe9XGXt2mgMKgoD7UJpn6t5k3RDbVobjy0IlBZA+y0ykexAS/VM71RhHt4
+         33kivUWdz7HLi1wLQwqybkPLwCidEcmdxL5ijHv2AK4/IUFRLdEVmNA55YH3BdMDkuQP
+         OJyaLTFWdaV6gmMIzTjtefxfdH9IaAvpYlO2V6wXshqSjuCBrSdvXzjGZsQxazsDbRKs
+         QTJ8kyyoAwN4JMzxAyFkf4tWLsIPvFk6CHNF++esTb6/wRjPWvyT/c2Z1/lFZLBDasHb
+         9P4hFOHLJgdu5n3MF9RQz7dWL9d1PsgatsmNC0b0jLHOEAv6fGub/+1sCRKPnTH97t/v
+         8hSw==
+X-Forwarded-Encrypted: i=1; AL+hErHfmaFcRt68SEk/edhSOoRJtCDNHCHvi1yk30xb0zg9vr1vrgmEW+Ppp9r6nnLz9v+Dg4X1aSpTIMM=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/8N8MWaAfqwW1U4fgSaSF2YoS5r7KmHPEv+xwsOd0TKuAhLToO
+	isPEZqRhAFnEzxsTTCUTqXQcVh0xQ+27LQG8RskIJRb/Oqp8A5i524ZEkfNklmpKiiI=
+X-Gm-Gg: AYBFou2rIfiUJVobH1EoP/io9aOAPLtttuhWlDREAS7CeFCQyaUDWjMaf9SAyBPZcjs
+	KOiHB9lGmkuc8a912jIjrJr74Yt8/LpfN2rNuYAJO/iVr/IfSqHyHfun0tIWfUUUpm4yY3R65wT
+	DygOSNSN35gjAJiQSTrnNu1+ws4ZqW3uZMc8/WUGQ6R3nA8bL6SmWcT5Zpfo1zr0A1xWqsmMVVH
+	FlgfJuQpHD9Y+saKYLb03c/d635DALueOZsHUG+HiYzZdBagBdrwO3KjPp7q96s4hFBq7ZlX0OG
+	gfZkPuZjDSXxd4WR7TCcPLTAsE1XbcgTui472ZKV4keeEfM+M7Btrwv3E/fvy/1OkxvRaTeYpOn
+	+ZI0f8cS0wvE9KaLnoTCaK4mmoWJ9WCJRPV0e3mmXOgwmhoXBAMBBmzMRH8ZnleegH8r+m4m/WW
+	yBqsTyQlX94G3UzWc75t6gA7QC4nNi+++Fl3/JpIL74yb3pTc3Pruxm1Y/S0BGNbycickSa7018
+	REjUN7uiQ8R9NsXtsaR9hSNZ8KgoXRXYVAOo/7hhUBiLuBB1P0R5k1wlORjzs3fvrucTINjCgYv
+	LypQtGE7fZd6cUMb6k8LMQFZIp6ww2bcWO8SzF7U7yVQEyYn
+X-Received: by 2002:a05:600c:8b63:b0:4a7:8fe8:130c with SMTP id 5b1f17b1804b1-4bb7da27088mr96761205e9.28.1795076386236;
+        Thu, 19 Nov 2026 00:19:46 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb84e5656asm17330585e9.3.2026.11.19.00.19.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Nov 2026 00:19:45 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Gregory Williams <gregory.williams@amd.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, Oded Gabbay
+ <ogabbay@kernel.org>, kishore Manne <nava.kishore.manne@amd.com>, Izhar
+ Ameer Shaikh <izhar.ameer.shaikh@amd.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jay Buddhabhatti <jay.buddhabhatti@amd.com>,
+ Ronak Jain <ronak.jain@amd.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 00/15] accel: Add AMD Versal AI Engine driver (with
+ Versal Gen 2 firmware support)
+In-Reply-To: <20261118233211.4121361-1-gregory.williams@amd.com>
+References: <20261118233211.4121361-1-gregory.williams@amd.com>
+Date: Thu, 19 Nov 2026 09:19:45 +0100
+Message-ID: <1jcxs12py6.fsf@starbuckisacylon.baylibre.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,86 +105,130 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: clock: Add STM32MP25 SYSCFG clock
- controller
-To: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Christophe Roullier <christophe.roullier@foss.st.com>,
- Dario Binacchi <dario.binacchi@amarulasolutions.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20261110-ups_mp25_clk_syscfg-v2-0-624559bb8ec7@foss.st.com>
- <20261110-ups_mp25_clk_syscfg-v2-1-624559bb8ec7@foss.st.com>
- <20261113-charming-admirable-pronghorn-bdc26c@quoll>
- <c76d9618-1e77-4259-92dd-8b8b3d6ade2e@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <c76d9618-1e77-4259-92dd-8b8b3d6ade2e@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 18/11/2026 13:17, Gabriel FERNANDEZ wrote:
->>> +
->>> +  clocks:
->>> +    minItems: 1
->> Why is this flexible? Device either has or has not these inputs.
-> Because each SYSCFG compatible is shared by SoCs which don't have the
-> same inputs: "st,stm32mp25-syscfg" is used by STM32MP251/253, which have
-> neither LVDS nor DSI, and by STM32MP255/257, which have both. The same
-> applies to "st,stm32mp23-syscfg" with STM32MP231/233 and STM32MP235.
+On mer. 18 nov. 2026 at 15:31, Gregory Williams <gregory.williams@amd.com> wrote:
 
-Aren't these different SoCs? I miss the point apparently. The rules
-explicitly ask for integration compatible, if you skip it, then it means
-all are the same. But then you say they are not the same...
+> This series adds a driver for the AMD AI Engine (AIE) found on Versal
+> devices, together with the firmware changes the driver depends on. AI Engine
+> is a tile array based accelerator used for applications such as beamforming and
+> machine learning inference. Tiles are organised in columns, and groups of
+> columns form partitions that an application requests, initialises and releases.
+>
+> Several registers in the AI Engine array (column and shim resets, memory
+> zeroisation, tile clock gating, NoC and interrupt routing) are privileged
+> and can only be written by the trusted firmware. The driver therefore
+> packs operations into a DMA buffer and hands it to the platform firmware,
+> which executes them in order.
+>
+> Firmware patches included
+> -------------------------
+> Patches 1-10 are not part of the AI Engine driver itself, but the driver
+> cannot work without them, so they are included here to keep the series
+> self-contained and reviewable in one place:
+>
+>   - 1-5:  zynqmp firmware driver refactoring and a va_start()/va_end()
+>           fix (patch 2 carries Fixes: tags), preparing for the extended
+>           SMCCC call format.
+>   - 6-7:  Versal Gen 2 compatible string and firmware support, where all
+>           EEMI APIs use the extended SMCCC payload.
+>   - 8-9:  Versal Gen 2 clock binding and clk driver match entry.
+>   - 10:   firmware IOCTL support for the Versal Gen 2 AIE run time
+>           operations, used by the driver.
+>
+> I am happy to split out or reorder the firmware and clock patches if the
+> maintainers prefer to take them through their own trees, and would
+> appreciate guidance on how the series should be merged.
 
-Best regards,
-Krzysztof
+For the clock, it would defenitely be prefered if you could split out
+clock part, especially if you later need an immutable branch.
+
+`b4` makes it very easy to handle series deps, please consider using the
+related tags
+
+https://b4.docs.kernel.org/en/latest/contributor/prep.html#working-with-series-dependencies
+
+>
+> AI Engine driver
+> ----------------
+>   - 11:   devicetree binding for the AI Engine.
+>   - 12:   driver core: device probe, partition request and release.
+>   - 13:   pm ops: building and sending firmware operation packets.
+>   - 14:   enabling and disabling tile clocks.
+>   - 15:   partition initialize and teardown (reset operations).
+>
+> Previous submission
+> -------------------
+> This driver was posted for review a little over a year ago:
+>
+>   https://lore.kernel.org/dri-devel/20250702155630.1737227-1-gregory.williams@amd.com/
+>
+> Since then the scope of what is proposed for upstream has changed, this series
+> is considerably different from that posting, in particular targeting only Versal
+> Gen 2 support. All comments received on the earlier posting have been addressed
+> or in this version.
+>
+> Abhyuday Godhasara (1):
+>   drivers: firmware: xilinx: Add IOCTL support for the AIE run time
+>     operations
+>
+> Gregory Williams (5):
+>   dt-bindings: soc: xilinx: Add Versal AI Engine DT binding
+>   accel/amd-ai-engine: Add AMD AI Engine device driver
+>   accel/amd-ai-engine: Add pm ops for firmware calls
+>   accel/amd-ai-engine: Add support to enable/disable tile clocks
+>   accel/amd-ai-engine: Add reset operations
+>
+> Naman Trivedi (1):
+>   dt-bindings: clock: versal: add Versal Gen 2 compatible string
+>
+> Senthil Nathan Thangaraj (8):
+>   firmware: xilinx: Separate TF-A checking
+>   firmware: xilinx: Call va_start after pm feature check
+>   firmware: xilinx: Add comments about number of arguments
+>   firmware: xilinx: Use match data for ZynqMP/Versal
+>   firmware: xilinx: Rename zynqmp_pm_invoke_fw_fn()
+>   dt-bindings: firmware: xilinx: Add Versal Gen 2 compatible string
+>   firmware: xilinx: Add support for Versal Gen 2
+>   clk: zynqmp: Add Versal Gen 2 compatible string
+>
+>  .../bindings/clock/xlnx,versal-clk.yaml       |   5 +-
+>  .../firmware/xilinx/xlnx,zynqmp-firmware.yaml |   3 +
+>  .../bindings/soc/xilinx/xlnx,ai-engine.yaml   |  61 +++
+>  MAINTAINERS                                   |   9 +
+>  drivers/accel/Kconfig                         |   1 +
+>  drivers/accel/Makefile                        |   3 +-
+>  drivers/accel/amd-ai-engine/Kconfig           |  15 +
+>  drivers/accel/amd-ai-engine/Makefile          |  14 +
+>  .../accel/amd-ai-engine/ai-engine-aiemlv2.c   | 441 ++++++++++++++++
+>  drivers/accel/amd-ai-engine/ai-engine-clock.c | 154 ++++++
+>  drivers/accel/amd-ai-engine/ai-engine-dev.c   | 255 ++++++++++
+>  .../accel/amd-ai-engine/ai-engine-internal.h  | 377 ++++++++++++++
+>  drivers/accel/amd-ai-engine/ai-engine-part.c  | 140 ++++++
+>  drivers/accel/amd-ai-engine/ai-engine-pm.c    | 472 ++++++++++++++++++
+>  drivers/accel/amd-ai-engine/ai-engine-res.c   | 184 +++++++
+>  drivers/accel/amd-ai-engine/ai-engine-reset.c |  69 +++
+>  drivers/clk/zynqmp/clkc.c                     |   1 +
+>  drivers/firmware/xilinx/zynqmp.c              | 340 +++++++++++--
+>  include/linux/amd-ai-engine.h                 | 115 +++++
+>  include/linux/firmware/xlnx-zynqmp.h          |  65 ++-
+>  20 files changed, 2679 insertions(+), 45 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml
+>  create mode 100644 drivers/accel/amd-ai-engine/Kconfig
+>  create mode 100644 drivers/accel/amd-ai-engine/Makefile
+>  create mode 100644 drivers/accel/amd-ai-engine/ai-engine-aiemlv2.c
+>  create mode 100644 drivers/accel/amd-ai-engine/ai-engine-clock.c
+>  create mode 100644 drivers/accel/amd-ai-engine/ai-engine-dev.c
+>  create mode 100644 drivers/accel/amd-ai-engine/ai-engine-internal.h
+>  create mode 100644 drivers/accel/amd-ai-engine/ai-engine-part.c
+>  create mode 100644 drivers/accel/amd-ai-engine/ai-engine-pm.c
+>  create mode 100644 drivers/accel/amd-ai-engine/ai-engine-res.c
+>  create mode 100644 drivers/accel/amd-ai-engine/ai-engine-reset.c
+>  create mode 100644 include/linux/amd-ai-engine.h
+>
+> -- 
+> 2.34.1
+>
+
+-- 
+Jerome
