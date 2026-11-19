@@ -1,47 +1,73 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=149.28.215.223
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795085715;
-	b=Vz0yFWan7iGaymRCvW5oTf04rsPyRxHEzZYF0QiE076TdYksXj/Ew+TkkxSX8ddCQtLq
-	 1wRNj7q2dxNU3sJsYot5kz+kJYfntDw/xSc2gWbUu2ulHq6MhqNkcchyhz5sLKTcMDxNV
-	 +lPci035QxHwj5TU51ZxxBDj9LKarEIFZbCkibJUS60pvEUXvu2LSBndZhMG5M9QgJT0d
-	 eggrk5Ih7k+YHwmN2yETSMxcdUv0LYdGAubFng2Fbud8u0TcRSUIJj8cGZ7aYelj5PLRG
-	 jjJFTut12Oewye+maGig31jqM1dgoqeG3F0oOngjt38M/c/9LsZnVkRkBQt0noskpAg==
+	t=1795089588;
+	b=2QER1pkjLKWL1p2lQwBPTy35ig/hYFRecw+4qNosv0HPqKv3PcdEAYXzAROvRSzJUUZI
+	 NYHqzfrT+dzeu4UfgtfIxzvc6jh8k2UpNxd5fxz7p4qFaNK1TY2AkK0+txJ8rDmFW1RVM
+	 ztJV8MZdh+5dpg/F8dBUqvTIrb2zJH6ChGPh62YbDecpzTrDjiYOYeg1FSv4NYBNDSMh6
+	 6G6vQfe9VCi2Ob1PXbZT1Ml/A4g9wRAvynLkWDlY9DFEG0Hpjix0PsuF7RU5nVmLnwTCE
+	 JGBfjeBcgmrhSdoLBfcKRmqWuAOg68H4UVNmhDYcNKF0DdMQ1jJPi6VAQlUaBKZkCYQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795085715;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	a=rsa-sha256; c=relaxed/relaxed; t=1795089588;
+	h=DMARC-Filter:DKIM-Signature:DKIM-Signature:CFBL-Feedback-ID:
+	 CFBL-Address:X-Forward-Email-ID:X-Forward-Email-Sender:
+	 X-Forward-Email-Version:X-Forward-Email-Website:X-Complaints-To:
+	 X-Report-Abuse:X-Report-Abuse-To:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=av2D7bNud7j+ZgZGHaHjgJw7DfhyRFMgkJgFPf9k60E=;
-	b=HGBP16NzHhT1HnxNQW0tm742vXcmjKqzrDM+fCXPEghdrK8VRw7/5llQcx4XoZZkL9d6
-	 3Sp4+nCpvUaKPv4YlyBTPRF+ltVPWZAOyUJk3nKC/jQQx4nXnQAEGvmriZ77TpMOxWpP/
-	 blwYX5IwC5P/EtyY6SaUVb8rrSYQGK7xBZN6TkGx50/ZLrg41EQI2fichhfjVmh2p+EMK
-	 w7j0e9BwWYnn/xsv2qLS15l9ct+SRA/0l05g2VFeX+PP3sWFsLd4vrJFFwDNNiwgCdXCC
-	 RMBARHbAJU2t58TB5pbnsjEu3TwNG0vCaTri2Ayv/meUJdZcF9Kc7rNyql0PlasFkwA==
+	bh=6uZDabLxQxlRNvlzS0DFbXpCPUyPpFV7CJaGTp2FAAM=;
+	b=lNGeibRHNYtBHVNgPVlKhcRIf976KLd09NcKnuVRFp4pu8WtDrpcI3T4DWo8Uo/7nqkl
+	 RI2EB5sWuxgij9T0+SmYYPIQGa9ZTnZXF3xVP+YLYkzOfws1Fx+CnFz9+9OYX8QjiI0WS
+	 PQGQCuZUAxMTdMW2FINm8LxmAkY/QwyMejgk8BDyofx2pvQBIHo1x3ljRycMRhP5rsEM/
+	 TJsBz+F9oyut+DAJe6fuYAkKLFZV/bIf2xG+UwhKrv4m+rnhHzxoLXFJBaA3c8FH7LWdA
+	 MrutwF+E+JIsvDF7pxSHx6wLL6Rnec8dl15aXzDGCuV5sHod2Suzg63EM9Qsjfr7KYQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jaFuonsT;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=kwiboo.se;
+	spf=pass smtp.mailfrom=fe-bounces.kwiboo.se;
+	dkim=pass header.d=kwiboo.se header.i=@kwiboo.se header.a=rsa-sha256 header.s=fe-e1b5cab7be header.b=SZCcXntU;
+	dkim=pass header.d=forwardemail.net header.i=@forwardemail.net header.a=rsa-sha256 header.s=default header.b=NXt5VNLK;
+	arc=none smtp.remote-ip=149.28.215.223
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B45F606A320;
-	Thu, 19 Nov 2026 10:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B24606A320
+	for <linux-clk@vger.kernel.org>; Thu, 19 Nov 2026 11:59:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D1B24606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jaFuonsT
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A9EF1F000C4;
-	Thu, 19 Nov 2026 10:55:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795085715;
-	bh=av2D7bNud7j+ZgZGHaHjgJw7DfhyRFMgkJgFPf9k60E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=jaFuonsTh85f5zgyMHwIyQoXESLU6ob1QBmmVIL2y8kzrDrI+sN+EXpgrqM9cWkCL
-	 HSCsOm68R+n4apKkc9LCwn/7tD9sxnVkDbuwSQg8YAlciBJbMSxtNWNg3zqvkJIG0o
-	 /OB5gNT/VDVzKO1uCW8MyPX/qz2m4bSR8AUVLe7FWCl3/A7qLie3Xh0BQruLIqbRr0
-	 vv/GynVkiSiPGOPT6cX8azlYFsXZanaKvosH8o0+uZkwk0yi+wiFbKV+YE3jgzSGe6
-	 h0DjOeSi654NH70w39EiLmNgVquv5tZro7XiS3k4Z3fBplaGFQ3JIZItAy435S/pGp
-	 +PIg50N06FCCQ==
-Message-ID: <783b5d30-edc8-4a03-b1c3-c74c803787dd@kernel.org>
-Date: Thu, 19 Nov 2026 11:55:10 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=kwiboo.se header.i=@kwiboo.se header.a=rsa-sha256 header.s=fe-e1b5cab7be header.b=SZCcXntU;
+	dkim=pass (1024-bit key, unprotected) header.d=forwardemail.net header.i=@forwardemail.net header.a=rsa-sha256 header.s=default header.b=NXt5VNLK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From:
+ Content-Language: References: Cc: To: Subject: MIME-Version: Date:
+ Message-ID: CFBL-Address: CFBL-Feedback-ID; q=dns/txt; s=fe-e1b5cab7be;
+ t=1795089580; bh=6uZDabLxQxlRNvlzS0DFbXpCPUyPpFV7CJaGTp2FAAM=;
+ b=SZCcXntUyRVHCkesee+9HuHaniaQ2Hzv7LH2IG/R6AG2W9sLKLZ6gRatSjiY7fXzUgvtfZuMT
+ TJIts3FZl0CqDUXzufdO00eLSUI/6VY+kI9L4syFr+grcyUb3WOxLvcH3tK2d6Okeyn7vaQQ7GN
+ 5K78OD5M/5U2sfn3goLCGiK8JbM7gwzhZaNmmgixohIRsHr7f66VJwAtbnQ8qWDa5VqlUtcLtEt
+ 3jBlxxu3xB2bP9CFu+TaJD9gCjpWCLv5Eviigm/X2aqu33IZTf+kpmdDUrTO2I0Qbi8ApB3HdZv
+ HBM2Meo7MPBokRd6dndSsQUxakzAKsryjGBs/+X01FXg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=forwardemail.net;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From:
+ Content-Language: References: Cc: To: Subject: MIME-Version: Date:
+ Message-ID: CFBL-Address: CFBL-Feedback-ID; q=dns/txt; s=default;
+ t=1795089580; bh=6uZDabLxQxlRNvlzS0DFbXpCPUyPpFV7CJaGTp2FAAM=;
+ b=NXt5VNLKiarO3Vgzw6M/UhcQOftXNpbgKpv3mq5g6cJK7C3vtdafBCYzdQp2qfTpo9EBRYooN
+ EsQU+yrRuPfLE6uClaZgSemMQ0amhzFtgpbYe27m/kCUn4EQytJzclBtRZnwMbQuWJz4Mo4LsLV
+ J7zfPE+WAMToksSFAzENLlc=
+CFBL-Feedback-ID: 6afee4a18179ba28676bf0a4:5f8657ad80648509a22aabaf6d528548
+CFBL-Address: abuse@forwardemail.net; report=arf
+X-Forward-Email-ID: 6afee4a18179ba28676bf0a4
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 2.19.33
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <34dbd46a-29cc-4b86-b9cb-9477dc0a4da8@kwiboo.se>
+Date: Thu, 19 Nov 2026 12:59:23 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -52,110 +78,136 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/15] dt-bindings: clock: versal: add Versal Gen 2
- compatible string
-To: Gregory Williams <gregory.williams@amd.com>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+Subject: Re: [PATCH v6 1/4] dt-bindings: clock: rockchip: Add RK3572 CRU
+To: Cunhao Lu <1579567540@qq.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
  Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>
-Cc: Naman Trivedi <naman.trivedimanojbhai@amd.com>,
- Senthil Nathan Thangaraj <senthilnathan.thangaraj@amd.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20261118233211.4121361-1-gregory.williams@amd.com>
- <20261118233211.4121361-9-gregory.williams@amd.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Elaine Zhang <zhangqing@rock-chips.com>,
+ Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20261117-add-board-ok3572-c-clk-v6-0-cabad6610c5f@qq.com>
+ <20261117-add-board-ok3572-c-clk-v6-1-cabad6610c5f@qq.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20261118233211.4121361-9-gregory.williams@amd.com>
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20261117-add-board-ok3572-c-clk-v6-1-cabad6610c5f@qq.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/11/2026 00:32, Gregory Williams wrote:
-> From: Naman Trivedi <naman.trivedimanojbhai@amd.com>
-> 
-> Add compatible string for Versal Gen 2 clock driver and validate
-> clock-names for xlnx,versal2-clk compatible.
-> 
-> Signed-off-by: Naman Trivedi <naman.trivedimanojbhai@amd.com>
-> Signed-off-by: Senthil Nathan Thangaraj <senthilnathan.thangaraj@amd.com>
+Hi Cunhao Lu,
 
-Still incomplete DCO. Please read submitting patches to understand what
-you must sign.
-
+On 11/17/2026 8:06 AM, Cunhao Lu wrote:
+> From: Elaine Zhang <zhangqing@rock-chips.com>
+> 
+> The RK3572 CRU uses the PMU0 GRF for the AUPLL reference mux.
+> Describe the controller and define its clock and reset IDs.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> [adapted to mainline rockchip clock and reset handling (xin24m input,
+>  don't introduce CLK_NR_CLKS)]
+> Signed-off-by: Cunhao Lu <1579567540@qq.com>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 > ---
->  Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> Changes in v6:
+> - Improve readability.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-> index 1f36ccc4cde1..e06f1ebc192a 100644
-> --- a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-> +++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-> @@ -17,10 +17,13 @@ description: |
->  properties:
->    compatible:
->      oneOf:
-> -      - const: xlnx,versal-clk
-> +      - enum:
-> +          - xlnx,versal-clk
-> +          - xlnx,versal2-clk
->        - items:
->            - enum:
->                - xlnx,versal-net-clk
-> +              - xlnx,versal2-clk
+> Changes in v3:
+> - Close the reset ID gap while preserving each named reset's register
+>   mapping.
+> - Remove CLK_NR_CLKS from the clock binding.
+> - Fix the indentation of the CRU binding example.
+> ---
+>  .../bindings/clock/rockchip,rk3572-cru.yaml        |  57 ++
+>  include/dt-bindings/clock/rockchip,rk3572-cru.h    | 560 ++++++++++++++++
+>  include/dt-bindings/reset/rockchip,rk3572-cru.h    | 713 +++++++++++++++++++++
+>  3 files changed, 1330 insertions(+)
 
-I don't understand this, it makes no sense. How exactly the same device
-is and is not compatible with older one?
+[snip]
 
-Please read DTS101 slides.
+> diff --git a/include/dt-bindings/clock/rockchip,rk3572-cru.h b/include/dt-bindings/clock/rockchip,rk3572-cru.h
+> new file mode 100644
+> index 000000000000..b917f72165ae
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/rockchip,rk3572-cru.h
+> @@ -0,0 +1,560 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> +/*
+> + * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
+> + * Author: Elaine Zhang <zhangqing@rock-chips.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3572_H
+> +#define _DT_BINDINGS_CLK_ROCKCHIP_RK3572_H
 
->            - const: xlnx,versal-clk
->  
->    "#clock-cells":
+[snip]
 
+> +#define ACLK_CRYPTO_NS				525
+> +#define CLK_PKA_CRYPTO_NS			526
+> +#define PCLK_DDR_MON				527
+> +
+> +/* Secure clocks */
+> +#define ACLK_CCI				600
+> +#define SCLK_DDR				601
+> +#define CLK_STIMER0_ROOT			602
+> +#define PCLK_SECURE_S				603
+> +#define HCLK_SECURE_S				604
+> +#define ACLK_SECURE_S				605
+> +#define CLK_PKA_CRYPTO_S			606
+> +#define PCLK_KLAD				607
+> +#define HCLK_CRYPTO_S				608
+> +#define HCLK_KLAD				609
+> +#define ACLK_CRYPTO_S				610
+> +#define PCLK_OTPC_S				611
+> +#define CLK_OTPC_S				612
+> +#define PCLK_WDT_S				613
+> +#define TCLK_WDT_S				614
+> +#define HCLK_TRNG_S				615
 
-Best regards,
-Krzysztof
+Are these secure clocks meant to be used as SCMI clock ids? Why a gap from
+527 to 600? If I am not mistaken SCMI ids should similar to Linux clock ids
+start at 0 and be a consecutive series.
+
+> +
+> +#endif
+> diff --git a/include/dt-bindings/reset/rockchip,rk3572-cru.h b/include/dt-bindings/reset/rockchip,rk3572-cru.h
+> new file mode 100644
+> index 000000000000..a88af7665dae
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/rockchip,rk3572-cru.h
+> @@ -0,0 +1,713 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> +/*
+> + * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
+> + * Author: Elaine Zhang <zhangqing@rock-chips.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_RESET_ROCKCHIP_RK3572_H
+> +#define _DT_BINDINGS_RESET_ROCKCHIP_RK3572_H
+> +
+> +/* CRU-->SOFTRST_CON01 */
+> +#define SRST_ARESETN_TOP_BIU                     0
+> +#define SRST_PRESETN_TOP_BIU                     1
+> +#define SRST_ARESETN_TOP_MID_BIU                 2
+> +#define SRST_HRESETN_TOP_BIU                     3
+
+Please drop the unnecessary/redundant RESETN in all constants. The SRST
+prefix is already a short for Software Reset.
+
+Please see [1] for the header I prepared for U-Boot mainline RK3572 support,
+it should have all these symbols cleaned up, to match naming patterns used
+for all currently supported Rockchip SoCs.
+
+[1] https://git.u-boot-project.org/u-boot/contributors/kwiboo/u-boot/-/blob/rk3562/include/dt-bindings/reset/rockchip%2Crk3572-cru.h
+
+Regards,
+Jonas
+
+[snip]
+
+> +#endif
