@@ -1,49 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795175248;
-	b=vjoSLj9pWkXvIP/Ov1I1kliEYBUNUP2oUGY0d7bm8iWgZGaOcI7hP16C8SUL5O/4jA4r
-	 0Y04+7TDhRQrn+JvCIPV9V1b+pZBR7muOLJZWABevWC2ZAZho6LmQcVwdCrT91eyMufCt
-	 PqIpkWt8vwxxKIaIsgazc+GYVJbOeePJnSEuvW8RAFa7FzsZYXo7/sW9Pmg/TmHqksBRp
-	 AWR4jQzUTPKGsXoekONYwSK742/E6CiNSD0rKiWNk1RMquSNAO5HFcWhD4JLfsRPHQVu1
-	 B/7CAUrWHPYSJMe4pFIHqRdjf5pLC3EEcXnIJ5qZttk0OfWEGRHXDd+QsEoe4sfhyww==
+	t=1795175379;
+	b=lOBvlb2OJ6nzILov/yKvHyZCxCgnxgCing5QS4pKeDvc7MnEseWzmmkP72aeD+zcxTJk
+	 tyvyNIwSKs0sKxZkOfxBTYnt/NkvQ60Rq3SACO+fvp2j3LomLal/UPtdkWM0JSf1U9Vr/
+	 nkjqYdXH2cg3mfM2YVBJlcC182vSJtfP1bH8rf2RWRT+o4+xxfCRsL6P9rTc0IhUbcLHW
+	 t1NQZWHt2TEeOGcYHRc7278KQjjM6UwIxYzTVijZRttQbW+RNdugSQHvSBgqYH3gM/OQs
+	 /BjxFgNmPr1O4GpnhQ3I3tVV4I/ppjUbwtuQY6WvJEtWhXMZ7RIG7gs3Gzh3acLGw9g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795175248;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795175379;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
 	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
 	 Content-Disposition:In-Reply-To;
-	bh=iyyk82KwD0gTHK6EesukEP1DVEZLAy4u41nZQjINL94=;
-	b=K5Ou3iNKM1XmRG+3nvdk1ctH/QRpT1y5sAfQQ8QuMeH3XFV5KjV6QVX9SR22PXjVO3wN
-	 0JybmD2QR2eTarlzvGXbUxgQcNM59NAhiaI2+thg0TSMZ4FS0+xZLu4FImB/Q5pvCmAG0
-	 bRwKQ6GeQlXChJBet/X/KP2t3TsZ8As1IwFWvFl7i5XV8sXXIZwc1qt/rxZ3zC9neNX7q
-	 adDpyg9h4b/4IA0w/IrQ8fLm3br8v+82IBj2GT3MyVV9IgfqgCcoUXQYZeXUdoIJf9NN2
-	 w/wpiM3jYA32dIeLmMribCbNqOVPJn2kx12X/vPAX94IpsknzuI77YPg1usnZE38MAQ==
+	bh=KhB5LY2U3ADsZjGR79e5pFUt3iqHrkKb0g96FBQARhI=;
+	b=2GG3y2paPsOqRYpbx5YuGk4JR1bPEvczwrOKsbBsemtwO5y6MD8DR0ZA15TcGfkmbQL4
+	 HLBGSEdCBWcDcMt8JlnLmAlYVhgUs7EJOr88+avBUaLzYo9wZ9lBf0V7QT4XjlrinPaRP
+	 306AzZEIoW07HgR+TyC4HuEXNCgmwwfv80GNk8FKQ4hzeGOFLK894xuwu1pJZpdRgR3Jb
+	 fYjzWB8ROz5UuXdR4rIGsClkDnLkdP+Gd7RCepSUR/wYH8IwFbrR1Bs5/oOJJ7unaukAB
+	 zoLFIV8ogdSq4Mb1g9aBUrSZdfKylOPNDV+zjic2nVCAq8guvxl1rIfbRyvUSSl/svw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=sang-engineering.com;
 	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=SLyHbDmf;
 	arc=none smtp.remote-ip=194.117.254.33
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7576C606A331
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 11:47:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7576C606A331
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25E5606A326
+	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 11:49:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B25E5606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=SLyHbDmf
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=iyyk
-	82KwD0gTHK6EesukEP1DVEZLAy4u41nZQjINL94=; b=GiD6KoS3cmPa1hLcSgGg
-	v3rXdC4hqxx4lcmtFohEFZ82WB0mJn1C8BPAIK83TXXTwjD/0kSoTGS7dCIRncTA
-	vl9D37TI1R7DXDSQ4HG4BgkGpWCj1a9t8ivFrAB9IBfQv8oWp7XjQnlG1YcfZIsm
-	cT++Szewq/WJE/NwnfC69Qo3kuguYzAnIiZxw70arMz8AT2kjxj0qzIZtMK4YvqU
-	ro4PiOlX3hYF40O2A3NTM1z9W4E9ERqHZe3eMjUtjTpRvWNwInUbXwF4yMYGZ9H+
-	H7nWZQUWHwQwmoNMVKy6q4d0kOe12oXHaTvavqu9+c8S6XrzHgcSWYrI+wI4HOvQ
-	3g==
-Received: (qmail 1461023 invoked from network); 20 Nov 2026 12:47:19 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2026 12:47:19 +0100
-X-UD-Smtp-Session: l3s3148p1@CWpszrNgLOwujnuU
-Date: Fri, 20 Nov 2026 12:47:18 +0100
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=KhB5
+	LY2U3ADsZjGR79e5pFUt3iqHrkKb0g96FBQARhI=; b=SLyHbDmfHuoVsC60d6n9
+	XfbnExBjnWeXW6GWJvUpM3DOhf4/eHZktcfpbxBTY+7pZh8ZCxLfl1fzwMSEX4Ex
+	z0ELcPgPv/Z6ekDJ6izOHok4Qsj9fIQPbNUqypvD7cKiMtoEImlSOwcHoBILBZXl
+	eRb1SzYaGv+5KOOYUuWuj9sKKHlCIaQFmUGKQq0qspGnK+E90f6B6gRuX1glgzu9
+	jM0mQ2sWk7T+E3HpAscs8sFjTwzRWxousb3VisoRbdIK478spdA29PW2Xqu05NYI
+	pNuUbedAjDCf0Bhxo8avpw/diIhkHwoPg7NadEcBkJMzsOotSwfuRBhav+T38flQ
+	KQ==
+Received: (qmail 1461740 invoked from network); 20 Nov 2026 12:49:34 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2026 12:49:34 +0100
+X-UD-Smtp-Session: l3s3148p1@WwCE1rNgOucujnuU
+Date: Fri, 20 Nov 2026 12:49:34 +0100
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: khendry@reliablecontrols.com
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -68,10 +71,11 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
-Message-ID: <awAzRgXaPNHcUC2G@ninjato>
+Subject: Re: [PATCH 4/6] dt-bindings: net: pcs: renesas,rzn1-miic: Document
+ rzn1 resets
+Message-ID: <awAzzqHtBuM3wf9g@ninjato>
 References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
- <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
+ <20261119-rzn1-miic-resets-v1-4-feee2bb28bb4@reliablecontrols.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -83,12 +87,16 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
+In-Reply-To: <20261119-rzn1-miic-resets-v1-4-feee2bb28bb4@reliablecontrols.com>
 
+On Thu, Nov 19, 2026 at 09:57:46AM -0800, Kyle Hendry via B4 Relay wrote:
+> From: Kyle Hendry <khendry@reliablecontrols.com>
+> 
+> On the rzn1, there are two resets for the miic. Add documentation for them.
+> 
+> Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
 
->  struct r9a06g032_priv {
->  	struct clk_onecell_data data;
->  	spinlock_t lock; /* protects concurrent access to gates */
+I will comment on the bindings over the weekend.
 
-Build error :( No addition of 'rcdev' to priv data!
+For further testing on real HW, I will wait for v2.
 
