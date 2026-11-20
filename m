@@ -1,77 +1,45 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795132091;
-	b=gtL3SP9bTdGliv3Lhx37IddCAk0NY5I+EMuqnkpgekNQd8ccEqim5cHUFxo6LkMXU3Wd
-	 //AiON8IV1wc7s4NoKGvXRF8wayCshQ3/E+BJlVjbm/9Qv4KSY6Kyqxh86lLON9141+Rj
-	 t1Ra9dKJEhgNwWZw+pgs7YKoJ5c48wb6bN7EUmYoDmCStIu0NCLGBbxPJCC2tfzzZa0lQ
-	 eP6bbH0c2BP75incGWi4M9soAOSclVeeS8H87VDUOEGRsDK/Cix9BD/zRp1WPZQAYwQkU
-	 6Ehf6nVqxM0lzgek86afiP0duRhMfhPuEyuhwjycQ1UdByUPwqo/YBZpNRty2Hrs/2w==
+	t=1795132969;
+	b=qlI4gon2GJ6PlKw7bDHzDPKD2wSQhn8WNLPL/G2ITklsH8umcZt3pOKjGoK5uiBJtLkD
+	 mKhehhycNeQj9Nk0EH7OurofF1PHqJNJV+pwBb5yod2bWCQr4s8DNO5T45zFWobmkWlx0
+	 3C5ParEzujetmA8lMmNyQ/e9Fl1TCSOmmghX7BFcLaVvEFpF/rftY1ucnS5KcEqmRpYNo
+	 2QPk9rnVY+Mcc45IugFa1UvRrBvO0FBwzLpOCH7EG4ut/w7quS9GcMgdv+HhcS8nBZSDv
+	 KZ9A3fSGfot5QaHIEvS+oLkEvO3zqvoJMv3BcnLIdr9ftmzNS8YnmiIMbheGmGRMM3A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795132091;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=+ijbtSK0fBZ6ownvGj02cHskN9Djna0WvtK/k37lNQ8=;
-	b=McH/PNe7u3YghfauTg1It6U4WjKSCJM61zW0zbgZy0uZ5dJQnIKZGolx01vS0EAaceXG
-	 cVf4vIta5w9aayl62r1S4DqSUo2payi7eerWfUhglCkZWIUdcukR/A8GAZOpmeoXk6EAa
-	 kpt9gpfSDkrXMqGCudPJTjQXMT5qjtAIRCJeKimDv3gAkjkRZ5WZXUqHzKuJi4c1BSOcK
-	 ZoJO/Zd2jCWjUTPY4MwuhR1x7kmMYXPZ0o9/UoXR3rJ3gIgpGWlBvKmt5jc1RBXaWWECp
-	 LIkgFei9xGXKEtYm0rVAlJdbD6jVPTzhZt1ZJ/6qXr5NSmHmd22CeNcvnjaegrbv5AQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795132969;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=l1rVD90iUwdYnP+P50y14163+c5Qwwe5OEm0CK39fM4=;
+	b=XNMicTRzmqAEJbLLMsGWy4xhj2B1BHu71Gw3Kee50Q2HwNysta3aXM5t5bp7IebZhxU+
+	 Wzd+aaDoTur81NFP0UhQFWvQ8DEw2HnZ1vd5oUdItRak3P/0bSY/5t/0wvqJAdbg1znDm
+	 I6r2zxNU6EEV3ofC46njUsCnsx/LTX3Umyov0+pGbBO65doyKsLpE4XKZb/tIlbBm4Pii
+	 xsDb6fAH8cS+16N3TZTBydfPAzDKaFm7J9qBGRFyuVJEWp4WW2Jd0TnI26rtihh/COIG1
+	 SUwQl/hXyeO6Ovs2zM4jitxwyrZvRK78Wo+Jc/F6orGaHZYSi/jVQ5MqqiM8CVmlSfw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=NcISFCtC;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aVn7PJTY;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A07A606A320;
-	Thu, 19 Nov 2026 23:48:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3A07A606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF88606A332;
+	Fri, 20 Nov 2026 00:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=NcISFCtC
-Received: from killaraus.ideasonboard.com (2001-14ba-7086-3000--a06.rev.dnainternet.fi [IPv6:2001:14ba:7086:3000::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CC82A6AF;
-	Fri, 20 Nov 2026 00:45:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1795131932;
-	bh=EZwvQCbn6puXRaR/jIu1ad9YLeXmu2tjVf0hS1LGbjk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NcISFCtC5Xg1GEKU99n//zV0rhPkR5PRrt6WisLdwe6SwAb9p/WCxEUiEiBfgG2fT
-	 Rnpzq+GOOlztVp88d33vyp6XUpVa/L77iC0tum6ZLf4aiWr26kd0THZmA812SHkFlO
-	 cwcwWjPeI9XKnw4+785lXybLQPrjxZjjA9AcwDVk=
-Date: Fri, 20 Nov 2026 01:47:59 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: =?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Paul Elder <paul.elder+renesas@ideasonboard.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 00/15] R-Car X5H Ironhide CPG/MDLC SCMI remapping
- support
-Message-ID: <20261119234759.GB2324725@killaraus.ideasonboard.com>
-References: <cover.1795029012.git.geert+renesas@glider.be>
- <1e9c5ac3-d82b-4af9-9946-0302cadf7404@baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aVn7PJTY
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 632571F000D2;
+	Fri, 20 Nov 2026 00:02:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795132969;
+	bh=l1rVD90iUwdYnP+P50y14163+c5Qwwe5OEm0CK39fM4=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=aVn7PJTYMlFhqgU3JDGl5lsuV7yqVPU4ZouNJy28WZTjxok6mxGnwJB4zvW3e12KA
+	 PUE3hBfPk9uY1EQdyHSPFzWiGKNUt6Ys3rT6euacpaK8b6JVrIg3Dt0tdvlT2ucFEW
+	 HIXzbbbYLQYo/DLA2iLt1UrlDdmWANJ98ydylERGyNAL0PR8c1vm89CifJTuaPPHjq
+	 Y/d5Gd9pREUGkhi4oaws1zXtaFepIp0nk+PcI9fuPE8oDVY3tv/wJz1r2sfT0nx2Z9
+	 Vj/4K72f7hknULhU3POzGZZrHzta6//Xvuy5OWjraoD0Ga9MjXsz8WxdJCLnOA6aMS
+	 pf6wPtOg/hUrg==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -81,61 +49,95 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1e9c5ac3-d82b-4af9-9946-0302cadf7404@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v13 1/5] dt-bindings: clock: airoha: Document support
+ for AN7583 clock
+From: Brian Masney <masneyb@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Brian Masney <masneyb@kernel.org>
+In-Reply-To: <20261117182444.103123-2-ansuelsmth@gmail.com>
+References: <20261117182444.103123-1-ansuelsmth@gmail.com>
+ <20261117182444.103123-2-ansuelsmth@gmail.com>
+Date: Thu, 19 Nov 2026 19:02:30 -0500
+Message-Id: <179513295003.301584.6678847701926278246.b4-review@b4>
+X-Mailer: b4 0.17-dev-8145e
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2510; i=masneyb@kernel.org;
+ s=20250903; h=from:subject:message-id;
+ bh=/SPFxDVuCW39gC1MQNp85lpHe1YZtsr5EuJw9s5QaOc=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLL+98kkdszgvF19XvDAf331B4127pXOb5QPexxjjXZOm
+ 2faYLeuo5SFQYyLQVZMkWVJrlFBROoq23t3NFlg5rAygQxh4OIUgIkoSDEyrGBgSYnmKD+vebHk
+ 8a8m3nbdunZ/+a02SXqRAow8fHqKDP9sTYXe/Jrzwfrf7/3ejl4/9jv6LQj5M31N6uuwwiDRyM8
+ cAA==
+X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-On Thu, Nov 19, 2026 at 03:47:15PM +0100, Clément Le Goffic wrote:
-> On 11/18/26 8:44 PM, Geert Uytterhoeven wrote:
-> > 	Hi all,
-> > 
-> > TL;DR:
-> > 
-> >     Describe hardware in DT, and perform mapping to abstractions offered
-> >     by SCMI in Linux.
-> 
-> A question on the approach
-> An SCMI variant DT could mark the CPG and MDLC status = "reserved" and point the consumers at arm,scmi, while the U-Boot IPL keeps the hardware DT.
-> Since v4, the series assumes the SCMI ids are stable:
-> 
-> >   - Remove dependencies by making assumptions and dropping disputed
-> >     items, to move this series forward:
-> >       - Assume all SCMI IDs are stable.
-> 
-> If they are, why not using them in the DT directly?
+Hi Christian,
 
-As far as I understand, the assumption impacts the mdlc and cpg drivers
-only, not their DT bindings. If (or rather, let's face it, when) a
-firmware revision later breaks the assumption, we will be able to handle
-it in those drivers without affecting DT.
+> Document support for Airoha AN7583 clock. This is based on the EN7523
+> clock schema with the new requirement of the "airoha,chip-scu".
+> 
+> The register for clock and reset for normal system and PCIe are scattered
+> between the "SCU" and "chip SCU" registers (they are 2 different register
+> block, the name is taken from the programming guide)
+> 
+> - Chip SCU provide register access to some clk gate and clk rate
+> - SCU provide register for reset, PCIe clock, other clock gate and PHY
+>   SERDES.
+> 
+> Upcoming and current airoha clock driver all follow this pattern of
+> declaring one of the 2 register and use a sysconf for the other as the 2
+> register block are tighlty coupled.
+> 
+> EN7581 internally handle the syscon with a direct reference by the use of
+> syscon_regmap_lookup_by_compatible while AN7583 wants to make this
+> explicit in DT with the new "airoha,chip-scu" phandle.
+> 
+> Similar to EN7581, also AN7583 permit the selection of the serdes line.
+> 
+> Add additional binding for additional clock and reset lines.
+> 
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/clock/airoha,en7523-scu.yaml     | 25 +++++++
+>  include/dt-bindings/clock/en7523-clk.h        |  3 +
+>  .../dt-bindings/reset/airoha,an7583-reset.h   | 65 +++++++++++++++++++
+>  3 files changed, 93 insertions(+)
+>  create mode 100644 include/dt-bindings/reset/airoha,an7583-reset.h
+>
+> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> index fc37786ac7ed..05cd20ce3ab9 100644
+> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> @@ -31,6 +31,7 @@ properties:
+>    compatible:
+>      items:
+>        - enum:
+> +          - airoha,an7583-scu
+>            - airoha,en7523-scu
+>            - airoha,en7581-scu
+>            - econet,en751221-scu
+> @@ -57,12 +58,36 @@ properties:
+>        available serdes port.
+>      const: 1
+>  
+> +  airoha,chip-scu:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: phandle to the Chip SCU providing the registers required
+> +      for configuring the PCIe related clocks and resets.
 
-I don't like this remapping driver much, in the sense that I wish it
-wouldn't be needed, but it seems to me to be the best possible
-compromise given the instability introduced by SCMI.
+My question from an earlier version appears to be unanswered, and
+Sashiko flagged it.
 
-> On partitioning, the cover letter says:
-> 
-> >   - The clock, reset, and power domain IDs are not stable by design,
-> >     causing DT incompatibilities.
-> >     SCMI requires that the ID space exposed to an agent (i.e. Linux)
-> >     starts at zero and is contiguous.  Hence any change in system
-> >     partitioning (Application CPU core vs. Realtime CPU core,
-> >     virtualization, ...) may mean a renumbering of all SCMI IDs,
-> >     implying a massive change to the DT.
-> 
-> SCMI do not mandate that renumbering. The ids start at zero and are sequential, but nothing requires them to cover only the resources of one agent.
-> The firmware can keep a single id space for all agents and restrict per agent what each one may use, the rest returning DENIED (SCMI 4.0, section 3.2.1).
-> For virtualization, the spec has the hypervisor grant each VM its resources this way. A new VM then changes permissions, not ids.
-> 
-> With a single id space, a software configuration only changes which nodes are enabled, so one DT per software configuration, a base DT plus an overlay, is enough.
-> If managing many configurations ever becomes a nightmare, tools exist for it, such as Lopper from devicetree-org [1], which generate one DT per execution domain from a single system DT.
-> 
-> That leaves the missing clock domain, which is a gap in SCMI itself.
-> 
-> [1] https://github.com/devicetree-org/lopper
+Brian
 
 -- 
-Regards,
-
-Laurent Pinchart
+Brian Masney <masneyb@kernel.org>
