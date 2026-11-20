@@ -1,98 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.54
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795172758;
-	b=O+xjOaMdWxoobKnCwY1wCNyuNszszLoE8V4CIG1DACvZWvhwUx8CKps6kDXNUaKHH+ci
-	 J9xhSSsQEFUK5W6tyZEydLnDUGCK0DnJYexoJIhOT+6C/Lpe2ipPGfyHzlcxEVGFcXzw7
-	 gicJFYtR6GrIL31pHUaZODPFQXfd7FMajjsSsNpZGg3MyJFoCip5Z+KKRbnbpVRwvEIBf
-	 5z7BWPIp8i3zehePHrONr1Q9XiGQW8G8l3SvVL6uSTyn/h3QUCKS0UWyEB5Wlk8/JeGch
-	 MEDdNv59QfCcLqXQT3W/JRStwY4upQJR6s03yX2DXPbuUUQQMyjKVOZrP86kpBEScsg==
+	t=1795172850;
+	b=zf/DQl/XFlFBVk43tXf76usouOwebe+gtT1rGV8Dh2it60zkOg/4XiBoyMzI1fabwkhk
+	 oHQ7FK357ncqeD6s77Qk4dD3b5X4WfkevCwnkSWkmNuiwEanQgADEon9jko6j15DxjOBB
+	 fptvSRTbSBzGklYHgd1HBSsaBNORnR+hiwLbBZcs68XFD6kq5//K09Vf1L+XcfUS10uOE
+	 u6lNKfkQpiAMXAdQb+H6bAOpVYr8+eZPdVOGhANuXYFyTGN1xaHKw1e7ba/kOS2pTvwBu
+	 cDXCeABEYviM+FI0xDA8x9iLjLrbNxo89wHbt0y1l71F2+5M5if7dQxeMV4quNRScog==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795172758;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795172850;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=t5AKTHXlCqIuWDfB5gbPvSysRhBo74t8qpIPPyXGwtU=;
-	b=oynnXQp+nQ+it5w2R5HDFIHU0hY6Tyi3/Hz1JGtUe+DhI+LnWkaWf2iVPUOeA4bkefZi
-	 kqTRvQIqcr9a9ODtToscLO3NmJvIjeEnGghgJwrreNVDUi6iPvlHjY/TvTwQDvHemjDoj
-	 GrZE9S8CIJIZOTwl2u9lHHl4Qdn/BVmaBc6gkhSxLJYp/x8OKLw/uoAD5haM3brkqgFZa
-	 bypt1Ev/Mkwf/ILeXN3lY0lq9JXtRd+ExTcsvyTTJmBsGCpZsDLU+9C+75okwn+O4cvoQ
-	 +nHgBpxeIZ9OUdcJ5Qr4HjZCbAKn7k9RLLLr6momrY2urruk1fAiJBMVGSaKianVXCg==
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=vw1Za3j6nrNQlO8tUKSo+13HAPp3lg1xUs/OwXV+egE=;
+	b=fwi6oc4jBmKbYEIVOOdbCBhMnPmcKn0zfU+QxcYeBN0EdQuuctvN5rsuwwOmvPKnwaUp
+	 pb7IZ/w1bPPShqZAFSTeDCcLRKFk8GcOLubac6V1aED9N6pyJ6WGLk5NrOZfoTNxIIkiA
+	 eoqoB8ZjHXj/IKE1A5tEYDbUtZR1ztiDhOVJfhrkyylmNXN9nIWfGoKXi55n1EgXdD9nr
+	 0NQVIEuydnjU4i1xy8iDx4CIix/YOy+LvBrJmVNhE6+uCKn0EIH7s/S2FO1npe7Qu+Rx8
+	 gR0IQfoJiYL6kY3P6jJp3xsAuo4XBUxW8yny7gaPqh/OyK4tVrFBdST+Y6pzyZfSBlA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amarulasolutions.com;
-	spf=pass smtp.mailfrom=amarulasolutions.com;
-	dkim=pass header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=hPPqVMlH;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.174
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=yXseSSBw;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.54
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9273606A32C
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 11:05:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A9273606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C1F60A2616
+	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 11:07:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F0C1F60A2616
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.a=rsa-sha256 header.s=google header.b=hPPqVMlH
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-8b30cbfa628so5499187b3.0
-        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 03:05:57 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795172756; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=yXseSSBw
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6ba38c41804so772501a12.3
+        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 03:07:29 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795172848; cv=none;
         d=google.com; s=arc-20260327;
-        b=eHaDUyOh7VWJyLIp7RocyeBUwEUfGlVDJsuSCPsxM5PZvGSM0vPeDuk8HAKxC4DCUd
-         UKbZr9VfAH9o80egYtZ/uq105nWR2aluC5wTCk9Kf7rTlA+zYzBhsu8g6vkaNrkduv4B
-         hWhiWttlUtngWs/Zf/QMvhNKzjH66b3gT3wkHjQ1wKs3gVthlG30rEwaYb/QLjRsV0KZ
-         Acxhy4fBKKHeXFNHOrWjII/QSn4uqUoku9SM8B9k04ERsKXFfKS7aF9A2f2LvBH4Q0IA
-         ib2zr1wxEMouxHr5j8kkXZDiFDgjB6oaXHoJ80XjsmzJEv9m4yctYO/BAI8/AtXYsN7b
-         tUIw==
+        b=O5Wa6GrH1besr1FCBJZiNEPH4mGEM8G7wweMMBil2EpAtKncA6Vp4378CmWqGAiGfR
+         IKJKAQajAta1Hg/AwmyBH8tB+b8fp93oPx4egjifMgCsUecL85cXnligauRsgAK8HEpr
+         zzn4RfOcySymksJY4vgBocGLp7vQSa8y2SV7VnDg3ASn/jBzv/36PHi4pXqEa/nngGXL
+         suI7ZZ6ZGi3m+K0/nAhW3BbJIkirJ8MPatT8DQT9ZM8CXuBjlDumq1wjXz1xrJbKoNqn
+         dt1ER5k3XmJJfEYcp59eE5CPklLakx8GQ423riFKCVsyLtPI6XPlnbvkHtysoTkr8kTQ
+         vn9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=t5AKTHXlCqIuWDfB5gbPvSysRhBo74t8qpIPPyXGwtU=;
-        fh=lXpyQZBCQl+ZwX9bZnzMvN+t+szO8PVfFfwnrls+aE0=;
-        b=X+sI46e76/xc2xKZPiZvvTdGUIgs8BOR/64WVIUmVZABintb7oRt4KmkxyQ0FDoRPK
-         wJinb4YNmO/6uZML8rbS4JnwVSfuDEH+otcx8QFyJhp7efSfFN6aviIlh1GvZ4w3G++q
-         LGw74qLCo7zVXJigTOUrfWSx2ilftqahPXkFWLioPgIpa1KWjLw0RUhDhmmk5+Q+KZ7S
-         aahzSImmRXwDijDny1rJ5pmMnuCpsxYKqtSLna5wgO1dNedTOIMcbpBZU8qNwxopV2tB
-         zdBuLOWoEpbcayCk1zAW6rAlqm7lrvbtAwVUmNd71JsuvwpjoTjBH9KcYF68EGJ7EYtT
-         Abbg==;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=vw1Za3j6nrNQlO8tUKSo+13HAPp3lg1xUs/OwXV+egE=;
+        fh=SU5MlVMjAoXtzRxRsVEKUs4BFCrpf25rnkHBQqVLoGs=;
+        b=GvAix5E6o3wM54A9HCfFJe7Ljc/8HjH7sMuvfh9YkkqndBNmDvNAkICgwZVRFxaokU
+         i8RiDwPNCQP7i0eB/1x42vSG1hh+HYzmMUC4iMVjtArboquK0eHEwb9CLa6yxEV/bsa7
+         Add1TfI+qGDKrWWXg3BFlvkRpjtkkge0XzHrcqGviWIAirxuCemS0j6rNj3abUkwwx8q
+         Esl5Xk0kMMsPFHVz90p4lyNy9D/JKtnWTQ5dGlrSAVWxlAAawKpfQEKEW3mHCqm1g2mq
+         kfqxnyu/rfnnqxBK1hqKkdSauy08Oh/fZZH+F3koYGNufTVgeMK10qdrD6dpGypPbKmb
+         YHJQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1795172756; x=1795777556; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=t5AKTHXlCqIuWDfB5gbPvSysRhBo74t8qpIPPyXGwtU=;
-        b=hPPqVMlHiTm/6e1bIBD2c6uAY5naMIEUQFGYTbSVJoeaIHL8a6wSmDQ9X4bC1e619o
-         iEF2HNRmj1CcltkDiAY+Lcxn7O43hVHAkNes3LV+9dd0uqKr64lfekgLJs9WUxX2Nurg
-         PEhxfvgaskfX9RORgH+az/6mzI4mk947KL0wc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795172756; x=1795777556;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=linaro.org; s=google; t=1795172848; x=1795777648; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=t5AKTHXlCqIuWDfB5gbPvSysRhBo74t8qpIPPyXGwtU=;
-        b=Uiva4myq8vXTkuB5xXIqLico1TKjmZbtpWGqrq2L693rPPk1GXSs7kHtzqaRfZyXcJ
-         licfYd9gSAK6BtuHPLOkHGIp61HUjqxCqc29yyFi/chcbxV3ABfMtZxWpqNSyWQOt3Uu
-         ULnpiIzvg5ozOrN8Tgjcgb+OoN49Z7ECrGckouO/5WAMpC6hH8Ojxdvo9o0YG9dD5VLR
-         jfFSIwDXLzTSPFgCyNKQTrVVcfg+nKKihXmhJjZDlBCJuPVzd3S7RScfnVKF46oqaF4T
-         D8u6KLC80Pwv2JBfPeJtvFs4icNU0J+HOat58MeDRLtrm4DejkBjxH5NXaYH7BxW4+dc
-         9dyw==
-X-Forwarded-Encrypted: i=1; AL+hErGnE7ezy+xcvqZwVJ2nyYV+8lvpHLyaWVTjG1eWQEcfTnpPglfHGXQZ6Ya+tsETi4ja33ENRyihZ2s=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8CAkiCDwxnTwXLzJMG5tqDi2hGvwubAY4nqNZTGVemZJguJ6cB
-	xDSp0k/xP92UVpVefw9shK2YkGa5JbAaBQ6VlZpcxomjOqq7xwvOfNRnDmaBMkuuETN2YelpjvP
-	0KyT7d4chxgy2s6K02GAnm1gzxOt8tLiPhnKokztQ4w==
-X-Gm-Gg: AZFdTZeW/GC1liiGBHdYPSXe8NkDZhH8z1d57BuuZWlNe9OBK5oMEmW6nePC1Tro4Zp
-	3Qt3X+wwqalBkP1mgxLzESfIusEzJL/uq9DCGj8Qwgy5LhUlO1TDWYseV3vVUqiEKobZeK/jezn
-	X4J1aAzo00v5Dz+nTE+FJh3T8AeadG5g83SXZxkU3Z4IXw1i9y97hHQTQFL80IjrBlHGiQM5yq9
-	WcWQDd5nlR7rgvELGLlFPMAlMIvcz4BdkdehaDb5edTxOo2mqy/BtjRz202Hd2j3MYu2excWJml
-	N9bBi+CugGQrYxebxMp5jGnuPfw5vJrXi2fE9djyiMqRX4fuwXmF6DFqM4DEsuyDktPMvn1LfYB
-	gokJvp3ejAayKWMwMVr2WyJEvA/x9WDcu6hlITZoIWQzToTOKuZGIRzFQ0w1X0Pkpa7a8jL+eta
-	x5jlkqYVlXIdvz
-X-Received: by 2002:a05:690c:6b81:b0:8b4:d0a3:dd64 with SMTP id
- 00721157ae682-8b520456d74mr12517987b3.12.1795172756538; Fri, 20 Nov 2026
- 03:05:56 -0800 (PST)
+        bh=vw1Za3j6nrNQlO8tUKSo+13HAPp3lg1xUs/OwXV+egE=;
+        b=yXseSSBwL667WWeqcwc21yoPcofDc/e/i/a0eCGiiUIrolXJjf8p5oc5Tb4mc6Ermj
+         bePnEkY54ZTwInl8DL26psq1wTSD/NFqBAe8CxTmiyBHp1H/jpU84o455nMMjQhhEdEa
+         lA1XN4iqiRUxyl9I8P8BVP5yyGg+CpqVfPuEtVWUJ3GwjYCturtgNWaBIXKDoI27wRMS
+         eZA2otDBZHbX3bSAsZq6wZS6p8uA816T6cXsXjW9BokYqZBj516ziReL7o4DVqv93sGi
+         YtmqSj33RCnGt5u/8A4nKw8q/PDc+udI289bWFav1ty6PHm9KHhQlgCApfj082PM3uVD
+         IKVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795172848; x=1795777648;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=vw1Za3j6nrNQlO8tUKSo+13HAPp3lg1xUs/OwXV+egE=;
+        b=PQv6Jza0tYK2KI1s8Dis7pryuF97Q03VdpVPwYTfmYKfSnrWkjVrr8tR5JwH6cKt3k
+         K7C2v/9x4z2xfMieAVdG2eWK+j176YbQLEJnJO5GaTO1q70xe50VSZNQ+E/pShdpxeGD
+         eEXnLeE7xfKBsIUGuYKlXyuMTx9AO7lqsRXSVPXJhXJ84MvBKI7k82tK+NQ7wBFQOQDN
+         AnqJWY4ZiUZMaIo6iuG9ekv6RUn64wi9O2c1JgPzLD7INvy7OEUX1Fh0esDhZ9IInT+w
+         7iFBTIy47OqsFrU8o/Jap1aLzaUqTYEvdFdi2x8J0bsivSjEX3yZWVl9BMtLoT/2PYAf
+         q7+Q==
+X-Forwarded-Encrypted: i=1; AL+hErH5ySQr+5FN2C1OqJdHtIB9vB6uO0b81pLUHLHSpv1h1CYSXugIXnN/+9z1huKgM9aQmP2ATd8lBYk=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9kdV+FWuAEkDIDlOxqDLUbiXOrJZi6hvgdz3IMkQkA0K8zUQno
+	Z9RTsbbE0cNMgkg6NnnjRqcHpw7HXUOiTtutUloNEuYDZzW6Hdb+WOUpoWTMVz/w4bJG+mGveBs
+	sKL57JoiJkvUNdt6qWmxlMjk7uaBe4bg69CyJSMXjiw==
+X-Gm-Gg: AZFdTZd9wzTqZPoW+5LaWXtkz056e2bODeXizKwltL23UU9qZfIKtT10UGdbZO7K52h
+	nrsXfLSE0ffjKSRurzv6MR2WdmUvtlr3yPanXrcSDQgcrxtbUVULwZqDQnojllGx7Lv9daTurrZ
+	YGG4pluyJOM1oQO8wjbupXEmcB0ltodIUvljXHEx3Xo9bFnN1scbv8qYSZMG2u9sT1Fzq/S8IWt
+	piSDcTcaZcaL3U8AVQafkXDBOrgDFSvLQvv7CMgd/8ASkTzBBQn8EZhbhd+PD7hXLh1tbhemnYR
+	3Hm/bht6o5YdBVLvnt/O1vF0a+zZ7vGcKNhSgiG51NJP7DJlN33DLKjVHUzjzukqdZ7oZYJq1L9
+	QIwT924CcYGRME+thNs/qqmEzN1YHz5BOivQWm00JeOnr0gcY7B5rVrNFUcR6JA2AElael8M=
+X-Received: by 2002:a05:6402:3225:b0:6b5:79f4:8d52 with SMTP id
+ 4fb4d7f45d1cf-6ba37e6f806mr1953110a12.20.1795172848247; Fri, 20 Nov 2026
+ 03:07:28 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -102,183 +103,94 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261104103620.4054694-1-dario.binacchi@amarulasolutions.com>
-In-Reply-To: <20261104103620.4054694-1-dario.binacchi@amarulasolutions.com>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Fri, 20 Nov 2026 12:05:44 +0100
-X-Gm-Features: AclHuK8j5lV0ZPwyCvHflp982Xer6I8gVMC44Ov4SpRq9SvLhJ8sxGrzvqdlJNI
-Message-ID: <CABGWkvp-fBTjTZKxkUTiTFzUYn70x1OTQxe81Jh=ScPEye94TA@mail.gmail.com>
-Subject: Re: [PATCH v15 0/2] clk: scmi: fix the i.MX OEM spread spectrum configuration
-To: Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Brian Masney <bmasney+clk@redhat.com>
-Cc: imx@lists.linux.dev, Peng Fan <peng.fan@nxp.com>, 
-	linux-amarula@amarulasolutions.com, arm-scmi@vger.kernel.org, 
-	michael@amarulasolutions.com, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Sebin Francis <sebin.francis@ti.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <CGME20261113104847epcas5p1d970255218f1ca78b19690bfd097f303@epcas5p1.samsung.com>
+ <20261113110612.3265841-1-raghav.s@samsung.com> <20261113110612.3265841-7-raghav.s@samsung.com>
+ <CADrjBPoR7_LDZmxC_bOFigvqDaagVihmybfX5AdvSPr9-FVb8w@mail.gmail.com> <002901dd77d9$6ddef600$499ce200$@samsung.com>
+In-Reply-To: <002901dd77d9$6ddef600$499ce200$@samsung.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 20 Nov 2026 11:07:16 +0000
+X-Gm-Features: Aa3M54pTNJ_y_R-HLRUhtwnIbiMHdLsAfFF3Abu5bW9vYYJErrbwlv-VYU97Njc
+Message-ID: <CADrjBPrO43A6XaVK7_J3-y9=bOsjhNbyf8KA6fmyvLJ0O61gOw@mail.gmail.com>
+Subject: Re: [PATCH v3 06/14 RESEND] clk: samsung: clk-pll: Add support for pll_4313
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Raghav Sharma <raghav.s@samsung.com>, krzk@kernel.org, s.nawrocki@samsung.com, 
+	cw00.choi@samsung.com, sboyd@kernel.org, bmasney+clk@redhat.com, 
+	jbrunet+clk@baylibre.com, robh@kernel.org, conor+dt@kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, is.gandhi@samsung.com, ts.amit@samsung.com, 
+	pokala.reddy@samsung.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Brian,
+Hi Alim,
 
-Cristian has reviewed both patches [1][2]. Is that enough on the SCMI
-side for you to pick them up, or would you rather wait for Sudeep?
+On Thu, 19 Nov 2026 at 03:52, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+>
+> Thanks Peter for review
+>
+> > -----Original Message-----
+> > From: Peter Griffin <peter.griffin@linaro.org>
+> > Sent: Friday, November 13, 2026 5:58 PM
+> > To: Raghav Sharma <raghav.s@samsung.com>
+> > Cc: krzk@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
+> > alim.akhtar@samsung.com; sboyd@kernel.org; bmasney+clk@redhat.com;
+> > jbrunet+clk@baylibre.com; robh@kernel.org; conor+dt@kernel.org; linux-
+> > samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> > kernel@vger.kernel.org; is.gandhi@samsung.com; ts.amit@samsung.com;
+> > pokala.reddy@samsung.com
+> > Subject: Re: [PATCH v3 06/14 RESEND] clk: samsung: clk-pll: Add support for
+> > pll_4313
+> >
+> > Hi Raghav,
+> >
+> > On Fri, 13 Nov 2026 at 10:53, Raghav Sharma <raghav.s@samsung.com>
+> > wrote:
+> > >
+> > > From: Alim Akhtar <alim.akhtar@samsung.com>
+> > >
+> > > PLLs 4313 are found in the Exynos8855 SoC and it is similar to
+> > > pll_531x except for CON8 offset, so re-using code for
+> > > pll_4313
+> > >
+> > > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> > > Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+> > > ---
+> > >  drivers/clk/samsung/clk-pll.c | 11 ++++++++++-
+> > > drivers/clk/samsung/clk-pll.h |  1 +
+> > >  2 files changed, 11 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/clk/samsung/clk-pll.c
+> > > b/drivers/clk/samsung/clk-pll.c index 3d837bd74355..7b0756127306
+> > > 100644
+> > > --- a/drivers/clk/samsung/clk-pll.c
+> > > +++ b/drivers/clk/samsung/clk-pll.c
+> > > @@ -1306,7 +1306,15 @@ static unsigned long
+> > samsung_pll531x_recalc_rate(struct clk_hw *hw,
+> > >         u64 mdiv, fout = parent_rate;
+> > >
+> > >         pll_con0 = readl_relaxed(pll->con_reg);
+> > > -       pll_con8 = readl_relaxed(pll->con_reg + 20);
+> > > +       if (pll->type == pll_4313) {
+> > > +               /* Offset for PLL_CON8 which hold FDIV different for PLL_4313
+> > > +                * which is PLL_LOCKTIME_OFFSET - 0x4
+> > > +                */
+> > > +               pll_con8 = readl_relaxed(pll->lock_reg - 4);
+> > > +       } else {
+> > > +               pll_con8 = readl_relaxed(pll->con_reg + 20);
+> > > +       }
+> > > +
+> >
+> > This starts to feel a bit hacky (pll_con8 register being referenced as an offset
+> > from lock_reg). Is the register really called pll_con8 on 8855? Or is it called
+> > something else, but happens to contain fdiv?
+> >
+> Yes, it is named as PLL_CON8_* on 8855, and contain fdiv bit.
 
-Patch 1/2 is a fix for 7.3 (Cc: stable), so it could go in as a 7.4-rc fix.
+If the register is actually called PLL_CON8_ in the TRM then the
+current patch makes sense "as is". It just seemed odd at first reading
+that con8 wasn't an offset from con_reg on this SoC.
 
-Cristian, your reply to 2/2 [2] has a "From:" line where I think you
-meant Reviewed-by. Could you confirm?
+Thanks,
 
-[1] https://lore.kernel.org/all/avMog5kzJpsiUhXn@pluto/
-[2] https://lore.kernel.org/all/avMtgxmGXTbTKG1t@pluto/
-
-Thanks and regards,
-Dario
-
-On Wed, Nov 4, 2026 at 11:36=E2=80=AFAM Dario Binacchi
-<dario.binacchi@amarulasolutions.com> wrote:
->
-> These are the two patches of the v14 series [1] still pending, as
-> patches 2/4 and 4/4 have been merged in 7.4-rc1.
->
-> The first one is a fix for 7.3: the i.MX SCMI OEM extension converts
-> the spread to the wrong unit, so the hardware is programmed with no
-> spread at all for any valid configuration. The second one rejects the
-> configurations that do not fit in the OEM fields, instead of silently
-> truncating them.
->
-> Brian is waiting for an ack from the SCMI side on both patches.
-> Sudeep and the arm-scmi list were not Cc'ed on v14, as
-> get_maintainer.pl does not list them for clk-scmi-oem.c.
->
-> [1] https://lore.kernel.org/all/20260904101243.412006-1-dario.binacchi@am=
-arulasolutions.com/
->
-> Changes in v15:
->  - Drop patches 2/4 and 4/4, merged in 7.4-rc1.
->  - Rebase on v7.4-rc1.
->
-> Changes in v14:
->  - Move the fixes first, so that they can be picked up separately from
->    the new patches.
->
-> Changes in v13:
->  - Add patch "clk: scmi: reject SSC configuration out of the OEM field
->    range".
->  - Rename patch "clk: scmi: fix SSC permyriad conversion" to "clk: scmi:
->    fix SSC spread conversion".
->
-> Changes in v12:
->  - Add patch "clk: scmi: fix SSC permyriad conversion" to fix the
->    permyriad to percent conversion in clk-scmi-oem.c, reported by
->    Sashiko AI review.
->
-> Changes in v11:
->  - Add patch "clk: Validate spread spectrum configuration" to reject
->    invalid parameters in the clk core before they reach the providers.
->
-> Changes in v10:
-> - Drop patches 1-22, superseded by the generic spread spectrum clocking
->   support from Peng Fan, merged in 7.3, so the i.MX8M specific infrastruc=
-ture
->   is no longer needed. This patch is now based on the following commits:
->   - ae794aa6e88d ("dt-bindings: clock: Add spread spectrum definition")
->   - c86814e70390 ("clk: Introduce clk_hw_set_spread_spectrum")
->   - a7f16660af39 ("clk: conf: Support assigned-clock-sscs")
->   - 7d98de6ffdab ("clk: Add KUnit tests for assigned-clock-sscs")
->   https://lore.kernel.org/all/20260826165611.236321-1-sboyd@kernel.org/
->
-> Changes in v9:
-> - Add 'Reviewed-by' tag of Peng Fan for imx8mn platform patches
-> - Fix building warning raised by the kernel test robot for patch
->   v8, 11/18 clk: imx: add support for i.MX8MN anatop clock driver
-> - Add patches for imx8m{m,p} platforms:
->   - 23/23 clk: imx8mm: support spread spectrum clock generation
->   - 22/23 clk: imx: add support for i.MX8MM anatop clock driver
->   - 21/23 clk: imx8mp: support spread spectrum clock generation
->   - 20/23 clk: imx8mp: rename ccm_base to base
->   - 19/23 clk: imx: add support for i.MX8MP anatop clock driver
->
-> Changes in v8:
-> - Drop the patches added in version 7:
->   - 10/23 dt-bindings: clock: imx8m-clock: add phandle to the anatop
->   - 11/23 arm64: dts: imx8mm: add phandle to anatop within CCM
->   - 12/23 arm64: dts: imx8mn: add phandle to anatop within CCM
->   - 13/23 arm64: dts: imx8mp: add phandle to anatop within CCM
->   - 14/23 arm64: dts: imx8mq: add phandle to anatop within CCM
->
-> Changes in v7:
-> - Add and manage fsl,anatop property as phandle to the anatop node with
->   the new patches:
->   - 10/23 dt-bindings: clock: imx8m-clock: add phandle to the anatop
->   - 11/23 arm64: dts: imx8mm: add phandle to anatop within CCM
->   - 12/23 arm64: dts: imx8mn: add phandle to anatop within CCM
->   - 13/23 arm64: dts: imx8mp: add phandle to anatop within CCM
->   - 14/23 arm64: dts: imx8mq: add phandle to anatop within CCM
->
-> Changes in v6:
-> - Merge patches:
->   10/20 dt-bindings: clock: imx8mm: add binding definitions for anatop
->   11/20 dt-bindings: clock: imx8mn: add binding definitions for anatop
->   12/20 dt-bindings: clock: imx8mp: add binding definitions for anatop
->   to
->   05/20 dt-bindings: clock: imx8m-anatop: define clocks/clock-names
->   now renamed
->   05/18 dt-bindings: clock: imx8m-anatop: add oscillators and PLLs
-> - Split the patch
->   15/20 dt-bindings-clock-imx8m-clock-support-spread-spectru.patch
->   into
->   12/18 dt-bindings: clock: imx8m-clock: add PLLs
->   16/18 dt-bindings: clock: imx8m-clock: support spread spectrum clocking
->
-> Changes in v5:
-> - Fix compilation errors.
-> - Separate driver code from dt-bindings
->
-> Changes in v4:
-> - Add dt-bindings for anatop
-> - Add anatop driver
-> - Drop fsl,ssc-clocks from spread spectrum dt-bindings
->
-> Changes in v3:
-> - Patches 1/8 has been added in version 3. The dt-bindings have
->   been moved from fsl,imx8m-anatop.yaml to imx8m-clock.yaml. The
->   anatop device (fsl,imx8m-anatop.yaml) is indeed more or less a
->   syscon, so it represents a memory area accessible by ccm
->   (imx8m-clock.yaml) to setup the PLLs.
-> - Patches {3,5}/8 have been added in version 3.
-> - Patches {4,6,8}/8 use ccm device node instead of the anatop one.
->
-> Changes in v2:
-> - Add "allOf:" and place it after "required:" block, like in the
->   example schema.
-> - Move the properties definition to the top-level.
-> - Drop unit types as requested by the "make dt_binding_check" command.
->
-> Dario Binacchi (2):
->   clk: scmi: fix SSC spread conversion
->   clk: scmi: reject SSC configuration out of the OEM field range
->
->  drivers/clk/clk-scmi-oem.c | 27 +++++++++++++++++++++++----
->  1 file changed, 23 insertions(+), 4 deletions(-)
->
-> ---
-> base-commit: 05441d697f7f9a927264f4058cbbc6a03dfcac9d
-> branch: imx-pll14xx-spread-spectrum
->
-> --
-> 2.43.0
->
-
-
---=20
-Dario Binacchi
-Senior Embedded Software Engineer
-M. +39 328 0625246
-dario.binacchi@amarulasolutions.com
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95
-Amarula Solutions SRL
- Via Felice Cavallotti 25D, 41012 Carpi, MO, IT
-info@amarulasolutions.com
-www.amarulasolutions.com
+Peter
