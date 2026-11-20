@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795197519;
-	b=bKUh9L81MKzjP2AT0SkEL0KRy3cQYLWKEjgRr7z7VVniZCZ1sYjTQKI/Kgj7my16f98p
-	 8KaJ4wUtAr4GYhHbqDb1vbT4ZC+AopZUFnXHA3G8uRT816a0KhTymu9iiY5FWbxJT+c/d
-	 4bAlwenP9vDpfsUhkCPKI752XgIJLxFkuKmbDkDZC0ROX2/fK2MlaWEV/SyuqhmOdSQHC
-	 gj2cUHgEL9oagokBqhlaqG5aMg7kLNGztlvLiSAb+59SY/PGNXWxkYDMvFRODwjvJd8y1
-	 ws3WR1WpanJ8vDiIqCzrw6tyGdRw0B7A243AJa5UvNOkwSRzmkGieJ+zMZ1UZnEyWyg==
+	t=1795197521;
+	b=urgkykWCsRS2HTtWkCYhXQ2lbPzd4caXlB8GP3BYiKZgipHVMVXjaS0/nEP+CS9uwMgN
+	 96S7sQ92uWOwMqM5BfZ6ZzwXY5DUL4u7RwWR6UTfoMHSX75l0+XqPx3MtovWK5nJqFS7p
+	 sfRivlF2LF0DQTfk+gS/bWg1ejHHnI1ZMkB+TD2rOVZgdU12jNeQPseD/CdBDdrXBTZyP
+	 DXOjJanDwJO2Ts1u3TKqyR22uYgcLH/kw1pINtbJF0ol6y/uMRWCgQHZ60BfopdY24V0H
+	 lLO826mgbkltGXmvgqTw4uA6y0ECSc3MGKzD0Jzh/18g19vrMn6EyAufj2rvQWEBOpA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795197519;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795197521;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Sox7amMXycRbrAsCltoWwm5OLlq3yEZVuhVhsbcinpM=;
-	b=4Ql+u0yXPYTejSxGLDRoM6RsGF1d/n3TOVmGKC0Yv2VUL2UI+AgxfNBkwwTDylmiuytI
-	 z/Rg9hg8T3t6MgxlE7JiHu3ALWGJqiZKYw8czdBIN6PRkhEL5G51vWUt/7H5F24FVzANF
-	 5gtqjCNe8JOyCWrjPV2lSG1Sl4OmRd63o5QxK8DElTwqYyMwdPHaiaTwbIr8FbXD3Y4JW
-	 sxbcFDRc09SWD3av3kCB4GfBCAhDhG/RqMABH8L4UgsCJ34+kxJaUPvM9jSMVq2TJ8CRI
-	 umYnVELBLGx2cH3qv0u88rEv8l+yelVM3AFl4Bx2vsqi9hP0SPVpFS8alQjrBoF7ljQ==
+	bh=p7HHkcxRFMtz3gtfISt9NfR1hbheu36AT1vsomKxQRM=;
+	b=xpCk5SmLEQtN4Njbj7mdhMq2p9eWGskvBTlu45RR7nWPbMDKNMSg73QX2LyOcvcNUYqR
+	 hjYgj4r+zWV57hOZLuvi8Qq8GulRrAAQDII5EJU/RYdof9Uxqh2S22Jo1mFy8/56mjmIv
+	 35z3rdhfNgKH5QkHoqQENX9MfyfhPP/tUAN+5SgSSOLZVbDPKivZ9/mDMJEOKfnaAVYw4
+	 GZzbMFbSMxrnLCMmlV1p9ia6G5+n2yQ4695W30V9Gg74+7IB+BLkQ2dhwf2r4DYOMfaK9
+	 AohAS6+ItgbgPHjZDkOydrT4nESJZ3Qhy1ruwgnv+2ncpnYKllNvYR8Bb5XFAi1T6AQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bneqPubr;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=L0sRAwk2;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECD6606A32C;
-	Fri, 20 Nov 2026 17:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17B9606A332;
+	Fri, 20 Nov 2026 17:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bneqPubr
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4089D1F000C6;
-	Fri, 20 Nov 2026 17:58:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=L0sRAwk2
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8E751F000C6;
+	Fri, 20 Nov 2026 17:58:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795197518;
-	bh=Sox7amMXycRbrAsCltoWwm5OLlq3yEZVuhVhsbcinpM=;
+	s=k20260515; t=1795197521;
+	bh=p7HHkcxRFMtz3gtfISt9NfR1hbheu36AT1vsomKxQRM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=bneqPubr97hlowVFBb56KWgJnmeuHwscHWfHvlQUdo8UEB6oE6cxTK0pCREp24coz
-	 4KozW/d2cdc9sbImeZGTSScOXPOv2m/AjN9QqL2BPRM6y7EEGXlAK0FehGH0deqncz
-	 xN6hHDQG3TmP00vJLJW4K5NwLq+RRdIo/K3PZw8L4dg6Sb46Yehi66pNiVc4uNx2HV
-	 DGBT3k3dV+zIPB3hdYZgIP+R0Pli78nw4gsQw0/CHxHotDv/2u5IfkHCJr/hLD3KRU
-	 s4eKTePTVP3gHjsxPJpTeEfWOno6YKOgv7slu93+7z/eGfAGIDj4wmJQUEWjULJtPj
-	 oJ5f5UGG2kwag==
-Message-ID: <sashiko-outbox-225759@kernel.org>
+	b=L0sRAwk2hOGww7pqk7pYew5cZRIPtG+fiTAhh3m2/rpr8U0p6Nnym+Rg40v3etXG6
+	 6/wme20a5fmBUMuvjPPGBVlveharabeOTwVVz1zkzIL1Kl3bbzc/pZ/HNqnt7mkBTK
+	 8WeYzG+Qr29EXxHPgRCrghKCiPOqc0+t6BSEpmtYwXM5fuKIpw5qogEFlsdH3WopT0
+	 XERW8S5y3GVYZf0T1BiIgQ3KflK1lEMFmoAIT+tWjt5BB0G+KyI2x96QiEfzWrh7tI
+	 gcrDRlooA6pyUt3KjaSOhaOQ6CiRM8y6pF8vv/g1b1p395ILNrgyct0xAHdnIU5GOI
+	 75LiV/tlllvTw==
+Message-ID: <sashiko-outbox-225763@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
+Subject: Re: [PATCH 6/6] ARM: dts: renesas: r9a06g032: Add resets to mii
+ converter
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Kyle Hendry" <khendry@reliablecontrols.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, wsa+renesas@sang-engineering.com
-In-Reply-To: <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
+In-Reply-To: <20261119-rzn1-miic-resets-v1-6-feee2bb28bb4@reliablecontrols.com>
 References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
- <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
+ <20261119-rzn1-miic-resets-v1-6-feee2bb28bb4@reliablecontrols.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 20 Nov 2026 17:58:37 +0000
+Date: Fri, 20 Nov 2026 17:58:40 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,169 +61,120 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 6 potential
+Thank you for your contribution! Sashiko AI review found 4 potential
 issues to consider:
+- [High] ARM: dts: renesas: r9a06g032: 1-based reset IDs mismatch
+  0-based reset table
 - [High] clk: renesas: r9a06g032: missing rcdev member in struct
   r9a06g032_priv
-- [High] clk: renesas: r9a06g032: 0-based r9a06g032_resets[] mismatches
-  1-based DT IDs
-- [High] clk: renesas: r9a06g032: inverted reset polarity in
-  r9a06g032_reset()
-- [Medium] clk: renesas: r9a06g032: inverted return value in
-  r9a06g032_reset_status()
+- [Medium] clk: renesas: r9a06g032: inverted polarity in
+  r9a06g032_reset() and status
 - [Medium] clk: renesas: r9a06g032: dangling sysctrl_priv on reset
-  registration error
-- [Low] clk: renesas: r9a06g032: unused func parameter in
-  r9a06g032_reset_set()
+  register error
 --
 
-commit c1ea072ef200e955b9711c8cf6fa8c5c06a195de
+commit 37a9aace6321173b9dddf5f8ccba42dd97dee222
 Author: Kyle Hendry <khendry@reliablecontrols.com>
 
-clk: renesas: r9a06g032: Add reset controller
+ARM: dts: renesas: r9a06g032: Add resets to mii converter
 
-This commit registers a reset controller in the r9a06g032 clock driver to
-control the RSTN_CLK25 and RSTN_ETH active-low reset bits in the
-PWRCTRL_SWITCHCTRL register.
+This commit adds the rst_ts and rst_miic reset references from the sysctrl
+node to the eth_miic node in the r9a06g032 device tree.
 
-> diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas=
-/r9a06g032-clocks.c
-> index 3df3f2b2c6de7..547e8d82f1cf1 100644
-> --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-[ ... ]
-> @@ -675,6 +676,11 @@ static const struct r9a06g032_clkdesc r9a06g032_cloc=
-ks[] =3D {
->  		RB(0xec, 16), RB(0xec, 17), RB(0xec, 18), RB(0xec, 19)),
->  };
+> diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts=
+/renesas/r9a06g032.dtsi
+> index f2bf087f7ad2e..0a538d9221254 100644
+> --- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
+> +++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
+> @@ -463,6 +463,9 @@ eth_miic: eth-miic@44030000 {
+>  				 <&sysctrl R9A06G032_CLK_RMII_REF>,
+>  				 <&sysctrl R9A06G032_HCLK_SWITCH_RG>;
+>  			clock-names =3D "mii_ref", "rgmii_ref", "rmii_ref", "hclk";
+> +			resets =3D <&sysctrl R9A06G032_RST_TS>,
+> +				 <&sysctrl R9A06G032_RST_MIIC>;
+> +			reset-names =3D "rst_ts", "rst_miic";
+>  			power-domains =3D <&sysctrl>;
+>  			status =3D "disabled";
 > =20
-> +static const struct regbit r9a06g032_resets[] =3D {
-> +	RB(0x188, 3),
-> +	RB(0x188, 4),
-> +};
 
 [Severity: High]
-Does the 0-based indexing of r9a06g032_resets[] mismatch the 1-based DT
-binding definitions?
+Are R9A06G032_RST_TS and R9A06G032_RST_MIIC off by one relative to
+r9a06g032_resets[]?
 
-include/dt-bindings/clock/r9a06g032-sysctrl.h defines R9A06G032_RST_TS as
-1 and R9A06G032_RST_MIIC as 2.  With clocks->rcdev.nr_resets set to
-ARRAY_SIZE(r9a06g032_resets) (2) and the default
-fwnode_reset_simple_xlate(), requesting R9A06G032_RST_MIIC (2) fails with
--EINVAL, and requesting R9A06G032_RST_TS (1) indexes r9a06g032_resets[1]
-(bit 4, RSTN_ETH) instead of bit 3 (RSTN_CLK25).
+Commit "dt-bindings: clock: r9a06g032-sysctrl: Document reset cells"
+defines R9A06G032_RST_TS as 1 and R9A06G032_RST_MIIC as 2, while commit
+"clk: renesas: r9a06g032: Add reset controller" registers a 2-element
+r9a06g032_resets[] array (indices 0 and 1) using the default 0-based
+fwnode_reset_simple_xlate():
 
-> +
->  struct r9a06g032_priv {
->  	struct clk_onecell_data data;
->  	spinlock_t lock; /* protects concurrent access to gates */
-> @@ -1307,6 +1313,56 @@ static void __init r9a06g032_init_h2mode(struct r9=
-a06g032_priv *clocks)
->  	writel(usb, clocks->reg + R9A06G032_SYSCTRL_USB);
->  }
-> =20
-> +
-> +#define rcdev_to_priv(x)	container_of(x, struct r9a06g032_priv, rcdev)
+drivers/clk/renesas/r9a06g032-clocks.c:
+	static const struct regbit r9a06g032_resets[] =3D {
+		RB(0x188, 3),
+		RB(0x188, 4),
+	};
+
+When miic_probe() requests these resets, rst_ts (1) targets index 1
+(RB(0x188, 4), the MII converter reset) instead of index 0 (RB(0x188, 3),
+the timestamp reset), and rst_miic (2) fails translation with -EINVAL
+because 2 >=3D nr_resets.
 
 [Severity: High]
-Is struct r9a06g032_priv missing the struct reset_controller_dev rcdev
-member?  Without it, rcdev_to_priv() and clocks->rcdev in
-r9a06g032_clocks_probe() fail to compile when CONFIG_CLK_R9A06G032 is
-enabled.
+Does commit "clk: renesas: r9a06g032: Add reset controller" fail to
+compile because struct r9a06g032_priv has no rcdev member?
 
-> +
-> +static int r9a06g032_reset_set(struct reset_controller_dev *rcdev,
-> +				  const char *func, bool set, unsigned long id)
-> +{
-> +	struct r9a06g032_priv *priv =3D rcdev_to_priv(rcdev);
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&priv->lock, flags);
-> +	clk_rdesc_set(priv, r9a06g032_resets[id], set);
-> +	spin_unlock_irqrestore(&priv->lock, flags);
-> +
-> +	return 0;
-> +}
-
-[Severity: Low]
-The func parameter in r9a06g032_reset_set() is unused and triggers a
--Wunused-parameter warning under W=3D1 builds.
-
-> +
-> +static int r9a06g032_reset(struct reset_controller_dev *rcdev,
-> +			  unsigned long id)
-> +{
-> +	r9a06g032_reset_set(rcdev, "reset", true, id);
-> +	udelay(5);
-> +	return r9a06g032_reset_set(rcdev, NULL, false, id);
-> +}
-> +
-> +static int r9a06g032_reset_assert(struct reset_controller_dev *rcdev, un=
-signed long id)
-> +{
-> +	return r9a06g032_reset_set(rcdev, "assert", false, id);
-> +}
-> +
-> +static int r9a06g032_reset_deassert(struct reset_controller_dev *rcdev,
-> +			     unsigned long id)
-> +{
-> +	return r9a06g032_reset_set(rcdev, "deassert", true, id);
-> +}
-
-[Severity: High]
-Is the reset polarity in r9a06g032_reset() inverted?
-
-Because these resets are active-low (false asserts and true deasserts, as
-in r9a06g032_reset_assert() and r9a06g032_reset_deassert()), passing true
-before udelay(5) and false afterward deasserts the line and then leaves
-the hardware held in reset.
-
-> +
-> +static int r9a06g032_reset_status(struct reset_controller_dev *rcdev,
-> +			   unsigned long id)
-> +{
-> +	struct r9a06g032_priv *priv =3D rcdev_to_priv(rcdev);
-> +
-> +	return clk_rdesc_get(priv, r9a06g032_resets[id]);
-> +}
+Both rcdev_to_priv() and r9a06g032_clocks_probe() access clocks->rcdev to
+register the sysctrl reset controller referenced here, but struct
+r9a06g032_priv only defines data, lock, and reg.
 
 [Severity: Medium]
-Should r9a06g032_reset_status() invert the return value of
-clk_rdesc_get()?
+In the sysctrl reset provider added by commit "clk: renesas: r9a06g032:
+Add reset controller", are the reset polarity and status inverted in
+r9a06g032_reset() and r9a06g032_reset_status()?
 
-reset_control_ops.status must return a positive value when the reset is
-asserted and 0 when deasserted, whereas clk_rdesc_get() on these
-active-low bits returns 0 when asserted and 1 when deasserted.
+drivers/clk/renesas/r9a06g032-clocks.c:r9a06g032_reset() {
+	r9a06g032_reset_set(rcdev, "reset", true, id);
+	udelay(5);
+	return r9a06g032_reset_set(rcdev, NULL, false, id);
+}
 
-[ ... ]
-
-> @@ -1404,6 +1460,14 @@ static int __init r9a06g032_clocks_probe(struct pl=
-atform_device *pdev)
->  	if (error)
->  		dev_err(dev, "Failed to populate children (%d)\n", error);
-> =20
-> +	clocks->rcdev.ops =3D &r9a06g032_reset_ops;
-> +	clocks->rcdev.of_node =3D np;
-> +	clocks->rcdev.of_reset_n_cells =3D 1;
-> +	clocks->rcdev.nr_resets =3D ARRAY_SIZE(r9a06g032_resets);
-> +	error =3D  devm_reset_controller_register(dev, &clocks->rcdev);
-> +	if (error)
-> +		return error;
+The reset bits in PWRCTRL_SWITCHCTRL are active-low (r9a06g032_reset_assert=
+()
+passes false and r9a06g032_reset_deassert() passes true).  Calling
+r9a06g032_reset() deasserts the line and then asserts it, leaving the
+peripheral held in reset.  Likewise, r9a06g032_reset_status() returns
+clk_rdesc_get() directly, which returns 1 when deasserted and 0 when
+asserted, opposite to the reset_control_status() contract.
 
 [Severity: Medium]
-If devm_reset_controller_register() fails here, does returning an error
-leave sysctrl_priv dangling after devres frees clocks?
+In commit "clk: renesas: r9a06g032: Add reset controller", what happens if
+devm_reset_controller_register() fails at the end of
+r9a06g032_clocks_probe()?
 
-Earlier in r9a06g032_clocks_probe(), r9a06g032_add_clk_domain(dev)
-registers an unmanaged genpd provider, sysctrl_priv is set to clocks, and
-of_platform_populate() creates child devices.  If
-devm_reset_controller_register() fails afterward, devres frees clocks and
-unmaps clocks->reg while sysctrl_priv remains non-NULL, causing a
-use-after-free in r9a06g032_sysctrl_set_dmamux(), and child devices
-probed during of_platform_populate() cannot look up the reset controller
-yet.  Registering the reset controller before r9a06g032_add_clk_domain(),
-sysctrl_priv =3D clocks, and of_platform_populate() avoids both problems.
+drivers/clk/renesas/r9a06g032-clocks.c:r9a06g032_clocks_probe() {
+	...
+	sysctrl_priv =3D clocks;
+
+	error =3D of_platform_populate(np, NULL, NULL, dev);
+	if (error)
+		dev_err(dev, "Failed to populate children (%d)\n", error);
+
+	clocks->rcdev.ops =3D &r9a06g032_reset_ops;
+	clocks->rcdev.of_node =3D np;
+	clocks->rcdev.of_reset_n_cells =3D 1;
+	clocks->rcdev.nr_resets =3D ARRAY_SIZE(r9a06g032_resets);
+	error =3D  devm_reset_controller_register(dev, &clocks->rcdev);
+	if (error)
+		return error;
+	...
+}
+
+Returning an error after r9a06g032_add_clk_domain(), sysctrl_priv
+assignment, and of_platform_populate() leaves global sysctrl_priv and the
+registered OF genpd provider pointing to devm-freed memory, and leaves
+populated child platform devices behind.  Also, calling
+of_platform_populate() before devm_reset_controller_register() means child
+devices probing during populate cannot look up the reset controller yet.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261119-rzn1-miic-=
-resets-v1-0-feee2bb28bb4@reliablecontrols.com?part=3D2
+resets-v1-0-feee2bb28bb4@reliablecontrols.com?part=3D6
