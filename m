@@ -1,87 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795185728;
-	b=L5/z8C0b9jX/PfSHEO2ZXX3s7mzxRu9Ht7w+YH0PrNurKSNOrF8MGo+F5vcM5CZECRVY
-	 QhdMsISshgtYcdmKl9Z04VzF88/7ZUlfDiGFIA5oAbYnXLtEt09QlnaXSsGwgfDRbUgov
-	 QgPzhq6tk1XhJYGTfbnIKAQMRPKe4E1/q1XCkvywdJ7kE3pe0+1DYy61zB49JRDqJqtF1
-	 RORpwa0taMfK2o+M2o8DMsbLIA+SEdrAnWDOS9cS0Li4rfe4bFIbaDFdMGtPOWdYmBdr+
-	 sBNkBRoFhWGynIC2z2LP5O6zfyIM4LbrchPDEfvgA1aKZQf7tj3RbHDhBW/617H6dpQ==
+	t=1795185737;
+	b=a4XVUpWSPQCuEtDWF6P4PHT4r9++ZjRAj3htNPT9BMWAaEYXLdx1F/+SvpjiSKeltcnV
+	 /ch4ME9GE4enbofLBjxFVqrOCboAULvMXR7S1Wqy2+NaOMZ43lCrqf3SnBXZi4WPVUdhF
+	 3iEkl1r6RTiUN6Uw2K116XxZUAI7Mmkp1JnjvVLesjyG86lw68pZDdZ0+ICdmDfBX1QWj
+	 A2NFe8CORIN6lKoxcsrf4RYldeSoi/WoUAMDIuymFWTpa6IOK5hLNM9aLz5xTE/a3jTIY
+	 2l9hAzq/TlD6JN5buub6IlYvDldD3hmUkI1uHArW0YALqUBHBQCgST2QwXptGV031Ww==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795185728;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795185737;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:Date:Subject:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
 	 References:In-Reply-To:To:Cc:X-Mailer;
-	bh=eTmGpAk5ApLPXB7Y5muckWXrGowRihIuOzQJLQl8RgA=;
-	b=egi7mrJtZRPGabXxNZf5vPAsvTIg2hbbxmAlMQUY5r8oWBnLnLicfBCug9VVrqSIECMl
-	 KMkFgyUXif21D17OiGfR/SjZdiJEpxRYUClPTEp9WgyWmbUlZdH/TSbyWnQSBA4Nh0cFU
-	 NqrMhGBLSd8Cue3VcpakGbt4XGJpsG8hFAsJZk5oczgnnimSaL9Ku5ySzDQ+wYYX8CHLY
-	 ZC24tABYEQSM/x57SaD+dpTu9GpWsGfXYfVbHGtW5N1FoCdYWKONzW8frNiQCitEKxUEF
-	 UJUVCOkqmhe4IVFQ/83pU2EVVQUBny5s/k6i9u9zD0UiM8yJlc0rnWcPyO5jAuxP8lg==
+	bh=HT3eyIKbaAFdJAsBCyUUl9qOeHC7n7o5AOxtBcK4VMc=;
+	b=S0sBW2w0shrSI2WXEiD2YtDagaQdBmBfWfC1OsZwP3xST66JDaW71lLoiGIR9bWuy4N7
+	 v1mHgjmURAmtagMBwHhmae9ZUvs/cfvVuqD3Nn36xKB2CmYA50pq4Qv9nwD019a8GP5nk
+	 Es/5n0izNllq+TGXBN7YGtCcdeBRLci72eusP0tWxJ8FR//I+HORPv1J392iX+sr341dv
+	 L78BTuJVeEctV6b4zmPlqcinn4B2xiYj48xkJ5z5Ewq5jT4FNYBWDUH2PKNqdhtzp8UP+
+	 7mMciiLo5Kt/8p2O8QucijGxyV9df4pc3TxpPiJZ+sRzSMoRf0LcHv4EgBP3CPoFEzQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="m6cWhX/h";
-	arc=none smtp.remote-ip=209.85.214.182
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Wb33keXY;
+	arc=none smtp.remote-ip=209.85.216.54
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92ABD606A330
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 14:42:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 92ABD606A330
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B84606A33A
+	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 14:42:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 11B84606A33A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=m6cWhX/h
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2f0213202fdso5273055ad.3
-        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 06:42:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Wb33keXY
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3b40d23e1adso819768a91.0
+        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 06:42:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795185727; x=1795790527; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795185736; x=1795790536; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=eTmGpAk5ApLPXB7Y5muckWXrGowRihIuOzQJLQl8RgA=;
-        b=m6cWhX/h+b4vXn0BU65hYZ1zM6hIfx5Tbnm5Bv4U+zXZBnmCehNRvh8U2QNaXaJb2Q
-         d0SAx0/VgeAnBdoq9aEBjAtKdSnOBiojRWOuacpCsyfzGqZdJX62SewIO6wagtcGd0dv
-         X9MoGqeP5bKHbNozjErqxadLUf7+Ofe6EuwDLa9smiVJ4GeF+Uu8A3alGBCYD/OqrpZl
-         JAyQHeRCXYOaFZwN8sBeQaAEeAQeokl4WreSuGNsd+OsMSnQXyBWruAWOunomuXNFD4H
-         RGVy6leVWqPX1tRaQV6vHwT1NIoaZC3UsaaXEoEZP/tf1UWWiveMaCxRChwgp2Bdcec1
-         i/vw==
+        bh=HT3eyIKbaAFdJAsBCyUUl9qOeHC7n7o5AOxtBcK4VMc=;
+        b=Wb33keXYKx7jHvDMOVfzOa1MjjfK3te3Tm5oMERAvMHZsJLvB8e/WZWzSP3sOwARxD
+         HD+M34bOlaEG4qHNcyDpGYeyq1U76fJt/+l3KUH+iSqJNmo3lylDvpiAxGJFgbHBUB3g
+         ZPPO6tb02p9YHPkjAMUKmxWFFgCh6eW70enqqn+agvVnmvK029VjXnoOrb3NrXNEd+Fc
+         z7FwLu0MWUFKm+yDidOqtfAY6mENmBl32KCyTVVI7ACSqD14QRNI5HfNvmhR0v5A4ctA
+         Ysv7jUuv0uDS38bnwaAjL0VmqGVSLfAMgI1NHKGpiofwDiBxLo80MnUVzsfAKMevqiHT
+         rnRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795185727; x=1795790527;
+        d=1e100.net; s=20260707; t=1795185736; x=1795790536;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=eTmGpAk5ApLPXB7Y5muckWXrGowRihIuOzQJLQl8RgA=;
-        b=rRVY3KthjIo087AS5X+QTvFLeRYWYZOx/ixsknLVgGEbIbb0R547lydPcyoxSzial8
-         aM9mpQOczYEwIq8b1c/X+BWbdsKNoya8I+omvgVWnt1nQZxHzZQAx2Q4gg4YdIs+gnTa
-         6HdvE5nIak3YiFTof6E3TF92oSx1v6WtSqJD48s9Mn/yDUz248mL9sePl4h99fTxhCIg
-         1A8X25piR2gBTta9jxOPkdEp5r4r+OJLe7kLT2rFgdgR8PWynnvS/LUY/cTMJ1XMPLpI
-         Cil0UmmalPMnFnHxGNTnnG+HJU0Mgb4MfpD0OAyefrYrGY6ZwDB/PRpkYwxLil4ccO1+
-         vieA==
-X-Gm-Message-State: APuU4Z9L/uftcMRGIFj3OIxYnQ0v6FJweucSXWhKVj1RJcMOkVtPswCG
-	ud+ZK67KrEyjRPBSI2IpdrCfCUbdabmSsUU9cvxBZgdyVBFrPNWES3WQ
-X-Gm-Gg: AZFdTZc/lEhHYa34Suyo7e2LZVXboxKG4o3yZSHWA7xdBTMF2OUCmhiyp+aHYS1mumS
-	SO5uruZDU1hph6OAVb28K/FtDEE8nZruQHRTmzFIFBU/9gybINK7jGG5zHJcw/40oLDSDyIGDvL
-	u/319EeVPc/nEObexjH7PXGS11ehik2yC0BlOJpKmYoKA6Ff5Ghbk5YAVAB8FGEpGwZOPLOpjTd
-	BtdHvTwzMV7n6qkdoDw136So5nBicbFt9pNY0mofER1mBpqj3Le5FHjl9tYyUzkDvcppJR6nns3
-	iySs2H7JT/6ayaVAk6fSQLEyWDvXNzm+9QDzWdAitPtiPmK8Z257QB8T6ZpXl6S2PRfi2WbTDHo
-	W1rR9s97TeMXqHwJWk+uv20oJVWk8SFsIjZMj7GOHc50BTwbFIlMFuhUv+DkAmcLfbnI5WHmYFi
-	veLyB4GgZCue+YY814F4TENjAlb97XKq8BJUqz8YsuUDL2aWNUEHjLZHAhhVz1+a/nIlj3sHsiC
-	J/0I6/6KM2gZKZsJ3Gls/DGAExhTaeR4rIrz4F7w9eNe/y2XELcruf5SiXP56MKswcmKoKMniSI
-	cI7Ubz19yKJngfxzcztApci68tVCLMZdQxW6jA==
-X-Received: by 2002:a17:902:eccf:b0:2e9:64b9:a333 with SMTP id d9443c01a7336-2f03f17c766mr37267005ad.19.1795185726811;
-        Fri, 20 Nov 2026 06:42:06 -0800 (PST)
+        bh=HT3eyIKbaAFdJAsBCyUUl9qOeHC7n7o5AOxtBcK4VMc=;
+        b=WkUAvoKi6puxs3bO/VNHKsiZvx0D1CHIjln9GirDeQXY6QYwv1vHc/rsMxhcuPb/d1
+         8W8yfM9PKviy/AOoWMrGdcxyS/5GVY27iN3p47yyAPep+NuulBnSty0fDj/bfvPMbmb2
+         bfEj2gbBNfUA5Pk81m/BMopPdWFKCDeQ4yZVKNabjw62lQgUbE4DslmW/luGk3WbVIlD
+         0RklBM20PwIQtchcu81wbau+b7OwJxluuWLUlUte8jSebz+7UWJIKTVUHx6QQyiEB7FD
+         2bqx50/ALS1LO1ReaNVXGjgZoOC2+c45bjNvlLYuTnKs64XkUl87hjJguRviteUKk/3B
+         9I5w==
+X-Gm-Message-State: APuU4Z/eV8KDeOkn9oP57HJaY9Cooz/FhptRe81Jy6AMznyQ1TTEgPBt
+	jtnTICpnM0KNDg5gF1abjMj/PKIKKUa3RDv6JFCp7RxWCJjoDhDd/Y0x
+X-Gm-Gg: AZFdTZffEd7l3NdWiOuUZ/mT10xvuJDjVpkCz2JGGnuSoGcX+/1p/CY8WfEZPmi016X
+	9DedDviWmd2NkOMZlWCV2vbHPux5/l5Pv6gxCgXx2b5h0rbZmaSD9Gz+uBW3yJXWoQVPexx/4BD
+	XnAuHDtC6oqHUwfZptMAVWVJxv9dKg0uR8zH6zxNKkWyxcx6nO7IvFbQHFeRHXtQBA48VF1kSmd
+	qLOSUGUqOXJQ1uCvn32uZbYrDqvNhmNJqEwngyw2WS7WZk+RxmfEPZ9Pao02vl3vvaypgkC6h0C
+	uyQVoJYz2rj0N+N9ixboieCWb7nMrTPCeA+Pr3M08w/D1xB+w+2O4idA7LAUNB9zsw1qJu5nqL6
+	mepZcgDAY//ZwrIcOBS3vz/El/Lb7SmkkJzrS4gQSFRgWu2o2Lso769s7/YzQeI3yGvoF33Agsq
+	OqJtkm3N13x7kKyAO+bzpHp1RbwQC0KPvSBy1kp/8+wi8JOdz+M2NliORjDoAWD57OBTyjhEphA
+	GmbGhbexOP1dwbSmPLRKCH6DmZEyQ5uuDv0q6eB/z0qaPP/ngCT6Y2jPCp24XhwcdlVDz2bYRzs
+	off/JLHx3SuMyQOTmZLcVN88s1MIqOObz8QHNq1YD8pcgqRPEReeX6ELntI=
+X-Received: by 2002:a17:90b:4ad2:b0:3a4:7730:33dd with SMTP id 98e67ed59e1d1-3b41c99525fmr3214938a91.58.1795185736231;
+        Fri, 20 Nov 2026 06:42:16 -0800 (PST)
 Received: from [10.98.15.223] ([2a09:bac1:6500::19b:170])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2f03ee848c1sm15346435ad.10.2026.11.20.06.41.59
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2f03ee848c1sm15346435ad.10.2026.11.20.06.42.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Nov 2026 06:42:06 -0800 (PST)
+        Fri, 20 Nov 2026 06:42:15 -0800 (PST)
 From: Chuanhong Guo <gch981213@gmail.com>
-Date: Fri, 20 Nov 2026 22:41:44 +0800
-Subject: [PATCH v2 1/3] clk: mediatek: mt7629: move clock counts out of DT
- bindings
+Date: Fri, 20 Nov 2026 22:41:45 +0800
+Subject: [PATCH v2 2/3] dt-bindings: clock: mediatek: mt7629: add RTC clock
+ IDs
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -93,7 +93,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261120-b4-mt7629-rtc-v2-1-cd877cd496ae@gmail.com>
+Message-Id: <20261120-b4-mt7629-rtc-v2-2-cd877cd496ae@gmail.com>
 References: <20261120-b4-mt7629-rtc-v2-0-cd877cd496ae@gmail.com>
 In-Reply-To: <20261120-b4-mt7629-rtc-v2-0-cd877cd496ae@gmail.com>
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
@@ -107,72 +107,27 @@ Cc: linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, Chuanhong Guo <gch981213@gmail.com>
 X-Mailer: b4 0.14.3
 
-The clock counts used by clk-mt7629.c size the clock provider arrays.
-They are driver implementation details rather than clock IDs used by
-device tree consumers.
-
-Move CLK_TOP_NR_CLK, CLK_INFRA_NR_CLK, CLK_PERI_NR_CLK and
-CLK_APMIXED_NR_CLK into the driver. Keep their values and all clock IDs
-unchanged.
+Expose the 40 MHz / 1221 RTC source and the RTC clock mux. Keep the
+existing CLK_TOP_RTC ID for the 40 MHz / 1024 source.
 
 Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
 ---
- drivers/clk/mediatek/clk-mt7629.c      | 5 +++++
- include/dt-bindings/clock/mt7629-clk.h | 4 ----
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ include/dt-bindings/clock/mt7629-clk.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/mediatek/clk-mt7629.c b/drivers/clk/mediatek/clk-mt7629.c
-index e154771b1b8b..517c43b19f18 100644
---- a/drivers/clk/mediatek/clk-mt7629.c
-+++ b/drivers/clk/mediatek/clk-mt7629.c
-@@ -17,6 +17,11 @@
- 
- #include <dt-bindings/clock/mt7629-clk.h>
- 
-+#define CLK_TOP_NR_CLK		108
-+#define CLK_INFRA_NR_CLK		6
-+#define CLK_PERI_NR_CLK		22
-+#define CLK_APMIXED_NR_CLK		7
-+
- #define MT7629_PLL_FMAX		(2500UL * MHZ)
- #define CON0_MT7629_RST_BAR	BIT(24)
- 
 diff --git a/include/dt-bindings/clock/mt7629-clk.h b/include/dt-bindings/clock/mt7629-clk.h
-index ad8e6d7f0154..cff9a02e8302 100644
+index cff9a02e8302..ca325c21b9bb 100644
 --- a/include/dt-bindings/clock/mt7629-clk.h
 +++ b/include/dt-bindings/clock/mt7629-clk.h
-@@ -115,7 +115,6 @@
+@@ -115,6 +115,8 @@
  #define CLK_TOP_CRYPTO_SEL		105
  #define CLK_TOP_SGMII_REF_1_SEL		106
  #define CLK_TOP_10M_SEL			107
--#define CLK_TOP_NR_CLK			108
++#define CLK_TOP_RTC_32K			108
++#define CLK_TOP_RTC_SEL			109
  
  /* INFRACFG */
  #define CLK_INFRA_MUX1_SEL		0
-@@ -124,7 +123,6 @@
- #define CLK_INFRA_DEVAPC_PD		3
- #define CLK_INFRA_APXGPT_PD		4
- #define CLK_INFRA_SEJ_PD		5
--#define CLK_INFRA_NR_CLK		6
- 
- /* PERICFG */
- #define CLK_PERIBUS_SEL			0
-@@ -149,7 +147,6 @@
- #define CLK_PERI_NFI_PD			19
- #define CLK_PERI_NFIECC_PD		20
- #define CLK_PERI_FLASH_PD		21
--#define CLK_PERI_NR_CLK			22
- 
- /* APMIXEDSYS */
- #define CLK_APMIXED_ARMPLL		0
-@@ -159,7 +156,6 @@
- #define CLK_APMIXED_ETH2PLL		4
- #define CLK_APMIXED_SGMIPLL		5
- #define CLK_APMIXED_MAIN_CORE_EN	6
--#define CLK_APMIXED_NR_CLK		7
- 
- /* SSUSBSYS */
- #define CLK_SSUSB_U2_PHY_1P_EN		0
 
 -- 
 2.56.1
