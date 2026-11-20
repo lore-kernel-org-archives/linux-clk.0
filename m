@@ -1,82 +1,158 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795173042;
-	b=1yXosK0X+oR+C4nsSUGn7dxNQeZLVfl6AYMufwwgmGv5hemNI8gxlIogwMfAGh36wPyE
-	 6j4UKbUsQttC9DKmUkl9bHe3kFdn2wxscQv9phDPJU2rLi7lP3c8BXpzEFRmV0NMM3Gxj
-	 fQ3dVhDDbbMRDnrozE9FozEpSLJGzB1zIHSWXJhR4KiL7XyGKk4YFZqtOMJ1X/n0mP449
-	 GRqKCThpJW+bJncl6kNffmg7NGGN+ddjZb2AenH9g9jdjRVCIOsYhgCdo72YfgP3kGP80
-	 Du4EwOF/cw6rpDNExyBNtgZmVd3NxTT4Dehfb9ybw8v2iI3S8m158P/EAK7f1QOAreA==
+	t=1795173099;
+	b=yaYppIuIqUWJnygmc4nKW8442w1O0wuVrLwHmut7/Iuah9PclaUsV7oiHH+EVdPjuywd
+	 +slW+xur+kgWft0Q4K5giunVuvgG1svGzkfgvFgDtDOEP2Mp46XbozjMDEIRNDIS1Wqcm
+	 HEeRdmGdvt8jlPEVLYSrv21h6JYeD2HMh26lY5qvzQ7nkTc1qcBskcQr2qleYcNPM0zsX
+	 qVR5AT7Q8wuA44VNTI3cNT1JJ1GQkJChZ3NUdiLkA0slJLeF+rIjtv9F5kRb5qkay3qKi
+	 RHPf7WGXVEi/L4PjbI9wE1xre7tPPiX3x4DU6C+mc/7Y5ge0xn8HAJ9F0Pj8rdxM67g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795173042;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
-	bh=P31KX+HGbOZ2m/ze0RQmiiG2ACd7jzLv4I1BkpYMPf4=;
-	b=W3fawMuYMTkvdrxEhaCCteQY3w8wUllOcMjXtnIEu1viPkTY6VwUxYKZv6+afQsYjCsk
-	 rW+52XhnqfLpgvX8qBvMiwKfHToLleCUPBCuLTZNlm3cvbKkPGIA11y6eQLQbt/ZXsSaj
-	 KzvlnyH/tduk/OlDPJ7VNlUGLr945IyOARBpQbQ+3u5g/c5Kl1gwmG128RqJ3f7PTEDkw
-	 Pklxe1EV1/V/A2Wz9fNQwrKAyFXXS9vUN527YhLpEzyku/K1Z8TYebJRee/OvBOZdqzvw
-	 xjpnMgx648uxHIbxhc78c0abG/l8LtSIFiukHoRPXzXlksqEXEiTDz6iMFV9sxuBvvw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795173099;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 X-Developer-Signature:X-Developer-Key:Content-Transfer-Encoding;
+	bh=6iowvnjr0RIgWlIDQQOFrlHY5uCtXtYYlYEEp/cOH20=;
+	b=Y89dS1ItQaRfA5FIHXScVsjCCDWdnXbxlIotTVSgHeBpf8cklUuQXyp3xvS6MADPy+XA
+	 etUfeSnVY+Bb7qvzjTPJKZb4DmtFOPv1KM4TqCH+3w8g+F6T0VevQ3sStOVk74izP6lcj
+	 rKqg6dfsfPEnzR63hVZNIohgQ2jpuWSENJMxQSLQBYhvt4qzM18fOZgQ6PIwZ+UbQqz1S
+	 KjaUqj3cbftWBKk8kvvVrWjxLBahVfXj6OXr4rSFBQnXLCjRChEamks7c03vfZcqxFcj2
+	 WIaE+1cohtbqfRTyYPgtVJKhGq/sj86l6McxBxLmrPBuPBib1lHGrRJIxW6zC+PJ7Tg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=sang-engineering.com;
-	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=Obxoi06N;
-	arc=none smtp.remote-ip=194.117.254.33
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=cy0T8JFY;
+	arc=none smtp.remote-ip=209.85.221.48
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DD2606A320
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 11:10:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 56DD2606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7B760A2624
+	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 11:11:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6C7B760A2624
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=Obxoi06N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:content-transfer-encoding
-	:in-reply-to; s=k1; bh=P31KX+HGbOZ2m/ze0RQmiiG2ACd7jzLv4I1BkpYMP
-	f4=; b=Obxoi06N2BzJC2E18N5zskewr6CRQuDC+9+KvJKyH9LuFwQeHEoRM8iX+
-	1RN3g2hi0vRMpw9ChKCggkqpDtldXjWSxbuf15ors+C79EzQrWROtqkODXwVMioz
-	AwJzyY5VTdwsnFQspH2hE8RSP1Nhf8/y7hf7KJNOdig+td/U5uqFSxRWdKIjksaV
-	xUmXByPF0+tNuh7pm304XaQfgfBSY355NR4ka2paF3JigCsRB5BOfvmbMWMNBP9B
-	GnaFo74Vv47qUVK4+9ZpjQSKFC89PuuUA5BL806XF5TI21wlvLZ+P+r6LUjwEDNL
-	l86k8NVB2qHZ1u6bkApUglRKLQi7w==
-Received: (qmail 1450248 invoked from network); 20 Nov 2026 12:10:35 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2026 12:10:35 +0100
-X-UD-Smtp-Session: l3s3148p1@knAOS7Ng4JIujnuU
-Date: Fri, 20 Nov 2026 12:10:34 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: =?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=cy0T8JFY
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-490c3ae81d3so431967f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 03:11:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1795173093; x=1795777893; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=6iowvnjr0RIgWlIDQQOFrlHY5uCtXtYYlYEEp/cOH20=;
+        b=cy0T8JFYf6te/xTc1kjLehflkRMCyCLyy11kt5kR0iiTkUeh72a0VfbQtLsWdxQKbC
+         cFhL1NyNlrILzdeaX46VwkVy4MeXP+mFwxsgogALnuIqFabIzDYbfPIl3XyCnmwy3ai5
+         8T6EK3t8OE8eX7WpS5CBBnJ9gcHuPx45xGmWl0vctudKI11NB8OsFG4EaWegB9jAqjdE
+         yLVMj47I7qQc00jYFIsxNT/1utXJQ9rQvvCMZFbRZLgflQn5wfH6nc0qoZ6hPFJoQBZA
+         5jVraI3baGqMgrr/3P3ZFrjwysBQ3aAxoi2icTr9AnuVXVlkHmUvOvgDDhNFO4YMaSSw
+         JBMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795173093; x=1795777893;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=6iowvnjr0RIgWlIDQQOFrlHY5uCtXtYYlYEEp/cOH20=;
+        b=ISDT8Gc1hArkXS9QPVuRP3iizch7RGooXJiBMkM9Uza0YBO3xqb5rk9XzfIh8FkyM2
+         4SQSG8wGMcAA/rhmDQUuaNZSZw6asu7fragIoMaBZjraOrn/NfoSlpFrZKH0KSWPYmeL
+         +PMY9qCbApzYlgqMbtIsJp/sawYISBA7pEQ+OUcA9w5BJtZhUZmrdUkLHb/ExVe207Dp
+         ICBPFSijlipA4aleOETEX91q4ov3N7+WqnaVtfuRY5rONp0IhKXKauJV2IS2hHtU4uoZ
+         V5w98qIKJxTeeYSIqaV+imY1vScLyCNXM4NOUW3wVdJchAEB/b4UBATzV1AtBKrTiiVG
+         4CTw==
+X-Forwarded-Encrypted: i=1; AL+hErEW45Gy6FFNhZas71gtj6REqldaxXTGe2T9FadWdDwvkgyDjt9qjwbFOkc2ivIjGrN/ziOkVrlL2X4=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9hPKCl8xRfkrdRcyUgzpPt8G3w6U4kTzNXwsh/NF7diOGEQUCn
+	XlW42m8SPIUKw+s9GPXIsQSWBkvuuKJ1pd4VFGo61YxYu5DAMYasuIIze7J8tAYB7No=
+X-Gm-Gg: AYBFou3GqEdkFyLx1bNT+M2Ll5Vk/r8hPkPQNcseguCMjuAFmu0aVwf8hKdY92hZEM9
+	VdZfij1kb5iXDgEE2V1Had9I1v4VlqmfSq6R88CVJ8w0/ypnOaWvCkATQb7yQI/E09aAs1uwjHJ
+	MBDD4KBisFWEa1MgHm+ohQNvC3DfvlycAi78yDnTvsK9DtTRo0gdt6VARRyo7kQT4xmB7kqoIF8
+	xmBRmTWJY9I8pOED2w6eQAYcPsMapmPSJiQST8BypvI1J98QlxENgOcylZReiRQXlhKZeskZcUg
+	EAHeNds8LmsHSlQd/3mtw2H3GJ2VeHMIfpOmC5FcjHTw4LEIpWBUHqxyHzKnWvVACuaWyvavGQt
+	LsXRrWcRLmgzpLnWADGCLLDZeHPEhHUaN5MCI5KnPTiT8diD15cEZzdAcd3nw0S9umu4Acm87Hb
+	KtCMXyCpAyOW+uNQQ/sBVUmQgCp1Qor8GTr70qhxZg/LeKb8om9ekYBExldbcdNqRvMaVSww1Iv
+	4pScqIEMZjxQ6yBRzlayxJpSvJBEt6qX2jJXxeTp/FwANp6veMOUY2nqtr4uvBBowAUpZTuPTdC
+	qIjsztA16rUMkKtkQhKR8y2TIUhObC2O66SfB8HoxgaazZf3jUB9gkgQEVP/jn9CuQ2RY87iBzb
+	3HHOEUSyhpckkI0+V
+X-Received: by 2002:a05:600c:3b0e:b0:4a1:efba:511 with SMTP id 5b1f17b1804b1-4bb8882508emr60110635e9.35.1795173092340;
+        Fri, 20 Nov 2026 03:11:32 -0800 (PST)
+Received: from localhost (p200300f65f19a904be03815e1634e776.dip0.t-ipconnect.de. [2003:f6:5f19:a904:be03:815e:1634:e776])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4bb884a15absm67887745e9.9.2026.11.20.03.11.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Nov 2026 03:11:31 -0800 (PST)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>,
+	Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Longfang Liu <liulongfang@huawei.com>,
+	Julian Ruess <julianr@linux.ibm.com>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Brett Creeley <brett.creeley@amd.com>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	=?utf-8?q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>,
+	Eric Auger <eric.auger@redhat.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Matthew Rosato <mjrosato@linux.ibm.com>,
+	Tony Krowiak <akrowiak@linux.ibm.com>,
+	Jason Herne <jjherne@linux.ibm.com>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Holger Dengler <dengler@linux.ibm.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Mark Brown <broonie@kernel.org>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Paul Elder <paul.elder+renesas@ideasonboard.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 00/15] R-Car X5H Ironhide CPG/MDLC SCMI remapping
- support
-Message-ID: <awAqqg6F2Z1t55x2@ninjato>
-References: <cover.1795029012.git.geert+renesas@glider.be>
- <1e9c5ac3-d82b-4af9-9946-0302cadf7404@baylibre.com>
- <20261119234759.GB2324725@killaraus.ideasonboard.com>
- <19c3745a-6308-46ff-bb37-3acc88fe22e2@baylibre.com>
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Bradley Morgan <bradley.morgan@linux.dev>,
+	Armin Wolf <W_Armin@gmx.de>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-doc@vger.kernel.org,
+	driver-core@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Alex Williamson <alex@shazbot.org>,
+	Mostafa Saleh <smostafa@google.com>,
+	kvm@vger.kernel.org,
+	qat-linux@intel.com,
+	virtualization@lists.linux.dev,
+	intel-xe@lists.freedesktop.org,
+	Vineeth Vijayan <vneethv@linux.ibm.com>,
+	Peter Oberparleiter <oberpar@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	linux-s390@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	Takashi Iwai <tiwai@suse.com>
+Subject: [PATCH v2 00/10] driver core: Disable driver overriding by default
+Date: Fri, 20 Nov 2026 12:11:01 +0100
+Message-ID: <cover.1795171088.git.u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -86,44 +162,110 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4896; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=zb+igsuXLt8tOTuUjhzAr7HaxCaZLq4II70BN40Br9Y=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBrACrJx1qga/LvoqPeQ2w7AGsIzkvZ0u8Ei7ilD OnkWyRDOleJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCawAqyQAKCRCPgPtYfRL+ TrT2B/4h+7Q3cE0LlxcXdMzSjo72DibWSV5sOQkmoVdvDT2jirOpWioUU86bki4NAIk6Z4fKuAQ Tq67UAFcdu/x0sb+TsWnSkdYqWbFXP1E9qqHzS6LbgG2Wo9AfXLnJRQPoIkCW5R3i/w6jmyDLiI LkWjw6qUO85o5cf3veZf7uvTVs/F1HlPcGi5H2XR8SEvtsTQoNcOqyDD/XO+JfY5VRim2QTygzC /LqpSYXX2fMI/PZcft+vtXeHkKEsua161Yxgcwt3mnXV1cWuUQhOgqkI5MNgrbn/8PHF60B4GWC cbYFOHiY7+15odYG/kF7YqO0HOLOodN9ndNTOKA9GdiXGD/D
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <19c3745a-6308-46ff-bb37-3acc88fe22e2@baylibre.com>
 
-Hi Clément,
+Hello,
 
-> I don't think SCMI itself introduce instability.
-> It only defines the protocol, and each firmware choose its ids.
-> Could you tell me what you mean by instability?
+here comes v2 which addresses the review feedback I got for (implicit)
+v1. See https://lore.kernel.org/linux-kernel/20261116110853.3418077-2-u.kleine-koenig@baylibre.com
+for the discussion about that previous submission.
+ 
+The objective is to deny force binding a device to a driver that isn't
+prepared for that. There are many drivers that run in a null pointer
+exception when this happens and only very few drivers are supposed to be
+used like that. So the first patch implements an explicit opt-in for
+drivers and denies other matches; the remaining patches implement the
+opt-in for drivers that rely on it. This makes it unnecessary to fix
+individual drivers to explicitly refuse such bindings. See commit
+1e50a0349012 ("iio: adc: mcp3564: reject devices without match data")
+for an example of such a driver-specific fix.
 
-Let me try to reword:
+Changes since (implicit) v1:
+ 
+ - Rework parameter parsing to just use `allow_driver_override` on the
+   kernel commandline
+ - Add review tags
+ - Add patches by Alex Williamson setting .support_driver_override in
+   pci and vfio drivers
+ - Add patches for uio, spidev and a few more drivers setting
+   .support_driver_override
+ - align wording in Documentation/admin-guide/tainted-kernels.rst with 
+   tools/debugging/kernel-chktaint
 
-In the past, we wanted to support all kinds of firmware. Sadly, each new
-firmware introduced different IDs here and there. So, we came up with
-some stable IDs ourselves and mapped them to the IDs per firmware. This
-is a n:1-mapping of firmware IDs to our stable IDs.
+It is sensible to merge the driver core change (patch #1) together with
+the individual driver patches setting .support_driver_override because
+with the driver core change the driver override doesn't work any more
+for the unmodified drivers (unless the new kernel parameter is provided
+and a taint is accepted). So I suggest (once there is agreement that the
+patches are fine) to merge them all in one go and provide a stable
+branch in case a driver was missed to be adapted. I can create such a
+branch and ask Greg or Linus to pull it, or Greg can do that.
 
-The support for <n> firmware versions got serious opposition from
-upstream. We concluded that supporting only the latest firmware will
-make most controversial discussion points vanish. So, we now have a
-1:1-mapping of (the latest) firmware IDs to our stable IDs.
+So if you're the maintainer of one of the drivers touched by patches #2
+and later and assuming your ok with that patch, please provide your Ack
+(plus the required coordination if applicable) for not merging via your
+usual tree.
 
-I guess this is what Geert means with IDs becoming "stable". <n>
-firmware versions might return <n> IDs, but supporting only one firmware
-we get the same "stable" ID from it.
+Best regards
+Uwe
 
-Sadly, of course, with the next firmware update, we still might get a
-different ID all the time. So, not stable in that regard and we still
-need the mapping :(
+Alex Williamson (3):
+  PCI: Allow untainted driver_override for PCI stub drivers
+  vfio: Allow untainted use of driver_override
+  s390/vfio: Allow untainted use of driver_override
 
-Yes, this means the driver is then tied to a specific firmware version
-because it only has this mapping. Not nice for a user. But we didn't see
-another way moving things forward for now.
+Uwe Kleine-König (7):
+  driver core: Disable driver overriding by default
+  uio: Allow untainted use of driver_override
+  spi: spidev: Allow untainted use of driver_override
+  clk: imx: scu: Allow untainted use of driver_override
+  remoteproc: Allow untainted use of driver_override
+  slimbus: qcom-ngd-ctrl: Allow untainted use of driver_override
+  ASoC: samsung: i2s: Allow untainted use of driver_override
 
-Was this understandable? Geert, did I miss something?
+ .../admin-guide/kernel-parameters.txt         |  6 +++
+ Documentation/admin-guide/tainted-kernels.rst | 54 ++++++++++---------
+ drivers/base/bus.c                            | 51 ++++++++++++++++++
+ drivers/clk/imx/clk-scu.c                     |  1 +
+ drivers/pci/pci-pf-stub.c                     |  1 +
+ drivers/pci/pci-stub.c                        |  1 +
+ drivers/rpmsg/rpmsg_ctrl.c                    |  1 +
+ drivers/rpmsg/rpmsg_ns.c                      |  5 +-
+ drivers/s390/cio/vfio_ccw_drv.c               |  1 +
+ drivers/s390/crypto/vfio_ap_drv.c             |  1 +
+ drivers/slimbus/qcom-ngd-ctrl.c               |  1 +
+ drivers/spi/spidev.c                          |  1 +
+ drivers/uio/uio_dmem_genirq.c                 |  1 +
+ drivers/uio/uio_hv_generic.c                  |  1 +
+ drivers/uio/uio_pci_generic.c                 |  1 +
+ drivers/uio/uio_pdrv_genirq.c                 |  1 +
+ drivers/vfio/cdx/main.c                       |  1 +
+ drivers/vfio/fsl-mc/vfio_fsl_mc.c             |  1 +
+ .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    |  3 +-
+ drivers/vfio/pci/ism/main.c                   |  3 +-
+ drivers/vfio/pci/mlx5/main.c                  |  3 +-
+ drivers/vfio/pci/nvgrace-gpu/main.c           |  3 +-
+ drivers/vfio/pci/pds/pci_drv.c                |  3 +-
+ drivers/vfio/pci/qat/main.c                   |  3 +-
+ drivers/vfio/pci/vfio_pci.c                   |  3 +-
+ drivers/vfio/pci/virtio/main.c                |  3 +-
+ drivers/vfio/pci/xe/main.c                    |  3 +-
+ drivers/vfio/platform/vfio_amba.c             |  1 +
+ drivers/vfio/platform/vfio_platform.c         |  1 +
+ include/linux/device.h                        | 19 +------
+ include/linux/device/driver.h                 |  2 +
+ include/linux/panic.h                         |  3 +-
+ include/trace/events/module.h                 |  3 +-
+ kernel/panic.c                                |  3 +-
+ sound/soc/samsung/i2s.c                       |  1 +
+ tools/debugging/kernel-chktaint               |  9 ++++
+ 36 files changed, 144 insertions(+), 55 deletions(-)
 
-Happy hacking everyone,
 
-   Wolfram
+base-commit: 7cfbf79c66c63e807ea452abf0546e6f6d6833a6
+-- 
+2.56.0.rc1
 
