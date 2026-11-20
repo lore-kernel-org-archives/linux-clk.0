@@ -1,79 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.175
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795209467;
-	b=ByApow7IJEcA84NA0Zd3ORuYADEBlal2a2D4wQsH8oty2DIpSKD0FRvsSl7gjoQWE56J
-	 A+1tH4PXH+IoHazrVsFz9w9gi2q9zeDqk+VDSmVYv8XlgS17DJY0h1QxAMaJeI8OKGgsW
-	 BJUupWL7vwkEyjuRIP1MSHnBNyLs3Nr5Mgbze7cKZTuFe8p3mwEkwpCx8kNKhC2w+JX4R
-	 QU22c07rSmVWpZdiCAHCoJf9Rv8/aOEzaH2Tp8M5FJ5VbMWjiN1SeaW5gXv/F/peupfkT
-	 la0r2ISzKKnfTxgg9FeWO+vwjb3v1OlEtJ27b+sg0hmlWeHF/AqWvgS6FSEm6uZOmYg==
+	t=1795210300;
+	b=m0xM1RkIvKTxb/Te0SRq6ino2q6MyhxH9Va+hZ+RrI12Y3Eg8ywoENEpu5+x7ChYJeH0
+	 uLO4/mBit86q6inrO6lmrlCk+ONuXHexqqrjcARCI8ptGUyDeToY8DnLaAhdpdb6uHZ7S
+	 6tiYor+2xCq9r7VgyKGwEhjTy7pHGqQuN5MIdTE4AxdWMvQ6wAWThIcM6aXV+MtAd40NO
+	 6ymO1XQdqJhnEsJEWtPWriVt3TJoo5ERaIu3ymG9oeUWq+KYvMnQ1J9C7FvxsZjDegaBW
+	 yeWDoV7cVCQSKUvuyKF88hvKFAS3boSv2SwJNCD003lubzxT4nxd8AlwWZoenTWn/7g==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795209467;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=RCiCQ+Hp1ZZQnxhUVfE+RgD9eMnE/2PonSrU83pyP44=;
-	b=roukgmdvjUJtz8A/MVr2bXQm89uYxwVmp8lP64eejp9+6f8xGNqWLR7bxqoWUKlsVMbw
-	 Jz0GWYgQZI3mjkhrgrVNSpLyT/OvJj3ZtwgaIWB94Rz9bMG1Nq5CHXt6cFN2zIE32D7Xe
-	 24lO1ycVIdpb8PdbADzNk6t2ZqoMT0YoSIJJVkpkfYdkpt6YmMdh11D5ER62jtxkfLwDm
-	 lMGzhhRpp8isMbzef63YXozdYtp2YbP0Lk0U0ZrJI8jBMhS4WiZs9tMXeIURc3OvPZ2n2
-	 D1k+luqx77s+PjXo4br1HMU70mt9mfIIV3ZQmLVJDBB0xMiWbzCxduni7PUKELg9fJg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795210300;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=26y+of0VW/d3qa/IzkivZULa62OBHde+4TVDHu/Ebbs=;
+	b=VXr4fXKfI+Lds3bzUp0utmMFGE0LXbXaxyatcj4GnttnzMXJ+dRfsL/eyc+jAzTHzvA1
+	 +2r0/tmczwCaHRbXLG9UiP5sMMMWF6/NW9UyhWwmkDdKyF4HP/8jkFwWUUWBdgyCxOhrq
+	 GKwPveAVVxfxJ+wzye+Y3AO/dzlvrFszmnebP1JXZ+sb3CAnkA3kwpUi4fCrqpjR7NEr6
+	 xV4J3050vRhyfK69EecaWa9pT3STD27YPTyw1NcvGLI95S54DVVywLDAhcfD8i3/4o4Ug
+	 PzRFmPpBmzq5V3AMWnboXlqA+GcWtb5PSF5D0uvAFGhbOSpiG+HopAbxF3ka08ttASA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=on65Uztg;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E60760A262F;
-	Fri, 20 Nov 2026 21:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=on65Uztg
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795209467;
-	b=tX5TXHclTUranHaB4WAc80XWpi/dJRfw9pUWx6HVlrQo7EF8bJ5AHOtblUra3Z8K2ZZy
-	 0ZiKJr4/bJqpygs6OLGEGUtMIeWAKrYrjn18srFVQaZoGzBIB/dHaVY28+zIpmip2rrdb
-	 yVhEERrPwZhYt5OIml0u0A+LIJR5pXmO4fo9bc+m/UoXiU29a0x1iyfH6SmQ087MGD7iB
-	 5jXKXGIXmyhSEDp822YibSvli3ljYu8HLckLdMihRr1I+pxBB50g6Maq9E5V92sgf1oMN
-	 ntqCgmFtCz28+5VyQ1QZtlec20t6UXCzhiGrkHWDMlR++S/JXVUTxh3//EjwKQ9ZNkA==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795209467;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=RCiCQ+Hp1ZZQnxhUVfE+RgD9eMnE/2PonSrU83pyP44=;
-	b=XO2qdrAmTa125X3Y3aSXmEevo0e9iK24X7q8NiSuD6oqc6wRwWNIPBL/2eBCZGTpmGaF
-	 soLYyi4hDM2UJLp07SDxv90AvmCCVTKCJbUTExtXgx8CUXQcm6APfhqo9Td08k0dDtTMB
-	 Ij3xEo0gQUjbs3RjPoHrXmvtq4A6mrEJ/vXFzWHmLsWbVdNk3Il5QHZKOxp98mehQeSTm
-	 hb/0gJvP3Q86a9LzTkaN3AsqcmzjrcoPSq77/nom9+YyCAlcp5AErE3TNmmvQC7LfykOV
-	 QWyZgUOuEv34kA0k58eXKv4aB9WHXJZ56+JkilZvC9GweD+Swrsy8s8flVb8HEU3z2A==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=owhm7wLl;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.175
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 686201F000CF;
-	Fri, 20 Nov 2026 21:17:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795209466;
-	bh=RCiCQ+Hp1ZZQnxhUVfE+RgD9eMnE/2PonSrU83pyP44=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=on65UztgRVfRIZT8jEGRZlPkAjDAzO8Dd5iwsNLxOF2Km0nifFnnRQ8GNxHokdu//
-	 JtKrsmMUMcceaAqYtfdr7w9Ql5FHHq7VBeykbplmBZ2pFcMmqp4/QnwscyRRvObJxP
-	 Xqsm3QNjtYWrPCkCz/StOup3EHxQEcxAtOEhfmMWdTp2hYnp5ByMS+5E5aI+9iBO7X
-	 8MmNabv408YkomUL6F/CGGF4+Ii53+8v3vZkB9wXNFc6941LwCTVCvtCcgmm7iiXhn
-	 MpFq5rN3AE755dEcBHyAEF/ohOFk8ODp9hlkdjQ8PJ1SGXWdHljsOUt3gg/58Kj9nH
-	 YR6IYyCFtqZvg==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id EAC014BA2D;
-	Fri, 20 Nov 2026 21:17:34 +0000 (UTC)
-From: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>
-Date: Fri, 20 Nov 2026 13:16:52 -0800
-Subject: [PATCH v2 1/3] dt-bindings: clock: r9a06g032-sysctrl: Document
- reset cells
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FD860A260E
+	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 21:31:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C0FD860A260E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=owhm7wLl
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3ab3cb83f54so1050091fa.0
+        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 13:31:38 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795210297; cv=none;
+        d=google.com; s=arc-20260327;
+        b=phzVV/O+FRzdJ+XaErS2HFflAMv1ij1rRnOIeAkSuMWdbQTXzKMOc3xUuDT5KaJLPe
+         CD1X4LqQvzlquaOwLOQgVk4uN8D+ZCDoUPmTIkJu9ZYo4BqlzBS4z8gp9yubrXqleRAS
+         FqQl0kAPiA2CaRR9wqHuQtJAhf1gi8NNrlsLUbL758vlv6QEQu3qqLyl20YC1EGn4cHq
+         lnyZ0ELtN6Qxd8rJEAEcHiqS6vuvdhDQA5yr86vJ8xHn7n6kDAqvdSubtL3M5OU2FEe3
+         DDIng/8Lm6FNQYI4YxALG21NKSNmZgt7Tm7ZrfzOGT1Ej8qnzFXHlga44bNtsjttQNnT
+         pOjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=26y+of0VW/d3qa/IzkivZULa62OBHde+4TVDHu/Ebbs=;
+        fh=lnLZOrWsWekF6YmsMKMwTDCQc3D0Nw7iAKYa0A3HHQM=;
+        b=Q/xYzpB6scktK7freAeBivfqobkMwdHnjQwThBkZVIDRs+X8d1jIo+CIH1aM3UpaQU
+         x5coZ0Qe1f9EaHgmctvzReCYgeyoDBLJB2i5HA0C9eP046PtCmnHmVxt+YScpqfI0YH7
+         IQK6DHPWIzdoExYKwxofcahQBwARH8AdBSPtfRVlY8qJ8lhvVnwYgRKfBOwzMcDX6MD/
+         UWskwvlIN9wCK9vWKX1+mZ+2zTlHW43l2WYiqAdI/CE3cZFRD0N2tnx18Tu0UYVxdwqU
+         YjqzScoLivJuigtORvHnaFHXwtsrGNoUyH0FqU8hhXK7jsu6se1afXD4yspTjfEsLoPw
+         jwPA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795210297; x=1795815097; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=26y+of0VW/d3qa/IzkivZULa62OBHde+4TVDHu/Ebbs=;
+        b=owhm7wLllg3l9s3Ng9CV1HrjwLj04k4mew4+Il/Z8w5k0GXizWUecYujWL4XpHDtMa
+         eS9MRCtEBZwwC8OdUWFwKPDTIlDgdFLHLZUfue/yq/USkW8/TiW1ko9/CoxPtSxP1A9D
+         D8MSFcWmlq6iHfxe/N4v0YRGxj23N85NQtLSVROCDnIzR4Uv318mpVWcVMo7jrrlABYt
+         YjadBn6OUuNuIFRnWiaLZ5X/eKMo7W3sxO+bCCWoKuFkljemHmv/yxy6hv/IR4N1kz5O
+         L3UPxcjApzNrfzj6wR8qTA9djgxz/M4AodemmINAcWB3TwhsliP53LE71qSquskMkxGi
+         21ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795210297; x=1795815097;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=26y+of0VW/d3qa/IzkivZULa62OBHde+4TVDHu/Ebbs=;
+        b=1hNKAVQvmy/978fXQxihDUrLqHfbu3U7/HhQTdP7O4LGvDGYVARP9spS8Rx2TlqHM2
+         LiT3BQtvOBo/gW4xoPt1JzQ/xEGyOU7xUsr+3XO6mq0zjGCvlFZ7VQnNaDClkrRmy7ij
+         Lch2iV2cDdURu4qYQ9K8u/VpV3ic2x7//UO+opJyL3HonrOovFjiRtHgxphM3M0kHuiE
+         JtfNC2672QVurumjjR0wd//dw3B1ZtUN0LpEXTeqlmK31l0mcaC7vHIgTsdrAsvQEn+l
+         1L2A0FKjai0qoD/xxEQTUvbpDJcPCqwilPTcdoYL7OXdrwbm+IGFIufCq0FK34x0QNtz
+         +3DQ==
+X-Forwarded-Encrypted: i=1; AL+hErFfr1JJ4RyxsQj9ZiOlMfASQLlCmAHogV80cKXA/8xnZ4lvanrPQQviMZeRf2Bx7x58ww70pjYcCWM=@vger.kernel.org
+X-Gm-Message-State: APuU4Z84AcquXMvPyUw/x9z3rhzyN7djYW0x/xXyuLQWKrNxBijTVBol
+	ws6fMq+dUKh/1sguYYYjpb/X2bEIBjYhiEY3zjyu7KwcXRtNABZ6T6S1pTaEH18/mj0oWmjXYTK
+	hTQeuSfXv26g4RIHBwrlROC/M7Z9jbZg=
+X-Gm-Gg: AZFdTZfDLzFJXl2iTNGwq7e+ugpE/nu9P2VX+9UmFyttEjnPWFyDiYRjX042bdN/wDu
+	tGleNkxXWwkjCaN7QyLHtPnvP1zOeNyQQQTsCyLTSKr3y5dU/4aaYuxkq0+QOlGsdQR0OyWaV5P
+	SrXA2xDOiku9zGJHVMQfEDxWujpiKhrG1Vsb1glvkeKPN2O9Id+eI7HtucMNW+beZY2Lk2gVVfz
+	1RxmtWB+MmtR5fZbBAZZESnJLr1n9XloG5GjmDLt9Q3hHQcX8WrXYatSxiszwm6lIPDtWkkyyfd
+	rj34UY8dUK/h4qnDSL5e0BBNZox+i/7QppTMZiVRNiVfAIAUv/t52+AYc+zvJG/r8LIucdhzIgI
+	OvisH/QirIgwQDZvofg9+uRwtY4hor8/hYVFVrPYtEyCTPwaJRw7C/xbjllom4z5khTjGiPMZtn
+	Jb5vi/Myy6/hnA9Byff8Pzn2Bm3rZkMuOX1WPkKFyhNwatI6bY3CaukSTsOl1mVU1yrESRUy5T7
+	WBpA0APjrKRxvPKeqvuVQdLLDCx+qwepkUOXRS1AgZm7tjvQ9v6k8I1HqTEs8YntnxgPrrk
+X-Received: by 2002:a05:6512:1320:b0:5bf:cf6d:ef1 with SMTP id
+ 2adb3069b0e04-5c1bc5767fdmr1687437e87.0.1795210296624; Fri, 20 Nov 2026
+ 13:31:36 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -83,88 +106,55 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261120-rzn1-miic-resets-v2-1-f1cfa678615b@reliablecontrols.com>
-References: <20261120-rzn1-miic-resets-v2-0-f1cfa678615b@reliablecontrols.com>
-In-Reply-To: <20261120-rzn1-miic-resets-v2-0-f1cfa678615b@reliablecontrols.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Kyle Hendry <khendry@reliablecontrols.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795209454; l=1778;
- i=khendry@reliablecontrols.com; s=20260813; h=from:subject:message-id;
- bh=WXf/BZr4yjg1xY6IIiwzikkQWZRk9snLw1UWfup0bNw=;
- b=bK05m5/mZ6wVusVvvi76q7xIAyyBGK1yE0z93i2M11e1QQinpO7IxqGPMM9MR/VGTMxKsvu1t
- xJwOPrhkijiDj4OgLclZAf0W4/MhgkopeuHF7HedOFSeQZy0UM03fNi
-X-Developer-Key: i=khendry@reliablecontrols.com; a=ed25519;
- pk=gbK6oghz3qBlBiaGCsEzALLOtj5VklmsuolHQNhDV5M=
-X-Endpoint-Received: by B4 Relay for khendry@reliablecontrols.com/20260813
- with auth_id=946
-X-Original-From: Kyle Hendry <khendry@reliablecontrols.com>
-Reply-To: khendry@reliablecontrols.com
-Content-Transfer-Encoding: 7bit
+References: <20261013-clk-type-state-v6-0-a5e9977b3509@collabora.com>
+ <1a1cb87df11.2c57f9fa237371.844135553238709982@collabora.com> <179519331840.3795820.8047048832159165355.b4-reply@b4>
+In-Reply-To: <179519331840.3795820.8047048832159165355.b4-reply@b4>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 20 Nov 2026 22:31:25 +0100
+X-Gm-Features: Aa3M54o4i_zALBjbkgtOxZes0dCWZ4jiHPCTwn8GOTMZ7mrp5N06gIycRXOv0PA
+Message-ID: <CANiq72nOKrAtct_eb7tjc9JFFpOQrN0=5bOyOZo1p4C+4U5bsw@mail.gmail.com>
+Subject: Re: [PATCH v6 0/7] Clk improvements
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Michal Wilczynski <m.wilczynski@samsung.com>, 
+	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Tamir Duberstein <tamird@kernel.org>, 
+	Alexandre Courbot <acourbot@nvidia.com>, linux-pm <linux-pm@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, 
+	linux-riscv <linux-riscv@lists.infradead.org>, linux-pwm <linux-pwm@vger.kernel.org>, 
+	linux-clk <linux-clk@vger.kernel.org>, rust-for-linux <rust-for-linux@vger.kernel.org>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
+	Maurice Hieronymus <mhi@mailbox.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Kyle Hendry <khendry@reliablecontrols.com>
+On Fri, Nov 20, 2026 at 5:49=E2=80=AFPM Jerome Brunet <jbrunet@baylibre.com=
+> wrote:
+>
+> I was wondering how the rust folks expect these changes to be handled sin=
+ce they
+> touch the rust/ dir. Should the clock changes go through the clock tree o=
+r the
+> rust one ? it is fine with me either way.
 
-Update the rzn1 system controller to indicate it can be a reset controller
-and add defines for miic resets
+The clock tree would be ideal, i.e. a lot of subfolders of `rust/`
+belong to different subsystems (the file is already under "COMMON CLK
+FRAMEWORK" in `MAINTAINERS`). The "treewide" Rust tree can act as a
+fallback tree for files tracked elsewhere if needed, but it is meant
+to be exceptional.
 
-Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
----
- .../devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml         | 5 +++++
- include/dt-bindings/clock/r9a06g032-sysctrl.h                        | 3 +++
- 2 files changed, 8 insertions(+)
+(The files will be able to move to e.g. `drivers/clk/` eventually,
+when we lift the limitations of the build system regarding that.)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
-index 26d94cedc871..70ccc315a10c 100644
---- a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
-@@ -36,6 +36,9 @@ properties:
-   '#clock-cells':
-     const: 1
- 
-+  '#reset-cells':
-+    const: 1
-+
-   '#power-domain-cells':
-     const: 0
- 
-@@ -56,6 +59,7 @@ required:
-   - clocks
-   - clock-names
-   - '#clock-cells'
-+  - '#reset-cells'
-   - '#power-domain-cells'
- 
- additionalProperties: false
-@@ -69,5 +73,6 @@ examples:
-                      <&ext_rgmii_ref>;
-             clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
-             #clock-cells = <1>;
-+            #reset-cells = <1>;
-             #power-domain-cells = <0>;
-     };
-diff --git a/include/dt-bindings/clock/r9a06g032-sysctrl.h b/include/dt-bindings/clock/r9a06g032-sysctrl.h
-index d9d7b8b4f426..e3059c50f7c3 100644
---- a/include/dt-bindings/clock/r9a06g032-sysctrl.h
-+++ b/include/dt-bindings/clock/r9a06g032-sysctrl.h
-@@ -146,4 +146,7 @@
- #define R9A06G032_CLK_UART6		152
- #define R9A06G032_CLK_UART7		153
- 
-+#define R9A06G032_RST_TS		1
-+#define R9A06G032_RST_MIIC		2
-+
- #endif /* __DT_BINDINGS_R9A06G032_SYSCTRL_H__ */
+I hope that clarifies!
 
--- 
-2.53.0
-
-
+Cheers,
+Miguel
