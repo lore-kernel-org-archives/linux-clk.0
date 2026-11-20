@@ -1,89 +1,85 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795192579;
-	b=yeOFNoogMVQW34NZN+TxLCPAYbvL+nouThOvroUYl35972i9OM0HkKH2ZlSq56iLpcnG
-	 wOVJ5/1qH+Ka4BjujrzA8g1vgiqZ5S8rJoSHXcH5KtMpHzEHaHeZmoyVufOnpzwHIm8Pt
-	 qSIOqjPZ+pPVpc1iwUNQoBY1+dudZyGEyPtbuY69cORwBDBLWroQHXVukZUgtxiYivhpm
-	 UieuSnngpqZuLo7VjVWFhaPxNAf5O7vhthpyccJcHci2NlnXbyOspMUPXXtNnwlSYG5xB
-	 Mmlzi5VAmZqQ2YDFYRQss6a3HQU7PeZXMCP/jL1UvDTGkkO3hcJaGN9SLFBFtYUo/qw==
+	t=1795193322;
+	b=tE4xr7/yx6CnPtZwf0SqN09qxU4JXssPgH/1soNFWk0e7UpUZDjuDpwYKDesl59pZHyK
+	 RDqbqEvZNqJZU1P/W+p2ONlnoDf6RrwG3aeZoRrcwboPOIM9n26CObHD2580zS8AK+5hh
+	 qgJB+GNuY0O0yONxfwUU1Uurl+NOlSuhrWBlErpThSOW+J4tx3BSWg/uicigNXdg6mCzH
+	 cSkifQc2LowfDu7356LXnxccbW1uSbyhlJVJeHl6tOt7dU1a/WfilmwP/AkvKyX/u6kVb
+	 atgt0YU+MT5j/1leOKe3H3JQYJzhPbsFjyWxslby84wVB5Pp/dK7ojbMgNabP6O0oGA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795192579;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795193322;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:From:Reply-To:Subject:To:Cc:
-	 References:Content-Language:Autocrypt:Organization:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=S9EqDOm+9yGN2oqvjOr/ElwRnZRpzarNDWQs/yelBOc=;
-	b=hhLqJtmhBxRTBHjAQjiwfNSNeysvtXq1i8hl21RoYt+bNwbWe8iNbkrUP/QFCSJINbpz
-	 wujB6VSBpSY5DxoI4PgIocmE7VKFm7fygx75HEafPg07M5WQDWINv8Lm3Mgfa+FcY4BGh
-	 EZrpxpHiAsEq7JoW59y6iAci6OC79Mf6RdQbisF26WFbKw9tXXPjwdJhYH2/BKDFTnQKu
-	 PzZ/QhiIfTwFHlEO3T3vaSii6PETRyMHHyleFcFaH2w6uDkmwFtuwYgfyGWzLEX5ed6+h
-	 UYmJ9mx5Qrh26ASIYD9EhSY/HqLzzlAyN71Lm2sxkm9YgpCz6vvJ54lVwTbK/hJBc9A==
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
+	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=bfyjauXkdda14TZQkJmia5dShZ8rR0trlEvtPbJzkjU=;
+	b=Cqitzr8z2JOtjKAJQLWb0XGNj4x6kWFLlYJASg+44gqZe1yBR0jPofxojHs9uTi7qbL8
+	 AvFz3QmGZTy6Rg6qygfgBlhbAkYBCRFyzE8fBMIAO9nMTC6L5ivab+aiUFAIyvfw9y4md
+	 P1BcYU1K6tSQN10W7WRLX2C105/DuQyIoKBeSMwkH88UZkJpIoCIHvL/GPqLOvM5rjZ9E
+	 eIJ4bzCfeadbtsQ/xrcz1cfZF2s4k1rNKkSl8WpoD9wTjYC9HM+SBHzZebbPZaW8CkJe1
+	 e7dqsZfHY9w11904gQM8eAXgbSTot+aRx4jRW7deZJRLM3Omr5uOYAEQGAtgind1k4w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=e8k2BilT;
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=RNAMJ6sM;
 	arc=none smtp.remote-ip=209.85.128.41
 Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16684606A32A
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 16:36:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 16684606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F91960A2601
+	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 16:48:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7F91960A2601
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=e8k2BilT
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a214c5c4c0so10127635e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 08:36:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=RNAMJ6sM
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4bb6adaf0f1so9815665e9.0
+        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 08:48:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795192577; x=1795797377; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:content-language:references:cc:to:subject:reply-to:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=S9EqDOm+9yGN2oqvjOr/ElwRnZRpzarNDWQs/yelBOc=;
-        b=e8k2BilT7XijSj3DULur05y6rfSJjuisVxNdu46fXnvxJGtJBBZf+dWSo4961ZO2l0
-         3MAW3doFFyiBx57LyDvYs3miVYOY5lrTMikypOxSO/aDbSZktxnxumrz5tdw+UPu9nz5
-         ZXtffIr74F7l5XqmIq98NUPEye/Dz7M+WPIUiFYD698yST00rF7VCzKdq4xg2ePTqpKx
-         Xw2Eg0RSlrMOeo7XrWG74eVbRmVU7EszkkNUxeGSmO8junIUtbKL08lh8+77YsU77lpw
-         Kv4+pzzbCMPUf0aqAQDcDN0Ob/DiWSD/oropcFuY09Dowftpw7XArzzu+Ny86GHGFJft
-         Xoog==
+        d=baylibre.com; s=google; t=1795193320; x=1795798120; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=bfyjauXkdda14TZQkJmia5dShZ8rR0trlEvtPbJzkjU=;
+        b=RNAMJ6sMUpkWN4HrB0XYJTVcOtjWWEYhH6d3S9pj85lhBPRg5KkeaWo1USMBh8nDxJ
+         w/2T2XYDMgVkyVrFeq/jl71c4n93hO/4Nc7iCIfX2OaYcsUU5pWUfNweZrU7lY4qEIxS
+         4eh9dpGdnLaPp6u/BJuIaSUEM9sKLBQrNTbenH1nsZTez+0/KglhUPE3Mx537/pB4xRP
+         8US4Tq4WX3HzsJOKtAtUGRlXjScW3SZXmw2uEC/7LSr2f9aIch+VfB/A7NqU30NL7hee
+         0gL2JYNXK9f/Y2bCnqnXnDCx6SIjdqdoRXZ4BKvTX66tKXa7T7/hV4E9yjYAFoJPIXic
+         WR7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795192577; x=1795797377;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:content-language:references:cc:to:subject:reply-to:from
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=S9EqDOm+9yGN2oqvjOr/ElwRnZRpzarNDWQs/yelBOc=;
-        b=RZc3h6Bmy3ktrbxF64DWFYgRPzLFgZGCBqLUp1z7VAwATkfgjB26USLXUlod2QFFqu
-         vFO+UTNmrqtGOuzsVgW+IqgZICketFJ0hLn3Jcdj4uC9TKfwyCDKfx6SbZda+6utTAO7
-         sTBVteaFy+LySrs6S9qXiOXjtJrEiPapK6P74SFwDTQWGeqkiodjFRlgKwq8jkaNalrI
-         OiNWoVQeZXRWcGSWfn6Lw/Xn2pcPjYnLJbwPdo+OT7IB/jOcrcYzfBLDnfR/zz2UYaWa
-         YjEdiKozU6qNPHmbqV409jv9vAHUo8uhW0OYtGGDZTDhRsio0SIqsuhqDY5WEdH/xGld
-         QIzQ==
-X-Forwarded-Encrypted: i=1; AL+hErGdoLl53Q1zolycIF405yFNt0at2a89tWPjNL/Z5tzL3AYKEoKoluaxM6PTpLQIrFPCXsFTTm8VNDI=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9uKWTz8fuzvmA5neh1odYhNtYWBs9ts2ZVJoQRoq2l737zxcxm
-	JWI4/flybvJR605yFKLATaoZq8cebs2xqFAE99K+Tn2/T1sCQprxkVfMmcfgqWS055Q=
-X-Gm-Gg: AYBFou0as1zfeCfcu+XZZhb1AhKgBbY5RLHVJOUjkThEZCAOPn7EI0V59mssr1zeNG6
-	zATrpaV5ab+jplIsfbweQGSzSRRu/hKEKbwtVDs/XumS+QOkc8Nw7nA6BHkluM707XWDR4eZaYX
-	9NxzD0iWCzT0m2TvOjbD4lhScIS55nRyhZbEiWbqItNMKyr287mvnXbihLuau1GYfCd7e6HqdF8
-	+jDhhcm2n9eTUU2x3hZbX2ZpKbpejTKaqkBf1N5DT1Cd+XODS+5Ifqvx/1aCf41TQs/idIiOCHO
-	i1KlzU5NW1OAPAWZwpWffPC4cxzU2YGvYpx/Q1Kd3IxxEM0e7m/4LIzumVxDaSJx17YmECw+PUY
-	vihsP+GJ8n+cr5lfsHu9fiJNfIy0Dv38tiS0OL/XupAdLzXl42bLY7zty5zTUieq5R1H/ds6aKA
-	8apuVcFHcvFLkDHvCAIqPSCra40EI8Gz5IYRBmjpnOt9A7L4fIx1M61vXsUcs26K9YhrM74an+u
-	pioh7rwfsFBPif2Ty696UbGdSMCs9QbAWFhzkD1A96crtDTotGSmaVV9+zm3gJrU07qLAaK1aWs
-	9u2ZIBhnKLtY2YY9e4a7QrPBrMKBsILxOMt//tMfSIESc7ed04aih5slFSNnWeoPtkc3Gp8+m2e
-	C7C4Uw3sY9Q==
-X-Received: by 2002:a05:600c:4585:b0:4a1:83f0:7c91 with SMTP id 5b1f17b1804b1-4bb8882948dmr81012225e9.18.1795192577228;
-        Fri, 20 Nov 2026 08:36:17 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:106d:1080:3374:165a:45ca:24fb? ([2a01:e0a:106d:1080:3374:165a:45ca:24fb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb884ab091sm139206125e9.11.2026.11.20.08.36.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Nov 2026 08:36:16 -0800 (PST)
-Message-ID: <07840e02-4cc0-4e90-aee6-5ed4b82f39e5@linaro.org>
-Date: Fri, 20 Nov 2026 17:36:15 +0100
+        d=1e100.net; s=20260707; t=1795193320; x=1795798120;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=bfyjauXkdda14TZQkJmia5dShZ8rR0trlEvtPbJzkjU=;
+        b=XH0y55K0YLEgL4h1NJ7aquLLV4HDy0+Mp2TGyUvetpVurPpn1neZKM1JbkYnxU29Ji
+         9fUrFfrbwrZbdX9Syh/MRnVcJESW0uz8iyxD0+gKSnR30zTxt0d/TwQqvpbnQitxv7Dk
+         OVH6CmjQtZQPjMTfQMp+at9e1a8UedsfNdtTeWpfugutuwh2zs0b+PDxJxtO6WD+7Dzg
+         9EolWgJ2UU1vQDpQV1t3nBRuPA+qHrhSUFi8zeMAFRjOEzpfLrDCPURk5dK5CgMqSeTu
+         I3zjhsokGRzFIQtHqsg6BwKnc0iiHXxtJP8xPkIzx4SU5wpcPHOcmfAXGIasCtAHsqnH
+         5lKw==
+X-Forwarded-Encrypted: i=1; AL+hErEhLFw50wU0YFS1yFYOXJpkBSzzyBQVLhUgQdkExZUfALd02R9HdLf5LV3X6ANL1STlCIeeUevjhd8=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9zlhLtLnSSjsaT9rouulau8q6omwtbbzPkUORtrBPHynSUZLSJ
+	dOIpNk/ivOMIeYt7Azo4a8i/Ac+GtVAuMEZLMtd0jJzVDLPC1gxyWvPFOu0Pb41UZ28=
+X-Gm-Gg: AYBFou3DNcMcvrJrNN3Au+T8F4fvoIiPx9Nn6HNFi/BVGDeLD8NL+oZ4gj48Udh4289
+	2LGRS8HX4jzdbxc6TdS4hTaJv5w+h1bG34bDRqXr/3l46t8b5SRBXOb++dtNvky/D+TJkEjsuZR
+	LIBV9KRNXSo+af4BDuytGR/h3WcuLDuroHJIn4UsaB50wpbK8sPe05OvgV31iJFjWNOMVNkr5wM
+	oP/lKn3weqjM+IwMQL2kajOKYtBc2asPjIHVETW5nfLFU1ob93p3SNTczs1Iz1CFYxp1yo3PVlN
+	4HjgysBzjp9Jl/IxPCiP7liQEXvUckTkAYenOioEEDExe/rtfrDBHsJAc8c/NRj8fJWmjCLqhNy
+	W/Hj44GiuuocYDFSBbyHKr0yZTR/vEOhk3W6zVpoM4Hq/YEUfkAEy1PZLcb2uCrrRzJbc5+cJMg
+	IvraZw4wuFWlS+NzX3IAg4b/VsJwt4gfoKZ1V/GjCQL9jGxxpxHk/fzA3vJEy67Xbfa9yyQKPxv
+	cAO9Xyih5AIYMGdQ44R+zMVQHtoO1RpdL6gzNKEgoVLFSv1JOd+deg0WJUziOokQFTV/PMyf7y0
+	2PuOY6HH+rfYEqFAIBIK/cEFAzS9DmYfHcie1O+vXc2HxtRm
+X-Received: by 2002:a05:600c:848d:b0:4bb:6b6b:fbaa with SMTP id 5b1f17b1804b1-4bb8880fd0amr81601005e9.16.1795193319985;
+        Fri, 20 Nov 2026 08:48:39 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb884c3063sm102415595e9.15.2026.11.20.08.48.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Nov 2026 08:48:39 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -93,83 +89,99 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH RFC 19/23] ASoC: qcom: sc8280xp: allow using the sc8280xp
- card with lpass-cpu
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Srinivas Kandagatla <srini@kernel.org>,
- Rohit kumar <quic_rohkumar@quicinc.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Konrad Dybcio <konradybcio@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>,
- linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
- linux-gpio@vger.kernel.org
-References: <20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org>
- <20261113-topic-sm8650-el2-v1-19-5183f6aab9fc@linaro.org>
- <179518897124.6016.130748488943015768.b4-review@b4>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <179518897124.6016.130748488943015768.b4-review@b4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v6 0/7] Clk improvements
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Michal Wilczynski <m.wilczynski@samsung.com>, 
+ Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, 
+ Fu Wei <wefu@redhat.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Miguel Ojeda <ojeda@kernel.org>, 
+ Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Trevor Gross <tmgross@umich.edu>, Tamir Duberstein <tamird@kernel.org>, 
+ Alexandre Courbot <acourbot@nvidia.com>, 
+ linux-pm <linux-pm@vger.kernel.org>, 
+ linux-kernel <linux-kernel@vger.kernel.org>, 
+ dri-devel <dri-devel@lists.freedesktop.org>, 
+ linux-riscv <linux-riscv@lists.infradead.org>, 
+ linux-pwm <linux-pwm@vger.kernel.org>, 
+ linux-clk <linux-clk@vger.kernel.org>, 
+ rust-for-linux <rust-for-linux@vger.kernel.org>, 
+ Boris Brezillon <boris.brezillon@collabora.com>, 
+ =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
+ Maurice Hieronymus <mhi@mailbox.org>, Jerome Brunet <jbrunet@baylibre.com>
+In-Reply-To: <1a1cb87df11.2c57f9fa237371.844135553238709982@collabora.com>
+References: <20261013-clk-type-state-v6-0-a5e9977b3509@collabora.com>
+ <1a1cb87df11.2c57f9fa237371.844135553238709982@collabora.com>
+Date: Fri, 20 Nov 2026 17:48:38 +0100
+Message-Id: <179519331840.3795820.8047048832159165355.b4-reply@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2089; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=4z3/sdMgR1NP7DfsDZx0tYiu2dW9UOhvaq59u1rg0JU=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNkMlc+2Ksh+kZXIPh/3rDDW4Kn27hqR6Y15t/Vndc9nY
+ JL6uuFhRykLgxgXg6yYIksNd7X4O0mtL7Om69yGmcPKBDKEgYtTACYSOYfhf77/s+M/3jXtP6oy
+ 5+cRhk+hnv9r4q4aztv7e7Xt8cINxx8zMkx3PJygYGn8ecrZdJeblhwduyRv7OkO5akz19EKybu
+ wlhsA
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On 11/20/26 16:36, Mark Brown wrote:
->> Add the missing DAI ids and set the ops to allow using
->> the sc8280xp card with lpass-cpu and keep the sm8650 sound
->> card bindings working with either Audioreach or lpass-cpu
->> interfaces.
->>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+On 2026-11-11 13:54:01-03:00, Daniel Almeida wrote:
+> Hi all,
 > 
->> @@ -533,12 +540,11 @@ static void sc8280xp_add_be_ops(struct snd_soc_card *card)
->>   	int i;
->>   
->>   	for_each_card_prelinks(card, i, link) {
->> -		if (link->no_pcm == 1) {
->> -			link->init = sc8280xp_snd_init;
->> -			link->exit = sc8280xp_snd_exit;
->> +		link->init = sc8280xp_snd_init;
->> +		link->exit = sc8280xp_snd_exit;
->> +		link->ops = &sc8280xp_be_ops;
-> 
-> This now applies to everything for all cards, that feels like it needs a
-> lot of care?
-> 
+>  > This series contains a few improvements that simplify clock handling for
+>  > drivers.
+>  > 
+>  > Patch 1 converts clk.rs to the kernel-vertical style for imports.
+>  > 
+>  > Patch 2 replaces OptionalClk with Clk::get_optional(). There is no struct
+>  > optional_clk in C, and Clk already allows a NULL pointer.
+>  > 
+>  > Patch 3 implements the same typestate pattern that has been used
+>  > successfully for Regulators. This is needed because otherwise drivers
+>  > will be responsible for unpreparing and disabling clocks themselves and
+>  > ultimately handling the reference counts on their own. This is
+>  > undesirable. The patch automatically encodes this information using the
+>  > type system so that no misuse can occur.
+>  > 
+>  > Patch 4 adds guards that prepare and/or enable a clock for the lifetime
+>  > of the guard without consuming the Clk, so that a driver can keep a
+>  > long-lived Clk<Prepared> and enable it for scoped sections.
+>  > 
+>  > Patch 5 makes things more convenient by offering devres-managed APIs. This
+>  > lets drivers set clock parameters once and forget about lifetime
+>  > management.
+>  > 
+>  > Patch 6 adds ExclusiveClk<T>, which holds rate exclusivity over a Clk<T>
+>  > in any state until it is dropped.
+>  > 
+>  > Patch 7 uses it in pwm-th1520 to lock the clock rate for the lifetime of
+>  > the driver data.
 
-Yes I need to figure out how to handle that, I hope I can use the same
-card driver for both use-cases...
+Hi there,
 
-Neil
+I was wondering how the rust folks expect these changes to be handled since they
+touch the rust/ dir. Should the clock changes go through the clock tree or the
+rust one ? it is fine with me either way.
+
+I've added small comments on patch 3, with my understanding of what of what you
+are trying to do. Please take them with a grain of salt. While I'm eager to help
+rust grow in the kernel, I'm definetely very new to it. It is very likely I got
+things wrong.
+
+If there are pain points regarding clocks with Rust, please feel free to
+reach me or Brian. We are happy to help if we can.
+
+Cheers
+
+-- 
+Jerome
+
