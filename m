@@ -1,102 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.127.74
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795162610;
-	b=SGMngM1YcTNMSusqja2qocddaPIz6OXE7svrFrj3kiee/W6z17CK5l3y/dQz+jG/IaEB
-	 BsvL9p0/2PMX+EzdNUJdi5YB+sFobkaChQ7qgWgNp+IgfrqK2FIjpCgWc7TN2RyHopAJD
-	 /r6nCrvSsoOULRiE19abPNHFJ8EzSHTrXKVMvAVyAsY14aLRP4PPS645cJeEH6tSW84OY
-	 XT3a5EpAYuKhFqKHn8M+DYGh1/s1EGC9beezYSQFB9bVqaA0I3lDJL1XWbvtPfUdvyRIE
-	 7VPkpF0DLPu06Bat7a52w0NOTYG76XK9zUbBMZ7d3pQreuvGxgg62nH70zTJgetvZwQ==
+	t=1795163048;
+	b=W7+wy6jaFnUF9J3nZijCJvnnoRsS9g0zYoxZFpy9Lej7kUFKw19TOtyIfHf0v37xyiOc
+	 dNRWMDdvetrsFxdQ1Mjsm4NUVa/4iIrWLH/qTR8Bmltgn9vt0XaAq6JX8mzfeNyMT1PY8
+	 W/2VMGFL9+qtahWdZfydXZik34gdecVk1VxNZcOCKN2bMbN27WqZkpWRZAeHNxnVCS2yJ
+	 dkxg311CWTdKMeHvP3FBXg+tbAHXjY7RHYCWXRoa8kZUUxI9NanAqXL/365acBXZpIDDJ
+	 gUhEHeUGEiXpaa1yshdChlmj68vdE7n18J39zFzgskM6J1aKKx0GR0VumSnKZTR66Gw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795162610;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=DTrRBBbOjFLAct0zJAH34zNdYPnC8LWnjifmPkUTr3s=;
-	b=sUL/8cb8u6wUiUrjLCuiVkv5L7rVCQHzsE1LJkeCFkrxb+U0hF3OtUEP0fIf+ycbFjwz
-	 NakuglMa8C3wfK8lpQmSzLwmWmX0SxcBatMbfo96LsuvKIh/s7JrK5ObPu5t9TT81VUuc
-	 1MZO2wAUfBwpJRHeUDbm6l/fkZAG0E6Je7MsU6dbs7/3qrTIfuEVSfoSF7aur52t+MFMj
-	 IngrQyDzQnaCNIosbJHLquajisM1GYUyd12JnKBTouQfoCXOgrkB8FlltYsittUoioUNy
-	 JSqhjzt5Gdw14ujMYCIq5osbWxBn2AkvZhduNX103zwvIVJqFYdQckBSqBq4cMNOIfA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795163048;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
+	 User-Agent:Subject:To:Cc:References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=vZtc0wjdiqQxlJGkIiZFhr+/5iPZbOkIXndqBMxjsLM=;
+	b=Ln9rLOLzbqduCI74UOt3tmUbLMsntnZUlnsHeD5djvN45Yv5Z4GHVteg1CYtJdKlCBMq
+	 e3GEIXoV61uLgHhdovGgSem/hXa7lm3yCB6dSuI1Z4ugem5b177e9gJdBf3fsWqJ2ZWhy
+	 AIfJGQ98W2lId4x0EmLwXYCU8t3VrPGiLCQ5HOPuIOoLvct54FjqzTfEEkBm3dw6+NPwy
+	 UH1EhsXvvFUHGYxXSsqnv9h+b5O5aSOlh2tK+4luY7Z/tWiRIJOkgzxbDR0AaRejMdJ/a
+	 oyGKpWZ0U2tNUYsMNpiOWdckzFIto/4QDkPDcKvYHFVa19RmfUIyFmj14zqQvaQPymA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=OidJyP58;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.217.41
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=amlogic.com;
+	spf=pass smtp.mailfrom=amlogic.com;
+	dkim=pass header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=H+KipDz4;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.127.74
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023074.outbound.protection.outlook.com [52.101.127.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D655606A332
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 08:16:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7D655606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3507A606A320;
+	Fri, 20 Nov 2026 08:24:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3507A606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=OidJyP58
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-7d2ca055399so181992137.3
-        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 00:16:50 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795162609; cv=none;
-        d=google.com; s=arc-20260327;
-        b=XHvuxj1u7Ui/yW4TL0yHRDMr6uhx6d2+/0oYYY+V3L5IgNA9lI2AIPjbeaaie4+JK9
-         WzMYESVokzTqz9T02sC4V60JhjWa73KsxT7yOEbEAiE2viPQxUgVjk844nxTSCU+ExI8
-         pbulg8+ruB18CSvyCTa9PnckQj2MhBojEDBD7ISK1yxgnZHXeeHV/4cNl+2jwyIeBRcL
-         LeuVGQKC4prhiFy0xCII7ZLb9aENDDB6xLgfib8xh7GcGwtdlQvZCa76PQGNvbhS4MPO
-         QaAN5rAGs7iCLuO72ykaR18mpeGWoy6PxZ70SE4eaYekAPMB3rp33hsugcp5E0TyhwqJ
-         Xrhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=DTrRBBbOjFLAct0zJAH34zNdYPnC8LWnjifmPkUTr3s=;
-        fh=ZPJPV1BuuLq16qJaAp75Os213eKxwbazWLdUizLRjqc=;
-        b=lLQRKyg+1WiS3DZJWNDFAom31wc6D5beSpjhzzzNqKn3yy+loMmloV/tvHoKwT9oYL
-         fw8SWoS++3HrzEf4kC7Bz6Fk9G4Np8dUuj44DvZ/wfFHbMfAzQnk4w4PZMPsHa4WjRpo
-         uWEYi4tAVZQR6xKGXPJZKBK5yrW3qz9/VBugUE7/raj6l7JG+3a/GQ9NW3WWfyBWhh2A
-         eU9Bs3rqnfvauIntCHgQ6q82SV/HEzYmijq/UPO2Px6h0Q/XvgltHVEiVHXVfCi0C1Jy
-         Dj/fmm67D1EWAnT+HDNkYFMZtz+H39zJv97X62roFu4NMPhH25tPE0g0oqAUNTAN3tTg
-         4raA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795162609; x=1795767409; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=DTrRBBbOjFLAct0zJAH34zNdYPnC8LWnjifmPkUTr3s=;
-        b=OidJyP582FX73SpilfBJrOmiXhxrJOYCltwuoU44dARQd6knYJbLoNgzzr2QZ/AjoL
-         HGCKHEEsI3bmshiQlfpEnTfkM5hcAJsX9eANMoJEg9e3CY466eqHmlenferkg4xMEhkc
-         xpOd6DLKN5qeg8dTs+yv7+uyQgIAz4Xzk2X/hfkkSTc67c9yvB0IWX/bcw/vN7UF06Oq
-         KNFPsahTkSsJrS8+tZFSqCtMwRLOddaXqTkAsYE3tFmraWqdL37SQVgkUcjqC/2YhYmQ
-         4AbAtUlx78qBQjO5gKgsyULaQp3LIrBnyCzG+hBL4bE867SrG+nklbMutTFgtKsdHJOz
-         IZXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795162609; x=1795767409;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=DTrRBBbOjFLAct0zJAH34zNdYPnC8LWnjifmPkUTr3s=;
-        b=eiAcUAly6OfTz4OkbUYtQulSfKN+LDgNp1SQZJfoEXoiECYFlV8ivxHayq1Q5y3QlH
-         +bsVkcMITBEdh3diMTS1PDYFMTKYSXcot+PTeIRktLeCrJLCMziLcceJnVS5eNiBkaqM
-         Pig2LzCpLPPABH6TcIv6eA3NSZyty+ScPg7YneTyxDpa7E13AmKfcmcCzswzKzqgejfs
-         8wnzXPP0Ei+iLbdwzOAzXipEUTxkd4BnryaeKn/7wThrY0lgueXWryZUXHUw1PxRCyk8
-         5JIwx5sjDXvEZk5ZPdfaRbNmguYRibARV0IVxEtxV0DZ+EEnP2AaBbyZnI9mJzmk4Bxk
-         OTHQ==
-X-Forwarded-Encrypted: i=1; AL+hErFAD01pQof+wSYKDZOFuDcx2vywZ1s7hzRz0qcqwzHiecYe+C66ZZV2pS3QggJfi+bQvuxptA58rSU=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8oM/w2+StnVDqK+Fb0xJy6y3x8Rm3C5e9eFQR8wzl7bjYkABwP
-	gp6h9Mhvq6ZS/wEgqoXAP0m0SNnGnnwkjDeNqwaznPS1PgYcJshF6MrvAknlCFzmR3+zlqHBzCe
-	3GPV8pXIwWtoxSygDXxTwsTQ47t5tWyI=
-X-Gm-Gg: AZFdTZex/Kn05hyPh0t+Mxy/O7Y+9qhNxdLwUfdQNhv9PLaKJLWzTrj8bfN6RcQSahJ
-	oGNPPCRmmiN7bPPBwi7Ze5ro1ev7PTZLqKxjiUdWyHrRJ+ajBpN6UJvmZ5GQdoChbLxsNv6iRef
-	+FimT0D+JFhoJ810eXQ7yX8QE1sxYf2arQ5VOnxnJDztc5HcGigQoDw73QuKOt42C+z4VT8ufnB
-	6c8OLmN8MkyTJTxc2aosskBr7VFkqq4Du3OQjAhNZiybVDwkNBfpuEJZ0zFSDXsbnMmUL+xVlOe
-	KME9vultglV/nUUTe8uyF86AZ7xLIm04BhZHx6KELD06aitjmPuq3l1KzDTJrnK0qYI+XcdZeAU
-	dgpHhgmvY87a486q3pd2aTD9i73WbrfWFvobgL6pL32N0Gtca5Hpf36Xu22uJZCjQt3a9Wqa4I5
-	JUWzIIhPtQ54Z1bQQH9oInkNLbpQ3BOtG68mhVVpnwO9YK3C6bumdpoUdwU01qmop7A80PLC5PR
-	f8tTtwUyGMgbQNIAtsjuPtT3VnjwA==
-X-Received: by 2002:a05:6102:5cc8:b0:7c5:4da3:aefb with SMTP id
- ada2fe7eead31-7d7396b4513mr725084137.34.1795162609310; Fri, 20 Nov 2026
- 00:16:49 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=H+KipDz4
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=woMJM0s5Y9zMGW5LAghiXZI5n4Ou0GqTnBVhByrVls0jAr8+5k/FTefz/pOjw0wM+I0iX9paTGUr/9KeI8OJYgWPmMmlnFK876dmncLaZp0H9b9N3kh8qwIVpJg/snnGWn6QQWj+ROMaS/Kap9l4fy4DRRcWkQatYjAM0waivUh5P7bDOT8XUsGTA1qOzsw4Fcx/395SHSRmj4mbYt1ugQDTDA6hdqHEUsJBr0oJZE6n+e20yrkm+Qn98EmmCdTsJuCeqfN5a/9ZF2sNYKP4kR93wW8SK/XSPRbpUrq9alqc3OGRbqb13TzeSXCUYHZ0ztL/xfiQI7RSJim2mZerKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vZtc0wjdiqQxlJGkIiZFhr+/5iPZbOkIXndqBMxjsLM=;
+ b=XIc0oMVelTc3i/fbyXmg0z6Qn3uXfh2LTNrY9Fm+h7h+D5QVN9iksZUDEFO9sOmOIy3ttpRE7g8b26mKqCSERnA1sQofdlzH1HFwClUfGYBbyw9spYDAm/frCk7/l48gfOkRaEG0lDYg8BWUw7gUaMl7NO0SXPHbk7v4rI+SQ0k/WIBvYkWRiTUmCi3bnwEfCX2LTyloRAoI86BK1YMO39qpho5tbuNxZPHMOpcIARau8mBD0gyUWqVox6neFMrpPqPuQktb8AiCvr7yWTPhbU9FpRkrrA4j55Dgm+54utkeuHxhcjhbmrOZPyXJL1TmLHFmluV0jqRA59A2xd3EzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vZtc0wjdiqQxlJGkIiZFhr+/5iPZbOkIXndqBMxjsLM=;
+ b=H+KipDz41wqfW0diCBHT7bGtZC4EUDnY8vdcoPL8LZbc0+ErgMslt5U2r68z92SnCcAl8tLX39LsldkjPar8uBY2E544vL00UZ32xbaDEgoKPVsYahfgaAaQfrOKYL4Ek3SZQtPHpROWVZB+F1WjLg1TelYRBxVZOkrRdfuL6IzGE9Oh0RAbr1m72FcIcunESAvxDia31UD3f6jLw0CZ/bog7cM+QoCkKNEx2Fe1Jg/WkAzgt5hIAlykecqzUsZa0G8/DXmaFN50OiENsMo73vbGQhcbReCCRbGXv2y6IPNs3QAMywTZHkTzX11yiv8j8BaNQ5xpCEID/4FaNAMGaQ==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from KL1PR03MB7149.apcprd03.prod.outlook.com (2603:1096:820:ca::7)
+ by KL1PR03MB7489.apcprd03.prod.outlook.com (2603:1096:820:e6::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.10; Fri, 20 Nov
+ 2026 08:24:03 +0000
+Received: from KL1PR03MB7149.apcprd03.prod.outlook.com
+ ([fe80::2f06:12a:fff0:6506]) by KL1PR03MB7149.apcprd03.prod.outlook.com
+ ([fe80::2f06:12a:fff0:6506%3]) with mapi id 15.21.0639.011; Fri, 20 Nov 2026
+ 08:24:02 +0000
+Message-ID: <f70ae730-57d8-4b94-b1c1-d1e247f0c192@amlogic.com>
+Date: Fri, 20 Nov 2026 16:24:01 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC RFT v2 2/3] clk: divider: add CLK_DIVIDER_INVALID_ZERO
+ flag
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20261029-meson_refactor_n-v2-0-ff4ac74e527b@amlogic.com>
+ <20261029-meson_refactor_n-v2-2-ff4ac74e527b@amlogic.com>
+ <179390104085.2573818.16461908615505096359.b4-review@b4>
+From: Jian Hu <jian.hu@amlogic.com>
+In-Reply-To: <179390104085.2573818.16461908615505096359.b4-review@b4>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: JH0PR02CA0021.apcprd02.prod.outlook.com
+ (2603:1096:990:76::17) To KL1PR03MB7149.apcprd03.prod.outlook.com
+ (2603:1096:820:ca::7)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -106,79 +106,150 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261021-submit-sun50i-h616-apb2-clock-v1-v1-0-7b857ad1198d@gmail.com>
- <20261021-submit-sun50i-h616-apb2-clock-v1-v1-1-7b857ad1198d@gmail.com> <CAGb2v642E3bDZ60_3oA7CN=hOVGn757RwfVaZWXvRSuWoo5kag@mail.gmail.com>
-In-Reply-To: <CAGb2v642E3bDZ60_3oA7CN=hOVGn757RwfVaZWXvRSuWoo5kag@mail.gmail.com>
-From: James Hilliard <james.hilliard1@gmail.com>
-Date: Fri, 20 Nov 2026 01:16:38 -0700
-X-Gm-Features: Aa3M54opK0HsAqJ5IKoxodsp8AVX0yGJFnC-piFBxQLeC7dh0z1JF0IENGFsfTk
-Message-ID: <CADvTj4pkgZj77566ni_ifFJODRC0XvvOddiOij4kGRxoseBqfA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: sun50i-h616: export the APB2 clock
-To: wens@kernel.org
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR03MB7149:EE_|KL1PR03MB7489:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1993907a-1d17-4a2a-7d14-08df46dfa27d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|7416014|376014|366016|1800799024|6133799003|18002099003|22082099003|3023799007|11063799006|56012099006|4143699003|261026121527099003|261022075727099003|261102123227099003|261021121427099003|261009223027099003|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	CQO7d4eGBtkfMCxFLibwDB1joXyJsOfEICJwyB0ibQw1R+QSN7E1VgiTxBxSRnfaDOJMQqU5jd5vetdtr8xcMddI8volghxwA3uUWDpZTgWSX5mNsbBE99daI39iVAsgLXBIzMSfVUmgdiSqEC6YhGzHh9SCUcVzv5486s/UkykOgsVYKioB/1rPvwoNNCCeZQbIq1dLUzmV7yI3efirGmw2DjrUMo2o3rcbnl/K6BGJLnVh9k3MSUTbPHgYWWLkYMzc2bcy8xT04yKxiPc7ORRrzfHIwGHd70tO8xSynZlIo03y7dt4BgIvNR+OwtVk9VkG5+gHBXAlCqIAE0nO/4lL+RvaFC1jj4Bh2Me0uYyZbZWlZkmgH8eh9rwH2ZunUCZf+9zSaWdrRqA0Fw4mb01uCmlUSZrHW7HOg0O1zDQBVoyJuQfvOl8+tSuEgyuGpX8V8rkOeLMh6yVEpnRI0VeNgvzrHCK6YCnqXYoD2PJyAbuTIyN/ctw6zWx63NGqnnMzIST3XwcybZSDNtUPLKD68hTtFr0hGUyZ254+28wo0S6rUfBrM+isT1sc7cg/+C1kBhw5tqteeJ0UNwsk4Fa8q7w4srL/A0GJTNDCa67dfkhgI4OcdB7+qyyN+NeSSMZgEPO+WS60qYWXHpN/kyNP0iqBy3dj2S9T7rXlgr0=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB7149.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(366016)(1800799024)(6133799003)(18002099003)(22082099003)(3023799007)(11063799006)(56012099006)(4143699003)(261026121527099003)(261022075727099003)(261102123227099003)(261021121427099003)(261009223027099003)(10067099003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a0dwakY2K21vMFFhQlV3dk1HRi9lNnVnTDJCRHp3SWROT0hKYys2ZzdBY2Yy?=
+ =?utf-8?B?Wkd0WUFoSTlBZHY5b0ZROC9SNzdhWTl3M1dqNDVBc2Fvc010NStNWU0vSVUr?=
+ =?utf-8?B?NStxQU42UFFtZWpadjFTeFJlVVNnSXFUME5MZTRxSS9qV2hWUmZQR1U4L3p1?=
+ =?utf-8?B?aDd3WllpVnhhakc2VWt0R0FiUGdUS1lhS1MrUnJCVkpUaFhpTWdIcjUwVENv?=
+ =?utf-8?B?MzhnaHFBazk4RUdrdjM0WjI4czc3TXprU3JxY2xwQ2FUaHFmWGpMQ2NSTUdL?=
+ =?utf-8?B?NkNUL3BHUmE4KzBxYisyOWJiZzlIWG9GZWg5Y0lPZmpiOGJZR3dOOXhtazdT?=
+ =?utf-8?B?QkNsZjQrN25VQmNMS2YyeWgxTUdVUkwzMS9ZQzRhSlZHbklxZzJQR09KWjhW?=
+ =?utf-8?B?UmJNTzNpZC9yQ3l1MEN4RXJVVVVnZ2NSYnZWaitWeXBLRkNtTWh2NjNrUDY1?=
+ =?utf-8?B?dlZnOFJ3MVpMK3dJN3lJMUQwcG9UekdodllPVUdpc1ErQWdweXJXWU96N0JQ?=
+ =?utf-8?B?OVJSOWtqWjZicGMrMFJZc0xMb3VCbnlod2ZGK3RjSzV1Y2FpcVM5aHJMZ3hm?=
+ =?utf-8?B?cDZRMWthTFZ1YTVic0VNNGNoRW1HbDFDY2NPcDh3YWl0S2J1UytlTjlIbUJT?=
+ =?utf-8?B?UkgxbVN0R2lCcVFMaXlpTDBlcEw4Tm43Q09kNnlyT2svL1g4V2lZNnNCYXhR?=
+ =?utf-8?B?ME9jWmFLMkVtNTNOWStnV3NGdUF5ZzZRRS9XVUFDeUMyUEU2Rk1iYVFUQ0dw?=
+ =?utf-8?B?YVdBZ3RQdXFIb0dEdWtpWU1jKzdtd1JKRU5LWktvRDZJVEcwMlRvS1o4T2lF?=
+ =?utf-8?B?Zm8zOWtqZEZacklFUlYwREhKVHozNkVoTUhDYXlJcHdNdzZTVDZvc3M0blRO?=
+ =?utf-8?B?eFNQVEY0eDkxMUI4cXlzZGVqL0dLd3B4bU1EM3VEQmx2R0xRTWFmOGYwaGhy?=
+ =?utf-8?B?a1NKaW5zcjNMeUh0a2ZmcVFUL1RqcVZneSszV1hFSjlzaG1QWldzZlFESnox?=
+ =?utf-8?B?WGFCQkh6WUM5RUZvUzY0WkRIMDhjOEJFUjB2UENjOEUrQlRNVU8xaS9tK3RQ?=
+ =?utf-8?B?OXJ0aDJEUzEvQnJ3MzV6aHF1OGw5S3Y2Q0FLQndoT3VUWkJqeWFGZVhKL2xn?=
+ =?utf-8?B?c2xJYVJhNzJsN21tcGh0ZUZDc2RqVjNWeUJQbjc4RW1Bbzl6V1ZhdUhvYU02?=
+ =?utf-8?B?ZHpSTjd6L0VjL0luSW9WcUUxSzRXVWxaTnBxcHdHZnhZYjQvOFpjSXRSOTMz?=
+ =?utf-8?B?TDI2MWdiWFJhREpSM0ZYc3pBVy82SDVINEpyM1NOY3V5OHpwL0g3RDg3Q3Uw?=
+ =?utf-8?B?Smp0dHl4bEpTT0szdVRFSEFBNkpKb0RQREJNV20vUFFpemZsa0xEWVdmOVVD?=
+ =?utf-8?B?WTUxN2ExczNuVTlYZmUrOTh5ZnJ4OHI3Z01rcHN2TnRLN0d6b1BiRWEvZ1Jz?=
+ =?utf-8?B?Q0tXZDF0YWpaTWtVelhyYU5uYm82OEt4aTk3MU9JSGc3T0Y4WkJhY0IvM2xK?=
+ =?utf-8?B?N2NYR2NuZksyM1hCWU5iNTJoREUrYXZFVkpkZkR1dEMyYjQyZmdBN2dKeGtl?=
+ =?utf-8?B?UEY4K2ZxNkZWWFBINTVuK01BNHV0d1U4ajdUYUJ1cHFPL0oxMTJTU0k0M2JU?=
+ =?utf-8?B?V1JyYnVMVUFEME1IQnY3WXBMUURBZ29kK2c4L1M4MmpPckJiV3N1ZWVVSllJ?=
+ =?utf-8?B?ZjJuaWlJNjVaRmFoZjg4cGtlc01saDNrYkNzeWxCVGY4ZjVXc2J6UGQ1ZTJ4?=
+ =?utf-8?B?RHNnMDhYb2kzY0VKN3g4VC81SnpQOFRpRXVMNDZ0ZktVSEZqWkwzQm96YjBy?=
+ =?utf-8?B?dlhNckROTFBQRnQxUCt6alVxL291WjVJU3lMVVFpa0x1bjhVWXlRY3Bmblpz?=
+ =?utf-8?B?NE45K0pMQ3p0UG9MZkFZS1Axd1pZNlR3MDBnOUFBUFR3Ukw3U1YrRzZ4Qzhr?=
+ =?utf-8?B?UHJNT2JLbjdCVWdCTWhiMzJlRDBVZldSd2lKZ2FCNHVXaFczcnNMZk8vc3c3?=
+ =?utf-8?B?UDRpMWo2aFVya2lkMkZGQ3Fnajh5cGxMc1gzSjZJZ203dEkvalNuOXlwWmJC?=
+ =?utf-8?B?MXgrNUN4TkhoSVJuZ01CUS96SW1rZjlQcDB3ZVhaODVaeDJReHNyOURjRFk3?=
+ =?utf-8?B?RUFyL3VydmRyTzJ2Z0Nkd0FDZjdDamlYTE10WnhQc0kzOXoyWmpZZ2FJd1c3?=
+ =?utf-8?B?M2RmRUsvcElOL2pHL2tJY1JqUjZxZnUvMU83ZVhlYWg2eTcxK0lwU0Yzazl2?=
+ =?utf-8?B?dkxOYS9OVEpPczVkejZoY0hrWCs5cEgybUxSbThpbGdtaWhnK3BJc2FyWXhx?=
+ =?utf-8?B?eEd3aGJYVldPSjhEVHpWeUNEQUpnVjFkL21hVTM4QmMyejdIbHBzdz09?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1993907a-1d17-4a2a-7d14-08df46dfa27d
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB7149.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2026 08:24:02.8829
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3ij2ao4P89qW5hQaBKuAdNM/O4uhQGVN+Xl1Seka3ej0ICfc1xpn7e5iUUmGJee8toJwwGB8xuYpHxyLWsPuYw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB7489
 
-On Thu, Nov 19, 2026 at 10:02=E2=80=AFPM Chen-Yu Tsai <wens@kernel.org> wro=
-te:
->
-> On Thu, Oct 22, 2026 at 8:09=E2=80=AFAM James Hilliard
-> <james.hilliard1@gmail.com> wrote:
-> >
-> > UARTs use APB2 as their baud clock. Expose its existing clock ID so dev=
-ice
->
-> And how did you discover this? How did you differentiate this from it jus=
-t
-> using a combined clock from the UART bus gate, which is also driven from
-> APB2?
 
-I got APB2 from section 9.2.3.5.2 of the H616 manual, which says
-=E2=80=9CSCLK is usually APB2.=E2=80=9D I took that to mean the UART needed=
- a separate
-reference to APB2 in DT.
+On 11/6/2026 1:50 AM, Jerome Brunet wrote:
+>> When a divider register reads zero, divider_recalc_rate() currently
+>> emits a warning (unless CLK_DIVIDER_ALLOW_ZERO is set) and returns
+>> the parent rate.
+>>
+>> This behaviour assumes a zero divisor acts as a pass-through, which
+>> does not apply to all hardware. Some dividers, for example PLL
+>> pre-dividers on Amlogic SoCs, come out of reset with a zero value
+>> that does not produce a usable clock. Returning the parent rate
+>> hides this fault behind an incorrect, plausible value.
+>>
+>> CLK_DIVIDER_ALLOW_ZERO only suppresses the warning while still
+>> reporting the parent rate, so it cannot represent this hardware
+>> behaviour.
+>>
+>> Add CLK_DIVIDER_INVALID_ZERO for dividers where a zero divisor value
+>> is invalid. When this flag is set, recalc_rate() returns 0, making
+>> the faulty state visible to the clock framework rather than hiding it
+>> as a pass-through.
+>>
+>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>> ---
+>>   drivers/clk/clk-divider.c    | 3 +++
+>>   include/linux/clk-provider.h | 6 ++++++
+>>   2 files changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+>> index f68216c65d3d..6c1523d22477 100644
+>> --- a/drivers/clk/clk-divider.c
+>> +++ b/drivers/clk/clk-divider.c
+>> @@ -143,6 +143,9 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+>>
+>>        div = _get_div(table, val, flags, width);
+>>        if (!div) {
+>> +             if (flags & CLK_DIVIDER_INVALID_ZERO)
+>> +                     return 0;
+> While I think CLK_DIVIDER_INVALID_ZERO really makes sense for a writeable divider
+> only, to gracefully handle a reset value at zero that we would later correct,
+> we should still handle all paths correctly. This include a RO divider and its
+> determine rate path. I'll try to send something for this soon.
 
-> I'm not adding this simply because you want / need a baud clk that you
-> can set the rate on. That's the wrong way to go about this. You should
-> just add CLK_SET_RATE_PARENT to the bus gates. And making the bus clocks
-> variable is a whole different discussion.
 
-I tried your suggestion on H616. With CLK_SET_RATE_PARENT on the UART
-bus gates, I can change the baud rate using just the existing gate
-clock. So I don't think we need to export CLK_APB2 for the UARTs.
+You are right, and I agree: a change in the core divider code has to be
+correct for every user, not only for the cases this series happens to use it
+for. I understand the RO divider / determine_rate path is the part that 
+still
+needs handling.
 
+I will drop the 2/3 patch in v3 since you will submit it separately.
+
+>> +
+>>                WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
+>>                        "%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
+>>                        clk_hw_get_name(hw));
+>> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+>> index dc8e161f9c2c..fe2dbbba49e3 100644
+>> --- a/include/linux/clk-provider.h
+>> +++ b/include/linux/clk-provider.h
+>> @@ -744,6 +744,11 @@ struct clk_div_table {
+>>    *   big endian.
+>>    * CLK_DIVIDER_EVEN_INTEGERS - clock divisor is 2, 4, 6, 8, 10, etc.
+>>    *   Formula is 2 * (value read from hardware + 1).
+>> + * CLK_DIVIDER_INVALID_ZERO - a zero value read from the register is not a
+>> + *   divide by one / bypass but an invalid setting which does not produce
+>> + *   a usable clock.  recalc_rate() returns 0 so that the broken state is
+>> + *   reported to the framework instead of the parent rate, without
+>> + *   triggering the CLK_DIVIDER_ALLOW_ZERO warning.
 >
->
-> ChenYu
->
-> > trees can describe it separately from the per-port bus gate. Keep the
-> > existing clock numbering.
-> >
-> > Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
-> > ---
-> >  include/dt-bindings/clock/sun50i-h616-ccu.h | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/include/dt-bindings/clock/sun50i-h616-ccu.h b/include/dt-b=
-indings/clock/sun50i-h616-ccu.h
-> > index 6889405f9fec..e3318772c92d 100644
-> > --- a/include/dt-bindings/clock/sun50i-h616-ccu.h
-> > +++ b/include/dt-bindings/clock/sun50i-h616-ccu.h
-> > @@ -11,6 +11,7 @@
-> >  #define CLK_CPUX               21
-> >
-> >  #define CLK_APB1               26
-> > +#define CLK_APB2               27
-> >
-> >  #define CLK_DE                 29
-> >  #define CLK_BUS_DE             30
-> >
-> > --
-> > 2.53.0
-> >
-> >
+>   CLK_DIVIDER_INVALID_ZERO - a zero divisor is an invalid setting with no
+>          usable output. recalc_rate() returns 0 instead of the parent rate.
+>          Takes precedence over CLK_DIVIDER_ALLOW_ZERO.
+
+
+Ok, it is short and clear.
+
+> --
+> Jerome
+
+--
+
+Jian
+
