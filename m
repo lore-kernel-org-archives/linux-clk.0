@@ -1,62 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795187713;
-	b=N2nGkwQ+y2n4SFaY3JT5Gf8hTnqoTLp/hz2R8yYmKzXYweVrD2h8p9bptp7qbT4pGYyi
-	 hGHahRmwn9nUHjJ+A1OEdyEN62d1Vcy4HkzXFfY9RjRj76iZ9SdI2n1SNu/FrIcT76hQQ
-	 zQgqKWLSLb26Q2WFVXlyMGgHG1mUxsDomDO7CZOcvIqskiPMzAwLIH72jKMg3W+Tebx90
-	 QAau31Q6DXVqEbirN6lGxYsn8cwaG92ef1EYVWVCN/62urfTErtXBQ6k9PcYds9ikXMwp
-	 AWbB/nUwVecyvLTvrQqPMtoEPvYfCZp0Y7ZwbblC0dCYw5FjRFmaOda9ojlC5+3tHEA==
+	t=1795188978;
+	b=e3TNNlaAsC0r5SlY77qiPq09MbGUBeU4O/ynEVHl2RsN0+JRaQwNFhcsSIsQ08QNRqk+
+	 nTlm5MrxUKm008cA5dM+DvnNdPxsf2gdy/M3ztoeiqe0ip+2lTiUPHvfTknFt21mYxFQs
+	 qUtzCA7aGHsyHkjSVaTNF7bq1SF2F2h+mZIAr2ZAiV1tNKecKr2LIi7p026DwkzlzxJ2X
+	 xYhvyq6eYkQ5ncm4SkBqTDYdh8frkf50udNcjtjcprcBRxyDHPrTHGzDD5CEe9EvyyGu2
+	 FhiVZcw5cQ9sZXQpjX2bVlJxqb70u8queB2A+54kGFc/Fa0zXA/DbkLBqsKwfxTouUA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795187713;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=ctb1Jv59qIphIUTiA76EUOJsYvs5jg8Gp4OuvrA3/o8=;
-	b=GeDm4G+5Pz5PWwoL7MFfpHLsHv3+03qvLCL2fTkeKVIpLO4Igb0YzsxClwSzHhdb7Xx4
-	 csqvzxwo2I7llKSKnh7cSXXp7kjUS0WSQCuJc6YKaGy1JpO3Qbqk44fL8JElyFkFJYHTb
-	 OKPv8naN/RdIVgNYjWtYSi+aWyrRWOKk7JMJ1SXUDhBqqebFHltFdVyoz5u2S2XBp5MoB
-	 vIQty1Gu28dV6ZM+Bv3F9s6efIIOB1gf2r4GuAxFdbtfqF8zuKBhnLigBTHrI4Y0hVFSf
-	 i0oGDWSNZMUu4rfXRxgWTlqO7wipW/ZbGbiBuZtxhA5UTYClods2aQhOXUz3vokYnVw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795188978;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=db2MO1a70PIE6Fv5WZXGz5F9j2CW0g9J+SpZG3GxKeo=;
+	b=nr3IJVgnN0WPEcXgGsSF8uOBldaFGV554gr7/CLUx5jCy2Fa4cveyVACL2f0gRmbERqs
+	 DaF6NVTT2PhNB2iH8irqhYGZ4PXKcWAD5/8JF/GX9rdx/XYObNPBjISpK0vdXklukctaD
+	 9R/CK2SQrGg++9zMIi09TO9oTnC6p/KMW5c3hEFw7viHokACdPJqLN4biDK1SBZyookJI
+	 k6v/hN5JyCH++1L2W42L4o9qMIwFcja3CZKdGwU4xMGlvONy10J78HBJClKY4ckBMctpK
+	 HsKfbIUvQFhB1mrxyTAaMSDmp4qaYH95ZjRfmSNsmJw2cZZm2QgioLQzpxiyBVe4Vrw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TiQD9vMR;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iY7qbtRX;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261BA606A320;
-	Fri, 20 Nov 2026 15:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1288F606A320;
+	Fri, 20 Nov 2026 15:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TiQD9vMR
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8E891F000D2;
-	Fri, 20 Nov 2026 15:15:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iY7qbtRX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ACC41F000C4;
+	Fri, 20 Nov 2026 15:36:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795187712;
-	bh=ctb1Jv59qIphIUTiA76EUOJsYvs5jg8Gp4OuvrA3/o8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=TiQD9vMReX7MxulOHgIp4t1lAlYcg8Q6bEZe2CoRbS8R/9mIteUeSkYgPKmeIEDQu
-	 rmmr0JvsyJFDo4K8WhriZ2eAgcX2x+2HbWes+mTXJ7ECFc4KZKBSyb4TZ5aYXQfSso
-	 +2A7M7kU14nBIGXo/z5RWUlO1G7u3u5DNR+QTWGQn+zuIYWA1ioG7ps1S0Lyi0Spqj
-	 VMG6VEc9iyxEzN/WEdLtb15EIXEpYgQno86Ng57cKsxBCmBEhxNjNQZbpgxALBFmdm
-	 aYmFI2Y80W+Y3y2zo2G2fYmqwX47DW9+Px0tEnhudym+rZa5egtVn5MQrtmIl0anKv
-	 4iVPicHcNNm+g==
-From: Mark Brown <broonie@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>, 
- Demeter Barna <me@fromdisposition.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org
-In-Reply-To: <20261104-b4-sm8350-sound-v1-0-4c872df294fa@fromdisposition.org>
-References: <20261104-b4-sm8350-sound-v1-0-4c872df294fa@fromdisposition.org>
-Subject: Re: (subset) [PATCH 0/7] arm64: dts: qcom: sm8350: Add SoundWire
- and LPASS
-Message-Id: <179518673827.6016.6677815995841367128.b4-ty@b4>
-Date: Fri, 20 Nov 2026 14:58:58 +0000
+	s=k20260515; t=1795188977;
+	bh=db2MO1a70PIE6Fv5WZXGz5F9j2CW0g9J+SpZG3GxKeo=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=iY7qbtRXUOcQFowK/jqsglS7S97JW+1X5C5Fwcm81+MKpDNUZduhnGEeIU1oh+Aer
+	 fpK6iPk9Am9peRUHDCbwruJ7KiPDfWWNTG71VAT1QVxMd+AZryE/DY5K3SCA605XhW
+	 3rkWv1M29RDeZG+T5ZnaRxM6XlWOBhcQvr5SPNVDxi18QC2FLK+vFXfj66NoXL3+XX
+	 wMLhb7jCy9Eka6FwWa7iuo1sT4fDoBvjcbWPSmptA5OHIyqMRq8hCrxhCAAPOgeEgs
+	 bvT1Lh3+g+CM9VCzhouhuC9DbnJTA8MUuf2/ijBXWXgwOshPlB6i7J6FDtgmmzPFpO
+	 pZQyzi78LzyRg==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -68,57 +51,59 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH RFC 19/23] ASoC: qcom: sc8280xp: allow using the
+ sc8280xp card with lpass-cpu
+From: Mark Brown <broonie@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, 
+ Rohit kumar <quic_rohkumar@quicinc.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+ linux-gpio@vger.kernel.org
+In-Reply-To: <20261113-topic-sm8650-el2-v1-19-5183f6aab9fc@linaro.org>
+References: <20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org>
+ <20261113-topic-sm8650-el2-v1-19-5183f6aab9fc@linaro.org>
+Date: Fri, 20 Nov 2026 15:36:11 +0000
+Message-Id: <179518897124.6016.130748488943015768.b4-review@b4>
 X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1803; i=broonie@kernel.org;
- h=from:subject:message-id; bh=YgJBtkWW8iWQG2laY8hnj1dOGRj0c+aLITIppNNt1Gk=;
- b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLIZkv+wHWdj3HBx+6w8lwubg9ZsPNvQ1SHz2O3ESb/VM
- hd5zv1501HKwiDGxSArpsgSl8X9sr7k9Rq+gwvbYOawMoEMYeDiFICJTJ3K8L/6OhP3l9CT6zqP
- HbdefX+V5gXRBfPeu5fxpT88uYzbsHQuI8OXFqfDx16+sXByvVOVxtpnw7Lyqzen7j8f3qodaxs
- n/OMHAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=760; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=yjz8fAQ3kPUwHl3NaYwbsrK24UeGk5MNb2vPPtnlmvw=;
+ b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLIZMl5flv7+cs/s8ksfd2gXesrP8v/we9HlaS4PG/q27
+ zuXtixPtaOUhUGMi0FWTJElLov7ZX3J6zV8Bxe2wcxhZQIZwsDFKQATSXZjZHj093gn057njsve
+ uimc3TGrXnSbqJOnbKXX6oAYxRkszyUZ/vA9fbC880DHwxnXebgFOKsvXZ2bHf9gs4FflhO7meB
+ EH04A
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Wed, 04 Nov 2026 18:07:08 +0000, Demeter Barna wrote:
-> arm64: dts: qcom: sm8350: Add SoundWire and LPASS
+> Add the missing DAI ids and set the ops to allow using
+> the sc8280xp card with lpass-cpu and keep the sm8650 sound
+> card bindings working with either Audioreach or lpass-cpu
+> interfaces.
 > 
-> SM8350 has the ADSP audio services in its dtsi but none of the LPASS
-> codec macros or SoundWire controllers, so boards can't describe their
-> codecs and DMICs yet. This series adds the RX, TX and VA macros with
-> their SoundWire controllers, and the SM8350 sound card compatible.
-> 
-> [...]
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-Applied to
+> @@ -533,12 +540,11 @@ static void sc8280xp_add_be_ops(struct snd_soc_card *card)
+>  	int i;
+>  
+>  	for_each_card_prelinks(card, i, link) {
+> -		if (link->no_pcm == 1) {
+> -			link->init = sc8280xp_snd_init;
+> -			link->exit = sc8280xp_snd_exit;
+> +		link->init = sc8280xp_snd_init;
+> +		link->exit = sc8280xp_snd_exit;
+> +		link->ops = &sc8280xp_be_ops;
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.5
+This now applies to everything for all cards, that feels like it needs a
+lot of care?
 
-Thanks!
-
-[3/7] ASoC: dt-bindings: qcom,lpass-rx-macro: Add SM8350 LPASS RX
-      https://git.kernel.org/broonie/sound/c/bc7f78224043
-[4/7] ASoC: dt-bindings: qcom,lpass-tx-macro: Add SM8350 LPASS TX
-      https://git.kernel.org/broonie/sound/c/f1184077e11d
-[5/7] ASoC: dt-bindings: qcom,lpass-va-macro: Add SM8350 LPASS VA
-      https://git.kernel.org/broonie/sound/c/991a76f7064a
-[7/7] ASoC: dt-bindings: qcom,sm8250: Add SM8350 sound card
-      https://git.kernel.org/broonie/sound/c/a5b5d062b40c
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- 
+Mark Brown <broonie@kernel.org>
