@@ -1,121 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795168579;
-	b=zRfWoET7TulXtX/u5ZJs0AORprOnpuHrEF1iVrLXew+uUtrNrUXNVajVzP9lS/7nUWLT
-	 D0lg3aEt+pcq9JaEKb4wJI2EX7N4K4rsyjO4O6UXl+wBfzw6YAXbr7uUiPXKj8GI+Cw2x
-	 BEzptVWFxF/K9RfahZangK7f74Pp8wgFxWOEhAW1OHH0YKb605rqo8iZ7rrsBN0fwuRLx
-	 2+wgQpLXhEbyI367VihMFirRfE/1cS3yPpLqsu4afrjwYqIPq0gEFQIU536MKeo0ji+bG
-	 G1vlHoE12eLSRgtdiCTUbQlasxj8+XUOJaRBzBd8djAZRUrtqn92VAxb6WsHJmdTyeA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795168579;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
-	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=62eMXVAhsdOLajmrx/nEro/aU3Oy4TAFM0MOIhVJt+Q=;
-	b=YxQaBF/+QXNq8YgrRrKZwTmyYNiU0R6NgX0k19Nopf+EQ4JhWqEc1l0EP0GrieX0Laqi
-	 ZlIdo7hnsZRtZhu7wxWxj/8nLo6mYYXqndQF1ewLS67uWJUzRafWGMa7lQqAZH13iDjkM
-	 NEM1GAEz054pg6Pv2OUJZYecwCTCOpL2lONKE+aARRv+Fmlz9SwsJQlN5FqJhHwn4I8d2
-	 vCni0yiXyz9o2v6PVm/ND/pXtWxsGqAaJ4EKPEqLFBmYVEmBVJnIx47G1vEUN0ayflpBL
-	 qgTbUwRlHKcRcrix2ge7c6G5CPzjiAfVKSpoSMNjmCmRYRWdixezZyq1QEQzPL1rM1Q==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=DtBZuUDj;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=JTLBdE3L;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795168845;
+	b=2FnBWn+XZvgrxA09YHUEtF3nZUjQWiwpdUreeq3xUKE3t3YYjI4uFYfatfr+UUZc2AXx
+	 hR/aembrSZMYS5bw3iC18IKjMsmh1n/c6qb4x2aCR+7TSfaxIaReD25vpzCNOnw93e/sJ
+	 wfQDid8q0TTEj8gHwrQhUXWVvbNKiXBluayReMDzIMrGQKalDkIUeUyO9VNcdFZ13kJST
+	 NhrzUOnLJ4G/xjxBnWzTOG2hJIhAtpJOw5jkvGf/JUzNmaptyGgDaK9WnapD6OH5pnr0E
+	 sr8P8huDHuH5AFPxGXCQgjgt1r2ySmW3eVv6S1FcwJje5+nnE1Vk86w4NDp/EToOfdQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795168845;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=Q+4Bel0/0Td/LHufY+LdhNApw47lN/ZWvaYrdGVnaYQ=;
+	b=mbEph+2GLtKI5VxHn74YSW3RR91RbwYFVclam6B/sbnwjKPOJg3f+0hcEgSBrzQWzDCf
+	 42byKzJkP1rEn8rKJGySpilOgcWKVKLGxPCL0A2gsqKz5iB9opt+0Uv5mqyMKTI3GGwx3
+	 yVl6alIrKx6bCoOBiVwdI1rSu+CXGlYkaJ6hcPzF4yOevkjS3VX1ntSS+LFDAi3WIO5y8
+	 5tWfnjAyH2MkprDwNIvUsphjOUooYzunkRopCK7V7E1qtpEx775ias0H4/TSsrNTfdZaC
+	 NtxMlhp0lJKMJfWW2JJWAlbKOPulpSgAZcu+M/uLXQbChzudgifyG1Wu7VKM7qs0sCg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=c4BlSOkl;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C286A606A320
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 09:56:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C286A606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7A0606A320;
+	Fri, 20 Nov 2026 10:00:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BF7A0606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=DtBZuUDj;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=JTLBdE3L
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AK8te4f815627
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 09:56:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=62eMXVAhsdOLajmrx/nEro/a
-	U3Oy4TAFM0MOIhVJt+Q=; b=DtBZuUDjme/84lhCpowIjh4IA7DZGsYJ9xpjZP+i
-	kV1Z4tp3kMmww3fOatjtqQZ38Pf/Wf7lRdvRn0KEffg8CiBaC1MIkFEjSvJft4bU
-	d9J9rt6BmsRA/VPAjktQn2F7U9KwRXWz/xPgFEvwitq0Ivsqw3q64DfFNV+nnT/7
-	gr7IkNBRMlm6s/mC1FczAeaLcyQV+XfhFFnKYGFqoDigURsH6GZ4/i/EfMfAZCUJ
-	VxFUzpoEdz2OuyMCaofk1qJtkEElziuYtXxzSIS+HCrZT+9mA+G83IHFHMUWIzlB
-	77UTAKN7z6v1TBUfM7eHSFOFeyjWERqLRkeSr07DVSPBVA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j27fyk2tr-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 09:56:17 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93f6f4fe531so132271885a.0
-        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 01:56:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795168577; x=1795773377; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=62eMXVAhsdOLajmrx/nEro/aU3Oy4TAFM0MOIhVJt+Q=;
-        b=JTLBdE3LjVJxvkDC6Ly8UL7Fb7xbgpvu/LTV94IfDcHvJauprqlS8/iFkKoOvT9o9W
-         d41A5RP0GZ00g1Mj2sUFcih48dQItsqUj3txC/IZaA4heSmP50lyiPnvYZI5Pu1ab8cw
-         KCaV9FeS87aVnfb6D4vKT5T/a/++unJCg4iCACHhGfvUMTi0vl2NrgbMsT3YsBJCQSp4
-         pZ6VjHaxFjrywa88Mt3O35t0gbXuvQzJIq6twUz2CI39TWxgZe25cq0rlZt4ksMtILyx
-         eN2Bty8uFX+En23W1FdbNBveRLBV8QlRzcUsG+aJzuFRO+hTft9X+YVpPio5TUrjfld/
-         wmDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795168577; x=1795773377;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=62eMXVAhsdOLajmrx/nEro/aU3Oy4TAFM0MOIhVJt+Q=;
-        b=dCDklxz6xwkaYLkZz3/yI5XYqxZxHyYebR0IWUm1gZ1aYB3JRHkxb6bdOkayQh3S5u
-         odI4+a9W0VZeIl79jHdN5JH2O+EtKechMPjPuHYZ5Eqsq1wOZaRevIL22s1x0JunkCGZ
-         f7/9VkFnnh767yT1jnI4OGQK1YOv1atZIy+Q2LkgF+eVv+xFB7UWiMj+8BuuhrYjgSha
-         q7Y26hNQJ6VDCBnbYlhBXU85xwH8VDiHSPqoB796guoNBcAt+ZvtoujuYbUxczFt739l
-         Hk8p7y9oUgB5HWK5ZfQUocFj3hH6+5a8tI7dl3X9o/jSdCc3CAPjAI+2lyb22sVVcexC
-         M8JQ==
-X-Forwarded-Encrypted: i=1; AL+hErEySMZ8OT8mOP1+XdWzYVRG5mXo6MekyP+jCGaN2dEdxk+R6gNlOgzO0M/0Um5Q2Q89ASO7Ad/MaIc=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+Ht8JX+L0fFT+1c3HlCd3s4DzQox6XfjodWwacBHc3DmRoRHAM
-	w5KMS8j8ofSXRcETeefA3M//0My0M7gUHLUzE72gexj2s7WiRmxuPM1uF7JWXFOVtk/Eb48uhZr
-	uusr0W5Uo5j3u5B7nbkcG6O3CAHlJJkYWkH6kSYkZ1beKIYr/bPgUdBYWRGqhoGQ=
-X-Gm-Gg: AYBFou0s12bGNcgndNGPypNQoFohizQsTKCFFPhU7Ew0Rd82UCpdXCbTxdfSncaCVsv
-	wMyVjeak+spe5yX/OHk9OkQazgbhlLNnuOrPDxzD1eF/dzCjpSs+I3o/WHzVNFPb3fChb/HmLZL
-	yI4zozg5pYHa5QcEJv724H3Lj7zeSQqoeAZ/vo5j03GvIeaNTY/svRDFa4bv8U4lQPizOjU2h2g
-	kTRQtf0/tAAAYM+S/NXjCURsB4cWwWJIXOy4rZztff//A/a7HgDpxtRF7UnZmHL/TDC3oCcjcn1
-	+6ul8G4VUaVMLlRDo8ANkeFx1izg/RuYAh2dGvJ3DICoclNu9nzxCx4ApVrTVDn18lkTWbQM1Tw
-	K3/CloDqvZNklf+A7pQtyLRaAp2Ir3lcNFaRGOGNgiMcoR2mztThULOrBPIUNPGp5
-X-Received: by 2002:a05:620a:4693:b0:93f:2b23:481b with SMTP id af79cd13be357-949ba955b51mr440889185a.22.1795168576901;
-        Fri, 20 Nov 2026 01:56:16 -0800 (PST)
-X-Received: by 2002:a05:620a:4693:b0:93f:2b23:481b with SMTP id af79cd13be357-949ba955b51mr440885085a.22.1795168576349;
-        Fri, 20 Nov 2026 01:56:16 -0800 (PST)
-Received: from oss.qualcomm.com ([188.27.161.77])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6a67fec7sm4320876f8f.26.2026.11.20.01.56.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Nov 2026 01:56:15 -0800 (PST)
-Date: Fri, 20 Nov 2026 11:56:14 +0200
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: qcom: camcc-eliza: Declare icc path dependency
- for TITAN_TOP_GDSC
-Message-ID: <vgclluwnmognwpaxmwazb3i6teyrktvbig3ykf74ppjbp24kze@umzxgoirryxf>
-References: <20261118-camcc-fix-v1-0-279d269e343b@oss.qualcomm.com>
- <20261118-camcc-fix-v1-2-279d269e343b@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=c4BlSOkl
+Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
+	(Authenticated sender: pza@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 8B140200EDB;
+	Fri, 20 Nov 2026 11:00:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1795168842;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q+4Bel0/0Td/LHufY+LdhNApw47lN/ZWvaYrdGVnaYQ=;
+	b=c4BlSOklF59hL1pYawmhsU7RqzPUnfiS/I+4hUpR1d5qbSH0pLMOiaqWq4WVymDk3zKY1G
+	96gwtfGlD29ilXfUKD4W41cJvC6SxystFjfzEei2hARgS9+7Mdeqgj+NSivCha9X/L0it7
+	eKd1Jnb63zeFF4UPnz94GNBTL4RgDR2Vfl4qpKMigcVJzy2m+1WF32OvqZ7G7fugS2sO6s
+	8oKA20OvCvUohEIr+0poIlmahZfghRCFx/EOy6QXINpiVS1R3lrD7pgnr+h9jt8aAgSul1
+	yashgq64uaiNprTc3TXc+NHmippMvGm2ZQbnHn+KfbWYkIMlBTQrOKVcfCZqvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1795168842;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q+4Bel0/0Td/LHufY+LdhNApw47lN/ZWvaYrdGVnaYQ=;
+	b=M3g3EI2eNuur12IFwUgc0ShD6XG5EXLIMVp+p+PU7yBkVYn78wqAmQkh/S/aC77sYDu3kq
+	0mZtqm+3WMMwRXdTqtXBYlOK02kxIN0yXzT8Akd3Ach9dBdNHp6H+4iS+lpKSkXaqPFJEv
+	SA98JSi9yCXTDNpy7pJu343eUyMAVgayq1Y5sTGKpZuA/MHS2YSnCCr6Rc6WAvoWP8vRhx
+	KHxaBmYpUdEUGMcni2T5rZcc+VaiJ7ut4ou56ydvF3otGcYG0q6Yb16d0kTwvF5NxwIjjF
+	FoTz/XosH5wwoK2EIgZ/G5vY/6L8WcZ6JfSPlWEZIEf8AF1ygecllmcqojsHrQ==
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1795168842; a=rsa-sha256;
+	cv=none;
+	b=GbgTki+Fmq8ov7IxA7lwbvK71uCkMFhYXPXGNmsbsDu2KybFR5A6vosczLGDqG15odxBym
+	DqOB6bXprMXeFwgazb3MV5Z/gsQyazNWyh9uSLAvKTtrHje6wXZ+LzNo2mdsjI0WIoMbgV
+	ocA24tEUBgQVn3RC9V+vgiIoiSDP4v0K6dbGYC3eoWF2Iq7WDaSBe5TTDs2+3SOS6vKsva
+	KCocofKI7IemlPZFUAdg5+rOxMt06HnE9mbhyIObP9NJPyGuZ7ty2UiDp6msBVq6fMkPND
+	l9DzVGDrEaRAaYwT5zWp9zTK+ZKq+mPJ+nF9XB+XyxH0IFWiA4MEETg+OkSqXw==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
+Message-ID: <3ef39f9c3698da4a8021ded56d8fca9ae9ccfb05.camel@pengutronix.de>
+Subject: Re: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: khendry@reliablecontrols.com, Geert Uytterhoeven
+ <geert+renesas@glider.be>,  Stephen Boyd <sboyd@kernel.org>, Brian Masney
+ <bmasney+clk@redhat.com>, Jerome Brunet	 <jbrunet+clk@baylibre.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Magnus Damm	 <magnus.damm@gmail.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ =?ISO-8859-1?Q?Cl=E9ment_L=E9ger?=	 <clement.leger@bootlin.com>, Andrew
+ Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@kernel.org>, Jakub Kicinski <kuba@kernel.org>,  Paolo
+ Abeni <pabeni@redhat.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Andrew Lunn	 <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King	
+ <linux@armlinux.org.uk>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+Date: Fri, 20 Nov 2026 11:00:42 +0100
+In-Reply-To: <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
+References: 
+	<20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
+	 <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -125,50 +107,160 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261118-camcc-fix-v1-2-279d269e343b@oss.qualcomm.com>
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIwMDAzOSBTYWx0ZWRfXzP/uvexFei/0
- jLaFkzybAqUdoV1eR7RVoi4G8jJqNUZgoAkHWSBb9f/3aevPyK1uQrIRxdHFrsRjPtoaCCICd46
- PeOZaXB6N6PEJdpJnJPykqgNyDf7VKc=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIwMDAzOSBTYWx0ZWRfXxJqvXfPvJJYp
- Q6VPcOp+v4DxXWX95RXCkDJY3Za0Nv+cO2WihEBTO+yYmafUyH1ajg7WLgF1NlFQC7uEMTDvE2J
- JnsaPx10LPJKgJtVEAGSAFz0EMs1B5e5VtNvE+CVDxflnn0OjFqTQ+3sVbKm5SkFf43XzTb1b1O
- N51RDdJHfUQZkS+4KOrKVB6cr2sLzk2C21SGX5Q5GWSPEb2k5RESJvEG8BaA/zmKOB12Icd1u2g
- swxSpvHUjvLz0QP0UiZk+r7r31oNVco8NmUJrgVCZSP863G+WuiOoVW6793IR1j1FBUfZG3EBrH
- uTw37/OXfHEZgdmCBiwgSwPx6+4xvBy6RGZeeN8a+v7VoFG1JBKVVPzUmoaP1beFjmk33ab0hXe
- 0IY11r5TIkEZCC7JnK006iTGosfm3fikyYyEaUXw6R2erBrqg8OeXuGI0IUMxTiv2/87nO/NK8o
- nuU7ukGZXfJatenmmZg==
-X-Authority-Analysis: v=2.4 cv=GZKCDgXL c=1 sm=1 tr=0 ts=6b001941 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=asF+/XNaGoxFafzDDLC1GQ==:17
- a=kj9zAlcOel0A:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
- a=EUspDBNiAAAA:8 a=cBiroVCkOlD2lhM5SNwA:9 a=CjuIK1q_8ugA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-ORIG-GUID: evY5hIgSVkVvTKkbk5vxLmrnY2Rd8EY1
-X-Proofpoint-GUID: evY5hIgSVkVvTKkbk5vxLmrnY2Rd8EY1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-20_03,2026-11-19_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 impostorscore=0 bulkscore=0 adultscore=0 spamscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
- definitions=main-2611200039
 
-On 26-11-18 15:45:06, Wenmeng Liu wrote:
-> The TITAN_TOP GDSC hosts the camera NoC (camnoc). If MMNOC is left
-> without any client vote while TITAN_TOP is still on, MMNOC attempts a
-> power collapse while camnoc may still be active (QACTIVE high). The
-> power collapse then gets stuck, and so does the MMNOC BCM, so any later
-> bandwidth request through it times out in RPMh:
-> 
->   Error sending AMC RPMH requests (-110)
-> 
-> Declare the interconnect path for TITAN_TOP_GDSC, so that MMNOC is kept
-> voted for as long as the GDSC is on.
-> 
-> Signed-off-by: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>
+On Do, 2026-11-19 at 09:57 -0800, Kyle Hendry via B4 Relay wrote:
+> From: Kyle Hendry <khendry@reliablecontrols.com>
+>=20
+> The rzn1 system controller has two resets that need to be cleared for the
+> mii converter to work. They are not directly associated with any clocks
+> so they need a reset controller to set them.
+>=20
+> They are documented in the PWRCTRL_SWITCHCTRL (0x4000C188) register as:
+>=20
+> Bit 3: RSTN_CLK25 - Active low Reset for Timestamp signal selection logic
+> Bit 4: RSTN_ETH - Active low Reset for RGMII/RMII Converter (50 MHz).
+>=20
+> Add a reset controller and add resets for those bits.
+>=20
+> Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
+> ---
+>  drivers/clk/renesas/r9a06g032-clocks.c | 64 ++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 64 insertions(+)
+>=20
+> diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas=
+/r9a06g032-clocks.c
+> index 3df3f2b2c6de..547e8d82f1cf 100644
+> --- a/drivers/clk/renesas/r9a06g032-clocks.c
+> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/pm_clock.h>
+>  #include <linux/pm_domain.h>
+>  #include <linux/reboot.h>
+> +#include <linux/reset-controller.h>
+>  #include <linux/slab.h>
+>  #include <linux/soc/renesas/r9a06g032-sysctrl.h>
+>  #include <linux/spinlock.h>
+> @@ -675,6 +676,11 @@ static const struct r9a06g032_clkdesc r9a06g032_cloc=
+ks[] =3D {
+>  		RB(0xec, 16), RB(0xec, 17), RB(0xec, 18), RB(0xec, 19)),
+>  };
+> =20
+> +static const struct regbit r9a06g032_resets[] =3D {
+> +	RB(0x188, 3),
+> +	RB(0x188, 4),
 
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+I suggest to use designated initializers:
+
+	[R9A06G032_RST_TS] =3D RB(0x188, 3),
+	[R9A06G032_RST_MIIC] =3D RB(0x188, 4),
+
+to document the association and make sure there are no off-by-one
+errors.
+
+> +};
+> +
+>  struct r9a06g032_priv {
+>  	struct clk_onecell_data data;
+>  	spinlock_t lock; /* protects concurrent access to gates */
+> @@ -1307,6 +1313,56 @@ static void __init r9a06g032_init_h2mode(struct r9=
+a06g032_priv *clocks)
+>  	writel(usb, clocks->reg + R9A06G032_SYSCTRL_USB);
+>  }
+> =20
+> +
+> +#define rcdev_to_priv(x)	container_of(x, struct r9a06g032_priv, rcdev)
+
+I'd use a static inline function for this.
+
+> +
+> +static int r9a06g032_reset_set(struct reset_controller_dev *rcdev,
+> +				  const char *func, bool set, unsigned long id)
+> +{
+> +	struct r9a06g032_priv *priv =3D rcdev_to_priv(rcdev);
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&priv->lock, flags);
+> +	clk_rdesc_set(priv, r9a06g032_resets[id], set);
+> +	spin_unlock_irqrestore(&priv->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static int r9a06g032_reset(struct reset_controller_dev *rcdev,
+> +			  unsigned long id)
+> +{
+> +	r9a06g032_reset_set(rcdev, "reset", true, id);
+> +	udelay(5);
+> +	return r9a06g032_reset_set(rcdev, NULL, false, id);
+> +}
+
+Please don't implement the reset op unless really needed for
+compatibility with actual, self-clearing reset controllers.
+
+If it is needed, please explain why. If so, is this delay enough for
+both resets? Is it enough for any other resets this reset controller
+driver may support in the future?
+
+> +
+> +static int r9a06g032_reset_assert(struct reset_controller_dev *rcdev, un=
+signed long id)
+> +{
+> +	return r9a06g032_reset_set(rcdev, "assert", false, id);
+> +}
+> +
+> +static int r9a06g032_reset_deassert(struct reset_controller_dev *rcdev,
+> +			     unsigned long id)
+> +{
+> +	return r9a06g032_reset_set(rcdev, "deassert", true, id);
+> +}
+> +
+> +static int r9a06g032_reset_status(struct reset_controller_dev *rcdev,
+> +			   unsigned long id)
+> +{
+> +	struct r9a06g032_priv *priv =3D rcdev_to_priv(rcdev);
+> +
+> +	return clk_rdesc_get(priv, r9a06g032_resets[id]);
+> +}
+> +
+> +static const struct reset_control_ops r9a06g032_reset_ops =3D {
+> +	.reset =3D r9a06g032_reset,
+> +	.assert =3D r9a06g032_reset_assert,
+> +	.deassert =3D r9a06g032_reset_deassert,
+> +	.status =3D r9a06g032_reset_status,
+> +};
+> +
+>  static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev =3D &pdev->dev;
+> @@ -1404,6 +1460,14 @@ static int __init r9a06g032_clocks_probe(struct pl=
+atform_device *pdev)
+>  	if (error)
+>  		dev_err(dev, "Failed to populate children (%d)\n", error);
+> =20
+> +	clocks->rcdev.ops =3D &r9a06g032_reset_ops;
+> +	clocks->rcdev.of_node =3D np;
+> +	clocks->rcdev.of_reset_n_cells =3D 1;
+
+Don't set of_reset_n_cells, as of_xlate isn't set either.
+
+fwnode_reset_n_cells will be set to 1 by default in
+reset_controller_register().
+
+> +	clocks->rcdev.nr_resets =3D ARRAY_SIZE(r9a06g032_resets);
+> +	error =3D  devm_reset_controller_register(dev, &clocks->rcdev);
+                ^
+Superfluous whitespace.
+
+> +	if (error)
+> +		return error;
+> +
+>  	return 0;
+
+Could be simplified to just:
+
+	return devm_reset_controller_register(dev, &clocks->rcdev);
+
+
+regards
+Philipp
