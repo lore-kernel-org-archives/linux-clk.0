@@ -1,76 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795165044;
-	b=EQkny8NupNK+UNPtimDONp01w9bzQV19VmDg+su3jtvnU/y3dj0OjjOkKxiVe2ugUfPj
-	 9dt5+XwvbGJZlwOvclOT0aSVyXJVRR+U3q4LlDeZfoNqh+/RNegJtzpfNEyRnVYX/vZOz
-	 hu6LmHSe0Pq5xglBuc8BNE3LSDDROqLtEHlHj+syRY9xRdvzzHr8PfwFkuKz8r+0Bai5p
-	 RyN5IvXP40rRpW33lrG/zGS10Sc30wcVRwWtCbDVjPZ2q98lBhWvhA+YebK9gGJdq05P1
-	 PVBTSMAAvd3/JIxtrT6ebhxSTwc4bPFi29Ei6QyKjE+mwuB0mfRTffsJLLCXeUNWo1A==
+	t=1795165067;
+	b=x47ePQagKADR5CjbhXdsnKH5h5ADifD+9Dv1xb3s9neGpPzJCZ5hWVQTqIbCS6q4P/p0
+	 dqr7EZtqdQPdkGreObgK7lQ+wpUbd2DT8C3jJDVoqDNM4kKWD7zC6tdsJKytHyhKpCCBc
+	 MSQLqnIynsYxhlka9/d+PHCq8fEwGo94k/cA2cdTIFARcKIT+rrIJxzQ7fey8z1QYQOeR
+	 Wuk0Lro5X+aWYHanZsReqcdDZeIUww/TH7gonkBUibHMdeVuNN5s+4yNSJCuKAY5+6shW
+	 xQQnrWmnagopEGCAfr2GBvXdKb/R+KGbd5p8/09dyvH9Ex6L1YcA45I92kTCjZ24gMw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795165044;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=slnLzkdmpwFbnxdOJOf8j6Mw1PiHOu2DMR+OPWGMV3g=;
-	b=kNV4Tz+MQcCy0hWUUWpjpEvyxsEEci8APIEfeDHKhZR3rcr77BWUdwCvkgo8K/esDRYx
-	 g6axw3iw8EykfK+lj7Bq/RggmdV1F0aZOlE3UzQ5vg983zpJL1FAd54PL5YCwvLWCDyAM
-	 dwMoumtjHbff4c7TW5m+2Yju6qtEsGIq5C4uzUaU5bjkRWhx3Iq+ZI9I2LE2ksftebDg5
-	 87uTj4wWtPxD+F3Tt4zk+aqW+0IldmBY74OjQESDq9FcBzTjWHuVdisT7OFlyM259NeuE
-	 cmhT2Yq/tIsmBsYWxDIsShZs6PgZ2QaVtL5rO39GX6sEumWq9m4ZYsz9rwLI0hfycPA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795165067;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=ROrkcw6iI7lN1BhbIvQj3p/zywAkYZt/3iMrqg1UUQ4=;
+	b=r7tqsvQh5HX4O14n1mLasWsSH90ULfsTLlnTaka1Xn92bIM+VkgzUHLlDW0aqffLH+yO
+	 oRw751i/aTrosrGiI8U/kqB3X+JEVbuv6E62ccoNnmR4Gpk91yUyIpbxoVsfoCoieVp0h
+	 QmF04XUH7DJP5/MUGP6OSRHmptYDZhPkWjvysXloWmGtYcPtA25Yva11rrlPdIZ0IlvYl
+	 4l4Ghwu4KIyn4GYWpjgb+3VYEsL+BmnltClIjI/9z2DlNdbw6Ij2WptFNnUt0SdaFda4S
+	 1+tMWZZLQgrY0gKvdckgPuKRqpP6n2EpMIJ+m4Gj+qk63NQ/ubRUxwbFxTkhvZ9HLdg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=fail header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.222.171
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LkJGcO1S;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C0D606A320
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 08:57:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F2C0D606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-9495d543c42so74250485a.3
-        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 00:57:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795165043; x=1795769843;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=slnLzkdmpwFbnxdOJOf8j6Mw1PiHOu2DMR+OPWGMV3g=;
-        b=G29LuMvjRay9ipgdjzHFCCuUdPXDWrpSSTjXGxOTSufP16hnRlpwyNsRrHA1Bhbyjm
-         ikrzrRO9OREUN2h5CXAA5ZqAZsUDvwEM+5hDszD6twsT3lK7G0XYnlbUW8d+aY/p2Psv
-         Xxqd5fgstW57EsRWRoK/A+yRqPV3BUXe5NJjyyd5O8v9a0y8/fQAIWXELjVGhsiQwaoA
-         J/E+sgxV/dkI3qnBI8//cVQN8kxVxpP96mnwwSmBvb188nCaPhRnQe8J2Nck4oTPWCME
-         wHMX4awDdIVG81UVg7zst8AuSQ/XCXp1TXqfIqExaSA6wULUtsVqJEZpR8R3/4jyHvh3
-         bFwA==
-X-Forwarded-Encrypted: i=1; AL+hErHhl9eUMhg45da+l6+4fLyRD/drKtp+vbN9lcGobYE+Wuh82u+4pcfG9F4YOebJpoky9+iQZaZ6QlY=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/uCaMFCRvHgZ279S/qI7teRWzU3VcSbQO4LXiRb+B0ohyHLg8h
-	bznQx3/LNc3QAUIPpauModcb9OP9oO1y9KikOFbNBF5YmCK6WpY7OVZhHkeLSouU
-X-Gm-Gg: AYBFou2I3iclUVh6hmLPAxKVufgyRpGZ27r2+tDe/qyHkmSrrvCHnS/G1+r42aVfFYG
-	Eo2tEGzkfrvaV1FJ2j1IwjcP/zRtzLWUah8vIji3biP3+dGFG/LI8cLXMo53EBJTXLEJxrihEts
-	4Q1F7tTWfz/a/+plILsMZKN9UqRPAwCWs3Amqbtcfps5oNAp3/gvO5ep5RT0Aruc0lLYUiqjtAB
-	g3boi0NO2FLLMs8J7AveDNGko8a/g/oA48z7MbReX7oJM/7IiAQY44yZu6pnqqu5A2mtlmV90W/
-	uRBIlpEsrbZbDVn42KE4/mjns364gwGoWtO15Eu4UBnEOPDg6kf7J0tH7i/xwg4TFSw/EKQayhr
-	vCDO/Wx4016KNZlh0Ewa+Sksfr9/zAZLs2oogcRmb1XLYrGbmM78RSZYNd0BKIjHmd15swIQldM
-	WrpoB8Wmr8NPVDuVWSmaYYjMAS9DQtwJTCe5URMCXCoZNLugB3TPfT9D+LmVjehDXoM/lkBtiGy
-	zz7Vev/0wpH8tSb1GPSMEhb2Zg0VQoWHtuHEplctQdMAFAjBAFnE+pGTiOgNIJj0MECVrY1lprv
-	0z+zlTV6yoWBkffxjR9nOIbj9zXvhKskySRNcpmdLA0rsLYT/b2MjfAhKdNBsyleV+eK
-X-Received: by 2002:a05:620a:4408:b0:945:d852:1618 with SMTP id af79cd13be357-949bab14280mr372859085a.70.1795165042784;
-        Fri, 20 Nov 2026 00:57:22 -0800 (PST)
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com. [209.85.219.42])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-949bb3f2de5sm146689585a.29.2026.11.20.00.57.22
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Nov 2026 00:57:22 -0800 (PST)
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-92134c4592dso6810696d6.0
-        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 00:57:22 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErEOvwf6iPFjiSqSLALoy7F6P0EHlDdjZdH9OotInj3Vi+iC7J9sF6QIl3rDRyuuES+donZpcFQ3AFA=@vger.kernel.org
-X-Received: by 2002:a05:6102:a49:b0:7c3:7286:c291 with SMTP id
- ada2fe7eead31-7d739587805mr971622137.19.1795164590827; Fri, 20 Nov 2026
- 00:49:50 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C4A606A320;
+	Fri, 20 Nov 2026 08:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LkJGcO1S
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C23F1F000CA;
+	Fri, 20 Nov 2026 08:57:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795165066;
+	bh=ROrkcw6iI7lN1BhbIvQj3p/zywAkYZt/3iMrqg1UUQ4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=LkJGcO1SS2GRABX/uMwEuScOjYQWaLW2LE4ozIGKw/cVD/AyLho95ori2YXN/zhwU
+	 swUw1DdCzLIxEVg6APSkqPuSlabb4NgTvYF6pNs/NByVXfoRfqyNE/gf/77O2zM1Fa
+	 uBSXwx/4k57FbkPxcxubAiumj1aV0trI5qEb6RIj9qmVW2gTfHm1tRLiwxIKo08Ze5
+	 EFbst+9laQOpXfReoo+GdPcggumUQOl690cOh39tcMHoEI7D14yRY652hMnGlJ08PA
+	 sJ0eV3nJ31gZf6szab9HDyekSzDgOfiKLk45GTkFPGFIBuY7AAwK3nOjMK6y9coRM6
+	 JSEIPl87hI8+g==
+Message-ID: <b4c4f8a4-99f2-42c1-b844-3fa7ae19e16b@kernel.org>
+Date: Fri, 20 Nov 2026 09:57:41 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -80,91 +51,86 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <cover.1795094688.git.geert+renesas@glider.be> <683b5b189409e5ee04100044fb615b01cb877f3d.1795094688.git.geert+renesas@glider.be>
- <20261119225017.15a7b5cc@kemnade.info> <CAMuHMdVbgGV_6yjOip4xT3YhBgaOveHzSRbw9e_cHen9NRZqmw@mail.gmail.com>
- <20261120094320.442d064b@kemnade.info>
-In-Reply-To: <20261120094320.442d064b@kemnade.info>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 20 Nov 2026 09:49:39 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWiCODz6RC9Q9-xMM5_k3grHztiLuR+-ikOZYoBawVvZg@mail.gmail.com>
-X-Gm-Features: Aa3M54pnWIgbseGoLAFGMXWb1P8DBLFzk6LU-uNSdaE_BgKhwLT8uPsc_3uFT5k
-Message-ID: <CAMuHMdWiCODz6RC9Q9-xMM5_k3grHztiLuR+-ikOZYoBawVvZg@mail.gmail.com>
-Subject: Re: [PATCH 5/6] [RFT] ARM: OMAP2+: Convert to dev_clk_get_from_provider()
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: ettore.chimenti@linaro.org, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Paul Walmsley <paul@pwsan.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Sandy Huang <hjc@rock-chips.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andyshrk@163.com>, 
-	Ulf Hansson <ulfh@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 1/2] dt-bindings: clock: qcom: Add LPASS VA CSR
+ HeartBeat pulse clock
+To: sarath.ganapathiraju@oss.qualcomm.com, andersson@kernel.org,
+ abelvesa@kernel.org, sboyd@kernel.org, bmasney+clk@redhat.com,
+ jbrunet+clk@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, srinivas.kandagatla@oss.qualcomm.com
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ prasad.kumpatla@oss.qualcomm.com
+References: <20261120-master-v14-0-112cfd63438d@oss.qualcomm.com>
+ <20261120-master-v14-1-112cfd63438d@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20261120-master-v14-1-112cfd63438d@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Andreas,
+On 20/11/2026 09:36, Sarath Ganapathiraju via B4 Relay wrote:
+> From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+> 
+> Add a binding for the Qualcomm LPASS VA CSR rate generator node that
+> exposes the lpass_heartbeat_pulse clock on Hawi.
+> 
+> The HeartBeat Pulse, also known as RateGen Pulse, synchronizes the
+> start of DMAs and Codec Interfaces for the audio usecase and can serve
+> as a periodic wakeup source for the DSP.
+> 
+> Require the LPASS LPR and audio vote clocks to access VA CSR register
+> space safely.
+> 
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Reviewed-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+> Tested-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
 
-On Fri, 20 Nov 2026 at 09:44, Andreas Kemnade <andreas@kemnade.info> wrote:
-> On Fri, 20 Nov 2026 08:49:05 +0100
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Thu, 19 Nov 2026 at 22:50, Andreas Kemnade <andreas@kemnade.info> wrote:
-> > > On Thu, 19 Nov 2026 14:40:38 +0100
-> > > Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-> > >
-> > > > OMAP2+ clock handling uses of_clk_get_from_provider() to obtain clocks
-> > > > used for power management, so the latter show up as "deviceless" in the
-> > > > consumer column of the clk_summary file in debugfs.
-> > > >
-> > > > Fix this by using dev_clk_get_from_provider() instead, letting us pass
-> > > > the consumer device, too.
-> > > >
-> > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > ---
-> > > > Compile-tested only.
-> > > >
-> > > > The first change is probably OK.  The second change may fail if anything
-> > > > in the oh->od->pdev->dev chain is not available yet at this point.
-> > >
-> > > Test on OMAP3:
-> >
-> > Thanks for testing!
-> >
-> > > --- clk-old     2026-11-19 22:44:59.810807920 +0100
-> > > +++ clk-new     2026-11-19 22:26:52.862531880 +0100
-> > > @@ -1,17 +1,17 @@
-> > >                                   enable  prepare  protect                                duty  hardware                            connection
-> > >     clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id
-> > >  ---------------------------------------------------------------------------------------------------------------------------------------------
-> > > - oscillator                          0       0        0        26000000    0          0     50000      Y   deviceless                      of_clk_get_from_provider
-> > > + oscillator                          0       0        0        26000000    0          0     50000      Y   deviceless                      dev_clk_get_from_provider
-> > >                                                                                                             deviceless                      no_connection_id
+Drop, did not happen. What is the problem in responding with testing to
+appropriate email, instead of to cover letter?
 
-                                deviceless
-mcbsp_clks
-> >
-> > Hmm, so the passed device is always NULL, and thus there is no point
-> > in making the change.
-> > Do you know if these come from the first or second change in my patch
-> > (I guess the second)?
-> >
-> From the first change, The second piece is nowadys only used by the dm81*
-> devices.
-
-Interesting.  So that means all/some of the existing use of
-&od->pdev->dev in _add_clkdev() is futile, as it may be NULL?
-
-> I would prefer to have this tested on dm81* too.
-
-Agreed.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
