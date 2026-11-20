@@ -1,86 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.179
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795201481;
-	b=Mr6vgClpVQgaLr4UoJrd3XoiEkRGA1t6YEqneT+f4RwBwrrv0SezPVgJO/X+QkxeDKJh
-	 IRFrPpu0K7oShD4DK/lm7oApzQNFgl2MkDDrqHLC5RGe4w4vTsNsAfdShXajamAidHTZV
-	 IlqMWU2tzOjFbEoiSICcMExdgaCbtJHZdEULJvEVexPvAbo/k+Pjmv851l4P2q6LDn+fK
-	 ooHyEoR8wOulPyGJPaaaBvoo55TMTKRfvMmINha5n58c2saieMHW7w5tj1eEyStWKYaOt
-	 +nVhfHNDGXklU65RWGaRt5kVCGxq/5O8dCUOUBZY2YmQ0ypgGDu5Nm5rbVbxQH70BNw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795201481;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:From:To:Cc:References:
-	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=UUBLYTEYTnacPQdSElmQNWFU9xXzQHJKHgKzBBSzYNg=;
-	b=16ur5HmRCKs5pM1F5+KVb0aWNp3hgjS4dcJsh49CCq3yG+Xpqo9tzshFDQcfrja1v7GC
-	 lCG01w9W2QwijV+PSYY5D3MAkTaa8Np2s/MD+rRFi6KJD36/crrDi+clACyt63lVn/RcP
-	 T6Brp2RDHaWoO1oFSCedPHhMmx0h0Mzegd+EUWN3ab30SiRJG37mOP3P+QfjjE6RGLwQn
-	 a8NxoFDcObDGqzd86/AYGjdLwQKY7KtrLTHwxlvFUVO2wOLLQ2bCBYJ/cvOjqDCXVEFf7
-	 DJQmnxQ6szPexvolEMDmDuKlyKplLQGWmGDm5tUwTEjN8c8nxZWkFsd6t2pozT7ej4A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=riscstar.com;
-	spf=pass smtp.mailfrom=riscstar.com;
-	dkim=pass header.d=riscstar.com header.i=@riscstar.com header.a=rsa-sha256 header.s=google header.b=JLrvzWrj;
-	arc=none smtp.remote-ip=209.85.167.179
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795209464;
+	b=l+TArRQDKXizhazuimdI2o/tWJ0odx4srCcIPbwHabrqlORyi9d4NbjPy1rTR2hHO69c
+	 OpZ/9snFHctFAikgAbbFoJer9TOgs1WAXXCOnt3RpANhqI9vMqt9kdbOQzPOQ/PMOE3F9
+	 slPWaAqjhH7izy19N8q/tOTpcYQ3QSPM/oD3IL4GzU/A7KsJTvrOjA8YN3gvf5OgT8NJp
+	 uRwcFJHEoTSTYrQK3ylYBgvC4L9pNdn14U5uiI/A5RDMTR0odPjQ9OLuD4QlSd2tNE9os
+	 aqD2LeN6qNXijwxHmpAO0S2d6NeWrtKi3HLybW1JvWOAgCUB3PabBdhX9vyLy/sqWbw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795209464;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=EuzUw5f1Ud4d58uJ/5SD6e0UG01nBBOaet58WDQ1pco=;
+	b=2tcbyWv67o/IwwVFXUTojpFe8sU8/ihnLHdzLJ8EgBhQT4vPw9qlJdEYSAgtnip0/wtr
+	 Lo+P9SDXKYVKlqxfUu3pBWiF+qBOMZcX3gRppZUvMTyhO1cZCgTrrPATh96O4tw3NmtRx
+	 QjVSz+hJMDJ3HFw1sEQpkXQ58udJv/lfDi+uBnyWrwD1EstNK+EewrFN/ctki4Uqv3Ajh
+	 jddX8W9HFKBh6Oe84hqaoQobracSt07ol7RMXFooaKO27flcVUrWTf5jVqI0BwxBiYVJw
+	 mCwh6SX7IAxm6l6G63alq5wbgh8y2HhguV1dMyNuXeBoTmsCAzmE55JoidWjHFuA34w==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nIWcPUnf;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9607606A692;
+	Fri, 20 Nov 2026 21:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nIWcPUnf
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1795209464;
+	b=Zxvnofe04qEkAYgy3wt7tBouCtbB8wu2X2Bj/UndBbKHYRQMsqd2sbsC2oQ3e2OT56j6
+	 T2IvyGGxdN3FuEuVz+htHt7Y3VHoHdCZi15t3sAzVVA0Fdpl3IHfeNzdCrRgzptdRVvwm
+	 RLgdJRd5QkqsdlL+WJNsRQ6rDs0wySq/qoSOWCnpTrxF6l2Z1ov9IUprt/lNfQCtDgXy2
+	 Rre9oNy/a2aAkdkSxOvL1IEiARMWy1R38qj41YbhCVWmGcinwfifTpCdR/4nXtYOTpbk4
+	 5AweXwUOnpTuxPL0LYejyKUg05K52Ze1gZIdoEE2KBosy091/AoPU84JM6+R0lmWW7A==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1795209464;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=EuzUw5f1Ud4d58uJ/5SD6e0UG01nBBOaet58WDQ1pco=;
+	b=DLhKsoLHAUo1Td6ZJe/05btcqYyzdDSgH+vEMJVNEtvpQcx509SoqThW1dvEs0+XoDbx
+	 32MfHfJeCVDqgjtfNLHHt+Nsu9SCZe5G713jbqWsbOpDEtdBnAtUwyO75JA1Yc4+OnWFz
+	 xNq2JI9t1p8vv+4YLDNhArYBirpbr2ZQLrjBbcUwseaJBeAWkMcWxmIZp39nmDf9M5ZTS
+	 uLgkTjGsaVOqAnLxPAXWAJJ1mZQ7XTwO5dGHsVusCNRFEaaqk+gCks0W4K6jN4bBAiTWf
+	 IxoEDb3PrsSVkjHImw5u4Xfi0M6Ket9qfO3rj5ERATDVd5MFEJ7xsf9XiVqQLFKRkQg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEA260A261F
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 19:04:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EDEA260A261F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar.com header.i=@riscstar.com header.a=rsa-sha256 header.s=google header.b=JLrvzWrj
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-571eb508e44so652134b6e.3
-        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 11:04:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar.com; s=google; t=1795201470; x=1795806270; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=UUBLYTEYTnacPQdSElmQNWFU9xXzQHJKHgKzBBSzYNg=;
-        b=JLrvzWrjv1Foo6HYSfTDQVhyxDufy62fACyY4TUuvVaXgUa8lSg6ccU7ISvUaCI27H
-         XwtX20FM0lAco9h28TTdGDJhvnP9d5NX+97YXXXWpfbFUFWZDBvFgg0CG7FJ6fqC6xii
-         L0UBMr7K6SzVuWyOSuC+n3EjKbo93TyJbcZGK6sRvqWpJEBbQYZwztZIOHeCYvQ/fsrb
-         7JC1ZqV0uo6I0urwInXjmsBf3Wbk3RFBF5WWgi3xER0qNs+Rn9fLAbWzqDHFsWJt7BcC
-         kNuMepTIGP5jkW7TM25coWgEjy4zyRZOe5lWrtuJf5pOEYx3Ep22hoon3Z4TQnVX7O2U
-         N8Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795201470; x=1795806270;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=UUBLYTEYTnacPQdSElmQNWFU9xXzQHJKHgKzBBSzYNg=;
-        b=x4KPCJOVEQ/h2hn2n6DKSU2vDtWNPTTaegd/3cx1Ix4HxTGjm2DTzsOoh4E1xUfhS3
-         YsZk01awU5LUvMgjfIOwVGz7WLvWXRMLzTVqNThsc3goFzgdMEnbCIhwH8blvMerv6xh
-         7bxYripR4A0t4WVqsZWT0qEvP+IhFHQqcX5W1J1vACMBVIr4gnzLQU3Yiml/Log3/XZ2
-         0RC0FMKHXtFc+CsaP/bWADfKuWyHzDbjYBFSC1O3CtsmKqfzqDqi4AyW2wz60rMdvHbA
-         BO/BP0NzRtxvU+X7fkuzD8nB0XkuDghk+XPVLKHUvR6PRU33bsXLE0iLj+PFYH5sZzVX
-         y1cg==
-X-Forwarded-Encrypted: i=1; AL+hErHzuWQhGfNG86Ou3CJOGesIuudYx6eKK6Dw7tqW2kcGOcd+1HNqRzuu+wBAg2weUvoaCbGm76A+j/Q=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+vek7jvqDN5KJKZjT5RWeFC+5zMuPd183GDl1VPOZfHi1hak3N
-	AMd6cpg4kDDE6p5ltop/V5hTxn92wgCO/C2bdahB5s1Gp2Fq5SHv3kJPtbYFgRTUy8g=
-X-Gm-Gg: AYBFou3Fr9sV4hqjvMGsFKkszDc1F4i5LDYOhRcnto5iMSdwJQ7LH1yXC7RT/EdxfY+
-	7x24E34WHwHZuEsmI8gXZLfWS3J93Z6dfPpCzojHS1mImXxZBt9kRdJQhWLMwMzdboTBJi3uIO2
-	i6NqTO92X5Zi2DtMuUd+sWQQeUDpN5vuxmJ/FuqwGzBNJhny+rtifZMXyIi4NCv2JIcTDMHcMON
-	MK5jBAsl+qUnUECWt7QbBWE35OlZ0x0Nzsp7XRbBp3pNtN7KuDrz4azqIyWPzbZYU+v5GXkf8eT
-	wNcTEB397qQgz7kwo16tZcMXtXl9dSpWHvMyBuAFDPiWDKJBhBrb5bqhD6/COFKtwE767YFMI8F
-	019XRHUxzU3g3w8cAtN6bDDqpJQGb/UJ5WX7e6iRkGzHGe3tTQQZeEJUR9oPwbgzyWyAD1ex9wA
-	m11zdFmt6glkutybsczmx6LiuwabBXByJwokjo5yLA38w8EtBic8HFQzCuNaOB1oth9FxQsfnMU
-	CWNn0iS8w+cWi2xrvuWObhrNVgcVOOzTXdbM+xo5EOVbffAA5vX8zYpcS3h2F5icELmZEjxk2vO
-	VIBZglzGxRTfwMT1nN54wpbMMRThCXLZzQ==
-X-Received: by 2002:a05:6808:1528:b0:4f9:a153:8446 with SMTP id 5614622812f47-57a0980a5eemr4879032b6e.38.1795201470007;
-        Fri, 20 Nov 2026 11:04:30 -0800 (PST)
-Received: from [172.22.22.28] ([76.156.233.211])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-57a35655a5bsm2814524b6e.13.2026.11.20.11.04.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Nov 2026 11:04:29 -0800 (PST)
-Message-ID: <295d75b9-b346-4669-8c1c-397df433b699@riscstar.com>
-Date: Fri, 20 Nov 2026 13:04:28 -0600
+	by smtp.kernel.org (Postfix) with ESMTPS id 8212C1F000D2;
+	Fri, 20 Nov 2026 21:17:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795209464;
+	bh=EuzUw5f1Ud4d58uJ/5SD6e0UG01nBBOaet58WDQ1pco=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=nIWcPUnf08xoLeij2YAKK2wcqwuT7MGzm+secu5ctzAbPXQ1GfJTsA0bQQwpoiDNJ
+	 Pzw0xkfOOL45huNn9HCHnSmeDWTUsqGA2z5sbdvKrSsdVmJyxPyAhiNkCKj+V0lq2T
+	 shaxw9qlXSnyngyXfhWo+MCsu86lpid89TtWl06epM582AVIf86mbQTrxvA7BVH4Ri
+	 s1zlxWWWxMx5bGM6wAKwjvjd6crwntC4W8aDPdU06v8EM82u/cqFPsA7mXjIGRMj0+
+	 Au8tU5+xtPa+qA0HRFwkVayErwOn/HPU0Dz5CK8LrBmZHKrfQlBpntkm0VH3YNZtTs
+	 GtSt+m9+3bBGg==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 10F364BA34;
+	Fri, 20 Nov 2026 21:17:35 +0000 (UTC)
+From: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>
+Date: Fri, 20 Nov 2026 13:16:53 -0800
+Subject: [PATCH v2 2/3] clk: renesas: r9a06g032: Add reset controller
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -90,91 +82,146 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] clk: tc9564: introduce a clock and reset driver
-From: Alex Elder <elder@riscstar.com>
-To: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com,
- p.zabel@pengutronix.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org
-Cc: daniel@riscstar.com, mohd.anwar@oss.qualcomm.com,
- lorenzo.bianconi@oss.qualcomm.com, fabrice.gasnier@foss.st.com,
- alexandre.torgue@foss.st.com, marex@nabladev.com,
- changhuang.liang@starfivetech.com, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20261120183212.1264522-1-elder@riscstar.com>
-Content-Language: en-US
-In-Reply-To: <20261120183212.1264522-1-elder@riscstar.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261120-rzn1-miic-resets-v2-2-f1cfa678615b@reliablecontrols.com>
+References: <20261120-rzn1-miic-resets-v2-0-f1cfa678615b@reliablecontrols.com>
+In-Reply-To: <20261120-rzn1-miic-resets-v2-0-f1cfa678615b@reliablecontrols.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Kyle Hendry <khendry@reliablecontrols.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795209454; l=3581;
+ i=khendry@reliablecontrols.com; s=20260813; h=from:subject:message-id;
+ bh=0g2POWYtRvVzTZboWK18HFCjFplyLI4cdWVXHncFx6c=;
+ b=QMkBThHxywhVBLfVFrdgLcxZpBDdWZ6PFT7jnP/0dmMSDwdV1Nv+kwM1uSZBgs6bPQwN6pqac
+ FqWzmjgr/DjBbOHtuME8ADSGktNm1nLqizBJisd6JhkvJWVR9mJ1ZhH
+X-Developer-Key: i=khendry@reliablecontrols.com; a=ed25519;
+ pk=gbK6oghz3qBlBiaGCsEzALLOtj5VklmsuolHQNhDV5M=
+X-Endpoint-Received: by B4 Relay for khendry@reliablecontrols.com/20260813
+ with auth_id=946
+X-Original-From: Kyle Hendry <khendry@reliablecontrols.com>
+Reply-To: khendry@reliablecontrols.com
 Content-Transfer-Encoding: 7bit
 
-On 11/20/26 12:32 PM, Alex Elder wrote:
-> This code has gone around and around in various forms, having been
-> included most recently in a series that also added a system controller
-> driver.  That system controller has now been removed.
-> 
-> This series introduces a devicetree binding and single driver to support
-> the clock and reset components present within the Toshiba TC9564 chip.
-> 
-> The Toshiba TC9564 is an SoC that attaches to a host system via PCIe.
-> It includes a PCIe switch with three downstream ports.  To one of
-> these ports an embedded PCIe endpoint is attached, and that implements
-> two PCI functions.  BAR 4 for both PCI functions provides access to
-> registers controlling blocks within the SoC, including the clock and
-> resets controllers supported by this series.
-> 
-> To avoid any confusion I'm only going to refer back to the "syscon"
-> series", which provides some additional information including links
-> to earlier versions of this code.
-> 
-> 					-Alex
+From: Kyle Hendry <khendry@reliablecontrols.com>
 
-If anyone would like to see the DTS file that uses this clock
-and reset functionality, it's available here:
+The rzn1 system controller has two resets that need to be cleared for the
+mii converter to work. They are not directly associated with any clocks
+so they need a reset controller to set them.
 
-  
-https://github.com/riscstar/linux/commit/de0515ee2967d8ff7753cc179a8e05283ee62829
+They are documented in the PWRCTRL_SWITCHCTRL (0x4000C188) register as:
 
-					-Alex
-> 
-> The previous version of this code was included in this series:
->    https://lore.kernel.org/all/20261104004332.2141282-1-elder@riscstar.com/
-> 
-> Between that series (v1) and this one (v2):
->    - There is no more syscon, so its devicetree binding and driver have
->      been dropped
->    - The clock and reset components now have a single devicetree binding
->    - We no longer use a syscon-generated regmap for accessing the common
->      range of memory used by multiple drivers; specific sub-ranges are
->      instead mapped
->    - The clock and reset drivers have been combined into a single driver
->      located under drivers/clk
->    - The config option for the driver includes COMPILE_TEST, as requested
->      (last month) by Jerome Brunet
->    - The help text for the config option is simplified, first suggested
->      by Philipp Zabel
->    - The driver now names clocks using dev_name() rather than trying to
->      hand-code a unique name into a fixed-size name array (also suggested
->      by Jerome)
->    - Certain functions now always return 0, which simplifies callers
->      so they can simply return what the called function returns
->    - As suggested by sashiko, a counted-by field in a flex array is now
->      assigned explicitly
-> 
-> Alex Elder (2):
->    dt-bindings: toshiba: introduce toshiba,tc9564-clock.yaml
->    clk: toshiba: introduce a TC9564 clock/reset driver
-> 
->   .../bindings/clock/toshiba,tc9564-clock.yaml  |  73 +++
->   MAINTAINERS                                   |   9 +
->   drivers/clk/Kconfig                           |   8 +
->   drivers/clk/Makefile                          |   1 +
->   drivers/clk/clk-tc9564.c                      | 501 ++++++++++++++++++
->   include/dt-bindings/clock/toshiba,tc9564.h    |  50 ++
->   6 files changed, 642 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml
->   create mode 100644 drivers/clk/clk-tc9564.c
->   create mode 100644 include/dt-bindings/clock/toshiba,tc9564.h
-> 
-> 
-> base-commit: 909ef7a9a30fa139e69e555e3606680f5cca7726
+Bit 3: RSTN_CLK25 - Active low Reset for Timestamp signal selection logic
+Bit 4: RSTN_ETH - Active low Reset for RGMII/RMII Converter (50 MHz).
+
+Add a reset controller and add resets for those bits.
+
+Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
+---
+ drivers/clk/renesas/r9a06g032-clocks.c | 59 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 3df3f2b2c6de..a474302987aa 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -21,6 +21,7 @@
+ #include <linux/pm_clock.h>
+ #include <linux/pm_domain.h>
+ #include <linux/reboot.h>
++#include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/soc/renesas/r9a06g032-sysctrl.h>
+ #include <linux/spinlock.h>
+@@ -675,7 +676,13 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
+ 		RB(0xec, 16), RB(0xec, 17), RB(0xec, 18), RB(0xec, 19)),
+ };
+ 
++static const struct regbit r9a06g032_resets[] = {
++	[R9A06G032_RST_TS]	= RB(0x188, 3),
++	[R9A06G032_RST_MIIC]	= RB(0x188, 4),
++};
++
+ struct r9a06g032_priv {
++	struct reset_controller_dev rcdev;
+ 	struct clk_onecell_data data;
+ 	spinlock_t lock; /* protects concurrent access to gates */
+ 	void __iomem *reg;
+@@ -1307,6 +1314,51 @@ static void __init r9a06g032_init_h2mode(struct r9a06g032_priv *clocks)
+ 	writel(usb, clocks->reg + R9A06G032_SYSCTRL_USB);
+ }
+ 
++static inline
++struct r9a06g032_priv *priv_from_rcdev(struct reset_controller_dev *resetdev)
++{
++	return container_of(resetdev, struct r9a06g032_priv, rcdev);
++}
++
++static int r9a06g032_reset_set(struct reset_controller_dev *rcdev,
++				bool set, unsigned long id)
++{
++	struct r9a06g032_priv *priv = priv_from_rcdev(rcdev);
++	unsigned long flags;
++
++	spin_lock_irqsave(&priv->lock, flags);
++	clk_rdesc_set(priv, r9a06g032_resets[id], set);
++	spin_unlock_irqrestore(&priv->lock, flags);
++
++	return 0;
++}
++
++static int r9a06g032_reset_assert(struct reset_controller_dev *rcdev,
++					unsigned long id)
++{
++	return r9a06g032_reset_set(rcdev, false, id);
++}
++
++static int r9a06g032_reset_deassert(struct reset_controller_dev *rcdev,
++					unsigned long id)
++{
++	return r9a06g032_reset_set(rcdev, true, id);
++}
++
++static int r9a06g032_reset_status(struct reset_controller_dev *rcdev,
++					unsigned long id)
++{
++	struct r9a06g032_priv *priv = priv_from_rcdev(rcdev);
++
++	return !clk_rdesc_get(priv, r9a06g032_resets[id]);
++}
++
++static const struct reset_control_ops r9a06g032_reset_ops = {
++	.assert = r9a06g032_reset_assert,
++	.deassert = r9a06g032_reset_deassert,
++	.status = r9a06g032_reset_status,
++};
++
+ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -1394,6 +1446,13 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ 	if (error)
+ 		return error;
+ 
++	clocks->rcdev.ops = &r9a06g032_reset_ops;
++	clocks->rcdev.of_node = np;
++	clocks->rcdev.nr_resets = ARRAY_SIZE(r9a06g032_resets);
++	error =  devm_reset_controller_register(dev, &clocks->rcdev);
++	if (error)
++		return error;
++
+ 	error = r9a06g032_add_clk_domain(dev);
+ 	if (error)
+ 		return error;
+
+-- 
+2.53.0
+
 
