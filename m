@@ -1,111 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795171489;
-	b=XXdlGNRzHs8ZL69oaUsXOv743PgMOF90O6sCrbkQld19XxJenPrmoQTkUPJVd/PnRR2p
-	 RTseJcwuBIBS+T/aeJLmCh115kKX+axyUrbGltPGd2+J9sXWFau+HMx9a7oMb3qkl113p
-	 itrCk1gR3a4ITwZZkBBvbdDtMTqswAMD35xH5X0GAuLbHqQ7/hH4ntxD5O5uq8BKIBO1Q
-	 ZkpSGdAa+mO+7Yv/cDJ4PuDbmVsf3l94If1BjhvgLZOHisNhkirArI9Xp5vVnPOD2wCg8
-	 drzaqZQchKBaiCbc0oW8RAtljnVGoMSHN96iHa8TLeowQ8+F8WHrxK8JqM8CKQDQY9Q==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795171489;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
-	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Info:X-Proofpoint-GUID:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=9ga9s4FaYGlFWJhY7GxV3+5LLmF/e6Nq1LhLpotH2LA=;
-	b=D/dywPMg8c7lCXwQFu5DKNhhfWlUBZj79C7RnFbtPIXnNWBxjzJu+f0diP4vB7p4XXTW
-	 GvNeYM6gul/1484TYsXHNbzPD+DXUUO+NBit4wAOpjYmrwuAXm8mHdlea08CiC4AGqRO2
-	 6hjt5Qe2+ksS4ed7baGUChwJE/hCuACBzUukDqy1ipf37iOUn2fz4i5gNpc2szELMAE+f
-	 k/X6zvPuofEnesBB3zVnJDKSJ9BSkGB9Ptmdjs38fQnNuLIzMk9SSbKdjO9FW+fPbajmM
-	 FX3BIIdKJPQWvbyze0xwRpCJ1N0E0Cr8R+pjJ8QrfTsE2ghuBfDhqoQCxZwPZhIhKAg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=f2HwKWgZ;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b="PK1r8c/x";
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.159.56
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795171719;
+	b=otS9vfrdhyf0mWDC2zGMWU7ySmZkubBMBOtptkvxdZFz4BGP6RskafurMMVlSwbGguEY
+	 sTTjymyapsZcC5Hlq6Coyjp+vFTDbQFmjrqxd/OURDszImjrodvRLVl2zfwH0HOoH5snN
+	 YKXma7WjRdH3x0Tl9dy0KKS4ef+qrba4oYAGYT3Gmx6XhPKbvj2YgGu4d2HD4sWWv3Ycc
+	 j7PccAskh4hN5TSqNXlG0GOuTbGlWPE2IYx5HGyaMj7bLiYRYrMyAvmku1yyNx2qi85uX
+	 PJQNndOtARzNqQ8CxcpD/EPapUgBg4OjuQXPwDLMPHFKsjw0rrcVgpUtNwPLQIXfw0A==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795171719;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:Content-Type:Content-Disposition:
+	 In-Reply-To:X-ClientProxiedBy:MIME-Version:
+	 X-MS-Exchange-MessageSentRepresentingType:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=PpIkpj45PnSBFFJR7sWSdwgY/ddfffz58HANlT3Ibbw=;
+	b=clueH/TMw6+4KxSckG2jpsj0ccojqMs7CkNa3zWbzg8XKTFiRGdAJ8LMNBenr4JKRnQZ
+	 rVOxzik2hDTpHETVTiF3Tiq1TBMe6TrMJW123bZUs+ozrh46q2xZi3vtgkS3KCBN1c437
+	 6kL2A0Cntu8pUDbxD0PUQvWTKhp+HleAORTNU9BagWYmg3tK3eANOlnxswV3FhtbJLRgO
+	 J722N4OBg75+rC+yZ8yvlBBZxOzPbB+ZblR2f7PiS6a3jabqsth8f2xWsd88dI9YKae6p
+	 bQmVqO04oDiCeeBInLBq+FuNEEsOy7OgmLFbFqBbk6XugbbHUw4JZtsFcSkgNU3P0wA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.nxp.com;
+	spf=pass smtp.mailfrom=oss.nxp.com;
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b="EPprA3/u";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.159.56
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013056.outbound.protection.outlook.com [40.107.159.56])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CAB606A333
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 10:44:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F2CAB606A333
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21371606A32A;
+	Fri, 20 Nov 2026 10:48:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 21371606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=f2HwKWgZ;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=PK1r8c/x
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AK7euDI3575698
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 10:44:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9ga9s4FaYGlFWJhY7GxV3+5LLmF/e6Nq1LhLpotH2LA=; b=f2HwKWgZcfKld8j1
-	7/QDVrMXeLYD5PCQxG1w6Lq9fq6FORKgSlUx8mkNQvPvxF9qdyVl08tVKzbXVqcq
-	dFRsUkuiFseKmEalVdG013XQ215OVMF+tb/TZKOFTLI43CC2CyaYNTCgEt9WVA8p
-	mT4ltxWHCoJPkWYrZJTf/56tziab125xo4v0XRzBY5kVfCAEiJ/LAjYZMkeT/5Ix
-	6uLKsZkciH5UoxTS7qsvU88eAtsw0QmhMN1G9JuzKMV8ckCx9YOnU4aqlXVdKGgR
-	TQ+Z+k5KN8W2fRVP8HdHT8UP0hh+3UlrRxytQbafS8jYBXApmNk1kiPhmyFTwd/U
-	DAFCWg==
-Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j2gu8116w-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 10:44:48 +0000 (GMT)
-Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-38131260a5dso1916048eec.0
-        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 02:44:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795171487; x=1795776287; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=9ga9s4FaYGlFWJhY7GxV3+5LLmF/e6Nq1LhLpotH2LA=;
-        b=PK1r8c/xbIU4uXICPamqUKH9/5DvaSLkTccvOCEDYwNZFyG5/+URVq9nMgfjaP34Gv
-         2P0fzMnE8IBmEtGmxlevt2XpB/sRxmnAJxdNZn8E7jWWs4NKik4tFYXmK00+QxyPHywK
-         3GqX6JJXx91AY4SbIFb6Gsukr5LBamuDNCdqL2+ueh8qo4NStb1MwiaxNNmZmkd3I48Q
-         5+LgEoCsE4F382PWZUqx/RAhPoF2ekDvPGreOlrBOSEJ+Z3gXN2g5grZivN7wQSFbRv/
-         Vop21CsSAio//SKiaHz5C4BJVhk/+HXdTud8b3U1VV+vLFaM9afoG5Rm7w1BLNL4CevD
-         jxgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795171487; x=1795776287;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=9ga9s4FaYGlFWJhY7GxV3+5LLmF/e6Nq1LhLpotH2LA=;
-        b=JF2OILpjxLZsfH1p+Gwpt50aCaDCTEcIUbzZ/m7G5dxEpo5Bpys5jpFVqLCUmugbtW
-         KmOhjH0O7p/Kg5C+bomulf3322vihCWZpz29C7OItFY+9jZxNSDgcCQuHoU4bNfVGnwe
-         lOYLD0BKTwR3ThdGvlJeQMc30nHqfWoe+8+QVMxXOlDUsum1zdtrEmY1CoNpvJlpwNzH
-         MkHEXkHXnE4YZKUHUzu70/DBgJ+vDd6vkTD8QCxi4fkv4B8lJA6m3KopkJ77hYmv5Fur
-         RUj5cdgzJS98ycLQI9syXE4VkFOOQLfIiPZ5pFKegx6+siY4fYfb8otg7++HTf4f5yXY
-         aMzg==
-X-Forwarded-Encrypted: i=1; AL+hErGBmQcMHbKOAIg2utmiOWxc9guwfyN7r9Ad5udTEf2WG7+Q54ZLtzkp12Jgpb0+OppEcNN2CHpI8XM=@vger.kernel.org
-X-Gm-Message-State: APuU4Z++UxlzjQZOBwPOYK5+1Ql6oI7+86XNgouHPY+XnqYakE+jy3qv
-	T53NkcuCrdAPDTnK2nDfxdJ5wU49BuIqkOQYsBkGI3ujaOEd29F2H2/4quzzsueMRrvyjmr8CMC
-	TLn2Z0rUYl9QPSuEXHx+i+Yq9k+/PQsOMahry14XiN/93TdPHbCyX2/EF6E3ezw4=
-X-Gm-Gg: AZFdTZdQmulyEaKbISSpHLtg+BxBYujo/Jj1EEjj5Gr2nKJctGaa3eniZsAHeQr7yse
-	gd8VY1+aAGmaxc2LSgfSumkKF4kPr4jK8WBHx6kw4OuwTLWtCCdfWiPuUuGDFWfFe/4YgSjYugU
-	27LnbU7qiWdRXD+pNA3Aqn3kLiWa7NZPozp3YB+piOwcq5t5tjqf49Bsflsup2wqwAxH++wfHRO
-	1N9UbE2lRLIlfygnz0Z5ZzihnDP/KsCK7bPNsDYQgJ9dnjj/OTqFeze/a1GDUTFWLaLl9smA4St
-	ngnMnRcxs+zbd/6i5+ZL11/TJyF1upNEOEIwvxK2GsRzhdMVQD5XUxM0w7lNleo8Z88nEf5x266
-	HwWdNOALQaBocWB/Z6XIhMoanjQJEXfgVvoPGEff49NUD+VrGXVTrf9L8HscvPZVPZH3z+w07
-X-Received: by 2002:a05:693c:80ce:b0:36a:12c1:3adb with SMTP id 5a478bee46e88-3856f254a24mr2275337eec.20.1795171487255;
-        Fri, 20 Nov 2026 02:44:47 -0800 (PST)
-X-Received: by 2002:a05:693c:80ce:b0:36a:12c1:3adb with SMTP id 5a478bee46e88-3856f254a24mr2275321eec.20.1795171486791;
-        Fri, 20 Nov 2026 02:44:46 -0800 (PST)
-Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-385d2b93dd9sm6097471eec.24.2026.11.20.02.44.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Nov 2026 02:44:46 -0800 (PST)
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Fri, 20 Nov 2026 16:14:21 +0530
-Subject: [PATCH v3 2/2] clk: qcom: segcc-nord: Add I2C and TSC clock
- support
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=EPprA3/u
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LRgHz2fz7mMQQuVvTgYZ2zD5NcYEH4JUrBD0LvFjHPeCoxbfzCxiwziiX6gXnZKl0Upq/1pf777SMpQVEgLkPp4V5ExwXfTEMA1yiOsu2wc3cvbYA4c1fDigAkusxbV9EfSp6Mk5uXSKDRysCHxLPtROV9VDyr9m13yeGJlKMqp3sEaZwqySfk1P7lb3MpI8HAQZqT2x63B7HyTbfUyuURE5pjQAFKParzfFjSQE6nAF/0f52PJ9KGr/lYzN+xogT/h9AVTpuWNwUv6qn+huArDaPRhjGIKEIcWguBo9ZqXFW/kiKrH60vmG1fgReZXAc+MOQuDSnlv09StvscyIZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PpIkpj45PnSBFFJR7sWSdwgY/ddfffz58HANlT3Ibbw=;
+ b=v5372+UtNNQq1QjL20cm+ArJqW0q/mf+NkIJzkfsnh4GKrxOEJc7bd7fjaZRVw0soEKhyDxZ5soALRsFBreL6D1Zv2OmoxSXUWF/BfZX9sInLBqZnWDjp21agxtvUHQ5Q8xub4/s3TtnCX4gicdu3GuZyOPGTiWYxf4FjHtWWJuuJKkOJq/0lx2HG9FDjvEhcVZ5i4qtgZBkEzfPvncX7IbFyDhrNZK4CLVxoGFo8a4eabQoFJhx5oPy38JPmUORuzryBYR3xAMp+nT+gm7v/hIUyeB4xUinr1P7dlITJyvB1jkAt1AydkkCFLHzln7MFRBHkO0EPXpnpUcbdxHbYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PpIkpj45PnSBFFJR7sWSdwgY/ddfffz58HANlT3Ibbw=;
+ b=EPprA3/ui3m0JNTP466msx4xDYED9backaSzI++NN6IDIFWe0ibSsGGdsHMua976QTsjYSicJjGDh9nVjmCtwla9h1h75JUU/87zqBY2repeE3+qqe6cO8jaUh50uk9rV7l/qf+0U34c/DH98iZ8OgWdMC423IXgvnyBwrsk86R1KVRa0bsxetqltPYpCuYCMy7mCJHAedCvwp6kcONiUv9+6968r1AdMCBC4NVG5A1xf1zJew8nejiSAsVfJFBrdG300t2qAKrKEJN1SuVmXnCat1c5cDUnBit1NGRU917jZm+ByrbUCFN3ztwp2f40bCA+7JnZM4jmRk93Y+sP0A==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB12318.eurprd04.prod.outlook.com
+ (2603:10a6:150:32b::19) by AS8PR04MB7638.eurprd04.prod.outlook.com
+ (2603:10a6:20b:291::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.12; Fri, 20 Nov
+ 2026 10:48:34 +0000
+Received: from GV2PR04MB12318.eurprd04.prod.outlook.com
+ ([fe80::a498:2b5a:cbdb:d6fa]) by GV2PR04MB12318.eurprd04.prod.outlook.com
+ ([fe80::a498:2b5a:cbdb:d6fa%3]) with mapi id 15.21.0639.010; Fri, 20 Nov 2026
+ 10:48:34 +0000
+Date: Fri, 20 Nov 2026 12:48:30 +0200
+From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+To: sashiko-reviews@lists.linux.dev
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, robh@kernel.org, 
+	conor+dt@kernel.org, Frank.Li@kernel.org
+Subject: Re: [PATCH v12 2/5] drm/imx: Add support for i.MX94 DCIF
+Message-ID: <awAgaVs4LLwqVA57@vm>
+References: <20261118-dcif-upstreaming-v12-0-29b35e27a1cc@oss.nxp.com>
+ <20261118-dcif-upstreaming-v12-2-29b35e27a1cc@oss.nxp.com>
+ <sashiko-outbox-221406@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <sashiko-outbox-221406@kernel.org>
+X-ClientProxiedBy: AM8P191CA0027.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21a::32) To GV2PR04MB12318.eurprd04.prod.outlook.com
+ (2603:10a6:150:32b::19)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -115,273 +100,266 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261120-gcc_i2c_tsc_support-v3-2-e631872e670b@oss.qualcomm.com>
-References: <20261120-gcc_i2c_tsc_support-v3-0-e631872e670b@oss.qualcomm.com>
-In-Reply-To: <20261120-gcc_i2c_tsc_support-v3-0-e631872e670b@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Taniya Das <taniya.das@oss.qualcomm.com>,
-        Abel Vesa <abel.vesa@oss.qualcomm.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIwMDA0MiBTYWx0ZWRfX9wIUttEpckws
- wkv8AMrOrMhASVYFpDNrKxkIrVUugMuE8uko6pWrbB0/aTWt6/R5bPhGb5IOTS52t4xyLtiWapK
- +m+UC3brzKxKwv1QxvUHGCHdOMDro1Tbws8TDXCOlW7C+EagNorG6d6rZs7axgS6m2vIohEHUjh
- RxZn/PdxOdmZcF+SVuHMB5X6KctyL/SH61ieRHKYw6yoQRC1OZyhUdzB3aiY0/UJF2YPNXJ2hpL
- uhYi8e9nHeqssWZ0053Jae1nur69v0zyWZH8cnp8FJF4dUaFH2jbycuC2v6SrNe5q7npCBXsqCc
- lN3b7LnlJ44pjBdXvtJ5CgYxUnTjKXDG53HLgEND0ugwjYKYDL/vXLUoFwXk3SXE7lQ6sd6QeVg
- axfLefqFnTX+NlblcRBeP2c9p9a9AXhLNwb2EkZ++fNvNHI1kHnaHMqfYDncp7Vx96FNr4sq3D1
- ABxLREBOgKvpJwrPKuQ==
-X-Authority-Analysis: v=2.4 cv=bLeDs/+Z c=1 sm=1 tr=0 ts=6b0024a0 cx=c_pps
- a=PfFC4Oe2JQzmKTvty2cRDw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
- a=EUspDBNiAAAA:8 a=dmjuMl4sYXMLEaQzlHIA:9 a=QEXdDO2ut3YA:10
- a=6Ab_bkdmUrQuMsNx7PHu:22
-X-Proofpoint-ORIG-GUID: KetzyJGkcQqgmpnJerXacDiTVBvBk07l
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIwMDA0MiBTYWx0ZWRfX1EfcpwqZ5tiT
- /sFl41ueCQ+HvRWAdn+oplc0kHyTIhO0l5MSAKUw4sfbAtcSuYtsMTt6DdRfjK4InN3F5PiQeRm
- rx1W6PbRIXuUu5L6CXPpjWTVwC/0Dro=
-X-Proofpoint-GUID: KetzyJGkcQqgmpnJerXacDiTVBvBk07l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-20_03,2026-11-19_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0 spamscore=0
- malwarescore=0 adultscore=0 clxscore=1015 suspectscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611200042
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB12318:EE_|AS8PR04MB7638:EE_
+X-MS-Office365-Filtering-Correlation-Id: b03cec65-aac4-4241-afea-08df46f3d2be
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|23010399003|19092799006|6133799003|261009223027099003|18092099006|22082099003|18002099003|261022075727099003|261022105027099003|261026140227099003|261026121527099003|261028144727099003|261021121427099003|261102123227099003|261021135927099003|56012099006|4143699003|10067099003|5023799004|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	LThyzbVjH5Z0K8+8JifSDWch4ObxXkAzqyDd75eTw2tBJToBwG3XK3CBHPBWezzA9UV7n8sYg943fGhHfh5cuqMCO7Hr/RU5JiEweDkWDaVKe9mAp93LjS+ruUHhc5TK167s4YLIzm82q8sZZdhigifznZv2k/qgN3Ho2HFbThIcoMHBIuUA1mEzAQBf918UzSeWphv9YUtQPLNUuZdnpG7dHTdyu6K/PDCzUUztKP6nmYSatqLp9VCcYZEOSwCVw4O+OwEyL86kEcaIiOW0iHbYP6bDx968zCPIAZYLdUUAkq9fWe28pVMPxHa23oY1hr5zNHEoObTembvCXIwJ2Utyf4GjHwpMcC8rFPjoYolij753+AL7vsw5LKm8FXMlbOXQvQcge8G5ECRRifBC5xqe74lM/02na18dQaEjBLvGfHrAJnP0eKdSd8/CJseweu86YCosSrv+IaoSgMfZvZW56IVIVjh6jDCJSyrDnjLeykttqaTNYBlN7krKIzMJQe61PuVFpouYKzrLWRScf/o7Bf1Og7c/iYKQEvGCFZJbua6zSYDMpFvc9fcyCvnO4cuBpYutRyy12EbFrTKwzvvFMccrVyV68Jk+GQMjsUGN0eJAzFkgFxncTg5eTXxP3n6L33y1f1QS+979iWd51kHAR2d03TlAwB2lVm8nMeA=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB12318.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(19092799006)(6133799003)(261009223027099003)(18092099006)(22082099003)(18002099003)(261022075727099003)(261022105027099003)(261026140227099003)(261026121527099003)(261028144727099003)(261021121427099003)(261102123227099003)(261021135927099003)(56012099006)(4143699003)(10067099003)(5023799004)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xwe7LpzWc1pXfBpEERjemn0UftsTCeiM/NfxxgsIfgbN/hCLMF82XQJUoINJ?=
+ =?us-ascii?Q?IDubnkalGjUX139ldEX8/WAmomQkbUqWrFaPZ/iPKobvbdFE3rd02M0jXrsz?=
+ =?us-ascii?Q?ogqMlrsoyjU/b1dWMa2zGYK/3aT+/09PTEWNBgEEsZmOgFf7l0xke+wMZ4EN?=
+ =?us-ascii?Q?u5ud/YtpWkdV8hnT3Gk5/5C4JH1EGsn8c2+fxqsFp4UkBUPaw8jw2xc66EZd?=
+ =?us-ascii?Q?Z9lwtN2DOiyYkbH+KOJ9nMnUHFqIZlZInGv39BtGMSueif4rIVkVwGs6Qu0P?=
+ =?us-ascii?Q?p+ImCFiOn+tqWZdDnUgKv650EpTjYgnSv213tzCS/eD61CkRuIMfe7PeclwE?=
+ =?us-ascii?Q?2u3SVbjMBwYJZ8GYTw6I4j1IGphN26cgFAWEXSl1N7SjQChNVb6T+cEg/5fw?=
+ =?us-ascii?Q?2cymzy0YtPLpA1E+zgjg5vMeD3AsoNn7AmvMiU6HnWDxPQ9CjhHY5gvZY7jU?=
+ =?us-ascii?Q?L/3iI1rfpeaqnL0gnvKWKAkQdjMQN6/leK7PyHjUtAY8RiTpnUYZrzYuD84o?=
+ =?us-ascii?Q?VbiLCXqf+lMvlmwGD9BNGfh+4Evh+25/XkN6YHNYp9jqiY0ZfyHPv3iVKw9G?=
+ =?us-ascii?Q?TbB6me/6GytqUQO3tqpKnAJ+4HAh9UHzMV4jiNGRrH8gpJkejEIQNKaO7UsK?=
+ =?us-ascii?Q?CFjpLJCwSocje2c+AZaN+lc2kqn8sPO5QDkX24vmO9vQKEsMNg50z7hQ6+DF?=
+ =?us-ascii?Q?LTIEGtEifuDLv7aNSA32RtOnfbYJZsTX8ozTVMuxi4gCZBkZsocwqePtoa1F?=
+ =?us-ascii?Q?ysV7dmCQJjvkvSp4p10m/KSIb7Uzp1Wykk1V1UoBLLobcrFCO/PqZRqhl2PT?=
+ =?us-ascii?Q?oAxvSvaIAI9RNt0++NOGKdUwcZSnH9CnJVGQQjgTW7XVh3kN/uDgKxyKFUrd?=
+ =?us-ascii?Q?eE+KlHSgyTRlQZR3tdIHgWAIZ0wzR8Z6clFKGl9T0YFYiGKuzRX4bcwlYCwq?=
+ =?us-ascii?Q?9K58TR5Jx/EXUXxzCt0j/SAADOdHjM4VyDz5P/yLcuGv8EDvRSqLyIANgCwF?=
+ =?us-ascii?Q?+nu8zZpwl8ZmxUsPkZyIPFmOCE65REktJCgjStOcJI15pGleqFkg4ZoHRuwz?=
+ =?us-ascii?Q?9iKwyRVim/2dKw++1pvUsJhzBqDM4jCTMc+uGhndXj08TZ5/xxI2uvVi8T8o?=
+ =?us-ascii?Q?NoduJHfqMup8w4iSKxyaNyv22YmQDfKfuMdUE6yWnt4Tzatu0ObeOX01Gwem?=
+ =?us-ascii?Q?whkEo8Sez0l7RtQbUOJSI0ReFFG93lsWl1lInHzzOlkOqPM8mo0OzpxHSazs?=
+ =?us-ascii?Q?VCGY2lLsEpn9ViV23IWUsZI1p/26kBZJr3bJfjYFOjPRIt4fb5oC/UiYhaUQ?=
+ =?us-ascii?Q?9WzXTuZBwaIm3/s77V3RVYCXkov6PJ/z8dQ1PVgJFcFn8KQ1V8745uhRfYmj?=
+ =?us-ascii?Q?/K9RkJIq3Gn41m6V2E3pLjayjRkaX6YGmfU2g1YJ845ybmXXVe6v/TovUBOS?=
+ =?us-ascii?Q?w6OG4yRZuGuiZ3RMWyXAz+7+WJbl+FU3y61OoFL7J06YJGZ37qxE6jx7aOrT?=
+ =?us-ascii?Q?zEWDqLP4cLUR8UyaHdgsZLmCWft2kctAlitn8xitnPa8G2oLPdbQ4S0a4Inc?=
+ =?us-ascii?Q?G4TwZIX8w6wuUj/2UUlkcXazW84gbX3undSKP/UUxOl9EjMuS/RvDeQnslcE?=
+ =?us-ascii?Q?s4v9j2J9P49SuP856vuWjNagri/tDaEz8nZGRj8aYctm9KTFYcFVUzauNw7h?=
+ =?us-ascii?Q?251bhxw6KucvNmQqyu/Te1fHh51XWEOo2nKMURob2zXA8zSLLa28v1stjm8K?=
+ =?us-ascii?Q?19tv5TNR9Q=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b03cec65-aac4-4241-afea-08df46f3d2be
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB12318.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2026 10:48:33.8643
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 83X6a7mbucdwMNwOMzeo0hFIZgmChg6dpV2JYFtSKdg2BnYQJ8GhJj0DqTCxCQblX+FCu6cgrYDifXA+/iT/aA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7638
 
-Describe the I2C slave and TSC subsystem clocks, reset lines, and
-parent PLL needed by the Nord SE GCC. This permits consumers to enable
-and reset the hardware through the common clock framework.
+On Wed, Nov 18, 2026 at 04:02:40PM +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 3 potential
+> issues to consider:
+> - [Medium] drm/imx/dcif: unclocked MMIO access when runtime PM resume
+>   fails
+> - [Medium] drm/imx: dcif: unbalanced clock disable if
+>   dcif_runtime_resume() fails
+> - [Low] drm/imx/dcif: missing shadow load and trigger clear in
+>   dcif_crc_source_disable()
+> --
+> 
+> commit 373caa0eccbfd7fa4334093ea8869b540640e7ab
+> Author: Sandor Yu <sandor.yu@nxp.com>
+> 
+> drm/imx: Add support for i.MX94 DCIF
+> 
+> This commit adds a DRM/KMS driver for the NXP i.MX94 Display Control
+> Interface (DCIF), supporting primary and overlay planes, YCbCr-to-RGB CSC
+> on layer 0, and frame/ROI CRC generation.
+> 
+> > diff --git a/drivers/gpu/drm/imx/dcif/dcif-crc.c b/drivers/gpu/drm/imx/dcif/dcif-crc.c
+> > new file mode 100644
+> > index 0000000000000..ad94b458a6c59
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/imx/dcif/dcif-crc.c
+> [ ... ]
+> > +void dcif_crc_source_enable(struct dcif_dev *dcif, enum dcif_crc_source source,
+> > +			    struct drm_rect *roi, int ncrc)
+> > +{
+> > +	int ret;
+> > +
+> > +	if (ncrc >= MAX_DCIF_CRC_NUM)
+> > +		return;
+> > +
+> > +	if (source == DCIF_CRC_SRC_NONE)
+> > +		return;
+> > +
+> > +	if (dcif->crc_is_enabled)
+> > +		return;
+> > +
+> > +	ret = drm_crtc_vblank_get(&dcif->crtc);
+> > +	if (ret) {
+> > +		drm_err(&dcif->drm, "Could not get vblank reference: %d\n", ret);
+> > +		return;
+> > +	}
+> > +
+> > +	dcif_crc_config(dcif, roi, ncrc);
+> > +
+> > +	regmap_set_bits(dcif->regmap, DCIF_CRC_CTRL,
+> > +			DCIF_CRC_CTRL_CRC_MODE | DCIF_CRC_CTRL_CRC_SHADOW_LOAD_EN |
+> > +			DCIF_CRC_CTRL_CRC_TRIG);
+> > +
+> > +	scoped_guard(spinlock_irqsave, &dcif->drm.event_lock)
+> > +		dcif->crc_is_enabled = true;
+> > +}
+> > +
+> > +void dcif_crc_source_disable(struct dcif_dev *dcif, int ncrc)
+> > +{
+> > +	if (!dcif->crc_is_enabled)
+> > +		return;
+> > +
+> > +	if (ncrc >= MAX_DCIF_CRC_NUM)
+> > +		return;
+> > +
+> > +	regmap_clear_bits(dcif->regmap, DCIF_CRC_CTRL, DCIF_CRC_CTRL_CRC_EN(ncrc));
+> 
+> [Severity: Low]
+> Should dcif_crc_source_disable() also clear DCIF_CRC_CTRL_CRC_TRIG and set
+> DCIF_CRC_CTRL_CRC_SHADOW_LOAD_EN when disabling CRC on an active CRTC?
+> 
+> Clearing only DCIF_CRC_CTRL_CRC_EN(ncrc) leaves the disabled state
+> unlatched, and if DCIF_CRC_CTRL_CRC_MODE, DCIF_CRC_CTRL_CRC_SHADOW_LOAD_EN
+> and DCIF_CRC_CTRL_CRC_TRIG stay set in DCIF_CRC_CTRL, a later
+> dcif_crc_source_enable() call via regmap_set_bits() will see no bit changes
+> and skip writing the register.
 
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
-Reviewed-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
----
- drivers/clk/qcom/segcc-nord.c | 135 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 135 insertions(+)
+It appears this one is correct. The CRC_EN(n) is shadowed and CRC_TRIG
+is not self-clearing in continuous mode. Will fix in v13.
 
-diff --git a/drivers/clk/qcom/segcc-nord.c b/drivers/clk/qcom/segcc-nord.c
-index ef97da3852e3571db5c34676a8f08b9650d1e4c6..256d3c18201b4fd0e48bef9293cdf78fb329ebe2 100644
---- a/drivers/clk/qcom/segcc-nord.c
-+++ b/drivers/clk/qcom/segcc-nord.c
-@@ -29,6 +29,7 @@ enum {
- 	P_BI_TCXO,
- 	P_SE_GCC_GPLL0_OUT_EVEN,
- 	P_SE_GCC_GPLL0_OUT_MAIN,
-+	P_SE_GCC_GPLL1_OUT_MAIN,
- 	P_SE_GCC_GPLL2_OUT_MAIN,
- 	P_SE_GCC_GPLL4_OUT_MAIN,
- 	P_SE_GCC_GPLL5_OUT_MAIN,
-@@ -74,6 +75,23 @@ static struct clk_alpha_pll_postdiv se_gcc_gpll0_out_even = {
- 	},
- };
- 
-+static struct clk_alpha_pll se_gcc_gpll1 = {
-+	.offset = 0x1000,
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
-+	.clkr = {
-+		.enable_reg = 0x57010,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "se_gcc_gpll1",
-+			.parent_data = &(const struct clk_parent_data) {
-+				.index = DT_BI_TCXO,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_fixed_lucid_ole_ops,
-+		},
-+	},
-+};
-+
- static struct clk_alpha_pll se_gcc_gpll2 = {
- 	.offset = 0x2000,
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
-@@ -189,6 +207,20 @@ static const struct clk_parent_data se_gcc_parent_data_4[] = {
- 	{ .index = DT_SLEEP_CLK },
- };
- 
-+static const struct parent_map se_gcc_parent_map_5[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_SE_GCC_GPLL0_OUT_MAIN, 1 },
-+	{ P_SE_GCC_GPLL5_OUT_MAIN, 3 },
-+	{ P_SE_GCC_GPLL1_OUT_MAIN, 4 },
-+};
-+
-+static const struct clk_parent_data se_gcc_parent_data_5[] = {
-+	{ .index = DT_BI_TCXO },
-+	{ .hw = &se_gcc_gpll0.clkr.hw },
-+	{ .hw = &se_gcc_gpll5.clkr.hw },
-+	{ .hw = &se_gcc_gpll1.clkr.hw },
-+};
-+
- static const struct freq_tbl ftbl_se_gcc_eee_emac0_clk_src[] = {
- 	F(66666667, P_SE_GCC_GPLL0_OUT_MAIN, 9, 0, 0),
- 	F(100000000, P_SE_GCC_GPLL0_OUT_MAIN, 6, 0, 0),
-@@ -670,6 +702,21 @@ static struct clk_rcg2 se_gcc_qupv3_wrap1_s6_clk_src = {
- 	.clkr.hw.init = &se_gcc_qupv3_wrap1_s6_clk_src_init,
- };
- 
-+static struct clk_rcg2 se_gcc_tscss_clk_src = {
-+	.cmd_rcgr = 0x2a010,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = se_gcc_parent_map_5,
-+	.freq_tbl = ftbl_se_gcc_emac0_ptp_clk_src,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "se_gcc_tscss_clk_src",
-+		.parent_data = se_gcc_parent_data_5,
-+		.num_parents = ARRAY_SIZE(se_gcc_parent_data_5),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
- static struct clk_branch se_gcc_eee_emac0_clk = {
- 	.halt_reg = 0x240b4,
- 	.halt_check = BRANCH_HALT,
-@@ -1079,6 +1126,34 @@ static struct clk_branch se_gcc_gp2_clk = {
- 	},
- };
- 
-+static struct clk_branch se_gcc_i2c_slave_ahb_clk = {
-+	.halt_reg = 0x2c008,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.hwcg_reg = 0x2c008,
-+	.hwcg_bit = 1,
-+	.clkr = {
-+		.enable_reg = 0x2c008,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "se_gcc_i2c_slave_ahb_clk",
-+			.ops = &clk_branch2_aon_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch se_gcc_i2c_slave_xo_clk = {
-+	.halt_reg = 0x2c004,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2c004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "se_gcc_i2c_slave_xo_clk",
-+			.ops = &clk_branch2_aon_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch se_gcc_mmu_2_tcu_vote_clk = {
- 	.halt_reg = 0x57040,
- 	.halt_check = BRANCH_HALT_VOTED,
-@@ -1456,6 +1531,57 @@ static struct clk_branch se_gcc_qupv3_wrap1_s_ahb_clk = {
- 	},
- };
- 
-+static struct clk_branch se_gcc_tscss_ahb_clk = {
-+	.halt_reg = 0x2a00c,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.hwcg_reg = 0x2a00c,
-+	.hwcg_bit = 1,
-+	.clkr = {
-+		.enable_reg = 0x2a00c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "se_gcc_tscss_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch se_gcc_tscss_cntr_clk = {
-+	.halt_reg = 0x2a008,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2a008,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "se_gcc_tscss_cntr_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&se_gcc_tscss_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch se_gcc_tscss_etu_clk = {
-+	.halt_reg = 0x2a004,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2a004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "se_gcc_tscss_etu_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&se_gcc_tscss_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct gdsc se_gcc_emac0_gdsc = {
- 	.gdscr = 0x24004,
- 	.en_rest_wait_val = 0x2,
-@@ -1520,9 +1646,12 @@ static struct clk_regmap *se_gcc_nord_clocks[] = {
- 	[SE_GCC_GP2_CLK_SRC] = &se_gcc_gp2_clk_src.clkr,
- 	[SE_GCC_GPLL0] = &se_gcc_gpll0.clkr,
- 	[SE_GCC_GPLL0_OUT_EVEN] = &se_gcc_gpll0_out_even.clkr,
-+	[SE_GCC_GPLL1] = &se_gcc_gpll1.clkr,
- 	[SE_GCC_GPLL2] = &se_gcc_gpll2.clkr,
- 	[SE_GCC_GPLL4] = &se_gcc_gpll4.clkr,
- 	[SE_GCC_GPLL5] = &se_gcc_gpll5.clkr,
-+	[SE_GCC_I2C_SLAVE_AHB_CLK] = &se_gcc_i2c_slave_ahb_clk.clkr,
-+	[SE_GCC_I2C_SLAVE_XO_CLK] = &se_gcc_i2c_slave_xo_clk.clkr,
- 	[SE_GCC_MMU_2_TCU_VOTE_CLK] = &se_gcc_mmu_2_tcu_vote_clk.clkr,
- 	[SE_GCC_QUPV3_WRAP0_CORE_2X_CLK] = &se_gcc_qupv3_wrap0_core_2x_clk.clkr,
- 	[SE_GCC_QUPV3_WRAP0_CORE_CLK] = &se_gcc_qupv3_wrap0_core_clk.clkr,
-@@ -1560,6 +1689,10 @@ static struct clk_regmap *se_gcc_nord_clocks[] = {
- 	[SE_GCC_QUPV3_WRAP1_S6_CLK] = &se_gcc_qupv3_wrap1_s6_clk.clkr,
- 	[SE_GCC_QUPV3_WRAP1_S6_CLK_SRC] = &se_gcc_qupv3_wrap1_s6_clk_src.clkr,
- 	[SE_GCC_QUPV3_WRAP1_S_AHB_CLK] = &se_gcc_qupv3_wrap1_s_ahb_clk.clkr,
-+	[SE_GCC_TSCSS_AHB_CLK] = &se_gcc_tscss_ahb_clk.clkr,
-+	[SE_GCC_TSCSS_CLK_SRC] = &se_gcc_tscss_clk_src.clkr,
-+	[SE_GCC_TSCSS_CNTR_CLK] = &se_gcc_tscss_cntr_clk.clkr,
-+	[SE_GCC_TSCSS_ETU_CLK] = &se_gcc_tscss_etu_clk.clkr,
- };
- 
- static struct gdsc *se_gcc_nord_gdscs[] = {
-@@ -1570,8 +1703,10 @@ static struct gdsc *se_gcc_nord_gdscs[] = {
- static const struct qcom_reset_map se_gcc_nord_resets[] = {
- 	[SE_GCC_EMAC0_BCR] = { 0x24000 },
- 	[SE_GCC_EMAC1_BCR] = { 0x25000 },
-+	[SE_GCC_I2C_BCR] = { 0x2c000 },
- 	[SE_GCC_QUPV3_WRAPPER_0_BCR] = { 0x26000 },
- 	[SE_GCC_QUPV3_WRAPPER_1_BCR] = { 0x27000 },
-+	[SE_GCC_TSCSS_BCR] = { 0x2a000 },
- };
- 
- static const struct clk_rcg_dfs_data se_gcc_nord_dfs_clocks[] = {
+> 
+> [ ... ]
+> 
+> > diff --git a/drivers/gpu/drm/imx/dcif/dcif-crtc.c b/drivers/gpu/drm/imx/dcif/dcif-crtc.c
+> > new file mode 100644
+> > index 0000000000000..233e149929964
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/imx/dcif/dcif-crtc.c
+> [ ... ]
+> > +static void dcif_crtc_atomic_enable(struct drm_crtc *crtc,
+> > +				    struct drm_atomic_commit *state)
+> > +{
+> > +	struct drm_crtc_state *crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
+> > +	struct dcif_crtc_state *dcif_crtc_state = to_dcif_crtc_state(crtc_state);
+> > +	struct drm_display_mode *adj = &crtc_state->adjusted_mode;
+> > +	struct dcif_dev *dcif = crtc_to_dcif_dev(crtc);
+> > +	struct drm_device *drm = crtc->dev;
+> > +	int ret;
+> > +
+> > +	dev_dbg(drm->dev, "mode " DRM_MODE_FMT "\n", DRM_MODE_ARG(adj));
+> > +
+> > +	/* enable power when we start to set mode for CRTC */
+> > +	ret = pm_runtime_resume_and_get(drm->dev);
+> > +	if (ret < 0) {
+> > +		drm_err(drm, "failed to resume DCIF, ret = %d\n", ret);
+> > +		return;
+> > +	}
+> > +	dcif->crtc_pm_enabled = true;
+> [ ... ]
+> > +static void dcif_crtc_atomic_disable(struct drm_crtc *crtc,
+> > +				     struct drm_atomic_commit *state)
+> > +{
+> > +	struct dcif_dev *dcif = crtc_to_dcif_dev(crtc);
+> > +	struct drm_device *drm = crtc->dev;
+> > +
+> > +	if (dcif->has_crc)
+> > +		dcif_crc_source_disable(dcif, 0);
+> > +
+> > +	dcif_disable_controller(dcif);
+> > +	dcif_disable_plane_panic(dcif);
+> > +
+> > +	drm_crtc_vblank_off(crtc);
+> > +
+> > +	if (dcif->crtc_pm_enabled) {
+> > +		dcif->crtc_pm_enabled = false;
+> > +		pm_runtime_put_sync(drm->dev);
+> > +	}
+> 
+> [Severity: Medium]
+> Can a failure in pm_runtime_resume_and_get() lead to MMIO register accesses
+> while the DCIF clocks are disabled?
+> 
+> If pm_runtime_resume_and_get() fails in dcif_crtc_atomic_enable(),
+> dcif->crtc_pm_enabled remains false, but crtc_state->active is still true.
+> In the same commit tail, drm_atomic_helper_commit_planes() still calls
+> dcif_plane_atomic_update() and dcif_crtc_atomic_flush(), and a later
+> dcif_crtc_atomic_disable() calls dcif_crc_source_disable(),
+> dcif_disable_controller(), and dcif_disable_plane_panic() before checking
+> dcif->crtc_pm_enabled.  Accessing DCIF registers while the block is
+> unclocked can cause an external abort or bus hang on i.MX94.
+
+This one is not worth fixing. First, the only thing that can fail in the
+runtime resume is clk_bulk_prepare_enable(). If that fails, the platform
+is already broken since the clocks are managed by the SCMI firmware. Second,
+adding checks dor crtc_pm_enabled in every commit path (flush, plane
+update, etc) would add a lot of unnecessary noise for something that
+will probably never happen in practice.
+
+> 
+> [ ... ]
+> 
+> > diff --git a/drivers/gpu/drm/imx/dcif/dcif-drv.c b/drivers/gpu/drm/imx/dcif/dcif-drv.c
+> > new file mode 100644
+> > index 0000000000000..80b554f1b6843
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/imx/dcif/dcif-drv.c
+> [ ... ]
+> > +static int dcif_suspend(struct device *dev)
+> > +{
+> > +	struct dcif_dev *dcif = dev_get_drvdata(dev);
+> > +	int ret;
+> > +
+> > +	ret = drm_mode_config_helper_suspend(&dcif->drm);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	if (pm_runtime_suspended(dev))
+> > +		return 0;
+> > +
+> > +	return dcif_runtime_suspend(dev);
+> > +}
+> > +
+> > +static int dcif_resume(struct device *dev)
+> > +{
+> > +	struct dcif_dev *dcif = dev_get_drvdata(dev);
+> > +	int ret;
+> > +
+> > +	if (!pm_runtime_suspended(dev)) {
+> > +		ret = dcif_runtime_resume(dev);
+> > +		if (ret < 0)
+> > +			return ret;
+> > +	}
+> > +
+> > +	return drm_mode_config_helper_resume(&dcif->drm);
+> > +}
+> 
+> [Severity: Medium]
+> Can a failure in dcif_runtime_resume() during system resume cause an
+> unbalanced clk_bulk_disable_unprepare()?
+> 
+> When the CRTC is active entering system suspend, the PM core's
+> device_prepare() holds a runtime PM reference, so the pm_runtime_put_sync()
+> in dcif_crtc_atomic_disable() leaves the device's runtime PM status as
+> RPM_ACTIVE.  dcif_suspend() then calls dcif_runtime_suspend() directly,
+> disabling clocks without updating runtime_status.  If dcif_runtime_resume()
+> fails in dcif_resume(), clocks remain disabled while runtime_status is
+> still RPM_ACTIVE, and device_complete() -> pm_runtime_put() will invoke
+> dcif_runtime_suspend() a second time.  Using pm_runtime_force_suspend() and
+> pm_runtime_force_resume() would keep runtime_status aligned with the clock
+> state.
+
+This is related to the previous issue and also not worth fixing since
+the resume is unlikely to fail, as I explained above.
 
 -- 
-2.34.1
-
+Thanks,
+Laurentiu
