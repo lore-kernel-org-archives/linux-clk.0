@@ -1,13 +1,13 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.127.87
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.75.107
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795152941;
-	b=GZ3c7lhuNw1+xW0i+sapum1cM95WuOHe8cz6Uc9+MqP+TDwJE+LM9NHBBnvBAYQKxm2A
-	 HStirUBDiqJuBwnPTimUNeLo21k/I/KtV0APL3xuj+5nvikwQXi2iIxubGTeRvSiaxDw2
-	 s/4OL/n88I8p4J4n7OaAYfjvCJ6aRBn4HGM/LDGdQdrKTQ2qQIH7K0c/ZLyJM9zFxjGRz
-	 wT3/rBMTez4j7D0KLafptq2lzY7b1cTUZuCQ0kJ4PwTieF75kt42y3enKAs/whJOygMao
-	 X8CO3xJ0sFO/KmIj89rSVyTS0CbYVxgMxoFzzwdcSW7uW28rv3+LrEuLz1CHmGjTAXA==
+	t=1795152937;
+	b=RWIXM7X/l/fA3YN4LB1rhyPSLjI+q/ZfdbxpXYBItXZ7MjJmThEkMY6+JgvSjo7dACo3
+	 2rj+p39kHd3wvlrNhWgX6CHw9D5nQKcZfmj/ftLXvMotbWpatezFkCm9BcCYu5tzeHQxn
+	 DwxQ3NmE9Wq/eGsg4KgtWdkIOVFNzDRywDvw6IP2BhhQP3k1doKVjSXC+IUACQTSTtTWC
+	 s+OyVRPGsvDq/RlTlx8w3kmDBygFwF37Gl/22AEkj35bgu7P30g5VBbnvzhArqmhmRzEI
+	 g8o+OL0BshgXbIp6YmQpmdsl+c9ht9k8vVzMfnO993JwfwFqccRjoudXkmhyT7VZcOQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795152941;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795152937;
 	h=DMARC-Filter:Received:Received:X-MS-Exchange-Authentication-Results:
 	 Received-SPF:Received:Received:From:To:Cc:Subject:Date:Message-ID:
 	 X-Mailer:In-Reply-To:References:MIME-Version:
@@ -25,46 +25,46 @@ ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
 	 X-MS-Exchange-CrossTenant-FromEntityHeader:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=wvLRDTzAuyU/cnrrmEH4pWrzDy4CHKvNYZzFtPrmRBw=;
-	b=wPwUMRhOgow3LOj04CbUdKUVJXsE8vzA0j+eXJ7AtGgKUH2UeozANQOtnx9FvJIesYsB
-	 CuHs71roB5fiaC/EOa2vi2lxy5y3+qiaQSziCO9zUs+jO7GHDRH9VD5cT68uaHpkUDtbZ
-	 FTUGzupTEzQZPVB2x8M/KgyridXjA32wwboLU+I3D4hqd2x9QwXlP9IjGQBn2/R7QL87A
-	 5jAP25LQ/24b+h/wlsLwzkZofbPtaCSx6WSi9p95oPeuScuDkk3Y8TXGZBBzf3kcsPrMt
-	 l9OtKN1+poA3TWCDfLk1Ev2gHGROF45UKiFsAAzlA309p2ZFl6UeObDs6RCWJpZ3qDw==
+	bh=TGSlRAR+Zm4NZmfK0vP+zv8nj5qbBIRZNsmYsMV1EOs=;
+	b=RJUVBUJWBbIC6LAiVLd8Z2srh+3PhB1Z/+DfYaL31kn/0WamBaUsNjgF0iAIldSSVqOe
+	 u7AdL9T9qWsanUSyS01WtNg9LL2Gc5ehYc1b+8qbRdqYMdtalzTsr5Dl3n1dnJRBuAXN3
+	 AE7bmC9QNoeee6wyYSuXP3rtzIX9bw8GTAU+ZNZpz7ONg2gC5Oql2RhuPdXEjOF2de95R
+	 t7W5vbFlVCkPFZMqTpn5CoaAy+xnIvA/OV5tYm+qx45n8aJZQUsFoXcQfQmoRo3fDPZTJ
+	 oZlWjqK/5Y8XbKXDoyji9F1b+MjZok633/tZBAvUp4tzodiAjVw0ub1QhuH1Nhg4qpA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=none header.from=cixtech.com;
 	spf=pass smtp.mailfrom=cixtech.com;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.127.87
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023087.outbound.protection.outlook.com [52.101.127.87])
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.75.107
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022107.outbound.protection.outlook.com [40.107.75.107])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2ADF60A2635;
-	Fri, 20 Nov 2026 05:35:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A2ADF60A2635
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24834606A325;
+	Fri, 20 Nov 2026 05:35:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 24834606A325
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CCU1cI65FlDUFEh5CVjCDnNaArgGuxMlvD6WM8t3T1GlhUjcAE9uPetMUzcEy+E+nL/SWSs3BIOD5A8pDjLplLFnG9Yk2venuJKhUmz5BNfQY+lM05ErjsixQYSkTofqrWoXeXFz8ONN0WNIkKtOtm0BMUoanEmwTfxciqqFbshZEUUE/GizX1BgzhXtX9wP9hoQKNw3WqkWYKLuclktHrrPYLlLX8V3s+XpmT0AuZC5NpXztcyjMMxhkCKqzxWwrEVk+FDvqnpW2OOw2En+DnX3oiX9T47W5nD8WVlMCNIHJ161Jrac/Fxzzz9j7/1UgY/XhPHrGmeFV25gj1WvHg==
+ b=yjsVOOTXPZ2YnOMWD8civ6DgDypirfIEDb/3i3fVT1ecoR1Z6V4AvQfJZEafC7Y3xVu+F0W2dA3V8NncX8VnubcCRWRxlzRkW90e/9UfzvarRxcAZ4OSyUyEs/hrnGtCiDPrDHwxDkSUkJCuAE0fj/Z1vz2d5j2QM2LM1gOFf1mqIRx1tZdTK5UyB07Q+q3OoFKio+3476gtkF1GhpwVNgtyILHqQ3e0Yauhiav8MIzX5yKrUXMC+7mj+e7G9Z30SIRacsO1UkPYt7+OJzghMsWHj3hdMpaSX0fginBGjDxS/CFxXojMPQf26d8LnqqPmado8ZFKMd8NHwFCVyX5HA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wvLRDTzAuyU/cnrrmEH4pWrzDy4CHKvNYZzFtPrmRBw=;
- b=Z/VaSdA1dcBsbu5I07uOo4GcpbBHnm3OzA2sUGskyfUNAaSQ4it4zr/l/hQFOy7RVTkjLWquG/FniaMpWCPEy+DGg7/CFAOCVZ1AJIuiKIK71LP5TkyeTXZTJTx+Y+/B/Kk8ABD5MlO1NpHyl9SKb7a/U1MnYZ34spwC8/QkZR775fcOL4FHB4Mvw7E9SrqP4da79SAZhoCyJCcZBiv7dCziY8IleEMkiIkJ7/Jld4f+8yVWXxtZqhlgZWtgum1rt4XJJ48bP0M49BXKq1NPLfw3F3CWNK3CtVSooTIkuokzBcARLBBpFBwdYxHsvTiDYIzgOoPgL9emU6kqyVpLEw==
+ bh=TGSlRAR+Zm4NZmfK0vP+zv8nj5qbBIRZNsmYsMV1EOs=;
+ b=WdgluTObn5tS+cyHBn4Lu5isyBRGtxpBQb057HWI7sb0g+q8gJmIpk/yXrqrRU6ETbI5auDkeWtz//cGCaHf0vVsC+oNgjuyKIqd04ijRzdqzZxlJ1e1vHYtmL4dQZCfJFqBlxbuqMKe8P4bDM43An9fSsPaQlVpZdOxKPRZRIPk/G7D1vbgdXwW4eSLyntrjCJNoca3cHh72oQ5eYZ4gfjgEXw0R5fpENqBrT7IFgMNCIWPcfYf/55SwQE8mkAHkQAgjYThNZk2Q+7svqVvDO+PE/OvfAVJLJumSngD2vOERB2NdjW+2xOx7ithlSj7un1YyJXkgqQBDhocSt3y7Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
  dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
  not signed); arc=none (0)
-Received: from PUVP216CA0069.KORP216.PROD.OUTLOOK.COM (2603:1096:301:225::12)
- by SI2PR06MB646176.apcprd06.prod.outlook.com (2603:1096:4:18c::7) with
+Received: from PUVP216CA0036.KORP216.PROD.OUTLOOK.COM (2603:1096:301:20f::18)
+ by PUZPR06MB5434.apcprd06.prod.outlook.com (2603:1096:301:dc::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.2; Fri, 20 Nov
- 2026 05:35:36 +0000
-Received: from TY2PEPF0000AB83.apcprd03.prod.outlook.com
- (2603:1096:301:225:cafe::ac) by PUVP216CA0069.outlook.office365.com
- (2603:1096:301:225::12) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 05:35:32 +0000
+Received: from TY2PEPF0000AB89.apcprd03.prod.outlook.com
+ (2603:1096:301:20f:cafe::77) by PUVP216CA0036.outlook.office365.com
+ (2603:1096:301:20f::18) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.639.12 via Frontend Transport; Fri,
- 20 Nov 2026 05:35:36 +0000
+ 20 Nov 2026 05:35:32 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 222.71.101.198) smtp.mailfrom=cixtech.com; dkim=none (message not signed)
  header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
@@ -72,12 +72,12 @@ Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
  222.71.101.198 as permitted sender) receiver=protection.outlook.com;
  client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
 Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- TY2PEPF0000AB83.mail.protection.outlook.com (10.167.253.4) with Microsoft
+ TY2PEPF0000AB89.mail.protection.outlook.com (10.167.253.7) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.639.5 via Frontend Transport; Fri, 20 Nov 2026 05:35:34 +0000
+ 15.21.639.5 via Frontend Transport; Fri, 20 Nov 2026 05:35:31 +0000
 Received: from ubuntu (unknown [172.20.64.99])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 71F6D427EFC2;
-	Fri, 20 Nov 2026 13:35:32 +0800 (CST)
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 7EF5640920E2;
+	Fri, 20 Nov 2026 13:35:30 +0800 (CST)
 From: Jelly Jia <Jelly.Jia@cixtech.com>
 To: vkoul@kernel.org,
 	Frank.Li@kernel.org,
@@ -97,11 +97,10 @@ Cc: devicetree@vger.kernel.org,
 	Jelly.Jia@cixtech.com,
 	linux-clk@vger.kernel.org,
 	joakim.zhang@cixtech.com,
-	radu@rendec.net,
-	Frank Li <Frank.Li@nxp.com>
-Subject: [PATCH v5 6/6] dmaengine: arm-dma350: Honour dma-channel-mask
-Date: Fri, 20 Nov 2026 13:35:29 +0800
-Message-ID: <20261120053529.371923-7-Jelly.Jia@cixtech.com>
+	radu@rendec.net
+Subject: [PATCH v5 2/6] irqchip: Add the Sky1 AUDSS auxiliary interrupt controller
+Date: Fri, 20 Nov 2026 13:35:25 +0800
+Message-ID: <20261120053529.371923-3-Jelly.Jia@cixtech.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261120053529.371923-1-Jelly.Jia@cixtech.com>
 References: <20261120053529.371923-1-Jelly.Jia@cixtech.com>
@@ -117,100 +116,362 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB83:EE_|SI2PR06MB646176:EE_
+X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB89:EE_|PUZPR06MB5434:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 667429e6-38f3-476e-1d38-08df46c819b0
+X-MS-Office365-Filtering-Correlation-Id: 8cd32b54-acaf-4eda-6d3c-08df46c81822
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|23010399003|36860700016|82310400026|921020|10067099003|260925022911599003|260925021311599003|56012099006|260925021911599003|261021121427099003|261022105027099003|261009223027099003|261102123227099003|261021123027099003|261028144727099003|261026140227099003|6133799003|22082099003|18002099003;
+	BCL:0;ARA:13230040|23010399003|36860700016|376014|7416014|1800799024|82310400026|921020|10067099003|56012099006|260925022911599003|260925021311599003|260925021911599003|261022105027099003|261028144727099003|261026121527099003|261026140227099003|261021121427099003|261022075727099003|261102123227099003|261009220027099003|261009221727099003|261009223027099003|22082099003|18002099003|261009221227099003|261009223327099003|3023799007;
 X-Microsoft-Antispam-Message-Info:
-	PUUXzwImrHOyEYHIi7c1ePtKsHZPDEbfFJjvM9YjttiqjS6os1G6RYZAm98xrVG5VOOG4hIt2AQN1TK1xymdIMerTgl5Ld+29e7yFkGjRKLlZfbHoLNjKYt6qAlu8RVkMnH6hShL84AMnyqxljCr5aGn5mvWG4MtjdPR0Xu1ruVCMecxy5k3HEQy69YdF5NrDh/ua0OI2XtAGE6w9Sg+7Mtzga8Rn29ixtUhhjfDyRfSiNhpJtjp2XWLWiz663VzdkgVtGJtN4XuNbW3tLH+XpjtRs38y8tZUFMnI/wJK3W8WORj7Uy8rrP6+MCdysyxFfiLBBaG4zVQ1V5e/DINPs2yhpO+pxDrJBPA/xcMngRMLFzyqaJoRVnsRUhYNvrbNbyHNlhBfnyXE9wRAY672QDhbsn94qkAwiY20ekFgsL85eDsHVMADOne9cWsh/APp1QuCxPQtcvzX9y+ME1PyLy6bE8W7tVwJcv27Mho81cx0Evrd9snzgluDEGvzWCOoqtWinxh2FGVzNdmh3KoD5e43DOk2R/nwLR8NhMcYIwSBE2Y7mjjDNTpekWhl1CJ2VvknTKoZrSrWrSjCZbhP1DeO2HHm546KsyGxc+2yPxNhjc9zPdd+z0tK5Hkx0kwQ1F5uhuBkNNPeHa0mw1H5eg9qwN3V3RDdAhpXEl4DpZlYE04t/gfbLcMyrGH2+N08hnuvl/ieWakkbEq7Updv3kkSHrARBLhBBvnYaevoDmH3DcxzD93omf7vhKiI0sV
+	+OL5jbX7J6D2pxAhLlqWqFhV3X1/qu1TeQqEEwEsiRoRaarLMAktPiyx5cY+C/O2nVeKp+YfnFOSx8Vqq3STH9jK//xe4ONgsi3WH5q45vXdfSnMrTqzcqqpkYKBXWNlfwtRyTBeIy4VOKXz1kz/pYSsxgSfjaGO+dTLFK3/mnkRlQZg7ZACpDEnJCbccWbvkq3d/4QNcMQKggXCnlAnq0b50ZIrLJVO6yYbe+RpIN1w7TvD7sfny6rkvb2bb2xwF9ppDJInXSFql5liR2eXurthQqbqHZhmmsesFM02c1UBttmmFIaRSiv4uNBl5shmXm7VxgtOURqsQY24grukvRIfdpLSbp+BBX07jXYAlk3dQaCaQrHUb/KSTyiT9bsu6zwOM6cdCMmANz9VvQ0GWZimqqp3KGZWbfLKmgGVmuDXz3a0lEnqbaEYrydZB2KqFXGEGBYN1YbnY8fQMKrUfgMM32gJnANr4GFRjGNzhfDqnaKpKaOzukgCu4HRx9nIn50u4RbBvjgCiRnOwy9qeWb6/083As5JdZFJRJcPSPWXuSCi/d3nP4Q12lrfy1zKqaBzonJbMj32bgo6KenDAxtYR50PnPxuWkIDMZ5snqJLi1lMyELQ5eW0mfdx3eIAcBcD5UYrR490cofXdqvYmxyCWDgWPdTUUAevyKpwr07Pfyr+CSodYcl3xLjke5Q59LLMZolaifqIltIQ8gZYmkkcLGuw+w/meJcfiq5d/pvZmYM6WDVNfsGAGrC7QvtH
 X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(23010399003)(36860700016)(82310400026)(921020)(10067099003)(260925022911599003)(260925021311599003)(56012099006)(260925021911599003)(261021121427099003)(261022105027099003)(261009223027099003)(261102123227099003)(261021123027099003)(261028144727099003)(261026140227099003)(6133799003)(22082099003)(18002099003);DIR:OUT;SFP:1102;
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(36860700016)(376014)(7416014)(1800799024)(82310400026)(921020)(10067099003)(56012099006)(260925022911599003)(260925021311599003)(260925021911599003)(261022105027099003)(261028144727099003)(261026121527099003)(261026140227099003)(261021121427099003)(261022075727099003)(261102123227099003)(261009220027099003)(261009221727099003)(261009223027099003)(22082099003)(18002099003)(261009221227099003)(261009223327099003)(3023799007);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	uvU1OUP21YYoN4NwRxgVAZNqdopk/y61ADw6VJZfLoXjekpPR3qh5AUs/NVFJ8zVXbhGOrQqvEPyMk8vMtsSSh/WjuOHHXU0yFzJ2c6HTatZxF2v7broqpZQZGBEWbHo46JR1D8znYcq7otLxhBoE76vhFzJempSCCXTHFpS8Xp7Mf97txux0nNGuOe783mFeirNXgQ+Wxsnd6KJo/GOFHIMC+E0IDQ/u4TwFrifIJ7kssP0bYNpUJfP310Kb5PUfjZWHKR7vjLpN1ww/1aihi1+x7yRBaheJn/ceQKBug4p6OGTncQOo3rxF5fR+GYq1kuaRHfF8s0fZSLM1SX9yM2BCYBq3eOfUYAByZjE7A4q/ahCUnuL/rT4BvOy39cM/KFIo4PYYA+9iKFU43YUDB9+nHnUxnh6PKtlKvMo/16n6aSBSmv2cpxzLhRJzFpP
+	ZeVapQbTFI1xpYW6WerTij4ImYZZoHbPaRV1vto3yE3ej3mR1wGepS7s3+O7V4IuFLhaHnyuzS/sK5L94KWMfB01P1w/YSJYg857vK+d4AqRFHNjTp0aF+QRHWYcOvZNNfQ4W6Vc440vW+l2pNsuwrGl+NhGXHLDR20XDyFbwDrKaXHqgG2ABKx8WJaL5V5+5ZNex48ZIViGZkmwPgVIr1rlZkGdZ2SH2SfGoLaJmUXI1/J/lMzSu5jVKAdsbW0fcwEPIxaDTGzZIn5b5AmoB4SLKAwDgUKVUQoJaBr/LmPsZ4fXQpJxstnQRR4NdvCL6ZV+4bd7rywKce9o4LE52ETCPy8JZXOiTQnQ6duDihHFv++NJYo8v1x44EOVqPa5E0NIZimtK+YKxXMCdeVzsUQf53CJSMeu8o+eAjV9bocB56IOfo6CpXYtagu7FLdZ
 X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2026 05:35:34.4336
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2026 05:35:31.9544
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 667429e6-38f3-476e-1d38-08df46c819b0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8cd32b54-acaf-4eda-6d3c-08df46c81822
 X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	TY2PEPF0000AB83.apcprd03.prod.outlook.com
+	TY2PEPF0000AB89.apcprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB646176
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5434
 
-DMA-350 channels may be reserved for firmware or another processor.
-Read the optional dma-channel-mask property and register only the channels
-whose bits are set. If the property is absent, preserve the existing
-behaviour and expose every hardware channel.
+The AUDSS CRU gates eight DMA channel interrupts onto a shared parent line.
+Implement its irqchip, domain and chained handler in an auxiliary driver
+under drivers/irqchip rather than the clock subsystem.
 
-Skip masked channels before accessing their channel registers or
-initializing their interrupts and virt-dma state. This avoids clearing
-or configuring channels reserved for firmware or another processor.
+Reuse the parent CRU regmap and firmware node. Retain level/polled child
+flow, explicit disable masking, mapping disposal and powered teardown. Keep
+clock/reset control in the parent. Coordinate the parent IRQ's quiescing
+with runtime PM and noirq system sleep, keeping sleepable power management
+out of hard IRQ callbacks.
 
-DMA-350 supports at most eight channels, so a single u32 covers every
-hardware channel without an additional 32-channel guard.
-
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Signed-off-by: Jelly Jia <Jelly.Jia@cixtech.com>
 ---
- drivers/dma/arm-dma350.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ MAINTAINERS                      |   1 +
+ drivers/irqchip/Kconfig          |  16 ++
+ drivers/irqchip/Makefile         |   1 +
+ drivers/irqchip/irq-sky1-audss.c | 255 +++++++++++++++++++++++++++++++
+ 4 files changed, 273 insertions(+)
+ create mode 100644 drivers/irqchip/irq-sky1-audss.c
 
-diff --git a/drivers/dma/arm-dma350.c b/drivers/dma/arm-dma350.c
-index ab68213d0bbb..4d3391248378 100644
---- a/drivers/dma/arm-dma350.c
-+++ b/drivers/dma/arm-dma350.c
-@@ -18,6 +18,7 @@
- #include <linux/of_dma.h>
- #include <linux/overflow.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/reset.h>
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
-@@ -1276,9 +1277,10 @@ static int d350_probe(struct platform_device *pdev)
- 	struct clk *clk;
- 	struct d350 *dmac;
- 	void __iomem *base;
-+	u32 chan_mask = U32_MAX;
- 	u32 reg;
- 	int ret, nchan, dw, aw, r, p;
--	bool coherent, memset;
-+	bool coherent, has_chan_mask, memset;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 93abbb315065..bd966600deb0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2904,6 +2904,7 @@ T:	git https://github.com/cixtech/linux-mainline.git
+ F:	Documentation/devicetree/bindings/arm/cix.yaml
+ F:	Documentation/devicetree/bindings/mailbox/cix,sky1-mbox.yaml
+ F:	arch/arm64/boot/dts/cix/
++F:	drivers/irqchip/irq-sky1-audss.c
+ F:	drivers/mailbox/cix-mailbox.c
+ K:	\bcix\b
  
- 	clk = devm_clk_get_optional_enabled(dev, NULL);
- 	if (IS_ERR(clk))
-@@ -1351,6 +1353,15 @@ static int d350_probe(struct platform_device *pdev)
- 	dmac->dma.device_caps = d350_device_caps;
- 	INIT_LIST_HEAD(&dmac->dma.channels);
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 136bab41f801..1275622851c1 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -233,6 +233,22 @@ config LAN966X_OIC
+ config MADERA_IRQ
+ 	tristate
  
-+	/* Firmware-reserved channels must not be accessed or registered. */
-+	has_chan_mask = device_property_present(dev, "dma-channel-mask");
-+	if (has_chan_mask) {
-+		ret = device_property_read_u32(dev, "dma-channel-mask", &chan_mask);
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+					     "failed to read dma-channel-mask\n");
++config IRQ_SKY1_AUDSS
++	tristate "CIX Sky1 AUDSS DMA interrupt controller"
++	depends on ARCH_CIX || COMPILE_TEST
++	depends on OF
++	select AUXILIARY_BUS
++	select IRQ_DOMAIN
++	select REGMAP
++	default CLK_SKY1_AUDSS
++	help
++	  Support the DMA channel interrupt gates in the CIX Sky1 audio
++	  subsystem CRU. This auxiliary driver shares the clock controller's
++	  register map and combines the channel interrupts onto a parent IRQ.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called irq-sky1-audss.
++
+ config IRQ_MIPS_CPU
+ 	bool
+ 	select GENERIC_IRQ_CHIP
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index 16a5fd126c9a..2862a0335082 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_IRQCHIP)			+= irqchip.o
++obj-$(CONFIG_IRQ_SKY1_AUDSS)		+= irq-sky1-audss.o
+ 
+ obj-$(CONFIG_AL_FIC)			+= irq-al-fic.o
+ obj-$(CONFIG_ALPINE_MSI)		+= irq-alpine-msi.o
+diff --git a/drivers/irqchip/irq-sky1-audss.c b/drivers/irqchip/irq-sky1-audss.c
+new file mode 100644
+index 000000000000..df2063f0d771
+--- /dev/null
++++ b/drivers/irqchip/irq-sky1-audss.c
+@@ -0,0 +1,255 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/* Copyright 2026 Cix Technology Group Co., Ltd. */
++
++#include <linux/auxiliary_bus.h>
++#include <linux/bitops.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/irqchip/chained_irq.h>
++#include <linux/irqdomain.h>
++#include <linux/module.h>
++#include <linux/of_irq.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++
++#define INFO_AP_IRQC		0x54
++#define INFO_AP_IRQC_DMAC_MASK	GENMASK(7, 0)
++#define SKY1_AUDSS_DMAC_IRQS	8
++
++struct sky1_audss_irq {
++	struct regmap *regmap;
++	struct irq_domain *domain;
++	int parent_irq;
++};
++
++static void sky1_audss_irq_mask(struct irq_data *d)
++{
++	struct sky1_audss_irq *priv = irq_data_get_irq_chip_data(d);
++
++	regmap_update_bits(priv->regmap, INFO_AP_IRQC, BIT(d->hwirq), 0);
++}
++
++static void sky1_audss_irq_unmask(struct irq_data *d)
++{
++	struct sky1_audss_irq *priv = irq_data_get_irq_chip_data(d);
++
++	regmap_update_bits(priv->regmap, INFO_AP_IRQC,
++			   BIT(d->hwirq), BIT(d->hwirq));
++}
++
++static int sky1_audss_irq_request_resources(struct irq_data *d)
++{
++	return try_module_get(THIS_MODULE) ? 0 : -ENODEV;
++}
++
++static void sky1_audss_irq_release_resources(struct irq_data *d)
++{
++	module_put(THIS_MODULE);
++}
++
++static struct irq_chip sky1_audss_irq_chip = {
++	.name			= "sky1-audss-dmac",
++	.irq_mask		= sky1_audss_irq_mask,
++	.irq_unmask		= sky1_audss_irq_unmask,
++	.irq_disable		= sky1_audss_irq_mask,
++	.irq_request_resources	= sky1_audss_irq_request_resources,
++	.irq_release_resources	= sky1_audss_irq_release_resources,
++	.flags			= IRQCHIP_SKIP_SET_WAKE,
++};
++
++static int sky1_audss_irq_map(struct irq_domain *d, unsigned int irq,
++			      irq_hw_number_t hwirq)
++{
++	if (hwirq >= SKY1_AUDSS_DMAC_IRQS)
++		return -EINVAL;
++
++	irq_set_chip_data(irq, d->host_data);
++	irq_set_chip_and_handler(irq, &sky1_audss_irq_chip, handle_level_irq);
++	/*
++	 * There is no per-channel pending status in the CRU. Poll enabled
++	 * children without spurious-IRQ accounting, but retain level flow
++	 * control so disabled and oneshot-threaded children stay masked.
++	 */
++	irq_set_status_flags(irq, IRQ_LEVEL | IRQ_IS_POLLED);
++	irq_set_noprobe(irq);
++
++	return 0;
++}
++
++static const struct irq_domain_ops sky1_audss_irq_ops = {
++	.map	= sky1_audss_irq_map,
++	.xlate	= irq_domain_xlate_onecell,
++};
++
++static void sky1_audss_irq_handler(struct irq_desc *desc)
++{
++	struct sky1_audss_irq *priv = irq_desc_get_handler_data(desc);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	unsigned long enabled;
++	unsigned int hwirq;
++	u32 val;
++
++	chained_irq_enter(chip, desc);
++
++	if (!regmap_read(priv->regmap, INFO_AP_IRQC, &val)) {
++		enabled = val & INFO_AP_IRQC_DMAC_MASK;
++		for_each_set_bit(hwirq, &enabled, SKY1_AUDSS_DMAC_IRQS)
++			generic_handle_domain_irq(priv->domain, hwirq);
 +	}
 +
- 	reg = readl_relaxed(base + DMANSECCTRL + NSEC_CTRL);
- 	writel_relaxed(reg | INTREN_ANYCHINTR_EN,
- 		       base + DMANSECCTRL + NSEC_CTRL);
-@@ -1360,6 +1371,9 @@ static int d350_probe(struct platform_device *pdev)
- 	for (int i = 0; i < nchan; i++) {
- 		struct d350_chan *dch = &dmac->channels[i];
- 
-+		if (has_chan_mask && !(chan_mask & BIT(i)))
++	chained_irq_exit(chip, desc);
++}
++
++static int sky1_audss_irq_runtime_suspend(struct device *dev)
++{
++	struct sky1_audss_irq *priv = dev_get_drvdata(dev);
++
++	/* The parent CRU may turn its clocks off after the child suspends. */
++	disable_irq(priv->parent_irq);
++
++	return 0;
++}
++
++static int sky1_audss_irq_runtime_resume(struct device *dev)
++{
++	struct sky1_audss_irq *priv = dev_get_drvdata(dev);
++
++	/* Parent resume has already restored the CRU registers. */
++	enable_irq(priv->parent_irq);
++
++	return 0;
++}
++
++static const struct dev_pm_ops sky1_audss_irq_pm_ops = {
++	RUNTIME_PM_OPS(sky1_audss_irq_runtime_suspend,
++		       sky1_audss_irq_runtime_resume, NULL)
++	NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				  pm_runtime_force_resume)
++};
++
++static int sky1_audss_irq_probe(struct auxiliary_device *adev,
++				const struct auxiliary_device_id *id)
++{
++	struct device *dev = &adev->dev;
++	struct sky1_audss_irq *priv;
++	int ret;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->regmap = dev_get_regmap(dev->parent, NULL);
++	if (!priv->regmap)
++		return dev_err_probe(dev, -ENODEV, "failed to get CRU regmap\n");
++
++	priv->parent_irq = of_irq_get(dev->of_node, 0);
++	if (priv->parent_irq < 0)
++		return dev_err_probe(dev, priv->parent_irq,
++				     "failed to get parent IRQ\n");
++	if (!priv->parent_irq)
++		return -EINVAL;
++
++	ret = pm_runtime_resume_and_get(dev->parent);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "failed to resume CRU\n");
++
++	ret = regmap_update_bits(priv->regmap, INFO_AP_IRQC,
++				 INFO_AP_IRQC_DMAC_MASK, 0);
++	if (ret)
++		goto out_put_parent;
++
++	dev_set_drvdata(dev, priv);
++	pm_runtime_get_noresume(dev);
++	ret = pm_runtime_set_active(dev);
++	if (ret)
++		goto out_put_child;
++	pm_runtime_enable(dev);
++
++	priv->domain = irq_domain_create_linear(dev_fwnode(dev),
++						SKY1_AUDSS_DMAC_IRQS,
++						&sky1_audss_irq_ops, priv);
++	if (!priv->domain) {
++		ret = -ENOMEM;
++		goto out_disable_pm;
++	}
++	irq_domain_set_pm_device(priv->domain, dev);
++
++	/* A chained handler cannot implement lazy-disable masking. */
++	irq_set_status_flags(priv->parent_irq, IRQ_DISABLE_UNLAZY);
++	irq_set_chained_handler_and_data(priv->parent_irq,
++					 sky1_audss_irq_handler, priv);
++
++	pm_runtime_put_sync(dev);
++	pm_runtime_put_sync(dev->parent);
++
++	return 0;
++
++out_disable_pm:
++	pm_runtime_disable(dev);
++	pm_runtime_set_suspended(dev);
++out_put_child:
++	pm_runtime_put_noidle(dev);
++out_put_parent:
++	pm_runtime_put_sync(dev->parent);
++	return ret;
++}
++
++static void sky1_audss_irq_remove(struct auxiliary_device *adev)
++{
++	struct device *dev = &adev->dev;
++	struct sky1_audss_irq *priv = dev_get_drvdata(dev);
++	unsigned int hwirq;
++	unsigned int virq;
++	int ret;
++
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret < 0)
++		dev_warn(dev, "failed to resume CRU for IRQ teardown: %d\n", ret);
++
++	disable_irq(priv->parent_irq);
++	if (ret >= 0)
++		regmap_update_bits(priv->regmap, INFO_AP_IRQC,
++				   INFO_AP_IRQC_DMAC_MASK, 0);
++	irq_set_chained_handler_and_data(priv->parent_irq, NULL, NULL);
++	synchronize_irq(priv->parent_irq);
++	irq_clear_status_flags(priv->parent_irq, IRQ_DISABLE_UNLAZY);
++
++	for (hwirq = 0; hwirq < SKY1_AUDSS_DMAC_IRQS; hwirq++) {
++		virq = irq_find_mapping(priv->domain, hwirq);
++		if (!virq)
 +			continue;
 +
- 		dch->base = base + DMACH(i);
- 		writel_relaxed(CH_CMD_CLEAR, dch->base + CH_CMD);
- 
++		/* Disassociation must not access an unpowered CRU either. */
++		if (ret < 0)
++			irq_set_chip(virq, NULL);
++		irq_dispose_mapping(virq);
++	}
++	irq_domain_remove(priv->domain);
++
++	pm_runtime_disable(dev);
++	if (ret >= 0)
++		pm_runtime_put_noidle(dev);
++	pm_runtime_set_suspended(dev);
++}
++
++static const struct auxiliary_device_id sky1_audss_irq_ids[] = {
++	{ .name = "clk_sky1_audss.irq" },
++	{ }
++};
++MODULE_DEVICE_TABLE(auxiliary, sky1_audss_irq_ids);
++
++static struct auxiliary_driver sky1_audss_irq_driver = {
++	.probe = sky1_audss_irq_probe,
++	.remove = sky1_audss_irq_remove,
++	.id_table = sky1_audss_irq_ids,
++	.driver = {
++		.pm = pm_ptr(&sky1_audss_irq_pm_ops),
++		.suppress_bind_attrs = true,
++	},
++};
++module_auxiliary_driver(sky1_audss_irq_driver);
++
++MODULE_AUTHOR("Jelly Jia <Jelly.Jia@cixtech.com>");
++MODULE_DESCRIPTION("CIX Sky1 AUDSS DMA interrupt controller");
++MODULE_LICENSE("GPL");
 -- 
 2.54.0
 
