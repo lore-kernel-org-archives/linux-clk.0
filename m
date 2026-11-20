@@ -1,98 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795217177;
-	b=ky4bKoy5178fx/GjxgoLvY9fAhwv3UDItk//xpC1g+UJd1QeNW9XxMwRAn2bJTdpA7R+
-	 dtQZ9YnNtl5lt9an5RcPeQSISeDRIGGmNsOlRUkDtm2vKDdoVuurE2m/O51q3P0y0/mWj
-	 YyNIqDDP4IjAgtTOvQwD7l4k+Y1DIr1Q4448E2U8WOzRZ5OLHmaJJGeUbfjDCxJTyZ5dM
-	 /hZVZGmXJ/110B0ftvDx1aQp4hNHaC4UUEmBLyXWf7vFY/x7afnT6dKVduKW1vcuIcSOq
-	 DIlipA8rJ6ilqunEuHCKCRgSTON1E1ypYoptxVmP7WZb/ceK4F3JX9XGwlq5jG4O2qg==
+	t=1795217603;
+	b=cWhP/qda8poL3qTdkto9SeIkdsataqUnPfI/A41jU+8T6arq5Io7bjzRNdfVzVdnx07V
+	 uRRtdWmjdDL5lT2LCcx+xmBbNPflKapQiD7Q5qdy7z4xCPyjmSNTZKYFKE7LhxK2SkFPW
+	 L2XVPe2GJdQNX4qGYjzqhwV+lV2MgZTUMlu/lO339CFTDhMRclmX04AX501BrUxXs0hb0
+	 nW6senTt7Kn04Y5+aRz6iQ8YZkLkvDsDcm0YqO1VMIPH62Vw3Sg34G89Xi5o7SovbokOS
+	 o8Tm+BV9qAOxxe/oDGmi8GEjQfAR8ExRD8chIVSC1Wy+xfAT9uaEadUJvcqTTz++OBg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795217177;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
-	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=HxNGyJ35hri0geA+PjED9R6TVp4HHaU3ucvR7577Fks=;
-	b=P3CMMOG5exhdbsHeUjD+5NJj3+AlJu0YFvooGdUaRtiUAYGgRRLJLbbJ+dj6vcDKtvVk
-	 jb0kk02gud7bTkE7p6dpHvTdL0oSTIwT6pVTz7YfKO6lgjlP1mdsKzXHAyRG0PXS6ZZ97
-	 Rq/RNbWUIglf+bXp9XPDivXKLIIBHcaq1U0dNYllBnEJeToe516sigYCxRxph0zrBtOIE
-	 qUX74NqjxVCZ1IUOW+tL0XlTlvQ5E9gZHBbeJCTxKgcH6dD/+ryyjYKNG+Z7+B8n+/Tpe
-	 twQiyhhIMxu5/w9GssTH62KahMyvnNpWu/ZPwelEyTR65ZCztBrByyBGFlgeJyxB9GQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795217603;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Message-ID:X-Google-Original-Message-ID:Date:From:To:Cc:Subject:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=5ue1b2+ZjqmKkDCu3UdAaIQP1rc8l0RRlBnT4tbuOuI=;
+	b=LOZJhe78SrqAdrgKnMLi5dd7HrXL5f/5OvxQ5kSTj9ZLX9B31pqx/u3Z1BRehUJVdOnM
+	 pyXsv9Yv9JzQIHh5pQxj5y0zKp/rvO/bajnltJO5GXdEbTy6eQmUU0l8xv48k1Z6G0Tgx
+	 b2bys4gL87ytN3Zc8HxEAiayQcfpjhVLQQS4GeXkDGrnfv8joa5z7zQUZ642y3efMP4mH
+	 xG0DDgB5cGgEgDnnkB7rRcmdCGVbnGhdG8nSTwqPRfB0NFocMLYnFdoeOTGGlTZW0g7Rm
+	 MmeaEo/H3xK8Gb+8OhMxDwWtNb5lt9GTqOHVNVIdlVbT9EcQHIWueAxemYd/ig2KV0A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EgsjNbIi;
-	arc=none smtp.remote-ip=198.175.65.18
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=HgRlFfFr;
+	arc=none smtp.remote-ip=209.85.128.44
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97DE606A68B;
-	Fri, 20 Nov 2026 23:26:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C97DE606A68B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E0C606A6A6
+	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 23:33:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 50E0C606A6A6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EgsjNbIi
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1795217174; x=1826753174;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Nbm7dttcg2VYnk3FmoiGwjR8294oJVUEhQthcpzoxPc=;
-  b=EgsjNbIijb02s3t4/xW693lQ+QGSXRyuzrj+5MrJ3kFtP4d58lkWxHNm
-   qv4EE1klHQ750QvJP1RbfJAWUWxYPiURuOlDGXeGo+YVWnWX82W9ZqzOi
-   AfGQ6Fj3F9cdrRaEtBmjxCcpbg2svUy9TdLSjwwZZtQoau4L2ZFCiddlQ
-   2wR9xJ/Sz1UfeYFOAVNs0sRzq6keV8o3tSKSXFkRSbNKEL8u5qC5THT9i
-   gCvJ3CcnlAOe7KaATGGwhDrPesHIFU2U3q2WB+wxT9SK+5fiGPpjGahv8
-   l15CNLFXbnzS9Rq21vH5Lk4AjWymqb7uTpimb3mbYhs+etHMlxPkAL/mM
-   Q==;
-X-CSE-ConnectionGUID: 4d/29vugQOasydgYjp6ArA==
-X-CSE-MsgGUID: +CovQ9rNTQ2dD2JehiGjzw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11972"; a="4119575"
-X-IronPort-AV: E=Sophos;i="6.27,223,1787036400"; 
-   d="scan'208";a="4119575"
-Received: from fmviesa013.fm.intel.com ([10.60.135.153])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2026 15:26:14 -0800
-X-CSE-ConnectionGUID: idZQ6xneQb+zLcR8VejhGw==
-X-CSE-MsgGUID: x+F/2N1QQ5GFCYNgl6siGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,223,1787036400"; 
-   d="scan'208";a="12811083"
-Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by fmviesa013.fm.intel.com with ESMTP; 20 Nov 2026 15:26:08 -0800
-Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1xUXzZ-00000001IwJ-0y7s;
-	Fri, 20 Nov 2026 23:26:05 +0000
-Date: Sat, 21 Nov 2026 07:25:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=HgRlFfFr
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4b79502c27aso12859895e9.1
+        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 15:33:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795217596; x=1795822396; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:subject:cc:to:from:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=5ue1b2+ZjqmKkDCu3UdAaIQP1rc8l0RRlBnT4tbuOuI=;
+        b=HgRlFfFrpkUyzgd7JVa/GkPe4W9b8tnBpYjT4sMf2y2pRWcop83zlfpr70NbTyQ6O3
+         Uk5W01XIz0ampvOmG/rOavp6u+3KylxHqaPY8mt+i2qhCDqmqIJZ8lC8gSZVgYfPz2bV
+         04Blp9Kc0vF6lcEtiIEnuBSgjdIKvG0LWLD8HFUTjEYKn/A5e3csMo17S/GNHPtN4kpX
+         y3INPSP8AkETKYAk8RkIZb5CX3TCUwWfm6pEagH9Xpqv6fhtIXBfb2x1reM0sDqk+Jy4
+         cLn4odlsQY5t/1IcmcPt66TJjsQxP1oB2rdmE+Nv389o00vjuOEU0IqMqJemLpaCWyP5
+         2wNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795217596; x=1795822396;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:subject:cc:to:from:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=5ue1b2+ZjqmKkDCu3UdAaIQP1rc8l0RRlBnT4tbuOuI=;
+        b=bTWS+yBch4F2oSUXxymucHqKs3fXQdbUEXK6J4eDRYv77dFnN2pmDOJcqBL2zkfg6N
+         8Y6/A5hAQuXCV+eI0YNzPdhqfFYOXdVDzWaV+5wKbbzycrWbA46QKsN7FH0RGM2A6YoZ
+         Gvf3G+BMKy9X5GGLuuhwAtfAAIxCdUU+S/6McntltyTW5PiTs1zo+Hs2hVk4qW1TozIX
+         0tAsNZHPm0Fv6czXYpQvpy++a7f8CDnv8kcBGdQCzY1Y9wUUohVa0eNPAle3luef8L17
+         XSQ8Zol4cnR7l8kRdrr96oP0pYM/fTg3DZS7Uud+oeiACVoONEOgnLIT/YEy2wjFk7xo
+         TwTQ==
+X-Forwarded-Encrypted: i=1; AL+hErGTwjNxG7tbzIbq3Gu6gpx3IDj0EseaWodJTBgCQeoyorax8XvBO96tIe6PzyymC/RkRoVxCQewqQs=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/V0RlaP1BvY7igMk/9mPC15Y1kONgNQUH/B/KKPpuu/3hRkbia
+	/STdiP4cQbfrz3C2wJOazHBcteCOryxY5BQ51dCN5WQ2nwnucob6FnWC
+X-Gm-Gg: AYBFou1FF15wRfqnpAKQQ1d+p4dXUIMh7elbljNb4AumZrA/PpzJFR3wT6G5sJrToMw
+	EG7G0GK1Q/1zEqgzyxIZdY10GHILabetklr1HeN6DpOvsaNHk54swB5G5izkpjwbDVX7iKAWLk4
+	CGfbmbIsObpGiy3VCGt7+46myC3ySuqQgnyNiW/ji9Miazz4Z8sKac/n20JAjOP6am4L40yG3LS
+	RikvtkgJST9OKUCGegp+tn7h8MN+Q/CsZbEbQWqNg8KSoX2p52peRQqDUw9XP0l+/XH6IoOvESC
+	J/iSxBg01nlVQXx/hmHjxrFOIW8ru5pu7KcyNqvX1JlthNVx+lMOtBr7qXeSTwHq/9nPdJH128j
+	Ze9hng8ZfdhRwvTQkzRxNP9zhlFrnkujYZV5KcQ98M5gHf5i6hOas1bVLnfFyPIHN9bosiZRdoq
+	B4c0nVXMe9jRfOHGPtYx6kLJj0kl1v3NitsSFAfL/eDsp8890a6KDYmXrBBIZ90tQkn3LO+vbpM
+	hI+iOGQPsQvYac7yNceXHUX7rppTsD6eWqin+m75Izhzqguh/M/jqg/eCVNqst4TzyjZP8sHRKT
+	hNoFo5N6o/eEeKGZwuQHsyIJLGk2NJnRLhJ02ru/NrgUbyOzzR3ozAnlgZmwvPFTm6NTB55vp0U
+	/EJPC4iFlPvGmIL4PCD6k/9KOTgt8/iNBlqmTWb+n2P5HUA1IyF7DNBqIXQ==
+X-Received: by 2002:a05:600c:828e:b0:4a1:e6a9:4086 with SMTP id 5b1f17b1804b1-4bb88785a99mr102949125e9.0.1795217595621;
+        Fri, 20 Nov 2026 15:33:15 -0800 (PST)
+Received: from Ansuel-XPS. (host-95-234-253-103.retail.telecomitalia.it. [95.234.253.103])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb884911e3sm144076735e9.6.2026.11.20.15.33.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Nov 2026 15:33:15 -0800 (PST)
+Message-ID: <6b00d8bb.5576de51.27441d.756e@mx.google.com>
+X-Google-Original-Message-ID: <awDYuZ9RgrHjrcWS@Ansuel-XPS.>
+Date: Sat, 21 Nov 2026 00:33:13 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Brian Masney <masneyb@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
 	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kyle Hendry <khendry@reliablecontrols.com>
-Subject: Re: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
-Message-ID: <202611210721.sFAijXHV-lkp@intel.com>
-References: <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
+	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 5/5] clk: en7523: add support for Airoha AN7583 clock
+References: <20261117182444.103123-1-ansuelsmth@gmail.com>
+ <20261117182444.103123-6-ansuelsmth@gmail.com>
+ <179513295004.301584.12820965897975670200.b4-review@b4>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -104,173 +108,286 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
+In-Reply-To: <179513295004.301584.12820965897975670200.b4-review@b4>
 
-Hi Kyle,
+On Thu, Nov 19, 2026 at 07:02:30PM -0500, Brian Masney wrote:
+> > Add support for Airoha AN7583 clock and reset.
+> > 
+> > Airoha AN7583 SoC have the same register address of EN7581 but implement
+> > different bits and additional base clocks. Also reset are different with
+> > the introduction of 2 dedicated MDIO line and drop of some reset lines.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  drivers/clk/clk-en7523.c | 249 +++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 249 insertions(+)
+> >
+> > diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+> > index 90bb86427c29..a7cb8dbcb048 100644
+> > --- a/drivers/clk/clk-en7523.c
+> > +++ b/drivers/clk/clk-en7523.c
+> > @@ -13,6 +13,7 @@
+> >  #include <linux/reset-controller.h>
+> >  #include <linux/spinlock.h>
+> >  #include <dt-bindings/clock/en7523-clk.h>
+> > +#include <dt-bindings/reset/airoha,an7583-reset.h>
+> >  #include <dt-bindings/reset/airoha,en7523-reset.h>
+> >  #include <dt-bindings/reset/airoha,en7581-reset.h>
+> >  #include <dt-bindings/clock/econet,en751221-scu.h>
+> > @@ -167,6 +168,14 @@ static const u32 crypto_base[] = { 540000000, 480000000 };
+> >  static const u32 emmc7581_base[] = { 200000000, 150000000 };
+> >  /* EN751221 */
+> >  static const u32 gsw751221_base[] = { 500000000, 250000000, 400000000, 200000000 };
+> > +/* AN7583 */
+> > +static const u32 gsw7583_base[] = { 540672000, 270336000, 400000000, 200000000 };
+> > +static const u32 emi7583_base[] = { 540672000, 480000000, 400000000, 300000000 };
+> > +static const u32 bus7583_base[] = { 600000000, 540672000, 480000000, 400000000 };
+> > +static const u32 spi7583_base[] = { 400000000, 12500000 };
+> > +static const u32 npu7583_base[] = { 666000000, 800000000, 720000000, 600000000 };
+> > +static const u32 crypto7583_base[] = { 540672000, 400000000 };
+> > +static const u32 emmc7583_base[] = { 150000000, 200000000 };
+> >  
+> >  static const struct en_clk_desc en7523_base_clks[] = {
+> >  	{
+> > @@ -369,6 +378,138 @@ static const struct en_clk_desc en7581_base_clks[] = {
+> >  	}
+> >  };
+> >  
+> > +static const struct en_clk_desc an7583_base_clks[] = {
+> > +	{
+> > +		.id = EN7523_CLK_GSW,
+> > +		.name = "gsw",
+> > +
+> > +		.base_reg = REG_GSW_CLK_DIV_SEL,
+> > +		.base_bits = 2,
+> > +		.base_shift = 8,
+> > +		.base_values = gsw7583_base,
+> > +		.n_base_values = ARRAY_SIZE(gsw7583_base),
+> > +
+> > +		.div_bits = 3,
+> > +		.div_shift = 0,
+> > +		.div_step = 1,
+> > +		.div_offset = 1,
+> > +	}, {
+> > +		.id = EN7523_CLK_EMI,
+> > +		.name = "emi",
+> > +
+> > +		.base_reg = REG_EMI_CLK_DIV_SEL,
+> > +		.base_bits = 2,
+> > +		.base_shift = 8,
+> > +		.base_values = emi7583_base,
+> > +		.n_base_values = ARRAY_SIZE(emi7583_base),
+> > +
+> > +		.div_bits = 3,
+> > +		.div_shift = 0,
+> > +		.div_step = 1,
+> > +		.div_offset = 1,
+> > +	}, {
+> > +		.id = EN7523_CLK_BUS,
+> > +		.name = "bus",
+> > +
+> > +		.base_reg = REG_BUS_CLK_DIV_SEL,
+> > +		.base_bits = 2,
+> > +		.base_shift = 8,
+> > +		.base_values = bus7583_base,
+> > +		.n_base_values = ARRAY_SIZE(bus7583_base),
+> > +
+> > +		.div_bits = 3,
+> > +		.div_shift = 0,
+> > +		.div_step = 1,
+> > +		.div_offset = 1,
+> > +	}, {
+> > +		.id = EN7523_CLK_SLIC,
+> > +		.name = "slic",
+> > +
+> > +		.base_reg = REG_SPI_CLK_FREQ_SEL,
+> > +		.base_bits = 1,
+> > +		.base_shift = 1,
+> > +		.base_values = slic_base,
+> > +		.n_base_values = ARRAY_SIZE(slic_base),
+> > +
+> > +		.div_reg = REG_SPI_CLK_DIV_SEL,
+> > +		.div_bits = 5,
+> > +		.div_shift = 24,
+> > +		.div_val0 = 20,
+> > +		.div_step = 2,
+> > +	}, {
+> > +		.id = EN7523_CLK_SPI,
+> > +		.name = "spi",
+> > +
+> > +		.base_reg = REG_SPI_CLK_FREQ_SEL,
+> > +		.base_bits = 1,
+> > +		.base_shift = 0,
+> > +		.base_values = spi7583_base,
+> > +		.n_base_values = ARRAY_SIZE(spi7583_base),
+> > +
+> > +		.div_reg = REG_SPI_CLK_DIV_SEL,
+> > +		.div_bits = 5,
+> > +		.div_shift = 8,
+> > +		.div_val0 = 40,
+> > +		.div_step = 2,
+> > +	}, {
+> > +		.id = EN7523_CLK_NPU,
+> > +		.name = "npu",
+> > +
+> > +		.base_reg = REG_NPU_CLK_DIV_SEL,
+> > +		.base_bits = 2,
+> > +		.base_shift = 9,
+> > +		.base_values = npu7583_base,
+> > +		.n_base_values = ARRAY_SIZE(npu7583_base),
+> > +
+> > +		.div_bits = 3,
+> > +		.div_shift = 0,
+> > +		.div_step = 1,
+> > +		.div_offset = 1,
+> > +	}, {
+> > +		.id = EN7523_CLK_CRYPTO,
+> > +		.name = "crypto",
+> > +
+> > +		.base_reg = REG_CRYPTO_CLKSRC2,
+> > +		.base_bits = 1,
+> > +		.base_shift = 0,
+> > +		.base_values = crypto7583_base,
+> > +		.n_base_values = ARRAY_SIZE(crypto7583_base),
+> > +	}, {
+> > +		.id = EN7581_CLK_EMMC,
+> > +		.name = "emmc",
+> > +
+> > +		.base_reg = REG_CRYPTO_CLKSRC2,
+> > +		.base_bits = 1,
+> > +		.base_shift = 13,
+> > +		.base_values = emmc7583_base,
+> > +		.n_base_values = ARRAY_SIZE(emmc7583_base),
+> > +	}, {
+> > +		.id = AN7583_CLK_MDIO0,
+> > +		.name = "mdio0",
+> > +
+> > +		.base_reg = REG_CRYPTO_CLKSRC2,
+> > +
+> > +		.base_value = 25000000,
+> > +
+> > +		.div_bits = 4,
+> > +		.div_shift = 15,
+> > +		.div_step = 1,
+> > +		.div_offset = 1,
+> > +	}, {
+> > +		.id = AN7583_CLK_MDIO1,
+> > +		.name = "mdio1",
+> > +
+> > +		.base_reg = REG_CRYPTO_CLKSRC2,
+> > +
+> > +		.base_value = 25000000,
+> > +
+> > +		.div_bits = 4,
+> > +		.div_shift = 19,
+> > +		.div_step = 1,
+> > +		.div_offset = 1,
+> > +	}
+> > +};
+> > +
+> >  static const u16 en7581_rst_ofs[] = {
+> >  	REG_RST_CTRL2,
+> >  	REG_RST_CTRL1,
+> > @@ -544,6 +685,64 @@ static const u16 en751221_rst_map[] = {
+> >  	[EN751221_USB_PHY_P1_RST]	= 3 * RST_NR_PER_BANK + 7,
+> >  };
+> >  
+> > +static const u16 an7583_rst_map[] = {
+> > +	/* RST_CTRL2 */
+> > +	[AN7583_XPON_PHY_RST]		= 0,
+> > +	[AN7583_GPON_OLT_RST]		= 1,
+> > +	[AN7583_CPU_TIMER2_RST]		= 2,
+> > +	[AN7583_HSUART_RST]		= 3,
+> > +	[AN7583_UART4_RST]		= 4,
+> > +	[AN7583_UART5_RST]		= 5,
+> > +	[AN7583_I2C2_RST]		= 6,
+> > +	[AN7583_XSI_MAC_RST]		= 7,
+> > +	[AN7583_XSI_PHY_RST]		= 8,
+> > +	[AN7583_NPU_RST]		= 9,
+> > +	[AN7583_TRNG_MSTART_RST]	= 12,
+> > +	[AN7583_DUAL_HSI0_RST]		= 13,
+> > +	[AN7583_DUAL_HSI1_RST]		= 14,
+> > +	[AN7583_DUAL_HSI0_MAC_RST]	= 16,
+> > +	[AN7583_DUAL_HSI1_MAC_RST]	= 17,
+> > +	[AN7583_XPON_XFI_RST]		= 18,
+> > +	[AN7583_WDMA_RST]		= 19,
+> > +	[AN7583_WOE0_RST]		= 20,
+> > +	[AN7583_HSDMA_RST]		= 22,
+> > +	[AN7583_TDMA_RST]		= 24,
+> > +	[AN7583_EMMC_RST]		= 25,
+> > +	[AN7583_SOE_RST]		= 26,
+> > +	[AN7583_XFP_MAC_RST]		= 28,
+> > +	[AN7583_MDIO0_RST]		= 30,
+> > +	[AN7583_MDIO1_RST]		= 31,
+> > +	/* RST_CTRL1 */
+> > +	[AN7583_PCM1_ZSI_ISI_RST]	= RST_NR_PER_BANK + 0,
+> > +	[AN7583_FE_PDMA_RST]		= RST_NR_PER_BANK + 1,
+> > +	[AN7583_FE_QDMA_RST]		= RST_NR_PER_BANK + 2,
+> > +	[AN7583_PCM_SPIWP_RST]		= RST_NR_PER_BANK + 4,
+> > +	[AN7583_CRYPTO_RST]		= RST_NR_PER_BANK + 6,
+> > +	[AN7583_TIMER_RST]		= RST_NR_PER_BANK + 8,
+> > +	[AN7583_PCM1_RST]		= RST_NR_PER_BANK + 11,
+> > +	[AN7583_UART_RST]		= RST_NR_PER_BANK + 12,
+> > +	[AN7583_GPIO_RST]		= RST_NR_PER_BANK + 13,
+> > +	[AN7583_GDMA_RST]		= RST_NR_PER_BANK + 14,
+> > +	[AN7583_I2C_MASTER_RST]		= RST_NR_PER_BANK + 16,
+> > +	[AN7583_PCM2_ZSI_ISI_RST]	= RST_NR_PER_BANK + 17,
+> > +	[AN7583_SFC_RST]		= RST_NR_PER_BANK + 18,
+> > +	[AN7583_UART2_RST]		= RST_NR_PER_BANK + 19,
+> > +	[AN7583_GDMP_RST]		= RST_NR_PER_BANK + 20,
+> > +	[AN7583_FE_RST]			= RST_NR_PER_BANK + 21,
+> > +	[AN7583_USB_HOST_P0_RST]	= RST_NR_PER_BANK + 22,
+> > +	[AN7583_GSW_RST]		= RST_NR_PER_BANK + 23,
+> > +	[AN7583_SFC2_PCM_RST]		= RST_NR_PER_BANK + 25,
+> > +	[AN7583_PCIE0_RST]		= RST_NR_PER_BANK + 26,
+> > +	[AN7583_PCIE1_RST]		= RST_NR_PER_BANK + 27,
+> > +	[AN7583_CPU_TIMER_RST]		= RST_NR_PER_BANK + 28,
+> > +	[AN7583_PCIE_HB_RST]		= RST_NR_PER_BANK + 29,
+> > +	[AN7583_XPON_MAC_RST]		= RST_NR_PER_BANK + 31,
+> > +
+> > +	/* RST_PCIC */
+> > +	[AN7583_PCIC_PERSTOUT0_RST]	= 2 * RST_NR_PER_BANK + 29,
+> > +	[AN7583_PCIC_PERSTOUT1_RST]	= 2 * RST_NR_PER_BANK + 26,
+> > +};
+> > +
+> >  static int en7581_reset_register(struct device *dev, void __iomem *base,
+> >  				 const u16 *rst_map, int nr_resets,
+> >  				 const u16 *rst_reg_ofs);
+> > @@ -1149,6 +1348,43 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
+> >  	return en7581_serdes_phy_register(&pdev->dev);
+> >  }
+> >  
+> > +static int an7583_clk_hw_init(struct platform_device *pdev,
+> > +			      struct clk_hw_onecell_data *clk_data)
+> > +{
+> > +	struct en_clk_priv *priv = platform_get_drvdata(pdev);
+> > +	struct device *dev = &pdev->dev;
+> > +	struct regmap *map;
+> > +	void __iomem *base;
+> > +	u32 val;
+> > +	int ret;
+> > +
+> > +	map = syscon_regmap_lookup_by_phandle(dev->of_node, "airoha,chip-scu");
+> > +	if (IS_ERR(map))
+> > +		return PTR_ERR(map);
+> > +
+> > +	base = devm_platform_ioremap_resource(pdev, 0);
+> > +	if (IS_ERR(base))
+> > +		return PTR_ERR(base);
+> > +
+> > +	priv->base = base;
+> > +
+> > +	en7581_register_clocks(dev, clk_data, map, base);
+> 
+> The Sashiko output looks legit here about the missing .set_rate,
+> .round_rate, or .determine_rate callbacks.
+> 
 
-kernel test robot noticed the following build errors:
+It's getting handled by a different series... It's really to keep things
+split and speedup review process. When one of the 2 gets merged, I will
+quickly rebase the other if needed.
 
-[auto build test ERROR on 662377fd1bb1d7cf4e97d312255fed868f56342d]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Kyle-Hendry-via-B4-Relay/dt-bindings-clock-r9a06g032-sysctrl-Document-reset-cells/20261119-095743
-base:   662377fd1bb1d7cf4e97d312255fed868f56342d
-patch link:    https://lore.kernel.org/r/20261119-rzn1-miic-resets-v1-2-feee2bb28bb4%40reliablecontrols.com
-patch subject: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
-config: arm-shmobile_defconfig (https://download.01.org/0day-ci/archive/20261121/202611210721.sFAijXHV-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 16.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261121/202611210721.sFAijXHV-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202611210721.sFAijXHV-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/container_of.h:5,
-                    from include/linux/kernel.h:22,
-                    from include/linux/clk.h:13,
-                    from drivers/clk/renesas/r9a06g032-clocks.c:10:
-   drivers/clk/renesas/r9a06g032-clocks.c: In function 'r9a06g032_reset_set':
->> include/linux/container_of.h:8:47: error: 'struct r9a06g032_priv' has no member named 'rcdev'
-       8 | #define typeof_member(T, m)     typeof(((T*)0)->m)
-         |                                               ^~
-   include/linux/build_bug.h:80:56: note: in definition of macro '__static_assert'
-      80 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
-      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
-         |         ^~~~~~~~~~~~~
-   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
-      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
-         |                       ^~~~~~~~~~~
-   include/linux/container_of.h:20:43: note: in expansion of macro 'typeof_member'
-      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
-         |                                           ^~~~~~~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c:1317:33: note: in expansion of macro 'container_of'
-    1317 | #define rcdev_to_priv(x)        container_of(x, struct r9a06g032_priv, rcdev)
-         |                                 ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c:1322:39: note: in expansion of macro 'rcdev_to_priv'
-    1322 |         struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
-         |                                       ^~~~~~~~~~~~~
->> include/linux/compiler_types.h:610:27: error: expression in static assertion is not an integer
-     610 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
-         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:80:56: note: in definition of macro '__static_assert'
-      80 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
-      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
-         |         ^~~~~~~~~~~~~
-   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
-      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
-         |                       ^~~~~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c:1317:33: note: in expansion of macro 'container_of'
-    1317 | #define rcdev_to_priv(x)        container_of(x, struct r9a06g032_priv, rcdev)
-         |                                 ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c:1322:39: note: in expansion of macro 'rcdev_to_priv'
-    1322 |         struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
-         |                                       ^~~~~~~~~~~~~
-   In file included from include/uapi/linux/posix_types.h:5,
-                    from include/uapi/linux/types.h:14,
-                    from include/linux/types.h:5,
-                    from include/linux/kasan-checks.h:5,
-                    from include/asm-generic/rwonce.h:26,
-                    from ./arch/arm/include/generated/asm/rwonce.h:1,
-                    from include/linux/compiler.h:391,
-                    from include/linux/err.h:5,
-                    from include/linux/clk.h:12:
->> include/linux/stddef.h:16:33: error: 'struct r9a06g032_priv' has no member named 'rcdev'
-      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-         |                                 ^~~~~~~~~~~~~~~~~~
-   include/linux/container_of.h:23:34: note: in expansion of macro 'offsetof'
-      23 |         (type *)((void *)(ptr) - offsetof(type, member)); })
-         |                                  ^~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c:1317:33: note: in expansion of macro 'container_of'
-    1317 | #define rcdev_to_priv(x)        container_of(x, struct r9a06g032_priv, rcdev)
-         |                                 ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c:1322:39: note: in expansion of macro 'rcdev_to_priv'
-    1322 |         struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
-         |                                       ^~~~~~~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c: In function 'r9a06g032_reset_status':
->> include/linux/container_of.h:8:47: error: 'struct r9a06g032_priv' has no member named 'rcdev'
-       8 | #define typeof_member(T, m)     typeof(((T*)0)->m)
-         |                                               ^~
-   include/linux/build_bug.h:80:56: note: in definition of macro '__static_assert'
-      80 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
-      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
-         |         ^~~~~~~~~~~~~
-   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
-      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
-         |                       ^~~~~~~~~~~
-   include/linux/container_of.h:20:43: note: in expansion of macro 'typeof_member'
-      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
-         |                                           ^~~~~~~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c:1317:33: note: in expansion of macro 'container_of'
-    1317 | #define rcdev_to_priv(x)        container_of(x, struct r9a06g032_priv, rcdev)
-         |                                 ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c:1354:39: note: in expansion of macro 'rcdev_to_priv'
-    1354 |         struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
-         |                                       ^~~~~~~~~~~~~
->> include/linux/compiler_types.h:610:27: error: expression in static assertion is not an integer
-     610 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
-         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:80:56: note: in definition of macro '__static_assert'
-      80 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
-      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
-         |         ^~~~~~~~~~~~~
-   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
-      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
-         |                       ^~~~~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c:1317:33: note: in expansion of macro 'container_of'
-    1317 | #define rcdev_to_priv(x)        container_of(x, struct r9a06g032_priv, rcdev)
-         |                                 ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c:1354:39: note: in expansion of macro 'rcdev_to_priv'
-    1354 |         struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
-         |                                       ^~~~~~~~~~~~~
->> include/linux/stddef.h:16:33: error: 'struct r9a06g032_priv' has no member named 'rcdev'
-      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-         |                                 ^~~~~~~~~~~~~~~~~~
-   include/linux/container_of.h:23:34: note: in expansion of macro 'offsetof'
-      23 |         (type *)((void *)(ptr) - offsetof(type, member)); })
-         |                                  ^~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c:1317:33: note: in expansion of macro 'container_of'
-    1317 | #define rcdev_to_priv(x)        container_of(x, struct r9a06g032_priv, rcdev)
-         |                                 ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c:1354:39: note: in expansion of macro 'rcdev_to_priv'
-    1354 |         struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
-         |                                       ^~~~~~~~~~~~~
-   drivers/clk/renesas/r9a06g032-clocks.c: In function 'r9a06g032_clocks_probe':
->> drivers/clk/renesas/r9a06g032-clocks.c:1463:15: error: 'struct r9a06g032_priv' has no member named 'rcdev'
-    1463 |         clocks->rcdev.ops = &r9a06g032_reset_ops;
-         |               ^~
-   drivers/clk/renesas/r9a06g032-clocks.c:1464:15: error: 'struct r9a06g032_priv' has no member named 'rcdev'
-    1464 |         clocks->rcdev.of_node = np;
-         |               ^~
-   drivers/clk/renesas/r9a06g032-clocks.c:1465:15: error: 'struct r9a06g032_priv' has no member named 'rcdev'
-    1465 |         clocks->rcdev.of_reset_n_cells = 1;
-         |               ^~
-   drivers/clk/renesas/r9a06g032-clocks.c:1466:15: error: 'struct r9a06g032_priv' has no member named 'rcdev'
-    1466 |         clocks->rcdev.nr_resets = ARRAY_SIZE(r9a06g032_resets);
-         |               ^~
-   drivers/clk/renesas/r9a06g032-clocks.c:1467:61: error: 'struct r9a06g032_priv' has no member named 'rcdev'
-    1467 |         error =  devm_reset_controller_register(dev, &clocks->rcdev);
-         |                                                             ^~
-
-
-vim +8 include/linux/container_of.h
-
-d2a8ebbf8192b84 Andy Shevchenko 2021-11-08  4  
-d2a8ebbf8192b84 Andy Shevchenko 2021-11-08 @5  #include <linux/build_bug.h>
-2b8e35337605ca5 Andy Shevchenko 2023-01-30  6  #include <linux/stddef.h>
-d2a8ebbf8192b84 Andy Shevchenko 2021-11-08  7  
-d2a8ebbf8192b84 Andy Shevchenko 2021-11-08 @8  #define typeof_member(T, m)	typeof(((T*)0)->m)
-d2a8ebbf8192b84 Andy Shevchenko 2021-11-08  9  
+(honestly was done to not make a big series)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	Ansuel
