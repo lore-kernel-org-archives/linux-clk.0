@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795165067;
-	b=x47ePQagKADR5CjbhXdsnKH5h5ADifD+9Dv1xb3s9neGpPzJCZ5hWVQTqIbCS6q4P/p0
-	 dqr7EZtqdQPdkGreObgK7lQ+wpUbd2DT8C3jJDVoqDNM4kKWD7zC6tdsJKytHyhKpCCBc
-	 MSQLqnIynsYxhlka9/d+PHCq8fEwGo94k/cA2cdTIFARcKIT+rrIJxzQ7fey8z1QYQOeR
-	 Wuk0Lro5X+aWYHanZsReqcdDZeIUww/TH7gonkBUibHMdeVuNN5s+4yNSJCuKAY5+6shW
-	 xQQnrWmnagopEGCAfr2GBvXdKb/R+KGbd5p8/09dyvH9Ex6L1YcA45I92kTCjZ24gMw==
+	t=1795165183;
+	b=MUV0Z6AnLhw3aukTPqsPy1Ma9poGI0ohqt/2G5FHurI2C3yJ+hZ7rAvklgM3vltYGNeS
+	 /mNQWUCxZo13deAHm02onQeVbWnCoBharQ06pNxW+nCGJz/Y4k1Kqp0evKlxcHoyY9Z1W
+	 DQ3ap5rvrxdKQSofi1JhBJiBo064/riXv6p6zDDn3unlg7cXt5SVyYBH9x3klORa8UGK2
+	 g+V8YC911OHeeWlUgK6YN7os6dQmciPJLLUevmgufNIhBGE4jT/ndKq/QgjftVjDoPIo1
+	 U94xJs6HFKUhnjLyPjZaAJakZNcvJnyls5JRM4ftXtGBTGkc2dBwwkoNHgA66bSQJhQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795165067;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795165183;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=ROrkcw6iI7lN1BhbIvQj3p/zywAkYZt/3iMrqg1UUQ4=;
-	b=r7tqsvQh5HX4O14n1mLasWsSH90ULfsTLlnTaka1Xn92bIM+VkgzUHLlDW0aqffLH+yO
-	 oRw751i/aTrosrGiI8U/kqB3X+JEVbuv6E62ccoNnmR4Gpk91yUyIpbxoVsfoCoieVp0h
-	 QmF04XUH7DJP5/MUGP6OSRHmptYDZhPkWjvysXloWmGtYcPtA25Yva11rrlPdIZ0IlvYl
-	 4l4Ghwu4KIyn4GYWpjgb+3VYEsL+BmnltClIjI/9z2DlNdbw6Ij2WptFNnUt0SdaFda4S
-	 1+tMWZZLQgrY0gKvdckgPuKRqpP6n2EpMIJ+m4Gj+qk63NQ/ubRUxwbFxTkhvZ9HLdg==
+	bh=zbAWU1RlxtAFu9xQZOUCjLW45qkPUbL82Im2/Iuxrx0=;
+	b=ld0UC5egXEmFxmYsb+u0w6cjeo0LyBKM4MkHTeeqE5rDbpJ8q00DE6s5ZwgUgxyMAUqj
+	 NdGj98COPY3BWBmgl8H55+M21VK3iI/Ab0JKNIvqMfdCLZWr0OO5N7MCBSXrt//Yb2uIq
+	 QnLEULfjYRa/YzN+YvrRyrw+19vH4RrtWNjSM473omkkxrvicvm8KjzPqWVdk26C8mnif
+	 Q1iva7U4bjOp8/CDsPXyW5fc/rYeIUK4xs7EYUj1GWN+h0tNr+pSKytGiWV9LMSipitZj
+	 eATyaNRjx67LLFXga0rTQVU302EpuZl0zuJ6a2i0h9sW9gzRtv/8/DELDBU1SRiVGzA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LkJGcO1S;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OOPNSvEg;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C4A606A320;
-	Fri, 20 Nov 2026 08:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2B960A2606;
+	Fri, 20 Nov 2026 08:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LkJGcO1S
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C23F1F000CA;
-	Fri, 20 Nov 2026 08:57:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OOPNSvEg
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C75F01F000C6;
+	Fri, 20 Nov 2026 08:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795165066;
-	bh=ROrkcw6iI7lN1BhbIvQj3p/zywAkYZt/3iMrqg1UUQ4=;
+	s=k20260515; t=1795165183;
+	bh=zbAWU1RlxtAFu9xQZOUCjLW45qkPUbL82Im2/Iuxrx0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=LkJGcO1SS2GRABX/uMwEuScOjYQWaLW2LE4ozIGKw/cVD/AyLho95ori2YXN/zhwU
-	 swUw1DdCzLIxEVg6APSkqPuSlabb4NgTvYF6pNs/NByVXfoRfqyNE/gf/77O2zM1Fa
-	 uBSXwx/4k57FbkPxcxubAiumj1aV0trI5qEb6RIj9qmVW2gTfHm1tRLiwxIKo08Ze5
-	 EFbst+9laQOpXfReoo+GdPcggumUQOl690cOh39tcMHoEI7D14yRY652hMnGlJ08PA
-	 sJ0eV3nJ31gZf6szab9HDyekSzDgOfiKLk45GTkFPGFIBuY7AAwK3nOjMK6y9coRM6
-	 JSEIPl87hI8+g==
-Message-ID: <b4c4f8a4-99f2-42c1-b844-3fa7ae19e16b@kernel.org>
-Date: Fri, 20 Nov 2026 09:57:41 +0100
+	b=OOPNSvEgVhZNW71MC6vuLU503DT49Hfb6ujAimA603hN2D2BPIRbq/J1LIROLHtVH
+	 BRbFc6rruEtVLSUW1vP/gv0DlVmQJLaYTbmeP4f+oNrWp0rtg1qQHvV/kSf8o0H+Y1
+	 8rpkoxD/jj7+MORCTIjknilnOwZ18BjxD3lwHz6MhEX1o9xNG/uGhFKJrIb1HoS3Pe
+	 /oa/JvcZU1GXm5sCbzr2QmuVf8k/xiugthJSMWKfJMTvkOA8xwGmFPn9VBQLmIPcBH
+	 3AtIleVV7n6A+hkuWPFm5MKnBINRJ2Pz/GnGH1YIAgCc+NQsWf1g12RsrT6HxuNOYg
+	 fpfWvtnj9hvZQ==
+Message-ID: <627410e4-e674-4ea2-bccb-e1842f71fbe6@kernel.org>
+Date: Fri, 20 Nov 2026 09:58:51 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -52,8 +52,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 1/2] dt-bindings: clock: qcom: Add LPASS VA CSR
- HeartBeat pulse clock
+Subject: Re: [PATCH v14 2/2] clk: qcom: Add LPASS VA CSR heartbeat pulse clock
 To: sarath.ganapathiraju@oss.qualcomm.com, andersson@kernel.org,
  abelvesa@kernel.org, sboyd@kernel.org, bmasney+clk@redhat.com,
  jbrunet+clk@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
@@ -62,7 +61,7 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  prasad.kumpatla@oss.qualcomm.com
 References: <20261120-master-v14-0-112cfd63438d@oss.qualcomm.com>
- <20261120-master-v14-1-112cfd63438d@oss.qualcomm.com>
+ <20261120-master-v14-2-112cfd63438d@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,29 +107,42 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20261120-master-v14-1-112cfd63438d@oss.qualcomm.com>
+In-Reply-To: <20261120-master-v14-2-112cfd63438d@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 20/11/2026 09:36, Sarath Ganapathiraju via B4 Relay wrote:
 > From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
 > 
-> Add a binding for the Qualcomm LPASS VA CSR rate generator node that
-> exposes the lpass_heartbeat_pulse clock on Hawi.
-> 
 > The HeartBeat Pulse, also known as RateGen Pulse, synchronizes the
-> start of DMAs and Codec Interfaces for the audio usecase and can serve
-> as a periodic wakeup source for the DSP.
+> start of DMAs and Codec Interfaces for the audio usecases and can
+> serve as a periodic wakeup source for the DSP.
 > 
-> Require the LPASS LPR and audio vote clocks to access VA CSR register
-> space safely.
+> Add the LPASS VA CSR driver that models the rate generator as a clock
+> provider so consumers can enable and disable it through the common
+> clock framework.
 > 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Attach the DT vote clocks to runtime PM and program the rate generator
+> counter and delay registers from runtime resume after the votes are
+> enabled. This restores the state if the LPASS register context is lost
+> across runtime suspend.
+> 
+> Rely on the clock core provider runtime PM handling around clock
+> prepare and unprepare to keep the votes active for regmap gate
+> accesses. Use the same runtime suspend and resume callbacks for
+> system sleep so the vote clocks are enabled before restoring the
+> rate generator after suspend. Track the heartbeat gate state in the
+> clock callbacks and restore LPASS_RATE_GEN_CTRL on resume when the
+> clock was enabled before the LPASS register context was lost.
+> 
 > Reviewed-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
 > Tested-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+> Signed-off-by: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+> ---
 
-Drop, did not happen. What is the problem in responding with testing to
-appropriate email, instead of to cover letter?
+
+So entire patch will need one more revision because of triviality in the
+binding... why not making applying tags correctly :/
 
 Best regards,
 Krzysztof
