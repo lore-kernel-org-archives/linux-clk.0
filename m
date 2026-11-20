@@ -1,45 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=77.73.98.243
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795188978;
-	b=e3TNNlaAsC0r5SlY77qiPq09MbGUBeU4O/ynEVHl2RsN0+JRaQwNFhcsSIsQ08QNRqk+
-	 nTlm5MrxUKm008cA5dM+DvnNdPxsf2gdy/M3ztoeiqe0ip+2lTiUPHvfTknFt21mYxFQs
-	 qUtzCA7aGHsyHkjSVaTNF7bq1SF2F2h+mZIAr2ZAiV1tNKecKr2LIi7p026DwkzlzxJ2X
-	 xYhvyq6eYkQ5ncm4SkBqTDYdh8frkf50udNcjtjcprcBRxyDHPrTHGzDD5CEe9EvyyGu2
-	 FhiVZcw5cQ9sZXQpjX2bVlJxqb70u8queB2A+54kGFc/Fa0zXA/DbkLBqsKwfxTouUA==
+	t=1795189088;
+	b=xH3+Dy0YmHN0SWTpT6SKHWJrYijkGFTvlBRKwQaY3MOa0tPXHP+qLeYM4+uPgaFM1EBT
+	 JbfDNmNar+VgwBaFAqa3gPIOYNbAIGE0uciCxlC74fQJwgn4fqwGxPQg7thAsF/qUD1xM
+	 oNwS9eI1LGRP8ZY+QfNwEHSYpo/u/2WBNYL3hHhpBTHmPDXqpeTQ9hUAUCH5NjtiIDvs8
+	 GiefKqz4K4OznoKZirrwAYauCthOPk3/jmwScFTJNWM7+FKoHf7SEK+VUUVbJpTDluSWf
+	 e2ebTpXQ1pdYgLH0FmulFsDenibt2lzhFMhPzSlq1Yz9VzvjfjbPrHjYpheeBnncRCg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795188978;
-	h=Received:DKIM-Signature:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=db2MO1a70PIE6Fv5WZXGz5F9j2CW0g9J+SpZG3GxKeo=;
-	b=nr3IJVgnN0WPEcXgGsSF8uOBldaFGV554gr7/CLUx5jCy2Fa4cveyVACL2f0gRmbERqs
-	 DaF6NVTT2PhNB2iH8irqhYGZ4PXKcWAD5/8JF/GX9rdx/XYObNPBjISpK0vdXklukctaD
-	 9R/CK2SQrGg++9zMIi09TO9oTnC6p/KMW5c3hEFw7viHokACdPJqLN4biDK1SBZyookJI
-	 k6v/hN5JyCH++1L2W42L4o9qMIwFcja3CZKdGwU4xMGlvONy10J78HBJClKY4ckBMctpK
-	 HsKfbIUvQFhB1mrxyTAaMSDmp4qaYH95ZjRfmSNsmJw2cZZm2QgioLQzpxiyBVe4Vrw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795189088;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=KFSasBaQ8OA2KKDICReL5AyVNlfF5o5HYocfZ1mZcWk=;
+	b=kwU1BM2pQKoZuAvXDmT1i4NYQxCeyVaeX+zFKxRac+2GpXWFvNmCzCMieFpcNx2YFvA4
+	 Xo/Wtzp1dURa6lJNdWNutcx+SeU991T5x2DgTGbLh5IQP/O+qthr5uM8SDU602aMkOBMT
+	 bXhr2IkHjW+rdMmB9hKSjWhfbNnJtPk0OmEiKo7DnoFuFCYnz8IIJu0/W7eTT56jqHDd/
+	 mihLRPdQMMQ9nTzPVDKcszazv/sVwvkzD7siCWMG4RyWL7m8RKzQqvKroNe+N8kg8SIa1
+	 3U0IzTCuUC+aVb06EfRkpBTNNKYOoIILNCLkyemqzud0YACMCXceZH/4yz9Fk9VF6Zg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iY7qbtRX;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=octarion.eu;
+	spf=pass smtp.mailfrom=octarion.eu;
+	dkim=pass header.d=octarion.eu header.i=@octarion.eu header.a=rsa-sha256 header.s=mail header.b=kMxL3zg1;
+	arc=none smtp.remote-ip=77.73.98.243
+Received: from mail.octarion.eu (mail.octarion.eu [77.73.98.243])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1288F606A320;
-	Fri, 20 Nov 2026 15:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52772606A32A
+	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 15:38:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 52772606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=octarion.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=octarion.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iY7qbtRX
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ACC41F000C4;
-	Fri, 20 Nov 2026 15:36:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795188977;
-	bh=db2MO1a70PIE6Fv5WZXGz5F9j2CW0g9J+SpZG3GxKeo=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=iY7qbtRXUOcQFowK/jqsglS7S97JW+1X5C5Fwcm81+MKpDNUZduhnGEeIU1oh+Aer
-	 fpK6iPk9Am9peRUHDCbwruJ7KiPDfWWNTG71VAT1QVxMd+AZryE/DY5K3SCA605XhW
-	 3rkWv1M29RDeZG+T5ZnaRxM6XlWOBhcQvr5SPNVDxi18QC2FLK+vFXfj66NoXL3+XX
-	 wMLhb7jCy9Eka6FwWa7iuo1sT4fDoBvjcbWPSmptA5OHIyqMRq8hCrxhCAAPOgeEgs
-	 bvT1Lh3+g+CM9VCzhouhuC9DbnJTA8MUuf2/ijBXWXgwOshPlB6i7J6FDtgmmzPFpO
-	 pZQyzi78LzyRg==
+	dkim=pass (2048-bit key) header.d=octarion.eu header.i=@octarion.eu header.a=rsa-sha256 header.s=mail header.b=kMxL3zg1
+Received: from mail.octarion.eu (localhost [127.0.0.1])
+	by mail.octarion.eu (Postfix) with ESMTP id D1F8F4ABFFA
+	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 15:37:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=octarion.eu; s=mail; t=1795189077; h=from:to:subject:date:message-id:mime-version; bh=KFSasBaQ8OA2KKDICReL5AyVNlfF5o5HYocfZ1mZcWk=; b=kMxL3zg1yr5R7HP5w9hCzCdsls68BJkrDbxotdBCYWeAYdzCy+caZF9QvYRb51gXSlkSH/UKkeVS
+	CSQbyJWatmwbDsKXXgHbKsc9L5jDStAhC8tYScviUieqOYGLY2P+gindRa0fPs1C6S//CDpzueFY
+	I6cyGrbWluqsO5rv1gAdyX30nzZXE+zXR++vKoabbT74MK3TdJwrNcIxMb9B6RKQN1h38sT4aBw4
+	Rj+bkDKR5eUVIwYfuHwsv8bnLmwdi3uoqIhiwE9CD6kfmJcjfhL9wn//M0QrlIsKzOSfbdImAhFK
+	Lj6fBs/rlJvB9w3U69I7l0rUhyDA0d/votFRIg==
+Received: from localhost.localdomain (unknown [IPv6:2a02:1807:3930:3611:dd78:6350:fd25:20d0])
+	by mail.octarion.eu (Postfix) with ESMTPSA id F09294AC0B1;
+	Fri, 20 Nov 2026 15:37:56 +0000 (UTC)
+From: Herman verschooten <Herman@octarion.eu>
+To: Chen-Yu Tsai <wens@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Herman verschooten <Herman@octarion.eu>
+Subject: [PATCH] clk: sunxi-ng: sun6i-a31: Fix LCD CH0 and IEP clock mux widths
+Date: Fri, 20 Nov 2026 16:37:23 +0100
+Message-ID: <20261120153723.85232-1-Herman@octarion.eu>
+X-Mailer: git-send-email 2.56.1
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -49,61 +68,71 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH RFC 19/23] ASoC: qcom: sc8280xp: allow using the
- sc8280xp card with lpass-cpu
-From: Mark Brown <broonie@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Srinivas Kandagatla <srini@kernel.org>, 
- Rohit kumar <quic_rohkumar@quicinc.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Konrad Dybcio <konradybcio@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
- linux-gpio@vger.kernel.org
-In-Reply-To: <20261113-topic-sm8650-el2-v1-19-5183f6aab9fc@linaro.org>
-References: <20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org>
- <20261113-topic-sm8650-el2-v1-19-5183f6aab9fc@linaro.org>
-Date: Fri, 20 Nov 2026 15:36:11 +0000
-Message-Id: <179518897124.6016.130748488943015768.b4-review@b4>
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=760; i=broonie@kernel.org;
- h=from:subject:message-id; bh=yjz8fAQ3kPUwHl3NaYwbsrK24UeGk5MNb2vPPtnlmvw=;
- b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLIZMl5flv7+cs/s8ksfd2gXesrP8v/we9HlaS4PG/q27
- zuXtixPtaOUhUGMi0FWTJElLov7ZX3J6zV8Bxe2wcxhZQIZwsDFKQATSXZjZHj093gn057njsve
- uimc3TGrXnSbqJOnbKXX6oAYxRkszyUZ/vA9fbC880DHwxnXebgFOKsvXZ2bHf9gs4FflhO7meB
- EH04A
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
 
-> Add the missing DAI ids and set the ops to allow using
-> the sc8280xp card with lpass-cpu and keep the sm8650 sound
-> card bindings working with either Audioreach or lpass-cpu
-> interfaces.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+The source select fields of the LCD0/LCD1 CH0 clocks and the IEP DRC0,
+DRC1, DEU0 and DEU1 clocks are 3 bits wide (bits 26:24), like those of
+the BE, FE and MP clocks, but they are described as 2 bits wide. The LCD
+CH0 clocks have 5 possible parents and the IEP clocks 6 (the same
+de_parents as BE/FE/MP), so pll-mipi, pll9 and pll10 can never be
+selected. Worse, if the bootloader left bit 26 set, Linux keeps it when
+it reparents these clocks, and the register ends up selecting a
+different or reserved source.
 
-> @@ -533,12 +540,11 @@ static void sc8280xp_add_be_ops(struct snd_soc_card *card)
->  	int i;
->  
->  	for_each_card_prelinks(card, i, link) {
-> -		if (link->no_pcm == 1) {
-> -			link->init = sc8280xp_snd_init;
-> -			link->exit = sc8280xp_snd_exit;
-> +		link->init = sc8280xp_snd_init;
-> +		link->exit = sc8280xp_snd_exit;
-> +		link->ops = &sc8280xp_be_ops;
+This happens on a Modecom FreeTab 8014 tablet, whose vendor bootloader
+shows its boot logo on the LVDS panel and leaves bit 26 set in both the
+LCD0 CH0 and the IEP DRC0 clock registers. Linux reparents them to
+pll-video0-2x and pll-periph-2x by writing only bits 25:24, leaving both
+registers at the reserved value 0b110: the TCON gets no clock and never
+raises a vblank interrupt (drm_atomic_helper_wait_for_vblanks() times
+out, the panel stays dark), and once the TCON clock is fixed by hand,
+the unclocked DRC0 makes the panel show a flat colour instead of the
+picture. When the same kernel is started over FEL, where these registers
+start at zero, the display works.
 
-This now applies to everything for all cards, that feels like it needs a
-lot of care?
+Describe these muxes as 3 bits wide.
 
+Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+Assisted-by: claude-opus-5-5
+Signed-off-by: Herman verschooten <Herman@octarion.eu>
+---
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index bab65cf..0884dc5 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -551,9 +551,9 @@ static const char * const lcd_ch0_parents[] = { "pll-video0", "pll-video1",
+ 						"pll-video0-2x",
+ 						"pll-video1-2x", "pll-mipi" };
+ static SUNXI_CCU_MUX_WITH_GATE(lcd0_ch0_clk, "lcd0-ch0", lcd_ch0_parents,
+-			       0x118, 24, 2, BIT(31), CLK_SET_RATE_PARENT);
++			       0x118, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_MUX_WITH_GATE(lcd1_ch0_clk, "lcd1-ch0", lcd_ch0_parents,
+-			       0x11c, 24, 2, BIT(31), CLK_SET_RATE_PARENT);
++			       0x11c, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
+ 
+ static const char * const lcd_ch1_parents[] = { "pll-video0", "pll-video1",
+ 						"pll-video0-2x",
+@@ -645,13 +645,13 @@ static SUNXI_CCU_M_WITH_MUX_GATE(mipi_csi_dphy_clk, "mipi-csi-dphy",
+ 				 BIT(15), 0);
+ 
+ static SUNXI_CCU_M_WITH_MUX_GATE(iep_drc0_clk, "iep-drc0", de_parents,
+-				 0x180, 0, 3, 24, 2, BIT(31), 0);
++				 0x180, 0, 3, 24, 3, BIT(31), 0);
+ static SUNXI_CCU_M_WITH_MUX_GATE(iep_drc1_clk, "iep-drc1", de_parents,
+-				 0x184, 0, 3, 24, 2, BIT(31), 0);
++				 0x184, 0, 3, 24, 3, BIT(31), 0);
+ static SUNXI_CCU_M_WITH_MUX_GATE(iep_deu0_clk, "iep-deu0", de_parents,
+-				 0x188, 0, 3, 24, 2, BIT(31), 0);
++				 0x188, 0, 3, 24, 3, BIT(31), 0);
+ static SUNXI_CCU_M_WITH_MUX_GATE(iep_deu1_clk, "iep-deu1", de_parents,
+-				 0x18c, 0, 3, 24, 2, BIT(31), 0);
++				 0x18c, 0, 3, 24, 3, BIT(31), 0);
+ 
+ static const char * const gpu_parents[] = { "pll-gpu", "pll-periph-2x",
+ 					    "pll-video0", "pll-video1",
 -- 
-Mark Brown <broonie@kernel.org>
+2.56.1
+
