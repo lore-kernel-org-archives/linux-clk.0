@@ -1,56 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795216437;
-	b=A72ShcqxtJqN4MjjXNFHxsjggjLJaxHNQ32WGtjTHwjlk4PCEr4UZK8dyz00kwzOldAA
-	 osJ3yN76wW3u4FhStb9e4KGjS9Mo6t/QqEM3YWwTU7e3waW9E7xLScO+x7ptIpxQE+Lh3
-	 jnlGZS+Vcmp3bfekrBtkXDTcKatZgDlhln+2B9yhPq+mlFn2yNCpNLGA8WhNO11W5O+I8
-	 zs4TwhX0pddqNREH79kVHwDMZbo6jHPFjvYKT8luD8GDq8bKCKUUzyCu5GQ5NI4B/Yr/m
-	 FC2wdRiXRRqxk21ui3qDMJ03JuWW2y4Qyzv7OnbYEe1xDoVuMGkVwB0XZUl1fnVPk3g==
+	t=1795217177;
+	b=ky4bKoy5178fx/GjxgoLvY9fAhwv3UDItk//xpC1g+UJd1QeNW9XxMwRAn2bJTdpA7R+
+	 dtQZ9YnNtl5lt9an5RcPeQSISeDRIGGmNsOlRUkDtm2vKDdoVuurE2m/O51q3P0y0/mWj
+	 YyNIqDDP4IjAgtTOvQwD7l4k+Y1DIr1Q4448E2U8WOzRZ5OLHmaJJGeUbfjDCxJTyZ5dM
+	 /hZVZGmXJ/110B0ftvDx1aQp4hNHaC4UUEmBLyXWf7vFY/x7afnT6dKVduKW1vcuIcSOq
+	 DIlipA8rJ6ilqunEuHCKCRgSTON1E1ypYoptxVmP7WZb/ceK4F3JX9XGwlq5jG4O2qg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795216437;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=GleaotWQee3JlNmgmMjdUZCltz74VVoKYJOyaFjqs3g=;
-	b=UEqZGnA8I3f+9Um0SWGJ5XEyVQ9pqW15qiCErB40otPb+PDqFcmBw2UkQe6JQYRniGlT
-	 ZzIamhbj/tmOqmbqxL4Cw0e3g1ym4QuGLNr/OMT1QY8v4MqmPEujmHLa9h0Lrvx6xTSEx
-	 zlq/IxZ719A5CxGmvekOa+/IXDVNq2p1H6pCdihZUbnY+WRuHQAmNqXkxAE2o1ReUApV0
-	 qbtaJEa/wAdrRPEPgXXmy0Vwl/n9d8CghjimRHqukZ4pECmq7TjoW9qc1bmlAiozsVaLB
-	 McfzaB+F9Mwda5GnZ0sgy+0jKU2ZjXzOYQFdJ+LekMVZie+QRL4gpFsJFhKu+KXV9Mg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795217177;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
+	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=HxNGyJ35hri0geA+PjED9R6TVp4HHaU3ucvR7577Fks=;
+	b=P3CMMOG5exhdbsHeUjD+5NJj3+AlJu0YFvooGdUaRtiUAYGgRRLJLbbJ+dj6vcDKtvVk
+	 jb0kk02gud7bTkE7p6dpHvTdL0oSTIwT6pVTz7YfKO6lgjlP1mdsKzXHAyRG0PXS6ZZ97
+	 Rq/RNbWUIglf+bXp9XPDivXKLIIBHcaq1U0dNYllBnEJeToe516sigYCxRxph0zrBtOIE
+	 qUX74NqjxVCZ1IUOW+tL0XlTlvQ5E9gZHBbeJCTxKgcH6dD/+ryyjYKNG+Z7+B8n+/Tpe
+	 twQiyhhIMxu5/w9GssTH62KahMyvnNpWu/ZPwelEyTR65ZCztBrByyBGFlgeJyxB9GQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bRD7RkSp;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EgsjNbIi;
+	arc=none smtp.remote-ip=198.175.65.18
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BE8606A33D
-	for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2026 23:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97DE606A68B;
+	Fri, 20 Nov 2026 23:26:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C97DE606A68B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bRD7RkSp
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 548031F000C0;
-	Fri, 20 Nov 2026 23:13:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795216437;
-	bh=GleaotWQee3JlNmgmMjdUZCltz74VVoKYJOyaFjqs3g=;
-	h=From:Subject:Reply-To:To:In-Reply-To:References:Date;
-	b=bRD7RkSpP3lZNnPBJ2XSJOrwkWYpb7+G6nQoTJVJe1/I5zcFqoybEN5ujuGoEtOMX
-	 GebL8dseJG/7zWTcyUVnxPxEfCkOtbv7zKiqo5GuLZ6RbyVOc/WMyw2IM9lZm+n9Ef
-	 6hFeqTX5Om159rJAEnN0fxKZ2g4UvCJCtqmqhgfaO76EmgJPCPoyThywpXTq39V60E
-	 yaoHjC+QbJrVRLOMdxL3ocSEkvVppZoY0Jqw6tHos8RsyjEGHZxhs9jfPQLRgaEZl+
-	 bNgvSr2hPRjxpXFHqeem31gtgh9DftnYg8VUY/xbFHJtV2SSnatxGADqb6zYlR0koy
-	 RISsbQWOW0Izw==
-Message-ID: <sashiko-outbox-226339@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v7 2/2] clk: en7523: add support for .set_rate for
- en7581
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Christian Marangi" <ansuelsmth@gmail.com>, linux-clk@vger.kernel.org
-In-Reply-To: <20261120225916.158641-3-ansuelsmth@gmail.com>
-References: <20261120225916.158641-1-ansuelsmth@gmail.com>
- <20261120225916.158641-3-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 20 Nov 2026 23:13:56 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EgsjNbIi
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795217174; x=1826753174;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Nbm7dttcg2VYnk3FmoiGwjR8294oJVUEhQthcpzoxPc=;
+  b=EgsjNbIijb02s3t4/xW693lQ+QGSXRyuzrj+5MrJ3kFtP4d58lkWxHNm
+   qv4EE1klHQ750QvJP1RbfJAWUWxYPiURuOlDGXeGo+YVWnWX82W9ZqzOi
+   AfGQ6Fj3F9cdrRaEtBmjxCcpbg2svUy9TdLSjwwZZtQoau4L2ZFCiddlQ
+   2wR9xJ/Sz1UfeYFOAVNs0sRzq6keV8o3tSKSXFkRSbNKEL8u5qC5THT9i
+   gCvJ3CcnlAOe7KaATGGwhDrPesHIFU2U3q2WB+wxT9SK+5fiGPpjGahv8
+   l15CNLFXbnzS9Rq21vH5Lk4AjWymqb7uTpimb3mbYhs+etHMlxPkAL/mM
+   Q==;
+X-CSE-ConnectionGUID: 4d/29vugQOasydgYjp6ArA==
+X-CSE-MsgGUID: +CovQ9rNTQ2dD2JehiGjzw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11972"; a="4119575"
+X-IronPort-AV: E=Sophos;i="6.27,223,1787036400"; 
+   d="scan'208";a="4119575"
+Received: from fmviesa013.fm.intel.com ([10.60.135.153])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2026 15:26:14 -0800
+X-CSE-ConnectionGUID: idZQ6xneQb+zLcR8VejhGw==
+X-CSE-MsgGUID: x+F/2N1QQ5GFCYNgl6siGQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,223,1787036400"; 
+   d="scan'208";a="12811083"
+Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
+  by fmviesa013.fm.intel.com with ESMTP; 20 Nov 2026 15:26:08 -0800
+Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1xUXzZ-00000001IwJ-0y7s;
+	Fri, 20 Nov 2026 23:26:05 +0000
+Date: Sat, 21 Nov 2026 07:25:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kyle Hendry <khendry@reliablecontrols.com>
+Subject: Re: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
+Message-ID: <202611210721.sFAijXHV-lkp@intel.com>
+References: <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,112 +101,176 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [High] clk: en7523: division by zero in _div_round_closest() via
-  en7581_find_best_rate()
---
+Hi Kyle,
 
-commit e6dd4eae87f38e0af65399298c3f7bcf2f939553
-Author: Christian Marangi <ansuelsmth@gmail.com>
+kernel test robot noticed the following build errors:
 
-clk: en7523: add support for .set_rate for en7581
+[auto build test ERROR on 662377fd1bb1d7cf4e97d312255fed868f56342d]
 
-This commit adds .set_rate and .determine_rate support for Airoha EN7581
-clocks and switches rate recalculation to the standard clock divider
-helpers.
+url:    https://github.com/intel-lab-lkp/linux/commits/Kyle-Hendry-via-B4-Relay/dt-bindings-clock-r9a06g032-sysctrl-Document-reset-cells/20261119-095743
+base:   662377fd1bb1d7cf4e97d312255fed868f56342d
+patch link:    https://lore.kernel.org/r/20261119-rzn1-miic-resets-v1-2-feee2bb28bb4%40reliablecontrols.com
+patch subject: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
+config: arm-shmobile_defconfig (https://download.01.org/0day-ci/archive/20261121/202611210721.sFAijXHV-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 16.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261121/202611210721.sFAijXHV-lkp@intel.com/reproduce)
 
-> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> index 8c00646ecdc6a..f47f3ee75057e 100644
-> --- a/drivers/clk/clk-en7523.c
-> +++ b/drivers/clk/clk-en7523.c
-[ ... ]
-> @@ -773,11 +846,210 @@ static unsigned long en7581_recalc_rate(struct clk=
-_hw *hw,
-[ ... ]
-> +static void en7581_find_best_rate(struct clk_hw *hw,
-> +				  struct clk_rate_request *req,
-> +				  const struct en_clk_desc *desc,
-> +				  unsigned long parent_rate,
-> +				  unsigned long requested_rate,
-> +				  unsigned long *best_diff)
-> +{
-> +	struct clk_rate_request div_req =3D *req;
-> +	int ret;
-> +
-> +	if (!desc->div_bits) {
-> +		en7581_update_best_rate(req, requested_rate, parent_rate,
-> +					best_diff);
-> +		return;
-> +	}
-> +
-> +	/* Treat each internal base rate as a fixed parent for the divider. */
-> +	div_req.rate =3D clamp(requested_rate, req->min_rate, req->max_rate);
-> +	div_req.best_parent_rate =3D parent_rate;
-> +	ret =3D divider_determine_rate(hw, &div_req, desc->div_table,
-> +				     desc->div_bits,
-> +				     CLK_DIVIDER_ROUND_CLOSEST);
-> +	if (ret)
-> +		return;
-> +
-> +	en7581_update_best_rate(req, requested_rate, div_req.rate, best_diff);
-> +}
-> +
-> +static int en7581_determine_rate(struct clk_hw *hw,
-> +				 struct clk_rate_request *req)
-> +{
-> +	struct en_clk *en_clk =3D container_of(hw, struct en_clk, hw);
-> +	const struct en_clk_desc *desc =3D en_clk->desc;
-> +	unsigned long best_diff =3D ULONG_MAX;
-> +	unsigned long rate =3D req->rate;
-> +	int tmp_base_val =3D 0;
-> +
-> +	if (!rate || (!desc->base_bits && !desc->div_bits))
-> +		return -EINVAL;
-> +
-> +	if (!desc->base_bits) {
-> +		en7581_find_best_rate(hw, req, desc, desc->base_value,
-> +				      rate, &best_diff);
-> +		goto exit;
-> +	}
-> +
-> +	for (; tmp_base_val < desc->n_base_values; tmp_base_val++)
-> +		en7581_find_best_rate(hw, req, desc,
-> +				      desc->base_values[tmp_base_val],
-> +				      rate, &best_diff);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202611210721.sFAijXHV-lkp@intel.com/
 
-[Severity: High]
-Can this trigger a division by zero in _div_round_closest() when
-requested_rate exceeds parent_rate?
+All errors (new ones prefixed by >>):
 
-en7581_determine_rate() loops over every entry in desc->base_values[], so
-requesting e.g. 500 MHz on "gsw" (whose base_values are 400 MHz and
-500 MHz, with div_table =3D=3D NULL) calls en7581_find_best_rate() with
-parent_rate =3D 400 MHz and div_req.rate =3D 500 MHz.  Without clamping
-div_req.rate to parent_rate, divider_determine_rate() ->
-clk_divider_bestdiv() -> _div_round() reaches _div_round_closest() with
-parent_rate < rate:
+   In file included from include/linux/container_of.h:5,
+                    from include/linux/kernel.h:22,
+                    from include/linux/clk.h:13,
+                    from drivers/clk/renesas/r9a06g032-clocks.c:10:
+   drivers/clk/renesas/r9a06g032-clocks.c: In function 'r9a06g032_reset_set':
+>> include/linux/container_of.h:8:47: error: 'struct r9a06g032_priv' has no member named 'rcdev'
+       8 | #define typeof_member(T, m)     typeof(((T*)0)->m)
+         |                                               ^~
+   include/linux/build_bug.h:80:56: note: in definition of macro '__static_assert'
+      80 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
+         |                       ^~~~~~~~~~~
+   include/linux/container_of.h:20:43: note: in expansion of macro 'typeof_member'
+      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
+         |                                           ^~~~~~~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c:1317:33: note: in expansion of macro 'container_of'
+    1317 | #define rcdev_to_priv(x)        container_of(x, struct r9a06g032_priv, rcdev)
+         |                                 ^~~~~~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c:1322:39: note: in expansion of macro 'rcdev_to_priv'
+    1322 |         struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
+         |                                       ^~~~~~~~~~~~~
+>> include/linux/compiler_types.h:610:27: error: expression in static assertion is not an integer
+     610 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:80:56: note: in definition of macro '__static_assert'
+      80 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
+         |                       ^~~~~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c:1317:33: note: in expansion of macro 'container_of'
+    1317 | #define rcdev_to_priv(x)        container_of(x, struct r9a06g032_priv, rcdev)
+         |                                 ^~~~~~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c:1322:39: note: in expansion of macro 'rcdev_to_priv'
+    1322 |         struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
+         |                                       ^~~~~~~~~~~~~
+   In file included from include/uapi/linux/posix_types.h:5,
+                    from include/uapi/linux/types.h:14,
+                    from include/linux/types.h:5,
+                    from include/linux/kasan-checks.h:5,
+                    from include/asm-generic/rwonce.h:26,
+                    from ./arch/arm/include/generated/asm/rwonce.h:1,
+                    from include/linux/compiler.h:391,
+                    from include/linux/err.h:5,
+                    from include/linux/clk.h:12:
+>> include/linux/stddef.h:16:33: error: 'struct r9a06g032_priv' has no member named 'rcdev'
+      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
+         |                                 ^~~~~~~~~~~~~~~~~~
+   include/linux/container_of.h:23:34: note: in expansion of macro 'offsetof'
+      23 |         (type *)((void *)(ptr) - offsetof(type, member)); })
+         |                                  ^~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c:1317:33: note: in expansion of macro 'container_of'
+    1317 | #define rcdev_to_priv(x)        container_of(x, struct r9a06g032_priv, rcdev)
+         |                                 ^~~~~~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c:1322:39: note: in expansion of macro 'rcdev_to_priv'
+    1322 |         struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
+         |                                       ^~~~~~~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c: In function 'r9a06g032_reset_status':
+>> include/linux/container_of.h:8:47: error: 'struct r9a06g032_priv' has no member named 'rcdev'
+       8 | #define typeof_member(T, m)     typeof(((T*)0)->m)
+         |                                               ^~
+   include/linux/build_bug.h:80:56: note: in definition of macro '__static_assert'
+      80 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
+         |                       ^~~~~~~~~~~
+   include/linux/container_of.h:20:43: note: in expansion of macro 'typeof_member'
+      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
+         |                                           ^~~~~~~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c:1317:33: note: in expansion of macro 'container_of'
+    1317 | #define rcdev_to_priv(x)        container_of(x, struct r9a06g032_priv, rcdev)
+         |                                 ^~~~~~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c:1354:39: note: in expansion of macro 'rcdev_to_priv'
+    1354 |         struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
+         |                                       ^~~~~~~~~~~~~
+>> include/linux/compiler_types.h:610:27: error: expression in static assertion is not an integer
+     610 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:80:56: note: in definition of macro '__static_assert'
+      80 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), typeof_member(type, member)) || \
+         |                       ^~~~~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c:1317:33: note: in expansion of macro 'container_of'
+    1317 | #define rcdev_to_priv(x)        container_of(x, struct r9a06g032_priv, rcdev)
+         |                                 ^~~~~~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c:1354:39: note: in expansion of macro 'rcdev_to_priv'
+    1354 |         struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
+         |                                       ^~~~~~~~~~~~~
+>> include/linux/stddef.h:16:33: error: 'struct r9a06g032_priv' has no member named 'rcdev'
+      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
+         |                                 ^~~~~~~~~~~~~~~~~~
+   include/linux/container_of.h:23:34: note: in expansion of macro 'offsetof'
+      23 |         (type *)((void *)(ptr) - offsetof(type, member)); })
+         |                                  ^~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c:1317:33: note: in expansion of macro 'container_of'
+    1317 | #define rcdev_to_priv(x)        container_of(x, struct r9a06g032_priv, rcdev)
+         |                                 ^~~~~~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c:1354:39: note: in expansion of macro 'rcdev_to_priv'
+    1354 |         struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
+         |                                       ^~~~~~~~~~~~~
+   drivers/clk/renesas/r9a06g032-clocks.c: In function 'r9a06g032_clocks_probe':
+>> drivers/clk/renesas/r9a06g032-clocks.c:1463:15: error: 'struct r9a06g032_priv' has no member named 'rcdev'
+    1463 |         clocks->rcdev.ops = &r9a06g032_reset_ops;
+         |               ^~
+   drivers/clk/renesas/r9a06g032-clocks.c:1464:15: error: 'struct r9a06g032_priv' has no member named 'rcdev'
+    1464 |         clocks->rcdev.of_node = np;
+         |               ^~
+   drivers/clk/renesas/r9a06g032-clocks.c:1465:15: error: 'struct r9a06g032_priv' has no member named 'rcdev'
+    1465 |         clocks->rcdev.of_reset_n_cells = 1;
+         |               ^~
+   drivers/clk/renesas/r9a06g032-clocks.c:1466:15: error: 'struct r9a06g032_priv' has no member named 'rcdev'
+    1466 |         clocks->rcdev.nr_resets = ARRAY_SIZE(r9a06g032_resets);
+         |               ^~
+   drivers/clk/renesas/r9a06g032-clocks.c:1467:61: error: 'struct r9a06g032_priv' has no member named 'rcdev'
+    1467 |         error =  devm_reset_controller_register(dev, &clocks->rcdev);
+         |                                                             ^~
 
-drivers/clk/clk-divider.c:_div_round_closest() {
-	up =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-	down =3D parent_rate / rate;
 
-	if (flags & CLK_DIVIDER_POWER_OF_TWO) {
-		up =3D __roundup_pow_of_two(up);
-		down =3D __rounddown_pow_of_two(down);
-	} else if (table) {
-		up =3D _round_up_table(table, up);
-		down =3D _round_down_table(table, down);
-	}
+vim +8 include/linux/container_of.h
 
-	up_rate =3D DIV_ROUND_UP_ULL((u64)parent_rate, up);
-	down_rate =3D DIV_ROUND_UP_ULL((u64)parent_rate, down);
-}
+d2a8ebbf8192b84 Andy Shevchenko 2021-11-08  4  
+d2a8ebbf8192b84 Andy Shevchenko 2021-11-08 @5  #include <linux/build_bug.h>
+2b8e35337605ca5 Andy Shevchenko 2023-01-30  6  #include <linux/stddef.h>
+d2a8ebbf8192b84 Andy Shevchenko 2021-11-08  7  
+d2a8ebbf8192b84 Andy Shevchenko 2021-11-08 @8  #define typeof_member(T, m)	typeof(((T*)0)->m)
+d2a8ebbf8192b84 Andy Shevchenko 2021-11-08  9  
 
-When table is NULL and CLK_DIVIDER_POWER_OF_TWO is not set, down is 0 and
-computing down_rate divides by zero.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261120225916.1586=
-41-1-ansuelsmth@gmail.com?part=3D2
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
