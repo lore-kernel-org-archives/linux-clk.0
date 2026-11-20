@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1795163810;
-	b=PoQIJ5xfchLbdIzCswFxi5GcbW71aT9HVglsIFhBHX2uqd9pTp5sSiqidtrbfHSiciSY
-	 5jSGLV92ERgrP2lUW1nks2RQfG27qSIJS/qF30AK8kZP36z8DLkTrPpW02j/QX/I9PjMJ
-	 erTSKyyHc7K24BEOIA+TLc/4PVdhZ0sA0NauBTJichqyzbGfjG7XaI/CTLQw/WVPDFdFK
-	 CJIr2YbUE1EikgRBaLAen/5RyI465Aal0lj+0DCE9FxSZOIUr2S/xOeX5JhFxhvOVNcvM
-	 FXmz/MIlWgGZNqyWE60tyYa5wdpvfC1GqLJfO9siH1/P3MJA13OH+XSrWpkHrix2RRA==
+	b=lqQVUKhHrCwwv7nVqVAs7ohrlKADl1Knwwxv39msecMrr56jbQDqCccbQpKXE984x82g
+	 QAtAttDFoD8kimY7qPl35zYNHDbn2b/n3O8xUtpuZ99aX9+MNfaD3o8vt9ICt1DytNayM
+	 mtVNNSw0O8ws+lF15SkFlIXu4B82dwr0kk1wuMl3Qm/S5nFSi1Xz34ArvTS6xjZhJDBUl
+	 BbVjGhdSIj6JLIHdbnDBLHqVtVGM4/1iAhbp5X5PUSkYh+AZ+t5VAFr/QF8YTfBsR6BdF
+	 g58OaI4m06HZr/yaqrT9o93jr/QKD3rUvzEikeDokihvOlyhKSNFt5qn6P9NDd0QB5g==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795163810;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=iCCjP6jYFmDEcc9O8GHhh9cPQdFQjCnCW6Okg4bAJbE=;
-	b=4UMsuWxRQ1J3wVj8ROeX0GX2Yy0rWZrKN9ldcsOHf6+JBkpO+ZNg4NzRffEw9ozwKO1n
-	 Q+3cIdRJIQf/LNW6dhiUD839JlRebCFYnLr7iupkb3ti+rIUl94S+Yeh5X0DZB8X8SRuD
-	 /bAuou9eN+44d8gS2Sjx6fvYxPd9UA27TroUXqFIJ/Q4ri0Dhoh4zkjamaCv/H3pPNrpV
-	 D84qCUdBjD6SS9Qu9QKB5l8WZ90Qacmozr134WZHe2jdIDcM6jop9t1TKRfpTKyOy9/Z7
-	 P5NoTI+axs3SfnEvAxpfjihfw+tQFGV+kghX5oMrlmgsmVI3crBg5Y146/I0kih2PEw==
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=V/vd9ORQC23Gfyxp52lyjuOTeSsxjHhhx7xH9I4itlE=;
+	b=ty3p27SCl10BTnatxtfb/Lu6QQQ2cBoN1CsqGpZaYMLFuvqTw5sK46jaYUZBiFMu4yNE
+	 YqmwqOKyGjSg4MCEyVkGxYHLNBfIiXaW6xNv074ZRGWiUeV5l1dWLU5XQzqtj4465MaEX
+	 HkWQrCRMgnEdaYwiBIQ+lY7nxOEaufRjlWgwdd/6pZQatacTrmdxEwmp7tj0JP8MINpqm
+	 e8opWCVnDc0Co2RiRNOnaKL+h4QizB6wbGu3gpAqzhkNlFtVUZ99CbQFf3XiBKMqX96YC
+	 uBYgSz/r7G2lTYDHzoOaDu2NiWhkTBg5342Iw05n2XEkaY36ONcRdK8+N+BUcL7LB0A==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=csIwaDsj;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lGPWMyR5;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF9F606A320;
-	Fri, 20 Nov 2026 08:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B423606A335;
+	Fri, 20 Nov 2026 08:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=csIwaDsj
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lGPWMyR5
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1795163809;
-	b=c/WqY47WmkZqKsJQeCR3258MvXrlfqoItbbXHUZscMueX6aRMzkG6M2lIeRoBH2eC7Nr
-	 2yBiEjh4oAn4fckbRG/XjxRSg2yWUGW9B87meXvi6fkdB1aIRsMBXXFh/lyCIkFQfcu6R
-	 afRMBXqm7kkvAgUNJWh3JrZjB5C7Y78VnnIqnEQAtO7YAd9BhrcLeAB9t+hvJZgjr/i4U
-	 jN06iB/biEdzuYIP7swmizduiDo8hhZTpOpH4IpTCx7dhNCO2zPeODrGwgJ95Ke2saKU/
-	 MV8FIurAOwSBvW98DjEGFJ/XPQUXnjDSp6dXKnoamDB05hEtE4YRyJzVCeqdGTdWBpg==
+	b=xiAAj8oxK30ZVvaA4jCL98K9tTT6FlITVVANtqHmF+6/KS+HQCF+efx+PIZU4xDfNfQm
+	 v2MSRYuGkRBNn0ud4svSe4Um2A61uKwWrNjpkHwKvYc9cxZlmz65NiyY18utdLpkS54k0
+	 lv6c6UeK9IlMA5V6DmAhanMOkFAqLxjxa2GeK50InzJEZclAJo68I33GYRs8bJ1/BUK7p
+	 kZ2zbBDDdIFaM9I2NH66mc11ppKrC7k7MqVu2R3H7IuunquGvavdXLWp6TBh5aUqv/i1f
+	 fxGq+DzaUVnjymH8EWqVRvc8k1ZZCjLyIdUmphLpIvH09BRENtEUFV5Uip0nmXwWJEA==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1795163809;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=iCCjP6jYFmDEcc9O8GHhh9cPQdFQjCnCW6Okg4bAJbE=;
-	b=tU8SKX3DCtgHxCKaBtEOgXMtYH2R8u3G82oU/0fwNeJB6jcReKdRwaRAIXqSwOKzGRfD
-	 u49j6tnv1S5r1bQ7epcfqCVg/E0LlQnxNXYNJAESmrksVW7AFsTquFBbDCIzukQvGlXTB
-	 P6EkKNxmscHMJABJMwmgCfjjkBpCXH+RjHBQljdTsm9xk70Vx3ZGPLnUDDRV4PmW0YnNe
-	 EwbT9CvAKZVE28oMYs51FPRP5CuMhJrMAGi0IJi/ak/kqwgNwnMtR4YaFWi0CqN6MzKGt
-	 71B3dV3G1gu/H72H48O1JZro7Yx734x3eQ+9GHCB1VDJc6qXZ4kA/As5NSxXNWIN3lw==
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=V/vd9ORQC23Gfyxp52lyjuOTeSsxjHhhx7xH9I4itlE=;
+	b=MuJQyj/7YesIAPrlOiavUKmtFj4z0Wp+Q9o8qTueMxDBdBlvGGHlTwVqxTlUklcssU9d
+	 gmT/VdJW32JNoiR6Yt2Iknv9uvEWHUmdr2lppgur7+n4dKyPkSxyOWfF17aNegqwHmOpQ
+	 KzE73WT3GDfan7dV42lb0ehcDrIfOO1yv7Yw4KiIOd34YwXYPx7hH/Bt+hk6RqCyxufFx
+	 A5Alyhn9XHfhnjA5jU9k+1Z7D0yQetT9/oLKDD9jhKkRoFzIMTEcCuS9G+Ru2k3Q7OFkG
+	 UIsDx+yZPxCVDVjWuOF9mWPbBsYG9cXblg/V8tA/EipNx0qJC5EGNbXgqzE+WgkUxtA==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 0FDB21F000CA;
+	by smtp.kernel.org (Postfix) with ESMTPS id 00EA51F000C6;
 	Fri, 20 Nov 2026 08:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1795163809;
-	bh=iCCjP6jYFmDEcc9O8GHhh9cPQdFQjCnCW6Okg4bAJbE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=csIwaDsjAxU1ycS4B2QucVOijmrN7AzN/M9C9TaCfvUP4phuZz2aqu4cdoOhc86Lw
-	 wtSJofyWmH2J/8dsCzI3Kn7IOh4UokXXL03FZajNMWmy3XbuawdD6teJMM1AH8PFQo
-	 TxRn/jmPWDqatjyanQb2tdi8EusiwPHzKerfci0EL1KKmTWZqp/xGym8MblnAf3nKI
-	 30TaQFUmcFFJxgBYWse+fnJ0UNbEpj+m50QcRGmsLX1PYyuTtpWkzHnp7gpFFDMRSq
-	 o+CPGUZ61vYu+T4yaBnIMHnodHkIPQgiGigKJsUXNuAMhr5+9u8M8sG6tBzSzpYnC7
-	 LtVU8kfS7cBYg==
+	bh=V/vd9ORQC23Gfyxp52lyjuOTeSsxjHhhx7xH9I4itlE=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=lGPWMyR5Sp952lJ+Ncmxw1hlZckzul+SK0UC8BbcVgQssquk+My+FABgsZ2nzA+pf
+	 uanpH7//r8iHSrrfbZq6nq1FsmbOZ65nv1gPPahS5Ov4+fU10FAMei78OeAJ+RaZPV
+	 qJ53/6tgry2BhT5dhe7WkEPJf3ZV0QQm2ihlOWPCmaNyHZ8bA53mvF1HBrDhN7qctJ
+	 rCpbqch9Vcxb5BJwTSbR3GXlCw9w9pqC2jxXPiVd7mQO8/umkza8CMC0tjoCkF+8s3
+	 hjfCModE9qGBDUDMZvQraQAfmwsXetNYFv87AARitiwQaj2X76Fsifr3S+atQjAGQx
+	 4MVZcW9ET0PRg==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 91C1E49784;
+	by lkml.kernel.org (Postfix) with ESMTP id 72AF1497A5;
 	Fri, 20 Nov 2026 08:36:48 +0000 (UTC)
 From: Sarath Ganapathiraju via B4 Relay <devnull+sarath.ganapathiraju.oss.qualcomm.com@kernel.org>
-Date: Fri, 20 Nov 2026 14:06:47 +0530
-Subject: [PATCH v14 1/2] dt-bindings: clock: qcom: Add LPASS VA CSR
- HeartBeat pulse clock
+Subject: [PATCH v14 0/2] Add LPASS VA CSR HeartBeat pulse clock support
+Date: Fri, 20 Nov 2026 14:06:46 +0530
+Message-Id: <20261120-master-v14-0-112cfd63438d@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,9 +84,13 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261120-master-v14-1-112cfd63438d@oss.qualcomm.com>
-References: <20261120-master-v14-0-112cfd63438d@oss.qualcomm.com>
-In-Reply-To: <20261120-master-v14-0-112cfd63438d@oss.qualcomm.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJ4GAGsC/3XOTU7DMBAF4KtUXpNqZlzHNivugVg4/qFGpAE7j
+ UBV7o5dpCQSZGNprPfNvBvLPkWf2ePhxpKfYo7DpQx4ejgwezaXV99EVz4YAbWgUTa9yaNPTWt
+ JShWENNqwEv5IPsSv+6bnl985X7s3b8eqa+Ic8zik7/upSdXcn6WTaqBRxB1Z4UCDeRpyPn5ez
+ bsd+v5YHlZ3T3qjSS1aF02lVgAdtAG9oxE2nMPCEYpHEASys4Kk2PO4eASk1WP1AkB77q2xfM/
+ TxhOunorXHXdBYHDo5J7nqy91V8+Ld1134tbZFvx//ed5/gFY+2qa9AEAAA==
+X-Change-ID: 20260917-master-6c2778f57a9a
 To: andersson@kernel.org, abelvesa@kernel.org, sboyd@kernel.org, 
  bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, robh@kernel.org, 
  krzk+dt@kernel.org, conor+dt@kernel.org, 
@@ -95,110 +99,169 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  prasad.kumpatla@oss.qualcomm.com
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795163807; l=2849;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795163807; l=7074;
  i=sarath.ganapathiraju@oss.qualcomm.com; s=default;
  h=from:subject:message-id;
- bh=pW8hso4nf9LvKry00I3CiRR3R1aM8imCfO15fq6aF3E=;
- b=hzCLPJ/Rl0VkBfwBKBlrel8zXUlEFv0J5t3nUKmLaBuHY5Uorsy0j6SOj795Dqq7JJJAPVKQl
- BknFkSETJE+ANlVQ+mLeeM7i1CciZvMmNmc4kua5htDVfr1HhXz3+ZI
+ bh=bwiqNoyuJeYE0cWhtbxJCmsXje1qBwdE5nXCQtMn/EM=;
+ b=U7B1HNo0qdIEdz9Pn+xOi6r4NMwyUmsGsIbwoPaDYf/EEsipqmqHjnU4TJPN7GSxkdHqMSkcr
+ YoPova1M6YEDXdAk0y5dknJXjH3W5GWdS2DNuilySB3cuyPMIzXNxwa
 X-Developer-Key: i=sarath.ganapathiraju@oss.qualcomm.com; a=ed25519;
  pk=4p2FWGXM+F2sir13Lu5stw5aKX5trUymK/ttESvgxQg=
 X-Endpoint-Received: by B4 Relay for
  sarath.ganapathiraju@oss.qualcomm.com/default with auth_id=870
 X-Original-From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
 Reply-To: sarath.ganapathiraju@oss.qualcomm.com
-Content-Transfer-Encoding: 7bit
 
-From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+The LPASS VA CSR block contains rate generator hardware that produces
+a HeartBeat Pulse (also known as RateGen Pulse). This pulse
+synchronizes the start of the DMAs and Codec Interfaces for the audio
+usecases and can serve as a periodic wakeup source for the DSP.
 
-Add a binding for the Qualcomm LPASS VA CSR rate generator node that
-exposes the lpass_heartbeat_pulse clock on Hawi.
+This series adds the DT binding and driver support to model this
+rate generator as a clock provider.
 
-The HeartBeat Pulse, also known as RateGen Pulse, synchronizes the
-start of DMAs and Codec Interfaces for the audio usecase and can serve
-as a periodic wakeup source for the DSP.
+Patch 1 adds the YAML binding for the new qcom,hawi-lpass-va-csr
+clock provider node under Documentation/devicetree/bindings/clock/.
 
-Require the LPASS LPR and audio vote clocks to access VA CSR register
-space safely.
+Patch 2 adds the lpass-va-csr driver under drivers/clk/qcom that
+registers the lpass_heartbeat_pulse clock and enables/disables the
+rate generator via regmap when the clock consumer requests it.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Reviewed-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-Tested-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+Changes in v14:
+- Rebase the series on linux-next next-20261119.
+- Add Prasad's Reviewed-by and Tested-by tags.
+- Resolve the Makefile context against latest linux-next by keeping the
+  new entry in the existing CONFIG_QCOM_CLK_* block; no functional
+  driver changes.
+- Link to v13: https://patch.msgid.link/20261105-master-v13-0-dbb43cdc60e5@oss.qualcomm.com
+
+Changes in v13:
+- Rebase the series on linux-next next-20261104.
+- Create and populate the PM clock list before enabling runtime PM so
+  runtime resume cannot touch VA CSR registers before the LPASS vote
+  clocks are available (Sashiko).
+- Drop the regmap cache for the LPASS rate generator registers to avoid
+  stale LPASS_RATE_GEN_CTRL state after LPASS register context loss
+  (Sashiko).
+- Use runtime PM force suspend and resume for system sleep, and restore
+  LPASS_RATE_GEN_CTRL on resume when the heartbeat clock was enabled
+  before LPASS register context loss.
+- Link to v12: https://patch.msgid.link/20261021-master-v12-0-9b3df51fd1d7@oss.qualcomm.com
+
+Changes in v12:
+- Rebase the series on linux-next next-20261020.
+- Depend on PM_CLK so COMPILE_TEST builds cannot select the driver when
+  pm_clk_suspend() and pm_clk_resume() are unavailable (Sashiko, LKP).
+- Link to v11: https://patch.msgid.link/20261012-master-v11-0-15009e3ecac3@oss.qualcomm.com
+
+Changes in v11:
+- Rebase the series on linux-next next-20261009.
+- Drop the custom heartbeat prepare/unprepare callbacks and rely on CCF
+  provider runtime PM handling (Ajay).
+- Restore the rate generator counter and delay registers from the
+  runtime resume callback after the LPASS vote clocks are enabled
+  (Sashiko).
+- Add an of_device_get_match_data() NULL guard (Sashiko).
+- Link to v10: https://patch.msgid.link/20260930-master-v10-0-105207bc5275@oss.qualcomm.com
+
+Changes in v10:
+- Rebase the series on linux-next next-20260929.
+- Add clk_is_enabled_regmap() to report the heartbeat gate state for
+  clk_disable_unused() (Sashiko).
+- Add Rob's Reviewed-by tag to the binding patch.
+- Link to v9: https://patch.msgid.link/20260928-master-v9-0-2277f09f9a09@oss.qualcomm.com
+
+Changes in v9:
+- Rebase the series on linux-next next-20260928.
+- Add runtime PM callbacks so the LPASS LPR and audio vote clocks are
+  enabled by pm_runtime_resume_and_get() before touching VA CSR
+  registers.
+- Keep the LPASS vote clocks enabled across heartbeat clock
+  enable/disable register accesses by taking a runtime PM reference from
+  the heartbeat clock prepare path.
+- Use synchronous runtime PM put on probe success and error paths.
+- Drop the one-use runtime PM error label while keeping synchronous puts (Konrad).
+- Wrap the runtime PM ops with pm_ptr() from HTML review.
+- Link to v8: https://patch.msgid.link/20260917-master-v8-0-823d2c5d090a@oss.qualcomm.com
+
+Changes in v8:
+- Rebase the series on linux-next next-20260916.
+- Require the LPASS LPR and audio vote clocks to access VA CSR
+  register space safely.
+- Attach the DT vote clocks to runtime PM and resume the device before
+  programming the rate generator registers.
+- Program the counter and delay registers once during probe.
+- Use qcom's simple regmap gate ops for the enable bit (Srinivas).
+- Drop the unreachable of_device_get_match_data() NULL check (Srinivas).
+- Drop stale Reviewed-by/Tested-by tags after the binding and driver
+  changes.
+- Link to v7: https://patch.msgid.link/20260831-heartbeat-v7-next-20260828-v7-0-e3ffeac46a51@oss.qualcomm.com
+
+Changes in v7:
+- Rebase the series on linux-next next-20260828.
+- Add Prasad's Reviewed-by and Tested-by tags to patch 2.
+- Link to v6: https://patch.msgid.link/20260821-heartbeat-v6-next-20260821-send-v6-0-62c5df84ce21@oss.qualcomm.com
+
+Changes in v6:
+- Rebase the series on linux-next next-20260821.
+- Capitalize Hawi in binding text (Bjorn).
+- Simplify the binding example by removing the soc wrapper and
+  two-cell address/size setup (Bjorn).
+- Keep the full VA CSR register window in the binding and describe it
+  as the VA CSR register block after Konrad clarified the earlier
+  register-range concern (Bjorn, Konrad).
+- Link to v5: https://patch.msgid.link/20260806-master-20260805-sync-v5-0-0ff42e9b6431@oss.qualcomm.com
+
+Changes in v5:
+- Add explicit ARM64 Kconfig gating and Qualcomm default-module policy
+  for QCOM_CLK_LPASS_HEARTBEAT_PULSE to align with nearby qcom clock
+  entries.
+- Link to v4: https://patch.msgid.link/20260805-master-20260805-sync-v4-0-dfbcbf427c2c@oss.qualcomm.com
+
+Changes in v4:
+- Rename the binding filename and schema ID to hawi-specific naming:
+  qcom,lpass-va-csr.yaml -> qcom,hawi-lpass-va-csr.yaml (Krzysztof).
+- Rename Kconfig symbol QCOM_CLK_LPASS_VA_CSR to
+  QCOM_CLK_LPASS_HEARTBEAT_PULSE (Konrad).
+- Add devm_pm_runtime_enable() in the lpass-va-csr probe path.
+- Drop the qcom,lpass-va-macro binding extension patch; it will be
+  resubmitted with the Hawi DTSI changes.
+- Drop sound/soc/codecs/Kconfig select wiring to keep this series
+  clock-only (Konrad).
+- Link to v3: https://lore.kernel.org/all/20260723-master-v3-0-3d67b79b0515@oss.qualcomm.com/
+
+Changes in v3:
+- Move the qcom,lpass-va-csr binding under
+  Documentation/devicetree/bindings/clock/ (Krzysztof).
+- Move the driver under drivers/clk/qcom/ (Krzysztof).
+- Improve the schema description and use generic clock-controller node
+  naming (Krzysztof).
+- Use additionalProperties: false and keep compatibles sorted.
+
+Changes in v2:
+- Split the qcom,lpass-va-csr and qcom,lpass-va-macro bindings into
+  separate patches.
+
+Changes in v1:
+- Initial version
+
 Signed-off-by: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
 ---
- .../bindings/clock/qcom,hawi-lpass-va-csr.yaml     | 62 ++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+Sarath Ganapathiraju (2):
+      dt-bindings: clock: qcom: Add LPASS VA CSR HeartBeat pulse clock
+      clk: qcom: Add LPASS VA CSR heartbeat pulse clock
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,hawi-lpass-va-csr.yaml b/Documentation/devicetree/bindings/clock/qcom,hawi-lpass-va-csr.yaml
-new file mode 100644
-index 000000000000..601da83add2b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,hawi-lpass-va-csr.yaml
-@@ -0,0 +1,62 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,hawi-lpass-va-csr.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm LPASS VA CSR heartbeat pulse clock provider
-+
-+maintainers:
-+  - Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-+  - Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
-+
-+description:
-+  The Hawi LPASS (Low Power Audio Subsystem) VA CSR block contains a
-+  rate generator that produces a periodic HeartBeat Pulse, also known
-+  as the RateGen Pulse. This pulse synchronizes the start of DMAs and
-+  Codec Interfaces for audio usecases and can serve as a periodic wakeup
-+  source for the DSP.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,hawi-lpass-va-csr
-+
-+  reg:
-+    maxItems: 1
-+    description: Address and size of the VA CSR register block.
-+
-+  clocks:
-+    items:
-+      - description: LPASS LPR (Low Power Resource) voting clock
-+      - description: LPASS Audio voting clock
-+
-+  clock-names:
-+    items:
-+      - const: lpr
-+      - const: audio
-+
-+  "#clock-cells":
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - "#clock-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
-+
-+    clock-controller@7ee0000 {
-+      compatible = "qcom,hawi-lpass-va-csr";
-+      reg = <0x07ee0000 0xe000>;
-+      clocks = <&q6prmcc LPASS_HW_LPR_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-+               <&q6prmcc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
-+      clock-names = "lpr", "audio";
-+      #clock-cells = <0>;
-+    };
+ .../bindings/clock/qcom,hawi-lpass-va-csr.yaml     |  62 ++++++
+ drivers/clk/qcom/Kconfig                           |  15 ++
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/lpass-va-csr.c                    | 210 +++++++++++++++++++++
+ 4 files changed, 288 insertions(+)
+---
+base-commit: adcad7f4e6332cff3d6d7165f41584899f598534
+change-id: 20260917-master-6c2778f57a9a
 
--- 
-2.34.1
+Best regards,
+--  
+Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
 
 
