@@ -1,47 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795277484;
-	b=y6UG93kWFkZoxQZ0HTfLVOWkEQaVq7a+hKl3xO9uLv9gfClzhY6OTDdnLqt59PaKDsgg
-	 cw3cdT52sbjoMAKVYe/DQMLpMM6P7NqIxjpoE3OkcFoSXAHt2ZBNFwuB/cJkqgqEQaT/C
-	 jdCZzA4BRgOCl+0wi59Z0WiwpgVTqjFipfVU2LsqPMS9Zix/tBrAiYaeF5RUdE0eegcph
-	 43+eWCUr+PDTirb3sZ8R87eYKNpsgahwXMu3YyRiB4k8gjwxIZCeakNhVfF0ft664dVk2
-	 VwMtAGAdk3yqqYNIMqglNCo5UZPeqs5PKljBhn/qloA5JkbI20BVTW7jfeaWRudK4KA==
+	t=1795279173;
+	b=a8H3++jBlB8SLuTHqxN1uUNg961+GbXHOyETRrV24iFQG2ggforBNPe42IqXDb4wuboa
+	 aillwiNi06oCV5tmfVeQtJZdoiEvIroHK0PVB4PjMVgbhMU6Or7q6wL+Kskp79AJYYLtM
+	 hJW+VviWaTYbq5VsJnoN/3ETvchjQS+k2UPzDw/IiXzqE5IMB/QfcIYXNReXCmLBprc93
+	 WdO+SPnmg2/TNAxouqdieGFIYoQkQDra3VRR/ZtTy+8tFEVh1HIpHR2XrgiQUYJl5yH4Z
+	 Z25NTe4+4v1dIGQf1n5NTaDuMV3N+p9xe+cXCVFtsH6GMsMoCYmJCO4+dUyJOBzXLlQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795277484;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=W1j+QhMZh7cgcvgfATIzWEl16YVX0rVq0ndiSNVz1qQ=;
-	b=WgPclbkZWOOlyowV4L9RFOhf4dN0WFiGOnNZKTrmev1t3KjpBdC2Yr40MEeCNUlkIBjd
-	 4pyJEs3b/ZYtUlIdhUCt+u26hAwRS8AH+FZoWVWic4ewTJmnDQ0lD5vXO9bNMTvBB1oD9
-	 xWTGCS5sPuYXEblZj3Egvkq16FQRdMTJB1FQVhAIoEamqJVCKhPlUoYBIaL6ROy3SZCLR
-	 xqtFFYryofP9k/tgknKMJcrp5VQIAvmhfjjSvIdVvNBjhuaUM+Jz53IpEDh+ktklNoG87
-	 RfRuSahAtbGB/NpND4aO6vra0DB2OFd8EFSAWwfFFm8fPcFhAWz3bewxY92gX2IBF9A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795279173;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=pLQTRcXUJhUmLmDSMnhR3mvBdnibH29NsZJ/odBJs3k=;
+	b=pF5eXceGDQ8xJU2oD6TXoz/EFbb6reQWhwFuyrmNZfB0pk6ycKnN6MKjMHSTRB+605/B
+	 5M18/pkFp9X4PnTDhxi8fgqrQr5v/t4NcJ+ij+BinWlN0oheAj71E0baTJp+MQor1utE1
+	 clddwnUDX4QxlLreheotFAfxMagfQEQklInzEKlLWByAbCasvDiWDrHd9WiuHDjFRBrVi
+	 7W/NpE91Nf/GKK9FlDvrKDPIn+G3HUQ3vH5yAbbST1QWF9KxyoxINqsmUXcV+ROw6d6a9
+	 PWNPjoX1ALIEpAXzEYB3Z3Hs09PD8331yHa67Oiy3PvZxS+UnJnpqrp8+DMAX680b5Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NzYmgpvu;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=elwNxqNl;
+	arc=none smtp.remote-ip=209.85.128.45
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8B3606A32A;
-	Sat, 21 Nov 2026 16:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D2F606A320
+	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 16:39:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 12D2F606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NzYmgpvu
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E8CE1F000C0;
-	Sat, 21 Nov 2026 16:11:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795277484;
-	bh=W1j+QhMZh7cgcvgfATIzWEl16YVX0rVq0ndiSNVz1qQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=NzYmgpvuJIFpPtdd8tq6/HIa7robc9D/bIOhT2avJpe9XsZ6qHCrISlXgK8/FvGh/
-	 X0wzFu07O7Bad2wBXUms7a8LkKwPT/Eu9TaW4283DaOs68wshJmLT8sR1EOsAIgcrP
-	 fJ28Nz2Eg2FQ+XPtbvPO0JpEQJhgF1sr5tr9cTyRlXTzXQ0l/TpEq6rdSzHMuFv1Xi
-	 mLqLKk68m6oqZW//bZ5jEkOlHZtVPc/ZjXidDPi0XUOt5jlnQSRT1K8Nb6J1JV/P+v
-	 pRHJRQz13IY/6G+1iWO7qhh5yT0O5epbn11ShX/aNvvt7kk9upAw3DUxP47zcelqhP
-	 Zqw8JANXcUQ+A==
-Message-ID: <b64cf863-e50d-455f-826c-13cd9ec66c6b@kernel.org>
-Date: Sat, 21 Nov 2026 17:11:15 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=elwNxqNl
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4b79502c27aso16287365e9.1
+        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 08:39:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795279171; x=1795883971; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=pLQTRcXUJhUmLmDSMnhR3mvBdnibH29NsZJ/odBJs3k=;
+        b=elwNxqNlg9w5HA4LpyiiqlhnV/mtuNlaGEuQHi7q1/TQd1LxWvhsEROrLfyl+oUeQt
+         RdhMat5q2HO24mh7XjReHGhzbHiWH5k04ifg8LlWxuel68EZ69OLJozB7gZqJH3PqD7/
+         dyEN1Z2uYfE1PMdC4CkcLFlgejYSp/b+149udohvf91lqJk/weZkc/cdNPWIX3E7+x1Y
+         5KIJyvRXSCSfQcz3klDvWB7u7gIC9qSNF2mM5aEY++25AaAwTzWcC2XS2EtgsY+uYWo1
+         ofWKvYFwvgjEgKCL9PVjZ0VOU9LwZsYwv5rI6V+uokTIAXmN7uM5SFoJqmGm00TNMghq
+         9gBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795279171; x=1795883971;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=pLQTRcXUJhUmLmDSMnhR3mvBdnibH29NsZJ/odBJs3k=;
+        b=0TtRffXPGIy0U0Vn2WyBzLQTr48CiNReuQ39bypk1rptIpjj5BU6WwVIMoVo4P3+1R
+         YBC6/h4z+V6YR3KZXTaMFfGv/2QMnMjMTUt4auJ5Wl75zHv7KIMuwneK4fQeVYYlxavm
+         D1cETSYejFbSETJpRiDTU1HPRO15FOJTpw+CYYgZyvqj1oPcF4ihkX1oo5Yyt5MPP5J7
+         TPzcHNAsB/F1tiZ7AT+N3SA69KNOf917ym/X2A6OHwEtkx+RqLl3gvMTk9ZzNN3Ftn7w
+         9F8qCRy7RVYdS7OEDczEQwFp5Bk19xMtbIzkNjQIEOblzRAPVZ85d1XrdD2KdGsk5XoH
+         AmCA==
+X-Forwarded-Encrypted: i=1; AL+hErHEfhgrt6qRwKbOOII8wBtx5CBkPpZT/G+QuUlM1GiI5SF3xP/Tuc4Zma8JZ4oIGhEt36tRl5cG2jI=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/LMlr3cO7DgYzeOzYBQ72SS5QawRwH8YxCapdO0dAlSpsoRROJ
+	LUw61YgzaPjIsS3QdtgMynguJhtPIb6CMRf30iXUyHTeMv9zmyASnK9j
+X-Gm-Gg: AZFdTZdOdomlFh7k4OL3URI6m1uDaWD6ryzrD01WLrfNzuWaEDmyh4+pnEAIAfPXKzy
+	HtoCP0sHMa/UsCcSsYWMNEYw3ZJ7rnfbqPaqLqxdkelJIapr5ban1CBeYXMrbrK4C0A0r6+1+ds
+	hXOWeGEgGnA46e+rKPjiiYpaD6Yiwd9Pwu0khPK7dRefFkNjXALcZCISK7otOW/R9bGSRvYkgkX
+	DzZ8Oe+P3E0E8OJiIFRqU+BnJkYv3DB3HSSOZ1P39Wr6Rh8WeApwWnWf8s9gTPEj+UjcNr7i/I9
+	cxStlEPuh2t2sbceabIygV08l5MadPGeBObeDkeRcI9BpV7qT2ORDQaUsTKDdPG4FCDLnSEoE6d
+	Qmm2/wRuarbN0Y3KFwQPjGfMYuf7xymmVjV+psydMU77YplX8Ru/Eu2J0mS0dEL12f961tHkAar
+	pyEDaDBIicQ5hWb0S1w59+Ot/isR4gDJjrLP74klHFkkDwYwhQrLWSjz5fe8ypZRsyJHzpTaiwZ
+	3DpSWwJdtFI98tu1LTXIao0mBKVDoDq6mB5PocZmJaYl3TgvZ9fl+s+cEHUvfcsYvTXcjB0i3Ft
+	cZ39vD4XzMD6FK/yUQW4sBL+06gy0ojn/GFOXu90zAbrcVd+RvNBYWIWUOhjclZPTeEOqz1z
+X-Received: by 2002:a05:600c:1549:b0:4bb:741d:ea8 with SMTP id 5b1f17b1804b1-4bb8880ad4amr140075845e9.7.1795279171363;
+        Sat, 21 Nov 2026 08:39:31 -0800 (PST)
+Received: from localhost-live.home.vlan10 (053da81f.dynamic.tele-ag.de. [5.61.168.31])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb8d4f9aa8sm140114675e9.4.2026.11.21.08.39.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Nov 2026 08:39:30 -0800 (PST)
+From: Joshua Covington <joshuacov@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joshua Covington <joshuacov@gmail.com>
+Subject: [PATCH] clk: rp1: allow the clock provider to be probed again
+Date: Sat, 21 Nov 2026 16:39:15 +0000
+Message-ID: <20261121163915.86681-1-joshuacov@gmail.com>
+X-Mailer: git-send-email 2.56.1
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,119 +99,63 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: sophgo: sg2042-clkgen: Keep gates of reserved
- devices enabled
-To: gaohan@iscas.ac.cn, Ard Biesheuvel <ardb@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
- Atish Patra <atish.patra@linux.dev>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Chen Wang <chen.wang@linux.dev>,
- Inochi Amaoto <inochiama@gmail.com>
-Cc: Han Gao <rabenda.cn@gmail.com>, linux-efi@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, sophgo@lists.linux.dev
-References: <20261121-b4-sg2042-efi-rtc-v1-0-19898b8ad497@iscas.ac.cn>
- <20261121-b4-sg2042-efi-rtc-v1-2-19898b8ad497@iscas.ac.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20261121-b4-sg2042-efi-rtc-v1-2-19898b8ad497@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21/11/2026 11:38, Han Gao via B4 Relay wrote:
-> From: Han Gao <gaohan@iscas.ac.cn>
-> 
-> On Milk-V Pioneer, firmware can own I2C0 to back the EFI RTC, with the
-> node marked status = "reserved". I2C0 shares GATE_CLK_APB_I2C with the
-> I2C controllers Linux uses. When those runtime-suspend, the gate is
-> switched off under the firmware and GetTime() returns EFI_NOT_READY.
-> 
-> Walk the reserved children of /soc and match their clock references,
-> as done in commit 6aa175476490 ("clk: renesas: cpg-mssr: Ignore all
-> clocks assigned to non-Linux system"). Unlike that driver, use
-> CLK_IS_CRITICAL rather than CLK_IGNORE_UNUSED: the gate is shared with
-> devices Linux drives, and their runtime PM would still turn it off.
-> 
-> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
-> ---
->  drivers/clk/sophgo/clk-sg2042-clkgen.c | 38 +++++++++++++++++++++++++++++++++-
->  1 file changed, 37 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/sophgo/clk-sg2042-clkgen.c b/drivers/clk/sophgo/clk-sg2042-clkgen.c
-> index 6abc2c973c49..414904965edf 100644
-> --- a/drivers/clk/sophgo/clk-sg2042-clkgen.c
-> +++ b/drivers/clk/sophgo/clk-sg2042-clkgen.c
-> @@ -11,6 +11,8 @@
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/of_clk.h>
->  #include <linux/platform_device.h>
->  #include <asm/div64.h>
->  
-> @@ -840,6 +842,35 @@ static int sg2042_clk_register_divs(struct device *dev,
->  	return ret;
->  }
->  
-> +static bool sg2042_clk_is_reserved(struct device_node *clkgen, unsigned int id)
-> +{
-> +	struct device_node *soc __free(device_node) = of_find_node_by_path("/soc");
+The clock descriptors are static and are registered directly. The
+clock framework clears hw.init once a clock has been registered, so
+when the RP1 device is unbound and bound again, the second probe
+registers clocks without init data and oopses:
 
-Where did you document the ABI? Soc is implied but not enforced. commit
-6aa175476490 makes the same mistake.
+  pc : __clk_register+0x5c/0x9dc
+  Call trace:
+   __clk_register+0x5c/0x9dc (P)
+   devm_clk_hw_register+0x5c/0xe0
+   rp1_register_pll+0x24/0x40
+   rp1_clk_probe+0xc0/0x168
 
-Reserved nodes might not even appear in DTB passed to Linux, because
-they are not the hardware exposed to the OS, so this entire approach is
-fragile. IMO, the list of clocks which are not controller by Linux
-should be static in the driver, but if you insist on using some ABI then
-you must document it.
+Keep the init data of each descriptor and restore it before the clock
+is registered.
 
-Best regards,
-Krzysztof
+Fixes: 6486341721a2 ("clk: rp1: Add support for clocks provided by RP1")
+Signed-off-by: Joshua Covington <joshuacov@gmail.com>
+---
+Tested on a Raspberry Pi CM5 with 6.18.64 and the Raspberry Pi
+downstream patches, where binding rp1_pci again after unbinding it hit
+this. Applies unchanged to v7.4-rc3 and builds there without warnings.
+
+ drivers/clk/clk-rp1.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
+index 1dd276dd2..5c3929e93 100644
+--- a/drivers/clk/clk-rp1.c
++++ b/drivers/clk/clk-rp1.c
+@@ -363,6 +363,7 @@ struct rp1_clk_desc {
+ 				       struct rp1_clk_desc *desc);
+ 	const void *data;
+ 	struct clk_hw hw;
++	const struct clk_init_data *init;
+ 	struct rp1_clockman *clockman;
+ 	unsigned long cached_rate;
+ 	struct clk_divider div;
+@@ -2418,8 +2419,15 @@ static int rp1_clk_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < asize; i++) {
+ 		desc = clk_desc_array[i];
+-		if (desc && desc->clk_register && desc->data)
+-			hws[i] = desc->clk_register(clockman, desc);
++		if (!desc || !desc->clk_register || !desc->data)
++			continue;
++
++		/* The clock core clears hw.init of these static descriptors */
++		if (!desc->init)
++			desc->init = desc->hw.init;
++		desc->hw.init = desc->init;
++
++		hws[i] = desc->clk_register(clockman, desc);
+ 	}
+ 
+ 	clk_audio_core = &pll_audio_core_desc;
+-- 
+2.56.0
+
