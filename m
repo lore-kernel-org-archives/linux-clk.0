@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795257498;
-	b=vRrH/DyQOOttMuLmBATHj0AeAxkCZIHXIGf4kdyigCVeX6U5eGd+0T1n3gTkt8eIAVom
-	 ErukzIMZjEB1XQkq/dCILumykFgMYxEzwJCfBI3z934T66kwwyp9pEi1vks6U25MLnAdD
-	 hJIdTcNjGqrLPOfx1uk4YmrGg7Gd+MfKZ1TxEmqda5s3jR/sIhaUFaH6xlQ7OMkIsZj/9
-	 Ga44IyfJs0P8l6SgdkOIufaZqncKy4QCFDoJDcGMSqh7DhRuEL4jLhr0Z6eOqENRrQzly
-	 RSL+Ts8T1xoKbbBsQaRfYp6DN6CaAZGyL3JyKPONSWVWl/i8C6D5DfKDbAIdDkjJJuA==
+	t=1795257914;
+	b=TPnf7LxWnmz7V4KKoL830LRd/X9s3yvVGidqVJwjDY2GuY5Br4joMFiR9w7jHfHu3Nq4
+	 fh5Rxeka7LOH+yxkoVp9ODhwVOgpKFINL4Vfcx66Vt0U2GGa6HfVsKr/Qa74NDFxDYESp
+	 r5C/PSAl+rM1sKMmf3Czvh68+2U+J3p9PCwk+Zham+1PIzHTmNrbmjKf5GStqNylaVN+r
+	 T3UEZGKHl7JhfzgfjZ7vtbwZ7oEC0e5F81NzDMOYO5BvS7ILejpIL05k7vNSgjYjgx0IW
+	 gXFciJmXHwgx0U0TuD3vrgJvhJRh2cdZqzKDmP6R8ZvGgb3VLKNcwe5zrR5W/WTIYrg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795257498;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795257914;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=OG0c6l+y/8sOpyl1NqaqhQcf9W4FSCA1cHzu90CtLcs=;
-	b=gd6rFFE+iXxqMv0AIM/PPlEu1Lg6oG8E8f9dGS/UXJ0igjiKXHUnVGgdMz+V/cswmzDY
-	 Xw0aw/qSusrmpzhM1ROJ5PoDYo4qZ58DXFuAKq07M0aljetxswYOIzgV+Cso1vzpdenyR
-	 cKb7NpDEwv4LzYGIvGaivNshlgWnQJnPtnAmdijUzgXmRm2wPYwbJU9mFWQgkaGofM9Vj
-	 QL9wZqUVqRFhfK/ex3K62/cAHXLxJDEO7mrw2Tb9BLF9k1n38gT/u62hyGOs5tJ/66Em/
-	 GnZhu0eloz3a6KwfFWlAewlA+vt3PFErP+RKr9p0DfGFw65+Ny8JPX3cI1sPkzaaXTg==
+	 Content-Type:Content-Transfer-Encoding:Message-Id:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=RrcRHbj/G9MLcSU8nLl8yl6T1TR9Wr4lqQ3X9FOvOBE=;
+	b=wiYELql0OCknxIyPIjWdDw2M1zGaLXvPnvt+agz7LrapaHO9DYni1TBWx3yCiXjZxiud
+	 n8B3kJzWFKOodYWjLYLBnkczz6OJ/SPQ81mmfUBRwwNx0AVUKsVWNctouiqNPwTM23M2I
+	 oN4t0TFzW8iL53SCATy/pXJzfqQv6EERX4bTlRABwBv/9xmu/jLXuq2HwyCj/1jkEyrH3
+	 XcrB9Z5fwYhPFyRsloGTiRyBWOS6R8KmxUV5q5qDQF/ZG2u3AuXDUAsiKae1JHQ1CSBBz
+	 b6JvFt42y0lzhSnPC9foamz/W8UhShAhOTyvs8EY6K0ZbhrtkPR7AvKUax/shamDJGw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dpyHBnf7;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ggPe8m/O";
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54F0606A325;
-	Sat, 21 Nov 2026 10:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD16B606A332;
+	Sat, 21 Nov 2026 10:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dpyHBnf7
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ggPe8m/O
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795257498;
-	b=GatvQPmaiOpF25DvV58ijjpjD6vJ0xx6gTrSnBKAceSPSTwI5R0RiT6jHDwaBAyCC0hx
-	 GryhqY1ku4YjKcHq4CCcULuz3Ek1dSFnddK+Q55tMeU2vh0437Y020zt6iasJ2AudoML8
-	 8kBw+uqGAJ82mxidoie3jToDqnHZduXOkF/ihL8vj3ThKt22zfFjmH2fPKH0s9K3+D3HB
-	 F1aDFFbXo6PgADrkQfprBgnO+9yPayQo4TJ1vdIVn7SuwcgRwnri/UbPULph/7Ufny91s
-	 Bpw4Few+gtzwpJb2KPCIVRNts0Brw8p3vIiXdeTTfvXIhbISIMJZrUZb7EKtTjUW17Q==
+	t=1795257914;
+	b=QP0ymJrh6W+qJG3c84J2pzvzSsH6g9VhZWRXyScpqw91nzdMnnwWzAath+up5A+thyIB
+	 2f0HHuFyLSGu4hCYg1NaF/DsjEcW1gWUF3fKNq/Q4eey9NVv3pKNZtyKIVeh/A+mvG7s3
+	 tw7u/xKOfl9e/MHN9L9zMcB96b3PljTGnBwlry0fJXqFqU4CQ0LEX2ib4AIUgNWfMFQg3
+	 fYY3fOZlDsYzW6WF3ZMebDmvzISy+PBCFWS5oRrLZ1hd/WpSpaSe6E5drU+5EZCo/eGk4
+	 cHQFGCf/qNSRxCnoVdeKBf/74ht9pdRAAnc5TvOkxb6gfx+Hzf9msw6VEEgMYXVTF9w==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795257498;
+	c=relaxed/relaxed; t=1795257914;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=OG0c6l+y/8sOpyl1NqaqhQcf9W4FSCA1cHzu90CtLcs=;
-	b=PQdBLstlPWA2nh9JhY0lYtD3HraYGBve/LNoOzRChQpe+ZylkaPfteZBAfJpFO3046XS
-	 QQdKhBI4ut1s9g4z0uMFKkiwiT+opCqQu6D4I2UKuhxWR4HaD6eMgzKsreZ92n/aqXyHP
-	 q1+/K/j3xl5FCFUSOJ9wKl51bVT7w+p96wVKOa6UNk/jMnjQjn9hXZsMPyUpmWxsXs81s
-	 Clhkyo6IVWTGh9YkhJtgW3iQEXG2I2m8I0Xjat6hfpUgeP/dwYfC1hW1sLHg+vaQv/HwM
-	 dgL/aLz6gJyEq5mIC1O9KiMsolnNCLFPzfKHv89wdySduyFPmExNM97yfpc0PiE/vmQ==
+	 Content-Transfer-Encoding:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=RrcRHbj/G9MLcSU8nLl8yl6T1TR9Wr4lqQ3X9FOvOBE=;
+	b=BQf+9YGO60AJQkXE0IDlKvXDSvilxd6l3k8Z33SNdGpt4kErwYBd8j2pW4EJs3Pixs9G
+	 nFEvGnQWkr0f5LhyiiBYow4q27mi6zBp5Ml23iM/8i0sdvMRIss67QPPVIr4YANtcshXX
+	 yTV76PdxPoYDvQGc9I5qZTdL7DdpoxF73qNB1JtK5VukanTqqGzehYv3e7za9cf9ptpza
+	 ivWdyms2cl+H5IuFIKVsAf1EO7YxH+8RFrKd1N++cfyswxTfxDEimh01TxH3QcS42RGqu
+	 QB3It2qxwHDhLillPhsjZr7TASZ+cSFuxRcgGVVwvlzFkTH2rtIDjpd83B3wU7QRHow==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id A0A121F000C6;
-	Sat, 21 Nov 2026 10:38:17 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 0B3E81F000C0;
+	Sat, 21 Nov 2026 10:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795257498;
-	bh=OG0c6l+y/8sOpyl1NqaqhQcf9W4FSCA1cHzu90CtLcs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=dpyHBnf7GVP/4dU7w/wMGIWaaD3YUoLa3+I62ISoBZjWvDW9JZKLEi+Eqzn42tmZZ
-	 i7BZzwQ4hnUIOfBj0AFYycfj1uV9IwYrp+VOpRokoNh0FElvo/dYt4wegxJi5imsYr
-	 VFdkiKYzPb0VQCJ/CU2bl8GkkbPrd6qYEGwIVCfUHgGpQq4n0WHwh4LDVS0fPrVaXp
-	 ZKJPqzL1b53LEqI67RgMEMO4JcQL02MV/JNZhJTnOWXqdxMZd28UHVOyFlVbXkPr48
-	 Pwdyk6T2tD0xlXKvoiVMlRvNmDBhqvu43un7/oFkHtT3R8KaAUi1D6AAd/Uho+Lkw+
-	 T+sWJUdUG4Q7g==
+	s=k20260515; t=1795257914;
+	bh=RrcRHbj/G9MLcSU8nLl8yl6T1TR9Wr4lqQ3X9FOvOBE=;
+	h=From:Date:Subject:To:Cc:Reply-To;
+	b=ggPe8m/OyPhCuWezzjMAG0Mvlbrz4d9kJmMvvJMEDsb45U8Q5P8+JMAW29uuWz2ar
+	 MmZVrVsOELR6nB+AU90A0qxKEN0Py209GHPBi0ZVmXpDH+h4KDCZsSJ6Rfl9ie2xut
+	 xSwywTHiRBlVOLsFsEbItyPs5yMBQmSa2UaoE++CyjzX8wMOhxmHItogod2Dij9Xw1
+	 S5f43Bkrgv2RfFHux4YERJLybVa0rElYnl0D9aDp0PARkIM+aBkV0Of2wogOLEVeEY
+	 hpZ1k3WnGm0mXG8nk40GJs+pufo7dLzv5+As0LRD/2DCkH4LSp3xFHBH0XAtmOcqUi
+	 QoVzJUjN6c71w==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 301264BBE7;
-	Sat, 21 Nov 2026 10:38:17 +0000 (UTC)
-From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Date: Sat, 21 Nov 2026 18:38:08 +0800
-Subject: [PATCH 2/2] clk: sophgo: sg2042-clkgen: Keep gates of reserved
- devices enabled
+	by lkml.kernel.org (Postfix) with ESMTP id 639A34BBEB;
+	Sat, 21 Nov 2026 10:45:13 +0000 (UTC)
+From: Suyuan Wang via B4 Relay <devnull+shyckless.gmail.com@kernel.org>
+Date: Sat, 21 Nov 2026 10:45:12 +0000
+Subject: [PATCH] clk: renesas: rzg2l: Don't mark a coupled clock enabled if
+ enabling fails
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,126 +84,100 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261121-b4-sg2042-efi-rtc-v1-2-19898b8ad497@iscas.ac.cn>
-References: <20261121-b4-sg2042-efi-rtc-v1-0-19898b8ad497@iscas.ac.cn>
-In-Reply-To: <20261121-b4-sg2042-efi-rtc-v1-0-19898b8ad497@iscas.ac.cn>
-To: Ard Biesheuvel <ardb@kernel.org>, 
- Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
- Atish Patra <atish.patra@linux.dev>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Chen Wang <chen.wang@linux.dev>, 
- Inochi Amaoto <inochiama@gmail.com>
-Cc: Han Gao <rabenda.cn@gmail.com>, linux-efi@vger.kernel.org, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, sophgo@lists.linux.dev, 
- Han Gao <gaohan@iscas.ac.cn>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795257496; l=2910;
- i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=FkwMGNzzFP9SAcLoWWEAD8DpNa60dTDRuCtVoBpvCok=;
- b=q3erWT1fwlHrNACKyfuHpCkIL80XgAGDT0V7qQ9mS+QUbZiQmrTwvliwagyujW22SWx/sZF6H
- bwT8bv9x9O2AhcQ4V7L6UQij2B8Mnqdpeu0VWzecd1SoDkGktQ2wX4c
-X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
- pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
-X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
- auth_id=1262
-X-Original-From: Han Gao <gaohan@iscas.ac.cn>
-Reply-To: gaohan@iscas.ac.cn
 Content-Transfer-Encoding: 7bit
+Message-Id: <20261121-rzg2l-coupled-clk-v1-1-c38c8299c176@gmail.com>
+X-B4-Tracking: v=1; b=H4sIADh2AWsC/yXMTQqDMBBA4avIrDtg4k+gVyld6GTUsUElURHFu
+ 5vq8lu8d0BgLxzgnRzgeZUg4xChXglQVw0to9ho0KkuldIK/d5qhzQuk2OL5H5YUmMKm5rM5Ay
+ xmzw3st3Pz/dxWOqeaf6P4DwvpwpJMnUAAAA=
+X-Change-ID: 20261121-rzg2l-coupled-clk-6cf75d07374e
+To: sboyd@kernel.org, geert+renesas@glider.be
+Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ jbrunet+clk@baylibre.com, bmasney+clk@redhat.com, 
+ prabhakar.mahadev-lad.rj@bp.renesas.com
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795257912; l=2447;
+ i=shyckless@gmail.com; s=default; h=from:subject:message-id;
+ bh=3y15QbBzV0RnkTxoTog+ECpsMR9NS7LppzilDPoTG4k=;
+ b=rBqqHHjt9+erqhzDjInR2FFJQu+aaY9fmkYHpZb5dHmxnwctDJWsFGz6zgxPgOIp3Fq5F0a2B
+ G8yjBTFWrESCs7jEMOcOAQwdPIlUM0WYIb1FlUMr3Hprq1eCWbt+baM
+X-Developer-Key: i=shyckless@gmail.com; a=ed25519;
+ pk=pMtccVGiWES3bV+7YBFuBclkvq2n2HBHQ5azaBrK2lY=
+X-Endpoint-Received: by B4 Relay for shyckless@gmail.com/default with
+ auth_id=1498
+X-Original-From: Suyuan Wang <shyckless@gmail.com>
+Reply-To: shyckless@gmail.com
 
-From: Han Gao <gaohan@iscas.ac.cn>
+From: Suyuan Wang <stevewong@hust.edu.cn>
 
-On Milk-V Pioneer, firmware can own I2C0 to back the EFI RTC, with the
-node marked status = "reserved". I2C0 shares GATE_CLK_APB_I2C with the
-I2C controllers Linux uses. When those runtime-suspend, the gate is
-switched off under the firmware and GetTime() returns EFI_NOT_READY.
+For coupled clocks, rzg2l_mod_clock_enable() sets clock->enabled before
+it touches the hardware, so that the sibling can see it:
 
-Walk the reserved children of /soc and match their clock references,
-as done in commit 6aa175476490 ("clk: renesas: cpg-mssr: Ignore all
-clocks assigned to non-Linux system"). Unlike that driver, use
-CLK_IS_CRITICAL rather than CLK_IGNORE_UNUSED: the gate is shared with
-devices Linux drives, and their runtime PM would still turn it off.
+	clock->enabled = true;
+	...
+	return rzg2l_mod_clock_endisable(hw, true);
 
-Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
+If rzg2l_mod_clock_endisable() then fails, for example because polling
+the CLK_MON bit times out, the flag stays set. The clock core does not
+count the clock as enabled or call its disable callback when enabling
+fails, so nothing clears the flag for this failed enable.
+
+A later enable of the sibling then sees the stale flag and returns
+success without enabling or checking the hardware. Disabling that
+sibling skips the shared clock bit as well, because the failed clock
+still looks enabled.
+
+Clear the flag again when enabling fails.
+
+Found with a static analysis tool and checked by hand.
+
+Fixes: 32897e6fff19 ("clk: renesas: rzg2l: Add support to handle coupled clocks")
+Cc: stable@vger.kernel.org
+Co-developed-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
+Signed-off-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
+Signed-off-by: Suyuan Wang <stevewong@hust.edu.cn>
 ---
- drivers/clk/sophgo/clk-sg2042-clkgen.c | 38 +++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
+Compile tested on arm64 with clang (W=1, no new warnings). I don't have an RZ/G2L board.
+---
+ drivers/clk/renesas/rzg2l-cpg.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sophgo/clk-sg2042-clkgen.c b/drivers/clk/sophgo/clk-sg2042-clkgen.c
-index 6abc2c973c49..414904965edf 100644
---- a/drivers/clk/sophgo/clk-sg2042-clkgen.c
-+++ b/drivers/clk/sophgo/clk-sg2042-clkgen.c
-@@ -11,6 +11,8 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_clk.h>
- #include <linux/platform_device.h>
- #include <asm/div64.h>
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index dc2bcbab18f1..18c4ed362295 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -2080,10 +2080,11 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
+ static int rzg2l_mod_clock_enable(struct clk_hw *hw)
+ {
+ 	struct mod_clock *clock = to_mod_clock(hw);
++	struct rzg2l_cpg_priv *priv = clock->priv;
++	unsigned long flags;
++	int ret;
  
-@@ -840,6 +842,35 @@ static int sg2042_clk_register_divs(struct device *dev,
- 	return ret;
- }
+ 	if (clock->sibling) {
+-		struct rzg2l_cpg_priv *priv = clock->priv;
+-		unsigned long flags;
+ 		bool enabled;
  
-+static bool sg2042_clk_is_reserved(struct device_node *clkgen, unsigned int id)
-+{
-+	struct device_node *soc __free(device_node) = of_find_node_by_path("/soc");
-+	struct device_node *node;
-+
-+	for_each_reserved_child_of_node(soc, node) {
-+		unsigned int i, count = of_clk_get_parent_count(node);
-+
-+		for (i = 0; i < count; i++) {
-+			struct of_phandle_args clkspec;
-+			bool match;
-+
-+			if (of_parse_phandle_with_args(node, "clocks", "#clock-cells",
-+						       i, &clkspec))
-+				continue;
-+
-+			match = clkspec.np == clkgen && clkspec.args_count == 1 &&
-+				clkspec.args[0] == id;
-+			of_node_put(clkspec.np);
-+			if (match) {
-+				of_node_put(node);
-+				return true;
-+			}
-+		}
+ 		spin_lock_irqsave(&priv->rmw_lock, flags);
+@@ -2094,7 +2095,15 @@ static int rzg2l_mod_clock_enable(struct clk_hw *hw)
+ 			return 0;
+ 	}
+ 
+-	return rzg2l_mod_clock_endisable(hw, true);
++	ret = rzg2l_mod_clock_endisable(hw, true);
++	if (ret && clock->sibling) {
++		/* the clock core will not disable it, so don't count it */
++		spin_lock_irqsave(&priv->rmw_lock, flags);
++		clock->enabled = false;
++		spin_unlock_irqrestore(&priv->rmw_lock, flags);
 +	}
 +
-+	return false;
-+}
-+
- static int sg2042_clk_register_gates(struct device *dev,
- 				     struct sg2042_clk_data *clk_data,
- 				     const struct sg2042_gate_clock gate_clks[],
-@@ -850,7 +881,12 @@ static int sg2042_clk_register_gates(struct device *dev,
- 	int i, ret = 0;
++	return ret;
+ }
  
- 	for (i = 0; i < num_gate_clks; i++) {
-+		unsigned long flags;
-+
- 		gate = &gate_clks[i];
-+		flags = gate->hw.init->flags;
-+		if (sg2042_clk_is_reserved(dev->of_node, gate->id))
-+			flags |= CLK_IS_CRITICAL;
- 		hw = __devm_clk_hw_register_gate
- 			(dev,
- 			 NULL,
-@@ -858,7 +894,7 @@ static int sg2042_clk_register_gates(struct device *dev,
- 			 NULL,
- 			 gate->hw.init->parent_hws[0],
- 			 NULL,
--			 gate->hw.init->flags,
-+			 flags,
- 			 clk_data->iobase + gate->offset_enable,
- 			 gate->bit_idx,
- 			 0,
+ static void rzg2l_mod_clock_disable(struct clk_hw *hw)
 
--- 
-2.55.0
+
 
 
