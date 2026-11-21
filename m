@@ -1,56 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.11.138.130
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795267491;
-	b=LJNFEBOWDTb5oYVnQwASnY/w1lFDxmceLT0zkaVHd/f3RaYfrQy/yfcBLoJbn15Y1oiM
-	 jKT1QmaMPX2m+Q+ycrCFD3TR4ZKUGG7j3pQ2Z3aZPYJpvPBouVhaRONFE2gf589doA3DJ
-	 MipiPz/zkqcpkOTxYwrxUrYZmwpLsRyZpNYKRPTetEckm/PTYrlzd6f+c/hgLbCKAWBSv
-	 mL77LXc9a/8BfN8JEFemTSclRqo5GfAZV0kWZ12o3MTsV0DYn3KNRPYjmmZuTLfa5aBLG
-	 Bsg6TvPhXVPiuUB4knwCOYw35LBEKDOW2yIPRzxFZqwQr1GnHVpBuKzhUoQZJE5YNLg==
+	t=1795267650;
+	b=ZGAJG3Bj3Keo7dqmMeGlsqQpQRnNlp/zapTiH1ZoglyhOqLgjllux72vEmyyDWi0G42A
+	 LLqfxvnY97yThY2xkdmoCoaZofSisbyKLwofrCXGk5H1qGa5ggzL1WouQsq6N0blnA90h
+	 Vv34qgzlDsWCa9u8tVZB3fZA5BWoCSEc3tn0S4M5CU/vUZy8PUFg4pljHzN/7JgGnmAvI
+	 fAIVtWEuXPsPK2X4gfCpUhVtv10eZN/TLu8tbTp1WIAirOvVPIMUsl3M1QeTE8tp89bRE
+	 mJEFN2fAtbqfAhFjMAwnziagxM++phLzr7eYvIu/8d8rOtWS2Hg2jmyxxiPbcESvW4g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795267491;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=8zkScy1Dlfj4/xifhixFlls0kOJlric8JVhwitFLmDc=;
-	b=yPYbnxqvWs8BoDiHAK66Ws8MEfywROAhnHEtRdGpC33mPBVC0ez0g4GkWPzunGdWogUm
-	 eMcN9UYSCyuiyOZ1cUGz84AmFIUutTgNn5IekPgVcM+dKRTzIUTaBk9d7fMo02leKuLlI
-	 XYwKEA8OUOzbyCK+m5sAuEUtueTuVPiauPr9cT1kv5uD3pDU2oV4wsMnDw3v3kglL38IR
-	 16thEmbolUadlzCTWEMuzxELzzja/lFGZCoAUyKPmDvIN4wD59I6zP043HThIjeN4qT4m
-	 dhaIYnwMG9KSpa4QIzBPZZtyHlMJDzXhtIykUtSU0UGW7IcQrjoI+wZ9/4/dQMpB5KQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795267650;
+	h=DMARC-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
+	 Content-Type;
+	bh=t3R4tnJIY9kB5WytDi15OEl7ThCTHknTfMjZvEx+X/M=;
+	b=Q3s38T7KK8L/b6gvGHgY/an8U1gOfntPG5HxLGerb/NU242ICYgv8L2hzzmPLfvCO6hu
+	 +3REGQ4V22zuzrKDplYRIyE9vPf3D0cWR/MbMmvu7GPRD9X/bByklQ1OpuA2exhKLi/NW
+	 WLNbbGzckE3/eK09Pa86VwCtl7fwB/t2DadyMjhnD8MBLUhiEzXklVEpQp8WaADyylfAW
+	 xj+1W2auoaP4fRN0snrdDRsbUuOy1JRUnH9ktmE9eOPKgBCDHnfpz4hkx/iROTgVf2C4Z
+	 MW9tnW1PSbMWhqcQR0pZW9eNC+lnmp+CO3skQJ2MzfkH8+v1egVYhomUQdk4LOhbOrQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SKqS13V9;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=sntech.de;
+	spf=pass smtp.mailfrom=sntech.de;
+	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=MEiP69zJ;
+	arc=none smtp.remote-ip=185.11.138.130
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084C7606A320;
-	Sat, 21 Nov 2026 13:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64E3606A32A;
+	Sat, 21 Nov 2026 13:27:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C64E3606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SKqS13V9
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B9CA1F000C4;
-	Sat, 21 Nov 2026 13:24:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795267490;
-	bh=8zkScy1Dlfj4/xifhixFlls0kOJlric8JVhwitFLmDc=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=SKqS13V9GXrJoz68zYPXfYYRR1Jx49T8+iwyw4SEtIfaJkCmgJHSjd10iP0idLSpc
-	 c4Tiymjf+nCYC9C1lEAtKSJA8dTTc2B7Ia0GyhkEA+1o7jY/H2KNkFPGG937iX9gyq
-	 E+ClBKtQLKHIZepLa1uw5d3RzF1vIXC+cc/9M47UUHzdSyS2HbUwmyiu5V+Np6EgNR
-	 mUKJrI/Vyd9BXEyTYcgnStBJ2418DKjfnbJvq3rQPDe0JGeKnE5iPSYn8EyZEoKDuA
-	 TKJPJmNCEmpT0MhY56IvVAh5iWWdUcusuw/Njyw38VIT5KAzkCsRabxDEfwlY1Orqs
-	 AcNEeWuE+tLfA==
-Message-ID: <sashiko-outbox-227069@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v10 1/2] dt-bindings: clock: Add gpio-enabled-clock
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Vyacheslav Yurkov" <V.Yurkov.EXT@bruker.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261121-feature-clock-guard-v10-1-5d449739bb8c@bruker.com>
-References: <20261121-feature-clock-guard-v10-0-5d449739bb8c@bruker.com>
- <20261121-feature-clock-guard-v10-1-5d449739bb8c@bruker.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 21 Nov 2026 13:24:50 +0000
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=MEiP69zJ
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=t3R4tnJIY9kB5WytDi15OEl7ThCTHknTfMjZvEx+X/M=; b=MEiP69zJ/0eWym4qb78XUFm2+V
+	QobfvUmO/6Hi80IUXhbcfqbaHCz/4xVaFFtjVDqoP/3UZ1vR+oN8QV+mI7E68mSGIl+mSpwaKGE+H
+	GLGCCrWrXgvaMGxp5Kbwd1pmb7OtfVmdZNSfLCm69bUw2lU/Ak0yT6ZkOY4ctj0a6+sfxUIHPyqUp
+	1hG1QklSBSV/V41i0soQzfkXY9Yv0mbJa2ratzSorI1mhJNNCkRuqwxOr4VCJljnHcukUOSZhVRU6
+	qgU/B558J447mBOrrS/HWCs95l0AE/k5MaE5Sspac89SO+fUB0H5sbGz3dPWe01xAMkSeY2dEUiec
+	FaBIsYeg==;
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: ZhuXiangyu <1194781887@qq.com>, Stephen Boyd <sboyd@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: rockchip: add clk-out
+Date: Sat, 21 Nov 2026 14:27:08 +0100
+Message-ID: <dggrSgDiRmusIaCk6T6L4Q@sntech.de>
+In-Reply-To: <f98c3f68-82d7-41e3-bb58-d3737b73c7b5@kernel.org>
+References:
+ <tencent_8104629BEBAEF41637AAF1CC7D95BC7DCC09@qq.com>
+ <f98c3f68-82d7-41e3-bb58-d3737b73c7b5@kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,117 +66,77 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Thank you for your contribution! Sashiko AI review found 3 potential
-issues to consider:
-- [Medium] dt-bindings: clock: poll-timeout-us encodes software policy
-  and bounds
-- [Low] dt-bindings: clock: clock-output-names required for
-  single-output clock
-- [Low] dt-bindings: clock: inconsistent property order in
-  gpio-enabled-clock
---
+Am Samstag, 21. November 2026, 12:02:37 Mitteleurop=C3=A4ische Normalzeit s=
+chrieb Krzysztof Kozlowski:
+> On 21/11/2026 11:58, ZhuXiangyu wrote:
+> > Document the Rockchip clock output/input switch, a single GRF-
+> > controlled gate used for signals such as the SAI MCLK output.
+> >=20
+> > Signed-off-by: ZhuXiangyu <1194781887@qq.com>
+> > ---
+> >  .../bindings/clock/rockchip,clk-out.yaml      | 81 +++++++++++++++++++
+>=20
+> Please follow carefully submitting patches document, including how to
+> sign your work and how to send it correctly threaded. There are numerous
+> guides already, so just follow them.
+>=20
+>=20
+> >  1 file changed, 81 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,cl=
+k-out.yaml
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/clock/rockchip,clk-out.y=
+aml b/Documentation/devicetree/bindings/clock/rockchip,clk-out.yaml
+> > new file mode 100644
+> > index 00000000..bf2a9b8a
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/rockchip,clk-out.yaml
+> > @@ -0,0 +1,81 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/rockchip,clk-out.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Rockchip Clock Output/Input Switch
+> > +
+> > +maintainers:
+> > +  - Heiko Stuebner <heiko@sntech.de>
+> > +
+> > +description: |
+> > +  Some Rockchip SoCs route a clock between an internal clock and a pin
+> > +  through a GRF bit, for example the SAI MCLK input/output switch. This
+> > +  driver exposes that single bit as a gate clock.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: rockchip,clk-out
+>=20
+> Generic compatibles are not allowed. Do NOT send us downstream code,
+> it's not acceptable.
+>=20
+> Not doing detailed review as it does not follow basic rules. Please go
+> through for example DTS101 slides.
 
-commit af456b3694509e900f2e04e650b48e34c1d34c06
-Author: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+this whole implementation is bogous, but it seems the submitter found
+the correct way to do this in [0] .
 
-dt-bindings: clock: Add gpio-enabled-clock
+But of course the submitter still fails to follow basic styles there.
+Broken threading and especially not stating that the new one superseded
+this one.
 
-This commit adds a Device Tree binding schema for a clock that passes its
-parent clock rate through and reports its enabled state via a GPIO line.
+And of course yet another patch bomb in the span of minutes accross so
+many different subsystems - which I guess is not a human doing it.
 
-> diff --git a/Documentation/devicetree/bindings/clock/gpio-enabled-clock.y=
-aml b/Documentation/devicetree/bindings/clock/gpio-enabled-clock.yaml
-> new file mode 100644
-> index 0000000000000..76c1425931d28
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/gpio-enabled-clock.yaml
-> @@ -0,0 +1,55 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/gpio-enabled-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: GPIO Enabled Clock
-> +
-> +maintainers:
-> +  - Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: gpio-enabled-clock
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +  enabled-gpios:
-> +    description: GPIO that indicates whether the clock is enabled or dis=
-abled.
-> +    maxItems: 1
-> +
-> +  poll-timeout-us:
-> +    description: Timeout in microseconds for waiting for a GPIO signal.
-> +    default: 10
-> +    minimum: 10
-> +    maximum: 1000
+@ZhuXiangyu: even if you're an LLM and new to the process, don't flood
+the lists - especially not before you get the process right.
 
-[Severity: Medium]
-Does poll-timeout-us encode OS driver polling policy rather than a
-hardware property?  How long a consumer polls a GPIO (as opposed to
-waiting on a GPIO interrupt or describing a hardware lock or startup
-time) is software policy, and bounding it to 10..1000 us rejects
-hardware clocks and PLLs whose stabilization time falls outside that
-window.
 
-Also, should the status GPIO be described directly on the clock provider
-node rather than requiring a parent clocks property on a separate
-pass-through wrapper node?  Modelling this as a wrapper forces a single
-hardware clock source with a lock GPIO to be split across two Device
-Tree nodes.
+[0] https://lore.kernel.org/linux-rockchip/tencent_9138CD6157C88BC2D52FE639=
+4AF83E560208@qq.com
 
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - "#clock-cells"
-> +  - enabled-gpios
-> +  - clock-output-names
 
-[Severity: Low]
-Should clock-output-names be optional here?  Because #clock-cells is 0,
-consumers reference this single-output clock provider directly by
-phandle and the clock name can fall back to the Device Tree node name,
-matching other single-output clock bindings such as fixed-clock.yaml and
-gpio-gate-clock.yaml.
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    clock {
-> +        compatible =3D "gpio-enabled-clock";
-> +        #clock-cells =3D <0>;
-> +        clocks =3D <&pll>;
-> +        clock-output-names =3D "gpio-enabled-clock";
-> +        enabled-gpios =3D <&gpio0 4 GPIO_ACTIVE_HIGH>;
-> +        poll-timeout-us =3D <20>;
-> +    };
-
-[Severity: Low]
-This isn't a bug, but the property order differs across properties,
-required, and examples: required lists enabled-gpios before
-clock-output-names, while the example lists #clock-cells before clocks.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261121-feature-cl=
-ock-guard-v10-0-5d449739bb8c@bruker.com?part=3D1
