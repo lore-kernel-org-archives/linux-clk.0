@@ -1,83 +1,93 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795296865;
-	b=z86x4SbAk2MOIt0nLNEsVhMIzMdDxv2wN2gnSMBwvOb58awxM5v6MhvxUT94Q6nZksMo
-	 9ngPBLq3WngsUTxLqRsbPQ0/rY/xG84R7P2dS5ca/k7kDKYhDI7vT4tQoGdWTCnOsWHt2
-	 Uqo8mw8EPrsoJPcQxyB24p85uF1v1eVjpMANaT6DhllVJC5VuvMFxq7SR+4YBuwLQ1F2C
-	 4OhvkOtPM8T3eCKoxKhFlCJHRohJAWbrT9IPdxeI0PgQhqvF4rASxJ5aooKuTHfLx71AM
-	 EwlrJGOd135bOsrj+qczk4wgA0qdO/3ccyJivkytk3C9mW1LITV2SgzAPXHreGDit2A==
+	t=1795298364;
+	b=uu0y5phuKd8MYiT8UWYlZ77eE/hZmNDoWHonKbeazK+yC+6e1zkBfh5o5WDvOsrknNye
+	 ysGtwdjlFrnlVdF6fVt/4r/ROV+Cj4wUXBBSU03kx7+5Q2AgVOFWq+D2cySe4c4Bij0up
+	 sjaSwIrPuJDfmlO0O6Z2IZMu+YK5y3/wCq6Ra8i5hl2PdEGXNSvrkrPN6i4Ems0SMZFVn
+	 5+ozm0qVlxcOHpY1dfa2yvEuuQ3uk9ksNTxPLKq9b/MCJUcEi7pYoAsWgPClo1L3RT93B
+	 +lOI/xmkTpudP+mqM10jwuHHQk7wDgytp6GiqOB5suDsyYHbsQwsXAufcsVPrfbGNfQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795296865;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=mUChzLeVR2MtutKX97MdpZQXyx2OvW2YcvAen733fVE=;
-	b=VgtuUxTEQGYvHTTfqB6DlgHtiHv5rhJUYAfiaSce09L/pUf4TU8nkIcVsyIRmYXc//YK
-	 f3Ylcj51bVecXGTwA7E0iGqqLGb7idqIOFA+SvpuFKnH3FGzKNNXWM1nmIcDwK7DCEjq3
-	 wK657cqaTG6rWrZv/P/EnBZwucH3sOmGrwYpWsX/yMkgnwnT35ucWjOz32a1wRNL6qDsE
-	 l8K22NR8nsm83gFwrGZZvsL8bAU1bo+7ul/dWqLQ2g+gp4NJT7QEZsZ0wa+UPDVhDdH72
-	 20orN5KGYs+nASjXQOizpb0RzxUElwb21pPyYozntHtn0719TeSOvoTWmfmmaoRtmqg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795298364;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=GCQgnNHZzP+PNKKdD4C2o7v4LNGaQ1ePdwhzcrVNroc=;
+	b=fJZGhbO90vfJPMKZVwXKLgrQMN4JNlFyZ/9KxQpb1cgrDVQKfF9l6RSw2XIOdlNY3Deq
+	 AqBZYkRr96zNDLtGObO94Uw//8xlbo3wm4ckeXQQzj5BMMwrp8zOM1eFg0j/JXFcJ+gkI
+	 DX0ZTYZuxop3o4hi/rC7FM7YTbNjp7/sxgxSrhCxiZdvpTtfIm/RZ21h52no0KpC5Ujrt
+	 PGehNuApoxsGBjt4LOfSNFCupLCSmw2gveKCFQpa4VY2JhS7i8CVURfNun4aGASwvec2Z
+	 AzRt5rh8EAfPZmSTGjqvxcFiLZ6/FOnssjFC+Xh9w9VOlQZVKodohkqvLmLaefKOydw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=sang-engineering.com;
-	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=d0YsZAnp;
-	arc=none smtp.remote-ip=194.117.254.33
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IdcHviTd;
+	arc=none smtp.remote-ip=209.85.128.47
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF02606A320
-	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 21:34:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ECF02606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A48606A334
+	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 21:59:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 84A48606A334
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=d0YsZAnp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=mUCh
-	zLeVR2MtutKX97MdpZQXyx2OvW2YcvAen733fVE=; b=d0YsZAnpbPtYmpNcRM2C
-	SwMgfmHzUur9jym6TLvWP6yFBmfbiMz7GTVq2bYzCi9mo7w/J6gmvlLNeKVbxfEF
-	ATF4zA8/M6UHo+wOll0MTUswaIbCpJ1Cy5jtzOZl/mgbRMqPWKcWExP9YxEok13Z
-	IkGJniWBTahtwqByiPMbUSDp/SLEMvMN4U0kvyY9W8ZiSH1qWjNoV6WbzFV+FdWH
-	wAJmaZEnUv7xwJ+Njk39l7jlQO2linQutAXM61ddpShNXZOWt/oRVIdp8eRhi08J
-	/FKL7hwLS4TbZmfWrpqX0qscB2/JlqXozeMgtL1R1s0Idk1ooGu9sL+DfpM6hUYH
-	ew==
-Received: (qmail 1948086 invoked from network); 21 Nov 2026 22:34:21 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Nov 2026 22:34:21 +0100
-X-UD-Smtp-Session: l3s3148p1@iaquH9BgZOIgAwDpTyYqANgHwk2rnHm5
-Date: Sat, 21 Nov 2026 22:34:20 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Ralph Siemsen <ralph.siemsen@linaro.org>
-Cc: khendry@reliablecontrols.com,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IdcHviTd
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4a35a60499eso15809675e9.0
+        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 13:59:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795298363; x=1795903163; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=GCQgnNHZzP+PNKKdD4C2o7v4LNGaQ1ePdwhzcrVNroc=;
+        b=IdcHviTdFJne9J8+x2v522N29b5MYCECORqKPNgq+/Jy/ZZMQPz+3BrknAD+rkIzF2
+         0SCo6g8eOVWNJVPU4wxtZm5PFUQ0+PGCnOzQLn2ZKealsJBXep2QX5XdBdz265MtspaU
+         Nc/mMMjUNUoo0kC2XcU6H7jmRGaf7rCm4icXhib59bKL+TPCTTT/OgiHRemC4XuGhra9
+         CWVSXHFPp98fF6xlYv6y3+Q2SRR+D9OejHOZZ5ZaxpnuV0huBk4PqNh9+aoCW4U9gYuv
+         QPk88nj+wcOLJFPha1JOlG1sA0XXJVEnnM+07CYfXUN9efuNeVPdlJ5py0CfjPsvFecc
+         2tEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795298363; x=1795903163;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=GCQgnNHZzP+PNKKdD4C2o7v4LNGaQ1ePdwhzcrVNroc=;
+        b=FCTvODQw1WivRwBXbM0fFfBbByVsTpitK7aPJZg4W+vySqmBWHE6IxuHSflZyEcJs1
+         UqFUdkxGYqWTdYlx8YVnq96q6XNu/tPrYrRbBnKTHbsj+7mLNEwL3YUMo+T0jHYYNAOe
+         IzwObx65LCIZpI4hB3+LUwopcMsFes5ZGg1GgcIRZ9G1brcQBOPu1YIthuzzi0OoRCVS
+         BBqEskTz2hM6PUiBJs7bxnhV2J1JfjaVNKs1ZfS8OyJJoFvRgvIyBjlEs25lacOM9qcW
+         1uSKlWsnp8hbxGz599IgRMIcpL2Uq5wvrLxHxAv9Y9T6+AB3LaxtMqYjjsEpfLD+pU8n
+         i3Tg==
+X-Forwarded-Encrypted: i=1; AL+hErFtK+dAiV+/R6e6t64PyQH7bfIt545hFeJpK1iUutIwetbqd8hl2DJ4XXMCgaIJXwvcG7VOawd63TE=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9DBLhaTxTmIet8aOZaDhTedFdyu32MYUWFwKoUaseo7wWcrZWH
+	vmfXXBuOBFZiWyQMCrgSeEcbU0t7ctFU4I7TYhDbIlxEJp1YibBiOs3V
+X-Gm-Gg: AZFdTZeF9YOlcoUe06i29KlPWgYfe0MZSVq2UsPWygWQqRsDYMUJHYZAUk1G+V+YnHq
+	ztdwyT5NZoVYz7epp3/BUZB6kz+JhbHx+cYIEw8g2di1rTk5fqAh8xroQJjZKq5x8V+hHXYDmWe
+	xB9140rLVrl4Lf4X5owlJEh61IIfN5eJ5GnhDoHKf4M5U3Z5W5eBLUmlpNwWG+TU4oz1bj7ebLY
+	ZmZQA7yY+p3ZHH/tsTKXU6I4LWR9UhzvuUOL1AuZwFQlD/TaRvruG/nPNQrPP6o5qhSI+WF4ykT
+	LGAw8u0SILSXf/t0u+Z5+/i8ml7pKWoeo2znI7/f4Lgs1LbIV/Hp1oF5BUHKgqArMME4NzB2efV
+	5SjOHcDQnU06Lx/JTxj0DvidncLgbL2xsPGxPKGS82LTzsW3moYIWx45UfmHq06Js+HXoS1tGRp
+	dbKvxKGIHWv8WyRN+XqUIkaMOnxlLv7iwQSe9dtjtyJN/Qvd50qjTIqGAly5LaSGEd/bd3xSvpb
+	wdBnycBRDrg3bf8D4oGcwkpiXaRaBKMmuWiBLcTCoT5+N5B5/l9c6E2fmywtCiK62lQ0rQkGsiQ
+	8JIjNjG58ixes7MiLFv/40DTJNmw2/eM+MX95rg7dHAX3wEN+eoGmPwl7aeFNrtaUTcnd5fZtmE
+	u+X3hRgWyPsYTMcJCTrgAD3Z5f+sBw8XKXjCrusXeF96/Z+r/z2H0niNTtuRzOHH/2bFTh8lK
+X-Received: by 2002:a05:600c:820d:b0:4bb:5de1:e912 with SMTP id 5b1f17b1804b1-4bb887c3ae7mr154679205e9.1.1795298362933;
+        Sat, 21 Nov 2026 13:59:22 -0800 (PST)
+Received: from Ansuel-XPS24.localdomain (host-87-17-253-173.retail.telecomitalia.it. [87.17.253.173])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4bb85399e2esm253651735e9.7.2026.11.21.13.59.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Nov 2026 13:59:22 -0800 (PST)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
-Message-ID: <awIOXP337u_nHqnN@shikoro>
-References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
- <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
- <awATU_lyjPBxThwq@shikoro>
- <awGZ-nCCbCNEuyr7@maple.netwinder.org>
+	linux-clk@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v8 0/2] clk: en7523: full clk_hw + set_rate for en7581
+Date: Sat, 21 Nov 2026 22:59:14 +0100
+Message-ID: <20261121215918.183705-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.55.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -87,43 +97,52 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pTXDnQ8DG42W+K2e"
-Content-Disposition: inline
-In-Reply-To: <awGZ-nCCbCNEuyr7@maple.netwinder.org>
+Content-Transfer-Encoding: 8bit
 
---pTXDnQ8DG42W+K2e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This simple patch convert the en7523 clk for EN7581
+to full clk and adds the .set_rate OPs.
 
+Needed mostly to configure MDC clk rate.
 
-> The reset duration could vary for each reset ID, since they refer to
-> different hardware. There's probably no "optimum" value here.
+This will be also implemented by AN7583 since they share the
+same exact implementation.
 
-Figures 7.3. and 7.4. say "5us delay is recommended" when changing
-XXX.RSTN bits, at least for the NoC parts. Yes, we can agree to trust
-the driver authors to get it right, but we could also decide to make it
-hard to get wrong. Bigger delays can still be open-coded if needed.
+Changes v8:
+- Handle corner case with div by zero in en7581_find_best_rate
 
+Changes v7:
+- Address some formal improvement from Brain
+- Back again to register clock returning error
+- Actually round rate on determine rate
 
---pTXDnQ8DG42W+K2e
-Content-Type: application/pgp-signature; name=signature.asc
+Changes v6:
+- Rework to use div_table entirely
+- Switch determine_rate to calculate best rate
 
------BEGIN PGP SIGNATURE-----
+Changes v5:
+- Handle requesting 0 rate
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsCDlwACgkQFA3kzBSg
-KbbM8hAArBvvQ3J6Gl2ZjLmVjeIL3UFqSTbiCDK7dNBn73kMdODTOv6XgDwwQCJ0
-+RQVzZUoF483LdiGroT52MAKjlo1oWzk3gdMmtMt7FtGeZyFbC+E8jykCJNKM8tW
-TlPcVmrqpF94fiaGWpaa35ehTON2ezntNWShpvM/N5a467PfztHUKOEMyx7ERO/D
-q8Zn//i6qbQ/bci+hmagIMmDXFBiHV6akmDzttSbf4wZdH2u1yroItrahB3wTblE
-PL6B5BA4GjBL64FLKr8XW4NVDhxQmAVDoZdMlhUWjPS5vhqCPfS6NNuTLQUzUfWy
-E/BWwxn1CWMTxV+HhO4AXFVFrys9T42Z08ICAFOHjOleoLZplVkfMN+zIh3h7wBR
-o7iZb25vxWL2hu8UgGMc2sNo8OwT0PATXlCenrBuR/uqhSIsfhRCC/nF02/ZI47v
-ahSvFkWSufuVhwIhbUmk8U5Exgzj+Mg9c4TjhrRTK6MCDa4fpdCvNnpl1U72mJHR
-Xq3jgLhM+4bodCBDJQHXPVNZwkMbyKlTf+hPpav6okETuNgQ86XE+CNYNywhmnzJ
-Mlo12B/mYG5JwpKPGcR1smZkcwNsrp/A+I1asgC7fhSDs7eD5HXNlLBN92yrCTc4
-3LnPqGr6KuIzZPaT+I3FXAJ7Zoy5D41UpNpmpYtcFmsR2WAy6ys=
-=XIqi
------END PGP SIGNATURE-----
+Changes v4:
+- Fix regression where base_bits is 0
+- Handle divider_get_val returning -EINVAL
 
---pTXDnQ8DG42W+K2e--
+Changes v3:
+- Rework to clock divisor API
+- Return error instead of -EINVAL
+- Use dev_err where possible
+- Use devm_kzalloc_obj
+- Revert to not fail on clk registration failure
+
+Changes v2:
+- Fix recalc_rate return value on error
+
+Christian Marangi (2):
+  clk: en7523: convert to full clk_hw implementation for en7581
+  clk: en7523: add support for .set_rate for en7581
+
+ drivers/clk/clk-en7523.c | 444 +++++++++++++++++++++++++++++++++------
+ 1 file changed, 381 insertions(+), 63 deletions(-)
+
+-- 
+2.55.0
+
