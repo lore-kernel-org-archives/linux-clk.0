@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795248083;
-	b=oQOpFFvM6JwTN1KMkimltOidvhzoN+04hhT0Ky8VXcmr1N00ZrFGm5eTTmXwbJMLT+VY
-	 dY50Z5OGXg5fcqELQyuUJEKnykWBcl6xpy79qJsb5bkXsB/xB83BZ2ljKTiQ//C1E6pZ/
-	 +cf2JEVc4QgU+O4KWGZCpgnaZb4WgLVPjImuF5QnH75rq2F7Zi7BOumKMel8mQ3qU8Kzq
-	 t6hdz+ISIapMkE+IGM3/qR6ua9YQVVVF/tvXzx8y6Ln2zpZNfFRQHSRz2C2wsgDjIBAGc
-	 Q/nvf83xhJsOfI2J+CfzqtpQvzPt4HDeEk9kH8cZ7fiSSFGebp9DBD8uyO/9Ke7dQFA==
+	t=1795248394;
+	b=dEV7RynCzcWgMSBhZrQCYxzvZWLrRF4q6WCbTdwCCZGEcWq8W9/x2iFEO61ZHNMsXtYC
+	 QvDsujmsMRVovpl6ttCZByVly4GTKYgayTo+rLHu90U6JID8EjE0imw+vZBzQlXVJQ3js
+	 g7ZtxtYyv3IphGBBqXuhcEyX9aW1lhD5D+Qr29BfTwlag5cwZ3dzXvsUKWs4z2c0zDyGq
+	 pFT78A/2fQU862LRahcGdYgu10J2yTfecCQe42chjTMg/SF2gApzmxfwnFUFEFJkKl8NA
+	 aetF4PmbRzMg9lxGv6GUsMMTQYNJSmH12NSjl1qLMMC5TF0YfRv8O/ads1cpzaMUFrg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795248083;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795248394;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=/nBFQZEJTSgaKpZnb3TrHVbaCxmksYr/v0Om85PtszQ=;
-	b=w67x8+GI87QrRmZU/3rYZtVpv6oEIBtBAKAMi40yjM//6mJfBGJK9GoSD9ydRp7DtGE/
-	 xBhzB01W4l9fIC0awbJqDGwOzQXzj8tg6A/5tOdnBA0Uvpgi9aPd4452sjOH80cZvEK/4
-	 Ifeo7mrYf44V6EUlpMQyvaAjSxKNieaMh47mxtrCYZ0YQUhVkexRXkFxy8bs/8wn3kglS
-	 safIduwhanStG8lWAtYiuXVz4o7oLDtrLDIdHjlOIfviMAzPfYZj8Xg7shqhZ4KylmP5D
-	 2ZitFw/15PxkQTxP5jFpa3SlInQxcs8Nw43X8+bv/Kqd0194aRb1UteeyXvNv/XCDJQ==
+	bh=jgE/AwLMjN9DPCZRytHYmoB968E//35pNXj9glDKVeE=;
+	b=Ok/v7iY5aenw8o6aAzxCDb91TV7WbVm8RtXJbjawy17EDkUdYZVFIPWpqihaieigy+OU
+	 LSD1EVvWn9H2Gj6slflVRct6UxiYF6S3V0QduWPPkVPUMQyBcUubosZbosg0TlkonDKBc
+	 da2x7WqPR0Ri02ZvTtaK0AX12XoUmDaL839bNUj/AEgGo9il//r/tTbAfhe1JGswb3Ho0
+	 VhlDDBSaEz3yrMVNVRKnIQugn/8VtQMtlehLcReu2F7fKfrDdoh9pdBS3m3a/MdrjJk16
+	 dl2YHe9CS9SLpluXYEOEPsJKzU2L/cfh4N32oIg+qzATsZFa6LbimUTwUJakMfZe/Ig==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=doU5WfRu;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KYticIY2;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9EE606A320;
-	Sat, 21 Nov 2026 08:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBC7606A320;
+	Sat, 21 Nov 2026 08:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=doU5WfRu
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9566B1F000C4;
-	Sat, 21 Nov 2026 08:01:22 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KYticIY2
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A27621F000C4;
+	Sat, 21 Nov 2026 08:06:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795248083;
-	bh=/nBFQZEJTSgaKpZnb3TrHVbaCxmksYr/v0Om85PtszQ=;
+	s=k20260515; t=1795248394;
+	bh=jgE/AwLMjN9DPCZRytHYmoB968E//35pNXj9glDKVeE=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=doU5WfRuRItUWINkETRxe211mtgU7E7hyrpX4ipDCYohHZ6Iu7F4qxin2F2AsPJBL
-	 98c34PQmK1nYOFqLHTmXAp/6aWxnpKsiTyxq0Ayp64Rb/Hdep96D/+wnCkCUnPlSZZ
-	 2UWFb7XJ/P3Sb3Lv3HvEDDJln0DfJ1134NNbXUOgdEkOfPXMEjlT+r27hoYq02e1YA
-	 wx5+8FMQEaE4Q/FY5K0vYop2d3BKQ//ah35vbtRP0REX+jr+qTSRwMZ4bD/t2UFRGt
-	 ACg2ZfKh8lfypRt//z3D1+WY4rd8DYnvPUBdEBOPSl5UA8sIFWGwLuQJgdb6I7Gy0Z
-	 WsghsAfJHwk1w==
-Message-ID: <sashiko-outbox-226811@kernel.org>
+	b=KYticIY22KKsHKl6pA2C8GfgzzWFpNSCO38hPLf8b9Gzr4raAG5DwurfTUdCEVuDd
+	 cV00DIZGzOSBuChVbKVkqG32jtG0uPtoaCOHI41hQD9X3GYcwqk350WDYKdIN6sfGZ
+	 DH1GejuVXx9pljE5Y7eZLYn5JmNXU+l9rLjBn0sfvbUoqH6AQKDugeYRmzA8fa6hGJ
+	 bhgc6as6oKiJ5NsDwlEKCagzAqorFWeNpG77/uzrOL4DVIe0Q0DmUvkKP/UNhHVWop
+	 8U03POeveXhOhEGjjvilV52qdtktPwxPb241PZuKggWJdM+Butp16JF/h85wCE16h4
+	 k8Uvw0vbff6Cg==
+Message-ID: <sashiko-outbox-226819@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 09/17] drm/spacemit: add Saturn DPU hardware backend
+Subject: Re: [PATCH v3 10/17] drm/spacemit: add Saturn DPU KMS pipeline
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Cody Kang" <codykang.hk@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-phy@lists.infradead.org, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, neil.armstrong@linaro.org, olteanv@gmail.com
-In-Reply-To: <20261121-k3-display-v3-9-ec419e8e96b8@gmail.com>
+In-Reply-To: <20261121-k3-display-v3-10-ec419e8e96b8@gmail.com>
 References: <20261121-k3-display-v3-0-ec419e8e96b8@gmail.com>
- <20261121-k3-display-v3-9-ec419e8e96b8@gmail.com>
+ <20261121-k3-display-v3-10-ec419e8e96b8@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 21 Nov 2026 08:01:22 +0000
+Date: Sat, 21 Nov 2026 08:06:33 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,319 +60,302 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 4 potential
+Thank you for your contribution! Sashiko AI review found 6 potential
 issues to consider:
-- [High] drm/spacemit: vfp underflow in saturn_init_tmg() when front
-  porch < 7
-- [High] drm/spacemit: unmasked IRQ dispatch and premature vblank event
-  in ISR
-- [Medium] drm/spacemit: stale underrun IRQ and ur_mask_armed race on
-  CFG_RDY
-- [Medium] drm/spacemit: race on cfg_rdy_timer and INT_CFG_RDY in
-  spacemit_dpu_run()
+- [High] drm/spacemit: premature event send in
+  spacemit_crtc_atomic_disable()
+- [High] drm/spacemit: premature event arming in
+  spacemit_crtc_atomic_flush() and ISR
+- [High] drm/spacemit: stale INT_VSYNC not cleared in
+  spacemit_crtc_enable_vblank()
+- [Medium] drm/spacemit: unbind before poll_fini in
+  spacemit_drm_master_bind()
+- [Medium] drm/spacemit: composer dst_w and dst_h left at 0 when no
+  plane is visible
+- [Medium] drm/spacemit: vblank not reset due to drm_vblank_init()
+  ordering
 --
 
-commit feb91f776850387e06b93738a2a9ed3971674069
+commit c4c8906d170c5bfb4e5c852ca468ddf4805b4d47
 Author: Cody Kang <codykang@vsit.ai>
 
-drm/spacemit: add Saturn DPU hardware backend
+drm/spacemit: add Saturn DPU KMS pipeline
 
-This commit adds the Saturn DPU hardware backend, covering clock setup,
-scene control and timing generator programming, RDMA channel and composer
-configuration, line-buffer sizing, and interrupt handling.
+This commit adds the atomic KMS CRTC and primary plane implementation,
+runtime PM hooks, and component master bind/unbind logic for the Saturn
+DPU.
 
-> diff --git a/drivers/gpu/drm/spacemit/dpu/dpu_saturn.c b/drivers/gpu/drm/=
-spacemit/dpu/dpu_saturn.c
+> diff --git a/drivers/gpu/drm/spacemit/spacemit_crtc.c b/drivers/gpu/drm/s=
+pacemit/spacemit_crtc.c
 > new file mode 100644
-> index 0000000000000..704e64fb9ec7e
+> index 0000000000000..c1257444dd150
 > --- /dev/null
-> +++ b/drivers/gpu/drm/spacemit/dpu/dpu_saturn.c
-> @@ -0,0 +1,353 @@
+> +++ b/drivers/gpu/drm/spacemit/spacemit_crtc.c
+> @@ -0,0 +1,589 @@
 
 [ ... ]
 
-> +/* Complete a commit whose lists the engine will not confirm any more. */
-> +void spacemit_dpu_complete_event(struct spacemit_crtc *a_crtc)
+> +static void spacemit_crtc_atomic_disable(struct drm_crtc *crtc,
+> +					 struct drm_atomic_commit *state)
 > +{
-> +	struct drm_crtc *crtc =3D &a_crtc->crtc;
-> +	struct drm_pending_vblank_event *event;
-> +	unsigned long flags;
+> +	struct drm_crtc_state *crtc_state =3D
+> +			drm_atomic_get_new_crtc_state(state, crtc);
+> +	struct spacemit_crtc *a_crtc =3D to_spacemit_crtc(crtc);
+> +	struct drm_device *drm =3D a_crtc->crtc.dev;
+> +	struct spacemit_drm_private *priv =3D drm->dev_private;
+> +	int idx;
 > +
-> +	spin_lock_irqsave(&crtc->dev->event_lock, flags);
-> +	event =3D a_crtc->event;
-> +	a_crtc->event =3D NULL;
-> +	if (event)
-> +		drm_crtc_send_vblank_event(crtc, event);
-> +	spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
+> +	if (drm_dev_enter(drm, &idx)) {
+> +		spacemit_dpu_uninit(a_crtc);
+> +		drm_dev_exit(idx);
+> +	}
 > +
-> +	if (event)
-> +		drm_crtc_vblank_put(crtc);
-> +}
+> +	drm_crtc_vblank_off(&a_crtc->crtc);
 > +
-> +void spacemit_cfg_rdy_timer_handler(struct timer_list *t)
-> +{
-> +	struct spacemit_crtc *a_crtc =3D timer_container_of(a_crtc, t,
-> +							  cfg_rdy_timer);
+> +	/* A commit may still be waiting for CFG_RDY: stop its watchdog. */
+> +	timer_delete_sync(&a_crtc->cfg_rdy_timer);
 > +
-> +	drm_err_ratelimited(a_crtc->crtc.dev, "CFG_RDY handshake timeout\n");
-> +	/* A CFG_RDY that still comes belongs to no commit any more. */
-> +	saturn_hee_enable_irq(a_crtc, INT_CFG_RDY, false);
+> +	pm_runtime_put_sync(priv->dev);
+> +
+> +	/* No further vblank will come; complete the disable event here. */
 > +	spacemit_dpu_complete_event(a_crtc);
-> +}
-
-[ ... ]
-
-> +/* Returns false when none of the pending status bits was this CRTC's. */
-> +bool spacemit_dpu_online_isr(struct spacemit_crtc *a_crtc)
-> +{
-> +	u32 irq_raw, irq_bit, irq_ur_bit, handled;
-> +	struct spacemit_drm_private *priv =3D a_crtc->crtc.dev->dev_private;
-> +	struct spacemit_hw_device *hwdev =3D priv->hwdev;
-> +
-> +	irq_raw =3D saturn_hee_get_int_sts(hwdev);
-> +	irq_bit =3D saturn_hee_get_irq_bit(INT_UNDERRUN);
-> +	irq_ur_bit =3D irq_raw & irq_bit;
-> +	handled =3D irq_ur_bit;
-> +	if (irq_ur_bit && !a_crtc->ur_reported) {
-> +		saturn_hee_clr_int_sts(a_crtc, irq_ur_bit);
-> +		drm_err_ratelimited(a_crtc->crtc.dev, "underrun\n");
-> +		a_crtc->ur_reported =3D true;
+> +	spin_lock_irq(&drm->event_lock);
+> +	if (crtc_state->event) {
+> +		drm_crtc_send_vblank_event(crtc, crtc_state->event);
+> +		crtc_state->event =3D NULL;
 > +	}
-> +	irq_bit =3D saturn_hee_get_irq_bit(INT_CFG_RDY);
-> +	if (irq_raw & irq_bit) {
-> +		saturn_hee_clr_int_sts(a_crtc, irq_bit);
-> +		timer_delete(&a_crtc->cfg_rdy_timer);
-> +		a_crtc->ur_reported =3D false;
-> +		saturn_hee_enable_irq(a_crtc, INT_CFG_RDY, false);
-> +		handled |=3D irq_bit;
-> +
-> +		/* The lists are taken: the next vblank completes the commit. */
-> +		spin_lock(&a_crtc->crtc.dev->event_lock);
-> +		if (a_crtc->event) {
-> +			drm_crtc_arm_vblank_event(&a_crtc->crtc, a_crtc->event);
-> +			a_crtc->event =3D NULL;
-> +		}
-> +		spin_unlock(&a_crtc->crtc.dev->event_lock);
-> +	}
-> +	irq_bit =3D saturn_hee_get_irq_bit(INT_VSYNC);
-> +	if (irq_raw & irq_bit) {
-> +		saturn_hee_clr_int_sts(a_crtc, irq_bit);
-> +		drm_crtc_handle_vblank(&a_crtc->crtc);
-> +		handled |=3D irq_bit;
-> +	}
-> +	irq_bit =3D saturn_hee_get_irq_bit(INT_REST) | irq_ur_bit;
-> +	if (irq_raw & irq_bit) {
-> +		saturn_hee_clr_int_sts(a_crtc, irq_bit);
-> +		handled |=3D irq_raw & irq_bit;
-> +	}
-> +
-> +	return handled;
+> +	spin_unlock_irq(&drm->event_lock);
 > +}
 
 [Severity: High]
-Can spacemit_dpu_online_isr() complete a commit's vblank event a frame
-early when INT_CFG_RDY and INT_VSYNC are both set in irq_raw?
+Does sending crtc_state->event without checking !crtc_state->active
+complete the vblank event prematurely during an active-to-active modeset?
 
-As noted in saturn_hee_irq_enable() and spacemit_dpu_run(),
-DPU_ONLINE_IRQ_STS latches status bits even while their mask bits in
-DPU_ONLINE_IRQ_MSK are cleared, yet saturn_hee_enable_irq() unmasks
-interrupts without clearing DPU_ONLINE_IRQ_STS first and
-spacemit_dpu_online_isr() does not mask irq_raw against
-DPU_ONLINE_IRQ_MSK.  When INT_CFG_RDY fires while INT_VSYNC is also set
-(either from a frame boundary or latched while vblank was masked), the
-INT_CFG_RDY branch calls drm_crtc_arm_vblank_event() and the following
-INT_VSYNC branch immediately calls drm_crtc_handle_vblank() in the same
-ISR invocation.  That delivers the flip event before the next vblank and
-unblocks drm_atomic_helper_wait_for_flip_done() early, allowing the next
-commit to overwrite the active command list slot.
-
-> +
-> +void spacemit_dpu_run(struct drm_crtc *crtc, struct drm_atomic_commit *s=
-tate)
-> +{
-> +	struct spacemit_crtc *a_crtc =3D to_spacemit_crtc(crtc);
-> +	struct spacemit_drm_private *priv =3D a_crtc->crtc.dev->dev_private;
-> +	struct spacemit_hw_device *hwdev =3D priv->hwdev;
-> +
-> +	saturn_hee_conf_dpuctrl(crtc, state);
-> +
-> +	/* flush all config register writes before CFG_RDY is raised */
-> +	mb();
-> +
-> +	/* Ack first: one left by a commit that timed out is not this one's. */
-> +	saturn_hee_clr_int_sts(a_crtc, saturn_hee_get_irq_bit(INT_CFG_RDY));
-> +	saturn_hee_enable_irq(a_crtc, INT_CFG_RDY, true);
-> +
-> +	mod_timer(&a_crtc->cfg_rdy_timer,
-> +		  jiffies + msecs_to_jiffies(SATURN_CFG_RDY_TIMEOUT_MS));
-> +	saturn_hee_cfg_ready(a_crtc, hwdev);
-> +
-> +	if (unlikely(a_crtc->is_1st_f)) {
-> +		drm_dbg(a_crtc->crtc.dev, "DPU start\n");
-> +		a_crtc->is_1st_f =3D false;
-> +		saturn_hee_sw_start(a_crtc, hwdev);
-> +	}
-> +}
-
-[Severity: Medium]
-Can spacemit_cfg_rdy_timer_handler() race with spacemit_dpu_online_isr()
-and spacemit_dpu_run() to complete the next commit's vblank event early or
-leave INT_CFG_RDY masked?
-
-CPU0 (<softirq>)                  CPU1
-spacemit_cfg_rdy_timer_handler()
-  drm_err_ratelimited(...)
-                                  <hardirq>
-                                  spacemit_dpu_online_isr()
-                                    timer_delete(&a_crtc->cfg_rdy_timer)
-                                    drm_crtc_arm_vblank_event(...)
-                                    drm_crtc_handle_vblank(...)
-                                  spacemit_crtc_atomic_flush()
-                                    a_crtc->event =3D new_event
-                                    spacemit_dpu_run()
-                                      saturn_hee_enable_irq(..., true)
-  saturn_hee_enable_irq(..., false)
-  spacemit_dpu_complete_event()
-    drm_crtc_send_vblank_event()  <-- completes new commit early
-
-timer_delete() in spacemit_dpu_online_isr() does not wait for an in-flight
-spacemit_cfg_rdy_timer_handler(), so the timer callback can mask the next
-commit's INT_CFG_RDY and complete its a_crtc->event before the hardware
-consumes its command lists.
-
-In addition, spacemit_dpu_run() unmasks INT_CFG_RDY before mod_timer() and
-saturn_hee_cfg_ready().  If a late CFG_RDY from a previously timed-out
-commit arrives right after saturn_hee_enable_irq(a_crtc, INT_CFG_RDY,
-true), spacemit_dpu_online_isr() runs timer_delete() before the timer is
-armed, masks INT_CFG_RDY, and arms a_crtc->event before both_cfg_rdy is
-written for the new commit.
-
-> diff --git a/drivers/gpu/drm/spacemit/dpu/dpu_saturn_hee.c b/drivers/gpu/=
-drm/spacemit/dpu/dpu_saturn_hee.c
-> new file mode 100644
-> index 0000000000000..1a194fe7cc7ba
-> --- /dev/null
-> +++ b/drivers/gpu/drm/spacemit/dpu/dpu_saturn_hee.c
-> @@ -0,0 +1,670 @@
+When changing modes on an active CRTC, drm_atomic_helper_commit_modeset_dis=
+ables()
+calls spacemit_crtc_atomic_disable() before spacemit_crtc_atomic_enable()
+and spacemit_crtc_atomic_flush() run.  Consuming crtc_state->event here
+delivers the event and signals commit->flip_done before the new mode is
+programmed, allowing a subsequent non-blocking commit to overwrite the
+2-slot command-list ring before the engine takes the modeset lists.
 
 [ ... ]
 
-> +void saturn_hee_enable_irq(struct spacemit_crtc *a_crtc,
-> +			   enum spacemit_dpu_irq irq_id, bool enable)
+> +static void spacemit_crtc_atomic_flush(struct drm_crtc *crtc,
+> +				       struct drm_atomic_commit *state)
 > +{
-> +	saturn_enable_irq_mask(a_crtc, enable,
-> +			       DPU_INT_BASE_ADDR + DPU_ONLINE_IRQ_MSK,
-> +			       saturn_hee_get_irq_bit(irq_id));
-> +}
+> +	struct drm_crtc_state *crtc_state =3D
+> +			drm_atomic_get_new_crtc_state(state, crtc);
+> +	struct spacemit_crtc *a_crtc =3D to_spacemit_crtc(crtc);
+> +	struct spacemit_drm_private *priv =3D crtc->dev->dev_private;
+> +	int idx;
 > +
-> +void saturn_hee_cfg_ready(struct spacemit_crtc *a_crtc,
-> +			  struct spacemit_hw_device *hwdev)
-> +{
-> +	u32 base =3D DPU_SCENE_CTL_ADDR(COMPOSER1);
+> +	/*
+> +	 * The event releases the next commit, which rewrites the other
+> +	 * command list and points the engine at it. Hold the event until
+> +	 * CFG_RDY says the engine has taken this commit's lists; the
+> +	 * interrupt then arms it for the following vblank.
+> +	 */
+> +	spin_lock_irq(&crtc->dev->event_lock);
+> +	if (crtc_state->event) {
+> +		if (drm_crtc_vblank_get(crtc) =3D=3D 0)
+> +			a_crtc->event =3D crtc_state->event;
+> +		else
+> +			drm_crtc_send_vblank_event(crtc, crtc_state->event);
+> +		crtc_state->event =3D NULL;
+> +	}
+> +	spin_unlock_irq(&crtc->dev->event_lock);
 > +
-> +	saturn_hee_enable_irq(a_crtc, INT_UNDERRUN, true);
-> +	a_crtc->ur_mask_armed =3D true;
-> +	dpu_write(hwdev, DPU_CTL_REG, base, both_cfg_rdy, 1);
+> +	/* clocks_on is false here only after a failed power-up. */
+> +	if (priv->clocks_on && drm_dev_enter(crtc->dev, &idx)) {
+> +		spacemit_dpu_run(crtc, state);
+> +		drm_dev_exit(idx);
+> +	} else {
+> +		spacemit_dpu_complete_event(a_crtc);
+> +	}
 > +}
 
-[Severity: Medium]
-Does enabling INT_UNDERRUN in saturn_hee_cfg_ready() before setting
-a_crtc->ur_mask_armed and without clearing DPU_ONLINE_IRQ_STS race with
-spacemit_dpu_online_isr()?
+[Severity: High]
+Can a_crtc->event be armed and delivered before the hardware takes the new
+command lists?
 
-saturn_hee_cfg_ready()
-  saturn_hee_enable_irq(a_crtc, INT_UNDERRUN, true)
+spacemit_crtc_atomic_flush()
+  spin_lock_irq(&crtc->dev->event_lock)
+  drm_crtc_vblank_get(crtc)
+  a_crtc->event =3D crtc_state->event
+  spin_unlock_irq(&crtc->dev->event_lock)
   <hardirq>
     spacemit_dpu_online_isr()
-      saturn_hee_clr_int_sts(a_crtc, ...)
-        if (... && a_crtc->ur_mask_armed)  <-- still false; stays unmasked
-  a_crtc->ur_mask_armed =3D true
+      if (irq_raw & INT_CFG_RDY)
+        drm_crtc_arm_vblank_event(..., a_crtc->event)  <-- armed early
+      if (irq_raw & INT_VSYNC)
+        drm_crtc_handle_vblank(...)                    <-- sent early
+  spacemit_dpu_run()
+    saturn_hee_conf_dpuctrl()
+    saturn_hee_clr_int_sts(..., INT_CFG_RDY)
+    saturn_hee_cfg_ready()
 
-After an underrun, INT_UNDERRUN is masked for the rest of the frame while
-the hardware continues latching DPU_INT_FRM_TIMING_UNFLOW in
-DPU_ONLINE_IRQ_STS.  When the next commit calls saturn_hee_cfg_ready(),
-unmasking INT_UNDERRUN without clearing DPU_ONLINE_IRQ_STS immediately
-triggers spacemit_dpu_online_isr().  If the interrupt arrives before
-a_crtc->ur_mask_armed =3D true (which also happens in
-saturn_hee_irq_enable()), saturn_hee_clr_int_sts() sees ur_mask_armed =3D=3D
-false and leaves INT_UNDERRUN unmasked; if it arrives after
-ur_mask_armed =3D true but before INT_CFG_RDY clears ur_reported, the bottom
-saturn_hee_clr_int_sts() call in spacemit_dpu_online_isr() immediately
-masks INT_UNDERRUN again before the new commit takes effect.
+spacemit_dpu_online_isr() inspects the unmasked DPU_ONLINE_IRQ_STS
+register.  If an enabled interrupt (such as INT_VSYNC) fires after
+event_lock is dropped and before spacemit_dpu_run() clears a leftover
+INT_CFG_RDY status bit and raises both_cfg_rdy, the ISR sees INT_CFG_RDY
+and arms a_crtc->event before the CRTC command list is even submitted.
+
+In addition, because spacemit_dpu_online_isr() handles INT_CFG_RDY before
+INT_VSYNC and there is no get_vblank_counter hook, when both bits are set
+in irq_raw, drm_crtc_arm_vblank_event() arms the event for vblank->count + 1
+and the immediately following drm_crtc_handle_vblank() increments
+vblank->count and delivers it in the same interrupt instead of at the next
+vblank, releasing flip_done while the command list is still in use.
 
 > +
-> +void saturn_hee_sw_start(struct spacemit_crtc *a_crtc,
-> +			 struct spacemit_hw_device *hwdev)
+> +static int spacemit_crtc_enable_vblank(struct drm_crtc *crtc)
 > +{
-> +	u32 base;
+> +	saturn_hee_enable_irq(to_spacemit_crtc(crtc), INT_VSYNC, true);
 > +
-> +	base =3D DPU_SCENE_CTL_ADDR(COMPOSER1);
-> +	dpu_write_reg(hwdev, DPU_CTL_REG, base, sw_start, 1);
+> +	return 0;
 > +}
-> +
-> +static void saturn_init_tmg(struct spacemit_crtc *a_crtc,
-> +			    const struct drm_display_mode *mode)
-> +{
-> +	u32 base =3D TMG0_BASE_ADDR;
-> +	struct spacemit_drm_private *priv =3D a_crtc->crtc.dev->dev_private;
-> +	struct spacemit_hw_device *hwdev =3D priv->hwdev;
-> +	u16 vfp, vbp, vsync, hfp, hbp, hsync;
-> +	void __iomem *tmg_addr;
-> +	u32 value;
-> +
-> +	tmg_addr =3D hwdev->base + TMG0_BASE_ADDR;
-> +
-> +	hsync =3D mode->hsync_end - mode->hsync_start;
-> +	hbp =3D mode->htotal - mode->hsync_end;
-> +	hfp =3D mode->hsync_start - mode->hdisplay;
-> +	vsync =3D mode->vsync_end - mode->vsync_start;
-> +	vbp =3D mode->vtotal - mode->vsync_end;
-> +	vfp =3D mode->vsync_start - mode->vdisplay;
-> +	drm_dbg(a_crtc->crtc.dev, "timing " DRM_MODE_FMT "\n", DRM_MODE_ARG(mod=
-e));
-> +
-> +	dpu_write(hwdev, TMG_REG, base, disp_ready_man_en, 0);
-> +	dpu_write(hwdev, TMG_REG, base, background_r, 0);
-> +	dpu_write(hwdev, TMG_REG, base, background_g, 0x0);
-> +	dpu_write(hwdev, TMG_REG, base, background_b, 0xff);
-> +	dpu_write(hwdev, TMG_REG, base, eof_1st_ln_dly_num, vfp - 7);
-> +	dpu_write(hwdev, TMG_REG, base, eof_2nd_ln_dly_num, vfp - 6);
-> +	dpu_write(hwdev, TMG_REG, base, split_en, 0);
-> +	dpu_write(hwdev, TMG_REG, base, cmd_screen, 0);
-> +	dpu_write(hwdev, TMG_REG, base, cmd_wait_en, 0);
-> +	dpu_write(hwdev, TMG_REG, base, cmd_wait_te, 0);
-> +	dpu_write(hwdev, TMG_REG, base, sof_pre_ln_num, 0);
-> +	dpu_write(hwdev, TMG_REG, base, hfp, hfp);
-> +	dpu_write(hwdev, TMG_REG, base, hbp, hbp);
-> +	dpu_write(hwdev, TMG_REG, base, vfp, vfp);
-> +	dpu_write(hwdev, TMG_REG, base, vbp, vbp);
-> +	dpu_write(hwdev, TMG_REG, base, hsync_width, hsync);
-> +	dpu_write(hwdev, TMG_REG, base, vsync_width, vsync);
-> +	dpu_write(hwdev, TMG_REG, base, hsp, 1);
-> +	dpu_write(hwdev, TMG_REG, base, vsp, 1);
-> +	dpu_write(hwdev, TMG_REG, base, h_active, mode->hdisplay);
-> +	dpu_write(hwdev, TMG_REG, base, v_active, mode->vdisplay);
-> +	dpu_write(hwdev, TMG_REG, base, fm_timing_en, 1);
-> +	/* The pipeline always hands RGB888 to the DP/eDP encoder. */
-> +	dpu_write(hwdev, TMG_REG, base, user, OUTFMT_RGB888);
-> +
-> +	value =3D readl(tmg_addr + 4 * dpu_field_word(TMG_REG, vfp));
-> +	value &=3D ~dpu_field_mask(TMG_REG, vfp);
-> +	value |=3D vfp;
-> +	writel(value, tmg_addr + 4 * dpu_field_word(TMG_REG, vfp));
 
 [Severity: High]
-Does vfp - 7 and vfp - 6 underflow when the display mode's vertical front
-porch is smaller than 7 lines?
+Does unmasking INT_VSYNC without clearing DPU_ONLINE_IRQ_STS first fire a
+spurious mid-frame vblank interrupt?
 
-Standard modes such as 1920x1080@60Hz (vdisplay =3D 1080, vsync_start =3D
-1084, so vfp =3D 4) have vfp < 7, which wraps the 16-bit eof_1st_ln_dly_num
-and eof_2nd_ln_dly_num fields to 0xfff9..0xffff, exceeding vtotal so the
-EOF line-delay counters cannot fire within the frame.  Also, the raw
-readl()/writel() sequence at the end of saturn_init_tmg() redundantly
-rewrites the same vfp field that dpu_write(hwdev, TMG_REG, base, vfp, vfp)
-just programmed above.
+As noted in saturn_hee_irq_enable(), DPU_ONLINE_IRQ_STS latches status
+bits while masked and fires as soon as the mask opens, but
+saturn_hee_irq_enable() only clears INT_UNDERRUN | INT_CFG_RDY:
+
+drivers/gpu/drm/spacemit/dpu/dpu_saturn_hee.c:saturn_hee_irq_enable() {
+	mask =3D saturn_hee_get_irq_bit(INT_UNDERRUN) |
+	       saturn_hee_get_irq_bit(INT_CFG_RDY);
+	if (enable) {
+		...
+		regmap_write(priv->hwdev->regmap,
+			     DPU_INT_BASE_ADDR + DPU_ONLINE_IRQ_STS, mask);
+	}
+}
+
+Whenever vblank has been disabled while the CRTC is running, the next
+frame latches INT_VSYNC in DPU_ONLINE_IRQ_STS.  Re-enabling vblank then
+immediately raises an interrupt mid-frame, incrementing the software
+vblank counter with a mid-frame timestamp or completing an event armed by
+INT_CFG_RDY in the same ISR call before the actual vblank.
+
+[ ... ]
+
+> +	drm_mode_config_reset(drm);
+> +
+> +	ret =3D drm_vblank_init(drm, drm->mode_config.num_crtc);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "failed to initialize vblank\n");
+> +		goto err_unbind_all;
+> +	}
+> +
+> +	drmm_kms_helper_poll_init(drm);
+> +	drm_helper_hpd_irq_event(drm);
+> +
+> +	enable_irq(priv->irq_online);
+> +
+> +	ret =3D drm_dev_register(drm, 0);
+> +	if (ret < 0)
+> +		goto err_disable_irq;
+> +	drm_client_setup(drm, NULL);
+> +
+> +	return 0;
+> +
+> +err_disable_irq:
+> +	disable_irq(priv->irq_online);
+> +
+> +err_unbind_all:
+> +	component_unbind_all(dev, drm);
+> +err_dc:
+> +	/*
+> +	 * .shutdown tests priv->ddev; never leave it on a half-initialised
+> +	 * device.
+> +	 */
+> +	priv->ddev =3D NULL;
+> +	priv->a_crtc =3D NULL;
+> +	drm_dev_put(drm);
+> +	return ret;
+> +}
+
+[Severity: Medium]
+Does calling drm_mode_config_reset() before drm_vblank_init() leave
+vblank->inmodeset unset while the CRTC is initially disabled?
+
+drm_mode_config_crtc_create_state() only calls drm_crtc_vblank_reset()
+when drm_dev_has_vblank() is true, which requires dev->num_crtcs to have
+been set by drm_vblank_init().  With the current order, drm_vblank_get()
+on the disabled CRTC succeeds instead of returning -EINVAL and enables
+vblank while the DPU is powered off.  Calling drm_vblank_init() before
+drm_mode_config_reset() avoids this.
+
+[Severity: Medium]
+If drm_dev_register() fails, does err_disable_irq unbind the components
+while output polling is still active?
+
+drmm_kms_helper_poll_init() and drm_helper_hpd_irq_event() start output
+polling before drm_dev_register(), but the error path runs
+component_unbind_all() before drm_dev_put() invokes the drmm poll release
+action, unlike spacemit_drm_master_unbind() which calls
+drm_kms_helper_poll_fini() before component_unbind_all().
+
+[ ... ]
+
+> diff --git a/drivers/gpu/drm/spacemit/spacemit_planes.c b/drivers/gpu/drm=
+/spacemit/spacemit_planes.c
+> new file mode 100644
+> index 0000000000000..c49a2e1572771
+> --- /dev/null
+> +++ b/drivers/gpu/drm/spacemit/spacemit_planes.c
+> @@ -0,0 +1,332 @@
+
+[ ... ]
+
+> +static void spacemit_plane_atomic_update(struct drm_plane *plane,
+> +					 struct drm_atomic_commit *state)
+> +{
+> +	struct drm_plane_state *new_state =3D
+> +			drm_atomic_get_new_plane_state(state, plane);
+> +	struct drm_crtc_state *crtc_state =3D
+> +			drm_atomic_get_new_crtc_state(state, new_state->crtc);
+> +	struct spacemit_drm_private *priv =3D plane->dev->dev_private;
+> +	int idx;
+> +
+> +	if (priv->clocks_on && drm_dev_enter(plane->dev, &idx)) {
+> +		/* A plane moved off the screen has no rectangle to program. */
+> +		if (new_state->visible)
+> +			spacemit_plane_program(plane, new_state,
+> +					       &crtc_state->adjusted_mode);
+> +		else
+> +			spacemit_plane_off(plane, new_state->crtc);
+> +		drm_dev_exit(idx);
+> +	}
+> +}
+
+[Severity: Medium]
+When a CRTC is enabled with no visible plane (disabled or clipped
+off-screen), do the composer output dimensions CMPS_X_REG dst_w and dst_h
+remain at 0?
+
+saturn_init_regs() enables CMPS_X_REG (module_enable =3D 1) and
+saturn_hee_conf_dpuctrl() sets POSTPIPE_REG m_inwidth and m_inheight to
+mode->hdisplay and mode->vdisplay, but CMPS_X_REG dst_w and dst_h are only
+written in saturn_hee_plane_update_hw_channel():
+
+drivers/gpu/drm/spacemit/dpu/dpu_saturn_hee.c:saturn_hee_plane_update_hw_ch=
+annel() {
+	...
+	base =3D CMP1_BASE_ADDR;
+	dpu_write(hwdev, CMPS_X_REG, base, dst_w, mode->hdisplay, cl_cmp);
+	dpu_write(hwdev, CMPS_X_REG, base, dst_h, mode->vdisplay, cl_cmp);
+	...
+}
+
+Skipping spacemit_plane_program() when new_state->visible is false leaves
+the composer configured for a 0x0 output feeding a full-mode postpipe and
+timing generator, causing a pipeline dimension mismatch and display
+underrun.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261121-k3-display=
--v3-0-ec419e8e96b8@gmail.com?part=3D9
+-v3-0-ec419e8e96b8@gmail.com?part=3D10
