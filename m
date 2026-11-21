@@ -1,98 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.175
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795285414;
-	b=Our/S9kbtQO3Q2NDTrGi1ljEWykmyHzZ2kfHq7OBXrcCu9t3KtG5LOJ8anX7GuDbNFjt
-	 bGnONrg5PtvGrATXrtgHutrm6SpoYSDQD89YBFD73uqvNruHdrpbIGSOuzzKC5gHXKW7D
-	 +/A+OJUvfAXFBznMyGmUIRRpIlEFmsRkucSfj03dhhI1TgAG6hqNrEwXMcePoq2lcriB7
-	 XketPSOGZsFOF+YVejwpdbvDhyvrbfOndVj0DxUa7dDtf7KoXNA5Dr48yag9v2wtvUVnL
-	 0wdIUkMtAhjUQLX92VWL0Q4Qy9+co/2BVzZIUuPluoV8FYhw2Ae50q47q2she3WzcUg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795285414;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:MIME-Version:References:
-	 In-Reply-To:From:Date:X-Gm-Features:Message-ID:Subject:To:Cc:
-	 Content-Type;
-	bh=Z75xzDza/hooSCAJFqk47whifzAJZg7dX21ijDhOozU=;
-	b=UkWpRamlTkGsmg2ciwSLz26vwAw968hp+ac/1oLMfwRlaTWa8B1AwrOVrgdewhSFNjPl
-	 k8cSaz8f7w9U2szs0r8oVOHp+6lmgWaFkRji+iTYLo+Dm6z7Sc8ZTcoynP1LZ4BbDbkF3
-	 zrQ8bSLbz0c6WFVw8fG7ENGrjmuxNJWOKheF7GqIp6KuLoXITAf9EHgsiWUFiZPlG5dBQ
-	 Re+f2K26sh1mlcoWdzU3/BuB63HMEgHrDxoPGwS6hxUvO4EVK6MD2UkioKnvEYGGmRRj1
-	 Daemey0Ul7kD6/rRYsgzTQHyZoS0YUclIz1Bg4MnKWh+kiAKbkyC2pwyQEc0FF88XHw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Gna8eCKj;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.175
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795296282;
+	b=B73jZOwRycs24P9NGhhJ+Rm2BdXUFy3WllYnh6wCsk+xQLlIGNFxF6UcyQfiv8VgJ8Wi
+	 CPgEmrC+dOmL8ZbRcB429/F0VEkM30GdoSSL1O8KQjoMQRZvWtEEDHEnydGaZnEGJ2xUl
+	 SJCg8Ntr7lGjU07OVp5+Io9VqK0dKNbN/van97r30pR/bMcULkP52zbs0vgNJyaRvbYfY
+	 ReVVh4mMzGvaV0I7HE/evAQ5zusQ2zKAUPXmxvKR2Y9DZINzQ3Ljgr5W78KCFs46etV3d
+	 FeUH4Zc2pRwcG1+LtJh4YSINxd1kQAk0W10XmN2JKUmGpql2GjiaKvBEvtdSfHACUNw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795296282;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=qPv/aRybxiihzTHTiKkFME6FpgXCP+REMbbDc/0fYE8=;
+	b=IRRNeHPsnCt5DeKAhgqmxCEE7bQRwc2zZ1Tc57XZTSz/vcizdT19fbVTDGvEla8aKUOJ
+	 p96gT36VGjyx7UkDdNOEfgS9/8xzsOE7kCGbo0jktBgZUkWAsgekLVA9kVlt23BwQgpIM
+	 7DoXxs436B+HjQ0EVM3eV4KA8fE9XwX5/Tb0ezJQvV8ejIN+EH+F5UyeyjL7wG2ZOOmlq
+	 vuZxsqe1rvTuk795GTDNM9HLp6tMI0S6WM8hCEfZ87Vjl7dV+88XlJlWTMSI3VqyYdFSK
+	 aCTgbYFpPNN5gfX+BK6/nsqeBzDSagCjUXrAUIKQKDTMHZeSxtxiK06gmIvHvvGE5UA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=AJqs8GGY;
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E45C606A320
-	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 18:23:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1E45C606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F212606A333
+	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 21:24:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7F212606A333
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Gna8eCKj
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3acd239776cso16555431fa.0
-        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 10:23:33 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795285412; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Uo4Cf2pFRmdLTy/ir4cx1xcU7TH7xwQs/G0qP772X2QnFnF0ouuDQtRyzOCGnMPi3y
-         JIRBvc00Rq0EY+dF7yEvfoBCxikfNka2jnt404+Nydbf/+reUl24aNHR+wq/lh0IRW+u
-         o74dCJBMIBK3fjKQFuuPnfuMSR+FPB4V+b6zNkdiiJA6mf5n0LCOmhaNjUFMjxCyb7oA
-         uy7YAFU9avJRACYzMICn6+n9jD3xZbOf8E+QC90Ujwhh3olviYcZ0XjPaWJ5TQXhqH/t
-         tBaVE9baie/G6zDPNS0jthBcsjhxhW9RfhbMTZN8mabb8Ia6XvndPQzzKYr10OgfoDlQ
-         iJxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=Z75xzDza/hooSCAJFqk47whifzAJZg7dX21ijDhOozU=;
-        fh=fM4ZI8+hWSv3Fnbj2b8tQ4LUMCJe/yK27MRsZNxqW0A=;
-        b=a93PEgtPdQHv7Xxfa3zQ076aKOzCUnA5CaiDQTGJvfceDD590Pk/6pW27kwoB0h7CY
-         U9yJ8V1flTnbwgu3M2rq9nEY77thAhLZngd3DQ5i874wOSofvHo0sUTxHbCHGjky36jd
-         /SafFwuPBZ4Tvq4VlBSOJy4KgJacFBWAAvFKyWnSWAJAJXP/K4aHXTV8fMsnhePfsCOF
-         OnwvVLjN6PelMoSENTDxFq9uE5IYN8EWzFtEBvmoGmpO4lX6yEOnBm0R+7rcP7iayi1s
-         tuF33AqK1jmnLWHx3WurfR6a86z4asEFJ1deosso30DPRXQDqorhx5fgraiAgYHwFTjX
-         RRnQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795285412; x=1795890212; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Z75xzDza/hooSCAJFqk47whifzAJZg7dX21ijDhOozU=;
-        b=Gna8eCKj4n5Ztoe8pGJ6AHQFClfP8pDbk8gPP5tkIswErA//AQeVc0sV+av3G8VsH5
-         0VKreHXVNyPDCCWr4bUgC/yjw1AhXXhO7ORi2ddeCdbU1KgNb9tby53+wNzQZq0wrnW6
-         SXfKTAudT/9bQtLHL415mqsBtTo9ly0mDc/UBUYDkXXt7jiuAskwtO535wUF6R1mcqX7
-         HojVbacJhSZYLi+Njuupk3hY5UCTEDuojXatBo5yPXDfLRLFYfAAwwp4OdQyaFfgYcVG
-         LJ4ywBOUxynyNAzta+xOSjPBIoZ7PWKREo/hN/hTFezi+1yXPAlp1uPeZy2UTnXDKazu
-         4hBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795285412; x=1795890212;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Z75xzDza/hooSCAJFqk47whifzAJZg7dX21ijDhOozU=;
-        b=TYOEO9jdEnpUApnSrVMOVyAwvPvzAXfUdoybg0K+Jq/34q13WG6UKI544+UzVMMcsq
-         4ric8uC5rPt1Sks169R8kzUWIgpmA2scnAIPfXEQK5OW/dM5aFON7pqPkfHIczGF8xAR
-         RZc+dJWzWsxXVRGzJfh+D8wHQM/A94OiTtC0lKIB1VuKQIEY12mTLGHRmNM+OFW/+DDN
-         dRx89YY3osx2WXTlzOdI/qtLJa4LWAVz5913LLItSggYyPFQFnA8GXK1oMDzqDNO/FWt
-         G2jyB8wNQNZ56eK1gmey+OaUSEYiJri0+k19Bm9BoRM9ecSo/cPxnXjpx1a0OMJRmBf0
-         Xwsw==
-X-Gm-Message-State: APuU4Z+D6sgRdCvXYsIkiNe9OrNISAqsPAvvKUCBEg9IRovtml3c4XIT
-	CO0XnDYFGL2v9ODNRWa5B6G0jAlPFIGQglJWyswEbzN1qdB7GieplGs6PFfVlOsT06P55Mu3IH1
-	90lhF9hqlg3NTwpMq8OGnCF3rqrlySvT6pUToJqU=
-X-Gm-Gg: AZFdTZfpoMD6YzOxp8KoMJC8HuFYYLa/lUYMRn/njAlWqZkoA7qqUOcLKcfh6ZCh4Sh
-	fEfj6GEuFlqmlRkcnRofdMzw3UVYWlbwi6QeOdfOACS4Z7r2Kk8G12c6OdjGpk6idYb1dINra4H
-	bVGisWeLQD/5te0/AXQ6zgQKJDQdzlDsjRle7cCZZSwsyQa+KTYQ99ioWFXzoLTkKrHQtRl9Qne
-	cMERqvh7j/Ehi2mMk+yW97cp3ET3OI878cuvtTwIBYT6tuPPdYW5cGA68ufq0QgPCW8gYG/702B
-	PWk0/3rA+SaMgR/VG2p/eeOq20NXLjLYm7cVxTYMG/uuDpyCJ0ZGHBWl5srvtds9WbZz3F2Ybkq
-	SKPFHXIPjIfh4WPcSLpZZ95h8VOt7HHUX1A==
-X-Received: by 2002:a2e:bd06:0:b0:3ac:e4cd:d824 with SMTP id
- 38308e7fff4ca-3ae7fa9d43bmr17398791fa.25.1795285412132; Sat, 21 Nov 2026
- 10:23:32 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=AJqs8GGY
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=qPv/
+	aRybxiihzTHTiKkFME6FpgXCP+REMbbDc/0fYE8=; b=AJqs8GGYNI1DF6qNJeT9
+	gyjB3dc6oXz4D+Yz/Qu+w02FrCzwj8AHpHK0fH6BeLfjG77NqlYQkpC3PnjCG92A
+	tGtT44cHaEKXQxziL01NLdBOJsvmclbSlpav6UUGWBRwlJmGHoHsgwOhISrn9uEE
+	fIp2eXF8iUGnlgLm56VCvglKYYvAcQx/O4G/w7AmpTw0JdjJV5aHFFZOls9s7VU5
+	diZ730+ilaxa6udyF0BVGbHNDiiEjL8n3yden5w4wI9YvSZAwHDs6DbP3dF2CAzl
+	U1uHwNFnxnbRRDCntrrlEgmN3udg9q6oA39xHetZr2yPK7N1dCq2oo/gToOVOYd2
+	tQ==
+Received: (qmail 1945706 invoked from network); 21 Nov 2026 22:24:28 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Nov 2026 22:24:28 +0100
+X-UD-Smtp-Session: l3s3148p1@betU/M9gntsgAwDpTyYqANgHwk2rnHm5
+Date: Sat, 21 Nov 2026 22:24:27 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Ralph Siemsen <ralph.siemsen@linaro.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, khendry@reliablecontrols.com,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: clock: r9a06g032-sysctrl: Document
+ reset cells
+Message-ID: <awIMBj_7OLrlM5G-@shikoro>
+References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
+ <20261119-rzn1-miic-resets-v1-1-feee2bb28bb4@reliablecontrols.com>
+ <awARmkCuelD_fdX6@shikoro>
+ <5d8530485716d129be2efa0518254e3322cecdb0.camel@pengutronix.de>
+ <awAq7vxcY8CGjhNl@ninjato>
+ <awGV8BU_AfaXQyBv@maple.netwinder.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -102,22 +89,42 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261121163915.86681-1-joshuacov@gmail.com> <sashiko-outbox-227181@kernel.org>
-In-Reply-To: <sashiko-outbox-227181@kernel.org>
-From: "Joshua C." <joshuacov@gmail.com>
-Date: Sat, 21 Nov 2026 18:23:19 +0000
-X-Gm-Features: Aa3M54oMS3zDmX2jTIQjP60yw_5F2PR36ANEnn56lHMZE1_sztKVGnLssNfJp44
-Message-ID: <CAKL7Q7p4C_Lmpa7RE=ERBVRzynNGdvhHMWzsvhe_ZC0v_0s_1A@mail.gmail.com>
-Subject: Re: [PATCH] clk: rp1: allow the clock provider to be probed again
-To: sashiko-reviews@lists.linux.dev
-Cc: linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fv0MbHVxiEYH6cP3"
+Content-Disposition: inline
+In-Reply-To: <awGV8BU_AfaXQyBv@maple.netwinder.org>
 
-> Clearing desc->hw.core and desc->div.hw.core for all descriptors before
-> the registration loop would avoid this.
+--fv0MbHVxiEYH6cP3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks, fixed in v2:
-https://lore.kernel.org/all/20261121181650.143474-1-joshuacov@gmail.com/
 
--- 
---joshua
+> Thinking about it some more, perhaps instead of using 0 as the special case
+> for "no parent", we could set .source to match .index. In other words a
+> clock pointing to itself means "no parent". Worth changing?
+
+What would be the gain? As you said before we can't update the values
+because they are already in DTBs.
+
+
+--fv0MbHVxiEYH6cP3
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsCDAYACgkQFA3kzBSg
+KbaxSQ//cizj5OOLsgYrAxaW1EKGn9YvmafR+RlvEqb8FlFxWBREKwon8e0FF3gu
+2Jpvaf/tOsiK1NhtQ/eTuYRfJ89p1XpJXX0tA+oTBv8eYdCEik3NV7hBMMNAXb7G
+EA/K0pyjN4k+UqvQMWP6h+WodMzFfNvLyu8aVMaNyGfC2Bjii/GKUAfJAUcR6ZTK
+McT0/W4e4kvFRKJQ0Lq1vQjzins0eQhFtTDnGd9hqDakYfbKFYE6TZQ/GuiQdfuf
+1+2wk+shbGWC1D1zk2kzHx+QCYxAZnNnFtF+XPtgorT6XKucDDgeeZ2A0qXpT1+z
+TVL6DMGWPaC78QHXrDuh52k8IgpB9EMAPksX+GcLlHdbSwjxtbGVcg6RoyVQH+dQ
+RQ+QHRgQtuw48k/SdZ6AILxxgUGGM5wWfn/xUWz7HF6kekq91GVIDraIEhpe5M1r
+32mie0F8Ej8YQj5Tpc5MSNrtRRLAKDQFnd95BmRvZeM7dZtHo5ajZWiRq8BMFaix
+VVJk+y6dxOXlZfm6I1rZYRnz0etxZhfYaUh3xth557wkLrXft4r5x1Gyr/G2xA9U
+uh5AhXZO5WMo7H9sv6XX7KnH640ry/gJpkK4G4qcS7KrFMddn2zhFG3pDpwxMdpR
+oCQzd28u2Kelvnez5qwBUf7Y/E48ehv8YgVjkAeHbFCtHVnMbqY=
+=0+NB
+-----END PGP SIGNATURE-----
+
+--fv0MbHVxiEYH6cP3--
