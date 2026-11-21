@@ -1,57 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795296840;
-	b=JN2tu0HugcO7PPEj69v+LNPxgJxJK/EyDkcJP57z28D6+sSw4LgZGSVmDahK7n0DzQik
-	 6jiQ0xq/g/KJEsSZFINnMfXyuUgM7LB5zZTNl9DPCQaIqkY4vOv74HKEtdKkT3D/iQe8/
-	 AdQZ0MGXjOiPifREAJsTnAao3Fw3ebGsqIUu8guiyzsAAFI0ohqRfO1CcerIXusP89Nwi
-	 LgsPt+nQXtRhBIOZO8SvAj4h8Fnbpx5SKrLkrwzmznsl8e7WAwi67PQdxS7wLYW8dcxPV
-	 4+Hp4PUOS0hrgrmBeDp7v/ngvEfMVWQMnhh7vXP9F+MLJIo/tvkLHBmDpRqdsbmSrNw==
+	t=1795296865;
+	b=z86x4SbAk2MOIt0nLNEsVhMIzMdDxv2wN2gnSMBwvOb58awxM5v6MhvxUT94Q6nZksMo
+	 9ngPBLq3WngsUTxLqRsbPQ0/rY/xG84R7P2dS5ca/k7kDKYhDI7vT4tQoGdWTCnOsWHt2
+	 Uqo8mw8EPrsoJPcQxyB24p85uF1v1eVjpMANaT6DhllVJC5VuvMFxq7SR+4YBuwLQ1F2C
+	 4OhvkOtPM8T3eCKoxKhFlCJHRohJAWbrT9IPdxeI0PgQhqvF4rASxJ5aooKuTHfLx71AM
+	 EwlrJGOd135bOsrj+qczk4wgA0qdO/3ccyJivkytk3C9mW1LITV2SgzAPXHreGDit2A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795296840;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=IFHu/2bEteEfsR5EpbnBVG7ybCCpFRsZWn/fSZnLG0Q=;
-	b=T4YY4JXYf1nUDQM4wilO/+muEEXJty4HSULbWn+BtPdPjA2FuaD4aq/O7kRfOBYqhPA5
-	 LTMRvU2qrNbv4+Vf0UPHsQ3d5KVZmciHnZeoJbEmizrVkzCIlx3veXvi9MeToZfdTgP4p
-	 e+/V5sMW81oGbi/rEf7xPjEMETeop45atJVbIZYe55f4hRlEnkyF3JtZJVn7KnQB9KvJo
-	 Hsn+Tljq3Shw4z1e1i+5NfhhjdWSWZyUgfADOwBoRIfewGUx1pwGKKLOWRZAgZJ4kxIeo
-	 UkYYGfpMYXCuRaUH/2IYg806G7GHFqszQ80KAPJb5Tn3/tWwjv3utlpVu5aCo3OwwTQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795296865;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=mUChzLeVR2MtutKX97MdpZQXyx2OvW2YcvAen733fVE=;
+	b=VgtuUxTEQGYvHTTfqB6DlgHtiHv5rhJUYAfiaSce09L/pUf4TU8nkIcVsyIRmYXc//YK
+	 f3Ylcj51bVecXGTwA7E0iGqqLGb7idqIOFA+SvpuFKnH3FGzKNNXWM1nmIcDwK7DCEjq3
+	 wK657cqaTG6rWrZv/P/EnBZwucH3sOmGrwYpWsX/yMkgnwnT35ucWjOz32a1wRNL6qDsE
+	 l8K22NR8nsm83gFwrGZZvsL8bAU1bo+7ul/dWqLQ2g+gp4NJT7QEZsZ0wa+UPDVhDdH72
+	 20orN5KGYs+nASjXQOizpb0RzxUElwb21pPyYozntHtn0719TeSOvoTWmfmmaoRtmqg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QangsuKn;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=d0YsZAnp;
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFB4606A320;
-	Sat, 21 Nov 2026 21:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF02606A320
+	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 21:34:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ECF02606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QangsuKn
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2BF31F000CA;
-	Sat, 21 Nov 2026 21:33:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795296839;
-	bh=IFHu/2bEteEfsR5EpbnBVG7ybCCpFRsZWn/fSZnLG0Q=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=QangsuKnrQsVdRI6hYCdZc/VwQzDqakchyFACUWcBS1RSW56c/0EjC41z9UYfhW6X
-	 PxJA3K/pZWgNAvFl2xuf82g1HNXx7lk+yQKmhA2TvlYJUfkVekWs3oAspWYFi+9x7Z
-	 BY3ocnIn5RH7smbqrIPTZjrMmKa8oL0+JUdNVA1MP+5WtUAGckGuTBuB6JG7fDkWfy
-	 63nRnTqF7rzgaPmw/uDXhadeKLCWhSWFEJmuBeSGxkmHPmhOSHS7g63tCwRWvdtM3S
-	 e9GUcK9HLiqQgy5lW4ASerJaf3TxhNZA2xrSmoZETqTFqsQSOosCumKhxOL0pFY6R3
-	 dnw4jv6GItjYw==
-Message-ID: <sashiko-outbox-227407@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v15 5/5] clk: en7523: add support for Airoha AN7583
- clock
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Christian Marangi" <ansuelsmth@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc: robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261121212738.170775-6-ansuelsmth@gmail.com>
-References: <20261121212738.170775-1-ansuelsmth@gmail.com>
- <20261121212738.170775-6-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 21 Nov 2026 21:33:58 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=d0YsZAnp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=mUCh
+	zLeVR2MtutKX97MdpZQXyx2OvW2YcvAen733fVE=; b=d0YsZAnpbPtYmpNcRM2C
+	SwMgfmHzUur9jym6TLvWP6yFBmfbiMz7GTVq2bYzCi9mo7w/J6gmvlLNeKVbxfEF
+	ATF4zA8/M6UHo+wOll0MTUswaIbCpJ1Cy5jtzOZl/mgbRMqPWKcWExP9YxEok13Z
+	IkGJniWBTahtwqByiPMbUSDp/SLEMvMN4U0kvyY9W8ZiSH1qWjNoV6WbzFV+FdWH
+	wAJmaZEnUv7xwJ+Njk39l7jlQO2linQutAXM61ddpShNXZOWt/oRVIdp8eRhi08J
+	/FKL7hwLS4TbZmfWrpqX0qscB2/JlqXozeMgtL1R1s0Idk1ooGu9sL+DfpM6hUYH
+	ew==
+Received: (qmail 1948086 invoked from network); 21 Nov 2026 22:34:21 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Nov 2026 22:34:21 +0100
+X-UD-Smtp-Session: l3s3148p1@iaquH9BgZOIgAwDpTyYqANgHwk2rnHm5
+Date: Sat, 21 Nov 2026 22:34:20 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Ralph Siemsen <ralph.siemsen@linaro.org>
+Cc: khendry@reliablecontrols.com,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
+Message-ID: <awIOXP337u_nHqnN@shikoro>
+References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
+ <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
+ <awATU_lyjPBxThwq@shikoro>
+ <awGZ-nCCbCNEuyr7@maple.netwinder.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,114 +86,44 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pTXDnQ8DG42W+K2e"
+Content-Disposition: inline
+In-Reply-To: <awGZ-nCCbCNEuyr7@maple.netwinder.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] clk: en7523: AN7583 MDIO clocks lack rate ops in
-  en7581_register_clocks()
---
+--pTXDnQ8DG42W+K2e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-commit 5161709c892ed291b31ad266a1982ac038057eb0
-Author: Christian Marangi <ansuelsmth@gmail.com>
 
-clk: en7523: add support for Airoha AN7583 clock
+> The reset duration could vary for each reset ID, since they refer to
+> different hardware. There's probably no "optimum" value here.
 
-This commit adds clock and reset controller support for the Airoha AN7583
-SoC to the en7523 clock driver.
+Figures 7.3. and 7.4. say "5us delay is recommended" when changing
+XXX.RSTN bits, at least for the NoC parts. Yes, we can agree to trust
+the driver authors to get it right, but we could also decide to make it
+hard to get wrong. Bigger delays can still be open-coded if needed.
 
-> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> index a4a75b8063a58..d044841cdc05a 100644
-> --- a/drivers/clk/clk-en7523.c
-> +++ b/drivers/clk/clk-en7523.c
 
-[ ... ]
+--pTXDnQ8DG42W+K2e
+Content-Type: application/pgp-signature; name=signature.asc
 
-> @@ -369,6 +378,138 @@ static const struct en_clk_desc en7581_base_clks[] =
-=3D {
->  	}
->  };
-> =20
-> +static const struct en_clk_desc an7583_base_clks[] =3D {
+-----BEGIN PGP SIGNATURE-----
 
-[ ... ]
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsCDlwACgkQFA3kzBSg
+KbbM8hAArBvvQ3J6Gl2ZjLmVjeIL3UFqSTbiCDK7dNBn73kMdODTOv6XgDwwQCJ0
++RQVzZUoF483LdiGroT52MAKjlo1oWzk3gdMmtMt7FtGeZyFbC+E8jykCJNKM8tW
+TlPcVmrqpF94fiaGWpaa35ehTON2ezntNWShpvM/N5a467PfztHUKOEMyx7ERO/D
+q8Zn//i6qbQ/bci+hmagIMmDXFBiHV6akmDzttSbf4wZdH2u1yroItrahB3wTblE
+PL6B5BA4GjBL64FLKr8XW4NVDhxQmAVDoZdMlhUWjPS5vhqCPfS6NNuTLQUzUfWy
+E/BWwxn1CWMTxV+HhO4AXFVFrys9T42Z08ICAFOHjOleoLZplVkfMN+zIh3h7wBR
+o7iZb25vxWL2hu8UgGMc2sNo8OwT0PATXlCenrBuR/uqhSIsfhRCC/nF02/ZI47v
+ahSvFkWSufuVhwIhbUmk8U5Exgzj+Mg9c4TjhrRTK6MCDa4fpdCvNnpl1U72mJHR
+Xq3jgLhM+4bodCBDJQHXPVNZwkMbyKlTf+hPpav6okETuNgQ86XE+CNYNywhmnzJ
+Mlo12B/mYG5JwpKPGcR1smZkcwNsrp/A+I1asgC7fhSDs7eD5HXNlLBN92yrCTc4
+3LnPqGr6KuIzZPaT+I3FXAJ7Zoy5D41UpNpmpYtcFmsR2WAy6ys=
+=XIqi
+-----END PGP SIGNATURE-----
 
-> +	}, {
-> +		.id =3D AN7583_CLK_MDIO0,
-> +		.name =3D "mdio0",
-> +
-> +		.base_reg =3D REG_CRYPTO_CLKSRC2,
-> +
-> +		.base_value =3D 25000000,
-> +
-> +		.div_bits =3D 4,
-> +		.div_shift =3D 15,
-> +		.div_step =3D 1,
-> +		.div_offset =3D 1,
-> +	}, {
-> +		.id =3D AN7583_CLK_MDIO1,
-> +		.name =3D "mdio1",
-> +
-> +		.base_reg =3D REG_CRYPTO_CLKSRC2,
-> +
-> +		.base_value =3D 25000000,
-> +
-> +		.div_bits =3D 4,
-> +		.div_shift =3D 19,
-> +		.div_step =3D 1,
-> +		.div_offset =3D 1,
-> +	}
-> +};
-
-[ ... ]
-
-> @@ -1144,6 +1343,43 @@ static int en7581_clk_hw_init(struct platform_devi=
-ce *pdev,
->  	return en7581_serdes_phy_register(&pdev->dev);
->  }
-> =20
-> +static int an7583_clk_hw_init(struct platform_device *pdev,
-> +			      struct clk_hw_onecell_data *clk_data)
-> +{
-> +	struct en_clk_priv *priv =3D platform_get_drvdata(pdev);
-> +	struct device *dev =3D &pdev->dev;
-> +	struct regmap *map;
-> +	void __iomem *base;
-> +	u32 val;
-> +	int ret;
-> +
-> +	map =3D syscon_regmap_lookup_by_phandle(dev->of_node, "airoha,chip-scu"=
-);
-> +	if (IS_ERR(map))
-> +		return PTR_ERR(map);
-> +
-> +	base =3D devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	priv->base =3D base;
-> +
-> +	en7581_register_clocks(dev, clk_data, map, base);
-
-[Severity: Medium]
-As reported by Brian Masney on v13 [1], does registering AN7583_CLK_MDIO0
-and AN7583_CLK_MDIO1 via en7581_register_clocks() leave their hardware
-dividers unprogrammed when clk_set_rate() is called?
-
-en7581_register_clocks() registers every entry in an7583_base_clks with
-devm_clk_hw_register_fixed_rate(), which attaches clk_fixed_rate_ops and
-provides no .set_rate, .round_rate, or .determine_rate callbacks.  When
-airoha_mdio_probe() in drivers/net/mdio/mdio-airoha.c calls
-clk_set_rate(priv->clk, freq) to divide the 25 MHz default down to 2.5 MHz,
-clk_set_rate() returns 0 without updating the 4-bit divider fields in
-REG_CRYPTO_CLKSRC2, leaving the MDIO bus clock at 25 MHz.
-
-Prior discussion on v10 and v13 noted that adjustable clock rate support was
-planned for a separate series, while Brian Masney confirmed on v13 that the
-missing rate callbacks here are an issue.
-
-[1] https://lore.kernel.org/r/179513295004.301584.12820965897975670200.b4-r=
-eview@b4
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261121212738.1707=
-75-1-ansuelsmth@gmail.com?part=3D5
+--pTXDnQ8DG42W+K2e--
