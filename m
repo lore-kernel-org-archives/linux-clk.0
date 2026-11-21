@@ -1,85 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795296282;
-	b=B73jZOwRycs24P9NGhhJ+Rm2BdXUFy3WllYnh6wCsk+xQLlIGNFxF6UcyQfiv8VgJ8Wi
-	 CPgEmrC+dOmL8ZbRcB429/F0VEkM30GdoSSL1O8KQjoMQRZvWtEEDHEnydGaZnEGJ2xUl
-	 SJCg8Ntr7lGjU07OVp5+Io9VqK0dKNbN/van97r30pR/bMcULkP52zbs0vgNJyaRvbYfY
-	 ReVVh4mMzGvaV0I7HE/evAQ5zusQ2zKAUPXmxvKR2Y9DZINzQ3Ljgr5W78KCFs46etV3d
-	 FeUH4Zc2pRwcG1+LtJh4YSINxd1kQAk0W10XmN2JKUmGpql2GjiaKvBEvtdSfHACUNw==
+	t=1795296473;
+	b=pc2oMmEpvY8FsTI6FWNuRRzjcuyOts/TlJS8FXX9bXlBLMyNGc37MjfiyxZbyjbw0nAM
+	 /ib+20a7ingTBxsJT519BfadvEUGGiH3QLxpQOPk89/mIUx45+xmuJquOSW8So+rzecPL
+	 ps6yVJXSIaprkPfWtAM3xFk68vuMaH1za8UWFjJyIOIJFhwufkX4mISXpHSVhhW+bpj3K
+	 TiAm//p2OdcWBt8z2hleqqbjugdpyxHD115wUSrYCwOrkV+gdWCnwBLvHspzNpFCZNLGO
+	 ByB+/zHi/SZU1VVckEzTtm86+zF+4qCJCLYllBVphj1cgTfltgg+2HqpFbnUI6xh6TA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795296282;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=qPv/aRybxiihzTHTiKkFME6FpgXCP+REMbbDc/0fYE8=;
-	b=IRRNeHPsnCt5DeKAhgqmxCEE7bQRwc2zZ1Tc57XZTSz/vcizdT19fbVTDGvEla8aKUOJ
-	 p96gT36VGjyx7UkDdNOEfgS9/8xzsOE7kCGbo0jktBgZUkWAsgekLVA9kVlt23BwQgpIM
-	 7DoXxs436B+HjQ0EVM3eV4KA8fE9XwX5/Tb0ezJQvV8ejIN+EH+F5UyeyjL7wG2ZOOmlq
-	 vuZxsqe1rvTuk795GTDNM9HLp6tMI0S6WM8hCEfZ87Vjl7dV+88XlJlWTMSI3VqyYdFSK
-	 aCTgbYFpPNN5gfX+BK6/nsqeBzDSagCjUXrAUIKQKDTMHZeSxtxiK06gmIvHvvGE5UA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795296473;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=8iFoRCsnLXiwnHCHjY4cuqwaLaLe2pBEmp7x1xjf4qc=;
+	b=hMc5/j2zraOL0A2nKT9aYiv84hLM6nn5x8UALt8k9UOPuKESHro9XKAoS0W/OT78iYRZ
+	 1g+mVcngHIPo71JrpOTnqr4uwHAJFiP6wq/mf+McDC0q1itfrChmDCmYzLi0GoadpH07I
+	 S6xZiKZksUSqJ4oH3jhvZ/aVEUe99R4KqOr++XnOTy/vnojVH6BjJ4UnZmYqTEeKpHViO
+	 UkTOM4vBgBPDIXez1OxTljH+lbBpbp4m4ie4bbvIJnpWcMm+miHGDdQyeh3XWjQOopX9X
+	 EBFmJDXTxYVEIg+Lw63QFfc/coq1+glQrTW3tumYtMFoEk5UBA9rqSkIbOZhlagfbBg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=sang-engineering.com;
-	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=AJqs8GGY;
-	arc=none smtp.remote-ip=194.117.254.33
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=al8q8kIV;
+	arc=none smtp.remote-ip=209.85.128.44
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F212606A333
-	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 21:24:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7F212606A333
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58B2606A32A
+	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 21:27:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E58B2606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=AJqs8GGY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=qPv/
-	aRybxiihzTHTiKkFME6FpgXCP+REMbbDc/0fYE8=; b=AJqs8GGYNI1DF6qNJeT9
-	gyjB3dc6oXz4D+Yz/Qu+w02FrCzwj8AHpHK0fH6BeLfjG77NqlYQkpC3PnjCG92A
-	tGtT44cHaEKXQxziL01NLdBOJsvmclbSlpav6UUGWBRwlJmGHoHsgwOhISrn9uEE
-	fIp2eXF8iUGnlgLm56VCvglKYYvAcQx/O4G/w7AmpTw0JdjJV5aHFFZOls9s7VU5
-	diZ730+ilaxa6udyF0BVGbHNDiiEjL8n3yden5w4wI9YvSZAwHDs6DbP3dF2CAzl
-	U1uHwNFnxnbRRDCntrrlEgmN3udg9q6oA39xHetZr2yPK7N1dCq2oo/gToOVOYd2
-	tQ==
-Received: (qmail 1945706 invoked from network); 21 Nov 2026 22:24:28 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Nov 2026 22:24:28 +0100
-X-UD-Smtp-Session: l3s3148p1@betU/M9gntsgAwDpTyYqANgHwk2rnHm5
-Date: Sat, 21 Nov 2026 22:24:27 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Ralph Siemsen <ralph.siemsen@linaro.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, khendry@reliablecontrols.com,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=al8q8kIV
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4a9a8d6cea8so24072745e9.1
+        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 13:27:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795296471; x=1795901271; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=8iFoRCsnLXiwnHCHjY4cuqwaLaLe2pBEmp7x1xjf4qc=;
+        b=al8q8kIVCmw6MiMt65Iueza+XABxhPxX2xNL4nlblp71fgfW7crmFSA8Hp3q8CmhtF
+         DIM1fpexXucynuyKElHILyjLatX8my/uTR6lEvTpUWGmFBxAw45nsRNmF0ZJ6Gc4zLL6
+         58lE30ykrI7kQ5mKTQsiX9dvy92N+KI+an2nAkRwh66/tWiKXf/hSMykEJMMMHM/Ts32
+         fawEkD+1Md1nVfYU5hk4hcZ67G4hxrGxrgVvOZ1SXoLBekwtHtL9FefZKNEIII4YDaU1
+         wZEx6XmMfheqEiFvBim/U7PZ35vnAhHz2GdCd2z980XD1TzQ+o8fe3EsbROUnJWg66q1
+         4ysQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795296471; x=1795901271;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=8iFoRCsnLXiwnHCHjY4cuqwaLaLe2pBEmp7x1xjf4qc=;
+        b=m9kbX/qrfAYjXt0rg2Obr4hRkw/ZzzVzNJ2aYZ5p/yFBa234faCCjZKkMHM6nCZZ3N
+         ZMP9EeibWTyqKNxAVSGhSa4FxSmNDJLl6IQpFhzmkNnykjtly12VhDkIyCXTUhy5rIyX
+         fWU7Bfchb83Bdj4lEUmYigJ30vg47LfobQJPg3P9ibM6DNWeDOjiVubdD4iuNJy0jYTM
+         Po9ewj/QYNeW2kviROMHG6vAibCHvuUeMZ+19EEroCd7pAXrfAstnykSk2aznSfa/fZA
+         TFEB+9tbZV2AWBhqS8wiHIQkngB2XMoZBNfurpi+ulYwTMK69AFkWflyan6tEUuo3r9M
+         fEdQ==
+X-Forwarded-Encrypted: i=1; AL+hErGRfDfaH4fmwN+sUP4kG4pBQYPO9n/JaB64DHwsQ/oieIIE0X+IsEfyjInPv5f/45oxtfwQRWiS6lo=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9zEvFlMONyFpr0cdZSRRYWEY/9IO7vdecpziILix2qSlzEyhjM
+	nxE6xMrVuqVncrJnW6w2nZL7s8ZiR3/3f0KhWfkuEiwdPmxWZxHlXjfzOnOnng==
+X-Gm-Gg: AZFdTZcFliccU0TKRlGEb8EyB4oYx4NbLe3TY+S0nkAzz7v428YKf8OimWEkiFQ01Zm
+	uSoxVFSo6+UnWwpHEcvjlPMr9h8KhIf3hWhQcb45NntehLJS2I/+Dqwkh0afo8r8Npk+tAYcjOw
+	2Xomm4mIc/qu/eNYEJ8Pbz9SfwfqZaAZyJ8M2hX39Ntn54s8xKvXp9AvecHmUWg0UIAgWI5a3Lr
+	t1/KC14c2tn23Bj5gVn3CtgClxgVPTt1yNcq5dMi7aOvDJiFho2d95oykfaBH7MBinNHURnzCZN
+	XOnZ/HWhQ87M7zg1PHMgg7prnLlihRFANTcBAzDN5nfFA7bngKWXRxCACC+EQSK5KSDztPxo8Wr
+	3ff8WHABArulheVbclwjzPHyVlHCzbHfYp7+6AgSYnC/G7pQgVRKLmT5soDnuDBnnVtcREySE5y
+	XyDYGUsOl9gfj+2H0iSTz+6GDW5xWtRsBU54yOktzm3bHuKCbxWJjHN7y97C3oTchd9NuJhbwV1
+	rZXtNNxdhdc92q7q8UVZlbuOh3DC7+/WfenfkRbEuRkkuxsRNKGwwFEwN+Bx/IuxXhGFiPU8MGA
+	1PRqKJOqegdpolN5HF65TdX6A20+2+qHQ8q8ZPt97ZLHs0XEr6YOOLk+PG37MLAgfVS7nrc5lbV
+	SrZ5Tvhubc+jM6UV2+m1FUcPVNTLYPd3+WioX0lWuFDp2ZkV8pZY=
+X-Received: by 2002:a05:600c:4e0b:b0:49e:65f2:db64 with SMTP id 5b1f17b1804b1-4bb887fb66cmr168468595e9.5.1795296471125;
+        Sat, 21 Nov 2026 13:27:51 -0800 (PST)
+Received: from Ansuel-XPS24.localdomain (host-87-17-253-173.retail.telecomitalia.it. [87.17.253.173])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4bb8538b3a7sm255668955e9.3.2026.11.21.13.27.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Nov 2026 13:27:50 -0800 (PST)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: clock: r9a06g032-sysctrl: Document
- reset cells
-Message-ID: <awIMBj_7OLrlM5G-@shikoro>
-References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
- <20261119-rzn1-miic-resets-v1-1-feee2bb28bb4@reliablecontrols.com>
- <awARmkCuelD_fdX6@shikoro>
- <5d8530485716d129be2efa0518254e3322cecdb0.camel@pengutronix.de>
- <awAq7vxcY8CGjhNl@ninjato>
- <awGV8BU_AfaXQyBv@maple.netwinder.org>
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Felix Fietkau <nbd@nbd.name>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v15 0/5] clk: add support for Airoha AN7583 clock
+Date: Sat, 21 Nov 2026 22:27:30 +0100
+Message-ID: <20261121212738.170775-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.55.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -89,42 +104,98 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fv0MbHVxiEYH6cP3"
-Content-Disposition: inline
-In-Reply-To: <awGV8BU_AfaXQyBv@maple.netwinder.org>
+Content-Transfer-Encoding: 8bit
 
---fv0MbHVxiEYH6cP3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This small series introduce some cleanup and support for
+clock and reset of Airoha AN7583.
 
+The implementation is similar to EN7581 but AN7583 introduce
+new reset and more clock divisor support.
 
-> Thinking about it some more, perhaps instead of using 0 as the special case
-> for "no parent", we could set .source to match .index. In other words a
-> clock pointing to itself means "no parent". Worth changing?
+Changes v15:
+- Fix num_clocks with new implementation for AN7583
 
-What would be the gain? As you said before we can't update the values
-because they are already in DTBs.
+Changes v14:
+- Fix wrong definition for chip-scu
+- Use scoped guard and guard API in reset
+- Rework for better num_clocks handling
+- Address some forma impovement suggested by Brian
 
+Changes v13:
+- Use guard API
+- Drop spinlock on read operation
+- Use enabled/disabled now that they don't sleep anymore
+- Rebase on top of linux-next
 
---fv0MbHVxiEYH6cP3
-Content-Type: application/pgp-signature; name=signature.asc
+Changes v12:
+- Fix dereference on pcie early unprepare
 
------BEGIN PGP SIGNATURE-----
+Changes v11:
+- Move to global spinlock
+- Move pci ops to sleepable prepare/unprepare
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsCDAYACgkQFA3kzBSg
-KbaxSQ//cizj5OOLsgYrAxaW1EKGn9YvmafR+RlvEqb8FlFxWBREKwon8e0FF3gu
-2Jpvaf/tOsiK1NhtQ/eTuYRfJ89p1XpJXX0tA+oTBv8eYdCEik3NV7hBMMNAXb7G
-EA/K0pyjN4k+UqvQMWP6h+WodMzFfNvLyu8aVMaNyGfC2Bjii/GKUAfJAUcR6ZTK
-McT0/W4e4kvFRKJQ0Lq1vQjzins0eQhFtTDnGd9hqDakYfbKFYE6TZQ/GuiQdfuf
-1+2wk+shbGWC1D1zk2kzHx+QCYxAZnNnFtF+XPtgorT6XKucDDgeeZ2A0qXpT1+z
-TVL6DMGWPaC78QHXrDuh52k8IgpB9EMAPksX+GcLlHdbSwjxtbGVcg6RoyVQH+dQ
-RQ+QHRgQtuw48k/SdZ6AILxxgUGGM5wWfn/xUWz7HF6kekq91GVIDraIEhpe5M1r
-32mie0F8Ej8YQj5Tpc5MSNrtRRLAKDQFnd95BmRvZeM7dZtHo5ajZWiRq8BMFaix
-VVJk+y6dxOXlZfm6I1rZYRnz0etxZhfYaUh3xth557wkLrXft4r5x1Gyr/G2xA9U
-uh5AhXZO5WMo7H9sv6XX7KnH640ry/gJpkK4G4qcS7KrFMddn2zhFG3pDpwxMdpR
-oCQzd28u2Kelvnez5qwBUf7Y/E48ehv8YgVjkAeHbFCtHVnMbqY=
-=0+NB
------END PGP SIGNATURE-----
+Changes v10:
+- Fix whitespace in include patch
+- Add reset and phy cell as required
+- Add additional patch for devm variant
+- Add additional patch for lock for clock and reset access
 
---fv0MbHVxiEYH6cP3--
+Changes v9:
+- Fix compilation error for priv (again) (this time fixed)
+
+Changes v8:
+- Add ACK tag by Connor
+- Fix missing priv->base assign
+
+Changes v7:
+- Add further info for DT patch
+- Add serdes selection support
+- Rebase on top of linux-next
+  Link: https://lore.kernel.org/all/20261009070725.13196-1-ansuelsmth@gmail.com/
+
+Changes v6:
+- Address bot suggestion for DT patch
+- Add further information on chip-scu phandle
+- Add dedicated PERSTOUT reset and PCIE_HB reset
+  Link: https://lore.kernel.org/all/20260819221458.30040-1-ansuelsmth@gmail.com/
+
+Changes v5:
+- Rebase on top of linux-next
+- Drop even more patch to reduce patch delta
+- Make chip-scu specific to AN7583
+  Link: https://lore.kernel.org/all/20260528190000.9164-1-ansuelsmth@gmail.com
+
+Changes v4:
+- Add review tag for DT patch
+- Fix clock patch to use en7581-chip-scu compatible
+- Drop PCIE SCU SSR write
+
+Changes v3:
+- Drop .set_rate patch (will be proposed later)
+- Drop chip-scu binding and related patch
+  Link: https://lore.kernel.org/all/20251106195935.1767696-1-ansuelsmth@gmail.com
+
+Changes v2:
+- Add .set_rate support
+- Rework DT to EN7581 implementation (clock driver is parent)
+- Add additional cleanup patch
+- Merge binding with schema patch
+- Add chip_scu phandle
+
+Christian Marangi (5):
+  dt-bindings: clock: airoha: Document support for AN7583 clock
+  clk: en7523: use devm variant for clk_hw_register and fixed clock
+  clk: en7523: protect concurrent access to reset and PCI register
+  clk: en7523: generalize register clocks function
+  clk: en7523: add support for Airoha AN7583 clock
+
+ .../bindings/clock/airoha,en7523-scu.yaml     |  26 ++
+ drivers/clk/clk-en7523.c                      | 389 ++++++++++++++++--
+ include/dt-bindings/clock/en7523-clk.h        |   3 +
+ .../dt-bindings/reset/airoha,an7583-reset.h   |  65 +++
+ 4 files changed, 447 insertions(+), 36 deletions(-)
+ create mode 100644 include/dt-bindings/reset/airoha,an7583-reset.h
+
+-- 
+2.55.0
+
