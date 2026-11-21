@@ -1,116 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795267069;
-	b=MQAGjwVW7qf76BAUjLA+TA+uwuYyUAVg4tUxkJbmsqM/LJrddPxquBuuIFuPBnJ1NDA3
-	 u7l63M10nF5tx8WBCJepKEbZi5RdLMZgcd75L1uTO5tejsF/MAvhpbEratuVEHEe5FVv8
-	 5gwhcikOhHceU6TZnW0JrWEOv4lpvtwmbzegord6Lq5l6W58N4fr7s45M837w9yU/fWZa
-	 sxt69T+gBjogBpgptREedIFUGhDW3rQAcwJd3iUPg6kK33TEPns1Qe0nSMAh89qPU7lJn
-	 8c6gwAkU0S9ZDIsCwBVd3RhLc+zhs4qbbKZWNQyyF5EDSqHtPSyroi2BcCGFyOma0HQ==
+	t=1795267280;
+	b=jP8SVEhierJQ6ZKj3AOdkgWhagD0TUKG/OMnD9cSw7G9h+7l8u8lTbpq5iZmuNwReiME
+	 6KfYvKH3dP9yZo2MjKj68yHa8fAxVK6F9QNdDUx9rIC5U8VFuuhGM78crNdJ0pA52mqAs
+	 Iv4s8ByGNHw2EuWyHFniRIBhJjrZfGwBs6RQ+gb3TbAAZtkZYC+cUUa2qyAlAJ03vTrB1
+	 B6WubJjvm9o2qbfYGxj6aZV+sRAZVY/WOChnCx2kG2mXqucfsXYLIlPm3usYXjUWbg6n3
+	 UdiN7r5B7OQaa4x3WVErt7Jf5loSur6LjWVpjbCwsVGsE9shmdHBTD1Fykr0TcqRD6A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795267069;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=Rgt/byHJz73fVZB9npadRPJRCi06Zbw9U3jYPp0MPbc=;
-	b=l5qMsBuvd3rFPn1b2SBjww/cHMy+8tMpKvL5+EKnaiVEaPAwLozoyAmB0QQd+NN9R5QF
-	 OkV4d6BlKNu/b3sP+P0QpawZnbGLBZjh/AI2GW6wLF6aaAEyxRs1BhSjt66qN154NVNVH
-	 Pwd2c5zWlGdLdpXJNOzG976zWnsX8JNPEy0GfQoVG14vlTr7GjPiNTquhPTLy8hPtcpUq
-	 eJc4xO9MmuducK3FgklKDwfkIV60kPFcKJRP6KUyfh+zwVLqHPphetAv9wCJDIYbsSH36
-	 XIvU00iexXmDEa/Dj+6KtxS/VYfX4+n0FO1B/Um7yzfR+/JJaPNpD/I+wOHfphOZSpg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795267280;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=UjLjVXM6U5fVosWAJcB4A6hS+HhndwNJfoGvMMyXioY=;
+	b=UucsARPWRrqvVm1J/R/AimOugfqbBMBc3mx5KPqcltrqwXCYOfR1rifzzH9LLXSXlMNk
+	 OjP5HCoE3X9FcFrJjDaUaYIwXZCrpQuu5+/DLLkZBC5kKx+GFH3s9ENq7C9vqkYS0w4Wq
+	 j7pRGt4TN6a11dY3JplMGpTTiWmw+Bb3w9kCMygmtOlqjWa/vO2A0AbKUUu8HReseM3pj
+	 xu94/Z1QZnyT8CXWRpYyBKTIYEz7g4hoMRN85X/bVR7ICXBqqwU8UQ45BOrh+8+V+qEWe
+	 p2w8skUYIfZWR8GgFhvlfVR80WSyI008Ygh8Aidn3IdfVdd6vLfeZEyxQzMuCADaqyw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Z5292Tds;
-	arc=none smtp.remote-ip=209.85.160.177
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=I4O0z+w0;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF836606A331
-	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 13:17:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CF836606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09576606A32A;
+	Sat, 21 Nov 2026 13:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Z5292Tds
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-55d6deecef6so19064481cf.2
-        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 05:17:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795267068; x=1795871868; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Rgt/byHJz73fVZB9npadRPJRCi06Zbw9U3jYPp0MPbc=;
-        b=Z5292TdssQirJ7anrgy/Ycj0wO1diReVT+xjqWqnvVpWW2hxPlSx6CnnlxSpqetc1z
-         +fddjESnGkA74Im6cQr17DvOW+VGIqruhO1KE5CwbJvPS54ALuMYtx4ha2VuyybUPXaT
-         reAh9DT5rV9fy+W//lI4WB/2FhxslsHRt8LxjfYv7VRLIEVwboWlnhQtGGPVYMmD6ihL
-         rqPFQZBMUV+gKP3QNnxGnSycOaF5ZFKfpghOCMHkZuVfrGH7y+3NT0bJUqPxS/JDH9QM
-         4l+csvlxSOav/F6ZIn19ywP7A8Me7D4xiu4/Fmr/Wb6uhFimbUOp/Inli4T67eYP/2Tt
-         /qYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795267068; x=1795871868;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Rgt/byHJz73fVZB9npadRPJRCi06Zbw9U3jYPp0MPbc=;
-        b=aW4qbK++Oe9+66f6hdqg9Ohac08tyAydMgHAsgkDZTSVjvqJgI/jlYsamwpmsFYYrj
-         gVs3ENaVVggKqHqi66kHB4c45ANv6YUc4EM5ehi1GTJFiCNh3Wsl5+JELHwdCRhUEdGr
-         xTkypfMN+J7deOn0/vf+6Fz78jyDYnG4vOi8xM6uRvqf2u3V2FclbqxUiApsNje4vJlM
-         5iZlwkYUYEtREzMvzlqnoiGo2nbmGx9VmVRPgp/Cfz9npOqy4TEQXoZ7XgZK6zJ4KFN9
-         TKQ3RRsN7+QU8amXgc05XLwuWDaGyL0VvjxxqnvwlK7le/Kby/BAH+vOp1GknIDVcj8g
-         5V6Q==
-X-Forwarded-Encrypted: i=1; AL+hErFqnmEkLCiYZSZxVTZidjU0+3L0TQJofrt5Q9v/F0WKZcP4+wdzpbEU3FTYeiQ3dzKNVZdXo0A/YWw=@vger.kernel.org
-X-Gm-Message-State: APuU4Z923DonHgmUS+2n/8LnhmfqcW3Um1vT2U8FStj4MW442iYKy8OP
-	gvRLMgWV6d6oxZFNxymm2gsafFRqgPXI5/eG81FDtL9zZoW8sPy5CWyn2QcuZ3BgLPk=
-X-Gm-Gg: AZFdTZextdo1qx+QIjTF8IZntE1kNtfA+YMZi9LYKbvSEpN8KJEdJerPctPkRT7qbUe
-	5a46moYcTP8P5JAODli3/KA00Dm4DwfQOKMB4G07trZcgb1Nb8T7aKTbs5MLQ88HNCiMQU42AUo
-	ZmyfTI1B81AFaf0yEMZcZshjv1aGBcPoNSiqDPIdkT5zdhJMm+IB+SAcVn91YZpywA2x/Q595bn
-	VhBOz4CXmMWuaQ+OU1pJw1yBr7YjgFptPpCYgmPwyXBMVUMpzQ0DJdYklm27K0Dydq8WZL4XLQN
-	G86GOAG8wrvlAJyWJjTCi0W8qxxFy+++zizE1G9FDIJ0l0dKgWfZAvWqrmEvQoZIa7lhfVwZ+st
-	TnJmDydrwXQGofAWDqcT1OzwMQAilJydUlhDwaelC3Ejdg5zOu33nO+1gEEankZBXRS6teALbIZ
-	bpuaw1R7uF9yT2lJE088TLl5aIHwJ6YFlIBMsckviw04YE6rOaa3VZi169P3HPw2rgAfFIQnBBE
-	RcbThjpGrr+01qt+BqyfSXtuc7HCdJs84Wq80V4FNREReVPIEkSA5TGnx0AakBr46mMN7r25FVl
-	iIfZehhcsGG3N05wIjw75vWBtpF3SV80zKwVURcaykpS6fvQdBvecQg5LNOK1ODqcpue5vsKUXf
-	tDhTr1a6Dyl1k2MnnHPLZ4AGuY1R8OXYJJYcQ29BOKtJ3Y5l3qbHrECHXNNgqV4uzIzIn/g==
-X-Received: by 2002:ac8:5f85:0:b0:55d:2dd1:48ba with SMTP id d75a77b69052e-55d76aa2f7cmr111131171cf.60.1795267067663;
-        Sat, 21 Nov 2026 05:17:47 -0800 (PST)
-Received: from localhost ([204.244.107.52])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-921349b1e58sm53873266d6.12.2026.11.21.05.17.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Nov 2026 05:17:47 -0800 (PST)
-Date: Sat, 21 Nov 2026 08:17:46 -0500
-From: Ralph Siemsen <ralph.siemsen@linaro.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: khendry@reliablecontrols.com,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
-Message-ID: <awGZ-nCCbCNEuyr7@maple.netwinder.org>
-References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
- <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
- <awATU_lyjPBxThwq@shikoro>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=I4O0z+w0
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5800F1F000C0;
+	Sat, 21 Nov 2026 13:21:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795267279;
+	bh=UjLjVXM6U5fVosWAJcB4A6hS+HhndwNJfoGvMMyXioY=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=I4O0z+w0qmwbUSlx7Cu4XTwG4DQFS33Esawwn0bDGUi6Sr/NHV4QI397gPULp05ZE
+	 raVpn6WPnsdu8i+uSpBGXxU6rQHRosVdiXCfXzoO7PY9sQipWUTLHao1BTxfhnsZDW
+	 Y/WCr7xQNqNSzj0b+Xe7x378/s1RgdVsKkj44Uku+O8WwPzXkAR+77Cn3fyWB47FGP
+	 UsPEsnthV00lnuMZABfyHos2Q00cQUdBIbrUIBrR1eQ/nOQRmjwetf9el665ej3S2a
+	 XPnztINRj1HlYfPeK+b3wbBeujaWjxWiVI+0kGG8OTNGOhaxk09/KedB8ReEEh/Ne3
+	 KF3ltGHN+GoxA==
+Message-ID: <sashiko-outbox-227063@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v10 2/2] clk: gpio: Add driver for GPIO-signalled clocks
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Vyacheslav Yurkov" <V.Yurkov.EXT@bruker.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261121-feature-clock-guard-v10-2-5d449739bb8c@bruker.com>
+References: <20261121-feature-clock-guard-v10-0-5d449739bb8c@bruker.com>
+ <20261121-feature-clock-guard-v10-2-5d449739bb8c@bruker.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 21 Nov 2026 13:21:18 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -119,22 +59,53 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <awATU_lyjPBxThwq@shikoro>
 
-On Fri, Nov 20, 2026 at 10:30:59AM +0100, Wolfram Sang wrote:
->> +static int r9a06g032_reset(struct reset_controller_dev *rcdev,
->> +			  unsigned long id)
->> +{
->> +	r9a06g032_reset_set(rcdev, "reset", true, id);
->> +	udelay(5);
->
->For future reference, please add a comment pointing to chapter in the
->docs where it is saying 5us is needed.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [High] clk: gpio: pass pointer to clk_gpio_enabled_ops in
+  CLK_HW_INIT_PARENTS_DATA()
+--
 
-The reset duration could vary for each reset ID, since they refer to 
-different hardware. There's probably no "optimum" value here.
+commit 89b7f5ec0fd3e779dce65c804661263ec21d8ca2
+Author: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
 
-Ralph
+clk: gpio: Add driver for GPIO-signalled clocks
+
+This commit adds a "gpio-enabled-clock" driver for clocks controlled by
+external hardware whose running status is reported through a GPIO line.
+
+> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+> index df0856a39c8d2..33f251b209a01 100644
+> --- a/drivers/clk/clk-gpio.c
+> +++ b/drivers/clk/clk-gpio.c
+
+[ ... ]
+
+> @@ -241,6 +242,112 @@ static struct platform_driver gpio_clk_driver =3D {
+>  };
+>  builtin_platform_driver(gpio_clk_driver);
+> =20
+
+[ ... ]
+
+> +static const struct clk_ops clk_gpio_enabled_ops =3D {
+> +	.prepare =3D	clk_gpio_enabled_prepare,
+> +	.is_prepared =3D	clk_gpio_enabled_is_prepared,
+> +};
+> +
+> +static int gpio_enabled_clk_driver_probe(struct platform_device *pdev)
+> +{
+
+[ ... ]
+
+> +	clk->hw.init =3D CLK_HW_INIT_PARENTS_DATA(clk_name, gpio_parent_data,
+> +						clk_gpio_enabled_ops, CLK_SET_RATE_PARENT);
+
+[Severity: High]
+Should this pass &clk_gpio_enabled_ops instead of clk_gpio_enabled_ops?
+CLK_HW_INIT_PARENTS_DATA() initializes struct clk_init_data.ops (const
+struct clk_ops *), so passing the struct by value fails to compile.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261121-feature-cl=
+ock-guard-v10-0-5d449739bb8c@bruker.com?part=3D2
