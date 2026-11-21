@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795258965;
-	b=CEPhCl4by294VhqgzHhLSj4I+mJb8467l3xQrC8yxeqS6YnBOO3FA5wyCvrGO5D1r6YH
-	 EKGN6JZ5ADGWXVB0rkFA7JreFAZb72mTVyESc8OSwYeG4K/VW2pjSuqc0JUNCTEs1uPai
-	 cQ1hb7JmY6yI/ffZdRHx/xq8+jD3j/oBHjD2T0Q0LCFYFMX25X/xLdgp5t+7xoG5rOHdh
-	 aeJEY0QF5KQSDU10PGc86pxYoKwmXdli1yWVf/1/2E/1xK6qcn2UE3c7gKgP/4L7G21Ri
-	 ZyYWd9Y4rRcLS/ixsqowFNLPkyZNtRRFZOJJ4LDrcbb4G6Z4tyMCoUqt8WQejuJhzlw==
+	t=1795259043;
+	b=5NLx/f9Ke5nkCTkYjRZSnY+rM+5KONC3uhPWDE13GGCp3gz7dxYLINPKwoJ/yNyFgtsq
+	 F9QciGk0PS/em+vDr56vqTzW+yrJE2o7oScxBOSQlHepN1iDZZxOk+aMk2cT4djC9VPKr
+	 S/pZO/VloDFLxZt5No+vLgos7Ok6S2+0CtDCRAobzO5q2FVSmWC+rM70Z0ShezwygNijI
+	 0xLJZyym0mlvUmp5zkGLf3ib/YRehFn8Xx2QeIuEaGrNbLHaAShcy229Sfo2YIwsAbgCP
+	 1hFBvCuL6JhckdGTYV38DKbWTtYg5u8nPyl0PUf189jf1jZCeYA2F0NE4uD8ki3b5Ng==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795258965;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795259043;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=7BuVzlJ+/ARC5V7HvviKlJq77JZVN16FxSVAokPlQk4=;
-	b=EwXj9eRpBJTUCEXGsowqtBe12FUSeyBYqZegzgZ/wSxYv+q6psR5J3Xs/9hh4SvMmb1L
-	 PyybGE9OCln+XCDn3KIAWsqX8ZYVmYsJ4jMs5bfae5NFVXixfidbVqMB18L+qeEoZapee
-	 fs2affnmSrTCGgCB7GjR79CTHex3pgCywmgZ42MFKj4+9mKfwUEf+Vr2AMOZX526/8J3P
-	 +ixxhboL/9FxnJ8jdLkfxDrArJokTFQ43Kr4tlg196bsPaCNkIkNh3Ds7Flq1HID1x1J2
-	 N2ba71Z47Isk/OJO/gOe3T2kbNKvIorrpapDT+x5vOm3i/7zhLAxH9k5JKynKEKuWmA==
+	bh=0IEDqFSkt+C2PVyEWS3RXL3VqNTsxyCiSPrOLMqTKq8=;
+	b=AP++cOHv+3DxXuUswcFju+LAXR721UM0FjoDFK3TAY+rLKjzQfzSZUYJ/2i2pt1wIYOd
+	 Dx1p4MuHYyqYJfGSdh0PoORPy7UhApq0aLQSF6qfX5pZezyxSeUcttqWxGUyXYtOxNC8C
+	 wFzu4MCLhyA2ruZO29H1iJlv9unbmdCZSrgb4bDtrNHZYWEgUBL+BOQqzw5o1BMdovmJW
+	 85NSKUmVHW2qO9xnj3z/wPK/Tha+6h6be/zkINQWiI+UhBOYzZ5wV0imNpjixaA7ocpqf
+	 YL7J1xY09oALqm5ziJfZP5T+JTh59PuxJ9X+OEr5XH/Gtm1GFu9At/Q9Ki3cALzxr5g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="aU/wCJ9c";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SdLSu61o;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17960606A320;
-	Sat, 21 Nov 2026 11:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00276606A320;
+	Sat, 21 Nov 2026 11:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aU/wCJ9c
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1EC91F000C4;
-	Sat, 21 Nov 2026 11:02:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SdLSu61o
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA981F000C4;
+	Sat, 21 Nov 2026 11:03:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795258964;
-	bh=7BuVzlJ+/ARC5V7HvviKlJq77JZVN16FxSVAokPlQk4=;
+	s=k20260515; t=1795259042;
+	bh=0IEDqFSkt+C2PVyEWS3RXL3VqNTsxyCiSPrOLMqTKq8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=aU/wCJ9cn/NiupW1IdxBQYuJywrcMJ+qtxYHrrAQNyQ2ZpUor1cY7lmWSdl3JM13d
-	 571Y6vkxZDO+8uctVhX4dMkkqSq5R8jNzPYyQJztr+KcsfXoSYDudyj1WqoF+oq4XR
-	 9vM4YFvKnvmy++WOtgJNAYLpdNLBo/lkDXsIctn3bFnF5h2EGGCvzHwdjRDZ67epc5
-	 dTHVfi78OZ6zfjDC8dRKbdR1thPlJ5cJbSsimst+/3xduPXIJBOWY3oiZbCnX3T0dJ
-	 NF4rvjlbFlRlusNIiu2rD2GdH3Z0a1q/jMWhr0yA34WZaWAe/3uwkLgnw4zsk7yDX1
-	 1/TCySqHEQeIg==
-Message-ID: <f98c3f68-82d7-41e3-bb58-d3737b73c7b5@kernel.org>
-Date: Sat, 21 Nov 2026 12:02:37 +0100
+	b=SdLSu61oD6c7Zyog6ba9BfhNAVOZI8XI7wHvEst6k3Cl+et0x/kYNRjD5u55c2yz4
+	 FyExcaZskfKITW6mD/esUsb/Zx9ZtHITQBaaznibfk0IkDep94IpHgQaY56LIERI93
+	 QhDtr9BIGqLzBeY7nypK6JbUBCoYOMFNQRi5DL1irf944WKMvqAwKwQOF9iNX/VCb0
+	 nvDyugpCrz3gxIL00WU2WYVp5ZeKD7mwjm5wH0htBAU0TtGo6fiGPtFxCTkUREGSwm
+	 FMRNm/gPI8W7BJUaNDilmXQnXBWeCMxirXLPrhsgLuqX9S6Drp1rxqrsRzyEL5Pc5u
+	 yPf26uPm8yRmw==
+Message-ID: <729d5740-b611-4701-a293-447f940453ec@kernel.org>
+Date: Sat, 21 Nov 2026 12:03:56 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -52,7 +52,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: clock: rockchip: add clk-out
+Subject: Re: [PATCH 2/2] clk: rockchip: add clock output/input switch driver
 To: ZhuXiangyu <1194781887@qq.com>, Stephen Boyd <sboyd@kernel.org>,
  Heiko Stuebner <heiko@sntech.de>
 Cc: Brian Masney <bmasney+clk@redhat.com>,
@@ -61,7 +61,8 @@ Cc: Brian Masney <bmasney+clk@redhat.com>,
  <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <tencent_8104629BEBAEF41637AAF1CC7D95BC7DCC09@qq.com>
+References: <20261121105856.1414984-1-1194781887@qq.com>
+ <tencent_6DE9C8A75BC0B999E08A6DD1A67AC25C5705@qq.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,133 +108,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <tencent_8104629BEBAEF41637AAF1CC7D95BC7DCC09@qq.com>
+In-Reply-To: <tencent_6DE9C8A75BC0B999E08A6DD1A67AC25C5705@qq.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 21/11/2026 11:58, ZhuXiangyu wrote:
-> Document the Rockchip clock output/input switch, a single GRF-
-> controlled gate used for signals such as the SAI MCLK output.
+> Add a small driver for the Rockchip GRF-controlled clock output/input
+> switch. It exposes a single gate bit as a clock, allowing the SAI MCLK
+> pin direction to be controlled through the clock framework.
 > 
+> Tested on an RK3506B board with the ES8388 codec: this clock drives the
+> I2S MCLK and audio playback works.
+> 
+> Tested-by: ZhuXiangyu <1194781887@qq.com>
+
+No, this makes no sense. Please do not invent own stuff, like
+author-testing-tags. Look how other people did it.
+
 > Signed-off-by: ZhuXiangyu <1194781887@qq.com>
 > ---
->  .../bindings/clock/rockchip,clk-out.yaml      | 81 +++++++++++++++++++
-
-Please follow carefully submitting patches document, including how to
-sign your work and how to send it correctly threaded. There are numerous
-guides already, so just follow them.
-
-
->  1 file changed, 81 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-out.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,clk-out.yaml b/Documentation/devicetree/bindings/clock/rockchip,clk-out.yaml
-> new file mode 100644
-> index 00000000..bf2a9b8a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,clk-out.yaml
-> @@ -0,0 +1,81 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/rockchip,clk-out.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip Clock Output/Input Switch
-> +
-> +maintainers:
-> +  - Heiko Stuebner <heiko@sntech.de>
-> +
-> +description: |
-> +  Some Rockchip SoCs route a clock between an internal clock and a pin
-> +  through a GRF bit, for example the SAI MCLK input/output switch. This
-> +  driver exposes that single bit as a gate clock.
-> +
-> +properties:
-> +  compatible:
-> +    const: rockchip,clk-out
-
-Generic compatibles are not allowed. Do NOT send us downstream code,
-it's not acceptable.
-
-Not doing detailed review as it does not follow basic rules. Please go
-through for example DTS101 slides.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: Parent clock.
-
-Drop description.
-
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +  rockchip,bit-shift:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: Bit position of the output enable in the register.
-
-Nope
-
-> +
-> +  rockchip,bit-set-to-disable:
-> +    type: boolean
-> +    description: |
-> +      By default the clock is enabled by setting the bit at
-> +      rockchip,bit-shift. When this property is present the polarity is
-> +      inverted: setting the bit disables the clock and clearing it
-> +      enables the clock.
-
-Nope
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - "#clock-cells"
-> +  - clock-output-names
-> +  - rockchip,bit-shift
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clkout_parent: clock {
-> +        compatible = "fixed-clock";
-> +        #clock-cells = <0>;
-> +        clock-frequency = <12288000>;
-> +    };
-
-Drop node, redundant.
-
-> +
-> +    clkout: clock@ff910004 {
-> +        compatible = "rockchip,clk-out";
-> +        reg = <0xff910004 0x4>;
-> +        clocks = <&clkout_parent>;
-> +        #clock-cells = <0>;
-> +        clock-output-names = "mclk_sai0_to_io";
-> +        rockchip,bit-shift = <8>;
-> +    };
-> +
-> +    audio-codec {
-> +        clocks = <&clkout>;
-> +        clock-names = "mclk";
-
-Drop node, redundant.
-
-
 
 Best regards,
 Krzysztof
