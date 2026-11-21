@@ -1,73 +1,118 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795264968;
-	b=BXxr+JMiAL8SIncZbRiQipItjUfrfS058PVcyjJ2Bc/1KfHUmdxIUh4vdEsu0Pki22Ld
-	 OwoK+si98IudZy/3mLmnVyCGlnyU53tt1BcggU3CIGW7BeO40f3JDY0s/nGJXTkr4cYV6
-	 C947B3exSFRTqvZ9R9T1/WWhKpJOj/W0tiqiHP4dpWDZ2CsxPP5bHVcQf3P3LZ+b73+Id
-	 IZMSfOlXQdePwmuFJilrRCVNFW3HCLj0/zUc5i5K6oq0iaaFFyK0nOBMvb011fHlC/t+j
-	 qRWMMqnZTZGTXFt/EE1RxmfgI03E0CD3npFcyiMp8j6Ti5A2MFWrEt5s0+2yM45Lx1g==
+	t=1795266035;
+	b=l+Jf9TfBRGv3/1ABKvMDoto2WuwTvfOwPLsxG4eRdzRJAJjgkz865If6PAMhuLp1tn8g
+	 JarDZUTpdZX43XEyjX/hG29OBPftXt4VvsraF5C3d9u8zZE80M8AzItsfX/sieBeOPiF9
+	 Ya9R1jXmA3ism0IuMTVIwHM2E87n19m/2GT6fVIFlcLOmOsQJk0OuNyvjupEpz/3rrNJ3
+	 4yhe+eOjHv6xqWmBSto1WerW9y6JyPYkOLoM9X7oGjf7Vd+wH3mUcR/uxQSa5OhM/fh02
+	 BJ37hW9QYHmilbPSEnmgzKqYCnWLsoGtiJJSs8D1Y2SO2DUNFnrOmfkCVtg5h03rmrg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795264968;
-	h=Received:DKIM-Signature:Received:Received:X-ME-Sender:
-	 X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
-	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
-	 References:Subject:Content-Type:Content-Transfer-Encoding;
-	bh=RuNf+pePjIWf7fpgOl6kHLwN5HRwrqk6Ttj5H6K8/Jo=;
-	b=edwN9lGnY5HskDnsysl0Oi5NF+8ZFU2VQV5fxDCC5wAvw9krVGtwuKaE1Z4zXvfcfK9S
-	 qV1dfTUh3N8LrIYeVmLbSIHEDLG+G8Chy70U1AGWkv+VEjihW85TdrCM/aSt1kMJ+U37k
-	 NZXN4xCUyupQMLsRYOahphIyVMxx2OX4uqBbwpWZ9tKvV6Y3dkAbbQsssTyUiuKFDBep8
-	 o6mBRLT6YZvG04r0TXjTqXhWi+QF38KZtLDU4X/Fw+h05vsMzaUrK05Vp8tlT1aJkcolz
-	 8qO2YlM/IolCQapjGYCYvc5TTFq4gUyAlol8zzoaJhk1jrnvFW//4Kt8ikh/14Z/CgQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795266035;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=NXIuNB3ZQ4GT/Hz3ry1FYljBSts0wnPjJe/0CXC9B/Q=;
+	b=jjJ9Z4bplaZr/Kg6AKFYfhLMYv98OFB7E9AsNKKKRmzTP8xjNunOgTtMRVAlmLbbi46S
+	 sK2Wrmca7QjhD1AhIhsGsylPUXs7BUFaM3zkSlXqRCMdXItR+LFbQC4mv4MNp8YJWd54g
+	 rCAEiDBqh/qWGwuJ0wXtYZESZF5RIkZ5lDhN9+1uwL7L4Mww3QYMy+KolaMjY3GIMK3Eq
+	 nuzybwIAsr0tebrIEpXxkJqNT6L1tdWgwQQ37SEH+rer1GRuXkAdMtI9ZEvHgnwZuHPh9
+	 AMcFkDfuK0/vLdXG1A3j2d16/gTrmDqupGDGm1MxNN91LOo+x9VrH3IPZejVJyYVoIg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Edkrk0u9;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=RNtRAbmQ;
+	arc=none smtp.remote-ip=209.85.222.172
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B173606A320;
-	Sat, 21 Nov 2026 12:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B484606A334
+	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 13:00:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4B484606A334
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Edkrk0u9
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 494501F000C6;
-	Sat, 21 Nov 2026 12:42:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795264967;
-	bh=RuNf+pePjIWf7fpgOl6kHLwN5HRwrqk6Ttj5H6K8/Jo=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject;
-	b=Edkrk0u9ZBtn+sfvtyuaB/62cjo0kHZXc7JqL1+Jp4ysmhyM/WQWc+zX5yq5ntE+k
-	 PL91l3Ay41tESI8Ugjuvp2aENCO0yodQ5+tfIZLAi13ySYtAfEaVGuxx1E57xfWmis
-	 rEjsgGfnti4RQFMyOPd3QkzDs7JG5bd3LCiGn1+JSoIMwFGbjkMTaJam9jZPEqhKs9
-	 OQyjCnUOo+vaApoK20oxvbEZpoqIssyd7YG2tavubLveNtDjejhWiRSqVmCOp1ucF2
-	 q3YhaEZbxEysEJktsEXJmYai7zYBPzNQdPoOqVpcfVvZGgxERveq0jA9pmSyw/uW2I
-	 ilbvM8oWL2z4A==
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailfauth.ams.internal (Postfix) with ESMTP id 8364D198003A;
-	Sat, 21 Nov 2026 07:42:44 -0500 (EST)
-Received: from ams-imap-11 ([10.64.2.31])
-  by ams-compute-02.internal (MEProxy); Sat, 21 Nov 2026 07:42:44 -0500
-X-ME-Sender: <xms:wJEBa-ZtDfskQiFzaQkxwVZMjq6DINcp4B6Qz1M2SaA5wwiI4_tiUw>
-    <xme:wJEBa8NCC5VQmS8G261kZ6ip0-tk_XJZFGroObPFb8iocwZNqWdOahCNPdXDHSQlM
-    HyN0W4dPkuG1m2gUPabxWiFTmCzFbJDkMhklxB0rrNmH-Y-fdyedhr5>
-X-ME-Proxy-Cause: dmFkZTE9e/DNRSP39ywX8YGfN8UoAyYP0CkDVl1avqiAO6xwU1q4JAb9xbXdWO/PpICXkX
-    zSe7F6+aKSXIivBTl4vZebp345mjcvLiZD9TrcN4QHwBOm4LthXKqGLtvIk6OB86Itx5kS
-    d/UV1jGeDDUTrmqovg7yftxuaJvfmdlHv1cqtQRmHAiOgfntYjw8a9G5ML3j1HE+rNqrVv
-    sJFYZ4GZgtsNvuRQjxcJtW6yVD0Woj3jL7EuAHCN2PhP3rLmluqpBpD3npZIKTrh/eJwu+
-    Lw3q/JjeWsgRzz3r5esxoF6oGSF9wTLqWumVmdUFgjUGa9Tpovw5aSjfTMwfCS592JTuoV
-    OcXXV3oeikv72LVep537lddmHM1Iut790jkACgOjIl+lEFO4p3xtlcZddXdPlBYFtphFDP
-    jV32RIJDx4tRZ2V5R/L0EsrklNVJbzl7ijr/T3nZVrJa82J4FoSmDH/wqpWF6Q/DzLC7UO
-    0GqxSPyYwOx8njcf0bDlwbbQQrKhDvHIkwvEcARRI/kQBu4gR7VcNwPUgpi5Vo+mq2sbbX
-    JsQXlL0ca+cqLynAiw8kIttg+OZmMDY42RhkY/ihzW1I+bJk+G9+JyYVViCb3eNHh6SNs7
-    Nga9lB9eHPZJC2iV/xvblxvv98by0fJIDxf0P1vn//Dnp0e2VImQzs8lz2wA
-X-ME-Proxy: <xmx:xJEBawZT-KsmJZzuUSa4Uls47l6wsD-ci_BoSZ8jlZQATSPlTA8QYQ>
-    <xmx:xJEBa6r1kDXzUi7QTo6cAoEOem3srPLfrattqzVlNKoAHexfPEQZJQ>
-    <xmx:xJEBa9xJhgpCROoCvfEgXfgfFrtmU2GSpQ2U0d49dLNbWRUuCUW-Zg>
-    <xmx:xJEBayLyKn1Qzc1vCBGkv0JyamZh9rl3O9Ev_HOOuNk6vN1DQ_UqaA>
-    <xmx:xJEBa_7sd8dXEJRNAg92aZYpU2HoUJd-Va-8yw61X00ejPrsRHaXKaZB>
-Feedback-ID: ice86485a:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id B33E7F8008E; Sat, 21 Nov 2026 07:42:40 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=RNtRAbmQ
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-9496577d4c4so211391385a.1
+        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 05:00:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1795266034; x=1795870834; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=NXIuNB3ZQ4GT/Hz3ry1FYljBSts0wnPjJe/0CXC9B/Q=;
+        b=RNtRAbmQYXLSiaEjtX2aUWytq3ybkP6vzvMM/GYzBbb22sqY7OMQwI+6PVQp9DHcAr
+         lhyzXBhfLKqVcuJ8sVYNtP2aRDK4nll7J9DPE5KKQ2CAiVa+LkTWYungYQISMsCYyeh8
+         hpGt4X4Nli6qalkIo2q0QmQpZOhYwDWO5tabVR1HVgZiiW3bleQnCJNRgfq3ll0kyepq
+         3gsRAOgqgRVcju81U/9by/AXAbdfkcF2NzQSoJbhod4BZL71XZp0atz6aRPfoC9lunEa
+         hlKhShuYNK3XPf/2DcuSXs5DhYd1yfNh3h4hIJmP4ba3ACaEg6LShMxd5328jY0CMk/1
+         hndQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795266034; x=1795870834;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=NXIuNB3ZQ4GT/Hz3ry1FYljBSts0wnPjJe/0CXC9B/Q=;
+        b=oMLswhWpXW8BcQ3j7hDJsJ3RMnjAHHx8itoP0n5por4ezGjMSDcJpsllmt/TUIR5df
+         PsEJGZZCoTKzXoidIc1tFkJcU7gMKx2SkMxW09VqPP+dTy2BRAbQI+KAcDutS2AbbyT6
+         Sk4qOQMhJJtnjpbtwvc9lZRC/CDNsRnRAgczEy7Rt+WDdPNi4nN2iN+A7uPP1tRQ0mW2
+         DJRJqVPVwirF6sQYSfb6BmuubrKySQDRHag6qhrCjtCFdo8MpUgDLroyj4LqqIikwKkC
+         z3TwIMfqpAWa/MajlsS43F4R2hfsMSOq4ONedd9EFoRwluaLgZjcCxGQr2XMOzGmwt2W
+         fD5g==
+X-Forwarded-Encrypted: i=1; AL+hErHDISSbu9sj656NidpiRozuiNvadALcCe7Ffogbd5HJ9JFjzxTG3zm5z584tRuzhVE3e3eU/TbUUWw=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+wtFohCzYC76sV5aP74kR2Urmup+asipi2PHijdEYoMgq7ZS7c
+	ZGn+h9FwrNv/bTvPFe9G9K6uBuh+qejvIpYlULX+r/dqW5zqCxliVit4I9iEuj8BMdA=
+X-Gm-Gg: AZFdTZfPe4p0CYvoIO+FmXkibHrBqWRZZdofTCrmIvxj3Sva5REaED0jfsGU05iwKZO
+	4cyX1ZNI+0nppcjvcIke9Ihwq5hyZPlx52uL9j0JFrqi9QNkn8PaJQxXFp51ds3Z9Rx29is6RFq
+	lQ3U/w43DcElP2ZYJei8L7ug3hDYJ7Z0MaWu0a1SPI4Q0r7rTMvFOrLBI0vKia0uOUkPPiVhoux
+	px2t2/NtzurlRYhafnDxI73CWfMrkilpU7Sx9gEs9EZxMKUEn13e+agDgNqop4riDvP6Opt47eD
+	63iXS/snTIAbVB8o4OuLjF1Xhz/qqGr+nsQqQXSMzoO26WJcINGQh6xetz+Gk+Gvcc4CgdOH8Qu
+	8xHDeQWtkXgE6Athg7vx+S7V0bGhKKIWYje38mu7MQFltmG9kNpr+Y0/jeCADaGi/tuS6gcpZV1
+	/2ZgHkVSuzL5CKcSrKdP7mSVwZob5uKUY7CwZGsoEdjMShKw2L7Je6YbfywRXr501oI4j123hRk
+	NLcDNl/wqLJ7e5bkFnjQQz1E96jYLp8VNA2jhyDx7pVcTvQllyaJXxxElOETeu/xxhiJlH0aEfk
+	8leECvoI6QFzPMLn2m46AeVrkx9wyBLrYH1o3e4hwUtiIUFm8tYeJq+SBA7uPJ7TKzuljTo75Sq
+	lG+LPYMF4DMChC34oGcywL7F67t2+n40kAUTe3bX3u7YoeQM=
+X-Received: by 2002:a05:620a:2786:b0:93e:5677:317b with SMTP id af79cd13be357-949b35e9b3fmr1046746285a.25.1795266033942;
+        Sat, 21 Nov 2026 05:00:33 -0800 (PST)
+Received: from localhost ([204.244.107.52])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-949bb427388sm408593585a.42.2026.11.21.05.00.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Nov 2026 05:00:33 -0800 (PST)
+Date: Sat, 21 Nov 2026 08:00:32 -0500
+From: Ralph Siemsen <ralph.siemsen@linaro.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, khendry@reliablecontrols.com,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: clock: r9a06g032-sysctrl: Document
+ reset cells
+Message-ID: <awGV8BU_AfaXQyBv@maple.netwinder.org>
+References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
+ <20261119-rzn1-miic-resets-v1-1-feee2bb28bb4@reliablecontrols.com>
+ <awARmkCuelD_fdX6@shikoro>
+ <5d8530485716d129be2efa0518254e3322cecdb0.camel@pengutronix.de>
+ <awAq7vxcY8CGjhNl@ninjato>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -77,70 +122,31 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-ThreadId: Afc6hXNcC8eV
-Date: Sat, 21 Nov 2026 13:42:20 +0100
-From: "Ard Biesheuvel" <ardb@kernel.org>
-To: gaohan@iscas.ac.cn, "Ilias Apalodimas" <ilias.apalodimas@linaro.org>,
- "Paul Walmsley" <pjw@kernel.org>, "Palmer Dabbelt" <palmer@dabbelt.com>,
- "Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>,
- "Atish Patra" <atish.patra@linux.dev>, "Stephen Boyd" <sboyd@kernel.org>,
- "Brian Masney" <bmasney+clk@redhat.com>,
- "Jerome Brunet" <jbrunet+clk@baylibre.com>,
- "Chen Wang" <chen.wang@linux.dev>, "Inochi Amaoto" <inochiama@gmail.com>
-Cc: "Han Gao" <rabenda.cn@gmail.com>, linux-efi@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, sophgo@lists.linux.dev
-Message-Id: <bb39f961-0589-4a3e-b649-888cf5edd3a1@app.fastmail.com>
-In-Reply-To: <20261121-b4-sg2042-efi-rtc-v1-1-19898b8ad497@iscas.ac.cn>
-References: <20261121-b4-sg2042-efi-rtc-v1-0-19898b8ad497@iscas.ac.cn>
- <20261121-b4-sg2042-efi-rtc-v1-1-19898b8ad497@iscas.ac.cn>
-Subject: Re: [PATCH 1/2] riscv: efi: Map runtime MMIO with device attributes
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <awAq7vxcY8CGjhNl@ninjato>
 
+On Fri, Nov 20, 2026 at 12:11:42PM +0100, Wolfram Sang wrote:
+>
+>> > > +#define R9A06G032_RST_TS		1
+>> > > +#define R9A06G032_RST_MIIC		2
+>> >
+>> > I didn't find any listing of the resets in the RZN1 docs, so coming up
+>> > with arbitrary numbers as we need them seems okay to me.
+>>
+>> Why aren't we starting at 0?
+>
+>I wondered as well but clocks are also starting from 1, so we could
+>argue with consistency.
 
+The clocks use value 0 to indicate "no parent clock", but only for the 
+".source" element of struct r9a06g032. The encoding macros add and 
+subtract 1 to the clock IDs, so it should in fact be possible to use 
+0-based values even for the clocks. Too late to change now since the 
+values are encoded into DTBs.
 
-On Sat, 21 Nov 2026, at 11:38, Han Gao via B4 Relay wrote:
-> From: Han Gao <gaohan@iscas.ac.cn>
->
-> EFI_MEMORY_MAPPED_IO regions are mapped with PAGE_KERNEL, so device
-> registers end up mapped as normal memory.
->
-> On Milk-V Pioneer, GetTime() reads the clock controller registers and
-> faults:
->
->   Oops - load access fault [#1]
->   Workqueue: efi_runtime efi_call_rts
->   status: 0000000200000120 badaddr: 0000007030012000 cause: 0000000000000005
->
-> Use PAGE_KERNEL_IO for these regions.
->
-> Fixes: b91540d52a08 ("RISC-V: Add EFI runtime services")
-> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
-> ---
->  arch/riscv/kernel/efi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+Thinking about it some more, perhaps instead of using 0 as the special 
+case for "no parent", we could set .source to match .index. In other 
+words a clock pointing to itself means "no parent". Worth changing? 
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
-
-I can take this as a fix via the EFI tree if you like.
-
-
-> diff --git a/arch/riscv/kernel/efi.c b/arch/riscv/kernel/efi.c
-> index 2d3cc57b4535..11e85d0ebc91 100644
-> --- a/arch/riscv/kernel/efi.c
-> +++ b/arch/riscv/kernel/efi.c
-> @@ -22,7 +22,7 @@ static __init pgprot_t 
-> efimem_to_pgprot_map(efi_memory_desc_t *md)
->  	u32 type = md->type;
-> 
->  	if (type == EFI_MEMORY_MAPPED_IO)
-> -		return PAGE_KERNEL;
-> +		return PAGE_KERNEL_IO;
-> 
->  	/* R-- */
->  	if ((attr & (EFI_MEMORY_XP | EFI_MEMORY_RO)) ==
->
-> -- 
-> 2.55.0
+Ralph 
