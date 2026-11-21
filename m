@@ -1,80 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1795285101;
-	b=EFH+p98iv9/tbtvKTj22Jj3MCI8h+Nrdd8oYJACaf6es/DKaxDcAlTXsYPg6/Uo6fHUA
-	 UozlGV2NEWLogQBoit6Y+lgfanhP2hlAZNgfry2+ZsVvNg/itb66gMbASrmIb3l/7D7S4
-	 ShBdwP4U0d1wfueZUrseDn9y9LRK4cPTr3yZj0kkYMiCDujkSWxj+Zb6gXBGFc7ANW++J
-	 6f3Bh/JyWaK/HKAZaRk6Ka7/oxfbpGnrlW1Y3g9+diPnzG2cFMWLLRB0wFWA+oxhlHjNY
-	 8tZUrtVz5GGdPlFec0s5NppIWG+f70Cz1JkCM6lFJpCbpu0kl3bSamHMK8IwCE168gQ==
+	b=UE5Evlv98H/1a+K8qw/ycXOJ+XCkPdrhcsN1jrKvUpHtBSRv7ATci/NMHQaBijRb2LyL
+	 86H06pQ2z3GzgcWzQ8UAzh/303qkDBBKAXK1p4wqYZyCBui6wbxVN6lcFlb5/BG8UCK+v
+	 gGO69zZa/K2EBNLSAbzsmW1LpnHcWZVUC7fbn36Nkvn6YNlbKs0cw4tNWkitiRXa9+QbD
+	 pkcHgxVVo1PWEcjdqfy0T14SaaH9bnFwecLJQFARn//0Ip1UULhrYD4zTlaNJ4c0M6OU2
+	 Sa6Ad/866dRnrPuBIWFKTnVVjM+uQBT1ZZZaETlq7R/vBOO4CugRgcEXnXInHKe4YIA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795285101;
-	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=ncDTKvJKW3D6IFjX5rtEEcYzOp1fkxCmtnJZ4T79BVA=;
-	b=oHKTE9xaPH+Hm370FthVlc323Gpti6u6K4UEC2usyPxtRi0Wbz2wqk/nDw/Fhk7ZKVUh
-	 y9xaSfvNTZi8TKhLzB72zlsBgIu8ezWWx8nN0kXGAo4ynKV7Gf8h7zTsqIDI22bH8q6ZK
-	 2xfi+xGi9sQLImrW/inrbbRguVRg3NPd4f0qEuoLYk3KZpSMKuGG38/6Y6CBUuLvbQXmc
-	 41K8jw2+xGc22Wao/VwPtfRqSo15ZUVe8aoMmaQRld5fJBlyACCCoCR8gEG6FF0Izoeas
-	 t9NdnhoufoBN3PrTME5vwp6ERJM7Z61r4iNzZtnH6bYEirtfCxuxShsm8Sg/zt0u/0g==
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=KGlDt84X+LMSzS/i/lJM9DHreNNB0ApRjf2Zk9oKYmw=;
+	b=eOruZ04VjE9pHINIqtPe83DEjcIfIhIXOLcO008mS3UzEAs/IVrr5Fr/kvu2XNb2RR5x
+	 +T55hC2cwW9rcpvw/VHkLMrl5F2LZlq0UAB0C6jwSdfPD8ZVC7m5DmwgiuwErYIR5Sz63
+	 8ZakopaHfqT/eCJoOKumsir0p8PYm6xussW+6nT4F6m00C4BjMUqIeYpHJv294Q5sTnn7
+	 6+GIRI57u54sRZzdhB3+4pI3gEdbFNmbOz1fvFPSNozjkflEd1Uz+LsJxKGg5bnXfd/dj
+	 YSBeJNdXolDDpAJHE19K4ncleBZJtvQIV1GkFHmsT39WDUSmLhzXmGEkELJBb08qieg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PYwOjRhA;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AwVUCMpC;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359DC606A320;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EC6606A334;
 	Sat, 21 Nov 2026 18:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PYwOjRhA
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AwVUCMpC
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1795285101;
-	b=iavaaP5Qp1Ge75RGryZ/zzC/gpFHvlKUxS+lJBLdjrHRxcojgIFlsiApi7Qp/lKt49h+
-	 0lEerxxwrMSUH0+sULlMvcO8ozu5kl5ohhvCKUrQyMeaGF6umeZlc0cqWT4yM/rs9cmmD
-	 1T64wxIP6q+2pxYfQNtg00OmezTPaXx7PIWg3GNo5nDOQqclLIPphkR4+R8nLUiiVzhPg
-	 XAY1iH1DI62P5PnK/hSSF8n9a8cKFuhQVODueL2NEKqeSBhnUhJ1dh0fjMcFIbJ2gsu3G
-	 MR+FQt28HKNuB3SHCIo28D012KCvQji6SOo4IvVewBzw3GRDub83xrfCf3LuNUBAHuA==
+	b=HN6pXWLNxH5A2jel+87m7bqKLmWca/3wcAOqOup6ZQ0vZUT9gXylorT7b92wwbnZyVfb
+	 JTuMN5l6x/XpQpAyR+f8a+U2ZQGrjH785i8C6MSBCHT3PqTM8Sdu9dLLqtQVmEbHYaICa
+	 H32kmzcSg9mlqxQFn15JKI8c4VzKgzimd5TI8lWD2CNJnwnIYShghRHwkfJ4jj/hwcT7F
+	 D25ziJbWUXIyO4atZn3iXVzuuSUS7wFsM8R7jsfJb6TXi6WRFgD6n+lbJvqkFAfMS+2fM
+	 35iWh4qOxpcW01Qdrw01ZY0wTHrk3q/0QXadqZXshBtYs8O/ujyjT/mRKE1FwP7u4mQ==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1795285101;
-	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
-	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=ncDTKvJKW3D6IFjX5rtEEcYzOp1fkxCmtnJZ4T79BVA=;
-	b=vjyFHM58lRN2brs6SG4MYPOsXEeV+Nm68QXpUPUgWzXtrSfzPaa1QBA9G+EKbLzgTgf0
-	 OzK8Fs0nk/xw9ZpQIzB98eZXi8avUac/qmdjMgrH2f1n2kROrIrMGyy+COzmWqsoNEBQ4
-	 sDwdPxPwj0tS0MNnhwJP14biMafyFLNffuS5RzEOFPpKnDbAYskVyXM7t4L14CVk9Qd8+
-	 r6VctYr8UknZmb2cL8GtGhDDZIYPnKSvRVYozgB1/jQGiuAVkll2yhYh+WHGP0IUAl9nK
-	 wTIjep7A1CvZN8A2t0pR5voex05S/u1pp0Zvamnd+DPEjpcMpEWlUnkbNG1VCNXdDYQ==
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=KGlDt84X+LMSzS/i/lJM9DHreNNB0ApRjf2Zk9oKYmw=;
+	b=HNNlD7v3tusXxQyuCktf4uQSlCNe88D+s42pQShQIo91CPotfsy3kGVJQOBpGkM1l528
+	 drXurzlZguKd3DZkcbNSLr9YMN4/rcY/ywV2aEOBZ27MizYqP6uIGJ2hm2Ms4dFG0CkXL
+	 Cs0lWxhoJhf8JpDdnlsAeQhqXlyyTCymMyK68DFCp/xPcKXzzSElIhTgxQh9mU4a/ngz5
+	 5S2LZHdiWKbgNvK7PHKXVWLOjJVJhr03WS66kwCf4p3XrS7+1Pcg7ZElSKoiS0TPoA8kT
+	 kFzsYgkK+1OhgSIRZgn0jObluClwA1PASaIVX6cdrjGH4m6mPmU/CCNcsr1sEyvvCKA==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 7AA051F000C6;
+	by smtp.kernel.org (Postfix) with ESMTPS id 899B01F000CF;
 	Sat, 21 Nov 2026 18:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1795285101;
-	bh=ncDTKvJKW3D6IFjX5rtEEcYzOp1fkxCmtnJZ4T79BVA=;
-	h=From:Subject:Date:To:Cc:Reply-To;
-	b=PYwOjRhAmlC7m7EdHMGijlL4hwflhtO6Mux3eDuzIhcKjzsQ3WIVOxHwy/qgY55Ht
-	 z7LLXbZ1/ja07cBgZsbkvJfuKAnpwtJc56TJpcjN19MtF8aW9GtjZbXIrsfznZpuTO
-	 rNKnGvgegfj4QemmwkRLQq53DoRdU3OlMR0RPz91xuLLVYDDpfxe7wa5FdbDbSHbtQ
-	 H8fOQQADKF8207ZHgUaXLjAMUTggdjkwwoyJPj1tflqPDgGNp3pI1Js+15a3swX+5k
-	 ja3K4JjdHluT2PGCN9NCiAI9GHOfNjQEoGneevMxz3noNCbYKOpEroqTDJC2tVmrcv
-	 JFf5jREWmfR+Q==
+	bh=KGlDt84X+LMSzS/i/lJM9DHreNNB0ApRjf2Zk9oKYmw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=AwVUCMpC1X/i43jNa+f2k6Aqg7eX2FeD3nZGHblnLQxEY1oiPq3laGQsnfneVGb+1
+	 agGXvPdIId6zD/aZPJcbFzwrIRRymwkjllR8aLAEI4P4bUe2hoLyKvyqUxLXuDZd6d
+	 ouRAb+n+HJXmj5wZXySSY3CKwVGjkF/YkMXFontCvnFDskl3PFjudMgB5ALl/8aNa1
+	 4idofuC+eyCAv4UOwZLgNCdG8L6JccvggTbZnN/ntBDOTKB9ZDtNl4JwuSwWD2OVfW
+	 sRY2BY3rVCZqcY5K2fSd8aBW5MK53DnihE5c7x1bDrWgoPAbCkOCYUDbwJZu2U6cnn
+	 cxAZzae75S3yg==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id D585F4BD38;
-	Sat, 21 Nov 2026 18:18:19 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id 1CD3F4BD42;
+	Sat, 21 Nov 2026 18:18:20 +0000 (UTC)
 From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Subject: [PATCH v2 0/2] clk: sophgo: sg2042: Keep gates used by firmware
- enabled
-Date: Sun, 22 Nov 2026 02:18:03 +0800
-Message-Id: <20261122-b4-sg2042-efi-rtc-v2-0-6d087e03e4e8@iscas.ac.cn>
+Date: Sun, 22 Nov 2026 02:18:05 +0800
+Subject: [PATCH v2 2/2] clk: sophgo: Keep SG2042 gates listed in
+ protected-clocks enabled
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -85,12 +84,9 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/32NwQ6CMBBEf4Xs2SV0LQqe/A/DoZQV1gOYbiUaw
- r9b8O7xZWbeLKAchBUu2QKBZ1GZxgR0yMAPbuwZpUsMVNDJGDLYWtSeCkvId8EQPbLtSiIqzdE
- xpN0zpOS9O2/Nj/XVPtjHTbQ1BtE4hc9+Oput988/GyzQ1FVdtZXrbH2+inqnufO5H6FZ1/ULo
- QssGcYAAAA=
-X-Change-ID: 20261121-b4-sg2042-efi-rtc-e4d5222513ae
+Message-Id: <20261122-b4-sg2042-efi-rtc-v2-2-6d087e03e4e8@iscas.ac.cn>
+References: <20261122-b4-sg2042-efi-rtc-v2-0-6d087e03e4e8@iscas.ac.cn>
+In-Reply-To: <20261122-b4-sg2042-efi-rtc-v2-0-6d087e03e4e8@iscas.ac.cn>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -101,71 +97,77 @@ Cc: Chen Wang <unicorn_wang@outlook.com>, Han Gao <rabenda.cn@gmail.com>,
  sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, 
  Han Gao <gaohan@iscas.ac.cn>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795285099; l=2101;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795285099; l=1924;
  i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=JKiIHEduS5hiyWa/DdSePRqv7K8ib23Oio2mSrLYzzE=;
- b=XWWBF8jXOUX1HUf4l5WASPoIi5NGWrSK+caiEitu8JsDdG/2CvTfkI2bnU89QdZszlgeJapa8
- IJlfO1uGxpxBmw3X+sg0e100TBClDGnH9+QrWivGNSMX6UySEyjD9ab
+ bh=oDFY3WrZMCRM6HlTzCNBxKLTff2F/eD4wOSph6ERWQ0=;
+ b=cW/iHYkr/MTWozHP2PrVACf7/yiuOa4PRHWQevLRm3LEinn1tgQtDNy8bsoT7Jma78StFPjTc
+ 6oWMwxABIQhDeAD/q1kY8iNJIdo+HshdQVJuWbcK0slgHLblwI70ydz
 X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
  pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
 X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
  auth_id=1262
 X-Original-From: Han Gao <gaohan@iscas.ac.cn>
 Reply-To: gaohan@iscas.ac.cn
+Content-Transfer-Encoding: 7bit
 
-On Milk-V Pioneer, firmware uses I2C0 for the EFI RTC and the serial
-flash for its own image and EFI variables. Both sit behind clock gates
-shared with devices Linux drives, so runtime PM on the Linux side can
-turn them off under the firmware, and GetTime() returns EFI_NOT_READY.
+From: Han Gao <gaohan@iscas.ac.cn>
 
-Let firmware list such gates in protected-clocks on the clkgen node,
-and keep them enabled.
+On Milk-V Pioneer, EFI runtime services use I2C0 and the serial flash,
+while Linux drives other devices behind the same gates. When those
+devices runtime-suspend, the gates are turned off under the firmware.
 
-qcom, the only current user of protected-clocks, does not register such
-clocks at all. That would break the I2C controllers Linux uses, as the
-DesignWare driver needs the clock rate, so here they stay registered and
-are only kept on. I'm not sure this fits the intended use; suggestions
-welcome.
+Mark gates listed in protected-clocks as critical. Unlike qcom, still
+register them, since Linux devices use them too.
 
-Tested on Milk-V Pioneer.
-
+Suggested-by: Yao Zi <me@ziyao.cc>
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
-Changes in v2:
-- Drop the EFI MMIO patch, Ard is taking it through the EFI tree
-- Use protected-clocks instead of scanning reserved nodes under /soc
-  (Krzysztof)
-- Document protected-clocks in the binding
-- Link to v1: https://patch.msgid.link/20261121-b4-sg2042-efi-rtc-v1-0-19898b8ad497@iscas.ac.cn
+ drivers/clk/sophgo/clk-sg2042-clkgen.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-To: Stephen Boyd <sboyd@kernel.org>
-To: Brian Masney <bmasney+clk@redhat.com>
-To: Jerome Brunet <jbrunet+clk@baylibre.com>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-To: Chen Wang <chen.wang@linux.dev>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>
-Cc: linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: sophgo@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
+diff --git a/drivers/clk/sophgo/clk-sg2042-clkgen.c b/drivers/clk/sophgo/clk-sg2042-clkgen.c
+index 6abc2c973c49..65ab18f701e1 100644
+--- a/drivers/clk/sophgo/clk-sg2042-clkgen.c
++++ b/drivers/clk/sophgo/clk-sg2042-clkgen.c
+@@ -840,6 +840,18 @@ static int sg2042_clk_register_divs(struct device *dev,
+ 	return ret;
+ }
+ 
++static unsigned long sg2042_gate_flags(struct device *dev,
++				       const struct sg2042_gate_clock *gate)
++{
++	u32 id;
++
++	of_property_for_each_u32(dev->of_node, "protected-clocks", id)
++		if (id == gate->id)
++			return gate->hw.init->flags | CLK_IS_CRITICAL;
++
++	return gate->hw.init->flags;
++}
++
+ static int sg2042_clk_register_gates(struct device *dev,
+ 				     struct sg2042_clk_data *clk_data,
+ 				     const struct sg2042_gate_clock gate_clks[],
+@@ -858,7 +870,7 @@ static int sg2042_clk_register_gates(struct device *dev,
+ 			 NULL,
+ 			 gate->hw.init->parent_hws[0],
+ 			 NULL,
+-			 gate->hw.init->flags,
++			 sg2042_gate_flags(dev, gate),
+ 			 clk_data->iobase + gate->offset_enable,
+ 			 gate->bit_idx,
+ 			 0,
+@@ -900,7 +912,7 @@ static int sg2042_clk_register_gates_fw(struct device *dev,
+ 			(dev,
+ 			 gate->hw.init->name,
+ 			 gate->hw.init->parent_data,
+-			 gate->hw.init->flags,
++			 sg2042_gate_flags(dev, gate),
+ 			 clk_data->iobase + gate->offset_enable,
+ 			 gate->bit_idx,
+ 			 0,
 
----
-Han Gao (2):
-      dt-bindings: clock: sophgo: Allow protected gate clocks on SG2042
-      clk: sophgo: Keep SG2042 gates listed in protected-clocks enabled
-
- .../devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml  |  2 ++
- drivers/clk/sophgo/clk-sg2042-clkgen.c                   | 16 ++++++++++++++--
- 2 files changed, 16 insertions(+), 2 deletions(-)
----
-base-commit: aebb7274476403040d582c61478df8f4a7bf9cd3
-change-id: 20261121-b4-sg2042-efi-rtc-e4d5222513ae
-
-Best regards,
---  
-Han Gao <gaohan@iscas.ac.cn>
+-- 
+2.55.0
 
 
