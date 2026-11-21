@@ -1,78 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1795266973;
-	b=DnKEROh2QHK1AteTt/8430nZ4lKZtF4Zs9ICtapx+zBdlwB5dMBo68/Ada1TBcpWp8ij
-	 YjOffGHDqgMWuoyam8HcNP4bSvx8n3oXWBlRE86vdwOU6GiE7/06of+hbmBGRYqwlBnci
-	 +2c9tasrGKP9XNKh/MVa5iZvGNC/nFYxGkfCjvzPzHkRJluTp2xH3AA1krdPjne1RoN+v
-	 +VzCEYqdq5y4yP3EY6ogZ/FafoHu8CpChOqvrvkHED1XIYpOzTvG5ZB5jGBRbFmeCpBoU
-	 wKVVr8uxWb65Jw1RIqG3fRlgPc8ExuIK2a1FeFJqzwt4vtatrHDrROOuNOQ2OH8vjyA==
+	b=kX/txf9FhzjA2kZYblF16KaVUGsnZb0Lncj3pXhhTKyDC0UFGkWW+RtdT7q9qPHb74sG
+	 zx38ok6kxHWXT5Q9jcBpJ2MULwj4bortaMx6BNeSl039YDhNjFDsxYOkzPZpf6FTLk3GR
+	 xycQTiudGcpv6wd2flaHB18zXMDGuuoZW3pyrtarWx8O+cXCxPhHCSFfSSm14CnObkWjE
+	 f3IEqg0mOQkwHHjLR3siHuu1i5befqaAFUXIYp0x6TB8Rlp58YtF3mcosqiveZ27PPEML
+	 HtJb1l2wBZTj6JdAtlxp032VZNyf/46wrL6NQtYs+NXmGp4sHIfIzMXgnDqjhI4aNnQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795266973;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=/sGZqn97tL9illgD8dVqV08HlJBJu9Dy61Ryqg5Ev5U=;
-	b=O+MAy3s8DjSJ1tsFEIKeUj/Sv/1DSMjHDYGtJe3RMlpmf19UNR2HNA3/kGKgJzdrkqlP
-	 ZoMdppnlZ7ko3vPM+OgUYDC0apt92JoOXfuWKsAsUPF4B//8BHGMhhLimen9vI7ZcqyyY
-	 A4QU9nFMuesFIsSVk8aEpnoYK1CD06AtGI3Qtbfi0o4gyshsR79qE6DHUiTgUKHtb/phI
-	 hqQ9XwrYoZOeWunTFVGMUEZyo5+c23p3TUUxH6W73ZQvHt61wQ3zz4aGwwp974lz3uqIm
-	 /RHSTEPfFSFrzi0K3MCVe6iqoFl3jQbyL/IuiOP3EpM/NWTzw4GZGEmFUYphV1ZK6LA==
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=jBtEkPNRck7QDwTZxqVQd7rLlwS/IspEELx+l2l31MI=;
+	b=VweqoZI6XU0P+vn9tXm36ewfTQ8iVMfIdwQueA9dpoICNZvxyLXDf1US/4rYT7tOefwr
+	 h+n6pmv6lYCDNUfuyzYQh9G6PHQ5UINaLQOEvtal6jz3Ykkm6UvrrJgjyv60nzl2lYelm
+	 00K1EK5TTAHPIKZQh8GK/ytZ5wgJFhEFChA8QU4U28JbuGEuXfVVSmjjLuIrNdreJ0pK+
+	 W4J46vnBOdLwg0Q7052k72+O7IgiYaBWDNewzGD5OdWikQ0QuVJpwjGb02ibqgpm8W8qA
+	 /ng2fQ2ik0NdvjVXyreoaEB+HtQhojHey5+BEf6mRpbFb/ET8fCZPIAPmPCv/SOMgHg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bmnZtiXh;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qxqy6ekK;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716FA606A338;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E05606A330;
 	Sat, 21 Nov 2026 13:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bmnZtiXh
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qxqy6ekK
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1795266973;
-	b=k04y7x7TkLQR2eGaL/7XkKAYBWIVcXd5W/JMFpwTqOWopOv3GMkWBlOsIwF8e/vpPTiL
-	 KrwvlHtgS9KE1DqUkRb+xA0EZR14u8UsCB4HmMas3JRy93z58vyYtHu2vfTB92cxf+I+V
-	 MzgDSq8owsySLDNyGN5jrsI+uhT373iei/54uSg7OIQmrU1FqFUUF6iFC+LbJAGvoXZBZ
-	 eWan71wLcTZB7AzbBcAK4xag9QWtpIE+qJ+eEfAz6Dv3gvspanfpP2RhlDzjOphxuyj/0
-	 L7bEynkn9pd8QA4Alw1LuZo+r9rhP8HUJQibqXMOh+xEnRn3SVGjV5IqoGVGBHNtLEg==
+	b=LW0Y9W/UxtGrXtF9/P+KLARsL+kf9XDm1QPMr23IX3flzUVt9wa5Q8dbESBDQPA5DpyR
+	 Cz8HwW729Ja0w2A9YtGdlj+Mf9SdfSeHx4StOS2go9ftQFgNtO2UGO2noQPl/m1WvfuTf
+	 NdWIK//bo66rJ8BxWhZ34jwF3ypLqv0dAsBHiYBOSJyC9TOhLy4Vtfpi0Gk6Aqfjubn2k
+	 97jhHOHMvAL8YJmsv5l/ItPVplM4xXSglyGEZ/SNhTRcKtnu/C/n5kq3Js6IQ5UApvPTa
+	 FVuKM3CTcv7WF2KGEuPLCTGpdOvEC9a6kgVglidTpxZXEgSbpBBNxfUW12NtWfFVV7A==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1795266973;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=/sGZqn97tL9illgD8dVqV08HlJBJu9Dy61Ryqg5Ev5U=;
-	b=thinHGJOm75rGd0fE/ljFPbVzKUYFW/8s7F6/JoDsCYfj0Diy+w+xcMgOfkxslXipR8L
-	 D8RNaVp618D/3Hsd5RPa7ykyb2v8UN/8SQ7ZbTg4a7itDG5aP6hvOWkK/GgClTPPi5K+R
-	 9St8g4KJt89v6UWRYk0eSlSsMxI8YGpZ4+NRcphuqEBNKk7CDhHXK5ZvMlNQ7Klb0dkzC
-	 x+EmpvJ4bHfyRbxPfcHWF2qITLZerjhpfsGBnjF6wJ19gApdy/Vhrn/RNu6PTCchJofOy
-	 QFAS6zF+9y9LMz6fGt7HkExJZxo/ctUVFzxZoxS1rUcdQp0DjstJMiIDmIdBAP38wpA==
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=jBtEkPNRck7QDwTZxqVQd7rLlwS/IspEELx+l2l31MI=;
+	b=DZNn7NtBZtoQ9gw2MbuMelqmt7oyhKY6E5xcbIWSmxqm3UDRin+4u32VJ9FHx/+XOADj
+	 nQPycmNVZ7Hak5/n8ZsL5z7HyiQlxhG50N5iZUJo1XoWdCOa4tRcGFD1o6ilbJmrkP2yy
+	 6T6BDRKL7Nu0X8kv993G+McA0XEPrv2aFwWI72j19e8XOCe/opuGuXV+s7b2u4KUampXL
+	 gKeCl65skb4PtlL9HoLBeqqSt5zgI2kGjojvituJPR0wij82oPPbWZqekvBfjX4tTsuYN
+	 wGeKbx0X4precGEpXsZNVC0J2lDGFxtucutOLwciqlLoGJF7WLMG0JsKsPBVv+L7wCw==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 576FF1F000C6;
+	by smtp.kernel.org (Postfix) with ESMTPS id 4CF811F000C0;
 	Sat, 21 Nov 2026 13:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795266973;
-	bh=/sGZqn97tL9illgD8dVqV08HlJBJu9Dy61Ryqg5Ev5U=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=bmnZtiXhu+wKpx4H4jrxw4ZEJGHO4f/5z+InNwu+s8wnP8sWSLt6RLBS7ZsRRmfLS
-	 EqKiQlOoNNtDpBUj2z3OW1M0roG69VNajnFF/V9VmXM1ZwZR6D3AoN2MCwLtfvb+uf
-	 SBg2Ezwl6zFcsriiC3h+v/8zxAcZ5gW5fM8oE67tEJPR2FhGvWdLxiLQdXlsxE+19k
-	 3uc/4rz8Arnxa1so4vfqYaXfgVzGtqG5t7Q5mBxSvSYREBbMe6vdlNg5LhqQdvBhLi
-	 SWboFgMyyEgczFtHMeAoU0Ryxd658jyQYU8XEXHCP5lthztbKGu0eRbMcLpqAZCJ93
-	 ZKm+xH25QT4ZQ==
+	s=k20260515; t=1795266972;
+	bh=jBtEkPNRck7QDwTZxqVQd7rLlwS/IspEELx+l2l31MI=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=Qxqy6ekKOJi5s80BCeX6/kW3Hz3RwOs8cAcnli8xbiOUjiIZGxJEaiFMtHsvKdFif
+	 9/z1BqiCfbgoeP00zUv/fC8ustIstHgZmiJBMIbKvWK7LDDT6JPtfq0ADmdwDE7Fli
+	 R7auMMNFvrZE0e7JBFJPKvy0rIjuaqoWEh4SdwaGKsLtKDI5rP/Ufw1g6zi7xRYkg0
+	 xpK8Ryw61uNyQ39b68GV+IvpwkJG6N69yGKaa76y4yFFI5/iQKqcl8ETTcFAXMCVjN
+	 hqn7r3qR6DygBcOIIdWhIv6ZB1DnC7Z4EhPcr4dSfc0/D9wbb8585KCH018eBIBN+A
+	 5DLHZBHjoryGg==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id D73B24BC7B;
+	by lkml.kernel.org (Postfix) with ESMTP id A008D4BC77;
 	Sat, 21 Nov 2026 13:16:11 +0000 (UTC)
 From: Vyacheslav Yurkov via B4 Relay <devnull+V.Yurkov.EXT.bruker.com@kernel.org>
-Date: Sat, 21 Nov 2026 13:16:09 +0000
-Subject: [PATCH v10 2/2] clk: gpio: Add driver for GPIO-signalled clocks
+Subject: [PATCH v10 0/2] A proposal to add a gpio-enabled clock driver.
+Date: Sat, 21 Nov 2026 13:16:07 +0000
+Message-Id: <20261121-feature-clock-guard-v10-0-5d449739bb8c@bruker.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -83,9 +84,14 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261121-feature-clock-guard-v10-2-5d449739bb8c@bruker.com>
-References: <20261121-feature-clock-guard-v10-0-5d449739bb8c@bruker.com>
-In-Reply-To: <20261121-feature-clock-guard-v10-0-5d449739bb8c@bruker.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJeZAWsC/43RzU7DMAwA4FdBORNk5z+ceA/EwXGzrRqsKN0q0
+ LR3J92BglLQjrbkz39nMebS51E83p1FyVM/9sOhBgj3d4J3dNhm2Xc1IRQoBxqD3GQ6nkqW/Dr
+ wXm5PVDq5UUCKtU3RWVEr30ve9B9X9vmlxrt+PA7l89plwjn7vzehBOlQe04Ggkn+KZXTPpcHH
+ t7EDE5qQSzCOqJmhJU1NnRWG2gQvSB1lnVEVwSQmYAIDNkGMQvilVtHTEVy5JC0V8kjN4hdkIh
+ 2HbEVMYqS7ViTI2oQ9wNRfh1x8zrgY9AJdWbVIP4GxFckdB1G60IXqUXCDUiYv6Mh6pA1KMIGi
+ d8Iwl83iRVhZLBk4jzKL+RyuXwBvYdRROACAAA=
+X-Change-ID: 20260318-feature-clock-guard-f20a2c35b965
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -96,167 +102,102 @@ Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, Vyacheslav Yurkov <uvv.mail@gmail.com>, 
  Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795266970; l=4749;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795266970; l=3728;
  i=V.Yurkov.EXT@bruker.com; s=20260318; h=from:subject:message-id;
- bh=dyzkwpsDWy1xsw5+SbD3ygu7Ho/BhopKpUo8Bx6I3RU=;
- b=0pmBPzlfFwjpY1hNo1Yhxzco9CP542ccdODSzyrfxu4lUTpDyvIzkEz3mI8UBLTwDG6UCtyY2
- HGwhrV2XKKOAJga3Keq6YbOFV9YVWv0g9bM9QYmDEVbd5qdDITA/oFx
+ bh=WSW5wx/mSC8oXiBVGrOyu6PgJaHE0ySq4NfVc7Wh0q8=;
+ b=SPtE3G/TBzqpzeunjO8RxfFjyPgp0QqlPRA01/7/K0JN4o6AAldTo0YDCtVG+AeJCoy5mFGg4
+ 96XQH9BzrYfBZXHynM9AbzniAw3TR3wikdUBXMGRdpBlnchcqe+LNVE
 X-Developer-Key: i=V.Yurkov.EXT@bruker.com; a=ed25519;
  pk=snJmgYVOKlp7aQtK9tWnEI7QTYxpPpJJvxdVsnxA7Fk=
 X-Endpoint-Received: by B4 Relay for V.Yurkov.EXT@bruker.com/20260318 with
  auth_id=686
 X-Original-From: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
 Reply-To: V.Yurkov.EXT@bruker.com
-Content-Transfer-Encoding: 7bit
 
-From: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+A gpio-enabled clock represents an input clock, which state is determined
+by a GPIO signal. It's similar to a gated-fixed-clock, but GPIO direction
+is inverted. Consumers can use the output clock to wait until the clock
+is ready and only then initialize / access dependent peripherals.
 
-Some clocks are not under CPU control: they are generated and enabled
-by external hardware, which only reports through a GPIO whether the
-clock is running. There is currently no way to describe such a clock,
-so consumers either initialize too early or rely on ad-hoc delays.
+The usage example for such a driver is when peripherals depend on PLLs in
+a FPGA, which can't be directly accessed by the CPU, but need a GPIO pin
+to check whether clock is actually usable. E.g. some of the IPs might not
+have a proper split between registers and IP core, which means that if an
+external clock and/or PLL lock is missing and one tries to access the 
+registers, the response never comes, thus the CPU stalls.
 
-Add a "gpio-enabled-clock" provider for this case. Its prepare
-callback polls the GPIO until it is asserted or a timeout expires, so
-a consumer's clk_prepare_enable() succeeds only once the clock is
-actually running, and fails otherwise. is_prepared reports the
-current state of the GPIO.
-
+Signed-off-by: Vyacheslav Yurkov <uvv.mail@gmail.com>
 Signed-off-by: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
 ---
-Our use case: peripheral clocks generated by FPGA PLLs, with the
-PLL-lock signals routed to GPIOs of the SoC.
+Changes in v10:
+- Use only sleep capable ops
+- Make commit messages more generic
+- Improve error handling for clock_prepare
+- Link to v9: https://lore.kernel.org/r/20261015-feature-clock-guard-v9-0-c1c05a498d9a@bruker.com
+
+Changes in v9:
+- Changed wordking from "locked" to "enabled" to be more generic
+- Use a separate DT schema file similar to other clock drivers
+- Add a timeout for polling in enable()/prepare()
+- Depending on whether GPIO can sleep or not use prepare() or enable()
+  set of ops respectively.
+- Decouple the implementation from exisiting drivers
+- Link to v8: https://lore.kernel.org/r/20260927-feature-clock-guard-v8-0-630938e302a1@bruker.com
+
+Changes in v8:
+- Fix return value of clk_gpio_locked_prepare()
+- Link to v7: https://lore.kernel.org/r/20260927-feature-clock-guard-v7-0-8dd19568d9a2@bruker.com
+
+Changes in v7:
+- Fix compatibility strings and schema errors.
+- Update GPIO pin name
+- Link to v6: https://lore.kernel.org/r/20260927-feature-clock-guard-v6-0-007983b13ec2@bruker.com
+
+Changes in v6:
+- Debug messages dropped.
+- The new driver is now an extension of exising clk-gpio drivers.
+- The controller doesn't enable the parent clock, the consumer is
+  supposed to do that instead.
+- Link to v5: https://lore.kernel.org/r/20260915-feature-clock-guard-v5-0-42ab5dc3a6aa@bruker.com
+
+Changes in v5:
+- Use existing DT binding with an additional property instead of adding
+  a new one
+- The driver is simplified in a way that it represents the actual HW
+  desgin without additional unrelated constructs
+- Aggregation is removed, now it's one clock input, one clock output
+- Link to v4: https://lore.kernel.org/r/20260726-feature-clock-guard-v4-0-e9c8b372b71c@bruker.com
+
+Changes in v4:
+- Removed driver specifics from DT binding
+- Link to v3: https://lore.kernel.org/r/20260603-feature-clock-guard-v3-0-01cca0aa04a5@bruker.com
+
+Changes in v3:
+- Removed unnecessary dt bindings
+- Improved HW description and commit messages
+- Link to v2: https://lore.kernel.org/r/20260510-feature-clock-guard-v2-0-6c25458d5340@bruker.com
+
+Changes in v2:
+- Renamed to clk-gpio-locked to express intent.
+- Provide enable() / is_enabled() operations so the clock behaves as
+  expected
+- Fixed DTS errors / warnings
+- Link to v1: https://lore.kernel.org/r/20260318-feature-clock-guard-v1-0-6137cb4084b7@bruker.com
+
 ---
- drivers/clk/clk-gpio.c | 107 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 107 insertions(+)
+Vyacheslav Yurkov (2):
+      dt-bindings: clock: Add gpio-enabled-clock
+      clk: gpio: Add driver for GPIO-signalled clocks
 
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index df0856a39c8d..33f251b209a0 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -15,6 +15,7 @@
- #include <linux/gpio/consumer.h>
- #include <linux/err.h>
- #include <linux/device.h>
-+#include <linux/iopoll.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
-@@ -241,6 +242,112 @@ static struct platform_driver gpio_clk_driver = {
- };
- builtin_platform_driver(gpio_clk_driver);
- 
-+/**
-+ * struct clk_gpio_enabled - gpio enabled clock
-+ *
-+ * @hw:		handle between common and hardware-specific interfaces
-+ * @gpiod:	gpio descriptor
-+ * @timeout_us:	timeout that is used to get a GPIO value
-+ *
-+ * Clock whose status is determined by a GPIO signal.
-+ *
-+ * Implements .prepare and .is_prepared
-+ */
-+struct clk_gpio_enabled {
-+	struct clk_hw hw;
-+	struct gpio_desc *gpiod;
-+	u32 timeout_us;
-+};
-+
-+#define to_clk_gpio_enabled(_hw) container_of(_hw, struct clk_gpio_enabled, hw)
-+#define GPIO_ENABLED_TIMEOUT_MIN 10
-+#define GPIO_ENABLED_TIMEOUT_MAX 1000
-+#define GPIO_ENABLED_TIMEOUT_DEFAULT 10
-+
-+static int clk_gpio_enabled_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_gpio_enabled *clk = to_clk_gpio_enabled(hw);
-+
-+	return gpiod_get_value_cansleep(clk->gpiod) > 0;
-+}
-+
-+/* The clock cannot be turned on, only waited for. */
-+static int clk_gpio_enabled_prepare(struct clk_hw *hw)
-+{
-+	struct clk_gpio_enabled *clk = to_clk_gpio_enabled(hw);
-+	int value, ret;
-+
-+	ret = readx_poll_timeout(gpiod_get_value_cansleep, clk->gpiod, value,
-+				 value != 0, 10, clk->timeout_us);
-+	if (ret)
-+		return ret;
-+
-+	return value < 0 ? value : 0;
-+}
-+
-+static const struct clk_ops clk_gpio_enabled_ops = {
-+	.prepare =	clk_gpio_enabled_prepare,
-+	.is_prepared =	clk_gpio_enabled_is_prepared,
-+};
-+
-+static int gpio_enabled_clk_driver_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct clk_gpio_enabled *clk;
-+	const char *clk_name;
-+	const struct clk_parent_data gpio_parent_data[] = {
-+		{ .index = 0 },
-+	};
-+	u32 timeout_us = GPIO_ENABLED_TIMEOUT_DEFAULT;
-+	int ret;
-+
-+	clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
-+	if (!clk)
-+		return -ENOMEM;
-+
-+	clk->gpiod = devm_gpiod_get(dev, "enabled", GPIOD_IN);
-+	if (IS_ERR(clk->gpiod))
-+		return dev_err_probe(dev, PTR_ERR(clk->gpiod),
-+				     "Can't get enabled GPIO property\n");
-+
-+	ret = device_property_read_string(dev, "clock-output-names", &clk_name);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "missing clock-output-names\n");
-+
-+	device_property_read_u32(dev, "poll-timeout-us", &timeout_us);
-+	if (timeout_us < GPIO_ENABLED_TIMEOUT_MIN ||
-+	    timeout_us > GPIO_ENABLED_TIMEOUT_MAX)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "poll-timeout-us is out of range [%u, %u]\n",
-+				     GPIO_ENABLED_TIMEOUT_MIN,
-+				     GPIO_ENABLED_TIMEOUT_MAX);
-+	clk->timeout_us = timeout_us;
-+
-+	clk->hw.init = CLK_HW_INIT_PARENTS_DATA(clk_name, gpio_parent_data,
-+						clk_gpio_enabled_ops, CLK_SET_RATE_PARENT);
-+
-+	ret = devm_clk_hw_register(dev, &clk->hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "Failed to register clock\n");
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &clk->hw);
-+}
-+
-+static const struct of_device_id gpio_enabled_clk_match_table[] = {
-+	{ .compatible = "gpio-enabled-clock" },
-+	{ }
-+};
-+
-+static struct platform_driver gpio_enabled_clk_driver = {
-+	.probe		= gpio_enabled_clk_driver_probe,
-+	.driver		= {
-+		.name	= "gpio-enabled-clk",
-+		.of_match_table = gpio_enabled_clk_match_table,
-+	},
-+};
-+builtin_platform_driver(gpio_enabled_clk_driver);
-+
- /**
-  * DOC: gated fixed clock, controlled with a gpio output and a regulator
-  * Traits of this clock:
+ .../bindings/clock/gpio-enabled-clock.yaml         |  55 +++++++++++
+ drivers/clk/clk-gpio.c                             | 107 +++++++++++++++++++++
+ 2 files changed, 162 insertions(+)
+---
+base-commit: 65e4fd942f72a9dba0e4e257290c4fa1aa756854
+change-id: 20260318-feature-clock-guard-f20a2c35b965
 
+Best regards,
 -- 
-2.34.1
+Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
 
 
