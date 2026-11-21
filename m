@@ -1,82 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.205.221.236
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795261281;
-	b=JqTPiH7w6OXqslnTlsdsLeEnJeXu8KJu8U1GgG9OeV5W7bx2V9z+tJMcONjPizUDGzmj
-	 Er4HkD5ZxxRta4DhUdTq8f44etWmGX08IcVkyLrtM+ZHEX+d72fdHkErMKvIffKoFNWCI
-	 T1fvbFIYwFJRwYkahji5wIqtakp6fLAMuUYQQhx6os+hARFd+Fui7b8Fml9fTb9CnR7Z+
-	 DAeHGISHG6saDWhymWXUhJncKDUZfnPgEk7o9F+3nbA++ZE1EEj+bEOcGtBs2S8uGOtLP
-	 CraZlW3/0m2jD2sVM3Bo68D6Jfxg8mYjCkFC1rxpWwIEmL5k+ef5QQuK8HAKmGZ6IKA==
+	t=1795262090;
+	b=PeArnhphaF5R93xcPlYHDAWtn7Elo0TrKKGHGCe3PljiTX+/ONNcuC1fminADGpdLxok
+	 8xZS2DhzT0GZ8TZj0q01TXmrETM0qcNx4w3/CTX/EFpwGqMCgy6XV2pUc+MeofSsv8c+r
+	 ZiO07tts7P/X17nCFYhgLqNvdfcYm0ZQjSlvruCfua/6hcWXYq2GEt6MGQivAUiIF7d/Y
+	 6OW8LIRUFnTTFffGswOqwjGCapHDL83Umfv8qJd+Wf0I4OD/xKOJFG0WIaFmAfttZTyfd
+	 0umoTboZK+UvHGLua9zq8FuS5/VnRTonF91JkoxzXZDUpk4Sdj4G5zKtHjuZ4Of7lIA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795261281;
-	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
-	 X-QQ-XMAILINFO:X-QQ-XMRINFO:From:To:Cc:Subject:Date:X-OQ-MSGID:
-	 X-Mailer:In-Reply-To:References:MIME-Version:
+	a=rsa-sha256; c=relaxed/relaxed; t=1795262090;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=y+AYtfVk0LkCTNbc8GOpJgwDHV5K3ThuTa26y9mHfAo=;
-	b=yhcWLHRmsbAvmpimw04rOfm6eP72UjeYCOKdpW0yQ+yrAqrXNuidqIO5XW3Wu7MAJJpK
-	 CK/GM2PO8fb6yurNjtST3FQcfwkEeBW5c/t4+Mn1AxWKPJCQiFu5tpBMX8+P90Z65ij+w
-	 hqwasVfpMEJ1BwBdr7kjlR5MQS6/tUvZCEzO5ooyI1AaGr2yMJqLQp28QZgwHo/ljfQYj
-	 T7UhmP3QLzgmZmf71j6moZldGN0jjy3Hy/GKC1AnQjwdWYASv4UqYrT8cFgbi4BInFiNk
-	 1ofP/NtL/14DpTznbJCBhAkTruzcQ8/vDnM5xdHQ7QqkGoiZbBPGB6hWTuDOBZ7Hlpg==
+	bh=szGjatEGvzumenIGoDmUhGP3PBi4OJXA+JaILrJyq7Y=;
+	b=tP5ckClzfc2JEs+DhqvpgQ5ucVLjEbuho+Vf1iPCVk9xaVejsYIINErugGeLxvAxj0LG
+	 GywVEKj5zTBXfSdRR7R8X8St+wWaHWLgzpG4hbq1DNV6aCC9kIlj5vtj3cax2yHOYMCDU
+	 zUqCAF9JJGyIW2DiVH6rKdmmKkS7g789n5rTqDhyJ0BLZg3CXi6KvlsFEwCUZpE3TMyGa
+	 6TV9ewQ5KN+O5E8EV216fy10Z3w07zhHq39qlTgMqxP2RpG0BiMJUhQcuKcsBgDqdG0mp
+	 wvyh6ZLYai5Brjx+FwCpC/e//kbkOKOrrXEU4ZA9sfvuTH4B7munHO0uC/pKs+e0vgw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=qq.com;
-	spf=pass smtp.mailfrom=qq.com;
-	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=P32bqnuf;
-	arc=none smtp.remote-ip=203.205.221.236
-Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=W6l+kx5d;
+	arc=none smtp.remote-ip=209.85.221.47
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6E2606A330;
-	Sat, 21 Nov 2026 11:41:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5D6E2606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B39606A320
+	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 11:54:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 57B39606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=P32bqnuf
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1795261273; bh=y+AYtfVk0LkCTNbc8GOpJgwDHV5K3ThuTa26y9mHfAo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=P32bqnufmrxVvq9fqpUbuKboJgfUREEdeNy73b/aUmjyhFFmEVUzeSeEsZ8ysnxUq
-	 /ec1JRAXCxLqmJ4AF5P51kJVIo4UXgFQGzlAWnjI0xxDAIDNCaXPwPfNtjLsZZA/RU
-	 7lz7ddu/+arAEk5Smb/DS30w99kJ68PcPx3oBVxo=
-Received: from jerry-PC.lan ([2408:8249:5f:7101:71a:8713:56b4:5043])
-	by newxmesmtplogicsvrsza73-0.qq.com (NewEsmtp) with SMTP
-	id A483CACC; Sat, 21 Nov 2026 19:41:08 +0800
-X-QQ-mid: xmsmtpt1795261269t3sk748np
-Message-ID: <tencent_27C5C9EA21F34B25719F07818366912BB407@qq.com>
-X-QQ-XMAILINFO: NnYhxYSyuBnLgVnKCHPq4TKmrtsqjLlnWFixUpd7RAqUMfvIq8rLc10uB7f6m6
-	 Pd5xPUqBsCvRep8z3/QvdQ17PMxayD00x5ZY6LCbHWjqqNv3Wb6/NzI/ENVt1KhHm4LWCC33dcMO
-	 a2HchLcNOtrZ0HQKGpuvxoVAOFa2FUcHhpx/EYMHOfV71r7GBHHLoHHRZ1SzRpQLNZmaRZDue9MB
-	 1U2kT/7MGjeZw3YaqnU83a3wD6fYgZjiJRokUiOLRUS5IXjoYoG/HwyJg0JzQ4yB0hC9FZQU3aUC
-	 zgzW7OqJlfS58xF1r5EsllNhrlSTg4zxeLrKbvxIFi6WfLfMXbh0fqMMLEf001kXgQmfNtxQy2b3
-	 NgdOc7Gv/x6bq3o4iCbAXMaTYK094dwTTkoJlF/OyqYOp4UcqZO7gvG2pDGM29ikNVNAu4K6Fy0w
-	 uLooprOeVLJBVc9KCNFpvCTN0dYD7LSBNG2ZOALyeorUZIxEw7CUwspCIhGIKoGsg/8SGeNxv4eT
-	 5aytPc+1QTPP2Ht3NtDZQmv9rbeP3qP85fhPoAun/VEku9ApgpJkh7ooL1o/azw+TuMHNSdvT6Q8
-	 j0Y125z5VTTzRiX6wWBP/sTrq51MUEy1eNrKNH+ZnKlbPofcsUVDHqrkl8WrfASTWOjfGS4vORKu
-	 u8z7+gL4f0Vxg3DNU86lXyowXm9nqMOrDhMG9/JHuLf4uMFgYcTKTeLJHtUAnxAw9CGpL/4eI3EI
-	 p9NgxqeZ17PccHxEHVvq+utPjajz6YGotJauE7mH6oY13cGlTp/EUw/LvESy5tmqbjNuD++wicDW
-	 OP34SskSazum5l0HySjdn5LRPqINBzZaJSzJHc47wEq46UfEczuPSB3d6bNWLYIcCLOtJW1zY+3M
-	 39PrDMhPoleAZ7pA2bUrKJWrIuQbM64FLLy/r8MfJ87RsnHEpvNxpHqRtRoA03pVce9Q1jibjDii
-	 nTnUaF8oUKSbnX/OiY4gFD/SUBgaLGr77T8fqxc/11cBAMWPxUlQWZeNYI1amHEP4+2UKWDfac2k
-	 xjjMCKvUztCINHrKkIrJ0IeR2QGFDEl1iK+KPU9iixkfJy+/FGtfHg+/U6BlQqDjoQzp7kN7Vxih
-	 PpZTpfSFDOwCO9sAEkMFYIp0UwIg==
-X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
-From: ZhuXiangyu <1194781887@qq.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	ZhuXiangyu <1194781887@qq.com>
-Subject: [PATCH 2/2] clk: rockchip: rk3506: add SAI MCLK output gates
-Date: Sat, 21 Nov 2026 19:41:06 +0800
-X-OQ-MSGID: <20261121114106.1464639-2-1194781887@qq.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261121114106.1464639-1-1194781887@qq.com>
-References: <20261121114106.1464639-1-1194781887@qq.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=W6l+kx5d
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-491f34b4e0fso810197f8f.2
+        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 03:54:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795262089; x=1795866889; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=szGjatEGvzumenIGoDmUhGP3PBi4OJXA+JaILrJyq7Y=;
+        b=W6l+kx5dMX2mdJt7T6QMcJ0hI8ZEeVOKDih7eGXKn9qesUeVUO7ThUMVP1kKGuXcft
+         VK7V+W6z5oRF9qG3c7Wjxb/2O6i0YdvIXxAaIz9bPP/J0V506KHJefwQgHgob+tHIwAF
+         CiMiwsOGnYflWizEn8hD11X7/1dzTgSfKYa0shHOJaOclRQQOQDnsazObS2sNUv+Ab5v
+         yg9vk2JQ8X19FlI0CraWD40SuQic4MS3t57KPYNuWhCfYbkJ+4W1zglAXSZQwx+xgxlm
+         4fLPgZyDLm+UgTBpoKfSSkt9GZQ1sZHr11Bhyy6p328gfI9XPo1n8y6mn3y2zSLtdDkT
+         03ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795262089; x=1795866889;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=szGjatEGvzumenIGoDmUhGP3PBi4OJXA+JaILrJyq7Y=;
+        b=02GAZtTojE835PtEr6LddpdZX2CO9YXgNBrHASvaaQ3iedBRjN03lXMPdkzXd/H3UT
+         d6kyDoTb5cJDV94BuWe4jQYMAumMm5X69IY1rIgdfamILRMwbmMt1VrKFnmPORnohVI+
+         XPjRye91laz4O5Ct+hs4XMA2ugfu/9z7X6yqSZNbZqmDDPcw+XibkE7w6RQRSjI2+kaV
+         h8ajqv55SyT+wNvl0plkU0E8NNqYv1uQANiCBupiQ/l/ik32FEViQ4o+h1vHU32ZCVaU
+         2Tp/zNkWuE8U3RBMefBTBsgpUZzUzWtUMPaTocZxmNYClReb1aQ7qNpc0eMNJhsYrJQ/
+         kdJg==
+X-Forwarded-Encrypted: i=1; AL+hErH6O7hJqnK1K4HBBFcfN0r6cX7Nm9IWZreh7+LcEY61sdDeIgoBPxpy/r8WI8T2k8zYY+3NSvC4kMQ=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/GTg50g+bQfDpvfeInA1DiLsRQnkOf+U++wNxAllSrYnnIdHrG
+	D2kB06NxweWdRggn7Q4gw2h8sp1J6Ioze1Hh+kBQkz7N5Vgf3ajI8fLo
+X-Gm-Gg: AZFdTZeywghLN4Xgh5JXlVrKfltAzp8sbgPVAlUQRgK6s5wPqKkMpRBiftjFBwzTDbj
+	jAuhW3XxJDiIPeuPIMEDwXuxWBZWHT8S1ehuNsSgUipksg+GpwZSj5kuHdy/kYuQuQ5WfD7XgkW
+	W9Zuh6bH08/Y6WO7PlPjNS+FdmRIV6/z8+PWx6T76pqQj1BHwabYa0kmLZeYH+Z5NZAlh3ooJyx
+	8c/DEvejmZgEn8ZLBZFf4Ft8wZCCaPRDxxEfo95Yl0MSRb33KD2Blj0E+kNgIXQFDFvwm9dw8RE
+	KsVYnU16ALH98w3m2NS3UFQVhslGM3Hj2wPLuWI1Hf/uzAwOunbKOodByKDi00mvp3ZhryABshj
+	nzfKlrbz5c/WnbuttZyt/c2gUOUmBmMo+VbsKi8aaZI3/TZjGR20Ss7u2s/EcWP4El0BYxOi2r6
+	pyO5s9yuEaRSDlNDUwBeacJBPBtM/mXAeNjME0mRlcYn34iY4bOsMZaFZ+E2Sg8hlPs4RP+0R+2
+	y5PAUIaZTV3EL3+/PjuIHI6tr5UhYWUuUKrxHDkYgc1wsRrg6E/xduabGeRZoLzCLXOLYGH/78h
+	F/84HRnxLXnran5vRSVhpoppq0yWzV7tvcxFAW5N8hYuF7igc14b/NiGMBsAbPJm7RcN
+X-Received: by 2002:a05:600c:848d:b0:4ac:86c9:b09c with SMTP id 5b1f17b1804b1-4bb88811da9mr136119295e9.13.1795262088516;
+        Sat, 21 Nov 2026 03:54:48 -0800 (PST)
+Received: from [10.50.139.243] ([23.90.153.233])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb9065744esm42471545e9.1.2026.11.21.03.54.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 21 Nov 2026 03:54:47 -0800 (PST)
+Message-ID: <7b96eb55-d357-4289-85ff-c0eaab53e8c5@gmail.com>
+Date: Sat, 21 Nov 2026 12:54:46 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -86,99 +92,77 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/2] clk: Add gpio-enabled clock driver
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Jyri Sarha <jsarha@ti.com>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20261015-feature-clock-guard-v9-0-c1c05a498d9a@bruker.com>
+ <20261015-feature-clock-guard-v9-2-c1c05a498d9a@bruker.com>
+ <179519084929.3795820.7180605641448271689.b4-review@b4>
+Content-Language: en-US
+From: Vyacheslav Yurkov <uvv.mail@gmail.com>
+In-Reply-To: <179519084929.3795820.7180605641448271689.b4-review@b4>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The RK3506 has four SAI MCLK output gates in the PMU and system GRFs.
-Register them with the existing GRF gate support so the SAI MCLK pin
-direction can be controlled through the clock framework.
+On 20.11.2026 17:07, Jerome Brunet wrote:
 
-The PMU GRF is added as an auxiliary GRF and the SAI0/SAI1 gates use
-it, while the SAI2/SAI3 gates live in the system GRF.
+> This comment has been carried since v5, where the reasoning was already
+> answered: returning an error from .prepare()/.enable() when the clock isn't
+> running is simply how a provider reports failure, not a workaround for the
+> framework. The claim is also wrong: the framework does call .is_prepared()
+> (clk_unprepare_unused_subtree(), clk_hw_is_prepared()). The rest describes return
+> conventions. Something like this would be enough:
+> 
+> 	/* The clock cannot be turned on, only waited for. */
+> 
 
-Signed-off-by: ZhuXiangyu <1194781887@qq.com>
----
- drivers/clk/rockchip/clk-rk3506.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Perhaps the claim is not clear enough then, the .is_prepared() is not 
+called _before_ prepare. I didn't mean it's not called at all.
 
-diff --git a/drivers/clk/rockchip/clk-rk3506.c b/drivers/clk/rockchip/clk-rk3506.c
-index dd59bd60..4196f4f7 100644
---- a/drivers/clk/rockchip/clk-rk3506.c
-+++ b/drivers/clk/rockchip/clk-rk3506.c
-@@ -5,6 +5,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -520,6 +521,8 @@ static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
- 			RK3506_CLKGATE_CON(14), 0, GFLAGS),
- 	GATE(MCLK_OUT_SAI0, "mclk_out_sai0", "mclk_sai0", 0,
- 			RK3506_CLKGATE_CON(14), 1, GFLAGS),
-+	GATE_GRF(MCLK_OUT_SAI0_TO_IO, "mclk_sai0_to_io", "mclk_out_sai0",
-+		 0, 0x4, 8, CLK_GATE_HIWORD_MASK, grf_type_pmu0),
- 	COMPOSITE(MCLK_SAI1, "mclk_sai1", mclk_sai_asrc_parents_p, 0,
- 			RK3506_CLKSEL_CON(41), 8, 4, MFLAGS, 0, 8, DFLAGS,
- 			RK3506_CLKGATE_CON(14), 2, GFLAGS),
-@@ -527,6 +530,8 @@ static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
- 			RK3506_CLKGATE_CON(14), 3, GFLAGS),
- 	GATE(MCLK_OUT_SAI1, "mclk_out_sai1", "mclk_sai1", 0,
- 			RK3506_CLKGATE_CON(14), 4, GFLAGS),
-+	GATE_GRF(MCLK_OUT_SAI1_TO_IO, "mclk_sai1_to_io", "mclk_out_sai1",
-+		 0, 0x4, 9, CLK_GATE_HIWORD_MASK, grf_type_pmu0),
- 	GATE(HCLK_ASRC0, "hclk_asrc0", "hclk_lsperi_root", 0,
- 			RK3506_CLKGATE_CON(14), 5, GFLAGS),
- 	COMPOSITE(CLK_ASRC0, "clk_asrc0", gpll_v0pll_v1pll_g_parents_p, 0,
-@@ -608,6 +613,8 @@ static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
- 			RK3506_CLKGATE_CON(18), 3, GFLAGS),
- 	GATE(MCLK_OUT_SAI2, "mclk_out_sai2", "mclk_sai2", 0,
- 			RK3506_CLKGATE_CON(18), 4, GFLAGS),
-+	GATE_GRF(MCLK_OUT_SAI2_TO_IO, "mclk_sai2_to_io", "mclk_out_sai2",
-+		 0, 0x4, 2, CLK_GATE_HIWORD_MASK, grf_type_sys),
- 	COMPOSITE(MCLK_SAI3_SRC, "mclk_sai3_src", mclk_sai_asrc_parents_p, 0,
- 			RK3506_CLKSEL_CON(52), 8, 4, MFLAGS, 0, 8, DFLAGS,
- 			RK3506_CLKGATE_CON(18), 5, GFLAGS),
-@@ -617,6 +624,8 @@ static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
- 			RK3506_CLKGATE_CON(18), 7, GFLAGS),
- 	GATE(MCLK_OUT_SAI3, "mclk_out_sai3", "mclk_sai3_src", 0,
- 			RK3506_CLKGATE_CON(18), 8, GFLAGS),
-+	GATE_GRF(MCLK_OUT_SAI3_TO_IO, "mclk_sai3_to_io", "mclk_out_sai3",
-+		 0, 0x4, 3, CLK_GATE_HIWORD_MASK, grf_type_sys),
- 	COMPOSITE(MCLK_SAI4_SRC, "mclk_sai4_src", mclk_sai_asrc_parents_p, 0,
- 			RK3506_CLKSEL_CON(53), 8, 4, MFLAGS, 0, 8, DFLAGS,
- 			RK3506_CLKGATE_CON(18), 9, GFLAGS),
-@@ -787,10 +796,17 @@ static void __init rk3506_clk_init(struct device_node *np)
- 	struct rockchip_clk_provider *ctx;
- 	unsigned long clk_nr_clks;
- 	void __iomem *reg_base;
-+	struct regmap *pmu_grf;
- 
- 	clk_nr_clks = rockchip_clk_find_max_clk_id(rk3506_clk_branches,
- 						   ARRAY_SIZE(rk3506_clk_branches)) + 1;
- 
-+	pmu_grf = syscon_regmap_lookup_by_compatible("rockchip,rk3506-grf-pmu");
-+	if (IS_ERR(pmu_grf)) {
-+		pr_err("%s: could not get PMU GRF syscon\n", __func__);
-+		return;
-+	}
-+
- 	reg_base = of_iomap(np, 0);
- 	if (!reg_base) {
- 		pr_err("%s: could not map cru region\n", __func__);
-@@ -804,6 +820,12 @@ static void __init rk3506_clk_init(struct device_node *np)
- 		return;
- 	}
- 
-+	if (rockchip_clk_add_grf(ctx, pmu_grf, grf_type_pmu0)) {
-+		pr_err("%s: could not add PMU GRF\n", __func__);
-+		iounmap(reg_base);
-+		return;
-+	}
-+
- 	rockchip_clk_register_plls(ctx, rk3506_pll_clks,
- 				   ARRAY_SIZE(rk3506_pll_clks),
- 				   0);
--- 
-2.47.3
+>> +static int clk_gpio_enabled_enable(struct clk_hw *hw)
+>> +{
+>> +	struct clk_gpio_enabled *clk = to_clk_gpio_enabled(hw);
+>> +	int value = 0;
+>> +
+>> +	readx_poll_timeout_atomic(gpiod_get_value, clk->gpiod, value,
+>> +			value != 0, 10, clk->timeout_us);
+> 
+> Same error handling as in the prepare variant above.
+> 
+> Also looking at it more closely, the binding allow 1ms max. It is lot of
+> time holding a spinlock without IRQ. If you don't stricly need this variant
+> please drop it for now.
+> 
+> 
+>> +
+>> +	device_property_read_u32(dev, "poll-timeout-us", &timeout_us);
+>> +	if (timeout_us < GPIO_ENABLED_TIMEOUT_MIN ||
+>> +	    timeout_us > GPIO_ENABLED_TIMEOUT_MAX)
+>> +		return dev_err_probe(dev, -EINVAL,
+>> +				     "poll-timeout-us is out of range [%u, %u]\n",
+>> +				     GPIO_ENABLED_TIMEOUT_MIN,
+>> +				     GPIO_ENABLED_TIMEOUT_MAX);
+>> +	clk->timeout_us = timeout_us;
+>> +
+>> +	if (gpiod_cansleep(clk->gpiod))
+>> +		ops = &clk_gpio_enabled_sleeping_ops;
+>> +	else
+>> +		ops = &clk_gpio_enabled_ops;
+> 
+> As I noted above, I prefer if you dropped the enabled variant that run with
+> irq off, unless you scrictly need it. Return -ENOTSUPP if the gpio can't sleep.
 
+I would rather keep only 1 variant in general, because my GPIO 
+controller can't sleep, but gpiod_get_value_cansleep works for both type 
+of controllers.
+
+Slava
