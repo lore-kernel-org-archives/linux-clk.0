@@ -1,79 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795257914;
-	b=TPnf7LxWnmz7V4KKoL830LRd/X9s3yvVGidqVJwjDY2GuY5Br4joMFiR9w7jHfHu3Nq4
-	 fh5Rxeka7LOH+yxkoVp9ODhwVOgpKFINL4Vfcx66Vt0U2GGa6HfVsKr/Qa74NDFxDYESp
-	 r5C/PSAl+rM1sKMmf3Czvh68+2U+J3p9PCwk+Zham+1PIzHTmNrbmjKf5GStqNylaVN+r
-	 T3UEZGKHl7JhfzgfjZ7vtbwZ7oEC0e5F81NzDMOYO5BvS7ILejpIL05k7vNSgjYjgx0IW
-	 gXFciJmXHwgx0U0TuD3vrgJvhJRh2cdZqzKDmP6R8ZvGgb3VLKNcwe5zrR5W/WTIYrg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795257914;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=RrcRHbj/G9MLcSU8nLl8yl6T1TR9Wr4lqQ3X9FOvOBE=;
-	b=wiYELql0OCknxIyPIjWdDw2M1zGaLXvPnvt+agz7LrapaHO9DYni1TBWx3yCiXjZxiud
-	 n8B3kJzWFKOodYWjLYLBnkczz6OJ/SPQ81mmfUBRwwNx0AVUKsVWNctouiqNPwTM23M2I
-	 oN4t0TFzW8iL53SCATy/pXJzfqQv6EERX4bTlRABwBv/9xmu/jLXuq2HwyCj/1jkEyrH3
-	 XcrB9Z5fwYhPFyRsloGTiRyBWOS6R8KmxUV5q5qDQF/ZG2u3AuXDUAsiKae1JHQ1CSBBz
-	 b6JvFt42y0lzhSnPC9foamz/W8UhShAhOTyvs8EY6K0ZbhrtkPR7AvKUax/shamDJGw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ggPe8m/O";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=43.163.128.52
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795258751;
+	b=MNQXR74bzalTKAwYYHPHPeVwWDxpfFYOkwQbnxymBtE/1V2T9PUjCpsQ80ause2h8cRw
+	 rx4Mhc8tZKk8qjUJEpmkc+QGkA3PNh3lTV9fiblS4Ui2TL8YWkdulywlxFOFMIOWnLSE9
+	 jROCqM3OR3htQPXGRv1Lpek291+ldpJ434ok4PeMu7Fne+rH3w3IsRVRXWnznaknuC6K3
+	 mA+as69kVupRCh79YEzMKv2pnN+Fx/o2G6zjUBdCB0Gbusqak+gk6Yg2pG7P2dJfcFQEW
+	 ugcpP/KhXAe9KehxYs0rM9FBuXxcpUXcHCAJOztr+Zbs4IAWN4VOPav4kzM4AwBEbug==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795258751;
+	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
+	 X-QQ-XMAILINFO:X-QQ-XMRINFO:From:To:Cc:Subject:Date:X-OQ-MSGID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=aGX/622BLcEUD7STQZB7h5g1EsoIPpXceYZcwodljQ8=;
+	b=PkMTHQKftb099mpsrkanc1+EABafQX+weTReGRXuK+CUOGYFOCpazQ08n2dI2L1gdvpK
+	 3cFW3ppU9KL5dh5Wv3De2kL/WSCHSqMIc1K0f8z6HPIyOZebHwO20+2uEt8WtTMnyCpxj
+	 WE+K3A4avvFS+YmrPeWKCLklmd/TRpNv1sqoxNu+zFgjxwD6EXrdXOEBeFXBhIz1x6ZDZ
+	 6n8wRRmk0AvH3Ep0yK2fqoehSyOqRSid+R+wXIHZLV8xvJi9p6b8Nh+wZFhgIRr9+ZVDX
+	 J+H8Na7YdX0u80C0hDmYoShrFx1KhVgNU6+3XGsOUc3JCj9AVm2920RtL9J9SXKWWdA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=qq.com;
+	spf=pass smtp.mailfrom=qq.com;
+	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=ApvIgA7p;
+	arc=none smtp.remote-ip=43.163.128.52
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.52])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD16B606A332;
-	Sat, 21 Nov 2026 10:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3898D606A682
+	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 10:59:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3898D606A682
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ggPe8m/O
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795257914;
-	b=QP0ymJrh6W+qJG3c84J2pzvzSsH6g9VhZWRXyScpqw91nzdMnnwWzAath+up5A+thyIB
-	 2f0HHuFyLSGu4hCYg1NaF/DsjEcW1gWUF3fKNq/Q4eey9NVv3pKNZtyKIVeh/A+mvG7s3
-	 tw7u/xKOfl9e/MHN9L9zMcB96b3PljTGnBwlry0fJXqFqU4CQ0LEX2ib4AIUgNWfMFQg3
-	 fYY3fOZlDsYzW6WF3ZMebDmvzISy+PBCFWS5oRrLZ1hd/WpSpaSe6E5drU+5EZCo/eGk4
-	 cHQFGCf/qNSRxCnoVdeKBf/74ht9pdRAAnc5TvOkxb6gfx+Hzf9msw6VEEgMYXVTF9w==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795257914;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=RrcRHbj/G9MLcSU8nLl8yl6T1TR9Wr4lqQ3X9FOvOBE=;
-	b=BQf+9YGO60AJQkXE0IDlKvXDSvilxd6l3k8Z33SNdGpt4kErwYBd8j2pW4EJs3Pixs9G
-	 nFEvGnQWkr0f5LhyiiBYow4q27mi6zBp5Ml23iM/8i0sdvMRIss67QPPVIr4YANtcshXX
-	 yTV76PdxPoYDvQGc9I5qZTdL7DdpoxF73qNB1JtK5VukanTqqGzehYv3e7za9cf9ptpza
-	 ivWdyms2cl+H5IuFIKVsAf1EO7YxH+8RFrKd1N++cfyswxTfxDEimh01TxH3QcS42RGqu
-	 QB3It2qxwHDhLillPhsjZr7TASZ+cSFuxRcgGVVwvlzFkTH2rtIDjpd83B3wU7QRHow==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 0B3E81F000C0;
-	Sat, 21 Nov 2026 10:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795257914;
-	bh=RrcRHbj/G9MLcSU8nLl8yl6T1TR9Wr4lqQ3X9FOvOBE=;
-	h=From:Date:Subject:To:Cc:Reply-To;
-	b=ggPe8m/OyPhCuWezzjMAG0Mvlbrz4d9kJmMvvJMEDsb45U8Q5P8+JMAW29uuWz2ar
-	 MmZVrVsOELR6nB+AU90A0qxKEN0Py209GHPBi0ZVmXpDH+h4KDCZsSJ6Rfl9ie2xut
-	 xSwywTHiRBlVOLsFsEbItyPs5yMBQmSa2UaoE++CyjzX8wMOhxmHItogod2Dij9Xw1
-	 S5f43Bkrgv2RfFHux4YERJLybVa0rElYnl0D9aDp0PARkIM+aBkV0Of2wogOLEVeEY
-	 hpZ1k3WnGm0mXG8nk40GJs+pufo7dLzv5+As0LRD/2DCkH4LSp3xFHBH0XAtmOcqUi
-	 QoVzJUjN6c71w==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 639A34BBEB;
-	Sat, 21 Nov 2026 10:45:13 +0000 (UTC)
-From: Suyuan Wang via B4 Relay <devnull+shyckless.gmail.com@kernel.org>
-Date: Sat, 21 Nov 2026 10:45:12 +0000
-Subject: [PATCH] clk: renesas: rzg2l: Don't mark a coupled clock enabled if
- enabling fails
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=ApvIgA7p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1795258741; bh=aGX/622BLcEUD7STQZB7h5g1EsoIPpXceYZcwodljQ8=;
+	h=From:To:Cc:Subject:Date;
+	b=ApvIgA7pRlHLWlCD61Cqsgkd1XAu21U6HEpfnhJ3n0zf/dTorZroIBa5n3cX1JCDD
+	 Mde57uPNmsgTcAdwAiPp2OUWcgoPPPUI8pSSZlbJZDFk1+5qr8tXJaqHndMPQ9hVv5
+	 H05mYMOjSbjcMAWtQ1gxkzGnDTXPOVIIFDptYHIQ=
+Received: from jerry-PC.lan ([2408:8249:5f:7101:71a:8713:56b4:5043])
+	by newxmesmtplogicsvrsza53-0.qq.com (NewEsmtp) with SMTP
+	id EBA89487; Sat, 21 Nov 2026 18:58:58 +0800
+X-QQ-mid: xmsmtpt1795258738tog0ojgbw
+Message-ID: <tencent_8104629BEBAEF41637AAF1CC7D95BC7DCC09@qq.com>
+X-QQ-XMAILINFO: NnYhxYSyuBnLgVnKCHPq4TJMLrJsypE6Qo40ozViJR71TS3Rr5PZXax0WLYJQQ
+	 wsN5lH0sfI2ww8GsJuYP9MvREmVdkYFAYUqAVidf7DH03HXepozXc936IqEVlUbtupVL6VKLPec5
+	 3BanyHHL0/2FebIvbA9kdpq48WBDXST5bhNxhhhesJaOctePRELF/c+2AQdt3h2935RqDXTiVEID
+	 0rmiaRFlUOGkbCBjcOdOPxrR4Pir59L6HkLD1H7D76gnG5KwCOyAv0hQnoLMyQxkd/E0WcZ/5+SO
+	 jKcJvfv2xPT6ZAOq0IfbCRUOCaqmT8hDSfnf2pTEFjXCpGVginVmooJ9pzU0pHZcMcKsk4Np++A+
+	 e4fuNgy+TgE/9y0bo2mgVgkHz/FeOc6vy0GKhjmCwwOUW4oT3gNZV2snV7JdnuYQibcFh51lI/Th
+	 QkWwvIhZiV2PDl9ng5mFjMU+6qVHNd+mHnhQv8Z1+RCH/8nyZcIhwL7NeNo44kNb1LeWmSgKA1Rx
+	 Z9Em4smSvdi5433IyQ/90/DbmtQrOZiYvl2a7A4XtNrORy2CTdV4cwUptnSVBJngHUq7k0YpqroZ
+	 hmNM3pibG3Sdy88O0I/c/6yDOCbI+Gq28F7ujWNdbnP+eVDi9RwQhF2X5VxaidcS1BLYD7q6i/0r
+	 q2Dv8+k2zr+PhKDRZlyd819/CmGB6BCFdA2XAd7wrjy3aF1qT+JBZuMXXMxF8RIYH484Z/nOEExr
+	 I/2lSb+kOl+5/cjGn4LZjp8Tiyiejb9I+JA1aGzwxyX5z7UI3zquOL5osFvpyYQhEySzuxT8zuJv
+	 Z5d9skrCWYe887mEyzyXZmvNvBoF6CKsbBg3XnfOZSZJ7tV69OTL2KQmVofUVv49IuJltlkDC9v+
+	 JTCriJh4nMySdRt6RpQf0wZefXtS7YsP2dEV0URzJjRR7E7gGP+5RDFJoP6DnIkYKiYrtABkd6f2
+	 eZ4oW7xPouEx6Wz+OINGD2Bulif2Bi6mvt86KBO7wNTrWYlSRMnLUcu7bKuQCSqA9CDOKYSHT2CH
+	 c5xgphM6oz59GlQZ1wZV9OwkBSlxUPg8C3IrSxPQkYzj/FvyFyqI+rkMsQDjHmO+7SvotBX+Jtzd
+	 aiA/Qp74516r3YWs2lLaW1XdMjSMPbwsAM6GlKJDW/wgD3DXLCzaF8uEolug34RCaMNIFq
+X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
+From: ZhuXiangyu <1194781887@qq.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ZhuXiangyu <1194781887@qq.com>
+Subject: [PATCH 1/2] dt-bindings: clock: rockchip: add clk-out
+Date: Sat, 21 Nov 2026 18:58:55 +0800
+X-OQ-MSGID: <20261121105856.1414984-1-1194781887@qq.com>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -83,101 +87,104 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261121-rzg2l-coupled-clk-v1-1-c38c8299c176@gmail.com>
-X-B4-Tracking: v=1; b=H4sIADh2AWsC/yXMTQqDMBBA4avIrDtg4k+gVyld6GTUsUElURHFu
- 5vq8lu8d0BgLxzgnRzgeZUg4xChXglQVw0to9ho0KkuldIK/d5qhzQuk2OL5H5YUmMKm5rM5Ay
- xmzw3st3Pz/dxWOqeaf6P4DwvpwpJMnUAAAA=
-X-Change-ID: 20261121-rzg2l-coupled-clk-6cf75d07374e
-To: sboyd@kernel.org, geert+renesas@glider.be
-Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- jbrunet+clk@baylibre.com, bmasney+clk@redhat.com, 
- prabhakar.mahadev-lad.rj@bp.renesas.com
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795257912; l=2447;
- i=shyckless@gmail.com; s=default; h=from:subject:message-id;
- bh=3y15QbBzV0RnkTxoTog+ECpsMR9NS7LppzilDPoTG4k=;
- b=rBqqHHjt9+erqhzDjInR2FFJQu+aaY9fmkYHpZb5dHmxnwctDJWsFGz6zgxPgOIp3Fq5F0a2B
- G8yjBTFWrESCs7jEMOcOAQwdPIlUM0WYIb1FlUMr3Hprq1eCWbt+baM
-X-Developer-Key: i=shyckless@gmail.com; a=ed25519;
- pk=pMtccVGiWES3bV+7YBFuBclkvq2n2HBHQ5azaBrK2lY=
-X-Endpoint-Received: by B4 Relay for shyckless@gmail.com/default with
- auth_id=1498
-X-Original-From: Suyuan Wang <shyckless@gmail.com>
-Reply-To: shyckless@gmail.com
+Content-Transfer-Encoding: 8bit
 
-From: Suyuan Wang <stevewong@hust.edu.cn>
+Document the Rockchip clock output/input switch, a single GRF-
+controlled gate used for signals such as the SAI MCLK output.
 
-For coupled clocks, rzg2l_mod_clock_enable() sets clock->enabled before
-it touches the hardware, so that the sibling can see it:
-
-	clock->enabled = true;
-	...
-	return rzg2l_mod_clock_endisable(hw, true);
-
-If rzg2l_mod_clock_endisable() then fails, for example because polling
-the CLK_MON bit times out, the flag stays set. The clock core does not
-count the clock as enabled or call its disable callback when enabling
-fails, so nothing clears the flag for this failed enable.
-
-A later enable of the sibling then sees the stale flag and returns
-success without enabling or checking the hardware. Disabling that
-sibling skips the shared clock bit as well, because the failed clock
-still looks enabled.
-
-Clear the flag again when enabling fails.
-
-Found with a static analysis tool and checked by hand.
-
-Fixes: 32897e6fff19 ("clk: renesas: rzg2l: Add support to handle coupled clocks")
-Cc: stable@vger.kernel.org
-Co-developed-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
-Signed-off-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
-Signed-off-by: Suyuan Wang <stevewong@hust.edu.cn>
+Signed-off-by: ZhuXiangyu <1194781887@qq.com>
 ---
-Compile tested on arm64 with clang (W=1, no new warnings). I don't have an RZ/G2L board.
----
- drivers/clk/renesas/rzg2l-cpg.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ .../bindings/clock/rockchip,clk-out.yaml      | 81 +++++++++++++++++++
+ 1 file changed, 81 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-out.yaml
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index dc2bcbab18f1..18c4ed362295 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -2080,10 +2080,11 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
- static int rzg2l_mod_clock_enable(struct clk_hw *hw)
- {
- 	struct mod_clock *clock = to_mod_clock(hw);
-+	struct rzg2l_cpg_priv *priv = clock->priv;
-+	unsigned long flags;
-+	int ret;
- 
- 	if (clock->sibling) {
--		struct rzg2l_cpg_priv *priv = clock->priv;
--		unsigned long flags;
- 		bool enabled;
- 
- 		spin_lock_irqsave(&priv->rmw_lock, flags);
-@@ -2094,7 +2095,15 @@ static int rzg2l_mod_clock_enable(struct clk_hw *hw)
- 			return 0;
- 	}
- 
--	return rzg2l_mod_clock_endisable(hw, true);
-+	ret = rzg2l_mod_clock_endisable(hw, true);
-+	if (ret && clock->sibling) {
-+		/* the clock core will not disable it, so don't count it */
-+		spin_lock_irqsave(&priv->rmw_lock, flags);
-+		clock->enabled = false;
-+		spin_unlock_irqrestore(&priv->rmw_lock, flags);
-+	}
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,clk-out.yaml b/Documentation/devicetree/bindings/clock/rockchip,clk-out.yaml
+new file mode 100644
+index 00000000..bf2a9b8a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,clk-out.yaml
+@@ -0,0 +1,81 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/rockchip,clk-out.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	return ret;
- }
- 
- static void rzg2l_mod_clock_disable(struct clk_hw *hw)
-
-
-
++title: Rockchip Clock Output/Input Switch
++
++maintainers:
++  - Heiko Stuebner <heiko@sntech.de>
++
++description: |
++  Some Rockchip SoCs route a clock between an internal clock and a pin
++  through a GRF bit, for example the SAI MCLK input/output switch. This
++  driver exposes that single bit as a gate clock.
++
++properties:
++  compatible:
++    const: rockchip,clk-out
++
++  reg:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 0
++
++  clocks:
++    maxItems: 1
++    description: Parent clock.
++
++  power-domains:
++    maxItems: 1
++
++  clock-output-names:
++    maxItems: 1
++
++  rockchip,bit-shift:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Bit position of the output enable in the register.
++
++  rockchip,bit-set-to-disable:
++    type: boolean
++    description: |
++      By default the clock is enabled by setting the bit at
++      rockchip,bit-shift. When this property is present the polarity is
++      inverted: setting the bit disables the clock and clearing it
++      enables the clock.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - "#clock-cells"
++  - clock-output-names
++  - rockchip,bit-shift
++
++additionalProperties: false
++
++examples:
++  - |
++    clkout_parent: clock {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <12288000>;
++    };
++
++    clkout: clock@ff910004 {
++        compatible = "rockchip,clk-out";
++        reg = <0xff910004 0x4>;
++        clocks = <&clkout_parent>;
++        #clock-cells = <0>;
++        clock-output-names = "mclk_sai0_to_io";
++        rockchip,bit-shift = <8>;
++    };
++
++    audio-codec {
++        clocks = <&clkout>;
++        clock-names = "mclk";
++    };
++
++...
+-- 
+2.47.3
 
