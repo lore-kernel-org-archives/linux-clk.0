@@ -1,65 +1,66 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.205.221.236
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795261280;
-	b=ll92/QqMuKtOPWuWJh0wUuaVS75kG5CswopOUSf3x/wOdu+GSii0nblEu7L1UlwG7HSc
-	 Xl1ht0A5wTSjxsQEKyBkEkppj8T3G/gX/KEa09kJIBFgIJ7Iu+xAfxjbAkZDOvCcunK4b
-	 UoTnwzHM3BhaEYIVS5OTKlTim78o6UAsGxQM1Ob3a+q4n8OOXoKusY9tYw4I6Wn9ZuXe8
-	 rWBUR0L03gUNA6UkRIjelt5/3PHkxF0BxqVvgOxFW69SiboDefrfNvn8895x01xt4zrir
-	 6h/zL6PMZ+H4+unibqkHuTzCjzuC3geeC3VHUReZbBhEeiCyas+T1MLnBP9HzNIZF2g==
+	t=1795261281;
+	b=JqTPiH7w6OXqslnTlsdsLeEnJeXu8KJu8U1GgG9OeV5W7bx2V9z+tJMcONjPizUDGzmj
+	 Er4HkD5ZxxRta4DhUdTq8f44etWmGX08IcVkyLrtM+ZHEX+d72fdHkErMKvIffKoFNWCI
+	 T1fvbFIYwFJRwYkahji5wIqtakp6fLAMuUYQQhx6os+hARFd+Fui7b8Fml9fTb9CnR7Z+
+	 DAeHGISHG6saDWhymWXUhJncKDUZfnPgEk7o9F+3nbA++ZE1EEj+bEOcGtBs2S8uGOtLP
+	 CraZlW3/0m2jD2sVM3Bo68D6Jfxg8mYjCkFC1rxpWwIEmL5k+ef5QQuK8HAKmGZ6IKA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795261280;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795261281;
 	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
 	 X-QQ-XMAILINFO:X-QQ-XMRINFO:From:To:Cc:Subject:Date:X-OQ-MSGID:
-	 X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=H0POKlXJyl1potWBMogKNasbJD7Qe/EdMAgMjh/RQek=;
-	b=o/uhE2NywPjO9wSupS9Pa/I0CtEsClEZSVlfhm7ftg7dU28kaA6Pf/roGHhJ/MppH0zi
-	 lxaKFPUHc8i+7DbFsVUOoh501TybD/l4dU5E942RnoxzX/QSes3HL6zejyeCNjTjn7rdM
-	 ouCa87v9MSKvPZB6eD0pOzQJjfLydIMv/6CA08GVhC3CldmGu34Yi+my3Y7dfFxvGHvkx
-	 ZaUeavGbJjDnRJuupk1NVp0uEMXASMB5VWgdAArO7/f8HNcGna+J2U08JYwyloABwxNG5
-	 S7EljBV/DtanNP92177v+wizmarAUxv+Sn9oTiYV0wxyyYHuESQi0xvLHUz1ZgKqFyw==
+	 X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=y+AYtfVk0LkCTNbc8GOpJgwDHV5K3ThuTa26y9mHfAo=;
+	b=yhcWLHRmsbAvmpimw04rOfm6eP72UjeYCOKdpW0yQ+yrAqrXNuidqIO5XW3Wu7MAJJpK
+	 CK/GM2PO8fb6yurNjtST3FQcfwkEeBW5c/t4+Mn1AxWKPJCQiFu5tpBMX8+P90Z65ij+w
+	 hqwasVfpMEJ1BwBdr7kjlR5MQS6/tUvZCEzO5ooyI1AaGr2yMJqLQp28QZgwHo/ljfQYj
+	 T7UhmP3QLzgmZmf71j6moZldGN0jjy3Hy/GKC1AnQjwdWYASv4UqYrT8cFgbi4BInFiNk
+	 1ofP/NtL/14DpTznbJCBhAkTruzcQ8/vDnM5xdHQ7QqkGoiZbBPGB6hWTuDOBZ7Hlpg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=qq.com;
 	spf=pass smtp.mailfrom=qq.com;
-	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=UADWpVae;
+	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=P32bqnuf;
 	arc=none smtp.remote-ip=203.205.221.236
 Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01031606A32A;
-	Sat, 21 Nov 2026 11:41:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 01031606A32A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6E2606A330;
+	Sat, 21 Nov 2026 11:41:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5D6E2606A330
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=UADWpVae
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=P32bqnuf
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1795261270; bh=H0POKlXJyl1potWBMogKNasbJD7Qe/EdMAgMjh/RQek=;
-	h=From:To:Cc:Subject:Date;
-	b=UADWpVaeOCWWc5JGFF1Dkfd+q0CAOwAIAfalLg+BBuOrhvfeYUKj+OyOahQuIIqxa
-	 45E/P8HdlHt1cENeXlqpyk0JvcwowtejB59PBAwLHeps2hvpklxaQTC8PwZw0rrAyD
-	 7UaOk9tHEPVAU7dQiVPVMrNN+qt8ZkNZE8guEcps=
+	t=1795261273; bh=y+AYtfVk0LkCTNbc8GOpJgwDHV5K3ThuTa26y9mHfAo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=P32bqnufmrxVvq9fqpUbuKboJgfUREEdeNy73b/aUmjyhFFmEVUzeSeEsZ8ysnxUq
+	 /ec1JRAXCxLqmJ4AF5P51kJVIo4UXgFQGzlAWnjI0xxDAIDNCaXPwPfNtjLsZZA/RU
+	 7lz7ddu/+arAEk5Smb/DS30w99kJ68PcPx3oBVxo=
 Received: from jerry-PC.lan ([2408:8249:5f:7101:71a:8713:56b4:5043])
 	by newxmesmtplogicsvrsza73-0.qq.com (NewEsmtp) with SMTP
 	id A483CACC; Sat, 21 Nov 2026 19:41:08 +0800
-X-QQ-mid: xmsmtpt1795261268tij57gi7q
-Message-ID: <tencent_9138CD6157C88BC2D52FE6394AF83E560208@qq.com>
-X-QQ-XMAILINFO: MMvVzQSdFuTpJIeV8/5hjtQfotwkZ+jtKyfjhICSDMZIDHT1X/DYkcbH/Lia1j
-	 XzXeCAPaRAu+mSZgb7XWYaWJ4aEZkHb3OGQKRr5VE13m7VPNP24J5vbBAWyRJvyaJ7bu/lTKOTyc
-	 5U1neCYdoSrqPoiI4FLGrGUfhVfzXyZ/aH0laYFJ38Wx9RWIZMI9n9y9vvtWFAP0j6g/aTM191xf
-	 bA6tWzdJK/yJunxXgLqTi/DF/5/D1kC+9mhQl17MIzNjkdxEU0pmELe05j1///XzD4iGUcEqg1nU
-	 2ShEWEjwQQ7zWM5FBemnfpXWCn3a3yjz4NXFfWoddtgY8jBlpymIB+EirySYqXEu0j/PU3gC3qn4
-	 2L2t/Y207YshOdI0SSUjVMQ4UzGDNfPf0zktGGM8vE0KvlgIqHr500j6wZSeMHUHSUI5YBpkEqLh
-	 8hSBlIiZDuEBRbtMbn2Q4u/3VhwyS1wiRTp+qp+ZAKp5K31uec3cPs50VDhFzu8dkLRQkjM+nc7O
-	 2PP0PdS+XqL7bXk34rye5nYJzEHXeIyeFn4V91eDFgna9Ao65Xi6ktbGr4ddRdOmgLq85Ji5O84k
-	 AEdncFZHbJ/dTwuI1srplAWPy5in07fMLejYV14KxZMKXldi2Q5h0m9vYAdtYdc05AIRG0UTLIXk
-	 XVPN6NWcFQ1Y5IuqFQ6UPswh/QzJry9LF3z0nmP5DMR4tIdiqMMpi7I/0tBAncU+kaGvHJWp36rs
-	 Yvj8cCJzQqdJZpZQCMKfnBWmJGuxYFlYplciUPPRUpKWp1FfhbsKevW6nm7Sa2Ew2EoT7Yg4Y7nQ
-	 S4yPD9ipjb277N0KxNT5dOdVvyRLcxYEcVFW3UmLoi6MP2EUvGl+3ZNkRMNDC6Gt/JBOw/D2/FxU
-	 VWjb2N0QFbtq2XrLNi2H2kcH+S9XZ6JytvhonJoGtOnIISj/+cl1V6FuQ/ygiqXtpkwKb+xSClVc
-	 LUZ39jg3zvhE52KJynxzHQ0GH3RmzBxZJGlX8Db2EhOxOY3SvjLOKS2dz5bySvKfW7Z9w0+y2/b/
-	 iTjzddXsotbsoiVJ+E2mMjYA+ISe9CkTp8ixrHmfB9UE6oerdHByOstz7quGpbE5/Lb0JuIEL6eD
-	 JCQlW6e1n33ePa1d8K97hBp3TwZA==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
+X-QQ-mid: xmsmtpt1795261269t3sk748np
+Message-ID: <tencent_27C5C9EA21F34B25719F07818366912BB407@qq.com>
+X-QQ-XMAILINFO: NnYhxYSyuBnLgVnKCHPq4TKmrtsqjLlnWFixUpd7RAqUMfvIq8rLc10uB7f6m6
+	 Pd5xPUqBsCvRep8z3/QvdQ17PMxayD00x5ZY6LCbHWjqqNv3Wb6/NzI/ENVt1KhHm4LWCC33dcMO
+	 a2HchLcNOtrZ0HQKGpuvxoVAOFa2FUcHhpx/EYMHOfV71r7GBHHLoHHRZ1SzRpQLNZmaRZDue9MB
+	 1U2kT/7MGjeZw3YaqnU83a3wD6fYgZjiJRokUiOLRUS5IXjoYoG/HwyJg0JzQ4yB0hC9FZQU3aUC
+	 zgzW7OqJlfS58xF1r5EsllNhrlSTg4zxeLrKbvxIFi6WfLfMXbh0fqMMLEf001kXgQmfNtxQy2b3
+	 NgdOc7Gv/x6bq3o4iCbAXMaTYK094dwTTkoJlF/OyqYOp4UcqZO7gvG2pDGM29ikNVNAu4K6Fy0w
+	 uLooprOeVLJBVc9KCNFpvCTN0dYD7LSBNG2ZOALyeorUZIxEw7CUwspCIhGIKoGsg/8SGeNxv4eT
+	 5aytPc+1QTPP2Ht3NtDZQmv9rbeP3qP85fhPoAun/VEku9ApgpJkh7ooL1o/azw+TuMHNSdvT6Q8
+	 j0Y125z5VTTzRiX6wWBP/sTrq51MUEy1eNrKNH+ZnKlbPofcsUVDHqrkl8WrfASTWOjfGS4vORKu
+	 u8z7+gL4f0Vxg3DNU86lXyowXm9nqMOrDhMG9/JHuLf4uMFgYcTKTeLJHtUAnxAw9CGpL/4eI3EI
+	 p9NgxqeZ17PccHxEHVvq+utPjajz6YGotJauE7mH6oY13cGlTp/EUw/LvESy5tmqbjNuD++wicDW
+	 OP34SskSazum5l0HySjdn5LRPqINBzZaJSzJHc47wEq46UfEczuPSB3d6bNWLYIcCLOtJW1zY+3M
+	 39PrDMhPoleAZ7pA2bUrKJWrIuQbM64FLLy/r8MfJ87RsnHEpvNxpHqRtRoA03pVce9Q1jibjDii
+	 nTnUaF8oUKSbnX/OiY4gFD/SUBgaLGr77T8fqxc/11cBAMWPxUlQWZeNYI1amHEP4+2UKWDfac2k
+	 xjjMCKvUztCINHrKkIrJ0IeR2QGFDEl1iK+KPU9iixkfJy+/FGtfHg+/U6BlQqDjoQzp7kN7Vxih
+	 PpZTpfSFDOwCO9sAEkMFYIp0UwIg==
+X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
 From: ZhuXiangyu <1194781887@qq.com>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Heiko Stuebner <heiko@sntech.de>
@@ -70,10 +71,12 @@ Cc: Brian Masney <bmasney+clk@redhat.com>,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	ZhuXiangyu <1194781887@qq.com>
-Subject: [PATCH 1/2] dt-bindings: clock: rockchip,rk3506-cru: add SAI MCLK output IDs
-Date: Sat, 21 Nov 2026 19:41:05 +0800
-X-OQ-MSGID: <20261121114106.1464639-1-1194781887@qq.com>
+Subject: [PATCH 2/2] clk: rockchip: rk3506: add SAI MCLK output gates
+Date: Sat, 21 Nov 2026 19:41:06 +0800
+X-OQ-MSGID: <20261121114106.1464639-2-1194781887@qq.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261121114106.1464639-1-1194781887@qq.com>
+References: <20261121114106.1464639-1-1194781887@qq.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -85,28 +88,97 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add clock IDs for the SAI MCLK output gates in the RK3506 PMU and
-system GRFs so they can be registered by the CRU driver.
+The RK3506 has four SAI MCLK output gates in the PMU and system GRFs.
+Register them with the existing GRF gate support so the SAI MCLK pin
+direction can be controlled through the clock framework.
+
+The PMU GRF is added as an auxiliary GRF and the SAI0/SAI1 gates use
+it, while the SAI2/SAI3 gates live in the system GRF.
 
 Signed-off-by: ZhuXiangyu <1194781887@qq.com>
 ---
- include/dt-bindings/clock/rockchip,rk3506-cru.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/rockchip/clk-rk3506.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/include/dt-bindings/clock/rockchip,rk3506-cru.h b/include/dt-bindings/clock/rockchip,rk3506-cru.h
-index 71d7dda2..708502db 100644
---- a/include/dt-bindings/clock/rockchip,rk3506-cru.h
-+++ b/include/dt-bindings/clock/rockchip,rk3506-cru.h
-@@ -281,5 +281,9 @@
- #define CLK_V0PLL_REF			268
- #define CLK_V1PLL_REF			269
- #define CLK_32K_FRAC_MUX		270
-+#define MCLK_OUT_SAI0_TO_IO		271
-+#define MCLK_OUT_SAI1_TO_IO		272
-+#define MCLK_OUT_SAI2_TO_IO		273
-+#define MCLK_OUT_SAI3_TO_IO		274
+diff --git a/drivers/clk/rockchip/clk-rk3506.c b/drivers/clk/rockchip/clk-rk3506.c
+index dd59bd60..4196f4f7 100644
+--- a/drivers/clk/rockchip/clk-rk3506.c
++++ b/drivers/clk/rockchip/clk-rk3506.c
+@@ -5,6 +5,7 @@
+  */
  
- #endif
+ #include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+@@ -520,6 +521,8 @@ static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
+ 			RK3506_CLKGATE_CON(14), 0, GFLAGS),
+ 	GATE(MCLK_OUT_SAI0, "mclk_out_sai0", "mclk_sai0", 0,
+ 			RK3506_CLKGATE_CON(14), 1, GFLAGS),
++	GATE_GRF(MCLK_OUT_SAI0_TO_IO, "mclk_sai0_to_io", "mclk_out_sai0",
++		 0, 0x4, 8, CLK_GATE_HIWORD_MASK, grf_type_pmu0),
+ 	COMPOSITE(MCLK_SAI1, "mclk_sai1", mclk_sai_asrc_parents_p, 0,
+ 			RK3506_CLKSEL_CON(41), 8, 4, MFLAGS, 0, 8, DFLAGS,
+ 			RK3506_CLKGATE_CON(14), 2, GFLAGS),
+@@ -527,6 +530,8 @@ static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
+ 			RK3506_CLKGATE_CON(14), 3, GFLAGS),
+ 	GATE(MCLK_OUT_SAI1, "mclk_out_sai1", "mclk_sai1", 0,
+ 			RK3506_CLKGATE_CON(14), 4, GFLAGS),
++	GATE_GRF(MCLK_OUT_SAI1_TO_IO, "mclk_sai1_to_io", "mclk_out_sai1",
++		 0, 0x4, 9, CLK_GATE_HIWORD_MASK, grf_type_pmu0),
+ 	GATE(HCLK_ASRC0, "hclk_asrc0", "hclk_lsperi_root", 0,
+ 			RK3506_CLKGATE_CON(14), 5, GFLAGS),
+ 	COMPOSITE(CLK_ASRC0, "clk_asrc0", gpll_v0pll_v1pll_g_parents_p, 0,
+@@ -608,6 +613,8 @@ static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
+ 			RK3506_CLKGATE_CON(18), 3, GFLAGS),
+ 	GATE(MCLK_OUT_SAI2, "mclk_out_sai2", "mclk_sai2", 0,
+ 			RK3506_CLKGATE_CON(18), 4, GFLAGS),
++	GATE_GRF(MCLK_OUT_SAI2_TO_IO, "mclk_sai2_to_io", "mclk_out_sai2",
++		 0, 0x4, 2, CLK_GATE_HIWORD_MASK, grf_type_sys),
+ 	COMPOSITE(MCLK_SAI3_SRC, "mclk_sai3_src", mclk_sai_asrc_parents_p, 0,
+ 			RK3506_CLKSEL_CON(52), 8, 4, MFLAGS, 0, 8, DFLAGS,
+ 			RK3506_CLKGATE_CON(18), 5, GFLAGS),
+@@ -617,6 +624,8 @@ static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
+ 			RK3506_CLKGATE_CON(18), 7, GFLAGS),
+ 	GATE(MCLK_OUT_SAI3, "mclk_out_sai3", "mclk_sai3_src", 0,
+ 			RK3506_CLKGATE_CON(18), 8, GFLAGS),
++	GATE_GRF(MCLK_OUT_SAI3_TO_IO, "mclk_sai3_to_io", "mclk_out_sai3",
++		 0, 0x4, 3, CLK_GATE_HIWORD_MASK, grf_type_sys),
+ 	COMPOSITE(MCLK_SAI4_SRC, "mclk_sai4_src", mclk_sai_asrc_parents_p, 0,
+ 			RK3506_CLKSEL_CON(53), 8, 4, MFLAGS, 0, 8, DFLAGS,
+ 			RK3506_CLKGATE_CON(18), 9, GFLAGS),
+@@ -787,10 +796,17 @@ static void __init rk3506_clk_init(struct device_node *np)
+ 	struct rockchip_clk_provider *ctx;
+ 	unsigned long clk_nr_clks;
+ 	void __iomem *reg_base;
++	struct regmap *pmu_grf;
+ 
+ 	clk_nr_clks = rockchip_clk_find_max_clk_id(rk3506_clk_branches,
+ 						   ARRAY_SIZE(rk3506_clk_branches)) + 1;
+ 
++	pmu_grf = syscon_regmap_lookup_by_compatible("rockchip,rk3506-grf-pmu");
++	if (IS_ERR(pmu_grf)) {
++		pr_err("%s: could not get PMU GRF syscon\n", __func__);
++		return;
++	}
++
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base) {
+ 		pr_err("%s: could not map cru region\n", __func__);
+@@ -804,6 +820,12 @@ static void __init rk3506_clk_init(struct device_node *np)
+ 		return;
+ 	}
+ 
++	if (rockchip_clk_add_grf(ctx, pmu_grf, grf_type_pmu0)) {
++		pr_err("%s: could not add PMU GRF\n", __func__);
++		iounmap(reg_base);
++		return;
++	}
++
+ 	rockchip_clk_register_plls(ctx, rk3506_pll_clks,
+ 				   ARRAY_SIZE(rk3506_pll_clks),
+ 				   0);
 -- 
 2.47.3
 
