@@ -1,118 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795266035;
-	b=l+Jf9TfBRGv3/1ABKvMDoto2WuwTvfOwPLsxG4eRdzRJAJjgkz865If6PAMhuLp1tn8g
-	 JarDZUTpdZX43XEyjX/hG29OBPftXt4VvsraF5C3d9u8zZE80M8AzItsfX/sieBeOPiF9
-	 Ya9R1jXmA3ism0IuMTVIwHM2E87n19m/2GT6fVIFlcLOmOsQJk0OuNyvjupEpz/3rrNJ3
-	 4yhe+eOjHv6xqWmBSto1WerW9y6JyPYkOLoM9X7oGjf7Vd+wH3mUcR/uxQSa5OhM/fh02
-	 BJ37hW9QYHmilbPSEnmgzKqYCnWLsoGtiJJSs8D1Y2SO2DUNFnrOmfkCVtg5h03rmrg==
+	t=1795266494;
+	b=DNHFoRGnGzWQr2V6OBA7+hkIrZBhkakczYfhhCTlKy6uM3Ipi4I/+SSd9hc1uvcLU0iJ
+	 s0RKxgGyPJN5K2Ym8xiYo7xolj5ImYsoKvVjDIWjalFh7jwxcqc4F8IIEKaxDV01K9Fma
+	 kD+PSx882d+UalUGQizcQQ5pl0yrWfl4Qj/tEahB3AR7q2tFRunoebzvT+GokO4OU11Md
+	 Brsu5qnWjAprzxNmOd0vY19vQ6WGDEzK4+7GfztsogAkbNVQsOzPs/sTLQXlQ5+k+sBC1
+	 ImzzgSH2q9baFsy3peLwe9kTPvROkC6WU2cToW7hCAljJZxYR8MzRHomz97ySLhzl2A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795266035;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795266494;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=NXIuNB3ZQ4GT/Hz3ry1FYljBSts0wnPjJe/0CXC9B/Q=;
-	b=jjJ9Z4bplaZr/Kg6AKFYfhLMYv98OFB7E9AsNKKKRmzTP8xjNunOgTtMRVAlmLbbi46S
-	 sK2Wrmca7QjhD1AhIhsGsylPUXs7BUFaM3zkSlXqRCMdXItR+LFbQC4mv4MNp8YJWd54g
-	 rCAEiDBqh/qWGwuJ0wXtYZESZF5RIkZ5lDhN9+1uwL7L4Mww3QYMy+KolaMjY3GIMK3Eq
-	 nuzybwIAsr0tebrIEpXxkJqNT6L1tdWgwQQ37SEH+rer1GRuXkAdMtI9ZEvHgnwZuHPh9
-	 AMcFkDfuK0/vLdXG1A3j2d16/gTrmDqupGDGm1MxNN91LOo+x9VrH3IPZejVJyYVoIg==
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=aRAzCciCsUrRiJ+1yAcA7cMdA+d9ps59tYubA1kPHnk=;
+	b=jP5xni8qRyESbuL/1qdjsUFd91mbQjUHzLbb4GqR9yTvMKY7B0QfJshYrA9Sbgg0S3PF
+	 ysuFIMmKauBAgJJQnPGHuimqyL7LBZfxe6DfW5JPpWTZCWOfW6pxHdlBGxGATXeqgg2/T
+	 1KUG2hT/G1DcqST4dxH2NnCHEaUVQZWsQfYJbhRGxJddDAPiMd9vHy6hRZ4lJKKHFwPFY
+	 4mptkY2k0F/kaZj8r398WIdWds3weLYgP/VxDaxE/B/KT+g1BDPqyGobpfKr4bcLn6oZm
+	 wXLemvHzzsBJKE0jVaxOBPyBzC+I8ac/4WnmhVf9WRArCi2u6WCYBUmKZ7dRItYI6WQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=RNtRAbmQ;
-	arc=none smtp.remote-ip=209.85.222.172
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Mi9up7Nj;
+	arc=none smtp.remote-ip=209.85.128.43
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B484606A334
-	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 13:00:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4B484606A334
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECF3606A32A
+	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 13:08:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8ECF3606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=RNtRAbmQ
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-9496577d4c4so211391385a.1
-        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 05:00:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Mi9up7Nj
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4bb5b8ef642so15056725e9.1
+        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 05:08:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795266034; x=1795870834; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=NXIuNB3ZQ4GT/Hz3ry1FYljBSts0wnPjJe/0CXC9B/Q=;
-        b=RNtRAbmQYXLSiaEjtX2aUWytq3ybkP6vzvMM/GYzBbb22sqY7OMQwI+6PVQp9DHcAr
-         lhyzXBhfLKqVcuJ8sVYNtP2aRDK4nll7J9DPE5KKQ2CAiVa+LkTWYungYQISMsCYyeh8
-         hpGt4X4Nli6qalkIo2q0QmQpZOhYwDWO5tabVR1HVgZiiW3bleQnCJNRgfq3ll0kyepq
-         3gsRAOgqgRVcju81U/9by/AXAbdfkcF2NzQSoJbhod4BZL71XZp0atz6aRPfoC9lunEa
-         hlKhShuYNK3XPf/2DcuSXs5DhYd1yfNh3h4hIJmP4ba3ACaEg6LShMxd5328jY0CMk/1
-         hndQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795266034; x=1795870834;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20260707; t=1795266493; x=1795871293; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=NXIuNB3ZQ4GT/Hz3ry1FYljBSts0wnPjJe/0CXC9B/Q=;
-        b=oMLswhWpXW8BcQ3j7hDJsJ3RMnjAHHx8itoP0n5por4ezGjMSDcJpsllmt/TUIR5df
-         PsEJGZZCoTKzXoidIc1tFkJcU7gMKx2SkMxW09VqPP+dTy2BRAbQI+KAcDutS2AbbyT6
-         Sk4qOQMhJJtnjpbtwvc9lZRC/CDNsRnRAgczEy7Rt+WDdPNi4nN2iN+A7uPP1tRQ0mW2
-         DJRJqVPVwirF6sQYSfb6BmuubrKySQDRHag6qhrCjtCFdo8MpUgDLroyj4LqqIikwKkC
-         z3TwIMfqpAWa/MajlsS43F4R2hfsMSOq4ONedd9EFoRwluaLgZjcCxGQr2XMOzGmwt2W
-         fD5g==
-X-Forwarded-Encrypted: i=1; AL+hErHDISSbu9sj656NidpiRozuiNvadALcCe7Ffogbd5HJ9JFjzxTG3zm5z584tRuzhVE3e3eU/TbUUWw=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+wtFohCzYC76sV5aP74kR2Urmup+asipi2PHijdEYoMgq7ZS7c
-	ZGn+h9FwrNv/bTvPFe9G9K6uBuh+qejvIpYlULX+r/dqW5zqCxliVit4I9iEuj8BMdA=
-X-Gm-Gg: AZFdTZfPe4p0CYvoIO+FmXkibHrBqWRZZdofTCrmIvxj3Sva5REaED0jfsGU05iwKZO
-	4cyX1ZNI+0nppcjvcIke9Ihwq5hyZPlx52uL9j0JFrqi9QNkn8PaJQxXFp51ds3Z9Rx29is6RFq
-	lQ3U/w43DcElP2ZYJei8L7ug3hDYJ7Z0MaWu0a1SPI4Q0r7rTMvFOrLBI0vKia0uOUkPPiVhoux
-	px2t2/NtzurlRYhafnDxI73CWfMrkilpU7Sx9gEs9EZxMKUEn13e+agDgNqop4riDvP6Opt47eD
-	63iXS/snTIAbVB8o4OuLjF1Xhz/qqGr+nsQqQXSMzoO26WJcINGQh6xetz+Gk+Gvcc4CgdOH8Qu
-	8xHDeQWtkXgE6Athg7vx+S7V0bGhKKIWYje38mu7MQFltmG9kNpr+Y0/jeCADaGi/tuS6gcpZV1
-	/2ZgHkVSuzL5CKcSrKdP7mSVwZob5uKUY7CwZGsoEdjMShKw2L7Je6YbfywRXr501oI4j123hRk
-	NLcDNl/wqLJ7e5bkFnjQQz1E96jYLp8VNA2jhyDx7pVcTvQllyaJXxxElOETeu/xxhiJlH0aEfk
-	8leECvoI6QFzPMLn2m46AeVrkx9wyBLrYH1o3e4hwUtiIUFm8tYeJq+SBA7uPJ7TKzuljTo75Sq
-	lG+LPYMF4DMChC34oGcywL7F67t2+n40kAUTe3bX3u7YoeQM=
-X-Received: by 2002:a05:620a:2786:b0:93e:5677:317b with SMTP id af79cd13be357-949b35e9b3fmr1046746285a.25.1795266033942;
-        Sat, 21 Nov 2026 05:00:33 -0800 (PST)
-Received: from localhost ([204.244.107.52])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-949bb427388sm408593585a.42.2026.11.21.05.00.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Nov 2026 05:00:33 -0800 (PST)
-Date: Sat, 21 Nov 2026 08:00:32 -0500
-From: Ralph Siemsen <ralph.siemsen@linaro.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, khendry@reliablecontrols.com,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: clock: r9a06g032-sysctrl: Document
- reset cells
-Message-ID: <awGV8BU_AfaXQyBv@maple.netwinder.org>
-References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
- <20261119-rzn1-miic-resets-v1-1-feee2bb28bb4@reliablecontrols.com>
- <awARmkCuelD_fdX6@shikoro>
- <5d8530485716d129be2efa0518254e3322cecdb0.camel@pengutronix.de>
- <awAq7vxcY8CGjhNl@ninjato>
+        bh=aRAzCciCsUrRiJ+1yAcA7cMdA+d9ps59tYubA1kPHnk=;
+        b=Mi9up7NjvpRyWzOY8s0o7PJ9oq3lkrxuxfoNnumarCgA4nUizFfFXZxPUIRrdNcD82
+         4hQjmpK/hA7CXZ09fxX0NHtcnkVMJFgfv8kJGtzoT27SOgmpe3G747ISiSEPZj7c3cqB
+         LZXcEcDDWHH8fiKcsQZ5EkOssnF0b1tUhg6Je3k9Kn0WWU7y2nZ3hh7gzcBUbUnAUbIV
+         gfuoHPYCRARbWl8xEqLsbFoMIxw9cciZ1oxXtglEIFYGXfohgSML6AhXpr+vh2Gj2vme
+         rHKgcwFj9QFrtjmpFI0tqdcFnkeg+uMpd2wjBlPhS3VjLW4e6Y8VUAccKZr0Bc3Au7tj
+         7DgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795266493; x=1795871293;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=aRAzCciCsUrRiJ+1yAcA7cMdA+d9ps59tYubA1kPHnk=;
+        b=rNj1HiqKb0pniAc6PNjmYPn8aWa74NZvcsvR+M3gOKUf6kXsBlVdY0hwEevMBRYVxv
+         1zrODsYcYxaEo+0dIWp+Gm1wCx8N24WlbcQ1AGEndYRADrPDbg4ScehRNI4g9Hw6nwjp
+         llfPh9bXv83f3JM3G5Qq7vj+dOp1sB8xkVYoEyCoMUCkjgyLCVOzgCZSwqoIzquV1hBj
+         xDTX0BHhrWHbJZbBSfLTicNephjm3W76Nk7itIKqApJdEDRE0ovhqjg6juz4k60lxOSh
+         nBZVQFNGcIXPUqZdnxDGDzKOm+tnZy1wg5ucKWAIuhAfe3b98E0orgsPIgR7WgeRs62r
+         8WVg==
+X-Forwarded-Encrypted: i=1; AL+hErEqLuqb1lB/t378hlGfzOCQxXU9MmO4XuJJasEvphq0lGQUIzA6t9oIB/aAPIINFES/757sUB3fNJU=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8o8AsqRGHsRktV0eTrrBPFj9HRKtwfs+d/MiFyf3XVO5cJnEBx
+	NxFO0X0oHKZSROHiCpbXY4r73j3dkBxBG5X3Zlz73ARgCTzMIKbgswnD
+X-Gm-Gg: AZFdTZfGsHckby+4S9We/ywFjVWaYNStgdlKON0xq+BEvn1+ajBu21gQR8/EkgftDXk
+	7kJdpXebeONFqFIOwphaZAYFXfugcUVC+VWnnqMGlH3iQj1l/DrP0wLllbHOc0SOYyWkd/Cza3/
+	HqyRNXyNgOkyWSzNJ8MKg+vROkuhKEJbpGUZgwnzuadgRxhMdssUa6qJ+A6p9Yin3X0IBH5wPah
+	R9q4ft6nZdY7gt/sMNbqTks/p7PrejO728RTLkttM7pW6vY8K1ERw+x+JD69J7MRQD3zcvfOE+z
+	TyGkEYKdC6cfRS4XUH2tHDW0VharT4e7OcHhLGHuW1ifq3OJc7dkZzMwE7HL2uXBEm+QxeiSkKq
+	Z0vUXoPnHGJzE8YUcjdHOtHMdkifKfPuppoUrccpDs5ah4FnXFCh3MmJWqzyPmWLpfiuRux4VK8
+	j+wXASmv5bWd1/omSn/XRT0JtzC4zl3GQSVD5DVmBettgkCUyoeErDYmh+MfJoV8nNUUV8YSe0I
+	Jx2DuHasgZ/CGhM/gUhi+tCv5qHiH9c+EVOW8K5YQiPF1XC78hqNq5zMzxVnExmdL93QFrG52Eh
+	puz/BoUruI86DqNFTsMZ9ir6giYZIVUugQ2XVe2mMZLs4OU=
+X-Received: by 2002:a05:600c:500c:b0:4bb:82f7:549f with SMTP id 5b1f17b1804b1-4bb8881409bmr148513185e9.19.1795266492771;
+        Sat, 21 Nov 2026 05:08:12 -0800 (PST)
+Received: from [10.50.139.243] ([23.90.153.233])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb906640a2sm48512235e9.0.2026.11.21.05.08.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 21 Nov 2026 05:08:12 -0800 (PST)
+Message-ID: <84ee070c-f134-4a78-a92e-0d03d0f0fca5@gmail.com>
+Date: Sat, 21 Nov 2026 14:08:11 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -122,31 +92,35 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <awAq7vxcY8CGjhNl@ninjato>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/2] clk: Add gpio-enabled clock driver
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Jyri Sarha <jsarha@ti.com>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20261015-feature-clock-guard-v9-0-c1c05a498d9a@bruker.com>
+ <20261015-feature-clock-guard-v9-2-c1c05a498d9a@bruker.com>
+ <179519084929.3795820.7180605641448271689.b4-review@b4>
+Content-Language: en-US
+From: Vyacheslav Yurkov <uvv.mail@gmail.com>
+In-Reply-To: <179519084929.3795820.7180605641448271689.b4-review@b4>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 20, 2026 at 12:11:42PM +0100, Wolfram Sang wrote:
->
->> > > +#define R9A06G032_RST_TS		1
->> > > +#define R9A06G032_RST_MIIC		2
->> >
->> > I didn't find any listing of the resets in the RZN1 docs, so coming up
->> > with arbitrary numbers as we need them seems okay to me.
->>
->> Why aren't we starting at 0?
->
->I wondered as well but clocks are also starting from 1, so we could
->argue with consistency.
+On 20.11.2026 17:07, Jerome Brunet wrote:
 
-The clocks use value 0 to indicate "no parent clock", but only for the 
-".source" element of struct r9a06g032. The encoding macros add and 
-subtract 1 to the clock IDs, so it should in fact be possible to use 
-0-based values even for the clocks. Too late to change now since the 
-values are encoded into DTBs.
+>> +builtin_platform_driver(gpio_enabled_clk_driver);
+> 
+> module_platform_driver
 
-Thinking about it some more, perhaps instead of using 0 as the special 
-case for "no parent", we could set .source to match .index. In other 
-words a clock pointing to itself means "no parent". Worth changing? 
+Any explanation on that? All other drivers in this file use 
+builtin_platform_driver. If you'd like to change that, perhaps it should 
+be changed for other clocks as well?
 
-Ralph 
+Slava
