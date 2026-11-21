@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1795285101;
-	b=UE5Evlv98H/1a+K8qw/ycXOJ+XCkPdrhcsN1jrKvUpHtBSRv7ATci/NMHQaBijRb2LyL
-	 86H06pQ2z3GzgcWzQ8UAzh/303qkDBBKAXK1p4wqYZyCBui6wbxVN6lcFlb5/BG8UCK+v
-	 gGO69zZa/K2EBNLSAbzsmW1LpnHcWZVUC7fbn36Nkvn6YNlbKs0cw4tNWkitiRXa9+QbD
-	 pkcHgxVVo1PWEcjdqfy0T14SaaH9bnFwecLJQFARn//0Ip1UULhrYD4zTlaNJ4c0M6OU2
-	 Sa6Ad/866dRnrPuBIWFKTnVVjM+uQBT1ZZZaETlq7R/vBOO4CugRgcEXnXInHKe4YIA==
+	b=tLXKuiS7pwBaMPPT3TUhTcHbpwifCvpU+Cl+avFf/w6l02psX/PDPMQNBI/nZpKlGWjK
+	 zqApJwpOgHlMEGb9oMtdUO033ca4b+hpObvSBW4n7yyQrausmh0Bm8akI+FozMBvBe88j
+	 i4LtYwAlbx/mKt/bryzQ0rwPCB/gU4JdlDWG7XJhCUtTYJwxgi8++aPVordZ0yaFFTk+V
+	 bDVMjEhnGNZIcGnFpPri4kqnHLTyo5FhGQGjARBTVWYqbeKHJNJVlgmdkw0L3XHsO7wG7
+	 3ArqvIc3wvUGCsnFXVpMsXXHKAt+BPiqn1oAsvnXDQex1YCGoRBxvakteRYOVFU6GOQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795285101;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=KGlDt84X+LMSzS/i/lJM9DHreNNB0ApRjf2Zk9oKYmw=;
-	b=eOruZ04VjE9pHINIqtPe83DEjcIfIhIXOLcO008mS3UzEAs/IVrr5Fr/kvu2XNb2RR5x
-	 +T55hC2cwW9rcpvw/VHkLMrl5F2LZlq0UAB0C6jwSdfPD8ZVC7m5DmwgiuwErYIR5Sz63
-	 8ZakopaHfqT/eCJoOKumsir0p8PYm6xussW+6nT4F6m00C4BjMUqIeYpHJv294Q5sTnn7
-	 6+GIRI57u54sRZzdhB3+4pI3gEdbFNmbOz1fvFPSNozjkflEd1Uz+LsJxKGg5bnXfd/dj
-	 YSBeJNdXolDDpAJHE19K4ncleBZJtvQIV1GkFHmsT39WDUSmLhzXmGEkELJBb08qieg==
+	bh=m1gnqWwuy37LNfIKTHMUOJxWxBN6DAuoZEotlbuqcgA=;
+	b=yDbZlLoCEbPjd+AaZupvvzqnMqTkLKzSUJFR7MBe9eYl69s2D5svvD1SsTlqeI/jF/uP
+	 +ev32QlB9ujhoBDBp42SD/FQSfTA3VEfOw6Bz3Ty6p+ZHkl2ifvGEv76Qkokt3BNulV5K
+	 UtQClP+lm1C16WlKUxEghSOY6rnB+Q+2SjINNzR1nP9BSMIciH78Ppq1KXN2Q7wBZrdpD
+	 N4zJDpELNQvGHBbI8eEH7TIOfRxCxNcgFQntE1Yl/4wL8MOHcQCW9+efXl+/hrG2twssE
+	 UBiEKywJLucjooBlsOn9ZXDWa17+SOWg9lm4bn4361veGzX2M4dUW3N3LPzsC9edghA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AwVUCMpC;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=J84xZG0d;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EC6606A334;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB33E606A336;
 	Sat, 21 Nov 2026 18:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AwVUCMpC
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=J84xZG0d
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1795285101;
-	b=HN6pXWLNxH5A2jel+87m7bqKLmWca/3wcAOqOup6ZQ0vZUT9gXylorT7b92wwbnZyVfb
-	 JTuMN5l6x/XpQpAyR+f8a+U2ZQGrjH785i8C6MSBCHT3PqTM8Sdu9dLLqtQVmEbHYaICa
-	 H32kmzcSg9mlqxQFn15JKI8c4VzKgzimd5TI8lWD2CNJnwnIYShghRHwkfJ4jj/hwcT7F
-	 D25ziJbWUXIyO4atZn3iXVzuuSUS7wFsM8R7jsfJb6TXi6WRFgD6n+lbJvqkFAfMS+2fM
-	 35iWh4qOxpcW01Qdrw01ZY0wTHrk3q/0QXadqZXshBtYs8O/ujyjT/mRKE1FwP7u4mQ==
+	b=qK5kQHq5vCZv2v4o8xikgO8S6tiec9Zv1W+7mmBjigLi53PgZr1vbwzrCJb1UyL5Xawk
+	 9WDnBUWJWJltIVgjGA2aB0fBzG9fDTz7Kd1x+rIrI8C/GVY9XFQJ0bkiZre7S/uOz2OJ9
+	 Q8YCRTpHgIUdgynP//U+YZtRsR19yGuU04v8QcP787pIQG1niXrsMH7Db2vkpWSK7knK3
+	 8z29yeSgWIBySGL7BnOgd3kHYGU/bM1BVqCpgtUgagzAUR6i6D3SZHXgPB/8fM44r+Qmi
+	 7559QbBe6lDSw0tgIcLdWvclzkkDGmkJYseod1SwoqsHKfCMFq8daUJ4Pgo0m3YTA2A==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1795285101;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=KGlDt84X+LMSzS/i/lJM9DHreNNB0ApRjf2Zk9oKYmw=;
-	b=HNNlD7v3tusXxQyuCktf4uQSlCNe88D+s42pQShQIo91CPotfsy3kGVJQOBpGkM1l528
-	 drXurzlZguKd3DZkcbNSLr9YMN4/rcY/ywV2aEOBZ27MizYqP6uIGJ2hm2Ms4dFG0CkXL
-	 Cs0lWxhoJhf8JpDdnlsAeQhqXlyyTCymMyK68DFCp/xPcKXzzSElIhTgxQh9mU4a/ngz5
-	 5S2LZHdiWKbgNvK7PHKXVWLOjJVJhr03WS66kwCf4p3XrS7+1Pcg7ZElSKoiS0TPoA8kT
-	 kFzsYgkK+1OhgSIRZgn0jObluClwA1PASaIVX6cdrjGH4m6mPmU/CCNcsr1sEyvvCKA==
+	bh=m1gnqWwuy37LNfIKTHMUOJxWxBN6DAuoZEotlbuqcgA=;
+	b=RFnTsod7DL4qdLlnHE6G2GT4LLiRp2qTYcL1bl+hEd7p0ivRJ8NA4zn+/1s/qnxGx2lT
+	 SWnZJcQqHRvUYfr+1y1Qs+xPHa0nD6OJHrmwCeVS3G3nqkTTO8Q7sW0moC41TqHBXp9iE
+	 78+nHQDaeeWymdF3wgj2e//P5itf2cfGycQk3kAAL+8dUn8JdaDgsGRZ56vyPIJ9WppFm
+	 bvWfk3XaB5GW3TzRXqmPEVF7hkTYcyaLch/j/8rwtOjSAIwCf1uAY6/16aK+E9MuWXUNx
+	 IeohdCNiwmCjr+hUCSQFeFvmAEOB+ug178tbWFTMOpuzEqTZoCxVzonPlPrPR2Zna1w==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 899B01F000CF;
+	by smtp.kernel.org (Postfix) with ESMTPS id 7AA391F000CA;
 	Sat, 21 Nov 2026 18:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1795285101;
-	bh=KGlDt84X+LMSzS/i/lJM9DHreNNB0ApRjf2Zk9oKYmw=;
+	bh=m1gnqWwuy37LNfIKTHMUOJxWxBN6DAuoZEotlbuqcgA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=AwVUCMpC1X/i43jNa+f2k6Aqg7eX2FeD3nZGHblnLQxEY1oiPq3laGQsnfneVGb+1
-	 agGXvPdIId6zD/aZPJcbFzwrIRRymwkjllR8aLAEI4P4bUe2hoLyKvyqUxLXuDZd6d
-	 ouRAb+n+HJXmj5wZXySSY3CKwVGjkF/YkMXFontCvnFDskl3PFjudMgB5ALl/8aNa1
-	 4idofuC+eyCAv4UOwZLgNCdG8L6JccvggTbZnN/ntBDOTKB9ZDtNl4JwuSwWD2OVfW
-	 sRY2BY3rVCZqcY5K2fSd8aBW5MK53DnihE5c7x1bDrWgoPAbCkOCYUDbwJZu2U6cnn
-	 cxAZzae75S3yg==
+	b=J84xZG0dDbtJxIshdnzJgdfjYDrQRB6PxKi4qSdKGBQGGv9JPc91wXk5MThmLkQO9
+	 M5iacNcuqOU4KIf+zeRLX2vWQW2QP83+uC2QNNlxObsGf7YrlpFuIudZSXHwN/Yi5w
+	 blgke7xqLB4/6WOVJ+Ic8hJzkgw1SG05C4ARMcdmbiuCx8Wtfsco8zPYPJH1KNlSfo
+	 VXzO1yb9G+8mbqvLl5nx88zMAqZRYBARq5Vi175rXdiH4B7kDg/Vz0zYDViA7MEmYk
+	 0N5EBpWujyn3dGqGnnRDqxF0eOV/V8fTvXiRtnLX3LX0AsvfQJWYXM8qhKNWXLsrfc
+	 za+sMIjgV4qrA==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 1CD3F4BD42;
+	by lkml.kernel.org (Postfix) with ESMTP id 020E14BD37;
 	Sat, 21 Nov 2026 18:18:20 +0000 (UTC)
 From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Date: Sun, 22 Nov 2026 02:18:05 +0800
-Subject: [PATCH v2 2/2] clk: sophgo: Keep SG2042 gates listed in
- protected-clocks enabled
+Date: Sun, 22 Nov 2026 02:18:04 +0800
+Subject: [PATCH v2 1/2] dt-bindings: clock: sophgo: Allow protected gate
+ clocks on SG2042
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,7 +84,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261122-b4-sg2042-efi-rtc-v2-2-6d087e03e4e8@iscas.ac.cn>
+Message-Id: <20261122-b4-sg2042-efi-rtc-v2-1-6d087e03e4e8@iscas.ac.cn>
 References: <20261122-b4-sg2042-efi-rtc-v2-0-6d087e03e4e8@iscas.ac.cn>
 In-Reply-To: <20261122-b4-sg2042-efi-rtc-v2-0-6d087e03e4e8@iscas.ac.cn>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -97,11 +97,11 @@ Cc: Chen Wang <unicorn_wang@outlook.com>, Han Gao <rabenda.cn@gmail.com>,
  sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, 
  Han Gao <gaohan@iscas.ac.cn>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795285099; l=1924;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795285099; l=966;
  i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=oDFY3WrZMCRM6HlTzCNBxKLTff2F/eD4wOSph6ERWQ0=;
- b=cW/iHYkr/MTWozHP2PrVACf7/yiuOa4PRHWQevLRm3LEinn1tgQtDNy8bsoT7Jma78StFPjTc
- 6oWMwxABIQhDeAD/q1kY8iNJIdo+HshdQVJuWbcK0slgHLblwI70ydz
+ bh=UH/ltGBkhI4HWv393ZO1ftLc3kIT2ZoPiDb2EP7JazI=;
+ b=zmlvbZFVIaQrl6XZFIezeydHolQUEOTmc+FSKHQENwcz/B4QFcXIDuxmrFsJuOyhenTIo7DYZ
+ Wk2vsHYsIZjD3KfsFhi/e424pM/pBgEO2UuygCb2fh9m/uc99M3suZY
 X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
  pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
 X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
@@ -112,60 +112,30 @@ Content-Transfer-Encoding: 7bit
 
 From: Han Gao <gaohan@iscas.ac.cn>
 
-On Milk-V Pioneer, EFI runtime services use I2C0 and the serial flash,
-while Linux drives other devices behind the same gates. When those
-devices runtime-suspend, the gates are turned off under the firmware.
-
-Mark gates listed in protected-clocks as critical. Unlike qcom, still
-register them, since Linux devices use them too.
+Firmware may need some gates kept on for its runtime services, such as
+the APB I2C gate for the EFI RTC and the AHB serial flash gate for EFI
+variables. Which ones depends on the firmware, not the SoC, so let
+firmware list them in protected-clocks.
 
 Suggested-by: Yao Zi <me@ziyao.cc>
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
- drivers/clk/sophgo/clk-sg2042-clkgen.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/sophgo/clk-sg2042-clkgen.c b/drivers/clk/sophgo/clk-sg2042-clkgen.c
-index 6abc2c973c49..65ab18f701e1 100644
---- a/drivers/clk/sophgo/clk-sg2042-clkgen.c
-+++ b/drivers/clk/sophgo/clk-sg2042-clkgen.c
-@@ -840,6 +840,18 @@ static int sg2042_clk_register_divs(struct device *dev,
- 	return ret;
- }
+diff --git a/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml b/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
+index e7a9255bcb58..76f123b84309 100644
+--- a/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
++++ b/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
+@@ -30,6 +30,8 @@ properties:
+       - const: dpll0
+       - const: dpll1
  
-+static unsigned long sg2042_gate_flags(struct device *dev,
-+				       const struct sg2042_gate_clock *gate)
-+{
-+	u32 id;
++  protected-clocks: true
 +
-+	of_property_for_each_u32(dev->of_node, "protected-clocks", id)
-+		if (id == gate->id)
-+			return gate->hw.init->flags | CLK_IS_CRITICAL;
-+
-+	return gate->hw.init->flags;
-+}
-+
- static int sg2042_clk_register_gates(struct device *dev,
- 				     struct sg2042_clk_data *clk_data,
- 				     const struct sg2042_gate_clock gate_clks[],
-@@ -858,7 +870,7 @@ static int sg2042_clk_register_gates(struct device *dev,
- 			 NULL,
- 			 gate->hw.init->parent_hws[0],
- 			 NULL,
--			 gate->hw.init->flags,
-+			 sg2042_gate_flags(dev, gate),
- 			 clk_data->iobase + gate->offset_enable,
- 			 gate->bit_idx,
- 			 0,
-@@ -900,7 +912,7 @@ static int sg2042_clk_register_gates_fw(struct device *dev,
- 			(dev,
- 			 gate->hw.init->name,
- 			 gate->hw.init->parent_data,
--			 gate->hw.init->flags,
-+			 sg2042_gate_flags(dev, gate),
- 			 clk_data->iobase + gate->offset_enable,
- 			 gate->bit_idx,
- 			 0,
+   '#clock-cells':
+     const: 1
+     description:
 
 -- 
 2.55.0
