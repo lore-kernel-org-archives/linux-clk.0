@@ -1,67 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=85.13.135.14
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795342641;
-	b=kw1X4HlvhN1ooiP0OTOutfuqoQOQNbuecTHysZtCcHn8Occ261BPLOGpJyhdaKd1NvfZ
-	 J/bO2A2tPQAP3r3WrJ6Hkz4pbGWqwGDcQdgICI2liUZ+Ad548xXP/EnRM7YFHHQjqpSo2
-	 NGeHhLQWxWvTGYAMCqljGoGyeWm5gGKW7fwG7+YSaFkiLPzI9OZRBOfei540eTNrj7mS+
-	 pfplZyMU8IjC3L8J0tjF1BKWbC9SO6vAOL0wQvW76lmB8OEwOaWJfqljPWTh5UObqj7g9
-	 Fah4B0EJOREk8CdhmW1ecFV2pBqismlNauiaQe/DUOjP4W5jryF5GrW38Bo2u2D8RGQ==
+	t=1795346680;
+	b=q4be355dMOcAxCBARUOQu6+ykxxh81tyrNlY/2WJ8Sdyrm7TT5x0BIEe3GylAxo0Oytu
+	 dwAQ7C8xFZ48agwk3uyEKAxIz8V1VghLlNwisoYqVO24KrCFzARY+tvNKHEDuNZ0W8/MU
+	 WbVP2jSRmbNfH9TH7wqVbJOMKJCfmcLKmSxlkQyTdTW7JbEo+6CgXVtMmfCClidI8KGO0
+	 TJRmPjQrNnGcai3LW0o7D+vCxrBu9uX0y6BFLf5IusNbbyqyTLBf9KOzyjag1ydpO8ZxB
+	 pGxs6UTI5fhEYbK7KlRVrgFDVr9NHP2nlR3FWmArRUE7Yt+5tXEl8ED/AwsEI9QeRXQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795342641;
-	h=DMARC-Filter:DKIM-Signature:X-KAS-Sym:Received:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
-	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding:X-Spamd-Bar;
-	bh=0rJsQvHhynQ32F2u5eNosZ1E229Ap94jONkhrNGuFzE=;
-	b=Ob9QRAXPiNWpswn9DZ6zduCiFJaCokhq+Krr6p2MHu95GNtF6KoSKi3WVluhq++ldahr
-	 N57G0SXrfo2/ZHHce6PfXiKpcEAhatxrRxt7jU1B64OLOy8AIu4TNDpJ52gFRVPDRMcOR
-	 XTrTLqlVmhLsnPPXMF9j2T+lrS4Opq+IQlHbJANzhOtspfmo9dzCBFViigLLDZtbELuNB
-	 SI1szhJrNZOV2ELsOSaCcXh9kuxBCeGhG3rh/Ek74YDGvN0GTb4xhTonQpgodxpapv/iu
-	 fyIuwmVQIN/CzRBiBU5agQEgs/gooTYYdJhT9oDq8r5M437hH08yyGFMz1w1n4WsleA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795346680;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=PIMZs/Htwz82mADxinMvXjHajQn3cdihqcbSr2PzE2k=;
+	b=CZdozxNuLy1YyHwYl7zn6sgNS9lS62E250OMXI1eGHR+0WRejk0B/C1rPSdm9emF3fZX
+	 ile4/WVLFRSmnq8A47cnKcmG2PNzN6SAAM9CA9Ki4EFr7eYHG0URqwiv4nZgtixTPD63n
+	 cxcgGo2m4PZYS1t0SlJI0qiO6/7lQYCWGK/d2P2DE5mge/ZKOBKQI+lVpFk/9WSPyXHAa
+	 jtsXOpuIilmRwHRhOAUujQDrpUEiaW0YhG4YOPV5Cd0uLpliFYEkRGQtZ/ziERdk7hwPj
+	 lrj1mRELb/PuV1kf3jDBvTGyuDF2h7JbjMxvNMTPgYgy2hDL5fezXU84Yjq8zZRlCyg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=tsv-stahl-riesa.de;
-	spf=pass smtp.mailfrom=tsv-stahl-riesa.de;
-	dkim=pass header.d=tsv-stahl-riesa.de header.i=@tsv-stahl-riesa.de header.a=rsa-sha256 header.s=kas202608160020 header.b=dRVOGmpp;
-	arc=none smtp.remote-ip=85.13.135.14
-Received: from dd13108.kasserver.com (dd13108.kasserver.com [85.13.135.14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=MTyvykDS;
+	arc=none smtp.remote-ip=209.85.128.43
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F029606A330;
-	Sun, 22 Nov 2026 10:17:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0F029606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tsv-stahl-riesa.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tsv-stahl-riesa.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59725606A32A
+	for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 11:24:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 59725606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tsv-stahl-riesa.de header.i=@tsv-stahl-riesa.de header.a=rsa-sha256 header.s=kas202608160020 header.b=dRVOGmpp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tsv-stahl-riesa.de;
-	s=kas202608160020; t=1795342639;
-	bh=0rJsQvHhynQ32F2u5eNosZ1E229Ap94jONkhrNGuFzE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:From;
-	b=dRVOGmppY1OJalTNCBIso6otognif5xYLHvzTpSCutwEGxqT+FFhsl35gZTOdOWLn
-	 /Ia6izJRACzzALywnuwmSZS94viM1DipDU07tn6f89XcxpkzwoMAvyj3zjv09lFJGn
-	 Yk3efFldRaUNwQ+9GR3ogr0DqFCmYWhXYcKYKy7y3eKF2NMk17yBmw+ww+TVBlmE54
-	 zJBiPye1UsgEDvqn1g/aPAxSrzCVVstlExYJc7RdAfM1QpzKTV5XpA0GvvKLvvqmG1
-	 7fOjjY2IsjQVXPDiZfY7XltdI4w/ddJ5p0EcLkvu+KA45JAK+128rtdW7ZTUnq54hs
-	 w2cOZbPurLHMA==
-X-KAS-Sym: v3:f51bdf72230551df:qJ5uOu2tDOwck04l6ZZT5ZgS9yYs6RwmRLkVQ2e11W2Qg
-	xi4Fjh2AYzKKX2gAyElm3p0uCqidYfZPAU5b1CzV46YKHzkqvcvF9ccxgCloMJKvslloO6MCVfr
-	6QdObSfYmUNWJ/0ucr8ReMwDqZqTusb+gYriedhqiF3fS0N72iVo5FfV8U+j8sjgdQrvg+UEGp/
-	pMFOz7n2SOuS/Di7sMFu5a52da6xM7KbRWb1W+CP2vGKw25C/j+ejlSDMMtN0jrrQDY3+AOavU4
-	QcErcPgCm854wBnsoLaG1yVxs1QYz+HjGQnrwyrtb2YfxTOOrtB2rQBg75sAG60ujUMzYTiA==:
-	VGCLRkyDvrsnEsRDHwxg+n4U3Tpg20TwGZAxbODxpHCAdrvXt7okBvewFd6oE6MMOQ+ZcpWzaRr
-	qEe7qcqRzNd6LBlnTBpkTeFzxJcRGrshoCRdvva0O8PgmjmKuFSAGUVMmpjRgDeHolwphzSD8Xl
-	jWxrdhaiOAFCvnZIv/e0DtmpLWslZvpUrD2DKB+FvvZ6u+7JLfBTbNz4583f91vNmdDWUdUilQi
-	8jb9fEdc8UMTqWmvN52+odE3YVzc5UnbUOw9kggDq/dCSkkCCiYhBJ8hhE0hUnkXMaBRzH4fk6O
-	aBOdyXriplVIYXB9xd2Atb0spEYjWNwpSZ46JV07Xs5g7lQGaVz9NU6hTcBNrrNNp+JlLBlDEgJ
-	vDrCf1tb1Bfv4D+5WACKYW1DKUEr+vvcagk0uEC/hdE/cgSBsvJTdyZqcF8u5kMLxV/1eZR+VWz
-	X5DgnTTLyHif6m2ICmXc7j8cTgoMnBqUqDuS2qZMSxelD99Ub2cZtTuHusPdcJKfRvyI+gv5VRt
-	o5nPa6Te1xjDokFTE1EaeQrw60vZdjt0QgUK6GfWMa816AtUaZnhj1VpboeHO8RCLhaAkBcmm8U
-	UsgrsQ91JN5Dmy3/QzuPSUMloUk8GOZ6V9s=
-Received: from [192.168.2.174] (dslb-188-098-197-218.188.098.pools.vodafone-ip.de [188.98.197.218])
-	by dd13108.kasserver.com (Postfix) with ESMTPSA id D318178203EB;
-	Sun, 22 Nov 2026 11:17:18 +0100 (CET)
-Message-ID: <464daeab-4306-41d5-b013-9a0813ac412e@tsv-stahl-riesa.de>
-Date: Sun, 22 Nov 2026 11:17:18 +0100
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=MTyvykDS
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4b467581b98so21127085e9.0
+        for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 03:24:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1795346677; x=1795951477; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=PIMZs/Htwz82mADxinMvXjHajQn3cdihqcbSr2PzE2k=;
+        b=MTyvykDSqxZixMQAjWAYp9+6EHQ3fkdc6x5B7TVViGYLOaE0Tx38aXRXFuHu9ZCvKa
+         uPVaSRpqyFGKWyiWxINiHm5iPYP8OSR6dh3DZm+AdJflyqBb/kppkBiN77p2Ok9YhUdE
+         y8lt98Yjz8KZEFLSj+MoTqoITqseG0wrl3OrIMifzGbRyM9fLYkNtpeQP+0CcbuTa+L+
+         TW0iZ6bxoOfqcWd7inFXovHIoEoJ1azO/rH469vv0dfMcGK7ZeDwCPZmizSWFf3xdhl/
+         w0xx7b4fuObM8Sl7yFSl2x5cuyo59JTYwh7FaVWnC1+MuFv4u1h9NTrKteJCFl1BxSWF
+         FMoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795346677; x=1795951477;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=PIMZs/Htwz82mADxinMvXjHajQn3cdihqcbSr2PzE2k=;
+        b=ZuvXaWFXEdzto4d1dmBdEDRAtFsqGHAY71IvKN0Rvqi3rOyj5lyxHjpFwx04psN2QK
+         iHnHFSuROEu3+ayRMqEi1ljbLLo8IPBiDNp0ST+l7z0wkywLuRx3ZKwKpcvUIQyf9wHH
+         dZ2DjpoyJxnQPLp9LeBZ4M9oT6Gr9IxdHN0qmNVVbYYdDuuMOqmJZShr87mhecX8zAic
+         amGWlP+VHYUafxxn0laIvrgfwE+gvn/dsmvu+NMBIRUmknd7ajMnKjkjCW2lWxKyiBwx
+         o4a7Jqt+zerDdSggu8gdSUYfOVwXJl5/tF3OTxnsAEyC4np4f3QMgi8efK8opgcKl1JG
+         6jHg==
+X-Forwarded-Encrypted: i=1; AL+hErFXyUrZOuY55qbXY9uU7W0m2S2BOpIwNQcgichwxcLDQWJp1oOYqBgky+6kHDsfnsl73UrTsZM48vU=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9flKKkWtqcL+Qs3LFgpfrg8VZi4I9diKaln8lCWdnty8vjvuT4
+	JjEUqGoEBpbQEPAKJbC8GRuxYerLYAOHSQVpmcGbtcGuoQNAgBEcc+7nzk2//1XZqok=
+X-Gm-Gg: AZFdTZcnPgErZ7WyQiiRP1JGDUWkpTkkVAgAs22M8lH8G/uxKYekOnk8J/nbeT+r+Iv
+	DMQDYJtsWCdmXIXS7SVMCKfta/t5ipE8gStXoXEFPJdwGUMczxOju90t+gaV7JMQ4gHFRGH7UkV
+	MJ4Dw4u/1sA/TvsX0hUQbW2dNT8cxKrrXt4cynxnsyyTQeof3fQ6Z+ZBShnR/mNfgzVRz8ynWbP
+	NbH15jsQFJk7gYUbT6b+OZAL/pLkieAEvXvknru7/LB7gpa+dk4HQWa2JwU2IfpilyE093x5hUD
+	7X7fJ1RQLIOIeOs9WbcpXlj3q+E9KdVXvEX6FQwbcqaqPk3FjQmcks9EjrgQOV04pppXL3+Un/Q
+	HOp69hSHdoWWPJiViKNJhxwiH/bhkBpG9PoU4ZMwIXSChUS7Pp4kztUA/gXRSSQfLrttDPF36iM
+	YzK0ejxaSySDXZ8oWaZH27LBaR/RpprCQhbBGOTqZK6/VpnOEGz5dceq2bYmuJPLd3kWT5nt2+s
+	DQ0NACo75h2/f+9NVGjmOaFRKz1t/GdgfGn5FLDLEEXepLmRsxOnvZuJN5XsC9uNR/iV3m4EEdm
+	/p1ChfFWtp2EUkYiAq3sbsZBPeNVsFSauPzuSOhR1vXHUkK/vQEUI7UNyzyZNfXIv0/t+Q==
+X-Received: by 2002:a05:600c:674b:b0:4bb:6947:3e1d with SMTP id 5b1f17b1804b1-4bb8892c0fcmr168170325e9.20.1795346676887;
+        Sun, 22 Nov 2026 03:24:36 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb906c089dsm102621925e9.1.2026.11.22.03.24.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Nov 2026 03:24:36 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Chen Wang <chen.wang@linux.dev>, 
+ Inochi Amaoto <inochiama@gmail.com>, linux-clk@vger.kernel.org, 
+ sophgo@lists.linux.dev, Phuong Nguyen <ndp2809@gmail.com>
+Cc: Inochi Amaoto <inochiama@outlook.com>
+In-Reply-To: <20261120105737.7461-1-ndp2809@gmail.com>
+References: <20261120105737.7461-1-ndp2809@gmail.com>
+Subject: Re: [PATCH] clk: sophgo: cv1800: set mux parent in
+ bypass_mux_set_parent()
+Message-Id: <179534666693.2640804.5201937916050830729.b4-ty@b4>
+Date: Sun, 22 Nov 2026 12:24:26 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -71,117 +101,24 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Tegra114: Fix CPU DFLL voltages
-To: Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>, Prashant Gaikwad
- <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20261029-upstream-speedo-t114-v1-0-81457cc9d94c@tsv-stahl-riesa.de>
-Content-Language: en-US
-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
-In-Reply-To: <20261029-upstream-speedo-t114-v1-0-81457cc9d94c@tsv-stahl-riesa.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spamd-Bar: ----
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=202; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=vTA6qGN6XffHkpfMEVingfg19fsOSrdJk4v8QOjxzCM=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNlMF95OMnGysTxwfl789Gq19WemyZsH55+VsGuL/xPNq
+ SKZLP6/o5SFQYyLQVZMkaWGu1r8naTWl1nTdW7DzGFlAhnCwMUpABNJ2s3wi1nl8oL62UzZj5Vr
+ JnT+fhX58WaL/ZT9Yq8sHoRU7t/yM5Phf7JDvOsrq+wNJxr+9n9/Yntu2/GJRg1FB0xEpqjPvM3
+ xkRkA
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Am 29.10.26 um 10:32 schrieb Patrick Fischer via B4 Relay:
-> Since the Tegra114 CPU DFLL got its CVB tables in v6.18, it computes
-> the CPU OPP voltages from tegra_sku_info.cpu_speedo_value and the step
-> of the vdd_cpu regulator. On a Tegra Note 7 (Tegra114, TPS65913) every
-> CPU OPP from 306 MHz to 1810.5 MHz ends up at 1000 mV, and the DFLL
-> never changes vdd_cpu: it stays at the 1.10 V left by the bootloader,
-> and the CPU runs at about 1.34 GHz whatever cpufreq requests. Three
-> bugs cause this:
-> 
-> 1. Since 2014 the speedo code reads the Tegra114 speedo fuses at offsets
->    that are 0x100 too large.
-> 2. It never stores the CPU and SoC speedo values in tegra_sku_info, so
->    the DFLL computes with speedo 0, which overflows in
->    round_cvb_voltage().
-> 3. The DFLL takes the voltage step from regulator_get_linear_step(),
->    which is 0 for the Palmas SMPS. Every OPP is rounded to 0 and so
->    clamped to the minimum, and the I2C LUT holds a single selector.
-> 
-> On its own, patch 3 fixes the Xiaomi Mi Pad (Tegra124 with Palmas). On
-> Tegra114, which includes the TF701T, it needs patches 1 and 2: with
-> speedo 0 every OPP would still overflow to 1000 mV. That is why the
-> three patches go together, all with Cc: stable.
-> 
-> Since patch 3 is only useful on Tegra114 together with patches 1 and 2,
-> it would be easiest to take all three through the Tegra tree.
-> 
-> The Tegra Note 7 device tree is not in mainline yet; I used
-> Svyatoslav's tegratab series on top of v7.3, with these patches
-> applied. Results on a P1640 (Tegra114 A02, SKU 5, CPU speedo ID 1):
-> 
-> - The fuse values match what the vendor kernel prints for this device:
->   CPU speedo 1742, SoC speedo 1156, CPU and SoC process 1 (before:
->   SoC process 0).
-> - CPU OPPs: 1000 mV up to 1122 MHz, then 1040, 1070, 1110, 1150, 1180,
->   1220 and 1270 mV at 1810.5 MHz, as computed from the CVB table.
->   Before: all 1000 mV.
-> - The DFLL LUT holds selectors 0x38 to 0x53 (1000 mV to 1270 mV)
->   instead of a single selector 0.
-> - The DFLL rate follows cpufreq within 2% from 306 MHz to 1708.5 MHz,
->   with vdd_cpu between 1020 mV and 1260 mV. At 1810.5 MHz it stays at
->   about 1.74 GHz at the end of the LUT (1270 mV). Before: about
->   1.34 GHz at any request.
-> - At 1122 MHz under load on four cores for 480 s the CPU stays at
->   52 degC with 3.15 W from the battery, compared to 73 degC and 4.48 W
->   before.
-> - No errors in a memory test with 25 passes, in three 600 s load runs
->   with cpufreq limits of 1428, 1606.5 and 1810.5 MHz (throttled to
->   about 1.0 to 1.2 GHz by a board thermal zone), and in 316 s at
->   1810.5 MHz with that trip raised (DFLL at about 1.73 GHz, 1270 mV, closed
->   loop throughout, stopped by the test at 98 degC).
-> 
-> Svyatoslav measured the CPU OPPs on an Asus TF701T (CPU speedo ID 2):
-> without the series all of them are at 1000 mV; with it they are
-> 1000 mV up to 1122 MHz, then 1020, 1050, 1090, 1120, 1150, 1190, 1240
-> and 1290 mV at 1912.5 MHz. The speedo IDs come from the SKU and do not
-> change, so the core, EMC and GPU OPPs stay the same, which he confirmed
-> on the TF701T.
-> 
-> Tool use (see Documentation/process/generated-content.rst): the patches,
-> their changelogs and this cover letter were prepared with an LLM coding
-> assistant (Claude Code). It compared the fuse offsets with the vendor
-> kernel, read the fuse words on the device, traced the zero voltage step
-> through the DFLL code, wrote the code changes and drafted the texts from
-> my measurements and instructions. I reviewed the changes and ran all
-> tests on the device.
-> 
-> ---
-> Patrick Fischer (3):
->       soc/tegra: fuse: Fix Tegra114 speedo fuse offsets
->       soc/tegra: fuse: Store Tegra114 CPU and SoC speedo values
->       clk: tegra: dfll: Get the voltage step of range-based regulators
-> 
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 26 ++++++++++++++++++++++++++
->  drivers/soc/tegra/fuse/speedo-tegra114.c   | 16 ++++++++++++----
->  2 files changed, 38 insertions(+), 4 deletions(-)
-> ---
-> base-commit: c339f4010dea8b0d754f84ace70cd1b089878ef8
-> change-id: 20261026-upstream-speedo-t114-3567735d5a2c
-> 
-> Best regards,
-> --  
-> Patrick Fischer <admin@tsv-stahl-riesa.de>
+Applied to local tree (clk-sophgo), thanks!
 
-Hi Thierry, Jon,
+[1/1] clk: sophgo: cv1800: set mux parent in bypass_mux_set_parent()
+      commit: 2c6c86e016e6b4394c4de23891423cfe65ba8d43
 
-gentle ping on patches 1/3 and 2/3. 3/3 is already queued in clk-next.
-1/3 and 2/3 have Reviewed-by from Mikko and Tested-by from Mikko
-(Dalmore) and Svyatoslav, and they still apply cleanly to 7.4-rc3 and
-to your fixes branch. They should land in the same release as 3/3,
-since the DFLL change alone does not help Tegra114 while the speedo
-values are still read from the wrong fuse offsets. Could they go in
-through your fixes branch?
+Best regards,
+--
+Jerome
 
-Thanks,
-Patrick
