@@ -1,64 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=13.75.44.102
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=85.13.135.14
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795339779;
-	b=vzQG1paiZYhZz8UIm7apHkH/JVTvNUj3JTSzq5ZPMqNopV0Ylhxnn0YxIYgwqSGyngvl
-	 3C4qO4oX+EVsDt/QE5ssXsVbbD5l0Vyj5qK4XIK6tsQT9Nmlf8EZK/gmNX9DOc6SNh+JK
-	 LGsJTvUhJl6AKnW/lIACkUUmJDECPj6bvuYqjuJB4fv03vlr5uGUAzWKFd7MKh1SETNQV
-	 YEtT/mZ148dIJkVd932gTeDfwusU+kUIKjIbvSaiJ6A1VR8eh4qSH68+/nfHc2I3fC1fg
-	 /vpVyNZGweyT5ssNiqZI8ptOgM4OZaip1dbDuJNqF574dmE5a7LYahu2MLjkvpeZBtw==
+	t=1795342641;
+	b=kw1X4HlvhN1ooiP0OTOutfuqoQOQNbuecTHysZtCcHn8Occ261BPLOGpJyhdaKd1NvfZ
+	 J/bO2A2tPQAP3r3WrJ6Hkz4pbGWqwGDcQdgICI2liUZ+Ad548xXP/EnRM7YFHHQjqpSo2
+	 NGeHhLQWxWvTGYAMCqljGoGyeWm5gGKW7fwG7+YSaFkiLPzI9OZRBOfei540eTNrj7mS+
+	 pfplZyMU8IjC3L8J0tjF1BKWbC9SO6vAOL0wQvW76lmB8OEwOaWJfqljPWTh5UObqj7g9
+	 Fah4B0EJOREk8CdhmW1ecFV2pBqismlNauiaQe/DUOjP4W5jryF5GrW38Bo2u2D8RGQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795339779;
-	h=DMARC-Filter:DKIM-Signature:Received:X-Originating-IP:Date:
-	 X-CM-HeaderCharset:From:To:Cc:Subject:X-Priority:X-Mailer:In-Reply-To:
-	 References:Content-Transfer-Encoding:Content-Type:MIME-Version:
-	 Message-ID:X-Coremail-Locale:X-CM-TRANSID:X-CM-SenderInfo:
-	 X-Coremail-Antispam;
-	bh=S60eQj6lys+qvFpthCLcJhVk99IHyJ9jWJ9dj910x3k=;
-	b=uljJK2hS13ImqCWoLeqPBDdwppJrdHnBAv2ojuYDgDeeNW/HzjP8sP409u23sVgu9O5D
-	 9uO8Wrt+fXUsWgRE79hsVEB+1zQt2dm8fGf0okJJorZ6i41zPDbSoxK+X3rksMXUx6JZv
-	 xHNg636mcHPTPHk5NIqOAyC0wX8ZqXphQ4Yt9dwIiPb2vY2m+yTUaMqiGPOZttcbc07q0
-	 cA6SOx7m6XslzH3TXLSOHqocdJpM1ERmP9wB6+OuoU8/tdfUFu/cpZIrZZ5DVQatBZbkd
-	 XlMZacx9k00JGUKx6iGxTfPk9Ri+t9u0BAHnIL0dkRFxQopH36PMIu/P5r28eJ3Z1Rw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795342641;
+	h=DMARC-Filter:DKIM-Signature:X-KAS-Sym:Received:Message-ID:Date:
+	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
+	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding:X-Spamd-Bar;
+	bh=0rJsQvHhynQ32F2u5eNosZ1E229Ap94jONkhrNGuFzE=;
+	b=Ob9QRAXPiNWpswn9DZ6zduCiFJaCokhq+Krr6p2MHu95GNtF6KoSKi3WVluhq++ldahr
+	 N57G0SXrfo2/ZHHce6PfXiKpcEAhatxrRxt7jU1B64OLOy8AIu4TNDpJ52gFRVPDRMcOR
+	 XTrTLqlVmhLsnPPXMF9j2T+lrS4Opq+IQlHbJANzhOtspfmo9dzCBFViigLLDZtbELuNB
+	 SI1szhJrNZOV2ELsOSaCcXh9kuxBCeGhG3rh/Ek74YDGvN0GTb4xhTonQpgodxpapv/iu
+	 fyIuwmVQIN/CzRBiBU5agQEgs/gooTYYdJhT9oDq8r5M437hH08yyGFMz1w1n4WsleA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mail.zgclab.edu.cn;
-	spf=pass smtp.mailfrom=mail.zgclab.edu.cn;
-	dkim=pass header.d=mail.zgclab.edu.cn header.i=@mail.zgclab.edu.cn header.a=rsa-sha256 header.s=dkim header.b=V0VwF8LO;
-	arc=none smtp.remote-ip=13.75.44.102
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D39606A320;
-	Sun, 22 Nov 2026 09:29:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 31D39606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.zgclab.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.zgclab.edu.cn
+	dmarc=none header.from=tsv-stahl-riesa.de;
+	spf=pass smtp.mailfrom=tsv-stahl-riesa.de;
+	dkim=pass header.d=tsv-stahl-riesa.de header.i=@tsv-stahl-riesa.de header.a=rsa-sha256 header.s=kas202608160020 header.b=dRVOGmpp;
+	arc=none smtp.remote-ip=85.13.135.14
+Received: from dd13108.kasserver.com (dd13108.kasserver.com [85.13.135.14])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F029606A330;
+	Sun, 22 Nov 2026 10:17:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0F029606A330
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tsv-stahl-riesa.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tsv-stahl-riesa.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=mail.zgclab.edu.cn header.i=@mail.zgclab.edu.cn header.a=rsa-sha256 header.s=dkim header.b=V0VwF8LO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=mail.zgclab.edu.cn; s=dkim; h=Received:Date:From:To:Cc:Subject:
-	In-Reply-To:References:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID; bh=S60eQj6lys+qvFpthCLcJhVk99IHyJ9jWJ9d
-	j910x3k=; b=V0VwF8LOFPgOgNwIkSOimGPvC/vW2bPFgbmf5jww9RwO4xerY/uW
-	WV8Afs7LjGh6t27SDOi0Fk1nZNpSrHDj/42EzapeDgwirIaB1QCe5UtgpZnBgeFG
-	m1A2/XBFDcFol5M9lHit9m2u/bwjh2uv73JUZ8F3nYgDPIjn6eNbPvs=
-Received: from wanghr2026$mail.zgclab.edu.cn ( [58.206.201.104] ) by
- ajax-webmail-web1 (Coremail) ; Sun, 22 Nov 2026 17:29:13 +0800 (GMT+08:00)
-Date: Sun, 22 Nov 2026 17:29:13 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?546L5rWp54S2?= <wanghr2026@mail.zgclab.edu.cn>
-To: "Brian Masney" <masneyb@kernel.org>
-Cc: linusw@kernel.org, sboyd@kernel.org, bmasney+clk@redhat.com,
-	jbrunet+clk@baylibre.com, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH] clk: versatile-icst: release regmap on registration
- failure
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT5 build
- 20261010(691d8f62) Copyright (c) 2002-2026 www.mailtech.cn
- mispb-4df55a87-4b50-4a66-85a0-70f79cb6c8b5-tsinghua.edu.cn
-In-Reply-To: <179509997129.279270.1694900680492734463.b4-review@b4>
-References: <1795076093787-3-ba1f065a@mail.zgclab.edu.cn>
- <179509997129.279270.1694900680492734463.b4-review@b4>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	dkim=pass (2048-bit key) header.d=tsv-stahl-riesa.de header.i=@tsv-stahl-riesa.de header.a=rsa-sha256 header.s=kas202608160020 header.b=dRVOGmpp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tsv-stahl-riesa.de;
+	s=kas202608160020; t=1795342639;
+	bh=0rJsQvHhynQ32F2u5eNosZ1E229Ap94jONkhrNGuFzE=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:From;
+	b=dRVOGmppY1OJalTNCBIso6otognif5xYLHvzTpSCutwEGxqT+FFhsl35gZTOdOWLn
+	 /Ia6izJRACzzALywnuwmSZS94viM1DipDU07tn6f89XcxpkzwoMAvyj3zjv09lFJGn
+	 Yk3efFldRaUNwQ+9GR3ogr0DqFCmYWhXYcKYKy7y3eKF2NMk17yBmw+ww+TVBlmE54
+	 zJBiPye1UsgEDvqn1g/aPAxSrzCVVstlExYJc7RdAfM1QpzKTV5XpA0GvvKLvvqmG1
+	 7fOjjY2IsjQVXPDiZfY7XltdI4w/ddJ5p0EcLkvu+KA45JAK+128rtdW7ZTUnq54hs
+	 w2cOZbPurLHMA==
+X-KAS-Sym: v3:f51bdf72230551df:qJ5uOu2tDOwck04l6ZZT5ZgS9yYs6RwmRLkVQ2e11W2Qg
+	xi4Fjh2AYzKKX2gAyElm3p0uCqidYfZPAU5b1CzV46YKHzkqvcvF9ccxgCloMJKvslloO6MCVfr
+	6QdObSfYmUNWJ/0ucr8ReMwDqZqTusb+gYriedhqiF3fS0N72iVo5FfV8U+j8sjgdQrvg+UEGp/
+	pMFOz7n2SOuS/Di7sMFu5a52da6xM7KbRWb1W+CP2vGKw25C/j+ejlSDMMtN0jrrQDY3+AOavU4
+	QcErcPgCm854wBnsoLaG1yVxs1QYz+HjGQnrwyrtb2YfxTOOrtB2rQBg75sAG60ujUMzYTiA==:
+	VGCLRkyDvrsnEsRDHwxg+n4U3Tpg20TwGZAxbODxpHCAdrvXt7okBvewFd6oE6MMOQ+ZcpWzaRr
+	qEe7qcqRzNd6LBlnTBpkTeFzxJcRGrshoCRdvva0O8PgmjmKuFSAGUVMmpjRgDeHolwphzSD8Xl
+	jWxrdhaiOAFCvnZIv/e0DtmpLWslZvpUrD2DKB+FvvZ6u+7JLfBTbNz4583f91vNmdDWUdUilQi
+	8jb9fEdc8UMTqWmvN52+odE3YVzc5UnbUOw9kggDq/dCSkkCCiYhBJ8hhE0hUnkXMaBRzH4fk6O
+	aBOdyXriplVIYXB9xd2Atb0spEYjWNwpSZ46JV07Xs5g7lQGaVz9NU6hTcBNrrNNp+JlLBlDEgJ
+	vDrCf1tb1Bfv4D+5WACKYW1DKUEr+vvcagk0uEC/hdE/cgSBsvJTdyZqcF8u5kMLxV/1eZR+VWz
+	X5DgnTTLyHif6m2ICmXc7j8cTgoMnBqUqDuS2qZMSxelD99Ub2cZtTuHusPdcJKfRvyI+gv5VRt
+	o5nPa6Te1xjDokFTE1EaeQrw60vZdjt0QgUK6GfWMa816AtUaZnhj1VpboeHO8RCLhaAkBcmm8U
+	UsgrsQ91JN5Dmy3/QzuPSUMloUk8GOZ6V9s=
+Received: from [192.168.2.174] (dslb-188-098-197-218.188.098.pools.vodafone-ip.de [188.98.197.218])
+	by dd13108.kasserver.com (Postfix) with ESMTPSA id D318178203EB;
+	Sun, 22 Nov 2026 11:17:18 +0100 (CET)
+Message-ID: <464daeab-4306-41d5-b013-9a0813ac412e@tsv-stahl-riesa.de>
+Date: Sun, 22 Nov 2026 11:17:18 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -68,76 +71,117 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Message-ID: <6898ef95.3261f.1a20296984c.Coremail.wanghr2026@mail.zgclab.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:yAQGZQD3bT7ptQJrJYapAg--.47925W
-X-CM-SenderInfo: pzdqwxbusqjlo62juzldeovvfxof0/1tbiAgEQD2r+rlqQcgABsf
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Tegra114: Fix CPU DFLL voltages
+To: Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>, Prashant Gaikwad
+ <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20261029-upstream-speedo-t114-v1-0-81457cc9d94c@tsv-stahl-riesa.de>
+Content-Language: en-US
+From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+In-Reply-To: <20261029-upstream-speedo-t114-v1-0-81457cc9d94c@tsv-stahl-riesa.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Bar: ----
 
-VGhhbmtzIGZvciB0aGUgcmV2aWV3LgoKCmRldm1fcmVnbWFwX2luaXRfbW1pbygpIGNhbm5vdCBi
-ZSB1c2VkIGhlcmU6IHRoZSBvbmx5IGluLXRyZWUgY2FsbGVyCnBhc3NlcyBkZXYgPT0gTlVMTC7C
-oCBpY3N0X2Nsa19yZWdpc3RlcigpIGlzIHJlYWNoZWQgZnJvbQp2ZXJzYXRpbGVfYXV4b3NjX2Ns
-a19zZXR1cCgpLCByZWdpc3RlcmVkIHZpYSBDTEtfT0ZfREVDTEFSRToKCgrCoCDCoCBjbGsgPSBp
-Y3N0X2Nsa19yZWdpc3RlcihOVUxMLCBkZXNjLCBjbGtfbmFtZSwgcGFyZW50X25hbWUsIGNtX2Jh
-c2UpOwrCoCDCoCDCoCAoZHJpdmVycy9jbGsvdmVyc2F0aWxlL2Nsay12ZXJzYXRpbGUuYzo4MSkK
-CgpUaGF0IHJ1bnMgYXQgZWFybHkgYm9vdCwgYmVmb3JlIGFueSBzdHJ1Y3QgZGV2aWNlIGV4aXN0
-cywgd2hpY2ggaXMgd2h5CnRoZSBjb2RlIHVzZXMgdGhlIG5vbi1kZXZtIHJlZ21hcF9pbml0X21t
-aW8oKSAtLSB0aGF0IGZ1bmN0aW9uIGhhcyBhbgpleHBsaWNpdCAiZGV2ID09IE5VTEwiIHBhdGgg
-aW4gX19yZWdtYXBfaW5pdCgpLgoKCkkgdmVyaWZpZWQgdGhlIHByb3Bvc2VkIGNoYW5nZSBkaXJl
-Y3RseTogYSBieXRlLWZvci1ieXRlIGNvcHkgb2YKaWNzdF9jbGtfcmVnaXN0ZXIoKSB3aXRoIHJl
-Z21hcF9pbml0X21taW8oKSBzd2l0Y2hlZCB0bwpkZXZtX3JlZ21hcF9pbml0X21taW8oKSwgY2Fs
-bGVkIGV4YWN0bHkgbGlrZSB0aGUgcmVhbCBjYWxsZXIgKGRldiA9PQpOVUxMLCBhIHJlYWwgaW9y
-ZW1hcCgpJ2QgYmFzZSkuwqAgSXQgb29wc2VzIGluIGRldnJlczoKCgrCoCDCoCBVbmFibGUgdG8g
-aGFuZGxlIGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgYXQgdmlydHVhbCBhZGRyZXNz
-CsKgIMKgIMKgIDAwMDAwMDAwMDAwMDAyY2PCoCAob2Zmc2V0b2Yoc3RydWN0IGRldmljZSwgZGV2
-cmVzX2xvY2spKQrCoCDCoCAuLi4KwqAgwqAgQ2FsbCB0cmFjZToKwqAgwqAgwqBfcmF3X3NwaW5f
-bG9ja19pcnFzYXZlKzB4NWMvMHg4YyAoUCkKwqAgwqAgwqBkZXZyZXNfbm9kZV9hZGQrMHgyOC8w
-eDcwCsKgIMKgIMKgX19kZXZtX2FkZF9hY3Rpb24rMHg3MC8weDkwCsKgIMKgIMKgX19kZXZtX3Jl
-Z21hcF9pbml0KzB4NDAvMHg2OArCoCDCoCDCoF9fZGV2bV9yZWdtYXBfaW5pdF9tbWlvX2Nsaysw
-eDg0LzB4ODAKwqAgwqAgwqBpY3N0X2Nsa19yZWdpc3Rlcl9kZXZtLmNvbnN0cHJvcC4wKzB4Njgv
-MHhmOCBbdGVzdF9pY3N0XQoKCmRldnJlc19hZGQoKS9kZXZyZXNfbm9kZV9hZGQoKSBkZXJlZmVy
-ZW5jZSBkZXYtPmRldnJlc19sb2NrLCBzbyBhbnkKZGV2bV8qIGNhbGwgaGVyZSBpcyBhIE5VTEwg
-ZGVyZWZlcmVuY2UsIHdoZXJlYXMgcmVnbWFwX2luaXRfbW1pbygpCmhhbmRsZXMgZGV2ID09IE5V
-TEwgZXhwbGljaXRseS7CoCBLZWVwaW5nIGl0IG5vbi1kZXZtIGFuZCByZWxlYXNpbmcgdGhlCnJl
-Z21hcCB3aXRoIHJlZ21hcF9leGl0KCkgb24gdGhlIGljc3RfY2xrX3NldHVwKCkgZmFpbHVyZSBw
-YXRoIGlzIHRoZXJlZm9yZSAKdGhlIGNvcnJlY3QgZml4LgoKClJlZ2FyZHMsCldhbmcgSGFvcmFu
-CgoKPiAtLS0tLeWOn+Wni+mCruS7ti0tLS0tCj4g5Y+R5Lu25Lq6OiAiQnJpYW4gTWFzbmV5IiA8
-bWFzbmV5YkBrZXJuZWwub3JnPgo+IOWPkemAgeaXtumXtDoyMDI2LTExLTE5IDIyOjUyOjUxICjm
-mJ/mnJ/lm5spCj4g5pS25Lu25Lq6OiAiV2FuZyBIYW9yYW4iIDx3YW5naHIyMDI2QG1haWwuemdj
-bGFiLmVkdS5jbj4KPiDmioTpgIE6IGxpbnVzd0BrZXJuZWwub3JnLCBzYm95ZEBrZXJuZWwub3Jn
-LCBibWFzbmV5K2Nsa0ByZWRoYXQuY29tLCBqYnJ1bmV0K2Nsa0BiYXlsaWJyZS5jb20sIGxpbnV4
-LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZywgbGludXgtY2xrQHZnZXIua2VybmVsLm9y
-ZywgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZywgIkJyaWFuIE1hc25leSIgPG1hc25leWJA
-a2VybmVsLm9yZz4KPiDkuLvpopg6IFJlOiBbUEFUQ0hdIGNsazogdmVyc2F0aWxlLWljc3Q6IHJl
-bGVhc2UgcmVnbWFwIG9uIHJlZ2lzdHJhdGlvbiBmYWlsdXJlCj4gCj4gSGkgV2FuZywKPiAKPiA+
-IGljc3RfY2xrX3JlZ2lzdGVyKCkgY3JlYXRlcyBhIG5vbi1kZXZtIHJlZ21hcCB3aXRoIHJlZ21h
-cF9pbml0X21taW8oKSBhbmQKPiA+IGhhbmRzIGl0IHRvIGljc3RfY2xrX3NldHVwKCksIHdoaWNo
-IG9uIGNsa19yZWdpc3RlcigpIGZhaWx1cmUgb25seSBmcmVlcwo+ID4gaXRzIG93biBzdHJ1Y3Rz
-IGFuZCBkcm9wcyB0aGUgcmVnbWFwIHBvaW50ZXIsIHNvIHRoZSByZWdtYXAgYW5kIGl0cwo+ID4g
-ZGVidWdmcyBlbnRyeSBsZWFrIHBlcm1hbmVudGx5LiBBIG5hbWUgY2xhc2ggaXMgYSBuYXR1cmFs
-IHRyaWdnZXI6IGEgRFQKPiA+IHdpdGggTiBzYW1lLW5hbWVkIGF1eG9zYyBjaGlsZHJlbiByZWdp
-c3RlcnMgIm9zYyIgb25jZSBhbmQgdGhlbiBmYWlscwo+ID4gLUVFWElTVCBvbiBldmVyeSBzdWJz
-ZXF1ZW50IHJlZ2lzdHJhdGlvbiwgbGVha2luZyBOLTEgcmVnbWFwcyBwZXIgYm9vdC4KPiA+IAo+
-ID4gUmVsZWFzZSB0aGUgcmVnbWFwIHdpdGggcmVnbWFwX2V4aXQoKSB3aGVuIGljc3RfY2xrX3Nl
-dHVwKCkgZmFpbHMuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IFdhbmcgSGFvcmFuIDx3YW5naHIy
-MDI2QG1haWwuemdjbGFiLmVkdS5jbj4KPiA+IEZpeGVzOiAxNzljOGZiM2MyYTYgKCJjbGs6IHZl
-cnNhdGlsZS1pY3N0OiBjb252ZXJ0IHRvIHVzZSByZWdtYXAiKQo+ID4KPiA+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2Nsay92ZXJzYXRpbGUvY2xrLWljc3QuYyBiL2RyaXZlcnMvY2xrL3ZlcnNhdGls
-ZS9jbGstaWNzdC5jCj4gPiBpbmRleCAzNzMzNGFmZWUwNDAuLmU5YzczNTNhYTVkNSAxMDA2NDQK
-PiA+IC0tLSBhL2RyaXZlcnMvY2xrL3ZlcnNhdGlsZS9jbGstaWNzdC5jCj4gPiArKysgYi9kcml2
-ZXJzL2Nsay92ZXJzYXRpbGUvY2xrLWljc3QuYwo+ID4gQEAgLTQwNywxNCArNDA3LDE4IEBAIHN0
-cnVjdCBjbGsgKmljc3RfY2xrX3JlZ2lzdGVyKHN0cnVjdCBkZXZpY2UgKmRldiwKPiA+ICAJCS5y
-ZWdfc3RyaWRlID0gNCwKPiA+ICAJfTsKPiA+ICAJc3RydWN0IHJlZ21hcCAqbWFwOwo+ID4gKwlz
-dHJ1Y3QgY2xrICpjbGs7Cj4gPiAgCj4gPiAgCW1hcCA9IHJlZ21hcF9pbml0X21taW8oZGV2LCBi
-YXNlLCAmaWNzdF9yZWdtYXBfY29uZik7Cj4gPiAgCWlmIChJU19FUlIobWFwKSkgewo+ID4gIAkJ
-cHJfZXJyKCJjb3VsZCBub3QgaW5pdGlhbGl6ZSBJQ1NUIHJlZ21hcFxuIik7Cj4gPiAgCQlyZXR1
-cm4gRVJSX0NBU1QobWFwKTsKPiA+ICAJfQo+ID4gLQlyZXR1cm4gaWNzdF9jbGtfc2V0dXAoZGV2
-LCBkZXNjLCBuYW1lLCBwYXJlbnRfbmFtZSwgbWFwLAo+ID4gLQkJCSAgICAgIElDU1RfVkVSU0FU
-SUxFKTsKPiA+ICsJY2xrID0gaWNzdF9jbGtfc2V0dXAoZGV2LCBkZXNjLCBuYW1lLCBwYXJlbnRf
-bmFtZSwgbWFwLCBJQ1NUX1ZFUlNBVElMRSk7Cj4gPiArCWlmIChJU19FUlIoY2xrKSkKPiA+ICsJ
-CXJlZ21hcF9leGl0KG1hcCk7Cj4gCj4gVGhlcmUgaXMgYSBzdHJ1Y3QgZGV2IGhlcmUsIHNvIGRl
-dm1fcmVnbWFwX2luaXRfbW1pbygpIHNob3VsZCBmaXggdGhpcwo+IGluIGEgY2xlYW5lciB3YXku
-Cj4gCj4gQnJpYW4KPiAKPiAtLSAKPiBCcmlhbiBNYXNuZXkgPG1hc25leWJAa2VybmVsLm9yZz4K
+Am 29.10.26 um 10:32 schrieb Patrick Fischer via B4 Relay:
+> Since the Tegra114 CPU DFLL got its CVB tables in v6.18, it computes
+> the CPU OPP voltages from tegra_sku_info.cpu_speedo_value and the step
+> of the vdd_cpu regulator. On a Tegra Note 7 (Tegra114, TPS65913) every
+> CPU OPP from 306 MHz to 1810.5 MHz ends up at 1000 mV, and the DFLL
+> never changes vdd_cpu: it stays at the 1.10 V left by the bootloader,
+> and the CPU runs at about 1.34 GHz whatever cpufreq requests. Three
+> bugs cause this:
+> 
+> 1. Since 2014 the speedo code reads the Tegra114 speedo fuses at offsets
+>    that are 0x100 too large.
+> 2. It never stores the CPU and SoC speedo values in tegra_sku_info, so
+>    the DFLL computes with speedo 0, which overflows in
+>    round_cvb_voltage().
+> 3. The DFLL takes the voltage step from regulator_get_linear_step(),
+>    which is 0 for the Palmas SMPS. Every OPP is rounded to 0 and so
+>    clamped to the minimum, and the I2C LUT holds a single selector.
+> 
+> On its own, patch 3 fixes the Xiaomi Mi Pad (Tegra124 with Palmas). On
+> Tegra114, which includes the TF701T, it needs patches 1 and 2: with
+> speedo 0 every OPP would still overflow to 1000 mV. That is why the
+> three patches go together, all with Cc: stable.
+> 
+> Since patch 3 is only useful on Tegra114 together with patches 1 and 2,
+> it would be easiest to take all three through the Tegra tree.
+> 
+> The Tegra Note 7 device tree is not in mainline yet; I used
+> Svyatoslav's tegratab series on top of v7.3, with these patches
+> applied. Results on a P1640 (Tegra114 A02, SKU 5, CPU speedo ID 1):
+> 
+> - The fuse values match what the vendor kernel prints for this device:
+>   CPU speedo 1742, SoC speedo 1156, CPU and SoC process 1 (before:
+>   SoC process 0).
+> - CPU OPPs: 1000 mV up to 1122 MHz, then 1040, 1070, 1110, 1150, 1180,
+>   1220 and 1270 mV at 1810.5 MHz, as computed from the CVB table.
+>   Before: all 1000 mV.
+> - The DFLL LUT holds selectors 0x38 to 0x53 (1000 mV to 1270 mV)
+>   instead of a single selector 0.
+> - The DFLL rate follows cpufreq within 2% from 306 MHz to 1708.5 MHz,
+>   with vdd_cpu between 1020 mV and 1260 mV. At 1810.5 MHz it stays at
+>   about 1.74 GHz at the end of the LUT (1270 mV). Before: about
+>   1.34 GHz at any request.
+> - At 1122 MHz under load on four cores for 480 s the CPU stays at
+>   52 degC with 3.15 W from the battery, compared to 73 degC and 4.48 W
+>   before.
+> - No errors in a memory test with 25 passes, in three 600 s load runs
+>   with cpufreq limits of 1428, 1606.5 and 1810.5 MHz (throttled to
+>   about 1.0 to 1.2 GHz by a board thermal zone), and in 316 s at
+>   1810.5 MHz with that trip raised (DFLL at about 1.73 GHz, 1270 mV, closed
+>   loop throughout, stopped by the test at 98 degC).
+> 
+> Svyatoslav measured the CPU OPPs on an Asus TF701T (CPU speedo ID 2):
+> without the series all of them are at 1000 mV; with it they are
+> 1000 mV up to 1122 MHz, then 1020, 1050, 1090, 1120, 1150, 1190, 1240
+> and 1290 mV at 1912.5 MHz. The speedo IDs come from the SKU and do not
+> change, so the core, EMC and GPU OPPs stay the same, which he confirmed
+> on the TF701T.
+> 
+> Tool use (see Documentation/process/generated-content.rst): the patches,
+> their changelogs and this cover letter were prepared with an LLM coding
+> assistant (Claude Code). It compared the fuse offsets with the vendor
+> kernel, read the fuse words on the device, traced the zero voltage step
+> through the DFLL code, wrote the code changes and drafted the texts from
+> my measurements and instructions. I reviewed the changes and ran all
+> tests on the device.
+> 
+> ---
+> Patrick Fischer (3):
+>       soc/tegra: fuse: Fix Tegra114 speedo fuse offsets
+>       soc/tegra: fuse: Store Tegra114 CPU and SoC speedo values
+>       clk: tegra: dfll: Get the voltage step of range-based regulators
+> 
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 26 ++++++++++++++++++++++++++
+>  drivers/soc/tegra/fuse/speedo-tegra114.c   | 16 ++++++++++++----
+>  2 files changed, 38 insertions(+), 4 deletions(-)
+> ---
+> base-commit: c339f4010dea8b0d754f84ace70cd1b089878ef8
+> change-id: 20261026-upstream-speedo-t114-3567735d5a2c
+> 
+> Best regards,
+> --  
+> Patrick Fischer <admin@tsv-stahl-riesa.de>
 
+Hi Thierry, Jon,
+
+gentle ping on patches 1/3 and 2/3. 3/3 is already queued in clk-next.
+1/3 and 2/3 have Reviewed-by from Mikko and Tested-by from Mikko
+(Dalmore) and Svyatoslav, and they still apply cleanly to 7.4-rc3 and
+to your fixes branch. They should land in the same release as 3/3,
+since the DFLL change alone does not help Tegra114 while the speedo
+values are still read from the wrong fuse offsets. Could they go in
+through your fixes branch?
+
+Thanks,
+Patrick
