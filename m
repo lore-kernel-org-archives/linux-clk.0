@@ -1,95 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=121.254.168.205
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795315207;
-	b=KMisG4UFczZP80KlKoOYLdyC5zszx+i7QLqs0CDea9iskl0bANRtvaDDYoP3VNPEuvd+
-	 aAYvZhNMSD/hnRen3ahHKPZWfZG0QPuwZJ76XYZXbH1F10pmdsJNQpi0j3MHodb5Yyk7X
-	 LycI2QYd4iMDBaxnnb7/jRmdzqsVPF7tGNGzi16T8vwKvJWmmpph+DNoI5cp4Mu/1OxXm
-	 P8lgbA9Vye9ojtYGgiFJvyz6fzAuYCmnEdT1QP0d6Ksz/WGCN7zY2QI61cgxxje2fmtFh
-	 PxiwXspac3IxjCF7nubXlMegNxJFMw3pVdt3qsaiv0xDJET+re3WmfVShotQxJ5kwLQ==
+	t=1795335896;
+	b=Ego4Yx7/kmGKdcBsQa9Okep5tis5oCamcZxn98j/UGENIhSgV7OT64uTiiDsuwkzP2eD
+	 51+vx3ceo6INTW9vjb30Z4XO68CTCV13sgQlgMz80xCNP4TxBlGhXEV3SrzuDRLDg63s7
+	 id+Sa23IJi9olsP9TQ8c0EJ96Mz/g+CORtZRmODTUNi573OWGq0tE21FrMdncEkpC5xtW
+	 /VEYzH1h5uL+JURhzN/wswldWyZvr2rnhj1QAy/vDHBeTGSPSY5dYN6o1dTrg3UNZR7ML
+	 8CHsPpR7dpxVIMa/8Bk0h4RvWre++YFYPaaq0OtjUfHBjgitFAYnXOJW9f8DuMedXnA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795315207;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=PKya3YxXvPxdPz7Z0C1z6SRKNYNaf8lxnWH3lx3F6Ek=;
-	b=MiQh4IFO4/0HC/Q2U/+U8eHC2WRaKP3LP2R62d2IlPmljQRRmz+6tjWtNjzsIxvIv6HR
-	 Nztk4JxAmizVkd50QNTdlVOBehKVY5H+D80r0vHBqQcdQNV4CVoKWbigHxK+s5qr2IYQf
-	 L9N3Fhd9xmR3W+itKegM0iLSX7Mbbqm64dcwwmJwGh3xERFFYNgNbHTylqUS09oX3lRKo
-	 VoFCkjnIjrxlKZEF9T3aa7FIbTeOW/r2AG0dZrlkb7Ew+8Y/wWmSU4uwWEH2dW34bFlAC
-	 QBBSx8pp9X0EjHogFtlDEVpTxc22afJuJDV68/vRdD03a+bbvbloKyYURvriDw5ZhmA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795335896;
+	h=DMARC-Filter:Received:Received:Received:Received:Date:From:Reply-To:
+	 To:Cc:Message-ID:Subject:MIME-Version:Content-Type:X-Priority:
+	 X-Authinfo;
+	bh=AQXMVq/bY9pwRN/7bAmT7U0vAZ3Y/kk/NV7eqWTjsoU=;
+	b=on2qOQ6YcSrV5N88+TLFLu7ea/8Rcy4q/DKcEmvmbicY3JAvKAhqrnXFyE6/r2aQp+Mi
+	 +dKLyptUyfnzFreFpfKcgYgupndXBgY9HSUZrylrAWnS9nWCd4RqXgM9dfppsEqMdPfK7
+	 hkawc8ZKnCNaejmYhWtlBzdV+7befeZ5SyaEjaUPO1s1EOHdsSVpPENdc12rKj5TJNmt7
+	 76jlt2x3KOwvX37O5rUIsbvzRkasC30UvWFsvo7rjxd53/dE+ooy1ErBl46eYWTFHW9i9
+	 dqCqJuuHG3yYHXKItS/BJC1DyG6mgWIcgyXDqySRMgHyDNEzc/9uTQLI8QCaYMEWz1Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=fail header.from=mswin.me;
-	spf=none smtp.mailfrom=mswin.me;
-	dkim=pass header.d=mswin-me.20260707.gappssmtp.com header.i=@mswin-me.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=nMNK5Ugl;
-	arc=none smtp.remote-ip=209.85.218.45
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=nirvanahyj.com;
+	spf=pass smtp.mailfrom=nirvanahyj.com;
+	arc=none smtp.remote-ip=121.254.168.205
+Received: from smtp3.hiworks.co.kr (smtp3.hiworks.co.kr [121.254.168.205])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A49606A32A
-	for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 02:40:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 39A49606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=mswin.me
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mswin.me
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=mswin-me.20260707.gappssmtp.com header.i=@mswin-me.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=nMNK5Ugl
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-c513a854320so375221766b.0
-        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 18:40:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mswin-me.20260707.gappssmtp.com; s=20260707; t=1795315205; x=1795920005; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=PKya3YxXvPxdPz7Z0C1z6SRKNYNaf8lxnWH3lx3F6Ek=;
-        b=nMNK5Uglm3oSjscVzrRVwYpVzwUcFeqH+R9VCWRiY03isTCMYcCfLyfN6aoOLdTq3z
-         rpOUbiiz/Y6TIT4y5YnwKh/6iJd3DJP0FfCWAAZPwbvx8j7HikkKC7e9DRegNFuYeDwY
-         /JV2B1O1YcXy6xxMmQIlcsHxgXrP5pavTdPcLJEukIYO10xfHtBb7t6UimVQ24i0izuC
-         cCROVhvbNXk5NLVPgnZUSxZL3dEb+nxktf8aDfiYuBR5qxF0RP8+O2jdrz02vjllVHMP
-         hTjRloH4GbNOB19H7RL5gusClYBLQ6tNGTatl59RZBCG0RvpzhbBnixNQuiEEY1KWdu6
-         Y3kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795315205; x=1795920005;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=PKya3YxXvPxdPz7Z0C1z6SRKNYNaf8lxnWH3lx3F6Ek=;
-        b=rlTO8fybFjEeYFRuLDLNR6LLWoxfe6LBB/kpO92CjaUGBjNCDfsSHeewgXkWWfCYZO
-         VCjFFO2poHy/WRAYS1r0U/23qtU2dOe2aEhOVU3UqrRlaGibsgtADMkF1GJXJSZOvz6C
-         e2qALKLggekuk/SDb2iOT8Wa+p4m/WDeziwKH2uooKnvWAOvYMjffAwo0PpofdQ6ls4k
-         IA2vIezN1OYfruxtHpSuERM6SOlN8VMF+SSQkUTpjvJaE4WBWnVoCTXev11iIpT0T+Pf
-         ZNOAonm0c9SzaKbyZ9m8fJH6DxkqiIele3LsV4CTleGKzVm8SzS6O6u6+YEbfj+6oh5p
-         bAIg==
-X-Forwarded-Encrypted: i=1; AL+hErHJpC7r/yfkyBAH4XJVt25NgBcTNuSGokG5a5tyGJmrCFjmlsUy2YJGYRbLXRNu80cQ6lA/pSYtlvg=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+dWw30JqWJs5iJ0kLdNQ9ow7S44p11bmL9eKdDWktWTZtqhmTD
-	9T/UhAbBo1idK5bS3frQD6Q7TdwmsbMyShB2VskOOE6DuelQLZSR10yY2u0CBYbUNfs=
-X-Gm-Gg: AZFdTZdRfKRVo5QSwH0dJk6KJcitxZ+ThNR/JZ4zs5Z0YYKR8wl9HhUzIqb9/SrZcxQ
-	i5xrJh41V0tsbLnfS7++V4wSfYgSlJc/TtbBxG59gDvV5EDnpgBySuKRrQhXBQ3wPPi+CVXaTCt
-	pgf2VTKpbvwDXq/EFc+Ab5rchiapxlCcEU+bSc7h7FqeD0MElBGk8LE61Faq9ep0e3ocZjQS2Pp
-	2LGBG8OJynHbLcu87e963LkK93FcBStPd6pSmQCV2JWO/xKDMGzkfWr1oUCExbfRQkFBGd7hoY+
-	TkKlDrXDSyBSxruaLS4xcYC+Ls+uYf+WouJBxiEoUe/EBgnof8uce57+3nINcoc1QSc3x7608pc
-	uuaNyGcY7ZzYsa0ET6Itl23xAUYpTUwbnqIgJwVCbYRCglAdK5aUKEXjMx4+SMEml6CyNATTGLN
-	O1qG/99J7I72Uefx66q9sNcsILVPEiKsRHZ+bmsYms4GrscJDzXsurRykUstcGkB7jXA1C+WUow
-	c2rmD8zdJLL3aQFUkLjsgIy8wmI6NJxN66C77TcCol/UuGUZnD2AGSJLK6JmYSUF+h+b4Se33is
-	1E08cH5AXVU7q6Hkp/GYJGJ+Zo8wKzt4zC4h
-X-Received: by 2002:a17:907:a890:b0:c41:55b4:d88b with SMTP id a640c23a62f3a-c513ab14402mr690249566b.43.1795315205485;
-        Sat, 21 Nov 2026 18:40:05 -0800 (PST)
-Received: from zephyr.int.serkovo.ru ([95.135.208.171])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513ae68788sm258432866b.29.2026.11.21.18.40.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Nov 2026 18:40:04 -0800 (PST)
-From: Roman Linev <admin@mswin.me>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Abel Vesa <abelvesa@kernel.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF62E606A320
+	for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 08:24:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AF62E606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nirvanahyj.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nirvanahyj.com
+Received: from hi-smtp-node2 (unknown [172.18.0.2])
+	by smtp3.hiworks.co.kr (Postfix) with ESMTPS id 4jXMZ65M3kzYlJhg
+	for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 17:24:46 +0900 (KST)
+Received: from hi-smtp-node2 (unknown [192.168.71.87])
+	by hi-smtp-node2 (Postfix) with ESMTP id 4jXMZ65773zQLN7S
+	for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 17:24:46 +0900 (KST)
+Received: from split.smtp.hiworks.com (amphora-3294b420-308a-4b9e-8a1d-bf25580dae1f.openstack.gabia.io)
+ 	by hi-smtp-node2 with ESMTP id zhau7ts2lbcgb4py;
+ 	Sun, 22 Nov 2026 17:24:46 +0900 (KST)
+Received: from hiworks-k8s (EHLO mail-api-v2-prod-574865655-x4kvt) (10.251.248.0) 	by 0 (smtp-channel-split) with SMTP; 	Sun, 22 Nov 2026 17:24:46 +0900
+Date: Sun, 22 Nov 2026 17:24:46 +0900 (KST)
+From: Young-Jun Hong <nirvanah@nirvanahyj.com>
+Reply-To: Young-Jun Hong <young.j.hong@kaist.ac.kr>
+To: Henrik Grimler <henrik@grimler.se>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: dispcc-sm8250: Don't park mdp_clk_src at registration
-Date: Sun, 22 Nov 2026 05:40:01 +0300
-Message-ID: <20261122024001.375239-1-admin@mswin.me>
-X-Mailer: git-send-email 2.56.1
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-ID: <gab995302678.0.1795335886363@nirvanahyj.com>
+Subject: RE: Re: [PATCH 2/4] clk: samsung: exynos5420: add VPLL rates for
+ 650, 700 and 750 MHz
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -99,89 +66,104 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; 
+	boundary="----=_Part_3387072_306714675.1795335886363"
+X-Priority: 3
+X-Authinfo: HIWORKS WEB authenticated <nirvanah@nirvanahyj.com|114.203.237.180>
 
-Parking disp_cc_mdss_mdp_clk_src at registration time breaks the EFI
-GOP framebuffer on the HUAWEI MateBook E Go 2022 (gaokun2, SC8180X):
-the panel goes dark as soon as dispcc-sm8250 probes and stays dark,
-while simpledrm keeps rendering into the framebuffer.
+------=_Part_3387072_306714675.1795335886363
+Content-Type: multipart/related; 
+	boundary="----=_Part_3387073_43970329.1795335886363"
 
-Use clk_rcg2_shared_no_init_park_ops for disp_cc_mdss_mdp_clk_src, as
-was done for sc8280xp and x1e80100, so registering the clock no longer
-reconfigures it. The firmware framebuffer then keeps working until the
-display driver takes over, as long as its other resources (MDSS_GDSC,
-the MDP branch and the display PLL) stay enabled.
+------=_Part_3387073_43970329.1795335886363
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-Tested on gaokun2 with an out-of-tree DT whose simple-framebuffer node
-holds MDSS_GDSC, dispcc-sm8250 built as a module, and clk_ignore_unused
-pd_ignore_unused on the command line. With the patch the panel stays
-lit; without the patch the panel goes dark (v7.4-rc3 and v7.3-rc2
-based kernels). Built-in dispcc-sm8250 and the unused-clock sweep were
-not tested. This driver also serves sm8150, sm8250 and sm8350; only
-sc8180x was tested.
+SGkgSGVucmlrLAoKClRoYW5rcyBmb3IgdGhlIHJldmlldywgYW5kIHNvcnJ5IGZvciB0aGUgc2xv
+dyByZXBseS4KCk9uIEZyaSwgTm92IDA2LCAyMDI2IGF0IDAzOjQ1OjM2UE0gKzAxMDAsIEhlbnJp
+ayBHcmltbGVyIHdyb3RlOgo+IFdoYXQgeW91IG1lYW4gd2l0aCAidXNpbmcgdGhlIHNhbWUgUC9N
+L1Mgc3R5bGUgYXMgdGhlIEFQTEwgcm93cyI/CgpUaGF0IHdvcmRpbmcgaXMgdG9vIGxvb3NlLCBz
+b3JyeS4gTGV0IG1lIGV4cGxhaW4gaG93IHRoZSByb3dzIHdlcmUKY2hvc2VuLgoKV2h5IHRoZSBW
+UExMIG5lZWRzIG5ldyByb3dzIGF0IGFsbDogdGhlIEdQVSBjbG9jayBpcwpmb3V0X3ZwbGwgLT4g
+bW91dF9zY2xrX3ZwbGwgLT4gbW91dF9hY2xrX2czZCAtPiBkb3V0X2FjbGtfZzNkIChhIDMtYml0
+CmRpdmlkZXIsIENMS19TRVRfUkFURV9QQVJFTlQpIC0+IG1vdXRfc3cvdXNlcl9hY2xrX2czZCAt
+PiBnM2QuIFRoZQpkaXZpZGVyIGNhbiBvbmx5IGRpdmlkZSBkb3duLCBzbyBhIEczRCByYXRlIGFi
+b3ZlIDYwMCBNSHogbmVlZHMgYSBWUExMCnJvdyBmb3IgaXQ7IHdpdGhvdXQgb25lLCBjbGtfc2V0
+X3JhdGUoKSByb3VuZHMgdG8gdGhlIDYwMCBNSHogcm93LgoKVGhlIFZQTEwgaXMgYSBwbGxfMjU1
+MCAoUExMMzV4eC1zdHlsZSBpbnRlZ2VyIFBMTCksIHRoZSBzYW1lIHR5cGUgYXMgdGhlCkFQTEws
+IEtQTEwgYW5kIEJQTEwgaW4gdGhpcyBkcml2ZXI6CgrCoMKgRnJlZiA9IDI0IE1IeiAvIFAgwqAg
+wqAoUDogNiBiaXRzKcKgIMKgaW5wdXQgb2YgdGhlIHBoYXNlIGRldGVjdG9yCsKgwqBWQ08gwqA9
+IEZyZWYgKiBNIMKgIMKgIMKgKE06IDEwIGJpdHMpIMKgZmVlZGJhY2sgZGl2aWRlcgrCoMKgRm91
+dCA9IFZDTyAvIDJeU8KgIMKgIMKgKFM6IDMgYml0cynCoCDCoHBvc3QtZGl2aWRlciwgb3V0c2lk
+ZSB0aGUgbG9vcAoKU28gd2hhdCBkZWNpZGVzIHdoZXRoZXIgYSByb3cgaXMgcmVhc29uYWJsZSBp
+cyB0aGUgcGhhc2UgZGV0ZWN0b3IgaW5wdXQKKEZyZWYpIGFuZCB0aGUgVkNPIGZyZXF1ZW5jeTsg
+UyBvbmx5IGRpdmlkZXMgdGhlIFZDTyBvdXRwdXQuIEkgcGlja2VkCnJvd3Mgd2hvc2UgRnJlZiBh
+bmQgVkNPIGFyZSBib3RoIGFscmVhZHkgdXNlZCBieSBwbGxfMjU1MCByb3dzIGluCm1haW5saW5l
+OgoKwqDCoHJhdGUgwqBQIMKgTSDCoCDCoFMgwqBGcmVmIMKgIMKgVkNPwqAgwqAgwqAgwqBzYW1l
+IEZyZWYgLyBWQ08gYWxyZWFkeSB1c2VkCsKgwqA2NTDCoCDCoDYgwqAzMjUgwqAxIMKgNCBNSHrC
+oCDCoDEzMDAgTUh6IMKgQVBMTCAxMzAwIE1IeiByb3cgKDMyNSwgNiwgMCkKwqDCoDcwMMKgIMKg
+MyDCoDE3NSDCoDEgwqA4IE1IesKgIMKgMTQwMCBNSHogwqBBUExMIDcwMCBNSHogcm93ICgxNzUs
+IDMsIDEpOwrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoFZQTEwgMzUwIE1IeiByb3cgKDE3NSwgMywgMikKwqDCoDc1MMKgIMKgMiDCoDEyNSDC
+oDEgwqAxMiBNSHogwqAxNTAwIE1IeiDCoEZyZWY6IFZQTEwgNjAwLzU0My80ODAvNDIwIHJvd3Ms
+CsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+QVBMTCAxMjAwLzkwMDsgVkNPOiBBUExMIDE1MDAKCldoeSBTID0gMSBhbmQgbm90IFMgPSAyIGxp
+a2UgdGhlIGV4aXN0aW5nIFZQTEwgcm93czogd2l0aCBTID0gMiwgNjUwIHRvCjc1MCBNSHogd291
+bGQgbmVlZCBhIFZDTyBvZiAyNjAwIHRvIDMwMDAgTUh6LCBhYm92ZSB0aGUgaGlnaGVzdCBWQ08g
+YW55CnBsbF8yNTUwIHRhYmxlIGluIG1haW5saW5lIHVzZXMgKDI0MDAgTUh6LCBlLmcuIHRoZSBW
+UExMIDYwMCBNSHogcm93CjIwMCwgMiwgMikuIFdpdGggUyA9IDEgdGhlIFZDTyBzdGF5cyBhdCAx
+MzAwIHRvIDE1MDAgTUh6LCB0aGUgc2FtZSByYW5nZQp0aGUgZXhpc3RpbmcgVlBMTCByb3dzIHJ1
+biBpbiAoMzUwIE1IeiByb3c6IDE0MDAgTUh6OyAxNzcgTUh6IHJvdzogMTQxNjsKMTAwIE1IeiBy
+b3c6IDE2MDApLiBUaGF0IGlzIHdoYXQgInRoZSBzYW1lIFAvTS9TIHN0eWxlIGFzIHRoZSBBUExM
+IHJvd3MiCndhcyBtZWFudCB0byBzYXk7IEkgd2lsbCBzcGVsbCBpdCBvdXQgbGlrZSB0aGlzIGlu
+IHYyLgoKPiBXYXMgaXQgdGVzdGVkIGJ5IGEgaHVtYW4/CgpZZXMuIFRoZSBjb2RlIHdhcyBnZW5l
+cmF0ZWQgYnkgQ2xhdWRlIENvZGUsIGJ1dCBJIHNldCB0aGUgZGlyZWN0aW9uIG9mCnRoZSBleHBl
+cmltZW50cywgbG9va2VkIGF0IHRoZSByZXN1bHRzIG15c2VsZiwgYW5kIHJlcGVhdGVkIHRoZSBy
+dW5zIG9uCm15IEFSVElLIDEwIGJvYXJkIHVudGlsIHRoZSByZXN1bHRzIGhlbGQgdXAuCgpTb21l
+IGJhY2tncm91bmQ6IEkgYW0gZXZhbHVhdGluZyB0aGUgQVJUSUsgMTAgKEV4eW5vcyA1NDIyKSBh
+cyBhCnNtYWxsIGNvbXB1dGUgYm9hcmQuIFN0YXJ0aW5nIGZyb20gaXRzIGZhY3RvcnkgRmVkb3Jh
+IGltYWdlLCBJIG1vdmVkCml0IHRvIERlYmlhbiBhbmQgdHVuZWQgaXQgZm9yIGJlbmNobWFya2lu
+Zywgd2l0aCBDbGF1ZGUgQ29kZSB3cml0aW5nCm1vc3Qgb2YgdGhlIHNjcmlwdHMgYW5kIGNvbmZp
+Z3VyYXRpb24gY2hhbmdlcy4gSSBkZWZpbmVkIHRoZQpleHBlcmltZW50cyBhbmQgaG93IHRvIHZh
+bGlkYXRlIHRoZW0sIGFuYWx5emVkIHRoZSByZXN1bHRzIG15c2VsZiwKYW5kIGFjY2VwdGVkIGEg
+Y2hhbmdlIG9ubHkgYWZ0ZXIgaXQgcmVwcm9kdWNlZCBhY3Jvc3MgcmVwZWF0ZWQgcnVucwpvbiB0
+aGUgYm9hcmQuIEZvciB0aGlzIHBhdGNoLCB0aGF0IG1lYW5zIHRoZSBjbGtfc3VtbWFyeSByZWFk
+aW5ncyBhbmQKdGhlIGZpeGVkLWNsb2NrIEdQVSBydW5zIGRlc2NyaWJlZCBiZWxvdy4KCj4gRG8g
+eW91IGhhdmUgYW55IHJlZmVyZW5jZXMsIGxpa2UgdmVuZG9yIGtlcm5lbCBzb3VyY2VzLCB0byBi
+YWNrIHVwCj4gdGhlc2UgY2hvaWNlcyBvZiBkaXZpZGVycyBhbmQgc2NhbGFyPwoKTm90IGZyb20g
+YSB2ZW5kb3Iga2VybmVsIGZvciB0aGlzIFNvQzogdGhlIG9uZXMgSSBmb3VuZCBmb3IgdGhlIEV4
+eW5vcwo1NDIyIChIYXJka2VybmVsJ3MgT0RST0lELVhVMy9YVTQgMy4xMCBhbmQgNi4xIHRyZWVz
+KSBhbHNvIHN0b3AgdGhlIFZQTEwKdGFibGUgYXQgNjAwIE1IeiwgYW5kIHRoZSBtYWlubGluZSBW
+UExMIHRhYmxlIChiOTI5ODFkZTkyY2IsIDIwMTkpIGRvZXMKbm90IHNheSB3aGVyZSBpdHMgdmFs
+dWVzIGNhbWUgZnJvbS4KClRoZSBjbG9zZXN0IHJlZmVyZW5jZSBpcyBpbiBtYWlubGluZS4gY2xr
+LWV4eW5vczUyNjAuYyAoZDM5ZTU1ZTA2MzcxLApTYW1zdW5nLCAyMDE0KSBoYXMgb25lIHRhYmxl
+IHRoYXQgaXQgYXBwbGllcyB0byBhbGwgcGxsXzI1NTAgUExMcyBvZgp0aGF0IFNvQywgaW5jbHVk
+aW5nIGl0cyBHM0RfUExMLiBJdCBjb250YWlucyA3MDAgTUh6ID0gMTc1LCAzLCAxICh0aGUKc2Ft
+ZSByb3cgYXMgaGVyZSksIFMgPSAxIHJvd3MgZnJvbSA2MzMgdG8gMTIwMCBNSHogKFZDTyAxMjY2
+IHRvIDI0MDAKTUh6KSwgYW5kIHRoZSAxMzAwIGFuZCAxNTAwIE1IeiByb3dzICgzMjUsIDYsIDAg
+YW5kIDI1MCwgNCwgMCkuIFNvIGEKU2Ftc3VuZy13cml0dGVuIEczRCBQTEwgdGFibGUgb24gdGhl
+IHNhbWUgUExMIHR5cGUgYWxyZWFkeSBydW5zIHRoZSBWQ08KYXQgMTMwMCB0byAxNTAwIE1IeiB3
+aXRoIFMgPSAxLiBUaGUgdmVuZG9yIDMuMTAgdHJlZSBmb3IgdGhlIDU0MjIgYWxzbwp1c2VzIFMg
+PSAxIG9uIG90aGVyIHBsbF8yNTUwIGluc3RhbmNlcyAoSVBMTCA2NjYgTUh6ID0gUCA0LCBNIDIy
+MiwKUyAxOyBTUExMIDgwMCBNSHogPSBQIDMsIE0gMjAwLCBTIDEpLiBJIGRvIG5vdCBoYXZlIHRo
+ZSB1c2VyIG1hbnVhbCwKc28gSSBoYXZlIG5vdCBjaGVja2VkIHRoZSByb3dzIGFnYWluc3QgaXRz
+IFBMTCBsaW1pdHMuCgpPbiB0aGUgYm9hcmQsIGNsa19zdW1tYXJ5IHJlcG9ydHMgZm91dF92cGxs
+IGF0IDY1MCwgNzAwIGFuZCA3NTAgTUh6LAphbmQgR1BVIHRocm91Z2hwdXQgZm9sbG93cyB0aGUg
+Y2xvY2s6IGJldHdlZW4gYSBmaXhlZCA2MDAgTUh6IGFuZCBhCmZpeGVkIDc1MCBNSHosIGFuIE9w
+ZW5DTCBtYWQ0IGxvb3AgZ29lcyBmcm9tIDMxLjEgdG8gMzguNyBHRkxPUFMgYW5kIGFuCmZwNjQg
+bG9vcCBmcm9tIDExLjIgdG8gMTMuOSBHRkxPUFMgKHJhdGlvIDEuMjQgZm9yIGJvdGg7IDEuMjUK
+ZXhwZWN0ZWQpLgoKSW4gdjIgSSB3aWxsIGNoYW5nZSB0aGUgNzUwIE1IeiByb3cgdG8gMjUwLCA0
+LCAxICh0aGUgTS9QIG9mIHRoZQoxNTAwIE1IeiByb3cgb2YgdGhlIHBsbF8yNTUwIHRhYmxlKTog
+c2FtZSBWQ08gYW5kIG91dHB1dCwgRnJlZiA2Cmluc3RlYWQgb2YgMTIgTUh6LCBzbyBhbGwgdGhy
+ZWUgcm93cyByZXVzZSBhbiBleGlzdGluZyBNL1AgcGFpci4gSSByYW4KdGhhdCByb3cgb24gdGhl
+IGJvYXJkOiBmb3V0X3ZwbGwgYW5kIHRoZSBHUFUgY2xvY2sgcmVhZCA3NTAgTUh6LCB0aGUKZml4
+ZWQgY2xvY2sgcmVzdWx0cyBtYXRjaCB0aGUgb2xkIHJvdyAoZnA2NCAxMy44LTE0LjAgR0ZMT1BT
+IGF0IDc1MApNSHosIDExLjEgYXQgNjAwIE1IeiksIGFuZCBhIGRldmZyZXEgcnVuIGJldHdlZW4g
+YWxsIE9QUHMgc2hvd2VkIG5vIEdQVQpmYXVsdHMuIFRoZSA2NTAgTUh6IHJvdyAoMzI1LCA2LCAx
+KSBwYXNzZWQgdGhlIHNhbWUgdGVzdCAoZnA2NCAxMi4wCkdGTE9QUykuIFRoZSB2MiBjaGFuZ2Vs
+b2cgYWxzbyBkZXNjcmliZXMgdGhlIGNsb2NrIHBhdGggYW5kIHdoZXJlIHRoZQp2YWx1ZXMgY29t
+ZSBmcm9tLgoKQmVzdCByZWdhcmRzLApZSgoKLS0gCllvdW5nLUp1biBIb25nIGZyb20gSGl3b3Jr
+cw==
+------=_Part_3387073_43970329.1795335886363--
 
-The cause was localized and the change tested with the help of an AI
-coding assistant (Anthropic Claude).
-
-Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
-Signed-off-by: Roman Linev <admin@mswin.me>
----
-
-Notes:
-    Testing (HUAWEI MateBook E Go 2022 LTE, SC8180X, booted from USB via GRUB
-    with an out-of-tree gaokun2 DT; Ubuntu userspace, GNOME on simpledrm):
-    
-    The DT describes the EFI GOP framebuffer as a simple-framebuffer in
-    /chosen with power-domains = <&dispcc MDSS_GDSC>; without that holder
-    MDSS_GDSC is powered off at dispcc's genpd sync_state, which also
-    blanks the panel independently of this patch. With the holder in place
-    and dispcc-sm8250 loaded as a module (deferred_probe_timeout=30 so
-    simpledrm binds after it; clk_ignore_unused pd_ignore_unused on every
-    boot, so the unused-clock sweep never ran), each pair differs only in
-    this one line:
-    
-      kernel                   stock dispcc-sm8250    with this patch
-      v7.4-rc3                 panel black            desktop visible
-      Ubuntu 7.3.0-15 (rc2)    panel black            desktop visible
-    
-    In both black cases the kernel log shows simpledrm bound to the DT
-    framebuffer, MDSS_GDSC on and GNOME rendering (KMS readback of the
-    framebuffer shows the desktop), but the physical panel stays dark from
-    the moment dispcc-sm8250 probes. Only the sc8180x path was tested.
-    
-    Prior art: Val Packett's downstream linux-qclaptops tree carries the
-    same one-line change for the Surface Pro X (commit 88aee348d602, "mostly
-    for sc8180x"); I came across it while researching the issue, next to
-    the merged sc8280xp/x1e80100 fixes it mirrors, and did not find it
-    posted to linux-clk. This report is from a different device, the HUAWEI
-    MateBook E Go 2022 (gaokun2), where the failure looks different:
-    MDSS_GDSC is held on by a simple-framebuffer node and scanout still
-    stops. The tests above isolate the parking as the cause on two kernels.
-    
-    Tool use: an AI coding assistant (Anthropic Claude) was used to
-    compare this driver with the sc8280xp/x1e80100 fixes, build the test
-    kernels/modules and analyse the boot logs; the change itself is the
-    one-line ops swap from those fixes. All hardware observations were made
-    by me on the device.
-
- drivers/clk/qcom/dispcc-sm8250.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
-index dc62eb18de..4a94b4c5a9 100644
---- a/drivers/clk/qcom/dispcc-sm8250.c
-+++ b/drivers/clk/qcom/dispcc-sm8250.c
-@@ -564,7 +564,7 @@ static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
- 		.parent_data = disp_cc_parent_data_5,
- 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_shared_no_init_park_ops,
- 	},
- };
- 
-
-base-commit: fbfe0c4beecfbd0e2958d91e5c95ff189bc489a0
--- 
-2.56.1
-
+------=_Part_3387072_306714675.1795335886363--
