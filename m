@@ -1,35 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795352996;
-	b=yE8PZXGpGLNgoUWPIsYsEOd5Hd91T52u8W1L8pQluGRpDTn1vJWeMfGnDyE76cLYJNZx
-	 4D4YpT1Hh3xDsjQJWB0qmC3PMezrnkU+rOAetDdpTNCEqDLupvI/PvXymsRK5CVJ9mwPt
-	 tk1Ve/UqJsMkGw+JpITsS0hW/YqLvZN2IUSinqRnvzZJ9AfEvHUkC61bXHCKNnmKxtMN8
-	 6sRrVJbQGqOVJ0HXUyxWdNMuXviuiZY80kqCyggEEbTQV/KZhuHAdB131a0os7XK4J5tg
-	 u/EHaaUE/6kXBu8AH0ovQr/C+JNDRUuQ3Fy4EEyy2hPB8L74dIud5/Tlycrawx2BPgg==
+	t=1795353566;
+	b=WRRz9LE3oMzznctxhV/yNbR7g+3RXMOd4Jw+oLXiqllMBhipNH+fyGGPgKF++UlcF2y+
+	 A6lpFg+krOR7TDRrkvlpdqMaeZedyi/YkDLiDHoJwSZQHbjapRWH+ZL3oXNdeXhWdQ+J8
+	 ULx/f6kebKR77BPpYdqOqi/5jfKhE5t8I9Q6M8teT+2HJOaGQxA/v0tair2TDvlHUbiJ5
+	 aoDWlxLEyes9HNStMdvRa0CiMFg2T5d2ezcRKvLzr4ytdHWxGY4UVD1mTf4kYDdhEBDyb
+	 RmmGpuYx0bbJ5jdIUkooaQITeLnw+yYstOLVmpBYqEs9L4YyfUFyl7HmWY0AOf3DH5g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795352996;
-	h=Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=3WVF+BnP4qzBtplSjxWQk5yg0E3IzzpiQgd0jJSCJv4=;
-	b=N2OSNHdinFZVxbQ3PqRgPGpsQWUhTip2GwZRuRCmTVqOMBn1RlUYDcoXMkcA9mIuC4tn
-	 SjDZiQlxkKgFfCgLXEGTSfBH7BJsv8wCCSTF84KvRmmLOqNFPw3u6x61vDmybDrq1V3rf
-	 qmpthXa2GOBzd1+IKN5fEN+iMhLDAyKbVkMAkKqnc7ZdmdACEhJtEhFPrnZMntPlVZl9c
-	 LRprIZx1hD9xpvkgX/mZDXQrX79e9YJVlXMcJE5trKo4CXuZ8Qf0qycvhDy+MrFi+deDk
-	 yqx5tR4WlK6mlp8fHzdP+riRTE741CSOULQ9RwTdPqovmTk9uiTY1DWjxIrzhtlAGew==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795353566;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=IWQC60ayXmUSstofGwQlMawv9SEc1M09tNmoor7OPsY=;
+	b=CG4hFdU8l9OQ4A5397fGhAkGikJF/ucJE2J+Hmm4VNi7svW57MRWPMaGqc6jwKKDOQx0
+	 K9Syo+K+nTfnPHuU/i97gQZOu9+2t5fzDPJm9M3rjQSf62j38xkWUlvhheZnhSVPMJz1G
+	 BJoAYd2B9EDsE3hDF5OQjafVv5dv6erkzCUR/+Kb3SV954Iuc5KRNfV+n3p/GU9sm8mEu
+	 RDNvg6HVDkdxHIwEfcvytBVZk2npGo84hPVMbGtKuTvOw6HiXhIFMnQ/UFurtjNxdf31+
+	 XtqoEtv9HM+5Qquccfepw83ujwBZtun12lbhGtJM0gcUWAMg1tEc+DvSmc4BcAxBLxQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PVOOD4Ez;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99665606A320;
-	Sun, 22 Nov 2026 13:09:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 392D01F000C4;
-	Sun, 22 Nov 2026 13:09:55 +0000 (UTC)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Sun, 22 Nov 2026 14:09:27 +0100
-Subject: [PATCH 4/4] clk: qcom: Consistently handle MSM8996 and SAR2130P
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A5A606A320
+	for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 13:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PVOOD4Ez
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68D9B1F000D0;
+	Sun, 22 Nov 2026 13:19:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795353565;
+	bh=IWQC60ayXmUSstofGwQlMawv9SEc1M09tNmoor7OPsY=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=PVOOD4EzZVYE6MZQYVBN/O1XO3vyobBkQ8tTmlHkJgDih5/PTb+VdO3jOB1CZOTDL
+	 grbo4RPB33Y4xPE0RxvrxJwirrBeyKAkhbDjsif3KJz9lzJhPXjzYAAHn601JCfreB
+	 rAfYfiH/ETaPVAjEYAIyLCmL2G3E6qlnecL7liuLJlZQ6HMAut2XnKNteea15m6gNg
+	 146tT4rnOf9iDbvMNYzlV7cp1jrEtkIr2Lt+3g+DoZuNCPwoo9yD+5Pj6cXStzZu51
+	 OWzZFqkLPYhWBTz8Rxpcpm6q5m0h6m8ziW98fxsFgE1aQTWUDrkgyrjUSZ5GS2Vdgx
+	 tkFSMNE380AzQ==
+Message-ID: <sashiko-outbox-227958@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 4/4] clk: qcom: Consistently handle MSM8996 and SAR2130P
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20261122-qcom-kconfig-unify-v1-4-6abaa7faf1c9@oss.qualcomm.com>
+References: <20261122-qcom-kconfig-unify-v1-0-6abaa7faf1c9@oss.qualcomm.com>
+ <20261122-qcom-kconfig-unify-v1-4-6abaa7faf1c9@oss.qualcomm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 22 Nov 2026 13:19:24 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -38,73 +59,72 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261122-qcom-kconfig-unify-v1-4-6abaa7faf1c9@oss.qualcomm.com>
-References: <20261122-qcom-kconfig-unify-v1-0-6abaa7faf1c9@oss.qualcomm.com>
-In-Reply-To: <20261122-qcom-kconfig-unify-v1-0-6abaa7faf1c9@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1275;
- i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=UqTBRQnStcoI0v+JVHtdOGcMZaZw/+a8HsHnNzs0PjI=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBrAumO7ZlqKTnxkPNcp+K5G484vumX1zDz1OesH
- rXokcN3WpCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCawLpjgAKCRDBN2bmhouD
- 13TaD/oDSSxIY+Krh9aOdhoxXUVoV9DDNOq+nm+hZQeRHDaYvVVT6cye+tOWk6UOHEA1GkIpY/n
- Ebip7hTcnGwcGMjs/j48wsqSROtGpY+wn6QLxEFpbeHqJBs35jRMaUub1dP9jkQQwGvyrZnF6v1
- 93IpoFh8mbeT2xBMvwn2auYNufYXi03QGUkK8wJGSjBAR/Dv5BXMWvjAzpG8ZXkHGj0W5qBqcW+
- DwGDKSixALkEidO5IZ9xveZssqUAtjo89+fTXHc1vKy1ixniLaC9g5JfnqQ5wiqKOAqgCkdk9Oh
- 9oLLPPiO/QrWQz4G8PlJFfs8Nf8jW5YdGewHRngnvOfL3FdmmpxikRDUGeKLev54rDyGL6TFS5u
- orpwYgO5eiKoGAKxNyI6/bZ//+Dc+/yFFFBGu6N6lwVVOyWEyo5RwEmVvu7NrxBXJZE2/mdMH6t
- aMU8S3PhMB0ZPpnWpgcJ+svI44ikt4/wJIihUTexzl/2Ce2crTe+eI2vEbL9ZgzZjsWLgMdGYFy
- WDiDQDX6QSxkPEjNkj2QbGz/q/vWKBUHrRGyE4NqsNxREa0/wO+JKHho8NIrNuqPW1JXe7Uurbu
- uz122tOIw2B4ARZtdU4GEedqkfEA9w4DYfnYJ8R8aLDgYitDJGAeDLvibyoRNAKGcetkCUbBUgs
- a9PnIeDAx/4oN4A==
-X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Restrict Qualcomm SoC clock controller drivers to ARM or ARM64 in a
-consistent way with other critical drivers (pin controllers,
-interconnects):
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [High] clk: qcom: unmet QCOM_KRYO_L2_ACCESSORS dependency and !ARM64
+  build failure
+- [Medium] clk: qcom: unmet SAR_GCC_2130P dependency from
+  SAR_GPUCC_2130P on 32-bit ARM
+--
 
-1. SAR2130P SoC has only ARM64 DTS user and other drivers are
-   already restricted to ARM64 only.
+commit f5d53fc7ff487e3f47959841dfdfdc27b70db0e5
+Author: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-2. Other drivers for MSM8996 are allowed for ARM 32-bit builds.
+clk: qcom: Consistently handle MSM8996 and SAR2130P
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
----
- drivers/clk/qcom/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This commit removes the ARM64 dependency from QCOM_CLK_APCC_MSM8996 and
+restricts SAR_GCC_2130P to ARM64 || COMPILE_TEST.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 6ddfa451ad55..a05a3a853871 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -463,8 +463,7 @@ config QCOM_CLK_APCC_MSM8996
- 	tristate "MSM8996 CPU Clock Controller"
- 	select QCOM_KRYO_L2_ACCESSORS
- 	select INTERCONNECT_CLK if INTERCONNECT
--	depends on ARM64
--	default ARCH_QCOM
-+	default ARCH_QCOM if ARM64
- 	help
- 	  Support for the CPU clock controller on msm8996 devices.
- 	  Say Y if you want to support CPU clock scaling using CPUfreq
-@@ -1188,6 +1187,7 @@ config SA_GPUCC_8775P
- 
- config SAR_GCC_2130P
- 	tristate "SAR2130P Global Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
- 	select QCOM_GDSC
- 	depends on COMMON_CLK_QCOM
- 	default ARCH_QCOM
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index f127a3bf911a6..fc77d2aae3437 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -441,8 +441,7 @@ config QCOM_CLK_APCC_MSM8996
+>  	tristate "MSM8996 CPU Clock Controller"
+>  	select QCOM_KRYO_L2_ACCESSORS
+>  	select INTERCONNECT_CLK if INTERCONNECT
+> -	depends on ARM64
+> -	default ARCH_QCOM
+> +	default ARCH_QCOM if ARM64
+>  	help
+>  	  Support for the CPU clock controller on msm8996 devices.
+>  	  Say Y if you want to support CPU clock scaling using CPUfreq
 
--- 
-2.53.0
+[Severity: High]
+Can QCOM_CLK_APCC_MSM8996 be enabled when ARM64 is disabled?
 
+QCOM_CLK_APCC_MSM8996 selects QCOM_KRYO_L2_ACCESSORS, which depends on
+ARM64 in drivers/soc/qcom/Kconfig.  Enabling QCOM_CLK_APCC_MSM8996 on
+32-bit ARM or non-ARM64 COMPILE_TEST builds triggers an unmet direct
+dependency warning and fails to compile because
+drivers/soc/qcom/kryo-l2-accessors.c uses the arm64-only asm/sysreg.h
+header and AArch64 system register macros, and
+drivers/clk/qcom/clk-cpu-8996.c calls read_cpuid_mpidr().
+
+> @@ -1166,6 +1165,7 @@ config SA_GPUCC_8775P
+> =20
+>  config SAR_GCC_2130P
+>  	tristate "SAR2130P Global Clock Controller"
+> +	depends on ARM64 || COMPILE_TEST
+>  	select QCOM_GDSC
+>  	depends on COMMON_CLK_QCOM
+>  	default ARCH_QCOM
+
+[Severity: Medium]
+Should SAR_GPUCC_2130P also depend on ARM64 || COMPILE_TEST?
+
+drivers/clk/qcom/Kconfig:
+config SAR_GPUCC_2130P
+	tristate "SAR2130P Graphics clock controller"
+	select QCOM_GDSC
+	select SAR_GCC_2130P
+	default m if ARCH_QCOM
+
+On 32-bit ARM builds with ARCH_QCOM=3Dy and COMPILE_TEST=3Dn,
+SAR_GPUCC_2130P defaults to m and selects SAR_GCC_2130P, causing an
+unmet direct dependency warning for SAR_GCC_2130P.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261122-qcom-kconf=
+ig-unify-v1-0-6abaa7faf1c9@oss.qualcomm.com?part=3D4
