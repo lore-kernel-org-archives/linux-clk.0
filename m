@@ -1,85 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795364887;
-	b=cfO3UGSege3dkWcRpzZXep+VjIxUZXGMSIfINvsrr1ycBc9iWPon8zvOPakVWTIDYx8e
-	 xCkj9TElgGZTXLKV03jJP0fHvM4hvFQisUlvRUz+R+9rKafKRuoef+OyMQvIQD8BUjkFo
-	 D/jWSsf86lCQ6aTSvdU2u+cBPCuBGM0PL8Ut5Ot5nYsj43MlmlrpE7A8rh0H57DgE/tur
-	 E0jgb4knaodMaXCoXugG5BBp6CN+DemaKplf571NWOL7219hJzhizpoAuq8Q4pf914+jD
-	 vi+yBHQR+NtjcmSnxevvpmqRXGcLXoXPrE+tu9mVYEH1MQEvL5FO/7qOBy1AL8JIVrQ==
+	t=1795364909;
+	b=ESfXXc6a8LwS8zpNPrwj8IBilkhSJz/aSVs6yrGVSyDXyhRPKXkA2q3AH+fXOI9GjhAt
+	 wCCbyDodJngfY529cWx9fe6w8csZzTE8cYRZMO0D8YeE6UuTycjOjgtG1ji2cZHknFVsU
+	 k4e8rYbfvTHnfQ+fMG5oC3Eun/TMh7k1HIBk8nZNB1Ad3G7s29Taz+ph7pv/du/ao5lFG
+	 518Se07K2q4JYSiTlEqGZ990CMjB/9c7QuCXgRWUqt+ktCS+ONRdSNEGPCg4ZJDzrW60d
+	 kRJD+luaaD7k7SeSxqxTCZyQ1q6z/IfnTByn4DkOGMKs0L34fhSC1BscDgoynmstn1g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795364887;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
-	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key;
-	bh=Wmw9kMiHkHIkNvmveX/rGow32td0mN/vuHA/wKKeVqo=;
-	b=q2DDOgEpolPE6ZhexV1t3uqts8126I61BnZCnPfT1KxkoElJ7mvSXthrClaHpvDtJMkI
-	 qjymvsQDaMn+UxhVIzEwIpDa3LFm5apRoWM+b5jACMVpjA2SPB6wV2FZ9B47IbwEib/A1
-	 8W3V5W2g2A+CPobo+5Lpp6U4ICbDLPL/tJM0Mb7xObelUDjG+uVrO6Z300+smbBLB460w
-	 7s3IALA3BwD10cD1vZP5Y4wdJ+g5zuV+eXQvz7KCdaBs89SZRb2eNQ8lF73yuMu3qNf4j
-	 ktEnCINblHmHDF0t1LPottPyKTP1oaD2TY/W2XfGKL8Bo3m9Ll4ZG98HztrMqx36AmA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795364909;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=40ClnSdafu9GjCIqCxo5bRhBPDPdsGWMGd+K027J65g=;
+	b=0LPmQl1rO7tFASgdYDo9hp2IwyZbkfmbVCUQ2Xo3OIUB3l/6HWhffj5AjHhkK1l5ru9d
+	 GhL/00PnAopyry1uUuazASTWUFXEO4HTOqHnNHBV01+m095qG9NFXGI0pxTnTPjjfJj9A
+	 44r0Une8r7RhAEDvjTkmoDC7LBgwI+LPd4qiWvC7z0Q7/1D0U4wqNJiSo6a1mE5BQ4nQc
+	 9DGO4XCsbkHBDgzXGFqzbq36bZ982LGg/KDQvEnHpvBJ6OpYw0b2xbpw6tVnU+wfmBV92
+	 roTmHi5zWJeDyZJFu8MA1a9XqReuBaBJH2U6NtjX0EBmkfvAg3UCfUvPCRcDH5P4+aw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=GAl1Ng02;
-	arc=none smtp.remote-ip=209.85.221.44
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qf0VW35p;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D199A606A320
-	for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 16:28:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D199A606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605CE606A320;
+	Sun, 22 Nov 2026 16:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=GAl1Ng02
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-4a68190a2a7so2078873f8f.1
-        for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 08:28:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1795364885; x=1795969685; darn=vger.kernel.org;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Wmw9kMiHkHIkNvmveX/rGow32td0mN/vuHA/wKKeVqo=;
-        b=GAl1Ng02U0lZ/BOAyVR9esrJJalYpD6MAHcQ080WrV4nSsX4BPg7gAW9nCSibDtuXv
-         67r7hgP/tnpSzgJNuGUsVX6UfckzI5QDXfqsLikZTBUvsRwsERjn24WvZJSKLsMAbpJB
-         +SlvxJAIiLyAafb+jpZLHs9uarB2nYfIMtihwTEduAfW8sJ+SVQrgXEjHrhoOFnjr3oU
-         IXL7WIvCXlwte5iMWVr5O0M8HqqnwkpZfjsS21Rd/CGNHTKAcJkJgxkWPnrBdo9ECJpA
-         ydoW792lNzK0d6Q6m4QGCP9Cvrkrs3wX8H632OlFeHGp1QQbDktvCRgws+huU8H/hJrJ
-         GLFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795364885; x=1795969685;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Wmw9kMiHkHIkNvmveX/rGow32td0mN/vuHA/wKKeVqo=;
-        b=ut96x0vO+cEKUVHv2ImD9ilUkauGMCXPtrfMtgOAKRQEpJLFkVBnoZLjjp3GM4BRZs
-         O/9QymXAE1o/4M26sP2sbKcM7+7zSDEIwEPLGTpNcW0zRrPPrS5eWmkC0ZqL/p/B9sUH
-         6vv2DV/AeVMXk5Fp0BHEWqtxsZU0h5QW51/jiNWhixoUhbzXidwaUmzgTNe1VtA54BWm
-         vFstjJ5qVkhrIRyyqpiKXG9LykQ11MR+sC1wFj4sWQ9Lf8Cs/JP8kmQxh55pZPyTcNqA
-         gmJ1DEHhxNQCOdBxE7M9ujYI1/Ey1rsEvgfuknv/ZPONYv3UENKh+/qhrMx+tzUMx2Gy
-         9UYQ==
-X-Forwarded-Encrypted: i=1; AL+hErEaEW+PDEcZzuZOSUyIFmNTSuwpPfz3l6tPSjGWWMbpT7S3/y607a6v2VDCLL6wSq+FfesHAvBSw/M=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8wSyJedPpqNzAAry59woRzszJneJn6roNL9VCj4Yc4MCE9PFtZ
-	9xVE9+KSYnhEy9LFg9XH7pVQXB5jNXQAXSFHauxZjmqCMyfUqh35p4gxWOvAoT1Tb9I=
-X-Gm-Gg: AZFdTZcxsu8/yudWHw7FnbZJF09VdAn8f/wITVvJ7k7eO5Q42x+ys18Sle7HSZzoOId
-	Tfxigt+WzhW/lk9KthkgCLC0q1UEG38maajbhpufi/ublhaFOGr+hIb4jqy6wgoCDEmp8NI4Pir
-	/dcuEtrqE+0pe4YWFEpsEyQRPUKhJMF0utQ/kKdzNYFRgxMPcWVGmTdPOVTPi7/st7+lvEZNAOH
-	3RekUDicf8CyRIYO6+97cllIEZTRCnddsfiXFazRLDNeXSpjhLozTy0SII7pECI4QZfb7alSqp3
-	ZI0MeC7jRdNn2Se4YBm8iIPW1UEFNbcvTiGTb3Rnn/hCX39bK8j/L0xg9j/qjDzCJmC77OWfx7Y
-	Iw+j+JvNdBe15GZ4b2RFORunbUahwOQEMnsgnXxrh7d3PurI+PKdHWSOYRTS2V0o4RihGvuRERC
-	DtQms918NZvnRD0BQ/mFwytPDdq6QMhHykIt5rWZry9c1iQFBB4+4wR+HhRiwO+REg0PYtMh1hD
-	8fV/EvwKrS8ArrOsp+W524hrOL9lFdkhY4MNoJuLMrlW6JxIcFEcq3qvb9pUDyqu0YOXSWaQy4d
-	WX0gY6OID8cowmkS/rNgaKtF0oXyNrQE4SsdgUDbxWEJc3zeb5fnc+GCjceNqvXTwxHDzw==
-X-Received: by 2002:a05:600c:4584:b0:4bb:5de1:e90f with SMTP id 5b1f17b1804b1-4bb88819bcdmr188625935e9.31.1795364885287;
-        Sun, 22 Nov 2026 08:28:05 -0800 (PST)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6bb989b3sm17362811f8f.51.2026.11.22.08.28.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2026 08:28:04 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qf0VW35p
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 582851F000C4;
+	Sun, 22 Nov 2026 16:28:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795364909;
+	bh=40ClnSdafu9GjCIqCxo5bRhBPDPdsGWMGd+K027J65g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Qf0VW35pxlfhSwIUl8Yu6FaYKS7Um63Qojtwl1KmeEktxADjPWlimxyXka8Y4227b
+	 ps4DU+7B6Jvy0Nqkth7EcJGi2eoDaAiLV8uUY9lkWs1dRd25UTNbp0nMJY6D7WnYsa
+	 Ppf4w5Ulo4e/Jro+R7zqLR/ZL23oexQYN4Q7bzJmGrzpfaGXjcxaSm6MOlyyH+DL3b
+	 maJJzPtTs4jQZ9OVfhnQp9xG7DDUFHQVuMtYAXhkpYcufV3s2hJBhyleZby4x2+717
+	 MoY1v1bJv3836fh/fujc67YsrBTbBZ18dAIjhjlnbpj10nWFRfKPV2J4idGbyDJdq/
+	 WMbqUrzBGtWyg==
+Date: Sun, 22 Nov 2026 17:28:25 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Christophe Roullier <christophe.roullier@foss.st.com>, patrick.delaunay@foss.st.com, yannick.fertre@foss.st.com, 
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] dt-bindings: arm: stm32: Add clock inputs to
+ STM32MP2 SYSCFG
+Message-ID: <20261122-benevolent-industrious-deer-0c8bbe@quoll>
+References: <20261118-ups_mp25_clk_syscfg-v3-0-935de791a4ce@foss.st.com>
+ <20261118-ups_mp25_clk_syscfg-v3-1-935de791a4ce@foss.st.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -89,53 +64,34 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] clk: vc5: Enable PFD frequency doubler for VersaClock
- 6E
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Maarten Zanders <maarten@zanders.be>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Matthias Fend <matthias.fend@emfend.at>, Adam Ford <aford173@gmail.com>, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jerome Brunet <jbrunet@baylibre.com>
-In-Reply-To: <20261117-vc5-6975-dbl-v1-1-d332b89964dc@zanders.be>
-References: <20261117-vc5-6975-dbl-v1-1-d332b89964dc@zanders.be>
-Date: Sun, 22 Nov 2026 17:27:59 +0100
-Message-Id: <179536487990.2728475.4863245677002258982.b4-review@b4>
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=796; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=ZJo1a9C/BXLQoHwq5QdRmDm3Dr2nuwnbw9QvlGUmVRk=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNnMEkIprPauS8KnPmNqDMjIjI88ePDr3+Mfb/FWbyliP
- u/N71nZUcrCIMbFICumyFLDXS3+TlLry6zpOrdh5rAygQxh4OIUgInwejP8d5X+seNuku//lStL
- T6+5JXjxrSZfndPHrHkML8NvRxs96WFkOLIrofvAhoMF3V8UmQ2CzznGqURMLTgV9/632fmpk93
- 4GAA=
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261118-ups_mp25_clk_syscfg-v3-1-935de791a4ce@foss.st.com>
 
-> The VersaClock 6E family (5P49V6965, 5P49V6975) supports the
-> reference frequency doubler, but VC5_HAS_PFD_FREQ_DBL is not set for
-> these devices. As a result, the doubler setting is ignored and all
-> PLL and output rates are reported at half their actual value when it
-> is enabled.
+On Wed, Nov 18, 2026 at 12:59:06PM +0100, Gabriel Fernandez wrote:
+> The SYSCFG of the STM32MP23x and STM32MP25x SoCs is the provider of the
+> LTDC pixel clock, which it selects in its DISPLAYCLKCR register among
+> the LTDC kernel clock, the LVDS PHY pixel clock and the DSI PHY byte
+> lane clock.
 > 
-> Set VC5_HAS_PFD_FREQ_DBL for the 5P49V6965 and 5P49V6975. Tested on
-> 5P49V6975 only.
+> Describe these inputs with the clocks and clock-names properties. The
+> LVDS and the DSI don't exist on STM32MP231/233 and STM32MP251/253, which
+> use the same SYSCFG compatibles as STM32MP235 and STM32MP255. So the
+> inputs are listed in the "ltdc", "lvds", "dsi" order, and the missing
+> ones are omitted at the end of the list.
 > 
-> Fixes: 2bda748e6ad8 ("clk: vc5: Add support for IDT VersaClock 5P49V6965")
-> Fixes: d8473831066b ("clk: vc5: Add support for IDT/Renesas VersaClock 5P49V6975")
-> Signed-off-by: Maarten Zanders <maarten@zanders.be>
+> The inputs are required, the LTDC kernel clock being always an input of
+> the mux. This doesn't break the users of existing devicetrees: no driver
+> registered the SYSCFG clock so far, and the clock driver doesn't need
+> these properties to probe.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> ---
+>  .../bindings/arm/stm32/st,stm32-syscon.yaml        | 28 +++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
 
-Could please split the 2 fixes so it backports cleanly and make the life of
-the stable folks easy ?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-With that:
-
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-
--- 
-Jerome
+Best regards,
+Krzysztof
 
