@@ -1,99 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795304932;
-	b=SdDVeWtJAEl5fBqzh3yaaPfWuvrmARXunrKiBfyymN8yXUHQWzftiODP8iSyVXWVpuUa
-	 1jwYoJdGx4PBSsbD1BgqRDvHFqJw/yIKkVP/iBSuuYk7TmBWD9cBdMeiRNZOi3j4MCPoN
-	 yNKdRy3MIsqEfwRJGKgAjyJZ7LK7VhyHnkiGGE36vTFNnA3+qvVCqSMXXwkqqUzaUmQ4K
-	 589V81W7hflnksM6jNRwh+CiNkrc7nZ/050lzEB2ArkZMyFv7AXTtMSkn8P7ziFg3qJ6K
-	 61F2Yk//IZNuigXFCdJyik8oNh7z6M2OXay34vbGIZTawEzK6ZxzCUA7kkYJ2JKc6QQ==
+	t=1795315207;
+	b=KMisG4UFczZP80KlKoOYLdyC5zszx+i7QLqs0CDea9iskl0bANRtvaDDYoP3VNPEuvd+
+	 aAYvZhNMSD/hnRen3ahHKPZWfZG0QPuwZJ76XYZXbH1F10pmdsJNQpi0j3MHodb5Yyk7X
+	 LycI2QYd4iMDBaxnnb7/jRmdzqsVPF7tGNGzi16T8vwKvJWmmpph+DNoI5cp4Mu/1OxXm
+	 P8lgbA9Vye9ojtYGgiFJvyz6fzAuYCmnEdT1QP0d6Ksz/WGCN7zY2QI61cgxxje2fmtFh
+	 PxiwXspac3IxjCF7nubXlMegNxJFMw3pVdt3qsaiv0xDJET+re3WmfVShotQxJ5kwLQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795304932;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795315207;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=wM708HwhUcKpDxEYjydx9KDWixNA1iE81j9OUZhkFbw=;
-	b=VY9QF9Di+ruCin5gDxozcr+4Ex45K42iw+xMBOC+Z1iSuYcPiiiWGCCIHx2T0BEWCuUm
-	 f/uQeKV1NldxzhCW42T9TAvJdr/YNY+KQgPwIMwSWeyO/53ppKhhNI9mOmCJIwYX0MQiN
-	 EWWtkMIWwd5s6TMwrcDEE8ED4dCrQoevWvVKyNFVuy/6HcYOVVq4y3mYJAxfRMKO5Y2FV
-	 Q4uMFgN9EiHxZRaxzPwfhX8LqIMKGT7GKdd0WnDStcX+MfWhrwQfCnOx/aQigl4TfR5QW
-	 M7xP4mVFtwWa8a1AjLjuenfwkY1S9QL2l5VtxAKorn3JPglnHpM1m9Cb2Xyc2Rh23lA==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=PKya3YxXvPxdPz7Z0C1z6SRKNYNaf8lxnWH3lx3F6Ek=;
+	b=MiQh4IFO4/0HC/Q2U/+U8eHC2WRaKP3LP2R62d2IlPmljQRRmz+6tjWtNjzsIxvIv6HR
+	 Nztk4JxAmizVkd50QNTdlVOBehKVY5H+D80r0vHBqQcdQNV4CVoKWbigHxK+s5qr2IYQf
+	 L9N3Fhd9xmR3W+itKegM0iLSX7Mbbqm64dcwwmJwGh3xERFFYNgNbHTylqUS09oX3lRKo
+	 VoFCkjnIjrxlKZEF9T3aa7FIbTeOW/r2AG0dZrlkb7Ew+8Y/wWmSU4uwWEH2dW34bFlAC
+	 QBBSx8pp9X0EjHogFtlDEVpTxc22afJuJDV68/vRdD03a+bbvbloKyYURvriDw5ZhmA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AEi1dkvd;
-	arc=none smtp.remote-ip=209.85.216.46
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dmarc=fail header.from=mswin.me;
+	spf=none smtp.mailfrom=mswin.me;
+	dkim=pass header.d=mswin-me.20260707.gappssmtp.com header.i=@mswin-me.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=nMNK5Ugl;
+	arc=none smtp.remote-ip=209.85.218.45
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6951606A330
-	for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 23:48:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D6951606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A49606A32A
+	for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 02:40:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 39A49606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=mswin.me
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mswin.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AEi1dkvd
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3b09a83d12aso1570003a91.2
-        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 15:48:51 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=mswin-me.20260707.gappssmtp.com header.i=@mswin-me.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=nMNK5Ugl
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-c513a854320so375221766b.0
+        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2026 18:40:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795304931; x=1795909731; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=wM708HwhUcKpDxEYjydx9KDWixNA1iE81j9OUZhkFbw=;
-        b=AEi1dkvd1iAbx9IB0IMCR3UE9iO988yBfhfkjx2i9mjncbiEHVVBFfXZ55Siz7OLad
-         hKHygBI5EWiua/IGIhAo+QKpeDXT8b53qhFXdt7p7s7V/9J9qP7c1BMuZ39aeIz1bNMp
-         Q5phb+V2Pyo6/7Ai2Xa9ooMuCCFBEHhUaBnFWlAxify3gS+UOZTiTfDYlkdkCkW0uCf3
-         AJwvk0btxPHVDq4GCveTblWNKSY5m7900GqJulzpo8SuxUWx2gSZMhJIgY+ZzmGhwTtT
-         p5XgjLG4heBRdLTVV1CR3Ksn4UjSIq4gBcvaBrwjndr8vwfNdrxDo95yzhO04Xvct/wG
-         lvAw==
+        d=mswin-me.20260707.gappssmtp.com; s=20260707; t=1795315205; x=1795920005; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=PKya3YxXvPxdPz7Z0C1z6SRKNYNaf8lxnWH3lx3F6Ek=;
+        b=nMNK5Uglm3oSjscVzrRVwYpVzwUcFeqH+R9VCWRiY03isTCMYcCfLyfN6aoOLdTq3z
+         rpOUbiiz/Y6TIT4y5YnwKh/6iJd3DJP0FfCWAAZPwbvx8j7HikkKC7e9DRegNFuYeDwY
+         /JV2B1O1YcXy6xxMmQIlcsHxgXrP5pavTdPcLJEukIYO10xfHtBb7t6UimVQ24i0izuC
+         cCROVhvbNXk5NLVPgnZUSxZL3dEb+nxktf8aDfiYuBR5qxF0RP8+O2jdrz02vjllVHMP
+         hTjRloH4GbNOB19H7RL5gusClYBLQ6tNGTatl59RZBCG0RvpzhbBnixNQuiEEY1KWdu6
+         Y3kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795304931; x=1795909731;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=wM708HwhUcKpDxEYjydx9KDWixNA1iE81j9OUZhkFbw=;
-        b=Ts85tSIWkSNeV/kGzIJ7BTe/Hu1Vkc2HpD7Da/OP7USo/YYIkYIRRyiKdcWBAX0oRL
-         XCYNgIP58ack99a5e15c7kuWrTEWzY7WyjkZK/6XAJBkui+1mc9TxFpPPW2eKo6oHGq4
-         Ul+54Im7R6C+irpeIGBVQBdUfcMUSQhKaOzVjfdjq0rx4s3FftpXVlQ4+lvxC+3EP/20
-         s3OTy4NaVp0f3TJbKs11Ws9BEKk9iF2yJDQ9WNZDlNOw3KQWlhMQMPjOLwqhLTgG+34p
-         VygdHWIUSGk5zgv5Cnf0C060ivYSSy5xP4YdtORhUIN24fb2iQI0Cc8uqML6iCgmlBab
-         03rw==
-X-Forwarded-Encrypted: i=1; AL+hErEYphON+cyKlVhsbE+RjXJ/WelQEhCV/XIrer5WHB8eBROH0aKz/2mhbt4S0EgevftcX8BXKbXcOmU=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+o1m+uhPWwAYMFnTKn5XNMkmSoZ1sHMJmWn8jIXF2JufvWy/jK
-	56cztB/hk06CYlCzjj+lx1u94WkvLUTStgY4cDGA0RRWItej57tJMzLa
-X-Gm-Gg: AZFdTZe/bEmZLZifWi+FEw2r5EXI8PYN5NSqSrjhVNqh7WJzxJaXkXV6mAjFXJlduHn
-	l2dOkCho5ix6OAYFOP37L/bBeRxjlulqBCna4cGeFnPhUcZaqRr90fdPo0LrfXurhWaVRcjP2n9
-	CNUl/SBTDeFtw36vZHqDbGML8hFXi+A2tK3KctZoOmhWMj64hCp7iY3kG+DLsUI+IODj1x08QNK
-	kxmr2d4L5/QzSqSakSiSdrwRa3gABLqH2ElFhAZsEj5BdeYxEqi1DjvBf22hkuwCLFBXDHNXfvi
-	tLXZY3d92uRHxmi3BZw2tqhur0c9DH7Ba3tKBWDWn8SmPj5qXSKqAp+Uew7dj+Xw66r6s5FEvyf
-	25C3gCIlVu5uEYcQUfhq8SFZa6V1pCc4xbJuHp/tgltAesY7IVo63O33P6bPYQX4YVVVr/uW7HB
-	uC23J4uxAzqzpuMF4TzqmV6/ll2+EWBwU6MWpOAHQKFFJEKgOa0h8YhqTct5Y+iPGtMMGnKT8Rl
-	85XqRfTxdpRQOFt8cSBMMVkWYMfqhEZ5+H4mYFhmoI+AS+rMqz4gDecuVec9QrNRJusPndHq6SF
-	fziy7W/LYN5SNFlw+2IUjZePJ80=
-X-Received: by 2002:a17:90a:d2cf:b0:3b4:1714:5bfc with SMTP id 98e67ed59e1d1-3b41c9b9dc1mr6761492a91.61.1795304931081;
-        Sat, 21 Nov 2026 15:48:51 -0800 (PST)
-Received: from localhost ([2001:19f0:8000:4ce8:5400:7ff:fe0e:e6b2])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b41abb1b66sm10532985a91.1.2026.11.21.15.48.49
+        d=1e100.net; s=20260707; t=1795315205; x=1795920005;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=PKya3YxXvPxdPz7Z0C1z6SRKNYNaf8lxnWH3lx3F6Ek=;
+        b=rlTO8fybFjEeYFRuLDLNR6LLWoxfe6LBB/kpO92CjaUGBjNCDfsSHeewgXkWWfCYZO
+         VCjFFO2poHy/WRAYS1r0U/23qtU2dOe2aEhOVU3UqrRlaGibsgtADMkF1GJXJSZOvz6C
+         e2qALKLggekuk/SDb2iOT8Wa+p4m/WDeziwKH2uooKnvWAOvYMjffAwo0PpofdQ6ls4k
+         IA2vIezN1OYfruxtHpSuERM6SOlN8VMF+SSQkUTpjvJaE4WBWnVoCTXev11iIpT0T+Pf
+         ZNOAonm0c9SzaKbyZ9m8fJH6DxkqiIele3LsV4CTleGKzVm8SzS6O6u6+YEbfj+6oh5p
+         bAIg==
+X-Forwarded-Encrypted: i=1; AL+hErHJpC7r/yfkyBAH4XJVt25NgBcTNuSGokG5a5tyGJmrCFjmlsUy2YJGYRbLXRNu80cQ6lA/pSYtlvg=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+dWw30JqWJs5iJ0kLdNQ9ow7S44p11bmL9eKdDWktWTZtqhmTD
+	9T/UhAbBo1idK5bS3frQD6Q7TdwmsbMyShB2VskOOE6DuelQLZSR10yY2u0CBYbUNfs=
+X-Gm-Gg: AZFdTZdRfKRVo5QSwH0dJk6KJcitxZ+ThNR/JZ4zs5Z0YYKR8wl9HhUzIqb9/SrZcxQ
+	i5xrJh41V0tsbLnfS7++V4wSfYgSlJc/TtbBxG59gDvV5EDnpgBySuKRrQhXBQ3wPPi+CVXaTCt
+	pgf2VTKpbvwDXq/EFc+Ab5rchiapxlCcEU+bSc7h7FqeD0MElBGk8LE61Faq9ep0e3ocZjQS2Pp
+	2LGBG8OJynHbLcu87e963LkK93FcBStPd6pSmQCV2JWO/xKDMGzkfWr1oUCExbfRQkFBGd7hoY+
+	TkKlDrXDSyBSxruaLS4xcYC+Ls+uYf+WouJBxiEoUe/EBgnof8uce57+3nINcoc1QSc3x7608pc
+	uuaNyGcY7ZzYsa0ET6Itl23xAUYpTUwbnqIgJwVCbYRCglAdK5aUKEXjMx4+SMEml6CyNATTGLN
+	O1qG/99J7I72Uefx66q9sNcsILVPEiKsRHZ+bmsYms4GrscJDzXsurRykUstcGkB7jXA1C+WUow
+	c2rmD8zdJLL3aQFUkLjsgIy8wmI6NJxN66C77TcCol/UuGUZnD2AGSJLK6JmYSUF+h+b4Se33is
+	1E08cH5AXVU7q6Hkp/GYJGJ+Zo8wKzt4zC4h
+X-Received: by 2002:a17:907:a890:b0:c41:55b4:d88b with SMTP id a640c23a62f3a-c513ab14402mr690249566b.43.1795315205485;
+        Sat, 21 Nov 2026 18:40:05 -0800 (PST)
+Received: from zephyr.int.serkovo.ru ([95.135.208.171])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513ae68788sm258432866b.29.2026.11.21.18.40.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Nov 2026 15:48:50 -0800 (PST)
-Date: Sun, 22 Nov 2026 07:48:17 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: gaohan@iscas.ac.cn, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Chen Wang <chen.wang@linux.dev>, 
-	Inochi Amaoto <inochiama@gmail.com>, Yao Zi <me@ziyao.cc>
-Cc: Chen Wang <unicorn_wang@outlook.com>, Han Gao <rabenda.cn@gmail.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, sophgo@lists.linux.dev, 
+        Sat, 21 Nov 2026 18:40:04 -0800 (PST)
+From: Roman Linev <admin@mswin.me>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Abel Vesa <abelvesa@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] clk: sophgo: Keep SG2042 gates listed in
- protected-clocks enabled
-Message-ID: <awIs42O_vJN3gB7l@inochi.infowork>
-References: <20261122-b4-sg2042-efi-rtc-v2-0-6d087e03e4e8@iscas.ac.cn>
- <20261122-b4-sg2042-efi-rtc-v2-2-6d087e03e4e8@iscas.ac.cn>
+Subject: [PATCH] clk: qcom: dispcc-sm8250: Don't park mdp_clk_src at registration
+Date: Sun, 22 Nov 2026 05:40:01 +0300
+Message-ID: <20261122024001.375239-1-admin@mswin.me>
+X-Mailer: git-send-email 2.56.1
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -103,77 +99,89 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261122-b4-sg2042-efi-rtc-v2-2-6d087e03e4e8@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 22, 2026 at 02:18:05AM +0800, Han Gao via B4 Relay wrote:
-> From: Han Gao <gaohan@iscas.ac.cn>
-> 
-> On Milk-V Pioneer, EFI runtime services use I2C0 and the serial flash,
-> while Linux drives other devices behind the same gates. When those
-> devices runtime-suspend, the gates are turned off under the firmware.
-> 
-> Mark gates listed in protected-clocks as critical. Unlike qcom, still
-> register them, since Linux devices use them too.
-> 
-> Suggested-by: Yao Zi <me@ziyao.cc>
-> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
-> ---
->  drivers/clk/sophgo/clk-sg2042-clkgen.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/sophgo/clk-sg2042-clkgen.c b/drivers/clk/sophgo/clk-sg2042-clkgen.c
-> index 6abc2c973c49..65ab18f701e1 100644
-> --- a/drivers/clk/sophgo/clk-sg2042-clkgen.c
-> +++ b/drivers/clk/sophgo/clk-sg2042-clkgen.c
-> @@ -840,6 +840,18 @@ static int sg2042_clk_register_divs(struct device *dev,
->  	return ret;
->  }
->  
-> +static unsigned long sg2042_gate_flags(struct device *dev,
-> +				       const struct sg2042_gate_clock *gate)
-> +{
-> +	u32 id;
-> +
-> +	of_property_for_each_u32(dev->of_node, "protected-clocks", id)
-> +		if (id == gate->id)
-> +			return gate->hw.init->flags | CLK_IS_CRITICAL;
-> +
-> +	return gate->hw.init->flags;
-> +}
-> +
+Parking disp_cc_mdss_mdp_clk_src at registration time breaks the EFI
+GOP framebuffer on the HUAWEI MateBook E Go 2022 (gaokun2, SC8180X):
+the panel goes dark as soon as dispcc-sm8250 probes and stays dark,
+while simpledrm keeps rendering into the framebuffer.
 
-I have a question on this: since a procteded clock should not be touched
-by a driver. Is this logic necessary? I guess this is a shared clock
-topology between the kernel and the firmare?
+Use clk_rcg2_shared_no_init_park_ops for disp_cc_mdss_mdp_clk_src, as
+was done for sc8280xp and x1e80100, so registering the clock no longer
+reconfigures it. The firmware framebuffer then keeps working until the
+display driver takes over, as long as its other resources (MDSS_GDSC,
+the MDP branch and the display PLL) stay enabled.
 
-Regards,
-Inochi
+Tested on gaokun2 with an out-of-tree DT whose simple-framebuffer node
+holds MDSS_GDSC, dispcc-sm8250 built as a module, and clk_ignore_unused
+pd_ignore_unused on the command line. With the patch the panel stays
+lit; without the patch the panel goes dark (v7.4-rc3 and v7.3-rc2
+based kernels). Built-in dispcc-sm8250 and the unused-clock sweep were
+not tested. This driver also serves sm8150, sm8250 and sm8350; only
+sc8180x was tested.
 
->  static int sg2042_clk_register_gates(struct device *dev,
->  				     struct sg2042_clk_data *clk_data,
->  				     const struct sg2042_gate_clock gate_clks[],
-> @@ -858,7 +870,7 @@ static int sg2042_clk_register_gates(struct device *dev,
->  			 NULL,
->  			 gate->hw.init->parent_hws[0],
->  			 NULL,
-> -			 gate->hw.init->flags,
-> +			 sg2042_gate_flags(dev, gate),
->  			 clk_data->iobase + gate->offset_enable,
->  			 gate->bit_idx,
->  			 0,
-> @@ -900,7 +912,7 @@ static int sg2042_clk_register_gates_fw(struct device *dev,
->  			(dev,
->  			 gate->hw.init->name,
->  			 gate->hw.init->parent_data,
-> -			 gate->hw.init->flags,
-> +			 sg2042_gate_flags(dev, gate),
->  			 clk_data->iobase + gate->offset_enable,
->  			 gate->bit_idx,
->  			 0,
-> 
-> -- 
-> 2.55.0
-> 
-> 
+The cause was localized and the change tested with the help of an AI
+coding assistant (Anthropic Claude).
+
+Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
+Signed-off-by: Roman Linev <admin@mswin.me>
+---
+
+Notes:
+    Testing (HUAWEI MateBook E Go 2022 LTE, SC8180X, booted from USB via GRUB
+    with an out-of-tree gaokun2 DT; Ubuntu userspace, GNOME on simpledrm):
+    
+    The DT describes the EFI GOP framebuffer as a simple-framebuffer in
+    /chosen with power-domains = <&dispcc MDSS_GDSC>; without that holder
+    MDSS_GDSC is powered off at dispcc's genpd sync_state, which also
+    blanks the panel independently of this patch. With the holder in place
+    and dispcc-sm8250 loaded as a module (deferred_probe_timeout=30 so
+    simpledrm binds after it; clk_ignore_unused pd_ignore_unused on every
+    boot, so the unused-clock sweep never ran), each pair differs only in
+    this one line:
+    
+      kernel                   stock dispcc-sm8250    with this patch
+      v7.4-rc3                 panel black            desktop visible
+      Ubuntu 7.3.0-15 (rc2)    panel black            desktop visible
+    
+    In both black cases the kernel log shows simpledrm bound to the DT
+    framebuffer, MDSS_GDSC on and GNOME rendering (KMS readback of the
+    framebuffer shows the desktop), but the physical panel stays dark from
+    the moment dispcc-sm8250 probes. Only the sc8180x path was tested.
+    
+    Prior art: Val Packett's downstream linux-qclaptops tree carries the
+    same one-line change for the Surface Pro X (commit 88aee348d602, "mostly
+    for sc8180x"); I came across it while researching the issue, next to
+    the merged sc8280xp/x1e80100 fixes it mirrors, and did not find it
+    posted to linux-clk. This report is from a different device, the HUAWEI
+    MateBook E Go 2022 (gaokun2), where the failure looks different:
+    MDSS_GDSC is held on by a simple-framebuffer node and scanout still
+    stops. The tests above isolate the parking as the cause on two kernels.
+    
+    Tool use: an AI coding assistant (Anthropic Claude) was used to
+    compare this driver with the sc8280xp/x1e80100 fixes, build the test
+    kernels/modules and analyse the boot logs; the change itself is the
+    one-line ops swap from those fixes. All hardware observations were made
+    by me on the device.
+
+ drivers/clk/qcom/dispcc-sm8250.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
+index dc62eb18de..4a94b4c5a9 100644
+--- a/drivers/clk/qcom/dispcc-sm8250.c
++++ b/drivers/clk/qcom/dispcc-sm8250.c
+@@ -564,7 +564,7 @@ static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
+ 		.parent_data = disp_cc_parent_data_5,
+ 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_shared_no_init_park_ops,
+ 	},
+ };
+ 
+
+base-commit: fbfe0c4beecfbd0e2958d91e5c95ff189bc489a0
+-- 
+2.56.1
+
