@@ -1,71 +1,64 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.11.138.130
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795387860;
-	b=h+PvD5PF7NAIZCvvVL8BEilZxsU4l95RxiCaJEwqMjP3s6QFXNqRm+IgAQtcWrd6XRHK
-	 gqprVRbjRNAEPSpWLv8THASPqvqgyfdo6MI0BzuVrZO65vRxLQa8j5KuClKA+lagwiwrg
-	 fhVv4WG4/DFdT9l12QHv8sa/0izHd0TQhs7Qm2JhYKJ0naJWT8cO8C4eIRPDZ8H7SMvYR
-	 OhaqlTeaDHT5+WBwWXlXAUMJ6wJx6w70bcYiHGIzty75P3/Pio9OXFkQr4hm0dx+J8C6o
-	 7CDJZa0NflA5h5cL/pIW8RNhJUW0PK1bvC3b90l/grdedD9KJ0p7Bd+4j8QpFJSyQkQ==
+	t=1795388816;
+	b=ZiNrNQG9wvsa9xj05BeMDWdcptE6vwFJYu2vOBj2qq04Q9XvLk+D4dH7KtOt+46oJ+Dw
+	 7t1TjxHJroclVWMk+3BnEyKktqkMHMTphtiPcDq3gH61Hchbnzih0DfsXu360FevWman2
+	 ysFGEz7K/JGBR/oAnljOtqvz/Vpjsiw4XhPsv50yKOdsp3Uwc7WgfQYopZBE9hVUTUasU
+	 JQ3K70uq8w6mGUWYA+OWRExE502hJ054Na3tg6f5gNaEK3MHdZ4hUe3+3KsQ2yhvhaj66
+	 QR2AGYSGh8KOQBi0yY4AcklUGbhyYB3JXyplAWANjI8jYnKz15ZwNL0luIdqznLG/sQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795387860;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795388816;
 	h=DMARC-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
 	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=WDxhkF33TpclfX5h060G3+KBXmy0Dwtz0cCnAQsQB6c=;
-	b=of5G8NWZfaGnRRakg3Si9RhBthcCpRC8AXGa9QMvUwarcWGLTgfs7/Mmc2sSVkXBz7N+
-	 aZTXfXAVtQT4k3Tyr+NNH1m/LnjYsUQc8y4Y2BiOi7S5xT1KcI028B9WGKeSn7GY3shXL
-	 h+W1oOdnOd7muvIQWCMegfN2NiKRTZOyGH5RLHB+5QQ0pv2+Apmt+WlyAcMAqb/jKyQsr
-	 W+EqDrUO8Z81JwhxcSVR7UFFkaGFzHqsJd3g+1n/KcPECn5h9ZmqnIDm+PsnbCOpbAh+/
-	 UMhJT8dhieAhzC166sryc/IKJn56pHEAMhg1wF+iAk1Te7A0wUfGl80ES7xFnCGw4xw==
+	bh=jPHQU+9wXfFcupAO4vYQAzpuQPGZ9v1Qdy5LLuFL8Ww=;
+	b=iPgIRd/vfPt6yMyTngTXeSc2MBI8JrgSuljFAiO+kg0mYJ87WCVbbxpIGn8I0/58Hqu5
+	 tfwdRmouApK5D+IPSnANKMd4Dd3fmIs+XiMIU33G54CgdqGVzZw6ecGupudaHvodpOSEq
+	 QMtWHsJOAQCT9/xnmOgjtTk0+x4XN628Bh9yt/nyKH65OhOxcqjdjyQRCN/0mzz66KnGq
+	 yGS/lzUqNY/mm6JYn3rchYsYc4NpYbZO16i4iFvJdYb8xcbo64LP8os3DBlX9P9/5iNYF
+	 3eSHhEPjMshsj2snx04u78UwuKx5+gDQMmBSVyzeO2l/8xI22ehKnHHyfGatCfl8fzg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=sntech.de;
 	spf=pass smtp.mailfrom=sntech.de;
-	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=KhwzlGAA;
+	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=A4Y2b49y;
 	arc=none smtp.remote-ip=185.11.138.130
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD4E606A338;
-	Sun, 22 Nov 2026 22:51:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0AD4E606A338
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466FF606A31A;
+	Sun, 22 Nov 2026 23:06:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 466FF606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=KhwzlGAA
+	dkim=pass (2048-bit key, unprotected) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=A4Y2b49y
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=WDxhkF33TpclfX5h060G3+KBXmy0Dwtz0cCnAQsQB6c=; b=KhwzlGAAxWJcLMcTRnCExkVRgc
-	njifOQ+uyKTCfhVBAeTjEAjUALzZR3ZUTU0Snq3xkM9OFaJXVTaCx4LrrK5oqreJfpxFRfKmrtPWr
-	0wVpeV8DXCjByDy/25NfAsN5asixOvb3IaWqVE7wLDqUXhL9aKcmceoBRJ+mlhhG7/TMY1vke/mLp
-	SgsnzAeF5cr1TEe+s5zQytZHpYTmXEFH5x/jcUYhtR0mx5tG+IkV9H+uV2IqEzejbz+qq+3MkTdDF
-	lDTTacG2PdBiAYQsVVlwmIAIeEiAJA3LezixGQoYSvTom/O8FbL4wKM12stuXj0ocrx1C/JpPhUaQ
-	Liteyshg==;
+	bh=jPHQU+9wXfFcupAO4vYQAzpuQPGZ9v1Qdy5LLuFL8Ww=; b=A4Y2b49yIgBkWlFP6buQZN01jp
+	J84dV9WXuEMPn9lEjWR0wjYVK9hL/pkSMDVBM6uSB9Zvqt9WrdoDocm2A/J/uLoKuRvoxAVQlqoLr
+	BQSVfFrM5e3/XvrqQ0EEJkGgQk4vbqwae0yZMEFDOoVOniVUwr7pOi07tn4OrsHVzohxqAsGXrWEE
+	7MPkF92hkToFvDt/GvWdq451N4ryis4zLAM4S0o5ha6clmYl7TuolEckpxt8BlWulm7zmZpT4lwce
+	44rUJiOUe4QTP+hH5EgJPE7PBIkOQuTQnAKxiiAN5lC56YesVfoq9ZLuJYfJ9ttewLbzErkzgml+8
+	OYTATdhA==;
 From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Liang Chen <cl@rock-chips.com>,
-	YouMin Chen <cym@rock-chips.com>,
-	Finley Xiao <finley.xiao@rock-chips.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	=?UTF-8?q?Yal=C3=A7=C4=B1n=20Can?= <ylcncn@gmail.com>
 Cc: Heiko Stuebner <heiko@sntech.de>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	kernel@collabora.com,
-	Dragan Simic <dsimic@manjaro.org>,
-	Detlev Casanova <detlev.casanova@collabora.com>
-Subject: Re: [PATCH] clk: rockchip: rk3576: create proper platform device
-Date: Sun, 22 Nov 2026 23:50:29 +0100
-Message-ID: <179538782489.3150822.15047892656895127141.b4-ty@b4>
+	Brian Masney <bmasney@redhat.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: rk3066: uart0/1 pclk comes from hclk_ahb2apb
+Date: Sun, 22 Nov 2026 23:50:30 +0100
+Message-ID: <179538782486.3150822.15627188420950858780.b4-ty@b4>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261112-rk3576-clk-platform-device-v1-1-2f3ac9f09403@collabora.com>
-References: <20261112-rk3576-clk-platform-device-v1-1-2f3ac9f09403@collabora.com>
+In-Reply-To: <20261030073638.164388-1-ylcncn@gmail.com>
+References: <20261030073638.164388-1-ylcncn@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -79,24 +72,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 12 Nov 2026 03:36:40 +0100, Sebastian Reichel wrote:
-> When RK3576 clock controller support was upstreamed, it copied the
-> vendor kernel's logic. That code makes no sense as it contains a
-> bunch of unused code (clk_rk3576_probe is never called as the DT
-> node is already initialized; if it would be called, the clock tree
-> would be registered twice).
-> 
-> Let's switch the driver to use the same style as RK3588: Continue to
-> initialize the clock tree early via rk3576_clk_init executed by
-> CLK_OF_DECLARE_DRIVER before the device model is initialized, but
-> don't mark the DT node as processed.
+On Fri, 30 Oct 2026 10:36:38 +0300, Yalçın Can wrote:
+> On rk3066a, uart0 (0x10124000) and uart1 (0x10126000) sit behind the
+> AHB-to-APB bridge of the cpu bus, as on rk3188, but their pclk gates name
+> pclk_cpu as parent. Nothing then holds hclk_ahb2apb (CLKGATE_CON4 bit 9),
+> so it is switched off as unused at late init and both UARTs read back as
+> all zeros: 8250 autoconfig reports PORT_UNKNOWN for uart0 and a serdev
+> Bluetooth controller on it (brcm,bcm4330-bt) times out on every command.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] clk: rockchip: rk3576: create proper platform device
-      commit: e8a4084724e114295aa3a077d9458726e7ef4e90
+[1/1] clk: rockchip: rk3066: uart0/1 pclk comes from hclk_ahb2apb
+      commit: 5138b09d66f93e6e40503043412e8295142570b6
 
 Best regards,
 -- 
