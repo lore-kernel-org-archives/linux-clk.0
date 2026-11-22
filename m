@@ -1,85 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795362241;
-	b=OYwqJFIqjB0aek50tTuPzSOWlg2KIU+144PFxT9Qp+jBbCuJ3s6nAALlBTP+HjW/L8NB
-	 yA9/i8nhyLQuvlRZqGnN65LNhXbnbfzhtQ6OkIPZl3paWd1MQCSD8O/Bls8e5h3yGPUKo
-	 SfdJ8MhhYIs4PUK7TGi7I5yu12zEt/GdvJJp7K4QHkhGFQIo6S5N2mMrrpCVlU0l0KRYp
-	 M2ArAt+y153acZ6bQRbVtvfXQd2yLTEhTCieq4Fs17SqkIlmDfgyc/cyS+bYZ6P4eUQB7
-	 SLCUzW/XDb2jU7EZ9F/vJuozvPuw8ZGagzt0UzEtwORznAXLwx72w7F/LvUc8tGWqDA==
+	t=1795362518;
+	b=l7oC/WDJ+tI7tIAP30Q3ExjsWTiPdKa8rZGzIgzRzmZGdF8stZdeRScj+QAywTkQzr9h
+	 EKp0V2fjHdSqWnDQyXR1e3nVmTR1RX+5I0tYW//eBnr9XAZw0hDY0T6evhVAVbfsKL8j3
+	 ZdXOqccR90xpjyjXY8kjqfCK6LofmoFLPvy/9SYqn9HlVOPmHpky5a2tu7jBDrSBp3XHS
+	 aPWEp1n5B4jLUOjHhYQUnlcD0cQ6HA02xMrB6cn3dFyI9H8ZNekydPURBv2Lz0LeEvmOU
+	 al7g7r2/BQUBXhXgrwLNHTxO6MFKU1NlXg6dJMSPdPoTxGEEzkLeyGSXAQB0Wz9KkDw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795362241;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795362518;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
 	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=d9py8oPfvfLRmuFbfYsLe+2KtIS5cNH01MMiHS00tcM=;
-	b=qiAsaaGvQ8POpt/AQBZelNHPQkRb1TiRQ0/PJxah7c3FIt0+uK6d9ax4H1VvHkk2+kTD
-	 Sij09dTMHEJf8gjWcQxvFiD+5T9oKnY1DU5w2BKM100FczOTorJ2O2KHWm3k8kUCWQEAW
-	 OhjHTOSBk1UlHaxaS11tjVO+zdaCsLc2jWvcoxHw+yIFG/ZB3AEmD4kij1+D2NcvR8t55
-	 HH3Dyu1bjCgHjYWOXzd0FS+OeFZS5SWvqSkDV9YkAS1kdDJ34NB5qj0StmVNUIer5+uKz
-	 5wXdk26LPevN6/DCB91SkB4NCWy0MNkpttZIEN0QibeDLkxldP92+7WMsIxhEkayfjQ==
+	bh=OU/4coRrYrYEMovrLhotSeDgFsbxxM6k/RzNG1xiMj4=;
+	b=5c6UfN4RTFm62/Y7LKwbgeosHljOAdyF8443a6x+XOpRjiy+n7zmSoZW2AepZjryV3Wy
+	 TQVZZdpdMNawFZgVm/VjqbdjbBgTv5f1tAue1ip+BA9MpOtR2pulc2NB+PUqwSpcDbl3D
+	 nOz6x4+713QQA62TstimF6Y/MAPKj3wNT8Bz0xVMlUTjHfnvC01WhyzXo7XvDdvMBHIX9
+	 A9gAUVjOsP6gIuzF6cS3LocINEweSK98Y9DumBH+Yv0n2IaIHQIycjmkefpQR+G7wC/Fx
+	 wPAoqs+sNRu+u4YgVYXNHIWbyiNWVv5uz/AnESqONzELGolni6vSlnWEvI/1CbhzbBg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=QB1NahZi;
-	arc=none smtp.remote-ip=209.85.128.51
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=T8rODVA7;
+	arc=none smtp.remote-ip=209.85.128.45
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8B0606A320
-	for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 15:44:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4D8B0606A320
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD10606A33A
+	for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 15:48:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9DD10606A33A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=QB1NahZi
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a207b02a2cso17177125e9.1
-        for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 07:44:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=T8rODVA7
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4b79502c27aso21484755e9.1
+        for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2026 07:48:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1795362239; x=1795967039; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1795362516; x=1795967316; darn=vger.kernel.org;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=d9py8oPfvfLRmuFbfYsLe+2KtIS5cNH01MMiHS00tcM=;
-        b=QB1NahZiK6TorK5WMu/AnSDAFcm8/vwmmHq90ZmqMPzL/O+gilg8DS+BIDsYcPwVDK
-         ZaAfr5L7MTW2v2aeFIz12nf6mWQsz+ep7qDGd9PDQNuoJG4rEiAuvkh5ndtg8Gx404cm
-         ifN/vnIfqb2xlPYSY5W/nGj4BqV+3Y5DLJNJ2pKRqOlPiI0qy/v16GVyiH7uaV73DXPC
-         dWIdT2A3gRxBh9llKhWX9O9PhgxhkU3R9p6Ct8uDIusoAlnRaMcxayYdO2CyywIgCn28
-         5UW9OXCT/EEhopJS2VSC/dyIdbWB7RMgVmT85eQbwkma2l97Xac+Q4ncDnPEcw7XhOKQ
-         QWfQ==
+        bh=OU/4coRrYrYEMovrLhotSeDgFsbxxM6k/RzNG1xiMj4=;
+        b=T8rODVA72roFxKJBCaacctLGEbghLgA/GVqVqHKVnUQy8rhTB3ZiOVUeTaLGepyBsG
+         BqFSxGGQBV/vpj/pnNuwSgnyM6VLCFjZO/35mRNrhytEmjUyA659Te8klU7vuxGe2MC/
+         GDQt8x4feyPEMCNqKc8bQHc1WxuQD88LS8xQd7LP6sFpXFGvD54BjGuGA71QPYjelpCK
+         pmXSHnAo8KOalk+ZkMz/yVWa47n8ZJlAlhBlPxCDSPdm7dnaZq4ED6t+AKYK+XX6LHW7
+         K9Lv+PnTwIUa2VjyTNbYRv++dQzLuZIf07RRWtZsse/LEN8GAzseAXDlpMXCA+2IrZfp
+         jV0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795362239; x=1795967039;
+        d=1e100.net; s=20260707; t=1795362516; x=1795967316;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=d9py8oPfvfLRmuFbfYsLe+2KtIS5cNH01MMiHS00tcM=;
-        b=UURSWMWAH3vfskBBgWajNkiWEpZ6pHYBGAl2lQY/3tr4rpyAp23h8ahFSyqBF2axfe
-         1d2yUksMuzRsQoApqYpYXG+fB8UV4vpGGVehPmcmJ8+I6CpQWzY38u1J8FDaJ2iqEtUd
-         ntNDrcrR1Drb5Ch6GT/Ip+zUbICY5fxkkQ+EkpfffbYd4HdajtI8zMAHEjxbE+TdxIUw
-         8U+AkAX7nXqjpjeTkyxOS5S1I0k0FMtN4R77Kf8CEgMwYzsmuSvxp1PkODsP+1lXF2ZN
-         TJCKmb6TqcYp1tOKzwJJ+ZWPCoq7xY3uOW3XnKMp580R17nqChqgRJ+Zp5Ym7tCQHLis
-         jb/w==
-X-Forwarded-Encrypted: i=1; AL+hErHZm+G9vURCts6JRo3jCxiffIgFi78Ini/skL6j1ZztGDApQ2n+U85Ir56gYcHXtv2UnJZsypJn4fI=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+9v1FjcXj/u1r9XqHxuTz262jYl1W6kNfjyNqNVXhhT/jGYs2D
-	+M/WHJLKn71/BBSIbr7UzFhwNbAaZiHE6TTgRKvrkGj7PlBWJiGV4UjdISA9ipVbI3A=
-X-Gm-Gg: AZFdTZde69mcSdJnvMKxCOvF85UWya0UtN2ZsyZoRlr0ehVqCmZLqfiPL+ZdEiqdHzb
-	Ep+c48uAkjnaMW2mw/EszrWJjscQCbfcXfkyRa+NPYVo++CAn90Ch/oFmzAvK9uExdGQaZ7UY+g
-	TTN+ZBlv+u3YBLdxWT3O1hhXwoC4iOEGeKJ85F/tFgNmj5+ViAOhW9bO1QEr669GmbhA7pi5U9E
-	LvJeIZ9kMeEmngHApmcl+BYGSKu8NXrgg0iJJ1oiiIOBOCvndzeCgepbuoskjCY8PY81asytJPK
-	l6Hl3nknyKr1xi/DpnSgWXLRGSxQ3+WyZm4ML9WaCdaETSQGAACr34CCs6IwUm2WM6zfqnvIBGR
-	4kdez0Sgar/XYXn1GsV4isw8GQjNtA6Uz7eAQBltg886aaJiIhJpQ/CXbEldiIM4w92RRwiaurU
-	GXlVoVsg8HzTq7j9jHwAjpvKZhPxiGZMfDqQzRJFhDo7irlPei3/+H4cW6M2oLu0KMY2QnTAAoH
-	sYlS6ifC7Ld9ij7VMt2PyGp+rWrN33j0o/cDJOWqC4AspYJZtxNRvQkRObxiDaulyi/+xxesN/7
-	0rEiLwwDQZtEjRp/U+V5R+hUOzhbXhf24n2iKuLS1r0TqqvXaQ==
-X-Received: by 2002:a05:600c:4f84:b0:4bb:5f3b:25a9 with SMTP id 5b1f17b1804b1-4bb88820f39mr179650485e9.30.1795362239768;
-        Sun, 22 Nov 2026 07:43:59 -0800 (PST)
+        bh=OU/4coRrYrYEMovrLhotSeDgFsbxxM6k/RzNG1xiMj4=;
+        b=C4eAJ4405mccjoDey4qks2918dV8KB7Xfs/ynQINbwFs74N3z6PkfFrIfc1dy+gN/M
+         uU12GrFi6UuKNR1FrQls0Oj7pzQ/P5bwF4mGflso35HCIJBkmxN/ebFNG3/ghPETTx92
+         BtJZahjVoYMfUrET2gFvXQOkfjo9d3QLFpEc1em3y1DhcAZn25y1CjqQxKc+GWaaBVwe
+         GcgU8NGnlDGVEvyM4iEaWW2qspPWpal48qCo5pIDjZF8dkwhRUU2qGWjLDndihO3fxlT
+         YR//JAGXSdgaVyX+nQrCv7wLafHZDioABU+1NJSddqYODswyG82ZqWl5QFqQTlZBT+lI
+         NstQ==
+X-Forwarded-Encrypted: i=1; AL+hErGKe2wYztO3QF2WETqG86/GllqOc8wiN6AqykkSyKZzqiGT0EyBzEaQyiarLqrFwFRICKhJMj+wSj0=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/rUZGBpaiqp7N5UbV729nd3B8NwJyt1FQ3bjkmTAUqq3z2yiSw
+	Par/egHG+05wc0DA674/3BM4hVoUkx8Y647x18GOIoT9TjFyZd0svnbfZJFJ2Nbrc04=
+X-Gm-Gg: AZFdTZc9abPB9B75PxqiGp19BXhkJ/OKX5PHVMmtkDVBQjOFRyffbKj4YmuBQiYHD4t
+	N6sXkXLC+yGrTz4Q3/UWdpcRnuAEk4JXmP8B0tdV+9LvKAgKEDEUCEoGP7uU0s/vb2RcokXY3ul
+	voCI6bhSJONO35ABYfqg918wcLMjdP3XF0eIhwELHY5doAVX7m10nprwlcVkPtSKnWDcVLuHvQV
+	65XmkNapo4TTCP+we081vNVkxpT2KxwPwOL3mLZo6rF/bdYC+4f3WuKkxg1Un9s+sDiKJnypYxb
+	pNkn2qXv4zSwjmQ29gGvUdwYRR4xXnfWZmIBAP012xq90NNxuDMH6JowwyqQQogo9PvkAhX9uhM
+	B0gTVx3rGD8stFectGwEY/G9JIZRJuuUJCd4SB5yvG1w4IbwCPsseHsNTJ8DuC8fp6fseZ7udZH
+	m8DY05cp+jZAbTGnKwxVUYgqOKm7xz9Jczyna11r9XcOVHfVouP0/L7rLVEqBrK9dVqEb3IKT4p
+	leHWbQiIIG6aDOiTmAsn9zbJKLyjJlE9kTS5vkCNCcPWXGhCVHmHeU4fSC1nTPrJs2NwNM5cHqy
+	xzp/Bhpausu2ycoxwVngMurglTiQ6rCXWGdPVHqb5ujyJB2HW6ovA7RpF86pGcP4+60oEQ==
+X-Received: by 2002:a05:600c:a088:b0:4a2:1a:a120 with SMTP id 5b1f17b1804b1-4bb8880ac02mr185403945e9.6.1795362516062;
+        Sun, 22 Nov 2026 07:48:36 -0800 (PST)
 Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb90655f5asm124899915e9.1.2026.11.22.07.43.59
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb88442995sm279389115e9.2.2026.11.22.07.48.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2026 07:43:59 -0800 (PST)
+        Sun, 22 Nov 2026 07:48:35 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -91,55 +91,114 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2 3/6] clk: starfive: jh71x0: Add generic CRG probe
- helper
+Subject: Re: [PATCH v2 5/6] reset: starfive: jh71x0: Support discontiguous
+ reset IDs
 From: Jerome Brunet <jbrunet@baylibre.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Brian Masney <bmasney@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Changhuang Liang <changhuang.liang@starfivetech.com>, 
+ Brian Masney <bmasney@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
  Hal Feng <hal.feng@starfivetech.com>, Jerome Brunet <jbrunet@baylibre.com>
-In-Reply-To: <20261118100523.11395-4-changhuang.liang@starfivetech.com>
+In-Reply-To: <0ee6bfcc5bb62fcb0c9128168e9367254393eca3.camel@pengutronix.de>
 References: <20261118100523.11395-1-changhuang.liang@starfivetech.com>
- <20261118100523.11395-4-changhuang.liang@starfivetech.com>
-Date: Sun, 22 Nov 2026 16:43:54 +0100
-Message-Id: <179536223421.2728475.4581137443338131034.b4-review@b4>
+ <20261118100523.11395-6-changhuang.liang@starfivetech.com>
+ <0ee6bfcc5bb62fcb0c9128168e9367254393eca3.camel@pengutronix.de>
+Date: Sun, 22 Nov 2026 16:48:34 +0100
+Message-Id: <179536251467.2728475.8360126735543701661.b4-reply@b4>
 X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1141; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=Auzs4ujqrLqv73w/LdDQcDLJr4HOPar7zURfN6DCgsE=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNnMvHv2TjpSZauWVl+5civr/YNXd327fkT28oZp9925r
- 55bIreqvKOUhUGMi0FWTJGlhrta/J2k1pdZ03Vuw8xhZQIZwsDFKQATObCW4Z9CxquCpZGC21aL
- Nnb/ULh3MGJ1xL3LTCLMsf2bf3tLXzFnZJh+JWddZY5f3cmoAvMfRhNWZsfl89S8vsdicKVzk/h
- XXn4A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3236; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=9+DCtU9MB3l+ZbzrrTv3gmLnvQYjcC8cHeWP8Lnbruw=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNnMfJdmLT80w3j7CVfpluD1enfZmBX0eRfuDfl8uJP74
+ M9MaYO+jlIWBjEuBlkxRZYa7mrxd5JaX2ZN17kNM4eVCWQIAxenAExkWj/DP7W3sXWdLHfn/NDL
+ NtvF0qLyP8s15nGl26pply9aezMeY2T4nysx89QUrcK6c4nddko6jeZeS+aG/+MX7Ge6lfb53Bt
+ pZgA=
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-> The StarFive JHB100 SoC has several clock and reset generators (CRGs)
-> which share the same probe flow: map the registers, register all the
-> clocks described by a table, add the clock provider and register the
-> auxiliary reset device.
+On 2026-11-18 11:39:56+01:00, Philipp Zabel wrote:
+> On Mi, 2026-11-18 at 02:05 -0800, Changhuang Liang wrote:
 > 
-> Add jh71x0_crg_probe() together with struct jh71x0_crg_domain_info so
-> that each CRG driver only needs to provide its clock table and reset
-> auxiliary device name. The reset auxiliary device is registered with
-> jh71x0_reset_controller_register().
+> > The reset IDs exposed to consumers of the StarFive JHB100 reset
+> > controllers do not map one-to-one to the hardware reset bits.
+> > 
+> > Add struct jh71x0_reset_info, which describes the number of resets, the
+> > assert/status register offsets and, for such controllers, a table of
+> > hardware reset lines indexed by reset ID. Add
+> > reset_starfive_jh71x0_register_with_info() to register a controller
+> > described this way.
+> > 
+> > If a map is provided, install a custom fwnode_xlate callback that
+> > translates the reset ID of the reset specifier to the hardware reset
+> > line. The translation is thus done once when a reset control is
+> > requested, and the reset operations are left untouched since they only
+> > ever see hardware reset lines.
+> > 
+> > Existing users of reset_starfive_jh71x0_register() are unaffected.
+> > 
+> > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> > ---
+> >  .../reset/starfive/reset-starfive-jh71x0.c    | 60 +++++++++++++++++++
+> >  .../reset/starfive/reset-starfive-jh71x0.h    | 24 ++++++++
+> >  2 files changed, 84 insertions(+)
+> > 
+> > diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.c b/drivers/reset/starfive/reset-starfive-jh71x0.c
+> > index d410a5a0ded4..5c64d47fb530 100644
+> > --- a/drivers/reset/starfive/reset-starfive-jh71x0.c
+> > +++ b/drivers/reset/starfive/reset-starfive-jh71x0.c
 > 
-> The clock table is made of struct jh71x0_crg_clk_data entries, where
-> each parent is described by a struct jh71x0_parent_data: either the
-> name of an external clock or the index of another clock of the CRG.
-> This way the external clocks need no index of their own, and the number
-> of clocks a CRG can provide is not limited by the width of a parent
-> index. The existing JH71X0_GATE(), JH71X0__DIV(), ... macros can be
-> used to fill the table.
+> [...]
 > 
-> The JH7100 and JH7110 drivers keep their own probe functions and the
-> index based struct jh71x0_clk_data for now.
+> > @@ -132,3 +152,43 @@ int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_no
+> >  	return devm_reset_controller_register(dev, &data->rcdev);
+> >  }
+> >  EXPORT_SYMBOL_GPL(reset_starfive_jh71x0_register);
+> > +
+> > +int reset_starfive_jh71x0_register_with_info(struct device *dev, struct device_node *of_node,
+> > +					     void __iomem *assert, void __iomem *status,
+> > +					     const u32 *asserted,
+> > +					     const struct jh71x0_reset_info *info,
+> > +					     struct module *owner)
+> > +{
+> > +	struct jh71x0_reset *data;
+> > +	int ret;
+> > +
+> > +	data = devm_kzalloc_obj(dev, *data);
+> > +	if (!data)
+> > +		return -ENOMEM;
+> > +
+> > +	data->rcdev.ops = &jh71x0_reset_ops;
+> > +	data->rcdev.owner = owner;
+> > +	data->rcdev.nr_resets = info->nr_resets;
+> > +	data->rcdev.dev = dev;
+> > +	data->rcdev.of_node = of_node;
+> > +
+> > +	if (info->map) {
+> > +		data->map = info->map;
+> > +		data->rcdev.fwnode_xlate = jh71x0_reset_fwnode_xlate;
+> > +		data->rcdev.fwnode_reset_n_cells = 1;
+> > +	}
+> > +
+> > +	spin_lock_init(&data->lock);
+> > +	data->assert = assert;
+> > +	data->status = status;
+> > +	data->asserted = asserted;
+> > +
+> > +	ret = devm_reset_controller_register(dev, &data->rcdev);
+> > +	if (ret < 0)
+> > +		return dev_err_probe(dev, ret, "Failed to register reset controller\n");
+> > +
+> > +	dev_info(dev, "Registered %u resets\n", data->rcdev.nr_resets);
+> 
+> Does this really need to be this verbose? Otherwise,
+> 
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-I trust you'll follow up on this.
+Hey Philipp,
+
+With the comment above addressed, Is it Ok if we take the whole series through the clk tree ?
 
 -- 
 Jerome
