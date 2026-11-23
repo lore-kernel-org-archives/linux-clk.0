@@ -1,35 +1,68 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795419520;
-	b=Dc9xvlYOSujpPo3mggxsz4NVPqNNFJBoGTorxPznVNJvGj65WZBhY3Hr/yxrCineNIHk
-	 x0sacCsMNP5it/7AJakU93s8LD0o/5BXUhfAojjEtYsjdiCfKIvLATO7JB5qxs80uoxSO
-	 lRbPHduUv39w4p1Bp8Tl/HZDEOtILWBCkcuntbRfhp3+oq3EIjFpkShpeBoDKRzxk3NQR
-	 CfOHKsSK0afYFRi4dVFRR5bN8omynR4DLdmcQbIa1McQaqUaUDoZ467TXo2KxmJiK5097
-	 QvFhySeTfe3+sDnHVpJqtdwFz+UlOP/T4V9pY1WOplltc6nVpeAoukgTTVpLips7Qmg==
+	t=1795420543;
+	b=qyvEA7py9GJbXWvsBbMc5hEx3qyvemm/5gRgJ+MYf1ylroQ01KU1+U1MarKJ35KPNVKN
+	 4ZGLrpkwGsh6S9Lu+NLO1o1FIa9+5sCYyVO2SFWqDX+n4I0uZVQebnRZspfz7G9VkxbWd
+	 wOAig3H47n4HXlP8demfyf4OfTtbTLqdojQJCN7j0RohHtt7MmPOYJgAo3oA5sUrRrZ0d
+	 v8Aq0Kbo04QWeBuvLAR2U5/R1wfXuZiO+zRDZyxAjO1j/Hbb9rrM3dIOsNbiBLKwRKwCt
+	 7hphuONDgxa988cAmxhfpJnO18B0nVJ1kdHRZ10TEL3PtHHx/pZzyC2TMTOg0PxeKpw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795419520;
-	h=Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=S709EPmVdlLbufQHIVLlQmTzzyFOWDm+lbAILIM8xAc=;
-	b=2WPcget7DVMHrKgpAzDwti4nzZ3pa2d7AsanfuRvMy3RQRST5X6YqZgOeQY+KEX/lAsC
-	 mCdAw4eNX7MW9Q68ABTTUhQpxVGqfV458s4lZInwbH3iQe7TnYNtpXS5rAeSMqrrKjZmr
-	 /98YhaEAUvPLpuQafRnGojPzeI217UD9aiIQtB/a7TaANcmOxqTdb/TKEB4btUvgJa7aC
-	 Sd+IMc+XTcr8ihZSpiWRbGVfs3oRODpjFgSn7TbATvZpLKiSxTgxqeX6XBtiiVV8SuxyB
-	 V4eZO0mvyb2t5fQppP76Qalu/eOqGuxbNpuDhAcA4DMb0XMSStCYFZXb0v4/t6KZ6bQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795420543;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=nYLwjkPeDoYKPQ9fpj7sj29JLi9BGT+W9npk3A58FDA=;
+	b=o9B/i3izBlyr0Qa1r2BgY64A3uej8F5vmFFnB6yn4gVytjDRuA+5UzQOc5wTez7WU2pk
+	 4NRtEdkmQFk3tEzabw5qhnfKCYVWuCbvUqEpizCnwPmCiv4jt4V+UyitPWos/gsoPjH6F
+	 vVGBVrcWfYDOXtUksTVVjOLIIX1pdPHV0QvDGJ8hRR0d0ZzBRSdfaeOVxDL2EeuUecia9
+	 fGg2xYV5lJZGwiMJaad6l/jPXmCESXhdkjtFwqx0xCV6yRkliOEJJ/AdnmzbIyXnbpA9c
+	 VxqNTxL6oxW9i53Oypy6NE8g6G48701w8RPkIC6ISJ8iHJj26hRlqiGzbJu12NZ3xHg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YXAvsKFi;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AE4606A33A;
-	Mon, 23 Nov 2026 07:38:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B22561F000CF;
-	Mon, 23 Nov 2026 07:38:38 +0000 (UTC)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Mon, 23 Nov 2026 08:38:14 +0100
-Subject: [PATCH v2 4/4] clk: qcom: Consistently handle MSM8996 and SAR2130P
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D20606A336;
+	Mon, 23 Nov 2026 07:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YXAvsKFi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AA821F000C6;
+	Mon, 23 Nov 2026 07:55:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795420543;
+	bh=nYLwjkPeDoYKPQ9fpj7sj29JLi9BGT+W9npk3A58FDA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=YXAvsKFiWSvpBAh0r/bLzhP/mDijS6wWiRAI/eNzzlW42pXDN4k8BL54YfASB4YyZ
+	 KDaG4gPrLUiNxP8Y53xiVgpDqyQYPNbffcEa5ycmQNLiBTR+5HEYIMJYvdAThv6YH9
+	 HpUjHRD3AKwKVwH6wIB1q+2q2wI63zezLOdt1UVU2EDTOuJDj6XbRN9XB1c4M1qRwJ
+	 nNsYrkMkn/h6oyq0H7wZPcnDLbwg1Mo1uDNj1WKorr/U67FRXRdTJ2zYV89UO4yI1c
+	 A8yJwwgZo6rSUPiINE2/hvWe4cJZZZanigQdCdzOb55tcn4lLBhSTUMLTCFRqbJA6u
+	 SjNDfuq17V90Q==
+Date: Mon, 23 Nov 2026 08:55:40 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: codykang.hk@gmail.com
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@kernel.org>, 
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>, Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Haylen Chu <heylenay@4d2.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Yao Zi <me@ziyao.cc>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, Guodong Xu <docular.xu@gmail.com>, 
+	Icenowy Zheng <uwu@icenowy.me>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Sarah Emery <sarah.emery@canonical.com>, Ze Huang <ze.huang@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Cody Kang <codykang@vsit.ai>, dri-devel@lists.freedesktop.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, spacemit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 10/17] drm/spacemit: add Saturn DPU KMS pipeline
+Message-ID: <awPxPHpr4NYxqdmf@houat>
+References: <20261121-k3-display-v3-0-ec419e8e96b8@gmail.com>
+ <20261121-k3-display-v3-10-ec419e8e96b8@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -39,95 +72,80 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261123-qcom-kconfig-unify-v2-4-fe56c8fd15bf@oss.qualcomm.com>
-References: <20261123-qcom-kconfig-unify-v2-0-fe56c8fd15bf@oss.qualcomm.com>
-In-Reply-To: <20261123-qcom-kconfig-unify-v2-0-fe56c8fd15bf@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1993;
- i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=u4n3ZVFvLwi0dVqlyrLjSilREUmVzsvx4RLcH+G3oBU=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBrA+1rMUyS528JGFAtsu+2StCwrHhZkWzw66hb/
- RFwMFtSipOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCawPtawAKCRDBN2bmhouD
- 1/40D/9j7BrVfoP4fZJ3opECjKHlXqjYr5MnwRp9UFJdi5s1FGvJfu9GVnGu9FamL2F8f3xySYZ
- UwSO+c671VwTjTuIqtNunfPiEEbGpE8DVHwesn7ya5bDuvZhyQ6US7ZlRVFFHiWK1Gl4Sl9/Kx4
- eE77OUWfchXtv6bnddnzWabh88FIibPqCVVj17UZV10Yp5Gq/BqrcfelFxRZ7Svj30GJMUWA4es
- DepNPwTq6Mg2YHkyGbYcZ2kGE4+YkEDj5+kaQyqY0zZlcUTea6erN6fMoOy+3+ZxGciwrONbwvp
- RGzVw7uOfKGSMFKSy630d3XBp7ovFgrJD7/EjxczJWRys+gUYks1EDcbGBYEE982F9Ev88sZ6Dh
- 85xrLFzpCxtPtHbkOE2BiRb8YqH9qeqEBmZ3FOGY7GxsuVWbUWJsd04cHzs9kkrBKigfCyLIyUU
- iwizO10cehIx0RczRWev9fGFSsBZd0Iwq6G38DIpatUkD0MtRUATa5jHQPmoPpXgS8eXRzlT20H
- 2vDna7NYJZUgK+UOGiFEpggtqXH26/ViX8PLC8B2RTPiGX3L+adf50vB9qdzR7Lp8VvNKxJw4JK
- TFj4gXJBpgPHTdn0h7DDGv5Sdf2mG7MtCp2DGR+r0L7M/qLvrfKbTbdsfuwb9N877WROY5bd6ei
- XomE3NjVePPEs9Q==
-X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="psp6wiqhchja3kyl"
+Content-Disposition: inline
+In-Reply-To: <20261121-k3-display-v3-10-ec419e8e96b8@gmail.com>
 
-Restrict Qualcomm SoC clock controller drivers to ARM64 in a consistent
-way with other critical drivers (pin controllers,
-interconnects):
 
-1. SAR2130P SoC has only ARM64 DTS user and other drivers are
-   already restricted to ARM64 only.
+--psp6wiqhchja3kyl
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v3 10/17] drm/spacemit: add Saturn DPU KMS pipeline
+MIME-Version: 1.0
 
-2. MSM8996 APCC driver selects QCOM_KRYO_L2_ACCESSORS, which is
-   available only for ARM64, thus reasonably this platform won't be ever
-   used on ARM 32-bit builds.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
----
- drivers/clk/qcom/Kconfig | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+On Sat, Nov 21, 2026 at 03:40:49PM +0800, Cody Kang via B4 Relay wrote:
+> +static int spacemit_drm_master_bind(struct device *dev)
+> +{
+> +	struct spacemit_drm_private *priv = dev_get_drvdata(dev);
+> +	struct spacemit_crtc *a_crtc;
+> +	struct drm_device *drm;
+> +	int ret;
+> +
+> +	ret = aperture_remove_all_conflicting_devices(spacemit_drm_drv.name);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "failed to remove existing framebuffers\n");
+> +
+> +	/*
+> +	 * Bind-scoped, not devm: the aggregate can rebind without this
+> +	 * device being re-probed, and each bind must release its own
+> +	 * drm_device.
+> +	 */
+> +	drm = drm_dev_alloc(&spacemit_drm_drv, dev);
+> +	if (IS_ERR(drm))
+> +		return PTR_ERR(drm);
+> +	priv->ddev = drm;
+> +	drm->dev_private = priv;
+> +
+> +	ret = spacemit_drm_mode_config_init(drm);
+> +	if (ret)
+> +		goto err_dc;
+> +
+> +	a_crtc = spacemit_drm_pipeline_init(drm);
+> +	if (IS_ERR(a_crtc)) {
+> +		ret = PTR_ERR(a_crtc);
+> +		goto err_dc;
+> +	}
+> +	priv->a_crtc = a_crtc;
+> +
+> +	/*
+> +	 * component_bind_all() unbinds what it bound before returning an error.
+> +	 */
+> +	ret = component_bind_all(dev, drm);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "failed to bind all components\n");
+> +		goto err_dc;
+> +	}
+> +
+> +	drm_mode_config_reset(drm);
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 6ddfa451ad55..05aa3b468812 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -927,8 +927,9 @@ config MSM_GCC_8994
- 
- config MSM_GCC_8996
- 	tristate "MSM8996 Global Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
- 	select QCOM_GDSC
--	default ARCH_QCOM if ARM64
-+	default ARCH_QCOM
- 	help
- 	  Support for the global clock controller on msm8996 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -936,9 +937,10 @@ config MSM_GCC_8996
- 
- config MSM_MMCC_8996
- 	tristate "MSM8996 Multimedia Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
- 	select MSM_GCC_8996
- 	select QCOM_GDSC
--	default m if ARCH_QCOM && ARM64
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the multimedia clock controller on msm8996 devices.
- 	  Say Y if you want to support multimedia devices such as display,
-@@ -1188,6 +1190,7 @@ config SA_GPUCC_8775P
- 
- config SAR_GCC_2130P
- 	tristate "SAR2130P Global Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
- 	select QCOM_GDSC
- 	depends on COMMON_CLK_QCOM
- 	default ARCH_QCOM
-@@ -1198,6 +1201,7 @@ config SAR_GCC_2130P
- 
- config SAR_GPUCC_2130P
- 	tristate "SAR2130P Graphics clock controller"
-+	depends on ARM64 || COMPILE_TEST
- 	select QCOM_GDSC
- 	select SAR_GCC_2130P
- 	default m if ARCH_QCOM
+You need to use drm_mode_config_create_initial_state().
 
--- 
-2.53.0
+Maxime
 
+--psp6wiqhchja3kyl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCawPxewAKCRAnX84Zoj2+
+dnHQAX9iDOtufQbymoduwPA/eIzFT4DPhesCne28+rDvff2JXlYtbNrRxUrTcGWq
+XGPo3ywBgIkbYttgELJJr4UywnFDhIGMTRi83oG6Mg+R1tb0t9izOxptosxvIQK+
+fEnXpcLERQ==
+=seld
+-----END PGP SIGNATURE-----
+
+--psp6wiqhchja3kyl--
