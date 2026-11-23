@@ -1,88 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795460949;
-	b=noUx7TNcI/PUI+971YJplAqSBRbQbYw6AB0grUpJSOPMnEb0E43pk7+AbSjMi4XCKrdz
-	 q3HCqNbezhbX9b6oNxB38VUXXjKEQZsHlMKNNqW149fHwnISx1CmD9vfPfAsnQMEl6xKc
-	 1eqpUA53i0u16IdUT8xOA1ow/xt1MQeGks2qSVP04qT7G3OBE3ya+Fbhf8iHp+HRmRH7A
-	 cK022viFiIb9y/k8/8RhpTQ5pt1l5zfUsx/4pqBRs+74Id5YETiNvVzPiaDDRkEPOc9Ut
-	 Gry9xxla1urmBUxMnxXyot00RgkmjBAwoJHuZcLWaqejWiR1//2Sfawy6lV2QSWfCIg==
+	t=1795461072;
+	b=pg8+Djkh+KHJwEodi2dZ9cPYuGpgFJxMz3b3qn4Lykr3me3hR0aDnbTJRE+ZB9MUwdbd
+	 QW09ZnxV1JzXBbBKDWiacahegoaiadf23QGuQ0L61qrgYkNm8r9ozPuYlUS+3XHat2+De
+	 nnFAZ6TKNcT0t7o/p6RtDcIdmWV0fN4vElS6LaU0CjzFhtk+TK+Q/1kwDvBy7Uw6cmO1f
+	 e+mGI9GzX+gOyruefpQYdzTbS+9Fn8YAvbTKFDEzURBu6PpVSg4nBtQyrryQ9R5woxCzd
+	 5XTeFPPzvLJJyicGVlRu8DB73MkN7MMG1U7dxLeAV9S1f++fSSz2d76MnunlvuJMUTQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795460949;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=hXmxFeoTBX/tQ++ntzQj/is3shY2/2htZh6VSebwwAc=;
-	b=3wSiLN6FF/B5TO1PYHcbWB9ctJ2kOVVDAwnuex+cywMs5xrUVnU0RfK+F4l6pwla58Id
-	 GBp4BRtRc7sOeQvxB/RwVKyM9FKri2hRsmDNw24CxrnHtPnELLIQdT6IWJ1m0DMEOyXOV
-	 IeaoFY6fGUAoumlv1V/7FLxuudsLQgMtIH5lCcmCFq1ZbhF4DvdW7HwjSNOrIv8x2vW6n
-	 p1fKsEs9D9jiDB9AG1HdIGaIMXXnUS0ETmgtyTYNubzp/brdnY4duXmh5mdVtlgQU65HI
-	 PrQMNqlfe3RE54ysag9/jwbU478LPOrhHigX66d4jpfarKqc1lVbNig+575np1hDtAw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795461072;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=Idvm97dvG7bTw2FwlJmYkLbnCrFv39HWDBLFEaw7lno=;
+	b=FJKJN1ISvQPdPFIuMzGTuUP06kojdYVXsrPlCnDz86tl39yJ8eJBePKBJ3iUYOxtEMDS
+	 ELSRPE1ruL/TDmtURCr6sl/HZ9W7AMdUqkFPPmAivrL3SFKkgaC3mnfUScP6b/K1Li28S
+	 oQzxl7ZOi2UbNsCXZA+GctWUIn9I4VmY1F470Q5SkUi6TWgfSsXr3Q5O85ER/gPkPreAh
+	 qN5yReLEIkCereDc0DA0cI9VmaHBQj/9rohAB0V0xhJgHHkte8yd9IP9LfSwMZDFWhNN8
+	 jiKmn29lJxLomtbIIVWkGeelf5hvqpOPZrpqdst6hudUFcuZp2Pm8YBOkhY8aYJaGFg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=bvzvFjpx;
-	arc=none smtp.remote-ip=209.85.128.42
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="UXAG/h5g";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9FA606A31F
-	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 19:09:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0D9FA606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61D3606A32A;
+	Mon, 23 Nov 2026 19:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=bvzvFjpx
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4bb6057b333so16710395e9.3
-        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 11:09:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1795460946; x=1796065746; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=hXmxFeoTBX/tQ++ntzQj/is3shY2/2htZh6VSebwwAc=;
-        b=bvzvFjpx075sG+8K5J2gMyO/voucUrNRFEDa5aga5/eRAnJrFMNDEHtmtxhq6Es/Vf
-         Va3ETZB02Tk+HUDIDJL4wHTugoTbHv9LhbfA8qJ+FltMF+6rxnoXlKREnf1XnHEscMHl
-         4E2U+tE2vJJWY69UqWY5h5XssZSKEqbBuyzI2GvHjPVmufkUG+tFZQNNQqvLcZmFV9HA
-         rzorDz8pNbd9EN9nUfRRAA/K8MHECzaVgQIl2EajITYjyvlYh//ZSYV081SXgvyeBF51
-         3REd/KLvhzSchHA1VZZvKwUVvO7+1PWJdaWjPxIklFfQn+lDVy8U3xgvTVpggqZq5/G2
-         YS7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795460946; x=1796065746;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=hXmxFeoTBX/tQ++ntzQj/is3shY2/2htZh6VSebwwAc=;
-        b=1cooH4Ane8Dj/+CGqJbVlQAm+yznyXxZmKNf9GON2UAtlIkW/UXjtva7Ie8QcocTpX
-         nYgv0mc1SayUxfiBuSf2m3zClyWXhKNgJiyKAAVAgs4XkJuLOefzSNj7yWa6JCgKAjwu
-         j/wMsCn8rlzL8kVpf1b8OytTlNRB3OUgcQGWFib0qi/f29fgOxbUt+aX+6Ixyfxe6N/l
-         nkphQjO03oJ/PcUfL4ydfIS0ujToFGSCFTwz8bIEUlPY6kcyDLMckd5uQfawMaSq99yo
-         Km3TAXZjHfyZh84JZsLXJs0xG+QymmL295Xn05sqiSE1RH5viT32Jue4J3nfi7aGp1qn
-         ICEA==
-X-Forwarded-Encrypted: i=1; AL+hErHbHQ/XPht/KcQ6XN7Jlo1YqJZQFc9LFxl1jXCkwzLv+fuEGYe3lSpjxWM+o9qexHmTjXOVejxPwPc=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+i3CB/9BYkltQSi3DFzfZQrQ6pNM5DXAcb53+XEI4cEWEt9XdI
-	QY/9AlLW6U0yT6/qF35VgcNZqHQ3wnVoyk3p/QzPG/RA4BLmnTjoYovoRb3b7WtniZI=
-X-Gm-Gg: AZFdTZe+90T+Sr8o1Wnq6U+T2Aahm8NB2LDb0JJXz0xbUtYwUueeZ1E3gNQVU9mRJPX
-	ovyX4Al+N+NnLGdfl9xL5vGHi24ipVyLSTIoItxS53zPxsdBI0xtMICNyUwAYryJ15cBJgudP8+
-	J7h9XowJVPVfrJvXL37zOg4gyCQ9b+toiSpZN6xRqktlbOr+9ow/j2ek+QifD5YGe7U9gP/EKYo
-	pqLB1ejkGtFuZfoxEMIjUTAaZFqhpj+kQRLgkkYl7uxZPJ0YVyMYkuLRq+ReNONQlUaMPhdYzBq
-	SutFsbqKGZEZG1e8JpHK+p1aaqRjRsO1cXhP5vzOxItlB7fZhoitxl6AyxHH768GAZZCbvQBwJZ
-	aBCDeKbBqMBCDRgEtXasagDCQtpYUA7eQH7OvsvllimDSzOu0n5+OS9KGeE+LiTRnhPvqXCD1yW
-	gcufOx7FGgR+xQC67zg6SlcRX8XR1etgzOSy+yGWvQtk/FKXTOoq4a4MLNMm/0t0h01nx8Dw7m7
-	wtQ5EupjErUlbwEseYVG0+Ul3jzG9fcxUkRO6+5daaqXaeWLICzxDe4l5RvIbuq84tmAGh1u/ml
-	wq0qPiDQOkYYnJaoCBFUVvIelwWSE0RFuqyoxanOnfA+55jKjMMNm42ocA==
-X-Received: by 2002:a05:600c:3e1a:b0:4bb:6814:7391 with SMTP id 5b1f17b1804b1-4bb8881921cmr248187205e9.25.1795460946295;
-        Mon, 23 Nov 2026 11:09:06 -0800 (PST)
-Received: from [192.168.1.62] (140.30.66.37.rev.sfr.net. [37.66.30.140])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6b9add26sm24014155f8f.44.2026.11.23.11.09.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Nov 2026 11:09:05 -0800 (PST)
-Message-ID: <27796cff-eef5-46ce-8079-93a0a8d40db5@baylibre.com>
-Date: Mon, 23 Nov 2026 20:09:05 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UXAG/h5g
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50D5B1F000C4;
+	Mon, 23 Nov 2026 19:11:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795461071;
+	bh=Idvm97dvG7bTw2FwlJmYkLbnCrFv39HWDBLFEaw7lno=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=UXAG/h5gcaXsoQt+kMAmviAJm66SUcara9oSzYqWQUv3zd56izLHBx98PPuu3frOr
+	 55T6J5QfliUjPb77RQRgs5XNY1sRYUlK45HQDb12FSEXsGHgIp/jUyiqSti40GNi+h
+	 vN6a5QhqDH1CqBDyWxK3tpheymYefUO2OK6Tpt0iESphKX8M9PwFZ2MQ/e4zJhMelu
+	 8++MrvB40HiXV9VlDobMoOKP75UYXR2oV9YgsQNVXiJqExu8JUHxY/LVswFdHgBpa4
+	 x9egZLsGkJBnoG7JZ5//wk18XWzKQ2gtm/+WCrRxBBjgzcYn6gyIE7CaK1KQijonAL
+	 SJYxBK+coqgPw==
+Message-ID: <sashiko-outbox-229914@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 7/8] PCI: cs7542: Add CS7542 PCIe host support
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Fil Dunsky" <filipp.dunsky@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, neil.armstrong@linaro.org, olteanv@gmail.com
+In-Reply-To: <20261123-b4-cs7542-pcie-v1-7-4cde5201d404@gmail.com>
+References: <20261123-b4-cs7542-pcie-v1-0-4cde5201d404@gmail.com>
+ <20261123-b4-cs7542-pcie-v1-7-4cde5201d404@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 23 Nov 2026 19:11:10 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -91,83 +59,186 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/15] R-Car X5H Ironhide CPG/MDLC SCMI remapping
- support
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>,
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Paul Elder <paul.elder+renesas@ideasonboard.com>,
- Sudeep Holla <sudeep.holla@kernel.org>,
- Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-References: <cover.1795029012.git.geert+renesas@glider.be>
- <1e9c5ac3-d82b-4af9-9946-0302cadf7404@baylibre.com>
- <20261119234759.GB2324725@killaraus.ideasonboard.com>
- <19c3745a-6308-46ff-bb37-3acc88fe22e2@baylibre.com>
- <awAqqg6F2Z1t55x2@ninjato>
- <d94ad9ca-afdd-4301-a69c-0bbad5b334fa@baylibre.com>
- <20261123103633.GB2959742@killaraus.ideasonboard.com>
- <fc13a7a8-b825-400c-9ea0-ceb2670dc478@baylibre.com>
- <20261123160550.GA3050935@killaraus.ideasonboard.com>
-Content-Language: en-US, fr
-From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
-Autocrypt: addr=clegoffic@baylibre.com; keydata=
- xjMEafx9bxYJKwYBBAHaRw8BAQdAtc85GIwDXLz0rh9thWXC80Lji0otVDVncXT4qaS4j1fN
- K0Nsw6ltZW50IExlIEdvZmZpYyA8Y2xlZ29mZmljQGJheWxpYnJlLmNvbT7ClgQTFgoAPhYh
- BJjMiHuM4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsDBQkJZgGABQsJCAcCBhUKCQgLAgQWAgMB
- Ah4BAheAAAoJEH6EW4KtCh6Tt+sA/jVC35rY1npFlOy7YnncTdrID8Qf855JA78IzXgvzpGp
- AP9FkuuT80m66PP3DvgYX9kVnG17mSDKO0+v2W18v6ZgCM44BGn8fW8SCisGAQQBl1UBBQEB
- B0DMwF4u//aQyzsFlO8rPJ/cqsAuPH80IeIA3HOEo5mlVgMBCAfCfgQYFgoAJhYhBJjMiHuM
- 4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsMBQkJZgGAAAoJEH6EW4KtCh6TdSgBAMDS0MiWCivt
- LjzZc9bs+P/xdXywUjDKq3lpQGJ6vZ0GAP9vI6DnN7vwVK6jt6/+0aBGkog5Ura9+WwRFEdM
- vLfPDQ==
-In-Reply-To: <20261123160550.GA3050935@killaraus.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 11/23/26 5:05 PM, Laurent Pinchart wrote:
-> v5 supports one firmware version at the moment, and the driver would get
-> support for new firmware versions when/if needed.
+Thank you for your contribution! Sashiko AI review found 4 potential
+issues to consider:
+- [High] PCI: cs7542: PCI_MSI_FLAGS_ENABLE in cortina_pcie_host_init()
+  cleared on probe
+- [High] PCI: cs7542: undisposed INTx virq mappings before
+  irq_domain_remove()
+- [Medium] PCI: cs7542: cortina_pcie_read_dbi() ~0U return masks iATU
+  failure on link loss
+- [Medium] PCI: cs7542: missing link_lost and IRQ sync in
+  cortina_pcie_shutdown()
+--
 
-This is where I disagree: I don't think a SoC driver should follow the SDK versions.
+commit cd2c931b6a3541fd8734c17e2a7332622247b319
+Author: Fil Dunsky <filipp.dunsky@gmail.com>
 
-> I have yet to see any vendor who can provide 100% stability guarantees
-> for SCMI firmware interfaces. In theory, sure. In real life, I just
-> don't buy it.
+PCI: cs7542: Add CS7542 PCIe host support
 
-I agree that while an SCMI firmware is in development, its ids can change between versions.
-To keep the ids of a released firmware stable, I see three rules:
-- an id always names the same resource, ids are never swapped,
-- an id is never dropped: when a resource goes away, the firmware keeps its id reserved and denies access to it, as SCMI 4.0 section 3.2.1 describes,
-- new ids are only added at the end
+This commit adds a DesignWare PCIe host controller driver for Cortina
+Systems CS7542 SoCs, handling clock/reset/PHY setup, multiplexed INTx and
+MSI interrupts, root configuration filtering, and link-loss blocking.
 
-I think upstream should only support a firmware that follows these rules, with its ids in the DT.
+> diff --git a/drivers/pci/controller/dwc/pcie-cs7542.c b/drivers/pci/contr=
+oller/dwc/pcie-cs7542.c
+> new file mode 100644
+> index 0000000000000..19225e9a292ef
+> --- /dev/null
+> +++ b/drivers/pci/controller/dwc/pcie-cs7542.c
+[ ... ]
+> +static int cortina_pcie_host_init(struct dw_pcie_rp *pp)
+> +{
+> +	struct dw_pcie *pci =3D to_dw_pcie_from_pp(pp);
+> +	u8 cap =3D dw_pcie_find_capability(pci, PCI_CAP_ID_MSI);
+> +	u16 flags;
+> +
+> +	pp->bridge->ops =3D &cortina_own_pci_ops;
+> +	pp->keep_rp_msi_en =3D true;
+> +	if (cap) {
+> +		flags =3D dw_pcie_readw_dbi(pci, cap + PCI_MSI_FLAGS);
+> +		dw_pcie_writew_dbi(pci, cap + PCI_MSI_FLAGS, flags | PCI_MSI_FLAGS_ENA=
+BLE);
+> +	}
+> +	return 0;
+> +}
 
-For firmware still in development, I agree with what Cristian wrote on the RFC[1]: "fix your firmwares AND/OR apply quirks in the meantime".
+[Severity: High]
+Will pci_host_probe() clear PCI_MSI_FLAGS_ENABLE right after
+cortina_pcie_host_init() sets it?
 
-Any other view on this is welcome.
+dw_pcie_host_init() runs pp->ops->init(pp) before calling
+pci_host_probe(bridge).  Because pp->keep_rp_msi_en keeps PCI_CAP_ID_MSI
+visible on the Root Port, enumerating the Root Port calls
+pci_init_capabilities() -> pci_msi_init(), which clears
+PCI_MSI_FLAGS_ENABLE via cortina_pcie_wr_own_conf() and leaves the Root
+Port MSI receiver disabled.  Setting PCI_MSI_FLAGS_ENABLE in
+pp->ops->post_init (or after dw_pcie_host_init() returns) would avoid
+this.
 
-> We can agree to disagree on this, no issue.
+[ ... ]
 
-Sure, I think we both already know we disagree on this :-)
-Thanks for taking the time to discuss it
+> +/* Standard RC configuration above 512 bytes wedges the CS7542 bus.
+> + * The DesignWare private register bank at 0x700 and above remains acces=
+sible.
+> + */
+> +static u32 cortina_pcie_read_dbi(struct dw_pcie *pci, void __iomem *base,
+> +				 u32 reg, size_t size)
+> +{
+> +	struct cortina_pcie *cp =3D to_cortina_pcie(pci);
+> +	u32 value =3D 0;
+> +
+> +	if (READ_ONCE(cp->link_lost))
+> +		return ~0U;
+> +	if (base =3D=3D pci->dbi_base && reg < 0x700 && reg + size > RC_CFG_LIM=
+IT)
+> +		return 0;
+> +	dw_pcie_read(base + reg, size, &value);
+> +	return value;
+> +}
 
-[1] https://lore.kernel.org/r/aekXUvIPb8nkhdKu@pluto
+[Severity: Medium]
+Can returning ~0U from cortina_pcie_read_dbi() when cp->link_lost is set
+trick dw_pcie_prog_outbound_atu() into reporting success?
 
-Best regards,
-Clément
+CPU0                                    CPU1
+dw_pcie_other_conf_map_bus()
+  dw_pcie_link_up() -> true
+                                        cortina_pcie_irq_handler()
+                                          cp->link_lost =3D true
+  dw_pcie_prog_outbound_atu()
+    dw_pcie_writel_atu_ob() (dropped)
+    dw_pcie_readl_atu_ob(..., ATU_REGION_CTRL2)
+      cortina_pcie_read_dbi() -> ~0U
+    val & ATU_ENABLE -> true
+    return 0
+  return pp->va_cfg0_base + where       <-- accesses downstream cfg window
+
+Because ATU_ENABLE is BIT(31), ~0U satisfies the poll in
+dw_pcie_prog_outbound_atu() even though cortina_pcie_write_dbi() dropped
+the iATU writes, allowing downstream config accesses to proceed after link
+loss.
+
+[ ... ]
+
+> +	ret =3D dw_pcie_host_init(&pci->pp);
+> +	if (ret) {
+> +		writel(0, cp->app + APP_INT_ENABLE);
+> +		irq_set_chained_handler_and_data(cp->irq, NULL, NULL);
+> +		irq_domain_remove(cp->intx_domain);
+> +		goto power_off;
+> +	}
+> +	platform_set_drvdata(pdev, cp);
+> +	return 0;
+> +
+> +power_off:
+> +	gpiod_set_value_cansleep(cp->perst, 1);
+> +	reset_control_assert(cp->reset);
+> +	phy_power_off(cp->phy);
+> +exit_phy:
+> +	phy_exit(cp->phy);
+> +disable_clk:
+> +	reset_control_assert(cp->reset);
+> +	clk_disable_unprepare(cp->clk);
+> +	return dev_err_probe(dev, ret, "host initialization\n");
+> +}
+> +
+> +static void cortina_pcie_remove(struct platform_device *pdev)
+> +{
+> +	struct cortina_pcie *cp =3D platform_get_drvdata(pdev);
+> +
+> +	dw_pcie_host_deinit(&cp->pci.pp);
+> +	irq_set_chained_handler_and_data(cp->irq, NULL, NULL);
+> +	irq_domain_remove(cp->intx_domain);
+> +	cortina_pcie_power_off(cp);
+> +}
+
+[Severity: High]
+Does removing cp->intx_domain without disposing of its mapped virtual IRQs
+leak IRQ descriptors and leave dangling pointers to cp and
+cortina_intx_chip?
+
+During pci_host_probe(), pci_assign_irq() maps INTx interrupts in
+cp->intx_domain (including for the Root Port itself, where
+dw_pcie_setup_rc() sets PCI_INTERRUPT_PIN =3D 1), and the PCI core does not
+unmap shared INTx lines on bus removal.  Both cortina_pcie_remove() and
+the dw_pcie_host_init() error path call irq_domain_remove(cp->intx_domain)
+without first calling irq_dispose_mapping(irq_find_mapping(cp->intx_domain,=
+ i))
+for each INTx line, leaving allocated irq_desc entries referencing the
+freed domain and driver state.
+
+> +static void cortina_pcie_shutdown(struct platform_device *pdev)
+> +{
+> +	struct cortina_pcie *cp =3D platform_get_drvdata(pdev);
+> +
+> +	writel(0, cp->app + APP_INT_ENABLE);
+> +	cortina_pcie_stop_link(&cp->pci);
+> +	gpiod_set_value_cansleep(cp->perst, 1);
+> +	reset_control_assert(cp->reset);
+> +}
+
+[Severity: Medium]
+Can cortina_pcie_shutdown() race with in-flight interrupts or subsequent
+DBI accesses while asserting controller reset?
+
+CPU0                                    CPU1
+cortina_pcie_shutdown()
+  writel(0, cp->app + APP_INT_ENABLE)
+                                        cortina_pcie_irq_handler()
+                                          dw_handle_msi_irq()
+  cortina_pcie_stop_link()
+  reset_control_assert(cp->reset)
+                                            dw_pcie_readl_dbi()  <-- DBI ac=
+cess in reset
+
+cortina_pcie_shutdown() does not take cp->lock, set cp->link_lost =3D true,
+or call synchronize_irq(cp->irq).  An in-flight IRQ handler or a
+concurrent config/DBI access (which checks cp->link_lost) can access DBI
+after the link is stopped and cp->reset is asserted, and a concurrent
+cortina_intx_unmask() can also re-enable bits in APP_INT_ENABLE.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123-b4-cs7542-=
+pcie-v1-0-4cde5201d404@gmail.com?part=3D7
