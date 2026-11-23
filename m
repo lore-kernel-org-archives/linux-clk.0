@@ -1,78 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795465977;
-	b=E+fW0+C6d2+IRFF7HuYKGnTsRzMh9KDCB1AkzSKToGbpI0l4ibpoJSiiYgmHX0RzVMt4
-	 tG5BAZWMYOR8meV6iTN1kDUqEmVpgTEOoNkqRLwTzy4vFfthh5BHyedwx7pROYXpj4Pev
-	 so7dBnGOEGONkaFpLHMzerXAZ+HEOEEbGQyjcOvZwsH/2U5Z1Byqk9Uf+xlDNysgTB+Kh
-	 fR8q1HzESHBn7fh58sPSzZ6IjdWUzX/U6mvx/Yk/ArMe+qex8z+h3lmWvvEc2M0hadoVF
-	 Ezhi48XNz7Ve1z81VJUI96xCWV04M90IURfparqJES97X8hWOyXg7vwLJlF4g+miZ1A==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795465977;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Lej6RTvtrpI2hEP/db8Qbcau2rotxEBHFNsfNijRJu8=;
-	b=m9195HQaUJTKKIuX6sFJKCITBy21Q9BchHlndMFJXlbX8DU9a2e56xlsFDr9XUslIyYx
-	 mSuFKd0aB/SrrT8KWLKKBVpQQWwRUC0fCpD0sGPfbsw87I/FKTW6Y008eEDSnx7+n4gJm
-	 NiSxNaUBRg0LPLAXqupSjzgBuyoqLSAlqMEZssv5ts7T3Bv5vKcl0+noLo8+gkIDhWhbm
-	 XqAH6lhBm6KkiufWYyhxK50zj3dC9WZwk86lli9wba7+bQWOlvl/jkwRTvQ8FbLhlRX56
-	 tXkSwovDnWNpHUbaehV8bFuS3zRPwR3nBvm0enrrivko3rxSOq0Wpntyzp97JZYcGsA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=j3TuCmyq;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795466275;
+	b=CM4fwUIMgSs5JkVGLGmcZS0x1mXtArd362wws6ysgAHBCEL3Gvv3dNQH3Thft9fVc0GY
+	 CLoV5qJjghVUpWZirp5gfwFKQyjFEt6VL+v6e3O7z1ytFvROK6bYosUAcWjuohv/ZPYFo
+	 iBksH2uB3hP/qJz9/BIgarA7rJ43TaA/zEwJdgHC38xmz4of0t9yDoUeY7sdJSm0HzXlm
+	 MopMHxQLp8o6nUB8dpP4r/6zHWeFKn1sJZ6i1tbEepP2sfZK6DkjnW1Vk98kSpQDEDazk
+	 BvMEkuR1UAEHREtwKSmQuImtvIXMV+VSrVJYXMGGxqhXRwEysrHoVe50kuf8BTh9a5w==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795466275;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=cT4+26bw+nlveyk1ygYZKPWMBO4GitGR/GIbG7Vg2kQ=;
+	b=XyVjxuPx8oBhgi5Cl6HBvZcceLjW/ht0/I1lTaoUf9ruG7FOO5GeY1yTPoki0BBm8BeS
+	 Nx8oFB3qpakLzw3wSujQG2HMqoBAOUb08OitYdh147DmSuI+bNJJZWnOcjYnJcCsgj6yL
+	 CCENilCjb4hK812knAq4YrzbNbiUz1rLLy7BtNIxw8ww11dmauZEK+JWP+0RRfJ3bcgA0
+	 GBIDYFPYfSuRiLj3AWZAPtdqmCyqlK8gPUYMKf36Ost9zJtWdau0DG3ZBUZ5yHjnvjHwX
+	 yMi1sYW96vMcR2IUiO9ViOWOEys5IwqsTAJUUN4sZ/AJByrvAany8vIe5jrcvxCFIwQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d1IoA2ND;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1661C606A68B;
-	Mon, 23 Nov 2026 20:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875BA606A31E;
+	Mon, 23 Nov 2026 20:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=j3TuCmyq
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795465976;
-	b=rZ+uTr+orARP/Vcb2rVjKEsCV4/tylX0sYou8d8WmpJka1WFhlYhOsKA4NTApHuImCX3
-	 EmD2qli6Fgx+BqosiciAn/o9APZWP4DCof9c5wZn6ucNvV45yuZsmudpHXvCOSfbh3lSf
-	 h0rJzRFxInIJGGO3kWc7hO+KwAZF8l+A2uMtg2PExjJasvt453G/ESvEAoqejLvp7uYyR
-	 Kz7zjl6bE/L6FUQj3gkhmvNi00epoQ3LrlFGZ6xOCWEox1U+vrOezitK3MXs2RK7cDTXa
-	 vYZ/qyAVz/JUS/QEsL5vPxkz8HsFRzp3KK6XhtGbuDgUM/6jqgNJcR/K9YKNtWtuJVw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795465976;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Lej6RTvtrpI2hEP/db8Qbcau2rotxEBHFNsfNijRJu8=;
-	b=yjtaHckWJk6LRVVoQ4h7gHVDl8ASFaWgZczE1AWjjGxIJlpd6xutZIuRtXc8mHCFAkm9
-	 lf2WZhjNksFiCb/GQJAyKxFOStWwKlGC84QBErk8MkqguRzRBHCW8yQnaSvEAZTfGcKvV
-	 ZomfCDZ2jYVV0V3yohKZL4ZLqcAyYlQBIE8txeT57lv+j7ng9wAArE+ghr26DCSDKeItA
-	 BA/S3enpMmGj7O/gF9Mtq6zJlhWJSqbjG/pilI0J+rsxMy0ewgr+eTZReobOMhCmE0Ltb
-	 B5OWk86JjCXV/symfIk9EWBpz786/PgeFf5LiMZls8Ri6tmqR8HvYsiwAVLnqGwu6pg==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 1C5751F0093C;
-	Mon, 23 Nov 2026 20:32:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d1IoA2ND
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2232A1F000C4;
+	Mon, 23 Nov 2026 20:37:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795465976;
-	bh=Lej6RTvtrpI2hEP/db8Qbcau2rotxEBHFNsfNijRJu8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=j3TuCmyqIDDR8NGD5LuQq5sXRj6fH32sOmv8uCX+++9Fem+v9yg6pXxafl552aMco
-	 fdfgPP9C+1FFxsAqzZ7Heuac1Qm+3+2PWTnFhLgBMQvfZXy1n5TMgKdFL6uCrk02j3
-	 nPSH4SioRgMHqPsxOBk394Tu+01/OL7DCeP+jXbjWoEdzcPGAl3PN2yIwvL6dy/OS4
-	 bMSzNCbWSVREEXjj/UcerYGGoY95hSWPUXLpDx+e8vKaqvbHFoTPtnhA7yBIGWYMpS
-	 68dXjwStQsrN6b0B3natzvKxyfwih6/oA1MpsrHgSRx6orNSf1dFh62s+yTHtaHVK/
-	 p9YHKOe32HZag==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 34DAC4C71A;
-	Mon, 23 Nov 2026 20:32:18 +0000 (UTC)
-From: Fil Dunsky via B4 Relay <devnull+filipp.dunsky.gmail.com@kernel.org>
-Date: Mon, 23 Nov 2026 23:32:22 +0300
-Subject: [PATCH v2 8/8] MAINTAINERS: Add CS7542 PCIe support
+	s=k20260515; t=1795466275;
+	bh=cT4+26bw+nlveyk1ygYZKPWMBO4GitGR/GIbG7Vg2kQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=d1IoA2NDSb6KAhysDhHG/JnTv2/xpGMeVXp2B9HXXQiAOq2IDJ7HIFK6D/jBxpU3p
+	 AhKxGO/ojDSwzAcEwLBhfKDspjkJB7IzLSMfreWxXV+9k6jnXXX1NrLCDixkjvLSva
+	 l0cmq2bGNFn95OPbYJB/tZ9ciYaE3mfvRclL3QF2/1qthBSP3Uf+Yg7YUO38+kjE5m
+	 lnZLpTiH9dsJPlRoKQXjg2t1xH5EN4umskF7sjtnDMxSLD3HkJVX1d2aLNqwbRJ5XY
+	 Gpcy5zxDsL2/wT53C5XwPViqbc64TFQX4+7+sFjdsRWbTWIxttdL9UxhnBa8B07b/c
+	 BouglJ5apHtuQ==
+Message-ID: <sashiko-outbox-230006@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: soc: Add Cortina Systems CS7542
+ global control block
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Fil Dunsky" <filipp.dunsky@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261123-cs7542-syscon-v2-1-1cd74b2522f9@gmail.com>
+References: <20261123-cs7542-syscon-v2-0-1cd74b2522f9@gmail.com>
+ <20261123-cs7542-syscon-v2-1-1cd74b2522f9@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 23 Nov 2026 20:37:54 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -81,77 +60,63 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261123-b4-cs7542-pcie-v2-8-f589a9cd0bef@gmail.com>
-References: <20261123-b4-cs7542-pcie-v2-0-f589a9cd0bef@gmail.com>
-In-Reply-To: <20261123-b4-cs7542-pcie-v2-0-f589a9cd0bef@gmail.com>
-To: Manivannan Sadhasivam <mani@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Krzysztof Wilczynski <kwilczynski@kernel.org>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795465935; l=1356;
- i=filipp.dunsky@gmail.com; s=20260930; h=from:subject:message-id;
- bh=jDKZmt7guwHzNgRKzZtW9q1sZuhebiJ5PQkmWsr+DNk=;
- b=COAIM9n7CTGeI8/L4LkcbqnsEldMGtaqCfIl/GPNmucZysECPadrp5Gs0ZzEUCWCmxfqt0Ccb
- lEinjDjWYRmCm41Fm5Fkw5271BcAEUcjoMXeS16jSw1BCeT47F5tcqn
-X-Developer-Key: i=filipp.dunsky@gmail.com; a=ed25519;
- pk=JAYP8e2rJ54DHOmhNtXud8rl1igAaAXoOHxtJmVXI1g=
-X-Endpoint-Received: by B4 Relay for filipp.dunsky@gmail.com/20260930 with
- auth_id=1085
-X-Original-From: Fil Dunsky <filipp.dunsky@gmail.com>
-Reply-To: filipp.dunsky@gmail.com
-Content-Transfer-Encoding: 7bit
 
-From: Fil Dunsky <filipp.dunsky@gmail.com>
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] dt-bindings: soc: cs7542-syscon references missing
+  cs7542-pinctrl schema
+--
 
-Cover the new PCIe control, SerDes and host drivers and their bindings
-under the existing CS7542 entry.
+commit 07450862dd3e19e1c7ed8329f2ae5067c2a63e4a
+Author: Fil Dunsky <filipp.dunsky@gmail.com>
 
-Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
----
- MAINTAINERS | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+dt-bindings: soc: Add Cortina Systems CS7542 global control block
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d8835aeca..511a6cb34 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2949,15 +2949,20 @@ F:	tools/perf/tests/shell/coresight/*
- F:	tools/perf/util/cs-etm-decoder/*
- F:	tools/perf/util/cs-etm.*
- 
--ARM/CORTINA SYSTEMS CS7542 GLOBAL CONTROL
-+ARM/CORTINA SYSTEMS CS7542 GLOBAL CONTROL AND PCIE
- M:	Fil Dunsky <filipp.dunsky@gmail.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
-+F:	Documentation/devicetree/bindings/pci/cortina,cs7542-pcie.yaml
-+F:	Documentation/devicetree/bindings/phy/cortina,cs7542-pcie-phy.yaml
- F:	Documentation/devicetree/bindings/pinctrl/cortina,cs7542-pinctrl.yaml
- F:	Documentation/devicetree/bindings/soc/cortina/
- F:	drivers/clk/clk-cs7542.c
-+F:	drivers/pci/controller/dwc/pcie-cs7542.c
-+F:	drivers/phy/phy-cs7542-pcie.c
- F:	drivers/pinctrl/pinctrl-cs7542.c
- F:	include/dt-bindings/clock/cortina,cs7542-clock.h
-+F:	include/dt-bindings/reset/cortina,cs7542-reset.h
- 
- ARM/CORTINA SYSTEMS GEMINI ARM ARCHITECTURE
- M:	Hans Ulli Kroll <ulli.kroll@googlemail.com>
+This commit adds the devicetree binding schema and clock specifier header
+for the Cortina Systems CS7542 global control block.
 
--- 
-2.53.0
+> diff --git a/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542=
+-syscon.yaml b/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542=
+-syscon.yaml
+> new file mode 100644
+> index 0000000000000..fb074de870bd4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon=
+.yaml
+> @@ -0,0 +1,49 @@
 
+[ ... ]
 
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: cortina,cs7542-syscon
+> +      - const: syscon
+> +      - const: simple-mfd
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  pinctrl:
+> +    type: object
+> +    $ref: /schemas/pinctrl/cortina,cs7542-pinctrl.yaml#
+
+[Severity: Low]
+Does referencing /schemas/pinctrl/cortina,cs7542-pinctrl.yaml# here break
+dt_binding_check at this commit?
+
+Documentation/devicetree/bindings/pinctrl/cortina,cs7542-pinctrl.yaml is
+not introduced until the following patch in the series, commit
+"dt-bindings: pinctrl: Add Cortina Systems CS7542 pin mux", so running
+make dt_binding_check on this commit alone (or if the soc and pinctrl
+patches go through separate trees) fails with an unresolvable schema
+reference.  Adding the pinctrl property to cortina,cs7542-syscon.yaml in
+the patch that introduces cortina,cs7542-pinctrl.yaml would keep each
+commit self-contained.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123-cs7542-sys=
+con-v2-0-1cd74b2522f9@gmail.com?part=3D1
