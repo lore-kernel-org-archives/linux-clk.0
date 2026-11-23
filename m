@@ -1,69 +1,37 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795417885;
-	b=veDm/SADlF2Tpn/axC2FRldDMsTSEz77X55ByC/HoPvO96oSi2n0sk8n8pybI1TLdUQt
-	 3u65c6DBpXnMHPCwET2oixC8M6Ul0YcvM3Kxafx+VkkLXRi56OjBZhZVRAYk+2rm2uyqf
-	 U7h5/r9OW0A5TLM+0mlJ7RnrRHvgiiZszLv4bDc1F39cMiM1bKkAhJV+zfRL7VSR9RFAD
-	 SI7WpuDHNQtoIyXdzTKmv30TnS2CTmyoQNYJmln7odtguLyRtDzpDDIpydBPVoBYisugu
-	 C6UZ2OLo42HGp3vKzNdgKp3ysLJOh3y3GAegzoFHSdcBMp+o+3T82+4a+iX0wdPxaKA==
+	t=1795419504;
+	b=ajEQJrjj45Ia4j+02m/wjMbb3xxglCEvHE+YU4dHUz3SgiamkkroZJlFOudHz11zzDrz
+	 LGFiOVAVeACUwRBEQJvq6K3AIFvqlR/0ZzNtW0INyi+IaG5E1Iy6ee9sf0YbJzoDZNSMA
+	 lwEEK2nrNZ+TpRGUB4fLEcJ3hdV4kFLqhdGv3mZenoVCPqaAYrthkDCb1t4ZU4l81Mxmd
+	 tF1FpGrbzJcagGUdK4HX1kD9W1Vamt6dLcQruUqGqP+5IO4rEFhXBTTCUJlLoWN1K7Pd3
+	 AMLV/6s8Wr1zPj838vmzVDsE734krWvPjE+CXIhZcTl/A9OCK3miGcX+lIu13YU3RWQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795417885;
-	h=DMARC-Filter:DKIM-Signature:Received:X-Originating-IP:Date:
-	 X-CM-HeaderCharset:From:To:Cc:Subject:X-Priority:X-Mailer:In-Reply-To:
-	 References:Content-Transfer-Encoding:Content-Type:MIME-Version:
-	 Message-ID:X-Coremail-Locale:X-CM-TRANSID:X-CM-SenderInfo:
-	 X-Coremail-Antispam;
-	bh=O9ny3PUDoHN73z9RkUU0DwJo+8Qh1WzART2kv0IUSgA=;
-	b=yccEYigcAtkLDijpdvag1xd7mRb8GTyOLgD3NCcc1CD3pAYt8cOcvynde8whukwsA24B
-	 OOCeYy33YeI5iQjWr3XxtCaWezg2wLh8QmAStsWUS5cqCT2rH+JTJg7yxXXXsSGGXXNQp
-	 7cQ+EsdVCS1xvpASjHUIyIpSpScwN0nUMhXx8ndsN8eDt3+HJ8reXZotQrK7l/CKbdQLr
-	 Zq/M3PXW4Wf50dwHCCaoa4yLzfqW0mryIzVhkbK0/42D1kPsGaTXM3BeYicCMZeo4/VKo
-	 qTw4SNzCR5c9IaNfi+0vQIbFZ2VG9XAztph2H+YXdMmw/GnHvCcsOGomJHEno9Vs49A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795419504;
+	h=Received:From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=kb2wW82BiRX9urEdf6flbl/a9JTwxBzi7QUNfVAnYnw=;
+	b=b+uXfntyVC51RNlrg1yPMwXeWG133vRhJ4AWwqyfC3gztIV+mE8ezPT3SJ6AxYweyv57
+	 pWnWFmJCnu4rW8IiixCGL1lLtgK+/LsH10y/aCaWRGegma/gOkJsavbaOdcrY92MIxcIc
+	 Senyssomne3WdoOGST5/sK+SSRePbSRC2ijp05kFM0L4HM32HiDV33HeIzHv7Ny1Mfty0
+	 5rumQha+MHkLoZoSVsSAO3b+43oCVlu+8OBTQ861a6JwenSGYJakp0OE5Xa0RFI+7yT1z
+	 1trvqGjUCuy9DDVNPOwA3f3uQgH6xN2nvEA274uc+qHIJEQ3FT/ckUl/QMWgwPamxHQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=eswincomputing.com;
-	spf=pass smtp.mailfrom=eswincomputing.com;
-	dkim=fail reason="signature verification failed" header.d=eswincomputing.com header.i=@eswincomputing.com header.a=rsa-sha256 header.s=dkim header.b="b/Z5uhda";
-	arc=none smtp.remote-ip=162.243.161.220
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BC4606A31A
-	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 07:11:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A6BC4606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=eswincomputing.com header.i=@eswincomputing.com header.a=rsa-sha256 header.s=dkim header.b=b/Z5uhda
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=eswincomputing.com; s=dkim; h=Received:Date:From:To:Cc:Subject:
-	In-Reply-To:References:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID; bh=wbrulM3oD0p3QX8D6CJ6Kgo1pKvSz0Q86JEs
-	Ny5ELkc=; b=b/Z5uhdajriqkrrf0/QdBg+bPnnRqyOUWV5D3aLTkVSFv8K6ERyW
-	+EBrRl4F4ITqHtUjSrnEt5cuem/wf8v67RzfAlRmP+UzG1+z9gj765wyJOK14jrf
-	Kgxpt3Iko6/EkOdNEvRnUWIdOE44hEoMWgRn0FLMVno9Zq1wrHgwWig=
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Mon, 23 Nov 2026 15:11:08 +0800 (GMT+08:00)
-Date: Mon, 23 Nov 2026 15:11:08 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: "Mervyn Pretorius" <mervynpretorius.oss@gmail.com>,
-	"Pinkesh Vaghela" <pinkesh.vaghela@einfochips.com>
-Cc: "Yifeng Huang" <huangyifeng@eswincomputing.com>,
-	"Stephen Boyd" <sboyd@kernel.org>,
-	"Brian Masney" <bmasney+clk@redhat.com>,
-	"Jerome Brunet" <jbrunet+clk@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-	"Min Lin" <linmin@eswincomputing.com>,
-	"Pritesh Patel" <pritesh.patel@einfochips.com>,
-	"Xuyang Dong" <dongxuyang@eswincomputing.com>
-Subject: Re: clk: eswin: eic7700: EIC7702X hangs when disabling unused
- D2D/PVT gates
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2026 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <20261122191830.2183513-1-mervynpretorius.oss@gmail.com>
-References: <20261122191830.2183513-1-mervynpretorius.oss@gmail.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094B4606A31A;
+	Mon, 23 Nov 2026 07:38:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A83091F000C4;
+	Mon, 23 Nov 2026 07:38:22 +0000 (UTC)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH v2 0/4] clk: qcom: Unify KConfig choices between clk,
+ pinctrl and interconnect
+Date: Mon, 23 Nov 2026 08:38:10 +0100
+Message-Id: <20261123-qcom-kconfig-unify-v2-0-fe56c8fd15bf@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -73,106 +41,67 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Message-ID: <5808e2e6.c22.1a2073e88d2.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgCnYhwM5wNrsIkAAA--.414W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEAAmsDGa8kI
-	AABsa
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWkKw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/22NQQ6CMBBFr0K6toSOAYIr72FYlDqVUWmlA0RCu
+ LsF487NJC95898iGAMhi1OyiIATMXkXAQ6JMK12N5R0jSwgg0IpULI3vpMP452lmxwd2VniETH
+ PmwrKCkR8fAW09N5HL/WXeWzuaIZtaTNa4sGHea9OavN+AfgXmJTMZKEbrUurrTLV2TOn/aif0
+ e3SeES9rusHVtO8kc0AAAA=
+X-Change-ID: 20261121-qcom-kconfig-unify-e3ee55b92792
+To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1182;
+ i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
+ bh=nYAE3w1TIK1tiltYdjoXbt0b5Tavvu7hlXRj69zzhpQ=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBrA+1kYhHUEzy9QRDd6aHCAfEGbrgbSPOIvDjHm
+ qchGXzvf0eJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCawPtZAAKCRDBN2bmhouD
+ 1960D/oDkn8kbxJdE6X2678GYy4aljuA1yxk9j/p6SbuCs0R+/G5s2t1MvQt+WECwD8Ju0BmJb+
+ VvHWedBcerJw1cfAXfLAg2Ddqo7HZoqTP8Ww3rZJKG8IW8M8Jva3euMDESHTqUg1tl8qEx0XlBK
+ GlPnaIRBMy05ASktrcVsB3AkKIPm94s0kp2wO8lR1ZIUSrv6991mA4/WYbaIXmY3RssFm9lj3tf
+ 2oYnQAIWF2pPEHlHKO64HmOw0jmNa1os0/p4EJvMXBmO7nEsbgguGqxmagHaOm2Rzwv1GTJP1Fy
+ waSZmKo9yD/um8WNTsVAC1G+xNvxvROeJgRQCajSzhIdtaW6Ll68qFOJsEteT/bhJl/sO6hqGed
+ 0x9m/3PgtdagDBKUmLFgEtww/TvsG4JuIsa3QFIRLGZQWRCpSTRL0PViCYkl0coYlaKuz4GtSct
+ uwysL2I9tDVotPm9rbcVnOlYnvl2TjCPjcXI9osO5AEq9vyPWp1fOGSPUxMrQI6rCJIUH5lvSLq
+ zLkuAUfTACnyYIYKa/dC7Tuly0j/JVsBNQgwXRh6regHgL1/Q4BqWWSReiWVz6MsN3QaYvZERry
+ LtkQkQiGgD6mLD29xoSrUG1e8+WWxe0Gs4PuRDLeksn9Ar7vqswS3AV08L5k2PtCjQ5L3G84BaF
+ btPLNnpLjU88Zyg==
+X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-PiAKPiBPbiBhIERlZXBDb21wdXRpbmcgRk1MMTNWMDMgYm9hcmQgKEVTV0lOIEVJQzc3MDJYLCBp
-LmUuIHR3byBFSUM3NzAwWAo+IGRpZXMsIDMyIEdpQiksIG1haW5saW5lIGhhbmdzIGR1cmluZyBv
-ciBzaG9ydGx5IGFmdGVyCj4gY2xrX2Rpc2FibGVfdW51c2VkKCkgdW5sZXNzIGNsa19pZ25vcmVf
-dW51c2VkIGlzIGdpdmVuLiBNYXJraW5nCj4gZ2F0ZV9kMmRfYWNsayAoYW5kLCBhcyBhIHByZWNh
-dXRpb24sIGdhdGVfbHNwX3B2dF9wY2xrKSBhcwo+IENMS19JU19DUklUSUNBTCBpbiBkcml2ZXJz
-L2Nsay9lc3dpbi9jbGstZWljNzcwMC5jIGZpeGVzIGl0IGhlcmU7IEknZAo+IGxpa2UgdG8ga25v
-dyB3aGV0aGVyIHRoYXQgaXMgdGhlIHJpZ2h0IGZpeCBvciB3aGV0aGVyIHNvbWV0aGluZyBlbHNl
-Cj4gc2hvdWxkIGNsYWltIHRoZXNlIGNsb2Nrcy4KPiAKPiBTZXR1cDoKPiAtIHY3LjQtcmMzICg0
-ODQzZjY4NzNmN2MpICsgInJpc2N2OiBlc3dpbjogZWljNzcwMDogQWRkIHN1cHBvcnQgZm9yCj4g
-ICBjbG9ja3MsIHJlc2V0cywgcGluY3RybCwgSFNQIGJ1cywgSTJDIGFuZCB3YXRjaGRvZyIgdjUK
-PiAgIChodHRwczovL2xvcmUua2VybmVsLm9yZy9yLzIwMjYxMDE1MTI1NDU0LjEzODE5NDEtMS1w
-aW5rZXNoLnZhZ2hlbGFAZWluZm9jaGlwcy5jb20pCj4gICArIGEgbWluaW1hbCBsb2NhbCBib2Fy
-ZCBkdHM6IGRpZSAwIG9ubHkgKDQgb2YgdGhlIDggaGFydHMsIHVhcnQwLAo+ICAgdGhlIGZpcm13
-YXJlIHJlc2VydmVkLW1lbW9yeSByZWdpb25zKS4KPiAtIGRlZmNvbmZpZyArIFBJTkNUUkxfRUlD
-NzcwMCwgRFdfV0FUQ0hET0csIFJJU0NWX1NCSV9WMDEuCj4gLSBPcGVuU0JJIHYxLjMsIFUtQm9v
-dCAyMDI0LjAxLCBEMkQgZmlybXdhcmUgMS41MSwgR1JVQiAoRUZJKS4gVW5kZXIKPiAgIEVGSSB0
-aGUga2VybmVsIHRha2VzIFJBTSBmcm9tIHRoZSBFRkkgbWVtb3J5IG1hcCwgc28gaXQgYWxzbyB1
-c2VzIHRoZQo+ICAgc2Vjb25kIGRpZSdzIDE2IEdpQiBhbHRob3VnaCB0aGUgZHRzIG9ubHkgZGVz
-Y3JpYmVzIGRpZSAwLgo+IC0gUGxhaW4gY29tbWFuZCBsaW5lOiBlYXJseWNvbj1zYmkgY29uc29s
-ZT10dHlTMCwxMTUyMDBuOCByZGluaXQ9L2luaXQKPiAgIChpbml0cmFtZnMgb25seSkuIFRvIGZp
-bmQgdGhlIGNsb2NrcyBJIHVzZWQgYSBsb2NhbCBkZWJ1Zy1vbmx5IG9wdGlvbgo+ICAgdGhhdCBr
-ZWVwcyBuYW1lZCBjbG9ja3Mgb24gaW4gY2xrX2Rpc2FibGVfdW51c2VkX3N1YnRyZWUoKSAobm90
-IG1lYW50Cj4gICBmb3IgbWVyZ2luZyk7IHNvbWUgb2YgdGhvc2UgYm9vdHMgYWxzbyBoYWQga2Vl
-cF9ib290Y29uIGFuZAo+ICAgdHJhY2VfZXZlbnQ9Y2xrOmNsa19kaXNhYmxlIHRwX3ByaW50aywg
-Y2FsbGVkICJ0cmFjZWQiIGJlbG93Lgo+IAo+IFdoYXQgSSBzZWUgb24gdGhlIHNlcmlhbCBjb25z
-b2xlOgo+IAo+IC0gZ2F0ZV9kMmRfYWNsazogZXZlcnkgYm9vdCB0aGF0IGRpc2FibGVkIGl0IGZh
-aWxlZCB0byByZWFjaCBpbml0OiAxCj4gICB0cmFjZWQgYm9vdCB0aGF0IGxlZnQgb25seSB0aGlz
-IGdhdGUgb3V0IG9mIGEgbGFyZ2VyIGtlcHQgc2V0LCAzCj4gICBwbGFpbiBib290cyB0aGF0IGtl
-cHQgb25seSBnYXRlX2xzcF9wdnRfcGNsayBvbiAoMiB3aXRoIGFsbCAzMiBHaUIsCj4gICAxIHdp
-dGggbWVtPTE2RyksIGFuZCB0aGUgc3RvY2sgYm9vdHMgd2l0aCBub3RoaW5nIGtlcHQgKDMyIEdp
-QiBhbmQKPiAgIG1lbT0xNkcpLiBXaXRoIDMyIEdpQiB0aGUgdHJhY2VkIGJvb3Qgc3RvcHMgcmln
-aHQgYXQKPiAgIHRoaXMgZ2F0ZS4gV2l0aCBtZW09MTZHIChMaW51eCBvbiBkaWUgMCBSQU0gb25s
-eSkgdGhlIGJvb3Qgc3RhbGxzCj4gICBiZWZvcmUgaW5pdDsgfjIxIHMgbGF0ZXIgUkNVIHJlcG9y
-dHMgYSBzdGFsbCwgYW5kIENQVSAyIHRoZW4gZG9lcyBub3QKPiAgIHJlc3BvbmQgdG8gdGhlIE5N
-SSAoIkFmdGVyIDEwIHNlY29uZHMsIHRoZXNlIENQVVMgc3RpbGwgaGF2ZW4ndAo+ICAgcmVzcG9u
-ZGVkIHRvIHRoZSBOTUk6IDIiKS4gS2VlcGluZyBvbmx5IHRoaXMgZ2F0ZSBvbiwgd2l0aCBldmVy
-eQo+ICAgb3RoZXIgdW51c2VkIGdhdGUgZGlzYWJsZWQsIGJvb3RzIHRvIGFuIGluaXRyYW1mcyBz
-aGVsbCB3aXRoIDMyIEdpQgo+ICAgKDIgYm9vdHMpIGFuZCB3aXRoIG1lbT0xNkcgKDEgYm9vdCku
-Cj4gCj4gLSBnYXRlX2xzcF9wdnRfcGNsazogaW50ZXJtaXR0ZW50LiBJIGhhdmUgMTAgYm9vdHMg
-dGhhdCBkaXNhYmxlZCBpdAo+ICAgd2hpbGUgZ2F0ZV9kMmRfYWNsayBzdGF5ZWQgb24uIEluIDQg
-b2YgdGhlIDcgdHJhY2VkIG9uZXMgKHdoaWNoIG1ha2UKPiAgIHRoZSBkaXNhYmxlIHBhc3MgbXVj
-aCBzbG93ZXI7IDUgb2YgdGhlIDcgd2VyZSBlYXJsaWVyIG1lbT0xNkcgYm9vdHMKPiAgIHdpdGgg
-b3RoZXIgY2xvY2tzIGtlcHQgb24gYXMgd2VsbCksIHRoZSBEMkQgZmlybXdhcmUgcHJpbnRlZCwg
-d2l0aGluCj4gICB0ZW5zIG9mIG1pbGxpc2Vjb25kcywgdGhlIGZvbGxvd2luZyAoZnJvbSBvbmUg
-b2YgdGhlbTsgY29sb3VyIGNvZGVzCj4gICByZW1vdmVkLCBhbmQgdGhlIGZpcnN0IGxpbmUncyAi
-RDJEIE5PVEkiIHByZWZpeCB3YXMgaW50ZXJsZWF2ZWQgd2l0aAo+ICAga2VybmVsIG91dHB1dCk6
-Cj4gCj4gICAgIEQyRCBOT1RJQ0U6IM6UVCA2MC42OTHCsEMgKHByZXYgNDYuMzI5LCBjdXJyIDEw
-Ny4wMjApCj4gICAgIEQyRCBGQUlMOiBUOjEwNy4wMjAgc3RzOjAwMDAwMDA3IHJ4OjAwZTYwMDAx
-IHJ4MjowMGU2MDAwMSBbUlggRVJSIEFMTHxSWCBMT0NBTCBMSU5LVVB8UlggUkVNT1RFIExJTktV
-UF0KPiAKPiAgIGFuZCBMaW51eCBodW5nLiBJbiB0aGUgb3RoZXIgMyB0cmFjZWQgYm9vdHMgYW5k
-IGluIGFsbCAzIHBsYWluIGJvb3RzLAo+ICAgZGlzYWJsaW5nIGl0IGNhdXNlZCBubyB2aXNpYmxl
-IHByb2JsZW0uIEkgZG9uJ3Qga25vdyB3aHkgaXQgaXMKPiAgIGludGVybWl0dGVudC4gQSBqdW1w
-IGZyb20gNDYgdG8gMTA3IMKwQyBiZXR3ZWVuIHR3byBmaXJtd2FyZSBzYW1wbGVzCj4gICBsb29r
-cyBsaWtlIGFuIGludmFsaWQgc2Vuc29yIHJlYWQgb25jZSB0aGlzIGNsb2NrIGlzIG9mZiwgYnV0
-IEkKPiAgIGNhbid0IHNlZSB0aGUgZmlybXdhcmUgc2lkZS4KPiAKPiAtIFdpdGggYm90aCBnYXRl
-cyBtYXJrZWQgQ0xLX0lTX0NSSVRJQ0FMIChkaWZmIGJlbG93OyBubyBvdGhlciBjaGFuZ2UsCj4g
-ICBubyBkZWJ1ZyBvcHRpb24sIG5vIGNsa19pZ25vcmVfdW51c2VkKSBhbmQgdGhlIHBsYWluIGNv
-bW1hbmQgbGluZSwKPiAgIHRoZSBib2FyZCBib290cyB3aXRoIGFsbCAzMiBHaUIsIGFuZCA5MiBw
-cmV2aW91c2x5IGVuYWJsZWQgdW51c2VkCj4gICBnYXRlcyBhcmUgZGlzYWJsZWQgKDExMyB1bmNs
-YWltZWQgZ2F0ZXMgd2VyZSBvbiBpbiBhIGNsa19pZ25vcmVfdW51c2VkCj4gICBib290OyB0aGUg
-MjEgbGVmdCBvbiBhcmUgdGhlIDE5IGZsYWdnZWQgQ0xLX0lHTk9SRV9VTlVTRUQgcGx1cyB0aGVz
-ZQo+ICAgdHdvKS4gV3JpdGluZyBhbmQgcmVhZGluZyBiYWNrIDI3IHggMSBHaUIgaW4gdG1wZnMg
-KHNvIHRoZSBzZWNvbmQKPiAgIGRpZSdzIFJBTSBpcyBpbiB1c2UpIGdpdmVzIGlkZW50aWNhbCBj
-aGVja3N1bXMsIGFuZCByZWJvb3QgLWYgcmV0dXJucwo+ICAgdG8gdGhlIGZpcm13YXJlLgo+IAo+
-IC0gZ2F0ZV9wdnQwX2NsayBhbmQgZ2F0ZV9wdnQxX2NsayB3ZXJlIGRpc2FibGVkIGluIGFsbCBv
-ZiB0aGUgYm9vdHMKPiAgIGFib3ZlIHRoYXQga2VwdCBvbmx5IG9uZSBvciBib3RoIG9mIHRoZSB0
-d28gZ2F0ZXMsIHdpdGhvdXQgcHJldmVudGluZwo+ICAgYm9vdC4gSSBoYXZlIG5vdCBjaGVja2Vk
-IHdoZXRoZXIgdGhlIFBWVCBzZW5zb3JzIHN0aWxsIGdpdmUgbGl2ZQo+ICAgcmVhZGluZ3Mgd2l0
-aCB0aGVtIG9mZi4KPiAKPiBOb3QgdGVzdGVkOiBzaW5nbGUtZGllIEVJQzc3MDBYLCBzdXNwZW5k
-L3Bvd2Vyb2ZmLCB0aGUgc2Vjb25kIGRpZSdzCj4gaGFydHMsIGFueXRoaW5nIGJleW9uZCBhbiBp
-bml0cmFtZnMgc2hlbGwuCj4gCj4gUXVlc3Rpb25zOgo+IDEuIElzIENMS19JU19DUklUSUNBTCBy
-aWdodCBmb3IgZ2F0ZV9kMmRfYWNsayAoYXQgbGVhc3Qgb24gRUlDNzcwMlgsCj4gICAgd2hlcmUg
-dGhlIEQyRCBsaW5rIGlzIGluIHVzZSksIGFuZCBmb3IgZ2F0ZV9sc3BfcHZ0X3BjbGs/IE9yIHNo
-b3VsZAo+ICAgIERUIGNvbnN1bWVycyAoYSBEMkQgbm9kZSwgdGhlIFBWVCBub2RlKSBjbGFpbSB0
-aGVtIGluc3RlYWQ/Cj4gMi4gRG9lcyB0aGUgRDJEIGZpcm13YXJlIHJlYWQgdGhlIFBWVCBzZW5z
-b3IgdGhyb3VnaCBnYXRlX2xzcF9wdnRfcGNsaywKPiAgICBhbmQgYXJlIGdhdGVfcHZ0MF9jbGsv
-Z2F0ZV9wdnQxX2NsayBuZWVkZWQgZm9yIGxpdmUgcmVhZGluZ3M/Cj4gCgpIaSBNZXJ2eW4gYW5k
-IFBpbmtlc2gsCgpUaGFua3MgZm9yIHRlc3RpbmcgYW5kIGZvciByYWlzaW5nIHRoZXNlIHF1ZXN0
-aW9ucyBhYm91dCB0aGUgRUlDNzcwMlguCgpPbiBxdWVzdGlvbiAxOiBmb3IgdGhlIEVJQzc3MDJY
-IChkdWFsLWRpZSksIGdhdGVfZDJkX2FjbGsgc2hvdWxkIGJlwqAKbWFya2VkIENMS19JR05PUkVf
-VU5VU0VEL0NMS19JU19DUklUSUNBTC4gVGhhdCBjbG9jayBuZWVkcyB0byBzdGF5wqAKZW5hYmxl
-ZCBpbiB0aGUgZHVhbC1kaWUgY2FzZS4KCk9uIHF1ZXN0aW9uIDI6IHlvdSBjYW4gYWRkIGEgUFZU
-IG5vZGUgYW5kIGxldCB0aGUgUFZUIGRyaXZlciBtYW5hZ2XCoApnYXRlX2xzcF9wdnRfcGNsayBh
-cyB3ZWxsIGFzIGdhdGVfcHZ0MF9jbGsvZ2F0ZV9wdnQxX2Nsay4gVGhlIFBWVCBkcml2ZXIKaXMg
-YWxyZWFkeSBpbiA3LjQtcmMzICh3aXRoIGNvbXBhdGlibGUgPSAiZXN3aW4sZWljNzcwMC1wdnQi
-KSwgYnV0IHRoZQpkdHMgaW4gdGhlIFsxXSBzZXJpZXMgZG9lcyBub3QgaW5jbHVkZSBhIFBWVCBu
-b2RlLgoKUGlua2VzaCwgY291bGQgeW91IGNoZWNrIHdoZXRoZXIgYSBQVlQgbm9kZSBzaG91bGQg
-YmUgYWRkZWQgaW4gdGhlIFsxXSBzZXJpZXM/CgpXZSBoYXZlbid0IHN1Ym1pdHRlZCBkdWFsLWRp
-ZSBzdXBwb3J0IHVwc3RyZWFtIHlldC4gRm9yIGR1YWwtZGllIHN1cHBvcnQswqAKeW91IGNhbiBy
-ZWZlciB0byB0aGUgcGF0Y2hlcyBiZWxvdzoKaHR0cHM6Ly9naXRodWIuY29tL0RDLURlZXBDb21w
-dXRpbmcvREMtbGludXgvdHJlZS9laWM3NzB4LXY3LjItcmM0CgpUaGFua3MgYWdhaW4gZm9yIHlv
-dXIgd29yayBvbiB0aGlzLgoKWzFdIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI2MTAx
-NTEyNTQ1NC4xMzgxOTQxLTEtcGlua2VzaC52YWdoZWxhQGVpbmZvY2hpcHMuY29tLwoKQmVzdCBy
-ZWdhcmRzLApYdXlhbmcgRG9uZwo=
+Changes in v2:
+- Patch #4: Restrict msm8996 to arm64 only, a few more drivers for both
+  msm8996 and sar2130p
+- Link to v1: https://patch.msgid.link/20261122-qcom-kconfig-unify-v1-0-6abaa7faf1c9@oss.qualcomm.com
+
+Recent commits adding defaults to clock, pinctrl and interconnect
+drivers left a options inconsistent between them, e.g. SDX65 clock
+driver not enabled by default but its pin controller enabled. This
+should be a consistent choice - we want by default all critical drivers
+enabled.
+
+There will be separate patches for pinctrl and interconnect.
+
+Best regards,
+Krzysztof
+
+---
+Krzysztof Kozlowski (4):
+      clk: qcom: Enable MSM8917 GCC by default
+      clk: qcom: Consistently enable MSM8939, MDM9615, SAR2130P and SDX65
+      clk: qcom: Drop redundant ARM and ARM64 dependency on IPQ_GCC_5018
+      clk: qcom: Consistently handle MSM8996 and SAR2130P
+
+ drivers/clk/qcom/Kconfig | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+---
+base-commit: ddeca928793056a8ffc0e3e107722c25e1836eac
+change-id: 20261121-qcom-kconfig-unify-e3ee55b92792
+
+Best regards,
+--  
+Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+
