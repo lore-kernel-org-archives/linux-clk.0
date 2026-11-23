@@ -1,45 +1,103 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795452008;
-	b=oCRgdd2sbzqfs2jMJDlyAnYQ5Pq9QhNPFUuhyK3lDpGj1qkXTdKPpgClrK44dP9Ef78O
-	 sNkp3uA5ig7UAt3QOV5ErMVNSpWzbKhuaQzDzNTLzps2Y2YFZCD10FkLrqYA83WlupPJg
-	 JG4leojphZuaUtv1DnKGFGzmzP4jf6vfKx9IVzwihuI+5uV3+MP8eyZNd/5fPHcgxs7oi
-	 nKCcaiibNrmKAcLwzVhHObX7Hjt1CFLIWpotiiwM/air+dz9RxIgc8/fHuX5IQxUG4dPX
-	 KI5DpqkiwRliUlgYl+wdGkxpDpptDfiICAM8a+Uqunelf+2tD8itdeCTk1+LmW46/AA==
+	t=1795452525;
+	b=C/9/8YcTDQi6eDvfH/b9qMvp4aOr9u/xK0dCMHCjYuG+6X7hSXoo/jNFebzoyZ3QfsO1
+	 /5nL2ulCBlF3e3IyJ4c5YVtHsVem+AHGX6HesYyTZMMPjZ3zrbmSKkSRlJ1t5g7jbNDRY
+	 IRiNppHYl4svGqhhOdpM3pN8kHNfdtuJLHIbi5hY1QUGA69Vb+5OgSOp6gk/m9E0XJYaq
+	 +TsNVbwlIZV/0U7NRCRu1jr/a18ZDUiY+kKNZRWG9mEzY+VxvHJYdaBmPuI4axWjItGcR
+	 TmJ5KtngV6FjGL9mQBaK2qr1cKLJfxvlAwYzz6yQrB13JaAClrTk1oiX5fD0lk3J6uA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795452008;
-	h=Received:DKIM-Signature:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=mK2x9J8DRMq47yHdDKKSaXJTWWVVEzbLr5jIKSSbArc=;
-	b=HrxqHr9se0OrCAWwoz4+w5ygsrnjJi3wcUQdBY/VJIfrM3SkXdkbdyc0cgQjQUWJmnb5
-	 pmBIgFbwBRLlBFDY173ywN0/cHr4VpQazKcmN7TCbRjvumAY1VrdhkpTOZJhkuUYGrJGg
-	 +rLXVr/innI2USyJE73BWwhL6SPaWRT5ZpFQclrbHf2K254+TkbToRgi+XeuRaO8nVZrL
-	 r3ad/gGQ+9ugZJb6h+ATBImaQRiMlvTLl/YWlSMOao+t8Qz2o/dp8zSbPW2EKjypUE9Vw
-	 mVYZeSFsq7m2cqH2rt7vwNDm/1HsPikJDUYGawRsEAgZtkw6TLKXiTCvdLqqE2k1JKw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795452525;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=msw4FIKrAUyInphRYrqr8Ra5cv1R+7cgbS2Ass40zs0=;
+	b=IK6C4T0tLA/SXEkiDm2utLLdEZp0JHvajzRwxUUrpBDWkpxqUVB/Tm5SQRG9qUuHF7mn
+	 jq/PepvY70FRwmgS06SrBi9ze8UekGrEzixbmkBrcWbH5rfCX+ED38kR1kv2NoUNcjf7G
+	 U/oFAa6JYXxQ2DP5D1sg9B2+rNXY/BeMmtu4K7g7XWw+wuJY2XlLZAtKipnxdSmhqgcIY
+	 ZNC5vYaS5VL3BAaXzDZyPnIptBQQ1lLp9He+t7ne2NUAGYqD2KqBzVzDVYinHiS/Xb4yz
+	 pJStZBYRKsyT6xNzXKbzvuhjOnzsaqAJdq7aqGqeGGx3oSiU18hZnQsevzSGafYIksQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BlVOuSfP;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FDF5ZjcJ;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A48606A335;
-	Mon, 23 Nov 2026 16:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0697606A33F;
+	Mon, 23 Nov 2026 16:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BlVOuSfP
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC1831F000D1;
-	Mon, 23 Nov 2026 16:40:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FDF5ZjcJ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6BEA1F000CF;
+	Mon, 23 Nov 2026 16:48:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795452008;
-	bh=mK2x9J8DRMq47yHdDKKSaXJTWWVVEzbLr5jIKSSbArc=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=BlVOuSfPnOF1qPwAm9fG4jwG4wGmJpVBuusA2i92aNgvxFW6qqIq/l+55FeLBHbtE
-	 nKYN4x9so8tcgzf+Y1L7ox7wqTc9tv2QeNc9M3qNy/HCuCH4E4T/NF4NTpja7+Jl5Z
-	 +mwyUQxDwSatRvSfsxY46jiABmaxGv0MRr6UPvOS90VykRMrrtREvlQLPwuMqWbKE4
-	 lbCItL5t3FbASk8FD2NpNhkpHtZsiBqerMfwhgy/Zvl/GtohsGDp5ufRRrS7sV8Syp
-	 gP/LIvWPQXF072lvuo2+T4/x/wVRqShqGRdcKvN/rLthszVcgb3P+zTZ1tYF8GPLSn
-	 x51Ya/uPwir8Q==
+	s=k20260515; t=1795452524;
+	bh=msw4FIKrAUyInphRYrqr8Ra5cv1R+7cgbS2Ass40zs0=;
+	h=From:To:Cc:Subject:Date;
+	b=FDF5ZjcJciDoEpkil1kpfCRri+Jge5eOMAixKUEN0r6++t8yVnG6E1DCNhHu5gYgB
+	 S22zyhbQ5N7Uy8+2qGcKoaS2aHnbKKLSk8Wo6cdmfkRhGUc04L+BmIKpToi5ul/RIZ
+	 BmItkIWXUGcu8LLQ1aJfSizqqFlgNLmcQaoXcfZ5/YSg1cf3HT7mRNVm+SxlksuMK0
+	 ENWLPUcAPLz3GXQCcSCzkD9ecq1WlRx/xjhOcTlUxz4l6XaXFMWzObMkYH6yLp26hx
+	 5z9wvUkJh/Xqv70vJNQrHjTAbU6iPKk8Xjja9FBbupMa9UaGjpJPMR1fG6HlnDyjT/
+	 7had/M0yF6Olw==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org,
+	Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	"Zhao, Linaro" <richard.zhao@linaro.org>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Amit Daniel Kachhap <amit.daniel@samsung.com>,
+	Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Chander Kashyap <k.chander@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Drew Fustini <fustini@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	imx@lists.linux.dev,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Joel Stanley <jms@oss.tenstorrent.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jyri Sarha <jsarha@ti.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Liam Beguin <lvb@xiphos.com>,
+	Linaro Ltd <mturquette@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	Lubomir Rintel <lkundrak@v3.sk>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Marian Mihailescu <mihailescu2m@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Rosen Penev <rosenp@gmail.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sergej Sawazki <ce3a@gmx.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH 00/10] clk: Assorted bug fixes across clock core and drivers
+Date: Mon, 23 Nov 2026 16:47:33 +0000
+Message-ID: <20261123164834.3330320-1-lee@kernel.org>
+X-Mailer: git-send-email 2.56.1.750.gf70dc682cf-goog
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -49,289 +107,86 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v4 4/4] clk: siflower: Add SF19A2890 peripheral clock
- and reset manager driver
-From: Brian Masney <masneyb@kernel.org>
-To: Joseph Telaak <joseph@telaak.dev>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Chuanhong Guo <gch981213@gmail.com>, Yao Zi <me@ziyao.cc>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
- linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20261122-sf19a2890-sysm-v4-4-bbfe1c495e2e@telaak.dev>
-References: <20261122-sf19a2890-sysm-v4-0-bbfe1c495e2e@telaak.dev>
- <20261122-sf19a2890-sysm-v4-4-bbfe1c495e2e@telaak.dev>
-Date: Mon, 23 Nov 2026 11:39:57 -0500
-Message-Id: <179545199778.209212.2921325243361338047.b4-review@b4>
-X-Mailer: b4 0.17-dev-8145e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9478; i=masneyb@kernel.org;
- s=20250903; h=from:subject:message-id;
- bh=2uVT9SbP2VytXAdgMdFr8rIK+phVKpZnhIuGO3jzqvE=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJZchL9WQPLL36uu+TQYZxR2r1q8X+R7mLfwNKPIQsnX
- jN8HJHUUcrCIMbFICumyLIk16ggInWV7b07miwwc1iZQIYwcHEKwEQ+tjMyvPSXtivInPEmLvd4
- /HuRtVkpCkt5i7KfXueLDN+wxqpJlJFh1Yz1rz14JRwFTLU2TFRfHBIiZvvyecPPPLHvPTdCPc6
- yAgA=
-X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Joseph,
+These issues were reported by Sashiko.
 
-> Add a platform driver for the peripheral clock and reset manager (CRM)
-> block found on Siflower SF19A2890 and compatible SoCs.
-> 
-> Each CRM block manages a group of APB peripherals through three registers:
-> a reset register, a clock gate register, and a shared Bus Output Enable
-> (BOE) register that must be asserted for any peripheral in the block to
-> respond to bus transactions.
-> 
-> The driver registers a clock gate controller and a reset controller from
-> a single DT node. A shared spinlock protects all read-modify-write
-> accesses across both. BOE is managed automatically: asserted when the
-> first clock gate is enabled and deasserted when the last one is disabled.
-> 
-> Some peripherals have more than one reset line, one for each clock
-> domain of the same IP. The driver exposes each such group as one reset,
-> because the lines have to be asserted together:
-> 
->   - GMAC: bits 0-1 are the two sides of an asynchronous AXI bridge, and
->     asserting one alone locks up the bus.
->   - SPI: bits 4-5 are the PL022's PRESETn and nSSPRST, and its TRM
->     requires nSSPRST to be asserted with PRESETn.
->   - UART: bits 0-2 are the PL011s' PRESETn and bits 4-6 their nUARTRST,
->     with the same requirement in the PL011 TRM.
->   - USB: bits 0-2 are the DWC2 controller's clock domains, its AXI
->     master among them.
->   - WLAN: bits 0-2 are the AXI slave, AXI master and platform domains.
+None of these changes have been tested on physical hardware.
 
-There's a lot of low level detail here. Give a more high level overview
-of what's here.
+Cc: "Uwe Kleine-König" <u.kleine-koenig@pengutronix.de>
+Cc: "Zhao, Linaro" <richard.zhao@linaro.org>
+Cc: Abel Vesa <abelvesa@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+Cc: Brian Masney <bmasney+clk@redhat.com>
+Cc: Chander Kashyap <k.chander@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: Drew Fustini <fustini@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>
+Cc: Frank Li <Frank.Li@nxp.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: imx@lists.linux.dev
+Cc: Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: Joel Stanley <jms@oss.tenstorrent.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Jyri Sarha <jsarha@ti.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: Liam Beguin <lvb@xiphos.com>
+Cc: Linaro Ltd <mturquette@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: Lubomir Rintel <lkundrak@v3.sk>
+Cc: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Marian Mihailescu <mihailescu2m@gmail.com>
+Cc: Maxime Coquelin <maxime.coquelin@st.com>
+Cc: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Peter Griffin <peter.griffin@linaro.org>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Rosen Penev <rosenp@gmail.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Sergej Sawazki <ce3a@gmx.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Thierry Reding <thierry.reding@kernel.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>
 
-> 
-> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
-> [Joseph Telaak:
->   - take it from Chuanhong's siflower-7.1 branch
->   - one compatible per block, with its gate bits, critical gates and
->     reset masks in tables in the driver instead of the
->     siflower,valid-gates, siflower,critical-gates,
->     siflower,reset-masks and siflower,num-resets properties
->   - parent gate N to input clock N by index, not by global name
->   - update the gates under the spinlock too, taken with guard()
->   - drop the separator comments
->   - Kconfig dependencies and help, subject]
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Co-developed-by: Joseph Telaak <joseph@telaak.dev>
-> Signed-off-by: Joseph Telaak <joseph@telaak.dev>
-> ---
->  MAINTAINERS                                    |   1 +
->  drivers/clk/siflower/Kconfig                   |  11 +
->  drivers/clk/siflower/Makefile                  |   1 +
->  drivers/clk/siflower/clk-sf19a2890-periphcrm.c | 362 +++++++++++++++++++++++++
->  4 files changed, 375 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 47a3a72a5d08..34ff7ec0b60e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -25704,6 +25704,7 @@ L:	linux-clk@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/clock/siflower,sf19a2890-clk.yaml
->  F:	Documentation/devicetree/bindings/clock/siflower,sf19a2890-periph-crm.yaml
-> +F:	drivers/clk/siflower/clk-sf19a2890-periphcrm.c
->  F:	drivers/clk/siflower/clk-sf19a2890.c
->  F:	include/dt-bindings/clock/siflower,sf19a2890-clk.h
->  F:	include/dt-bindings/clock/siflower,sf19a2890-periph-crm.h
-> diff --git a/drivers/clk/siflower/Kconfig b/drivers/clk/siflower/Kconfig
-> index ad1b04b4bb9b..4fa6dd156b8a 100644
-> --- a/drivers/clk/siflower/Kconfig
-> +++ b/drivers/clk/siflower/Kconfig
-> @@ -9,3 +9,14 @@ config CLK_SF19A2890
->  	  and the muxes and dividers that feed the CPU, the buses and the
->  	  peripherals. The GIC timer runs from the CPU clock, so a kernel
->  	  for this SoC needs it built in.
-> +
-> +config CLK_SF19A2890_PERIPHCRM
-> +	bool "Clock and reset driver for Siflower SF19A2890 peripherals"
-> +	depends on MACH_SIFLOWER_MIPS || COMPILE_TEST
-> +	default MACH_SIFLOWER_MIPS
-> +	select RESET_CONTROLLER
-> +	help
-> +	  Supports the peripheral clock and reset managers of the Siflower
-> +	  SF19A2890. Each peripheral block has one, with its clock gates,
-> +	  its resets and the bus output enable it needs to answer bus
-> +	  requests.
-> diff --git a/drivers/clk/siflower/Makefile b/drivers/clk/siflower/Makefile
-> index 3f4d689f7d9b..c4f4e0b8820d 100644
-> --- a/drivers/clk/siflower/Makefile
-> +++ b/drivers/clk/siflower/Makefile
-> @@ -1,2 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  obj-$(CONFIG_CLK_SF19A2890) += clk-sf19a2890.o
-> +obj-$(CONFIG_CLK_SF19A2890_PERIPHCRM) += clk-sf19a2890-periphcrm.o
-> diff --git a/drivers/clk/siflower/clk-sf19a2890-periphcrm.c b/drivers/clk/siflower/clk-sf19a2890-periphcrm.c
-> new file mode 100644
-> index 000000000000..c3642fb743b4
-> --- /dev/null
-> +++ b/drivers/clk/siflower/clk-sf19a2890-periphcrm.c
-> @@ -0,0 +1,362 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +/*
-> + * Siflower SF19A2890 peripheral clock and reset manager driver.
-> + *
-> + * Each managed block has three registers:
-> + *   RESET    at base + 0x0  - per-peripheral reset bitmasks
-> + *   CLK_GATE at base + 0x4  - one bit per clock gate
-> + *   BOE      at base + 0xc  - shared Bus Output Enable; bits [1:0] must be set
-> + *                             for any APB peripheral in the block to respond
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/device-id/of.h>
-> +#include <linux/io.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +
-> +#include <dt-bindings/clock/siflower,sf19a2890-periph-crm.h>
-> +
-> +#define REG_RESET	0x0
-> +#define REG_CLK_GATE	0x4
-> +#define REG_BOE		0xc
-> +#define BOE_EN		GENMASK(1, 0)
-> +
-> +struct sf19a2890_periphcrm_gate {
-> +	const char *name;
-> +	u8 bit;
-> +	unsigned long flags;
-> +};
-> +
-> +struct sf19a2890_periphcrm_data {
-> +	const struct sf19a2890_periphcrm_gate *gates;
-> +	unsigned int num_gates;
-> +	const u32 *reset_masks;
-> +	unsigned int num_resets;
-> +};
-> +
-> +struct sf19a2890_periphcrm {
-> +	void __iomem *base;
-> +	spinlock_t lock;	/* serializes all register updates */
-> +	struct reset_controller_dev rcdev;
-> +	const u32 *reset_masks;
-> +	struct clk_hw_onecell_data clk_data;
-> +};
-> +
-> +struct sf19a2890_periphclk {
-> +	struct sf19a2890_periphcrm *crm;
-> +	struct clk_hw hw;
-> +	u32 idx;
-> +};
-> +
-> +static inline struct sf19a2890_periphclk *hw_to_periphclk(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct sf19a2890_periphclk, hw);
-> +}
-> +
-> +static int sf19a2890_periphclk_enable(struct clk_hw *hw)
-> +{
-> +	struct sf19a2890_periphclk *gate = hw_to_periphclk(hw);
-> +	struct sf19a2890_periphcrm *crm = gate->crm;
-> +	u32 reg;
-> +
-> +	guard(spinlock_irqsave)(&crm->lock);
-> +	reg = readl(crm->base + REG_CLK_GATE);
-> +	writel(reg | BIT(gate->idx), crm->base + REG_CLK_GATE);
-> +	writel(BOE_EN, crm->base + REG_BOE);
-> +	return 0;
-> +}
-> +
-> +static void sf19a2890_periphclk_disable(struct clk_hw *hw)
-> +{
-> +	struct sf19a2890_periphclk *gate = hw_to_periphclk(hw);
-> +	struct sf19a2890_periphcrm *crm = gate->crm;
-> +	u32 reg;
-> +
-> +	guard(spinlock_irqsave)(&crm->lock);
-> +	reg = readl(crm->base + REG_CLK_GATE);
-> +	reg &= ~BIT(gate->idx);
-> +	writel(reg, crm->base + REG_CLK_GATE);
-> +	if (reg == 0)
-> +		writel(0, crm->base + REG_BOE);
-> +}
-> +
-> +static int sf19a2890_periphclk_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct sf19a2890_periphclk *gate = hw_to_periphclk(hw);
-> +	struct sf19a2890_periphcrm *crm = gate->crm;
-> +
-> +	return !!(readl(crm->base + REG_CLK_GATE) & BIT(gate->idx));
-> +}
-> +
-> +static const struct clk_ops sf19a2890_periphclk_ops = {
-> +	.enable = sf19a2890_periphclk_enable,
-> +	.disable = sf19a2890_periphclk_disable,
-> +	.is_enabled = sf19a2890_periphclk_is_enabled,
-> +};
-> +
-> +static inline struct sf19a2890_periphcrm *
-> +rcdev_to_periphcrm(struct reset_controller_dev *rcdev)
-> +{
-> +	return container_of(rcdev, struct sf19a2890_periphcrm, rcdev);
-> +}
-> +
-> +static int sf19a2890_periphcrm_reset_update(struct reset_controller_dev *rcdev,
-> +					    unsigned long id, bool assert)
-> +{
-> +	struct sf19a2890_periphcrm *crm = rcdev_to_periphcrm(rcdev);
-> +	u32 reg;
-> +
-> +	guard(spinlock_irqsave)(&crm->lock);
-> +	reg = readl(crm->base + REG_RESET);
-> +	if (assert)
-> +		reg |= crm->reset_masks[id];
-> +	else
-> +		reg &= ~crm->reset_masks[id];
-> +	writel(reg, crm->base + REG_RESET);
-> +	return 0;
-> +}
-> +
-> +static int sf19a2890_periphcrm_reset_assert(struct reset_controller_dev *rcdev,
-> +					    unsigned long id)
-> +{
-> +	return sf19a2890_periphcrm_reset_update(rcdev, id, true);
-> +}
-> +
-> +static int
-> +sf19a2890_periphcrm_reset_deassert(struct reset_controller_dev *rcdev,
-> +				   unsigned long id)
-> +{
-> +	return sf19a2890_periphcrm_reset_update(rcdev, id, false);
-> +}
-> +
-> +static int sf19a2890_periphcrm_reset_status(struct reset_controller_dev *rcdev,
-> +					    unsigned long id)
-> +{
-> +	struct sf19a2890_periphcrm *crm = rcdev_to_periphcrm(rcdev);
-> +
-> +	return !!(readl(crm->base + REG_RESET) & crm->reset_masks[id]);
-> +}
-> +
-> +static const struct reset_control_ops sf19a2890_periphcrm_reset_ops = {
-> +	.assert = sf19a2890_periphcrm_reset_assert,
-> +	.deassert = sf19a2890_periphcrm_reset_deassert,
-> +	.status = sf19a2890_periphcrm_reset_status,
-> +};
+Lee Jones (10):
+  clk: imx: imx8qxp-lpcg: Prevent stack overflow when parsing clocks
+  clk: lmk04832: Validate child reg index in lmk04832_probe()
+  clk: tegra: bpmp: Bound num_parents by MRQ_CLK_MAX_PARENTS
+  clk: composite: Initialise sub-hw pointers in determine_rate()
+  clk: divider: Avoid division by zero in _div_round_closest()
+  clk: gpio: Reject gate clocks with multiple parents
+  clk: samsung: exynos5420: Terminate PLL rate tables with sentinels
+  clk: tenstorrent: Poll atomically in atlantis_clk_pll_enable()
+  clk: cdce925: Use devm_of_clk_add_hw_provider() to avoid UAF on unbind
+  clk: mmp: audio: Use devm_of_clk_add_hw_provider() to prevent UAF
 
-Please move the reset functionality to drivers/reset. You can use either
-the auxiliary device or MFD.
-
-Brian
+ drivers/clk/clk-cdce925.c               |  4 ++--
+ drivers/clk/clk-composite.c             |  2 ++
+ drivers/clk/clk-divider.c               |  3 +++
+ drivers/clk/clk-gpio.c                  |  3 +++
+ drivers/clk/clk-lmk04832.c              | 10 ++++++++--
+ drivers/clk/imx/clk-imx8qxp-lpcg.c      |  4 ++++
+ drivers/clk/mmp/clk-audio.c             |  4 ++--
+ drivers/clk/samsung/clk-exynos5420.c    |  4 ++++
+ drivers/clk/tegra/clk-bpmp.c            | 14 +++++++-------
+ drivers/clk/tenstorrent/atlantis-prcm.c |  9 +++++----
+ 10 files changed, 40 insertions(+), 17 deletions(-)
 
 -- 
-Brian Masney <masneyb@kernel.org>
+2.56.1.750.gf70dc682cf-goog
+
