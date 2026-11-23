@@ -1,65 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795474489;
-	b=qnO+flF+uI+JqsiwVCFL5cEOE1g+w1Hgg32uILSylPA2nnGUCC/k7K+bUOD16fyMXRUr
-	 0t1zpcjQUlrgbI4haUN6eDS7HmiwV8/9nsXDw7dXPSRRw9H72Zs6CfiZRGqCaflra8JZP
-	 SW4/r+0r5qYdJ2ebXlS3gSv80Vzi/JjENYtZpbPzsi78bJd0+/DLITAnWtdHAQtuIfKUK
-	 TZlfJlc8h56EhPymymUPEOgiPnEwcUkoS25AflxAD1n0wxfmLGY5tPNvVtaG94NdGug0n
-	 Ia03mQ4JoS9boUrohzRUCOMlHp/EXC7S3zII3gonVeIu1y8I49uJWZ5iCkcw12sP1LA==
+	t=1795475646;
+	b=2V+PmnS9nunIGBT8ForwYx6CjtuyP0DTtPfbKo+cefseUjKzeELe9yS6vIsV2xPAuESC
+	 jTQCwHRDzBybLSGZh906hcWA7Xj7nr5g0HGHQVuMbEZ1al8ewfwAk/2U3xdEwMr/kgA+h
+	 dzhVtUHJz3Bn5npyypWgNHmZgL575CM+ZS7BqTpDV4BMQ5FgRuLJ3LJZq9PcN54II6SiG
+	 +wj0kA31paCY2OULws5uriTS6IfwmlIjMjvRZ4JGgsCpgBAsmj11y5eRI1/uaTL9fG8Ct
+	 JeaVzgEJRSrBfsY17HhdmgR+AvkyhMyIzth9O1tY1dC9Y/+PLdSyIXEB3SkpcbIw3Ug==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795474489;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=QZY3QEbTazJVBNLfkYhq96DccGik9lwrQlsFGiS8+BM=;
-	b=JIOm4HXLyBJkE/3YWA+KQ50DEw7CMciPt3EpuLy35gISGqN1XI8Q6Py7TaGe10NNrlOX
-	 5/r+BMxdB+Uy8HT1byAAxXNcNOFZGR2jYoEEDi8jx79O0tLh7JpMXdGrtIk9yv0nqwSMk
-	 VfnrjV9CvHukjmMvcZls9FMC12xpJ5aEiFi5uNMrgWuajDNAXO1CDcMok/rcWPotJR6Q6
-	 mzIXWPknZSMRdir/twYfwAXQHzGAVL/6o7zfBMXB+eivy1D9jqxA6Ea+XAw59GBSMqit8
-	 e4jZSgBQOQTfGxHJhz6OfXm4NSVZH7K9oYexxtxQJehgd/spuY1JrsMoIxaocEjKIIA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795475646;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=C6KwTsLrlwsaKBhMU0WaohccwmX6ZHQZDknXs0RVOoU=;
+	b=j6rCNM30jhyGT8o6QP+gkjPQ6inmB2mCaYljnHFbCAsgsywxyv9p1nsbLEwcjMrc5bpM
+	 EBZOsmtCKnA5HTVikyYhkbtXFPxA2HkKEhYhjbylVkyzuKE3tIOfBf/v0iy+/px4n1JZi
+	 3mh14xlt6tm0oabI+8ZJ2vprM/7pvkUBcUpBNPs5JhAVhZUGX75YQnxJwjtAOg07oFiyb
+	 OHL3i/65HjvkbWAylvFLdXNmSrrFKeTTt6sdIoAWMR9yj4rZkeKVzWaDKPkoQAp3LZIkq
+	 g36MgIj9spxTHnA0aSpqriyxTf69xjA1jZeAJPZfPxFjytEiJsfDygiFpjWE+HV/98A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Kud4b5sK;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=cIpCEZ88;
+	arc=none smtp.remote-ip=209.85.214.171
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D19606A31E;
-	Mon, 23 Nov 2026 22:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEC7606A337
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 23:14:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7AEC7606A337
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Kud4b5sK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A9EA1F000E0;
-	Mon, 23 Nov 2026 22:54:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795474488;
-	bh=QZY3QEbTazJVBNLfkYhq96DccGik9lwrQlsFGiS8+BM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To;
-	b=Kud4b5sK91u5SBmL8lPGIPTN3CP4ATH85EG1moMmnUj+tCyZ0v8511LIpcjMDEoyz
-	 hXY8ps3kX6luSVimz1DL6w/4v5XS3DVwUhuQbkGmU/X2il+gRYmCZtVqR23bFanmSl
-	 Dl8czKObWKjkuDOOoojGPffwA/hzs17niUNQsMcAce/LLJwD1vtNNMvahJFR3lKBo7
-	 91mQ5CLCB3pQclrn2mhzQrNaTb16nOaPOKJcN8Q6chuOiFNmkbvmBcewM9/mdGNKea
-	 bh4CHAmXA8WiB8Y2kO9AEWts847SxOKF65TwM1vfTLxrLZ0khTRsDy48k1r9GPMfkS
-	 kKKZ03sSSQ6nQ==
-Date: Mon, 23 Nov 2026 16:54:47 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Fil Dunsky <filipp.dunsky@gmail.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=cIpCEZ88
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2f0481b35c9so21444745ad.0
+        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 15:14:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795475646; x=1796080446; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=C6KwTsLrlwsaKBhMU0WaohccwmX6ZHQZDknXs0RVOoU=;
+        b=cIpCEZ88w+pQmk+ulKPNTfEnMuAxP6vai3E0cBlxkiM2J/XApn/czsHdbN/aKXPTpP
+         bWvDeKqOnD7/e/v0nI+KHfUJKLse1HTOLUiwbQYh3iKGbqlsAmPiyUcyKKppy3od8g5D
+         OKhjK1wl3q21YovfcKjuBmTpRWD5BBncvPZNU4/nIcQUo8DsWSQJiz6d0R86DXloYb+8
+         cI0W47HT8buqyOzp3R7fy88QRAPjDyIU0Mqp6RI0vXG5nhoWc+6rLInWYNmkdjywMrYc
+         yyoGJqEkURA8VOIvXYIx7n6qeySHwi6sVNFmcRHwlAwJjpjFcl6qiXD5Lr25g4XeJ6ZV
+         AqYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795475646; x=1796080446;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=C6KwTsLrlwsaKBhMU0WaohccwmX6ZHQZDknXs0RVOoU=;
+        b=iTbk3d9BH4JnxJ+9Jl8itiiGdluYFJYG6gR7lIbRoBUG/VMjcxVVXBdsysPSqlyEtq
+         LSEvlfLLqRPqUl1VgnGaMfazA+SkD9q9WGhDcIXOcFqibILNbGnPBD5OvH7wmYvkuvIi
+         PdbR0mdBYUtuvL06P4qkeQSKgdbzYE2yVsCe9yNSt1c/h3V7GoLRQhE+Nk2wiZf2aN9H
+         Bx7vlTNBKA/mvjikU7/U7K4x9frCfuRZmdAFCmEwecHWz9zjA46SCh0G5Pwj11XZsAPz
+         HgjltxggvXWZJHDhIvzdytfwqVKGANM3rgOVZC8AVTREYzK5sxHerWpdPcBeVjPWsyaK
+         TOUQ==
+X-Forwarded-Encrypted: i=1; AL+hErE9zrQ4qL/CopElTfCNWyV2bmEUUjYcH+m7UCZmQhu9fV4wQchHDLXj6qmXgij1hbzYgnjl2ha0U4U=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/0ZnFnWoASXedrqNW+8VIHvxqwVwld7kxQ1utGYQ65xwVuzjcx
+	lvtVvUmY2MWEzQTWRi7L0kta4IY/CM7vR57IbAGN5YGy4GI02LKaK1Cs
+X-Gm-Gg: AZFdTZfvQyCk8NQGUdvpxYjj3ugPmcpwwzz2zAYDbFpupo9yBBhH/SwDGCzogeLISYS
+	ier429P+szw2uEXipAXq8Wo9PeiAUsCTHAFRdyzSj9Y49KKSJp4PEBnuKwauqe+00LO8MPYm6ho
+	qIcB8Xy5HvTFt7by3vHmjyQ3hQQbdJqG5pHjkJVGM3tBkRgz1MCbEjlkN7fb2kD0XU5Lx28wJWa
+	PW0kwm4PE0gT8mnVKp+/jMhB8IaSYmERSTWAdhoOAbKohXFTSL/HHp9ARrSbHthopSh6iKR4+YK
+	kHPsB0MgLkpTE6DCNswaoR5RnMa2wmK3EZy/tVZtrj2HA/IH7KSyROy9SaXn+zqkxo1pTYzUguM
+	TFIG09qn0Eg7mv4WSGBFDB7LTT2vemOp70uj1LOnXIwktzRPETGePRHpRMQfB2Te1toa+6WA3V/
+	t+TbhSjRZEiLgSQy/Nu90ByQgGDJZV8dM6gY5WCWtCFumJj5UxxZGv8LEnoeLkWAs1rsbazasZk
+	tmTNyE6DZxe0L/nrPt4x6GmlMDc5i7b9TQCv+pCb+CSRoyR4aNLtTxNnD2jY2Vhhq/ZeC5uMjOU
+	f18LEXCleJ8M9GgSRvIPdGDDkdd9Vc6l/z0yf2li6C+vhEMf2cejsVEjynSG
+X-Received: by 2002:a17:903:acb:b0:2f0:25ea:8fb7 with SMTP id d9443c01a7336-2f03f0c19f1mr111523555ad.3.1795475645821;
+        Mon, 23 Nov 2026 15:14:05 -0800 (PST)
+Received: from X870E-AORUS-MASTER.kkp-group.com ([2400:4053:d960:1a00:9970:cbea:9dbf:d448])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2f03f0dc0ebsm58140215ad.33.2026.11.23.15.14.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Nov 2026 15:14:05 -0800 (PST)
+From: Shigeaki Asai <asai.6265@gmail.com>
+To: krzk@kernel.org,
+	m.szyprowski@samsung.com,
+	s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	peter.griffin@linaro.org,
+	alim.akhtar@samsung.com,
+	sboyd@kernel.org,
+	bmasney+clk@redhat.com,
+	jbrunet+clk@baylibre.com
+Cc: linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/8] soc: cortina: Add CS7542 PCIe control, SerDes and
- host support
-Message-ID: <20261123225447.GA1119216@bhelgaas>
+Subject: Re: [PATCH RFC 0/2] clk: samsung: exynos5: fix sub-CMU power domain attach
+Date: Tue, 24 Nov 2026 08:13:53 +0900
+Message-ID: <20261123231353.3288426-1-asai.6265@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <ca2615ca-7483-481f-ac9c-cf64054ec0de@kernel.org>
+References: <ca2615ca-7483-481f-ac9c-cf64054ec0de@kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -69,30 +107,14 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261123-b4-cs7542-pcie-v2-0-f589a9cd0bef@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 23, 2026 at 11:32:14PM +0300, Fil Dunsky wrote:
-> Add CS7542 PCIe support with global gate/reset controls, a Snow Bush
-> SerDes PHY and DesignWare host glue. The global syscon already provides
-> the APB/CPU/AXI clocks; extend that same provider with three PCIe gates
-> and controller resets. No resource-less pcie-control child is created.
-> The existing clock indices remain unchanged; PCIe gets named specifiers.
-> ...
+Sorry, I missed Marek's series. I didn't check linux-next and the
+fixes-clk branch before sending.
 
-> Changes in v2:
-> - Expose PCIe gates/resets on the existing global syscon provider.
-> - Remove the virtual child binding and separate gate/reset driver.
-> - Preserve early strap clocks and unwind partial registration failures.
-> - Put clocks before interrupts in the host binding and example.
-> - Enable root-port MSI after enumeration; dispose INTx mappings on teardown.
-> - Return 0 for lost-link DBI reads to fail iATU polling; serialize quiesce,
->   config/DBI access and IRQ draining before reset.
-> - Link to v1: https://patch.msgid.link/20261123-b4-cs7542-pcie-v1-0-4cde5201d404@gmail.com
+I'm withdrawing this RFC.
 
-v1: Date: Mon, 23 Nov 2026 21:43:28 +0300
-v2: Date: Mon, 23 Nov 2026 23:32:14 +0300
+Thank you for letting me know, Marek.
 
-That's way too fast and wastes reviewers' time.  Please wait at least
-a few days between versions.
+Shigeaki
+
