@@ -1,58 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795438146;
-	b=LUOoj6lUByWszMj6VP9mLdvfFQhKGQcGJ6ph+9bHncDOAM+Y3WvDxLztDbOxdUJd9KIt
-	 OmbHTtHRSGGOmr/pPA3GFCUUo/Viwb7rYwKW3v7s6f8ImIvOqrj5xxVcQuah9bhm2u9qJ
-	 ne6BMUCVeB5jWLYQpVmu+/XgW9X4R9V1Fa6wkuB990TeQlCMBmxNOAgGrK8UxWi3zaj0u
-	 e+EFIgSaCufLsL2S8BC+gB5/wP6qa3kDSgwhzjTQ70KOghm07ABIe3RqvOEsjAJymJgaP
-	 /+YJIGQXrJe7Pb6Ip+NZlNAlfNcB0YPvnSnDCsBX5WVzEvFWVXN57eOOFrIXYwijNlg==
+	t=1795438325;
+	b=CZUNcOwnaXhKykeqxvpRnEe6Xs3UrpFQCECRFFqQqPQ7QTZ9YIxFSpXfZBOCu1h6B/FG
+	 Ya9NUvWbpPxVgcilLrw6QDEuUQdT7noLlZH5qqslS/awx2gw/ghfKxoS3KOHM3u4WDavk
+	 7OBHWurLRt+MblRn45G0vxjQPuoFH5qUQibBOl/tJoyWnh4jq7eTPfMaIDf3l4wldkCzx
+	 7D0t1M/I4WFGMph2mZJhGsI2FHQJrSyxiIV1Vz/TYG8QFSXFHqJJ94yIdY0PwWf9wlqPc
+	 0AfP9jhayFDlvvjWcn9/orvr43gOi5Wryw3jEody2RyJfYfKyEUn+JpQEC6rlpsUm4g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795438146;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795438325;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ClaVrzyn2eIXIvK+7DuI6AtAqSoQrEoZ1zEDeyX5I3I=;
-	b=KxUEv7Y6bGswJvy8W5mVHhWVc6LF80ErEMk6Jju9BZqq5GZImLzw7rLOZCvZb1Wq2B1L
-	 eiIRzJMslFo8XfrWe5LwRx6WSfDU6I9K/x5Upu0x667feerEiihFuroW+YxQ74hZxSC/B
-	 gC94Bv0P/syT2z7rl9R7k95p61WVKQxxj+8BID1qTt7rg8MYiNp9e4iOil1xp4FDA0Qkc
-	 fodz2aqhEwdwompxqmdXsL8fQx9FisrDkWLwqWc7vxGlCTVHmT7Z0zGs/WrrPvvBSA7cZ
-	 DRuZsW/E9x3PFR0Yo8fbtkyckK+AoEDYAbr4abLBtls2etNBqVxMRAiZVsUxMvlYbsg==
+	bh=RL5W8o5n+ZQXF/3m0OY5QGBdUDJ/J3OtGNthRBW3czY=;
+	b=13UJx12yigweKBg3Iu6qUOEk+BEit5yRptf2H/+cus3tAgYa5yRiJSW+7AJnc2od7cfZ
+	 LwwSZEkMAKxpD5YLqqG/2YK+LOMjw78h8HUPcEaDjtdB9IFaCJmJMQE8MiYCErGKjO/Qi
+	 gYGeqMvlm2gbHVKPj/JL/AbL9JkSJVmA9MBRExxzcX31Od+SFRmo/QjVDw2JI4Ex4IAA4
+	 7xaLZKeuS3MH3VLYkoMXp52vq3WCU6XLaObbRPzOjOfQ/N6w9f9CoAeBHAAEXzpJdE2c0
+	 Jn7iIE6nhvdzR9TYpr5/jg+nvn+VjJN6pndQEtkTMtwX9X3FyoKnehckHIURoQJY5Pw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xl38hrN5;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VxLE1hlv;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D7F606A332;
-	Mon, 23 Nov 2026 12:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84362606A693;
+	Mon, 23 Nov 2026 12:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xl38hrN5
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91C561F000EE;
-	Mon, 23 Nov 2026 12:49:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VxLE1hlv
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA10B1F0093E;
+	Mon, 23 Nov 2026 12:52:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795438145;
-	bh=ClaVrzyn2eIXIvK+7DuI6AtAqSoQrEoZ1zEDeyX5I3I=;
+	s=k20260515; t=1795438325;
+	bh=RL5W8o5n+ZQXF/3m0OY5QGBdUDJ/J3OtGNthRBW3czY=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Xl38hrN52zetpjaBLwuDKPwabiCpq4LcFT0n6x1v+NR/nZ2AFNL6i1Av98mundJxW
-	 25pg6RjzP6kfIBGH3XyJNjf9Gky+IM4AQBTlFj11J/fuEJLAXNt6PMnRnj79QS5o34
-	 HcOBLQYEJF4X3+i2Pz7+bIFN+p7UMkawI8i1ADWoT7vyHlbhMaEmtFJWlm+LkkC6cl
-	 x9bZcCQTRLEtEbijN5R4+bMOHJmA/pDLtZ7BRxIfecY+wEpvvQ7kDsnRaPuDqb8HVu
-	 cWlt4WezvyXvEuo9iVAj3dAvZM9nTV+hk9xQJzOKaLLUIFMlamGPchalaplnkmUU5w
-	 hAVy8k6riwkXw==
-Message-ID: <sashiko-outbox-229265@kernel.org>
+	b=VxLE1hlvm5/tVSh45vlyyqkvk2b83vnNm9zGRQgzj1vh9qsVY8akQCxuzgPA0OKGB
+	 4aNkSi9q9+QYtwPKtTbPXoIYsyLRXGkoRVXEGIcH/hRB4lcHfa4HlGFgC6IQhpN57w
+	 zLCvvNLp7kSht3CMbdUzk5aB//0fQd3rX/PAf7I5/VT3TZOPdsDHX1WlauiCOcQwIm
+	 HiXGDMnc+HjN4IzOS+dqZe66eiDTPJn9Vr2mOpKISriJPXDUI0ZwBHkO3pPeuCTius
+	 YvnRn+UfIcAablO2VKPDDCThz+b0vQP8271H9c5W8v5l1hfnK+ht+7aCoj7SlNHhAm
+	 q+la6bNG5rt4g==
+Message-ID: <sashiko-outbox-229269@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 6/7] arm64: dts: qcom: msm8953: add CAMSS node and
- MCLK pinctrl states
+Subject: Re: [PATCH v2 7/7] arm64: dts: qcom: msm8953-xiaomi-tissot: enable
+ front and rear cameras
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Hikmah Gumelar" <hikmahgumelar@gmail.com>
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, media-ci@linuxtv.org
-In-Reply-To: <20261123123546.152162-7-hikmahgumelar@gmail.com>
+In-Reply-To: <20261123123546.152162-8-hikmahgumelar@gmail.com>
 References: <20261123110805.119610-1-hikmahgumelar@gmail.com>
  <20261123123546.152162-1-hikmahgumelar@gmail.com>
- <20261123123546.152162-7-hikmahgumelar@gmail.com>
+ <20261123123546.152162-8-hikmahgumelar@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 23 Nov 2026 12:49:05 +0000
+Date: Mon, 23 Nov 2026 12:52:04 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -64,94 +64,184 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 3 potential
 issues to consider:
-- [Medium] arm64: dts: qcom: msm8953: undocumented interconnects on
-  camss@1b00020
-- [Low] arm64: dts: qcom: msm8953: camss@1b00020 placed out of address
-  order
-- [Low] arm64: dts: qcom: msm8953: camss_mclk pinctrl states placed out
-  of order
+- [Low] arm64: dts: qcom: tissot: redundant pm8953_l2 and pm8953_l23
+  overrides
+- [Low] arm64: dts: qcom: tissot: sensor MCLK and unused MCLK2 pinctrl
+  on cci node
+- [Low] arm64: dts: qcom: tissot: non-generic camera node names and
+  unsorted nodes
 --
 
-commit 27cc0ba26aa55e15a280cb981915e46ef83e3448
+commit 32dade37fcf383efdbda253ebb3dd130e1b41698
 Author: Hikmah Gumelar <hikmahgumelar@gmail.com>
 
-arm64: dts: qcom: msm8953: add CAMSS node and MCLK pinctrl states
+arm64: dts: qcom: msm8953-xiaomi-tissot: enable front and rear cameras
 
-This commit adds the camera subsystem (CAMSS) device node and MCLK0/1/2
-pinctrl state nodes to the Qualcomm MSM8953 SoC devicetree.
+This commit enables the CAMSS, CCI, CSIPHY0/CSIPHY2 ports, and the
+OmniVision OV12A10 rear and Samsung S5K5E8 front camera sensors in the
+Xiaomi Mi A1 device tree.
 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8953.dtsi b/arch/arm64/boot/dts/=
-qcom/msm8953.dtsi
-> index 753167c3f8619..2e64fb8bbb2ee 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8953.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-> @@ -902,6 +902,27 @@ sdc1_cmd_off: sdc1-cmd-off-state {
->  				drive-strength =3D <2>;
->  			};
+> diff --git a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts b/arch/ar=
+m64/boot/dts/qcom/msm8953-xiaomi-tissot.dts
+> index fccb9c4360cae..5d4fd7f420420 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts
+> +++ b/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts
+> @@ -308,6 +308,20 @@ ts_int_default: ts-int-default-state {
+>  		drive-strength =3D <2>;
+>  		bias-pull-up;
+>  	};
+> +
+> +	cam_sensor_rear_default: cam-sensor-rear-default-state {
+> +		pins =3D "gpio33", "gpio39", "gpio62";
+> +		function =3D "gpio";
+> +		bias-disable;
+> +		drive-strength =3D <2>;
+> +	};
+> +
+> +	cam_sensor_front_default: cam-sensor-front-default-state {
+> +		pins =3D "gpio129";
+> +		function =3D "gpio";
+> +		bias-disable;
+> +		drive-strength =3D <2>;
+> +	};
+>  };
 > =20
-> +			camss_mclk0_default: camss-mclk0-default-state {
-> +				pins =3D "gpio26";
-> +				function =3D "cam_mclk";
-> +				drive-strength =3D <2>;
-> +				bias-disable;
-> +			};
+>  &uart_0 {
+> @@ -325,3 +339,103 @@ &usb3_dwc3 {
+>  	/delete-property/ usb-role-switch;
+>  	dr_mode =3D "peripheral";
+>  };
 > +
-> +			camss_mclk1_default: camss-mclk1-default-state {
-> +				pins =3D "gpio27";
-> +				function =3D "cam_mclk";
-> +				drive-strength =3D <2>;
-> +				bias-disable;
-> +			};
+> +&camss {
+> +	status =3D "okay";
+> +	vdda-supply =3D <&pm8953_s3>;
 > +
-> +			camss_mclk2_default: camss-mclk2-default-state {
-> +				pins =3D "gpio28";
-> +				function =3D "cam_mclk";
-> +				drive-strength =3D <2>;
-> +				bias-disable;
+> +	ports {
+> +		port@0 {
+> +			reg =3D <0>;
+> +			csiphy0_ep: endpoint {
+> +				clock-lanes =3D <7>;
+> +				data-lanes =3D <0 1 2 3>;
+> +				remote-endpoint =3D <&rear_cam_ep>;
 > +			};
+> +		};
 > +
->  			sdc1_data_on: sdc1-data-on-state {
->  				pins =3D "sdc1_data";
->  				bias-pull-up;
+> +		port@2 {
+> +			reg =3D <2>;
+> +			csiphy2_ep: endpoint {
+> +				clock-lanes =3D <7>;
+> +				data-lanes =3D <0 1>;
+> +				remote-endpoint =3D <&front_cam_ep>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&cci {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&cci0_default>,
+> +		    <&cci1_default>,
+> +		    <&camss_mclk0_default>,
+> +		    <&camss_mclk1_default>,
+> +		    <&camss_mclk2_default>;
+> +
+> +	status =3D "okay";
+> +};
 
 [Severity: Low]
-Should these pinctrl state nodes for gpio26, gpio27, and gpio28 be placed
-between i2c_6_sleep (gpio22, gpio23) and cci0_default (gpio29, gpio30)
-instead of splitting the sdc1_* states?  Commit 589deb6bc275 ("arm64:
-dts: qcom: msm8953: Re-sort tlmm pinctrl states") sorted the tlmm child
-nodes by the pins property.
+Should camss_mclk0_default and camss_mclk1_default be attached to their
+respective camera sensor nodes instead of &cci, and camss_mclk2_default be
+dropped?
 
-> @@ -1257,6 +1278,140 @@ cci_i2c1: i2c-bus@1 {
->  			};
->  		};
-> =20
-> +		camss: camss@1b00020 {
-> +			compatible =3D "qcom,msm8953-camss";
+The CCI node in msm8953.dtsi already configures cci0_default and
+cci1_default, while GCC_CAMSS_MCLK0_CLK and GCC_CAMSS_MCLK1_CLK belong to
+the rear and front sensors and MCLK2 (gpio28) is unused on this board.
+Putting the MCLK pinctrl states on &cci ties sensor clock pin muxing to the
+I2C controller and claims an unused pin, whereas &cci only needs
+status =3D "okay".
+
+> +
+> +&cci_i2c0 {
+> +	camera-sensor@10 {
+> +		compatible =3D "ovti,ov12a10";
+> +		reg =3D <0x10>;
+> +		clocks =3D <&gcc GCC_CAMSS_MCLK0_CLK>;
+> +		pinctrl-0 =3D <&cam_sensor_rear_default>;
+> +		pinctrl-names =3D "default";
+> +		reset-gpios =3D <&tlmm 33 GPIO_ACTIVE_LOW>;
+> +		pwdn-gpios =3D <&tlmm 39 GPIO_ACTIVE_LOW>;
+> +		vana-gpios =3D <&tlmm 62 GPIO_ACTIVE_HIGH>;
+> +		avdd-supply =3D <&pm8953_l22>;
+> +		dvdd-supply =3D <&pm8953_l2>;
+> +		dovdd-supply =3D <&pm8953_l6>;
+> +		rotation =3D <270>;
+> +		orientation =3D <1>;
+> +		status =3D "okay";
+> +		port {
+> +			rear_cam_ep: endpoint {
+> +				data-lanes =3D <0 1 2 3>;
+> +				remote-endpoint =3D <&csiphy0_ep>;
+> +				link-frequencies =3D /bits/ 64 <216000000>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&cci_i2c1 {
+> +	camera-sensor@2d {
+> +		compatible =3D "samsung,s5k5e8";
+> +		reg =3D <0x2d>;
+> +
+> +		clocks =3D <&gcc GCC_CAMSS_MCLK1_CLK>;
+> +		pinctrl-0 =3D <&cam_sensor_front_default>;
+> +		pinctrl-names =3D "default";
+> +
+> +		reset-gpios =3D <&tlmm 129 GPIO_ACTIVE_LOW>;
+> +
+> +		avdd-supply =3D <&pm8953_l22>;
+> +		dvdd-supply =3D <&pm8953_l23>;
+> +		dovdd-supply =3D <&pm8953_l6>;
+> +		rotation =3D <90>;
+> +		orientation =3D <0>;
+> +
+> +		status =3D "okay";
+> +
+> +		port {
+> +			front_cam_ep: endpoint {
+> +				data-lanes =3D <0 1>;
+> +				remote-endpoint =3D <&csiphy2_ep>;
+> +				link-frequencies =3D /bits/ 64 <418000000>;
+> +			};
+> +		};
+> +	};
+> +};
 
 [Severity: Low]
-Should camss@1b00020 be placed before cci@1b0c000 (immediately after
-display-subsystem@1a00000) to keep child nodes under soc@0 sorted in
-ascending unit-address order?
+This isn't a bug, but the Devicetree specification and Qualcomm DTS style
+use generic camera@10 and camera@2d node names rather than
+camera-sensor@10 and camera-sensor@2d.
 
-[ ... ]
+Also, status =3D "okay" is redundant on new board-level child nodes, and the
+new &camss, &cci, &cci_i2c0, &cci_i2c1 references and &tlmm pinctrl states
+are appended at the end rather than kept in alphabetical order with the
+rest of this file.
 
-> +			interconnects =3D <&snoc_mm MAS_VFE0 RPM_ACTIVE_TAG
-> +					 &bimc SLV_EBI RPM_ACTIVE_TAG>,
-> +					<&snoc_mm MAS_VFE1 RPM_ACTIVE_TAG
-> +					 &bimc SLV_EBI RPM_ACTIVE_TAG>,
-> +					<&bimc MAS_APPS_PROC RPM_ACTIVE_TAG
-> +					 &pcnoc SLV_CAMERA_SS_CFG RPM_ACTIVE_TAG>;
-> +			interconnect-names =3D "cam_vfe0_mem",
-> +					     "cam_vfe1_mem",
-> +					     "cam_ahb";
+> +
+> +&pm8953_l23 {
+> +	regulator-min-microvolt =3D <1200000>;
+> +};
+> +
+> +&pm8953_l2 {
+> +	regulator-min-microvolt =3D <1200000>;
+> +	regulator-max-microvolt =3D <1225000>;
+> +};
 
-[Severity: Medium]
-Does adding interconnects and interconnect-names here cause dtbs_check
-validation failures for all boards that include msm8953.dtsi?
-Documentation/devicetree/bindings/media/qcom,msm8953-camss.yaml specifies
-additionalProperties: false and does not document interconnects or
-interconnect-names.
+[Severity: Low]
+Are these &pm8953_l23 and &pm8953_l2 overrides redundant?  Both regulators
+are already defined earlier in this file under &rpm_requests with
+regulator-min-microvolt =3D <1200000> and regulator-max-microvolt =3D <1225=
+000>.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123123546.1521=
-62-1-hikmahgumelar@gmail.com?part=3D6
+62-1-hikmahgumelar@gmail.com?part=3D7
