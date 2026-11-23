@@ -1,65 +1,126 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795440123;
-	b=dLTOiFqrMWM/ZtKfLXo6JdK6JKZPOscFmEEskEdGPkO7NX/+BJDzYlze0BnmlJSeoQXh
-	 TCRXicO/x4+SsMD5BvK6Fmteap4s4D6wObO45VbvpFhuffmK/COUlGqwXejl3Vcr0eZCC
-	 YpJoGds3WJ5AV2iu8ldoOP0jhafaYOiQ6GI5BTQKqvZHX+DzXY5ebM/zXK5XVme+lKooO
-	 SfAHPCHm6GexKdDYH8YCjKw+/jQdYwJJxrSD2S0cDi3bwnugS6axliYJcMqzhulXQROuP
-	 mQfi9iiZ3QvrjVYndjQOTpAo2ZGmgtS0fVEWs2NeZMdkQZLhBCPVNZj4YiWPAAf/Fnw==
+	t=1795440643;
+	b=kC4ncgslYpOo40lLazvUGq5J5XN0ICouGXPcfr4Hp2Bwgc6XQA5jujvN6V/4/Dl5+cCx
+	 ieUBSKLRQv7EuUklewWlJnQvpcUhrY43KRLi6fOPj16xDwlv/8/D8QO+GEkgefIZGYHMO
+	 3yYfS2KFx4oC4zEp/PDWKis6q23JZ5/DMZt7JEXAFJCHncZ7I8zrmBoLzqDSm5m8DRbX9
+	 g8NYEWo90yVXhuAr+NSHwDodE4pcSkcVOdr19IrvOv687FigZWcFaJGhXM+pA6BoieuP1
+	 1MLBUUJG6DCX1bCvmrhE4oEuePLC9R1NsxouIWuUUcWQ0CnWqXIL3+CDvD2Qm7jNkLA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795440123;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=KZfX+ZF6d3jxSf9WpYrXx6unSUfJtLVOGgikrC1kH6U=;
-	b=kxP1WuJooXVlqecEBBqWXP23uS+UeNkaHGxPzUvt8kYao2XfKlncETsdUR/kSaEipmOV
-	 oV4Er11Qi2NkmC/DysPW2beusVhmK8h91sMHB9pisSz4GHV+hvEYMsoN38o97k3XOo01e
-	 KDdQmi7KXJZuvOOhmGOp+gJGC21J69ihuav7j5VIsFtv1feslXXz/WbGPB6i4mEU98PNu
-	 x4Ri8+YvffDLeMKUkI9zFd52OhQeDXrLp2xnYs92E/BlClWg2phcsrsTvTEgmYi/tp+C7
-	 4BtBPwHFKVi+v3ssWNZsPK/og09+RS4uBaRZASbDAUnm4rq5/jZYvtYzff56EY8tLMQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795440643;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
+	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:X-Proofpoint-ORIG-GUID:
+	 X-Authority-Analysis:X-Proofpoint-GUID:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=6GW16cYLEXbLEKRxCLcZ/hm1ouVgqsdPZ8UneMsZf6M=;
+	b=f1SAuqe3GE8mNv61lEC6YuwsKbTdGJACui6IzDwVEo0gkJjFTrRgDEiwtBjIz1bq36le
+	 3rUm8CLqtT0LJEdbt580eGzrc/QjJB30ZgXjpQEq4VAj9uPWaTfhiLS9eVfsPjePnnVMc
+	 S1hcSyzLot4+pDTsoM1e9m0QS7/hEyIbSv7T2rIkeb++edhqxLSbi2OwECNaX8/j+sdT+
+	 tO51OV5gfU+tttVAzvD+4eJD5kAt8kKdio+kFB68txSzev7xlBnLgmQaEeVn4PtTHjoTM
+	 EELYRLLCxnt3dvutTPWJLFVGOxsUBkSakapYwcYXDF0byxg453fpDzjfm3Ca4SNkuwQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TMGgafaP;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=c6TAGOg6;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=gEn7+k0A;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03DF606A31A;
-	Mon, 23 Nov 2026 13:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11028606A32A
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 13:30:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 11028606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TMGgafaP
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D687A1F000C0;
-	Mon, 23 Nov 2026 13:21:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795440123;
-	bh=KZfX+ZF6d3jxSf9WpYrXx6unSUfJtLVOGgikrC1kH6U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=TMGgafaPHDfKrZrodW+958mBFtGiFovNSmKRRX3mzyYR+/UORFpEttx/f+kDZn2xd
-	 QjD8bvURHYb75aSBEz3uIb23mWlLOwfcBOnObmFKGvzQMYHVmBG00LBl4CgM/7+z80
-	 Ec//Y1Z4SzUEKwmzZ3zWebqjccK8P++vImIEz8kTys/hyjl86N/SWsE3vvW/A52swj
-	 +dLefTXln+SHLtCt1Oe/jvYTP9poeKBS8aEUz6JHxc3ikl5TgfOdM1R398BjxG7EKx
-	 s1nn8g+AQB5aQo1KEAfEociw01ShjHDkYOiWTZoAaquGWYwqyQ5vzAjJjbpVvYYObu
-	 CEXOexUivKJGw==
-Date: Mon, 23 Nov 2026 21:01:37 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Richard GENOUD <richard.genoud@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 00/13] arm64: add Synaptics SL2610 SoCs and RDK boards
-Message-ID: <awQ5MYARkTBxQpjC@xhacker>
-References: <20261115102401.3520-1-jszhang@kernel.org>
- <avrx2EhgZ10ED40P@xhacker>
- <26aa0b74-e3f8-4405-ab87-743f5f8ef197@bootlin.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=c6TAGOg6;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=gEn7+k0A
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ANDKu7J1974182
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 13:30:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=6GW16cYLEXbLEKRxCLcZ/hm1
+	ouVgqsdPZ8UneMsZf6M=; b=c6TAGOg6zi0O5kcLuEuN/zocBSDmqajGdyt5ZKdp
+	JFQcnRh4jGqIi+JgJm8LtbWG776NhXnFYt8IBDEHEWhlq8tGnCAvG7N4gjx/fs0g
+	RwHLHAQ0AzKISsPBHeN+T7sgGPzfp8mpNfUmyAahFVHjGEuOHoNy3R93Ypgji/1x
+	n4pNZrIEt+skItajBuFA0fLd6AE16jE4U/KuS3s5WAa8MHKNEOwVSL6qotCUiUp3
+	3+dwTPk3RXdaFMfmjEmBqkTy8QrljLtE7P+E4n+wCKsGj1qZTeLYJd9iiTnTunK+
+	jzcavvfDiGJ0pRTcooPH0jqLoiD8wvpfK4VnnCpM48Fu8A==
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com [209.85.217.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j4m7urget-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 13:30:41 +0000 (GMT)
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-7cc01d48a1bso3116541137.1
+        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 05:30:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1795440641; x=1796045441; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=6GW16cYLEXbLEKRxCLcZ/hm1ouVgqsdPZ8UneMsZf6M=;
+        b=gEn7+k0Ajaze1vGjd+9YvxrKbxZoK7CwlUziaxShMn1c1qP+qCqUtb/j1rm28nqQwA
+         Y9G5KJT2NfLeCAnij2TdjEKJIlympH/oaHji3lp8qBvgVuVYWyChaRLZx3sgT9b/PTxc
+         p8bet/RyeZCRyBoQfYzzX3DqVwMXDZem3ZR5VwaUFIOZrvkY/hFrNuGiwU2M2wVKEbI4
+         wbiBBMC1OHIN9icmt0OZTzInNPheC04yokttgfMsx8FMab8/NfGzDw1lhVN2Xcg0uLJe
+         xfggIo2sp9rX4uqV5FsyOO/MC8rRRT+p1B0R+FAdNWA5HjiqZ0ahuRMDE0XMy4DBiuxa
+         i9Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795440641; x=1796045441;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=6GW16cYLEXbLEKRxCLcZ/hm1ouVgqsdPZ8UneMsZf6M=;
+        b=BYemlAbym2hpweYzzVDXQA4NbH3fnORh6GXmtkOWYujoN1FAKS/bttSAvtAy4G9pyP
+         c/rp2+yaUzl8q4Yum8dS6izCkYYll22HvZqNukDnoUNAldOe+Ka/Acpv0h1L2iwXQyZ9
+         ET28CywOURiV2EP8SeZsdev+rebrQ/Y3XVE+VOkM4UqKgQIuf5yll4O6XX7Ck7ENBa+A
+         0IfSAlfcWwDndgq2ZVbg5x5R83gbKHt+T/8xE/fKYMq1McXExJI0d9NxIOE2fTxTcwbn
+         wiSs2k7NQ++ZwVvR8pZNNXYDI0rYoZdgFKTrU6vLK4aly9tKvl9oFPqgrMtQr8JiIMhN
+         +peA==
+X-Forwarded-Encrypted: i=1; AL+hErFAjWA4bFO7PL+zbw0T9h/KWdDlGAn2xkr74Ekrz+c1VSP7BmMsoOAuWNjQSJ+vPxsNYRmmgckbO5c=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8QnkTY0ubY4PgsOC+ug1YcQ8vZKfKTlcz8TQ0P4LIkp+67Ow3w
+	AeVnTZoZSn/k/FHh+qmN5IPm2xhCczx/5IhLOdrXpEKFxywItGItIGsRuWm/PmGnTMnD3kwIhyj
+	SaWpbygiCtSzWD81I9BmNKbMmFo1FTsng4bVQ8u9YJn0JsvJnksymqZLQxKkGSaQ=
+X-Gm-Gg: AZFdTZfI3/QcGNOCSEy3nlrwqHT3PWsDPGL2Q+6HRqk12XwjqCxq+qE0QS0Ixs+GIT/
+	grFVccgCy3cS352tqixghmijl0E5symE7PuWK3co/M3skDd9TBvJKkQZhlImMO28rkj8Q8gBb62
+	/LsqFd6mwS0VlBnwt0ydggMlDQuIQaOMlTJN//ZagSxjr8c2Tdt21/rRm5noVVyZGGLu4DZ56lN
+	IBHZEXCxcbk+EQ3taggWJI1VQGufRrUUMj1K2+uq2EUB62CPEHgw2bP4G0eqpBzoEg0uZWeKqPg
+	mHfaa8RdlxJFFaXjg7mPmC+HRrSdEZAxp8IYu6jOdeUIQNWP0JFgnO+tOM/8L4toGy2XhOIo+T+
+	+dl1w2B5KbF1NZN6c3DZYBiOZObTt01itLpi6A5fNUCGBTO3uN65MnowvW5UvteycoprJIG2rey
+	mOzsWz6zMStYBnoaI=
+X-Received: by 2002:a05:6102:580a:b0:7ce:a840:e736 with SMTP id ada2fe7eead31-7d739626308mr3388886137.13.1795440641109;
+        Mon, 23 Nov 2026 05:30:41 -0800 (PST)
+X-Received: by 2002:a05:6102:580a:b0:7ce:a840:e736 with SMTP id ada2fe7eead31-7d739626308mr3388860137.13.1795440640566;
+        Mon, 23 Nov 2026 05:30:40 -0800 (PST)
+Received: from QCOM-aGQu4IUr3Y (i-global052.qualcomm.com. [199.106.103.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7d6e7fa0467sm11903416137.6.2026.11.23.05.30.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Nov 2026 05:30:40 -0800 (PST)
+Date: Mon, 23 Nov 2026 21:30:31 +0800
+From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 1/2] soc: qcom: socinfo: Copy new SoC IDs from bindings
+Message-ID: <awQ_90R8_uGWm2Sz@QCOM-aGQu4IUr3Y>
+References: <20261122-qcom-socinfo-id-dt-bindings-v1-0-eeee0ffa25da@oss.qualcomm.com>
+ <20261122-qcom-socinfo-id-dt-bindings-v1-1-eeee0ffa25da@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -69,163 +130,103 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <26aa0b74-e3f8-4405-ab87-743f5f8ef197@bootlin.com>
+In-Reply-To: <20261122-qcom-socinfo-id-dt-bindings-v1-1-eeee0ffa25da@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: 573g6UeF5Vt7s3h-hRhoM11HnfxI8QOE
+X-Authority-Analysis: v=2.4 cv=KurYSmWN c=1 sm=1 tr=0 ts=6b044001 cx=c_pps
+ a=P2rfLEam3zuxRRdjJWA2cw==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
+ a=kj9zAlcOel0A:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
+ a=EUspDBNiAAAA:8 a=votV42V3uHCFBabA7mkA:9 a=CjuIK1q_8ugA:10
+ a=ODZdjJIeia2B_SHc_B0f:22
+X-Proofpoint-GUID: 573g6UeF5Vt7s3h-hRhoM11HnfxI8QOE
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIzMDA1MyBTYWx0ZWRfX1sXvcnYiN7VE
+ 4BHNGicg1kZIpqyFceQrNhreKeSMtgLZoil0Z4FiO0574GoYgDmUckGGp0mIps0yCVbz/6sMVR3
+ T4bSKP5Cnl2q/jB87QGo5OL6bK261YA=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIzMDA1MyBTYWx0ZWRfX94TsxDYdSTXb
+ osE7H0TZsSJCsMYmQFqXN+JabqoG1g0f4aIsdCvPtQRtHsJxieIhA2BMgulh8WZYfeESbkKkXQD
+ w6zx/1O2MC8E3C+dqIP/a0PqBawvTaOv4E390FPc+UXLW1qOP5PtpO4eQ594HWENPYp1Dzxk/S6
+ 7hKCD/4t5BXKEvaUIV9uTp0u49u/3bBkbz4ApxDJmVqrZyAVEfErZ8icE/aakHiMj7mEENYsHGk
+ JqHYVicDbb/IVOFmJmXnS9Ad43kYQLFATWEL8gCoJ+nfhN6bQ3LJaEt622sEvpVbZtY6+cIuobF
+ fqjm35Ep5N1cuoJJDiChR8+XTO1pXU4R8xIsEVyEgeyVyH4mm2AQoJDdUwIihMrGbdQAqGycSla
+ 0YSH9NohSuAxf3OZ2OQ1GNTAHlX0pgiZXDdlrnC7U5Zp3GcpXPF+FInIaTob3ldKCBBTJNiqUbZ
+ 5HgIccc3LHMoNJ/STKQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-23_03,2026-11-23_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 phishscore=0 spamscore=0
+ malwarescore=0 adultscore=0 suspectscore=0 clxscore=1015 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611230053
 
-On Wed, Nov 18, 2026 at 08:54:05AM +0100, Richard GENOUD wrote:
-> Le 16/11/2026 à 13:06, Jisheng Zhang a écrit :
-> > On Sun, Nov 15, 2026 at 06:23:39PM +0800, Jisheng Zhang wrote:
-> > > Add initial support for the Synaptics SL261X SoCs and corresponding
-> > > RDK boards.
-> > > 
-> > > The SL261X SoCs include five pin-to-pin compatible SoCs: SL2611, SL2613,
-> > > SL2615, SL2617, and SL2619.
-> > > 
-> > > Only reset, pinctrl, clk/pll, uart, gpio, i2c, spi, i3c are included in
-> > > this series. The support for Ethernet, USB, SDHCI, CAN, DMAC, XSPI will
-> > > be submitted after this series is merged.
-> > > 
-> > > since v1:
-> > >   - rebase on latest rcN
-> > >   - drop some patches which have been merged
-> > >   - let the "gbl" node export pinctrl/reset/clk devices with
-> > >     MFD_CELL_NAME()
-> > >   - use <linux/platform_device.h> instead of <linux/mod_devicetable.h>
-> > >   - adopt some coding suggestions from Uwe
-> > >   - Use 0 and 1 to select normal and strong pull-up on 10-bit pads
-> > 
-> > Other SoCs doesn't use this defintion for pull up or strong pull up.
-> > After consulting our HW people, the strong pull up isn't used at
-> > all, so I will remove strong pull up support in newer version. We can
-> > add back its support when it's really needed in the future, nothing
-> > breaks.
-> I've found a similar definition here:
-> https://elixir.bootlin.com/linux/v7.3.1/source/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml#L73-L78
+On Sun, Nov 22, 2026 at 06:46:20PM +0100, Krzysztof Kozlowski wrote:
+> The IDs of newer Qualcomm SoCs, as reported by hardware or firmware, are
+> currently used only in the socinfo.c driver.  There should no and there
 
-This one looks strange, and changes the meaning of bias-pull-up, I.E
-if adding "bias-pull-up" to any pin node, then it means strong pull up
-because the pinctrl subsys framework adds 1 by default. To use normal
-pull up, this binding needs "bias-pull-up = <0>;", which looks ugly
-IMHO.
+s/should no/should be no/
 
-> But also a plain new property here:
-> https://elixir.bootlin.com/linux/v7.3.1/source/Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml#L153-L155
+> is no in-tree DTS user of these, so none of these constants are really
+> proper Devicetree ABI.  IDs of older SoCs were being used in DTS, thus
+> that part matches the concept behind DT bindings.
 
-I like this. But I'm not sure whether it's accepted or not.
+Not quite true for the start of the range. The constants themselves
+are not referenced, but the values are used as raw numbers in
+qcom,msm-id:
 
-> And another with the real strong pull-up value:
-> https://elixir.bootlin.com/linux/v7.3.1/source/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml#L94-L99
+  qrb5165-rb5.dts:                    qcom,msm-id = <455 0x20001>;
+  sm7225-fairphone-fp4.dts:           qcom,msm-id = <459 0x10000>;
+  sm6350-sony-xperia-lena-pdx213.dts: qcom,msm-id = <434 0x10000>, <459 0x10000>;
 
-This is standard solution.
+So QRB5165 and SM7225 are still consumed by bootloaders through DTS,
+which is the same category as the older IDs you keep.
 
-> As you said, if it's not used, we can skip it and add a property in
-> the future (or the real value if we have it).
+> Copy arbitrarily chosen newer SoC IDs from DT bindings to the regular
+> header of socinfo driver and use it when needed, so later they could be
+> removed from the bindings.
 
-skipping it makes sense now.
+I would suggest converting the boards above to QCOM_ID_QRB5165 and
+QCOM_ID_SM7225, and keeping those two IDs in the bindings. Then
+the in-tree DTS users become visible, and the cut is no longer arbitrary:
+everything left in qcom,ids.h is an ID actually used by DTS.
 
-> 
-> But we won't be able to use 1 for strong and 0 for normal.
-> 
-> Regards,
-> Richard
-> > 
-> > >   - collect Acked-by tag
-> > > 
-> > > Jisheng Zhang (13):
-> > >    arm64: kconfig: let ARCH_BERLIN cover Synaptics arm64 SoCs
-> > >    pinctrl: berlin: use u16 instead of u8 for the offset
-> > >    pinctrl: berlin: enable module build support
-> > >    pinctrl: berlin: add optional pinconf support
-> > >    dt-bindings: soc: synaptics: add SL2610 system controllers
-> > >    soc: synaptics: add SL2610 system controller support
-> > >    reset: add Synaptics SL2610 reset controller support
-> > >    pinctrl: berlin: add Synaptics SL2610 pin controller support
-> > >    clk: berlin: add Synaptics clock controller helpers
-> > >    clk: berlin: add Synaptics SL2610 clocks and PLLs
-> > >    dt-bindings: arm: berlin: add Synaptics SL2610 SoCs and RDK boards
-> > >    arm64: dts: synaptics: add SL2610 family SoCs
-> > >    arm64: dts: synaptics: add SL2610 family RDK boards
-> > > 
-> > >   .../bindings/arm/marvell,berlin.yaml          |  20 +
-> > >   .../soc/synaptics/syna,sl2610-soc-syscon.yaml | 178 ++++
-> > >   MAINTAINERS                                   |   8 +
-> > >   arch/arm64/Kconfig.platforms                  |   4 +-
-> > >   arch/arm64/boot/dts/synaptics/Makefile        |   5 +
-> > >   arch/arm64/boot/dts/synaptics/sl2611-rdk.dts  |  16 +
-> > >   arch/arm64/boot/dts/synaptics/sl2611.dtsi     | 457 +++++++++++
-> > >   arch/arm64/boot/dts/synaptics/sl2613-rdk.dts  |  16 +
-> > >   arch/arm64/boot/dts/synaptics/sl2613.dtsi     |  12 +
-> > >   arch/arm64/boot/dts/synaptics/sl2615-rdk.dts  |  16 +
-> > >   arch/arm64/boot/dts/synaptics/sl2615.dtsi     |  46 ++
-> > >   arch/arm64/boot/dts/synaptics/sl2617-rdk.dts  |  16 +
-> > >   arch/arm64/boot/dts/synaptics/sl2617.dtsi     |  46 ++
-> > >   arch/arm64/boot/dts/synaptics/sl2619-rdk.dts  |  16 +
-> > >   arch/arm64/boot/dts/synaptics/sl2619.dtsi     |  44 +
-> > >   .../boot/dts/synaptics/sl261x-rdk-common.dtsi | 135 ++++
-> > >   drivers/clk/Kconfig                           |   1 +
-> > >   drivers/clk/berlin/Kconfig                    |  34 +
-> > >   drivers/clk/berlin/Makefile                   |   4 +
-> > >   drivers/clk/berlin/clk-sl2610.c               | 360 +++++++++
-> > >   drivers/clk/berlin/sl-clk.c                   | 279 +++++++
-> > >   drivers/clk/berlin/sl-clk.h                   |  31 +
-> > >   drivers/clk/berlin/sl-sysmgr-clk.c            | 241 ++++++
-> > >   drivers/clk/berlin/sl-sysmgr-clk.h            |  44 +
-> > >   drivers/clk/berlin/sl2610-pll.c               | 145 ++++
-> > >   drivers/clk/berlin/sl2610-pll.h               |  14 +
-> > >   drivers/pinctrl/berlin/Kconfig                |  16 +
-> > >   drivers/pinctrl/berlin/Makefile               |   1 +
-> > >   drivers/pinctrl/berlin/berlin.c               | 259 +++++-
-> > >   drivers/pinctrl/berlin/berlin.h               |  17 +-
-> > >   drivers/pinctrl/berlin/pinctrl-sl2610.c       | 759 ++++++++++++++++++
-> > >   drivers/reset/Kconfig                         |  13 +
-> > >   drivers/reset/Makefile                        |   1 +
-> > >   drivers/reset/reset-sl2610.c                  | 224 ++++++
-> > >   drivers/soc/Kconfig                           |   1 +
-> > >   drivers/soc/Makefile                          |   1 +
-> > >   drivers/soc/synaptics/Kconfig                 |  14 +
-> > >   drivers/soc/synaptics/Makefile                |   2 +
-> > >   drivers/soc/synaptics/sl2610-syscon.c         |  84 ++
-> > >   include/dt-bindings/clock/syna,sl2610.h       | 131 +++
-> > >   include/dt-bindings/reset/syna,sl2610-reset.h |  80 ++
-> > >   41 files changed, 3771 insertions(+), 20 deletions(-)
-> > >   create mode 100644 Documentation/devicetree/bindings/soc/synaptics/syna,sl2610-soc-syscon.yaml
-> > >   create mode 100644 arch/arm64/boot/dts/synaptics/sl2611-rdk.dts
-> > >   create mode 100644 arch/arm64/boot/dts/synaptics/sl2611.dtsi
-> > >   create mode 100644 arch/arm64/boot/dts/synaptics/sl2613-rdk.dts
-> > >   create mode 100644 arch/arm64/boot/dts/synaptics/sl2613.dtsi
-> > >   create mode 100644 arch/arm64/boot/dts/synaptics/sl2615-rdk.dts
-> > >   create mode 100644 arch/arm64/boot/dts/synaptics/sl2615.dtsi
-> > >   create mode 100644 arch/arm64/boot/dts/synaptics/sl2617-rdk.dts
-> > >   create mode 100644 arch/arm64/boot/dts/synaptics/sl2617.dtsi
-> > >   create mode 100644 arch/arm64/boot/dts/synaptics/sl2619-rdk.dts
-> > >   create mode 100644 arch/arm64/boot/dts/synaptics/sl2619.dtsi
-> > >   create mode 100644 arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
-> > >   create mode 100644 drivers/clk/berlin/Kconfig
-> > >   create mode 100644 drivers/clk/berlin/clk-sl2610.c
-> > >   create mode 100644 drivers/clk/berlin/sl-clk.c
-> > >   create mode 100644 drivers/clk/berlin/sl-clk.h
-> > >   create mode 100644 drivers/clk/berlin/sl-sysmgr-clk.c
-> > >   create mode 100644 drivers/clk/berlin/sl-sysmgr-clk.h
-> > >   create mode 100644 drivers/clk/berlin/sl2610-pll.c
-> > >   create mode 100644 drivers/clk/berlin/sl2610-pll.h
-> > >   create mode 100644 drivers/pinctrl/berlin/pinctrl-sl2610.c
-> > >   create mode 100644 drivers/reset/reset-sl2610.c
-> > >   create mode 100644 drivers/soc/synaptics/Kconfig
-> > >   create mode 100644 drivers/soc/synaptics/Makefile
-> > >   create mode 100644 drivers/soc/synaptics/sl2610-syscon.c
-> > >   create mode 100644 include/dt-bindings/clock/syna,sl2610.h
-> > >   create mode 100644 include/dt-bindings/reset/syna,sl2610-reset.h
-> > > 
-> > > -- 
-> > > 2.55.0
-> > > 
-> > > 
-> > 
-> 
-> 
-> -- 
-> Richard Genoud, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> ---
+>  drivers/clk/qcom/apss-ipq6018.c      |  2 +-
+>  drivers/cpufreq/qcom-cpufreq-nvmem.c |  1 +
+>  include/linux/soc/qcom/socinfo.h     | 94 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 96 insertions(+), 1 deletion(-)
+
+[...]
+
+> diff --git a/include/linux/soc/qcom/socinfo.h b/include/linux/soc/qcom/socinfo.h
+> index ba823a0013c5..cd2e8eddf3b5 100644
+> --- a/include/linux/soc/qcom/socinfo.h
+> +++ b/include/linux/soc/qcom/socinfo.h
+> @@ -112,4 +112,98 @@ enum qcom_socinfo_feature_code {
+>  #define SOCINFO_PCn(n)			((n) + 1)
+>  #define SOCINFO_PC_RESERVE		(BIT(31) - 1)
+>  
+> +/* SoC IDs */
+> +#define QCOM_ID_QRB5165			455
+> +#define QCOM_ID_SM8450			457
+> +#define QCOM_ID_SM7225			459
+> +#define QCOM_ID_SA8295P			460
+> +#define QCOM_ID_SA8540P			461
+> +#define QCOM_ID_QCM4290			469
+> +#define QCOM_ID_QCS4290			470
+> +#define QCOM_ID_SM7325			475
+
+[...]
+
+> +#define QCOM_ID_IPQ5404			671
+> +#define QCOM_ID_QCS9100			667
+
+Since the list is being moved anyway, this might be a good moment to
+fix the ordering.
+
+Also, drivers/clk/qcom/apss-ipq5424.c includes qcom,ids.h without using
+any QCOM_ID_* constant, so the include could be dropped while at it.
+
+Shawn
