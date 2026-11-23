@@ -1,46 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=218.76.62.146
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795432166;
-	b=llGkyp3XqM7g1iV7vggaF6yglqWgvbliJi7A0RiH8GOzJ12QAVjg61b1oFUCLOIMHNRY
-	 JP1PDSe0aqut8ohoAAlB+lSWKKvO1laj/h8EdJpAZZKQIgAq1E5sVkgb3AmL52UBQmKjZ
-	 oBHhtaqaih6W1QCX7P5VVI451MujhnrFLRBJYyWRfyKZNNRr28WM7pfvyNs2ljbOgxi68
-	 IGSzfomTu06Plz++BHDqxBhSLTXL7vTZh/z3/P2yJeNZpMKyjbQGBtfZ1H8e5tTbxTm5f
-	 pXooG19fewSJ0U6Rgz//uAD3jm6e2CO146jzSwMMe1ctOz4y6rfOfUIlO+0DEAXUv+A==
+	t=1795432184;
+	b=tjeLnCKvWTIornNxySffZAkeJ5ODsUWScz0CDTiny+MggK87AEVivylWRbx9UmLYRgXV
+	 F9t4YKZ4GN2+RZlZLV6lU7D7XjXeJtcP+PmH43t4Vd4e3c/rIy+hN+wT8QCFxWk30xUr+
+	 0quMITtOkisebNfQYPnFaGIrs9bRXmtDh3noHLAXvsSl5zZoebLIn20qXVOr6w9uyEQKj
+	 ef7NtYq42jZHN8V0E3ld2NJtpHv2NyPPpDKmPfjdWe8IRGXFCXwuV7ziTEOb/Q4wioF8+
+	 9C8AoMz038yQDReMBrqtsOOxiXJwmAJVkawVuzzJC9NYdGPD5ZQnI11GfLqMr2Yyz2Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795432166;
-	h=DMARC-Filter:DKIM-Signature:Received:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-CM-TRANSID:X-Coremail-Antispam:X-CM-SenderInfo;
-	bh=+kDopycZnDAP9HA19BBrkkNf4GaSRLyZaHpHCwaxUpc=;
-	b=oVSGEvWGDnTuY2Swcyi6IoPysHnFKd0C8fvwG/tlDpYNA46wtHKVpKMG1CBzUf1XGtwA
-	 nyn4zf/GVwuBw3y7sA5ZtfgPPngewHq3elO9ML0zLtRxBAlZfcJPnDua5OxS+lOfAqAU8
-	 l1anCQzZMi1ek6OjMlKOATmpd9Pi3o4xbrErrEepekd6csHgDPCBMxNRGo0yw0uGXadTf
-	 0ok3H4iLwFmciQfYU0N8sBUz2YQQ+qsf71OpBZxKbup3A1/FGIhmwc+QEY4taYkBcFLFe
-	 CgMWccQkLRXW3F6riimblQC3iR8sA84EL6yJ/o6xMf+xz7y/DqIAN8nTB70Gbc7Wy5w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795432184;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=m+1rbnB2XIBoFek7YSMPNC4SvTChDO6N1k2EZFgPzuU=;
+	b=PUqV2uWd6HQdcNtlL46U8zYoKSLx+2dXAIGDDQ3MnR4f0iznB1awbvIckjsuut8s3crJ
+	 7ZrTawYSS0HgOdAQLX0s4H7/z683g3xW46vtSZor+1VfjE4aTqFHr3OU5hMrLJIsTUABN
+	 seAJiea2r7SGErOiAlW45Fi+hAEYtTvQaPzIESEm6+Ri4HJy7dyWv1ntOiary5k0+kv65
+	 pt/EUjrIdA3kmhK+1VUNey5o/v0kr0LlZicDgRqkkN0Q1LMi1TGpNAqXRx302XKq+k9Jc
+	 5p/+DORmUCcP0rly6SM0TfsxG5yaFTZdO1/C+35STAqw76s2afVqiC+eZWUFuT3u3WQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ultrarisc.com;
-	spf=pass smtp.mailfrom=ultrarisc.com;
-	dkim=pass header.d=ultrarisc.com header.i=@ultrarisc.com header.a=rsa-sha256 header.s=dkim header.b=R6k8B3wW;
-	arc=none smtp.remote-ip=218.76.62.146
-Received: from ultrarisc.com (unknown [218.76.62.146])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7129606A31E;
-	Mon, 23 Nov 2026 11:09:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A7129606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ultrarisc.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nG2Qg8F1;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466AF606A31E;
+	Mon, 23 Nov 2026 11:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ultrarisc.com header.i=@ultrarisc.com header.a=rsa-sha256 header.s=dkim header.b=R6k8B3wW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=ultrarisc.com; s=dkim; h=Received:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
-	References:Date:Message-Id; bh=+kDopycZnDAP9HA19BBrkkNf4GaSRLyZa
-	HpHCwaxUpc=; b=R6k8B3wWpsiObveZeoFHed2EGTGDnFK/0MmJcI8iybAPk3FF0
-	pJQ0EDMJ5VaLgj7thKOpbCuh8pWZSJlpeyZDf6gQuLeL7oUj8L1WPtMvc/97H09n
-	lzYtebxKcWeCSegQDhjBnScZFBSLUxWY4UZRU2J+koaIlXN0oF6ZJY+T3U=
-Received: from [127.0.0.1] (unknown [192.168.100.1])
-	by localhost.localdomain (Coremail) with SMTP id AQAAfwDHQAexHgRrhEgEAA--.2091S2;
-	Mon, 23 Nov 2026 19:08:33 +0800 (CST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nG2Qg8F1
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E90B1F000D4;
+	Mon, 23 Nov 2026 11:09:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795432183;
+	bh=m+1rbnB2XIBoFek7YSMPNC4SvTChDO6N1k2EZFgPzuU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=nG2Qg8F1X4MpHPPC4Mw0d880qgNwOVR464jpte19mccsajr+UolGrfi3Y0me7cXQ9
+	 T94Qk25Zw1mDjn3tu4HA/Tvx/GLFlc/CKzH3tH3LExzcQ6wMpiG73FS8b192uxuZU0
+	 YX4ApsT0eq4SLnTnuiRclCm7hQsbeQ1gTTF6p9+z86QCPJR7j100VkFSyjzPnlACnz
+	 VoEW4Ehix537kntvXYr0RaZ1YY88VBMaIUNKmBc1JbTdgWLUcHDDS4lpXGBN7vV2hW
+	 HUIlcBtSpbduQBU+RriJtGFLJrpx/b6iBMN4oSbqrOpaRurpis9xuKMHBDSc4B+cao
+	 p1HwTz9DjFXMA==
+Date: Mon, 23 Nov 2026 12:09:40 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Ajit Pandey <ajit.pandey@oss.qualcomm.com>, 
+	Imran Shaik <imran.shaik@oss.qualcomm.com>, Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: add Shikra PWM XO512
+ source clock
+Message-ID: <20261123-chubby-nightingale-from-tartarus-310442@quoll>
+References: <20261116-pwm_clocks_shikra-v1-0-55fc11501821@oss.qualcomm.com>
+ <20261116-pwm_clocks_shikra-v1-1-55fc11501821@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -50,81 +64,21 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] MAINTAINERS: Update UltraRISC driver maintainers
-From: Xincheng Ji <jixincheng@ultrarisc.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, 
- Xincheng Ji <jixincheng@ultrarisc.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Linus Walleij <linusw@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>, 
- linux-pci@vger.kernel.org, linux-clk@vger.kernel.org, 
- netdev@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Fei Chen <chenfei@ultrarisc.com>, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20261118-unimpeded-swapping-6b1b3e5bebba@spud>
-References: <20261116-ultrarisc-maintainer-v1-1-f58706ae438c@ultrarisc.com>
- <179501112283.639563.5233054429317576626.b4-review@b4>
- <20261118-unimpeded-swapping-6b1b3e5bebba@spud>
-Date: Mon, 23 Nov 2026 19:08:40 +0800
-Message-Id: <179543212034.1604484.9462414929447940252.b4-reply@b4>
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795432120; l=658;
- i=jixincheng@ultrarisc.com; s=20260922; h=from:subject:message-id;
- bh=2XLgEq6VwPYO3u9Cdwe+eXzTlcnJKcd6VYZ8ir9zoX4=;
- b=aKUFY1rPQkOEW8tfiUw+ybT22Zp6yoFu8w2dZgnGnPlt9ibfbxWWEE9JKWkooBYH/PP4AKZCr
- UTCWh0XY9DvBDMZKPe01jKMlplaefeGjNl2vREUNTEe+gDv5shPr6X+
-X-Developer-Key: i=jixincheng@ultrarisc.com; a=ed25519;
- pk=n848dcS5D6g0vLad/rjp4Gf/1eedTe1a3pYUrkt2260=
-X-CM-TRANSID:AQAAfwDHQAexHgRrhEgEAA--.2091S2
-X-Coremail-Antispam: 1UD129KBjvdXoW5Kr1fJw13ArWfCr1xWF48Zwb_yoWxXwb_uw
-	nayFyxA3WUCF1xAanF9F45urnF9rW0gw1UZ34Fyr1xCrWvvw4kWws0kr90vr1Sva97tF9I
-	krn5Zr13Kry2vjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbT8FF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
-	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRCCJPDUUUU
-X-CM-SenderInfo: pml0x0xfkh0wg6xo325dul2uoofrz/1tbiAQAADmsD4rIADQABs7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261116-pwm_clocks_shikra-v1-1-55fc11501821@oss.qualcomm.com>
 
-Hi Jerome, Conor,
+On Mon, Nov 16, 2026 at 10:57:44AM +0530, Taniya Das wrote:
+> Export the GCC PWM XO512 source clock ID so the Shikra PWM controller
+> can describe and configure its complete clock path.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
+>  include/dt-bindings/clock/qcom,shikra-gcc.h | 1 +
+>  1 file changed, 1 insertion(+)
 
-Thanks for the feedback and the clock Ack.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-I agree that leaving the company does not necessarily mean stepping
-down as a maintainer. Unfortunately, I am no longer able to contact
-Jia Wang or Xincheng Zhang to ask for their confirmation.
-
-Following your suggestion, I will send v2 adding Fei Chen and myself
-as maintainers while retaining the existing entries. We can revisit
-their removal after allowing a reasonable time for them to respond.
-
-Conor, thanks for offering to take this through the RISC-V tree if
-the subsystem maintainers do not pick it up.
-
-Thanks,
-Xincheng
-
--- 
-Xincheng Ji <jixincheng@ultrarisc.com>
+Best regards,
+Krzysztof
 
