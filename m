@@ -1,75 +1,114 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.227.129
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795433094;
-	b=M7XbCaF4scPXr5gomqBhbw64/mx9EjZrQeO9EKAO3k+cdEnaFt0TvMuaR56PR2Q3dE9Y
-	 pbZQskc1I3H9A5NUBveD/fl/hzcyaVierWx3hSX39+Yqbr4/NIQe8I5yuUntmdexR6PFP
-	 vfesIHVMAkclftDm7W/5Htr8my24rdv1qxrH7PJUHr/6GQLrQnIaF412HHHwFjVgF6v1E
-	 T+wvPUX9qSs/SMH/8STcEYxmCVoAg/UQH1nZ5s8msj8GwBs1H3mdPSPHtFaW/EIYi0VbM
-	 FO6Vt9Yn6vScMsu0kuOxIq4QRNHpCkR6yXgxMffmjNNbEmRc81qZ3n1j3CG0SD27dLw==
+	t=1795433167;
+	b=DAsRr/HDI7vDVjb2wOQWa+xca8a476GMU4KvbDVDdlbCZmYV3CuoyArwRDTsVNMVJJF0
+	 fUVoQnqgJ1rxP+CuAM969PWjyz0cWXcK0qcBeD8F4M7bFtNipi/oZMXSxmn1vWcYfzlFW
+	 Yn4iy9M7k1Nk3bSxmLKYfv7xDckTRmyirrWA0NRBHLHTzbbAHRycGKct2rZtLCj33dnES
+	 n6UfSPVvVli9Uv0MmvdXzJuQ6AiGhFk64c7NzDRcEhvtqqOhxOcvjqOHI3DhdiowabsnX
+	 +71EkZyABUEE5dvr9Mg77pEVA8bKnuVVFaEoU68cYI+ABXeGQhyAdOI+fA3Go4l9aDA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795433094;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=FDLkdAG6SH1GnUEwqnA+0+a0OunQrhtXxs1sKgVVilc=;
-	b=Y4nMxvTL8D/ZqUp6atykCWhItLW4NuVT6XeTT9chUr1Q0zr1Dq5Y+pQZeOhK70tN6OBV
-	 etKPIhIpBtwh8O3uTYhtuMBlsFC1q9K+c3/dwmjuvHhta6HO6IXk4OHpnH6J26uNH7kIW
-	 FRavGFPWEtMu9j1NYrelEHp72LIXJiDDoSTDbCYHVOjpSpR8RXFWoaj61EhLvKoP9XnNR
-	 z6/k2Hy3hSSjmPsJ2PUpVuQyEYWXyVVl+8U6lSOCefx4q5Y06+0oAp50wvtB31j7OVzON
-	 0FamwirD+YPK+zFHUvUmpD26F4HowpgrYbZzs/7/o7pcvKbs6/SQjP5uY6mBmXIK1Vg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795433167;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	bh=Io7ujKNNt7SQhbgiNtNsmPHGRtWoUuLSgdS1AFaBjnc=;
+	b=NqkUwvLfmwu84gE/HzpwgEo+nGJZjSt8QOXQ2Q/TSsYbI6cbCn3VGJUmOkyTPknMxGH5
+	 M3zL0WFrmFD1Dh8zuwZ+at2CD59m6gTH+umef/QLZ/u1/aiIZ1ECdtRf0qF4FuDaaFZ9X
+	 3sFex8FkGnM57t4YqDjb0whhKFiX3snpvPPtIhG72VtBmilngDbxf54BQMQYulhXsJAGL
+	 xSzbUSTkgDvqQe39X7dTdhORCng3ZszzffcMC8ZHGQcmS5k7SQw7H/3dGBRiYOKCr5rd7
+	 r2GH3FBOoDsFrDwWGplhQSz+U+cv0WvcCp5qcKX00V44aOhRE27Kv9lcVRdUTVCd0cA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=Ti2+aFmQ;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DmuyGlSV;
+	arc=none smtp.remote-ip=74.125.227.129
+Received: from mail-pj2-f1.google.com (mail-pj2-f1.google.com [74.125.227.129])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D7B606A31A;
-	Mon, 23 Nov 2026 11:24:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 52D7B606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEE1606A32D
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 11:26:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AFEE1606A32D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=Ti2+aFmQ
-Received: from killaraus.ideasonboard.com (2001-14ba-7086-3000--a06.rev.dnainternet.fi [IPv6:2001:14ba:7086:3000::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DA13C177;
-	Mon, 23 Nov 2026 12:22:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1795432940;
-	bh=hb4P93d/CtVlWvdjmqk9rxhiNgKlW9A8FN0kJu+NlyM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ti2+aFmQsLywTbAqtWhyNj/ERQn8nDDJjLUKNhy4OCjouOkuyL6EhkyX/3YTLmDf8
-	 DQ1AsbEDHhsppR3ToClGA9YlqiUWzMfHopnGL0TGh1J5kv7DbtylTGPAJfNz3WUdA/
-	 neI8AomK8DIaUCNfaRHKRFHmmbR3MlnhepffjMjM=
-Date: Mon, 23 Nov 2026 13:24:50 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Paul Elder <paul.elder+renesas@ideasonboard.com>,
-	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 04/15] clk: renesas: r8a78000: Add clk_hw to clk_map
-Message-ID: <20261123112450.GF3010398@killaraus.ideasonboard.com>
-References: <cover.1795029012.git.geert+renesas@glider.be>
- <ea85d72ca37bc7abc59fda5aed4b8272578922c4.1795029012.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DmuyGlSV
+Received: by mail-pj2-f1.google.com with SMTP id 98e67ed59e1d1-3b10718b387so1717596a91.1
+        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 03:26:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795433166; x=1796037966; darn=vger.kernel.org;
+        h=mime-version:content-transfer-encoding:content-type:references
+         :in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Io7ujKNNt7SQhbgiNtNsmPHGRtWoUuLSgdS1AFaBjnc=;
+        b=DmuyGlSVyG0u5kdHOp1ild90T4N/HC7n+JkFjIWZ7Qz0SJ/qFf78h+3H1j8N1TLC8/
+         dFYgp2JnaSmUDKnkMd4SWTZ7Sr/32VbO71cd5+kUIBjBCy2YfgrbHSjV4Mi774QTss4L
+         58rqlv5QMJZSVsd3hLGM1ziY8Udp8cnfbjZGpQRuZYH3E5ojg/owA6GyvNumphsyF8pw
+         F94jWV42N+KzboOAVlP0DCuL38oHmXRmrrCwE7OY2+nFiA72NaD7E1UQnts9UqCt1WLD
+         zhB31LMAV2ev4ZD5wC+U/dscosPhA+hfIuN3zZZGQWXcML0UnxKaGSjP8sIH7mdWslFM
+         KlHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795433166; x=1796037966;
+        h=mime-version:content-transfer-encoding:content-type:references
+         :in-reply-to:subject:cc:to:from:message-id:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Io7ujKNNt7SQhbgiNtNsmPHGRtWoUuLSgdS1AFaBjnc=;
+        b=Z3uqEnJ9LOXXqG2OKbHPfcQzEU20Yj4sAmudq9J50ftNCwGmMAlZKfSDylgMl0FzEG
+         PhmjTeOslAMnkHmibQX64wdOCPkwymMgkzQNNaRydYTvuB3L3sA2uctF9gfGW5/6E0Zi
+         KSVP3+3nCReX5yRF/Q8r2yi5yt7/AzRak9FmFzQuYobCi/lhfvRCR7CefwI7Cw0zIkLa
+         L9myAqfubYK8hxkuK1FXSItx60b5CdN0H/ZApFyKDmME9mDzyispI5C1Ql5ZClLZrOPT
+         OUheI6ZikIdQhX2cL1mWYUsU6lBeYOXQW5Og5dAU+Y1ALD79q4K2FQNnZN9dtqsGzL8N
+         qNiA==
+X-Forwarded-Encrypted: i=1; AL+hErHJXne6IlrvZ3oAcKBqtL+9zl0+cnChJ+nLHaHIcqkCeSg+sSiVHvoO7wadwG+IJIktGIJnSnTeW50=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8ce5XpDZJtpAy1YiB/1LSuppPjo3IbQyD8YZPlWScnF0gBUkG1
+	HEhbJYy9djJW7cq/BV1o2xGk/oORXQ4kYoNObhZQZm47qNF2nl+2jjNc
+X-Gm-Gg: AZFdTZdEQUlwR4OVrgadvs8xU3dBDDvj9fzicKDooH98bm77rOf5gmlWL/UjaRdfffN
+	NK5F1Psgi2FPOWnzhxkHIX+W1ifOwph/eRr4uKgiJm5nnn/od9wTrIsdyR0utziAH/tYepzkmp0
+	Uil9Xz8lCS019Diyc0eluSRKXrVrvtZj0qwoGkwgq5rReA4ClHO+hovNX/O2Kw4NFy4Alb+OjVo
+	QHU+PwgIJqDrhdiisVQqW4V7k52+aNEOJeWzZjVixNVIVLbYAljYZZBM4rKkwqhposetpAaxJuP
+	pGX1VsjhvZMoEezGECajeBLQCqdf0aKxIy/vc8meLLuUmyrQgdCGPSiQLJRoyBu7FfkpxSprAQU
+	YKLp2aCMLA1pjt3SHNLurnCO3TH9pBKXrjJzPSAxllAsC5tlGt8vO+hmPLVimEeuDQUXRj2K4Tv
+	S2KJsvZvsIIkem0EgRbG20cHgCefTUxPXOMZTlUByK5EBTrQY/luMMSVH1EZZuYeZcUJHDTEcx4
+	MNhnWxdGLJugT8oHTdgiDqbVKZez5qrEvnONxrzIiGY/INLDFbW6PZJnwsIR4jL2pBTjYKe4FUJ
+	l0y5wbIYQwOutwjwflJlyKBpfMKVJVPzC+k=
+X-Received: by 2002:a17:90b:4c07:b0:3b4:f92:ade7 with SMTP id 98e67ed59e1d1-3b41cb20eb8mr10517519a91.52.1795433165943;
+        Mon, 23 Nov 2026 03:26:05 -0800 (PST)
+Received: from localhost ([2403:2c80:6::10a9])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b41ad8e93asm17449770a91.11.2026.11.23.03.26.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Nov 2026 03:26:05 -0800 (PST)
+Date: Mon, 23 Nov 2026 19:26:02 +0800
+Message-ID: <f5c6f44bfb6040289653cdc079b1cb2a.codykang.hk@gmail.com>
+From: Cody Kang <codykang.hk@gmail.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Yixun Lan <dlan@kernel.org>, Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+ Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Haylen Chu <heylenay@4d2.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Yao Zi <me@ziyao.cc>,
+ Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Guodong Xu <docular.xu@gmail.com>, Icenowy Zheng <uwu@icenowy.me>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Sarah Emery <sarah.emery@canonical.com>, Ze Huang <ze.huang@oss.qualcomm.com>,
+ Dmitry Baryshkov <lumag@kernel.org>, dri-devel@lists.freedesktop.org,
+ linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 10/17] drm/spacemit: add Saturn DPU KMS pipeline
+In-Reply-To: <awPxPHpr4NYxqdmf@houat>
+References: <20261121-k3-display-v3-0-ec419e8e96b8@gmail.com>
+ <20261121-k3-display-v3-10-ec419e8e96b8@gmail.com> <awPxPHpr4NYxqdmf@houat>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -79,219 +118,17 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ea85d72ca37bc7abc59fda5aed4b8272578922c4.1795029012.git.geert+renesas@glider.be>
 
-On Wed, Nov 18, 2026 at 08:44:52PM +0100, Geert Uytterhoeven wrote:
-> Prepare for mapping to other than fixed-rate clocks by adding an array
-> of clk_hw pointers, indexed by the clock map entry index, and populating
-> it up-front.
-> 
-> Move r8a78000_cpg_priv.fixed_hws into get_hws(), as it is no longer
-> needed afterwards, and drop NUM_FIXED_CLKS.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> v5:
->   - Add Tested-by,
->   - Rebase,
->   - Use kzalloc_objs() and __free() instead of devm_k{calloc,free}() for
->     the temporary array of fixed clocks,
->   - Replace devm_kcalloc() by devm_kzalloc_objs(),
->   - Replace unified clk_map by keeping the original clk_id_map and
->     adding a separate array of clk_hw pointers,
->   - Let clk_id_map_find() return an index,
->   - Replace fill_clk_map() by get_hws(),
-> 
-> v4:
->   - No changes,
-> 
-> v3:
->   - New.
-> ---
->  drivers/clk/renesas/r8a78000-cpg.c | 71 ++++++++++++++++++++----------
->  1 file changed, 48 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/r8a78000-cpg.c b/drivers/clk/renesas/r8a78000-cpg.c
-> index 236c638834703f95..fd97e1558d423f95 100644
-> --- a/drivers/clk/renesas/r8a78000-cpg.c
-> +++ b/drivers/clk/renesas/r8a78000-cpg.c
-> @@ -5,6 +5,7 @@
->   * Copyright (C) 2026 Glider bv
->   */
->  
-> +#include <linux/cleanup.h>
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/dev_printk.h>
-> @@ -35,10 +36,9 @@ enum fixed_clk {
->  	FIXED_CLK_66M,
->  	FIXED_CLK_133M,
->  	FIXED_CLK_266M,
-> -	NUM_FIXED_CLKS
->  };
->  
-> -static const unsigned long fixed_clk_rates[NUM_FIXED_CLKS] = {
-> +static const unsigned long fixed_clk_rates[] = {
->  	[FIXED_CLK_66M] = 66666000,
->  	[FIXED_CLK_133M] = 133330000,
->  	[FIXED_CLK_266M] = 266660000,
-> @@ -51,31 +51,30 @@ static const unsigned long fixed_clk_rates[NUM_FIXED_CLKS] = {
->   *
->   * @dev: CPG device
->   * @map: Mapping from DT clock IDs to fixed-rate clock IDs
-> - * @fixed_hws: Fixed rate clocks
-> + * @hws: Clocks, indexed by @map entry index
->   */
->  struct r8a78000_cpg_priv {
->  	struct device *dev;
->  	const struct clk_id_map *map;
-> -	struct clk_hw *fixed_hws[NUM_FIXED_CLKS];
-> +	struct clk_hw **hws;
->  };
->  
-> -static const struct clk_id_map_entry *clk_id_map_find(const struct clk_id_map *map,
-> -						u32 dt_id)
-> +static int clk_id_map_find(const struct clk_id_map *map, u32 dt_id)
+Hi Maxime,
 
-While at it, I'd recommend adding a r8a78000_ prefix to this and other
-functions below to avoid future namespace clashes.
+On Mon, 23 Nov 2026 08:55:40 +0100, Maxime Ripard wrote:
+> On Sat, Nov 21, 2026 at 03:40:49PM +0800, Cody Kang via B4 Relay wrote:
+> > +static int spacemit_drm_master_bind(struct device *dev)
+[...]
+> > +	drm_mode_config_reset(drm);
+>
+> You need to use drm_mode_config_create_initial_state().
 
->  {
->  	for (unsigned int i = 0; i < map->size; i++) {
->  		if (map->entries[i].dt_id == dt_id)
-> -			return &map->entries[i];
-> +			return i;
->  	}
->  
-> -	return NULL;
-> +	return -1;
->  }
->  
->  static struct clk_hw *r8a78000_clk_get(struct of_phandle_args *spec, void *data)
->  {
->  	struct r8a78000_cpg_priv *priv = data;
-> -	const struct clk_id_map_entry *entry;
->  	struct device *dev = priv->dev;
->  	struct clk_hw *hw;
-> +	int idx;
->  	u32 id;
->  
->  	if (spec->args_count != 1)
-> @@ -83,13 +82,13 @@ static struct clk_hw *r8a78000_clk_get(struct of_phandle_args *spec, void *data)
->  
->  	id = spec->args[0];
->  
-> -	entry = clk_id_map_find(priv->map, id);
-> -	if (!entry) {
-> +	idx = clk_id_map_find(priv->map, id);
-> +	if (idx < 0) {
->  		dev_err(dev, "Unknown clock %u\n", id);
->  		return ERR_PTR(-ENOENT);
->  	}
->  
-> -	hw = priv->fixed_hws[entry->fw_id];
-> +	hw = priv->hws[idx];
->  
->  	dev_dbg(dev, "Mapping DT clock %u to %s at %lu Hz\n", id,
->  		clk_hw_get_name(hw), clk_hw_get_rate(hw));
-> @@ -97,27 +96,54 @@ static struct clk_hw *r8a78000_clk_get(struct of_phandle_args *spec, void *data)
->  	return hw;
->  }
->  
-> -static int register_fixed_clks(struct r8a78000_cpg_priv *priv)
-> +static struct clk_hw **register_fixed_clks(struct device *dev)
+Thanks for the review. Will fix in v4.
 
-I would have kept the r8a78000_cpg_priv argument for consistency. Not a
-big deal, up to you.
-
->  {
-> -	struct device *dev = priv->dev;
-> +	unsigned int n = ARRAY_SIZE(fixed_clk_rates);
->  	unsigned long rate;
->  	struct clk_hw *hw;
->  	const char *name;
-
-Those three variables can be moved within the loop. Also up to you.
-
->  
-> -	for (unsigned int i = 0; i < ARRAY_SIZE(fixed_clk_rates); i++) {
-> +	struct clk_hw **hws __free(kfree) = kzalloc_objs(*hws, n);
-> +	if (!hws)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	for (unsigned int i = 0; i < n; i++) {
->  		rate = fixed_clk_rates[i];
->  		name = devm_kasprintf(dev, GFP_KERNEL, "cpg-%lu", rate);
->  		if (!name)
-> -			return -ENOMEM;
-> +			return ERR_PTR(-ENOMEM);
->  
->  		hw = devm_clk_hw_register_fixed_rate(dev, name, NULL, 0, rate);
->  		if (IS_ERR(hw))
-> -			return PTR_ERR(hw);
-> +			return ERR_CAST(hw);
-> +
-> +		hws[i] = hw;
-> +	}
-> +
-> +	return_ptr(hws);
-> +}
->  
-> -		priv->fixed_hws[i] = hw;
-> +static struct clk_hw **get_hws(struct r8a78000_cpg_priv *priv)
-> +{
-> +	const struct clk_id_map *map = priv->map;
-> +	struct device *dev = priv->dev;
-> +	struct clk_hw **hws;
-> +	u16 fw_id;
-
-This can also be moved within the loop.
-
-> +
-> +	struct clk_hw **fixed_hws __free(kfree) = register_fixed_clks(dev);
-> +	if (IS_ERR(fixed_hws))
-> +		return ERR_CAST(fixed_hws);
-> +
-> +	hws = devm_kzalloc_objs(dev, *hws, map->size);
-> +	if (!hws)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	for (unsigned int i = 0; i < map->size; i++) {
-> +		fw_id = map->entries[i].fw_id;
-> +		hws[i] = fixed_hws[fw_id];
->  	}
->  
-> -	return 0;
-> +	return hws;
->  }
->  
->  static int r8a78000_cpg_probe(struct platform_device *pdev)
-> @@ -125,7 +151,6 @@ static int r8a78000_cpg_probe(struct platform_device *pdev)
->  	struct device *dev = &pdev->dev;
->  	struct r8a78000_cpg_priv *priv;
->  	const struct clk_id_map *map;
-> -	int ret;
->  
->  	map = of_device_get_match_data(dev);
->  	if (!map)
-> @@ -138,9 +163,9 @@ static int r8a78000_cpg_probe(struct platform_device *pdev)
->  	priv->dev = dev;
->  	priv->map = map;
->  
-> -	ret = register_fixed_clks(priv);
-> -	if (ret)
-> -		return ret;
-> +	priv->hws = get_hws(priv);
-> +	if (IS_ERR(priv->hws))
-> +		return PTR_ERR(priv->hws);
->  
->  	return devm_of_clk_add_hw_provider(dev, r8a78000_clk_get, priv);
->  }
-
--- 
-Regards,
-
-Laurent Pinchart
+Cody
