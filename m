@@ -1,52 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795439104;
-	b=ZJGqtpLHeisR85ICId4dka+1xUkXVi6k/RLr3IzEAaqhwJvO/nQs7+GfT+CU8ptdI9SK
-	 XdttQoXDqxEPyEz9lzsAYope237iswcedO8Pb9OYnyLpHZO1ZwP+3Zly2H3os7Enok0I9
-	 Jf84sBLNRj67+SgMdOFahl25s1oT/VG2cOVnt3DCci1C9mJ6xMUDOj9eXPu2GWwIaC2ka
-	 /PPtMvVsowrxd5pIOrrGyZhku6rgY47UoGFsiznX/FM724ypokBQnViy9M2ySkC5jMBXT
-	 tK2uXFyvmST9IqVNh76ATNekdQWcGDgxX7hbhiMmVXBEFshWXcwEcZNtOJI6GbBghwg==
+	t=1795439169;
+	b=veGlnYsEiOYVDSc8GvG8pa+v3ehFqJChUDfoiEKNkmm2Yu8IBFw1oL8t81+BuqhFyTq1
+	 WotiQdktwxlYphX6DSwJ0C/ZoMRlnYm7a3pON18csAShh2MyF+x7XxjwJslSItn3sOsGa
+	 MwnaZV5HRpb9EJZc22Wmbcs2+rjrbCGu3Sbo18lIPmWxkCpO2sLP2uA5L/N4UlPnTgFab
+	 t7ISkLRMDppDVAuUmOCzCC4VqMxfnWQkthb1gPcxsF1ZglD/nMv9qkzw0uzC+y8MilIk+
+	 IGePPKpN8SVlQMfKy6ryOqLqLp0PqlG9aP/Iq3Xp4qkah7N67UWFb4117Iwb/3MhWxQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795439104;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795439169;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
 	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
 	 Content-Disposition:In-Reply-To;
-	bh=JqwOi7/BVktI2ZHP/U/3Nu9WMQA6oh0lX3SVmULq8WU=;
-	b=mb0U0lzavVEoJ4Us2gyxEPow0iAeAA4c8HJNFV3vlxIhaGkHDQF+4V5y7qm48O+pxdGe
-	 tv4++MFgcw3ogF+EbiborA6gVzh64MdBvFdzytnXBXsMsbffE2xKk+qRlQCOBLczdciZW
-	 C+zlB17IFq+llNjjs5R19aiykzfVX/tdfOk/50H8+qTGUOhmwYsKT/HbKusH8Km9Vl5I6
-	 5OsB7jqqc83fNcyekUsP7OJ1ZAjvNSNC3aizHOeZE/gyEIgMajzh2kKFe3OjON/690mt2
-	 LP85q5HT7iVrIcTgHeE7sU/NQUB4d+MvDm7THpMqdO11ggQDcA9C0JdwGIWUOkQ7h4g==
+	bh=eBZpwWyrav8yuFoA0vlExqV8f7U0LYTnP7ApT9lXYes=;
+	b=tTG4D3osK+XBBq06rFg03NpKxQRVGvdNh+0Lm02cKYvDvN1onKp08pO3yhN5NZj1vstz
+	 Rd5E1CTc8aD+LZ/PaB9NOtYXRpPDSLRO6imZSDshkMObwfZ4GzSHwIJHPTm3eIynYmybO
+	 H6Kw5WEmUWv0RWJw8X6ChEi+d+Z9j9uG7am+VluLAP6bwnb/eR0YksN+Uly0kolNn1nKP
+	 eR91l6/K8MSPD9zPvfvf8AHxs2mQWq6Kw47bfFw3Y6l1nI5zDMuIwcvoA9NoiO07UAMKs
+	 xZE/2ALMCrhbAZ7IADz5o6X7jxX0CRgDgwadGpWB+iU8lNT63gNER1v4JcoAG2ScSVw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=sang-engineering.com;
 	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=d1TUo5jS;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=HLUfPuM9;
 	arc=none smtp.remote-ip=194.117.254.33
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342E8606A32A
-	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 13:05:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 342E8606A32A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37D0606A321
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 13:06:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B37D0606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=d1TUo5jS
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=HLUfPuM9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=JqwO
-	i7/BVktI2ZHP/U/3Nu9WMQA6oh0lX3SVmULq8WU=; b=d1TUo5jS4ydnerrVYxvi
-	FOjyUW9RHzWhbtnnBffSPtASsbJMFsiv2MCg3IkhHaErxN3gA2dn3rL8LLU1d7vm
-	9EAulY1oJj1QcWGIkXUfPmEWzZak6Ti8hjczVubxJGe7SsO0y8SuWOuT8lWTCHSS
-	ctrkKGhkKr9favHNjoFIas+G3xyEjXWnFI5bep1ogTFtjl7XNpDghdBIolOU2r4h
-	X/EZrjj1l6DYqNZOn9Y47MUbxHZOzm8yIXSWwyMqLR7or4/92nno7LzV7XiB7t+l
-	Yv6tp4CxjmX1j76x6bTN2KbORQwh1B4hwdvMiuJrwH77CaukBcvyuJwzutTTaINY
-	BA==
-Received: (qmail 2734062 invoked from network); 23 Nov 2026 14:05:00 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Nov 2026 14:05:00 +0100
-X-UD-Smtp-Session: l3s3148p1@oH7GPfFgdo0ujnsu
-Date: Mon, 23 Nov 2026 14:05:00 +0100
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=eBZp
+	wWyrav8yuFoA0vlExqV8f7U0LYTnP7ApT9lXYes=; b=HLUfPuM9FNCHsI3arcOG
+	sl5EvTAt3bcHjlDovFKX/t97wlVwrtFgMHUR3JNa6i6XRTqmtPCmZuDXXwwg/Cq3
+	DxQjcCOdLyZfUx96gTCglcABU40lcoLqg8+7HqUgzPNFhaaWgvnHYust6tPnpSRd
+	BY4swjsM0Zg05+BAOSsugoBxu8p2jBsrFTXwa7yysVkTm6U5ILkZqhyAo7uDdLPP
+	Jrl/6LXbqS+QWDBbGN4IaDsjTxSLYhUicuYZ39pyC1B2/PJTcqCBvjTrIt1qG0KY
+	NAAJTXeqVetCqNfCOPmpOdYhJ6ttWd3Qd+Cm+1Hi9AaDf8uUr1QaMD7c75/lGndr
+	Qw==
+Received: (qmail 2734891 invoked from network); 23 Nov 2026 14:06:05 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Nov 2026 14:06:05 +0100
+X-UD-Smtp-Session: l3s3148p1@lz2nQfFgPr8ujnsu
+Date: Mon, 23 Nov 2026 14:06:05 +0100
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
@@ -64,10 +64,10 @@ Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
 	linux-rockchip@lists.infradead.org, linux-omap@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: Add dev_clk_get_from_provider()
-Message-ID: <awQ5_Fjh6hKTx9Qo@ninjato>
+Subject: Re: [PATCH 3/6] clk: renesas: Convert to dev_clk_get_from_provider()
+Message-ID: <awQ6PXdLz88kI9wQ@ninjato>
 References: <cover.1795094688.git.geert+renesas@glider.be>
- <7155949aea78042fd399da5ad23a72765b2b6cc7.1795094688.git.geert+renesas@glider.be>
+ <55d67b95c675924fb67d13ecbab47bb45c8af372.1795094688.git.geert+renesas@glider.be>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -79,22 +79,25 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7155949aea78042fd399da5ad23a72765b2b6cc7.1795094688.git.geert+renesas@glider.be>
+In-Reply-To: <55d67b95c675924fb67d13ecbab47bb45c8af372.1795094688.git.geert+renesas@glider.be>
 
-On Thu, Nov 19, 2026 at 02:40:35PM +0100, Geert Uytterhoeven wrote:
-> Clocks obtained through of_clk_get_from_provider() show up as
-> "deviceless" in the consumer column of the clk_summary file in debugfs.
-> Add a new variant dev_clk_get_from_provider() that also takes a consumer
-> device, so callers can provide it, and consumer's name will be shown in
-> the clk_summary output.
+On Thu, Nov 19, 2026 at 02:40:36PM +0100, Geert Uytterhoeven wrote:
+> Renesas clock domain callbacks use of_clk_get_from_provider() to obtain
+> clocks used for power management, so the latter show up as "deviceless"
+> in the consumer column of the clk_summary file in debugfs.
 > 
-> Reimplement of_clk_get_from_provider() on top of
-> dev_clk_get_from_provider().
+> Fix this by using dev_clk_get_from_provider() instead, letting us pass
+> the consumer device, too.
+> 
+> Sample clk_summary change snippet on R-Car H1 Marzen:
+>     - sata 1 1 0 62500000 0 0 50000 Y deviceless    of_clk_get_from_provider
+>     + sata 1 1 0 62500000 0 0 50000 Y fc600000.sata dev_clk_get_from_provider
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Tested on R-Car H1 and H3.
 
-Very minor: Maybe of_dev_clk_get_from_provider? It is still OF specific.
-But in general:
+Tested on RZ/A1 (Genmai) and RZ/N1D (demo board).
 
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
