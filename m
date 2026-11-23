@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795459951;
-	b=w2zwUbu9r72pF1kbUeSWoqwxGgmlYkqh9w+ItqmxPGOHBs5Rn5RfBls/uA2cdttrknTg
-	 vEQlaeucvwvyAQf1uCg8aFc/z6yRlzj246Kx3m6EFxHZI6fIGjlMa1/Fqu4J61I+POIbf
-	 dpyZ3ccXKMl9jgA3pmX4yb6YrgDw4STbeUuEds3B2Z8BL3A8+CKIch2SQEI4gHc0txYmt
-	 LRG1qZb5/IrgVho5BW+SXuG0bEkkWBJ1HDaI/SR7nLAUItrqD2sAHpD57EKioEGgpdXmG
-	 0AlCMww1b18pv/XEioDye2B7G0DYssVvQVDeUoYPo0LELeDyl7qe1B8le9RPE5QV92A==
+	t=1795460155;
+	b=CyxbMOL9jLq1mTj14EGsLrapn5v1kyxM1W2QrzvfmpOZXfYGvO4M1haYR6UNX0n/mf9M
+	 tO2BPrjI2FU7OMvH3gN2rSx0fSKhA+LNRkP2+j8n+MrqSiuby8p6VXxUmku/gT8W40jli
+	 0wDjoh1bXYi7v0h7kudhdTwadTz1U45CF8ShPPNo4HcYnbBIKIjdnKcQMVTUagWGa5ZeX
+	 Den6tEw10iMzO7nbKshsuCWaYlIFgDBrGXItkiXbj7ZlQl/lxADBoHqU/yaFcPsefL6KP
+	 7VCaAAeDHjwW/YCGq42Dj9wW7fFY4Lp5rOM0MrhlJv1zexDFVsB7CKPYd3n8V/M8MXQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795459951;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795460155;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=lstZztA1mDrFB9PHgmMDTPXyLU6CoCr0SlAF6QN7mvs=;
-	b=NOHSfLoh5WsG3+Crt8JpBxwQOZaozcaf1uvOsJU+Vm73+Mu3FKAYclW5aWikusCQiq2D
-	 U9tjmF26heAUw2JzOMc9iudzA/GKFf31pPDSLsU3c6UgBgQv0xGiiol2+VZLqtyIvTxdX
-	 TpfOpDC5B6y8q6otFQWb6ag4XCTy4fbWLq6wGrmoC/qccc4hfyvmxV7XoEaJqnwxQAm3P
-	 BGF1uYZJ187kIfEI4tWcrWkEcZZ2eP1v1S9By68MCXbV/il9GDzkbSsKQLwc9EIQbDXKv
-	 kZqx48+46jaWTaRecu1thpfLpzyUxE7mY5x2vEsKD16CermckpNbvA7mk/Mh/Ah6WsQ==
+	bh=SZAQqMButyP2tMLf6h4QZvmumV2dcczmMYB0U2+e69Q=;
+	b=FHtT44n4ACjZxwikXoOJmGUNAYvB5pvXapDwh9S1ht0s7TJh1/pB7uMdLyaUqXr3PdC6
+	 8ULh3hqKBfPkGLvtvQfnh0cGCbHmUgnUE8SCvDw0Y99WRkMKcih9s1IuQsYhq6PAiAFr5
+	 4S8o4g6sYR8k3Axx8W5T+k+oipTftvan3svRe83+1sQ0iQ0c0wpNjIdwU8sSVO+mmEYU6
+	 CYeecuN+cbhmI3xTPCQHRyzwUyL8GgYrPxUqMKkGGEymnnfh7etpoAhxIEHTrejZrJup8
+	 7S3djR2cifgLyovJCvjIL/wKUZglA5a/Q4KycrufjYkE19meRh8dJtx4gcXyFPnBpTw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N5cF+hLo;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mAsIm9nG;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87FA606A31A;
-	Mon, 23 Nov 2026 18:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9703A606A31A;
+	Mon, 23 Nov 2026 18:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N5cF+hLo
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDF8E1F000CA;
-	Mon, 23 Nov 2026 18:52:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mAsIm9nG
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF0B71F000CA;
+	Mon, 23 Nov 2026 18:55:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795459951;
-	bh=lstZztA1mDrFB9PHgmMDTPXyLU6CoCr0SlAF6QN7mvs=;
+	s=k20260515; t=1795460155;
+	bh=SZAQqMButyP2tMLf6h4QZvmumV2dcczmMYB0U2+e69Q=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=N5cF+hLoAXbdEfg9OAUtdpa+W9up/V1euG8ChQytlr0NcTZZCcjHdGaFRU+T4PEOT
-	 uGyPQGU28YUhJqOpSFOFomRWPxccePnFxBTYKIFJkhe7Rb+do1mrKzmdGlECwKhz/S
-	 63Snfrck46LBTbNK3xzuHmcqzPmln7GO7qCdyOYo13o1SCSuYOmj4Ig6BB/rz/ta1n
-	 VRxkL+NEvDN46UHdlgNHI7t0AJS92+det5KvUC1zTNaMmSXrWz7JdxDNJfeRjc1vL1
-	 9A4rjAPpOSfVvU/cO6ppoJmcYbgaQzBW0U0qvXUTgxUvQHmkhSrXkQAt0BhJSDpnzO
-	 N54bVzQdj7o5A==
-Message-ID: <sashiko-outbox-229882@kernel.org>
+	b=mAsIm9nGek6GGPaW6jwxV8zPptNi7HM+BYX/fLGLZSoF8L+Bw5P34KKF/+AEB03dj
+	 TG+ZYKV6giTYWjCVeu/0EdukJ2ah1OuZ6F34tUV6SMuqtawETDVA4VsutibSMPRpAl
+	 YONUXSZX2AUsTaJfKtdgPeZ02KNibhULeaeS1ff9mBDmlVOTZgac4X2V8mle6BF4bv
+	 qi7HNp1/fw9xpfYVUob62tMbHs8rL7o80Tmw7yHvrcnY4oPAJ0CIc6DCA1S6CTbxhX
+	 K/JVlg2VH2CgriDygq8a1J+6INIHuSlgOH+qoxRSVN9+NyAL9aR2QT8P346Z4kDg6V
+	 JVhZ1cA4hf7Vg==
+Message-ID: <sashiko-outbox-229885@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/8] PCI: dwc: Export the multiplexed MSI interrupt
- handler
+Subject: Re: [PATCH 4/5] pinctrl: Add Cortina Systems CS7542 pin multiplexer
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Fil Dunsky" <filipp.dunsky@gmail.com>
-Cc: linux-pci@vger.kernel.org, linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, neil.armstrong@linaro.org, olteanv@gmail.com
-In-Reply-To: <20261123-b4-cs7542-pcie-v1-1-4cde5201d404@gmail.com>
-References: <20261123-b4-cs7542-pcie-v1-0-4cde5201d404@gmail.com>
- <20261123-b4-cs7542-pcie-v1-1-4cde5201d404@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261123-cs7542-syscon-v1-4-49858e631449@gmail.com>
+References: <20261123-cs7542-syscon-v1-0-49858e631449@gmail.com>
+ <20261123-cs7542-syscon-v1-4-49858e631449@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 23 Nov 2026 18:52:30 +0000
+Date: Mon, 23 Nov 2026 18:55:54 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,74 +60,83 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found no new issues
-in this patch, but noticed 1 related pre-existing issue it does not
-introduce:
-- [Critical] PCI: dwc: use-after-free in dw_pcie_free_msi() [1]
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Medium] pinctrl: cs7542: missing function_is_gpio() breaks strict
+  GPIO requests
 --
 
-commit 73ef750c2f801a3eaf7bfcf95e0a5bd88aebd4c3
+commit e26847f7ebd3df4b67ad59e0473df47cbaeaa5df
 Author: Fil Dunsky <filipp.dunsky@gmail.com>
 
-PCI: dwc: Export the multiplexed MSI interrupt handler
+pinctrl: Add Cortina Systems CS7542 pin multiplexer
 
-This commit exports dw_handle_msi_irq() so that modular DesignWare PCIe host
-glue drivers can dispatch the internal MSI receiver directly from a combined
-application interrupt handler.
+This commit adds a pin multiplexer driver for the Cortina Systems CS7542
+SoC supporting GPIO on all 160 lines and six UART pins via the global
+syscon regmap.
 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/=
-pci/controller/dwc/pcie-designware-host.c
-> index bbb02458af58f..1d076bb62783c 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -85,6 +85,7 @@ void dw_handle_msi_irq(struct dw_pcie_rp *pp)
->  			generic_handle_demux_domain_irq(pp->msi_irq_domain, irq_off + pos);
->  	}
->  }
-> +EXPORT_SYMBOL_GPL(dw_handle_msi_irq);
-> =20
->  /* Chained MSI interrupt service routine */
->  static void dw_chained_msi_isr(struct irq_desc *desc)
+> diff --git a/drivers/pinctrl/pinctrl-cs7542.c b/drivers/pinctrl/pinctrl-c=
+s7542.c
+> new file mode 100644
+> index 0000000000000..977c4ce98100d
+> --- /dev/null
+> +++ b/drivers/pinctrl/pinctrl-cs7542.c
+> @@ -0,0 +1,188 @@
 
-[Severity: Critical]
-This problem wasn't introduced by this patch, but can dw_handle_msi_irq() h=
-it
-a use-after-free on pp->msi_irq_domain when racing with dw_pcie_free_msi()
-[1]?
+[ ... ]
 
-During device unbind or module removal, dw_pcie_free_msi() clears the chain=
-ed
-MSI handlers with irq_set_chained_handler_and_data() and immediately removes
-pp->msi_irq_domain without waiting for in-flight interrupts on other CPUs:
+> +enum cs7542_function {
+> +	CS7542_FUNCTION_GPIO,
+> +	CS7542_FUNCTION_UART,
+> +};
 
-drivers/pci/controller/dwc/pcie-designware-host.c:dw_pcie_free_msi() {
-	for (ctrl =3D 0; ctrl < MAX_MSI_CTRLS; ctrl++) {
-		if (pp->msi_irq[ctrl] > 0)
-			irq_set_chained_handler_and_data(pp->msi_irq[ctrl],
-							 NULL, NULL);
-	}
+[ ... ]
 
-	irq_domain_remove(pp->msi_irq_domain);
+> +static int cs7542_gpio_request_enable(struct pinctrl_dev *pctldev,
+> +				      struct pinctrl_gpio_range *range,
+> +				      unsigned int pin)
+> +{
+> +	return cs7542_set_mux(pctldev, CS7542_FUNCTION_GPIO, pin);
+> +}
+> +
+> +static const struct pinmux_ops cs7542_pinmux_ops =3D {
+> +	.get_functions_count =3D cs7542_get_functions_count,
+> +	.get_function_name =3D cs7542_get_function_name,
+> +	.get_function_groups =3D cs7542_get_function_groups,
+> +	.set_mux =3D cs7542_set_mux,
+> +	.gpio_request_enable =3D cs7542_gpio_request_enable,
+> +	.strict =3D true,
+> +};
+
+[Severity: Medium]
+Should cs7542_pinmux_ops implement .function_is_gpio?
+
+Because cs7542_pinmux_ops sets .strict =3D true and exposes "gpio"
+(CS7542_FUNCTION_GPIO) as a pinmux function without providing
+.function_is_gpio, activating a pinctrl state or hog with function =3D "gpi=
+o"
+sets desc->mux_usecount and desc->mux_setting on the pin.  When that pin is
+then requested as a GPIO, pin_request() leaves gpio_ok false and rejects
+the request with -EINVAL:
+
+drivers/pinctrl/pinmux.c:pin_request() {
+	...
+		if (mux_setting) {
+			if (ops->function_is_gpio)
+				gpio_ok =3D ops->function_is_gpio(pctldev,
+								mux_setting->func);
+		} else {
+			gpio_ok =3D true;
+		}
+
+		if ((!gpio_range || ops->strict) && !gpio_ok &&
+		    desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
+	...
 }
 
-If dw_chained_msi_isr() is already running on another CPU when teardown
-starts, dw_handle_msi_irq() will pass the freed pp->msi_irq_domain to
-generic_handle_demux_domain_irq():
-
-CPU0                                    CPU1
-dw_pcie_free_msi()                      dw_chained_msi_isr()
-  irq_set_chained_handler_and_data()
-  irq_domain_remove(pp->msi_irq_domain)
-                                          dw_handle_msi_irq(pp)
-                                            generic_handle_demux_domain_irq(
-                                              pp->msi_irq_domain, ...)
-                                              <-- use-after-free
-
-Calling synchronize_irq() for each active pp->msi_irq[ctrl] before
-irq_domain_remove() would ensure no chained handler is still running.
-
-[1] https://sashiko.dev/#/bug/linux-a392f803-d749-417f-bb89-17e283cf6476
+pinmux_can_be_used_for_gpio() likewise returns false for any pin muxed to
+CS7542_FUNCTION_GPIO via pinctrl.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123-b4-cs7542-=
-pcie-v1-0-4cde5201d404@gmail.com?part=3D1
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123-cs7542-sys=
+con-v1-0-49858e631449@gmail.com?part=3D4
