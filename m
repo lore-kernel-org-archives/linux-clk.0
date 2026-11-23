@@ -1,97 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795424705;
-	b=lTnWefa1QnHZJhNYifcQyQq3Ql8drrIzb4ge0GaR1dOuWJNEozxvUNGy0YIcMAxx5sd0
-	 9xVCEHdereVbf/3iErxQLKJs18wxfA0kv1c3+7XoSlRZ2jtly3R2iEk9pJEsnW+y+WKey
-	 sajcwAg0sZy+FX1cc4QGoQI2BxSqul7Px1AzWzTCAmql83wbEMKIzhsdM2v4E2aBYv9kQ
-	 ffG9YUS6KbJI1KKnm8XFZzkrFXvI2jPDU4SKVbWC4T0RQEcYlpwW3MQlzYBHs4ihUD5bd
-	 s280/Vyz5AH/boBmmnW/yIJ6j9/U7N3rSGVl/lr/uJ976ISO/Cc3SEExvWjHKVqnONQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795424705;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=Wr+kWjHpTo7WaujM5d0oISZ/ZZw0eCmzGrhlM9Yi0DU=;
-	b=ctGvTiA9FLBfaqRMoUK1qM/r4hQBjn5aEnJhk7fYH6ca7WDek8tDN+Rq/EwCTnIA4iwR
-	 sLbpI9a7HafPHtLG+QdSxo8cqbq3G4vnOBRzXe7QV0tqS1sxVpgNBbIm+jAR5L5AYTPjJ
-	 U75jON+9Y6DijEyJZ+4P5oxLGjqILloH6KKrpgLwemJfXwH7sVOdcoPaXUznPzB9ix1Ds
-	 u2CupyR6DZn7QEgZCrrkl2XmQLirOzEc7RG2Ubrsj1Z7jnSkMKF2OXE+LLG/AU88BjDZk
-	 nKrNAg1FEoxyUI0Xj00WOhAryCGgNW52DZBZzg6h00pPdmqD8uTqk2yt4unigioTajQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=W56Kaq5f;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.11.138.130
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795425832;
+	b=zVVqzuK+RRt0q+WlMEkBsilgIaaBi5U5OWAT4wbxu51zGPQ86swAeLu33E131v9ESfqU
+	 LsBufIzX05wXjl1rIhFi/CS33AAm6QozSf3zmXN3OgveRUUwgZq2HSIMzklRWdokgIxF9
+	 WPyqWVhCScaz8RHbEKC09kNE1SiEvsjH6VaNSKnu7fHtz4gaNYtElhkfbHs78NLDniF2c
+	 XbyUAnRKGgjWmgW/bxn3LIymmtGx58cVeYDtDMDJm6cYdqIsgs8Nas6hbaIQQ6HVGG83/
+	 pdUwNsgYGmTOwlfxc3b2ykMay9UYbvZ31pcIKZV0hahbzG4a3wguj9GjuQU28LORTmg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795425832;
+	h=DMARC-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
+	 Content-Type;
+	bh=9s01IOL/VfsGnGIqdOhwdDoI7uOEMrcArvSSD1ab7Bk=;
+	b=mBuIfHNhuZlVBCs9ZQd/Tm8woQSq2B9DSV+Vog86XkFT1PhrdHEMO+VbgRxPHInOhQbI
+	 clDdmVifGWDfadx1xBvhB+yxrDITnptJfZ30SGtUpsVPtPL+xlPoRq9SvMbfSm1mW2J+Y
+	 r8gL5XcXX+2XBR1HGYKhMO4CbfutoTGEVBV//Abh1Uz0vRomEXlFjV08wObMhyQMWr/SG
+	 tSO8VMvJGyqy0UZGNWz2LlnP1KN9xpQ9v2Wwd3jC3fnCrzq0w4or5N+etC5vpVnKFd5Wr
+	 OMK9ot4T0u557gf29DZDAq8A3pTjbmN7abd28BmHWjLa3PXeTCb1NV93D8UbkEc8isw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=sntech.de;
+	spf=pass smtp.mailfrom=sntech.de;
+	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=IgsJAasd;
+	arc=none smtp.remote-ip=185.11.138.130
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C901606A31A;
-	Mon, 23 Nov 2026 09:05:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8C901606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28536606A68E;
+	Mon, 23 Nov 2026 09:23:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 28536606A68E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=W56Kaq5f
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 0E150200AB9;
-	Mon, 23 Nov 2026 10:05:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1795424702;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wr+kWjHpTo7WaujM5d0oISZ/ZZw0eCmzGrhlM9Yi0DU=;
-	b=W56Kaq5fn6fASvOPqIXh+677od8Brm4t8jOtXlCuLuggcHN/ogLBmJwKApIBmhC28MAZR3
-	eIor5yFLnf6ewenyllkLuUcXizcRBq+kz8vQ4jall4FHUUrettQ9xGHLd9rbDlNYrriGq8
-	mLONxpXD60FQkuNNSZC9LUZt7f3GuW8QWHLMv6LiAmZNeozGk8VvKRYQdsMPDW3sVPDDye
-	+pISlk2C89ewjgNaVemqsc0qJodGAdPo7y8jPan93JOu7EWeL5LnCVSJ6s8t6cIvKrBc43
-	RCO0Spndfd88BRv0laJa03QNcEqFeenHS99xy6+Vg3lWZJw1Wr/G50IXOvzL0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1795424702;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wr+kWjHpTo7WaujM5d0oISZ/ZZw0eCmzGrhlM9Yi0DU=;
-	b=SdGy2ubpY2vVJ4pgQS88011nLIzkNbBlXINeFZe5KFUgk6B84MarTvqhSlmMIXmG/2GqmV
-	nUkK3PeqWzqSiJP9+xwHM3IdTECnc6sXWEskW/poR361/GBbF52FvirgI1abJkim9mj/GL
-	WCwHNSM4IsPfo1EtNP3pZ53rjj9FLWAcaXoMKSeEs66D0tOrcy4A+epwoGVSi3X/inisBv
-	DtQkfs73Z0aTNfeMQh2z9QhkMq6qGFCveNxkgrKYplvpVbtIuh5KA/DuznOUy5vzA/ltO9
-	/hevQ8H/DWudwJA6aovOCkxppeTNkGEXXKmhem3xF2kVCQGEHlIk9RAVXdkTsQ==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1795424702; a=rsa-sha256;
-	cv=none;
-	b=HItAs5iU2zEGkHqGzEjxRGPsjfprtiJOAq5H5wHmtBoXuC14LWXEe5Qx3mxL1/PNn0C+EF
-	FaiaqcMswXFiCid0OVgqzsaHewRtWKqUwsLJfucFMsvcz5YSdIV+Bi72gjrOdNJZGcFAeS
-	B2gOhxPPtZAYsMjXXMvEeHr6PvWCI9BMrZDzI3W236RMrcRZOGIK9v7g027I7OVYLRB6rF
-	I4BxxD7ffGTpcUPliW+qxgDXK1vFmTOhBjx4VPk5kGyaZZIvHDLf/DO7WkRkkK7iHb5A94
-	f72LkBApOwR1A/h6V1+qrX6VIF/8k3nAo3+QVPnFmjBrBfxAwK2FHB16WGjrmw==
-Message-ID: <447a60519c38eed420f7778ff0cc6de359a44cd6.camel@pengutronix.de>
-Subject: Re: [PATCH v2 5/6] reset: starfive: jh71x0: Support discontiguous
- reset IDs
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Changhuang Liang <changhuang.liang@starfivetech.com>, Brian Masney	
- <bmasney@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Stephen
- Boyd	 <sboyd@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>, Rob
- Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley	 <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-riscv@lists.infradead.org, Hal Feng
- <hal.feng@starfivetech.com>
-Date: Mon, 23 Nov 2026 10:05:01 +0100
-In-Reply-To: <179536251467.2728475.8360126735543701661.b4-reply@b4>
-References: <20261118100523.11395-1-changhuang.liang@starfivetech.com>
-	 <20261118100523.11395-6-changhuang.liang@starfivetech.com>
-	 <0ee6bfcc5bb62fcb0c9128168e9367254393eca3.camel@pengutronix.de>
-	 <179536251467.2728475.8360126735543701661.b4-reply@b4>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (2048-bit key, unprotected) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=IgsJAasd
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=9s01IOL/VfsGnGIqdOhwdDoI7uOEMrcArvSSD1ab7Bk=; b=IgsJAasdLG82fnozH9SFHpbn7P
+	rQN7p6u1BmpqmfCVrfFpMN/CPRVfnjghSvLdu5DNRY9Kx2aBOufpGSPkLjPPtS8/GHRKm5ZntGM8g
+	7QHA1Qmo5knPoVIFe8WGG6mRangNs/0gnzzFBRfMZsieglXNU1VL1v2kg8xs1v0KMKNGz0x2jH5T+
+	9z1t9OEv2OGKRFD7xefUZmA2NG2M1CyBskRYiKtcZtgaQ9IAdGDKrJpi1ExtuCcP3mBdx92lYzdhH
+	f9j2eWYk03aHVkkpRG+lIT+z/rWGv6H4XR0xeKrr6U4ifh/4qj7JafF5dXRdxiZdtTaeQsnNPj2Rd
+	HkQaL/Mg==;
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Xiangyu Zhu <1194781887@qq.com>, Chaoyi Chen <chaoyi.chen@rock-chips.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v4 0/3] clk: rockchip: rk3506: Add the SAI MCLK output gate clocks
+Date: Mon, 23 Nov 2026 10:23:26 +0100
+Message-ID: <pWqLoF7FQU26AfZrjX9Cfw@sntech.de>
+In-Reply-To: <5176e5e2-72f3-4175-8b29-1dbc64c4e418@rock-chips.com>
+References:
+ <tencent_C2AD19EB4A6C91A75AD3DC4089CB875C4005@qq.com>
+ <5176e5e2-72f3-4175-8b29-1dbc64c4e418@rock-chips.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -101,18 +67,49 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi Jerome,
-
-On So, 2026-11-22 at 16:48 +0100, Jerome Brunet wrote:
-> Hey Philipp,
+Am Montag, 23. November 2026, 02:51:32 Mitteleurop=C3=A4ische Normalzeit sc=
+hrieb Chaoyi Chen:
+> Hi Xiangyu,
 >=20
-> With the comment above addressed, Is it Ok if we take the whole series th=
-rough the clk tree ?
+> On 11/23/2026 8:38 AM, Xiangyu Zhu wrote:
+> > The RK3506 has four SAI MCLK output gates: SAI0 and SAI1 are controlled
+> > by bits in the PMU GRF, SAI2 and SAI3 by bits in the system GRF.  Model
+> > them as GRF gate clocks so the SAI MCLK pin direction can be controlled
+> > through the clock framework.
+> >=20
+> > This is v4 of the earlier "rockchip,clk-out" binding/driver submission.
+> > That one introduced a generic "rockchip,clk-out" compatible plus a
+> > standalone driver, which is not acceptable: upstream already has generic
+> > GRF gate support (branch_grf_gate together with rockchip_clk_add_grf()),
+> > and RK3576 and RK3588 register their SAI/I2S MCLK output gates with it.
+> > No device tree changes are included.
+>=20
+> Please slow down the pace at which you send patches so that people have
+> time to read them. Don't send your patches within 24 hours.
+>=20
+> In addition, your Message-ID seems to have been modified by your email
+> provider:
+>=20
+> Message-ID: <tencent_C4C715C962613597F98212938F8940633306@qq.com>
+>=20
+> Please try the downgrade the git version[0] you use for
+> git send-email, or switch to a different email provider.
+>=20
+> [0]: https://lore.kernel.org/all/8771714B848C3A9F+9f64a309-ff70-466f-8d29=
+=2D15950318b728@airkyi.com/
 
-Yes, please.
+tencent is notorious for mangling message-ids (adding that "tencent_"
+in front. This will likely happen with all git versions.
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+I think the best way forward is what most "qq" users do nowadays
+to use "b4" and use it web-submission option [0]
 
-regards
-Philipp
+
+Heiko
+
+[0] https://b4.docs.kernel.org/en/latest/contributor/send.html
+
+
