@@ -1,45 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795455676;
-	b=3ewzbmQu9k0kPnEWiZ5cQTsJYK5JEf/P3yuDL6bPHBCk+xfwtRdZBSFkWm78o0eP/Ei1
-	 0msuVA/SWlvnD41DvpDV0GiIySHGzIlXwVMVaV7MlILF00V1riitG5xi8+kNUgFoav0Ke
-	 mqQBlh6bJNs2hDlx191MVuRzHJBEVzCMtQDge0Pl2v/MerVe6MRpFKaShkFOuw0WTy/xk
-	 z6C6iWZlTuyp2x/iKpM9rgWOuifRpAl4jkg5h9kyMgeIDy2ph0Xchc3AHZujrtzrr33NL
-	 g1c9UPpdRF72GoK39eyyfyCGPhE+2Vh5R7XkL6f94CVB8iX1+oX+UY3BFnuTfn7c3oQ==
+	t=1795456441;
+	b=Xt+DuYRtgVxcrIo5u2HFuU9MIlW9ZuPft8FeTXwTvmSIW4YD6tYVCrFZ/Xq0kL9fezuA
+	 8XkGXTO19/vd0xeBfIaEGXkkVuQCHB9umdQ06jpgMQ45NHsS4/1gLUrlp8xoJgzE5Efpv
+	 y+ZuGUxfKUTlnL5hIAghlcpywau/4N2uQec/uaWU3DlYENY+XgAeAUMYi2nYgFKWWNfG6
+	 fwMrr/H8zMuB6cweUMcQTpjxkZDy4Lw2tujgdcqbhY+81D3EtQKDhh1MK8jVdyEdzW7VP
+	 4P50ZKXp7kBgiJ3U5YpuPQ+kOBZiFzsHdi4gZsooCL2I5H/auOmF3UGItqIiSxFtJEQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795455676;
-	h=Received:DKIM-Signature:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=ESZysrmfQUFNH+m6FpD5eDnva2LetIZ1aC3sdBbrzF0=;
-	b=LWLVXJohyCStY0LShpneeSyuK73HVkQhFCzZXK8hkrjloR3B+oeTxJvVQspZvwjvojvd
-	 FKPjyPah2kmQRXUOXroF2Gnw1vthrhlnRUTHXs2N2R9zMTCZNotTxuIU/18uGXhjMouge
-	 8SVq6ltEt0v62X350OePVrkIYDuEDT8d7MMHDONYEJ1GnhmI5qylrZ8ItSaA2yjoxTSE+
-	 x3s2ndzuh8la86uznSwUQbp6k2fU2NfYCyUfaxScvJ8qTwc8oLozlR6q1Iwk1QEd+h8+K
-	 RrctfbzVJRnuWv/2Jq3R3qkjEdYBO6l+DYODj+4Hq0NwrPC8koLrfPnfspJIZttNpNg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795456441;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
+	 Content-Language:From:In-Reply-To:Content-Transfer-Encoding:
+	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
+	 X-CMS-RootMailID:References;
+	bh=KAB2BKt918TC8J1Io05dleoIknVU5q1NI2MsEwZVMss=;
+	b=XNdehO/kElpDGEUdQMxq7B6/eUgIJ1I+PpmkUKQgGSTYxY522CNLKn2jl9q63HipUnxF
+	 J7TKtrydiH55c3H0uVlXBz43MqH4NLVK4XdTO2UyDu136WZGmcB7UlL9Q8F2VfTeK9mom
+	 rQJcSG8l7P7nMJ+60Yg+Jyl2Vx9ANCKiZcXI8Uy+/2NiKlUu66iCNij2wu2e3sTbUScr9
+	 8pA+MMbtid5L0Iky1BDBgTRPwQFqu3TSI8MOPJoJXr5VNJcNlplCFrj3kbdlt8Mc+ZlLg
+	 CYxQtYnigPCnZ1yDAOaMzDHR9B1tza8J85RxVAJFGxxSqycY1BlC7Mnv4/uLn+ri5oQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Bnri0tWH;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b="KaLHmeY/";
+	arc=none smtp.remote-ip=210.118.77.11
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C56606A31E;
-	Mon, 23 Nov 2026 17:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0B0606A31F
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 17:53:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0A0B0606A31F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Bnri0tWH
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CB8C1F000CA;
-	Mon, 23 Nov 2026 17:41:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795455675;
-	bh=ESZysrmfQUFNH+m6FpD5eDnva2LetIZ1aC3sdBbrzF0=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=Bnri0tWHBrn23F2VelVjctxSJFhVSOS5K59OkscgK/fPM5Vyr6JrKnncud6DdlSei
-	 SNXvpTfK3n/ZjTgF+dGy71xSDRTz6pt2UjLQE9ZQfdFK7/1dZAaIRSvR0ngqi7804z
-	 xfUNzkX0T9KWnFqeg6zJwBFvu13myfwSkz3119pfTcvYwNAOMVCZkZLjZjIzIFuHeu
-	 edpbeNjYPBs3wK4eDLVdaXRLVw6GnSc+Oi2jWITym/vNQVIOuXxe+gZWhpHLYrznPW
-	 loGVarnmQwsB3xKO3oA9PKJuURlpizRQcxarAnL70F+82KfdONCgRolDO9VhLG/qu/
-	 qQuQMOYCYGruA==
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=KaLHmeY/
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261123175357euoutp01f7ae3e196fea12829bf702598ab81908~qvh4KaA4a2115121151euoutp01S
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 17:53:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261123175357euoutp01f7ae3e196fea12829bf702598ab81908~qvh4KaA4a2115121151euoutp01S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1795456437;
+	bh=KAB2BKt918TC8J1Io05dleoIknVU5q1NI2MsEwZVMss=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=KaLHmeY/H5/6luOM3bVkacedBNGp4qFGJ/QLKxD9En+nFjUF5oST4IhTspYpfAUoo
+	 +Js8gOjXitDE24uNSHz9PV3JDQ/OWZ/IuT4sobCQh9OVCo221IgqmSuvS3sjQIjjTm
+	 WzSNQ4plLTKCpO1lLKZF+smGvCmLACEWFffNiNnw=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20261123175357eucas1p2cc191475e27a19aa757b67113f059dff~qvh3zUySr2536125361eucas1p2Y;
+	Mon, 23 Nov 2026 17:53:57 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20261123175356eusmtip2b9af5e8e9756c7efec6eca2def375a43~qvh2tRfpt1373213732eusmtip2Q;
+	Mon, 23 Nov 2026 17:53:56 +0000 (GMT)
+Message-ID: <d0bf2242-d9ad-4a7e-a1cb-ef32e50f34f9@samsung.com>
+Date: Mon, 23 Nov 2026 18:53:55 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -49,141 +64,78 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH RFC 0/2] clk: samsung: exynos5: fix sub-CMU power domain
+ attach
+To: y-asai.0816@docomonet.jp, Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, Alim
+	Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, Brian
+	Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20261123-exynos5-subcmu-defer-v1-0-43aef47d4f2b@docomonet.jp>
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2] clk: rp1: allow the clock provider to be probed
- again
-From: Brian Masney <masneyb@kernel.org>
-To: Joshua Covington <joshuacov@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Andrea della Porta <andrea.porta@suse.com>, linux-clk@vger.kernel.org, 
- linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20261121181650.143474-1-joshuacov@gmail.com>
-References: <20261121181650.143474-1-joshuacov@gmail.com>
-Date: Mon, 23 Nov 2026 12:41:10 -0500
-Message-Id: <179545567027.246915.947299820828330388.b4-review@b4>
-X-Mailer: b4 0.17-dev-8145e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4059; i=masneyb@kernel.org;
- s=20250903; h=from:subject:message-id;
- bh=vYwHTQFaiFcOdFiOEcdPU7jjLxefr+q68VzaqBSCDBI=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJZqrbf9Dt6NUp5spD0/iMsTMrLGkKEFq70TXhx7toJ5
- Z8+HAfedZSyMIhxMciKKbIsyTUqiEhdZXvvjiYLzBxWJpAhDFycAjCRoB6Gf2rHdxosbp7KZjG3
- 8vqlCdNfLEut/fp+3tqc1dPLPs/4w/iKkWHf9W8Zcb7dcpV7Z3gqW/iuMonMZHC1C44TV8wUPPE
- thgMA
-X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+X-CMS-MailID: 20261123175357eucas1p2cc191475e27a19aa757b67113f059dff
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20261123141844eucas1p221c650882789ccab239e57ee458c02a1
+X-EPHeader: CA
+X-CMS-RootMailID: 20261123141844eucas1p221c650882789ccab239e57ee458c02a1
+References: <CGME20261123141844eucas1p221c650882789ccab239e57ee458c02a1@eucas1p2.samsung.com>
+	<20261123-exynos5-subcmu-defer-v1-0-43aef47d4f2b@docomonet.jp>
 
-Hi Joshua,
+On 23.11.2026 15:18, Shigeaki Asai via B4 Relay wrote:
+> Since commit c09a3e6c97f0 ("soc: samsung: pm_domains: Convert to regular
+> platform driver"), the exynos-pd platform driver registers the power
+> domains too late for exynos5-subcmu, so the sub-CMUs are not attached to
+> them and their clock setup is not restored. On ODROID-XU4 this drops the
+> GPU performance badly (about 3.5 fps in the Kodi menu, with repeated
+> panfrost "gpu sched timeout").
+>
+> This series fixes it as follows:
+> - Make the exynos5-clock probe wait until the power domains are
+>   registered, so the sub-CMUs are attached to them.
+> - Also make audss wait for pll_in. As a side effect of making the
+>   sub-CMUs wait, audss would otherwise probe before pll_in exists and
+>   generate audio from the 24 MHz pll_ref, which causes audio stuttering.
+>
+> However, this relies on deferred probe, which conflicts with the move 
+> towards platform_driver_probe(), and the sub-CMU clock data is
+> __initconst, so the deferred probe has to finish before init memory is
+> freed. So I would like to discuss the preferred way to fix it.
+>
+> This may also explain the oopses seen in the RFC series "clk: samsung:
+> Use platform_driver_probe() to avoid __refdata". Krzysztof saw them
+> when converting exynos5-subcmu, and Stephen pointed out that
+> platform_driver_probe() is incompatible with deferred probe. The
+> sub-CMUs have to wait for their power domains, so exynos5-subcmu
+> probably cannot use platform_driver_probe() as long as exynos-pd is a
+> regular platform driver.
+> https://lore.kernel.org/all/20250305-clk-samsung-ref-init-data-v1-0-a4e03a019306@linaro.org/
+>
+> Testing:
+> - Tested on ODROID-XU4 with a Linux 7.3 based LibreELEC kernel:
+>   every power domain now has an exynos5-subcmu device attached in
+>   pm_genpd_summary, the Kodi menu went from about 3.5 fps to 25-30 fps,
+>   "gpu sched timeout" went from 17 to 0, and there is no audio
+>   stuttering.
+> - On next/clk, only build-tested (exynos_defconfig, W=1) and checked
+>   with checkpatch. I have not booted next/clk on the hardware.
+> - These patches are already carried in LibreELEC.
+>
+> I investigated the root cause and wrote these patches and the commit
+> messages with the help of Claude (claude-opus-5-5). I reviewed the
+> changes and tested them on the hardware as described above.
 
-> The clock descriptors are static. The clock core clears hw.init when a
-> clock is registered. When RP1 is unbound and bound again, the second
-> probe registers the clocks without init data and oopses:
-> 
->   pc : __clk_register+0x5c/0x9dc
->   Call trace:
->    __clk_register+0x5c/0x9dc (P)
->    devm_clk_hw_register+0x5c/0xe0
->    rp1_register_pll+0x24/0x40
->    rp1_clk_probe+0xc0/0x168
-> 
-> The clock core also leaves hw.core pointing to the freed clk_core on
-> unregister. Some clocks refer to a parent that is registered after
-> them, e.g. clk_mipi0_dpi to clksrc_mipi0_dsi_byteclk. On the second
-> probe, their parent lookup can use the stale clk_core.
-> 
-> Restore hw.init and clear the stale state of all descriptors before
-> registering them.
-> 
-> Fixes: 6486341721a2 ("clk: rp1: Add support for clocks provided by RP1")
-> Signed-off-by: Joshua Covington <joshuacov@gmail.com>
+https://lore.kernel.org/all/20261030075325.517182-1-m.szyprowski@samsung.com/
 
-There's presumably other drivers that will have the same issue as well.
-Rather than having drivers all try to fix this themselves, let's see if
-we can fix this in the core for everyone. Can you try this completely
-untested patch? If that works, then you can take it over. It will need a
-kunit test.
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=5fbe2d229bd3738ed63c7c9177466ad6bc130f18
 
-Brian
-
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 673eac47450b..8e5b530d80b5 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -119,6 +119,7 @@ struct clk_core {
- 	const char		*name;
- 	const struct clk_ops	*ops;
- 	struct clk_hw		*hw;
-+	const struct clk_init_data *hw_init;
- 	struct module		*owner;
- 	struct device		*dev;
- 	struct hlist_node	rpm_node;
-@@ -4450,6 +4451,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- 	if (dev && dev->driver)
- 		core->owner = dev->driver->owner;
- 	core->hw = hw;
-+	core->hw_init = init;
- 	core->flags = init->flags;
- 	core->num_parents = init->num_parents;
- 	core->min_rate = 0;
-@@ -4498,6 +4500,10 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- 		pr_err("%pOF: error %pe: failed to register clk '%s' (%pS)\n",
- 		       np, ERR_PTR(ret), init->name, hw);
- 	}
-+
-+	/* Leave @hw as it was handed to us so that it can be registered again */
-+	hw->init = init;
-+
- 	return ERR_PTR(ret);
- }
- 
-@@ -4654,6 +4660,7 @@ void clk_unregister(struct clk *clk)
- {
- 	unsigned long flags;
- 	const struct clk_ops *ops;
-+	struct clk_hw *hw;
- 
- 	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
- 		return;
-@@ -4702,6 +4709,21 @@ void clk_unregister(struct clk *clk)
- 	if (clk->core->protect_count)
- 		pr_warn("%s: unregistering protected clock: %s\n",
- 					__func__, clk->core->name);
-+
-+	/*
-+	 * Return the clk_hw to the state it had before registration. Drivers
-+	 * with statically allocated clk_hw structures can then register them
-+	 * again, e.g. when the device is unbound and bound again. This also
-+	 * makes sure that a clk_parent_data.hw reference to this clk_hw is
-+	 * treated as an orphan rather than resolved to the stale clk_core.
-+	 */
-+	hw = clk->core->hw;
-+	if (!WARN_ON(hw->core != clk->core || hw->clk != clk)) {
-+		hw->core = NULL;
-+		hw->init = clk->core->hw_init;
-+		hw->clk = NULL;
-+	}
-+
- 	clk_prepare_unlock();
- 
- 	kref_put(&clk->core->ref, __clk_release);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index a355d1ee5189..a4c60ea06361 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -359,7 +359,9 @@ struct clk_init_data {
-  *
-  * @init: pointer to struct clk_init_data that contains the init data shared
-  * with the common clock framework. This pointer will be set to NULL once
-- * a clk_register() variant is called on this clk_hw pointer.
-+ * a clk_register() variant is called on this clk_hw pointer. It is restored
-+ * if registration fails or when the clock is unregistered, so the clk_hw can
-+ * be registered again as long as the init data it points to is still valid.
-  */
- struct clk_hw {
- 	struct clk_core *core;
-
+Best regards
 -- 
-Brian Masney <masneyb@kernel.org>
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
