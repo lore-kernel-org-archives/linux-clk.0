@@ -1,78 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795459289;
-	b=rZCxeFIoT33x/x3ml0K7jvPU0owYBQ+SF6PHtDof569BJ4xaM5OqP9ghsQl86mp9cBUP
-	 35LqdXtzp4TgMyOL6v81fkTOXsmiT1tekz7tOZ6mUF8/XL0geoshgNRH7J2LUWMb0+GfB
-	 iYv22PlnpTkPyh9lB2ElqV2YJfgU1Of8wG2jvJKjPmmOqiVbcheBmRa/ln3v4HVZoTWS5
-	 5/SOcbPG7IwpEYN0kY/EYjjJbDsoUndw5yEderaqQEN6WBqUd9OWl+JrORMHkhh0IjauH
-	 SBnXy82zpDLbWQjh9WDQ8Yp8MmZl1gAzfvA1DqfPjhyfG5TPLTCrwj0RNCAV1hgiYnw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795459289;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=JA1RY4AoQnfSHpB9qDuwptqbpVvMYp1OIFwFo8h5NUs=;
-	b=dfkZtCrz5x/7JOwgJ5ENhRfsOlEPp7c3SupCAd2bkyVZUdoi6j3H+8T2pOa1df/U69MX
-	 cscCJCcx0EjW3OltltwADwpE3gNqPUq6EUTE+ZKoC4NzZqNvZUP2H3XVXHmypdH6VPT8R
-	 19oa/zDgiwFEbmfDlb0OSxdyj2yoEpkuQljymgjm7pfsm73KA+7cDO8WgEsJtndb1QsHJ
-	 xNOyfH4eIrN1WTxplU0y8mGgd35Mf4nvGJwoVT8a9pRvOTfOmGmAIVkdg72v19RORXGm4
-	 SMW/96LppSplesIaAOf3+VrDlaLToHHQU7aG9X9A7ysxhlTfyfaJafmq79f3+5NDwNg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Hk3CV+w9;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795459393;
+	b=ltmtorUQkQUVLP8u2HN5Imsiig5XmhxmJMMXLQlFUY6hv9/0pzhTkhWzKyiHfsLkNCRT
+	 Gr33sNOYX2cTutRYbhUR/FIjYsFNLVm1aZBNOqBO2bo/TK7aUmexb2RMhn0ZLW58uZ743
+	 S/Fivbj0tlPjQrAGQwpKqGOIdOXVQ87qLKhp3QNl5en1HeEVt3D6Y1NdqR8JhVEYQtMhF
+	 7UaNSekpbpHHmTTzP1nPyaa1V8wCg8GJbtbk1klDOPKoFBB4XEyKsUulNp5mUrjcy/XjM
+	 uSguteoRNX89zsKFIa/dlnhnZOTiN9T3Jpq+fK4b6WkJZVpBT/ITfBmG+VwjCzg6cDw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795459393;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=vPCMziszslBItb1dRp8M4MqozzL0PCZJwazP5bZa3uI=;
+	b=xNjGXEQ+pDpb0e0QQofll3mEWq2DLkKG3VxDdSXFggaekCnsoXFPli8lxxJdnA++rTxp
+	 U4RvJVvLDnPpipCvBG4n6DoCFS2oC+Gz2eZej+teRN708RNQ/CmIu8cgyGxfbDRQxEx+z
+	 dlszhVvfhjspOqOrRwV8UuAQtpqsWkE6pZFnHPb8vZG5dSz7Bm/ihHQC5c5dPS3lWxFtD
+	 cSFafNBPOA414q9DuhJonCXSeuM0MYImQr1+noqsjzbLmUigO0ztRtNeU7n4YEXS9Elll
+	 vhjFizmHaUN9EBqRb7/BqReIDVE4XLWOxtgMUHgBy+e0ldHTcvEVgBaexZP6E+EoJyg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cBwqL+i1;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87858606A32E;
-	Mon, 23 Nov 2026 18:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE6D606A31A;
+	Mon, 23 Nov 2026 18:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Hk3CV+w9
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795459289;
-	b=dQbm51Qaga2rcHEs3PjdI5AbYBKsDLNRvJN3rFPc+MHYf+POgLpHHV74DYikouOJ6r7B
-	 ZPo37rIGl74mHbNQIxngIW1saZB/4MzBgc8Z2O6byTO+Kvxa/bXD3+h0kkpVgz5YY9OgY
-	 Fa4q8oLiZgW+PLhGsBSnlTQZvFdLHbE+xFM/MkEpQMotIqcNRwlgUxZg7+jZzJmSck5RP
-	 olsY5Qz+vX8JRGejhQGHmyg+cYPmRCHsm1oJcWAkQ+hF6KfAk+B5S2Z3j9rF+KSPGkimG
-	 JtI/Y4+riPWW/vsr34SPLjzOp9rzhHX2eJHemdO3rD8nzfXaG9lGVGE+OL4Cqc/QRPw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795459289;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=JA1RY4AoQnfSHpB9qDuwptqbpVvMYp1OIFwFo8h5NUs=;
-	b=MZVrVyK7jOsFXCuR104V0N+2SAsmiky+RuGodUc/iv0WR5VLImcvTwlBt3R0wjLaL23+
-	 uSikhuhTt9TdaZ02NJl1ol9mMpvj4Q6yew36Y3NTMGLPsw7bykFMQs1nif7gZE9cRTncv
-	 ZBqV+nsBKicn/Wynv8+RQfyd3L/0yZpvfkkEZATDbsiQgycyo2QI+bE7MoftiuBHk+QoE
-	 vHvM95jfdXYJ58r6CUIr0K8e/AjBKix8gNtjF4p6IEXHaR2Nq7y+KrsFB56G71cXSyAzC
-	 jq4h6WCGY8j/n0i+TfS3AANTK9ztFJnGuNyU0ko5YQfzT5vvKcgCuo9USl8fUBCcSGQ==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 424831F000C0;
-	Mon, 23 Nov 2026 18:41:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cBwqL+i1
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37B1E1F000EE;
+	Mon, 23 Nov 2026 18:43:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795459289;
-	bh=JA1RY4AoQnfSHpB9qDuwptqbpVvMYp1OIFwFo8h5NUs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=Hk3CV+w9++LCKyMaCPgnv5LYLF5e3niV97mXxvfYAkZqw6fJ0+sFTzfmSm5dLTn6+
-	 1iFH60QQ1p5DfAk2xuaxuEIN8sJfr/98sJ1ILeeAQST0Imr6stFw6PYDJdeeSO1YLk
-	 39xOTTXDhvYUvxOTYegHCPsHSfta/ZTQ/ZzvPa3qMKKAhddAf8EFV9MCVXuG4L0zuH
-	 ZB4QEzbk+xFG+Oprz7dyGukEpyL+E43rI/d6+nb5Q52HazSlxvz3G7oW/+Y0G61Jtm
-	 UrMVrKc+hxoedG/KDUUIwFExsO4E3hk+E/DPAG5MBn7hG+MegeczGpngQVEvW64M9J
-	 81yaeUpE9hMhw==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id A43704C5BF;
-	Mon, 23 Nov 2026 18:41:13 +0000 (UTC)
-From: Fil Dunsky via B4 Relay <devnull+filipp.dunsky.gmail.com@kernel.org>
-Date: Mon, 23 Nov 2026 21:41:16 +0300
-Subject: [PATCH 5/5] MAINTAINERS: Add CS7542 global control support
+	s=k20260515; t=1795459392;
+	bh=vPCMziszslBItb1dRp8M4MqozzL0PCZJwazP5bZa3uI=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=cBwqL+i1+mIvADDJBh6DnqwiZQ+G2cAj6u9DMAmP+W19iYaheDlH7llwrzbjspobx
+	 DqxcD63kxUhJMQkc0HhjxDouc8QZEKPcbRSYUOzgyn+Ej6vlQ682hhZZP9T1go5GXy
+	 eUSGllKvFGO2Bnhov9PSQdG0ENObDAnCU9TZDN4NBKa3T0qol0WiPxjVjuVV1uUJqv
+	 ANo0xjSW7/CScieb3r4DQaT/gIBUksVtp0clVTFwKml2YDlVlTnHVL6kjkb7iCAVaS
+	 2wJQ0htloLQgbx/fOZWGPQXKWoPAjHQA3rsz9LUNrDPtASHhFEqAnxrmesAjariHot
+	 UmpXtxZKb9+Ww==
+Message-ID: <sashiko-outbox-229859@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 3/4] clk: qcom: gcc-glymur: Set FORCE_MEM_ON for USB4 uC
+ clocks
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Konrad Dybcio" <konradybcio@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261123-topic-usb4_clks-v1-3-531ab5635c03@oss.qualcomm.com>
+References: <20261123-topic-usb4_clks-v1-0-531ab5635c03@oss.qualcomm.com>
+ <20261123-topic-usb4_clks-v1-3-531ab5635c03@oss.qualcomm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 23 Nov 2026 18:43:11 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -81,69 +60,46 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261123-cs7542-syscon-v1-5-49858e631449@gmail.com>
-References: <20261123-cs7542-syscon-v1-0-49858e631449@gmail.com>
-In-Reply-To: <20261123-cs7542-syscon-v1-0-49858e631449@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795459271; l=1174;
- i=filipp.dunsky@gmail.com; s=20260930; h=from:subject:message-id;
- bh=fgWHYLyeGItAI+Z6w73sl393x6RrEmbFL0xFZL+FdhU=;
- b=sDCjqIa/sgV9CFJOqw4l+bU2+00O+z4TTreM9rs37EA5rtQg1l+SVzAMioWOdf3TXxhV5bRW5
- XsCQjqX31txAPMDIQE/gBNNAhnaIQzHvepqsA3/NEyZJvhSzcEmuC27
-X-Developer-Key: i=filipp.dunsky@gmail.com; a=ed25519;
- pk=JAYP8e2rJ54DHOmhNtXud8rl1igAaAXoOHxtJmVXI1g=
-X-Endpoint-Received: by B4 Relay for filipp.dunsky@gmail.com/20260930 with
- auth_id=1085
-X-Original-From: Fil Dunsky <filipp.dunsky@gmail.com>
-Reply-To: filipp.dunsky@gmail.com
-Content-Transfer-Encoding: 7bit
 
-From: Fil Dunsky <filipp.dunsky@gmail.com>
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [High] clk: qcom: gcc-glymur: wrong USB4 clocks in
+  clk_glymur_regs_configure()
+--
 
-Track the global control binding, strap clock provider and pin
-multiplexer independently of the pending platform series.
+commit 81f271b4a5a581eaebcc7fd24442cd3d1ce247ae
+Author: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-AI assistance: Codex prepared this change from the existing OpenWrt port
-and GPL vendor sources.
+clk: qcom: gcc-glymur: Set FORCE_MEM_ON for USB4 uC clocks
 
-Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+This commit sets CBCR_FORCE_MEM_CORE_ON on three USB4 clock branches in
+clk_glymur_regs_configure() to retain USB4 uC RAM contents on Glymur and
+Mahua.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 44540a1eb..d8835aeca 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2949,6 +2949,16 @@ F:	tools/perf/tests/shell/coresight/*
- F:	tools/perf/util/cs-etm-decoder/*
- F:	tools/perf/util/cs-etm.*
- 
-+ARM/CORTINA SYSTEMS CS7542 GLOBAL CONTROL
-+M:	Fil Dunsky <filipp.dunsky@gmail.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/pinctrl/cortina,cs7542-pinctrl.yaml
-+F:	Documentation/devicetree/bindings/soc/cortina/
-+F:	drivers/clk/clk-cs7542.c
-+F:	drivers/pinctrl/pinctrl-cs7542.c
-+F:	include/dt-bindings/clock/cortina,cs7542-clock.h
-+
- ARM/CORTINA SYSTEMS GEMINI ARM ARCHITECTURE
- M:	Hans Ulli Kroll <ulli.kroll@googlemail.com>
- M:	Linus Walleij <linusw@kernel.org>
+> diff --git a/drivers/clk/qcom/gcc-glymur.c b/drivers/clk/qcom/gcc-glymur.c
+> index 031ed806a38ed..96d1c07348bcb 100644
+> --- a/drivers/clk/qcom/gcc-glymur.c
+> +++ b/drivers/clk/qcom/gcc-glymur.c
+> @@ -8542,6 +8542,10 @@ static void clk_glymur_regs_configure(struct devic=
+e *dev, struct regmap *regmap)
+>  	qcom_branch_set_force_periph_on(regmap, gcc_pcie_5_pipe_clk, true);
+>  	qcom_branch_set_force_mem_core(regmap, gcc_pcie_6_pipe_clk, true);
+>  	qcom_branch_set_force_periph_on(regmap, gcc_pcie_6_pipe_clk, true);
+> +
+> +	qcom_branch_set_force_mem_core(regmap, gcc_usb4_0_sys_clk, true);
+> +	qcom_branch_set_force_mem_core(regmap, gcc_usb4_1_uc_hrr_clk, true);
+> +	qcom_branch_set_force_mem_core(regmap, gcc_usb4_2_sys_clk, true);
+>  }
+> =20
+>  static const struct qcom_cc_driver_data gcc_glymur_driver_data =3D {
 
--- 
-2.53.0
+[Severity: High]
+Should USB4 instances 0 and 2 pass gcc_usb4_0_uc_hrr_clk (0x2b06c) and
+gcc_usb4_2_uc_hrr_clk (0xe006c) instead of gcc_usb4_0_sys_clk (0x2b05c)
+and gcc_usb4_2_sys_clk (0xe005c)?  With sys_clk passed for controllers 0
+and 2, their uC clocks never have CBCR_FORCE_MEM_CORE_ON set, leaving the
+USB4 uC RAM contents unretained on those two controllers.
 
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123-topic-usb4=
+_clks-v1-0-531ab5635c03@oss.qualcomm.com?part=3D3
