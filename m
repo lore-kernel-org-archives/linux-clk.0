@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795460155;
-	b=CyxbMOL9jLq1mTj14EGsLrapn5v1kyxM1W2QrzvfmpOZXfYGvO4M1haYR6UNX0n/mf9M
-	 tO2BPrjI2FU7OMvH3gN2rSx0fSKhA+LNRkP2+j8n+MrqSiuby8p6VXxUmku/gT8W40jli
-	 0wDjoh1bXYi7v0h7kudhdTwadTz1U45CF8ShPPNo4HcYnbBIKIjdnKcQMVTUagWGa5ZeX
-	 Den6tEw10iMzO7nbKshsuCWaYlIFgDBrGXItkiXbj7ZlQl/lxADBoHqU/yaFcPsefL6KP
-	 7VCaAAeDHjwW/YCGq42Dj9wW7fFY4Lp5rOM0MrhlJv1zexDFVsB7CKPYd3n8V/M8MXQ==
+	t=1795460275;
+	b=4ebOgmO14KGbs5kqBIcqjShWqpMjUkn+sXTjLu3uQ/qess81v8EbfsbUW2ih6peHUHrM
+	 U1kJAm7x49w3jA6u3bUy1FeYgixiRLCC/wBDd4SNOI6EXk12A8CuquNAOD+ZsOct3FsQ+
+	 ZPPZ1IzcjlLqZ5pPQxTfEl5AK/SXqnatVdhugOsaxM57vqXos9kJfW4+n3gBFQfkWn2tz
+	 GECpaxmF7J7r4YuSqThWD+bm9OUf5bTtAxEwTRLl87elPU82PnSVzYHgjkOp9VQIhTq5O
+	 K4wctqcr9AS2bWTvGaP9z1khgJp70cOSZentcaCGywtqhZvd14nRndjq6wLjD8DhA8w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795460155;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795460275;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=SZAQqMButyP2tMLf6h4QZvmumV2dcczmMYB0U2+e69Q=;
-	b=FHtT44n4ACjZxwikXoOJmGUNAYvB5pvXapDwh9S1ht0s7TJh1/pB7uMdLyaUqXr3PdC6
-	 8ULh3hqKBfPkGLvtvQfnh0cGCbHmUgnUE8SCvDw0Y99WRkMKcih9s1IuQsYhq6PAiAFr5
-	 4S8o4g6sYR8k3Axx8W5T+k+oipTftvan3svRe83+1sQ0iQ0c0wpNjIdwU8sSVO+mmEYU6
-	 CYeecuN+cbhmI3xTPCQHRyzwUyL8GgYrPxUqMKkGGEymnnfh7etpoAhxIEHTrejZrJup8
-	 7S3djR2cifgLyovJCvjIL/wKUZglA5a/Q4KycrufjYkE19meRh8dJtx4gcXyFPnBpTw==
+	bh=kSfjBnZBWfZq7XeQ/GDzjNOUZXZqg1ZujX6SW66Y9TM=;
+	b=4DKiY0R1umsFhdwj1w1U2+rcDO2buYeekdx5fQLO5x4mB9sffUuEse9O3RLv2wKOWA+F
+	 Y65150pNHpdmpewewc3DHArcOQ8dp7jwOxv3ZoPU0C0msEgwhYCrWkmE2JsEEFQP+xj3W
+	 KxhryenA0CJ9PIc8pcYuyBNmLL79DuhGLCD4iGajlnTDEu1CGG6s/r4LTxZCGrxBidFDo
+	 Hk8+cHdnbhV+yZn9heTlYngvRG5iCPgKU5+W3D0jT4JMOro+Yf4BKAh2Nm2PCLokVHWR6
+	 Bb3rn61+6vVt/+5rV8p595/0k+sRdv7GAmCV2d9yd7c286JaIatOjhgOLvDIfYws1pw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mAsIm9nG;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oc54pgyh;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9703A606A31A;
-	Mon, 23 Nov 2026 18:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2596A606A321;
+	Mon, 23 Nov 2026 18:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mAsIm9nG
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF0B71F000CA;
-	Mon, 23 Nov 2026 18:55:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oc54pgyh
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A1501F000CF;
+	Mon, 23 Nov 2026 18:57:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795460155;
-	bh=SZAQqMButyP2tMLf6h4QZvmumV2dcczmMYB0U2+e69Q=;
+	s=k20260515; t=1795460274;
+	bh=kSfjBnZBWfZq7XeQ/GDzjNOUZXZqg1ZujX6SW66Y9TM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=mAsIm9nGek6GGPaW6jwxV8zPptNi7HM+BYX/fLGLZSoF8L+Bw5P34KKF/+AEB03dj
-	 TG+ZYKV6giTYWjCVeu/0EdukJ2ah1OuZ6F34tUV6SMuqtawETDVA4VsutibSMPRpAl
-	 YONUXSZX2AUsTaJfKtdgPeZ02KNibhULeaeS1ff9mBDmlVOTZgac4X2V8mle6BF4bv
-	 qi7HNp1/fw9xpfYVUob62tMbHs8rL7o80Tmw7yHvrcnY4oPAJ0CIc6DCA1S6CTbxhX
-	 K/JVlg2VH2CgriDygq8a1J+6INIHuSlgOH+qoxRSVN9+NyAL9aR2QT8P346Z4kDg6V
-	 JVhZ1cA4hf7Vg==
-Message-ID: <sashiko-outbox-229885@kernel.org>
+	b=oc54pgyhN8UhE8Elvu4rABHWgXRqhAaWcPaEg5JFonh1d0Vk9n+W3FNQ88QJZkTn+
+	 mqvpWw2RO5ESphd9XXcZBeaFLZYDBjxXw9uZk9O2G9o/GMJr/UBGo7Wvly9V1mIfr0
+	 FpKzAYgWkKFec5JOKSwLERveHsxUSz5T9yX0TxHo+1ZCsynFu966KO5kgxHX3i4ACy
+	 AW6ql9c7HLz542uwdJmnweRJ81Q4OzfWi2WcuQlR28tuWXAPYlllw95ysJMhrQF9HO
+	 SRavGiCdYwvchdc4hTgIIb5IubEPjlZ6JP4E3YaG9OZEkNHwCQjnlLeFkTgcsOu0vR
+	 96jTNxA93Z50g==
+Message-ID: <sashiko-outbox-229891@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 4/5] pinctrl: Add Cortina Systems CS7542 pin multiplexer
+Subject: Re: [PATCH 4/4] clk: qcom: gcc-glymur: Convert USB4 clocks to use
+ phymux ops
 Reply-To: sashiko-reviews@lists.linux.dev
-To: "Fil Dunsky" <filipp.dunsky@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261123-cs7542-syscon-v1-4-49858e631449@gmail.com>
-References: <20261123-cs7542-syscon-v1-0-49858e631449@gmail.com>
- <20261123-cs7542-syscon-v1-4-49858e631449@gmail.com>
+To: "Konrad Dybcio" <konradybcio@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261123-topic-usb4_clks-v1-4-531ab5635c03@oss.qualcomm.com>
+References: <20261123-topic-usb4_clks-v1-0-531ab5635c03@oss.qualcomm.com>
+ <20261123-topic-usb4_clks-v1-4-531ab5635c03@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 23 Nov 2026 18:55:54 +0000
+Date: Mon, 23 Nov 2026 18:57:54 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,83 +61,79 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] pinctrl: cs7542: missing function_is_gpio() breaks strict
-  GPIO requests
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [High] clk: qcom: gcc-glymur: USB4 PHY RX branch clocks poll halt with
+  phymux parent
+- [Medium] clk: qcom: gcc-glymur:
+  gcc_usb4_{0,1,2}_phy_p2rr2p_pipe_clk_src not converted
 --
 
-commit e26847f7ebd3df4b67ad59e0473df47cbaeaa5df
-Author: Fil Dunsky <filipp.dunsky@gmail.com>
+commit b685bd7088c460b8ed23d2168b56f940cdb682c3
+Author: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-pinctrl: Add Cortina Systems CS7542 pin multiplexer
+clk: qcom: gcc-glymur: Convert USB4 clocks to use phymux ops
 
-This commit adds a pin multiplexer driver for the Cortina Systems CS7542
-SoC supporting GPIO on all 160 lines and six UART pins via the global
-syscon regmap.
+This commit converts gcc_usb4_{0,1,2}_phy_rx{0,1}_clk_src from
+clk_regmap_mux with clk_regmap_mux_closest_ops to clk_regmap_phy_mux with
+clk_regmap_phy_mux_ops.
 
-> diff --git a/drivers/pinctrl/pinctrl-cs7542.c b/drivers/pinctrl/pinctrl-c=
-s7542.c
-> new file mode 100644
-> index 0000000000000..977c4ce98100d
-> --- /dev/null
-> +++ b/drivers/pinctrl/pinctrl-cs7542.c
-> @@ -0,0 +1,188 @@
-
+> diff --git a/drivers/clk/qcom/gcc-glymur.c b/drivers/clk/qcom/gcc-glymur.c
+> index 96d1c07348bcb..186c779e30846 100644
+> --- a/drivers/clk/qcom/gcc-glymur.c
+> +++ b/drivers/clk/qcom/gcc-glymur.c
 [ ... ]
+> @@ -1099,32 +1033,30 @@ static struct clk_regmap_mux gcc_usb4_0_phy_pcie_=
+pipe_mux_clk_src =3D {
+>  	},
+>  };
+> =20
+> -static struct clk_regmap_mux gcc_usb4_0_phy_rx0_clk_src =3D {
+> +static struct clk_regmap_phy_mux gcc_usb4_0_phy_rx0_clk_src =3D {
+>  	.reg =3D 0x2b0c0,
+> -	.shift =3D 0,
+> -	.width =3D 2,
+> -	.parent_map =3D gcc_parent_map_34,
+>  	.clkr =3D {
+>  		.hw.init =3D &(const struct clk_init_data) {
+>  			.name =3D "gcc_usb4_0_phy_rx0_clk_src",
+> -			.parent_data =3D gcc_parent_data_34,
+> -			.num_parents =3D ARRAY_SIZE(gcc_parent_data_34),
+> -			.ops =3D &clk_regmap_mux_closest_ops,
+> +			.parent_data =3D &(const struct clk_parent_data){
+> +				.index =3D DT_QUSB4PHY_0_GCC_USB4_RX0_CLK,
+> +			},
+> +			.num_parents =3D 1,
+> +			.ops =3D &clk_regmap_phy_mux_ops,
+>  		},
+>  	},
+>  };
 
-> +enum cs7542_function {
-> +	CS7542_FUNCTION_GPIO,
-> +	CS7542_FUNCTION_UART,
-> +};
+[Severity: High]
+Should the child branches gcc_usb4_{0,1,2}_phy_rx{0,1}_clk use
+BRANCH_HALT_SKIP instead of BRANCH_HALT now that their parents use
+clk_regmap_phy_mux_ops?
 
-[ ... ]
-
-> +static int cs7542_gpio_request_enable(struct pinctrl_dev *pctldev,
-> +				      struct pinctrl_gpio_range *range,
-> +				      unsigned int pin)
-> +{
-> +	return cs7542_set_mux(pctldev, CS7542_FUNCTION_GPIO, pin);
-> +}
-> +
-> +static const struct pinmux_ops cs7542_pinmux_ops =3D {
-> +	.get_functions_count =3D cs7542_get_functions_count,
-> +	.get_function_name =3D cs7542_get_function_name,
-> +	.get_function_groups =3D cs7542_get_function_groups,
-> +	.set_mux =3D cs7542_set_mux,
-> +	.gpio_request_enable =3D cs7542_gpio_request_enable,
-> +	.strict =3D true,
-> +};
+With clk_regmap_phy_mux_ops, phy_mux_enable() switches the parent mux from
+BI_TCXO to the external PHY RX clock before enabling the child branch, and
+clk_branch2_disable() disables the child branch before phy_mux_disable()
+parks the mux back on BI_TCXO.  If the PHY is not actively driving the RX
+clock when the branch is toggled, clk_branch_wait() will time out polling
+CBCR_CLK_OFF, trigger a WARN, and fail with -EBUSY.
 
 [Severity: Medium]
-Should cs7542_pinmux_ops implement .function_is_gpio?
+Should gcc_usb4_{0,1,2}_phy_p2rr2p_pipe_clk_src also be converted to
+clk_regmap_phy_mux with clk_regmap_phy_mux_ops (as in
+drivers/clk/qcom/gcc-x1e80100.c)?
 
-Because cs7542_pinmux_ops sets .strict =3D true and exposes "gpio"
-(CS7542_FUNCTION_GPIO) as a pinmux function without providing
-.function_is_gpio, activating a pinctrl state or hog with function =3D "gpi=
-o"
-sets desc->mux_usecount and desc->mux_setting on the pin.  When that pin is
-then requested as a GPIO, pin_request() leaves gpio_ok false and rejects
-the request with -EINVAL:
-
-drivers/pinctrl/pinmux.c:pin_request() {
-	...
-		if (mux_setting) {
-			if (ops->function_is_gpio)
-				gpio_ok =3D ops->function_is_gpio(pctldev,
-								mux_setting->func);
-		} else {
-			gpio_ok =3D true;
-		}
-
-		if ((!gpio_range || ops->strict) && !gpio_ok &&
-		    desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
-	...
-}
-
-pinmux_can_be_used_for_gpio() likewise returns false for any pin muxed to
-CS7542_FUNCTION_GPIO via pinctrl.
+Those three muxes have the same 2-bit phymux layout switching between
+P_USB4_{0,1,2}_PHY_GCC_USB4_PCIE_PIPE_CLK (0) and P_BI_TCXO (2).  Because
+qmp_combo_usb4_init() and qmp_combo_usb4_exit() only call
+clk_prepare_enable() and clk_disable_unprepare() on qmp->p2rr2p_pipe_clk
+without calling clk_set_parent(), leaving them on
+clk_regmap_mux_closest_ops prevents the mux from switching between the PHY
+pipe clock and BI_TCXO.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123-cs7542-sys=
-con-v1-0-49858e631449@gmail.com?part=3D4
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123-topic-usb4=
+_clks-v1-0-531ab5635c03@oss.qualcomm.com?part=3D4
