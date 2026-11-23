@@ -1,127 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795440906;
-	b=jOXAp9vuVQKFA3iGTq1VViqf+7YN0vs43pZm+dFlgyM2V0W5qCC2qbpvPT3vgAzM7a3j
-	 8fy1QfhG+muQJJkYS3GShEVQveJUS92YNAucRvjjPsjUImdwEEcCVs+P1aY8yAWCvAUaM
-	 nq5FfUAFWOmF9Faw7WWMiOYhj15YCqRRxDDA0oIDJAF2jnBF6ICJQRGWO1cvi/iWV3Aw0
-	 e5krM+IJKy6BQn9igi0+O8gfhtMsE0hyDzn7PCwV5SVkZYPV2QpY7jrUPwACaFWNW8TC7
-	 1aF2YdzTFBPxFFGKyf0hqgO7COeFJEPTO5NQMX60LNPE8uG19fLvzEl5fzrYE2WC3eA==
+	t=1795442169;
+	b=t3NOqI1BNUejcZ5IVTGGV4YgCEW+PnHiIf8HyNz2PlmkO8gV8GGJ2yK/ERMvzwy8MpIe
+	 sdqqAhxgUnTZk3yAljiqXPjGXf+pYRyuC5ecVyOroTwEJjm04dW/1ly8RmY8s6kmYWeP0
+	 HLocKCPf1nsOMg5Jn1WPoLVxnSvX0+SvJGxQWn+eFTPEUlgdcH6E4/rvPpI5JsB+RceGY
+	 b4ZGVz7xgk3kZez6Zy+nuF0G3vFc+8eaNOJdX05T7c5w8K9DrCusuqMjYGjsXIuQ1D1qp
+	 Qy+u6wejnAJyv42ynVO25yF4XTRqePxTcHsA0PlI7KAMPPv6gehjDEbDHj1+j6f6lrg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795440906;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
-	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Proofpoint-Spam-Details-Enc:
-	 X-Authority-Analysis:X-Proofpoint-GUID:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=W4X+lIkpMnuBPXB5cEtedMsQlEel+NCp6hl7V/xtT3s=;
-	b=30/fWUdbq/ZSK2WVgE7kgVVsbquIOGvuW18QqNmINCX9Dt/wxFHeXydc0pqloG9nqTn/
-	 5+PDaVDKs0L5dXYfTfHorhFK/cLkfR4Af6h4qK3n/V16M46Zfz8n+x1QzTb4ewHucIYwG
-	 DHy2+kSzKwgVxqGSeLzAR8Qj21hcc5dzf3JABprnjytgqw/I1EJUXXWN+usZpvblVDXZI
-	 ImLFnt/ZpiBeERIdQ3ftc4FMpdHEJiq9AcyQYiughTuUO5HD6KJB7I5faUL0D8pzLkeuk
-	 Ta0t81wuqvB+AJiXGCrVlLicAS8Yw7f6hMzTqQzYvK/ShlfybT5NBD6whz2g/vud+Ag==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795442169;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=Ij5ZTrPk8G8iXLI9NSBhyUCOZ2xz7zXjgCAz0t859Wg=;
+	b=NSIJUteRM4SvLvt9IpY+3GiGZ2b7lZ9b3lGilBycsEW1QaTo27ORWnT9NYSI6urR8C8A
+	 8v2uOYD+qd0woWuj2KXkWc1rQwAGmlPcY/2aX5DJgUFgsr6OQmamedDXtfqGP+6HPF0HH
+	 XayArAJfv+8won2aS8IzIfpsML6Xc7MYaxYddzv6JtOlRhainHE94x4VqKxzkRnMSNTFv
+	 uZ8z0KfWRB+lYxIHDzCvcK+SsExVo+wPxQUuZmTT8xVzssXOnBU1mmSZ1pDF/VfuurTmy
+	 8gySxXWARCh7vAwQLsbmOZNth176bkJY3IUIhZMwk28EOyHHYNb26xE650pD6XcDyyg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=VEFaZBcv;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=hhkGzK6B;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=jxO2EUN9;
+	arc=none smtp.remote-ip=209.85.128.43
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72292606A32A
-	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 13:35:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 72292606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1013606A33E
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 13:56:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B1013606A33E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=VEFaZBcv;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=hhkGzK6B
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ANDKp8A2369001
-	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 13:35:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=W4X+lIkpMnuBPXB5cEtedMsQ
-	lEel+NCp6hl7V/xtT3s=; b=VEFaZBcv6QGdGPm6O/xtuaSamAgwZMZvMl+7bE4H
-	kMgAoM+nduS1Hxg0u3aC/Q3I4DawmUMY4gcm5indKy0X9c9vHvhenmPBCv2DMUMz
-	yc2nPqgCe2QiA5lUXX7+eO8cad3MVuxjebjLtvafW9YoMz0kGBuERs8N/Jfin4bq
-	gNbxlU2t1K6GypHjoywh11oJBj4AZxiIhPCAvnjNX4yUgSfT3JiXW5zTLYTu/oGw
-	jEz0eL4k0C9AQXQqy43GriIh4PWHvisZEAjof5aTNIjRMS6KyqFVP4qritTfFctp
-	KWzeXnAPVlTVpEVd6S4iZY68WHVGz/sesr6gdTh7ZSxRHw==
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com [209.85.128.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j4g1p9hgt-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 13:35:05 +0000 (GMT)
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-8b50256700cso50813227b3.3
-        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 05:35:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=jxO2EUN9
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4bb9d8e8e90so4259255e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 05:56:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795440904; x=1796045704; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1795442167; x=1796046967; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=W4X+lIkpMnuBPXB5cEtedMsQlEel+NCp6hl7V/xtT3s=;
-        b=hhkGzK6BXsmbaSYX5+Hcbi4s7pZ7AMQf8v6TJ/i9eXk9UMOkZIBM5Grj4hT6RQkBk7
-         PRmzol2EC1MFVdKgwb3Qq+FPN3Yoaqst6q9YFW/Z1nF6nAlcT2K3Jkso6h737AyD/qzj
-         uMz+MGtVx+8L/RXYHxySu5EKZ700RXpSj8rgLEVk4iXf9CDuxKYi+Rtl5sFwq9VjptO7
-         DE4TSuDWeq8nsLNWqb7SiQvh2SOeZPPkR6eDV+7s7rJAsKcHPOITt8kjjQFFdN0ltNWq
-         MJaOO/gWhYiE9OOYfAdm8YDH5TxE+b21vHzHQTDBssVPdvewinN9LbbnNFq2j/YesU6/
-         ppiw==
+        bh=Ij5ZTrPk8G8iXLI9NSBhyUCOZ2xz7zXjgCAz0t859Wg=;
+        b=jxO2EUN9OlTiPBr7yHwhvyHwCmIlMfdEtJqtweAuIfcLjVEqm5h5PUf5S0ooYCmHR0
+         bhUn+pza0dw0vNqR8tkR9+Py+hHTYvWS2fcw+VNRhLvyWYJcRS+Sgp1AiFLt1tMfu/8v
+         dBsGkuTJA4x5M/DshYTETzQXlhQXwjAw4NgS+zcs1pW/3SoLssuI8qsKAMBRMy54uHJ9
+         bbVM5B18Bjv8S98i9w0YFMGnAfCz+CbhFbOQqizkdKzcccybXYD7qczOAyA6Vs+Qiatr
+         B95SuXoQOIbrBCVEydoO9x7gBBHARAN2EDyviNymcAF8r28I8FoirOZxliq5cGKQ0lGy
+         BmXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795440904; x=1796045704;
+        d=1e100.net; s=20260707; t=1795442167; x=1796046967;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=W4X+lIkpMnuBPXB5cEtedMsQlEel+NCp6hl7V/xtT3s=;
-        b=C5bTu5WNncQ3+tVtHYuMCs+bedVr4funoEu8vgFPQIPSVR8sjaPDJFFx3e0bOd1AgR
-         8Cw0DEeZJBmuh9fjRFQ22cwQeQlzmUEfeGJxK14Natdy58Saxb4VCZEOvH22BtK5u7mn
-         c4K3/8H9Ykk6XPSGOCVxhhvzZjQO2pVc1ap8AvEL/hIOT0RN7c5c9KvO0YPfHrA+iLE/
-         3qQaxIp4PvHi5MqHs85oOYWUs8Kl0GRPBQili4zosMBb00uWNV+ohK1sEaCwywb+bpkp
-         1FGiCY7AvK/WZMZHhu/4jgAIPzEwlpkO218ipOXz5GXOFfloZRs395bRLbb+S4/b3q2Q
-         2KMA==
-X-Forwarded-Encrypted: i=1; AL+hErEATtMuliFaSAdIfaXp3dUgF01xDJ4Z8sIY5L0TUXHBXSo2/mveEif/yDwP8ephoCg2/DRyLt3w/4o=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/Yc0wUgh6vJUeCtz4CPUQS/C7ZFqY/LIA2rcH8MqtF79FsxVAs
-	UGWztx04r387zw0QkPWbiusuTCChPGxhNp5yRma/jfD7I4bkTWTGrPu5hQxSMSDwaIdoJ4/RMhK
-	JMMZgVMcrom6lsnVZ63WE2gCMtLwHT8mQtFHOYlcj4zPedCW38cE1AKNwBE0U66s=
-X-Gm-Gg: AZFdTZfs2yu9+w8lcoCQyEP0zA/H7RxvNcUNU9pLxGJ2eEqPB8Boi257ptIvBYtkyDv
-	pr8ddXVc1jOvJKIpZYoZiTT8kHJ8vVkIh2ixuxr3OFSJ7uHVNa5jMhQypMSEs0m6AvGWlBdYEs9
-	7K4e2hF5pYgAZAJayijB0a7Vxt0CiRL5+INWmcwZsG/a7egu3mcn7yrUsHC2Rku+uNkN5k2j/dZ
-	L3JRcD+OXHslbQqFkxl1wGCLyoO7IVIhL7VMPVfnxhHBUTShCjZBV5/YBUb5sysId5L2v9PcfbQ
-	760+zC6bZMAepm4IpLQ1etGw68tXaRHPJcRkjMsJVHC9+XNS73bOtLd12oI8LibFm31Nd3G+B2V
-	aQ26mNSM0Ex80XHdpVakvK1nCevednnQ255gJ3QULao1KHImuCmIdU2ZA5dEpWH926lh8clacVl
-	+rxO9ZSXXqjnkxo6CT
-X-Received: by 2002:a05:690c:2a44:b0:8b2:edac:7a4c with SMTP id 00721157ae682-8b52042bedamr39514627b3.10.1795440904363;
-        Mon, 23 Nov 2026 05:35:04 -0800 (PST)
-X-Received: by 2002:a05:690c:2a44:b0:8b2:edac:7a4c with SMTP id 00721157ae682-8b52042bedamr39514537b3.10.1795440903970;
-        Mon, 23 Nov 2026 05:35:03 -0800 (PST)
-Received: from QCOM-aGQu4IUr3Y (i-global052.qualcomm.com. [199.106.103.52])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-8b52030df7bsm46300587b3.31.2026.11.23.05.34.57
+        bh=Ij5ZTrPk8G8iXLI9NSBhyUCOZ2xz7zXjgCAz0t859Wg=;
+        b=mXSfm3XQfJgsCB84UJxwThr4umnGB1uMlEpuYkAMgCmi9n4fLHGzhO127tNWyi1r5m
+         4Dwg6qjoFr2Qt+XsDALj9FFHHW7LMvzlNOBJLosqvUv19TMjjHGtG7/gG5uGQTlLi3bF
+         QqDGHiKPGEGle0dh+Aywm1IqZPKLEbxv2dzieUtoYxAB9ydbj48EpfmNagL+F7+SZE51
+         7hYw0fXvCxMLJF1UU0ElZK7wl9ILYG5xuXAcKx8hPDf3BYSzcsRP0Tq6sHtLGWcRHeS+
+         6BIXop5SGt0ODQxMu6j1b64M9UNJ24/WXcBR46dCCP25LnS/WxV1z9AgEt/DOGvM/zB6
+         Kgog==
+X-Forwarded-Encrypted: i=1; AL+hErEbmTkkKg9xTGpM1xRx73w19Y8+NBllI2MMEYwsr6pW8/bizr0x7uLr/MGQq31C8aLvk/yWYOgaTOY=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/1CEey1J/MW0GXBN8P+VCw/OreQeTioVWFRd+VyN4XmM9jW4q5
+	820VtNbgjFa10ecK8/TJHraamzJkjnQlVRtFvAD5lSVrK15sJ2V4yn7bcmUxZIjk/7E=
+X-Gm-Gg: AZFdTZfmRba3lx9u/FG2eRWXK3S5WbpK6NdVn/FO6Abp/QNd/CNtUqgB4LxNE0jht+H
+	+t2n1R6DSvzMBz+27dQtFB656yAxsDLOm9nbdILhBD/Ui9tneFDFQjKkLjne4mV4ysOZDUWO35o
+	AgeGkxH4JI+eWdXZlmSkOmTqyz+BJSkMv3ckJKAk2ZXcXqjgjVEiAQoS8z3ICNoi12H05aQVtW9
+	dOVvkWDNxDDHwkkBcWDhPEdpnhaWWsfSAr8ntrXZzOSiRKr56Rech2CchNeLZQ1vE/HA3Wmt0F+
+	5Wj7x9PLimaGpt6ECI3SWYPUN8Uwkp+C+s5t9YeDZkwHTwsa6xzt40wnrm4++x1AJk303BCxa5C
+	UcaslAgJ/4MDbPBeDLmB95yG/8ZS8Fh5aphY/JP/R3q8xB92ghLuYAY3p4fu63VIHrjD1A0bPHO
+	dmkDf04lZkJC7kRF9lT7N7uYJtnMSbGU6LHrA5LONxlY7hq3v4dVqVuiGdtODifMUoNjDWhrnjB
+	2QK4Jepefk26Ii42InIE0mMQS/L4aBiigVpJmmxrQoNtlJlsBkf/c2Y/ZGPziY9F66qN6tfaQG6
+	7QnHDwzhYN+oT87MEX5goUphuYsA1h9hG+g=
+X-Received: by 2002:a05:600c:3ba3:b0:4bb:7571:5743 with SMTP id 5b1f17b1804b1-4bb88813444mr267490555e9.27.1795442167038;
+        Mon, 23 Nov 2026 05:56:07 -0800 (PST)
+Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4bb884a3a3dsm336572585e9.10.2026.11.23.05.56.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2026 05:35:03 -0800 (PST)
-Date: Mon, 23 Nov 2026 21:34:54 +0800
-From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: qcom: qcom,ids: Remove unneeded ID
- constants
-Message-ID: <awRA_lWAviFJj7oC@QCOM-aGQu4IUr3Y>
-References: <20261122-qcom-socinfo-id-dt-bindings-v1-0-eeee0ffa25da@oss.qualcomm.com>
- <20261122-qcom-socinfo-id-dt-bindings-v1-2-eeee0ffa25da@oss.qualcomm.com>
+        Mon, 23 Nov 2026 05:56:06 -0800 (PST)
+Date: Mon, 23 Nov 2026 14:56:04 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Hikmah Gumelar <hikmahgumelar@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] media: i2c: add s5k5e8 image sensor driver
+Message-ID: <awRDMjtMC74v5zQq@monoceros>
+References: <20261123110805.119610-1-hikmahgumelar@gmail.com>
+ <20261123123546.152162-1-hikmahgumelar@gmail.com>
+ <20261123123546.152162-4-hikmahgumelar@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -131,55 +103,271 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="od2jan737ze6e64n"
 Content-Disposition: inline
-In-Reply-To: <20261122-qcom-socinfo-id-dt-bindings-v1-2-eeee0ffa25da@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIzMDA1MyBTYWx0ZWRfX9qYCdFEPM65E
- 6zBt1MLH62sSHwddPfb4nfSVXk9qhnFXZaCVHLlgpCu0D4aZnBfDcYhoSL2RNH2nBmZsguIOqBD
- EaO2gfsOEr9r/SjEMQvevNjWxp5SNJ9v6E779WkeXkviq1eiO+RM2eBL+j0ic8QK69YGPOcUUUa
- MTfJl3EI9dyKL4Ts7+zfzo+gI8AhZimh9J3XW3qvHNCvGa2sJGgYjz3p60ms0AVjV81ZVzCM5dI
- RyflsIbBEG59/ezKI1up63Uz5aLccT56gW0uQ/aY84faf91kNbcvIZc0Y69pSmDFLcW96NTVp+c
- yrpfm1FP7ZUvMWXK02KMK0+ucnPv0TC8nK5bqVNskrwXhRBYXT4Z+ofnNk4WtSVWNGX9tMC7ngU
- 1qSdXIvJSP5FaVOQ8Fd/8gVaOzICL1HgM+g7M0AR7HfhLfupuLdEmAgZR2FuoY7Bmthx+1o6yrQ
- RPiKPS4hxQbHbU6s3lA==
-X-Authority-Analysis: v=2.4 cv=AeIkjHXG c=1 sm=1 tr=0 ts=6b044109 cx=c_pps
- a=72HoHk1woDtn7btP4rdmlg==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
- a=kj9zAlcOel0A:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
- a=EUspDBNiAAAA:8 a=JVp1Gilkp8drtUWwDXwA:9 a=CjuIK1q_8ugA:10
- a=kA6IBgd4cpdPkAWqgNAz:22
-X-Proofpoint-GUID: ghhyOcRiRQ39KF8IlTKTjt0-KPh6Po46
-X-Proofpoint-ORIG-GUID: ghhyOcRiRQ39KF8IlTKTjt0-KPh6Po46
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIzMDA1MyBTYWx0ZWRfX9rJlD9untLH2
- ctGYqiaOJ/ijcXTr5MP4/o4Iel29qwxO8JWLDGvvPBpC47KtfBr9QfRwWhgr6d5iTjaqnHP8aFi
- 0kpdOPkMFfViBjHC+xBeogo68ofo29Y=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-23_03,2026-11-23_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 adultscore=0 clxscore=1015
- suspectscore=0 phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
- definitions=main-2611230053
+In-Reply-To: <20261123123546.152162-4-hikmahgumelar@gmail.com>
 
-On Sun, Nov 22, 2026 at 06:46:21PM +0100, Krzysztof Kozlowski wrote:
-> The IDs of newer Qualcomm SoCs, as reported by hardware or firmware, are
-> currently used only in the socinfo.c driver.  There should no and there
 
-Same typo as in patch 1.
+--od2jan737ze6e64n
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v2 3/7] media: i2c: add s5k5e8 image sensor driver
+MIME-Version: 1.0
 
-> is no in-tree DTS user of these, so none of these constants are really
-> proper Devicetree ABI.  IDs of older SoCs were being used in DTS, thus
-> that part matches the concept behind DT bindings.
-> 
-> Driver have local copy of these defines, thus these can be dropped.
+Hello,
 
-Nit: Drivers have local copies ...
+On Mon, Nov 23, 2026 at 07:35:42PM +0700, Hikmah Gumelar wrote:
+> diff --git a/drivers/media/i2c/s5k5e8.c b/drivers/media/i2c/s5k5e8.c
+> new file mode 100644
+> index 000000000000..80931e5a1c6b
+> --- /dev/null
+> +++ b/drivers/media/i2c/s5k5e8.c
+> @@ -0,0 +1,500 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/i2c.h>
+> +#include <linux/mod_devicetable.h>
 
-Shawn
+<linux/i2c.h> already provides of_device_id, so please drop
+<linux/mod_devicetable.h> (which adds a lot of unneeded dependencies).
 
-> This has no impact on in-tree ABI, but any outside users would be
-> affected.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> +#include <linux/module.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/unaligned.h>
+> +#include <media/v4l2-ctrls.h>
+> +#include <media/v4l2-device.h>
+> +#include <media/v4l2-fwnode.h>
+> +
+> +#define S5K5E8_CHIP_ID_REG		0x0000
+> +#define S5K5E8_CHIP_ID			0x5e80
+> +#define S5K5E8_REG_MODE_SELECT		0x0100
+> +#define S5K5E8_MODE_STANDBY		0x00
+> +#define S5K5E8_MODE_STREAMING		0x01
+> +#define S5K5E8_REG_VTS			0x0340
+> +#define S5K5E8_REG_EXPOSURE		0x0202
+> +#define S5K5E8_REG_ANALOG_GAIN		0x0204
+> +#define S5K5E8_REG_TEST_PATTERN		0x0600
+> +#define S5K5E8_XVCLK_FREQ		24000000
+> +#define S5K5E8_LINK_FREQ_418MHZ		418000000ULL
+> +#define S5K5E8_PIXEL_RATE		167200000ULL
+> +
+> +struct s5k5e8_reg { u16 address;
+> +u8 val;
+> +};
+> +struct s5k5e8_mode {
+> +	u32 width, height, hts_def, vts_def, vts_min, num_regs;
+> +	const struct s5k5e8_reg *regs;
+> +};
+> +
+> +static const char * const s5k5e8_supply_names[] = { "avdd", "dvdd", "dovdd" };
+> +#define S5K5E8_NUM_SUPPLIES ARRAY_SIZE(s5k5e8_supply_names)
+> +
+> +static const struct s5k5e8_reg s5k5e8_common_regs[] = {
+> +	{ 0x0100, 0x00 }, { 0x3906, 0x7e }, { 0x3c01, 0x0f }, { 0x3c14, 0x00 },
+> +	{ 0x3235, 0x08 }, { 0x3063, 0x2e }, { 0x307a, 0x10 }, { 0x307b, 0x0e },
+> +	{ 0x3079, 0x20 }, { 0x3070, 0x05 }, { 0x3067, 0x06 }, { 0x3071, 0x62 },
+> +	{ 0x3072, 0x16 }, { 0x3203, 0x43 }, { 0x3205, 0x43 }, { 0x320b, 0x42 },
+> +	{ 0x3007, 0x00 }, { 0x3008, 0x14 }, { 0x3020, 0x58 }, { 0x300d, 0x34 },
+> +	{ 0x300e, 0x17 }, { 0x3021, 0x02 }, { 0x3010, 0x59 }, { 0x3002, 0x01 },
+> +	{ 0x3005, 0x01 }, { 0x3008, 0x04 }, { 0x300f, 0x70 }, { 0x3010, 0x69 },
+> +	{ 0x3017, 0x10 }, { 0x3019, 0x19 }, { 0x300c, 0x62 }, { 0x3064, 0x10 },
+> +	{ 0x3c08, 0x0e }, { 0x3c09, 0x10 }, { 0x3c31, 0x0d }, { 0x3c32, 0xac },
+> +};
+> +
+> +static const struct s5k5e8_reg s5k5e8_2592x1944_regs[] = {
+> +	{ 0x0100, 0x00 }, { 0x0136, 0x18 }, { 0x0137, 0x00 }, { 0x0305, 0x06 },
+> +	{ 0x0306, 0x18 }, { 0x0307, 0xa8 }, { 0x0308, 0x34 }, { 0x0309, 0x42 },
+> +	{ 0x3c1f, 0x00 }, { 0x3c17, 0x00 }, { 0x3c0b, 0x04 }, { 0x3c1c, 0x47 },
+> +	{ 0x3c1d, 0x15 }, { 0x3c14, 0x04 }, { 0x3c16, 0x00 }, { 0x0820, 0x03 },
+> +	{ 0x0821, 0x44 }, { 0x0114, 0x01 }, { 0x0344, 0x00 }, { 0x0345, 0x08 },
+> +	{ 0x0346, 0x00 }, { 0x0347, 0x08 }, { 0x0348, 0x0a }, { 0x0349, 0x27 },
+> +	{ 0x034a, 0x07 }, { 0x034b, 0x9f }, { 0x034c, 0x0a }, { 0x034d, 0x20 },
+> +	{ 0x034e, 0x07 }, { 0x034f, 0x98 }, { 0x0900, 0x00 }, { 0x0901, 0x00 },
+> +	{ 0x0381, 0x01 }, { 0x0383, 0x01 }, { 0x0385, 0x01 }, { 0x0387, 0x01 },
+> +	{ 0x0340, 0x07 }, { 0x0341, 0xb0 }, { 0x0342, 0x0b }, { 0x0343, 0x28 },
+> +	{ 0x0200, 0x00 }, { 0x0201, 0x00 }, { 0x0202, 0x03 }, { 0x0203, 0xde },
+> +	{ 0x3303, 0x02 }, { 0x3400, 0x00 }, { 0x323b, 0x02 }, { 0x3301, 0x00 },
+> +	{ 0x3321, 0x04 }, { 0x3306, 0x00 }, { 0x3307, 0x08 }, { 0x3308, 0x0a },
+> +	{ 0x3309, 0x27 }, { 0x330a, 0x01 }, { 0x330b, 0x01 }, { 0x330e, 0x00 },
+> +	{ 0x330f, 0x08 }, { 0x3310, 0x07 }, { 0x3311, 0x9f }, { 0x3312, 0x01 },
+> +	{ 0x3313, 0x01 },
+> +};
+
+Is this a reverse engineered table of initial register values? A comment
+would be awesome.
+
+> +static const struct s5k5e8_mode supported_modes[] = {
+> +	{
+> +		.width = 2592, .height = 1944, .hts_def = 2856,
+> +		.vts_def = 1968, .vts_min = 1968,
+> +		.num_regs = ARRAY_SIZE(s5k5e8_2592x1944_regs),
+> +		.regs = s5k5e8_2592x1944_regs,
+> +	},
+> +};
+> +
+> [...]
+> +static int s5k5e8_enum_frame_size(struct v4l2_subdev *sd, struct v4l2_subdev_state *sd_state,
+> +		struct v4l2_subdev_frame_size_enum *fse)
+> +{
+> +	if (fse->index >= ARRAY_SIZE(supported_modes) ||
+> +	    fse->code != MEDIA_BUS_FMT_SGRBG10_1X10)
+> +		return -EINVAL;
+
+ARRAY_SIZE(supported_modes) is one. Does supported_modes really need to
+be an array?
+
+> +	fse->min_width = fse->max_width = supported_modes[fse->index].width;
+> +	fse->min_height = fse->max_height = supported_modes[fse->index].height;
+> +	return 0;
+> +}
+> +
+> [...]
+> +static int s5k5e8_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev = &client->dev;
+> +	struct s5k5e8 *s5k5e8;
+> +	u32 val = 0;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	s5k5e8 = devm_kzalloc(dev, sizeof(*s5k5e8), GFP_KERNEL);
+> +	if (!s5k5e8)
+> +		return -ENOMEM;
+> +	s5k5e8->dev = dev;
+> +	v4l2_i2c_subdev_init(&s5k5e8->sd, client, &s5k5e8_subdev_ops);
+> +	s5k5e8->xvclk = devm_v4l2_sensor_clk_get(dev, NULL);
+> +	if (IS_ERR(s5k5e8->xvclk))
+> +		return dev_err_probe(dev, PTR_ERR(s5k5e8->xvclk), "xvclk\n");
+> +	clk_set_rate(s5k5e8->xvclk, S5K5E8_XVCLK_FREQ);
+> +	s5k5e8->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(s5k5e8->reset_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(s5k5e8->reset_gpio), "reset\n");
+> +	for (i = 0; i < S5K5E8_NUM_SUPPLIES; i++)
+> +		s5k5e8->supplies[i].supply = s5k5e8_supply_names[i];
+> +	ret = devm_regulator_bulk_get(dev, S5K5E8_NUM_SUPPLIES, s5k5e8->supplies);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "regulators\n");
+> +	ret = s5k5e8_power_on(dev);
+> +	if (ret)
+> +		return ret;
+> +	ret = s5k5e8_read_reg(s5k5e8, S5K5E8_CHIP_ID_REG, 2, &val);
+> +	if (ret || val != S5K5E8_CHIP_ID) {
+> +		dev_err(dev, "failed to identify s5k5e8 (ret=%d, id=0x%x)\n", ret, val);
+
+Use dev_err_probe() for error messages in the probe function.
+
+> +		ret = ret ? ret : -ENXIO;
+> +		goto err_power;
+> +	}
+> +	dev_info(dev, "identified Samsung S5K5E8 sensor (0x%04x)\n", val);
+
+Degrade to dev_dbg() or drop. Once the driver is considered ok, messages
+of this kind only clutter the kernel log with very little value and add
+to the boot time.
+
+> +	mutex_init(&s5k5e8->mutex);
+> +	s5k5e8->cur_mode = &supported_modes[0];
+> +	ret = s5k5e8_init_controls(s5k5e8);
+> +	if (ret)
+> +		goto err_mutex;
+> +	s5k5e8->sd.internal_ops = &s5k5e8_internal_ops;
+> +	s5k5e8->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> +	s5k5e8->sd.entity.ops = &s5k5e8_entity_ops;
+> +	s5k5e8->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> +	s5k5e8->pad.flags = MEDIA_PAD_FL_SOURCE;
+> +	ret = media_entity_pads_init(&s5k5e8->sd.entity, 1, &s5k5e8->pad);
+> +	if (ret)
+> +		goto err_ctrl;
+
+Use newlines to separate function call + its error handling from the
+other code.
+
+> +	s5k5e8->sd.state_lock = &s5k5e8->mutex;
+> +	ret = v4l2_subdev_init_finalize(&s5k5e8->sd);
+> +	if (ret)
+> +		goto err_media;
+> +	ret = v4l2_async_register_subdev_sensor(&s5k5e8->sd);
+> +	if (ret)
+> +		goto err_media;
+> +	pm_runtime_set_active(dev);
+> +	pm_runtime_enable(dev);
+> +	pm_runtime_idle(dev);
+> +	return 0;
+> +err_media: media_entity_cleanup(&s5k5e8->sd.entity);
+> +err_ctrl: v4l2_ctrl_handler_free(s5k5e8->sd.ctrl_handler);
+> +err_mutex: mutex_destroy(&s5k5e8->mutex);
+> +err_power: s5k5e8_power_off(dev);
+
+A label should be on its own line.
+
+> +	return ret;
+> +}
+> +
+> +static void s5k5e8_remove(struct i2c_client *client)
+> +{
+> +	struct v4l2_subdev *sd = i2c_get_clientdata(client);
+> +	struct s5k5e8 *s5k5e8 = to_s5k5e8(sd);
+> +
+> +	v4l2_async_unregister_subdev(sd);
+> +	media_entity_cleanup(&sd->entity);
+> +	v4l2_ctrl_handler_free(sd->ctrl_handler);
+> +	mutex_destroy(&s5k5e8->mutex);
+> +	pm_runtime_disable(&client->dev);
+> +	if (!pm_runtime_status_suspended(&client->dev))
+> +		s5k5e8_power_off(&client->dev);
+> +	pm_runtime_set_suspended(&client->dev);
+> +}
+> +
+> +static const struct dev_pm_ops s5k5e8_pm_ops = { SET_RUNTIME_PM_OPS(s5k5e8_power_off,
+> +		s5k5e8_power_on, NULL) };
+
+This looks strange. I'd add a \n before SET_RUNTIME_PM_OPS. In general
+align continuation lines to the previous opening brace or parenthesis.
+
+> +static const struct of_device_id s5k5e8_of_match[] = { { .compatible = "samsung,s5k5e8" }, { } };
+
+Please fix the layout of this struct. It should look like:
+
+static const struct of_device_id s5k5e8_of_match[] = {
+	{ .compatible = "samsung,s5k5e8" },
+	{ }
+};
+
+
+> +MODULE_DEVICE_TABLE(of, s5k5e8_of_match);
+> +static struct i2c_driver s5k5e8_i2c_driver = {
+> +	.driver = { .name = "s5k5e8", .pm = &s5k5e8_pm_ops, .of_match_table = s5k5e8_of_match },
+> +	.probe = s5k5e8_probe, .remove = s5k5e8_remove,
+
+This also lacks newlines.
+
+> +};
+> +module_i2c_driver(s5k5e8_i2c_driver);
+> +MODULE_DESCRIPTION("Samsung S5K5E8 5MP sensor driver");
+> +MODULE_LICENSE("GPL");
+
+The same critics apply to (at least) patch #5, too.
+
+Best regards
+Uwe
+
+--od2jan737ze6e64n
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmsERfIACgkQj4D7WH0S
+/k6aQwf+IZj2GNT6Pnyg4+VzCfG5XXa2gKc5nz7HLJKLGnhUebr36dGQdI4je8Ve
+aAI99ctvkHP51gYEBv7DMXXsGX0YWQmdSRBqZDtZkqhLb7Ym+9w1i8g5Z7by7d1/
+EW3aUs70aoa6iXs7GKdpZXgBVIakHhAeX3y2BLkH/RzeoCB3c/JrA3kWh8/bkSSs
+rMdybxyI+GyQ0GMC8EgIusYetPTc4NPDjV6W/l/fBmZzDaREdzwUI0egdTm+O16s
+8ZchJXgZeKfx17B9OGZ91y9uXE0kEDmcl/4qIHnDtKigfGP/6z6Fwdc/L8C7AGZI
+uBAIXDmF0DomZGuRHBfXOpJxe7hvVA==
+=9kNX
+-----END PGP SIGNATURE-----
+
+--od2jan737ze6e64n--
