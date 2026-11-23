@@ -1,60 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795456441;
-	b=Xt+DuYRtgVxcrIo5u2HFuU9MIlW9ZuPft8FeTXwTvmSIW4YD6tYVCrFZ/Xq0kL9fezuA
-	 8XkGXTO19/vd0xeBfIaEGXkkVuQCHB9umdQ06jpgMQ45NHsS4/1gLUrlp8xoJgzE5Efpv
-	 y+ZuGUxfKUTlnL5hIAghlcpywau/4N2uQec/uaWU3DlYENY+XgAeAUMYi2nYgFKWWNfG6
-	 fwMrr/H8zMuB6cweUMcQTpjxkZDy4Lw2tujgdcqbhY+81D3EtQKDhh1MK8jVdyEdzW7VP
-	 4P50ZKXp7kBgiJ3U5YpuPQ+kOBZiFzsHdi4gZsooCL2I5H/auOmF3UGItqIiSxFtJEQ==
+	t=1795457087;
+	b=uSamldzw85U0D/Ms6eXtQ+IoICneJY9KVSJaoohZfWeyWzTloeczuqQxIWp+EFXfdMw4
+	 bK7itbdUAjNzonNaFBQQjPV8o6R8dFU4nA5cfhCQBoSIk86HRa0HRXl1bchVD34a2rM93
+	 sqTXd+dWKHLwNBf9FFJSvaZ3L7L7HC6h162WnWXbkRIc4HCxdxyzPJAjYCLv2PE5xIkBx
+	 uFvysTgI+hen9ox6fga21KfYFqSwubA6WwSoslc1dwB4icRhE8HHdcnU/LEyUGMVhwr/e
+	 eeFpy8TSuEu+yJtlERVTrV6XIHxQWtFn/XUABOMUwm9/uSqGuDYcEqKxdAASiUL9scQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795456441;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
-	 Content-Language:From:In-Reply-To:Content-Transfer-Encoding:
-	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
-	 X-CMS-RootMailID:References;
-	bh=KAB2BKt918TC8J1Io05dleoIknVU5q1NI2MsEwZVMss=;
-	b=XNdehO/kElpDGEUdQMxq7B6/eUgIJ1I+PpmkUKQgGSTYxY522CNLKn2jl9q63HipUnxF
-	 J7TKtrydiH55c3H0uVlXBz43MqH4NLVK4XdTO2UyDu136WZGmcB7UlL9Q8F2VfTeK9mom
-	 rQJcSG8l7P7nMJ+60Yg+Jyl2Vx9ANCKiZcXI8Uy+/2NiKlUu66iCNij2wu2e3sTbUScr9
-	 8pA+MMbtid5L0Iky1BDBgTRPwQFqu3TSI8MOPJoJXr5VNJcNlplCFrj3kbdlt8Mc+ZlLg
-	 CYxQtYnigPCnZ1yDAOaMzDHR9B1tza8J85RxVAJFGxxSqycY1BlC7Mnv4/uLn+ri5oQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795457087;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=y35eIMSiZT/nTX9Fpa3jplnBfS4jKOac4FxuSq60JL0=;
+	b=jckme6h6+YrscSgr8Z/KhLkymSmavxaQ8W5gd4MhTcs2XRaqpLPV1plqaB1etrU2yUOF
+	 TaHNTZHRr/m4wzLc2ETiovi8BPikg9V7GyNZbC6fi9o87YoFVI1U/az+ADZfDtL226cqb
+	 zUgE6qNpgqBjpqbxYE6TeHPXG8miLUppdLfBLtNzJoK3aim8QmWfB9NuqxbNlzyqqcnHH
+	 bRi9RgX++Grk9ByiwepRQHcFPRtdymAJhwDF2GqePSR9gK0/R1XDTd/U5rl3xZg/s2Tn0
+	 abeUPE//mGXGO+iCaRVpz7BDPoU8TPqli4BymrCRwmlF6F3an6eBrcnP3DXnnakXLNQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b="KaLHmeY/";
-	arc=none smtp.remote-ip=210.118.77.11
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CdSNieRG;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0B0606A31F
-	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 17:53:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0A0B0606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7B0606A31A;
+	Mon, 23 Nov 2026 18:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=KaLHmeY/
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261123175357euoutp01f7ae3e196fea12829bf702598ab81908~qvh4KaA4a2115121151euoutp01S
-	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 17:53:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261123175357euoutp01f7ae3e196fea12829bf702598ab81908~qvh4KaA4a2115121151euoutp01S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1795456437;
-	bh=KAB2BKt918TC8J1Io05dleoIknVU5q1NI2MsEwZVMss=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=KaLHmeY/H5/6luOM3bVkacedBNGp4qFGJ/QLKxD9En+nFjUF5oST4IhTspYpfAUoo
-	 +Js8gOjXitDE24uNSHz9PV3JDQ/OWZ/IuT4sobCQh9OVCo221IgqmSuvS3sjQIjjTm
-	 WzSNQ4plLTKCpO1lLKZF+smGvCmLACEWFffNiNnw=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20261123175357eucas1p2cc191475e27a19aa757b67113f059dff~qvh3zUySr2536125361eucas1p2Y;
-	Mon, 23 Nov 2026 17:53:57 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261123175356eusmtip2b9af5e8e9756c7efec6eca2def375a43~qvh2tRfpt1373213732eusmtip2Q;
-	Mon, 23 Nov 2026 17:53:56 +0000 (GMT)
-Message-ID: <d0bf2242-d9ad-4a7e-a1cb-ef32e50f34f9@samsung.com>
-Date: Mon, 23 Nov 2026 18:53:55 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CdSNieRG
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FC0B1F000C4;
+	Mon, 23 Nov 2026 18:04:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795457087;
+	bh=y35eIMSiZT/nTX9Fpa3jplnBfS4jKOac4FxuSq60JL0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=CdSNieRGhfYgx+Dm7mrlMeU8yDdEWMqPkRKS+OWrREWFn83cMz+3TMD9ziygV0/D4
+	 kDfbQCfLVWNJQr1M4C/eT722iSqt/gMPvdk6snAzl67CWbW5pY+zIlibQbxI9SE3xg
+	 uFqUmNDp+uyyWo/yINtUGjnO4k2oPXvOofCT9ORHmkwrVuvsmRjPk2E2S+O0TnWFyA
+	 di23SIhRYTyWMixXsiErzrzGDj6ySUbyxa3Or8kenpoISbfQN04S+4Z+ZnwGlVO+5/
+	 ecV0MnutE2LVnsmrn70tjmLYAFSeXzliZFI1YibLrnHLhIvqU3DOCpiugX4fsuW4cq
+	 J9P2YqUJA8i3g==
+From: Brian Masney <masneyb@kernel.org>
+To: Ulf Hansson <ulfh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Mike Turquette <mturquette@linaro.org>, Linus Walleij <linusw@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Brian Masney <masneyb@kernel.org>
+In-Reply-To: <20261120-ux500-clk-power-upll-v1-1-431041f317ba@kernel.org>
+References: <20261120-ux500-clk-power-upll-v1-1-431041f317ba@kernel.org>
+Subject: Re: [PATCH] clk: ux500: Power the AB8500 ULP PLL from VintCore12
+Message-Id: <179545708005.209212.18146398732794144167.b4-ty@b4>
+Date: Mon, 23 Nov 2026 13:04:40 -0500
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -64,78 +61,29 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH RFC 0/2] clk: samsung: exynos5: fix sub-CMU power domain
- attach
-To: y-asai.0816@docomonet.jp, Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, Alim
-	Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, Brian
-	Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20261123-exynos5-subcmu-defer-v1-0-43aef47d4f2b@docomonet.jp>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20261123175357eucas1p2cc191475e27a19aa757b67113f059dff
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261123141844eucas1p221c650882789ccab239e57ee458c02a1
-X-EPHeader: CA
-X-CMS-RootMailID: 20261123141844eucas1p221c650882789ccab239e57ee458c02a1
-References: <CGME20261123141844eucas1p221c650882789ccab239e57ee458c02a1@eucas1p2.samsung.com>
-	<20261123-exynos5-subcmu-defer-v1-0-43aef47d4f2b@docomonet.jp>
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.17-dev-8145e
+X-Developer-Signature: v=1; a=openpgp-sha256; l=308; i=masneyb@kernel.org;
+ s=20250903; h=from:subject:message-id;
+ bh=1UzDk8FVrIOGyD/xdVIAtdnxgAhXqPxF+MYLJb6pd68=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJZGqyePCk06Pn9qkB258oi70kLvZP95c6c+GF52L/24
+ AvV/x+9OkpZGMS4GGTFFFmW5BoVRKSusr13R5MFZg4rE8gQBi5OAZjI7lOMDG/fF6UfDsp8fu1i
+ 4YH/0vN4b3RW/hL+GX42umi+5h05nocM//3mOjcVStYION49FeD+PG7au+rueUv2b7p/rc76U/O
+ 9C3wA
+X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-On 23.11.2026 15:18, Shigeaki Asai via B4 Relay wrote:
-> Since commit c09a3e6c97f0 ("soc: samsung: pm_domains: Convert to regular
-> platform driver"), the exynos-pd platform driver registers the power
-> domains too late for exynos5-subcmu, so the sub-CMUs are not attached to
-> them and their clock setup is not restored. On ODROID-XU4 this drops the
-> GPU performance badly (about 3.5 fps in the Kodi menu, with repeated
-> panfrost "gpu sched timeout").
->
-> This series fixes it as follows:
-> - Make the exynos5-clock probe wait until the power domains are
->   registered, so the sub-CMUs are attached to them.
-> - Also make audss wait for pll_in. As a side effect of making the
->   sub-CMUs wait, audss would otherwise probe before pll_in exists and
->   generate audio from the 24 MHz pll_ref, which causes audio stuttering.
->
-> However, this relies on deferred probe, which conflicts with the move 
-> towards platform_driver_probe(), and the sub-CMU clock data is
-> __initconst, so the deferred probe has to finish before init memory is
-> freed. So I would like to discuss the preferred way to fix it.
->
-> This may also explain the oopses seen in the RFC series "clk: samsung:
-> Use platform_driver_probe() to avoid __refdata". Krzysztof saw them
-> when converting exynos5-subcmu, and Stephen pointed out that
-> platform_driver_probe() is incompatible with deferred probe. The
-> sub-CMUs have to wait for their power domains, so exynos5-subcmu
-> probably cannot use platform_driver_probe() as long as exynos-pd is a
-> regular platform driver.
-> https://lore.kernel.org/all/20250305-clk-samsung-ref-init-data-v1-0-a4e03a019306@linaro.org/
->
-> Testing:
-> - Tested on ODROID-XU4 with a Linux 7.3 based LibreELEC kernel:
->   every power domain now has an exynos5-subcmu device attached in
->   pm_genpd_summary, the Kodi menu went from about 3.5 fps to 25-30 fps,
->   "gpu sched timeout" went from 17 to 0, and there is no audio
->   stuttering.
-> - On next/clk, only build-tested (exynos_defconfig, W=1) and checked
->   with checkpatch. I have not booted next/clk on the hardware.
-> - These patches are already carried in LibreELEC.
->
-> I investigated the root cause and wrote these patches and the commit
-> messages with the help of Claude (claude-opus-5-5). I reviewed the
-> changes and tested them on the hardware as described above.
 
-https://lore.kernel.org/all/20261030075325.517182-1-m.szyprowski@samsung.com/
+On Fri, 20 Nov 2026 10:02:38 +0100, Linus Walleij wrote:
+> clk: ux500: Power the AB8500 ULP PLL from VintCore12
 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=5fbe2d229bd3738ed63c7c9177466ad6bc130f18
+Applied, thanks!
 
-Best regards
+[1/1] clk: ux500: Power the AB8500 ULP PLL from VintCore12
+      https://git.kernel.org/clk/linux/c/69e92a94ef27
+
+Best regards,
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Brian Masney <masneyb@kernel.org>
 
