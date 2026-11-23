@@ -1,56 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795454020;
-	b=nLoLYaK9La428XpGC8cNsjkPhOONArgJpPQSDndrqiluQX6WBlnYZ2gUh5SBMzlhIQBD
-	 JGA+8AeUlsaVq2ufWeEuzTfqwZ/EtoeswFBXoN6WCKSbtGvt4EvzogNoT5z4Gzkp6YIfT
-	 IAaKGepLu4oPV9QtmI09yseItqZJ0g0ZDLn7njDohLHLxFBg7sE5+ICnkc+UhLPUw99QV
-	 a1sXaaze8qJgEZcotAXY6Q/c6CrvXoHBISmEyk/8YADhtYTB8BiEutgsaIrzoXgKmadJE
-	 86NEt8bBG5axlvlGOzB5z9e6oh6lfzBSwZSfh87telBP/euB5r8o850Uy/hOO4YbEiQ==
+	t=1795454733;
+	b=Yo60RllPDO2QtqTYGtTBE29zjYkbBqzjv9brfXUeWC/y6jfbQ3XPOnMta/GkV6xGKZrp
+	 CIOrlIAQoBDYaDwq3pNnlLjaSjJz/cJKf8KfjXBZqasQJCf0ihLBS2BPSgEMQnvS5Q7wr
+	 fabfMa1Ev4MNjuqo3/qiXadbO12xJkLnvgXvHzq9NLkEMUpnccU54e2wy7Hj2bSHql92k
+	 0DDu8WAkRM3QtbklT0p1AFFJTU0vjZgDWC5amDBIVPJV/oX+YUUEX7tg7CmbVKlz70p9R
+	 Qd8aLtUaZHbURVbIkJMWxkCiZLZVGEYXV4V9DoNSSVcS1d7jm/KCrVpNuXA7H7PemjA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795454020;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=XMevZObTQrwIBZ4zVSD9xmRkiB19mESNAfv/miZL2Bk=;
-	b=3knYhHvLckWSBsokfJwRfXtgcYhoOCeJ2OebWpUCRL71G1dvkHKzdj1zk296JwQSqq88
-	 sB8UNy8rE/VXpO8Zl5GJLDHQBnRlrXbpm++UTfm6ndtHtScsNyxNGmIs1idviWK+wcyyV
-	 D5jric7suNP5zsfLQvWLtNh3thg69AANOsWWJ1EIpgZIAdoeqti/QvCtxMdqVRqZRgLJ3
-	 pSSA5Frgy88hjsbxOSX0GiaTVUodWcWMikYZyCcnEbSdC2h0psbJyP5bWM4UKLJ2t7shb
-	 3QQxx5n5VV6TuFryPvflii2HueYEfgreFtuCdEOAxvw2qU9tHFzhrvAVf+Rvm6PVZYg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795454733;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
+	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Authority-Analysis:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-GUID:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=lfhg2+/rNBhkH2W0arnD3tR/lai12P2aVjqQX7vl+Hc=;
+	b=Gbu09EbSQXt/Ob2bXlFwglOyPFNOXMGgHcO1kyTprEExMZoxgqe4t/XdJnstVvq6cBgj
+	 tDRdFOQuYchgHV7iAMwRS0h6oVInNzhtQ+dm0sK1MSLWmGVdqnspXlwRo9cwbkPA33jFK
+	 6/J2xqVwLdfYrQIQYzffN/W+bNIim/kFqEXtWeasaIpGg4j01XxK5y6OpAk+G9DUVw6V1
+	 zYWJXK+k1WbKUVPnq4LsQr/+l/mjihGw2fh+P4IaOkO/e3athM6v9N0NR/psdqD4Eg801
+	 H96M2MiRxOBNqTTsnWItjzk2UEkCh3W2+W+WMULMVdZNyIU7lUgR659mZQhVFh/3/KQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PFTi5Vzh;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="ES/btqeW";
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=IRw1kSt7;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C66606A31A
-	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 17:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CA7606A31A
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 17:25:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C2CA7606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PFTi5Vzh
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 135FD1F000C6;
-	Mon, 23 Nov 2026 17:13:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795454020;
-	bh=XMevZObTQrwIBZ4zVSD9xmRkiB19mESNAfv/miZL2Bk=;
-	h=From:Subject:Reply-To:To:In-Reply-To:References:Date;
-	b=PFTi5Vzh8CU1VM5Gw52Pi9F5T3xa2SFQfyq3ejVciUd6pn1a10lN9TK6VKxv8nsyY
-	 jXGPPntRozmijgjOTaPmgIXvbsY/8ghiiUd+SBe64Tky0a4mccf2vcM84wne9gbbCu
-	 gcR47xuE9xg69PfVvJGDWACz6RZq6uPTC+8MWavexIOm2MYB+aidFvDZQyE7NQtVqV
-	 +h0pYClsx5SYL9VrymC150XGOh7Fh6CAnwSw+ifdK1CErD50FLg4SThbJPqh7Ey12R
-	 ET2EM1xXq4IUt6GDpbVsb8IytOmYrcI1novJdllKt5AgBTMShJWAVdxNujmxCy7tt+
-	 G48Fl15SQxNPg==
-Message-ID: <sashiko-outbox-229709@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 05/10] clk: divider: Avoid division by zero in
- _div_round_closest()
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Lee Jones" <lee@kernel.org>, linux-clk@vger.kernel.org
-In-Reply-To: <20261123164834.3330320-6-lee@kernel.org>
-References: <20261123164834.3330320-1-lee@kernel.org>
- <20261123164834.3330320-6-lee@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 23 Nov 2026 17:13:39 +0000
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=ES/btqeW;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=IRw1kSt7
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ANGGt9t2340269
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 17:25:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lfhg2+/rNBhkH2W0arnD3tR/lai12P2aVjqQX7vl+Hc=; b=ES/btqeWk9Ry0Y4v
+	sPoVsd4C6na0WcfUDwzbpyMtnHs5bhkYPybKr0Ecn5CNPpAnGtJ2KRoTSefgpWvb
+	WhW4cG3J1iecCApouM0FOxcwsEPDtC/Dz+JZXNw+eJ+pABSjSMhYtz59XtGFdTeD
+	d0fR+0wd+MQXKA//TVuDVjOYxcoUdchjCyvRjRsu/RcjF2KOoLQgHzN/jOWEUilb
+	cY4R496mMi+8iksuU59eHyMhnG4+gSRDuR2YiBV6/Pwqa9Kqzw2Fp8Cfgk//Kqx8
+	UH5imSinHWeiwAFLJ2drOD3iW/aTwHN3iVnrpD8swI+eDjvTGggOp7mbUBRauXCC
+	Vue6Iw==
+Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com [209.85.222.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j4exx2spa-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 17:25:31 +0000 (GMT)
+Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-99af36c8b98so40412241.1
+        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 09:25:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1795454731; x=1796059531; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=lfhg2+/rNBhkH2W0arnD3tR/lai12P2aVjqQX7vl+Hc=;
+        b=IRw1kSt73pjEXYwJdclzKQgGlvG7nnxBJ/HytOijac9G7jNTPElk53F3x9kII9r1Yn
+         CO1pum/eIjjS4OM+EZL2yMK5oXbpn/4qlTZcXRRc0Yl+oxI0h9qHAC5jdlUficg9L+qp
+         LPyPVTBqvLJHbTt6VsipJ7gVzRfzq7deJC9QNLCfoC1HZHGBn46a4FwYH58yCrBFsn8Q
+         9Zhm/+KWB1fy9sZTGLtklj/ImEvRizE5gMORGcpkuPZJRHNu4AgKNHaAJAauO4MO34WM
+         WoyDW7p8Y3U3tMEmDrf4nemtv99eNd5Ban3wGfyGPenvxjjcRlVHHMS6lbB2WpON+9i2
+         73Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795454731; x=1796059531;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=lfhg2+/rNBhkH2W0arnD3tR/lai12P2aVjqQX7vl+Hc=;
+        b=QsRG7LIQkhEY3HvX8Nl1VrqvBflky9Q6NFa12/bYY3QwipHDxHz4t2fKpBpyfdbhdx
+         sJLIdhLdLYCWZ8J69iOE5vFSFkqG8LqIyF6DwYkuJUTiM1csbRyJchgWTo6qVDbxJQtI
+         Ibo/sIpeQJlQ5y+9A6yr6IaHg+/FDr8t2/iZTt8fia/FQoc5mOZVp9LBE7mj3B2Uaj7n
+         OVJAmBnm4fm79BM22n4O/DXCzGj163pwuMOAcLlKJctcQm7Z3nfv26ZfEYhT9uR4G5fR
+         9MGtDWJRu5W47yur3tV4H59WdnostqsR0YYeo0LAPLgs2bHpWC1aTj7Qd7s6/0eHyEZB
+         Pa6A==
+X-Forwarded-Encrypted: i=1; AL+hErEl6XKexZuapjM4QBSHELsdx2+vUROkUzpdHdP7THFafNKLg7G6gJs7q61zHEGhcoP8pWme9aq4qW4=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/K52fy5H/IQ5/vP59cnXXZ78N818fTLiSGkbXoRB9a3Pf6TFPr
+	fH45OAgK/m84MtLB8lDHoAOUeU3ydv3vM03p/KsdSPnw311ffw9MxEa9Tmtn/1G2Sa3Y+9Mudl5
+	ZMKfr1ijKrcwH1DbzR6Y+xhTtvbWNbcYOeJUaBEpmPyonjEu2BxmB7AHHs7JVFtY=
+X-Gm-Gg: AZFdTZc2XiYG3fhiR2OmZ2Sfin//kxuFu8zLw++BmEykUQSmAD4Gju/943zXCB3QxKu
+	9czcw84Gk1ZylCL+eomo4tMqAC0U3Ds3lXfm2R+WxC9u5tSNRrtpIQgULs4Z1TPL8mMjE61AdRy
+	fxNVjCIu7n9GVWMf7KYM1OouDLOhkmqkov8/TJElTHe7BZVZYux6HKDOTA8FkVtrazvfKSaIWJQ
+	OyIls/47FWiLZ9lIDyfh3XpAxhDfcZagcHdok0kAWgOcvvNFzfbqL/eGF/mN0ve5yuXvYZUPlT1
+	q+Isax91dzom6FzaBQLtc/rLp54GgdnbhsCm7G2vt0w51cfFoyO1uJGYK1bKDfMDze0PBo1s4l4
+	HpxEt9M6YN+sXDtQ8bY7xeTHn8JjrEh+GPbAr+jqjwm0ldkHplqhDHNnVSlQ9I094SlaNYj8=
+X-Received: by 2002:ac5:c00a:0:20b0:5cf:ad27:3a67 with SMTP id 71dfb90a1353d-5ee8af8d7bfmr7450525e0c.5.1795454731017;
+        Mon, 23 Nov 2026 09:25:31 -0800 (PST)
+X-Received: by 2002:ac5:c00a:0:20b0:5cf:ad27:3a67 with SMTP id 71dfb90a1353d-5ee8af8d7bfmr7450472e0c.5.1795454730544;
+        Mon, 23 Nov 2026 09:25:30 -0800 (PST)
+Received: from [192.168.226.72] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513afc679bsm432664066b.63.2026.11.23.09.25.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Nov 2026 09:25:29 -0800 (PST)
+Message-ID: <97ccd0d2-6410-40f4-9c0f-c08931dbeb10@oss.qualcomm.com>
+Date: Mon, 23 Nov 2026 18:25:27 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,61 +114,65 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/7] media: dt-bindings: media: i2c: add Samsung S5K5E8
+To: Hikmah Gumelar <hikmahgumelar@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@baylibre.com>
+References: <20261123123546.152162-1-hikmahgumelar@gmail.com>
+ <20261123152722.168879-1-hikmahgumelar@gmail.com>
+ <20261123152722.168879-3-hikmahgumelar@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20261123152722.168879-3-hikmahgumelar@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=FKKOVOos c=1 sm=1 tr=0 ts=6b04770c cx=c_pps
+ a=UbhLPJ621ZpgOD2l3yZY1w==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=2S1_hLxhzeHvXZh1LqAA:9 a=QEXdDO2ut3YA:10 a=TOPH6uDL9cOC6tEoww4z:22
+X-Proofpoint-ORIG-GUID: ggPT4Du3kXGE0voRPxsSY7XHYgiOVZE_
+X-Proofpoint-GUID: ggPT4Du3kXGE0voRPxsSY7XHYgiOVZE_
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIzMDA2OSBTYWx0ZWRfXxKu2ofY7Si9K
+ DUgMVTiMgwL1vCeMS2vUPwdbPNrCHAkOKw++3xSKrmOGac/4NLig9tK/gQ+5I3TnaTlZgQ+tbaZ
+ q7FK8e6jnmfQN0WJTtI4Sfwfp+x41zI=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIzMDA2OSBTYWx0ZWRfX5NhUdJu24mov
+ RhziQAUB4e8kYoOISCvkCAnmHpjP3uKwYcbFZrtFbjmIEETO00rMYnWBxdqZq1JG+D961l1ocAP
+ Lte5YmkvZyBazd07XcRWTcJUkxkmfb0HK+WXfUEZVg2f8cC7C2AUsEgc+VeOzdwN97D9/mv7W/y
+ vqhuyO261/Q7kih59+2/5uFuqM2TLgvA9Dn2RzV2iXX0nj0g2EFPjCITSa/7TBvZfuH+6+jWnBg
+ 6tLcI9KEwL3nsAaJ5njREwufDb+xoPRTmHPQW76febe+djCgy2CmPuF5CsltyRJcmSscUBWWXRq
+ wGjR5EvPId/cH3NqX/qd5y16ewBQzZnjjRJrPr+myQZt7mLwLbRVkijwkXKYqwTSyyU3+ahTpgw
+ cSZLwBmuJYmAM7ZMUeGWGUI+5Zc8URwSusBRtLtVCGQbKsvRJQ45dI8zQNETRM1flCIM7xiiHMa
+ y7nP1mKxR3S+TEp/+Bw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-23_04,2026-11-23_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
+ lowpriorityscore=0 impostorscore=0 phishscore=0 suspectscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611230069
 
-Thank you for your contribution! Sashiko AI review found no new issues
-in this patch, but noticed 1 related pre-existing issue it does not
-introduce:
-- [High] clk: divider: 64-bit addition overflow in _div_round() and
-  divider_get_val() [1]
---
+On 11/23/26 4:27 PM, Hikmah Gumelar wrote:
+> Add Devicetree binding schema for the Samsung S5K5E8 5-megapixel MIPI CSI-2 CMOS image sensor.
 
-commit 794cea87b2763d8416c120885c5c264136bf9dfd
-Author: Lee Jones <lee@kernel.org>
+Please wrap the commit messages at 72 chars
 
-clk: divider: Avoid division by zero in _div_round_closest()
+Konrad
 
-This commit returns the minimum valid divisor from _div_round_closest()
-when the requested rate is greater than or equal to parent_rate, avoiding
-a zero divisor and subsequent division by zero.
-
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index f68216c65d3df..d05dc595ec4c7 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -244,6 +244,9 @@ static int _div_round_closest(const struct clk_div_ta=
-ble *table,
->  	int up, down;
->  	unsigned long up_rate, down_rate;
-> =20
-> +	if (rate >=3D parent_rate)
-> +		return table ? _round_up_table(table, 1) : 1;
-> +
->  	up =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
->  	down =3D parent_rate / rate;
-
-[Severity: High]
-This problem wasn't introduced by this patch, but can DIV_ROUND_UP_ULL()
-still overflow 64-bit addition in _div_round_up() and divider_get_val()
-[1]?
-
-drivers/clk/clk-divider.c:_div_round_up() {
-	int div =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-
-	if (flags & CLK_DIVIDER_POWER_OF_TWO)
-		div =3D __roundup_pow_of_two(div);
-	...
-}
-
-On 64-bit platforms, when rate > U64_MAX - parent_rate + 1 (for example,
-via clk_round_rate(clk, ULONG_MAX) or when clk_divider_bestdiv() clamps an
-overflowing target_parent_rate to ULONG_MAX), (u64)parent_rate + rate - 1
-wraps around and DIV_ROUND_UP_ULL() evaluates to 0 instead of 1.  That
-passes 0 to __roundup_pow_of_two() when CLK_DIVIDER_POWER_OF_TWO is set
-(triggering an undefined shift) or underflows div - 1 in _get_val() when
-called from divider_get_val().
-
-[1] https://sashiko.dev/#/bug/linux-4e20dfb7-a4d5-4b44-bb0d-e7b8ced3408c
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123164834.3330=
-320-1-lee@kernel.org?part=3D5
