@@ -1,57 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795428595;
-	b=QsDwJaZ8EUE1eQVlcTTFt4YG5YWIdTHAbCeB9QyhEpt/ql/ii7XFCWIKM7LJz8M8PvqI
-	 vX0f0RIaav6UXGQhE51q++wjERPPvGOgYvAB022ufTAH8uGeRc1+Ar5tpKUl3hONnXx9t
-	 7t1VHF8kKrLxnkQg1t39fRG+2GRTmVyT1QDzb68o7ULKORYEUSQfxZo9ZJKySR4TbCRfH
-	 dRmcoj06opAgTXyzm4cJNyyHwvIESF6z3HkqrmBC5P86lPkYLcGrzpLYNUnRQhkaE4R3P
-	 Yw3dmxm+rOpERsBOGI9vq5Mqi31TXxlemW+kTcVTDktvPcmlV7mw9X6+WMC1MzYyF4w==
+	t=1795428698;
+	b=tEjAyrfjjYO0GLx7iZ9395zdQxkXBAwGGoq/SyX0zX4d1UjO4eDLlxkgoOVgePOJ5GbT
+	 iY149vYLktC9UGDxJQ6rCyYyNCyxZQOFECwppxvLqNZw3s8c1P2SgrOPw0Hdu0Gg0HIEJ
+	 iMxPkLDUn54SRphV73ZUcpJanwOqU9TlZf0ZK9s2LVWFAPAFv1hc224B6X4p0/pV7Sr/R
+	 H7Jip81NymGXog/yjM4KKYo2AQHiz2P9xEg3K/9nA8m6/nXi+DoeTU9EL1qVf/lwEjMVB
+	 4HG/88pXBt91voJ9j1U/NT4wTtfn14SWjVHnGM9agFyrdSgYXDg6I7w3J1f9+vf5lZw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795428595;
-	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:From:Content-Language:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=QzNSZ0iFhRlTWtyDOwGZYClX/oRnKCvUibKarAhFQB8=;
-	b=s9c8VENuEHK3bHYPCVR8m1KVIYWXBpkkZCZIx0LGRBLGXhfrU7dZYHYMun0D/DlJEaw/
-	 tttgqHzTTEa8Mz4tCybJ4whu/76qETYQl1ivsifLAtv3KLiTqb9MZqxBckiS5mTqVQkdi
-	 xptB2ChzceeHvmv0sQmCYcJALuKrmKnrWdNafabX5f2XSRsIBCgQyVZ4xG++kkaSHMtY0
-	 svZbpD6u81wVoDczJkOXWV3J4qW+J+jQgN1N1u8t91pahygO8p86CBUAPSe62qS9J94ux
-	 CIp4aX/KIDzezRI4HSGXi1TXHX2RWP2r7iK+5u58ZbgE4VyLky8Y0xRuTJQ2JfC4lbQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795428698;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=2zhhd1eEjuORztzKR2E0hxoBTlVwdi2f3ssxH8CIdr4=;
+	b=kYXq7AKABfOAlDDx9mb4oosNHKnVh656ITUJVAd05ZaTUPzFY8vTQdcU6wNep8AkdX1c
+	 CoRT1r2mkQUyvD4pWvAJ5UNK+IQgDG/ePMt+FcC8YH+csNHl58z5lcQQQ31NNDCxd6eR0
+	 9g94OEw5q4OcuxdTpH3mfrr2BgK/GeFpZ6jUV9hC7lwHsdt8o59SrA5C2IThEh6hueHX1
+	 ON/u4gMNbaLSIrBpXOcklHD65JNUOu085KcoC7vCVAT1I34QgII42G4ksJiPeKk5BZTMe
+	 rpIZ1wJFE9LN4uNhL/7PrAHwpGZ+2roistUcdYjc6bRMW8JJYVDE2R+SxD9Mfkwl6Jw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=collabora.com;
-	spf=pass smtp.mailfrom=collabora.com;
-	dkim=pass header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=mail header.b=BBePDjYT;
-	arc=none smtp.remote-ip=148.251.105.195
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=OrTMXlAl;
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F514606A31E;
-	Mon, 23 Nov 2026 10:09:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3F514606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A498E606A32C
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 10:11:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A498E606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=mail header.b=BBePDjYT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1795428593;
-	bh=dNcePiAUgVfMdRA+1roMRiVaEzWyrtTb8Npu/FK/EqY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BBePDjYTm0dnzUEMQr71rXFyP6MEJNcQCEHXVkw+Y+2PQzAUn64znCBUpQ9mg6Mpu
-	 dhAobMTj0w62AYUcNRJt06xPjX65TlHXbUDYzBlBXTVrIkavKW2w4e+KiJ3PerXLuN
-	 Hb3qwOPAWaMKgfqUtPbw2yHYOsod19W46F8NOLQDZGoTamlm4gtKZ8Zybzsi8m2brb
-	 LCO24l9X5yzZZoFZsiz/B/FZQutp25a6WYXxTDEZivbrwlMeSnOHjHiV2FSVM1Nm1f
-	 O0b/2h9yaVSaxXm0MviW9R9SbPssuMWCixe/JZLTc+rdKeXlnkATT3FTgKkyrCRARN
-	 SiOj3NT1LKw+Q==
-Received: from [100.64.1.21] (unknown [100.64.1.21])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 274FC17E021B;
-	Mon, 23 Nov 2026 11:09:53 +0100 (CET)
-Message-ID: <05e5b03e-16f7-4e5b-b6ad-f946b2560ccf@collabora.com>
-Date: Mon, 23 Nov 2026 11:09:52 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=OrTMXlAl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=2zhh
+	d1eEjuORztzKR2E0hxoBTlVwdi2f3ssxH8CIdr4=; b=OrTMXlAlc7y5ZEcxZcR0
+	3gGqbjRCkA1Z31VBk5/N9jy3BrLFHTy09HwVb5u3Au1MTFRzYNVztLF9H1008ajw
+	pqmgnyjtWZUWj4+n8YefbbvCr17h5ypnU2s/UKL6d9DOyAFkE8HFaamVcE2IdDbp
+	FAjLY5AwSlwcwYFdAlv4oGa2YmLKM+OV0g588bpEv58q0D234zFiMOnXPsM6rFAA
+	mCferKHkgue73cNnL0DhnUi/F/+Aueviet8LrQVC69/ERK1RML6E+kCb1BG3YBP1
+	Bwbl6miAmjKqfdQRxyfYhzMLWdjBj/25IQN4gQ/xVzOuXFOsqt5NgJZHMnRyhSEr
+	dQ==
+Received: (qmail 2655639 invoked from network); 23 Nov 2026 11:11:33 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Nov 2026 11:11:33 +0100
+X-UD-Smtp-Session: l3s3148p1@knt+0e5gSrYujnsu
+Date: Mon, 23 Nov 2026 11:11:33 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: khendry@reliablecontrols.com
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] clk: renesas: r9a06g032: Add reset controller to
+ clear resets for mii converter
+Message-ID: <awQRVRjdSX9vtw61@ninjato>
+References: <20261120-rzn1-miic-resets-v2-0-f1cfa678615b@reliablecontrols.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,102 +74,49 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] clk: mediatek: mt7629: move clock counts out of DT
- bindings
-To: Chuanhong Guo <gch981213@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20261120-b4-mt7629-rtc-v2-0-cd877cd496ae@gmail.com>
- <20261120-b4-mt7629-rtc-v2-1-cd877cd496ae@gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20261120-b4-mt7629-rtc-v2-1-cd877cd496ae@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="APV7O7fo23abPKXl"
+Content-Disposition: inline
+In-Reply-To: <20261120-rzn1-miic-resets-v2-0-f1cfa678615b@reliablecontrols.com>
 
-On 11/20/26 15:41, Chuanhong Guo wrote:
-> The clock counts used by clk-mt7629.c size the clock provider arrays.
-> They are driver implementation details rather than clock IDs used by
-> device tree consumers.
-> 
-> Move CLK_TOP_NR_CLK, CLK_INFRA_NR_CLK, CLK_PERI_NR_CLK and
-> CLK_APMIXED_NR_CLK into the driver. Keep their values and all clock IDs
-> unchanged.
-> 
-> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
+--APV7O7fo23abPKXl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If you migrate clk-mt7629 to mtk_clk_simple_{probe,remove}, you will realize that
-the CLK_xxxx_NR_CLK definitions are completely useless, and you'll be able to
-remove those.
+On Fri, Nov 20, 2026 at 01:16:51PM -0800, Kyle Hendry via B4 Relay wrote:
+> On the rzn1, there are two resets for the mii converter in the system
+> controller. If they are not cleared by the bootloader then the kernel nee=
+ds
+> to do it.=20
+>=20
+> To handle this, I've added a reset controller interface to the clock
+> driver so the miic driver can deassert them.
 
-Check other MediaTek clock drivers about how to migrate.
+I took patches 4-6 from v1 to actually test this series. Worked fine and
+the resets were deasserted (I added some debug prints):
 
-In any case, NR_CLK is always the same as ARRAY_SIZE(that_clock_array)....
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Cheers,
-Angelo
 
-> ---
->   drivers/clk/mediatek/clk-mt7629.c      | 5 +++++
->   include/dt-bindings/clock/mt7629-clk.h | 4 ----
->   2 files changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt7629.c b/drivers/clk/mediatek/clk-mt7629.c
-> index e154771b1b8b..517c43b19f18 100644
-> --- a/drivers/clk/mediatek/clk-mt7629.c
-> +++ b/drivers/clk/mediatek/clk-mt7629.c
-> @@ -17,6 +17,11 @@
->   
->   #include <dt-bindings/clock/mt7629-clk.h>
->   
-> +#define CLK_TOP_NR_CLK		108
-> +#define CLK_INFRA_NR_CLK		6
-> +#define CLK_PERI_NR_CLK		22
-> +#define CLK_APMIXED_NR_CLK		7
-> +
->   #define MT7629_PLL_FMAX		(2500UL * MHZ)
->   #define CON0_MT7629_RST_BAR	BIT(24)
->   
-> diff --git a/include/dt-bindings/clock/mt7629-clk.h b/include/dt-bindings/clock/mt7629-clk.h
-> index ad8e6d7f0154..cff9a02e8302 100644
-> --- a/include/dt-bindings/clock/mt7629-clk.h
-> +++ b/include/dt-bindings/clock/mt7629-clk.h
-> @@ -115,7 +115,6 @@
->   #define CLK_TOP_CRYPTO_SEL		105
->   #define CLK_TOP_SGMII_REF_1_SEL		106
->   #define CLK_TOP_10M_SEL			107
-> -#define CLK_TOP_NR_CLK			108
->   
->   /* INFRACFG */
->   #define CLK_INFRA_MUX1_SEL		0
-> @@ -124,7 +123,6 @@
->   #define CLK_INFRA_DEVAPC_PD		3
->   #define CLK_INFRA_APXGPT_PD		4
->   #define CLK_INFRA_SEJ_PD		5
-> -#define CLK_INFRA_NR_CLK		6
->   
->   /* PERICFG */
->   #define CLK_PERIBUS_SEL			0
-> @@ -149,7 +147,6 @@
->   #define CLK_PERI_NFI_PD			19
->   #define CLK_PERI_NFIECC_PD		20
->   #define CLK_PERI_FLASH_PD		21
-> -#define CLK_PERI_NR_CLK			22
->   
->   /* APMIXEDSYS */
->   #define CLK_APMIXED_ARMPLL		0
-> @@ -159,7 +156,6 @@
->   #define CLK_APMIXED_ETH2PLL		4
->   #define CLK_APMIXED_SGMIPLL		5
->   #define CLK_APMIXED_MAIN_CORE_EN	6
-> -#define CLK_APMIXED_NR_CLK		7
->   
->   /* SSUSBSYS */
->   #define CLK_SSUSB_U2_PHY_1P_EN		0
-> 
+--APV7O7fo23abPKXl
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsEEVUACgkQFA3kzBSg
+KbbOuw/+NmeRwl80UT8zRscw+nxapGVFTkcpvHxUDvQ/YQlMRmrdq8dtyV+m/7Uv
+/T1LXRVLG4mKP8I6Xlt3PgnyCHZrBa0csn8fxmfuCTelsXU9hamhlBFlQho6cx71
+p86TwcW+d1CyUXLPiccGMpiSccRaMz87RVtSqLsGhOhioC9XAdZ60FGWMT+b62zn
+KZfJzPDpLRA8/dQs1PGWMPkDpEBQbEISOW05O7c9K8v1cD4mdCOp58LQFS02u4N2
+idrsCQ8HH3sxPQUiC7kyYb7EAFOUvNNkPFKICRFTcbWokPfe3FQcbxAe6O483CRi
+5Idm4XH9e+tgVHugSnGhfx0hKP1Hz412ZOjisdd0ouSR5RI/62OW2w/D/CFJTlSJ
+2C4xisd0YaZpR2/uXAOALIBR8i1Lkw3iX4+dmBC161t8AdLFvMG2vdQS/JmDVOvK
+kA74880hg0GzEppZyExgoECbjeUxBKTAAH0a7as0LqzRbUhZerh7lprJrGSfk/Nl
+uCS4y1XNoOcVSX1ZEZ8gkova5KxlFYdlWPu+qNJr4+TAX1mL8jNFxEDkzfuDEuh0
+msp9EPpwrS4JhLfwC3kUzqPkFFNejb+S8fr6xC9rjRBlvv60pbbv/xmxu+ZVKTwF
+6xzuhY5jrV+qGqLhGo9KvaJV18MBUCPqpWV5IEv8iCjOBREtjNI=
+=aUdw
+-----END PGP SIGNATURE-----
+
+--APV7O7fo23abPKXl--
