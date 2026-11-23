@@ -1,13 +1,13 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.75.90
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.126.80
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795402138;
-	b=waS7ePUG496Jj+8yOYlEH/hsuYy2kOyFfT7rDO9rY6IACsZ7ItByMPde1IdO6s2qIlbE
-	 aP5blDtbCEumLwOJ0j4ZzZnLrwS7odkIlRoQRQf3PIDy1klCBkULy5bgpBQRBWyIx9Hn+
-	 X1vV/nDg3nepaZV1lKCf2vGnyu9UGZ04PrRvu11GK8+rCI0CyjRVG4etadkZw1DQn98lw
-	 S948aErs1frEMRDYbX84OskkJMixvO1tvgKCtMXFBNIm2FgklY2iDxqQ/QFXsA32+zdMk
-	 JcQ4C/zoVGXD198fVKaD7wfshkQpVkweB227VXhsPGKl6sWo/EZ9b0vGwO1PA7WEG/Q==
+	t=1795402305;
+	b=JSLR8g2eQn4+kHBDTAcrXUJN1A882Q76XUPgKURWmceZQUVf+wsnKJLTk2XUnv8tgGdZ
+	 ut8Agvytab9r7HMHBCYAy8A7V6R44tVdqPE5xmKraQ45urild8rM3FnKMND7ns/LGxykh
+	 O30bY4PEmX/a4GsLNe7RBqd3cAnlwKswIGy5h6hjvwzf9jTomh3aBOUSxwXa1W0YButlr
+	 uLlTDQ2/Hpwf4g+TBNEKxN8C8gV7RkAB4AJEJr+fFb9ueznpCHaiIq+3bvMZ92/Jmva6h
+	 Ithhp3FELmG8x2K/eSXOA6adPiVsS1S21S0FgDWSe51c0KeCdyXmWDmdiTk/wKWCvuQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795402138;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795402305;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
 	 User-Agent:Subject:To:Cc:References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
@@ -24,58 +24,58 @@ ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
 	 X-MS-Exchange-CrossTenant-UserPrincipalName:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=VK1T2HwlPyFHMRMv7r8NO5LBtROymS3xhOkA36Wy8H4=;
-	b=1JLs7T0EFioFJPT/2T24uNIMfJTjB3og7AJ1JFJf/wje2iLalRxFZme6W/br5Nd+lvuK
-	 LoJGRBQwCNyqD31sLFScQE+PWfLYEwsjvZQVDLOYP22K3lj+Z2LWHrz2qXdk9FJh4SIY0
-	 jL2z4T6+tJICblUKALJ24gKz/AMQTN070bYXLTF8HhodG8J92s8sQqbyDu/e0fbKAvdwm
-	 lJykqAlo5JfQ6UITzrRv3GlS//yj2JbM0vmXrDjtWv7td9mxV7nm0Cmo8F7jOvQYhDVVc
-	 LKNKfWPesE1i9CVGJi4d8daxvMfpugQa/YoboK5gU1NIX+sD9IR7uFVuiu3dnwOZVYQ==
+	bh=uamSJL7kR7eafNJ+Uq8YA9Hu8PFg0ZESPtkdJciTX5o=;
+	b=E7mpF/xMg5oU+Uoz3XyafjMpaDXH+GbFD4KQGFTIiRwvZJcJLIcgB2mcUPcnKrxQikI9
+	 za0su629dxDi2T9+sXl17czraQbCdKFMvzMBv0drlS6WhCJkwJX58m1XeHLZOfwQjGuVm
+	 101x2mAhVXZtDDkxQTdkqm87RSv+fyG0TKDNmr9pFIxJl3msQBqY78o2VSaENI0KHQCCW
+	 Nmsp3Bp/uu1Jn5UG6mMCg8PYSraxS1yvWwJRzkjLy8BesWxPZ3cl2Lj9620g+i33B8efn
+	 jVGt3HQVhPS20Rne5yFH7AJrO17cFhEY5L4vxTbkoZ4sJQisSblk5GuJNwyVC/7nO1Q==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=amlogic.com;
 	spf=pass smtp.mailfrom=amlogic.com;
-	dkim=pass header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=TalrCIhg;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.75.90
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022090.outbound.protection.outlook.com [40.107.75.90])
+	dkim=pass header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=aaWbmw7D;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.126.80
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022080.outbound.protection.outlook.com [52.101.126.80])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B2C606A31A;
-	Mon, 23 Nov 2026 02:48:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F0B2C606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A54606A31A;
+	Mon, 23 Nov 2026 02:51:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 69A54606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=TalrCIhg
+	dkim=pass (2048-bit key, unprotected) header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=aaWbmw7D
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HZBiYK1BqG+dCdLGFlkOEEa9uT71Of1W9WEbiOCQMZq1LoXqOjJUsUfs2vZQ2EcjqjO/VhX4QotlZIXyo3UnT/P2WVBQDXkF4sAwW6hzAar2IUeMuIW3T3ZxNx4stmeEqV3aB3o+hdtyjRrIrQgL2z12XLfPcws+MXbW/owhVTPF4gxw3MQG8E63qjXx1h/6iMj6lfH65XG8mM3wwz1vrfTIUkv9WOs5kJct6+ThOi8TeOkjC/Uze50iq1nJX6+SqXTV55k3PD9sh2cd1iEHQQeqYYWb8whjKX276EmjdvG93g+xIeDR0rWJln9ni9XUTd6R2rNssuhlLQ+XkDJ6Cw==
+ b=UJUhWZhpgaesiAhmgSvvPWczrLBwrGb160KePAvwxfg/gzYYbWYlRaYgIDsY2kUaJ6YTBehWbIs5Wfz7zeWGfIWfbCPVaKEUYTvsiBZHimOm2flOVO+Mkm459tteo4Au4klqmhYdvOeB7pz5dCJwbxT/Rc+q84qFx0cOoGMIBZscWEIyedY54tbFuP3X0rBruvyvAADVAqD0TTSS1P8/2E+CmUE/biZSlQ4EMqhZMcuDtncVU/bRseayKwxWa+swCHwvM3EJUxBS5xLl2MdClMB+9gIWzO/klOavCckAsp+F+E680FlET+ptLJDUxbOrRLMJCE6Apr8/7MQueLS+4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VK1T2HwlPyFHMRMv7r8NO5LBtROymS3xhOkA36Wy8H4=;
- b=weHxpap0WthzC1fnm26xSdA8L4Z0WorxtXr7Fq9t394or0TRqdQNeRuD9NM/Ei0q9OkVfe6Q0mqrAVYdlN7CEdlfMuyQCLq5T/gC8TSFiYjbQpe8Itjr7tFPtGAWjfMbzoMYHmYP0qul+YTJSwYiOTM9hxANlTJoRCpIXZJxT1Z7PHNQ5X0o6Rd9VGtM5gKh3YijkxBLRy5G2lK5S5z0p75VuBlWnork/KrV6bAxG3jtUVf372nwPh7OTsmrILcOF2cjP8o3x0kZtj0C56Ql8BK/ExsdkTuYrlyvfaImMOdAdwYAfBaoZugfZVa6agHiq73HBzwzZnKJXjxAebHIdA==
+ bh=uamSJL7kR7eafNJ+Uq8YA9Hu8PFg0ZESPtkdJciTX5o=;
+ b=M+7NMOHWyDf5JHNqEzEWeghBko7yH/YCLrXWwzv92BCkm16ZseMDctm1Q6O5X4EvKfgW+2CAC/pMGb0o0tvQpbhfYPbRZVV1tbJLBTTx0N3HOLeKjnwjm2DyyNIpTTmH+XnhNhn70m+krIDIIJwszUyaugxa74Ld/fQudRuXmzcWWv6SYzuP7MAPmVU2Ms1VTKYlWpbUIz5E7K86RxOMVejkBmHyWPlo91vTE2qbwPu1ultdNKcuK+omEE62n9zreZvzw4qNY9qokp2sa+5kFeDRZkMy87jARs6JO5pqKbiJihxLzT/wDQR/qLksxRKBSfMvE4NV83srI2af+sxJZA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
  dkim=pass header.d=amlogic.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VK1T2HwlPyFHMRMv7r8NO5LBtROymS3xhOkA36Wy8H4=;
- b=TalrCIhgqrZqmyP5fNHQL3FVZ9HP4SZxR7xk7x0rWsiM7Ho0gwkLXBtYv9IYTt/gxCF9xpfxzMjqILNAm/q5g3hbolVxbn/FcbRsuZcNVh0H2/Dz9m2bX61WotEYBLLZ414ZQG5Isy5L0KavHKxZFlo3UekreuZvH2tzsoacgea0OZgdugr6pSCKy5DpETzeKrWJaHgvtv4a2I6l1r2sxkoUZvu1Pj0miTzeFUM9d0JO0mLdRqms34YI4iLH2V6ZnX43tDqyEv6MXXEUFBDkC6HXbFuIEDDXKKxHIdgs36qWZaRQlBYN+QU+FY4jsQxwXHdSlFzUQXytUghHQnej8w==
+ bh=uamSJL7kR7eafNJ+Uq8YA9Hu8PFg0ZESPtkdJciTX5o=;
+ b=aaWbmw7DsBjjQYAJmPOIZSR26JKGQz2ps2OygkdzGhKMIPNOlXeylwVGRbT4l7SF57jGgQc3wDpEkvn2FGYlqvLFBh9NP4JErInsgpFZbs6zERxpTn1v0ZHSpcTS0Bclyy+BrJ6/zdErMJmqtUXdb8xfBhHaAnbwDV249iTvwwzR2m+LJCZsyhLYGVqdGh+eS18sIzSu/Z1hS2Pb/G/I/Lc3prfDiliapyXYN7/L/Ovdn6x9GBdnQXAkb2moXKQG34tWYIpk60gWSlxh/ya/BJf5YSEsjlawtjJ0U9K4zYzx2yu4o+wNe9IT8AEZUjM1kWAaMeEprYno3zTXDBY6Kw==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amlogic.com;
 Received: from TYNPR03MB10226.apcprd03.prod.outlook.com
- (2603:1096:405:3c1::21) by SE3PR03MB10620.apcprd03.prod.outlook.com
- (2603:1096:101:322::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.13; Mon, 23 Nov
- 2026 02:48:55 +0000
+ (2603:1096:405:3c1::21) by JH0PR03MB7509.apcprd03.prod.outlook.com
+ (2603:1096:990:15::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.10; Mon, 23 Nov
+ 2026 02:51:42 +0000
 Received: from TYNPR03MB10226.apcprd03.prod.outlook.com
  ([fe80::ff5:e524:cf10:5d7]) by TYNPR03MB10226.apcprd03.prod.outlook.com
  ([fe80::ff5:e524:cf10:5d7%6]) with mapi id 15.21.0639.012; Mon, 23 Nov 2026
- 02:48:55 +0000
-Message-ID: <832c4090-d6d7-4c3b-85e7-ed7dfb8c85c4@amlogic.com>
-Date: Mon, 23 Nov 2026 10:48:49 +0800
+ 02:51:42 +0000
+Message-ID: <0ea53475-4112-4e27-b06b-b6301f28e14c@amlogic.com>
+Date: Mon, 23 Nov 2026 10:51:36 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 5/5] arm64: dts: amlogic: Add Amlogic S4 Audio
+Subject: Re: [PATCH v8 0/5] Add support for S4 audio
 To: Jerome Brunet <jbrunet@baylibre.com>
 Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -89,14 +89,13 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
 References: <20261110-audio_drvier-v8-0-1489241e4c83@amlogic.com>
- <20261110-audio_drvier-v8-5-1489241e4c83@amlogic.com>
- <179536111581.2728475.9919460533427781841.b4-review@b4>
+ <179536124894.2728475.16240917993133855473.b4-review@b4>
 From: Jiebing Chen <jiebing.chen@amlogic.com>
-In-Reply-To: <179536111581.2728475.9919460533427781841.b4-review@b4>
+In-Reply-To: <179536124894.2728475.16240917993133855473.b4-review@b4>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: JH0PR01CA0061.apcprd01.prod.exchangelabs.com
- (2603:1096:990:57::8) To TYNPR03MB10226.apcprd03.prod.outlook.com
+X-ClientProxiedBy: JH0PR01CA0071.apcprd01.prod.exchangelabs.com
+ (2603:1096:990:57::13) To TYNPR03MB10226.apcprd03.prod.outlook.com
  (2603:1096:405:3c1::21)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -108,353 +107,91 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYNPR03MB10226:EE_|SE3PR03MB10620:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0da04716-41e1-4a85-c1c2-08df490c508e
+X-MS-TrafficTypeDiagnostic: TYNPR03MB10226:EE_|JH0PR03MB7509:EE_
+X-MS-Office365-Filtering-Correlation-Id: e813fded-62d1-48bd-6fe7-08df490cb45c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|23010399003|18002099003|22082099003|260925021911599003|260925021311599003|260925022911599003|261009223027099003|3023799007|261021123027099003|261021121427099003|261022105027099003|261026121527099003|261026140227099003|261028144727099003|4143699003|56012099006|10067099003|261102123227099003|11063799006;
+	BCL:0;ARA:13230040|1800799024|7416014|23010399003|366016|376014|18002099003|22082099003|4143699003|11063799006|261026121527099003|261022105027099003|261026140227099003|56012099006|261028144727099003|10067099003;
 X-Microsoft-Antispam-Message-Info:
-	GtZqkqK2SALF80BYwhKSFt4V8aoRgYOfN46gyuCDOEH/f/BWCnCWC7T0L/KzTxM+eKNzSeVxHsM+SeS//vRXI+lPJScSYNnWciYob6u666QOPW1o2eXUu4Ib0zafkiZZ92YdBqxqm+cPcMMJF0UMplAfNSMI9Jx0Uu8aGccCXcGBM0NA+nrVeNJqDkHe4SWeqPGWloAf48PReYVSFNiFBT3pQdYCelnL80zfWMgkTsDWd2Gt+eCbO/rMdQL3RMhIJ/vetxoyd30OU6OUINK6xYBy0NIlFnLLgj/NF+nZf3oi9utN14fqpVB1NZC028g+t1joNVAM0jbuHtjaSMxIFHj7wb5h3o+cW+kUFkQOKO7Y27luRVsfVVUlP7fCv1zF1GEv0rHuD+TYMpVpYFLQX6UAesEX31uhay7pR+EeuWmtQuEzD67YAwAHETw7/AwSByPc2gP0xCk/S9zxl6zMbcAwHErrRfTbVX8M4XDCdx+KsjsfcbXRUokuTI9wyS6cCs6LH4RLQSNyaxcVVpXcNO3tWKGQYgtA/vSe4yeY1PhyhT0JulxNqnw8GMhNm/QN7ie5j9mTWOyiBh1Lrqpdp3gEfQ4hAdrEkWtNs28+S+JIQet1L3AkO3rjGRNLUiLMOMXcTOo49HoJQQ6INzMvke+0XtUyvPZzf2ZppKy0vyc=
+	LObOe3zk2qdqtsaqVd8Stg1fbkPGGV/VeWTtH31MRSGPTIbfloPurTT/eg4G7xbgYtBOuiWdtqPw5WrDoi1FaL0flZA2hZMdwUuamo47TCioSbXWFv9RY9JHUna2DkoMoR7j8myD5sIbR0J3OoYTDDES3KestpwsooD1XJ4EFJI/VGkcZ58+5w97q9vdSaPHwIZXgPpyPz10gkG3qaZNyZEmo8RBisaU5sh+G8csEkSbKYQzio+K0uT6D6NMtmabRoA51e3B8Acp5Bk0eZ5Tt33XBbmKKg1QWaNgWZnd9sXN5np9IENpHpkLlR9jm5QNvQQMemTkLxUioFsOO0HqO44CS33wNebnl3za53i2LZRRKgkVLEShgjmv5ys56x1c3NXWAiV7PNDsQ+q15KErpkpMJz0n0qY6JZ05NQvLwf3VysKBp+MVvrB1P/c5zalQo3hrEoKpTAs5KLXzzjj8Vd2ed2FyKUormJ4a6SzIlaZh0PIXODSHweNX+hT1gmW6NFyuQxEIvV5fVD2R6y4svvbNWx1dHBsofParUb9gykfLaPEhCUx35zve3l8ZkfQ/PMy9PCLsbv4tBDM3Kuz9dVUK866DJzh4XBT9Unb763r/57AaOfwm0LbmS6mFKfzOhl+noeQ6gbkAS/kTHY2dPDjmIjcSvQJzLqEdQsd9+Ug=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYNPR03MB10226.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(23010399003)(18002099003)(22082099003)(260925021911599003)(260925021311599003)(260925022911599003)(261009223027099003)(3023799007)(261021123027099003)(261021121427099003)(261022105027099003)(261026121527099003)(261026140227099003)(261028144727099003)(4143699003)(56012099006)(10067099003)(261102123227099003)(11063799006);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYNPR03MB10226.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(23010399003)(366016)(376014)(18002099003)(22082099003)(4143699003)(11063799006)(261026121527099003)(261022105027099003)(261026140227099003)(56012099006)(261028144727099003)(10067099003);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QkVxLzdyMmV4d1RweFVpU2RVcm9XUFljUEdJNmc3azRneGxIRHd0Z2h6SVRy?=
- =?utf-8?B?aTJiQjNBSWNKWjJEYlFhT0JBWFRxcDdwdFZsOWp6WVdYYW9PSXJna0hJcFZV?=
- =?utf-8?B?MUFGL08wM2U1alk2RHF1bFBBZ1c3NnJLRTBHS0pSS1VsM2lPOC93M0ZDZXVj?=
- =?utf-8?B?RnRGWFBlODFEZEExSHg1dXYxdEZTejVJSnRMWFBLbW5CS2xzdmdEK3ZuNmp4?=
- =?utf-8?B?cVkzVnR0WmxIUmdrRzdLSnlvVGMrWmxQWXJzSEZpR1l2amJSWkVDbi9VRWhB?=
- =?utf-8?B?b01yODU1UG5ja1pUVDFrNEF4QTZJUGt3VjhQdXJSUnVaNHg3QnF0aW5ycVox?=
- =?utf-8?B?NTltM2tqUEhZTlFFQXFuQmtyOEFuT0IwUVBqaUlMa3p0d3kzNi9PMHNzS1FW?=
- =?utf-8?B?R0xBTS8rc0lLYnpNdkZsT1EzbzhteldLalNGdGNkN24xR1QxZUxUYVI1TTNF?=
- =?utf-8?B?QTY1cnhFcVFMV2NCcUJDMFpSdmRoQjNYejV3K2EwV0FvK2oxVkpncFFUNXFx?=
- =?utf-8?B?aW02dktCV3lOSTBIbnJqRkpkd0F3eFlTZjFDNEJoVkRRWThmMHpuZU96ZDJY?=
- =?utf-8?B?akhKbEtvZHpEb3R6ZEhkdFYrYnRIcXhHRERjdVcvSEdBZnJVQ0ZsdUVrcHVB?=
- =?utf-8?B?ZVo5eGwxNk9SVVRTOE9KSVZNSnloQlluTW9CVnVCWm1xdlgzV0NFZ3YrUy9L?=
- =?utf-8?B?K3FPYm1QbmpCNHByNXFyYzh3MGt0OFN5Q2xVdTVLQ1FtQXA0THVyOHdFRVdD?=
- =?utf-8?B?SzNaZVpBR2NxQnp2NWNvU1lVbnFqTmJTdkFBcGo5OGdaQ1dObWVyMHdEVUsx?=
- =?utf-8?B?KzRpMFpzd1h4eUdFVTJVMjdFWWJQLzR3SXdtTFVuTnJvTG5nT1h5OGVqZHVK?=
- =?utf-8?B?SFc1S2hrMDNXa3NiYVdTRWRwSDFVOWpTekR0WTJwNWQzcUN3dlh3WExjUSs2?=
- =?utf-8?B?WnZvTXBYOFZTRGxvdXhXZWtNOE5KS2VhMlFhRUMwTFBaMzk4MXF5RER6TTRt?=
- =?utf-8?B?ZGNTOElJdzkySEVoUHNGR2lKUWRocll1K1RyblYwclBBYzhDVTZVSWtFSnla?=
- =?utf-8?B?WjVvSTZMSXQ2aUhqa1ExRFFtUGtvVXAxamh2OExrY3lnQmJBaStTdUFOTFE3?=
- =?utf-8?B?UTRuZ1pwZlVLK0V5eFhjL2dQaGFNV255cStKOUt3WE12Z2xwNllsVVYxM2VU?=
- =?utf-8?B?K2syQXEyMzJ4MWg3c1N1aHlaSWpwcnBiM2RNWlRhN3FIbkpZY1FDMlJITlhk?=
- =?utf-8?B?QWpXRFYrbjRELzA4TWpibEQ2WDVzdlArbkladG1FRU80UXE1NUZMMDVjQXJl?=
- =?utf-8?B?aEsyYVVKcStHU1M0TUNwY015QjJ3cUlsYk1lS292dzVxOHVPaFEyRThJM1hn?=
- =?utf-8?B?RE0vMVhWeDdTWlNXbTZHTzNIL3ZpbkpaS2psYmhHWEpFUnpKeFhXRjlDL1Vk?=
- =?utf-8?B?QzdvS0Z1VG5mejB5MC9iUUFCZGxzNEVMVmRwaUx4Vm1SM2tHb3NFREVLaVFh?=
- =?utf-8?B?b0gyS1ZyU3U4ejcxN2xDOFhLZkFrdnlYMExOTzBpL0UwbThIcjE3SHEyV2lv?=
- =?utf-8?B?YTZBWmU4bmVYdXk4dmdoUUdIR2g5QzhRYWxxOHZoNEJOdEN6dktrTDBhR3Z5?=
- =?utf-8?B?dTNWRXdkMi9pN1hzUWphUld1UFhETHA1OWJreUlvL1l6YVZQN1oyaFp6ZVRz?=
- =?utf-8?B?a1lXbXRnMmIvR0Rhb0lMaElCWU50TlAyQ3Y3ZVlvblVPTHN0elJGQzRxMkd2?=
- =?utf-8?B?clpKZlB4c0lEb3YwcEpTOCtkTDZ3NWYxY3FQVzVDM2puRUtzNUJyTTdEV2hG?=
- =?utf-8?B?cWgyR1dlQys3blY5VjQrSFpBZjVwSzczL1ZzSU1qelR6Mjhidm9PVUFnT3hr?=
- =?utf-8?B?b2lnMXRBTHlYaysvSy9CRkpyOGluV0hhYVNWaWd2cWJsdUhoUlo2UUJXR24y?=
- =?utf-8?B?UmUzYnZlZHpyajRTOHoyMU9pZDduRndaNDJEd09zRXdTem0rQ0VoMlpVdjJq?=
- =?utf-8?B?WkRpTk90T3AwWGMvQkNBNzdpSmZtYURHSDUrSzZLUXBVeDBCdWFwcnNvUS8w?=
- =?utf-8?B?cjA4MnRFZ04zclFSY1BxWjFvazJMZk8rUEg4eUNWQ3hGN0YrUUM5ZXBRbk5Z?=
- =?utf-8?B?QWRBT2tqYWNyUEd1aFI1d0g0V1gvQjV4cExRcFdUYU1qa0dNRkN3Z1l2UE1x?=
- =?utf-8?B?TThVVzJvOE5OMG5oSHVNdHdiZ2F5S0JDRDN0cTN3cVhTRnpQRVdvSXZYVFdt?=
- =?utf-8?B?THZ2OVhCYkE0ZUxibjJXYlN3cmRMbUpCT3hVWkdCNDlmcTQyK1ZIRjNpUUp5?=
- =?utf-8?B?MGtkN2JIS3BmRkhHUSs5bC9wODdTeWJBYkRTVnZuQlIrTTVEN2tMUT09?=
+	=?utf-8?B?QytXVFhBYWhTdzdYZzZ2SnNESWhVN0RSOVVBdlM1MXpGVENwVVovMys2LzBw?=
+ =?utf-8?B?UUhyek1ES3JOaUhyN0F1QUNkeEVJaTJsWEVOek1tME82blBlUUdBRFltS21C?=
+ =?utf-8?B?SE1sald3ZzJ1L0RhUi9WS2x4ZDRBZVFOcGtaMzRFckNvMUZ5RUlIR3kwMkw5?=
+ =?utf-8?B?QS9vb1ZYL1NsbG5zMExTUUNZOVhrSzBSa3hzTWNLVFNOcFVENllwMzhxNXRF?=
+ =?utf-8?B?YkJRUFk1UzRlT2ZHZlJxaGNtNVVUYVhyYmpHTUl2d2cxaFZORVg2YlUvL1gr?=
+ =?utf-8?B?dThVRzJHd28zN2hoWEdPQjhqNmRDZjAvaTgvMkdldEtnZzVoUDRWWTBWbTds?=
+ =?utf-8?B?MGo2eTlacU5iTU4vR3ZpR1l5QWx3WjhsUThMMFR0UHl5dFNrWmdmakdQQnNN?=
+ =?utf-8?B?eEdqZk8ybHlTVVNvcVg5aTFnOUNBZUJrMTJ5aHM5cUNYVUo5cWE0ZERIaFNF?=
+ =?utf-8?B?UWxhR0RMaEQ4anVmeEhXUDF6YURCUEFET0JyZHhnblhRUVZUd3ZuYUhsNUFz?=
+ =?utf-8?B?SHFmQVRZcWJhMm1zem9BY0Q0SHQ4L2dVWXB4VGY1Zng4N014eHVYZ290a1Vl?=
+ =?utf-8?B?eDU5K09HbEFINU1mZ2VjRHRkTnBtcURBRHhEVkZhNnZEWVI5WHQ0R0R6MUgx?=
+ =?utf-8?B?UjkxMEp4Y1BTSGdQdHRqUW9EODdJZCt3dlRZM1pDUnZIcXlNS0I0d1Jlc3FX?=
+ =?utf-8?B?Wm1RRGNZckVXdW9GODk0RmRVMmRIU0x6Mk45QTJCc01sNnB3anpsMDVkcmRq?=
+ =?utf-8?B?RXlUd2V0U3k2cVltN3J6UXR5bGRkVzVSMlhyb1M1aVdrUmpoQ1lPOWhKWVZO?=
+ =?utf-8?B?NkpqUXkyQ285bXM3N2tMZy94UjAveHlyekx0UkRoTWgyRGdmK2ZMeUdkVVI2?=
+ =?utf-8?B?Nmt6dE9NODdlRitFeVdaVHVJZkdtT1d2c2F3cXFodjJXcW9UNFZzOUR0Rldn?=
+ =?utf-8?B?clRxa2pKOXlJcnUrTHlPNmJrdmpwM2VGcW8xRkQvZnZHWmkrL1hva3hqVlZp?=
+ =?utf-8?B?ckx2QUp0a01PNi9kNkVCbk1TL25xd0hBdEk1TWptTjB3VjlvbFhkNlcySXZQ?=
+ =?utf-8?B?OWM5NlJKVS9TTFpDc3MvOTVueUlZTEQ2VmRYVWtRWmZZZDgrM1R0cWNhZDZ2?=
+ =?utf-8?B?dnh6ci9veHEzeVYxbjhYTXNvVm1BK0k2OUlsS2VabnJJUFd3Y1JpMXdBdmRG?=
+ =?utf-8?B?MVNCK3R6SUdHQ2ZuR3hBVUpRNEJlKzdQZnNuUnNTa1gvcUhTVTNyUE1IRkdF?=
+ =?utf-8?B?aHFPN2xoTWUxcEtTZk0wck1LbGwzcGI4YWlOUjJBZ2ZGMzlZNlZUckpvRnFJ?=
+ =?utf-8?B?aXhta1cwZHcwd1RjWGQyUkxHK1pHREZOamlXRGJJd0lvdHNVdlBndlZXakUy?=
+ =?utf-8?B?eUdJUU41VTVvODd2Q25PK1BROS9ZRGErV3hZTk15ejFPVk9qRzBoUEJFMGdx?=
+ =?utf-8?B?cUVHQ29QNDc2UjlHRjlWS2NCSjdaRkxYeEJWV0VQTnVxZzZNK0d2M2pnL1hI?=
+ =?utf-8?B?dy9PaUpMQlB0TVZRV0FEYmZScW9ESG1uTjE0K3JydnIwc21lRlZ2YnNSSThT?=
+ =?utf-8?B?eUNabS8zWWlwOEJDdjFxbzBJcFAzUzI0cmtwcktLMmVlNllEL2JlTi9OZXFS?=
+ =?utf-8?B?NklyUjcwVXJrVWtyOHRmQVJTNXh6ZjZJbkwvSld0Mkc4cEZMRld4NTlQeGxx?=
+ =?utf-8?B?MCtZbkp0UHBNVUcyWGtWeDNaemlOei9CKzJGd2NXQ0Q2cXJhakpraUcycDRk?=
+ =?utf-8?B?U2R0dTA3SEUvcUxEN25NQ2lKWXBKVG1WMlFOSCtLbmlLbWJKaW85bXMvVGc2?=
+ =?utf-8?B?YitlN0NpWHB0TFdCd1Nvb2I0VnduU1l4QkNVYWRnKzBlQzNma0ZlenVCckhY?=
+ =?utf-8?B?QnRCZS91SFZTSVRnck1LWUk1Zkw0ZDFiUVIzb3BCbnZ1bHRtYkFvckJCeWVk?=
+ =?utf-8?B?d0Q3RXZBZ2dIWmgvMWxjTGhZOGFjaCtKdGExR3Rzamg2dW9iTHBqem1NclVM?=
+ =?utf-8?B?RERtM1k2c3dWVU1EU3Qvck4wcWFhdGVtNzNhZ3BhMEFhNDZ5TEhMRkpHeGR1?=
+ =?utf-8?B?NTNhNytCMDlidDRGcjdpYUFJanhEUG5oeU1NWWhDcFY1RWRZeDQwWElxaUJm?=
+ =?utf-8?B?NGg3TTNsNDRXMW1EQ01rUjM2a3krZEYydnJMbmo1RWdjUmx4V2d2Y1RlSFZE?=
+ =?utf-8?B?c2pnSUdDZ0xzdUQ2WnNjTStuYldNQWUvejVyUUkrSCtMV0diR0dqZmo5RUxm?=
+ =?utf-8?B?aitNNUR0TWtXNEtCUDZkYmc3UnZlR1lMa3lhOXNXWFk4V0xRb29YbUYvd1Zt?=
+ =?utf-8?B?b296d1hMY3NRajlnbHRzNjBBUng5QTlTRjBaNUNsZldSSy9wYjN4dz09?=
 X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0da04716-41e1-4a85-c1c2-08df490c508e
+X-MS-Exchange-CrossTenant-Network-Message-Id: e813fded-62d1-48bd-6fe7-08df490cb45c
 X-MS-Exchange-CrossTenant-AuthSource: TYNPR03MB10226.apcprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2026 02:48:55.0976
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2026 02:51:42.5601
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bgGT/ADOr4uDMxBJttJQbc7e92Uxqqxf2zsWcijRR0DGQU2ZSrl2N6K5fiVc4j+lC8fjaqlXML3EdhWdVyNq27OVPBq00Tsfzs4Q/guWZt8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE3PR03MB10620
+X-MS-Exchange-CrossTenant-UserPrincipalName: u5BbiWR2qzMAYArejtFUX4vADv1mVY9JN4sRFes/idUStP2Yw62ToWJyAtUZMaIev7VpFNEOuxm9gG4lxgf87V0ZhSIhxrNTn3Q3uqLOENs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB7509
 
 
-在 2026/11/22 23:25, Jerome Brunet 写道:
+在 2026/11/22 23:27, Jerome Brunet 写道:
 > [ EXTERNAL EMAIL ]
 >
->> Add basic audio driver support for the Amlogic S4 based
->> Amlogic AQ222 board.
+>> This series completes the end-to-end audio support
+>> for S4 SoC from hardware bindings to driver implementation
+>> and system integration.
 >>
->> Signed-off-by: Jiebing Chen <jiebing.chen@amlogic.com>
->> ---
->>   .../boot/dts/amlogic/meson-s4-s805x2-aq222.dts     | 311 ++++++++++++++++
->>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi          | 396 +++++++++++++++++++++
->>   2 files changed, 707 insertions(+)
+>> 1 Device Tree Bindings Updates
+>> Added audio power domain and S4 audio clock support for S4 SoC.
+>> Added S4 audio tocodec binding support.
 >>
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts b/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
->> index 0a3f81ea0fb0..334b57bde4de 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
->> +++ b/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
->> @@ -75,6 +75,17 @@ vddio_ao1v8: regulator-vddio-ao1v8 {
->>               regulator-always-on;
->>        };
+>> 2 Driver Implementation
+>> Implemented S4 tocodec driver for G12A architecture.
+>> Added S4 audio clock support in AXG audio clock
 >>
->> +     vcc5v_reg: regulator-vcc-5v {
->> +             compatible = "regulator-fixed";
->> +             vin-supply = <&main_12v>;
->> +             regulator-name = "VCC5V";
->> +             regulator-min-microvolt = <5000000>;
->> +             regulator-max-microvolt = <5000000>;
->> +             gpio = <&gpio GPIOH_7 GPIO_ACTIVE_HIGH>;
->> +             startup-delay-us = <7000>;
->> +             enable-active-high;
->> +     };
->> +
->>        /* SY8120B1ABC DC/DC Regulator. */
->>        vddcpu: regulator-vddcpu {
->>                compatible = "pwm-regulator";
->> @@ -129,6 +140,207 @@ vddcpu: regulator-vddcpu {
->>                                <699000 98>,
->>                                <689000 100>;
->>        };
->> +
->> +     dioo2133: audio-amplifier-0 {
->> +             compatible = "simple-audio-amplifier";
->> +             enable-gpios = <&gpio GPIOH_8 GPIO_ACTIVE_HIGH>;
->> +             VCC-supply = <&vcc5v_reg>;
->> +             sound-name-prefix = "Analog_PA";
->> +     };
->> +
->> +     spdif_dir: audio-spdif-in {
->> +             compatible = "linux,spdif-dir";
->> +             #sound-dai-cells = <0>;
->> +             sound-name-prefix = "DIR";
->> +     };
->> +
->> +     spdif_dit: audio-spdif-out {
->> +             compatible = "linux,spdif-dit";
->> +             #sound-dai-cells = <0>;
->> +             sound-name-prefix = "DIT";
->> +     };
->> +
->> +     sound {
->> +             compatible = "amlogic,axg-sound-card";
->> +             model = "aq222";
->> +             audio-widgets = "Line", "Lineout";
->> +             audio-aux-devs = <&tdmout_a>, <&tdmout_b>, <&tdmout_c>,
->> +                              <&tdmin_a>, <&tdmin_b>, <&tdmin_c>,
->> +                              <&tdmin_lb>, <&dioo2133>;
->> +             audio-routing = "TDMOUT_A IN 0", "FRDDR_A OUT 0",
->> +                             "TDMOUT_A IN 1", "FRDDR_B OUT 0",
->> +                             "TDMOUT_A IN 2", "FRDDR_C OUT 0",
->> +                             "TDM_A Playback", "TDMOUT_A OUT",
->> +                             "TDMOUT_B IN 0", "FRDDR_A OUT 1",
->> +                             "TDMOUT_B IN 1", "FRDDR_B OUT 1",
->> +                             "TDMOUT_B IN 2", "FRDDR_C OUT 1",
->> +                             "TDM_B Playback", "TDMOUT_B OUT",
->> +                             "TDMOUT_C IN 0", "FRDDR_A OUT 2",
->> +                             "TDMOUT_C IN 1", "FRDDR_B OUT 2",
->> +                             "TDMOUT_C IN 2", "FRDDR_C OUT 2",
->> +                             "TDM_C Playback", "TDMOUT_C OUT",
->> +                             "SPDIFOUT_A IN 0", "FRDDR_A OUT 3",
->> +                             "SPDIFOUT_A IN 1", "FRDDR_B OUT 3",
->> +                             "SPDIFOUT_A IN 2", "FRDDR_C OUT 3",
->> +                             "SPDIFOUT_B IN 0", "FRDDR_A OUT 4",
->> +                             "SPDIFOUT_B IN 1", "FRDDR_B OUT 4",
->> +                             "SPDIFOUT_B IN 2", "FRDDR_C OUT 4",
->> +                             "TDMIN_A IN 0", "TDM_A Capture",
->> +                             "TDMIN_A IN 1", "TDM_B Capture",
->> +                             "TDMIN_A IN 2", "TDM_C Capture",
->> +                             "TDMIN_A IN 3", "TDM_A Loopback",
->> +                             "TDMIN_A IN 4", "TDM_B Loopback",
->> +                             "TDMIN_A IN 5", "TDM_C Loopback",
->> +                             "TDMIN_B IN 0", "TDM_A Capture",
->> +                             "TDMIN_B IN 1", "TDM_B Capture",
->> +                             "TDMIN_B IN 2", "TDM_C Capture",
->> +                             "TDMIN_B IN 3", "TDM_A Loopback",
->> +                             "TDMIN_B IN 4", "TDM_B Loopback",
->> +                             "TDMIN_B IN 5", "TDM_C Loopback",
->> +                             "TDMIN_C IN 0", "TDM_A Capture",
->> +                             "TDMIN_C IN 1", "TDM_B Capture",
->> +                             "TDMIN_C IN 2", "TDM_C Capture",
->> +                             "TDMIN_C IN 3", "TDM_A Loopback",
->> +                             "TDMIN_C IN 4", "TDM_B Loopback",
->> +                             "TDMIN_C IN 5", "TDM_C Loopback",
->> +                             "TDMIN_LB IN 3", "TDM_A Capture",
->> +                             "TDMIN_LB IN 4", "TDM_B Capture",
->> +                             "TDMIN_LB IN 5", "TDM_C Capture",
->> +                             "TDMIN_LB IN 0", "TDM_A Loopback",
->> +                             "TDMIN_LB IN 1", "TDM_B Loopback",
->> +                             "TDMIN_LB IN 2", "TDM_C Loopback",
->> +                             "TODDR_A IN 0", "TDMIN_A OUT",
->> +                             "TODDR_B IN 0", "TDMIN_A OUT",
->> +                             "TODDR_C IN 0", "TDMIN_A OUT",
->> +                             "TODDR_A IN 1", "TDMIN_B OUT",
->> +                             "TODDR_B IN 1", "TDMIN_B OUT",
->> +                             "TODDR_C IN 1", "TDMIN_B OUT",
->> +                             "TODDR_A IN 2", "TDMIN_C OUT",
->> +                             "TODDR_B IN 2", "TDMIN_C OUT",
->> +                             "TODDR_C IN 2", "TDMIN_C OUT",
->> +                             "TODDR_A IN 3", "SPDIFIN Capture",
->> +                             "TODDR_B IN 3", "SPDIFIN Capture",
->> +                             "TODDR_C IN 3", "SPDIFIN Capture",
->> +                             "TODDR_A IN 6", "TDMIN_LB OUT",
->> +                             "TODDR_B IN 6", "TDMIN_LB OUT",
->> +                             "TODDR_C IN 6", "TDMIN_LB OUT",
->> +                             "Analog_PA INL", "ACODEC LOLP",
->> +                             "Analog_PA INR", "ACODEC LORP",
->> +                             "Lineout", "Analog_PA OUTL",
->> +                             "Lineout", "Analog_PA OUTR";
->> +             clocks = <&clkc_pll CLKID_HIFI_PLL>,
->> +                      <&clkc_pll CLKID_MPLL0>,
->> +                      <&clkc_pll CLKID_MPLL1>;
->> +             assigned-clocks = <&clkc_pll CLKID_HIFI_PLL>,
->> +                               <&clkc_pll CLKID_MPLL0>,
->> +                               <&clkc_pll CLKID_MPLL1>;
->> +             assigned-clock-rates = <1179648000>,
->> +                                    <270950400>,
->> +                                    <393216000>;
->> +
->> +             dai-link-0 {
->> +                     sound-dai = <&frddr_a>;
->> +             };
->> +
->> +             dai-link-1 {
->> +                     sound-dai = <&frddr_b>;
->> +             };
->> +
->> +             dai-link-2 {
->> +                     sound-dai = <&frddr_c>;
->> +             };
->> +
->> +             dai-link-3 {
->> +                     sound-dai = <&toddr_a>;
->> +             };
->> +
->> +             dai-link-4 {
->> +                     sound-dai = <&toddr_b>;
->> +             };
->> +
->> +             dai-link-5 {
->> +                     sound-dai = <&toddr_c>;
->> +             };
->> +
->> +             dai-link-6 {
->> +                     sound-dai = <&tdmif_a>;
->> +                     dai-format = "i2s";
->> +                     dai-tdm-slot-tx-mask-0 = <1 1>;
->> +                     mclk-fs = <256>;
->> +                     codec-0 {
->> +                             sound-dai = <&tohdmitx TOHDMITX_I2S_IN_A>;
->> +                     };
->> +                     codec-1 {
->> +                             sound-dai = <&toacodec TOACODEC_IN_A>;
->> +                     };
->> +             };
->> +
->> +             dai-link-7 {
->> +                     sound-dai = <&tdmif_b>;
->> +                     dai-format = "i2s";
->> +                     dai-tdm-slot-tx-mask-0 = <1 1>;
->> +                     mclk-fs = <256>;
->> +                     codec-0 {
->> +                             sound-dai = <&toacodec TOACODEC_IN_B>;
->> +                     };
->> +                     codec-1 {
->> +                             sound-dai = <&tohdmitx TOHDMITX_I2S_IN_B>;
->> +                     };
->> +             };
->> +
->> +             /* 8ch HDMI interface */
->> +             dai-link-8 {
->> +                     sound-dai = <&tdmif_c>;
->> +                     dai-format = "i2s";
->> +                     dai-tdm-slot-tx-mask-0 = <1 1>;
->> +                     dai-tdm-slot-tx-mask-1 = <1 1>;
->> +                     dai-tdm-slot-tx-mask-2 = <1 1>;
->> +                     dai-tdm-slot-tx-mask-3 = <1 1>;
->> +                     mclk-fs = <256>;
->> +                     codec-0 {
->> +                             sound-dai = <&tohdmitx TOHDMITX_I2S_IN_C>;
->> +                     };
->> +             };
->> +
->> +             /* spdif hdmi and coax output */
->> +             dai-link-9 {
->> +                     sound-dai = <&spdifout_a>;
->> +
->> +                     codec-0 {
->> +                             sound-dai = <&spdif_dit>;
->> +                     };
->> +
->> +                     codec-1 {
->> +                             sound-dai = <&tohdmitx TOHDMITX_SPDIF_IN_A>;
->> +                     };
->> +             };
->> +
->> +             /* spdif hdmi interface */
->> +             dai-link-10 {
->> +                     sound-dai = <&spdifout_b>;
->> +
->> +                     codec {
->> +                             sound-dai = <&tohdmitx TOHDMITX_SPDIF_IN_B>;
->> +                     };
->> +             };
->> +
->> +             /* spdif coax input */
->> +             dai-link-11 {
->> +                     sound-dai = <&spdifin>;
->> +
->> +                     codec {
->> +                             sound-dai = <&spdif_dir>;
->> +                     };
-> Was this tested ? ...
->
->> +             };
->> +
->> +             dai-link-12 {
->> +                     sound-dai = <&toacodec TOACODEC_OUT>;
->> +
->> +                     codec {
->> +                             sound-dai = <&acodec>;
->> +                     };
->> +             };
->> +     };
->>   };
->>
->>   &pwm_ef {
->> @@ -235,3 +447,102 @@ &ethmac {
->>        phy-handle = <&internal_ephy>;
->>        phy-mode = "rmii";
->>   };
->> +
->> +&acodec {
->> +     AVDD-supply = <&vddio_ao1v8>;
->> +     status = "okay";
->> +};
->> +
->> +&arb {
->> +     status = "okay";
->> +};
->> +
->> +&clkc_audio {
->> +     status = "okay";
->> +};
->> +
->> +&frddr_a {
->> +     status = "okay";
->> +};
->> +
->> +&frddr_b {
->> +     status = "okay";
->> +};
->> +
->> +&frddr_c {
->> +     status = "okay";
->> +};
->> +
->> +&spdifin {
->> +     status = "okay";
-> ... as sashiko pointed out, you are indeed missing a pinctrl for it.
->
-> With sashiko remarks handled
-AP222 does not have an SPDIF IN port. I will remove it and update the 
-interrupt number for SPDIF IN.
->
-> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+>> 3 Device Tree Integration
+>> Add Amlogic S4 audio subsystem support in arm64 DTS.
+> A clock immutable branch is going to be necessary to handle the dependencies
+> in this series. Please re-submit with clock changes only and a proper cover letter
+> so I can merge apply this and provide the IB. Thanks
+i will submit the clock changes as a separate patch. Thanks.
 >
 > --
 > Jerome
