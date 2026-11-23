@@ -1,58 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795437736;
-	b=m/gi+V1BhtKOdV4PSqpoHRc0tBRitIn/CER1BmoHzs9sqzzATH3kM7RYXH418CPWVp1h
-	 o6IOodh1vrujIeFvaqMHBDj652+oY0SokhkhwqevYI1NB/fTsUzT7i6w1jFMgz+5pxby6
-	 TUssPhY7assA957YwNGgNXixmFp9mE3LYqswEj+BwgUGx6MN/9n1JSh7oQgFW+tMtdlY8
-	 h3TFWfuZl28zVavDG3+kSNNMk0NaX4YcrNkn9Blyi97xmZ8ERU4oXgCt7KlOFQircAn+n
-	 2ZKO4rwJZIfZJAj6eBxVwNE3hhmilhiZjHPzEJV6SqVpxulX7RNFohAN5aXU3jsg5oQ==
+	t=1795437828;
+	b=lnIjKe6i/pOd9e37BxoYpe8/HF3vb3O4MGzSGPqFur58ww3Ov4KH8eF9F/UIkuiGQS4J
+	 F9JYEP0V1ZpD3MWrcnZx5SQSS1svCoe+bnmsW+NblKYq8Sg+29jkDe0TCrePt3RdlNYvc
+	 cWNCl/SA7cXGPipwC9tFpWq7r4KTYBa8wr/hqP1CZzw/YyJCVY7O+tnbRrucmph+1Ff22
+	 Of6S3nZQigVxlUvyLrBT27PK1zmab+CCMN7iFDa7kZ4uXC6HQF5vS6tCDgLZasI+yvSFc
+	 YP+FK+rXhwttCbDvv0VN85jZ18nRaJfQddmDVmXjVRC54EFi0SSHDQ9Rg4xuuRarNKQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795437736;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795437828;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=9I0udAh4k+IEtVLjhC08RI/5opG5srAmgJRwc2gLk+k=;
-	b=3Yv78euJ0SitJiJwxmEboX/fFjTVVA14fnK1IRoHR0GqSVA4olcN2zfK9bSumJqFBAuk
-	 yfqrL/H2eJEGpJfa09/PgZ36YT4B0GeUhI1m8n5N46q4ek0vrCu73ZyjpQwsM7Ient74l
-	 K9d47z+aIptxNah+FXkMdD6D6ylKJ+TeuEL8ggmn+RSo5OkPqaN6NhSCI1aLqPja6gBkI
-	 Mz+++yOFV7boUsWy2XiXzlIXQajSaayVf00SQy8sZ0gxsM7i5q6q5ZmfMfTEA+Q4OaU0W
-	 AAm3BwE5VZxQVP72GAR6AXJ2cMGTfFR8iDd0NjfVxkRkGq6DbnHtDoAQMJnK0SwttHg==
+	bh=jar3Sv4TK/TH1BdHMGPIcdy7IiFCOBmOQWc2yi3p2Dk=;
+	b=NQ3TczDDZom2hOBpobt8Ig+2g0W8WD7BrZkcApccmqCLrOkq/+UH7rN5+/pE2ntG5PsY
+	 H4MokEKR4kKS0J0oW9SCskxFG7uZ7WMB7CnUFRbYrzjRDtvcFdd7W7hDauQ7vE1/S4ptm
+	 +Ehw7Vu7H7LeKwNZu+mGhIKT1cCMcNh3PdTRhN9Gzol+1uLtBWQnPTLzPsFOFeObJkUBd
+	 DwcNe4SdR+G8dTtsPHC7cChcQLG4akJozK1f2OntVNmMFG0inCriVygWS79c2H0Fgi+Z4
+	 yaWRW7eNHIa1ZRYY049s6DnZwPuQhN7Sm8EeolmMQGQ4NcHLAfevvsOm8Kn01zZ0y+g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mZ5UFL3C;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NbpxE00L;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6713B606A31E;
-	Mon, 23 Nov 2026 12:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4597C606A31A;
+	Mon, 23 Nov 2026 12:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mZ5UFL3C
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A392B1F000C4;
-	Mon, 23 Nov 2026 12:42:15 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NbpxE00L
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BBB31F000C0;
+	Mon, 23 Nov 2026 12:43:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795437735;
-	bh=9I0udAh4k+IEtVLjhC08RI/5opG5srAmgJRwc2gLk+k=;
+	s=k20260515; t=1795437827;
+	bh=jar3Sv4TK/TH1BdHMGPIcdy7IiFCOBmOQWc2yi3p2Dk=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=mZ5UFL3CfujsSi7zeXDN/Q/PlTdtNf8bjKy6u4C2YwuxcBfvwSCLdZ0jz+7SS/peT
-	 1dtGHJHIEiIL7AreJx01YZjQjTuG7mpMBIjdUw3Kp582fjRFm7S/0Z3CR+JPfoeTd0
-	 8+gMAtojUOXCasI0JXWqM4lRMxUDH+ca3Ytw0OrpzhAn/YMR7bCXKEEqdmaAKM08Ev
-	 Ra3Jgiw2asSlY4LxtSNZwxxJGuppZA+lX7vIq3mucHT2Kgk7hsTy/rsUyyn1YXC0VK
-	 sbzTf32Ai/MvZRGKkkh67Oc5PeSCBshKBiBn8bciWWkkGhK6YmD0xhK5w3zE7FMhYu
-	 yvISB+qsWtN7A==
-Message-ID: <sashiko-outbox-229240@kernel.org>
+	b=NbpxE00LU3SGrQaU1K1WcvdL6XwpUMfLOJgtFZmkSQKPVbVIY4LXGtN/x/56TDBUx
+	 DyKpIw+poY4+cB8sjQPV/6m9ccXf69sCbJbfklfArv3sgy+hj7yYqAdui6iWkNDDBm
+	 c26n0xrx+MdymuPNXaZEd3u5dGJ6XXPHWSI5dqOiqkKMKM5wrZ04VWKIO00/kg38Vs
+	 8fxW23ZAAQEjdlqgB/yHiU0DQbWCquNnUAP3WvDGAfP+IpNS6Vca0qkLs0R8/n9ymK
+	 7gmp/sqHemVp6qLWvfM9qJEZXFB9KRxYetiLiNFf8RaQIdptNr7GvGDGgO0J6cWj1B
+	 +lZpDyO9ab4rA==
+Message-ID: <sashiko-outbox-229241@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 1/7] clk: qcom: gcc-msm8953: fix csi_phytimer_clk_src
- 100MHz parent
+Subject: Re: [PATCH v2 2/7] media: dt-bindings: media: i2c: add Samsung
+ S5K5E8
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Hikmah Gumelar" <hikmahgumelar@gmail.com>
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, media-ci@linuxtv.org
-In-Reply-To: <20261123123546.152162-2-hikmahgumelar@gmail.com>
+In-Reply-To: <20261123123546.152162-3-hikmahgumelar@gmail.com>
 References: <20261123110805.119610-1-hikmahgumelar@gmail.com>
  <20261123123546.152162-1-hikmahgumelar@gmail.com>
- <20261123123546.152162-2-hikmahgumelar@gmail.com>
+ <20261123123546.152162-3-hikmahgumelar@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 23 Nov 2026 12:42:15 +0000
+Date: Mon, 23 Nov 2026 12:43:45 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -62,32 +62,66 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Low] clk: qcom: gcc-msm8953: missing Fixes trailer in commit message
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [Medium] dt-bindings: media: i2c: invalid $id and $schema URIs in
+  samsung,s5k5e8.yaml
+- [Medium] dt-bindings: media: i2c: 0-based CSI-2 data-lanes in
+  samsung,s5k5e8.yaml
 --
 
-commit 59570529f8fc55fdf8adbdb3388beb1cf4e96df4
+commit b55315d405d591f8eee7ad684f3b49e1f2a7e7c2
 Author: Hikmah Gumelar <hikmahgumelar@gmail.com>
 
-> clk: qcom: gcc-msm8953: fix csi_phytimer_clk_src 100MHz parent
->
-> The 100 MHz entry in ftbl_csi_phytimer_clk_src selects P_GPLL0_DIV2 with
-> a divider of 4, which leaves gcc_camss_csi0phytimer_clk stuck off on
-> MSM8953 platforms such as Xiaomi Mi A1 (tissot).
->
-> Switch the 100 MHz parent to P_GPLL0 with a divider of 8 (800 MHz / 8 =3D
-> 100 MHz), matching the 200 MHz and 266.67 MHz entries.
->
-> Signed-off-by: Hikmah Gumelar <hikmahgumelar@gmail.com>
+media: dt-bindings: media: i2c: add Samsung S5K5E8
 
-[Severity: Low]
-This fixes the 100 MHz entry in ftbl_csi_phytimer_clk_src introduced with
-the driver.  Should the commit message include:
+This commit adds a Devicetree binding schema for the Samsung S5K5E8
+5-megapixel MIPI CSI-2 CMOS image sensor.
 
-  Fixes: 9bb6cfc3c77e ("clk: qcom: Add Global Clock Controller driver for M=
-SM8953")
+> diff --git a/Documentation/devicetree/bindings/media/i2c/samsung,s5k5e8.y=
+aml b/Documentation/devicetree/bindings/media/i2c/samsung,s5k5e8.yaml
+> new file mode 100644
+> index 0000000000000..0e440209c3fd2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/samsung,s5k5e8.yaml
+> @@ -0,0 +1,103 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org
+> +$schema: http://devicetree.org
+
+[Severity: Medium]
+Are $id and $schema truncated here?  Running dt_binding_check fails unless
+$id is http://devicetree.org/schemas/media/i2c/samsung,s5k5e8.yaml# and
+$schema is http://devicetree.org/meta-schemas/core.yaml#.
+
+[ ... ]
+
+> +  port:
+> +    $ref: /schemas/graph.yaml#/$defs/port-base
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      endpoint:
+> +        $ref: /schemas/media/video-interfaces.yaml#
+> +        unevaluatedProperties: false
+> +
+> +        properties:
+> +          data-lanes:
+> +            items:
+> +              - const: 0
+> +              - const: 1
+
+[Severity: Medium]
+Should data-lanes use 1-based physical lane indices (1 and 2) here and in
+the example below?
+
+Per video-interfaces.yaml and v4l2_fwnode_endpoint_parse_csi2_bus(),
+physical lane 0 on a MIPI CSI-2 D-PHY bus is the clock lane by default and
+data lanes are 1-indexed, so data-lanes =3D <0 1> assigns physical lane 0 to
+both the clock lane and data lane 0 while rejecting valid <1 2> endpoints.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123123546.1521=
-62-1-hikmahgumelar@gmail.com?part=3D1
+62-1-hikmahgumelar@gmail.com?part=3D2
