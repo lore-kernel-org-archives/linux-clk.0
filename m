@@ -1,87 +1,45 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795452667;
-	b=bZMfDW4HCQnK0sDOwihpf8hwhndKr3binqzmgJowGM2dgqscUcz/KzkAI0OVUPQj6m2d
-	 9wokchqIDQzC1Zu9lINBSgzbLFmbROUCEhfJCtHvuQ5sRm68xsECCmKS7vP8iC9pG+4Dm
-	 H1JbT6Luec8Ca/zw4ISosN2mRGwx1RwMEp3N73CPoYnIYuRzA6RUwbOmXDjJ4uX++4BzM
-	 mL0wp1uv0FXptHEwGDN2f4dEKuq4k3c/TGAzDNTAdrEnPa5Al3yRixUP+j3RZESM2Njzh
-	 QKn4fx2AaXQR4OichDowb3zxFd4myUi7eY2wLXPJOxJnqIvaGCxwzwR8gdNgFJwmbpw==
+	t=1795452953;
+	b=vtV+jAhi2+Oo0pGHWprZb4UgSCr9Z+HX5M2GLDRt1PIgi46Y1tLeor6c6tsUuKUhgbbj
+	 bHLflUpsbms2kwn+iO+LMosVywo09/+ncUbEIO6bICM9+ES3Fpqht6444Qc6jHTrW6qJ9
+	 gryVVL+hQbCOa48yUL6/Dx0RvLhuTeU3s+62TZoqFJ6pRMEryYsUKSv0VemwS1VUTI3yB
+	 6UQajyKCWUAR697jQNEy8jykCQB/tT3Qh97c33VK+0DDhp3Ld0iqWBM+9azzVgBs9c3dA
+	 +UqEweQBQLpzuBP5EZuPv2E/iZcFMXR3hz7LYubnNPb/kGSamj0yoQATTwfDRb/If0A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795452667;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=oDDXBnRuSFWwir+Qc8FIH/dhSu2JKoewicfxlAouLOQ=;
-	b=P99fep+/u8N/nKahR1TnKD6bymxDETzJVQAQvV4LXlsrNFXG/gW4KxZKFycJnF9Q1Wux
-	 zAnLr1d4rUwc5I8jPw8apnKjCwrwN4apFK6ZJFBB3N4Unz87WnbOUPkjA+PCifYSqvDwH
-	 0uQbuirJbaocJQCTp7vYWk8azBAKvdQutwf2sWcM1AWXXHNYvu8vufFJc7fkhY3knGK8S
-	 yJCL88twVgBAJs29U9p0wuomCT/SjeaOo3joBJQKHUfb2Sq/1JsgFaPIm9qDUHg3WbLI5
-	 +GW+oIn9lOICe9sbGrFjZPyZJNsSPoPPZgwlWnT9j5qJw7MBLElXTZ0u8tew57s3pMA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795452953;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=DVuO288S4OHkKdmhORY1dPwKToeS5NVnqdlS1+sSYF8=;
+	b=zLup+8pSwWxpiypAnpPKUOJ85tBcSuO2MeaoyFhZg+AJo5FhhjY9KLNGtURDvmg5QzvY
+	 vLzzu1mo9dl3XEKqDgOq8H4tVIfH/3GJt4YubILcPCmoDFVN5YyMWubbp1m5tTkgL0/+h
+	 S57nPeDxAnhCetK1XlJCItoMOWjDoBY1Uwsbl73VlnxNq6i4uu7X09RmOHOU5lLs/SMt/
+	 KA1YL99fqmge92zpEfvu+2+jSExHdKGVUJiCRKtuEHZWValgeu9aAA4IYNO6+5fBxz35W
+	 DCuzX/S6XJ7QxHXer3lsAu0qwNw5gxLAwYoR1ZEvmgVF7voEv681M0lT3pQD0LQJXaQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=sang-engineering.com;
-	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=Qw7beBot;
-	arc=none smtp.remote-ip=194.117.254.33
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NQnLsAOF;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09940606A693
-	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 16:50:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 09940606A693
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD56606A31F;
+	Mon, 23 Nov 2026 16:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=Qw7beBot
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=oDDX
-	BnRuSFWwir+Qc8FIH/dhSu2JKoewicfxlAouLOQ=; b=Qw7beBot+GEfrz2B7nN6
-	L91TgwiyyshqWEIlVxVwK+kbARCBrRi6xpjS9Fs0aqTv82dY6SF3rTegjqVEdYak
-	06XG8jvk4zsw/SOjvy19BxtfawiXuNLUVtw4nhignsmehIxWOLZkTQ3D3bD2Uo4i
-	xQHm7K4nP2xn1zsGRbNKoONoqJKi4q8wcV8jzMC24bruB0522uj7iK/e3r8w3oar
-	F1T+homIsQFmqZ+e6iHrwX/WYOLJMKeF+AKO+jgD3wfX32JjFtZ3YhbyNdVIAj08
-	kKLYKz9/KJWRmmS78KqnWsFdTSY3YBaPUCl0GPYGFMvPBYKc0knyFj6QdvnSrQGW
-	Aw==
-Received: (qmail 2835965 invoked from network); 23 Nov 2026 17:50:55 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Nov 2026 17:50:55 +0100
-X-UD-Smtp-Session: l3s3148p1@zwO+ZfRgEuIgAQnoAEqRAK1B9h1530u9
-Date: Mon, 23 Nov 2026 17:50:55 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Ralph Siemsen <ralph.siemsen@linaro.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, khendry@reliablecontrols.com,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: clock: r9a06g032-sysctrl: Document
- reset cells
-Message-ID: <awRu6SH8GvRir-eP@shikoro>
-References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
- <20261119-rzn1-miic-resets-v1-1-feee2bb28bb4@reliablecontrols.com>
- <awARmkCuelD_fdX6@shikoro>
- <5d8530485716d129be2efa0518254e3322cecdb0.camel@pengutronix.de>
- <awAq7vxcY8CGjhNl@ninjato>
- <awGV8BU_AfaXQyBv@maple.netwinder.org>
- <awIMBj_7OLrlM5G-@shikoro>
- <CANp-EDbNxWnpjXDshVhPEwppGu1cf2V2UBO+hk2NtFDFeqCAdg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NQnLsAOF
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C58D1F000C0;
+	Mon, 23 Nov 2026 16:55:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795452952;
+	bh=DVuO288S4OHkKdmhORY1dPwKToeS5NVnqdlS1+sSYF8=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=NQnLsAOF6LEkdxRgrWA+Y6Dd8hDOrVSQ28JC2tOvRkADqHKyOrdSs7yQ47vE55y3v
+	 wR75XKuELYqRHeSnS5JvN1upBWMBTIFDySyNDdcPrc+825ElLNQtfMqq7UBVf9T5Ek
+	 HE2volKb9SVQYRAAFxyMcxOmjieGVzbHnohAYMePuqzPaJgb+VsFmCMr3Jwbw6g1ER
+	 Xv6aOijWTBdX6XEJXT5SacatXj1VBOhcIVXqkjt7r4b8RXBRIkSMGq9XMvppvkKjam
+	 qs52kNGtnSkw5zU2lsuQlL3X8xZTYiAuenrf6u/YIu8gMwfL0RW2JofUMFiIqFm5S6
+	 sDsugy0srrUUA==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -91,41 +49,48 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/micjW0Pmzh8X1xY"
-Content-Disposition: inline
-In-Reply-To: <CANp-EDbNxWnpjXDshVhPEwppGu1cf2V2UBO+hk2NtFDFeqCAdg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v5 3/6] clk: cix: Preserve Sky1 AUDSS interrupt and
+ reset context
+From: Brian Masney <masneyb@kernel.org>
+To: Jelly Jia <Jelly.Jia@cixtech.com>
+Cc: vkoul@kernel.org, Frank.Li@kernel.org, robh@kernel.org, 
+ krzk+dt@kernel.org, conor+dt@kernel.org, robin.murphy@arm.com, 
+ sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
+ tglx@kernel.org, devicetree@vger.kernel.org, 
+ cix-kernel-upstream@cixtech.com, dmaengine@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, joakim.zhang@cixtech.com, radu@rendec.net, 
+ Brian Masney <masneyb@kernel.org>
+In-Reply-To: <20261120053529.371923-4-Jelly.Jia@cixtech.com>
+References: <20261120053529.371923-1-Jelly.Jia@cixtech.com>
+ <20261120053529.371923-4-Jelly.Jia@cixtech.com>
+Date: Mon, 23 Nov 2026 11:55:36 -0500
+Message-Id: <179545293652.209212.13817685318206713956.b4-review@b4>
+X-Mailer: b4 0.17-dev-8145e
+X-Developer-Signature: v=1; a=openpgp-sha256; l=624; i=masneyb@kernel.org;
+ s=20250903; h=from:subject:message-id;
+ bh=dlN8f5waGDkpgx6y+Hr2A3mh8IFsF1SXgakq51pTHIs=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJZCnj0eiaWdbxJfHKr9OKuiLrVaT1LmUIiBU+uVVVJ7
+ lFh+BjRUcrCIMbFICumyLIk16ggInWV7b07miwwc1iZQIYwcHEKwEQceBn+e0fsncxTtr3pT+rq
+ 2R9lmM35thsd23BggXjdq1SDnReOH2dk+FzskFH0sGj/R9NJzV9qLrb8X+chlzntd+9y04iMKuY
+ SRgA=
+X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
---/micjW0Pmzh8X1xY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> The AUDSS CRU saves its clock configuration before runtime suspend, but
+> the save list does not include the AP interrupt gates or software reset
+> state. If that state is lost across a CRU power transition, restoring
+> the clocks alone does not restore the configuration of its consumers.
+> 
+> Add INFO_AP_IRQC and INFO_SW_RESETN to the existing save and restore
+> list so the interrupt gate and reset configuration is preserved with
+> the rest of the CRU context.
+> 
+> Signed-off-by: Jelly Jia <Jelly.Jia@cixtech.com>
 
+Reviewed-by: Brian Masney <masneyb@kernel.org>
 
-> And perhaps more importantly, it would make consistent the .index and
-> .source fields. Having one of them shifted by 1 can be confusing, and
-> could lead to bugs.
-
-I do buy that. If you have time and interest, I will review it.
-
-
---/micjW0Pmzh8X1xY
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsEbukACgkQFA3kzBSg
-KbZygQ/9G2yCc2P4OLa0WArZ/M4a7tsNbdcqactU++gO9citbwVdE8tbKOjFg3gM
-C3cnNOz58R1ubgUwSsRzkp7ey+UwISzT3JsP1xrXWrSQjoZM87H6S5K8CZOdb1qQ
-ftUOMVVPSPZdA6d5n/cLDE4p2rHQNMLxhr4BS95yHB5HjrApA/4CMnbpR1IkZE87
-i9Yj415eL6OpaZwo6gm/YgYuW9z0dd7rvJe9gYoqvCyLCsRhTMp46LJ23uSxy5oT
-Mjt5J2pINGrRh0aaAEwRXvoP5xBzORYvlbzdwwVvUKwWBV8ddR5IunRY+M4EpwJp
-ZZpC9bqg73DmsM9+T9v7/+Kb/3eDhNUjPxm/a3LcWMVQCDNFI57PRoLOZ6e8tE90
-pZCW6utLA03Sy5jMX+O/Y2+eC/HtOF+plz16UA/PqWHltgH8Bp+2ck4nV7TYyViJ
-+Zawlq7FTNsVDL5pX8tqiOLkyRZAvJ8P1mySrqg84t0p9npXvAnRE2LOeVvBGmM8
-DkTR1HAHa77DMaVt6uLM8o9KTpU+xPI9jefiqbTbXb8Q/LyQHQ/q14hD86a7/4I8
-p3KOrX3dFYmbXk2LJT0DYwSnIvxQcMX1hLYQLeBEmjQPov0fvDfDVNQ3R49f2P0n
-hZhltREBYFLuU4p9/onFUGU24M55UlAusAJTlMOu863GxzxxjEo=
-=8jOZ
------END PGP SIGNATURE-----
-
---/micjW0Pmzh8X1xY--
+-- 
+Brian Masney <masneyb@kernel.org>
