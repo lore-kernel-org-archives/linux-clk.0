@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795452953;
-	b=vtV+jAhi2+Oo0pGHWprZb4UgSCr9Z+HX5M2GLDRt1PIgi46Y1tLeor6c6tsUuKUhgbbj
-	 bHLflUpsbms2kwn+iO+LMosVywo09/+ncUbEIO6bICM9+ES3Fpqht6444Qc6jHTrW6qJ9
-	 gryVVL+hQbCOa48yUL6/Dx0RvLhuTeU3s+62TZoqFJ6pRMEryYsUKSv0VemwS1VUTI3yB
-	 6UQajyKCWUAR697jQNEy8jykCQB/tT3Qh97c33VK+0DDhp3Ld0iqWBM+9azzVgBs9c3dA
-	 +UqEweQBQLpzuBP5EZuPv2E/iZcFMXR3hz7LYubnNPb/kGSamj0yoQATTwfDRb/If0A==
+	t=1795452956;
+	b=IplGA0KMrlsV47NgDOl7x94DMAjnyd5hhknGrt5ezqPIbo2rXSiMMFIwWJcMcM9Vzosg
+	 eYLaaYqMhA4pqVsA+8hYjjNiGOCbaViLw1nVr1w9hEgaH2ZR6xdZs+9QzynNCMFOH094c
+	 gu2nKDmf5txLDYjPqIXahby8VUcRFyIiw7NyNZHhpEFDk/9XBLHIe/l/0ICDmxIgagpSP
+	 cFi2R5RMqomu0/5eVhMCpi2CyP34Zi3YfhT8+ZpG4V5MX8g2YtwbczMHs4pmA1woJgGtp
+	 naiOunPcKB0lZkjmsewNXjzAlIBdlWnQHV1FkChY/5qBgVURI1uP9cvUqVAm50I8V6Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795452953;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795452956;
 	h=Received:DKIM-Signature:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
 	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=DVuO288S4OHkKdmhORY1dPwKToeS5NVnqdlS1+sSYF8=;
-	b=zLup+8pSwWxpiypAnpPKUOJ85tBcSuO2MeaoyFhZg+AJo5FhhjY9KLNGtURDvmg5QzvY
-	 vLzzu1mo9dl3XEKqDgOq8H4tVIfH/3GJt4YubILcPCmoDFVN5YyMWubbp1m5tTkgL0/+h
-	 S57nPeDxAnhCetK1XlJCItoMOWjDoBY1Uwsbl73VlnxNq6i4uu7X09RmOHOU5lLs/SMt/
-	 KA1YL99fqmge92zpEfvu+2+jSExHdKGVUJiCRKtuEHZWValgeu9aAA4IYNO6+5fBxz35W
-	 DCuzX/S6XJ7QxHXer3lsAu0qwNw5gxLAwYoR1ZEvmgVF7voEv681M0lT3pQD0LQJXaQ==
+	bh=JiJWtBiXq1+5RKYEMTg+aa/FLub2kV3/FMeSnrSIRCw=;
+	b=sQFpnHkd290Ry1NltGxZWXGZ6JSyTGT2AdRR0boZs/nBAUcl7fCU7qRwyK1HY9BtHSdh
+	 VFQKszlP9uJjnXmQGHtNYYgIzoLAwbXavW8o++aoLLtMqV4CfhRLzzdzb3olellZ74jJm
+	 mCUrUSnQtBsAvU2ow4yw8bJs9I1mIpAYiA7pVXugMeX+AHsx32TVILDPCUygTe+DLD2wb
+	 K0hFDl69jG2Xnq50gTK3B3rC4Sh6Hl65pfhZTYIoxPbxRc7S9H+tmHa5fZwMCTrnOxYr9
+	 NhHVu+5oydJvJLe9qP35SwSXE+PIjuQPL75kKAZojl+zC+KF3BTFqwhCWJKzOK/JDqw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NQnLsAOF;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TDdLjKjl;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD56606A31F;
-	Mon, 23 Nov 2026 16:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615E0606A337;
+	Mon, 23 Nov 2026 16:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NQnLsAOF
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C58D1F000C0;
-	Mon, 23 Nov 2026 16:55:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TDdLjKjl
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADAC21F000EC;
+	Mon, 23 Nov 2026 16:55:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795452952;
-	bh=DVuO288S4OHkKdmhORY1dPwKToeS5NVnqdlS1+sSYF8=;
+	s=k20260515; t=1795452955;
+	bh=JiJWtBiXq1+5RKYEMTg+aa/FLub2kV3/FMeSnrSIRCw=;
 	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=NQnLsAOF6LEkdxRgrWA+Y6Dd8hDOrVSQ28JC2tOvRkADqHKyOrdSs7yQ47vE55y3v
-	 wR75XKuELYqRHeSnS5JvN1upBWMBTIFDySyNDdcPrc+825ElLNQtfMqq7UBVf9T5Ek
-	 HE2volKb9SVQYRAAFxyMcxOmjieGVzbHnohAYMePuqzPaJgb+VsFmCMr3Jwbw6g1ER
-	 Xv6aOijWTBdX6XEJXT5SacatXj1VBOhcIVXqkjt7r4b8RXBRIkSMGq9XMvppvkKjam
-	 qs52kNGtnSkw5zU2lsuQlL3X8xZTYiAuenrf6u/YIu8gMwfL0RW2JofUMFiIqFm5S6
-	 sDsugy0srrUUA==
+	b=TDdLjKjlFLKf2tWyUFQNB/8I4PmHPudG3ijiqjF1mjYsppIOCwVBJDZqGbyUK0/mn
+	 NxlAKUbHFfQBwdT3EaeZ4iRFoFI3oVKv6sRfmiGAlO/m30cjkPXZu6O9skJ7Pft41N
+	 mnpxFTmK0wCireiGpp4wnYw6bJcOr+v/Bi5JO4aE4jHIdbfwapfADLKPFNXT9BX6bb
+	 eC3IMfp/rIlC9zxGvGxy5mhBJR3KifFffOiT2257LqIx3IKxTUXPOiFP8KAp/NrIu3
+	 Mgz9KXlBwuLdtdRwT3REUbDUgVRNRmki1gBZWYM9h7Y/hRdnyRy/WZ/L0ok0CS2wC7
+	 B3ssegoNWPoWQ==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,8 +51,8 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v5 3/6] clk: cix: Preserve Sky1 AUDSS interrupt and
- reset context
+Subject: Re: [PATCH v5 4/6] clk: cix: Register the Sky1 AUDSS IRQ auxiliary
+ device
 From: Brian Masney <masneyb@kernel.org>
 To: Jelly Jia <Jelly.Jia@cixtech.com>
 Cc: vkoul@kernel.org, Frank.Li@kernel.org, robh@kernel.org, 
@@ -63,30 +63,30 @@ Cc: vkoul@kernel.org, Frank.Li@kernel.org, robh@kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  linux-clk@vger.kernel.org, joakim.zhang@cixtech.com, radu@rendec.net, 
  Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20261120053529.371923-4-Jelly.Jia@cixtech.com>
+In-Reply-To: <20261120053529.371923-5-Jelly.Jia@cixtech.com>
 References: <20261120053529.371923-1-Jelly.Jia@cixtech.com>
- <20261120053529.371923-4-Jelly.Jia@cixtech.com>
+ <20261120053529.371923-5-Jelly.Jia@cixtech.com>
 Date: Mon, 23 Nov 2026 11:55:36 -0500
-Message-Id: <179545293652.209212.13817685318206713956.b4-review@b4>
+Message-Id: <179545293652.209212.10772184134283516103.b4-review@b4>
 X-Mailer: b4 0.17-dev-8145e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=624; i=masneyb@kernel.org;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=650; i=masneyb@kernel.org;
  s=20250903; h=from:subject:message-id;
- bh=dlN8f5waGDkpgx6y+Hr2A3mh8IFsF1SXgakq51pTHIs=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJZCnj0eiaWdbxJfHKr9OKuiLrVaT1LmUIiBU+uVVVJ7
- lFh+BjRUcrCIMbFICumyLIk16ggInWV7b07miwwc1iZQIYwcHEKwEQceBn+e0fsncxTtr3pT+rq
- 2R9lmM35thsd23BggXjdq1SDnReOH2dk+FzskFH0sGj/R9NJzV9qLrb8X+chlzntd+9y04iMKuY
- SRgA=
+ bh=gy5VDOsHr+MXi/hQ1HMI05+dsbHa9lnkZnbNKtej0a4=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJZCoTcjj+xfT1hb4vL7j8PFq1V+LAiRDM0onv/jk5B/
+ 9CKM9YdHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAEzE8QHDb1amd/xn0p1L3kfX
+ z+s2vtLGEaq2yUci63GE9IPbIvUOUQz/M9NOmK/W4pg7y+SYHmNhmkHxzbzpKRevcJw03MrPd8i
+ HGQA=
 X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-> The AUDSS CRU saves its clock configuration before runtime suspend, but
-> the save list does not include the AP interrupt gates or software reset
-> state. If that state is lost across a CRU power transition, restoring
-> the clocks alone does not restore the configuration of its consumers.
+> Register an auxiliary IRQ device for CRU nodes declaring an interrupt
+> controller, following the existing reset device pattern. Share a raw-lock
+> regmap with the IRQ driver so its hard IRQ callbacks can access the CRU.
 > 
-> Add INFO_AP_IRQC and INFO_SW_RESETN to the existing save and restore
-> list so the interrupt gate and reset configuration is preserved with
-> the rest of the CRU context.
+> Restore the parent before child IRQ delivery resumes using noirq
+> system-sleep ordering. Use the same PM callback macros as the IRQ driver.
+> Auxiliary child teardown must run before parent regmap/runtime-PM cleanup.
+> The existing reset-sky1-audss.c is unchanged.
 > 
 > Signed-off-by: Jelly Jia <Jelly.Jia@cixtech.com>
 
