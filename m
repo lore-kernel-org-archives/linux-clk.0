@@ -1,58 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.137
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795437273;
-	b=D0d/ksU7UTRt2nHMjquNjMSLLshGTnjnjx7szpG5z9ABLazv6/YZe0VQ3340Ax4zrdWz
-	 NI3d9dP1ovCeMSR9+tfLKYDCRYo300/UR1V8PwBxNSN0Sf8gWAhG1VDDpjfQjdbRqoBqX
-	 nVnMc6GmddPrpbsUxqfpMnzDdFvan+K5xdwMqUWR0Z742/ZaIYXDbTS9SYovg7XoMprMN
-	 dEFpRjITlZWlBUTkPuUHogD2/O16bVHfNsg35p4usaNGq2+8dBTOUx79oNc7O8x1ZIsgM
-	 4GYpMNm/GjBgV2NQmj0e3IWYgTeVzzT6tNMNHBG7T+Ut00GHbK/jsS4VTZm5G5QR9XQ==
+	t=1795437292;
+	b=H0znscJCyW0iyHz4vYVp89lpyM6NjkdqX5ILCHgwnCvrYaDJY+V+5RTL+6JjQu01oa/H
+	 Bbotg0ypkiqJJH29m076I/mJItXZxD8887FwKfW6/SGFTOkg89q1B/iRG5lZ/cUoyjzhx
+	 XdsbxUA0NyeWIhceyRBGcwx8yOB7bJVZr/5cYnmT+fsD55/sN0gQTn//+McCQrI3hf9J0
+	 6yTkQOlmoU+5edIZwAHUYIkSy4tgbAPuIZsrU/bbnFoPTA8wRJ7/kN8Xs7+r1xWLbKygK
+	 my4EaU9Ttiiexg1w1Su3UIMSLj68z2q9s3HPLlclf9W04cJTl8JOqmcmY8iPyJOgZ5g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795437273;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=FR6wWEGn+t+BtzbC/LIorR/2/RzdWcrbFjRruoMp+fg=;
-	b=YsO2xrXUx1aWm+Gj+kax0tUFd6a55NEwhA+rhOGNQ9AAXSbhv29BDWSCA9nG60eyz7HA
-	 +yDCBunDg1aRgIGcE4vWWkNzKAUxz/TUPAqTYwal45BSmAomoz9rwCKsCKeIBGPLfY2bi
-	 b1xnCa3IRJBVjzLFSVc2m6ZRKvO5uYOy9y+KJSqy/cbyVRKhuRgnVQerlDzvpHP1k6N4f
-	 ykp+Xj7VbfsMtihZSi98x9o4pJwgOikX0rvSKac2PYsnwin7w+SB95FRgWbddber490nQ
-	 Xu9nj/AStZsXOwqYD762IGNSCslfDCp0xC5p1EBYOiaZXaNol6aBb56FZWtgp2iIZFw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795437292;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
+	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
+	 References:Subject:Content-Type:Content-Transfer-Encoding;
+	bh=eHnVdH3eygeNZ6mEwcCP89LSgWOPzbTMb7xVcTPFhqQ=;
+	b=QkXgb0Ylk+HpvZ6XdTXE/zkZnTomn62nj0YzttipPRg+frcnvlUy0e+w6xCT42FwNVCn
+	 9ZDImlpfNPca7yxdGOcPoFeJgMrDXDH9Zs65ZZxP6L2A4mqbWZ9799S8CRge5dwj8wW79
+	 017l6Jn7kuGk2lTxfZfKyuHh5zIhF/mr2akKD8GbS82zB4Lwwp9X6SimcwN+fdpQmXycO
+	 x58P1FPFJVYyjSLotNRohM+sIROst/QtxcrNxTjHzK37Wia4agqHaT0OfpeMqNJBPOuxU
+	 tRrkl+fpGztyn1eDVbIz95jcjrgLm5xMp2TpTR4jTAHOyz/8FisVZ1j9UKqrdb9KQGg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LSgZZF5t;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=glider.be;
+	spf=pass smtp.mailfrom=glider.be;
+	dkim=pass header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=lwhvrItP;
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=UsLMaOp3;
+	arc=none smtp.remote-ip=202.12.124.137
+Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60FE606A31A;
-	Mon, 23 Nov 2026 12:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33FB606A32A
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 12:34:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F33FB606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=glider.be
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LSgZZF5t
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 308181F000CA;
-	Mon, 23 Nov 2026 12:34:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795437273;
-	bh=FR6wWEGn+t+BtzbC/LIorR/2/RzdWcrbFjRruoMp+fg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=LSgZZF5tuZj++6QvvJXJgJmD5X/zU83rYNkS4t0au6BRsx9K9Y7s4CcgPgijo8k+g
-	 aUhMlNx65inEh/R1VLcX2Smt1Tn460aTKSLFROhhB1MjqUBo89b4IB8zmmV7H3K4bp
-	 LwSZi5oBZErg7SsKvrfPjSjKV4S+T/ABoG02UuUwEA6voMiI9fpuw+4TBIj6evqCrI
-	 LXdFc58L6IuJO49fHqjIxrm7JMaHp/+EreQJPvDzOPsWzrP5e4AzHK/n9j3/ZUyJ93
-	 X2ezds2Kdo/Bj9aRKeweqQ35mcmPonyC36Ew4KHqD5LdFsnwlg5J7GMebW6TDCV0EJ
-	 bfj7FkkfB45IA==
-Date: Mon, 23 Nov 2026 13:34:29 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen-Yu Tsai <wenst@chromium.org>, Laura Nao <laura.nao@collabora.com>, 
-	Chris Chen <chris-qj.chen@mediatek.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: mediatek: Add MT8196 PWM muxes
-Message-ID: <20261123-sassy-tacky-jackdaw-3dbb2f@quoll>
-References: <20261117-mt8196-pwm-clk-v1-0-d8725bcea9f4@baylibre.com>
- <20261117-mt8196-pwm-clk-v1-1-d8725bcea9f4@baylibre.com>
+	dkim=pass (2048-bit key, unprotected) header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=lwhvrItP;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=UsLMaOp3
+Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
+	by mailflow.stl.internal (Postfix) with ESMTP id 3E5181302F35
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 07:34:51 -0500 (EST)
+Received: from ams-imap-13 ([10.64.2.33])
+  by ams-compute-02.internal (MEProxy); Mon, 23 Nov 2026 07:34:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=glider.be; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1795437275;
+	 x=1795440875; bh=eHnVdH3eygeNZ6mEwcCP89LSgWOPzbTMb7xVcTPFhqQ=; b=
+	lwhvrItPrxrnWeg316nV1PuaExKq05uOnB7kdGOR+IJk3rFQ4890Jz9EcO31c0kk
+	xI5+e5MQsZ0Yu/9Wf27fOSkUCHAHEv49K9IkC+q+zMAiV0fWxL6WVhEL0+7utY0A
+	sMfoGyUVx5WNE7TkLtuFcn5bgseBGwR+2VyVL+Itg7Bp2cdvDppO16Gw3TVGIzFs
+	+veTAsVcniGMCYUlt6/hAvIA3qTBC20vLfBumf1+HmZqvHv8q4hsNKIWQCGv9AIk
+	kBIyqj9HN4qUmIGzSxUWBSlcFtdt4oVoz0eRwV++3xeZ2I5GDpbWpNk2sI5vSH5E
+	XacBZeeCuSCzIGUDtDjXyA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795437275; x=
+	1795440875; bh=eHnVdH3eygeNZ6mEwcCP89LSgWOPzbTMb7xVcTPFhqQ=; b=U
+	sLMaOp3ptN7qnKvIWkUvlnS7dH7+uzP+HriLKIrFXHLFQoGwOy+gn5VW7NtvjlTt
+	ManvQiXA/yGJs2Qs6t1/vWVROdmRhLQH/8Hcwu1SoOc4SZMVpnelETNdusb/zknJ
+	UmxWQ0dzev43r8pjIXIriUtoK8G+VORVCbl2FWAa9ww1T55Zk7Fli9ccMLHqkTRa
+	728HmALwK06es2xy8VIwZ29dfV8WS8beUKPzAiEKfZ+k1pFpUdcWF5cXI8faDOsU
+	AVE3P+q0ygfltJRFgOfUjOofusYqIx5b+2wM0O7GquksOL7nSHB2Odj/pNqvOcPx
+	EDEeO1hAn3Zw6rwm8/1hA==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=sign d=glider.be a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1795437275; d=glider.be;
+	mf=PGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg==;
+	rt=PGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc+;
+	s=fm1:rsa-sha256:LI7bzjjzRhkoF7xBGlQZOBGqDVUF2zZlpJNVO6iXp11v/rE
+	WiC/KyFrW93+3Yjy8+GY7VpGP3pJk2GGMzYrZL9+1Xxki6ft2QpPCLXdsGCVjChw
+	0OQ6F3LNNNgk9Rt56wNsUoAsCFLNXM0wEKwE1zoOE0Atj/hqSZKsOHDUOJF6SQyB
+	ptE3quk01FyYxV+UknvDcH8SMhPspmXW+8TUwxnsEJNdADhLzn89D/d4n2wvIOna
+	mO0a7Lr2b5t4DmYNkojw5z+4cv1wLlzQlkGargZMPXVItJgUGaR2F3q72VwKZcRw
+	MprLZf8I++MwJDOOkXJaDxo4/nl42vlaz9xQIJw==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=mi-m=1; hc=12;
+	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+	from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:NqarG23xk+ubs76/imvVRMIVR9rWyW+HFno8706/BFM=:crBsktOEwz7H50H+P11uEpNa/OLN9cRsaNs9xh5MNQY=;
+X-ME-Sender: <xms:0jIEa-kXHJSkHDBxBkbB-Rfk12hTluPPIO3BLiJ00t8HIPNy3Ml4xg>
+    <xme:0jIEawpYzEGOcdmBH7VfOrQ3QrgvR7pCr3gof4I3Y8cveujyxtwEy4Wlp9OZfM0KZ
+    6NIwSex1_RsXjNhe9UyR-zy65wJm5Tu98aBjnJFwfhWMy5aSsomJmxq>
+X-ME-Proxy-Cause: dmFkZTGjXOFYrJRxiwHc7rFicL9MWrbJzVM+Gc43OT+4O8mbpHX/5MAATZsAInI6Irclg4
+    HmBPr8P3wEx6H7B5dwsR/HHfQoqdBCUtEOiLxJS9mZIu4PwsE2PDUU94Q4jqfnzMI9Btwd
+    XpAwuZscnIVSUJsF+0koA0iiwDsWZD37XBYDpPn7VmVqd2+XDkRmbJlf9eAMXdWpLtpQMN
+    czFKZy8qBH04/Oxu9ZQMA8zOfPCNmVRws8jIRBNnncQG5Q6WPhVcUJAKcrqyeTM0Wsgfxf
+    7khQAAS5dOfnNwzM5QvQ9pzjX/BkQ1CzMMp393inSIF78qd4yR0IFm8Ms0iqIjWovz6FpU
+    CgFQgw/soK/tq/mFGhE7cmCgQ2BSc3IlcKqUnBArsu0BDneAWSEtDCvjKurDHAbPO6oPbX
+    sF57QnbFAohTkunviWyVlbAtg2pDgFRklPonksWA69xQ0TXMBe/n4cgjmLBjnjnFOL+NIQ
+    KG8IEHZU2UaWpcvWRx2fiUdHV9c6XRoVgAOrwaQm0/CLrqRT7skw2gfC9tF/v7PC1CmPph
+    Hx52t6ORfO6Jkd49V45jcWX6CXK3RoCdKJg6vWEOHTfKxESaXeoFqhF0QwDn54eSftAZVO
+    e2XmsNI60B6pmvsE0U09WBDT/LdtdFP602rgOxjdTpAl5xk+xpMyC10wzLkw
+X-ME-Proxy: <xmx:1jIEa9MdAPtePcO_m0xHaaHu0JEHLytb4ihDc7EMzSSAh4JomFv1WQ>
+    <xmx:1jIEaxKYf69HkxcKUSVCWteMnRpFcoVEdsxp4onPUsO6FVxf2CWTFQ>
+    <xmx:1jIEa8vVRg3M5Q1pMJ_4h2N16qOm3qOZcdRAwjDOgv9xHzpZR0A39A>
+    <xmx:1jIEazHtrOgobv7i74yPIQ2hjQZ8bg54nM33N94XEWR69sFzIEwHvg>
+    <xmx:2zIEa8npJ8YnsLCDqc6cvQGTXzw3RisQ_vkaFmsAS7VIUCAHgwtMzrMj>
+Feedback-ID: ia0f84a9e:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id 935AEF80098; Mon, 23 Nov 2026 07:34:26 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -62,25 +115,100 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261117-mt8196-pwm-clk-v1-1-d8725bcea9f4@baylibre.com>
+X-ThreadId: A9C68vVDcqlZ
+Date: Mon, 23 Nov 2026 13:34:06 +0100
+From: "Geert Uytterhoeven" <geert+renesas@glider.be>
+To: "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>
+Cc: "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Stephen Boyd" <sboyd@kernel.org>,
+ "Brian Masney" <bmasney+clk@redhat.com>,
+ "Jerome Brunet" <jbrunet+clk@baylibre.com>, "Ulf Hansson" <ulfh@kernel.org>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Marek Vasut" <marek.vasut+renesas@mailbox.org>,
+ "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>,
+ "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>,
+ "Kevin Hilman" <khilman@baylibre.com>, "Vinod Koul" <vkoul@kernel.org>,
+ "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
+ "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
+ "Paul Elder" <paul.elder+renesas@ideasonboard.com>,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>,
+ "Sudeep Holla" <sudeep.holla@kernel.org>,
+ "Cristian Marussi" <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+Message-Id: <23ab561a-c5c5-41ff-a0f4-87a3f5ca2e49@app.fastmail.com>
+In-Reply-To: <20261123113619.GG3010398@killaraus.ideasonboard.com>
+References: <cover.1795029012.git.geert+renesas@glider.be>
+ <e01baebc546ed6f1b71a0487a59cda73239ea7f1.1795029012.git.geert+renesas@glider.be>
+ <20261123113619.GG3010398@killaraus.ideasonboard.com>
+Subject: Re: [PATCH v5 05/15] clk: renesas: r8a78000: Add SCMI remapping support
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 17, 2026 at 07:16:02PM +0000, Alexandre Mergnat wrote:
-> From: Chris Chen <chris-qj.chen@mediatek.com>
-> 
-> Add clock IDs for the MT8196 PWM source selectors, so that the peri_ao
-> clock driver can register them and devicetrees can select a PWM clock
-> source with assigned-clock-parents.
-> 
-> Signed-off-by: Chris Chen <chris-qj.chen@mediatek.com>
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
-> ---
->  include/dt-bindings/clock/mediatek,mt8196-clock.h | 5 +++++
->  1 file changed, 5 insertions(+)
+Hi Laurent,
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+On Mon, Nov 23, 2026, at 12:36, Laurent Pinchart wrote:
+> On Wed, Nov 18, 2026 at 08:44:53PM +0100, Geert Uytterhoeven wrote:
+>> Extend the Clock Pulse Generator driver for R-Car X5H with SCMI support,
+>> to remap DT clock IDs to abstractions (clocks) offered by the SCMI
+>> firmware when running on a system with SCMI, and SCMI support is
+>> enabled.  Take into account some peculiarities of the current SCMI
+>> firmware implementations, and fall-back to fixed-rate clocks as
+>> replacements for SCMI clocks that are not available.
+>> Support for bus clocks used by serial, I2C, and SPI devices is included.
+>> 
+>> This lets us avoid putting SCMI IDs in DT, and allows us to use the same
+>> hardware description in SoC DTS for systems with and without SCMI
+>> firmware.
+>> 
+>> For now, it is assumed SCMI clock IDs are stable, and match SCP FW
+>> SDKv4.31.0 and later.
+>> 
+>> Suggested-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Best regards,
-Krzysztof
+>> --- a/drivers/clk/renesas/r8a78000-cpg.c
+>> +++ b/drivers/clk/renesas/r8a78000-cpg.c
 
+>> @@ -140,7 +182,35 @@ static struct clk_hw **get_hws(struct r8a78000_cpg_priv *priv)
+>>  
+>>  	for (unsigned int i = 0; i < map->size; i++) {
+>>  		fw_id = map->entries[i].fw_id;
+>> -		hws[i] = fixed_hws[fw_id];
+>> +		if (fw_id >= FIXED_CLK_OFFSET) {
+>> +			hws[i] = fixed_hws[fw_id - FIXED_CLK_OFFSET];
+>> +			continue;
+>> +		}
+>> +
+>> +		scmi_spec.np = scmi_clk_np;
+>> +		scmi_spec.args_count = 1;
+>> +		scmi_spec.args[0] = fw_id;
+>> +
+>> +		clk = of_clk_get_from_provider(&scmi_spec);
+>> +		if (IS_ERR(clk))
+>> +			return dev_err_cast_probe(dev, clk,
+>> +				"Failed to get SCMI clock %u\n", fw_id);
+>> +
+>> +		hw = __clk_get_hw(clk);
+>> +		clk_put(clk);
+>
+> Doesn't that leave the hw pointer possibly dangling, shouldn't you keep
+> the reference to the clock ?
+
+Only struct clk is reference-counted; struct clk_hw is not, and exists as
+long as the clock provider hasn't unregistered it.
+
+Gr{oetje,eeting}s,
+
+                                                Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                                            -- Linus Torvalds
