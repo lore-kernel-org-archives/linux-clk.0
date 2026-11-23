@@ -1,54 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795430198;
-	b=hzekJHrmZns1DjTF/gZN1NbeS/RxcCaayBrpbJMCX4QYDVUHHufN0vVWTfvSkrnAj+do
-	 g790KDwXqmbnYRJggZhbaaBNx+u9IqQ8Lz9h0/qMy62382yV8pPJ4xpnFdCmanMIq/qoX
-	 8Qt6wzutfKR+Vw11/UA2QZmQgAAQ/kuJJGZ1OYJr93FfCIBAzd3u3ZX9+z1WCmM3aN8+D
-	 XmXAe2owCUa39IZ3A1S+W2hd/60XDZPZttEWgNNk3438A21EhunYBZLW93paOZtmyfCeb
-	 s2i381orFsuL+A8eWllQbN+0y3zMeDTGkBozy/uznHlsxM6nwxZlGcdT6oW2RX0gCxg==
+	t=1795431460;
+	b=OgAimWz1TO8kuVjwOr8l2leb1XcLQP7BSqkJfTXi+T96kRkqzNTGdy2ZiOeO6D+/jyUZ
+	 QaYkKUhAANIs/rvkJw1c2tAPEFJEaQNgx/0YB/Ut9kPTE/E9kU0/LNqsnytiRfQDRxP56
+	 GpVli/iL6y4d3YlGEWVv/pQXPhsSR9MM4Y8zIZzOx5i2BCpgxnoo4xLW+9DtBkmhAQBRn
+	 d7ku6ccQMelic+fcVf2AdtyPnGyyMSB6Fmr+4XG7/pBvbFS6C3+EOvLx4lrDc13htDS3y
+	 dF3GX7E3JxN7LReYqDeFFsGgK7tZVIWpUs4tPPzdUxJsWaM6LSeNsoq6yKIGcYSrxNQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795430198;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795431460;
 	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
 	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=PcLcbUy9WLbB87302gRwaNmUCRa+6gKrWS43onZVWUM=;
-	b=RkvvQun+qFaWR9ow+NTuLY6PohM9Ds5oZi9Mzdlpn984jxuZ3n+n91bUfEalQV1GQAcA
-	 bAomRVgFVAvdnux5fEjQjCaxj8AO22kS+j40VcytlzTUbyEw8/KsSMOeaElRB7nQLAb/U
-	 UYboyhwOAaDHf9YzzCdNCuJQbidheicLhogAQ/V9RjXHvPfLqVdQ+SQCJ43XCnaV3baSB
-	 Zt5ptjcClnnSPA7YGxzXdR9yYfC5R293UJ8gfW/0i2mVvs8ZQ5v77VApLzEt0LZ85Oxkb
-	 1sN3NyFYXFDITCFBdJAaiMhtlwSc/2jiCBeRetzMQeWJ6+z/oKr7m0h4ck/oL6GKvjg==
+	 In-Reply-To;
+	bh=ivDTVAtvWv3uwend5cm17scjqn/tl8MG+Jy9Smv3hpg=;
+	b=sVeCTfNr0D4yWNjsejikpwaWdwY05XgjqgRVMgc6KUoU/ds2XXf4I8pqArpSEK4ofkB1
+	 zto4wtpINqta/XOEfxIISltkNRvZmIvk/9BjKaS7RHbJvnNveyja4Ra6nKi+3O6gossIj
+	 CdeMGYgC0TdRp9wp8jMe7pd8hCTEZInaVdu9QUhaBdVjWN8hMnQFGiMfuuOSdI9c/Bolv
+	 hfUaXcqTjYkSjV5FuexmdU/VRsB9Z0PSSE4CtCbJX9T33KQA/iGV7+ZSdH/Q9m8087ZDy
+	 9heAi3o9rFxuB6gGHwaPXfVwPyT0t8laVJZXznvdXLdR8Yrh1BSdU2RmDpBN5JpdpeQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=ideasonboard.com;
 	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=mITrGh2T;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=f7lUuUcJ;
 	arc=none smtp.remote-ip=213.167.242.64
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58482606A31E;
-	Mon, 23 Nov 2026 10:36:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 58482606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4046606A31A;
+	Mon, 23 Nov 2026 10:57:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B4046606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=mITrGh2T
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=f7lUuUcJ
 Received: from killaraus.ideasonboard.com (2001-14ba-7086-3000--a06.rev.dnainternet.fi [IPv6:2001:14ba:7086:3000::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 834BE4B0;
-	Mon, 23 Nov 2026 11:34:02 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3F2F7177;
+	Mon, 23 Nov 2026 11:55:05 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1795430042;
-	bh=ccjAAMHgAJq89pSqUHBH89F3ZPD7R6QW9itkpi2hSf0=;
+	s=mail; t=1795431305;
+	bh=AvO1/maww9n+YB0rxCd6DEtZ440NZzTfyaS445kaBfs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mITrGh2T1FVa6dXh336gRFij/ePLSfcLwEekVfS1AxwaI7aqZ0bLgYy/lJEqruSUi
-	 FObd+PkgFTebQAZS8wBeD2K5FUZEdu7ymMqsxsBxmV4tRsWqYAeyJUQAp8z0+2dNCm
-	 P5/jt6wVW1mR4TlGRbHZb1csDC+J4CXxqUIxhxnA=
-Date: Mon, 23 Nov 2026 12:36:33 +0200
+	b=f7lUuUcJy8Q8gJH5VYA7aaa3M4mV+ugeNvtqthpyxA3a4AgiBAKgrR8cfUcs7sB3R
+	 Yu7p3IW3qVICHH0IWvcnE2HVpP2F17VVllH1jdcP3qTvia02bPS5BPrLlS/F4DlC/6
+	 gwVVR6fFqqZQCgY++fQxDQBYg7PN7Ll+3GmNv//s=
+Date: Mon, 23 Nov 2026 12:57:36 +0200
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: =?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh@kernel.org>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Marek Vasut <marek.vasut@mailbox.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
@@ -60,22 +58,22 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
 	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
 	Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
 	Paul Elder <paul.elder+renesas@ideasonboard.com>,
+	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>,
 	Sudeep Holla <sudeep.holla@kernel.org>,
 	Cristian Marussi <cristian.marussi@arm.com>,
 	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
 	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 00/15] R-Car X5H Ironhide CPG/MDLC SCMI remapping
- support
-Message-ID: <20261123103633.GB2959742@killaraus.ideasonboard.com>
+Subject: Re: [PATCH v5 01/15] clk: renesas: r8a78000: Merge debug prints in
+ r8a78000_clk_get()
+Message-ID: <20261123105736.GB3010398@killaraus.ideasonboard.com>
 References: <cover.1795029012.git.geert+renesas@glider.be>
- <1e9c5ac3-d82b-4af9-9946-0302cadf7404@baylibre.com>
- <20261119234759.GB2324725@killaraus.ideasonboard.com>
- <19c3745a-6308-46ff-bb37-3acc88fe22e2@baylibre.com>
- <awAqqg6F2Z1t55x2@ninjato>
- <d94ad9ca-afdd-4301-a69c-0bbad5b334fa@baylibre.com>
+ <cee843b319c9eceba2339f14a134e305a2b05d7e.1795029012.git.geert+renesas@glider.be>
+ <57d2cc58-15ac-434e-ab40-7a8a54d93a1f@mailbox.org>
+ <CAMuHMdXXS4ZTxLBrZoNycHUzdUp9QsisfA7CcBPyAGw7zTuSoA@mail.gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -87,68 +85,39 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d94ad9ca-afdd-4301-a69c-0bbad5b334fa@baylibre.com>
+In-Reply-To: <CAMuHMdXXS4ZTxLBrZoNycHUzdUp9QsisfA7CcBPyAGw7zTuSoA@mail.gmail.com>
 
-On Fri, Nov 20, 2026 at 03:33:11PM +0100, Clément Le Goffic wrote:
-> Hi Wolfram,
+On Fri, Nov 20, 2026 at 08:56:42AM +0100, Geert Uytterhoeven wrote:
+> On Fri, 20 Nov 2026 at 06:28, Marek Vasut wrote:
+> > On 11/18/26 8:44 PM, Geert Uytterhoeven wrote:
+> > > The two debug prints in r8a78000_clk_get() are very similar.
+> > > Merge them into a single debug print.
+> > >
+> > > While at it, unwrap the (wrongly-indented) continuation of the
+> > > r8a78000_clk_get() function header, as it fits on a single line.
+> >
+> > It might be worth mentioning, that this now also uses
+> > clk_hw_get_name(hw) instead of map->fw_id .
 > 
-> Thank you for the rewording, it is clear
-> 
-> On 11/20/26 12:10 PM, Wolfram Sang wrote:
-> > In the past, we wanted to support all kinds of firmware. Sadly, each new
-> > firmware introduced different IDs here and there. So, we came up with
-> > some stable IDs ourselves and mapped them to the IDs per firmware. This
-> > is a n:1-mapping of firmware IDs to our stable IDs.
-> 
-> Sure, that is part of firmware development.
-> I know several SDK versions exist, and supporting several of them is work for a vendor tree.
-> As Geert's cover says, "While upstream Linux must only support sufficiently mature firmware versions, vendor trees (e.g. renesas-lts) may still want to support development firmware versions".
-> Each SDK version can then have its own DT there.
+> clk_hw_get_name(hw) was printed before; fw_id will still be printed
+> in get_hws() after PATCH 04/15.
 
-That's not how DT works. Please be gentle with Krzysztof and avoid
-increasing his blood pressure :-)
+That's worth mentioning in the commit message. With that, the patch
+looks good to me.
 
-> > The support for <n> firmware versions got serious opposition from
-> > upstream. We concluded that supporting only the latest firmware will
-> > make most controversial discussion points vanish. So, we now have a
-> > 1:1-mapping of (the latest) firmware IDs to our stable IDs.
-> 
-> Agreed, supporting several numbering upstream for the same chip only brings confusion.
-> But then, why can't that one mapping be one DT?
-> 
-> > I guess this is what Geert means with IDs becoming "stable". <n>
-> > firmware versions might return <n> IDs, but supporting only one firmware
-> > we get the same "stable" ID from it.
-> > 
-> > Sadly, of course, with the next firmware update, we still might get a
-> > different ID all the time. So, not stable in that regard and we still
-> > need the mapping :(
-> 
-> When the firmware can be updated, I think an id change should be fixed there first.
-> That is what I would do in the open-source SCMI server firmware I am writing for this chip.
-> 
-> > Yes, this means the driver is then tied to a specific firmware version
-> > because it only has this mapping. Not nice for a user. But we didn't see
-> > another way moving things forward for now.
-> I think the DT is that other way.
-> With the SCMI ids in DT, only the DT is tied to a firmware version, not the drivers.
-> If a release that changes ids is already out, it needs a new DT, or a quirk for that one release when the DT cannot be updated.
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-So you're proposing that, with any new firmware that introduces an ABI
-breakage, every single DTB on all boards in the wild get updated ? That
-just doesn't scale, sorry. Let's forget about that bad idea, and focus
-on finding a good solution.
-
-> The hardware stays described
-> The CPG and MDLC belong to the SCMI server, so the DT should mark them status = "reserved", and the consumers use the SCMI clock, power domain and reset providers.
-> 
-> The Devicetree Specification v0.4 define "reserved" for this case (section 2.3.4, Table 2.4):
-> "Typically this is used for devices that are controlled by another software component, such as platform firmware."
-> 
-> Zephyr also uses SCMI on this chip, and it already keeps the SCMI ids in its X5H DT
-> Juno and STM32MP15 handle their firmware differences the same way, with separate -scmi DT variants that simply include the board DT and an SCMI .dtsi.
-> If the number of variants grows, tools such as Lopper, which I mentioned before, can help manage them.
+> > [...]
+> >
+> > > -     dev_dbg(dev, "Mapping DT clock %u to fixed clock %u\n", id, map->fw_id);
+> > > -
+> > >       hw = priv->fixed_hws[map->fw_id];
+> > >
+> > > -     dev_dbg(dev, "clock %u is %s at %lu Hz\n", id, clk_hw_get_name(hw),
+> > > -             clk_hw_get_rate(hw));
+> > > +     dev_dbg(dev, "Mapping DT clock %u to %s at %lu Hz\n", id,
+> > > +             clk_hw_get_name(hw), clk_hw_get_rate(hw));
+> > [...]
 
 -- 
 Regards,
