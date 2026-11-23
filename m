@@ -1,78 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795459436;
-	b=RQEBRSyXH7Rbawpq07cUiTrz7ukxQpcCj5UDdrO86DINDvUBo72tmXzToxeFTODCuIt8
-	 4/h9wA2N8upbIoOOI7uCRj3ZuT1hCkhP8dNMjTGXuWh5IPoVGiS4yH+snONml3b6ll3s0
-	 y9894i/+1xjS2ItPLkwqtTqtzdDwGOmvWSbNc6yI7JWjyDhvmHDS0n3Nf+ifLbWVFnZel
-	 Pa+au2Z9orIqT0OX5JFpzSbF5IpiKvF4bnKwChcGbCSJFE+Opvvr5tfZB38jrwe1fMjs7
-	 eW2r3c0eqvCVug710jvcMFYJ76b710unkssgFsP+p0C8BmmyhLEE8gY3kSTmE2QSmVg==
+	t=1795459452;
+	b=eBFp3FctXxZmolQb5q4JTJSRgejA9JV3xvbBfp2ecDJqBVOmPR4/utBp1kqPeAmbjae8
+	 gbNaVFQpDddlou9TMf0CgpRpohouCNiZ18CtmSGwXi7anY77Yr9rGKb8N99bP6EQUvwws
+	 7PqrH9DpGIn/YhAL8lop2kA9bE6Y3DfcWDQ4GWDSukrpQlmKYCuPcxC2XU7YTTmnE1rnj
+	 u/4FSgs/WyWSu+lzxeRxKRhn8arxZ9uELOpFlFxuT95sxJqMsidPKIvuR+6rFSoINppJH
+	 3mcF3uQv5dZPchkLVOZPgh3z7gw1sqehTrfGyj1RaKCGCvv/joZfaQJXUz4WFd6akTw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795459436;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795459452;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Zz6L92ZDSFMnlI2YQdsV7kK/kM96g1+mYDq69MPiFmU=;
-	b=TOPkMS/HueZPmZkGggisC1AJ3H0KzCGiDJ+HZqe1epgFaFiqs2+ZBo+HLg6kx1pccwKr
-	 dtPkEmchekX6ohVHOBDOB/xiPIAr9pSDIh7wpPoGMd4utF5oCbWxzhZawcnDJHjNMU3N6
-	 g2ia0MVTat4hND6f0ZmJAfbqg6+5iRrEuf/0UB01N2+pXsElWEzM3D71eRGnEfKYNG/VU
-	 dEfNgn/879b7eGW/pPH+LwiJ+MvanRlVrJDPx3p7gNE95TXnmRm6pmZFctp4xQJThGtXh
-	 ngwVbjutwIfqBXuwy0dyauOacQ6I/a3loIC/ucOUwhuAqeITdhuQ2G4Sq2jFkxbyTrw==
+	bh=7sE8W3VI1V3vjXuz/LM8ZZERrDVCUZFcI4EPJGcPIlM=;
+	b=ZvMRMFGIVsu7aQphCMgKIw8UNPOs1AGkfY3cbSWi2uVQ2G/06ht45jePPpqCfj8I7v2L
+	 wIrF5cWquOvQGpiFrFt5yWcyk0EEzWxv3mTCLiKojf6uzCaxIZTxHDFzAUEMQBCaJqDVH
+	 t4bntiXT/WIxtXAQL0seODwTUM+hwfrZNsQVfYHvfPwxXI4IKFN4xZsVDo8zWQEn1QZy+
+	 g9nDGLjz/zXC4xYaZxRaRTQgDB1V5JQuMCLXUWK+mYhQvd98CTc7JEemRfvj3/ziNMoTB
+	 inRTDY1e5MxNhcEkNlGcu7gDvVvTBzr+hG7SK6OIFWL+nFCbGQeKNMmR26wUHuHccTQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hsmhC1xI;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OmB2PEuX;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F6A606A31F;
-	Mon, 23 Nov 2026 18:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC33606A333;
+	Mon, 23 Nov 2026 18:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hsmhC1xI
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OmB2PEuX
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795459436;
-	b=O9XgfmgaAqGaqgWPTMlhCEDYmWd/n6R4CMuvIg02txGqFIFpxPSEfMruf33T+5SPpVhU
-	 Whrk671Vvb6nUaWVcpfyGNSSglaIQhdHEbm7DxjHoBNVnMGc9f/8FyB9QlQdqFXNfYxm8
-	 mTGoTKV4/IVES4F+rp1nms6z1ylenL04aAvPvJ05zQ2d2QEjyanBug71+IQnkFMtsQPq5
-	 dIPL00tDHcoFGXcmoN23+zJQm849vJkwQ0mM30IaLRw+UWQh7ODOSKbH0hFVAdAsO/TPO
-	 Q/A3a9ZnwtfDN8GPu3IOJ2qjqmD+itX0vXcYJMnj7WVM8qKaNyWFpSkfyskCFfD/B7g==
+	t=1795459452;
+	b=fv+TC95YBdEOP2XdI5gD+L1XDGwgYRSXV0ffLe0tUzJfS28qBdmPp784SJhocY0NGQjo
+	 /WXj+RGBPgxyCmAz3MFmUMOr1W3lg0m04z+aAi7OVEHubw5vAxrCbwl6t4TNYUTWv9BDX
+	 bsFIEuqr9dRH95I+njAvcZDu12JzM/wg6AB/Q12kUh+w+4+pgqyv5HkfKhebuoqY6dJMO
+	 QCiBf9N8BlQpL4BvRC81C6q+db95MpIXAevei8Ma3/OCKAZ6yeBsWiZA5vC5UHSqpEAQo
+	 ZW7O6xWQHak98bu8mYKrnwjc1IQHgLwUH59iLszQL5OsCByXNazjm/1ggDXVLTDYB9g==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795459436;
+	c=relaxed/relaxed; t=1795459452;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Zz6L92ZDSFMnlI2YQdsV7kK/kM96g1+mYDq69MPiFmU=;
-	b=uQMbRZx84R8KMxaeHPGLcOoNEet2zC0ZuQQm6UVCWsKh23ahuyJQ1H7Bh9qd0NLHUr1J
-	 GmNUVE5ziB+IMb93qRTxK6GqDttL4cEzisK++INBiuSrAZsjvlZqA+ukRYc3t4WhwUwdp
-	 HOnuplag/TKs3//sW4pE8QRtNA55nxj9q8a/+2p51mV2e2OJeZ75q9unGe7sSTN6rg3Tj
-	 wW0takPHL4kXLwfJh4frZtT1xBiDMi/OHlj11D9s1O6E5RfkzqugVC6GGw0a4tUMQJ5l4
-	 lCuZ8YfFi3qSQirNQbSHbEWabDPkMx7dpLnnoqdBzK/VicSqWo2q6q2dz89LcbflU6w==
+	bh=7sE8W3VI1V3vjXuz/LM8ZZERrDVCUZFcI4EPJGcPIlM=;
+	b=nG5h1Qk+UDhiyuqJj50NFqFJdFuexGqGB7qZWXgjgC5qP4ELigTDyfZqnbXwzCiBWbJt
+	 5dG7KLP8PZURU8W8wlCDD5JqPlLK/dFzxjHFLONLfhDkbEp0ErvvALRGZ9M1hs0pPOsub
+	 IA36pli/YsDPL83Hh0lkMfaLCbeDoeA2y6JlDvxiJ9Gn5++Wx1ZOB7RDH981RvBcw1K+T
+	 AGkyVJr39Jkj0wndS/m1MAePE8TA3RQS8cUK6D/v9cf38Tu2bcx2ktoMBCrALh+xoK2v2
+	 KyNpEPyd3XgB0FQaijR65ZcnJBZbKUvq8ZNk74SjfzAbjFI7mzC08Db4Mzo9oUUh8Xw==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 5C7431F000F4;
-	Mon, 23 Nov 2026 18:43:41 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id A1C8A1F00AD4;
+	Mon, 23 Nov 2026 18:43:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795459436;
-	bh=Zz6L92ZDSFMnlI2YQdsV7kK/kM96g1+mYDq69MPiFmU=;
+	s=k20260515; t=1795459451;
+	bh=7sE8W3VI1V3vjXuz/LM8ZZERrDVCUZFcI4EPJGcPIlM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=hsmhC1xIgxnY8A91iySaz0uK0wbbFQnGvuv3WvgzY5gijcSBPQwX2HEZx5tlc8U/p
-	 mARtf9QvJmG707ASOrjm+npsHCAGjUyoDYnpb0He+C8ChcFVMgwi24CRCb0kjkbLZX
-	 YsMbgz70D3QhTRnhFL9nCBZ2Qa28MQyd1plGeRKyFbO3sYqPGkb7IkEIpVXiMxXwMH
-	 7feWKYzstj36rl38qGQSP0ZQGIogUdV4CkPqtEdtWvAte1hYs5o0MbyRxQhDjYSTEo
-	 Dv/k9GZvUfxCbn92buZB9nUBmEAtJChiM712lDdMDiO/XFDSQZzeMnxhFYBaZmhyVa
-	 HeVR+YxIkafzQ==
+	b=OmB2PEuXYebtlju+AEj0ixzwnxDOVprQRfhXvfyhAV3yicClKTgNnH818lmBIHWSI
+	 whkH7DRfCar6OF/eM7zEmSGxi6Xt5Slsl74QZuvETHOySBmmPDuHzVV7c+hBSFJziJ
+	 oOkmyPHbhmT7hZ0Io1ZXl+UygUeCTVbkcd8aKp2jUYUSnzVGwALm5TQbEIFUS643ho
+	 XsXt79SNhjffy551jdz+PP8NZ7QClRR4nWPpkOZPoZ9tBaJMyudVMPhu0yeBUPYwsf
+	 GNJchrtGEnGeaRGVtTYBJwb9mSrbVf+f5oQ4pZGvJmiRcDMedOr0vUusBxZX5syHeO
+	 yF2EzNbzhycEQ==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 621DA4C607;
+	by lkml.kernel.org (Postfix) with ESMTP id 9DE094C612;
 	Mon, 23 Nov 2026 18:43:34 +0000 (UTC)
 From: Fil Dunsky via B4 Relay <devnull+filipp.dunsky.gmail.com@kernel.org>
-Date: Mon, 23 Nov 2026 21:43:33 +0300
-Subject: [PATCH 5/8] phy: Add CS7542 PCIe SerDes support
+Date: Mon, 23 Nov 2026 21:43:35 +0300
+Subject: [PATCH 7/8] PCI: cs7542: Add CS7542 PCIe host support
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -83,7 +83,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261123-b4-cs7542-pcie-v1-5-4cde5201d404@gmail.com>
+Message-Id: <20261123-b4-cs7542-pcie-v1-7-4cde5201d404@gmail.com>
 References: <20261123-b4-cs7542-pcie-v1-0-4cde5201d404@gmail.com>
 In-Reply-To: <20261123-b4-cs7542-pcie-v1-0-4cde5201d404@gmail.com>
 To: Manivannan Sadhasivam <mani@kernel.org>, 
@@ -101,11 +101,11 @@ Cc: Jingoo Han <jingoohan1@gmail.com>,
  linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795459409; l=9297;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795459409; l=18438;
  i=filipp.dunsky@gmail.com; s=20260930; h=from:subject:message-id;
- bh=xbqhgVGjORFnQ5gPtfVS3sFJz4weZ5kVBK/LGnXuSak=;
- b=QNVgNlvbBW934POdhUTwDtWsSN8OBXryNPi7DhDOOM/dEJnB3LmSOCUmXp0FW0JjbcvIJPfR2
- c458jFRiOygB7kW6ewdsWtpFux7pV8liLuO2eTYcgVb0W05tzeH1dxn
+ bh=l8tQYV/KBNlLdAYng+NOlpoKWrRevN+OGd/q1aMRC9s=;
+ b=QG0A115bMh4UUyxHwft4vCO7fwLXZKs1/HRIBZ8KUC6Dzrl+mNXpaXUXsluMD1rw3MXxnRwUK
+ KOTdWUXknGKCmBxHpfodJQo1CBYGuzD5r0kXMyrXA7aG0mJtnCHpAjp
 X-Developer-Key: i=filipp.dunsky@gmail.com; a=ed25519;
  pk=JAYP8e2rJ54DHOmhNtXud8rl1igAaAXoOHxtJmVXI1g=
 X-Endpoint-Received: by B4 Relay for filipp.dunsky@gmail.com/20260930 with
@@ -116,285 +116,571 @@ Content-Transfer-Encoding: 7bit
 
 From: Fil Dunsky <filipp.dunsky@gmail.com>
 
-Provide per-lane generic PHYs using the vendor 24 MHz programming table
-and revision-dependent value. Sequence power and reset through the shared
-global regmap and fail on CMU lock timeout with balanced power cleanup.
-Use the shared PHY status bank without overlapping PCIe wrapper resources.
+Add DesignWare host glue consuming separate clock, reset and PHY
+providers. Use live link status and stop previous training before
+enumeration. Finish endpoint teardown before draining the shared IRQ and
+freeing MSI domains. Dispatch enabled INTx/MSI sources through one
+application interrupt and use its MSI target window.
+
+Prevent root configuration accesses at and above 0x200, including direct
+DesignWare DBI reads, while preserving the private CSR bank and separate
+iATU callback base. Unwind power and IRQ domains on failure and removal.
+
+Read live link/LTSSM state through the application wrapper. After link
+loss, block configuration and DBI accesses until controller reset and
+reprobe.
 
 Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
 ---
- drivers/phy/Kconfig           |  11 ++
- drivers/phy/Makefile          |   2 +
- drivers/phy/phy-cs7542-pcie.c | 232 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 245 insertions(+)
+ drivers/pci/controller/dwc/Kconfig       |  12 +
+ drivers/pci/controller/dwc/Makefile      |   2 +
+ drivers/pci/controller/dwc/pcie-cs7542.c | 508 +++++++++++++++++++++++++++++++
+ 3 files changed, 522 insertions(+)
 
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index 105fbe408..77cff94fe 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -204,4 +204,15 @@ source "drivers/phy/tegra/Kconfig"
- source "drivers/phy/ti/Kconfig"
- source "drivers/phy/xilinx/Kconfig"
+diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+index 0a0d56fcf..88415954e 100644
+--- a/drivers/pci/controller/dwc/Kconfig
++++ b/drivers/pci/controller/dwc/Kconfig
+@@ -577,4 +577,16 @@ config PCIE_ULTRARISC
+ 	  By default, this symbol is enabled when ARCH_ULTRARISC is active,
+ 	  requiring no further configuration on that platform.
  
-+config PHY_CS7542_PCIE
-+	tristate "Cortina Systems CS7542 PCIe SerDes"
-+	depends on OF && HAS_IOMEM && COMMON_CLK
++config PCIE_CS7542
++	tristate "Cortina Systems CS7542 PCIe controller"
++	depends on OF && HAS_IOMEM && PCI_MSI && COMMON_CLK
++	select PCIE_DW_HOST
 +	select GENERIC_PHY
-+	select MFD_SYSCON
++	select RESET_CONTROLLER
 +	help
-+	  Support the three CS7542 Snow Bush SerDes lanes in PCIe mode
-+	  with a 24 MHz reference clock. Lane resets share the global syscon.
-+	  SATA mode and other reference frequencies are not supported.
-+	  The module is called phy-cs7542-pcie.
++	  Enable the DesignWare PCIe host controllers on Cortina CS7542.
++	  Separate clock, reset and generic PHY providers are required.
++	  The application interrupt handles both legacy INTx and MSI.
++	  The module is called pcie-cs7542.
 +
  endmenu
-diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-index c6dd02003..54df29e74 100644
---- a/drivers/phy/Makefile
-+++ b/drivers/phy/Makefile
-@@ -55,3 +55,5 @@ obj-$(CONFIG_GENERIC_PHY)		+= allwinner/	\
- 					   tegra/	\
- 					   ti/		\
- 					   xilinx/
+diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+index d4f88cfc6..4a6ae9037 100644
+--- a/drivers/pci/controller/dwc/Makefile
++++ b/drivers/pci/controller/dwc/Makefile
+@@ -61,3 +61,5 @@ obj-$(CONFIG_ARM64) += pcie-hisi.o
+ obj-$(CONFIG_ARM64) += pcie-tegra194-acpi.o
+ endif
+ endif
 +
-+obj-$(CONFIG_PHY_CS7542_PCIE) += phy-cs7542-pcie.o
-diff --git a/drivers/phy/phy-cs7542-pcie.c b/drivers/phy/phy-cs7542-pcie.c
++obj-$(CONFIG_PCIE_CS7542) += pcie-cs7542.o
+diff --git a/drivers/pci/controller/dwc/pcie-cs7542.c b/drivers/pci/controller/dwc/pcie-cs7542.c
 new file mode 100644
-index 000000000..d027baa93
+index 000000000..19225e9a2
 --- /dev/null
-+++ b/drivers/phy/phy-cs7542-pcie.c
-@@ -0,0 +1,232 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* CS7542 Snow Bush SerDes, PCIe mode with a 24 MHz reference clock. */
++++ b/drivers/pci/controller/dwc/pcie-cs7542.c
+@@ -0,0 +1,508 @@
++// SPDX-License-Identifier: GPL-2.0
 +#include <linux/bitfield.h>
 +#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
 +#include <linux/iopoll.h>
-+#include <linux/mfd/syscon.h>
++#include <linux/phy/phy.h>
++#include <linux/reset.h>
++#include <linux/delay.h>
++#include <linux/gpio/consumer.h>
++#include <linux/interrupt.h>
++#include <linux/irqchip/chained_irq.h>
++#include <linux/irqdomain.h>
++#include <linux/kernel.h>
 +#include <linux/module.h>
 +#include <linux/of.h>
-+#include <linux/phy/phy.h>
++#include <linux/of_irq.h>
++#include <linux/pci.h>
 +#include <linux/platform_device.h>
-+#include <linux/regmap.h>
++#include <linux/resource.h>
 +
-+#define GLOBAL_JTAG_ID	0x00
-+#define GLOBAL_PHY_CONTROL 0x14
-+#define PHY_REFCLK_MASK(p) (3U << ((p) * 2))
-+#define PHY_REFCLK_24MHZ(p) (2U << ((p) * 2))
-+#define PHY_PD(p)	BIT(8 + (p))
-+#define PHY_CMU_RESETN(p) BIT(16 + (p) * 4)
-+#define PHY_LN0_RESETN(p) BIT(17 + (p) * 4)
-+#define PHY_POR_N(p)	BIT(19 + (p) * 4)
-+#define PHY_CMU_OK	BIT(18)
-+#define PHY_STATUS_STRIDE 0x80
-+#define SNOW_COM_REG0	0x00
-+#define SNOW_REG0_CFG	0x00090006
-+#define SNOW_REG0_AHB_RESETN BIT(0)
-+#define SNOW_REV_REG	96
-+#define SNOW_REV_REG_A0	0x5e082e00
-+#define SNOW_REV_REG_A1	0x5e080600
-+#define SNOW_COM_LANE_REG0 0xc8
-+#define SNOW_LANE_REG0_CFG 0x400290c0
-+#define SNOW_LANE_REG0_MASTER_RESETN BIT(1)
-+#define CS7542_PORTS	3
++#include "pcie-designware.h"
 +
-+struct cs7542_serdes;
-+struct cs7542_lane {
-+	struct cs7542_serdes *serdes;
-+	void __iomem *base;
-+	struct phy *phy;
-+	unsigned int id;
++#define APP_INT_STATUS		0x00
++#define APP_INT_ENABLE		0x04
++#define APP_CORE_CONFIG		0x1c
++#define APP_PM_STATUS		0x20
++#define APP_LINK_ACTIVE		BIT(18)
++#define APP_LTSSM_STATE		GENMASK(9, 4)
++#define APP_CFG_START		0x80
++#define APP_CFG_END		0x84
++
++#define INT_INTX_ASSERT(x)	BIT((x) * 2)
++#define INT_INTX_ASSERT_MASK	(BIT(0) | BIT(2) | BIT(4) | BIT(6))
++#define INT_MSI			BIT(8)
++#define INT_LINK_UP		BIT(9)
++#define INT_RADM_NONFATAL_ERR	BIT(12)
++#define INT_RADM_FATAL_ERR	BIT(13)
++#define INT_GM_COMPOSER_ERR	BIT(16)
++#define INT_RADMX_COMPOSER_ERR	BIT(17)
++#define INT_ELASTIC_OVF		BIT(18)
++#define INT_ELASTIC_UNF		BIT(19)
++#define INT_LINK_DOWN		BIT(22)
++#define INT_ERR_MASK		(INT_RADM_NONFATAL_ERR | INT_RADM_FATAL_ERR | \
++				 INT_GM_COMPOSER_ERR | INT_RADMX_COMPOSER_ERR | \
++				 INT_ELASTIC_OVF | INT_ELASTIC_UNF | INT_LINK_DOWN)
++
++#define CORE_CFG_LTSSM_EN	BIT(0)
++#define CORE_CFG_AXI_UR_MASK	BIT(5)
++
++#define APP_PORT_STRIDE		0x400
++#define APP_PHYS_BASE		0xF00A0000
++#define APP_CFG_WINDOW_LEN	0x1000
++#define APP_MSI_TARGET		0xC0
++#define RC_CFG_LIMIT		0x200
++
++struct cortina_pcie {
++	struct dw_pcie		pci;
++	void __iomem		*app;
++	struct clk		*clk;
++	struct phy		*phy;
++	struct reset_control	*reset;
++	struct gpio_desc	*perst;
++	int			irq;
++	bool			msi_ready;
++	bool			link_lost;
++	struct irq_domain	*intx_domain;
++	raw_spinlock_t		lock;
++	resource_size_t		dbi_phys;
++	resource_size_t		app_phys;
++	int			port;
 +};
 +
-+struct cs7542_serdes {
-+	struct device *dev;
-+	struct regmap *global;
-+	void __iomem *status;
-+	struct clk *ref;
-+	struct cs7542_lane lanes[CS7542_PORTS];
-+	u32 revision_value;
-+};
++#define to_cortina_pcie(x)	container_of((x), struct cortina_pcie, pci)
 +
-+struct snow_reg {
-+	u16 off;
-+	u32 val;
-+};
-+
-+static const struct snow_reg snow_phy_24mhz[] = {
-+	{ 0,   SNOW_REG0_CFG }, { 4,   0x000e0960 }, { 32,  0x68a00000 },
-+	{ 44,  0x50040000 }, { 48,  0x40250270 }, { 52,  0x00004001 },
-+	{ 100, 0xf0914200 }, { 104, 0x4c0c9048 }, { 108, 0x00000373 },
-+	{ 124, 0x04841000 }, { 128, 0x000000e0 }, { 132, 0x04000023 },
-+	{ 136, 0x68001038 }, { 140, 0x0d181ea2 }, { 144, 0x0000000c },
-+	{ 196, 0x0f600000 }, { 200, SNOW_LANE_REG0_CFG }, { 204, 0x0000003c },
-+	{ 208, 0xc68b8300 }, { 212, 0x98280301 }, { 216, 0xe1782819 },
-+	{ 220, 0x00f410f0 }, { 232, 0xa0a0a000 }, { 236, 0xa0a0a0a0 },
-+	{ 240, 0x9fc00068 }, { 244, 0x00000001 }, { 248, 0x00000000 },
-+	{ 252, 0xd07e4130 }, { 256, 0x935285cc }, { 260, 0xb0dd49e0 },
-+	{ 264, 0x0000020b }, { 300, 0xd8000000 }, { 304, 0x0001ff1a },
-+	{ 308, 0xf0000000 }, { 312, 0xffffffff }, { 316, 0x3fc3c21c },
-+	{ 320, 0x0000000a }, { 324, 0x00f80000 },
-+};
-+
-+static int cs7542_phy_power_off(struct phy *phy)
++static int cortina_pcie_port_init(struct cortina_pcie *cp)
 +{
-+	struct cs7542_lane *lane = phy_get_drvdata(phy);
-+	unsigned int p = lane->id;
-+	u32 mask = PHY_PD(p) | PHY_CMU_RESETN(p) | PHY_LN0_RESETN(p) | PHY_POR_N(p);
++	u32 value;
 +	int ret;
 +
-+	ret = regmap_update_bits(lane->serdes->global, GLOBAL_PHY_CONTROL, mask, PHY_PD(p));
-+	clk_disable_unprepare(lane->serdes->ref);
-+	return ret;
-+}
-+
-+static int cs7542_phy_power_on(struct phy *phy)
-+{
-+	struct cs7542_lane *lane = phy_get_drvdata(phy);
-+	struct cs7542_serdes *sd = lane->serdes;
-+	unsigned int p = lane->id;
-+	u32 mask, value;
-+	int ret, i;
-+
-+	ret = clk_prepare_enable(sd->ref);
++	writel(cp->dbi_phys, cp->app + APP_CFG_START);
++	writel(cp->dbi_phys + APP_CFG_WINDOW_LEN - 1, cp->app + APP_CFG_END);
++	ret = readl_poll_timeout(cp->app + APP_CFG_END, value,
++				 value == cp->dbi_phys + APP_CFG_WINDOW_LEN - 1, 10, 10000);
 +	if (ret)
 +		return ret;
-+	mask = PHY_PD(p) | PHY_CMU_RESETN(p) | PHY_LN0_RESETN(p) | PHY_POR_N(p) |
-+	       PHY_REFCLK_MASK(p);
-+	ret = regmap_update_bits(sd->global, GLOBAL_PHY_CONTROL, mask,
-+				 PHY_PD(p) | PHY_REFCLK_24MHZ(p));
-+	if (ret)
-+		goto power_off;
-+	msleep(100);
-+	ret = regmap_update_bits(sd->global, GLOBAL_PHY_CONTROL, PHY_PD(p) | PHY_POR_N(p),
-+				 PHY_POR_N(p));
-+	if (ret)
-+		goto power_off;
-+	usleep_range(10, 20);
-+	for (i = 0; i < ARRAY_SIZE(snow_phy_24mhz); i++) {
-+		if (snow_phy_24mhz[i].off == SNOW_REV_REG + 4)
-+			writel(sd->revision_value, lane->base + SNOW_REV_REG);
-+		writel(snow_phy_24mhz[i].val, lane->base + snow_phy_24mhz[i].off);
++	writel(0, cp->app + APP_INT_ENABLE);
++	writel(readl(cp->app + APP_INT_STATUS), cp->app + APP_INT_STATUS);
++	return 0;
++}
++
++/* APP remains accessible after link loss, unlike the DBI port debug bank. */
++static bool cortina_pcie_link_up(struct dw_pcie *pci)
++{
++	struct cortina_pcie *cp = to_cortina_pcie(pci);
++
++	return !READ_ONCE(cp->link_lost) &&
++	       !!(readl(cp->app + APP_PM_STATUS) & APP_LINK_ACTIVE);
++}
++
++static enum dw_pcie_ltssm cortina_pcie_get_ltssm(struct dw_pcie *pci)
++{
++	struct cortina_pcie *cp = to_cortina_pcie(pci);
++
++	return FIELD_GET(APP_LTSSM_STATE, readl(cp->app + APP_PM_STATUS));
++}
++
++static int cortina_pcie_start_link(struct dw_pcie *pci)
++{
++	struct cortina_pcie *cp = to_cortina_pcie(pci);
++	u32 v;
++
++	v = readl(cp->app + APP_CORE_CONFIG);
++	v |= CORE_CFG_LTSSM_EN | CORE_CFG_AXI_UR_MASK;
++	writel(v, cp->app + APP_CORE_CONFIG);
++	return 0;
++}
++
++static void cortina_pcie_stop_link(struct dw_pcie *pci)
++{
++	struct cortina_pcie *cp = to_cortina_pcie(pci);
++	u32 value = readl(cp->app + APP_CORE_CONFIG);
++
++	writel(value & ~CORE_CFG_LTSSM_EN, cp->app + APP_CORE_CONFIG);
++}
++
++static void cortina_pcie_irq_handler(struct irq_desc *desc)
++{
++	struct cortina_pcie *cp = irq_desc_get_handler_data(desc);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	u32 status, clear;
++	int i;
++
++	chained_irq_enter(chip, desc);
++
++	status = readl(cp->app + APP_INT_STATUS);
++	status &= readl(cp->app + APP_INT_ENABLE);
++	clear = status & ~INT_LINK_UP;
++	if (status & INT_LINK_DOWN)
++		clear |= INT_LINK_UP;
++	writel(clear, cp->app + APP_INT_STATUS);
++
++	if (status & INT_LINK_DOWN) {
++		/* The DBI interface needs a controller reset after link loss. */
++		raw_spin_lock(&cp->lock);
++		WRITE_ONCE(cp->link_lost, true);
++		writel(0, cp->app + APP_INT_ENABLE);
++		raw_spin_unlock(&cp->lock);
++		dev_warn_ratelimited(cp->pci.dev, "link lost; controller reprobe required\n");
++		goto out;
 +	}
-+	writel(SNOW_REG0_CFG | SNOW_REG0_AHB_RESETN, lane->base + SNOW_COM_REG0);
-+	ret = regmap_update_bits(sd->global, GLOBAL_PHY_CONTROL, PHY_CMU_RESETN(p),
-+				 PHY_CMU_RESETN(p));
++
++	if (status & INT_ERR_MASK)
++		dev_err_ratelimited(cp->pci.dev, "port %d: PCIe error, status %#x\n",
++				    cp->port, status);
++
++	for (i = 0; i < PCI_NUM_INTX; i++)
++		if (status & INT_INTX_ASSERT(i))
++			generic_handle_domain_irq(cp->intx_domain, i);
++	if ((status & INT_MSI) && cp->msi_ready)
++		dw_handle_msi_irq(&cp->pci.pp);
++
++out:
++	chained_irq_exit(chip, desc);
++}
++
++static void cortina_intx_mask(struct irq_data *d)
++{
++	struct cortina_pcie *cp = irq_data_get_irq_chip_data(d);
++	u32 bit = INT_INTX_ASSERT(d->hwirq);
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&cp->lock, flags);
++	writel(readl(cp->app + APP_INT_ENABLE) & ~bit, cp->app + APP_INT_ENABLE);
++	raw_spin_unlock_irqrestore(&cp->lock, flags);
++}
++
++static void cortina_intx_unmask(struct irq_data *d)
++{
++	struct cortina_pcie *cp = irq_data_get_irq_chip_data(d);
++	u32 bit = INT_INTX_ASSERT(d->hwirq);
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&cp->lock, flags);
++	if (!READ_ONCE(cp->link_lost))
++		writel(readl(cp->app + APP_INT_ENABLE) | bit, cp->app + APP_INT_ENABLE);
++	raw_spin_unlock_irqrestore(&cp->lock, flags);
++}
++
++static struct irq_chip cortina_intx_chip = {
++	.name		= "cortina-INTx",
++	.irq_mask	= cortina_intx_mask,
++	.irq_unmask	= cortina_intx_unmask,
++};
++
++static int cortina_pcie_intx_map(struct irq_domain *domain, unsigned int irq,
++				 irq_hw_number_t hwirq)
++{
++	irq_set_chip_and_handler(irq, &cortina_intx_chip, handle_simple_irq);
++	irq_set_chip_data(irq, domain->host_data);
++	return 0;
++}
++
++static const struct irq_domain_ops cortina_intx_domain_ops = {
++	.map = cortina_pcie_intx_map,
++	.xlate = pci_irqd_intx_xlate,
++};
++
++static int cortina_pcie_init_irq_domain(struct cortina_pcie *cp)
++{
++	struct device *dev = cp->pci.dev;
++	struct device_node *intc;
++
++	intc = of_get_child_by_name(dev->of_node, "interrupt-controller");
++	if (!intc)
++		return dev_err_probe(dev, -ENODEV, "no interrupt-controller child\n");
++
++	cp->intx_domain = irq_domain_create_linear(of_fwnode_handle(intc), PCI_NUM_INTX,
++						   &cortina_intx_domain_ops, cp);
++	of_node_put(intc);
++	if (!cp->intx_domain)
++		return dev_err_probe(dev, -ENOMEM, "cannot create INTx domain\n");
++	return 0;
++}
++
++static int cortina_pcie_rd_own_conf(struct pci_bus *bus, unsigned int devfn,
++				    int where, int size, u32 *val)
++{
++	struct cortina_pcie *cp = to_cortina_pcie(to_dw_pcie_from_pp(bus->sysdata));
++
++	*val = ~0U;
++	if (where < 0 || (size != 1 && size != 2 && size != 4) ||
++	    (where & (size - 1)))
++		return PCIBIOS_BAD_REGISTER_NUMBER;
++	if (READ_ONCE(cp->link_lost))
++		return PCIBIOS_DEVICE_NOT_FOUND;
++	if (where >= RC_CFG_LIMIT || size > RC_CFG_LIMIT - where) {
++		*val = 0;
++		return PCIBIOS_SUCCESSFUL;
++	}
++	return pci_generic_config_read(bus, devfn, where, size, val);
++}
++
++static int cortina_pcie_wr_own_conf(struct pci_bus *bus, unsigned int devfn,
++				    int where, int size, u32 val)
++{
++	struct cortina_pcie *cp = to_cortina_pcie(to_dw_pcie_from_pp(bus->sysdata));
++
++	if (where < 0 || (size != 1 && size != 2 && size != 4) ||
++	    (where & (size - 1)))
++		return PCIBIOS_BAD_REGISTER_NUMBER;
++	if (READ_ONCE(cp->link_lost))
++		return PCIBIOS_DEVICE_NOT_FOUND;
++	if (where >= RC_CFG_LIMIT || size > RC_CFG_LIMIT - where) {
++		dev_dbg(bus->dev.parent, "ignoring RC config write at %#x\n", where);
++		return PCIBIOS_SUCCESSFUL;
++	}
++	return pci_generic_config_write(bus, devfn, where, size, val);
++}
++
++static struct pci_ops cortina_own_pci_ops = {
++	.map_bus	= dw_pcie_own_conf_map_bus,
++	.read		= cortina_pcie_rd_own_conf,
++	.write		= cortina_pcie_wr_own_conf,
++};
++
++static int cortina_pcie_host_init(struct dw_pcie_rp *pp)
++{
++	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
++	u8 cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSI);
++	u16 flags;
++
++	pp->bridge->ops = &cortina_own_pci_ops;
++	pp->keep_rp_msi_en = true;
++	if (cap) {
++		flags = dw_pcie_readw_dbi(pci, cap + PCI_MSI_FLAGS);
++		dw_pcie_writew_dbi(pci, cap + PCI_MSI_FLAGS, flags | PCI_MSI_FLAGS_ENABLE);
++	}
++	return 0;
++}
++
++static int cortina_pcie_msi_init(struct dw_pcie_rp *pp)
++{
++	struct cortina_pcie *cp = to_cortina_pcie(to_dw_pcie_from_pp(pp));
++	u32 ctrl;
++	int ret;
++
++	/* The application IRQ multiplexes MSI and INTx, so do not chain it twice. */
++	pp->msi_irq[0] = -ENODEV;
++	ret = dw_pcie_msi_host_init(pp);
++	if (ret)
++		return ret;
++	/* CS7542 routes endpoint MSI writes through its application target. */
++	pp->msi_data = cp->app_phys + APP_MSI_TARGET;
++	/* A custom MSI hook owns setup and teardown of the multiplexed receiver. */
++	for (ctrl = 0; ctrl < pp->num_vectors / MAX_MSI_IRQS_PER_CTRL; ctrl++) {
++		dw_pcie_writel_dbi(&cp->pci, PCIE_MSI_INTR0_MASK + ctrl * MSI_REG_CTRL_BLOCK_SIZE,
++				   pp->irq_mask[ctrl]);
++		dw_pcie_writel_dbi(&cp->pci, PCIE_MSI_INTR0_ENABLE + ctrl * MSI_REG_CTRL_BLOCK_SIZE,
++				   ~0);
++	}
++	dw_pcie_writel_dbi(&cp->pci, PCIE_MSI_ADDR_LO, lower_32_bits(pp->msi_data));
++	dw_pcie_writel_dbi(&cp->pci, PCIE_MSI_ADDR_HI, upper_32_bits(pp->msi_data));
++	cp->msi_ready = true;
++	return 0;
++}
++
++static void cortina_pcie_host_deinit(struct dw_pcie_rp *pp)
++{
++	struct cortina_pcie *cp = to_cortina_pcie(to_dw_pcie_from_pp(pp));
++
++	/* Endpoints have stopped; now drain the shared IRQ before freeing domains. */
++	writel(0, cp->app + APP_INT_ENABLE);
++	readl(cp->app + APP_INT_ENABLE);
++	synchronize_irq(cp->irq);
++	if (cp->msi_ready) {
++		cp->msi_ready = false;
++		dw_pcie_free_msi(pp);
++		pp->msi_irq_domain = NULL;
++	}
++}
++
++static const struct dw_pcie_host_ops cortina_pcie_host_ops = {
++	.init		= cortina_pcie_host_init,
++	.deinit		= cortina_pcie_host_deinit,
++	.msi_init	= cortina_pcie_msi_init,
++};
++
++/* Standard RC configuration above 512 bytes wedges the CS7542 bus.
++ * The DesignWare private register bank at 0x700 and above remains accessible.
++ */
++static u32 cortina_pcie_read_dbi(struct dw_pcie *pci, void __iomem *base,
++				 u32 reg, size_t size)
++{
++	struct cortina_pcie *cp = to_cortina_pcie(pci);
++	u32 value = 0;
++
++	if (READ_ONCE(cp->link_lost))
++		return ~0U;
++	if (base == pci->dbi_base && reg < 0x700 && reg + size > RC_CFG_LIMIT)
++		return 0;
++	dw_pcie_read(base + reg, size, &value);
++	return value;
++}
++
++static void cortina_pcie_write_dbi(struct dw_pcie *pci, void __iomem *base,
++				   u32 reg, size_t size, u32 value)
++{
++	struct cortina_pcie *cp = to_cortina_pcie(pci);
++
++	if (READ_ONCE(cp->link_lost))
++		return;
++	if (base == pci->dbi_base && reg < 0x700 && reg + size > RC_CFG_LIMIT)
++		return;
++	dw_pcie_write(base + reg, size, value);
++}
++
++static const struct dw_pcie_ops cortina_dw_pcie_ops = {
++	.read_dbi = cortina_pcie_read_dbi,
++	.write_dbi = cortina_pcie_write_dbi,
++	.link_up = cortina_pcie_link_up,
++	.get_ltssm = cortina_pcie_get_ltssm,
++	.start_link = cortina_pcie_start_link,
++	.stop_link = cortina_pcie_stop_link,
++};
++
++static void cortina_pcie_power_off(struct cortina_pcie *cp)
++{
++	gpiod_set_value_cansleep(cp->perst, 1);
++	reset_control_assert(cp->reset);
++	phy_power_off(cp->phy);
++	phy_exit(cp->phy);
++	clk_disable_unprepare(cp->clk);
++}
++
++static int cortina_pcie_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct cortina_pcie *cp;
++	struct dw_pcie *pci;
++	struct resource *res;
++	int ret;
++
++	cp = devm_kzalloc(dev, sizeof(*cp), GFP_KERNEL);
++	if (!cp)
++		return -ENOMEM;
++	pci = &cp->pci;
++	pci->dev = dev;
++	pci->ops = &cortina_dw_pcie_ops;
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
++	if (!res)
++		return -EINVAL;
++	cp->dbi_phys = res->start;
++	cp->app = devm_platform_ioremap_resource_byname(pdev, "app");
++	if (IS_ERR(cp->app))
++		return PTR_ERR(cp->app);
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "app");
++	cp->app_phys = res->start;
++	if (res->start < APP_PHYS_BASE ||
++	    (res->start - APP_PHYS_BASE) % APP_PORT_STRIDE ||
++	    (res->start - APP_PHYS_BASE) / APP_PORT_STRIDE >= 3)
++		return -EINVAL;
++	cp->port = (res->start - APP_PHYS_BASE) / APP_PORT_STRIDE;
++	raw_spin_lock_init(&cp->lock);
++	cp->clk = devm_clk_get(dev, NULL);
++	if (IS_ERR(cp->clk))
++		return dev_err_probe(dev, PTR_ERR(cp->clk), "controller clock\n");
++	cp->reset = devm_reset_control_get_exclusive(dev, NULL);
++	if (IS_ERR(cp->reset))
++		return dev_err_probe(dev, PTR_ERR(cp->reset), "controller reset\n");
++	cp->phy = devm_phy_get(dev, "pcie");
++	if (IS_ERR(cp->phy))
++		return dev_err_probe(dev, PTR_ERR(cp->phy), "SerDes\n");
++	cp->perst = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
++	if (IS_ERR(cp->perst))
++		return dev_err_probe(dev, PTR_ERR(cp->perst), "PERST# GPIO\n");
++	cp->irq = platform_get_irq(pdev, 0);
++	if (cp->irq < 0)
++		return cp->irq;
++
++	ret = clk_prepare_enable(cp->clk);
++	if (ret)
++		return ret;
++	ret = phy_init(cp->phy);
++	if (ret)
++		goto disable_clk;
++	ret = phy_set_mode(cp->phy, PHY_MODE_PCIE);
++	if (ret)
++		goto exit_phy;
++	ret = phy_power_on(cp->phy);
++	if (ret)
++		goto exit_phy;
++	ret = reset_control_reset(cp->reset);
 +	if (ret)
 +		goto power_off;
-+	ret = readl_poll_timeout(sd->status + p * PHY_STATUS_STRIDE, value,
-+				 value & PHY_CMU_OK, 100, 100000);
++	writel(0, cp->app + APP_INT_ENABLE);
++	cortina_pcie_stop_link(pci);
++	writel(readl(cp->app + APP_INT_STATUS), cp->app + APP_INT_STATUS);
++	gpiod_set_value_cansleep(cp->perst, 0);
++	msleep(100);
++	ret = cortina_pcie_port_init(cp);
++	if (ret)
++		goto power_off;
++	ret = cortina_pcie_init_irq_domain(cp);
++	if (ret)
++		goto power_off;
++	irq_set_chained_handler_and_data(cp->irq, cortina_pcie_irq_handler, cp);
++	writel(INT_MSI | INT_ERR_MASK, cp->app + APP_INT_ENABLE);
++	pci->pp.ops = &cortina_pcie_host_ops;
++	ret = dw_pcie_host_init(&pci->pp);
 +	if (ret) {
-+		dev_err(sd->dev, "lane %u CMU did not lock\n", p);
++		writel(0, cp->app + APP_INT_ENABLE);
++		irq_set_chained_handler_and_data(cp->irq, NULL, NULL);
++		irq_domain_remove(cp->intx_domain);
 +		goto power_off;
 +	}
-+	writel(SNOW_LANE_REG0_CFG | SNOW_LANE_REG0_MASTER_RESETN,
-+	       lane->base + SNOW_COM_LANE_REG0);
-+	ret = regmap_update_bits(sd->global, GLOBAL_PHY_CONTROL, PHY_LN0_RESETN(p),
-+				 PHY_LN0_RESETN(p));
-+	if (ret)
-+		goto power_off;
-+	msleep(100);
++	platform_set_drvdata(pdev, cp);
 +	return 0;
 +
 +power_off:
-+	cs7542_phy_power_off(phy);
-+	return ret;
++	gpiod_set_value_cansleep(cp->perst, 1);
++	reset_control_assert(cp->reset);
++	phy_power_off(cp->phy);
++exit_phy:
++	phy_exit(cp->phy);
++disable_clk:
++	reset_control_assert(cp->reset);
++	clk_disable_unprepare(cp->clk);
++	return dev_err_probe(dev, ret, "host initialization\n");
 +}
 +
-+static int cs7542_phy_set_mode(struct phy *phy, enum phy_mode mode, int submode)
++static void cortina_pcie_remove(struct platform_device *pdev)
 +{
-+	return mode == PHY_MODE_PCIE && !submode ? 0 : -EINVAL;
++	struct cortina_pcie *cp = platform_get_drvdata(pdev);
++
++	dw_pcie_host_deinit(&cp->pci.pp);
++	irq_set_chained_handler_and_data(cp->irq, NULL, NULL);
++	irq_domain_remove(cp->intx_domain);
++	cortina_pcie_power_off(cp);
 +}
 +
-+static const struct phy_ops cs7542_phy_ops = {
-+	.power_on = cs7542_phy_power_on,
-+	.power_off = cs7542_phy_power_off,
-+	.set_mode = cs7542_phy_set_mode,
-+	.owner = THIS_MODULE,
-+};
-+
-+static struct phy *cs7542_phy_xlate(struct device *dev, const struct of_phandle_args *args)
++static void cortina_pcie_shutdown(struct platform_device *pdev)
 +{
-+	struct cs7542_serdes *sd = dev_get_drvdata(dev);
++	struct cortina_pcie *cp = platform_get_drvdata(pdev);
 +
-+	if (args->args_count != 1 || args->args[0] >= CS7542_PORTS)
-+		return ERR_PTR(-EINVAL);
-+	return sd->lanes[args->args[0]].phy;
++	writel(0, cp->app + APP_INT_ENABLE);
++	cortina_pcie_stop_link(&cp->pci);
++	gpiod_set_value_cansleep(cp->perst, 1);
++	reset_control_assert(cp->reset);
 +}
 +
-+static int cs7542_phy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct phy_provider *provider;
-+	struct cs7542_serdes *sd;
-+	unsigned int id;
-+	int ret, i;
-+
-+	sd = devm_kzalloc(dev, sizeof(*sd), GFP_KERNEL);
-+	if (!sd)
-+		return -ENOMEM;
-+	sd->dev = dev;
-+	sd->global = syscon_regmap_lookup_by_phandle(dev->of_node, "cortina,global-syscon");
-+	if (IS_ERR(sd->global))
-+		return dev_err_probe(dev, PTR_ERR(sd->global), "global register map\n");
-+	sd->ref = devm_clk_get(dev, NULL);
-+	if (IS_ERR(sd->ref))
-+		return dev_err_probe(dev, PTR_ERR(sd->ref), "reference clock\n");
-+	if (clk_get_rate(sd->ref) != 24000000)
-+		return dev_err_probe(dev, -EINVAL, "only 24 MHz reference supported\n");
-+	ret = regmap_read(sd->global, GLOBAL_JTAG_ID, &id);
-+	if (ret)
-+		return ret;
-+	switch (FIELD_GET(GENMASK(15, 12), id)) {
-+	case 0:
-+	case 1:
-+		sd->revision_value = SNOW_REV_REG_A0;
-+		break;
-+	case 8:
-+	case 9:
-+		sd->revision_value = SNOW_REV_REG_A1;
-+		break;
-+	default:
-+		return dev_err_probe(dev, -ENODEV, "unsupported silicon revision %#x\n", id);
-+	}
-+	sd->status = devm_platform_ioremap_resource(pdev, CS7542_PORTS);
-+	if (IS_ERR(sd->status))
-+		return PTR_ERR(sd->status);
-+	for (i = 0; i < CS7542_PORTS; i++) {
-+		struct cs7542_lane *lane = &sd->lanes[i];
-+
-+		lane->id = i;
-+		lane->serdes = sd;
-+		lane->base = devm_platform_ioremap_resource(pdev, i);
-+		if (IS_ERR(lane->base))
-+			return PTR_ERR(lane->base);
-+		lane->phy = devm_phy_create(dev, NULL, &cs7542_phy_ops);
-+		if (IS_ERR(lane->phy))
-+			return PTR_ERR(lane->phy);
-+		phy_set_drvdata(lane->phy, lane);
-+	}
-+	platform_set_drvdata(pdev, sd);
-+	provider = devm_of_phy_provider_register(dev, cs7542_phy_xlate);
-+	return PTR_ERR_OR_ZERO(provider);
-+}
-+
-+static const struct of_device_id cs7542_phy_match[] = {
-+	{ .compatible = "cortina,cs7542-pcie-phy" },
++static const struct of_device_id cortina_pcie_of_match[] = {
++	{ .compatible = "cortina,cs7542-pcie" },
 +	{ }
 +};
-+MODULE_DEVICE_TABLE(of, cs7542_phy_match);
++MODULE_DEVICE_TABLE(of, cortina_pcie_of_match);
 +
-+static struct platform_driver cs7542_phy_driver = {
-+	.probe = cs7542_phy_probe,
++static struct platform_driver cortina_pcie_driver = {
++	.probe = cortina_pcie_probe,
++	.remove = cortina_pcie_remove,
++	.shutdown = cortina_pcie_shutdown,
 +	.driver = {
-+		.name = "cs7542-pcie-phy",
-+		.of_match_table = cs7542_phy_match,
++		.name = "cs7542-pcie",
++		.of_match_table = cortina_pcie_of_match,
 +	},
 +};
-+module_platform_driver(cs7542_phy_driver);
++module_platform_driver(cortina_pcie_driver);
 +
-+MODULE_DESCRIPTION("Cortina Systems CS7542 PCIe SerDes");
++MODULE_DESCRIPTION("Cortina Systems CS7542 PCIe host controller");
 +MODULE_LICENSE("GPL");
 
 -- 
