@@ -1,66 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.205.221.155
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.205.221.236
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1795392650;
-	b=ywUtsfj+DXs3GXOpm/go2LN4vf7/h+qjsetEYUXyP60qgOgA0YQQ//nkuyWzYnYdIgle
-	 Cddx/2bbaY/58DcUTofJ3w7vIoLJiyn77PgWmmTxZPDHicLLAh9nbZB/J7p5mmL20M945
-	 J16VVOCQlEPE/oEaKx1pXAMvhWiKzzjTNiTgweciE4NbvMxcjOlh2F0EPrs2id4TYsE0z
-	 EqKjiDRXg3tHTztSevtA8ioa2rzCePZkyS/MrUwzQXRT7Cbq+RhaBR2kJJuFrarVFLAE3
-	 ZGgiyckP1guDAAPgg3pJs2GLOKrX7NcC9K1btG3Ok9CYZMm7ftK+n7vEgm9OP+f8l0A==
+	b=KX8rR3myI2O4kDxGOWgRZyZO3pRbfBmkNIdblawWgKc0OaYGSm6QxzI1oFDrPAsjgjzG
+	 mA1Y9zwIUIOYE87duPIfjcgPR9tQZIN5wuDxduQsIKexWlAVPSzFW4cDVNubPp7HM/qwv
+	 rTe1B1XuFxiEGQxSJxpA3wkvyHjHwivKjH559NLki5cTlHnArHwlAVv3jLCRNj8dHADGS
+	 QD91RRMMQ//8BA8JrxGi2TH4DxL5Bov+Sdhw4p+Kkp1ByptSCZ9J46L0vJrp1UznuV3ZW
+	 9jbK2ccvR0ZYUbhHluRDSKY8Dp7+RzQ3N32qvQkKHtyj2xQ9RpmDI6FpQIem6HopoaA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795392650;
 	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
 	 X-QQ-XMAILINFO:X-QQ-XMRINFO:From:To:Cc:Subject:Date:X-OQ-MSGID:
-	 X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=47lhYxhJjidb4LprULqqGEJWLcgqp0KzmPtcOdzaZSU=;
-	b=OL58pV/3dGUoelJgwgYyyGbJk33z3wUjXrxc+CorR9RrS3tDtMTgOY+M2SsEgk4c/VAE
-	 uWOW1M1OLK5vy/1d4250oXxAJ7rl+S7X+AEg18eOyavdlN39MepJbIU2bKH8kdO/LlTRs
-	 x+j/4VnW+I9EOQW2GSsUEPa4+KcL2AhPpLTwTbVCBw6El712G4MYFxZe++9n8CZbxCNNf
-	 /fh78bXvWfknfMQ0R8HdUWLaOA2KkeKWjtALca9totjQZGVdL4ZkIEPlp0ZZ4AKHeM7pY
-	 8kNto/lRQr8hhva0ZSVMK6sjgjwFkxE+15pf87YhuGb6TNhU0f0RVJPvK3kUk+IpH7A==
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=zCzXcB/gcPUK0OBE9Ia6L1IFSVcN8lBVdYQJrZSjFyk=;
+	b=B71apZlogNBZrSvAStn8ntejyKe1qT8WeOyWsIJ9oWst0psT62DTzM986+RdhDKva0M8
+	 5rhGMtyvSys4yEmUgKP3OoB+Owo4E1ohJEJSm06hKJ1fA03EGgmEcD0ejD+KlWmeZwY7j
+	 IZfqz2dURxahWTs9r4YAap9ynr8/d7vDbrvnW92PqHoNHGnqlLDzJHuRlcsr17qr0dPqp
+	 YDNcWkUEx5lCwjDv7ffahlCIeh4fxCEKO891cElYknTh4pvvabJuNryd8StDtmYjDS+Jh
+	 kWaimLFI5aK7szP/ECltHose+KGoO5itqpWs1yfWtqZojxvidAkYLU6qpzj4tZrNfrw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=qq.com;
 	spf=pass smtp.mailfrom=qq.com;
-	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=zAyL9wgD;
-	arc=none smtp.remote-ip=203.205.221.155
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
+	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=KhabOH+o;
+	arc=none smtp.remote-ip=203.205.221.236
+Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D72606A31A;
-	Mon, 23 Nov 2026 00:10:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 72D72606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE94606A31E;
+	Mon, 23 Nov 2026 00:10:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7CE94606A31E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=zAyL9wgD
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=KhabOH+o
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1795392638; bh=47lhYxhJjidb4LprULqqGEJWLcgqp0KzmPtcOdzaZSU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=zAyL9wgDJ8hCJantxSWaPIpVhpSCPToBhooGdphlb+zvt3Sqk/2+zyAfR8ybcO/9L
-	 6sVPeo+PcQ7qkxTRoCidVR2zQ9sKJnAPcoLjSIJckammHdsTu9G/pXhdGECjEddqmn
-	 oAF6KKfr4OYMz2/nF7m934VTox91ReTENgbx8rSs=
+	t=1795392635; bh=zCzXcB/gcPUK0OBE9Ia6L1IFSVcN8lBVdYQJrZSjFyk=;
+	h=From:To:Cc:Subject:Date;
+	b=KhabOH+oIt37Gj9TpdCsGiDPO71SYpLBp8IU0XEabvp53J8olfS9CUVoXWmZXOFjc
+	 fCNwkZ7mWkilP06CCxUI9ES2vaofBJjloWxf+mvIxYjP1Paph2J50fvPkF6PLFxVua
+	 2SZZfUhDtixP7WdD5MiTNt+WNRolcETicjwl0SUw=
 Received: from jerry-PC.lan ([2408:8249:5f:7101:71a:8713:56b4:5043])
 	by newxmesmtplogicsvrszc56-0.qq.com (NewEsmtp) with SMTP
 	id 2A1184D1; Mon, 23 Nov 2026 08:10:33 +0800
-X-QQ-mid: xmsmtpt1795392636tmlyqsg09
-Message-ID: <tencent_8AD71C4349D2274F40A1B9ED0A78F1AF1A05@qq.com>
-X-QQ-XMAILINFO: MKCip/S3UDF5dUxc+TTOfoqFelSVAfouM2Cjc3I1AFevuG/388bPWpwM3GfxaH
-	 C4y5HYctiChX1Ne3EqBzQLuMS4f8k7ckooBeqXhB3pzLbVqt5QfovUXudtu0QbeoUBZrlG+nPOvB
-	 Zy/dUT0QM8tu/vZ76OQH0cAGWT6IpMFZK0kpQ+siaWE4vmk6JAfkZZjeGQwZt6u7Ha6L+ab/1eex
-	 ZnQLs8PQeKw0MD0fjxo+LzvCKiSOi6iqiaN0RceabQshLbtP38X6iFTzfezHyrZ3MNX+ekv0PZ88
-	 xJ0fZ/sZN2U3pQ9tOg+gQ3iKr7SxB1sWU0oz1hiDFROSF/nVnRfeQ1t4EMfhtP4ipZClRfBD+Cmf
-	 sNu+rYrVEpdWBwbgA9q+QGgwJ9zVrAHPxpYiSgN3j7A6IlVpscgwb6+Ym/B2DDbY8Yy32ywqw+BS
-	 k2lqU+5EzxW0T+np95F7A9QCD8KZeSF4wONg3662Z3AnU/wL7tpYivcMkJh3AYipbnsE6W69hsM7
-	 1G7ZvCon2Ad1ZQRNOP9g58EEGeu7ECL3KEwYIbLThWjkraLSY3hfbEIaqr30uzmtl0t7vRpy08+W
-	 +zk9HrgouorXVuUyuom6Dz4KBUKECwBtBJiHrLHvvnxbHzj8nhaXHvDsT5u3KXimVuD80a2vNq2o
-	 jFTxD4C+JvFGKfRD2+jWpdME3A8QuajZ4qseLOco8YnlYG6bttzTrNkIKalUDsCKYRJe1pd/6uMl
-	 DshzSNXuo17ZCvrNJ05KEMyrPjw6FglSgIplyN4JxMFt2a88j+hVxg5MWU9XWijFiFXfLuEXwKXn
-	 LLf1JLqYjlxvCucxo99igP4yuYDVUnxs9RJzXbD9dQiflWVKhjiB+CD1ZzPB23DtwCFKwLjOvYNZ
-	 eUe/d+HtOymCKjh5XLFZi59acJiuPgMkEQ1oaWAlceW4JHY7omG75UtpUXKn8leEQKty43J3RZWB
-	 Hiq5cIP1TiRLAMpEVGfD4XAD0xDPrXzEXW4mNpEpHwXBR2PX5k8xXokdRrEK+LjOp1Zn7gPjj8lE
-	 Z2gGjVMi/ayrcuB9dmjqu5vV2yAX+2Uqb8TkQZxW/X5p9Gnd0jBQ9L5pmzZXwO8t9UhyEub54Vyo
-	 jpmFsLcOPyKsg6PzUvKH7ug4u3mh9HO3BHhV3KQuuCdHUphRQ3HPSTz6zmUHWcrEeAkYN/fP2ShU
-	 MNiz2IXN0eluBmFbIS5Hzf5PkYY1087b0ndRt2rikX663toQ==
+X-QQ-mid: xmsmtpt1795392633tb9wyo0qg
+Message-ID: <tencent_EB9C4DA9CDC741E0BE99F36A6871B9BADB05@qq.com>
+X-QQ-XMAILINFO: OVgMLYsdica2kuw9YlcxebNwrLkqTlTuscftxkVmfoVanPi7KTjAJRloxnsawE
+	 OkzUHWDIpLLH5hzIOL5HFwLFfJsiI81LqqBgHRmTr1KdMC7gAF8MJZCBz2nde0l/Rqzx22LsNe3S
+	 i/FipitTETSr7VJruxVHUAEk+2bl3YmBtdEnGNEgpMnRsmps0itXCIxydnejv3R0sUIwKfrGVCGV
+	 GJHN85fkoQXW2X+BDtUpQo5lhb5zb3m/2f6F7a6F3TFRkLiKFVanvCT+AE05nrz0G+LJg0dAogaM
+	 oUCLu7gu4OHaI40eZR1u9AoNxWPcqtGSnR6/DqH/pbN3jndhfUjUCJN43v8Qp+T2l+MaM0F6xEPQ
+	 Y25WuPqpY9ZUdxFG3RzAbrWfhR8r98I+HDNS8xiSAVZetoN8K9IGs9hUyN7jqIQJVzFdujZ8iCRy
+	 zDPY8yWM6x/Df0CY9/S+b5/8P78X4cagraxasES7+nd1Wu+A18LQWYCrHj18Ah0WPFUcGkcVF+4g
+	 KuCsax7INbZ8FJJTGQ48SvXGHfOXFGABUr/N+5xQZg7UUFXDNpJBIm+ONRrPyRRj0yQXyQ8EoJNS
+	 3W15RhnSK3mUO0keRSk8+gzm7VtQ+X2WmyRAPQfa6lekwXx8BE9DMllVEIii2qdosQ1S+IvwL/9e
+	 XdoxIKUF4eCpI1DMGSAz9ChFHLv4xtDudqefT+UWhk3TBOAuCQVfKaN3PB/f3A3tvCOLGEJPU66Y
+	 f+xPzFd/LJ88yPDo66dAT+WDFYvFA1bDYYFyoR9THcBc9wneZ0BmaTGuVnwql2npNRJMyDOXQz/W
+	 3R6fCTtSP6dadxdlJwATh59wVtsS+7872/NCE+xnW9IYpzTKI8gOVVXkW4MyOgoK/bBwMMKuzEyT
+	 B/Yo8ok2T8y5Uq0NaKqVpp5ZwCmNHt0c2B34d8CtPy5bCzkUQnGnOobQpOUq4kl3Kk6L/II0uw3j
+	 3S84qoiG5+UvoISoB7W/fdcyWGnHxtdFLLa69HloFwHY0Xl+yNToGrhw9/3FUC51gDGOlfHU/UMz
+	 DnuFwV9RcW3Ss6UCwpd6OG5gx68xK/MdszeGZSc3wyfRmnMNYL3lesMnBeYO9AS6vTIYmL+Z1Xd0
+	 i1Kwaig6bQOfjiM6bb3OuLIEtB+pwq4m/+qcpFIe/dB+o7MW2Q7HOl3P3lcemgBJuK6Bfz5naTwl
+	 VV4cArqaEJA7B88o1ClC3K3gXD
 X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
 From: Xiangyu Zhu <1194781887@qq.com>
 To: Heiko Stuebner <heiko@sntech.de>,
@@ -74,12 +73,10 @@ Cc: Xiangyu Zhu <1194781887@qq.com>,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] clk: rockchip: rk3506: Register the SAI MCLK output gates
-Date: Mon, 23 Nov 2026 08:10:29 +0800
-X-OQ-MSGID: <dde2ea2795acc72940f75a69caf502fe22f316dc.1795366993.git.1194781887@qq.com>
+Subject: [PATCH v3 0/2] clk: rockchip: rk3506: Add the SAI MCLK output gate clocks
+Date: Mon, 23 Nov 2026 08:10:27 +0800
+X-OQ-MSGID: <cover.1795366993.git.1194781887@qq.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1795366993.git.1194781887@qq.com>
-References: <cover.1795366993.git.1194781887@qq.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -91,108 +88,51 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The RK3506 has four SAI MCLK output gates in the PMU and system GRFs.
-Register them with the existing GRF gate support so the SAI MCLK pin
-direction can be controlled through the clock framework, the same way
-RK3576 and RK3588 handle their SAI/I2S MCLK output gates.
+The RK3506 has four SAI MCLK output gates: SAI0 and SAI1 are controlled
+by bits in the PMU GRF, SAI2 and SAI3 by bits in the system GRF.  Model
+them as GRF gate clocks so the SAI MCLK pin direction can be controlled
+through the clock framework.
 
-The SAI2/SAI3 gates sit in the system GRF, which the CRU already has via
-its "rockchip,grf" phandle.  The SAI0/SAI1 gates live in the PMU GRF, so
-they are kept in a separate branch table that is only registered once
-that syscon has been added as an auxiliary GRF.  Registering them
-unconditionally would make them fall back to the system GRF and toggle an
-unrelated bit there.
+This is a v3 of the earlier "rockchip,clk-out" binding/driver submission.
+That one introduced a generic "rockchip,clk-out" compatible plus a
+standalone driver, which is not acceptable: upstream already has generic
+GRF gate support (branch_grf_gate together with rockchip_clk_add_grf()),
+and RK3576 and RK3588 register their SAI/I2S MCLK output gates with it.
+No device tree changes are included.
 
-The PMU GRF lookup stays non-fatal: it only carries the SAI0/SAI1 gates,
-so a missing syscon must not keep the whole CRU from being registered.
+v2 registered all four gates from one branch table while only the PMU GRF
+was added as an auxiliary GRF.  The two system GRF gates therefore came
+right after two PMU GRF gates in the same table, and
+rockchip_clk_register_branches() keeps using the regmap it picked for the
+previous branch when it finds no entry for a branch's grf_type, so they
+ended up toggling bits of the PMU GRF.  The SAI0/SAI1 gates are now
+registered from their own table, and only once the PMU GRF was really
+added, so no branch table mixes two GRF types and the PMU GRF gates can
+no longer fall back to the system GRF.
 
 Tested on a RK3506B board: the SAI0 MCLK output runs at 12.288 MHz and
-drives the ES8388 codec, audio playback works, and the GRF gate bits
-were read back from the registers to confirm that they get set.
+drives the ES8388 codec, audio playback works, and the GRF gate bits were
+read back from the registers to confirm that they get set.  Enabling the
+SAI2/SAI3 gates sets bit 2 and bit 3 of the system GRF (0xff288004) and
+leaves the PMU GRF alone.
 
-Signed-off-by: Xiangyu Zhu <1194781887@qq.com>
----
- drivers/clk/rockchip/clk-rk3506.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Changes since v2:
+ - register the SAI0/SAI1 gates from a separate table that is only used
+   when the PMU GRF was added successfully
 
-diff --git a/drivers/clk/rockchip/clk-rk3506.c b/drivers/clk/rockchip/clk-rk3506.c
-index dd59bd60..5046a658 100644
---- a/drivers/clk/rockchip/clk-rk3506.c
-+++ b/drivers/clk/rockchip/clk-rk3506.c
-@@ -5,6 +5,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -608,6 +609,8 @@ static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
- 			RK3506_CLKGATE_CON(18), 3, GFLAGS),
- 	GATE(MCLK_OUT_SAI2, "mclk_out_sai2", "mclk_sai2", 0,
- 			RK3506_CLKGATE_CON(18), 4, GFLAGS),
-+	GATE_GRF(MCLK_OUT_SAI2_TO_IO, "mclk_sai2_to_io", "mclk_out_sai2",
-+		 0, 0x4, 2, CLK_GATE_HIWORD_MASK, grf_type_sys),
- 	COMPOSITE(MCLK_SAI3_SRC, "mclk_sai3_src", mclk_sai_asrc_parents_p, 0,
- 			RK3506_CLKSEL_CON(52), 8, 4, MFLAGS, 0, 8, DFLAGS,
- 			RK3506_CLKGATE_CON(18), 5, GFLAGS),
-@@ -617,6 +620,8 @@ static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
- 			RK3506_CLKGATE_CON(18), 7, GFLAGS),
- 	GATE(MCLK_OUT_SAI3, "mclk_out_sai3", "mclk_sai3_src", 0,
- 			RK3506_CLKGATE_CON(18), 8, GFLAGS),
-+	GATE_GRF(MCLK_OUT_SAI3_TO_IO, "mclk_sai3_to_io", "mclk_out_sai3",
-+		 0, 0x4, 3, CLK_GATE_HIWORD_MASK, grf_type_sys),
- 	COMPOSITE(MCLK_SAI4_SRC, "mclk_sai4_src", mclk_sai_asrc_parents_p, 0,
- 			RK3506_CLKSEL_CON(53), 8, 4, MFLAGS, 0, 8, DFLAGS,
- 			RK3506_CLKGATE_CON(18), 9, GFLAGS),
-@@ -782,11 +787,20 @@ static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
- 			RK3506_CLKGATE_CON(20), 0, GFLAGS),
- };
- 
-+static struct rockchip_clk_branch rk3506_clk_pmu_grf_branches[] __initdata = {
-+	GATE_GRF(MCLK_OUT_SAI0_TO_IO, "mclk_sai0_to_io", "mclk_out_sai0",
-+		 0, 0x4, 8, CLK_GATE_HIWORD_MASK, grf_type_pmu0),
-+	GATE_GRF(MCLK_OUT_SAI1_TO_IO, "mclk_sai1_to_io", "mclk_out_sai1",
-+		 0, 0x4, 9, CLK_GATE_HIWORD_MASK, grf_type_pmu0),
-+};
-+
- static void __init rk3506_clk_init(struct device_node *np)
- {
- 	struct rockchip_clk_provider *ctx;
- 	unsigned long clk_nr_clks;
- 	void __iomem *reg_base;
-+	struct regmap *pmu_grf;
-+	bool have_pmu_grf = false;
- 
- 	clk_nr_clks = rockchip_clk_find_max_clk_id(rk3506_clk_branches,
- 						   ARRAY_SIZE(rk3506_clk_branches)) + 1;
-@@ -804,6 +818,15 @@ static void __init rk3506_clk_init(struct device_node *np)
- 		return;
- 	}
- 
-+	pmu_grf = syscon_regmap_lookup_by_compatible("rockchip,rk3506-grf-pmu");
-+	if (IS_ERR(pmu_grf)) {
-+		pr_warn("%s: could not get PMU GRF syscon\n", __func__);
-+	} else if (rockchip_clk_add_grf(ctx, pmu_grf, grf_type_pmu0)) {
-+		pr_warn("%s: could not add PMU GRF\n", __func__);
-+	} else {
-+		have_pmu_grf = true;
-+	}
-+
- 	rockchip_clk_register_plls(ctx, rk3506_pll_clks,
- 				   ARRAY_SIZE(rk3506_pll_clks),
- 				   0);
-@@ -815,6 +838,10 @@ static void __init rk3506_clk_init(struct device_node *np)
- 	rockchip_clk_register_branches(ctx, rk3506_clk_branches,
- 				       ARRAY_SIZE(rk3506_clk_branches));
- 
-+	if (have_pmu_grf)
-+		rockchip_clk_register_branches(ctx, rk3506_clk_pmu_grf_branches,
-+					       ARRAY_SIZE(rk3506_clk_pmu_grf_branches));
-+
- 	rk3506_rst_init(np, reg_base);
- 
- 	rockchip_register_restart_notifier(ctx, RK3506_GLB_SRST_FST, NULL);
+Changes since v1:
+ - drop the rockchip,clk-out binding and driver
+ - use the existing GATE_GRF support like RK3576 and RK3588 do
+ - limit the series to the clock driver and the dt-bindings IDs
+
+Xiangyu Zhu (2):
+  dt-bindings: clock: rockchip,rk3506-cru: Add SAI MCLK output gate IDs
+  clk: rockchip: rk3506: Register the SAI MCLK output gates
+
+ drivers/clk/rockchip/clk-rk3506.c               | 27 +++++++++++++++++++++++++
+ include/dt-bindings/clock/rockchip,rk3506-cru.h |  4 ++++
+ 2 files changed, 31 insertions(+)
+
 -- 
 2.47.3
 
