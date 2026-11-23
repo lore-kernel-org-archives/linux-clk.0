@@ -1,44 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.79.60.76
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795398707;
-	b=PbSKW/nPXnZgYizTZ9pQGguGXsqomxFSt06i0NpSZjg75wAXOoRJI+0qdBoo3JfL3cJD
-	 a9ZEusc1mA6mwSdErv3U+4zfNkxi+89Gp/Gu0Ng9ZZwD+ubp6pmM2iII6t+y6CKpa2S2b
-	 FRr0SvKc9r3+36sX7O37U9wKgmbASdgL3fg8kEEaQAboM21vTGu2K+Wgkrf7Xhh0XrGja
-	 qqPSsH1uYPum+85KuJfSU64wvl4QXJRieJBdI7TwDR68s1hRC9Pq9R/wr6p+3cw1Kllbm
-	 U19q6a2OJla0SEUZ+ABRD5+Yd/NHo2rgli7jqEyKAOHjyOyeT9mlK3B0nLDjmjpVOeQ==
+	t=1795399061;
+	b=ctSVLnGVvzCRdILc1QyGkdbRSZdSJNnsiGVrL5c6dSDt318zymh6nkrS34a4eCjM9iNa
+	 VgZYdMCKmA0vWZU5KK6fNoWZs+PihVQLYoDDTzTo3TXVK9eBs/eZF2UgNMqJ/DsszOqpC
+	 YGwY7hHqXGt6oBDlR0G/dJOJFs1lmFWTguZKOsuvwXATBXeENVYRqrTvMJQuqFejcEn2D
+	 FMHDhDvSGDpF7d+Zo1jGwfc70J9sjK91YTRfcmnF983JACdgTtiLjClXlFm6fDedaAGQg
+	 W6Swg+DenEW2IrDfaJta/TsXemz0vI+qksNsID+eKf9osm0nyFHmd01NCRrxKb5AuyQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795398707;
-	h=DMARC-Filter:Received:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-HM-Tid:X-HM-MType:
-	 X-HM-Spam-Status:DKIM-Signature;
-	bh=Q9NunyhRXef+uYLUVcBJxPIw1fxbnbcm5osyb8TqXYc=;
-	b=QKsHkxh9PgYaOeSy15I6MtGYzYIdKm+Cmx2k5U70237sEmxSlpNpc8Omra7P+UL3dXrN
-	 OoAA5QqdYxpGseqKEkBfcLcRqE15wI8F1xgSLTx7PJfcHFIlExefUSlINGx9hy+uqyiUT
-	 HqmkcVfviia0ZlpPTRSwAp2w7HdDTGKhhvPiC9UmyMHbLaA91nA8iuVWF3S6JzsO1Smn+
-	 9+0UU1pBHXK4YIBCVteuvn+KLE+ilh/U2oBgGkpfRMlaTmNoMLSf/zISVISqCNAwYChwM
-	 UTYimqZdWBcIxWcv4KXZdw2lICRkEjpA4JlFIeaSPEhRPUALXhYtYOkavOxRQyJ9C/g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795399061;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=P8yu7ALgBn94BFGQ10a/jOsyKGGf2b1WAznGMAxwekU=;
+	b=vtUyCPUXmc+1KOL6PhMjQ2SMs6LZXzKPB0+hea4YdhgwLhgMri+RoHl79Efb+Ci/aIYZ
+	 txuW4w6uy9U2/yKmF5HzgMduJVW4QPSpdrCH40FxHBnUMPbExwYtMCg79zwE3aODNgjnR
+	 LW7Hkq+yFgHQNl9yoEYLMUggmxftMV95T3sIN4jSm0XYO2elv/GE7Vay6a/bOqv7JzWGA
+	 +i8bDExjSflpu9m0DOBFvGrsY/2KBtCIUOu6PbqD14CAJ+pHY8YnzuaobyNANdegRL5CP
+	 SsFNBzPIPP0mvYTdWE+3ie/d/VifeYy5BIbA4RK5MsU+ULPb5UPMHyHYnexDtjOlDLw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=rock-chips.com;
-	spf=pass smtp.mailfrom=rock-chips.com;
-	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b="NJoD1TY/";
-	arc=none smtp.remote-ip=210.79.60.76
-Received: from mail-m6076.netease.com (mail-m6076.netease.com [210.79.60.76])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="g7ES1l5/";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3693606A31A;
-	Mon, 23 Nov 2026 01:51:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C3693606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE8B606A31A;
+	Mon, 23 Nov 2026 01:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=NJoD1TY/
-Received: from [172.16.12.90] (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 5595de3af;
-	Mon, 23 Nov 2026 09:51:34 +0800 (GMT+08:00)
-Message-ID: <5176e5e2-72f3-4175-8b29-1dbc64c4e418@rock-chips.com>
-Date: Mon, 23 Nov 2026 09:51:32 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=g7ES1l5/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B4801F000CA;
+	Mon, 23 Nov 2026 01:57:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795399060;
+	bh=P8yu7ALgBn94BFGQ10a/jOsyKGGf2b1WAznGMAxwekU=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=g7ES1l5/+WuKNvSrLxSLbDOFaO9HLWn10WI6xK1PWMyZVzrSP4u6cTQk+/DR35jgr
+	 B3z/BueZ1Yd7w5nX7JxtSlx4YS1kNpK6vWugoSD0eUlkU75I0PtfBbw+Eth/THJuOW
+	 /8Q8+QZnfzos7h3IhcJILdzMirZGdGFqcLv4xtGd3M9DasUxDy/jv4OoYhJ554EK9T
+	 slxeSwbhOh85/+/2FYfDOFN3zKH+4gxXn5pTMdfXOGLJO4KrOMexgPpjUtOwfZua9s
+	 TaamZWJtPm9CRbzlaHdDUY8ybryprtRTA5XW2h37i67pG3Ws/+ug/ulAfWSCFa4uOd
+	 wkKozR16vUwxw==
+Message-ID: <sashiko-outbox-228538@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v4 2/4] clk: siflower: Add SF19A2890 clock manager
+ driver
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Joseph Telaak" <joseph@telaak.dev>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261122-sf19a2890-sysm-v4-2-bbfe1c495e2e@telaak.dev>
+References: <20261122-sf19a2890-sysm-v4-0-bbfe1c495e2e@telaak.dev>
+ <20261122-sf19a2890-sysm-v4-2-bbfe1c495e2e@telaak.dev>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 23 Nov 2026 01:57:39 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -47,109 +60,159 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] clk: rockchip: rk3506: Add the SAI MCLK output
- gate clocks
-To: Xiangyu Zhu <1194781887@qq.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <tencent_C2AD19EB4A6C91A75AD3DC4089CB875C4005@qq.com>
-Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <tencent_C2AD19EB4A6C91A75AD3DC4089CB875C4005@qq.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0aa20619f63c03a7kunm9ecc2466b555bb
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCQkwdVkNJH0hDQk9CTEIYGVYVFA
-	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSU
-	9PT0hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=NJoD1TY/x5HC+BNx2DhEsOexcaA3iF2SBwoYNe3h21uciMr+ZKulGD2CmX3tWEuWoWlx+JRbSnUoWMVVqTcm+C10FJTNIwn1lVOklkI9jXhJJ21KejXGgvp9IaaViHs4YFlyGtsfsu7MPnqwVfPKHG58LodKmT8Ysv35BcjRq/k=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=Q9NunyhRXef+uYLUVcBJxPIw1fxbnbcm5osyb8TqXYc=;
-	h=date:mime-version:subject:message-id:from;
 
-Hi Xiangyu,
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [Medium] clk: siflower: missing provider update in
+  sf19a2890_clk_probe()
+- [Low] clk: siflower: Kconfig depends on undefined MACH_SIFLOWER_MIPS
+--
 
-On 11/23/2026 8:38 AM, Xiangyu Zhu wrote:
-> The RK3506 has four SAI MCLK output gates: SAI0 and SAI1 are controlled
-> by bits in the PMU GRF, SAI2 and SAI3 by bits in the system GRF.  Model
-> them as GRF gate clocks so the SAI MCLK pin direction can be controlled
-> through the clock framework.
-> 
-> This is v4 of the earlier "rockchip,clk-out" binding/driver submission.
-> That one introduced a generic "rockchip,clk-out" compatible plus a
-> standalone driver, which is not acceptable: upstream already has generic
-> GRF gate support (branch_grf_gate together with rockchip_clk_add_grf()),
-> and RK3576 and RK3588 register their SAI/I2S MCLK output gates with it.
-> No device tree changes are included.
+commit 9f005e02da5b51c2e50e528140d38bbfbcf12e37
+Author: Chuanhong Guo <gch981213@gmail.com>
 
-Please slow down the pace at which you send patches so that people have
-time to read them. Don't send your patches within 24 hours.
+clk: siflower: Add SF19A2890 clock manager driver
 
-In addition, your Message-ID seems to have been modified by your email
-provider:
+This commit adds a clock manager driver for the Siflower SF19A2890 SoC,
+registering the CPU clock and its PLLs early via CLK_OF_DECLARE_DRIVER
+and the remaining muxdiv clocks from a platform driver.
 
-Message-ID: <tencent_C4C715C962613597F98212938F8940633306@qq.com>
+> diff --git a/drivers/clk/siflower/Kconfig b/drivers/clk/siflower/Kconfig
+> new file mode 100644
+> index 0000000000000..ad1b04b4bb9b2
+> --- /dev/null
+> +++ b/drivers/clk/siflower/Kconfig
+> @@ -0,0 +1,11 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +
+> +config CLK_SF19A2890
+> +	bool "Clock driver for Siflower SF19A2890"
+> +	depends on MACH_SIFLOWER_MIPS || COMPILE_TEST
+> +	default MACH_SIFLOWER_MIPS
 
-Please try the downgrade the git version[0] you use for
-git send-email, or switch to a different email provider.
+[Severity: Low]
+Is MACH_SIFLOWER_MIPS defined in the tree?  Without it, CLK_SF19A2890
+can only be enabled when COMPILE_TEST is set and defaults to n.
 
-[0]: https://lore.kernel.org/all/8771714B848C3A9F+9f64a309-ff70-466f-8d29-15950318b728@airkyi.com/
+> diff --git a/drivers/clk/siflower/clk-sf19a2890.c b/drivers/clk/siflower/=
+clk-sf19a2890.c
+> new file mode 100644
+> index 0000000000000..4dad8f65eb4b9
+> --- /dev/null
+> +++ b/drivers/clk/siflower/clk-sf19a2890.c
 
-> 
-> v2 registered all four gates from one branch table while only the PMU GRF
-> was added as an auxiliary GRF.  The two system GRF gates therefore came
-> right after two PMU GRF gates in the same table, and
-> rockchip_clk_register_branches() keeps using the regmap it picked for the
-> previous branch when it finds no entry for a branch's grf_type, so they
-> ended up toggling bits of the PMU GRF.  The SAI0/SAI1 gates are now
-> registered from their own table, and only once the PMU GRF was really
-> added, so no branch table mixes two GRF types and the PMU GRF gates can
-> no longer fall back to the system GRF.
-> 
-> The series now also documents the RK3506 GRF compatibles in the Rockchip
-> GRF binding, including the "rockchip,rk3506-pmu-grf" name used by the
-> clock driver.  The RK3506 DTS uses the same PMU GRF compatible; that
-> rename is part of the RK3506 DTS series.
-> 
-> Tested on a RK3506B board: the SAI0 MCLK output runs at 12.288 MHz and
-> drives the ES8388 codec, audio playback works, and the GRF gate bits were
-> read back from the registers to confirm that they get set.  Enabling the
-> SAI2/SAI3 gates sets bit 2 and bit 3 of the system GRF (0xff288004) and
-> leaves the PMU GRF alone.
-> 
-> Changes since v3:
->  - add the RK3506 GRF compatibles to the Rockchip GRF binding
->  - look up the PMU GRF using the documented "rockchip,rk3506-pmu-grf"
->    compatible instead of the vendor's "rockchip,rk3506-grf-pmu" name
-> 
-> Changes since v2:
->  - register the SAI0/SAI1 gates from a separate table that is only used
->    when the PMU GRF was added successfully
-> 
-> Changes since v1:
->  - drop the rockchip,clk-out binding and driver
->  - use the existing GATE_GRF support like RK3576 and RK3588 do
->  - limit the series to the clock driver and the dt-bindings IDs
-> 
-> Xiangyu Zhu (3):
->   dt-bindings: soc: rockchip: Add RK3506 GRF compatibles
->   dt-bindings: clock: rockchip,rk3506-cru: Add SAI MCLK output gate IDs
->   clk: rockchip: rk3506: Register the SAI MCLK output gates
-> 
->  .../devicetree/bindings/soc/rockchip/grf.yaml |  4 +++
->  drivers/clk/rockchip/clk-rk3506.c             | 27 +++++++++++++++++++
->  .../dt-bindings/clock/rockchip,rk3506-cru.h   |  4 +++
->  3 files changed, 35 insertions(+)
-> 
+[ ... ]
 
--- 
-Best, 
-Chaoyi
+> +static void __init sf19a2890_clk_early_init(struct device_node *node)
+> +{
+> +	struct clk_hw_onecell_data *data;
+> +	void __iomem *base;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	data =3D kzalloc_flex(*data, hws, CLK_SF19A2890_NR_CLKS);
+> +	if (!data)
+> +		return;
+> +
+> +	data->num =3D CLK_SF19A2890_NR_CLKS;
+> +	/* The clocks registered at probe defer until then */
+> +	for (i =3D 0; i < data->num; i++)
+> +		data->hws[i] =3D ERR_PTR(-EPROBE_DEFER);
+> +
+> +	base =3D of_iomap(node, 0);
+> +	if (!base) {
+> +		pr_err("failed to map the registers\n");
+> +		goto err_free;
+> +	}
+> +
+> +	for (i =3D 0; i < ARRAY_SIZE(sf19a2890_early_clks); i++) {
+> +		unsigned int id =3D sf19a2890_early_clks[i];
+> +		struct clk_hw *hw =3D sf19a2890_hws[id];
+> +
+> +		hw_to_sf_clk_common(hw)->base =3D base;
+> +		ret =3D of_clk_hw_register(node, hw);
+> +		if (ret) {
+> +			pr_err("failed to register clock %u: %d\n", id, ret);
+> +			goto err_unregister;
+> +		}
+> +		data->hws[id] =3D hw;
+> +	}
+> +
+> +	ret =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get, data);
+> +	if (ret) {
+> +		pr_err("failed to add the clock provider: %d\n", ret);
+> +		goto err_unregister;
+> +	}
+> +
+> +	sf19a2890_clk_data =3D data;
+> +	sf19a2890_clk_base =3D base;
+> +	return;
+> +
+> +err_unregister:
+> +	while (i--)
+> +		clk_hw_unregister(data->hws[sf19a2890_early_clks[i]]);
+> +	iounmap(base);
+> +err_free:
+> +	kfree(data);
+> +}
+> +
+> +CLK_OF_DECLARE_DRIVER(sf19a2890_clk, "siflower,sf19a2890-clk", sf19a2890=
+_clk_early_init);
+> +
+> +static int sf19a2890_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct clk_hw_onecell_data *data =3D sf19a2890_clk_data;
+> +	struct device *dev =3D &pdev->dev;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	if (!data)
+> +		return -ENODEV;
+> +
+> +	for (i =3D 0; i < data->num; i++) {
+> +		struct clk_hw *hw =3D sf19a2890_hws[i];
+> +
+> +		/* Registered early */
+> +		if (!IS_ERR(data->hws[i]))
+> +			continue;
+> +
+> +		hw_to_sf_clk_common(hw)->base =3D sf19a2890_clk_base;
+> +		ret =3D devm_clk_hw_register(dev, hw);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "failed to register clock %u\n", i);
+> +	}
+> +
+> +	/* Hand out the clocks only once they are all registered */
+> +	for (i =3D 0; i < data->num; i++)
+> +		data->hws[i] =3D sf19a2890_hws[i];
+> +
+> +	return 0;
+> +}
+
+[Severity: Medium]
+Can updating data->hws[] after the devm_clk_hw_register() loop leave
+downstream clocks orphaned?
+
+During each devm_clk_hw_register() call, __clk_core_init() runs
+clk_core_reparent_orphans_nolock(), which queries the OF provider via
+of_clk_hw_onecell_get() while data->hws[i] is still
+ERR_PTR(-EPROBE_DEFER).  Because the second loop populates data->hws[i]
+without re-running orphan reparenting or of_clk_set_defaults(), any
+downstream clock registered earlier that references one of the late
+muxdiv clocks by DT phandle stays orphaned with rate 0.
+
+In addition, of_clk_add_hw_provider() in sf19a2890_clk_early_init() runs
+of_clk_set_defaults(node, true) while the 17 late slots hold
+ERR_PTR(-EPROBE_DEFER), so an assigned-clocks property on the clock
+controller node referencing any late clock causes
+of_clk_add_hw_provider() to fail with -EPROBE_DEFER and unregister the
+early CPU and PLL clocks.
+
+Populating data->hws[i] before each devm_clk_hw_register() (or calling
+of_clk_del_provider() and of_clk_add_hw_provider() once all clocks are
+populated) would allow orphan reparenting and default clock assignments
+to complete.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261122-sf19a2890-=
+sysm-v4-0-bbfe1c495e2e@telaak.dev?part=3D2
