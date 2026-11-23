@@ -1,36 +1,36 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795419512;
-	b=0690LgYqGhMokU+D1NUsFe3gYTsl5etGWYTXPy3aPAtCrDmooZ+MJk1OM2mFDlr06LUG
-	 wah7rM6f5ELgRmBvO1bbfrtrwAnmOcDpCQZlkubbbVD3qwsqnl01nEuiKHg0BdMG+Be0h
-	 Im5uQb1TEHTIMBhIkIbFNKxq6E9G7ZSSggJ2qKSfGN0gOGW6SiG/clWn8G2kgxXWRuLmJ
-	 Bfom9YpJ6gBnrpz79k/B5WZ4HvepAX3TY+CfOvOsL/TA/q/Nej0CwCP9ZT0ZBuNLKdcBS
-	 3AHN4Oao5vHl5ddD4sHmF+cLCztQthY/uA/k2Qpp5eM8UescIOzKj95PwrnSiHrWr+w==
+	t=1795419515;
+	b=5bzVG5DcaDj0aB8RQPCY+/MnjNikUReXZjSB9Gf3inVOc/eyEFpA4ayF0yujpeejV7V+
+	 2XkVRQyaghcHbFb7P4jI9RVd1JrZ7f8tnf2eYwvP0JTt5u4tq6tGL7zojx4/dtkdZIGZV
+	 k0AlZo/F8c4Q7Qqpb0SC67EM86f1EHeYBLf62HS8UnG9RmRLI4KhNn7SmL0WFIBQvNMS3
+	 6dcxRjTfhyuagNQb25e+GiztoNpBv5hwa3DIeaZqBIeW0umJmToSVQ+1Bd13Cr+q/vWxk
+	 eiYso++pRzMWvdesdLvSYMN9QtghJwMuiTUlgkg9XVy+uzjwL85nVKv+8R96K4inLnw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795419512;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795419515;
 	h=Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=Vnk9vQuILzvHv3ut/dW7kMQknuYwVY9iKGBFPnyYtJU=;
-	b=qDVS78SpyJlkJZLh3gLgQLb2CTxmrFHnahczHint52BT/iGOc49fsY0GrwBAJTy0pLh/
-	 o1dVFk9qUM9+ynp1N2Jd9+PIQ6zH4UKyYUtZ/LVk4MTHmJrK3RIkDdOrezuwdi5L1T4Cc
-	 cPVYZ/qqI0g5c04+gZs9ywQoajQuGHwX9Gir88rcKb1fk1+F1i3rD4Qm1zlnsvDMYCWrJ
-	 RA5+7mGeNxzwGx8tgxCXlDpD4kxSLmwKoKJMzG8LFb83vl1BYQGCssPiAzsgSukCXeNEm
-	 8YaoRliABsZQgPP8ut7j2MnzPo4RnSn8gzPEc5+nzct5C7o/D4WFV4+/V+WGkIU441w==
+	bh=q2g7v99AfPez2bNaWYwX9leBvXnfhrV9/muFJfRB/2E=;
+	b=AnoXdaadovXjDD5TOok7ahANiQU8A8KWnCXK8soVfk5lksbr5LafnCVAlkuM0yvhmxOD
+	 gCGKMBb9FO5rOIpoCNylSAj+WVndS+GWHJb8HYUCJ1tKM7z3s+4/2UroydYYvrTQgmqqv
+	 41AtLvH6xK4FTxxT/z4nkEkpYm93dJ2Kk6T9Rrt5RmH5XDppLfp2IoF3GMge9aQMdoK5D
+	 frVg2izcfhM45dvYpWl5rb9yN5k93EZi8KlCJmpPFFRjTBtqXyiaZ70zfQzB4e5QPBPEe
+	 lMySbwZkQlqNUIAtqYBDVfPbquqE0t/gwomG3PE1RA2fCTf3lMptVUOwut8pXhl6hHg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F085606A331;
-	Mon, 23 Nov 2026 07:38:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA5B51F000E1;
-	Mon, 23 Nov 2026 07:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997C6606A330;
+	Mon, 23 Nov 2026 07:38:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B7791F000D3;
+	Mon, 23 Nov 2026 07:38:34 +0000 (UTC)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Mon, 23 Nov 2026 08:38:12 +0100
-Subject: [PATCH v2 2/4] clk: qcom: Consistently enable MSM8939, MDM9615,
- SAR2130P and SDX65
+Date: Mon, 23 Nov 2026 08:38:13 +0100
+Subject: [PATCH v2 3/4] clk: qcom: Drop redundant ARM and ARM64 dependency
+ on IPQ_GCC_5018
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -42,7 +42,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261123-qcom-kconfig-unify-v2-2-fe56c8fd15bf@oss.qualcomm.com>
+Message-Id: <20261123-qcom-kconfig-unify-v2-3-fe56c8fd15bf@oss.qualcomm.com>
 References: <20261123-qcom-kconfig-unify-v2-0-fe56c8fd15bf@oss.qualcomm.com>
 In-Reply-To: <20261123-qcom-kconfig-unify-v2-0-fe56c8fd15bf@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
@@ -51,77 +51,45 @@ To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2032;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=740;
  i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=MwoJAHsxq3kRu+1Ivzcy6fEn5ox6fFB8e3Etbqrh1tg=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBrA+1pB1BQ5l8r76cIP9ixxfJnf5G4pXJG2OfK4
- z9uS1YMJKmJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCawPtaQAKCRDBN2bmhouD
- 14x1D/sHI4s/bkRHKbBrF/3CeRWZZdfX4QQDh2A9di9FcQMcFbG7wjvza7dkByATJaZjlQws5QJ
- duMCDANBUKyUyGHNLvrhEYps9lXzwX3XNBkxO4Llyf8JVMfaTRXBwGM6PnjoG34QiFTiljSpq5T
- OP+zyzvzSvm24PY4dTfZpjjVW39bas2WLUwD1iP6zNYg6MOeNnKdQ7q4FWN49uWKVqOFAju9hiJ
- 9LXVXKT/bZ4zReAcleiPxHee97oV1IXGsvB7VAcXHldmSJ0d7kQDIS9MvhYmSSXmKo1zdUUSEMp
- wJc7JzkROeSoFP144HXrrjKEaz1PY+lZM0dgmow1aluRY3IIp/gggSLL2mKBjogsFl7ejoHr2TV
- 36xmURyDpytTEGJLXtTtWRcIQTDZzJAiF9Tk2Oa8Mi0319ZEDvvngS/jTzTzve+3IyphtDFQsan
- WnQqy2q4stGudH4x8uE12T+j77JeXlnoilZCpuFhKKavbCBfspTs7wKLzYDt/OTtZC+pmk2Zp1P
- I9snK63/D9g9khIyG2VSCYK+XlT8q0/TUmftsnrGrFxVj74ad2+PSOzJQaDMNsonJ6UJTswpoMO
- V4e85KuRncgnJKjT7h0FCzwK1QYPWgDf85tf8289AiTR3cTaW0i4tzZMf+CG39m40LGiLGm0zxs
- uoyseSgBdWnUahA==
+ bh=oVNwpS5L9vZXZKx3UIsH0zv4b3oLQzDJTsWa2WTdcjo=;
+ b=kA0DAAoBwTdm5oaLg9cByyZiAGsD7Wqg9zRmH/3OVBPeVmWszGhP8Ijrpdj4M/mFCEhyNcI1S
+ okCMwQAAQoAHRYhBN3SYig9ERsjO264qME3ZuaGi4PXBQJrA+1qAAoJEME3ZuaGi4PX92YP/R3R
+ d6/K5GA9fS/CHO0M9R0Lq426WGVzdI+g0Xfx/YDR2Cmpd+s6bz0/Pxe7gG0udsSP0AUDwyuaoRW
+ gjY/DqsSeIP8Flm08Vwq6nKM3WsYbepnjVVhNLA8sAF3tO+F+bFrUyfjA1tNo+ISsG5M6ApidqC
+ UPsanOUFJGwJBprHiRCHl1Ulw5vmO2sO4bsOGAO7hF0MokwA0eILeJlZFj4cLS3xOLw2ogarecj
+ wz4mU87f+XBTUfYMJI1TLw3m42OvKjMj+oqrYYIumMBenHjJ/CpD6X9Cg+w6wn3LszQDXAz8Q1D
+ V1o8Brjb9pvml/Q90zCBX+nU9t9cKiWRuokqFhIH+PosDx3XU/+k8GChVxznULoS/hhBsCyUqBA
+ BjhaTrqC4DqBGx4z5CDgKWAJ/wE2ZB4s1ADbPk59ZIPAmt5PVq7jV14qv6HlOeqHs5QPMDwAa7f
+ PiQTQxrIEtqWVyG4jN3EkT++/uKWTVstTn2PxbhiIq3w3VECQdCdNM+yYtI1dyEHr+xh0l1YGLS
+ U9gGl9Psq4T4QroZXC0YF2FLBkjhcsjbM5VR2fSfe+U4e3vKQaPbMGTif93nnvPWLhhu32Iri4J
+ rjWIQSYrkwwuM90zqEmRwD82PcOg0ox+Ka0CITYiAjK8l34X55peEt6lBIGyNhviIqKWTFtLpCl
+ UF1Bu
 X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Critical drivers for MSM8939, MDM9615, SAR2130P and SDX65, like pin
-controller and interconnect, are already enabled by default, so should
-be the clock controller drivers as well.
+All Qualcomm clock controller CONFIG entries depend on ARCH_QCOM which
+is ARM and ARM64 platform, thus additional depends for IPQ5018 is
+redundant.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 ---
- drivers/clk/qcom/Kconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/clk/qcom/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 91e774dada4b..757f52910f94 100644
+index 757f52910f94..6ddfa451ad55 100644
 --- a/drivers/clk/qcom/Kconfig
 +++ b/drivers/clk/qcom/Kconfig
-@@ -807,6 +807,7 @@ config MSM_GCC_8917
- config MSM_GCC_8939
- 	tristate "MSM8939 Global Clock Controller"
- 	select QCOM_GDSC
-+	default ARCH_QCOM if ARM64
+@@ -643,7 +643,6 @@ config IPQ_GCC_4019
+ 
+ config IPQ_GCC_5018
+ 	tristate "IPQ5018 Global Clock Controller"
+-	depends on ARM || ARM64 || COMPILE_TEST
+ 	default ARCH_QCOM && ARM64
  	help
- 	  Support for the global clock controller on msm8939 devices.
- 	  Say Y if you want to use devices such as UART, SPI i2c, USB,
-@@ -852,6 +853,7 @@ config MDM_GCC_9607
- config MDM_GCC_9615
- 	tristate "MDM9615 Global Clock Controller"
- 	depends on ARM || COMPILE_TEST
-+	default ARCH_QCOM
- 	help
- 	  Support for the global clock controller on mdm9615 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -1189,6 +1191,7 @@ config SAR_GCC_2130P
- 	tristate "SAR2130P Global Clock Controller"
- 	select QCOM_GDSC
- 	depends on COMMON_CLK_QCOM
-+	default ARCH_QCOM
- 	help
- 	  Support for the global clock controller on SAR2130P devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -1198,6 +1201,7 @@ config SAR_GPUCC_2130P
- 	tristate "SAR2130P Graphics clock controller"
- 	select QCOM_GDSC
- 	select SAR_GCC_2130P
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the graphics clock controller on SAR2130P devices.
- 	  Say Y if you want to support graphics controller devices and
-@@ -1480,6 +1484,7 @@ config SDX_GCC_65
- 	tristate "SDX65 Global Clock Controller"
- 	depends on ARM || COMPILE_TEST
- 	select QCOM_GDSC
-+	default ARCH_QCOM
- 	help
- 	  Support for the global clock controller on SDX65 devices.
- 	  Say Y if you want to use peripheral devices such as UART,
+ 	  Support for global clock controller on ipq5018 devices.
 
 -- 
 2.53.0
