@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795447874;
-	b=JD5gUJUBzrFlvHIQitRZUrtYXyLYKB87rvRn6ZSs/EuWTiANtmPAvCFOu2tz96ESMMal
-	 ogrYE8yzC8SnesFp+Ll25Uo33TzcObDCVAWNkycY5YXpkWXpYxZKkJAOoFfbrOPKShz91
-	 ujtctNGlvoLPGiEpuWRM1i2fuKxjetJVuToaomxwhK6IsdU0qiL5kejsCVjfHAD5nw3lj
-	 XiRW0iQ8ULOEUJf+CKUojMbGNjHys59Hh3NecVby37/qHcccTWux1s3CCBGWCWLhqQQfy
-	 NH2yJHqhYWsehegarHrVp4u8y5kw080ECtFNrmMBfLIuK3ea8GLSFZyfoO28HZPSn5w==
+	t=1795448166;
+	b=RPzlG1cP6stZb18V2USWR2bsvuQ8b9oUNK2iqJxUq4SwK+zznfbQcHEl70MGL6LwOHmZ
+	 33XP3Hnqxmhub5sGVnPrbg9YWsS+Q+UxkAJLygplUiw94Enb3kzFP1SfnFgVmVY+MEmhM
+	 KTx8RxRtJLCCpdYeEsGL8UtLwd1lsD9P5Qz9QwHF1gNylbZj4RA/SH7s+gqXjSdDJqEth
+	 GVpMqcmR1MZTDa6MlViU/+DJnn1mXBb5VG34Ls4WVADkh/i8at+cZ4mXz0+gDKShGY6IZ
+	 ZKmP31a+TTk5J7KBkpRU+0/Ut6jplV8TReJT8t+B3HDChcc4w2KQQhTgitcSApc9W4w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795447874;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795448166;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=5Zmzfenaqe/ABUcz0D1nvMINiY0TPaqXO2ZTdLBhjRU=;
-	b=saXwzzICP0UbqzmjOKkt5GFHyiShDIfs7jku5MM+y5MTU6zn3GDdTQObcThfokMQLc63
-	 l4Y7d40z62AgHm7Lq8Hxv0hGSt8kF1y38ba21jqfjpQiYpbCXK64HP9pYgFsr5OTAX66m
-	 DCJjJGZq8C+mTao/HelpjCjDHn16pbRGHRayFch7nGKAlo7lDTxE91gxZiHu1aIwo4V39
-	 JQMnPRY3vVV4DAAhUXn8zZWhYwveiOXKztsfMr7UCHVTfHwAqGpAkjba5hn4G3oMbwzBK
-	 7bZIfZlEdSCyiguN8MvJ5mEaoT/Q5gdxJ12UxSB54tCpdeh3pl9w3RJZoxq/70Y/FnA==
+	bh=UXpd3Nh2t45ncSVSh4QPOrYvcJiFSBL00rNMi7DJgJk=;
+	b=uuxjgGlyGdddbdLIsgNQi4OAlyWKMa+yejB09cz1Swz2FOJe354XOEzzPNJ+lNRcJrHZ
+	 9mmvNnLubx55Fxb3lvcnOrKn/h3iyIUXmRrjd5fhK8MQ8rIBMT05G6swgMU2Q2exm/DxO
+	 4J9Qxml4MYKGENhGaIU1ULBARtgDXlRbkr8I9hIhqhZAQWnGHggNGtcRu8/cBDt4yTzRy
+	 Qj+hOUtM/A2t/G8aQNL4m775dbu6/ncmWwWPCbYZ0HiGqUaBW5jPr8RXX8aqJglBH0ihA
+	 +4yUA95nPPVAcFvbprtD5fqhpn8zmQ1isCim8szGXiMVnb23MryYuphBrdsk9xPa2Nw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OhHvVIeL;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XfPB5P93;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACDA606A31E
-	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 15:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEA5606A31A
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 15:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OhHvVIeL
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CD9D1F000F2
-	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 15:31:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XfPB5P93
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DBBA1F01561
+	for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 15:36:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795447873;
-	bh=5Zmzfenaqe/ABUcz0D1nvMINiY0TPaqXO2ZTdLBhjRU=;
+	s=k20260515; t=1795448166;
+	bh=UXpd3Nh2t45ncSVSh4QPOrYvcJiFSBL00rNMi7DJgJk=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=OhHvVIeLj+E8jjACmZyxOQsE9LLq2TL2ftClvwugpxsJm1tg23lNcFLQd0SGWplHc
-	 TWzlhIBDKuLOhLGZrVly6pVMQ6oWBArpvHDqz5nVxf0svxcdqjylyUoSeyh7z6xyhF
-	 SQRLZ3bux7XcahS8tWzmVdaMc/RcYAbrfHXlzehjfQ3//xvRaSpcALvlJPajTkIdRH
-	 CSmNEyCORb08sPFGiybftPt3O04fBgs9GzWRqKMudgC6VFdJaNPvO400OdzCN1jt/U
-	 c4GOc9ynGtjbcKSXfGhJGFfckZq5SwXYVbgZi5/ymHi48yEFdJXlUmDNBNce7RSqHQ
-	 nDPq2gL7TL3RQ==
-Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-15ea896ddc8so5736615c88.0
-        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 07:31:13 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErGrZi1NTDQB5rVPHtUAVOOhb3Hs8ioCJ3Z5gnmIDotCPUkrBoSGVe8QHgsFvdeQU67gNke0KcmoBc8=@vger.kernel.org
-X-Gm-Message-State: APuU4Z99RdAuayRQHb3RFNryuY+SxXPhlFmu0aXq2BUWKMPBuVgtflU5
-	nJwIpJatwgXMDrZWhHF53Lwa4wvrO8kdOT6v5VNW3DhWwQu0gehcsAbiwHimz8Vn4kBsUPmdmfF
-	n6O6buHuUlCXaMjrQQzsz6qbsC3jjwg==
-X-Received: by 2002:a05:701b:2810:b0:143:5cb4:30 with SMTP id
- a92af1059eb24-1b5567b3391mr10425170c88.3.1795447872711; Mon, 23 Nov 2026
- 07:31:12 -0800 (PST)
+	b=XfPB5P93HP4vbKYlZWXIzvsr39OBy4OsyaLsBLvVeoS9AAZ6PTkbcgp0qeWPSkkrV
+	 wxzI/QYnUkCNN+zR1cYRChx0Twos7wOKJ3HYbovl51vv3hQp2J/sgIQy95EJDqeG1w
+	 eEDo644Q+/um0iNAjY0VsuG9sJTu9mcn+f1HdKCYRH2Mi7+1jsBXqUTkQBpWHC5Xt2
+	 PFB70kEXrhiVblbGVZu5igGcOFMWyN8HBX9vsokuGGg1aOiIYOqzOIXjR2jRtIV3RH
+	 7PhUC+AYpUv9Br5airvjFVcL/Qo638f5xSffOhjyZ6wWon88bDx9D7NvKQPwYtYpFa
+	 fArKNB97Aa3fw==
+Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-38190551625so7133586eec.1
+        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 07:36:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErF5PuN5kdxlafh+FIt8R1M05WO05NXRkXIkKMPhLe8gxzpIxKKOBN4sKW/ewuVNKP4B6aIvjOsvu+Q=@vger.kernel.org
+X-Gm-Message-State: APuU4Z96Kvec1WCKg+Hrr2WPFxAOlwM+JiOfFXV2xI6TxKJtETjDk9zD
+	ZsQKR0690tV4KhImooyss0H4FsG18TLSbWrFbYgTHJwGGeMi5bOxvBQEvI7wmNoBLRSmAue1Dq+
+	d/k8HKHaxFFF/gOLvqRT8+yJUn69CNg==
+X-Received: by 2002:a05:701b:2514:b0:16a:c6f2:60c2 with SMTP id
+ a92af1059eb24-1b55689fcb2mr10673901c88.12.1795448165577; Mon, 23 Nov 2026
+ 07:36:05 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,14 +59,14 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261010115539.9237-1-l.scorcia@gmail.com> <20261010115539.9237-6-l.scorcia@gmail.com>
-In-Reply-To: <20261010115539.9237-6-l.scorcia@gmail.com>
+References: <20261010115539.9237-1-l.scorcia@gmail.com> <20261010115539.9237-7-l.scorcia@gmail.com>
+In-Reply-To: <20261010115539.9237-7-l.scorcia@gmail.com>
 From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Mon, 23 Nov 2026 15:30:57 +0000
-X-Gmail-Original-Message-ID: <CAAOTY_9N7q8vSOM1R-i0JzidoSnVmf7E99KKi458NGU=WTSnCA@mail.gmail.com>
-X-Gm-Features: Aa3M54qyF59hFKqLYZAT2WpV4wdT_KYkLyV_ony0INzG1Z9OlyFKt_7T9Q9dDAQ
-Message-ID: <CAAOTY_9N7q8vSOM1R-i0JzidoSnVmf7E99KKi458NGU=WTSnCA@mail.gmail.com>
-Subject: Re: [PATCH 5/7] drm/mediatek: mtk_hdmi: Set tz_disabled for mt8167
+Date: Mon, 23 Nov 2026 15:35:53 +0000
+X-Gmail-Original-Message-ID: <CAAOTY__jNESf=ZofZWN8SxBMkzeRrXEJv=J0QE4guC71hvBKGw@mail.gmail.com>
+X-Gm-Features: Aa3M54qi2_k27JpUO0fxBJ7jBDU5evrvHmSEsv1tBfznyzC71R2OzkCm3lxw8do
+Message-ID: <CAAOTY__jNESf=ZofZWN8SxBMkzeRrXEJv=J0QE4guC71hvBKGw@mail.gmail.com>
+Subject: Re: [PATCH 6/7] drm/mediatek: mtk_hdmi: Improve the secure output bit toggle
 To: Luca Leonardo Scorcia <l.scorcia@gmail.com>
 Cc: linux-mediatek@lists.infradead.org, 
 	Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, 
@@ -78,8 +78,8 @@ Cc: linux-mediatek@lists.infradead.org,
 	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
 	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, 
-	Fabien Parent <fparent@baylibre.com>, CK Hu <ck.hu@mediatek.com>, 
-	chunhui dai <chunhui.dai@mediatek.com>, linux-arm-kernel@lists.infradead.org, 
+	Fabien Parent <fparent@baylibre.com>, chunhui dai <chunhui.dai@mediatek.com>, 
+	CK Hu <ck.hu@mediatek.com>, linux-arm-kernel@lists.infradead.org, 
 	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
 	dri-devel@lists.freedesktop.org
@@ -90,8 +90,15 @@ Luca Leonardo Scorcia <l.scorcia@gmail.com> =E6=96=BC 2026=E5=B9=B410=E6=9C=
 =8810=E6=97=A5=E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=8811:56=E5=AF=AB=E9=81=93=
 =EF=BC=9A
 >
-> Just like mt2701, MediaTek mt8167 does not require an ARM supervisor mode
-> call to toggle HDMI output.
+> The secure output control bit toggle for mt2701/mt8167 currently sets
+> bit 0 (DEEP_COLOR_EN), 1-2 (DEEP_COLOR_MODE), 15 (HDMI_PSECUR_EN) and 31
+> (HDMI_PCLK_FREE_RUN_EN) in the same operation, but only bit 15 is actuall=
+y
+> controlling the HDMI_PSECUR_EN bit, the rest of them are already being se=
+t
+> in separate operations later. Add a define for bit 15 and clean up the bi=
+t
+> update operation.
 
 Applied to mediatek-drm-fixes [1], thanks.
 
@@ -102,6 +109,7 @@ Regards,
 Chun-Kuang.
 
 >
-> Fixes: 511cf7d12331 ("drm/mediatek: hdmi: Add MT8167 configuration")
+> Fixes: 0fc721b2968e ("drm/mediatek: add hdmi driver for MT2701 and MT7623=
+")
 > Signed-off-by: Luca Leonardo Scorcia <l.scorcia@gmail.com>
 > ---
