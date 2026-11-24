@@ -1,13 +1,13 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.52.63
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.46.23
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795492598;
-	b=WGFUZVirF8DnUCrlfqqZp7PPuGbv5s9Ol1GiGf/tr5qCsN8YyDdE8WfE6P1uJDvidlyA
-	 AEdlcIYa2T54i1H3S+2+yE6OTJj7otleB8kiW+NCIHU5IY95TTOCwlU2KzfwiaTu+pg+F
-	 zwzsRTA4dI2FNgWjXlM35ZCqqQ1etHBMaF3IFkWQ0W+hohrmyaGj+wHd9Yxj7UwKALZEN
-	 EUQ4qyfMVkf1lP9IW9sssjI+tudvg82k86OVNPckLywGpMbKYXKtDuV47ZTKfdmYY7Bf/
-	 iIIwhzhIJem79205G5D7uvlCOGm0pNhYyyGhxsFQ5dCZBJqFrE5lURnkPMTBHn+yGgw==
+	t=1795492607;
+	b=gVDq5NhINnxJ7JDoey+Irj5guUAth6ETwfxR/11F6n3PMstui+5b3gYeR7CZvmjgLXBS
+	 pRlu/DPzD9rMVPa5bPC/wsy3V6VVZcG858+gsl83CcMfMkG6AU2GKnan61Xi3tIJsZsHh
+	 OaPxi+hWJs5vnp+MrdXxR4IE4JuMV8al7NXFy7Umi/UrP1LWR0AKzOPsENbczyPyD7QrD
+	 vucSOXtphhofDwsu0cGNJSU7q+g6g+xECQ95WPY+Iw0RhVvXeLZiwkwnf1Z4Q3d2lOXrV
+	 bM8n20MMmA+ACvhFf2Y2SLA0GhtfkNSChxQYi2CwwcgqmTf9FcSEdk7nBmsrImLOtxQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795492598;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795492607;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:
 	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
 	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
@@ -26,74 +26,74 @@ ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
 	 X-MS-Exchange-CrossTenant-FromEntityHeader:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=fcD/VjDIYMsET00/CLVouFEnQiuO5b/aivOcc1p1OoQ=;
-	b=kTHE7ToDML7DNXp530yP8nb2UV9MdgnERzELFyWLK6VS+3Zmai5zJclkUPiIe5X2abDM
-	 a0wDWm4b/hOOq4Zp6cv/nrckipWhmR2kIxLh3I8TmXl1Ek02CaGknA0RzkZZBwXWWCijG
-	 N7cvTRcbGNsLODL066Ss9+rHX9Qx5Cv7dwebrMnVpnkW1vcO1AKjZ5OAvodbuZIzTb6b/
-	 FSS1Hj+gU0IPTEL9pjLIHFGV2j5nReE8lgleJ5pIDN0Cq06FLzGBO/215UZ1Ao26qLn7s
-	 wnwf+cDN0M34CqBBhE2DzYPUhm9shtuUoOjQkj92iQDTBhtOZ2Om8asZ0ldTtlm4n0w==
+	bh=ZGdorF/41IyVyBqcUesnUhPl1YWUERWGX7u+UM8ct4c=;
+	b=KFpqanSfjq3PXF+2G3Y686WMesq+mMWOTiXSvhwOcGri4tk2XcvFTur2dTzsTCWcYfXa
+	 QHqMd/tRQz8hvF9RD9j54V+f8h/gJfddgLgG3u24L8DljzojnWRhyMc1ThSCOecVNuADT
+	 bcIBAGkvYV1puQuqvn+0P6+cKW/B2m3vIQY4HO5wJmK6DpbHwf4e1wXodX4Jjlb8plVmL
+	 7larXcNFGpO3BN96DAlVvoxtTfBvgnJBYLem0lJRbExr8uBhzFqAUvgwC2mMCeVwL6rG0
+	 T1qCF7YDbMSOIjqwNFRSxATFQlOop4VtAbOJzZrSOliKIKMguA4rkC7E/La0hAIaA2A==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=amd.com;
 	spf=fail smtp.mailfrom=amd.com;
-	dkim=pass header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=svITgr+G;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.52.63
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011063.outbound.protection.outlook.com [52.101.52.63])
+	dkim=pass header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=5QA1aREY;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.46.23
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010023.outbound.protection.outlook.com [52.101.46.23])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8D3606A322;
-	Tue, 24 Nov 2026 03:56:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8F8D3606A322
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC94D606A698;
+	Tue, 24 Nov 2026 03:56:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CC94D606A698
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=svITgr+G
+	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=5QA1aREY
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sAItrmVj0SCU3PUDD8WtMwR94+HSKJuyTCXFZV11vLVgd13L9RrYqXmz8bhA3odWI7vbyqA5von2Qi4peqjRhJJhL6TIrjQwLJKY2c+8yJqm+dVJVfnlCUCobaHAcd75qn0Jf6VFnZ+moRmN571zSC5o1GmFfwQqHAkdOiYtflkhqDCDyiPl411zijjfC96/RXRtuH+mMc41hHjhmbmhHPFrEavQIr4hLbgKJVOaIydB8fJ5OhETg8w8xTO5u1iFodIlVt0g1OoHXK6cxJTMHDMul6Wko1YuNB8khcU/g7MTxfksBiQoy74hpT0PjrCyg8aCfXDvnWv1AWEBBoBhKQ==
+ b=zJv4oRrM0eV9HRURBbrdYEqASDgjwhoBMsJuDnA3a1+3gLGs20Hy+UHrrezNzFIBGnQk3YTHUyZk55islR5/QwXSL8PNoh5m1Xea6fcpNrdVqrEfqR0anI2RAio87lrg/JhIRNm28jRY6sgqIS15yj9Jecf2h1CFqOo8LEfwtSDtDpyWAjVmM7AVI1nud1+KpFjBOc25881dLlXSEGCj5SeOVkgvj/nArBggSqkQOkloC/WVprLf3BWoX9QkCu2Z6B6qnoOK0X8lGXABnUhGV0IL6p0KImCBmBsoiX3gVTYn7m6IK6fcd46VedVOP2P/XF6G/O8soTaRr0YQuNhIbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fcD/VjDIYMsET00/CLVouFEnQiuO5b/aivOcc1p1OoQ=;
- b=fCYPO1MjnxsEr8eZef73CYPgQOxfzuc64WznusmbDf2gEAKI8ozRgngI2s8LKGeRf8fcJFcixA50Vp6+tXjmVFLf2AREpjbYlMXGSTJPR0TLOlyHoklX6PuR16cWBC6TeWkEpM4Q4oQSlzY8xS/Iy87ZEko26u9GQPZZBaQHlYQIy5DvNKbkWk+QhygtiTjgFumqgC6EBC0GVWy0PcqYIR0TbiaJDgPk3vZmeHf3yB6fxFczInopxd5zL/DuIm6ZVy3jLlXqtsR6tx/W1dKQ87aRpirammLBufd8c/ybteMPXMVWUiunp8KNMs12W/TU/dIR0TylKTo8WFbRbYbLoQ==
+ bh=ZGdorF/41IyVyBqcUesnUhPl1YWUERWGX7u+UM8ct4c=;
+ b=ewDdS+CTFUdw1ZAtl/BnLTVTejUIqZj1XX8XvuEMlwxbCSCL0hxWPYBZjMe/bjv1H98ty36pAsaZ1+qpxSQNqdXqR8Qs6/u0U90vnAxqlxQ2RXhdK0HyvejVqZtkdQe62Vt+8veQbcJgRxJTavO09r7Lokg4vtV6hs1qKhk5v5PnqeEfAQ3VnCpNhZAmtC4Bjn1Z8/Issm3hY6FGQLjL4Gm1Mv3WpleG5gLjPdt8Vp6al2h1HjSibxGzDtJKinP0CgYeSGxPEzaLDPyAPZyJZBCPXPsNVeQhkkFizHOvYTdqHBqKyzxXdUg+2eea7fYEA83h+hJ1xlUOHMEVHbrwww==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fcD/VjDIYMsET00/CLVouFEnQiuO5b/aivOcc1p1OoQ=;
- b=svITgr+GS06WgtA2sMdLK13pu7jrPLdsOmlSSI8hYqoyo9g8ZTvdbzAdnVXBpkLzHWW6ojwiiqduRuEDQpqrYXpkNCCq1wUVxOJLQDySejb2Pu7d0NL6GSDpv2K7Ru7uwM+cM6n6KGVQ1w+jDc8xnav+7yZLQNfb0mk0154ZPTc=
-Received: from MW4PR03CA0190.namprd03.prod.outlook.com (2603:10b6:303:b8::15)
- by PH7PR12MB6762.namprd12.prod.outlook.com (2603:10b6:510:1ac::11) with
+ bh=ZGdorF/41IyVyBqcUesnUhPl1YWUERWGX7u+UM8ct4c=;
+ b=5QA1aREYjHTaFNc02xigfQIXNdmCe5rceLkLYXAq3hCjqKzCC4XSLaLGMg/h0SUU+hdbv5Xuwp52IRxLWiCDWa1s7GISoLDKOBDUHDxpgxb2G9N780iJQlaIOXN7QJ8BgPGuCFxYo2R0xx7V1ZQqJGCw5jtksx1ACDavKqFHnnM=
+Received: from CH0PR08CA0018.namprd08.prod.outlook.com (2603:10b6:610:33::23)
+ by PH5PR12MB953872.namprd12.prod.outlook.com (2603:10b6:510:501::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.14; Tue, 24 Nov
- 2026 03:56:32 +0000
-Received: from MWH0EPF000C618A.namprd02.prod.outlook.com
- (2603:10b6:303:b8:cafe::a1) by MW4PR03CA0190.outlook.office365.com
- (2603:10b6:303:b8::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.639.14 via Frontend Transport; Tue,
- 24 Nov 2026 03:56:31 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.13; Tue, 24 Nov
+ 2026 03:56:42 +0000
+Received: from DS8PEPF000000DD.namprd05.prod.outlook.com
+ (2603:10b6:610:33:cafe::7d) by CH0PR08CA0018.outlook.office365.com
+ (2603:10b6:610:33::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.662.5 via Frontend Transport; Tue, 24
+ Nov 2026 03:56:42 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- MWH0EPF000C618A.mail.protection.outlook.com (10.167.249.122) with Microsoft
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ DS8PEPF000000DD.mail.protection.outlook.com (10.167.23.198) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.662.3 via Frontend Transport; Tue, 24 Nov 2026 03:56:31 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ 15.21.639.5 via Frontend Transport; Tue, 24 Nov 2026 03:56:42 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Mon, 23 Nov
- 2026 21:56:22 -0600
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ 2026 21:56:41 -0600
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Mon, 23 Nov
- 2026 21:56:21 -0600
+ 2026 21:56:40 -0600
 Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by satlexmb08.amd.com
  (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.57 via Frontend
- Transport; Mon, 23 Nov 2026 21:56:17 -0600
+ Transport; Mon, 23 Nov 2026 21:56:37 -0600
 From: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
 To: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: <git@amd.com>, <shubhrajyoti.datta@gmail.com>, Michael Turquette
@@ -102,9 +102,9 @@ CC: <git@amd.com>, <shubhrajyoti.datta@gmail.com>, Michael Turquette
 	<conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, "Shubhrajyoti
  Datta" <shubhrajyoti.datta@amd.com>, <devicetree@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v4 1/8] dt-bindings: clock: clocking-wizard: Add static-config mode support
-Date: Tue, 24 Nov 2026 09:25:46 +0530
-Message-ID: <20261124035613.1968260-2-shubhrajyoti.datta@amd.com>
+Subject: [PATCH v4 6/8] clk: clocking-wizard: Use dev_err_probe() when mapping registers
+Date: Tue, 24 Nov 2026 09:25:51 +0530
+Message-ID: <20261124035613.1968260-7-shubhrajyoti.datta@amd.com>
 X-Mailer: git-send-email 2.44.4
 In-Reply-To: <20261124035613.1968260-1-shubhrajyoti.datta@amd.com>
 References: <20261124035613.1968260-1-shubhrajyoti.datta@amd.com>
@@ -121,150 +121,56 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000C618A:EE_|PH7PR12MB6762:EE_
-X-MS-Office365-Filtering-Correlation-Id: 14de7660-b38b-4d53-aa1f-08df49deed0c
+X-MS-TrafficTypeDiagnostic: DS8PEPF000000DD:EE_|PH5PR12MB953872:EE_
+X-MS-Office365-Filtering-Correlation-Id: e50709d9-73f3-4694-5a00-08df49def34f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|23010399003|36860700016|6133799003|18002099003|22082099003|261009223027099003|3023799007|261021121427099003|261021123027099003|261022105027099003|261026140227099003|261026121527099003|261102123227099003|261028144727099003|56012099006|10067099003|5023799004|11063799006;
+	BCL:0;ARA:13230040|36860700016|1800799024|7416014|376014|23010399003|82310400026|261028144727099003|10067099003|56012099006|11063799006|261021123027099003|261026140227099003|261021121427099003|261009223027099003|261102123227099003|261022105027099003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	nHmjYP4VV/ou9Q52u13nopALLmBJmOANV9fV++WKEpnnx4YgrDzKD/0VKeJbhbDj1wylYYdgpCD5MoUouuxFHi+6sC05eaUISLR2T+vecvJ0lJ2lMaxMrWeNVlYY20MhD1bAlE5nqhGqiBXQdZ66whjG5Gq+O+P6UYzOw2Azu+zILbwG7CGDk3NjmVfq0OTeC1Vwz6YjyR6nejWKg+ARLHnQSsIcsmuntwSbP6SnjdSPJWfJkh4C5sAXMEDycoNeQCOsOKf2zvn19YEKZwmdntggBMPW79PiqMbF9yd68/VTDlRFFMwiPTx3Eqsc6pYoWZ3fZs7H0fyTQ8nrVb3eyKgGhDyhd95LsfGSeNRI19SumnCIVVNUe93lZukH1xzx7/nj4wGpGem0PdODCTo71NCrH7kVPRb2pguXRmVTW9wvf71yU8rQQz4l1DeoebkE3McjXDNqmXHYsHnghz7Hwbh30NWLhpELP+g5zDhYj+ko+Yew/nnM4Cg0sHkCayhvaXx0kBPRlaA9goNbq2sycN0WkT0kRmGPQXzlCyP1A3nEkYOA+6YQwSOC6wbCcQ9x4cb2miUMb9Le2QN2WqI+NRgGdOhIqV9tOq8jh/qeiTTMtJuGKIUtpddHTb8oQTahlTsXVWJyXDx0mzw0gmjc4yXxUj4yx+fQPr6YajD/L3YCfMbz0HTPiT2I94YEB/EfZmgBl6mgLo8Sf8FzzIcPtA==
+	JanlwLo9bndEMAl8ZveO2AqAdalfgdrql2178lzwClMWhGqudXjZZ/GAC7JbjKKMJoA6UgkvZikJWV61ZCEcqnqf0j5QBUDSzmO/lthZcktPTdF6GWrMaqnIO/dlWc/xPk5Nix6Flrww70Jx/YbnbvuNY5c+FrDNTgIiKMI2XUvx76M9jmWt1DIUNVhXlgqnC0AR10debfSJLWS0PlhGMV4vAQObJJfy5lDOAPYmgXbvGtCTyaxBgssqtz0HugihmrzLuJ13pCDDb7QANChAgnQvHeU6cYZGP5bOtkz5N0wZnAYqMhwXwtu+2Y1Uv/bqutN0mgDmYWRWMhHDx866l1VuX+QT3QFk141wV85S9CUuTeWAdBuEh6mX5Xyxk48SP6xC9yYA6I+aMjzNaegDHBymDNA6y1iqkBxi2V5nMyZ4RfwfRTvmrN3RA6y9EJKjNB/90KyNPL/jHAq5c761/FTm5+icjpaaeyHD0mb4affVXyrCwVlTOgemSkUOSJhVdUFTca8qWjlv3aoYZDrKS9NMpN/rnqZmbyQtjwveo/0eD4VnAt2bw1kEtk5+TPnqsLa5zmT3Jlj/8QRLoWQToxnndHFvCPGsqF6KVTCOUUyGd6zQCtLJS9Les8HuefJ6t/+QnfCH2q8W1tJ6nb2dsJ7nlns2P0Rl0k6LG+R1gV++Y6+s5pmc+y5v3c07ynL1B/LqWIv+J2HZIKWDTkGkKQ==
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(23010399003)(36860700016)(6133799003)(18002099003)(22082099003)(261009223027099003)(3023799007)(261021121427099003)(261021123027099003)(261022105027099003)(261026140227099003)(261026121527099003)(261102123227099003)(261028144727099003)(56012099006)(10067099003)(5023799004)(11063799006);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(7416014)(376014)(23010399003)(82310400026)(261028144727099003)(10067099003)(56012099006)(11063799006)(261021123027099003)(261026140227099003)(261021121427099003)(261009223027099003)(261102123227099003)(261022105027099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	rJA4K3I7z0lfuemkoNOfINYh+1xrE7t8xuEfrdGeyb/RD0XLOyatNL6/PyqC/g10T1DuqJ+KHZjL1Ctwo/pm7hdhe7wp+kq45bZ6/pMeQj0e5NhJmQGHgi35scLllQujq7B29z83mgc3p5Flex8aspaNPdm/VwGLejLTi3fci64XLMXCO4341kPzSnfPWIunkb0WJ3m3eXygYJL354SYLzerYyFvr6Nw2r/qR0XbM/SshWgoG6MDCBzwctk5I7bRv7O3EjRcGtKvdJJBr/DxVUSGySXfmx5wHKfNDCDfQ7gA0ap0nA/KLgzeB+cKQsP9SHyD6V4TJfwEpKV+BA5Y/DFupccL/jeANhZDrDvYhnrkMauZhYCCmRkTAJC6QmC8ZNF5LJrzfwHbsn6u7V69spZxAUn0/gxVYdvsOMrK696AsTA4vl2Up1il364lEzfm
+	SxvEQbEA5B6LfGjCaldakDMuiy8P/SDgYgDYLAtIYwOUPJMkWbrbUoJJryWiTZVTt8GLjDJonX6IVnetJVv3/JSuJuMF2re3eXXL8iL91TjSPDc2LwPZzcV1GcC5jO6xp6zwizA9U+C0gg7cH6tUYACgcHmoupIbr41X71jQkaJ6LMJADpYBicJ24jKnUNvOHXXMqdRer8W3ZWPY85ch8GMOrivic2Mw0eEeh7+4jzd/5km9Rtrc7kWvwKLidDaJNilJKJK9ycngLCW/ll5gPUtoMWBviV7VgscRwN2rc3bTGrUOkF0d40VpjtCtFf2BJPrdVTLMIztOtlD0HR4OTDbcD9RmtCoK1wMzWwMwocAbwshy2cG8viDUQptfK6mXmsFzf60jusKRKfcLynxSEpLiltVk+eJKrl1PD67VRdaBkz88iA2eR6A2282wTDct
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2026 03:56:31.7146
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2026 03:56:42.2763
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14de7660-b38b-4d53-aa1f-08df49deed0c
+X-MS-Exchange-CrossTenant-Network-Message-Id: e50709d9-73f3-4694-5a00-08df49def34f
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000C618A.namprd02.prod.outlook.com
+	DS8PEPF000000DD.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6762
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH5PR12MB953872
 
-Static-config MMCM/PLL ratios are fixed at IP build time, so the kernel
-cannot read per-output multiply/divide from registers and needs DT pairs
-to register fixed-factor clocks. Also add the tuples by pair in example.
+Align the devm_platform_ioremap_resource() error path with clk_in1 and
+s_axi_aclk handling for consistent logging and deferred-probe behavior.
 
-In static-config mode the IP exposes only fixed-factor clock outputs and
-has no runtime-programmable registers, so reg is not required.
-Make reg optional for static-config
-
-In static-config mode the AXI bus interface is unused, so s_axi_aclk
-is not required. Allow clocks/clock-names to have only one entry
-(clk_in1) when xlnx,static-config is present and enforce two entries
-otherwise. Update the static-config example accordingly.
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
 ---
 
-(no changes since v3)
+(no changes since v1)
 
-Changes in v3:
-Added reviewed tag
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Changes in v2:
-Merged the similar patches
-Allow check for current dt even if it is unused.
-
- .../bindings/clock/xlnx,clocking-wizard.yaml  | 51 +++++++++++++++++--
- 1 file changed, 47 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-index 3f311f90294e..865927b9f1be 100644
---- a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-+++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-@@ -29,11 +29,13 @@ properties:
-     const: 1
+diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+index a3f4c5d6495e..7fe8d0d4cfba 100644
+--- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
++++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+@@ -1414,7 +1414,8 @@ static int clk_wzrd_probe(struct platform_device *pdev)
  
-   clocks:
-+    minItems: 1
-     items:
-       - description: clock input
-       - description: axi clock
+ 		clk_wzrd->base = devm_platform_ioremap_resource(pdev, 0);
+ 		if (IS_ERR(clk_wzrd->base))
+-			return PTR_ERR(clk_wzrd->base);
++			return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->base),
++					     "failed to map registers\n");
  
-   clock-names:
-+    minItems: 1
-     items:
-       - const: clk_in1
-       - const: s_axi_aclk
-@@ -57,15 +59,45 @@ properties:
-     description:
-       Number of outputs.
- 
-+  xlnx,clk-mul-div:
-+    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+    description:
-+      Fixed MMCM/PLL multiply/divide ratios, one (multiplier, divisor)
-+      pair per clock output relative to clk_in1. The number of entries
-+      must equal xlnx,nr-outputs.
-+    minItems: 1
-+    maxItems: 8
-+    items:
-+      items:
-+        - description: multiplier
-+          minimum: 1
-+        - description: divisor
-+          minimum: 1
-+
- required:
-   - compatible
--  - reg
-   - "#clock-cells"
-   - clocks
-   - clock-names
-   - xlnx,speed-grade
-   - xlnx,nr-outputs
- 
-+allOf:
-+  - if:
-+      required:
-+        - xlnx,static-config
-+    then:
-+      required:
-+        - xlnx,clk-mul-div
-+    else:
-+      required:
-+        - reg
-+      properties:
-+        clocks:
-+          minItems: 2
-+        clock-names:
-+          minItems: 2
-+
- additionalProperties: false
- 
- examples:
-@@ -74,10 +106,21 @@ examples:
-         compatible = "xlnx,clocking-wizard";
-         reg = <0xb0000000 0x10000>;
-         #clock-cells = <1>;
--        xlnx,static-config;
-+        clocks = <&clkc 15>, <&clkc 18>;
-+        clock-names = "clk_in1", "s_axi_aclk";
-+        xlnx,nr-outputs = <6>;
-         xlnx,speed-grade = <1>;
-+    };
-+
-+  - |
-+    clock-controller {
-+        compatible = "xlnx,clocking-wizard";
-+        #clock-cells = <1>;
-+        clocks = <&clkc 15>;
-+        clock-names = "clk_in1";
-         xlnx,nr-outputs = <6>;
--        clock-names = "clk_in1", "s_axi_aclk";
--        clocks = <&clkc 15>, <&clkc 15>;
-+        xlnx,speed-grade = <1>;
-+        xlnx,static-config;
-+        xlnx,clk-mul-div = <12 1>, <10 2>, <8 1>, <6 1>, <4 2>, <2 1>;
-     };
- ...
+ 		ret = of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd->speed_grade);
+ 		if (!ret) {
 -- 
 2.34.1
 
