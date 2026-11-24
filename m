@@ -1,80 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=211.75.126.72
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795487833;
-	b=FqKGijA/h9CzLwHrEbLbrsvfplcHs9+HxrZ1MP4pzqDqtv7NwRxYDoZJEWdh5aSV4i4a
-	 iZ6Fjx0Oo4LA3Ckt14djZoxHkvpmVN607cigw/7uyYM9+Rj1fMV18WI8BC12tD2XqjYqR
-	 0HXoDnwmAc0fiBhctBnu6eyIVgJsamUqKrHzbjFoF3NdWTMdc/y7kUb6QhILAtKrNNK69
-	 n3yBw/ITjkZuR03MQ9JaQAzSL9swULTsYlf5mVu1Q4XB4UaA5BnJ0/HFebxFFkPJ/O61R
-	 DLRsRTqEU7EcnGcL4DnfUugOY9VY/Hlsu8EBQ7Y0JNiv6CaQR3zqUwmdVnPn9aWMhAA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795487833;
-	h=DMARC-Filter:X-SpamFilter-By:DKIM-Signature:Received:Received:
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.198.44
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795492584;
+	b=q9up3ts5nC6yJQMDyYEvWmcABnu6RYz9uiGM1D0bjdwXPGwW4SOBAAHg+ahQZ8JuUSal
+	 Xf0DjdSD7AYEryrVvrzEo4XIt2hk+TbsZRr3fBhWpJZUenk4N2scfq44L+eU4Btgoi6kk
+	 J72ZdISvoeqJ6IgelYTMPyE4CNc3v86AI69AsIQD4APUC+nrrvfjKK2dTh4OPmloF5OES
+	 uK7WIJ8RTYmekTpZLLtdC9VibcSqV5zoc4cJ76l3njT3mbagFUwRraRa0RzNm5pZsvSis
+	 rhJ9dD2/VFoIEPK2DBdWQFq4/cNx+SCH5UaVvc837axqG01GRzpSywSVTtfkY7jwyyw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795492584;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
 	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
-	 Content-Type;
-	bh=ygU8fGKUmnGnm5PVxdJh1kJFzSJLmb7y0zqmvaDmUk4=;
-	b=1BE/yzgTkTTARvOEyToLpew/Yjl0sByVVQrzNt1r6K7O4JzGnfU2BXW69ZHs8jfrjgyy
-	 WZAtod4TPC4ERlAvXHZ/8dciADqFFfg+WjerNPSFwUUA8kXAbOY7STA0Q9qdEyS9mYnlm
-	 4tyVo/Lljqnrbq7hLfGvmo5nC9QWKP6f75CwrGKCfGzFwVVIesSc+Pxa4FmphwKyKqIpy
-	 5EyqA0tZleIQI3HFujJSUkA70/lTIBBxNFk2meJXc4m+tBDFJ/vyWaZn9ixdvVKxWpxnS
-	 dEKi1PfQ059eck80KyJn5h+vn/ERV31MiTVwTay4sSwZYje3P3aV4D3NPvqvbiMlHlA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=realtek.com;
-	spf=pass smtp.mailfrom=realtek.com;
-	dkim=pass header.d=realtek.com header.i=@realtek.com header.a=rsa-sha256 header.s=dkim header.b=PkMMetiO;
-	arc=none smtp.remote-ip=211.75.126.72
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	 MIME-Version:Content-Transfer-Encoding:Content-Type:
+	 X-EOPAttributedMessage:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=+YdvZbzJrs6MnFfqfxi0CDVj0ByOt2FocnTvLTVd/bU=;
+	b=fCnfm87kp3O0uJrj7rtdCOuK4coQOVqu+La2XsHOXOZSZVw38Y5thhK3PdOnpVuCyFAY
+	 9MtnF+e0vZdI17O0L+99wG0e96NW4vJe/tlIwqSdCkuSnEzLveGl3CbXaqe9vfokhE511
+	 uSum5/bvf6T5mTJrqd7k/EM/oxqkBWAqBDrEyPjqSF0kC4h3OrExw+ZfFjvWcB7KoRUrt
+	 4MvF8N54M4C71izCJoH0HPk0KjvUsSYxyY/2dXYBy+DbLIK+nyVc2KRSBH9ldmCzS3LtV
+	 56vAIoAw0BH/IkIlnJDQU1vd+yYqhD03L4ftPByu9VXItu0CcBm0nRD5Jr2309aYMsw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=amd.com;
+	spf=fail smtp.mailfrom=amd.com;
+	dkim=pass header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=y2rftIsW;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.198.44
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010044.outbound.protection.outlook.com [40.93.198.44])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB69260A2611;
-	Tue, 24 Nov 2026 02:37:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BB69260A2611
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82771606A31E;
+	Tue, 24 Nov 2026 03:56:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 82771606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.a=rsa-sha256 header.s=dkim header.b=PkMMetiO
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6AO2ZwH722160542, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1795487758; bh=ygU8fGKUmnGnm5PVxdJh1kJFzSJLmb7y0zqmvaDmUk4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=PkMMetiOkG0keOhRjGc+9YZr5pbCihnr5qwvPWmqYt5xZvTheT0Qjk3EAvq7shxDH
-	 kxcW2ZHlHCXUELcuKSUL+QBZIc6qIwtQ0XCpiX1Iuzv5yTGnLBIi4SWwkYDsweEQwr
-	 HMEm/oGdhQBTG0B9qI2VRW8FLemo8YpGwSYLIDxHOwid1PDS1oKLyGYq6FH1Lr//Rc
-	 6IkqadL4Khr0/+m/OhFbkFWT4iypjExzbj6uhlAwjy61eMTAqARY8Za2VBx0T6S8Sy
-	 CTIszgODNgBO8/FAoDjG1qWcK3z1OLQNeVIGXjZ3kScCfsYBCLjROF+QkZx+D/xyNR
-	 UhplG9bCt8Suw==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 6AO2ZwH722160542
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 24 Nov 2026 10:35:58 +0800
-Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Tue, 24 Nov 2026 10:35:58 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Tue, 24 Nov 2026 10:35:58 +0800
-Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
- (10.21.1.56) with Microsoft SMTP Server id 15.2.2562.56 via Frontend
- Transport; Tue, 24 Nov 2026 10:35:58 +0800
-From: Yu-Chun Lin <eleanor.lin@realtek.com>
-To: <sboyd@kernel.org>, <bmasney+clk@redhat.com>, <jbrunet+clk@baylibre.com>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<cylee12@realtek.com>, <afaerber@suse.com>, <jyanchou@realtek.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-realtek-soc@lists.infradead.org>, <james.tai@realtek.com>,
-	<cy.huang@realtek.com>, <stanley_chang@realtek.com>,
-	<eleanor.lin@realtek.com>
-Subject: [PATCH v17 1/9] dt-bindings: clock: Add Realtek RTD1625 Clock & Reset Controller
-Date: Tue, 24 Nov 2026 10:35:49 +0800
-Message-ID: <20261124023558.4088635-2-eleanor.lin@realtek.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20261124023558.4088635-1-eleanor.lin@realtek.com>
-References: <20261124023558.4088635-1-eleanor.lin@realtek.com>
+	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=y2rftIsW
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IuB+nKPnBG/g+S49hqV9bsQ3JPy8qtPbhA6L97p+RhFNvD8/ngL4cMULqBl/EFpkzI7jMATempuIoTL+gjhTWFS1a+pZRs4Km9jfeqLqUtQ49sUlV0LpSnNOWSQwPj/RVJuExHv4cqPlfWwGR1expr9a7NLree6luF2Y/HsxFAvBxpNZFZoQVJ+Zaezb0naYiHDjbBWflCs6EbhZXyH6UsyaRW5TmzjMly3ZjQ6ZzT5d718GHRbuUzJykJHIZoBBjAieErnC1hcFdfqZbVQnpnoCAlH3SAPLqEhrnudcruiubyIP01SzqOPDe/hpnEkb+PeaRrN9EzohEyuzUBzk1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+YdvZbzJrs6MnFfqfxi0CDVj0ByOt2FocnTvLTVd/bU=;
+ b=IZMxN4QORMpChUjEbgAuqjmlcCZECUAM6L7KB5s5zBivjS9cESc4kNFKhY3y90dSlRQxQmov2+IfzDKnG1+hzViswROtg2PGauG92AUFLElfc6P0Nu4PizmdgFh0N2v+y9Fv12t0oYX0avaRA6uNzyuJMJtmJ3pdhohX4pWKA4xhMW8tP99y5a+2oKE6oJV7X6LN8BoUvtwXh1yQZox64owwyMv5sbldY50F58usmACFq8nx/xl9p1/pYMaM2uYJ8M7rfsmhww6dfLpzr5BhSU2x/i+bV6dMo9wjzLClLkThn/JMB/OxLYaRm93NZn3eFq+6rThjsnaEyJk/ck4KBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+YdvZbzJrs6MnFfqfxi0CDVj0ByOt2FocnTvLTVd/bU=;
+ b=y2rftIsWXNCKj1hV+tVOTesMKu/VHWDXRyxhUjHL2T22R++1kdh6Q5W1B/yFlgBAPuqffwLchnLvlHLfofMrHJjvuCm92zLs4XrGJbRYyidu1LLYyqzanin6X23Y9NpPyIr9SgIteLwM9pbdodkAwP0HQNzRuNizSaV0mHKCdpM=
+Received: from DS7PR03CA0310.namprd03.prod.outlook.com (2603:10b6:8:2b::9) by
+ CH3PR12MB8972.namprd12.prod.outlook.com (2603:10b6:610:169::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.10; Tue, 24 Nov
+ 2026 03:56:19 +0000
+Received: from DS8PEPF000000DE.namprd05.prod.outlook.com
+ (2603:10b6:8:2b:cafe::3d) by DS7PR03CA0310.outlook.office365.com
+ (2603:10b6:8:2b::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.639.14 via Frontend Transport; Tue,
+ 24 Nov 2026 03:56:19 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ DS8PEPF000000DE.mail.protection.outlook.com (10.167.23.199) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.662.3 via Frontend Transport; Tue, 24 Nov 2026 03:56:18 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Mon, 23 Nov
+ 2026 21:56:18 -0600
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Mon, 23 Nov
+ 2026 21:56:17 -0600
+Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.57 via Frontend
+ Transport; Mon, 23 Nov 2026 21:56:14 -0600
+From: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+To: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <git@amd.com>, <shubhrajyoti.datta@gmail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, "Shubhrajyoti
+ Datta" <shubhrajyoti.datta@amd.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v4 0/8] clk: clocking-wizard: Add static-config clock provider support
+Date: Tue, 24 Nov 2026 09:25:45 +0530
+Message-ID: <20261124035613.1968260-1-shubhrajyoti.datta@amd.com>
+X-Mailer: git-send-email 2.44.4
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -86,315 +117,81 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS8PEPF000000DE:EE_|CH3PR12MB8972:EE_
+X-MS-Office365-Filtering-Correlation-Id: ce80915f-8c3c-47c8-7c3e-08df49dee53c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|23010399003|376014|1800799024|36860700016|7416014|18002099003|261009223027099003|3023799007|5023799004|261021123027099003|56012099006|261102123227099003|261026121527099003|261021121427099003|261026140227099003|261022075727099003|261022105027099003|11063799006|261028144727099003|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	nVGkH73XiFMIBaOODGPF/+Hzgpq2H5BTySJ87cuCsrF3ZmazwSwdsJLO8g+94dIILGZjZLkUw9m+y9IVUiza/o9RHzeRp/wyAuGsLbOPgVSBVBfPLfWNjiHpIM+QdIWTqRcfX2OeTJeodgCmbLyy7C45VAo3SZISeyqlZfgzg66q8e6NrPpTy8Zxyzp/m78kh4y4fnCyHlYpOkbfcfzHcNAk/tgT8wgEP4er3o8QlkVV7tCN43Ut2MG6JJpgn+DBg2z4+IxVIQ2ZNIyX2+/M4KS771yvcXFR/tZh7KvtoL4oEp2OW07MK/LjnDxuVg/2vqg6A4+DTV6CUF/0fJAdPIWa70PxRDY16hy0PTI0DzblF5RdEOARe+cWXPDaJal+BKeWLPnFaDotzkLHWwVe4JJUI1pixWptjs96GtOSbqe4zpgGNCTUu881nWQT+AAL23RwEC6QUbOf8ZKBJLyWSfO3tR3xlLmqv8TmXNZwMbPPh5WpvdD2bxfwp+61mH3L58InVKJDD4sZVCr4BHfrKrDxaiN7R8aII5RN9ho7fX+HydiTsakNy7CFZjv/7nz4Q7fzeQ2L60Oi8ylPRcS2mWPN5tBOU3tavnFmAKJXOXJ8sdVMp9pL2NmK5c+raRS66gYqXA9qXLPggsRZRyktGe6j25bFYfJS1V2V0t/29fCtzC+cV1p6iOAOY3pQvhPhKcFgzrDrzoCEDpEFie7oYw==
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(23010399003)(376014)(1800799024)(36860700016)(7416014)(18002099003)(261009223027099003)(3023799007)(5023799004)(261021123027099003)(56012099006)(261102123227099003)(261026121527099003)(261021121427099003)(261026140227099003)(261022075727099003)(261022105027099003)(11063799006)(261028144727099003)(10067099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	8S0LB1dK5qhw/IiHDmj/gA/RNpVR/jXkXQKVYxopy6JdfvfYRa0mDvcCaOU6Adp0XI20AjUDLZGKBrbAwFYXnfRHlrbaq+xrLCUBzgz56hzqKu6FQyrFPqJy5zNOAlShDJjJ21AiDBt8KcBbS3kFnQDEFU+5zNaMgQqUoKmIbRuJgm2zu4aQZ0+M3rydzklEnTWPev9h6D3xjKAHBBJd3XHZMNTcz3wHWVCN8lnX/bhsdDZDPSeWXI+bLcIWQJRI1v+bbZ76ottP7LW8Nh7UCVBGTvW5y4ajGFgoALHA5WU9tc5p1O7tts5ZLv/eXCuGvkzh3oG/Pu2S8G6UKNufwJzlRNHeeKlyqWEpGaYp/cEQBOlbJPPHLwLmcqA3a1xJyqkOrc9zBBrx8QFnqeH0YkeP5jF+GUqysAOdGX3rr3yLwNqmNq1okVxql53xqktL
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2026 03:56:18.6812
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce80915f-8c3c-47c8-7c3e-08df49dee53c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS8PEPF000000DE.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8972
 
-Add DT binding schema for Realtek RTD1625 clock and reset controller
 
-Co-developed-by: Cheng-Yu Lee <cylee12@realtek.com>
-Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
-Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
----
-The reset IDs have been accepted:
-https://lore.kernel.org/lkml/1e434e5ab047b503e02e9ed9f3eb0aeb173d5602.camel@pengutronix.de/
+The Xilinx clocking-wizard IP can be used in a static-config mode
+ where the hardware is pre-programmed at boot and no dynamic register
+ access is required. In that case the driver should skip ioremap,
+ read the fixed multiplier/divisor pairs from the device tree, and
+ register fixed-factor clocks derived from clk_in1.
 
-Changes in v17:
-- Move the 'clocks' and 'clock-names' item descriptions to the top level, and
-keep only the item counts in the if/else branches.
----
- .../bindings/clock/realtek,rtd1625-clk.yaml   |  93 ++++++++++
- MAINTAINERS                                   |   6 +
- .../dt-bindings/clock/realtek,rtd1625-clk.h   | 166 ++++++++++++++++++
- 3 files changed, 265 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/realtek,rtd1625-clk.yaml
- create mode 100644 include/dt-bindings/clock/realtek,rtd1625-clk.h
+ This series:
+   - adds the xlnx,clk-mul-div binding to carry mul/div pairs
+   - makes the reg property optional for static-config nodes
+   - skips ioremap when xlnx,static-config is present
+   - moves clk_in1 acquisition before the static-config check so it
+     is available in both code paths
+   - registers fixed-factor output clocks in static-config mode
 
-diff --git a/Documentation/devicetree/bindings/clock/realtek,rtd1625-clk.yaml b/Documentation/devicetree/bindings/clock/realtek,rtd1625-clk.yaml
-new file mode 100644
-index 000000000000..d126e07b6729
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/realtek,rtd1625-clk.yaml
-@@ -0,0 +1,93 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/realtek,rtd1625-clk.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Realtek RTD1625 Clock & Reset Controller
-+
-+maintainers:
-+  - Cheng-Yu Lee <cylee12@realtek.com>
-+  - Yu-Chun Lin <eleanor.lin@realtek.com>
-+
-+description:
-+  The Realtek RTD1625 Clock Controller manages and distributes clock
-+  signals to various controllers and implements a Reset Controller for the
-+  SoC peripherals.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - realtek,rtd1625-crt-clk
-+      - realtek,rtd1625-iso-clk
-+      - realtek,rtd1625-iso-s-clk
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    items:
-+      - description: External 27 MHz oscillator
-+      - description: CRT SYS clock input
-+      - description: CRT SYSH clock input
-+      - description: CRT DDSA divide-by-four clock input
-+      - description: CRT miscellaneous gate clock input
-+
-+  clock-names:
-+    minItems: 1
-+    items:
-+      - const: osc27m
-+      - const: clk_sys
-+      - const: clk_sysh
-+      - const: clk_ddsa_div4
-+      - const: clk_en_misc
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - "#clock-cells"
-+  - "#reset-cells"
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          const: realtek,rtd1625-iso-clk
-+
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 5
-+
-+        clock-names:
-+          minItems: 5
-+
-+    else:
-+      properties:
-+        clocks:
-+          maxItems: 1
-+
-+        clock-names:
-+          maxItems: 1
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@98000000 {
-+      compatible = "realtek,rtd1625-crt-clk";
-+      reg = <0x98000000 0x1000>;
-+      clocks = <&osc27m>;
-+      clock-names = "osc27m";
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 93abbb315065..c51f9fc157c8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23537,6 +23537,12 @@ S:	Maintained
- F:	include/sound/rt*.h
- F:	sound/soc/codecs/rt*
- 
-+REALTEK CLOCK DRIVERS
-+M:	Cheng-Yu Lee <cylee12@realtek.com>
-+M:	Yu-Chun Lin <eleanor.lin@realtek.com>
-+S:	Supported
-+F:	include/dt-bindings/clock/realtek*
-+
- REALTEK OTTO WATCHDOG
- M:	Sander Vanheule <sander@svanheule.net>
- L:	linux-watchdog@vger.kernel.org
-diff --git a/include/dt-bindings/clock/realtek,rtd1625-clk.h b/include/dt-bindings/clock/realtek,rtd1625-clk.h
-new file mode 100644
-index 000000000000..ea4e6bb77736
---- /dev/null
-+++ b/include/dt-bindings/clock/realtek,rtd1625-clk.h
-@@ -0,0 +1,166 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (C) 2026 Realtek Semiconductor Corp.
-+ */
-+#ifndef __DT_BINDINGS_RTK_CLOCK_RTD1625_H
-+#define __DT_BINDINGS_RTK_CLOCK_RTD1625_H
-+
-+#define RTD1625_CRT_CLK_EN_MISC           0
-+#define RTD1625_CRT_CLK_EN_PCIE0          1
-+#define RTD1625_CRT_CLK_EN_DIP            2
-+#define RTD1625_CRT_CLK_EN_GSPI           3
-+#define RTD1625_CRT_CLK_EN_ISO_MISC       5
-+#define RTD1625_CRT_CLK_EN_SDS            6
-+#define RTD1625_CRT_CLK_EN_HDMI           7
-+#define RTD1625_CRT_CLK_EN_GPU            9
-+#define RTD1625_CRT_CLK_EN_VE1            10
-+#define RTD1625_CRT_CLK_EN_VE2            11
-+#define RTD1625_CRT_CLK_EN_MD             18
-+#define RTD1625_CRT_CLK_EN_TP             19
-+#define RTD1625_CRT_CLK_EN_RCIC           20
-+#define RTD1625_CRT_CLK_EN_NF             21
-+#define RTD1625_CRT_CLK_EN_EMMC           22
-+#define RTD1625_CRT_CLK_EN_SD             23
-+#define RTD1625_CRT_CLK_EN_SDIO_IP        24
-+#define RTD1625_CRT_CLK_EN_MIPI_CSI       25
-+#define RTD1625_CRT_CLK_EN_EMMC_IP        26
-+#define RTD1625_CRT_CLK_EN_SDIO           27
-+#define RTD1625_CRT_CLK_EN_SD_IP          28
-+#define RTD1625_CRT_CLK_EN_TPB            30
-+#define RTD1625_CRT_CLK_EN_MISC_SC1       31
-+#define RTD1625_CRT_CLK_EN_MISC_I2C_3     32
-+#define RTD1625_CRT_CLK_EN_ACPU           33
-+#define RTD1625_CRT_CLK_EN_JPEG           34
-+#define RTD1625_CRT_CLK_EN_MISC_SC0       37
-+#define RTD1625_CRT_CLK_EN_HDMIRX         45
-+#define RTD1625_CRT_CLK_EN_HSE            46
-+#define RTD1625_CRT_CLK_EN_FAN            49
-+#define RTD1625_CRT_CLK_EN_SATA_WRAP_SYS  52
-+#define RTD1625_CRT_CLK_EN_SATA_WRAP_SYSH 53
-+#define RTD1625_CRT_CLK_EN_SATA_MAC_SYSH  54
-+#define RTD1625_CRT_CLK_EN_R2RDSC         55
-+#define RTD1625_CRT_CLK_EN_TPC            56
-+#define RTD1625_CRT_CLK_EN_PCIE1          57
-+#define RTD1625_CRT_CLK_EN_MISC_I2C_4     58
-+#define RTD1625_CRT_CLK_EN_MISC_I2C_5     59
-+#define RTD1625_CRT_CLK_EN_TSIO           60
-+#define RTD1625_CRT_CLK_EN_VE4            61
-+#define RTD1625_CRT_CLK_EN_EDP            62
-+#define RTD1625_CRT_CLK_EN_TSIO_TRX       63
-+#define RTD1625_CRT_CLK_EN_PCIE2          64
-+#define RTD1625_CRT_CLK_EN_EARC           66
-+#define RTD1625_CRT_CLK_EN_LITE           67
-+#define RTD1625_CRT_CLK_EN_MIPI_DSI       68
-+#define RTD1625_CRT_CLK_EN_NPUPP          69
-+#define RTD1625_CRT_CLK_EN_NPU            70
-+#define RTD1625_CRT_CLK_EN_AUCPU0         71
-+#define RTD1625_CRT_CLK_EN_AUCPU1         72
-+#define RTD1625_CRT_CLK_EN_NSRAM          73
-+#define RTD1625_CRT_CLK_EN_HDMITOP        74
-+#define RTD1625_CRT_CLK_EN_AUCPU_ISO_NPU  76
-+#define RTD1625_CRT_CLK_EN_KEYLADDER      77
-+#define RTD1625_CRT_CLK_EN_IFCP_KLM       78
-+#define RTD1625_CRT_CLK_EN_IFCP           79
-+#define RTD1625_CRT_CLK_EN_MDL_GENPW      80
-+#define RTD1625_CRT_CLK_EN_MDL_CHIP       81
-+#define RTD1625_CRT_CLK_EN_MDL_IP         82
-+#define RTD1625_CRT_CLK_EN_MDLM2M         83
-+#define RTD1625_CRT_CLK_EN_MDL_XTAL       84
-+#define RTD1625_CRT_CLK_EN_TEST_MUX       85
-+#define RTD1625_CRT_CLK_EN_DLA            86
-+#define RTD1625_CRT_CLK_EN_TPCW           88
-+#define RTD1625_CRT_CLK_EN_GPU_TS_SRC     89
-+#define RTD1625_CRT_CLK_EN_VI             91
-+#define RTD1625_CRT_CLK_EN_LVDS1          92
-+#define RTD1625_CRT_CLK_EN_LVDS2          93
-+#define RTD1625_CRT_CLK_EN_AUCPU          94
-+#define RTD1625_CRT_CLK_EN_UR1            96
-+#define RTD1625_CRT_CLK_EN_UR2            97
-+#define RTD1625_CRT_CLK_EN_UR3            98
-+#define RTD1625_CRT_CLK_EN_UR4            99
-+#define RTD1625_CRT_CLK_EN_UR5            100
-+#define RTD1625_CRT_CLK_EN_UR6            101
-+#define RTD1625_CRT_CLK_EN_UR7            102
-+#define RTD1625_CRT_CLK_EN_UR8            103
-+#define RTD1625_CRT_CLK_EN_UR9            104
-+#define RTD1625_CRT_CLK_EN_UR_TOP         105
-+#define RTD1625_CRT_CLK_EN_MISC_I2C_7     110
-+#define RTD1625_CRT_CLK_EN_MISC_I2C_6     111
-+#define RTD1625_CRT_CLK_EN_SPI0           112
-+#define RTD1625_CRT_CLK_EN_SPI1           113
-+#define RTD1625_CRT_CLK_EN_SPI2           114
-+#define RTD1625_CRT_CLK_EN_LSADC0         120
-+#define RTD1625_CRT_CLK_EN_LSADC1         121
-+#define RTD1625_CRT_CLK_EN_ISOMIS_DMA     122
-+#define RTD1625_CRT_CLK_EN_DPTX           124
-+#define RTD1625_CRT_CLK_EN_NPU_MIPI_CSI   125
-+#define RTD1625_CRT_CLK_EN_EDPTX          126
-+#define RTD1625_CRT_CLK_HIFI              128
-+#define RTD1625_CRT_CLK_NPU_MIPI_CSI      129
-+#define RTD1625_CRT_CLK_NPU               130
-+#define RTD1625_CRT_CLK_NPU_SYSH          132
-+#define RTD1625_CRT_CLK_HIFI_SCPU         133
-+#define RTD1625_CRT_CLK_GPU               134
-+#define RTD1625_CRT_CLK_GPU2D             135
-+#define RTD1625_CRT_CLK_MIPI_DSI_PCLK     136
-+#define RTD1625_CRT_CLK_VE1               137
-+#define RTD1625_CRT_CLK_VE2               138
-+#define RTD1625_CRT_CLK_VE4               139
-+#define RTD1625_CRT_CLK_SYS               141
-+#define RTD1625_CRT_CLK_SYSH              142
-+#define RTD1625_CRT_PLL_SDIO_REF          145
-+#define RTD1625_CRT_PLL_CR_REF            146
-+#define RTD1625_CRT_PLL_EMMC_REF          147
-+#define RTD1625_CRT_CLK_MIS_SC0           148
-+#define RTD1625_CRT_CLK_MIS_SC1           149
-+#define RTD1625_CRT_PLL_SCPU              150
-+#define RTD1625_CRT_PLL_VE1               151
-+#define RTD1625_CRT_PLL_DDSA              152
-+#define RTD1625_CRT_PLL_PSAUDA1           153
-+#define RTD1625_CRT_PLL_PSAUDA2           154
-+#define RTD1625_CRT_PLL_BUS               155
-+#define RTD1625_CRT_PLL_SDIO              156
-+#define RTD1625_CRT_PLL_SDIO_VP0          157
-+#define RTD1625_CRT_PLL_SDIO_VP1          158
-+#define RTD1625_CRT_PLL_DCSB              159
-+#define RTD1625_CRT_PLL_GPU               160
-+#define RTD1625_CRT_PLL_NPU               161
-+#define RTD1625_CRT_PLL_VE2               162
-+#define RTD1625_CRT_PLL_HIFI              163
-+#define RTD1625_CRT_PLL_SD                164
-+#define RTD1625_CRT_PLL_SD_VP0            165
-+#define RTD1625_CRT_PLL_SD_VP1            166
-+#define RTD1625_CRT_PLL_EMMC              167
-+#define RTD1625_CRT_PLL_EMMC_VP0          168
-+#define RTD1625_CRT_PLL_EMMC_VP1          169
-+#define RTD1625_CRT_PLL_ACPU              170
-+#define RTD1625_CRT_CLK_DET               171
-+#define RTD1625_CRT_PLL_VODMA             172
-+#define RTD1625_CRT_CLK_DDSA_DIV4         173
-+
-+#define RTD1625_ISO_CLK_EN_USB_P4         0
-+#define RTD1625_ISO_CLK_EN_USB_P3         1
-+#define RTD1625_ISO_CLK_EN_MISC_CEC0      2
-+#define RTD1625_ISO_CLK_EN_CBUSRX_SYS     3
-+#define RTD1625_ISO_CLK_EN_CBUSTX_SYS     4
-+#define RTD1625_ISO_CLK_EN_CBUS_SYS       5
-+#define RTD1625_ISO_CLK_EN_CBUS_OSC       6
-+#define RTD1625_ISO_CLK_EN_MISC_UR0       8
-+#define RTD1625_ISO_CLK_EN_I2C0           9
-+#define RTD1625_ISO_CLK_EN_I2C1           10
-+#define RTD1625_ISO_CLK_EN_ETN_250M       11
-+#define RTD1625_ISO_CLK_EN_ETN_SYS        12
-+#define RTD1625_ISO_CLK_EN_USB_DRD        13
-+#define RTD1625_ISO_CLK_EN_USB_HOST       14
-+#define RTD1625_ISO_CLK_EN_USB_U3_HOST    15
-+#define RTD1625_ISO_CLK_EN_USB            16
-+#define RTD1625_ISO_CLK_EN_VTC            17
-+#define RTD1625_ISO_CLK_EN_MISC_VFD       18
-+
-+#define RTD1625_ISO_S_CLK_EN_ISOM_MIS     0
-+#define RTD1625_ISO_S_CLK_EN_ISOM_GPIOM   1
-+#define RTD1625_ISO_S_CLK_EN_TIMER7       2
-+#define RTD1625_ISO_S_CLK_EN_IRDA         3
-+#define RTD1625_ISO_S_CLK_EN_UR10         4
-+
-+#endif /* __DT_BINDINGS_RTK_CLOCK_RTD1625_H */
+Changes in v4:
+Rebased
+
+Changes in v3:
+- Added Reviewed-by tag from Rob Herring (carried from v2)
+- Squashed the three separate v1 dt-bindings patches (clk-mul-div
+  property, reg optional, s_axi_aclk optional) into this single patch,
+  per Conor Dooley's review comment on v1 patch 3/8
+- Removed duplicated number-of-outputs handling
+- New patch
+- New patch: split the shared notifier_block into per-clock callbacks
+  to avoid corrupting the notifier chains
+
+Changes in v2:
+- Acquire clk_in1 even on the static-config path, instead of only when
+  the dynamic-reconfig registers are used
+
+Shubhrajyoti Datta (8):
+  dt-bindings: clock: clocking-wizard: Add static-config mode support
+  clk: clocking-wizard: Do not map the memory for static-config
+  clk: clocking-wizard: Move clk_in1 acquisition before static-config
+    check
+  clk: clocking-wizard: Add static-config clock provider support
+  clk: clocking-wizard: Skip s_axi_aclk for static-config
+  clk: clocking-wizard: Use dev_err_probe() when mapping registers
+  clk: clocking-wizard: Fix division by zero and unbounded register
+    write
+  clk: clocking-wizard: Use separate notifier_block for each clock
+
+ .../bindings/clock/xlnx,clocking-wizard.yaml  |  51 +++-
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c    | 229 +++++++++++++++---
+ 2 files changed, 245 insertions(+), 35 deletions(-)
+
 -- 
-2.43.0
+2.34.1
 
