@@ -1,89 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.42
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795539725;
-	b=lt6xInp9eQDk/eCuNv8zu+3nIVGU3SZRd7wPnqti0Wg5uar6IJhuuxVHsa6S0/ln4D/j
-	 w+YKDrmWnZhdUTA9McmXafOllG4ugutK7//uaqSYQo+OU5hNc5FL+KpPkFjOJitAdeP7H
-	 yAlwkm1q3ei+W/IXC6CT1wykWq051Rx35WahTqR8fHgmXme1FnYzo2WhIqiym/VOJOZhY
-	 E/8j4rhKOFdC0cl96aoUCijTrR2J1ZeHW10bsXzTqWgpj0Jc3FOg7hH5R03nhBAKFDxKk
-	 Fkh06hZjCQAH7J6rtFro6eO1QCeG54GgOd47t8V8DGhhoGggQSgloPodSWEOz0kpaJA==
+	t=1795539726;
+	b=l/2ttoUlcvPczvogxgJGPAdn63SdJQKhAZXzssdwME1vxxbxMornpX0L1y7whaSS08MW
+	 Aijj7KAte4ZuPYu4NUuob5d71qK4hYdakgpjuCsHvRaZyKuxnoj7ZFzkbKflN/XpXBEpm
+	 +xeoWHvmihyGQeuL+aITA5JvZCmdW63BjknJYthW+Hxx4ID3i1ptGmTuFpC13HgGoKqpr
+	 4ClODU6Ap0FOPa4E0mMMNEjZGTNxd5xSCN5p6VufeeNBcT++7AyEXqw5w+EDZfV2t22nd
+	 FNtLu0u2A8cXqacMK/FEt1xF5pn+VgekWqKHZ/Yo2b51sPGTUHTN9Zufu/5KH+6oclg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795539725;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795539726;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=RRiL4OzOpohN/ZafWfD+xctnmPPDVha9Ds90ZcxZC54=;
-	b=TelwurE17Bqnz8KlBfWueCgC5qkBJKxNox/sBKQ1v7rZ2EIP/ilP8MqIVzSFOWUcehKg
-	 ZM8AdSGJR/lCd1/Ntc/sqQSMS5Qn6JV7EUol/SgD47PZYpp6ZQCf84eAWhXg2l1IgT7GU
-	 E8rTMER/RD0vhuxGHc//BcBuAIC0CWZ7in0Ir1ZdYklMyI9ssAACn5nWT1ie6RaGxvvcK
-	 cy5gjLmsejCInB2Qaajf8FLx1dYWIjtbIGx9B2eQg2AjyXzVFHndZsgtCLIG3b07GmZE8
-	 w8eS4Mxujsqr0YhT9UkV9+G671mQUgT/x+xQfAicpz0mZuO5pe/45/ghkjZPLgyjo2w==
+	bh=XwT3aZFlHsd58KLKRbLD5G6I9G+3wvp/vZ5Z0SPwh3I=;
+	b=y2Y9MgxLPLij1xHZcDP+qnxbfmrTJiKWXxfo7qE6O+ewz7F6LVn6zXU0EC7L9tyGqUqi
+	 HmLpBldIkpAWrcAZ/H9pp3Qmnh0f+jheMIL2yslANyuVLcYpTosbLbAZtYy+G7zMifuJA
+	 o9IOUm/f5H0BIyWUvqrM9k20gbSOUN39V0HqoPxCd1z48gQawvUV743c5aCJrv1TxNTkw
+	 elJC2hasnAoNU5tBK0wlpbuTnWxffuspENYGpmkxEMlqLfRs92BwXQ/75mVodcK0IqDrU
+	 0P8sFjZZQkNTW8iqNtXwzy2YwbzQyTA3IRPU7HO3IKGe8sKJpHHQ0MebaopMJZTUugA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=VL+ku6Bl;
-	arc=none smtp.remote-ip=209.85.128.51
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=SPS5lF+P;
+	arc=none smtp.remote-ip=209.85.208.42
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12EA606A32D
-	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 17:02:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E12EA606A32D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED92606A32E
+	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 17:02:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8ED92606A32E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=VL+ku6Bl
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a9a8d6cea8so62073465e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 09:02:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=SPS5lF+P
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6b47c1a3c74so6511871a12.3
+        for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 09:02:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795539723; x=1796144523; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=RRiL4OzOpohN/ZafWfD+xctnmPPDVha9Ds90ZcxZC54=;
-        b=VL+ku6BllDctlQo0U1qeDvY67hZAq4is9jGArvHsy0JkBdB3d1YBir7hTpH6vyEJ6a
-         GBBaoywovwgLzVyMI3yrvQbAPC13o4hra2oUfWKEw64n1bQchlQLRBKwR1TaYt5R3AWb
-         XeOLwZ5I11Hxo6ppaxH8cot5HlBEEhBcuPzqcnE/usduUXJtGD+F1esZvhZ7kvIl96w1
-         HBiujCsoMm0qZG9Sm1pLWy3mbT+fxsIVHdE2Dv7zycAJ31suKlNEpYCtDHKSQTFefFPp
-         Bq+CQzBOP41oK6D14Q5wB5H+ZC8nkVOvYJw6CL9lEUsYKPwyGCbkm99BntjcQxYEC8au
-         Hpnw==
+        d=linaro.org; s=google; t=1795539724; x=1796144524; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=XwT3aZFlHsd58KLKRbLD5G6I9G+3wvp/vZ5Z0SPwh3I=;
+        b=SPS5lF+P0V8ueoFqaMschkK+BT+fq5Dq9t2ANbnQ5/YeAh84fFyDVU9QQ5ikaAXFBA
+         yIr0ILHNjTrKHb16ZLuO/H3xZKFLVzb75T9X/NKnSfPxK1h5c0EzauiLxEnLZ+Pxyk99
+         9zPZoarVwPv5CXgyFasTA5/BYA3g7HGRmAnMbLBsyDqbXyAYAaC5HZ6RmEYzlyzrauQC
+         x1Xi7RkSntl4DDqMoGcF9RHRDAHHDW0ZgDMYtExDy6S8GFSbooNL1QA4Fr1/RSPIAAOX
+         noWNLUbDaLvu5n4QSM+nK/6f8088NUIhT4Emc81jGsMtBUoWSrxMO60ewUcM4tTM5FYI
+         Xcvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795539723; x=1796144523;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=RRiL4OzOpohN/ZafWfD+xctnmPPDVha9Ds90ZcxZC54=;
-        b=Jjpe51AIdo9CeSBRVDiEbaK7jrc4D4d3VT5CYFuFfvxaDqVZsgMAYmuGnikzACqi20
-         /TgIVOqqyrKdKg22IYzlAAHzZYburG2Gq7+bF1Jo+ZEewLIQVkPoQsQ8HFgs5n/N6Gov
-         yggw7gyEkRtRN6dXcm5fiC7BZZdgfKV7ZfJMOxMxo5bzVCf7kWMgo9tpFwdPTIBLJ3yu
-         Jc5GKQAYyGuzR4SHZ0J8uzVH113lMybq9hNDDpvgLyYYXrURqc2KomStX4SMJdprYbV9
-         VJMyfsDPOMEm+w96I8ejRrrq7RVVCkOp8RxU2QX/WPcCNmxhYbnyHfi4+IpEfX/EeRRm
-         cBgA==
-X-Forwarded-Encrypted: i=1; AL+hErGG2rL/of2eHULqUbIhK9PAQu2dYbaj51FGUqd8yT3ZduDtE8PJq48CPIZAN9xAgeTetpWftHWm59w=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/S1qs0ejEynGOcvCyMu3FR+dgHyhZmIzz9GitwIgYcrtN0hWwA
-	YNLWfner6MhOdKYCMd0LHtCd/zKFN6m0cz/GlXp1vZ0q/TwhKalHG49WBYPfilc47AM=
-X-Gm-Gg: AZFdTZdo7mfr5/aZMXZfR7z68ePX6YycpjSeSz1a4uQYwsihCGNTH13blEqKb/ODSyf
-	Cu5P3r8OhQSoLB69uf7L/REdWPl0G3/MtmlafZvmeo7nEtbbh1SMW2CNwmtQa53uh2FIbN/5/Vv
-	GH7veujVQnTfo9CV67xUsPz1gecFaJssq8l7EPuSLAOmGa5D1fnqOxg40fUQ2z10ZPRzZ/xTAPQ
-	8bcGfsf0V7ML/bqpbcxXkwnpmHmcH9iwbNbm/nfl5JbHyjNorxo/0C1fXeLsCwhmUpNPDTkHZC5
-	QscsOM2QoOhC9lW8DyTJy8PHkl5hiQtukQ9vHOVryNCdjXsfL6XCdVZkco4r6uNmEKg9usk2j+x
-	iieiKMvo+E+chnrl8G4mdpNWE3yr8Q/elooyWwmlRRy93r0xK14P+PUu/YPnXZ0LjLBjMZtY5GO
-	H8rsMvmWdyHaSxjUttgwep+QZ3+0IBplqNoHmdRDVXvKyVtHO23yGzrnmSq8JfbDdR9EqNIjstO
-	TplgDEOv5a1+LEV5c0Vo+H+A+spG3ipSmQ0ka8TY5CGSPZiTN1p/hZw9bAUN2kwpkn6Xqx2A3NG
-	1KhKapR5CJ6hS174+nH0d5X1gdQYHJg/udEtMjJvuovCxSrOU24=
-X-Received: by 2002:a7b:cbc8:0:b0:4a1:d49e:9ce with SMTP id 5b1f17b1804b1-4bb860f6ae9mr268381825e9.2.1795539722932;
-        Tue, 24 Nov 2026 09:02:02 -0800 (PST)
+        d=1e100.net; s=20260707; t=1795539724; x=1796144524;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=XwT3aZFlHsd58KLKRbLD5G6I9G+3wvp/vZ5Z0SPwh3I=;
+        b=CILGLAdZfvD3ymBwXj4HIvZ3JKyVI2ZEFiMiB6ANcWG3rJf49/VC6e/ndS0CIX4xRQ
+         n9hhWWpXJv+2jjfABr0hdbmQfytNHPluCbFYCegnBtJBS6OETplYAsKCoLUrFmhCqjnL
+         cTJOY1Tk/s++d/9PuX4+jNZfHa3PB/9VYnl0drSRjXPWIE65laoagmoxPFdC4xcp4aO6
+         sPxQc2A8exxNg9Q3mXyNWZ4OxF8QnB3MgbmBAqG+z0u9gb1yoqq9shgsGtMMnB1aH6cV
+         uezQ+MTnSVkCx+dZKXvL10qTRkUYPxMCZgOrq0cTf5p2omSsTMySB80yiiW3PS9gnBbg
+         LIdQ==
+X-Forwarded-Encrypted: i=1; AL+hErHpixa5vMTFdSpp9DHMmFNaSMqEOPJG+27Lv8YTi4YhYAXZOkEcQplM3g+6lvCGlPCsu6bToZNl48A=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9dPh7u4iWdS5ESXNOYNb6PnpNUa/EVShRmikD3IpP2H1mVs4G0
+	CnD2cubWANaeg0XQLcc8V/Bp//CKx1WE0d0ZjydtAkvMiDhEw6KFfwP1pOmFrEfDYFg=
+X-Gm-Gg: AZFdTZc7Z6Fm368kqBMs7X+AhCNV2d87erTxQ/30XFwDZHOPzcjiDBNejZstyWFO1nQ
+	zo3lX4J/q6IZH/LZV0q8YNTdPvWREap+TlfvZtu+VmlD38BeQ0f8dKaTTeqmpPPlJzi8Hld6mkR
+	W6BlO9ga0kVMUMowC+WD3XNjlH+xagDeCcbm3duIlmq8uv0MUdfMG90uACIFKZGAzGDqnBQmj1+
+	H7zmzrbxixCbaVqgs5vUtUl4+on8t75rNOULhesyJ/OuIk7bgwpmf1xke6ICV9SBJV2Qfsr0ZAv
+	4K8t6daamTPVaXQzkeFeK+0Rm4K6bz/8TUKNvHizNxok5kleY+odAWEOsvjcTdA6pdh9gp5kOCj
+	NuEjo/o6K/3oSQgvVLwxk0caJXVCKEP+dg9gicOBFbQPZCwtkzcRo3basUAoQm2GA4pesBC/iyN
+	9JnSXkrfug+A+1DFEtL92MVQtPXv4012cA9UIvy6Kahx3yPBv85Ij8XUssjqz+T6MNxgXeGi0Ak
+	fKTtpFP6cKV+8frWfcUwMTiJ23U2lbmVChYqwFi3Bcf79DaG4wI+iznuDVAKLnosApbMRY+0o/z
+	TLy3sRaizUjsbYnzcfS33/3/VfrE58uND35A/j7fFJWbCRoKrao=
+X-Received: by 2002:aa7:d353:0:b0:6ba:22f7:189e with SMTP id 4fb4d7f45d1cf-6ba37d63cdbmr7700846a12.7.1795539723652;
+        Tue, 24 Nov 2026 09:02:03 -0800 (PST)
 Received: from arrakeen.starnux.net ([2a01:e0a:106d:1080:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab65cb42absm30778526f8f.1.2026.11.24.09.02.02
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab65cb42absm30778526f8f.1.2026.11.24.09.02.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2026 09:02:02 -0800 (PST)
+        Tue, 24 Nov 2026 09:02:03 -0800 (PST)
 From: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: [PATCH v2 0/2] clk: qcom: add SM8650 LPASS core & audio clock
- controllers
-Date: Tue, 24 Nov 2026 18:01:53 +0100
-Message-Id: <20261124-topic-sm8650-el2-clks-v2-0-8086440e2c09@linaro.org>
+Date: Tue, 24 Nov 2026 18:01:54 +0100
+Subject: [PATCH v2 1/2] dt-bindings: clock: qcom: add SM8650 LPASS core &
+ audio clock controllers
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -95,11 +95,9 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAHDBWsC/32NQQ6CMBBFr2K6dgwtUtCV9zAsyjiFUaSkg0RDu
- LuAe5cvef/9SQlFJlHn3aQijSwcugXMfqewcV1NwLeFlUmM1VqnMISeEeRZ2CwBag1g+xBAi84
- fTZqjy9Wy7SN5fm/da/ljeVV3wmGNrUbDMoT42Y5HvXp/PkYNCWS6SL11rjp5vLTcuRgOIdaqn
- Of5CwDhyS3IAAAA
-X-Change-ID: 20261113-topic-sm8650-el2-clks-c6caf4237ca7
+Message-Id: <20261124-topic-sm8650-el2-clks-v2-1-8086440e2c09@linaro.org>
+References: <20261124-topic-sm8650-el2-clks-v2-0-8086440e2c09@linaro.org>
+In-Reply-To: <20261124-topic-sm8650-el2-clks-v2-0-8086440e2c09@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
@@ -109,72 +107,309 @@ To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2168;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9194;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=8xldoLxtezJbtP4/pZjzbhRupDGzWKXysrmDChcvVC8=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBrBcMIp2x3vV888qJY+E4xqRsaVgLOWlpQeahOJ5se
- +FWi/PeJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCawXDCAAKCRB33NvayMhJ0X03D/
- 4gc5Vfkq2Dp2ipO/vLvm+21a13LPwtYQA+apcvS75tSREjNxdehlRHRMr9ZdgbzdIxSF3F+1bz45sI
- I2Cjn9QEW9et7g8H1IMPOTNnmctzj+i9b6OkFsbH7sMeH7RuNxxwsVhZ8GZSpkpyufvTI8pyR7CR2g
- +Tap74pdXi+eY3vnvz+GgMUyH8PgoG9wu/OAcQASVsU6uwGern4eYzvKDVHWbPsMpTDVxczt9Rf16x
- NVH442uQ5/j+VqH8ciNlQP3BM/Ct14y/xzWuCI9dyu9VdKhI6OA/ImKCVLlLiVFrUqePWaAn4HoZn7
- 5uPhehbSERAFjjgu1hwVWRqO30uzx1C48p6w1nsBmEnn8Dgs//msQcFDx8vJmH6w6IatMKMMxdPTz0
- t5hZkf6lT5j5Oa6hOf2EeSLjBxrV8MyVwWyxtr23FL0bVuuNMPWMQwWE7oGxFbdC3tWAn7bZ6eVmeO
- UrrbGfEDNbEgKJGPDX9qH6ZAu3sTsUb4qr7dDR6gcWq1RyaKOmRDLAffTVx14P8L/O7eJKaVvWEZjo
- ajwI0mIlCFnXeyZVC0ED026gNwxndzjgp3/ZBaljFgEYXl8Q7w1l54CaXZKX6L7CPndQAcm/wET9ko
- xMAIKLpsuTFhgH0mU4M76obL8UR4j08HlmGtgqKrrtBr1xP8lhij16Vh0yuA==
+ bh=vhU5lxH/H/+EwXmF5EBX46Y54+E+pVR+8x03INwtyfU=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBrBcMJR0OkwtINf5f8wKP1MohM6EwcAEgHkLh5l5iH
+ fGlpu2aJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCawXDCQAKCRB33NvayMhJ0QcLD/
+ 9C0HaX1zNIl0B0SCoppJBxEl7WsnjMjzFZH4WZxVnwmhGbxhbEfL4ofl5Xo0gdzlh8WKBRgqKIvsvE
+ Q+NZLPUKV/4IpoauFXxcxWWJaIFO23hRXa/7If+urXMFjC0AP09+KxTyEINS1gPXvMVZf6rlA79xYj
+ HFJHkl0TM4UxHsl2HyWksPnJmNaK4bnbb0yJHImOX4hxzFyzStYIlm6F/I1ooMAOfoHf9bnSdrtPkq
+ D8sAaO8a0RElVU6r36Aw+Z3+YzvZgIXwZrUADG5UeKLiShpCG3jmJpcHjBZEZGBTAivrXDX506PYLN
+ C6dBjogZw2RLE9ozLBSSrl5qU+PPfFimWR3zLnZJzp4G3LqIVuRWiHfrqoMa80jStCwJlEKd0Xq1eq
+ JOEtm7htU9AGbb/8h3qw5lZj/Pb7p7DgroRM0fHXXVietMYzhMTwogPwCOgVSBhsQ8gquYMbwnYYmq
+ KMPUuu6KICDORxwK6uyEgMeVLCOerrOqv/cNq4LlD76nvQQJw7LKN2kqr0rl7U+QnEg+WH5GglmSUo
+ QiyvAnolephcuf94CL2jhZDZMgiHy0zUMkYM8LlXtxLgsZ2x6xQcAJcOtXoy1u+iCEnoYdEtm3QQIT
+ pMcdhjgqC5NcqYNqdwHUS0jGGoMqW1qEGfT8TqNMKt5RZ+bF3xukPv/x+3aQ==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-This patchset is part of a serie adding the necessary plumbing to
-drive the SM8650 audio interfaces directly from Linux.
-This is required for boards like the Valve Deckard that boot Linux at EL2
-without the ADSP audio firmware, meaning the audio interfaces must be driven
-directly by the application processor through lpass-cpu.
+The SM8650 LPASS HM, core, audio and AON clock controllers need to be
+described to drive audio from Linux without the ADSP firmware.
 
-This patchset is forked from the monoliothic v1 at [1].
-
-Without the ADSP firmware, the LPASS clocks (MI2S bit clocks,
-codec macro MCLKs, LPM memory clocks) must be controlled by Linux.
-
-[1] https://patch.msgid.link/20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org
+Document these clock controllers and add their clock & power domain ids.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
-Changes in v2:
-- Fix qcom,sm8650-lpasscorecc.yaml example
-- Correct lpass_aon_cc_ext_if1_clk_src parent map
-- Add freq_tbl to lpass_aon_cc_main_rcg_clk_src
-- Drop comments
-- Drop useless lpass_aon_cc_tx_mclk_clk forward declaration
-- Add common probe for  lpass_audio & lpass_aon
-- Use correct PM macro
-- Use pm_ptr()
-- Unregister aon_cc if audio_cc fails to register
-- Fix corecc pll user_ctl_val and ops
-- Fix parent data index
-- Drop pm for lpasscorecc-sm8650
-- Unregister lpass_hm if lpass_core fails to register
-- Link to v1: https://patch.msgid.link/20261113-topic-sm8650-el2-v1-0-5183f6aab9fc@linaro.org
+ .../bindings/clock/qcom,sm8650-lpasscorecc.yaml    | 178 +++++++++++++++++++++
+ .../dt-bindings/clock/qcom,lpassaudiocc-sm8650.h   |  47 ++++++
+ .../dt-bindings/clock/qcom,lpasscorecc-sm8650.h    |  30 ++++
+ 3 files changed, 255 insertions(+)
 
----
-Neil Armstrong (2):
-      dt-bindings: clock: qcom: add SM8650 LPASS core & audio clock controllers
-      clk: qcom: add SM8650 LPASS core & audio clock controllers
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8650-lpasscorecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8650-lpasscorecc.yaml
+new file mode 100644
+index 000000000000..c26d16b4ea3a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,sm8650-lpasscorecc.yaml
+@@ -0,0 +1,178 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,sm8650-lpasscorecc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm LPASS Core & Audio Clock Controllers on SM8650
++
++maintainers:
++  - Neil Armstrong <neil.armstrong@linaro.org>
++
++description: |
++  Qualcomm LPASS HM, core, audio and AON clock controllers provide the clocks
++  and power domains of the Low Power Audio SubSystem (LPASS) on SM8650, used
++  when LPASS is driven by Linux instead of the ADSP firmware.
++
++  See also:
++    include/dt-bindings/clock/qcom,lpasscorecc-sm8650.h
++    include/dt-bindings/clock/qcom,lpassaudiocc-sm8650.h
++
++properties:
++  compatible:
++    enum:
++      - qcom,sm8650-lpassaoncc
++      - qcom,sm8650-lpassaudiocc
++      - qcom,sm8650-lpasscorecc
++      - qcom,sm8650-lpasshm
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    minItems: 1
++    maxItems: 2
++
++  power-domains:
++    maxItems: 1
++
++  required-opps:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: qcom,sm8650-lpasshm
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Board XO source
++        clock-names:
++          items:
++            - const: bi_tcxo
++      required:
++        - power-domains
++        - '#power-domain-cells'
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: qcom,sm8650-lpasscorecc
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Board XO source
++        clock-names:
++          items:
++            - const: bi_tcxo
++        required-opps: false
++      required:
++        - power-domains
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: qcom,sm8650-lpassaoncc
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Board XO source
++            - description: LPASS_CORE_CC_CORE_CLK
++        clock-names:
++          items:
++            - const: bi_tcxo
++            - const: iface
++        power-domains: false
++        required-opps: false
++      required:
++        - '#power-domain-cells'
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: qcom,sm8650-lpassaudiocc
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Board XO source
++            - description: LPASS_AON_CC_MAIN_RCG_CLK_SRC
++        clock-names:
++          items:
++            - const: bi_tcxo
++            - const: iface
++        required-opps: false
++      required:
++        - power-domains
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,lpassaudiocc-sm8650.h>
++    #include <dt-bindings/clock/qcom,lpasscorecc-sm8650.h>
++    #include <dt-bindings/power/qcom,rpmhpd.h>
++
++    clock-controller@6bc0000 {
++        compatible = "qcom,sm8650-lpassaudiocc";
++        reg = <0x06bc0000 0x38000>;
++        clocks = <&bi_tcxo_div2>, <&lpass_aon LPASS_AON_CC_MAIN_RCG_CLK_SRC>;
++        clock-names = "bi_tcxo", "iface";
++        power-domains = <&lpass_aon LPASS_AON_CC_LPASS_AUDIO_HM_GDSC>;
++        #clock-cells = <1>;
++    };
++
++    lpass_aon: clock-controller@6e00000 {
++        compatible = "qcom,sm8650-lpassaoncc";
++        reg = <0x06e00000 0x30000>;
++        clocks = <&bi_tcxo_div2>, <&lpass_core LPASS_CORE_CC_CORE_CLK>;
++        clock-names = "bi_tcxo", "iface";
++        #clock-cells = <1>;
++        #power-domain-cells = <1>;
++    };
++
++    lpass_core: clock-controller@7b00000 {
++        compatible = "qcom,sm8650-lpasscorecc";
++        reg = <0x07b00000 0x58000>;
++        clocks = <&bi_tcxo_div2>;
++        clock-names = "bi_tcxo";
++        power-domains = <&lpass_hm LPASS_CORE_HM_GDSC>;
++        #clock-cells = <1>;
++    };
++
++    lpass_hm: clock-controller@7e00000 {
++        compatible = "qcom,sm8650-lpasshm";
++        reg = <0x07e00000 0xa000>;
++        clocks = <&bi_tcxo_div2>;
++        clock-names = "bi_tcxo";
++        power-domains = <&rpmhpd RPMHPD_LCX>;
++        required-opps = <&rpmhpd_opp_nom>;
++        #clock-cells = <1>;
++        #power-domain-cells = <1>;
++    };
++...
+diff --git a/include/dt-bindings/clock/qcom,lpassaudiocc-sm8650.h b/include/dt-bindings/clock/qcom,lpassaudiocc-sm8650.h
+new file mode 100644
+index 000000000000..c10e2a2639f1
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,lpassaudiocc-sm8650.h
+@@ -0,0 +1,47 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2021, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_LPASS_AUDIO_CC_SM8650_H
++#define _DT_BINDINGS_CLK_QCOM_LPASS_AUDIO_CC_SM8650_H
++
++/* LPASS_AUDIO_CC clocks */
++#define LPASS_AUDIO_CC_CODEC_MEM_CLK			1
++#define LPASS_AUDIO_CC_CODEC_MEM0_CLK			2
++#define LPASS_AUDIO_CC_CODEC_MEM1_CLK			3
++#define LPASS_AUDIO_CC_CODEC_MEM2_CLK			4
++#define LPASS_AUDIO_CC_CODEC_MEM3_CLK			5
++#define LPASS_AUDIO_CC_RX_MCLK_CLK			6
++#define LPASS_AUDIO_CC_RX_MCLK_CLK_SRC			7
++#define LPASS_AUDIO_CC_TX_MCLK_RX_CLK			8
++#define LPASS_AUDIO_CC_WSA_MCLK_CLK_SRC			9
++#define LPASS_AUDIO_CC_WSA_MCLK_CLK			10
++#define LPASS_AUDIO_CC_WSA2_MCLK_CLK			11
++#define LPASS_AUDIO_CC_TX_MCLK_WSA_CLK			12
++#define LPASS_AUDIO_CC_TX_MCLK_WSA2_CLK			13
++#define LPASS_AUDIO_CC_CDIV_RX_MCLK_DIV_CLK_SRC		16
++#define LPASS_AUDIO_CC_CDIV_WSA_MCLK_DIV_CLK_SRC	17
++#define LPASS_AUDIO_CC_EXT_IF1_CLK_SRC			18
++#define LPASS_AUDIO_CC_EXT_IF1_IBIT_CLK			19
++#define LPASS_AUDIO_CC_EXT_IF2_CLK_SRC			20
++#define LPASS_AUDIO_CC_EXT_IF2_IBIT_CLK			21
++#define LPASS_AUDIO_CC_EXT_IF4_CLK_SRC			22
++#define LPASS_AUDIO_CC_EXT_IF4_IBIT_CLK			23
++#define LPASS_AUDIO_CC_EXT_IF5_CLK_SRC			24
++#define LPASS_AUDIO_CC_EXT_IF5_IBIT_CLK			25
++
++/* LPASS_AON_CC clocks */
++#define LPASS_AON_CC_MAIN_RCG_CLK_SRC			1
++#define LPASS_AON_CC_AUDIO_HM_H_CLK			2
++#define LPASS_AON_CC_TX_MCLK_CLK_SRC			3
++#define LPASS_AON_CC_TX_MCLK_CLK			4
++#define LPASS_AON_CC_VA_MEM0_CLK			5
++#define LPASS_AON_CC_CDIV_TX_MCLK_DIV_CLK_SRC		6
++#define LPASS_AON_CC_EXT_IF1_CLK_SRC			7
++#define LPASS_AON_CC_EXT_IF1_IBIT_CLK			8
++
++/* LPASS_AON_CC power domains */
++#define LPASS_AON_CC_LPASS_AUDIO_HM_GDSC		0
++
++#endif
+diff --git a/include/dt-bindings/clock/qcom,lpasscorecc-sm8650.h b/include/dt-bindings/clock/qcom,lpasscorecc-sm8650.h
+new file mode 100644
+index 000000000000..2849729a2e56
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,lpasscorecc-sm8650.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2021, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_LPASS_CORE_CC_SM8650_H
++#define _DT_BINDINGS_CLK_QCOM_LPASS_CORE_CC_SM8650_H
++
++/* LPASS_CORE_CC clocks */
++#define LPASS_CORE_CC_DIG_PLL                           0
++#define LPASS_CORE_CC_DIG_PLL_OUT_MAIN_DIV_CLK_SRC      1
++#define LPASS_CORE_CC_DIG_PLL_OUT_ODD                   2
++#define LPASS_CORE_CC_CORE_CLK                          3
++#define LPASS_CORE_CC_CORE_CLK_SRC                      4
++#define LPASS_CORE_CC_EXT_IF0_CLK_SRC                   5
++#define LPASS_CORE_CC_EXT_IF0_IBIT_CLK                  6
++#define LPASS_CORE_CC_EXT_IF1_CLK_SRC                   7
++#define LPASS_CORE_CC_EXT_IF1_IBIT_CLK                  8
++#define LPASS_CORE_CC_EXT_IF2_CLK_SRC                   9
++#define LPASS_CORE_CC_EXT_IF2_IBIT_CLK                  10
++#define LPASS_CORE_CC_LPM_CORE_CLK                      11
++#define LPASS_CORE_CC_LPM_MEM0_CORE_CLK                 12
++#define LPASS_CORE_CC_SYSNOC_MPORT_CORE_CLK             13
++#define LPASS_CORE_CC_EXT_MCLK0_CLK                     14
++#define LPASS_CORE_CC_EXT_MCLK0_CLK_SRC                 15
++
++/* LPASS Core power domains */
++#define LPASS_CORE_HM_GDSC				0
++
++#endif
 
- .../bindings/clock/qcom,sm8650-lpasscorecc.yaml    | 178 +++++
- drivers/clk/qcom/Kconfig                           |  12 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/lpassaudiocc-sm8650.c             | 761 +++++++++++++++++++++
- drivers/clk/qcom/lpasscorecc-sm8650.c              | 506 ++++++++++++++
- .../dt-bindings/clock/qcom,lpassaudiocc-sm8650.h   |  47 ++
- .../dt-bindings/clock/qcom,lpasscorecc-sm8650.h    |  30 +
- 7 files changed, 1535 insertions(+)
----
-base-commit: 909ef7a9a30fa139e69e555e3606680f5cca7726
-change-id: 20261113-topic-sm8650-el2-clks-c6caf4237ca7
-
-Best regards,
---  
-Neil Armstrong <neil.armstrong@linaro.org>
+-- 
+2.34.1
 
