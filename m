@@ -1,45 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795547787;
-	b=SoCCkkkX/ebrWuGxZPcqVgKlP0iB6w7omiUrwGiup5fCYImjbMsAQf9mvNPDYlw5rVYr
-	 8wlbTfCgJV9Zt2M1i9GenWjY93+Jej+FyG1gPeKZFXCojD1vihjL/o684ITWNRkycRYYY
-	 P6LaAi2kBY6qaoTAWPCpdeDIQFo+Xo18vzi/ii0DNaeDSVUXTOLV5/EIg+Z3rydFRKkrl
-	 9AoaCrhCLPXsyxcJBf5i+L/maQYZVJCt6l3FFhTcHJvzDicNUdW71ZIg1MhWFvMRhZ38K
-	 WQeVlolGbZ+nYcLqp0WGmvt26hDxz5uQ1uYTgMU0d2at4XK61TtPvY7eq9y9LeG57Vw==
+	t=1795549990;
+	b=0nKuVRrJobGdNChWd8B25CIm8gKOe7mLYZzcUajB4DnFZBR2MHGBhrXhn7n2jPg78WKM
+	 3ZctsVXzONvYdA5SK5fj+FKLw+Tc8TPjci115233jqFjblH5Oyy3GxKg8S52APoPeaWRR
+	 xHdJ9lqYC4lZwRH/YUtT4hwUW5yfp12dBvZiMxVMctq/yqz9zrScIjPYlILMZR5uTR6pN
+	 gIjeehZP3GGD2RrKf6OMxc7l2g/CxZQAin2S402TctYZ8RJY/Y6eaoZknYaMD/44TMTjH
+	 alHgLUA/Av/kr81BrQYcK+l3Tqr6vR8IyKwMWCQ7odFXOlefPl7fV0sjqJp7bwtYI+Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795547787;
-	h=Received:DKIM-Signature:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=lXwLpfc4aS4+J/jJs2iTIAGiSEtFcclowGK9/tjyUGk=;
-	b=O+T0pJJXU1PcQbBM1BtCIsz0Jm/snJDXTSLff11Z2yWJ3B6ustCQYdg+I7mGveo0Bg8D
-	 tN2qeFEkeSx8BN5gvCtE2gCiXOTLOivyK2lkwfNEdEOSHHbCtmbldttBm7s7VPFUWSuFt
-	 mjyweaLrFnzjnmK96y0tGWGFSqKKGQRRzYXBpblm7OYzaQM5FZZjFKz6GJups6ibeB+gS
-	 0AT3P1Ey7too5hnbw0WuxmPGSeBDv/38CtKIP3AVG0qu1L7wYyAFypcd5YOaGxTeYZE7z
-	 OrThPBKI/ZfB+e4Zo1Ko4JNWXkoq2Fv/dkdGIrWw4NIk4AM99NklmzVa8v4VQFTKr6w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795549990;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=RumJVU2fyeIBgsPQcKKCaCPpS/w2DrR8cb6jiXDvUqQ=;
+	b=qz4dtjobpty1WDA31hhEJsE973CAi9+Rni+1T3DyZECDzJ5d45Fi/SEHq8LmAEptJgFq
+	 OhVcUkCxgi0INoiiHXcKznUPObCCewaILW7p1+KLYdB10KrW2I5HO45nwnV0O777sxuZi
+	 w67EBytOKanZPKKvCiLj0z6jV7q7liwCUVnNKA/5dXtrEw1PKOQ3W5tCL9kGC/ZYq4Dkj
+	 1FV/j5m1DoUM38sJkadyAUqMhHsf/ljAT+gC6AuoiL2P7B9zzFZEh0gM7bXRoAkozg902
+	 Yjq8YE+chL1mZ00l0WWbWoWazIwPxcrF1bHF2eqN5IkFg//79MJyb68Mo1swXUncqYA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E8xOoZm1;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TpapYsxX;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8186606A31E;
-	Tue, 24 Nov 2026 19:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C429606A31E;
+	Tue, 24 Nov 2026 19:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E8xOoZm1
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 333321F000C6;
-	Tue, 24 Nov 2026 19:16:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TpapYsxX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D9E51F000CA;
+	Tue, 24 Nov 2026 19:53:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795547786;
-	bh=lXwLpfc4aS4+J/jJs2iTIAGiSEtFcclowGK9/tjyUGk=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=E8xOoZm1tkyvMNjNixCEnPcZxqSvm7nQHecKeztfjP56GWSvZjYReB7gYKUMnv/w0
-	 Sm3JsLa7BScRVmvAS4iQD2/oBRunDKNEBcW7/bWITGa+2n8302BouwuRDbV60VPuZg
-	 oZD4mrDpCZ1837ckijBp0VEFr+jUN1AjhTzGkgLhtEEqiV2h/rj9UlQWbhuUhiftc3
-	 hJCM24QqfT+wOyzl0fIt8DCweVrvK0lJJ5CWDml25DFhXcZc4D2vJUPPWYy6DpgpaN
-	 JsVYyoyZsZchDF+71Dwm6d7BrOJ9Mko0WLASP4tj/CWY13bXLducdhFzpeREsi4KOj
-	 iyQDhLG7PwCJw==
+	s=k20260515; t=1795549989;
+	bh=RumJVU2fyeIBgsPQcKKCaCPpS/w2DrR8cb6jiXDvUqQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=TpapYsxXs0e/Mhxv9ycjbdYGMdhMy+TA8GsFxkKtYoHva2Pk7Z5iql5+Tp6jhEQ/Y
+	 qNpcpD/IXuBD4Jg3KucVvZwgAwkglbqRI9TmX1wAtPCGrTLazhDD7izyOJ+QfFjMiA
+	 nauXAy8HA2TVAJaw7neFNg4vZMosP+XjJSUnbxlY99RsnEVOb6RplIlHDROUU7mA9/
+	 D2cXwNRPoPbXlfZQhVIflB6lBQPppTIvkNARiVD1xL682Njp+i0fDLsOlNSNuWA61N
+	 YP5Y6Pw9E97CxE4r3WEL3SUf8fuxy15iIzgw5fzt8+VAqsw5FrROhlC1Nshup0T81S
+	 x7q4p9XspGodQ==
+Message-ID: <sashiko-outbox-231910@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 01/10] dt-bindings: clock: qcom: Add bindings for PDM
+ GP_MN clock divider
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Taniya Das" <taniya.das@oss.qualcomm.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261124-b4-pdm_clk_gp_mnd_v2-v3-1-98db26a87500@oss.qualcomm.com>
+References: <20261124-b4-pdm_clk_gp_mnd_v2-v3-0-98db26a87500@oss.qualcomm.com>
+ <20261124-b4-pdm_clk_gp_mnd_v2-v3-1-98db26a87500@oss.qualcomm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 24 Nov 2026 19:53:08 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -48,100 +60,29 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v4 3/5] soc: st: stm32mp2-syscfg: register the clock
- device
-From: Brian Masney <masneyb@kernel.org>
-To: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Christophe Roullier <christophe.roullier@foss.st.com>, 
- Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20261124-ups_mp25_clk_syscfg-v4-3-894d95dffec4@foss.st.com>
-References: <20261124-ups_mp25_clk_syscfg-v4-0-894d95dffec4@foss.st.com>
- <20261124-ups_mp25_clk_syscfg-v4-3-894d95dffec4@foss.st.com>
-Date: Tue, 24 Nov 2026 14:16:18 -0500
-Message-Id: <179554777875.338124.2443153902372697503.b4-review@b4>
-X-Mailer: b4 0.17-dev-8145e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1998; i=masneyb@kernel.org;
- s=20250903; h=from:subject:message-id;
- bh=F1WVQywTa9F2r7TDaCAJztvWfqC8Q7gfotXdlbvqROs=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJZH7W0Czi4fuJvs6oPT7shs7bSP1zXa3Km+xF5bf0jV
- WcZTao7SlkYxLgYZMUUWZbkGhVEpK6yvXdHkwVmDisTyBAGLk4BmIjUKUaGnbHpPgx+ZmUPVnA3
- zjwxl7/CLpDp4EoWvXb912Enmq8kMTI0tLaL5vuELPvwdL0ES9a6wooZclMLAliN9nutq72Wxcs
- PAA==
-X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Hi Gabriel,
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] dt-bindings: clock: qcom: redundant word bindings in commit
+  subject
+--
 
-> The STM32MP23x and STM32MP25x SYSCFG provides the LTDC pixel clock mux,
-> whose driver is an auxiliary driver since the SYSCFG node is bound to
-> this driver.
-> 
-> Create the auxiliary device for the clock driver.
-> 
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> [gabriel.fernandez@foss.st.com: create the device on STM32MP23x too]
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> ---
->  drivers/soc/st/Kconfig           |  1 +
->  drivers/soc/st/stm32mp2-syscfg.c | 14 +++++++++++++-
->  2 files changed, 14 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/st/Kconfig b/drivers/soc/st/Kconfig
-> index 2a9d6a77be45..62bbe8c63238 100644
-> --- a/drivers/soc/st/Kconfig
-> +++ b/drivers/soc/st/Kconfig
-> @@ -5,6 +5,7 @@ config SOC_STM32MP2
->  	tristate "STM32MP2 SoC family support"
->  	depends on ARCH_STM32 || COMPILE_TEST
->  	default ARCH_STM32 && ARM64
-> +	select AUXILIARY_BUS
->  	select SOC_BUS
->  	help
->  	  If you say yes here, you get support for the ST STM32MP2 family
-> diff --git a/drivers/soc/st/stm32mp2-syscfg.c b/drivers/soc/st/stm32mp2-syscfg.c
-> index 770321a4a6f7..1160b65d3dde 100644
-> --- a/drivers/soc/st/stm32mp2-syscfg.c
-> +++ b/drivers/soc/st/stm32mp2-syscfg.c
-> @@ -3,13 +3,25 @@
->   * Copyright 2026 Marek Vasut
->   */
->  
-> +#include <linux/auxiliary_bus.h>
->  #include <linux/module.h>
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  
->  static int stm32mp2_syscfg_probe(struct platform_device *pdev)
->  {
-> -	return devm_of_platform_populate(&pdev->dev);
-> +	struct device *dev = &pdev->dev;
-> +	int ret;
-> +
-> +	ret = devm_of_platform_populate(dev);
-> +	if (ret)
-> +		return ret;
-> +
+commit 014c9445d6141d97936e8971e3c43aff457ee953
+Author: Taniya Das <taniya.das@oss.qualcomm.com>
 
-Looking at the dt binding, I see that the clocks property is optional.
-Should this have the following check?
+dt-bindings: clock: qcom: Add bindings for PDM GP_MN clock divider
 
-    if (!of_property_present(dev->of_node, "clocks"))
-        return 0;
+This commit adds the device tree binding schema for the Qualcomm Peripheral
+Web's PDM GP_MN clock divider.
 
-Brian
+> dt-bindings: clock: qcom: Add bindings for PDM GP_MN clock divider
 
--- 
-Brian Masney <masneyb@kernel.org>
+[Severity: Low]
+This isn't a bug, but the dt-bindings: prefix already indicates that the
+patch adds a binding, so "bindings for" in the subject line is redundant
+and can be dropped (for example, "dt-bindings: clock: qcom: Add PDM GP_MN
+clock divider").
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261124-b4-pdm_clk=
+_gp_mnd_v2-v3-0-98db26a87500@oss.qualcomm.com?part=3D1
