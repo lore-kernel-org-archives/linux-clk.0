@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795495295;
-	b=0u1RotEPTsBzTvgggY6UnrGf5FrlLrpStQvI5qfq65Mjvl7tA77axy+r+D5doilGImuD
-	 AHdlEldzPEo/uACBQNSiQH64rus1WK0R8Tv1nHGOZUxyCnpNdWCOvlwqFkzcXM8ZOZqX7
-	 O4H7B/iyDYWmqGJPMFJFc3w0SSxO7R7kfYx6yY2l8xycXdXq73t2+vmlPOKQa5acK0w++
-	 GsPY+JoID/8QpAv/H6/PNV6G+aOG0RJFewGTbbVSTCQ9cz3lNvOMfcQtHMYFo4uQ0FzxN
-	 0hfoi5FcOP30EREx6BTNPEXzpvA/B4v0ua+KYXUH6usN3ZLUqe/iQ40gASG2hTxQufQ==
+	t=1795495298;
+	b=0i8Ldnu4+cjEipDnCPTr+glq87S7eHSqoL+WgsxMy99fufLZECxz8IdvjJPm161OPsht
+	 2/LuUSQkGAVEEKxGMAqyqM52UB2n7xZI0iUrh9tsUsi9Qd4247KbaqUzmKqzYLwLjJ3su
+	 D8BtzDW/lzXgxh+6UACpDsovvL2W8ih0RL+3q0oKljvogmyDRFwmRRc0OTDEP85g0vFc2
+	 tbhNJR8CS3ztBBdpwuHYZBnvIqwhDP7uVh1pCFZMpMhuen4utyeOsXdTOUKEUdLvR8OCI
+	 oD0LfnEfklEkv4/IGm17bXB3boXSJKJSO1cZazau4Mcv2Cvd95Pi/e9QBy1tAN7CeuA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795495295;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795495298;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=rwP6hYLmbNkuOgB89irY+7NxXjvjB1ChDUj1DhEAqsk=;
-	b=y4uX6cXBBGFP09LJfIhF2EKs2Df6mgjWhK6DsjmnW4ng1qyea+LdyCq5Prm9/pUjqaK4
-	 us7X/s/36Q4wLHuEQSFd0iYkurTLd7Fz7lx6dFauQPQZ1PmD03+87KJhCPMTRM/zfgb+e
-	 CIrjWz0IUJsXIs24jCLzTb63REFnkM2YQXL/4wArfziyvSjWyEje7TJqoEHNaPtd1tOWS
-	 yZzOjjOIbcZtxVC23NtVQDbF+zKthKxeIJnnWaq7xXmOVX1CKC4hjjlfkUu0sX8X3wDq6
-	 hpALzYmmA6Z5SjYboLXRj7fpxnSCqKd5sawzA/gKGWUG0kDeDCibR+HXrLW7MPk8T+w==
+	bh=kj54KKqus3DpCyZNB5aVCoc87sy3Q+Ne+YOlrdr6juM=;
+	b=bJDqsr9Q+ygToXGtdDjkws2fCMmHFBvpN1Q0kW7nc/PbbnYV1p19P9hKz4ayhvUC+yTh
+	 apuksA/F2TrMm2g987+jAVD5eAmzmPdVDuSDoNVXDsAIGUSN41luAw+cvlq94vRCW4uQv
+	 /v1Y3fkb0Z/HzxLCohFiEWMTvC3ByAxuFtYV5/WOGxgku0vqymyk6OdpUNyBRIvGOk8ZU
+	 qB0vWvDGjyamyxknLrsmPe0hWii2qaMOPm7l/xbeD05Li2eEWquwmgqdHivFdLYbZZJ/v
+	 oT4fLCbycVwzK99t4DAR6FrPTaF4SFU1zG9ko13nDmCiWYXc29yhaEhjXi1wJXm+6iA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Dc/XZY8e";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WBtCCE3k;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CFA606A335;
-	Tue, 24 Nov 2026 04:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93B5606A6A2;
+	Tue, 24 Nov 2026 04:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Dc/XZY8e
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WBtCCE3k
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795495295;
-	b=0faOfRmPU4QoDynNOos+l9PcP3++b3gfYPl8p20DUOPiM0OY4aOccbYdEjfVRjLGD3tZ
-	 zdHKj4wB5x7jD8LttrZ/I+YAXnLLkcgrbpYMaGFzn8GdkRq7wgpvjdq+E+INYOiFqa7Qt
-	 R2yshAMVXk6ChkYl5QT/yOHhEkAO8sgGw8jex9UVxfoDxlnFP5VSus19t1kBBULGq9aId
-	 MdIztt4kSwwo+TZF/TFH7/KUhrUooKS5+OZDcvFjhveR/doo0KaAQ5mVVndUpWA4B7k5w
-	 q0mwYwDKe8G6oR+75h+JeNPwi3kswvPEVjdeFmmJoYcV3hTYh5WEZKJSNSshlA63EGw==
+	t=1795495297;
+	b=wop2nyJCWQBv4uUngfGoZtOBLPAxc475xGCsdf9+oIrA/MZfVkkD+bCXnW6rh2UmhuLM
+	 O6fl+FKMhNkqHBSFMVf+JqPYRZo2TL6KsrqxeU9wbGD5a9ItQB0XoAaYCg0A6gx0UxVeX
+	 veNZqjlojFc/8QV1yLOm/CBgxgAVbw3MdI3pn0wwWT1u0wT55RcG6Fx2mHQdsRAgMlVwi
+	 Q+D7ESL+d2ptlwog3WfrXI4fztdqq+lupxce9Z2OMy+31NObTVEg51by6wleEnZA3X5y2
+	 9wQbTIj7J+uVm2N8rm0XLicQZo37e/SQ+b+LeCSTV6uJIIJFb3S0bOR7Ze+cgbYLxeQ==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795495295;
+	c=relaxed/relaxed; t=1795495297;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=rwP6hYLmbNkuOgB89irY+7NxXjvjB1ChDUj1DhEAqsk=;
-	b=aVcWhneYb8I3gawMBIzQrPGGRXMcqn5UKsUBMYbmrlYTK0UtC2o/NjB5CsSPx3rGFh26
-	 3piN61S/Tay/aKBTMCFGxoE+LvzIB7quFkiEyw4V47lZpxTAXfbqj7DB9hMuREk/FCyxA
-	 aw7mA6LlC8o/uQ6YOz4hVAx0nsJXxqHlbUPz6on884F0sh/tcm3a6VR7kU8TY1o9bLKQQ
-	 ARQigjQi46UVrqSSwv222H3tko9+3aTaur2K98+jDBF5tUKI70vmXEo9sGC6NHQtD1f7w
-	 aphn2mZ9qXRKgp41cQLeaaT7ziokbUNpB6HqOn2tdX/7bFXRXFH9SCiwKTfh1jTd8FA==
+	bh=kj54KKqus3DpCyZNB5aVCoc87sy3Q+Ne+YOlrdr6juM=;
+	b=sufEO/yNniNuJdGzutCfhYuqXYN1PQxP1jiZBCNCBFFfYK5ZjaHc0cxsaBK8nQKSd+5e
+	 VF5E1EcEtrwPlW5caxz5fyeI/XCIrHQU1IuItKE6FRfhuc0ICax4ltV/zbjNA1aGd0Jbw
+	 SflroP5FoFLPXviWkwqHEIEtfgJJFVuISB6Ocx2mfrzi+/LZAkrs79ipRZxv/IWXPzYhG
+	 byjltndvxo/zQztkjkB+g1in56/RrGKytda39JP42vHgWfaVRD79EYelNQKY7+Kf/Y1uy
+	 gB0Yp1lwL2vUorsv+uKSzlGovCdV6bKX5nfjyO9ANXCcymmLQ4Uv8qdXwHgVKFxPXzg==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 25E271F000D4;
-	Tue, 24 Nov 2026 04:41:25 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id DC6561F000D0;
+	Tue, 24 Nov 2026 04:41:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795495295;
-	bh=rwP6hYLmbNkuOgB89irY+7NxXjvjB1ChDUj1DhEAqsk=;
+	s=k20260515; t=1795495297;
+	bh=kj54KKqus3DpCyZNB5aVCoc87sy3Q+Ne+YOlrdr6juM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=Dc/XZY8ebnhXl65/34UqUPwvxch/vcoq3iYcV5Dv2Y4v4eosMPMfjibrz893OTrDy
-	 s2M37PBOILm94KlsGJajnxVXpz83YOa0YbAKjVbt/VndRuqG33aP3LL8YmxxpDxSlE
-	 Jw/vmiGOHVfRDiC8jOiRNqYYO56L9ATSe33m68fNCHMFVLKOQA+KV9n/A69EthPjJ+
-	 XSm9cipmtnAm4cGUJuH4UvnbXkpjwLuE+dKL4bm3sPxdM0UAL5ICKc7xedvix7PTjc
-	 7BhLnaTIk9D+KLw/VCQLIG6P/YPx815OXasBY515LO4A3puLcLpUqQ5nZX3xHtrkeC
-	 3lrB6Apc2VoRg==
+	b=WBtCCE3ktU4NbIgn5Je6zTHUt5JaLR21wltA/pG7OUvf6tS7mcXikR8aXplhl4rBS
+	 1Hl4TVPOktIdQs8eKFaGGVRzG0IgZ7fxzeaGEemaNkD2lC7lJX1wp8c0Qt3VsvFzZN
+	 yr2+cOfPEElUrGNK0DhITzRjTnoqfQ0d0jgXmbz02UGzBNA596wVaXF8qUTn6GoYhK
+	 HHH8ABpcsxHFJVBQHBpOmJz4uP0ZnptBGU5vui3VHjG0RGw2H37YcJY/ZwoCVhq7Be
+	 t7+xcImS61ihBQZRWBdFkFyawnNeVuXDRg8GqjvcmNpFCB/d7JYeQyG6Jza1ETRPde
+	 I+0Bz9DvlGWTA==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id AC9964C8B2;
+	by lkml.kernel.org (Postfix) with ESMTP id 6FA974C8AA;
 	Tue, 24 Nov 2026 04:41:24 +0000 (UTC)
 From: Joseph Telaak via B4 Relay <devnull+joseph.telaak.dev@kernel.org>
-Date: Mon, 23 Nov 2026 23:41:24 -0500
-Subject: [PATCH v5 4/6] dt-bindings: clock: Add Siflower SF19A2890
- peripheral clock/reset managers
+Date: Mon, 23 Nov 2026 23:41:22 -0500
+Subject: [PATCH v5 2/6] dt-bindings: clock: Add Siflower SF19A2890 clock
+ manager
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,7 +84,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261123-sf19a2890-sysm-v5-4-4ba44a0db17d@telaak.dev>
+Message-Id: <20261123-sf19a2890-sysm-v5-2-4ba44a0db17d@telaak.dev>
 References: <20261123-sf19a2890-sysm-v5-0-4ba44a0db17d@telaak.dev>
 In-Reply-To: <20261123-sf19a2890-sysm-v5-0-4ba44a0db17d@telaak.dev>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -101,11 +101,11 @@ Cc: Paul Burton <paulburton@kernel.org>,
  Conor Dooley <conor.dooley@microchip.com>, 
  Joseph Telaak <joseph@telaak.dev>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795495283; l=8716;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795495283; l=4233;
  i=joseph@telaak.dev; s=20261104; h=from:subject:message-id;
- bh=jhe/wmRGKRZEoUc58eWAge+X8p9oPBOwrKECt3T0S4I=;
- b=W0S7P6xFm9CHZwW4xOdu99dyO1DCyP4eXxf4zdLYjeWjpn3ngEfqM8Py1RwgL+gNtzkuAgGto
- NxZWNk9wtl9AEaoFyLp2R6JefmhEyDDnPFjhAnHx7PeKUK0KSSjxyYb
+ bh=1hE1zhMG0OtBg9FcIR+gI4NTYVaU3Uop5FjyhLMYHqg=;
+ b=C8q1a6zO5bUc86v+SBwtHzYmqGAl8EVJtjkUc3W/g+z4Rcyiuj5UhJ1vBSBvVrtAtKm/flszR
+ OkTW9Jg11kNCzbOek5LoqXgTsmO5s6yVBTLfqIUYCkRfoFQznR2VdqT
 X-Developer-Key: i=joseph@telaak.dev; a=ed25519;
  pk=oQI+UfddlZ0wK2ac4WKOGNjUl1ZEN8j9ZVFSqEDoNP0=
 X-Endpoint-Received: by B4 Relay for joseph@telaak.dev/20261104 with
@@ -116,304 +116,137 @@ Content-Transfer-Encoding: 7bit
 
 From: Joseph Telaak <joseph@telaak.dev>
 
-Each peripheral block of the Siflower SF19A2890 has a clock and reset
-manager of its own, with a reset register, a clock gate register and a
-bus output enable. The blocks differ in which gate and reset bits they
-use, so each has its own compatible, and clock N of a manager is its
-input clock N, gated. The header names the clocks and resets of each
-manager, since their meaning depends on the manager.
+The clock manager of the Siflower SF19A2890 holds the SoC's PLLs and
+the muxes and dividers that derive the bus, CPU and peripheral clocks
+from them. The peripherals' own gates and resets are in separate
+blocks.
 
-Based on Chuanhong Guo's binding, which described every block with one
-compatible and its bit layout in properties.
+The header is Chuanhong Guo's, from his SF19A2890 branch, and keeps his
+license. It drops the count at its end, and names the NPU clock
+CLK_MUXDIV_NPU_PE, without the _CLK suffix that no other clock has.
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Joseph Telaak <joseph@telaak.dev>
 ---
- .../clock/siflower,sf19a2890-periph-crm.yaml       | 166 +++++++++++++++++++++
- MAINTAINERS                                        |   2 +
- .../clock/siflower,sf19a2890-periph-crm.h          |  87 +++++++++++
- 3 files changed, 255 insertions(+)
+ .../bindings/clock/siflower,sf19a2890-clk.yaml     | 57 ++++++++++++++++++++++
+ MAINTAINERS                                        |  7 +++
+ include/dt-bindings/clock/siflower,sf19a2890-clk.h | 27 ++++++++++
+ 3 files changed, 91 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/siflower,sf19a2890-periph-crm.yaml b/Documentation/devicetree/bindings/clock/siflower,sf19a2890-periph-crm.yaml
+diff --git a/Documentation/devicetree/bindings/clock/siflower,sf19a2890-clk.yaml b/Documentation/devicetree/bindings/clock/siflower,sf19a2890-clk.yaml
 new file mode 100644
-index 000000000000..f464cfffb2a2
+index 000000000000..9b72f14c2bd9
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/siflower,sf19a2890-periph-crm.yaml
-@@ -0,0 +1,166 @@
++++ b/Documentation/devicetree/bindings/clock/siflower,sf19a2890-clk.yaml
+@@ -0,0 +1,57 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/siflower,sf19a2890-periph-crm.yaml#
++$id: http://devicetree.org/schemas/clock/siflower,sf19a2890-clk.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Siflower SF19A2890 peripheral clock and reset manager
++title: Siflower SF19A2890 clock manager
 +
 +maintainers:
 +  - Joseph Telaak <joseph@telaak.dev>
 +
 +description: |
-+  Each peripheral, or group of peripherals, of the Siflower SF19A2890 has
-+  a clock and reset manager of its own: a reset register, a clock gate
-+  register, and a bus output enable that the peripherals need as well as
-+  their clocks to answer bus requests.
++  The clock manager of the Siflower SF19A2890 holds the SoC's three PLLs
++  (CPU, DDR and common) and the clock muxes with dividers that derive the
++  bus, CPU and peripheral clocks from them. The peripherals' own clock
++  gates and resets are in separate peripheral clock and reset managers.
 +
-+  Clock N of the manager is input clock N, gated. The clocks and resets of
-+  each manager are defined in
-+  include/dt-bindings/clock/siflower,sf19a2890-periph-crm.h.
++  The clocks are defined in include/dt-bindings/clock/siflower,sf19a2890-clk.h.
 +
 +properties:
 +  compatible:
-+    enum:
-+      - siflower,sf19a2890-gmac-crm
-+      - siflower,sf19a2890-gpio-crm
-+      - siflower,sf19a2890-i2c-crm
-+      - siflower,sf19a2890-pwm-crm
-+      - siflower,sf19a2890-rf-crm
-+      - siflower,sf19a2890-spi-crm
-+      - siflower,sf19a2890-timer-crm
-+      - siflower,sf19a2890-uart-crm
-+      - siflower,sf19a2890-usb-crm
-+      - siflower,sf19a2890-wdt-crm
-+      - siflower,sf19a2890-wlan24-crm
-+      - siflower,sf19a2890-wlan5-crm
++    const: siflower,sf19a2890-clk
 +
 +  reg:
 +    maxItems: 1
 +
 +  clocks:
-+    minItems: 1
-+    maxItems: 6
++    items:
++      - description: 12 MHz oscillator
++      - description: 40 MHz oscillator
++
++  clock-names:
++    items:
++      - const: osc12m
++      - const: osc40m
 +
 +  "#clock-cells":
-+    const: 1
-+
-+  "#reset-cells":
 +    const: 1
 +
 +required:
 +  - compatible
 +  - reg
 +  - clocks
++  - clock-names
 +  - "#clock-cells"
-+  - "#reset-cells"
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: siflower,sf19a2890-gmac-crm
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: GMAC bus clock
-+            - description: GMAC register clock
-+            - description: RGMII transmit reference clock
-+            - description: Timestamp unit clock
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - siflower,sf19a2890-wlan24-crm
-+              - siflower,sf19a2890-wlan5-crm
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: AXI slave clock
-+            - description: AXI master clock
-+            - description: Radio platform clock
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: siflower,sf19a2890-rf-crm
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Test clock
-+            - description: AXI slave clock
-+            - description: Boot clock
-+            - description: Low-power clock
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: siflower,sf19a2890-usb-crm
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: USB controller clock
-+            - description: AXI master clock
-+            - description: USB PHY reference clock
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: siflower,sf19a2890-spi-crm
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: APB clock
-+            - description: SSP clock
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: siflower,sf19a2890-uart-crm
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: UART0 APB clock
-+            - description: UART1 APB clock
-+            - description: UART2 APB clock
-+            - description: UART0 clock
-+            - description: UART1 clock
-+            - description: UART2 clock
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - siflower,sf19a2890-gpio-crm
-+              - siflower,sf19a2890-i2c-crm
-+              - siflower,sf19a2890-pwm-crm
-+              - siflower,sf19a2890-timer-crm
-+              - siflower,sf19a2890-wdt-crm
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 1
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    #include <dt-bindings/clock/siflower,sf19a2890-clk.h>
-+
-+    clock-controller@19e24c00 {
-+        compatible = "siflower,sf19a2890-uart-crm";
-+        reg = <0x19e24c00 0x10>;
-+        clocks = <&clk CLK_MUXDIV_PBUS>, <&clk CLK_MUXDIV_PBUS>,
-+                 <&clk CLK_MUXDIV_PBUS>, <&clk CLK_MUXDIV_UART>,
-+                 <&clk CLK_MUXDIV_UART>, <&clk CLK_MUXDIV_UART>;
++    clock-controller@19e01000 {
++        compatible = "siflower,sf19a2890-clk";
++        reg = <0x19e01000 0x800>;
++        clocks = <&osc12m>, <&osc40m>;
++        clock-names = "osc12m", "osc40m";
 +        #clock-cells = <1>;
-+        #reset-cells = <1>;
 +    };
 diff --git a/MAINTAINERS b/MAINTAINERS
-index de087d1c255d..47a3a72a5d08 100644
+index 93abbb315065..ce8d0596939c 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -25703,8 +25703,10 @@ M:	Joseph Telaak <joseph@telaak.dev>
- L:	linux-clk@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/clock/siflower,sf19a2890-clk.yaml
-+F:	Documentation/devicetree/bindings/clock/siflower,sf19a2890-periph-crm.yaml
- F:	drivers/clk/siflower/clk-sf19a2890.c
- F:	include/dt-bindings/clock/siflower,sf19a2890-clk.h
-+F:	include/dt-bindings/clock/siflower,sf19a2890-periph-crm.h
+@@ -25698,6 +25698,13 @@ N:	sifive
+ K:	fu[57]40
+ K:	[^@]sifive
  
++SIFLOWER SF19A2890 CLOCK DRIVERS
++M:	Joseph Telaak <joseph@telaak.dev>
++L:	linux-clk@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/clock/siflower,sf19a2890-clk.yaml
++F:	include/dt-bindings/clock/siflower,sf19a2890-clk.h
++
  SILEAD TOUCHSCREEN DRIVER
  M:	Hans de Goede <hansg@kernel.org>
-diff --git a/include/dt-bindings/clock/siflower,sf19a2890-periph-crm.h b/include/dt-bindings/clock/siflower,sf19a2890-periph-crm.h
+ L:	linux-input@vger.kernel.org
+diff --git a/include/dt-bindings/clock/siflower,sf19a2890-clk.h b/include/dt-bindings/clock/siflower,sf19a2890-clk.h
 new file mode 100644
-index 000000000000..1cf54761fe72
+index 000000000000..94bbebd0c1cc
 --- /dev/null
-+++ b/include/dt-bindings/clock/siflower,sf19a2890-periph-crm.h
-@@ -0,0 +1,87 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+#ifndef __DT_BINDINGS_CLOCK_SIFLOWER_SF19A2890_PERIPH_CRM_H
-+#define __DT_BINDINGS_CLOCK_SIFLOWER_SF19A2890_PERIPH_CRM_H
++++ b/include/dt-bindings/clock/siflower,sf19a2890-clk.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++#ifndef __DT_BINDINGS_CLOCK_SIFLOWER_SF19A2890_CLK_H
++#define __DT_BINDINGS_CLOCK_SIFLOWER_SF19A2890_CLK_H
 +
-+/* siflower,sf19a2890-gmac-crm */
-+#define CLK_GMAC_BUS		0
-+#define CLK_GMAC_REG		1
-+#define CLK_GMAC_TX_REF		2
-+#define CLK_GMAC_TSU		3
++#define CLK_PLL_CPU		0
++#define CLK_PLL_DDR		1
++#define CLK_PLL_CMN		2
++#define CLK_MUXDIV_BUS1		3
++#define CLK_MUXDIV_BUS2		4
++#define CLK_MUXDIV_BUS3		5
++#define CLK_MUXDIV_CPU		6
++#define CLK_MUXDIV_PBUS		7
++#define CLK_MUXDIV_MEM_PHY	8
++#define CLK_MUXDIV_UART		9
++#define CLK_MUXDIV_ETH_REF	10
++#define CLK_MUXDIV_ETH_BYP_REF	11
++#define CLK_MUXDIV_ETH_TSU	12
++#define CLK_MUXDIV_GMAC_BYP_REF	13
++#define CLK_MUXDIV_M6250_0	14
++#define CLK_MUXDIV_M6250_1	15
++#define CLK_MUXDIV_WLAN24_PLF	16
++#define CLK_MUXDIV_WLAN5_PLF	17
++#define CLK_MUXDIV_USBPHY_REF	18
++#define CLK_MUXDIV_TCLK		19
++#define CLK_MUXDIV_NPU_PE	20
 +
-+#define RST_GMAC		0
-+
-+/* siflower,sf19a2890-gpio-crm */
-+#define CLK_GPIO		0
-+
-+#define RST_GPIO		0
-+
-+/* siflower,sf19a2890-i2c-crm */
-+#define CLK_I2C			0
-+
-+#define RST_I2C			0
-+
-+/* siflower,sf19a2890-pwm-crm */
-+#define CLK_PWM			0
-+
-+#define RST_PWM			0
-+
-+/* siflower,sf19a2890-rf-crm */
-+#define CLK_RF_TEST		0
-+#define CLK_RF_AXIS		1
-+#define CLK_RF_BOOT		2
-+#define CLK_RF_LP		3
-+
-+#define RST_RF			0
-+
-+/* siflower,sf19a2890-spi-crm */
-+#define CLK_SPI_APB		0
-+#define CLK_SPI_SSP		1
-+
-+#define RST_SPI			0
-+
-+/* siflower,sf19a2890-timer-crm */
-+#define CLK_TIMER		0
-+
-+#define RST_TIMER		0
-+
-+/* siflower,sf19a2890-uart-crm */
-+#define CLK_UART0_APB		0
-+#define CLK_UART1_APB		1
-+#define CLK_UART2_APB		2
-+#define CLK_UART0		3
-+#define CLK_UART1		4
-+#define CLK_UART2		5
-+
-+#define RST_UART0		0
-+#define RST_UART1		1
-+#define RST_UART2		2
-+
-+/* siflower,sf19a2890-usb-crm */
-+#define CLK_USB			0
-+#define CLK_USB_AXIM		1
-+#define CLK_USB_PHY_REF		2
-+
-+#define RST_USB			0
-+#define RST_USB_PHY_POR		1
-+#define RST_USB_PHY		2
-+
-+/* siflower,sf19a2890-wdt-crm */
-+#define CLK_WDT			0
-+
-+#define RST_WDT			0
-+
-+/* siflower,sf19a2890-wlan24-crm */
-+#define CLK_WLAN24_AXIS		0
-+#define CLK_WLAN24_AXIM		1
-+#define CLK_WLAN24_PLF		2
-+
-+#define RST_WLAN24		0
-+
-+/* siflower,sf19a2890-wlan5-crm */
-+#define CLK_WLAN5_AXIS		0
-+#define CLK_WLAN5_AXIM		1
-+#define CLK_WLAN5_PLF		2
-+
-+#define RST_WLAN5		0
-+
-+#endif /* __DT_BINDINGS_CLOCK_SIFLOWER_SF19A2890_PERIPH_CRM_H */
++#endif /* __DT_BINDINGS_CLOCK_SIFLOWER_SF19A2890_CLK_H */
 
 -- 
 Git-155)
