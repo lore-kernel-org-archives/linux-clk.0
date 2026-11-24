@@ -1,103 +1,45 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795547129;
-	b=y6G6sl5d00AR3jIlAUIjmZMh5dLpgduuVDyRD7wnSaNi8+kNDdr84FxGUL2sXA+lobu7
-	 Ttbon1K6tyEHA89Fq7Xmjn0I6byqCt+g0cPcwi70pQfv+EngJXN2Q/KQCYp7qFL9ckkLG
-	 kYTP09j0ytXZkL4eBLWdwzLfLhpoiNKUIQ5TJHxyFmMQFvTrpNgmGg0FcU5eRKyxkBJsf
-	 wA8Fh0hMKzX6dB9xsv3xHpn4soqr6fCwENLwOAULl38Pldwh432RNhfhGW1qZwUbfVPTj
-	 rmvYJWEyy6DQnOMdI66w+CTJbVymM4rnUCbiDUxkdW+h5T2FjHmogVd4HKm0KaqqVZQ==
+	t=1795547787;
+	b=SoCCkkkX/ebrWuGxZPcqVgKlP0iB6w7omiUrwGiup5fCYImjbMsAQf9mvNPDYlw5rVYr
+	 8wlbTfCgJV9Zt2M1i9GenWjY93+Jej+FyG1gPeKZFXCojD1vihjL/o684ITWNRkycRYYY
+	 P6LaAi2kBY6qaoTAWPCpdeDIQFo+Xo18vzi/ii0DNaeDSVUXTOLV5/EIg+Z3rydFRKkrl
+	 9AoaCrhCLPXsyxcJBf5i+L/maQYZVJCt6l3FFhTcHJvzDicNUdW71ZIg1MhWFvMRhZ38K
+	 WQeVlolGbZ+nYcLqp0WGmvt26hDxz5uQ1uYTgMU0d2at4XK61TtPvY7eq9y9LeG57Vw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795547129;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=oRymF9g7Ou6E84Fcm6RvQE44N4Aj97+O2QyjNvisAjA=;
-	b=fH1Zz16VJr5kT2a0bS4ASxJBko8zrSued9ungf49VdycjkXOFaNJ8EHj+9915L+vjelt
-	 CPTaLleKV0QSRiz82HN9Ldv1lVJTz6MsKpmB6Lvx76oKv6/AzbkbCtcHS+G5paLIxqMXb
-	 Cl5gSzGamVYpr9NZcTFcXmsNaoKZzyEMdVgBn+MEWlZDhbxiwZVcRLk3JiDM5peKGmp66
-	 tyWVxp7x8J/UJI4CF/5vfTz8I0b0+xAXmXhbSo2I6iuboa/UbKjcIcwctc8XDhatuhx1R
-	 KLm8Hlx7YhFBS3T3XLHrSrzuuJkz5LfMz/wxZ2tfAYOxLCCWPvQiSTNOVvoNIvYUjlw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795547787;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=lXwLpfc4aS4+J/jJs2iTIAGiSEtFcclowGK9/tjyUGk=;
+	b=O+T0pJJXU1PcQbBM1BtCIsz0Jm/snJDXTSLff11Z2yWJ3B6ustCQYdg+I7mGveo0Bg8D
+	 tN2qeFEkeSx8BN5gvCtE2gCiXOTLOivyK2lkwfNEdEOSHHbCtmbldttBm7s7VPFUWSuFt
+	 mjyweaLrFnzjnmK96y0tGWGFSqKKGQRRzYXBpblm7OYzaQM5FZZjFKz6GJups6ibeB+gS
+	 0AT3P1Ey7too5hnbw0WuxmPGSeBDv/38CtKIP3AVG0qu1L7wYyAFypcd5YOaGxTeYZE7z
+	 OrThPBKI/ZfB+e4Zo1Ko4JNWXkoq2Fv/dkdGIrWw4NIk4AM99NklmzVa8v4VQFTKr6w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=chromium.org;
-	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b="LaQ/DrsS";
-	arc=none smtp.remote-ip=74.125.82.46
-Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E8xOoZm1;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C606606A31E
-	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 19:05:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6C606606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8186606A31E;
+	Tue, 24 Nov 2026 19:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=LaQ/DrsS
-Received: by mail-dl1-f46.google.com with SMTP id a92af1059eb24-1b3ada81853so5679185c88.0
-        for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 11:05:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1795547127; x=1796151927; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=oRymF9g7Ou6E84Fcm6RvQE44N4Aj97+O2QyjNvisAjA=;
-        b=LaQ/DrsSf/lTSKvebzDUDO0d/SHlG21H7sH+cy2n5Opuq5APd2coUYIy+qQpQcVw4R
-         0BV9TbeCVyo44f/hbGV92P3ImsMclWWCBp/vJiP8cse/parjod0QWq640h6Itmt7KGot
-         KhUQc+NJfF+SZ6jCEIuWmdYI0PlW4M6xWEVe8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795547127; x=1796151927;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=oRymF9g7Ou6E84Fcm6RvQE44N4Aj97+O2QyjNvisAjA=;
-        b=CBgeXO0HPcYr3SRhx1+IZ9+CgbtYk+lMbFJveVfekCYeMx88AXdJNilM/57spPFq0T
-         nlmZgoM+cf7+9i7SlVoBpN5bVysFLthSzh2U9apxssv4RJNqKVnZcOmxYlEWobuKs7YZ
-         LgI4duMkP/Hb+xQzcFrvQOv7p0NyMVledIuaHHi/t7r+QMvOxiYWFAt6PZba/EDzJsfT
-         6VI0+vp4OEHVTBeCCQZk04T5Dr/exRj9ZYn4yun58GFa1X+kU3mjH7tsV0kGAJl3vGYq
-         pcILrHaXYjPgoJfNCcK1OzDaqN7fUhZCCUYHXoYteT4PreYN5EKFQFl7+5kB216grqMe
-         rOcQ==
-X-Forwarded-Encrypted: i=1; AL+hErEOHN+0uWqrCPs/9nwYmLz8n3rGNMWoUEhA7b/pEkH4gFOWFhlN3/UtTenQAI7/sSAnP9Ajv0zXmgE=@vger.kernel.org
-X-Gm-Message-State: APuU4Z903tf9F5YPOABgBJdrgt8U0Es9L8fzjHtfMSaKWd7JcrTA+CIA
-	A9XYjw98xB3x0L9SMzRVg6s6V3OAIC1tT1pQttWYWLn1gxFNSyIpzictow5KfhOTuw==
-X-Gm-Gg: AZFdTZdzzrqNLZQrd8erSb9+GJiDK0iDX+kSxapMHzm0FuT7gKHuAgdamlP2tsqT5q9
-	3gaCZsmfZZZ4JvPEek4aV6+5wk77R7FwsfWH7c3CZqnmsWGuy/UksGULGRU+Hbj11l+u6qTkaif
-	DuwhO2i97yP5OVKWS+/dqZ5Km3q8XI9EWEvGgFFrPsYoyIsFgdTGaYGYRJeWKUt3S3aWNmO2/N9
-	PwUm9KhYKJ3fpcSVzDl8uLf1zV0jBkw6VBfVXKRImel2KNWDNwV9SpF0E0COYrjUmLX+Djcyim3
-	F1j6Aoc6Wboc0BVph9PhvASu5b39VOpBhKJA+bvWkRGQ5ZzBkjhHblT59Eeq9WtsbpAnk8wkvej
-	iJXk1d3Tdpar9frvLkP+DdapD9y6d+ooqzr2lcaGVoKoyl2BwDK98h9tNEQ3WCmdqiIe3SVezpO
-	ZhmDarFH1JXHInh12Rgc7Pq2MUXdAbfIPW/kdMDA7MGT1FaoODfPGmIKlMLUc6aaRQiHySZy+rk
-	zE8QTeSG44K7x9U1+bw7JWAtcOVdxWJm7qcojGMOxjzSk55fbgVcf3HXh27V6UZjvaU17kjEonQ
-	v16wZ56hDgYIHF0LqukvyqhGlhUOM38xkuKcnfAxVj3Too/eMaiTreqpMjMj2KMXi0DB
-X-Received: by 2002:a05:7023:a41:b0:1b5:4b48:b9ee with SMTP id a92af1059eb24-1b5568c0ec9mr15438832c88.26.1795547127198;
-        Tue, 24 Nov 2026 11:05:27 -0800 (PST)
-Received: from localhost ([2a00:79e0:2e7c:8:ea9b:d8a3:ba44:2d0a])
-        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-3866f299d0bsm39337143eec.19.2026.11.24.11.05.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Nov 2026 11:05:26 -0800 (PST)
-Date: Tue, 24 Nov 2026 11:05:23 -0800
-From: Brian Norris <briannorris@chromium.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Thomas Gleixner <tglx@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>,
-	linux-arm-kernel@lists.infradead.org,
-	Mariano Marciello <mmarciello@google.com>,
-	Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
-	Jakub =?utf-8?B?R8WCb3dhY2tp?= <jglow@google.com>
-Subject: Re: [PATCH 3/9] soc: google: Add CPM over MailBox Array driver
-Message-ID: <awXf86suGgKeazZx@google.com>
-References: <20261026214359.3122870-1-briannorris@chromium.org>
- <20261026144346.3.I7bc547c83b7bf677a62670099f481a91ac737073@changeid>
- <CADrjBPqnRrFeYT9J6NGxy+Xzy1PTZEz+BMs1_u2md7Ra6xPPDQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E8xOoZm1
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 333321F000C6;
+	Tue, 24 Nov 2026 19:16:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795547786;
+	bh=lXwLpfc4aS4+J/jJs2iTIAGiSEtFcclowGK9/tjyUGk=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=E8xOoZm1tkyvMNjNixCEnPcZxqSvm7nQHecKeztfjP56GWSvZjYReB7gYKUMnv/w0
+	 Sm3JsLa7BScRVmvAS4iQD2/oBRunDKNEBcW7/bWITGa+2n8302BouwuRDbV60VPuZg
+	 oZD4mrDpCZ1837ckijBp0VEFr+jUN1AjhTzGkgLhtEEqiV2h/rj9UlQWbhuUhiftc3
+	 hJCM24QqfT+wOyzl0fIt8DCweVrvK0lJJ5CWDml25DFhXcZc4D2vJUPPWYy6DpgpaN
+	 JsVYyoyZsZchDF+71Dwm6d7BrOJ9Mko0WLASP4tj/CWY13bXLducdhFzpeREsi4KOj
+	 iyQDhLG7PwCJw==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -107,259 +49,99 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADrjBPqnRrFeYT9J6NGxy+Xzy1PTZEz+BMs1_u2md7Ra6xPPDQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v4 3/5] soc: st: stm32mp2-syscfg: register the clock
+ device
+From: Brian Masney <masneyb@kernel.org>
+To: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Christophe Roullier <christophe.roullier@foss.st.com>, 
+ Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Brian Masney <masneyb@kernel.org>
+In-Reply-To: <20261124-ups_mp25_clk_syscfg-v4-3-894d95dffec4@foss.st.com>
+References: <20261124-ups_mp25_clk_syscfg-v4-0-894d95dffec4@foss.st.com>
+ <20261124-ups_mp25_clk_syscfg-v4-3-894d95dffec4@foss.st.com>
+Date: Tue, 24 Nov 2026 14:16:18 -0500
+Message-Id: <179554777875.338124.2443153902372697503.b4-review@b4>
+X-Mailer: b4 0.17-dev-8145e
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1998; i=masneyb@kernel.org;
+ s=20250903; h=from:subject:message-id;
+ bh=F1WVQywTa9F2r7TDaCAJztvWfqC8Q7gfotXdlbvqROs=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJZH7W0Czi4fuJvs6oPT7shs7bSP1zXa3Km+xF5bf0jV
+ WcZTao7SlkYxLgYZMUUWZbkGhVEpK6yvXdHkwVmDisTyBAGLk4BmIjUKUaGnbHpPgx+ZmUPVnA3
+ zjwxl7/CLpDp4EoWvXb912Enmq8kMTI0tLaL5vuELPvwdL0ES9a6wooZclMLAliN9nutq72Wxcs
+ PAA==
+X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-On Tue, Nov 24, 2026 at 12:28:24PM +0000, Peter Griffin wrote:
-> Hi Brian,
+Hi Gabriel,
+
+> The STM32MP23x and STM32MP25x SYSCFG provides the LTDC pixel clock mux,
+> whose driver is an auxiliary driver since the SYSCFG node is bound to
+> this driver.
 > 
-> Thanks for your series; it's great to see more Laguna support being posted.
+> Create the auxiliary device for the clock driver.
 > 
-> On Mon, 26 Oct 2026 at 21:45, Brian Norris <briannorris@chromium.org> wrote:
-> >
-> > The Central Power Manager (CPM) is a co-processor on the Google Tensor
-> > SoCs, as used on Pixel phones. CPM supports power-management and a
-> > number of other features.
-> >
-> > The Application Processor communicates with CPM over a pair of mailbox
-> > channels (the "MailBox Array" (MBA)). CPM provides clock, power-domain,
-> > reset, interrupt services, and more.
-> 
-> [..]
-> 
-> +++ b/drivers/soc/google/Kconfig
-> @@ -0,0 +1,13 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> [gabriel.fernandez@foss.st.com: create the device on STM32MP23x too]
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> ---
+>  drivers/soc/st/Kconfig           |  1 +
+>  drivers/soc/st/stm32mp2-syscfg.c | 14 +++++++++++++-
+>  2 files changed, 14 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/soc/st/Kconfig b/drivers/soc/st/Kconfig
+> index 2a9d6a77be45..62bbe8c63238 100644
+> --- a/drivers/soc/st/Kconfig
+> +++ b/drivers/soc/st/Kconfig
+> @@ -5,6 +5,7 @@ config SOC_STM32MP2
+>  	tristate "STM32MP2 SoC family support"
+>  	depends on ARCH_STM32 || COMPILE_TEST
+>  	default ARCH_STM32 && ARM64
+> +	select AUXILIARY_BUS
+>  	select SOC_BUS
+>  	help
+>  	  If you say yes here, you get support for the ST STM32MP2 family
+> diff --git a/drivers/soc/st/stm32mp2-syscfg.c b/drivers/soc/st/stm32mp2-syscfg.c
+> index 770321a4a6f7..1160b65d3dde 100644
+> --- a/drivers/soc/st/stm32mp2-syscfg.c
+> +++ b/drivers/soc/st/stm32mp2-syscfg.c
+> @@ -3,13 +3,25 @@
+>   * Copyright 2026 Marek Vasut
+>   */
+>  
+> +#include <linux/auxiliary_bus.h>
+>  #include <linux/module.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+>  
+>  static int stm32mp2_syscfg_probe(struct platform_device *pdev)
+>  {
+> -	return devm_of_platform_populate(&pdev->dev);
+> +	struct device *dev = &pdev->dev;
+> +	int ret;
 > +
-> +config GOOGLE_CPM_MBA
-> +       tristate "Google Tensor CPM MailBox Array Interface"
-> +       depends on ARCH_GOOGLE || COMPILE_TEST
-> +       depends on MAILBOX
-> 
-> Should we also have "depends on OF"?
+> +	ret = devm_of_platform_populate(dev);
+> +	if (ret)
+> +		return ret;
+> +
 
-Why, precisely? It's not actually a compilation dependency (I tested),
-although it's needed at runtime. It doesn't seem like this is
-consistently done simply for runtime dependencies, and instead work has
-generally been done to ensure everything builds fine and fails closed
-without CONFIG_OF.
+Looking at the dt binding, I see that the clocks property is optional.
+Should this have the following check?
 
-Anyway, it's a bit academic, since ARCH_GOOGLE (ARM64) selects OF.
+    if (!of_property_present(dev->of_node, "clocks"))
+        return 0;
 
-> +       select AUXILIARY_BUS
-> +       help
-> +         Driver for interfacing with the Central Power Manager (CPM) MailBox
-> +         Array (MBA) found on Google Tensor SoCs. The driver provides APIs for
-> +         communication between the Application Processor and the CPM, and
-> +         is required by CPM client drivers such as clock, reset, power
-> +         domain, and more.
-> 
-> > diff --git a/drivers/soc/google/google-cpm-mba.c b/drivers/soc/google/google-cpm-mba.c
-> > new file mode 100644
-> > index 000000000000..629a071e202c
-> > --- /dev/null
-> > +++ b/drivers/soc/google/google-cpm-mba.c
-> > @@ -0,0 +1,964 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Google MailBox Array (MBA) CPM Interface
-> > + *
-> > + * Copyright 2023-2026 Google LLC
-> > + */
-> > +
-> > +#include <linux/auxiliary_bus.h>
-> > +#include <linux/bitfield.h>
-> > +#include <linux/bits.h>
-> > +#include <linux/cleanup.h>
-> > +#include <linux/completion.h>
-> > +#include <linux/device.h>
-> > +#include <linux/jiffies.h>
-> > +#include <linux/kref.h>
-> > +#include <linux/list.h>
-> > +#include <linux/lockdep.h>
-> > +#include <linux/mailbox/goog-mba-message.h>
-> > +#include <linux/mailbox_client.h>
-> > +#include <linux/mailbox_controller.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_platform.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/spinlock.h>
-> 
-> Missing `#include <linux/slab.h>` header here as later it calls
-> kfree(), kzalloc_obj().
-> This can cause "implicit declaration of function kfree / kzalloc_obj"
-> errors with COMPILE_TEST. Also similar issue in clk-cpm.c
-
-Ack, will fix.
-
-> > +
-> > +#include <soc/google/google-cpm-mba.h>
-> > +
-> > +#include "google-cpm-mba.h"
-> > +
-> 
-> [..]
-> > +static bool cpm_iface_is_valid_req(struct cpm_data *cpm,
-> > +                                  struct cpm_request *cpm_req)
-> > +{
-> > +       struct device *dev = cpm->dev;
-> > +
-> > +       if (!cpm_req) {
-> > +               dev_err(dev, "cpm_req is NULL\n");
-> > +               return false;
-> > +       }
-> > +
-> > +       if (!cpm_req->req_msg) {
-> > +               dev_err(dev, "cpm_req->req_msg is NULL\n");
-> > +               return false;
-> > +       }
-> > +
-> > +       if (cpm_req->msg_type > RESPONSE_MSG || cpm_req->msg_type < ONEWAY_MSG) {
-> > +               dev_err(dev, "Invalid msg_type: %d\n", cpm_req->msg_type);
-> > +               return false;
-> > +       }
-> 
-> Should cpm_req->dst_id also be range checked?
-
-This will be refactored on v2, where dst_id will be u8 and so will
-always be in-bounds.
-
-> > +
-> > +       if (cpm_is_request_msg(cpm_req) && !cpm_req->resp_msg) {
-> > +               dev_err(dev, "cpm_req->resp_msg is NULL when msg_type is REQUEST_MSG\n");
-> > +               return false;
-> > +       }
-> > +
-> > +       if (cpm_is_response_msg(cpm_req)) {
-> > +               if (!goog_mba_q_get_valid(&cpm_req->resp_context)) {
-> > +                       dev_err(dev, "Invalid valid bit in resp_context: %#x\n",
-> > +                               cpm_req->resp_context);
-> > +                       return false;
-> > +               }
-> > +
-> > +               if (!cpm_is_response_header(&cpm_req->resp_context)) {
-> > +                       dev_err(dev, "Invalid response type in resp_context: %#x\n",
-> > +                               cpm_req->resp_context);
-> > +                       return false;
-> > +               }
-> > +       }
-> > +
-> > +       return true;
-> > +}
-> > +
-> 
-> [..]
-> 
-> > +
-> > +static int cpm_init_q_mode_proto(struct cpm_data *cpm)
-> > +{
-> > +       struct cpm_payload msg_payload = {};
-> > +       struct cpm_request req = {
-> > +               .msg_type = ONEWAY_MSG,
-> > +               .req_msg = &msg_payload,
-> > +       };
-> > +
-> > +       return __cpm_send_message(cpm, &req, GOOG_MBA_Q_INIT_PROTO_VAL, 0);
-> 
-> Do we want this to have an infinite timeout? If the CPM firmware never
-> responds, it will hang the boot (as MAX_SCHEDULE_TIMEOUT doesn't arm a
-> timer).
-> I guess it is game over anyway if the CPM firmware is dead, but it
-> would be nice to log an error and return from probe()
-
-Hmm, I suppose a timeout would be OK, although definitely fatal to any
-useful purpose of the system.
-
-> > +}
-> > +
-> > +static int cpm_init_q_mode(struct cpm_data *cpm)
-> > +{
-> > +       int ret;
-> > +
-> > +       ret = cpm_init_q_mode_proto(cpm);
-> > +       if (ret < 0)
-> > +               return ret;
-> > +
-> > +       cpm->seq_num = GOOG_MBA_Q_MIN_SEQ_VAL;
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static void cpm_adev_release(struct device *dev)
-> > +{
-> > +       struct auxiliary_device *adev = to_auxiliary_dev(dev);
-> > +
-> > +       of_node_put(dev->of_node);
-> > +       kfree(adev);
-> > +}
-> > +
-> > +static void cpm_unregister_adev_action(void *data)
-> > +{
-> > +       struct auxiliary_device *adev = data;
-> > +
-> > +       auxiliary_device_delete(adev);
-> > +       auxiliary_device_uninit(adev);
-> > +}
-> > +
-> 
-> Can we use devm_auxiliary_device_create() instead of open coding these?
-
-Yes.
-
-I think this (and some planned subsequent changes) have morphed a bit
-over my development time, as there were some cases where we could not
-reuse the same of_node. But this current patch can use it, and I also
-think future changes will likely just use mfd / of_platform_populate()
-if they require subnodes, so my initial concern is probably invalid.
-
-> > +static int cpm_register_adev(struct cpm_data *cpm, const char *name)
-> > +{
-> > +       struct auxiliary_device *adev;
-> > +       int ret;
-> > +
-> > +       adev = kzalloc_obj(*adev, GFP_KERNEL);
-> > +       if (!adev)
-> > +               return -ENOMEM;
-> > +
-> > +       adev->name = name;
-> > +       adev->id = 0;
-> > +       adev->dev.parent = cpm->dev;
-> > +       adev->dev.release = cpm_adev_release;
-> > +       device_set_of_node_from_dev(&adev->dev, cpm->dev);
-> > +
-> > +       ret = auxiliary_device_init(adev);
-> > +       if (ret) {
-> > +               of_node_put(adev->dev.of_node);
-> > +               kfree(adev);
-> > +               return ret;
-> > +       }
-> > +
-> > +       ret = auxiliary_device_add(adev);
-> > +       if (ret) {
-> > +               auxiliary_device_uninit(adev);
-> > +               return ret;
-> > +       }
-> > +
-> > +       return devm_add_action_or_reset(cpm->dev, cpm_unregister_adev_action, adev);
-> > +}
-> > +
-> 
-> [..]
-> 
-> > +
-> > +MODULE_DESCRIPTION("Google MBA CPM interface");
-> > +MODULE_AUTHOR("Lucas Wei <lucaswei@google.com>");
-> 
-> I think you should add Lucas Wei's SoB tag to the patch as part of the DCO
-
-I keep going back and forth in my head on this one, since these drivers
-did indeed start from the same source with the professed MODULE_AUTHOR.
-But they've been massively rewritten, so they're similar in a sort of
-Ship of Theseus way.
-
-I suppose I'll retain the MODULE_AUTHOR() and update the SoB.
-
-Regards,
 Brian
+
+-- 
+Brian Masney <masneyb@kernel.org>
