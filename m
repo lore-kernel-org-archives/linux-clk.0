@@ -1,56 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795516132;
-	b=piDpQ7xM3fG560+1ZQsoXv95dj2f43cx8VQl0lzm4AiJo5iODdxOUNRaOoC/qgqPCK1b
-	 sCqoMlbpmkQ62FUjKd/0FHN7BpUMwhDlnj5aEgWSxnl0RKGbyNw/G7IPrviC2tNzRYM7d
-	 WEQbhI6bntPVLshGw8jWld0tsB3nHZsfL4EnMMoYvxKXAseBGlwetGG/5uyEkpRp1qz1P
-	 ujkKkFwdDMgIZ+ONpARnr+bwQEgzaOPSAEUvXhVIu+SpoeLnfi3XI3Oik8hGzoXtSZeok
-	 F/dQhyxPi19Wj+DGeb7eVb9Qr1FbJqliIwaWOilyXYmNwO5vd5rnm+5ou6z02nhMISg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795516132;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=0xMlouJrypYx/yImtpjHEvUuMDrtLk3A8nlTJrmuU3A=;
-	b=WwDaklA0QhpZk4Y/CcrooUkYDPkIl25Um1R973oOaZpbI5nfOoMp/KDzpa4JwkSVebNp
-	 Ym0QDTDWKTDF4q5g5yTUJUD4zavOcmvUnT9NV7aNyb7YKN6bgCeMgcUfbLz1CuOH1H0S3
-	 aaHl7PYZaLLNp9mtoGmSD/ckiOuUHt5sA/uVVlFOpKOAce6+r84FyZLoYIMVOmoPfvpCQ
-	 Z6k9ieNR6c7daFmxlyCSt1toZ1gmB/DSThcy33qZIzah9m3RL0yVVyGiPPFyoFWSaLVNk
-	 KjyTAM8UIywulGPRBdxe/CLlMr0nVY2GL1Aq0Wuw/BYoFJRBEDKWDOxkzBXDA7UzM1A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CdiunMw5;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795516206;
+	b=fkNI+XTWfB2VCxi9/dowDnX8Rx2QUNXm6a/YOsvZdSX3kXaQIA7fd+vhWOOa8GiHx8eg
+	 4F1ScCVkkUeHKNGJaBwiq+GC7HJ6CK3D0rkv6bbaY7pNwbH+rwjU4budWpFvOvq+j20RW
+	 4kbO3fob2BR6fT2KU+MAKSoCV4c+sDvcRvwi0u/M3gC/qxPB7TJWO+4jkxGeWEGztbQF6
+	 WVcO2jYqMCACsLw0Rl3RaS6O+1R5lSu/jX1+mUtIm7DDX7lvij3yMa33SIFqgd91Va6eP
+	 xUfes0Yv2VhgrB8bOVLiNVTQ+nLvqqhm3AceaosAa4Di63v3r6KbjNSiDZwC2NJo4Ow==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795516206;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=fvqpUaYvk9f/z+mIcVPsgnzKNqUqRWXkIX6uqXRqLX0=;
+	b=XOmsGpBVvafIGRVLHS702JIT/Vw2gq7yalDU9W2qVOfBv2QIUbtVeUNFG0WUXUYeMAZg
+	 EvcmxIZAc+O6jUiDsiZ20FmgUwLr+9Z9AidlrB2yOeBvMw+CNwxBCnoDPPwjcgv/y3sdL
+	 QQMhMcZ4uF2hTRHcaWekd/ZBpg+Eo4KA1glekZ5s/goHlKCAqcraF0cgopZkJuQKKeDZK
+	 sWszr3kA0orX65+D8Yde2Y4Z2gU/esfdA8X9cjEStTba8PFySjP/M25tu/x5ll2ILDIU2
+	 unDgAJDH5Mq2kHDCaQDIs+VACLnX8AMEdlBGDFxTOikvi1nTZrtym3gPAjLcjTNtIcw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=dM+gS99d;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32499606A31E;
-	Tue, 24 Nov 2026 10:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07F9606A32C;
+	Tue, 24 Nov 2026 10:30:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C07F9606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CdiunMw5
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E7581F000CA;
-	Tue, 24 Nov 2026 10:28:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795516131;
-	bh=0xMlouJrypYx/yImtpjHEvUuMDrtLk3A8nlTJrmuU3A=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=CdiunMw5H2E/puEF1nMlJcWqWzLJipi06O9cofA/4yJTWcA0obERovtCMznwSLX+g
-	 RJ/m37VKfPlUb6iHSwft0ceHQOi1KHTfX9byKVrRBAbCD+9F/n4Ce3nNQKqW0h5TnI
-	 mOICiv/YlNGBx8YDWfPvhVdlfgZgfAoY7eNceNyCRvj6gLd7m9ASlVVEOGntHzn7GX
-	 fwKvD1eZ9vL67p6hG5scp2F/8vOkYQQfdpNJUiTdQGbOqWKKH/q/z0sa38+i6aW5d8
-	 5x3tSqWmqO8Kh2aO4TyTAAWkZD3IbiFN3EQ7WePI+pghZnzUmDLUEyDy9GnVf/FIfC
-	 FrNmVgseXGAkw==
-Message-ID: <sashiko-outbox-230964@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/4] clk: qcom: Add the Netrani global clock controller
-Reply-To: sashiko-reviews@lists.linux.dev
-To: SignKirigami <prcups@krgm.moe>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261124-netrani-clock-v1-v1-2-ce10cedbfa4b@krgm.moe>
-References: <20261124-netrani-clock-v1-v1-0-ce10cedbfa4b@krgm.moe>
- <20261124-netrani-clock-v1-v1-2-ce10cedbfa4b@krgm.moe>
-Content-Type: text/plain; charset=utf-8
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=dM+gS99d
+Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
+	(Authenticated sender: pza@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id C3907201A7B;
+	Tue, 24 Nov 2026 11:30:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1795516203;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fvqpUaYvk9f/z+mIcVPsgnzKNqUqRWXkIX6uqXRqLX0=;
+	b=dM+gS99ddtlsxQ9OWhdpqVKfvJ6lVY0i0TGS5Ku27GmC+9NEpdrBpVek7eOepa06Zs7yUc
+	quqXm++aWfafJghFV1DGy9fRgjmgEsNm68jdK3mXRKQvlnIOeMuUgVNINzo71yTLpgZksF
+	MKqa/q7mXFNQNjvHLilVga52wvW23hBnmsygusgz64dNVcsfPzgZdsdCEygOgbJlb67cuy
+	2uSXgGLSSQJLZ3jLCm15hfuqSkW3PXVT8HdiYk3Md111G+aSOCy9bmxW/WOuz6dtv+lEd9
+	GbH0kGXZFf1oRoXS+uTx6w5dZ78a7VPhvzcnmUgLnSUVDAM3IPj/pKlKywFLsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1795516203;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fvqpUaYvk9f/z+mIcVPsgnzKNqUqRWXkIX6uqXRqLX0=;
+	b=TezWTQBF9YWVTLhcboUvlTc1tLXItyidILp5AJw+CU928bjTPxFFrNmxN5frevjCdXSEIY
+	xHMEcIIBzrlM5/UJT7/LDYtcewblE8YVWwNE3loNLQT377Xe8gyjfs+6P0u91k6GPeDJbQ
+	KvhpHVYN7PTvEAGkEulbBe3m0NiN2Xs3RB48cIELG2czSy8rVmDLbWbZiAOr5snc7793Hv
+	pXiEVXG2kEfO/kIpWEbN1qaUc/MaakHh9EZaCe5krrcbvpyRvJVnqC+AmUVoxiBRfrdSfM
+	WWgY6Oollfh/qj96OZ5YFNuVHWB5yf4LkpwJE6D3HA83Hk37CKhlFRfhxNJsvA==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1795516203; a=rsa-sha256;
+	cv=none;
+	b=fkEK7slnqgbBO+XuN6cijAGgy2vmQ/NG+qiy8DcOy0w0ENS9IqB7fgct3Wa+CvZR3tS/0x
+	2x0jAvQMY2KUQYuWUelLCN9E/R3vfq6Es7FcB3mt2D5cLPsdME9OptyeQPG5ULTF9cfiPA
+	ea2wobXE9yqmPFXEsPeYbCbY5xNZIaKNtspyxazP1Dxklx0PwUmeIpRAY67zLM0FwFmPLm
+	fLRY5j5QGLs0Yq/VUcPd7DvpJnnYbo9gnPZ5d5zdm8CD+n11NQU2N9zDVr1zyW8hsxPkQR
+	i8nzC8wsIhM/pbgvYhH1XtAL6Vn8d4XYqjAjEZ30FUIjQFoCwUTnJf9dNtsLZQ==
+Message-ID: <bfa7cff359bf346981be355d0429f4743a58dbc4.camel@pengutronix.de>
+Subject: Re: [PATCH v5 6/6] reset: Add Siflower SF19A2890 peripheral reset
+ driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: joseph@telaak.dev, Stephen Boyd <sboyd@kernel.org>, Brian Masney	
+ <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Rob
+ Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley	 <conor+dt@kernel.org>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>
+Cc: Paul Burton <paulburton@kernel.org>, Jiaxun Yang
+ <jiaxun.yang@flygoat.com>,  Chuanhong Guo <gch981213@gmail.com>, Yao Zi
+ <me@ziyao.cc>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=	
+ <u.kleine-koenig@baylibre.com>, linux-mips@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 24 Nov 2026 11:30:03 +0100
+In-Reply-To: <20261123-sf19a2890-sysm-v5-6-4ba44a0db17d@telaak.dev>
+References: <20261123-sf19a2890-sysm-v5-0-4ba44a0db17d@telaak.dev>
+	 <20261123-sf19a2890-sysm-v5-6-4ba44a0db17d@telaak.dev>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 24 Nov 2026 10:28:51 +0000
+User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,539 +101,187 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
 
-Thank you for your contribution! Sashiko AI review found 7 potential
-issues to consider:
-- [High] clk: qcom: mismatched parent arrays and num_parents in six
-  Netrani RCGs
-- [High] clk: qcom: missing reset entries in gcc_netrani_resets clobber
-  GPLL0 at 0x0
-- [Medium] clk: qcom: QUPv3 SE5 RCGs omitted from gcc_dfs_clocks[] in
-  gcc-netrani
-- [Medium] clk: qcom: inconsistent QUPv3 SE5 divider and QSPI0 offsets
-  across wrappers
-- [Medium] clk: qcom: critical gcc_camera_sleep_clk registered as
-  gateable branch clock
-- [Medium] clk: qcom: gcc_netrani_prepare_required_clocks() writes video
-  AXI bit to 0x4201c
-- [Low] clk: qcom: open-coded probe and init boilerplate in gcc-netrani
---
-
-commit 391c2be97d7837927f3384c23157765a1781b299
-Author: SignKirigami <prcups@krgm.moe>
-
-clk: qcom: Add the Netrani global clock controller
-
-This commit adds the global clock controller (GCC) driver for Qualcomm
-Netrani, providing clocks, resets, power domains, and QUPv3 DFS roots.
-
-> diff --git a/drivers/clk/qcom/gcc-netrani.c b/drivers/clk/qcom/gcc-netran=
-i.c
+On Mo, 2026-11-23 at 23:41 -0500, Joseph Telaak via B4 Relay wrote:
+> From: Joseph Telaak <joseph@telaak.dev>
+>=20
+> Add a driver for the resets of the Siflower SF19A2890 peripheral clock
+> and reset managers. It binds to the auxiliary device that their clock
+> driver creates and uses the registers that driver has mapped. Where an
+> IP has a reset line for each of its clock domains, as the PL011 UARTs
+> and the PL022 SPI controller do, one reset drives all of them, since
+> they have to be asserted together.
+>=20
+> Based on the reset part of the driver in Chuanhong Guo's SF19A2890
+> branch.
+>=20
+> Link: https://github.com/981213/linux/commit/37c81bebaf54
+> Co-developed-by: Chuanhong Guo <gch981213@gmail.com>
+> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
+> Signed-off-by: Joseph Telaak <joseph@telaak.dev>
+> ---
+>  MAINTAINERS                               |   1 +
+>  drivers/reset/Kconfig                     |  11 ++
+>  drivers/reset/Makefile                    |   1 +
+>  drivers/reset/reset-sf19a2890-periphcrm.c | 194 ++++++++++++++++++++++++=
+++++++
+>  4 files changed, 207 insertions(+)
+>=20
+[...]
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 489fafd6bbe3..d4b707505c3d 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -39,6 +39,7 @@ obj-$(CONFIG_RESET_RASPBERRYPI) +=3D reset-raspberrypi.=
+o
+>  obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) +=3D reset-rzg2l-usbphy-ctrl.o
+>  obj-$(CONFIG_RESET_RZV2H_USB2PHY) +=3D reset-rzv2h-usb2phy.o
+>  obj-$(CONFIG_RESET_SCMI) +=3D reset-scmi.o
+> +obj-$(CONFIG_RESET_SF19A2890_PERIPHCRM) +=3D reset-sf19a2890-periphcrm.o
+>  obj-$(CONFIG_RESET_SIMPLE) +=3D reset-simple.o
+>  obj-$(CONFIG_RESET_SKY1) +=3D reset-sky1.o
+>  obj-$(CONFIG_RESET_SKY1_AUDSS) +=3D reset-sky1-audss.o
+> diff --git a/drivers/reset/reset-sf19a2890-periphcrm.c b/drivers/reset/re=
+set-sf19a2890-periphcrm.c
 > new file mode 100644
-> index 0000000000000..f8bbd0edd528c
+> index 000000000000..54b476237bd4
 > --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-netrani.c
-> @@ -0,0 +1,2833 @@
-
-[ ... ]
-
-> +static const struct parent_map gcc_parent_map_0[] =3D {
-> +	{ P_BI_TCXO, 0 },
-> +	{ P_GCC_GPLL0_OUT_MAIN, 1 },
-> +	{ P_GCC_GPLL0_OUT_EVEN, 6 },
+> +++ b/drivers/reset/reset-sf19a2890-periphcrm.c
+> @@ -0,0 +1,194 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Siflower SF19A2890 peripheral reset driver
+> + *
+> + * The peripheral clock and reset managers keep their resets in the firs=
+t
+> + * register of the block. Their clock driver creates an auxiliary device=
+ for
+> + * them and passes the mapped registers in its platform data.
+> + */
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/bits.h>
+> +#include <linux/device.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/spinlock.h>
+> +
+> +#include <dt-bindings/clock/siflower,sf19a2890-periph-crm.h>
+> +
+> +#define REG_RESET	0x0
+> +
+> +struct sf19a2890_periphrst_data {
+> +	const u32 *masks;
+> +	unsigned int num_resets;
 > +};
 > +
-> +static const struct clk_parent_data gcc_parent_data_0[] =3D {
-> +	{ .fw_name =3D "bi_tcxo" },
-> +	{ .hw =3D &gcc_gpll0.clkr.hw },
-> +	{ .hw =3D &gcc_gpll0_out_even.clkr.hw },
-> +};
-
-[ ... ]
-
-> +static const struct parent_map gcc_parent_map_2[] =3D {
-> +	{ P_BI_TCXO, 0 },
-> +	{ P_SLEEP_CLK, 5 },
+> +struct sf19a2890_periphrst {
+> +	struct reset_controller_dev rcdev;
+> +	void __iomem *base;
+> +	spinlock_t lock;	/* serializes reset register updates */
+> +	const u32 *masks;
 > +};
 > +
-> +static const struct clk_parent_data gcc_parent_data_2[] =3D {
-> +	{ .fw_name =3D "bi_tcxo" },
-> +	{ .fw_name =3D "sleep_clk" },
-> +};
-> +
-> +static const struct parent_map gcc_parent_map_3[] =3D {
-> +	{ P_BI_TCXO, 0 },
-> +	{ P_GCC_GPLL0_OUT_MAIN, 1 },
-> +	{ P_GCC_GPLL0_OUT_ODD, 2 },
-> +	{ P_GCC_GPLL10_OUT_MAIN, 3 },
-> +	{ P_GCC_GPLL0_OUT_EVEN, 6 },
-> +};
-> +
-> +static const struct clk_parent_data gcc_parent_data_3[] =3D {
-> +	{ .fw_name =3D "bi_tcxo" },
-> +	{ .hw =3D &gcc_gpll0.clkr.hw },
-> +	{ .hw =3D &gcc_gpll0_out_odd.clkr.hw },
-> +	{ .hw =3D &gcc_gpll10.clkr.hw },
-> +	{ .hw =3D &gcc_gpll0_out_even.clkr.hw },
-> +};
-> +
-> +static const struct parent_map gcc_parent_map_4[] =3D {
-> +	{ P_BI_TCXO, 0 },
-> +};
-> +
-> +static const struct clk_parent_data gcc_parent_data_4[] =3D {
-> +	{ .fw_name =3D "bi_tcxo" },
-> +};
-> +
-> +static const struct parent_map gcc_parent_map_5[] =3D {
-> +	{ P_PCIE_0_PIPE_CLK, 0 },
-> +	{ P_BI_TCXO, 2 },
-> +};
-> +
-> +static const struct clk_parent_data gcc_parent_data_5[] =3D {
-> +	{ .fw_name =3D "pcie_0_pipe_clk" },
-> +	{ .fw_name =3D "bi_tcxo" },
-> +};
-
-[ ... ]
-
-> +static struct clk_rcg2 gcc_pcie_0_aux_clk_src =3D {
-> +	.cmd_rcgr =3D 0x7b064,
-> +	.mnd_width =3D 16,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D gcc_parent_map_2,
-> +	.freq_tbl =3D ftbl_gcc_pcie_0_aux_clk_src,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_pcie_0_aux_clk_src",
-> +		.parent_data =3D gcc_parent_data_2,
-> +		.num_parents =3D ARRAY_SIZE(gcc_parent_data_3),
-> +		.flags =3D CLK_SET_RATE_PARENT,
-> +		.ops =3D &clk_rcg2_shared_ops,
-> +	},
-> +};
-
-[ ... ]
-
-> +static struct clk_rcg2 gcc_sdcc1_apps_clk_src =3D {
-> +	.cmd_rcgr =3D 0xb3010,
-> +	.mnd_width =3D 8,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D gcc_parent_map_3,
-> +	.freq_tbl =3D ftbl_gcc_sdcc1_apps_clk_src,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_sdcc1_apps_clk_src",
-> +		.parent_data =3D gcc_parent_data_3,
-> +		.num_parents =3D ARRAY_SIZE(gcc_parent_data_4),
-> +		.flags =3D CLK_SET_RATE_PARENT,
-> +		.ops =3D &clk_rcg2_shared_floor_ops,
-> +	},
-> +};
-> +
-> +static const struct freq_tbl ftbl_gcc_sdcc1_ice_core_clk_src[] =3D {
-> +	F(100000000, P_GCC_GPLL0_OUT_ODD, 2, 0, 0),
-> +	F(150000000, P_GCC_GPLL0_OUT_EVEN, 2, 0, 0),
-> +	F(300000000, P_GCC_GPLL0_OUT_EVEN, 1, 0, 0),
-> +	{ }
-> +};
-> +
-> +static struct clk_rcg2 gcc_sdcc1_ice_core_clk_src =3D {
-> +	.cmd_rcgr =3D 0xb3030,
-> +	.mnd_width =3D 0,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D gcc_parent_map_3,
-> +	.freq_tbl =3D ftbl_gcc_sdcc1_ice_core_clk_src,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_sdcc1_ice_core_clk_src",
-> +		.parent_data =3D gcc_parent_data_3,
-> +		.num_parents =3D ARRAY_SIZE(gcc_parent_data_4),
-> +		.flags =3D CLK_SET_RATE_PARENT,
-> +		.ops =3D &clk_rcg2_shared_floor_ops,
-> +	},
-> +};
-
-[ ... ]
-
-> +static const struct freq_tbl ftbl_gcc_ufs_phy_ice_core_clk_src[] =3D {
-> +	F(100000000, P_GCC_GPLL0_OUT_MAIN, 6, 0, 0),
-> +	F(200000000, P_GCC_GPLL0_OUT_MAIN, 3, 0, 0),
-> +	F(403000000, P_GCC_GPLL4_OUT_MAIN, 2, 0, 0),
-> +	{ }
-> +};
-> +
-> +static struct clk_rcg2 gcc_ufs_phy_ice_core_clk_src =3D {
-> +	.cmd_rcgr =3D 0x87074,
-> +	.mnd_width =3D 0,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D gcc_parent_map_0,
-> +	.freq_tbl =3D ftbl_gcc_ufs_phy_ice_core_clk_src,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_ufs_phy_ice_core_clk_src",
-> +		.parent_data =3D gcc_parent_data_0,
-> +		.num_parents =3D ARRAY_SIZE(gcc_parent_data_2),
-> +		.flags =3D CLK_SET_RATE_PARENT,
-> +		.ops =3D &clk_rcg2_shared_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 gcc_ufs_phy_phy_aux_clk_src =3D {
-> +	.cmd_rcgr =3D 0x870a8,
-> +	.mnd_width =3D 0,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D gcc_parent_map_4,
-> +	.freq_tbl =3D ftbl_gcc_pcie_0_aux_clk_src,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_ufs_phy_phy_aux_clk_src",
-> +		.parent_data =3D gcc_parent_data_4,
-> +		.num_parents =3D ARRAY_SIZE(gcc_parent_data_5),
-> +		.flags =3D CLK_SET_RATE_PARENT,
-> +		.ops =3D &clk_rcg2_shared_ops,
-> +	},
-> +};
-
-[ ... ]
-
-> +static struct clk_rcg2 gcc_usb3_prim_phy_aux_clk_src =3D {
-> +	.cmd_rcgr =3D 0x4906c,
-> +	.mnd_width =3D 0,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D gcc_parent_map_2,
-> +	.freq_tbl =3D ftbl_gcc_usb30_prim_mock_utmi_clk_src,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_usb3_prim_phy_aux_clk_src",
-> +		.parent_data =3D gcc_parent_data_2,
-> +		.num_parents =3D ARRAY_SIZE(gcc_parent_data_3),
-> +		.ops =3D &clk_rcg2_ops,
-> +	},
-> +};
-
-[Severity: High]
-Do these six RCGs pass a mismatched ARRAY_SIZE() for .num_parents?
-
-In gcc_pcie_0_aux_clk_src, gcc_ufs_phy_phy_aux_clk_src, and
-gcc_usb3_prim_phy_aux_clk_src, .num_parents is larger than the assigned
-parent_data and parent_map arrays, so clk_core_populate_parent_map() and
-qcom_find_src_index() read past the end of those tables.
-
-In gcc_sdcc1_apps_clk_src and gcc_sdcc1_ice_core_clk_src,
-ARRAY_SIZE(gcc_parent_data_4) truncates the 5-entry gcc_parent_data_3 table
-to 1 entry (P_BI_TCXO), causing qcom_find_src_index() to fail with -ENOENT
-for every PLL-backed rate in their frequency tables.
-
-In gcc_ufs_phy_ice_core_clk_src, .num_parents uses gcc_parent_data_2 while
-.parent_data and .parent_map use gcc_parent_data_0 and gcc_parent_map_0,
-which also lack the P_GCC_GPLL4_OUT_MAIN parent required for the 403 MHz
-entry in ftbl_gcc_ufs_phy_ice_core_clk_src.
-
-[ ... ]
-
-> +static struct clk_branch gcc_camera_sleep_clk =3D {
-> +	.halt_reg =3D 0x36018,
-> +	.halt_check =3D BRANCH_HALT,
-> +	.clkr =3D {
-> +		.enable_reg =3D 0x36018,
-> +		.enable_mask =3D BIT(0),
-> +		.hw.init =3D &(const struct clk_init_data) {
-> +			.name =3D "gcc_camera_sleep_clk",
-> +			.ops =3D &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_video_axi0_clk =3D {
-> +	.halt_reg =3D 0x4200c,
-> +	.halt_check =3D BRANCH_HALT_SKIP,
-> +	.hwcg_reg =3D 0x4200c,
-> +	.hwcg_bit =3D 1,
-> +	.clkr =3D {
-> +		.enable_reg =3D 0x4200c,
-> +		.enable_mask =3D BIT(0),
-> +		.hw.init =3D &(const struct clk_init_data) {
-> +			.name =3D "gcc_video_axi0_clk",
-> +			.ops =3D &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-
-[ ... ]
-
-> +static struct clk_init_data gcc_qupv3_wrap0_s5_clk_src_init =3D {
-> +	.name =3D "gcc_qupv3_wrap0_s5_clk_src",
-> +	.parent_data =3D gcc_parent_data_0,
-> +	.num_parents =3D ARRAY_SIZE(gcc_parent_data_0),
-> +	.flags =3D CLK_SET_RATE_PARENT,
-> +	.ops =3D &clk_rcg2_shared_ops,
-> +};
-> +
-> +static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src =3D {
-> +	.cmd_rcgr =3D 0x27618,
-> +	.mnd_width =3D 16,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D gcc_parent_map_0,
-> +	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s5_clk_src,
-> +	.clkr.hw.init =3D &gcc_qupv3_wrap0_s5_clk_src_init,
-> +};
-> +
-> +static struct clk_regmap_div gcc_qupv3_wrap0_s5_div_clk_src =3D {
-> +	.reg =3D 0x2774c,
-> +	.shift =3D 0,
-> +	.width =3D 4,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_qupv3_wrap0_s5_div_clk_src",
-> +		.parent_hws =3D (const struct clk_hw*[]) {
-> +			&gcc_qupv3_wrap0_s5_clk_src.clkr.hw,
-> +		},
-> +		.num_parents =3D 1,
-> +		.flags =3D CLK_SET_RATE_PARENT,
-> +		.ops =3D &clk_regmap_div_ro_ops,
-> +	},
-> +};
-
-[ ... ]
-
-> +static struct clk_branch gcc_qupv3_wrap0_qspi0_clk =3D {
-> +	.halt_reg =3D 0x27744,
-> +	.halt_check =3D BRANCH_HALT_VOTED,
-> +	.clkr =3D {
-> +		.enable_reg =3D 0x62010,
-> +		.enable_mask =3D BIT(24),
-> +		.hw.init =3D &(const struct clk_init_data) {
-> +			.name =3D "gcc_qupv3_wrap0_qspi0_clk",
-> +			.parent_hws =3D (const struct clk_hw*[]) {
-> +				&gcc_qupv3_wrap0_s5_clk_src.clkr.hw,
-> +			},
-> +			.num_parents =3D 1,
-> +			.flags =3D CLK_SET_RATE_PARENT,
-> +			.ops =3D &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-
-[ ... ]
-
-> +static struct clk_init_data gcc_qupv3_wrap1_s5_clk_src_init =3D {
-> +	.name =3D "gcc_qupv3_wrap1_s5_clk_src",
-> +	.parent_data =3D gcc_parent_data_0,
-> +	.num_parents =3D ARRAY_SIZE(gcc_parent_data_0),
-> +	.flags =3D CLK_SET_RATE_PARENT,
-> +	.ops =3D &clk_rcg2_shared_ops,
-> +};
-> +
-> +static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src =3D {
-> +	.cmd_rcgr =3D 0x28618,
-> +	.mnd_width =3D 16,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D gcc_parent_map_0,
-> +	.freq_tbl =3D ftbl_gcc_qupv3_wrap1_s5_clk_src,
-> +	.clkr.hw.init =3D &gcc_qupv3_wrap1_s5_clk_src_init,
-> +};
-> +
-> +static struct clk_regmap_div gcc_qupv3_wrap1_s5_div_clk_src =3D {
-> +	.reg =3D 0x28744,
-> +	.shift =3D 0,
-> +	.width =3D 4,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_qupv3_wrap1_s5_div_clk_src",
-> +		.parent_hws =3D (const struct clk_hw*[]) {
-> +			&gcc_qupv3_wrap1_s5_clk_src.clkr.hw,
-> +		},
-> +		.num_parents =3D 1,
-> +		.flags =3D CLK_SET_RATE_PARENT,
-> +		.ops =3D &clk_regmap_div_ro_ops,
-> +	},
-> +};
-
-[ ... ]
-
-> +static struct clk_branch gcc_qupv3_wrap1_qspi0_clk =3D {
-> +	.halt_reg =3D 0x28748,
-> +	.halt_check =3D BRANCH_HALT_VOTED,
-> +	.clkr =3D {
-> +		.enable_reg =3D 0x62010,
-> +		.enable_mask =3D BIT(25),
-> +		.hw.init =3D &(const struct clk_init_data) {
-> +			.name =3D "gcc_qupv3_wrap1_qspi0_clk",
-> +			.parent_hws =3D (const struct clk_hw*[]) {
-> +				&gcc_qupv3_wrap1_s5_clk_src.clkr.hw,
-> +			},
-> +			.num_parents =3D 1,
-> +			.flags =3D CLK_SET_RATE_PARENT,
-> +			.ops =3D &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-
-[Severity: Medium]
-Are the SE5 divider and QSPI0 CBCR offsets swapped between QUPv3 wrapper 0
-and wrapper 1?
-
-Both wrappers have identical relative offsets up to +0x618, but wrapper 0
-places gcc_qupv3_wrap0_qspi0_clk.halt_reg at +0x744 (0x27744) and
-gcc_qupv3_wrap0_s5_div_clk_src.reg at +0x74c (0x2774c), whereas wrapper 1
-places gcc_qupv3_wrap1_s5_div_clk_src.reg at +0x744 (0x28744) and
-gcc_qupv3_wrap1_qspi0_clk.halt_reg at +0x748 (0x28748).  One of the two
-wrappers will read the CBCR as a clock divider and poll the divider register
-for branch halt status.
-
-[ ... ]
-
-> +static const struct qcom_reset_map gcc_netrani_resets[] =3D {
-> +	[GCC_CAMERA_BCR] =3D { 0x36000 },
-> +	[GCC_DISPLAY_BCR] =3D { 0x37000 },
-> +	[GCC_GPU_BCR] =3D { 0x81000 },
-
-[ ... ]
-
-> +	[GCC_USB3PHY_PHY_SEC_BCR] =3D { 0x60010 },
-> +	[GCC_VIDEO_BCR] =3D { 0x42000 },
-> +};
-
-[Severity: High]
-Are GCC_EMMC_BCR and GCC_VIDEO_AXI0_CLK_ARES missing from
-gcc_netrani_resets[]?
-
-Both IDs are defined in include/dt-bindings/clock/qcom,netrani-gcc.h below
-GCC_VIDEO_BCR, so their slots in gcc_netrani_resets[] are zero-initialized.
-Because qcom_reset_set_assert() does not check for unpopulated entries,
-asserting or deasserting either reset writes BIT(0) to register 0x0, which =
-is
-the mode register for gcc_gpll0, toggling GPLL0 output control instead of
-resetting the peripheral.
-
-> +
-> +static const struct clk_rcg_dfs_data gcc_dfs_clocks[] =3D {
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s0_clk_src),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s1_clk_src),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s2_clk_src),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s3_clk_src),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s4_clk_src),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s0_clk_src),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s1_clk_src),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s2_clk_src),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s3_clk_src),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s4_clk_src),
-> +};
-
-[Severity: Medium]
-Should gcc_dfs_clocks[] also include gcc_qupv3_wrap0_s5_clk_src and
-gcc_qupv3_wrap1_s5_clk_src?
-
-Both SE5 RCGs define standalone mutable struct clk_init_data structs
-(gcc_qupv3_wrap0_s5_clk_src_init and gcc_qupv3_wrap1_s5_clk_src_init) for
-DEFINE_RCG_DFS(), but omitting them from gcc_dfs_clocks[] means
-qcom_cc_register_rcg_dfs() never checks or enables DFS on QUPv3 SE5.
-
-[ ... ]
-
-> +static int gcc_netrani_prepare_required_clocks(struct device *dev,
-> +					     struct regmap *regmap)
+> +static inline struct sf19a2890_periphrst *
+> +rcdev_to_periphrst(struct reset_controller_dev *rcdev)
 > +{
-> +	static const u32 keep_enabled[] =3D {
-> +		0x36004, /* GCC_CAMERA_AHB_CLK */
-> +		0x36018, /* GCC_CAMERA_SLEEP_CLK */
-> +		0x3601c, /* GCC_CAMERA_XO_CLK */
-> +		0x37004, /* GCC_DISP_AHB_CLK */
-> +		0x37014, /* GCC_DISP_XO_CLK */
-> +		0x81004, /* GCC_GPU_CFG_AHB_CLK */
-> +		0x42004, /* GCC_VIDEO_AHB_CLK */
-> +		0x42018, /* GCC_VIDEO_XO_CLK */
-> +	};
-> +	int ret;
-> +	unsigned int i;
+> +	return container_of(rcdev, struct sf19a2890_periphrst, rcdev);
+> +}
 > +
-> +	ret =3D regmap_update_bits(regmap, gcc_ufs_phy_ice_core_clk.halt_reg,
-> +				 CBCR_FORCE_MEM_CORE_ON, CBCR_FORCE_MEM_CORE_ON);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to retain UFS ICE memory\n");
+> +static int sf19a2890_periphrst_update(struct reset_controller_dev *rcdev=
+,
+> +				      unsigned long id, bool assert)
+> +{
+> +	struct sf19a2890_periphrst *rst =3D rcdev_to_periphrst(rcdev);
+> +	u32 reg;
 > +
-> +	/* Do not disable already-enabled critical clocks when a later write fa=
-ils. */
-> +	for (i =3D 0; i < ARRAY_SIZE(keep_enabled); i++) {
-> +		ret =3D regmap_update_bits(regmap, keep_enabled[i],
-> +					 CBCR_CLOCK_ENABLE, CBCR_CLOCK_ENABLE);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret,
-> +					     "failed to enable clock at %#x\n",
-> +					     keep_enabled[i]);
-> +	}
-
-[Severity: Medium]
-Won't clk_disable_unused() turn gcc_camera_sleep_clk (0x36018) back off at
-late_initcall?
-
-Unlike the other clocks in keep_enabled[], 0x36018 is also registered in
-gcc_netrani_clocks[GCC_CAMERA_SLEEP_CLK] with clk_branch2_ops instead of
-clk_branch2_aon_ops (and without CLK_IS_CRITICAL), so clk_disable_unused()
-will clear CBCR_CLOCK_ENABLE when no consumer holds it enabled.  In additio=
-n,
-GCC_VIDEO_XO_CLK (139, 0x42018) is the highest ID in the binding header,
-above the last entry in gcc_netrani_clocks[] (GCC_VIDEO_THROTTLE_CORE_CLK,
-138), so requesting GCC_VIDEO_XO_CLK fails the bounds check in
-qcom_cc_clk_hw_get() with -EINVAL instead of returning a NULL dummy clock.
-
-> +
-> +	ret =3D regmap_update_bits(regmap, 0x4201c, BIT(21), BIT(21));
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to configure video AXI clock\n"=
-);
-> +
+> +	guard(spinlock_irqsave)(&rst->lock);
+> +	reg =3D readl(rst->base + REG_RESET);
+> +	if (assert)
+> +		reg |=3D rst->masks[id];
+> +	else
+> +		reg &=3D ~rst->masks[id];
+> +	writel(reg, rst->base + REG_RESET);
 > +	return 0;
 > +}
-
-[Severity: Medium]
-Should this regmap_update_bits() target 0x4200c (gcc_video_axi0_clk) instead
-of 0x4201c?
-
-Offset 0x4201c is gcc_venus_ctl_axi_clk on SM4450, whereas Netrani's video
-AXI clock (gcc_video_axi0_clk) is at 0x4200c.
-
 > +
-> +static int gcc_netrani_probe(struct platform_device *pdev)
+> +static int sf19a2890_periphrst_assert(struct reset_controller_dev *rcdev=
+,
+> +				      unsigned long id)
 > +{
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	regmap =3D qcom_cc_map(pdev, &gcc_netrani_desc);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	ret =3D qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
-> +				       ARRAY_SIZE(gcc_dfs_clocks));
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D gcc_netrani_prepare_required_clocks(&pdev->dev, regmap);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return qcom_cc_really_probe(&pdev->dev, &gcc_netrani_desc, regmap);
+> +	return sf19a2890_periphrst_update(rcdev, id, true);
 > +}
 > +
-> +static struct platform_driver gcc_netrani_driver =3D {
-> +	.probe =3D gcc_netrani_probe,
-> +	.driver =3D {
-> +		.name =3D "gcc-netrani",
-> +		.of_match_table =3D gcc_netrani_match_table,
-> +	},
+> +static int sf19a2890_periphrst_deassert(struct reset_controller_dev *rcd=
+ev,
+> +					unsigned long id)
+> +{
+> +	return sf19a2890_periphrst_update(rcdev, id, false);
+> +}
+> +
+> +static int sf19a2890_periphrst_status(struct reset_controller_dev *rcdev=
+,
+> +				      unsigned long id)
+> +{
+> +	struct sf19a2890_periphrst *rst =3D rcdev_to_periphrst(rcdev);
+> +
+> +	return !!(readl(rst->base + REG_RESET) & rst->masks[id]);
+> +}
+> +
+> +static const struct reset_control_ops sf19a2890_periphrst_ops =3D {
+> +	.assert =3D sf19a2890_periphrst_assert,
+> +	.deassert =3D sf19a2890_periphrst_deassert,
+> +	.status =3D sf19a2890_periphrst_status,
 > +};
 > +
-> +static int __init gcc_netrani_init(void)
-> +{
-> +	return platform_driver_register(&gcc_netrani_driver);
-> +}
-> +subsys_initcall(gcc_netrani_init);
+> +#define RST_DATA(_name)							\
+> +	static const struct sf19a2890_periphrst_data sf19a2890_##_name##_rst =
+=3D { \
+> +		.masks =3D sf19a2890_##_name##_masks,			\
+> +		.num_resets =3D ARRAY_SIZE(sf19a2890_##_name##_masks),	\
+> +	}
 > +
-> +static void __exit gcc_netrani_exit(void)
+> +/*
+> + * A reset that covers several bits drives the reset lines of all the cl=
+ock
+> + * domains of one IP, which have to be asserted together.
+> + */
+
+This comment seems misplaced. I suggest you move it up to the masks
+field in the sf19a2890_periphrst_data definition or down to where
+multiple bits are actually set. Also, s/reset/reset mask/ ?
+
+> +static const u32 sf19a2890_single_masks[] =3D { BIT(0) };
+> +
+> +RST_DATA(single);
+> +
+> +/* The two sides of an asynchronous AXI bridge */
+> +static const u32 sf19a2890_gmac_masks[] =3D { [RST_GMAC] =3D GENMASK(1, =
+0) };
+> +
+> +RST_DATA(gmac);
+[...]
+> +static int sf19a2890_periphrst_probe(struct auxiliary_device *adev,
+> +				     const struct auxiliary_device_id *id)
 > +{
-> +	platform_driver_unregister(&gcc_netrani_driver);
-> +}
-> +module_exit(gcc_netrani_exit);
+> +	const struct sf19a2890_periphrst_data *data;
+> +	struct device *dev =3D &adev->dev;
+> +	const struct of_device_id *match;
+> +	struct sf19a2890_periphrst *rst;
+> +
+> +	/* The OF node is the parent's, so device_get_match_data() cannot be us=
+ed */
+> +	match =3D of_match_node(sf19a2890_periphrst_ids, dev->of_node);
+> +	if (!match)
+> +		return -ENODEV;
+> +	data =3D match->data;
+> +
+> +	rst =3D devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
 
-[Severity: Low]
-This isn't a bug, but struct qcom_cc_driver_data (.clk_cbcrs, .dfs_rcgs, and
-.clk_regs_configure with qcom_branch_set_force_mem_core()), qcom_cc_probe(),
-and subsys_platform_driver() could replace the open-coded probe and init
-boilerplate here, matching gcc-sm4450.c.
+devm_kzalloc_obj()
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261124-netrani-cl=
-ock-v1-v1-0-ce10cedbfa4b@krgm.moe?part=3D2
+regards
+Philipp
