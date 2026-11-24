@@ -1,100 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.219.47
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795559486;
-	b=bK3C7sO/X2gMKWqBqQU1Tnx16Ae97Kt2YfVxfDyCmSaePWBbFUqsnYVIobdiZ+ku0RQk
-	 YQVg/n0xYPQyteVK/KZoL4tIx9LjWtzAxQbhIviBXys/H2zAoFxDkUWC/vnISXeXgQS2L
-	 8Z5P3wuUxAGHbRYG6HXYl1JxtOenNDi5u4oo7H3FI+FXaWvSEQuMHF5Qc/GCcBEn4eqlq
-	 cXigg5l2779VNHgKwv4JbjKogkvq0WpgxgP5lZlh+Uq4V47xfyum9GPDCdf2beH63YAZ/
-	 3xOU5F+nbEwtVOQYMcnDJIIY78Cp3HmsdKevsmNKz+THZBwzX62Q8487F1SkSbMJ7iw==
+	t=1795560306;
+	b=AKIudd7I0+p+Nbp6BD+NUL+gLGZg8fwqtbLQtmMbUf/4qzaHI4B/Sf+3ofjTBVZ1LJcq
+	 33uuDegD6PA2LBE+83EP7CnafunS/2gViiJGC3lTxlQF99AKfLEHJPV8yjkvTnngiWJSh
+	 WzYMrLD7P31YtL34H6FQOfsdNGproSkPYS9VEKrPLuWIX2IxReEi9TWC4S7WXTYANKXmX
+	 mQ0XwwQxye+Sh8pMKsQrJawEA0S6jGq6r6abD7ESD7vZ3JxHlxjfQNheluWxmNScDyMRe
+	 V3It9INdetnJL25ldIeYhsFfJ6X/uZp6q7vXMLs6t/MyZ4AAg15QUfeE3Gf2KPVAcTQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795559486;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795560306;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type;
-	bh=INRxzK7vSn4HoWNw09mGrnkGOVMtgkPRDzZLhk0h1pY=;
-	b=oqfh1DsMp2OqpblSpWLWZ64ZB/66PkLyPHx7ysz1ou7On97AwJb9pO2JQSjat0fwlRSg
-	 Q9bpAmUihNZe3cvym4b3opPjFRSBRUAI8IrqBB8UqZKVhUBts7pHjSRRmB7oAtPBu51GY
-	 Yfx7IEo9go2Hux5mzPYaSINme8BZ9zA7iPw9FqwctCLYleIS9s/2C1dA5eExWBCBdam6M
-	 aF659ryYhb2XHSJlWbJJ7VX0/K+tnzsoIIKKZHSqtdtmVAvDY+OoRJBzG9INYA9MnMaDs
-	 dOjGKwij88KS9Z6Kd/Rqu2z7OuzsnId8VILAa1r/0XtzdWGEwvxNFQQHmZ7heze8eoQ==
+	 Message-ID:Subject:To:Content-Type;
+	bh=yCYYd3oBds+jZ9JWJhUL/nmmfvT7+2Bt1ZWaOHjOA+E=;
+	b=lX6AUFp2QWLvs2sXiqLiGWaEuPqHdxcMDdrpPOgkBerpzW02PxU21P0kbKmG/O80Y4kR
+	 QU/1NYk0XO5oBdN433GaUtl2m5vLVZLxbRirlASMz7xcEgeArX0I9zaZ/K94WLifPXy5Z
+	 uuGhvXY4iKr+LN8lcA8iT9lrAWGScoOhkSDsjm1BXKF9rJ/pVES9WvVEub+Q3ur3z34Ul
+	 JeBFI1XnQ/3ecaIjKFCsqE42UU3vk6q6xkQ1G5+j+tf/CdCuLUq5w+AKK/UEPtv9h89LK
+	 q1pH+fIV4CrDqLlymJECBGB4uEQ5NGRChh498vlzy0k27W+BTb3dmywUBy6eh00jjkg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Pq6hYJqL;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.54
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Zd9w4ev3;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.219.47
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50AC606A6A1
-	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 22:31:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A50AC606A6A1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45F2606A334
+	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 22:45:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B45F2606A334
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Pq6hYJqL
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c4d427836e9so696107566b.1
-        for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 14:31:25 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795559484; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Zd9w4ev3
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-92116a3ef3cso68004996d6.0
+        for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 14:45:05 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795560304; cv=none;
         d=google.com; s=arc-20260327;
-        b=rkzq7OBHxoQ9QpflKYbVwHDV0LLujaEftimnZjh/HgPYqWwFrhDVRvbjaj8Aei/v6g
-         fnQGXIo7Ep9mwTcADU9ciDROcvCcRVwPYtEuzO/GCx1EkI+PbnTi924CkbTy9LIKM4Dc
-         3TA44USW9PlQ6SKbKe0w2kh+bOEwbvAqeqAd/QhSlXVpUsFkymfwFcAYrGpwWCWGEu/3
-         y/jtjRsaDxixH7a+ZxPS15NhTZhhgu2NTGZtLwtZFWz2/12ubvucglpwleahaw2kZcao
-         fPte3wFsQ+Bm1kKGvElSy8WeCIW8zj+zb/cD/mHXkozRXm/TsrEqRcf92zyjH62B+t++
-         KUPA==
+        b=dS87cBeHK1olFUHHAyAMKAUCJeVuiYEOU0c07mYJeYV8ndACstbXHq6nn3OHSi8U9Y
+         tpavMhCChfo76HEsrkWK59GZI0gXykzkqoIF1FoLS0Ty3fWLf3PI0rg3JqDPXUkKKWOG
+         OrXDRkgKLCaMObCV/QnXbFWBFxDIfWCzAgbTAvWejvyqr9KJFvm1BW/SJZCUBTEFZ2CF
+         6G57+Bya7rzQ33jb+zBhXMSx4sZ7BLaGrnrqlGMIrQuTfH6OU7xiaclOPvuBJ19Q/NBD
+         UbCq5HVvutZCKFV99zvNhMXiejDgqLwGkCKUsROQdT2viyLs5s2drFkm656DDthMSlG2
+         1JmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=INRxzK7vSn4HoWNw09mGrnkGOVMtgkPRDzZLhk0h1pY=;
-        fh=KUVUnK9dd6KXLNWwyUhUEn1atNAL5Mrbe96eheYShaQ=;
-        b=VHgQcAp0fOVP88sZbOHXySK8D84URd2bo6hjZ8iPo+4uwUZZH1kTf2mQkVOJZ1/KNz
-         jSHkqOm8/Hl3fGdYf9SsAAzBrFluy1c9w8fL/CBrn4ULUTVOyhSNtk6pEgejng9GHoC3
-         L+4mQmJ5K1r6+lUOXkXqJfaJalJmRVNe09ShTUheyHuMKNdEq7onru4uwCuUWkXKdWo+
-         FYnTcs2oJdVkbFAFaTGE1vXmk0NFUgadeutRuVfbGenE6H4vs+jvJWGTg7tNkQHr7EYZ
-         9qE4epe6OiKK3cFw3FVtixIrgiQJlJUuKOQqUBpqwdQiKPqFlC7jz0l0IUR64UeY/kgN
-         CuzQ==;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :dkim-signature;
+        bh=yCYYd3oBds+jZ9JWJhUL/nmmfvT7+2Bt1ZWaOHjOA+E=;
+        fh=6JzKrI1Ax5pt4bn7Ri2oa9yD426DHuPAip0SgLvfXmg=;
+        b=AWmJi3ga/Gwp8nKpjiZR9YLwgtrSMEsJkeCbMeaNMOFN7mkMX8iUBszBuhBl9vVnpY
+         SSKSYiNMNJUCH79gG+EELvzYkSbHUgR/R/bo9GrEDYXpimeaFpEa7C7OaNNaUTuO7a8S
+         MOQcVPfac5YB+SeRujkWnaHgBTbNnkRgCJfFcv+I3z+LmYmqJZdBczTXSZxUUjvfsDLx
+         J5UjjX1OiB0ChLXe8vUBzKYUWdREVaQLQtF4CPWEemCoqMk2zHYPaeiHjWY5u4rZAlro
+         gmksFgSrON/GqjJ7SrW5KIEHg3b07HvT1wegbdO9UxjC7yf/fdHRhXLwwSsk3kmWDapZ
+         o+7Q==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795559484; x=1796164284; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20260707; t=1795560304; x=1796165104; darn=vger.kernel.org;
+        h=content-type:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=INRxzK7vSn4HoWNw09mGrnkGOVMtgkPRDzZLhk0h1pY=;
-        b=Pq6hYJqLqfjmwjq6l8NZL/b72FkWDY7/prko4BQ8KEWZLjnZPHCUw44AYwkS+F8DRi
-         EUeoUtNsUmpvMracnT4N+GgMdEmq/lLExWZTQz/1x2gGNuR3gColGwjZifwMrkotSzq1
-         d6CELz6FR9caGvQ5SJQ8Y9tQVYlF1B8Q2XaCePiSHWZdneDCgaC0t5wk53jlieeZPq0K
-         Xr/gKY4gRbr8NIvfHqVM+4o2vEDZGfOtkWKPxClj2k43yKXLUk1wVQj7s9WACrQQEpw0
-         Q98XJp/kNzbRIEqZyr+UWynhvWGPSRNCMolaQERiuhRGVt3CSC7buBUx16Xoa3CNaJR4
-         u73Q==
+        bh=yCYYd3oBds+jZ9JWJhUL/nmmfvT7+2Bt1ZWaOHjOA+E=;
+        b=Zd9w4ev305jpWD1jjllsqxQexHNUqy/j86+yEk40ABsXBT5PLgxGS368zNXtdrLWaV
+         oGMsXEijpTlMkHUUP8UFJu+W9SQdPz+tPN0K4WAtY21rVgM8ZF2bMzAT3YZ+E7DPAZMo
+         7qbl4Y0ErUvTtOlcPrUdNdcJePaqNSkxzmqdXRSmGtjB6W3vNYOhPH229Qlay2kxnmpT
+         XKd2ERNn+CgX1JIiUXBJKMK2RjFgVBThZY9DZcYAcAj5oI0jQQ22SdFAGvX6wtylFPDt
+         QstfiwuA2MgNkMzCTNc9JKxD4feui+NcGs8Fe/4LGnJSBuBH205zH8y1goo4XwpcZgRV
+         tybA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795559484; x=1796164284;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=INRxzK7vSn4HoWNw09mGrnkGOVMtgkPRDzZLhk0h1pY=;
-        b=FrlwXpwLENZR/mv/SqWNaSBVKNdQoRkD6KldbWheN+2RF/XgDTDgoTJ/e9Fw7CFpwM
-         KllaCK3DDXKfE8tSdOLJQQXhpQ+vfeDkA1ImpFl1voCRpf50j4NH1AIUIWmOD5B7CAA7
-         YyzCPiRxalHcArC/PzTazOHDhj4LXn/4hXLsyBdKSZJhqhA7rubpLNk/Rzs5TuKwvSw+
-         j0TWvOHrcrgW7g912fhaASHRa+M/igCflStlXp+ogA1d/qcEpCPoe5nGr5C7S57Lj8qX
-         iSzhvfoI6ZBa8acUvIojNhbude+9549aaj8g69FKT0pce185x4I78UBYIiUmEJqSMbxZ
-         3soA==
-X-Forwarded-Encrypted: i=1; AL+hErFwtCfdDnuyTDM9OWM1UgrFGsg6TItKwua6NkxBY501sP8XYPaOaa4w/0jxViVIfGSVlEqSJPNXqLM=@vger.kernel.org
-X-Gm-Message-State: APuU4Z90VyojHG405KKDGQzklzFPS3q0UVwTnGA/l+rE9boTw5rzNQGf
-	nmbGgWhvb+nIRyHz4XxvylZ95nUKlmrG4VZyQQjKFNxvjgUovqbfwDR9+pHlEvs+XEE7q5MdV7/
-	v34HbC3A6UEVQVqThy+1zMkDpydI44U5C+qbLeHMZWw==
-X-Gm-Gg: AZFdTZfiNLGbS3usDH72L9EzwYrLprSrGjT8m/75dqbo2o2W3PLeGGkzGR9GjwSEqeV
-	JRusevjVo72rhMOD1V2VLq/VoLANJA8/JwZbd1SF8W7PVU6oPjoR4Z3iPiqipCm9nPave2fnD1y
-	tIU2qqrnPL75iNBWOTNVyH8QD9rA3c8tcW1L1XyqJ649Nd6pYfwf5Py7/TSPTuGLQn881yP+/Pc
-	S706fTabI1CHgbr9xSmWiU0aC2Vz4ZWgqqcx2j0SPmcsQz+1RFaRZUq2TUNhSFseyCJybemncIt
-	z0Z2Zx3P3ApLMpCewGgtSMfjjfsaq7MZ0Uvm+vaMxy8NvLFTkpuwgliwUPQ84JIQPBPNAP7pRhX
-	+9FJIfQkXBcf5uFT5nqGWwRNlBR4vNLkccWCfwrooJyJAiVTbnoahoQU00mvt+ODfvluf3CnbTs
-	Vadoc7ayHQdnxTMOa7
-X-Received: by 2002:a05:6402:15d4:b0:6b7:709f:85f with SMTP id
- 4fb4d7f45d1cf-6ba37ec031amr9043918a12.36.1795559484024; Tue, 24 Nov 2026
- 14:31:24 -0800 (PST)
+        d=1e100.net; s=20260707; t=1795560304; x=1796165104;
+        h=content-type:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=yCYYd3oBds+jZ9JWJhUL/nmmfvT7+2Bt1ZWaOHjOA+E=;
+        b=q1HuvmccmbSi4j9LmByqjFXtFyHKJQWDx4bY6QgnHOIKibGyfCfkLlFb/uY+tQgwKt
+         Y201Blg8MKdVj+YGVonGYXS7uaz8Rm7TqQEQTSqSsj40sG6vD2hwP9nfbxrO6NQrHFoE
+         Ci0BoDylHDm18Xc81JOIgX9P2qSiRNwyXTRA8J6mpXuDF1tpwqDnTX0C5j3wGWFLAKu6
+         gxIzCsdmGBfh5VJPJZ3zy3VeItwdsD374UJLB4PC830/eo6Op00U4IUzrJ+15UlUjReD
+         BVR0UKTI4FCqscit4rdjzqYyCNplMIto+Qbhapa16rPOhFkvt5PN9zGk12WZW4AKhfBp
+         uhMw==
+X-Forwarded-Encrypted: i=1; AL+hErE7AE+LXFAE223okBb1s9+Yvji2CefuUKpOof9IGLiXBdicY/960qaXd8ydQmdUVx/houQ82MaXtJ0=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+kR+X3qFczuI2LLNoUOFApTEJn/q48cAsyAv8KIcNjOF1qc+7c
+	Hf1xEJfkXIzUFZHss80eUiF8G26Z5gRXfsQDm6IVkOqnZbYE7Sg3W46+qthuaT0rDUuQakXOE17
+	h5A0N2IaK7vX/ZnvlExSr9vyKhQFbqlg=
+X-Gm-Gg: AZFdTZcstfC1QFUxj9dMiMqca5IXo3X86yB0bVuuH+hGmWMG0RaQrFmQH/NrWBllzVL
+	nE7Cb7eodGfW+w97gbJfb5OGBfrFDAfu+F+392jpVtBuqI5MuH6V8YCZgNgtvsiqfkFzJuKQfcm
+	1VONuS+pEaAoEjqLrdjp3Z2S8104Qol5fPhG1X8lFvVvJXFSuSzPu+WqMJLrCJe5W11+PyHPZhA
+	xlsLVy3y+JOfEl+aKpK8XOBBjw8JwsgcIJ9nMWt+dgYjBTydkHThLfatxAwpKUGIMLF6Dk+6NSt
+	I304NgcsemOoIn7f7R0ttpjZr63PmKx3G8x9MEh5Adgh3Re6DBz2pVOd6Ay1AWHkGzwCWslKhIG
+	ccVG78+0gheA2/f4h45Lzn4GjxMsEdQ6cXUCwM+k1BThHKz7lWiFxL8hQ67UL8uQj0T2WEkK0yo
+	5EkyXQ
+X-Received: by 2002:a05:6214:4e81:b0:90c:c1eb:ae42 with SMTP id
+ 6a1803df08f44-92134aef54emr233395366d6.13.1795560304578; Tue, 24 Nov 2026
+ 14:45:04 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -104,72 +104,67 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261026214359.3122870-1-briannorris@chromium.org>
- <20261026144346.3.I7bc547c83b7bf677a62670099f481a91ac737073@changeid>
- <CADrjBPqnRrFeYT9J6NGxy+Xzy1PTZEz+BMs1_u2md7Ra6xPPDQ@mail.gmail.com> <awXf86suGgKeazZx@google.com>
-In-Reply-To: <awXf86suGgKeazZx@google.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 24 Nov 2026 22:31:11 +0000
-X-Gm-Features: Aa3M54olM1DKVBX3EQP9Zt-gD9WnHLwb_Lxu-JjOzcrrRgxAqJXxzL4OnVB7R18
-Message-ID: <CADrjBPqG_TLwgOTzQ-o5pM7k1DzkeVxNkV2xDHsU4OBAyYOofQ@mail.gmail.com>
-Subject: Re: [PATCH 3/9] soc: google: Add CPM over MailBox Array driver
-To: Brian Norris <briannorris@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Thomas Gleixner <tglx@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>, 
-	linux-arm-kernel@lists.infradead.org, 
-	Mariano Marciello <mmarciello@google.com>, Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org, 
-	=?UTF-8?Q?Jakub_G=C5=82owacki?= <jglow@google.com>
+References: <20261121215918.183705-1-ansuelsmth@gmail.com>
+In-Reply-To: <20261121215918.183705-1-ansuelsmth@gmail.com>
+From: "Christian Marangi (Ansuel)" <ansuelsmth@gmail.com>
+Date: Tue, 24 Nov 2026 23:44:52 +0100
+X-Gm-Features: Aa3M54o1KZCLfwpBkP_IpydVafBmrB1P_TpJmIirIZDyXM40wgltYTAemrvh87o
+Message-ID: <CA+_ehUzoCPcBV4B-OvNUheQokcWjaPmGJuYxenqj2b9Q_B_ndQ@mail.gmail.com>
+Subject: Re: [PATCH v8 0/2] clk: en7523: full clk_hw + set_rate for en7581
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+
+Il giorno sab 21 nov 2026 alle ore 22:59 Christian Marangi
+<ansuelsmth@gmail.com> ha scritto:
+>
+> This simple patch convert the en7523 clk for EN7581
+> to full clk and adds the .set_rate OPs.
+>
+> Needed mostly to configure MDC clk rate.
+>
+> This will be also implemented by AN7583 since they share the
+> same exact implementation.
+>
+> Changes v8:
+> - Handle corner case with div by zero in en7581_find_best_rate
+>
+> Changes v7:
+> - Address some formal improvement from Brain
+> - Back again to register clock returning error
+> - Actually round rate on determine rate
+>
+> Changes v6:
+> - Rework to use div_table entirely
+> - Switch determine_rate to calculate best rate
+>
+> Changes v5:
+> - Handle requesting 0 rate
+>
+> Changes v4:
+> - Fix regression where base_bits is 0
+> - Handle divider_get_val returning -EINVAL
+>
+> Changes v3:
+> - Rework to clock divisor API
+> - Return error instead of -EINVAL
+> - Use dev_err where possible
+> - Use devm_kzalloc_obj
+> - Revert to not fail on clk registration failure
+>
+> Changes v2:
+> - Fix recalc_rate return value on error
+>
+> Christian Marangi (2):
+>   clk: en7523: convert to full clk_hw implementation for en7581
+>   clk: en7523: add support for .set_rate for en7581
+>
+>  drivers/clk/clk-en7523.c | 444 +++++++++++++++++++++++++++++++++------
+>  1 file changed, 381 insertions(+), 63 deletions(-)
+>
 
 Hi Brian,
 
-On Tue, 24 Nov 2026 at 19:05, Brian Norris <briannorris@chromium.org> wrote:
->
-> On Tue, Nov 24, 2026 at 12:28:24PM +0000, Peter Griffin wrote:
-> > Hi Brian,
-> >
-> > Thanks for your series; it's great to see more Laguna support being posted.
-> >
-> > On Mon, 26 Oct 2026 at 21:45, Brian Norris <briannorris@chromium.org> wrote:
-> > >
-> > > The Central Power Manager (CPM) is a co-processor on the Google Tensor
-> > > SoCs, as used on Pixel phones. CPM supports power-management and a
-> > > number of other features.
-> > >
-> > > The Application Processor communicates with CPM over a pair of mailbox
-> > > channels (the "MailBox Array" (MBA)). CPM provides clock, power-domain,
-> > > reset, interrupt services, and more.
-> >
-> > [..]
-> >
-> > +++ b/drivers/soc/google/Kconfig
-> > @@ -0,0 +1,13 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +
-> > +config GOOGLE_CPM_MBA
-> > +       tristate "Google Tensor CPM MailBox Array Interface"
-> > +       depends on ARCH_GOOGLE || COMPILE_TEST
-> > +       depends on MAILBOX
-> >
-> > Should we also have "depends on OF"?
->
-> Why, precisely? It's not actually a compilation dependency (I tested),
-> although it's needed at runtime. It doesn't seem like this is
-> consistently done simply for runtime dependencies, and instead work has
-> generally been done to ensure everything builds fine and fails closed
-> without CONFIG_OF.
->
-> Anyway, it's a bit academic, since ARCH_GOOGLE (ARM64) selects OF.
+sashiko seems happy now... Any chance we can pick this (or 7583) series?
 
-I was thinking more if COMPILE_TEST=y && CONFIG_OF=n &&
-CONFIG_WERROR=y is set. I'm not sure if 0-day performs such a build. I
-guess since no 0-day failure has been reported in this thread, perhaps
-it isn't required.
-
-Peter
+It's currently blocking 7589 development.
