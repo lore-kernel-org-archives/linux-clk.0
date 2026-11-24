@@ -1,60 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795540364;
-	b=bj7dBz2tv07S+rb6izEXjWdNd0tbNig8OCX8+Lr67sn97UTaZiK7X7nlnZmTWfvMytBH
-	 h/uMOyppKrjlHQdF/4Nzlc4MjestBLzzpxD+Hoxy/Q47n1J+6o9D6YDQxbu36JZ/61KfZ
-	 v37erE0N3TU7oDwLAYggzSSWT6ozaeWSuumrevBHkrTUTnIruvCEB6TmX3l+xE6NnzLtO
-	 dB8k9MismWZKELlWgpeC6GLNVpws6t3wvs0430M+loHfN3Lv55gL//CT692DyulqFvfB6
-	 /V/QrBWKhIGKjfDSSEXC5+t86vEknLMfnSSZTsHDcCNLXZd9Fp2lSjivGMYoWEyeV5A==
+	t=1795540716;
+	b=UxBrsX8VJCiJfKyn76c7eBUbQYYspxONLZjDZ8x8lCkTK+p0pWot8su4igdcxInVZU4Q
+	 YnL+dtxsfb+Evh0l6gaSFmtkbDb4T00a1u/3LKkxRPbU+8Na0lPDBmOkBtRwgxWwiqzjM
+	 M+sL7gdmIEAl6QE0sNbqlnKdku5crw9vOTkpM/bNWh6PKW2CvDatsZL9EW3N9muJLnoLs
+	 g0nESW5KW7ClAj29Nwl37DhhKhlctRWtQbEBIOEfvCqbZE6/ocvwwPo8zAh40rsFqhkIi
+	 cQVTmmaGzbQPmCSf0Jx1fAv9VNhMn/7fB1CoZIXMvPFT5qj68XJwjvMgSXfPoQmnCqA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795540364;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 User-Agent;
-	bh=tZicJN8WSvhii4IUoQLB2IJqpXlbaB7rrJrQ3BqZbkM=;
-	b=0z0fHP2V+No6v6e1yfOoun8J1JYmoRb+ptjPrWKIQLXRqW7UdAgwon7pRQ8Gbed+NrSR
-	 g1WAOxtwnUVW6xy9CLJu2aIJxQSzF3OzCiCbMeIWQ0kOfVRfQWPHeX/rqaLeY00KcSId/
-	 nt5VbZvW2PtPdvjjGVX8dPYiKgzCEC7xctlb7/0rATNUSbqRTrJwkzSTp7kj649dqsNsq
-	 wAeUf0Mm5eO66U/8bZSeG8RN2sATEJ6Iqa6XeI3+k00Y06vfWkvcfMw0YfoFcZZ7L/qmT
-	 W+StQCk+ZkbTigIg256ap7ugqiiCNqhevasmpM6OrOzs9ZjSMoknA0tEwYYIXaVwYbA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795540716;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=nvoHQblVvTO5wjfDWw+R4A1RKcGOawuDiPZT0xUmZY4=;
+	b=uyZUnhnfF6UypWnYApPddyuKTCd7GYjn9xMsbJ58jMbU9TM5VrndNnCshAsAlyAM9ntj
+	 XkZy0Sq84LJ2WVACOMgbkNhhXJSMRJQOwL5bZKE7rDg+BvZvRLC0ZjxTSRopRW56LPqCf
+	 ytFjO+PuysgK3Sp1xbJuOlfsUSzX6fLoU8zhcCNukxAQqMqPTvmh7GuOapX9+1IWcqJpz
+	 fRKD6g2eO3aFjhPH4piadMKWOurcrXKgo17SGf7rPpjO+cU56fXbuhCnhV3iW0cX7mM0D
+	 b+WCJMpsq+0FUSEpQQtXXJdD/RIofJ1B1v21tsinPAwkGP+SqLfDYpK41YSA1usS3WQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VclK5N1A;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EX8mlVkF;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D44606A31E;
-	Tue, 24 Nov 2026 17:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D66606A31E;
+	Tue, 24 Nov 2026 17:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VclK5N1A
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227561F000D0;
-	Tue, 24 Nov 2026 17:12:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EX8mlVkF
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43E321F000C6;
+	Tue, 24 Nov 2026 17:18:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795540363;
-	bh=tZicJN8WSvhii4IUoQLB2IJqpXlbaB7rrJrQ3BqZbkM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=VclK5N1AUX7DTqF7jzIbm3VG+FBxriINu/7v1LZqHYNcEMYH47kgVIPWLcbqIWogf
-	 lO87PK3T2sE+iAVfg7veEHPYvXFsaOCrBTQb23rAabjZHGKjQ06Zosg8SDc0K3GVUU
-	 ej7R/5NkQNghALpIthFdi0fjfPI9Bv1i6oxF4hrVNIPOQZ6klNLcF+TlFTf8p9JdF3
-	 AzFANgjSahL56QC+qe3V+WuPeB/X+D4Coc08sz1YlbGtP2zbH0ZpEPCK0BBPNPeejO
-	 W+JYvpjje4cZEY7rFoSDFOtzWo+qwYQZhW5ex4McaEk+5E+jWaFgrgdJIHzemBxIG/
-	 a4vgwlLsHOZ8w==
-Date: Tue, 24 Nov 2026 12:12:38 -0500
-From: Brian Masney <masneyb@kernel.org>
-To: Fil Dunsky <filipp.dunsky@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: cs7542: Add global PCIe controls and network
- engine reset
-Message-ID: <awXFhjXhZ-e_QM_R@x1g10>
-References: <20261124-b4-cs7542-global-controls-v1-0-12548785df2c@gmail.com>
- <20261124-b4-cs7542-global-controls-v1-2-12548785df2c@gmail.com>
+	s=k20260515; t=1795540715;
+	bh=nvoHQblVvTO5wjfDWw+R4A1RKcGOawuDiPZT0xUmZY4=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=EX8mlVkFDQ45BTbBIoQlcpPzpgAQL1amuGMGG2K7MEaJbt4ny4QukQE+pR/a3w7TK
+	 alrApm09A9rr8JGOE0CjhWVLCrAsbbO0dodGqZwTsxHoVm1agIewe0sR1PIWoQ9Nx/
+	 8VnUtG5Y0+qo6GBEU9pl8JynO08H7WBxQWjAAaZezKOBKX6nIAU4AS3dsHAaa5FT9Q
+	 arjY+mu/MaXGpVMaf58edxi8G7shYeq+WZAt46JxY/5SXH5yO3VhESEhrYlMIGdKM0
+	 uHPvU4VgCg+AQslxZBipoyl3RaA5/zW3IDoLZ9U25h9UJ6jXnMJjUPla+YOMkFbVr6
+	 5uxqZivw5IFZw==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -64,229 +49,64 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261124-b4-cs7542-global-controls-v1-2-12548785df2c@gmail.com>
-User-Agent: Mutt/2.4.3 (2026-10-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] clk: tegra: tegra124-emc: Skip timings whose parent
+ rate cannot be set
+From: Brian Masney <masneyb@kernel.org>
+To: Patrick Fischer <admin@tsv-stahl-riesa.de>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Svyatoslav Ryhel <clamor95@gmail.com>, Brian Masney <bmasney@redhat.com>, 
+ Thierry Reding <treding@nvidia.com>, linux-clk@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable+noautosel@kernel.org, Brian Masney <masneyb@kernel.org>
+In-Reply-To: <20261111-upstream-clk-emc-parent-v1-1-636eea572572@tsv-stahl-riesa.de>
+References: <20261111-upstream-clk-emc-parent-v1-1-636eea572572@tsv-stahl-riesa.de>
+Date: Tue, 24 Nov 2026 12:18:26 -0500
+Message-Id: <179554070638.342734.6160657540275227565.b4-review@b4>
+X-Mailer: b4 0.17-dev-8145e
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1385; i=masneyb@kernel.org;
+ s=20250903; h=from:subject:message-id;
+ bh=ir3UQjLHGDw/zLIAiMWv27Yk3ypbdfQgTmPg/94dMhk=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJZjz3e+avzTppv0XWBDYovxBRmsWdl2l9aU3v1jJT47
+ 0nTp2zi7yhlYRDjYpAVU2RZkmtUEJG6yvbeHU0WmDmsTCBDGLg4BWAie1UYGb593FG5ZGL4B03u
+ Xw/uGM3mOC7N/UdFJ+587ZYV0W+nvdNg+Kc5e43l1+VbWk34j5gvO6hqnMBz7VZ54r7A99MLdPL
+ 9AhgB
+X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Hi Fil,
+Hi Jon / Thierry / Mikko,
 
-On Tue, Nov 24, 2026 at 12:50:59AM +0300, Fil Dunsky wrote:
-> Register PCIe gates and controller resets through the early global
-> provider. Add the network engine composite reset using the same syscon
-> regmap, with the existing 1 us/1000 us readback polling and partial-domain
-> status error from the posted NE reset driver. Keep the PCIe reset pulse
-> delays and all provider-registration failure cleanup. NE pulse reset
-> remains unsupported; the Ethernet consumer needs assert/deassert/status.
+> Each EMC timing names a parent clock and the rate that parent has to run
+> at. On Tegra114, PLLM is registered with TEGRA_PLL_FIXED, so its rate
+> cannot be changed, but the Tegra114 device trees still contain timings
+> on pll_m at rates the bootloader did not set up, e.g. 792 MHz on a
+> Tegra Note 7 where the bootloader leaves PLLM at 408 MHz.
 > 
-> Both independent consumers can use this common provider without a
-> PCIe-host dependency or a resource-less network reset child.
+> emc_set_timing() calls clk_set_rate() on the parent, which succeeds
+> without changing anything, and then loads the 792 MHz timing while the
+> EMC runs at 408 MHz. On the Tegra Note 7 that gives a refresh interval
+> of about 15 us instead of 7.7 us (DDR3 allows 7.8 us), and the clock
+> core then reports 408 MHz, so later requests for 408 MHz keep the
+> 792 MHz register values.
 > 
-> AI assistance: Codex prepared this draft from the posted CS7542 series.
+> Skip timings whose parent cannot be rounded to the requested rate when
+> loading them, so that the highest reachable timing is used instead.
+> On Tegra124 PLLM is not fixed, so its timings should all stay; this was
+> not tested on Tegra124.
 > 
-> Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
-> ---
->  drivers/clk/Kconfig      |   7 +-
->  drivers/clk/clk-cs7542.c | 211 ++++++++++++++++++++++++++++++++++++++++++-----
->  2 files changed, 195 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 47b5265fe..cba07bed3 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -59,13 +59,16 @@ config LMK04832
->  	  Low-Noise JESD204B Compliant Clock Jitter Cleaner With Dual Loop PLLs
->  
->  config COMMON_CLK_CS7542
-> -	bool "Cortina Systems CS7542 strap-selected clocks"
-> +	bool "Cortina Systems CS7542 global clocks and resets"
->  	depends on OF && HAS_IOMEM
->  	select MFD_SYSCON
-> +	select RESET_CONTROLLER
->  	help
->  	  Read the boot straps of the CS7542 global control block to provide
->  	  its APB, CPU and AXI clocks. This driver does not change PLLs or
-> -	  dividers. It is built in because the APB clock is needed by timers.
-> +	  dividers. It also provides the three PCIe clock gates and resets,
-> +	  and the exclusive network engine and DMA-LSO/SSP reset domain.
-> +	  It is built in because the APB clock is needed by timers.
->  
->  config COMMON_CLK_APPLE_NCO
->  	tristate "Clock driver for Apple SoC NCOs"
-> diff --git a/drivers/clk/clk-cs7542.c b/drivers/clk/clk-cs7542.c
-> index 4e6c1e98a..17b7109a9 100644
-> --- a/drivers/clk/clk-cs7542.c
-> +++ b/drivers/clk/clk-cs7542.c
-> @@ -1,24 +1,29 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/* Cortina Systems CS7542 strap-selected clocks */
-> +/* Cortina Systems CS7542 global clocks and reset domains. */
->  
->  #include <linux/bitfield.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/delay.h>
->  #include <linux/err.h>
->  #include <linux/init.h>
->  #include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/printk.h>
->  #include <linux/regmap.h>
-> +#include <linux/reset-controller.h>
->  #include <linux/slab.h>
->  
->  #include <dt-bindings/clock/cortina,cs7542-clock.h>
-> +#include <dt-bindings/reset/cortina,cs7542-reset.h>
->  
->  #define CS7542_GLOBAL_STRAP	0x0c
->  #define CS7542_STRAP_SPEED	GENMASK(3, 1)
-> -#define CS7542_NUM_CLKS		3
-> +#define CS7542_NUM_FIXED_CLKS	3
-> +#define CS7542_NUM_CLKS		6
->  
->  /* Rates from the GPL vendor kernel's get_platform_clk(). */
-> -static const unsigned long cs7542_rates[][CS7542_NUM_CLKS] = {
-> +static const unsigned long cs7542_rates[][CS7542_NUM_FIXED_CLKS] = {
->  	/* APB, CPU, AXI */
->  	{ 100000000, 400000000, 133333333 },
->  	{ 100000000, 600000000, 150000000 },
-> @@ -33,14 +38,142 @@ static const char * const cs7542_clock_names[] = {
->  	[CS7542_CLK_APB] = "cs7542-apb",
->  	[CS7542_CLK_CPU] = "cs7542-cpu",
->  	[CS7542_CLK_AXI] = "cs7542-axi",
-> +	[CS7542_CLK_PCIE0] = "cs7542-pcie0",
-> +	[CS7542_CLK_PCIE1] = "cs7542-pcie1",
-> +	[CS7542_CLK_PCIE2] = "cs7542-pcie2",
-> +};
-> +
-> +#define CS7542_PORTS	3
-> +#define CS7542_NUM_RESETS	4
-> +/* NI, FE, TM, SCH, QM, DMA-LSO/SSP, NI XRAM; never reset SDRAM (bit 4). */
-> +#define CS7542_NE_RESET_MASK	(GENMASK(3, 0) | BIT(5) | BIT(16) | BIT(17))
-> +#define GLOBAL_RESET	0x04
-> +#define GLOBAL_CONFIG	0x10
-> +
-> +struct cs7542_gate {
-> +	struct clk_hw hw;
-> +	struct regmap *map;
-> +	u32 mask;
-> +};
-> +
-> +struct cs7542_control {
-> +	struct reset_controller_dev rcdev;
-> +	struct regmap *map;
-> +	struct cs7542_gate gates[CS7542_PORTS];
-> +	struct clk_hw_onecell_data *clks;
-> +};
-> +
-> +static int cs7542_gate_prepare(struct clk_hw *hw)
-> +{
-> +	struct cs7542_gate *gate = container_of(hw, struct cs7542_gate, hw);
-> +
-> +	return regmap_update_bits(gate->map, GLOBAL_CONFIG, gate->mask, gate->mask);
-> +}
-> +
-> +static void cs7542_gate_unprepare(struct clk_hw *hw)
-> +{
-> +	struct cs7542_gate *gate = container_of(hw, struct cs7542_gate, hw);
-> +
-> +	regmap_update_bits(gate->map, GLOBAL_CONFIG, gate->mask, 0);
-> +}
-> +
-> +static int cs7542_gate_is_prepared(struct clk_hw *hw)
-> +{
-> +	struct cs7542_gate *gate = container_of(hw, struct cs7542_gate, hw);
-> +	unsigned int value;
-> +	int ret;
-> +
-> +	ret = regmap_read(gate->map, GLOBAL_CONFIG, &value);
-> +	return ret ? ret : !!(value & gate->mask);
-> +}
-> +
-> +static const struct clk_ops cs7542_gate_ops = {
-> +	.prepare = cs7542_gate_prepare,
-> +	.unprepare = cs7542_gate_unprepare,
-> +	.is_prepared = cs7542_gate_is_prepared,
-> +};
-> +
-> +static int cs7542_reset_update(struct reset_controller_dev *rcdev,
-> +			       unsigned long id, bool assert)
-> +{
-> +	struct cs7542_control *ctl = container_of(rcdev, struct cs7542_control, rcdev);
-> +	unsigned int value;
-> +	u32 mask, target;
-> +	int ret;
-> +
-> +	if (id >= CS7542_NUM_RESETS)
-> +		return -EINVAL;
-> +	mask = id == CS7542_RESET_NE ? CS7542_NE_RESET_MASK : BIT(6 + id);
-> +	target = assert ? mask : 0;
-> +	ret = regmap_update_bits(ctl->map, GLOBAL_RESET, mask, target);
-> +	if (ret || id != CS7542_RESET_NE)
-> +		return ret;
-> +	return regmap_read_poll_timeout(ctl->map, GLOBAL_RESET, value,
-> +				       (value & mask) == target, 1, 1000);
-> +}
-> +
-> +static int cs7542_reset_assert(struct reset_controller_dev *rcdev, unsigned long id)
-> +{
-> +	return cs7542_reset_update(rcdev, id, true);
-> +}
-> +
-> +static int cs7542_reset_deassert(struct reset_controller_dev *rcdev, unsigned long id)
-> +{
-> +	return cs7542_reset_update(rcdev, id, false);
-> +}
-> +
-> +static int cs7542_reset_status(struct reset_controller_dev *rcdev, unsigned long id)
-> +{
-> +	struct cs7542_control *ctl = container_of(rcdev, struct cs7542_control, rcdev);
-> +	unsigned int value;
-> +	u32 mask;
-> +	int ret;
-> +
-> +	if (id >= CS7542_NUM_RESETS)
-> +		return -EINVAL;
-> +	mask = id == CS7542_RESET_NE ? CS7542_NE_RESET_MASK : BIT(6 + id);
-> +	ret = regmap_read(ctl->map, GLOBAL_RESET, &value);
-> +	if (ret)
-> +		return ret;
-> +	value &= mask;
-> +	if (id == CS7542_RESET_NE && value && value != mask)
-> +		return -EIO;
-> +	return !!value;
-> +}
-> +
-> +static int cs7542_reset_pulse(struct reset_controller_dev *rcdev, unsigned long id)
-> +{
-> +	int ret;
-> +
-> +	if (id >= CS7542_NUM_RESETS)
-> +		return -EINVAL;
-> +	if (id == CS7542_RESET_NE)
-> +		return -EOPNOTSUPP;
-> +
-> +	ret = cs7542_reset_assert(rcdev, id);
-> +	if (ret)
-> +		return ret;
-> +	usleep_range(10000, 12000);
-> +	ret = cs7542_reset_deassert(rcdev, id);
-> +	if (ret)
-> +		return ret;
-> +	usleep_range(10000, 12000);
-> +	return 0;
-> +}
-> +
-> +static const struct reset_control_ops cs7542_reset_ops = {
-> +	.assert = cs7542_reset_assert,
-> +	.deassert = cs7542_reset_deassert,
-> +	.status = cs7542_reset_status,
-> +	.reset = cs7542_reset_pulse,
->  };
+> Fixes: cf561283254d ("clk: tegra: set up proper EMC clock implementation for Tegra114")
+> Cc: stable+noautosel@kernel.org # needs the Tegra114 EMC auto-calibration fixes
+> Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
 
-The reset driver goes under drivers/reset.
-
-Also you posted 4 different patch series for clk drivers for this same
-SoC. Please post them all together as one to make the review easier.
+I'd like to see someone from Nvidia review this before I take it.
 
 Brian
+
+-- 
+Brian Masney <masneyb@kernel.org>
