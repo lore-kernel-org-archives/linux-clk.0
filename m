@@ -1,102 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795541640;
-	b=w6IaFaEGLrXIym0BLOzJwNQAGggLZVM21RrUyB5yHr9otXbhYqVCYsLvSDWlazquJ+jR
-	 9Y38xI0L72MPAyublAmYmZiozEH1xdQ39rwSAsmvUJIoZPNBnKxuM4IH7KT9MtDFDkXGY
-	 6Rdbg/wHvJ/A4NUZSR17JM7hHBCazH5AQpyvLKlMOTBgurmpkyO4KIMgAXhBVCp1amdeY
-	 WwWxfXgMTjCvPHT/xz8upAe6fbks55B+H77PMkcoKmH2r3q+F3F58jzciXHRdeaFoDMgi
-	 E9O1OsksK4IxK77kvKZnqsU0Djs362snoEBUM4xvL9eKT//vmle+uFqsuxdGdkyYzFw==
+	t=1795541778;
+	b=LeUiFmAroTyZOnfJu/Y8KFJ0dvZ1reQdR/ggOdysp456kuog7bQQn3Fj/8pNlScKL73/
+	 g/41yxzGzXJ86i1SPPcbbTcQufHQCt2O9rsNA9uKQTCPxw42zvW0PGmGSTMtH/fdHB1wP
+	 QXeHQwcnRchxBrYiElEfl8NB1ZXE8H9NPTHC//qr9RSDbkars/StJ1aw/+1IhpEmZXtlJ
+	 MC2KNSwIqubp/jmlVl40WTGaaZzrFnEN58LBnXDdKMrE9rHou8yolpzf3EyfmbClgBY8a
+	 hUEjUqdwjVHaf/KieDXbTgm0539o3YkWbOn4379qPT+vHyspv8Qyl4qU8fhdV2t+CoA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795541640;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Transfer-Encoding:MIME-Version:Content-Type;
-	bh=iqYPNhQdv5q8sriJxPDOk8LmysuftpZ7o/yXP0JyEzs=;
-	b=xc2SRTGZe6uDB04WqBV8ikJ1m1NaKYvSOs2W/3oka1e2psSimqdHNmqvR4QeCM8zsp4B
-	 36bRP9CV7KJAo9PazxkUJ1WV0B/6glhaPLdUis5QUi3L6u6bEmkSiM9W7wOVqVxxU4RxP
-	 mkZMA9oAUyTb2qNcvNSRL+su4ddUoB5rT419gXiNHhl7uqLjNEQwvfeyMWvAUAnRepv/3
-	 58MR0K42V0cg6NhNUXfxW4MlMQFBLJ1umoUGNBFdp6FFWNc/+EMBfNkk6Q6i7CJMUBwok
-	 meHDUQ04xGzvtEIiwBpIF/CTEsdByQjeWbBYDbwxRnVRxfX7AitCzbFLJd8TiV/lTRg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795541778;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 User-Agent;
+	bh=tfymlDcljSjuvF26uzxj/WXRQgXdLURskmE2fWlkPsA=;
+	b=EAuSwzV4frJ1r4uqOk20rl48D1YWimxP9lzsqPwyYoUmP0eFVzgDhijsrOqsJV0uRXJ1
+	 zvY33KTJiW9buW218jEz1dgIcRguParOz+9aR8yqJHFz4FhduwlMdF7voxoMeSXS3qtcA
+	 nP5HNseH86k76cKbHXDGYRXqRZw+xLZQ+LW1aLYytlWYrM26meEgjJ1BcdPlvDECzrJ1q
+	 nQ7CIQBxV53DOWUm+XUU0WSSCl0bbE0WISsagstZchc1OXd22zA0bLQAgsqVSzzwWsb7q
+	 drDHrALU97h87oSXChgYA0Gs1fYcSkuEKGAWPv2d2awijkEqps1sMO2kCfO6zkz0+Qg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DWhauDVf;
-	arc=none smtp.remote-ip=209.85.167.48
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Yf05ie99;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA34606A331
-	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 17:34:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1FA34606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFCB606A31E;
+	Tue, 24 Nov 2026 17:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DWhauDVf
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5c158c4c15fso5987946e87.1
-        for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 09:33:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795541638; x=1796146438; darn=vger.kernel.org;
-        h=content-type:mime-version:content-transfer-encoding:message-id:date
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=iqYPNhQdv5q8sriJxPDOk8LmysuftpZ7o/yXP0JyEzs=;
-        b=DWhauDVfAmirslFngHjTM1mnMVETNpzC4zCZN6Nu+H+EhFIW1EEv9E6qUNcbdXp5+1
-         0iNlpLKUe1Guc0WO6iclRDlL2FbObdhb1InOgL2bK23VPErxebNUqb6vlIjJfrJhutuz
-         fAp9WJJ6VP1QNvnXVlxV4KqDZRdNvCWldx1WpPDESL2wvxsBdPh1dEFhxFGPXBw4JfxT
-         GDdJaiu+Rlk6h2EV+32PBMl8xTsqxq3qGvHW8OqCqyVyuSWcziRUT8LHfO7RXSFmTkE+
-         f0jbOJOGFh9KJAtkYcn1jePsLEAldHTxiLK2g5SrnhAJ4l1QPfnR3f7FBPGl86NZ+hsN
-         5S3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795541638; x=1796146438;
-        h=content-type:mime-version:content-transfer-encoding:message-id:date
-         :references:in-reply-to:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=iqYPNhQdv5q8sriJxPDOk8LmysuftpZ7o/yXP0JyEzs=;
-        b=aTKgX6MY8aLL+XFi9Q2SOvBvbYlbgAGw3MYilRx6n2wrg0BnjocDd95pztKEdroAPl
-         ZnOEGD1bo5VELnIv5iLjjMVP3gvofyM8ePJvuSPgdCphXjTHLSrD2kNSZhi1z93v8wQO
-         gKMrXitLVWGCz3B4E9mJXkhMsaNtJdIzbY4yaSVz/1ixoXKFw8ykysCqawzIhT4acwY8
-         JJJufmbD6v6Qj8TnZzICpWn+Y0oV/x61jgAqNRmFHQkqm8FRX2CyRrL9O8uPCCk4H2eA
-         M5Aj1LHlayA2q6B4tPYZyFbJGZOKHgQWTzzRoQA8+wMFp0+BG+TE2/lPgrYsyXNhgRYe
-         N+2w==
-X-Forwarded-Encrypted: i=1; AL+hErEG646WMMoaa1gCjWH9TNLXuyOq0RBPxZ53wn4qTQigQCAp5eXnGNnebQ3xmg+0f8gWYayEYi7w+B8=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/rnjy17TniqO2DAKqBkxsBZxucDCPpfDoBMNIwfGtmVwjm4hnH
-	xR9qA1FrmPzHmi/sOzCN9gNv72wFn/NAbdScfkkxJ+ZcMgojRUSttRqA
-X-Gm-Gg: AZFdTZcl3rgzcZ5oyAKeRxc7793vpI+4Pp8+ZGvFemt9HV+psQkCtVjdWY8SFPOX+ZO
-	1hmIbmB9BHJqxa00QsTNB+vbMY5t2RCtByuC1chxKYswOUpGQOPxEfi4Ka+84eezAy7PzuC2mBf
-	a3wZgwC81pLCXRleJJW2qo3nqk16GPVd25DBao5fYp2wwjC74aQHvO4E0gmGSjyfq0fZsAP2/Jl
-	9yP4YcjtI5XYBW7L/KMLSDd9uiMGJIDN7o52tYm5JVMUDtzUznycbYb155yOo9OdIY95rj9BD1Y
-	kr9oIwclBPxl8Q1mX5/b7a1LT8V9qhCl7UWyjAmaKgNQ62oMqFf6XXiB23Xe+9bnCbuZQTIAZZx
-	ki+/B0cebBIx3PatSHhtNlAqLI3fVKx3hX9m6pjZojWjo880zme6UiXE136e9mO/hpubnM7FDZE
-	ZMhyhgSL5JgrFxxrFx3ju/N9s9vRe5OlwGL3EbPAes67jEiU8piGIoZ/xjKZFv60gw4rijvPSGE
-	boqDD5jc0rR/QHoSdjq99aWneYwLCXzgSVpcyR/k9lWwxvW/U38O2fmNQx9J7gymjfCofKsiyDo
-	TVDN/SS67prWIVGiED3rD8E/DHBNliy1lvyCJMPXiCOc8FX0Uv8FEso=
-X-Received: by 2002:ac2:4bd5:0:b0:5c1:ac33:5a45 with SMTP id 2adb3069b0e04-5c1b79fc8dfmr4560944e87.4.1795541638132;
-        Tue, 24 Nov 2026 09:33:58 -0800 (PST)
-Received: from [127.0.1.1] (ip-024-180.users.dtel.ru. [91.210.24.180])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c1bcff8bbdsm3990097e87.28.2026.11.24.09.33.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2026 09:33:57 -0800 (PST)
-From: Fil Dunsky <filipp.dunsky@gmail.com>
-To: Brian Masney <masneyb@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: cs7542: Add global PCIe controls and network
- engine reset
-In-Reply-To: <awXFhjXhZ-e_QM_R@x1g10>
-References: <20261124-b4-cs7542-global-controls-v1-0-12548785df2c@gmail.com>
- <20261124-b4-cs7542-global-controls-v1-2-12548785df2c@gmail.com>
- <awXFhjXhZ-e_QM_R@x1g10>
-Date: Tue, 24 Nov 2026 20:33:35 +0300
-Message-ID: <179554161506.57.3046327489415683188@gmail.com>
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Yf05ie99
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 037221F000C0;
+	Tue, 24 Nov 2026 17:36:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795541778;
+	bh=tfymlDcljSjuvF26uzxj/WXRQgXdLURskmE2fWlkPsA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Yf05ie99WCEH3z5Bh5ZjkjaYMGpqa5c0dWCUG/aleYLfppE+V+1nkgGoTgNv2woQL
+	 q91oJAz+jzY84f1fDS3zTVyUgXljZFKWNQyxfqjdMwRWFyYHpey7LSg1i/OX5essit
+	 /0gQAJun5dgptmQJGRZ6EOE1cvo5xZdDgLE+n3Qc/PaK6RE7DEEeZyc9Rqxs7zMjG/
+	 yRB4VSJMcFHzaAV+YehR2OunxXCnMrpakiuMCAfJscLSMmlqfcsFUexdR7vkJLuc7J
+	 F0poHPePg+2XGAJa5vW8i3Sp75+1JqQI0J5EPNWvHE/gWyO0E21vuiN0spUR9tYpfI
+	 K9+NSpE9XxcXQ==
+Date: Tue, 24 Nov 2026 12:36:12 -0500
+From: Brian Masney <masneyb@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	"Zhao, Linaro" <richard.zhao@linaro.org>,
+	Linaro Ltd <mturquette@linaro.org>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 05/10] clk: divider: Avoid division by zero in
+ _div_round_closest()
+Message-ID: <awXLDDmHUpELwCio@x1g10>
+References: <20261123164834.3330320-1-lee@kernel.org>
+ <20261123164834.3330320-6-lee@kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -106,15 +67,51 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="fixed"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261123164834.3330320-6-lee@kernel.org>
+User-Agent: Mutt/2.4.3 (2026-10-09)
 
-Hi Brian,
+Hi Lee,
 
-I'll move the reset controller to drivers/reset/ and send the CS7542
-clock changes together. That will put the strap-selected clocks and
-the PCIe gates in the same series, with one binding for the global
-register block. I'll fold in the remaining review before posting it.
+On Mon, Nov 23, 2026 at 04:47:38PM +0000, Lee Jones wrote:
+> When CLK_SET_RATE_PARENT is not set on a CLK_DIVIDER_ROUND_CLOSEST
+> divider, clk_divider_bestdiv() invokes _div_round_closest() before
+> clamping the resulting divisor to at least 1.  If the requested rate
+> exceeds parent_rate (for instance via clk_round_rate(clk, ULONG_MAX))
+> or parent_rate is zero, parent_rate / rate evaluates to 0.
+> 
+> Passing down == 0 into __rounddown_pow_of_two() triggers an undefined
+> shift and truncates back to 0, after which DIV_ROUND_UP_ULL() divides by
+> zero.
+> 
+> Since a divider cannot increase its parent rate, return the minimum
+> valid divisor directly whenever rate is greater than or equal to
+> parent_rate.
+> 
+> Fixes: 9315514252a9 ("clk: divider: fix calculation of initial best divider when rounding to closest")
+> Closes: https://sashiko.dev/#/bug/linux-cc7c0851-a317-4348-ab29-9d748aa20cfc
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lee Jones <lee@kernel.org>
+> ---
+>  drivers/clk/clk-divider.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index f68216c65d3d..d05dc595ec4c 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -244,6 +244,9 @@ static int _div_round_closest(const struct clk_div_table *table,
+>  	int up, down;
+>  	unsigned long up_rate, down_rate;
+>  
+> +	if (rate >= parent_rate)
+> +		return table ? _round_up_table(table, 1) : 1;
+> +
 
-Thanks,
-Fil
+Carlo Caione posted a separate fix for this that I merged yesterday.
+Patch 2 in his series covers what you posted.
 
+https://lore.kernel.org/linux-clk/20261119-upstream-clk-divider-large-rates-v3-0-838eccd2e497@baylibre.com/
+
+Brian
