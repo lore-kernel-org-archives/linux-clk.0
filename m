@@ -1,83 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795562303;
-	b=wOuvX4sgBJ9H2Papdy2JhPSPgC5y03qoodlF2hTkga9NWeMVZtZYy+yUXWJnt8BL+XvR
-	 ls5QnWsMnl6dcdxowOAKRypXdy+QGsjR0JzIicwhFwl266f+JTksL3sFqOCWzU2V1sgJe
-	 vgsrqNS/mFCMh1TVibm4VHkxMgLu6eU1IBRgk2cmqIUCq1PqdGxLPqLDj6OQYUOSgUGFp
-	 2qxnckSsTrmrXc2VjjOHsgN4+p8gunJxyQv6OI20BOQduz3qdBvS8C9Xi0NInY1J3Gq7B
-	 4grhWG3I4UKXxcY9RlE5L5UMpS8gLnLWxVlcV3pK/X0YS4Bx25GgbaSIuLy2ae0MRVw==
+	t=1795562304;
+	b=b8bAyKyRus/9dMJDwvU0VAZ/xYwZJlPzFWIaZ2R5As6Pv4Ea55yH/aPjKE7mW3F8/Xs1
+	 QgPyI/RPlCGk78C9HyMfTvJjKKNGwS6PfaEFAoJ0/bhRSw5x9gGZfNLFJDrvM/TQG0iIh
+	 IPz35R+htrqGEqZLFe8DkzwPfnkKr9PYKLID446enM7Esn26KxUVfGr3Dsf9cDyNGW2Lc
+	 8CnP4j06y+GF1iF4PdhFPHxKo0AfxuSY8lZ3lqmZRInpkV6U44X9oJgF2kpvqOdMf+ASf
+	 g8yBqDqGvAqqTGC0/5baqDGBv84Q258pA2L6PECTJ43rU9V3ykl4pHA0v93ATmChCdw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795562303;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795562304;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=JSPW10Pj7mWYrcYQV491CeBQq8pVVNVHWtKBSkpxQdY=;
-	b=X/lkh7nnwRE7KITapISrPsFHUODx2BDiiwjhjSEVQ7USgjX6/GzYIdk0MQSdxV4asrgy
-	 F2DBseVOipJwOPAeT2tfpIAShVPjzWgKEkrTQ7CpoQS+QvF/Js5jXUZx4mJgUIZ5+VcX/
-	 a0TzeM0pUjJ/EYT3R/IR0/FUFKnO89MRrXDlgPldWQQ144jzPtTUY6/flhHLzi85fhhdZ
-	 IJBrBiLKVGqeyToA50Lskve7BaymRet4G7Go+Fc7kxwCZWhytUg3z8Athrtw9ZFww5rbx
-	 w1ZlMMVE6LeIz7dSBSgM9eMJF23xnS5PdtHZq7VGgwIk6nw+sUj2mcxHhbRo2wg9b0g==
+	bh=Zws3+0qJXedwr5K37EOTqn6aaQV/PF1R0UsJI3VdM8c=;
+	b=HNGRiinFYgGagy2ZRhhox4oIcghMOhYOR26iQbpGye2HfRjHJBs66LlCF8sQuov0c8Dn
+	 ze7idJ2MAPEsDNK16VtdOB2w6QuQfULnlZakEb6uKz8IPyDQfhhdB+jXIhRNkFjk63JPo
+	 OQGWywYzr6h415TN42Dk4VZcBUi2RPtKFouEUzUFEk5Kso0DIumMnk90YoQPqmVUoeHgd
+	 rah7CbXn5n9bpLRM2zZFXQOudyMFal9EIjqm1EbACx1FCEa46QV2FxFrFC4BYseybq5nf
+	 FGj0mQAyhrZlamx3+2x7M2Pw1OEgacw9fZd3JvQuTMVcD6Th05/SVEh/JnowLTwVj/A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=SI0ND5xy;
-	arc=none smtp.remote-ip=209.85.128.52
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=uPH2U2MO;
+	arc=none smtp.remote-ip=209.85.128.47
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AAC606A333
-	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 23:18:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D1AAC606A333
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B597D606A333
+	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 23:18:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B597D606A333
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=SI0ND5xy
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4bba5e17728so679345e9.2
-        for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 15:18:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=uPH2U2MO
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4bb702a7548so44415675e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 15:18:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795562301; x=1796167101; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795562302; x=1796167102; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=JSPW10Pj7mWYrcYQV491CeBQq8pVVNVHWtKBSkpxQdY=;
-        b=SI0ND5xybHzRNkTlF7R69RrtN0WhAy6NS3Dqdmm282zxlySUryxFPjZeqOA4ldnWb5
-         FH5OmdYtPtrzSV66UbadG8hPTKejk4ztYaXVtXsnANibRwzyjV5hK4KeIQHNVBbQvaJ8
-         M8ZqJzEZ1LjwxzAt1FAa0FRaRwWF14rRR9WAxrdJJVo4Gowm/qAmWnKjuBGVOjlJqv+r
-         P3OyJS9FfRtChwteYvHKD12yKaZklv9pTtspU31NsUjDGL5LRdbPPsQVglSLOr1fWF+6
-         hIMCrU4rXEasa62orHeuZTrLDr7L1PNS8HdrlgyGxv64YzXyfuvVxBW4ZKB3h+qA0NDk
-         zg2w==
+        bh=Zws3+0qJXedwr5K37EOTqn6aaQV/PF1R0UsJI3VdM8c=;
+        b=uPH2U2MOzie2i8+oOLQwwx5UpnhlYYzbYUKfKCdTzZRB+9HAWp3Fn7HaUU1HWac1Qe
+         iEMRL0VKzBa8SqyGYbJVAN9MqXOVqLHElK0ks9ISF2afFJI1c40CpJJ7m7YOehX6GEhN
+         yN4+YxkqscUe8rg8PdJqFmYGcm7DyjxFMc3xX6/SsYJ3Nu9FtkfJ1reisIppWRLnugjR
+         IKaQMioW/SExMoZ7AVl+o3J0Qn/61/AVrqDD8X9EZ1yhHI3Wp3zEJd2CDatiKeEBeAMj
+         jk2b+jiLckqDLgWL/U0rSY7fBHRMAda8HRV7enkoHOnjVoRcbdGhsGSC4NyxNrN5790+
+         GDIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795562301; x=1796167101;
+        d=1e100.net; s=20260707; t=1795562302; x=1796167102;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=JSPW10Pj7mWYrcYQV491CeBQq8pVVNVHWtKBSkpxQdY=;
-        b=ehfeMRElLULXP8UaSeA5/nUnpwbnsZoiXrGU9pxyg7v+HzR6I8A+2M7wkehVY+dELg
-         RzUsT3rulmlldl28gJ0UbF9LWMaJdTCa1T4Af01D20Pws6hYVSAz2Nu9A2bOvlXA048X
-         m+qMoXy8hHlLmhNkZzreA9p40xdqisOcHsiFgtgX4Qk1OmpRgjAL806G7UQgs3uaAEYr
-         gJiUmk26lt+GhSgvJUsChAn+eme1poX5LteN8Rftb1x1OwIdlOybnAMQ0nf+ONYlF86M
-         z6yFJagRDcOzACzhJVjNfV3n0i4T6oglv0yCRXULeiIm7f4a81qU6LOX3w1TJMAszzYF
-         qvhg==
-X-Forwarded-Encrypted: i=1; AL+hErGfB+Zni8AT0sSF6W9VnpxAbA8ZDspHJFUZ8Jj6dU5utPXnY7jd/fAYD3IcwF+QY8Eqou09N+ESXSI=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8+rWtoLbpdmEJM9A48nym7RxhNH+Fkd7GlzUNBlyXsh4NrJDw2
-	8OLuduCMJMh9hqTsFVru5Cb9oQKNnzM8XJQ5U6YYvOZdVipQKgZwgLA6
-X-Gm-Gg: AZFdTZeqllGFFZqWfV/jUxQp8NsXelDF8TUAXnDqLSHejjO8013wWbVyU84BJ3TtYcm
-	QBp022hmO6Q+YfheueoLm1FmDgn7gggiUvKBbF++fmnECFxoeH6zojKuHynFy02MBLAIxwCfvX3
-	6YbLXp4IABqr1whqlvbkkJOl1uP7DbFxQ/0EG7KTxJX+mx5dQc8NIMfQUSlSixbKD4+PVlqLH1B
-	1xioKBjlvMb/kqoxxVdDPWZ0A6HR7u0DYHL9CwmLPszM8gC8CFeGwtrRnn2Jbd0lwtvB5VeCUNo
-	ExWDN5BdjZxYZJW6KsLMjVVDUz2/OwyQ62pVA3SzR1IqnE6FF7vQxgHh3FEV8J88Iwrge5U3HIN
-	84q3NkW/s5t1jyvDuoAKvUzhyKZ4/6ZNaWE9BOB9/sPgxcXjmMKhXaQkD2wRzQrjIS6rv6zFsBr
-	ySDXQPEL1EaG7Rskicf/6MNppgvhS25eaEUrzQQD4pTFnrPAp1WS/onCTw4wZXgKA71YLkAiH3S
-	9VLXvoQYqjkm9xSDFuPKnP5dGMZExU2dIPBPcj6Zl+ynZ2GqLusRg+ZrAb9MsmuL69kWFwh+b0p
-	MIHhhKG9XoMowYLqVn0N92sS7DUg5YhHOZPC80a67MQeR7Yh7LfuND9RVlUFOs8i01tp4lPc
-X-Received: by 2002:a05:600c:64c8:b0:4a0:1c0e:b057 with SMTP id 5b1f17b1804b1-4bb887e2380mr303656325e9.4.1795562301128;
+        bh=Zws3+0qJXedwr5K37EOTqn6aaQV/PF1R0UsJI3VdM8c=;
+        b=SxixOVFCYS/hshoKSXxMWnItkWfIeHUgSEyb/MctPJ48VMlSWIVyC4UlwVWrQgkpRf
+         N3pBaRdJ0qca6plJv6Yc+swbAADg2fVzX0PC9yTyABkW6uzFF6txE1cfoPI1cF20mHZK
+         S05K4zCLTmjGYbHU4a8jnpEJr0s2VMRoLhrEhDy/koXk+zSUNH9N5rHpXBMcPVGoWIq2
+         FntD0MjQKOmysjnuFuaDgthQO98yNzs5WaSPW5q9Af/9LovT8CbptfwMN0MgKOlFPIb0
+         tXAq+nysPW63SZKDNcSdVv+CZO6ub4YiHP3JkOoCErWHG4PyKnUWL+UEfUBlebQA2FDq
+         e1kQ==
+X-Forwarded-Encrypted: i=1; AL+hErGgmyN2g5MugjVs4Swu1DeeMPlO/sSd1A1bTDaDwed+i28OTyTgqSvbJAqleJlfRxMX1wWtL0lOJw4=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/xjLFKqi6LZdzJkjCOCbLGU+/2dh/fxw+shHxx0IcvllZcLtfy
+	Au3rzZbEWi6EZZan86AI7+BioZJ1bRXwyT6u63CbgFChfsOi4rvp7TXf
+X-Gm-Gg: AZFdTZeRNUe47V1NaohZGJUI/wnpIg3YWDfID8syT2ntCsvnmwOkhULWQ8VxMz2CTHq
+	FD5JXHytDGLfEAsLskLxuXjbWVovMzZENdOsI9dh2n+HhXP5uiXK/cch4F0KrxXGI0QqLkMySSt
+	m7Fdg4x7g2a7t7/Rz37HuXJFckhMulbjlGDicJlkxt5xxYdsYeknszno7lecn/QDSXUrkyLvFPh
+	TAU2UqDqnrYpTI38KL83PWhj9kDix2hi0DXaSekCuc8V9Fqm8Fjul7jS4bWLMEKFna8fnxD72t1
+	+XcIlLtFqgJoAIGCdjJpBDCbYmkwvQ1hjEL00ojtzvZXqpkeba8Frkhf+Q2fdw1v0zskI3o2U/4
+	kfE+FVnBqH2+GMscwNDPfxhyCdewOlfKwYNJ1ekb4a9E4t28j75WRNgc7X1LQ4HxFB84pWMo07f
+	l9tS7OSJ7k1OUsm2hVAFCIff0Pgjw3JoUiy0jAfnozBNMYjAWt2fb27QrmmBLX/DI4Ef3C26C7i
+	jtjsZwXYoyJgrS6yWhwH51hm3KtpOzZkrAEE8JYLM3sOZrS7bsPM5oklfuW/rwEUZ3pNkyKPa2Q
+	qhwGZiFMaG81RIia0lYJip+gJhh6uVMqAp3pHeMcfC74qHgZlJ6nlVoSQzkBwIZagFuwmEjo1Q=
+	=
+X-Received: by 2002:a05:600c:4515:b0:4bb:659c:b8db with SMTP id 5b1f17b1804b1-4bb88813b27mr337493705e9.12.1795562301983;
         Tue, 24 Nov 2026 15:18:21 -0800 (PST)
 Received: from localhost-live.home.vlan10 (053d9243.dynamic.tele-ag.de. [5.61.146.67])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb853a9846sm554400825e9.11.2026.11.24.15.18.20
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb853a9846sm554400825e9.11.2026.11.24.15.18.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2026 15:18:20 -0800 (PST)
+        Tue, 24 Nov 2026 15:18:21 -0800 (PST)
 From: Joshua Covington <joshuacov@gmail.com>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <masneyb@kernel.org>
@@ -89,11 +90,10 @@ Cc: Brian Masney <bmasney+clk@redhat.com>,
 	linux-clk@vger.kernel.org,
 	linux-rpi-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Joshua Covington <joshuacov@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3 1/3] clk: allow a clk_hw to be registered again after unregistering it
-Date: Tue, 24 Nov 2026 23:17:49 +0000
-Message-ID: <20261124231751.83938-2-joshuacov@gmail.com>
+	Joshua Covington <joshuacov@gmail.com>
+Subject: [PATCH v3 2/3] clk: tests: add tests for registering a clk_hw again
+Date: Tue, 24 Nov 2026 23:17:50 +0000
+Message-ID: <20261124231751.83938-3-joshuacov@gmail.com>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261124231751.83938-1-joshuacov@gmail.com>
 References: <20261124231751.83938-1-joshuacov@gmail.com>
@@ -108,131 +108,234 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-__clk_register() sets hw->init to NULL, and clk_unregister() leaves
-hw->core and hw->clk pointing to the clk_core and clk it is about to
-release. A driver with statically allocated clk_hw structures can
-therefore not register them again, e.g. when its device is unbound and
-bound again. The second registration has no init data and oopses. A
-clk_parent_data.hw reference to such a clk_hw also resolves to the
-freed clk_core of the previous registration.
+Add tests that a statically allocated clk_hw can be registered again
+after it has been unregistered and after its registration has failed,
+that a parent referenced through clk_parent_data.hw is treated as an
+orphan after it has been unregistered, then reparented once it is
+registered again, and that init data on the stack of the registering
+function is not handed back on unregistration.
 
-Keep the init pointer in the clk_core, and put it back into the clk_hw
-when the registration fails and when the clock is unregistered. Init
-data on the stack of the registering function is gone by the time the
-clock is unregistered, so leave hw->init NULL in that case. This has to
-be checked at registration, as object_is_on_stack() only looks at the
-stack of the current task. Also clear hw->core and hw->clk on
-unregistration, so that a reference to an unregistered clk_hw is
-treated as an orphan.
-
-Fixes: 0214f33c4e0e ("clk: Overwrite clk_hw::init with NULL during clk_register()")
-Link: https://lore.kernel.org/all/179545567027.246915.947299820828330388.b4-review@b4/
-Cc: stable@vger.kernel.org
-Co-developed-by: Brian Masney <masneyb@kernel.org>
-Signed-off-by: Brian Masney <masneyb@kernel.org>
 Signed-off-by: Joshua Covington <joshuacov@gmail.com>
 ---
- drivers/clk/clk.c            | 23 +++++++++++++++++++++++
- include/linux/clk-provider.h |  5 ++++-
- 2 files changed, 27 insertions(+), 1 deletion(-)
+ drivers/clk/clk_test.c | 191 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 191 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 4d2cc86bfb..c19ae1812c 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -20,6 +20,7 @@
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index 0505ed357b..0b6fa518cf 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -7,6 +7,7 @@
+ #include <linux/clk/clk-conf.h>
  #include <linux/of.h>
- #include <linux/pm_runtime.h>
- #include <linux/sched.h>
+ #include <linux/platform_device.h>
 +#include <linux/sched/task_stack.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/string.h>
-@@ -70,6 +71,9 @@ struct clk_parent_map {
-  * @ops:               Pointer to hardware-specific operations for this clk.
-  * @hw:                Pointer for traversing from a struct clk to its
-  *                     corresponding hardware-specific structure.
-+ * @hw_init:           Init data of @hw, put back into @hw when the
-+ *                     registration fails or the clk is unregistered. NULL
-+ *                     if the init data was on the stack.
-  * @owner:             Kernel module owning this clk (for reference counting).
-  * @dev:               Device associated with this clk (optional)
-  * @rpm_node:          Node for runtime power management list management.
-@@ -119,6 +123,7 @@ struct clk_core {
- 	const char		*name;
- 	const struct clk_ops	*ops;
- 	struct clk_hw		*hw;
-+	const struct clk_init_data *hw_init;
- 	struct module		*owner;
- 	struct device		*dev;
- 	struct hlist_node	rpm_node;
-@@ -4457,6 +4462,8 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- 	if (dev && dev->driver)
- 		core->owner = dev->driver->owner;
- 	core->hw = hw;
-+	/* Stack init data is gone once the registering function returns. */
-+	core->hw_init = object_is_on_stack(init) ? NULL : init;
- 	core->flags = init->flags;
- 	core->num_parents = init->num_parents;
- 	core->min_rate = 0;
-@@ -4505,6 +4512,9 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- 		pr_err("%pOF: error %pe: failed to register clk '%s' (%pS)\n",
- 		       np, ERR_PTR(ret), init->name, hw);
- 	}
-+
-+	hw->init = init;
-+
- 	return ERR_PTR(ret);
- }
+ #include <linux/units.h>
  
-@@ -4656,11 +4666,16 @@ static void clk_core_evict_parent_cache(struct clk_core *core)
- /**
-  * clk_unregister - unregister a currently registered clock
-  * @clk: clock to unregister
-+ *
-+ * The clk_hw of @clk is returned to its state before registration, so
-+ * that it can be registered again. Until then, a clk_parent_data.hw
-+ * reference to it is treated as an orphan.
-  */
- void clk_unregister(struct clk *clk)
- {
- 	unsigned long flags;
- 	const struct clk_ops *ops;
-+	struct clk_hw *hw;
+ /* Needed for clk_hw_get_clk() */
+@@ -3876,6 +3877,195 @@ static struct kunit_suite clk_parse_clkspec_test_suite = {
+ 	.test_cases = clk_parse_clkspec_test_cases,
+ };
  
- 	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
- 		return;
-@@ -4709,6 +4724,14 @@ void clk_unregister(struct clk *clk)
- 	if (clk->core->protect_count)
- 		pr_warn("%s: unregistering protected clock: %s\n",
- 					__func__, clk->core->name);
++/*
++ * Allocate init data that outlives the registering function, as the init data
++ * of a statically allocated clk_hw does.
++ */
++static struct clk_init_data *
++clk_register_again_init(struct kunit *test, const char *name,
++			const struct clk_ops *ops, struct clk_hw *parent)
++{
++	struct clk_init_data *init;
++	const struct clk_hw **parents;
 +
-+	hw = clk->core->hw;
-+	if (!WARN_ON(hw->core != clk->core || hw->clk != clk)) {
-+		hw->core = NULL;
-+		hw->init = clk->core->hw_init;
-+		hw->clk = NULL;
++	init = kunit_kzalloc(test, sizeof(*init), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, init);
++	init->name = name;
++	init->ops = ops;
++
++	if (parent) {
++		parents = kunit_kzalloc(test, sizeof(*parents), GFP_KERNEL);
++		KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parents);
++		parents[0] = parent;
++		init->parent_hws = parents;
++		init->num_parents = 1;
 +	}
 +
- 	clk_prepare_unlock();
- 
- 	kref_put(&clk->core->ref, __clk_release);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index a355d1ee51..026efed876 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -359,7 +359,10 @@ struct clk_init_data {
-  *
-  * @init: pointer to struct clk_init_data that contains the init data shared
-  * with the common clock framework. This pointer will be set to NULL once
-- * a clk_register() variant is called on this clk_hw pointer.
-+ * a clk_register() variant is called on this clk_hw pointer. It is restored
-+ * if registration fails, and when the clock is unregistered unless the init
-+ * data was on the stack of the registering function. The clk_hw can then be
-+ * registered again as long as the init data it points to is still valid.
-  */
- struct clk_hw {
- 	struct clk_core *core;
++	return init;
++}
++
++/*
++ * Test that a statically allocated clk_hw can be registered again after it
++ * has been unregistered, and that unregistering returns it to the state it
++ * had before the first registration.
++ */
++static void clk_register_again_after_unregister(struct kunit *test)
++{
++	struct clk_dummy_context *ctx;
++	struct clk_init_data *init;
++
++	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++	init = clk_register_again_init(test, "reregister-clk",
++				       &clk_dummy_rate_ops, NULL);
++	ctx->rate = DUMMY_CLOCK_INIT_RATE;
++	ctx->hw.init = init;
++
++	KUNIT_ASSERT_EQ(test, clk_hw_register(NULL, &ctx->hw), 0);
++	KUNIT_EXPECT_NULL(test, ctx->hw.init);
++
++	clk_hw_unregister(&ctx->hw);
++	KUNIT_EXPECT_PTR_EQ(test, ctx->hw.init, init);
++	KUNIT_EXPECT_NULL(test, ctx->hw.core);
++	KUNIT_EXPECT_NULL(test, ctx->hw.clk);
++
++	KUNIT_ASSERT_EQ(test, clk_hw_register(NULL, &ctx->hw), 0);
++	KUNIT_EXPECT_STREQ(test, clk_hw_get_name(&ctx->hw), "reregister-clk");
++	KUNIT_EXPECT_EQ(test, clk_hw_get_rate(&ctx->hw), DUMMY_CLOCK_INIT_RATE);
++
++	clk_hw_unregister(&ctx->hw);
++}
++
++/*
++ * Test that a failed registration leaves the init data in the clk_hw, so
++ * that the clk_hw can be registered once the cause of the failure is gone.
++ */
++static void clk_register_again_after_failure(struct kunit *test)
++{
++	struct clk_dummy_context *ctx1, *ctx2;
++	struct clk_init_data *init;
++
++	ctx1 = kunit_kzalloc(test, sizeof(*ctx1), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx1);
++	ctx2 = kunit_kzalloc(test, sizeof(*ctx2), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx2);
++	init = clk_register_again_init(test, "reregister-dup",
++				       &clk_dummy_rate_ops, NULL);
++	ctx1->hw.init = init;
++	ctx2->hw.init = init;
++
++	KUNIT_ASSERT_EQ(test, clk_hw_register(NULL, &ctx1->hw), 0);
++
++	/* A second clock with the same name must fail to register. */
++	KUNIT_EXPECT_EQ(test, clk_hw_register(NULL, &ctx2->hw), -EEXIST);
++	KUNIT_EXPECT_PTR_EQ(test, ctx2->hw.init, init);
++	KUNIT_EXPECT_NULL(test, ctx2->hw.core);
++	KUNIT_EXPECT_NULL(test, ctx2->hw.clk);
++
++	clk_hw_unregister(&ctx1->hw);
++
++	KUNIT_ASSERT_EQ(test, clk_hw_register(NULL, &ctx2->hw), 0);
++	clk_hw_unregister(&ctx2->hw);
++}
++
++/*
++ * Test that a clk_parent_data.hw reference to a clk_hw that has been
++ * unregistered is treated as an orphan rather than resolved to the clk_core
++ * of the previous registration, and that the clock is reparented once the
++ * parent is registered again.
++ */
++static void clk_register_again_parent_hw_orphan(struct kunit *test)
++{
++	struct clk_init_data *parent_init, *child_init;
++	struct clk_dummy_context *parent;
++	struct clk_hw *child;
++
++	parent = kunit_kzalloc(test, sizeof(*parent), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
++	child = kunit_kzalloc(test, sizeof(*child), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, child);
++
++	parent_init = clk_register_again_init(test, "reregister-parent",
++					      &clk_dummy_rate_ops, NULL);
++	child_init = clk_register_again_init(test, "reregister-child",
++					     &clk_dummy_single_parent_ops,
++					     &parent->hw);
++	parent->rate = DUMMY_CLOCK_INIT_RATE;
++	parent->hw.init = parent_init;
++	child->init = child_init;
++
++	KUNIT_ASSERT_EQ(test, clk_hw_register(NULL, &parent->hw), 0);
++	KUNIT_ASSERT_EQ(test, clk_hw_register(NULL, child), 0);
++	KUNIT_EXPECT_PTR_EQ(test, clk_hw_get_parent(child), &parent->hw);
++
++	clk_hw_unregister(child);
++	clk_hw_unregister(&parent->hw);
++
++	/*
++	 * Set the init data again so that this test only depends on the
++	 * parent reference, not on the init data being restored.
++	 */
++	parent->hw.init = parent_init;
++	child->init = child_init;
++
++	/* The child comes back first: its parent must be an orphan. */
++	KUNIT_ASSERT_EQ(test, clk_hw_register(NULL, child), 0);
++	KUNIT_EXPECT_NULL(test, clk_hw_get_parent(child));
++
++	/* Once the parent is back, the child must be reparented to it. */
++	KUNIT_ASSERT_EQ(test, clk_hw_register(NULL, &parent->hw), 0);
++	KUNIT_EXPECT_PTR_EQ(test, clk_hw_get_parent(child), &parent->hw);
++	KUNIT_EXPECT_EQ(test, clk_hw_get_rate(child), DUMMY_CLOCK_INIT_RATE);
++
++	clk_hw_unregister(child);
++	clk_hw_unregister(&parent->hw);
++}
++
++/*
++ * Test that init data on the stack of the registering function is not
++ * handed back when the clock is unregistered, as it would point to a stack
++ * frame that is gone by then.
++ */
++static void clk_register_again_stack_init(struct kunit *test)
++{
++	struct clk_init_data init = {
++		.name = "reregister-stack",
++		.ops = &clk_dummy_rate_ops,
++	};
++	struct clk_dummy_context *ctx;
++
++	if (!object_is_on_stack(&init))
++		kunit_skip(test, "init data is not on the stack");
++
++	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++	ctx->hw.init = &init;
++
++	KUNIT_ASSERT_EQ(test, clk_hw_register(NULL, &ctx->hw), 0);
++	clk_hw_unregister(&ctx->hw);
++
++	KUNIT_EXPECT_NULL(test, ctx->hw.init);
++	KUNIT_EXPECT_NULL(test, ctx->hw.core);
++	KUNIT_EXPECT_NULL(test, ctx->hw.clk);
++}
++
++static struct kunit_case clk_register_again_test_cases[] = {
++	KUNIT_CASE(clk_register_again_after_unregister),
++	KUNIT_CASE(clk_register_again_after_failure),
++	KUNIT_CASE(clk_register_again_parent_hw_orphan),
++	KUNIT_CASE(clk_register_again_stack_init),
++	{}
++};
++
++/*
++ * Test suite for registering a clk_hw again after it has been unregistered
++ * or after its registration has failed.
++ */
++static struct kunit_suite clk_register_again_test_suite = {
++	.name = "clk-register-again-test",
++	.test_cases = clk_register_again_test_cases,
++};
++
+ kunit_test_suites(
+ 	&clk_assigned_rates_suite,
+ 	&clk_assigned_sscs_suite,
+@@ -3892,6 +4082,7 @@ kunit_test_suites(
+ 	&clk_range_test_suite,
+ 	&clk_range_maximize_test_suite,
+ 	&clk_range_minimize_test_suite,
++	&clk_register_again_test_suite,
+ 	&clk_register_clk_parent_data_of_suite,
+ 	&clk_register_clk_parent_data_device_suite,
+ 	&clk_single_parent_mux_test_suite,
 -- 
 2.56.0
 
