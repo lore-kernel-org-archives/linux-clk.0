@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795539923;
-	b=HU06Mk2kRSl4MRTcMvu0v/NeWS8UNFXdq8g9W+0w3OCyw5DRk9iOUQ3fMltqXyoq6hCs
-	 6WSUmG2O5DufrQ1eux0cqyRokjm2p7f3M2U85QCAye2bJfIrNfu0N/2TaQuhpdwzWm5p8
-	 v5XU4yhEUjga8/9WSQ3kL1Z/A1z54P+mnTUxaA1R8b8G6mlpM8PY3HFmUkUVLYR2ypB1k
-	 7zy6hyRBWhvcmz0a8nJz0PfYURl3+sTH3JoM0Rmqn4WKulIO3kwvKYDRq7mnE867bRtNq
-	 14BZ5MVm+siROYSdsVngduGOMpb+QLqyA67gZ8pOtgWg5vLRQ/iR3dfLc92KgJBZh+Q==
+	t=1795539928;
+	b=BLzG3Oehnadwemzv8iJEZcW+Tq8W/jWGe2v+6COC20J4MEM3P+tqf4zjV3IQ8EacwqW3
+	 K8/s40X3i/NQt532gJkgsLZFbgCAt7xowY4ykWM3WYMyvLtQ2EtcAf5AJIlUdWsL2F2f8
+	 w6Pb9VJzNiJld/4fKAMa+zWBi1W//COXm/3FI85Rdo6zOxHqcdDkRXYGRPxeUNMV7Yozj
+	 uxAIFDhVc01spQplQN5RX5qlTthpAP24tciWk90AuIblK9YbGX0XtOy7H4f1dHtOtq/pQ
+	 Jius+jmoKpH8AilnTeGaMvmtgtD0cea/bKbJzNamZzbVkcrdlClhs1SOKrW2qYc6Thg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795539923;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795539928;
 	h=Received:DKIM-Signature:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
 	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=f55T/kSrDNSJkxy+qhEwPTiybH8m19I0GJ1bu1KYWII=;
-	b=gEAsIOezVuae8QoseeOb5Zi0dgkmCPUjZEmNDPaCtu1CgUjK0QqsT2jmImxa46KK/hOB
-	 eUddXhcbrjj51wxrZXTx3pXOfyQcYtWRx9QvWzFaXRHgT36GFdrCYWmAmuwvFMG7NfuqP
-	 wbB+0MEPuePiFHFV3wBKXuN0hGhQtDObP60fNtvXhOb1HEceN81D+uVZ1bvI3P6fh0y8q
-	 lmw/lr8Gw4OchuLE8/LIZ2wD/kYA9oZm2YPGBmr24YZOxmP+wEn81Uyijv4aEx2rQXEFV
-	 CiNvtM4eW6F8ZKN4mFQjj74ImSW76bfMubOh8swb8PAO5YdfmyjbTjdYXpusd/Vw8Ng==
+	bh=5YXINzAIgoH3lok9RVMBss6u9Tr706x9HN937IH4IVA=;
+	b=ip1hbhKZah5cPQlOmJBavmcmGySx09ou6q3gW3Mkftb7/oobT9LqDSGL2fYe0u2a1XGJ
+	 9oMJ8+9GTsnqdewjQNM6fA2kTDFpM3tME5itY2BpbZeI+D+wShGk/seLIdoyFHbknsUfM
+	 HNkKXIig1bD6qbJjTQx4SSsMItAkLtUTcOa6lBELiDygzWdWyse3G4VuPaqHc/d5R6PgW
+	 sYgHM34gwBinPbBsgxVJ2O2XP/8dKFkvxjj2WutNU2bICHslew2yGmbN5f5IjMIiChA0p
+	 y++weSCH7wjTtyVlQI8w2E2HpNQEH5aZjhGqXhEm+Lc5GnG7hOI424kdrkQKPnVUDIA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PrywwkvI;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c5jJCwZS;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0188D606A31E;
-	Tue, 24 Nov 2026 17:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96005606A321;
+	Tue, 24 Nov 2026 17:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PrywwkvI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5913F1F000C6;
-	Tue, 24 Nov 2026 17:05:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c5jJCwZS
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E9711F000EB;
+	Tue, 24 Nov 2026 17:05:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795539922;
-	bh=f55T/kSrDNSJkxy+qhEwPTiybH8m19I0GJ1bu1KYWII=;
+	s=k20260515; t=1795539927;
+	bh=5YXINzAIgoH3lok9RVMBss6u9Tr706x9HN937IH4IVA=;
 	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=PrywwkvIpITuAreH8ygZnvkGEsjQ7GOqvt81KWLw7redTIGsMgYIRfkKKPRGv64qc
-	 kt0jVizZ5ZIqs29K3pgvXMK924RLSIHXmJpXTcyR1TZsMHdlQj8euytWmTA8hTGPsI
-	 +2YHIgawafwdY1uqQGFwP28je3usaDVCOdqykG/t/dPA3g1GVXJLF0Te5D2GhoaYFZ
-	 q5oTOjmidpISfy1PFDdy8S/M4z1mXQczY0qg0GdRqVxnSCldRKFfEtjmyTR8LtJlIl
-	 ie3xf+3gU5DEGgw7xCPJWQ4HVVTdqyC0MNuDynX+9B938P9H2ajylLioeyN37XJE71
-	 Akv6Icl5FvPZw==
+	b=c5jJCwZSVtQlNFniz4pYhnQxWIR9tXhrk4rS6UQn8Wegl6BwsxlTRydxYE1NdJA8A
+	 PY77Gy+s6jwDjn7QDzuPaf41t4HnUWwTvPZCKoGqmnlJ/6DaoUyGnK8xUvG8De6DLH
+	 u/27maVsLxpY+aCioxkd5VjPs61ppjkjisfybrtu5G32mdtvyTAgqPufsMPWQtIYzS
+	 eJTuxYGEdxy15loW7+7IBJAFvLLv8QutdwUdtAGqsDy/ebLX/LynJPCXf/gFutMwfE
+	 uA5H2rbIvfZM2DdkVXYPtzvddhY0UFXFQX4M5lxtgs+ZLrRmWEV8GPPY3CnXfhc0cg
+	 j6G+GIFqOEEEw==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,7 +51,8 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v5 1/6] MIPS: Add support for Siflower MIPS SoCs
+Subject: Re: [PATCH v5 3/6] clk: siflower: Add SF19A2890 clock manager
+ driver
 From: Brian Masney <masneyb@kernel.org>
 To: Joseph Telaak <joseph@telaak.dev>
 Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -65,38 +66,86 @@ Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
  linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20261123-sf19a2890-sysm-v5-1-4ba44a0db17d@telaak.dev>
+In-Reply-To: <20261123-sf19a2890-sysm-v5-3-4ba44a0db17d@telaak.dev>
 References: <20261123-sf19a2890-sysm-v5-0-4ba44a0db17d@telaak.dev>
- <20261123-sf19a2890-sysm-v5-1-4ba44a0db17d@telaak.dev>
+ <20261123-sf19a2890-sysm-v5-3-4ba44a0db17d@telaak.dev>
 Date: Tue, 24 Nov 2026 12:05:08 -0500
-Message-Id: <179553990882.338124.2700514698048622727.b4-review@b4>
+Message-Id: <179553990883.338124.17209990225292890457.b4-review@b4>
 X-Mailer: b4 0.17-dev-8145e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=649; i=masneyb@kernel.org;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2342; i=masneyb@kernel.org;
  s=20250903; h=from:subject:message-id;
- bh=Lzsl3O/CyZSXSD5OOxgz4HOpmwsFS5hLkGYMaG366uE=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJZDx/7xTldcIv/uaDmx3pVKUEGU3fmKYjUv5A4Ua7m+
- /7aGw23jlIWBjEuBlkxRZYluUYFEamrbO/d0WSBmcPKBDKEgYtTACZyu4rhD/8UnsjX7Bcttt/V
- zll/6vyGQDfhL9ol8pGqYRWpHRtmdjMy9G5Lj8209NzZf7c5OrBZ4pb1ifj+4FXnF7d1NZxL2Hy
- WGQA=
+ bh=uUMody63Siy6rWiJavlvtygHAqJl5E2A5Jith/K0ARs=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJZD59QPfdtee6e/lrfepvgidXaay0m3XL5cLD41GvBQ
+ yIt1n8KOkpZGMS4GGTFFFmW5BoVRKSusr13R5MFZg4rE8gQBi5OAZhI1kpGhqbH/19dmtj4vmVC
+ 7B7Z313Czrs+mB9inGVw/q8NkwOXATsjw68Vf9cfXPO7wjtvcdaCy6ah3jPufj6n3K8n0nvK8pX
+ RCXYA
 X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
 Hi Joseph,
 
-> Siflower MIPS SoCs like SF19A2890 use a dual-core MIPS InterAptiv
-> processor, built-in GMAC, USB, dual-band WiFi and various other
-> peripherals.
+> Add a driver for the clock manager of the Siflower SF19A2890: the CPU,
+> DDR and common PLLs, and the muxes with dividers that derive the bus,
+> CPU and peripheral clocks from them. The GIC timer probes before the
+> platform bus and needs the CPU clock, so the driver registers that clock
+> and its PLLs early, from CLK_OF_DECLARE_DRIVER, and the other clocks from
+> a platform driver.
 > 
-> Notably, they use some ARM PLxxx peripherals, and ARM_AMBA is
-> selected for the drivers.
+> Based on the driver in Chuanhong Guo's SF19A2890 branch.
 > 
-> Most devices on the market with this chip come with 64M or less
-> DRAM. A kmalloc.h with malloc alignment override is added to
-> conserve memory, and a MACH_SIFLOWER_MIPS is created with reduced
-> features instead of using the generic kernel.
+> Link: https://github.com/981213/linux/commit/0466d6303c25
+> Co-developed-by: Chuanhong Guo <gch981213@gmail.com>
+> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
+> Signed-off-by: Joseph Telaak <joseph@telaak.dev>
+> ---
+>  MAINTAINERS                          |   1 +
+>  drivers/clk/Kconfig                  |   1 +
+>  drivers/clk/Makefile                 |   1 +
+>  drivers/clk/siflower/Kconfig         |  11 +
+>  drivers/clk/siflower/Makefile        |   2 +
+>  drivers/clk/siflower/clk-sf19a2890.c | 494 +++++++++++++++++++++++++++++++++++
+>  6 files changed, 510 insertions(+)
 
-The MACH_SIFLOWER_MIPS Kconfig and the kmalloc.h should be separate
-commits.
+[snip]
+
+> static unsigned long sf19a28_muxdiv_recalc_rate(struct clk_hw *hw,
+>                                                 unsigned long parent_rate)
+> {
+>         struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
+>         struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
+>         u32 div;
+> 
+>         div = sf_readl(cmn_priv, priv->offset + REG_MUXDIV_RATIO) + 1;
+>         return parent_rate / div;
+
+Newline before the return. There's other places where this is needed as
+well.
+
+> +static int sf19a2890_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct clk_hw_onecell_data *data = sf19a2890_clk_data;
+> +	struct device *dev = &pdev->dev;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	if (!data)
+> +		return -ENODEV;
+> +
+> +	for (i = 0; i < data->num; i++) {
+> +		struct clk_hw *hw = sf19a2890_hws[i];
+> +
+> +		/* Registered early */
+> +		if (!IS_ERR(data->hws[i]))
+> +			continue;
+> +
+> +		hw_to_sf_clk_common(hw)->base = sf19a2890_clk_base;
+> +		ret = devm_clk_hw_register(dev, hw);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "failed to register clock %u\n", i);
+> +
+> +		data->hws[i] = hw;
+
+You can assign this before the devm_clk_hw_register().
 
 Brian
 
