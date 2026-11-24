@@ -1,97 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795514714;
-	b=QGm6gu5gtL0XRaGgsK3btEMGCG6Ns7BLWkCy7xXfdMPHm9bawGdZJ5qSL8h5mbmsFn4h
-	 Eag4yRIskLP3wD/bF0irMhly8+TF7spDfycYKloWXgRch577zopSW2aoW71drLAxR5Hgf
-	 Fd0bRnV+1orH0RUlo8k56R/ZsvNEZIxnM63McgOnYrZoqKr5Drhk3VBRPEWnq8JNvuppt
-	 Ev2D65LHQj0Ku4Tij/6WsteCFMosYK4LvL/5y8DxUy0+mMKPg6O+GJ/sBees2BRgVQTYD
-	 77ymjyZ46y4WaZ0Pmbb4mhdG2qKsnqcqGtbOFIgzvKHtMAcsF4XGBqstLRhD8T/8uhQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795514714;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=H8p63jVzqspLS/yYDkgn0Or4vozMPrWlrtlpK8EIjBA=;
-	b=4iP2b9XJdgeQa6lWxduU/j2DOVP/utPt7+lYgEHaBYcp+y+xV4FYOw1mz9UlBikKA9NB
-	 fGY0ck5aMZRXEZ2kRSmsPX5MJfNajklureZVQ4e7onga08/tGv4/vwJsZKITH6/ryNQ21
-	 EVr4pAOaQZ62oepK10vGoyN57guUXEfsBPrfy2oxZRlJgd09W7A7/iijsafwKll4xIoxu
-	 7YgaRrhzGZWDJ+ulKBQqBsC7A4ABW6QtP+sOzKbzE4JjIj4pPJyCYLSPX80FWQ0denXon
-	 SvLvdUphFTAdZZET5JBLpnAuNMrPSdJH+RaO4DN3ak3UbWuGb3xtdCuDVDm/NO+Cntw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=SgIqTliG;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.171
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795514783;
+	b=XzL62/RsfspoCEp4q+bNkCJfaQU+IwDhA580JpH2iiMgQA6A2ZjrqfKUyAzf1d+uB9kC
+	 YzivqQPTUu9f8EhccDISw31PXSKqkRN+stQWMTcUZKuxyomc0AxA39Je7sEzOIpFQH7DB
+	 8ld7P9O58BN1lBvrBFA4UoaCikRIWMWWgmpUVrgyZdmkAIGcSjiHYmiLzdffpkEouLr8z
+	 wBxdxGpSZxQQoonn8DUkzeAfPTQZXfw/IprWJlr0774IsPQ3kcdOfRdYB031VbJ3wo/9R
+	 cvw03oLyUOJdWcq8U42fsVZqBE+Kpie17RFiwP9yKd2+HFe10fxWNrbkE2wqURzszGQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795514783;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Transfer-Encoding:MIME-Version:Content-Type;
+	bh=HKyC5Y8ArbHevJ7+3eNbqEfUXbI8Lmcn1USmOAduUL8=;
+	b=2TZIxY3LdZ0LVVLx1UQDgkhA3YvzKTfDi/lVj+aoaJ0eT0+6gDpkSJFe0srSYL54ZhKu
+	 iBykUpTfNwR/ixknBvd/QhfNA6OZyWtvXXUh5maXabdTHENP/FFqRDDdODM5szI4tFGEl
+	 xcaiN/h6/yP83NnUBnfsjeoDxHq5qwPRK9o44/dzD9kaRsFbfuNHuhv0kk7ymHlRbZMBA
+	 +vmRanZDEx6226myoW+9tbJhfLE7U+RbXkbKW1tAVyjX+3e/kwbFT92B9bo/EV1NT9LUI
+	 cW655fyDqOOv1BHA+CTAN3+LtK6oSfr+FR0n8PgrnR9XKs7XT4LH0fdTi02KK7Nb5oQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=mZgY1IRu;
+	arc=none smtp.remote-ip=209.85.208.171
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33585606A339;
-	Tue, 24 Nov 2026 10:05:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 33585606A339
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEB0606A327
+	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 10:06:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ECEB0606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=SgIqTliG
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id B49642020DC;
-	Tue, 24 Nov 2026 11:05:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1795514710;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H8p63jVzqspLS/yYDkgn0Or4vozMPrWlrtlpK8EIjBA=;
-	b=SgIqTliGQ/EujMYD5rdTmMNePrv7K80ns5GjscE8pXQb5WmWt2WxIV5auO9EwDNnBk/jfN
-	IFFc9LY9/DEHEaABfr8yTqtBU+SRKxY+vD3TZ/s046CcKIvtciUk27SZJ1guyaV1b/ohIN
-	6emn8hoU+LX3hi6wSN5AJZI47MowPRXoWA/JTjLYKuMwn4t5n7S+KEpTar5Mf0NLa2hALq
-	FY/r3FftvfIEVFIYQDrwSd4uoEfPXo6qAvlVgC967pdmDqc3UeKogpV/mZKGHS7rc+izAy
-	y+hcoC9iiLhVBBSHSStkOLtbB6NGXvqSyQ6y3DxvLXuPzEhOXNgurOGHx9XrLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1795514710;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H8p63jVzqspLS/yYDkgn0Or4vozMPrWlrtlpK8EIjBA=;
-	b=NNCIxjoisA3DfJ9YhHLwZXERhJ+CbYJvR+LxwY5j4hf1serGJihnU/85QxYu8QpEne4GzG
-	B26aocmUzhxl+CvYx267940TLNbMTKITo4rYBF9Z8mS8vOLDdP+PRfOjIYlLBnafsOfKhU
-	XJwlGMCE1ExIalEDjt5KAF5sCuotjTJXu7Lcyalsn2ylZyi1heyApDpEAMkT6LRdMVxiMN
-	66qoqK/ErlsIciMABD9EAMUYqFo3Rb4ZsImjFz+4/fdj7yecRTqHgcZ/BVLx10RF9z9sjd
-	F6l0Da1ERUCp3MPhf4fxAbryUzCmeG1VfSpu9/yhtPZFZAOlEOPmvgdetAzLwg==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1795514710; a=rsa-sha256;
-	cv=none;
-	b=S0JYSQRGdMO84u/k49CDmLAsD9YPXdZ/QiwFcLxS9EWH7/srhpQTYZNuygCEZjKSiZJjpy
-	VZEz47+rHNMQL7iQYimPElyMzb3kP6AOYSaWpoROOc8OSek0LXb4+oqxqc6FeDPL+Twh1X
-	1pKY0BzvnuJ67cpgJEOUeZQhHxyVU0cxcWGk7usxnj6zVWTccCs0d/F79czRIALCMtlfwE
-	6HCiBCu73M8viEUe+won2xPJjK078UxF7SsMtOMP4Rl5lbrmZw+T+YW4IzGp5kUrjgUBma
-	/WZ6Tpp1cfgROGhrZe60KCqhowvOIdxDp8ejleYjub0ImuXWdUs0r0N8q5LSPw==
-Message-ID: <f5d30781ae9502cd76ee2b6757f96a0e5ffa8b71.camel@pengutronix.de>
-Subject: Re: [PATCH v2 7/8] PCI: cs7542: Add CS7542 PCIe host support
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: filipp.dunsky@gmail.com, Manivannan Sadhasivam <mani@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>,  Krzysztof Wilczynski <kwilczynski@kernel.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Brian
- Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>,
- Neil Armstrong	 <neil.armstrong@linaro.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 24 Nov 2026 11:05:10 +0100
-In-Reply-To: <20261123-b4-cs7542-pcie-v2-7-f589a9cd0bef@gmail.com>
-References: <20261123-b4-cs7542-pcie-v2-0-f589a9cd0bef@gmail.com>
-	 <20261123-b4-cs7542-pcie-v2-7-f589a9cd0bef@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=mZgY1IRu
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3ae7d1ce1bfso37494501fa.1
+        for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 02:06:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795514781; x=1796119581; darn=vger.kernel.org;
+        h=content-type:mime-version:content-transfer-encoding:message-id:date
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=HKyC5Y8ArbHevJ7+3eNbqEfUXbI8Lmcn1USmOAduUL8=;
+        b=mZgY1IRutbfxoEyOQvSGmKLJUEp+Eu6JolB/hRdVFmprzU+N56r0kuBCzbaGeoC1Kr
+         E1leuNmYvr9aamFFdNrVl9ezKqpJU81J+m1rFJ6zT4rJdddCoK3/67Z0jGxUEJmH+51I
+         f+7qcGFjjCXKtibJaZulYEU8kCXqkEugCSd8o2tP4/Agdf4Sa4YLI4ylBQmucH4xI5q7
+         RpxgVmlA2zyQZGwNTsUSlXWjx/AgqmY024OBMY3Ri/UOKpLBaBt6jA4iCpLda0RdjcwX
+         i5czapbYLURJq+GvRGG85QrH4G42nkyth48LqTS74ywvIO3EdQKa4ZBRTMoB3CG2wyd3
+         SRsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795514781; x=1796119581;
+        h=content-type:mime-version:content-transfer-encoding:message-id:date
+         :references:in-reply-to:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=HKyC5Y8ArbHevJ7+3eNbqEfUXbI8Lmcn1USmOAduUL8=;
+        b=rqN/u2ghzK9Lr62+TC3kwRnkEnrpEks2wJ/8M0oSaafMyhG/sgRU4F0bjQBit3lTJK
+         FrMwNSzbOVC4CQP5tJmVgEA6OSUVefcex1EnpL1oWBkRMfdEVk+PtWYlxuAuxjtAlYBQ
+         2dtTwJQyWlTlAgjyE1Uz0svLAOHJWFFza+VG5YXelqat62BVsMoDoTKuaCaX6CplA/Qz
+         J0/IuJhhq9LhsqOmtColajaickOStWGtbGVJo+LMJcihxgA7kOv6VIm1uNqOBOBX0Xun
+         fAA7mb4fEWvpPSKHE5A7MVfuCsIwdf//P9qaZF5BLcqJJJPvcKvak1e666sRKmdon/DQ
+         M8yw==
+X-Forwarded-Encrypted: i=1; AL+hErFBWvi5A6QH1h/lyLLnIaZH7X0XAHNBb1J3loHS/kvrAsx2qDjz+DsJceMAkbZ8TtWHJKIY2lDKcvY=@vger.kernel.org
+X-Gm-Message-State: APuU4Z949OUfxDJp6J5p2cs3y/BEhc64qEAz7UKC4YmrosnAfDRXrpNI
+	FW4VGycQBrL+8YYAZNgOti87QqiLzU1BY3YkTN2DEGbJX6DS208sTxpq
+X-Gm-Gg: AZFdTZedqJocNlPJQylE3mvPsV2MzVYglWZOVuvEPXmn7l2nl9x+ML3/GgWf2sBcVie
+	I6JW9bvlKKuk10F0lw25QFxv+jlE1M3A9bx58RSIdJuKnAkpZQQMU93Z9aXYURSCLiVWHW6Nb6p
+	7DDMiDeU5eRluKuTWMY5qPyZE4R06V+rCyRMF8/G7hSULOABAL+PhOxdhNaD4np/ZOtw8SsE1qL
+	qyIbebCRocJ7eEuH3H1YPxpB33AU+0BgpC5u4MICerrCTqlHwLSTSCX45y7bKNcYkiFwBYECO31
+	bXOmo5XyWGH9k0jhGFOUV61Qf7Ge3cjqLO/VXn42klfxghJSLEQLDuke88RuutqAIrjEviTHOh4
+	mNmmvH1DRzUlcOijQyPaQPv1YBV0ZR1WImuiILsys/v8ctIZtAPhYxc6sjfEtoXNuZ2MfF/JPzR
+	OI36nIi0TIAXDKw7rr3eEZd/vufsyqvt/5IRmAwTJvIIPmnON4FVE/Wd0H4KywvpEGAOocEjRG7
+	93v7TR59WtBxQRU8LO5Q4hSHpboQdgOZU4ScX4KyF5q1Ha7EnnUgIawJhYu2pLxLlHTU0hyejKV
+	gEaUPVlWT1wHtaIx35Kv0g1pA//FKf4mSyW7uW7avsB+mk5aipxz0gk=
+X-Received: by 2002:a05:6512:3b08:b0:5c1:b29a:1ba3 with SMTP id 2adb3069b0e04-5c1bc7d5ce5mr5731034e87.29.1795514780815;
+        Tue, 24 Nov 2026 02:06:20 -0800 (PST)
+Received: from [127.0.1.1] (ip-024-180.users.dtel.ru. [91.210.24.180])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c1bd01b423sm3627942e87.43.2026.11.24.02.06.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Nov 2026 02:06:20 -0800 (PST)
+From: Fil Dunsky <filipp.dunsky@gmail.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: cs7542: Add global PCIe controls and network
+ engine reset
+In-Reply-To: <9facd8eabb9d0c2bbe816117481dd624aa8c1f04.camel@pengutronix.de>
+References: <20261124-b4-cs7542-global-controls-v1-0-12548785df2c@gmail.com>
+ <20261124-b4-cs7542-global-controls-v1-2-12548785df2c@gmail.com>
+ <9facd8eabb9d0c2bbe816117481dd624aa8c1f04.camel@pengutronix.de>
+Date: Tue, 24 Nov 2026 13:05:40 +0300
+Message-ID: <179551474060.2.10541952676329766668@gmail.com>
+Content-Transfer-Encoding: 8bit
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -101,77 +105,30 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format="fixed"
 
-On Mo, 2026-11-23 at 23:32 +0300, Fil Dunsky via B4 Relay wrote:
-> From: Fil Dunsky <filipp.dunsky@gmail.com>
->=20
-> Add DesignWare host glue consuming separate clock, reset and PHY
-> providers. Use live link status and stop previous training before
-> enumeration. Finish endpoint teardown before draining the shared IRQ and
-> freeing MSI domains. Dispatch enabled INTx/MSI sources through one
-> application interrupt and use its MSI target window.
->=20
-> Prevent root configuration accesses at and above 0x200, including direct
-> DesignWare DBI reads, while preserving the private CSR bank and separate
-> iATU callback base. Unwind power and IRQ domains on failure and removal.
->=20
-> Read live link/LTSSM state through the application wrapper. After link
-> loss, block configuration and DBI accesses until controller reset and
-> reprobe.
->=20
-> Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
-> ---
->  drivers/pci/controller/dwc/Kconfig       |  12 +
->  drivers/pci/controller/dwc/Makefile      |   2 +
->  drivers/pci/controller/dwc/pcie-cs7542.c | 551 +++++++++++++++++++++++++=
-++++++
->  3 files changed, 565 insertions(+)
->=20
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/=
-dwc/Kconfig
-> index 0a0d56fcf..2ebaa8db1 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -577,4 +577,16 @@ config PCIE_ULTRARISC
->  	  By default, this symbol is enabled when ARCH_ULTRARISC is active,
->  	  requiring no further configuration on that platform.
-> =20
-> +config PCIE_CS7542
-> +	tristate "Cortina Systems CS7542 PCIe controller"
-> +	depends on OF && HAS_IOMEM && PCI_MSI && COMMON_CLK
-> +	select PCIE_DW_HOST
-> +	select GENERIC_PHY
-> +	select RESET_CONTROLLER
+Hi Philipp,
 
-Drop RESET_CONTROLLER, this is not a reset controller driver.
-The consumer API has stubs.
+Yes, those are seven separately named bits in GLOBAL_BLOCK_RESET. I
+haven't found a hardware requirement to change them in one write. The
+vendor cs_ni_reset() toggles bits in a different register,
+NI_TOP_NI_INTF_RST_CONFIG.
 
-[...]
-> diff --git a/drivers/pci/controller/dwc/pcie-cs7542.c b/drivers/pci/contr=
-oller/dwc/pcie-cs7542.c
-> new file mode 100644
-> index 000000000..5487e667d
-> --- /dev/null
-> +++ b/drivers/pci/controller/dwc/pcie-cs7542.c
-> @@ -0,0 +1,551 @@
-[...]
-> +static int cortina_pcie_probe(struct platform_device *pdev)
-> +{
-[...]
-> +	cp->reset =3D devm_reset_control_get_exclusive(dev, NULL);
-> +	if (IS_ERR(cp->reset))
-> +		return dev_err_probe(dev, PTR_ERR(cp->reset), "controller reset\n");
-[...]
-> +	ret =3D reset_control_reset(cp->reset);
+I grouped the lines for Ethernet teardown. QM can still own RX buffers
+and DMA-LSO can still own TX descriptors. The driver checks that all
+the blocks it owns are held in reset before freeing those buffers.
+The -EIO for a mixed readback is how the current driver detects an
+incomplete stop. The Almond+ tests exercised the grouped sequence.
 
-Please use assert/deassert, this is not a self-clearing reset.
-See my comments on the reset controller driver.
+I'll try exposing individual reset lines and checking each in the
+Ethernet driver. If any assert or readback fails, it needs to keep the
+DMA buffers. reset_control_bulk_assert() would deassert earlier lines
+on error, so that helper is unsuitable for this teardown.
 
-Would a convenience function like [1] be helpful?
+I'll also use regmap_test_bits() for the gate, drop the redundant ID
+checks, and move the PCIe assert, deassert and delays into the host
+driver. These reset bits stay asserted until software clears them.
 
-[1] https://lore.kernel.org/all/20261112-reset-control-pulse-v1-1-25cea1058=
-83e@pengutronix.de/
+Thanks,
+Fil
 
-
-regards
-Philipp
