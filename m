@@ -1,21 +1,21 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=46.4.11.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795515155;
-	b=os6jINDAAbTt5lHaSw9TgZ/q2upWfr4pvFXqpk2qWAbwmkcHBLg5fjMlgbpbGNJMVO2x
-	 tiIT8ZTlPZr7GF4U/kMi+pDNYmk4/xnrk/bHf/kGfd+NSISh6oGi6vgbSeZz/d3TOaC+m
-	 qrHVbyjoP9ZRAIFTaLaG3cp3Z46KFXTDIe4ytg9Grqi+2bEV/3wH3+QrKW8itGZKuYL8r
-	 lZmWrIVvsA/KOTHAVKekJRVyqcDGCnXPzlCU1O+Y6zjyNt93a7BgreuVLMO9oW5awJtsn
-	 Pjz43ok6A3Ry+WfhngJ8Q6MXzU+6GGslXJ4pCbCRwXI2qT38cZE/R7S4lQmd1Ro3mXA==
+	t=1795515158;
+	b=bCzd203dXa2xmkCELrRAGNZmCLPhqOMhbhiu140VTW05hQkx8KhyJf9kvF96SZOHafUH
+	 NLytjtXgeUlqVrx00uTfQxFdt513ZRN70n5xVFBIqLMMmJK0xYvk0SsbBFkwSB06ejjaG
+	 2NPJBbZrSY9Vc0v9jnLaboFdGHF3bExYqC6QINZatMozsPt6r/74LWFOId6OEkfGvktVi
+	 U/iX5ZX1axal690Ho5t5QLnkDYb/WsDCEPpgWMp9NoHdF0gJlWGDZRH4ZFlHLYAaxvkCL
+	 YWTx9oYHE6wISGXkRsaKU5b6IDqVJ7DQHu/APcqLArf+rKUBRU4/GmNMs8xQegrwpXQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795515155;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795515158;
 	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=VC3zdcCmQJ5xuRGuScfghO6qOOTPwatzp5rgJ5szjZA=;
-	b=STTlFaXsWgiDkpaCn8on0qXF/fgRMdAQ0ZxhbacAmitE1VJ5d167N7tqv0wgowUoG0lo
-	 VRfdb5aAZ296qTagx2Zca+jN41KLc1lwdNG1W3ERPTZkE9KC6FX968cSAE7AO2QsxiCY6
-	 +z+td0rbAmdiw4J5t0IANIjaloevmI0N14B1n8F7yQNJNPnyONpJTQHYyCisYxtL09MrJ
-	 fc3L9NNAtpl6iwVgMACfYRA1ITLiu6wN2EPJwR0MQuK5H4fgGZpNqFgIxP7PTE5i2lxMt
-	 sO48vF9EPNaTzqpoy4o1eYL941tQtvrw0Qkw/JgfLvPTcDvK8s3ZMB9vDcbuccydHwA==
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=7H+pbZMTpK8J+vDkshjQslwpLaNlZ2yJEtgHYNK0gzw=;
+	b=0CpUENnLBxuQYob8RxrU3OmrSwSE9MRq9A8AcEl5HQrljTwfpfrP/4ONnisWNBSJTXcO
+	 XJ1uCthWTLPNuOjZvHL2jxi1XQRbWEHQftFHSzEvOYAoO7mDps3e77WJ0+WRFWsNCL+5l
+	 TdE/8ddbm+mnEnL1klsLPc7LKDgYoGSLr0IVNUr/jMSfA1T+l9PxQ+w5sWacJgyezor/h
+	 I+XHBTu03ybKNYIngzYW3V9+XBYNTXD24b9Xw8bWWct/fhVv0moc0FAjMBEUrXJmx0nIc
+	 gk9it95XVvQY+k/pbP6Q4FixMNUMNQJ7qkPW81HRED1JkeqkMJC0uaEe9iSwzmY6eKA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=phrozen.org;
 	spf=pass smtp.mailfrom=phrozen.org;
@@ -24,17 +24,17 @@ Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D386606A695;
-	Tue, 24 Nov 2026 10:12:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9D386606A695
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EAD60A261E;
+	Tue, 24 Nov 2026 10:12:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 07EAD60A261E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phrozen.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phrozen.org
 Received: from [2a04:4540:1403:dffc:4a09:a431:737f:f29f] (helo=bertha10..)
 	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <john@phrozen.org>)
-	id 1xVnVk-007edJ-17;
-	Tue, 24 Nov 2026 11:12:28 +0100
+	id 1xVnVh-007edJ-3C;
+	Tue, 24 Nov 2026 11:12:26 +0100
 From: John Crispin <john@phrozen.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -57,12 +57,10 @@ Cc: Daniel Lezcano <daniel.lezcano@kernel.org>,
 	upstream@airoha.com,
 	Weifeng.xu@airoha.com,
 	zhengping.zhang@airoha.com
-Subject: [PATCH 6/6] clk: en7523: populate SCU child devices
-Date: Tue, 24 Nov 2026 11:12:20 +0100
-Message-Id: <20261124101220.3888170-7-john@phrozen.org>
+Subject: [PATCH 0/6] clk: en7523: add support for Airoha AN7589
+Date: Tue, 24 Nov 2026 11:12:14 +0100
+Message-Id: <20261124101220.3888170-1-john@phrozen.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261124101220.3888170-1-john@phrozen.org>
-References: <20261124101220.3888170-1-john@phrozen.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -74,44 +72,51 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The AN7583 and AN7589 MDIO controllers live in the SCU register space
-and are described as children of the clock controller node, taking the
-SCU regmap from their parent. Nothing creates their platform devices.
+The Airoha AN7589 SCU is the EN7581 one with wider mux fields, new
+base rate tables, new clocks and a third reset bank. This series adds
+its clocks and resets to the en7523 driver.
 
-Populate the children once the clock and reset providers are
-registered, since the children consume both. SoCs without children are
-unaffected.
+Patch 1 adds the compatible of the AN7589 chip SCU. Patch 2 adds the
+binding of the clock controller, the clock IDs and the reset header.
+Patch 3 lets a SoC have fewer clock descriptors than clock IDs, which
+the AN7589 needs because it has no GSW clock. Patch 4 adds the AN7589
+clocks and resets.
 
-Signed-off-by: John Crispin <john@phrozen.org>
----
- drivers/clk/clk-en7523.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Patches 5 and 6 are for the MDIO controllers, which live in the SCU
+register space and are children of the clock controller node. Patch 5
+allows the child nodes in the binding and patch 6 creates their
+devices. The AN7583 MDIO controllers use the same path.
 
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index 800de9a48594..bdc5b378d1a4 100644
---- a/drivers/clk/clk-en7523.c
-+++ b/drivers/clk/clk-en7523.c
-@@ -5,6 +5,7 @@
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/phy.h>
- #include <linux/phy/phy.h>
-@@ -1822,7 +1823,11 @@ static int en7523_clk_probe(struct platform_device *pdev)
- 	if (r)
- 		return r;
- 
--	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-+	if (r)
-+		return r;
-+
-+	return devm_of_platform_populate(&pdev->dev);
- }
- 
- static const struct en_clk_soc_data en7523_data = {
+The series depends on the series "clk: add support for Airoha AN7583
+clock" v15 [1]. That series makes #phy-cells required for the AN7583.
+The AN7589 provides no serdes PHY, so patch 2 moves this requirement
+into a rule for the AN7583 alone.
+
+[1] https://lore.kernel.org/r/20261121212738.170775-1-ansuelsmth@gmail.com
+
+John Crispin (6):
+  dt-bindings: arm: airoha: add AN7589 chip SCU
+  dt-bindings: clock: airoha: add AN7589
+  clk: en7523: decouple base clock count from clock ID count
+  clk: en7523: add support for Airoha AN7589
+  dt-bindings: clock: airoha: allow MDIO controllers under the SCU
+  clk: en7523: populate SCU child devices
+
+ .../bindings/arm/airoha,en7581-chip-scu.yaml  |   1 +
+ .../bindings/clock/airoha,en7523-scu.yaml     |  30 +-
+ drivers/clk/clk-en7523.c                      | 335 +++++++++++++++++-
+ include/dt-bindings/clock/en7523-clk.h        |   9 +
+ .../dt-bindings/reset/airoha,an7589-reset.h   |  68 ++++
+ 5 files changed, 438 insertions(+), 5 deletions(-)
+ create mode 100644 include/dt-bindings/reset/airoha,an7589-reset.h
+
+
+base-commit: 3191063649dbf7c0d0b768e1f3655e4c5fc6edb5
+prerequisite-patch-id: cb7f4047f6de36dd2c1eb612c407847cb48b3be7
+prerequisite-patch-id: 94ab63d8aa9fd575c8addab53d7fe6ab6064a31d
+prerequisite-patch-id: 6ef84d4bdb8a219a1a0677cfb372b229c3ef6c0a
+prerequisite-patch-id: 463419d96297c209bff6ce0e587c470877e547d7
+prerequisite-patch-id: cdf4f7496650724d242508706b4857ce4ca6d6ef
 -- 
 2.34.1
 
