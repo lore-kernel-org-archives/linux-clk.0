@@ -1,57 +1,61 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795542031;
-	b=fljn0wu1Qv4OxSkwAbV8KFr4zf2uBdagEa8HtzbhszvORUN4r2PRViKZ+22I00TZXB4C
-	 oHGVGBhcvNR4TmGMdB7Ocs5DW++txfGR8H2jSAxmK1nPOLcbLZgQzq3AzI+/RWS7MCwVw
-	 kgT99xVkopyKWsVW1yJpPOUenxP6ip5WxhLpBgeJgnzj3YZlT3kBnRZUPd0aykbOkH/Bo
-	 T3vZVvY/98SQzc3ZcHMDQw1WoVCaYtp5meFcpSi02o0CCut6Bb8U6SHrgFaQO+ouka1IV
-	 vNqs0hmkyAPKdpGHRWvqCi3wKGzqfY5k31Ai9Jdap9XVE6FDsyr0toFqD9Tbb+70DcQ==
+	t=1795545120;
+	b=ayzL8+2Vt6TWzJmOLp9V5umLAQbNlrZkkL+gHQX69CuwKQOt/EgfKB06IL221nwk9297
+	 Q18Dlp2S/WCFx8p+OeOOU0sOMBQ6m0byXl/M/y6vuDfSZD1ECbLrBQPQilfPw7IJgT1XU
+	 ia1z8SM1jPXMQgTe9wq63zMwzAypEbmYHrMYz3NU4xUdXweDmvTvDOwgWD+8wHpcWuyTZ
+	 KVj7HWmsVmrBvhQAAzSzwyjH2RK0tcCJWlq3Z2NMC9d1nR+0i9AHY+Tz7tNuf1qJRLbxZ
+	 1kdZ25leDyyvAIuxEBrdIVAOeO5TvlDTnIuOBi+NWm4ZONinAruJkWJlGYbsudEipDQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795542031;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=PuzZMqpxFhcQuLotlpSoOV/ohZvOUOio5AHasllr4fM=;
-	b=dPYDrpLXRXs04r14OFKSDn6GFWR6/44izstEMhhyRKxEJP1MxLFAzZue8WF0g/Ri22YX
-	 ZWIXLKhHZV6+FuTDTxk40PLGAMWc/g9c5qN5+KMLNdlYQZnPH49fXWtsh9cBTyn88JijZ
-	 HEXX+ovdgpy0TLpD5hK3muOHEIN+nEFAoXHcuS0QXH/aioj5+Wxyirl0vt/ZDyKATBoeq
-	 QJtqTjgLcDY/cHa3Sg4ToMva0O5SfITs41JGydrsp9d7Gi5kqgj2YvU0OyMXE7RZdIusj
-	 QYir6EVUsO1m3tC+U9m144pDsvHyGZFgHRvf3vm3QI+Ui8y8wXZSDTjRILTJhvLXIYw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795545120;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 User-Agent;
+	bh=gw/J6tsrEEBYQGZcVt2c5cjvJDfXcBGni2CbulyGeQM=;
+	b=uCV+wbJzCKFiJMUcxGVc2Jm2gRCzWlv19mDKSDpMlgIAZRQiMzmXvg0oc/o3ip89XVVu
+	 EspTrc0Uzmf8WkSQIvLAnenPI/bGd/ZX06ie2vlt6wJaeFzlvuxN96OL+Ey6DRUd6dZ17
+	 5+k+fXnVxHlZcZ616diwNbsjQ+YS8Do2zyZ0cmIgnEPAlz0jLfQjp2bNkqIUKk5U0HVfO
+	 /xZsEZwFNf3D9tj2plY0L15wLp9tvLxy/78AszfhYEHFQ+vcAi06rrSjjjJV79quD8ZYW
+	 Y2AhvGtTJx2N05kCAl6qIzgz+eDl4HplJ7GaymRv2uXIbQDgA4IknxfLkT2J+NRUamw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="c/YaJX87";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XZzTrYeD;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D439606A321;
-	Tue, 24 Nov 2026 17:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77E9606A31E;
+	Tue, 24 Nov 2026 18:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c/YaJX87
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB8921F000D1;
-	Tue, 24 Nov 2026 17:40:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XZzTrYeD
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 087051F000C4;
+	Tue, 24 Nov 2026 18:31:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795542030;
-	bh=PuzZMqpxFhcQuLotlpSoOV/ohZvOUOio5AHasllr4fM=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=c/YaJX87TwWU9f5J+3EQbhfrW0zTUomjJHpst+LwV+2eaKqi/BIDF/5H62kUnd7cC
-	 2MIRgwlb1UUbauYe/WlYLGShIATgnsFoDalFadlZ8498Croyvmfq5yvdbVgsHbMzIS
-	 xZ0Sg/EpT9h6YaMnyRUV6soBSiv4tvBUxd9YSYYGdaqW87WHm9Cett1S4JkRmceM8C
-	 qLtI3maWSrSavey/aCtAqyuuqkviJ3d67N3ijreWoyQ2p93zlhibeM7v6VWBc3o2dL
-	 RTkRQ0bSfGdaFgtnv5Ayki15eYTIvCx62Vp5wPFltczspsHEsyWP5K58zInJ+fjVo7
-	 O/UhXDB5gwimw==
-Message-ID: <sashiko-outbox-231728@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 2/2] clk: qcom: add SM8650 LPASS core & audio clock
- controllers
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Neil Armstrong" <neil.armstrong@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261124-topic-sm8650-el2-clks-v2-2-8086440e2c09@linaro.org>
-References: <20261124-topic-sm8650-el2-clks-v2-0-8086440e2c09@linaro.org>
- <20261124-topic-sm8650-el2-clks-v2-2-8086440e2c09@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 24 Nov 2026 17:40:29 +0000
+	s=k20260515; t=1795545119;
+	bh=gw/J6tsrEEBYQGZcVt2c5cjvJDfXcBGni2CbulyGeQM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=XZzTrYeDqn0b1CMgtlMjAD0oeEVxxe0f2v6I1ntpfCuzWkLiuvfwl7s4n5VqAC6DU
+	 xmVE+ZHysFW+GEoreUW7STi1p9rsvFt3OVxJ/fJ79j77hlpcCUezvLZhPRTYggyWRZ
+	 gDe5m5bfA3egdwacje+pIMEiNFscAXgvd/SH7+vYB+FPSIN8J4HWjbm8tHU/I7Hxa9
+	 IJdxsFTILMp6OV1FWbJJrGPeeS77oJ/UNHnqvwIIUr1d3Qb30Lnyjb3DC/yPtlBreg
+	 5WSPEHYqsYZjWlLcBkGJOMtkKRlOj9LTCTTQNpNXi85g1VYNBMdunnSata6wwEF6OF
+	 P1386DUcOZ6Rw==
+Date: Tue, 24 Nov 2026 13:31:56 -0500
+From: Brian Masney <masneyb@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Drew Fustini <fustini@kernel.org>,
+	Joel Stanley <jms@oss.tenstorrent.com>,
+	Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 08/10] clk: tenstorrent: Poll atomically in
+ atlantis_clk_pll_enable()
+Message-ID: <awXYHBcmdDQ9OvlD@x1g10>
+References: <20261123164834.3330320-1-lee@kernel.org>
+ <20261123164834.3330320-9-lee@kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,250 +64,52 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261123164834.3330320-9-lee@kernel.org>
+User-Agent: Mutt/2.4.3 (2026-10-09)
 
-Thank you for your contribution! Sashiko AI review found 4 potential
-issues to consider:
-- [High] clk: qcom: unclocked GDSC MMIO access in lpass_aon_cc on SM8650
-- [Medium] clk: qcom: MND freq_tbl used on non-MND
-  lpass_aon_cc_main_rcg_clk_src
-- [Medium] clk: qcom: MCLK branches parented to 2X RCGs instead of CDIV
-  dividers
-- [Low] clk: qcom: stale LPASS HM iface clock description in commit
-  message
---
+Hi Lee,
 
-commit 5b9d49ed39635aa6cd0df792f0d843cc860ce478
-Author: Neil Armstrong <neil.armstrong@linaro.org>
+On Mon, Nov 23, 2026 at 04:47:41PM +0000, Lee Jones wrote:
+> The Common Clock Framework invokes .enable callbacks in atomic context
+> with interrupts disabled and enable_lock held.  In atlantis_clk_pll_ops,
+> atlantis_clk_pll_enable() is registered as the .enable callback yet
+> waits for PLL lock using regmap_read_poll_timeout() with a 500 us sleep
+> interval, triggering a sleep-in-atomic bug via usleep_range().
+> 
+> Since the PRCM regmap is backed by MMIO, use
+> regmap_read_poll_timeout_atomic() instead.
+> 
+> Fixes: 23c8ebc95284 ("clk: tenstorrent: Add Atlantis clock controller driver")
+> Closes: https://sashiko.dev/#/bug/linux-980395a6-f282-478a-bf18-b5695a725735
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lee Jones <lee@kernel.org>
+> ---
+>  drivers/clk/tenstorrent/atlantis-prcm.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/tenstorrent/atlantis-prcm.c b/drivers/clk/tenstorrent/atlantis-prcm.c
+> index eccc8015da23..d9155f133713 100644
+> --- a/drivers/clk/tenstorrent/atlantis-prcm.c
+> +++ b/drivers/clk/tenstorrent/atlantis-prcm.c
+> @@ -313,10 +313,11 @@ static int atlantis_clk_pll_enable(struct clk_hw *hw)
+>  			   PLL_CFG_EN_BIT, PLL_CFG_EN_BIT);
+>  
+>  	/* Step 3: Wait for PLL lock */
+> -	ret = regmap_read_poll_timeout(pll->common.regmap,
+> -				       pll->config.reg_offset, val,
+> -				       val & PLL_CFG_LOCK_BIT,
+> -				       PLL_BYPASS_WAIT_US, PLL_LOCK_TIMEOUT_US);
+> +	ret = regmap_read_poll_timeout_atomic(pll->common.regmap,
+> +					      pll->config.reg_offset, val,
+> +					      val & PLL_CFG_LOCK_BIT,
+> +					      PLL_BYPASS_WAIT_US,
+> +					      PLL_LOCK_TIMEOUT_US);
 
-clk: qcom: add SM8650 LPASS core & audio clock controllers
+This should actually be converted to use the enable lock instead of the
+prepare lock since this will sleep with interrupts disabled. The _atomic
+variant won't be needed there.
 
-This commit adds drivers for the SM8650 LPASS HM, core, audio, and AON
-clock controllers so Linux can manage LPASS clocks and GDSCs without ADSP
-firmware.
-
-> Add drivers for the SM8650 LPASS HM, core, audio and AON clock
-> controllers, the HM, audio and AON controllers keeping their iface clock
-> enabled while in use, LPASS HM's being the GCC LPASS config NoC clock.
-
-[Severity: Low]
-Is the commit message description of LPASS HM's iface clock still
-accurate?  Only the audio and AON drivers acquire and manage an "iface"
-clock via pm_clk_add(); lpass_hm_core_probe() calls qcom_cc_probe()
-directly without setting up pm_clk.
-
-> diff --git a/drivers/clk/qcom/lpassaudiocc-sm8650.c b/drivers/clk/qcom/lp=
-assaudiocc-sm8650.c
-> new file mode 100644
-> index 0000000000000..abd0258d9e72f
-> --- /dev/null
-> +++ b/drivers/clk/qcom/lpassaudiocc-sm8650.c
-[ ... ]
-> +/* XO only for now: the ADSP plan feeds these from the audio CC DIG PLL =
-*/
-> +static const struct freq_tbl ftbl_lpass_cc_ext_clk_src[] =3D {
-> +	F(1536000, P_BI_TCXO, 1, 2, 25),
-> +	F(2304000, P_BI_TCXO, 1, 3, 25),
-> +	F(3072000, P_BI_TCXO, 1, 4, 25),
-> +	F(9600000, P_BI_TCXO, 2, 0, 0),
-> +	F(19200000, P_BI_TCXO, 1, 0, 0),
-> +	{ }
-> +};
-[ ... ]
-> +static struct clk_rcg2 lpass_aon_cc_main_rcg_clk_src =3D {
-> +	.cmd_rcgr =3D 0x19000,
-> +	.mnd_width =3D 0,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D lpass_aon_cc_parent_map_0,
-> +	.freq_tbl =3D ftbl_lpass_cc_ext_clk_src,
-> +	.clkr.hw.init =3D &(const struct clk_init_data){
-> +		.name =3D "lpass_aon_cc_main_rcg_clk_src",
-> +		.parent_data =3D lpass_aon_cc_parent_data_0,
-> +		.num_parents =3D ARRAY_SIZE(lpass_aon_cc_parent_data_0),
-> +		.ops =3D &clk_rcg2_ops,
-> +	},
-> +};
-
-[Severity: Medium]
-Should lpass_aon_cc_main_rcg_clk_src use a frequency table without MND
-entries (such as ftbl_lpass_mclk_clk_src) since its .mnd_width is 0?
-
-Because __clk_rcg2_configure_mnd() only programs M, N, and D when
-rcg->mnd_width is non-zero, requesting 1.536 MHz, 2.304 MHz, or 3.072 MHz
-on lpass_aon_cc_main_rcg_clk_src (or via its CLK_SET_RATE_PARENT child
-branches) matches the fractional M/N entries in ftbl_lpass_cc_ext_clk_src
-during rate determination, but programs only pre_div =3D 1 in hardware,
-leaving the clock running at 19.2 MHz.
-
-[ ... ]
-
-> +/* MCLK =3D RCG / CDIV (reset value: divide by 2), the 2X clocks are the=
- RCG */
-> +static struct clk_regmap_div lpass_audio_cc_cdiv_rx_mclk_div_clk_src =3D=
- {
-[ ... ]
-> +static struct clk_branch lpass_audio_cc_wsa_mclk_clk =3D {
-> +	.halt_reg =3D 0x2a0d4,
-> +	.halt_check =3D BRANCH_HALT,
-> +	.clkr =3D {
-> +		.enable_reg =3D 0x2a0d4,
-> +		.enable_mask =3D BIT(0),
-> +		.hw.init =3D &(const struct clk_init_data){
-> +			.name =3D "lpass_audio_cc_wsa_mclk_clk",
-> +			.parent_hws =3D (const struct clk_hw*[]){
-> +				&lpass_audio_cc_cdiv_wsa_mclk_div_clk_src.clkr.hw,
-> +			},
-> +			.num_parents =3D 1,
-> +			.flags =3D CLK_SET_RATE_PARENT,
-> +			.ops =3D &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch lpass_audio_cc_wsa2_mclk_clk =3D {
-> +	.halt_reg =3D 0x2d004,
-> +	.halt_check =3D BRANCH_HALT,
-> +	.clkr =3D {
-> +		.enable_reg =3D 0x2d004,
-> +		.enable_mask =3D BIT(0),
-> +		.hw.init =3D &(const struct clk_init_data){
-> +			.name =3D "lpass_audio_cc_wsa2_mclk_clk",
-> +			.parent_hws =3D (const struct clk_hw*[]){
-> +				&lpass_audio_cc_wsa_mclk_clk_src.clkr.hw,
-> +			},
-> +			.num_parents =3D 1,
-> +			.flags =3D CLK_SET_RATE_PARENT,
-> +			.ops =3D &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch lpass_audio_cc_tx_mclk_wsa_clk =3D {
-> +	.halt_reg =3D 0x2a0f4,
-> +	.halt_check =3D BRANCH_HALT,
-> +	.clkr =3D {
-> +		.enable_reg =3D 0x2a0f4,
-> +		.enable_mask =3D BIT(0),
-> +		.hw.init =3D &(const struct clk_init_data){
-> +			.name =3D "lpass_audio_cc_tx_mclk_wsa_clk",
-> +			.parent_hws =3D (const struct clk_hw*[]){
-> +				&lpass_aon_cc_tx_mclk_clk_src.clkr.hw,
-> +			},
-> +			.num_parents =3D 1,
-> +			.flags =3D CLK_SET_RATE_PARENT,
-> +			.ops =3D &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch lpass_audio_cc_tx_mclk_rx_clk =3D {
-> +	.halt_reg =3D 0x2c0e0,
-> +	.halt_check =3D BRANCH_HALT,
-> +	.clkr =3D {
-> +		.enable_reg =3D 0x2c0e0,
-> +		.enable_mask =3D BIT(0),
-> +		.hw.init =3D &(const struct clk_init_data){
-> +			.name =3D "lpass_audio_cc_tx_mclk_rx_clk",
-> +			.parent_hws =3D (const struct clk_hw*[]){
-> +				&lpass_aon_cc_tx_mclk_clk_src.clkr.hw,
-> +			},
-> +			.num_parents =3D 1,
-> +			.flags =3D CLK_SET_RATE_PARENT,
-> +			.ops =3D &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch lpass_audio_cc_tx_mclk_wsa2_clk =3D {
-> +	.halt_reg =3D 0x2d00c,
-> +	.halt_check =3D BRANCH_HALT,
-> +	.clkr =3D {
-> +		.enable_reg =3D 0x2d00c,
-> +		.enable_mask =3D BIT(0),
-> +		.hw.init =3D &(const struct clk_init_data){
-> +			.name =3D "lpass_audio_cc_tx_mclk_wsa2_clk",
-> +			.parent_hws =3D (const struct clk_hw*[]){
-> +				&lpass_aon_cc_tx_mclk_clk_src.clkr.hw,
-> +			},
-> +			.num_parents =3D 1,
-> +			.flags =3D CLK_SET_RATE_PARENT,
-> +			.ops =3D &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-
-[Severity: Medium]
-Should lpass_audio_cc_wsa2_mclk_clk and the three lpass_audio_cc_tx_mclk_*
-branches be parented to their CDIV divider clocks rather than directly to
-the 2X RCG clock sources?
-
-As noted in the CDIV comment above, 1X MCLK branches are divided by CDIV
-(divide by 2 at reset), which is how lpass_audio_cc_rx_mclk_clk,
-lpass_audio_cc_wsa_mclk_clk, and lpass_aon_cc_tx_mclk_clk are wired.
-Parenting lpass_audio_cc_wsa2_mclk_clk directly to
-lpass_audio_cc_wsa_mclk_clk_src and lpass_audio_cc_tx_mclk_{wsa,rx,wsa2}_clk
-directly to lpass_aon_cc_tx_mclk_clk_src with CLK_SET_RATE_PARENT causes a
-2x rate mismatch in clk_get_rate() and conflicts with sibling 1X MCLK
-branches sharing those RCGs when clk_set_rate() is called.
-
-[ ... ]
-
-> +static struct gdsc lpass_aon_cc_lpass_audio_hm_gdsc =3D {
-> +	.gdscr =3D 0x11090,
-> +	.pd =3D {
-> +		.name =3D "lpass_aon_cc_lpass_audio_hm_gdsc",
-> +	},
-> +	.pwrsts =3D PWRSTS_OFF_ON,
-> +	.flags =3D RETAIN_FF_ENABLE,
-> +};
-[ ... ]
-> +static int lpass_cc_sm8650_probe(struct platform_device *pdev,
-> +				 const struct qcom_cc_desc *desc)
-> +{
-> +	int ret;
-> +
-> +	ret =3D devm_pm_runtime_enable(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D devm_pm_clk_create(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D pm_clk_add(&pdev->dev, "iface");
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed to acquire iface clock\n");
-> +		return ret;
-> +	}
-> +
-> +	ret =3D pm_runtime_resume_and_get(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D qcom_cc_probe(pdev, desc);
-> +
-> +	pm_runtime_put_sync(&pdev->dev);
-> +
-> +	return ret;
-> +}
-
-[Severity: High]
-Can gdsc_enable() or gdsc_disable() access
-lpass_aon_cc_lpass_audio_hm_gdsc (offset 0x11090) while lpass_aon_cc is
-runtime-suspended and its iface clock is disabled?
-
-At the end of lpass_cc_sm8650_probe(), pm_runtime_put_sync() suspends
-lpass_aon_cc and disables its iface clock (LPASS_CORE_CC_CORE_CLK), which
-also allows lpass_core_cc to runtime-suspend and power off
-LPASS_CORE_HM_GDSC.  Because gdsc_enable() and gdsc_disable() do not
-runtime-resume the GDSC provider device, any genpd power transition that
-runs while lpass_aon_cc is suspended performs unclocked MMIO on 0x11090
-and triggers a bus hang or SError.  For example, genpd_power_off_unused()
-at late_initcall_sync, asynchronous genpd_power_off_work_fn() after a
-consumer drops its runtime PM supplier link, or system suspend/resume of a
-virtual genpd device attached via dev_pm_domain_attach_by_name() in
-lpass_macro_pds_init() can all toggle this GDSC while lpass_aon_cc is
-runtime-suspended.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261124-topic-sm86=
-50-el2-clks-v2-0-8086440e2c09@linaro.org?part=3D2
+Brian
