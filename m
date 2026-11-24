@@ -1,61 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795545120;
-	b=ayzL8+2Vt6TWzJmOLp9V5umLAQbNlrZkkL+gHQX69CuwKQOt/EgfKB06IL221nwk9297
-	 Q18Dlp2S/WCFx8p+OeOOU0sOMBQ6m0byXl/M/y6vuDfSZD1ECbLrBQPQilfPw7IJgT1XU
-	 ia1z8SM1jPXMQgTe9wq63zMwzAypEbmYHrMYz3NU4xUdXweDmvTvDOwgWD+8wHpcWuyTZ
-	 KVj7HWmsVmrBvhQAAzSzwyjH2RK0tcCJWlq3Z2NMC9d1nR+0i9AHY+Tz7tNuf1qJRLbxZ
-	 1kdZ25leDyyvAIuxEBrdIVAOeO5TvlDTnIuOBi+NWm4ZONinAruJkWJlGYbsudEipDQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795545120;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 User-Agent;
-	bh=gw/J6tsrEEBYQGZcVt2c5cjvJDfXcBGni2CbulyGeQM=;
-	b=uCV+wbJzCKFiJMUcxGVc2Jm2gRCzWlv19mDKSDpMlgIAZRQiMzmXvg0oc/o3ip89XVVu
-	 EspTrc0Uzmf8WkSQIvLAnenPI/bGd/ZX06ie2vlt6wJaeFzlvuxN96OL+Ey6DRUd6dZ17
-	 5+k+fXnVxHlZcZ616diwNbsjQ+YS8Do2zyZ0cmIgnEPAlz0jLfQjp2bNkqIUKk5U0HVfO
-	 /xZsEZwFNf3D9tj2plY0L15wLp9tvLxy/78AszfhYEHFQ+vcAi06rrSjjjJV79quD8ZYW
-	 Y2AhvGtTJx2N05kCAl6qIzgz+eDl4HplJ7GaymRv2uXIbQDgA4IknxfLkT2J+NRUamw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XZzTrYeD;
-	arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795545677;
+	b=w0blZ/VDJ6Sce9a70j+ZbKvlCTjQ1ebxCKM2p0UbL8m7z61K8J1XjpLbH4ywKe3cseE+
+	 J6fNT8YNHCmMGxCfZ+pgs8BNvuNnz6rnnZGtcfNdpX1RCyZNEqkZ5bo61EExXXC+ymVK8
+	 Kdnm2MnyAnnbXWvdYZoZJMCIGQJBxc545u5CiiKpGqVAdy4IkoPGW3R3OUohF9aa91xCy
+	 uG5nbNLj7fQM5O4bLyLOKBWTlaptAo2AQrhoijlfLk+GtLcKirOEAniG2EYwp1/CI0UT0
+	 yMzQjmoxnEYoxhdOKtmIxJtQxlCur5j30vjj7FkGrdqFis8s7+UpFiLknalybZpTKHw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795545677;
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=94OncMefUcNhEDwbiCTBjXKjoJuzmHSv8vTKTTuJQOQ=;
+	b=smkq6JgAATYfZKVIkJHs8NFQp2jAEnSU45cFCyNPOZ/gRtjICrmRcVZmJbh0rSIG8JFl
+	 XUugFpVFQnOxQyVAqvppWazz9lwu51HpTKpJdpzDYcq+8dn4dCBX7DpDke0dM1NyabeFI
+	 A2L2i/jvz/mVyWyy1gy/e3Yz0jI6MyJm6YyQcHHOTC3whfaMOPUTWB5TeAps+CSvoRkqg
+	 i/YQvyMyVWUlrH/dNvjq5oH7OaXRg71oY/UaJxoxv7AYpehN3TqHBDgqkKKeJuJHQuTPL
+	 /EA91Zcbpu0TKKgcpiia6fF3GCu/+HZvXzZZW1Diw168T6Ns2fZC0lKikJVb685ZYrQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RJxPgz9W;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77E9606A31E;
-	Tue, 24 Nov 2026 18:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC206606A31E
+	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 18:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XZzTrYeD
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 087051F000C4;
-	Tue, 24 Nov 2026 18:31:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RJxPgz9W
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1795545677;
+	b=29GkeoCBJZD/3Q3wTu2B9hC9Uf1koMdUPmWJ6uTeRcg8CuEQkSuoRqgOUybzSV0EGJre
+	 MVIp31sJSEMT9NYHSREONHIvFozfnFGFLtB5+Ed4tObgW0pt5k5OwGHSL4lJaUmd/I2UK
+	 b+PEBRE8tU0q3ccux3d64hl4t37X4zmVZzueCgfwgoV6z8FT/k8tVcl0wdoKOay8iGkyv
+	 m8omvBTgE8Y+O0EBVweC3Z2Zrd+E5Ep7pYQRHhxBYgJWrnFrJBHBX/JBw8A8E1ul8Llyh
+	 biSYlvMWDG2l0A+Bo7Wjb1qYpikTEviVZJ8PUeOZABj3jkZ8hU1EK+QaPKaUnaVP7nA==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1795545677;
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=94OncMefUcNhEDwbiCTBjXKjoJuzmHSv8vTKTTuJQOQ=;
+	b=MN0sU4O23wFXcQ8N37i9HpoyTQyw4Ia/FS/OCh65pX6HDcmIUT4dASnU/Tztw4vb6o8y
+	 K4RQURI7JrciD/kDVMhRR6gu4zYWpwP58x78tgOTTFwDi6W89NrfQqU2y84RgIaAqGqtG
+	 KqGBs/QWPAv0Si6nuiUgEcZ65Gc7paKuqCGgj6xJg91Tp5yt2FSayMGcoPhtaM8C04jMg
+	 uk3EqGRY1LjzI7PqI430DdQgVy/VnD07lyaBpamTQ/M5rwRfZ8HMrXrPNqph/HcOsFSPT
+	 07T2dOU8EJuN5/FR9Y9qzG7wbPCUxa4vDGI3XzOg2i1LdhSsLDaISeQ9Lydkhcdr0hg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id 71CD41F000C4;
+	Tue, 24 Nov 2026 18:41:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795545119;
-	bh=gw/J6tsrEEBYQGZcVt2c5cjvJDfXcBGni2CbulyGeQM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=XZzTrYeDqn0b1CMgtlMjAD0oeEVxxe0f2v6I1ntpfCuzWkLiuvfwl7s4n5VqAC6DU
-	 xmVE+ZHysFW+GEoreUW7STi1p9rsvFt3OVxJ/fJ79j77hlpcCUezvLZhPRTYggyWRZ
-	 gDe5m5bfA3egdwacje+pIMEiNFscAXgvd/SH7+vYB+FPSIN8J4HWjbm8tHU/I7Hxa9
-	 IJdxsFTILMp6OV1FWbJJrGPeeS77oJ/UNHnqvwIIUr1d3Qb30Lnyjb3DC/yPtlBreg
-	 5WSPEHYqsYZjWlLcBkGJOMtkKRlOj9LTCTTQNpNXi85g1VYNBMdunnSata6wwEF6OF
-	 P1386DUcOZ6Rw==
-Date: Tue, 24 Nov 2026 13:31:56 -0500
-From: Brian Masney <masneyb@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Drew Fustini <fustini@kernel.org>,
-	Joel Stanley <jms@oss.tenstorrent.com>,
-	Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 08/10] clk: tenstorrent: Poll atomically in
- atlantis_clk_pll_enable()
-Message-ID: <awXYHBcmdDQ9OvlD@x1g10>
-References: <20261123164834.3330320-1-lee@kernel.org>
- <20261123164834.3330320-9-lee@kernel.org>
+	s=k20260515; t=1795545677;
+	bh=94OncMefUcNhEDwbiCTBjXKjoJuzmHSv8vTKTTuJQOQ=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=RJxPgz9WzU84SmcBfqvpUsEkQRspdeqREGJkNvbZM7zQbp1RNZKohV+4MPGRFu9OC
+	 VH65lWES9Y3yoCubVV7S/d09ohfhxmuTcyBe5ijBJNDIEy/9ys4Mj4ZQ1d5tCWyeZs
+	 72hTQsFE/EjAFCiIOLqkXaTAWZWdj+qshsigiz0V0cOQz+bDCLechOYCSpie51n+IU
+	 BapItiJMP3wD2F+BXJZ/QWnUvIdDWuPgZAkreNRGQU/ySuHcGn87tJhBCKAiSr/BF6
+	 fmdS9B1zDDG6ixAnzpPMheKW6Q+vw27NiNBPr/G5lIJBVhZ1S15ZUBB9P3X6JhCLbN
+	 mNxjamd3KUTGQ==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id C66484CB37;
+	Tue, 24 Nov 2026 18:41:13 +0000 (UTC)
+From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
+Subject: [PATCH 0/2] clk: eswin: Fix the EIC7700 PLL post-divider
+Date: Wed, 25 Nov 2026 02:41:01 +0800
+Message-Id: <20261125-eic7700-cpu-pll-postdiv-v1-0-b1ccd6339a20@iscas.ac.cn>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -65,51 +83,53 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261123164834.3330320-9-lee@kernel.org>
-User-Agent: Mutt/2.4.3 (2026-10-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD3aBWsC/x3MQQqAIBBA0avErBtwpLK6SrQIHWsgSrQiiO6et
+ HyL/x9IHIUT9MUDkS9Jsm8ZVBZgl2mbGcVlg1a6IdI1slhjlEIbTgzrimFPh5MLdeXIdq0nRwp
+ yHSJ7uf/zML7vB/69D9dpAAAA
+X-Change-ID: 20261125-eic7700-cpu-pll-postdiv-24d1c98f1d10
+To: Yifeng Huang <huangyifeng@eswincomputing.com>, 
+ Xuyang Dong <dongxuyang@eswincomputing.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: Brian Masney <bmasney@redhat.com>, Han Gao <rabenda.cn@gmail.com>, 
+ linux-clk@vger.kernel.org, Han Gao <gaohan@iscas.ac.cn>, 
+ Jingkun Zheng <zhengjingkun@iscas.ac.cn>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795545672; l=779;
+ i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
+ bh=t8ZcuweeJNISZuSMsr0ma3NCNW561sd+NOoXsw+v1Sw=;
+ b=diPFeDuIDZU9YkcSf71xBpGfVxkppziXUTRXOyWVSnCDGZBgMMD8UO+z+vwdcNbgWt6VaM99J
+ wHJwV6tWvgoD+cBPF+PEWiT4ohrFB2XO2+Qh2aTudnS3jJHkYOaQpMj
+X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
+ pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
+X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
+ auth_id=1262
+X-Original-From: Han Gao <gaohan@iscas.ac.cn>
+Reply-To: gaohan@iscas.ac.cn
 
-Hi Lee,
+clk_pll_set_rate() sets a post-divider the rate math doesn't know
+about, so the P550 CPU ran at half speed. Patch 1 fixes that, patch 2
+makes recalc_rate use the full formula from the TRM.
 
-On Mon, Nov 23, 2026 at 04:47:41PM +0000, Lee Jones wrote:
-> The Common Clock Framework invokes .enable callbacks in atomic context
-> with interrupts disabled and enable_lock held.  In atlantis_clk_pll_ops,
-> atlantis_clk_pll_enable() is registered as the .enable callback yet
-> waits for PLL lock using regmap_read_poll_timeout() with a 500 us sleep
-> interval, triggering a sleep-in-atomic bug via usleep_range().
-> 
-> Since the PRCM regmap is backed by MMIO, use
-> regmap_read_poll_timeout_atomic() instead.
-> 
-> Fixes: 23c8ebc95284 ("clk: tenstorrent: Add Atlantis clock controller driver")
-> Closes: https://sashiko.dev/#/bug/linux-980395a6-f282-478a-bf18-b5695a725735
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lee Jones <lee@kernel.org>
-> ---
->  drivers/clk/tenstorrent/atlantis-prcm.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/tenstorrent/atlantis-prcm.c b/drivers/clk/tenstorrent/atlantis-prcm.c
-> index eccc8015da23..d9155f133713 100644
-> --- a/drivers/clk/tenstorrent/atlantis-prcm.c
-> +++ b/drivers/clk/tenstorrent/atlantis-prcm.c
-> @@ -313,10 +313,11 @@ static int atlantis_clk_pll_enable(struct clk_hw *hw)
->  			   PLL_CFG_EN_BIT, PLL_CFG_EN_BIT);
->  
->  	/* Step 3: Wait for PLL lock */
-> -	ret = regmap_read_poll_timeout(pll->common.regmap,
-> -				       pll->config.reg_offset, val,
-> -				       val & PLL_CFG_LOCK_BIT,
-> -				       PLL_BYPASS_WAIT_US, PLL_LOCK_TIMEOUT_US);
-> +	ret = regmap_read_poll_timeout_atomic(pll->common.regmap,
-> +					      pll->config.reg_offset, val,
-> +					      val & PLL_CFG_LOCK_BIT,
-> +					      PLL_BYPASS_WAIT_US,
-> +					      PLL_LOCK_TIMEOUT_US);
+Tested on a HiFive Premier P550: all CPU operating points, and setting
+and reading back the audio PLL rate.
 
-This should actually be converted to use the enable lock instead of the
-prepare lock since this will sleep with interrupts disabled. The _atomic
-variant won't be needed there.
+Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
+---
+Han Gao (2):
+      clk: eswin: Fix the EIC7700 PLL post-divider
+      clk: eswin: Use REFDIV and the post-dividers in the EIC7700 PLL rate
 
-Brian
+ drivers/clk/eswin/clk.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
+---
+base-commit: b6a9fa34ce4187cb69d3c588a4bbffc31ce5db8f
+change-id: 20261125-eic7700-cpu-pll-postdiv-24d1c98f1d10
+
+Best regards,
+-- 
+Han Gao <gaohan@iscas.ac.cn>
+
+
