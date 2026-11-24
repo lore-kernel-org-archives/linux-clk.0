@@ -1,57 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795493887;
-	b=GkcgfndMHTpUP3RMpOPYKkuicDEDmnqSBeTzJpW21xuyyf8UzjscJWTR6/faAFRrfMdl
-	 v3S3tgdIECdi/42Y1QzU+nFJXdateZXkelswOedFdL1eCDdAbKgex7h8OVGUHjoJIblCe
-	 Fk4ZQWm0hwMiZg4Rtvnc2iGkywa15cSdmx4+C40M3HlF0v7SCPpcWB89D6lnk93G2unRL
-	 sactcZzgvAFBXDAYXAdS3xLas7+X9TkFopj1Ejhm2qi+cnDaxD4sYmf9T4eAkpzgVL/ay
-	 XUOwMD4mLdU40jYJqAGkb+OSrOab4xPO3tiRrUPmGPiAZh+DxYKa/veHwe8yvJv4GeQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795493887;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=JHHc7ykJ5Gwbre6os/vaASFU6vE6CK+VU8ZUZ08YX5g=;
-	b=wS74pknYk2upqZIivM8fFw+MFVZ/YZV5VUo3Aa0pNltK/BGtllqeb5nKIw3/HsjCAUex
-	 tyvkooyBDofBGAIrEG0Wrh3oKLCVmSIEzMJ5vEQmxQyJ2OTgcmPT1OfaHlDyqM4TG1pKK
-	 CbWI6wSTP+/jxaAkPY1lq59VNdYVewDxh5UwPnpLlRqwn4kt//uf1DoFJoQnEet8p9Soo
-	 IvUwLdZWnZtKEWw0VnGK8oH/A16nMAGKqXNRsVdjhrTel5HHHbIb6rrXr/ZRZSB6hoEbJ
-	 sgqe+pEYS0F0324PKm8kxBTfGtH2W07RWs681z4+c1aVtdAGKW1t+wbIPdp6+dx6hjw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eesOFzCj;
-	arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795495291;
+	b=IJy6yxqN69txybvuAscIbrXgiPsppHmsLHzE4Bo9qy81s4JS03Wi14Lw8LCLeTXF1yZv
+	 QUYHEF/qRIeK3Z16ZtcW46LroBASLROe/ypLvHAZPzAmp54Ip8ehOjrOKO8ga4VirLvJp
+	 ealujJdp69pL2NnwukzfAwXl4vntMdEwKIMNs+6BujvDd8wzLdGktYzyQ80rn1blr6HMF
+	 YEsv3lU2MZDfbcdta7nYjBbqHpZSXd+0yPLQTHuYVWruIiRe5fzkWz33FexIhxyh3F5us
+	 /n01x4Ih4EtUPW1I78nVeic80hELK5X47RKF1IeBM2Sjp01Rq7P+hgsufhin/8VNKqw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795495291;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
+	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=iAWnEJRTZo4ZfoxutvsoMJKV0eTQZqJSBo1SrA6HwHQ=;
+	b=oZAL1ZGGX1RRiqB3pzPpWt9nXPwXytN+DZJTrgtGj6nmnHo0IauHTFC6TkZ+UJWZjH31
+	 j4TIq4VRT0tzU2YucuAnUW57qXYc3DGh6LqnOC+Ifaz+dVvObHfcWk/XGj3cprZwE+ysq
+	 G39J+bnBtee8fzYjKe8jcc0dCloLM6rrc9axfb7DyOQqjNmk/G/k/UpoyLo+FfVVftWqD
+	 ntyFaCUAzzB0Dy2AiJxZNB1Bs1gcyWZE/MEPvIJhup/rv7eSrvNG54fcyOofpOQNBlRS1
+	 kS7DwymkvT1eqoJn86pRNdaOcuSP/b//TUNW+sn1NEEBz3S4p7oedz8Gg18SqX8ELPg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Uxir5DFS;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4965606A31E;
-	Tue, 24 Nov 2026 04:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE93606A31E;
+	Tue, 24 Nov 2026 04:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eesOFzCj
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 411801F000C0;
-	Tue, 24 Nov 2026 04:18:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Uxir5DFS
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1795495290;
+	b=Bno+dxRwY7/zRFuFfmFlsVRt2NiIMqGV7yI8P34+vkpHGXDPLqqphGH/CFVciBgfGIGQ
+	 q5V8QUxd6tGZdOxCL0X9Ol+l4rGiIySJ5El15EFw6wkt+LhjZp2tam4JCjpA17uIosBEf
+	 TXl2bvk068HVW1M149/doqeLaLhLd2M+aS6sUA5IsAhr5IMieCrdqZPjDFNpKfWnGvmI3
+	 2dj937kB76JsqR/9eKqkONrYpsad03zvTCwLg1Di9uLPBKEDQpbKU7Tkj5S+P1J+ahahz
+	 SWliBRBvzZzqveN0QjDgdZYQJsPWE2Vr+ZQd3etXDfKdyTMWfs2X4MBf4bR6xUeyIBw==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1795495290;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=iAWnEJRTZo4ZfoxutvsoMJKV0eTQZqJSBo1SrA6HwHQ=;
+	b=w2yOkkzernR/jtDFrmCvs6NqcbXoqiv/jHAmgT6fCyu2xmNBI5vzr15Nc08r1vjCueYB
+	 wArYEWAsdcrlrheCSacLKKo69koXGf9vy+lKLjtUBl5svmmi/ghV8yhzMav3xvOLHX0YK
+	 R5g2Dry5LBg1RPAFkoGbbSq9TfD/BO3B11NReSLd+l91kZ5ElmbQC65KtyGgQ+CWacL2q
+	 jR2ILKK8/LcZlSEASmsy43e2ji/BY1PN1ASalVQuVZ6zIcGD2JihGJOoLFT9nJZXuA9mb
+	 yzlmq1EOIt1dg4yzaEybovYRA/LIij4Lwr/Xa+BlMS+EkZhp1aEFzxZ2lpisdFV/JlA==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id C32991F000CF;
+	Tue, 24 Nov 2026 04:41:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795493886;
-	bh=JHHc7ykJ5Gwbre6os/vaASFU6vE6CK+VU8ZUZ08YX5g=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=eesOFzCj39Qc63cmaWrC2EcsQ3Iaaxntw0pfFL8M5OhOooRhfXf4gMCPl0wbw06YP
-	 AghODOYDRU4hNC0CpQNCbTfrFuy2BMlAOj1geJ2b5Bf+R7RhkaXXxFQVxfM+ES7lmX
-	 Gupozh43gLa3gjxEQ/pxWaBg1ds2sZ1yWpHfBrgHgRpqbWJjgxEq4gw6Xy5DOGKK/s
-	 yJdSlGxPNGE2mRYCy6WcYlIvh2Ww1ewGrSat7/dIubi/sPS60WEOmOE/kKMJAOTSlD
-	 Hgc6oXBUpud65ZTgFtAI6U2fy+RMTm1GRbp86/OL+z6DrEZ2LGUalAwp7im/7DEF5L
-	 wqG4zzc8po2Og==
-Message-ID: <sashiko-outbox-230500@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 7/8] clk: clocking-wizard: Fix division by zero and
- unbounded register write
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Shubhrajyoti Datta" <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261124035613.1968260-8-shubhrajyoti.datta@amd.com>
-References: <20261124035613.1968260-1-shubhrajyoti.datta@amd.com>
- <20261124035613.1968260-8-shubhrajyoti.datta@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 24 Nov 2026 04:18:05 +0000
+	s=k20260515; t=1795495290;
+	bh=iAWnEJRTZo4ZfoxutvsoMJKV0eTQZqJSBo1SrA6HwHQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=Uxir5DFSvn5Z5yS8gTmy9O0DPG80zPi2I052Ky1dVseOtJZ00fUqvIZnk8qvA7epR
+	 rn9ITueds5PAEAGGYdqUTH5lqz+P6307zyZHCsvpZ4GVnjAfNtozaZNccx+fpwVj6g
+	 kgirUFHrE66gSChVwOTVmeTNhChPhc5oXZZuPRuo3c7lbH0Ukn/IuiO7eXHBgA31gz
+	 DnTJf30qbM6egxQ2i0iF4B3mAvzZwDlV9ZtGiwWBcBfFw1FQock1MPMmGB6mX6mVO8
+	 cJsm6mO+NBnERiDACblyXcZdJgXF2NMjPT+hryGnp7Y/OYhJb19A6NnaB84V2Go3U8
+	 gdkkOj2j/V1xA==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 55A734C8A6;
+	Tue, 24 Nov 2026 04:41:24 +0000 (UTC)
+From: Joseph Telaak via B4 Relay <devnull+joseph.telaak.dev@kernel.org>
+Date: Mon, 23 Nov 2026 23:41:21 -0500
+Subject: [PATCH v5 1/6] MIPS: Add support for Siflower MIPS SoCs
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,126 +81,135 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261123-sf19a2890-sysm-v5-1-4ba44a0db17d@telaak.dev>
+References: <20261123-sf19a2890-sysm-v5-0-4ba44a0db17d@telaak.dev>
+In-Reply-To: <20261123-sf19a2890-sysm-v5-0-4ba44a0db17d@telaak.dev>
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Paul Burton <paulburton@kernel.org>, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, Chuanhong Guo <gch981213@gmail.com>, 
+ Yao Zi <me@ziyao.cc>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Joseph Telaak <joseph@telaak.dev>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795495283; l=3355;
+ i=joseph@telaak.dev; s=20261104; h=from:subject:message-id;
+ bh=uNFvdHDKF2De/lRMz83ttlgpkFV125CqqDBrcYzphz8=;
+ b=XO8OgRpMMYQp2P6aF5Oe27c0j+oCgxc0CskwLlMA5nYZ7FB1EFFRNofjInViYr61fILTRnAPG
+ BDRunO7mVH5Bt9HbLynOiZp/3Ox/IznY0Jrn+E2bBnKfyLbL5sucXVz
+X-Developer-Key: i=joseph@telaak.dev; a=ed25519;
+ pk=oQI+UfddlZ0wK2ac4WKOGNjUl1ZEN8j9ZVFSqEDoNP0=
+X-Endpoint-Received: by B4 Relay for joseph@telaak.dev/20261104 with
+ auth_id=1404
+X-Original-From: Joseph Telaak <joseph@telaak.dev>
+Reply-To: joseph@telaak.dev
 
-Thank you for your contribution! Sashiko AI review found 3 potential
-issues to consider:
-- [Medium] clk: clocking-wizard: u8 truncation of div in
-  clk_wzrd_determine_rate()
-- [Medium] clk: clocking-wizard: missing zero rate checks in
-  multi-output rate callbacks
-- [Low] clk: clocking-wizard: missing Fixes trailers for bug fixes
---
+From: Chuanhong Guo <gch981213@gmail.com>
 
-commit 7829b1929b443e35dccbe8d3e7ecd82961ac4d4c
-Author: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Siflower MIPS SoCs like SF19A2890 use a dual-core MIPS InterAptiv
+processor, built-in GMAC, USB, dual-band WiFi and various other
+peripherals.
 
-> clk: clocking-wizard: Fix division by zero and unbounded register write
->
-> 1. clk_wzrd_determine_rate(): DIV_ROUND_CLOSEST() can return 0 when
->    the requested rate greatly exceeds the parent rate, causing a
->    division by zero on the subsequent parent_rate / div. Clamp div
->    to a minimum of 1.
->
-> 2. clk_wzrd_dynamic_reconfig(): min_t() result was not assigned back
->    to value, so the cap to WZRD_DR_MAX_INT_DIV_VALUE was never applied
->    before the register write.
->
-> 3. clk_wzrd_get_divisors() and clk_wzrd_get_divisors_ver(): If rate is
->    0, DIV_ROUND_CLOSEST_ULL divides by zero. Return -EINVAL early.
->
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Notably, they use some ARM PLxxx peripherals, and ARM_AMBA is
+selected for the drivers.
 
-[Severity: Low]
-Should this include Fixes: tags for the commits that introduced these bugs?
+Most devices on the market with this chip come with 64M or less
+DRAM. A kmalloc.h with malloc alignment override is added to
+conserve memory, and a MACH_SIFLOWER_MIPS is created with reduced
+features instead of using the generic kernel.
 
-  Fixes: 5a853722eb32 ("staging: clocking-wizard: Add support for dynamic r=
-econfiguration")
-  Fixes: 7681f64e6404 ("clk: clocking-wizard: calculate dividers fractional=
- parts")
-  Fixes: e0a94c6bb5b4 ("clk: xilinx: Optimize divisor search in clk_wzrd_ge=
-t_divisors_ver()")
+Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
+[Joseph Telaak:
+  - rebase on v7.4-rc1 and use the "MIPS:" prefix
+  - longer Kconfig help
+  - commit message grammar and paragraphs]
+Signed-off-by: Joseph Telaak <joseph@telaak.dev>
+---
+ arch/mips/Kconfig                             | 32 +++++++++++++++++++++++++++
+ arch/mips/generic/Platform                    |  1 +
+ arch/mips/include/asm/mach-siflower/kmalloc.h |  9 ++++++++
+ 3 files changed, 42 insertions(+)
 
-> diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xil=
-inx/clk-xlnx-clock-wizard.c
-> index 7fe8d0d4cfba2..046efa5c77c98 100644
-> --- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-> +++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-> @@ -303,7 +303,7 @@ static int clk_wzrd_dynamic_reconfig(struct clk_hw *h=
-w, unsigned long rate,
->  	value =3D DIV_ROUND_CLOSEST(parent_rate, rate);
-> =20
->  	/* Cap the value to max */
-> -	min_t(u32, value, WZRD_DR_MAX_INT_DIV_VALUE);
-> +	value =3D min_t(u32, value, WZRD_DR_MAX_INT_DIV_VALUE);
-> =20
->  	/* Set divisor and clear phase offset */
->  	writel(value, div_addr);
-> @@ -341,6 +341,8 @@ static int clk_wzrd_determine_rate(struct clk_hw *hw,
->  	 * achievable
->  	 */
->  	div =3D DIV_ROUND_CLOSEST(req->best_parent_rate, req->rate);
-> +	if (!div)
-> +		div =3D 1;
-> =20
->  	req->rate =3D req->best_parent_rate / div;
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index ed17c9b1624c..e10145edeb53 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -937,6 +937,38 @@ config SIBYTE_BIGSUR
+ 	select ZONE_DMA32 if 64BIT
+ 	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+ 
++config MACH_SIFLOWER_MIPS
++	bool "Siflower MIPS SoCs"
++	select MIPS_GENERIC
++	select MACH_GENERIC_CORE
++	select ARM_AMBA
++	select BOOT_RAW
++	select CEVT_R4K
++	select CLKSRC_MIPS_GIC
++	select COMMON_CLK
++	select CPU_MIPSR2_IRQ_EI
++	select CPU_MIPSR2_IRQ_VI
++	select CSRC_R4K
++	select DMA_NONCOHERENT
++	select IRQ_MIPS_CPU
++	select MIPS_CPU_SCACHE
++	select MIPS_GIC
++	select MIPS_L1_CACHE_SHIFT_5
++	select NO_EXCEPT_FILL
++	select SMP_UP if SMP
++	select SYS_HAS_CPU_MIPS32_R2
++	select SYS_SUPPORTS_32BIT_KERNEL
++	select SYS_SUPPORTS_LITTLE_ENDIAN
++	select SYS_SUPPORTS_MIPS16
++	select SYS_SUPPORTS_MIPS_CPS
++	select SYS_SUPPORTS_MULTITHREADING
++	select USE_OF
++	help
++	  Select this to build a kernel which supports SoCs from Siflower
++	  with MIPS InterAptiv cores, like Siflower SF19A2890. These have
++	  ARM PrimeCell peripherals, so ARM_AMBA is selected, and 32-byte
++	  cache lines, which allows a smaller kmalloc alignment.
++
+ config SNI_RM
+ 	bool "SNI RM200/300/400"
+ 	select ARC_MEMORY
+diff --git a/arch/mips/generic/Platform b/arch/mips/generic/Platform
+index 0c03623f3897..c09a8484db9b 100644
+--- a/arch/mips/generic/Platform
++++ b/arch/mips/generic/Platform
+@@ -10,6 +10,7 @@
+ 
+ # Note: order matters, keep the asm/mach-generic include last.
+ cflags-$(CONFIG_MACH_INGENIC_SOC)	+= -I$(srctree)/arch/mips/include/asm/mach-ingenic
++cflags-$(CONFIG_MACH_SIFLOWER_MIPS)	+= -I$(srctree)/arch/mips/include/asm/mach-siflower
+ cflags-$(CONFIG_MIPS_GENERIC)	+= -I$(srctree)/arch/mips/include/asm/mach-generic
+ 
+ load-$(CONFIG_MIPS_GENERIC)	+= 0xffffffff80100000
+diff --git a/arch/mips/include/asm/mach-siflower/kmalloc.h b/arch/mips/include/asm/mach-siflower/kmalloc.h
+new file mode 100644
+index 000000000000..0887ae3575d7
+--- /dev/null
++++ b/arch/mips/include/asm/mach-siflower/kmalloc.h
+@@ -0,0 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++#ifndef __ASM_MACH_SIFLOWER_KMALLOC_H
++#define __ASM_MACH_SIFLOWER_KMALLOC_H
++
++#ifdef CONFIG_DMA_NONCOHERENT
++#define ARCH_DMA_MINALIGN	32
++#endif
++
++#endif /* __ASM_MACH_SIFLOWER_KMALLOC_H */
 
-[Severity: Medium]
-Can storing DIV_ROUND_CLOSEST() into u8 div in clk_wzrd_determine_rate()
-truncate dividers above WZRD_DR_MAX_INT_DIV_VALUE (255) instead of clamping
-them?
+-- 
+Git-155)
 
-In clk_wzrd_determine_rate(), div is declared as u8.  When a low rate is
-requested such that DIV_ROUND_CLOSEST(req->best_parent_rate, req->rate) is
-256 or greater, the quotient wraps modulo 256.  If the quotient is a
-multiple of 256 (for example, 256 MHz parent and 1 MHz requested rate),
-div wraps to 0 and the new "if (!div) div =3D 1;" check forces req->rate to
-req->best_parent_rate instead of the minimum frequency.  Because
-clk_set_rate() passes the rounded req->rate from clk_wzrd_determine_rate()
-into clk_wzrd_dynamic_reconfig(), the recomputed value in
-clk_wzrd_dynamic_reconfig() is already wrapped to 1..255, bypassing the
-min_t(u32, value, WZRD_DR_MAX_INT_DIV_VALUE) cap above.  Widen div to u32
-(or unsigned long) and clamp it to [1, WZRD_DR_MAX_INT_DIV_VALUE] in
-clk_wzrd_determine_rate().
 
-> @@ -355,6 +357,9 @@ static int clk_wzrd_get_divisors_ver(struct clk_hw *h=
-w, unsigned long rate,
->  	u32 m, d, o;
->  	u32 mmin, mmax, dmin, dmax, omin, omax;
-> =20
-> +	if (!rate)
-> +		return -EINVAL;
-> +
->  	mmin =3D VER_WZRD_M_MIN;
->  	mmax =3D VER_WZRD_M_MAX;
->  	dmin =3D VER_WZRD_D_MIN;
-> @@ -397,6 +402,9 @@ static int clk_wzrd_get_divisors(struct clk_hw *hw, u=
-nsigned long rate,
->  	u64 m, d, o;
->  	u64 mmin, mmax, dmin, dmax, omin, omax, mdmin, mdmax;
-> =20
-> +	if (!rate)
-> +		return -EINVAL;
-> +
->  	mmin =3D WZRD_M_MIN << 3;
->  	mmax =3D WZRD_M_MAX << 3;
->  	dmin =3D WZRD_D_MIN;
-
-[Severity: Medium]
-Can a rate of 0 still trigger a division by zero in the multi-output rate
-callbacks?
-
-clk_wzrd_get_divisors() and clk_wzrd_get_divisors_ver() are only used when
-nr_outputs =3D=3D 1.  For multi-output instances, the driver does not set a
-minimum rate via clk_hw_set_rate_range(), so req->rate =3D=3D 0 can reach
-clk_wzrd_determine_rate() and divide by zero in
-DIV_ROUND_CLOSEST(req->best_parent_rate, req->rate) before the new !div
-check.  Likewise, clk_wzrd_determine_rate_f() returns 0 without rejecting
-req->rate =3D=3D 0, allowing clk_wzrd_dynamic_reconfig_f() to divide by rat=
-e =3D=3D
-0 in DIV_ROUND_DOWN_ULL() and DIV_ROUND_CLOSEST_ULL(), and
-clk_wzrd_dynamic_reconfig() and clk_wzrd_ver_dynamic_reconfig() also divide
-by rate without checking for 0.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261124035613.1968=
-260-1-shubhrajyoti.datta@amd.com?part=3D7
