@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795545677;
-	b=w0blZ/VDJ6Sce9a70j+ZbKvlCTjQ1ebxCKM2p0UbL8m7z61K8J1XjpLbH4ywKe3cseE+
-	 J6fNT8YNHCmMGxCfZ+pgs8BNvuNnz6rnnZGtcfNdpX1RCyZNEqkZ5bo61EExXXC+ymVK8
-	 Kdnm2MnyAnnbXWvdYZoZJMCIGQJBxc545u5CiiKpGqVAdy4IkoPGW3R3OUohF9aa91xCy
-	 uG5nbNLj7fQM5O4bLyLOKBWTlaptAo2AQrhoijlfLk+GtLcKirOEAniG2EYwp1/CI0UT0
-	 yMzQjmoxnEYoxhdOKtmIxJtQxlCur5j30vjj7FkGrdqFis8s7+UpFiLknalybZpTKHw==
+	t=1795545684;
+	b=B7/pxeULvGmrBQ82GGhr/sL5n2OUhDDrGcvNA3/wD/xpFV0dltv3tL+zQ/6TbPscI9jA
+	 aF2Emo71PxNVAnj37XwHeUWduOpc3SH0bwh99T+BikKf9Sl6TRmwmU/ouBXaXAQQwx9iU
+	 hG19sub/jqhF0CcBptG7tXT/5oA1di3p8Xl0Z4OBE4HIOk5PGVSZ0VEBX+fat2SoKSLnA
+	 D1DrDwUkfB/H1hJ/GWmE00Oi7F4J+9PtcRip/AtRdDBpylrd++lRPPXSdKlE1NJMixvdR
+	 j9TItCBBkycNKpA0dMWoYxNkPK6GQbmFsHuECcmsyywEmwVVIIpwyb0+uPapzWlhGkg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795545677;
-	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=94OncMefUcNhEDwbiCTBjXKjoJuzmHSv8vTKTTuJQOQ=;
-	b=smkq6JgAATYfZKVIkJHs8NFQp2jAEnSU45cFCyNPOZ/gRtjICrmRcVZmJbh0rSIG8JFl
-	 XUugFpVFQnOxQyVAqvppWazz9lwu51HpTKpJdpzDYcq+8dn4dCBX7DpDke0dM1NyabeFI
-	 A2L2i/jvz/mVyWyy1gy/e3Yz0jI6MyJm6YyQcHHOTC3whfaMOPUTWB5TeAps+CSvoRkqg
-	 i/YQvyMyVWUlrH/dNvjq5oH7OaXRg71oY/UaJxoxv7AYpehN3TqHBDgqkKKeJuJHQuTPL
-	 /EA91Zcbpu0TKKgcpiia6fF3GCu/+HZvXzZZW1Diw168T6Ns2fZC0lKikJVb685ZYrQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795545684;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=jkZYm03lRvQFmPBUbBcIltQEBq59A4h16tLKYtelBQ4=;
+	b=tnN1H1rZYYd+LboHm5KqKCR9oV319D56hCfaVknGtro4gI5L0FUkDIzxQnFYXJ0r69Is
+	 3zK2+/kv9SwuANmIJ7NS5PRPG/BDeSMgvGDs5M69spIL8x/l2CsfXcKzTUQnL8+fOkxFL
+	 uNGiLYXO4V4Ek9ne7qZACswKqiqExNmvCWATZYBScRdEYa1xrj3spJqxDZDYZM//bHoj/
+	 9YX+gxFA2RUlAPjK5HA3zAK0UIv6bHa9EuECThB05hq8gG9oGeR9K29fu312Xmleof0Mo
+	 QI8EJOrzDWm4gVHeWybrc9gqxhUM7znCXlg8ylna9WL0SgKLx3WUKws/qI8rRqOyqRA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RJxPgz9W;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R6I5SZk0;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC206606A31E
-	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 18:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121AA606A31E
+	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 18:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RJxPgz9W
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R6I5SZk0
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795545677;
-	b=29GkeoCBJZD/3Q3wTu2B9hC9Uf1koMdUPmWJ6uTeRcg8CuEQkSuoRqgOUybzSV0EGJre
-	 MVIp31sJSEMT9NYHSREONHIvFozfnFGFLtB5+Ed4tObgW0pt5k5OwGHSL4lJaUmd/I2UK
-	 b+PEBRE8tU0q3ccux3d64hl4t37X4zmVZzueCgfwgoV6z8FT/k8tVcl0wdoKOay8iGkyv
-	 m8omvBTgE8Y+O0EBVweC3Z2Zrd+E5Ep7pYQRHhxBYgJWrnFrJBHBX/JBw8A8E1ul8Llyh
-	 biSYlvMWDG2l0A+Bo7Wjb1qYpikTEviVZJ8PUeOZABj3jkZ8hU1EK+QaPKaUnaVP7nA==
+	t=1795545683;
+	b=h2s4KXpIFUhcsh3+WygoE0J9z6m8RATPGadM6oRHGVyH8/+K/b3VloovSvf0dgczCIGj
+	 s+hr/1eK/lssmSvn4zfbnk/rs2bnQkBlVs1J0Uf5Io4aIPKEKr4/d7kumHOVL7ER0x3Mb
+	 Vk7OqjdaujnpVoU7llcgw7srNp8E4sA8GJOPsuNCtyD03aMTZ4bMw1AL95q+bvhmAUNtO
+	 mibs6Zqly0DHYRZYl8p2QRlk0RcZS2EH92I8i/rvE0QkImfxD5cSRsEhYLzaisHGZW5RA
+	 kC11UkyxlUoxgt7/fZsoCVedO2w6qaN14jy38rvzsCBZxSDAygC1DJNhn6JhvcYT4nQ==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795545677;
-	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
-	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=94OncMefUcNhEDwbiCTBjXKjoJuzmHSv8vTKTTuJQOQ=;
-	b=MN0sU4O23wFXcQ8N37i9HpoyTQyw4Ia/FS/OCh65pX6HDcmIUT4dASnU/Tztw4vb6o8y
-	 K4RQURI7JrciD/kDVMhRR6gu4zYWpwP58x78tgOTTFwDi6W89NrfQqU2y84RgIaAqGqtG
-	 KqGBs/QWPAv0Si6nuiUgEcZ65Gc7paKuqCGgj6xJg91Tp5yt2FSayMGcoPhtaM8C04jMg
-	 uk3EqGRY1LjzI7PqI430DdQgVy/VnD07lyaBpamTQ/M5rwRfZ8HMrXrPNqph/HcOsFSPT
-	 07T2dOU8EJuN5/FR9Y9qzG7wbPCUxa4vDGI3XzOg2i1LdhSsLDaISeQ9Lydkhcdr0hg==
+	c=relaxed/relaxed; t=1795545683;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=jkZYm03lRvQFmPBUbBcIltQEBq59A4h16tLKYtelBQ4=;
+	b=do98XDC/U6L/lCMeA1ex+KtkewimDCnS0YwKu/Yv4PSS2YY019UA5sftITDIyyfsdcds
+	 shFDOJJMsR0um4OHxKLJP7eOZFGqZogNINFyKkFO4BAs+ij/Ne4KlSTY4tBIpLuV+e04r
+	 /5fdzM7m+2wvDOhwQtJ2G4/BgtLV4Hq+aEtj54Od6h/Sphzh7ovRTV9+f+P3KrLBEvxi7
+	 3BD6oVEnhyJ1Xs/FoOQqsgecZ08a+hn2ngO4uSw7XdzAmM8iq56RXJcfAspYFvGRb4jpF
+	 03a5CcoDpY6ddNeTHqlSrIeJBQgOKSAqTq+y12QlvHs0NmOFVdccQzZy7W6oncFsDRA==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 71CD41F000C4;
+	by smtp.kernel.org (Postfix) with ESMTPS id 71E121F000C6;
 	Tue, 24 Nov 2026 18:41:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795545677;
-	bh=94OncMefUcNhEDwbiCTBjXKjoJuzmHSv8vTKTTuJQOQ=;
-	h=From:Subject:Date:To:Cc:Reply-To;
-	b=RJxPgz9WzU84SmcBfqvpUsEkQRspdeqREGJkNvbZM7zQbp1RNZKohV+4MPGRFu9OC
-	 VH65lWES9Y3yoCubVV7S/d09ohfhxmuTcyBe5ijBJNDIEy/9ys4Mj4ZQ1d5tCWyeZs
-	 72hTQsFE/EjAFCiIOLqkXaTAWZWdj+qshsigiz0V0cOQz+bDCLechOYCSpie51n+IU
-	 BapItiJMP3wD2F+BXJZ/QWnUvIdDWuPgZAkreNRGQU/ySuHcGn87tJhBCKAiSr/BF6
-	 fmdS9B1zDDG6ixAnzpPMheKW6Q+vw27NiNBPr/G5lIJBVhZ1S15ZUBB9P3X6JhCLbN
-	 mNxjamd3KUTGQ==
+	s=k20260515; t=1795545683;
+	bh=jkZYm03lRvQFmPBUbBcIltQEBq59A4h16tLKYtelBQ4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=R6I5SZk0mo3DJd90kRmLCuYIWvWN18dhxzkaC33xzpRhcwOSHGDImYAZjQJl/5+yt
+	 rarrdaHJD6uusH1vPVe02SpHGbzSSr7iKvn1IuV1bin0tMryx0Pq+kPFnNXSYdQkBI
+	 FJaDTzQ/H+gk43hGuqDQgBZTW1D2yZZBvn1FPy9d1yWAwzi9MhyJS14b9CmVHw1irg
+	 g3WoRckzZ27h+Fj52uBUALH01hbGzapNAYhFfM+hHyq6Q7RwnNC6O5EW+jEU85JupN
+	 daOpVzZgzaPio3wfAAf9HDnozNpplrq9vFc9MvFO0an40g/DZkO+X8OIHDCA6M0oKu
+	 roYm/+9K3vraQ==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id C66484CB37;
+	by lkml.kernel.org (Postfix) with ESMTP id F20C24CB42;
 	Tue, 24 Nov 2026 18:41:13 +0000 (UTC)
 From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Subject: [PATCH 0/2] clk: eswin: Fix the EIC7700 PLL post-divider
-Date: Wed, 25 Nov 2026 02:41:01 +0800
-Message-Id: <20261125-eic7700-cpu-pll-postdiv-v1-0-b1ccd6339a20@iscas.ac.cn>
+Date: Wed, 25 Nov 2026 02:41:02 +0800
+Subject: [PATCH 1/2] clk: eswin: Fix the EIC7700 PLL post-divider
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,11 +83,9 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAD3aBWsC/x3MQQqAIBBA0avErBtwpLK6SrQIHWsgSrQiiO6et
- HyL/x9IHIUT9MUDkS9Jsm8ZVBZgl2mbGcVlg1a6IdI1slhjlEIbTgzrimFPh5MLdeXIdq0nRwp
- yHSJ7uf/zML7vB/69D9dpAAAA
-X-Change-ID: 20261125-eic7700-cpu-pll-postdiv-24d1c98f1d10
+Message-Id: <20261125-eic7700-cpu-pll-postdiv-v1-1-b1ccd6339a20@iscas.ac.cn>
+References: <20261125-eic7700-cpu-pll-postdiv-v1-0-b1ccd6339a20@iscas.ac.cn>
+In-Reply-To: <20261125-eic7700-cpu-pll-postdiv-v1-0-b1ccd6339a20@iscas.ac.cn>
 To: Yifeng Huang <huangyifeng@eswincomputing.com>, 
  Xuyang Dong <dongxuyang@eswincomputing.com>, 
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -97,39 +94,75 @@ Cc: Brian Masney <bmasney@redhat.com>, Han Gao <rabenda.cn@gmail.com>,
  linux-clk@vger.kernel.org, Han Gao <gaohan@iscas.ac.cn>, 
  Jingkun Zheng <zhengjingkun@iscas.ac.cn>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795545672; l=779;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795545672; l=2174;
  i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=t8ZcuweeJNISZuSMsr0ma3NCNW561sd+NOoXsw+v1Sw=;
- b=diPFeDuIDZU9YkcSf71xBpGfVxkppziXUTRXOyWVSnCDGZBgMMD8UO+z+vwdcNbgWt6VaM99J
- wHJwV6tWvgoD+cBPF+PEWiT4ohrFB2XO2+Qh2aTudnS3jJHkYOaQpMj
+ bh=K7CbBbwRL7SATfIfwvhHdIvzguPw8xQ/hwuAz02UZhg=;
+ b=J+PHDdEF/5xW9rq1nnIDUZ7SDjsXFHDB8D67iM0bKs856vLcTRGOBdfpNULzyLAhWAm3Cpph8
+ WTxVqm9vcJqBj5raZzvbru7qdR4n47uQUf0XTA21SeYHEhOAuXIdz8C
 X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
  pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
 X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
  auth_id=1262
 X-Original-From: Han Gao <gaohan@iscas.ac.cn>
 Reply-To: gaohan@iscas.ac.cn
+Content-Transfer-Encoding: 7bit
 
-clk_pll_set_rate() sets a post-divider the rate math doesn't know
-about, so the P550 CPU ran at half speed. Patch 1 fixes that, patch 2
-makes recalc_rate use the full formula from the TRM.
+From: Han Gao <gaohan@iscas.ac.cn>
 
-Tested on a HiFive Premier P550: all CPU operating points, and setting
-and reading back the audio PLL rate.
+Both PLL clocks are FOUT1 of their PLL. Per the TRM:
 
+  FOUT1 = FREF * (FBDIV + FRAC / 2^24) /
+          (4 * REFDIV * (POSTDIV1_A + 1) * (POSTDIV1_B + 1))
+
+The driver leaves the post-dividers out of its rate math, but
+clk_pll_set_rate() sets POSTDIV1_A (bits 10:8) to 1, which halves the
+output. It also writes bits 18:16 as "POSTDIV2", which is really
+POSTDIV2_A for FOUT2.
+
+On the HiFive Premier P550 the CPU ran at 699 MHz when CPUFreq set
+1.4 GHz.
+
+Clear POSTDIV1_A and POSTDIV1_B (bits 14:12) instead, and leave FOUT2
+alone.
+
+Fixes: cd44f127c1d4 ("clk: eswin: Add eic7700 clock driver")
+Reported-by: Jingkun Zheng <zhengjingkun@iscas.ac.cn>
+Link: https://github.com/eswincomputing/EIC7700X-SoC-Technical-Reference-Manual/releases/download/v1.0.0-20250103/EIC7700X_SoC_Technical_Reference_Manual_Part1.pdf
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
-Han Gao (2):
-      clk: eswin: Fix the EIC7700 PLL post-divider
-      clk: eswin: Use REFDIV and the post-dividers in the EIC7700 PLL rate
+ drivers/clk/eswin/clk.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
- drivers/clk/eswin/clk.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
----
-base-commit: b6a9fa34ce4187cb69d3c588a4bbffc31ce5db8f
-change-id: 20261125-eic7700-cpu-pll-postdiv-24d1c98f1d10
+diff --git a/drivers/clk/eswin/clk.c b/drivers/clk/eswin/clk.c
+index e8851283ccdbf0ea57002511f991c9d68a7f4788..7d51d3a8fc06d7b4a0d7435aeb0cb0e58e16708e 100644
+--- a/drivers/clk/eswin/clk.c
++++ b/drivers/clk/eswin/clk.c
+@@ -21,8 +21,8 @@
+ #define PLL_REFDIV_MASK		GENMASK(17, 12)
+ #define PLL_FBDIV_MASK		GENMASK(31, 20)
+ #define PLL_FRAC_MASK		GENMASK(27, 4)
+-#define PLL_POSTDIV1_MASK	GENMASK(10, 8)
+-#define PLL_POSTDIV2_MASK	GENMASK(18, 16)
++#define PLL_POSTDIV1_A_MASK	GENMASK(10, 8)
++#define PLL_POSTDIV1_B_MASK	GENMASK(14, 12)
+ 
+ struct eswin_clock_data *eswin_clk_init(struct platform_device *pdev,
+ 					size_t nr_clks)
+@@ -110,10 +110,9 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	val |= FIELD_PREP(PLL_FRAC_MASK, frac_val);
+ 	writel_relaxed(val, clk->ctrl_reg1);
+ 
++	/* eswin_calc_pll() assumes FOUT1 is not post-divided */
+ 	val = readl_relaxed(clk->ctrl_reg2);
+-	val &= ~(PLL_POSTDIV1_MASK | PLL_POSTDIV2_MASK);
+-	val |= FIELD_PREP(PLL_POSTDIV1_MASK, 1);
+-	val |= FIELD_PREP(PLL_POSTDIV2_MASK, 1);
++	val &= ~(PLL_POSTDIV1_A_MASK | PLL_POSTDIV1_B_MASK);
+ 	writel_relaxed(val, clk->ctrl_reg2);
+ 
+ 	/* Last, enable pll */
 
-Best regards,
 -- 
-Han Gao <gaohan@iscas.ac.cn>
+2.47.3
 
 
