@@ -1,107 +1,93 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.175
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795503632;
-	b=un9eZjPt8Q/UNNuHBq6I7125JXKfN+KLVWcYfahV1wDdv4NmNCA+CN2Dq0pa7u/vnt9Z
-	 I4+6ogzAvIjLuFlaYmeekwLYQQolJ4EBJqOGL/5m7gq3vUuwC+X3lmH2ZtgtU9E8xAyV3
-	 FWICtyF1oBInQOyNuT6sC/huYaSO56tBwRV6b29DoBL6ngMpEjVG9rh+SszAdbJ8QIEYj
-	 vgfkymNxsFIMGe0HSmlkr5enVQmZPUUeyA6iSKxETdRRCPoe9giaOGy7wtQXYGHORsWaN
-	 WNvFS8Nq2nJFTdjMkaTvU8gfGKsGEoK7DPcJPFfNjrhbRyH+rUN0OUoflyU4nXia3yw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795503632;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Transfer-Encoding:MIME-Version:Content-Type;
-	bh=bUUKY0RsjD+IVYyi5SJxAofkyIWwSJR0q+NQRX7ZwwU=;
-	b=Q6kBy+z06ecUCZ8zRiVaNC74z+MJ4vFluorhcON8s9CjwCA2BAjcr01OyTQlMa9xxTBP
-	 oJMBM611Vui8UuIXjK+GYUA/IQJ7pObd4pikSkPTsSPzlpi6/FnYuLJerkGEaQRiu5jRl
-	 8AHMogSkI5AWlZKsuSrH/5v/NWIu4QV9lZMkNIWEZCmCL/mSudqEa4rFrR1hHKcaw+Ajl
-	 1LEd9yuI9Gm1Bi6w3rrBqwvnvU50hv3nJElJGD7n0rd3PFe85ToVD8yE2cYNml7FnyQJj
-	 8xoqkNnKQMIfY866xt/wLqfb4CkDHifQgvnv1oPQqpmd+5aaq3t/j1+rhBKj+FwzQsw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=QVGdd82U;
-	arc=none smtp.remote-ip=209.85.208.175
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795513689;
+	b=qVRkFgTiImXg4VbCqCnLjmfaVX3V73OZSLADtYo3JXawnYOeRlx4h+5Csn6t7fxkztnW
+	 HhY7z06r0TWr3gW/TDbsfsNpcOGRv+YEgdqNeqhfvkksPtGFh7ilMfeU7VvasYzloUjSO
+	 3YZJCxgFv8LAgVkV7zAJMOEr+pHz9GRZG07aZQaV1odLc3pd10N7nOdhoZ8/G03Q76WeX
+	 WA6FNqCDFMVvWfDTpTTN1JM2KpN0N5dbrKl/o3hjBAAUw/lt2e/NgMgMJOu76eKD7DeCQ
+	 P2mbFW7f4cZkTMWBY9WOsPoWkBNMciwgEd1CPcN5dUACwXCYrJgyW3oIKvSYiWgS5JQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795513689;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=d6DaKHdaojEjeUyebY43orfnn2MYkANFL6lWDhdElGI=;
+	b=aHXy7nofzmzf2CWNXOc5ZGssRy72qsA6g7AhdBkwAGJDa3ShrpySqjwgKX3HwXKnH2T1
+	 I4LaHB8orVtgyR48H85QKt8gw2t8y1WF5TFNJGSYy9MjqZ/I/Xr0l+QfVKE2GMgb46b2d
+	 zXsIB1N1H2Cyj3YhbH16IW/tZNBB85mt/shWsK2uQ2fSf1gCJa0QDBYRovOiVxKxLYW3z
+	 i540IWt62f7pyEUn5X4EkkqjEM9bpBtEiWEGwxCHShwCiGTU42250UjV6bAOM5E0vkxH4
+	 vx+UIfqsX6dT/0NXH5M0NMcZ+LhcvlZxvSpx4OLsVqKa1ydARRBzB0vYWnpTmqLHsqA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=fAxyb7vm;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0830E606A327
-	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 07:00:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0830E606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B552606B704;
+	Tue, 24 Nov 2026 09:48:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0B552606B704
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=QVGdd82U
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3ab4354db11so40501171fa.1
-        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2026 23:00:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795503630; x=1796108430; darn=vger.kernel.org;
-        h=content-type:mime-version:content-transfer-encoding:message-id:date
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=bUUKY0RsjD+IVYyi5SJxAofkyIWwSJR0q+NQRX7ZwwU=;
-        b=QVGdd82UruFfPdkhhDtfnYqoV6hQDoIc6LmdBLufjtmQpvNKfQQwYNlPT4YjkByGtC
-         6b10N5ALfWr87MLq6fS42XMmf1oLMR0lG3tNc4la+6M161rsBCiPEePoiahvpmI08Q0Z
-         aC53VISrmlWQvFm0CjvJHI1xPz0/R66Iz3+AvjcnKb1mVt0qOVT2+wIJk6LSYi4ate2X
-         4S2MWMQVrYYIDvhFU0Kt9KID8whWfbFTA2VbauqgCBsy5/MTuy1exwBW+v/soVSc+irp
-         EaLAxJqrZHrbGSaMGF5XpL87gVdKhgZTt3I1BMvo5spUCzG5KXRjOVvEysxZq4rlxvLm
-         BBkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795503630; x=1796108430;
-        h=content-type:mime-version:content-transfer-encoding:message-id:date
-         :references:in-reply-to:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bUUKY0RsjD+IVYyi5SJxAofkyIWwSJR0q+NQRX7ZwwU=;
-        b=kZOSnHuDZQdph5mg/88lnBAxXrGvXT0PKyvtu/m7EzSsNqbx9QRBMxEzKE52rfj0AM
-         Iz6UyectiKCj1vlNw0/1plhqN+DmdA3KRdE3gSnDTTod7Zy+QLYIMnGCoynpJUdEcUMc
-         IovthUUbqUmKvng6t/xsloESAv9qYoUCNhv6IPVjdx7pPLTPVjYmY9Q887Cg0jl6PiFc
-         Buo6hlg9xRBiA+wsZ0hefzX5USPKndSz6gm3/uR1d4LA4b7NZzB7JzRlQ797ARZ8RhP7
-         RJh3kAd4q5IrS243NHD4MgHv75DDnHIpPj133jO1gvGBw2b/NJ1TOhw0DpY2QNm4pQ/+
-         CuBg==
-X-Forwarded-Encrypted: i=1; AL+hErFLj0pFmAyQZxWzJltllaVbzpC2saal4qKybZE90TDRpxHJ5rHlv3pElv9N8AnysRDaolYQ9xu9XjA=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/euEd/ADJ0dpcL85KKPr267jN5BZf6zfynOnJ/MELNrc9aLrcJ
-	b5CTkprPUMazcV1C5mDlcLH14Azf9U+zPskQKhDH3F5ah9Hixz4pZgcZmRK/8uUNVIXPew==
-X-Gm-Gg: AZFdTZc/z4m43nM/UieW4jC+4zB3uRE1hRFPrzHeZ5SeiyQXeOlR9GyoFTLAQbljnxm
-	LkqjjFRcaHHQ8+MEcBuvT8box4E6cuMoHtLlTGlVAxVz2cgacMl4s3Y9kXowVyEdbly6/zEhNY3
-	YKjTGTxjwiypc8NCkMruI3zHphU3O5IR5daW24V9oCp67lp6K/leyco6EghAulcO6qHKC/TpUg+
-	uMQ30YQuYwTo8UuF3l6GwMd5N4a5z6n2Komug9CgdCPRLBagzWpSMyZpjMFxEYdajKSWOc0DDee
-	buSg0dUqikhq1rC4pqrJdlqTq5lY5eRnrg8UbHRZa8TUjhDNw/p4F3KLRCih13MM/EK0oSyQvQN
-	t0T6L+yFDkjFr/639eCsPQFhmjXshy3OiuOFHQFMiMO1g7UuM6ryg6BeEIfc+sHdPr5NwcA5Ndi
-	/XOc8Zu85+oNmjtxHsGy6bvCNdfRJfGsIvUnUsrTvmNQGqml5spE1iAb6f+nriFkB5Vq+BHnP/q
-	tSug4zbDPS2LuyGb4dWAzm9futpZNf9oiE4yr8su6PwgTsAFjjGWdlnIDPG0jI76A5D+zxlZmFk
-	NvXNRzIZ/hM9it3clxGHtr2vpxEmFHWWjvlt+PkCj7bgWNLMOCgU5TI=
-X-Received: by 2002:a05:6512:12c4:b0:5c1:563f:ff23 with SMTP id 2adb3069b0e04-5c1bc84ebc3mr3803268e87.61.1795503630067;
-        Mon, 23 Nov 2026 23:00:30 -0800 (PST)
-Received: from [127.0.1.1] (ip-024-180.users.dtel.ru. [91.210.24.180])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c1bd05e235sm3481118e87.64.2026.11.23.23.00.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2026 23:00:28 -0800 (PST)
-From: Fil Dunsky <filipp.dunsky@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Vinod Koul <vkoul@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof Wilczynski <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-pci@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH 2/8] dt-bindings: clock: Describe CS7542 PCIe gates and resets
-In-Reply-To: <831a6498-9c1a-4829-b47d-52035fe15444@kernel.org>
-References: <20261123-b4-cs7542-pcie-v1-0-4cde5201d404@gmail.com>
- <20261123-b4-cs7542-pcie-v1-2-4cde5201d404@gmail.com>
- <831a6498-9c1a-4829-b47d-52035fe15444@kernel.org>
-Date: Tue, 24 Nov 2026 09:58:48 +0300
-Message-ID: <179550352887.5.18085137758862458863@gmail.com>
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=fAxyb7vm
+Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
+	(Authenticated sender: pza@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id C07472020DC;
+	Tue, 24 Nov 2026 10:48:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1795513683;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d6DaKHdaojEjeUyebY43orfnn2MYkANFL6lWDhdElGI=;
+	b=fAxyb7vmCadkahPPTPSFgFAP4NUEywyc+e4cnVblhGTvavGWlA+L0IvjRL21f0ohSXbKcj
+	jwmI0jmBF0dqeQhIIxiLCCmxjr2pr6QiJ3D0tphiHOT7bXeJBDAtoyNYWwrpfPxo7Z5TBq
+	s7KAIt+w4HutiHZo4GT1w8YKr2wT/6ZrjxTI0GhkzJoR45tpbSOC85aYQGOJ3ZPLwpzpBQ
+	pyxxkFXOQ9xJXcyQpP/rcJv4QZ7+NubFAwNwn+PRVsVilErr/iEYpueYejfRKOY/1lrg+m
+	cuzLWy5MLNppIJnG3tMCUf1tZsHge72S/lOlg+i4wjJhIDBFIRm++9ul4W8o6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1795513683;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d6DaKHdaojEjeUyebY43orfnn2MYkANFL6lWDhdElGI=;
+	b=eZaIgAI7dIOiBn5mRsTegayS+3l51NWaPgEn0pU92fclcOvbJ31gOvmncHHXe1Jd3/AVWm
+	w927NCyMIYJCLbk5inKRHboCfdJQ9m0jdNahJSsMPY3Jrf/q0DdRAMkDhP0NizFnVKKiQV
+	b5OtlHM3mfK0Ja1yDOwRswuizBuQk9E/ke0gD7kjiBbty1R8br7K0C+2wcIYsdPrqb9We5
+	IOBuEnfIcbyOmTsMeg0oW2U/5LBhkidM6r1PcjO9bF4GIV7LetvIjdJGxz765pMJNZ2sKh
+	m6FfxLdXBH+bWbaLXI+wSVNptUHxPGg9K1hNCagjAjw+QV46vuN0W6LrzCM13Q==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1795513683; a=rsa-sha256;
+	cv=none;
+	b=NR7+rirICfaIY/R1UUt+SMs00eQ+ok1Jb2RRUHGZ5OAQFQM/w0uaFpcqv97bYevrjEiuRk
+	ogklv2C/OO0NVu8dNkH2yyRjfCIPgam9YZCC7nP+owGZ3OGLHUjWyB1WQul9rGwl1DLdNW
+	Lpax3CeUIr1uH+UDIpzn4RQrcJ8m6d+GKQxyo2aMKtJgkvpJXbx93Wru2PUJTuZ6CkU8h0
+	ue1qyOgBVjuwaPRxqTyJnowHVl4mAoxawzGgP0Z3TJGdioT68zxJa+/wgjPlIcfmmGsOa9
+	IuCSAJ/OHi4qN5vWB9nCAXHIjMuGWjAqugr8GOCqVYQ3nt5IJeQnsU75evpEpQ==
+Message-ID: <9facd8eabb9d0c2bbe816117481dd624aa8c1f04.camel@pengutronix.de>
+Subject: Re: [PATCH 2/3] clk: cs7542: Add global PCIe controls and network
+ engine reset
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: filipp.dunsky@gmail.com, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Stephen Boyd	 <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet	 <jbrunet+clk@baylibre.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Date: Tue, 24 Nov 2026 10:48:03 +0100
+In-Reply-To: <20261124-b4-cs7542-global-controls-v1-2-12548785df2c@gmail.com>
+References: <20261124-b4-cs7542-global-controls-v1-0-12548785df2c@gmail.com>
+	 <20261124-b4-cs7542-global-controls-v1-2-12548785df2c@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -111,20 +97,188 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="fixed"
 
-Hi Krzysztof,
+On Di, 2026-11-24 at 00:50 +0300, Fil Dunsky via B4 Relay wrote:
+> From: Fil Dunsky <filipp.dunsky@gmail.com>
+>=20
+> Register PCIe gates and controller resets through the early global
+> provider. Add the network engine composite reset using the same syscon
+> regmap, with the existing 1 us/1000 us readback polling and partial-domai=
+n
+> status error from the posted NE reset driver. Keep the PCIe reset pulse
+> delays and all provider-registration failure cleanup. NE pulse reset
+> remains unsupported; the Ethernet consumer needs assert/deassert/status.
+>=20
+> Both independent consumers can use this common provider without a
+> PCIe-host dependency or a resource-less network reset child.
+>=20
+> AI assistance: Codex prepared this draft from the posted CS7542 series.
+>=20
+> Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
+> ---
+>  drivers/clk/Kconfig      |   7 +-
+>  drivers/clk/clk-cs7542.c | 211 +++++++++++++++++++++++++++++++++++++++++=
++-----
+>  2 files changed, 195 insertions(+), 23 deletions(-)
+>=20
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 47b5265fe..cba07bed3 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -59,13 +59,16 @@ config LMK04832
+>  	  Low-Noise JESD204B Compliant Clock Jitter Cleaner With Dual Loop PLLs
+> =20
+>  config COMMON_CLK_CS7542
+> -	bool "Cortina Systems CS7542 strap-selected clocks"
+> +	bool "Cortina Systems CS7542 global clocks and resets"
+>  	depends on OF && HAS_IOMEM
+>  	select MFD_SYSCON
+> +	select RESET_CONTROLLER
+>  	help
+>  	  Read the boot straps of the CS7542 global control block to provide
+>  	  its APB, CPU and AXI clocks. This driver does not change PLLs or
+> -	  dividers. It is built in because the APB clock is needed by timers.
+> +	  dividers. It also provides the three PCIe clock gates and resets,
+> +	  and the exclusive network engine and DMA-LSO/SSP reset domain.
+> +	  It is built in because the APB clock is needed by timers.
+> =20
+>  config COMMON_CLK_APPLE_NCO
+>  	tristate "Clock driver for Apple SoC NCOs"
+> diff --git a/drivers/clk/clk-cs7542.c b/drivers/clk/clk-cs7542.c
+> index 4e6c1e98a..17b7109a9 100644
+> --- a/drivers/clk/clk-cs7542.c
+> +++ b/drivers/clk/clk-cs7542.c
+[...]
+> @@ -33,14 +38,142 @@ static const char * const cs7542_clock_names[] =3D {
+>  	[CS7542_CLK_APB] =3D "cs7542-apb",
+>  	[CS7542_CLK_CPU] =3D "cs7542-cpu",
+>  	[CS7542_CLK_AXI] =3D "cs7542-axi",
+> +	[CS7542_CLK_PCIE0] =3D "cs7542-pcie0",
+> +	[CS7542_CLK_PCIE1] =3D "cs7542-pcie1",
+> +	[CS7542_CLK_PCIE2] =3D "cs7542-pcie2",
+> +};
+> +
+> +#define CS7542_PORTS	3
+> +#define CS7542_NUM_RESETS	4
+> +/* NI, FE, TM, SCH, QM, DMA-LSO/SSP, NI XRAM; never reset SDRAM (bit 4).=
+ */
+> +#define CS7542_NE_RESET_MASK	(GENMASK(3, 0) | BIT(5) | BIT(16) | BIT(17)=
+)
 
-Agreed. I have folded these controls into the parent global syscon in the
-separately posted shared-global follow-up:
+So these are multiple separate resets merged into one logical reset
+control? Does the hardware require them to be set with the same write
+access?
 
-https://lore.kernel.org/all/20261124-b4-cs7542-global-controls-v1-0-12548785df2c@gmail.com/
+> +#define GLOBAL_RESET	0x04
+> +#define GLOBAL_CONFIG	0x10
+> +
+[...]
+> +static int cs7542_gate_is_prepared(struct clk_hw *hw)
+> +{
+> +	struct cs7542_gate *gate =3D container_of(hw, struct cs7542_gate, hw);
+> +	unsigned int value;
+> +	int ret;
+> +
+> +	ret =3D regmap_read(gate->map, GLOBAL_CONFIG, &value);
+> +	return ret ? ret : !!(value & gate->mask);
 
-The parent node now provides both clocks and resets directly. The prepared
-PCIe revision removes this resource-less child binding/provider and uses
-the parent. I will let the ongoing reviews settle before reposting the
-PCIe series.
+Consider using regmap_test_bits() here.
 
-Thanks,
-Fil
+> +}
+> +
+> +static const struct clk_ops cs7542_gate_ops =3D {
+> +	.prepare =3D cs7542_gate_prepare,
+> +	.unprepare =3D cs7542_gate_unprepare,
+> +	.is_prepared =3D cs7542_gate_is_prepared,
+> +};
+> +
+> +static int cs7542_reset_update(struct reset_controller_dev *rcdev,
+> +			       unsigned long id, bool assert)
+> +{
+> +	struct cs7542_control *ctl =3D container_of(rcdev, struct cs7542_contro=
+l, rcdev);
+> +	unsigned int value;
+> +	u32 mask, target;
+> +	int ret;
+> +
+> +	if (id >=3D CS7542_NUM_RESETS)
+> +		return -EINVAL;
 
+This is superfluous, fwnode_reset_simple_xlate() already checked this
+before creating the reset control.
+
+> +	mask =3D id =3D=3D CS7542_RESET_NE ? CS7542_NE_RESET_MASK : BIT(6 + id)=
+;
+> +	target =3D assert ? mask : 0;
+> +	ret =3D regmap_update_bits(ctl->map, GLOBAL_RESET, mask, target);
+> +	if (ret || id !=3D CS7542_RESET_NE)
+> +		return ret;
+> +	return regmap_read_poll_timeout(ctl->map, GLOBAL_RESET, value,
+> +				       (value & mask) =3D=3D target, 1, 1000);
+> +}
+> +
+> +static int cs7542_reset_assert(struct reset_controller_dev *rcdev, unsig=
+ned long id)
+> +{
+> +	return cs7542_reset_update(rcdev, id, true);
+> +}
+> +
+> +static int cs7542_reset_deassert(struct reset_controller_dev *rcdev, uns=
+igned long id)
+> +{
+> +	return cs7542_reset_update(rcdev, id, false);
+> +}
+> +
+> +static int cs7542_reset_status(struct reset_controller_dev *rcdev, unsig=
+ned long id)
+> +{
+> +	struct cs7542_control *ctl =3D container_of(rcdev, struct cs7542_contro=
+l, rcdev);
+> +	unsigned int value;
+> +	u32 mask;
+> +	int ret;
+> +
+> +	if (id >=3D CS7542_NUM_RESETS)
+> +		return -EINVAL;
+> +	mask =3D id =3D=3D CS7542_RESET_NE ? CS7542_NE_RESET_MASK : BIT(6 + id)=
+;
+> +	ret =3D regmap_read(ctl->map, GLOBAL_RESET, &value);
+> +	if (ret)
+> +		return ret;
+> +	value &=3D mask;
+> +	if (id =3D=3D CS7542_RESET_NE && value && value !=3D mask)
+> +		return -EIO;
+
+Is this a sign that maybe these should be separate controls?
+
+> +	return !!value;
+> +}
+> +
+> +static int cs7542_reset_pulse(struct reset_controller_dev *rcdev, unsign=
+ed long id)
+> +{
+> +	int ret;
+> +
+> +	if (id >=3D CS7542_NUM_RESETS)
+> +		return -EINVAL;
+> +	if (id =3D=3D CS7542_RESET_NE)
+> +		return -EOPNOTSUPP;
+> +
+> +	ret =3D cs7542_reset_assert(rcdev, id);
+> +	if (ret)
+> +		return ret;
+> +	usleep_range(10000, 12000);
+> +	ret =3D cs7542_reset_deassert(rcdev, id);
+> +	if (ret)
+> +		return ret;
+> +	usleep_range(10000, 12000);
+> +	return 0;
+> +}
+
+Please drop this and let the PCIe driver call
+reset_control_assert/deassert() itself.
+
+reset_control_reset() is for (compatibilty with) self-clearing resets.
+
+regards
+Philipp
