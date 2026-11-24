@@ -1,88 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.176
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795554390;
-	b=zL/9JMnTxZyS6aQct0uQniSvcL8hhsg3uDnTnGuxHX/IFhe0QvYNW4e8xezcuB2Q7x4C
-	 2A2Xq5O4G2iEAp/HCPcYYLTJQs/d8IkJTN9Jf7etN5r0CG4wXkSJDG608y4SzTyMZns4O
-	 Abulqg6uxaV0IYA2Okqd2nqm1sDhNUJYzZFUTDAUcJ960FrmaFoFSHQENZ3KuYPU9Vbe1
-	 MqLOhGX3OT37tsrnIQVkXO5Q98dXuHrHwPg4xeMtZ82j2gBsVIwjTLeW+VRFyOHWcDIhS
-	 yk2ibKTN+MHUtqW+0OMY3s7Bo2Gc9eSXAWG/MYwmXLSvT5CBsIPwGvgvUVE4k4bl0kA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795554390;
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.54
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795559486;
+	b=bK3C7sO/X2gMKWqBqQU1Tnx16Ae97Kt2YfVxfDyCmSaePWBbFUqsnYVIobdiZ+ku0RQk
+	 YQVg/n0xYPQyteVK/KZoL4tIx9LjWtzAxQbhIviBXys/H2zAoFxDkUWC/vnISXeXgQS2L
+	 8Z5P3wuUxAGHbRYG6HXYl1JxtOenNDi5u4oo7H3FI+FXaWvSEQuMHF5Qc/GCcBEn4eqlq
+	 cXigg5l2779VNHgKwv4JbjKogkvq0WpgxgP5lZlh+Uq4V47xfyum9GPDCdf2beH63YAZ/
+	 3xOU5F+nbEwtVOQYMcnDJIIY78Cp3HmsdKevsmNKz+THZBwzX62Q8487F1SkSbMJ7iw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795559486;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key;
-	bh=39S0aJdHWIRyJr9J3YXH1gyMCf139eDsPFo3E4VheKE=;
-	b=4z47aH9/R4ju0JKcDv+zeRihDovJUgJMZFeYYF/69rXTAhtjrIdm6hwdQ4k1f/f7WHBV
-	 DP4dqwa3tt3Sd9DhvT7l+huJkrkn7f4oYaWv1FdvCMXFmhA/V9ZzPF6BYXXkC7U9SKstB
-	 /TDrCZ4c7VJomEpZThvdPsLO1GZZChgdBXu0wHDGRMu3wdHWC/p/TDKUXlyWsDnCP/woz
-	 7sfmUrdQ9lcCRRqQvfU+3O/J95LjOhN57LunqrPk02VEyXzLKZi1BwvTHE+FyU5Kx+Hsq
-	 kGl6AkBDPINUkQlhL4zKRURC4CXqK9ODT6oWAhhgaQ1w12qrkvEC1fNnWjNH294MC4Q==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Ka3i1QcM;
-	arc=none smtp.remote-ip=209.85.208.176
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=INRxzK7vSn4HoWNw09mGrnkGOVMtgkPRDzZLhk0h1pY=;
+	b=oqfh1DsMp2OqpblSpWLWZ64ZB/66PkLyPHx7ysz1ou7On97AwJb9pO2JQSjat0fwlRSg
+	 Q9bpAmUihNZe3cvym4b3opPjFRSBRUAI8IrqBB8UqZKVhUBts7pHjSRRmB7oAtPBu51GY
+	 Yfx7IEo9go2Hux5mzPYaSINme8BZ9zA7iPw9FqwctCLYleIS9s/2C1dA5eExWBCBdam6M
+	 aF659ryYhb2XHSJlWbJJ7VX0/K+tnzsoIIKKZHSqtdtmVAvDY+OoRJBzG9INYA9MnMaDs
+	 dOjGKwij88KS9Z6Kd/Rqu2z7OuzsnId8VILAa1r/0XtzdWGEwvxNFQQHmZ7heze8eoQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Pq6hYJqL;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.54
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FF6606A32E
-	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 21:06:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C9FF6606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50AC606A6A1
+	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 22:31:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A50AC606A6A1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Ka3i1QcM
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3ad0102edd4so45589941fa.1
-        for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 13:06:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Pq6hYJqL
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c4d427836e9so696107566b.1
+        for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 14:31:25 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795559484; cv=none;
+        d=google.com; s=arc-20260327;
+        b=rkzq7OBHxoQ9QpflKYbVwHDV0LLujaEftimnZjh/HgPYqWwFrhDVRvbjaj8Aei/v6g
+         fnQGXIo7Ep9mwTcADU9ciDROcvCcRVwPYtEuzO/GCx1EkI+PbnTi924CkbTy9LIKM4Dc
+         3TA44USW9PlQ6SKbKe0w2kh+bOEwbvAqeqAd/QhSlXVpUsFkymfwFcAYrGpwWCWGEu/3
+         y/jtjRsaDxixH7a+ZxPS15NhTZhhgu2NTGZtLwtZFWz2/12ubvucglpwleahaw2kZcao
+         fPte3wFsQ+Bm1kKGvElSy8WeCIW8zj+zb/cD/mHXkozRXm/TsrEqRcf92zyjH62B+t++
+         KUPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=INRxzK7vSn4HoWNw09mGrnkGOVMtgkPRDzZLhk0h1pY=;
+        fh=KUVUnK9dd6KXLNWwyUhUEn1atNAL5Mrbe96eheYShaQ=;
+        b=VHgQcAp0fOVP88sZbOHXySK8D84URd2bo6hjZ8iPo+4uwUZZH1kTf2mQkVOJZ1/KNz
+         jSHkqOm8/Hl3fGdYf9SsAAzBrFluy1c9w8fL/CBrn4ULUTVOyhSNtk6pEgejng9GHoC3
+         L+4mQmJ5K1r6+lUOXkXqJfaJalJmRVNe09ShTUheyHuMKNdEq7onru4uwCuUWkXKdWo+
+         FYnTcs2oJdVkbFAFaTGE1vXmk0NFUgadeutRuVfbGenE6H4vs+jvJWGTg7tNkQHr7EYZ
+         9qE4epe6OiKK3cFw3FVtixIrgiQJlJUuKOQqUBpqwdQiKPqFlC7jz0l0IUR64UeY/kgN
+         CuzQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795554388; x=1796159188; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=39S0aJdHWIRyJr9J3YXH1gyMCf139eDsPFo3E4VheKE=;
-        b=Ka3i1QcMwgj9n7g4v8b4yXKIMd6UgursfRCNBPDOgQhogBvy47twgV+SNmIxwsJaRp
-         uBm7dXlHNNGzFgKCgDw8TOjiKicY2tEhLQVQUOnxrU3pVO2U7d7mAuqp5Or+yEqG3a13
-         0GlLIOd4ENdJCByGc9txCcf7HL3IRRsARqYGQeKa+1KbwfwHZ0rexHF1srG0qyCmCTk7
-         pBPmPXXC1ji8zcGreTCQ+2uw7ag2QBpiTEOZMLrvWfHM0x4PrwQeru+jH4b5ViYHuVyU
-         rntzTzRkcNmvmExS2X6MkGHYYrJ1+DymkZAIjqzqOGm6//WJgOKtfqzF2L482PTu0TXQ
-         BDkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795554388; x=1796159188;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=linaro.org; s=google; t=1795559484; x=1796164284; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=39S0aJdHWIRyJr9J3YXH1gyMCf139eDsPFo3E4VheKE=;
-        b=mT1eaEDSfofQJtR4bcKIO+fGvvaP3b+EpWAhwijEcKdVTCNxFU8VipC90y4glEAqsi
-         BLL6gUnorSYn2H+VJ43xrDb8ddDiTcyS6qlTShZywLjsopik2T6t7DOfNMDbKpgKjafX
-         xHfkNRlYmUVAiFMSFCKA1I1WCUPi6n7NJ2pqcPXAVzugYg7sSvozXjtO1xdHoRqURRzC
-         p7S5kiFh/LmCSwMW9pcISZMIf4te2Nv1SE9aOkWrNcE0Tdni15DcQAwpE7/N4mOvkbnh
-         xIBmMAnvHunpq0PEG2t0Hq+7KniO0XXsVjjjuXiFJMDrG+OovuMjbxTqAVvOmDZArwxo
-         9XFw==
-X-Forwarded-Encrypted: i=1; AL+hErFM4FHhufCelNUFzaEFpfU7t/WPFLFghoswzcWWpMZGHe36ZpG8YdA6UURT/GaZR3OEj2f/V5HNr4w=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/AGvXLxqKzzyy9sEPhL8Miix1r/xDkIxCvMRpheJo7rwndz4/x
-	+DryBOZd18s6BrTLvJ5uWLUhMWqikXtdwOWaDlNND4Pyfl4w57AJnnse
-X-Gm-Gg: AZFdTZeiTHTcH55WB4yXnaF8jadOlEAv/DNFSSjQcfKE9KVTk4cmfToMkVy2EfeitRJ
-	wibcBoylJg5Njrsm4GkM5dysYz6hPqM4VMkDffRH+u2GkD5pE29sd8m0Kgnd8k8ukKxegWcM0L/
-	uI1RslBJAu3tmuIK41imgpp2v7E5WydFnJncLJkZjWayvyRJYTr3yGanrrmGrC/XlQBa2ITzQ3s
-	Pr96dXT90NvNhRTI6RbYTXAoEKjzQKH9d/iQyZg9pNrq58ReB9zUMOjz/QRmz/fYtaeGo8t3vcO
-	fqyICrGTYWii6JKZJm/qHWLneOd7jPCfzNrpGPt4ZVL9mB1Z3DwZtfy2lMO2hHWgZ6dwpQoDsTu
-	0SVxoMPBL69P9kMp0d1i4gk+zyYbLtzfWC8I9HdukZGqpvV/hNQD8WMHmA30GDmQA3PSpkzSoyT
-	rmahiBnJJuqKG6STtgv+ZOrHt5LolIDM3x2fwF4IEpP0tdlcUHVrDo+qHHDPD49bwmgTnlWbo8+
-	GrI3wzNGN7KgRpyQX8tJpn3LU4CLNKtbBS7KJzReOvOQcAUbbUsLS0XPLytR72d7CGJV9PkzNlt
-	LL7WWtXV37kcY9wqnnkIDuseFPtIk5XoeWYkxl08
-X-Received: by 2002:a05:6512:6d2:b0:5c1:57c4:a756 with SMTP id 2adb3069b0e04-5c1bc67ecfcmr4578403e87.9.1795554387810;
-        Tue, 24 Nov 2026 13:06:27 -0800 (PST)
-Received: from [192.168.0.15] ([2a02:a312:c59b:a180:251a:f25f:80fa:af1d])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c1bd041813sm4099045e87.53.2026.11.24.13.06.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2026 13:06:27 -0800 (PST)
-From: Artur Kowalski <arturkow2000@gmail.com>
-Date: Tue, 24 Nov 2026 22:06:04 +0100
-Subject: [PATCH v2 6/6] watchdog: tegra20_wdt: Stop on VDE power off
+        bh=INRxzK7vSn4HoWNw09mGrnkGOVMtgkPRDzZLhk0h1pY=;
+        b=Pq6hYJqLqfjmwjq6l8NZL/b72FkWDY7/prko4BQ8KEWZLjnZPHCUw44AYwkS+F8DRi
+         EUeoUtNsUmpvMracnT4N+GgMdEmq/lLExWZTQz/1x2gGNuR3gColGwjZifwMrkotSzq1
+         d6CELz6FR9caGvQ5SJQ8Y9tQVYlF1B8Q2XaCePiSHWZdneDCgaC0t5wk53jlieeZPq0K
+         Xr/gKY4gRbr8NIvfHqVM+4o2vEDZGfOtkWKPxClj2k43yKXLUk1wVQj7s9WACrQQEpw0
+         Q98XJp/kNzbRIEqZyr+UWynhvWGPSRNCMolaQERiuhRGVt3CSC7buBUx16Xoa3CNaJR4
+         u73Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795559484; x=1796164284;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=INRxzK7vSn4HoWNw09mGrnkGOVMtgkPRDzZLhk0h1pY=;
+        b=FrlwXpwLENZR/mv/SqWNaSBVKNdQoRkD6KldbWheN+2RF/XgDTDgoTJ/e9Fw7CFpwM
+         KllaCK3DDXKfE8tSdOLJQQXhpQ+vfeDkA1ImpFl1voCRpf50j4NH1AIUIWmOD5B7CAA7
+         YyzCPiRxalHcArC/PzTazOHDhj4LXn/4hXLsyBdKSZJhqhA7rubpLNk/Rzs5TuKwvSw+
+         j0TWvOHrcrgW7g912fhaASHRa+M/igCflStlXp+ogA1d/qcEpCPoe5nGr5C7S57Lj8qX
+         iSzhvfoI6ZBa8acUvIojNhbude+9549aaj8g69FKT0pce185x4I78UBYIiUmEJqSMbxZ
+         3soA==
+X-Forwarded-Encrypted: i=1; AL+hErFwtCfdDnuyTDM9OWM1UgrFGsg6TItKwua6NkxBY501sP8XYPaOaa4w/0jxViVIfGSVlEqSJPNXqLM=@vger.kernel.org
+X-Gm-Message-State: APuU4Z90VyojHG405KKDGQzklzFPS3q0UVwTnGA/l+rE9boTw5rzNQGf
+	nmbGgWhvb+nIRyHz4XxvylZ95nUKlmrG4VZyQQjKFNxvjgUovqbfwDR9+pHlEvs+XEE7q5MdV7/
+	v34HbC3A6UEVQVqThy+1zMkDpydI44U5C+qbLeHMZWw==
+X-Gm-Gg: AZFdTZfiNLGbS3usDH72L9EzwYrLprSrGjT8m/75dqbo2o2W3PLeGGkzGR9GjwSEqeV
+	JRusevjVo72rhMOD1V2VLq/VoLANJA8/JwZbd1SF8W7PVU6oPjoR4Z3iPiqipCm9nPave2fnD1y
+	tIU2qqrnPL75iNBWOTNVyH8QD9rA3c8tcW1L1XyqJ649Nd6pYfwf5Py7/TSPTuGLQn881yP+/Pc
+	S706fTabI1CHgbr9xSmWiU0aC2Vz4ZWgqqcx2j0SPmcsQz+1RFaRZUq2TUNhSFseyCJybemncIt
+	z0Z2Zx3P3ApLMpCewGgtSMfjjfsaq7MZ0Uvm+vaMxy8NvLFTkpuwgliwUPQ84JIQPBPNAP7pRhX
+	+9FJIfQkXBcf5uFT5nqGWwRNlBR4vNLkccWCfwrooJyJAiVTbnoahoQU00mvt+ODfvluf3CnbTs
+	Vadoc7ayHQdnxTMOa7
+X-Received: by 2002:a05:6402:15d4:b0:6b7:709f:85f with SMTP id
+ 4fb4d7f45d1cf-6ba37ec031amr9043918a12.36.1795559484024; Tue, 24 Nov 2026
+ 14:31:24 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -92,374 +104,72 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261124-t20-for-upstream-v2-6-440116846f97@gmail.com>
-References: <20261124-t20-for-upstream-v2-0-440116846f97@gmail.com>
-In-Reply-To: <20261124-t20-for-upstream-v2-0-440116846f97@gmail.com>
-To: Daniel Lezcano <daniel.lezcano@kernel.org>, 
- Thomas Gleixner <tglx@kernel.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, 
- Shuah Khan <skhan@linuxfoundation.org>, 
- Randy Dunlap <rdunlap@infradead.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org, 
- clamor95@gmail.com, Artur Kowalski <arturkow2000@gmail.com>, 
- linux-clk@vger.kernel.org
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11358;
- i=arturkow2000@gmail.com; s=default; h=from:subject:message-id;
- bh=tn4wJe9hYRRwGHyBOLf6IjcClTEqhQuMn6rAi8XzVQw=;
- b=owGbwMvMwCVmYeTc/TaVxZzxtFoSQzbrH2fxB0V8LMxJWz9uezTrp8ynlBkH1Xaf39ad/KZit
- 723jzZ/RykLgxgXg6yYIovZQ6EvPPO83m94ubUTZg4rE8gQBi5OAZjIcT2Gv3Jmsi8ZDu3s0ss/
- Ffdrs453LNPc5y6FO++v/nEgTGjPyX8M/2P/nw15IHpcOzVsfoNOudqxA1eOdOkVhwduzGWf/yY
- 8jR8A
-X-Developer-Key: i=arturkow2000@gmail.com; a=openpgp;
- fpr=F60710C8D69E03A01A2801CD87A47D20C2709637
+References: <20261026214359.3122870-1-briannorris@chromium.org>
+ <20261026144346.3.I7bc547c83b7bf677a62670099f481a91ac737073@changeid>
+ <CADrjBPqnRrFeYT9J6NGxy+Xzy1PTZEz+BMs1_u2md7Ra6xPPDQ@mail.gmail.com> <awXf86suGgKeazZx@google.com>
+In-Reply-To: <awXf86suGgKeazZx@google.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 24 Nov 2026 22:31:11 +0000
+X-Gm-Features: Aa3M54olM1DKVBX3EQP9Zt-gD9WnHLwb_Lxu-JjOzcrrRgxAqJXxzL4OnVB7R18
+Message-ID: <CADrjBPqG_TLwgOTzQ-o5pM7k1DzkeVxNkV2xDHsU4OBAyYOofQ@mail.gmail.com>
+Subject: Re: [PATCH 3/9] soc: google: Add CPM over MailBox Array driver
+To: Brian Norris <briannorris@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Thomas Gleixner <tglx@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>, 
+	linux-arm-kernel@lists.infradead.org, 
+	Mariano Marciello <mmarciello@google.com>, Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org, 
+	=?UTF-8?Q?Jakub_G=C5=82owacki?= <jglow@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-A watchdog reset doesn't reset the PMC, and Tegra20's boot ROM hangs
-after it if the VDE power partition is off. Unless booted with
-tegra_pmc.vde_always_on=1, the PMC driver powers the partition off when
-it registers it, and genpd powers it off whenever the VDE is idle. A
-watchdog started by the bootloader can still catch hangs early during
-boot, before that happens.
+Hi Brian,
 
-Register a PMC partition power off notifier to stop the watchdog before
-the VDE partition is powered off for the first time. If the partition is
-already off, a watchdog left running by the bootloader is stopped
-instead of taken over. Afterwards the watchdog refuses to start with
--EBUSY, as a reset would hang, even if the partition is powered on
-again. If the notifier can't be registered, the driver warns and keeps
-the watchdog running.
+On Tue, 24 Nov 2026 at 19:05, Brian Norris <briannorris@chromium.org> wrote:
+>
+> On Tue, Nov 24, 2026 at 12:28:24PM +0000, Peter Griffin wrote:
+> > Hi Brian,
+> >
+> > Thanks for your series; it's great to see more Laguna support being posted.
+> >
+> > On Mon, 26 Oct 2026 at 21:45, Brian Norris <briannorris@chromium.org> wrote:
+> > >
+> > > The Central Power Manager (CPM) is a co-processor on the Google Tensor
+> > > SoCs, as used on Pixel phones. CPM supports power-management and a
+> > > number of other features.
+> > >
+> > > The Application Processor communicates with CPM over a pair of mailbox
+> > > channels (the "MailBox Array" (MBA)). CPM provides clock, power-domain,
+> > > reset, interrupt services, and more.
+> >
+> > [..]
+> >
+> > +++ b/drivers/soc/google/Kconfig
+> > @@ -0,0 +1,13 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +
+> > +config GOOGLE_CPM_MBA
+> > +       tristate "Google Tensor CPM MailBox Array Interface"
+> > +       depends on ARCH_GOOGLE || COMPILE_TEST
+> > +       depends on MAILBOX
+> >
+> > Should we also have "depends on OF"?
+>
+> Why, precisely? It's not actually a compilation dependency (I tested),
+> although it's needed at runtime. It doesn't seem like this is
+> consistently done simply for runtime dependencies, and instead work has
+> generally been done to ensure everything builds fine and fails closed
+> without CONFIG_OF.
+>
+> Anyway, it's a bit academic, since ARCH_GOOGLE (ARM64) selects OF.
 
-The notifier runs outside of the watchdog core's locking, so it only
-stops the hardware, under a mutex shared with the watchdog operations,
-and leaves the core's state alone. Clearing WDOG_HW_RUNNING there would
-race with the core, and leak the module and device references the core
-holds for a running watchdog. The core therefore keeps considering a
-watchdog stopped this way as running, which shows as follows:
+I was thinking more if COMPILE_TEST=y && CONFIG_OF=n &&
+CONFIG_WERROR=y is set. I'm not sure if 0-day performs such a build. I
+guess since no 0-day failure has been reported in this thread, perhaps
+it isn't required.
 
-- While the device is closed, the core keeps pinging, which fails
-  without effect, and holds its references, as for any watchdog that
-  can't be stopped. They are released when the driver is unbound.
-- Opening the device fails with -EBUSY, as the core pings a watchdog it
-  considers running instead of starting it, and starting fails as well.
-- If user space has the device open, keepalives and timeout changes
-  fail with -EBUSY, so it finds out that the watchdog is gone.
-
-Stopping is the default. With tegra_pmc.vde_always_on=1, the partition
-is never powered off, so the watchdog stays usable. Booting with
-tegra20_wdt.stop_on_vde_off=0 also keeps it usable, but at the risk of
-the system hanging instead of rebooting.
-
-The watchdog is stopped even with nowayout, as a watchdog that can't
-reset the system is of no use. Booting with
-tegra20_wdt.stop_on_vde_off=0 keeps a nowayout watchdog running after
-the partition is powered off.
-
-Signed-off-by: Artur Kowalski <arturkow2000@gmail.com>
----
- Documentation/watchdog/watchdog-parameters.rst |   5 +
- drivers/watchdog/tegra20_wdt.c                 | 184 ++++++++++++++++++++++---
- 2 files changed, 170 insertions(+), 19 deletions(-)
-
-diff --git a/Documentation/watchdog/watchdog-parameters.rst b/Documentation/watchdog/watchdog-parameters.rst
-index 8f454c82521a8..1c62d2ad22f7a 100644
---- a/Documentation/watchdog/watchdog-parameters.rst
-+++ b/Documentation/watchdog/watchdog-parameters.rst
-@@ -609,6 +609,11 @@ tegra20_wdt:
-     nowayout:
- 	Watchdog cannot be stopped once started
- 	(default=kernel config parameter)
-+    stop_on_vde_off:
-+	Stop the watchdog for good when the VDE partition is powered
-+	off, as a reset would hang the boot ROM. This takes precedence
-+	over nowayout. Booting with tegra_pmc.vde_always_on=1 keeps the
-+	partition, and with it the watchdog, usable (default=1)
- 
- -------------------------------------------------
- 
-diff --git a/drivers/watchdog/tegra20_wdt.c b/drivers/watchdog/tegra20_wdt.c
-index aa90d538f92f3..0f15805927d20 100644
---- a/drivers/watchdog/tegra20_wdt.c
-+++ b/drivers/watchdog/tegra20_wdt.c
-@@ -9,11 +9,15 @@
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/notifier.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/stringify.h>
- #include <linux/watchdog.h>
- 
-+#include <soc/tegra/pmc.h>
-+
- /* Timer registers */
- #define TIMER_PTV			0x0
- #define TIMER_EN			BIT(31)
-@@ -40,6 +44,9 @@
- struct tegra20_wdt {
- 	struct watchdog_device	wdd;
- 	void __iomem		*tmr_regs;
-+	struct notifier_block	powergate_nb;
-+	struct mutex		lock;		/* hardware and vde_off */
-+	bool			vde_off;
- };
- 
- #define WDT_HEARTBEAT 120
-@@ -55,10 +62,26 @@ MODULE_PARM_DESC(nowayout,
- 	"Watchdog cannot be stopped once started (default="
- 	__stringify(WATCHDOG_NOWAYOUT) ")");
- 
--static int tegra20_wdt_start(struct watchdog_device *wdd)
-+/*
-+ * After a watchdog reset, Tegra20's boot ROM hangs if the VDE partition is
-+ * powered off, which the PMC driver does when it registers the partition,
-+ * unless booted with tegra_pmc.vde_always_on=1. By default, the watchdog is
-+ * therefore only used until the partition is powered off for the first time,
-+ * which still allows a watchdog started by the bootloader to catch hangs early
-+ * during boot. tegra_pmc.vde_always_on=1 keeps the watchdog usable for good.
-+ * Clearing this keeps it usable as well, but at the risk of the system
-+ * hanging instead of rebooting. This takes precedence over nowayout, as a
-+ * watchdog that can't reset the system is of no use. Clear this to keep a
-+ * nowayout watchdog running.
-+ */
-+static bool stop_on_vde_off = true;
-+module_param(stop_on_vde_off, bool, 0);
-+MODULE_PARM_DESC(stop_on_vde_off,
-+	"Stop the watchdog for good when the VDE partition is powered off, even with nowayout (default=1)");
-+
-+static int __tegra20_wdt_start(struct tegra20_wdt *wdt)
- {
--	struct tegra20_wdt *wdt = watchdog_get_drvdata(wdd);
--	u32 period = wdd->timeout * USEC_PER_SEC / 2;
-+	u32 period = wdt->wdd.timeout * USEC_PER_SEC / 2;
- 
- 	writel(TIMER_EN | TIMER_PERIODIC | (period - 1),
- 	       wdt->tmr_regs + TIMER_PTV);
-@@ -72,9 +95,8 @@ static int tegra20_wdt_start(struct watchdog_device *wdd)
- 	return tegra20_clk_watchdog_enable(true);
- }
- 
--static int tegra20_wdt_stop(struct watchdog_device *wdd)
-+static int __tegra20_wdt_stop(struct tegra20_wdt *wdt)
- {
--	struct tegra20_wdt *wdt = watchdog_get_drvdata(wdd);
- 	int ret;
- 
- 	ret = tegra20_clk_watchdog_enable(false);
-@@ -86,32 +108,90 @@ static int tegra20_wdt_stop(struct watchdog_device *wdd)
- 	return ret;
- }
- 
-+static int tegra20_wdt_start(struct watchdog_device *wdd)
-+{
-+	struct tegra20_wdt *wdt = watchdog_get_drvdata(wdd);
-+	int ret;
-+
-+	mutex_lock(&wdt->lock);
-+
-+	/* a reset would hang with the VDE partition powered off */
-+	if (wdt->vde_off)
-+		ret = -EBUSY;
-+	else
-+		ret = __tegra20_wdt_start(wdt);
-+
-+	mutex_unlock(&wdt->lock);
-+
-+	return ret;
-+}
-+
-+static int tegra20_wdt_stop(struct watchdog_device *wdd)
-+{
-+	struct tegra20_wdt *wdt = watchdog_get_drvdata(wdd);
-+	int ret;
-+
-+	mutex_lock(&wdt->lock);
-+	ret = __tegra20_wdt_stop(wdt);
-+	mutex_unlock(&wdt->lock);
-+
-+	return ret;
-+}
-+
- static int tegra20_wdt_ping(struct watchdog_device *wdd)
- {
- 	struct tegra20_wdt *wdt = watchdog_get_drvdata(wdd);
-+	int ret = 0;
-+
-+	mutex_lock(&wdt->lock);
-+
-+	/*
-+	 * The notifier stopped the watchdog behind the core's back, which keeps
-+	 * considering it running. Fail the pings, so that opening the device
-+	 * fails, and user space that has it open finds out.
-+	 */
-+	if (wdt->vde_off) {
-+		ret = -EBUSY;
-+		goto unlock;
-+	}
- 
- 	/*
- 	 * Clearing the interrupt alone doesn't restart the timer's period, so
- 	 * the reset could follow as soon as half the timeout after the ping.
- 	 * Rewriting the timer setting restarts the period. The interrupt is
--	 * cleared afterwards, so one fired in between doesn't count.
-+	 * cleared afterwards, so one fired in between doesn't count. While
-+	 * stopped, the timer setting reads back as 0, so this doesn't start it.
- 	 */
- 	writel(readl(wdt->tmr_regs + TIMER_PTV), wdt->tmr_regs + TIMER_PTV);
- 	writel(TIMER_PCR_INTR_CLR, wdt->tmr_regs + TIMER_PCR);
- 
--	return 0;
-+unlock:
-+	mutex_unlock(&wdt->lock);
-+
-+	return ret;
- }
- 
- static int tegra20_wdt_set_timeout(struct watchdog_device *wdd,
- 				   unsigned int timeout)
- {
--	wdd->timeout = timeout;
-+	struct tegra20_wdt *wdt = watchdog_get_drvdata(wdd);
-+	int ret = 0;
- 
--	/* starting again reprograms the running watchdog */
--	if (watchdog_active(wdd))
--		return tegra20_wdt_start(wdd);
-+	mutex_lock(&wdt->lock);
- 
--	return 0;
-+	if (wdt->vde_off) {
-+		ret = -EBUSY;
-+	} else {
-+		wdd->timeout = timeout;
-+
-+		/* starting again reprograms the running watchdog */
-+		if (watchdog_active(wdd))
-+			ret = __tegra20_wdt_start(wdt);
-+	}
-+
-+	mutex_unlock(&wdt->lock);
-+
-+	return ret;
- }
- 
- static const struct watchdog_info tegra20_wdt_info = {
-@@ -130,30 +210,96 @@ static const struct watchdog_ops tegra20_wdt_ops = {
- 	.set_timeout =	tegra20_wdt_set_timeout,
- };
- 
-+/*
-+ * This runs outside of the watchdog core's locking, and possibly before the
-+ * watchdog is registered, so it must not touch the core's state, such as
-+ * WDOG_ACTIVE and WDOG_HW_RUNNING. The core keeps considering a stopped
-+ * watchdog as running, along with the references it holds for it, and the
-+ * operations refuse to start or ping it instead.
-+ */
-+static int tegra20_wdt_powergate_notify(struct notifier_block *nb,
-+					unsigned long event, void *data)
-+{
-+	struct tegra20_wdt *wdt = container_of(nb, struct tegra20_wdt,
-+					       powergate_nb);
-+	unsigned int id = *(unsigned int *)data;
-+
-+	if (event != TEGRA_PMC_POWERGATE_POWER_OFF ||
-+	    id != TEGRA_POWERGATE_VDEC)
-+		return NOTIFY_DONE;
-+
-+	mutex_lock(&wdt->lock);
-+
-+	if (!wdt->vde_off) {
-+		wdt->vde_off = true;
-+		__tegra20_wdt_stop(wdt);
-+
-+		dev_info(wdt->wdd.parent,
-+			 "VDE powered off, watchdog stopped for good\n");
-+	}
-+
-+	mutex_unlock(&wdt->lock);
-+
-+	return NOTIFY_OK;
-+}
-+
-+static void tegra20_wdt_unregister_notifier(void *data)
-+{
-+	struct tegra20_wdt *wdt = data;
-+
-+	tegra_pmc_powergate_unregister_notifier(&wdt->powergate_nb);
-+}
-+
- static int tegra20_wdt_init(struct platform_device *pdev,
- 			    struct tegra20_wdt *wdt,
- 			    void __iomem *regs)
- {
- 	struct device *dev = &pdev->dev;
--	int ret;
-+	int ret, err;
- 
- 	wdt->tmr_regs = regs;
- 
-+	ret = devm_mutex_init(dev, &wdt->lock);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * If the VDE partition is already powered off, the notifier is called
-+	 * right away and stops a watchdog left running by the bootloader.
-+	 */
-+	if (stop_on_vde_off) {
-+		wdt->powergate_nb.notifier_call = tegra20_wdt_powergate_notify;
-+
-+		err = tegra_pmc_powergate_register_notifier(&wdt->powergate_nb);
-+		if (err) {
-+			dev_warn(dev, "failed to register VDE notifier: %d\n",
-+				 err);
-+		} else {
-+			ret = devm_add_action_or_reset(dev,
-+					tegra20_wdt_unregister_notifier, wdt);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+
- 	/*
- 	 * The bootloader may leave the watchdog running. Take it over with
- 	 * our own timeout and timer 1, and let the core ping it until user
- 	 * space opens the device.
- 	 */
--	if (tegra20_clk_watchdog_is_enabled()) {
-+	mutex_lock(&wdt->lock);
-+
-+	if (!wdt->vde_off && tegra20_clk_watchdog_is_enabled()) {
- 		dev_info(dev, "watchdog left running by the bootloader, taking it over (timeout %u sec)\n",
- 			 wdt->wdd.timeout);
--		ret = tegra20_wdt_start(&wdt->wdd);
--		if (ret)
--			return ret;
--		set_bit(WDOG_HW_RUNNING, &wdt->wdd.status);
-+		ret = __tegra20_wdt_start(wdt);
-+		if (!ret)
-+			set_bit(WDOG_HW_RUNNING, &wdt->wdd.status);
- 	}
- 
--	return 0;
-+	mutex_unlock(&wdt->lock);
-+
-+	return ret;
- }
- 
- static int tegra20_wdt_probe(struct platform_device *pdev)
-
--- 
-2.56.1
-
+Peter
