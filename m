@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795502311;
-	b=RmN0IuJiSAE/dsw4VYhxpc/Nb2OXZRllW5OxGbySpyWa1TGMukZEbi0iIOfm58LcbfUE
-	 yZ7O9Re1j64qh/IKzhVK0x3JJZYrepJ/UpS/kci1qG1bGAru3W9R0q2XUshpvpuo1pYuF
-	 f3brpYPmbgN6zld60DBjriCjygAVJ3MPoCtq30k0P8bT9CPJzQQJnOnznyH4S3perQ0+k
-	 1PpO4HreO95u3nhVppWe9fab1OHF4nLUaM+K67joqFsFFI7R3S1/WNWWfb+KHmnSI5vxC
-	 5HIXJpE8nXzpmayWSjlXTkGkldtwzfW5w8VRQvCOrx6WNc0mubKCNrcWIrofavgv2Eg==
+	t=1795502482;
+	b=qck4rTCBHZRAFVVsQBENqaUYO2JkpMAyFDP1mDq7yD+uHqLt9ytkGR4XTvDoqPRRvgev
+	 tgQcnmJrIXHrD8C9TOXexnMfmyLJhAXeBbvGInpW3Zc7Cb2nyMLC7J1o0I1gwYY+hqqWP
+	 AAiEJfYRJR+X/jPK0ect8xw0yKGAwWV4AvlpQOot1yAavYLNrgAVcFwec1Q0PMG7BFNf8
+	 YZ3owlkF6VG/kpg85FLpVRFq1TypPQUZ5DjdCyH+8/U0BJSWOu2t3cZQ3QYyNjBGsvP7h
+	 pqJc5geeyQoBhLkB4feJDvwtmvTfB0tT9FHIb0xKQATIkasxkHyo4Ozy0JMPxzGA4xQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795502311;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795502482;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=G4Jws+luoVJ3BEeYNiEMEcC6CxB49mTq6uZPEZLGGks=;
-	b=N+VE/z3Z3h+sYrVhcLs/RX7fbu2mfOw8yU/pl1ZGDsrIBYM4qvrYZ3a46DVmizL9gwPg
-	 gzbTME1eyYZxbVe8XBnLbbW0wmmUPn3gF6e+VvHMU0x7goh3YTIPWkmAoZvr0akQVZUk6
-	 rJW5f5Mj+TYe+zRNrr0PrmYDCoo3dVWTnH9DDP+kB8Mb4tofIGPPQQsxKvE2L+NfDYYMZ
-	 4ejwUV++E9XFTl43GOcEbwopz6dWv5gJpmSn+R8qI2D+01JKTQvfBtpFZXCLrBqsapVnd
-	 MYB/AC29Vs7fe8SgN071hSIifvqXY7ASwVvfy0ov3ngdiWF8sZroeqgYTHWrxIZyQ9A==
+	bh=D0iXW4cQ6r7peoDFl+A6eW97uV9tAAL0MLqDFk+woko=;
+	b=TjWnFa3SbJaPTKeoaW7YoU4Fhl7R6nlVFDAcaZQT+EVZcgpn6xUewYFVxl9hlLjd7t7y
+	 TJrLfeJVe8dhf+J2C/QJRVGb9WsKCHMlOC/Dv/1jAXErd8HZm6Oa8SY7KcmArQLiEV2/7
+	 tbCUIb6G7Es5OoU+i4koEPaCA9jSK5uDgO8AFSZLTEP0L8Ok7JqX5LXX+I77CwfP+ck8b
+	 JzcklhhfBrpoxeJEiTOeSUZh2swVTAvT7Qnmu4gXpUBn7L6K1mrLO2yeyZ6t6nTzLDwZD
+	 nzBK95lGms2Z8Fm/IC5R7hjh8mFz9LbIMPvRUshSGfKvxDZ4O2p3cdxRWJ1ub8bKagQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="B/3MInbc";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bgDbZiCK;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F0F606A31E;
-	Tue, 24 Nov 2026 06:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEB6606A326;
+	Tue, 24 Nov 2026 06:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B/3MInbc
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFD911F000C6;
-	Tue, 24 Nov 2026 06:38:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bgDbZiCK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E44C1F0089E;
+	Tue, 24 Nov 2026 06:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795502310;
-	bh=G4Jws+luoVJ3BEeYNiEMEcC6CxB49mTq6uZPEZLGGks=;
+	s=k20260515; t=1795502481;
+	bh=D0iXW4cQ6r7peoDFl+A6eW97uV9tAAL0MLqDFk+woko=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=B/3MInbc+7/0bDMIJBx5IpI7khMruoB3nanB6Qr6Ea1AR/zDoK4FSJ9uzLlLEPqdi
-	 hWQyJlkkVSq57rbY1JorQgZG6eeGCh4/t0gs4SpMfrtxDiZiFm/4jJffnl/d9W2aM9
-	 Yud68vicJZxeyqYsenMLhSgIl5gAyQYsO1qrBEgwSGITXC3Q5F1KhRg61ZkqbT1LVP
-	 bWwS8kQ3NYxHanEI5oTl2ocYbSaxB8BnOl7ctH/7NGWo1opvfAEzc7GnxXsMNckYNU
-	 JcGHalGxDkLnKM/+fccXSeZb/3mj6OJLe1zHuxp4/gvoxpZNA91DeoinsSqX9DbBVT
-	 qkQPr9dj60Jlw==
-Message-ID: <831a6498-9c1a-4829-b47d-52035fe15444@kernel.org>
-Date: Tue, 24 Nov 2026 07:38:22 +0100
+	b=bgDbZiCK/ZKa00WDXAUWPS269+6R3R6rqkH5S5llCEDGPFKXb8jKhdFa3mtRisUaS
+	 xm4Zizp87kzhzeGM0c0e6XH40AM+2D8kEO9kV6NmYO/tci25Q/pcgIcAMRpOgfih5W
+	 as1tjQOmdNjeuBK9cCQN83Gz7fSxk8mtcdJHGKhOucahc89TT4kb97anUOPAakrN9d
+	 0VFVZzMQNzKS4XBUECUYYEGCGuP0lF64vN1f4pEFbc9wD3gSaRfiOHje6QG9WkKo9L
+	 TWMd/MdfDGfQduJXbBm6NoPbgtLjkKYP71mbqfxX8iFJs3lWw4v10g/TvSur5eVRPs
+	 Mn/k+UFhMS3Hw==
+Message-ID: <7bce0280-704e-42ce-ba65-d3ab369bc20c@kernel.org>
+Date: Tue, 24 Nov 2026 07:41:14 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -52,24 +52,18 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] dt-bindings: clock: Describe CS7542 PCIe gates and
- resets
-To: filipp.dunsky@gmail.com, Manivannan Sadhasivam <mani@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof Wilczynski <kwilczynski@kernel.org>, Rob Herring
- <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
+Subject: Re: [PATCH v3 1/5] dt-bindings: soc: Add Cortina Systems CS7542
+ global control block
+To: filipp.dunsky@gmail.com, Linus Walleij <linusw@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20261123-b4-cs7542-pcie-v1-0-4cde5201d404@gmail.com>
- <20261123-b4-cs7542-pcie-v1-2-4cde5201d404@gmail.com>
+ <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20261123-cs7542-syscon-v3-0-f1c07a1703f8@gmail.com>
+ <20261123-cs7542-syscon-v3-1-f1c07a1703f8@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -115,23 +109,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20261123-b4-cs7542-pcie-v1-2-4cde5201d404@gmail.com>
+In-Reply-To: <20261123-cs7542-syscon-v3-1-f1c07a1703f8@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/11/2026 19:43, Fil Dunsky via B4 Relay wrote:
-> +properties:
-> +  compatible:
-> +    const: cortina,cs7542-pcie-control
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
+On 23/11/2026 21:54, Fil Dunsky via B4 Relay wrote:
+> From: Fil Dunsky <filipp.dunsky@gmail.com>
+> 
+> Describe the shared global register block and its strap-selected APB,
+> CPU and AXI clocks. A pinctrl child will share the syscon regmap. Keep
+> clock IDs in the order used by the previous out-of-tree CS75xx clock
+> provider.
+> 
+> AI assistance: Codex prepared this change from the existing OpenWrt port
+> and GPL vendor sources.
+> 
+> Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
 
-No resources here, not a separate device. Fold it into the parent.
+I commented at v1 10 hours after it was posted and now I see v3.
+Dropping from patchwork, so this won't cut the queue.
 
 Best regards,
 Krzysztof
