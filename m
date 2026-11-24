@@ -1,81 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795537683;
-	b=VpCJBp4gFbkcuPtohXQz+1pvK5hB9WRT42BiE9MRpfE4vyXJr0A4kCAjILwqPEPyIZv8
-	 gIEvgIMVi69234FNryjqAjesDy9zCtYKAmSq5gM7ESpnHb6Orceavj9p3g8UoFN6FgBhs
-	 bpWkV/YJCpwtzMBb8P6eKa3pXSNLT7lq4Dgj7ExozvVK/r4GQEvcvf4cBx3UQJ4UNdaj8
-	 nnTQIaVUpgQ7EbXvyPJhx9MfatTAPRv9f/CQ06x9iojWo+qdd1hRNUL1gk5g4WND3c2Qz
-	 keiALiR7afpelpS4fsJP7ADP1gZS6jFGaPte6O5oZJNwxgiUzl9hfHtIO19/R2AmhVw==
+	t=1795538007;
+	b=Po+fJ3MkSfgTYmnftaKOOfKPBlDWSrFeOusUsEqLx8YJEpwErOghL0q+/7yTy+qhtbol
+	 2w+ssW6pe96tizhkctDdIpAMWH28zUd3TzPcoXDQPaAKEGRNFBTByt6oC+wRGMwsFIIPV
+	 wv8/vglA7N/KlCToV5bYviF+7fCtIcbGmOe+qQH7KLoLP2wLPSHqPp19lQP9DEnm+dpV7
+	 Ux7FfHiopoECBqX30tPNiwACMSeMKNeP+zz077idPga+0QXawxXSjh+Vz6iW/5Mq6/e2n
+	 V8KGHWrfV888JDz19TbLRbrVB4X8GHcUzdNXpP75KOLBIZsoc0BiVYNNCM5+NHHZWsw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795537683;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:To:Cc:
-	 Subject:In-Reply-To:References:User-Agent:Date:Message-ID:
-	 MIME-Version:Content-Type:X-Last-TLS-Session-Version;
-	bh=DkZ1ABuSs0XqFw9KTioPWKhCAj31GhHamAleqCJ6xL4=;
-	b=HTmg505hdXhrGwlfTlsxnlsUwPA+xr/ABSlpZVHY9kACuC0RZQAvyOG5ynCBm35MA3Xf
-	 QiF2u4PKG7BlAdtJnMGSjnZpGZ76Epn9JfonyyQ2mxIBj888tsDzcQXT6XMYsCfeZxMtz
-	 Y4c4VWCafQK2G1C69ROqKiVz5SXmYg5mq8ObTuHoSubhkLJlAnVWqh/7TecS0ASNfCD//
-	 1K+bkLtAQz9N0HHvO7wPVN1402vLU2ljAZy5TCejIoTp5uwAWiGg+VjFiMihOJlley+8l
-	 +3T9nP/aI1CRB/0RByrzeHHywNrRo/Wa3s7BXcIA8DhF9DK7lPbuBpFw3SVNSmhxNTA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795538007;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=zEq0v2oKNYWb4P6EHAyM+/7c+KRh4LKSoNP+1xVqrHk=;
+	b=De9YnZYO5N597vreyb8h9hVXw6KLhmaA68l5vfGqqdq0kHLjUlUnmEK90CfYmzmzwqEI
+	 BieVR1QTwrpHQvsIYzO+kBa5ID8GTtwtni72ajexAKFFu8iaHwSw8nGMZBq+LggtyNml1
+	 td1iovPeGjtq+Qh2ovxiu3+R/Q8cechL+mM5HfcvMG2yyuUv8/qmkNre421zUaq2PaMa5
+	 ApvzpKSPK6M4hnCr4PxHyliR15eRnFgJRjISr5HAQusrsaDhnDy0SL4ewSHxDRhJSy1uU
+	 g6o2R89CD8YLrv4oNjHBOcwfptwkRcn0h184hYldoac4GD1BohVWkeBLIfQgBn88VAQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=VX3JpSiO;
-	arc=none smtp.remote-ip=185.246.85.4
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OCWvpjlA;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB0B606A32E
-	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 16:28:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DEB0B606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9697D606A335;
+	Tue, 24 Nov 2026 16:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=VX3JpSiO
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 8062F4E41746;
-	Tue, 24 Nov 2026 16:28:00 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4031D601E1;
-	Tue, 24 Nov 2026 16:28:00 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5E60F11E685A3;
-	Tue, 24 Nov 2026 17:27:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1795537674; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=DkZ1ABuSs0XqFw9KTioPWKhCAj31GhHamAleqCJ6xL4=;
-	b=VX3JpSiO8UcsPsmc75P4wD4phG8vOx1B3MRJNmTyfC7zJb50+OJmlJSmktDpqTssYXTRYN
-	WtnjgCsJtxVUkuwCv1935gtQllbTQllpi7dDfBel5QJxh598glIlMV3QxVubhw4K9jK5bc
-	NH92hMlCnISr9WG1VAfTqLNbx541kJOPeLyrENcQq+zjNnKBpT1pFT/IFFncSSjkWJkhgV
-	srDTCwPjFpYvNGTtZNFEOYJf4aDfR8Y6tnoocc+w02VBnzwCWplkU/2Y4d8ujgEavS3sOh
-	4SnPKaLdxWZaKdFxLtcuSiWa7Bc65AmwjNLxFrlalOLO55EJvTad63tEZLqz7Q==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Jacky Huang <ychuang3@nuvoton.com>,  Shan-Chun Hung
- <schung@nuvoton.com>,  Michael Turquette <mturquette@baylibre.com>,
-  Stephen Boyd <sboyd@kernel.org>,  Richard Cochran
- <richardcochran@gmail.com>,  Arnd Bergmann <arnd@arndb.de>,  Brian Masney
- <bmasney+clk@redhat.com>,  Jerome Brunet <jbrunet+clk@baylibre.com>,  Rob
- Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>,  Andrew Jeffery
- <andrew@codeconstruct.com.au>,  Avi Fishman <avifishman70@gmail.com>,
-  Tomer Maimon <tmaimon77@gmail.com>,  Tali Perry <tali.perry1@gmail.com>,
-  Patrick Venture <venture@google.com>,  Nancy Yuen <yuenn@google.com>,
-  Benjamin Fair <benjaminfair@google.com>,  Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>,  Steam Lin <STLin2@winbond.com>,
-  linux-arm-kernel@lists.infradead.org,  linux-clk@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Krzysztof Kozlowski <krzk@kernel.org>,
-  devicetree@vger.kernel.org,  openbmc@lists.ozlabs.org
-Subject: Re: [PATCH v12 10/10] MAINTAINERS: Add myself as Nuvoton MA35D1
- clock controller
-In-Reply-To: <179519171774.3795820.3121589367853881174.b4-review@b4> (Jerome
-	Brunet's message of "Fri, 20 Nov 2026 17:21:57 +0100")
-References: <20261118-perso-ma35d1-upstream-clk-v12-0-bee2c8dad4e1@bootlin.com>
-	<20261118-perso-ma35d1-upstream-clk-v12-10-bee2c8dad4e1@bootlin.com>
-	<179519171774.3795820.3121589367853881174.b4-review@b4>
-User-Agent: mu4e 1.12.12; emacs 30.2
-Date: Tue, 24 Nov 2026 17:27:43 +0100
-Message-ID: <874id6ry80.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OCWvpjlA
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA9761F000CA;
+	Tue, 24 Nov 2026 16:33:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795538006;
+	bh=zEq0v2oKNYWb4P6EHAyM+/7c+KRh4LKSoNP+1xVqrHk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=OCWvpjlALgIusraQjBom7IxT4QnG012vZVex48VG6RsRaXrGTIJe4BMmisV34VBEq
+	 wreiypBU+LZfsrNMZ+hTsu9r0QVUyVd6P1Dr52fRxWdbliD0p/x6rVns5Tz8TGwcDf
+	 Bcc7pppTTuv8Pl9kIywZZ6lMWjgpjrGFTA9xdLvagTEtGWvsBEdN6SzwnjaL/9LO3U
+	 ADHJ8XIA3QlL6Q+EcijCCWOpdqIl1W0Z7w6wdpuGBXphcLQ3SQeWfX40RmUL2AD0Z3
+	 TMBkqiXyqIy2hf1mChF5koTo0liOK6vPuExdqONQyPsvtqIfW0wC3thOEW9xGf3Fd3
+	 OMpuUKV3DjB2g==
+From: Brian Masney <masneyb@kernel.org>
+To: linusw@kernel.org, Wang Haoran <wanghr2026@mail.zgclab.edu.cn>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Brian Masney <masneyb@kernel.org>
+In-Reply-To: <1795076093787-3-ba1f065a@mail.zgclab.edu.cn>
+References: <1795076093787-3-ba1f065a@mail.zgclab.edu.cn>
+Subject: Re: [PATCH] clk: versatile-icst: release regmap on registration
+ failure
+Message-Id: <179553795742.327668.17908781831724510646.b4-ty@b4>
+Date: Tue, 24 Nov 2026 11:32:37 -0500
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -85,28 +60,29 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.17-dev-8145e
+X-Developer-Signature: v=1; a=openpgp-sha256; l=320; i=masneyb@kernel.org;
+ s=20250903; h=from:subject:message-id;
+ bh=lXih8MstoYXHfUZ87usSbt2rL2rCDOllrk5JMU7mf88=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJZ93jnRQQWf7vJPoMh9JN6GbvOT9cFnPNvPn9kfltzn
+ 9JlLv1zHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAEzE9hLDX6GlDl13xdUzvTYW
+ yXpkzjEMY8yarOjkvNSr8gGH4YEfJxn+++UWOu5cm/Nru9mE42w/H91RUZFm2e1e0PaNs3pZTMl
+ jTgA=
+X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-On 20/11/2026 at 17:21:57 +01, Jerome Brunet <jbrunet@baylibre.com> wrote:
 
->> I have the platform, I currently use it for my developpements and
->> therefore I care about the clock controller driver and the SPI
->> controller driver not being constantly broken. I would like to step up
->> to help the Nuvoton team (not visible in the diff since they created
->> an MA35D1 catch-all entry) in the maintaince of this driver.
->> 
->> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
->
-> Acked-by: Jerome Brunet <jbrunet@baylibre.com>
->
-> Commit log nits:
-> - The subject is missing a word: "Add myself as Nuvoton MA35D1 clock
->   controller maintainer".
+On Thu, 19 Nov 2026 16:14:53 +0800, Wang Haoran wrote:
+> clk: versatile-icst: release regmap on registration failure
 
-:-)
+Applied, thanks!
 
-> - developpements -> developments
-> - maintaince -> maintenance
+[1/1] clk: versatile-icst: release regmap on registration failure
+      https://git.kernel.org/clk/linux/c/f0e15ebf8965
 
-Will fix!
+Best regards,
+-- 
+Brian Masney <masneyb@kernel.org>
+
