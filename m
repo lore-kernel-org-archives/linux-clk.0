@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795495966;
-	b=jkFFu6IRFrfJDQhqAvyGeFpK2shcjAc7aJGR9SqQ2SwK0yFByrh8b1Ne0QWtVkbwR52P
-	 5VqAm38OpWHf399QvIxZAQSIDWeW+ynaKOJDPc97GYfx+6D7K1sRKWOE1OmhsGtKgA5Xb
-	 xadw+0RZ6l6rAFNGRgNX9hIpaX3+I9a+ObeI/i+Gf+u36vnEZc3M0u1izR3TuzjgHx/Z+
-	 Klo2gGs+qp43r/TX18eM7N0uZds7kNJ3hDflFBWt+P7031nUmyEuP7xDLthUQm7cycVaj
-	 8NPbHOexo9YApsKFJ0I8P36LEKOaiJ+/d9KFFeQ5Q3msibECJXkeqC2IliXj7neDlnA==
+	t=1795496284;
+	b=Z40DWN7CT06hgUV5KUH50fcAfymfcXGIhLyI9hF8rFYwDYtZjYuD4GTKZiZTyot42Pn5
+	 lP+I1ONK3ozm9RWCA8biZ8TVmu/iFfjq9q07y9Oc1rWdNXJYue+E/VW/nihvr3B+YKcFC
+	 ybEUSS0v2/aZfU+U4bgcKDW58vPLX+pq6GesOYHuBkqRGRohB9ZuM3XfqEgSeKiZCuCdc
+	 h1SnMmn2b984iooPJrINlBP7wZzlKhdzaueV5XPdAFLO9pIZZNAJHXNKP8TpbPKNPR0bY
+	 gxNv9TlXo6/jm+b5Wvw4UbU5ASf1Qk2w01+ffI8oNVWX2d81boFBGQrqLszntKx+btQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795495966;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795496284;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=nOtKGWVdVPb6ADfMhKIMeuga4NjXJyHAm4MRWKDed1Q=;
-	b=UFYZTw0zSVhExuWas5vV/SeJpiyaCie2jvXUksg8JQEZsBVnCwMDikUx0KDD9tdIhwr3
-	 pX9FasNLCSTMnV1kwFXgG2coVIctvOnxiHZE/TL5X2ChPoxD7Xj8i2BlvD0Jaz96g/szk
-	 y0/TzzbXtsnGVaH9H2r3jWAt6evxfMRnyn2WRpNXGASCo55lEanYX1qD9d5Yc2z0DOIBT
-	 ovXQPiqBu/xaUAam/sv9BTBGLu/kDP1miQrNRluLtL2irrciHP9CBoi4m7MDkJWmjTe3m
-	 0q/xHPzPcWTHOHG3X1OEEpTiBjJg88qSBoHatrnRSTNNEf9yUNwf9byH96nOSuwCOTw==
+	bh=kA6UbIS07ItcGWE42HPyzRVwC8ngtxMZtR/wbCOP8gU=;
+	b=rm665ekn4pF69ys4DY8we2YY6IOGpR3uNr5UINcMophoOhywlwLrbN/AaGCP/Y38QXcJ
+	 AYEYQqUJUhsFJFRcM3owshyKSujgDMGFXixNl7ujKjTD2a3eTkwTCRJVD10A7qrAXdkv3
+	 08iBPBFe9vSqyu+VnDsvy3gWWucyyYzvHdKH/weONVdGNuJ0yNP8HqLeWQmX5saIL1/p4
+	 GN+V9tnMMl8QvzDl+j3S3OfX467msaXx/tUBPiwCJZJ2tkAgUK7qTtV1YNv+XufcHVNYB
+	 l42PVUhqCB+X1ATMFJh+OFdKcwQpZfS+j/e0PN38Gc7dARAG9FHF2m/sLiiIp8kxnfw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Nlc/Oftt";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fd2fhLOR;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCE5606A322;
-	Tue, 24 Nov 2026 04:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F58606A321;
+	Tue, 24 Nov 2026 04:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Nlc/Oftt
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC5601F000C4;
-	Tue, 24 Nov 2026 04:52:44 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fd2fhLOR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC6FB1F000D1;
+	Tue, 24 Nov 2026 04:58:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795495965;
-	bh=nOtKGWVdVPb6ADfMhKIMeuga4NjXJyHAm4MRWKDed1Q=;
+	s=k20260515; t=1795496283;
+	bh=kA6UbIS07ItcGWE42HPyzRVwC8ngtxMZtR/wbCOP8gU=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Nlc/Oftt4gw0/6eW7sxNPebaaRFq40YNQhInckQIUXhFlG8tpItRc6tepxcYOg3tN
-	 KXe6t832zE8eLld1+kyumnMKdsbzJ/c3I2PZoUX7yRvRf5ev2Z+DvmjAFRnuetF+bS
-	 hrkpxFOVqrcFw4qwJa8r9FLxZrMHiNKKVHXp7SpBnoqUVfeQ/mWDTplmjbSwxI9tVs
-	 OTNn4mYorckINZsiJRSxp3yooS5ZJFzIF3m1lNJCckqBpwSgVOg7NE5NbHfyRP5mZl
-	 /CgCN6GdxRW+RHKKvpiTpqS2xd9LPzGg3SB8Sdu7OsQyLf/qgffUcxn/O7kOpEpplH
-	 c6VknPODTkQjQ==
-Message-ID: <sashiko-outbox-230526@kernel.org>
+	b=Fd2fhLORdPeA3P5ctUw850YgVfE83EF3+7miiPmnsSKC/02QEPH4QiDX/9mebmZdT
+	 zPqaFFVGd0Xfss5ulVa2dmp/nV5QZcJCDMT38P3PCAvE7KEw9SzAVnucCh7V3H2uK0
+	 LZfirg74uUlEIxTqGFKwfwswy2aFe2y/8TYCcCK5kVEVt31l9OVJCuXz2kLSR3yAKZ
+	 C08ScxkDrNEUXAgsFf6g+uBr0++TlplOg2XapGvf+1Gr52RgclIusH6cwvHEqbDwpM
+	 cTkfzCxbMa7zXVoVSFUPDZRhJKtasISk9EkscluT6NMbxVzmET4qVd/6YKOurYbM1I
+	 ez6XMdErMTbiw==
+Message-ID: <sashiko-outbox-230534@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 6/6] reset: Add Siflower SF19A2890 peripheral reset
+Subject: Re: [PATCH v5 3/6] clk: siflower: Add SF19A2890 clock manager
  driver
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Joseph Telaak" <joseph@telaak.dev>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261123-sf19a2890-sysm-v5-6-4ba44a0db17d@telaak.dev>
+In-Reply-To: <20261123-sf19a2890-sysm-v5-3-4ba44a0db17d@telaak.dev>
 References: <20261123-sf19a2890-sysm-v5-0-4ba44a0db17d@telaak.dev>
- <20261123-sf19a2890-sysm-v5-6-4ba44a0db17d@telaak.dev>
+ <20261123-sf19a2890-sysm-v5-3-4ba44a0db17d@telaak.dev>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 24 Nov 2026 04:52:44 +0000
+Date: Tue, 24 Nov 2026 04:58:02 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -63,75 +63,140 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential
 issue to consider:
-- [Low] reset: sf19a2890: unused sf19a2890_periphrst_ids when CONFIG_OF
-  is disabled
+- [Medium] clk: siflower: broken late clock publication and defaults in
+  sf19a2890
 --
 
-commit eb59c76c1f50a7fd2445c0b31eb22084d7fc905e
+commit 99941c15178fb0fa3ccc19a6c27f477a30815152
 Author: Joseph Telaak <joseph@telaak.dev>
 
-reset: Add Siflower SF19A2890 peripheral reset driver
+clk: siflower: Add SF19A2890 clock manager driver
 
-This commit adds an auxiliary-bus reset controller driver for the Siflower
-SF19A2890 peripheral clock and reset managers.
+This commit adds a clock driver for the Siflower SF19A2890 SoC, registering
+the CPU clock and its parent PLLs early via CLK_OF_DECLARE_DRIVER and the
+remaining mux/divider clocks from a platform driver.
 
-Link: https://github.com/981213/linux/commit/37c81bebaf54
+Link: https://github.com/981213/linux/commit/0466d6303c25
 
-> diff --git a/drivers/reset/reset-sf19a2890-periphcrm.c b/drivers/reset/re=
-set-sf19a2890-periphcrm.c
+> diff --git a/drivers/clk/siflower/clk-sf19a2890.c b/drivers/clk/siflower/=
+clk-sf19a2890.c
 > new file mode 100644
-> index 0000000000000..54b476237bd48
+> index 0000000000000..3ccb768331ad3
 > --- /dev/null
-> +++ b/drivers/reset/reset-sf19a2890-periphcrm.c
+> +++ b/drivers/clk/siflower/clk-sf19a2890.c
 
 [ ... ]
 
-> +static const struct of_device_id sf19a2890_periphrst_ids[] =3D {
-> +	{ .compatible =3D "siflower,sf19a2890-gmac-crm", .data =3D &sf19a2890_g=
-mac_rst },
-> +	{ .compatible =3D "siflower,sf19a2890-gpio-crm", .data =3D &sf19a2890_s=
-ingle_rst },
-> +	{ .compatible =3D "siflower,sf19a2890-i2c-crm", .data =3D &sf19a2890_si=
-ngle_rst },
-> +	{ .compatible =3D "siflower,sf19a2890-pwm-crm", .data =3D &sf19a2890_si=
-ngle_rst },
-> +	{ .compatible =3D "siflower,sf19a2890-rf-crm", .data =3D &sf19a2890_wla=
-n_rst },
-> +	{ .compatible =3D "siflower,sf19a2890-spi-crm", .data =3D &sf19a2890_sp=
-i_rst },
-> +	{ .compatible =3D "siflower,sf19a2890-timer-crm", .data =3D &sf19a2890_=
-single_rst },
-> +	{ .compatible =3D "siflower,sf19a2890-uart-crm", .data =3D &sf19a2890_u=
-art_rst },
-> +	{ .compatible =3D "siflower,sf19a2890-usb-crm", .data =3D &sf19a2890_us=
-b_rst },
-> +	{ .compatible =3D "siflower,sf19a2890-wdt-crm", .data =3D &sf19a2890_si=
-ngle_rst },
-> +	{ .compatible =3D "siflower,sf19a2890-wlan24-crm", .data =3D &sf19a2890=
-_wlan_rst },
-> +	{ .compatible =3D "siflower,sf19a2890-wlan5-crm", .data =3D &sf19a2890_=
-wlan_rst },
-> +	{ /* sentinel */ }
-> +};
-> +
-> +static int sf19a2890_periphrst_probe(struct auxiliary_device *adev,
-> +				     const struct auxiliary_device_id *id)
+> +static void __init sf19a2890_clk_early_init(struct device_node *node)
 > +{
-> +	const struct sf19a2890_periphrst_data *data;
-> +	struct device *dev =3D &adev->dev;
-> +	const struct of_device_id *match;
-> +	struct sf19a2890_periphrst *rst;
+> +	struct clk_hw_onecell_data *data;
+> +	void __iomem *base;
+> +	unsigned int i;
+> +	int ret;
 > +
-> +	/* The OF node is the parent's, so device_get_match_data() cannot be us=
-ed */
-> +	match =3D of_match_node(sf19a2890_periphrst_ids, dev->of_node);
+> +	data =3D kzalloc_flex(*data, hws, CLK_SF19A2890_NR_CLKS);
+> +	if (!data)
+> +		return;
+> +
+> +	data->num =3D CLK_SF19A2890_NR_CLKS;
+> +	/* The clocks registered at probe defer until then */
+> +	for (i =3D 0; i < data->num; i++)
+> +		data->hws[i] =3D ERR_PTR(-EPROBE_DEFER);
+> +
+> +	base =3D of_iomap(node, 0);
+> +	if (!base) {
+> +		pr_err("failed to map the registers\n");
+> +		goto err_free;
+> +	}
+> +
+> +	for (i =3D 0; i < ARRAY_SIZE(sf19a2890_early_clks); i++) {
+> +		unsigned int id =3D sf19a2890_early_clks[i];
+> +		struct clk_hw *hw =3D sf19a2890_hws[id];
+> +
+> +		hw_to_sf_clk_common(hw)->base =3D base;
+> +		ret =3D of_clk_hw_register(node, hw);
+> +		if (ret) {
+> +			pr_err("failed to register clock %u: %d\n", id, ret);
+> +			goto err_unregister;
+> +		}
+> +		data->hws[id] =3D hw;
+> +	}
+> +
+> +	ret =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get, data);
+> +	if (ret) {
+> +		pr_err("failed to add the clock provider: %d\n", ret);
+> +		goto err_unregister;
+> +	}
+> +
+> +	sf19a2890_clk_data =3D data;
+> +	sf19a2890_clk_base =3D base;
+> +	return;
+> +
+> +err_unregister:
+> +	while (i--)
+> +		clk_hw_unregister(data->hws[sf19a2890_early_clks[i]]);
+> +	iounmap(base);
+> +err_free:
+> +	kfree(data);
+> +}
+> +
+> +CLK_OF_DECLARE_DRIVER(sf19a2890_clk, "siflower,sf19a2890-clk", sf19a2890=
+_clk_early_init);
+> +
+> +static void sf19a2890_clk_unpublish(void *data)
+> +{
+> +	struct clk_hw **hw =3D data;
+> +
+> +	*hw =3D ERR_PTR(-EPROBE_DEFER);
+> +}
+> +
+> +static int sf19a2890_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct clk_hw_onecell_data *data =3D sf19a2890_clk_data;
+> +	struct device *dev =3D &pdev->dev;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	if (!data)
+> +		return -ENODEV;
+> +
+> +	for (i =3D 0; i < data->num; i++) {
+> +		struct clk_hw *hw =3D sf19a2890_hws[i];
+> +
+> +		/* Registered early */
+> +		if (!IS_ERR(data->hws[i]))
+> +			continue;
+> +
+> +		hw_to_sf_clk_common(hw)->base =3D sf19a2890_clk_base;
+> +		ret =3D devm_clk_hw_register(dev, hw);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "failed to register clock %u\n", i);
+> +
+> +		data->hws[i] =3D hw;
 
-[Severity: Low]
-Will sf19a2890_periphrst_ids trigger a -Wunused-const-variable warning when
-built with CONFIG_COMPILE_TEST=3Dy and CONFIG_OF=3Dn?  When CONFIG_OF is
-disabled, of_match_node() expands to NULL without evaluating its first
-argument, and sf19a2890_periphrst_ids is not referenced anywhere else.
+[Severity: Medium]
+As reported by Brian Masney on v4 [1], can setting data->hws[i] =3D hw after
+devm_clk_hw_register() and registering the OF provider while late clocks
+are still ERR_PTR(-EPROBE_DEFER) break orphan reparenting and
+assigned-clocks defaults?
+
+devm_clk_hw_register() runs clk_core_reparent_orphans_nolock() before
+returning.  Because data->hws[i] is still ERR_PTR(-EPROBE_DEFER) during
+that call, any already-registered orphan clock parented by the last clock
+(CLK_MUXDIV_NPU_PE) cannot resolve its parent via the OF provider and
+remains orphaned.
+
+In addition, of_clk_add_hw_provider() in sf19a2890_clk_early_init() calls
+of_clk_set_defaults(node, true) while the 17 late clocks are still
+ERR_PTR(-EPROBE_DEFER).  If the clock controller DT node specifies
+assigned-clocks for any late clock, of_clk_add_hw_provider() fails with
+-EPROBE_DEFER and tears down all early clocks including the CPU clock;
+even when early init succeeds, sf19a2890_clk_probe() never re-runs
+of_clk_set_defaults() after registering the late clocks.
+
+[1] https://lore.kernel.org/r/179545199778.209212.13754058672210050271.b4-r=
+eview@b4
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123-sf19a2890-=
-sysm-v5-0-4ba44a0db17d@telaak.dev?part=3D6
+sysm-v5-0-4ba44a0db17d@telaak.dev?part=3D3
