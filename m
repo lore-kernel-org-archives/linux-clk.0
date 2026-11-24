@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795495306;
-	b=a+M45mtqq7KrQtez0VLlvRvGISRBENC8g4MnE1ZIpx6F5Fal2fSuPLgUZGY1p3Zn3E0V
-	 zM5pxOWZIsdK7M27gYnX+dvj4UjxfRtwjC1RKm6eqgmDf8yH7qRo8AtwnwWbANFAAKAe7
-	 xjhMPqap/5HRSz8rXXidAk46AGCli6NchPrWRRjX8e6MiL4Ijf9JuvFasmigco6b2SEaK
-	 p9qASJmRlBbHBGemk7GKBMI/8n0RNmYZlrzyf1RnuKNpxu3fiuu9S4P5c2TUXcjZK12om
-	 jL5KKi0TQSTIzWOU8obIH4Bd5OMIIcfNE5paROcyaqYNaYA2ZuOCd6wzO0hzmYUSuvw==
+	t=1795495297;
+	b=up858e45JWAzEg1CWgsxa9WKWeAM4rwiQy4rXxocEcwZTo0fcsmKy++GPnFLQxxfq2g+
+	 AXdBYStfTfHIoypYyQhoTyDgYwwxBRJyIqqgMPju/7J9fFwM8CD7Hx3/PlYrmvoRdsMP1
+	 Kj9a+/QqAz75Q6ixr/OnYn5Je/v8mw8wPSHdgxB00n3eRC2CqajCcwMIAdtS9kuBN1ChO
+	 Y3kSU/8q6IcRqohUi41Ti6//MHVTT9KmjHtgPC2gs8TAfuWn2Lz9gNx1CoXfILRgZVo9M
+	 MZL0cOzQw8NxegOS1UiWdAFIoaClW9OozAAAgd3MIut/5VE5sUkB0D5VvcaBhgL3/QQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795495306;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795495297;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=4flAGIIvXXpEDeF9TOGEI8o2mMQ9LPgzBZ9V1HSUwz8=;
-	b=RJupaSGeczq0Wv63F4XPIFgzQsw/I97B1t0YDxe94vPuoHPi6AOndYlNK7mC3sspxs1C
-	 6mFwQuOXN+Ig6qob8XQdugFAx0SbmLq6+2WWRRNtWqmGthLgaUcEmVBBoO3OgkBphEC2g
-	 JQWMNeBH9beMgbwqfLcoz//Tvq2JKzu9/Lfd5iTcRaz6artrmJYyNjIF08fQ5WAhkT35k
-	 xarL/87lORPWkHjaqhTcS046UQ4AaqV1XHoEPiCudAOU79y53XfrHC/OYensDHFUeSMoH
-	 ueaEvFSXiIpdhB8MxckIhfFv/TseZGcefWj6d7xbyujg4IQuDyO0D7gswWLrE9bpJmg==
+	bh=Af0ubQHuDE1Cwsg7hWpxMCuIHsMjPq6OwUoIKcAWZ58=;
+	b=X1gKMxBJRYQHgqBj1nzn2i+pWob4Aj9X1NbOxvyKHHhc4ibAnlaioD6N2wJSZaLU1FlJ
+	 0dc+dJlycXNsLfeG9g13xr4dUGSKhvKhXPRXORwvTVFwevMUraSViInU/Qe9mm1cXPoEO
+	 GEy9nhDqvwMWwnWWNQS1EFUjYWGFJSGtsazfbIJ3gsLO8Rqc7qp5eufTMxNBJh+e5hTKb
+	 nDxJkodJB59JxjsMrG2tBsDTJhVLnBJCFOsHAxxZDZ+Snyq+OKGmRdNFW9KiJsvaqy/WT
+	 sGyzNSe41ZH16+oW7hqoCIMlr131fI6ITN4SpDCriMG881DNFbHjTHPxjgaqAQ+B9Kw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HI0oWbZ0;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DGi9YqG2;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856B9606A327;
-	Tue, 24 Nov 2026 04:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC171606A69B;
+	Tue, 24 Nov 2026 04:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HI0oWbZ0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DGi9YqG2
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795495306;
-	b=3qJvo23YeNa4mP6m6AsYaoHqn+4RelUGH6Ubr+u5S5MsMjtZ+IgOJSbBCLPYZaoaHvsk
-	 b7TSa8iP5nA/Dp6EWLEkXR2Hd4OpQNLlZbPibEPDK7jr5JeRO/21vg12g8/273KpjGj0E
-	 2u7J6WY59yfHDZ+92QS/AOthhMX9NVbYadZS10CinGCKz89zM3skX+YomHtSIIJnWhV1Q
-	 jmdvOxhm9GO438JqXWw/6hTVSxnRhqfSHIW7xJxopPkHa9m0PsZMGk75wdLoAhqwGyzqg
-	 EiDY3MkwGHiz1tj6eDTdXe7NEZiCZ73oJuii+Bduwz7Lg76fwFiSHHpXwdbecFx7WHA==
+	t=1795495297;
+	b=ftS6oD2UQCivznqsQtEtLk+OXO/M7zAOKhUr4J2lKW83Xx/yqr8Zv/KUGgKGrZ+E2Xbr
+	 xW/DTyHj3eRata3TtDCSvaFFzqk5hwWFg8XvvM8xy4kxGvRR6aiJ2YjjsqkkAtRYCad2Z
+	 UnaoJaow5hniPm8WBCpPRip0GFb2f9Pds0y1yx1uA5wBF/fUcvqQBFKNDw3Ax0ra808oT
+	 duxcOVANdItVK/P2JrhEqsw5STqfAZersAF88FVzeX25Kss1sNbDK3m4UaUBo1bwdrLIh
+	 39TQVJitosYBnXT2ZDbinmbEUqi5d5O0ziuupLIje3nig4CRCmcfBErRRcuj8H2mU/Q==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795495306;
+	c=relaxed/relaxed; t=1795495297;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=4flAGIIvXXpEDeF9TOGEI8o2mMQ9LPgzBZ9V1HSUwz8=;
-	b=wR9CeqO2Bsg5p2Pc8jsDg/wOt4L2l/GthlP76s32ggRtlHa6uD8eL/rspFQ/g09dh+nO
-	 T3vCVavBTGZpGEZn7I5ffDAvwt/B+HFzkmjX9D3q+xNLpD3yepu40qG6ezH+cRXcEWMbp
-	 536uHS2YOJ8FkSQeX1DvaFlFD+3BRNF5pDenXsFi2GfGfRGMTA/5cPLv303d2LTKmEztX
-	 GCs7bvlFn5gk0hQVEiWW62uLOKkRvYM3GlgN2Umh1NcZ9Q+hcGIljWpGo0AWKHYxRHbcF
-	 aVkSricVZvZE7QQFgoyVgbVZqH/LJUTDqXsDSlEsWyZjAQKAJZedgLqL6+Z5kqGwhRw==
+	bh=Af0ubQHuDE1Cwsg7hWpxMCuIHsMjPq6OwUoIKcAWZ58=;
+	b=K1Nv1iV3GGguqlL0m6HzDfbltC687kUb3Yq2Sd7oZhA0/Z/ed4nkc3P0brkr3MO93PiY
+	 nTPBE8/BsrxLfZyhQ4omEbKkrXQ/vYAo7lbVhIhe/mlnHzK1k7Pmmn2/IzGPZDVKg2O+l
+	 iODN+xJJ7sl7FNPYsumOEoNsuMKlDnOutEK3qm3jo08a0cyQzTW+tNDhycrnEtjjNulMa
+	 hCuxctFwPo8bJvXbSq6T+22VZ9x1cp2QjcdSG+zSKH5SBwFGpRbo1UmC1xUnxOzhTgEN/
+	 eQuSgsIXok+TxIs98o1LUJj2in7P9Zx44sRcjBSLFXm8pCn5rEoE6gGXIFMlLfMVXYQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 5546A1F000E0;
-	Tue, 24 Nov 2026 04:41:31 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 0725E1F000D2;
+	Tue, 24 Nov 2026 04:41:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795495306;
-	bh=4flAGIIvXXpEDeF9TOGEI8o2mMQ9LPgzBZ9V1HSUwz8=;
+	s=k20260515; t=1795495297;
+	bh=Af0ubQHuDE1Cwsg7hWpxMCuIHsMjPq6OwUoIKcAWZ58=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=HI0oWbZ0GUh8kAM9QDPb00FwxhlPxmC3LYpbD02RhNk/QbAk8a68RXOm2hHumByHM
-	 KxLcus4gLl7VRfGzh11r3TVuZMLWcZSUEdZgo4eBAcz4eEHXOhYQjSFD+XPldUh1v4
-	 bHURCDiyMlj12RPKiC1yiKSeIamv5wiyFHYlPkN2gjNZ0YXwM1q9AdXli0J7x8pI6V
-	 23wJNCrCI2gXflcgEHnp1LFt69CDuXhlSqxhjX4IpAxaCUvRThz1YAjWqCYV31wLpz
-	 nQ8kG5eENrL57WZZs+czNqwFjvypP/ue0iIeu/fXf95QlTSM12ctyHDswrmAMX3GHB
-	 lgYParmwT1Dxw==
+	b=DGi9YqG238m+jUP8/xYHx16uH2UprnCu/L3F0hpSq6OCBZaKoqBxzN7iC8wzzk1sg
+	 0aTvSW+pkbFbSbubb43Tw4K7fTiHkmTHcOgekqflKuUKj8j5KrqGAQXB4zg0LaKs8d
+	 kefn7GaM7E+ZZnKK5apUA7LspLRgDkJsvMKJpIpvwZEBL6ns1G6E1zn2/1AN4QUoFB
+	 TqG30L8j+AKRBhqfZhcM7GHMNSLQvlpeE1ixmpV2hRAyG2Pzc6wn9lHBdCO+GwIGO5
+	 ot7KQYpi2Lt5PezPC/aQBKCswEq6TNMddmqWaggO1vivybnwsK/3pwXQOWSP3t7HG0
+	 27SWyG1xfnsAg==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id E4DB04C8BA;
+	by lkml.kernel.org (Postfix) with ESMTP id 8D42F4C8AE;
 	Tue, 24 Nov 2026 04:41:24 +0000 (UTC)
 From: Joseph Telaak via B4 Relay <devnull+joseph.telaak.dev@kernel.org>
-Date: Mon, 23 Nov 2026 23:41:26 -0500
-Subject: [PATCH v5 6/6] reset: Add Siflower SF19A2890 peripheral reset
- driver
+Date: Mon, 23 Nov 2026 23:41:23 -0500
+Subject: [PATCH v5 3/6] clk: siflower: Add SF19A2890 clock manager driver
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,7 +83,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261123-sf19a2890-sysm-v5-6-4ba44a0db17d@telaak.dev>
+Message-Id: <20261123-sf19a2890-sysm-v5-3-4ba44a0db17d@telaak.dev>
 References: <20261123-sf19a2890-sysm-v5-0-4ba44a0db17d@telaak.dev>
 In-Reply-To: <20261123-sf19a2890-sysm-v5-0-4ba44a0db17d@telaak.dev>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -100,11 +99,11 @@ Cc: Paul Burton <paulburton@kernel.org>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Joseph Telaak <joseph@telaak.dev>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795495283; l=9809;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795495283; l=18594;
  i=joseph@telaak.dev; s=20261104; h=from:subject:message-id;
- bh=tH3G7I3tf7pzBkrIwalM9DcMheb+KjROQWqrMyyrX4M=;
- b=eHNqvau0CxnnsVRw52bxecO5TEsrWbScseUOxy9c4wXYm6gS9nu9JjuaNbbOjFVzvx45tiy7+
- Gbe90jWrHLKCc0ixvXZ3rLHF7GBf58MLxxoM680tVvb0L1MD65dhAI/
+ bh=aJcwzhAxPIF8zuWQ3ElmqAkBrMOvtdK30eDmyn7AVsI=;
+ b=MZVQBlfKBwqyzJjfXNKYzZoi1XSBfAi/Pxrf/u1P7nkB0sN/dVO4P8HU9YpCpbghmQlDwttRP
+ dS1kfqeih22AmF3IEREFOab3HHQczJhIlKQGdIWYtuCL7oR7p/NoaXb
 X-Developer-Key: i=joseph@telaak.dev; a=ed25519;
  pk=oQI+UfddlZ0wK2ac4WKOGNjUl1ZEN8j9ZVFSqEDoNP0=
 X-Endpoint-Received: by B4 Relay for joseph@telaak.dev/20261104 with
@@ -115,273 +114,589 @@ Content-Transfer-Encoding: 7bit
 
 From: Joseph Telaak <joseph@telaak.dev>
 
-Add a driver for the resets of the Siflower SF19A2890 peripheral clock
-and reset managers. It binds to the auxiliary device that their clock
-driver creates and uses the registers that driver has mapped. Where an
-IP has a reset line for each of its clock domains, as the PL011 UARTs
-and the PL022 SPI controller do, one reset drives all of them, since
-they have to be asserted together.
+Add a driver for the clock manager of the Siflower SF19A2890: the CPU,
+DDR and common PLLs, and the muxes with dividers that derive the bus,
+CPU and peripheral clocks from them. The GIC timer probes before the
+platform bus and needs the CPU clock, so the driver registers that clock
+and its PLLs early, from CLK_OF_DECLARE_DRIVER, and the other clocks from
+a platform driver.
 
-Based on the reset part of the driver in Chuanhong Guo's SF19A2890
-branch.
+Based on the driver in Chuanhong Guo's SF19A2890 branch.
 
-Link: https://github.com/981213/linux/commit/37c81bebaf54
+Link: https://github.com/981213/linux/commit/0466d6303c25
 Co-developed-by: Chuanhong Guo <gch981213@gmail.com>
 Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
 Signed-off-by: Joseph Telaak <joseph@telaak.dev>
 ---
- MAINTAINERS                               |   1 +
- drivers/reset/Kconfig                     |  11 ++
- drivers/reset/Makefile                    |   1 +
- drivers/reset/reset-sf19a2890-periphcrm.c | 194 ++++++++++++++++++++++++++++++
- 4 files changed, 207 insertions(+)
+ MAINTAINERS                          |   1 +
+ drivers/clk/Kconfig                  |   1 +
+ drivers/clk/Makefile                 |   1 +
+ drivers/clk/siflower/Kconfig         |  11 +
+ drivers/clk/siflower/Makefile        |   2 +
+ drivers/clk/siflower/clk-sf19a2890.c | 494 +++++++++++++++++++++++++++++++++++
+ 6 files changed, 510 insertions(+)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 34ff7ec0b60e..ae47322d15dd 100644
+index ce8d0596939c..de087d1c255d 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -25706,6 +25706,7 @@ F:	Documentation/devicetree/bindings/clock/siflower,sf19a2890-clk.yaml
- F:	Documentation/devicetree/bindings/clock/siflower,sf19a2890-periph-crm.yaml
- F:	drivers/clk/siflower/clk-sf19a2890-periphcrm.c
- F:	drivers/clk/siflower/clk-sf19a2890.c
-+F:	drivers/reset/reset-sf19a2890-periphcrm.c
+@@ -25703,6 +25703,7 @@ M:	Joseph Telaak <joseph@telaak.dev>
+ L:	linux-clk@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/clock/siflower,sf19a2890-clk.yaml
++F:	drivers/clk/siflower/clk-sf19a2890.c
  F:	include/dt-bindings/clock/siflower,sf19a2890-clk.h
- F:	include/dt-bindings/clock/siflower,sf19a2890-periph-crm.h
  
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index eda9c698a95f..6e2f6cceb3cb 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -295,6 +295,17 @@ config RESET_SCMI
- 	  This driver uses SCMI Message Protocol to interact with the
- 	  firmware controlling all the reset signals.
- 
-+config RESET_SF19A2890_PERIPHCRM
-+	tristate "Siflower SF19A2890 peripheral reset controller"
-+	depends on MACH_SIFLOWER_MIPS || COMPILE_TEST
-+	select AUXILIARY_BUS
-+	default CLK_SF19A2890_PERIPHCRM
-+	help
-+	  Supports the resets of the peripheral clock and reset managers of
-+	  the Siflower SF19A2890, one manager for each peripheral block.
-+	  The driver binds to the auxiliary device that their clock driver
-+	  creates, so it needs CLK_SF19A2890_PERIPHCRM to do anything.
-+
- config RESET_SIMPLE
- 	bool "Simple Reset Controller Driver" if COMPILE_TEST || EXPERT
- 	default ARCH_ASPEED || ARCH_BCMBCA || ARCH_BITMAIN || ARCH_REALTEK || ARCH_SOPHGO || ARCH_STM32 || (ARCH_INTEL_SOCFPGA && ARM64) || ARCH_SUNXI || ARC
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 489fafd6bbe3..d4b707505c3d 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_RESET_RASPBERRYPI) += reset-raspberrypi.o
- obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) += reset-rzg2l-usbphy-ctrl.o
- obj-$(CONFIG_RESET_RZV2H_USB2PHY) += reset-rzv2h-usb2phy.o
- obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
-+obj-$(CONFIG_RESET_SF19A2890_PERIPHCRM) += reset-sf19a2890-periphcrm.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_SKY1) += reset-sky1.o
- obj-$(CONFIG_RESET_SKY1_AUDSS) += reset-sky1-audss.o
-diff --git a/drivers/reset/reset-sf19a2890-periphcrm.c b/drivers/reset/reset-sf19a2890-periphcrm.c
+ SILEAD TOUCHSCREEN DRIVER
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 37a8e35d4178..8e73490cb702 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -536,6 +536,7 @@ source "drivers/clk/renesas/Kconfig"
+ source "drivers/clk/rockchip/Kconfig"
+ source "drivers/clk/samsung/Kconfig"
+ source "drivers/clk/sifive/Kconfig"
++source "drivers/clk/siflower/Kconfig"
+ source "drivers/clk/socfpga/Kconfig"
+ source "drivers/clk/sophgo/Kconfig"
+ source "drivers/clk/spacemit/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 52d138d4ffc8..d2f07584783e 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -160,6 +160,7 @@ obj-y					+= renesas/
+ obj-$(CONFIG_COMMON_CLK_ROCKCHIP)	+= rockchip/
+ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+ obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
++obj-y					+= siflower/
+ obj-y					+= socfpga/
+ obj-y					+= sophgo/
+ obj-y					+= spacemit/
+diff --git a/drivers/clk/siflower/Kconfig b/drivers/clk/siflower/Kconfig
 new file mode 100644
-index 000000000000..54b476237bd4
+index 000000000000..ad1b04b4bb9b
 --- /dev/null
-+++ b/drivers/reset/reset-sf19a2890-periphcrm.c
-@@ -0,0 +1,194 @@
++++ b/drivers/clk/siflower/Kconfig
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++config CLK_SF19A2890
++	bool "Clock driver for Siflower SF19A2890"
++	depends on MACH_SIFLOWER_MIPS || COMPILE_TEST
++	default MACH_SIFLOWER_MIPS
++	help
++	  Supports the clock manager of the Siflower SF19A2890: its PLLs
++	  and the muxes and dividers that feed the CPU, the buses and the
++	  peripherals. The GIC timer runs from the CPU clock, so a kernel
++	  for this SoC needs it built in.
+diff --git a/drivers/clk/siflower/Makefile b/drivers/clk/siflower/Makefile
+new file mode 100644
+index 000000000000..3f4d689f7d9b
+--- /dev/null
++++ b/drivers/clk/siflower/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_CLK_SF19A2890) += clk-sf19a2890.o
+diff --git a/drivers/clk/siflower/clk-sf19a2890.c b/drivers/clk/siflower/clk-sf19a2890.c
+new file mode 100644
+index 000000000000..3ccb768331ad
+--- /dev/null
++++ b/drivers/clk/siflower/clk-sf19a2890.c
+@@ -0,0 +1,494 @@
 +// SPDX-License-Identifier: GPL-2.0-only
++
++#define pr_fmt(fmt) "sf19a2890-clk: " fmt
++
++#include <linux/bitfield.h>
++#include <linux/clk-provider.h>
++#include <linux/device-id/of.h>
++#include <linux/io.h>
++#include <linux/math64.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++#include <dt-bindings/clock/siflower,sf19a2890-clk.h>
++
++#define CLK_SF19A2890_NR_CLKS	(CLK_MUXDIV_NPU_PE + 1)
++
++#define REG_PLL_BASE		0x0
++#define REG_PLL_PD		0x0
++#define  PLL_PD			BIT(0)
++#define  PLL_PD_VCO		BIT(1)
++#define  PLL_PD_POSTDIV		BIT(2)
++#define  PLL_PD_4PHASE		BIT(3)
++#define  PLL_PD_DAC		BIT(4)
++#define  PLL_PD_DSM		BIT(5)
++
 +/*
-+ * Siflower SF19A2890 peripheral reset driver
-+ *
-+ * The peripheral clock and reset managers keep their resets in the first
-+ * register of the block. Their clock driver creates an auxiliary device for
-+ * them and passes the mapped registers in its platform data.
++ * PLL_PARAM is a 48-bit value put into 6 registers, 8-bit per register:
++ * REFDIV = PLL_PARAM[47:42]
++ * POSTDIV2 = PLL_PARAM[41:39]
++ * POSTDIV1 = PLL_PARAM[38:36]
++ * FRAC = PLL_PARAM[35:12]
++ * FBDIV = PLL_PARAM[11:0]
 + */
 +
-+#include <linux/auxiliary_bus.h>
-+#include <linux/bits.h>
-+#include <linux/device.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/reset-controller.h>
-+#include <linux/spinlock.h>
++#define REG_PLL_PARAM(_x)	(0x4 + (_x) * 4)
++#define  PLL_REFDIV_HI		47
++#define  PLL_REFDIV_LO		42
++#define  PLL_POSTDIV2_HI	41
++#define  PLL_POSTDIV2_LO	39
++#define  PLL_POSTDIV1_HI	38
++#define  PLL_POSTDIV1_LO	36
++#define  PLL_FRAC_HI		35
++#define  PLL_FRAC_LO		12
++#define  PLL_FRAC_BITS		(PLL_FRAC_HI - PLL_FRAC_LO + 1)
++#define  PLL_FBDIV_HI		11
++#define  PLL_FBDIV_LO		0
 +
-+#include <dt-bindings/clock/siflower,sf19a2890-periph-crm.h>
++#define REG_PLL_CFG 0x1c
++#define  PLL_CFG_BYPASS		BIT(0)
++#define  PLL_CFG_SRC		GENMASK(2, 1)
++#define  PLL_CFG_OCLK_SEL	BIT(3)
++#define  PLL_CFG_OCLK_GATE	BIT(4)
++#define  PLL_CFG_LOAD_DIVS	BIT(5)
 +
-+#define REG_RESET	0x0
++#define REG_PLL_LOCK 0x20
 +
-+struct sf19a2890_periphrst_data {
-+	const u32 *masks;
-+	unsigned int num_resets;
-+};
++/*
++ * Read-only register indicating the value of the hardware clock source
++ * override pin. When the first bit of this register is set, PLL clock
++ * source is forced to the 40M oscillator regardless of PLL_CFG_SRC
++ * value.
++ */
++#define REG_PLL_SRC_OVERRIDE 0x24
 +
-+struct sf19a2890_periphrst {
-+	struct reset_controller_dev rcdev;
++struct sf_clk_common {
 +	void __iomem *base;
-+	spinlock_t lock;	/* serializes reset register updates */
-+	const u32 *masks;
++	struct clk_hw hw;
 +};
 +
-+static inline struct sf19a2890_periphrst *
-+rcdev_to_periphrst(struct reset_controller_dev *rcdev)
++struct sf19a2890_clk {
++	struct sf_clk_common common;
++	u32 offset;
++};
++
++#define SF_CLK_COMMON(_name, _parents, _op, _flags)				\
++	{								\
++		.hw.init = CLK_HW_INIT_PARENTS_DATA(_name, _parents, _op,	\
++						    _flags),		\
++	}
++
++static inline struct sf_clk_common *hw_to_sf_clk_common(struct clk_hw *hw)
 +{
-+	return container_of(rcdev, struct sf19a2890_periphrst, rcdev);
++	return container_of(hw, struct sf_clk_common, hw);
 +}
 +
-+static int sf19a2890_periphrst_update(struct reset_controller_dev *rcdev,
-+				      unsigned long id, bool assert)
++static inline struct sf19a2890_clk *cmn_to_clk(struct sf_clk_common *cmn_priv)
 +{
-+	struct sf19a2890_periphrst *rst = rcdev_to_periphrst(rcdev);
-+	u32 reg;
++	return container_of(cmn_priv, struct sf19a2890_clk, common);
++}
 +
-+	guard(spinlock_irqsave)(&rst->lock);
-+	reg = readl(rst->base + REG_RESET);
-+	if (assert)
-+		reg |= rst->masks[id];
++static inline u32 sf_readl(struct sf_clk_common *priv, u32 reg)
++{
++	return readl(priv->base + reg);
++}
++
++static inline void sf_writel(struct sf_clk_common *priv, u32 reg, u32 val)
++{
++	writel(val, priv->base + reg);
++}
++
++static u32 sf_pll_param_get(struct sf19a2890_clk *priv, u32 hi, u32 lo)
++{
++	struct sf_clk_common *cmn = &priv->common;
++	u32 ret = 0;
++	int reg_hi = hi / 8;
++	int reg_lo = lo / 8;
++	u32 reg_hi_pos = hi % 8;
++	u32 reg_lo_pos = lo % 8;
++	int i;
++
++	if (reg_hi == reg_lo) {
++		u32 mask = (BIT(reg_hi_pos - reg_lo_pos + 1)) - 1;
++		u32 reg_val = sf_readl(cmn, priv->offset + REG_PLL_PARAM(reg_hi));
++
++		return (reg_val >> reg_lo_pos) & mask;
++	}
++
++	ret = sf_readl(cmn, priv->offset + REG_PLL_PARAM(reg_hi)) & (BIT(reg_hi_pos + 1) - 1);
++	for (i = reg_hi - 1; i > reg_lo; i--)
++		ret = (ret << 8) | sf_readl(cmn, priv->offset + REG_PLL_PARAM(i));
++	ret = (ret << (8 - reg_lo_pos)) |
++	      (sf_readl(cmn, priv->offset + REG_PLL_PARAM(reg_lo)) >> reg_lo_pos);
++
++	return ret;
++}
++
++static unsigned long sf19a28_pll_recalc_rate(struct clk_hw *hw,
++					     unsigned long parent_rate)
++{
++	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
++	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
++	u32 refdiv = sf_pll_param_get(priv, PLL_REFDIV_HI, PLL_REFDIV_LO);
++	u32 fbdiv = sf_pll_param_get(priv, PLL_FBDIV_HI, PLL_FBDIV_LO);
++	u32 postdiv1 = sf_pll_param_get(priv, PLL_POSTDIV1_HI, PLL_POSTDIV1_LO);
++	u32 postdiv2 = sf_pll_param_get(priv, PLL_POSTDIV2_HI, PLL_POSTDIV2_LO);
++	u32 pll_pd = sf_readl(cmn_priv, priv->offset + REG_PLL_PD);
++	u64 rate;
++	u32 frac;
++
++	if (!refdiv || !postdiv1 || !postdiv2)
++		return 0;
++
++	rate = div_u64((u64)parent_rate * fbdiv, refdiv);
++
++	/* With the DSM on, the VCO runs at parent / refdiv * (fbdiv + frac / 2^24) */
++	if (!(pll_pd & PLL_PD_DSM)) {
++		frac = sf_pll_param_get(priv, PLL_FRAC_HI, PLL_FRAC_LO);
++		rate += div_u64((u64)parent_rate * frac, refdiv) >> PLL_FRAC_BITS;
++	}
++
++	return div_u64(rate, postdiv1 * postdiv2);
++}
++
++static u8 sf19a28_pll_get_parent(struct clk_hw *hw)
++{
++	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
++	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
++	u32 cfg;
++
++	if (sf_readl(cmn_priv, priv->offset + REG_PLL_SRC_OVERRIDE))
++		return 1;
++
++	cfg = sf_readl(cmn_priv, priv->offset + REG_PLL_CFG);
++
++	return (FIELD_GET(PLL_CFG_SRC, cfg) == 1);
++}
++
++static const struct clk_ops sf19a28_pll_ops = {
++	.recalc_rate = sf19a28_pll_recalc_rate,
++	.get_parent = sf19a28_pll_get_parent,
++};
++
++static const struct clk_parent_data clk_pll_parents[] = {
++	{ .fw_name = "osc12m" },
++	{ .fw_name = "osc40m" },
++};
++
++#define SF19A28_PLL(_name, _offset, _flags)				\
++	struct sf19a2890_clk _name = {					\
++		.common = SF_CLK_COMMON(#_name, clk_pll_parents,	\
++					&sf19a28_pll_ops, _flags),	\
++		.offset = REG_PLL_BASE + (_offset),			\
++	}
++
++static SF19A28_PLL(pll_cpu, 0x0, 0);
++static SF19A28_PLL(pll_ddr, 0x40, 0);
++static SF19A28_PLL(pll_cmn, 0x80, 0);
++
++#define REG_MUXDIV_BASE		0x400
++#define REG_MUXDIV_CFG		0x0
++#define  MUXDIV_USE_NCO		BIT(3)
++#define  MUXDIV_SRC_SEL		GENMASK(2, 0)
++#define REG_MUXDIV_RATIO	0x4
++#define  MUXDIV_RATIO_MAX	0xff
++#define REG_MUXDIV_NCO_V	0x8
++#define REG_MUXDIV_EN		0xc
++#define REG_MUXDIV_XN_DIV_RATIO	0x10
++#define  MUXDIV_XN_DIV_MAX	3
++
++static unsigned long sf19a28_muxdiv_recalc_rate(struct clk_hw *hw,
++						unsigned long parent_rate)
++{
++	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
++	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
++	u32 div;
++
++	div = sf_readl(cmn_priv, priv->offset + REG_MUXDIV_RATIO) + 1;
++	return parent_rate / div;
++}
++
++static int sf19a28_muxdiv_determine_rate(struct clk_hw *hw,
++					 struct clk_rate_request *req)
++{
++	unsigned int div;
++
++	if (!req->rate)
++		div = MUXDIV_RATIO_MAX + 1;
 +	else
-+		reg &= ~rst->masks[id];
-+	writel(reg, rst->base + REG_RESET);
++		div = DIV_ROUND_CLOSEST(req->best_parent_rate, req->rate);
++
++	if (!div)
++		div = 1;
++	else if (div > MUXDIV_RATIO_MAX + 1)
++		div = MUXDIV_RATIO_MAX + 1;
++
++	req->rate = req->best_parent_rate / div;
 +	return 0;
 +}
 +
-+static int sf19a2890_periphrst_assert(struct reset_controller_dev *rcdev,
-+				      unsigned long id)
++static int sf19a28_muxdiv_set_rate(struct clk_hw *hw, unsigned long rate,
++				   unsigned long parent_rate)
 +{
-+	return sf19a2890_periphrst_update(rcdev, id, true);
-+}
++	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
++	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
++	unsigned int div;
 +
-+static int sf19a2890_periphrst_deassert(struct reset_controller_dev *rcdev,
-+					unsigned long id)
-+{
-+	return sf19a2890_periphrst_update(rcdev, id, false);
-+}
-+
-+static int sf19a2890_periphrst_status(struct reset_controller_dev *rcdev,
-+				      unsigned long id)
-+{
-+	struct sf19a2890_periphrst *rst = rcdev_to_periphrst(rcdev);
-+
-+	return !!(readl(rst->base + REG_RESET) & rst->masks[id]);
-+}
-+
-+static const struct reset_control_ops sf19a2890_periphrst_ops = {
-+	.assert = sf19a2890_periphrst_assert,
-+	.deassert = sf19a2890_periphrst_deassert,
-+	.status = sf19a2890_periphrst_status,
-+};
-+
-+#define RST_DATA(_name)							\
-+	static const struct sf19a2890_periphrst_data sf19a2890_##_name##_rst = { \
-+		.masks = sf19a2890_##_name##_masks,			\
-+		.num_resets = ARRAY_SIZE(sf19a2890_##_name##_masks),	\
-+	}
-+
-+/*
-+ * A reset that covers several bits drives the reset lines of all the clock
-+ * domains of one IP, which have to be asserted together.
-+ */
-+static const u32 sf19a2890_single_masks[] = { BIT(0) };
-+
-+RST_DATA(single);
-+
-+/* The two sides of an asynchronous AXI bridge */
-+static const u32 sf19a2890_gmac_masks[] = { [RST_GMAC] = GENMASK(1, 0) };
-+
-+RST_DATA(gmac);
-+
-+/* The AXI slave, AXI master and platform domains */
-+static const u32 sf19a2890_wlan_masks[] = { GENMASK(2, 0) };
-+
-+RST_DATA(wlan);
-+
-+/* The DWC2 controller's clock domains, then the PHY's */
-+static const u32 sf19a2890_usb_masks[] = {
-+	[RST_USB] = GENMASK(2, 0),
-+	[RST_USB_PHY_POR] = BIT(3),
-+	[RST_USB_PHY] = BIT(4),
-+};
-+
-+RST_DATA(usb);
-+
-+/* The PL022's PRESETn and nSSPRST */
-+static const u32 sf19a2890_spi_masks[] = { [RST_SPI] = GENMASK(5, 4) };
-+
-+RST_DATA(spi);
-+
-+/* Each PL011's PRESETn and nUARTRST */
-+static const u32 sf19a2890_uart_masks[] = {
-+	[RST_UART0] = BIT(0) | BIT(4),
-+	[RST_UART1] = BIT(1) | BIT(5),
-+	[RST_UART2] = BIT(2) | BIT(6),
-+};
-+
-+RST_DATA(uart);
-+
-+static const struct of_device_id sf19a2890_periphrst_ids[] = {
-+	{ .compatible = "siflower,sf19a2890-gmac-crm", .data = &sf19a2890_gmac_rst },
-+	{ .compatible = "siflower,sf19a2890-gpio-crm", .data = &sf19a2890_single_rst },
-+	{ .compatible = "siflower,sf19a2890-i2c-crm", .data = &sf19a2890_single_rst },
-+	{ .compatible = "siflower,sf19a2890-pwm-crm", .data = &sf19a2890_single_rst },
-+	{ .compatible = "siflower,sf19a2890-rf-crm", .data = &sf19a2890_wlan_rst },
-+	{ .compatible = "siflower,sf19a2890-spi-crm", .data = &sf19a2890_spi_rst },
-+	{ .compatible = "siflower,sf19a2890-timer-crm", .data = &sf19a2890_single_rst },
-+	{ .compatible = "siflower,sf19a2890-uart-crm", .data = &sf19a2890_uart_rst },
-+	{ .compatible = "siflower,sf19a2890-usb-crm", .data = &sf19a2890_usb_rst },
-+	{ .compatible = "siflower,sf19a2890-wdt-crm", .data = &sf19a2890_single_rst },
-+	{ .compatible = "siflower,sf19a2890-wlan24-crm", .data = &sf19a2890_wlan_rst },
-+	{ .compatible = "siflower,sf19a2890-wlan5-crm", .data = &sf19a2890_wlan_rst },
-+	{ /* sentinel */ }
-+};
-+
-+static int sf19a2890_periphrst_probe(struct auxiliary_device *adev,
-+				     const struct auxiliary_device_id *id)
-+{
-+	const struct sf19a2890_periphrst_data *data;
-+	struct device *dev = &adev->dev;
-+	const struct of_device_id *match;
-+	struct sf19a2890_periphrst *rst;
-+
-+	/* The OF node is the parent's, so device_get_match_data() cannot be used */
-+	match = of_match_node(sf19a2890_periphrst_ids, dev->of_node);
-+	if (!match)
-+		return -ENODEV;
-+	data = match->data;
-+
-+	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
-+	if (!rst)
-+		return -ENOMEM;
-+
-+	rst->base = (void __iomem __force *)dev_get_platdata(dev);
-+	if (!rst->base)
++	if (!rate)
 +		return -EINVAL;
 +
-+	spin_lock_init(&rst->lock);
-+	rst->masks = data->masks;
-+	rst->rcdev.owner = THIS_MODULE;
-+	rst->rcdev.nr_resets = data->num_resets;
-+	rst->rcdev.ops = &sf19a2890_periphrst_ops;
-+	rst->rcdev.of_node = dev->of_node;
-+	rst->rcdev.dev = dev;
++	div = DIV_ROUND_CLOSEST(parent_rate, rate);
++	if (div < 1)
++		div = 1;
++	else if (div > MUXDIV_RATIO_MAX + 1)
++		div = MUXDIV_RATIO_MAX + 1;
++	div -= 1;
 +
-+	return devm_reset_controller_register(dev, &rst->rcdev);
++	sf_writel(cmn_priv, priv->offset + REG_MUXDIV_RATIO, div);
++
++	return 0;
 +}
 +
-+static const struct auxiliary_device_id sf19a2890_periphrst_aux_ids[] = {
-+	{ .name = "clk_sf19a2890_periphcrm.reset" },
++static int sf19a28_muxdiv_enable(struct clk_hw *hw)
++{
++	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
++	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
++
++	sf_writel(cmn_priv, priv->offset + REG_MUXDIV_EN, 1);
++	return 0;
++}
++
++static void sf19a28_muxdiv_disable(struct clk_hw *hw)
++{
++	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
++	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
++
++	sf_writel(cmn_priv, priv->offset + REG_MUXDIV_EN, 0);
++}
++
++static int sf19a28_muxdiv_is_enabled(struct clk_hw *hw)
++{
++	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
++	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
++
++	return !!sf_readl(cmn_priv, priv->offset + REG_MUXDIV_EN);
++}
++
++/* MUXDIV_SRC_SEL values of clk_muxdiv_parents */
++static const u32 sf19a28_muxdiv_table[] = { 0, 1, 2, 4, 6 };
++
++static u8 sf19a28_muxdiv_get_parent(struct clk_hw *hw)
++{
++	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
++	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
++	u32 cfg = sf_readl(cmn_priv, priv->offset + REG_MUXDIV_CFG);
++
++	return clk_mux_val_to_index(hw, sf19a28_muxdiv_table, 0, FIELD_GET(MUXDIV_SRC_SEL, cfg));
++}
++
++static int sf19a28_muxdiv_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct sf_clk_common *cmn_priv = hw_to_sf_clk_common(hw);
++	struct sf19a2890_clk *priv = cmn_to_clk(cmn_priv);
++	u32 cfg = sf_readl(cmn_priv, priv->offset + REG_MUXDIV_CFG);
++
++	/* Keep MUXDIV_USE_NCO */
++	cfg &= ~MUXDIV_SRC_SEL;
++	cfg |= FIELD_PREP(MUXDIV_SRC_SEL, clk_mux_index_to_val(sf19a28_muxdiv_table, 0, index));
++	sf_writel(cmn_priv, priv->offset + REG_MUXDIV_CFG, cfg);
++
++	return 0;
++}
++
++static const struct clk_parent_data clk_muxdiv_parents[] = {
++	{ .hw = &pll_cpu.common.hw },
++	{ .hw = &pll_ddr.common.hw },
++	{ .hw = &pll_cmn.common.hw },
++	{ .fw_name = "osc12m" },
++	{ .fw_name = "osc40m" },
++};
++
++static const struct clk_ops sf19a28_muxdiv_ops = {
++	.recalc_rate = sf19a28_muxdiv_recalc_rate,
++	.determine_rate = sf19a28_muxdiv_determine_rate,
++	.set_rate = sf19a28_muxdiv_set_rate,
++	.enable = sf19a28_muxdiv_enable,
++	.disable = sf19a28_muxdiv_disable,
++	.is_enabled = sf19a28_muxdiv_is_enabled,
++	.get_parent = sf19a28_muxdiv_get_parent,
++	.set_parent = sf19a28_muxdiv_set_parent,
++};
++
++#define SF19A28_MUXDIV(_name, _offset, _flags)				\
++	struct sf19a2890_clk _name = {					\
++		.common = SF_CLK_COMMON(#_name, clk_muxdiv_parents,	\
++					&sf19a28_muxdiv_ops, _flags),	\
++		.offset = REG_MUXDIV_BASE + (_offset),			\
++	}
++
++static SF19A28_MUXDIV(muxdiv_bus1, 0x0, CLK_IS_CRITICAL);
++static SF19A28_MUXDIV(muxdiv_bus2, 0x20, CLK_IS_CRITICAL);
++static SF19A28_MUXDIV(muxdiv_bus3, 0x40, CLK_IS_CRITICAL);
++static SF19A28_MUXDIV(muxdiv_cpu, 0x100, CLK_SET_RATE_NO_REPARENT);
++static SF19A28_MUXDIV(muxdiv_pbus, 0x120, CLK_IS_CRITICAL);
++static SF19A28_MUXDIV(muxdiv_mem_phy, 0x140, CLK_IS_CRITICAL);
++static SF19A28_MUXDIV(muxdiv_uart, 0x180, 0);
++static SF19A28_MUXDIV(muxdiv_eth_ref, 0x200, 0);
++static SF19A28_MUXDIV(muxdiv_eth_byp_ref, 0x220, 0);
++static SF19A28_MUXDIV(muxdiv_eth_tsu, 0x240, 0);
++static SF19A28_MUXDIV(muxdiv_gmac_byp_ref, 0x260, 0);
++static SF19A28_MUXDIV(muxdiv_m6250_0, 0x280, 0);
++static SF19A28_MUXDIV(muxdiv_m6250_1, 0x2a0, 0);
++static SF19A28_MUXDIV(muxdiv_wlan24_plf, 0x2c0, 0);
++static SF19A28_MUXDIV(muxdiv_wlan5_plf, 0x2e0, 0);
++static SF19A28_MUXDIV(muxdiv_usbphy_ref, 0x300, 0);
++static SF19A28_MUXDIV(muxdiv_tclk, 0x320, 0);
++static SF19A28_MUXDIV(muxdiv_npu_pe, 0x340, 0);
++
++static struct clk_hw *const sf19a2890_hws[CLK_SF19A2890_NR_CLKS] = {
++	[CLK_PLL_CPU] = &pll_cpu.common.hw,
++	[CLK_PLL_DDR] = &pll_ddr.common.hw,
++	[CLK_PLL_CMN] = &pll_cmn.common.hw,
++	[CLK_MUXDIV_BUS1] = &muxdiv_bus1.common.hw,
++	[CLK_MUXDIV_BUS2] = &muxdiv_bus2.common.hw,
++	[CLK_MUXDIV_BUS3] = &muxdiv_bus3.common.hw,
++	[CLK_MUXDIV_CPU] = &muxdiv_cpu.common.hw,
++	[CLK_MUXDIV_PBUS] = &muxdiv_pbus.common.hw,
++	[CLK_MUXDIV_MEM_PHY] = &muxdiv_mem_phy.common.hw,
++	[CLK_MUXDIV_UART] = &muxdiv_uart.common.hw,
++	[CLK_MUXDIV_ETH_REF] = &muxdiv_eth_ref.common.hw,
++	[CLK_MUXDIV_ETH_BYP_REF] = &muxdiv_eth_byp_ref.common.hw,
++	[CLK_MUXDIV_ETH_TSU] = &muxdiv_eth_tsu.common.hw,
++	[CLK_MUXDIV_GMAC_BYP_REF] = &muxdiv_gmac_byp_ref.common.hw,
++	[CLK_MUXDIV_M6250_0] = &muxdiv_m6250_0.common.hw,
++	[CLK_MUXDIV_M6250_1] = &muxdiv_m6250_1.common.hw,
++	[CLK_MUXDIV_WLAN24_PLF] = &muxdiv_wlan24_plf.common.hw,
++	[CLK_MUXDIV_WLAN5_PLF] = &muxdiv_wlan5_plf.common.hw,
++	[CLK_MUXDIV_USBPHY_REF] = &muxdiv_usbphy_ref.common.hw,
++	[CLK_MUXDIV_TCLK] = &muxdiv_tclk.common.hw,
++	[CLK_MUXDIV_NPU_PE] = &muxdiv_npu_pe.common.hw,
++};
++
++/*
++ * The MIPS GIC timer runs from the CPU clock and probes from
++ * TIMER_OF_DECLARE() in time_init(), before the platform bus. Register that
++ * clock and the PLLs it may run from early, and the others at probe.
++ */
++static const unsigned int sf19a2890_early_clks[] __initconst = {
++	CLK_PLL_CPU,
++	CLK_PLL_DDR,
++	CLK_PLL_CMN,
++	CLK_MUXDIV_CPU,
++};
++
++static struct clk_hw_onecell_data *sf19a2890_clk_data;
++static void __iomem *sf19a2890_clk_base;
++
++static void __init sf19a2890_clk_early_init(struct device_node *node)
++{
++	struct clk_hw_onecell_data *data;
++	void __iomem *base;
++	unsigned int i;
++	int ret;
++
++	data = kzalloc_flex(*data, hws, CLK_SF19A2890_NR_CLKS);
++	if (!data)
++		return;
++
++	data->num = CLK_SF19A2890_NR_CLKS;
++	/* The clocks registered at probe defer until then */
++	for (i = 0; i < data->num; i++)
++		data->hws[i] = ERR_PTR(-EPROBE_DEFER);
++
++	base = of_iomap(node, 0);
++	if (!base) {
++		pr_err("failed to map the registers\n");
++		goto err_free;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sf19a2890_early_clks); i++) {
++		unsigned int id = sf19a2890_early_clks[i];
++		struct clk_hw *hw = sf19a2890_hws[id];
++
++		hw_to_sf_clk_common(hw)->base = base;
++		ret = of_clk_hw_register(node, hw);
++		if (ret) {
++			pr_err("failed to register clock %u: %d\n", id, ret);
++			goto err_unregister;
++		}
++		data->hws[id] = hw;
++	}
++
++	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, data);
++	if (ret) {
++		pr_err("failed to add the clock provider: %d\n", ret);
++		goto err_unregister;
++	}
++
++	sf19a2890_clk_data = data;
++	sf19a2890_clk_base = base;
++	return;
++
++err_unregister:
++	while (i--)
++		clk_hw_unregister(data->hws[sf19a2890_early_clks[i]]);
++	iounmap(base);
++err_free:
++	kfree(data);
++}
++
++CLK_OF_DECLARE_DRIVER(sf19a2890_clk, "siflower,sf19a2890-clk", sf19a2890_clk_early_init);
++
++static void sf19a2890_clk_unpublish(void *data)
++{
++	struct clk_hw **hw = data;
++
++	*hw = ERR_PTR(-EPROBE_DEFER);
++}
++
++static int sf19a2890_clk_probe(struct platform_device *pdev)
++{
++	struct clk_hw_onecell_data *data = sf19a2890_clk_data;
++	struct device *dev = &pdev->dev;
++	unsigned int i;
++	int ret;
++
++	if (!data)
++		return -ENODEV;
++
++	for (i = 0; i < data->num; i++) {
++		struct clk_hw *hw = sf19a2890_hws[i];
++
++		/* Registered early */
++		if (!IS_ERR(data->hws[i]))
++			continue;
++
++		hw_to_sf_clk_common(hw)->base = sf19a2890_clk_base;
++		ret = devm_clk_hw_register(dev, hw);
++		if (ret)
++			return dev_err_probe(dev, ret, "failed to register clock %u\n", i);
++
++		data->hws[i] = hw;
++		ret = devm_add_action_or_reset(dev, sf19a2890_clk_unpublish, &data->hws[i]);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++static const struct of_device_id sf19a2890_clk_dt_ids[] = {
++	{ .compatible = "siflower,sf19a2890-clk" },
 +	{ /* sentinel */ }
 +};
-+MODULE_DEVICE_TABLE(auxiliary, sf19a2890_periphrst_aux_ids);
 +
-+static struct auxiliary_driver sf19a2890_periphrst_driver = {
-+	.probe = sf19a2890_periphrst_probe,
-+	.id_table = sf19a2890_periphrst_aux_ids,
++static struct platform_driver sf19a2890_clk_driver = {
++	.probe	= sf19a2890_clk_probe,
++	.driver = {
++		.name			= "sf19a2890-clk",
++		.of_match_table		= sf19a2890_clk_dt_ids,
++		.suppress_bind_attrs	= true,
++	},
 +};
-+module_auxiliary_driver(sf19a2890_periphrst_driver);
-+
-+MODULE_AUTHOR("Chuanhong Guo <gch981213@gmail.com>");
-+MODULE_AUTHOR("Joseph Telaak <joseph@telaak.dev>");
-+MODULE_DESCRIPTION("Siflower SF19A2890 peripheral reset driver");
-+MODULE_LICENSE("GPL");
++builtin_platform_driver(sf19a2890_clk_driver);
 
 -- 
 Git-155)
