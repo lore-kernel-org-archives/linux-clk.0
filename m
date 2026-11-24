@@ -1,45 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795532473;
-	b=Mc6iN6NOY/3qLJEPhzQH4qzaZO8STCuhMkZimfXTX0UfoEq687+XHr4vsEoNQhJMh8b5
-	 YFxnG9AGL/x5rdx+YD/h8c49wA7NXARk44SfBy5CiD/1NMVMEfgIOO540e3CRzO2nJz7j
-	 zWbKf+IhOxvdUcBHmk/lyhh2Js4H3aq4cPYZfK9BW17LCz46pAw+egEp41UhJAQJ8uu1H
-	 qAQMYndR2/cJfjoyPTmwQZg2ULNA3L+bXu/Q53r9UOaJsPNuVQbvUGnm1ARetk+bJRJnQ
-	 WytV3CHVbx3gKCuzmU7cjzNv6Oc6A+IqNJhT6fWYWTzEQaBH2vpgfNnc1iV6bn5F2oA==
+	t=1795534975;
+	b=4rynplZC9VSh6bcDEHirFA/Yhpyh/q8hVWRhO4VTxiezrsKq/84wgoDcQrTNp+NFAVbZ
+	 QODux0u3b3Mx2JvpnU+cdROp6Wqw5UZnbxriK5NEd0NALxr78j4X70h/2ZRc3MvenPNjN
+	 AjhaVPyQZXSk7kEyRUBbfOA06Y2SI0BH2Kdd9gGRFSLJMPutSaRf70JXpKXhjRjH4V7/T
+	 zNWIf/Nid7O90clnpnXyVLNfHvf4cRlxRqDUTKImzve8H2S7NvXDNvDP9ijvIL16Nnqwc
+	 mxcDrQa9w0dg11CnLuJ8esTPPSHUxVfcRVbXmEmOgqf1inK12CDqb/HP/YuCPRocZVw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795532473;
-	h=Received:DKIM-Signature:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=ALc2DSxAFB+z144gug25dVUdNIFgyfJHT2bWTlh/b4s=;
-	b=dsCpmafqUHlNDCZ+vVEwRyw/9MUz0Ii26Va1Is4itzBbeqVWwhb7ZDKJNxUkvNskhT9X
-	 +Ecil9VoLVYfJGuSNZxtI8QHRaEoYya3PBuullBwwcYhXpR09+T1wVyUwSrFc4ItRON07
-	 OqyJTgL/wG2R6hO0UxahgTjxz6JJxy9gWID4rmI3j4fsFd5RO1ppUsYhRWXa0Ye93Bq20
-	 UU7kRm2lD2lb5jiYc0bfpkHME5fY5B02VegoxKfL1vLGq1EjPSYMryb+YhlavfMm3gLmI
-	 xooOa7TudUBqTKDaFDOIMKUNRks7LnbBoDlBDuSZcgAWJyUmbgmEchjZHpwGYsGhDBg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795534975;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=mfpjH9KpwxPrA+Oi91DwWUdIC56DE2cYNwDMsjTlZiI=;
+	b=Fe/gycbCw+zuo0H3fbRFLKmmXanR4OIteJwaVvP+qGZEqzeJB52ul16GWKB2pkl3tbKR
+	 X4tFDSHBfwrsN9soDFWzXpQsrtF3lQDCKmVQb3PFzK/W1jt7xvOAHUlXUhuiPhQOR1ift
+	 iK/t9Wwqqa+B4oVXNqPFpEm8veB4l0nQM71SQF2n8n50YkDdwBppJU5R3KxzZ/JhyS1wB
+	 zP6cPFfFJTsuBNWSl4GWa+njmJuczgkWcW0iAPMUAmyr7hyRr8BUT15Tt8IwoxatzG/uI
+	 bVmK9SzrVgYt/TAL922myA5OmsMlOIZdrXrzF8UZHSrn7TM1Nxhcv2+JB9C1X0VTu+A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="WKgC/2zw";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="eoMhw/tW";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11E7606A323;
-	Tue, 24 Nov 2026 15:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0972606A31E;
+	Tue, 24 Nov 2026 15:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WKgC/2zw
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C37C1F000C0;
-	Tue, 24 Nov 2026 15:01:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eoMhw/tW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70BB71F000F4;
+	Tue, 24 Nov 2026 15:42:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795532472;
-	bh=ALc2DSxAFB+z144gug25dVUdNIFgyfJHT2bWTlh/b4s=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=WKgC/2zwvSt19KsvTJXu8aQJUBgDyOIuyGUhlsrxDAuqCGK07+txYoMPSRQU+MYaU
-	 Bx2GLzgIaicrMPRK4n4alQd8CPiB6syQHwPET5d51kXC+QesvZhLuGmbE6a6/0xQ+a
-	 AMSrC3WJCVHaOIt/Yg3VlVpw8LJSXLirZoivpXKEpioId6vqpXYBoan+bCm/Ah1T6h
-	 gV2xoZdBhdgN5Lj38bbsz/nkW4fCmY8EQNR08Jj1M/oPAnvATexR1t4domcGpKyPXT
-	 63m+gofKlMf+NCoUr1HQoBTynqy2kqNg4Fo/RclWtC/nID+f0YXsSorMIDLGC/hrQX
-	 1JBZROg+MVclQ==
+	s=k20260515; t=1795534975;
+	bh=mfpjH9KpwxPrA+Oi91DwWUdIC56DE2cYNwDMsjTlZiI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=eoMhw/tWIbiYIixQOPA5r2xHZHp/IQ6bwuX/WZr0Nss6gJjf17M+5Htj30xW1qizh
+	 kpgPY/7nKMVpanaEXhwfRGyL78b1lF5uY8Y6lZHt3gHYgcqJvx/rNOk3+IRzMsv/pu
+	 VA+9j9ICtrqgtJztVNG3pcdjxoqXPoc3ANt0m08a6OE1KoV632Q+lhumNVuahHckp9
+	 ATwne40LY2eg/tYTL4Ef46i7intOiTSUEKT7iX1ejf9P0A8Ou8zjJIxcFtSQaNZa/P
+	 rFcjwZCZO8ng7c7mi22S1hnFMKl7x916sX7C5+S3afR05qTZ2hKgHXYTxoU/hU1Ago
+	 dlT8/Eal4W5IQ==
+Message-ID: <9cfa6ce8-55cb-4b3d-9035-efc5de44adaf@kernel.org>
+Date: Tue, 24 Nov 2026 16:42:51 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -49,63 +51,81 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v4 8/8] dt-bindings: stm32: use reference manual names
- for ETR and STM bus clocks
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: rockchip,rk3506-cru: Add SAI
+ MCLK output gate IDs
+To: Xiangyu Zhu <1194781887@qq.com>, Heiko Stuebner <heiko@sntech.de>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1795363509.git.1194781887@qq.com>
+ <tencent_93FC4A7191B1BAC63C4DE9C2674660AA7905@qq.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20261106-ups_mp25_clk_update-v4-8-9e32b817c38d@foss.st.com>
-References: <20261106-ups_mp25_clk_update-v4-0-9e32b817c38d@foss.st.com>
- <20261106-ups_mp25_clk_update-v4-8-9e32b817c38d@foss.st.com>
-Date: Tue, 24 Nov 2026 16:01:04 +0100
-Message-Id: <179553246414.44164.14668877546162285849.b4-review@b4>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=879; i=krzk@kernel.org;
- h=from:subject:message-id; bh=Yd2whfFIQx6CU36G85U2V6q320n+Sz6amBmurjhQT/k=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBrBaaxP87ZTEqSoh3W7nf0iHw+pu6YaAtHs9Luo
- lq9h05GcICJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCawWmsQAKCRDBN2bmhouD
- 17ngD/9fzXC1ZLELcRUz7qArItuZfK+8D+sGamj9pWSLmVADrrqB+2I54M6TyFncO9gRmBSwEIQ
- uHEqqEkbcry7oJA/jfNBhc/7hERh/8eoXmmfkcn0Yg3CUGZ3qTM3HlRTGLt7KBTkLLCNpqNfSfU
- 5VJzulQZgHHSES5UsIAN+DDEq6GjR/lCdmt2bPBeG7XuUQLc7rXfuH19l76uWzeYfJHY6c887Ox
- AyEJQW1TiDiLjnrZcGVUzzOqHAAN93nDobM8Mn0btIe3gOwDq68tLXUdgliiZtYZoE7B2jje2tA
- nqZ3jDbKG2ZyXiDQeZ02TDp4bB9pTNevNB0pMazrDRN8P79fDMDBN1hDKi0xC8cjDIoQamr0JG3
- txFpPl70oRpC1Hlf+Kr7fBOQGcwExYboTB1LaA8qV6kq3eEPgxkxK0JQLhR8CmPkJJchAZHUKBM
- uBF8zeETSLwyfvLF8uCoDWvpKBUcG27/TqJE3Jq+UjjOob7grPXHGM6uFqrdWMMUvbOb1lmWXw0
- F0Spae5/dbd/2ZEEmwbvL+/NIq4njlX9SK7HkvvrgDREwZZybjJWEvXNyK7XXyocN2HQcwZZgmq
- CgURutamNq3s8MP+xepvmGO9r96L9oiw9sNc7QaRtGulZTOwI6u285s9V7mCznF6rnikX+g4YfJ
- PzX6rrbLDmfNiOw==
-X-Developer-Key: i=krzk@kernel.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <tencent_93FC4A7191B1BAC63C4DE9C2674660AA7905@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> The bus clocks of the STM and of the ETR are identified by CK_BUS_STM500,
-> CK_SCMI_STM500 and CK_SCMI_ETR. Now that their kernel clocks are
-> described as CK_KER_STM and CK_KER_ETR, and as the RCC bus clock of the
-> ETR is already CK_BUS_ETR, these names are confusing. They also differ
-> from the reference manual and from the STM32MP21 binding, which uses
-> CK_BUS_STM, CK_SCMI_BUS_ETR and CK_SCMI_BUS_STM for the same clocks.
+On 22/11/2026 17:24, Xiangyu Zhu wrote:
+> Add clock IDs for the four SAI MCLK output-to-IO gates of the RK3506.
+> SAI0 and SAI1 are controlled by bits in the PMU GRF, SAI2 and SAI3 by
+> bits in the system GRF.
 > 
-> Use CK_BUS_STM, CK_SCMI_BUS_ETR and CK_SCMI_BUS_STM, with unchanged
-> values, and keep the old names as deprecated aliases so that the
-> existing users are not affected.
-> 
-> No functional change.
+> Signed-off-by: Xiangyu Zhu <1194781887@qq.com>
+> ---
+>  include/dt-bindings/clock/rockchip,rk3506-cru.h | 4 ++++
 
-That's ABI break, so clearly not true. Users of this ABI - this header -
-did compile before, now they don't.
+I will mark everything you as changes requested. This is all half
+broken, b4 review cannot even fetch for review.
 
-ABI impact must be explicit in commit msg.
+If you keep sending such poor submissions with that speed, I will be
+moving everything from you to /dev/null.
 
 Best regards,
 Krzysztof
-
--- 
-Krzysztof Kozlowski <krzk@kernel.org>
