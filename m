@@ -1,47 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795535018;
-	b=s3BP4K42E514tjJGd59h9ZtnpTgAWEMqTmX5NgmJUSY94xZpRig2y3YMNWo4EXiwAj2D
-	 KbPjXDkavsOTjOdd9Mz6Au8wxroVfeoxf92ZAA0v1uwvN29Yw8ywt2D5vY4mmbNayux7F
-	 0Gb7He7VdKdk7kvaXoBGAgA3MdaLaL0SyAS1G9fvBoLbIYiG3av3hLxmKDDThDViwNvDc
-	 gQBZamxLMqdLccOgr33sK3fUDwNCcuKymZPUYUXWKREGbwXxMvIjwFh6NCR9GemnLgqIt
-	 cklSGQ419eeS3zIGLu7ihJSdSXnsXFGVxEZOyvgGHS/fgNinsbzyGPKBrGHyDI5hLvQ==
+	t=1795535969;
+	b=XZyt+wQ8RDoJ/OX8rYgD1n4/esO0s+wLwOW+tdQjPq30FDgQ5OcyjpyETCpzaArR2Rh6
+	 7W2pMYTcY35nx52oqP7BR/6JkwaGGD1K2tQmLXTCiHPug/cGXvgsAFRl7xOJ/tQ6t11vM
+	 9qiQnJoT4IuwT+C+6CHKK1/AeZQ26BYvGky6x3mr6DxAQxnMTBkwDBdYNwdUYA4RPx7OT
+	 9XhIeR8yOvyrPms8nfdzEIqq8GQWHGmFJIsNBPH1e8J8Nu4Y0tDxmGFbsZM2Ei3MKcYmY
+	 y2/63radO1SGyWxLXyWRjAymcOgNtNAv03mMWlPD92EymIEFnmypwAVYRC9Cbm+1fXQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795535018;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=OphDtjftykvKdSXxRrxRevI7lA3nqKW0OusdY6IhM/M=;
-	b=yPTJc/PPG9d+kzoac1cXiOpNwBZp3TiH8hbXGhzfZvphjbol/r5qm7omzY2YR1Bd9Oq/
-	 ih2rTMgEUmXbheIjHa3nPfQ7FlfPyQJTSxBUFZ1iZVV1MvkdJpUcruvsnTyCwbtGXQ9bS
-	 SMjqQ0XM4Oirt0R+H18ZSbvGCDpokU5aG70nGZIwuac6p5cZE30LFCkwB9fo1J639UWFk
-	 FjCEWHMSKo+37LcqQLXMlz+XWRfe+HcPhBIMvMkSbHJljnX9gFnaE8lDXIH8B9t2boR9X
-	 RtJXf540NQ4xf1rDhXK1KzPsqKrQfb7eBbnE/4nj0v+JkfpXjsKKofci+YVnLeH8eUA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795535969;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=bHObZ+HSjm4VzcaC/Ikrsru4sCAmDKY5/bqklzvFM1w=;
+	b=xEQSGdhrdGJAeARAALwr2rCBk0LysgmJxyZqyaWCQJWziCyEIbA6Vrn5east4yo1rUJ0
+	 ipdm0xDcgedFlOIAKZ5GWUPdid2WcStMG/sdZMM2Ay47faJS1KGQoXIcsFIrBJAuEXKFT
+	 kQxoBP1HZfogt7R/F7vx8HWQ+7xeEA0EU0pbh52oCHwwiscAVd3v9R6vUIE9YQM+g/vUK
+	 Kf/u1XcQN1xrfL2YxQSgEBFYC6e90fJeEJ/SVMUXjzpkJfefG0Ip6m7ly5ef/0ht2kJAV
+	 SyxWXq2i4yANr2TsmNPdotMjBBkZCdTh7tmYE72m5/zKzoCr7bRrY2w86fy7FJWw7jQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FDSJ3luv;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ljn+iImp;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2FC606A31E;
-	Tue, 24 Nov 2026 15:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F3A606A684;
+	Tue, 24 Nov 2026 15:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FDSJ3luv
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C39291F000D0;
-	Tue, 24 Nov 2026 15:43:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ljn+iImp
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FE651F000C6;
+	Tue, 24 Nov 2026 15:59:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795535018;
-	bh=OphDtjftykvKdSXxRrxRevI7lA3nqKW0OusdY6IhM/M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=FDSJ3luvCCCCFeOHqHUybs816Kvog2lbKmIiDAI1UCzZ/xOs8qFjGgwxxDLp8T9Fk
-	 pBfEKHK7kuhuFaSTLeHQTBYzhZCNE+AvJYjtkZRyTk5VUTGRJFJxJUT6JtbeSATuCA
-	 3DhAkc93kMbzHyAOcMRp7qeNQC1LXp48cJ7SuiuPRSkv46l/5GN+vRewwpsZ89DoUg
-	 DmGuf/QsVrNrnnM1iz7+6uKSq/IIlTGy+5TAxTSJZsgJke2GR9z6wyc5VmP1/PCF/h
-	 kvp2eeTDso+vogwTi8YwpDBMhpbbZPs38vsKggY25z/37YwTOLDIHdq6J9SCjUr3CO
-	 Sc7iwi5Gn2fow==
-Message-ID: <8fe2c124-204e-42bb-906b-fec676895c6b@kernel.org>
-Date: Tue, 24 Nov 2026 16:43:33 +0100
+	s=k20260515; t=1795535968;
+	bh=bHObZ+HSjm4VzcaC/Ikrsru4sCAmDKY5/bqklzvFM1w=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=Ljn+iImpFHBfNA9rDkG7/B8+b7dbzXUUPZMoX3lHKtpgG+uMCq1fIRfwuTxpoCUf5
+	 2aX70nFxD1/zIfH7wW8Xf43mA5/dc82WjSHgDG2XPXXl2OWOReY9uk8wAntjFAJyWc
+	 NTgyMuPoEKAIrz7gSeLZFJg1puMOV044F1rW1hGoNCjL6oracyzg6wUS/hgXvHmPip
+	 uBC9NSFgRsfg841ZZ4BWzr7DKKi0ea1cMgxuhx2jJWjOEwFtLC00/8coSLSz4sKrU6
+	 TAAkAuaktf49YhBo6TJaSHnaJkcBQ59pGyZt8B97+8KJpUtMuqoLtL2Sk9Zk0/7m9i
+	 WRzPrgUWOMJQA==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,84 +49,56 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] dt-bindings: clock: rockchip,rk3506-cru: Add SAI
- MCLK output gate IDs
-To: Xiangyu Zhu <1194781887@qq.com>, Heiko Stuebner <heiko@sntech.de>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1795394137.git.1194781887@qq.com>
- <tencent_6A1DF318251B1F7D01E6E6B8AB9A45E3EA07@qq.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <tencent_6A1DF318251B1F7D01E6E6B8AB9A45E3EA07@qq.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/4] dt-bindings: clock: Add Qualcomm Netrani GCC
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: SignKirigami <prcups@krgm.moe>
+Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Taniya Das <taniya.das@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20261124-netrani-clock-v1-v1-1-ce10cedbfa4b@krgm.moe>
+References: <20261124-netrani-clock-v1-v1-0-ce10cedbfa4b@krgm.moe>
+ <20261124-netrani-clock-v1-v1-1-ce10cedbfa4b@krgm.moe>
+Date: Tue, 24 Nov 2026 16:59:23 +0100
+Message-Id: <179553596330.100526.7383493325025221002.b4-review@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=521; i=krzk@kernel.org;
+ h=from:subject:message-id; bh=AFk4DzOvIC+jZ+r4YZ5TuRMTTDyUvdKMvdacKFwL1xM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBrBbRcXloueW0zJ7sJfYJuddWcBkx+ycSXZdFTh
+ jDAZagtw9+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCawW0XAAKCRDBN2bmhouD
+ 124AD/4vGV9kE061BWHGe/uAIxOdwmb1ueAvIgj09LKUpQW6c2h5Xmu3rDbrv5Umx/8xKgbgyz3
+ EUJPwrXI0xnAoMs6zeP4wAAw2rC1a6o7UObNEBJQw9Zn5JAPoN4YcNlJL+0At4FAY0lO9K9qJS/
+ ZNIzx2CZj/PktOmaAyNcM2fpTG8V9k1Xd1+q8YolVMtivUUr7MitOygCLYsnRaFUIgk+VBekS/g
+ hWfIVwp1FBxlf04Qp0sBE7fCh5XAicyEJw272daAImwKHq3KRWftC2EVtFgRNc62RRWhq7EZqD6
+ R9U+b71ZCbDk3RihJO44+S1as2oJRq5ZySkxidqmedBqsyn1/KpGS/H/ocrDyFOorasFz5aVrcp
+ AfA7agcFrm/GL58Eq938d01rtue8quOdzxymJh7/MNCyAaMA43i8M+yKoUzIhHmTBvZZzIDtl4Z
+ duTLcfEnNCQ/H7qs4W5OC72uRjKNZtgthUSU6zi/rSXjNS7QK4jj/SaWw1UnF+//gvaqXJsXsa9
+ CZcHehDHksruhPU+7k0XrA5WRM8W3VMBVS3RnjnEqg7w3x01ySdi8iwG7d3X00lk1yJzOqgGI7P
+ 2i0NU7WTXoeWIM1G4JdRagZkfMW1TdsMW7Rwz/udnAtUYuK/9yw56coG53t6cXqvahIaFKyYSgo
+ peNcl/S+gZ9pjxA==
+X-Developer-Key: i=krzk@kernel.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On 23/11/2026 01:38, Xiangyu Zhu wrote:
-> Add clock IDs for the four SAI MCLK output-to-IO gates of the RK3506.
-> SAI0 and SAI1 are controlled by bits in the PMU GRF, SAI2 and SAI3 by
-> bits in the system GRF.
+> Add the Netrani global clock, reset and power-domain controller.
+> Describe its seven input clocks and provide clock and reset identifiers.
 > 
-> Signed-off-by: Xiangyu Zhu <1194781887@qq.com>
+> Signed-off-by: SignKirigami <prcups@krgm.moe>
 > ---
->  include/dt-bindings/clock/rockchip,rk3506-cru.h | 4 ++++
->  1 file changed, 4 insertions(+)
+>  .../bindings/clock/qcom,netrani-gcc.yaml           |  77 +++++++++
+>  include/dt-bindings/clock/qcom,netrani-gcc.h       | 184 +++++++++++++++++++++
+>  2 files changed, 261 insertions(+)
+>
 
-OK, three patches on 23... close to /dev/null.
-
-
-No changelog, dozen of random patches in mailbox and patchwork.
-
-I will mark everything you as changes requested. This is all half
-broken, b4 review cannot even fetch for review.
+Valid feedback, dropping from DT patchwork.
 
 Best regards,
 Krzysztof
+
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
