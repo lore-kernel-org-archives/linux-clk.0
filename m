@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795534975;
-	b=4rynplZC9VSh6bcDEHirFA/Yhpyh/q8hVWRhO4VTxiezrsKq/84wgoDcQrTNp+NFAVbZ
-	 QODux0u3b3Mx2JvpnU+cdROp6Wqw5UZnbxriK5NEd0NALxr78j4X70h/2ZRc3MvenPNjN
-	 AjhaVPyQZXSk7kEyRUBbfOA06Y2SI0BH2Kdd9gGRFSLJMPutSaRf70JXpKXhjRjH4V7/T
-	 zNWIf/Nid7O90clnpnXyVLNfHvf4cRlxRqDUTKImzve8H2S7NvXDNvDP9ijvIL16Nnqwc
-	 mxcDrQa9w0dg11CnLuJ8esTPPSHUxVfcRVbXmEmOgqf1inK12CDqb/HP/YuCPRocZVw==
+	t=1795534996;
+	b=EV7jRQfNoTBw5z0PV6hTWtQo0NV3+xvjcc7KZ4REyMoXorG6LX3Yu3v+CyefnUMEOs7c
+	 gMhv/kasMHy6UL6VE1HWVhQpC2fgPSiQqc7Kc3qz23Y8Zzs2/z5PbYwnUq4xYI+wURsgN
+	 AHhGWmtrys7QvsoLOxfWLErmyH7+f8Slk3vFbVQFSu/yXrgrJQH8JkTXTm8XImUwfsF0n
+	 A7WWQ8qsHyvKzAGRXkBbIkABfnsKa6OMgASzj/CHgd7z/bGnXqzCk8HTOpAWlIDTjPjLg
+	 vhlBF/lcq6yswR2pTgE5NMZuoAABd5iFezKlyQ+VSFbTIDJi9rdyoB44bjSXe+4vK1w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795534975;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795534996;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=mfpjH9KpwxPrA+Oi91DwWUdIC56DE2cYNwDMsjTlZiI=;
-	b=Fe/gycbCw+zuo0H3fbRFLKmmXanR4OIteJwaVvP+qGZEqzeJB52ul16GWKB2pkl3tbKR
-	 X4tFDSHBfwrsN9soDFWzXpQsrtF3lQDCKmVQb3PFzK/W1jt7xvOAHUlXUhuiPhQOR1ift
-	 iK/t9Wwqqa+B4oVXNqPFpEm8veB4l0nQM71SQF2n8n50YkDdwBppJU5R3KxzZ/JhyS1wB
-	 zP6cPFfFJTsuBNWSl4GWa+njmJuczgkWcW0iAPMUAmyr7hyRr8BUT15Tt8IwoxatzG/uI
-	 bVmK9SzrVgYt/TAL922myA5OmsMlOIZdrXrzF8UZHSrn7TM1Nxhcv2+JB9C1X0VTu+A==
+	bh=sBoCKenou90aTHNQjTt3MTvz1PnSoW8Wl48ePCo9828=;
+	b=5XNKgR7nwN79nrRosI2qi5A/AFyFq/rHJHcZqTixLNyCCAVDMJGLh4KgKDx9+D+YhooZ
+	 /69aY5oTamCB4WEYu019ybtZtdILF4nhVqeQ3QphanX6LE9Hl8LRFa3SPjak3fWMZ2AWR
+	 iID5T/K/YxN9jft7vJNM3Pv+r1Ba7b6YCmZjtrluPEFYf9/hltrgxvpdX1OfP6MA95Ap0
+	 JzyHT2CSpJ5FVcK+Qbo9epf3xI55DMcxHEAJQtiiypVhKzGP7QqoNC7wA8vm/UIkyeHiZ
+	 DgW8s6n/16UwYrhEv/9dizKGgxLnKgrvT1q9mLPrDLF8Y3gDacM12ipwAdIXJAZZXcg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="eoMhw/tW";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H2mjmB4h;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0972606A31E;
-	Tue, 24 Nov 2026 15:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7E1606A31E;
+	Tue, 24 Nov 2026 15:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eoMhw/tW
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70BB71F000F4;
-	Tue, 24 Nov 2026 15:42:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H2mjmB4h
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9689C1F000C6;
+	Tue, 24 Nov 2026 15:43:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795534975;
-	bh=mfpjH9KpwxPrA+Oi91DwWUdIC56DE2cYNwDMsjTlZiI=;
+	s=k20260515; t=1795534995;
+	bh=sBoCKenou90aTHNQjTt3MTvz1PnSoW8Wl48ePCo9828=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=eoMhw/tWIbiYIixQOPA5r2xHZHp/IQ6bwuX/WZr0Nss6gJjf17M+5Htj30xW1qizh
-	 kpgPY/7nKMVpanaEXhwfRGyL78b1lF5uY8Y6lZHt3gHYgcqJvx/rNOk3+IRzMsv/pu
-	 VA+9j9ICtrqgtJztVNG3pcdjxoqXPoc3ANt0m08a6OE1KoV632Q+lhumNVuahHckp9
-	 ATwne40LY2eg/tYTL4Ef46i7intOiTSUEKT7iX1ejf9P0A8Ou8zjJIxcFtSQaNZa/P
-	 rFcjwZCZO8ng7c7mi22S1hnFMKl7x916sX7C5+S3afR05qTZ2hKgHXYTxoU/hU1Ago
-	 dlT8/Eal4W5IQ==
-Message-ID: <9cfa6ce8-55cb-4b3d-9035-efc5de44adaf@kernel.org>
-Date: Tue, 24 Nov 2026 16:42:51 +0100
+	b=H2mjmB4hdFlDh8K5y6pFzioB1enKqlhnh7/TGLWHD6HCVQ8rwRseApU4F253/aZ5s
+	 zplNh+r3pfET0FtNcccEsyu4XHtTwW1e1oYL+xSJhYKOyKzHjGC2Ccqtskf0Yj08PW
+	 AUMovUSM7mAXpI+g0ate96uHKK7JFxQhTeIXKZPw5ue/fHD+pMqYKFP1xIdNC0oGbo
+	 q+vCYoK6pmmaEh+OWK6Nz15yShuvA3FD+h7QF9WKeCjZFWR+zZnK/DVNn3BThcC+FJ
+	 C1UWCjkrZAMUdk0tnVhmW2oK0EEDuGgT/sAQhETU2Sm5RAYrKVIS8ZDEb29OsoOgSH
+	 bDKq8gSdXz0Xg==
+Message-ID: <c41e10d1-bd39-460c-92ee-7b59b4064d18@kernel.org>
+Date: Tue, 24 Nov 2026 16:43:10 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -52,7 +52,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: rockchip,rk3506-cru: Add SAI
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: rockchip,rk3506-cru: Add SAI
  MCLK output gate IDs
 To: Xiangyu Zhu <1194781887@qq.com>, Heiko Stuebner <heiko@sntech.de>,
  Stephen Boyd <sboyd@kernel.org>
@@ -61,8 +61,8 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
  <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
  linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1795363509.git.1194781887@qq.com>
- <tencent_93FC4A7191B1BAC63C4DE9C2674660AA7905@qq.com>
+References: <cover.1795366993.git.1194781887@qq.com>
+ <tencent_362F86565B982729D9FAF4092C36DF5C0D0A@qq.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,11 +108,11 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <tencent_93FC4A7191B1BAC63C4DE9C2674660AA7905@qq.com>
+In-Reply-To: <tencent_362F86565B982729D9FAF4092C36DF5C0D0A@qq.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/11/2026 17:24, Xiangyu Zhu wrote:
+On 23/11/2026 01:10, Xiangyu Zhu wrote:
 > Add clock IDs for the four SAI MCLK output-to-IO gates of the RK3506.
 > SAI0 and SAI1 are controlled by bits in the PMU GRF, SAI2 and SAI3 by
 > bits in the system GRF.
@@ -120,12 +120,14 @@ On 22/11/2026 17:24, Xiangyu Zhu wrote:
 > Signed-off-by: Xiangyu Zhu <1194781887@qq.com>
 > ---
 >  include/dt-bindings/clock/rockchip,rk3506-cru.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+
+No changelog, dozen of random patches in mailbox and patchwork.
 
 I will mark everything you as changes requested. This is all half
 broken, b4 review cannot even fetch for review.
 
-If you keep sending such poor submissions with that speed, I will be
-moving everything from you to /dev/null.
 
 Best regards,
 Krzysztof
