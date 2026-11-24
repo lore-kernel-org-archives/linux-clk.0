@@ -1,78 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795545684;
-	b=B7/pxeULvGmrBQ82GGhr/sL5n2OUhDDrGcvNA3/wD/xpFV0dltv3tL+zQ/6TbPscI9jA
-	 aF2Emo71PxNVAnj37XwHeUWduOpc3SH0bwh99T+BikKf9Sl6TRmwmU/ouBXaXAQQwx9iU
-	 hG19sub/jqhF0CcBptG7tXT/5oA1di3p8Xl0Z4OBE4HIOk5PGVSZ0VEBX+fat2SoKSLnA
-	 D1DrDwUkfB/H1hJ/GWmE00Oi7F4J+9PtcRip/AtRdDBpylrd++lRPPXSdKlE1NJMixvdR
-	 j9TItCBBkycNKpA0dMWoYxNkPK6GQbmFsHuECcmsyywEmwVVIIpwyb0+uPapzWlhGkg==
+	t=1795545685;
+	b=UIdxSoAVWbx0p0C19DwWtmAF/+agPCxVV5/yXSusKcWFrMSsrLYleFyONIFFfOuGjvUx
+	 afXxB60duDMYEy2CrOF62QDzJlBm93A1afHtwezLcBZZsz5Xm3ANjfWoJGoaOjsY+G6NR
+	 nwnx2bjEpFPilqFxT0v/l/1LhDCesjZpxIhAYIDPJGLNWjPNV8fFF0lLrpcap8JAi5u36
+	 0xigZ4OrvwcC73AnjOh93+Gq7qWT/jZ60/9iqpk55r+w67JOwcVLw90HL4uOVDjcJ2v4P
+	 y5ud37rXEdG3bQl7dm9HuOtc0xoNfTasU/oOA8p7B/pVX+0M+MX6ygU+JwTLnXQW04A==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795545684;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795545685;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=jkZYm03lRvQFmPBUbBcIltQEBq59A4h16tLKYtelBQ4=;
-	b=tnN1H1rZYYd+LboHm5KqKCR9oV319D56hCfaVknGtro4gI5L0FUkDIzxQnFYXJ0r69Is
-	 3zK2+/kv9SwuANmIJ7NS5PRPG/BDeSMgvGDs5M69spIL8x/l2CsfXcKzTUQnL8+fOkxFL
-	 uNGiLYXO4V4Ek9ne7qZACswKqiqExNmvCWATZYBScRdEYa1xrj3spJqxDZDYZM//bHoj/
-	 9YX+gxFA2RUlAPjK5HA3zAK0UIv6bHa9EuECThB05hq8gG9oGeR9K29fu312Xmleof0Mo
-	 QI8EJOrzDWm4gVHeWybrc9gqxhUM7znCXlg8ylna9WL0SgKLx3WUKws/qI8rRqOyqRA==
+	bh=FjSusbs1vkJ/EwbwIgWS/l9m52iylQNbn/QTUuTjTG0=;
+	b=4GYsXt0INbJr5OEFj/p1uLiOR6rbjlzj9HoFhGnAy9XKfjCU+Q+PXBeo/p8LtgrQI5E+
+	 uZ+LZDpwGBRlqvJlA/UCJxYMAPKbkTBsnGFIosCHhHVlNMtT1Jd2lPdgF2fcHh4/aTmyr
+	 cABx41SxFDtuZ4QcuRPyCVkVRkfMmUUYaR1TB1ySFOO0jZ7IHEg8/KVWcSjZksI28sBny
+	 XN79PArxb/5e5WD/G6iugiD+LXjcXysOgfWZHUncZJsZrIIINATcAone+/zTVZAtt6ZYf
+	 CLqdAlPheAAmUqn9G0DlfAEGwk5YaH1uCVxlx2bJDfHGWraqxi0UR5acegWqnIbDz3g==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R6I5SZk0;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mRNFqouJ;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121AA606A31E
-	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 18:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4308D606A327
+	for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2026 18:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R6I5SZk0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mRNFqouJ
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795545683;
-	b=h2s4KXpIFUhcsh3+WygoE0J9z6m8RATPGadM6oRHGVyH8/+K/b3VloovSvf0dgczCIGj
-	 s+hr/1eK/lssmSvn4zfbnk/rs2bnQkBlVs1J0Uf5Io4aIPKEKr4/d7kumHOVL7ER0x3Mb
-	 Vk7OqjdaujnpVoU7llcgw7srNp8E4sA8GJOPsuNCtyD03aMTZ4bMw1AL95q+bvhmAUNtO
-	 mibs6Zqly0DHYRZYl8p2QRlk0RcZS2EH92I8i/rvE0QkImfxD5cSRsEhYLzaisHGZW5RA
-	 kC11UkyxlUoxgt7/fZsoCVedO2w6qaN14jy38rvzsCBZxSDAygC1DJNhn6JhvcYT4nQ==
+	t=1795545685;
+	b=xPh/wmuMwU5bUemhsM5UpuYr1XGh9U42ggAwe0irih1sjcLbxpBJCYqmDE1384cCfN10
+	 o9ue81ySsUS8mJ6UwLvExCJ4nHvGsmVRsuYZ+/0vdHeg1ImZvT2NZpGjjU+8woDctnv93
+	 wKnW7GRP2tUIE6djM6lbdeM91DT71zXDJLRwwV387/g2lF/zJX5crsmiVUNN4M55fFGqD
+	 DtPFkGN9sGS7hFLUM6bY+OvniAGr1Hx0NS3nCDWQooswF/bFmrBhnI2HrNlPg3nNWBbqR
+	 RB5okZcTo1uNY4uzm6by0d/gC8psn0mRObicRpjQKYi9pu5SV+cZmTQAsSo0nxZ1lbw==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795545683;
+	c=relaxed/relaxed; t=1795545685;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=jkZYm03lRvQFmPBUbBcIltQEBq59A4h16tLKYtelBQ4=;
-	b=do98XDC/U6L/lCMeA1ex+KtkewimDCnS0YwKu/Yv4PSS2YY019UA5sftITDIyyfsdcds
-	 shFDOJJMsR0um4OHxKLJP7eOZFGqZogNINFyKkFO4BAs+ij/Ne4KlSTY4tBIpLuV+e04r
-	 /5fdzM7m+2wvDOhwQtJ2G4/BgtLV4Hq+aEtj54Od6h/Sphzh7ovRTV9+f+P3KrLBEvxi7
-	 3BD6oVEnhyJ1Xs/FoOQqsgecZ08a+hn2ngO4uSw7XdzAmM8iq56RXJcfAspYFvGRb4jpF
-	 03a5CcoDpY6ddNeTHqlSrIeJBQgOKSAqTq+y12QlvHs0NmOFVdccQzZy7W6oncFsDRA==
+	bh=FjSusbs1vkJ/EwbwIgWS/l9m52iylQNbn/QTUuTjTG0=;
+	b=fPxE6TmjD5e4H9FZv9jS5FqMqggTNupV2ds12QQuc1Jn37eMGseDJN9Z+KX/A2w+GjKg
+	 obZioUm3AA25brchpYnkZKs7Z6B6GmTwp8Km48Oy35Y/ATFdCpaOG90mwtjDL+KiZyR++
+	 B0h8BI2+ntC5PWoPzFwUFy0bqsExL/GEmR7EK7dAC/6Cb/8BOq0wJY+56C9W4LhIbsMfW
+	 nf7rQzK8pf+RvbqqhNEKqIcZjWQVkI+qod5vR6bwo4cdUNNn5Isz6Bmc2qWsL+ufLNBiW
+	 rhHWeL0GFsEfkCPVFlg6cEJhwh9GZXHkm9DM9AbgSs71b6t1X7mQ6N7coexXpfWeZ8A==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 71E121F000C6;
+	by smtp.kernel.org (Postfix) with ESMTPS id 8CF891F000CA;
 	Tue, 24 Nov 2026 18:41:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795545683;
-	bh=jkZYm03lRvQFmPBUbBcIltQEBq59A4h16tLKYtelBQ4=;
+	s=k20260515; t=1795545685;
+	bh=FjSusbs1vkJ/EwbwIgWS/l9m52iylQNbn/QTUuTjTG0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=R6I5SZk0mo3DJd90kRmLCuYIWvWN18dhxzkaC33xzpRhcwOSHGDImYAZjQJl/5+yt
-	 rarrdaHJD6uusH1vPVe02SpHGbzSSr7iKvn1IuV1bin0tMryx0Pq+kPFnNXSYdQkBI
-	 FJaDTzQ/H+gk43hGuqDQgBZTW1D2yZZBvn1FPy9d1yWAwzi9MhyJS14b9CmVHw1irg
-	 g3WoRckzZ27h+Fj52uBUALH01hbGzapNAYhFfM+hHyq6Q7RwnNC6O5EW+jEU85JupN
-	 daOpVzZgzaPio3wfAAf9HDnozNpplrq9vFc9MvFO0an40g/DZkO+X8OIHDCA6M0oKu
-	 roYm/+9K3vraQ==
+	b=mRNFqouJwqjZk0p/ExcnG3fMUWbmXco986jMv8Xd8mZ6HAWM5EEf8qZoPEkdCfnkU
+	 3R/O2B7+U21c831+kR1510/So/MXLuHpbjBt4CscuKKiXWc1tQI3i5YcgzouEmuyBw
+	 kZI8VKA9//EYvBqcqZ7ileGwL/8mZ2Xe/zYP/EfBnf/NpCJQExWOYIWFbbFDHhx0O2
+	 vEcDnyUxB8KS90J8dGwgM/RS6vR2tQp6V05V9G0p92SB6n+uJ0bHZCJrRRPEyPVdjh
+	 XPfnFKF+g6lcV6MtbmW1iUS2heNQG5f0TeUITFBkVggJ0XyIgb0irSYfZYZ8Dig07L
+	 6TOOXe+dEy6hw==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id F20C24CB42;
-	Tue, 24 Nov 2026 18:41:13 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id 1E81C4CB49;
+	Tue, 24 Nov 2026 18:41:14 +0000 (UTC)
 From: Han Gao via B4 Relay <devnull+gaohan.iscas.ac.cn@kernel.org>
-Date: Wed, 25 Nov 2026 02:41:02 +0800
-Subject: [PATCH 1/2] clk: eswin: Fix the EIC7700 PLL post-divider
+Date: Wed, 25 Nov 2026 02:41:03 +0800
+Subject: [PATCH 2/2] clk: eswin: Use REFDIV and the post-dividers in the
+ EIC7700 PLL rate
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -83,7 +84,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261125-eic7700-cpu-pll-postdiv-v1-1-b1ccd6339a20@iscas.ac.cn>
+Message-Id: <20261125-eic7700-cpu-pll-postdiv-v1-2-b1ccd6339a20@iscas.ac.cn>
 References: <20261125-eic7700-cpu-pll-postdiv-v1-0-b1ccd6339a20@iscas.ac.cn>
 In-Reply-To: <20261125-eic7700-cpu-pll-postdiv-v1-0-b1ccd6339a20@iscas.ac.cn>
 To: Yifeng Huang <huangyifeng@eswincomputing.com>, 
@@ -91,14 +92,13 @@ To: Yifeng Huang <huangyifeng@eswincomputing.com>,
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>
 Cc: Brian Masney <bmasney@redhat.com>, Han Gao <rabenda.cn@gmail.com>, 
- linux-clk@vger.kernel.org, Han Gao <gaohan@iscas.ac.cn>, 
- Jingkun Zheng <zhengjingkun@iscas.ac.cn>
+ linux-clk@vger.kernel.org, Han Gao <gaohan@iscas.ac.cn>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795545672; l=2174;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795545672; l=1923;
  i=gaohan@iscas.ac.cn; s=20261021; h=from:subject:message-id;
- bh=K7CbBbwRL7SATfIfwvhHdIvzguPw8xQ/hwuAz02UZhg=;
- b=J+PHDdEF/5xW9rq1nnIDUZ7SDjsXFHDB8D67iM0bKs856vLcTRGOBdfpNULzyLAhWAm3Cpph8
- WTxVqm9vcJqBj5raZzvbru7qdR4n47uQUf0XTA21SeYHEhOAuXIdz8C
+ bh=VrFwb4LbqjLwL5yeuV+0FMqYdBlAoZkY2EyJTM77sGc=;
+ b=FUIU6DX3ikNkr3SZtTgnF9zNyVsAD9fsSMms6uKh5HiiO/NmSqaknVac+uS4onmZ/RLkJ87yn
+ FMhBGdezhVXCG0KvDeHTdiJNWuR/V21IFz/sdJIJHsn9lXb64lkRzOn
 X-Developer-Key: i=gaohan@iscas.ac.cn; a=ed25519;
  pk=J8WHEK3filS86QaCaIHDGafqhxKyQ4K7+vFgRirTIiY=
 X-Endpoint-Received: by B4 Relay for gaohan@iscas.ac.cn/20261021 with
@@ -109,58 +109,60 @@ Content-Transfer-Encoding: 7bit
 
 From: Han Gao <gaohan@iscas.ac.cn>
 
-Both PLL clocks are FOUT1 of their PLL. Per the TRM:
+clk_pll_recalc_rate() ignores REFDIV and the FOUT1 post-dividers, so
+it reports the wrong rate if firmware set them. Use the full formula
+from the TRM.
 
-  FOUT1 = FREF * (FBDIV + FRAC / 2^24) /
-          (4 * REFDIV * (POSTDIV1_A + 1) * (POSTDIV1_B + 1))
-
-The driver leaves the post-dividers out of its rate math, but
-clk_pll_set_rate() sets POSTDIV1_A (bits 10:8) to 1, which halves the
-output. It also writes bits 18:16 as "POSTDIV2", which is really
-POSTDIV2_A for FOUT2.
-
-On the HiFive Premier P550 the CPU ran at 699 MHz when CPUFreq set
-1.4 GHz.
-
-Clear POSTDIV1_A and POSTDIV1_B (bits 14:12) instead, and leave FOUT2
-alone.
-
-Fixes: cd44f127c1d4 ("clk: eswin: Add eic7700 clock driver")
-Reported-by: Jingkun Zheng <zhengjingkun@iscas.ac.cn>
 Link: https://github.com/eswincomputing/EIC7700X-SoC-Technical-Reference-Manual/releases/download/v1.0.0-20250103/EIC7700X_SoC_Technical_Reference_Manual_Part1.pdf
 Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 ---
- drivers/clk/eswin/clk.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/clk/eswin/clk.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/eswin/clk.c b/drivers/clk/eswin/clk.c
-index e8851283ccdbf0ea57002511f991c9d68a7f4788..7d51d3a8fc06d7b4a0d7435aeb0cb0e58e16708e 100644
+index 7d51d3a8fc06d7b4a0d7435aeb0cb0e58e16708e..51d816c6d19b8a22045b147a863b39c9f3c9a7f1 100644
 --- a/drivers/clk/eswin/clk.c
 +++ b/drivers/clk/eswin/clk.c
-@@ -21,8 +21,8 @@
- #define PLL_REFDIV_MASK		GENMASK(17, 12)
- #define PLL_FBDIV_MASK		GENMASK(31, 20)
- #define PLL_FRAC_MASK		GENMASK(27, 4)
--#define PLL_POSTDIV1_MASK	GENMASK(10, 8)
--#define PLL_POSTDIV2_MASK	GENMASK(18, 16)
-+#define PLL_POSTDIV1_A_MASK	GENMASK(10, 8)
-+#define PLL_POSTDIV1_B_MASK	GENMASK(14, 12)
+@@ -135,9 +135,10 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct eswin_clk_pll *clk = to_pll_clk(hw);
+ 	u64 fbdiv_val, frac_val, tmp;
+-	u32 rem, val;
++	u32 refdiv, postdiv_a, postdiv_b, rem, val;
  
- struct eswin_clock_data *eswin_clk_init(struct platform_device *pdev,
- 					size_t nr_clks)
-@@ -110,10 +110,9 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	val |= FIELD_PREP(PLL_FRAC_MASK, frac_val);
- 	writel_relaxed(val, clk->ctrl_reg1);
+ 	val = readl_relaxed(clk->ctrl_reg0);
++	refdiv = FIELD_GET(PLL_REFDIV_MASK, val);
+ 	val &= PLL_FBDIV_MASK;
+ 	fbdiv_val = (val >> clk->fbdiv_shift);
  
-+	/* eswin_calc_pll() assumes FOUT1 is not post-divided */
- 	val = readl_relaxed(clk->ctrl_reg2);
--	val &= ~(PLL_POSTDIV1_MASK | PLL_POSTDIV2_MASK);
--	val |= FIELD_PREP(PLL_POSTDIV1_MASK, 1);
--	val |= FIELD_PREP(PLL_POSTDIV2_MASK, 1);
-+	val &= ~(PLL_POSTDIV1_A_MASK | PLL_POSTDIV1_B_MASK);
- 	writel_relaxed(val, clk->ctrl_reg2);
+@@ -145,7 +146,17 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 	val &= PLL_FRAC_MASK;
+ 	frac_val = (val >> clk->frac_shift);
  
- 	/* Last, enable pll */
+-	/* rate = 24000000 * (fbdiv + frac / (2 ^ 24)) / 4 */
++	val = readl_relaxed(clk->ctrl_reg2);
++	postdiv_a = FIELD_GET(PLL_POSTDIV1_A_MASK, val);
++	postdiv_b = FIELD_GET(PLL_POSTDIV1_B_MASK, val);
++
++	if (!refdiv)
++		return 0;
++
++	/*
++	 * rate = parent_rate * (fbdiv + frac / 2^24) /
++	 *	  (4 * refdiv * (postdiv_a + 1) * (postdiv_b + 1))
++	 */
+ 	tmp = parent_rate * frac_val;
+ 	rem = do_div(tmp, BIT(24));
+ 	if (rem)
+@@ -153,7 +164,7 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 	else
+ 		tmp = parent_rate * fbdiv_val + tmp;
+ 
+-	do_div(tmp, 4);
++	do_div(tmp, 4 * refdiv * (postdiv_a + 1) * (postdiv_b + 1));
+ 
+ 	return tmp;
+ }
 
 -- 
 2.47.3
