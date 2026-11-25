@@ -1,57 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.61.82.184
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795581440;
-	b=aCQ4YTFtn8y7gVfe5UwwEum0nPQoz5FvWgI+DIPUYLCWTFxsaYz8AzaNlVbsLP1FWfwG
-	 xo2wt40HDbNQZ+2nENK7u59Leyb/IejDNKl53Z36zYaefrCYOoTxpYZH7EFeHV+wr6XvW
-	 jTarZg8GsafbrNp0FuxCmCe8KrUupqHJ+hEZoyNzeJj6/91vpfod0SYAiugR7bnSAK4UW
-	 RsYI/eu0KMZHWolvXAO/2I+7PwviemggL1kDh9NVIt8F4s+Lxn96FF8+tXf9RGVa0GSJ0
-	 Tvcmd1cF5lrVHEyFXaiGnIt42T04ZwDRcBCOJaeikKJsklezpehnV0QbGhMwycuEaSA==
+	t=1795586453;
+	b=aRlUIYugh6kdGexEXx/v8l2Dj1b6ogciLKCAZpyXkrMV4QVp2m53lZI3SAwrHQ+UEdAD
+	 /rozjXE3lzD6NDvXsO9ExxuqUpTWcjzQr/Zd59xVImjrgwxjrAo28bgCUuF+eQV2072DQ
+	 jl2s4sJbd+L39EPz2aghvbFyPgpq9jpU9/yYoFk5Bzm7ewTTSQrbv30khJVTEkX9f2D/p
+	 NG2oN0w+R/oDHG89pk4Fz/QJatwXYZDmgfuuvD0BZbn6YtBp1lXhqgY2Qw6sTDoGZMdJe
+	 3GQBaDtaXDMYNSJnLX8wLdtYrLufngtMBmyQyryIw9MIFTLUcaEVHY3XkGMdv6YIFWw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795581440;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=G7tHl+CojJmBKfurqUx2H1QXkoVyxgTgP0dmRjVHHTQ=;
-	b=mm2ij8lquJ8+F4rjlQ3k6Tew4ktrlrB5tz8Q3/p9XfLt8fPT3qOKYG5Nq7uPrt3HYYmO
-	 CFcNmiYSxFbj6VpiTSGAzRlqK0hFhhCnigWWIJGoX/T05/hwtJT44frRWT2WJe7xLbNub
-	 pCMp9IZsEc4/TKqFKHAJARDXbYS1cu0LqLmc+wiy7yANR6t+tnQubYWwsS2wNVmme54zN
-	 Jm5PShT5BRX/e5cUsZ3ubCQufVeNG8COv24NqGpG9D0QX72KUgRA4vwNVTTcMKCU96bJu
-	 OTl/OeMa+SrjQc4319+UlBoTm9PvQ+g3m+/xgCirn5+glWTA2OIK0jYgpKnIUsfQoDQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795586453;
+	h=DMARC-Filter:X-UUID:DKIM-Signature:X-CID-P-RULE:X-CID-O-INFO:
+	 X-CID-META:X-CID-BVR:X-CID-BAS:X-CID-FACTOR:X-CID-RHF:X-UUID:Received:
+	 Received:Received:From:To:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type;
+	bh=OQ8eDMcUmdXK5He2mvO2Ew0LR++K/A/qA850U/+NkVc=;
+	b=idjdgOJX6xK6r1wUBHqJEvPW740u8rcJxLHcSN0LU2lHVKKWQ0BmNx4Z8+48sootkTnf
+	 UMg3jXNRWtox3xaCO0JqRqnkRCN8Ch4r3TjGotjex+TRNJ/kdL2e5OU+HtskcEBKuE6D6
+	 55loXCEIfXGJBWrpTIN73fC2//d8KhWUTy2wZHMbC0G34g5Rwd9wjXPIQ9RG/Hbr+e1tt
+	 AAwmK1u3Gd3HJpjnMJ1EB0AE2LrMNCYvgoJbpxoHZji443fQM5l3cUBhNZuFzyzqKxQBs
+	 RlITuwOtlMv4O0yTTZJ5AOKq4LWaE1EAOUNf1OEf7FKDhGAw/dOBbeoym24ynG15mVQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UZsdQZwh;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=mediatek.com;
+	spf=pass smtp.mailfrom=mediatek.com;
+	dkim=pass header.d=mediatek.com header.i=@mediatek.com header.a=rsa-sha256 header.s=dk header.b=LhgaupVj;
+	arc=none smtp.remote-ip=210.61.82.184
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16D1606A331;
-	Wed, 25 Nov 2026 04:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF47606A31E;
+	Wed, 25 Nov 2026 06:00:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ACF47606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UZsdQZwh
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 870461F000ED;
-	Wed, 25 Nov 2026 04:37:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795581439;
-	bh=G7tHl+CojJmBKfurqUx2H1QXkoVyxgTgP0dmRjVHHTQ=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=UZsdQZwh/+QD59Y5v/PxCZ/9SdHl1xVToYq9eFq0UXSfPmuX+PBPDDebfGT9/VneB
-	 uLwkJ0qadM6aZi41fRYZQhdd6BAd2GKEutfg6+DZZrEe0spRtEASX19conTYlBvFFJ
-	 zP/Mvmkze/LpuuEe7m3abQfxgfqKAHU16nvQ0Cw/FGlF8mJqV9mkzbxjPHa2aGk5nZ
-	 RkJRjx9abEemJfzsKCCWDdZy872v1Wr4Q5LDhUSlS0fQVR7YsacmlnqnFkWeEJy7Xl
-	 NssYbwnQ/WLzLQC8x2YbMSlSggIp//13jjo0GthQFHUJ2XzOrSz6sCYr3pQkoW5eT6
-	 DzQzbRwlS1qug==
-Message-ID: <sashiko-outbox-232584@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 2/4] clk: qcom: Add the Netrani global clock
- controller
-Reply-To: sashiko-reviews@lists.linux.dev
-To: SignKirigami <prcups@krgm.moe>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261125-netrani-clock-v1-v2-2-9ef014e71737@krgm.moe>
-References: <20261125-netrani-clock-v1-v2-0-9ef014e71737@krgm.moe>
- <20261125-netrani-clock-v1-v2-2-9ef014e71737@krgm.moe>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 25 Nov 2026 04:37:19 +0000
+	dkim=pass (1024-bit key, unprotected) header.d=mediatek.com header.i=@mediatek.com header.a=rsa-sha256 header.s=dk header.b=LhgaupVj
+X-UUID: 8dbd8388e89511f18dc8c9802ae25ab1-20261125
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:To:From; bh=OQ8eDMcUmdXK5He2mvO2Ew0LR++K/A/qA850U/+NkVc=;
+	b=LhgaupVjGQwjbqLhYKwr6pJeANpRf/BeFwXLwtzhvMi5JB7Eal0zzyVfFH0ITNNl3rHZj4GHAfPPrQZYGHieuE/IjyvpuR+5IbYykgHHmIAHM5UO0lCOGOjrQQ+Eb6P0tl8k5HuWjGoXpuZLJU1wyTrdl7WJHNMGI2Oydv3WU6A=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.21,REQID:4e2de29e-fdee-4669-a441-f87b9d658868,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:b0318ac,CLOUDID:23d4f2bd-9e04-43bc-9c07-a2d8d8315d7e,B
+	ulkID:nil,BulkQuantity:0,SF:102|136|836|865|888|898,TC:-5,Content:0|15|50|
+	99,EDM:2|-100,IP:nil,URL:99|1,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,
+	OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 8dbd8388e89511f18dc8c9802ae25ab1-20261125
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <echo.zhang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1657262601; Wed, 25 Nov 2026 14:00:45 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Wed, 25 Nov 2026 14:00:43 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.2562.56 via Frontend Transport; Wed, 25 Nov 2026 14:00:42 +0800
+From: Echo Zhang <echo.zhang@mediatek.com>
+To: Echo Zhang <echo.zhang@mediatek.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
+	<jbrunet+clk@baylibre.com>, Nathan Chancellor <nathan@kernel.org>, Nick
+ Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, MMDVFS Team
+	<linux-mediatek@lists.infradead.org>, <kyrie.wu@mediatek.com>,
+	<ming-fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <llvm@lists.linux.dev>
+Subject: [PATCH 0/7] soc: mediatek: add MMDVFS support for MT8196
+Date: Wed, 25 Nov 2026 14:00:05 +0800
+Message-ID: <20261125060037.649659-1-echo.zhang@mediatek.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,367 +87,85 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Thank you for your contribution! Sashiko AI review found 7 potential
-issues to consider:
-- [High] clk: qcom: PHY pipe and symbol muxes use
-  clk_regmap_mux_closest_ops
-- [Medium] clk: qcom: duplicate critical clock handling for
-  GCC_CAMERA_SLEEP_CLK
-- [Medium] clk: qcom: shared USB3 RCGs use clk_rcg2_ops instead of
-  shared ops
-- [Medium] clk: qcom: wrong parent map on gcc_ufs_phy_ice_core_clk_src
-- [Medium] clk: qcom: missing use_rpm in gcc_netrani_desc keeps CX
-  domain powered on
-- [Medium] clk: qcom: gcc-netrani: inconsistent QUPv3 SE5 div and QSPI0
-  offsets
-- [Low] clk: qcom: inconsistent clk_parent_data leaves DT_* indices
-  unused
---
+This series adds support for the MediaTek Multimedia Dynamic Voltage and
+Frequency Scaling (MMDVFS) controller on MT8196. The controller provides
+virtual clocks for multimedia hardware blocks and coordinates their
+performance requests with platform voltage resources. The driver
+aggregates consumer rate requests and programs the MT8196 hardware clock
+control fabric (HWCCF) voter. Its VCP/MMUP backend coordinates shared
+memory and IPI communication with firmware.
 
-commit 077902159f94d35202e6cca7a6f9975247f4011d
-Author: SignKirigami <prcups@krgm.moe>
+The series introduces the clock IDs and device tree bindings, followed by
+the common clock provider, VCP backend and MT8196 topology and voting
+data. It also adds a read-only debugfs status view and a MAINTAINERS entry.
 
-clk: qcom: Add the Netrani global clock controller
+This series depends on Xiangzhi Tang's MediaTek VCP remoteproc series,
+which provides the public VCP API used by MMDVFS:
+https://lore.kernel.org/r/20260427111446.22955-1-xiangzhi.tang@mediatek.com
 
-This commit adds the Global Clock Controller (GCC) driver for Qualcomm
-Netrani, providing clocks, resets, GDSCs, and QUPv3 DFS configurations.
+Patch layout:
+  1/7: Define the MT8196 MMDVFS clock IDs used by DT consumers.
+  2/7: Document the common MMDVFS and MT8196 DT bindings.
+  3/7: Add the common driver, virtual clock provider and vote handling.
+  4/7: Add the VCP/MMUP shared-memory and IPI backend.
+  5/7: Add MT8196 topology data and HWCCF voting operations.
+  6/7: Add a read-only debugfs status view.
+  7/7: Add the MMDVFS files and contacts to MAINTAINERS.
 
-> diff --git a/drivers/clk/qcom/gcc-netrani.c b/drivers/clk/qcom/gcc-netran=
-i.c
-> new file mode 100644
-> index 0000000000000..c16d931317c15
-> --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-netrani.c
-> @@ -0,0 +1,2816 @@
-[ ... ]
-> +enum {
-> +	DT_BI_TCXO,
-> +	DT_SLEEP_CLK,
-> +	DT_PCIE_0_PIPE_CLK,
-> +	DT_UFS_PHY_RX_SYMBOL_0_CLK,
-> +	DT_UFS_PHY_RX_SYMBOL_1_CLK,
-> +	DT_UFS_PHY_TX_SYMBOL_0_CLK,
-> +	DT_USB3_PHY_WRAPPER_GCC_USB30_PIPE_CLK,
-> +};
-[ ... ]
-> +static const struct clk_parent_data gcc_parent_data_6[] =3D {
-> +	{ .fw_name =3D "bi_tcxo", .name =3D "bi_tcxo" },
-> +	{ .hw =3D &gcc_gpll0.clkr.hw },
-> +	{ .hw =3D &gcc_gpll9.clkr.hw },
-> +	{ .hw =3D &gcc_gpll4.clkr.hw },
-> +	{ .hw =3D &gcc_gpll0_out_even.clkr.hw },
-> +};
+Validation: the two MMDVFS bindings passed dt_binding_check. Each driver
+commit built cumulatively with arm64 Clang on top of the VCP dependency.
+The production changes were also ported to the MT8196 sapphire validation
+tree, retaining its older VCP API compatibility and separate internal test
+hooks. Its full package build and board boot passed. The status interface
+reported initialization with three resource controllers, seven muxes. The
+user, vote_step and force_step test completed with zero functional failures;
 
-[Severity: Low]
-Only DT_BI_TCXO is used (in the PLL definitions), leaving the other six
-DT_* enum constants unused because gcc_parent_data_0 through
-gcc_parent_data_10 use .fw_name instead of .index, while gcc_parent_data_6
-and gcc_usb30_prim_sleep_clk also carry legacy .name fallbacks.  Should the
-clk_parent_data entries use .index =3D DT_* consistently across the driver?
+Echo Zhang (7):
+  dt-bindings: clock: mediatek: add MT8196 MMDVFS clock IDs
+  dt-bindings: soc: mediatek: add MMDVFS binding
+  soc: mediatek: add MMDVFS core driver
+  soc: mediatek: mmdvfs: add VCP backend
+  soc: mediatek: mmdvfs: add MT8196 support
+  soc: mediatek: mmdvfs: add read-only status debug
+  MAINTAINERS: add MediaTek MMDVFS entry
 
-[ ... ]
+ .../soc/mediatek/mediatek,mmdvfs.yaml         |   60 +
+ .../soc/mediatek/mediatek,mt8196-mmdvfs.yaml  |   87 ++
+ MAINTAINERS                                   |   11 +
+ drivers/soc/mediatek/Kconfig                  |   19 +
+ drivers/soc/mediatek/Makefile                 |    1 +
+ drivers/soc/mediatek/mmdvfs/Makefile          |   10 +
+ drivers/soc/mediatek/mmdvfs/mmdvfs-clk.c      |  447 +++++++
+ drivers/soc/mediatek/mmdvfs/mmdvfs-core.c     |  651 ++++++++++
+ drivers/soc/mediatek/mmdvfs/mmdvfs-debug.c    |  200 +++
+ drivers/soc/mediatek/mmdvfs/mmdvfs-internal.h |  361 ++++++
+ drivers/soc/mediatek/mmdvfs/mmdvfs-mt8196.c   |  637 ++++++++++
+ drivers/soc/mediatek/mmdvfs/mmdvfs-up-priv.h  |   57 +
+ drivers/soc/mediatek/mmdvfs/mmdvfs-up.c       |  275 +++++
+ .../soc/mediatek/mmdvfs/mmdvfs-vcp-memory.h   |  104 ++
+ drivers/soc/mediatek/mmdvfs/mmdvfs-vcp.c      | 1075 +++++++++++++++++
+ .../clock/mediatek,mt8196-mmdvfs.h            |   74 ++
+ include/soc/mediatek/mmdvfs.h                 |   90 ++
+ 17 files changed, 4159 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/mediatek/mediatek,mmdvfs.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/mediatek/mediatek,mt8196-mmdvfs.yaml
+ create mode 100644 drivers/soc/mediatek/mmdvfs/Makefile
+ create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-clk.c
+ create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-core.c
+ create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-debug.c
+ create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-internal.h
+ create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-mt8196.c
+ create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-up-priv.h
+ create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-up.c
+ create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-vcp-memory.h
+ create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-vcp.c
+ create mode 100644 include/dt-bindings/clock/mediatek,mt8196-mmdvfs.h
+ create mode 100644 include/soc/mediatek/mmdvfs.h
 
-> +static struct clk_regmap_mux gcc_pcie_0_pipe_clk_src =3D {
-> +	.reg =3D 0x7b060,
-> +	.shift =3D 0,
-> +	.width =3D 2,
-> +	.parent_map =3D gcc_parent_map_5,
-> +	.clkr =3D {
-> +		.hw.init =3D &(const struct clk_init_data) {
-> +			.name =3D "gcc_pcie_0_pipe_clk_src",
-> +			.parent_data =3D gcc_parent_data_5,
-> +			.num_parents =3D ARRAY_SIZE(gcc_parent_data_5),
-> +			.ops =3D &clk_regmap_mux_closest_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_regmap_mux gcc_ufs_phy_rx_symbol_0_clk_src =3D {
-> +	.reg =3D 0x87060,
-> +	.shift =3D 0,
-> +	.width =3D 2,
-> +	.parent_map =3D gcc_parent_map_7,
-> +	.clkr =3D {
-> +		.hw.init =3D &(const struct clk_init_data) {
-> +			.name =3D "gcc_ufs_phy_rx_symbol_0_clk_src",
-> +			.parent_data =3D gcc_parent_data_7,
-> +			.num_parents =3D ARRAY_SIZE(gcc_parent_data_7),
-> +			.ops =3D &clk_regmap_mux_closest_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_regmap_mux gcc_ufs_phy_rx_symbol_1_clk_src =3D {
-> +	.reg =3D 0x870d0,
-> +	.shift =3D 0,
-> +	.width =3D 2,
-> +	.parent_map =3D gcc_parent_map_8,
-> +	.clkr =3D {
-> +		.hw.init =3D &(const struct clk_init_data) {
-> +			.name =3D "gcc_ufs_phy_rx_symbol_1_clk_src",
-> +			.parent_data =3D gcc_parent_data_8,
-> +			.num_parents =3D ARRAY_SIZE(gcc_parent_data_8),
-> +			.ops =3D &clk_regmap_mux_closest_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_regmap_mux gcc_ufs_phy_tx_symbol_0_clk_src =3D {
-> +	.reg =3D 0x87050,
-> +	.shift =3D 0,
-> +	.width =3D 2,
-> +	.parent_map =3D gcc_parent_map_9,
-> +	.clkr =3D {
-> +		.hw.init =3D &(const struct clk_init_data) {
-> +			.name =3D "gcc_ufs_phy_tx_symbol_0_clk_src",
-> +			.parent_data =3D gcc_parent_data_9,
-> +			.num_parents =3D ARRAY_SIZE(gcc_parent_data_9),
-> +			.ops =3D &clk_regmap_mux_closest_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_regmap_mux gcc_usb3_prim_phy_pipe_clk_src =3D {
-> +	.reg =3D 0x49068,
-> +	.shift =3D 0,
-> +	.width =3D 2,
-> +	.parent_map =3D gcc_parent_map_10,
-> +	.clkr =3D {
-> +		.hw.init =3D &(const struct clk_init_data) {
-> +			.name =3D "gcc_usb3_prim_phy_pipe_clk_src",
-> +			.parent_data =3D gcc_parent_data_10,
-> +			.num_parents =3D ARRAY_SIZE(gcc_parent_data_10),
-> +			.ops =3D &clk_regmap_mux_closest_ops,
-> +		},
-> +	},
-> +};
+-- 
+2.45.2
 
-[Severity: High]
-Should gcc_pcie_0_pipe_clk_src, the three UFS symbol clock muxes, and
-gcc_usb3_prim_phy_pipe_clk_src be defined as struct clk_regmap_phy_mux with
-clk_regmap_phy_mux_ops instead of struct clk_regmap_mux with
-clk_regmap_mux_closest_ops?
-
-clk-regmap-phy-mux.h is included at the top of this file, and these 2-bit
-muxes select between the external PHY clock (0) and bi_tcxo (2).  Because
-clk_regmap_mux_closest_ops has no .enable or .disable callbacks and
-consumer drivers only enable or disable the child branch clocks, enabling
-the branch clocks will never switch the muxes from bi_tcxo to the PHY clock
-source, and disabling them before PHY or GDSC power-down will never park
-the muxes back on bi_tcxo, which can break PCIe/UFS/USB3 clocking or wedge
-the GDSC on power collapse.
-
-[ ... ]
-
-> +static struct clk_rcg2 gcc_ufs_phy_ice_core_clk_src =3D {
-> +	.cmd_rcgr =3D 0x87074,
-> +	.mnd_width =3D 0,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D gcc_parent_map_6,
-> +	.freq_tbl =3D ftbl_gcc_ufs_phy_ice_core_clk_src,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_ufs_phy_ice_core_clk_src",
-> +		.parent_data =3D gcc_parent_data_6,
-> +		.num_parents =3D ARRAY_SIZE(gcc_parent_data_6),
-> +		.flags =3D CLK_SET_RATE_PARENT,
-> +		.ops =3D &clk_rcg2_shared_ops,
-> +	},
-> +};
-
-[Severity: Medium]
-Is gcc_parent_map_6 the right parent map for gcc_ufs_phy_ice_core_clk_src?
-
-P_GCC_GPLL1_OUT_MAIN and gcc_gpll1 are defined in this driver but never
-referenced in any parent_map.  In gcc-sm4450.c,
-gcc_ufs_phy_ice_core_clk_src (at the same 0x87074 offset) uses a parent map
-with P_GCC_GPLL1_OUT_MAIN at cfg 4 rather than gcc_parent_map_6 (which maps
-P_GCC_GPLL9_OUT_MAIN at cfg 2 for SDCC2).  Using gcc_parent_map_6 here
-leaves gcc_gpll1 orphaned and causes parent lookups on
-gcc_ufs_phy_ice_core_clk_src to fail if hardware selects cfg 4.
-
-[ ... ]
-
-> +static struct clk_rcg2 gcc_usb30_prim_master_clk_src =3D {
-> +	.cmd_rcgr =3D 0x49028,
-> +	.mnd_width =3D 8,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D gcc_parent_map_0,
-> +	.freq_tbl =3D ftbl_gcc_usb30_prim_master_clk_src,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_usb30_prim_master_clk_src",
-> +		.parent_data =3D gcc_parent_data_0,
-> +		.num_parents =3D ARRAY_SIZE(gcc_parent_data_0),
-> +		.ops =3D &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static const struct freq_tbl ftbl_gcc_usb30_prim_mock_utmi_clk_src[] =3D=
- {
-> +	F(19200000, P_BI_TCXO, 1, 0, 0),
-> +	{ }
-> +};
-> +
-> +static struct clk_rcg2 gcc_usb30_prim_mock_utmi_clk_src =3D {
-> +	.cmd_rcgr =3D 0x49040,
-> +	.mnd_width =3D 0,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D gcc_parent_map_0,
-> +	.freq_tbl =3D ftbl_gcc_usb30_prim_mock_utmi_clk_src,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_usb30_prim_mock_utmi_clk_src",
-> +		.parent_data =3D gcc_parent_data_0,
-> +		.num_parents =3D ARRAY_SIZE(gcc_parent_data_0),
-> +		.ops =3D &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 gcc_usb3_prim_phy_aux_clk_src =3D {
-> +	.cmd_rcgr =3D 0x4906c,
-> +	.mnd_width =3D 0,
-> +	.hid_width =3D 5,
-> +	.parent_map =3D gcc_parent_map_2,
-> +	.freq_tbl =3D ftbl_gcc_usb30_prim_mock_utmi_clk_src,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_usb3_prim_phy_aux_clk_src",
-> +		.parent_data =3D gcc_parent_data_2,
-> +		.num_parents =3D ARRAY_SIZE(gcc_parent_data_2),
-> +		.ops =3D &clk_rcg2_ops,
-> +	},
-> +};
-
-[Severity: Medium]
-Should gcc_usb30_prim_master_clk_src, gcc_usb30_prim_mock_utmi_clk_src, and
-gcc_usb3_prim_phy_aux_clk_src use clk_rcg2_shared_ops and
-CLK_SET_RATE_PARENT (as in gcc-sm4450.c)?
-
-gcc_usb30_prim_master_clk_src is shared by gcc_usb30_prim_master_clk and
-the voted branches gcc_aggre_usb3_prim_axi_clk and
-gcc_cfg_noc_usb3_prim_axi_clk, and gcc_usb3_prim_phy_aux_clk_src is shared
-by gcc_usb3_prim_phy_aux_clk and gcc_usb3_prim_phy_com_aux_clk.  With
-clk_rcg2_ops, these RCGs are not parked on a safe XO source when disabled
-(which can wedge gcc_usb30_prim_gdsc if the parent PLL is turned off) and
-rate updates while child branches are gated will attempt unforced
-CMD_UPDATE writes.
-
-[ ... ]
-
-> +static struct clk_regmap_div gcc_qupv3_wrap0_s5_div_clk_src =3D {
-> +	.reg =3D 0x2774c,
-> +	.shift =3D 0,
-> +	.width =3D 4,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_qupv3_wrap0_s5_div_clk_src",
-> +		.parent_hws =3D (const struct clk_hw*[]) {
-> +			&gcc_qupv3_wrap0_s5_clk_src.clkr.hw,
-> +		},
-> +		.num_parents =3D 1,
-> +		.flags =3D CLK_SET_RATE_PARENT,
-> +		.ops =3D &clk_regmap_div_ro_ops,
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_qupv3_wrap0_s5_clk =3D {
-> +	.halt_reg =3D 0x27610,
-> +	.halt_check =3D BRANCH_HALT_VOTED,
-> +	.clkr =3D {
-> +		.enable_reg =3D 0x62008,
-> +		.enable_mask =3D BIT(15),
-> +		.hw.init =3D &(const struct clk_init_data) {
-> +			.name =3D "gcc_qupv3_wrap0_s5_clk",
-> +			.parent_hws =3D (const struct clk_hw*[]) {
-> +				&gcc_qupv3_wrap0_s5_div_clk_src.clkr.hw,
-> +			},
-> +			.num_parents =3D 1,
-> +			.flags =3D CLK_SET_RATE_PARENT,
-> +			.ops =3D &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_qupv3_wrap0_qspi0_clk =3D {
-> +	.halt_reg =3D 0x27744,
-[ ... ]
-> +static struct clk_regmap_div gcc_qupv3_wrap1_s5_div_clk_src =3D {
-> +	.reg =3D 0x28744,
-> +	.shift =3D 0,
-> +	.width =3D 4,
-> +	.clkr.hw.init =3D &(const struct clk_init_data) {
-> +		.name =3D "gcc_qupv3_wrap1_s5_div_clk_src",
-> +		.parent_hws =3D (const struct clk_hw*[]) {
-> +			&gcc_qupv3_wrap1_s5_clk_src.clkr.hw,
-> +		},
-> +		.num_parents =3D 1,
-> +		.flags =3D CLK_SET_RATE_PARENT,
-> +		.ops =3D &clk_regmap_div_ro_ops,
-> +	},
-> +};
-[ ... ]
-> +static struct clk_branch gcc_qupv3_wrap1_qspi0_clk =3D {
-> +	.halt_reg =3D 0x28748,
-
-[Severity: Medium]
-Are the register offsets for gcc_qupv3_wrap1_s5_div_clk_src and
-gcc_qupv3_wrap1_qspi0_clk (or their wrap0 counterparts) swapped?
-
-Every other clock and reset in QUPv3 wrapper 0 (base 0x27000) and wrapper 1
-(base 0x28000) uses identical relative offsets, with an 8-byte stride for
-CBCRs.  Here, wrapper 0 puts qspi0_clk.halt_reg at +0x744 (0x27744) and
-s5_div_clk_src.reg at +0x74c (0x2774c), whereas wrapper 1 puts
-s5_div_clk_src.reg at +0x744 (0x28744) and qspi0_clk.halt_reg at +0x748
-(0x28748).  If these offsets are swapped, one wrapper will read a CBCR as a
-4-bit clock divider and poll the divider register for branch halt status.
-
-[ ... ]
-
-> +static const u32 gcc_netrani_critical_cbcrs[] =3D {
-> +	0x36004, /* GCC_CAMERA_AHB_CLK */
-> +	0x36018, /* GCC_CAMERA_SLEEP_CLK */
-> +	0x3601c, /* GCC_CAMERA_XO_CLK */
-> +	0x37004, /* GCC_DISP_AHB_CLK */
-> +	0x37014, /* GCC_DISP_XO_CLK */
-> +	0x81004, /* GCC_GPU_CFG_AHB_CLK */
-> +	0x42004, /* GCC_VIDEO_AHB_CLK */
-> +	0x42018, /* GCC_VIDEO_XO_CLK */
-> +};
-
-[Severity: Medium]
-Why is 0x36018 (GCC_CAMERA_SLEEP_CLK) both listed in
-gcc_netrani_critical_cbcrs and registered in gcc_netrani_clocks as
-gcc_camera_sleep_clk with CLK_IS_CRITICAL and no parent?
-
-On SM4450, 0x36018 is also present in gcc_sm4450_critical_cbcrs and is
-intentionally omitted from gcc_sm4450_clocks so qcom_branch_set_clk_en()
-enables the CBCR directly without registering a CLK_IS_CRITICAL clock in
-CCF (which permanently holds a runtime PM reference on the clock controller
-device).  If GCC_CAMERA_SLEEP_CLK is meant to be an always-on critical CBCR
-here as well, it should not be registered as a CLK_IS_CRITICAL clk_branch;
-if it is meant to be consumer-controlled, it should not be marked
-CLK_IS_CRITICAL or listed in gcc_netrani_critical_cbcrs.
-
-[ ... ]
-
-> +static const struct qcom_cc_desc gcc_netrani_desc =3D {
-> +	.driver_data =3D &gcc_netrani_driver_data,
-> +	.config =3D &gcc_netrani_regmap_config,
-> +	.clks =3D gcc_netrani_clocks,
-> +	.num_clks =3D ARRAY_SIZE(gcc_netrani_clocks),
-> +	.resets =3D gcc_netrani_resets,
-> +	.num_resets =3D ARRAY_SIZE(gcc_netrani_resets),
-> +	.gdscs =3D gcc_netrani_gdscs,
-> +	.num_gdscs =3D ARRAY_SIZE(gcc_netrani_gdscs),
-> +};
-
-[Severity: Medium]
-Should gcc_netrani_desc set .use_rpm =3D true?
-
-The qcom,netrani-gcc devicetree binding requires the CX power domain on the
-clock controller node, which platform_probe() attaches and powers on before
-calling gcc_netrani_probe().  Without .use_rpm =3D true,
-qcom_cc_really_probe() never enables runtime PM or calls
-pm_runtime_put_sync(), leaving the CX power domain permanently powered on
-even when all GCC clocks and GDSCs are idle.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261125-netrani-cl=
-ock-v1-v2-0-9ef014e71737@krgm.moe?part=3D2
