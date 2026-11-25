@@ -1,68 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=13.75.44.102
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795594351;
-	b=GLoyHCY2yUiw4cy+FF9ojkqf9M5Wv70EbWF0xqG/zMoCWwWB/bDRozjE0R4JD2Go/tcg
-	 hYx9hzaXrChk8g+rDEdrhHd+j20PzVHgiF8sDaGE0b8GQY2jV9XO6LDCro80vFHlt/DaM
-	 ZA0MaBPIAx77r/TtxN5+/gbVWq9XIfyuWLmjTyuFhOqp2Qdw827gd8VW2rf4GuxAkD2gc
-	 pAe5StTR484AaU7joFHdJsvBqcpiJcqj0/+5Cl5JrMJlFaB9ODe+mmUzil6Xj/X1riiCx
-	 p+UGu8mj0bvi9N+vgMrPJTEhAHtLj9k2DHkguDVdUDoIv6xRINRxkNJKCNcPOLM8y0Q==
+	t=1795595523;
+	b=zYr767cYyiKyimrUx1Lv48m0QgRNDpreVUg/Kk7mZipZnnY7zS47HnMZxp48KTCEoovK
+	 fGkY6WG37Two938Le4LccYrubnqnxZHQ52gAIbDgKeD1MHOCfk9n0t6mptmRLhuiLJ7fv
+	 NFLJQ7yi9+Z9JaT7wb9g5I6OEVTYnCxtljqdr8hjzv30tgYJObXHHO8zGenQO2BsIsdkF
+	 xcM3NUeDX7IH2VYMlqlBD/mMe9MT+e7+x+czLSgwzJrBR1VXYbOpJTCJhEY9QGK2L0kYW
+	 mWFlhE2mOfdJMj1S5hAwf6qOrjPflF56t//3ISL86+vFQf8xj8dqPARO4IPKDxJv1oQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795594351;
-	h=DMARC-Filter:DKIM-Signature:Received:X-Originating-IP:Date:
-	 X-CM-HeaderCharset:From:To:Cc:Subject:X-Priority:X-Mailer:In-Reply-To:
-	 References:Content-Transfer-Encoding:Content-Type:MIME-Version:
-	 Message-ID:X-Coremail-Locale:X-CM-TRANSID:X-CM-SenderInfo:
-	 X-Coremail-Antispam;
-	bh=KLDHT3mhDgcLFkYjJmk6bA/ObB1vtwIOf6xFXNe/0no=;
-	b=0eC6GJZ2AQiyvW3sEDAp5sCTOnZ6pLSBzP6U5BJFMksO6TzAyFgsuR70rYVX1mCbrj17
-	 mgy5wJi9C/4D7HMQ6B4icVbFA89JaOta6u8nPiGg5Gk2sIQVqoIQqSa6Q40qLYJ9vsdUI
-	 yXUaKDfqHaRCPh4U9GLvFEzbvQoMcBIiX+k630WxXn/BgRFjsTkTI6/BNx8feahNI9Onq
-	 k/LbNS5YpgWU1X2abP0A2WG2mKWj/4FKk7VPzzCgRS9xikVXdtL4g+NGX4easO79s1z8z
-	 NxKufOdq/+4NHbBEYJ7/6I3beeqcdYu+h5ze4kGDQpOBCGBMgGRGkPFuMIoIZh6a6DA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795595523;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:From:To:Cc:References:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=Xhprbp8vYgoK3W8l2CK0jpgqQyaq9WrszZ2gTi+N1FM=;
+	b=er/sJTAqe2xaQshcVchj3kCRVc0dOIiZoUY2Hl/qUsMP62UIYy9UsDwSz2t884Ywh9Bz
+	 Cteh0Afy95TidLz4HUM0U+F1eRqq1IbQ14a3ZBuYJbXrVmqGdU1UKErVX315dDb+Mbdl9
+	 UEDQceumdVpBa2POOUqlInldqrsfL4EfJfO4Kh+SE4oLUi/4Fm0FNqN4LPMSRyhJ+42x4
+	 9hm0St0Zm9qz1YRbjX0/fLwOARkm+NhEFAY16CE3VU9OkYcyWP1pMzqxMjvNj/iZ2LmRN
+	 hbifh1S5IEn+EupW1nsOkT4AZXi01VXwWE88m75YqweiB391bGESMir4DItIwBb++NQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=eswincomputing.com;
-	spf=pass smtp.mailfrom=eswincomputing.com;
-	dkim=fail reason="signature verification failed" header.d=eswincomputing.com header.i=@eswincomputing.com header.a=rsa-sha256 header.s=dkim header.b=hCpiP8v3;
-	arc=none smtp.remote-ip=13.75.44.102
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98782606A321
-	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 08:12:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 98782606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=boAdVYoX;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B38606A31E;
+	Wed, 25 Nov 2026 08:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=eswincomputing.com header.i=@eswincomputing.com header.a=rsa-sha256 header.s=dkim header.b=hCpiP8v3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=eswincomputing.com; s=dkim; h=Received:Date:From:To:Cc:Subject:
-	In-Reply-To:References:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID; bh=Xx1e4NsuVflPEtaWduYet2H7WSmulX5RUsGq
-	ouRg/Rc=; b=hCpiP8v3KwT+/k0v/aqAqEyQ5j1iUuMcizjtNxWPFUhemY6fAqfG
-	kAvuNiIxs9Qzaf/0VU4bsRzOG2wooPKJieSQ5O002sT5hcq95Lnx5RQ+/rX9QiH4
-	jpvfhm5LRpdUGWUmfo6gak0mowNOnjHkxQc9/3KANBZDCN7vX9Qu+hY=
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Wed, 25 Nov 2026 16:12:18 +0800 (GMT+08:00)
-Date: Wed, 25 Nov 2026 16:12:18 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: gaohan@iscas.ac.cn, "Stephen Boyd" <sboyd@kernel.org>,
-	"Brian Masney" <bmasney+clk@redhat.com>,
-	"Jerome Brunet" <jbrunet+clk@baylibre.com>
-Cc: "Brian Masney" <bmasney@redhat.com>, "Han Gao" <rabenda.cn@gmail.com>,
-	linux-clk@vger.kernel.org,
-	"Yifeng Huang" <huangyifeng@eswincomputing.com>,
-	"Pinkesh Vaghela" <pinkesh.vaghela@einfochips.com>,
-	"Min Lin" <linmin@eswincomputing.com>
-Subject: Re: [PATCH 2/2] clk: eswin: Use REFDIV and the post-dividers in the
- EIC7700 PLL rate
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2026 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <20261125-eic7700-cpu-pll-postdiv-v1-2-b1ccd6339a20@iscas.ac.cn>
-References: <20261125-eic7700-cpu-pll-postdiv-v1-0-b1ccd6339a20@iscas.ac.cn>
- <20261125-eic7700-cpu-pll-postdiv-v1-2-b1ccd6339a20@iscas.ac.cn>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=boAdVYoX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B881F000C6;
+	Wed, 25 Nov 2026 08:31:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795595523;
+	bh=Xhprbp8vYgoK3W8l2CK0jpgqQyaq9WrszZ2gTi+N1FM=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To;
+	b=boAdVYoX6mzVRi523peA0iUwn//soWfCQzl+E94F2K/c/zZRfD3fiEix+n2i3hPES
+	 aXkQyPSDPAxStRt++4P0F7qi9974GWrBGgMaLskiSiUfb8g6C1RbBsYmcGREJtlpHG
+	 NJXGmZ8qL7Fx5S7hEjOUgoCZUSEQyQpJrNvQrwRoUq2nP8evB7moPrYoqosJBT1Ga1
+	 p2fzUN7xQq4fpTwW5jTr6PwuMFmdTlDfJzTxIDJ+9Gqy4xxwFmkxtbHYaRHtXHnVEu
+	 uq/4RbynOG/7r5eaVe7Ft98NQeb0m+cYS6NG6B41b/i9iobv4kYwL2JeyO2soXETeO
+	 l90JcBY8eo3Cg==
+Message-ID: <de65af39-3a9c-4b2e-bb82-2a84b8584731@kernel.org>
+Date: Wed, 25 Nov 2026 09:31:54 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -72,48 +51,150 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Message-ID: <16529f.d68.1a211c3400b.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgA38xximAZr5OsAAA--.612W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgECAmsFvK8Wx
-	QABss
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/9] dt-bindings: soc: google: Add Google Tensor CPM
+ binding
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Thomas Gleixner <tglx@kernel.org>,
+ Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>,
+ linux-arm-kernel@lists.infradead.org,
+ Mariano Marciello <mmarciello@google.com>,
+ Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
+ =?UTF-8?Q?Jakub_G=C5=82owacki?= <jglow@google.com>
+References: <20261026214359.3122870-1-briannorris@chromium.org>
+ <20261026144346.2.Ib692ddd35c1dbea1757d9b1db6c1c7e938fc4ea6@changeid>
+ <20261028-rapid-daffodil-rat-0adc6a@quoll> <aulIoq2oVjJ3DVzL@google.com>
+ <d4a430de-715a-4936-8adb-35ff57a52b5f@kernel.org>
+ <avZkfg6WMlMzOxpn@google.com>
+ <72ef7ef8-acc8-4ad5-9c09-76d9e944bf5c@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <72ef7ef8-acc8-4ad5-9c09-76d9e944bf5c@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-PiAKPiBjbGtfcGxsX3JlY2FsY19yYXRlKCkgaWdub3JlcyBSRUZESVYgYW5kIHRoZSBGT1VUMSBw
-b3N0LWRpdmlkZXJzLCBzbwo+IGl0IHJlcG9ydHMgdGhlIHdyb25nIHJhdGUgaWYgZmlybXdhcmUg
-c2V0IHRoZW0uIFVzZSB0aGUgZnVsbCBmb3JtdWxhCj4gZnJvbSB0aGUgVFJNLgo+IAo+IExpbms6
-IGh0dHBzOi8vZ2l0aHViLmNvbS9lc3dpbmNvbXB1dGluZy9FSUM3NzAwWC1Tb0MtVGVjaG5pY2Fs
-LVJlZmVyZW5jZS1NYW51YWwvcmVsZWFzZXMvZG93bmxvYWQvdjEuMC4wLTIwMjUwMTAzL0VJQzc3
-MDBYX1NvQ19UZWNobmljYWxfUmVmZXJlbmNlX01hbnVhbF9QYXJ0MS5wZGYKPiBTaWduZWQtb2Zm
-LWJ5OiBIYW4gR2FvIDxnYW9oYW5AaXNjYXMuYWMuY24+Cj4gLS0tCj4gIGRyaXZlcnMvY2xrL2Vz
-d2luL2Nsay5jIHwgMTcgKysrKysrKysrKysrKystLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDE0IGlu
-c2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xr
-L2Vzd2luL2Nsay5jIGIvZHJpdmVycy9jbGsvZXN3aW4vY2xrLmMKPiBpbmRleCA3ZDUxZDNhOGZj
-MDZkN2I0YTBkNzQzNWFlYjBjYjBlNThlMTY3MDhlLi41MWQ4MTZjNmQxOWI4YTIyMDQ1YjE0N2E4
-NjNiMzljOWYzYzlhN2YxIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY2xrL2Vzd2luL2Nsay5jCj4g
-KysrIGIvZHJpdmVycy9jbGsvZXN3aW4vY2xrLmMKPiBAQCAtMTM1LDkgKzEzNSwxMCBAQCBzdGF0
-aWMgdW5zaWduZWQgbG9uZyBjbGtfcGxsX3JlY2FsY19yYXRlKHN0cnVjdCBjbGtfaHcgKmh3LAo+
-ICB7Cj4gIAlzdHJ1Y3QgZXN3aW5fY2xrX3BsbCAqY2xrID0gdG9fcGxsX2Nsayhodyk7Cj4gIAl1
-NjQgZmJkaXZfdmFsLCBmcmFjX3ZhbCwgdG1wOwo+IC0JdTMyIHJlbSwgdmFsOwo+ICsJdTMyIHJl
-ZmRpdiwgcG9zdGRpdl9hLCBwb3N0ZGl2X2IsIHJlbSwgdmFsOwo+ICAKPiAgCXZhbCA9IHJlYWRs
-X3JlbGF4ZWQoY2xrLT5jdHJsX3JlZzApOwo+ICsJcmVmZGl2ID0gRklFTERfR0VUKFBMTF9SRUZE
-SVZfTUFTSywgdmFsKTsKPiAgCXZhbCAmPSBQTExfRkJESVZfTUFTSzsKPiAgCWZiZGl2X3ZhbCA9
-ICh2YWwgPj4gY2xrLT5mYmRpdl9zaGlmdCk7Cj4gIAo+IEBAIC0xNDUsNyArMTQ2LDE3IEBAIHN0
-YXRpYyB1bnNpZ25lZCBsb25nIGNsa19wbGxfcmVjYWxjX3JhdGUoc3RydWN0IGNsa19odyAqaHcs
-Cj4gIAl2YWwgJj0gUExMX0ZSQUNfTUFTSzsKPiAgCWZyYWNfdmFsID0gKHZhbCA+PiBjbGstPmZy
-YWNfc2hpZnQpOwo+ICAKPiAtCS8qIHJhdGUgPSAyNDAwMDAwMCAqIChmYmRpdiArIGZyYWMgLyAo
-MiBeIDI0KSkgLyA0ICovCj4gKwl2YWwgPSByZWFkbF9yZWxheGVkKGNsay0+Y3RybF9yZWcyKTsK
-PiArCXBvc3RkaXZfYSA9IEZJRUxEX0dFVChQTExfUE9TVERJVjFfQV9NQVNLLCB2YWwpOwo+ICsJ
-cG9zdGRpdl9iID0gRklFTERfR0VUKFBMTF9QT1NURElWMV9CX01BU0ssIHZhbCk7Cj4gKwo+ICsJ
-aWYgKCFyZWZkaXYpCj4gKwkJcmV0dXJuIDA7Cj4gKwo+ICsJLyoKPiArCSAqIHJhdGUgPSBwYXJl
-bnRfcmF0ZSAqIChmYmRpdiArIGZyYWMgLyAyXjI0KSAvCj4gKwkgKgkgICg0ICogcmVmZGl2ICog
-KHBvc3RkaXZfYSArIDEpICogKHBvc3RkaXZfYiArIDEpKQo+ICsJICovCj4gIAl0bXAgPSBwYXJl
-bnRfcmF0ZSAqIGZyYWNfdmFsOwo+ICAJcmVtID0gZG9fZGl2KHRtcCwgQklUKDI0KSk7Cj4gIAlp
-ZiAocmVtKQo+IEBAIC0xNTMsNyArMTY0LDcgQEAgc3RhdGljIHVuc2lnbmVkIGxvbmcgY2xrX3Bs
-bF9yZWNhbGNfcmF0ZShzdHJ1Y3QgY2xrX2h3ICpodywKPiAgCWVsc2UKPiAgCQl0bXAgPSBwYXJl
-bnRfcmF0ZSAqIGZiZGl2X3ZhbCArIHRtcDsKPiAgCj4gLQlkb19kaXYodG1wLCA0KTsKPiArCWRv
-X2Rpdih0bXAsIDQgKiByZWZkaXYgKiAocG9zdGRpdl9hICsgMSkgKiAocG9zdGRpdl9iICsgMSkp
-Owo+ICAKPiAgCXJldHVybiB0bXA7Cj4gIH0KPiAKCkFja2VkLWJ5OiBYdXlhbmcgRG9uZyA8ZG9u
-Z3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20+CgpUaGFua3MsClh1eWFuZyBEb25nCg==
+On 25/11/2026 08:07, Krzysztof Kozlowski wrote:
+> On 13/11/2026 02:14, Brian Norris wrote:
+>> Hi Krzysztof,
+>>
+>> On Thu, Nov 05, 2026 at 07:54:22PM +0100, Krzysztof Kozlowski wrote:
+>>> On 03/11/2026 03:36, Brian Norris wrote:
+>>>> On Wed, Oct 28, 2026 at 02:19:23PM +0100, Krzysztof Kozlowski wrote:
+>>>>> On Mon, Oct 26, 2026 at 02:43:40PM -0700, Brian Norris wrote:
+>>>>
+>>>>>> --- /dev/null
+>>>>>> +++ b/include/dt-bindings/interrupt-controller/irq-cpm-google.h
+>>>>>> @@ -0,0 +1,16 @@
+>>>>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>>>>>> +/*
+>>>>>> + * This header provides constants for CPM IRQ.
+>>>>>> + *
+>>>>>> + * Copyright 2025-2026 Google LLC
+>>>>>> + *
+>>>>>> + */
+>>>>>> +#ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
+>>>>>> +#define _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
+>>>>>> +
+>>>>>> +#define CPM_IRQ_RTC_ALARM_NO			0
+>>>>>
+>>>>> Keep naming consistent. Clocks has _CLK suffix, so this should not use
+>>>>> prefix.
+>>>>>
+>>>>>
+>>>>>> +#define CPM_IRQ_AOC_MIN				7
+>>>>>
+>>>>> Anyway, ABI constants should be indexed from 0 and incremented by 1.
+>>>>
+>>>> What do you mean by this? Do I need to make up names for the
+>>>> unused IDs between 0 and 7? On an initial search, I don't believe they
+>>>> have any meaning at all. Does that mean I should make up some kind of
+>>>> "RESERVED_<N>" naming here?
+>>>
+>>> No, I meant CPM_IRQ_AOC_MIN is 1.
+>>>
+>>>>
+>>>> Between 7 and 156, these are just ... 150 different "service numbers"
+>>>> within the AOC (Always On Connectivity) subsystem. I can name them
+>>>> AOC_0, AOC_1, ... AOC_149 if that helps.
+>>>>
+>>>> Or are you suggesting that I pack the actual use cases (so, 0 and 7-157)
+>>>> into 0-151? I thought it was valuable to directly use the firmware
+>>>> indexing where possible; if I change those, then the indexing loses its
+>>>> inherent meaning, and we also have to add another layer of translation.
+>>>
+>>> We do not use hardware numbers as bindings and ABI, because that's
+>>> pointless - no benefits, only risks. Similarly you do not define GIC
+>>> interrupt numbers, pinctrl pin numbers, MMIO addresses as bindings. None
+>>> of these bind anything between DTS and software, so not a binding.
+>>
+>> OK, I see your point about the distinction between hardware numbers and
+>> bindings. So are firmware-protocol-defined numbers more like hardware
+>> numbers or bindings?
+>>
+>>> There are some exceptions like SCMI firmware, but that's not the case here.
+>>
+>> It's funny you mention that, because that's exactly what Jerome compared
+>> this to in the clk, reset, and pmdomain portions.
+>>
+>> These values are used literally in the firmware interface, so I'd
+>> consider them very similar to SCMI firmware protocol IDs (and, not that
+> 
+> Sure, where is the source code of the firmware then?
+
+And if you do not have the source code, then not a binding, so you won't
+have case like:
+https://lore.kernel.org/all/20261124-qcom-adsp-shared-vmid-fixes-v1-1-f1a808dc41a5@mainlining.org/
+
+Best regards,
+Krzysztof
