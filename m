@@ -1,100 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795603037;
-	b=oCe952C0XPwSG1qXBl4PAncY1+oFz/UM3aARb+lYRQJ6PaKkswQY65rwmdAccwJRYwmN
-	 kr2m1RPCZenIgg0pL0oPlrL4cMs5i71ZFhNORXVu2UH/+EqCmqiPvYWiu+GK3G+PqDTei
-	 b6FyVzeZYYn5HWAnsAu1qFomrlC5i+Z4ZFP6ppUYa08AD9gz+zcrV94OBJa7nr3nyCPZB
-	 w0MB08WRHGVkPzb3FZecPw1pYYUyi4z/hYAlF3lL70y6t/xbKvD8Vh1LVccreAPM4FACM
-	 4aTkLZbMQ2GrpZfUgJ/X51BZdnwk2ispFMeOy/5hfNc1KmGCpZvhlVlfgQKu0u3VUew==
+	t=1795603565;
+	b=vBlVNVcZ9g+eX0Tipw+5gNIMMwvxgsyEF7SGl9WwHuSRi8CNglrVJOk28CTkYNPWVVrY
+	 wkT5rXEKEhlE4o5bMoHJXD/Jexm1tl/Zi98fjV74+j4z+PX6xt8DSUizsk6iRxUBrdsKO
+	 qoD3ADlqXC4XMrlxuUp3dHBP9Lo0KiokhpElCpdS5+Sp333YZG/5kgvGJEAywLc3w19z0
+	 rcn2w9kxABNv2vQMvXzLclQiLRNwyv+2wpRb/CGF4lMjN0MDayp9BYAoaijNsDGOpbZu1
+	 /1+TFeXSVseWT7fFeDzFfu4xzl3K92yKJnQ7QnYDjxK5E65O4/pdm34KhTUYhdu+9rQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795603037;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:X-Google-Original-From:Date:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=HjjQ4RF7btdRb/yccVHLGll0ZfchmSlAwpbX+qzuMEk=;
-	b=M3Nn07FvZbUe2sopjtdBT3QxLvwI1cxisBaldzjHMHC7loQk0W4LyL85T3FJb9ptQxEa
-	 3eosUTagYoBEDEZ508CqtskE76SapX1QEng64BdbVjAoe8BWuAaOjyNiArHLKkc5w9odC
-	 kRBx8MS1/XbIuPYbM14x03a0E6TzmBWDr+0yYGPf4TmiF4b0+akT2dAQeq28YuQlsBHLf
-	 bbOi1YOJxQMCrkR2aRLnzbLrs70EVGtyUDQkxlxhF4gBUrtROC+MdHJw++Zhae1in/+B5
-	 OVFMFSLzjdmuVA6slcvEwHzofCkhtrd14LoHoRa5huGFPzfLsiX3DwQIxz0A8TzxR8Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795603565;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=HfN/ahiVnXduUDbp68u51qh4o9kAwPd5xT173c4gw10=;
+	b=UuF8OfCNu9uxQIRsH8Wem8nOmWVNn3lFlfb8em9LWhnxLcqAEze7AGztD1eUNb3tpMbX
+	 ODCqbJEJY4TV1R9bzaHs72XJczvg5fbZIjowgq015V7aLLNF8ejwLGe/oF8jL+ngtk2GH
+	 F1YjJVv2kx6uu53RE7ZFneOjeZSDkb49zJYt0oXVnYU3b/x6PY/FP96gKFHEO8/GjrQ0l
+	 /Xhllv0qT942YKTFHRab+QdCrONLNPW3tkZeh5u3X+HmHjjB53P5xIk4D6HyL7p9v+1Tk
+	 wnx8EHA5eB7Gf0xzimBeO6++SwL3NlXLrChNi5N9ftqmPeDIl9hqi2FEQZP7KJsoP3w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=suse.com;
-	spf=pass smtp.mailfrom=suse.com;
-	dkim=pass header.d=suse.com header.i=@suse.com header.a=rsa-sha256 header.s=google header.b=cnyG9anV;
-	arc=none smtp.remote-ip=209.85.221.54
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W1qw7ada;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CE6606A32A
-	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 10:37:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A1CE6606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF7F606A326;
+	Wed, 25 Nov 2026 10:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.a=rsa-sha256 header.s=google header.b=cnyG9anV
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-4a2f4ca0dcfso3187348f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 02:37:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1795603035; x=1796207835; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:date:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=HjjQ4RF7btdRb/yccVHLGll0ZfchmSlAwpbX+qzuMEk=;
-        b=cnyG9anV9+tEJ8LtFELy6ZIeP9iGbpJnEWHEWD8m2xEXLjZ2r6XX6Q0L2BC6eHIuqR
-         tFOQW0MTnVfX8wGmdS8DuzmOqGl2PVJyyGl31BoQkuv9j8vdAcUmINALr2JUK92O0MEH
-         Sf/7gjxpQzAiKVvT+vBhZFSZpnMTVE5Uem5a2kQFbiw6u92BcUoKZ3NuTsdx8gvPR6NP
-         S+5+eG2VG/LU2d2vWySqhLkqmFKhfy5cJ7KSbDDwgy73WMn05lmM4Nw7k2E40KpYUYUQ
-         NWjwWU2aSwW2Rb9P317N/kRlukga4FWST7HpoByeDojD61soL/szUpUk9O8VB4CSTE11
-         OqYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795603035; x=1796207835;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=HjjQ4RF7btdRb/yccVHLGll0ZfchmSlAwpbX+qzuMEk=;
-        b=CSRwtW12S28pCNKTtQLTvRQLIOCMFKXmDrHL85jP94q7KdUGH6staYFOu8SwkbTn8g
-         gPhbsyfBGWlHHuNqCfnoHVNCpKFZoWE0MPhuDnWR87ae8YzHKz6KCIpJMVJSX5goyjAU
-         nnF0wllddlRTSfXisB4n6z9SjkjH3ldOu8CYEHJrnaGjvUyrOvT+Tms10KADi8YRzC2q
-         sqq51O8XuJiXaju0CYqJon7pRuAP/IegdeQVEOU9kBXuocYb6r/bafUAzqNwhENyAMu3
-         +hy9tjEzVrsMjMM4WRQEt7hhQevQNuUC1JwsxoMPxWIwivrcIF4ZXSKSVCSKctordKdA
-         ZORw==
-X-Forwarded-Encrypted: i=1; AL+hErHbRiMzi02BANMNN0cP1z/tpuWvHeqilJ0bq3BrHPoEXNMJu4E4P6qFehaz75dbCPlVuCpKOU4PP+Q=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8ex+FiKS1xjl+wZBruIL6dH7QvCYdtx17e6joY2BGf/AlKbMVx
-	xokEshV5Oj6qc8gvl3O3C9/EmGcSeDE86+q5+ihYlStmTqNvH/kiOFRpS6WAyD7eLmo=
-X-Gm-Gg: AZFdTZfuwtOIkp7wLECFHWuOWu/O1MBiaBJBoDItynBitbgHwjKbxw+rSSFof5evKyC
-	WuLkTSY0Po7AC5qmT5zF3vgTkSnUmPYcsQAB5GWa0w9J0swzVVG8ICCTsd8jWht3n4JLa8UiGSK
-	stuoWj3H4RB/YDEclD9mYEGAwbh7XrSJBRpytf8RVnzg0QwfTOZNPpgoAcmUqEKK2a4YCfJfilI
-	nwDQ1RJlAVNVnyRUgX1/uLxhZEMZnSlTqOxNycLPuvEI81BQD7nga4kQy+dqwJIHaji9nCqPlqD
-	SL0jQl09UdrL/ETudQ0d3UXhUFRjI9MVK1/qySGMF76WCsM6Bkj2r5KpS9IqcS13bjRJdYio8MF
-	bL0r191vhX44RUU5HAM+VOBRURqbfg1f1BMvUdmysrey9lW14d3kaIxKEuyRG7egAmCHKBkv4mL
-	lZTodyZ8PIxGHIDirKQOjhdSW+G9s9nNRmBASvDn9Ejy20oYZp+erYVzpYZr07/ajybsuaL4OJM
-	pYZ2hH0yRFW1vJnt7VIz/lDLsVCkUZqqeUoZqJOYYZsNWC/J0eDihCrZ2nH38uTawW0IzM3yKM6
-	FICpXgqiKwDR9rJlKQYfBaclyps=
-X-Received: by 2002:a05:600d:600b:b0:4a2:cbe:bec2 with SMTP id 5b1f17b1804b1-4bb8882375cmr360820775e9.32.1795603034960;
-        Wed, 25 Nov 2026 02:37:14 -0800 (PST)
-Received: from localhost ([82.192.120.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb8538b3a7sm569732465e9.3.2026.11.25.02.37.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 02:37:14 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Wed, 25 Nov 2026 11:41:13 +0100
-To: Joshua Covington <joshuacov@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <masneyb@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] clk: rp1: reset cached rates on probe
-Message-ID: <awa7SfNvWXcItiBk@apocalypse>
-References: <20261124231751.83938-1-joshuacov@gmail.com>
- <20261124231751.83938-4-joshuacov@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W1qw7ada
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0CF01F000C6;
+	Wed, 25 Nov 2026 10:46:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795603564;
+	bh=HfN/ahiVnXduUDbp68u51qh4o9kAwPd5xT173c4gw10=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=W1qw7adai1ir9+K0+6gT4+NqaxeH+//TQPY/88zyQZ3UfywpCs5FSY81zuS7cMEMb
+	 +LZsr2BVBEU9atcR2+L2ySLMRvg1ldIK9zVznyz3tWgPOcnMbbfWqzpVdt0dy8LDpd
+	 /lIX4m7+NmeEp2cR0Qlb3uX8krtGDWpUUadM4pd4mnbGeFGnelFROUGHkLG19/uZGU
+	 6MMESdDKUCNhb/Ig4ckoaDc+Z/nm7YtEFsSfMcbQjBCw5WXBMkJLTMMqXKlwRHqHql
+	 GXLO4booI9fIf3S7/2b/Pq4CwUlBTKslU+fdfIzJXVJTf74pkHZM8TABD03FGQpe9M
+	 I6oxGkxlax7Bg==
+Message-ID: <sashiko-outbox-233158@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v4 3/6] clk: Add Cortina Systems CS7542 clocks
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Fil Dunsky" <filipp.dunsky@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261125-cs7542-syscon-v4-3-3337bb0d3b48@gmail.com>
+References: <20261125-cs7542-syscon-v4-0-3337bb0d3b48@gmail.com>
+ <20261125-cs7542-syscon-v4-3-3337bb0d3b48@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 25 Nov 2026 10:46:04 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -103,50 +59,45 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261124231751.83938-4-joshuacov@gmail.com>
 
-Hi Joshua,
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Medium] clk: cs7542_gate_is_prepared() treats regmap_test_bits()
+  error as true
+--
 
-On 23:17 Tue 24 Nov     , Joshua Covington wrote:
-> The clock descriptors are static, so their cached rates survive when
-> RP1 is unbound and bound again. The "varsrc" clocks then report the
-> rate of the previous probe, and the audio PLL and I2S clocks start with
-> stale cached values.
-> 
-> Reset the cached rates before registering the clocks, so that a second
-> probe starts from the same state as the first.
-> 
-> Fixes: 6486341721a2 ("clk: rp1: Add support for clocks provided by RP1")
-> Signed-off-by: Joshua Covington <joshuacov@gmail.com>
-> ---
->  drivers/clk/clk-rp1.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
-> index 1dd276dd2b..60037b19db 100644
-> --- a/drivers/clk/clk-rp1.c
-> +++ b/drivers/clk/clk-rp1.c
-> @@ -2416,6 +2416,12 @@ static int rp1_clk_probe(struct platform_device *pdev)
->  	clockman->onecell.num = asize;
->  	hws = clockman->onecell.hws;
->  
-> +	for (i = 0; i < asize; i++) {
-> +		desc = clk_desc_array[i];
-> +		if (desc)
-> +			desc->cached_rate = 0;
-> +	}
+commit f8597ca556e18d2697791a53767842596741c7d5
+Author: Fil Dunsky <filipp.dunsky@gmail.com>
+
+clk: Add Cortina Systems CS7542 clocks
+
+This commit adds a clock driver for the Cortina Systems CS7542 global
+syscon, registering the APB, CPU, and AXI clocks from the boot strap along
+with three PCIe clock gates.
+
+> diff --git a/drivers/clk/clk-cs7542.c b/drivers/clk/clk-cs7542.c
+> new file mode 100644
+> index 0000000000000..5aa83dc71c2e9
+> --- /dev/null
+> +++ b/drivers/clk/clk-cs7542.c
+
+[ ... ]
+
+> +static int cs7542_gate_is_prepared(struct clk_hw *hw)
+> +{
+> +	struct cs7542_gate *gate =3D container_of(hw, struct cs7542_gate, hw);
 > +
->  	for (i = 0; i < asize; i++) {
->  		desc = clk_desc_array[i];
->  		if (desc && desc->clk_register && desc->data)
+> +	return regmap_test_bits(gate->map, GLOBAL_CONFIG, gate->mask);
+> +}
 
-Thanks for your patch!
+[Severity: Medium]
+Can a regmap_test_bits() error cause cs7542_gate_is_prepared() to report
+the clock gate as prepared?  regmap_test_bits() returns a negative errno if
+reading GLOBAL_CONFIG fails, and clk_core_is_prepared() assigns the result
+of .is_prepared() directly to a bool, converting any negative error into
+true and causing clk_unprepare_unused_subtree() to unprepare the gate.
+Checking regmap_test_bits(...) > 0 would treat read failures as unprepared.
 
-Reviewed-by: Andrea della Porta <andrea.porta@suse.com>
-
-> -- 
-> 2.56.0
-> 
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261125-cs7542-sys=
+con-v4-0-3337bb0d3b48@gmail.com?part=3D3
