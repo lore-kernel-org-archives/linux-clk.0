@@ -1,38 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.47.186.116
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795579586;
-	b=5LwO1mdi7/PAg7aMTxcoyD3BN0G1rlg1UhckZClecnUkRXIQZwAoAsYPRwIUQ1ubmu0Q
-	 DDRGc8uTBxf7IEdjCfgCz/iwwQ1HChTgKOAPZmDq2Q1iWr3pPZwyCv+bGHDSIhc2f9HPc
-	 U1LMMFPwuJtiLkMt2na9OrVHs1rOJ30K2/pxkFlWmVJonLlk3z4kv9MelpKsiP9qOWfAR
-	 ws3T4Zzl800wUWQdvmihOP5lloeoo8aixQe6okEzJSIm2LHuTGwMC9C8z9JMcXJWF092C
-	 +BcNlmfEmPrig2XZAtgkcwGQpeipXASJkCDO6JY2DHgj4qiPTpRJRGvI5Ae9TLUESdg==
+	t=1795579813;
+	b=FPXFk5tNDSgI7tKvma2eT6CHGdsy8wb/TuiGwJebhREGnhRCzXPnHiUIJr+YHfASjLl0
+	 LYHHixF9itrDRY1EuGRQyKbeSnlmvrDA1xeBx81URyAqpRCvrkwqhgr03vrxfHpM9cA6c
+	 b873jG0uQmfNpeoUTR/e2e0pvSOw6+eNYNA/Fh4r8ger8IYn1eD26YA4NOLaV7rrOulY6
+	 gxgJHUlbqDFQ27Adk26aPMJQSJvnrc9FS44CvR8pVM2G1MudchwOWgREwMwi1BWgQoot/
+	 bSXlUBxQfkzG61YoCS4LJvBmO8wb+y10j02iLznRdNCvS11yrty5H7HcTQD0zQbxT1w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795579586;
-	h=DMARC-Filter:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=4eeMbvFMu2vzoY+6M8rEF9e4tT+qIPYw4qCPCaMDfCQ=;
-	b=mxUZgWQ9WWqcPNvLGI3UsTxKWw8L9I1Mj5HrYMctKynRTT0okeJs73b6ajKvV9JMVz9L
-	 zn6W/63Y+vwgLidUIXy41hoMt42ok6orNIBxcTC8Xw8j62p+ieHjbJH/S0SOquZabPLFD
-	 mLiAEke6DCFPloeuRfqZBy3URZeprMZ3PLQlLVqJd4M5LWvQbmrF69XjKnVHHgxd54xwB
-	 16DjrgRoyCAkq5Cu7zRpkw3Wibi36lENgzQAyD+PGPhPOgVKToup/duxixsONHph8Sf03
-	 kKY+rwKx+G2DkksWdIdkyHNkvGy2gPR98EuvbD7dyqLpZ9y/Nar2iuY8W28veGYu73A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795579813;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=vyN+S89dABkbEJ7mc1sd16diNMnG4dcnsXd9z2tyODQ=;
+	b=GEAwDox1ok9dRoopC/9ZWOxV3xi8J+AiK7PM0tD8lz3t1+x9B+u+Y0puKgB5LjxjMV4V
+	 XHrrHDSgnjFlz/n5xgUK03aUcQfweF9DnPQ4VZDCjGfJD2Mcjv8Yyap2/22OWbrIWwJ/l
+	 uOa2okUsCQKDVO97hn9YQeu0CmDytK/exi0uZuTCt33qP6amwhNPoIMoAdr9dAEn5ZrFO
+	 Ffr0VgeiihHekms5wfEC++1RE6aClSiF/reNCUgge1fEuExUCHgBZdXSH5ftSGqXFeDGA
+	 U67giq7ggu/L9cwfDO4x7UyGYJET3RuyiFuFMGofBnQMnm1djG2SoUUkspKZTbzrhHQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=krgm.moe;
-	spf=pass smtp.mailfrom=krgm.moe;
-	arc=none smtp.remote-ip=103.47.186.116
-Received: from krgm.moe (krgm.moe [103.47.186.116])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467C2606A332;
-	Wed, 25 Nov 2026 04:06:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 467C2606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=krgm.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krgm.moe
-Received: from [10.42.0.96] (unknown [114.242.206.180])
-	by krgm.moe (Postfix) with ESMTPSA id 358BC859;
-	Wed, 25 Nov 2026 09:36:23 +0530 (IST)
-From: SignKirigami <prcups@krgm.moe>
-Date: Wed, 25 Nov 2026 12:05:21 +0800
-Subject: [PATCH v2 4/4] clk: qcom: rpmh: Add Netrani clock resources
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gvEFcFH6;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC29606A31E;
+	Wed, 25 Nov 2026 04:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gvEFcFH6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C3F11F000CA;
+	Wed, 25 Nov 2026 04:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795579812;
+	bh=vyN+S89dABkbEJ7mc1sd16diNMnG4dcnsXd9z2tyODQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=gvEFcFH6si0NiS8W2GZkln6pZyl5w1r1I/QHDHwDfqIKWUNoIGKo4gqCpClvP7U0F
+	 CQjLnf3C4kbsXPhYR1hfKmyuFO7gPh822MN74u5wH4fRv+y0O3CbTni0p8eHg3JZFs
+	 CDsROgq2s4dAXL9zx3hMQNf4bbV15A87ISNcZjKKNhNy+4CR/Vz3FSQnEo35WGqSGZ
+	 YZp6PauZZU7u0o4QFtrI32Uqq1o1iBEyY6bL8ZtQpy7+ZY+azwQxMaiTS5v4il85iR
+	 pe8LWMxkB3R3tnjQRTIhGouPEUS0XNDYakOnH/GKtD8c+YLoB1TOQ2ywBfDzqPcTFY
+	 S7cMNVy77Qgkg==
+Message-ID: <sashiko-outbox-232559@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2 3/4] dt-bindings: clock: Add Netrani RPMh clocks
+Reply-To: sashiko-reviews@lists.linux.dev
+To: SignKirigami <prcups@krgm.moe>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+In-Reply-To: <20261125-netrani-clock-v1-v2-3-9ef014e71737@krgm.moe>
+References: <20261125-netrani-clock-v1-v2-0-9ef014e71737@krgm.moe>
+ <20261125-netrani-clock-v1-v2-3-9ef014e71737@krgm.moe>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 25 Nov 2026 04:10:11 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -41,84 +59,54 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261125-netrani-clock-v1-v2-4-9ef014e71737@krgm.moe>
-References: <20261125-netrani-clock-v1-v2-0-9ef014e71737@krgm.moe>
-In-Reply-To: <20261125-netrani-clock-v1-v2-0-9ef014e71737@krgm.moe>
-To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.15.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2109; i=prcups@krgm.moe;
- h=from:subject:message-id; bh=HwiD6+7HyPVYVbtrw+yEWM7KyfKumGTWD1kRzR/4byA=;
- b=owEBCQL2/ZANAwAIAV0dOJt2umJjAcsmYgBrBl6MfNaE3zSMxcpwWf7QVuCWrnrqmz1TTYg5V
- gWnb2s2V9WJAc8EAAEIADkWIQRSClJ2zjncUdNU0FFdHTibdrpiYwUCawZejBsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwwLDIACgkQXR04m3a6YmOLqgv+Lz1qOTBX40KMy1xeRs8fgIV+LM6lNxT
- O81xh/JgpQWuq0SHm2LBx4OLA0jA3V2PUT3cg+0sWleTEy9ry6uL3ROBei41bGm5YszaMcZQWML
- 9anApjRamxcwWcjnIpwGa3RaWucq8hGBSBGb1TyrN4/Fuq3pjr8d5PwuDhjVHshCY2DBPiM8iXI
- eyqNzJwDcQrWJRNL1PA6znBXyaIlTQUJcxz13Agf9vt/VJwAroRo7Knc/agXkpXaKwb9+IbJ1Zi
- 6CvyJEa9cKjW+Y6Wgr00F68k2oru1RiQBLJ/exwhx8U7iP9oaNZ/OlQNeGq37CpuxEq0ohmGkR7
- 5mGeNS5CtnIwx2huh+vQmH1GVuyDJMo8Bg5zxCXVyQBAjuyiW1CakJubqCb8JotgX9C1dGn2jpw
- lh0AwKdHQR4cI0n/BVY00QmEZ4zJES4T+cECF6CO/HqssgddNjR3u2yw4qHU4so1+YsjePpi7Ry
- 6f0ga2+PsLg8J814SC0r2Z517wpcO+Q
-X-Developer-Key: i=prcups@krgm.moe; a=openpgp;
- fpr=520A5276CE39DC51D354D0515D1D389B76BA6263
 
-Describe the Netrani XO, line/broadband, RF and IPA resource clocks.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] dt-bindings: clock: qcom,rpmhcc: unnecessary netrani-only
+  required block
+--
 
-Signed-off-by: SignKirigami <prcups@krgm.moe>
----
- drivers/clk/qcom/clk-rpmh.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+commit b3574101c65f043362d9641e881d3932e0269507
+Author: SignKirigami <prcups@krgm.moe>
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 68640e5904a64..389f9567f2397 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -499,6 +499,27 @@ static const struct clk_rpmh_desc clk_rpmh_sdx55 = {
- 	.num_clks = ARRAY_SIZE(sdx55_rpmh_clocks),
- };
- 
-+static struct clk_hw *netrani_rpmh_clocks[] = {
-+	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div4.hw,
-+	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div4_ao.hw,
-+	[RPMH_LN_BB_CLK2]	= &clk_rpmh_ln_bb_clk2_a4.hw,
-+	[RPMH_LN_BB_CLK2_A]	= &clk_rpmh_ln_bb_clk2_a4_ao.hw,
-+	[RPMH_LN_BB_CLK3]	= &clk_rpmh_ln_bb_clk3_a2.hw,
-+	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_ln_bb_clk3_a2_ao.hw,
-+	[RPMH_RF_CLK1]		= &clk_rpmh_rf_clk1_a.hw,
-+	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
-+	[RPMH_RF_CLK2]		= &clk_rpmh_rf_clk2_a.hw,
-+	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_a_ao.hw,
-+	[RPMH_RF_CLK5]		= &clk_rpmh_rf_clk5_a.hw,
-+	[RPMH_RF_CLK5_A]	= &clk_rpmh_rf_clk5_a_ao.hw,
-+	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
-+};
-+
-+static const struct clk_rpmh_desc clk_rpmh_netrani = {
-+	.clks = netrani_rpmh_clocks,
-+	.num_clks = ARRAY_SIZE(netrani_rpmh_clocks),
-+};
-+
- static struct clk_hw *sm8150_rpmh_clocks[] = {
- 	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
- 	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
-@@ -1141,6 +1162,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
- 	{ .compatible = "qcom,kaanapali-rpmh-clk", .data = &clk_rpmh_kaanapali},
- 	{ .compatible = "qcom,kuno-rpmh-clk", .data = &clk_rpmh_kuno},
- 	{ .compatible = "qcom,milos-rpmh-clk", .data = &clk_rpmh_milos},
-+	{ .compatible = "qcom,netrani-rpmh-clk", .data = &clk_rpmh_netrani },
- 	{ .compatible = "qcom,nord-rpmh-clk", .data = &clk_rpmh_nord},
- 	{ .compatible = "qcom,qcs615-rpmh-clk", .data = &clk_rpmh_qcs615},
- 	{ .compatible = "qcom,qdu1000-rpmh-clk", .data = &clk_rpmh_qdu1000},
+dt-bindings: clock: Add Netrani RPMh clocks
 
--- 
-2.56.0
+This commit documents the qcom,netrani-rpmh-clk compatible string for the
+Netrani RPMh clock controller and adds a conditional block requiring
+clocks and clock-names for it.
 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/D=
+ocumentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+> index 5c9b653bc2aa5..6ab049ba4b6f9 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+
+[ ... ]
+
+> @@ -68,6 +69,16 @@ required:
+>    - compatible
+>    - '#clock-cells'
+> =20
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          const: qcom,netrani-rpmh-clk
+> +    then:
+> +      required:
+> +        - clocks
+> +        - clock-names
+
+[Severity: Low]
+Why require clocks and clock-names only for qcom,netrani-rpmh-clk?
+
+Every RPMh clock controller in drivers/clk/qcom/clk-rpmh.c uses
+__DEFINE_CLK_RPMH, which parents all non-BCM resource clocks to the xo
+input clock, and every existing in-tree DTSI matching qcom,*-rpmh-clk
+specifies clocks and clock-names =3D "xo".  This allOf block can either be
+dropped to match the rest of the SoCs in this binding, or clocks and
+clock-names can be moved to the top-level required list.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261125-netrani-cl=
+ock-v1-v2-0-9ef014e71737@krgm.moe?part=3D3
