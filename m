@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795602860;
-	b=HQCUJ7WAs/cA4/5TTi9bdMCfcSJK1FZY80m5dytxXsYiRqxCR3wx8u0ISyLrnU7yd//J
-	 LpqU565NHAAn2ifIkaqmbwB6szykOyq6H0YkXtXeBUeC9xD+u27DE/KCwxc3zy9xIh6db
-	 SqdsB2XXPT1uDMlhYEQ9LiV+slyXi7uLW8Cw311Sx/zq71B8EWGL4ZFin2cq6x5QBI514
-	 wh1ygZ0inzVkCGLARe+Ag8YapKWZYL6IZvWJX92aFvdC70mCRqRvV9clBx/CFF6SDx6b9
-	 HxJzBJBx8BX+2yV4nIVv/UtIFyY8x1NIrjZPxwaAS6B0a9dqZURkrVM+pm/Ld18tCOA==
+	t=1795602869;
+	b=plzT0rtsKiq9bcThFwX1cy6CWAIAg521POlLpKNdL72LYViJrLRaDJlY/ghmP/1Zmy5Q
+	 1GkGRzXYK/FbCZYslC4XtV5Fv9sSeqpLuTOW+SJG3qqZNApvr2P5wsrUPoWbpXg51XuRw
+	 xTlGo5XkCN9bjyXRbGRED+EJzmyZVUGATUaI3AZekzhYjKmPE01Eh37XvwYKTmQs6DJZO
+	 zszwpolIqw5T3m0nYFhBaB+WphVktDV52dNTmbnjNM7Iw0jEsB0b2smoYfOqKfH6uNmtE
+	 Qj7TtvtGer7yTLVvazLStJwX7KOZz+4Wpl2c/sEdE4SMFEzmFEhpaR12ZIPQW97PunQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795602860;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795602869;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=aCqK1uXLPdCs4Ldkr3opqdXBdv0PuoNLOgXFHdY57+E=;
-	b=5pHuhh/1mxg71vEHUVmgh6fGRyMa4lojasijOoll8HpYcZ2+BnqtJdLYY0uYBhM3rT4k
-	 /It9HpyOsLcUfB0t+SglD641Xp+Dps6+Uq0jhoIs5E8AwwCAlP2wMfhJd/aRLhnn/mdXD
-	 tiQx3icGoVrP2MppkxjS9yopDbXowl9aiABYnJBRMqNZiKTzjuVws/8zATl/pgGMkiAQc
-	 B4GtU7PjjW26DGiJgOs3HAjfQRV3c+Ej3NEbFkIHKYPZCn8lcnDJ8JkGZi5XVIr7fJIZj
-	 mBB/ysE0BpavsKKpwIT6/bsQxwOya4cdq2bWWjCEpdaj0d8M3RbHxRfF9gblykB6tQA==
+	bh=iBBqfo+d2+cFn8zVtVbNnGx1ZajuTlfBHFQX3dJVgqY=;
+	b=VUTAPun+Za5pxB/0U847zPQOFyW5BUB05f765c74Z7ip+Yj1Wm07RdwgrvGK5cikSdIm
+	 TQdFxo2KFH03V6WwwgMxRKFCEsNQhr3z6gIWlHNLPd1V7pt8q+mUS5pmblHS5t0Wiu6Jr
+	 /MbjKSxXtKIXf8cHLfpNxhqYrMSLgUSe2YA2Z38LuSNST8dMHpXPr8F1hjo9yAKeL6ZDI
+	 TVDcsPEGEhfPJ4g5HIIAuTgZfyOipI/JGRAlsxG/cqCdh3wDO70JvMY3Ez49DgvT8+szr
+	 TLMikqps/04Dpu2kxv7Ww2XNP7pnvt+CIY3Wx1nTF/IXFSFbI2jYUfiA5Yf3P7ybEEw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lV4i1GjC;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="fbcsDy/1";
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71918606A32C;
-	Wed, 25 Nov 2026 10:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1584A606A338;
+	Wed, 25 Nov 2026 10:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lV4i1GjC
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fbcsDy/1
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795602860;
-	b=QmorhgdhUJq+HxjOrX6+ro6UH809pGsL934LliEJJ05rXrHleLWmvx/LbSIbU3tWivEg
-	 zh+caRGnk4UgND5awqrcVkrZZatNcwhokCbLUBkxDpsOTlqexWi7Gdh0dO8Nt9ZncHHqf
-	 jAjvoLlDLoW4tLx1fd1YUnbfizxKLYS5f4Nt4vAifQ2Z12xUfR2MJvjMXMYzLOcFSRIlJ
-	 jyPsbgS5dyHEUHCXye76r44WQWROFF/BSCnjKd2mDTATpdYK+yYoFu5ROMT17s7aJVl2+
-	 szaZfuF2NRLRZfDccBn5ue4dqlrWJ4Af1bC5mwdFHsrxMTw1cIAtLc6AE2Y/XZdXruQ==
+	t=1795602868;
+	b=u7if8lDhP8HlHZkpUZ+nGmJeIAQKAtwyHzA+aDnerIaD8X/+RBO8nFiAfiqdTBTydhng
+	 Ggev5xpM2ru1TO4SMzgUwfXGCj90jmtN7TkvKyUCsWlEojckwSAiSXJRdMNhFUW0dTqz+
+	 SaB9O2yKLfvY3XA5JkARVwgMd83pS7ca7nStPfe0haqIOnV2MIIKRu3tyXJJsJzfppU3S
+	 6w3aa6Q0tG1URM4ufSc0pZGROwHbAKrFMAGwbX2PyqKdhuCH3bXhxSlD/wuvwEkPrrrgt
+	 LuZBJkIFNTyDRDXrFSjcJdsQjvys7SlNkFvrFe+sCqBA1z/hHsRzk9jxKBj2oHLg5wA==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795602860;
+	c=relaxed/relaxed; t=1795602868;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=aCqK1uXLPdCs4Ldkr3opqdXBdv0PuoNLOgXFHdY57+E=;
-	b=L7IV/Ke0EuSZo2TkalsM4Y7ckaFEJPYmjagrn5eu3oK5aXLTxbvC5NYveiNzWZzuKpth
-	 hHygkG60pps9YcwqV918hkKGzMWGYyYkETLzDxgigk1qf5PWleOPV7pOksAqv+HhhW+XD
-	 g59SSAXBAz/Ygf89j1FZnjW+6rfiz4qhRE5C7fsajBM38LpSmSP1EXzTj5LI9p42rSzvn
-	 Nm8HGap4Fr90SB/J7R/ZRSw5TtSenddZ5vtKi87o07goxC2IflC73MCDI4Mykfcmq8Mu7
-	 VuESHvAzCNpL/ptOmqDUW1XByENpeTEP2QgtdjgU1h7LFOPud4PjSOWRb9WhvWIIL1Q==
+	bh=iBBqfo+d2+cFn8zVtVbNnGx1ZajuTlfBHFQX3dJVgqY=;
+	b=prxxBypH4Dvai4xDnsHJZXgHm1ICblZi/jFI6B6tcgYx9B7q8xuM1DeEMDCwV64+6vBY
+	 7qlHFmaox/lJ1CZXe8dp8nklTm92G/6uR+eAqZQ4hPy2K7vTIqm4fQhrVtlyois3YMf0Y
+	 hHNKXiZ6Njj/wsbk7PEKgLKRHthAo89vdDppJ7V+bzq/Yv806PXvIWh7xHO5zWSDZ6USH
+	 OM1zO1jvJmcr7twKe6dqQowWAPHwdebo0ywR5E7iHPI47zKZuG3V1PUJ36JAJxtfUIdG8
+	 wIzYztksuNeWxq4eYzLUuRgd/S4HrPrX7U9OsejpmPQXeWhF1Nh5BzhdlLXO9qEse3w==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 47D9F1F008B2;
-	Wed, 25 Nov 2026 10:34:10 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 38BA71F01574;
+	Wed, 25 Nov 2026 10:34:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795602860;
-	bh=aCqK1uXLPdCs4Ldkr3opqdXBdv0PuoNLOgXFHdY57+E=;
+	s=k20260515; t=1795602868;
+	bh=iBBqfo+d2+cFn8zVtVbNnGx1ZajuTlfBHFQX3dJVgqY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=lV4i1GjCT7MVEeZP9EKvEKwENMcSxmXaxIL7oX6NTKHU7JPBaNW+rarO5wnZWTBOb
-	 lGGBXbqLsSIkjqP5dClO8OqRsok18vrI5f842QQVPq3Z6QKj7ksdau5a+tPeoX7Ss+
-	 FW1jXDhZxBBrfAH4szLYxNXHXW25tuxMgqU89kJulTCcr99ucB88uosUN64i8jU52r
-	 2t19TZu7Q8GHxHwFI9jSQe1mX6/0QK36PZvxc0tFjmeQv+y31ZgB8plKZ+XjyFKVGs
-	 8YLs8VManh7WD9jg17w7+TDafGg1GJCBFSdQT8o2mat1kBMsLZAT8ycq6h8R7qtg4S
-	 x+BiNOWXh6C4w==
+	b=fbcsDy/1RM6JaTjTtzMRIroj51fymYcuYPNzx7U+A3VqSK7T5TNhIdgQvzUCWHe2S
+	 /UOWTFNFqd6icqM/300ATbO3VevUUxEgRoqBdCf1vjIqYNdB0rvU+bL8uIsYTuwRd0
+	 Y0ZvO+ma2DtVvh9N0y69gZUnnwYfpPh4GKAgPw/uFq2ky9DM5D3xT5xFs+E8BJS0Lc
+	 eqzzPdPMuuygJqVc4OTfh36lGVoD9uSVXcV3OMAUVgQy4ECvTm0AgWOGH+htXn9s+I
+	 7fU3p6b4VdHlMjfCfCclfUoam1p2+3NCTTOpHkas26yUEsvFixTaevNT0sz15KmoyL
+	 dILaWuJbyrE+g==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id C6F404CE50;
-	Wed, 25 Nov 2026 10:34:09 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id 4B6644CE60;
+	Wed, 25 Nov 2026 10:34:10 +0000 (UTC)
 From: Fil Dunsky via B4 Relay <devnull+filipp.dunsky.gmail.com@kernel.org>
-Date: Wed, 25 Nov 2026 13:34:10 +0300
-Subject: [PATCH v4 2/6] dt-bindings: pinctrl: Add Cortina Systems CS7542
- pin mux
+Date: Wed, 25 Nov 2026 13:34:14 +0300
+Subject: [PATCH v4 6/6] MAINTAINERS: Add CS7542 global control support
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,7 +83,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261125-cs7542-syscon-v4-2-3337bb0d3b48@gmail.com>
+Message-Id: <20261125-cs7542-syscon-v4-6-3337bb0d3b48@gmail.com>
 References: <20261125-cs7542-syscon-v4-0-3337bb0d3b48@gmail.com>
 In-Reply-To: <20261125-cs7542-syscon-v4-0-3337bb0d3b48@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -96,11 +95,11 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
  linux-gpio@vger.kernel.org
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795602848; l=3414;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795602848; l=1145;
  i=filipp.dunsky@gmail.com; s=20260930; h=from:subject:message-id;
- bh=GXF3eV4Di05M7txSyaOSbXKuZUwi57EYWkuShSLxJwk=;
- b=pAWFBWv4AImGwJ4AUClltaW/LmOcv8n8fPdvAKH7T07b5F02HYkqOM/eiyHX/CqsaatHb/T20
- OjpwlcGQkgkDrmSTRi0HIPBha1tVzOsQn52mVBb7r9Pu1sFeaIqQU4z
+ bh=451qyYBYGcKQBnv4zkYbgyAEFoN+lZtfxN3rOpF09y8=;
+ b=7SwLJdRedUZdNTGMoRkhPdZqvW/+eAFF2+lVWXeaAGO7mvMncnIIxXO/jiDMvff4bEPKnKzYv
+ mKlRMyg8oTzBhHK2X3iFcZ0QPJQOgrroMCuxvaDvhAefcQBlvJi9ovP
 X-Developer-Key: i=filipp.dunsky@gmail.com; a=ed25519;
  pk=JAYP8e2rJ54DHOmhNtXud8rl1igAaAXoOHxtJmVXI1g=
 X-Endpoint-Received: by B4 Relay for filipp.dunsky@gmail.com/20260930 with
@@ -111,120 +110,37 @@ Content-Transfer-Encoding: 7bit
 
 From: Fil Dunsky <filipp.dunsky@gmail.com>
 
-Describe the GPIO and UART mux functions and reference the child
-schema from the global control block.
+Add contacts and paths for the CS7542 clock, reset and pinctrl
+drivers and their device tree bindings.
 
 Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
 ---
- .../bindings/pinctrl/cortina,cs7542-pinctrl.yaml   | 84 ++++++++++++++++++++++
- .../soc/cortina/cortina,cs7542-syscon.yaml         |  4 ++
- 2 files changed, 88 insertions(+)
+ MAINTAINERS | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/cortina,cs7542-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/cortina,cs7542-pinctrl.yaml
-new file mode 100644
-index 000000000..cd5c81a0d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/cortina,cs7542-pinctrl.yaml
-@@ -0,0 +1,84 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/cortina,cs7542-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cortina Systems CS7542 pin multiplexer
-+
-+maintainers:
-+  - Fil Dunsky <filipp.dunsky@gmail.com>
-+
-+description:
-+  The pin multiplexer is a child of the CS7542 global control syscon.
-+  Five 32-bit registers select GPIO mode when a pin's bit is set, or the
-+  peripheral signal when it is clear. Pin numbers match the five GPIO
-+  banks, from gpio0 to gpio159. Initially only GPIO mode and the UART
-+  signals on gpio72 through gpio77 are supported. Other peripheral
-+  routes and electrical configuration are not described here.
-+
-+allOf:
-+  - $ref: pinctrl.yaml#
-+
-+properties:
-+  compatible:
-+    const: cortina,cs7542-pinctrl
-+
-+patternProperties:
-+  '-pins$':
-+    type: object
-+    $ref: pinmux-node.yaml#
-+    additionalProperties: false
-+
-+    properties:
-+      function:
-+        enum: [gpio, uart]
-+
-+      pins:
-+        items:
-+          pattern: '^gpio([0-9]|[1-9][0-9]|1[0-5][0-9])$'
-+        minItems: 1
-+        maxItems: 160
-+
-+    required:
-+      - function
-+      - pins
-+
-+    allOf:
-+      - if:
-+          properties:
-+            function:
-+              const: uart
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [gpio72, gpio73, gpio74, gpio75, gpio76, gpio77]
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    syscon@f0000000 {
-+        compatible = "cortina,cs7542-syscon", "syscon", "simple-mfd";
-+        reg = <0xf0000000 0x100>;
-+        #clock-cells = <1>;
-+
-+        pinctrl {
-+            compatible = "cortina,cs7542-pinctrl";
-+
-+            reset-pins {
-+                function = "gpio";
-+                pins = "gpio37";
-+            };
-+
-+            aux-uarts-pins {
-+                function = "uart";
-+                pins = "gpio72", "gpio73", "gpio74", "gpio75",
-+                       "gpio76", "gpio77";
-+            };
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml b/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml
-index 561bb7b63..fe839e46e 100644
---- a/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml
-+++ b/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml
-@@ -38,6 +38,10 @@ properties:
-   "#reset-cells":
-     const: 1
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 44540a1eb..703e95e83 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2949,6 +2949,18 @@ F:	tools/perf/tests/shell/coresight/*
+ F:	tools/perf/util/cs-etm-decoder/*
+ F:	tools/perf/util/cs-etm.*
  
-+  pinctrl:
-+    type: object
-+    $ref: /schemas/pinctrl/cortina,cs7542-pinctrl.yaml#
++ARM/CORTINA SYSTEMS CS7542 GLOBAL CONTROL
++M:	Fil Dunsky <filipp.dunsky@gmail.com>
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++S:	Maintained
++F:	Documentation/devicetree/bindings/pinctrl/cortina,cs7542-pinctrl.yaml
++F:	Documentation/devicetree/bindings/soc/cortina/
++F:	drivers/clk/clk-cs7542.c
++F:	drivers/pinctrl/pinctrl-cs7542.c
++F:	drivers/reset/reset-cs7542.c
++F:	include/dt-bindings/clock/cortina,cs7542-clock.h
++F:	include/dt-bindings/reset/cortina,cs7542-reset.h
 +
- required:
-   - compatible
-   - reg
+ ARM/CORTINA SYSTEMS GEMINI ARM ARCHITECTURE
+ M:	Hans Ulli Kroll <ulli.kroll@googlemail.com>
+ M:	Linus Walleij <linusw@kernel.org>
 
 -- 
 2.53.0
