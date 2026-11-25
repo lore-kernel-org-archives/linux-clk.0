@@ -1,96 +1,45 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=119.15.109.137
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795607608;
-	b=eceH+dIRXThuXsvBtMcetcwf/QG/XxXDo+0SNxReK1ARuhlp1IdQzdZTLC30SJtaTW3S
-	 U+uFOKqPXaeZNKc561vwESMwObcsI+3RcsL8+qDQEzO0cJGku4Jzmkyg6f8OPNjUSJrsb
-	 h0LHdVZ7Xvhc8/Oi/TOj/0RgJ5TfVF5fRxlG1sn+qNN3JPoCqbhLsPKqj6MasNTmQrx/J
-	 wCSL36xx67uBhZ1BBDKdOU7OLDDe1WKSNEtTUkWPty78NO/r273yBwa5wMYP1kKfWa5eH
-	 tfy2w4FBLrKHVpeOg34bKn2ThtGB+yWa3l4a0P1BVdM+UmthtRJv4Q6lhye7u/LRtMg==
+	t=1795607902;
+	b=jDzws9d2GJ9cLijiABuoV01CRa19WA1n/+2OerxxFG38asu7/QMhNjG0Az5eg+Vkx+Zm
+	 ZefvQKq+VFoWC3eXmBAnu0qH3c4OPOSbbIhRv1Dsq7Ylldn+Kb733joEoFCCcFfdmtxJV
+	 ifc+kSCQbwGqO0uSA95lR+zN2o8ycOvcC+JMVM05VD4vY4JGaFtV3iiibjX8fNnKMyks8
+	 YI6h+mm7guRVcs+hAr8Ap5gXHmdWvTOizBc8easKYwRExxN4AXdk0/icpaoPuJGTOyOBt
+	 3g9owDskLa52X6tH0d1//GjKkftJy35mXVN9rirSTrWVxQASXuaBUHgDQa+UJub1bBA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795607608;
-	h=DMARC-Filter:Received:DKIM-Signature:X-GPT-Reason:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=mlkDCg9kprZ62DwlXQd8yd+ADgwJpdD1CpbOrg8ZjiY=;
-	b=OqR+FwsHHF7Ifbz848AF4pOjSuosND+F0YJzOXktLRtxXh3EuDbXqxTLyB3fIGCFMGSs
-	 rpGTYxXfZgehqGgoqD3wWf6tO3d9G9n1v5/iadwNR7+m1OCAAUwXaNHe9JGiSo38WE2bS
-	 0FRMtUc4B0jhKBOTaDK69hFzsoFfpl5gvB3LXBs0xHY03ABjEgs6ArED07x2xP5ywO436
-	 m15ncaTF5inFvz58x4vg+dRbemA8wTa7LyVe6F0Vx3AvrXCTY4RXlb8/RWGStbxnLViLh
-	 9B/c4DLko32oCZS2OFUgl+H/i2WGTrT7QwJfcjc2eBD3ILacERVzv9rR0FPhRlTDkvA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795607902;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer;
+	bh=iegJmaLrxjuEXYo/kXVTXMNsmKwZ8sV4FxYf+lyrVHk=;
+	b=VaAOYdaeLkEW11YT4Yy4qKck/i1nW0PQ6yn5lmnVF43qYlIt2cTmqc08omOzEpLnIUkP
+	 8S+YAap4qzBRfAVG2X+h5S2xfAw+a5ASwT0gnDuP3CHzDGysvPKFhZIQEovcI5+UVVg4t
+	 zyehEVh3NRL/fL4CXoijxPWQlIV3A4UnI77UvlRk7ruOJwnop0fYYZPf3kW8+kcGO4v5p
+	 KloA8+DWZfxpR8dlrtgh5PShIjLSATRvGykVein+gkgnoQpAA6o/wfV3xiYp9vdbjP56p
+	 qh/INYy0PwKsDr0CONUCv7lTVeg/ayQduAqW0IAs1M6tNU1bGyMBvjoacxpBc9wdJhg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=d-silva.org;
-	spf=pass smtp.mailfrom=d-silva.org;
-	dkim=pass header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=C8qj2Rj+;
-	arc=none smtp.remote-ip=119.15.109.137
-Received: from www.nmnhosting.com (watt.d-silva.org [119.15.109.137])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b4L6X72q;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6FC606A332;
-	Wed, 25 Nov 2026 11:53:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EE6FC606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=d-silva.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=d-silva.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDC1606A31E;
+	Wed, 25 Nov 2026 11:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=C8qj2Rj+
-Received: from Hawking.lan (hawking.lan [10.0.1.4])
-	by www.nmnhosting.com (Postfix) with ESMTP id 32D4E45844;
-	Wed, 25 Nov 2026 22:53:20 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=d-silva.org; s=2025a;
-	t=1795607600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mlkDCg9kprZ62DwlXQd8yd+ADgwJpdD1CpbOrg8ZjiY=;
-	b=C8qj2Rj+fzKog24buY1PaEC/j3+RQMketNzOBNyqLPWLhq3UVkUmXjPujBBBfT32+Ki+0s
-	2Y6k9BKv4Xh6Cgdk4eNvSDniSQhzK5oRY5aaw8V03U/XkGaHoA8oZcgvXvXzrrwIhtpckP
-	D7e+5pVv+l6s9ImcAxTvntnCi3d2XynmKc4m8EmxMU3tg72jdrGMswbwvB8ygFYJyyf1aJ
-	HUapdsxbhWcfElKIXpTDoNlNeqEAEO3kDjc6dUakyf3z4+fSNGVWbQdDDxumfm/rnqxnz7
-	PKxPPKekc+UHvNn7g/4bNwrBoIOeaE/YpnGdebkwT26eR7KAiLcsSJcNrm1rdw==
-X-GPT-Reason: The email is classified as personal/professional
-	correspondence because it appears to be a direct reply to a technical
-	discussion. The sender domain (d-silva.org) matches the recipient's
-	known personal mailbox (alastair@d-silva.org), the subject line
-	refers to a specific technical patch (clk: sunxi-ng: a733), and
-	there are no phishing indicators, urgency tactics, or external URLs
-	present.
-From: Alastair D'Silva <alastair@d-silva.org>
-To: Junhui Liu <junhui.liu@pigmoral.tech>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Richard Cochran <richardcochran@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	netdev@vger.kernel.org,
-	Alastair D'Silva <alastair@d-silva.org>,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Enzo Adriano <enzo.adriano.code@gmail.com>,
-	Norman Herms <dockseed@proton.me>,
-	Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
-Subject: Re: [PATCH v7 7/8] clk: sunxi-ng: a733: Add bus clock gates
-Date: Wed, 25 Nov 2026 22:53:20 +1100
-Message-ID: <20261125115320.3692954-1-alastair@d-silva.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261112-a733-clk-v7-7-db7c5451ffa2@pigmoral.tech>
-References: <20261112-a733-clk-v7-7-db7c5451ffa2@pigmoral.tech>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b4L6X72q
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A92621F000C0;
+	Wed, 25 Nov 2026 11:58:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795607901;
+	bh=iegJmaLrxjuEXYo/kXVTXMNsmKwZ8sV4FxYf+lyrVHk=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=b4L6X72qTKMicsxqXokbel7lNBuYiYsZhzr4Bfyq0wcYC6jjDBFz6DbHMjY29zYDj
+	 HNh77Io+aw65qtmIfXMBJ+cLcirYxrFEM/H1XkfJ2OcWU/VOp+vyrMr+bGhDQw4Jui
+	 hVOU2AdQgfCYvfQWFZ6LtoXnPloHNv6w+KAKE7Oeue3Ijiog5V5Qy8GhLhhI1a/QhC
+	 uMip3dbWMUkGyoOw2occOBaZYGVJC29rf0eNftztZNNCvIUzzHYIXd4Qa4ZlEoEHY4
+	 IYrDMj0SSeOFcyfNZMyXaTuO9lBLX3fSa6/WydbRK0FHbl24Kk0PumOUTRbjxI5vGb
+	 tzGRahh5iVPhQ==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -100,32 +49,49 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 2/7] dt-bindings: soc: mediatek: add MMDVFS binding
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Echo Zhang <echo.zhang@mediatek.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ MMDVFS Team <linux-mediatek@lists.infradead.org>, kyrie.wu@mediatek.com, 
+ ming-fan.chen@mediatek.com, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, llvm@lists.linux.dev, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20261125060037.649659-3-echo.zhang@mediatek.com>
+References: <20261125060037.649659-1-echo.zhang@mediatek.com>
+ <20261125060037.649659-3-echo.zhang@mediatek.com>
+Date: Wed, 25 Nov 2026 12:58:18 +0100
+Message-Id: <179560789852.84329.1942681652314978942.b4-reply@b4>
+X-Mailer: b4 0.17-dev
 
-Hi Junhui,
+On 2026-11-25 14:00 +0800, Echo Zhang wrote:
+> Describe the MMDVFS clock provider and its connection to VCP firmware
+> in a common binding. Document the optional MMUP shared memory and IPI
+> settings used by the firmware backend.
+> 
+> Add an MT8196 binding for the HWCCF syscon and seven mux OPP tables so
+> the driver can map clock rate requests to hardware votes.
+> 
+> Signed-off-by: Echo Zhang <echo.zhang@mediatek.com>
+> ---
+>  .../soc/mediatek/mediatek,mmdvfs.yaml         | 60 +++++++++++++
+>  .../soc/mediatek/mediatek,mt8196-mmdvfs.yaml  | 87 +++++++++++++++++++
 
-On Thu, 12 Nov 2026, Junhui Liu wrote:
-> static SUNXI_CCU_GATE_HWS(ahb_msi_lite0_clk, "ahb-msi-lite0", ahb_hws,
-> 			  0x5c0, BIT(16), 0);
-> ...
-> static SUNXI_CCU_GATE_HWS(mbus_msi_lite0_clk, "mbus-msi-lite0", mbus_hws,
-> 			  0x5e0, BIT(29), 0);
+.... and this has build check failures :/
 
-While bringing up GMAC0 on the OrangePi 4 Pro with this v7 CCU series,
-link-up and DMA broke as soon as clk_disable_unused() ran.
+Best regards,
+Krzysztof
 
-ahb-msi-lite0 (0x5c0, BIT(16)) and mbus-msi-lite0 (0x5e0, BIT(29)) gate
-the shared MSI-Lite0 bus fabric used by GMAC0 and other masters, whereas
-bus-msi-lite0 is only its register configuration clock. Referencing
-ahb-msi-lite0 and mbus-msi-lite0 only in gmac0 does not model the
-shared fabric, and gating them off breaks GMAC0 DMA.
-
-Could you please mark ahb_msi_lite0_clk and mbus_msi_lite0_clk with
-CLK_IS_CRITICAL, matching ahb_store_clk and mbus_store_clk in this
-driver?
-
-Tested on OrangePi 4 Pro (Allwinner A733).
-
-Thanks,
-Alastair
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
