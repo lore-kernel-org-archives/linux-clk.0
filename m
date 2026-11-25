@@ -1,97 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.54
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795605460;
-	b=BLSg8N8/bzvAxcsVYRxH1bngQVANqegt+18/vHTEcjWhY48cxo9ySRIuaVykrTzWJCCH
-	 xT2Ex8X9DUATW1j1iepzTcXMCLhFZ3gi8SvARubY5bqR437aejLbaS3NwiFJhER51DnM2
-	 RPv5uaIhy8NSJdIRzACRzZBguvx0/Xezli1Be9coIa0796cvWvNZwhqavfVH5ugRgpjy6
-	 A/mfiwJhRK9SwHz7eefiphyQxIup02xpd2wnP35vevxw38DYdWnA4BOp2c7Hur6AthXd+
-	 zOCc/+HyAtXwqmWnn02jioENPRSFB3wSP0LOsU3hnAF0dpZ0SXd9v+IF+tQT92Ln1RQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795605460;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	bh=fxRUQxNACXipbKVSVCcm8+n4+a6NGsD8TgB0HuHTvI8=;
-	b=dtYjkC5gkacC8FB81pUk8705OEEqKhHIJKfFyAvWllpQXUMimnAU1ltHcH0/Z/aOHYDF
-	 5B7stBF35eAVhKt276NodygwjdZVGaEn2YZJBgLTqikuRIS05ItsSX83PhY9bF7Y+/LJv
-	 pLRe63P2xbjzyPad03OX8/9/0YGEExxUCnCueiT8pNTZQ85E7Xf+TJCqyGEgnvSbbL7ri
-	 VoAWq4n+YAeRaxfYGmH06krx38yhMD5BvnneRBRLzuTJ+4ZJ93jFH8HbYwv+xEfZimok+
-	 6d7Ts+TMYQ+lmX07wfEkDwwZcp1Xi5IPi4gYBfIRQIWn+8G4rVWhx7I1as2N3HhJNvg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=KYdOc0fw;
-	arc=none smtp.remote-ip=209.85.221.54
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795605545;
+	b=yoQHg9c+2y5ZyWPYC2b8LQLY//Vu7MyvMlMfZ2PpgnHuKcs7BJ7qZQ8c3iJZ1tcCFw0J
+	 7zm3KwR+lt4Ul7EffuLxiRGGb528wxfkkRXaOcA/D3BtFem+XtD/fvx19ry4XINvpOQrR
+	 u4wAPHdkzYHYTXj6t9BdbLsnRbtKnd4C3+dRpNi6cNrNNdNCL6hIWUdfwyiz+KE9Mz1Cs
+	 sPHXFgy/CrfGcukXrjeX5PLtxtU0RpqJZobuYlof1h0KP3Rh0XmDzCXTthp0D8U/LBPLL
+	 SlnloO+0mR8DpwzYTEppSxhJ7lkqbu+piO+chrNFLAIRLwoZpbyPdK1UiQ6uKgNzuLQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795605545;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=GxX/KRbPOCkNcpI6+Rv+y3C1vdctOR1gnbhti2p7x78=;
+	b=cdC0h8+23ElJ/qUZfh2xEsmxWrQYsHicKBSBkQEv8FxF2uPOZxW7jy77M8g16mwpIfpn
+	 EHFRo8W2MzsEL+u9ZqND7gIeoEYTnkulb/usJOiET5hPteiMW6uJzaJNxbFYMND2Z61Ys
+	 yurme5fr4LTL5RIkAYcCra2Z2+kQGNdyJL3yaCZvwmrOzfqZ+uY8IjmG8qJ10n1y+oOSk
+	 e0OhnDl3md5aUTS97wl4G37moLyLFd1MzN5rmV54/ephwNO0aGsPOospaT8mOfSoEcosS
+	 ZJrjUHmgxAW3r7N2OKelg7E8O6hQi/+naNWEaObKLboJcJ8Mkendu1y4PagshEwlpEA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=ND8caDPt;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C83606A32A
-	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 11:17:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 01C83606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A4D606A31E;
+	Wed, 25 Nov 2026 11:19:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 08A4D606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=KYdOc0fw
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-4a2f4ca0dcfso3215783f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 03:17:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795605458; x=1796210258; darn=vger.kernel.org;
-        h=mime-version:content-transfer-encoding:content-type:message-id:date
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=fxRUQxNACXipbKVSVCcm8+n4+a6NGsD8TgB0HuHTvI8=;
-        b=KYdOc0fw0XfpgWsOReTkFfKlAQWYh5bjBxSLc6c+GDe/HrXiZr1FoXzYrJn0x5py9p
-         AroMR5c/ME3gJGrcz0A5Oy90P/yN1qKQf+pJgegmVWq0JBN7WgoskahOmvdspM7u/oN1
-         2shHaODP3Gfc4taLmjHi8c7MKuvFK8/8mNcmZAh7rEmYK42dXcpRftLiZepXPNOOJIcM
-         Ss1S590je9bVFOygYEZLwpCpT8h5UZWjrPmKx5x9AjgmJQUJoiDb2jUFfi2B3pQjFlGq
-         ECu+PVX0diYk0dQl4mCVLw+KOT60043XRMvLPRiIOVD0+UN99u8rQbIZ9Xh4AsM6/7q7
-         T+CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795605458; x=1796210258;
-        h=mime-version:content-transfer-encoding:content-type:message-id:date
-         :references:in-reply-to:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=fxRUQxNACXipbKVSVCcm8+n4+a6NGsD8TgB0HuHTvI8=;
-        b=pBNHzIwHjRLMYSgGzulFN7m88Q5vOiIj2YDtuy6/MNroYWLheS/ZfexzR1BqeomZtc
-         9jK33oQ52V/3jxY+rTlGUxMkUPcSseFt1sjn2IUxgBAf5eXZgKPJ57uwg1G/jHI+NZuJ
-         5B7tYHQAt0LBUYUF/Z0hF7DEaaQVe+s7IcsoQrSi482ZTPBirbGWUgYN21OM/StOXy8C
-         FhweeZlNPMK/q1+xvyQkHZNlEdj9d3yTvswwMf1A7yUt5CjASC9ZIr1cfvSL1QtFXejK
-         xBW5BDp+DO5DYC8o8hTYXc4J61PT2gX7EmkLgX9swR5G8FT2z3YSjZufoLNMmvUt/wVR
-         aqBg==
-X-Forwarded-Encrypted: i=1; AL+hErFX5inBoKpb503/8tQ5JK6AhHZhmxZT52hLO2LOY6IxTXFvJmbE2xKAcA71baF/7kdRjtW7k4ziVfc=@vger.kernel.org
-X-Gm-Message-State: APuU4Z881woay0cObncwG33v8flp03AHoyPmYexYUykCqXEqpJ/bolfI
-	3/mZcca3dRU1/4QEZcvrh3hr1/nHZhO1Gl47pVgZlSy8ljOIm06hdXHlbVqIy3e/3ynstA==
-X-Gm-Gg: AZFdTZd0HBK1wcHRMA3hyBPmffNJoskL1Lh05zLldBU37skYm0tdHvuErUAQu8FyPZU
-	PNz39j9oToCE54uL+XHktgKpH3MYQ8e7w1dlluh/vK9MKQXGSORtIA+cHtezMM2BrdNEpEWqvnL
-	zLa4zg9WuN+1FvhIAdoXxpuVNqok8EJYLpowYR/4KF+UYP3cfKajHqiQzfvzPqDiUzFsvt/JU5e
-	+fqtjEXayFEqGpMSl7lDsePekESs+2gSVp2yTj3leMcVGsbcbmrFCmOAlGA3vS2jHESree7GJ1r
-	5DarHsvIx4hTwmjulwNJ9Wu6SdpF4OGaFrGdN52Nd2+rSztdTbzhNGbzzh6WXeZQMU9O3kznRXL
-	UMAW7qzUirrc461u2McYp4CrxdWGtUWK5cs9KvP/gpVn4cjrICSdjx2bq+udJ7TDDSHZyxLQ4mz
-	m3nCQ88u7BISuiGO8l9WsNcvRlMTlXdy8fjw3MLFtI9MY3Tv/Bw/o8k4tPIluORT8qDuYw9877k
-	wCIh4elxVpDSpQMUEd0N18cXgiTBFN6OrtOqjqbYdgJ65iCcrNJTFxLW+u8GUgPI9RHV1Kmeljt
-	B9lzFByYIz8w0zS7k2MCOegvqhG7z5zBLDQ4DNMzERYqHr45iYUI8j0=
-X-Received: by 2002:a05:600c:a085:b0:4bb:7bee:5496 with SMTP id 5b1f17b1804b1-4bb8880f04dmr378366175e9.13.1795605458098;
-        Wed, 25 Nov 2026 03:17:38 -0800 (PST)
-Received: from [127.0.1.1] (ip-024-180.users.dtel.ru. [91.210.24.180])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb853c9170sm579874685e9.14.2026.11.25.03.17.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 03:17:37 -0800 (PST)
-From: Fil Dunsky <filipp.dunsky@gmail.com>
-To: sashiko-bot@kernel.org
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH v4 3/6] clk: Add Cortina Systems CS7542 clocks
-In-Reply-To: <sashiko-outbox-233158@kernel.org>
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=ND8caDPt
+Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
+	(Authenticated sender: pza@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id D3653200037;
+	Wed, 25 Nov 2026 12:19:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1795605541;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GxX/KRbPOCkNcpI6+Rv+y3C1vdctOR1gnbhti2p7x78=;
+	b=ND8caDPtAtwSt2twEzOI9yd23v7XoHTcw3Lw75soG+EgPPdsxEsyeKFRqw3o2OJj0+TUzj
+	J7IXvqEPYXLVGxpJlClodDCtLA2Y9/UttaL24O1/4duPyQ+7hR3bNCNIkjGiDqS45AZXfS
+	TUHYz92xXymEQ8g2KPiD/+7n8xWLJOmbbgZl4oFmj9YwMTjhB+n41JgdrrZML7GKeFPByK
+	s/K0GIj0CK201ZobwEdkLq81BLSrr4fsV+OoHH1L+i+QLcXFjV6AI2aOnjKz8f0fONFT68
+	UEWBflYzR5ksPTXOE7wnfq9Z0Bebnb6vyUTQgS3lmINxpglpduxf/s19eQXfEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1795605541;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GxX/KRbPOCkNcpI6+Rv+y3C1vdctOR1gnbhti2p7x78=;
+	b=WqiiQewmo0FmvuOi0s68OfMRBs5PYHt+D0x6sC1rdx4AkWRlZtMV64ly3nChAwtay3i/D/
+	KZJz1SF/34GeiOLX27KgTSmP/CugUidVkWK/hNpS2ehhf9Dpdn9y7rK5jev4imffiavUeJ
+	VzH3GikUFg4kM3UArUrG/h36XsQDQ1ueUSDxIXiY204waLoiJ9e5EXQA6vhujtXvzmKPI7
+	Bs2oexxvGf7WgaWws0aHWLw9VJA+eLcjAWBAK525+27boroqvCgErmBZchsgDP7MES3NQe
+	GkiH4OGKDI+R0WZsoLnesFC0Izz1MmsRNusgtCaKWk0eAQJEftIWcnt/vfdJIw==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1795605541; a=rsa-sha256;
+	cv=none;
+	b=E2vdOFTcAHnNOSiEGiSk+Zlfwi6N+BNzk23sLgZZBZE2o101/3UN2MYavVsFgkGXjKO4z+
+	Vaf7P2AvBz33O15djLWn3mVB4diMO0ILb08HR6gxkbYzL4Z8NrgZfTSbUuAz6IOOUe20XI
+	dl4PExN2wBA6VO4Nf2F6MFLdODSeJAbqT6IXtbkkU15DA6ckZJzRLWAYFiJwViV6XzSJxC
+	hPwf0Blh0g/gS8XQLaUkHj7ReYhNppFrt318xWzAtaqm8xN31Zt2BJiRPopdX6pvFAgzaw
+	5/T8K7EUz5bVaTSl9Xlky/A6hkZ5U/NkzTXDYUVLIE2YFLbrzDH5rgJAemGUgg==
+Message-ID: <3b8b8d154a841d80de20d31c32b2fb4faba11480.camel@pengutronix.de>
+Subject: Re: [PATCH v4 4/6] reset: Add Cortina Systems CS7542 global reset
+ controller
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: filipp.dunsky@gmail.com, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Stephen Boyd	 <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet	 <jbrunet+clk@baylibre.com>, Linus Walleij
+ <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Date: Wed, 25 Nov 2026 12:19:01 +0100
+In-Reply-To: <20261125-cs7542-syscon-v4-4-3337bb0d3b48@gmail.com>
 References: <20261125-cs7542-syscon-v4-0-3337bb0d3b48@gmail.com>
- <20261125-cs7542-syscon-v4-3-3337bb0d3b48@gmail.com>
- <sashiko-outbox-233158@kernel.org>
-Date: Wed, 25 Nov 2026 14:17:21 +0300
-Message-ID: <179560544103.3.15793449705570350216@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	 <20261125-cs7542-syscon-v4-4-3337bb0d3b48@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -102,15 +100,47 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 
-Thanks, confirmed. clk_core_is_prepared() stores this callback's result
-in a bool, so a negative regmap error is treated as prepared.
+On Mi, 2026-11-25 at 13:34 +0300, Fil Dunsky via B4 Relay wrote:
+> From: Fil Dunsky <filipp.dunsky@gmail.com>
+>=20
+> Use the shared syscon regmap to control three PCIe and seven network
+> engine reset signals. PCIe consumers supply their own assert and
+> recovery timing. Verify level transitions of the network resets before
+> the consumer releases DMA buffers. Reject the unassigned group ID to
+> preserve exclusive ownership of the underlying lines.
+>=20
+> The clock provider registers early for timers. Match the platform
+> device for the same syscon when reset consumers can probe.
+>=20
+> Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
+> ---
+>  drivers/reset/Kconfig        |  10 ++++
+>  drivers/reset/Makefile       |   1 +
+>  drivers/reset/reset-cs7542.c | 134 +++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 145 insertions(+)
+>=20
+[...]
+> diff --git a/drivers/reset/reset-cs7542.c b/drivers/reset/reset-cs7542.c
+> new file mode 100644
+> index 000000000..b86c82554
+> --- /dev/null
+> +++ b/drivers/reset/reset-cs7542.c
+> @@ -0,0 +1,134 @@
+[...]
+> +static int cs7542_reset_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct cs7542_reset *rst;
+> +
+> +	/* Clock-only descriptions also use this syscon. */
+> +	if (!of_property_present(dev->of_node, "#reset-cells"))
+> +		return 0;
+> +
+> +	rst =3D devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
 
-I have changed cs7542_gate_is_prepared() to return
-regmap_test_bits(...) > 0. The actual callback failed with the posted
-code and passed with the fix for all negative Linux errnos, zero and
-one under GCC and Clang. Both ARM compiler builds passed as well.
+devm_kzalloc_obj()
 
-The fix is queued for v5 while the combined v4 review continues.
 
-Thanks,
-Fil
+regards
+Philipp
