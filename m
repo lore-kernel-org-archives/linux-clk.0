@@ -1,83 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795640076;
-	b=i3BexRx0WSQ5YjEFuNCs8L8gJX6FEn8msuNfRs3H5vB7HGgidwiYuOWXVx1F2hKptinw
-	 Q0vPnsW8Ex+WuNEpAQKHNbYOvTD+52TCRto7KpbMGP31h1GoM47Mp8+Rrn2qm7r55Bk3l
-	 l4pVD/NvPkgWw1de0Xs0rEQToyhvPfro3x2Po/2BZtT1MSNnqGjiUs6S+mrIzuHe1AZfM
-	 wx0pICJiV1NbfOVfw5fOpGJTm61mGLKEPQsvUIN3eMfjodTlmutgR142jd8KB35QFfZNT
-	 agLa872iQj0a5Bf1VVlWxszcWbARHkKfQlKJRh1qZmnImwKh61jkgwyIlxMYfUTityQ==
+	t=1795640078;
+	b=MQVtmcBh8w6A+hTD/UTUWxANek7FS8tLoVEpr9JmofoaFUNpK6+gTS6xGuUx2YK+QumM
+	 UfBpjO5W69hDd8X+w2kBJ503JIOBhLCFi/JeL0RMjcA/R0rR7NHapFb0BGxcC5ylE02O1
+	 389z704b3mGElB3vAmBGe/em3VFOXU3Yu0kQnRzypJPlibRF10wfZx5/nV+x0Z1USXt6v
+	 VGRqapJyqPkEU21tSTBIARgDRbeRvlU2CNKrMNWvacNewz9M4x9Ozld7AajRKiXM8IuUA
+	 PZgkFNlY5410EXTHIy+R9xRiBvKw+2u/rYYSoNJpBwUgt0Vt7AV49726NhxLiOk1/uQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795640076;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795640078;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=QufEL77KFv/8bAd7CFpTzBwtbJF17sNvAMP+Mxwo/G4=;
-	b=FqQjA70ZSMAIo8W6T2qgF0v1aGgGmqI2n9/t53tAxXH27IxhPv4MQr/JBK+6Z5SRHijK
-	 bYaH2f29JXtmXVzlQwHshl/fYMN8cnAQMlMC6/ZPi9pPBpRUmbtXGG2l681Ej0uFut0Sl
-	 WDdFcQUWhlrqsaenSQ2V/EzETimZbfAESIgzWZ60oVfKI5Mx//OTpIJ+404H5b0f1Y0Qo
-	 2DEZPxSsCJJYhrLOU5C0It7UlABT42TpVoMHPksvZVNuKWhvxSad2p9hlJY2dzGUzyjQT
-	 2a587rpCpc4EoVcNSpG91wrDWfkg+iU9E5snWRAIqkpo6kgNe+oLxk7upL9Vbwp9vPw==
+	bh=At893HOits8PlbcqKQMAG+x6VHDDd+yyVnApfOrreEE=;
+	b=Q7W8ejGUSwN5ihSDa4d8NsoTPmz5rRWcpetGvlTZelagJm4vgXjHKYZfx3grpJuZ/JVo
+	 cnWVI24PVYYcr0NO2KMEAzuunXiWl3A18P5zXKkhEPwa+MRRrdC/2HNEXDaqCsy8m/75H
+	 pL0bbq++rz9wJq5s4DV9f9YM6O/2lEuOBa8M6B3ciOOOeUL6yWBEU5kO1ho0QpJeZReMR
+	 ukyYlzAOMw0J5gP9PUNRqh0NLbOn2HlZVAA8tNebelEtX0lOPTk36Jhk5jYWk/RWBybAM
+	 RDW8WkcX+ioseCLB0c2D2x+8Jo2RZUiZQc1Kf6ZW5u/JmLBJY+L4tYSi/L6LCwvbFEQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=UCWZumXN;
-	arc=none smtp.remote-ip=209.85.208.171
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=tRIuHIDa;
+	arc=none smtp.remote-ip=209.85.167.49
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D570606A32E
-	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 20:54:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3D570606A32E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4711D606A339
+	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 20:54:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4711D606A339
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=UCWZumXN
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3ab30d04674so6414001fa.2
-        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 12:54:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=tRIuHIDa
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5c00c727a26so512869e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 12:54:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795640074; x=1796244874; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1795640075; x=1796244875; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=QufEL77KFv/8bAd7CFpTzBwtbJF17sNvAMP+Mxwo/G4=;
-        b=UCWZumXNKB7VpKk1OEd6h86HAysZ3yO9N1YHh9rN/RWOjFzEKHU3RdQd9bpuGHpWOB
-         MH3ZWC6SbRKqo/IiFV03pxOJYJt2iDPhmzSR1lq7IClpAxp5PodIJ3hG4NF0v8bKMF5g
-         d/MtsTBs6dn8JAcP6w0BVM7Ws9eA3y5QjAAzNWD83WROs239zVht81+FBZHPr+Znfwzt
-         g2qFFJDQcfGTdu5dEozMOVoHbD4+eeJXf/6UrX/qxS6XXL2yIjqEwTsqPg4ota8PUgbw
-         wYX4CnGVGlagdHq+3LaIdd55pNqB3vw2ehY9wEO+LRqwRSHF2jgllbiyttSOOgEmC0J+
-         QPdA==
+        bh=At893HOits8PlbcqKQMAG+x6VHDDd+yyVnApfOrreEE=;
+        b=tRIuHIDaAazSvAYxdsTYzbqP6+kJs7Q312mhnldXf2RHls+Ke/Q5o0jf4fLyNmjO6v
+         cDBiBWaikLMWSflRvanN8DO7UXWMII/dHXhp2V6VM4awMBtUFJvidJ+6cF2gRbZdcH+Z
+         Gh9/Vepo4RpRdqoN1Gyyp+FJSrTuSLiEm+tIOCJlKYiVTAxITO4Ve9g6+n91kgXMlIyr
+         UOOhawheHZdMNW3IPQWFzBzpicQ/seSIyyihRuIVJ+qkiZZVmUhegLPaK+/vWrNhKGED
+         hRq8KFXqlYjRZZsC+woHhx7sb6wMmAilIUs57uC6wFGdZjuczqUSaHz56ebQ41mhkF2u
+         /rmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795640074; x=1796244874;
+        d=1e100.net; s=20260707; t=1795640075; x=1796244875;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=QufEL77KFv/8bAd7CFpTzBwtbJF17sNvAMP+Mxwo/G4=;
-        b=u2nf+rGH73R5k++OZj9FwTUhC3CTo3yMqSKfc/jq56wDZOcEpgsgrXf09CKiNg3m26
-         H+1Mafwlzezoc8fwmi32ivUFaKUydJnEE8xnfMFVUDSXpWPI/wWtYBhURNwWZDf8u59N
-         pSf7h5wfO0Omyfj3TAZ8fkQ9reCGxVUlVL2vYNaGyWzSL7w2duTdsAvN6NE/Z65H2BwY
-         cK2ngbcgVSDO+SizxMSTEeY1yp7+kEYzbwuNostOjkOxvfzwDQWf94ZzMEx4ZovFMcyQ
-         Jvuc4PhLdB++36q2I0VkN8UoDxyKlUFIpuUoranqbnV2PrrU00CKy5+ROn5gyRkTYxUp
-         s0Ew==
-X-Forwarded-Encrypted: i=1; AL+hErEtqCW8DDuOMcnVP99dmZ8dxQo2ZFlIj4iDFCkzvgUkm1ZR/7WMXq4ZIaixdJkTYzHNT0cvYcC74Xo=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8sOuFDoxD6CfTC0YrYWLxJt2qbj2TFxQq4sAhkrkbxnAgoSGYK
-	r1B8ng09cMtbtNEFTXemRcVH/pPxj2H7j1yMtUGU2Xz38wzxy/R1t7tJj5ePzklejGs=
-X-Gm-Gg: AZFdTZdH4C3t/V6+5WF0d8GpxvK/OuUFYV+wMnpVfGqnxiixS6fZ7ZQ8d1GOIgIsYW0
-	CeKnJgnfDOJAuEf7Yy3p+6OHlhuKnmDUF8ys+hAlQHyQ1V4eY7xHCIDYGnpqGq/cSmPOx22AadW
-	ntkYx9FGaTIPIveMHItG3R6bR4jS+UyKSObvpV+LG7CMgiRy3QfPl61KiiSjhISEI3CLGF+mUpK
-	Tbjv0ZKaQA3KYBZNd/ZUpwyonC8ReNmg9NbLRk13mgxoVXOJIbOA1bdKpKoImK6t16+T1s23/3f
-	8OTVMjDg1ZMO93oXYCSWf5qNi96Axk5vJQeeLAiwnuiQDeSUlk7NDe3wMuUFRD7Nm9whEidd/As
-	vQt0ocbLsFOnlK5D/Ur07k+mgF1N3z9Dse/v48Sg3mOCK0qhJ7HeTGyWKSyJa+R5kRO+x/snyjh
-	0y25247Rgdg8n+xlcqwKcSN2ClgPor2rB8T/+NLbDBnguRWB5rlYCAAanqXPD+zIBcnpNYPc3WT
-	zzjxZ6WJa8dyWPBzExUXkHSKPDHhnumkaTYx6hPHuk3pEFO1wg/KvOnhHHIXM7GzVfqKc5Y48Mn
-	q8N6LkvAMUHNF1vmMFDE1qnXOJEoEeEBQVP0P56JAMnBOuPH9gVy+6iX6+QxN3LWNtS/Hg==
-X-Received: by 2002:a05:651c:e0cf:10b0:3ae:11a4:22e8 with SMTP id 38308e7fff4ca-3ae7f9b4af3mr40150491fa.1.1795640074317;
-        Wed, 25 Nov 2026 12:54:34 -0800 (PST)
+        bh=At893HOits8PlbcqKQMAG+x6VHDDd+yyVnApfOrreEE=;
+        b=zNYje8PAClEUbQIGh05IUdW70O/16/tmppFT9WgGZDZUOz5ZeSJRXtVT22aGlpnM9J
+         xSkMAFiGCj/USTvQEYzcqMa2tr4a3lbKVX5K2zgm+LJewwxVc64Sg0Cv+siziJIqMPTh
+         MzLK2O1fQS0bU8GVdJCJxa9YvfUNYsAdoFpwlTmlbFu16P69e1ooREv0ZOdVjbLj/ipI
+         uSJ6BB/GBDA18bnkorQC7RNNJN9nu1TL9MGkbh3oekrNoYBrkp0WUMd9Z9MXB/V/5MFS
+         kiM02WS3hIMhVCdqBUzqcytVIncrTeW27kZ7x+v/+UzNTEKbX+i8XsAyqGP0YKWlfnV9
+         7BEg==
+X-Forwarded-Encrypted: i=1; AL+hErE8bJiRy/vlnYAnGBI6DxJ6RosTCx7nsdATZv4jneNvevYPRBAAJHdKQ3++1F9ud/VYIjzZJSF9knk=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+EIubEiTB/U9Atf+bJTGlQbppGk2gzWmCsAHXu58NNH7vbTWlX
+	172bMdDlo23rgglrXaHGdsjMCyZIYbbziO5hj7d696N8r/K7uuMGHL4rAkBsDwOQPyA=
+X-Gm-Gg: AZFdTZeF5Gt4NwaOJ6YIzunZxEG1osey79UGuGSYBjSaZr0vbSLwKx5AsjWiXx6M7mQ
+	KSji75VfG98Jv/4YQPYX7f5syQDErXJuj7G1oeo67Xpntb78Z7bvbJe120ajOdSG8ly9uYQNNCA
+	yOiksK+Y4xVMlpgd/YAnb4BsyQC0fMch1QxJ8lGClubpErmhw23UOkXQ8YWnT9+Cvkfth64BzRP
+	WCzTYZAWl6K2s9y1WIKYkTncBsi4GcjDgLWdZVl9RayYPybPkOCeMb+X/2pH22UCRazt5qrYl1x
+	dLNAQ+3OzHAauplk+eUCWRzWkn7gIaX0cDMZrA7QgwgFYkfQIpdtdvV6pmeBw8wdLYQ8fXAxVXh
+	r8u05MKjNQgrFJ8nFXSX1IjCr5oNNKDq3dllaGovpl9NZRhlqSEeC5Op9KSTN6/+nkFDyOcdqW7
+	42b9ah6bDAXogdQGPZb/5lcuBCgR+ReIXNT6OQu5lrKi/zCGIRBA3CjfjN5WOVlEHRlLCRPA2EN
+	EJk8wi8HJfnm4PXyjhn8FYQ44F8dtMBiI11P7YyYks0ff7c5U9tUdM4L1kdjlTzwDBDu+AQsHYT
+	nP38JEsUG9zuyQx55dIOE9HPAh79n/TRx/pLA3RIiC9DfG0Pku2vJb5z3Rbv8T8zCQDBYw==
+X-Received: by 2002:a05:651c:c011:10b0:3ac:dfad:319d with SMTP id 38308e7fff4ca-3ae7f9d6f4bmr42526411fa.1.1795640075524;
+        Wed, 25 Nov 2026 12:54:35 -0800 (PST)
 Received: from thyme (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3ae805751f4sm50871441fa.40.2026.11.25.12.54.33
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3ae805751f4sm50871441fa.40.2026.11.25.12.54.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 12:54:34 -0800 (PST)
+        Wed, 25 Nov 2026 12:54:35 -0800 (PST)
 From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Abel Vesa <abelvesa@kernel.org>,
@@ -96,9 +96,9 @@ Cc: Stephen Boyd <sboyd@kernel.org>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: clock: qcom,sm8450-camcc: Require required-opps on SM8650
-Date: Wed, 25 Nov 2026 22:54:16 +0200
-Message-ID: <20261125205417.1437355-2-vladimir.zapolskiy@linaro.org>
+Subject: [PATCH 2/2] arm64: dts: qcom: sm8650: Add camera clock controller MXC vote
+Date: Wed, 25 Nov 2026 22:54:17 +0200
+Message-ID: <20261125205417.1437355-3-vladimir.zapolskiy@linaro.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261125205417.1437355-1-vladimir.zapolskiy@linaro.org>
 References: <20261125205417.1437355-1-vladimir.zapolskiy@linaro.org>
@@ -113,35 +113,33 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-SM8650 camera clock controller PLLs are powered by MXC rail, CAM_CC_PLL0
-runs at 1200MHz and it requires SVS_L1 level of MXC rail. Without
-required-opps property the MXC rail is voted at its lowest level only.
+The camera clock controller PLLs are powered by MXC rail. CAM_CC_PLL0
+runs at 1200MHz, the PLL supplies CAMNOC AXI, AHB and CPHY RX clocks,
+and it is enabled on any camera use, also CAM_CC_PLL3 runs at up to
+1570MHz to supply 785MHz IFE0 clock. On SM8650 the PLLs running above
+1100MHz require SVS_L1 level of MXC rail, while the camera clock
+controller has no 'required-opps' property, and the MXC rail is voted
+at its lowest level only.
 
-Commit db30c1160ca5 ("dt-bindings: clock: qcom: Drop required-opps in
-required on SM8650 camcc") dropped the requirement, because the lowest
-MMCX level is sufficient, and at that time the MXC power domain was not
-described. Require required-opps property on SM8650 again.
-
+Fixes: 673fa9a42606 ("arm64: dts: qcom: sm8650: Additionally manage MXC power domain in camcc")
 Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 ---
- .../devicetree/bindings/clock/qcom,sm8450-camcc.yaml          | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/arm64/boot/dts/qcom/sm8650.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-index 64f5002931f2..666d2addfc85 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-@@ -87,9 +87,7 @@ allOf:
-         compatible:
-           not:
-             contains:
--              enum:
--                - qcom,sm8475-camcc
--                - qcom,sm8650-camcc
-+              const: qcom,sm8475-camcc
-     then:
-       required:
-         - required-opps
+diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+index 5a030f9646c8..af94fada15a5 100644
+--- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+@@ -5641,6 +5641,8 @@ camcc: clock-controller@ade0000 {
+ 				 <&sleep_clk>;
+ 			power-domains = <&rpmhpd RPMHPD_MMCX>,
+ 					<&rpmhpd RPMHPD_MXC>;
++			required-opps = <&rpmhpd_opp_low_svs>,
++					<&rpmhpd_opp_svs_l1>;
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
 -- 
 2.53.0
 
