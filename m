@@ -1,56 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795623398;
-	b=C02kFNNV+/maz+6rN9dZLY/clemTNDNVMhqOTMHJwXiFmktsBSlp/elb+j46vxxgVDrI
-	 w024v3tjWpXuoSqB1cvblTKDVbccwtkT8KtP1/oELJoaNzrCcJ7rPhUQtXgkdkFHA3cx3
-	 lF16Kg8KWs6RrDGDSNXt1KHA79UpXbMtlE5AtPDuYS2wsCtT7v6Khriv9KIfCKzYcIkdY
-	 2oqp35s8k5tK6fpnB7mMPj6fBUs4Ttgsfs2OLySQbq6BrM+irFrgBukO20jUT3V/A9Dzf
-	 1dYmkszuKyzIXhKULcR9ZrKWJXXcnIB/E0DMOBzNtWENuUVLSrKMrzoTYWjK5fTqFOw==
+	t=1795629923;
+	b=rCH2JFw5jpRy5Hcu0NZXvPad53R9YM/AZCgkffnDEFd3xE8JrgWJspTV1Qe7FrUnlZQB
+	 Xd7XhbRd2/42lxU1aQR1dkXhOubrSSdgFsUbGTeE5XjCppODyofdQnoZ3OI7LvSwe6if7
+	 mvNjcHk2IhD/m3f9AESDYmfaBmnWNFYb8l+EDyTW/TU97SGtk/ZKUWUGuOY+0blFM4RG4
+	 jgFWPODe6nJk5JUb7zwO6JZAe1rlYjus2W3+pR5KCt0JXwGmrDCwgUCKZ6pgXdTBj7JJ7
+	 piYzkx/I7crU1eDRpnt/ps6gnbNls2fApTIuUyoAOGRzZkrnog2NUrwbLUzjV3JDXmA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795623398;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=pgNpwuNjZPa0FgqgsMQIdcu4qflYj7O8O2CtmNNIw7A=;
-	b=evNp9eo3pnFmt8Ly4E2WOvIt5bwZMijRC89GDrD6Znad6GvQDSNzcVNM0DV/PtHt72uS
-	 lcDJ9w78QFiT0ewl5mur/fDH6uIs0loaOSWrcq2r9Eu8aatadZFtOrchFa0yGAKxsQNFw
-	 qkTl57L7YuAegIcmKrDkRNz33783ge+lYi8CJV/2DgczYvK8q/+D+DPY/pF2pOWaN0hMe
-	 7sYO59QMtD0nnx4blvAwHsqJsT6hDmgfW3/JvGcynpO9ZjTCakfcdM2tYogGOf46liomM
-	 Jrhp0rcjzH2SlMIHCIE2Ypx/reOAfJuRnEJkjhnsseRdqDClsHgS/vTr11ezqSOADHw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795629923;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id:X-Mailer:X-Last-TLS-Session-Version;
+	bh=0anl0ccCCCZoc0bFfoM8ANcczII5sgMZtQxxCyWtzo8=;
+	b=sEL/pscean90U6hCcOojjCZHDF5WDZzJBu1CylwbSDrlj7nvu2YtqI+MFtVuj8GhW/Yb
+	 8ObywP0IVBMn5B5HTh5qXk2sDwFxxvO2BtcYUA9gyOgI+bonuauHMiLPIKEo5e1Y8zaRj
+	 I2yt1ypYG9qELjI46Uus4ub9z6mvZ3RkBg7n9pHHWDwoQcQ//TT+g+ObBcBxB6vCWvFOD
+	 Gkv4XOf/uyfmeVHtD3uR2XQcimTmJiJ9OcfCTAk5Lv3BllGCpNjXnGZwwcjKTY9kk/48c
+	 innLpWWPKJu4HlR4XJCFB7l1hi20mrXT5xlayDE4bRORUkfC7YrG/M4wRNsnK7jqwBg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SbvYGL84;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b="mfUz/1l2";
+	arc=none smtp.remote-ip=185.246.84.56
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2E6606A321;
-	Wed, 25 Nov 2026 16:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76305606A321;
+	Wed, 25 Nov 2026 18:05:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 76305606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SbvYGL84
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 572D61F000C4;
-	Wed, 25 Nov 2026 16:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795623398;
-	bh=pgNpwuNjZPa0FgqgsMQIdcu4qflYj7O8O2CtmNNIw7A=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=SbvYGL84iVbKlLZGVoy9cUJe8rqKbIrYI+Rg0G0sLeD7apbpbmuFMBeHm4rr1QIpS
-	 ytTTPmVjtwefGh4pshGxrZdsDdikbdZ+Bv1aqhno+DzoqPMZG7++nVdcziq2BJeBnw
-	 xoTvgfp9VfrRaomWA7IVsd8/3TVvOy4Cth7X8yOYnQqWnfjcBO4rZqt7aVmg/trSmk
-	 WB3FMYH7w3HN5cmL5dmnNIY0mar9d2LLOQ8j3J4JG8DYD+dHhuzhrA7e8kKY4BJ6zG
-	 LqSrAUAooxvJb/cBt0rr1+NFXQyd9M9UHCobVbsohuCAwFCZsfQWFltbxQBYeUuAIV
-	 jeiDh7bgQZOPg==
-Message-ID: <sashiko-outbox-233736@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 2/3] clk: renesas: r9a06g032: Add reset controller
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Kyle Hendry" <khendry@reliablecontrols.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, wsa+renesas@sang-engineering.com
-In-Reply-To: <20261125-rzn1-miic-resets-v3-2-f25a4b656d71@reliablecontrols.com>
-References: <20261125-rzn1-miic-resets-v3-0-f25a4b656d71@reliablecontrols.com>
- <20261125-rzn1-miic-resets-v3-2-f25a4b656d71@reliablecontrols.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 25 Nov 2026 16:16:37 +0000
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=mfUz/1l2
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 2018D1A17E2;
+	Wed, 25 Nov 2026 18:05:21 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D3B3E60480;
+	Wed, 25 Nov 2026 18:05:20 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 047B911E6B0E0;
+	Wed, 25 Nov 2026 19:05:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1795629915; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=0anl0ccCCCZoc0bFfoM8ANcczII5sgMZtQxxCyWtzo8=;
+	b=mfUz/1l2y9B5Q6PYTyl08Q0MPGeJPFMZpJfKF9f2H85BLYXnVbJYV0sNQ22zUAufCKepkb
+	Io2t55gOPfDO9liSeZnvG1Zys75fC1wGTQP4yBD/ORz31SyTAedq/74Q/EhMxOEzdBmpGB
+	U6Lk1CEjUx7XJxAc9NPu+MsghaHtJVDTaRnL63mHusx5uf6jnKvNpkrXIouXBa5xzPbrz7
+	/dxrCjLyC4O5LF90xXlF7CquGb858SGCsEHjZ6Rp18lypoOzkZV2+mVVWqfrwYJ8FRZKbX
+	DouSvjBzu3hp3KbICuKu7eJUO/IvZY+zqXc4eE+nL0NgzdPeGME/WefmWEkC8g==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,51 +58,48 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v13 2/5] drm/imx: Add support for i.MX94 DCIF
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, linux-clk@vger.kernel.org, 
+ imx@lists.linux.dev, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org
+In-Reply-To: <20261120-dcif-upstreaming-v13-2-966ac248773f@oss.nxp.com>
+References: <20261120-dcif-upstreaming-v13-0-966ac248773f@oss.nxp.com>
+ <20261120-dcif-upstreaming-v13-2-966ac248773f@oss.nxp.com>
+Date: Wed, 25 Nov 2026 19:05:04 +0100
+Message-Id: <179562990451.846133.506244474972901657.b4-review@b4>
+X-Mailer: b4 0.16.0
+X-Last-TLS-Session-Version: TLSv1.3
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] clk: renesas: r9a06g032: missing RESET_CONTROLLER Kconfig
-  selection
---
+On Fri, 20 Nov 2026 12:50:37 +0000, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com> wrote:
+> The i.MX94 Display Control Interface features:
+>  * Up to maximum 3 layers of alpha blending:
+>     - 1 background layer(Layer 0);
+>     - 1 foreground layer(Layer 1);
+>     - A programmable constant color behind the background layer;
+>  * Each layer supports:
+>     - programmable plane size;
+>     - programmable background color;
+>     - embedded alpha and global alpha;
+>  * Data output with CRC checksum for 4 programmable regions;
+> 
+> [...]
 
-commit 7a7dcd672790275a8fba3dc76bd11b687249bdde
-Author: Kyle Hendry <khendry@reliablecontrols.com>
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-clk: renesas: r9a06g032: Add reset controller
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-This commit registers a reset controller in the R9A06G032 clock driver to
-expose the timestamp and RGMII/RMII converter reset lines in the
-PWRCTRL_SWITCHCTRL register.
-
-> diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas=
-/r9a06g032-clocks.c
-> index 3df3f2b2c6de7..fc4433c3d3272 100644
-> --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-
-[ ... ]
-
-> @@ -1394,6 +1446,13 @@ static int __init r9a06g032_clocks_probe(struct pl=
-atform_device *pdev)
->  	if (error)
->  		return error;
-> =20
-> +	clocks->rcdev.ops =3D &r9a06g032_reset_ops;
-> +	clocks->rcdev.of_node =3D np;
-> +	clocks->rcdev.nr_resets =3D ARRAY_SIZE(r9a06g032_resets);
-> +	error =3D  devm_reset_controller_register(dev, &clocks->rcdev);
-> +	if (error)
-> +		return error;
-
-[Severity: Medium]
-Should config CLK_R9A06G032 in drivers/clk/renesas/Kconfig select
-RESET_CONTROLLER?
-
-Without that selection, builds with CONFIG_CLK_R9A06G032=3Dy and
-CONFIG_RESET_CONTROLLER=3Dn compile devm_reset_controller_register() to a
-no-op stub that returns 0, leaving the reset controller unregistered so
-consumers such as pcs-rzn1-miic fail to probe with -EOPNOTSUPP.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261125-rzn1-miic-=
-resets-v3-0-f25a4b656d71@reliablecontrols.com?part=3D2
