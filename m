@@ -1,88 +1,91 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.13
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795643509;
-	b=Jg3TAFMgTttAmo+anxWUQ3YX6j17gqNP84n6ZHy0Wh0KB33/lsKfCp3WTCY85EDvCr6a
-	 5Rxj3bMm7aIVb3fzk4uLjPc9Lpx+nUnbkuapkoIAK/YeA/CPRBAxD2SPjgwXAvOxSdG5h
-	 xNZvto2qYyS7y5BqC2XFwXc/Mz+6ca+ratZg3n/2qz0gCX8YDVYBawk6op3ZvwiMkIY3k
-	 hWpe/NEn/Q/1Uxjc9HeKhww7prNRVIJ4Rj/PCdnDHE0S9/NCRZsy8n7qH/cGyIeuHfBAA
-	 SooL+UQNNkzYg61nOJ6s+gYbGxBLk2JVUBnbcK+NsUzRi7nsSV+7zZHesOlV5+YXphQ==
+	t=1795643863;
+	b=Tz4XzWPGee4WMkyTXm8yriUvcwD5XEushVNNuWw+G8CbC8HaLbxJdTt7Vds604mTOFlZ
+	 ddbl+bSGPEM3KnrQOrkpsssT3MlqZQc8MdQWSiMBxCR7ohwnBYIJ9T/lq3BrqMwgyeCpW
+	 h0DDRaHolbU4VU+aQOWZ/MspFZ6GQ2GnP1S95ujwX7EC76i8Wl8cYfYEiqfkovwfmFVAJ
+	 T32iPmvsA1Od3tfSw0BxvMQ+nWaiSEWc6zdwLsFbhszIom3Sr/5jg5kE6s7iz1qnQ5Fuu
+	 3yXfVFFm4S8cMHqL77x4ay0jMmvWXk3p/hd3QL1l40g4LnH3081Nc6Sx/wyBt0D2UEg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795643509;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=rbSy8/naK9NpKBKilS5D0FxnjU7qPGsjWJMaC5SsXmI=;
-	b=qzfFUOYiPyxtY6VxyjoS2FMmtE5eQQkQhstKpzs8C1e20FSIuRsn4RuFFSIqRlPQJyR0
-	 BC/6xH0Y28Ze5sfCkMnbujTptI/sCD4U18JhE2LlDC9Us6GxOJ3fE81PcUY10HUmo/EwK
-	 R7OYH2vLnpLjIayLRzIqR/85B9bKluozhdQkp8QcTU9x/SqfoFH31bK6JG9X0uYlVfTlx
-	 L7Yaeiq2wliKBTbMfvhOsE/SIOEarnQs3yQszfZdWa+UlsDUTNNu6ceIRe19uCwIybUSc
-	 u6IVvJf5Y8kAHW5qQKIzIeYj7cqblv6L0NOQgyeGNkYPiVTSZkZY3/Rhh8Hg4wJxTmg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795643863;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
+	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=fQSJlq2AB9gSSiRXHYp7CIMNPJd6C/z8QNb96gGU/Io=;
+	b=rV1Vag7PD/Mt7qMkBieB/nksmd/rUg1WzCS1vBwslYcovJQAV7Q6pfEgHtzN4U+Hwk+P
+	 eb2/SnOyIsMPoHPgBjyEQO/cIjs7CmcREOnYrUcRWccv9oVlJDZ9IwMuU3pbMCJ4V2XLA
+	 NFh/d14f01TZCBX9Rr0CUstk7qmqAZCXpx0iGOUpYo7n2QcC2K4AvUiaCWwLCEzLmREWq
+	 +onEW+vt+E++FfBWpVARFH9VGt4n9OBpp8a18g9GNIWdGSM4oLKWy7eKF8qkDyHMqdVke
+	 7rqP64ZZBbFJpX+w0uCjFDaeM2ibLvkUVpKG36JmO8Obgk3DxC9fLRfXUKLtJHPWtyA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=riscstar.com;
-	spf=pass smtp.mailfrom=riscstar.com;
-	dkim=pass header.d=riscstar.com header.i=@riscstar.com header.a=rsa-sha256 header.s=google header.b=RvkMU6aH;
-	arc=none smtp.remote-ip=209.85.161.47
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dvWh1JfU;
+	arc=none smtp.remote-ip=198.175.65.13
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BAF6606A323
-	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 21:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4BAF6606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114AF606A321;
+	Wed, 25 Nov 2026 21:57:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 114AF606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=riscstar.com header.i=@riscstar.com header.a=rsa-sha256 header.s=google header.b=RvkMU6aH
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-71b30ed75a1so3655992eaf.0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 13:51:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar.com; s=google; t=1795643508; x=1796248308; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=rbSy8/naK9NpKBKilS5D0FxnjU7qPGsjWJMaC5SsXmI=;
-        b=RvkMU6aHw3UFU7F0s3LawFuMMWucgrJOewAmTNt/s9mU1jocAFjNJMZKtPkXuvf+r6
-         3Y1gMKTzSvrCakTTvX1dK5xqZ8bWJeGZJ2cAKfIvX0GRIA6CK00CzxZpH2mgs+RjwMlp
-         /J928Qpmpf9szu6sskdshfNebwQGfXIM0ijz7JGjMOYZ90oMGk6HmqfozgFQYYsjC7+Z
-         Pi1R4SLtvkJ49mAZH827Axk/UVcNrNf/Qm4qAYl0gpum9z2+bGTOAaekxeFK56P3SYJS
-         EC2MUyaS7hqQErt+f03GVz84MxOh0BOA7wKgIXz5xT9Fw7bT22bUKp+Qu+sJrZdcsFau
-         Dobw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795643508; x=1796248308;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=rbSy8/naK9NpKBKilS5D0FxnjU7qPGsjWJMaC5SsXmI=;
-        b=0vuDKlcwAYhDzWaubZZoBDEVYuDvGdYpz0lsSBVosE8uX0OrRszp64rKUmT6ufgSxp
-         HyOigGvPNx+XZazQrbG3K/LNNh0CPjB+CjjLFhVpOUuZykScE+7POneKp6GMEELwzUDi
-         bIexHNwbYu1S7a1bV+t6eKUxYbulD5pDOPsAKlxS5tVl1JAcqUSO3wZYdWBOXfArnJrE
-         tBmfERlTG0WgOhpQ6c2rg9zubGmByK92N3ZOcARi/HLI6AGsU7OBOS287WjgjO8rp3G4
-         AV6Rp4/FxYcBpnIOWz4ViYm/q1xvf/5hJTXFsEplJQlVBRgq8niOSN3llL4gh6vmzgta
-         sqsg==
-X-Forwarded-Encrypted: i=1; AL+hErE9dHRF9KWmR1Hiq8XV+p3E1dt+aRpg6/AJtSmewpJK+T9qTT7DMQbo0oIE5L6pcmsh97NnT8h5hnA=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+7DmxWidK5VQfdx18LXF4bnlyNMc51ZPaUmjp3zRKdQgUlWwnz
-	/5fHT7xoJcxhsfT05yUBmlwxp2Tn34FCUGl7uNv1UXvhWcxPU/I9ir5mLLPOfm/YAHk=
-X-Gm-Gg: AZFdTZcDdXWBd9lSwLPFRDZW1cVk1Rgft907OdaOmv9wqzVTqJg5881QLS+/1v3JHkH
-	K9WRvmgIfszo7MmRbao4HIhCWykpavzQCiulFbMw5e5aPFsAbI1IaaHlMgxwXd+9V0j72QYldwi
-	z9YwTK85vTGMI0IbAASdw3Mh2uglYb9wFdL2leTQl3S8OXsEYpsROj0SLLAn8cVKSpl4Sr3k/YL
-	JnO+SQpcpO1ht/ok13h4IlHnJt1Oe31PvksU31OASGhSS/HTsMHTeRy4oZhj3qYqFpvbuZsdISd
-	FDfTyOOZ7IERgAYH4gG8tAgTMNsW6pbCG+GEFJJQBwl2htlw08+ecwg8Ck+UuZZpiL8FY5XlEAG
-	HLbk2fmWPVbaRv9T/Y+CDlDaZfXVyBnddY/KCk5OLaf4D1k1eiOpO2azMZqHlgMZMXIs+YeMxHP
-	DhZ1e+ScCbBlJjRE8iflDQFGGjD0+FXwYCMtz0CUQsgoOWY8LATnSHhO0GGKJI71gs3ekk7N85o
-	x8HEFO8pczvzw0lnxMnpn2FJdy+S+4tP65Juxvd1mKE5B/fVaqEvC+8f23H2kL3g+Iie1WVmBgZ
-	uBeEBIthCMwV/mEWryQFX9US53xAotTn
-X-Received: by 2002:a05:6820:1391:b0:71b:8969:9d1d with SMTP id 006d021491bc7-71b8969a594mr465740eaf.31.1795643508188;
-        Wed, 25 Nov 2026 13:51:48 -0800 (PST)
-Received: from [172.22.22.28] ([76.156.233.211])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-71b38015c46sm12670866eaf.4.2026.11.25.13.51.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Nov 2026 13:51:47 -0800 (PST)
-Message-ID: <d5abcbbb-e533-4a44-a26a-1ca17e37d7f6@riscstar.com>
-Date: Wed, 25 Nov 2026 15:51:47 -0600
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dvWh1JfU
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795643862; x=1827179862;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pZh7FPy1aRkXInOd3Z/lqy51P/H4KfXJDCzy5vYW68Y=;
+  b=dvWh1JfUPT3iCHVmrASvgn4ZpXZk16048LVbpXkJg6pMZ/Q88TCOpvVp
+   99psw2SvAAPgszw3xqe4zFDgKNX3wdrUaiQutwnhDMwKDqkgGmKCXoAjq
+   GCQr4/x1hrj5JnT3LYH+EoVpqcTZ4r7q9RaDeW19D+knSn4wBAUZ8ll+O
+   GzzpC0l2bHYTTi/m8LAUVSfsR9DGSVy+mzw8W2Du5BKgOs1PAo/CTiK3J
+   Ls+WyrockeVN13pOSMpjWkKHLowvBimkWrdum4osMQgSQ9sCsG8/NlDIm
+   gz8OkIPmnB0sdReyB+Vp/2sv/INX8WRr6E/HUqYFFxYDWVKV1GiDyC4pN
+   A==;
+X-CSE-ConnectionGUID: Wg2/JX6AQNicn62bB38vpg==
+X-CSE-MsgGUID: 7tmkhYjsQ3uu9jg74MV95g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11977"; a="4446498"
+X-IronPort-AV: E=Sophos;i="6.27,233,1787036400"; 
+   d="scan'208";a="4446498"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2026 13:57:42 -0800
+X-CSE-ConnectionGUID: HkRkHbzMTgG06ER/z44mbw==
+X-CSE-MsgGUID: s2DEfbL2R6S8bPeeGAfkTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,233,1787036400"; 
+   d="scan'208";a="12569558"
+Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 25 Nov 2026 13:57:37 -0800
+Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1xWKze-00000001Sji-1nMK;
+	Wed, 25 Nov 2026 21:57:34 +0000
+Date: Thu, 26 Nov 2026 05:57:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hikmah Gumelar <hikmahgumelar@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, u.kleine-koenig@baylibre.com,
+	Hikmah Gumelar <hikmahgumelar@gmail.com>
+Subject: Re: [PATCH v4 3/7] media: i2c: add s5k5e8 image sensor driver
+Message-ID: <20261126053002.F2AZOt2m-lkp@intel.com>
+References: <20261125123146.379057-4-hikmahgumelar@gmail.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -92,113 +95,180 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] arm64: dts: qcom: qcs6490-rb3gen2: add TC9564
- clock node
-To: sashiko-reviews@lists.linux.dev
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org,
- conor+dt@kernel.org
-References: <20261125202141.1288493-1-elder@riscstar.com>
- <20261125202141.1288493-4-elder@riscstar.com>
- <sashiko-outbox-234134@kernel.org>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <sashiko-outbox-234134@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261125123146.379057-4-hikmahgumelar@gmail.com>
 
-On 11/25/26 2:28 PM, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential
-> issue to consider:
-> - [High] arm64: dts: qcom: clock-25000000 under pcie@0,0 shifts tc9563
->    port indexing
-> --
+Hi Hikmah,
 
-This was a great catch on a seemingly unrelated problem.
+kernel test robot noticed the following build errors:
 
-I will consider how to address it.  Off hand I can think
-of two options, but I'm sure there are others:
-- Move the tc9564_xo_board *after* the downstream ports
-   (after the end of the pcie@3,0 node).  In this case I
-   would add a clear comment in the DTS file explaining
-   why this is necessary.
-- Make the logic in "pci-pwrctrl-tc9563.c" more robust,
-   possibly by skipping nodes that aren't of type "pci"
-   (or possibly "pciex"?).
-I think the second option is better, but I'm open to
-other suggestions.
+[auto build test ERROR on next-20261124]
+[cannot apply to robh/for-next linuxtv-media-pending/master media-tree/master linus/master v7.4-rc4 v7.4-rc3 v7.4-rc2 v7.4-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-However, at the very end of this message there is another
-observation that might make the above moot.  I think this
-clock node should probably be defined closer to the root
-of the tree.  I'll verify that and will fix it.
+url:    https://github.com/intel-lab-lkp/linux/commits/Hikmah-Gumelar/clk-qcom-gcc-msm8953-fix-csi_phytimer_clk_src-100MHz-parent/20261125-193140
+base:   next-20261124
+patch link:    https://lore.kernel.org/r/20261125123146.379057-4-hikmahgumelar%40gmail.com
+patch subject: [PATCH v4 3/7] media: i2c: add s5k5e8 image sensor driver
+config: hexagon-randconfig-1000-20261126 (https://download.01.org/0day-ci/archive/20261126/20261126053002.F2AZOt2m-lkp@intel.com/config)
+compiler: clang version 21.1.8 (https://github.com/llvm/llvm-project 2078da43e25a4623cab2d0d60decddf709aaea28)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261126/20261126053002.F2AZOt2m-lkp@intel.com/reproduce)
 
-> commit c4e2dd0c5c7aea169ea475dfdf59cb2e475d33be
-> Author: Alex Elder <elder@kernel.org>
-> 
-> arm64: dts: qcom: qcs6490-rb3gen2: add TC9564 clock node
-> 
-> This commit adds a devicetree node for the Toshiba TC9564 clock and reset
-> controller along with a 25 MHz fixed-clock node supplying it.
-> 
->> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> index 682bcbc0b466b..b327f64885ef2 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> @@ -890,6 +890,13 @@ pcie@0,0 {
->>   		pinctrl-0 = <&tc9563_resx_n>;
->>   		pinctrl-names = "default";
->>   
->> +		tc9564_xo_board: clock-25000000 {
->> +			compatible = "fixed-clock";
->> +			#clock-cells = <0>;
->> +			clock-frequency = <25000000>;
->> +			clock-output-names = "tc9564_xo_board";
->> +		};
->> +
->>   		pcie1_switch0_dsp1: pcie@1,0 {
->>   			reg = <0x20800 0x0 0x0 0x0 0x0>;
->>   			#address-cells = <3>;
-> 
-> [Severity: High]
-> Does placing clock-25000000 as the first child of pcie@0,0 shift the
-> downstream port indexing in the tc9563 power control driver?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/20261126053002.F2AZOt2m-lkp@intel.com/
 
-I think it currently does.
+All errors (new ones prefixed by >>):
 
-> Both tc9563_pwrctrl_probe() and tc9563_pwrctrl_parse_reset_line() map the
-> direct children of the pci1179,0623 node positionally to TC9563_DSP1,
-> TC9563_DSP2, and TC9563_VDSP:
-> 
-> drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c:tc9563_pwrctrl_probe() {
-> 	...
-> 	port = TC9563_USP;
-> 	for_each_child_of_node_scoped(node, child) {
-> 		if (++port >= TC9563_MAX)
-> 			break;
+>> drivers/media/i2c/st-mipid02.c:847:19: error: call to undeclared function 'devm_cci_regmap_init_i2c'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     847 |         bridge->regmap = devm_cci_regmap_init_i2c(client, 16);
+         |                          ^
+>> drivers/media/i2c/st-mipid02.c:847:17: error: incompatible integer to pointer conversion assigning to 'struct regmap *' from 'int' [-Wint-conversion]
+     847 |         bridge->regmap = devm_cci_regmap_init_i2c(client, 16);
+         |                        ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   2 errors generated.
+--
+>> drivers/media/i2c/thp7312.c:2097:20: error: call to undeclared function 'devm_cci_regmap_init_i2c'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    2097 |         thp7312->regmap = devm_cci_regmap_init_i2c(client, 16);
+         |                           ^
+>> drivers/media/i2c/thp7312.c:2097:18: error: incompatible integer to pointer conversion assigning to 'struct regmap *' from 'int' [-Wint-conversion]
+    2097 |         thp7312->regmap = devm_cci_regmap_init_i2c(client, 16);
+         |                         ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   2 errors generated.
 
-If the second option above is chosen, this function
-should be updated the same way.
 
-> 		ret = tc9563_pwrctrl_parse_device_dt(child, &tc9563->cfg[port]);
-> 	...
-> }
-> 
-> With clock-25000000 ahead of pcie@1,0, pcie@2,0, and pcie@3,0, the driver
-> treats clock-25000000 as TC9563_DSP1, shifts pcie@1,0 and pcie@2,0 into
-> TC9563_DSP2 and TC9563_VDSP (misassociating per-port settings, reset
-> GPIOs, and the integrated Ethernet endpoint), and stops before reaching
-> pcie@3,0.  It also violates Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml,
-> which only permits pcie@[1-2],0 and pcie@[3],0 child nodes.  Should
-> tc9564_xo_board live under the root /clocks node instead?
+vim +/devm_cci_regmap_init_i2c +847 drivers/media/i2c/st-mipid02.c
 
-The 25 MHz oscillator comes from *outside* the TC9564 chip,
-not under the upstream PCIe switch port.
+642bb5e88fed89e Mickael Guene 2019-04-09  803  
+642bb5e88fed89e Mickael Guene 2019-04-09  804  static int mipid02_probe(struct i2c_client *client)
+642bb5e88fed89e Mickael Guene 2019-04-09  805  {
+642bb5e88fed89e Mickael Guene 2019-04-09  806  	struct device *dev = &client->dev;
+642bb5e88fed89e Mickael Guene 2019-04-09  807  	struct mipid02_dev *bridge;
+642bb5e88fed89e Mickael Guene 2019-04-09  808  	u32 clk_freq;
+642bb5e88fed89e Mickael Guene 2019-04-09  809  	int ret;
+642bb5e88fed89e Mickael Guene 2019-04-09  810  
+4dd10fbbeb9c337 Kees Cook     2026-10-28  811  	bridge = devm_kzalloc_obj(dev, *bridge);
+642bb5e88fed89e Mickael Guene 2019-04-09  812  	if (!bridge)
+642bb5e88fed89e Mickael Guene 2019-04-09  813  		return -ENOMEM;
+642bb5e88fed89e Mickael Guene 2019-04-09  814  
+642bb5e88fed89e Mickael Guene 2019-04-09  815  	bridge->i2c_client = client;
+642bb5e88fed89e Mickael Guene 2019-04-09  816  	v4l2_i2c_subdev_init(&bridge->sd, client, &mipid02_subdev_ops);
+642bb5e88fed89e Mickael Guene 2019-04-09  817  
+642bb5e88fed89e Mickael Guene 2019-04-09  818  	/* got and check clock */
+642bb5e88fed89e Mickael Guene 2019-04-09  819  	bridge->xclk = devm_clk_get(dev, "xclk");
+642bb5e88fed89e Mickael Guene 2019-04-09  820  	if (IS_ERR(bridge->xclk)) {
+642bb5e88fed89e Mickael Guene 2019-04-09  821  		dev_err(dev, "failed to get xclk\n");
+642bb5e88fed89e Mickael Guene 2019-04-09  822  		return PTR_ERR(bridge->xclk);
+642bb5e88fed89e Mickael Guene 2019-04-09  823  	}
+642bb5e88fed89e Mickael Guene 2019-04-09  824  
+642bb5e88fed89e Mickael Guene 2019-04-09  825  	clk_freq = clk_get_rate(bridge->xclk);
+642bb5e88fed89e Mickael Guene 2019-04-09  826  	if (clk_freq < 6000000 || clk_freq > 27000000) {
+642bb5e88fed89e Mickael Guene 2019-04-09  827  		dev_err(dev, "xclk freq must be in 6-27 Mhz range. got %d Hz\n",
+642bb5e88fed89e Mickael Guene 2019-04-09  828  			clk_freq);
+642bb5e88fed89e Mickael Guene 2019-04-09  829  		return -EINVAL;
+642bb5e88fed89e Mickael Guene 2019-04-09  830  	}
+642bb5e88fed89e Mickael Guene 2019-04-09  831  
+642bb5e88fed89e Mickael Guene 2019-04-09  832  	bridge->reset_gpio = devm_gpiod_get_optional(dev, "reset",
+642bb5e88fed89e Mickael Guene 2019-04-09  833  						     GPIOD_OUT_HIGH);
+642bb5e88fed89e Mickael Guene 2019-04-09  834  
+61c03b631b74a38 Chuhong Yuan  2019-10-17  835  	if (IS_ERR(bridge->reset_gpio)) {
+61c03b631b74a38 Chuhong Yuan  2019-10-17  836  		dev_err(dev, "failed to get reset GPIO\n");
+61c03b631b74a38 Chuhong Yuan  2019-10-17  837  		return PTR_ERR(bridge->reset_gpio);
+61c03b631b74a38 Chuhong Yuan  2019-10-17  838  	}
+61c03b631b74a38 Chuhong Yuan  2019-10-17  839  
+642bb5e88fed89e Mickael Guene 2019-04-09  840  	ret = mipid02_get_regulators(bridge);
+642bb5e88fed89e Mickael Guene 2019-04-09  841  	if (ret) {
+642bb5e88fed89e Mickael Guene 2019-04-09  842  		dev_err(dev, "failed to get regulators %d", ret);
+642bb5e88fed89e Mickael Guene 2019-04-09  843  		return ret;
+642bb5e88fed89e Mickael Guene 2019-04-09  844  	}
+642bb5e88fed89e Mickael Guene 2019-04-09  845  
+6223dafa3c9111d Alain Volmat  2023-11-25  846  	/* Initialise the regmap for further cci access */
+6223dafa3c9111d Alain Volmat  2023-11-25 @847  	bridge->regmap = devm_cci_regmap_init_i2c(client, 16);
+6223dafa3c9111d Alain Volmat  2023-11-25  848  	if (IS_ERR(bridge->regmap))
+6223dafa3c9111d Alain Volmat  2023-11-25  849  		return dev_err_probe(dev, PTR_ERR(bridge->regmap),
+6223dafa3c9111d Alain Volmat  2023-11-25  850  				     "failed to get cci regmap\n");
+6223dafa3c9111d Alain Volmat  2023-11-25  851  
+642bb5e88fed89e Mickael Guene 2019-04-09  852  	bridge->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+642bb5e88fed89e Mickael Guene 2019-04-09  853  	bridge->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
+04d170b288b3404 Alain Volmat  2023-11-25  854  	bridge->sd.internal_ops = &mipid02_subdev_internal_ops;
+642bb5e88fed89e Mickael Guene 2019-04-09  855  	bridge->sd.entity.ops = &mipid02_subdev_entity_ops;
+642bb5e88fed89e Mickael Guene 2019-04-09  856  	bridge->pad[0].flags = MEDIA_PAD_FL_SINK;
+642bb5e88fed89e Mickael Guene 2019-04-09  857  	bridge->pad[1].flags = MEDIA_PAD_FL_SINK;
+642bb5e88fed89e Mickael Guene 2019-04-09  858  	bridge->pad[2].flags = MEDIA_PAD_FL_SOURCE;
+642bb5e88fed89e Mickael Guene 2019-04-09  859  	ret = media_entity_pads_init(&bridge->sd.entity, MIPID02_PAD_NB,
+642bb5e88fed89e Mickael Guene 2019-04-09  860  				     bridge->pad);
+642bb5e88fed89e Mickael Guene 2019-04-09  861  	if (ret) {
+642bb5e88fed89e Mickael Guene 2019-04-09  862  		dev_err(&client->dev, "pads init failed %d", ret);
+04d170b288b3404 Alain Volmat  2023-11-25  863  		return ret;
+04d170b288b3404 Alain Volmat  2023-11-25  864  	}
+04d170b288b3404 Alain Volmat  2023-11-25  865  
+04d170b288b3404 Alain Volmat  2023-11-25  866  	ret = v4l2_subdev_init_finalize(&bridge->sd);
+04d170b288b3404 Alain Volmat  2023-11-25  867  	if (ret < 0) {
+04d170b288b3404 Alain Volmat  2023-11-25  868  		dev_err(dev, "subdev init error: %d\n", ret);
+04d170b288b3404 Alain Volmat  2023-11-25  869  		goto entity_cleanup;
+642bb5e88fed89e Mickael Guene 2019-04-09  870  	}
+642bb5e88fed89e Mickael Guene 2019-04-09  871  
+642bb5e88fed89e Mickael Guene 2019-04-09  872  	/* enable clock, power and reset device if available */
+a74e17ca6443260 Alain Volmat  2024-10-08  873  	ret = mipid02_set_power_on(&client->dev);
+642bb5e88fed89e Mickael Guene 2019-04-09  874  	if (ret)
+642bb5e88fed89e Mickael Guene 2019-04-09  875  		goto entity_cleanup;
+642bb5e88fed89e Mickael Guene 2019-04-09  876  
+642bb5e88fed89e Mickael Guene 2019-04-09  877  	ret = mipid02_detect(bridge);
+642bb5e88fed89e Mickael Guene 2019-04-09  878  	if (ret) {
+642bb5e88fed89e Mickael Guene 2019-04-09  879  		dev_err(&client->dev, "failed to detect mipid02 %d", ret);
+642bb5e88fed89e Mickael Guene 2019-04-09  880  		goto power_off;
+642bb5e88fed89e Mickael Guene 2019-04-09  881  	}
+642bb5e88fed89e Mickael Guene 2019-04-09  882  
+642bb5e88fed89e Mickael Guene 2019-04-09  883  	ret = mipid02_parse_tx_ep(bridge);
+642bb5e88fed89e Mickael Guene 2019-04-09  884  	if (ret) {
+642bb5e88fed89e Mickael Guene 2019-04-09  885  		dev_err(&client->dev, "failed to parse tx %d", ret);
+642bb5e88fed89e Mickael Guene 2019-04-09  886  		goto power_off;
+642bb5e88fed89e Mickael Guene 2019-04-09  887  	}
+642bb5e88fed89e Mickael Guene 2019-04-09  888  
+642bb5e88fed89e Mickael Guene 2019-04-09  889  	ret = mipid02_parse_rx_ep(bridge);
+642bb5e88fed89e Mickael Guene 2019-04-09  890  	if (ret) {
+642bb5e88fed89e Mickael Guene 2019-04-09  891  		dev_err(&client->dev, "failed to parse rx %d", ret);
+642bb5e88fed89e Mickael Guene 2019-04-09  892  		goto power_off;
+642bb5e88fed89e Mickael Guene 2019-04-09  893  	}
+642bb5e88fed89e Mickael Guene 2019-04-09  894  
+a74e17ca6443260 Alain Volmat  2024-10-08  895  	/* Enable runtime PM and turn off the device */
+a74e17ca6443260 Alain Volmat  2024-10-08  896  	pm_runtime_set_active(dev);
+a74e17ca6443260 Alain Volmat  2024-10-08  897  	pm_runtime_get_noresume(&client->dev);
+a74e17ca6443260 Alain Volmat  2024-10-08  898  	pm_runtime_enable(dev);
+a74e17ca6443260 Alain Volmat  2024-10-08  899  
+a74e17ca6443260 Alain Volmat  2024-10-08  900  	pm_runtime_set_autosuspend_delay(&client->dev, 1000);
+a74e17ca6443260 Alain Volmat  2024-10-08  901  	pm_runtime_use_autosuspend(&client->dev);
+a74e17ca6443260 Alain Volmat  2024-10-08  902  	pm_runtime_put_autosuspend(&client->dev);
+a74e17ca6443260 Alain Volmat  2024-10-08  903  
+642bb5e88fed89e Mickael Guene 2019-04-09  904  	ret = v4l2_async_register_subdev(&bridge->sd);
+642bb5e88fed89e Mickael Guene 2019-04-09  905  	if (ret < 0) {
+642bb5e88fed89e Mickael Guene 2019-04-09  906  		dev_err(&client->dev, "v4l2_async_register_subdev failed %d",
+642bb5e88fed89e Mickael Guene 2019-04-09  907  			    ret);
+642bb5e88fed89e Mickael Guene 2019-04-09  908  		goto unregister_notifier;
+642bb5e88fed89e Mickael Guene 2019-04-09  909  	}
+642bb5e88fed89e Mickael Guene 2019-04-09  910  
+642bb5e88fed89e Mickael Guene 2019-04-09  911  	dev_info(&client->dev, "mipid02 device probe successfully");
+642bb5e88fed89e Mickael Guene 2019-04-09  912  
+642bb5e88fed89e Mickael Guene 2019-04-09  913  	return 0;
+642bb5e88fed89e Mickael Guene 2019-04-09  914  
+642bb5e88fed89e Mickael Guene 2019-04-09  915  unregister_notifier:
+3c8c153914812a9 Sakari Ailus  2021-03-05  916  	v4l2_async_nf_unregister(&bridge->notifier);
+3c8c153914812a9 Sakari Ailus  2021-03-05  917  	v4l2_async_nf_cleanup(&bridge->notifier);
+a74e17ca6443260 Alain Volmat  2024-10-08  918  	pm_runtime_disable(&client->dev);
+a74e17ca6443260 Alain Volmat  2024-10-08  919  	pm_runtime_set_suspended(&client->dev);
+642bb5e88fed89e Mickael Guene 2019-04-09  920  power_off:
+a74e17ca6443260 Alain Volmat  2024-10-08  921  	mipid02_set_power_off(&client->dev);
+642bb5e88fed89e Mickael Guene 2019-04-09  922  entity_cleanup:
+642bb5e88fed89e Mickael Guene 2019-04-09  923  	media_entity_cleanup(&bridge->sd.entity);
+642bb5e88fed89e Mickael Guene 2019-04-09  924  
+642bb5e88fed89e Mickael Guene 2019-04-09  925  	return ret;
+642bb5e88fed89e Mickael Guene 2019-04-09  926  }
+642bb5e88fed89e Mickael Guene 2019-04-09  927  
 
-For this reason, it should be defined somewhere on the board,
-not within the TC9564 chip.
-
-I will investigate the right way to represent this and will
-correct it.
-
-					-Alex
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
