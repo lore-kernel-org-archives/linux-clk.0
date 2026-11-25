@@ -1,115 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.229.137
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=109.224.244.121
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795615610;
-	b=5ceIQaAoG+8P3kLxfNBaGW+h6lST815i21qvoau+aVAe6g/DKNB54gz7edvUA8y6wZgW
-	 XbXkDqctOvqAbs+dWS5W2PlYKOwugkHE6MMdOdncibWww5kHEB2XBsn+7m1vAgNasxT3/
-	 9zYhFH1WnoRjfdM+U+zoYK9PzGb7cu+oa+Zcxx4CncGLny4wVrbWlwrOKSqZHshreICA/
-	 +epr286C4i6hOJp8puZkQRPonQrsdmacYWddaJYX1xohOEIMUZEgWL1HH46FkDtnEVg39
-	 nMIbmDwoOuZtCXJFA74Ar7iCZIn3nfQsZKQDLg4HET4SFFzyGpz16CHJsteHRiHuKdw==
+	t=1795617192;
+	b=YIs6HKs1Q5nuRgiqhDMmGAKW2LiIYqWRn05RfLTY9+w2Zh1f/VaReapKIs5xpaSS3f6n
+	 cFFl38p8L36pRE1RW3AU85cDv3PptJwaCjuAEcz0Ox/ZP87HHWGoYIvAFmSx/1Mbzd+et
+	 MayENVBkHYjXyv/nKZfxH5c+6jYatkY0ZSpuOSG+kQCVArUqvPbk2RTzBACAEXstMFMuM
+	 Ewji3HUlSFVsJEine9T8d+qKVqMMKTWIkTruM/mcAkxNe17LT3r23IDayxMMMtlslx4tN
+	 cxI5LnnuUMy6x7rGlGzeMweYREdgkvaBLEEUcljd9pHJ8bjx7not9CDUN2fbSUP/R0A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795615610;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	bh=MP09FK8BKciK7H/NzSBFI5ee4XjfPiGr8z/17qMy3kI=;
-	b=kuTVmuF9hLy8Nj4esczTC5BDZpva+5SWaUa/Fpj8a/bWgvK7rOqGGHQZE8xk3SuVo7Wa
-	 D3y1QaeaLWGC4+1x/GpdwM1PxJLUE9/VSaXrC1E3aVX5y+D++LL890DS77HCtwSHN6NCf
-	 V8mBbyqqqHRSEb+aYoLBTp5mdavgbX0OL3sarirLUMS6Giu3U0S8Y7x6nFnLOefvEJUuQ
-	 bikwHEjl+fe6lKqhL09bMsfP8HoUCubKWzzcnarCvibLUEXdnr0S/o8/5RdRXDTTHg5Ok
-	 6+W+5PCa3PqJncAuOd5jHO1kUTdAzC3q4VnB5JeB0CjVjDYswZpzjIQmJYmEekoPadA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795617192;
+	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
+	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=JTuzeFXaJ0CrgwY+VJsh1Zrm4GF5RUj+OFjSqoSpq5M=;
+	b=GlUhZulZREvxoNn1x4kZYVDcv6DO6fmFgHvwj4Gd89sifSLVYoV9ymu8Tpk4015DWU5L
+	 yBH20E6/PcR0NTnbPXoAwqtaMxqisIw0YBIQ5VyiVTAVVorvi/4diz2PrxpPKbJ0GunA7
+	 XmULvs49Vxd/SG1/5sCsDmyOFkxwF1U/CvCIuEe454zxfKFD/wpNKH3sNd4umvKK7Wugg
+	 NFdGB+ASBtk/falsjul45ahgDUmuT8P1RuYN7S2t6cJG8ALytWA/Fz8bOKKT5zF9aymw2
+	 1YNGf1z6BGXUQKuSRfbiVLSvyPpGbPbzodyU6Gl6ISPrPStJWv3JNzMUydwiukzPSHw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=fVeMPU2L;
-	arc=none smtp.remote-ip=74.125.229.137
-Received: from mail-dl2-f9.google.com (mail-dl2-f9.google.com [74.125.229.137])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=protonmail.ch;
+	spf=pass smtp.mailfrom=protonmail.ch;
+	dkim=pass header.d=protonmail.ch header.i=@protonmail.ch header.a=rsa-sha256 header.s=protonmail3 header.b=F5CiVjeQ;
+	arc=none smtp.remote-ip=109.224.244.121
+Received: from mail-244121.protonmail.ch (mail-244121.protonmail.ch [109.224.244.121])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5105F606A326
-	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 14:06:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5105F606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7155F606A323;
+	Wed, 25 Nov 2026 14:33:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7155F606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=fVeMPU2L
-Received: by mail-dl2-f9.google.com with SMTP id a92af1059eb24-1397ad3d891so813027c88.0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 06:06:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795615608; x=1796220408; darn=vger.kernel.org;
-        h=mime-version:content-transfer-encoding:content-type:references
-         :in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=MP09FK8BKciK7H/NzSBFI5ee4XjfPiGr8z/17qMy3kI=;
-        b=fVeMPU2LQflS9t5Hux2xZmBbd7AQUgCcFsHVsMBbyb1onFoxxv3rIAiSh8CTXacTz+
-         mICIXq3wAe4SwVyPYoPXICZjy5J+0ufY/gVPITAUp1VduxA6gs5TKZ7ujaR+CNRDdVke
-         qseDoHa6B02E4Al6EO6DimgZyCpiUI0Mp/xCUBDjxMHVjVSNkWK/TMndxsQyephR/Ami
-         AgLrZbfaIMMJOnAFvi1fgUon/13tg7hzXIWWbeU1E6SM3hEDzj2mGRbFjpkx6oOBnpiw
-         2U5MkOtkZrRf3aUiyMSho4m5cajyw7M7+d3xs+w6weTOoBLbjnXZPTGNbBb/jBVKN8Gv
-         6JWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795615608; x=1796220408;
-        h=mime-version:content-transfer-encoding:content-type:references
-         :in-reply-to:subject:cc:to:from:message-id:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=MP09FK8BKciK7H/NzSBFI5ee4XjfPiGr8z/17qMy3kI=;
-        b=Ra5O2ZzhDYH50t9YCoBD2/yzJ9m2AWdC/B+lkc4SswnClUIpv60OdgjHWf4/jMxXrZ
-         zAWJ/86C+WwIi3Q/0RZNSzlrYufFtDOFb6j+N9EZLCxOIDm+3Az73i9XE34inHyfiUey
-         uEGf4D3SAoltenYTPQm5eK81vMCf6Zd49Y8zKb4HKvwrGKpILghwy9LrupXf4DrlAU4o
-         paqu47mXAI/Dco5ZXQwVAhj/NjR6YAczQIz0a29bryPlnVzKKyAzwNwDTehwtm196q3o
-         6C9XOAJMg4SDLQkt9zthIWHl0KaY0brhL7EzB3UktahYFQGJ/WEPch7gGQDk1hfIhL00
-         wGNg==
-X-Forwarded-Encrypted: i=1; AL+hErFaf54zhd+CoWRvAa69UK2AzJE+q7j375rMdu2pD4c1Qoq4Uk3b7RVFedJucGjwTUFZF0nEkV/kS+A=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+Q8GS4d7ZdTzHZfbtAdOkzI2TiMIlnFbDImhMPDlhhYQqrCjkd
-	bjmA7OOpxvPpfGM25LY47ekdTwwf0IaFD/h5xG2el41x9dDuGChZBe38
-X-Gm-Gg: AZFdTZfKZ+jO7xpfppwcIM0C+uaKreDIm4wYAAPhuhE/TA8aF5EVLZjTZ46uMXNw7/m
-	9fgJgJeX+ub9Fl09GxdM6jZXjEtsibusk/aVcs8CXfHx55XLMkkURbNCzJ3fv5CvJ2KimesDtsi
-	bUKpYfNlttDtpOrBj1XP641OULLrdaXYDdeYDRYYmdvDh5JwJdvK3jxNJuY226RE//x2q12Yu95
-	O7EP9Xk7ZjBlcGu9T1XP2HiBMp7dgKPsd9yXWyYBeUfs+bR4m/mntQ7qPmk6ZyYAwCAzeUL9JIj
-	74WBgj6zPIbyLM0tE62J/4VfUFi2+lrNjoDErzaTVEpwj8EWqVkkhbxrOdItdLqoSCEI3UqNCpB
-	5ZVsE7nyuNbP+cuaV8tW/vSKdqDSIvVdXR9yjxm/EU5oAOTvF21OuAfJOUlXp0/BKmw5Y4Sorim
-	J2eQr98cL0/bCoGQcgzyIJLPu4lZFzBvcvn+Q76yUWQziTfwfrTzyqCVOgtfDo8y0mnTGzjowvA
-	Kz2QwodPYWsrxDS2DzLgynIEGE1YuZEj9wRCwa+msnVMcUJomlKTL8cS+oTkoz2awvoloRWVea4
-	rpACQlvYNXIdjNm48AXMp4tSnIXpFo9Y7MTPoaIFbA==
-X-Received: by 2002:a05:701a:844e:10b0:1b0:20:6444 with SMTP id a92af1059eb24-1b56e185990mr10444498c88.39.1795615608143;
-        Wed, 25 Nov 2026 06:06:48 -0800 (PST)
-Received: from localhost ([2604:a840:3:1e0::3003])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-38567cafec4sm61981028eec.26.2026.11.25.06.06.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 06:06:47 -0800 (PST)
-Date: Wed, 25 Nov 2026 22:06:43 +0800
-Message-ID: <eccf3f1e6dc94fbe847d112e8804c053.codykang.hk@gmail.com>
-From: Cody Kang <codykang.hk@gmail.com>
-To: James Morris <jmorris@namei.org>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@kernel.org>,
- Troy Mitchell <troy.mitchell@linux.spacemit.com>,
- Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Haylen Chu <heylenay@4d2.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
- Yao Zi <me@ziyao.cc>,
- Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Guodong Xu <docular.xu@gmail.com>, Icenowy Zheng <uwu@icenowy.me>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Sarah Emery <sarah.emery@canonical.com>, Ze Huang <ze.huang@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 00/17] drm/spacemit: add SpacemiT K3 display support
-In-Reply-To: <87eaeb2-b6e9-9198-b9cf-7e9f96bdcbc@namei.org>
-References: <20261121-k3-display-v3-0-ec419e8e96b8@gmail.com>
- <87eaeb2-b6e9-9198-b9cf-7e9f96bdcbc@namei.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.a=rsa-sha256 header.s=protonmail3 header.b=F5CiVjeQ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
+	s=protonmail3; t=1795617186; x=1795876386;
+	bh=JTuzeFXaJ0CrgwY+VJsh1Zrm4GF5RUj+OFjSqoSpq5M=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=F5CiVjeQhxUKomP2szkCl3AxCjmzQtv8kCXXwoN1vs1eV4d1vs8dP9Kui19EugwoB
+	 eQrBWS51mV/XqcTAy0Dfhv3/Br3tnt+ZGb6EwanqMtbonx6/+bMkQyoBYq1YlxqMV1
+	 gFSsJST0bakzUG2SiEdX5dpx0o1b36AL/7yChSu5kP9IGOQvoKqiujybGqYImuEke2
+	 EhM+SxWntECLOcC5a5OogdEdNUkhXhpiG/GHgfaaQr8AnWmtY4+NjpdrA33P3DGQro
+	 WgIWWy7jTNCPC0n0U75GUI0cbSVhffJEzZTVUVAmesWJIZ5pY+DoYljmTDuuyw8EmM
+	 OKZdlsj/WcsKA==
+Date: Wed, 25 Nov 2026 14:32:54 +0000
+To: Echo Zhang <echo.zhang@mediatek.com>
+From: Ben Grisdale <bengris32@protonmail.ch>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, MMDVFS Team <linux-mediatek@lists.infradead.org>, kyrie.wu@mediatek.com, ming-fan.chen@mediatek.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH 4/7] soc: mediatek: mmdvfs: add VCP backend
+Message-ID: <20261125143248.237422bc@ben-desktop>
+In-Reply-To: <20261125060037.649659-5-echo.zhang@mediatek.com>
+References: <20261125060037.649659-1-echo.zhang@mediatek.com> <20261125060037.649659-5-echo.zhang@mediatek.com>
+Feedback-ID: 27291966:user:proton
+X-Pm-Message-ID: 57888eaf1331de2550f94de46d07d4368ce17893
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -119,56 +64,114 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+On Wed, 25 Nov 2026 14:00:09 +0800 "Echo Zhang" <echo.zhang@mediatek.com> w=
+rote:
 
-On Tue, 24 Nov 2026 19:53:11 -0800, James Morris wrote:
-> On Sat, 21 Nov 2026, Cody Kang via B4 Relay wrote:
->
-> > This series adds display support for the SpacemiT K3 [2], a RISC-V SoC:
-> > a new DRM driver, a new PHY driver and three new bindings.
->
->
-> Tested-by: James Morris <jmorris@namei.org> # CoM260-IFX, DisplayPort
->
-> Assisted by an LLM.
->
-> v3 on v7.4-rc1 works on a SpacemiT K3 CoM260 IFX with an Acer EDB323QU
-> (2560x1440, 144 Hz) on the DisplayPort connector. The DRM, DP and PHY
-> drivers were built in, and Linux ran from an initramfs with
-> clk_ignore_unused.
-
-Thanks for testing v3. I will add your Tested-by in v4, on the PHY,
-DRM driver, SoC device tree and CoM260-IFX patches.
-
-> The board has the vendor U-Boot 2022.10 built on May 21 2026, not the
-> uboot-for-k3-display-verify branch. That link in the cover letter
-> returns 404 for me.
-
-I will drop that link in v4.
+> Add the VCP transport used by MMDVFS to map AP and firmware shared
+> memory, manage feature power references and send IPI commands.
+>=20
+> Wait for VCP readiness and handle the selected MMUP or VCP READY
+> notification to initialize firmware after boot and resume. Serialize
+> IPI transactions while shared memory and acknowledgment state are in
+> use.
 
 [...]
-> Two observations:
->
-> 1. The HPD interrupt never fired. /proc/interrupts stayed at 0 for
->    cac88000.dp in both boots, also across the unplug and replug, when
->    the stream was running. The connector poll caught both.
 
-Same on my CoM260-IFX: the count stays at 0, also across an unplug
-and replug with the output on.
+> +static void mmdvfs_get_bootmode(void)
+> +{
+> +=09struct device_node *np_chosen;
+> +=09struct tag_bootmode {
+> +=09=09u32 size;
+> +=09=09u32 tag;
+> +=09=09u32 bootmode;
+> +=09=09u32 boottype;
+> +=09} *tag;
+> +
+> +=09if (bootmode < UNKNOWN_BOOT)
+> +=09=09return;
+> +
+> +=09np_chosen =3D of_find_node_by_path("/chosen");
+> +=09if (!np_chosen) {
+> +=09=09bootmode =3D NORMAL_BOOT;
+> +=09=09return;
+> +=09}
+> +
+> +=09tag =3D (struct tag_bootmode *)of_get_property(np_chosen, "atag,boot"=
+, NULL);
+> +=09of_node_put(np_chosen);
+> +
+> +=09if (tag)
+> +=09=09bootmode =3D tag->bootmode;
+> +=09else
+> +=09=09bootmode =3D NORMAL_BOOT;
+> +}
+> +
 
-The external DP connector is polled on purpose. The interrupt needs
-the pixel clock, so it cannot report a plug into an idle port, and the
-bridge leaves out DRM_BRIDGE_OP_HPD there.
+[...]
 
-> 2. With the monitor asleep, nothing was displayed. It kept HPD high and
->    returned a generic 1920x1080 EDID. Link training passed at
->    2.7 Gbps x2, but the monitor stayed dark until I woke it by hand
->    and a later modeset retrained the link. The kernel got no event
->    when the monitor woke. I found no DP_SET_POWER write in the driver;
->    could the sink be left in D3?
+> +static int
+> +mmdvfs_vcp_send_ipi_impl(struct mmdvfs_device *mmdvfs, void *data, u32 l=
+en,
+> +=09=09=09 const bool vcp)
+> +{
+[...]
+> +=09mmdvfs_get_bootmode();
+> +=09if (bootmode =3D=3D RECOVERY_BOOT) {
+> +=09=09mmdvfs_err(mmdvfs->dev, "IPI skipped: bootmode=3D%d\n", bootmode);
+> +=09=09return -EACCES;
+> +=09}
+> +
 
-Right, v3 never writes DP_SET_POWER. v4 will set the sink to D0
-before link training.
+Allow me to give my two cents here, even if I am a nobody :)
 
-Cody
+Android bootmodes. Whilst I do respect the reason for Android bootmodes
+existing, what I do not like to see is people checking for the *Android*
+bootmode in their drivers.
+
+Android kernels these days are *modular* thanks to GKI. I *do not*
+understand why people still check for bootmodes in their drivers when
+there is a much better option of *not loading them* if they are not
+wanted in the current bootmode.
+
+Having your driver depend on the behaviour of one specific userspace is
+terrible. And tracking it in firmware (given that this code is checking
+for an "atag,boot" property presumably added by the bootloader) is even
+worse.
+
+Aside from enabling these questionable bootmode checks in the drivers,
+I have no idea why the bootloader needs to get involved with putting
+non-standard state / boot info inside of /chosen (i.e. that "atag,boot"
+property), when Android solved this problem by using bootargs, and more
+recently, bootconfig.
+
+I will acknowledge that "just not loading modules" does get a bit more
+nuanced if you bring something like udev / Android init into the mix,
+but there are still better solutions to this problem: either gracefully
+handling the state where the hardware isn't ready in your driver, making
+your bootloader set status =3D "disabled"; on the relavent DT node, or
+blocklisting the module from userspace in boot modes where it can't
+work.
+
+Inter-driver dependencies are not a good excuse either (e.g. a core
+clock driver depending on some DVFS driver that is a no-op in recovery,
+forcing you to load it ANYWAY, even if the bootloader doesn't start the
+required firmware on recovery boot). If that is the case, then there is
+some serious refactoring work to do.
+
+First I began seeing these sorts of checks in vendor touch screen
+drivers, but now it seems to be infecting SoC side drivers as well.
+
+*Kernel* drivers should work the same regardless of what *userspace*
+environment is running (with the only real exception being the absence
+of firmware or explicit configurations from userspace). And in situations
+where they genuinely can't work, they should not be loaded at all.
+
+There should be no such thing as "kernel drivers designed for Android",
+only "kernel drivers designed for Linux".
+
+Best regards,
+Ben Grisdale
+
