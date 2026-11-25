@@ -1,47 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.70.43.103
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795595523;
-	b=zYr767cYyiKyimrUx1Lv48m0QgRNDpreVUg/Kk7mZipZnnY7zS47HnMZxp48KTCEoovK
-	 fGkY6WG37Two938Le4LccYrubnqnxZHQ52gAIbDgKeD1MHOCfk9n0t6mptmRLhuiLJ7fv
-	 NFLJQ7yi9+Z9JaT7wb9g5I6OEVTYnCxtljqdr8hjzv30tgYJObXHHO8zGenQO2BsIsdkF
-	 xcM3NUeDX7IH2VYMlqlBD/mMe9MT+e7+x+czLSgwzJrBR1VXYbOpJTCJhEY9QGK2L0kYW
-	 mWFlhE2mOfdJMj1S5hAwf6qOrjPflF56t//3ISL86+vFQf8xj8dqPARO4IPKDxJv1oQ==
+	t=1795595555;
+	b=UDUZOF5nfpqQ8UazMen8FieMV6u3MNIvMpztfBQxnSTHTaxWIjMi0cLS6b4BXNCkMq5H
+	 e4C4VDvA2DEaXWHZ9zXmnQt7tG59mt+bXyXKv8+OMS1Yc3d7ts/92dLrg5kiplIxlbgsl
+	 QBjtiywGPU7BtIig8jrPWwVLB0jCHKoiyqbL/OHcN9lGCG/f8xWEwAHa/MBK8i+f9IEJe
+	 YV5TdFO2qEZcGx7ciWe2dGMdN2BqgVRZVrBTdu0Wy7Y1u3Q3Q/yFHlmGMutS8SF2YGanh
+	 JYk4ghah2cLEdGMa1NJenJe6mFqdb7fFdSFYqMWC6vDp/OWp6JkdjYEonxZDxjgpsBA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795595523;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:From:To:Cc:References:Content-Language:Autocrypt:In-Reply-To:
+	a=rsa-sha256; c=relaxed/relaxed; t=1795595555;
+	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
+	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=Xhprbp8vYgoK3W8l2CK0jpgqQyaq9WrszZ2gTi+N1FM=;
-	b=er/sJTAqe2xaQshcVchj3kCRVc0dOIiZoUY2Hl/qUsMP62UIYy9UsDwSz2t884Ywh9Bz
-	 Cteh0Afy95TidLz4HUM0U+F1eRqq1IbQ14a3ZBuYJbXrVmqGdU1UKErVX315dDb+Mbdl9
-	 UEDQceumdVpBa2POOUqlInldqrsfL4EfJfO4Kh+SE4oLUi/4Fm0FNqN4LPMSRyhJ+42x4
-	 9hm0St0Zm9qz1YRbjX0/fLwOARkm+NhEFAY16CE3VU9OkYcyWP1pMzqxMjvNj/iZ2LmRN
-	 hbifh1S5IEn+EupW1nsOkT4AZXi01VXwWE88m75YqweiB391bGESMir4DItIwBb++NQ==
+	bh=ocJYbfT6g5bezYeAIa1e7zaXiCG4wIbvDDiN4JuxlxY=;
+	b=lsHP78En+BDwYjstn5totOzo2+fNx/tL23ylFcj8S9YCJjU7h2qwvxX3qY6z8o4/uAte
+	 FgOTVwphuIbOshIKzuRpHrdYEGnh2g9KLxvb+ZV0+Y+qfhx3/ntidCbjQ2u9aXkoDk435
+	 PsUhxU5lOm9UuX+AQzWgzyJ4gzmdRr7Jc8Wt+WZ55es3KgfrADGUUKaK+x7+TAFmf6sKs
+	 nTIrP4+iccI/weJagA0kz/DWHkZLIoiguKDmvrSX6l8adEs26rFiK5iK5mIVjwoRN4y4m
+	 6efFhynN4DOK1ogfbj+LuIWp/eX//Wnq9FUGN4ivhQ83eOYJ/zLvw5YxWW7Zf4b0VxA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=boAdVYoX;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=protonmail.com;
+	spf=pass smtp.mailfrom=protonmail.com;
+	dkim=pass header.d=protonmail.com header.i=@protonmail.com header.a=rsa-sha256 header.s=protonmail3 header.b=bRD7SKFy;
+	arc=none smtp.remote-ip=185.70.43.103
+Received: from mail-43103.protonmail.ch (mail-43103.protonmail.ch [185.70.43.103])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B38606A31E;
-	Wed, 25 Nov 2026 08:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230EE606A321;
+	Wed, 25 Nov 2026 08:32:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 230EE606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=boAdVYoX
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B881F000C6;
-	Wed, 25 Nov 2026 08:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795595523;
-	bh=Xhprbp8vYgoK3W8l2CK0jpgqQyaq9WrszZ2gTi+N1FM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To;
-	b=boAdVYoX6mzVRi523peA0iUwn//soWfCQzl+E94F2K/c/zZRfD3fiEix+n2i3hPES
-	 aXkQyPSDPAxStRt++4P0F7qi9974GWrBGgMaLskiSiUfb8g6C1RbBsYmcGREJtlpHG
-	 NJXGmZ8qL7Fx5S7hEjOUgoCZUSEQyQpJrNvQrwRoUq2nP8evB7moPrYoqosJBT1Ga1
-	 p2fzUN7xQq4fpTwW5jTr6PwuMFmdTlDfJzTxIDJ+9Gqy4xxwFmkxtbHYaRHtXHnVEu
-	 uq/4RbynOG/7r5eaVe7Ft98NQeb0m+cYS6NG6B41b/i9iobv4kYwL2JeyO2soXETeO
-	 l90JcBY8eo3Cg==
-Message-ID: <de65af39-3a9c-4b2e-bb82-2a84b8584731@kernel.org>
-Date: Wed, 25 Nov 2026 09:31:54 +0100
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.a=rsa-sha256 header.s=protonmail3 header.b=bRD7SKFy
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1795595551; x=1795854751;
+	bh=ocJYbfT6g5bezYeAIa1e7zaXiCG4wIbvDDiN4JuxlxY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=bRD7SKFyHzLu1nC7qNjFwkb75NJhdRk81G9HUHk5gT88YD1qTWCgBTAqPch376Cku
+	 +8l9qDb+E9tbnmc5m/37SKHWHWKqKYcO6SMWWGGHGyUP+xz6e58DV98Zwlp7HxoZnj
+	 UHSVdpKC1bYHpjAykyedPqgQqOzPp7cjk2yA/xReJj0PTkGeFRg2YsAtKV+NCFXQ0m
+	 jHu4vX9rYnuy+olB3lI9I4OHhEkILpOR9GYo4ckA+imDUQvo4BeziGmK2t1/w5KxHw
+	 pefcFp/ABCPrd7+VTCx5zhQq9m11qfZg07ca1KYgBvS4oQGIPkveLdjL0HwSXfeirp
+	 PP6jMjsx5OHqQ==
+Date: Wed, 25 Nov 2026 08:32:26 +0000
+To: Echo Zhang <echo.zhang@mediatek.com>
+From: Roman Vivchar <rva333@protonmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, MMDVFS Team <linux-mediatek@lists.infradead.org>, kyrie.wu@mediatek.com, ming-fan.chen@mediatek.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH 2/7] dt-bindings: soc: mediatek: add MMDVFS binding
+Message-ID: <hbfQpNQOlAFzs0tUkhDLyxa2evgCuK2TA6HLtNPnASJ-0neKDSdo9kvldUCCVCvv9OwjNQxx7WToK4nwSKfKGX7Yyj37PgPe1tpVuhBTWeQ=@protonmail.com>
+In-Reply-To: <20261125060037.649659-3-echo.zhang@mediatek.com>
+References: <20261125060037.649659-1-echo.zhang@mediatek.com> <20261125060037.649659-3-echo.zhang@mediatek.com>
+Feedback-ID: 173184497:user:proton
+X-Pm-Message-ID: 11c2febfc39a728f981e5e8e4c2b0aa17a47990a
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,150 +64,149 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] dt-bindings: soc: google: Add Google Tensor CPM
- binding
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Thomas Gleixner <tglx@kernel.org>,
- Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>,
- linux-arm-kernel@lists.infradead.org,
- Mariano Marciello <mmarciello@google.com>,
- Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
- =?UTF-8?Q?Jakub_G=C5=82owacki?= <jglow@google.com>
-References: <20261026214359.3122870-1-briannorris@chromium.org>
- <20261026144346.2.Ib692ddd35c1dbea1757d9b1db6c1c7e938fc4ea6@changeid>
- <20261028-rapid-daffodil-rat-0adc6a@quoll> <aulIoq2oVjJ3DVzL@google.com>
- <d4a430de-715a-4936-8adb-35ff57a52b5f@kernel.org>
- <avZkfg6WMlMzOxpn@google.com>
- <72ef7ef8-acc8-4ad5-9c09-76d9e944bf5c@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <72ef7ef8-acc8-4ad5-9c09-76d9e944bf5c@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 25/11/2026 08:07, Krzysztof Kozlowski wrote:
-> On 13/11/2026 02:14, Brian Norris wrote:
->> Hi Krzysztof,
->>
->> On Thu, Nov 05, 2026 at 07:54:22PM +0100, Krzysztof Kozlowski wrote:
->>> On 03/11/2026 03:36, Brian Norris wrote:
->>>> On Wed, Oct 28, 2026 at 02:19:23PM +0100, Krzysztof Kozlowski wrote:
->>>>> On Mon, Oct 26, 2026 at 02:43:40PM -0700, Brian Norris wrote:
->>>>
->>>>>> --- /dev/null
->>>>>> +++ b/include/dt-bindings/interrupt-controller/irq-cpm-google.h
->>>>>> @@ -0,0 +1,16 @@
->>>>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->>>>>> +/*
->>>>>> + * This header provides constants for CPM IRQ.
->>>>>> + *
->>>>>> + * Copyright 2025-2026 Google LLC
->>>>>> + *
->>>>>> + */
->>>>>> +#ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
->>>>>> +#define _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
->>>>>> +
->>>>>> +#define CPM_IRQ_RTC_ALARM_NO			0
->>>>>
->>>>> Keep naming consistent. Clocks has _CLK suffix, so this should not use
->>>>> prefix.
->>>>>
->>>>>
->>>>>> +#define CPM_IRQ_AOC_MIN				7
->>>>>
->>>>> Anyway, ABI constants should be indexed from 0 and incremented by 1.
->>>>
->>>> What do you mean by this? Do I need to make up names for the
->>>> unused IDs between 0 and 7? On an initial search, I don't believe they
->>>> have any meaning at all. Does that mean I should make up some kind of
->>>> "RESERVED_<N>" naming here?
->>>
->>> No, I meant CPM_IRQ_AOC_MIN is 1.
->>>
->>>>
->>>> Between 7 and 156, these are just ... 150 different "service numbers"
->>>> within the AOC (Always On Connectivity) subsystem. I can name them
->>>> AOC_0, AOC_1, ... AOC_149 if that helps.
->>>>
->>>> Or are you suggesting that I pack the actual use cases (so, 0 and 7-157)
->>>> into 0-151? I thought it was valuable to directly use the firmware
->>>> indexing where possible; if I change those, then the indexing loses its
->>>> inherent meaning, and we also have to add another layer of translation.
->>>
->>> We do not use hardware numbers as bindings and ABI, because that's
->>> pointless - no benefits, only risks. Similarly you do not define GIC
->>> interrupt numbers, pinctrl pin numbers, MMIO addresses as bindings. None
->>> of these bind anything between DTS and software, so not a binding.
->>
->> OK, I see your point about the distinction between hardware numbers and
->> bindings. So are firmware-protocol-defined numbers more like hardware
->> numbers or bindings?
->>
->>> There are some exceptions like SCMI firmware, but that's not the case here.
->>
->> It's funny you mention that, because that's exactly what Jerome compared
->> this to in the clk, reset, and pmdomain portions.
->>
->> These values are used literally in the firmware interface, so I'd
->> consider them very similar to SCMI firmware protocol IDs (and, not that
-> 
-> Sure, where is the source code of the firmware then?
+Hi,
 
-And if you do not have the source code, then not a binding, so you won't
-have case like:
-https://lore.kernel.org/all/20261124-qcom-adsp-shared-vmid-fixes-v1-1-f1a808dc41a5@mainlining.org/
+On Wednesday, November 25th, 2026 at 8:01 AM, Echo Zhang <echo.zhang@mediat=
+ek.com> wrote:
+
+> Describe the MMDVFS clock provider and its connection to VCP firmware
+> in a common binding. Document the optional MMUP shared memory and IPI
+> settings used by the firmware backend.
+>=20
+> Add an MT8196 binding for the HWCCF syscon and seven mux OPP tables so
+> the driver can map clock rate requests to hardware votes.
+>=20
+> Signed-off-by: Echo Zhang <echo.zhang@mediatek.com>
+> ---
+>  .../soc/mediatek/mediatek,mmdvfs.yaml         | 60 +++++++++++++
+>  .../soc/mediatek/mediatek,mt8196-mmdvfs.yaml  | 87 +++++++++++++++++++
+>  2 files changed, 147 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/mediatek/mediat=
+ek,mmdvfs.yaml
+>  create mode 100644 Documentation/devicetree/bindings/soc/mediatek/mediat=
+ek,mt8196-mmdvfs.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/soc/mediatek/mediatek,mmdv=
+fs.yaml b/Documentation/devicetree/bindings/soc/mediatek/mediatek,mmdvfs.ya=
+ml
+> new file mode 100644
+> index 000000000000..d65f4c9084cc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/mediatek/mediatek,mmdvfs.yaml
+> @@ -0,0 +1,60 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/mediatek/mediatek,mmdvfs.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek Multimedia Dynamic Voltage and Frequency Scaling (MMDVFS=
+)
+> +
+> +maintainers:
+> +  - MediaTek MMDVFS Team <linux-mediatek@lists.infradead.org>
+
+Maintainers should be real people, not a mailing list.
+
+> +
+> +description:
+> +  MediaTek MMDVFS provides dynamic voltage and frequency scaling for mul=
+timedia
+> +  hardware accelerators. The controller exposes virtual clocks that mult=
+imedia
+> +  consumers use through the common clock framework. The driver aggregate=
+s
+> +  consumer rate requests and sends the resulting DVFS votes to the multi=
+media
+> +  hardware voter and VCP firmware.
+> +
+> +select: false
+> +
+> +properties:
+> +  mediatek,vcp:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the MediaTek VCP remote processor used for MMDVFS share=
+d
+> +      memory, feature registration, notifier, and IPI operations.
+> +
+> +  mediatek,mmup-sram:
+> +    type: boolean
+> +    description:
+> +      Use the MMUP SRAM window for MMDVFS callback records and status da=
+ta.
+> +
+> +  mediatek,mmup-enable:
+> +    type: boolean
+> +    description:
+> +      Enable the MMUP path for MMDVFS shared memory and IPI handling.
+> +
+> +  mediatek,vcp-ipi-id:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      VCP IPI channel id for MMDVFS. If omitted, the driver uses the pla=
+tform
+> +      default.
+> +
+> +  mediatek,mmup-ipi-id:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      MMUP IPI channel id for MMDVFS. If omitted, the driver uses the pl=
+atform
+> +      default.
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +    description:
+> +      MMDVFS clock specifier. Consumers pass an SoC-specific MMDVFS cloc=
+k
+> +      index.
+> +
+> +required:
+> +  - mediatek,vcp
+> +  - "#clock-cells"
+> +
+> +additionalProperties: true
+> diff --git a/Documentation/devicetree/bindings/soc/mediatek/mediatek,mt81=
+96-mmdvfs.yaml b/Documentation/devicetree/bindings/soc/mediatek/mediatek,mt=
+8196-mmdvfs.yaml
+> new file mode 100644
+> index 000000000000..13381c78dbd1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/mediatek/mediatek,mt8196-mmdv=
+fs.yaml
+> @@ -0,0 +1,87 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/mediatek/mediatek,mt8196-mmdvfs.y=
+aml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek MT8196 Multimedia Dynamic Voltage and Frequency Scaling
+
+Why there's mediatek,mmdvfs.yaml file if this exists?
+
+> +
+> +maintainers:
+> +  - MediaTek MMDVFS Team <linux-mediatek@lists.infradead.org>
+> +
+> +allOf:
+> +  - $ref: mediatek,mmdvfs.yaml#
+> +
+> +select:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - mediatek,mt8196-mmdvfs
+> +  required:
+> +    - compatible
+
+Drop. select is automatically inferred from the compatible.
 
 Best regards,
-Krzysztof
+Roman
