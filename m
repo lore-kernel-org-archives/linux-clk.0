@@ -1,60 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=109.224.244.121
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.224.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795617192;
-	b=YIs6HKs1Q5nuRgiqhDMmGAKW2LiIYqWRn05RfLTY9+w2Zh1f/VaReapKIs5xpaSS3f6n
-	 cFFl38p8L36pRE1RW3AU85cDv3PptJwaCjuAEcz0Ox/ZP87HHWGoYIvAFmSx/1Mbzd+et
-	 MayENVBkHYjXyv/nKZfxH5c+6jYatkY0ZSpuOSG+kQCVArUqvPbk2RTzBACAEXstMFMuM
-	 Ewji3HUlSFVsJEine9T8d+qKVqMMKTWIkTruM/mcAkxNe17LT3r23IDayxMMMtlslx4tN
-	 cxI5LnnuUMy6x7rGlGzeMweYREdgkvaBLEEUcljd9pHJ8bjx7not9CDUN2fbSUP/R0A==
+	t=1795618388;
+	b=Qst97dlKYcLquQrJGYJ9xCj2LZQIJjoYbzvNS5FrNAPCsAuRXJbSesBxCSGMc7cBDdoR
+	 xcUqHNOYSTYZYTyYVaFSLtW9yUf0t+Mh/gRolzE1v2MMpl2V9ngRSHsDf4WzQ9915qwSd
+	 VbZUNCQwCPJycfIVU5ZkTiVDzcMTqZvq0INIccMV+X486mZDhNxVobyhN0LYHHPUKIaj5
+	 OI6pQ5rW8WnvSoiWcxY0l7n1mfJPr10NPqKMNzYUWcEBVl1SC/lEiPJbpHb5xvjxMCfxq
+	 Jmhw/TJpyNX1aYBaKkYoxoqh4IF98D516thXB8rAYOxOQIricdV3tiWJ0IzNEvQQRbg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795617192;
-	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
-	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=JTuzeFXaJ0CrgwY+VJsh1Zrm4GF5RUj+OFjSqoSpq5M=;
-	b=GlUhZulZREvxoNn1x4kZYVDcv6DO6fmFgHvwj4Gd89sifSLVYoV9ymu8Tpk4015DWU5L
-	 yBH20E6/PcR0NTnbPXoAwqtaMxqisIw0YBIQ5VyiVTAVVorvi/4diz2PrxpPKbJ0GunA7
-	 XmULvs49Vxd/SG1/5sCsDmyOFkxwF1U/CvCIuEe454zxfKFD/wpNKH3sNd4umvKK7Wugg
-	 NFdGB+ASBtk/falsjul45ahgDUmuT8P1RuYN7S2t6cJG8ALytWA/Fz8bOKKT5zF9aymw2
-	 1YNGf1z6BGXUQKuSRfbiVLSvyPpGbPbzodyU6Gl6ISPrPStJWv3JNzMUydwiukzPSHw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795618388;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=qhCwXvAyXM1RHsJVCIWLLXEAUGswl0Dh6+s1SkrTVk0=;
+	b=5MpCvug5hlahMDWfob3S/sHDc0hqoTPCYS7HC+qNNhZZuEZVCblTFB0ilmfeVRoX9qiu
+	 +fzfvOntE8xGMjWvV/DpIGmiIr8jyGUC/ocXrakupY+Qv3OBdJ8cPchZIOi2wbSUy3e8k
+	 ux9pXLePvJ516D3D7gDP1ivi9QCxeeopkl7HqopLm1MrglfrlU3yF1IBZFh3lls9Qg3oR
+	 0xZe0LA6Ti0AJCAFT7fIYyvmZG+GFp8AMgVjNrRUGCCNcdj6sy/4rgbAnh1D4rZJad4XY
+	 +PK/Zzaz/KpchCDkEgDrsl39Bh5Qmh8Yo4ATsG2MgDbZhTezxeJFEjhEUiT2+lOY/UQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=protonmail.ch;
-	spf=pass smtp.mailfrom=protonmail.ch;
-	dkim=pass header.d=protonmail.ch header.i=@protonmail.ch header.a=rsa-sha256 header.s=protonmail3 header.b=F5CiVjeQ;
-	arc=none smtp.remote-ip=109.224.244.121
-Received: from mail-244121.protonmail.ch (mail-244121.protonmail.ch [109.224.244.121])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=fail header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=74.125.224.45
+Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7155F606A323;
-	Wed, 25 Nov 2026 14:33:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7155F606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.ch
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.a=rsa-sha256 header.s=protonmail3 header.b=F5CiVjeQ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
-	s=protonmail3; t=1795617186; x=1795876386;
-	bh=JTuzeFXaJ0CrgwY+VJsh1Zrm4GF5RUj+OFjSqoSpq5M=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=F5CiVjeQhxUKomP2szkCl3AxCjmzQtv8kCXXwoN1vs1eV4d1vs8dP9Kui19EugwoB
-	 eQrBWS51mV/XqcTAy0Dfhv3/Br3tnt+ZGb6EwanqMtbonx6/+bMkQyoBYq1YlxqMV1
-	 gFSsJST0bakzUG2SiEdX5dpx0o1b36AL/7yChSu5kP9IGOQvoKqiujybGqYImuEke2
-	 EhM+SxWntECLOcC5a5OogdEdNUkhXhpiG/GHgfaaQr8AnWmtY4+NjpdrA33P3DGQro
-	 WgIWWy7jTNCPC0n0U75GUI0cbSVhffJEzZTVUVAmesWJIZ5pY+DoYljmTDuuyw8EmM
-	 OKZdlsj/WcsKA==
-Date: Wed, 25 Nov 2026 14:32:54 +0000
-To: Echo Zhang <echo.zhang@mediatek.com>
-From: Ben Grisdale <bengris32@protonmail.ch>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, MMDVFS Team <linux-mediatek@lists.infradead.org>, kyrie.wu@mediatek.com, ming-fan.chen@mediatek.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 4/7] soc: mediatek: mmdvfs: add VCP backend
-Message-ID: <20261125143248.237422bc@ben-desktop>
-In-Reply-To: <20261125060037.649659-5-echo.zhang@mediatek.com>
-References: <20261125060037.649659-1-echo.zhang@mediatek.com> <20261125060037.649659-5-echo.zhang@mediatek.com>
-Feedback-ID: 27291966:user:proton
-X-Pm-Message-ID: 57888eaf1331de2550f94de46d07d4368ce17893
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9497A606A689
+	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 14:53:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9497A606A689
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-67c24619b19so4837971d50.2
+        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 06:53:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795618387; x=1796223187;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=qhCwXvAyXM1RHsJVCIWLLXEAUGswl0Dh6+s1SkrTVk0=;
+        b=voOm1+tgT6bE7X1eb/7hkcOD748n6WsmzJALG2Q5klKYVsRTflwU389MTXh2/L4Wx8
+         2V8ZxT6DZKQaUPNCcv9jiCg9qnjDnxgCmYei11UVvkani9Msv1qbT7uciPiw7oaBfAYX
+         PZTirvoX8EP2WdbgZ1mohMakjR9wb2F5s+M8l4rjPxG3E/hJ3tiRujXgOPEP37r/r72I
+         rUXL6PGmlQD/3agZ/dPWnp2UQisAgmGQpqpI84GD9aF/j+ubV77uA4abD6V+vr/qT+QO
+         QUAVp/IzXq/A5P76BtXYmMa5GSthO/00rNo9dIXKbnWpV9DwuiuMs5Aje+/FvuoaYlVX
+         BEkQ==
+X-Forwarded-Encrypted: i=1; AL+hErEbtwKIGQuSYP1dvS9ZUaWhzaNSq9+ptxh5UVd65uNaFx3THRgZImyaJZ/5SI9BQCD99qy77Qt/izA=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/SFyzNaySQtrJQwTN/jfOuLrR3Oqlk1GHTANZ1hnQKu6s6ZSh2
+	tHNxk70YyRmC+aZcSykueiv/Iy4fYGCstmltTzmMa8dZxYFVIEdNtB3Gl5IoouMR
+X-Gm-Gg: AZFdTZfiyhcOi7KfpaCwLd6VxB9swHZqqikunSmMJ3CEf1OW8VRMfF5IDi8zx1ul/Tb
+	C6jkz2yBYCQ9GR8//EBic/7A8e68FWRlULVLEF+ZSv/6PP/RWHfY2dN7+IR4SmFatCTlhaik/gw
+	StThGWygeX0ZhaOIezVe5z1cMYYedJJtPFUI05NrzbAbIRtxJmeb66zJXoCja0ah7GVjPG/+b1l
+	TZPyNkrebm3ncuML2W9IkCyAKYn/sWEDVA6bAYTBWZPZvlbkRnKy+0dpYq0aUaL3hJhCDaEK+lV
+	QP0qIYAhRuQpbRUFmvebifHmTccYWZSkKkwZbm/vodRrzhllqaD2qzF8GTX+LW0EXQLmBeN5jtZ
+	35I4TwkuiLyxWUn/ITjkzqQ//+jCnt68zF+B0IyWztnzbEsL51HPr+nPDYrUWHbbg1/qdfhe63k
+	hMykKaenrRMrMvgm8J4AGc+EWAxDHV/nfn5IBuGy8FgGHMNjFCcDISgQVPecu7Fp+e1wPNKduB+
+	7giNK9bmRbxueSCvBxQj5axYBnWOLjKX4cRPh7+MvnmuCTRXmr0SL8IFeAMzjyMsvApzvioIifM
+	PM6pKhaoG6QIRJEtDGSWAUnz3gT/MWLtFCopYj/J4ZZykbqnE6Wfs/31CqiX+RNCeME=
+X-Received: by 2002:a05:690e:1a9c:b0:67d:af3b:24f3 with SMTP id 956f58d0204a3-67df4479fa8mr5543208d50.57.1795618387458;
+        Wed, 25 Nov 2026 06:53:07 -0800 (PST)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-67df31fa7afsm8492742d50.1.2026.11.25.06.53.07
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Nov 2026 06:53:07 -0800 (PST)
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-7d2bf046ceaso3576902137.3
+        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 06:53:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErFz8NFFdzKOSFZRtZ/bU1xuCcgXCfyfpK4dTkYT9gAGxJhvn/lO7dtKqgpflngn7o5MnzcvUtQYuR4=@vger.kernel.org
+X-Received: by 2002:a05:6122:2192:b0:5ec:7589:f9e0 with SMTP id
+ 71dfb90a1353d-5ee8af4a3d9mr11210352e0c.11.1795617963345; Wed, 25 Nov 2026
+ 06:46:03 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -64,114 +81,90 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <cover.1795029012.git.geert+renesas@glider.be> <1e9c5ac3-d82b-4af9-9946-0302cadf7404@baylibre.com>
+In-Reply-To: <1e9c5ac3-d82b-4af9-9946-0302cadf7404@baylibre.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 25 Nov 2026 15:45:51 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX2BEAK27P0Da7Nei=DLaHgTdi=FiC5ZMhVegNuGwM5_Q@mail.gmail.com>
+X-Gm-Features: Aa3M54o5mrxb1PGlHbFHaQn6zx-fZm6HZYf4SleH1VTd0nBeXxZvXoTTF6NrZag
+Message-ID: <CAMuHMdX2BEAK27P0Da7Nei=DLaHgTdi=FiC5ZMhVegNuGwM5_Q@mail.gmail.com>
+Subject: Re: [PATCH v5 00/15] R-Car X5H Ironhide CPG/MDLC SCMI remapping support
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Paul Elder <paul.elder+renesas@ideasonboard.com>, 
+	Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 25 Nov 2026 14:00:09 +0800 "Echo Zhang" <echo.zhang@mediatek.com> w=
-rote:
+Hi Cl=C3=A9ment,
 
-> Add the VCP transport used by MMDVFS to map AP and firmware shared
-> memory, manage feature power references and send IPI commands.
->=20
-> Wait for VCP readiness and handle the selected MMUP or VCP READY
-> notification to initialize firmware after boot and resume. Serialize
-> IPI transactions while shared memory and acknowledgment state are in
-> use.
+On Thu, 19 Nov 2026 at 15:47, Cl=C3=A9ment Le Goffic <clegoffic@baylibre.co=
+m> wrote:
+> On 11/18/26 8:44 PM, Geert Uytterhoeven wrote:
+> > TL;DR:
+> >
+> >     Describe hardware in DT, and perform mapping to abstractions offere=
+d
+> >     by SCMI in Linux.
+>
+> A question on the approach
+> An SCMI variant DT could mark the CPG and MDLC status =3D "reserved" and =
+point the consumers at arm,scmi, while the U-Boot IPL keeps the hardware DT=
+.
 
-[...]
+In theory, yes.
 
-> +static void mmdvfs_get_bootmode(void)
-> +{
-> +=09struct device_node *np_chosen;
-> +=09struct tag_bootmode {
-> +=09=09u32 size;
-> +=09=09u32 tag;
-> +=09=09u32 bootmode;
-> +=09=09u32 boottype;
-> +=09} *tag;
-> +
-> +=09if (bootmode < UNKNOWN_BOOT)
-> +=09=09return;
-> +
-> +=09np_chosen =3D of_find_node_by_path("/chosen");
-> +=09if (!np_chosen) {
-> +=09=09bootmode =3D NORMAL_BOOT;
-> +=09=09return;
-> +=09}
-> +
-> +=09tag =3D (struct tag_bootmode *)of_get_property(np_chosen, "atag,boot"=
-, NULL);
-> +=09of_node_put(np_chosen);
-> +
-> +=09if (tag)
-> +=09=09bootmode =3D tag->bootmode;
-> +=09else
-> +=09=09bootmode =3D NORMAL_BOOT;
-> +}
-> +
+Status =3D "reserved" would work fine for a leaf device (e.g. a network
+interface), without further dependencies.
 
-[...]
+For core components like the CPG and MDLC its different, as every single
+module on the SoCs makes use of them.
 
-> +static int
-> +mmdvfs_vcp_send_ipi_impl(struct mmdvfs_device *mmdvfs, void *data, u32 l=
-en,
-> +=09=09=09 const bool vcp)
-> +{
-[...]
-> +=09mmdvfs_get_bootmode();
-> +=09if (bootmode =3D=3D RECOVERY_BOOT) {
-> +=09=09mmdvfs_err(mmdvfs->dev, "IPI skipped: bootmode=3D%d\n", bootmode);
-> +=09=09return -EACCES;
-> +=09}
-> +
+> Since v4, the series assumes the SCMI ids are stable:
+>
+> >   - Remove dependencies by making assumptions and dropping disputed
+> >     items, to move this series forward:
+> >       - Assume all SCMI IDs are stable.
+> If they are, why not using them in the DT directly?
 
-Allow me to give my two cents here, even if I am a nobody :)
+Because:
+  1. They are not stable!
+     We only _assumed_ they are stable, so we could relax dependencies.
+     With that assumption, there is no longer a need for the (contented)
+     addition of scmi_get_base_info(), which would be needed to
+     distinguish among different firmware using e.g. different ID
+     spaces.
+     FTR, without scmi_get_base_info() we're at the same playing field
+     level as some other SoCs vendors that don't bump their version
+     numbers at all when making incompatible changes ;-)
 
-Android bootmodes. Whilst I do respect the reason for Android bootmodes
-existing, what I do not like to see is people checking for the *Android*
-bootmode in their drivers.
+  2. That can't work for now, due to limitations/deficiencies of the
+     current SCMI firmware specification and/or firmware implementation.
 
-Android kernels these days are *modular* thanks to GKI. I *do not*
-understand why people still check for bootmodes in their drivers when
-there is a much better option of *not loading them* if they are not
-wanted in the current bootmode.
+  3. Last but not least, they are not hardware description.
 
-Having your driver depend on the behaviour of one specific userspace is
-terrible. And tracking it in firmware (given that this code is checking
-for an "atag,boot" property presumably added by the bootloader) is even
-worse.
+Gr{oetje,eeting}s,
 
-Aside from enabling these questionable bootmode checks in the drivers,
-I have no idea why the bootloader needs to get involved with putting
-non-standard state / boot info inside of /chosen (i.e. that "atag,boot"
-property), when Android solved this problem by using bootargs, and more
-recently, bootconfig.
+                        Geert
 
-I will acknowledge that "just not loading modules" does get a bit more
-nuanced if you bring something like udev / Android init into the mix,
-but there are still better solutions to this problem: either gracefully
-handling the state where the hardware isn't ready in your driver, making
-your bootloader set status =3D "disabled"; on the relavent DT node, or
-blocklisting the module from userspace in boot modes where it can't
-work.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Inter-driver dependencies are not a good excuse either (e.g. a core
-clock driver depending on some DVFS driver that is a no-op in recovery,
-forcing you to load it ANYWAY, even if the bootloader doesn't start the
-required firmware on recovery boot). If that is the case, then there is
-some serious refactoring work to do.
-
-First I began seeing these sorts of checks in vendor touch screen
-drivers, but now it seems to be infecting SoC side drivers as well.
-
-*Kernel* drivers should work the same regardless of what *userspace*
-environment is running (with the only real exception being the absence
-of firmware or explicit configurations from userspace). And in situations
-where they genuinely can't work, they should not be loaded at all.
-
-There should be no such thing as "kernel drivers designed for Android",
-only "kernel drivers designed for Linux".
-
-Best regards,
-Ben Grisdale
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
