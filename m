@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795604292;
-	b=afB1vKbblKC/OSaramtZqkKl/X1XjpVdnuur+j+kaAfY3lhyhSG1oLdzCBziBkuvKGIk
-	 J4ZVwbabfNENAJZqgyt3bDtl/h2wqBBqHH3kjigzM2oe48KJHhAjWbfqKqH15GBlYGDZz
-	 /0nSD1bCppre1IsHpz8iQQstNX3Q34RkJLKz8IHuoenVqGNuGTjOXFVDYV8xK35BSuAg9
-	 bs8FXTzLEdl/H3aznPZEAQe3vIDltQPeVjuO5AfS1MhJIhA1l5IusS9gihkur8SnGqfSb
-	 KHh90TeX63+GQ4hWJq9WiiJvWY1HfwqefnGeq0YwkNFN1PsKvRpdAb3qaLCMfWo9gKw==
+	t=1795604365;
+	b=0W5vhalfw6IFuCjGF3wPEt/vlmEUnMMTeYAKLkwBPHeisZldVfuDU/8Itf4dPCyKsGJy
+	 dOep6u0H7wFgBJQYHe7fWS6CkSbK34+UoJiYFkJXsYH88J0GQsXmmGxu7kys2wFSy7t7d
+	 Sf9E4OeX5ZZ8uZaK8zxT1rkzyYaA3aA35zJsqrFTf1QmUjRoQ2hJ8EanydSvNQZXVihlI
+	 GPXwSCrJuN/XeocGK+4n5x3uQyalMtOLD6zBSH+1YPn43vxpp2RPp8ShCFBQ2p3sV8KTU
+	 pFvE0xqDJfX/oQTyZrXlkpMtHzymwvFY+xp4P5ha2VCOv4xXyx7A5rPpkClWDM7/nGg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795604292;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795604365;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=Ezl81EdcwaGzGmgo8qc93IdYDX7vHXyDmmf20JLLsZk=;
-	b=ZKMK8maoV4XKWzq2Y2WO0VfnY9FC8VreiUeKgCHFRo7RLoeUJ7045MjuzVdEkG/pMUM/
-	 P4XynvsLE8W7Y7p4VgMm2HmX5eqJX51wznnZ6EitI/nUB5nyffQG97lYmzhNKqFApYYw+
-	 XwEO94ISJpWylDTwMH4mXSRyfJ0qZwN9DVSEXVV4syPLAxgyyg3KAFb+fPaBslWJSdi68
-	 KbKS49ThEyblDPXdz4DQfA4DCMebb3S0gyt2hWveSTCsg53JWgihxoTNoXRF70fhnULPy
-	 UClhMzu5bNlQbO/3SFY9Sr8+4wrkwyVaXS+VTOIMhVEzah0+UcfEuSPv7A4VYdsW2nQ==
+	bh=fKA8BFLGdwVjzSEcP9TB5OaODNCZi8nQaBdamkoL5gM=;
+	b=BoM9wsQgq4mICMCYf0pDrdYFzZNi5x2/4XxUzQkFrNDBIR79rh6Qy8B4wOi4+aWbWbDT
+	 KWsvJwyZyvRQfBA98hMIU8AkeY/xz3+SKOE1HMN7u9bUhg/LRTaGEFIFK5WlQvRALeS1p
+	 LobXAaUjYsAzxcR7x0hRa941Sy3nQBV4QVvWIK1JVf82TjaoypXaXcF2Yx45jz5jlK4Xa
+	 j0Nb+kmkCrsCYE2evYJNB9v0BTAQPQeWkHTXb8DXXrtAznsVzAmBvmBY9IbFYvYxTKrsc
+	 1amOnyGZUmJ+6M/K4QUahPBBe6U/y4UjtBXsbJA5MsPytnbT8kqljd3f+BvwwtDAklg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YEHC8FEK;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fZqT4Y+W;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65035606A31E;
-	Wed, 25 Nov 2026 10:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835CD606A32C;
+	Wed, 25 Nov 2026 10:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YEHC8FEK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B14951F000C0;
-	Wed, 25 Nov 2026 10:58:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fZqT4Y+W
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7236E1F000C0;
+	Wed, 25 Nov 2026 10:59:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795604292;
-	bh=Ezl81EdcwaGzGmgo8qc93IdYDX7vHXyDmmf20JLLsZk=;
+	s=k20260515; t=1795604364;
+	bh=fKA8BFLGdwVjzSEcP9TB5OaODNCZi8nQaBdamkoL5gM=;
 	h=Date:Subject:To:References:From:In-Reply-To;
-	b=YEHC8FEKizvcfCDw2AHuP0lJqmhMrm1wFdck2zClUIEzHPpozUOdkUx9G9dUg0WcH
-	 BL0TZSWG1iZctoyRa0aQM4C5Ev7A3lAmX+6xXuOZ/A5e/52p08/ejOfvUt7TBoBYID
-	 OkazQJ+2w6zxa/v6b080eQNSWSLgQYOj9Ivry84mYHJvTz00Q12cWavkfwNQMcIm+J
-	 AKUQJWlGOa+sCi/px7bkkXArG3BQiuibiVL51LrHAIMogyg4IqRFBGsWCagFq1ddMZ
-	 6a+iKXgTtC9XRrYjS3ekP0CLfytm4ECKjkHxRf/4kGm3f+swBe4w63XG2Y1d8/urY8
-	 lCbOMi3tL2Ecg==
-Message-ID: <22b88487-6445-4fe1-ab96-d46b303b7f9b@kernel.org>
-Date: Wed, 25 Nov 2026 11:58:04 +0100
+	b=fZqT4Y+W6Ev/Ih99QzPAtBImX2Ne4q0CdhL4POHSaBLNGEK6nF8HOZSLpbO1X8K01
+	 Q5xzdAZBUSPSzIMJX8VdQ980dCRtBrevcY5VKUrz/xkrfoVbr816XApV+G337DHIqJ
+	 EvGlnPrKAqU6aSvI7WeeNboVmSdonsCWOYZG+KKU2G8DcvPWhvIgNgQuqTtxUza/OD
+	 9Et22BIbcucuv3pH2nZWchAVCzmOvMv/BFxD6HpKJOn7/4E4LJcaTYdeFe01UdkyJN
+	 dQPhZprYXBjrKN3BWRhNlaQzbnj/XABqLpSluS5uvaPPUyyi+kY/xjy8WIeKvOnkbS
+	 /X+ASzcAC7rIA==
+Message-ID: <180e1abc-9463-4973-9cf0-a6e8c86e17fa@kernel.org>
+Date: Wed, 25 Nov 2026 11:59:17 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -52,7 +52,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] dt-bindings: soc: mediatek: add MMDVFS binding
+Subject: Re: [PATCH 4/7] soc: mediatek: mmdvfs: add VCP backend
 To: Echo Zhang <echo.zhang@mediatek.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
@@ -67,7 +67,7 @@ To: Echo Zhang <echo.zhang@mediatek.com>, Rob Herring <robh@kernel.org>,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-clk@vger.kernel.org, llvm@lists.linux.dev
 References: <20261125060037.649659-1-echo.zhang@mediatek.com>
- <20261125060037.649659-3-echo.zhang@mediatek.com>
+ <20261125060037.649659-5-echo.zhang@mediatek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -113,185 +113,101 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20261125060037.649659-3-echo.zhang@mediatek.com>
+In-Reply-To: <20261125060037.649659-5-echo.zhang@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 25/11/2026 07:00, Echo Zhang wrote:
-> +description:
-> +  MediaTek MMDVFS provides dynamic voltage and frequency scaling for multimedia
-> +  hardware accelerators. The controller exposes virtual clocks that multimedia
-> +  consumers use through the common clock framework. The driver aggregates
-> +  consumer rate requests and sends the resulting DVFS votes to the multimedia
-> +  hardware voter and VCP firmware.
-> +
-> +select: false
+> Add the VCP transport used by MMDVFS to map AP and firmware shared
+> memory, manage feature power references and send IPI commands.
+> 
+> Wait for VCP readiness and handle the selected MMUP or VCP READY
+> notification to initialize firmware after boot and resume. Serialize
+> IPI transactions while shared memory and acknowledgment state are in
+> use.
+> 
+> Signed-off-by: Echo Zhang <echo.zhang@mediatek.com>
+> ---
+>  drivers/soc/mediatek/mmdvfs/Makefile          |    2 +
+>  drivers/soc/mediatek/mmdvfs/mmdvfs-clk.c      |   39 +-
+>  drivers/soc/mediatek/mmdvfs/mmdvfs-core.c     |  272 +++--
+>  drivers/soc/mediatek/mmdvfs/mmdvfs-internal.h |  160 ++-
+>  drivers/soc/mediatek/mmdvfs/mmdvfs-up-priv.h  |   57 +
+>  drivers/soc/mediatek/mmdvfs/mmdvfs-up.c       |  275 +++++
+>  .../soc/mediatek/mmdvfs/mmdvfs-vcp-memory.h   |  104 ++
+>  drivers/soc/mediatek/mmdvfs/mmdvfs-vcp.c      | 1075 +++++++++++++++++
+>  include/soc/mediatek/mmdvfs.h                 |   66 +-
+>  9 files changed, 1846 insertions(+), 204 deletions(-)
+>  create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-up-priv.h
+>  create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-up.c
+>  create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-vcp-memory.h
+>  create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-vcp.c
+> 
+> diff --git a/drivers/soc/mediatek/mmdvfs/Makefile b/drivers/soc/mediatek/mmdvfs/Makefile
+> index 33a280827006..16ecee30bff6 100644
+> --- a/drivers/soc/mediatek/mmdvfs/Makefile
+> +++ b/drivers/soc/mediatek/mmdvfs/Makefile
+> @@ -4,3 +4,5 @@ obj-$(CONFIG_MTK_MMDVFS) += mtk-mmdvfs.o
+>  
+>  mtk-mmdvfs-y += mmdvfs-core.o
+>  mtk-mmdvfs-y += mmdvfs-clk.o
+> +mtk-mmdvfs-y += mmdvfs-up.o
+> +mtk-mmdvfs-y += mmdvfs-vcp.o
+> diff --git a/drivers/soc/mediatek/mmdvfs/mmdvfs-clk.c b/drivers/soc/mediatek/mmdvfs/mmdvfs-clk.c
+> index 114f3148cf46..b9025427782d 100644
+> --- a/drivers/soc/mediatek/mmdvfs/mmdvfs-clk.c
+> +++ b/drivers/soc/mediatek/mmdvfs/mmdvfs-clk.c
+> @@ -15,7 +15,6 @@
+>  #include <linux/of.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+> -#include <linux/pm_runtime.h>
 
-What?
-
-> +
-> +properties:
-> +  mediatek,vcp:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Phandle to the MediaTek VCP remote processor used for MMDVFS shared
-> +      memory, feature registration, notifier, and IPI operations.
-> +
-> +  mediatek,mmup-sram:
-> +    type: boolean
-> +    description:
-> +      Use the MMUP SRAM window for MMDVFS callback records and status data.
-> +
-> +  mediatek,mmup-enable:
-> +    type: boolean
-> +    description:
-> +      Enable the MMUP path for MMDVFS shared memory and IPI handling.
-> +
-> +  mediatek,vcp-ipi-id:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      VCP IPI channel id for MMDVFS. If omitted, the driver uses the platform
-> +      default.
-> +
-> +  mediatek,mmup-ipi-id:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      MMUP IPI channel id for MMDVFS. If omitted, the driver uses the platform
-> +      default.
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +    description:
-> +      MMDVFS clock specifier. Consumers pass an SoC-specific MMDVFS clock
-> +      index.
-> +
-> +required:
-> +  - mediatek,vcp
-> +  - "#clock-cells"
-> +
-> +additionalProperties: true
-> diff --git a/Documentation/devicetree/bindings/soc/mediatek/mediatek,mt8196-mmdvfs.yaml b/Documentation/devicetree/bindings/soc/mediatek/mediatek,mt8196-mmdvfs.yaml
-> new file mode 100644
-> index 000000000000..13381c78dbd1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/mediatek/mediatek,mt8196-mmdvfs.yaml
-> @@ -0,0 +1,87 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/mediatek/mediatek,mt8196-mmdvfs.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek MT8196 Multimedia Dynamic Voltage and Frequency Scaling
-> +
-> +maintainers:
-> +  - MediaTek MMDVFS Team <linux-mediatek@lists.infradead.org>
-> +
-> +allOf:
-> +  - $ref: mediatek,mmdvfs.yaml#
-
-What?
-
-> +
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +          - mediatek,mt8196-mmdvfs
-> +  required:
-> +    - compatible
-
-What?
-
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - mediatek,mt8196-mmdvfs
-> +
-> +  mediatek,hwccf:
-
-clock control is via clocks, no?
+Srsly, you just added this. So you add buggy code just to fix it...
 
 
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Phandle to the MT8196 multimedia hardware clock control fabric syscon
-> +      used for AP-side hardware votes.
+>  #include <linux/property.h>
+>  #include <linux/slab.h>
+>  #include <linux/string.h>
+> @@ -27,9 +26,18 @@
+>  
+>  static const char *mmdvfs_get_clkdev_name(const char *name, char *buf, size_t size)
+>  {
+> +	int ret;
 > +
-> +  mediatek,mux-opp-tables:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-
-NAK, you are messing with us...
-
-> +    minItems: 7
-> +    maxItems: 7
-> +    description: |
-> +      OPP tables for the seven MT8196 MMDVFS muxes, in this order:
-> +      display, MDP, SMI, VENC, VDEC, IMG, CAM. MDP and MML share
-> +      the MDP mux. Each OPP entry must have opp-hz and opp-level.
+>  	if (strlen(name) < MMDVFS_CLKDEV_CON_ID_MAX)
+>  		return name;
+>  
+> +	if (str_has_prefix(name, "mmdvfs-vcp-")) {
+> +		ret = snprintf(buf, size, "mmdvfs-v-%s",
+> +			       name + strlen("mmdvfs-vcp-"));
+> +		if (ret > 0 && ret < (int)size)
+> +			return buf;
+> +	}
 > +
-> +required:
-> +  - compatible
-> +  - mediatek,hwccf
-> +  - mediatek,mux-opp-tables
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/mediatek,mt8196-mmdvfs.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        vcp: remoteproc@31800000 {
-> +            compatible = "mediatek,mt8196-vcp";
-> +            reg = <0 0x31800000 0 0x100000>;
-> +        };
-> +
-> +        mm_hwv: syscon@31b00000 {
-> +            compatible = "mediatek,mt8196-mm-hwv", "syscon";
-> +            reg = <0 0x31b00000 0 0x6000>;
-> +        };
-> +
+>  	return NULL;
+>  }
+>  
+> @@ -66,7 +74,7 @@ static int mmdvfs_set_rate(struct clk_hw *hw, unsigned long rate,
+>  
+>  	data = mmdvfs->data;
+>  
+> -	if (!data->init_done)
+> +	if (!READ_ONCE(data->init_done))
+>  		return -EPROBE_DEFER;
+>  
+>  	if (!mmdvfs_is_valid_user_id(user->id) ||
+> @@ -76,12 +84,6 @@ static int mmdvfs_set_rate(struct clk_hw *hw, unsigned long rate,
+>  		return -EINVAL;
+>  	}
+>  
+> -	if (rate == 0) {
+> -		mmdvfs_dbg(mmdvfs->dev, "Zero rate request for user %s\n",
+> -			   user->name);
+> -		return 0;
+> -	}
 
-What are all these nodes? Drop.
-
-> +        mmdvfs_opp: opp-table {
-> +            compatible = "operating-points-v2";
-> +            opp-0 {
-> +                opp-hz = /bits/ 64 <100000000>;
-> +                opp-level = <0>;
-> +            };
-> +        };
-> +
-> +        mmdvfs: mmdvfs-mux {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-If you cannot find a name matching your device, please check in kernel
-sources for similar cases or you can grow the spec (via pull request to
-DT spec repo).
-
-Honestly, not a separate device. You just added it for Linux drivers.
-
-NAK for entire binding.
-
-> +            compatible = "mediatek,mt8196-mmdvfs";
-> +            mediatek,vcp = <&vcp>;
-> +            mediatek,hwccf = <&mm_hwv>;
-> +            mediatek,mux-opp-tables = <&mmdvfs_opp>, <&mmdvfs_opp>,
-> +                                      <&mmdvfs_opp>, <&mmdvfs_opp>,
-> +                                      <&mmdvfs_opp>, <&mmdvfs_opp>,
-> +                                      <&mmdvfs_opp>;
-> +            #clock-cells = <1>;
-> +        };
-> +    };
-
+NAK, this is just random coding, without any architectural oversight.
 
 Best regards,
 Krzysztof
