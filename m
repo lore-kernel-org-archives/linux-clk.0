@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795602865;
-	b=TORmnEsme0LDMTpYxv7vufH98ARAeyUoWxHBA58h8yPCbgn5tFbieNLjszxlZSoOjFJo
-	 YX3Yq9GTZ+Ye5J4Rhmqv6hal3YmM2AxuNlfnDVCqogs9Eu2u0PjKwu7evh/U6uwYSjHov
-	 LhXdi8sC55WtKlM5mT623HZ/pfqH21yRBJkf8qP7PpOmoa39ZARmNVpE6M5yGRqLmnbZh
-	 47K/ze+7uD3JdAbiT3k/FnO1DtfA7LTRNyGLFCzk8Ui3PA1cFu797pOFy3B6bKjSZ0Hui
-	 WgTwiWKQN8TEI4UE5AnMZzqkYmc1hndKbKpqOlEElRME0bYPR4soDqJfJtGarqXtwfw==
+	t=1795602860;
+	b=HQCUJ7WAs/cA4/5TTi9bdMCfcSJK1FZY80m5dytxXsYiRqxCR3wx8u0ISyLrnU7yd//J
+	 LpqU565NHAAn2ifIkaqmbwB6szykOyq6H0YkXtXeBUeC9xD+u27DE/KCwxc3zy9xIh6db
+	 SqdsB2XXPT1uDMlhYEQ9LiV+slyXi7uLW8Cw311Sx/zq71B8EWGL4ZFin2cq6x5QBI514
+	 wh1ygZ0inzVkCGLARe+Ag8YapKWZYL6IZvWJX92aFvdC70mCRqRvV9clBx/CFF6SDx6b9
+	 HxJzBJBx8BX+2yV4nIVv/UtIFyY8x1NIrjZPxwaAS6B0a9dqZURkrVM+pm/Ld18tCOA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795602865;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795602860;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=oCvYdqFnGBpwdhljQzammkoM2NAqgJQKHy3YaAbmt2w=;
-	b=VjQzecL6mZTGz+T1XsX87WKfsZ7BcHdVDU/377Z9zS179ydSosVPdRO8L3o66NYO4tqn
-	 QXsWI6qKauREoYjY0Up6QmGyTQtDGWn/OIWE2YVyJoiZ0DB05+okbW0hujlq/hcMP9V61
-	 Sjjvrg0HA1lhexrqiZymn3shSftg2y5Z4gsPFjzRFP7hjzAvDNx145zcM5GX4BFuv8emz
-	 xkQo6bTiu8+JR3Xpsm3tqd6FwSyo39U6QG8I/nAw9LFI0TsB/l75PxA3fdTQxSxs/5kjl
-	 84YO7lIRGmsSBw4uzNHbggHBn46pRuAKSzFQEzM1KS3YgGCEll5AVs7QYvnG2J7ptQw==
+	bh=aCqK1uXLPdCs4Ldkr3opqdXBdv0PuoNLOgXFHdY57+E=;
+	b=5pHuhh/1mxg71vEHUVmgh6fGRyMa4lojasijOoll8HpYcZ2+BnqtJdLYY0uYBhM3rT4k
+	 /It9HpyOsLcUfB0t+SglD641Xp+Dps6+Uq0jhoIs5E8AwwCAlP2wMfhJd/aRLhnn/mdXD
+	 tiQx3icGoVrP2MppkxjS9yopDbXowl9aiABYnJBRMqNZiKTzjuVws/8zATl/pgGMkiAQc
+	 B4GtU7PjjW26DGiJgOs3HAjfQRV3c+Ej3NEbFkIHKYPZCn8lcnDJ8JkGZi5XVIr7fJIZj
+	 mBB/ysE0BpavsKKpwIT6/bsQxwOya4cdq2bWWjCEpdaj0d8M3RbHxRfF9gblykB6tQA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=meBcI4CM;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lV4i1GjC;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709A060A3807;
-	Wed, 25 Nov 2026 10:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71918606A32C;
+	Wed, 25 Nov 2026 10:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=meBcI4CM
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lV4i1GjC
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795602865;
-	b=SURr9m9waFqejrBVnSNRCzAHgdIjOKkaWBuJSX0i9MiSisO0DZ59FEq3wkTsk9zhkt9g
-	 Bec07o5Ocq/Mt0ntbZRGL06h0oJ5CWp8CvcUStr0NEYo8vNC3bzBqelihyh2i14ZX1N8U
-	 9tbWIGU5Ohkm0dttAzvwTKuPGrdQ7WGFf2CcnQD4xsaEX+ycxbjgPFerTMKk28knMimzS
-	 1VK9D0TYbwVn7zGiVWNkMMqKfdnHL1/PLq5QvRvy372cW38Ahkg7HmCnklPqjCMhd+3C0
-	 Sasx0aJKK63xy+YrOwf2fxMXVMWTlj/WgpapDDoa5JmXjeDtXEwsjvrF1RYwczt8ovw==
+	t=1795602860;
+	b=QmorhgdhUJq+HxjOrX6+ro6UH809pGsL934LliEJJ05rXrHleLWmvx/LbSIbU3tWivEg
+	 zh+caRGnk4UgND5awqrcVkrZZatNcwhokCbLUBkxDpsOTlqexWi7Gdh0dO8Nt9ZncHHqf
+	 jAjvoLlDLoW4tLx1fd1YUnbfizxKLYS5f4Nt4vAifQ2Z12xUfR2MJvjMXMYzLOcFSRIlJ
+	 jyPsbgS5dyHEUHCXye76r44WQWROFF/BSCnjKd2mDTATpdYK+yYoFu5ROMT17s7aJVl2+
+	 szaZfuF2NRLRZfDccBn5ue4dqlrWJ4Af1bC5mwdFHsrxMTw1cIAtLc6AE2Y/XZdXruQ==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795602865;
+	c=relaxed/relaxed; t=1795602860;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=oCvYdqFnGBpwdhljQzammkoM2NAqgJQKHy3YaAbmt2w=;
-	b=NoIsPObIe+xKMj6cLkhgV2l8VQiOjFiVqxMKRHhmUux252WB3kGAhKSqyEtEUWnntQE7
-	 6sviJspvf4uxTvrKLjZ/Ly72Q8X9dIX/JVv7nW+bOWCiOwXgBkm/ImlAKWVBubkY5QWoL
-	 lha7GtG5q7PBQbA//q+n0YJLqg+RiD8TaAPOXsyk9k0OEc+7lVxiz7VBPWiURKONl1FAc
-	 Hzftol18b0Jvy5Q5iaIDMoUyB+6iAMVb2+C21boO+xoazt3hVsKCMs43HqBRd3TzXpQ9c
-	 uc0FhSPJIAARwuHI3sw16JDn6D3xV97fN3LlaeFx5vvseArYW2tsUaQjxPyP10cxosA==
+	bh=aCqK1uXLPdCs4Ldkr3opqdXBdv0PuoNLOgXFHdY57+E=;
+	b=L7IV/Ke0EuSZo2TkalsM4Y7ckaFEJPYmjagrn5eu3oK5aXLTxbvC5NYveiNzWZzuKpth
+	 hHygkG60pps9YcwqV918hkKGzMWGYyYkETLzDxgigk1qf5PWleOPV7pOksAqv+HhhW+XD
+	 g59SSAXBAz/Ygf89j1FZnjW+6rfiz4qhRE5C7fsajBM38LpSmSP1EXzTj5LI9p42rSzvn
+	 Nm8HGap4Fr90SB/J7R/ZRSw5TtSenddZ5vtKi87o07goxC2IflC73MCDI4Mykfcmq8Mu7
+	 VuESHvAzCNpL/ptOmqDUW1XByENpeTEP2QgtdjgU1h7LFOPud4PjSOWRb9WhvWIIL1Q==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 83BC21F000CF;
+	by smtp.kernel.org (Postfix) with ESMTPS id 47D9F1F008B2;
 	Wed, 25 Nov 2026 10:34:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795602865;
-	bh=oCvYdqFnGBpwdhljQzammkoM2NAqgJQKHy3YaAbmt2w=;
+	s=k20260515; t=1795602860;
+	bh=aCqK1uXLPdCs4Ldkr3opqdXBdv0PuoNLOgXFHdY57+E=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=meBcI4CMnhsjd1ihgRzGYr3GfQfr9yp0y2vVJ/pCoGscFGjg+QYwhxha3qxy08DUm
-	 ZcvR1Mrvw3mTbnVHYlB92oyfIwoqLYm3apLb6xn3eVujHaVn8Cyvlk9SLrq5gLr5kO
-	 HURdvV9nn+hVdefYk5/FNejD1pDB6SF1AnQHtD83OY/fWb10ok3rwxG1cUmES8k6cW
-	 kIZwURjQhFEditjplOLyav02OElV+Q4EzbLizq5koMQgeVmF6Yang8hr61qm7YCuJ+
-	 I3Dbb8pOt0jrdrjEp4Uf9qe2YIPqHx1kwGnmKii9/vradD9S5nd0rjE7fj5BZCmkY6
-	 26miX1EiCc3jg==
+	b=lV4i1GjCT7MVEeZP9EKvEKwENMcSxmXaxIL7oX6NTKHU7JPBaNW+rarO5wnZWTBOb
+	 lGGBXbqLsSIkjqP5dClO8OqRsok18vrI5f842QQVPq3Z6QKj7ksdau5a+tPeoX7Ss+
+	 FW1jXDhZxBBrfAH4szLYxNXHXW25tuxMgqU89kJulTCcr99ucB88uosUN64i8jU52r
+	 2t19TZu7Q8GHxHwFI9jSQe1mX6/0QK36PZvxc0tFjmeQv+y31ZgB8plKZ+XjyFKVGs
+	 8YLs8VManh7WD9jg17w7+TDafGg1GJCBFSdQT8o2mat1kBMsLZAT8ycq6h8R7qtg4S
+	 x+BiNOWXh6C4w==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 0E1874CE58;
-	Wed, 25 Nov 2026 10:34:10 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id C6F404CE50;
+	Wed, 25 Nov 2026 10:34:09 +0000 (UTC)
 From: Fil Dunsky via B4 Relay <devnull+filipp.dunsky.gmail.com@kernel.org>
-Date: Wed, 25 Nov 2026 13:34:12 +0300
-Subject: [PATCH v4 4/6] reset: Add Cortina Systems CS7542 global reset
- controller
+Date: Wed, 25 Nov 2026 13:34:10 +0300
+Subject: [PATCH v4 2/6] dt-bindings: pinctrl: Add Cortina Systems CS7542
+ pin mux
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,7 +84,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261125-cs7542-syscon-v4-4-3337bb0d3b48@gmail.com>
+Message-Id: <20261125-cs7542-syscon-v4-2-3337bb0d3b48@gmail.com>
 References: <20261125-cs7542-syscon-v4-0-3337bb0d3b48@gmail.com>
 In-Reply-To: <20261125-cs7542-syscon-v4-0-3337bb0d3b48@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -96,11 +96,11 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
  linux-gpio@vger.kernel.org
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795602848; l=6210;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795602848; l=3414;
  i=filipp.dunsky@gmail.com; s=20260930; h=from:subject:message-id;
- bh=Ass96zx9V9S2GY99MTNCkP+grHT3PLmWF2LFuWIH+Es=;
- b=+1V3RPXUKjnsNN3rhNATqJQsKGzESizsJ7nZ95Z6VQHscPGaXUq5c5Y/1u20KLRvQM52Qq1Xj
- 9SGTPyrVHT7AQrHletHGtKbGHAdmeOHq9dOsLiqh5V0og/Yfg63d07i
+ bh=GXF3eV4Di05M7txSyaOSbXKuZUwi57EYWkuShSLxJwk=;
+ b=pAWFBWv4AImGwJ4AUClltaW/LmOcv8n8fPdvAKH7T07b5F02HYkqOM/eiyHX/CqsaatHb/T20
+ OjpwlcGQkgkDrmSTRi0HIPBha1tVzOsQn52mVBb7r9Pu1sFeaIqQU4z
 X-Developer-Key: i=filipp.dunsky@gmail.com; a=ed25519;
  pk=JAYP8e2rJ54DHOmhNtXud8rl1igAaAXoOHxtJmVXI1g=
 X-Endpoint-Received: by B4 Relay for filipp.dunsky@gmail.com/20260930 with
@@ -111,195 +111,120 @@ Content-Transfer-Encoding: 7bit
 
 From: Fil Dunsky <filipp.dunsky@gmail.com>
 
-Use the shared syscon regmap to control three PCIe and seven network
-engine reset signals. PCIe consumers supply their own assert and
-recovery timing. Verify level transitions of the network resets before
-the consumer releases DMA buffers. Reject the unassigned group ID to
-preserve exclusive ownership of the underlying lines.
-
-The clock provider registers early for timers. Match the platform
-device for the same syscon when reset consumers can probe.
+Describe the GPIO and UART mux functions and reference the child
+schema from the global control block.
 
 Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
 ---
- drivers/reset/Kconfig        |  10 ++++
- drivers/reset/Makefile       |   1 +
- drivers/reset/reset-cs7542.c | 134 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 145 insertions(+)
+ .../bindings/pinctrl/cortina,cs7542-pinctrl.yaml   | 84 ++++++++++++++++++++++
+ .../soc/cortina/cortina,cs7542-syscon.yaml         |  4 ++
+ 2 files changed, 88 insertions(+)
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index eda9c698a..544cb79fa 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -73,6 +73,16 @@ config RESET_BRCMSTB_RESCAL
- 	  This enables the RESCAL reset controller for SATA, PCIe0, or PCIe1 on
- 	  BCM7216 or the BCM2712.
- 
-+config RESET_CS7542
-+	tristate "Cortina Systems CS7542 reset controller"
-+	depends on OF && HAS_IOMEM
-+	select MFD_SYSCON
-+	help
-+	  Control the individual PCIe and network engine reset signals in
-+	  the CS7542 global register block.
-+	  The PCIe controllers have independent level resets. The network
-+	  engine uses seven reset lines, including the shared DMA block.
-+
- config RESET_DR1V90
- 	tristate "Anlogic DR1V90 reset controller"
- 	depends on ARCH_ANLOGIC || COMPILE_TEST
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 489fafd6b..df183fc0a 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_BCM6345) += reset-bcm6345.o
- obj-$(CONFIG_RESET_BERLIN) += reset-berlin.o
- obj-$(CONFIG_RESET_BRCMSTB) += reset-brcmstb.o
- obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
-+obj-$(CONFIG_RESET_CS7542) += reset-cs7542.o
- obj-$(CONFIG_RESET_DR1V90) += reset-dr1v90.o
- obj-$(CONFIG_RESET_EIC7700) += reset-eic7700.o
- obj-$(CONFIG_RESET_EIC7700_HSP) += reset-eic7700-hsp.o
-diff --git a/drivers/reset/reset-cs7542.c b/drivers/reset/reset-cs7542.c
+diff --git a/Documentation/devicetree/bindings/pinctrl/cortina,cs7542-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/cortina,cs7542-pinctrl.yaml
 new file mode 100644
-index 000000000..b86c82554
+index 000000000..cd5c81a0d
 --- /dev/null
-+++ b/drivers/reset/reset-cs7542.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Cortina Systems CS7542 global reset controller */
++++ b/Documentation/devicetree/bindings/pinctrl/cortina,cs7542-pinctrl.yaml
+@@ -0,0 +1,84 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/cortina,cs7542-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <linux/bits.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/reset-controller.h>
-+#include <linux/slab.h>
++title: Cortina Systems CS7542 pin multiplexer
 +
-+#include <dt-bindings/reset/cortina,cs7542-reset.h>
++maintainers:
++  - Fil Dunsky <filipp.dunsky@gmail.com>
 +
-+#define CS7542_GLOBAL_RESET	0x04
++description:
++  The pin multiplexer is a child of the CS7542 global control syscon.
++  Five 32-bit registers select GPIO mode when a pin's bit is set, or the
++  peripheral signal when it is clear. Pin numbers match the five GPIO
++  banks, from gpio0 to gpio159. Initially only GPIO mode and the UART
++  signals on gpio72 through gpio77 are supported. Other peripheral
++  routes and electrical configuration are not described here.
 +
-+static const u32 cs7542_reset_masks[] = {
-+	[CS7542_RESET_PCIE0] = BIT(6),
-+	[CS7542_RESET_PCIE1] = BIT(7),
-+	[CS7542_RESET_PCIE2] = BIT(8),
-+	[CS7542_RESET_NI] = BIT(0),
-+	[CS7542_RESET_FE] = BIT(1),
-+	[CS7542_RESET_TM] = BIT(2),
-+	[CS7542_RESET_SCH] = BIT(3),
-+	[CS7542_RESET_QM] = BIT(5),
-+	[CS7542_RESET_DMA] = BIT(16),
-+	[CS7542_RESET_NI_XRAM] = BIT(17),
-+};
++allOf:
++  - $ref: pinctrl.yaml#
 +
-+struct cs7542_reset {
-+	struct reset_controller_dev rcdev;
-+	struct regmap *map;
-+};
++properties:
++  compatible:
++    const: cortina,cs7542-pinctrl
 +
-+static int cs7542_reset_update(struct reset_controller_dev *rcdev,
-+			       unsigned long id, bool assert)
-+{
-+	struct cs7542_reset *rst = container_of(rcdev, struct cs7542_reset, rcdev);
-+	u32 mask = cs7542_reset_masks[id];
-+	u32 target = assert ? mask : 0;
-+	unsigned int value;
-+	int ret;
++patternProperties:
++  '-pins$':
++    type: object
++    $ref: pinmux-node.yaml#
++    additionalProperties: false
 +
-+	ret = regmap_update_bits(rst->map, CS7542_GLOBAL_RESET, mask, target);
-+	if (ret || id < CS7542_RESET_NI)
-+		return ret;
++    properties:
++      function:
++        enum: [gpio, uart]
 +
-+	return regmap_read_poll_timeout(rst->map, CS7542_GLOBAL_RESET, value,
-+					(value & mask) == target, 1, 1000);
-+}
++      pins:
++        items:
++          pattern: '^gpio([0-9]|[1-9][0-9]|1[0-5][0-9])$'
++        minItems: 1
++        maxItems: 160
 +
-+static int cs7542_reset_assert(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	return cs7542_reset_update(rcdev, id, true);
-+}
++    required:
++      - function
++      - pins
 +
-+static int cs7542_reset_deassert(struct reset_controller_dev *rcdev,
-+				 unsigned long id)
-+{
-+	return cs7542_reset_update(rcdev, id, false);
-+}
++    allOf:
++      - if:
++          properties:
++            function:
++              const: uart
++        then:
++          properties:
++            pins:
++              items:
++                enum: [gpio72, gpio73, gpio74, gpio75, gpio76, gpio77]
 +
-+static int cs7542_reset_status(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	struct cs7542_reset *rst = container_of(rcdev, struct cs7542_reset, rcdev);
++required:
++  - compatible
 +
-+	return regmap_test_bits(rst->map, CS7542_GLOBAL_RESET, cs7542_reset_masks[id]);
-+}
++additionalProperties: false
 +
-+static int cs7542_reset_xlate(struct reset_controller_dev *rcdev,
-+			      const struct of_phandle_args *spec)
-+{
-+	unsigned int id = spec->args[0];
++examples:
++  - |
++    syscon@f0000000 {
++        compatible = "cortina,cs7542-syscon", "syscon", "simple-mfd";
++        reg = <0xf0000000 0x100>;
++        #clock-cells = <1>;
 +
-+	if (id >= rcdev->nr_resets || !cs7542_reset_masks[id])
-+		return -EINVAL;
++        pinctrl {
++            compatible = "cortina,cs7542-pinctrl";
 +
-+	return id;
-+}
++            reset-pins {
++                function = "gpio";
++                pins = "gpio37";
++            };
 +
-+static const struct reset_control_ops cs7542_reset_ops = {
-+	.assert = cs7542_reset_assert,
-+	.deassert = cs7542_reset_deassert,
-+	.status = cs7542_reset_status,
-+};
++            aux-uarts-pins {
++                function = "uart";
++                pins = "gpio72", "gpio73", "gpio74", "gpio75",
++                       "gpio76", "gpio77";
++            };
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml b/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml
+index 561bb7b63..fe839e46e 100644
+--- a/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml
++++ b/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml
+@@ -38,6 +38,10 @@ properties:
+   "#reset-cells":
+     const: 1
+ 
++  pinctrl:
++    type: object
++    $ref: /schemas/pinctrl/cortina,cs7542-pinctrl.yaml#
 +
-+static int cs7542_reset_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct cs7542_reset *rst;
-+
-+	/* Clock-only descriptions also use this syscon. */
-+	if (!of_property_present(dev->of_node, "#reset-cells"))
-+		return 0;
-+
-+	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
-+	if (!rst)
-+		return -ENOMEM;
-+
-+	rst->map = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(rst->map))
-+		return dev_err_probe(dev, PTR_ERR(rst->map), "cannot get global regmap\n");
-+
-+	rst->rcdev.owner = THIS_MODULE;
-+	rst->rcdev.dev = dev;
-+	rst->rcdev.of_node = dev->of_node;
-+	rst->rcdev.ops = &cs7542_reset_ops;
-+	rst->rcdev.nr_resets = ARRAY_SIZE(cs7542_reset_masks);
-+	rst->rcdev.of_reset_n_cells = 1;
-+	rst->rcdev.of_xlate = cs7542_reset_xlate;
-+
-+	return devm_reset_controller_register(dev, &rst->rcdev);
-+}
-+
-+static const struct of_device_id cs7542_reset_of_match[] = {
-+	{ .compatible = "cortina,cs7542-syscon" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, cs7542_reset_of_match);
-+
-+static struct platform_driver cs7542_reset_driver = {
-+	.probe = cs7542_reset_probe,
-+	.driver = {
-+		.name = "cs7542-reset",
-+		.of_match_table = cs7542_reset_of_match,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+module_platform_driver(cs7542_reset_driver);
-+
-+MODULE_DESCRIPTION("Cortina Systems CS7542 global reset controller");
-+MODULE_LICENSE("GPL");
+ required:
+   - compatible
+   - reg
 
 -- 
 2.53.0
