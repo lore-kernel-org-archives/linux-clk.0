@@ -1,101 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795642487;
-	b=RG1nIw6doRuu2RbXdaQF0Qe2doO1I0r/cVcNjiFgOymDO1Xeirr0qH9NQca08M0wUVTh
-	 S5SwLxUYmY3qAjgQNkwLCm+cvIAqDGcs+kLafDWsw/E52ulMD0RcKARBfVVrWNYheOF8/
-	 bDRulNhk6jAE/us1I9SGOgt+om2iNnKzkw6im9YpUEcLANdPFsAGRZuJMsp3kwFc+8Iv/
-	 T18vrn1oxeg3VBBVN/leFlcjHeJSK6vC9oli8LHFjHdWxxkYfw0BCp3KCRCypqplcrsMo
-	 GThxYTgwvs9UaFmJW0lIlWCDzFBy09qWTk1cET9yomLa9rTyB0i435IHklwvn0uz/Mw==
+	t=1795643509;
+	b=Jg3TAFMgTttAmo+anxWUQ3YX6j17gqNP84n6ZHy0Wh0KB33/lsKfCp3WTCY85EDvCr6a
+	 5Rxj3bMm7aIVb3fzk4uLjPc9Lpx+nUnbkuapkoIAK/YeA/CPRBAxD2SPjgwXAvOxSdG5h
+	 xNZvto2qYyS7y5BqC2XFwXc/Mz+6ca+ratZg3n/2qz0gCX8YDVYBawk6op3ZvwiMkIY3k
+	 hWpe/NEn/Q/1Uxjc9HeKhww7prNRVIJ4Rj/PCdnDHE0S9/NCRZsy8n7qH/cGyIeuHfBAA
+	 SooL+UQNNkzYg61nOJ6s+gYbGxBLk2JVUBnbcK+NsUzRi7nsSV+7zZHesOlV5+YXphQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795642487;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795643509;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=jXX3gkFCOkNPcapqV5zy6fgymKr5RIqiGnmKRbO39Qw=;
-	b=0THPu1FMFU2HQWIILI6oOt6GJebVQXtVHPL8sc4vlg4ypsAG32kdnWz3BobNHgNJQ2Yb
-	 QG5GzDfQTDEK6aLk4BoCyop/MIygzMpbKzgZiyLC+i5BIReIUu8nPGDdpp736xgjl/aNx
-	 2X3EvgXApeilqR2R5J1RdtOyLRLrghwcaz/sNTp9raL1uYMYwY2jhcnum6SoUElMqDZ17
-	 JMRpEticv4ashEukHSlJ1Dfb7G+iq8sr3LcV3dlxR0ExCMCLBh7O2X2p6Fkdsf9oXeLIW
-	 lQSj4Schk/j49RyAmmSEOOIV/SDwUK2fahBIaFHTh8fGP5hMSB54po9ixHxTLnG0wHw==
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=rbSy8/naK9NpKBKilS5D0FxnjU7qPGsjWJMaC5SsXmI=;
+	b=qzfFUOYiPyxtY6VxyjoS2FMmtE5eQQkQhstKpzs8C1e20FSIuRsn4RuFFSIqRlPQJyR0
+	 BC/6xH0Y28Ze5sfCkMnbujTptI/sCD4U18JhE2LlDC9Us6GxOJ3fE81PcUY10HUmo/EwK
+	 R7OYH2vLnpLjIayLRzIqR/85B9bKluozhdQkp8QcTU9x/SqfoFH31bK6JG9X0uYlVfTlx
+	 L7Yaeiq2wliKBTbMfvhOsE/SIOEarnQs3yQszfZdWa+UlsDUTNNu6ceIRe19uCwIybUSc
+	 u6IVvJf5Y8kAHW5qQKIzIeYj7cqblv6L0NOQgyeGNkYPiVTSZkZY3/Rhh8Hg4wJxTmg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=qeVdXljI;
-	arc=none smtp.remote-ip=209.85.167.43
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dmarc=pass header.from=riscstar.com;
+	spf=pass smtp.mailfrom=riscstar.com;
+	dkim=pass header.d=riscstar.com header.i=@riscstar.com header.a=rsa-sha256 header.s=google header.b=RvkMU6aH;
+	arc=none smtp.remote-ip=209.85.161.47
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F2A606A31E
-	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 21:34:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E1F2A606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BAF6606A323
+	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 21:51:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4BAF6606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=qeVdXljI
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5c1ad0d0b72so581611e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 13:34:46 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=riscstar.com header.i=@riscstar.com header.a=rsa-sha256 header.s=google header.b=RvkMU6aH
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-71b30ed75a1so3655992eaf.0
+        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 13:51:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795642485; x=1796247285; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=jXX3gkFCOkNPcapqV5zy6fgymKr5RIqiGnmKRbO39Qw=;
-        b=qeVdXljIB+1M8aTtHy3OLelc/hYOQZ7dY7OO8jm9OSfqgeIrgsoeVwA7mLsGob950/
-         7PJ/flx7gIa1tw6uXT+54jxxH7lQFMUGyPJ3/4hSmnRDKBOAIWFQ7oMirVfVvL9uz6Az
-         5nZ9MVe/ZSss3DbHP9u2azLphlAga3cNjF08WNYLxCLSS6WyAcH0+QqLBE/DkAWNV+LS
-         eWcJ2C896XVe468vgjb3l5sFAftNBZw8Mq1/WaE7CljFopuu5LMltL4uwKfTFdWo5C5q
-         tG/llhKZducvRh6J27ba9Vx6xmjgCB4pPvfDQPJjRSD0+Y6x5S8UEPLcU+0srxLw1FKJ
-         aiww==
+        d=riscstar.com; s=google; t=1795643508; x=1796248308; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=rbSy8/naK9NpKBKilS5D0FxnjU7qPGsjWJMaC5SsXmI=;
+        b=RvkMU6aHw3UFU7F0s3LawFuMMWucgrJOewAmTNt/s9mU1jocAFjNJMZKtPkXuvf+r6
+         3Y1gMKTzSvrCakTTvX1dK5xqZ8bWJeGZJ2cAKfIvX0GRIA6CK00CzxZpH2mgs+RjwMlp
+         /J928Qpmpf9szu6sskdshfNebwQGfXIM0ijz7JGjMOYZ90oMGk6HmqfozgFQYYsjC7+Z
+         Pi1R4SLtvkJ49mAZH827Axk/UVcNrNf/Qm4qAYl0gpum9z2+bGTOAaekxeFK56P3SYJS
+         EC2MUyaS7hqQErt+f03GVz84MxOh0BOA7wKgIXz5xT9Fw7bT22bUKp+Qu+sJrZdcsFau
+         Dobw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795642485; x=1796247285;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=jXX3gkFCOkNPcapqV5zy6fgymKr5RIqiGnmKRbO39Qw=;
-        b=WcOaPbuhv+ZdGf2DSpuGRsADLsdJAG95FLrFP+Gl7xX5bfyxHJTVdtXlK2THtPV+Pn
-         pH4ApUPyMJzbRw0MNyyOihdoAquEWyFTLBLmdGICrRKACKwDOq2CypOPWTEc5SAw+MOr
-         HjKem5+YuFloG/tv3A/qUu2Tatgo8oYLYEglEoB0qtbs2oFjc64nIHDtJYVum6xrlvLV
-         GkwPjreX3GuuTnVk0Ej7VZxTNtgV0XPsaEY314R9s3lBNAWPm5KmT6TyHFY/wfU8mYYd
-         kOq45u7u/3kwQ2R0UYIQsX+goXxded95WFcyT32Ts05Xjc2FESh1Ldukx3i4eYXv/+2d
-         QiWQ==
-X-Forwarded-Encrypted: i=1; AL+hErF4VRZ2153LL4A57eyGW2di0u6yPbBm09DQvkUuxGwqSE/LAyGms16TqoOMomolFLZYRdJeSBKAZ9U=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/Y5jt/XqSKdaRIcas7ZL2GqvTSrzt9Eyrk4ReyA9JaXd1OF46X
-	hrzTaTTiXnKyDIa3dluKdvCkB+B29oyrhMcy/gwzMtXfxxOSle+lr6hWqphYYNrwPro=
-X-Gm-Gg: AZFdTZfp2FEsGRkyONjnJvyerIFuBYIDS1M7jtpn56GYG4b7q7dCemx4nt3YH5kcXpt
-	8yXNrTPvkzlmXVH0/qjY+8gZ/azHf1nukdD9C7R+zvQZ94YaZLNezJEK2jQ6wny8pplPCQPOYFH
-	hnxvLSPHpwJdpwSnWEGp9ICBisROUpMYRZU/02gf3HZ2ieVikrRxQKLb0bQazCM/cbKJiHRTeOs
-	Et29zHLO5/hO5JxRraWI6QyGcS9hkNZUrdK2Noy2OHPwDhkk8sRI8CR9FbqniET7JddsG6eCdY4
-	UAJvw73pm68Q/SkGIIKyK7QHtE4pau01Zq2AyONeKYiOJ/wk8aBUIu2bKvkeaoLu/+SLC4z9NK6
-	p/MojyiXAp/Mj+4cxGvz1L2UYIPXCYzWnR3ZMIbphQUg+vDhe1EkZ8ePpFB6NoULoBcCjYUIKqN
-	JXTkewl/Hcsog4aG0ll84HVzzH+5p17rJH3zdxJrGDr97vhFZ/+GkHBq64+3uwRBwjQTMPKCFl3
-	EAFPHO0L0hY3pbNnK1COmfxXiOHaR87o77aaJJPE12Uay8RabprmF/pifl7sJIgt6y997r1v+3D
-	Hc6PUYD1K/18nxY/+WKtwu6eb7znxCC5Q5xzOyMdz3qdQCMWfOWQ8QjnNJj3Lef0FFZS3g==
-X-Received: by 2002:a05:6512:6719:b0:5bf:ba43:fa67 with SMTP id 2adb3069b0e04-5c1bc935c91mr5378563e87.6.1795642485238;
-        Wed, 25 Nov 2026 13:34:45 -0800 (PST)
-Received: from thyme (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c1bcf3338fsm4845422e87.3.2026.11.25.13.34.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 13:34:44 -0800 (PST)
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Abel Vesa <abelvesa@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Melody Olvera <melody.olvera@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] clk: qcom: gcc-qdu1000: Add sentinel to GPLL0 even post divider table
-Date: Wed, 25 Nov 2026 23:34:33 +0200
-Message-ID: <20261125213433.1438537-3-vladimir.zapolskiy@linaro.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261125213433.1438537-1-vladimir.zapolskiy@linaro.org>
-References: <20261125213433.1438537-1-vladimir.zapolskiy@linaro.org>
+        d=1e100.net; s=20260707; t=1795643508; x=1796248308;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=rbSy8/naK9NpKBKilS5D0FxnjU7qPGsjWJMaC5SsXmI=;
+        b=0vuDKlcwAYhDzWaubZZoBDEVYuDvGdYpz0lsSBVosE8uX0OrRszp64rKUmT6ufgSxp
+         HyOigGvPNx+XZazQrbG3K/LNNh0CPjB+CjjLFhVpOUuZykScE+7POneKp6GMEELwzUDi
+         bIexHNwbYu1S7a1bV+t6eKUxYbulD5pDOPsAKlxS5tVl1JAcqUSO3wZYdWBOXfArnJrE
+         tBmfERlTG0WgOhpQ6c2rg9zubGmByK92N3ZOcARi/HLI6AGsU7OBOS287WjgjO8rp3G4
+         AV6Rp4/FxYcBpnIOWz4ViYm/q1xvf/5hJTXFsEplJQlVBRgq8niOSN3llL4gh6vmzgta
+         sqsg==
+X-Forwarded-Encrypted: i=1; AL+hErE9dHRF9KWmR1Hiq8XV+p3E1dt+aRpg6/AJtSmewpJK+T9qTT7DMQbo0oIE5L6pcmsh97NnT8h5hnA=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+7DmxWidK5VQfdx18LXF4bnlyNMc51ZPaUmjp3zRKdQgUlWwnz
+	/5fHT7xoJcxhsfT05yUBmlwxp2Tn34FCUGl7uNv1UXvhWcxPU/I9ir5mLLPOfm/YAHk=
+X-Gm-Gg: AZFdTZcDdXWBd9lSwLPFRDZW1cVk1Rgft907OdaOmv9wqzVTqJg5881QLS+/1v3JHkH
+	K9WRvmgIfszo7MmRbao4HIhCWykpavzQCiulFbMw5e5aPFsAbI1IaaHlMgxwXd+9V0j72QYldwi
+	z9YwTK85vTGMI0IbAASdw3Mh2uglYb9wFdL2leTQl3S8OXsEYpsROj0SLLAn8cVKSpl4Sr3k/YL
+	JnO+SQpcpO1ht/ok13h4IlHnJt1Oe31PvksU31OASGhSS/HTsMHTeRy4oZhj3qYqFpvbuZsdISd
+	FDfTyOOZ7IERgAYH4gG8tAgTMNsW6pbCG+GEFJJQBwl2htlw08+ecwg8Ck+UuZZpiL8FY5XlEAG
+	HLbk2fmWPVbaRv9T/Y+CDlDaZfXVyBnddY/KCk5OLaf4D1k1eiOpO2azMZqHlgMZMXIs+YeMxHP
+	DhZ1e+ScCbBlJjRE8iflDQFGGjD0+FXwYCMtz0CUQsgoOWY8LATnSHhO0GGKJI71gs3ekk7N85o
+	x8HEFO8pczvzw0lnxMnpn2FJdy+S+4tP65Juxvd1mKE5B/fVaqEvC+8f23H2kL3g+Iie1WVmBgZ
+	uBeEBIthCMwV/mEWryQFX9US53xAotTn
+X-Received: by 2002:a05:6820:1391:b0:71b:8969:9d1d with SMTP id 006d021491bc7-71b8969a594mr465740eaf.31.1795643508188;
+        Wed, 25 Nov 2026 13:51:48 -0800 (PST)
+Received: from [172.22.22.28] ([76.156.233.211])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-71b38015c46sm12670866eaf.4.2026.11.25.13.51.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Nov 2026 13:51:47 -0800 (PST)
+Message-ID: <d5abcbbb-e533-4a44-a26a-1ca17e37d7f6@riscstar.com>
+Date: Wed, 25 Nov 2026 15:51:47 -0600
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -105,35 +92,113 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] arm64: dts: qcom: qcs6490-rb3gen2: add TC9564
+ clock node
+To: sashiko-reviews@lists.linux.dev
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org,
+ conor+dt@kernel.org
+References: <20261125202141.1288493-1-elder@riscstar.com>
+ <20261125202141.1288493-4-elder@riscstar.com>
+ <sashiko-outbox-234134@kernel.org>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <sashiko-outbox-234134@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The GPLL0 even output post divider table is not terminated by an empty
-entry, the table is passed to divider_determine_rate(), and the generic
-clock divider helpers iterate over a table until they find an entry with
-a zero divider, thus they may read past the end of the array.
+On 11/25/26 2:28 PM, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 1 potential
+> issue to consider:
+> - [High] arm64: dts: qcom: clock-25000000 under pcie@0,0 shifts tc9563
+>    port indexing
+> --
 
-Add the missing sentinel to the table to fix the issue.
+This was a great catch on a seemingly unrelated problem.
 
-Fixes: 1c9efb0bc040 ("clk: qcom: Add QDU1000 and QRU1000 GCC support")
-Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
----
- drivers/clk/qcom/gcc-qdu1000.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I will consider how to address it.  Off hand I can think
+of two options, but I'm sure there are others:
+- Move the tc9564_xo_board *after* the downstream ports
+   (after the end of the pcie@3,0 node).  In this case I
+   would add a clear comment in the DTS file explaining
+   why this is necessary.
+- Make the logic in "pci-pwrctrl-tc9563.c" more robust,
+   possibly by skipping nodes that aren't of type "pci"
+   (or possibly "pciex"?).
+I think the second option is better, but I'm open to
+other suggestions.
 
-diff --git a/drivers/clk/qcom/gcc-qdu1000.c b/drivers/clk/qcom/gcc-qdu1000.c
-index 4dfc67280611..6f44f4cc9968 100644
---- a/drivers/clk/qcom/gcc-qdu1000.c
-+++ b/drivers/clk/qcom/gcc-qdu1000.c
-@@ -65,7 +65,8 @@ static struct clk_alpha_pll gcc_gpll0 = {
- };
- 
- static const struct clk_div_table post_div_table_gcc_gpll0_out_even[] = {
--	{ 0x1, 2 }
-+	{ 0x1, 2 },
-+	{ }
- };
- 
- static struct clk_alpha_pll_postdiv gcc_gpll0_out_even = {
--- 
-2.53.0
+However, at the very end of this message there is another
+observation that might make the above moot.  I think this
+clock node should probably be defined closer to the root
+of the tree.  I'll verify that and will fix it.
 
+> commit c4e2dd0c5c7aea169ea475dfdf59cb2e475d33be
+> Author: Alex Elder <elder@kernel.org>
+> 
+> arm64: dts: qcom: qcs6490-rb3gen2: add TC9564 clock node
+> 
+> This commit adds a devicetree node for the Toshiba TC9564 clock and reset
+> controller along with a 25 MHz fixed-clock node supplying it.
+> 
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> index 682bcbc0b466b..b327f64885ef2 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> @@ -890,6 +890,13 @@ pcie@0,0 {
+>>   		pinctrl-0 = <&tc9563_resx_n>;
+>>   		pinctrl-names = "default";
+>>   
+>> +		tc9564_xo_board: clock-25000000 {
+>> +			compatible = "fixed-clock";
+>> +			#clock-cells = <0>;
+>> +			clock-frequency = <25000000>;
+>> +			clock-output-names = "tc9564_xo_board";
+>> +		};
+>> +
+>>   		pcie1_switch0_dsp1: pcie@1,0 {
+>>   			reg = <0x20800 0x0 0x0 0x0 0x0>;
+>>   			#address-cells = <3>;
+> 
+> [Severity: High]
+> Does placing clock-25000000 as the first child of pcie@0,0 shift the
+> downstream port indexing in the tc9563 power control driver?
+
+I think it currently does.
+
+> Both tc9563_pwrctrl_probe() and tc9563_pwrctrl_parse_reset_line() map the
+> direct children of the pci1179,0623 node positionally to TC9563_DSP1,
+> TC9563_DSP2, and TC9563_VDSP:
+> 
+> drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c:tc9563_pwrctrl_probe() {
+> 	...
+> 	port = TC9563_USP;
+> 	for_each_child_of_node_scoped(node, child) {
+> 		if (++port >= TC9563_MAX)
+> 			break;
+
+If the second option above is chosen, this function
+should be updated the same way.
+
+> 		ret = tc9563_pwrctrl_parse_device_dt(child, &tc9563->cfg[port]);
+> 	...
+> }
+> 
+> With clock-25000000 ahead of pcie@1,0, pcie@2,0, and pcie@3,0, the driver
+> treats clock-25000000 as TC9563_DSP1, shifts pcie@1,0 and pcie@2,0 into
+> TC9563_DSP2 and TC9563_VDSP (misassociating per-port settings, reset
+> GPIOs, and the integrated Ethernet endpoint), and stops before reaching
+> pcie@3,0.  It also violates Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml,
+> which only permits pcie@[1-2],0 and pcie@[3],0 child nodes.  Should
+> tc9564_xo_board live under the root /clocks node instead?
+
+The 25 MHz oscillator comes from *outside* the TC9564 chip,
+not under the upstream PCIe switch port.
+
+For this reason, it should be defined somewhere on the board,
+not within the TC9564 chip.
+
+I will investigate the right way to represent this and will
+correct it.
+
+					-Alex
