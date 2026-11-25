@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795621002;
-	b=aweuFkdSn9VYwI790HAHxT3I9o6dy51xmMQl0spc95TMCZqZyBgNnXmgfP8sF5FOYUWx
-	 1yQJ2dur0rBreSL1gvH6d7mnOHZyjEq7pHo1SCkG1Oib8RUHdEakZJ7xRdbI+TWN5DofN
-	 Gtrz9a4g7g2RcAlu5UgmdG8UfDvySw04FlDxheJTJMc8ysieI7maW8B5LAY21BFfE9Nic
-	 PWacZjgNBIFAlh5I4kmm7vCtVNwcMjbw/Q7YDjN8BLYn9RKrwIt7ZAdkHLjWm1PJcnzPz
-	 FFVIWdtttHAFlD3OuOdF6fBUIGcB5/hxwdRkFF1Y2fdm/MqrolnDjpsgCxfdxlPu4Xg==
+	t=1795621008;
+	b=OAMlKeorIh4wmQ8dhf+E7G4g+7NuAHT8kIhdKVNZJaDZVUC4AG3+ClaDcAAx/y2hRBR9
+	 CklIMeCKLXBnYHBkVYNnuRbHOO6WEsaiTtpmHSb+FvpXa0Gk1DXKY+t36lqGTDZfXJvtK
+	 SFahGmzF5BHsH5OPs3P7yohsZUrYJ3IGFw4sJMvzP7qPg3Wkj4vKcXXEl2+dBss9gY2bq
+	 q4wJLeRze0LRNYw2KdYX4t/LGnDRTB1UwEA8UEr6yhCHpViVboUU9Qw+thc4V3PvQqw2I
+	 rmxgV0dST+9mYmT8QZ92ngb931gKk9+fNvId8Lc1xrmcFqxMdjE6zLN6GwcBjFlCleA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795621002;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795621008;
 	h=Received:DKIM-Signature:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
 	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=XvTKLKhLWXrfLb9+js6MFGQ/DuZ14JfMkl8pBoukSCY=;
-	b=tg01uva2DMDoQ+LzbwNU5IbngTaWprJts+9QodN6jIYa2tXNcolphSJtwnecbKYWbEY+
-	 sMLa6meKelE8kTpYEMGTLO+VEyTBGHUzN2daNibGFNqht9PvkTsMdSnUlBZQRfSXjzSL0
-	 gyMWtEDkvjqumfU5uZ/IJ+kIME61X1Jt/jaTNxsFJ6xkfziIqK/b7gdqoHY22kcX03MHO
-	 mg0NojPCesIk90T7AIrKRcsAjJypuXXEhf2KqZ4jBYfxS9cS5yxaU25aGwpvmImwKC8wr
-	 K6rj/9K36H3Cimg4BH07b0vxaJANZ6U8bRZQxF5CD8X1Jr73Bg6UnslflvqtvofJ5Yw==
+	bh=E4gahwPKY0YwK67Ml2QTBETBsr9zPWMHQsnmRG4ecuk=;
+	b=VHeflg3wmz4Xr+Jw/kXufGN6wqAcgxXnIvVlwp3DDCvgpvPF1L0StX0rbngIGF3n85hD
+	 u/MNEmE2pdLMP5UIkIK+byQiLXTLJ/k8ztK212hnTupfQzjP4VfeZy9EsEcNAVTKcdQuz
+	 mP4QoLdHLfmtW5cLsaNUKEUrsXjXSZsg7/QbPm7H8PPy2BOajdadkvlpRZoPfq94JgoxH
+	 6HSgR7s0e1XshhWR7DKhAN70h6RKK0z/uFrM5aRsb7uZNSlOdDPn8WlK3RkjFaPjH3Ztt
+	 PcBYUYmZp1ko2J1zwRkvcmNQEmpo8kc8xdecRMbDSVn5Tz4nrqbQ9SkzvfHqZNPbutw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=emEdo+3V;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iJsa1Ph6;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5567F606A685;
-	Wed, 25 Nov 2026 15:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28C9606A695;
+	Wed, 25 Nov 2026 15:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=emEdo+3V
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAD651F000C4;
-	Wed, 25 Nov 2026 15:36:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iJsa1Ph6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA7A81F000D2;
+	Wed, 25 Nov 2026 15:36:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795621002;
-	bh=XvTKLKhLWXrfLb9+js6MFGQ/DuZ14JfMkl8pBoukSCY=;
+	s=k20260515; t=1795621008;
+	bh=E4gahwPKY0YwK67Ml2QTBETBsr9zPWMHQsnmRG4ecuk=;
 	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=emEdo+3Vcx2qcN5tLWthbYUlZmhINQbC2UlNU89hkRovj65+KivZsxrU3WoeJ41BK
-	 y/6vJqmI1bE0CPRtkdSUnEO74ocgJN3Tz44xEryo5sRVt1UKFaw28FErTW3E+zgUct
-	 voiZno16hkbV3bwH1PEz+SsVRNJk+fqgR1WAUPseoFYb795ongFbcZRdMfcqUNT9jz
-	 x9kgSHRQ1MBdQ/0Hi7uaGLK5XEeN+vblFked2jSpxmcbSDUknLQ7xewPR8gEukVncd
-	 UXJ7jNPQs0cXJAj5cETiMV+tq4BbKBfSLw3kwy8dZaoLJNth4gVvFP0Z3Hblg/NCdc
-	 qSZ2pPAXE19bg==
+	b=iJsa1Ph6Lye8Kxltg2vx087a/5J4RHKTfD6GWrcsAiXCLSCCDyc2Osclsbv2u4Gz6
+	 gzPl5LIExg0ABFVCuLmjfPIfGu/cr18Twx8HJZ7aOBGG1O5uU05AHowHJMa8XL3hiB
+	 Ljdyo+kuWwYcSweCv5J3YItc6gzVJjrrbdUheGDDn3zHz4USa6B3VRvmfAt+PtEQVa
+	 LW3kjRPdh8Rem0j8tHFdBtAvDn7aEMW3SR76E61r/KB6s7IvIM6f1xkFiXiILA8DnA
+	 v6imJSFC2MKJ0ydJqgl+xvVlFcBxiRBQB1NruNfOTFYzezfdr032SFjR+aQBxCSfdz
+	 SCwEhzzppq+dA==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,8 +51,8 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v4 4/8] clk: clocking-wizard: Add static-config clock
- provider support
+Subject: Re: [PATCH v4 8/8] clk: clocking-wizard: Use separate
+ notifier_block for each clock
 From: Brian Masney <masneyb@kernel.org>
 To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, git@amd.com, 
@@ -62,223 +62,102 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, git@amd.com,
  Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, 
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20261124035613.1968260-5-shubhrajyoti.datta@amd.com>
+In-Reply-To: <20261124035613.1968260-9-shubhrajyoti.datta@amd.com>
 References: <20261124035613.1968260-1-shubhrajyoti.datta@amd.com>
- <20261124035613.1968260-5-shubhrajyoti.datta@amd.com>
+ <20261124035613.1968260-9-shubhrajyoti.datta@amd.com>
 Date: Wed, 25 Nov 2026 10:36:33 -0500
-Message-Id: <179562099316.458327.15246469960975998989.b4-review@b4>
+Message-Id: <179562099317.458327.8068874764407758762.b4-review@b4>
 X-Mailer: b4 0.17-dev-8145e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6645; i=masneyb@kernel.org;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2787; i=masneyb@kernel.org;
  s=20250903; h=from:subject:message-id;
- bh=w5DgWGuw/9YvYQddvv1a0z+c4zuNwaL4AFh+j4cOg9E=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLLZGZoan+rLzIl+JNzycc+vXZGGiV/03++a9vbfC4tAt
- qWu95ZVdJSyMIhxMciKKbIsyTUqiEhdZXvvjiYLzBxWJpAhDFycAjCR+iWMDDdV7y2dpGom2vRe
- 7Pd3FebbdlI/DvWVddxmVOY7FbG2+R/DPyM/RYlgzvqki0Kz7ILfTFvlpGH//vSXPcbNTFsrui7
- lMAEA
+ bh=eaOLuiMerQksPgxnTMm1NlWOcHllakrAf02cjhklA2A=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLLZGVoPy995/E0xrb3yToHo+oqub9WRSq65vhmLz0o3W
+ iYmaqp0lLIwiHExyIopsizJNSqISF1le++OJgvMHFYmkCEMXJwCMBGFmYwMfdHXd960OcD/NPO4
+ 9pVHGkVxjO5GB2dwFm2o0Iy3i1vqzchwR4bl/3SRZ2nTHaIk+ZfoXtZ7/iZ1ybtZVd+FJII2sdx
+ hBQA=
 X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
 Hi Shubhrajyoti,
 
-> When xlnx,static-config is present the divider/multiplier path is
-> synthesized inside the Wizard without exposing runtime MMIO
-> reconfiguration, so omit the AXI register mapping and advertise each
-> routed output clock as a clk_fixed_factor child of clk_in1 using the
-> synthesized ratios exported through xlnx,clk-mul-div.
-> 
-> However the parent clock of clk_in1 can still be gated, disabled, or
-> (re-)enabled after FPGA programming (typical FPGA Manager flows,
-> CCF-managed parents, PLL fabric power sequencing).
-> 
-> Add a 10 us delay in each output clock's .enable() hook so consumers
-> wait for reference settling before first access.
+> A struct notifier_block has a single 'next' pointer, so registering the
+> same instance to two different notification chains corrupts the linked
+> lists. Use a dedicated nb_axi for the s_axi_aclk notifier chain.
 > 
 > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+
+Same as previous patch. Needs a Fixes and Cc stable.
+
 > ---
 > (no changes since v3)
 > 
 > Changes in v3:
-> - Removed duplicated number-of-outputs handling
+> - New patch: split the shared notifier_block into per-clock callbacks
+>   to avoid corrupting the notifier chains
 > 
->  drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 137 ++++++++++++++++++++-
->  1 file changed, 135 insertions(+), 2 deletions(-)
+>  drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 42 +++++++++++++++++-----
+>  1 file changed, 33 insertions(+), 9 deletions(-)
 >
 > diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-> index 649cf2d21943..31fed0e1ed30 100644
+> index 046efa5c77c9..f71e464e0fca 100644
 > --- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
 > +++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-> @@ -12,6 +12,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/delay.h>
->  #include <linux/slab.h>
->  #include <linux/io.h>
->  #include <linux/of.h>
-> @@ -114,6 +115,7 @@
->  #define VER_WZRD_O_MIN			2
->  #define VER_WZRD_O_MAX			511
->  #define WZRD_FRAC_POINTS		1000
-> +#define WZRD_ENABLE_DELAY_US		10
->  
->  /* Get the mask from width */
->  #define div_mask(width)			((1 << (width)) - 1)
-> @@ -833,6 +835,13 @@ static int clk_wzrd_ver_determine_rate_all(struct clk_hw *hw,
->  	return 0;
->  }
->  
-> +static int clk_wzrd_enable(struct clk_hw *hw)
-> +{
-> +	/* Allow the output clock to settle after enable */
-> +	udelay(WZRD_ENABLE_DELAY_US);
-
-If this delay is needed, then it should use the prepare callback instead
-of enable.
-
-> +	return 0;
-> +}
-> +
->  static const struct clk_ops clk_wzrd_ver_divider_ops = {
->  	.determine_rate = clk_wzrd_determine_rate,
->  	.set_rate = clk_wzrd_ver_dynamic_reconfig,
-> @@ -926,6 +935,85 @@ static const struct clk_ops clk_wzrd_clk_divider_ops_f = {
->  	.recalc_rate = clk_wzrd_recalc_ratef,
+> @@ -133,7 +133,8 @@ enum clk_wzrd_int_clks {
+>  /**
+>   * struct clk_wzrd - Clock wizard private data structure
+>   *
+> - * @nb:			Notifier block
+> + * @nb:			Notifier block for clk_in1
+> + * @nb_axi:		Notifier block for s_axi_aclk
+>   * @base:		Memory base
+>   * @clk_in1:		Handle to input clock 'clk_in1'
+>   * @axi_clk:		Handle to input clock 's_axi_aclk'
+> @@ -144,6 +145,7 @@ enum clk_wzrd_int_clks {
+>   */
+>  struct clk_wzrd {
+>  	struct notifier_block nb;
+> +	struct notifier_block nb_axi;
+>  	void __iomem *base;
+>  	struct clk *clk_in1;
+>  	struct clk *axi_clk;
+> @@ -191,6 +193,7 @@ struct versal_clk_data {
 >  };
 >  
-> +static unsigned long
-> +clk_wzrd_static_factor_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+>  #define to_clk_wzrd(_nb) container_of(_nb, struct clk_wzrd, nb)
+> +#define to_clk_wzrd_axi(_nb) container_of(_nb, struct clk_wzrd, nb_axi)
+>  
+>  /* maximum frequencies for input/output clocks per speed grade */
+>  static const unsigned long clk_wzrd_max_freq[] = {
+> @@ -1160,6 +1163,30 @@ static struct clk_hw *clk_wzrd_register_divider(struct device *dev,
+>  
+>  static int clk_wzrd_clk_notifier(struct notifier_block *nb, unsigned long event,
+>  				 void *data)
 > +{
-> +	struct clk_fixed_factor *fix = to_clk_fixed_factor(hw);
-> +	unsigned long long rate;
+> +	unsigned long max;
+> +	struct clk_notifier_data *ndata = data;
+> +	struct clk_wzrd *clk_wzrd = to_clk_wzrd_axi(nb);
 > +
-> +	rate = (unsigned long long)parent_rate * fix->mult;
-> +	do_div(rate, fix->div);
-> +	return (unsigned long)rate;
-> +}
+> +	if (clk_wzrd->suspended)
+> +		return NOTIFY_OK;
 > +
-> +static int clk_wzrd_static_factor_determine_rate(struct clk_hw *hw,
-> +						 struct clk_rate_request *req)
-> +{
-> +	struct clk_fixed_factor *fix = to_clk_fixed_factor(hw);
+> +	max = WZRD_ACLK_MAX_FREQ;
 > +
-> +	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
-> +		unsigned long best_parent;
-> +
-> +		best_parent = (req->rate / fix->mult) * fix->div;
-> +		req->best_parent_rate =
-> +			clk_hw_round_rate(clk_hw_get_parent(hw), best_parent);
+> +	switch (event) {
+> +	case PRE_RATE_CHANGE:
+> +		if (ndata->new_rate > max)
+> +			return NOTIFY_BAD;
+> +		return NOTIFY_OK;
+> +	case POST_RATE_CHANGE:
+> +	case ABORT_RATE_CHANGE:
+> +	default:
+> +		return NOTIFY_DONE;
 > +	}
-> +
-> +	req->rate = (req->best_parent_rate / fix->div) * fix->mult;
-> +
-> +	return 0;
 > +}
 > +
-> +static int clk_wzrd_static_factor_set_rate(struct clk_hw *hw,
-> +					   unsigned long rate,
-> +					   unsigned long parent_rate)
-> +{
-> +	return 0;
-> +}
-> +
-> +static const struct clk_ops clk_wzrd_static_fixed_factor_ops = {
+> +static int clk_wzrd_clk_notifier_in1(struct notifier_block *nb, unsigned long event,
 
-As pointed out by sashiko, can clk_fixed_factor_ops be used instead?
-
-> +	.enable = clk_wzrd_enable,
-> +	.determine_rate = clk_wzrd_static_factor_determine_rate,
-> +	.set_rate = clk_wzrd_static_factor_set_rate,
-> +	.recalc_rate = clk_wzrd_static_factor_recalc_rate,
-> +};
-
-> +static struct clk_hw *
-> +clk_wzrd_devm_register_static_fixed_factor(struct device *dev,
-> +					   const char *name,
-> +					   const struct clk_parent_data *parent_data,
-> +					   unsigned long flags,
-> +					   unsigned int mult,
-> +					   unsigned int div)
-> +{
-> +	struct clk_init_data init = {};
-> +	struct clk_fixed_factor *fix;
-> +	struct clk_hw *hw;
-> +	int ret;
-> +
-> +	fix = devm_kzalloc(dev, sizeof(*fix), GFP_KERNEL);
-> +	if (!fix)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	fix->mult = mult;
-> +	fix->div = div;
-> +
-> +	init.name = name;
-> +	init.ops = &clk_wzrd_static_fixed_factor_ops;
-> +	init.flags = flags;
-> +	init.parent_data = parent_data;
-> +	init.num_parents = 1;
-> +
-> +	fix->hw.init = &init;
-> +
-> +	hw = &fix->hw;
-> +	ret = devm_clk_hw_register(dev, hw);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	return hw;
-> +}
-> +
->  static struct clk_hw *clk_wzrd_register_divf(struct device *dev,
->  					  const char *name,
->  					  const char *parent_name,
-> @@ -1290,9 +1378,11 @@ static int clk_wzrd_probe(struct platform_device *pdev)
->  {
->  	struct device_node *np = pdev->dev.of_node;
->  	struct clk_wzrd *clk_wzrd;
-> +	const char *clk_name;
->  	unsigned long rate;
-> +	struct clk_hw *hw;
->  	int nr_outputs;
-> -	int ret;
-> +	int ret, i;
->  
->  	ret = of_property_read_u32(np, "xlnx,nr-outputs", &nr_outputs);
->  	if (ret || nr_outputs > WZRD_NUM_OUTPUTS)
-> @@ -1302,6 +1392,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
->  				GFP_KERNEL);
->  	if (!clk_wzrd)
->  		return -ENOMEM;
-> +	clk_wzrd->clk_data.num = nr_outputs;
->  	platform_set_drvdata(pdev, clk_wzrd);
->  
->  	clk_wzrd->axi_clk = devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
-> @@ -1337,7 +1428,6 @@ static int clk_wzrd_probe(struct platform_device *pdev)
->  		if (ret)
->  			return ret;
->  
-> -		clk_wzrd->clk_data.num = nr_outputs;
->  		ret = devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_get,
->  						  &clk_wzrd->clk_data);
->  		if (ret) {
-> @@ -1360,6 +1450,49 @@ static int clk_wzrd_probe(struct platform_device *pdev)
->  				dev_warn(&pdev->dev,
->  					 "unable to register clock notifier\n");
->  		}
-> +	} else {
-> +		u32 mul_div[WZRD_NUM_OUTPUTS * 2];
-> +		const struct clk_parent_data parent_data = { .fw_name = "clk_in1" };
-> +		int num_elems = nr_outputs * 2;
-> +
-> +		/*
-> +		 * xlnx,clk-mul-div is a uint32-matrix of <mul div> pairs;
-> +		 * FDT encodes it as a flat u32 array so we can read it directly.
-> +		 */
-> +		ret = of_property_read_u32_array(np, "xlnx,clk-mul-div",
-> +						 mul_div, num_elems);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "xlnx,clk-mul-div missing or invalid\n");
-
-The counts should be validated. Also use dev_err_probe() like the rest
-of the function.
+After this change, clk_wzrd_clk_notifier() and
+clk_wzrd_clk_notifier_in1() can be combined with a common helper.
 
 Brian
 
