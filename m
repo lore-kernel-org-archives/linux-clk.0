@@ -1,78 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795638298;
-	b=O55UJ5AnWwY8wuuit4mmjMRi+KKkKYeqxeAc28IpvMKvL7oYToR2cpmxCNuPrdv/vaPS
-	 o5c5XVe4DKpmBYzTwyK88RnWp5lWYGlWHmUI77mLYi2Kg40bQ9nc18PNWYRkcSvquKxtz
-	 QQGj1vQN7IIfYLAIChzSuU/0Pqc7ZGGgF8g7jzA4Xjshpfq1CfrALYOA8GCi9Bbb4mnNF
-	 ywzWUiMcwXO9FznHuOh6q9d7oBC7U1NTZrbOQbgJSN2KsND+xja9/5rGKLLUt5adDyLMl
-	 7jhVe2arWd4u6kPuhXBlsMgc+iHX4uPObMfwAFFXpw7sQpQwkAWR6EhIvCSQxJ3grWg==
+	t=1795638307;
+	b=qp4VjNCB9xuSze0gkoqHNS154YtKl7ZKLLxgbKhKo2em1gZrA6qcPVoaCp5pdfly4oWn
+	 klO4rj17YAd7aw+OLwstKobdUyF1aE7iZAoemsqGpzAv8RvzOuvrH5sLK/TbMv7EeTX1l
+	 +oT6xD1E70df/87QMX39br3Yj53Wt7H3rH5x3haUz3CONBsBaqjd2Okb/CtyUJzz3gcOx
+	 p9NA0VlQHlXextbvCtnxGiCBO1tgswHkaHfbFqHPFOBMTrWAkFEIMTJshDCu0r9ACVupK
+	 Oy5u8d21YU/7AjLkSo0y41954f5OdnJkWvGsNRI582Bt3ks8eeqf9MOsKTsMjbBYz4g==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795638298;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795638307;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
-	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=p0S9F4LIxQujZ3St8lMsBEBWLRaUd0jAUlDzWizR1eQ=;
-	b=O8ObJmXL0+6Ra/LMzNy/0WoPm5zqsC7VtWrgSn+DKwS67+JcjD5I8a2lLh1FEVoHRSxo
-	 oQkkDB2FRloFdFAD+Slf/J3pQmDqxynaEevbjjejAabWFyHSFMt00w4AtEicdKRf4LALd
-	 8lcRjhmvVafvwpGFrv0UHsi1LDJplqAIy8jvdZ1t8bv9Pr/KzyYoOGuvLHPQGiujjjV+R
-	 wk9NU5xFyGUKeAZOlaJcm/tQpLglEOQqEjPnwGa1jeKjcpg3yda+8HNd3X2nWjYrR92Nh
-	 Zoa/oCLb0xAOxy6k5tIsPN8Wwf3jMC4J1dmdD/ciHimAbIFFzB9hvHO/1uq1jBuu3oA==
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=kj54KKqus3DpCyZNB5aVCoc87sy3Q+Ne+YOlrdr6juM=;
+	b=OTrZxN5F6wRfFCqbaprFGNloWcux2wjdwQ7oAadQE8SM+du+k+K1o3aUtOI8rcU877sT
+	 MaAoDV4oQi2V2+07T4YUMOIHGU9ZldvbMex5I/Xvbwzlekts5h12A2R2ulZuKhg4bJ8Yu
+	 PsclxYdb8mfXN1mV1JaIFB/3YD6euI8ChmjTVJ9cLihX8GIsQMqqJ8Ee2Q4bPPDWOQoDp
+	 qPKML1uY+VAFbf8DrSWrcmYf2kW4dqe2nNMjxaZ39r/lBIItO/y1wehSBoW54z0Ie/Ohm
+	 iR5UKJEE5/FFd25Gh2osUTGV+Omerw654K/HHanqjpCLIaD9j3JuFj9vDWXErFZZSgg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="nmUUS1L/";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H3JCjDeQ;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEC2606A31E;
-	Wed, 25 Nov 2026 20:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE33606A321;
+	Wed, 25 Nov 2026 20:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nmUUS1L/
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H3JCjDeQ
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795638297;
-	b=l/+S9xYm7JCOeqlgqNHYBLV6MGqqSUbZGuR7DNjnr+BwQXtSKAeqam4U6UPlHv/Gqn8A
-	 FuS5EY779HmkxkZ/b/Eqc7/OEbTD/52BOAGq4uVxCx0/H/KueCL1nsY0RUGUua8MZicfb
-	 QgO78ceNJvVi+yvbMtmUqvG+kvfHUyfeuwc60HlF0el9Cn/S6d7rn6QY8DzsCm8vZY5av
-	 Tf4Qdu6qZmv/0uBOeu6oS7YZ/qwA++YQaxenA4FC764qp1vNGbRvxpg1/snZRC8njEE6e
-	 fkkoCQSb23dahaCnaWcNXXBTlObNDGjCoezQrDRJbAKAReNAxYzZSaegpZW45UaPycw==
+	t=1795638307;
+	b=S2sDywW5EHbKBrUVXNQHqz7JYv53f6h+zt9XhnWob0vp0f77PSLuLWaNvpdgbc8tdabo
+	 1eMZJZl0a3z6gjE0FHZJksdChf5javZfBRgswYmItQWgFCQNRg8SRk2Wnhp6YWP9Hw8um
+	 cXF+mz7SZKKRVQeELBMfUkRIKqc5iyss8QwF46n9zqZvno2+2vWHHNoZS8G4X8RdKqnM4
+	 knh02aVICqGeG0XyErKDXRvryvLUPhEsTnXRMTflFWpg+MWiRXbqxFcINTYN6xCSNwTHW
+	 EcugujkPdQg2udgIFa/WLD6SacuSVtFXWGAv8KROEeIClcL7bMFFN1DMsIJ4iiS3oYA==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795638297;
+	c=relaxed/relaxed; t=1795638307;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=p0S9F4LIxQujZ3St8lMsBEBWLRaUd0jAUlDzWizR1eQ=;
-	b=ppkTzyAbziFg7L6LQDBr00jYXS4Va5OZ5WuZVstu69n1wGl9dS2BTZhnefTdjSOR/2vW
-	 9NLQ4rffraf27JV6EdMIn22JzNPNSbfI4vVXjNbLF6rjnQDVqNKIUaOI3qC5hHZLQ/+Y6
-	 3OW+S+K1nSQFBgKSqLc9tOLYREutp0R0snNwr+3onRonkjdSf0uWkujJFKwb4tM3jO9cq
-	 B+sANhvGXhLYV4atj8qcPkzOylr57tGMRl5ng43UIBWhVrQfvWBf44M5odbzWUD2LQY/4
-	 K7ANFybypu1iZugnHc5wUjn1M2uDHzZsLOqOOR7MADcEOm/cWRHX4osxGRxqfgOGSag==
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=kj54KKqus3DpCyZNB5aVCoc87sy3Q+Ne+YOlrdr6juM=;
+	b=gFncyNstazOqA9LsKD+nxIpt/LXqE+Rs9BhTRw9TXvWbr3P+ULOh8VYZnOpaH3P9ejf3
+	 TSzGH4u7fkzZ2ml+3VEy8Q512gXbfczswFfqZQ0TZlf1P6SJMEXo0ZTmWOh79tBY2+2TR
+	 6zyDaDhQang4lOwc56y6ZfJqy0VOYGZRMvip+N7AsFqhRGq4Q7y2uMRdQyWGuS+1q26f5
+	 61tFsZVTSyJupI5d2e3GfdpcPFflO48+C4nSu686I2/PleF0HPr7xr3VussmfYGk9YFiV
+	 u6Pem2Z+RlJLVHVgSKuBPJEwtRw9L8Er1S5P0TyM+OroFxMGYj2D2HLcNFjKMy7gABQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id BD2E81F000C6;
+	by smtp.kernel.org (Postfix) with ESMTPS id D5D6F1F000CA;
 	Wed, 25 Nov 2026 20:24:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795638297;
-	bh=p0S9F4LIxQujZ3St8lMsBEBWLRaUd0jAUlDzWizR1eQ=;
+	s=k20260515; t=1795638307;
+	bh=kj54KKqus3DpCyZNB5aVCoc87sy3Q+Ne+YOlrdr6juM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=nmUUS1L/vfLun0tpXHnyaPve9OGE7dnydqi+dZw+UFTnzQ/+brkssfwNwwm5NJK/5
-	 5rISOW3gbrx2oUpRY03lYG+s1/rKv6fHLWHd23HZQyTWmJMLfN7SChVvpWimHHwUMV
-	 7lbjy4itMKl6k4qN65h8uXnEvLVP/6UXsQpHJFZNAgcIaMDbbXM6/jrH6DCvLz9TsJ
-	 QFAXxvm736fDjQGQ6nDkaFKcUbHY0bgXvf1SLE1Jkq1lQAzDDZ3XAfpmcllA58A7eR
-	 UWaJPVbjvJc7mE15QNAci/A1Gsis7OQ5VrplnutvE1x+DcQLhAMYpJ5HtlCmhXEzeQ
-	 n8lb8Hp5MtbvQ==
+	b=H3JCjDeQy8qz57GAn0wZcJ6uigR7MFkPkWkIkOcX6hjhTyCnYQUeKJV/fxWpawnc1
+	 dT7cFTDfJqYDp3ASJDCiNXgJSustfPvT9lRGId8jjC4gnNpGzMOv1psVTBoxUx2TnU
+	 FFjaIYYsBupMmocB2YV/OnbOwLeTNMAqqPNLZ5hKzPF6G7P+ECE0+hdBYrwZbSZRRd
+	 q0EHDYf0hqoRY81Ku+oCUGYwV9KGEXDOLrsDWjjQL0cGZssSqJbQi04kOmqTc8dssd
+	 MZ4Tw5nSCeDFA7kI/14JfLqz4+xitZ/sF/Gi3dVAGeyidDELEIndpXu+1yJW2X1P4a
+	 k6ic6jc34CCIQ==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 4436F4D015;
+	by lkml.kernel.org (Postfix) with ESMTP id 632CC4D025;
 	Wed, 25 Nov 2026 20:24:55 +0000 (UTC)
 From: Joseph Telaak via B4 Relay <devnull+joseph.telaak.dev@kernel.org>
-Date: Wed, 25 Nov 2026 15:24:48 -0500
-Subject: [PATCH v6 1/6] MIPS: Add support for Siflower MIPS SoCs
+Date: Wed, 25 Nov 2026 15:24:49 -0500
+Subject: [PATCH v6 2/6] dt-bindings: clock: Add Siflower SF19A2890 clock
+ manager
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -83,8 +84,7 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261125-sf19a2890-sysm-v6-1-181875c10682@telaak.dev>
+Message-Id: <20261125-sf19a2890-sysm-v6-2-181875c10682@telaak.dev>
 References: <20261125-sf19a2890-sysm-v6-0-181875c10682@telaak.dev>
 In-Reply-To: <20261125-sf19a2890-sysm-v6-0-181875c10682@telaak.dev>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -98,88 +98,155 @@ Cc: Paul Burton <paulburton@kernel.org>,
  =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
  linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
  Joseph Telaak <joseph@telaak.dev>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795638294; l=2176;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795638294; l=4233;
  i=joseph@telaak.dev; s=20261104; h=from:subject:message-id;
- bh=ziqqvVYU3GmZibawv8t72n+ZZ3zc07HtvebkWxBkx+8=;
- b=9uC3DLpXVwKSKJCQxSbqousLs/2Wh8+FP/Fegt/w6HCj1TfMYonkex0FBQ7zwcdkPFbbE84xq
- oOBoCrqtP5vAJ9RKtIEAVrjyPHnyCrgO0KX25JD4zTOjwCSAJuyVlBN
+ bh=1hE1zhMG0OtBg9FcIR+gI4NTYVaU3Uop5FjyhLMYHqg=;
+ b=mq2jyvl3kdXvY6Ino4A+5nTYpuCoL+gpP4OL02cjWS+0kzuhKPnYRs7OKDhWhDQPToE6RGAZs
+ rcNCgj/RCvzCpjwxuAkaom3xp5b7yguURQc/UGK5P92VB5O/7eahxvq
 X-Developer-Key: i=joseph@telaak.dev; a=ed25519;
  pk=oQI+UfddlZ0wK2ac4WKOGNjUl1ZEN8j9ZVFSqEDoNP0=
 X-Endpoint-Received: by B4 Relay for joseph@telaak.dev/20261104 with
  auth_id=1404
 X-Original-From: Joseph Telaak <joseph@telaak.dev>
 Reply-To: joseph@telaak.dev
+Content-Transfer-Encoding: 7bit
 
-From: Chuanhong Guo <gch981213@gmail.com>
+From: Joseph Telaak <joseph@telaak.dev>
 
-Siflower MIPS SoCs like SF19A2890 use a dual-core MIPS InterAptiv
-processor, built-in GMAC, USB, dual-band WiFi and various other
-peripherals.
+The clock manager of the Siflower SF19A2890 holds the SoC's PLLs and
+the muxes and dividers that derive the bus, CPU and peripheral clocks
+from them. The peripherals' own gates and resets are in separate
+blocks.
 
-Notably, they use some ARM PLxxx peripherals, and ARM_AMBA is
-selected for the drivers.
+The header is Chuanhong Guo's, from his SF19A2890 branch, and keeps his
+license. It drops the count at its end, and names the NPU clock
+CLK_MUXDIV_NPU_PE, without the _CLK suffix that no other clock has.
 
-Most devices on the market with this chip come with 64M or less
-DRAM, so a MACH_SIFLOWER_MIPS is created with reduced features
-instead of using the generic kernel.
-
-Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
-[Joseph Telaak:
-  - rebase on v7.4-rc1 and use the "MIPS:" prefix
-  - longer Kconfig help
-  - commit message grammar and paragraphs
-  - move the kmalloc.h override to a patch of its own]
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Joseph Telaak <joseph@telaak.dev>
 ---
- arch/mips/Kconfig | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ .../bindings/clock/siflower,sf19a2890-clk.yaml     | 57 ++++++++++++++++++++++
+ MAINTAINERS                                        |  7 +++
+ include/dt-bindings/clock/siflower,sf19a2890-clk.h | 27 ++++++++++
+ 3 files changed, 91 insertions(+)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index ed17c9b1624c..549bc7d13dd9 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -937,6 +937,39 @@ config SIBYTE_BIGSUR
- 	select ZONE_DMA32 if 64BIT
- 	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
- 
-+config MACH_SIFLOWER_MIPS
-+	bool "Siflower MIPS SoCs"
-+	select MIPS_GENERIC
-+	select MACH_GENERIC_CORE
-+	select ARM_AMBA
-+	select BOOT_RAW
-+	select CEVT_R4K
-+	select CLKSRC_MIPS_GIC
-+	select COMMON_CLK
-+	select CPU_MIPSR2_IRQ_EI
-+	select CPU_MIPSR2_IRQ_VI
-+	select CSRC_R4K
-+	select DMA_NONCOHERENT
-+	select IRQ_MIPS_CPU
-+	select MIPS_CPU_SCACHE
-+	select MIPS_GIC
-+	select MIPS_L1_CACHE_SHIFT_5
-+	select NO_EXCEPT_FILL
-+	select SMP_UP if SMP
-+	select SYS_HAS_CPU_MIPS32_R2
-+	select SYS_SUPPORTS_32BIT_KERNEL
-+	select SYS_SUPPORTS_LITTLE_ENDIAN
-+	select SYS_SUPPORTS_MIPS16
-+	select SYS_SUPPORTS_MIPS_CPS
-+	select SYS_SUPPORTS_MULTITHREADING
-+	select USE_OF
-+	help
-+	  Select this to build a kernel which supports SoCs from Siflower
-+	  with MIPS InterAptiv cores, like Siflower SF19A2890. These have
-+	  ARM PrimeCell peripherals, so ARM_AMBA is selected. Most boards
-+	  with them have 64M of DRAM or less, so this kernel leaves out the
-+	  generic kernel's support for other boards.
+diff --git a/Documentation/devicetree/bindings/clock/siflower,sf19a2890-clk.yaml b/Documentation/devicetree/bindings/clock/siflower,sf19a2890-clk.yaml
+new file mode 100644
+index 000000000000..9b72f14c2bd9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/siflower,sf19a2890-clk.yaml
+@@ -0,0 +1,57 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/siflower,sf19a2890-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- config SNI_RM
- 	bool "SNI RM200/300/400"
- 	select ARC_MEMORY
++title: Siflower SF19A2890 clock manager
++
++maintainers:
++  - Joseph Telaak <joseph@telaak.dev>
++
++description: |
++  The clock manager of the Siflower SF19A2890 holds the SoC's three PLLs
++  (CPU, DDR and common) and the clock muxes with dividers that derive the
++  bus, CPU and peripheral clocks from them. The peripherals' own clock
++  gates and resets are in separate peripheral clock and reset managers.
++
++  The clocks are defined in include/dt-bindings/clock/siflower,sf19a2890-clk.h.
++
++properties:
++  compatible:
++    const: siflower,sf19a2890-clk
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: 12 MHz oscillator
++      - description: 40 MHz oscillator
++
++  clock-names:
++    items:
++      - const: osc12m
++      - const: osc40m
++
++  "#clock-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@19e01000 {
++        compatible = "siflower,sf19a2890-clk";
++        reg = <0x19e01000 0x800>;
++        clocks = <&osc12m>, <&osc40m>;
++        clock-names = "osc12m", "osc40m";
++        #clock-cells = <1>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 93abbb315065..ce8d0596939c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -25698,6 +25698,13 @@ N:	sifive
+ K:	fu[57]40
+ K:	[^@]sifive
+ 
++SIFLOWER SF19A2890 CLOCK DRIVERS
++M:	Joseph Telaak <joseph@telaak.dev>
++L:	linux-clk@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/clock/siflower,sf19a2890-clk.yaml
++F:	include/dt-bindings/clock/siflower,sf19a2890-clk.h
++
+ SILEAD TOUCHSCREEN DRIVER
+ M:	Hans de Goede <hansg@kernel.org>
+ L:	linux-input@vger.kernel.org
+diff --git a/include/dt-bindings/clock/siflower,sf19a2890-clk.h b/include/dt-bindings/clock/siflower,sf19a2890-clk.h
+new file mode 100644
+index 000000000000..94bbebd0c1cc
+--- /dev/null
++++ b/include/dt-bindings/clock/siflower,sf19a2890-clk.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++#ifndef __DT_BINDINGS_CLOCK_SIFLOWER_SF19A2890_CLK_H
++#define __DT_BINDINGS_CLOCK_SIFLOWER_SF19A2890_CLK_H
++
++#define CLK_PLL_CPU		0
++#define CLK_PLL_DDR		1
++#define CLK_PLL_CMN		2
++#define CLK_MUXDIV_BUS1		3
++#define CLK_MUXDIV_BUS2		4
++#define CLK_MUXDIV_BUS3		5
++#define CLK_MUXDIV_CPU		6
++#define CLK_MUXDIV_PBUS		7
++#define CLK_MUXDIV_MEM_PHY	8
++#define CLK_MUXDIV_UART		9
++#define CLK_MUXDIV_ETH_REF	10
++#define CLK_MUXDIV_ETH_BYP_REF	11
++#define CLK_MUXDIV_ETH_TSU	12
++#define CLK_MUXDIV_GMAC_BYP_REF	13
++#define CLK_MUXDIV_M6250_0	14
++#define CLK_MUXDIV_M6250_1	15
++#define CLK_MUXDIV_WLAN24_PLF	16
++#define CLK_MUXDIV_WLAN5_PLF	17
++#define CLK_MUXDIV_USBPHY_REF	18
++#define CLK_MUXDIV_TCLK		19
++#define CLK_MUXDIV_NPU_PE	20
++
++#endif /* __DT_BINDINGS_CLOCK_SIFLOWER_SF19A2890_CLK_H */
 
 -- 
 Git-155)
