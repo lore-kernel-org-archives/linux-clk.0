@@ -1,45 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795621006;
-	b=imvZDq3o7Fj+kPRQ4lVBXVYUhANMI2BeqQkW+1pYYUWTRcCyLIaTS0e/xILR3f6XYVnG
-	 +FiI5bDYdSEHMY+AtOWap9B9nFI5UomjkMZriGPr/7gD2YzkaG692Lxfu2b2OORQATOA1
-	 qk28g/3/Blql3Zonin1KNqA7GbJepgbl8LEIkDIcu2natBfrhmTjdhYYbdweKI9aVnMeY
-	 92+QMMuJpuTEG2h9pniPzzMS7hlHt2P7EG+v5Rt48tdyxRCGplAnJGBR/t7L7LOxuvSca
-	 UBO/8yIw5yskK0iZPDFxLKmz7+4COtMmd5i9w1EnSA1NLe1G2V1ClzEFF9oqzBBvsJA==
+	t=1795621215;
+	b=HmlYloKgPnqpquENcXPltjo351YgczOfXwrXOJNso44puGylBpe4UIPJXdUF67GWcMnR
+	 x1piNqVpkYgSNL+4DIwOjYee6vPS2ZGwBU2XFT/4hAiNhgA1wKm6YI3wrtZD7LRllHGUY
+	 xkEkzKR9iJBmVLG9aYDzNVBuT9d1VXEYXsEoX85nxWaudEXJ1yAA7ft9+rrPPgmhl4V/b
+	 lpdPLYbj6IM+OWIPo0TMOb9FT4TGWwRhoyl+fKIPLnvinnEJNKB7FTVd5U7MXMNwX52aq
+	 HHirFgv0qfdTBVfayxt2MhxWtbrLOu8JAkpQfKmaWKzxp6sLDfp9gkmRFSFZiq84MVg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795621006;
-	h=Received:DKIM-Signature:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=Db0NSgXMkMNO+C2D5Me7g3QqZEixSPV9A2/gMgzci+4=;
-	b=mziSo9WsmmfQ3cPShv7rn3Ha9G/poHP/VyAAezSkckqWmTt6a/fWnKS9FxtTZrS9MQyi
-	 NpyzPIXFi9nd81nuOHcSqowq1bkwCI/IX9gBCcCgd1y6WFZ4IneyYU6TCS8/Up+gtj6xM
-	 a9L4MMs/GDxX9VUF8wS4Iikwedj6uPjkt4KbdtAmNlNBWcE+u9BP6ehn1Yc5JBqLVNHlG
-	 MsHgUuo0RJ/wg1WZErbwHuMtPRyXfZqe28VQowkFrgaFteEag8WDR0xVfkVbKvszsd6CP
-	 UDur5k4BwWgr01RwcXGMUMLP0GaITioAgxQpwyLOO1mm4QTg2kBouV85RG5hV3mKR4Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795621215;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=Vo0yv7V1NvB5So1od64WGTrt056xHM+jS6nDksudhu4=;
+	b=0OpcjgkbaS4wvJRkBBixSQ2l3KEpMtnlhI/JT3O6jNBWY8XeWqmy8oL+7hw74VnfpzuL
+	 DzRrm9PTJ/seBOunPh++Mj2NegWf7ZJE4UY0Mkyb7HEmo8hnIENauNpX+BFxqihp7Sx/x
+	 7460x/PAYYT6Yfbkh5ptf3cSyVvq0WqmIyeRUTabvhTFGbaj6KOp5NuUlNII7PUk+ann9
+	 T1oWnR/dG3bPJNTKF4r2+Nr+VA8p35ZMhTRJJNGLgdL2SxYNLHW9LHQ9pG8sdHuQXm33S
+	 6NlDc4LLxcAHpjIyL9R5OTueDfbmeEA8sNJX7QVUfZZ/Cj6nYNYAmYlQF/7WEiVlziQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kwvwmjDA;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Htpy3g5Q;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37D560A261E;
-	Wed, 25 Nov 2026 15:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0722C606A69B
+	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 15:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kwvwmjDA
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D09B11F000D2;
-	Wed, 25 Nov 2026 15:36:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Htpy3g5Q
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E811F01562;
+	Wed, 25 Nov 2026 15:40:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795621006;
-	bh=Db0NSgXMkMNO+C2D5Me7g3QqZEixSPV9A2/gMgzci+4=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=kwvwmjDAoL+Vj3LJyhaLGAWrR86wbbBIdS15WS6xazfyEjZ7kvnWwxjfOGBbHmB5X
-	 Ye1o18WjwWuK1NtCC5i6piR3bPfdyaoEsRFKKLbHX0HMs1J/Iiahqj8U7jKmE1SDhI
-	 C41Fs0A9gw4P7lb2WLsP04xTaxmX/bBuF8/Zrn6wb25WJ7eGONpImBPwRz6xDJ2oLu
-	 55Np/qbyYBCkNZKJMYizEvPLqBOMSgQhW3+m3fImDvVinbEirVQBk81jAAHyEbJPcQ
-	 SY4cXUvkY1/AhJNOx2b3FGF0+whmW/UDn523mnLZTSIQn188GaGXqTnoWFzD0+LtkI
-	 WTQrRY77D4nJg==
+	s=k20260515; t=1795621214;
+	bh=Vo0yv7V1NvB5So1od64WGTrt056xHM+jS6nDksudhu4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=Htpy3g5QQtT9AutvX+04vhFSwlDvI/F6wHL8lSx2Fu00dFJeN/pJtA4yNwm6tP3Yq
+	 kBC4EEjZUGQ8MyTHzVfw39gvz16zm4aXPSGR3g8ecTN1g7ryX8RqJkBKlQcWijEH+N
+	 oeQfecVB54Mtu8Ovowtf5Y3qKXVBZd/fwA/+ZByYF/ZyFv+wGHHlfTrMDr3w4CArgR
+	 g0GrJnXKhjGCHMkMMom6dplCPDcXUZrihjo2jigOzPRAcn6bnbvEdhv8O65N1nxim3
+	 QCo/OXpAzas3v+pPccCscfaX9+JMSB0P+xPe7ZV7rTHiklUPfI4njOtJFd9KbeVBRO
+	 WP6IsPzyNawYg==
+From: Brian Masney <masneyb@kernel.org>
+To: Yifeng Huang <huangyifeng@eswincomputing.com>, 
+ Xuyang Dong <dongxuyang@eswincomputing.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Han Gao <gaohan@iscas.ac.cn>
+Cc: Brian Masney <bmasney@redhat.com>, Han Gao <rabenda.cn@gmail.com>, 
+ linux-clk@vger.kernel.org, Jingkun Zheng <zhengjingkun@iscas.ac.cn>, 
+ Brian Masney <masneyb@kernel.org>
+In-Reply-To: <20261125-eic7700-cpu-pll-postdiv-v1-0-b1ccd6339a20@iscas.ac.cn>
+References: <20261125-eic7700-cpu-pll-postdiv-v1-0-b1ccd6339a20@iscas.ac.cn>
+Subject: Re: [PATCH 0/2] clk: eswin: Fix the EIC7700 PLL post-divider
+Message-Id: <179562120730.338124.17758286214024367532.b4-ty@b4>
+Date: Wed, 25 Nov 2026 10:40:07 -0500
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -51,83 +64,38 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v4 7/8] clk: clocking-wizard: Fix division by zero and
- unbounded register write
-From: Brian Masney <masneyb@kernel.org>
-To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, git@amd.com, 
- shubhrajyoti.datta@gmail.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Brian Masney <masneyb@kernel.org>
-In-Reply-To: <20261124035613.1968260-8-shubhrajyoti.datta@amd.com>
-References: <20261124035613.1968260-1-shubhrajyoti.datta@amd.com>
- <20261124035613.1968260-8-shubhrajyoti.datta@amd.com>
-Date: Wed, 25 Nov 2026 10:36:33 -0500
-Message-Id: <179562099317.458327.4285167925748688864.b4-review@b4>
 X-Mailer: b4 0.17-dev-8145e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1934; i=masneyb@kernel.org;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=752; i=masneyb@kernel.org;
  s=20250903; h=from:subject:message-id;
- bh=UMWYa4TPDU8Q7t9X5oGe2QDTLUGyi07Kbjlh8X3LaZg=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLLZGVoreoKZZKLy780+0aUj0GRSYbzH7l7IxvL2qSxW4
- R8mXbrUUcrCIMbFICumyLIk16ggInWV7b07miwwc1iZQIYwcHEKwETuNTP8ZpdJ/rBmM3sDk4xr
- bPPk1Ec6mz/PYo3xu3RxpnPhlS1yggz/65IT2wPneP0I3/t6D9uxFOGO2et77Oxf792sk7dxrf4
- +TgA=
+ bh=0AvNTPmxzNkEFjucXr+CMHujO4Eyar4Gy4/CIDTWa10=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLLZGSMDWNl2rFmfuWFRsXTNEy/Bpuq62G8+O8V5VYS27
+ j4d7CjVUcrCIMbFICumyLIk16ggInWV7b07miwwc1iZQIYwcHEKwESeJzD8z+aSqWm5+YhPZaW+
+ 3gfmlScOLZsWUf3/9uQ8Kxej4A9q1xgZ1mWuXiNT25r5j+u72nchv9L83KhrC75pWZvOKAkx/Vv
+ LBwA=
 X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Hi Shubhrajyoti,
 
-> 1. clk_wzrd_determine_rate(): DIV_ROUND_CLOSEST() can return 0 when
->    the requested rate greatly exceeds the parent rate, causing a
->    division by zero on the subsequent parent_rate / div. Clamp div
->    to a minimum of 1.
+On Wed, 25 Nov 2026 02:41:01 +0800, Han Gao wrote:
+> clk: eswin: Fix the EIC7700 PLL post-divider
 > 
-> 2. clk_wzrd_dynamic_reconfig(): min_t() result was not assigned back
->    to value, so the cap to WZRD_DR_MAX_INT_DIV_VALUE was never applied
->    before the register write.
+> clk_pll_set_rate() sets a post-divider the rate math doesn't know
+> about, so the P550 CPU ran at half speed. Patch 1 fixes that, patch 2
+> makes recalc_rate use the full formula from the TRM.
 > 
-> 3. clk_wzrd_get_divisors() and clk_wzrd_get_divisors_ver(): If rate is
->    0, DIV_ROUND_CLOSEST_ULL divides by zero. Return -EINVAL early.
+> Tested on a HiFive Premier P550: all CPU operating points, and setting
+> and reading back the audio PLL rate.
 > 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> [...]
 
-This needs some Fixes tag(s) and Cc for stable. Also this, and the last
-patch needs to go at the beginning of the series to make it easier to
-backport to the stable kernels.
+Applied, thanks!
 
-> ---
-> (no changes since v2)
-> 
-> Changes in v2:
-> - New patch
-> 
->  drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-> index 7fe8d0d4cfba..046efa5c77c9 100644
-> --- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-> +++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-> @@ -303,7 +303,7 @@ static int clk_wzrd_dynamic_reconfig(struct clk_hw *hw, unsigned long rate,
->  	value = DIV_ROUND_CLOSEST(parent_rate, rate);
->  
->  	/* Cap the value to max */
-> -	min_t(u32, value, WZRD_DR_MAX_INT_DIV_VALUE);
-> +	value = min_t(u32, value, WZRD_DR_MAX_INT_DIV_VALUE);
->  
->  	/* Set divisor and clear phase offset */
->  	writel(value, div_addr);
-> @@ -341,6 +341,8 @@ static int clk_wzrd_determine_rate(struct clk_hw *hw,
->  	 * achievable
->  	 */
->  	div = DIV_ROUND_CLOSEST(req->best_parent_rate, req->rate);
+[1/2] clk: eswin: Fix the EIC7700 PLL post-divider
+      commit: 1ad511a38987c827a465da8d281a843ab37774cf
+[2/2] clk: eswin: Use REFDIV and the post-dividers in the EIC7700 PLL rate
+      commit: 1b6d57e98eb01c3fb8c3b4e287a797b6f7a072ca
 
-The Sashiko feedback looks legit here regarding the u8.
-
-Brian
-
+Best regards,
 -- 
 Brian Masney <masneyb@kernel.org>
+
