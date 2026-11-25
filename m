@@ -1,55 +1,71 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795629935;
-	b=GBm6vxPUY11nTL6v2BqguilJ5KdYt6JolNI7A15d1CfO7qgnlr/kDydFZiOEJWuWLeTT
-	 xHLKOGdwAhX5b7Oq9ONoK+r6wiSLFcLjlAkLUQG0pCFl8NF47RsXU0ibxqgekAGAfW0/e
-	 vFuLrRC63hZ2u1H6sovEoyf7nGcCA0KEsP/do2xB+zWBngdRaDpodBrAE+SkbGanmt8sa
-	 J6fdPPxxJ0D/4+mHaNVkDi6H/To1qlKZSO6QPtThWIL0Vk1EbgJ9/BmqLeobEpijtqQhy
-	 Czf91pV2A3VizzbOWWHXyXX5mLOp2q/iZczHjqugJ8/gKEfclgpGo4f9E3CRqHB91VQ==
+	t=1795633186;
+	b=Pu/Kr3i6wTKx24kl286cDXbnMKkggqi6HKr6eNIW4dK3QOQXyneMbzM5V9NQtn/1Bvbk
+	 1G0fClpy7Yq8rJaQOzkU+2NiJIVdKClbHA6JTXCfn5TTSNqpe3twBAw4afPMlYs+AX6zO
+	 pbivPTiDGRWhei5ZjX8iWQBD6DAc4eTexwLfhBovvjZfUL5Xg9vF3MRkJeGTRAcwDI+iZ
+	 udqUfXsaSN8oILQ8OCjeyJSOzg7binZcRA1E0/iX6w/VawbuY4QwbxVRBskMgsM+jC3pm
+	 OAOA5E4TZ+55SoYuiL8jV3+ci7Kcv9n+XbPrTz1laCqnVYcbhJScfWL+45AmL24gr1w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795629935;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id:X-Mailer:X-Last-TLS-Session-Version;
-	bh=gjJnzkcMPhEPJ5/q666Im5Q4FNxL6hZMRuK1yLefp/I=;
-	b=yYc0qiEE3HDE6wGn0LP68OFtpwMitgvUURcFUg26/DBxyvq5o8ZxoI4VGAn58k+NhUU6
-	 1lDC+mP8lr0ufynJDCDpdjLFKOAMCTd3HpxJnUzH4F2h0zwctU1kTDHCyGWaC+ZSSGM0f
-	 DCMKA5ns3MSeskDweyE759thPDqRnqOSDlQrAIATr8N3iJRvUOSfoAKWeDLJl4UOtufqd
-	 kzk0YQX5j1QELKkz2/47rl+NsTInVSt1t177e4BJUTEISOsd53X8OcF85z3zI//0Vrwcl
-	 sNAqeil+QAgX+qarwTC7jTR8JL91DKEtltXStYP9fs0w4VtBj9x9Vujy67UC1ni/ScA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795633186;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=vyc3SoV3rFl2e5RGKK25UjPyvMlwIT1pDlP02Ms3jb4=;
+	b=oP87IaWuN+NnBPfAZeUT11cajapWRYKUsGxP5nQ7TmrfFfKmfOTixb55SyZNKplijTaf
+	 AZtdg6Vvej64Zt7w0jpGOPxhoVxJgpNP4W3b0oR6bUCF1F1sC7pIl6kYP6wQVdGaX6smw
+	 adYbzbAXxEdFdP0scxZ3MCh72uClNV2qhN2x8H4K2/nQhXOKYKwDa43RH/OWN+C5dY3pp
+	 050KouZ/r4wIQb/05v0ntf4OuhRehFPnWDmNxluUB9OHUlENxrsf3itLTo2HTa/J6N5Ed
+	 +9Dw8aYhszGmhhsZ9t0HsuTYBfRpp3psPv21OOPDt3zgy+oFL5yrJs6ODFuZuw9NH2Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=lNm17mS0;
-	arc=none smtp.remote-ip=185.246.85.4
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b="axw/dLkF";
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80030606A692;
-	Wed, 25 Nov 2026 18:05:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 80030606A692
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616ED606A326
+	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 18:59:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 616ED606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=lNm17mS0
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 1E3004E4177F;
-	Wed, 25 Nov 2026 18:05:33 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E8C0460480;
-	Wed, 25 Nov 2026 18:05:32 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3289711E6B08C;
-	Wed, 25 Nov 2026 19:05:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1795629928; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=gjJnzkcMPhEPJ5/q666Im5Q4FNxL6hZMRuK1yLefp/I=;
-	b=lNm17mS0qvqEwvboUKPMid9SQ8CpkX8eQqI7GQDWRSmDkLE8f7U+brK688OGcnnK5igGZT
-	2SbRz9c9mGnneagQcttxjU0NPGFtpfTBPT2BKMOHp8W9OluUMBoO95tN6xC27vlrPbx+zK
-	J+kqtI/88n2fZMufcyEpxxAeV1J9dqjL7x6WYsepiaSbVpymESWecm4JRQuTBHXzOB450o
-	OCDucrEeNc029XSVPqHLoYmuGNPCJl/fpqfKLZC+knKhugpO3UKANhiOJtg4Ho3x+JlLfx
-	HzZ7WRBYaMoMnrmiA1aVQi2lkQl2tsG+Mv9KrdnBhBq8MeM4SZnKslVRrr1GNQ==
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=axw/dLkF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=vyc3
+	SoV3rFl2e5RGKK25UjPyvMlwIT1pDlP02Ms3jb4=; b=axw/dLkFCJgBg9nIl1s5
+	hDqmX6/PmhBb+8mOn4KRBnxPE0d7QvgDEBJS0ifWkveK2kCE89yY1waR0RZfeAzr
+	qdARTipkz8kOIawBFQEeDPpktq30/IKwq/ME6UsQGjz4UArbxm2oqBB9GoOEe0Gf
+	QSmOThmif3y+Dt5N41uinL1j0Rj9lVY6ofMgsIA85BqYXnZEZiKGb1F3/vApi6tw
+	jE3WyJOz/xiCdUZEi1Y+IxMA6hw0S7CpfbgM8NRQCLNbf/yjygUkIOs0uQ5HMn+f
+	ANdJMExgOoKKumcGP4GVQrJi1/i9V4MMoxPCEl1IJG0bnxJcECMOCbz0pLVDRmeZ
+	JQ==
+Received: (qmail 1089750 invoked from network); 25 Nov 2026 19:59:39 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Nov 2026 19:59:39 +0100
+X-UD-Smtp-Session: l3s3148p1@ow3LbR5hSs5tKXAi
+Date: Wed, 25 Nov 2026 19:59:38 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: khendry@reliablecontrols.com
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: clock: r9a06g032-sysctrl: Document
+ reset cells
+Message-ID: <awcwFqvQIxuLqykY@shikoro>
+References: <20261125-rzn1-miic-resets-v3-0-f25a4b656d71@reliablecontrols.com>
+ <20261125-rzn1-miic-resets-v3-1-f25a4b656d71@reliablecontrols.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,38 +75,45 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v13 5/5] arm64: dts: imx943-evk: Add display support
- using IT6263
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, linux-clk@vger.kernel.org, 
- imx@lists.linux.dev, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org
-In-Reply-To: <20261120-dcif-upstreaming-v13-5-966ac248773f@oss.nxp.com>
-References: <20261120-dcif-upstreaming-v13-0-966ac248773f@oss.nxp.com>
- <20261120-dcif-upstreaming-v13-5-966ac248773f@oss.nxp.com>
-Date: Wed, 25 Nov 2026 19:05:04 +0100
-Message-Id: <179562990453.846133.15615766820554855508.b4-review@b4>
-X-Mailer: b4 0.16.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ECv6qnzY90UW0343"
+Content-Disposition: inline
+In-Reply-To: <20261125-rzn1-miic-resets-v3-1-f25a4b656d71@reliablecontrols.com>
 
-On Fri, 20 Nov 2026 12:50:40 +0000, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com> wrote:
-> The ITE IT6263 based NXP LVDS to HDMI converter can be attached to the
-> i.MX943 EVK board LVDS port using the mini-SAS connector. Since this is
-> the default configuration for the EVK, add support for it here.
+--ECv6qnzY90UW0343
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+On Wed, Nov 25, 2026 at 07:53:43AM -0800, Kyle Hendry via B4 Relay wrote:
+> From: Kyle Hendry <khendry@reliablecontrols.com>
+>=20
+> Update the rzn1 system controller to indicate it can be a reset controller
+> and add defines for miic resets
+>=20
+> Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+
+--ECv6qnzY90UW0343
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsHMBYACgkQFA3kzBSg
+KbZylg//X2j2MASyGMVfg+7tn76Q/5PPUpBCnFXbbxE8La/RMDadmrr1NZ13yDJN
+SQFt7D29hBVl0ueX5dXC3/BSH1ZFH43oO4VOc/pzeXmkvBYT506dGLIjgrSRGgLl
+EQSAUxmyysDJu2szjiWiWO2LzkJh7ujN17h/ugfvHFkbJuRB8oghPgecBajJUX7n
+nvopkPqpi61jRBu2OJS6MKdC+wql+aZMt/HpfkRVJfe7AjyeeY4lV/Umo3yXtWyl
+M/mZQMXeK0BT/GwJJzV6ZFtmwbeiuP43eYfuwyd+m5k/U7V+IObfTbbW+dJcRbgP
++iAlLYdR7YL6lyfM8vkP7T8Ci7uLUkNA6L7Vsjnd6TpxIWyT0qLtusZWYUcRlJlh
++Hy6BFP81UcbCQouJnHxCWy/uAQG0fz3SZpaUnm2VuGP1HPUlhj0eCa7lZafgauG
+EnNJRONxdarEZh5ni6GR9d6p6xqx+7f4AXKVk0p8NDm3vQ87aaZfmkYCXcIRVYbU
+6guSo6tRtu310ghjB0UseRdVfyiyEQZw/aWypARA+N3i/D04hX3bUk+NnP5WyPjL
+EJYtM+4Zk/g0op898qU9dElol2muMuHBVIrTjSVnYMBgYd1W1OPcsLSwPeQ0nwEV
+SBmTgd+wEm2j8QHFL+Y30uvZml5Cyw2ePvaFXY8ttXFA6GPbH8Y=
+=s6ed
+-----END PGP SIGNATURE-----
+
+--ECv6qnzY90UW0343--
