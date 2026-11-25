@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795604111;
-	b=bUai7QR9IaFsO6RbXkM8tyHZmRZv5D6+wGap+sdlC1mG2tA3hAxdtlIzv340mf2s6dPJ
-	 HwQRfDxVY7xWRmde3OwXdRW5rNRYKZ55HAbycaGzW/ZTL//dKsaS4+jxiCNtLihesy3HM
-	 KrzNZayiGRhlm9JD0Oa4923diUnUshK93Fcut7BL1wRkZJgdIBtXkoTKvah+qrWm6Ov0d
-	 KtcI0ONMwZtYhp05W3niDBZXEGPXasbOKgVy61kmImlEPU21YhBz0OensTf+8Yk5iRFyV
-	 45/daPCwbG/AxRHutIZ05qtIVxBDfTG28+/cAhCvaXrRlqIIp0Q48CGaxlOtQh4ViVQ==
+	t=1795604164;
+	b=t3QDuzGQCI8z/SVx6a788IwN/KoxUl/BZcdgcvm06Cquy1HoYyhPSlH0P2gsXn+hEcba
+	 oaBGEI0u7YkKxCX0l+Fs/ITfaklnSJHBaNMn6Ps57N0zGqOBwTJq5FLpeh3wRI6WdV4Rr
+	 FLCjPiUS5KqwFcBaSV5yVnSYLWLFu3+LaXdxSNS79xrY4qiGowgd3dm0VyKZ/KQPd3mLe
+	 xqyZo52fvmUNCPKmzUdPEnbFsMEk636kpIuESJNgnrdmh0DmOqIfyrqdYJfLfWSfav583
+	 2irx/17CiR+oT1QuJ2dzuo0oBJ6wRc0nQs821SuzUrclPRxEtjYMUg+0ymnJAHjSwgQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795604111;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795604164;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=3T+PgBhGAeiyiJXoesZjBC+dalaU5f+v7s903e1CpXs=;
-	b=zuGx38LxMcg08sH0BRi7U3G6iul3wHkKNPdHvrtmNQNNsaEwgNOItRCXK1wjF+pN9TIE
-	 bk9h/Yy23sOjJCJ4MzLBVwiop+hVEUwFXocHGFIzx7x/k21rhcHCE45U/sjxkmYfAuG43
-	 6h2UBfX1Ad6u3aFxkdjf+4mdsg9rLYXG0qpJIYe4TdFTuvKE+qr8LcnLB9HkOovoaX+RQ
-	 rVSG5XcUjf/7wAq1D/OqpIHx3KUBgelPnF39A297erYYURWwiuCYworxs2RWscxrlsYxt
-	 fW7Ih3cHqZCxo5nA1JpAAs/vz5tnDJCXLm+NubogUbBi0bxkxOF1cz+Q5Jc2UxSgY3w==
+	bh=uk1PPG/FDoyL9b6Au2Lqg1OrW2czFnedhEgtVD2BHEI=;
+	b=LX/a25xLUbZMx+9rfFn3zR+dJUSdmE1T7S3iMl9NipcOL3K8BgThzyriZ2UR61r4O5pK
+	 nTmvPLNGOZpcsKZIr7DNLUAknAXbTrbu+IWO9wG0Ix3zWCA1GJfLIlfYT1QGxyy/dMByb
+	 YsbhYQIkgn0ufUEWrC61CGR9wEYnIwILGYXd+nAlVDM4SXRMKnFL4eUyRQOn+mW2G4dcP
+	 0K2Jolep18pBXiyLVX2m97HxRhznZZSSag7kUSaGm1AsKbpOnTqw7z6BIIH1JIoyAg9TM
+	 gWtSQGdX6+lBATsOspMyL/AT08/x6Tz0qyVALhbDgz1DWf7vtuLxYYdPrCw3X1RE57A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HMR+lxB9;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="NvG4H/6J";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91677606A335;
-	Wed, 25 Nov 2026 10:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11C3606A31E;
+	Wed, 25 Nov 2026 10:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HMR+lxB9
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E651A1F000C4;
-	Wed, 25 Nov 2026 10:55:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NvG4H/6J
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6E641F000C0;
+	Wed, 25 Nov 2026 10:55:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795604111;
-	bh=3T+PgBhGAeiyiJXoesZjBC+dalaU5f+v7s903e1CpXs=;
+	s=k20260515; t=1795604163;
+	bh=uk1PPG/FDoyL9b6Au2Lqg1OrW2czFnedhEgtVD2BHEI=;
 	h=Date:Subject:To:References:From:In-Reply-To;
-	b=HMR+lxB9DpYGJdlMSiwTyypb8XN0TBuITla3qPw7hwHp4VeL0Ul2htvUZLPrifSxM
-	 5NuE6u2yPcrrSB5hbZWu8M1qnIFZVbjGlku0+o8f1CFiu6w6qCBfR232d7Pe3rTDzu
-	 XJCSM49gC6mR0Jpy9ilKnd8nBEYNr3L8vDVajsAjh4i1ZP8kgkHMN/pywZ9HCDo9nC
-	 e6DfPpZTAwH0OQitvZf1/87I8rDF65hEbFw8+EdlnPrg++M1CEmv6dZLa2hjiwzFz5
-	 26YToi+XTpjfn6Z4i2xdHWs6zRux06lfU2A1py1Cv9xAdKogZh4nO6JDh9NqNYfsid
-	 9/hBHeqrXmaGQ==
-Message-ID: <647d4527-dd99-4f1e-98ff-a6a5317560e6@kernel.org>
-Date: Wed, 25 Nov 2026 11:54:58 +0100
+	b=NvG4H/6JtQ6E4Uf23rGZN/aBgjo0J2DaZo9i6kFoa+t0wwBhH22VAWT2zRepaP9wC
+	 B298LAti6/W9d7tRSQF6CAb1kDVdmLQXddgtYOPVauQQpOPO+VE25N+PbmLNLKSNsE
+	 IKT4IRXYvIpdKismji8P6Y/EN3YOnx1bGdN1QSlY9JXprhp/n/xHPmPjdMKQ8pQRCW
+	 3XjaonLF0KMjAuy5OFbHOSoJ5lUjSvIYemWrWvNJUoJhGuqJuLPe2GRm2zoet0h8IL
+	 oXmJyjusLT9mDuNImoB6VNlvCX5+gNYdxzP75HiM6FGu5YS2U3Qm8d2qmhQamns1t5
+	 8+zTuzDW7tWlA==
+Message-ID: <77569628-a251-4086-a148-7673453854e8@kernel.org>
+Date: Wed, 25 Nov 2026 11:55:55 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -52,7 +52,8 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] soc: mediatek: add MMDVFS core driver
+Subject: Re: [PATCH 1/7] dt-bindings: clock: mediatek: add MT8196 MMDVFS clock
+ IDs
 To: Echo Zhang <echo.zhang@mediatek.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
@@ -67,7 +68,7 @@ To: Echo Zhang <echo.zhang@mediatek.com>, Rob Herring <robh@kernel.org>,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-clk@vger.kernel.org, llvm@lists.linux.dev
 References: <20261125060037.649659-1-echo.zhang@mediatek.com>
- <20261125060037.649659-4-echo.zhang@mediatek.com>
+ <20261125060037.649659-2-echo.zhang@mediatek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -113,77 +114,111 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20261125060037.649659-4-echo.zhang@mediatek.com>
+In-Reply-To: <20261125060037.649659-2-echo.zhang@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 25/11/2026 07:00, Echo Zhang wrote:
-> Add the common MediaTek MMDVFS driver framework.
+> Add clock IDs for the MT8196 MMDVFS clock provider.
 > 
-> The core driver handles device probing, SoC data selection, clock provider
-> registration, power-management notification, and dispatch to the
-> microprocessor transport used for runtime performance voting.
-
-I don't get why DVFS driver is a soc driver. This should use proper
-Linux subsystems and be placed there.
-
+> These IDs describe the clocks exposed by the MMDVFS block and are used by
+> device tree consumers to request multimedia performance levels through the
+> standard clock framework.
 > 
 > Signed-off-by: Echo Zhang <echo.zhang@mediatek.com>
 > ---
->  drivers/soc/mediatek/Kconfig                  |  19 +
->  drivers/soc/mediatek/Makefile                 |   1 +
->  drivers/soc/mediatek/mmdvfs/Makefile          |   6 +
->  drivers/soc/mediatek/mmdvfs/mmdvfs-clk.c      | 462 ++++++++++++++
->  drivers/soc/mediatek/mmdvfs/mmdvfs-core.c     | 581 ++++++++++++++++++
->  drivers/soc/mediatek/mmdvfs/mmdvfs-internal.h | 305 +++++++++
->  include/soc/mediatek/mmdvfs.h                 |  72 +++
->  7 files changed, 1446 insertions(+)
->  create mode 100644 drivers/soc/mediatek/mmdvfs/Makefile
->  create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-clk.c
->  create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-core.c
->  create mode 100644 drivers/soc/mediatek/mmdvfs/mmdvfs-internal.h
->  create mode 100644 include/soc/mediatek/mmdvfs.h
+>  .../clock/mediatek,mt8196-mmdvfs.h            | 74 +++++++++++++++++++
+
+This is not a separate commit.
+
+
+>  1 file changed, 74 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/mediatek,mt8196-mmdvfs.h
 > 
-> diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
-> index d7293977f06e..bb273a4461f0 100644
-> --- a/drivers/soc/mediatek/Kconfig
-> +++ b/drivers/soc/mediatek/Kconfig
-> @@ -60,6 +60,25 @@ config MTK_REGULATOR_COUPLER
->  	default ARCH_MEDIATEK
->  	depends on REGULATOR
->  
-> +config MTK_MMDVFS
-> +	tristate "MediaTek MMDVFS support"
-> +	depends on ARCH_MEDIATEK || COMPILE_TEST
-> +	depends on MTK_VCP_RPROC
-
-Does not exist.
-
-> +	help
-> +	  Say yes here to add support for the MediaTek Multimedia Dynamic
-> +	  Voltage and Frequency Scaling controller. The controller provides
-> +	  virtual clocks for multimedia hardware blocks and coordinates
-> +	  performance votes with platform voltage resources.
+> diff --git a/include/dt-bindings/clock/mediatek,mt8196-mmdvfs.h b/include/dt-bindings/clock/mediatek,mt8196-mmdvfs.h
+> new file mode 100644
+> index 000000000000..428d8a35abdb
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/mediatek,mt8196-mmdvfs.h
+> @@ -0,0 +1,74 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2024 MediaTek Inc.
+> + * Author: MediaTek MMDVFS Team
+> + */
 > +
-
-...
-
-> +/* Logging macros */
-> +#define mmdvfs_dbg(dev, fmt, args...) \
-> +	dev_dbg(dev, "[mmdvfs] " fmt, ##args)
-> +#define mmdvfs_info(dev, fmt, args...) \
-> +	dev_info(dev, "[mmdvfs] " fmt, ##args)
-> +#define mmdvfs_warn(dev, fmt, args...) \
-> +	dev_warn(dev, "[mmdvfs] " fmt, ##args)
-> +#define mmdvfs_err(dev, fmt, args...) \
-> +	dev_err(dev, "[mmdvfs] " fmt, ##args)
+> +#ifndef _DT_BINDINGS_MMDVFS_CLK_MT8196_H
+> +#define _DT_BINDINGS_MMDVFS_CLK_MT8196_H
 > +
+> +/*
+> + * MMDVFS Clock IDs for MT8196
+> + *
+> + * These IDs are used by multimedia clients in device tree to reference
+> + * MMDVFS virtual clocks for DVFS voting.
+> + *
+> + * MT8196 uses HWCCF (Hardware Clock Control Fabric) architecture.
+> + *
+> + * Usage in device tree:
+> + *   clocks = <&mmdvfs MMDVFS_USER_VDEC>;
+> + *   clock-names = "mmdvfs";
+> + */
+> +
+> +/* Core user clocks used by multimedia hardware drivers */
+> +#define MMDVFS_USER_DISP	0	/* user-disp */
+> +#define MMDVFS_USER_MDP		1	/* user-mdp */
+> +#define MMDVFS_USER_MML		2	/* user-mml */
+> +#define MMDVFS_USER_SMI		3	/* user-smi */
+> +#define MMDVFS_USER_JPEGDEC	4	/* user-jpegdec */
+> +#define MMDVFS_USER_JPEGENC	5	/* user-jpegenc */
+> +#define MMDVFS_USER_VENC	6	/* user-venc */
+> +#define MMDVFS_USER_VFMT	7	/* user-vfmt */
+> +#define MMDVFS_USER_IMG		8	/* user-img */
+> +#define MMDVFS_USER_CAM		9	/* user-cam */
+> +#define MMDVFS_USER_VCORE	10	/* user-vcore */
+> +#define MMDVFS_USER_VMM		11	/* user-vmm */
+> +#define MMDVFS_USER_VDISP	12	/* user-vdisp */
+> +#define MMDVFS_USER_VDEC	13	/* user-vdec */
+> +#define DUMMY_USER_DIS		14	/* dummy-dis */
+> +#define DUMMY_USER_MDP		15	/* dummy-mdp */
+> +#define DUMMY_USER_MML		16	/* dummy-mml */
+> +#define DUMMY_USER_SMI		17	/* dummy-smi */
+> +#define DUMMY_USER_VEN		18	/* dummy-ven */
+> +#define DUMMY_USER_VDE		19	/* dummy-vde */
+> +#define DUMMY_USER_IMG		20	/* dummy-img */
+> +#define DUMMY_USER_CAM		21	/* dummy-cam */
+> +#define MMDVFS_USER_CAM_SMI	22	/* user-cam-smi */
+> +#define MMDVFS_USER_VCP_SMI	23	/* user-vcp-smi */
+> +
+> +/* AP voter clocks (24-33) - System level control */
+> +#define MMDVFS_AP_CAM		24
+> +#define MMDVFS_AP_CAMTM		25
+> +#define MMDVFS_AP_VDE		26
+> +#define MMDVFS_AP_IMG		27
+> +#define MMDVFS_AP_IPE		28
+> +#define MMDVFS_AP_DIS		29
+> +#define MMDVFS_AP_MML		30
+> +#define MMDVFS_AP_SMI		31
+> +#define MMDVFS_AP_VEN		32
+> +#define MMDVFS_AP_MDP		33
+> +
+> +/* VCP voter clocks (34-43) - VCP firmware control */
+> +#define MMDVFS_VCP_CAM		34
+> +#define MMDVFS_VCP_CAMTM	35
+> +#define MMDVFS_VCP_VDE		36
+> +#define MMDVFS_VCP_IMG		37
+> +#define MMDVFS_VCP_IPE		38
+> +#define MMDVFS_VCP_DIS		39
+> +#define MMDVFS_VCP_MML		40
+> +#define MMDVFS_VCP_SMI		41
+> +#define MMDVFS_VCP_VEN		42
+> +#define MMDVFS_VCP_MDP		43
+> +
+> +#define MMDVFS_USER_NUM		44
 
-No, do not reimplement standard Linux kernel APIs/frameworks.
+Not a binding, drop.
 
-This applies EVERYWHERE here.
-
-
+Are you sending us some downstream old driver? Which upstream code was
+used as a base/example for this work?
 
 Best regards,
 Krzysztof
