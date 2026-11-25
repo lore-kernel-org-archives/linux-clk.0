@@ -1,99 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.74.39
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795596494;
-	b=ZalZu94eSFUec8DGUlKW4/ycRxq9RHVrVEurTYJRRnOTZ7x3u/m7rSrPIwOmEswq8nEW
-	 nC/Lolm4ms6rFZfP6veiATGuuVgMykvw5Bg97OcUNGSsBXcVuBL/OdKfwyCs7Dr1pTuV7
-	 4r4hMfQm58W0Z3pErFvnjGMWNmYVpUHTayBZgWGxyUSeLys+UehsmAu8mI72ZPCbZYTUt
-	 knu6a/6qJ5bLTztwUjxrJexqunc/g4Ab/57oTWd0hFBLQroZpUiV87S9E6xubO5mLAtwp
-	 H+kLNCdJLIfx7SjZnt4bUGfdv/hIZlYRWesbvY+DjbaGg1cjXlNsIBTTQoGEypkh5BA==
+	t=1795601629;
+	b=GSqnufsxDAmFqWq7pLgGoYfT/BTPbWDzJ/RZsMR2769yMcshTHrI/t1qQDzawzJ1U0g4
+	 kdPsJ8Rm5FxHg3pwGCVivGqBGe3hUx7YSwwcmr7XhWMm1/XjjJPB/qST2nxFgfMubkbB9
+	 T2NC/HTbZieqgQ6h4FhDePHJrBwbqbYXY8p8qNyCDinM3T5ItqzYAw4kUBCnag0uwyu0N
+	 gSUDN1kwXeVTpjgIQ+NKpowGAFufTlpQdNOf7xgvetYAOrvLOswrNollV1WBzmsvaxv49
+	 ohiyghniOGWeapEAcwZyWKUSdUVpC0s/ByfYFR+Gw0sNZPsDgwSK+mEbji6rw1DlUbA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795596494;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=YkAdyXDhvxMbRBkp6QhLOEe1Q7AO6B3AXM55qEFp9lo=;
-	b=kjwd77O7yJ8nG9EwvqDoeJ8ti6K94CW2GLbWn1UlC2FSw2UHt12kVJPv3HrTgGWSzeS0
-	 ycF2CzxTy3lMJk3TrA427CDzWoHnnoEdAVxR9e3Y6J7MXDY3xrx9TY4Ne7fJMVvXe6mCS
-	 NEyp90Tq3VZtfePGG2TXk8q/bgNVEvCCw3bxv+UR4ZGFnwJ9/xzbGNXstJOTr0QX01okd
-	 /kssRJ+17lMzTiBWtFGXPAStAwuXhV6//oz6MJErhc2suUkbbRt0OMEZ9DuZcOFaVV+hF
-	 lJ42aXVZq4FLLJbj624/egtYaRjYbWCatLtnMNiBzbgCnNklGM9NOdnfCzUcl6/mFjA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795601629;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-LD-Processed:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=GxzN+Wzy9REbMAhy08M/716Vbz1H7dT4bIMoMb3QriQ=;
+	b=Fdab1O1p0cNjZeapdoXjn4zfqmcq1wZRyt/RugAXY7qhEZigDRbYiHtSE9/RdAHcsUAs
+	 rRJ5sndQTehiazdtVl3tDfNo2h1tG/2xW7ju1y4QdcMsgRtaf7A7OPLWp8BWgjGVguH6/
+	 PtdXAt0yz7dK7/YV52Ba/X80gakwecPh4g/FG+qUzSgPDDapc7Mh5okiLgh1A5ucaJHwv
+	 XIphfGpydT40CzP1gKRDmIhjaR+ruIoQiBtM6bf4BVpxJ9hOgSXsZzBhbr53ZUky7Jht4
+	 gwNHcZIJUUjAiJ241hVb4pSHU4+T3fB/nBxi0H+0nfKVnnwKC2yOaMSwoS9an6X4DSw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=VxswUdnZ;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	dmarc=pass header.from=renesas.com;
+	spf=pass smtp.mailfrom=renesas.com;
+	dkim=pass header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=IWJheuJp;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.74.39
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011039.outbound.protection.outlook.com [40.107.74.39])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E035B606A331;
-	Wed, 25 Nov 2026 08:48:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E035B606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1908606A327;
+	Wed, 25 Nov 2026 10:13:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B1908606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=VxswUdnZ
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 07059205A40;
-	Wed, 25 Nov 2026 09:48:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1795596485;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YkAdyXDhvxMbRBkp6QhLOEe1Q7AO6B3AXM55qEFp9lo=;
-	b=VxswUdnZ8zZxlG5K8v8LMwwD3+rEe0Ben6LtoW+UoWP0aSf4mODGbC1+uanTjtonl18p3W
-	whniGtoYwAF5KzvpUe2gZBJt3ZU44Vu39ddmIeJqI9Y4dIaHyVS+y31QGoDJI/Biuzdwsb
-	SDLuthBxcKO1JWAQTYa1ky4KtxZO/baqpcZBOy7ViitMUEN9SZaI08jVxuZ66Zr6knwB9/
-	ZR8f3+8TtaSpiWOzi/nIiUXRmkXbYnV0ZPJH/ciIa8QosV9ftqkNRe9oBg1acezhAx0umP
-	K9ABwbJMqnEylxGnPo/hb3UkHV4H8I0zSRsF2EsZudhvK5NJ7ZkXbIIANzoNZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1795596485;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YkAdyXDhvxMbRBkp6QhLOEe1Q7AO6B3AXM55qEFp9lo=;
-	b=a4BbdNpK5Zw/lp7YDH8eLh8iOa15oE+eZ6QafE1egvprRUdf7/2cieX+gnOZSWxWtCoQKh
-	PPibIQa3XuBva4Wp3Fe6zoUt0lUnHKbrTK7TvPyyrsJzQY1Z4Eovu1afqtrwho5jf0k0JT
-	D54qs4MgJULawdk4HDj55BJJIGyZ3QmnIjThpzxKJJ2qPBTxNvQWCbXOtw22V2uq3E/Cpk
-	vFzFAW6230132pBQ4025UWOClshecdmx6DTJYuP1vggU8V/APbtdM7fc4hD9VVzU+kQNMI
-	9BOa1k3FcR3iuTEWonnYr5kzGkIChYAltbk62SWF6GE/nZkLsJY08OH3dimOyg==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1795596485; a=rsa-sha256;
-	cv=none;
-	b=DoQnf0dJy5UTJ4fHT2nESiGG6WRMGq5wR6/d479i6cQIHS8voXrBl+HUyJfpRWJdiJuIJK
-	WJig4zqFayZpMmRIWSM9ygk7ZFuVV0tQlF+AxlWjUyQ418pit3CEltkHKzhMxNL28Pv3Y+
-	PRkur0UQg9WEKJiyckDFQdZBc0rKsYXwrE9yokweU6WZDtNV8UJvcd4R/bOTXHpqFxFCTh
-	rMDohYDNKo/LX69L1sbsSwmn7fh6lgRJ1zuK2/UksJvYE9qOUd3UZT1TKgC8JA4z466B0e
-	CEWzw8PwfhIGAaqCXCOFYkdQ4luWMNWA+Kv9AKz3S/njkkx25fNg/kGhC9Q+7Q==
-Message-ID: <f89e293688feb3f9bcdce0f1b6fed0ee424e5cd8.camel@pengutronix.de>
-Subject: Re: [PATCH v2 5/9] reset: google: Add CPM reset driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Brian Norris <briannorris@chromium.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Stephen Boyd
-	 <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
-	 <jbrunet+clk@baylibre.com>, Thomas Gleixner <tglx@kernel.org>, Ulf Hansson
-	 <ulfh@kernel.org>, Peter Griffin <peter.griffin@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, =?ISO-8859-1?Q?Andr=E9?=
- Draszik <andre.draszik@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>, Jakub
- =?UTF-8?Q?G=C5=82owacki?=	 <jglow@google.com>, linux-clk@vger.kernel.org,
- Douglas Anderson	 <dianders@chromium.org>, devicetree@vger.kernel.org,
- linux-pm@vger.kernel.org,  Mariano Marciello <mmarciello@google.com>,
- google-soc@lists.linux.dev
-Date: Wed, 25 Nov 2026 09:48:04 +0100
-In-Reply-To: <20261124160343.v2.5.I0b1ad34a718a9b5f667d2481041970ea45989dd3@changeid>
-References: <20261125000349.3385325-1-briannorris@chromium.org>
-	 <20261124160343.v2.5.I0b1ad34a718a9b5f667d2481041970ea45989dd3@changeid>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (1024-bit key, unprotected) header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=IWJheuJp
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SOvqAbhDnO7cYQbxHDCmDIgKOnFwkMifxACagwEMOAV9qWzveDXO++fHflyU9A1q8osJtOiVRSXuBWmVgNZ8GgSLzb3cUobyYzG21ZISppv+0G5xMENG/0n1RQ+FtDH05yR7oO16j9G2SsrYJOhN9ihnuq5sNBV02Hs5OP7N+94tLNr69GPOeSc+gkRMJn0g9XszDXxSLotLp5OwYJSaPxTAjCCElcnR9Fxp4r4NTaaonTmfCfTQVd6Vbp9nV11EuhSJNphgd547CUqvJBGvXgpYcAXp0cyQHuqt8GUEBFP8/p16BzleNWc/vNNK5Fs+Yth3KU+LdpzMXSNexhjd4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GxzN+Wzy9REbMAhy08M/716Vbz1H7dT4bIMoMb3QriQ=;
+ b=wodK+Eql/B0O89CLh6lEXoSZ3ERsR3D1pBUL3NUq+sZB1+nwAtaai2e6zw0tWyU9bQEp5lXq48+tCmuNqaepOvh5c88PrJ2dsskf8H1i30s4i5bEsbqnoJ8CWiVXrghi1M3NrCKue7ejabFkJgZhcHuwKFdzseu0GLO48SPPzR3HwmKX0NUWAp6wUwwmNjzgXY1yDbfVrwq/bK8IcjiilQgEmuf1Zu/0CRL23tW+YvqM8wyJChC6wooZaTsdbvHRIDmPgRIb0XVDl17G1U5ii5H9j4epkv/KU91SxbKnpfcZwGNnpjxOu76RYZIHt8UE/eEEWbPQv8O89I0QbrlUEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GxzN+Wzy9REbMAhy08M/716Vbz1H7dT4bIMoMb3QriQ=;
+ b=IWJheuJpEArWZemN823kcz9VIeSOzoIBHNuohPQNGjMvrsJsfZzljIwjrAmqF1Ug4OIAeVgP4Ksp9w19stbom0JKjSSNuo8zLi2Jj+SN3KKxI4sJGanTt/2O80dpMcqwofOp4Y8412bqZ/NPmVQcTpgtH1oGAl8LqfnYMa80Y04=
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TY4PR01MB15109.jpnprd01.prod.outlook.com (2603:1096:405:283::5)
+ by TYCPR01MB10381.jpnprd01.prod.outlook.com (2603:1096:400:241::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.6; Wed, 25 Nov
+ 2026 10:13:43 +0000
+Received: from TY4PR01MB15109.jpnprd01.prod.outlook.com
+ ([fe80::eaac:e6c3:ef79:e511]) by TY4PR01MB15109.jpnprd01.prod.outlook.com
+ ([fe80::eaac:e6c3:ef79:e511%6]) with mapi id 15.21.0662.004; Wed, 25 Nov 2026
+ 10:13:09 +0000
+Message-ID: <dc195219-eb7e-4222-9a0a-90553b109b6c@renesas.com>
+Date: Wed, 25 Nov 2026 10:12:41 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] i3c: renesas: Add RZ/G3L support
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org
+References: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-0-2e76b87209bb@renesas.com>
+Content-Language: en-US
+From: Diogo Ivo <diogo.ivo.sx@renesas.com>
+In-Reply-To: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-0-2e76b87209bb@renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0336.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ea::9) To TYYPR01MB15118.jpnprd01.prod.outlook.com
+ (2603:1096:405:1a1::11)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -103,251 +107,120 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY4PR01MB15109:EE_|TYCPR01MB10381:EE_
+X-MS-Office365-Filtering-Correlation-Id: cf02e046-c5c4-4cf4-c2fa-08df4adcabc2
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|23010399003|366016|18002099003|22082099003|6133799003|261009223027099003|3023799007|921020|11063799006|10067099003|56012099006|261102123227099003|261028144727099003|261026140227099003|261022105027099003|261022075727099003|261021121427099003;
+X-Microsoft-Antispam-Message-Info:
+	ZLcfWG58BUue56QXL/k+PGwya7kRV2GrhEdGW5F1Q292xECfhRW9hFffFFM7AJ81FMfCiTNl+1U5VR9nuqnSzdFGdPWys0AMRcAScO7agXUyI5qVZkHKyQz7BaylsREBCGiXunkThsIM70LCiqywUy7FJzhdNQWcPi+tvcRg7VEALOkyVdYc5sQ7q173w0XFvDFxP1kKhscZkjxgW9orKXi+sukCTEtrdnmZceEdVLCEGRluw6/C6P4OTtAt45kJoqiWepPf7YaErzs+t/+p75scVNj6h+jrMQ0y7G0hCksAsd6V72Lp4g1C5eWCqFNfCPkqZsH0p7JeCeav4M3Kaw6zDIZ75/7Dfbl1MQrrcB8BgGelxEeQcAePyofaBs9lSw6oGlwpAG98gzBdHxBxxUA0hxCeoyOmB+aiTl/50D+wTsQwqZLlabOkJ72CBT//hlWFtwqy4ZDhWKT5EOVJPAvXJehhl02ahb+QUBCCTcyJub89o8dcMdHFotntC68JqYYdDz5lQPhEGjvLRxz8ZZMCbcfnSBenlrtXKiT9jr2oeJ0IpXeU8SAVgsDESNZZQyx7/NhJZobJmk2nRHOa0B2l4ZwXbvlN2P1qqu4S7SzJgrFKoqkjkU0BoI+KlzxrZ4pjT6RFCyGZBAnKz+ZHXQ==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY4PR01MB15109.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(23010399003)(366016)(18002099003)(22082099003)(6133799003)(261009223027099003)(3023799007)(921020)(11063799006)(10067099003)(56012099006)(261102123227099003)(261028144727099003)(261026140227099003)(261022105027099003)(261022075727099003)(261021121427099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NnZuVHUwczFocTFtSzVzSk5RQjg1d3pqMDlNVTFpM0RZMHp1UmJRUitCZUg2?=
+ =?utf-8?B?OXFqMkhNelhHS0VIUUdJSnV6N3NMemtLRFJ2TUtFdDhuTWlpa0cwd3NqeVVH?=
+ =?utf-8?B?aGNMeTJINERWTWtMLzJxTTZ2c2xnMXNDUnZFNTl6YnVZRDA4SEUrN0RSRk0r?=
+ =?utf-8?B?M3lhRFJBaWh6TlVBbytiMktTVnN2YVBhSThFZDhTMFVpUFJoT2hTMGsxMUhE?=
+ =?utf-8?B?YXR5aE55WENERklUZ2haUkFJbEQrekR5VTk1OWgycVdMZ3RhQXlTV1VscTl1?=
+ =?utf-8?B?THJwV1RRYXhCOTBTY09lTExZOGQzMmdCT1NndXUyVHlqUTgzRUdPUENROE02?=
+ =?utf-8?B?MFhPRE9PdXBrbHRLY20wK2NpVkh5U3FGRktFSjhUait5d0htNks0UU5HZnFG?=
+ =?utf-8?B?TkRGZ295RmszREN6b0REaDdJbFBTU0NSd01NSkI3MVBaTm0wS1B5a0VsaUpw?=
+ =?utf-8?B?MjVBWDdldUZLZnE2RS9FcU1rZnBPSy9xVGNHKytJVURmN2p5QnZTL2FlQUZ1?=
+ =?utf-8?B?VG93d3lKamVncENnVGhmazZvZVhsbE5sTkZMcWIwMWJMRk5ZZTNQanVrTDhI?=
+ =?utf-8?B?ajZZaHFjODVSankrOGcvMUZNSG4yYzNoOXJWcGFaTDdBNEYyT0RNUUVSNWFS?=
+ =?utf-8?B?eGdxRUI5c2ZXZlg3ODFGQWd4WGFPVFFqaTlrTkxPdXlCTEFrUzg3RStSSjJD?=
+ =?utf-8?B?c2o0K09hczg2LzVrVkVaeWdZZVRKVktsMVQwbnM5QkpHbm84d1MyWnBkQ2c2?=
+ =?utf-8?B?NWt4azNGSWFTOUVWcEVORWY2L0NWNFJTbmk3dll6RllMYmNqcnJWYWphOVBC?=
+ =?utf-8?B?ekF2UDBUMVdnQ1VwdFlQS1F0YkhJTUxZQ1YvMlJHNlFNcm8yRGdwbFh2WUdP?=
+ =?utf-8?B?YitYeXcvb2RGU1lZNTVjM29ONGVGK05WRWIrOWRKdDlJeDZRRGdIeEsrbThH?=
+ =?utf-8?B?Z0NDYW1KSWNlVlYxdTVzTTJrL3NJcTg3R3ZscWplRExvckdlTjhyRmFLbytr?=
+ =?utf-8?B?eUcwOTgyZGdBVWh6RFJGdVRQbXU3Tm9lYzNkU0NkT3B2R2VXRjFHN21OeHNX?=
+ =?utf-8?B?bDNxaWJwR09CelEwQWJrR3h2OGd4aDROUWthUDZBa05WT0dabC9ZVVV0WUs4?=
+ =?utf-8?B?L1g2LzlsSGQxTmQ4RzQ4Q01sYitCYlF1NUhqcStkQzhWRjdmMWlUZ1pOclFy?=
+ =?utf-8?B?UTFTQVJ0cXFEVTNoUFJ6ZmlqNHJzNk5TQzh1NEZCUHBBbFVwbE4wbGUyRlJv?=
+ =?utf-8?B?MjRtSkhabndmRXZwQlBjR2xTZXRWRXU4eWhiaWQ3dXJDR2tlbkZzdm0vS0FQ?=
+ =?utf-8?B?OEx4Zm5LTHkvaVRZdGlPY3lMQkc1V0wwZjNaUHVxM3pqdGtuSEVrdW9pc0VT?=
+ =?utf-8?B?VWQ2ajFlV2h4RjBTWm9PZEh0VlAveFphVVVUWXZaMmd0dTRrcWNVTDNvVFN3?=
+ =?utf-8?B?SGU5K3JHWFVsb25pVGJiTFpmbnJydDhONnoxdnpMUzQ1aVF4ZCtjb283VDEw?=
+ =?utf-8?B?eEVldTMrYlZKTTdpVVMyZXBmUWFsTDc1MDl1YURqc2ZkdkZnbElxa2xFZm9h?=
+ =?utf-8?B?TkZTTzdxWGxrM2QxYitsY0ZwVEQyNGl4OGFlZXpkTW1LZFUzbGtDcXpUZHNT?=
+ =?utf-8?B?bWxPL1h1R1JBdEs4bjY3dlZqYmVHSnp0R0c3OUVxWkZBUjR6UytyRDlqYzBE?=
+ =?utf-8?B?STRCM3Vld3pjbXlKOVgxUmNZNnJyZW9PbWRsMzR4THNuckRZU1NiL2FZc29M?=
+ =?utf-8?B?T1o1Qk1RdnJiOWRQV0FyZDh1L2FiaHRFRm9vMWFta3IwOTZIQ1haTGIrczVV?=
+ =?utf-8?B?YkhNT1I2WEMxK01EQ1d3VFJmYS9hdWpyeHZyMFJXTmhrYnBlZFZPck02bW9x?=
+ =?utf-8?B?SVl1WHV2MEl6alY5cHIxTktubFA0YUFVTUV6dGF1cm5ENUllTUZRZU9Yd3BH?=
+ =?utf-8?B?VjBLeEZKSVlLbGlyV0kwQkt5Q0kyQmRjMTBsQkIwUmpnQkZkV2pJS0JrZW9Q?=
+ =?utf-8?B?WDZGRkRZa0FVZXBQcGgydGVIc1ZDTEQvazI3czB4SlpIaEtXNVZEczd6aUN0?=
+ =?utf-8?B?U1NRZUxFK3dlTTFsM3UxZzRkRjFEQWU2czFhV0M4Tng4QmRFR0tjeDVKZC9F?=
+ =?utf-8?B?b2RGbGdsUFAzRUFSakJCOGFvTUtZUXhqQUN1b20reFo1N1FVd0U4WkdsTVlw?=
+ =?utf-8?B?OXdTWVRkVkdhUFBrK1ljcWNXS0F4VXdHaWdxdnhZQW1ycFJCWEN5UzBKaWtC?=
+ =?utf-8?B?NUhlbzNFN2tYRkRyT3RKb1JpK3g0emFCcjQ1T3BJL0ZXNUZoNGUvdThXZFBC?=
+ =?utf-8?B?WWtNYUJVRFlMZFRtbjRqamlybnViRE13OUFpaHFlZVByaG9EQTdWbWU5aUFR?=
+ =?utf-8?Q?hLnIs3zuqBvDOCHU=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf02e046-c5c4-4cf4-c2fa-08df4adcabc2
+X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB15118.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2026 10:13:05.1265
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JTYc1dNhUOZ93zt/EV45b3QIEODffUD0tiuOz0hfnQ3RvqjVCG/2nvO4c+0E8Kx83RfR2xhrT58tig6crAcDAxFv/sOwt4UFfEjUhSVmm+c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10381
 
-On Di, 2026-11-24 at 16:03 -0800, Brian Norris wrote:
-> Google Tensor SoCs (used on Pixel phones) manage many resources
-> (including resets) using a Central Power Manager (CPM) co-processor. We
-> communicate with CPM using mailboxes, abstracted in the
-> devm_cpm_get_handle(), etc., API.
->=20
-> For posterity, I list a summary of changes made relative to the
-> downstream Pixel driver:
->=20
-> * Switch to auxiliary bus, as a child of a CPM device
->=20
-> * Use devm more heavily
->=20
-> * Avoid representing each reset as its own Device Tree node.
->=20
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+Hi all,
+
+On 10/26/2026 11:35 AM, Diogo Ivo wrote:
+> Hi,
+> 
+> this series adds I3C support for the Renesas RZ/G3L (R9A08G046) SoC and
+> enables the controller on the RZ/G3L SMARC EVK.
+> 
+> It starts with a driver fix, which is independently applicable and
+> marked for stable: on a pure I3C bus, the I3C core leaves the I2C SCL
+> rate at zero, and the driver used to derive a zero-width open-drain SCL
+> from it. It now falls back to the 1 MHz FM+ limit instead. There is also
+> a small cosmetic patch removing a comma after the sentinel in the
+> compatible table, for consistency.
+> 
+> The rest of the series adds the DT bindings, the CPG clocks and resets,
+> and the SoC and board device tree support for RZ/G3L. The driver only
+> consumes resources that are common to the RZ/G3L and the RZ/G3S
+> (R9A08G045) (the tclk clock, the presetn and tresetn resets and seven
+> named interrupts), so no driver changes are needed: the RZ/G3L is
+> described by the SoC-specific renesas,r9a08g046-i3c compatible with a
+> fallback to the renesas,r9a08g045-i3c compatible of the RZ/G3S, which
+> the driver already matches.
+> 
+> The board enablement is guarded by the SW_I3C_EN switch, as the pins
+> are shared with RIIC3 and the audio codec behind it.
+> 
+> The I3C I/O voltage can be set to 1.2V or 1.8V on the board through
+> the SYS.3 (I3C_IOVS) switch. As software needs to tell the pin
+> controller which voltage is in effect, the series also adds pin
+> controller support for the I3C power source on RZ/G3L together with the
+> matching board device tree configuration.
+> 
+> Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
 > ---
->=20
 > Changes in v2:
->  * Rename symbols from goog_cpm_rst_* to cpm_reset_*
->  * Moved shared protocol details to CPM driver
->  * Remove custom reset debugfs interface and .remove callback.
->  * Remove per-SoC table; we only need naive translation of firmware IDs
->=20
->  drivers/reset/Kconfig            |   1 +
->  drivers/reset/Makefile           |   1 +
->  drivers/reset/google/Kconfig     |  11 +++
->  drivers/reset/google/Makefile    |   2 +
->  drivers/reset/google/reset-cpm.c | 154 +++++++++++++++++++++++++++++++
->  5 files changed, 169 insertions(+)
->  create mode 100644 drivers/reset/google/Kconfig
->  create mode 100644 drivers/reset/google/Makefile
->  create mode 100644 drivers/reset/google/reset-cpm.c
->=20
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 673bca1e594e..64c12b479b2c 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -475,6 +475,7 @@ config RESET_ZYNQMP
->  	  This enables the reset controller driver for Xilinx ZynqMP SoCs.
-> =20
->  source "drivers/reset/amlogic/Kconfig"
-> +source "drivers/reset/google/Kconfig"
->  source "drivers/reset/hisilicon/Kconfig"
->  source "drivers/reset/realtek/Kconfig"
->  source "drivers/reset/spacemit/Kconfig"
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 2fe527a7be8e..a151fe63905e 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-y +=3D core.o
->  obj-y +=3D amlogic/
-> +obj-y +=3D google/
->  obj-y +=3D hisilicon/
->  obj-y +=3D realtek/
->  obj-y +=3D spacemit/
-> diff --git a/drivers/reset/google/Kconfig b/drivers/reset/google/Kconfig
-> new file mode 100644
-> index 000000000000..38431b4f9001
-> --- /dev/null
-> +++ b/drivers/reset/google/Kconfig
-> @@ -0,0 +1,11 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config RESET_CPM
-> +	tristate "Google CPM Reset Controller"
-> +	depends on ARCH_GOOGLE || COMPILE_TEST
-> +	depends on GOOGLE_CPM_MBA
-> +	help
-> +	  Driver support for reset controllers found on Google Tensor SoCs,
-> +	  operating over the CPM mailbox interface. This allows peripheral
-> +	  drivers to assert and deassert resets on LPCM hardware blocks.
-> +
-> +	  If unsure, say N.
-> diff --git a/drivers/reset/google/Makefile b/drivers/reset/google/Makefil=
-e
-> new file mode 100644
-> index 000000000000..437c19459464
-> --- /dev/null
-> +++ b/drivers/reset/google/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_RESET_CPM) +=3D reset-cpm.o
-> diff --git a/drivers/reset/google/reset-cpm.c b/drivers/reset/google/rese=
-t-cpm.c
-> new file mode 100644
-> index 000000000000..ef0863f25cac
-> --- /dev/null
-> +++ b/drivers/reset/google/reset-cpm.c
-> @@ -0,0 +1,154 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Device driver to control Google SoC LPCM resets via CPM.
-> + * Copyright 2023-2026 Google LLC
-> + */
-> +
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/bits.h>
-> +#include <linux/container_of.h>
-> +#include <linux/dev_printk.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
-> +#include <linux/gfp_types.h>
-> +#include <linux/limits.h>
-> +#include <linux/mod_devicetable.h>
+> - Drop the "i3c: renesas: Add RZ/G3L support" patch and express the
+>    compatibility of the RZ/G3L with a fallback to the
+>    renesas,r9a08g045-i3c compatible in the bindings and in the DTS, as
+>    suggested by Krzysztof.
+> - Split the clock and interrupt constraints in the bindings into
+>    separate if/else blocks to handle the RZ/G3S fallback on RZ/G3L
+>    nodes.
+> - Sort the &i3c and i3c_pins nodes alphabetically in
+>    r9a08g046l48-smarc.dts.
+> - Link to v1: https://patch.msgid.link/20261020-divo-ssgrlpcsrc-2966-i3c-v1-0-30a47f25e515@renesas.com
+Gentle ping on this series.
 
-Please include the specific <linux/device-id/*.h> that is needed
-instead of all of <linux/mod_devicetable.h>.
+Thanks,
+Diogo
 
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/types.h>
-> +#include <soc/google/google-cpm-mba.h>
-> +
-> +#define ASSERT_OP_ID			0
-> +#define DEASSERT_OP_ID			1
-> +
-> +#define CPM_RST_LPCM_ID_MASK		GENMASK(31, 16)
-> +#define CPM_RST_ID_MASK			GENMASK(15, 0)
-
-Why are these fields 16 bits wide when one line below it says:
-
-> +/* Object fields are 8 bits */
-> +#define CPM_RST_ID_MAX			U8_MAX
-> +
-> +static inline unsigned long to_rstc_idx(u32 lpcm_id, u32 rst_id)
-> +{
-> +	return FIELD_PREP(CPM_RST_LPCM_ID_MASK, lpcm_id) |
-> +	       FIELD_PREP(CPM_RST_ID_MASK, rst_id);
-> +}
-> +
-> +static inline u32 lpcm_from_idx(unsigned long idx)
-> +{
-> +	return FIELD_GET(CPM_RST_LPCM_ID_MASK, idx);
-> +}
-> +
-> +static inline u32 rst_from_idx(unsigned long idx)
-> +{
-> +	return FIELD_GET(CPM_RST_ID_MASK, idx);
-> +}
-> +
-> +struct cpm_reset_provider {
-> +	struct reset_controller_dev rcdev;
-> +	struct cpm_handle *cpm;
-> +};
-> +
-> +static inline struct cpm_reset_provider *to_provider(struct reset_contro=
-ller_dev *rcdev)
-> +{
-> +	return container_of(rcdev, struct cpm_reset_provider, rcdev);
-> +}
-> +
-> +static int cpm_reset_send_lpcm(struct reset_controller_dev *rcdev,
-> +			       unsigned long idx, u8 opcode)
-> +{
-> +	struct cpm_reset_provider *provider =3D to_provider(rcdev);
-> +	const struct cpm_lpcm_message msg =3D {
-> +		.cmd =3D LPCM_CMD_SET_RST,
-> +		.opcode =3D opcode,
-> +		.lpcm_id =3D lpcm_from_idx(idx),
-> +		.obj_id =3D rst_from_idx(idx),
-> +	};
-> +
-> +	return cpm_send_lpcm_message(provider->cpm, &msg);
-> +}
-> +
-> +static int cpm_reset_assert(struct reset_controller_dev *rcdev,
-> +			    unsigned long idx)
-> +{
-> +	return cpm_reset_send_lpcm(rcdev, idx, ASSERT_OP_ID);
-> +}
-> +
-> +static int cpm_reset_deassert(struct reset_controller_dev *rcdev,
-> +			      unsigned long idx)
-> +{
-> +	return cpm_reset_send_lpcm(rcdev, idx, DEASSERT_OP_ID);
-> +}
-> +
-> +static const struct reset_control_ops cpm_reset_ops =3D {
-> +	.assert =3D cpm_reset_assert,
-> +	.deassert =3D cpm_reset_deassert,
-> +};
-> +
-> +static int cpm_reset_of_xlate(struct reset_controller_dev *rcdev,
-> +			      const struct of_phandle_args *reset_spec)
-> +{
-> +	u32 lpcm_id, rst_id;
-> +
-> +	if (reset_spec->args_count !=3D 2)
-> +		return -EINVAL;
-> +
-> +	lpcm_id =3D reset_spec->args[0];
-> +	rst_id =3D reset_spec->args[1];
-> +
-> +	if (lpcm_id > CPM_RST_ID_MAX)
-
-This looks a bit weird.
-
-Maybe add a CPM_LPCM_ID_MAX, directly use U8_MAX here, or rename the
-constant to not include RST_ID?
-
-> +		return -EINVAL;
-> +	if (rst_id > CPM_RST_ID_MAX)
-> +		return -EINVAL;
-> +
-> +	return to_rstc_idx(lpcm_id, rst_id);
-> +}
-> +
-> +static int cpm_reset_probe(struct auxiliary_device *auxdev,
-> +			   const struct auxiliary_device_id *id)
-> +{
-> +	struct device *dev =3D &auxdev->dev;
-> +	struct cpm_reset_provider *provider;
-> +	int ret;
-> +
-> +	provider =3D devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
-
-devm_kzalloc_obj()
-
-> +	if (!provider)
-> +		return -ENOMEM;
-> +
-> +	provider->cpm =3D devm_cpm_get_handle(dev);
-> +	if (IS_ERR(provider->cpm))
-> +		return dev_err_probe(dev, PTR_ERR(provider->cpm),
-> +				     "Failed to get CPM handle\n");
-> +
-> +	provider->rcdev.dev =3D dev;
-> +	provider->rcdev.owner =3D THIS_MODULE;
-> +	provider->rcdev.of_node =3D dev->of_node;
-> +	provider->rcdev.ops =3D &cpm_reset_ops;
-> +	provider->rcdev.of_reset_n_cells =3D 2;
-> +	provider->rcdev.of_xlate =3D cpm_reset_of_xlate;
-> +
-> +	ret =3D devm_reset_controller_register(dev, &provider->rcdev);
-> +	if (ret < 0) {
-> +		dev_err(dev, "failed to register reset controller: %d\n", ret);
-
-dev_err_probe()
-
-
-regards
-Philipp
