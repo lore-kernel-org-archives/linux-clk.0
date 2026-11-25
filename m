@@ -1,108 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795609996;
-	b=Txf4HIv8BRGSohTqjQiFPlenQ5uSzM/4CgpNS/EEpwEdLC+UCTdga0fZ2zWiNEx0Mv2u
-	 OmRwGertj+ettbvVTV+NczjhRJm71U5ZXg5PRCOoN1RxHwpggusgfGwYu7p/1mN5goLm1
-	 VHIkN9J9XCht7Qg/lVXCR33W5cM1X5B0vl2Cnm4q2yPN9Sh62k8WJo3jJPTNbvTA1eJpd
-	 NtHFf+mmeztsUUbCcXjCGKcuErkjHMyVttcwvoFrmyDvqiFVfvBkkOHFYLtT6ZC3dojnH
-	 UYcveMLKp8McctAUXQA1rm5gwNdeXC1P9kYxT7PCnMtmLrrWMXrkz7JsDdeewDqMreg==
+	t=1795610683;
+	b=SUZDY135wcWQycMT5fEPE9ehXy2t/Q8GKMs7GIoAfhui9RLniOvrdOZaCAqeKU5071vn
+	 NL1b7cyIahT7OxVtblUxuLBpIoLjmx4doBtjj0EDWwgfsRO4DOTecEml2SKwK+QOvE80h
+	 qYtFdVCmnqk6iiivn6z2NE5vkrOZrpWV6uqjWQScT8HNssmYNPa+IdYuQ4woND8ATgZJX
+	 RGUoumVf1a5fqhOcR/XyLu4GP2VLUKyO6ww/9goHI1YX94LaBkbSFVHQ1T/hV3+n1KrUV
+	 Jl5zTq6TwVGcEIxBT80kmcwMGAhoYuqxKQBzAmn6YjRKdxUMMUCNpdpMf7ne2RunVAw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795609996;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=u9UxTbIvHn2NymkmK6sTzYgQuFVw5L2GmRCY+f1oSYM=;
-	b=J6C7DFjOpCMMyb4tmKz4Suml0EO+UPVjaOYfAMe6XNtVHtF6R/z11gcbqo9sJDyWTDzU
-	 omTG5WASCDhYxNYfRZo0cNDBAz9ozntXja250IieQo1fCd0fUnKS58DJUmiXZH4cBPC51
-	 TAxLYXJMrwRTpFnQAgBLMz9jtbqOWKrSpYVyy20Gvxmlh8uOXRHADXoHKc5jwdiYruqhx
-	 O+uluW5DEsirKYEC5DT3WjHBdOBr9VgFmiJl7UapedrkdHw+mP/hUgO+4Fblb62M+KxxF
-	 m+/kUQShyT+nltyTofbZl2zdVmxjFGCfek8QssSyP2er3LEXW4fkg0VTAGI92p8uWeA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795610683;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=ZLTjpd3XnUz/ZzSdq2po/3f2k3GzMZNRz6Dm1JnltU0=;
+	b=EzdW1m/n1tHdrAAZw0SRmK5dCwR3CF18SZUq7heN2NBqHpEnz8RsHM5Bo/79so39AGhP
+	 W5id1W8kG6nsCYYD/UqImV9zYqVkMmhJMcCg+ZvWbU+jYEKJfpjSysZx0O1470ECc7gM8
+	 nY5e+ujj/75vRVzpq0VB0AmlWtV0bhpZcGDdCaD/JkrnmL3QBvQqDAhTyCJ5Ckkxro2Dn
+	 Zx3OT6RRdhgiGa3GH9kZ0QUsmQ9ElPWwLOvez6VcDSQGEAFZFjADqe3vaWgydzkP4zx14
+	 szkdnMg6ltyB7TFCbtpbnhNZvcFbAd0BQYbKoj7Ow1C4zBmsUSeLRLDoDW7hPFvKpsg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="qgf/rxEJ";
-	arc=none smtp.remote-ip=209.85.216.50
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GkPMAE1Y;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67032606A329
-	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 12:33:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67032606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10D1606A331;
+	Wed, 25 Nov 2026 12:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=qgf/rxEJ
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3b421e8d111so3825837a91.3
-        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 04:33:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795609996; x=1796214796; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=u9UxTbIvHn2NymkmK6sTzYgQuFVw5L2GmRCY+f1oSYM=;
-        b=qgf/rxEJbxbQk0k4cDRQ2CUScsPmBOb32E8eV7SSGbTmDRbgYCKL+rs+qu6txu3x7S
-         cjI9087SNrGDsqNfxE7Tww5wmtC89VG8WHBtct8fjTrDhGiSrgUzWq92HybFy66Q7+Mh
-         7sLaY0t19HW9EWdOuhDlzCjKhu7VJeJZlX19RhOvEmTfIxy0YdZ0cg4oZddsm0G0wbyl
-         I8wjsPiXsqdS4IV5HSPD2d9HiAm/91i+D31wPtwHpvD+wyjmVk5TOzZTRcB2sCf1BHI+
-         IvmHh7ZTosiAVRfVsx+BQrfehi6Ert+W6ekLsS8rYMVaFjKWiLOh0/4JqEmJZn84vZy0
-         5WJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795609996; x=1796214796;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=u9UxTbIvHn2NymkmK6sTzYgQuFVw5L2GmRCY+f1oSYM=;
-        b=E9YeWVDctl/uwD24TZnddRTZj2lTGs/EKCp4je8gE2ckjhxDW8BUqySRzN+zQnAeLi
-         /8TX9/OfyMzDjuPOBzYCOaN7ZJcUK+T/XG6OBYvy0e+lC4cC0disvpnyItvuDPQRuq2S
-         QO0SVR7WLIDBebTV9WqKtfj7O8oyP7X3S++rhsBAXEvC+1JWG7OtrKKF9YebZr2cT9Sp
-         tEk8JVsWWZy9CYG9ofLfpSIr/XSsKJx7shvuHz7Djy+mumK5d7j5NDZvvwmC8iLNNKd5
-         Ysb4yXDNwIiyPvA5U/jYSubQLNtff8/p6ZEfVbP6acXHEhuctwUm5ZNtPsl99neJPySn
-         dB9A==
-X-Forwarded-Encrypted: i=1; AL+hErEtITC1vcVywmgl5qmyWj31t8rfIe93KVqeG3yWgxSnTskfahuv1JqURkqH3sry0y4yKwWhzwqv/YI=@vger.kernel.org
-X-Gm-Message-State: APuU4Z84AaEh73idu8CvsVjekaZb1iVzIVDZ0jYDBxYX0iaSrINSD3a/
-	GM+VHPC8zTwoEv7JVvDy7vosS15rXZjD8fZMK8OqDuEADFFbompZKoSq
-X-Gm-Gg: AZFdTZfEmNme0zFsF+IgHacv3bOJLKCFi6X4YK//zQ1faOICh2l/19osCi3tSkMNCqi
-	HBcTQ4z8lVZUvbBqXfnDOX4BcD6UxNaYVg8LUn+1OOj50+/ieGvkE+x1VOLXJr6zR6lTyp6+qfR
-	2L9B4QpUVonXwflnbns+Qf0k4huaNfuA71flMTpOp3NfSVAiBBrcbKoKXeXb5fCge/sZ47RnNNK
-	EsN5tzSDOi6t3wsxSYTerqQbl4ODWS04oIgn/+DqrYt4JGvFErm4iKCRF7KAS583t7IuOeIr8+6
-	0vAIG84vNonWNF2COtyOOhAG6cfCwc71MvNZRxEh9EtA5xtrEufs05+jUtAVMlnUSusBaVRhtSO
-	s3tQVJ58tN1265ofzkDdlFwwZ+5FUxPZz44Ta6ywp1qJRF2MCiL9n95elz3MwQm55zlsRIzkhOL
-	OgiRWJ4+ueo3ZW/WO/BgI8KMF/NgBsxELYMJa0xZ0V04PVToudLdY1Km97RN7kpjG360MYg5HNW
-	IvTUrqYGgcBzMuW/Bx3Ztks2euSaZ3GwYHfuDp4HQiJOQ5MZOBkcUkpGyGL7xlsNMwuKgKTrkRS
-	DGr2Yeir2CllpnLdbEJzZYBsC5XHfosgNu8mS29Ti9K6zPAxFSziu9ZRYDy2rdXDjK4E
-X-Received: by 2002:a17:90a:e7d0:b0:3a7:3474:b1ee with SMTP id 98e67ed59e1d1-3b41cb3276cmr17251989a91.60.1795609995742;
-        Wed, 25 Nov 2026 04:33:15 -0800 (PST)
-Received: from localhost.localdomain ([103.118.130.202])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b44b792474sm12698366a91.3.2026.11.25.04.33.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 04:33:15 -0800 (PST)
-From: Hikmah Gumelar <hikmahgumelar@gmail.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	u.kleine-koenig@baylibre.com,
-	Hikmah Gumelar <hikmahgumelar@gmail.com>
-Subject: [PATCH v4 7/7] arm64: dts: qcom: msm8953-xiaomi-tissot: enable front and rear cameras
-Date: Wed, 25 Nov 2026 19:31:46 +0700
-Message-ID: <20261125123146.379057-8-hikmahgumelar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261125123146.379057-1-hikmahgumelar@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GkPMAE1Y
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFE151F000EE;
+	Wed, 25 Nov 2026 12:44:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795610683;
+	bh=ZLTjpd3XnUz/ZzSdq2po/3f2k3GzMZNRz6Dm1JnltU0=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=GkPMAE1YxeFme44nFrBRNYInCnG0T1m2dCn8biKIXNplTRYgVkpWJwfasvnspvFcg
+	 wWWya0CEe2UCVoTB2RpJFJPqMxSoq3kR9p2A6Jh1MXBBJySx84TgSZ0l8Fv3zoyFDB
+	 2OB/JFlHxIuUOIV3/6v9w1kRxNcicKi2hxuU1NnVvenCK/hdj3T8VlqZcsl6TRvxP8
+	 AcQkD0gGx8kWmcwaSXK48Ovk2aIHVcy6fejoquPA6qgsqPY52YiNyGl39cWtkRHXmb
+	 1yF+jbDSvDXVIIgoxL09PfBMqduTIPTUNa2FVnqEGSwRIpwHzxiCeLv3YVve6hxEmM
+	 Y/fqwPhoBgtvw==
+Message-ID: <sashiko-outbox-233389@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v4 3/7] media: i2c: add s5k5e8 image sensor driver
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Hikmah Gumelar" <hikmahgumelar@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, media-ci@linuxtv.org
+In-Reply-To: <20261125123146.379057-4-hikmahgumelar@gmail.com>
 References: <20261125123146.379057-1-hikmahgumelar@gmail.com>
+ <20261125123146.379057-4-hikmahgumelar@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 25 Nov 2026 12:44:42 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -111,167 +59,245 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Enable CAMSS, CCI, CSIPHY0/CSIPHY2 ports, and the OmniVision OV12A10
+Thank you for your contribution! Sashiko AI review found 6 potential
+issues to consider:
+- [High] media: i2c: Kconfig: unintended removal of select V4L2_CCI_I2C
+  from 53 drivers
+- [High] media: i2c: premature VIDEO_OV12A10 Kconfig and Makefile
+  entries without ov12a10.c
+- [High] media: i2c: s5k5e8: missing VIDEO_S5K5E8 Kconfig entry and
+  MAINTAINERS entry
+- [Low] media: i2c: s5k5e8: open-coded CCI I2C helpers instead of
+  v4l2-cci framework
+- [Low] media: i2c: s5k5e8: legacy s_stream and manual mutex/streaming
+  state
+- [Low] media: i2c: s5k5e8: malformed indentation in default_mode and
+  s5k5e8_set_ctrl()
+--
 
-rear and Samsung S5K5E8 front image sensors on the Xiaomi Mi A1.
+commit f9317782624ff79a943a965105715454acccfd55
+Author: Hikmah Gumelar <hikmahgumelar@gmail.com>
 
-Signed-off-by: Hikmah Gumelar <hikmahgumelar@gmail.com>
----
- .../boot/dts/qcom/msm8953-xiaomi-tissot.dts   | 124 ++++++++++++++++++
- 1 file changed, 124 insertions(+)
+media: i2c: add s5k5e8 image sensor driver
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts b/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts
-index fccb9c4360ca..87db6b18d191 100644
---- a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts
-@@ -74,6 +74,108 @@ vph_pwr: vph-pwr-regulator {
- 		regulator-always-on;
- 		regulator-boot-on;
- 	};
-+	vreg_cam_avdd: regulator-cam-avdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vreg_cam_avdd";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		gpio = <&tlmm 62 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		pinctrl-0 = <&cam_vreg_avdd_default>;
-+		pinctrl-names = "default";
-+	};
-+};
-+
-+&camss {
-+	vdda-supply = <&pm8953_s3>;
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			reg = <0>;
-+
-+			csiphy0_ep: endpoint {
-+				clock-lanes = <7>;
-+				data-lanes = <0 1 2 3>;
-+				remote-endpoint = <&rear_cam_ep>;
-+			};
-+		};
-+
-+		port@2 {
-+			reg = <2>;
-+
-+			csiphy2_ep: endpoint {
-+				clock-lanes = <7>;
-+				data-lanes = <0 1>;
-+				remote-endpoint = <&front_cam_ep>;
-+			};
-+		};
-+	};
-+};
-+
-+&cci {
-+	status = "okay";
-+};
-+
-+&cci_i2c0 {
-+	camera@10 {
-+		compatible = "ovti,ov12a10";
-+		reg = <0x10>;
-+
-+		clocks = <&gcc GCC_CAMSS_MCLK0_CLK>;
-+		assigned-clocks = <&gcc GCC_CAMSS_MCLK0_CLK>;
-+		assigned-clock-rates = <24000000>;
-+		pinctrl-0 = <&cam_sensor_rear_default &camss_mclk0_default>;
-+		pinctrl-names = "default";
-+
-+		reset-gpios = <&tlmm 33 GPIO_ACTIVE_LOW>;
-+		powerdown-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
-+
-+		avdd-supply = <&vreg_cam_avdd>;
-+		dvdd-supply = <&pm8953_l2>;
-+		dovdd-supply = <&pm8953_l6>;
-+
-+		rotation = <270>;
-+		orientation = <1>;
-+
-+		port {
-+			rear_cam_ep: endpoint {
-+				data-lanes = <1 2 3 4>;
-+				link-frequencies = /bits/ 64 <216000000>;
-+				remote-endpoint = <&csiphy0_ep>;
-+			};
-+		};
-+	};
-+};
-+
-+&cci_i2c1 {
-+	camera@2d {
-+		compatible = "samsung,s5k5e8";
-+		reg = <0x2d>;
-+
-+		clocks = <&gcc GCC_CAMSS_MCLK1_CLK>;
-+		assigned-clocks = <&gcc GCC_CAMSS_MCLK1_CLK>;
-+		assigned-clock-rates = <24000000>;
-+		pinctrl-0 = <&cam_sensor_front_default &camss_mclk1_default>;
-+		pinctrl-names = "default";
-+
-+		reset-gpios = <&tlmm 129 GPIO_ACTIVE_LOW>;
-+
-+		avdd-supply = <&pm8953_l22>;
-+		dvdd-supply = <&pm8953_l23>;
-+		dovdd-supply = <&pm8953_l6>;
-+
-+		rotation = <90>;
-+		orientation = <0>;
-+
-+		port {
-+			front_cam_ep: endpoint {
-+				data-lanes = <1 2>;
-+				link-frequencies = /bits/ 64 <418000000>;
-+				remote-endpoint = <&csiphy2_ep>;
-+			};
-+		};
-+	};
- };
- 
- &hsusb_phy {
-@@ -154,6 +256,7 @@ &pmi8950_wled {
- };
- 
- &rpm_requests {
-+	vdd_l23-supply = <&pm8953_s3>;
- 	regulators {
- 		compatible = "qcom,rpm-pm8953-regulators";
- 
-@@ -302,6 +405,27 @@ gpio_hall_sensor_default: gpio-hall-sensor-state {
- 		bias-pull-up;
- 	};
- 
-+	cam_sensor_front_default: cam-sensor-front-default-state {
-+		pins = "gpio129";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	cam_sensor_rear_default: cam-sensor-rear-default-state {
-+		pins = "gpio33", "gpio39";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	cam_vreg_avdd_default: cam-vreg-avdd-default-state {
-+		pins = "gpio62";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
- 	ts_int_default: ts-int-default-state {
- 		pins = "gpio65";
- 		function = "gpio";
--- 
-2.47.3
+This commit adds a V4L2 subdevice driver for the Samsung S5K5E8 5-megapixel
+MIPI CSI-2 CMOS image sensor.
 
+> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> index 162b8ea026018..4ac9545f1581f 100644
+> --- a/drivers/media/i2c/Kconfig
+> +++ b/drivers/media/i2c/Kconfig
+> @@ -43,7 +43,6 @@ config VIDEO_CCS_PLL
+> =20
+>  config VIDEO_ALVIUM_CSI2
+>  	tristate "Allied Vision ALVIUM MIPI CSI-2 camera support"
+> -	select V4L2_CCI_I2C
+>  	help
+>  	  This is a Video4Linux2 sensor-level driver for the Allied Vision
+>  	  ALVIUM camera connected via MIPI CSI-2 interface.
+> @@ -62,7 +61,6 @@ config VIDEO_AR0521
+> =20
+>  config VIDEO_GC0308
+>  	tristate "GalaxyCore GC0308 sensor support"
+> -	select V4L2_CCI_I2C
+>  	help
+>  	  This is a Video4Linux2 sensor driver for the GalaxyCore
+>  	  GC0308 camera.
+
+[Severity: High]
+Were these select V4L2_CCI_I2C lines removed by mistake from 53 existing
+drivers in drivers/media/i2c/Kconfig?
+
+V4L2_CCI_I2C is a promptless helper symbol, and devm_cci_regmap_init_i2c()
+is only declared and compiled when CONFIG_V4L2_CCI_I2C is enabled. Without
+these selects, any build that enables one of the 53 CCI-based drivers while
+CONFIG_VIDEO_CCS is disabled fails with an implicit declaration of
+devm_cci_regmap_init_i2c() and undefined references to the cci_*() helpers.
+
+[ ... ]
+
+> @@ -538,6 +506,15 @@ config VIDEO_OV08X40
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called ov08x40.
+> =20
+> +config VIDEO_OV12A10
+> +	tristate "OmniVision OV12A10 sensor support"
+> +	help
+> +	  This is a Video4Linux2 sensor-level driver for the OmniVision
+> +	  OV12A10 12-megapixel MIPI CSI-2 CMOS image sensor.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called ov12a10.
+> +
+>  config VIDEO_OV13858
+>  	tristate "OmniVision OV13858 sensor support"
+>  	help
+
+[ ... ]
+
+> diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+> index a750942e9c620..1ae704f57468c 100644
+> --- a/drivers/media/i2c/Makefile
+> +++ b/drivers/media/i2c/Makefile
+> @@ -99,6 +99,7 @@ obj-$(CONFIG_VIDEO_OV02E10) +=3D ov02e10.o
+>  obj-$(CONFIG_VIDEO_OV05C10) +=3D ov05c10.o
+>  obj-$(CONFIG_VIDEO_OV08D10) +=3D ov08d10.o
+>  obj-$(CONFIG_VIDEO_OV08X40) +=3D ov08x40.o
+> +obj-$(CONFIG_VIDEO_OV12A10) +=3D ov12a10.o
+>  obj-$(CONFIG_VIDEO_OV13858) +=3D ov13858.o
+>  obj-$(CONFIG_VIDEO_OV13B10) +=3D ov13b10.o
+>  obj-$(CONFIG_VIDEO_OV2640) +=3D ov2640.o
+
+[Severity: High]
+Does adding VIDEO_OV12A10 to Kconfig and Makefile here break the build when
+CONFIG_VIDEO_OV12A10 is enabled?
+
+drivers/media/i2c/ov12a10.c is not added until the later commit "media:
+i2c: add ov12a10 image sensor driver" in this series, so enabling
+CONFIG_VIDEO_OV12A10 at this commit fails with no rule to make target
+drivers/media/i2c/ov12a10.o.
+
+> @@ -137,6 +138,7 @@ obj-$(CONFIG_VIDEO_RJ54N1) +=3D rj54n1cb0c.o
+>  obj-$(CONFIG_VIDEO_S5C73M3) +=3D s5c73m3/
+>  obj-$(CONFIG_VIDEO_S5K3M5) +=3D s5k3m5.o
+>  obj-$(CONFIG_VIDEO_S5K5BAF) +=3D s5k5baf.o
+> +obj-$(CONFIG_VIDEO_S5K5E8) +=3D s5k5e8.o
+>  obj-$(CONFIG_VIDEO_S5K6A3) +=3D s5k6a3.o
+>  obj-$(CONFIG_VIDEO_S5KJN1) +=3D s5kjn1.o
+>  obj-$(CONFIG_VIDEO_S5KJN5) +=3D s5kjn5.o
+
+[Severity: High]
+Is a config VIDEO_S5K5E8 entry missing from drivers/media/i2c/Kconfig?
+
+Without a VIDEO_S5K5E8 symbol in Kconfig, CONFIG_VIDEO_S5K5E8 can never be
+enabled and drivers/media/i2c/s5k5e8.c is never compiled. An entry in
+MAINTAINERS is also missing for the new driver.
+
+> diff --git a/drivers/media/i2c/s5k5e8.c b/drivers/media/i2c/s5k5e8.c
+> new file mode 100644
+> index 0000000000000..d25b978d7eda6
+> --- /dev/null
+> +++ b/drivers/media/i2c/s5k5e8.c
+
+[ ... ]
+
+> +static const struct s5k5e8_mode default_mode =3D {
+> +		.width =3D 2592, .height =3D 1944, .hts_def =3D 2856,
+> +			.num_regs =3D ARRAY_SIZE(s5k5e8_2592x1944_regs),
+> +		.regs =3D s5k5e8_2592x1944_regs,
+> +	};
+
+[ ... ]
+
+> +static int s5k5e8_read_reg(struct s5k5e8 *s5k5e8, u16 reg, u32 len, u32 =
+*val)
+> +{
+> +	struct i2c_client *client =3D v4l2_get_subdevdata(&s5k5e8->sd);
+> +	struct i2c_msg msgs[2];
+> +	u8 addr_buf[2], data_buf[4] =3D { 0 };
+> +	int ret;
+> +
+> +	put_unaligned_be16(reg, addr_buf);
+> +	msgs[0].addr =3D client->addr;
+> +	msgs[0].flags =3D 0;
+> +	msgs[0].len =3D 2;
+> +	msgs[0].buf =3D addr_buf;
+> +	msgs[1].addr =3D client->addr;
+> +	msgs[1].flags =3D I2C_M_RD;
+> +	msgs[1].len =3D len;
+> +	msgs[1].buf =3D &data_buf[4 - len];
+> +	ret =3D i2c_transfer(client->adapter, msgs, 2);
+> +	if (ret !=3D 2)
+> +		return ret < 0 ? ret : -EIO;
+> +	*val =3D get_unaligned_be32(data_buf);
+> +	return 0;
+> +}
+> +
+> +static int s5k5e8_write_reg(struct s5k5e8 *s5k5e8, u16 reg, u32 len, u32=
+ val)
+> +{
+> +	struct i2c_client *client =3D v4l2_get_subdevdata(&s5k5e8->sd);
+> +	u8 buf[6];
+> +	int ret;
+> +
+> +	put_unaligned_be16(reg, buf);
+> +	put_unaligned_be32(val << (8 * (4 - len)), buf + 2);
+> +	ret =3D i2c_master_send(client, buf, len + 2);
+> +	return ret =3D=3D len + 2 ? 0 : (ret < 0 ? ret : -EIO);
+> +}
+> +
+> +static int s5k5e8_write_regs(struct s5k5e8 *s5k5e8, const struct s5k5e8_=
+reg *regs, u32 len)
+> +{
+> +	u32 i;
+> +	int ret;
+> +
+> +	for (i =3D 0; i < len; i++) {
+> +		ret =3D s5k5e8_write_reg(s5k5e8, regs[i].address, 1, regs[i].val);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +	return 0;
+> +}
+
+[Severity: Low]
+Could this driver use the V4L2 CCI regmap helpers (devm_cci_regmap_init_i2c=
+(),
+cci_read(), cci_write(), and cci_multi_reg_write()) instead of open-coding
+16-bit big-endian I2C register access in s5k5e8_read_reg(),
+s5k5e8_write_reg(), and s5k5e8_write_regs()? Also, s5k5e8_probe() can use
+v4l2_link_freq_to_bitmap() to validate the link frequency.
+
+[ ... ]
+
+> +	switch (ctrl->id) {
+> +	case V4L2_CID_ANALOGUE_GAIN:
+> +		ret =3D s5k5e8_write_reg(s5k5e8, S5K5E8_REG_ANALOG_GAIN, 2, ctrl->val);
+> +	break;
+> +	case V4L2_CID_EXPOSURE:
+> +		ret =3D s5k5e8_write_reg(s5k5e8, S5K5E8_REG_EXPOSURE, 2, ctrl->val);
+> +	break;
+> +	case V4L2_CID_VBLANK:
+> +		ret =3D s5k5e8_write_reg(s5k5e8, S5K5E8_REG_VTS, 2,
+> +				       s5k5e8->cur_mode->height + ctrl->val);
+> +	break;
+> +	case V4L2_CID_TEST_PATTERN:
+> +		ret =3D s5k5e8_write_reg(s5k5e8, S5K5E8_REG_TEST_PATTERN, 2, ctrl->val=
+);
+> +	break;
+> +	}
+
+[Severity: Low]
+This isn't a bug, but the break statements in s5k5e8_set_ctrl() are aligned
+with the case labels, and the fields and closing brace in default_mode above
+have inconsistent indentation.
+
+[ ... ]
+
+> +static int s5k5e8_set_stream(struct v4l2_subdev *sd, int enable)
+> +{
+> +	struct s5k5e8 *s5k5e8 =3D to_s5k5e8(sd);
+> +	int ret =3D 0;
+> +
+> +	mutex_lock(&s5k5e8->mutex);
+> +	if (s5k5e8->streaming =3D=3D enable) {
+> +		mutex_unlock(&s5k5e8->mutex);
+> +		return 0;
+> +	}
+
+[ ... ]
+
+> +static const struct v4l2_subdev_video_ops s5k5e8_video_ops =3D { .s_stre=
+am =3D s5k5e8_set_stream };
+
+[Severity: Low]
+Should this implement .enable_streams and .disable_streams in s5k5e8_pad_ops
+with .s_stream =3D v4l2_subdev_s_stream_helper instead of wiring a custom
+.s_stream callback and tracking s5k5e8->streaming manually? Aliasing
+s5k5e8->sd.state_lock to s5k5e8->ctrl_handler.lock would also avoid the need
+for a separate s5k5e8->mutex.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261125123146.3790=
+57-1-hikmahgumelar@gmail.com?part=3D3
