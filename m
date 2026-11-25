@@ -1,104 +1,108 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.191.115
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795636211;
-	b=nj7CKZZkfGF5JKsXFaCCJ4xIcKpkq0Aa2req+nCKqD4cXsh9gBd5IYIcnNs23qcPtWNX
-	 CWHwY7eaCmVOwWxHGGNuM22qj4lopl3gIB017ymkeCuLwxb4kdJ/BGuvO1WmsBM/1B95s
-	 46qXwGgOLeH5B51yxRIHIUAeK5M6rDwtjp8AOFio7TqVj+dHSrT8C5+Tjtg53tNIn/oCt
-	 TAxfG2WrKkzfccxyTuQhP/mRk0pE5xirtfQSHuQ/AZNrYfODigskq+sWDjYhs8WdgqZeP
-	 75T6LaXe3TnLCT1QUL5SP+s2c47Yssdum0oZoMTziV/YL7uhACmhDHw9ttlEsPy7x2A==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795636211;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-AtpMessageProperties:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=4LrMQT6gJOI/7UHNlXEjqj0LJlJC1ZrLM3aTPaTpPHQ=;
-	b=LfCnCZ2qkN0Hns28dHutm7iS42r9/gkHQxhik0bvGcHu3XYpcP1j1Lw2JgxJFVBgDq36
-	 En09bIinIn87oseEQjvVf+asFgElhDOvCENGRLQZI+2m6iYEy2yBA2ZpkpWicW+PECCrA
-	 Yh0NzsyEkR1+h//zASv3OoriKXCcqY576RjEyPLQEdA2ZffyUYNTUP/huzMqNUrVzG8Kh
-	 BdPZX2xuY3vyRNoc7R2fHmPH/9dwPQaZ5HJohl4OsO1v0kNrL6AiurigzGZVqr2RlpsnY
-	 B1l+25w2puyqAE3ThG16UL35oTJM6mPfmbTxEnXSOU2sXFOJLbmOJ8heRfoXEuGP0rw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=reliablecontrols.com;
-	spf=pass smtp.mailfrom=reliablecontrols.com;
-	dkim=pass header.d=reliablecontrols.com header.i=@reliablecontrols.com header.a=rsa-sha256 header.s=selector2 header.b=Uqxte2Od;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.191.115
-Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020115.outbound.protection.outlook.com [52.101.191.115])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.178
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795638107;
+	b=vEjKUuwEZYOqGdgboA50uZUT1vo68hFzxZga69lNu+zzD4k/zu1K1KeVYSHg8WPPXZIq
+	 DLSJ9NwhBfgSe5/ntoj/NhzilNRIBO3QxqG6s4HffS3pg35KUtcLNpgSDvn9NqirvqJC6
+	 yslUeQiyXsQCiC04QgKMrwUT926MssHuJ4cZz1M3F4iUVz5BeeCW+x4+4you3yUlHzDPD
+	 D8LopoQ9SEfkGziwsMvRhLTHFk74vEEf32VFXCGXaTYAWZKbfdE1ABvKlI5jy30sMAS2x
+	 wHg9e4wqerlGBQ2XN+npiy9eBTwrGt10XRA2MAg03XmZdu1IrMRYa/IeII/C4A+INlg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795638107;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=3CfQrYxGmVhqVfBjXz2JxOYBYnlyriKE0w7C0oW3eCw=;
+	b=wu1Lqqj4YMGY85ITOQRIuL3qQKedLPMBt+jOEMjsevI8aRfRfYETk95tK3fuw+wPWJh8
+	 fqIFwRm2fF/BiF7uRKW371Acwg98UfDjXweu5CObSsFB+cVFQPBPcoMvcfbebUiRZfibE
+	 MUxC6v7K4Lyi3DUcFC0ym6RiqvZgnG5oa27fSpLo7NppkesjvW9Jc8e7qR9uaDSDSeXLL
+	 pnYTss6iRhM0QfTOk+OU3ombPVjrBrw1KGTe2CiV9iRcsyrpmT9fhRkbjiBhXpvF9mJS2
+	 iLUSVRY8wV5WEqUW6YH8IFm6rTEQrIqRduoaKc9FyXemH1jGSYeJV/3JZdOhJfXl31g==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=riscstar.com;
+	spf=pass smtp.mailfrom=riscstar.com;
+	dkim=pass header.d=riscstar.com header.i=@riscstar.com header.a=rsa-sha256 header.s=google header.b=yvL1qbup;
+	arc=none smtp.remote-ip=209.85.167.178
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D444606A31E;
-	Wed, 25 Nov 2026 19:50:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8D444606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=reliablecontrols.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=reliablecontrols.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C74606A326
+	for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 20:21:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 17C74606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=reliablecontrols.com header.i=@reliablecontrols.com header.a=rsa-sha256 header.s=selector2 header.b=Uqxte2Od
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WcagPPnUt7QJl3TGCaQ/mUud4nmx6+/gduz4j/B+o4qRZb6iGhvyav6SOl1z/kNKkprvDnhUgZ2kdAYmvy8noHFgxrKTsPLht4y/C/bvhhq4VB6ZDmllSUSEcin7Tr+1Ng+HrzcJLXJjGknvjh+Qh+o+A+25Gec5NFL37UDboWE5beXXq0tJKsWZeFxO3DRcQmLZKJEr7MKeY2TAjCuRA28zqX5Wud2id2bm/P0+b24Q4aPzcllJm7gldCj3mlhgFuvi1lV0vRIgCQzTdaLC4KVkndaZHnn27rmPIzsJHFuGqMOucGXLdnmU0j/L0jaIlgL3Bt7BRLq6V2dXDXrOjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4LrMQT6gJOI/7UHNlXEjqj0LJlJC1ZrLM3aTPaTpPHQ=;
- b=G6jVpiVCsUSHo4ci0Ca7Nv6zPnqW+ARWEXBUCkdPq/5RqQ50Dk42r0DoNc5dENu6Q/IC3/tFxH2FNaIKI9O9F/xDkbvWKFh3EuFaotyyMk+Ywn6NNS5GnO7Dn0SZFK6WwOOyyXJs/4sV3kT0rOGb+NdxVc42TOPC4RWDszgIabP1axRdSHDX2/dLX4g725CWokgUiyo5JA2so0uZX5x0ubtZUwArGpQ4O0jR4V3lsinBCv/FVVdlCAoaWYuNAoRPV3d6A9k1gYgw6qXD9ZwjYyP3Wu3TMRMBoF/siUnZvX42ZiihduVBHc8YCnOHNoUgm6ofBZn6D7DI91wNeV41vA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=reliablecontrols.com; dmarc=pass action=none
- header.from=reliablecontrols.com; dkim=pass header.d=reliablecontrols.com;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=reliablecontrols.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4LrMQT6gJOI/7UHNlXEjqj0LJlJC1ZrLM3aTPaTpPHQ=;
- b=Uqxte2OdR3AOMBSku71yt0z9HO61iD30XTIm0C9ZkpQ753AqoOkn04MLq6jK8s5RFpkVGrgahTi4nGBJm9VKzuGolomykHI1ikHWicPttwqJ0cjLQfyG/jN8gZ1QWA4h2lfVTtwHGHq1CTaq4h2Oe86kb9/aBz0hxVkxZdjR5CIUCvsXzJXKMGkL+kXYoIe6qPOxbZBlWnyLI5MCkS7qQpe2U07yL8pcOJsnhJLwl1ihV9iHzQ1nLpM+aBd6SJ30K1NGhwtRP6dmYfzaHpKtfUg28bvOpvXAx7/01f8JYEuPCqcpqA96VRElQk1H3UojJI1tTXdykt0zQ8hIlWiZaA==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=reliablecontrols.com;
-Received: from YT8PR01MB560833.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b00:a::10)
- by YT2PR01MB5837.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:55::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.4; Wed, 25 Nov
- 2026 19:50:06 +0000
-Received: from YT8PR01MB560833.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::bda5:1597:e27f:11a6]) by YT8PR01MB560833.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::bda5:1597:e27f:11a6%5]) with mapi id 15.21.0662.004; Wed, 25 Nov 2026
- 19:50:06 +0000
-Message-ID: <5e2d3dd2-300a-463e-ad38-e32e22c83986@reliablecontrols.com>
-Date: Wed, 25 Nov 2026 12:50:04 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] clk: renesas: r9a06g032: Add reset controller
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20261125-rzn1-miic-resets-v3-0-f25a4b656d71@reliablecontrols.com>
- <20261125-rzn1-miic-resets-v3-2-f25a4b656d71@reliablecontrols.com>
- <awcxPKer4G5oXQKo@shikoro>
-Content-Language: en-US
-From: Kyle Hendry <khendry@reliablecontrols.com>
-In-Reply-To: <awcxPKer4G5oXQKo@shikoro>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0192.namprd04.prod.outlook.com
- (2603:10b6:303:86::17) To YT8PR01MB560833.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b00:a::10)
+	dkim=pass (2048-bit key, unprotected) header.d=riscstar.com header.i=@riscstar.com header.a=rsa-sha256 header.s=google header.b=yvL1qbup
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-4b190cdc9feso3782844b6e.0
+        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2026 12:21:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar.com; s=google; t=1795638106; x=1796242906; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=3CfQrYxGmVhqVfBjXz2JxOYBYnlyriKE0w7C0oW3eCw=;
+        b=yvL1qbup9iqNKVVTLxLarpET/deJHiZWhfe/gHkYx5+N0idKilfWyv3K/XqdT+n2lZ
+         lgf5muna3z/KdRp5A3+UrrU2U4QC0wrFU1txXmSQrcRU6MUd/8AxqFTA/VZNhycOu7aJ
+         PTGdx1VdDxANBe8cmsOUEGCOjLvcD5V9nbJ3w0nNSE795XK7JHb7kz7J80xdbDadDxXM
+         4D0RuiVWYPziTvo3JTv5rFl14ciQGGXpHJhr+Kr/smdO6DhvySOY/b1fCqQ4kI5LYLVa
+         Hh/3m1kD3LcNoZIsQEtUSgj6KLUUshK68BWFUBTTsWdG8HRZacDo5K4XJoACvLIbxRiJ
+         9muA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795638106; x=1796242906;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=3CfQrYxGmVhqVfBjXz2JxOYBYnlyriKE0w7C0oW3eCw=;
+        b=kdy0CWhWCaTuSca6qPIUW2HaktujKNeJ72IZv36ocXdVIgWXyz6Buv80CtR1VgI7fR
+         UX78FDVU0auU1MRMEvBe/wzqBJnAm2bpa3vd4DALZ22pJDrBGaUHqmAeoKLAkbkiYEcq
+         qiCWiqlhE/d9abXOX8ALNIflyWASsjqgIBbEmt52mH4rdIPH3HiGGiuhPA8s72PsgP/x
+         OT5ul2UaTOsgCCu88IEQGdp+Tgr2qiDENOdFgc8At5vUrQOj1yeeNfHQeuD9WTUhyNd5
+         MphtySM1zwvu+U83b2XLHT6c5H9I4EM1VR0bSGVXsrsV25AAks0fjRTpMiUKGtK1ePza
+         elTg==
+X-Forwarded-Encrypted: i=1; AL+hErGn9HmZtvJuukjXOzsIiKjwfLAPvLKars99rtdSifI1b1xnA4B5AyLyzfwiV8QobAqXzvTJgHPly2k=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8sWhOzFZBcsTwubg/lSlYszLK7mol6EyEkfZlOLFKtXORd4yvH
+	KBkSKJxumh0Wp941vRXXYraFNi58PhLAcNrk3dfncBvLbZcUDAinmFRQKvuWQOd8Ug0=
+X-Gm-Gg: AZFdTZcKiqS5N2P+Erai+xjvGrD8AmECnNmr8/OKA3fof6BrnsviAiuxlPNaR6DfIw2
+	RqsRos2WRRnp8S2oH+Y8+dLnSNVkO4haFOV0YfTXpHhesoN+2YvJx2jTOgQdAKo/tagJYxhXzPr
+	kIzwc/3KsH32X+qRcldNoeosvPGl7qYqZJgXs0ol8bAgGwOlVeSMSZEHTCIWgiGXfiJRPfYc2GK
+	yLUjtWl4q1AVS9yyQ7jD2Bmt+/Zzl3rbxyW/fQhHafhRj247LLDl4863tbZoIFpP6QtFrkIT1xG
+	3QhNFYjeStCLzqi12SOZ6/cpM0NwtHgJA4xMwfe/N7sk8BjdxM9Y/+eeERZamUtBtgoXOXDrOdc
+	8aTw5U++H7JBi/3r8Zbs9+TqyproozMBZfxkpjr4SWaJ0DeFNHrsRJZuG/hRoLslE24FkiWH9Cv
+	73ljRJSOM00ABja7NqaYAoPPf7E6l3EMqBPflJgzaBo3gsyCaU7IR0WHxVS+bHXSdFgbJZL032r
+	xTiU2ShYNM+QsEqc0QtJCulYPueKE6RNsXUR56vlaQFfjkWOtIGSA/951/pyylyOMHgeVXtJtub
+	6waM50dTxebM8UbnZZfqKG8rvuziKgJ887S4
+X-Received: by 2002:a05:6808:1310:b0:573:d802:fb0 with SMTP id 5614622812f47-57a09504ab8mr19901858b6e.13.1795638105859;
+        Wed, 25 Nov 2026 12:21:45 -0800 (PST)
+Received: from zippy.localdomain ([76.156.233.211])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4bc5edc52aasm18900550fac.4.2026.11.25.12.21.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Nov 2026 12:21:45 -0800 (PST)
+From: Alex Elder <elder@riscstar.com>
+To: sboyd@kernel.org,
+	bmasney+clk@redhat.com,
+	jbrunet+clk@baylibre.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de,
+	andersson@kernel.org,
+	konradybcio@kernel.org,
+	abelvesa@kernel.org
+Cc: daniel@riscstar.com,
+	mohd.anwar@oss.qualcomm.com,
+	lorenzo.bianconi@oss.qualcomm.com,
+	fabrice.gasnier@foss.st.com,
+	alexandre.torgue@foss.st.com,
+	marex@nabladev.com,
+	changhuang.liang@starfivetech.com,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] clk: tc9564: introduce a clock and reset driver
+Date: Wed, 25 Nov 2026 14:21:38 -0600
+Message-ID: <20261125202141.1288493-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -108,91 +112,92 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT8PR01MB560833:EE_|YT2PR01MB5837:EE_
-X-MS-Office365-Filtering-Correlation-Id: 53de6922-f967-4c7b-edb9-08df4b2d4dfb
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|23010399003|376014|366016|18002099003|22082099003|55112099003|4143699003|56012099006|11063799006|261028144727099003|261026121527099003|261021123027099003|261026140227099003|261022105027099003|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	eGxWo448/hlE0Fz+m7wc7cF0L7YjbBa0MoO9nHuJ2+DKh1zD7cigkW56cIHekbQGHpkn5MQ02COWucpa/GP81XsveMTqMIBa3klXCr0O42p08XOEBn6NpQymjFfIqu4t4WeMIpbdxQ9ecPH5UxADt181FFosDNMNinVJMTG/FwwNwSXVp7+UegCIPygQVtWKHCOragvkR+n17DK4pKrbq6cbE2BzPkt3DN7SQaEy59NZ0TbM+Y+H0rRDwHDyoTjDlviZ1/mPRWWyXydGEcF3MGC0Gfn0eOmlU/j31MMUJfMjyIFhhqtmgJboXis7Fbikya5ilBqAurK6lX+99rawcCiChqnMuvRMrqjtT+0JHKU79q0tSXwiySQGAeeJJvzuDhGCf8T9PHgRVot4v0wkbp+BtHHLO0mpQALXJ5YDtj2FEBZ5pIWZLh6Hb7hTVCJUHKdGEnlcZg+XN1KXcT4BIn6xBkhTOAkN4OZg66H6pGS6+Xh18z9H+xFmKmTZ6pE+qaHM20PKLcYjEcEAL9i5L2huxUDLTtq8dJzf9r6X+x00HsYfyJ9fOaIBZz29X9knSPftUBdrwDG9Nr7K8IY+OYLyk4jZg7giuQBHcfiKLHwaYDBk6ALF+noBhUc8pNNmsLRFkv1ysB0TtyWd+evjRqOLS3IRm+7qIzRDyyDmhUg=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT8PR01MB560833.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(23010399003)(376014)(366016)(18002099003)(22082099003)(55112099003)(4143699003)(56012099006)(11063799006)(261028144727099003)(261026121527099003)(261021123027099003)(261026140227099003)(261022105027099003)(10067099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QWc3ajFhQllQUmlVcndwZWNMM3JuYndycklpOVliUzhacmxFdUtRdis0RjhS?=
- =?utf-8?B?aUtZL0ZwWWdKM2gwaW9DWm5mS3p3NU9hYk9Jek9ZTWNaeGZaMXVZaHZzeTVu?=
- =?utf-8?B?R2N6Ui84RmtkV1hrUkkvSnFxUTQ0eTJGL0N5NEljWFFhOTlISERWandxWTlJ?=
- =?utf-8?B?Q0psNkdkN1NwQWRKM0ttWGJWWU5LY1h2eWl0U0VOZ2ljTks3Q3Z4ckpkY3p1?=
- =?utf-8?B?bTFqbGgvTWFabGRVWDdDdE1SMmZwZmZGYkpXR0JiYk5KV2dSYzh1T253bEFT?=
- =?utf-8?B?cVp6eHlCbkplMEhHaytsb3I2VXBJTzQ0bjZ6ZGdVOTg1akdUMzFYWEJobmlK?=
- =?utf-8?B?QTFkeUhhRkswTUVDMmhuZUlUQUtSc3ptcE8rUVdVYjBmOTY1b0FiL2hXemto?=
- =?utf-8?B?RC9FQTZYenc2MVRYa0QyTE9tYlN2NTBGWXpISUlTYXBPWmdFV29adktTNFh0?=
- =?utf-8?B?LzlFODJEYzc4eHQ2R09Hd2NBeUV0VC9ybGhFempoazdzL3BGVExRdU11cXV1?=
- =?utf-8?B?bkNrekx5VWFzZG9QbENRMzlGek9QMUxZN2tWZHVUcmRmWUQvWThjME9GZHFI?=
- =?utf-8?B?ZjFyRnVoTFBZTmZCNysxRy9ZKzZHdUFqYkF1aS9JdzBYN05pblU2bGlwZ0h1?=
- =?utf-8?B?VjJ0eDBRb1dXYjFnZ2lkSTQvUGQ0STR4b0l6czROenVTem5kK3BoY0dVVENa?=
- =?utf-8?B?VFMrdHJNT0Nrci9zNXVPSlVsRUg0elJpajRadHJYdHhWNlF3ejhPM0hpNVpm?=
- =?utf-8?B?QmNSYytiajZnMExyZG04b0tUYWhKRzVGZC9WVjF0MWE0TEpaVEh6Y0tYeXAx?=
- =?utf-8?B?ZFlGNnQvUjJhcVVXV3gwMmZYSE5vQ2dBQmdFY2oyOFpncWI0YlJGNzRtSVZi?=
- =?utf-8?B?VEIxbjF0Z1Q0YndManFBSnlkVEhUeVJ6dGoxTm1MUWVjQ3hxQzBsdW9NeG1i?=
- =?utf-8?B?dUM4b3lIOFkrWkFVdStKeDljQWVqVVhzM3dyRUpTREpFTHpGVGZ6OHA4ek42?=
- =?utf-8?B?VExRZTJ0bHdwK252QzE0djQvdUR4dlpqTitnakxxMWpLMU11SCs2Y21JTHFn?=
- =?utf-8?B?d3o1TlNUUlYvMmJzY2JqeTc1TzVhSW5GN2laNDVaN2VYOEJia3p0QzJkY1Fs?=
- =?utf-8?B?M3JpUkNXbEh2dWlwdmhwSlZJK05wck9oaG5iRTZHNzhyRVJ0NGxvZGJOTks2?=
- =?utf-8?B?MjRGbURpTXI2bWp2K0lqd0R1QWJNMTlPM1BEdHpxbDgvd2lvZ2tZRVZtK21W?=
- =?utf-8?B?a2VFVmNja21PZHczQk0vb3p6MVp0L1M1TGpvU2dGeWsvN081N3g4d2RDQTl5?=
- =?utf-8?B?aGl1MVBYUlQ3N0NYNVJobmlOTmhpMVA4VlR5K2s0Y3RERWJKdWRNeHB6OEZ6?=
- =?utf-8?B?bXIwckQyNUNqZ0Q4Yk5VSTNjUzU0S1hRQTlhRE00OVZxMUZrUDJ0c3lpb3Vz?=
- =?utf-8?B?ZDFsdVQyemo1dEZuR3ZISWcyTWh0bndXZ216YlVJUEtvTUcyS1Z5bW1IMHdW?=
- =?utf-8?B?MTB0UDk1ZVZrZVRadG9SK0VVZG1FR082VU40U0dHelMwaTg5eDJJa1pqNVBy?=
- =?utf-8?B?QVZZdXhHUHhFSm15VStBcTRvMkpFR1V4ak9iTXZYc1V2SXorUEZzbVBYbEhB?=
- =?utf-8?B?T0FyM3l0RHFKd0F3bm5LS01YY2FrbE5EVmduZFE0eU5udVNodEJLSzFBVGlU?=
- =?utf-8?B?amZpbEM4WmI0YkF5WHBmS05BVHhCRjZ2bms5LytVZHZMWXB3ajBFN1ErQmpk?=
- =?utf-8?B?NVArYTB0ME5lSWpBRzZOdFk0dnArWURUd0pqdktaUEN6V3ZNVVdUVVRIdGVW?=
- =?utf-8?B?SlYwcjJ1ekhxeTVZaGRaSWdwdEYwbGZndGFjTVQxdmxiMWU4eWdFYi9JQzdF?=
- =?utf-8?B?RW1TRlQyN3VXOVE0QWlSREJDS25VMGFpcWhRSVRJalFsdUdRK0VLcCtEZUp4?=
- =?utf-8?B?bkRyR082Q25ub1VlSmVCbzdWSGM1b3ZCelllR0JFVGpzeTlJMzYzbmpjV20v?=
- =?utf-8?B?MGluaERpT3N4QXhFSXVSY3RBY21YR3JuaEZaVFplc0xEVkJLVkRrQU1pcWdu?=
- =?utf-8?B?YTFHQnlqWC9lRkFReEh0anFGbXFFQU9sUmZBN1lhT0tZaEl1TGJPSmdvVS9x?=
- =?utf-8?B?T1d3UzJkSWEzSW9jdm5ZVm96aWpEdW1xK1ZtQ1IvdlAwL0RydFhKOWJsT2Fj?=
- =?utf-8?B?UmJVZUhaVGpzbEVvVk9oMUZzYmpoSnl5SUtRWjJ6SG8wUnlVQUtZSmxnS0tH?=
- =?utf-8?B?Vko5Z3JUWEQwVEUvbnJmWnBWL1psb0o1SVprS2x2Z3V5anhhRVpRYVU0T3Y3?=
- =?utf-8?B?anBCaVVhd1owcEdnVWZ2ejNDMzNyTm5xRlk0NjhJR0tmUUZJbWxGeWkrdUdF?=
- =?utf-8?Q?HnrfDVvFxfeCZz1U=3D?=
-X-OriginatorOrg: reliablecontrols.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53de6922-f967-4c7b-edb9-08df4b2d4dfb
-X-MS-Exchange-CrossTenant-AuthSource: YT8PR01MB560833.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2026 19:50:06.5461
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 70dc28cd-aa9f-493c-abf3-5c1ff69c0ddc
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3nT1F/mOZKcEbCJlLRg8RiOV/ccfPEzFOBAXbgDC5aQBvKFBqMRcSZVecrLTfDnbcjqXaQfH2YdUZdzqrcIRlXX1b5qQ4y+GWBkcJe2Uz50=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB5837
+Content-Transfer-Encoding: 8bit
 
-On 25-Nov-26 12:04, Wolfram Sang wrote:
->> +static int r9a06g032_reset_set(struct reset_controller_dev *rcdev,
->> +				bool set, unsigned long id)
->> +{
->> +	struct r9a06g032_priv *priv = priv_from_rcdev(rcdev);
->> +	unsigned long flags;
->> +
->> +	spin_lock_irqsave(&priv->lock, flags);
->> +	clk_rdesc_set(priv, r9a06g032_resets[id], set);
->> +	spin_unlock_irqrestore(&priv->lock, flags);
-> 
-> I checked the docs again. (Do you have them? You can find the relevant
-> part here[1]). Figure 7.3 and 7.4 mention a reset propagation time of
-> 5us. So, it is not describing a pulse of 5us. But every access to the
-> RSTN register needs this delay for propagation. So, despite the U-Boot
-> code not having the delay, I think we should add a 'udelay(5)' here
-> after the unlock. What do you think?
+This series introduces a devicetree binding and single driver to support
+the clock and reset components present within the Toshiba TC9564 chip.
 
-Agreed. I'll apply the delay to these resets.
+The Toshiba TC9564 is an SoC that attaches to a host system via PCIe.
+It includes a PCIe switch with three downstream ports.  To one of
+these ports an embedded PCIe endpoint is attached, and that implements
+two PCI functions.  BAR 4 for both PCI functions provides access to
+registers controlling blocks within the SoC, including the clock and
+reset controllers supported by this series.
 
-Regards,
-Kyle
+The first version of this series included a system controller, which
+has since been removed.  This version addresses all review feedback
+received on version 2.
+
+					-Alex
+
+Version 2 is available here:
+  https://lore.kernel.org/all/20261120183212.1264522-1-elder@riscstar.com/
+
+Between version 2 and version 3:
+  - Added Lorenzo's Reviewed-by on the devicetree binding patch
+  - The devicetree binding now uses @kernel.org e-mail addresses
+    for Daniel and me
+  - Cleaned up the patch header text in patch 2
+  - The Kconfig option now depends on RESET_CONTROLLER
+  - The Kconfig option can now be enabled if COMPILE_TEST is enabled
+  - The generic gate clock controller code is now used rather than
+    implementing a custom one
+  - Only the gate clock IDs are now published in "toshiba,tc9564.h";
+    the PLL and internal fixed clocks are implemented and accessed
+    only within "clk-tc9564.c"
+  - The PLL is initialialized, followed by all fixed rate clocks,
+    followed by the gate clocks, to ensure each clock's parent is
+    initialized before the clock is
+  - Updating the reset registers (read/modify/write) is now protected
+    by a spinlock
+  - There are no more "unnecessary newlines" in the initialization
+    arrays for clocks and resets
+  - An update to the DTS file is now included as the last patch in
+    this series
+
+The version prior to v2 of this code was included in this series:
+  https://lore.kernel.org/all/20261104004332.2141282-1-elder@riscstar.com/
+
+Between that series (v1) and this one (v2):
+  - There is no more syscon, so its devicetree binding and driver have
+    been dropped
+  - The clock and reset components now have a single devicetree binding
+  - We no longer use a syscon-generated regmap for accessing the common
+    range of memory used by multiple drivers; specific sub-ranges are
+    instead mapped
+  - The clock and reset drivers have been combined into a single driver
+    located under drivers/clk
+  - The config option for the driver includes COMPILE_TEST, as requested
+    (last month) by Jerome Brunet
+  - The help text for the config option is simplified, first suggested
+    by Philipp Zabel
+  - The driver now names clocks using dev_name() rather than trying to
+    hand-code a unique name into a fixed-size name array (also suggested
+    by Jerome)
+  - Certain functions now always return 0, which simplifies callers
+    so they can simply return what the called function returns
+  - As suggested by sashiko, a counted-by field in a flex array is now
+    assigned explicitly
+
+Alex Elder (3):
+  dt-bindings: toshiba: introduce toshiba,tc9564-clock.yaml
+  clk: toshiba: introduce a TC9564 clock/reset driver
+  arm64: dts: qcom: qcs6490-rb3gen2: add TC9564 clock node
+
+ .../bindings/clock/toshiba,tc9564-clock.yaml  |  73 +++
+ MAINTAINERS                                   |   9 +
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  |  15 +
+ drivers/clk/Kconfig                           |   9 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-tc9564.c                      | 456 ++++++++++++++++++
+ include/dt-bindings/clock/toshiba,tc9564.h    |  40 ++
+ 7 files changed, 603 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml
+ create mode 100644 drivers/clk/clk-tc9564.c
+ create mode 100644 include/dt-bindings/clock/toshiba,tc9564.h
+
+
+base-commit: 9437046953b2fb3bf55b36582450ea0267df82a7
+-- 
+2.53.0
+
