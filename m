@@ -1,55 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795629923;
-	b=rCH2JFw5jpRy5Hcu0NZXvPad53R9YM/AZCgkffnDEFd3xE8JrgWJspTV1Qe7FrUnlZQB
-	 Xd7XhbRd2/42lxU1aQR1dkXhOubrSSdgFsUbGTeE5XjCppODyofdQnoZ3OI7LvSwe6if7
-	 mvNjcHk2IhD/m3f9AESDYmfaBmnWNFYb8l+EDyTW/TU97SGtk/ZKUWUGuOY+0blFM4RG4
-	 jgFWPODe6nJk5JUb7zwO6JZAe1rlYjus2W3+pR5KCt0JXwGmrDCwgUCKZ6pgXdTBj7JJ7
-	 piYzkx/I7crU1eDRpnt/ps6gnbNls2fApTIuUyoAOGRzZkrnog2NUrwbLUzjV3JDXmA==
+	t=1795629929;
+	b=tOpX+bVg2/ClMuOgRbiCzoHZwN1wqTjveurSye8N/Q/ucMtyU5HuuiL+ydr7bq7OYWY2
+	 ThdDowG850NnOPreh1ovrzA0H4s24OefCO6gFdmo4ARN2YH14/0mI1411gJX0z0NiTbdD
+	 3Rb4ACeP40n7RU2+J885duZKD9hWDEsDBEidTHphMfzqObd45SKCkOFXvrcGITrD8lLQD
+	 pbAz5097TI9uVR54NVfvaOi7HJigsFVG4AS+IbQfqw8s5H8KRsdrKFICO84vIYYmbqsps
+	 oVFZwSeShqZYNPEbLjCiCEoOzCAUR4LCvz3XCWNbylLPmH6eXNzdBR5MBtHXi7eucZw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795629923;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795629929;
 	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
 	 References:Date:Message-Id:X-Mailer:X-Last-TLS-Session-Version;
-	bh=0anl0ccCCCZoc0bFfoM8ANcczII5sgMZtQxxCyWtzo8=;
-	b=sEL/pscean90U6hCcOojjCZHDF5WDZzJBu1CylwbSDrlj7nvu2YtqI+MFtVuj8GhW/Yb
-	 8ObywP0IVBMn5B5HTh5qXk2sDwFxxvO2BtcYUA9gyOgI+bonuauHMiLPIKEo5e1Y8zaRj
-	 I2yt1ypYG9qELjI46Uus4ub9z6mvZ3RkBg7n9pHHWDwoQcQ//TT+g+ObBcBxB6vCWvFOD
-	 Gkv4XOf/uyfmeVHtD3uR2XQcimTmJiJ9OcfCTAk5Lv3BllGCpNjXnGZwwcjKTY9kk/48c
-	 innLpWWPKJu4HlR4XJCFB7l1hi20mrXT5xlayDE4bRORUkfC7YrG/M4wRNsnK7jqwBg==
+	bh=z0fn3F766wuQK7x5mxxCqW7uOeoT4GbYQhAdJOMmB5I=;
+	b=db21znkTOz3e853D7ZzrDkR1A6dzo8F05Dbi0H8wzskefIBQPQyFF0pnCYPzKX0zpxCH
+	 LW5ekInHVVjBv+FX4XwYpz8ovqvsgyj/8McoYvX9tm5WC70V3vR6/bHSLicnXpK71Je5r
+	 uXm8BiGayH9oR1EQwuPRAmU/3EDd1POV2OizWqtjERom4+DYZtmCRciCxL2qx5Jw2QMLH
+	 vMcz8Icvu53cDT6Vijb8mCu5JN7lMNkyOI2enKAHcQExS5frlAFucqIwknjVoTBZmPWOO
+	 j6BNQtXblS/6YohX7W44PDyxRZ6q9IAPnga4vPGe04xFL9pU2Hko26c3jCyW5yrKwDg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=bootlin.com;
 	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b="mfUz/1l2";
-	arc=none smtp.remote-ip=185.246.84.56
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=zyFNXAhd;
+	arc=none smtp.remote-ip=185.246.85.4
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76305606A321;
-	Wed, 25 Nov 2026 18:05:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 76305606A321
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB70606A338;
+	Wed, 25 Nov 2026 18:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7EB70606A338
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=mfUz/1l2
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=zyFNXAhd
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 2018D1A17E2;
-	Wed, 25 Nov 2026 18:05:21 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 18A814E41781;
+	Wed, 25 Nov 2026 18:05:27 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D3B3E60480;
-	Wed, 25 Nov 2026 18:05:20 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 047B911E6B0E0;
-	Wed, 25 Nov 2026 19:05:10 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E2CFC60480;
+	Wed, 25 Nov 2026 18:05:26 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A456B11E6B0E1;
+	Wed, 25 Nov 2026 19:05:19 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1795629915; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1795629921; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=0anl0ccCCCZoc0bFfoM8ANcczII5sgMZtQxxCyWtzo8=;
-	b=mfUz/1l2y9B5Q6PYTyl08Q0MPGeJPFMZpJfKF9f2H85BLYXnVbJYV0sNQ22zUAufCKepkb
-	Io2t55gOPfDO9liSeZnvG1Zys75fC1wGTQP4yBD/ORz31SyTAedq/74Q/EhMxOEzdBmpGB
-	U6Lk1CEjUx7XJxAc9NPu+MsghaHtJVDTaRnL63mHusx5uf6jnKvNpkrXIouXBa5xzPbrz7
-	/dxrCjLyC4O5LF90xXlF7CquGb858SGCsEHjZ6Rp18lypoOzkZV2+mVVWqfrwYJ8FRZKbX
-	DouSvjBzu3hp3KbICuKu7eJUO/IvZY+zqXc4eE+nL0NgzdPeGME/WefmWEkC8g==
+	bh=z0fn3F766wuQK7x5mxxCqW7uOeoT4GbYQhAdJOMmB5I=;
+	b=zyFNXAhdALZuyx8Bv8QI3r5W/mRqMqrMtjWNM79N33AqkCAksk8tmkuOwLNkQtxWEPuk7e
+	QuoWGXatVVoMJ63AXUAHhQ3HPh+7BSeV/pTScOyMnjEooBJMC8KHBZlA+3TXYuIaOS6Ean
+	CDyrS76D9Z4KXxqP+Hc6XYNtytdFEKGvW80ufcjuk+a7FzLsKGxCUn5jXAdks1dkGAiczr
+	P0RXbZbAnKLoEWBYJ8KNZ0gQxi81p8YcpI4PDfombMiU07T4t2EW5gtmMbDK6IF2tzt5Bi
+	prJV1kiMj9n2cKIRgO8E/NnGFVU0ENCzexwWg4r5MSIc1EtBW7FtnBfV/qDSRw==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,42 +61,37 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v13 2/5] drm/imx: Add support for i.MX94 DCIF
+Subject: Re: [PATCH v13 4/5] arm64: dts: imx94: Add display pipeline nodes
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
 To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
  Pengutronix Kernel Team <kernel@pengutronix.de>, 
  Fabio Estevam <festevam@gmail.com>, 
  Luca Ceresoli <luca.ceresoli@bootlin.com>, linux-clk@vger.kernel.org, 
  imx@lists.linux.dev, devicetree@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  dri-devel@lists.freedesktop.org
-In-Reply-To: <20261120-dcif-upstreaming-v13-2-966ac248773f@oss.nxp.com>
+In-Reply-To: <20261120-dcif-upstreaming-v13-4-966ac248773f@oss.nxp.com>
 References: <20261120-dcif-upstreaming-v13-0-966ac248773f@oss.nxp.com>
- <20261120-dcif-upstreaming-v13-2-966ac248773f@oss.nxp.com>
+ <20261120-dcif-upstreaming-v13-4-966ac248773f@oss.nxp.com>
 Date: Wed, 25 Nov 2026 19:05:04 +0100
-Message-Id: <179562990451.846133.506244474972901657.b4-review@b4>
+Message-Id: <179562990452.846133.17994433821419936260.b4-review@b4>
 X-Mailer: b4 0.16.0
 X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, 20 Nov 2026 12:50:37 +0000, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com> wrote:
-> The i.MX94 Display Control Interface features:
->  * Up to maximum 3 layers of alpha blending:
->     - 1 background layer(Layer 0);
->     - 1 foreground layer(Layer 1);
->     - A programmable constant color behind the background layer;
->  * Each layer supports:
->     - programmable plane size;
->     - programmable background color;
->     - embedded alpha and global alpha;
->  * Data output with CRC checksum for 4 programmable regions;
+On Fri, 20 Nov 2026 12:50:39 +0000, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com> wrote:
+> Add the nodes necessary for the display pipeline on i.MX94:
+>  * LVDS/DISPLAY CSR;
+>  * clock-ldb-pll-div7 needed by DCIF and LDB;
+>  * Display controller interface (DCIF);
+>  * LVDS display bridge (LDB);
+> 
 > 
 > [...]
 
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Acked-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 -- 
 Luca Ceresoli, Bootlin
