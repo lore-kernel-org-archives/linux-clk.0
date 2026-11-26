@@ -1,101 +1,122 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795687230;
-	b=eQKSYXfmU8V8v8jtjrBalUpCVwp/0frHBK2LUrQb77DAr+5zIRMV3XmKmJ3muLzyQde4
-	 dkfyyUWZgHp7r2WqdnLDkPh/24Ydem4Gk/5uAkPnAwTq5qQv9u5M08SSQTMS30G1ttQbw
-	 9iHRkWVsr+sw96FiP6Y3/t+KafcVBfyMUdRahrFlk4bihUonL0KjSaLhnhN5qjQeZ3G+z
-	 LDq4SEhHcwm0JO59KexImCkLnLFImB3pGgTMybu2ZqgpW4r5BRh+ziBnk1LDsC/tGQQ7c
-	 aoRX4Lkzb00X4jcM62r7WhNY1BMnYeo0MuOiKJtQRSyM5mQPMuaVen2fY5U0Lg++M0w==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795687230;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=q2mecaHdf9fQt6uFtB3JOo6SnHGQnL+J6Uhto1mX8V4=;
-	b=Y1ShRJanqDa4ynW9fZTrQWelee/Qp/cXaTcoaKQSZnYtMKaEiW2KQHkCVey8H52CLCdP
-	 a5tubCsOdXCaXup7M2eJYAvZniDf/x2lUFS9RrRePCHK6ClpAcpLCh4kEv2CYbhZ3C+Ze
-	 uPJBCEo2/Thlkjyyi29/Jkt8BAxsuJF8nF+Relt7CTQQAmtId0IL7hrNjhWsI66RGiGtD
-	 UGhF2OJW6hZ1UNiYLS9CO/weRRgNhl1MAMRyr3sEoOHS1rt3v9iKOUQZ5dsYl+Q7ByhcB
-	 kQxuV72zlwq6nUbAUjDp8PbZn6YArUeihrae0zzD1ikg3T46tJ3276aFi9ZN4i0/nHA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=E2nkLJu8;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795687674;
+	b=tuOjUaiW7zcvquYb8FbRwbM+ilEOfel1YkRBmhCaqIpbMaqzcXcl8wjDsLcjbl2GA3he
+	 wiBPEMX6mjjgrrZNOu474cQpcVsdDeMKk8k4YQMNZ0GIhJscoolWwVCbEVXGRWYIq28hL
+	 fhcoXcYGSpJ67tPgq4zYx7l//QU0eFhO1oOHII+k29/WzMicY6v7z9OCgYNTQKlsPFmyK
+	 w8SoDfiHrm8zfBrLNdqyAYbNYrAlyHfEY2UpZKM4ZuX9rJv0pYiZdKxoJ9I4yBInolbBW
+	 tvtbKQFxiJSYUHJTlGAMhSIJrSnd6I0vLo5inCoyOdW5HSX3fkxFLHIifz/+tuO+/Ww==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795687674;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
+	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-GUID:X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:
+	 X-Authority-Analysis:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=G9iILtelhr8Yu2FohoGwzQk0gRPwQeEBjlv06/YSbwE=;
+	b=qrkIyVuPKeOgNGlbRNg+zuExBiM9BijK26jKcdWF6tEDCi2MQQi4Io33wgj/wo1MiFR9
+	 EdU1iEYukelKYF3mqLaUovxWtJXCQQaTfMGobMTuit8f/l2DaRrhx9aciBhAEtzSJtsF9
+	 hYW1TUjo6oSWtuZZletCuzTaDUdkv3zaxVvdRasVmG+C/Zr5u9o3OEMvX7Hez+qVVMxhO
+	 Ps9KHwQb9aQug/WXhr5BYIzafSvvgwQuXHW45aI5KAaLmtoGLQQEDvf3G+2YOJZhKeE5C
+	 +1nRLvCJF2aSWjclJ1C6l16wpMJLVb4uTc63gB1dv7IhdbcbZuwQrliHLvcZipRFLxw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=aB1XSrRG;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=izmbP7sQ;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A713E606A321;
-	Thu, 26 Nov 2026 10:00:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A713E606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D70F606A31E
+	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 10:07:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7D70F606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=E2nkLJu8
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 3062F200509;
-	Thu, 26 Nov 2026 11:00:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1795687227;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q2mecaHdf9fQt6uFtB3JOo6SnHGQnL+J6Uhto1mX8V4=;
-	b=E2nkLJu8uEfaPkMO+WNZl7KByQ7wd17jFeir36TfrYvQxbfFKC7mn2SdTAalXdGoaa2ZmX
-	4JdaOx+npG715reCsbR4dqlTOdAhV8XxUMxPAVhifDuL7NIW999vC1SXMStE2T4J1Qyuue
-	wH7HPosPfk522LVvVeI0DhpI8n1UkwymWyW5FjEOB3ne4Tr3hfd4c4JyIhyW7mrNfZ6Yyr
-	YEMwxxw+xpvmpjaLvvWb3e13r5hSYOVKAgLvp23gvm7kpUNJtj7UTG1HeEDxMugxEkKLmA
-	DzPgwizW2yWZHh4Cjdyyk6ZugjJLAFSmbay1dQGQJVh6ynP4voaDmCXb9xt25w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1795687227;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q2mecaHdf9fQt6uFtB3JOo6SnHGQnL+J6Uhto1mX8V4=;
-	b=FE0vI8qUEgOEZFKbIBM0XdrhW/hSbyHWJ79sdSHrsOnIVg9JEElEXBugFVTnApGxcIFa7G
-	Wue4egM96zYl+LHmjwCZWd8cH1JvD4fGUp2BNUcsKW7KeqGlECqkUe3YOKg0dBdRHcqH8B
-	xehcEpC+OMFHPxEOGXEywsiSKKbqf014iK9FsG18lWx0/XBf9LNJpEe4n6Uzrd10g0vBo1
-	QzCfZpwxO9juycrNaJDMumwinDvIQBiKp8shIONQe8lRT7fgnDC1xY9uGvGRflNo35fwcR
-	CrNeELb7j1xccXRj/53szIGDZ7MjEDL49PqzujbKBUcC9uQ1Ec4cl3pg/JbMYA==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1795687227; a=rsa-sha256;
-	cv=none;
-	b=VNKAcbU6083evAYtgG/4DbGEJvDmbeaURvQyZkqMuPvl3kT6NFUlGfwrj14ied8bMDmGsK
-	1nd8XCpCfywUpvxt6Au1HrWlkK9V+ujelfUgjVJme3TKo2WX51GbHeQUN2f6+ZssaL+Cvw
-	jVFVZIrrzbRYtsqnHcmYFbKCYUT1VQzHDacWYk7TY6rBCSZNLAET3rpVHCvqCsr7acPb5o
-	/5pi015kNzKdfOLW6rpZi2T620SePC75+kmFWGpWl8si/nqfvUhDKd+qwgUhBaxgXG8++s
-	iNrMfHtbfyiBxB3FcQXdd0c0imCObGH4V4h8A/FeZdcfswD8UykmGrHKvBJTFA==
-Message-ID: <66d5a395e692387ff39669b60f803cde8f97affe.camel@pengutronix.de>
-Subject: Re: [PATCH v2 5/9] reset: google: Add CPM reset driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Brian
- Masney <bmasney+clk@redhat.com>,  Jerome Brunet <jbrunet+clk@baylibre.com>,
- Thomas Gleixner <tglx@kernel.org>, Ulf Hansson <ulfh@kernel.org>,  Peter
- Griffin <peter.griffin@linaro.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>,  =?ISO-8859-1?Q?Andr=E9?= Draszik	
- <andre.draszik@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>, Jakub
- =?UTF-8?Q?G=C5=82owacki?=	 <jglow@google.com>, linux-clk@vger.kernel.org,
- Douglas Anderson	 <dianders@chromium.org>, devicetree@vger.kernel.org,
- linux-pm@vger.kernel.org,  Mariano Marciello <mmarciello@google.com>,
- google-soc@lists.linux.dev
-Date: Thu, 26 Nov 2026 11:00:27 +0100
-In-Reply-To: <awcz1aP6xcL6G2t4@google.com>
-References: <20261125000349.3385325-1-briannorris@chromium.org>
-	 <20261124160343.v2.5.I0b1ad34a718a9b5f667d2481041970ea45989dd3@changeid>
-	 <f89e293688feb3f9bcdce0f1b6fed0ee424e5cd8.camel@pengutronix.de>
-	 <awcz1aP6xcL6G2t4@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=aB1XSrRG;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=izmbP7sQ
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AQ7B9BX919560
+	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 10:07:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=G9iILtelhr8Yu2FohoGwzQk0
+	gRPwQeEBjlv06/YSbwE=; b=aB1XSrRG9Tg9EV5Kujh1v5n+6HaPnQH8HSHhBcZB
+	DMSIjQjak7kWjuy65DcwYjRRe8EG8HIb/pgErYMbd2yTqRdH8kdfLPWDBP7I74mu
+	oAaag5esojBzSIyfydSwLotzVG2E9fxYZH+QbY9TEFZVQkAJ/3HeIKcpFYEEWKO3
+	oGClV93Xh4hMwegJtAqsDhBOnZJ3hVZLdcmYJpBN7xpavyJfUNjhiyYOYN7JBKsl
+	bQVLQU4xKu/7u2HcFK1513Nw+O53TnM6gj09LynunZ982VnnLYn69kKt9xgaXn9U
+	3KetkbIF43Mtywx+0CK+LsFz6k+7qcUOfFHllJAhjgebDw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j662y2k4x-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 10:07:53 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93f3969a2a7so970321385a.2
+        for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 02:07:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1795687672; x=1796292472; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=G9iILtelhr8Yu2FohoGwzQk0gRPwQeEBjlv06/YSbwE=;
+        b=izmbP7sQnRp8j/hgbVT803+cl7t52q0d2cB0gPNVgxZnB3meZm0D6p3y5w5/pIQYay
+         EnLwSj0ydaEDNf4MKHxcfRHWk4AMsIxOKkXJVHSxqN7tBMRj4aTdX5FM5JN6Y0Kxvs5p
+         Z+ozAotWTT6NlWkAi+IlJUHF22Bn8hQ3lF85wnfaH6o+o1bEvSus3QpTpaVr18KWL0k2
+         8c3SuY3phs7+DBlP3E3rdrN2pavoEyuD7/q2ujWXR59z/jQE9rp+BI0/EcFcwOzK0zCy
+         5eYlvOpwey7mpPN8WjMG6MDZeTbo78o/FiXCCOtTdsvqAwA888CbBromYbW8SnQUqzs+
+         vacA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795687672; x=1796292472;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=G9iILtelhr8Yu2FohoGwzQk0gRPwQeEBjlv06/YSbwE=;
+        b=IHsI3jj1+sWnPe7HrdT4/GQnO+aFECklp8ANHSSsR1GccQgDhnPWHhaUh59mL74Ep8
+         xXLnvgBCxUnAu4jdyFW6+Y3t8tZNS4FFn8ucrzmK7XgYokbR9IBuTYw1wo4HY7U1QaK/
+         9bHJPMIjmVWf2OmdljbltNPrqv8rxugSLPsjf1o1XM/TEU2Ugg4BvfGbBtSv9gGfNKA2
+         MliIYigJXWWZrg4Lzze5vJxZm2FRsgibG5cCysaB8mUUZ/MXwW/k4Wxe4aCnSZaymqPc
+         mlKx8yBtNabqKl/d2Bxf+qB2IemPlAs8NBmxC2H0F8l4e7MoSfDDrV3CKAKSZI8eJ9CH
+         cjFg==
+X-Forwarded-Encrypted: i=1; AL+hErHXV835J61oT8ZA6JZDC6VoY1KUe57HVr8eGIagIuFlJHKrKvcRJiqzf3usx5ErVEF9ojAdSe3oW5s=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9PCfzH5YnllxKJrJGIGbZLIc6i4RlyJ+frGOqyaJ50mGXL2FsN
+	/69Euw6LNsn91bomdXkwzwoyzLTsV2C9CwgcOtegw/iQQ571+De8UR0cJRsrfHxVNE0LLAmaVJc
+	cWqs4NSsQqdrZTVkDec2VLFOLgXzINGzbiAM4amq0RRf5WE6gc3+HJodmX3L9Sz4Lp3u6lhc=
+X-Gm-Gg: AZFdTZfmkPkyez8bD9R9V8SZB+gHFo1ETN005iyyDf1ZEqy5bmSJhfk6urabLPlAjy0
+	IxW5izI3mv/8Mtddf+gdj/kTrQzQW2AO4zl4PWb6e7NgEt4X18undBHCsfeN/ZwFcwBFhcAmq2d
+	ro4h96TmKpSt1yyfqGLBPtj/VES4Ft9NCANAmN0a/5hMCyn2W7pzdc57FRaGi9VKGalNAVsX193
+	rH+aLCmjxV3Iwu8S+uw6qM/Mw5Bb/oc5vLebWbUApRm7r3YzxYWMHXCKAGoq73FvNmq+bWvy3MT
+	hTQPj/93CRINeBBdHtH1GtjHpwJM42hzOqtQGEj0aqsJz6olkmcXkcl5BqWr3ngn26CkXVRjT0R
+	4fhPxhwBFUh3tIkg6YlVJP5gPjLS4AU5q00d4OPrUq2qIHOy77PscdiOOO3UxThU=
+X-Received: by 2002:a05:620a:4488:b0:949:91c6:973e with SMTP id af79cd13be357-949bab66f99mr3618198085a.65.1795687672336;
+        Thu, 26 Nov 2026 02:07:52 -0800 (PST)
+X-Received: by 2002:a05:620a:270d:b0:949:3ea1:3021 with SMTP id af79cd13be357-949bab6d711mr3557251685a.68.1795687266480;
+        Thu, 26 Nov 2026 02:01:06 -0800 (PST)
+Received: from localhost ([188.152.73.83])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6b110d56sm38799609f8f.40.2026.11.26.02.01.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Nov 2026 02:01:05 -0800 (PST)
+Date: Thu, 26 Nov 2026 11:01:04 +0100
+From: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+To: Alex Elder <elder@riscstar.com>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        p.zabel@pengutronix.de, andersson@kernel.org, konradybcio@kernel.org,
+        abelvesa@kernel.org, daniel@riscstar.com, mohd.anwar@oss.qualcomm.com,
+        fabrice.gasnier@foss.st.com, alexandre.torgue@foss.st.com,
+        marex@nabladev.com, changhuang.liang@starfivetech.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] arm64: dts: qcom: qcs6490-rb3gen2: add TC9564
+ clock node
+Message-ID: <awgDYC5NDhrtYcVW@lore-desk>
+References: <20261125202141.1288493-1-elder@riscstar.com>
+ <20261125202141.1288493-4-elder@riscstar.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -105,69 +126,106 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2fAwCp9gELKVaB6R"
+Content-Disposition: inline
+In-Reply-To: <20261125202141.1288493-4-elder@riscstar.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTI2MDAzOSBTYWx0ZWRfX9js5+zo2Z6ns
+ Js9aUrg95nuvmyq4xKapHri5jZDt/2MkuHDF0CfBBce/6iCBOjET/Er3Ob3nkONyT8DEgjWIMYV
+ G0Mu3yYHBbCV15IFJ5pzNPfB3qLbcT/86yRwtTJRe9we5hkl6x9V7jUEQQXkl0QFMVgJLoEJav3
+ Ez2QsghHb8rH+VuJd43n6H53jKIVy3llfOAnedDhS6t+Ve7KXH+B63b7H+r2QMVEl8+QwAezyFy
+ q+RU0bysmC0NiEdXLWpaiPMucembNJDJTcLSuCi0OAwYaO8/LIrPSI+MA5Z3nOaPfq3OgTIS1AP
+ vQk2G9DPLFEsYiohvT1Q694SZBYm//3t1njGXaRbjXsmXTc2pB8lGd+4GVdk7gjit3LjsQJoXO1
+ 8nJP7VqT0vCnHCTRclc/0hDX+IQ6RR5o61h8f7ntgjR2BpzGSdgZVQL+dJNOlsgrWTpOHFMRVF7
+ Dz6lrl/CUR5kL8B7HBQ==
+X-Proofpoint-GUID: GW_Jk7pqALQL27yUVzEz3RibeprY4zC2
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTI2MDAzOSBTYWx0ZWRfX+sdSAZWy3qJE
+ bK0Gh5SWAAZtsWz5wTmCGh/iXiHVFQrCREpyIc+ETvTF/dBIJqE9Z8YtcV0buTgfMJWsad4vgtP
+ m0tF3x2KN7BRN+XJkGeD+BJuPF6JSR0=
+X-Proofpoint-ORIG-GUID: GW_Jk7pqALQL27yUVzEz3RibeprY4zC2
+X-Authority-Analysis: v=2.4 cv=W/KtxhWk c=1 sm=1 tr=0 ts=6b0804f9 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=mlS0om9xteqVCAF/aDpb2g==:17
+ a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22 a=ee_2aqc6AAAA:8
+ a=EUspDBNiAAAA:8 a=DTxt4SQFiI5XT4Iyg4UA:9 a=CjuIK1q_8ugA:10
+ a=1mOaCQywVTqKKdqfoSYA:9 a=PEH46H7Ffwr30OY-TuGO:22 a=VOpmJXOdbJOWo2YY3GeN:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-26_02,2026-11-25_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 phishscore=0 malwarescore=0 adultscore=0
+ suspectscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611260039
 
-On Mi, 2026-11-25 at 11:15 -0800, Brian Norris wrote:
-> On Wed, Nov 25, 2026 at 09:48:04AM +0100, Philipp Zabel wrote:
-> > On Di, 2026-11-24 at 16:03 -0800, Brian Norris wrote:
-> > > Google Tensor SoCs (used on Pixel phones) manage many resources
-> > > (including resets) using a Central Power Manager (CPM) co-processor. =
-We
-> > > communicate with CPM using mailboxes, abstracted in the
-> > > devm_cpm_get_handle(), etc., API.
-> > >=20
-> > > For posterity, I list a summary of changes made relative to the
-> > > downstream Pixel driver:
-> > >=20
-> > > * Switch to auxiliary bus, as a child of a CPM device
-> > >=20
-> > > * Use devm more heavily
-> > >=20
-> > > * Avoid representing each reset as its own Device Tree node.
-> > >=20
-> > > Signed-off-by: Brian Norris <briannorris@chromium.org>
-> > > ---
-> > >=20
-> > > Changes in v2:
-> > >  * Rename symbols from goog_cpm_rst_* to cpm_reset_*
-> > >  * Moved shared protocol details to CPM driver
-> > >  * Remove custom reset debugfs interface and .remove callback.
-> > >  * Remove per-SoC table; we only need naive translation of firmware I=
-Ds
-> > >=20
-> > >  drivers/reset/Kconfig            |   1 +
-> > >  drivers/reset/Makefile           |   1 +
-> > >  drivers/reset/google/Kconfig     |  11 +++
-> > >  drivers/reset/google/Makefile    |   2 +
-> > >  drivers/reset/google/reset-cpm.c | 154 +++++++++++++++++++++++++++++=
-++
-> > >  5 files changed, 169 insertions(+)
-> > >  create mode 100644 drivers/reset/google/Kconfig
-> > >  create mode 100644 drivers/reset/google/Makefile
-> > >  create mode 100644 drivers/reset/google/reset-cpm.c
-> > >=20
-[...]
-> > > diff --git a/drivers/reset/google/reset-cpm.c b/drivers/reset/google/=
-reset-cpm.c
-> > > new file mode 100644
-> > > index 000000000000..ef0863f25cac
-> > > --- /dev/null
-> > > +++ b/drivers/reset/google/reset-cpm.c
-> > > @@ -0,0 +1,154 @@
-[...]
-> > > +	if (lpcm_id > CPM_RST_ID_MAX)
-> >=20
-> > This looks a bit weird.
-> >=20
-> > Maybe add a CPM_LPCM_ID_MAX, directly use U8_MAX here, or rename the
-> > constant to not include RST_ID?
+--2fAwCp9gELKVaB6R
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+> Add a node for the clock and reset controller found within the
+> Toshiba TC9564 SoC.  Also add a node representing the fixed
+> rate 25 MHz crystal that supplies the chip.
 >=20
-> How about these (with the masks made 8-bit as they should be)?
+> Co-developed-by: Daniel Thompson <daniel@riscstar.com>
+> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+> v3: - This patch was previously not included in the series
 >=20
->   FIELD_MAX(CPM_RST_LPCM_ID_MASK))
->   FIELD_MAX(CPM_RST_ID_MASK))
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 
-Even better. I just got tripped up by the comparison between lpcm_id
-and what looked like the limit for rst_id.
+Reviewed-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
 
-regards
-Philipp
+>=20
+> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/bo=
+ot/dts/qcom/qcs6490-rb3gen2.dts
+> index 682bcbc0b466b..b327f64885ef2 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> @@ -890,6 +890,13 @@ pcie@0,0 {
+>  		pinctrl-0 =3D <&tc9563_resx_n>;
+>  		pinctrl-names =3D "default";
+> =20
+> +		tc9564_xo_board: clock-25000000 {
+> +			compatible =3D "fixed-clock";
+> +			#clock-cells =3D <0>;
+> +			clock-frequency =3D <25000000>;
+> +			clock-output-names =3D "tc9564_xo_board";
+> +		};
+> +
+>  		pcie1_switch0_dsp1: pcie@1,0 {
+>  			reg =3D <0x20800 0x0 0x0 0x0 0x0>;
+>  			#address-cells =3D <3>;
+> @@ -969,6 +976,14 @@ pci-ep-bus@4 {
+>  					#size-cells =3D <1>;
+>  					/* Map 0x0-0x1fffff to BAR 4 */
+>  					ranges =3D <0x0  0x4 0x0 0x0  0x200000>;
+> +
+> +					clock-controller@1004 {
+> +						compatible =3D "toshiba,tc9564-clock";
+> +						reg =3D <0x1004 0x10>;
+> +						clocks =3D <&tc9564_xo_board>;
+> +						#clock-cells =3D <1>;
+> +						#reset-cells =3D <1>;
+> +					};
+>  				};
+>  			};
+> =20
+> --=20
+> 2.53.0
+>=20
+
+--2fAwCp9gELKVaB6R
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCawgDYAAKCRA6cBh0uS2t
+rDJeAP0Q6+VXzDX3T4Mxc0he53zTGBAW5n6sPUtB0OuXRO2TaAEAk4D3UlGDtfnO
+vcLGfSBOqjIkzTbgYiQdQ6pQ0DDeQAE=
+=e1Ov
+-----END PGP SIGNATURE-----
+
+--2fAwCp9gELKVaB6R--
