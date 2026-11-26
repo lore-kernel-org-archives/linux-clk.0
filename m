@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795681875;
-	b=0czw701ppVrJLA4MKX+g1hoYLJ6ePMRnMNh2pLG4NWcMRixu+CEZyfKCZXaGHtXzYY++
-	 TbDvGOYsWQG9P8wHk2tNsURGM3RcVpdWfAy95vn33ZvWvaa5o9vfCvV6Am7ncoRvQHS+m
-	 Ppi/3r9EnVaFqcqI6hpLGhdbzjg67NFYB4+dUOz36EnCu9OzDEAMU7XM5DnYGH/NEJJ5M
-	 badzQ9ssYwiF9+ZT8yC+HWkbTeypd8OlMR6pyiIZg7orrXUGnI7ojJpzdtLG4gHIZqJHE
-	 woFkxdR3GRrdeq15Y1Flixyq1Upk/Wosp6mx8JjN4whY/DrslL99AWhzhlsqkAqmv/w==
+	t=1795681970;
+	b=ZXNRMrU5RSArRTqk1wzi3K8N+iAJU8KzRJNhuCx1QjicHNdxbij6+eFsXILNSbrNio/j
+	 AcgiP6Uq3oZ3dWy7lliseUPAcETi3GemV3SW5/U1UrJuMuZqRUeZetMF6HwzO//3GmyXV
+	 PAV5XeaeDZ0YylHWfn3oNGm6mtS8TmpqOuXgAE9XlzMES7bC4X8u6k35RBB13iMxE+6ig
+	 mm90nXXDvrxhTAgSCZ1hvUbPU2HhgU5xCsQwdbiw2iOARnl4lzHDrQ0eII5svdtk1INVw
+	 BQYfSv8/nH1VO+UClDQYv3kyQtG7dB56EEzSPeueLmbyS/Yf/e2EL+Kh62DDdhuNvCw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795681875;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=EOFVyGyYJqU+rNVdExuIa/A4KCVvlE3VjOnDJf/GLKc=;
-	b=gm10rKU8BK5rPJfJeh6PhHcCs2UapeXqnwU5mDakqt7339mBNPB3W8WnalysvRzaF1/H
-	 kT3SIRp7XQYHqv1gj+EKCczQ9xF8vHFB/Z9NA0tyRR8dFc4cTCP/+n2kxb+ubEgxXifqa
-	 MHYxFGfUzKKpV5c7v/oVGX3wIRvWImHAjHfVbmF+ESRHRCAeQ0G0QMOom+pP8SoQibdfV
-	 0qvvCYtgIPZ9NXh50Wf+BgkYj2KkPilDBNw2ybNzldiDS56BxjTVU87gMtf8Lz7oDE1bu
-	 uaM9x1qvc67NRHNh3u4joDWhQ/RETYZBTP7SJbyjUbhj/0Cz1qjxHMmUlmcdIYSqhxw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795681970;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=wLxY5sB8v8mPk8KgUDUq9dwEXJAF4r+U8SN0f9BdvmQ=;
+	b=oyYMmPJVX279CYmegGGIjsUv+IE0d2lNludP82vcxlZqynm/QNKy121Jmn9Ncnm6j6wH
+	 n5muakbomB5hh7JBt6y6CCeTzW/wkYwE5dgv5avvkI0MQNulbt8DJH3bmOFKjKAKHY6V6
+	 r+rEWnaOwISJnPz+T3hArY1IAUo7SrJ/46ANRw1rCPhDiDQv0f8RhWlVybSpw5+5UYwVM
+	 7luZ7IKZGsYY50JYp/w20R6ui2Tt41+3uzEMBpZnVFojAr+IOvZp+67qfGu7in8/oNB0n
+	 RTzYK01h45VAIR3BNcgVE759VpdTa5NRi3R1dBX5mtlTSCJOu/kEyC3LRA3Q383HCag==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Kos7nORo;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Nph5ynBL;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051DE606A31C
-	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 08:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C51606A32A
+	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 08:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Kos7nORo
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B491C1F000D8
-	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 08:31:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Nph5ynBL
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47FCA1F000D8;
+	Thu, 26 Nov 2026 08:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795681874;
-	bh=EOFVyGyYJqU+rNVdExuIa/A4KCVvlE3VjOnDJf/GLKc=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=Kos7nORo2W5ieReE58LGqeTwKL9Ui9j7e+fXVsWObncWqZQF/zyQDNDtPMsu7kZot
-	 4JaTUQlT2vA+9rauHVdYM37L4AzzMcxwvzgiVZ6Lr/1CXh3ts5xvvE1v/Yx7Dh6sRD
-	 MWm3iPQ4OHwDJ2eDJBIwch+4m+e+FKW69UNVzbIm3bRIMm2S1SoMMP8oSXsXTDSFtR
-	 EXH2PWF4G5zXtRYrMSVl4bOPodP88IS7GnWnYPcev2FO+oDKdWn1sXiLBC+A8bhvoZ
-	 0jmGgK6flR/THCtKPLIkUq2ugs8dIEMgnyQ8e7wWI9e/ZhStZKd+nxTTiIrV/rSZa6
-	 LsAW2PBDn8KsQ==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3ae85e3685cso45651421fa.2
-        for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 00:31:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErEMYXtsfVlUb6aSJVmvTnYT7WqAqGDf9QGEsbx8KLVSU7CkEDEpTqVUkTEblasN0kLxBSCb8bmgDhg=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9nanFVXHc2D3DfN+Aqvte6+ZinK37ShZl7sVdJwcUPnEtKbgBp
-	vyTWVKS19ZI7npGuzzaAMDzze+sWdqVuc7mL0sMvA9IGK9RQzK4lNwqufiV79GHzEqHJrh+v6YA
-	QvHKyeLbMalYm+ecnL1j/0BfWJ9fV8A0=
-X-Received: by 2002:a05:6512:2255:b0:5c1:ace3:131a with SMTP id
- 2adb3069b0e04-5c1bc8661damr5652240e87.48.1795681873045; Thu, 26 Nov 2026
- 00:31:13 -0800 (PST)
+	s=k20260515; t=1795681969;
+	bh=wLxY5sB8v8mPk8KgUDUq9dwEXJAF4r+U8SN0f9BdvmQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=Nph5ynBLYEsKe+yImvoqcbvYb04unLBm3Ba987Q+sbVNu3P9dzEApC/CQ+x7Za9Mo
+	 Z32bXqCTH+q4F8x6MhEbwN2rJuF+epQgh7Cw6jffiYIWafZlLkxPyqjpN+2Waxq7Ji
+	 lCoKOnf7EcGy4BI5TgJ92N6T6RYyxkGP3SEkrlCS4f/7sNCT08V97KQfXOqLpE6EJW
+	 AAzvYjuVPcHNwYDYwQY3szVh9JJk1dSguLGgqh9jT/ZzjjjGQjX0nNUfVY6lS1fllE
+	 QKImawH3ER66gH80o6bPleDvKqMpVp3UzUpAzWiKZZzpv3cy6ZsCfUJ5bwEkmqSovm
+	 eeoUUr5jdLaYw==
+Message-ID: <sashiko-outbox-235026@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] clk: nuvoton: Manage MA35D1 mux clocks with the
+ controller
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Guangshuo Li" <liguangshuo@mail.sdu.edu.cn>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20261126-a35bb25eb5-u10-0@mail.sdu.edu.cn>
+References: <20261126-a35bb25eb5-u10-0@mail.sdu.edu.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 26 Nov 2026 08:32:48 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -58,53 +59,74 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <20261126-a35bb25eb5-u14-0@mail.sdu.edu.cn>
-In-Reply-To: <20261126-a35bb25eb5-u14-0@mail.sdu.edu.cn>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Thu, 26 Nov 2026 16:30:58 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65-HypXGomrmDzq6fK2sbF5NwCXmGDgfKsJ_UhBu18YLw@mail.gmail.com>
-X-Gm-Features: Aa3M54o43cu-6A0TaGG1ukqNIvNBVoMGzQ0_0epz3dGZK25t85Du9OaBaHJIHPA
-Message-ID: <CAGb2v65-HypXGomrmDzq6fK2sbF5NwCXmGDgfKsJ_UhBu18YLw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] clk: mediatek: Unregister apmixedsys clocks on unbind
-To: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
-Cc: angelogioacchino.delregno@collabora.com, sboyd@kernel.org, 
-	bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, matthias.bgg@gmail.com, 
-	wenst@chromium.org, drinkcat@chromium.org, weiyi.lu@mediatek.com, 
-	msp@baylibre.com, fparent@baylibre.com, linux-clk@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 26, 2026 at 4:27=E2=80=AFPM Guangshuo Li
-<liguangshuo@mail.sdu.edu.cn> wrote:
->
-> Pair apmixedsys clock registration with removal on four MediaTek SoCs.
+Thank you for your contribution! Sashiko AI review found no new issues
+in this patch, but noticed 1 related pre-existing issue it does not
+introduce:
+- [Critical] clk: nuvoton: use-after-free in ma35d1_clocks_probe() [1]
+--
 
-You are checking the wrong tree.
+commit 9ff45d0263efa96de1be9a7ff0a42ea74ccdf3fa
+Author: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
 
-This series is mostly obsoleted by the following commits:
+clk: nuvoton: Manage MA35D1 mux clocks with the controller
 
-c9c2fd1a53a4 clk: mediatek: mt8516-apmixedsys: Switch to common
-probe/remove helpers
-68d1fa487766 clk: mediatek: mt8183: Switch to common probe/remove helpers
-9421b0b085c0 clk: mediatek: mt8167-apmixedsys: Switch to common
-probe/remove helpers
+This commit converts ma35d1_clk_mux_parent() and ma35d1_clk_mux() to use
+devm_clk_hw_register_mux_parent_data_table() so that the mux clocks are
+automatically unregistered when the platform device is removed.
 
-> Guangshuo Li (4):
->   clk: mediatek: mt8167: Unregister apmixedsys clocks on unbind
->   clk: mediatek: mt8183: Unregister apmixedsys clocks on unbind
->   clk: mediatek: mt8365: Unregister apmixedsys clocks on unbind
+> diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk-m=
+a35d1.c
+> index e95f72bb81032..4428556b64ade 100644
+> --- a/drivers/clk/nuvoton/clk-ma35d1.c
+> +++ b/drivers/clk/nuvoton/clk-ma35d1.c
+> @@ -380,9 +380,9 @@ static struct clk_hw *ma35d1_clk_mux_parent(struct de=
+vice *dev, const char *name
+>  					    const struct clk_parent_data *pdata,
+>  					    int num_pdata)
+>  {
+> -	return clk_hw_register_mux_parent_data(dev, name, pdata, num_pdata,
+> -					       CLK_SET_RATE_NO_REPARENT, reg, shift,
+> -					       width, 0, &ma35d1_lock);
+> +	return devm_clk_hw_register_mux_parent_data_table(dev, name, pdata, num=
+_pdata,
+> +							  CLK_SET_RATE_NO_REPARENT, reg, shift,
+> +							  width, 0, NULL, &ma35d1_lock);
+>  }
+> =20
+>  static struct clk_hw *ma35d1_clk_mux(struct device *dev, const char *nam=
+e,
+> @@ -390,9 +390,9 @@ static struct clk_hw *ma35d1_clk_mux(struct device *d=
+ev, const char *name,
+>  				     const struct clk_parent_data *pdata,
+>  				     int num_pdata)
+>  {
+> -	return clk_hw_register_mux_parent_data(dev, name, pdata, num_pdata,
+> -					       CLK_SET_RATE_NO_REPARENT, reg, shift,
+> -					       width, 0, &ma35d1_lock);
+> +	return devm_clk_hw_register_mux_parent_data_table(dev, name, pdata, num=
+_pdata,
+> +							  CLK_SET_RATE_NO_REPARENT, reg, shift,
+> +							  width, 0, NULL, &ma35d1_lock);
+>  }
 
-This is the only one that applies. But we probably want to convert it to
-the common helpers as well.
+[Severity: Critical]
+This problem wasn't introduced by this patch, but right above
+ma35d1_clk_mux_parent(), doesn't ma35d1_clk_fixed() also leave its clocks
+registered on probe failure or driver unbind [1]?
 
+drivers/clk/nuvoton/clk-ma35d1.c:ma35d1_clk_fixed() {
+	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
+}
 
-ChenYu
+Because ma35d1_clk_fixed() uses the unmanaged
+clk_hw_register_fixed_rate() helper instead of
+devm_clk_hw_register_fixed_rate(), the fixed-rate clocks remain
+registered in the clock framework and leak after ma35d1_clocks_probe()
+fails or the device is unbound.
 
->   clk: mediatek: mt8516: Unregister apmixedsys clocks on unbind
->
-> base-commit: 4dce97c6c265544342e716e62fd24bbb232590c5
->
+[1] https://sashiko.dev/#/bug/linux-0fffc72d-3bbf-4403-b81b-eac9ff603015
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261126-a35bb25eb5=
+-u10-0@mail.sdu.edu.cn?part=3D1
