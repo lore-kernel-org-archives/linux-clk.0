@@ -1,97 +1,45 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=119.15.109.137
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795675759;
-	b=j/IgQyFbkzTVSw/3kvS6rHR8E9EGL5LVOMKKh4AJMf2gAVaryeEFxBGQA+LsBuj8S8hZ
-	 12Qu0I4BcZSWdQq5XgKtJCprKmUL8dErxVZLm/ELuHLd6oZCyD7UDEXzYE3R1qqCnUwQm
-	 zM6Fs9JaeiVUf2LCf7fW45cD0M9W3E6rTQV0GNNSPaSTcwV9V+Q3mKScGsZIaQLrFSOpZ
-	 FoKJurgrf5J3py0CnIb3PGhP7/XUEza1aZoX/qyW9v8sDFxycnX+/KI0ab8+qm/4i4OJX
-	 DzaaV+sK7bmt1DQXrhaQif9K6ApygLCR60qBbgaQhmlUug+5wR3wSy+UTM2vO96ISjw==
+	t=1795676964;
+	b=FNVAtJpqhURwlmOy//ZUWnd3coyg10CvNbxreG+JbDTPvkRwl7Y6ZRust235efhjjR+b
+	 5xlCorgS0T15SM1IIQkH4Hb+xwgm1pezohkUgEYx8qZ7JaQRMELMgcRcZEz5B9EOkzQU/
+	 Lq5zmv49+33zJYMUuaRg/L6WjgFZ2Qo3HDNyPRr67hG03kH8l1SaMcl0bDGPUV/DQhUXj
+	 fzHJumDbo7DDor+ZJYcHL+Rp34Apmwoiqm5G0oMe/LVoYnZjMcKADro3VppnoGHyXm561
+	 5XfD1l4OLfJ+7B+9NZxbOKxYN2Q8wMARLEou7zSImZtpOAH1wGA9mr6x9+UC5BkuRjg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795675759;
-	h=DMARC-Filter:Received:DKIM-Signature:X-GPT-Reason:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=ALDZI9zzoGK/EGXlQh9cjJVsMiJ6Nq8NocmOtDE4lVY=;
-	b=QN6Vsq/kJSpKv5r34z4WxCSiFDUFAFIJ8uLuTvGedD5+a/BZylnWIoBUPF+LoBNN5Lp7
-	 mK44wpNxKxsDKM2c7A1bNDYBJKdOzhEkj2vw7/HjYmcJ6IZzR8Nc9rErYOp8jb3jFPVm1
-	 VClexBWQM/n0AJhm4aDTZIwtYT0+Yepm2qJmunjh+uR1rp08nJgEfkoStVMqLPUcdc+3u
-	 empBvqnAuX+8FoGsGR9uoP0XQEnj46fzFvetlsV0BS+uQjhOSUalWNNP0reNn7BnC5oYY
-	 cx9bNfIwUmnBGtoCve4tLj8PBCqN0X2EXaAFrzeC4bwe72yriNp61F5IE9pHe1gu4OA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795676964;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer;
+	bh=jwb5N7uyT2WDq4mt94dsR2bTDs02PiJrxSo0w40YZbI=;
+	b=ZkEYgwBLWWjE6H89cznJVlIxld8g4WfZ8LhOcDJrH2sAveVTCWoduDl9ul0SZs91SVDe
+	 UIZb8sj7OXuVHPWuNzCdbQe7VWxwTlmzedQJTk+kw0LA0gPkEWckb0G0YSl3GcgBtvZkK
+	 O6jqow/T9xGQ1r6ESj+sbh25EPGvqQ3+Avy01uaBL+yGdfWLBuRcCioFPu3hcPHn+e77U
+	 bxTOzTLlorwU8WWGKYQ1ZVPSh8s5coyvr9LxQmOoMJi4YKLlf+/OGvTgMVn7MVxqHSRbi
+	 HZK+sjNk4S5lbHMY1dOTbkRqWWA9dLe2F/yIw/keyG4BHSq0TSQzg0xapMVxDf7fbxQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=d-silva.org;
-	spf=pass smtp.mailfrom=d-silva.org;
-	dkim=pass header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=TABOzGOx;
-	arc=none smtp.remote-ip=119.15.109.137
-Received: from www.nmnhosting.com (watt.d-silva.org [119.15.109.137])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mCwJGwIW;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAF4606A339;
-	Thu, 26 Nov 2026 06:49:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BAAF4606A339
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=d-silva.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=d-silva.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE123606A31C;
+	Thu, 26 Nov 2026 07:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=TABOzGOx
-Received: from Hawking.lan (hawking.lan [10.0.1.4])
-	by www.nmnhosting.com (Postfix) with ESMTP id 2FEC3403EF;
-	Thu, 26 Nov 2026 17:49:09 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=d-silva.org; s=2025a;
-	t=1795675749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ALDZI9zzoGK/EGXlQh9cjJVsMiJ6Nq8NocmOtDE4lVY=;
-	b=TABOzGOxi1J6AGOAfDZT/+WS29Uy6C2yZftVVmKrm7PTlSkOHLK5XDikYwiChl5+NtFTB0
-	mt0gXWk/t4zEQNHNWaVInTVHmJl3QW1DO9vFAGNlYe+OHLoSt5CnH6DUmOapf4kZwqZN32
-	OQ7A5rQ7qg9cdrnDajTtt2U8pF9kFby03TKdzdcVeFZdkIGrYOEkfqGyoBtk/EBsijjNbH
-	3GKgc8UFZntRHQ6DXwfGwE+kuJD5mUzP+eMacK91Unn975VSCFCkKCse2QzBC7lQLIOxEk
-	LcwirsXbizh3PCuS5ug6Cw3hTcqfnf1a2GYvF5pXoA7XFfKRRGVoxZc93wMlNA==
-X-GPT-Reason: This is a legitimate personal/technical correspondence
-	regarding a Linux kernel patch or hardware driver update. The
-	message is sent from a known personal domain (alastair@d-silva.org)
-	to a recipient in a technical context, and the content specifically
-	discusses hardware clock frequencies (26 MHz crystal, OrangePi
-	4 Pro, DTS files) which aligns perfectly with the subject line.
-	There are no phishing indicators, no unsolicited marketing, and
-	no suspicious links; the conversation is a standard developer follow-up.
-From: Alastair D'Silva <alastair@d-silva.org>
-To: Junhui Liu <junhui.liu@pigmoral.tech>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Richard Cochran <richardcochran@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	netdev@vger.kernel.org,
-	Alastair D'Silva <alastair@d-silva.org>,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Enzo Adriano <enzo.adriano.code@gmail.com>,
-	Norman Herms <dockseed@proton.me>,
-	Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
-Subject: Re: [PATCH v7 4/8] clk: sunxi-ng: a733: Add PLL clocks support
-Date: Thu, 26 Nov 2026 17:48:50 +1100
-Message-ID: <20261126064909.2584729-1-alastair@d-silva.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261112-a733-clk-v7-4-db7c5451ffa2@pigmoral.tech>
-References: <20261112-a733-clk-v7-4-db7c5451ffa2@pigmoral.tech> <20261125122452.3966873-1-alastair@d-silva.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mCwJGwIW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE5EC1F000C0;
+	Thu, 26 Nov 2026 07:09:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795676964;
+	bh=jwb5N7uyT2WDq4mt94dsR2bTDs02PiJrxSo0w40YZbI=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=mCwJGwIWKvzK5Z8LSs1t9rcO+i7vyCTE2UxjxEobI+80N9ZySQU06hNNVBR9amkph
+	 OufZrL59lQtB8JPQoCIwOSZrpK4kOX9JZ2Sl5g1jVk3C3nK7/wq6RXAy0+5aOa4/De
+	 XsW7wvdjh8auzT6rnFQNNWP+92RNGkNHQec0Wqi8DRKsKKqf+8SnutKR+AiZWoov8Y
+	 fzCaW2UeR3nxd3KXKuz7nmaYwQEKxcfWZQF620tL0fpXwfrEdnYh5lSIWNOtgnKS9i
+	 ETdBDVXSQnbzBqOaOBY1ZDKeLP44/1t1sRjXqioEf2mbMZqCOzftLSS0Jl4ZeMQhio
+	 a7jyskB4454wA==
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -101,20 +49,60 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 07/10] clk: samsung: exynos5420: Terminate PLL rate
+ tables with sentinels
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Thomas Abraham <thomas.ab@samsung.com>, 
+ Chander Kashyap <k.chander@samsung.com>, 
+ Amit Daniel Kachhap <amit.daniel@samsung.com>, 
+ Tomasz Figa <t.figa@samsung.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+ Marian Mihailescu <mihailescu2m@gmail.com>, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org
+In-Reply-To: <20261123164834.3330320-8-lee@kernel.org>
+References: <20261123164834.3330320-1-lee@kernel.org>
+ <20261123164834.3330320-8-lee@kernel.org>
+Date: Thu, 26 Nov 2026 08:09:21 +0100
+Message-Id: <179567696129.9086.5750343229179878451.b4-reply@b4>
+X-Mailer: b4 0.17-dev
 
-Hi Junhui,
+On 2026-11-23 16:47 +0000, Lee Jones wrote:
+> _samsung_clk_register_pll() sizes each PLL rate table by scanning until
+> it encounters an entry with .rate == 0, then copies the counted entries
+> into pll->rate_table.  However, exynos5420_pll2550x_24mhz_tbl,
+> exynos5422_bpll_rate_table, exynos5420_epll_24mhz_tbl, and
+> exynos5420_vpll_24mhz_tbl all omit a terminating zero sentinel, causing
+> out-of-bounds reads into adjacent read-only data and populating
+> pll->rate_table with bogus entries.
+> 
+> Append a sentinel entry to each of the four PLL rate tables.
+> 
+> Fixes: ca5b40293822 ("clk: samsung: register exynos5420 apll/kpll configuration data")
+> Fixes: 9842452acd3d ("clk: samsung: exynos542x: Add EPLL rate table")
+> Fixes: 8b4a7acf7b30 ("clk: samsung: add BPLL rate table for Exynos 5422 SoC")
+> Fixes: b92981de92cb ("clk: samsung: exynos5420: Add VPLL rate table")
+> Closes: https://sashiko.dev/#/bug/linux-553831f9-0a7b-4e94-be60-222de60ca8c3
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lee Jones <lee@kernel.org>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Good catch — I confirmed the OrangePi 4 Pro has a 26 MHz crystal on
-board, and my DTS had declared 24 MHz for hosc.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Updating &hosc to 26000000 Hz fixes the rate calculation:
+Best regards,
+Krzysztof
 
-  2500000.serial: ttyS0 MMIO32:0x0000000002500000 (irq = 414, base_baud = 1500000) is a 16550A
-
-ttyS0 now boots cleanly to shell with your v7 CCU series. Sorry for the
-noise, and I'll send a v2 of my OrangePi 4 Pro DTS series with 26 MHz.
-
-Thanks,
-Alastair
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
