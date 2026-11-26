@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795720685;
-	b=FI7U8AkqE0bq5Ft21HzbpJIvxymmviY9nGNVy5Vhg4oHKBloZP+UwNXhZa/sjKHifrTk
-	 mLpFOiIEk4H9ho5hbECIwZKq3mgsYPhSbThiQAvSjxJfiQPcaXVtA9zpiYhgYr4o80sC9
-	 yLYFhtobc5jFQBg67ppFvCE4WAiZ2JwN3mawUWf1OMea1Xi06Z+EerS8q/Bne1x6FUZ2J
-	 YE2CdUXjoOrkXfuCAUVLOs1u8rs1VQ92LlUmxgYSzgA7WSTi/FxriTx8YDcLTU7uXrojv
-	 zypu4zHg2YpfR9y8tXHqRy1GeST/MGdt4xyAjAutX3IENGKtu9R/5a6Xxf/4LZFjZhA==
+	t=1795722286;
+	b=v10CA2z9S5ZbdIgt0LelsXueosUx4sAIvAhgZcWkw2xtL97OpeQJpU5743aTytAakWN+
+	 ysep+qFfuT6HGDVSl3Ki7xTtbDh2CmiFcHIGP9seVZ30hS1sIcmuE0R6zl+LCc/J0Dk/0
+	 KHnDkE2GA5RXzZv0p7juoKizdQ7UFHrppGtOua9aPKdbWknT4Bu3GZ2CfqgYQpQ0egOFv
+	 uS2ly/P3XVM+Ot4wXYgo57JZzV6GvXb+e4w1o85deB0nOnqXY3YIoKxLTuZd2GK8UZWPq
+	 zI+ikWItYw7NwcvHGO0JMIV4SbgNZ2iee00Lx3nVnIX7s6rxnFuLn8Bd4pH0pz2xm8g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795720685;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=xnLsaFFd7DaXIqgQI5tpr1pHVZGrCvHyloCd0xXcLik=;
-	b=qbTH1aVEfg0M4hr6M11+TuCWcmUhbBe8m1c8VbQ2YMLErgF1WWEemqpVRNS/A+uS3XGK
-	 fw7k5fJ9r/wGP1hm5i6gBa+eak8ZNI+LSz1R/Uevff4CXY9IvgZia6VNePwNnu28SKiOa
-	 SelUm/auWfI68Mdcne8Z9NJOsDOU6eu9tdvQS/bd0vJFUYYDRcnMg/3R6u4jmngeNIUIu
-	 y6MqAU5RmdxF4SQ/6hh5flxC7TiBnoCRk6Kx3YklUNxAOTGN4P6rbOUFovLhRjHqAgWiq
-	 WFHDsppYn2iXa2ZmNmSmNjuUthmICcHaB2m1Jw3y/Cl/DgKYbqJ511u0YuB7zr8e63A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795722286;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=Oo9+vrYhAJWcCP9yTjV9mqNzkHZ2WVXfX/Ghz4OifHY=;
+	b=h7ni0c+dEPk2oKCSY1FyZ+wnqMy5aWou3faXnzKATqo8aFgvNACUMLIDicwxgozNZsje
+	 OAYVnzpP/460BrfMpZUUq/7WuRomn5IIdcce3c6Q0L/6wcoKKWaE52JoJjOK1qYFJxCeF
+	 RGaiv55uWglkIlINxjIVWu3YHJnqkUxMxyXgTPxrHt/kadxCBjB0vOiJMyQXepwcXW9Gp
+	 lKZaGoS+tg9S6MzrQmSZe1DYpMzkOpMpfTL5dXw8iX0rKIsxjgx4qgTWA6X0faGt+tZz2
+	 Sraf3aeIgY6IKqLGAdjiEpOFX7sQTXMC1VyIO1Z7xjPNnqnmcZHWTIMLubgPQ7vSOCw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Amg8hjhM;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lu5JrHAc;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CCF606A323;
-	Thu, 26 Nov 2026 19:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD167606A31C;
+	Thu, 26 Nov 2026 19:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Amg8hjhM
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 134241F000D3;
-	Thu, 26 Nov 2026 19:18:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lu5JrHAc
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 964391F000C0;
+	Thu, 26 Nov 2026 19:44:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795720684;
-	bh=xnLsaFFd7DaXIqgQI5tpr1pHVZGrCvHyloCd0xXcLik=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Amg8hjhMWKg2cthveCbNXTCSSzg7Pnkck01PpFSvWAeotfydb5Z0gjNieOdqFkiYw
-	 dokAtJuA/DFagP2X31fp0qPF8wtsv/eaAheweA2psi8jA9hZX6RaTvcXgiE6I3W8tv
-	 k7M9/ioMIBFZXUBdGkKd/k7BqSZ/S4hNw5rVqkNYUoOaDx7yMWCVylhizfXr/wVDfR
-	 z+Q7IfiNs/diVXQYeWDmh3yHMesC1Un/9gap6tJFNlpGeqIhbdU32YiVP4v9iTLhtJ
-	 QkurW74p3q0xACnBpoqEehdFnVxI/mJfIZsDu6p/vYCv+eOAONVmXDf7HxH7tMtBHx
-	 te+VqKazZ7n1Q==
-Message-ID: <sashiko-outbox-236076@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 5/8] usb: dwc3: qcom: Add support to keep GDSC On during
- host mode bus suspend
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Jagadeesh Kona" <jagadeesh.kona@oss.qualcomm.com>
-Cc: linux-clk@vger.kernel.org, linux-usb@vger.kernel.org, linux-phy@lists.infradead.org, linux-pci@vger.kernel.org, vkoul@kernel.org, neil.armstrong@linaro.org, olteanv@gmail.com
-In-Reply-To: <20261127-usb-pcie-gdsc-suspend-v1-5-485a08ffdc6f@oss.qualcomm.com>
-References: <20261127-usb-pcie-gdsc-suspend-v1-0-485a08ffdc6f@oss.qualcomm.com>
- <20261127-usb-pcie-gdsc-suspend-v1-5-485a08ffdc6f@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 26 Nov 2026 19:18:03 +0000
+	s=k20260515; t=1795722286;
+	bh=Oo9+vrYhAJWcCP9yTjV9mqNzkHZ2WVXfX/Ghz4OifHY=;
+	h=From:To:Cc:Subject:Date;
+	b=lu5JrHAcqLjCYmqJ20tk1pnHtdSHfqZ9uMPiI2EfFJ6SDRi99vzBf2PiuiIu7owRZ
+	 3bMuk6sPZgjzpHnyUsQgeRENnPfVjHd3oDp5Ce2G0X9dnH4LYYHAh1HLLwJ5wm/uMk
+	 N8hIdkrEaGjZHdBP8HKLAiaqYqDjbCDo4MNtWT/9YISxz4J1fJ4K/GOhQh7SK0t2G5
+	 /pm03RVfH55UpDbjXFB6+M8U9zI07QJF8zoPReso5C6wpAM/bguhiilcDk+aBD+XsI
+	 mvJADiSX0Zdh4wqIXTr2gVJuzxhNSLXUZtqoj9EeklYfTmWOmZvS3PxQsvLb0fXlae
+	 pVdpL61XIPXzw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	linux-clk@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+	Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: [GIT PULL] Qualcomm clock fixes for v7.4
+Date: Thu, 26 Nov 2026 20:44:41 +0100
+Message-ID: <20261126194442.8026-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.56.1
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,52 +60,38 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] usb: dwc3: qcom: GenPD hwmode not reset in dwc3_qcom_resume()
-  or remove
---
 
-commit 497ba54c561a27a707fe8980a8ab1233948ec270
-Author: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+The following changes since commit 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4:
 
-usb: dwc3: qcom: Add support to keep GDSC On during host mode bus suspend
+  Linux 7.4-rc1 (2026-11-01 13:26:31 -0800)
 
-This commit toggles GenPD hardware mode in dwc3_qcom_suspend() so the USB
-GDSC stays powered during host-mode wakeup suspend and turns off otherwise.
+are available in the Git repository at:
 
-> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-> index 5a68025ccea5e..99dce28dda065 100644
-> --- a/drivers/usb/dwc3/dwc3-qcom.c
-> +++ b/drivers/usb/dwc3/dwc3-qcom.c
-[ ... ]
-> @@ -391,6 +392,9 @@ static int dwc3_qcom_suspend(struct dwc3_qcom *qcom, =
-bool wakeup)
->  		for (i =3D 0; i < qcom->num_ports; i++)
->  			qcom->ports[i].usb2_speed =3D dwc3_qcom_read_usb2_speed(qcom, i);
->  		dwc3_qcom_enable_interrupts(qcom);
-> +		dev_pm_genpd_set_hwmode(qcom->dev, true);
-> +	} else {
-> +		dev_pm_genpd_set_hwmode(qcom->dev, false);
->  	}
-> =20
->  	qcom->is_suspended =3D true;
+  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-fixes-for-7.4
 
-[Severity: Medium]
-Should dwc3_qcom_resume() also reset dev_pm_genpd_set_hwmode(qcom->dev,
-false)?
+for you to fetch changes up to 60521e4ff9e7f1b41758f387842d73667a7f0410:
 
-Once a host-mode suspend enables hwmode (setting sc->hw_stay_on =3D true in
-the GDSC), dwc3_qcom_resume() leaves it enabled while the controller is
-active.  If the driver is later unbound or unloaded, dwc3_qcom_remove()
-resumes the device and detaches from GenPD without calling
-dwc3_qcom_suspend(), so gdsc_disable() sees sc->hw_stay_on set and leaves
-the GDSC powered on in hardware.  If the driver is then re-probed,
-genpd_add_device() reinitializes dev_gpd_data(dev)->hw_mode to false while
-sc->hw_stay_on remains true, causing future dev_pm_genpd_set_hwmode(dev,
-false) calls to short-circuit.
+  clk: qcom: gcc-glymur: use collapse-voting for PCIe GDSCs (2026-11-07 18:13:36 -0600)
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261127-usb-pcie-g=
-dsc-suspend-v1-0-485a08ffdc6f@oss.qualcomm.com?part=3D5
+----------------------------------------------------------------
+Qualcomm clock fixes for v7.4
+
+Fix Glymur GCC power domain handling for PCIe and USB.
+
+- Use collapse voting for PCIe and PCIe PHY power domains shared with
+  other masters, including domains enabled by boot firmware.
+- Retain USB and USB PHY power domains to preserve configuration and
+  fix USB host controller resume from suspend.
+
+----------------------------------------------------------------
+Jagadeesh Kona (1):
+      clk: qcom: gcc-glymur: Use PWRSTS_RET_ON flag for USB GDSCs
+
+Taniya Das (1):
+      clk: qcom: gcc-glymur: use collapse-voting for PCIe GDSCs
+
+ drivers/clk/qcom/gcc-glymur.c | 46 +++++++++++++++++++++++++++++++++----------
+ 1 file changed, 36 insertions(+), 10 deletions(-)
