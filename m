@@ -1,70 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795711611;
-	b=AFWJZOl3ZrKVh1J7FYZAqDitUUEuAdbc2maXzhxhZFvB90iayuWRTpg8h7dAt24+6iEW
-	 Or3/JIo9ObhRjBzuGVIVhyuTzL+B1t5f4XANwDVPtWa2sSVfUfGofIhkobLlBtcY68iqP
-	 lp6PGVfRIL1SbkzMaNUKOpfzIiej9dw/0+CIcUWf3Rs9ofIuQVubgds8TKXuMu7GHvPQ1
-	 uPOSrSrNzkK6sKd6lekGf2CKz4SI0ekOHePGduPV8ooBA9Cihk3EfRrtwTyGFmqdyXXPl
-	 oRyMELeCiMdYJh4mrsbc7Z7ciWKwdcBsXqhAz69zqfMEs1/0+1A1SXDtzDIp5d/7q0w==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795711611;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=ssl/gQ24zAnvrKn3wfey5FZaIYLB01/ilqM+/OBq/bs=;
-	b=bEmEOmqJBpw8RbSQMi+Pj+XrQBehidwGDD0ZrQLbUlw+IrtGU6MLOWh+/xEnxWfR8bS7
-	 6R54zC2Kv5seqZ60b6wSq0GBQc8dFgiJSEvnXId7wkTlnsV+Lj0owjEpxtztONkBkC68X
-	 RZYXd9P91FZvCY/V03xOf6H72J75h3lj/fdNH48oC8ML6m19ZrZGskAQLS3plEbB4V7pe
-	 k5FVDgmUlDzaaUnVCMYTgWMUbgttWxf970cwCB5OLjE8Y2TG7OoYsOlvKK3GJH2Lxg0WC
-	 kwm086YsGim/m1u42tBBriwNbRQyzjrIRMwrZjJrv+Offr9VDOi+k/Jke0iNzVfH7NA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=sang-engineering.com;
-	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b="YV/VkjWu";
-	arc=none smtp.remote-ip=194.117.254.33
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795713593;
+	b=OS+4pWDNqrWQITCQkQrjhjELZyi74KnBokysU2ech6IQbkz32qKSsM7noZz6Z+kCGFW/
+	 Za7vWTgaiAAB50v/b7wlSyel4lb/3O20lkFxem97rnD4EeZ1IvudOVtEbMpQtL5yn4Amy
+	 GPx0bZaokNmqdTmPF9P3ljk3Akt64H0GVKfuiKnfyZYIjLAyM2RHjIqp4x0W+7ZQstqGN
+	 R4fknn8bIuRKPLiaLidBhgbh2RdSEZC9P/0KxzV2ccj7wel3cuT+7V0mdnzP/D0UMfz4+
+	 vIxA/W2rNcv7rDSxWtxbLtrB1YvmDBU6Y4QB4b1H3MnbNyqEhPVfD/NF3T+5rsTMh/w==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795713593;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=IDeKDSsVbDV13k0Hy+XkX6qCopz9xoTAmCZ1Tcbq/jI=;
+	b=foRBGzTK4Gn38rKCOm5oPL1Y+kFB768YmpuTnCUk2VKv9SZEnIEFlvXTsTRNNmnYlsh0
+	 lMG48lCdBhcVYHKWxgkN93iDtFugZThq+oGwykpuHZzv6lIDJAzSUwRewPnCzfocsko1t
+	 nKI5ELEvLXBRE3Pn8GkBT2BvmxiQ+7L1KJiLK526GFm7SHJ1XRJp+zn6Mduz62fDCQvP0
+	 /fX9VqcEC4R6IPYru0VTZ1hoWeS2Z+gl+tSpPgHqnvg6xiLEmIr6Bo+YBF45rL/QsxPFC
+	 ht4z1ZC1sh+JslVmTiqdr0jTb30o0rPbU3w+AE6Jr1Egz09x7icW16Y6eN2HSgpz5eA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=UEKF+kAI;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80BE606A323
-	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 16:46:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A80BE606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C530606A31C;
+	Thu, 26 Nov 2026 17:19:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9C530606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=YV/VkjWu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=ssl/
-	gQ24zAnvrKn3wfey5FZaIYLB01/ilqM+/OBq/bs=; b=YV/VkjWuivQRx4JrWSI1
-	9Vn1jU94k6lIKYhilNDU6+3rqqLm/lkDcuMdIQwiNZG6WZKUhZe/Hz/Xo6iI0ekW
-	X50wN/L8r6t2TCGK4y1o+aU/nZrKH/9/KZBS1knGLK1dOkLmNfnQ8X7jFb1OtN53
-	onButIvAZ6VOr6TqE24bVTSqwjLk0pCMkmSTtcj3FvI97kyYy225C+AichiXrO/u
-	fAqDd/jYIQvER+eBcKCKG+RU0wMTgIvUxn8vanbtHevTcO7sH8BNaMvON6oWtjQ2
-	jBNg6WyGbUPFTH7Z7Y2GVUdjka61Ra6cz52K3rcEG7tZV9izmbvT5sT2XcH6Gvw7
-	aA==
-Received: (qmail 1637125 invoked from network); 26 Nov 2026 17:46:45 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Nov 2026 17:46:45 +0100
-X-UD-Smtp-Session: l3s3148p1@Ao5WsDBh8toujnv5
-Date: Thu, 26 Nov 2026 17:46:44 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: khendry@reliablecontrols.com
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] clk: renesas: r9a06g032: Add reset controller
-Message-ID: <awhicMkIysHljr04@shikoro>
-References: <20261126-rzn1-miic-resets-v4-0-4f73af81d779@reliablecontrols.com>
- <20261126-rzn1-miic-resets-v4-2-4f73af81d779@reliablecontrols.com>
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=UEKF+kAI
+Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
+	(Authenticated sender: pza@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 93F6620583D;
+	Thu, 26 Nov 2026 18:19:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1795713586;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IDeKDSsVbDV13k0Hy+XkX6qCopz9xoTAmCZ1Tcbq/jI=;
+	b=UEKF+kAIxfh+ciOumzn6hZn1L9NuCv3VAMkQGuaovTkc9IMnNU1Ir4Z6N3mrmX6Q6wmJX5
+	WRRjZgCI4799KKuEW0S9BjATjzSrFRIxUJhbTJrFl7Z+qUag+JNis8p7wUXAwHMdu6EFyR
+	YYK1Dge6Fqrnn7yMSlXo95kU5tWghXqXBWL8MwaRQ+SS0dvuIlr8c9bNqA5EQsyOZiCIUl
+	KDQDyPd8VVzn7q/M51930Q2+/1JEK+IPyzAq1ajTi+PaHL7pidwzPuIVjzjia+lq3iXCEX
+	nsXHge1Zpo30iCc3JLjjzZImP4PrDSxxUmWB5K6jKgaJe+yw70AIM1i1Uq892g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1795713586;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IDeKDSsVbDV13k0Hy+XkX6qCopz9xoTAmCZ1Tcbq/jI=;
+	b=B07MFOCoC8+nNbkkldFEyw5yoaeNSqqr8tFxdF/Q6wcvnnVgoWlR7G3HC0ZiD5/rqdJ0q+
+	NDi1FfH7woS+mwdc4KzPANShQk+jYCfVUQNgJVNNAKMliaDVcZCtJokmrl26U9aZ/a690D
+	rd+Cn9ZjBUvESYC/s/zE0smVO/rHxqDdB7i1hjGq4akSVZ0AfWjdvQZTwcrvwAtVKrIIJu
+	TcP511BulGQ3qQ9LrKG6UZIHf2+/A86GZ2eAt4SQNBAMkmKGpO5LkVMYVDQHmchdiBQeNp
+	Wlfb2k04tNx2PtGHVWQ8D0CZBqc/g1sVkSsez50DrIBM/Ju0rDG+6BVbnbaVYA==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1795713586; a=rsa-sha256;
+	cv=none;
+	b=MRS0mnKPu6BGbJxZjUZufAzX4rgbnLUrflyMUPDdLj+1lVe9AfZZsocXagFecyjIKeYf0X
+	AHVbByd+JKt9HKSkVRDq/Nz0L4qoGbYkBk+81vb19ecvWOEyrC7YSOSNTyPSK/6TY3L/0G
+	w3t5sfURtKgWJa5XBkV/+Ese2RuUE0ALaVOean3mbZAHAjTP67a/JL7oNxu7OLR93zvHzG
+	WZhGgcGgnm1W58SsONxSoE+U+BulQfNqKRV/mAcCokZyGEP+VQKEjbmNFD/xRgV3ycCGfs
+	RT+EdlFxBRnomDHlkSM0JRSqLYNnQvxFCD1TCMRLBxjNsS8cKXqKyO5KeWgrPA==
+Message-ID: <04cb977d0a486b9574aaec5262ce92f652a29f18.camel@pengutronix.de>
+Subject: Re: [PATCH v3 2/3] clk: toshiba: introduce a TC9564 clock/reset
+ driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Alex Elder <elder@riscstar.com>, sboyd@kernel.org,
+ bmasney+clk@redhat.com, 	jbrunet+clk@baylibre.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, 	andersson@kernel.org,
+ konradybcio@kernel.org, abelvesa@kernel.org
+Cc: daniel@riscstar.com, mohd.anwar@oss.qualcomm.com, 
+	lorenzo.bianconi@oss.qualcomm.com, fabrice.gasnier@foss.st.com, 
+	alexandre.torgue@foss.st.com, marex@nabladev.com, 
+	changhuang.liang@starfivetech.com, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 26 Nov 2026 18:19:46 +0100
+In-Reply-To: <e20fde6a-3389-4084-a2de-fee5426a74e6@riscstar.com>
+References: <20261125202141.1288493-1-elder@riscstar.com>
+	 <20261125202141.1288493-3-elder@riscstar.com>
+	 <579859f0e1b53aa6506492a2e5d073f3f991014c.camel@pengutronix.de>
+	 <e20fde6a-3389-4084-a2de-fee5426a74e6@riscstar.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -74,55 +103,24 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xmfzo9YHvsZCNSrG"
-Content-Disposition: inline
-In-Reply-To: <20261126-rzn1-miic-resets-v4-2-4f73af81d779@reliablecontrols.com>
 
---xmfzo9YHvsZCNSrG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Nov 26, 2026 at 08:11:06AM -0800, Kyle Hendry via B4 Relay wrote:
-> From: Kyle Hendry <khendry@reliablecontrols.com>
+On Do, 2026-11-26 at 06:59 -0600, Alex Elder wrote:
+> On 11/26/26 3:42 AM, Philipp Zabel wrote:
+> > On Mi, 2026-11-25 at 14:21 -0600, Alex Elder wrote:
+[...]
+> > > +	/* Warn on any attempt to change state of a critical reset */
+> > > +	if (WARN_ON(id =3D=3D RESET_I2C) || WARN_ON(id =3D=3D RESET_PCIE))
+> > > +		return 0;
+> >=20
+> > Can't this be checked at reset_control_get() time (in fwnode_xlate) so
+> > that critical reset controls aren't given out to consumers in the first
+> > place?
 >=20
-> The rzn1 system controller has two resets that need to be cleared for the
-> mii converter to work. They are not directly associated with any clocks
-> so they need a reset controller to set them.
->=20
-> They are documented in the PWRCTRL_SWITCHCTRL (0x4000C188) register as:
->=20
-> Bit 3: RSTN_CLK25 - Active low Reset for Timestamp signal selection logic
-> Bit 4: RSTN_ETH - Active low Reset for RGMII/RMII Converter (50 MHz).
->=20
-> Add a reset controller and add resets for those bits.
->=20
-> Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
+> So I'd pass in a slightly modified fwnode_reset_simple_xlate()
+> as the fwnode_xlate pointer?  I hadn't thought about that, but
+> it's a good suggestion.
 
-Kudos for adding the comment, too!
+Exactly, and don't forget to set fwnode_reset_n_cells.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---xmfzo9YHvsZCNSrG
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsIYnAACgkQFA3kzBSg
-KbYDpQ/+LhlHS62LFJKv8RGRxltBy3PkA2QZE6EnjtFw0TZ2Sm4r3SUQW3WSo2AH
-3DtkIvxmRQvrjwUyqc/CmS17RbOA7RfxxBVquvSNzwxfpBtLHfZrgaGLYMFRUDb0
-Wy1g1VNDwaPXAQemiLoTdPf0tdJkxsasiueiEQitXd10DjnQ4Tzab2RVHZmewQ1q
-Cp7Jc/FbpsVG2YYfpIS8mgjqBoSdLkjRO7mCWa7vzhT1INUv14V25qcbwO9c788e
-E8iJqWZhaLSNsnWrEZQrG1eTjHKW9FTJDo11d1vd41l9Bd5KlRQIdiMEs8Vafn90
-NGetlPQHH8lnldJEt+TLCwak3lehhV5r6851sauXfhDjHLq8/FJFwOl2+VIwjnD/
-MxAvEJJsCbt/IYyjkQZNQxuXUC47L4CjxTSRMgkHDD7W7X0ZtjnMtmM8aPlBiR+n
-cYC2gGwyqcgnT7ZrpGJS0OTRhUhAIWHz3ve74Ef16IbXLlftmEIcbFuPkCHSysVT
-14LnIIM94v2V4L4Q2FtYRV+Tl+MX5M3+RSZHJX0esygsLlyQJN/XgAKcdKJu62jy
-EPLhNVOVqme4u+9xmK0pFiqFS8pHESfylqsX8Fqu6LrGnadqPD59rERzyU5mgvwQ
-+lbMBhM4RC/JHvqusFj5YILKuwViqr33jvkYf2UZrdLShBSvxMo=
-=OzO3
------END PGP SIGNATURE-----
-
---xmfzo9YHvsZCNSrG--
+regards
+Philipp
