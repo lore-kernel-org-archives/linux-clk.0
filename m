@@ -1,80 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795714528;
-	b=lHHs/Gj1WyjXz42H4StDPK6LKleME6nmZ6rp71Z1P2ulpZIU9ROJa+HOAMJ9thY7J6Xx
-	 WGW+NnelXawAqnevtlaj28vReZd5AxtzsvzcaoyHJ7hEYF/FGWsBNrWnmvyQ7SvxH3FXc
-	 1ZWbphfzphYCKl6u3miORWjR+U8A06mdZQRYRtZAS7r6eQl0pAAJDfo/ZisAAWHFJIT0g
-	 BVW2lIDZhmfpfAnvqJDMixI5DLZWRkjOdOxumjRYzI3H7l8R1KHVfHwApLUGNFbTaVxHr
-	 PxTw07MLv+LZLm5AY3i8vaQJndeo4+ocraEkZbI+YrCNjh573M2LF2uxM1hT91cF4zg==
+	t=1795719582;
+	b=N8IPNYAYdTy1Pln0uTmefqhxV6YM0AobBTIDYX/L3rbPaxlG1B6sCa/TGSDuS4hngC2o
+	 1CYVcfZXd/UmZWei9GPiMLXkDLHextcoSgHNHgf7/ayh5d5VUiIjNvLmuREG6z9bU6X7m
+	 O2XSXM69zwk2bMqDxbxmDEsmWKcZmVosnNP7jU4FlmJrCalDgUk9fViHM00FGKHzacBxC
+	 H+z6OguJIcQTbvB3986ZOw10DdLXAQxfbYI9s9ZH6mFaZYOQh+OAmrZ7R7SxqiQUUKmeX
+	 rRltZkdRQUeh81pu0+D4fFydsijDcF93cgdrdZ8mNLf+0rlAtun9JWbBkFdm3RyZIvw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795714528;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 Received:Received:From:To:Cc:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:X-Mailer:Thread-Index:
-	 Content-Language:X-CMS-MailID:X-Msg-Generator:Content-Type:CMS-TYPE:
-	 cpgsPolicy:X-CFilter-Loop:X-CMS-RootMailID:References;
-	bh=14yM+1Yamm5IaEsMmCuWFx4OfLA0U2vaBLRIMDPYO1U=;
-	b=chFOkCbm5fgo5knybUD08OWRDK4lV32OB7MPmNBLTyNcdwUk+Wwuxo/+MLtNwKVZs0Vz
-	 veMvI7Bs5T9IvL3XbOkDfZAg7OiYxys7YApx2txZgQLEf/4AmE1PLyLmKD9kMIBNZAMHF
-	 NGoDRohX7NoJaG9z0fTgroCFVMrgzqWHIy1+FrDuDbyXN4Ne/+auFNNr9YxKW/P106Chs
-	 Pqz5FH92zxVL71aDV2nHAV42lgO/jKS9cVxlJjXA48q4vaVkZ3S80K7pzAUa3q92oaEwb
-	 ivZsW7KYqfkTJBekhNsHR9wxCDBiQZ2r5nQ5K9ujcU+6UfBQq/DIu1aavKzxjNtECxw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795719582;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:
+	 Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Details-Enc:
+	 X-Authority-Analysis:X-Proofpoint-Spam-Info:X-Proofpoint-GUID:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=PKnwJGn1kbNBw+OYy82caU/JC92cEMMnvBlOquiaj/U=;
+	b=JfH07wRjcinJ/0QXngtZ9TQab5aXRH2cMnePAv2H52xFWKrzd2J0d5Xj8/Yzc8IVhl/K
+	 ySeMoQEGnSc1eILi2RpIPCdnCS6zV0Kh+2S3BSCWoOJvqkvfIZFvcD8d2e4Tz7H52mp8h
+	 50crEbk+dJeTrUvCLo6uKJdF4RrVNrmwff7S2f+WwqJMlSOYcE6ZZpY7Tni4eTPnXMSK/
+	 z4SkyFYz99RG0Ay+Bgx0NcEeFikzusoNMNYPjKjqVQIpMkt1Nt3ElBc/cJoZenMk7Yz4X
+	 Ee544DbfBI091Sivb5r/4GHFCcyZnzEvXPR5NR8bIHmIUxR42f96QvV8C9CdVKVGvBw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=aLJJauJS;
-	arc=none smtp.remote-ip=203.254.224.33
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Cu9Wzjj7;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=B2uKOJtf;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14658606A31C
-	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 17:35:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 14658606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A307D606A31C
+	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 18:59:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A307D606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=aLJJauJS
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20261126173525epoutp037c2e638ac75cb27bcc813b98eacafd41~rqNiu0R7t1145311453epoutp03d
-	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 17:35:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20261126173525epoutp037c2e638ac75cb27bcc813b98eacafd41~rqNiu0R7t1145311453epoutp03d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1795714525;
-	bh=14yM+1Yamm5IaEsMmCuWFx4OfLA0U2vaBLRIMDPYO1U=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=aLJJauJSeqNDvNfBVu7tJRuYcVRWtjCl9qTUTv6yaZlIeTnaQsGAH0h9SweogNWFD
-	 iQVNy0fibJLCWMMlj1c7UXw5VIOHG/QSIEUdAVy8pV4ZNv353EKf2btaNIN/8q2DQB
-	 FjPuc/68bCae5mGTjeGQVQKP9DRKv0/KJxBKoX70=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20261126173524epcas5p46903feb70672bfbdf94648993741fb9a~rqNh0hkSC2895928959epcas5p44;
-	Thu, 26 Nov 2026 17:35:24 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.89]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4jb3bb175gz2SSKX; Thu, 26 Nov
-	2026 17:35:23 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20261126173522epcas5p2518c8da061331e3cc701a8049530da95~rqNgRjAAK2027520275epcas5p2q;
-	Thu, 26 Nov 2026 17:35:22 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20261126173520epsmtip11149f069be0767a3d84426c2390cf8eb~rqNeGBwwj2823428234epsmtip1g;
-	Thu, 26 Nov 2026 17:35:19 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Peter Griffin'" <peter.griffin@linaro.org>, "'Raghav Sharma'"
-	<raghav.s@samsung.com>
-Cc: <krzk@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<sboyd@kernel.org>, <bmasney+clk@redhat.com>, <jbrunet+clk@baylibre.com>,
-	<robh@kernel.org>, <conor+dt@kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <is.gandhi@samsung.com>,
-	<ts.amit@samsung.com>, <pokala.reddy@samsung.com>
-In-Reply-To: <CADrjBPrzHP_97OgAYacJKKqeCcp9FURoi6=Dmopk6nisTdEbdA@mail.gmail.com>
-Subject: RE: [PATCH v3 08/14 RESEND] clk: samsung: exynos8855: add block
- peris clock support
-Date: Thu, 26 Nov 2026 23:05:18 +0530
-Message-ID: <000101dd7dcc$835c0830$8a141890$@samsung.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Cu9Wzjj7;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=B2uKOJtf
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AQGcE3J596877
+	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 18:59:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=PKnwJGn1kbNBw+OYy82caU
+	/JC92cEMMnvBlOquiaj/U=; b=Cu9Wzjj7rorA/u6iXgCIiQ/SUnhbjxcPw6D0t/
+	yzeHlTiXtf0S0fhhEG3F6gbCIHuUQlx+i+YHFzCB6PhjrA0adrp8H70mai82PMTq
+	3FwFFSniXsdqIDXBFxDPvwHI9e3WK+vS4gL3WWXqmQgf2Fo7O6jXtDDGf8VNDDXM
+	dtvdXPnjPDIkHuRb8VD6Q0ie+KWvtyx2r/DSja2F/Q3tyZHKGZ4R1W5at+Ei7KO7
+	a9jq2aQN/f8y9gjCmwG4FEV4LcPcrnzKK+G9Z/rHW4hxuS2MIXIS9HZqi11WbM9g
+	ZsmoTG8dX+QucmIdvvpczclncmDj77KseVifa0mP9rDtU6Bg==
+Received: from mail-dl1-f69.google.com (mail-dl1-f69.google.com [74.125.82.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j6rf90dc6-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 18:59:40 +0000 (GMT)
+Received: by mail-dl1-f69.google.com with SMTP id a92af1059eb24-1b56c696405so10472197c88.1
+        for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 10:59:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1795719580; x=1796324380; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=PKnwJGn1kbNBw+OYy82caU/JC92cEMMnvBlOquiaj/U=;
+        b=B2uKOJtf1AV0wfvdDz+dei5DW1Kf5asGqvbZKU8kjHeVSiCa7YUZhJBDGZV0YTti9o
+         SvF9LDld6HaRVDLQCDT3QlrV8auMvxLtdIxK3jvBs6cRY6JIiaw4t3DNMdTYmsTLLUBM
+         hFj/JOHzWxmW0d5D4CF1gesUghyIysv/YVTQbu9pcjq7JO9ECVTCW3hjS9BqgPLCVUpq
+         k+l2soD/ZKhn9OyHGmcdueSHXseFDY+bRMVr51cW+ljxWWngJjUe462J/ZCWy+9J6U4V
+         vAzC+kAPl0Hc5m44O0n+sKab6Rwy6vmF6Ux0HaiM0ALh3+/XXcBFQfuV2o0RyYCZtyx2
+         2BHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795719580; x=1796324380;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=PKnwJGn1kbNBw+OYy82caU/JC92cEMMnvBlOquiaj/U=;
+        b=EfTIbvMzcrUIIvoJ8Z7/WFJrJGWh0KGj0XmMkEUcxd7K9Qdpp3oZuBbP3Agqw5IHjm
+         YFsZwHhMf1uS55Uy6VN395u3mLaxDI1m4z8CpsxzePfc5o5ss2pMxGCA/RnYB+bvedlO
+         QuVwEg1Ox3OquJGVvS5J/iOGy9vC+HyU/28f6i6YRC8SNgj/ZWdKsarT/n+UIsEcTVfq
+         ND73VmS5JoyvUncTWQ72wx/ss7tUMbsUXwRvInWrtGOnQ0MCSx9x26zCmctqKtPQ6tHd
+         7vBUIFN/we/o2OU1UYMWBf8YvrDIdyackJxaHj/DbVPzacK95a0h8rLW7R15R3LXQOAk
+         7kgQ==
+X-Forwarded-Encrypted: i=1; AL+hErGG1yAVgZ52S5pxABb3JMMr+vXmotUvA+Xj2S1k+/xkl5vjxU0suT0/5gd/PDfky9c6EjYswUupEw8=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/8bDtYbzzgoh3/jhfTLGf58O6kVB1Z+8ixr4a4MIV+M7cBk944
+	g7qLR9yqTBvB6L+Ab0e58fllw7yXbxayS4bCiQEepLnN9lQ9d709CsEJEpyviwSdkVGDDh1nLXG
+	GNfNprwOeAe0djlm0keoTUf2zs88kt24KQ3lcQ4FP9DV8UVNo0vxBsO9GTjSWjwA=
+X-Gm-Gg: AZFdTZdiC2CY2HCJXBh2prfuGtPTq+8JPNkIWkYRu06iiZHKAF5Yylx9B4qYMDJUhwY
+	u8Q+6KSZLVM7vUtKtG6UF1w0ogbyBIgFEJvASQu1VIFGOGHCzbEAi0Ez8pHcYsVoqoGIm1G/e+t
+	CipTJ4ROBkVX/ExT2C4lxiEWZanetSCsQ0nvh86C3LIkOhi2mfBOaRNp4ZbdtSlEBZKPj2BE0p/
+	n8t+0padegV/wQT4z+6KJxJj5AiWQRRtGW2ZpiQ3TAs78lBu2bxSFkjuU9TZQG3O9jZuWqUhAZF
+	A+eDoQJIttncn4wkqe7XUAaMNtgrnKP5RA85kf7epc8A6Fk+GLZ+62LNwv+lpqRzDMaLpHaNtJ5
+	nLu/ECxKDaYY0oC1XADNwl4JKVHXoR5RYDYgjE6YMGb+z7ymEUDGQtYjOKSzPr9Nzp2m8Y/K+Bp
+	ViumuS
+X-Received: by 2002:a05:701b:2814:b0:1b5:1a5a:1dc with SMTP id a92af1059eb24-1b5568bcbb3mr25262174c88.12.1795719580018;
+        Thu, 26 Nov 2026 10:59:40 -0800 (PST)
+X-Received: by 2002:a05:701b:2814:b0:1b5:1a5a:1dc with SMTP id a92af1059eb24-1b5568bcbb3mr25262137c88.12.1795719579488;
+        Thu, 26 Nov 2026 10:59:39 -0800 (PST)
+Received: from hu-jkona-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b5567ffa8csm60868190c88.7.2026.11.26.10.59.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Nov 2026 10:59:39 -0800 (PST)
+From: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Subject: [PATCH 0/8] clk: qcom: gdsc: Allow USB and PCIe GDSCs to stay
+ enabled across suspend
+Date: Fri, 27 Nov 2026 00:27:08 +0530
+Message-Id: <20261127-usb-pcie-gdsc-suspend-v1-0-485a08ffdc6f@oss.qualcomm.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,206 +115,127 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHlWUtnqVICpCIeTIEFEh+EoBRnawGxlKqAArMGWkMCaFOU4Lb6fmOA
-Content-Language: en-us
-X-CMS-MailID: 20261126173522epcas5p2518c8da061331e3cc701a8049530da95
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20261113104853epcas5p175c566a1ced2547e533c21b21e60e993
-References: <CGME20261113104853epcas5p175c566a1ced2547e533c21b21e60e993@epcas5p1.samsung.com>
-	<20261113110612.3265841-1-raghav.s@samsung.com>
-	<20261113110612.3265841-9-raghav.s@samsung.com>
-	<CADrjBPrzHP_97OgAYacJKKqeCcp9FURoi6=Dmopk6nisTdEbdA@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAASBCGsC/y2OSQ6DMAxFrxJlXUeEIaiseo+KRQguRC1TnFRIi
+ Ls3QDe23pf8/DdO6CwSr9jGHX4t2WmMIG+Mm16PHYJtI/M0SZWUqYJADczGInQtGaBAM44tlPp
+ +N6pRaZ4oHm9nhy+7nt5nfbHDJUS9v0I+IJE+9RW75DKTSRaXkIXKSwUSZqcplvC9eD8mIrEE/
+ THTMIg4ji+NJoQjsL5iI64e/jULXu/7D8gvyVncAAAA
+X-Change-ID: 20261126-usb-pcie-gdsc-suspend-7a99c6b62406
+To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Ulf Hansson <ulf.hansson@oss.qualcomm.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-pci@vger.kernel.org,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+        Prashanth K <prashanth.k@oss.qualcomm.com>,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-ORIG-GUID: ZRgubNFiQ0Uys4ShHXwoic3uEUWNANmP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTI2MDA3NCBTYWx0ZWRfX8hoX5u7xM0ws
+ eZIpzYk1UyDLVuU95zLgroipxrhZKd0bj686mtHdi7MxbvVtPk7uOZj9rXdd7BJQ7tw6fNjQdaL
+ hD8SxkIsdtFzITxuDCuKBLDWNGi8PHZY9+Nx7rqp1X5skGxI770jAWF/W+PdpG6RvaDG8ip/4yx
+ 46cetwqtFYpMgpzuBXAbUBUq/tHxjyoLFreaz9gBhtsaDmm8yF5Txmw+O8IueYX/KA5ny3tNbZg
+ 78C+hAnk744VQ0napDF9KvwpFFEXVkoYm4e1kKigJKu/2yHfDZS3mAULnxwGAZ6BGq78EijZ2nf
+ gzuBQIuHI5aD9MDGG52Zq4nvfFrP6B4jfNX/VhSiTAEqH8uMsK790tzulamz5dPirz6Ae8byALA
+ kd4vMFXmFwVSbys1tLEEvLSzP4xaykN2MNvD+LySaHyd6HLKylEb/Ishls/HTr8NIeFUOIbI5Il
+ fVPS9e6L8s7UcOVhnqA==
+X-Authority-Analysis: v=2.4 cv=cpkOAF4i c=1 sm=1 tr=0 ts=6b08819c cx=c_pps
+ a=kVLUcbK0zfr7ocalXnG1qA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=IPO9h8n_qQbs29NzXk0A:9 a=QEXdDO2ut3YA:10
+ a=vr4QvYf-bLy2KjpDp97w:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTI2MDA3NCBTYWx0ZWRfXyVl9N06eZ32J
+ ZCDMsadBBcqCrMFbXQ+N8URAGz4vBCAYf+XccXFygdTl5dDnSXUNwTRg3HrgwUaTawTJQyhgrFG
+ 1lHtk6rZ8IDGOPkldutRCW6J9aZjAOc=
+X-Proofpoint-GUID: ZRgubNFiQ0Uys4ShHXwoic3uEUWNANmP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-26_04,2026-11-26_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ suspectscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611260074
 
+USB and PCIe GDSCs on some Qualcomm platforms need to remain enabled
+across system suspend for certain use cases, such as USB host mode and
+PCIe non-D3cold. These GDSCs currently use PWRSTS_RET_ON, which keeps
+them enabled after their first enable even when consumers no longer
+require them.
 
+These GDSCs have a HW mechanism to stay enabled during suspend while
+allowing the parent voltage rails to turn off, with HW handling the
+parent transition to active voltage rails. Use the existing GenPD
+hwmode interface to let consumers request this behavior only when
+required, and clear it once no longer needed, allowing the GDSC to be
+powered off when unused.
 
-> -----Original Message-----
-> From: Peter Griffin <peter.griffin=40linaro.org>
-> Sent: Friday, November 13, 2026 6:24 PM
-> To: Raghav Sharma <raghav.s=40samsung.com>
-> Cc: krzk=40kernel.org; s.nawrocki=40samsung.com; cw00.choi=40samsung.com;
-> alim.akhtar=40samsung.com; sboyd=40kernel.org; bmasney+clk=40redhat.com;
-> jbrunet+clk=40baylibre.com; robh=40kernel.org; conor+dt=40kernel.org; lin=
-ux-
-> samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org; is.gandhi=40samsung.com; ts.amit=40samsung.com;
-> pokala.reddy=40samsung.com
-> Subject: Re: =5BPATCH v3 08/14 RESEND=5D clk: samsung: exynos8855: add bl=
-ock
-> peris clock support
->=20
-> Hi Raghav,
->=20
-> On Fri, 13 Nov 2026 at 10:54, Raghav Sharma <raghav.s=40samsung.com>
-> wrote:
-> >
-> > Register compatible and cmu_info data to support clocks.
-> > CMU_PERIS, this provides clocks for PERIS
-> >
-> > Co-developed-by: Alim Akhtar <alim.akhtar=40samsung.com>
-> > Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
-> > Signed-off-by: Raghav Sharma <raghav.s=40samsung.com>
-> > ---
-> >  drivers/clk/samsung/clk-exynos8855.c =7C 97
-> > ++++++++++++++++++++++++++++
-> >  1 file changed, 97 insertions(+)
-> >
-> > diff --git a/drivers/clk/samsung/clk-exynos8855.c
-> > b/drivers/clk/samsung/clk-exynos8855.c
-> > index dcf58f2459b0..12b5ae54b560 100644
-> > --- a/drivers/clk/samsung/clk-exynos8855.c
-> > +++ b/drivers/clk/samsung/clk-exynos8855.c
-> > =40=40 -18,7 +18,9 =40=40
-> >  /* NOTE: Must be equal to the last clock ID increased by one */
-> >  =23define CLKS_NR_TOP                     (CLKCMU_DOUT_G3D_HTU + 1)
-> >  =23define CLKS_NR_PERIC                   (CLK_GOUT_USI_PERIC + 1)
-> > +=23define CLKS_NR_PERIS                   (CLK_GOUT_WDT1_PERIS + 1)
-> >
-> > +=23define EXYNOS8855_PERIS_GATE_DBG_OFFSET      0x2004
-> >  =23define EXYNOS8855_PERIC_GATE_DBG_OFFSET      0x2024
-> >  =23define EXYNOS8855_TOP_GATE_DBG_OFFSET      0x20A0
-> >
-> > =40=40 -1092,6 +1094,98 =40=40 static const struct samsung_cmu_info
-> peric_cmu_info __initconst =3D =7B
-> >         .memclk_offset          =3D EXYNOS8855_MEMCLK_OFFSET,
-> >  =7D;
-> >
-> > +/* ---- CMU_PERIS
-> > +--------------------------------------------------------- */
-> > +
-> > +/* Register Offset definitions for CMU_PERIS (0x10030000) */
-> > +=23define CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER
-> 0x600
-> > +=23define CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC                    0x100=
-0
-> > +=23define CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER
-> 0x610
-> > +=23define CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP                   0x180=
-0
-> > +=23define CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP                    0x180=
-4
-> > +=23define
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK
-> 0x201c
-> > +=23define
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_P
-> CLK  0x2040
-> > +=23define
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK
-> 0x2048
-> > +=23define
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK
-> 0x204c
-> > +=23define CMU_PERIS_CONTROLLER_OPTION0_CMU_CTRL                  0x800
-> > +
-> > +static const unsigned long peris_clk_regs=5B=5D __initconst =3D =7B
-> > +       CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER,
-> > +       CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC,
-> > +       CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER,
-> > +       CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP,
-> > +       CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_P
-> CLK,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK,
-> > +       CMU_PERIS_CONTROLLER_OPTION0_CMU_CTRL,
-> > +=7D;
->=20
-> Same comment about preserving register state from the bootloader when
-> powering off/on PERIS block.
->=20
-> > +
-> > +/* List of parent clocks for Muxes in CMU_PERIS */
-> > +PNAME(mout_clkcmu_peris_noc_user_p) =3D =7B =22oscclk=22,
-> > +=22dout_clkcmu_peris_noc=22 =7D;
-> > +PNAME(mout_clk_peris_gic_p) =3D =7B =22oscclk=22,
-> > +=22mout_clkcmu_peris_gic_user=22 =7D;
-> > +PNAME(mout_clkcmu_peris_gic_user_p) =3D =7B =22oscclk=22,
-> > +=22dout_clkcmu_peris_gic=22 =7D;
-> > +
-> > +static const struct samsung_mux_clock peris_mux_clks=5B=5D __initconst=
- =3D =7B
-> > +       MUX(CLK_MOUT_PERIS_NOC_USER, =22mout_clkcmu_peris_noc_user=22,
-> > +           mout_clkcmu_peris_noc_user_p,
-> CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER, 4, 1),
-> > +       MUX(CLK_MOUT_PERIS_GIC, =22mout_clk_peris_gic=22,
-> > +           mout_clk_peris_gic_p,
-> CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC, 0, 1),
-> > +       MUX(CLK_MOUT_PERIS_GIC_USER, =22mout_clkcmu_peris_gic_user=22,
-> > +           mout_clkcmu_peris_gic_user_p,
-> > +CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER, 4, 1), =7D;
-> > +
-> > +static const struct samsung_div_clock peris_div_clks=5B=5D __initconst=
- =3D =7B
-> > +       DIV(CLK_DOUT_PERIS_NOCP, =22dout_clkcmu_peris_nocp=22,
-> > +           =22mout_clkcmu_peris_noc_user=22,
-> CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP,
-> > +           0, 4),
-> > +       DIV(CLK_DOUT_PERIS_OTP, =22dout_clkcmu_peris_otp=22,
-> > +           =22oscclk=22, CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP,
-> > +           0, 4),
-> > +=7D;
-> > +
-> > +static const struct samsung_gate_clock peris_gate_clks=5B=5D __initcon=
-st =3D =7B
-> > +       GATE(CLK_GOUT_CMU_PERIS, =22gout_cmu_peris=22,
-> > +            =22dout_clkcmu_peris_nocp=22,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK,
-> > +            21, 0, 0),
-> > +       GATE(CLK_GOUT_SYSREG_PERIS, =22gout_sysreg_peris=22,
-> > +            =22dout_clkcmu_peris_nocp=22,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_P
-> CLK,
-> > +            21, 0, 0),
-> > +       GATE(CLK_GOUT_WDT0_PERIS, =22gout_wdt0_peris=22,
-> > +            =22dout_clkcmu_peris_nocp=22,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK,
-> > +            21, 0, 0),
-> > +       GATE(CLK_GOUT_WDT1_PERIS, =22gout_wdt1_peris=22,
-> > +            =22dout_clkcmu_peris_nocp=22,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK,
-> > +            21, 0, 0),
->=20
-> The Linux clock name strings look wrong here. It looks like you've genera=
-lly
-> followed the clk-gs101 clock name mangling in this series so it should be
-> =22gout_<block-name>_<IP-clock-name>, but you have =22gout_IP-
-> clock_name>-<block-name>=22. I know there is some =22name diversity=22 in=
--tree
-> for various SoCs, but with new SoCs using auto clocks I would like to kee=
-p the
-> naming scheme following a similar style to clk-gs101.
->=20
-> Also I guess with auto clocks now enabled from the start you may never
-> need to expose all the CMU bus clocks, but I worry a bit you may have
-> mangled the names here a bit too much. If you do need to expose extra
-> gates you might get name collisions. For example in clk-gs101 we have bot=
-h
->=20
-> gout_apm_apm_usi0_uart_ipclk
-> gout_apm_apm_usi0_uart_pclk
->=20
-> So we kept the _pclk suffix in the Linux name to avoid a name collision.
->=20
-Thanks for review, will change to gout_<block-name>_<IP-clock-name> convent=
-ion=20
-> Thanks,
->=20
-> Peter
+This series adds the set_hwmode_dev callback for USB and PCIe GDSCs on
+Qualcomm Glymur, QCS615 and Shikra platforms, and updates the corresponding
+USB and PCIe consumer drivers to use dev_pm_genpd_set_hwmode() to control
+the GDSC dynamically.
+
+The clock and USB driver patches need to be picked together on Glymur
+to avoid functional issues, since the existing RET_ON flag is removed
+in this series. This approach can be extended to more targets in the
+future.
+
+This series is based on top of below qmp phy suspend/resume series and
+depends on it:
+https://lore.kernel.org/all/20261113103111.156476-1-prashanth.k@oss.qualcomm.com/
+
+Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+---
+Jagadeesh Kona (4):
+      clk: qcom: gdsc: Use GenPD hwmode to keep GDSC enabled across suspend
+      clk: qcom: gcc-glymur: Register set_hwmode_dev callback for USB, PCIe GDSCs
+      clk: qcom: gcc-qcs615: Register set_hwmode_dev callback for USB, PCIe GDSCs
+      clk: qcom: gcc-shikra: Register set_hwmode_dev callback for USB, PCIe GDSCs
+
+Krishna Chaitanya Chundru (1):
+      PCI: qcom: Keep GDSC enabled during non-D3cold suspend
+
+Krishna Kurapati (1):
+      usb: dwc3: qcom: Add support to keep GDSC On during host mode bus suspend
+
+Prashanth K (2):
+      phy: qcom: combo: Keep the PHY GDSC ON during host bus suspend
+      phy: qcom: usb: Keep the PHY GDSC ON during host bus suspend
+
+ drivers/clk/qcom/gcc-glymur.c             | 46 ++++++++++++++++++++++++-------
+ drivers/clk/qcom/gcc-qcs615.c             |  3 ++
+ drivers/clk/qcom/gcc-shikra.c             |  3 ++
+ drivers/clk/qcom/gdsc.c                   | 21 ++++++++++++++
+ drivers/clk/qcom/gdsc.h                   |  2 ++
+ drivers/pci/controller/dwc/pcie-qcom.c    |  6 ++++
+ drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 14 ++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp-usb.c   | 15 ++++++++++
+ drivers/usb/dwc3/dwc3-qcom.c              |  4 +++
+ 9 files changed, 104 insertions(+), 10 deletions(-)
+---
+base-commit: 47588e4c16d8876d3058bcec030ed8a016794b9e
+change-id: 20261126-usb-pcie-gdsc-suspend-7a99c6b62406
+prerequisite-message-id: 20261113103111.156476-1-prashanth.k@oss.qualcomm.com
+prerequisite-patch-id: d39d8cf075595b668e85fbc6c3cf7234c318602e
+prerequisite-patch-id: 5f7421fa9312a84661ff4a87e946f315e8dc27e8
+
+Best regards,
+-- 
+Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 
