@@ -1,98 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.201.6
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795679911;
-	b=kNHy4OcAyARQ8jxrNktzZfNXUa/Rm0x4bzDUA8DgeN//jPIF7EXJhvAXyrBs1VgJNIzE
-	 7zlT1LySe41Z+oVG009lxleS4fmlj4tMS+9AifDMN9uo6KxehA9TFNMV23KxGk+sZJzfg
-	 qzyg1PbZ6rvv+Gx8XTMu0mlECZIojh/NW5MjGn8GsH0BzIeMEqfXmJVLtCdkfgnCWv+sR
-	 3ahkzx8YtR7L2vT3CXQuTpBfop5+N2iWoeNdsP4iI4qO/KDwXtGyRlL67bX29ehFQcUh9
-	 WL9FESRyogxrjdr1FLGZRerom9jEj1Cpb14tK+f5lSZrpTLh840f+mmy6/EsYtkeRVQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795679911;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:In-Reply-To:References:Content-Transfer-Encoding:
-	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:
-	 X-MS-Exchange-AntiSpam-MessageData-1:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=W36kMWoIbIMRdRjcGVcNHOnlR+3hLxKf+bm8uT4nGB8=;
-	b=duyc/gMw4nAGHpV6CklrLPfJw8DRIBrjsTgH4B64HRQizItg+UgatnaaPceUo87TkUvJ
-	 7sgAZdM9yKOH/0NAyWL/gW+UZ/74NBIAtF961uDqabb9cb6diICyYaoghmh7ouyrtlCZo
-	 RjOFUaJo8JIY/tJUAFxy8DtNJ91WetRsxP2x9ORWZ4dgVybhjqO7aNKg27A0mUYqSxU2O
-	 joqz6IAu9h7fnn6mo2RjYpQ1ohEMXiKDBqASTebhheFlwHaeijADOwC0k3Qp4M4AAZbZd
-	 XFOXDcMe7RQ6NJbF/KbUt04+SgrUQg8oDUdbryCbs3kzKWjInYORTRIF8WYXQv1n3jg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=nvidia.com;
-	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=JAhz8i0i;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.201.6
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010006.outbound.protection.outlook.com [52.101.201.6])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795681014;
+	b=zl6uWKgcCau1Xq1FKOHYErvqmE8SyB9x9hrimxzUc+WuvXQ0RK945s59Cs0AY93QOjKd
+	 74fGxblO5DQuMDw+1/vSH7OwoDD9mwbZE7ez8XjWaTvcmzpkgNqpvue6+weYDm1qtacv9
+	 e+BtB7R+UeYhw8IHxqR0bcolJE5I5s9FhkuDbsB3hyIHars1u1GJmonuNIPmW5WmM7ocF
+	 z33d2nL6jt53LelUH5L9pAWfz1eM4CZbqPC0i9Bq8O5G2ujeYfxgBu6ivyK9pNeyzCvpB
+	 9gL/8FJR+eQAh9GN4MP9IAXSb4Hv8uOIFESWHqarS2qkhPcXz0yRlNAtx+yLb8XcHmQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795681014;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Message-ID:
+	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:Organization:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Last-TLS-Session-Version;
+	bh=N/cEzKcepYsGi3Rr32SGnZ2whiJRMg9YAJGcOs7d3pE=;
+	b=EYhNaea7Vg+XzE+G4SdpzVQKg+fJYFRK/qUIDIqX2fL/2J80avggSkNfLg6f3uLFIVE+
+	 yNlTJY0CuWMBlPekrSNh4e9OOG0AxsUGqGd378AmygLv/QZGS9YHiC5iC+4zgFah/bCyE
+	 6cZyH2l1mRc2rKB7OV7l7mUAZl9o2JY8zsrKlCoQIMVZ/Bt/KYLm5bDSvStYFb5TwMM1/
+	 QTQa2LMo47EdsewxXsgld3Fix/vzRAW3K8kuxE7VUEdyPpXYcmnEzNxjz/uc8CuP8SRfl
+	 R9+dTJpHbMqU84Afon69RoTyeXg7eM3+sG6anR4U7pb/LBXrNxon9GnQ28AdKCNWoPw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b="JH/+eCCL";
+	arc=none smtp.remote-ip=185.246.84.56
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BDE606A31C;
-	Thu, 26 Nov 2026 07:58:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 94BDE606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432A4606A321;
+	Thu, 26 Nov 2026 08:16:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 432A4606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=JAhz8i0i
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t2CnKEslv49qlJKTA2tH7fPT8+9v0k9lrcvjwEOJXqo/2diMFYmiegTPwhQcyh+dbbHgH8b28rtcBkXmarbYfALdv6pvd3e3sbHZ7eks96333tKKYaTDo6/X4El4NGDS4ZCOIpoAWbs0MI4bvMaDzXkxGZ4PLAfi42LHb2zJSj77juHellDTz32A4IkSpsaJAs57xy+CFgVdF/OmuNlBLwA4c3hpj5qTOBys/5jIKQU8bZSzKzldzRUlvjgyLny+ibp7bLeDMWLbjyy2ev4g/x/bEddjAB4SP0ai46SmrJzoJZDCb10dLYaCqpsMcy2YzPqCRPZ7a9HbVRpgja+6EA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W36kMWoIbIMRdRjcGVcNHOnlR+3hLxKf+bm8uT4nGB8=;
- b=wBzbjN3g0rqu1OtauDxb8DfuxidV3FGQKvrT2+TNQx0xke2oFFYCBulGcFmYM2HbCYUHGTFPfQOhx5RxBoP+wzKsUo58gxQEUTj8OPYh9mX6kg1YhaFo47r+TT9X8gEgTKefh/5kY+VvKi90BJ8YXXrOhyDdoyivxxDRsu+DdIuIs0QJuNJdsJgjyGLuttrlOOF70L3qvX3FLJs0wMjKeJGEZmLSDSqXND7Lp2fbIR52iWZ3WWtQ/ysPVlySAlU/VNxvoF+yRC1Dgl0VNQVeSKKfU3LgQvmspaCVVnnIERb2qzJBofVYVdWtEh0328Mh1zRN2KCVpU83DcXe5qIq9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W36kMWoIbIMRdRjcGVcNHOnlR+3hLxKf+bm8uT4nGB8=;
- b=JAhz8i0ixmVAErmOuzRPYA0SplZWo44Bjq4bzE8a6AXoJOSqi+JbEj8B7B7lbMM0BlmzgxEPm651xHj4BgEVmuLvrvJWc2gkTr2tPSVyGsgfbQn1dYTciL8yeagnQq4vh96gCq4gRwe2bIdSLV8kQI/vtPjp0g5r/MMB+Oe0WAMTcXzheVfMNGrxJbtIOj9Fg7ObDRLKvaaT5G1Dizsv2fPhdKDOJWuHqV77xJVAcXGnUslAte150a/eIeEZt9cSgHGt6mdi9ZiTdfo17IGyxdYktrYNeha2jU7r1+DbNxKOSB2qpGku88yFDFDIQE+eRsCWkzKMjoS5kAiUcHNZmg==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by CH2PR12MB4152.namprd12.prod.outlook.com (2603:10b6:610:a7::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.7; Thu, 26 Nov
- 2026 07:58:27 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0639.012; Thu, 26 Nov 2026
- 07:58:26 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
- linux-clk@vger.kernel.org
-Cc: Karl Mehltretter <kmehltretter@gmail.com>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- Karl Mehltretter <kmehltretter@gmail.com>
-Subject: Re: [PATCH] clk: tegra: Fix Tegra210 IQC2 clock lookup
-Date: Thu, 26 Nov 2026 16:58:22 +0900
-Message-ID: <C1R-z2jTSnCjUfGh68ynjA@nvidia.com>
-In-Reply-To: <20261024110113.63341-1-kmehltretter@gmail.com>
-References: <20261024110113.63341-1-kmehltretter@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: OSTPR01CA0006.jpnprd01.prod.outlook.com
- (2603:1096:604:220::16) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=JH/+eCCL
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 6ADDE1A1809;
+	Thu, 26 Nov 2026 08:16:52 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3441C60237;
+	Thu, 26 Nov 2026 08:16:52 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D29F111E6835E;
+	Thu, 26 Nov 2026 09:16:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1795681011; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=N/cEzKcepYsGi3Rr32SGnZ2whiJRMg9YAJGcOs7d3pE=;
+	b=JH/+eCCLMcYtMAzvglxXXC+fGv/9T9mHlOPKeKUNwFxSdqCzdn78ULd5UpxXkrp4JbZC8l
+	OEKf0NHTs/7KFL4j5HsL3fB5AMLKfg9TeHoEKWr8m/83+F0IP+vHXJGZIDhaiJeopJ78Rn
+	NEsxpoTA1C5SXccCLA55tSlyRvuaK5iuc8alnQlZYJ47hKhobKCSYKYq0YpZRq+mvd0SyV
+	UF7vC6+x/OcRtAitIZEQ7UVMlhatVc7llFU1I+DqKLkKFREOFdmmnF98FCH2J6DlxQMVvt
+	XtHQelZwZbqh/5ZwnsZOTEsC9RUg7s6i1tQtwb/Ma1UFKmPL+ZyoWCayhJzJdg==
+Message-ID: <0828126f-54fd-43af-94ee-35d1047378db@bootlin.com>
+Date: Thu, 26 Nov 2026 09:16:45 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -102,117 +62,326 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|CH2PR12MB4152:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b490801-be22-461b-ba1e-08df4b930d1a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|23010399003|376014|1800799024|10070799003|261102123227099003|56012099006|261021121427099003|11063799006|10067099003|261021123027099003|261026140227099003|261022105027099003|261009223027099003|261022075727099003|261028144727099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	z6SIMuIS9XvwyxYjHiPs2MqDyYA2Md0HmT4TM6vwoKgpkKfLPqbFzAxyiPPz7Nivr2Ap3vBAC377OPb/Oe+bLci9fSIJPzFlrAjWBBkfVcUd11+sGhqiNBfTzY12AuEMqy1zwGmXl/YpEQ+83S5BWw64YqnfTLDfd78LD6/ZIJrq8UjGXIYgSLuJPNq1TkVIHlo1dfe/rXl+50qJAVJUVO8bDMExLMcjCC48ZhXPLachwU+fq2dRrrCcAMZxnrlh1IXTffTl6AE3ChGkmmVgp1EqKKzACUxu0hgBwtEJOyHJP+ntwwpasQNWy95JQhjUyv22Kus9TdUMlbyvNNH1Fy6lpZi8rjqQ2AVootzbZwNyfx1AuKOsvvNuYld8BWU8pLGJMn4x/ZlItS8Su5Tt4kMZOeHn8fL7Duu036jphQXPz1xHERuf5d8Poh4RHT4/dk4c7TAJSV55/y2oxRC2ZU/kVQE1GQAzVlRSj6agyv5WVklyBRtbokkvW+jH93jR4Xx3f7tcMSAZHVlKZHPgJH27krx7n3Zx1MVIPFL9QXaVuNnMmrT44YgzbAyKY/4gu0mmHSTGKd3fffuCOBIkXpiW+Cn+RU34UmkfL1QBV1aHNMVshbP+17uElUwGjF59x8ol/J6sMYTz/T6jgJVmOL8lwgZ35MrQx8rSmGzQm3Q=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(376014)(1800799024)(10070799003)(261102123227099003)(56012099006)(261021121427099003)(11063799006)(10067099003)(261021123027099003)(261026140227099003)(261022105027099003)(261009223027099003)(261022075727099003)(261028144727099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bUZEMDBXSHJQeG1BN0Fkc1RLNGVBWHBldGRSOVhoeTZ2emNUMzJlUDR2ekhE?=
- =?utf-8?B?Ylhud2dyUVJpWGdnaStpb1B5MFZaUCtoRHoxS2hmbGpFTTJrazUvdytCalZ1?=
- =?utf-8?B?bW00Y3JvT3ZqWGl6V20yOXVmUlRWazErUHBJTlA4QWJzSU1IQjM5VjJGV1A0?=
- =?utf-8?B?R3dnUUFyc2trVVpnL3c5QTYxVXhZUndPc0NSQ1BaYnlaOFpmb0hmUCtVMEN2?=
- =?utf-8?B?YjM5SHQvbHJwdTE4OFJHV25WN1BZNndiOHprZldKd0ZhdkZjUGFONHJUOHAz?=
- =?utf-8?B?ajRSeVFZK21zeGVocEVDdC90N2NIaDhMUktGd2VEb0hxREJRaWxlbFJXKzhL?=
- =?utf-8?B?ZkxqcTFhY05SLzJlZVg4VTZzM01zV1JOUVErQ2daeUpyWkliOTZmTmNiYVZE?=
- =?utf-8?B?Qnk1a3IzMy9tM2xNcUZJZDJCWVNoU21pNys1QTN1cXozRnYwQW5LOENKSHlB?=
- =?utf-8?B?cTFveGxlNmFpdWtwQjVFMHBtSlhnV1ZsT01HUEdBRGNmeDUxeFZ3V3VhUkdY?=
- =?utf-8?B?aEJ3N2hiNHBROTR4a0V2dlFMY2dtOGI4K3Fzb29hSXZqNUZabTJDWHQ1TDFp?=
- =?utf-8?B?aEw3R09tZjQwczU2RlRRZXJ4S1hOZzg0NFhLQmhNVU9yL0twQUFqN2tUcVJ2?=
- =?utf-8?B?aDhtb2FKQ2ZZWFQyNHFNeEpwZnNOSnJ5Z0dEbFNTL28xMnVvdFJYQ3VpTnA2?=
- =?utf-8?B?NkpJaWhlRDRhZC8zYXRjbE5vRHMwNll1eStCdTZ0S0tiSi8wSWlBdFZKNUor?=
- =?utf-8?B?RXQ5Vzdud2tkN1RPUjRTM2c5QTNZc0NUZlFKMUNBbFVNa213NUcrYTJwa2Iv?=
- =?utf-8?B?SW56UDRJTGdpOXl1WmRITlBZYVJjK3grSm5GQjFQU1VvY2NaQ1V3eDFuVGJC?=
- =?utf-8?B?TFUwa2lOaWgzRURhaXluZ25Gb0tteDZYbGJnQlYzOElJTmNKSytGb1dOY0NP?=
- =?utf-8?B?QldQdlY0MktLWXNESy9NN1ZTaVJuMXVCWkhsMVA5RmZVNUNiUEhTRTA3MTJq?=
- =?utf-8?B?eXk3ZVlFV3YwZ3VRSXVndnNqZnlaYjFzRUlhU3UzVFljZ2xHZVJuYW85ZkFU?=
- =?utf-8?B?bFJOVjB4SXUrd1RWdllWUXB4Vmh5Q28yeGdXZ0NteG5OM2NQU0lYMGY2dlNt?=
- =?utf-8?B?MFp6aGt2VHdrWW0zQ1ZCMDNDNUtzOWt0RFJuaUtpUHJESm5sOHN5OWJmZ290?=
- =?utf-8?B?QURielRaaWp2TGdhV0FLMG40SWErMjhDS2lmb3JIZzRBODc5eGVUeDQwblB4?=
- =?utf-8?B?TDN4Mm0yejdRaHg3bUxqcmxIZVZCR0NMSWtTcGlQYzNVUlNydGxRcmRTTXBI?=
- =?utf-8?B?QTVEb2lTNjFyUnYwKzFYS3BiTXhQbytHZGhXL2lQYXlsZzN6SmFtMDF1eW1s?=
- =?utf-8?B?QWVoeEN5YUFwMEtYSmdCZWxNSjFyNmdxTUpVc2VTRDl2OWJRY3NvV2pSZ2tl?=
- =?utf-8?B?dkhIMUxsVFVSajdJYkRyNVYrd1hreXgvSTUwM3I5NWttMUJIUEV3ODE4cmVL?=
- =?utf-8?B?YnhlMWRTWEtmZVNVekx1ZnRabmU5UXpTT2xHclJKdHNreHZyZ05kTWdsbUdx?=
- =?utf-8?B?aFZaRmc4bm9lbUNQaGJKUWFTK1lSbXBUUVJsaEg0cTNiR29mblV2V0RxaER5?=
- =?utf-8?B?NEdZT1pxemk2YmU2R2RsNlBpanYwV1BPUmVaSis4ZlpMd1UrYzF2UWQ4eUxF?=
- =?utf-8?B?cHZLcWRic0V5RUZSOEZ3SmRPQng0SDlqRTd3cEVRTU83czNTZlZqN1U1R0lK?=
- =?utf-8?B?aU1aMnVQMTlWYW5PTFpGaUhtNkJTalZMemlNeXc3azZhSkdpc2pkSFI0NEFV?=
- =?utf-8?B?T3FzbVFkNXl6U3dJU2xWTU9xWjIyMVZNVmFnelhtYUhuUEdjNGc2MTJlVEkr?=
- =?utf-8?B?cWQvR2Y2MnZKMm5IbXNVM3hXYWlrN3Z1WXVNR04rTkpWYmsrQVFhYWJxUjJl?=
- =?utf-8?B?Z3JXelVOclBMOW5HOUZ0RlZPeGNkc1V5TU5KK2pLaURNMENEeVQvbmxZM2ZV?=
- =?utf-8?B?L2FTY0RIVk5SL3BBTjUxT2dxMjRyTTM1UUNnMCsyR3FIaE5xaVpkNFJVWmpC?=
- =?utf-8?B?U0cvdXpsYXJSdVBBZUZTRDNNbElBb05JZmV1REF1RmI5T0Z0aGFBNkNwVkdS?=
- =?utf-8?B?a0R2eHZRckJqZHNnZHVBeXRDemJmMnZ4aWZNUEc1VHRhNXY2YlM5WDFaYUkr?=
- =?utf-8?B?OXpwUytRT1p0eUtCdmhvRjRkTGVqVFBtbDArT1hWd0RiUkJPazhjTWtFYi9G?=
- =?utf-8?B?a09jNEJEdkc5eHk1ekxFUDVsZlp1TVVHOGhnY1NzWDFHekFkMUtYWFB2ZHda?=
- =?utf-8?B?SzBEVTlkSXFWNzlyL0xqVXBhbUdnSUR5OGpoNkZKREFaWEFqVmxPUWg0SEU4?=
- =?utf-8?Q?UdkIFKBEuBrBx1+iWv5z9297GJtPpKErImEwjXZPTGQ2F?=
-X-MS-Exchange-AntiSpam-MessageData-1: gr1Io+gHXWqXeg==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b490801-be22-461b-ba1e-08df4b930d1a
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 07:58:26.7141
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zIeiR4lHCohyqyrlE+fDlvrVR+dLPLIkizvY4whuEBjgmBImuD6Q10OLMOktqF+hKKgIM2tkktfORxG3Gm1Npw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4152
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 13/13] arm64: dts: synaptics: add SL2610 family RDK
+ boards
+To: Jisheng Zhang <jszhang@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+References: <20261115102401.3520-1-jszhang@kernel.org>
+ <20261115102401.3520-14-jszhang@kernel.org>
+Content-Language: en-US, fr
+From: Richard GENOUD <richard.genoud@bootlin.com>
+Organization: Bootlin
+In-Reply-To: <20261115102401.3520-14-jszhang@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Saturday, October 24, 2026 8:01=E2=80=AFPM Karl Mehltretter wrote:
-> gate_clks[] uses tegra_clk_iqc1 for both iqc1 and iqc2. On Tegra210,
-> gate_clk_init() overwrites the TEGRA210_CLK_IQC1 provider entry with
-> iqc2 and leaves TEGRA210_CLK_IQC2 unpopulated, so looking up
-> TEGRA210_CLK_IQC2 fails with -EINVAL.
->=20
-> Use tegra_clk_iqc2 for the iqc2 gate.
->=20
-> Fixes: 88da44c5edb9 ("clk: tegra: Add missing Tegra210 clocks")
-> Assisted-by: LLM
-> Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+Le 15/11/2026 à 11:23, Jisheng Zhang a écrit :
+> Add device trees for the SL2611, SL2613, SL2615, SL2617 and SL2619
+> reference development kits. Share their common console, memory, pin
+> configuration and regulator descriptions and enable the populated
+> peripherals.
+> 
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 > ---
-> Tested on a Jetson Nano 4GB (Tegra210) with a small probe module that
-> calls of_clk_get_from_provider() on the Tegra210 CAR node. Unpatched,
-> TEGRA210_CLK_IQC2 (220) returns -EINVAL and TEGRA210_CLK_IQC1 (221)
-> resolves to iqc2. With this patch on 5b0764a53235, ID 220 resolves to
-> iqc2 and ID 221 resolves to iqc1.
->=20
->  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk=
--tegra-periph.c
-> index 4dcf7f7..47bb657 100644
-> --- a/drivers/clk/tegra/clk-tegra-periph.c
-> +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> @@ -813,7 +813,7 @@ static struct tegra_periph_init_data gate_clks[] =3D =
-{
->  	GATE("apb2ape", "clk_m", 107, 0, tegra_clk_apb2ape, 0),
->  	GATE("cec", "pclk", 136, 0, tegra_clk_cec, 0),
->  	GATE("iqc1", "clk_m", 221, 0, tegra_clk_iqc1, 0),
-> -	GATE("iqc2", "clk_m", 220, 0, tegra_clk_iqc1, 0),
-> +	GATE("iqc2", "clk_m", 220, 0, tegra_clk_iqc2, 0),
->  	GATE("pll_a_out_adsp", "pll_a", 188, 0, tegra_clk_pll_a_out_adsp, 0),
->  	GATE("pll_a_out0_out_adsp", "pll_a", 188, 0, tegra_clk_pll_a_out0_out_a=
-dsp, 0),
->  	GATE("adsp", "aclk", 199, 0, tegra_clk_adsp, 0),
->=20
-> base-commit: 5b0764a53235d3c77e1ed674e836e1b3fe1a4b1f
-> --=20
-> 2.39.5 (Apple Git-154)
->=20
->=20
+>   arch/arm64/boot/dts/synaptics/Makefile        |   5 +
+>   arch/arm64/boot/dts/synaptics/sl2611-rdk.dts  |  16 +++
+>   arch/arm64/boot/dts/synaptics/sl2613-rdk.dts  |  16 +++
+>   arch/arm64/boot/dts/synaptics/sl2615-rdk.dts  |  16 +++
+>   arch/arm64/boot/dts/synaptics/sl2617-rdk.dts  |  16 +++
+>   arch/arm64/boot/dts/synaptics/sl2619-rdk.dts  |  16 +++
+>   .../boot/dts/synaptics/sl261x-rdk-common.dtsi | 135 ++++++++++++++++++
+>   7 files changed, 220 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2611-rdk.dts
+>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2613-rdk.dts
+>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2615-rdk.dts
+>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2617-rdk.dts
+>   create mode 100644 arch/arm64/boot/dts/synaptics/sl2619-rdk.dts
+>   create mode 100644 arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/synaptics/Makefile b/arch/arm64/boot/dts/synaptics/Makefile
+> index de71ddda6835..810d0d08c2de 100644
+> --- a/arch/arm64/boot/dts/synaptics/Makefile
+> +++ b/arch/arm64/boot/dts/synaptics/Makefile
+> @@ -2,3 +2,8 @@
+>   # Berlin SoC Family
+>   dtb-$(CONFIG_ARCH_BERLIN) += berlin4ct-dmp.dtb
+>   dtb-$(CONFIG_ARCH_BERLIN) += berlin4ct-stb.dtb
+> +dtb-$(CONFIG_ARCH_BERLIN) += sl2611-rdk.dtb
+> +dtb-$(CONFIG_ARCH_BERLIN) += sl2613-rdk.dtb
+> +dtb-$(CONFIG_ARCH_BERLIN) += sl2615-rdk.dtb
+> +dtb-$(CONFIG_ARCH_BERLIN) += sl2617-rdk.dtb
+> +dtb-$(CONFIG_ARCH_BERLIN) += sl2619-rdk.dtb
+> diff --git a/arch/arm64/boot/dts/synaptics/sl2611-rdk.dts b/arch/arm64/boot/dts/synaptics/sl2611-rdk.dts
+> new file mode 100644
+> index 000000000000..585872307834
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/synaptics/sl2611-rdk.dts
+> @@ -0,0 +1,16 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright (C) 2025 Synaptics Incorporated
+> + *
+> + * Author: Jisheng Zhang <jszhang@kernel.org>
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "sl2611.dtsi"
+> +#include "sl261x-rdk-common.dtsi"
+> +
+> +/ {
+> +	model = "Synaptics SL2611 RDK";
+> +	compatible = "syna,sl2611-rdk", "syna,sl2611";
+> +};
+> diff --git a/arch/arm64/boot/dts/synaptics/sl2613-rdk.dts b/arch/arm64/boot/dts/synaptics/sl2613-rdk.dts
+> new file mode 100644
+> index 000000000000..de75c9fab6a2
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/synaptics/sl2613-rdk.dts
+> @@ -0,0 +1,16 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright (C) 2025 Synaptics Incorporated
+> + *
+> + * Author: Jisheng Zhang <jszhang@kernel.org>
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "sl2613.dtsi"
+> +#include "sl261x-rdk-common.dtsi"
+> +
+> +/ {
+> +	model = "Synaptics SL2613 RDK";
+> +	compatible = "syna,sl2613-rdk", "syna,sl2613";
+> +};
+> diff --git a/arch/arm64/boot/dts/synaptics/sl2615-rdk.dts b/arch/arm64/boot/dts/synaptics/sl2615-rdk.dts
+> new file mode 100644
+> index 000000000000..ae03638a3a53
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/synaptics/sl2615-rdk.dts
+> @@ -0,0 +1,16 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright (C) 2025 Synaptics Incorporated
+> + *
+> + * Author: Jisheng Zhang <jszhang@kernel.org>
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "sl2615.dtsi"
+> +#include "sl261x-rdk-common.dtsi"
+> +
+> +/ {
+> +	model = "Synaptics SL2615 RDK";
+> +	compatible = "syna,sl2615-rdk", "syna,sl2615";
+> +};
+> diff --git a/arch/arm64/boot/dts/synaptics/sl2617-rdk.dts b/arch/arm64/boot/dts/synaptics/sl2617-rdk.dts
+> new file mode 100644
+> index 000000000000..ba4ea21ac505
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/synaptics/sl2617-rdk.dts
+> @@ -0,0 +1,16 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright (C) 2025 Synaptics Incorporated
+> + *
+> + * Author: Jisheng Zhang <jszhang@kernel.org>
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "sl2617.dtsi"
+> +#include "sl261x-rdk-common.dtsi"
+> +
+> +/ {
+> +	model = "Synaptics SL2617 RDK";
+> +	compatible = "syna,sl2617-rdk", "syna,sl2617";
+> +};
+> diff --git a/arch/arm64/boot/dts/synaptics/sl2619-rdk.dts b/arch/arm64/boot/dts/synaptics/sl2619-rdk.dts
+> new file mode 100644
+> index 000000000000..58901ac2a050
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/synaptics/sl2619-rdk.dts
+> @@ -0,0 +1,16 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright (C) 2025 Synaptics Incorporated
+> + *
+> + * Author: Jisheng Zhang <jszhang@kernel.org>
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "sl2619.dtsi"
+> +#include "sl261x-rdk-common.dtsi"
+> +
+> +/ {
+> +	model = "Synaptics SL2619 RDK";
+> +	compatible = "syna,sl2619-rdk", "syna,sl2619";
+> +};
+> diff --git a/arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi b/arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
+> new file mode 100644
+> index 000000000000..78a9b28fdf99
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/synaptics/sl261x-rdk-common.dtsi
+> @@ -0,0 +1,135 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright (C) 2025 Synaptics Incorporated
+> + *
+> + * Author: Jisheng Zhang <jszhang@kernel.org>
+> + */
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/linux-event-codes.h>
+> +
+> +/ {
+> +	aliases {
+> +		serial0 = &sm_uart0;
+> +		serial1 = &sm_uart1;
+> +		serial2 = &sm_uart2;
+> +		serial3 = &sm_uart3;
+> +		serial4 = &soc_uart0;
+> +		serial5 = &soc_uart1;
+> +		serial6 = &soc_uart2;
+> +		serial7 = &soc_uart3;
+> +		i2c0 = &sm_i2c0;
+> +		i2c1 = &sm_i2c1;
+> +		i2c2 = &soc_i2c0;
+> +		i2c3 = &soc_i2c1;
+> +		spi1 = &sm_spi1;
+> +		spi2 = &soc_spi0;
+> +		spi3 = &soc_spi1;
+> +		spi4 = &soc_spi2;
+> +		spi5 = &soc_spi3;
+> +	};
+> +
+> +	cpus {
+> +		cpu@0 {
+> +			cpu0-supply = <&vcore>;
+> +		};
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +		bootargs = "earlycon";
+> +	};
+> +
+> +	memory@0 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x00000000 0x0 0x80000000>;
+> +	};
+> +};
+> +
+> +&osc {
+> +	clock-frequency = <25000000>;
+> +};
+> +
+> +&pinctrl {
+> +	soc_i2c0_pmux: soc_i2c0-pmux {
+> +		groups = "GPIO23", "GPIO24";
+> +		function = "tw2";
+> +		drive-strength = <7>;
+> +	};
+> +};
+> +
+> +&sm_pinctrl {
+> +	sm_i2c0_pmux: i2c0-pmux {
+> +		groups = "SM_GPIO12", "SM_GPIO13";
+> +		function = "tw0";
+> +		drive-strength = <7>;
+> +	};
+> +
+> +	sm_i2c1_pmux: i2c1-pmux {
+> +		groups = "SM_GPIO3", "SM_GPIO4";
+> +		function = "tw1";
+> +		drive-strength = <7>;
+> +	};
+> +
+> +	vcore_gpio_pmux: vcore-gpio-pmux {
+> +		groups = "SM_GPIO5";
+> +		function = "gpio";
+> +	};
+> +};
+> +
+> +&sm_uart0 {
+> +	status = "okay";
+This will be needed at early boot, so please add:
+	bootph-all;
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+ > +};
+ > +
 
+And also:
+&sm_clk {
+	bootph-all;
+};
 
+Regards,
+Richard
 
+> +&sm_i2c0 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&sm_i2c0_pmux>;
+> +	clock-frequency = <100000>;
+> +
+> +	expander0: gpio@43 {
+> +		compatible = "fcs,fxl6408";
+> +		reg = <0x43>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +	};
+> +
+> +	expander1: gpio@44 {
+> +		compatible = "fcs,fxl6408";
+> +		reg = <0x44>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +	};
+> +};
+> +
+> +&sm_i2c1 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&sm_i2c1_pmux>;
+> +	clock-frequency = <100000>;
+> +
+> +	vcore: regulator@60 {
+> +		compatible = "silergy,sy8827n";
+> +		reg = <0x60>;
+> +		regulator-name = "vcore";
+> +		regulator-min-microvolt = <700000>;
+> +		regulator-max-microvolt = <987500>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-active-discharge = <0>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vcore_gpio_pmux>;
+> +		enable-gpios = <&portc 5 GPIO_ACTIVE_LOW>;
+> +	};
+> +};
+> +
+> +&soc_i2c0 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&soc_i2c0_pmux>;
+> +	clock-frequency = <100000>;
+> +};
+> +
+> +&sm_uart1 {
+> +	status = "okay";
+> +};
