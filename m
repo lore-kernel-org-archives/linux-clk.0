@@ -1,80 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.254.224.25
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795707854;
-	b=W4cmQWedOHlC4Gzi/+E/gzUKrvosNPa63UdM9w5BymssAdtFdObaplzcqfpJYG3hKP2b
-	 hjwHo2yALqp2zYQVem3YNkGd7lwsU0baXs2tkZTg7FJ+HuLTlugRE7uTzi4azkO2QWjt7
-	 OQFnz0gqljI6VuIDCrkDJXfEI+qMVzgDWdD252D6VX8BUMzjOaFg8Bc+3LQTWWYTjU4Hy
-	 2jl/go+fZ4sAnPqWNwoABpm63f4s4/f+Y73f5O3wQGUyT5BJhswHzyfvI0ioX4yedLHBj
-	 3Lyktp12IJHrqkz0ldhHBMUYGX72LltfN43DHs+BNSqBOKzWYdQmnhtSApMwYYHQfQQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795707854;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 Received:Received:From:To:Cc:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:X-Mailer:Thread-Index:
-	 Content-Language:X-CMS-MailID:X-Msg-Generator:Content-Type:CMS-TYPE:
-	 cpgsPolicy:X-CFilter-Loop:X-CMS-RootMailID:References;
-	bh=8/2RIhr8qmshbZKgEJCspHFVA0yAW1nZUYa6uqR0kME=;
-	b=Kb7UYUnrnyPaQB55sJAaHtwGK72fmYIqzvmknB9yiNtPLRxpNAe9QJn+cyOACtrBO3Q1
-	 8k0jeoutqOSkiDugJarxDzN68SzdzlFJyUceJS6dkqpDaJPUjC6lxiuXQMj31EbuHSGFA
-	 GsyuoU/svasoaNSYtxet4P+V/rZBdOWfHW5CtJO3whbZRGElyGAgfV2LDCaKnh0owUVBe
-	 bOaWwn5gmMfnVlpmjX2Kqm30V7QO16mUVjUHIhRlPzNogJTrWzjxrKcr3Wk+wKQgMAGH7
-	 ABhqwy9nMU5zAE9/6ULfvYtwf/Liuei8kcM36kDotGFSrz7lQI6Mw5nu+gxwiSKNGUQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=JWQa9tC3;
-	arc=none smtp.remote-ip=203.254.224.25
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.180.11
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795707860;
+	b=H/0RKoBaWHEyln+vjQmAh3CaWgywOAeG0WxhcItzKw5zWVsjZZfdfRxml/++EHjb4nkc
+	 7kPRqt0D4YcG8TRBCCU4RJ2FsVzOBfh6s6Qj8/yDfBI5/9DuE2PNFf8OkuOuBOxp/mgEu
+	 TD8Kqx3DpPEThyy6g90btFt2gIdx3HIdEoomcdkfMdCqyqjw4qw4YIUAuod/PudoF6f5U
+	 tgVvUvnXXgznSn7DlVc4l2qvq72xrLITbEKZtaQXvYbwurlp+6x3Gj5lu3baIdgB56Zfy
+	 CCW7N2sc+qSzn5tbLizObyNuSUxkU9bXWN98Ji/5lCXdJTE1XbbRn2qNoRqbBQRdn8g==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795707860;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:X-Zoho-Virus-Status:X-Zoho-AV-Stamp:
+	 X-ZohoMailClient;
+	bh=OM1CR4VZ1XRCf4Mb1JBeSkMUVIqv4QjfpnGFdkXKa8Q=;
+	b=bwkAhW3cccTGDVxvGGOJn0t0sioc8b1TKe85LzTjokRxVHL1rtXjR2ileboPCW0qwstU
+	 maN/2T8FeU/WAoW71jU+vwOszgaB9kkxB1RkQskjiaJlcvUznGZCILiNgWW72OIH8EPqs
+	 DHd+/Le4TxaqTm4JEawywbKPAxafbdd3aGg9DoKpUbCo2agWQ3M6GAQ02Gd8MJZY3bZl8
+	 pdBxvadF0/lL+bAwTg7aouUEfTTrvKZ3JDYzhVc/yYwKfRB9MRiIF075EnZGre16GeFSd
+	 aNx5h9/B/oEetL4yddF6MmBZRWUaTUH2ybkEZ6juZxOipi/DnXmwbippRNADJu0KKCA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=collabora.com;
+	spf=pass smtp.mailfrom=collabora.com;
+	dkim=pass header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=zohomail header.b=hkfMt+f0;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.180.11
+Received: from sender6-op-o11.zoho.com (sender6-op-o11.zoho.com [165.173.180.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8648606A321
-	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 15:44:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A8648606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B66606A31E;
+	Thu, 26 Nov 2026 15:44:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 07B66606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=JWQa9tC3
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20261126154405epoutp02eb4b70d265202d872804aeec5de953d2~rosWPlBIh0275102751epoutp02x
-	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 15:44:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20261126154405epoutp02eb4b70d265202d872804aeec5de953d2~rosWPlBIh0275102751epoutp02x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1795707845;
-	bh=8/2RIhr8qmshbZKgEJCspHFVA0yAW1nZUYa6uqR0kME=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=JWQa9tC3hIYmABN1K4WRN6wkGJGddPkodHlJJt86Jp/0UqF003YbiGqUPDTHpLLb0
-	 0wxn5GgH3X4m+hICFb4JQO3Gy5ttEoaz7dNEGHKXlpQ7mfB9XqNKIbOJ+UyftjP742
-	 Zy5JIJ4Jxf+fCveKWWMHwp6Yqmo9MbRVp3N5Nm7k=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20261126154404epcas5p4e452e034245d3db160e74d05e3d3fa25~rosU_XgKJ2602626026epcas5p4z;
-	Thu, 26 Nov 2026 15:44:04 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.86]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4jb17738Qxz2SSKZ; Thu, 26 Nov
-	2026 15:44:03 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20261126154402epcas5p27608ba8f724eda55014b644b1d4e711a~rosTdxN3V1258512585epcas5p2p;
-	Thu, 26 Nov 2026 15:44:02 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20261126154400epsmtip1969fb94ad98af9b6cd6c1014143ba1f8~rosRRzx0r0927909279epsmtip1D;
-	Thu, 26 Nov 2026 15:44:00 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Peter Griffin'" <peter.griffin@linaro.org>, "'Raghav Sharma'"
-	<raghav.s@samsung.com>
-Cc: <krzk@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<sboyd@kernel.org>, <bmasney+clk@redhat.com>, <jbrunet+clk@baylibre.com>,
-	<robh@kernel.org>, <conor+dt@kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <is.gandhi@samsung.com>,
-	<ts.amit@samsung.com>, <pokala.reddy@samsung.com>
-In-Reply-To: <CADrjBPoAVMdxgU4P+shh+9O5rGJp+m3sRQMDd2c-7zbJ8qhiBQ@mail.gmail.com>
-Subject: RE: [PATCH v3 07/14 RESEND] clk: samsung: exynos8855: add block top
- and peric clock support
-Date: Thu, 26 Nov 2026 21:13:58 +0530
-Message-ID: <000001dd7dbc$f5fa2d00$e1ee8700$@samsung.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=zohomail header.b=hkfMt+f0
+ARC-Seal: i=1; a=rsa-sha256; t=1795707813; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jOrsV/EdgIHFpYnQu9qAN/y/+fkunJ0aK2dkgBvSwZlb97IX9uiOEX2oLfKPpe5VANYPPt07jMyVysA9mKldtmWot06i1A6ZxHM2SBfNbkdC86Z8jdaufrAa+Ppb2D9dRmKgfviNWW6OguFOv2Y6WlOiyXBoSMEPxbzo5OAbR5k=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1795707813; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=OM1CR4VZ1XRCf4Mb1JBeSkMUVIqv4QjfpnGFdkXKa8Q=; 
+	b=UZc7pslD1B3jXtk2IpNK1bLzSza2YVFdwLmo2DXlOe6J8fpbnsqpO7mYJ+CFStHiqiWs95/90yc/8g3eolbbbM3k/auJIR1u70EAJNyVYGvgRAqpIG54ecHJcnyxUU/kxWz+WQK+kzuUYOYztlMZxJDTuUP85YFPM4GZJ96LSJ8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: a=rsa-sha256; b=hkfMt+f0WZjr9Vz4C6sAA0F5d05Gb2/exmfkRem+8Ub1X0TBmbP3nQDpt1xG7y4ItEsi9oqW/1DdEKrY2v9b/xwiFNmYayyiQCnWRJ5O8+vv/T0SLV2Jae5X8466nPg8SeJf9xQU8uvGWAl22X/Nby/Mu8tntzwTY5zpkMvh0ck=; c=relaxed/relaxed; s=zohomail; d=collabora.com; v=1; bh=OM1CR4VZ1XRCf4Mb1JBeSkMUVIqv4QjfpnGFdkXKa8Q=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
+Received: by smtp.zohomail.com with SMTPS id 1795707762336858.7605108291161;
+	Thu, 26 Nov 2026 07:42:42 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id C8EE31804FF; Thu, 26 Nov 2026 16:41:54 +0100 (CET)
+Date: Thu, 26 Nov 2026 16:41:54 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: sashiko-reviews@lists.linux.dev
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, 
+	conor+dt@kernel.org
+Subject: Re: [PATCH v3 5/6] arm64: dts: rockchip: add dfi clocks on RK3588
+Message-ID: <awhS3yryw6H-qaug@venus>
+References: <20261126-dfi-clocks-and-rk3576-support-v3-0-0f33c1b8df48@collabora.com>
+ <20261126-dfi-clocks-and-rk3576-support-v3-5-0f33c1b8df48@collabora.com>
+ <sashiko-outbox-235767@kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,363 +69,98 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="a2jkuf37hasnfdu7"
+Content-Disposition: inline
+In-Reply-To: <sashiko-outbox-235767@kernel.org>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-0.2.13.1.5.4/295.700.99
+X-ZohoMailClient: External
+
+
+--a2jkuf37hasnfdu7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIXbjCFvuM775FMvx+V85gotW/ScAGxlKqAAw1MM3IBhutM2LaaJbZw
-Content-Language: en-us
-X-CMS-MailID: 20261126154402epcas5p27608ba8f724eda55014b644b1d4e711a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20261113104850epcas5p4ef9292af100475b1f12a2601bf5e1a84
-References: <CGME20261113104850epcas5p4ef9292af100475b1f12a2601bf5e1a84@epcas5p4.samsung.com>
-	<20261113110612.3265841-1-raghav.s@samsung.com>
-	<20261113110612.3265841-8-raghav.s@samsung.com>
-	<CADrjBPoAVMdxgU4P+shh+9O5rGJp+m3sRQMDd2c-7zbJ8qhiBQ@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] arm64: dts: rockchip: add dfi clocks on RK3588
+MIME-Version: 1.0
 
-Hi Peter
+Hi,
 
-> -----Original Message-----
-> From: Peter Griffin <peter.griffin=40linaro.org>
-> Sent: Friday, November 13, 2026 5:36 PM
-> To: Raghav Sharma <raghav.s=40samsung.com>
-> Cc: krzk=40kernel.org; s.nawrocki=40samsung.com; cw00.choi=40samsung.com;
-> alim.akhtar=40samsung.com; sboyd=40kernel.org; bmasney+clk=40redhat.com;
-> jbrunet+clk=40baylibre.com; robh=40kernel.org; conor+dt=40kernel.org; lin=
-ux-
-> samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org; is.gandhi=40samsung.com; ts.amit=40samsung.com;
-> pokala.reddy=40samsung.com
-> Subject: Re: =5BPATCH v3 07/14 RESEND=5D clk: samsung: exynos8855: add bl=
-ock
-> top and peric clock support
+On Thu, Nov 26, 2026 at 03:01:57PM +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 1 potential
+> issue to consider:
+> - [Medium] arm64: dts: rockchip: rk3588 dfi clocks violate
+>   rockchip,dfi.yaml binding
+> --
 >=20
-> Hi Raghav,
+> commit 01f5bc0587cdc7770b7d81ff68f46ba8e1c4c5c1
+> Author: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 >=20
-> Nice to see you got the auto clock mode working on this SoC. Great Work=
-=21
-> See some inline comments below
+> arm64: dts: rockchip: add dfi clocks on RK3588
 >=20
-> On Fri, 13 Nov 2026 at 10:53, Raghav Sharma <raghav.s=40samsung.com>
-> wrote:
-> >
-> > Register compatible and cmu_info data to support clocks.
-> > CMU_TOP & CMU_PERIC, these provide clocks for TOP & PERIC
-> >
-> > Co-developed-by: Alim Akhtar <alim.akhtar=40samsung.com>
-> > Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
-> > Signed-off-by: Raghav Sharma <raghav.s=40samsung.com>
-> > ---
-> >  drivers/clk/samsung/Makefile         =7C    1 +
-> >  drivers/clk/samsung/clk-exynos8855.c =7C 1130
-> > ++++++++++++++++++++++++++
-> >  2 files changed, 1131 insertions(+)
-> >  create mode 100644 drivers/clk/samsung/clk-exynos8855.c
-> >
-> > diff --git a/drivers/clk/samsung/Makefile
-> > b/drivers/clk/samsung/Makefile index b3e994bd525d..99c2c304ff48 100644
-> > --- a/drivers/clk/samsung/Makefile
-> > +++ b/drivers/clk/samsung/Makefile
-> > =40=40 -29,6 +29,7 =40=40 obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK) +=3D
-> > clk-exynos8895.o
-> >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-exynos990.o
-> >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-exynosautov9.o
-> >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-
-> exynosautov920.o
-> > +obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-exynos8855.o
-> >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-gs101.o
-> >  obj-=24(CONFIG_EXYNOS_ACPM_CLK)          +=3D clk-acpm.o
-> >  obj-=24(CONFIG_S3C64XX_COMMON_CLK)       +=3D clk-s3c64xx.o
-> > diff --git a/drivers/clk/samsung/clk-exynos8855.c
-> > b/drivers/clk/samsung/clk-exynos8855.c
-> > new file mode 100644
-> > index 000000000000..dcf58f2459b0
-> > --- /dev/null
-> > +++ b/drivers/clk/samsung/clk-exynos8855.c
-> > =40=40 -0,0 +1,1130 =40=40
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (c) 2026 Samsung Electronics Co., Ltd.
-> > + * Author: Raghav Sharma <raghav.s=40samsung.com>
-> > + *
-> > + * Common Clock Framework support for Exynos 8855 SoC.
-> > + */
-> > +
-> > +=23include <linux/clk-provider.h>
-> > +=23include <linux/of.h>
-> > +=23include <linux/platform_device.h>
-> > +
-> > +=23include <dt-bindings/clock/samsung,exynos8855.h>
-> > +
-> > +=23include =22clk.h=22
-> > +=23include =22clk-exynos-arm64.h=22
-> > +
-> > +/* NOTE: Must be equal to the last clock ID increased by one */
-> > +=23define CLKS_NR_TOP                     (CLKCMU_DOUT_G3D_HTU + 1)
-> > +=23define CLKS_NR_PERIC                   (CLK_GOUT_USI_PERIC + 1)
-> > +
-> > +=23define EXYNOS8855_PERIC_GATE_DBG_OFFSET      0x2024
-> > +=23define EXYNOS8855_TOP_GATE_DBG_OFFSET      0x20A0
-> > +
-> > +=23define EXYNOS8855_DRCG_EN_OFFSET       0x104
-> > +=23define EXYNOS8855_MEMCLK_OFFSET        0x108
-> > +
-> > +/* ---- CMU_TOP
-> > +--------------------------------------------------------- */
-> > +
-> > +/* Register Offset definitions for CMU_TOP (0x13900000) */
-> > +/* PLL */
+> This commit adds four per-channel DFI monitor clocks to the dfi@fe060000
+> node in rk3588-base.dtsi.
 >=20
-> IIUC in clk-pll.c you are using PLL_LOCKTIME_PLL_SHARED* - 4 for the
-> PLL_CON8 register offset? I was expecting to see those registers defined
-> here
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64=
+/boot/dts/rockchip/rk3588-base.dtsi
+> > index d0f364547ae55..ef0ff6555fba3 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+> > @@ -2190,6 +2190,10 @@ qos_vop_m1: qos@fdf82200 {
+> >  	dfi: dfi@fe060000 {
+> >  		reg =3D <0x00 0xfe060000 0x00 0x10000>;
+> >  		compatible =3D "rockchip,rk3588-dfi";
+> > +		clocks =3D <&cru PCLK_DDR_MON_CH0>, <&cru PCLK_DDR_MON_CH1>,
+> > +			 <&cru PCLK_DDR_MON_CH2>, <&cru PCLK_DDR_MON_CH3>;
+> > +		clock-names =3D "pclk_ddr_mon_ch0", "pclk_ddr_mon_ch1",
+> > +			      "pclk_ddr_mon_ch2", "pclk_ddr_mon_ch3";
 >=20
-Sure will update this in v4
+> [Severity: Medium]
+> Does this violate Documentation/devicetree/bindings/devfreq/event/rockchi=
+p,dfi.yaml?
+>=20
+> The schema currently allows only a single clock named pclk_ddr_mon:
+>=20
+> Documentation/devicetree/bindings/devfreq/event/rockchip,dfi.yaml {
+>     ...
+>   clocks:
+>     maxItems: 1
+>=20
+>   clock-names:
+>     items:
+>       - const: pclk_ddr_mon
+>     ...
+> }
+>=20
+> Without the corresponding binding update, dtbs_check fails for all RK3588
+> device trees that include rk3588-base.dtsi.
 
-> > +=23define PLL_LOCKTIME_PLL_SHARED0                            0x8
-> > +=23define PLL_LOCKTIME_PLL_SHARED1                            0x10
-> > +=23define PLL_LOCKTIME_PLL_SHARED2                            0x18
-> > +=23define PLL_LOCKTIME_PLL_MMC                                 0x20
-> > +=23define PLL_LOCKTIME_PLL_SHARED3                            0x28
-> > +=23define PLL_LOCKTIME_PLL_SHARED4                            0x38
-> > +=23define PLL_LOCKTIME_PLL_MIF_SWITCH                         0x30
-> > +=23define PLL_CON0_PLL_MMC                                    0x1c0
-> > +=23define PLL_CON3_PLL_MMC                                    0x1cc
-> > +=23define PLL_CON0_PLL_SHARED0                                0x100
-> > +=23define PLL_CON3_PLL_SHARED0                                0x10c
-> > +=23define PLL_CON0_PLL_SHARED1                                0x140
-> > +=23define PLL_CON3_PLL_SHARED1                                0x14c
-> > +=23define PLL_CON0_PLL_SHARED2                                0x180
-> > +=23define PLL_CON3_PLL_SHARED2                                0x18c
-> > +=23define PLL_CON0_PLL_SHARED3                                0x200
-> > +=23define PLL_CON3_PLL_SHARED3                                0x20c
-> > +=23define PLL_CON0_PLL_SHARED4                                0x280
-> > +=23define PLL_CON3_PLL_SHARED4                                0x28c
-> > +=23define PLL_CON0_PLL_MIF_SWITCH                             0x240
-> > +=23define PLL_CON3_PLL_MIF_SWITCH                             0x24c
-> > +
-> > +/* MUX & DIV */
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_AUD_CPU                   0x1000
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_AUD_NOC
-> 0x1004
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CPUCL0_SWITCH
-> 0x1008
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CPUCL0_NOCP
-> 0x100c
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_DSU_SWITCH
-> 0x1010
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CPUCL1_SWITCH
-> 0x1014
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CIS_CLK0                  0x1018
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CIS_CLK1                  0x101c
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CIS_CLK2                  0x1020
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CIS_CLK3                  0x1024
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CIS_CLK4                  0x1028
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CMU_BOOST_TOP
-> 0x102c
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CMU_BOOST
-> 0x1030
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CMU_BOOST_CPU
-> 0x1034
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CMU_BOOST_MIF0
-> 0x1038
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CSIS_NOC                  0x103c
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CSTAT_NOC
-> 0x1040
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CSTAT_BYRP
-> 0x1044
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_DPU_NOC                   0x1048
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_G3DCORE_SWITCH
-> 0x104c
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_M2M_NOC
-> 0x1058
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_M2M_JPEG
-> 0x105c
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_M2M_GDC
-> 0x1060
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_MIF1_NOCP
-> 0x1064
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_MFC_NOC
-> 0x1068
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_MIF0_NOCP
-> 0x106c
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_NOCL0_NOC
-> 0x1070
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_NOCL1A_NOC
-> 0x1074
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_PERIC_NOC
-> 0x1078
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_PERIC_MMC_CARD
-> 0x107c
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_PERIC_IP                  0x1080
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_AUD_CPU                   0x1800
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_AUD_NOC                   0x1804
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CPUCL0_SWITCH
-> 0x1808
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CPUCL0_NOCP
-> 0x180c
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_DSU_SWITCH
-> 0x1810
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CPUCL1_SWITCH
-> 0x1814
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CIS_CLK0                  0x1818
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CIS_CLK1                  0x181c
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CIS_CLK2                  0x1820
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CIS_CLK3                  0x1824
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CIS_CLK4                  0x1828
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CMU_BOOST_TOP
-> 0x182c
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CMU_BOOST
-> 0x1830
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CSIS_NOC                  0x1834
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CMU_BOOST_CPU
-> 0x1838
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CMU_BOOST_MIF0
-> 0x183c
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CSTAT_NOC                 0x1840
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CSTAT_BYRP                0x1844
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_DPU_NOC                   0x1848
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_G3DCORE_SWITCH
-> 0x184c
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_M2M_NOC                   0x1858
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_M2M_JPEG                  0x185c
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_M2M_GDC                   0x1860
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_MIF1_NOCP                 0x1864
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_MFC_NOC                   0x1868
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_MIF0_NOCP                 0x186c
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_NOCL0_NOC                 0x1870
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_NOCL1A_NOC
-> 0x1874
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_PERIC_NOC                 0x1878
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_PERIC_MMC_CARD
-> 0x187c
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_PERIC_IP                 0x1880
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_PERIS_GIC                 0x10c4
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_PERIS_NOC                 0x10c8
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_PERIS_GIC                 0x18c0
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_PERIS_NOC                 0x18c4
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_HSI_NOC                   0x1050
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_HSI_UFS_EMBD
-> 0x1054
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_HSI_NOC                   0x1850
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_HSI_UFS_EMBD
-> 0x1854
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_RGBP_NOC
-> 0x1084
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_YUVP_NOC
-> 0x1090
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_ALIVE_NOC
-> 0x1094
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CSIS_DCPHY
-> 0x1098
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CSIS_OIS                  0x109c
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_ICPU_NOCD_0
-> 0x10a0
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_ICPU_NOCD_1
-> 0x10a4
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_GNPU0_NOC
-> 0x10ac
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_GNPU0_XMAA
-> 0x10b0
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_SDMA_NOC
-> 0x10b4
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_DNC_HTU                   0x10b8
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_DNC_NOC                   0x10bc
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_PSP_NOC                   0x10c0
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_G3D_NOCP
-> 0x10cc
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_USI_NOC                   0x10d0
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_USI_IP                    0x10d4
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CPUCL0_DBG_NOC
-> 0x10d8
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_BOOST_RCO
-> 0x10dc
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_MIF0_SWITCH
-> 0x10e0
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_MIF1_SWITCH
-> 0x10e4
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_NOCL1B_NOC
-> 0x10e8
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CPUCL2_SWITCH
-> 0x10ec
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CMU_BOOST_MIF1
-> 0x10f0
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_CSTAT_MCSC
-> 0x10f4
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_G3D_HTU                   0x10f8
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_RGBP_NOC                  0x1884
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_YUVP_NOC                  0x1890
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_ALIVE_NOC                 0x1894
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CSIS_DCPHY                0x1898
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CSIS_OIS                  0x189c
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_ICPU_NOCD_0
-> 0x18a0
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_ICPU_NOCD_1
-> 0x18a4
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_GNPU0_NOC
-> 0x18a8
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_GNPU0_XMAA
-> 0x18ac
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_SDMA_NOC                  0x18b0
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_DNC_HTU                   0x18b4
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_DNC_NOC                   0x18b8
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_PSP_NOC                   0x18bc
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_G3D_NOCP                  0x18c8
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_USI_NOC                   0x18cc
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_USI_IP                    0x18d0
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CPUCL0_DBG_NOC
-> 0x18d4
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_NOCL1B_NOC
-> 0x18d8
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CPUCL2_SWITCH
-> 0x18dc
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CMU_BOOST_MIF1
-> 0x18e0
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_CSTAT_MCSC
-> 0x18e4
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_G3D_HTU                   0x18e8
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_USB_NOC                   0x1088
-> > +=23define CMU_TOP_CLK_CON_MUX_CLKCMU_USB_USB20DRD
-> 0x108c
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_USB_NOC                   0x1888
-> > +=23define CMU_TOP_CLK_CON_DIV_CLKCMU_USB_USB20DRD
-> 0x188c
-> > +=23define CMU_TOP_CONTROLLER_OPTION0_CMU_CTRL                  0x800
-> > +
-> > +static const unsigned long top_clk_regs=5B=5D __initconst =3D =7B
-> > +       PLL_LOCKTIME_PLL_MMC,
->=20
-> and also here
->=20
-Sure
-> > +       PLL_LOCKTIME_PLL_SHARED0,
-> > +       PLL_LOCKTIME_PLL_SHARED1,
-> > +       PLL_LOCKTIME_PLL_SHARED2,
->=20
-> =5B..=5D
->=20
-=5Bsnip=5D
-> > +
->=20
-> If you don't define all registers (like QCH, etc.) in the CMUs that can b=
-e
-> powered off, enabling power domains on this SoC might cause you to lose
-> state configured by the bootloader (and quite possibly also suffer weird =
-hard
-> to debug timing/clock issues when enabling power management).
->=20
-> Since auto clock mode is now used (and QCH registers are used by auto
-> mode), I think it makes sense to define all the CMU registers that need t=
-heir
-> state preserved here.
->=20
-Sure, will add QCH related register in v4
+This is a false positive. Sashiko is missing the DFI patch series,
+which just got merged today as mentioned in the cover letter.
 
-> Thanks,
->=20
-> Peter
+Greetings,
 
+-- Sebastian
+
+--a2jkuf37hasnfdu7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmsIUz4ACgkQ2O7X88g7
++pqEeA//VfiLt/n+iz1i7f3gbyfJ4sUg6srVA53WVfa2j+iKkg68qpcOuJjksyMX
+ecaQd0bSJjV+vwsTcoRKMrVPuBkbqOZIL0Mn7QtLKmy9cxhTRhRPep8rzgrtZGSI
+eW9BUoFnii1pm5URwAdak6V/VUd8nrfeeivsOCrQ+tn3ZQHmCkWkVeh8sAGWjGcg
+tv9ABySWpZgeGPO4f023L1qs6MY3xHtQKUJmowavqfPaXz3xxVkXwGYrYi0wVQ+D
+9l3l1UFDIBrs6sCns8ppf2diLjuRSwMv0m6lriK6do/Jfn5I2haigGos/wl94hsc
+R+haq4DBJpjYYPCbOjMdB7zPO95pd9rbKf4pVZUci8BWfwbjxjNWrL97S7vg6RvJ
+u21QZkXZE1cq6YufEArk8IvlUb31t+ri+yud8FxU6kP3Pqz3qrOgxp0i/e8maEtQ
+bfDqF1Vj7JQQ9phj8xxsikfRBdkx2Hi2mQ6gyW+4eXXWsYbU2SKg0Me075zj2mqu
+T396j7XI6zw91krsRCg7AFENJFA536ffqZ1c8EHHBDw2SNLvVzJ1bfsh/XG8KQ2s
+zfx7+o+o81vXrbj6Li7ij1D77G0J4LjRE9FSS8mz/fWAtrFTbEP9p4QVNS6lFFGv
+ZjEB5LH9BnOsBPOyMVs4hBa8mD7xaSili21aSzZkTrmdfEUFh2U=
+=CXjp
+-----END PGP SIGNATURE-----
+
+--a2jkuf37hasnfdu7--
