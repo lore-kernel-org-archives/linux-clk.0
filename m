@@ -1,45 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=119.15.109.137
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795677113;
-	b=uEjq/uCD9RJ6M1LNhcWJimhQKybsKf4XyPn0Mnjq5eaVnfO+Ldv9WrDJ/U1IAb/s7CNy
-	 eI69UTX3KxaIO7EoJ0uldVxhFvzfKpbX6PLGgydvIdDiRpJdhBHGDrZ2tThD9OZDL1ZJg
-	 kMzPypf/mZKaFhpmPiPfYntWe0frCNqgBNHwn+LtIvGyhXy4zdCdC0APKJzyl3+o3cbbM
-	 55es5Hn3Y3ShnzvP1bKCS+gRhWLtCiU4NzIPQXlL6HcOdhUQXIBnkI8j0Jz6sdluTH9vy
-	 ALbQhixprk4sAkPQaEDDpe9Xv/sX2fJyNaVFqOFTeiu7wJgcLWxfZgQ4hpPUF+0yWhA==
+	t=1795677181;
+	b=Ck3v8X/Ggp7OKLqxhRMOKAdIzusILXN3HNXzde1FWLlVJUEFqJC30+fxs3QxKN+t4kXZ
+	 gQQxn0NhBQeZghhNQ2eMZe7xsL4S/ynfSfBvfluhrz8ZLzKb35Z/VUQB/yYIa15xtZbxS
+	 r2Al1vLjo4Iaw8Z4dNY161Qq0Hg0FPMBJVhgH1xT3Rner0x7S+slrLHSNOhQSW1wRYG8O
+	 VR/5UZyv+UZc8FXslZxjOkXWMh7zYvDfW0DIeqPujtIn6j7XtaeYCb2KlIHp5dw8mf5pF
+	 uOp6uaPR2IGZs34mDh2Qdh5tI3IF3vD53bhgW6JIWSy/eiDsv6Hpe5KAazveBXbAOlg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795677113;
-	h=Received:DKIM-Signature:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer;
-	bh=4YyEWwAkCQU+bFSGO99qgS4Bf2a+9peUpz7t0o/uWGE=;
-	b=G2RbekYcOE32nnAYk05r9unWcNhbYnyDjtzDBbexGrE/4QeA7bw4WVIFkKvU3n4y59n4
-	 3AUtQw7fnwlHLZD3dvI1a5Qx/E4dygKc2pGxuufKlC2bTeWP9eOFd7h7akOj3+Z80oM+p
-	 VbynMSEzg9L4bD5PuSaZKeeRI0Na2gp5bVmjCgQ760c+mQde77xPT4oVCsC418qxSzjEw
-	 8FGJ2j72He38vSXh+YA5QyjO2Lxap5feXRDQzmYeKsJIHFoZop/nXQ2oN/3D2Ud60i5XR
-	 m8M2Ylnb+zP+R23v2MkjovqWTFWj8hcHzUD9JW4hcQDVpVz2AvSl/gKo5qPetRkdjSw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795677181;
+	h=DMARC-Filter:Received:DKIM-Signature:X-GPT-Reason:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=K5j+hY/TpNb3TDZ4CDlJ7DrhpFGoRBJlazHC7f2+tvM=;
+	b=vM01e9D8vmm6TMp1gutnHiFwaYvzWiWCx5oAzpa2ktZEIGPDtmT65Ht9mKBiAe2UEABz
+	 woQ9Rrsn8zDbDQGnm9lhsO8RUHK5UbyiXptEvtPxLzF7utXQ8HlzLWF6C4q4ZKFZ2yy86
+	 ReJZzE0Hk1PFETUTwDH9rp5cDpvckMCI50U+2rxzVJXlnlYx55t0EgUVDUxltC/N5ytFf
+	 5ip87Hr3za0ha8ob97JAYXybB83hPuXyFnbE1i190gs+MlyTIsMSuv+noTQe3aidwaiCa
+	 Qk+kNx+SWk2CcThh8QXMrVCOP1uPsznjSos2NRnMkYhF/S+TU8cqQ9ahJGV2F/I6OVQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EmnxEBiQ;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=d-silva.org;
+	spf=pass smtp.mailfrom=d-silva.org;
+	dkim=pass header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=S+Gw97xI;
+	arc=none smtp.remote-ip=119.15.109.137
+Received: from www.nmnhosting.com (watt.d-silva.org [119.15.109.137])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D669606A69D;
-	Thu, 26 Nov 2026 07:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE078606A31E
+	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 07:13:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CE078606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=d-silva.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=d-silva.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EmnxEBiQ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 247671F000D2;
-	Thu, 26 Nov 2026 07:11:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795677112;
-	bh=4YyEWwAkCQU+bFSGO99qgS4Bf2a+9peUpz7t0o/uWGE=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=EmnxEBiQ2we8OzqZSSUpuEIO00yeED7qfKBz7UYPbFY1VeUVc6EPIae2wwJbIamBP
-	 hsGAerkUoYPIC2tpHu80+9l9MufpHAlp9RPJ0hcvleJe+v7uDzB6bhnB5Kul5aL4uk
-	 hgKXpV0OSsQKhMunlU/5XLrtjy9IWeto8hzJL9DppEl0UZsOY/79Gg6xL7Rtg30rGD
-	 demWXX4eczRRkAoisvA8lkKM9GX+c7rZOELcjsJ485j5234h5gHVpkL28DQsdqcblc
-	 iO8ceRNxm22qrTd7U+L93JEWMBK2c95sTIlngtQwIqFiXYM88xeSZlBCEQjdvMh6LJ
-	 z5752lLHGObWw==
+	dkim=pass (2048-bit key) header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=S+Gw97xI
+Received: from Hawking.lan (hawking.lan [10.0.1.4])
+	by www.nmnhosting.com (Postfix) with ESMTP id ABBF5403EF;
+	Thu, 26 Nov 2026 18:12:51 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=d-silva.org; s=2025a;
+	t=1795677171;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=K5j+hY/TpNb3TDZ4CDlJ7DrhpFGoRBJlazHC7f2+tvM=;
+	b=S+Gw97xIOtAkRieQQs+SOn+HpjNXnlZbOYRP5t3zwnganqxBG9AmklkK9fPBfYfgGF/JpT
+	946886chveBS0Dd6+fwGs+lLIlUkDfeGK5qjyfOo5lJLKJFDsZJNQAvf0bOERUr15+T/Ly
+	MnbWZKRQFVR0X3f7sIMsVUppIAiU+t7HH7VUiIEOvw15UKXVOyhcvg82QPe8B5zKkxGWwa
+	tpmsmVsKMMAfbpxmTkRKYyzAhPTqq+kcxlhEWh+5lNqfxqwPkPJLAIHVS5h59WFPM8Cs3E
+	e/xQLW+PPxckrv/wRSag6b0sMAGzRh5FlBSMDgv54ou1jbEsFyd1kyRz8PA5vg==
+X-GPT-Reason: legitimate. This is a technical software patch (Linux
+	kernel style) sent from alastair@d-silva.org, which is a recognized
+	personal address in the context. The content is a specific code
+	diff regarding hardware clock gating (sunxi-ng: a733) and includes
+	a valid "Fixes" reference, "Signed-off-by" line, and standard development
+	headers. There are no phishing indicators, no suspicious links,
+	and the content perfectly aligns with technical development rather
+	than unsolicited marketing or scams.
+From: Alastair D'Silva <alastair@d-silva.org>
+To: Chen-Yu Tsai <wens@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: Junhui Liu <junhui.liu@pigmoral.tech>,
+	Andre Przywara <andre.przywara@arm.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	Alastair D'Silva <alastair@d-silva.org>
+Subject: [PATCH] clk: sunxi-ng: a733: Mark msi-lite0 clocks as critical
+Date: Thu, 26 Nov 2026 18:12:51 +1100
+Message-ID: <20261126071251.2671198-1-alastair@d-silva.org>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -49,61 +80,52 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 07/10] clk: samsung: exynos5420: Terminate PLL rate
- tables with sentinels
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Thomas Abraham <thomas.ab@samsung.com>, 
- Chander Kashyap <k.chander@samsung.com>, 
- Amit Daniel Kachhap <amit.daniel@samsung.com>, 
- Tomasz Figa <t.figa@samsung.com>, Lukasz Luba <lukasz.luba@arm.com>, 
- Marian Mihailescu <mihailescu2m@gmail.com>, 
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org
-In-Reply-To: <179567696129.9086.5750343229179878451.b4-reply@b4>
-References: <20261123164834.3330320-1-lee@kernel.org>
- <20261123164834.3330320-8-lee@kernel.org>
- <179567696129.9086.5750343229179878451.b4-reply@b4>
-Date: Thu, 26 Nov 2026 08:11:49 +0100
-Message-Id: <179567710988.9086.18307051341647082138.b4-reply@b4>
-X-Mailer: b4 0.17-dev
+Content-Transfer-Encoding: 8bit
 
-On 2026-11-26 08:09:21+01:00, Krzysztof Kozlowski wrote:
-> On 2026-11-23 16:47 +0000, Lee Jones wrote:
-> 
-> > _samsung_clk_register_pll() sizes each PLL rate table by scanning until
-> > it encounters an entry with .rate == 0, then copies the counted entries
-> > into pll->rate_table.  However, exynos5420_pll2550x_24mhz_tbl,
-> > exynos5422_bpll_rate_table, exynos5420_epll_24mhz_tbl, and
-> > exynos5420_vpll_24mhz_tbl all omit a terminating zero sentinel, causing
-> > out-of-bounds reads into adjacent read-only data and populating
-> > pll->rate_table with bogus entries.
-> > 
-> > Append a sentinel entry to each of the four PLL rate tables.
-> > 
-> > Fixes: ca5b40293822 ("clk: samsung: register exynos5420 apll/kpll configuration data")
-> > Fixes: 9842452acd3d ("clk: samsung: exynos542x: Add EPLL rate table")
-> > Fixes: 8b4a7acf7b30 ("clk: samsung: add BPLL rate table for Exynos 5422 SoC")
-> > Fixes: b92981de92cb ("clk: samsung: exynos5420: Add VPLL rate table")
-> > Closes: https://sashiko.dev/#/bug/linux-553831f9-0a7b-4e94-be60-222de60ca8c3
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Lee Jones <lee@kernel.org>
-> > ---
-> >  drivers/clk/samsung/clk-exynos5420.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+The ahb-msi-lite0 and mbus-msi-lite0 clocks gate the shared MSI-Lite0
+bus fabric used by GMAC0 and other peripherals. The bus-msi-lite0 clock
+only gates the register configuration interface. Until a bus or
+interconnect driver models MSI-Lite0 consumers, referencing these shared
+clocks only in GMAC0 does not reflect the shared fabric. Without
+CLK_IS_CRITICAL, clk_disable_unused() gates them off and breaks GMAC0
+link-up and DMA.
 
-Actually let me just grab it and I still wait for other files as well.
+Mark ahb-msi-lite0 and mbus-msi-lite0 as CLK_IS_CRITICAL, matching
+ahb-cpus and mbus-store in this driver.
 
+Fixes: ed757071ac3d ("clk: sunxi-ng: a733: Add bus clock gates")
+Assisted-by: LLM
+Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun60i-a733.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+index 958a2a2bcf76..74759dc6b292 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
++++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+@@ -567,8 +567,9 @@ static SUNXI_CCU_GATE_HWS(ahb_serdes_clk, "ahb-serdes", ahb_hws,
+ 			  0x5c0, BIT(8), 0);
+ static SUNXI_CCU_GATE_HWS(ahb_usb_sys_clk, "ahb-usb-sys", ahb_hws,
+ 			  0x5c0, BIT(9), 0);
++/* Keep enabled for the shared MSI-Lite0 AHB bus fabric. */
+ static SUNXI_CCU_GATE_HWS(ahb_msi_lite0_clk, "ahb-msi-lite0", ahb_hws,
+-			  0x5c0, BIT(16), 0);
++			  0x5c0, BIT(16), CLK_IS_CRITICAL);
+ 
+ /* This gate controls access to the storage controller MMIO registers. */
+ static SUNXI_CCU_GATE_HWS(ahb_store_clk, "ahb-store", ahb_hws,
+@@ -597,8 +598,9 @@ static SUNXI_CCU_GATE_HWS(mbus_vid_in_clk, "mbus-vid-in", mbus_hws,
+ 			  0x5e0, BIT(24), 0);
+ static SUNXI_CCU_GATE_HWS(mbus_serdes_clk, "mbus-serdes", mbus_hws,
+ 			  0x5e0, BIT(28), 0);
++/* Keep enabled for the shared MSI-Lite0 MBUS DMA paths. */
+ static SUNXI_CCU_GATE_HWS(mbus_msi_lite0_clk, "mbus-msi-lite0", mbus_hws,
+-			  0x5e0, BIT(29), 0);
++			  0x5e0, BIT(29), CLK_IS_CRITICAL);
+ 
+ /* Keep enabled for the storage controller DMA paths. */
+ static SUNXI_CCU_GATE_HWS(mbus_store_clk, "mbus-store", mbus_hws,
 -- 
-Krzysztof Kozlowski <krzk@kernel.org>
+2.53.0
+
