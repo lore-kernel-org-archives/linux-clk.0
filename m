@@ -1,63 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=101.71.155.101
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795681519;
-	b=MB/gY+miB4VeIYTSjZXNTKu82OQxdNz+W3GzXjjEL8f0nXM6R3dYKe9kgvb9R0LIQAQI
-	 WvJ09lhqULxO3+e9tI+BcILPszd8dZuncg5keUZTHDbZijk17SRw5NYX09k6D7z4qvzuQ
-	 V35g6K+O1V+MSOXYfxPCbD16HQN8u+OV4qd32x7AWtvlGWhshc5w2SwSGT71PG6uU8z0+
-	 YRfArDByFXy78jHuBL80X4aAmeuc2LrgadSilLQBZ7P+wMJdOL6UIKy5jX1JM72xxCAhJ
-	 i/R/WYK4AJPot1OJa/TBDXU4Sy6bcyuOUuwNa/ketwbRX5ZIYfymTIdPttSqp5ad4mw==
+	t=1795681574;
+	b=RikO03xDEKmHVzKdOzpmNGz23ANym7MdVFakatL/egprb2jLu7T7952s1Ju/OrMGeSHH
+	 d1csnNKicUKiXfk1+4dxRpfnCJaUCyQ7fWdm3LWnB1MQkW4xCqi74Kiz6lEjqqEKOOgjL
+	 Uhx4w/LbMNxCARwFh91Y2KdG0CDbmcDKKjWrHl5z6Pu7NTi2ZDm31HrIOgkKyRw4GNmvy
+	 /2CRHhkJC5pkSorB8ItBKWxUxpKATA2L4UVQzSoC6iqh9WTZ1wBqSOsUu1bpPLRJ/c5ct
+	 665pEPcc7Dt48xNQv4tcccrXzaOB8c1KgOxu5EuVy81xLIoHPRNgKwpbLoiywMGEecw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795681519;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=nasJW35t/3GDXcnrQth4xXcfZ6A0BlwMudYBlU7KjCs=;
-	b=ciWGZ9tT4OcTp8tCm2n5lYF+oLMzXn0kje1tI4cCd2ZdLL4Vv8JK19Dw0c1cLqmm4Iqv
-	 vwxYQJbyYNWtl4gKfenIeQbzZ4xZsgpZgbhvK39vdVPc/zRBtdm+fKiEHvAgJy5h5V7hr
-	 eQPLdPv6u24tI4FiWgm1puAlTU78LbzAIv3pItulzrA3GXQrhlzGB1MiaCtBtyTTpSsiJ
-	 Gf4vooUhlP3Fj30P8agtTRA4EYQHNQiA8ixw81oRvdCVJoq3AzscrRNPZqCkLYK6t0NE8
-	 pr66XZxOnTIlp4lG8WabtKxSRoa2lFslSAvZQxHQ2qv3e8j9h8tO8BmaK+VG2HmrdJQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795681574;
+	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
+	 X-HM-Tid:X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
+	bh=Frt4iJSN4qjcmbAUkqM+QYh/uQluAlfo97xzc3WIxIs=;
+	b=XXuFfBz5djPjh+YnpxzxQxVJ5SB8EQ7IHe8KmQv95U0qP7VzyxVl/zR/l7h1H4KqamAn
+	 HDlMl0xmCL5SoxZ6FQTK5w3JCPf6Q9rMzqSSP3+W4EUWOC1s5pr9Yh/u++SDcuc5XlJW/
+	 fdbkm/cXDyMME03seCW3CUDtoLt/FuHh0pJbwuROtFZvz82JKH/f/m+dHJuWomgS1tStU
+	 bDBpc7pR1R4NYQT/E63dII0Q4/BhAoMWZuaRnAWcqsRhMRSiKjuHK1oKwBVv6SVsLsRZY
+	 dqace8u4vwbu9YzhszG+NSu2Z2R+WEEYGKZLpzy3m40PG11mqQQ5yzL0EqJlzNSDzNA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TTBWCJyf;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=mail.sdu.edu.cn;
+	spf=pass smtp.mailfrom=mail.sdu.edu.cn;
+	dkim=pass header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=Mzhhcjjj;
+	arc=none smtp.remote-ip=101.71.155.101
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865A4606A33B;
-	Thu, 26 Nov 2026 08:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55655606A31E;
+	Thu, 26 Nov 2026 08:26:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 55655606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.sdu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.sdu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TTBWCJyf
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 987731F000C6;
-	Thu, 26 Nov 2026 08:25:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795681518;
-	bh=nasJW35t/3GDXcnrQth4xXcfZ6A0BlwMudYBlU7KjCs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=TTBWCJyfFXUVV2nsweHhl2exzA27u/yHLeFjqSovhBZJVskH8jwmKRE+BT7dMaHvj
-	 1S7TlVsSvD48kwdqCyPwMhe1/GtZsKOvMGxE9tyhoC0+doAiVyAsIHuN4vN3WCJKN+
-	 m6HKdRFpSDn2xW7B5dXaczA8PV7SPrQWVVE6kWVCV06vQDV21X1YaIB+oFBcvlQaVB
-	 GkFqAbHhKLtPp5gJAk9oxLiE5iu4M0aBqvAPoM6aZe9RBCYzLOlWkBnLYQ56d2sFJO
-	 OFy8Oz2TIuw56ke4jCPWavGQbcF52KBqfL0LrbXOUR/EADeoS08GAFmuO//rBc04jz
-	 l71eqWlcke+SA==
-Date: Thu, 26 Nov 2026 08:25:14 +0000
-From: Lee Jones <lee@kernel.org>
-To: Brian Masney <masneyb@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	"Zhao, Linaro" <richard.zhao@linaro.org>,
-	Linaro Ltd <mturquette@linaro.org>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 05/10] clk: divider: Avoid division by zero in
- _div_round_closest()
-Message-ID: <20261126082514.GB38590@joneslee-macbookpro.roam.internal>
-References: <20261123164834.3330320-1-lee@kernel.org>
- <20261123164834.3330320-6-lee@kernel.org>
- <awXLDDmHUpELwCio@x1g10>
+	dkim=pass (1024-bit key) header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=Mzhhcjjj
+Received: from lgs.. (unknown [101.76.249.61])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 561726901;
+	Thu, 26 Nov 2026 16:26:09 +0800 (GMT+08:00)
+From: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
+To: angelogioacchino.delregno@collabora.com,
+	sboyd@kernel.org,
+	bmasney+clk@redhat.com,
+	jbrunet+clk@baylibre.com,
+	matthias.bgg@gmail.com,
+	wenst@chromium.org,
+	drinkcat@chromium.org,
+	weiyi.lu@mediatek.com,
+	msp@baylibre.com,
+	fparent@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/4] clk: mediatek: mt8183: Unregister apmixedsys clocks on unbind
+Date: Thu, 26 Nov 2026 16:26:08 +0800
+Message-ID: <20261126-a35bb25eb5-u14-2@mail.sdu.edu.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261126-a35bb25eb5-u14-0@mail.sdu.edu.cn>
+References: <20261126-a35bb25eb5-u14-0@mail.sdu.edu.cn>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -67,55 +66,70 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <awXLDDmHUpELwCio@x1g10>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0aa216f64bb803a1kunm1e3afcc53c29eb
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCTBhPVklIHxkdSh1DGUkeQ1YeHw
+	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlKS0pVTE1VSU9CVU1KWVdZFhoPEhUdFFlBWU9LSFVKS0lCQ0
+	NMVUpLS1VLWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=MzhhcjjjKIoWIAcK1gW3hfyLLsjR2MKY4YA8m6VPAQUXFrqiL0RoHHBbhqkhR615JDMEuXqfChyfGh1LXD2poIIsXtrUGQtIkkwyoTaLO0+HQEjv4M88LsnLxZRnjxBiL3nLJGB8csR8ODFrHb5u60kkgi1pIUzF1tytmXH2dsI=; c=relaxed/relaxed; s=default; d=mail.sdu.edu.cn; v=1;
+	bh=Frt4iJSN4qjcmbAUkqM+QYh/uQluAlfo97xzc3WIxIs=;
+	h=date:mime-version:subject:message-id:from;
 
-On Tue, 24 Nov 2026, Brian Masney wrote:
+The apmixedsys driver leaves the OF provider and clocks registered
+on unbind. The clock table is device-managed, so the provider can
+retain a pointer to released storage.
 
-> Hi Lee,
-> 
-> On Mon, Nov 23, 2026 at 04:47:38PM +0000, Lee Jones wrote:
-> > When CLK_SET_RATE_PARENT is not set on a CLK_DIVIDER_ROUND_CLOSEST
-> > divider, clk_divider_bestdiv() invokes _div_round_closest() before
-> > clamping the resulting divisor to at least 1.  If the requested rate
-> > exceeds parent_rate (for instance via clk_round_rate(clk, ULONG_MAX))
-> > or parent_rate is zero, parent_rate / rate evaluates to 0.
-> > 
-> > Passing down == 0 into __rounddown_pow_of_two() triggers an undefined
-> > shift and truncates back to 0, after which DIV_ROUND_UP_ULL() divides by
-> > zero.
-> > 
-> > Since a divider cannot increase its parent rate, return the minimum
-> > valid divisor directly whenever rate is greater than or equal to
-> > parent_rate.
-> > 
-> > Fixes: 9315514252a9 ("clk: divider: fix calculation of initial best divider when rounding to closest")
-> > Closes: https://sashiko.dev/#/bug/linux-cc7c0851-a317-4348-ab29-9d748aa20cfc
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Lee Jones <lee@kernel.org>
-> > ---
-> >  drivers/clk/clk-divider.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> > index f68216c65d3d..d05dc595ec4c 100644
-> > --- a/drivers/clk/clk-divider.c
-> > +++ b/drivers/clk/clk-divider.c
-> > @@ -244,6 +244,9 @@ static int _div_round_closest(const struct clk_div_table *table,
-> >  	int up, down;
-> >  	unsigned long up_rate, down_rate;
-> >  
-> > +	if (rate >= parent_rate)
-> > +		return table ? _round_up_table(table, 1) : 1;
-> > +
-> 
-> Carlo Caione posted a separate fix for this that I merged yesterday.
-> Patch 2 in his series covers what you posted.
-> 
-> https://lore.kernel.org/linux-clk/20261119-upstream-clk-divider-large-rates-v3-0-838eccd2e497@baylibre.com/
+Remove the provider and unregister the gates and PLLs during removal.
 
-Perfect.  Dropped.
+This issue was found by our static analysis tool under development.
 
+Fixes: acddfc2c261b ("clk: mediatek: Add MT8183 clock support")
+Signed-off-by: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
+---
+ drivers/clk/mediatek/clk-mt8183-apmixedsys.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/clk/mediatek/clk-mt8183-apmixedsys.c b/drivers/clk/mediatek/clk-mt8183-apmixedsys.c
+index 6242d4f5376e..e1fc3f2beafa 100644
+--- a/drivers/clk/mediatek/clk-mt8183-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt8183-apmixedsys.c
+@@ -168,6 +168,8 @@ static int clk_mt8183_apmixed_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto unregister_gates;
+ 
++	platform_set_drvdata(pdev, clk_data);
++
+ 	return 0;
+ 
+ unregister_gates:
+@@ -178,6 +180,16 @@ static int clk_mt8183_apmixed_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++static void clk_mt8183_apmixed_remove(struct platform_device *pdev)
++{
++	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
++
++	of_clk_del_provider(pdev->dev.of_node);
++	mtk_clk_unregister_gates(apmixed_clks, ARRAY_SIZE(apmixed_clks),
++				 clk_data);
++	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
++}
++
+ static const struct of_device_id of_match_clk_mt8183_apmixed[] = {
+ 	{ .compatible = "mediatek,mt8183-apmixedsys" },
+ 	{ /* sentinel */ }
+@@ -186,6 +198,7 @@ MODULE_DEVICE_TABLE(of, of_match_clk_mt8183_apmixed);
+ 
+ static struct platform_driver clk_mt8183_apmixed_drv = {
+ 	.probe = clk_mt8183_apmixed_probe,
++	.remove = clk_mt8183_apmixed_remove,
+ 	.driver = {
+ 		.name = "clk-mt8183-apmixed",
+ 		.of_match_table = of_match_clk_mt8183_apmixed,
 -- 
-Lee Jones
+2.43.0
+
