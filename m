@@ -1,63 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.251.105.195
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1795704787;
-	b=aSz5p2vD2p0qBD8MS0IIfsQLNUcoPcakuIN0l1UreGPs9fOyxke1M8DbdJfAc3g0EHFL
-	 aqC2760kq83wH1kwPRL17ek75cX1TY07nZZVUx4/ImjW7choawC7z5VfavEo85T2UObR/
-	 s0RpsQBWJtqKQc5GiLy+ho/tNt0xIwHhtVjLamLxlHJMdQbSPTCRv5+1hyOYDCbQqWr+c
-	 wn+qLhqgtgrZ7fBCSsdGoyggbnv4LpzdRtKi/unGDhxvKrObZwje4s6GWe7hXNWgM1yFh
-	 4Orjt85P6ZC3p2JfM6ZCtUO9dcieGyBQzKxSJ9zcoE1k5GHVbouwBK280qXE6ZJ4+zg==
+	b=UfGIUIs4A7H7RPqLZ28qA85c9wtmOJUBJq8b6Ddg7CuEci7fAaNa1OXAibRVh6y755jL
+	 XTeTaO4nmtp+dWZtMQhoBzNv+xMy60sw3EgLiOFgVi/LN1SC9VIFtRWDBP25mf8QzBZaq
+	 yCpa3LAXqycS4IZI6Ch059SjDhFPXUhVrztSrWlaoSeUDZJuJXVggC25ieBIklnjaAh3m
+	 lfN6sVboD3wSa9B2dqRX/rxEvBagw2e2QYYPv6/gfgL1APGmvIUhRtBIYqfJvveGDNNCl
+	 WZgq1qyfKkgNK4hAnRZUUviLZyOvwJqp6RqF7ovJBGo6IwHVHaWohr+s6gos7iHPtbw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795704787;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:Subject:Date:
-	 Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:Date:Subject:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
+	 References:In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:
 	 X-Developer-Key;
-	bh=8rXTF8S6SCImfx4kGM4o+l4VsRYzP0ZTlhaF52aqdlM=;
-	b=H6JkoAU4yZdNwDrAuDs21hagx+pvzvNf+0FEpW24vh10Ie2gOmRXmyfNgVZixM973Xqw
-	 1UdMx8paoYN23K40up4iU9FH0Cfb9JSuk6EgythMi4P21HpjvYPm1+DAOa+UhgUr714ac
-	 3YwFkPQ9bWGEQxu8y/9oAQ8ZvXnKVKPWhH8SkJERXJwQjkYZlzHIotkStErL3ShblyxAT
-	 6czHrs1mqdFj8pXajpMYckH/a8Y8YkFkH0nbVf4XqtbMb4pg0zndDi6SmqAWYe0YAW6VA
-	 2uExwDMz16y6g3zk7Ie9qbdy2c6kRg52hqn8dXixd2r7Hb+NN8lqT9Nu40iMp6qxvwQ==
+	bh=LuSdbCS6PnEOFW/yBPEagnpefQJlzkts0oUQFSt4QkQ=;
+	b=GnM+fVdIjTNsAjYZusTdgN0AyOw6neGjw8V18NmF35kw37IkORmMKQBLHvlxRM9k0FBL
+	 8nS3/OTVJsrVKvZDYkwbjLYbOcbXMxs5akkrPF3TwKMijrk88jEy3wVIPy82xd633jKeZ
+	 YAHiwbE0QweWHqalCfohAtLbbsMNvLPRmJVV+P3djGbzroiuirvlMeiM9Kln6CTMkY9ZD
+	 tL8nihdZt9LZcacB+rF9QmivrzT6jESLXZuemUIl5QXl2h8UlY1q8l7d6nFtSxA4Qa5vG
+	 BUuN6WnGR3ZgvdKfFvlveLUHVZ9a7CFTn2c5c/GhXLSImf6jLDBBG6ljIhkqINi6E4g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=collabora.com;
 	spf=pass smtp.mailfrom=collabora.com;
-	dkim=pass header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=mail header.b=JnBWj0E6;
+	dkim=pass header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=mail header.b=JWiWAJSt;
 	arc=none smtp.remote-ip=148.251.105.195
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A54C606A687;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A50A606A32A;
 	Thu, 26 Nov 2026 14:53:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9A54C606A687
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9A50A606A32A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=mail header.b=JnBWj0E6
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=mail header.b=JWiWAJSt
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
 	s=mail; t=1795704784;
-	bh=Z99yblWrGkFB95zdt7nLTwpaeA6d3IbLOed7B8698CY=;
-	h=From:Subject:Date:To:Cc:From;
-	b=JnBWj0E6QnDwyfw1exMOhkXOAGFxlmwTm2TCzIY6++muW8/bI55BssVCc1KrCkszk
-	 Ilp8hKPhXdd4wYM3YMKe9m76/ylB+UQiQO+ZVE2/SKHZg2BNTMRBgtYVAmJtrbdrvz
-	 D9bTDmWA55wZUmzGOlLf8jNcdW5N2PO3R9cIGe5FQceXxd+y82Yiq9RpKQUowCIMpE
-	 T2fvkZegMoeOqhpMlCh2WMzsjr5A4CBW7FzT2PK4ndUTE4l0FziQh+aSe6Xzm53DHY
-	 sn8P4vvV+gyKC30pRdfrLuRZ5YtSnnAvQCoaE8DydCgDzkT9MoJvcoq8nxVghh63aN
-	 1xrS3k6NR8XPw==
+	bh=VXjQmgPNcP6TxrE9fEJyZi07Hi5P0Q3culnMpUj9c98=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=JWiWAJStLHRo2lj/uUtvvglAI8dN/zmaCL/VwmSC2+oFe+qVIWaiucaNHbelwKhEm
+	 9+RPqJ/ihcaxCZflBG5ggTpttlRkC+/nMzwCBxrHB0oEM7IjSJTyhXpz7Na75yfgpW
+	 MDCF7Odlew+LZpAeL0aaM3EZIiNLuhC1jVPoje5lwp9jt6PLSZ1I1ewbgRsmth2h7P
+	 81U3ZYUEU8Rj5915rfjq/0fqKQUCNmPWM7FuvHwXu94TQ0kHzhThg0YKh0284cnox5
+	 B8FY+jm7BVJKt5f+vdyNCTHCH63bNN5yDlxo1xN4Zfk8BVmBgZ0K1eDdLKkTEk2jxn
+	 MapqJCyKC+DXg==
 Received: from jupiter.universe (unknown [100.64.1.62])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A2B0817E04F7;
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A567D17E0FD4;
 	Thu, 26 Nov 2026 15:53:04 +0100 (CET)
 Received: by jupiter.universe (Postfix, from userid 1000)
-	id 5F1AD48002C; Thu, 26 Nov 2026 15:53:04 +0100 (CET)
+	id 63808480031; Thu, 26 Nov 2026 15:53:04 +0100 (CET)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH v3 0/6] arm64: dts: rockchip: add RK3588 DFI clocks and
- RK3576 DFI
-Date: Thu, 26 Nov 2026 15:52:35 +0100
-Message-Id: <20261126-dfi-clocks-and-rk3576-support-v3-0-0f33c1b8df48@collabora.com>
+Date: Thu, 26 Nov 2026 15:52:38 +0100
+Subject: [PATCH v3 3/6] clk: rockchip: rk3588: add PCLK_DDR_MON_CH gate
+ branches
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -69,10 +68,9 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMwQrCMAwA0F8ZORuwLVbwV8TD2qQaJ21ptiGM/
- btVj+/yNlBuwgqXYYPGq6iU3OEOA8THmO+MQt1gj9YbYz1SEoyvEifFMRO2yZ3OHnWptbQZUyS
- y5HgMJkA/auMk799/vf2tS3hynL8p7PsHXuRevoEAAAA=
-X-Change-ID: 20261126-dfi-clocks-and-rk3576-support-fcdd2d3eab1b
+Message-Id: <20261126-dfi-clocks-and-rk3576-support-v3-3-0f33c1b8df48@collabora.com>
+References: <20261126-dfi-clocks-and-rk3576-support-v3-0-0f33c1b8df48@collabora.com>
+In-Reply-To: <20261126-dfi-clocks-and-rk3576-support-v3-0-0f33c1b8df48@collabora.com>
 To: Heiko Stuebner <heiko@sntech.de>
 Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
@@ -84,66 +82,63 @@ Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
  linux-kernel@vger.kernel.org, kernel@collabora.com, 
  Sebastian Reichel <sebastian.reichel@collabora.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2148;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1856;
  i=sebastian.reichel@collabora.com; h=from:subject:message-id;
- bh=Z99yblWrGkFB95zdt7nLTwpaeA6d3IbLOed7B8698CY=;
- b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGsIR9DT7D1ADUqu10Ej8STv0K6p4ddyE2Zkf
- 9D4Riz24KluqIkCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJrCEfQAAoJENju1/PI
- O/qaB4gP/08rY1SXm09rN9dmsfpvQiHOv5lh0aYWhKoGnZM5ReM32Pp7hWrJmOv0iaWmCgn7LpF
- s5D404oX60djiXBY/gvzNcArkAGxv+kpWVWKRcO/NPUjatF/PDDSTQ/sSR7yZyI4zQ/pPJsfeHk
- TxM/6HMRTcrqqrUuTYoaluNfCMv9DpR2VEGQNY514O6JvsTtBOk0k6D+fXrTaooMl6XfvuKkwrq
- wzO9N3OgF7k0hTl9naQrXncuDgsSpriubmLgwQTj8gC3IGS17gmjCFJz6zueFWziGAw8RKTdIj2
- IndJXkfzU9s9cgvtXf8RgJUc3bm0Td1EPwuOui4LCjDljlMVyxEUz5hxi5sqy7UZABfL50Am+Cz
- V4uTknk8Re8Xf9UZCarkPnwUA23MIgN+dvNHky0KH3FXOB2t4kBhdvxa+sW7/Yo1i9FUIeddu4T
- CbV9H4P+UUGcjwpdOjf/em86FM5XTUi0+PTE8j4suRuyIR2vfxFB1GoOf3KpV4AimESkbgCovAa
- dOGj9ZdJIxno54075yV2FVoA0SzNsDy0Rr2mJaSPoqSIv/g0OqqFFRcrQmW6Z/t51la7L4Rg/kv
- hCPqlOqqnahlS+PXAe+v5qYZoAt6P9jaOIlpFxdyAIRDqBrv2dfI5jqWJAaR4JuIghiIr8pYN3P
- TQhJFHWaa9QiCY8xwA2k6qQ==
+ bh=WfqRSjYFz7+ljRQE5uaOc11qdMoKK31EtGs4gkDrNM4=;
+ b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGsIR9BgLmQS56N3xRiujYqbu7FvWjcjLib8h
+ 7MqHxszt3xtu4kCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJrCEfQAAoJENju1/PI
+ O/qa7pEP/jmZJ6C/rwWR+v7DY5++az7FWNw+FIgrGJ5IlqSiFzidk2vKcxyBNNisbI64fMeEMlm
+ AF9oSRdCMdoLBlDZmkZjQu64bMwveOM8B6PwFIx72Jd45EIFU5zgbfoKssucGoJHcuNQbHjv/3s
+ IvZdei2MSevo+3hUL7OMYUPQdRRWQ0lo0eLkxwZIMOqDh8IdPySfpFlxFPiffLCRvPi07cb/OEl
+ ZwcRy3YD+oAKaXuuLve0XaEEThTUpFBVQzVKDCldpARdabgcHODRz0j1UvziTtRPnzVBRow6Rah
+ KRfCGTfLfuFFpjRCG2Nssk+psTrCZ8RiQLnabZnBAWCirOxlbRC3onC2pOdEynUWvaOx5v/2SIH
+ EPth60jSuSNxkTfR1LVxghCybcmK+0GHpE0SvkiBX5/F4nJri+p6idi+72iAVvpW+80nbru6dw2
+ M20V4iK1kV03pFHr0fmHhMdTkrMqDUW03pwNJZaobdyTyu5GIxnepC5PM5HDaKEl/C6nl+vQpfM
+ bcIC7GAnP0xjZasghwEBEr3Mz8IGbVUhenm3YTwY+5yn4SfopwSBu91iOAwft287tq+ZvQic6Bx
+ gC3PNmWiN66suX44mBfs8sYghVUWyWMt53scI2wX0uo42k1dYZbiNd9xDRC3iuMFp2GXzG2eEKX
+ vh1G1MKENO5ej8D5OkgUq9w==
 X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
  fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-When RK3588 DFI support was added, support for the clocks was missed.
-This series fixes that and also adds the clocks for RK3576 as well as
-RK3576 DFI node itself.
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-The DT binding for the DFI side already got merged together with the
-driver changes today, so there is no dependencies for this series:
+On the Rockchip RK3588, each memory channel has some bandwidth
+monitoring silicon (hence the "DDR_MON"), which is driven by a clock
+gated by PCLK_DDR_MON_CH0/1/2/3.
 
-https://lore.kernel.org/linux-pm/20261119-rockchip-dfi-rk3588-cleanups-and-rk3576-support-v4-0-517a68c008fe@collabora.com/
+These clock branches were left out of the mainline clock tree until now.
 
-I expect all patches in this series to be handled by Heiko and kept
-them together in one series for simplicity even though they go through
-different trees.
+Add them, with the proper CRU reg bits, and the proper parent.  They are
+given the "CLK_IGNORE_UNUSED" flag, so that older device trees with
+newer kernels don't turn off the clocks because they're seen as not in
+use.
 
-Changes in v3:
- * Link to v2 (part 1): https://lore.kernel.org/linux-rockchip/20260921-rockchip-dfi-cleanup-v2-0-43ff34ac8599@collabora.com/
- * Link to v2 (part 2): https://lore.kernel.org/linux-rockchip/20260921-b4-rockchip-dfi-rk3576-support-v2-0-04f847016321@collabora.com/
-- Split out clock and DTS patches from two DFI series; the DFI driver
-  patches got their own v3 (and v4 got applied as mentioned above)
-- None of the patches in this series changed compared to v2
-
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
-Nicolas Frattaroli (6):
-      dt-bindings: clock: rk3588: add PCLK_DDR_MON_CH clocks
-      dt-bindings: clock: rk3576: add more DFI clocks
-      clk: rockchip: rk3588: add PCLK_DDR_MON_CH gate branches
-      clk: rockchip: rk3576: add missing DFI clock branch
-      arm64: dts: rockchip: add dfi clocks on RK3588
-      arm64: dts: rockchip: add DFI node to RK3576
+ drivers/clk/rockchip/clk-rk3588.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- arch/arm64/boot/dts/rockchip/rk3576.dtsi        | 11 +++++++++++
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi   |  4 ++++
- drivers/clk/rockchip/clk-rk3576.c               |  4 +++-
- drivers/clk/rockchip/clk-rk3588.c               |  8 ++++++++
- include/dt-bindings/clock/rockchip,rk3576-cru.h |  6 ++++++
- include/dt-bindings/clock/rockchip,rk3588-cru.h |  4 ++++
- 6 files changed, 36 insertions(+), 1 deletion(-)
----
-base-commit: 0202125a80af9dad6d762dfe52572b95ca7699db
-change-id: 20261126-dfi-clocks-and-rk3576-support-fcdd2d3eab1b
+diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
+index 24baa0ef9bf3..0485faf27163 100644
+--- a/drivers/clk/rockchip/clk-rk3588.c
++++ b/drivers/clk/rockchip/clk-rk3588.c
+@@ -1349,6 +1349,14 @@ static struct rockchip_clk_branch rk3588_early_clk_branches[] __initdata = {
+ 	COMPOSITE(CLK_DDR_CM0_RTC, "clk_ddr_cm0_rtc", mux_24m_32k_p, CLK_IS_CRITICAL,
+ 			RK3588_CLKSEL_CON(166), 5, 1, MFLAGS, 0, 5, DFLAGS,
+ 			RK3588_CLKGATE_CON(70), 4, GFLAGS),
++	GATE(PCLK_DDR_MON_CH0, "pclk_ddr_mon_ch0", "pclk_center_root", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(20), 1, GFLAGS),
++	GATE(PCLK_DDR_MON_CH1, "pclk_ddr_mon_ch1", "pclk_center_root", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(20), 14, GFLAGS),
++	GATE(PCLK_DDR_MON_CH2, "pclk_ddr_mon_ch2", "pclk_center_root", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(23), 1, GFLAGS),
++	GATE(PCLK_DDR_MON_CH3, "pclk_ddr_mon_ch3", "pclk_center_root", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(23), 14, GFLAGS),
+ 	GATE(PCLK_WDT, "pclk_wdt", "pclk_center_root", 0,
+ 			RK3588_CLKGATE_CON(70), 7, GFLAGS),
+ 	GATE(PCLK_TIMER, "pclk_timer", "pclk_center_root", 0,
 
-Best regards,
---  
-Sebastian Reichel <sebastian.reichel@collabora.com>
+-- 
+2.53.0
 
