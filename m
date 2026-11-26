@@ -1,110 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795689244;
-	b=uqvXzqow3VMwLas521cS4LYb4JTE6LNeHp0Uru7Y2fPscj5zSKM+YZdLvi+1WlWHhXe+
-	 Zy70+SkLtyUl7uCrwnFiv1fVR/azVMt9fvCyF9hPRuMinvmB27gwy6/VWk6vHpYagdlWm
-	 sfn3EMaUl2e+0VDoVe7lPTGE5HGR6nldhX5laEEhutertu1c06ocpLj4uE+DBQ+zGv8vl
-	 TeKk+JvfEo0D/FAbkJb+z2zg3b7FxiUfIqvmrUeyKKwKGgY+QIh0T6uSV/D1ETlKObCpP
-	 WvDGg+L2xyzsoWc6fBXGSdzrjY0veyyQ/hwLzsD185Ie0Tc4mbe4hplr4WffGgO5mVw==
+	t=1795695323;
+	b=r1hmub4iWWfOswzPOOZ78ZTyv2crjncfOm1uixUIev3zojdPLIRwT5ENoUMut6XEDzdl
+	 rk/dtV0qCIFdffZc4IEx7lwefuppae5hGu1h+hei8qsbBEHGe2Zu56DCSY2UZVvsHaypa
+	 qAh3Yx6WuTh9OYSkgdF3+gEWb4mqMvA3V6LDaCPqZOfs+zTayn5k8emVNiBIOk00XatBE
+	 UqevSPPkXp3Uw7dONqrjBegiAF/UqHFc0jgOGJ4lCIX0yqyJ3iHgb9tavfZDrB2D+9rB2
+	 OCEGvfuaoTsBqapmX/R/m6Oed+epOubjMZjnM+07xpz2lZlVjiO4kjlbmkSYX3RAIqw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795689244;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795695323;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=QUY9+Y2VxoEdHCsHD5R8MfHCWDCl4kBtw61OaYnUOhg=;
-	b=yys5DH7lDfH3/3Yo3XsJUxisz0wskYmkVlYQuTUb5nI8CIDgeB8fgPTGiITFQWnXqRyR
-	 fngUoraSpjhroaZqEvmTLAEJcdYS/WIsqim8ptj7kuruxEME4i3M1UHorYTP7HUgPXKHW
-	 FU2mGnTKweaLZEW0zdis9p+4C1syJIx88muAgUU3+tQFwUzceGVUzDIjXtpEiqLN1fpHJ
-	 WTOKQfZGU+KGOeOV1B6W6ihgAT+QOmGHDwZzsnke6VJzTuj6ioU9R58zN+8acszqwraAc
-	 bE3yXgK7WSJfeQOQkS5Mz3NsXtbyNAUx7wbS/XP09uJsbbawgJJRcR+ZKg+slfErj4A==
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=N7R2bspuSN2vTU9KXTd+Gs5ucj/LrOjxnprdX2nps1A=;
+	b=P7hFqVW+P+ARCGBH5BSR+UmNVNuvaXjxNFRiyW3BxOkyPAwWf0QsD2bnAe5nwpKKpC4O
+	 riMhd/ELUQtcK/lM3sSXLR2KABNeVQsWVqpbzaLg6q8jZFHS5l8LdQ3xK/Nud/Mrsm1u2
+	 QO7YqZhnhgQmCYXhRao+N3pKZQJVnVf3IVlInH17Y21rj3XeVMgkVHkvOT6pIwuf9NZCd
+	 dFO/xNU4fbxJdM1v+ycgyLcNTeYcOpCEpIb94CJisjJDwcknYYgVeZ4trgxQllOuvUPlm
+	 /4oEpR7Sk9qwtRn9GwlpuiRL8nq9z+dlbsrJI/N16/r5kVBR4GyfdR2RHEqXX+RBtEg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=F5Dm8yJq;
-	arc=none smtp.remote-ip=74.125.82.181
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=FwRjmudW;
+	arc=none smtp.remote-ip=209.85.128.45
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87251606A321
-	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 10:34:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 87251606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FAE606A31C
+	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 12:15:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C1FAE606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=F5Dm8yJq
-Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-3282db206d3so2534272eec.0
-        for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 02:34:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=FwRjmudW
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4bb6ba3b244so70877555e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 04:15:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795689244; x=1796294044; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=QUY9+Y2VxoEdHCsHD5R8MfHCWDCl4kBtw61OaYnUOhg=;
-        b=F5Dm8yJqZJ/eIFY4KXNhFuQ/PKsgI8ojbyn4Qk/Mv4AzNggmrVvBIXclzBnaw0Ihf3
-         TAqc4T9s57gJ7Lq9gix1mZwarusULJYDrwY9qHV0IQhC6ZxMrrPZ0rCKn5ENv7LAIbUk
-         Qd94p7yYd/mLJOckfK+3i/vF/51N/1jaVo5XPtSFXmoW/AfxALbT6BzDP7CbsZk+Mdii
-         s9Alx9xyBDo8JoWEUTRl+c7vn48WMLXwuOWQH2lrvec3sDhIsL4poAdHPhkEfNY1Fm/G
-         Oo3G4H7+tu2Xl5TJzpdBCNcKTBDXxFhHYwOTYsJO9HM0r+7+vNkQngffTDm8PHyhojAe
-         EPNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795689244; x=1796294044;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=baylibre.com; s=google; t=1795695321; x=1796300121; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=QUY9+Y2VxoEdHCsHD5R8MfHCWDCl4kBtw61OaYnUOhg=;
-        b=jWTwUU8colrB1t9dF0KefNtdooa4faIlH6PI4mGkqKoi0m62A/LNbwlniygxnevNRe
-         pCdsbaceFbqnL6eSuigGP2M9ntt+Sbd39sITvZb87c2tk6sGiQBHpIMT3i8SeOBeYuXr
-         iVHcWzM6yLkZyjWduL9fW4ZfMA3EGxkU8jzqG0jP0UMO+1zOVGF/fNHU6ctrIXv4/HaM
-         YUwZ9jKbHEFKOLE8lArlQ/Gx6MB4iUNui5zRRBo5q9MhMC2KxhgnySRNtAmDuc0tPa5U
-         9xG4HEi94fzqyxGyZynP/0D84NZ8/STof0MCnPXNSrZHw1HpgLxwF8dOS4yXwEdnUDv5
-         GOLQ==
-X-Forwarded-Encrypted: i=1; AL+hErGFUVAfj5R/r7c5E1Clw3m8P9Lx2ajaGq91D63YebR9kczr5yMce+7PYxSLpDvC2f4K8LfCZni6W2k=@vger.kernel.org
-X-Gm-Message-State: APuU4Z87FjvYsyLge5w3zIQ1zZCenywCKPBS9egF2EfNcWBVWfriRBnJ
-	2GKWoZOWbulc61Fh/y9mixeZgdGWDEs5T+2Em3aPD1F2yVgOcQY2Dt/5NcU21RRNZM8=
-X-Gm-Gg: AZFdTZcVNm57El++zrboeQW9I7Y5YbiLpd0Fb6jqKroaoPINbLCthdyKUJgEQFRYS3w
-	zkcN4dCc8xn6+w3kHbrN7Jp2AZfTZPVQPFLtKudtHRBU/iG91ATF+yfrqVlz6Ii4AU68ir03pW2
-	UjR5hDUt/h2tHi0d0es932/d4s16zp24DjonxIPFMAz1jy50cTruQzRgJiGrWixxB7J4ZpNdBSv
-	88FNeOtNN3ZCrWdOtjfn1I11LkscIaZOOyFhuwlPiUPtV4ZMYnacq7WYqpQ80UEYCffY8LYt8Ch
-	JrKk44qX9zV1prUFJf3IBQ6wvzNmtbBNxUpXHJi9IHuWQyxei8y5kj+vrS8JsJFaQ+rFHvhP8wJ
-	Rv1bkZ5+vFqGgpmMtvVgP3+h65QrfVgvxOg4BSRXKrhfT8Ub8W301KIFuIajHuxL0h+k3lRQ82V
-	kuWfV5v6/cvVldzZxWFf0QMWR7eKlZAg/sPcFN5UcNclq/mgfRQnNaVovw2UQbbS5xIOYp3+Bmm
-	3JUzQ/rvVeHp4kaLdC20UTqhLlFSTxJZ+sPBgffRIwbbrnaoMF/zEP5Vb80unvCa8Jq42OnUqly
-	my8GZFh6eAeH7PVmb6uOPfNU03cNmA==
-X-Received: by 2002:a05:7301:dc3:b0:386:ce5a:41aa with SMTP id 5a478bee46e88-386ce5a47f9mr4653486eec.13.1795689243454;
-        Thu, 26 Nov 2026 02:34:03 -0800 (PST)
-Received: from localhost ([122.172.83.36])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-38566cd46c5sm76487652eec.11.2026.11.26.02.34.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Nov 2026 02:34:02 -0800 (PST)
-Date: Thu, 26 Nov 2026 16:04:00 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Christian Hewitt <christianshewitt@gmail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	christian.koever-draxl@student.uibk.ac.at,
-	neil.armstrong@linaro.org, sboyd@kernel.org, bmasney+clk@redhat.com,
-	khilman@baylibre.com, rafael@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	Christian Stefan =?iso-8859-1?Q?K=F6v=E9r-Draxl?= <ckoever@outlook.de>
-Subject: Re: [PATCH 4/4] cpufreq: add an Amlogic speed-bin driver
-Message-ID: <awgLGFpH73_fcnbC@vireshk-B250M-D3H>
-References: <at8WfX_G0tfTlFrm@vireshk-B250M-D3H>
- <9556e959-daf3-4c85-8794-9613e7e7a9ae@gmail.com>
- <A45EC676-5B14-4932-A4CF-87ED3B71108D@gmail.com>
- <4a51e879-708c-49dc-a08a-3f64eeec8bbf@amlogic.com>
- <CAFBinCBkJJeRPKLFBA9KYjwXMxFjow_NOtvFoKRQdxD=rOPW3w@mail.gmail.com>
- <48b333a3-ef88-4739-a087-3ed9d8ec60a4@amlogic.com>
- <CAFBinCCgmRmk--W53wqdJhF-SzJbai--s7wyzDNt3LpfN00spw@mail.gmail.com>
- <b606819a-661e-4488-b5fb-9e786de463c6@amlogic.com>
- <awe_Wur5fVbeqV2d@vireshk-B250M-D3H>
- <1dbf65eb-fd04-41a3-876b-e2941cc10172@amlogic.com>
+        bh=N7R2bspuSN2vTU9KXTd+Gs5ucj/LrOjxnprdX2nps1A=;
+        b=FwRjmudWL65oLgTj/u0S7HQX4RFS3WnOCzEmmUj60oHwEXRK/tuKkJNusyKZlWK1M9
+         Q3OWtaUEnyPQMKwdLfw/GSnHVTtxYsSTBID0lVsgQ+7Q7IR1flV5EeGHRZeXIv4a3g0u
+         Qa23F7gHKt5tLT3NTo5Ox0mgBBDrx/nxvTvTh+tjKsv4tzk67N/YeWXxxPfyt6pWUUBg
+         2Dfyjmgf30+RljnWLlu996rmkIJJykXjPdfyAG1Qt2Ml1kKCIByWel5t5wtqUFcyDadF
+         30t/r9Humb2RC7ljW6BOWSF5sZaZnLBTgR0GHu82jg405d1/psWuDQyX3zYU4ZDWOxL9
+         2czQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795695321; x=1796300121;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=N7R2bspuSN2vTU9KXTd+Gs5ucj/LrOjxnprdX2nps1A=;
+        b=VRLeqOvJBPLN7qhaW4saKv2TtS20zdU3vahrlrKjqxMbr/C73BaVVbw4jHd0DZpfTm
+         EeeAmblT9L6RiLmCFoVGDypLx6YD6o92Lg2pMzRiIU7EAH17/dhEhlUv+KJJrGXnBLKg
+         +yZ1YI68S+luehyJLmgpEDG7nAlnX7VIRnJ4RQEjAuMH0VgWi4ZfzAZbfuwGFHQFGSZ7
+         f0VcvtZGWjADaiVpdy/zYOe7wfCWTnIubsy4XQb7h+0LGHuciUPHChhqUTSpEcVMZ217
+         VuQYmJQPI9iEsk+WQbf0xidPziw7zoVDCCY1hpeB/7HGFbrl3bz+0/4KavHQ2TQZ1psC
+         q2vw==
+X-Forwarded-Encrypted: i=1; AL+hErFEOD4S91YxxtUeRlLm6x4yMQw1lrk5KNRGS6tFR59YfRIDNxFNSHUoinLWQCZ7DSW40zzruD3ovwc=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/5zfICX16rK0ML4rnTeEK1aKw8yeF4SWZjDWWRoXuf2EibtDJY
+	sc4uWFyl/L0Do/ogBXc8rTvgwa/syjOD1CBxC5xP6IIKJXh2/y4WxAJ+PJ9Itou0D4U=
+X-Gm-Gg: AZFdTZc/FVWz8g81VFZFM+zPmmBleUrguQXIjxAtHmJo6ZjpyU20GQMYhprppmEiJBr
+	4EWe1IdjFKS+n4AW6enjv3lWb66Qnwzew5zMJ0KqWL5Pze7fbq1LV6ZbAaTcXAZzz/lzBOgSOkL
+	3vBMmVtA1KVx2dzluFwO//KR42ohqham4wtbEBHheW6wYDWg/8yle+BgKFNnA+TUrBIRMLlMVqV
+	rHDp3Q6ws94PRcfgmaMbK1k+zSmW/Tm4lPgQ5Xh42wX0zFDRKKBas/1zS/GcdW3B60gefMi+Hwh
+	AazZy5eCmFOqvo7ymOXnVtR3JszRA3KZcA7Mv2yo1x/qUsILSPO7SMxboUy6utLO+d5xt0XVgHg
+	n27lprf5J9ahzsahU3wGJNVA3U4fhwhNb2F4wrLGjIn69112nXWZo9O4sYOhpWzu3YaI+vY+k3S
+	q4oIGkDtk1s18glsMsq5Rc7rpiEZ8MTuxwYVDZGHZvpDzAwAjZOvq8cGvT9pWw187hv+ql7iwGl
+	uFUyX+Xue2auBomBpqYti9iOKHXkUBE3aiv7wbdSkKoCNAGhAu2sXDVxIDVDTzP155d778oypBM
+	1/jGTMG2xH1TPN8hngk4jtL5BHbGIZRf7OsFH74y1Xiasyt1v4hirpR/tOotkBS56wCJ38JBcHy
+	+R2sMi40DNYUKIuVRoXiIxg90OhXBl3j+IJBWieZO6r6sVaILLCsKFRZt73jdsDJcfQ==
+X-Received: by 2002:a05:600c:3b91:b0:4bb:7e4e:de53 with SMTP id 5b1f17b1804b1-4bb8881059bmr507224745e9.12.1795695320857;
+        Thu, 26 Nov 2026 04:15:20 -0800 (PST)
+Received: from ?IPV6:2a02:842a:9b20:d01:a06b:e180:2ea9:f6eb? (2a02-842a-9b20-0d01-a06b-e180-2ea9-f6eb.rev.sfr.net. [2a02:842a:9b20:d01:a06b:e180:2ea9:f6eb])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb906c089dsm349451575e9.1.2026.11.26.04.15.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Nov 2026 04:15:20 -0800 (PST)
+Message-ID: <bc5f0035-08ba-4813-9bda-9b2ba68f3680@baylibre.com>
+Date: Thu, 26 Nov 2026 13:15:18 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -114,19 +93,163 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1dbf65eb-fd04-41a3-876b-e2941cc10172@amlogic.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/15] R-Car X5H Ironhide CPG/MDLC SCMI remapping
+ support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Paul Elder <paul.elder+renesas@ideasonboard.com>,
+ Sudeep Holla <sudeep.holla@kernel.org>,
+ Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <cover.1795029012.git.geert+renesas@glider.be>
+ <1e9c5ac3-d82b-4af9-9946-0302cadf7404@baylibre.com>
+ <20261119234759.GB2324725@killaraus.ideasonboard.com>
+ <19c3745a-6308-46ff-bb37-3acc88fe22e2@baylibre.com>
+ <awAqqg6F2Z1t55x2@ninjato>
+ <d94ad9ca-afdd-4301-a69c-0bbad5b334fa@baylibre.com>
+ <20261123103633.GB2959742@killaraus.ideasonboard.com>
+ <fc13a7a8-b825-400c-9ea0-ceb2670dc478@baylibre.com>
+ <20261123160550.GA3050935@killaraus.ideasonboard.com>
+ <27796cff-eef5-46ce-8079-93a0a8d40db5@baylibre.com>
+ <20261125221502.GD3581@killaraus.ideasonboard.com>
+Content-Language: en-US, fr
+From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
+Autocrypt: addr=clegoffic@baylibre.com; keydata=
+ xjMEafx9bxYJKwYBBAHaRw8BAQdAtc85GIwDXLz0rh9thWXC80Lji0otVDVncXT4qaS4j1fN
+ K0Nsw6ltZW50IExlIEdvZmZpYyA8Y2xlZ29mZmljQGJheWxpYnJlLmNvbT7ClgQTFgoAPhYh
+ BJjMiHuM4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsDBQkJZgGABQsJCAcCBhUKCQgLAgQWAgMB
+ Ah4BAheAAAoJEH6EW4KtCh6Tt+sA/jVC35rY1npFlOy7YnncTdrID8Qf855JA78IzXgvzpGp
+ AP9FkuuT80m66PP3DvgYX9kVnG17mSDKO0+v2W18v6ZgCM44BGn8fW8SCisGAQQBl1UBBQEB
+ B0DMwF4u//aQyzsFlO8rPJ/cqsAuPH80IeIA3HOEo5mlVgMBCAfCfgQYFgoAJhYhBJjMiHuM
+ 4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsMBQkJZgGAAAoJEH6EW4KtCh6TdSgBAMDS0MiWCivt
+ LjzZc9bs+P/xdXywUjDKq3lpQGJ6vZ0GAP9vI6DnN7vwVK6jt6/+0aBGkog5Ura9+WwRFEdM
+ vLfPDQ==
+In-Reply-To: <20261125221502.GD3581@killaraus.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 26-11-26, 17:49, Chuan Liu wrote:
-> Yes, as shown in this patch [1], I forced the above two
-> "assert_single_clk()" to "assert_clk_index()" and it worked.
+Hi Geert, Laurent,
 
-Maybe this is the right thing to do:
+Thanks to both of you for the answers, I reply to all of them here.
 
-Functions using assert_single_clk(fixed-index-0), can be converted to
-assert_clk_index(fixed-index-0). Lets make this change in the OPP core (in a
-separate patch).
+On 11/25/26 3:45 PM, Geert Uytterhoeven wrote:
+> Status = "reserved" would work fine for a leaf device (e.g. a network
+> interface), without further dependencies.
+>
+> For core components like the CPG and MDLC its different, as every single
+> module on the SoCs makes use of them.
 
--- 
-viresh
+Right, an SCMI DT changes every producer and consumer node, and they would change again with each firmware version that changes its ids. If I were to do it, I would handle those changes in a downstream tree, as SCMI does not seem designed for several firmware versions with different ids on the same chip.
+
+>   1. They are not stable!
+>      We only _assumed_ they are stable, so we could relax dependencies.
+>      With that assumption, there is no longer a need for the (contented)
+>      addition of scmi_get_base_info(), which would be needed to
+>      distinguish among different firmware using e.g. different ID
+>      spaces.
+
+I think this is the real problem, and it is not specific to X5H. Ideally the SCMI firmware keeps its ids stable, and to me it should even be mandatory.
+
+>   2. That can't work for now, due to limitations/deficiencies of the
+>      current SCMI firmware specification and/or firmware implementation.
+
+Which ones? Can't we work on improving it?
+
+>   3. Last but not least, they are not hardware description.
+
+They are firmware ids, and the arm,scmi binding is made for them.
+
+On 11/25/26 3:52 PM, Geert Uytterhoeven wrote:
+> This only focuses on the IDs, not on different abstractions offered by
+> SCMI.
+>
+> The latter leads to the need for changes in (many) DT bindings and
+> drivers, to support the same hardware blocks that are already supported
+> without SCMI in the same and/or older SoCs.  How many different DT
+> binding variants, with corresponding more complex handling in drivers,
+> are you willing to support for the same hardware block?
+> The remapping driver takes care of this in a single place, avoiding DT
+> binding and driver changes all over the tree.
+
+Agreed, the ids are only one part. But most of the other differences on X5H come from the firmware (missing clocks, zero rates, reserved resets) or from the missing clock domain in SCMI, so I would rather fix them in the firmware and in the specification.
+
+On 11/25/26 3:55 PM, Geert Uytterhoeven wrote:
+> So we can't upstream DT, until we have stable IDs for real?
+
+Yes, that would be my take, to avoid glue code based on the firmware version.
+
+To me, development firmware is the SDK, made for development, and a released firmware is the one that has been fully tested, where no new resource or missing id is discovered anymore. As you wrote to Wolfram, "We are still discovering missing SCMI IDs for some resource", so I think the X5H firmware is still in development.
+
+I was also always told not to upstream something that is not mature enough, as your cover letter says for the firmware. So why is it important to upstream the DT before the firmware is mature?
+
+On 11/25/26 11:15 PM, Laurent Pinchart wrote:
+> It's not a matter of "in development". Software is always in
+> development. Don't get me wrong, I agree that we should minimize
+> breaking changes in SCMI firmware, but we can't avoid them, or even
+> minimize them enough, without a QA cost that nobody seems willing to
+> pay. Where's the stable SCP firmware for X5H ?
+
+Linux is always in development too, and it still keeps its userspace ABI stable. I think a firmware can do the same with its ids: keeping them stable is not a QA cost, it is a rule when adding resources, append only and never renumber.
+
+The open-source SCP firmware I am developing for X5H is public here: https://git.gitlab.arm.com/clegoffic/SCP-firmware/-/tree/renesas
+
+For the SDK firmware, Geert's v5 cover says one table covers SDK 4.31 and later, tested with 4.36 and 4.39, so the ids v5 uses have not changed since 4.31.
+
+Personally, I also don't like to see version numbers of firmware that is neither upstream nor public in an open-source project like the Linux kernel.
+
+On 11/25/26 3:55 PM, Geert Uytterhoeven wrote:
+> Zephyr has less complex software abstractions than Linux, and
+> might not care about DT stability.
+
+Yes, we are lucky on this one :-D
+
+On 11/25/26 3:56 PM, Geert Uytterhoeven wrote:
+> I understand that can work on servers with N CPU cores, N network
+> interfaces, and N storage controllers, where you run multiple
+> virtual instances using the same DTB describing e.g. a single CPU core,
+> network interface, and storage controller.
+> But not on an embedded platform with complex I/O...
+
+To me, X5H is an Arm platform like another, not a special case. NXP's automotive S32G, which also has complex I/O, already uses SCMI ids in its mainline DT. That is why I would rather handle the firmware versions with the SCMI quirk framework, the same way for every platform, than with a special case for each SoC.
+
+On 11/25/26 11:15 PM, Laurent Pinchart wrote:
+> We have two options to deal with that: either we handle that instability
+> in every leaf driver, or we handle it in a central place. The latter
+> seems a much better solution to me.
+
+Agreed on a central place rather than every leaf driver. Where we differ is which central place: I think it is the SCMI framework, with its quirk framework, rather than one remapping driver per SoC. A hardware revision is handled by the driver of that hardware, but SCMI is the same protocol on every SoC, so its firmware versions are better handled once in the SCMI stack.
+
+Anyway, I know I am going against the common view here, and maybe I live in an idealistic world. I truly think that one SCMI platform should have only one SCMI firmware version, but somehow several exist here. Do you know why the old SDK firmware versions are not simply fixed and updated?
+
+In general, different SoC vendors seem to face the same issue, so perhaps it comes from the software development process around SCMI servers. That may be worth stating somewhere, or even directly in the SCMI specification, for example that a released SCMI firmware keeps its ids stable.
+
+As long as old firmware versions are not fixed, it changes how the SCMI Linux framework has to think about the product development lifecycle: how can we handle several SCMI server versions without a set of device trees and without dependencies inside the drivers?
+
+My first idea was an upstream interface in the SCMI framework, used by tables maintained downstream. But that does not hold, as an upstream interface needs an upstream user, and I am not in favor of adding one for this.
+
+So I would rather keep a set of atomic patches downstream, one per firmware version, built on the SCMI quirk framework, so they stay easy to rebase and maintain. This way upstream carries no development firmware, no extra device trees and no version-specific code.
+
+This would also follow the comment in drivers/clk/clk-scmi-oem.c: "impl_ver-specific behavior should be considered a bug and handled via SCMI Quirk framework".
+
+> The way to go in my opinion is minimizing firmware breakages *and*
+> having a remapping driver. Those are not mutually exclusive.
+
+Agreed, they are not. We only disagree on where the remapping should live.
+
+Best regards,
+Clément
