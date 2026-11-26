@@ -1,76 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=119.15.109.137
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795677181;
-	b=Ck3v8X/Ggp7OKLqxhRMOKAdIzusILXN3HNXzde1FWLlVJUEFqJC30+fxs3QxKN+t4kXZ
-	 gQQxn0NhBQeZghhNQ2eMZe7xsL4S/ynfSfBvfluhrz8ZLzKb35Z/VUQB/yYIa15xtZbxS
-	 r2Al1vLjo4Iaw8Z4dNY161Qq0Hg0FPMBJVhgH1xT3Rner0x7S+slrLHSNOhQSW1wRYG8O
-	 VR/5UZyv+UZc8FXslZxjOkXWMh7zYvDfW0DIeqPujtIn6j7XtaeYCb2KlIHp5dw8mf5pF
-	 uOp6uaPR2IGZs34mDh2Qdh5tI3IF3vD53bhgW6JIWSy/eiDsv6Hpe5KAazveBXbAOlg==
+	t=1795677278;
+	b=4RsVzU74aZgG70zt+M8x4hE9IYOhGavWwxfUKBLQRkz6B0C8CLG1wAt3NKfhqdquCRvK
+	 p1uO4IxM5GjewxDWya1Np9HsFlbBLc1u/nFN/6/ygOY2DJZ1ZTb8KGvmZrY02/x50reS8
+	 3gBTrxcjTL8I4Y0MR/av7AMIDMB30IQi2CJ7TH28HdTV8XS+Saz+2DLNIlXLy4HGPL/Nn
+	 DmEDQ6YA+M0Nypyow6RFrRG8oz8h7o4ZCpEAsRBj0Cvpf+vj1u5CL3/TQwEm6Cq1jH4hS
+	 R0sk/y5ngSJ7oVQqYiFeDwXvbZ4tKJh9TLu0Q5uerd+n4ScUknQgamTKEwp657HrySg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795677181;
-	h=DMARC-Filter:Received:DKIM-Signature:X-GPT-Reason:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=K5j+hY/TpNb3TDZ4CDlJ7DrhpFGoRBJlazHC7f2+tvM=;
-	b=vM01e9D8vmm6TMp1gutnHiFwaYvzWiWCx5oAzpa2ktZEIGPDtmT65Ht9mKBiAe2UEABz
-	 woQ9Rrsn8zDbDQGnm9lhsO8RUHK5UbyiXptEvtPxLzF7utXQ8HlzLWF6C4q4ZKFZ2yy86
-	 ReJZzE0Hk1PFETUTwDH9rp5cDpvckMCI50U+2rxzVJXlnlYx55t0EgUVDUxltC/N5ytFf
-	 5ip87Hr3za0ha8ob97JAYXybB83hPuXyFnbE1i190gs+MlyTIsMSuv+noTQe3aidwaiCa
-	 Qk+kNx+SWk2CcThh8QXMrVCOP1uPsznjSos2NRnMkYhF/S+TU8cqQ9ahJGV2F/I6OVQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795677278;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer;
+	bh=53x66dpOysE700lhiF+v1Ti3qORDyr+UbN9kd+D3Gh4=;
+	b=aqnbN+/W3cwlL89IMCMq3cpAjpXxWh/gX2qK/FUoHRgrSnQRA5Ex5dpNfO77jEMzY7e1
+	 F4ID3Kk1okpYWkT3/jEyQc80UfdqO3ufg1P1iBbWkUsRxTNZNKTh9jw+cWiiDIMZSotjq
+	 IM6hHp2uH0sTcEDR/kjUv3oDxc39skvOU1GxlpHs1gmuloOkP79wYfDi06RULZmpLv+JR
+	 mkG7i52NZkrAItnfzFRQBTwRuLWLi6QfS6civX/z4n4e7fTeyvOm40pwto2VyEoZ/25DW
+	 +iq5SJpyUnm0muVw6kFotVr8zj+Q8AnoWDmze821mys793ZXbcFX6rhGk6gXJClD0OQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=d-silva.org;
-	spf=pass smtp.mailfrom=d-silva.org;
-	dkim=pass header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=S+Gw97xI;
-	arc=none smtp.remote-ip=119.15.109.137
-Received: from www.nmnhosting.com (watt.d-silva.org [119.15.109.137])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Nx1Y6HzP;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE078606A31E
-	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 07:13:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CE078606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=d-silva.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=d-silva.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDC2606A31C;
+	Thu, 26 Nov 2026 07:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=S+Gw97xI
-Received: from Hawking.lan (hawking.lan [10.0.1.4])
-	by www.nmnhosting.com (Postfix) with ESMTP id ABBF5403EF;
-	Thu, 26 Nov 2026 18:12:51 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=d-silva.org; s=2025a;
-	t=1795677171;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=K5j+hY/TpNb3TDZ4CDlJ7DrhpFGoRBJlazHC7f2+tvM=;
-	b=S+Gw97xIOtAkRieQQs+SOn+HpjNXnlZbOYRP5t3zwnganqxBG9AmklkK9fPBfYfgGF/JpT
-	946886chveBS0Dd6+fwGs+lLIlUkDfeGK5qjyfOo5lJLKJFDsZJNQAvf0bOERUr15+T/Ly
-	MnbWZKRQFVR0X3f7sIMsVUppIAiU+t7HH7VUiIEOvw15UKXVOyhcvg82QPe8B5zKkxGWwa
-	tpmsmVsKMMAfbpxmTkRKYyzAhPTqq+kcxlhEWh+5lNqfxqwPkPJLAIHVS5h59WFPM8Cs3E
-	e/xQLW+PPxckrv/wRSag6b0sMAGzRh5FlBSMDgv54ou1jbEsFyd1kyRz8PA5vg==
-X-GPT-Reason: legitimate. This is a technical software patch (Linux
-	kernel style) sent from alastair@d-silva.org, which is a recognized
-	personal address in the context. The content is a specific code
-	diff regarding hardware clock gating (sunxi-ng: a733) and includes
-	a valid "Fixes" reference, "Signed-off-by" line, and standard development
-	headers. There are no phishing indicators, no suspicious links,
-	and the content perfectly aligns with technical development rather
-	than unsolicited marketing or scams.
-From: Alastair D'Silva <alastair@d-silva.org>
-To: Chen-Yu Tsai <wens@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: Junhui Liu <junhui.liu@pigmoral.tech>,
-	Andre Przywara <andre.przywara@arm.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	Alastair D'Silva <alastair@d-silva.org>
-Subject: [PATCH] clk: sunxi-ng: a733: Mark msi-lite0 clocks as critical
-Date: Thu, 26 Nov 2026 18:12:51 +1100
-Message-ID: <20261126071251.2671198-1-alastair@d-silva.org>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Nx1Y6HzP
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC9EA1F000C6;
+	Thu, 26 Nov 2026 07:14:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795677277;
+	bh=53x66dpOysE700lhiF+v1Ti3qORDyr+UbN9kd+D3Gh4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=Nx1Y6HzP6YmxBYDOcJWxCaz8aslRqwn3YbimRiB0dOW5tsFZkgAZVhYAcMt2cMY94
+	 fw6Fk8Qiks7viNmu2NwepgpOnIYubHvDpVIfkf+TC+bqZivNzTGzKK+wCa6wsn0HyG
+	 2Oel27nbR9E/ubhu4qWAzXiN1a58IKzKUDckNABhBiuA9AuE2qgl94pDmZDO9yXCp+
+	 YfXaTY+SlRPmHvH8pbXP16/zWWPDHi7JOAoklCdn7eID6wnrE+1km+JUcikjgf/ckp
+	 gJeIHXNKmFxlsyKZTk/AFmcg6c5xew7eMf206ku52vksInSAl6J+C70lkMbJH/Kmva
+	 /vqGUNvj2PvPA==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+ linux-riscv@lists.infradead.org, Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+ "Zhao, Linaro" <richard.zhao@linaro.org>, Abel Vesa <abelvesa@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Amit Daniel Kachhap <amit.daniel@samsung.com>, 
+ Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Chander Kashyap <k.chander@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Dong Aisheng <aisheng.dong@nxp.com>, 
+ Drew Fustini <fustini@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>, 
+ Frank Li <Frank.Li@nxp.com>, Heiko Stuebner <heiko@sntech.de>, 
+ imx@lists.linux.dev, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Joel Stanley <jms@oss.tenstorrent.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Jyri Sarha <jsarha@ti.com>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ Liam Beguin <lvb@xiphos.com>, Linaro Ltd <mturquette@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ Lubomir Rintel <lkundrak@v3.sk>, Lukasz Luba <lukasz.luba@arm.com>, 
+ Marian Mihailescu <mihailescu2m@gmail.com>, 
+ Maxime Coquelin <maxime.coquelin@st.com>, 
+ Mike Looijmans <mike.looijmans@topic.nl>, Peng Fan <peng.fan@nxp.com>, 
+ Pengpeng Hou <pengpeng@iscas.ac.cn>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>, Rosen Penev <rosenp@gmail.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Sergej Sawazki <ce3a@gmx.de>, 
+ Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+In-Reply-To: <20261123164834.3330320-1-lee@kernel.org>
+References: <20261123164834.3330320-1-lee@kernel.org>
+Subject: Re: (subset) [PATCH 00/10] clk: Assorted bug fixes across clock
+ core and drivers
+Message-Id: <179567727106.9086.4007919152692495322.b4-ty@b4>
+Date: Thu, 26 Nov 2026 08:14:31 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -80,52 +91,75 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.17-dev
 
-The ahb-msi-lite0 and mbus-msi-lite0 clocks gate the shared MSI-Lite0
-bus fabric used by GMAC0 and other peripherals. The bus-msi-lite0 clock
-only gates the register configuration interface. Until a bus or
-interconnect driver models MSI-Lite0 consumers, referencing these shared
-clocks only in GMAC0 does not reflect the shared fabric. Without
-CLK_IS_CRITICAL, clk_disable_unused() gates them off and breaks GMAC0
-link-up and DMA.
 
-Mark ahb-msi-lite0 and mbus-msi-lite0 as CLK_IS_CRITICAL, matching
-ahb-cpus and mbus-store in this driver.
+On Mon, 23 Nov 2026 16:47:33 +0000, Lee Jones wrote:
+> clk: Assorted bug fixes across clock core and drivers
+> 
+> These issues were reported by Sashiko.
+> 
+> None of these changes have been tested on physical hardware.
+> 
+> Cc: "Uwe Kleine-König" <u.kleine-koenig@pengutronix.de>
+> Cc: "Zhao, Linaro" <richard.zhao@linaro.org>
+> Cc: Abel Vesa <abelvesa@kernel.org>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> Cc: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+> Cc: Brian Masney <bmasney+clk@redhat.com>
+> Cc: Chander Kashyap <k.chander@samsung.com>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: Dong Aisheng <aisheng.dong@nxp.com>
+> Cc: Drew Fustini <fustini@kernel.org>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Francesco Dolcini <francesco.dolcini@toradex.com>
+> Cc: Frank Li <Frank.Li@nxp.com>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: imx@lists.linux.dev
+> Cc: Jerome Brunet <jbrunet+clk@baylibre.com>
+> Cc: Joel Stanley <jms@oss.tenstorrent.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Jyri Sarha <jsarha@ti.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Cc: Liam Beguin <lvb@xiphos.com>
+> Cc: Linaro Ltd <mturquette@linaro.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: Lubomir Rintel <lkundrak@v3.sk>
+> Cc: Lukasz Luba <lukasz.luba@arm.com>
+> Cc: Marian Mihailescu <mihailescu2m@gmail.com>
+> Cc: Maxime Coquelin <maxime.coquelin@st.com>
+> Cc: Mike Looijmans <mike.looijmans@topic.nl>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Peter Griffin <peter.griffin@linaro.org>
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Rosen Penev <rosenp@gmail.com>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Sergej Sawazki <ce3a@gmx.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Thierry Reding <thierry.reding@kernel.org>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Tomasz Figa <t.figa@samsung.com>
+> 
+> [...]
 
-Fixes: ed757071ac3d ("clk: sunxi-ng: a733: Add bus clock gates")
-Assisted-by: LLM
-Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
----
- drivers/clk/sunxi-ng/ccu-sun60i-a733.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-index 958a2a2bcf76..74759dc6b292 100644
---- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-@@ -567,8 +567,9 @@ static SUNXI_CCU_GATE_HWS(ahb_serdes_clk, "ahb-serdes", ahb_hws,
- 			  0x5c0, BIT(8), 0);
- static SUNXI_CCU_GATE_HWS(ahb_usb_sys_clk, "ahb-usb-sys", ahb_hws,
- 			  0x5c0, BIT(9), 0);
-+/* Keep enabled for the shared MSI-Lite0 AHB bus fabric. */
- static SUNXI_CCU_GATE_HWS(ahb_msi_lite0_clk, "ahb-msi-lite0", ahb_hws,
--			  0x5c0, BIT(16), 0);
-+			  0x5c0, BIT(16), CLK_IS_CRITICAL);
- 
- /* This gate controls access to the storage controller MMIO registers. */
- static SUNXI_CCU_GATE_HWS(ahb_store_clk, "ahb-store", ahb_hws,
-@@ -597,8 +598,9 @@ static SUNXI_CCU_GATE_HWS(mbus_vid_in_clk, "mbus-vid-in", mbus_hws,
- 			  0x5e0, BIT(24), 0);
- static SUNXI_CCU_GATE_HWS(mbus_serdes_clk, "mbus-serdes", mbus_hws,
- 			  0x5e0, BIT(28), 0);
-+/* Keep enabled for the shared MSI-Lite0 MBUS DMA paths. */
- static SUNXI_CCU_GATE_HWS(mbus_msi_lite0_clk, "mbus-msi-lite0", mbus_hws,
--			  0x5e0, BIT(29), 0);
-+			  0x5e0, BIT(29), CLK_IS_CRITICAL);
- 
- /* Keep enabled for the storage controller DMA paths. */
- static SUNXI_CCU_GATE_HWS(mbus_store_clk, "mbus-store", mbus_hws,
+[07/10] clk: samsung: exynos5420: Terminate PLL rate tables with sentinels
+        https://git.kernel.org/krzk/linux/c/16efc5f5b3963779dd9aa714fdcb55a6bd8469d5
+
+Best regards,
 -- 
-2.53.0
+Krzysztof Kozlowski <krzk@kernel.org>
 
